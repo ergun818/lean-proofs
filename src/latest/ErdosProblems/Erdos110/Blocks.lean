@@ -17,7 +17,7 @@ open Cardinal Set
 namespace Erdos110
 namespace Blocks
 
-open Height
+open Erdos110.Height
 
 /-- Specker parameter at scale `k`. -/
 def scale (q : ℕ → ℕ) (k : ℕ) : ℕ := q k + 1

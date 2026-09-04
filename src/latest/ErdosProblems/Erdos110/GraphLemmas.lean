@@ -29,8 +29,7 @@ theorem colorable_two_of_hom_no_short_odd_walk
   let cF : F.Coloring Bool :=
     F.recolorOfEquiv finTwoEquiv hFac.coloringTwo
   let cG : G.Coloring Bool := SimpleGraph.Coloring.mk (fun v ↦ cF v) (by
-    intro u v huv
-    intro huvColor
+    intro u v huv huvColor
     have huvReach : F.Reachable u v := by
       rw [hreach]
       exact huv.reachable

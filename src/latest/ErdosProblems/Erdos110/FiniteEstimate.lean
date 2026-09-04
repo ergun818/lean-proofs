@@ -118,12 +118,12 @@ theorem chromaticNumber_le (H : (graph C q).Subgraph) (k : ℕ)
               exact ⟨hxy.ne, Or.inl ⟨hxy, j, hkj, hj⟩⟩
             intro heq
             have := congrFun heq ⟨0, by omega⟩
-            simp only [dif_pos rfl] at this
+            simp only at this
             exact ctBool.valid htail this
           · have hjk : j < k := by omega
             intro heq
             have := congrFun heq ⟨j + 1, by omega⟩
-            simp only [dif_neg (by omega), Nat.add_sub_cancel] at this
+            simp only [Nat.add_sub_cancel] at this
             exact layerColor_ne C q hj this
         · by_cases hkj : k ≤ j
           · have htail : (tail C q H k).Adj x y := by
@@ -131,12 +131,12 @@ theorem chromaticNumber_le (H : (graph C q).Subgraph) (k : ℕ)
               exact ⟨hxy.ne, Or.inr ⟨hxy.symm, j, hkj, hj⟩⟩
             intro heq
             have := congrFun heq ⟨0, by omega⟩
-            simp only [dif_pos rfl] at this
+            simp only at this
             exact ctBool.valid htail this
           · have hjk : j < k := by omega
             intro heq
             have := congrFun heq ⟨j + 1, by omega⟩
-            simp only [dif_neg (by omega), Nat.add_sub_cancel] at this
+            simp only [Nat.add_sub_cancel] at this
             exact layerColor_ne C q hj this.symm)
   have hc := color.colorable
   simpa using hc.chromaticNumber_le

@@ -6,14 +6,14 @@ import ErdosProblems.Erdos110.PCF.Background.Ordinal
 Adapted from Y. Paz, `PCF-Theory` (Apache 2.0), and ported to Mathlib v4.33.0.
 -/
 
-open Classical
-open Set Order Cardinal
+open Set Order Cardinal Filter
+open scoped Set.Notation
 
 universe u v
 
 namespace Ordinal
 
--- Keep the order projections coherent with the legacy ordinal-topology declarations.
+-- Keep the ordinal order projections coherent throughout these topology lemmas.
 local instance ordinalLT : LT Ordinal := Ordinal.partialOrder.toLT
 local instance ordinalLE : LE Ordinal := Ordinal.partialOrder.toLE
 
@@ -21,8 +21,8 @@ local instance ordinalLE : LE Ordinal := Ordinal.partialOrder.toLE
 instance {o : Ordinal.{u}} : Small.{max u v} (Iio o) := small_lift (Iio o)
 
 /- Mathlib currently exposes several definitionally equal `LT`/`LE` projections for
-ordinals.  The deprecated ordinal-topology API was elaborated using the projection of
-`partialOrder`, while later order lemmas often select a richer projection.  These
+ordinals.  These lemmas use the projection of `partialOrder`, while other order lemmas
+may select a richer projection.  These
 bridges make the intended coercions explicit and keep the port independent of instance
 selection. -/
 private theorem partial_lt_iff (a b : Ordinal) :
@@ -50,22 +50,34 @@ private theorem not_lt_of_ge' {a b : Ordinal} (h : b ≤ a) : ¬ a < b := by
   intro hab
   exact (not_lt_of_ge h) hab
 
-theorem IsAcc.inter_Ioi {o p : Ordinal} {S : Set Ordinal} (h : o.IsAcc S) (hp : p < o) :
-    o.IsAcc (S ∩ Ioi p) := by
-  rw [isAcc_iff]
-  refine ⟨h.pos.ne.symm, fun q hq ↦ ?_⟩
+/-- Accumulation in the ordinal order topology, expressed using intervals below the point. -/
+theorem accPt_principal_iff (o : Ordinal) (S : Set Ordinal) :
+    AccPt o (𝓟 S) ↔ o ≠ 0 ∧ ∀ p < o, (S ∩ Ioo p o).Nonempty := by
+  simpa using (SuccOrder.accPt_principal (a := o) (s := S))
+
+/-- Closedness in an initial segment is closure under accumulation points in that segment. -/
+theorem isClosed_Iio_iff {S : Set Ordinal} {o : Ordinal} :
+    IsClosed (Iio o ↓∩ S) ↔ ∀ p < o, AccPt p (𝓟 S) → p ∈ S := by
+  simp [isClosed_iff_accPt, ← comap_principal,
+    isOpen_Iio.isOpenEmbedding_subtypeVal.accPt_comap_iff]
+
+theorem accPt_inter_Ioi {o p : Ordinal} {S : Set Ordinal} (h : AccPt o (𝓟 S)) (hp : p < o) :
+    AccPt o (𝓟 (S ∩ Ioi p)) := by
+  rw [accPt_principal_iff]
+  refine ⟨h.isSuccLimit.pos.ne.symm, fun q hq ↦ ?_⟩
   by_cases hpq : p ≤ q
-  · obtain ⟨x, hx⟩ := h.forall_lt q hq
+  · obtain ⟨x, hx⟩ := (SuccOrder.accPt_principal.mp h).2 q hq
     exact ⟨x, ⟨⟨hx.1, hpq.trans_lt hx.2.1⟩, hx.2⟩⟩
-  · obtain ⟨x, hx⟩ := h.forall_lt p ((partial_lt_iff p o).mpr hp)
+  · obtain ⟨x, hx⟩ := (SuccOrder.accPt_principal.mp h).2 p ((partial_lt_iff p o).mpr hp)
     exact ⟨x, ⟨⟨hx.1, (partial_lt_iff p x).mp hx.2.1⟩,
       lt_trans' (lt_of_not_ge hpq) ((partial_lt_iff p x).mp hx.2.1),
       (partial_lt_iff x o).mp hx.2.2⟩⟩
 
 theorem isAcc_iSup {o : Ordinal.{u}} {α : Iio o} (ho : IsSuccLimit o)
     (f : Iio o → Ordinal.{v})
-    [Small.{v} (Iio o)] (hf : ∀ α β, α < β → f α < f β) {S : Set Ordinal} (hp : ∀ β, α < β → f β ∈ S) :
-    (iSup f).IsAcc S := by
+    [Small.{v} (Iio o)] (hf : ∀ α β, α < β → f α < f β)
+    {S : Set Ordinal} (hp : ∀ β, α < β → f β ∈ S) :
+    AccPt (iSup f) (𝓟 S) := by
   let next : Iio o → Iio o := fun i ↦
     ⟨succ i.1, (partial_lt_iff _ _).mp
       (ho.isSuccPrelimit.succ_lt ((partial_lt_iff _ _).mpr i.2))⟩
@@ -73,7 +85,7 @@ theorem isAcc_iSup {o : Ordinal.{u}} {α : Iio o} (ho : IsSuccLimit o)
     change i.1 < succ i.1
     exact (partial_lt_iff _ _).mp (lt_succ i.1)
   let : Nonempty (Iio o) := ⟨α⟩
-  rw [isAcc_iff]
+  rw [accPt_principal_iff]
   constructor
   · have flt := hf (next α) (next (next α)) (next_gt (next α))
     have lesup := le_ciSup (f := f) bddAbove_of_small (next (next α))
@@ -105,6 +117,7 @@ theorem isAcc_iSup {o : Ordinal.{u}} {α : Iio o} (ho : IsSuccLimit o)
         exact hf _ _ (next_gt δ)
 
 theorem mk_derivedSet_le (S : Set Ordinal) : #(derivedSet S) ≤ #S := by
+  classical
   by_cases hS : S.Finite
   · exact mk_le_mk_of_subset <| (isClosed_iff_derivedSet_subset _).mp hS.isClosed
   /- `f` sends each accumulation point of `S` to the smallest element of `S` above it,
@@ -133,13 +146,13 @@ theorem mk_derivedSet_le (S : Set Ordinal) : #(derivedSet S) ≤ #S := by
     apply le_antisymm
     · apply not_lt.mp
       intro hba
-      obtain ⟨x, hx⟩ := IsAcc.forall_lt a.2 b.1 hba
+      obtain ⟨x, hx⟩ := (SuccOrder.accPt_principal.mp a.2).2 b.1 hba
       exact hnone.2 ⟨x, ⟨hx.1, hx.2.1⟩⟩
     · apply not_lt.mp
       intro hab'
-      obtain ⟨x, hx⟩ := IsAcc.forall_lt b.2 a.1 hab'
+      obtain ⟨x, hx⟩ := (SuccOrder.accPt_principal.mp b.2).2 a.1 hab'
       exact hnone.1 ⟨x, ⟨hx.1, hx.2.1⟩⟩
-  push_neg at hemp
+  push Not at hemp
   unfold f at hab
   rw [dif_pos hemp.1, dif_pos hemp.2, Option.some_inj] at hab
   have hsInf : sInf (S ∩ Ioi a.1) = sInf (S ∩ Ioi b.1) :=
@@ -149,7 +162,7 @@ theorem mk_derivedSet_le (S : Set Ordinal) : #(derivedSet S) ≤ #S := by
     have blt : b.1 ≤ sInf (S ∩ Ioi b.1) :=
       le_csInf hemp.2 fun _ ⟨_, h⟩ ↦ h.le
     have ltb : sInf (S ∩ Ioi a.1) < b.1 := by
-      obtain ⟨x, hx⟩ := IsAcc.forall_lt b.2 a.1 altb
+      obtain ⟨x, hx⟩ := (SuccOrder.accPt_principal.mp b.2).2 a.1 altb
       exact csInf_lt_of_lt (a := x) (OrderBot.bddBelow _) ⟨hx.1, hx.2.1⟩ hx.2.2
     have : sInf (S ∩ Ioi b.1) < b.1 := hsInf ▸ ltb
     exact (not_lt_of_ge blt) this
@@ -158,7 +171,7 @@ theorem mk_derivedSet_le (S : Set Ordinal) : #(derivedSet S) ≤ #S := by
     have alt : a.1 ≤ sInf (S ∩ Ioi a.1) :=
       le_csInf hemp.1 fun _ ⟨_, h⟩ ↦ h.le
     have lta : sInf (S ∩ Ioi b.1) < a.1 := by
-      obtain ⟨x, hx⟩ := IsAcc.forall_lt a.2 b.1 blta
+      obtain ⟨x, hx⟩ := (SuccOrder.accPt_principal.mp a.2).2 b.1 blta
       exact csInf_lt_of_lt (a := x) (OrderBot.bddBelow _) ⟨hx.1, hx.2.1⟩ hx.2.2
     have : sInf (S ∩ Ioi a.1) < a.1 := hsInf.symm ▸ lta
     exact (not_lt_of_ge alt) this
@@ -167,17 +180,17 @@ theorem mk_derivedSet_le (S : Set Ordinal) : #(derivedSet S) ≤ #S := by
 
 
 theorem isClosedBelow_derivedSet {S : Set Ordinal} :
-    ∀ o, IsClosedBelow (S ∪ (derivedSet S)) o := fun o ↦ by
-  rw [isClosedBelow_iff]
+    ∀ o, IsClosed (Iio o ↓∩ (S ∪ derivedSet S)) := fun o ↦ by
+  rw [isClosed_Iio_iff]
   intro p plto pacc
   right
-  apply (isAcc_iff _ _).mpr
-  refine ⟨(IsAcc.pos pacc).ne.symm, ?_⟩
+  apply (accPt_principal_iff _ _).mpr
+  refine ⟨pacc.isSuccLimit.pos.ne.symm, ?_⟩
   intro q qltp
-  obtain ⟨x, hx⟩ := IsAcc.forall_lt pacc q qltp
-  cases' hx.1 with xs xds
+  obtain ⟨x, hx⟩ := (SuccOrder.accPt_principal.mp pacc).2 q qltp
+  rcases hx.1 with xs | xds
   · exact ⟨x, ⟨xs, hx.2⟩⟩
-  obtain ⟨y, hy⟩ := IsAcc.forall_lt xds q hx.2.1
-  exact ⟨y, ⟨hy.1, ⟨hy.2.1, hy.2.2.trans hx.2.2⟩⟩⟩
+  · obtain ⟨y, hy⟩ := (SuccOrder.accPt_principal.mp xds).2 q hx.2.1
+    exact ⟨y, ⟨hy.1, ⟨hy.2.1, hy.2.2.trans hx.2.2⟩⟩⟩
 
 end Ordinal

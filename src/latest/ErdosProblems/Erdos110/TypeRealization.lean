@@ -13,7 +13,6 @@ upper ladder in which it lies.
 noncomputable section
 
 open Cardinal Set Order
-open Classical
 
 namespace Erdos110
 namespace Height
@@ -52,10 +51,11 @@ def Rich (C : (a : S) → Ordinal.Club a.1) (P : S → Prop) :
 
 private def badBound
     (C : (a : S) → Ordinal.Club a.1) (P : S → Prop)
-    (r : ℕ) (xs : List (Set.Iio lambda.ord)) : Set.Iio lambda.ord :=
-  if h : ∃ b : Set.Iio lambda.ord,
+    (r : ℕ) (xs : List (Set.Iio lambda.ord)) : Set.Iio lambda.ord := by
+  classical
+  exact if h : ∃ b : Set.Iio lambda.ord,
       ∀ x : Set.Iio lambda.ord, b.1 < x.1 → ¬ Rich C P r (xs ++ [x])
-  then Classical.choose h else zeroBelowLambda
+    then Classical.choose h else zeroBelowLambda
 
 private theorem badBound_spec
     (C : (a : S) → Ordinal.Club a.1) (P : S → Prop)
@@ -73,9 +73,10 @@ private theorem badBound_spec
 private def goodWitness
     (C : (a : S) → Ordinal.Club a.1) (P : S → Prop)
     (r : ℕ) (xs : List (Set.Iio lambda.ord))
-    (b : Set.Iio lambda.ord) : Set.Iio lambda.ord :=
-  if h : Rich C P (r + 1) xs then Classical.choose (h b)
-  else zeroBelowLambda
+    (b : Set.Iio lambda.ord) : Set.Iio lambda.ord := by
+  classical
+  exact if h : Rich C P (r + 1) xs then Classical.choose (h b)
+    else zeroBelowLambda
 
 private theorem goodWitness_spec
     (C : (a : S) → Ordinal.Club a.1) (P : S → Prop)
@@ -88,10 +89,11 @@ private theorem goodWitness_spec
 
 private def prefixHeight
     (C : (a : S) → Ordinal.Club a.1) (P : S → Prop)
-    (xs : List (Set.Iio lambda.ord)) : Set.Iio lambda.ord :=
-  if h : HasPrefix C P xs then
+    (xs : List (Set.Iio lambda.ord)) : Set.Iio lambda.ord := by
+  classical
+  exact if h : HasPrefix C P xs then
     ⟨(Classical.choose h).1, (Classical.choose h).2.1⟩
-  else zeroBelowLambda
+    else zeroBelowLambda
 
 private theorem prefixHeight_spec
     (C : (a : S) → Ordinal.Club a.1) (P : S → Prop)
@@ -316,7 +318,7 @@ theorem realizeRanks
       exact hpointD r)
   have hbmem : b.1 ∈ D.carrier := by
     apply D.isClub.mem_of_isAcc b.2.1
-    exact (C b).isClub.isAcc.mono hbD
+    exact (C b).isClub.isAcc.mono (Filter.monotone_principal hbD)
   have htailBound : ∀ x ∈ tail, x.1 < b.1 := by
     apply forall_right_lt_of_forall₂
       (bounds := bounds) (h := hrel)

@@ -71,7 +71,7 @@ def natIndex (n : ℕ) : Set.Iio kappa.ord := ⟨n, by
   change (n : Ordinal) < kappa.ord
   rw [Cardinal.lt_ord]
   rw [Ordinal.card_nat]
-  exact (Cardinal.nat_lt_aleph0 n).trans aleph0_lt_kappa⟩
+  exact (Cardinal.natCast_lt_aleph0 (n := n)).trans aleph0_lt_kappa⟩
 
 /-- The `n`-th selected point of the club ladder at `a`. -/
 def point (C : (a : S) → Ordinal.Club a.1) (a : S) (n : ℕ) : Ordinal :=

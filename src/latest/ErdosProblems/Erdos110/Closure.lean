@@ -208,16 +208,16 @@ theorem closedUnder_isClub
     (F : ℕ → List (Set.Iio lambda.ord) → Set.Iio lambda.ord) :
     Ordinal.IsClub {d | ClosedUnder F d} lambda.ord := by
   constructor
-  · rw [Ordinal.isClosedBelow_iff]
+  · rw [Ordinal.isClosed_Iio_iff]
     intro d hd hacc
     refine ⟨hd, ?_⟩
     intro k xs hxs
-    have hdpos : 0 < d := hacc.pos
+    have hdpos : 0 < d := hacc.isSuccLimit.pos
     have hm : listMax xs < d := listMax_lt hdpos hxs
-    obtain ⟨q, hq⟩ := hacc.forall_lt (listMax xs) hm
+    obtain ⟨q, hq⟩ := (SuccOrder.accPt_principal.mp hacc).2 (listMax xs) hm
     exact hq.1.2 k xs (fun x hx ↦
       (le_listMax hx).trans_lt hq.2.1) |>.trans hq.2.2
-  · rw [Ordinal.isAcc_iff]
+  · rw [Ordinal.accPt_principal_iff]
     refine ⟨(Cardinal.isSuccLimit_ord regular_lambda.aleph0_le).pos.ne.symm, ?_⟩
     intro p hp
     let p' : Set.Iio lambda.ord := ⟨p, hp⟩

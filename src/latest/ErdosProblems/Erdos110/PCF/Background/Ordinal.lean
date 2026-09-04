@@ -31,12 +31,12 @@ theorem succ_Iio {α : Type*} [PartialOrder α] [SuccOrder α] {a : α} (h : IsS
 /-- The order isomorphism between ℕ and the first ω ordinals. -/
 @[simps! apply]
 def relIso_nat_omega0 : ℕ ≃o Iio ω where
-  toFun n := ⟨n, nat_lt_omega0 n⟩
+  toFun n := ⟨n, natCast_lt_omega0 n⟩
   invFun n := Classical.choose (lt_omega0.1 n.2)
   left_inv n := by
     have h : ∃ m : ℕ, n = (m : Ordinal) := ⟨n, rfl⟩
     exact (Nat.cast_inj.1 (Classical.choose_spec h)).symm
-  right_inv n := Subtype.eq (Classical.choose_spec (lt_omega0.1 n.2)).symm
+  right_inv n := Subtype.ext (Classical.choose_spec (lt_omega0.1 n.2)).symm
   map_rel_iff' := by
     intro a b
     change (a : Ordinal) ≤ (b : Ordinal) ↔ a ≤ b
@@ -105,7 +105,7 @@ theorem not_exists_ssubset_chain_lift {α : Type u} {S : Set α} {ℓ : Ordinal.
     · rw [h']
   suffices g : Iio ℓ ↪ S by
     have hle := lift_mk_le'.mpr ⟨g⟩
-    rw [mk_Iio_ordinal, Cardinal.lift_lift] at hle
+    rw [Cardinal.mk_Iio_ordinal, Cardinal.lift_lift] at hle
     have aux1 : Cardinal.lift.{v + 1, u} #↑S =
         Cardinal.lift.{v + 1} (Cardinal.lift.{v, u} #↑S) :=
       (Cardinal.lift_lift _).symm
@@ -147,7 +147,7 @@ theorem mk_Iio_subtype {o : Ordinal} {p : Iio o} : #(Iio p) = #(Iio p.1) := by
     this⟩, h⟩
   exact ⟨f, g, congrFun rfl, congrFun rfl⟩
 
-theorem two_lt_aleph0 : 2 < ℵ₀ := nat_lt_aleph0 2
+theorem two_lt_aleph0 : 2 < ℵ₀ := natCast_lt_aleph0
 
 theorem succ_pred_of_finite {o : Ordinal} (h : 0 < o) (h' : o < ω) : succ o.pred = o := by
   rw [succ_pred_eq_iff_not_isSuccPrelimit]
@@ -160,3 +160,7 @@ theorem type_Iio (α : Ordinal.{u}) : type (· < · : Iio α → Iio α → Prop
 
 theorem isLimit_iff' {o : Ordinal} : IsSuccLimit o ↔ o ≠ 0 ∧ ∀ x < o, succ x < o := by
   rw [isSuccLimit_iff, isSuccPrelimit_iff_succ_lt]
+
+end Ordinal
+
+end

@@ -265,13 +265,13 @@ private theorem path_bounds
               exact (indices_lt (j := j + 1) (by omega) (by omega)
                 (by omega) hn).1⟩ <
               v j ⟨lowerIndex ell s u d, (indices_lt (by omega) hu hud hn).1⟩ := by
-          convert hlow using 1 <;> congr 1 <;> apply Fin.ext <;> simp <;> omega
+          convert hlow using 1; congr 1; apply Fin.ext; simp; omega
         have hupp' :
             v j ⟨upperIndex ell s u d, (indices_lt (by omega) hu hud hn).2.2⟩ <
               v (j + 1) ⟨upperIndex ell s (u + 1) d, by
                 exact (indices_lt (j := j + 1) (by omega) (by omega)
                   (by omega) hn).2.2⟩ := by
-          convert hupp using 1 <;> congr 1 <;> apply Fin.ext <;> simp <;> omega
+          convert hupp using 1; congr 1; apply Fin.ext; simp; omega
         exact ⟨⟨hlow'.le.trans hih.1.1, hih.1.2.trans hupp'.le⟩,
           fun _ ↦ ⟨hlow'.trans_le hih.1.1, hih.1.2.trans_lt hupp'⟩⟩
       · have he := by simpa [hup] using hedge j hjlt
@@ -296,7 +296,7 @@ private theorem path_bounds
               exact (indices_lt (j := j + 1) (by omega) (by omega)
                 (by omega) hn).1⟩ <
               v j ⟨lowerIndex ell s u d, (indices_lt (by omega) hu hud hn).1⟩ := by
-          convert hlowA using 1 <;> congr 1 <;> apply Fin.ext <;> simp <;> omega
+          convert hlowA using 1 <;> congr 1 <;> apply Fin.ext <;> simp; omega
         have hupp' :
             v j ⟨upperIndex ell s u d, (indices_lt (by omega) hu hud hn).2.2⟩ <
               v (j + 1) ⟨upperIndex ell s u (d + 1), by
@@ -320,7 +320,7 @@ private theorem counts_ne_of_odd (up : ℕ → Prop) [DecidablePred up]
 when the tuple width satisfies the displayed generous bound. -/
 theorem no_short_odd_closed_walk
     {n : ℕ} {α : Type*} [LinearOrder α]
-    (s ell : ℕ) (hs : 1 ≤ s) (hell : ell ≤ 2 * s + 1)
+    (s ell : ℕ) (_hs : 1 ≤ s) (hell : ell ≤ 2 * s + 1)
     (hn : 3 * ell * (s + 1) + s + 1 < n)
     (hodd : Odd ell) (v : ℕ → IncSeq n α)
     (hedge : ∀ j < ell, Adj s (v j) (v (j + 1)))

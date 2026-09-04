@@ -16,7 +16,7 @@ open Cardinal Set
 namespace Erdos110
 namespace Construction
 
-open Height Blocks
+open Erdos110.Height Blocks
 
 variable (C : (a : Height.S) → Ordinal.Club a.1)
 variable (q : ℕ → ℕ)
