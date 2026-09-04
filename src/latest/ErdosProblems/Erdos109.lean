@@ -188,8 +188,7 @@ theorem hasDensityAlong_zero_union {F : ℕ → Finset ℕ} {E D : Set ℕ}
 def densityOneFilter (F : ℕ → Finset ℕ) : Filter ℕ where
   sets := {E | HasDensityAlong F Eᶜ 0}
   univ_sets := by
-    simpa [HasDensityAlong, finsetDensity] using
-      (tendsto_const_nhds : Tendsto (fun _ : ℕ => (0 : ℝ)) atTop (𝓝 0))
+    simp [HasDensityAlong, finsetDensity]
   sets_of_superset := by
     intro E D hE hED
     exact hasDensityAlong_zero_mono (compl_subset_compl.mpr hED) hE
@@ -263,7 +262,7 @@ theorem density_zero_not_mem_ultrafilter
     simpa using hE
   have hempty : (∅ : Set ℕ) ∈ (p : Filter ℕ) := by
     simpa only [inter_compl_self] using inter_mem hEp hcomp
-  simpa using hempty
+  simp at hempty
 
 /-- A uniform eventual lower bound for the density of `E` along `F`. -/
 def HasPositiveLowerDensityAlong (F : ℕ → Finset ℕ) (E : Set ℕ) : Prop :=
@@ -290,7 +289,7 @@ theorem densityOneFilter_inf_principal_neBot
   by_contra hnon
   have hsub : B ⊆ Uᶜ := by
     intro b hb
-    simp only [mem_compl_iff, Classical.not_not]
+    simp only [mem_compl_iff]
     intro hbU
     exact hnon ⟨b, hbU, hb⟩
   exact not_subset_of_positiveLowerDensity_of_density_zero hB hU hsub
@@ -523,7 +522,7 @@ theorem bohrReturn_syndetic (Z : List Circle) {r : ℝ} (hr : 0 < r) :
 /-- Intersecting finitely many finite-character return constraints amounts
 to taking their union and the smaller radius. -/
 theorem bohrReturn_append_subset_inter (Z W : List Circle) {r s : ℝ}
-    (hr : 0 < r) (hs : 0 < s) :
+    (_ : 0 < r) (_ : 0 < s) :
     bohrReturn (Z ++ W) (min r s) ⊆ bohrReturn Z r ∩ bohrReturn W s := by
   intro n hn
   constructor
@@ -670,7 +669,7 @@ theorem sum_realIndicator (F : Finset ℕ) (E : Set ℕ) :
       (((F : Set ℕ) ∩ E).ncard : ℝ) := by
   classical
   rw [Set.ncard_eq_toFinset_card _ (F.finite_toSet.inter_of_left E)]
-  simp [realIndicator, Set.Finite.mem_toFinset]
+  simp [realIndicator]
 
 theorem realFinsetMean_indicator (F : Finset ℕ) (E : Set ℕ) :
     realFinsetMean F (realIndicator E) = finsetDensity F E := by
@@ -1520,7 +1519,8 @@ theorem tendsto_beta_endpoint_error
 theorem integral_map_betaEmpirical (N : ℕ) (hN : 0 < N)
     (f : BetaNat →ᵇ ℝ) :
     ∫ x, f x ∂(((betaEmpirical N hN).map
-        continuous_betaShift.measurable.aemeasurable : ProbabilityMeasure BetaNat) : Measure BetaNat) =
+        continuous_betaShift.measurable.aemeasurable : ProbabilityMeasure BetaNat) :
+          Measure BetaNat) =
       (∫ x, f x ∂((betaEmpirical N hN : ProbabilityMeasure BetaNat) : Measure BetaNat)) +
         (f (pure N) - f (pure 0)) / N := by
   rw [ProbabilityMeasure.toMeasure_map]
@@ -1745,7 +1745,7 @@ theorem betaInvariantStates_isClosed : IsClosed betaInvariantStates := by
       exact isClosed_univ
   have hinv : IsClosed {Λ : BetaFunctional |
       ∀ f : BetaTest, Λ (betaShiftTest f) = Λ f} := by
-    simp only [setOf_forall]
+    simp only [ofPred_forall]
     exact isClosed_iInter fun f ↦
       isClosed_eq (WeakDual.eval_continuous _) (WeakDual.eval_continuous _)
   rw [show betaInvariantStates = ({Λ : BetaFunctional | Λ (1 : BetaTest) = 1} ∩
@@ -2366,8 +2366,7 @@ theorem spectralQuadratic_add (U : H ≃ₗᵢ[ℂ] H) (x : H)
     exact map_add (ContinuousMap.realToRCLikeStarAlgHom _ ℂ) f g
   unfold spectralQuadratic
   rw [hreal, map_add Φ]
-  simp only [ContinuousLinearMap.add_apply, inner_add_left, map_add,
-    Complex.add_re]
+  simp only [add_apply, inner_add_left, Complex.add_re]
   rfl
 
 theorem spectralQuadratic_smul (U : H ≃ₗᵢ[ℂ] H) (x : H)
@@ -2380,9 +2379,7 @@ theorem spectralQuadratic_smul (U : H ≃ₗᵢ[ℂ] H) (x : H)
     exact map_smul (ContinuousMap.realToRCLikeStarAlgHom _ ℂ) c f
   unfold spectralQuadratic
   rw [hreal, map_smul Φ]
-  simp only [ContinuousLinearMap.smul_apply, inner_smul_left,
-    Complex.real_smul, Complex.mul_re, Complex.ofReal_re,
-    Complex.ofReal_im, zero_mul, sub_zero, smul_eq_mul]
+  simp only [smul_apply, inner_smul_left, Complex.mul_re, smul_eq_mul]
   simp [Φ]
 
 noncomputable def continuousSqrt {X : Type*} [TopologicalSpace X]
@@ -2425,7 +2422,7 @@ theorem spectralQuadratic_nonneg (U : H ≃ₗᵢ[ℂ] H) (x : H)
   unfold spectralQuadratic
   rw [hop]
   change 0 ≤ Complex.re (inner ℂ ((star a * a) x) x)
-  rw [ContinuousLinearMap.mul_apply, ContinuousLinearMap.star_eq_adjoint,
+  rw [mul_apply_eq_comp, ContinuousLinearMap.star_eq_adjoint,
     ContinuousLinearMap.adjoint_inner_left]
   exact inner_self_nonneg (𝕜 := ℂ) (x := a x)
 
@@ -2580,7 +2577,7 @@ theorem integral_spectralMeasure_complex (U : H ≃ₗᵢ[ℂ] H) (x : H)
     exact integral_const_mul _ _]
   rw [hfrint, hfiint]
   rw [map_add, map_smul]
-  rw [ContinuousLinearMap.add_apply, ContinuousLinearMap.smul_apply,
+  rw [add_apply, smul_apply,
     inner_add_right, inner_smul_right]
   rw [spectralQuadratic_complex_of_real,
     spectralQuadratic_complex_of_real]
@@ -2769,12 +2766,11 @@ theorem tendsto_wiener_average_sq_zero
   change Complex.re
     (∫ zw, circleCesaroKernel N zw.1 zw.2 ∂(μ.prod μ)) = _
   rw [integral_circleCesaroKernel_eq μ N]
-  simp only [map_mul, map_inv₀, map_natCast, map_sum, Complex.ofReal_inv,
-    Complex.mul_conj', Complex.ofReal_pow, Complex.ofReal_sum,
-    Complex.ofReal_mul]
-  simp only [Complex.mul_re, Complex.inv_re, Complex.natCast_re, Complex.normSq_natCast, div_self_mul_self',
-    Complex.re_sum, Complex.inv_im, Complex.natCast_im, neg_zero, zero_div, Complex.im_sum, zero_mul, sub_zero,
-    mul_eq_mul_left_iff, inv_eq_zero, Nat.cast_eq_zero]
+  simp only [Complex.mul_conj']
+  simp only [Complex.mul_re, Complex.inv_re, Complex.natCast_re, Complex.normSq_natCast,
+    div_self_mul_self', Complex.re_sum, Complex.inv_im, Complex.natCast_im, neg_zero,
+    zero_div, Complex.im_sum, zero_mul, sub_zero, mul_eq_mul_left_iff, inv_eq_zero,
+    Nat.cast_eq_zero]
   left
   apply Finset.sum_congr rfl
   intro i hi
@@ -2816,6 +2812,7 @@ noncomputable def spectralPow (U : H ≃ₗᵢ[ℂ] H) (n : ℕ) :
   (ContinuousMap.restrict (spectrum ℂ (unitaryOperator U))
     (ContinuousMap.id ℂ)) ^ n
 
+omit [CompleteSpace H] in
 @[simp] theorem spectralPow_apply (U : H ≃ₗᵢ[ℂ] H) (n : ℕ)
     (z : UnitarySpectrum U) : spectralPow U n z = (z.1 : ℂ) ^ n := rfl
 
@@ -2846,10 +2843,12 @@ noncomputable def unitaryEigenSpan (U : H ≃ₗᵢ[ℂ] H) : Submodule ℂ H :=
 noncomputable def unitaryKronecker (U : H ≃ₗᵢ[ℂ] H) : ClosedSubmodule ℂ H :=
   (unitaryEigenSpan U).closure
 
+omit [CompleteSpace H] in
 theorem unitaryEigenSpan_le_kronecker (U : H ≃ₗᵢ[ℂ] H) :
     unitaryEigenSpan U ≤ (unitaryKronecker U).toSubmodule :=
   (unitaryEigenSpan U).le_topologicalClosure
 
+omit [CompleteSpace H] in
 theorem eigenvector_mem_kronecker (U : H ≃ₗᵢ[ℂ] H) {y : H} {z : Circle}
     (hy : U y = (z : ℂ) • y) : y ∈ unitaryKronecker U := by
   apply unitaryEigenSpan_le_kronecker U
@@ -2878,6 +2877,7 @@ are precisely the eigenvectors with the given eigenvalue. -/
 noncomputable def twistedUnitary (U : H ≃ₗᵢ[ℂ] H) (z : Circle) : H →L[ℂ] H :=
   (z : ℂ)⁻¹ • unitaryOperator U
 
+omit [CompleteSpace H] in
 theorem twistedUnitary_norm_le_one (U : H ≃ₗᵢ[ℂ] H) (z : Circle) :
     ‖twistedUnitary U z‖ ≤ 1 := by
   apply ContinuousLinearMap.opNorm_le_bound _ zero_le_one
@@ -2885,6 +2885,7 @@ theorem twistedUnitary_norm_le_one (U : H ≃ₗᵢ[ℂ] H) (z : Circle) :
   change ‖(z : ℂ)⁻¹ • U y‖ ≤ 1 * ‖y‖
   rw [norm_smul, norm_inv, Circle.norm_coe, inv_one, U.norm_map, one_mul]
 
+omit [CompleteSpace H] in
 theorem mem_eqLocus_twistedUnitary_iff (U : H ≃ₗᵢ[ℂ] H) (z : Circle)
     (y : H) :
     y ∈ (twistedUnitary U z).eqLocus (1 : H →L[ℂ] H) ↔
@@ -3003,6 +3004,7 @@ theorem integral_circleCesaroKernel_right_eq (μ : Measure Circle)
   intro n hn
   exact integral_circle_div_pow_right μ w n
 
+omit [CompleteSpace H] in
 theorem iterate_twistedUnitary_apply (U : H ≃ₗᵢ[ℂ] H)
     (w : Circle) (n : ℕ) (x : H) :
     (twistedUnitary U w)^[n] x =
@@ -3156,14 +3158,16 @@ noncomputable def unitaryCorrelationAverage (U : H ≃ₗᵢ[ℂ] H)
   (N : ℝ)⁻¹ * ∑ n ∈ Finset.range N,
     ‖inner ℂ y (((unitaryOperator U) ^ n) x)‖
 
+omit [CompleteSpace H] in
 theorem unitaryOperator_pow_apply (U : H ≃ₗᵢ[ℂ] H) (n : ℕ) (x : H) :
     ((unitaryOperator U) ^ n) x = (U ^ n) x := by
   induction n with
   | zero => simp
   | succ n ih =>
-      rw [pow_succ', pow_succ', ContinuousLinearMap.mul_apply, ih]
+      rw [pow_succ', pow_succ', mul_apply_eq_comp, ih]
       rfl
 
+omit [CompleteSpace H] in
 theorem inner_unitary_pow_left_right (U : H ≃ₗᵢ[ℂ] H)
     (x : H) (k m : ℕ) :
     inner ℂ ((U ^ k) x) ((U ^ (k + m)) x) =
@@ -3171,6 +3175,7 @@ theorem inner_unitary_pow_left_right (U : H ≃ₗᵢ[ℂ] H)
   rw [pow_add]
   exact (U ^ k).inner_map_map x ((U ^ m) x)
 
+omit [CompleteSpace H] in
 theorem unitaryCorrelationAverage_self (U : H ≃ₗᵢ[ℂ] H) (x : H) (N : ℕ) :
     unitaryCorrelationAverage U x x N =
       (N : ℝ)⁻¹ * ∑ n ∈ Finset.range N,
@@ -3284,6 +3289,7 @@ theorem tendsto_unitaryCorrelationAverage_orbit_weakPart
             (Finset.sum_nonneg fun _ _ ↦ norm_nonneg _)
   · simpa only [Pi.add_apply, zero_add] using hprefix.add hself
 
+omit [CompleteSpace H] in
 theorem unitaryCorrelationAverage_lipschitz (U : H ≃ₗᵢ[ℂ] H) (x : H) (N : ℕ) :
     LipschitzWith ‖x‖₊ (fun y ↦ unitaryCorrelationAverage U x y N) := by
   apply LipschitzWith.of_dist_le_mul
@@ -3350,12 +3356,14 @@ theorem unitaryCorrelationAverage_lipschitz (U : H ≃ₗᵢ[ℂ] H) (x : H) (N 
       _ = (‖x‖₊ : ℝ) * dist y z := by
         rw [dist_eq_norm, coe_nnnorm]
 
+omit [CompleteSpace H] in
 theorem unitaryCorrelationAverage_nonneg (U : H ≃ₗᵢ[ℂ] H)
     (x y : H) (N : ℕ) :
     0 ≤ unitaryCorrelationAverage U x y N :=
   mul_nonneg (inv_nonneg.mpr (Nat.cast_nonneg N))
     (Finset.sum_nonneg fun _ _ ↦ norm_nonneg _)
 
+omit [CompleteSpace H] in
 theorem unitaryCorrelationAverage_add_le (U : H ≃ₗᵢ[ℂ] H)
     (x y z : H) (N : ℕ) :
     unitaryCorrelationAverage U x (y + z) N ≤
@@ -3368,6 +3376,7 @@ theorem unitaryCorrelationAverage_add_le (U : H ≃ₗᵢ[ℂ] H)
   rw [inner_add_left]
   exact norm_add_le _ _
 
+omit [CompleteSpace H] in
 theorem unitaryCorrelationAverage_smul (U : H ≃ₗᵢ[ℂ] H)
     (x y : H) (c : ℂ) (N : ℕ) :
     unitaryCorrelationAverage U x (c • y) N =
@@ -3381,10 +3390,12 @@ theorem unitaryCorrelationAverage_smul (U : H ≃ₗᵢ[ℂ] H)
   rw [← Finset.mul_sum]
   ring
 
+omit [CompleteSpace H] in
 theorem tendsto_unitaryCorrelationAverage_zero (U : H ≃ₗᵢ[ℂ] H) (x : H) :
     Tendsto (fun N ↦ unitaryCorrelationAverage U x 0 N) atTop (nhds 0) := by
   simp [unitaryCorrelationAverage]
 
+omit [CompleteSpace H] in
 theorem tendsto_unitaryCorrelationAverage_add (U : H ≃ₗᵢ[ℂ] H)
     (x y z : H)
     (hy : Tendsto (fun N ↦ unitaryCorrelationAverage U x y N) atTop (nhds 0))
@@ -3396,6 +3407,7 @@ theorem tendsto_unitaryCorrelationAverage_add (U : H ≃ₗᵢ[ℂ] H)
     (fun N ↦ unitaryCorrelationAverage_add_le U x y z N) ?_
   simpa only [Pi.add_apply, zero_add] using hy.add hz
 
+omit [CompleteSpace H] in
 theorem tendsto_unitaryCorrelationAverage_smul (U : H ≃ₗᵢ[ℂ] H)
     (x y : H) (c : ℂ)
     (hy : Tendsto (fun N ↦ unitaryCorrelationAverage U x y N) atTop (nhds 0)) :
@@ -3444,6 +3456,7 @@ theorem tendsto_unitaryCorrelationAverage_mem_forwardCyclic_weakPart
     Submodule.topologicalClosure_minimal _ hspan hMclosed
   exact hclosure (by simpa only [unitaryForwardCyclic, xw] using hy)
 
+omit [CompleteSpace H] in
 theorem unitary_pow_mem_forwardCyclic (U : H ≃ₗᵢ[ℂ] H)
     (x : H) (n : ℕ) :
     (U ^ n) x ∈ unitaryForwardCyclic U x := by
@@ -3487,6 +3500,7 @@ open scoped ComplexConjugate Pointwise Topology
 
 variable {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
 
+omit [CompleteSpace H] in
 theorem unitary_pow_eigenvector (U : H ≃ₗᵢ[ℂ] H)
     {x : H} {z : Circle} (hx : U x = (z : ℂ) • x) (n : ℕ) :
     (U ^ n) x = (z : ℂ) ^ n • x := by
@@ -3500,6 +3514,7 @@ theorem unitary_pow_eigenvector (U : H ≃ₗᵢ[ℂ] H)
         _ = (z : ℂ) ^ n • ((z : ℂ) • x) := by rw [hx]
         _ = (z : ℂ) ^ (n + 1) • x := by rw [smul_smul, pow_succ]
 
+omit [CompleteSpace H] in
 theorem totallyBounded_unitaryOrbit_eigenvector (U : H ≃ₗᵢ[ℂ] H)
     {x : H} {z : Circle} (hx : U x = (z : ℂ) • x) :
     TotallyBounded (Set.range fun n : ℕ ↦ (U ^ n) x) := by
@@ -3515,6 +3530,7 @@ theorem totallyBounded_unitaryOrbit_eigenvector (U : H ≃ₗᵢ[ℂ] H)
   refine ⟨z ^ n, ?_⟩
   exact (unitary_pow_eigenvector U hx n).symm
 
+omit [CompleteSpace H] in
 theorem totallyBounded_unitaryOrbit_zero (U : H ≃ₗᵢ[ℂ] H) :
     TotallyBounded (Set.range fun n : ℕ ↦ (U ^ n) (0 : H)) := by
   convert totallyBounded_singleton (0 : H) using 1
@@ -3556,6 +3572,7 @@ theorem totallyBounded_unitaryOrbit_smul (U : H ≃ₗᵢ[ℂ] H)
 def unitaryAlmostPeriodic (U : H ≃ₗᵢ[ℂ] H) : Set H :=
   {x | TotallyBounded (Set.range fun n : ℕ ↦ (U ^ n) x)}
 
+omit [CompleteSpace H] in
 theorem isClosed_unitaryAlmostPeriodic (U : H ≃ₗᵢ[ℂ] H) :
     IsClosed (unitaryAlmostPeriodic U) := by
   apply closure_subset_iff_isClosed.mp
@@ -3620,6 +3637,7 @@ open scoped ComplexConjugate Pointwise Topology
 
 variable {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
 
+omit [CompleteSpace H] in
 theorem lower_inner_on_unitary_return (U : H ≃ₗᵢ[ℂ] H) (w : H)
     {n : ℕ} (hn : dist ((U ^ n) w) w < ‖w‖ / 2) :
     ‖w‖ ^ 2 / 2 < ‖inner ℂ w ((U ^ n) w)‖ := by
@@ -3647,6 +3665,7 @@ theorem lower_inner_on_unitary_return (U : H ≃ₗᵢ[ℂ] H) (w : H)
   simp only [inner_self_eq_norm_sq_to_K] at hdiff
   nlinarith [sq_nonneg ‖w‖]
 
+omit [CompleteSpace H] in
 theorem unitaryCorrelationAverage_lower_of_syndetic_returns
     (U : H ≃ₗᵢ[ℂ] H) (w : H) (hw : w ≠ 0)
     (S : Set ℕ)
@@ -3705,6 +3724,7 @@ theorem unitaryCorrelationAverage_lower_of_syndetic_returns
       mul_le_mul_of_nonneg_left hsum (inv_nonneg.mpr (Nat.cast_nonneg N))
     _ = unitaryCorrelationAverage U w w N := rfl
 
+omit [CompleteSpace H] in
 theorem eq_zero_of_totallyBounded_unitaryOrbit_of_correlationAverage
     (U : H ≃ₗᵢ[ℂ] H) (w : H)
     (horbit : TotallyBounded (Set.range fun n : ℕ ↦ (U ^ n) w))
@@ -4639,13 +4659,13 @@ theorem betaRightTranslateComplex_of_continuous (F : C(BetaNat, ℂ))
     rw [hit, add_comm]
   exact congrFun heq
 
-variable {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
+variable {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H]
 
 /-- The compact closure of the forward orbit of an almost-periodic vector. -/
 def compactOrbit (U : H ≃ₗᵢ[ℂ] H) (c : H) : Set H :=
   closure (Set.range fun n : ℕ ↦ (U ^ n) c)
 
-theorem isCompact_compactOrbit (U : H ≃ₗᵢ[ℂ] H) (c : H)
+theorem isCompact_compactOrbit [CompleteSpace H] (U : H ≃ₗᵢ[ℂ] H) (c : H)
     (hc : TotallyBounded (Set.range fun n : ℕ ↦ (U ^ n) c)) :
     IsCompact (compactOrbit U c) := by
   exact hc.closure.isCompact_of_isClosed isClosed_closure
@@ -4663,7 +4683,7 @@ noncomputable def compactOrbitCode (U : H ≃ₗᵢ[ℂ] H) (c : H)
   ψ (compactOrbitPoint U c n)
 
 theorem norm_compactOrbitCode_le (U : H ≃ₗᵢ[ℂ] H) (c : H)
-    (hc : TotallyBounded (Set.range fun n : ℕ ↦ (U ^ n) c))
+    (_ : TotallyBounded (Set.range fun n : ℕ ↦ (U ^ n) c))
     (ψ : compactOrbit U c →ᵇ ℂ) (n : ℕ) :
     ‖compactOrbitCode U c ψ n‖ ≤ ‖ψ‖ :=
   ψ.norm_coe_le_norm _
@@ -4812,8 +4832,6 @@ theorem betaKoopman_continuousMap {μ : Measure BetaNat} [IsFiniteMeasure μ]
     ContinuousMap.coeFn_toLp (p := 2) (𝕜 := ℂ) μ (betaShiftComplex F)] with
       p hcomp hFcomp hshift
   rw [hcomp]
-  change (((ContinuousMap.toLp 2 μ ℂ F : BetaL2 μ) : BetaNat → ℂ) ∘ betaShift) p =
-    ((ContinuousMap.toLp 2 μ ℂ (betaShiftComplex F) : BetaL2 μ) : BetaNat → ℂ) p
   rw [hFcomp, hshift]
   rfl
 
@@ -4830,6 +4848,7 @@ theorem betaKoopman_pow_continuousMap {μ : Measure BetaNat} [IsFiniteMeasure μ
       rw [ih, betaKoopman_continuousMap]
       rw [Function.iterate_succ_apply']
 
+omit [IsFiniteMeasure μ] in
 theorem dist_compactOrbitPoint_add (U : BetaL2 μ ≃ₗᵢ[ℂ] BetaL2 μ)
     (c : BetaL2 μ) (k n m : ℕ) :
     dist (compactOrbitPoint U c (k + n)) (compactOrbitPoint U c (k + m)) =
@@ -4840,6 +4859,7 @@ theorem dist_compactOrbitPoint_add (U : BetaL2 μ ≃ₗᵢ[ℂ] BetaL2 μ)
   change dist ((U ^ k) ((U ^ n) c)) ((U ^ k) ((U ^ m) c)) = _
   rw [(U ^ k).dist_map]
 
+omit [IsFiniteMeasure μ] in
 theorem compactOrbitExtension_shift_pure
     (U : BetaL2 μ ≃ₗᵢ[ℂ] BetaL2 μ) (c : BetaL2 μ)
     (hc : TotallyBounded (Set.range fun n : ℕ ↦ (U ^ n) c))
@@ -4989,6 +5009,7 @@ theorem compactOrbitFactorClosed_le_kronecker
       change IsClosed (unitaryAlmostPeriodic (betaKoopman hμ))
       exact isClosed_unitaryAlmostPeriodic (betaKoopman hμ))
 
+omit [IsFiniteMeasure μ] in
 theorem compactOrbitExtension_one
     (U : BetaL2 μ ≃ₗᵢ[ℂ] BetaL2 μ) (c : BetaL2 μ)
     (hc : TotallyBounded (Set.range fun n : ℕ ↦ (U ^ n) c)) :
@@ -5350,6 +5371,7 @@ local instance : BorelSpace BetaNat := ⟨rfl⟩
 
 variable {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
 
+omit [CompleteSpace H] in
 /-- A quantitative Pythagorean estimate around an orthogonal projection. -/
 theorem norm_sub_starProjection_sq_le
     (S : Submodule ℂ H) [S.HasOrthogonalProjection]
@@ -5789,7 +5811,7 @@ noncomputable section
 noncomputable local instance : MeasurableSpace BetaNat := borel BetaNat
 local instance : BorelSpace BetaNat := ⟨rfl⟩
 
-variable {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
+variable {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H]
 
 /-- A continuous tent function supported on the ball of radius `r`. -/
 noncomputable def compactReturnBump (r d : ℝ) : ℝ :=
@@ -5903,7 +5925,7 @@ theorem compactReturnWeight_pos_implies_return_mem
       filter_upwards [hRc] with n hn
       apply Subtype.ext
       have hnnot : ¬ dist ((U ^ n) c) c < r := by
-        simpa only [R, Set.mem_compl_iff, Set.mem_setOf_eq] using hn
+        simpa only [R, Set.mem_compl_iff, Set.mem_ofPred_eq] using hn
       exact compactReturnBump_eq_zero_of_le hr (le_of_not_gt hnnot)
     have hext : Ultrafilter.extend fs p = z := by
       rw [ultrafilter_extend_eq_iff]
@@ -5912,12 +5934,14 @@ theorem compactReturnWeight_pos_implies_return_mem
     exact congrArg Subtype.val hext
   linarith
 
+variable [CompleteSpace H]
+
 /-- The same return bump as a bounded continuous observable on the compact
 orbit closure. -/
 noncomputable def compactReturnObservable
     (U : H ≃ₗᵢ[ℂ] H) (c : H)
     (hc : TotallyBounded (Set.range fun n : ℕ ↦ (U ^ n) c))
-    (r : ℝ) (hr : 0 < r) : compactOrbit U c →ᵇ ℂ := by
+    (r : ℝ) (_ : 0 < r) : compactOrbit U c →ᵇ ℂ := by
   letI : CompactSpace (compactOrbit U c) :=
     isCompact_iff_compactSpace.mp (isCompact_compactOrbit U c hc)
   exact BoundedContinuousFunction.mkOfCompact
@@ -6002,7 +6026,7 @@ noncomputable section
 noncomputable local instance : MeasurableSpace BetaNat := borel BetaNat
 local instance : BorelSpace BetaNat := ⟨rfl⟩
 
-variable {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
+variable {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H]
 
 theorem iterate_linearIsometryEquiv_apply
     (U : H ≃ₗᵢ[ℂ] H) (n : ℕ) (x : H) :
@@ -6111,7 +6135,7 @@ noncomputable section
 noncomputable local instance : MeasurableSpace BetaNat := borel BetaNat
 local instance : BorelSpace BetaNat := ⟨rfl⟩
 
-variable {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
+variable {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H]
 
 /-- The empirical limit measure tilted by a smooth compact-return weight. -/
 noncomputable def compactReturnWeightedMeasure
@@ -6371,7 +6395,7 @@ theorem betaTrigAlgebra_toLp_mem_span {F : C(BetaNat, ℂ)}
 
 /-! ## Finite phase tori -/
 
-variable {I : Type*} [Fintype I]
+variable {I : Type*}
 
 noncomputable def phasePoint (z : I → Circle) (n : ℕ) : I → Circle :=
   fun i ↦ z i ^ n
@@ -6387,7 +6411,7 @@ theorem torusTrigAlgebra_separatesPoints :
   intro x y hxy
   have : ∃ i, x i ≠ y i := by
     by_contra h
-    push_neg at h
+    push Not at h
     exact hxy (funext h)
   obtain ⟨i, hi⟩ := this
   refine ⟨(torusCoordinate i : (I → Circle) → ℂ), ?_, ?_⟩
@@ -6586,7 +6610,7 @@ noncomputable section
 noncomputable local instance : MeasurableSpace BetaNat := borel BetaNat
 local instance : BorelSpace BetaNat := ⟨rfl⟩
 
-variable {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
+variable {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H]
 
 /-- Bundled eigenvectors of a unitary. -/
 def UnitaryEigenvector (U : H ≃ₗᵢ[ℂ] H) :=
@@ -6730,7 +6754,7 @@ noncomputable section
 noncomputable local instance : MeasurableSpace BetaNat := borel BetaNat
 local instance : BorelSpace BetaNat := ⟨rfl⟩
 
-variable {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
+variable {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H]
 
 /-- The diagonal action of a unitary on the Hilbert direct sum of two copies. -/
 noncomputable def unitaryL2Prod (U : H ≃ₗᵢ[ℂ] H) :
@@ -6766,14 +6790,14 @@ theorem unitaryL2Prod_eigen_left (U : H ≃ₗᵢ[ℂ] H)
     unitaryL2Prod U (WithLp.toLp 2 (x, 0)) =
       (z : ℂ) • WithLp.toLp 2 (x, 0) := by
   rw [unitaryL2Prod_apply, hx, U.map_zero]
-  simpa only [← WithLp.toLp_smul, Prod.smul_mk, smul_zero]
+  simp only [← WithLp.toLp_smul, Prod.smul_mk, smul_zero]
 
 theorem unitaryL2Prod_eigen_right (U : H ≃ₗᵢ[ℂ] H)
     {y : H} {z : Circle} (hy : U y = (z : ℂ) • y) :
     unitaryL2Prod U (WithLp.toLp 2 (0, y)) =
       (z : ℂ) • WithLp.toLp 2 (0, y) := by
   rw [unitaryL2Prod_apply, hy, U.map_zero]
-  simpa only [← WithLp.toLp_smul, Prod.smul_mk, smul_zero]
+  simp only [← WithLp.toLp_smul, Prod.smul_mk, smul_zero]
 
 theorem unitaryEigenSpan_toLp_left (U : H ≃ₗᵢ[ℂ] H)
     {x : H} (hx : x ∈ unitaryEigenSpan U) :
@@ -7065,6 +7089,7 @@ theorem exists_continuous_clip_close
 
 variable {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
 
+omit [CompleteSpace H] in
 /-- Algebraic eigenvectors are dense in the Kronecker subspace by definition. -/
 theorem exists_unitaryEigenSpan_close
     (U : H ≃ₗᵢ[ℂ] H) {a : H} (ha : a ∈ unitaryKronecker U)
@@ -7478,8 +7503,9 @@ noncomputable local instance : MeasurableSpace BetaNat := borel BetaNat
 local instance : BorelSpace BetaNat := ⟨rfl⟩
 
 variable {mu : Measure BetaNat} [IsProbabilityMeasure mu]
-variable {K : Type*} [NormedAddCommGroup K] [InnerProductSpace ℂ K] [CompleteSpace K]
+variable {K : Type*} [NormedAddCommGroup K] [InnerProductSpace ℂ K]
 
+omit [IsProbabilityMeasure mu] in
 theorem integral_compactReturnWeightedMeasure
     (V : K ≃ₗᵢ[ℂ] K) (c : K) (r : ℝ) (hr : 0 < r)
     (g : BetaNat → ℝ) :
@@ -7495,6 +7521,7 @@ theorem integral_compactReturnWeightedMeasure
       (compactReturnWeight V c r hr).continuous.measurable)
   · exact ae_of_all _ fun p ↦ ENNReal.ofReal_lt_top
 
+omit [IsProbabilityMeasure mu] in
 theorem compactReturnWeightedMeasure_real_univ
     (V : K ≃ₗᵢ[ℂ] K) (c : K) (r : ℝ) (hr : 0 < r) :
     (compactReturnWeightedMeasure mu V c r hr).real Set.univ =
@@ -7511,7 +7538,7 @@ theorem compactReturnWeighted_average_betaCrossAverage_lower
     (hdpos : 0 < d)
     (N : ℕ) (hN : 0 < N)
     (h f : ℕ → ℝ) (H C e : ℝ)
-    (hH : 0 ≤ H) (he : 0 ≤ e)
+    (_ : 0 ≤ H) (_ : 0 ≤ e)
     (hh : ∀ n, |h n| ≤ H) (hf : ∀ n, |f n| ≤ C)
     (hsmall : ∀ n,
       |∫ p, compactReturnWeight V c r hr p *
@@ -7859,7 +7886,7 @@ theorem complexPrefixMean_gram_combination
           complexPrefixMean N (fun n ↦ Z i (pure n) * conj (Z j (pure n))) := by
   unfold complexPrefixMean
   simp_rw [gram_combination_apply]
-  simp only [Finset.sum_mul, Finset.mul_sum]
+  simp only [Finset.mul_sum]
   rw [Finset.sum_comm]
   apply Finset.sum_congr rfl
   intro i hi
@@ -7882,7 +7909,7 @@ theorem integral_gram_combination
   apply Eq.trans (integral_congr_ae (ae_of_all _ fun p ↦
     gram_combination_apply Z d e p))
   rw [integral_finsetSum d.support (fun i _hi ↦
-    integrable_finset_sum e.support fun j _hj ↦
+    integrable_finsetSum e.support fun j _hj ↦
       (hint i j).const_mul (d i * conj (e j)))]
   apply Finset.sum_congr rfl
   intro i hi
@@ -7920,7 +7947,7 @@ noncomputable def empiricalCombinationNorm
     ‖continuousFinsuppCombination Z d (pure n)‖ ^ 2) / (N : ℝ))
 
 theorem complexPrefixMean_self_eq_secondMoment
-    (N : ℕ) (hN : 0 < N) (G : C(BetaNat, ℂ)) :
+    (N : ℕ) (_ : 0 < N) (G : C(BetaNat, ℂ)) :
     complexPrefixMean N (fun n ↦ G (pure n) * conj (G (pure n))) =
       (((∑ n ∈ Finset.range N, ‖G (pure n)‖ ^ 2) / (N : ℝ) : ℝ) : ℂ) := by
   unfold complexPrefixMean
@@ -7993,7 +8020,7 @@ theorem norm_complexPrefixMean_le
       field_simp
 
 theorem exists_subseq_tendsto_bounded_complex_array
-    (a : ℕ → ℕ → ℂ) (C : ℝ) (hC : 0 ≤ C)
+    (a : ℕ → ℕ → ℂ) (C : ℝ) (_ : 0 ≤ C)
     (ha : ∀ k j, ‖a k j‖ ≤ C) :
     ∃ phi : ℕ → ℕ, ∃ l : ℕ → ℂ, StrictMono phi ∧
       (∀ j, Tendsto (fun k ↦ a (phi k) j) atTop (nhds (l j))) ∧
@@ -8123,11 +8150,9 @@ variable {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteS
 /-- Strong ultrafilter limit of a totally bounded unitary orbit. -/
 noncomputable def compactOrbitLimit
     (U : H ≃ₗᵢ[ℂ] H) (c : H)
-    (hc : TotallyBounded (Set.range fun n : ℕ ↦ (U ^ n) c))
-    (p : BetaNat) : H := by
-  letI : CompactSpace (compactOrbit U c) :=
-    isCompact_iff_compactSpace.mp (isCompact_compactOrbit U c hc)
-  exact (Ultrafilter.extend (compactOrbitPoint U c) p : compactOrbit U c).1
+    (_ : TotallyBounded (Set.range fun n : ℕ ↦ (U ^ n) c))
+    (p : BetaNat) : H :=
+  (Ultrafilter.extend (compactOrbitPoint U c) p : compactOrbit U c).1
 
 theorem continuous_compactOrbitLimit
     (U : H ≃ₗᵢ[ℂ] H) (c : H)
@@ -8214,7 +8239,7 @@ theorem dist_compactOrbitLimit_le_of_mem
 noncomputable def betaOrbitAt (Y : C(BetaNat, ℂ)) (p : BetaNat) :
     C(BetaNat, ℂ) :=
   betaExtendComplex (fun n ↦ Y (betaShift^[n] p)) ‖Y‖
-    (fun n ↦ Y.norm_coe_le_norm _)
+    (fun n ↦ Y.norm_coe_le_norm (betaShift^[n] p))
 
 @[simp] theorem betaOrbitAt_pure_apply
     (Y : C(BetaNat, ℂ)) (p : BetaNat) (n : ℕ) :
@@ -8453,6 +8478,7 @@ noncomputable section
 
 variable {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
 
+omit [CompleteSpace H] in
 theorem finsetDensity_large_inner_le_correlationAverage
     (U : H ≃ₗᵢ[ℂ] H) (x y : H) (M : ℕ) (hM : 0 < M)
     (epsilon : ℝ) (hepsilon : 0 < epsilon) :
@@ -8520,7 +8546,7 @@ theorem essential_mem_small_weak_correlation
   convert hasDensityAlong_large_weak_correlation_zero
     U F y N hNpos hNtop epsilon hepsilon using 1
   ext n
-  simp only [Set.mem_compl_iff, Set.mem_setOf_eq, not_lt]
+  simp only [Set.mem_compl_iff, Set.mem_ofPred_eq, not_lt]
 
 end
 
@@ -8583,7 +8609,7 @@ noncomputable def mrrGeneratorFamily
   simp [mrrGeneratorFamily]
 
 theorem list_getD_mem_or_zero
-    {alpha : Type*} [DecidableEq alpha] [Zero alpha]
+    {alpha : Type*} [Zero alpha]
     (L : List alpha) (n : ℕ) : L.getD n 0 ∈ L ∨ L.getD n 0 = 0 := by
   by_cases hn : n < L.length
   · left
@@ -8629,7 +8655,7 @@ theorem finiteCharacters_le_generatorSpan
   rw [List.mem_iff_getElem] at hwL
   obtain ⟨n, hn, hwn⟩ := hwL
   refine ⟨Nat.pair 1 n + 1, ?_⟩
-  simp only [mrrGeneratorFamily, Nat.unpair_pair, ne_eq, one_ne_zero,
+  simp only [mrrGeneratorFamily, Nat.unpair_pair, one_ne_zero,
     ↓reduceIte]
   rw [List.getD_eq_getElem?_getD, List.getElem?_eq_getElem hn]
   simpa only [Option.getD_some] using hwn
@@ -8746,7 +8772,7 @@ theorem rightTranslate_continuousAnti_eq
 
 theorem betaCrossAverage_anti_eq
     (A : Set ℕ) (Y Hc : C(BetaNat, ℂ))
-    (hHreal : ∀ p, Hc p = ((Hc p).re : ℂ))
+    (_ : ∀ p, Hc p = ((Hc p).re : ℂ))
     (N : ℕ) (p : BetaNat) :
     betaCrossAverage N (fun n ↦ (Hc (pure n)).re)
         (fun m ↦ continuousAntiPart A Y (pure m)) (1 + ‖Y‖)
@@ -8853,7 +8879,7 @@ theorem dist_toLp_betaOrbitAt_le
 theorem inner_re_lower_of_close
     {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H]
     (a b x y : H)
-    (hab : (inner ℂ a b).re ≥ 0)
+    (_ : (inner ℂ a b).re ≥ 0)
     (ha : ‖a‖ ≤ 1) (hb : ‖b‖ ≤ 1)
     (hxa : ‖x - a‖ ≤ ε) (hyb : ‖y - b‖ ≤ η) :
     (inner ℂ x y).re ≥ (inner ℂ a b).re - ε * (1 + η) - η := by
@@ -8983,13 +9009,13 @@ theorem mrr_corr_zero_numeric
 
 theorem mrr_transfer_to_compact_numeric
     {delta eps corr compact error : ℝ}
-    (hdelta : 0 < delta)
+    (_ : 0 < delta)
     (hcorr : (3 / 4 : ℝ) * delta ^ 2 ≤ corr)
     (heps : eps ≤ (1 / 100 : ℝ) * delta ^ 2)
     (heq : corr = compact + error)
     (herror : error ≤ eps) :
     (2 / 3 : ℝ) * delta ^ 2 ≤ compact := by
-  nlinarith [sq_pos_of_pos hdelta]
+  nlinarith
 
 theorem norm_unitary_iterate_sub_le_three
     {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H]
@@ -9191,7 +9217,6 @@ theorem erdos_109 (A : Set ℕ) (hA : A.upperDensity > 0) :
     exact lt_of_le_of_ne (compactReturnWeight_nonneg V c eps heps p) hnz.symm
   have hpReturns := compactReturnWeight_pair_pos_implies
     U ga g eps heps (by simpa only [V, c] using hpWeight)
-
   -- The next diagonal subsequence realizes the pointwise limsup and then
   -- represents every required correlation by one vector in the limiting L² space.
   let antiSeq : ℕ → ℝ := fun k ↦ cross (phi₁ k) p
@@ -9248,7 +9273,6 @@ theorem erdos_109 (A : Set ℕ) (hA : A.upperDensity > 0) :
     exact hNtop.comp (hphi₀.tendsto_atTop.comp
       (hphi₁.tendsto_atTop.comp
         (htheta.comp hphi₂.tendsto_atTop)))
-
   have hantiLower : -(epsY / d) ≤ limsup antiSeq atTop := by
     simpa only [antiSeq] using hpLimsup
   have hantiLim' : Tendsto
@@ -9428,7 +9452,6 @@ theorem erdos_109 (A : Set ℕ) (hA : A.upperDensity > 0) :
       exact heqeps.le
     exact mrr_transfer_to_compact_numeric hdelta hcorrZeroStrong
       hepsSmall heq hhi
-
   -- Every return time for the algebraic approximation of the compact part
   -- now has a uniformly positive limiting row correlation.
   have hpEssential : (p : Filter ℕ) ≤
