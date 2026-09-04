@@ -330,7 +330,7 @@ lemma densityZero_compl_of_densityOne {s : Set ℝ} {x : ℝ}
       sᶜ ∩ Metric.closedBall x r =
         Metric.closedBall x r \ (s ∩ Metric.closedBall x r) := by
     ext y
-    simp only [mem_inter_iff, mem_compl_iff, mem_diff]
+    simp only [mem_inter_iff, mem_compl_iff, Set.mem_sdiff]
     tauto
   have hsubball : s ∩ Metric.closedBall x r ⊆ Metric.closedBall x r :=
     inter_subset_right
@@ -339,7 +339,7 @@ lemma densityZero_compl_of_densityOne {s : Set ℝ} {x : ℝ}
     finiteness
   have hfinsub : volume (s ∩ Metric.closedBall x r) ≠ ⊤ :=
     ne_top_of_le_ne_top hfinball (measure_mono hsubball)
-  rw [hdiff, measure_diff hsubball
+  rw [hdiff, measure_sdiff hsubball
     (hsm.inter hball).nullMeasurableSet hfinsub]
   rw [ENNReal.sub_div]
   · rw [ENNReal.div_self (by
@@ -373,7 +373,7 @@ lemma densityOne_of_densityZero_compl {s : Set ℝ} {x : ℝ}
       s ∩ Metric.closedBall x r =
         Metric.closedBall x r \ (sᶜ ∩ Metric.closedBall x r) := by
     ext y
-    simp only [mem_inter_iff, mem_compl_iff, mem_diff]
+    simp only [mem_inter_iff, mem_compl_iff, Set.mem_sdiff]
     tauto
   have hsubball : sᶜ ∩ Metric.closedBall x r ⊆ Metric.closedBall x r :=
     inter_subset_right
@@ -382,7 +382,7 @@ lemma densityOne_of_densityZero_compl {s : Set ℝ} {x : ℝ}
     finiteness
   have hfinsub : volume (sᶜ ∩ Metric.closedBall x r) ≠ ⊤ :=
     ne_top_of_le_ne_top hfinball (measure_mono hsubball)
-  rw [hdiff, measure_diff hsubball
+  rw [hdiff, measure_sdiff hsubball
     (hsm.compl.inter hball).nullMeasurableSet hfinsub]
   rw [ENNReal.sub_div]
   · rw [ENNReal.div_self (by
@@ -430,7 +430,7 @@ lemma translateSet_inter_ball (s : Set ℝ) (x a r : ℝ) :
 
 /-- Density-one neighborhoods are stable under translation. -/
 lemma densityOne_translate {s : Set ℝ} {x a : ℝ}
-    (hsm : MeasurableSet s) (hs : IsDensityOneAt s x) :
+    (_ : MeasurableSet s) (hs : IsDensityOneAt s x) :
     IsDensityOneAt (translateSet s a) (x + a) := by
   unfold IsDensityOneAt at *
   refine hs.congr' ?_
@@ -652,7 +652,8 @@ lemma affinePull_hasMeasurableDifferences {f : ℝ → ℝ} {a ρ : ℝ}
   funext x
   unfold affinePull
   simp only [Function.comp_apply]
-  congr 2 <;> ring
+  congr 2
+  ring
 
 /-- A nondegenerate affine map is nonsingular for Lebesgue measure. -/
 lemma qmp_affine (a ρ : ℝ) (hρ : ρ ≠ 0) :
@@ -969,7 +970,8 @@ lemma periodic_ae_zero_of_Ioc {u : ℝ → ℝ}
     ring_nf at hper
     exact hper
   rw [hper']
-  convert hx' using 1 <;> ring_nf
+  convert hx' using 1
+  ring_nf
 
 /-- The base-point variable of a second difference inherits the unit period
 of the original function. -/
@@ -1122,7 +1124,9 @@ lemma densityRelated_of_common_left {f : ℝ → ℝ} {t y z : ℝ}
     have htranslate :=
       densityOne_translate (hsm.inter hqm)
         (densityOne_inter hsm hqm hsden hqden) (a := a)
-    convert htranslate using 1 <;> dsimp [a] <;> ring
+    convert htranslate using 1
+    dsimp [a]
+    ring
   refine ⟨n + m, A, hAmeas, hAden, ?_⟩
   have hsfull :
       ∀ᵐ u ∂volume, u ∈ s →
@@ -1174,7 +1178,9 @@ lemma densityRelated_symm {f : ℝ → ℝ} {y z : ℝ}
   have hAmeas : MeasurableSet A := translateSet_measurable hsm
   have hAden : IsDensityOneAt A z := by
     have htranslate := densityOne_translate hsm hsden (a := a)
-    convert htranslate using 1 <;> dsimp [a] <;> ring
+    convert htranslate using 1
+    dsimp [a]
+    ring
   refine ⟨n, A, hAmeas, hAden, ?_⟩
   have hsfull :
       ∀ᵐ u ∂volume, u ∈ s →
@@ -1282,7 +1288,9 @@ lemma densityCenteredRelated_of_common_left {f : ℝ → ℝ} {D E t y z : ℝ}
     have htranslate :=
       densityOne_translate (hsm.inter hqm)
         (densityOne_inter hsm hqm hsden hqden) (a := a)
-    convert htranslate using 1 <;> dsimp [a] <;> ring
+    convert htranslate using 1
+    dsimp [a]
+    ring
   refine ⟨cz - cy, A, hAmeas, hAden, ?_⟩
   have hsfull :
       ∀ᵐ u ∂volume, u ∈ s →
@@ -1331,7 +1339,9 @@ lemma densityCenteredRelated_symm {f : ℝ → ℝ} {D y z : ℝ}
   have hAmeas : MeasurableSet A := translateSet_measurable hsm
   have hAden : IsDensityOneAt A z := by
     have htranslate := densityOne_translate hsm hsden (a := a)
-    convert htranslate using 1 <;> dsimp [a] <;> ring
+    convert htranslate using 1
+    dsimp [a]
+    ring
   refine ⟨-c, A, hAmeas, hAden, ?_⟩
   have hsfull :
       ∀ᵐ u ∂volume, u ∈ s →
@@ -1913,7 +1923,8 @@ lemma periodic_invariant_ae_const {u : ℝ → ℝ}
     ring_nf at hper
     exact hper
   rw [hper']
-  convert hx' using 1 <;> ring_nf
+  convert hx' using 1
+  ring_nf
 
 /-- Rational points remain dense after quotienting the real line by the
 integer lattice. -/
@@ -2114,10 +2125,11 @@ noncomputable def finiteLowerMedian {n : ℕ} (u : Fin n → ℝ) : ℝ :=
   else 0
 
 lemma measurable_finset_inf'
-    {δ ι : Type*} [MeasurableSpace δ] [DecidableEq ι]
+    {δ ι : Type*} [MeasurableSpace δ]
     {s : Finset ι} (hs : s.Nonempty) {u : ι → δ → ℝ}
     (hu : ∀ i ∈ s, Measurable (u i)) :
     Measurable (fun x => s.inf' hs (fun i => u i x)) := by
+  classical
   induction s using Finset.induction_on with
   | empty => simp at hs
   | @insert a s ha ih =>
@@ -2220,7 +2232,7 @@ lemma finiteSup_add_const_of_nonempty {n : ℕ} {s : Finset (Fin n)}
       linarith
     linarith
 
-lemma finset_inf_add_const {ι : Type*} [DecidableEq ι]
+lemma finset_inf_add_const {ι : Type*}
     {s : Finset ι} (hs : s.Nonempty) (u : ι → ℝ) (c : ℝ) :
     s.inf' hs (fun i => c + u i) = c + s.inf' hs u := by
   apply le_antisymm
@@ -2904,7 +2916,9 @@ theorem erdos908_counterexample :
 
 /-- **Main result for the supplied continuous wording:** the universal
 affirmative statement with a continuous first summand is false. -/
-theorem not_erdos_908 : ¬ (∀ f : ℝ → ℝ, Erdos908.HasMeasurablePositiveDifferences f → Erdos908.HasDecomposition f) := by
+theorem not_erdos_908 :
+    ¬ (∀ f : ℝ → ℝ,
+      Erdos908.HasMeasurablePositiveDifferences f → Erdos908.HasDecomposition f) := by
   intro h
   exact heaviside_no_decomposition (h heaviside heaviside_hasMeasurablePositiveDifferences)
 
@@ -3263,7 +3277,7 @@ lemma integral_abs_circleDyadicAverage_le {u : UnitAddCircle → ℝ}
   have hsum_int :
       Integrable (fun x : UnitAddCircle =>
         ∑ i : Fin (2 ^ n), |u (x + a i)|) volume := by
-    apply integrable_finset_sum
+    apply integrable_finsetSum
     intro i hi
     exact (hshift_int i).norm
   have havg_int :
@@ -3271,7 +3285,7 @@ lemma integral_abs_circleDyadicAverage_le {u : UnitAddCircle → ℝ}
     have hraw : Integrable (circleDyadicAverage u n) volume := by
       unfold circleDyadicAverage
       apply Integrable.div_const
-      apply integrable_finset_sum
+      apply integrable_finsetSum
       intro i hi
       exact hshift_int i
     exact hraw.norm
@@ -3303,7 +3317,7 @@ lemma integral_abs_circleDyadicAverage_le {u : UnitAddCircle → ℝ}
       exact Filter.Eventually.of_forall hpoint
     _ = (∑ i : Fin (2 ^ n),
           ∫ x : UnitAddCircle, |u (x + a i)|) / N := by
-      rw [integral_div, integral_finset_sum]
+      rw [integral_div, integral_finsetSum]
       intro i hi
       exact (hshift_int i).norm
     _ = (∑ _i : Fin (2 ^ n),
@@ -3327,7 +3341,7 @@ lemma circleDyadicAverage_integrable {u : UnitAddCircle → ℝ}
     Integrable (circleDyadicAverage u n) volume := by
   unfold circleDyadicAverage
   apply Integrable.div_const
-  apply integrable_finset_sum
+  apply integrable_finsetSum
   intro i hi
   exact (measurePreserving_add_right volume
       (((i : ℝ) / (2 ^ n : ℝ) : ℝ) : UnitAddCircle)).integrable_comp_of_integrable hu
@@ -3429,7 +3443,7 @@ lemma tendsto_integral_abs_circleDyadicAverage_sub_integral
         exact Filter.Eventually.of_forall hpoint
       _ = _ := by
         rw [integral_add, integral_add]
-        · simp [measureReal_def, UnitAddCircle.measure_univ]
+        · simp [measureReal_def]
         · exact hdiffi.norm
         · exact hmiddlei
         · exact hdiffi.norm.add hmiddlei
@@ -3609,7 +3623,7 @@ lemma finiteSoftCenter_measurable
     · exact measurable_const
   · have hzero : n = 0 := Nat.eq_zero_of_not_pos hn
     subst n
-    simpa [finiteSoftCenter] using (measurable_const : Measurable (fun _ : δ => (0 : ℝ)))
+    simp [finiteSoftCenter]
 
 lemma finiteSoftCenter_add_const {n : ℕ} (hn : 0 < n)
     (u : Fin n → ℝ) (c : ℝ) :
@@ -3855,7 +3869,7 @@ lemma circleSoftScore_strictAnti {u : UnitAddCircle → ℝ}
     linarith
   have hdpos : 0 < ∫ x : UnitAddCircle, d x := by
     rw [integral_pos_iff_support_of_nonneg hdnonneg hdint, hdsupp]
-    simp [UnitAddCircle.measure_univ]
+    simp
   change 0 < ∫ x : UnitAddCircle,
     (Real.arctan (u x - a) - Real.arctan (u x - b)) at hdpos
   rw [integral_sub (circleSoftScore_integrable hu a)
@@ -4100,7 +4114,7 @@ lemma tendstoInMeasure_circleFiniteSoftCenter
         rw [Real.dist_eq] at hx
         rw [abs_sub_comm] at hx
         by_contra hnot
-        push_neg at hnot
+        push Not at hnot
         have : |circleFiniteSoftCenter u n x - C| < ε := by
           rw [abs_lt]
           constructor <;> linarith
@@ -4182,7 +4196,7 @@ lemma tendstoInMeasure_sub_fixed_real
   funext n
   congr 1
   ext x
-  simp only [Set.mem_setOf_eq]
+  simp only [Set.mem_ofPred_eq]
   rw [Real.dist_eq, Real.dist_eq]
   rw [show d x - F n x - (d x - G x) = -(F n x - G x) by ring]
   simp only [abs_neg]
@@ -4283,7 +4297,7 @@ lemma tendsto_prod_measure_pair_dist_of_section_tendstoInMeasure
       (Eventually.of_forall fun nm =>
         Eventually.of_forall (hBbound nm))
       (by
-        simp only [lintegral_const, Measure.restrict_apply_univ]
+        simp only [lintegral_const]
         exact ENNReal.mul_ne_top (measure_ne_top _ _) (measure_ne_top _ _))
       hBlim
     simpa using hD
@@ -4552,7 +4566,7 @@ lemma exists_measurable_subseq_limit_of_pair_cauchy_in_measure
       convert (summable_geometric_two' (1 : ℝ)) using 1
       funext n
       dsimp [δ]
-      simp [one_div, inv_pow, pow_succ', div_eq_mul_inv]
+      simp [inv_pow, pow_succ', div_eq_mul_inv]
     have hacauchy : CauchySeq a :=
       cauchySeq_of_dist_le_of_summable δ ha_dist hδsum
     rcases cauchySeq_tendsto_of_complete hacauchy with ⟨l, hl⟩
@@ -4688,9 +4702,11 @@ lemma dyadicSoftRepresentative_sub_ints {p : ℝ → ℝ}
   calc
     dyadicSoftRepresentative p n (x, t) =
         dyadicSoftRepresentative p n (x, t - a) := by
-          convert ht using 1 <;> push_cast <;> ring_nf
+          convert ht using 1
+          ring_nf
     _ = dyadicSoftRepresentative p n (x - b, t - a) := by
-          convert hx using 1 <;> push_cast <;> ring_nf
+          convert hx using 1
+          ring_nf
 
 lemma exists_int_mem_Ioc (x : ℝ) :
     ∃ n : ℤ, x ∈ Ioc (n : ℝ) (n + 1 : ℝ) := by
@@ -4757,7 +4773,7 @@ lemma ae_tendsto_periodizePlane_of_fundamentalSquare
     convert hprod using 1
     funext z
     dsimp [T]
-    congr <;> ring
+    congr
   have htrans := hmp.quasiMeasurePreserving.ae hfull
   apply (ae_restrict_iff' hCm).2
   filter_upwards [htrans] with z hz hmem
@@ -4977,7 +4993,7 @@ lemma dense_dyadicRationalSet : Dense dyadicRationalSet := by
     dsimp [y, m]
     rw [← add_div]
     rw [lt_div_iff₀ hpowpos]
-    simpa [mul_comm] using Int.lt_floor_add_one ((2 : ℝ) ^ n * x)
+    simp [mul_comm]
   have hinv : 1 / (2 : ℝ) ^ n < r := by
     rw [div_lt_iff₀ hpowpos]
     rw [div_lt_iff₀ hr] at hn
@@ -5615,7 +5631,7 @@ lemma hasMeasurableDifferences_of_ae_good_increments
   unfold differenceKernel
   change c (x + (u + v)) - c x =
     (c (x + u + v) - c (x + u)) + (c (x + u) - c x)
-  congr 2 <;> ring_nf
+  ring_nf
 
 /-- The quotient constants themselves again have measurable differences;
 the new information is that their Cauchy defects have one jointly
@@ -5830,7 +5846,8 @@ lemma scalar_split_of_decomposition_of_nested_defect
     filter_upwards [hs, hr s] with t hst hrt
     unfold cauchyDefect at hst
     have hrt' : r (s + t) - r t = 0 := by
-      convert hrt using 1 <;> ring_nf
+      convert hrt using 1
+      ring_nf
     linarith
   let b : ℝ → ℝ := fun s => -arctanRowValue dr s
   have hb : AEMeasurable b volume := by
@@ -5970,7 +5987,7 @@ open scoped Pointwise ENNReal
 lemma measure_inter_pos_of_gt_half
     {α : Type*} [MeasurableSpace α] {μ : Measure α}
     [IsProbabilityMeasure μ]
-    {A B : Set α} (hA : MeasurableSet A) (hB : MeasurableSet B)
+    {A B : Set α} (_ : MeasurableSet A) (hB : MeasurableSet B)
     (hAm : (1 / 2 : ℝ≥0∞) < μ A) (hBm : (1 / 2 : ℝ≥0∞) < μ B) :
     0 < μ (A ∩ B) := by
   by_contra hzero
@@ -6201,7 +6218,7 @@ lemma measure_many_large_sections
       {a : α | (5 / 6 : ℝ≥0∞) < ν {b : β | (a, b) ∈ E}} := by
     ext a
     change a ∉ Bad ↔ _
-    simp only [Bad, mem_setOf_eq, not_le]
+    simp only [Bad, mem_ofPred_eq, not_le]
     have hseccompl :
         ν {b : β | (a, b) ∈ E} + q a = 1 := by
       have hsplit := measure_inter_add_sdiff (μ := ν) (univ : Set β)
@@ -6246,7 +6263,7 @@ lemma measure_many_large_sections
       linarith
   rw [← hcompl]
   have hsplit := measure_inter_add_sdiff (μ := μ) (univ : Set α) hBadmeas
-  rw [univ_inter, diff_eq, univ_inter] at hsplit
+  rw [univ_inter, sdiff_eq, univ_inter] at hsplit
   have htotal : μ univ = 1 := by simp
   rw [htotal] at hsplit
   by_contra hnot
@@ -6303,7 +6320,7 @@ set whose measure is as close to one as desired; this fixed quantitative
 version is the one used in the compact quotient argument. -/
 lemma exists_large_bounded_level
     {α : Type*} [MeasurableSpace α] {μ : Measure α}
-    [IsProbabilityMeasure μ] {F : α → ℝ} (hF : Measurable F) :
+    [IsProbabilityMeasure μ] {F : α → ℝ} (_ : Measurable F) :
     ∃ n : ℕ, (35 / 36 : ℝ≥0∞) < μ {x : α | |F x| ≤ n} := by
   let E : ℕ → Set α := fun n => {x : α | |F x| ≤ n}
   have hmono : Monotone E := by
@@ -6407,7 +6424,8 @@ lemma differenceKernel_eq_of_circle_increment_eq
     linarith
   rw [habz]
   have hper := (differenceKernel_periodic_increment hp x).zsmul z b
-  convert hper using 1 <;> push_cast <;> ring_nf
+  convert hper using 1
+  ring_nf
 
 /-- A one-periodic real function has the same difference kernel for base
 points representing the same point of the unit additive circle. -/
@@ -6423,7 +6441,8 @@ lemma differenceKernel_eq_of_circle_base_eq
     linarith
   rw [hxyz]
   have hper := (differenceKernel_periodic_base hp t).zsmul z y
-  convert hper using 1 <;> push_cast <;> ring_nf
+  convert hper using 1
+  ring_nf
 
 /-- The difference kernel of a one-periodic function descended to the
 compact torus. -/
@@ -6665,7 +6684,7 @@ local instance : IsProbabilityMeasure (volume : Measure UnitAddCircle) :=
 almost-everywhere relation on the compact torus. -/
 lemma ae_circleDifferenceKernel_eq_circlePlaneLift_add
     {p : ℝ → ℝ} {G : ℝ → ℝ → ℝ} {c : ℝ → ℝ}
-    (hp : Function.Periodic p 1)
+    (_ : Function.Periodic p 1)
     (hrel : ∀ᵐ t ∂volume, ∀ᵐ x ∂volume,
       differenceKernel p x t = G x t + c t) :
     ∀ᵐ t : UnitAddCircle ∂volume, ∀ᵐ x : UnitAddCircle ∂volume,
@@ -6971,7 +6990,7 @@ local instance : IsProbabilityMeasure (volume : Measure UnitAddCircle) :=
 greater than two thirds on which the shifted function is uniformly bounded. -/
 lemma const_le_add_one_of_circleSoftScore_zero_of_large_bound
     {u : UnitAddCircle → ℝ} {C L : ℝ}
-    (hu : Measurable u) (hL : 0 ≤ L)
+    (hu : Measurable u) (_ : 0 ≤ L)
     (hscore : circleSoftScore u 0 = 0)
     (hgood : (2 / 3 : ℝ≥0∞) <
       volume {x : UnitAddCircle | |u x + C| ≤ L}) :
@@ -7082,7 +7101,7 @@ lemma abs_const_le_add_one_of_circleSoftScore_zero_of_large_bound
     convert hgood using 1
     congr 1
     ext x
-    simp only [mem_setOf_eq]
+    simp only [mem_ofPred_eq]
     rw [show -u x + -C = -(u x + C) by ring, abs_neg]
   have hlowerNeg :=
     const_le_add_one_of_circleSoftScore_zero_of_large_bound
@@ -7255,7 +7274,7 @@ lemma measurableDecomposition_of_bounded_periodized_scalar
     (hc : HasMeasurableDifferences c)
     (hb : AEMeasurable b volume)
     (hbper : Function.Periodic b 1)
-    (hB : 0 ≤ B)
+    (_ : 0 ≤ B)
     (hbound : ∀ᵐ x ∂volume,
       |periodizeOne c x + b x| ≤ B) :
     HasMeasurableDecomposition c := by
