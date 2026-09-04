@@ -67,12 +67,13 @@ def Tail {X Y : Type u} : {b : ℕ} → BlockHole X Y b → Type u
 
 attribute [reducible] Tail
 
+@[instance_reducible]
 noncomputable def tailFintype {X Y : Type u} [Fintype X] [Fintype Y] :
     {b : ℕ} → (h : BlockHole X Y b) → Fintype h.Tail
   | _, .here b => towerFintype X Y b
   | _, .later _ h => h.tailFintype
 
-def tailNonempty {X Y : Type u} [Nonempty X] [Nonempty Y] :
+theorem tailNonempty {X Y : Type u} [Nonempty X] [Nonempty Y] :
     {b : ℕ} → (h : BlockHole X Y b) → Nonempty h.Tail
   | _, .here b => towerNonempty X Y b
   | _, .later _ h => h.tailNonempty
@@ -133,7 +134,7 @@ end BlockHole
 than `rho` above it, provided `(card X - 1) * rho ≤ eps`. -/
 theorem exists_gt_average_add_of_exists_lt_average_sub
     {X : Type*} [Fintype X] [Nonempty X] (f : X → ℝ)
-    {eps rho : ℝ} (hrho : 0 < rho)
+    {eps rho : ℝ} (_ : 0 < rho)
     (hspread : ((Fintype.card X : ℝ) - 1) * rho ≤ eps)
     (x₀ : X) (hx₀ : f x₀ < average f - eps) :
     ∃ x : X, average f + rho < f x := by
@@ -202,7 +203,7 @@ theorem tower_uniform_sections_aux
         intro x
         rw [BlockHole.section_here]
         exact huniform x
-      · push_neg at huniform
+      · push Not at huniform
         obtain ⟨x₀, hx₀⟩ := huniform
         have havg : density A = average fun x : X ↦ density (fiber A x) :=
           density_eq_average_fiber A
@@ -470,7 +471,7 @@ theorem reindex_hole_comp_apply {q m d b : ℕ}
       towerFinEquiv q m b (h.fill (V x) z) := by
   funext i
   simp only [Subspace.reindex_apply, Equiv.refl_apply, Equiv.refl_symm,
-    Function.comp_apply, Subspace.comp_apply, BlockHole.subspace_apply]
+    Subspace.comp_apply, BlockHole.subspace_apply]
   rfl
 
 /-- A dense ternary cube contains a ternary subspace all of whose binary

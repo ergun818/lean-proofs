@@ -77,7 +77,7 @@ theorem density_map_equiv [Fintype X] [Fintype Y]
 
 theorem average_const [Fintype X] [Nonempty X] (c : ℝ) :
     average (fun _ : X ↦ c) = c := by
-  simp [average, Fintype.expect_const]
+  simp [average]
 
 theorem average_add [Fintype X] (f g : X → ℝ) :
     average (fun x ↦ f x + g x) = average f + average g := by
@@ -181,7 +181,7 @@ theorem card_eq_sum_card_fiber [Fintype X] [Fintype Y]
     apply Prod.ext
     · have hp' := (Finset.mem_filter.1 hp).2
       have hq' := (Finset.mem_filter.1 hq).2
-      simpa [hp', hq']
+      simp [hp', hq']
     · exact hpq
   · intro y hy
     refine ⟨(x, y), ?_, rfl⟩
@@ -225,7 +225,7 @@ theorem exists_fiber_density_ge [Fintype X] [Fintype Y]
 theorem average_indicator [Fintype X] [DecidableEq X] (A : Finset X) :
     average (fun x ↦ if x ∈ A then (1 : ℝ) else 0) = density A := by
   classical
-  simp [average_eq_sum_div_card, density_eq_card_div_card, Finset.sum_boole]
+  simp [average_eq_sum_div_card, density_eq_card_div_card]
 
 /-- The exact average of a function which is constant on a finset and its complement. -/
 theorem average_piecewise_const [Fintype X] [Nonempty X] [DecidableEq X]
@@ -253,10 +253,11 @@ noncomputable def superlevel [Fintype X] (f : X → ℝ) (c : ℝ) : Finset X :=
 
 /-- Quantitative averaging.  If `f ≤ B` and `μ ≤ average f`, the set on
 which `f ≥ c` has density at least `(μ-c)/(B-c)`. -/
-theorem density_superlevel_ge [Fintype X] [Nonempty X] [DecidableEq X]
+theorem density_superlevel_ge [Fintype X] [Nonempty X]
     (f : X → ℝ) {mu c B : ℝ} (havg : mu ≤ average f)
     (hub : ∀ x, f x ≤ B) (hcB : c < B) :
     (mu - c) / (B - c) ≤ density (superlevel f c) := by
+  classical
   have hpoint : ∀ x, f x ≤
       (if x ∈ superlevel f c then B else c) := by
     intro x
@@ -287,7 +288,7 @@ noncomputable def largeFibers [Fintype X] [Fintype Y]
 
 /-- Quantitative large-fibre principle. -/
 theorem density_largeFibers_ge [Fintype X] [Fintype Y]
-    [Nonempty X] [Nonempty Y] [DecidableEq X]
+    [Nonempty X] [Nonempty Y]
     (A : Finset (X × Y)) {mu c : ℝ} (hA : mu ≤ density A) (hc : c < 1) :
     (mu - c) / (1 - c) ≤ density (largeFibers A c) := by
   rw [density_eq_average_fiber] at hA
@@ -297,7 +298,7 @@ theorem density_largeFibers_ge [Fintype X] [Fintype Y]
 
 /-- Half-threshold version: a `[0,1]`-valued function of average at least
 `δ` is at least `δ/2` on a set of density at least `δ/2`. -/
-theorem half_le_density_superlevel [Fintype X] [Nonempty X] [DecidableEq X]
+theorem half_le_density_superlevel [Fintype X] [Nonempty X]
     (f : X → ℝ) {delta : ℝ} (hdelta : 0 ≤ delta)
     (havg : delta ≤ average f) (hub : ∀ x, f x ≤ 1) :
     delta / 2 ≤ density (superlevel f (delta / 2)) := by
@@ -314,7 +315,7 @@ theorem half_le_density_superlevel [Fintype X] [Nonempty X] [DecidableEq X]
 
 /-- Half-threshold form specialized to product fibres. -/
 theorem half_le_density_largeFibers [Fintype X] [Fintype Y]
-    [Nonempty X] [Nonempty Y] [DecidableEq X]
+    [Nonempty X] [Nonempty Y]
     (A : Finset (X × Y)) {delta : ℝ} (hdelta : 0 ≤ delta)
     (hA : delta ≤ density A) :
     delta / 2 ≤ density (largeFibers A (delta / 2)) := by

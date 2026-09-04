@@ -84,14 +84,14 @@ theorem iterated_increment
       obtain ⟨n, hn⟩ := hstep m
       refine ⟨n, fun A hA => ?_⟩
       rcases hn A hA with hline | ⟨U, hU⟩
-      . exact Or.inl hline
-      . have hU' : density A + gamma <= density (pullbackFinset U A) := by
+      · exact Or.inl hline
+      · have hU' : density A + gamma <= density (pullbackFinset U A) := by
           simpa only [densityIn_eq_density_pullback] using hU
         have hpull : delta <= density (pullbackFinset U A) := by
           exact hA.trans ((le_add_of_nonneg_right hgamma.le).trans hU')
         rcases hm (pullbackFinset U A) hpull with hline | ⟨V, hV⟩
-        . exact Or.inl (HasLine.of_pullback U hline)
-        . refine Or.inr ⟨U.comp V, ?_⟩
+        · exact Or.inl (HasLine.of_pullback U hline)
+        · refine Or.inr ⟨U.comp V, ?_⟩
           rw [densityIn_comp]
           have hchain :
               density A + gamma + ((r + 1 : Nat) : Real) * gamma <=
@@ -116,8 +116,8 @@ theorem exists_exact_dimension_hasLine_of_increment
   obtain ⟨N, hN⟩ := iterated_increment hgamma hstep 1 r
   refine ⟨N, fun A hA => ?_⟩
   rcases hN A hA with hline | ⟨U, hU⟩
-  . exact hline
-  . exfalso
+  · exact hline
+  · exfalso
     have hupper := densityIn_le_one U A
     have hlower :
         delta + ((r + 1 : Nat) : Real) * gamma <= densityIn U A := by
@@ -147,12 +147,12 @@ noncomputable def swapFinset {X Y : Type*} (A : Finset (X × Y)) :
     Finset (Y × X) :=
   A.map (Equiv.prodComm X Y).toEmbedding
 
-@[simp] theorem mem_swapFinset {X Y : Type*} [DecidableEq X] [DecidableEq Y]
+@[simp] theorem mem_swapFinset {X Y : Type*}
     (A : Finset (X × Y)) (y : Y) (x : X) :
     (y, x) ∈ swapFinset A <-> (x, y) ∈ A := by
   simp [swapFinset]
 
-@[simp] theorem card_swapFinset {X Y : Type*} [DecidableEq X] [DecidableEq Y]
+@[simp] theorem card_swapFinset {X Y : Type*}
     (A : Finset (X × Y)) : (swapFinset A).card = A.card := by
   simp [swapFinset]
 
@@ -200,10 +200,10 @@ def lineWithFixedSuffix {k m r : Nat}
       (wordSplitEquiv k m r).symm (l a, y) := by
   apply (wordSplitEquiv k m r).injective
   apply Prod.ext
-  . funext i
+  · funext i
     simp [lineWithFixedSuffix, reindexLine, Combinatorics.Line.apply_def]
     cases h : finSumFinEquiv.symm (Fin.castAdd r i) <;> rfl
-  . funext i
+  · funext i
     simp [lineWithFixedSuffix, reindexLine, Combinatorics.Line.apply_def]
     cases h : finSumFinEquiv.symm (Fin.natAdd m i) <;> rfl
 

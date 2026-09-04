@@ -38,7 +38,7 @@ private theorem pullback_eq_subspacePullback
 
 private theorem densityIn_eq_erdos171
     {eta alpha iota : Type*} [Fintype eta] [Fintype alpha]
-    [Fintype (eta → alpha)] [DecidableEq eta]
+    [Fintype (eta → alpha)]
     (U : Subspace eta alpha iota) (A : Finset (iota → alpha)) :
     densityIn U A = Erdos171.density (Erdos171.subspacePullback U A) := by
   rw [densityIn, pullback_eq_subspacePullback]
@@ -64,7 +64,7 @@ private theorem exists_dense_tile {m d : ℕ}
       (Finset.inter_subset_left)
   have hinter : T.tiles.biUnion q = A ∩ T.covered := by
     ext x
-    simp only [Finset.mem_biUnion, q, p, Erdos171.SubspaceTiling.mem_covered,
+    simp only [Finset.mem_biUnion, q, Erdos171.SubspaceTiling.mem_covered,
       Finset.mem_inter]
     aesop
   have hsum_global :

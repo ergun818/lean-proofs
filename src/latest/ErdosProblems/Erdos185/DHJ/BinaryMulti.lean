@@ -141,7 +141,7 @@ theorem binary_multidimensional (m : ℕ) (delta : ℝ) (hdelta : 0 < delta) :
         rw [Finset.nonempty_iff_ne_empty]
         intro hAempty
         subst A
-        simpa using hpos
+        simp at hpos
       obtain ⟨a, ha⟩ := hne
       let U : Combinatorics.Subspace (Fin 0) (Fin 2) (Fin 0) :=
         { idxFun := Fin.elim0
