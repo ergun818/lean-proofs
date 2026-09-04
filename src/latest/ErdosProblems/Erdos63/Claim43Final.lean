@@ -73,7 +73,6 @@ theorem candidate_ball_subset_highDegree_ball_of_no_high
   apply ballAvoidingFrom_forbidden_anti G
   intro z hz
   rw [Finset.coe_union] at hz
-  change z ∈ (X : Set V) ∪ (highDegree : Set V)
   rcases hz with hzHigh | hzCore
   · exact Or.inr hzHigh
   · exact Or.inl (Finset.mem_union_right _ hzCore)
@@ -169,7 +168,7 @@ theorem false_of_conflictFree_nonreaching_family
           G j.1.1 j.1.2 (hnoHigh j.1 j.2) hballHigh
   obtain ⟨i, hiLarge⟩ := exists_large_avoiding_ball_of_LM37CorrelatedScale
     G epsilon kappa hexp deleted Aseed Bset Cset deletedCap R 0
-      ballRadius ballTarget degreeInto scale hdeleted (by simpa [hcard])
+      ballRadius ballTarget degreeInto scale hdeleted (by simp [hcard])
       (by
         intro i
         dsimp [Aseed]
@@ -200,8 +199,7 @@ theorem false_of_conflictFree_nonreaching_family
             (Aseed i) 1))))
       (by
         intro i r
-        simp [Cset, HasLimitedContactAfterDeletion,
-          blockedExternalNeighborhood])
+        simp [Cset, blockedExternalNeighborhood])
       hpairActual
       (by
         intro i ell hell hellRadius hslow
@@ -374,7 +372,7 @@ theorem false_of_conflictFree_nonreaching_family_bootstrap
           G j.1.1 j.1.2 (hnoHigh j.1 j.2) hballHigh
   obtain ⟨i, hiLarge⟩ := exists_large_avoiding_ball_of_LM37CorrelatedScale
     G epsilon kappa hexp deleted Aseed Bset Cset deletedCap R 0
-      ballRadius ballTarget degreeInto scale hdeleted (by simpa [hcard])
+      ballRadius ballTarget degreeInto scale hdeleted (by simp [hcard])
       (by
         intro i
         dsimp [Aseed]

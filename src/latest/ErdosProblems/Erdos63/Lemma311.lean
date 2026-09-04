@@ -377,7 +377,7 @@ theorem exists_cycle_contact_arcs
     apply hzB
     simpa [h] using haB
   have hp : p.IsPath := by simpa [p] using hR.isPath_takeUntil haR
-  have hdecomp : p.append q = R := by simpa [p, q] using R.take_spec haR
+  have hdecomp : p.append q = R := by simp [p, q]
   have hq : q.IsPath := by
     have hpne : ¬ p.Nil := Walk.not_nil_of_ne hza
     have hpqcycle : (p.append q).IsCycle := by rw [hdecomp]; exact hR
@@ -385,7 +385,7 @@ theorem exists_cycle_contact_arcs
   have hrevcontacts : {y ∈ B | y ∈ q.reverse.support}.Nonempty := by
     refine ⟨a, ?_⟩
     simp only [Finset.mem_filter]
-    exact ⟨haB, by simpa [Walk.support_reverse] using q.start_mem_support⟩
+    exact ⟨haB, by simp [Walk.support_reverse]⟩
   obtain ⟨b, hbB, hbqr, hlast⟩ :=
     q.reverse.exists_mem_support_forall_mem_support_imp_eq B hrevcontacts
   let u : G.Walk z b := q.reverse.takeUntil b hbqr
@@ -393,7 +393,7 @@ theorem exists_cycle_contact_arcs
   have hu : u.IsPath := by simpa [u] using hq.reverse.takeUntil hbqr
   have hw : w.IsPath := by simpa [w] using hq.reverse.dropUntil hbqr
   have hsplit : u.append w = q.reverse := by
-    simpa [u, w] using q.reverse.take_spec hbqr
+    simp [u, w]
   by_cases hab : a = b
   · left
     refine ⟨a, haB, ?_⟩
@@ -517,7 +517,7 @@ theorem IsShortestCycle.card_support_inter_ballAvoiding_le
           intro y hy
           have hy' := Finset.mem_inter.1 hy
           have hya := haunique y (List.mem_toFinset.1 hy'.1) hy'.2
-          simpa [hya]
+          simp [hya]
         have hcard : (C.support.toFinset ∩ B).card ≤ 2 * r + 1 := by
           calc
             (C.support.toFinset ∩ B).card ≤ ({a} : Finset V).card :=
@@ -613,7 +613,7 @@ theorem neighborFinset_sdiff_subset_ballAvoiding_one [Fintype V]
   · simp [p, Walk.cons_isPath_iff, G.ne_of_adj hxy]
   · intro z hz hzW
     simp only [p, Walk.support_cons, Walk.support_nil, List.mem_cons,
-      List.mem_singleton, List.not_mem_nil, or_false] at hz
+      List.not_mem_nil, or_false] at hz
     rcases hz with rfl | rfl
     · simp
     · exact (hyW hzW).elim
@@ -637,7 +637,7 @@ theorem card_ballAvoiding_one_lower_of_minDegree [Fintype V]
     · simp [p, Walk.cons_isPath_iff, G.ne_of_adj hxy]
     · intro z hz hzW
       simp only [p, Walk.support_cons, Walk.support_nil, List.mem_cons,
-        List.mem_singleton, List.not_mem_nil, or_false] at hz
+        List.not_mem_nil, or_false] at hz
       rcases hz with rfl | rfl
       · simp
       · exact (hyW hzW).elim
@@ -889,7 +889,7 @@ theorem exists_pairwise_starExpansion_avoiding [Fintype V]
 /-- The preceding finite induction, reindexed by an arbitrary finite type. -/
 theorem exists_pairwise_starExpansion_avoiding_finite [Fintype V]
     (G : SimpleGraph V) [DecidableRel G.Adj]
-    {I : Type*} [Fintype I] [DecidableEq I] {D : ℕ}
+    {I : Type*} [Fintype I] {D : ℕ}
     (center : I ↪ V) (base : Finset V)
     (hD : 0 < D) (hcenter : ∀ i, center i ∈ base)
     (hdegree : ∀ i,
@@ -1029,7 +1029,7 @@ theorem exists_pairwise_trimmed_starExpansion_avoiding [Fintype V]
 index type. -/
 theorem exists_pairwise_trimmed_starExpansion_avoiding_finite [Fintype V]
     (G : SimpleGraph V) [DecidableRel G.Adj]
-    {I : Type*} [Fintype I] [DecidableEq I] {D : ℕ}
+    {I : Type*} [Fintype I] {D : ℕ}
     (center : I → V) (base : Finset V)
     (hD : 0 < D) (hcenter : ∀ i, center i ∈ base)
     (hdegree : ∀ i,
@@ -1191,7 +1191,7 @@ theorem sum_card_neighborFinset_inter_comm_moore [Fintype V]
       intro a ha
       congr 1
       ext b
-      simp [and_comm, G.adj_comm]
+      simp [and_comm]
     _ = ∑ b ∈ B, (A.bipartiteBelow G.Adj b).card :=
       Finset.sum_card_bipartiteAbove_eq_sum_card_bipartiteBelow G.Adj
     _ = ∑ b ∈ B, (G.neighborFinset b ∩ A).card := by
@@ -1447,7 +1447,7 @@ theorem CappedBallPacking.blocked_of_maximal [Fintype V]
           (ballAvoiding G (deleted : Set V) z radius) := by
   classical
   by_contra hnone
-  push_neg at hnone
+  push Not at hnone
   obtain ⟨hwnew, hwprotected, hwold⟩ := hnone
   have hinsert : IsCappedBallPacking G deleted available reserved radius target
       (insert w centers) := by
@@ -2256,9 +2256,9 @@ def pathFamilyTotalLength [DecidableEq V] {G : SimpleGraph V}
 
 /-- An admissible bounded path family can be chosen lexicographically
 extremal: maximum cardinality, then minimum total length. -/
-theorem exists_cardMax_lengthMin_pathFamily [Fintype V] [DecidableEq V]
+theorem exists_cardMax_lengthMin_pathFamily [Finite V] [DecidableEq V]
     {J : Type v} [DecidableEq J]
-    (G : SimpleGraph V) [DecidableRel G.Adj]
+    (G : SimpleGraph V)
     (roots targets barrier : Finset V) (label : V → J)
     (bound multiplicity : ℕ) :
     ∃ family : Finset (BoundedRootTargetPath G roots targets bound),
@@ -2270,11 +2270,10 @@ theorem exists_cardMax_lengthMin_pathFamily [Fintype V] [DecidableEq V]
         IsAdmissiblePathFamily roots targets barrier label bound multiplicity other →
         other.card = family.card →
         pathFamilyTotalLength family ≤ pathFamilyTotalLength other) := by
+  let := Fintype.ofFinite V
   let originalDecEq : DecidableEq V := inferInstance
-  let originalDecRel : DecidableRel G.Adj := inferInstance
   classical
   let : DecidableEq V := originalDecEq
-  let : DecidableRel G.Adj := originalDecRel
   let good : Finset (Finset (BoundedRootTargetPath G roots targets bound)) :=
     Finset.univ.powerset.filter
       (IsAdmissiblePathFamily roots targets barrier label bound multiplicity)
@@ -2284,14 +2283,11 @@ theorem exists_cardMax_lengthMin_pathFamily [Fintype V] [DecidableEq V]
     refine ⟨Finset.mem_powerset.2 (Finset.empty_subset _), ?_⟩
     refine ⟨?_, ?_, ?_, ?_⟩
     · intro p hp
-      have : False := by simpa using hp
-      exact this.elim
+      simp at hp
     · intro p hp
-      have : False := by simpa using hp
-      exact this.elim
+      simp at hp
     · intro p hp
-      have : False := by simpa using hp
-      exact this.elim
+      simp at hp
     · simp
   have hgood : good.Nonempty := ⟨∅, hempty⟩
   obtain ⟨cardMax, hcardMaxGood, hcardMax⟩ :=
@@ -2338,11 +2334,13 @@ noncomputable def targetLabel (default : {v : V // v ∈ targets}) (v : V) :
     {v : V // v ∈ targets} :=
   if h : v ∈ targets then ⟨v, h⟩ else default
 
+omit [Fintype V] in
 @[simp] theorem targetLabel_of_mem (default : {v : V // v ∈ targets})
     {v : V} (hv : v ∈ targets) :
     targetLabel (targets := targets) default v = ⟨v, hv⟩ := by
   simp [targetLabel, hv]
 
+omit [Fintype V] in
 theorem targetLabel_injective_on (default : {v : V // v ∈ targets}) :
     Set.InjOn (targetLabel (targets := targets) default) (targets : Set V) := by
   intro x hx y hy hxy
@@ -2352,6 +2350,7 @@ theorem targetLabel_injective_on (default : {v : V // v ∈ targets}) :
     congrArg Subtype.val (targetLabel_of_mem default hy)
   exact hxval.symm.trans ((congrArg Subtype.val hxy).trans hyval)
 
+omit [Fintype V] in
 /-- The reservoir-label injection bounds an admissible family by the number
 of available labelled reservoirs. -/
 theorem IsAdmissiblePathFamily.card_le_labels [Fintype J]
@@ -2365,6 +2364,7 @@ theorem IsAdmissiblePathFamily.card_le_labels [Fintype J]
     exact Finset.mem_univ _
   · exact hfamily.2.1
 
+omit [Fintype V] in
 /-- The per-root multiplicity condition gives the complementary global
 bound on the number of routes. -/
 theorem IsAdmissiblePathFamily.card_le_roots_mul
@@ -2380,6 +2380,7 @@ theorem IsAdmissiblePathFamily.card_le_roots_mul
       (fun p hp ↦ p.root_mem) hlt
   exact (Nat.not_lt_of_ge (hfamily.2.2.2 r hr)) hfiber
 
+omit [Fintype V] in
 /-- A genuinely deficient root makes the global route bound strict. -/
 theorem IsAdmissiblePathFamily.card_lt_roots_mul_of_fiber_lt
     (family : Finset (BoundedRootTargetPath G roots targets bound))
@@ -2400,6 +2401,7 @@ theorem IsAdmissiblePathFamily.card_lt_roots_mul_of_fiber_lt
       · exact ⟨x, hx, hdef⟩
     _ = roots.card * multiplicity := by simp
 
+omit [Fintype V] in
 /-- If an admissible family has not filled all labels, one reservoir label is
 unused. -/
 theorem IsAdmissiblePathFamily.exists_unused_label [Fintype J]
@@ -2410,7 +2412,7 @@ theorem IsAdmissiblePathFamily.exists_unused_label [Fintype J]
     ∃ j : J, ∀ p ∈ family, label p.target ≠ j := by
   classical
   by_contra hnone
-  push_neg at hnone
+  push Not at hnone
   have huniv : (Finset.univ : Finset J) ⊆
       family.image (fun p ↦ label p.target) := by
     intro j hj
@@ -2423,6 +2425,7 @@ theorem IsAdmissiblePathFamily.exists_unused_label [Fintype J]
   have hle : Fintype.card J ≤ family.card := by simpa [himage] using hcard
   exact (not_le_of_gt hshort) hle
 
+omit [Fintype V] in
 /-- Maximality forces a root fibre to attain its allowed multiplicity once
 every deficient fibre admits one compatible extra route. -/
 theorem filter_card_eq_multiplicity_of_augment
@@ -2449,6 +2452,7 @@ theorem filter_card_eq_multiplicity_of_augment
   have hcard := hmaximum (insert p family) hpinsert
   simp [hpnot] at hcard
 
+omit [Fintype V] in
 /-- Reindex a full fibre over each embedded root by the second matrix
 coordinate.  The resulting matrix of routes is injective. -/
 theorem exists_routeMatrix_of_fullFibres {k m : ℕ}
@@ -2503,6 +2507,7 @@ theorem exists_routeMatrix_of_fullFibres {k m : ℕ}
     subst j'
     rfl
 
+omit [Fintype V] in
 /-- Reindex one full root fibre.  This is the dependent form needed when
 only the low-degree prescribed roots are routed in Case II. -/
 theorem exists_routeFiber_of_full {k m : ℕ} {x : V}
@@ -2535,6 +2540,7 @@ noncomputable def familySupport
     (family : Finset (BoundedRootTargetPath G roots targets bound)) : Finset V :=
   family.biUnion supportFinset
 
+omit [Fintype V] in
 /-- A bounded path has fewer than `bound + 1` support vertices, so the whole
 extremal carrier has the corresponding union bound. -/
 theorem card_familySupport_le
@@ -2584,7 +2590,7 @@ noncomputable def expansionFamilyOfRoutesAndStars
     (hstarPair : ∀ a b : Fin k × Fin k, a ≠ b →
       Disjoint (star a.1 a.2).verts (star b.1 b.2).verts)
     (hattach : 3 * m + endpointRadius ≤ R)
-    (hm : 0 < m) (horderPos : ∀ i j, 0 < order i j)
+    (_ : 0 < m) (horderPos : ∀ i j, 0 < order i j)
     (horderLe : ∀ i j, order i j ≤ D) :
     LM311ExpansionFamily G root order R protectedSet := by
   classical
@@ -2639,11 +2645,11 @@ noncomputable def expansionFamilyOfRoutesAndStars
       rcases hzEnds' with hzRoot | hzTarget
       · exact (Finset.mem_sdiff.1 hz).2 (by simpa [hroute i j |>.2] using hzRoot)
       · have hzTargets : z ∈ targets := by
-          simpa [hzTarget] using (route i j).target_mem
+          simp [hzTarget]
         exact Finset.disjoint_left.1 hrootTarget hzRoots hzTargets
     · by_cases hzCenter : z = (route i j).target
       · have hzTargets : z ∈ targets := by
-          simpa [hzCenter] using (route i j).target_mem
+          simp [hzCenter]
         exact Finset.disjoint_left.1 hrootTarget hzRoots hzTargets
       · have hzArm : z ∈ (star i j).verts \ {(route i j).target} :=
           Finset.mem_sdiff.2 ⟨hzStar, by simpa using hzCenter⟩
@@ -2675,11 +2681,11 @@ noncomputable def expansionFamilyOfRoutesAndStars
           · exact (Finset.mem_sdiff.1 hz).2
               (by simpa [hroute i j |>.2] using hzR)
           · have hzTargets : z ∈ targets := by
-              simpa [hzT] using (route i j).target_mem
+              simp [hzT]
             exact Finset.disjoint_left.1 htargetProtected hzTargets hzProtected
         · by_cases hzT : z = (route i j).target
           · have hzTargets : z ∈ targets := by
-              simpa [hzT] using (route i j).target_mem
+              simp [hzT]
             exact Finset.disjoint_left.1 htargetProtected hzTargets hzProtected
           · exact (Finset.disjoint_left.1 (hstarBase i j)
               (Finset.mem_sdiff.2 ⟨hzStar, by simpa using hzT⟩)
@@ -2761,11 +2767,12 @@ noncomputable def switchingContact
       (ballAvoiding G (switchingBarrier barrier family x : Set V) x ell) ∩
     old.supportFinset
 
+omit [Fintype V] in
 /-- A short path from a deficient root to an unused labelled target augments
 the path family whenever it avoids the switching barrier away from its two
 endpoints. -/
 theorem exists_admissible_insert_of_switching_path
-    (hrootsBarrier : roots ⊆ barrier)
+    (_ : roots ⊆ barrier)
     (htargetsBarrier : targets ⊆ barrier)
     (hrootTarget : Disjoint roots targets)
     (family : Finset (BoundedRootTargetPath G roots targets bound))
@@ -2808,7 +2815,7 @@ theorem exists_admissible_insert_of_switching_path
       have hzDeleted : z ∈ switchingBarrier barrier family x \ {y} :=
         Finset.mem_sdiff.2 ⟨hzSwitch, by simpa using hzy⟩
       have hzEnds := hpavoid.2 z (by simpa [new] using hz) (by simpa using hzDeleted)
-      exact (by simpa [hzx, hzy] using hzEnds)
+      simp [hzx, hzy] at hzEnds
     · exact hfamily.1 q hq
   · intro a ha b hb hab
     simp only [Finset.coe_insert, Set.mem_insert_iff] at ha hb
@@ -2833,7 +2840,7 @@ theorem exists_admissible_insert_of_switching_path
           simpa only [supportFinset, List.mem_toFinset] using hzOldSupport
         have hyEnds := hfamily.1 old hold y hyOldWalk (htargetsBarrier hy)
         rcases (by simpa using hyEnds : y = old.root ∨ y = old.target) with hyr | hyt
-        · have hyroot : y ∈ roots := by simpa [hyr] using old.root_mem
+        · have hyroot : y ∈ roots := by simp [hyr]
           exact Finset.disjoint_left.1 hrootTarget hyroot hy
         · exact hyunused old hold (congrArg label hyt).symm
       have hzFamily : z ∈ familySupport family := by
@@ -2847,7 +2854,7 @@ theorem exists_admissible_insert_of_switching_path
       have hzPWalk : z ∈ p.support := by
         simpa only [new, supportFinset, List.mem_toFinset] using hzP
       have hzEnds := hpavoid.2 z hzPWalk (by simpa using hzDeleted)
-      exact (by simpa [hzx, hzy] using hzEnds)
+      simp [hzx, hzy] at hzEnds
     rw [Finset.mem_insert] at ha hb
     rcases ha with rfl | ha <;> rcases hb with rfl | hb
     · exact (hab rfl).elim
@@ -2888,6 +2895,7 @@ theorem exists_admissible_insert_of_switching_path
       rw [hfilter]
       exact hfamily.2.2.2 r hr
 
+omit [Fintype V] in
 /-- A proper suffix of a simple path does not contain its old root. -/
 lemma root_not_mem_support_dropUntil
     (p : BoundedRootTargetPath G roots targets bound)
@@ -2914,7 +2922,7 @@ lemma root_not_mem_support_dropUntil
 to have at most `ell+2` contacts with the deficient-root ball. -/
 theorem switchingContact_card_le_of_lengthMin
     (hrootsBarrier : roots ⊆ barrier)
-    (htargetsBarrier : targets ⊆ barrier)
+    (_ : targets ⊆ barrier)
     (hrootTarget : Disjoint roots targets)
     (family : Finset (BoundedRootTargetPath G roots targets bound))
     (hfamily :
@@ -3048,7 +3056,7 @@ theorem switchingContact_card_le_of_lengthMin
             · exfalso
               apply hzNotBlocked
               exact Finset.mem_sdiff.2
-                ⟨Finset.mem_union_left _ hzBarrier, by simpa [hzx]⟩
+                ⟨Finset.mem_union_left _ hzBarrier, by simp [hzx]⟩
         · have hzw' : z = w := by simpa using hzw
           subst z
           have hwAllowed := hfamily.1 old hold w hwOld hzBarrier
@@ -3133,7 +3141,7 @@ theorem switchingContact_card_le_of_lengthMin
         change z ∈ family.biUnion supportFinset
         rw [Finset.mem_biUnion]
         exact ⟨q, Finset.mem_of_mem_erase hq, hzQParts.1⟩
-      · simpa [hzNotX]
+      · simp [hzNotX]
   have hnewDisjointRemaining : ∀ q ∈ family.erase old,
       Disjoint (new.supportFinset \ roots) (q.supportFinset \ roots) := by
     intro q hq
@@ -3144,7 +3152,7 @@ theorem switchingContact_card_le_of_lengthMin
       have hqNeOld : old ≠ q := by
         intro h
         subst q
-        simpa using hq
+        simp at hq
       exact Finset.disjoint_left.1
         (hfamily.2.2.1 old hold q hqFamily hqNeOld) hzOld hzQ
     · exact Finset.disjoint_left.1 (hballDisjointRemaining q hq) hzBall hzQ
@@ -3483,7 +3491,7 @@ end BoundedRootTargetPath
 then a radius-`r` root ball loses at most the whole fixed set and `2(r+1)+1`
 cycle vertices at its next boundary. -/
 theorem card_blocked_fixed_union_shortestCycle_le [Fintype V]
-    (G : SimpleGraph V) [DecidableRel G.Adj]
+    (G : SimpleGraph V)
     {c v : V} {C : G.Walk c c} (hC : IsShortestCycle C)
     (fixed : Finset V) (r : ℕ) :
     (blockedExternalNeighborhood G
@@ -3572,7 +3580,7 @@ theorem exists_short_root_target_path_of_large_balls [Fintype V]
 /-- Variant of the large-ball connector whose second endpoint may be any
 vertex of a prescribed reservoir seed. -/
 theorem exists_short_root_set_path_of_large_balls [Fintype V]
-    (G : SimpleGraph V) [DecidableRel G.Adj]
+    (G : SimpleGraph V)
     (U A B : Finset V) {x : V} (rounds : ℕ)
     (hA : A ⊆ ballAvoiding G (U : Set V) x 1)
     (hAavoid : ∀ a ∈ A, a ∉ (U : Set V))
@@ -4359,7 +4367,7 @@ theorem exists_sourceLowFullPathFamily [Fintype V]
       (ballAvoiding G (L : Set V) (center s) (5 * ell₀)) lowRoots)
     (hrootsCard : roots.card = k)
     (hlowRoots : lowRoots = roots \ L)
-    (hprotected : reservedSet.card ≤ protectedCard)
+    (_ : reservedSet.card ≤ protectedCard)
     (hprotectedDef : protectedSet =
       (reservedSet ∪ C.support.toFinset) ∪ roots)
     (hfixedCard : fixed.card ≤ 2 * k ^ 2 + 2 * protectedCard + 2 * k)
@@ -4730,7 +4738,7 @@ theorem exists_sourceLowFullPathFamily [Fintype V]
         (by
           have hseed : num.lowReservoirGrowth 0 ≤ B.card :=
             num.low_reservoir_start.trans (by
-              simpa [B] using (reservoir unused).card_verts.ge)
+              simp [B])
           simpa [growthReservoir] using hseed)
         (by intro r hr; simpa [growthReservoir] using
           num.low_reservoir_next hdDelta r hr)
@@ -4924,10 +4932,10 @@ theorem liuMontgomery_lemma3_11_caseHigh [Fintype V]
       (family.filter fun p ↦ p.root = root i).card = k := by
     intro i
     apply BoundedRootTargetPath.filter_card_eq_multiplicity_of_augment
-      family hfamily hmaximum (by simpa [roots])
+      family hfamily hmaximum (by simp [roots])
     intro hdeficient
     have hlabelsCard : Fintype.card {v : V // v ∈ hubs} = 2 * k ^ 2 := by
-      simpa [hhubsCard]
+      simp [hhubsCard]
     have hshort : family.card < Fintype.card {v : V // v ∈ hubs} := by
       rw [hlabelsCard]
       have hk2 : 0 < k ^ 2 := pow_pos num.k_pos 2
@@ -5095,8 +5103,7 @@ theorem liuMontgomery_lemma3_11_caseHigh [Fintype V]
           exact (Finset.mem_sdiff.1 hz).1) hAavoid hBavoid hlarge
     have hyLabel : label y = unused := by
       dsimp [label, y]
-      simpa using
-        (BoundedRootTargetPath.targetLabel_of_mem defaultHub hyHubs)
+      simp
     have hyunused' : ∀ q ∈ family, label q.target ≠ label y := by
       intro old hold heq
       exact hunused old hold (heq.trans hyLabel)
@@ -5468,7 +5475,7 @@ theorem liuMontgomery_lemma3_11_caseLow [Fintype V]
       · exact (Finset.mem_sdiff.1 hz).2 (by
           simpa [hroute a.1 a.2 |>.2] using hzRoot)
       · have hzT : z ∈ targets := by
-          simpa [hzTarget] using (route a.1 a.2).target_mem
+          simp [hzTarget]
         exact Finset.disjoint_left.1 hrootTarget hzLow hzT
     · have hzT : z ∈ targets :=
         reservoir_mem_union reservoir _ hzReservoir
@@ -5490,7 +5497,7 @@ theorem liuMontgomery_lemma3_11_caseLow [Fintype V]
       · exact (Finset.mem_sdiff.1 hz).2 (by
           simpa [hroute a.1 a.2 |>.2] using hzRoot)
       · have hzT : z ∈ targets := by
-          simpa [hzTarget] using (route a.1 a.2).target_mem
+          simp [hzTarget]
         exact Finset.disjoint_left.1 htargetProtected hzT hzProtected
     · exact Finset.disjoint_left.1 (hreservoirProtected _)
         hzReservoir hzProtected
@@ -5521,7 +5528,7 @@ theorem liuMontgomery_lemma3_11_caseLow [Fintype V]
           z = (route a.1 a.2).root ∨ z = (route a.1 a.2).target) with
         hzRoot | hzTarget
       · have hzLow : z ∈ lowRoots := by
-          simpa [hzRoot] using (route a.1 a.2).root_mem
+          simp [hzRoot]
         exact htrimNotLow b hzB hzLow
       · have hown := htargetInReservoir (route a.1 a.2)
           (hroute a.1 a.2).1
@@ -5539,7 +5546,7 @@ theorem liuMontgomery_lemma3_11_caseLow [Fintype V]
           z = (route b.1 b.2).root ∨ z = (route b.1 b.2).target) with
         hzRoot | hzTarget
       · have hzLow : z ∈ lowRoots := by
-          simpa [hzRoot] using (route b.1 b.2).root_mem
+          simp [hzRoot]
         exact htrimNotLow a hzA hzLow
       · have hown := htargetInReservoir (route b.1 b.2)
           (hroute b.1 b.2).1

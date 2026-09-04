@@ -86,7 +86,7 @@ theorem AvgDegreeAtLeast.edgeFinset_nonempty [Fintype V] [Nonempty V]
 
 The explicit isomorphism is useful because the two graphs have differently
 nested subtype vertex types. -/
-private noncomputable def induceEraseIso [Fintype V] (G : SimpleGraph V)
+private noncomputable def induceEraseIso (G : SimpleGraph V)
     (S : Finset V) (v : V) (hv : v ∈ S) :
     G.induce (↑(S.erase v) : Set V) ≃g
       (G.induce (↑S : Set V)).induce ({⟨v, hv⟩}ᶜ : Set (↑S : Set V)) where
@@ -108,7 +108,7 @@ private noncomputable def induceEraseIso [Fintype V] (G : SimpleGraph V)
 
 /-- The induced edge count splits into the edges avoiding `v` and the edges
 incident with `v`. -/
-private theorem card_edgeFinset_induce_erase_add_degree [Fintype V]
+private theorem card_edgeFinset_induce_erase_add_degree
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (S : Finset V) (v : V) (hv : v ∈ S) :
     (G.induce (↑(S.erase v) : Set V)).edgeFinset.card +
@@ -182,7 +182,7 @@ theorem exists_induced_core_avgDegreeAtLeast [Fintype V] [Nonempty V]
       have hScard : S.card = 1 := by
         simpa [herase_eq] using (Finset.card_erase_add_one x.2).symm
       have hKcard : Fintype.card (↑S : Set V) = 1 := by
-        simpa [hScard] using Fintype.card_coe S
+        simp [hScard]
       have hKedges : K.edgeFinset.card = 0 := by
         have hbottom : K = ⊥ := by
           have hle := K.card_edgeFinset_le_card_choose_two

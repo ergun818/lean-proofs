@@ -63,7 +63,7 @@ lemma exists_finite_subgraph_not_colorable {V : Type u} (G : SimpleGraph V)
 
 /-- A finite non-`d`-colorable graph has a nonempty induced subgraph of minimum
 degree at least `d`. -/
-lemma exists_induced_core {V : Type u} [Fintype V] (G : SimpleGraph V)
+lemma exists_induced_core {V : Type u} [Finite V] (G : SimpleGraph V)
     [DecidableRel G.Adj] {d : ℕ} (hd : 0 < d) (hnotcolor : ¬G.Colorable d) :
     ∃ S : Finset V, S.Nonempty ∧
       ∀ v : (S : Set V), d ≤ (G.induce (S : Set V)).degree v := by
@@ -73,7 +73,7 @@ lemma exists_induced_core {V : Type u} [Fintype V] (G : SimpleGraph V)
     intro hdegenerate
     exact hnotcolor
       (Erdos760.SimpleGraph.colorable_of_degenerate G d hd hdegenerate)
-  push_neg at hnotdegenerate
+  push Not at hnotdegenerate
   obtain ⟨S, hS, hdegree⟩ := hnotdegenerate
   refine ⟨S, hS, ?_⟩
   intro v
@@ -92,7 +92,7 @@ lemma exists_induced_core {V : Type u} [Fintype V] (G : SimpleGraph V)
 
 /-- The minimum-degree core supplied by `exists_induced_core` satisfies the
 division-free average-degree inequality used by `FinitePowerTailTheorem`. -/
-lemma induced_core_average_degree {V : Type u} [Fintype V] (G : SimpleGraph V)
+lemma induced_core_average_degree {V : Type u} (G : SimpleGraph V)
     [DecidableRel G.Adj] (S : Finset V) {d : ℕ}
     (hdegree : ∀ v : (S : Set V), d ≤ (G.induce (S : Set V)).degree v) :
     AvgDegreeAtLeast (G.induce (S : Set V)) d := by

@@ -192,8 +192,8 @@ theorem exists_bipartite_subgraph_half {V : Type u} [Fintype V]
         Finset.univ.filter fun e : V × V ↦ H.Adj e.1 e.2 := by
     ext e
     simp only [D, Finset.mem_filter, Finset.mem_univ, true_and, H,
-      SimpleGraph.between_adj, A, Set.mem_setOf_eq, Set.mem_compl_iff]
-    cases h₁ : g e.1 <;> cases h₂ : g e.2 <;> simp [h₁, h₂]
+      SimpleGraph.between_adj, A, Set.mem_ofPred_eq, Set.mem_compl_iff]
+    cases h₁ : g e.1 <;> cases h₂ : g e.2 <;> simp
   have hH_card :
       (D.filter fun e ↦ g e.1 ≠ g e.2).card = 2 * H.edgeFinset.card := by
     rw [hH_directed, ← H.two_mul_card_edgeFinset]

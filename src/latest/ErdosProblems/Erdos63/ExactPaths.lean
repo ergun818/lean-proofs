@@ -222,7 +222,7 @@ namespace SimpleGraph.Walk
 
 universe u
 
-variable {V : Type u} [DecidableEq V]
+variable {V : Type u}
 variable {G : SimpleGraph V}
 
 /-- Three simple paths whose only common vertices are their consecutive
@@ -289,10 +289,10 @@ theorem exactPath_of_adjustable_middle
     (hp : p.IsPath) (hq : q.IsPath)
     (hmiddle : ∀ i : ℕ, i ≤ k →
       ∃ r : G.Walk v₃ v₄, r.IsPath ∧ r.length = base + 2 * i)
-    (hleft : ∀ i : ℕ, ∀ hi : i ≤ k, ∀ r : G.Walk v₃ v₄,
+    (hleft : ∀ i : ℕ, ∀ _ : i ≤ k, ∀ r : G.Walk v₃ v₄,
       r.IsPath → r.length = base + 2 * i →
         p.support.Disjoint r.support.tail)
-    (hright : ∀ i : ℕ, ∀ hi : i ≤ k, ∀ r : G.Walk v₃ v₄,
+    (hright : ∀ i : ℕ, ∀ _ : i ≤ k, ∀ r : G.Walk v₃ v₄,
       r.IsPath → r.length = base + 2 * i →
         (p.support ++ r.support.tail).Disjoint q.reverse.support.tail)
     (hbase : p.length + base + q.length ≤ ell)
@@ -318,13 +318,13 @@ theorem exactPath_of_adjustable_middle_of_parity [Fintype V]
     (B : Bipartition G) {v₁ v₂ v₃ v₄ : V} {ell base k : ℕ}
     (p : G.Walk v₁ v₃) (q : G.Walk v₂ v₄)
     (hp : p.IsPath) (hq : q.IsPath)
-    (r₀ : G.Walk v₃ v₄) (hr₀ : r₀.IsPath) (hr₀len : r₀.length = base)
+    (r₀ : G.Walk v₃ v₄) (_ : r₀.IsPath) (hr₀len : r₀.length = base)
     (hmiddle : ∀ i : ℕ, i ≤ k →
       ∃ r : G.Walk v₃ v₄, r.IsPath ∧ r.length = base + 2 * i)
-    (hleft : ∀ i : ℕ, ∀ hi : i ≤ k, ∀ r : G.Walk v₃ v₄,
+    (hleft : ∀ i : ℕ, ∀ _ : i ≤ k, ∀ r : G.Walk v₃ v₄,
       r.IsPath → r.length = base + 2 * i →
         p.support.Disjoint r.support.tail)
-    (hright : ∀ i : ℕ, ∀ hi : i ≤ k, ∀ r : G.Walk v₃ v₄,
+    (hright : ∀ i : ℕ, ∀ _ : i ≤ k, ∀ r : G.Walk v₃ v₄,
       r.IsPath → r.length = base + 2 * i →
         (p.support ++ r.support.tail).Disjoint q.reverse.support.tail)
     (hell : ParityCompatible B v₁ v₂ ell)
@@ -351,10 +351,10 @@ theorem lemma4_8_splice [Fintype V] (B : Bipartition G)
     {v₁ v₂ : V}
     (p : G.Walk v₁ A.leftRoot) (q : G.Walk v₂ A.rightRoot)
     (hp : p.IsPath) (hq : q.IsPath)
-    (hleft : ∀ i : ℕ, ∀ hi : i ≤ k, ∀ r : G.Walk A.leftRoot A.rightRoot,
+    (hleft : ∀ i : ℕ, ∀ _ : i ≤ k, ∀ r : G.Walk A.leftRoot A.rightRoot,
       r.IsPath → r.length = A.length + 2 * i →
         p.support.Disjoint r.support.tail)
-    (hright : ∀ i : ℕ, ∀ hi : i ≤ k, ∀ r : G.Walk A.leftRoot A.rightRoot,
+    (hright : ∀ i : ℕ, ∀ _ : i ≤ k, ∀ r : G.Walk A.leftRoot A.rightRoot,
       r.IsPath → r.length = A.length + 2 * i →
         (p.support ++ r.support.tail).Disjoint q.reverse.support.tail)
     (hell : ParityCompatible B v₁ v₂ ell)
@@ -875,7 +875,7 @@ those used by the corrected Lemma 4.7 induction above. -/
 def LMRobustSimpleAdjusterSupply : Prop :=
   ∃ d₀ : ℕ, ∀ {W : Type u} [Fintype W] [Nonempty W]
       (J : SimpleGraph W) [DecidableRel J.Adj]
-      (B : Bipartition J) {d : ℕ},
+      (_ : Bipartition J) {d : ℕ},
       d₀ ≤ d →
       IsLMExpander J (1 / 1024) ((1 / 64) * (d : ℝ)) →
       (∀ v : W, d ≤ J.degree v) →

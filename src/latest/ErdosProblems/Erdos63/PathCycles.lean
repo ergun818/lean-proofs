@@ -100,7 +100,7 @@ theorem HasPathBetweenLength.hasCycleLength_add_one_of_adj_of_edge_not_mem
   obtain ⟨p, hp, hlen⟩ := hpath
   refine ⟨y, Walk.cons hyx p, hp.isCycle_cons_of_adj_of_edge_not_mem hyx ?_, ?_⟩
   · exact hclose p hp hlen
-  · simp [hlen, Nat.add_comm]
+  · simp [hlen]
 
 /-- A simple path of length at least two closes to a cycle when its endpoints
 are adjacent. -/
@@ -109,7 +109,7 @@ theorem HasPathBetweenLength.hasCycleLength_add_one_of_adj
     HasCycleLength G (n + 1) := by
   obtain ⟨p, hp, hlen⟩ := hpath
   refine ⟨y, Walk.cons hyx p, hp.isCycle_cons_of_adj (hlen.symm ▸ hn) hyx, ?_⟩
-  simp [hlen, Nat.add_comm]
+  simp [hlen]
 
 /-- Symmetric orientation of
 `HasPathBetweenLength.hasCycleLength_add_one_of_adj`. -/
@@ -189,7 +189,7 @@ theorem _root_.SimpleGraph.IsBipartiteWith.walk_endpoint_parity
   induction p generalizing S T with
   | nil =>
       refine ⟨fun _ ↦ hx, fun hodd ↦ ?_⟩
-      exact (by simpa using hodd : False).elim
+      simp at hodd
   | @cons u v w hadj p ih =>
       have hv : v ∈ T := hb.mem_of_mem_adj hx hadj
       have ihp := ih hb.symm hv

@@ -53,7 +53,7 @@ noncomputable def widenRadius (A : Adjuster G D m k) (hmm' : m ≤ m') :
 
 @[simp] theorem widenRadius_verts (A : Adjuster G D m k) (hmm' : m ≤ m') :
     (A.widenRadius hmm').verts = A.verts := by
-  simpa [widenRadius] using A.radiusMono_verts hmm'
+  simp [widenRadius]
 
 @[simp] theorem widenRadius_leftEnd_verts
     (A : Adjuster G D m k) (hmm' : m ≤ m') :
@@ -102,6 +102,7 @@ end Adjuster
 
 /-! ## A root connector obtained from the two discarded expansions -/
 
+omit [DecidableEq V] in
 /-- A walk supported inside a set disjoint from `X` avoids `X` altogether. -/
 private theorem avoids_of_supportsIn_disjoint {x y : V} {p : G.Walk x y}
     {S : Finset V} {X : Set V} (hp : ∀ z ∈ p.support, z ∈ S)
@@ -110,6 +111,7 @@ private theorem avoids_of_supportsIn_disjoint {x y : V} {p : G.Walk x y}
   have hzS : z ∈ (S : Set V) := hp z hz
   exact (Set.disjoint_left.1 hSX hzS hzX).elim
 
+omit [DecidableEq V] in
 /-- The path returned by the avoiding-ball connector avoids the forbidden
 set altogether when its two selected endvertices do not belong to that set. -/
 private theorem connector_avoids_empty {a b : V} {p : G.Walk a b}
@@ -122,6 +124,7 @@ private theorem connector_avoids_empty {a b : V} {p : G.Walk a b}
   · exact (ha hzX).elim
   · exact (hb hzX).elim
 
+omit [DecidableEq V] in
 /-- Connect the roots of two vertex expansions using an avoiding path between
 their vertex sets.  Loop erasure is used only after concatenation, so the
 result is a genuine path and retains the required avoidance and length bound. -/
@@ -162,6 +165,7 @@ theorem exists_root_connector_of_avoiding_path
     _ = px.length + p.length + py.length := by simp [w, Walk.length_append]
     _ ≤ m₁ + t + m₂ := by omega
 
+omit [DecidableEq V] in
 /-- Avoiding balls whose sizes sum to more than the order of the graph yield
 a short path between the two expansion roots. -/
 theorem exists_root_connector_of_large_balls [Fintype V]
@@ -203,6 +207,7 @@ structure LMConnectorSchedule (epsilon kappa : ℝ) (N D workspace : ℕ) where
 
 namespace LMConnectorSchedule
 
+omit [DecidableEq V] in
 /-- A schedule is realized by every avoiding ball whose initial set has the
 certified order and whose deleted set is within the workspace budget. -/
 theorem half_le_ball [Fintype V]
@@ -281,6 +286,7 @@ theorem half_le_ball [Fintype V]
 
 end LMConnectorSchedule
 
+omit [DecidableEq V] in
 /-- Two copies of the same multiplicative schedule give a short avoiding
 connector.  This is the source-faithful numerical form of Lemma 3.4 used by
 the final Lemma 4.7 wrapper. -/
@@ -301,6 +307,7 @@ theorem exists_avoiding_path_between_of_lmConnectorSchedule [Fintype V]
       G (W : Set V) A B S.rounds S.rounds (by rw [hN]; omega)
   exact ⟨a, ha, b, hb, p, hp, by omega⟩
 
+omit [DecidableEq V] in
 /-- Among all avoiding paths joining two finite sets, choose one of minimum
 length.  Minimality makes the chosen endpoints the only vertices of the path
 in either end set.  This is the elementary trimming step which permits the
@@ -369,6 +376,7 @@ theorem exists_endpoint_clean_avoiding_path
 
 /-! ## Splicing a concrete connector between two adjusters -/
 
+omit [DecidableEq V] in
 /-- Three pairwise compatible paths concatenate to a path. -/
 private theorem isPath_append_append {v₁ v₂ v₃ v₄ : V}
     {p : G.Walk v₁ v₂} {q : G.Walk v₂ v₃} {r : G.Walk v₃ v₄}

@@ -156,7 +156,7 @@ theorem lm44AdaptiveCost_le_gain {d i : ℕ}
           ≤ (65536 * (j + 3) ^ 2) *
               (16515199 * (j + 3) ^ 3) := by
             dsimp [block, Parameters.lm311AdaptiveBlock]
-            gcongr <;> omega
+            gcongr; omega
       _ = (65536 * 16515199) * (j + 3) ^ 5 := by ring
       _ ≤ (65536 * 16515199) * (32 * 8 ^ (j + 1)) := by gcongr
       _ ≤ 8 ^ j * 2 ^ 53 := by
@@ -557,7 +557,7 @@ theorem eventually_lm44_packing_five :
           ≤ 2 * Real.exp (L / 2) := by linarith
       _ < Real.exp (L / 2) * Real.exp (L / 2) := by
         nlinarith [Real.exp_pos (L / 2)]
-      _ = Real.exp L := by rw [← Real.exp_add]; congr 1 <;> ring
+      _ = Real.exp L := by rw [← Real.exp_add]; congr 1; ring
       _ = (n : ℝ) := by
         change Real.exp (Real.log (n : ℝ)) = (n : ℝ)
         rw [Real.exp_log]
@@ -1489,7 +1489,7 @@ theorem eventually_lm43_claim44_ball_bounds :
     calc
       4 * (family : ℝ) *
           (2 * (radius : ℝ) ^ 2 + 10 * (radius : ℝ))
-          ≤ 4 * x * (12 * x ^ 2) := by gcongr <;> nlinarith
+          ≤ 4 * x * (12 * x ^ 2) := by gcongr; nlinarith
       _ = 48 * x ^ 3 := by ring
   have hseedX4 : (seed : ℝ) ≤ x ^ 4 := by
     have hseedSum : (seed : ℝ) ≤ 106 * x ^ 2 + 48 * x ^ 3 := by

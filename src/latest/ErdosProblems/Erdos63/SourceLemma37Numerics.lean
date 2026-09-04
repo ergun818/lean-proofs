@@ -116,7 +116,7 @@ theorem two_lm37SourceSmallBudget_le_expansion
 
 /-- The source budget is superadditive over finite families. -/
 theorem sum_lm37SourceLargeBudget_le
-    {I : Type*} [DecidableEq I] (D : ℕ) (J : Finset I) (f : I → ℕ) :
+    {I : Type*} (D : ℕ) (J : Finset I) (f : I → ℕ) :
     ∑ i ∈ J, lm37SourceLargeBudget D (f i) ≤
       lm37SourceLargeBudget D (∑ i ∈ J, f i) := by
   simp only [lm37SourceLargeBudget, lmGrowthGain]
@@ -376,11 +376,11 @@ noncomputable def concreteLM37SourceBounds
     exact hstrictReal.trans_le
       (two_lm37SourceSmallBudget_le_expansion
         (b.degree_large.trans' (by omega)) (by
-          convert hlower using 1 <;> ring))
+          convert hlower using 1; ring))
 
 /-- Family aggregation is automatic for a package built by the constructor. -/
 theorem concreteLM37SourceBounds_largeBudgetSum
-    {I : Type*} [DecidableEq I]
+    {I : Type*}
     (N d Ucap Icard contact radius M degreeIntoU D T : ℕ)
     (b : LM37SourceNumericalBounds N d Ucap Icard radius M degreeIntoU D T)
     (J : Finset I) (f : I → ℕ)

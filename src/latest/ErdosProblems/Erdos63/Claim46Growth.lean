@@ -55,7 +55,7 @@ theorem lm43_expansion_profile_lower
       15 * (s : ℝ) / ((1 / 64 : ℝ) * (d : ℝ)) =
         960 * (s : ℝ) / (d : ℝ) := by
     field_simp [ne_of_gt hdpos]
-    <;> ring
+    ring
   rw [harg]
   have hratioOne : (1 : ℝ) < 960 * (s : ℝ) / (d : ℝ) := by
     rw [lt_div_iff₀ hdpos]

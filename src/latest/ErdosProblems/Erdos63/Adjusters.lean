@@ -43,18 +43,21 @@ def HasSupportedPathLength (G : SimpleGraph V) (allowed : Finset V)
 
 namespace HasSupportedPathLength
 
+omit [DecidableEq V] in
 theorem toHasPathBetweenLength {allowed : Finset V} {x y : V} {n : ℕ}
     (h : HasSupportedPathLength G allowed x y n) :
     HasPathBetweenLength G x y n := by
   obtain ⟨p, hp, -, hlen⟩ := h
   exact ⟨p, hp, hlen⟩
 
+omit [DecidableEq V] in
 theorem mono_allowed {S T : Finset V} {x y : V} {n : ℕ}
     (h : HasSupportedPathLength G S x y n) (hST : S ⊆ T) :
     HasSupportedPathLength G T x y n := by
   obtain ⟨p, hp, hsupp, hlen⟩ := h
   exact ⟨p, hp, fun z hz ↦ hST (hsupp z hz), hlen⟩
 
+omit [DecidableEq V] in
 theorem reverse {allowed : Finset V} {x y : V} {n : ℕ}
     (h : HasSupportedPathLength G allowed x y n) :
     HasSupportedPathLength G allowed y x n := by
@@ -64,6 +67,7 @@ theorem reverse {allowed : Finset V} {x y : V} {n : ℕ}
   apply hsupp z
   simpa using hz
 
+omit [DecidableEq V] in
 /-- A supported exact path remains one after adding graph edges. -/
 theorem mono_graph {G' : SimpleGraph V} {allowed : Finset V}
     {x y : V} {n : ℕ} (hGG' : G ≤ G')
@@ -91,7 +95,7 @@ theorem appendWalk {S T : Finset V} {x y z : V} {a b : ℕ}
     rcases hw with hw | hw
     · exact Finset.mem_union_left _ (hp w hw)
     · exact Finset.mem_union_right _ (hq w hw)
-  · simpa [Walk.length_append, hplen, hqlen]
+  · simp [Walk.length_append, hplen, hqlen]
 
 end HasSupportedPathLength
 

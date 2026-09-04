@@ -49,7 +49,7 @@ variable {G : SimpleGraph V}
 /-- Every external neighbor of a union either lies in the deleted set, or is
 an available external neighbor of one of the members of the union. -/
 theorem externalNeighborhood_biUnion_subset_deleted_union_available
-    [Fintype V] [DecidableEq I] (G : SimpleGraph V) (U : Finset V)
+    [Fintype V] (G : SimpleGraph V) (U : Finset V)
     (J : Finset I) (S : I → Finset V) :
     externalNeighborhood G (J.biUnion S) ⊆
       U ∪ J.biUnion (fun i ↦ availableExternalNeighborhood G (U : Set V) (S i)) := by
@@ -66,7 +66,7 @@ theorem externalNeighborhood_biUnion_subset_deleted_union_available
 /-- Cardinal version of
 `externalNeighborhood_biUnion_subset_deleted_union_available`. -/
 theorem card_externalNeighborhood_biUnion_le_deleted_add_available
-    [Fintype V] [DecidableEq I] (G : SimpleGraph V) (U : Finset V)
+    [Fintype V] (G : SimpleGraph V) (U : Finset V)
     (J : Finset I) (S : I → Finset V) :
     (externalNeighborhood G (J.biUnion S)).card ≤
       U.card + ∑ i ∈ J,
@@ -84,7 +84,7 @@ theorem card_externalNeighborhood_biUnion_le_deleted_add_available
 that common neighborhood replaces the whole deleted set in the preceding
 bound.  This is the decisive second pigeonhole step in Lemma 3.5. -/
 theorem externalNeighborhood_biUnion_subset_common_blocked
-    [Fintype V] [DecidableEq I] (G : SimpleGraph V) (U Z : Finset V)
+    [Fintype V] (G : SimpleGraph V) (U Z : Finset V)
     (J : Finset I) (S : I → Finset V)
     (hblocked : ∀ i ∈ J,
       blockedExternalNeighborhood G (U : Set V) (S i) = Z) :
@@ -104,7 +104,7 @@ theorem externalNeighborhood_biUnion_subset_common_blocked
 
 /-- Cardinal version of the common-blocked-neighborhood bound. -/
 theorem card_externalNeighborhood_biUnion_le_common_blocked_add_available
-    [Fintype V] [DecidableEq I] (G : SimpleGraph V) (U Z : Finset V)
+    [Fintype V] (G : SimpleGraph V) (U Z : Finset V)
     (J : Finset I) (S : I → Finset V)
     (hblocked : ∀ i ∈ J,
       blockedExternalNeighborhood G (U : Set V) (S i) = Z) :
@@ -126,7 +126,7 @@ theorem card_externalNeighborhood_biUnion_le_common_blocked_add_available
 contradicts the Komlós--Szemerédi expansion inequality once its union lies in
 the expansion range. -/
 theorem no_selected_family_of_deleted_neighborhood_bound
-    [Fintype V] [DecidableEq I]
+    [Fintype V]
     (G : SimpleGraph V) (epsilon k : ℝ) (hexp : IsLMExpander G epsilon k)
     (U : Finset V) (S : I → Finset V) (J : Finset I) (B : ℕ)
     (hlower : k / 2 ≤ ((J.biUnion S).card : ℝ))
@@ -155,7 +155,7 @@ theorem no_selected_family_of_deleted_neighborhood_bound
 keeps the sum of the individual budgets instead of replacing it by a uniform
 worst-case bound. -/
 theorem no_selected_family_of_deleted_neighborhood_sum_bound
-    [Fintype V] [DecidableEq I]
+    [Fintype V]
     (G : SimpleGraph V) (epsilon k : ℝ) (hexp : IsLMExpander G epsilon k)
     (U : Finset V) (S : I → Finset V) (J : Finset I) (budget : I → ℕ)
     (hlower : k / 2 ≤ ((J.biUnion S).card : ℝ))
@@ -182,7 +182,7 @@ theorem no_selected_family_of_deleted_neighborhood_sum_bound
 /-- Common blocked neighborhoods give the sharper obstruction used for the
 small-set case of Liu--Montgomery Lemma 3.5. -/
 theorem no_selected_family_of_common_blocked_neighborhood
-    [Fintype V] [DecidableEq I]
+    [Fintype V]
     (G : SimpleGraph V) (epsilon k : ℝ) (hexp : IsLMExpander G epsilon k)
     (U Z : Finset V) (S : I → Finset V) (J : Finset I) (B C : ℕ)
     (hlower : k / 2 ≤ ((J.biUnion S).card : ℝ))
@@ -242,7 +242,7 @@ present in `ballAvoidingFrom` even if it belongs to the forbidden set. -/
 theorem hasLimitedContactAfterDeletion_of_path_shortest_from_set
     [Fintype V] (G : SimpleGraph V) (A T deleted : Finset V)
     {s t : V} (ht : t ∈ T) (p : G.Walk s t)
-    (hp : p.IsPath) (hpdeleted : p.Avoids (deleted : Set V) ∅)
+    (_ : p.IsPath) (hpdeleted : p.Avoids (deleted : Set V) ∅)
     (hAdeleted : Disjoint A deleted)
     (hshortest : ∀ a' ∈ A, ∀ t' ∈ T, ∀ q : G.Walk a' t',
       q.IsPath → q.Avoids (deleted : Set V) ∅ → p.length ≤ q.length) :
@@ -326,7 +326,7 @@ theorem hasLimitedContactAfterDeletion_of_path_shortest_from_set
 the set whose avoiding ball is grown. -/
 theorem hasLimitedContactAfterDeletion_of_shortest_path
     [Fintype V] (G : SimpleGraph V) (A T deleted : Finset V)
-    {a t : V} (ha : a ∈ A) (ht : t ∈ T) (p : G.Walk a t)
+    {a t : V} (_ : a ∈ A) (ht : t ∈ T) (p : G.Walk a t)
     (hp : p.IsPath) (hpdeleted : p.Avoids (deleted : Set V) ∅)
     (hAdeleted : Disjoint A deleted)
     (hshortest : ∀ a' ∈ A, ∀ t' ∈ T, ∀ q : G.Walk a' t',
@@ -763,7 +763,7 @@ theorem VertexExpansion.minDegree_sub_budget_le_card_ballAvoidingFrom_one
     · simp [p, Walk.cons_isPath_iff, G.ne_of_adj hxy]
     · intro z hz hzW
       simp only [p, Walk.support_cons, Walk.support_nil, List.mem_cons,
-        List.mem_singleton, List.not_mem_nil, or_false] at hz
+        List.not_mem_nil, or_false] at hz
       rcases hz with rfl | rfl
       · simp
       · exact (hyW hzW).elim
@@ -948,7 +948,7 @@ private theorem liuMontgomery_lemma3_5_uniform
     (U : Finset V) (S : I → Finset V)
     (L D T qLarge qSmall Blarge Bsmall C : ℕ)
     (hpair : ((Finset.univ : Finset I) : Set I).PairwiseDisjoint S)
-    (hnonempty : ∀ i : I, (S i).Nonempty)
+    (_ : ∀ i : I, (S i).Nonempty)
     (hmax : ∀ i : I, (S i).card ≤ D)
     (hlargeN : ∀ i : I, L ≤ (S i).card →
       (availableExternalNeighborhood G (U : Set V) (S i)).card ≤ Blarge)
@@ -995,7 +995,7 @@ private theorem liuMontgomery_lemma3_5_uniform
     omega
   have hcase : half ≤ (large.biUnion S).card ∨ half ≤ (small.biUnion S).card := by
     by_contra h
-    push_neg at h
+    push Not at h
     omega
   rcases hcase with hlarge | hsmall
   · have hlargeCard : (large.biUnion S).card = ∑ i ∈ large, (S i).card :=
@@ -1118,7 +1118,7 @@ private theorem liuMontgomery_lemma3_5_uniform
       calc
         ∑ i ∈ J, (S i).card = ∑ _i ∈ J, r :=
           Finset.sum_congr rfl fun i hi ↦ hJsize i hi
-        _ = qSmall * r := by simp [hJcard, mul_comm]
+        _ = qSmall * r := by simp [hJcard]
     have hJblocked : ∀ i ∈ J,
         blockedExternalNeighborhood G (U : Set V) (S i) = Z := by
       intro i hi
@@ -1158,7 +1158,7 @@ theorem liuMontgomery_lemma3_5_finite
     (hblocked : ∀ i : I, (S i).card < cutoff →
       (blockedExternalNeighborhood G (U : Set V) (S i)).card ≤
         blockedBudget (S i).card)
-    (hminSizePos : 0 < minSize) (hcutoffPos : 0 < cutoff)
+    (hminSizePos : 0 < minSize) (_ : 0 < cutoff)
     (hDpos : 0 < D) (hTpos : 0 < T)
     (hqSmallPos : ∀ r : ℕ, minSize ≤ r → r < cutoff → 0 < qSmall r)
     (hlargeSample : qLarge * D ≤ (T + 1) / 2)
@@ -1207,7 +1207,7 @@ theorem liuMontgomery_lemma3_5_finite
   have hcase : half ≤ (large.biUnion S).card ∨
       half ≤ (small.biUnion S).card := by
     by_contra h
-    push_neg at h
+    push Not at h
     omega
   rcases hcase with hlarge | hsmall
   · have hlargeCard : (large.biUnion S).card = ∑ i ∈ large, (S i).card :=
@@ -1297,7 +1297,7 @@ theorem liuMontgomery_lemma3_5_finite
         r * ((boundedSubsets U (blockedBudget r)).card * qSmall r) ≤
           ∑ i ∈ small with (S i).card = r, (S i).card := by
       by_contra hno
-      push_neg at hno
+      push Not at hno
       obtain ⟨r₀, hr₀⟩ := hsizesNonempty
       have hsumlt :
           ∑ r ∈ Finset.Ico minSize cutoff,
@@ -1471,7 +1471,7 @@ private theorem liuMontgomery_lemma3_7_uniform
       ((U : Set V) ∪ (B i : Set V) ∪ (Cset i : Set V)) (A i) radius).card := by
   classical
   by_contra hnone
-  push_neg at hnone
+  push Not at hnone
   let X : I → Set V := fun i ↦
     (U : Set V) ∪ (B i : Set V) ∪ (Cset i : Set V)
   have hfirst (i : I) : ∃ ell : ℕ, 0 < ell ∧ ell ≤ radius ∧
@@ -1611,7 +1611,7 @@ theorem liuMontgomery_lemma3_7_correlated
       ((U : Set V) ∪ (B i : Set V) ∪ (Cset i : Set V)) (A i) radius).card := by
   classical
   by_contra hnone
-  push_neg at hnone
+  push Not at hnone
   let X : I → Set V := fun i ↦
     (U : Set V) ∪ (B i : Set V) ∪ (Cset i : Set V)
   have hfirst (i : I) : ∃ ell : ℕ, 0 < ell ∧ ell ≤ radius ∧

@@ -287,7 +287,7 @@ theorem exists_two_vertices_outside_shortestCycle_and_reserved
     have hdegreeCard : G.degree c =
         (G.neighborFinset c \ C.support.toFinset).card +
           (G.neighborFinset c ∩ C.support.toFinset).card := by
-      simpa [G.card_neighborFinset_eq_degree] using hpartition.symm
+      simp [G.card_neighborFinset_eq_degree]
     have := hdegree c
     omega
   obtain ⟨x₁, hx₁, x₂, hx₂, hx₁x₂⟩ := Finset.one_lt_card.1 havailable
@@ -389,7 +389,7 @@ theorem exists_cycle_of_neighbor_path_avoiding
     exact hvab.elim hvaNe hvbNe
   let q : G.Walk v b := Walk.cons hva p
   have hq : q.IsPath := by
-    simp [q, Walk.cons_isPath_iff, hp, hvNotSupport, hvaNe]
+    simp [q, Walk.cons_isPath_iff, hp, hvNotSupport]
   have hpPos : 0 < p.length := by
     by_contra hzero
     have hpzero : p.length = 0 := by omega
@@ -468,7 +468,6 @@ theorem exists_short_cycle_through_vertex_of_lmExpander_growth [Fintype V]
     exact (Finset.disjoint_left.1 hAB ha hb).elim
   obtain ⟨C, hC, hClength⟩ :=
     exists_cycle_of_neighbor_path_avoiding hva hvb hab p hp.1 (by
-      change p.Avoids ({v} : Set V) ({a, b} : Set V)
       simpa using hp.2)
   exact ⟨b, C, hC, by omega⟩
 
@@ -946,7 +945,7 @@ theorem VertexExpansion.exists_attach_path_star [Fintype V]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     {root a t : V} {D₀ oldRadius pathRadius target totalRadius : ℕ}
     (E : VertexExpansion G root D₀ oldRadius) (ha : a ∈ E.verts)
-    (p : G.Walk a t) (hp : p.IsPath) (hpLength : p.length ≤ pathRadius)
+    (p : G.Walk a t) (_ : p.IsPath) (hpLength : p.length ≤ pathRadius)
     (forbidden : Finset V) (htarget : 0 < target)
     (htDegree : target + forbidden.card ≤ G.degree t)
     (hRadius : oldRadius + pathRadius + 1 ≤ totalRadius) :
@@ -1025,7 +1024,7 @@ theorem VertexExpansion.exists_attach_path_expansion
     {root a z center : V}
     {D₀ oldRadius pathRadius D₁ farRadius totalRadius : ℕ}
     (E : VertexExpansion G root D₀ oldRadius) (ha : a ∈ E.verts)
-    (p : G.Walk a z) (hp : p.IsPath) (hpLength : p.length ≤ pathRadius)
+    (p : G.Walk a z) (_ : p.IsPath) (hpLength : p.length ≤ pathRadius)
     (Z : VertexExpansion G center D₁ farRadius) (hz : z ∈ Z.verts)
     (hRadius : oldRadius + pathRadius + 2 * farRadius ≤ totalRadius) :
     ∃ F : VertexExpansion G root D₁ totalRadius,
@@ -1238,7 +1237,6 @@ theorem Adjuster.exists_replaceEnds_byTwoPathStars [Fintype V]
           change z ∈ U ∪ A.core
           exact Finset.mem_union_right _ hzCore)
       · apply (Finset.disjoint_left.1 hright hzRight)
-        change z ∈ rightForbidden
         simp [rightForbidden, hz]
     · intro z hz hzForbidden
       change z ∈ U ∪ A.core ∪ right.verts at hzForbidden
@@ -1251,7 +1249,6 @@ theorem Adjuster.exists_replaceEnds_byTwoPathStars [Fintype V]
           change z ∈ U ∪ A.core
           exact Finset.mem_union_right _ hzCore)
       · apply (Finset.disjoint_left.1 hright hzRight)
-        change z ∈ rightForbidden
         simp [rightForbidden, hz]
   obtain ⟨left, hleft⟩ := exists_expansion_of_two_paths_star_disjoint
     G qLeft pLeft hqLeftLength hpLeftLength leftForbidden
@@ -1265,7 +1262,6 @@ theorem Adjuster.exists_replaceEnds_byTwoPathStars [Fintype V]
   have hcoreRight : Disjoint A.core right.verts := by
     apply (hright.mono_right ?_).symm
     intro z hzCore
-    change z ∈ rightForbidden
     simp [rightForbidden, hzCore]
   have hends : Disjoint left.verts right.verts := by
     apply hleft.mono_right
@@ -1282,7 +1278,6 @@ theorem Adjuster.exists_replaceEnds_byTwoPathStars [Fintype V]
   · exact (Finset.disjoint_left.1 hleft hzLeft (by
       exact Finset.mem_union_left _ (Finset.mem_union_left _ hzU))).elim
   · exact (Finset.disjoint_left.1 hright hzRight (by
-      change z ∈ rightForbidden
       simp [rightForbidden, hzU])).elim
   · exact (Finset.disjoint_left.1 hAU hzU (A.core_subset_verts hzCore)).elim
 
@@ -2095,13 +2090,14 @@ enough that each candidate has a key in a finite type and candidates with the
 same key conflict.  Scanning the keys then constructs a finite family which
 conflicts with every candidate. -/
 theorem exists_finite_maximal_conflictFree_family_local
-    {Candidate Key : Type*} [Fintype Key]
+    {Candidate Key : Type*} [Finite Key]
     (key : Candidate → Key) (Conflict : Candidate → Candidate → Prop)
     (hsame : ∀ a b, key a = key b → Conflict a b)
     (hsymm : ∀ a b, Conflict a b → Conflict b a) :
     ∃ S : Finset Candidate,
       ((S : Set Candidate).Pairwise fun a b ↦ ¬ Conflict a b) ∧
         ∀ a : Candidate, ∃ b ∈ S, Conflict a b := by
+  let := Fintype.ofFinite Key
   classical
   have aux : ∀ keys : Finset Key, ∃ S : Finset Candidate,
       ((S : Set Candidate).Pairwise fun a b ↦ ¬ Conflict a b) ∧
@@ -2141,7 +2137,7 @@ theorem exists_finite_maximal_conflictFree_family_local
           · have hnotall : ¬ ∀ b ∈ S, ¬ Conflict a b := by
               intro hall
               exact hnew ⟨a, hak, hall⟩
-            push_neg at hnotall
+            push Not at hnotall
             obtain ⟨b, hbS, hab⟩ := hnotall
             exact ⟨b, hbS, hab⟩
           · exact hSmax a hakeys
@@ -2321,7 +2317,7 @@ shorter.  In Claims 4.5 and 4.6 the fixed path starts in the left end, while
 theorem hasLimitedContactAfterDeletion_of_opposite_shortest_path
     [Fintype V] (G : SimpleGraph V) (A T deleted : Finset V)
     {s t : V} (ht : t ∈ T) (p : G.Walk s t)
-    (hp : p.IsPath) (hpdeleted : p.Avoids (deleted : Set V) ∅)
+    (_ : p.IsPath) (hpdeleted : p.Avoids (deleted : Set V) ∅)
     (hAdeleted : Disjoint A deleted)
     (hshortest : ∀ a' ∈ A, ∀ t' ∈ T, ∀ q : G.Walk a' t',
       q.IsPath → q.Avoids (deleted : Set V) ∅ → p.length ≤ q.length) :
@@ -3085,7 +3081,6 @@ theorem reachingCandidate_limitedContact_barrier
         exact hzCore
       have hzBarrier : z ∈ reachingCandidateBarrier i := by
         exact Finset.mem_union_left _ (by
-          change z ∈ reachingCandidateCore i
           exact hzCore')
       exact Or.inr hzBarrier
 
@@ -3247,7 +3242,6 @@ theorem no_second_highDegree_connection_of_no_targetAdjuster
     rcases hzForbidden with ((hzDeleted | hzCore) | hzRootPath) | hzPath
     · exact Or.inl (Or.inl hzDeleted)
     · exact Or.inl (Or.inr (Finset.mem_union_left _ (by
-        change z ∈ reachingCandidateCore i
         exact hzCore)))
     · by_cases hzStart : z = P.start
       · subst z
@@ -3351,14 +3345,12 @@ theorem exists_targetAdjuster_of_large_reachingCandidate_ball
         (reachingCandidateSeed_disjoint_deleted_union_barrier i) hzSeed
         (Finset.mem_union_right _ hzBarrier)).elim
     · exact (Finset.disjoint_left.1 P.opposite_disjoint_path hzSeed
-        (by change z ∈ P.path.support.toFinset; exact hzPath)).elim
+        hzPath).elim
   have hballW : Disjoint ball W := by
     exact disjoint_ballAvoidingFrom_forbidden G
       (reachingCandidateSeed i) W ballRadius hseedW
   let rightFull := P.adjusted.rightEnd.ofBallAvoidingFrom (W : Set V) ballRadius
   obtain ⟨rightSmall, hrightSmall⟩ := rightFull.proposition3_10 hTargetPos (by
-    change targetOrder ≤
-      (ballAvoidingFrom G (W : Set V) P.adjusted.rightEnd.verts ballRadius).card
     simpa only [W, Finset.coe_union, reachingCandidateSeed] using hballCard)
   let right : VertexExpansion G P.adjusted.rightRoot targetOrder totalRadius :=
     rightSmall.radiusMono (by
@@ -3418,7 +3410,6 @@ theorem exists_targetAdjuster_of_large_reachingCandidate_ball
         rw [← P.core_eq]
         exact hzCore))
     · exact (Finset.disjoint_left.1 hballW (hrightBall hzRight) (by
-        change z ∈ W
         exact Finset.mem_union_right _ (by
           change z ∈ P.path.support.toFinset
           exact List.mem_toFinset.2 hz))).elim
@@ -3441,7 +3432,6 @@ theorem exists_targetAdjuster_of_large_reachingCandidate_ball
   have hcoreRight : Disjoint P.adjusted.core right.verts := by
     apply (hballW.mono hrightBall ?_).symm
     intro z hzCore
-    change z ∈ W
     exact Finset.mem_union_left _ (Finset.mem_union_right _ (by
       exact Finset.mem_union_left _ hzCore))
   have hends : Disjoint left.verts right.verts := by
@@ -3460,7 +3450,6 @@ theorem exists_targetAdjuster_of_large_reachingCandidate_ball
   · exact (Finset.disjoint_left.1 hleft hzLeft (by
       exact Finset.mem_union_left _ (Finset.mem_union_left _ hzDeleted))).elim
   · exact (Finset.disjoint_left.1 hballW (hrightBall hzRight) (by
-      change z ∈ W
       exact Finset.mem_union_left _ (Finset.mem_union_left _ hzDeleted))).elim
   · have hdeleted : Disjoint deleted P.adjusted.verts := by
       rw [P.verts_eq]
@@ -3519,15 +3508,12 @@ theorem exists_targetAdjuster_of_large_reachingCandidate_ball_expansion
         (reachingCandidateSeed_disjoint_deleted_union_barrier i) hzSeed
         (Finset.mem_union_right _ hzBarrier)).elim
     · exact (Finset.disjoint_left.1 P.opposite_disjoint_path hzSeed (by
-        change z ∈ P.path.support.toFinset
         exact hzPath)).elim
   have hballW : Disjoint ball W :=
     disjoint_ballAvoidingFrom_forbidden G
       (reachingCandidateSeed i) W ballRadius hseedW
   let rightFull := P.adjusted.rightEnd.ofBallAvoidingFrom (W : Set V) ballRadius
   obtain ⟨rightSmall, hrightSmall⟩ := rightFull.proposition3_10 hTargetPos (by
-    change targetOrder ≤
-      (ballAvoidingFrom G (W : Set V) P.adjusted.rightEnd.verts ballRadius).card
     simpa only [W, Finset.coe_union, reachingCandidateSeed] using hballCard)
   let right : VertexExpansion G P.adjusted.rightRoot targetOrder totalRadius :=
     rightSmall.radiusMono
@@ -3578,7 +3564,6 @@ theorem exists_targetAdjuster_of_large_reachingCandidate_ball_expansion
         rw [← P.core_eq]
         exact hzCore))
     · exact (Finset.disjoint_left.1 hballW (hrightBall hzRight) (by
-        change z ∈ W
         exact Finset.mem_union_right _ (by
           change z ∈ P.path.support.toFinset
           exact List.mem_toFinset.2 hz))).elim
@@ -3606,7 +3591,6 @@ theorem exists_targetAdjuster_of_large_reachingCandidate_ball_expansion
   have hcoreRight : Disjoint P.adjusted.core right.verts := by
     apply (hballW.mono hrightBall ?_).symm
     intro z hzCore
-    change z ∈ W
     exact Finset.mem_union_left _ (Finset.mem_union_right _
       (Finset.mem_union_left _ hzCore))
   have hends : Disjoint left.verts right.verts := by
@@ -3625,7 +3609,6 @@ theorem exists_targetAdjuster_of_large_reachingCandidate_ball_expansion
   · exact (Finset.disjoint_left.1 hleft hzLeft
       (Finset.mem_union_left _ (Finset.mem_union_left _ hzDeleted))).elim
   · exact (Finset.disjoint_left.1 hballW (hrightBall hzRight) (by
-      change z ∈ W
       exact Finset.mem_union_left _ (Finset.mem_union_left _ hzDeleted))).elim
   · have hdeleted : Disjoint deleted P.adjusted.verts := by
       rw [P.verts_eq]
@@ -3645,7 +3628,7 @@ theorem reachingCandidate_ball_eq_highDegree_of_no_second
       {A : SmallSimpleAdjusterCandidate G minRadius maxRadius //
         A.Eligible deleted highDegree protectedSet separation}}
     (i : {A // A ∈ reachingEligibleSubfamily S targetSet connectionRadius})
-    (hfinishHigh : (reachingCandidateConnectionData i).finish ∈ highDegree)
+    (_ : (reachingCandidateConnectionData i).finish ∈ highDegree)
     (hnoSecond : ¬ HasShortAvoidingConnection G
       (deleted ∪ reachingCandidateBarrier i ∪ reachingCandidatePath i)
       (reachingCandidateSeed i)
@@ -3678,7 +3661,6 @@ theorem reachingCandidate_ball_eq_highDegree_of_no_second
     · exact (Finset.disjoint_left.1
         (reachingCandidateConnectionData i).opposite_disjoint_path
         hzSeed (by
-          change z ∈ (reachingCandidateConnectionData i).path.support.toFinset
           exact hzPath)).elim
   have hfar : ¬ HasShortAvoidingConnection G X
       (reachingCandidateSeed i) highDegree ballRadius := by
@@ -3767,7 +3749,6 @@ theorem reachingCandidate_ball_eq_highDegree_of_no_highConnection
         (reachingCandidateSeed_disjoint_deleted_union_barrier i)
         hzSeed (Finset.mem_union_right _ hzBarrier)).elim
     · exact (Finset.disjoint_left.1 P.opposite_disjoint_path hzSeed (by
-        change z ∈ P.path.support.toFinset
         exact hzPath)).elim
   have hfar : ¬ HasShortAvoidingConnection G X
       (reachingCandidateSeed i) highDegree ballRadius := by
@@ -3791,9 +3772,7 @@ theorem reachingCandidate_ball_eq_highDegree_of_no_highConnection
     · exact Finset.mem_union_left _ (Finset.mem_union_left _ hzDeleted)
     · apply Finset.mem_union_left
       apply Finset.mem_union_right
-      change z ∈ reachingCandidateBarrier i
       apply Finset.mem_union_left
-      change z ∈ reachingCandidateCore i
       rw [reachingCandidateCore, P.core_eq]
       exact hzCore
   have heq := ballAvoidingFrom_union_eq_of_no_shortAvoidingConnection
@@ -3862,7 +3841,6 @@ theorem reachingCandidate_high_ball_disjoint_protected
         · exact (Finset.disjoint_left.1
             (reachingCandidateConnectionData i).opposite_disjoint_path ha
             (by
-              change a ∈ (reachingCandidateConnectionData i).path.support.toFinset
               exact haPath)).elim)
       y hyBall (by exact Or.inl (Or.inl (Or.inr hyHigh)))
   · apply i.1.2.2.2
@@ -4025,7 +4003,7 @@ structure LM44Scale
 /-- The occupied seed of a putatively small maximal family has the cardinality
 budget recorded by `LM44Scale`.  This is the first counting estimate in Claim
 4.4; proof fields on eligible candidates play no role in the count. -/
-theorem card_LM44_seed_le [Fintype V]
+theorem card_LM44_seed_le
     {N d targetOrder totalRadius Delta deletedCap protectedCap separation
       minRadius maxRadius R : ℕ} {kappa : ℝ}
     (scale : LM44Scale N d targetOrder totalRadius Delta deletedCap protectedCap
@@ -4093,7 +4071,7 @@ theorem card_LM44_ball_le [Fintype V]
 
 /-- The finite maximal collection `A₀`, constructed without requiring a
 finiteness instance on the proof-carrying adjuster type. -/
-theorem exists_maximal_eligible_family [Fintype V]
+theorem exists_maximal_eligible_family [Finite V]
     (deleted highDegree protectedSet : Finset V) (separation : ℕ) :
     ∃ S : Finset
       {A : SmallSimpleAdjusterCandidate G minRadius maxRadius //
@@ -5671,7 +5649,7 @@ theorem liuMontgomery_lemma4_2_finite [Fintype V]
   have hx₁z : x₁ ≠ z := fun h ↦ hx₁C (h ▸ hzC)
   have hx₂z : x₂ ≠ z := fun h ↦ hx₂C (h ▸ hzC)
   have hcForbidden : c ∉ forbidden := fun hc ↦
-    Finset.disjoint_left.1 hforbiddenCycle hc (by simpa using hcC)
+    Finset.disjoint_left.1 hforbiddenCycle hc (by simp)
   have hzForbidden : z ∉ forbidden := fun hz ↦
     Finset.disjoint_left.1 hforbiddenCycle hz (by simpa using hzC)
   have hprotectedCard : C.support.toFinset.card ≤ C.length + 1 := by
@@ -5761,7 +5739,7 @@ theorem liuMontgomery_lemma4_2_finite [Fintype V]
     intro v hv₁ hv₂
     have hv := meet (0 : Fin 6) (2 : Fin 6) (by decide) hv₁ hv₂
     have hv' := meet (2 : Fin 6) (0 : Fin 6) (by decide) hv₂ hv₁
-    simp [roots, lemma42Roots] at hv hv'
+    dsimp [roots, lemma42Roots] at hv hv'
     exact hx₁x₂ (hv.symm.trans hv')
   let W₁ : Finset V :=
     (forbidden ∪ C.support.toFinset ∪ E₁₁.verts ∪ E₂₁.verts ∪
@@ -5846,26 +5824,26 @@ theorem liuMontgomery_lemma4_2_finite [Fintype V]
   have hE₂₂W₁ : E₂₂.verts ⊆ W₁ := by
     intro v hv
     apply Finset.mem_sdiff.2
-    refine ⟨by simp [W₁, hv], ?_⟩
+    refine ⟨by simp [hv], ?_⟩
     simp only [Finset.mem_insert, Finset.mem_singleton]
     rintro (rfl | rfl)
     · have h := meet (3 : Fin 6) (0 : Fin 6) (by decide) hv E₁₁.root_mem
-      simp [roots, lemma42Roots] at h
+      dsimp [roots, lemma42Roots] at h
       exact hx₁x₂ h
-    · have h := meetC (3 : Fin 6) hv (by simpa using hcC)
+    · have h := meetC (3 : Fin 6) hv (by simp)
       simp [roots, lemma42Roots] at h
       exact hx₂c h.symm
   have hE₄₁W₁ : E₄₁.verts ⊆ W₁ := by
     intro v hv
     apply Finset.mem_sdiff.2
-    refine ⟨by simp [W₁, hv], ?_⟩
+    refine ⟨by simp [hv], ?_⟩
     simp only [Finset.mem_insert, Finset.mem_singleton]
     rintro (rfl | rfl)
     · have h := meet (5 : Fin 6) (0 : Fin 6) (by decide) hv E₁₁.root_mem
-      simp [roots, lemma42Roots] at h
+      dsimp [roots, lemma42Roots] at h
       exact hx₁z h
-    · have h := meetC (5 : Fin 6) hv (by simpa using hcC)
-      simp [roots, lemma42Roots] at h
+    · have h := meetC (5 : Fin 6) hv (by simp)
+      dsimp [roots, lemma42Roots] at h
       exact hcz h
   have hPdisjE₂₂ : Disjoint P.support.toFinset E₂₂.verts := by
     rw [Finset.disjoint_left]
@@ -5963,7 +5941,7 @@ theorem liuMontgomery_lemma4_2_finite [Fintype V]
   have hPsubsetW₂ : P.support.toFinset ⊆ W₂ := by
     intro v hv
     apply Finset.mem_sdiff.2
-    refine ⟨by simp [W₂, hv], ?_⟩
+    refine ⟨by simp [hv], ?_⟩
     intro hvRoot
     simp only [Finset.mem_insert, Finset.mem_singleton] at hvRoot
     rcases hvRoot with hvx₂ | hvz
@@ -5979,7 +5957,7 @@ theorem liuMontgomery_lemma4_2_finite [Fintype V]
     have hvx₁ : v ≠ x₁ := fun hv ↦ hx₁C (hv ▸ hvC)
     have hvW : v ∈ W₁ := by
       apply Finset.mem_sdiff.2
-      exact ⟨by simp [W₁, hvC], by simp [hvx₁, hvc]⟩
+      exact ⟨by simp [hvC], by simp [hvx₁, hvc]⟩
     exact hPavoid v hvP hvW
   have hQcycle : ∀ v ∈ Q.support, v ∈ C.support → v = z := by
     intro v hvQ hvC
@@ -5987,16 +5965,16 @@ theorem liuMontgomery_lemma4_2_finite [Fintype V]
     have hvx₂ : v ≠ x₂ := fun hv ↦ hx₂C (hv ▸ hvC)
     have hvW : v ∈ W₂ := by
       apply Finset.mem_sdiff.2
-      exact ⟨by simp [W₂, hvC], by simp [hvx₂, hvz]⟩
+      exact ⟨by simp [hvC], by simp [hvx₂, hvz]⟩
     exact hQavoid v hvQ hvW
   have hE₂₁W₁ : E₂₁.verts ⊆ W₁ := by
     intro v hv
     apply Finset.mem_sdiff.2
-    refine ⟨by simp [W₁, hv], ?_⟩
+    refine ⟨by simp [hv], ?_⟩
     simp only [Finset.mem_insert, Finset.mem_singleton]
     rintro (rfl | rfl)
     · exact (Finset.disjoint_left.1 hfinalEnds E₁₁.root_mem hv).elim
-    · have h := meetC (2 : Fin 6) hv (by simpa using hcC)
+    · have h := meetC (2 : Fin 6) hv (by simp)
       simp [roots, lemma42Roots] at h
       exact hx₂c h.symm
   have hPdisjE₂₁ : Disjoint P.support.toFinset E₂₁.verts := by
@@ -6006,7 +5984,7 @@ theorem liuMontgomery_lemma4_2_finite [Fintype V]
   have hE₁₁W₂ : E₁₁.verts ⊆ W₂ := by
     intro v hv
     apply Finset.mem_sdiff.2
-    refine ⟨by simp [W₂, hv], ?_⟩
+    refine ⟨by simp [hv], ?_⟩
     simp only [Finset.mem_insert, Finset.mem_singleton]
     rintro (rfl | rfl)
     · exact (Finset.disjoint_left.1 hfinalEnds hv E₂₁.root_mem).elim
@@ -6028,7 +6006,7 @@ theorem liuMontgomery_lemma4_2_finite [Fintype V]
       exact hx₂z h.symm
     have hvW : v ∈ W₂ := by
       apply Finset.mem_sdiff.2
-      exact ⟨by simp [W₂, hvE], by simp [hvx₂, hvz]⟩
+      exact ⟨by simp [hvE], by simp [hvx₂, hvz]⟩
     exact hQavoid v hvQ hvW
   have hPshort : P.support.Disjoint short.support.tail := by
     rw [List.disjoint_left]
@@ -6069,13 +6047,13 @@ theorem liuMontgomery_lemma4_2_finite [Fintype V]
     rw [Finset.disjoint_left]
     intro v hvC hvE
     have h := meetC (0 : Fin 6) hvE hvC
-    simp [roots, lemma42Roots] at h
+    dsimp [roots, lemma42Roots] at h
     exact hx₁C (by simpa [h] using hvC)
   have hcycleRight : Disjoint C.support.toFinset E₂₁.verts := by
     rw [Finset.disjoint_left]
     intro v hvC hvE
     have h := meetC (2 : Fin 6) hvE hvC
-    simp [roots, lemma42Roots] at h
+    dsimp [roots, lemma42Roots] at h
     exact hx₂C (by simpa [h] using hvC)
   have hPE₁root : ∀ v ∈ P.support, v ∈ E₁₁.verts → v = x₁ := by
     intro v hvP hvE
@@ -6083,10 +6061,10 @@ theorem liuMontgomery_lemma4_2_finite [Fintype V]
     have hvc : v ≠ c := by
       intro hv
       subst v
-      exact (Finset.disjoint_left.1 hcycleLeft (by simpa using hcC) hvE).elim
+      exact (Finset.disjoint_left.1 hcycleLeft (by simp) hvE).elim
     have hvW : v ∈ W₁ := by
       apply Finset.mem_sdiff.2
-      exact ⟨by simp [W₁, hvE], by simp [hvx₁, hvc]⟩
+      exact ⟨by simp [hvE], by simp [hvx₁, hvc]⟩
     exact hPavoid v hvP hvW
   have hcoreLeft : Disjoint (cycleSpliceCore P Q C) E₁₁.verts := by
     rw [Finset.disjoint_left]
@@ -6133,7 +6111,7 @@ theorem liuMontgomery_lemma4_2_finite [Fintype V]
     rcases hvUnion with (hvP | hvC) | hvQ
     · have hvW : v ∈ W₁ := by
         apply Finset.mem_sdiff.2
-        refine ⟨by simp [W₁, hvF], ?_⟩
+        refine ⟨by simp [hvF], ?_⟩
         simp only [Finset.mem_insert, Finset.mem_singleton]
         exact fun h ↦ h.elim (fun hv ↦ hx₁forbidden (hv ▸ hvF))
           (fun hv ↦ hcForbidden (hv ▸ hvF))
@@ -6141,7 +6119,7 @@ theorem liuMontgomery_lemma4_2_finite [Fintype V]
     · exact (Finset.disjoint_left.1 hforbiddenCycle hvF hvC).elim
     · have hvW : v ∈ W₂ := by
         apply Finset.mem_sdiff.2
-        refine ⟨by simp [W₂, hvF], ?_⟩
+        refine ⟨by simp [hvF], ?_⟩
         simp only [Finset.mem_insert, Finset.mem_singleton]
         exact fun h ↦ h.elim (fun hv ↦ hx₂forbidden (hv ▸ hvF))
           (fun hv ↦ hzForbidden (hv ▸ hvF))
@@ -6151,25 +6129,25 @@ theorem liuMontgomery_lemma4_2_finite [Fintype V]
     (by omega) hshortLen hlongLen hshortSupport hlongSupport
     hPshort hPshortQ hPlong hPlongQ hcoreLeft hcoreRight hfinalEnds hcoreCard
   refine ⟨A, rfl, rfl, ?_, ?_⟩
-  intro v hvC
-  apply Finset.mem_sdiff.2
-  refine ⟨by simp [cycleSpliceCore, hvC], ?_⟩
-  simp only [Finset.mem_insert, Finset.mem_singleton]
-  intro hvRoots
-  rcases hvRoots with hv₁ | hv₂
-  · subst v
-    apply hx₁C
-    exact List.mem_toFinset.1 hvC
-  · subst v
-    apply hx₂C
-    exact List.mem_toFinset.1 hvC
-  rw [Finset.disjoint_left]
-  intro v hvF hvA
-  change v ∈ E₁₁.verts ∪ E₂₁.verts ∪ cycleSpliceCore P Q C at hvA
-  simp only [Finset.mem_union] at hvA
-  rcases hvA with (hvLeft | hvRight) | hvCore
-  · exact (Finset.disjoint_left.1 hleftForbidden hvF hvLeft).elim
-  · exact (Finset.disjoint_left.1 hrightForbidden hvF hvRight).elim
-  · exact (Finset.disjoint_left.1 hcoreForbidden hvF hvCore).elim
+  · intro v hvC
+    apply Finset.mem_sdiff.2
+    refine ⟨by simp [hvC], ?_⟩
+    simp only [Finset.mem_insert, Finset.mem_singleton]
+    intro hvRoots
+    rcases hvRoots with hv₁ | hv₂
+    · subst v
+      apply hx₁C
+      exact List.mem_toFinset.1 hvC
+    · subst v
+      apply hx₂C
+      exact List.mem_toFinset.1 hvC
+  · rw [Finset.disjoint_left]
+    intro v hvF hvA
+    change v ∈ E₁₁.verts ∪ E₂₁.verts ∪ cycleSpliceCore P Q C at hvA
+    simp only [Finset.mem_union] at hvA
+    rcases hvA with (hvLeft | hvRight) | hvCore
+    · exact (Finset.disjoint_left.1 hleftForbidden hvF hvLeft).elim
+    · exact (Finset.disjoint_left.1 hrightForbidden hvF hvRight).elim
+    · exact (Finset.disjoint_left.1 hcoreForbidden hvF hvCore).elim
 
 end Erdos63

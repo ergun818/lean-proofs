@@ -211,8 +211,7 @@ noncomputable def ofColoring (c : G.Coloring Bool) : Bipartition G where
     refine ⟨?_, ?_⟩
     · rw [Set.disjoint_left]
       intro x hxleft hxright
-      simp only [Finset.coe_filter, Finset.coe_univ, Set.mem_setOf_eq,
-        Set.mem_univ, true_and] at hxleft hxright
+      simp only [Finset.coe_filter, Set.mem_ofPred_eq] at hxleft hxright
       simp [hxleft] at hxright
     · intro x y hxy
       have hne := c.valid hxy
@@ -541,7 +540,7 @@ def monoGraph (E : BoundedVertexExpansion G root D m) (hGG' : G ≤ G') :
 
 /-- Restrict the recorded vertex set when paths to all retained vertices are
 known to remain in the retained set. -/
-def restrictVertices (E : BoundedVertexExpansion G root D m) (T : Finset V)
+def restrictVertices (_ : BoundedVertexExpansion G root D m) (T : Finset V)
     (hroot : root ∈ T) (D' : ℕ) (hcard : T.card = D')
     (hpaths : ∀ y : V, y ∈ T →
       ∃ p : G.Walk root y,

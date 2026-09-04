@@ -99,7 +99,7 @@ def IsKSExpander [Fintype V] (G : SimpleGraph V) (t : ℝ) : Prop :=
     t ≤ S.card → 2 * S.card ≤ Fintype.card V →
       ksRate t S.card * S.card ≤ (externalNeighborhood G S).card
 
-lemma ksGamma_mem_Icc {t x : ℝ} (ht : 0 < t) (hx : 0 < x) :
+lemma ksGamma_mem_Icc {t x : ℝ} (ht : 0 < t) (_ : 0 < x) :
     ksGamma t x ∈ Set.Icc (0 : ℝ) 1 := by
   by_cases hxt : x < t
   · simp [ksGamma, hxt]
@@ -144,7 +144,7 @@ lemma ksGamma_anti {t x y : ℝ} (ht : 0 < t) (hx : 0 < x) (hxy : x ≤ y) :
     simp only [ksGamma, hxt, hyt, if_false]
     exact (inv_le_inv₀ hlogy hlogx).2 hlogxy
 
-lemma ksRate_nonneg {t x : ℝ} (ht : 0 < t) (hx : 0 ≤ x) :
+lemma ksRate_nonneg {t x : ℝ} (_ : 0 < t) (_ : 0 ≤ x) :
     0 ≤ ksRate t x := by
   by_cases hxt : x < t
   · simp [ksRate, hxt]
@@ -390,7 +390,7 @@ lemma exists_ksInducedScore_maximizer [Fintype V] (G : SimpleGraph V)
 lemma ksInducedAverageDegree_le_of_score_maximal [Fintype V]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     {t : ℝ} (ht : 0 < t) {S : Finset V}
-    (hS : S.Nonempty)
+    (_ : S.Nonempty)
     (hmax : ∀ T : Finset V,
       ksInducedScore t G T ≤ ksInducedScore t G S) :
     ∀ T : Finset V, T ⊆ S →
@@ -547,7 +547,7 @@ lemma ksInducedAverageDegree_le_in_maximizer [Fintype V]
 
 /-! ## Minimum degree of the maximizer -/
 
-private noncomputable def ksInduceEraseIso [Fintype V]
+private noncomputable def ksInduceEraseIso
     (G : SimpleGraph V) (S : Finset V) (v : V) (hv : v ∈ S) :
     G.induce (↑(S.erase v) : Set V) ≃g
       (G.induce (↑S : Set V)).induce
@@ -568,7 +568,7 @@ private noncomputable def ksInduceEraseIso [Fintype V]
   right_inv x := Subtype.ext <| Subtype.ext rfl
   map_rel_iff' := Iff.rfl
 
-private theorem ks_card_edgeFinset_induce_erase_add_degree [Fintype V]
+private theorem ks_card_edgeFinset_induce_erase_add_degree
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (S : Finset V) (v : V) (hv : v ∈ S) :
     (G.induce (↑(S.erase v) : Set V)).edgeFinset.card +
@@ -646,7 +646,6 @@ lemma ksInducedAverageDegree_erase_gt [Fintype V]
   have hdegree' : (q : ℝ) * n < m := (lt_div_iff₀ hnR).mp hdegree
   norm_num only [Nat.cast_one] at ⊢
   rw [div_lt_div_iff₀ hnR hn1R]
-  push_cast at hdegree' ⊢
   calc
     2 * (m : ℝ) * ((n : ℝ) - 1) =
         2 * m * n - 2 * m := by ring
@@ -757,7 +756,7 @@ lemma ks_card_edgeFinset_le_inside_union_compl [Fintype V]
 union of a set with its external neighborhood spans enough edges to account
 for half of `d` times the size of the set. -/
 lemma ks_separator_density [Fintype V] (G : SimpleGraph V)
-    [DecidableRel G.Adj] {d : ℝ} (hd : 0 ≤ d)
+    [DecidableRel G.Adj] {d : ℝ} (_ : 0 ≤ d)
     (hbase : d ≤ averageDegree G)
     (hmax : ∀ T : Finset V, ksInducedAverageDegree G T ≤ d)
     (A : Finset V) :
@@ -775,7 +774,6 @@ lemma ks_separator_density [Fintype V] (G : SimpleGraph V)
     · have hCcard : (0 : ℝ) < C.card := by
         exact_mod_cast (Finset.card_pos.mpr (Finset.nonempty_iff_ne_empty.mpr hC))
       rw [ksInducedAverageDegree] at hCavg
-      norm_num at hCavg ⊢
       exact (div_le_iff₀ hCcard).mp hCavg
   have htotal : d * Fintype.card V ≤
       2 * (G.edgeFinset.card : ℝ) := by
@@ -783,7 +781,6 @@ lemma ks_separator_density [Fintype V] (G : SimpleGraph V)
     · simp [hV]
     · have hVR : (0 : ℝ) < Fintype.card V := by exact_mod_cast Nat.pos_of_ne_zero hV
       rw [averageDegree] at hbase
-      norm_num at hbase ⊢
       exact (le_div_iff₀ hVR).mp hbase
   have hCcard : A.card + C.card = Fintype.card V := by
     dsimp [C]
@@ -806,7 +803,7 @@ lemma ks_separator_density [Fintype V] (G : SimpleGraph V)
 
 lemma ks_score_forces_density_loss {t x n a d : ℝ}
     (ht : 0 < t) (htx : t ≤ x) (hxn : 3 * x ≤ 2 * n)
-    (ha : 0 ≤ a) (hd : 0 ≤ d)
+    (_ : 0 ≤ a) (hd : 0 ≤ d)
     (hscore : a * (1 + ksGamma t x) ≤
       d * (1 + ksGamma t n)) :
     a ≤ d * (1 - 64 * ksRate t x) := by

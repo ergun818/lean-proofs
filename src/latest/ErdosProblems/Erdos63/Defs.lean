@@ -367,7 +367,7 @@ theorem ballAvoiding_subset_insert_compl [Fintype V] (G : SimpleGraph V)
     (ballAvoiding G X root r : Set V) ⊆ {root} ∪ Xᶜ := by
   intro y hy
   rcases (mem_ballAvoiding G X root r y).1 hy |>.eq_root_or_not_mem with h | h
-  · exact Or.inl (by simpa [h])
+  · exact Or.inl (by simp [h])
   · exact Or.inr h
 
 end Erdos63

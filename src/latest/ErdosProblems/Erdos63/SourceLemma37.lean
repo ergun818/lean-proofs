@@ -1206,7 +1206,6 @@ theorem source_candidate_ball_subset_highDegree_ball_of_no_high
   apply ballAvoidingFrom_forbidden_anti G
   intro z hz
   rw [Finset.coe_union] at hz
-  change z ∈ (X : Set V) ∪ (highDegree : Set V)
   rcases hz with hzHigh | hzCore
   · exact Or.inr hzHigh
   · exact Or.inl (Finset.mem_union_right _ hzCore)
@@ -1293,7 +1292,7 @@ theorem exists_large_twoEnd_ball_of_LM37SourceFinalBounds
     G (1 / 1024) ((1 / 64) * (d : ℝ)) hexp deleted Aseed Bset Cset
       deletedCap (SourceLemma35Numerics.indexCard (Fintype.card V)) 0
       ballRadius (10 * m ^ 2 * Dtarget) degreeInto scale hdeleted
-  · simpa [hcard]
+  · simp [hcard]
   · intro i
     dsimp [Aseed]
     rw [card_ends]
@@ -1301,7 +1300,7 @@ theorem exists_large_twoEnd_ball_of_LM37SourceFinalBounds
       (Nat.pow_le_pow_left i.1.1.min_le 2))
   · intro i
     have hx : i.1.1.adjuster.leftRoot ∈ Aseed i := by
-      simpa [Aseed] using i.1.1.adjuster.leftEnd.root_mem
+      simp [Aseed]
     have hdisjoint : Disjoint (Aseed i) (deleted ∪ Bset i ∪ Cset i) := by
       simpa [Aseed, Bset, Cset] using
         i.1.1.ends_disjoint_deleted_union_core i.1.2
@@ -1321,12 +1320,11 @@ theorem exists_large_twoEnd_ball_of_LM37SourceFinalBounds
             exact this)
           hcore (by
             intro r
-            simp [Cset, HasLimitedContactAfterDeletion,
-              blockedExternalNeighborhood])
+            simp [Cset, blockedExternalNeighborhood])
     exact hstartOne.trans_le ((hretained i).trans (by simpa using hboot))
   · intro i
     have hx : i.1.1.adjuster.leftRoot ∈ Aseed i := by
-      simpa [Aseed] using i.1.1.adjuster.leftEnd.root_mem
+      simp [Aseed]
     have hdisjoint : Disjoint (Aseed i) (deleted ∪ Bset i ∪ Cset i) := by
       simpa [Aseed, Bset, Cset] using
         i.1.1.ends_disjoint_deleted_union_core i.1.2
@@ -1346,11 +1344,10 @@ theorem exists_large_twoEnd_ball_of_LM37SourceFinalBounds
             exact this)
           hcore (by
             intro r
-            simp [Cset, HasLimitedContactAfterDeletion,
-              blockedExternalNeighborhood])
+            simp [Cset, blockedExternalNeighborhood])
     exact (hretained i).trans (by simpa using hboot)
   · intro i r
-    simp [Cset, HasLimitedContactAfterDeletion, blockedExternalNeighborhood]
+    simp [Cset, blockedExternalNeighborhood]
   · exact hpairActual
   · intro i ell hell hellRadius hslow
     dsimp [Bset]
@@ -1450,7 +1447,7 @@ theorem exists_large_twoEnd_ball_of_LM37SourceFinalBounds_of_radiusOneLower
     G (1 / 1024) ((1 / 64) * (d : ℝ)) hexp deleted Aseed Bset Cset
       deletedCap (SourceLemma35Numerics.indexCard (Fintype.card V)) 0
       ballRadius (10 * m ^ 2 * Dtarget) degreeInto scale hdeleted
-  · simpa [hcard]
+  · simp [hcard]
   · intro i
     dsimp [Aseed]
     rw [card_ends]
@@ -1464,7 +1461,7 @@ theorem exists_large_twoEnd_ball_of_LM37SourceFinalBounds_of_radiusOneLower
     simpa [scale, LM37SourceBounds.toCorrelatedScale, Aseed, Bset, Cset,
       Set.union_empty] using hballOneLower i
   · intro i r
-    simp [Cset, HasLimitedContactAfterDeletion, blockedExternalNeighborhood]
+    simp [Cset, blockedExternalNeighborhood]
   · exact hpairActual
   · intro i ell hell hellRadius hslow
     dsimp [Bset]
@@ -1572,7 +1569,7 @@ theorem exists_large_twoEnd_ball_of_conditional_LM37SourceFinalBounds
               hdisjoint (hdegreeMin i.1.1.adjuster.leftRoot) (hdegree i _ hxBall)
               hcore (by
                 intro r
-                simp [HasLimitedContactAfterDeletion, blockedExternalNeighborhood])
+                simp [blockedExternalNeighborhood])
         exact hretained.trans (by simpa using hboot)
     exact exists_large_twoEnd_ball_of_LM37SourceFinalBounds_of_radiusOneLower
       G hpair d deletedCap degreeInto m Dtarget maxSlowSize (bounds hM) hexp
@@ -1605,7 +1602,7 @@ theorem exists_large_twoEnd_ball_of_conditional_LM37SourceFinalBounds
             hdisjoint (hdegreeMin i.1.1.adjuster.leftRoot) (hdegree i _ hxBall)
             hcore (by
               intro r
-              simp [HasLimitedContactAfterDeletion, blockedExternalNeighborhood])
+              simp [blockedExternalNeighborhood])
       have hOne : 10 * m ^ 2 * Dtarget ≤ (ballAvoidingFrom G
           ((deleted : Set V) ∪ (i.1.1.adjuster.core : Set V) ∪
             ((∅ : Finset V) : Set V)) i.1.1.ends 1).card :=

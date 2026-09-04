@@ -103,7 +103,7 @@ noncomputable def mapEmbedding {W : Type v} {H : SimpleGraph W}
   vertices := E.verts.map ⟨f, f.injective⟩
   root_mem := Finset.mem_map.2 ⟨root, E.root_mem, rfl⟩
   card_vertices := by
-    simpa using E.card_verts
+    simp
   path_to := by
     intro y hy
     obtain ⟨x, hx, rfl⟩ := Finset.mem_map.1 hy
@@ -158,7 +158,7 @@ private theorem exists_first_exit_prefix {S T : Finset V} {y : V}
     by_cases hkeq : k = n
     · have hwz : w = z := by
         rw [← hkw, hqget, hkeq]
-      simpa [hwz]
+      simp [hwz]
     · apply Finset.mem_insert_of_mem
       have hpkT : p.getVert k ∈ T := by
         by_contra hkT

@@ -272,9 +272,11 @@ theorem exists_maximal_eligible_family_card_ge_four_mul
       rw [Finset.disjoint_left]
       intro v hvEnds hvHigh
       change v ∈
-        ((A.leftEnd.mapEmbedding (SimpleGraph.Embedding.induce {x | x ∈ T})).monoGraph hHG).verts.map
+        ((A.leftEnd.mapEmbedding
+          (SimpleGraph.Embedding.induce {x | x ∈ T})).monoGraph hHG).verts.map
               (Function.Embedding.subtype outer) ∪
-          ((A.rightEnd.mapEmbedding (SimpleGraph.Embedding.induce {x | x ∈ T})).monoGraph hHG).verts.map
+          ((A.rightEnd.mapEmbedding
+            (SimpleGraph.Embedding.induce {x | x ∈ T})).monoGraph hHG).verts.map
               (Function.Embedding.subtype outer) at hvEnds
       rcases Finset.mem_union.1 hvEnds with hvLeft | hvRight
       · obtain ⟨w, hw, hwv⟩ := Finset.mem_map.1 hvLeft

@@ -432,8 +432,7 @@ theorem liuMontgomery_lemma3_12_finite [Fintype V]
   obtain ⟨A0, hA0, hA0card⟩ := Finset.exists_subset_card_eq hcompl
   have hP0 : P 0 := by
     refine ⟨A0, hA0, hA0card.le.trans schedule.zero, ?_⟩
-    simpa [hA0card] using
-      Finset.card_le_card (subset_ballAvoidingFrom G (W : Set V) A0 0)
+    simp [hA0card]
   let i := Nat.findGreatest P rounds
   have hiP : P i := Nat.findGreatest_spec (P := P) (Nat.zero_le _) hP0
   have hirounds : i ≤ rounds := Nat.findGreatest_le rounds
@@ -541,7 +540,7 @@ private theorem exists_path_to_first_entry [Fintype V]
     (F : VertexExpansion G y L rE)
     (W : Finset V) (workspace radius : ℕ)
     (hEW : Disjoint E.verts W) (hFW : Disjoint F.verts W)
-    (hEF : Disjoint E.verts F.verts)
+    (_ : Disjoint E.verts F.verts)
     (hW : W.card ≤ workspace)
     (start : ℕ)
     (hDseed : start ≤ D ∨ start + workspace ≤ degreeScale)
@@ -741,13 +740,14 @@ private theorem exists_fresh_expansion_family [Fintype V]
 finite type and equal keys force a conflict.  The candidate type itself need
 not be finite. -/
 theorem exists_finite_maximal_conflictFree_family
-    {Candidate Key : Type*} [Fintype Key]
+    {Candidate Key : Type*} [Finite Key]
     (key : Candidate → Key) (Conflict : Candidate → Candidate → Prop)
     (hsame : ∀ a b, key a = key b → Conflict a b)
     (hsymm : ∀ a b, Conflict a b → Conflict b a) :
     ∃ S : Finset Candidate,
       ((S : Set Candidate).Pairwise fun a b ↦ ¬ Conflict a b) ∧
         ∀ a : Candidate, ∃ b ∈ S, Conflict a b := by
+  let := Fintype.ofFinite Key
   classical
   have aux : ∀ keys : Finset Key, ∃ S : Finset Candidate,
       ((S : Set Candidate).Pairwise fun a b ↦ ¬ Conflict a b) ∧
@@ -787,7 +787,7 @@ theorem exists_finite_maximal_conflictFree_family
           · have hnotall : ¬ ∀ b ∈ S, ¬ Conflict a b := by
               intro hall
               exact hnew ⟨a, hak, hall⟩
-            push_neg at hnotall
+            push Not at hnotall
             obtain ⟨b, hbS, hab⟩ := hnotall
             exact ⟨b, hbS, hab⟩
           · exact hSmax a hakeys
@@ -876,7 +876,7 @@ theorem Conflict.symm
   · exact Or.inr fun hdisj ↦ hinter hdisj.symm
 
 /-- A maximal pairwise externally disjoint raw-arm family. -/
-theorem exists_maximal_family [Fintype Key] :
+theorem exists_maximal_family [Finite Key] :
     ∃ S : Finset (RawArm G source forbidden target keys m),
       ((S : Set (RawArm G source forbidden target keys m)).Pairwise
         fun A B ↦ ¬ Conflict A B) ∧
@@ -992,12 +992,12 @@ target is charged to the workspace.
 The two reserve inequalities are simple cardinal forms of the source
 estimates `D-|W| >= x` and `|B_k|-|W| >= x`. -/
 theorem exists_saturated_family
-    [Fintype Key] [DecidableRel G.Adj]
+    [Finite Key] [DecidableRel G.Adj]
     (epsilon kappa : ℝ) (hexp : IsLMExpander G epsilon kappa)
     (degreeScale : ℕ) (hdegree : ∀ v : V, degreeScale ≤ G.degree v)
     (start workspace radius : ℕ)
     (growth : BallGrowthSchedule G epsilon kappa start workspace radius)
-    (hstart : 0 < start)
+    (_ : 0 < start)
     (hradius : 2 * (radius + 1) ≤ m)
     (hfixed : forbidden.card + keys.card * (m + 1) ≤ workspace)
     (hsourceSurvives : 1 + workspace ≤ source.card)
@@ -1115,7 +1115,7 @@ blocks, then fewer than all four-tuples are bad as soon as
 `4*q*M^3 < M^4`.  Crucially, the three destination blocks are aggregated
 before applying the degree bound. -/
 theorem exists_good_four_of_total_bad_degree
-    {α : Type*} [DecidableEq α]
+    {α : Type*}
     (C₀ C₁ C₂ C₃ : Finset α) (Bad : α → α → Prop)
     (M q : ℕ)
     (h₀ : C₀.card = M) (h₁ : C₁.card = M)
@@ -1303,7 +1303,7 @@ theorem exists_good_four_of_total_bad_degree
 /-- A contact set of size at most `m+1`, already containing the arm's own
 target point, meets at most `m` other pairwise-disjoint keyed targets. -/
 theorem card_target_hits_le
-    {Arm Key₀ V₀ : Type*} [DecidableEq Arm] [DecidableEq Key₀]
+    {Arm Key₀ V₀ : Type*}
     [DecidableEq V₀] [Fintype Key₀]
     (C : Finset Arm) (key : Arm → Key₀)
     (target : Key₀ → Finset V₀)
@@ -1358,7 +1358,7 @@ theorem card_target_hits_le
 remaining roots contains a block of `armsPerRoot` arms assigned to one root.
 This is the exact finite pigeonhole step in each of the four routing stages. -/
 theorem exists_popular_owner
-    {Candidate Owner : Type*} [DecidableEq Candidate] [DecidableEq Owner]
+    {Candidate Owner : Type*}
     (S : Finset Candidate) (remaining : Finset Owner)
     (owner : Candidate → Owner) (armsPerRoot : ℕ)
     (hremaining : remaining.Nonempty)
@@ -1666,7 +1666,7 @@ theorem RoutedArm.disjoint_other_expansion [Fintype V]
     (hEpair : ∀ i j, i ≠ j → Disjoint (E i).verts (E j).verts)
     (R : Finset (Fin 4))
     (P : RoutedArm G A root Key target m) (i j : Fin 4)
-    (howner : P.owner = i)
+    (_ : P.owner = i)
     (hsource : P.sourceCarrier = expansionUnion E R)
     (hpiece : P.ownerPiece = (E i).verts)
     (hjR : j ∈ R) (hij : i ≠ j) :
@@ -1684,7 +1684,7 @@ theorem RoutedArm.disjoint_other_expansion [Fintype V]
 three disjoint blocks of other arms.  This is the degree estimate used by the
 four-partite counting argument, isolated from the much larger stage-building
 proof so that Lean only elaborates it once. -/
-theorem RoutedArm.total_other_target_hits_le [Fintype V] [Fintype Key]
+theorem RoutedArm.total_other_target_hits_le [Fintype V] [Finite Key]
     {A : Finset V} {root : Fin 4 → V} {target : Key → Finset V}
     {m : ℕ}
     (Call C X Y Z : Finset (RoutedArm G A root Key target m))
@@ -1699,6 +1699,7 @@ theorem RoutedArm.total_other_target_hits_le [Fintype V] [Fintype Key]
       (X.filter fun b ↦ ¬ Disjoint a.exposure (target b.key)).card +
         (Y.filter fun b ↦ ¬ Disjoint a.exposure (target b.key)).card +
         (Z.filter fun b ↦ ¬ Disjoint a.exposure (target b.key)).card ≤ m := by
+  let := Fintype.ofFinite Key
   classical
   intro a ha
   let O := X ∪ Y ∪ Z
@@ -1756,7 +1757,7 @@ their target expansions.  Keeping this finite reindexing separate prevents
 the source-faithful four-stage construction from becoming one enormous
 elaboration unit. -/
 theorem enlargedFourConclusion_of_routed_permutation
-    [Fintype V] [Fintype Key]
+    [Fintype V]
     {A : Finset V} {root : Fin 4 → V}
     {targetRoot : Key → V} {targetRadius L m : ℕ}
     (B : ∀ k : Key, VertexExpansion G (targetRoot k) L targetRadius)
@@ -1883,7 +1884,7 @@ owner, prefix the retained raw arms inside that owner's prescribed expansion,
 and forget the heterogeneous raw-arm type.  This is the reusable unit called
 four times with remaining-root cardinalities `4,3,2,1`. -/
 theorem exists_routed_block
-    [Fintype Key] [DecidableRel G.Adj]
+    [Finite Key] [DecidableRel G.Adj]
     (epsilon kappa : ℝ) (hexp : IsLMExpander G epsilon kappa)
     (degreeScale : ℕ) (hdegree : ∀ v : V, degreeScale ≤ G.degree v)
     (start workspace radius q : ℕ)
@@ -1892,7 +1893,7 @@ theorem exists_routed_block
     (hradius : 2 * (radius + 1) ≤ m)
     (E : ∀ i : Fin 4, VertexExpansion G (root i) D m)
     (hEA : ∀ i, Disjoint (E i).verts A)
-    (hEpair : ∀ i j, i ≠ j → Disjoint (E i).verts (E j).verts)
+    (_ : ∀ i j, i ≠ j → Disjoint (E i).verts (E j).verts)
     (R : Finset (Fin 4)) (hR : R.Nonempty)
     (forbidden : Finset V) (hAforbidden : A ⊆ forbidden)
     (hEforbidden : ∀ i ∈ R, Disjoint (E i).verts forbidden)
@@ -1906,7 +1907,7 @@ theorem exists_routed_block
     (htargetSeed : ∀ k ∈ keys,
       start + workspace ≤ (target k).card ∨
         start + workspace ≤ degreeScale)
-    (htargetPair : ∀ k ∈ keys, ∀ l ∈ keys, k ≠ l →
+    (_ : ∀ k ∈ keys, ∀ l ∈ keys, k ≠ l →
       Disjoint (target k) (target l))
     (htargetSource : ∀ k, Disjoint (target k) (expansionUnion E R))
     (hcount : R.card * q ≤ keys.card) :
@@ -2494,8 +2495,7 @@ private theorem enlargedFourConclusion_of_candidates
   let σ : Fin 4 → Fin 4 := ![i₀, i₁, i₂, i₃]
   have hσinj : Function.Injective σ := by
     intro s t hst
-    fin_cases s <;> fin_cases t <;> simp only [σ, Matrix.cons_val_zero,
-      Matrix.cons_val_one, Fin.isValue] at hst
+    fin_cases s <;> fin_cases t <;> simp only [σ] at hst
     · rfl
     · exact (hi₁₀ hst.symm).elim
     · exact (hi₂₀ hst.symm).elim
@@ -2906,12 +2906,14 @@ private def swap
   end₂_avoids := S.end₁_avoids
   ends_disjoint := S.ends_disjoint.symm
 
+omit [Fintype V] in
 @[simp] private theorem total_swap
     (S : PairedLongConnectorState G X start₁ start₂ L m) :
     S.swap.total = S.total := by
   simp [PairedLongConnectorState.swap, PairedLongConnectorState.total,
     Nat.add_comm]
 
+omit [Fintype V] in
 /-- Update the first arm once a clean link to a new end expansion has been
 constructed.  The symmetric update is obtained by `swap`. -/
 private theorem extendLeft
@@ -2989,6 +2991,7 @@ private theorem extendLeft
   · simp only [T, PairedLongConnectorState.total, newPath, Walk.length_append]
     omega
 
+omit [Fintype V] in
 /-- Attach a clean end-to-fresh-expansion segment to the first arm. -/
 private theorem extendViaFirst
     (S : PairedLongConnectorState G X start₁ start₂ L m)
@@ -3827,7 +3830,6 @@ private theorem exists_short_cross [Fintype V]
         subst z
         exact Finset.disjoint_left.1 h₃₄ hb₃ hzE₄
       · exact Finset.disjoint_left.1 h₃₄ hzE₃ hzE₄
-
   · obtain ⟨p, hp, hpA, hplen, hpsub⟩ := package E₁ E₄ ha₁ hb₄ h₁₄
       Finset.subset_union_left Finset.subset_union_right
     refine Or.inr <| Or.inl ⟨p, hp, hpA, hplen, ?_, ?_⟩
@@ -3915,7 +3917,7 @@ private theorem exists_long_complement [Fintype V]
       freshWorkspace pathWorkspace)
     (hdegree : ∀ z : V, N.degreeScale ≤ G.degree z)
     (A : Finset V) (p : G.Walk x y)
-    (hp : p.IsPath) (hpA : ∀ z ∈ p.support, z ∉ A)
+    (hp : p.IsPath) (_ : ∀ z ∈ p.support, z ∉ A)
     (hplen : p.length ≤ 7 * m)
     (E : VertexExpansion G u L (3 * m))
     (F : VertexExpansion G v L (3 * m))

@@ -58,7 +58,7 @@ auxiliary expansion. -/
 noncomputable def claim46Workspace [Fintype V]
     (G : SimpleGraph V) (deleted highDegree : Finset V)
     (S : Finset
-      {A : SmallSimpleAdjusterCandidate G minRadius maxRadius // True})
+      {_A : SmallSimpleAdjusterCandidate G minRadius maxRadius // True})
     (ballRadius : ℕ) : Finset V :=
   deleted ∪ S.biUnion fun A ↦
     claim46OccupiedNeighborhood G highDegree A.1 ballRadius

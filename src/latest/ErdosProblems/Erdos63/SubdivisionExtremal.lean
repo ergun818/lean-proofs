@@ -51,7 +51,7 @@ private def GoodAssignment [DecidableEq V] (G : SimpleGraph V)
     Set.InjOn Prod.fst (M : Set ((V × V) × V)) ∧
       Set.InjOn Prod.snd (M : Set ((V × V) × V))
 
-private lemma offDiag_card_lt_of_nonempty_right [DecidableEq V]
+private lemma offDiag_card_lt_of_nonempty_right
     (U W : Finset V) (hU : U.Nonempty) (hcard : W.card ^ 2 ≤ U.card) :
     W.offDiag.card < U.card := by
   rw [Finset.offDiag_card]
@@ -70,7 +70,7 @@ private lemma offDiag_card_lt_of_nonempty_right [DecidableEq V]
 
 /-- Liu--Montgomery Proposition 3.16, with the necessary nonemptiness condition
 made explicit. -/
-theorem liuMontgomery_skewed_bipartite_subdivision [DecidableEq V]
+theorem liuMontgomery_skewed_bipartite_subdivision
     (G : SimpleGraph V) [DecidableRel G.Adj] (U W : Finset V) (d : ℕ)
     (hUW : Disjoint U W) (hU : U.Nonempty)
     (hcard : W.card ^ 2 ≤ U.card)
@@ -84,7 +84,6 @@ theorem liuMontgomery_skewed_bipartite_subdivision [DecidableEq V]
   obtain ⟨M, hMmax⟩ := goodSets.exists_maximal ⟨∅, hempty⟩
   have hMgood : GoodAssignment G U W M := by
     exact (Finset.mem_filter.mp hMmax.1).2
-
   have hfst_subset : M.image Prod.fst ⊆ W.offDiag := by
     intro p hp
     obtain ⟨z, hzM, rfl⟩ := Finset.mem_image.mp hp
@@ -96,20 +95,17 @@ theorem liuMontgomery_skewed_bipartite_subdivision [DecidableEq V]
     exact Finset.card_le_card hfst_subset
   have hMcard_lt : M.card < U.card :=
     hMcard_le.trans_lt (offDiag_card_lt_of_nonempty_right U W hU hcard)
-
   let used : Finset V := M.image Prod.snd
   have hused_card : used.card = M.card := by
     exact Finset.card_image_of_injOn hMgood.2.2
   have hused_lt : used.card < U.card := by simpa [hused_card] using hMcard_lt
   obtain ⟨u, huU, huUnused⟩ := Finset.exists_mem_notMem_of_card_lt_card hused_lt
-
   let A : Finset V := W.filter fun w ↦ G.Adj u w
   have hAcard : d ≤ A.card := hdeg u huU
-
   have hrepresented : ∀ p ∈ A.offDiag, ∃ v, (p, v) ∈ M := by
     intro p hpA
     by_contra hnot
-    push_neg at hnot
+    push Not at hnot
     have hpdata := Finset.mem_offDiag.mp hpA
     have hp1 := Finset.mem_filter.mp hpdata.1
     have hp2 := Finset.mem_filter.mp hpdata.2.1
@@ -153,20 +149,17 @@ theorem liuMontgomery_skewed_bipartite_subdivision [DecidableEq V]
     have hback : insert (p, u) M ⊆ M :=
       hMmax.2 hinGood (Finset.subset_insert (p, u) M)
     exact hnot u (hback (Finset.mem_insert_self (p, u) M))
-
   obtain ⟨core, hcore_range⟩ : ∃ core : Fin d ↪ V, Set.range core ⊆ A := by
     apply Function.Embedding.exists_of_card_le_finset
     simpa using hAcard
   have hcoreA (i : Fin d) : core i ∈ A := hcore_range (Set.mem_range_self i)
   have hcoreW (i : Fin d) : core i ∈ W := (Finset.mem_filter.mp (hcoreA i)).1
-
   let edgePair : SubdivisionEdge d → V × V := fun e ↦
     (core e.1.1, core e.1.2)
   have hedgePairA (e : SubdivisionEdge d) : edgePair e ∈ A.offDiag := by
     apply Finset.mem_offDiag.mpr
     refine ⟨hcoreA e.1.1, hcoreA e.1.2, ?_⟩
     exact fun h ↦ ne_of_lt e.2 (core.injective h)
-
   let middle : SubdivisionEdge d → V := fun e ↦
     Classical.choose (hrepresented (edgePair e) (hedgePairA e))
   have hmiddleM (e : SubdivisionEdge d) : (edgePair e, middle e) ∈ M := by
@@ -190,7 +183,6 @@ theorem liuMontgomery_skewed_bipartite_subdivision [DecidableEq V]
     apply Prod.ext
     · exact core.injective (congrArg Prod.fst hpairs)
     · exact core.injective (congrArg Prod.snd hpairs)
-
   let vertexMap : SubdivisionVertex d → V
     | .inl i => core i
     | .inr e => middle e
@@ -217,7 +209,6 @@ theorem liuMontgomery_skewed_bipartite_subdivision [DecidableEq V]
         | inr f =>
             have hef : middle e = middle f := by simpa [vertexMap] using hxy
             exact congrArg Sum.inr (hmiddle_injective hef)
-
   let hom : oneSubdivisionClique d →g G :=
     ⟨vertexMap, by
       intro x y hxy
@@ -241,14 +232,14 @@ theorem liuMontgomery_skewed_bipartite_subdivision [DecidableEq V]
 /-- Contrapositive form used in deletion arguments: if the indicated
 subdivision is absent, some vertex of `U` has fewer than `d` neighbors in
 `W`. -/
-theorem exists_few_neighbors_of_no_oneSubdivisionClique [DecidableEq V]
+theorem exists_few_neighbors_of_no_oneSubdivisionClique
     (G : SimpleGraph V) [DecidableRel G.Adj] (U W : Finset V) (d : ℕ)
     (hUW : Disjoint U W) (hU : U.Nonempty)
     (hcard : W.card ^ 2 ≤ U.card)
     (hfree : ¬ oneSubdivisionClique d ⊑ G) :
     ∃ u ∈ U, (W.filter fun w ↦ G.Adj u w).card < d := by
   by_contra h
-  push_neg at h
+  push Not at h
   exact hfree (liuMontgomery_skewed_bipartite_subdivision G U W d hUW hU hcard h)
 
 end Erdos63

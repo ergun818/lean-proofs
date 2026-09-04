@@ -68,7 +68,7 @@ theorem lm_expansion_profile_lower
       15 * (s : ℝ) / ((1 / 64 : ℝ) * (d : ℝ)) =
         960 * (s : ℝ) / (d : ℝ) := by
     field_simp [ne_of_gt hdpos]
-    <;> ring
+    ring
   rw [harg]
   have hratioOne : (1 : ℝ) < 960 * (s : ℝ) / (d : ℝ) := by
     rw [lt_div_iff₀ hdpos]
@@ -444,13 +444,13 @@ theorem lm311_expansion_product_mono
         = (d : ℝ) / (960 * 1024) * (x / Real.log x ^ 2) := by
           dsimp [x]
           field_simp
-          <;> ring_nf
+          ring_nf
     _ ≤ (d : ℝ) / (960 * 1024) * (y / Real.log y ^ 2) := hscaled
     _ = (1 / 1024) /
           Real.log (15 * (b : ℝ) / ((1 / 64) * (d : ℝ))) ^ 2 * (b : ℝ) := by
           dsimp [y]
           field_simp
-          <;> ring_nf
+          ring_nf
 
 /-- One quarter of the exact LM expansion, rounded down.  One quarter is
 used for certified growth; the remaining three quarters absorb the finite
@@ -605,7 +605,6 @@ private theorem lm311_log_stage_bound (j : ℕ) :
     norm_num at hthree ⊢
     exact hthree
   rw [Real.log_mul (by norm_num : (15 : ℝ) ≠ 0) (by positivity), Real.log_pow]
-  push_cast
   have hj : (0 : ℝ) ≤ j := Nat.cast_nonneg j
   nlinarith
 
@@ -705,7 +704,7 @@ theorem lm311AdaptiveGain_stage_lower
       _ ≤ 960 * ((8 : ℝ) ^ j * ((d : ℝ) / 64)) / (d : ℝ) := by
         exact (div_le_div_iff_of_pos_right hdpos).2
           (mul_le_mul_of_nonneg_left hmul (by norm_num))
-      _ = 15 * (8 : ℝ) ^ j := by field_simp <;> ring
+      _ = 15 * (8 : ℝ) ^ j := by field_simp; ring
   have hratioLower : (15 : ℝ) / 2 ≤ 960 * (base : ℝ) / (d : ℝ) := by
     rw [le_div_iff₀ hdpos]
     have hseedReal : (d : ℝ) / 128 ≤ (lm311AdaptiveSeed d : ℝ) := hseedCut
@@ -738,7 +737,7 @@ theorem lm311AdaptiveGain_stage_lower
         (base : ℝ)) / 4 := by
     rw [expansionEpsilon_of_le hprofileCut]
     have harg : 15 * (base : ℝ) / ((1 / 64) * (d : ℝ)) =
-        960 * (base : ℝ) / (d : ℝ) := by field_simp <;> ring
+        960 * (base : ℝ) / (d : ℝ) := by field_simp; ring
     rw [harg]
     calc
       (((base / block : ℕ) : ℝ)) ≤ (base : ℝ) / (block : ℝ) := hcastDiv
@@ -747,7 +746,7 @@ theorem lm311AdaptiveGain_stage_lower
         div_le_div_of_nonneg_left (Nat.cast_nonneg base) hdenpos hden
       _ = ((1 / 1024 : ℝ) /
           Real.log (960 * (base : ℝ) / (d : ℝ)) ^ 2 * (base : ℝ)) / 4 := by
-        field_simp <;> ring
+        field_simp; ring
   dsimp [lm311AdaptiveGain]
   exact Nat.le_floor hreal
 
@@ -804,7 +803,7 @@ theorem lm311AdaptiveCurve_checkpoint
 
 theorem lm311AdaptiveCurve_reaches_warmTarget
     {n d : ℕ} (hd : lm311DegreeThreshold ≤ d)
-    (hD : 0 < Parameters.lmExpansionOrder n) :
+    (_ : 0 < Parameters.lmExpansionOrder n) :
     Parameters.lmExpansionOrder n ^ 4 ≤
       lm311AdaptiveCurve d (lm311AdaptiveSeed d)
         (Parameters.lm311AdaptiveRounds n) := by
@@ -909,7 +908,7 @@ theorem lm311AdaptiveCost_le_gain
       block * (6 * i + 40)
           ≤ (65536 * (j + 3) ^ 2) * (5505064 * (j + 3) ^ 3) := by
             dsimp [block, Parameters.lm311AdaptiveBlock]
-            gcongr <;> omega
+            gcongr; omega
       _ = (65536 * 5505064) * (j + 3) ^ 5 := by ring
       _ ≤ (65536 * 5505064) * (32 * 8 ^ (j + 1)) := by gcongr
       _ ≤ 8 ^ j * 2 ^ 53 := by
@@ -1417,7 +1416,7 @@ private theorem lm311Combined_rate_of_scaleBounds
     (hstartCut : (d : ℝ) / 128 ≤ (start : ℝ))
     (hcombinedCut : (d : ℝ) / 128 ≤
       (lm311CombinedStart n start : ℝ))
-    (hi : i < Parameters.lm311AdaptiveRounds n + lmGrowthRounds n)
+    (_ : i < Parameters.lm311AdaptiveRounds n + lmGrowthRounds n)
     (hlocalCost : i < Parameters.lm311AdaptiveRounds n →
       cost ≤ lm311AdaptiveGain d (lm311AdaptiveCurve d start i))
     (hglobalCost : cost ≤ lm311GlobalCost n)
@@ -1576,11 +1575,9 @@ private theorem lm311RatePackage_of_scaleBounds {n d : ℕ}
       by_cases hiell : i < Parameters.lm311LocalRadius n
       · rw [if_pos hiell]
         dsimp [lm311CarrierCost]
-        norm_num
         omega
       · rw [if_neg hiell]
         dsimp [lm311CarrierCost]
-        norm_num
         omega
     simpa only [cost, Nat.add_assoc] using
       lm311Combined_rate_of_scaleBounds S hd hcarrierCut hcombinedCutCarrier hi
@@ -2730,7 +2727,7 @@ works simultaneously for every `d ≤ n`, and the produced expansion radius
 is bounded by the radius used in Theorem 2.7. -/
 theorem eventually_exists_lm311Numerics :
     ∃ d₀ : ℕ, ∀ d : ℕ, d₀ ≤ d → ∀ n : ℕ, d ≤ n →
-      ∃ num : LM311Numerics (1 / 1024) ((1 / 64) * (d : ℝ)) n 2 d
+      ∃ _ : LM311Numerics (1 / 1024) ((1 / 64) * (d : ℝ)) n 2 d
           (Parameters.lmExpansionOrder n) (Parameters.lmExpansionOrder n ^ 2)
           (Parameters.lm311LocalRadius n) (lmGrowthRounds n) 0,
         5 * lmGrowthRounds n ≤ Parameters.lmRadius (1 / 1024) n := by
@@ -3211,10 +3208,10 @@ noncomputable def concreteLM42ConnectorScale
   squareSeed := by
     rcases hSquareSeed with hsource | hdegree
     · left
-      simpa [squareStart, max_eq_right hsource]
+      simp [squareStart, max_eq_right hsource]
     · by_cases hsource : lm311AdaptiveSeed d ≤ m ^ 2 * D
       · left
-        simpa [squareStart, max_eq_right hsource]
+        simp [squareStart, max_eq_right hsource]
       · right
         have hreverse : m ^ 2 * D ≤ lm311AdaptiveSeed d :=
           Nat.le_of_lt (Nat.lt_of_not_ge hsource)
@@ -3222,10 +3219,10 @@ noncomputable def concreteLM42ConnectorScale
   cubeSeed := by
     rcases hCubeSeed with hsource | hdegree
     · left
-      simpa [cubeStart, max_eq_right hsource]
+      simp [cubeStart, max_eq_right hsource]
     · by_cases hsource : lm311AdaptiveSeed d ≤ m ^ 3 * D
       · left
-        simpa [cubeStart, max_eq_right hsource]
+        simp [cubeStart, max_eq_right hsource]
       · right
         have hreverse : m ^ 3 * D ≤ lm311AdaptiveSeed d :=
           Nat.le_of_lt (Nat.lt_of_not_ge hsource)
@@ -3577,7 +3574,6 @@ theorem eventually_lm315ScaleBounds :
             exact mul_le_mul hdiv hpw (by positivity) (by positivity)
       _ = B * y / x ^ 10 + 2 * B * C * x ^ 8 := by
         field_simp [ne_of_gt hxpos]
-        <;> ring
   have hrouteCoeff : (B + 1) * C ≤ x ^ 2 := by
     calc
       (B + 1) * C ≤ Q := by norm_num [A, B, C, Q]
@@ -3718,7 +3714,7 @@ theorem eventually_lm315ScaleBounds :
           256 * A * B ^ 2 * y / x ^ 5 +
           512 * A * B ^ 2 * C * x ^ 13 := by
             field_simp [ne_of_gt hxpos]
-            <;> ring
+            ring
       _ ≤ y := by linarith only [ht1, ht2, ht3, ht4]
   have hF₁K : F₁ * div ≤ K := by
     dsimp [K, lm315K]
@@ -3792,7 +3788,7 @@ theorem eventually_lm315ScaleBounds :
           112 * A * B * x ^ 5 + 16 * B ^ 2 * y / x ^ 8 +
           32 * B ^ 2 * C * x ^ 10 + 24 * B * x ^ 2 := by
             field_simp [ne_of_gt hxpos]
-            <;> ring
+            ring
       _ ≤ y := by linarith only [hs1, hs2, hs3, hs4, hs5, hs6, hypos.le]
   have hF₂K : F₂ * div ≤ K := by
     dsimp [K, lm315K]
@@ -4101,7 +4097,7 @@ theorem eventually_exists_lm315Numerics :
 Only `X.card + Y.card` is paid globally; `Z` is charged through the
 limited-contact estimate. -/
 theorem half_le_ball_of_lmLimitedContact
-    [Fintype V] (G : SimpleGraph V) [DecidableRel G.Adj]
+    [Fintype V] (G : SimpleGraph V)
     (d D core contact : ℕ)
     (hexp : IsLMExpander G (1 / 1024) ((1 / 64) * (d : ℝ)))
     (A X Y Z : Finset V)
@@ -4235,7 +4231,7 @@ theorem half_le_ball_of_lmLimitedContact
 /-- Two limited-contact balls grown with the same forbidden decomposition
 intersect, producing the short connector used by Lemmas 3.4 and 4.7. -/
 theorem exists_avoiding_path_between_of_lmLimitedContact
-    [Fintype V] (G : SimpleGraph V) [DecidableRel G.Adj]
+    [Fintype V] (G : SimpleGraph V)
     (d D core contact : ℕ)
     (hexp : IsLMExpander G (1 / 1024) ((1 / 64) * (d : ℝ)))
     (A B X Y Z : Finset V)
@@ -4273,7 +4269,7 @@ theorem exists_avoiding_path_between_of_lmLimitedContact
 each side is the union of both ends, while only the ambient forbidden set and
 the two small cores are deleted. -/
 theorem exists_avoiding_path_between_of_lmSmallDeletion
-    [Fintype V] (G : SimpleGraph V) [DecidableRel G.Adj]
+    [Fintype V] (G : SimpleGraph V)
     (d D workspace : ℕ)
     (hexp : IsLMExpander G (1 / 1024) ((1 / 64) * (d : ℝ)))
     (W A B : Finset V)
@@ -4775,7 +4771,7 @@ large: it is not included in the globally paid workspace and is charged only
 through the two limited-contact hypotheses.  The output nevertheless avoids
 both `forbiddenSmall` and `protected`. -/
 theorem AdjusterJoin.stepOfConcreteLimitedContactGrowth
-    [Fintype V] [DecidableRel G.Adj]
+    [Fintype V]
     {D m mB k d core contact : ℕ}
     (A : Adjuster G D m k) (B₀ : Adjuster G D mB 1) (hmB : mB ≤ m)
     (hexp : IsLMExpander G (1 / 1024) ((1 / 64) * (d : ℝ)))
@@ -4828,8 +4824,7 @@ theorem AdjusterJoin.stepOfConcreteLimitedContactGrowth
         (adjusterJoinSmallBarrier forbiddenSmall A B₀ : Set V) ∪
           ((∅ : Finset V) : Set V) ∪ (protectedSet : Set V) := by
     intro z hz
-    simp only [adjusterJoinSmallBarrier, Finset.coe_union, Set.mem_union,
-      Set.mem_empty_iff_false, or_false] at hz ⊢
+    simp only [adjusterJoinSmallBarrier, Finset.coe_union, Set.mem_union] at hz ⊢
     tauto
   have hp' : p.IsAvoidingPath
       (adjusterJoinSmallBarrier (forbiddenSmall ∪ protectedSet) A B₀ : Set V)

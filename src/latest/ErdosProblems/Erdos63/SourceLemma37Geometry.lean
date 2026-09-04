@@ -128,7 +128,7 @@ private theorem lm37_firstSlow_real_increment_le
       x ^ (p - 1) = x ^ (p * (-15 : ℝ)) := by congr 1; dsimp [p]; norm_num
       _ = (x ^ p) ^ (-15 : ℝ) := Real.rpow_mul (by dsimp [x]; positivity) _ _
       _ = (x ^ p) ^ (-15 : ℤ) := by
-        simpa using Real.rpow_intCast (x ^ p) (-15 : ℤ)
+        simp
   rw [hdiff]
   dsimp [f, f', x, y, p]
   rw [hxpow] at hrpow
@@ -197,7 +197,7 @@ private theorem lm37_routeRest_le
     (hsqrtReal : (Nat.sqrt s : ℝ) ≤ Real.sqrt (s : ℝ))
     (hQroot : 100 * (Q : ℝ) ≤ Real.sqrt (s : ℝ))
     (hpoly : (Q : ℝ) * (4 * L ^ 16 + 2) ≤ (s : ℝ) / 4)
-    (hLone : 1 ≤ L) :
+    (_ : 1 ≤ L) :
     (Q : ℝ) * ((11 * Nat.sqrt s + 1 : ℕ) + 2 * ell) ≤
       (s : ℝ) / 2 := by
   have hsqrtSq : Real.sqrt (s : ℝ) ^ 2 = (s : ℝ) :=
@@ -207,7 +207,7 @@ private theorem lm37_routeRest_le
     have hmul := mul_le_mul_of_nonneg_right hQroot (Real.sqrt_nonneg (s : ℝ))
     nlinarith [mul_nonneg hQnonneg (Real.sqrt_nonneg (s : ℝ))]
   have hinside : 1 + 2 * (ell : ℝ) ≤ 4 * L ^ 16 + 2 := by
-    nlinarith [hclockReal, one_le_pow₀ hLone (n := 16)]
+    linarith only [hclockReal]
   have hrestPoly : (Q : ℝ) * (1 + 2 * (ell : ℝ)) ≤
       (s : ℝ) / 4 :=
     (mul_le_mul_of_nonneg_left hinside hQnonneg).trans hpoly

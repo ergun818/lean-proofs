@@ -96,11 +96,11 @@ private theorem even_cycle_interval_of_exact_paths_on_edge
     hexact (m - 1) hqParity hqLower hqUpper
   have hcycle : HasCycleLength G ((m - 1) + 1) :=
     hasCycleLength_succ_of_adj_hasPathBetweenLength hxy (by omega) hpath
-  convert hcycle using 1 <;> omega
+  convert hcycle using 1; omega
 
 /-- Cycles found in an induced extracted graph lift through the spanning
 subgraph chosen by the bipartite reduction and then into the original graph. -/
-private theorem HasCycleLength.lift_extracted [Fintype V]
+private theorem HasCycleLength.lift_extracted
     {H : SimpleGraph V} (hHG : H ≤ G) (S : Finset V) {m : ℕ}
     (hcycle : HasCycleLength (H.induce (↑S : Set V)) m) :
     HasCycleLength G m :=

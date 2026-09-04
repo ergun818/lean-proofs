@@ -93,7 +93,7 @@ theorem lm311AdaptiveTime_le (j : ℕ) :
           simp [lm311AdaptiveBlock]
           ring
         _ ≤ 917504 * (j + 1) * (j + 3) ^ 2 := by
-          gcongr <;> omega
+          gcongr; omega
 
 /-- A fixed power of the logarithm is eventually at most the identity. -/
 theorem eventually_log_pow_le_self (k : ℕ) :
@@ -268,7 +268,6 @@ theorem tendsto_lmFloorEndpoint_atTop : Tendsto lmFloorEndpoint atTop atTop := b
 lemma half_le_natFloor {x : ℝ} (hx : 2 ≤ x) :
     x / 2 ≤ (⌊x⌋₊ : ℝ) := by
   have hfloor := Nat.lt_floor_add_one x
-  norm_num at hfloor ⊢
   linarith
 
 /-! ## Ceiling-safe adjuster radii -/
@@ -412,7 +411,7 @@ theorem eventually_lm311_star_budgets :
   have hRceil : (R : ℝ) < 1638400 * L ^ 3 + 1 := by
     convert
       (lmRadius_lt_add_one (n := n)
-        (show (0 : ℝ) < 1 / 1024 by norm_num)) using 1 <;>
+        (show (0 : ℝ) < 1 / 1024 by norm_num)) using 1;
       norm_num [R, L]
   have hRupper : (R : ℝ) ≤ 1638401 * L ^ 3 := by
     have hL3 : 1 ≤ L ^ 3 := one_le_pow₀ hLone
@@ -667,7 +666,7 @@ theorem eventually_lm311_packing :
           ≤ 2 * Real.exp (L / 2) := by linarith
       _ < Real.exp (L / 2) * Real.exp (L / 2) := by
         nlinarith [Real.exp_pos (L / 2)]
-      _ = Real.exp L := by rw [← Real.exp_add]; congr 1 <;> ring
+      _ = Real.exp L := by rw [← Real.exp_add]; congr 1; ring
       _ = (n : ℝ) := by
         change Real.exp (Real.log (n : ℝ)) = (n : ℝ)
         rw [Real.exp_log]
@@ -1308,7 +1307,6 @@ theorem eventually_dyadicGrowthAdmissible :
     push_cast
     rw [Real.rpow_def_of_pos (pow_pos (by norm_num) m), Real.log_pow]
     congr 1
-    push_cast
     ring
   rw [DyadicGrowthAdmissible, hleft, hinner]
   exact Real.exp_le_exp.mpr hm

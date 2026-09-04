@@ -35,7 +35,7 @@ attribute [local instance] Classical.propDecidable Classical.decEq
 /-! ## Superadditivity of the canonical gain -/
 
 /-- Natural division is superadditive in its numerator. -/
-theorem sum_div_le_div_sum {I : Type*} [DecidableEq I]
+theorem sum_div_le_div_sum {I : Type*}
     (J : Finset I) (f : I → ℕ) (q : ℕ) :
     ∑ i ∈ J, f i / q ≤ (∑ i ∈ J, f i) / q := by
   classical
@@ -50,7 +50,7 @@ theorem sum_div_le_div_sum {I : Type*} [DecidableEq I]
           Nat.div_add_div_le_add_div
 
 /-- The canonical Liu--Montgomery gain is superadditive over a finite family. -/
-theorem sum_lmGrowthGain_le_lmGrowthGain_sum {I : Type*} [DecidableEq I]
+theorem sum_lmGrowthGain_le_lmGrowthGain_sum {I : Type*}
     (N : ℕ) (J : Finset I) (f : I → ℕ) :
     ∑ i ∈ J, lmGrowthGain N (f i) ≤
       lmGrowthGain N (∑ i ∈ J, f i) := by
@@ -175,7 +175,6 @@ theorem lm37SampleMultiplicity_lower {d r : ℕ} (hr : 0 < r) :
   calc
     (d : ℝ) / 128 = ((d : ℝ) / (128 * (r : ℝ))) * r := by
       field_simp [ne_of_gt hrreal]
-      <;> ring
     _ ≤ (lm37SampleMultiplicity d r : ℝ) * r := by
       gcongr
       exact hceil.trans hmax
@@ -241,7 +240,7 @@ theorem eight_lm37SourceGain_le_expansion
     (two_lmGrowthGain_le_expansion hN hd hcutoff hsN)
 
 theorem sum_lm37SourceGain_le_lm37SourceGain_sum
-    {I : Type*} [DecidableEq I] (N : ℕ) (J : Finset I) (f : I → ℕ) :
+    {I : Type*} (N : ℕ) (J : Finset I) (f : I → ℕ) :
     ∑ i ∈ J, lm37SourceGain N (f i) ≤
       lm37SourceGain N (∑ i ∈ J, f i) := by
   simpa only [lm37SourceGain] using
@@ -320,8 +319,8 @@ noncomputable def concreteLM37SourceSplitScale
   large_sample := b.large_sample
   small_sample := b.small_sample
   large_lower := by
-    convert lm37SampleMultiplicity_lower (d := d) b.cutoff_pos using 1 <;>
-      norm_num <;> ring
+    convert lm37SampleMultiplicity_lower (d := d) b.cutoff_pos using 1;
+      norm_num; ring
   large_upper := by
     have hcast : ((lm37SampleMultiplicity d cutoff * D : ℕ) : ℝ) ≤
         ((N / 2 : ℕ) : ℝ) := by exact_mod_cast b.large_upper
@@ -353,7 +352,7 @@ noncomputable def concreteLM37SourceSplitScale
   small_lower := by
     intro r hr _
     convert lm37SampleMultiplicity_lower (d := d)
-      (b.minSize_pos.trans_le hr) using 1 <;> norm_num <;> ring
+      (b.minSize_pos.trans_le hr) using 1; norm_num; ring
   small_upper := by
     intro r hr hcut
     have hcast : ((lm37SampleMultiplicity d r * r : ℕ) : ℝ) ≤
@@ -378,7 +377,7 @@ noncomputable def concreteLM37SourceSplitScale
 /-- The large-family aggregation premise is automatic for the source-split
 scale as well. -/
 theorem concreteLM37SourceSplitScale_largeBudgetSum
-    {I : Type*} [DecidableEq I]
+    {I : Type*}
     (N d Ucap Icard contact radius M degreeIntoU minSize cutoff D T : ℕ)
     (b : LM37SourceSplitBounds N d Ucap Icard radius M degreeIntoU
       minSize cutoff D T)
@@ -468,7 +467,7 @@ noncomputable def concreteLM37LargeOnlyScale
   large_sample := by simpa using b.sample
   small_sample := by simp
   large_lower := by
-    convert b.cutoff_above_expander using 1 <;> norm_num <;> ring
+    convert b.cutoff_above_expander using 1 <;> norm_num; ring
   large_upper := by
     have hnat : D ≤ N / 2 := b.half
     have hcast : (D : ℝ) ≤ (N / 2 : ℕ) := by exact_mod_cast hnat
@@ -509,7 +508,7 @@ noncomputable def concreteLM37LargeOnlyScale
 /-- The family-dependent budget premise in both Claim 4.5 and Claim 4.6 is
 automatic for `concreteLM37LargeOnlyScale`. -/
 theorem concreteLM37LargeOnlyScale_largeBudgetSum
-    {I : Type*} [DecidableEq I]
+    {I : Type*}
     (N d Ucap Icard contact radius M degreeIntoU D cutoff : ℕ)
     (b : LM37LargeOnlyBounds N d Ucap Icard radius M D cutoff)
     (J : Finset I) (f : I → ℕ) :
@@ -805,7 +804,7 @@ structure LM43RobustSourceScalarCertificate
 /-- Construct the robust scalar certificate from the three source-split
 Lemma 3.7 bound records.  Superadditivity discharges all three
 family-dependent large-budget hypotheses automatically. -/
-noncomputable def concreteLM43RobustSourceSplitScalarCertificate
+theorem concreteLM43RobustSourceSplitScalarCertificate
     (N d separation highRadius targetRadius ballRadius minRadius maxRadius
       targetOrder totalRadius Delta deletedCap R degreeInto ballTarget
       finalConnectorQ finalConnectorRadius

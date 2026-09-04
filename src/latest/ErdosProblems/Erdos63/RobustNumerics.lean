@@ -36,18 +36,18 @@ attribute [local instance] Classical.propDecidable Classical.decEq
 /-- End order required by the corrected Lemma 4.7 induction.  The degree
 parameter is retained in the signature so every Lemma 4.3 parameter has the
 same `(N,d)` interface. -/
-noncomputable def lm43TargetOrder (N d : ℕ) : ℕ :=
+noncomputable def lm43TargetOrder (N _ : ℕ) : ℕ :=
   lm47InflatedOrder N
 
 /-- Deletion budget required by the corrected Lemma 4.7 induction. -/
-noncomputable def lm43DeletionCap (N d : ℕ) : ℕ :=
+noncomputable def lm43DeletionCap (N _ : ℕ) : ℕ :=
   lm47SimpleBudget N
 
 /-- The post-deletion average-degree scale in Claim 4.4. -/
-def lm43InitialDegree (N d : ℕ) : ℕ := d / 4
+def lm43InitialDegree (_ d : ℕ) : ℕ := d / 4
 
 /-- The minimum-degree scale of the expander extracted in Claim 4.4. -/
-def lm43CoreDegree (N d : ℕ) : ℕ := d / 64
+def lm43CoreDegree (_ d : ℕ) : ℕ := d / 64
 
 /-- Candidate radius at an extracted subgraph order `n'`. -/
 noncomputable def lm43CoreRadius (n' : ℕ) : ℕ :=
@@ -58,7 +58,7 @@ noncomputable def lm43MinRadiusFrom (coreDegree : ℕ) : ℕ :=
   lm43CoreRadius (coreDegree + 1)
 
 /-- Ambient upper endpoint for the variable source radius interval. -/
-noncomputable def lm43CandidateRadius (N d : ℕ) : ℕ :=
+noncomputable def lm43CandidateRadius (N _ : ℕ) : ℕ :=
   lm43CoreRadius N
 
 noncomputable def lm43MinRadius (N d : ℕ) : ℕ :=
@@ -71,16 +71,16 @@ noncomputable def lm43MaxRadius (N d : ℕ) : ℕ :=
 noncomputable def lm43AvoidingRadius (N : ℕ) : ℕ :=
   ⌈Real.log (Real.log (N : ℝ)) ^ 20⌉₊
 
-noncomputable def lm43HighRadius (N d : ℕ) : ℕ :=
+noncomputable def lm43HighRadius (N _ : ℕ) : ℕ :=
   lm43AvoidingRadius N
 
-noncomputable def lm43BallRadius (N d : ℕ) : ℕ :=
+noncomputable def lm43BallRadius (N _ : ℕ) : ℕ :=
   lm43AvoidingRadius N
 
 /-- Radius of the last two-set connectors.  This is the multiplicative
 growth clock used by `LM42GrowthSchedule`, distinct from the iterated-log
 clock of the preceding Lemma 3.7 ball. -/
-noncomputable def lm43FinalConnectorRadius (N d : ℕ) : ℕ :=
+noncomputable def lm43FinalConnectorRadius (N _ : ℕ) : ℕ :=
   lmGrowthRounds N
 
 /-- Connection radius to the auxiliary target expansion. -/
@@ -88,7 +88,7 @@ noncomputable def lm43TargetRadius (N d : ℕ) : ℕ :=
   lm43BallRadius N d + 2 * (lm43FinalConnectorRadius N d + 1)
 
 /-- Separation used by the maximal family. -/
-noncomputable def lm43Separation (N d : ℕ) : ℕ :=
+noncomputable def lm43Separation (N _ : ℕ) : ℕ :=
   10 * lm43AvoidingRadius N
 
 /-- Radius in the output statement used by the exact-path argument. -/
@@ -103,7 +103,7 @@ noncomputable def lm43HighCutoff (N d : ℕ) : ℕ :=
   200 * lm43MaxRadius N d * lm43TargetOrder N d
 
 /-- The Proposition 3.16 threshold used for neighbours in the deleted set. -/
-def lm43DegreeInto (N d : ℕ) : ℕ := d / 2
+def lm43DegreeInto (_ d : ℕ) : ℕ := d / 2
 
 /-- A graph-independent upper budget for
 `deleted ∪ manyNeighborsInto deleted (d/2)`. -/
@@ -111,7 +111,7 @@ noncomputable def lm43ProtectedCap (N d : ℕ) : ℕ :=
   lm43DeletionCap N d + 100 * lm43TargetOrder N d ^ 2
 
 /-- The survivor count needed by the final cardinality contradiction. -/
-noncomputable def lm43FamilyTarget (N d : ℕ) : ℕ :=
+noncomputable def lm43FamilyTarget (N _ : ℕ) : ℕ :=
   SourceLemma35Numerics.indexCard N
 
 /-- The source parameter `R`; Claim 4.4 constructs at least `4R`
@@ -1162,7 +1162,7 @@ theorem eventually_lm43_radius_budgets :
       _ ≤ (3 * lmGrowthDenominator N) * (Nat.log 2 N + 1) := by
         gcongr
       _ ≤ (4 * lmGrowthDenominator N) * (Nat.log 2 N + 1) := by
-        gcongr <;> norm_num
+        gcongr; norm_num
       _ = r := by simp [r, lmGrowthRounds, lmGrowthDivisor]; ring
   have hrpos : 0 < r := by
     simpa [lm43CandidateRadius, lm43CoreRadius, r] using hr d
