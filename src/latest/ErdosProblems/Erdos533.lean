@@ -33,7 +33,7 @@ import ErdosProblems.Erdos615.Erdos615Construction
 
 open Filter SimpleGraph
 open Set MeasureTheory
-open scoped Classical ENNReal NNReal Pointwise Topology BigOperators
+open scoped ENNReal NNReal Pointwise Topology BigOperators
 
 namespace Erdos533
 
@@ -45,7 +45,7 @@ abbrev ComplexSphere (k : ℕ) :=
   Metric.sphere (0 : EuclideanSpace ℂ (Fin (k + 1))) 1
 
 instance complexSphereNonempty (k : ℕ) : Nonempty (ComplexSphere k) :=
-  ⟨⟨EuclideanSpace.single 0 1, by simp [ComplexSphere, Metric.mem_sphere]⟩⟩
+  ⟨⟨EuclideanSpace.single 0 1, by simp [ComplexSphere]⟩⟩
 
 /-- Surface measure on `ComplexSphere k`, regarded as a bundled finite measure. -/
 noncomputable def complexSphereFiniteMeasure (k : ℕ) :
@@ -93,7 +93,7 @@ theorem realSphere_two_set_far (h : ℕ) (hh : 0 < h)
   have hhtop : (h : ℝ≥0∞) ≠ ∞ := by simp
   have htotal : volume.toSphere
       (Set.univ : Set (Metric.sphere (0 : E) 1)) = (h : ℝ≥0∞) * V := by
-    simp [E, V, Measure.toSphere_apply_univ, finrank_euclideanSpace_fin]
+    simp [E, V, Measure.toSphere_apply_univ]
   have hOAK : volume.toSphere KA = (h : ℝ≥0∞) * volume OA := by
     rw [Measure.toSphere_apply' volume hKA.measurableSet]
     simp only [OA, E, finrank_euclideanSpace_fin]
@@ -153,7 +153,7 @@ theorem realSphere_two_set_far (h : ℕ) (hh : 0 < h)
       _ = volume CA ^ (2 : ℝ)⁻¹ * volume (-CB) ^ (2 : ℝ)⁻¹ := by rw [hneg]
       _ ≤ volume M := hBM
   have hnorm (x : Metric.sphere (0 : E) 1) : ‖(x : E)‖ = 1 := by
-    simpa [Metric.mem_sphere, dist_zero_right] using x.property
+    simp
   have hMball : M ⊆ Metric.closedBall (0 : E) (d / 2) := by
     intro z hz
     rcases hz with ⟨u, hu, v, hv, rfl⟩
@@ -227,7 +227,7 @@ theorem realSphere_two_set_far (h : ℕ) (hh : 0 < h)
   have hball : volume (Metric.closedBall (0 : E) (d / 2)) =
       ENNReal.ofReal ((d / 2) ^ h) * V := by
     rw [Measure.addHaar_closedBall' volume (0 : E) (by linarith)]
-    simp [E, V, finrank_euclideanSpace_fin,
+    simp [E, V,
       Measure.addHaar_unitClosedBall_eq_addHaar_unitBall]
   have hV0 : V ≠ 0 := by
     exact ne_of_gt (by simpa [V] using
@@ -301,7 +301,7 @@ theorem rho_sq : rho ^ 2 =
 theorem one_add_rho_add_sq : 1 + rho + rho ^ 2 = 0 := by
   rw [rho_sq]
   apply Complex.ext <;> simp [rho]
-  <;> ring
+  ring
 
 @[simp] theorem norm_rho : ‖rho‖ = 1 := by
   rw [Complex.norm_def]
@@ -352,11 +352,9 @@ noncomputable def realSphereEquiv {h : ℕ}
     (e : EuclideanSpace ℝ (Fin h) ≃ₗᵢ[ℝ] EuclideanSpace ℝ (Fin h)) :
     Erdos615.Construction.Sphere h ≃ Erdos615.Construction.Sphere h where
   toFun x := ⟨e x, by
-    simpa [Erdos615.Construction.Sphere, Metric.mem_sphere, dist_zero_right]
-      using x.property⟩
+    simp⟩
   invFun x := ⟨e.symm x, by
-    simpa [Erdos615.Construction.Sphere, Metric.mem_sphere, dist_zero_right]
-      using x.property⟩
+    simp⟩
   left_inv x := by ext; simp
   right_inv x := by ext; simp
 
@@ -391,12 +389,11 @@ theorem sphereProbability_preimage_linearIsometry (h : ℕ) (hh : 0 < h)
     · rintro ⟨r, hr, yr, ⟨w, hw, rfl⟩, rfl⟩
       refine ⟨r, hr, e (w : EuclideanSpace ℝ (Fin h)),
         ⟨eS w, hw, rfl⟩, ?_⟩
-      simp [eS, realSphereEquiv]
+      simp
     · rintro ⟨r, hr, yr, ⟨w, hw, rfl⟩, hzw⟩
       let w' : Erdos615.Construction.Sphere h :=
         ⟨e.symm w, by
-          simpa [Erdos615.Construction.Sphere, Metric.mem_sphere, dist_zero_right]
-            using w.property⟩
+          simp⟩
       refine ⟨r, hr, (w' : EuclideanSpace ℝ (Fin h)), ⟨w', ?_, rfl⟩, ?_⟩
       · change eS w' ∈ A
         simpa [eS, w', realSphereEquiv] using hw
@@ -422,7 +419,7 @@ theorem sphereProbability_preimage_linearIsometry (h : ℕ) (hh : 0 < h)
     have hcoe := congrArg
       (fun N : FiniteMeasure (Erdos615.Construction.Sphere h) =>
         (N : Measure (Erdos615.Construction.Sphere h))) hzero
-    exact hμ (by simpa [M, Erdos615.Construction.sphereFiniteMeasure] using hcoe)
+    exact hμ (by simp [M, Erdos615.Construction.sphereFiniteMeasure] at hcoe)
   have hmass : M.mass ≠ 0 := M.mass_nonzero_iff.mpr hMne
   apply mul_left_cancel₀ hmass
   calc
@@ -543,8 +540,7 @@ isometric to the complex sphere used by the graph construction. -/
 noncomputable def complexOfRealSphere (k : ℕ)
     (x : Erdos615.Construction.Sphere ((k + 1) * 2)) : ComplexSphere k :=
   ⟨(complexRealBasis k).repr.symm x, by
-    simpa [ComplexSphere, Erdos615.Construction.Sphere, Metric.mem_sphere,
-      dist_zero_right] using x.property⟩
+    simp⟩
 
 @[simp] theorem complexOfRealSphere_coe (k : ℕ)
     (x : Erdos615.Construction.Sphere ((k + 1) * 2)) :
@@ -656,8 +652,8 @@ noncomputable def complexStripNormal (k : ℕ) (j : Fin 3)
 theorem complexStripNormal_norm (k : ℕ) (j : Fin 3)
     (x : ComplexSphere k) : ‖complexStripNormal k j x‖ = 1 := by
   have hx : ‖(x : EuclideanSpace ℂ (Fin (k + 1)))‖ = 1 := by
-    simpa [ComplexSphere, Metric.mem_sphere, dist_zero_right] using x.property
-  simp [complexStripNormal, norm_smul, norm_mul, norm_rho, hx]
+    simp
+  simp [complexStripNormal, norm_smul, norm_rho, hx]
 
 theorem complexStripFunctional (k : ℕ) (j : Fin 3)
     (x : ComplexSphere k)
@@ -731,13 +727,15 @@ def crossClose {k : ℕ} (t : ℝ) (x y : ComplexSphere k) : Prop :=
 center. -/
 noncomputable def robustSecondCells (k : ℕ) (r : ℝ) (hr : 0 < r)
     (t : ℝ) (i : Fin (Erdos615.Construction.netCard ((k + 1) * 2) r hr)) :
-    Finset (Fin (Erdos615.Construction.netCard ((k + 1) * 2) r hr)) :=
-  Finset.univ.filter fun j ↦ awayFromStrips t
-    (inner ℂ
-      ((complexCenter k r hr i : ComplexSphere k) :
-        EuclideanSpace ℂ (Fin (k + 1)))
-      ((complexCenter k r hr j : ComplexSphere k) :
-        EuclideanSpace ℂ (Fin (k + 1))))
+    Finset (Fin (Erdos615.Construction.netCard ((k + 1) * 2) r hr)) := by
+  classical
+  exact
+    Finset.univ.filter fun j ↦ awayFromStrips t
+      (inner ℂ
+        ((complexCenter k r hr i : ComplexSphere k) :
+          EuclideanSpace ℂ (Fin (k + 1)))
+        ((complexCenter k r hr j : ComplexSphere k) :
+          EuclideanSpace ℂ (Fin (k + 1))))
 
 /-- For a fixed first center, almost all of the second-sphere weight avoids
 the three strips.  The loss is the sum of the three real strip bounds. -/
@@ -747,6 +745,7 @@ theorem sum_robustSecondCells_weight_lower (k : ℕ) (r t : ℝ)
     1 - 12 * t * Real.sqrt ((((k + 1) * 2 : ℕ) : ℝ)) ≤
       ∑ j ∈ robustSecondCells k r hr t i,
         Erdos615.Construction.weight ((k + 1) * 2) r (by omega) hr j := by
+  classical
   let h : ℕ := (k + 1) * 2
   have hh : 0 < h := by simp [h]
   let P := Erdos615.Construction.sphereProbability h hh
@@ -766,8 +765,9 @@ theorem sum_robustSecondCells_weight_lower (k : ℕ) (r t : ℝ)
     ((hStrip 0).union (hStrip 1)).union (hStrip 2)
   have hstripBound (q : Fin 3) :
       (P (Strip q) : ℝ) ≤ 4 * t * Real.sqrt h := by
-    convert sphereProbability_complex_strip k q x (2 * t) (by positivity) using 1 <;>
-      simp only [P, Strip, h, x] <;> ring
+    convert sphereProbability_complex_strip k q x (2 * t) (by positivity) using 1
+    simp only [h]
+    ring
   have hBadNN : P Bad ≤ P (Strip 0) + P (Strip 1) + P (Strip 2) := by
     calc
       P Bad ≤ P (Strip 0 ∪ Strip 1) + P (Strip 2) := by
@@ -899,10 +899,7 @@ theorem sum_robustSecondCells_weight_lower (k : ℕ) (r t : ℝ)
 noncomputable def rhoRotateSphere (k : ℕ) (q : Fin 3) (x : ComplexSphere k) :
     ComplexSphere k :=
   ⟨rho ^ q.1 • (x : EuclideanSpace ℂ (Fin (k + 1))), by
-    have hx : ‖(x : EuclideanSpace ℂ (Fin (k + 1)))‖ = 1 := by
-      simpa [ComplexSphere, Metric.mem_sphere, dist_zero_right] using x.property
-    simpa [ComplexSphere, Metric.mem_sphere, dist_zero_right, norm_smul,
-      norm_rho, hx]⟩
+    simp [norm_smul]⟩
 
 @[simp] theorem rhoRotateSphere_coe (k : ℕ) (q : Fin 3)
     (x : ComplexSphere k) :
@@ -983,7 +980,6 @@ theorem awayFromStrips_rho_pow {t : ℝ} {a : ℂ} (q : Fin 3)
   · simpa using ha 2
   · simpa [mul_assoc] using ha 1
   · norm_num only [pow_one] at ⊢
-    change t ≤ |(rho * (rho * a)).im|
     rw [show rho * (rho * a) = rho ^ 2 * a by ring]
     exact ha 2
   · norm_num only [pow_one] at ⊢
@@ -1011,14 +1007,16 @@ theorem awayFromStrips_rho_pow {t : ℝ} {a : ℂ} (q : Fin 3)
 /-- The weighted fraction of cross pairs selected by a fixed global rotation
 of the second part. -/
 noncomputable def crossWeight (k : ℕ) (r : ℝ) (hr : 0 < r)
-    (t : ℝ) (q : Fin 3) : ℝ :=
-  ∑ i : Fin (Erdos615.Construction.netCard ((k + 1) * 2) r hr),
-    Erdos615.Construction.weight ((k + 1) * 2) r (by omega) hr i *
-      ∑ j : Fin (Erdos615.Construction.netCard ((k + 1) * 2) r hr),
-        if crossClose t (complexCenter k r hr i)
-            (rhoRotateSphere k q (complexCenter k r hr j)) then
-          Erdos615.Construction.weight ((k + 1) * 2) r (by omega) hr j
-        else 0
+    (t : ℝ) (q : Fin 3) : ℝ := by
+  classical
+  exact
+    ∑ i : Fin (Erdos615.Construction.netCard ((k + 1) * 2) r hr),
+      Erdos615.Construction.weight ((k + 1) * 2) r (by omega) hr i *
+        ∑ j : Fin (Erdos615.Construction.netCard ((k + 1) * 2) r hr),
+          if crossClose t (complexCenter k r hr i)
+              (rhoRotateSphere k q (complexCenter k r hr j)) then
+            Erdos615.Construction.weight ((k + 1) * 2) r (by omega) hr j
+          else 0
 
 /-- One of the three global rotations supplies at least one quarter of all
 weighted cross pairs, provided the three strip losses total at most `1/4`. -/
@@ -1026,6 +1024,7 @@ theorem exists_crossWeight_ge_quarter (k : ℕ) (r t : ℝ)
     (hr : 0 < r) (hrt : r < t)
     (hstrip : 12 * t * Real.sqrt ((((k + 1) * 2 : ℕ) : ℝ)) ≤ 1 / 4) :
     ∃ q : Fin 3, 1 / 4 ≤ crossWeight k r hr t q := by
+  classical
   let I := Fin (Erdos615.Construction.netCard ((k + 1) * 2) r hr)
   let wt : I → ℝ := fun i ↦
     Erdos615.Construction.weight ((k + 1) * 2) r (by omega) hr i
@@ -1196,7 +1195,7 @@ theorem rotationClose_irrefl {k : ℕ} {d : ℝ} (hd : d < Real.sqrt 3)
     (x : ComplexSphere k) : ¬rotationClose d x x := by
   rintro ⟨j, hj⟩
   have hxnorm : ‖(x : EuclideanSpace ℂ (Fin (k + 1)))‖ = 1 := by
-    simpa [ComplexSphere, Metric.mem_sphere, dist_zero_right] using x.property
+    simp
   have hnorm :
       ‖(x : EuclideanSpace ℂ (Fin (k + 1))) -
           rho ^ (j.1 + 1) • (x : EuclideanSpace ℂ (Fin (k + 1)))‖ =
@@ -1234,7 +1233,6 @@ theorem rotationClose_symm {k : ℕ} {d : ℝ} {x y : ComplexSphere k} :
       rw [smul_sub, smul_smul, hcoef]
       simp [sub_eq_add_neg, add_comm]]
     simpa [norm_smul, norm_rho] using hh
-
   · refine ⟨0, ?_⟩
     norm_num [approxRotation] at hh ⊢
     rw [show
@@ -1332,7 +1330,7 @@ theorem large_cells_give_inner_triangle (k : ℕ) (r d e D : ℝ)
   let c₁ : ComplexSphere k := complexCenter k r hr i₁
   let c₂ : ComplexSphere k := complexCenter k r hr i₂
   have sphereNorm (x : ComplexSphere k) : ‖(x : E)‖ = 1 := by
-    simpa [E, ComplexSphere, Metric.mem_sphere, dist_zero_right] using x.property
+    simp
   have hfar₁' : D < dist (x₀ : E) (-(rho • (x₁ : E))) := by
     have H : D < dist (complexOfRealSphere k a₀)
         (complexOfRealSphere k (realSphereEquiv (negRhoRotation k) a₁)) := by
@@ -1521,7 +1519,7 @@ theorem same_rotation_not_adjacent {k : ℕ} {d : ℝ} {u v x : ComplexSphere k}
       _ ≤ 2 * d + d := add_le_add (by simpa [norm_sub_rev] using huv_dist) huv
       _ = 3 * d := by ring
   have hvnorm : ‖(v : E)‖ = 1 := by
-    simpa [ComplexSphere] using v.property
+    simp
   have hnorm :
       ‖(v : E) - rho ^ (j.1 + 1) • (v : E)‖ = Real.sqrt 3 := by
     rw [show
@@ -1680,7 +1678,7 @@ theorem crossClose_im_inner_sub_rhoSq {k : ℕ} {t : ℝ}
 /-- The local `3 + 2` obstruction.  An inner triangle in the left part and
 an inner edge in the right part cannot have all six cross edges. -/
 theorem no_oriented_three_two_configuration {k : ℕ} {d t : ℝ}
-    (hd0 : 0 ≤ d) (ht : 0 < t) (hdsmall : 3 * d < Real.sqrt 3)
+    (hd0 : 0 ≤ d) (_ht : 0 < t) (hdsmall : 3 * d < Real.sqrt 3)
     (hdt : d ^ 2 < 3 * t)
     {x₀ x₁ x₂ y y' : ComplexSphere k}
     (hx₁₀ : rotationClose d x₁ x₀) (hx₂₀ : rotationClose d x₂ x₀)
@@ -1706,7 +1704,7 @@ theorem no_oriented_three_two_configuration {k : ℕ} {d t : ℝ}
     have hsum : 6 * t ≤
         (inner ℂ (x₀ : E) e).im + (inner ℂ (x₁ : E) e).im +
           (inner ℂ (x₂ : E) e).im := by linarith
-    simp only [triangleAverage, inner_smul_real_left, inner_add_left]
+    simp only [triangleAverage]
     norm_num
     linarith
   have him_le_norm :
@@ -1780,7 +1778,7 @@ theorem crossClose_im_inner_sub_left_rho {k : ℕ} {t : ℝ}
 /-- The local `2 + 3` obstruction, obtained by putting the inner triangle in
 the second part. -/
 theorem no_oriented_two_three_configuration {k : ℕ} {d t : ℝ}
-    (hd0 : 0 ≤ d) (ht : 0 < t) (hdsmall : 3 * d < Real.sqrt 3)
+    (hd0 : 0 ≤ d) (_ht : 0 < t) (hdsmall : 3 * d < Real.sqrt 3)
     (hdt : d ^ 2 < 3 * t)
     {x x' y₀ y₁ y₂ : ComplexSphere k}
     (hxx' : approxRotation d 0 x x')
@@ -1806,7 +1804,7 @@ theorem no_oriented_two_three_configuration {k : ℕ} {d t : ℝ}
     have hsum : 6 * t ≤
         (inner ℂ e (y₀ : E)).im + (inner ℂ e (y₁ : E)).im +
           (inner ℂ e (y₂ : E)).im := by linarith
-    simp only [triangleAverage, inner_smul_real_right, inner_add_right]
+    simp only [triangleAverage]
     norm_num
     linarith
   have him_le_norm :
@@ -2276,6 +2274,7 @@ abbrev WeightedCrossCopyPair (k : ℕ) (r : ℝ) (hr : 0 < r)
     Fin (Erdos615.Construction.multiplicity ((k + 1) * 2) r (by omega) hr L p.1.1) ×
       Fin (Erdos615.Construction.multiplicity ((k + 1) * 2) r (by omega) hr L p.1.2)
 
+open Classical in
 theorem crossWeight_eq_sum (k : ℕ) (r : ℝ) (hr : 0 < r)
     (t : ℝ) (q : Fin 3) :
     crossWeight k r hr t q =
@@ -2305,6 +2304,7 @@ theorem crossWeight_eq_sum (k : ℕ) (r : ℝ) (hr : 0 < r)
   rw [← Finset.sum_filter]
   exact Finset.sum_subtype (Finset.univ.filter good) (by simp [good]) f
 
+open Classical in
 theorem weightedCrossCopyPair_card_lower (k : ℕ) (r : ℝ) (hr : 0 < r)
     (L : ℕ) (t : ℝ) (q : Fin 3) :
     (L : ℝ) ^ 2 * crossWeight k r hr t q ≤
@@ -2351,6 +2351,7 @@ noncomputable def weightedCrossRightFin (k : ℕ) (r : ℝ) (hr : 0 < r)
     Fin (Erdos615.Construction.copyCard ((k + 1) * 2) r (by omega) hr L) :=
   copyVertexEquivFin ((k + 1) * 2) r (by omega) hr L ⟨p.1.1.2, p.2.2⟩
 
+open Classical in
 noncomputable def weightedCrossPairToEdge (k : ℕ) (r : ℝ) (hr : 0 < r)
     (L : ℕ) (d t : ℝ) (q : Fin 3)
     (p : WeightedCrossCopyPair k r hr L t q) :
@@ -2403,6 +2404,7 @@ theorem weightedCrossPairToEdge_injective (k : ℕ) (r : ℝ) (hr : 0 < r)
   cases hright
   rfl
 
+open Classical in
 /-- The rounded finite graph retains the weighted cross density. -/
 theorem finiteGeometricGraph_edge_lower (k : ℕ) (r : ℝ) (hr : 0 < r)
     (L : ℕ) (d t : ℝ) (q : Fin 3) :
@@ -2683,6 +2685,7 @@ theorem exists_dimension_parameter (eta : ℝ) (heta : 0 < eta) :
     _ ≤ 8 * (1 / (1 + (R : ℝ) ^ 2 / 6400)) := by gcongr
     _ < eta := hsmall
 
+open Classical in
 /-- A finite counterexample at density `1 / 32`: every triangle-free vertex
 set has fewer than `η n` vertices. -/
 def IsCounterexample (η : ℝ) {n : ℕ} (G : SimpleGraph (Fin n)) : Prop :=
@@ -2691,6 +2694,7 @@ def IsCounterexample (η : ℝ) {n : ℕ} (G : SimpleGraph (Fin n)) : Prop :=
     ∀ S : Finset (Fin n), G.CliqueFreeOn (S : Set (Fin n)) 3 →
       (S.card : ℝ) < η * n
 
+open Classical in
 /-- The precise finite output required from the analytic part of the LRSS
 construction.  The numerical assumptions are kept in the package so that
 `K₅`-freeness is obtained from `geometricGraph_cliqueFree_five`, rather than
@@ -2711,6 +2715,7 @@ parameters are explicit; only the final integer scale `L` is chosen large
 enough to absorb rounding errors and the requested lower bound on the order. -/
 theorem geometricWitness_exists (η : ℝ) (hη : 0 < η) (N : ℕ) :
     GeometricWitness η N := by
+  classical
   obtain ⟨R, hR, hRsmall⟩ := exists_dimension_parameter η hη
   have hRreal : 0 < (R : ℝ) := by exact_mod_cast hR
   have hRone : 1 ≤ (R : ℝ) := by exact_mod_cast hR
@@ -2850,6 +2855,7 @@ theorem geometricWitness_exists (η : ℝ) (hη : 0 < η) (N : ℕ) :
         gcongr
   exact hcard.trans_lt (by simpa [K] using hstrict)
 
+open Classical in
 /-- The deterministic geometric argument converts an analytic witness into
 an ordinary finite counterexample. -/
 theorem isCounterexample_finiteGeometricGraph {η : ℝ} {N k m : ℕ}
@@ -2885,6 +2891,7 @@ theorem counterexamplePackage_of_geometricWitness
   refine ⟨m + m, hN, finiteGeometricGraph d t w z, ?_⟩
   exact (isCounterexample_finiteGeometricGraph hm hN hd0 ht hdsmall hdt hedge hsmall).2
 
+open Classical in
 /-- Pure quantifier conversion: arbitrarily large finite counterexamples at one
 fixed positive density imply the exact negative answer in Problem 533. -/
 theorem erdos_533_of_counterexamplePackage (hcounter : CounterexamplePackage) :
@@ -2908,6 +2915,7 @@ theorem erdos_533_of_counterexamplePackage (hcounter : CounterexamplePackage) :
     exact (not_lt_of_ge (Nat.cast_nonneg S.card)) (by simpa using hsmall)
   nlinarith
 
+open Classical in
 /-- Erdős Problem 533 has a negative answer.  The graph family above has
 fixed edge density `1/32`, is `K₅`-free, and has triangle-independence
 number `o(n)`. -/
