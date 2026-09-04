@@ -67,7 +67,7 @@ lemma secondCorrectionWeightAF_relativeType (k : ℕ) :
   let u : ArithmeticFunction ℝ := sharpShiftedReciprocalWeightAF
   let v : ArithmeticFunction ℝ := omegaWeightAF k
   have hvOne : v 1 = 1 := by
-    simpa [v] using omegaWeightAF_one k
+    simp [v]
   have hvNonneg : ∀ n, 0 ≤ v n := by
     intro n
     exact omegaWeightAF_nonneg k n
@@ -140,7 +140,7 @@ lemma secondCorrectionWeightAF_logType (k : ℕ) :
     sharpShiftedReciprocalWeightAF_nonneg (omegaWeightAF_nonneg k)
     sharpShiftedReciprocalWeightAF_logType
     (fun {p} hp j => omegaWeightAF_le_one k (p ^ j))
-  convert h using 1 <;> norm_num
+  convert h using 1; norm_num
 
 /-- Power-saving tau-inverse error used to establish local summability in
 the next shifted application. -/
@@ -209,7 +209,7 @@ lemma thirdCorrection_meanType (k : ℕ) :
       (fun {p} hp j => omegaWeightAF_le_one k (p ^ j))
     change TauInvCorrection448.IsTauInverseLogType
       (hybridCorrectionWeight u (omegaWeightAF k)) 577
-    convert h using 1 <;> norm_num
+    convert h using 1; norm_num
   refine
     { C_nonneg := by norm_num
       map_zero := hybridCorrectionWeight_zero _ _

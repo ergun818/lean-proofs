@@ -401,7 +401,7 @@ theorem sourceDyadicClosePairMean_le_of_weighted_shift
         (k : ℝ) ^ (-(5 : ℝ) / 4) := by
   let v : ArithmeticFunction ℝ := Prop3WeightedT448.omegaWeightAF k
   have hvOne : v 1 = 1 := by
-    simpa [v] using Prop3WeightedT448.omegaWeightAF_one k
+    simp [v]
   have hvNonneg : ∀ n, 0 ≤ v n := by
     intro n
     exact Prop3WeightedT448.omegaWeightAF_nonneg k n
@@ -520,7 +520,7 @@ theorem formalDyadicClosePairMean_le_of_weighted_shift
         (k : ℝ) ^ (-(5 : ℝ) / 4) := by
   let v : ArithmeticFunction ℝ := Prop3WeightedT448.omegaWeightAF k
   have hvOne : v 1 = 1 := by
-    simpa [v] using Prop3WeightedT448.omegaWeightAF_one k
+    simp [v]
   have hvNonneg : ∀ n, 0 ≤ v n := by
     intro n
     exact Prop3WeightedT448.omegaWeightAF_nonneg k n

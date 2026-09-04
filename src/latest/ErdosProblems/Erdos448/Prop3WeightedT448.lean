@@ -188,14 +188,14 @@ lemma omegaWeightAF_le_one (k n : ℕ) : omegaWeightAF k n ≤ 1 := by
   · unfold omegaWeight
     rw [zpow_neg]
     exact inv_le_one_of_one_le₀
-      (one_le_zpow₀ (by norm_num) (Int.ofNat_zero_le _))
+      (one_le_zpow₀ (by norm_num) (Int.natCast_nonneg _))
 
 /-- The local series in the second ET Lemma 2 application is summable under
 the defining local estimate of a tau-inverse-type function. -/
 lemma tauInverse_weighted_local_summable
     (w₁ : ArithmeticFunction ℝ)
     (hwOne : w₁ 1 = 1) (hwNonneg : ∀ n, 0 ≤ w₁ n)
-    {C delta : ℝ} (hC : 0 ≤ C) (hdelta : 0 < delta)
+    {C delta : ℝ} (hC : 0 ≤ C) (_hdelta : 0 < delta)
     (hwType : IsTauInverseType w₁ C delta)
     {p : ℕ} (hp : p.Prime) (i k : ℕ) :
     Summable (fun j : ℕ =>
@@ -246,7 +246,7 @@ Euler-factor estimate. -/
 lemma tsum_le_one_add_geometric_tail
     (f : ℕ → ℝ) (A r : ℝ)
     (hf : Summable f) (hfzero : f 0 = 1)
-    (hA : 0 ≤ A) (hrzero : 0 ≤ r) (hrone : r < 1)
+    (_hA : 0 ≤ A) (hrzero : 0 ≤ r) (hrone : r < 1)
     (htail : ∀ j : ℕ, f (j + 1) ≤ A * r ^ (j + 1)) :
     (∑' j : ℕ, f j) ≤ 1 + A * r / (1 - r) := by
   have hftail : Summable (fun j : ℕ => f (j + 1)) :=
@@ -842,7 +842,7 @@ lemma roughIndicator_le_one (sigma n : ℕ) :
   unfold roughIndicator
   split_ifs <;> norm_num
 
-lemma roughIndicator_two_of_ne_zero {n : ℕ} (hn : n ≠ 0) :
+lemma roughIndicator_two_of_ne_zero {n : ℕ} (_hn : n ≠ 0) :
     roughIndicator 2 n = 1 := by
   rw [roughIndicator, if_pos]
   intro p hp
@@ -888,7 +888,7 @@ lemma weightedTSum_succ_eq_shiftedConvolutionSum
   have htOne : 1 ≤ t := (Finset.mem_Icc.mp ht).1
   have ht0 : t ≠ 0 := Nat.ne_of_gt (zero_lt_one.trans_le htOne)
   rw [weightedTKernel, roughIndicator_two_of_ne_zero ht0]
-  simp [omegaWeightAF, ht0, Nat.mul_comm, mul_comm]
+  simp [omegaWeightAF, ht0, mul_comm]
 
 /-- The actual second ET-Lemma-2 estimate before Mertens simplification.
 It derives the correction weight and all local summability hypotheses; the
@@ -990,7 +990,7 @@ noncomputable def weightedShiftedDyadicConstant
 
 lemma weightedShiftedDyadicConstant_nonneg
     {Clog lambda1 lambda2 : ℝ}
-    (hC : 0 ≤ Clog) (h₁ : 0 ≤ lambda1) (h₂ : 0 ≤ lambda2) :
+    (_hC : 0 ≤ Clog) (h₁ : 0 ≤ lambda1) (h₂ : 0 ≤ lambda2) :
     0 ≤ weightedShiftedDyadicConstant Clog lambda1 lambda2 := by
   have hm := HalberstamScratch.explicitMassConstant_nonneg h₁ h₂
   have hc := TauInvTypeMean448.cleanMertensConstant_pos.le
@@ -1067,7 +1067,7 @@ theorem weightedTSum_dyadic_le
       (∏ p ∈ (2 ^ (k + 2) + 1).primesBelow,
         ∑' j : ℕ, WeightedTauInv448.weightedFunction u k (p ^ j) /
           (((p ^ j : ℕ) : ℝ))) ≤ _
-    convert h using 1 <;> ring_nf
+    convert h using 1; ring_nf
   have hhybrid : 0 ≤ hybridCorrectionWeight u (omegaWeightAF k) q :=
     hybridCorrectionWeight_nonneg u (omegaWeightAF k)
       huOne (omegaWeightAF_one k) huNonneg (omegaWeightAF_nonneg k)
@@ -1201,7 +1201,7 @@ theorem weightedTSum_dyadic_le
         hybridCorrectionWeight u (omegaWeightAF k) q := by
       have hcore := mul_le_mul_of_nonneg_left hrpow hcoeff
       have hout := mul_le_mul_of_nonneg_right hcore hhybrid
-      convert hout using 1 <;> ring
+      exact hout
     _ = weightedShiftedDyadicConstant Clog lambda1 lambda2 *
         ((2 ^ k : ℕ) : ℝ) * (k : ℝ) ^ (-(3 : ℝ) / 4) *
         hybridCorrectionWeight u (omegaWeightAF k) q := by
@@ -1424,8 +1424,8 @@ theorem sharpHybridCorrection_meanType (k : ℕ) :
       sharpShiftedReciprocalWeightAF_one (omegaWeightAF_one k)
       sharpShiftedReciprocalWeightAF_nonneg (omegaWeightAF_nonneg k)
       sharpShiftedReciprocalWeightAF_logType
-      (fun {p} hp j => omegaWeightAF_le_one k (p ^ j)) using 1 <;>
-      simp [w] <;> norm_num
+      (fun {p} hp j => omegaWeightAF_le_one k (p ^ j)) using 1;
+      simp; norm_num
   refine
     { C_nonneg := by norm_num
       map_zero := hybridCorrectionWeight_zero _ _
@@ -2509,8 +2509,7 @@ theorem sharpWeightedTSum_half_le
           sharpShiftedReciprocalWeightAF q := by
   intro z
   split_ifs with hkz hz
-  ·
-    have h := sharpWeightedTSum_large_le hq k hk z hkz
+  · have h := sharpWeightedTSum_large_le hq k hk z hkz
     have hw2 := hybridCorrectionWeight_nonneg sharpShiftedReciprocalWeightAF
       (omegaWeightAF k) sharpShiftedReciprocalWeightAF_one
       (omegaWeightAF_one k) sharpShiftedReciprocalWeightAF_nonneg
@@ -2610,7 +2609,7 @@ inductive SizeRegime (sigma thetaPow z : ℕ)
   | small (h : z < sigma)
 
 lemma sizeRegime_exists {sigma thetaPow z : ℕ}
-    (horder : sigma ≤ thetaPow) : Nonempty (SizeRegime sigma thetaPow z) := by
+    (_horder : sigma ≤ thetaPow) : Nonempty (SizeRegime sigma thetaPow z) := by
   by_cases hlarge : thetaPow ≤ z
   · exact ⟨SizeRegime.large hlarge⟩
   · have hztheta : z < thetaPow := Nat.lt_of_not_ge hlarge
@@ -2635,7 +2634,7 @@ lemma exact_three_regime_partition
       simp [hlarge, hmiddle, hztheta, hnotSmall]
     · have hzsigma : z < sigma := Nat.lt_of_not_ge hmiddle
       have hnotMid : ¬ (sigma ≤ z ∧ z < thetaPow) := fun h => hmiddle h.1
-      simp [hlarge, hmiddle, hnotMid, hzsigma]
+      simp [hlarge, hmiddle, hzsigma]
 
 /-- Exact partition specialized to the weighted `t`-sum. -/
 lemma weightedTSum_three_regime_partition

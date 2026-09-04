@@ -207,7 +207,7 @@ lemma weighted_local_term_le_majorant
           push_cast
           simp only [div_eq_mul_inv, inv_pow]
 
-lemma mixedLocalMajorant_summable {C : ℝ} (hC : 0 ≤ C)
+lemma mixedLocalMajorant_summable {C : ℝ} (_hC : 0 ≤ C)
     {p : ℕ} (hp : p.Prime) (k : ℕ) :
     Summable (mixedLocalMajorant C k p) := by
   by_cases hsmall : p < 2 ^ k
@@ -386,7 +386,7 @@ private lemma large_base_le {p : ℕ} (hp : p.Prime) :
           1 / ((p : ℝ) * ((p : ℝ) - 1))) -
           1 / (2 * ((p : ℝ) - 1)) =
         1 / (2 * (p : ℝ) * ((p : ℝ) - 1)) := by
-    field_simp [hp0, hp1] <;> ring_nf
+    field_simp [hp0, hp1]; ring_nf
   rw [← sub_nonneg, heq]
   have hp1pos : 0 < (p : ℝ) - 1 := by
     exact sub_pos.mpr (by exact_mod_cast hp.one_lt)

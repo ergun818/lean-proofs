@@ -95,7 +95,7 @@ lemma convolution_three_quarters_half_le_twelve (N : ℕ) (hN : 2 ≤ N) :
       _ ≤ ((N : ℝ) / 2) ^ (-(1 / 2 : ℝ)) *
             ∑ j ∈ S, (j : ℝ) ^ (-(3 / 4 : ℝ)) := by
         gcongr
-        simpa [low] using Finset.filter_subset (fun j ↦ 2 * j ≤ N) S
+        simp [low]
       _ ≤ ((N : ℝ) / 2) ^ (-(1 / 2 : ℝ)) *
             (4 * (N : ℝ) ^ (1 / 4 : ℝ)) := by
         gcongr
@@ -136,7 +136,7 @@ lemma convolution_three_quarters_half_le_twelve (N : ℕ) (hN : 2 ≤ N) :
       _ ≤ ((N : ℝ) / 2) ^ (-(3 / 4 : ℝ)) *
             ∑ j ∈ S, ((N - j : ℕ) : ℝ) ^ (-(1 / 2 : ℝ)) := by
         gcongr
-        simpa [high] using Finset.filter_subset (fun j ↦ ¬ 2 * j ≤ N) S
+        simp [high]
       _ = ((N : ℝ) / 2) ^ (-(3 / 4 : ℝ)) *
             ∑ j ∈ S, (j : ℝ) ^ (-(1 / 2 : ℝ)) := by
         apply congrArg (fun z : ℝ ↦ ((N : ℝ) / 2) ^ (-(3 / 4 : ℝ)) * z)
@@ -217,7 +217,7 @@ lemma convolution_half_half_le_eight (N : ℕ) (hN : 2 ≤ N) :
       _ ≤ ((N : ℝ) / 2) ^ (-(1 / 2 : ℝ)) *
             ∑ j ∈ S, (j : ℝ) ^ (-(1 / 2 : ℝ)) := by
         gcongr
-        simpa [low] using Finset.filter_subset (fun j ↦ 2 * j ≤ N) S
+        simp [low]
       _ ≤ ((N : ℝ) / 2) ^ (-(1 / 2 : ℝ)) *
             (2 * (N : ℝ) ^ (1 / 2 : ℝ)) := by
         gcongr
@@ -256,7 +256,7 @@ lemma convolution_half_half_le_eight (N : ℕ) (hN : 2 ≤ N) :
       _ ≤ ((N : ℝ) / 2) ^ (-(1 / 2 : ℝ)) *
             ∑ j ∈ S, ((N - j : ℕ) : ℝ) ^ (-(1 / 2 : ℝ)) := by
         gcongr
-        simpa [high] using Finset.filter_subset (fun j ↦ ¬ 2 * j ≤ N) S
+        simp [high]
       _ = ((N : ℝ) / 2) ^ (-(1 / 2 : ℝ)) *
             ∑ j ∈ S, (j : ℝ) ^ (-(1 / 2 : ℝ)) := by
         apply congrArg (fun z : ℝ ↦ ((N : ℝ) / 2) ^ (-(1 / 2 : ℝ)) * z)

@@ -82,7 +82,7 @@ theorem shifted_reciprocal_sum_le_weightedFirstShiftedBoundAll
         intro m hm hnot
         positivity
       _ = 1 / (q.divisors.card : ℝ) := by
-        simp [hq]
+        simp
       _ ≤ Prop3ShiftedMean448.sharpShiftedReciprocalWeight q :=
         one_div_card_divisors_le_sharpWeight hq.ne'
 

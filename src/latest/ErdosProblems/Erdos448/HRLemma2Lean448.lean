@@ -171,7 +171,7 @@ lemma product_replace_on_subset
     (A D W : ℕ → ℝ)
     (hD : ∀ p ∈ S, 0 ≤ D p)
     (hA : ∀ p ∈ T, 0 ≤ A p)
-    (hW : ∀ p ∈ T, 0 ≤ W p)
+    (_hW : ∀ p ∈ T, 0 ≤ W p)
     (hADW : ∀ p ∈ T, A p ≤ W p * D p) :
     (∏ p ∈ S, if p ∈ T then A p else D p) ≤
       (∏ p ∈ T, W p) * ∏ p ∈ S, D p := by
@@ -422,7 +422,7 @@ lemma localSeries_summable_of_prime_power_geometric
     (u v : ArithmeticFunction ℝ)
     {p : ℕ} (hp : p.Prime) (i : ℕ)
     (lambda_i lambda : ℝ)
-    (hlambda_i : 0 ≤ lambda_i) (hlambda : 0 ≤ lambda)
+    (_hlambda_i : 0 ≤ lambda_i) (hlambda : 0 ≤ lambda)
     (hlambda_lt : lambda < 2)
     (hlower : ∀ j : ℕ, 0 ≤ u (p ^ (i + j)) * v (p ^ j))
     (hupper : ∀ j : ℕ,
@@ -784,7 +784,7 @@ lemma prime_factor_denominator_product
   simp [hzero, hu.map_one]
 
 lemma basicInfiniteShiftedEulerProduct_eq_unconditional_product
-    (u v : ArithmeticFunction ℝ) (hu : u.IsMultiplicative)
+    (u v : ArithmeticFunction ℝ) (_hu : u.IsMultiplicative)
     (k N : ℕ) :
     basicInfiniteShiftedEulerProduct u v k N =
       ∏ p ∈ (N + 1).primesBelow,
@@ -1068,7 +1068,9 @@ end ErdosTenenbaumLemma2Scratch
 
 #print axioms ErdosTenenbaumLemma2Scratch.product_replace_on_subset
 #print axioms ErdosTenenbaumLemma2Scratch.multiplicative_convolution_mean_value_II_of_basic_engine
-#print axioms ErdosTenenbaumLemma2Scratch.multiplicative_convolution_mean_value_II_infinite_of_basic_engine
+open ErdosTenenbaumLemma2Scratch in
+#print axioms multiplicative_convolution_mean_value_II_infinite_of_basic_engine
 #print axioms ErdosTenenbaumLemma2Scratch.raw_multiplicative_convolution_engine
 #print axioms ErdosTenenbaumLemma2Scratch.multiplicative_convolution_mean_value_II
-#print axioms ErdosTenenbaumLemma2Scratch.multiplicative_convolution_mean_value_II_of_geometric_majorants
+open ErdosTenenbaumLemma2Scratch in
+#print axioms multiplicative_convolution_mean_value_II_of_geometric_majorants

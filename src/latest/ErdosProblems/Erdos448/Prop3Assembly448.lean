@@ -162,14 +162,14 @@ lemma scaleRegime_eq_short_iff (sigma thetaPow z : ℕ) :
       simp [scaleRegime, hlong, hmiddle, hztheta, hzsigma]
 
 /-- The contribution of one of the three remaining-length regimes. -/
-def regimeContribution { ι : Type* } [DecidableEq ι]
+def regimeContribution {ι : Type*} [DecidableEq ι]
     (I : Finset ι) (sigma thetaPow : ℕ) (z : ι → ℕ)
     (weight : ι → ℝ) (r : ScaleRegime) : ℝ :=
   ∑ i ∈ I.filter (fun i ↦ scaleRegime sigma thetaPow (z i) = r), weight i
 
 /-- Exact `A+B+C` decomposition.  This is deliberately independent of the
 analytic estimates: every reindexed quadruple belongs to exactly one range. -/
-theorem sum_eq_regimeContributions { ι : Type* } [DecidableEq ι]
+theorem sum_eq_regimeContributions {ι : Type*} [DecidableEq ι]
     (I : Finset ι) (sigma thetaPow : ℕ) (z : ι → ℕ)
     (weight : ι → ℝ) :
     (∑ i ∈ I, weight i) =
@@ -194,7 +194,7 @@ estimates.  `hreindex` is supplied by repeated use of
 `sum_divisors_reindex`; `hLong`, `hMiddle`, and `hShort` are precisely the
 three mean-value obligations.  No analytic fact is hidden in this lemma. -/
 theorem et_prop3_one_scale_of_three_estimates
-    { ι : Type* } [DecidableEq ι]
+    {ι : Type*} [DecidableEq ι]
     (f : ℕ → ℝ) (I : Finset ι) (z : ι → ℕ) (weight : ι → ℝ)
     (x sigma theta k : ℕ) (y L Ctheta : ℝ)
     (hreindex : (∑ n ∈ positiveBelow x, f n) = ∑ i ∈ I, weight i)
@@ -2303,7 +2303,7 @@ theorem naturalGridSelectedPair_firstMoment_le_of_one_scale
             (specializedOneScaleLog x k) ^ (-(1 : ℝ) / 4) +
             C * (specializedOneScaleLog x k) ^ (-(1 : ℝ) / 2)) := by
     intro k hk
-    convert hOneScale k hk using 1 <;> dsimp [B, C] <;> ring
+    convert hOneScale k hk using 1; dsimp [B, C]; ring
   have hfinal := Erdos448.prop4_of_prop2_prop3_at
     (c := (2 / 5 : ℝ)) (q := (-(5 : ℝ) / 4))
     (b := (-(1 : ℝ) / 4)) (δ := Real.log 2)
@@ -3019,11 +3019,13 @@ end Erdos448Prop3Assembly
 #print axioms Erdos448Prop3Assembly.normalizedFormalExpandedScaleMoment_sum_reindex
 #print axioms Erdos448Prop3Assembly.normalizedFormalExpandedScaleMoment_one_scale_bound
 #print axioms Erdos448Prop3Assembly.normalizedReducedFormalExpandedScaleMoment_sum_reindex
-#print axioms Erdos448Prop3Assembly.normalizedReducedFormalExpandedScaleMoment_sum_eq_zero_of_cutoff_lt
+open Erdos448Prop3Assembly in
+#print axioms normalizedReducedFormalExpandedScaleMoment_sum_eq_zero_of_cutoff_lt
 #print axioms Erdos448Prop3Assembly.normalizedReducedFormalExpandedScaleMoment_one_scale_bound
 #print axioms Erdos448Prop3Assembly.reducedFormalExpandedScaleRegimeContribution_short_eq_zero
 #print axioms Erdos448Prop3Assembly.reducedFormalExpandedScaleRegimeContribution_eq_triple_m
-#print axioms Erdos448Prop3Assembly.reducedFormalExpandedScaleRegimeContribution_le_active_first_shifted
+open Erdos448Prop3Assembly in
+#print axioms reducedFormalExpandedScaleRegimeContribution_le_active_first_shifted
 #print axioms Erdos448Prop3Assembly.naturalGrid_reduced_regime_le_pair_t
 #print axioms Erdos448Prop3Assembly.reducedFormalPairRegimeWeightSum_le_formalClosePairMean
 #print axioms Erdos448Prop3Assembly.naturalGridSelectedPair_firstMoment_le_common_scale_sum

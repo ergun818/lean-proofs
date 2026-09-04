@@ -219,7 +219,7 @@ lemma reducedProduct_mul_common_eq_lcm {n : ℕ} {p : ℕ × ℕ}
           (pairReducedRight p * pairCommon p) := by ring
     _ = p.1 * p.2 := by rw [ha, hb]
     _ = pairCommon p * Nat.lcm p.1 p.2 := by
-      simpa [pairCommon, mul_comm] using (Nat.gcd_mul_lcm p.1 p.2).symm
+      exact (Nat.gcd_mul_lcm p.1 p.2).symm
 
 /-- Consequently the reduced product times the gcd divides `n`. -/
 lemma reducedProduct_mul_common_dvd {n : ℕ} {p : ℕ × ℕ}
@@ -518,17 +518,17 @@ theorem selectedClosePairMass_le_specializedScaleSum
   apply selectedClosePairMass_le_scaleSum_of_pointwise
     (selected := selected) (weight := fun m B => ((1 : ℝ) / 2) ^ omegaBelow m B)
     (coefficient := specializedScaleCoefficient ξ) (n := n)
-  intro p hp hs
-  exact h7 n p hp hs
-  intro p hp
-  apply mul_nonneg
-  · unfold specializedScaleCoefficient
+  · intro p hp hs
+    exact h7 n p hp hs
+  · intro p hp
     apply mul_nonneg
-    · apply Real.rpow_nonneg
-      exact mul_nonneg (by norm_num) (Real.log_nonneg hξ)
-    · apply Real.rpow_nonneg
-      positivity
-  · positivity
+    · unfold specializedScaleCoefficient
+      apply mul_nonneg
+      · apply Real.rpow_nonneg
+        exact mul_nonneg (by norm_num) (Real.log_nonneg hξ)
+      · apply Real.rpow_nonneg
+        positivity
+    · positivity
 
 /-- Range-indexed form, matching the paper's sum over all relevant scales. -/
 theorem selectedClosePairMass_le_specializedRangeScaleSum
@@ -626,8 +626,7 @@ def formalOrderedPairsInBin (D : Finset ℕ) (k : ℕ) : Finset (ℕ × ℕ) :=
 lemma mem_formalPairsInBin_iff {D : Finset ℕ} {k a b : ℕ} :
     (a, b) ∈ formalPairsInBin D k ↔
       a ∈ D ∧ b ∈ D ∧ Nat.log 2 a = k ∧ Nat.log 2 b = k ∧ a < b := by
-  simp only [formalPairsInBin, Finset.mem_filter, Finset.mem_product,
-    Prod.fst, Prod.snd]
+  simp only [formalPairsInBin, Finset.mem_filter]
   aesop
 
 lemma mem_formalOrderedPairsInBin_iff {D : Finset ℕ} {k a b : ℕ} :
@@ -1384,8 +1383,7 @@ lemma sum_lowerHalf_reducedPositiveFormalScaleSummand_eq_Icc
           reducedFormalExpandedScaleMass omegaAtLogScale n k := by
   rw [lowerHalfFormalScales_eq_Icc n hn, Icc_zero_eq_insert_Icc_one,
     Finset.sum_insert]
-  · simp only [reducedPositiveFormalScaleSummand, if_pos, Nat.cast_zero,
-      zero_add]
+  · simp only [reducedPositiveFormalScaleSummand, if_pos, zero_add]
     apply Finset.sum_congr rfl
     intro k hk
     have hk0 : k ≠ 0 := by simp at hk; omega

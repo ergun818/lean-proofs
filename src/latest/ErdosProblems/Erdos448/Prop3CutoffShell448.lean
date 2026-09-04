@@ -87,8 +87,7 @@ theorem weightedFirstShiftedBoundAll_le_envelope
     rw [FirstShiftedSmall448.weightedFirstShiftedBoundAll,
       if_neg (by simpa [hceil] using hlarge)]
     rw [hnested, hu]
-    ·
-      norm_num only [Nat.cast_ofNat]
+    · norm_num only [Nat.cast_ofNat]
       have hsqrt4 : 0 < Real.sqrt (Real.log (4 : ℝ)) :=
         Real.sqrt_pos.2 log_four_pos
       rw [div_eq_mul_inv]
@@ -905,7 +904,7 @@ theorem interiorCutoffShellSum_le
     rw [sum_range_pred_succ_eq_Ioo J (fun a ↦
       (a : ℝ) ^ (-(1 : ℝ) / 2) *
         ((J - a : ℕ) : ℝ) ^ (-(1 : ℝ) / 2))]
-    convert ConvolutionExtra448.convolution_half_half_le_eight J hJ using 1 <;>
+    convert ConvolutionExtra448.convolution_half_half_le_eight J hJ using 1;
       ring_nf
   calc
     interiorCutoffShellSum x q k =
@@ -1465,7 +1464,7 @@ theorem cutoffFirstShiftedSum_long_le
           (shellHeight z : ℝ) ^ (-(1 : ℝ) / 4) +
         c₂ * ((z : ℝ) * W) * (k : ℝ) ^ (-(1 : ℝ) / 4)) +
       c₃ * ((z : ℝ) * W) * (k : ℝ) ^ (-(1 : ℝ) / 4) := by
-        convert hraw using 1 <;> dsimp [c₁, c₂, c₃, W] <;> ring
+        convert hraw using 1; dsimp [c₁, c₂, c₃, W]; ring
     _ ≤ (c₁ * ((z : ℝ) * W) * (k : ℝ) ^ (-(1 : ℝ) / 4) +
         c₂ * ((z : ℝ) * W) * (k : ℝ) ^ (-(1 : ℝ) / 4)) +
       c₃ * ((z : ℝ) * W) * (k : ℝ) ^ (-(1 : ℝ) / 4) := by
@@ -1537,7 +1536,7 @@ theorem cutoffFirstShiftedSum_middle_le
         c₂ * ((z : ℝ) * W) * (k : ℝ) ^ (-(1 : ℝ) / 4)) +
       c₃ * ((z : ℝ) * W) *
         (shellHeight z : ℝ) ^ (-(1 : ℝ) / 4) := by
-        convert hraw using 1 <;> dsimp [c₁, c₂, c₃, W] <;> ring
+        convert hraw using 1; dsimp [c₁, c₂, c₃, W]; ring
     _ ≤ (c₁ * ((z : ℝ) * W) *
           (shellHeight z : ℝ) ^ (-(1 : ℝ) / 4) +
         c₂ * ((z : ℝ) * W) *

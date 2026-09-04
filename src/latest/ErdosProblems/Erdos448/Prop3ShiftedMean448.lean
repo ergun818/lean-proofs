@@ -432,7 +432,7 @@ lemma localCorrection_nonneg (p : ℕ) : 0 ≤ localCorrection p := by
     have : (0 : ℝ) < (p : ℝ) - 1 := sub_pos.mpr hpR
     positivity
 
-lemma localCorrection_le_exp {p : ℕ} (hp : p.Prime) :
+lemma localCorrection_le_exp {p : ℕ} (_hp : p.Prime) :
     localCorrection p ≤
       Real.exp (1 / (4 * (p : ℝ) * ((p : ℝ) - 1))) := by
   unfold localCorrection
@@ -988,7 +988,7 @@ lemma card_divisors_shifted_coprime_identity
       apply factorization_eq_zero_of_not_mem_primeFactors
       exact fun hpn => (Finset.disjoint_left.mp hmn.disjoint_primeFactors) hpm hpn
     · exact Or.inl (factorization_eq_zero_of_not_mem_primeFactors hpm)
-  rcases hzero with hzero | hzero <;> simp [hzero] <;> ring
+  rcases hzero with hzero | hzero <;> simp [hzero]; ring
 
 /-- The normalized shifted reciprocal divisor function. -/
 noncomputable def normalizedTauRatio (q m : ℕ) : ℝ :=
@@ -1012,7 +1012,7 @@ lemma normalizedTauRatio_le_one (q m : ℕ) : normalizedTauRatio q m ≤ 1 := by
   simp only [normalizedTauRatio]
   split_ifs with h
   · norm_num
-  · push_neg at h
+  · push Not at h
     have hqm : q * m ≠ 0 := Nat.mul_ne_zero h.1 h.2
     have hsub := Nat.divisors_subset_of_dvd hqm (dvd_mul_right q m)
     have hcard : q.divisors.card ≤ (q * m).divisors.card := Finset.card_le_card hsub
@@ -1133,7 +1133,7 @@ theorem normalizedTauRatio_mean_le_euler_product
           ∏ p ∈ (N + 1).primesBelow,
             ∑' j : ℕ, normalizedTauRatio q (p ^ j) /
               ((p ^ j : ℕ) : ℝ) by
-    convert hraw using 1 <;> ring
+    convert hraw using 1; ring
   apply HalberstamScratch.halberstam_richert_of_mass_convolution
     (normalizedTauRatio q) (normalizedTauRatio_zero_right q)
     (normalizedTauRatio_one hq)

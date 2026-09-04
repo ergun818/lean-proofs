@@ -204,7 +204,7 @@ lemma fifth_power_bound_implies_weight
     have h := Real.log_le_log (pow_pos (by norm_num : (0 : ℝ) < 2) _) hpowR
     rw [Real.log_pow, Real.log_pow] at h
     push_cast at h
-    convert h using 1 <;> ring
+    exact h
   have hlogk : 0 ≤ Real.log (k : ℝ) := Real.log_nonneg (by exact_mod_cast hk)
   have hlog3 : 0 < Real.log (3 : ℝ) := Real.log_pos (by norm_num)
   have htarget :
@@ -225,7 +225,7 @@ lemma fifth_power_bound_implies_weight
   rw [show (3 : ℝ) = Real.exp (Real.log 3) by
     rw [Real.exp_log (by norm_num)]]
   rw [← Real.exp_add, ← Real.exp_add, ← Real.exp_zero]
-  exact Real.exp_le_exp.mpr (by convert htarget using 1 <;> ring)
+  exact Real.exp_le_exp.mpr (by convert htarget using 1; ring)
 
 lemma fifth_power_bound_implies_exact_weight
     {C m : ℕ} (hC : 0 < C) (hpow : 2 ^ (5 * m) ≤ C ^ 2) :
@@ -236,7 +236,7 @@ lemma fifth_power_bound_implies_exact_weight
     have h := Real.log_le_log (pow_pos (by norm_num : (0 : ℝ) < 2) _) hpowR
     rw [Real.log_pow, Real.log_pow] at h
     push_cast at h
-    convert h using 1 <;> ring
+    exact h
   have htarget :
       0 ≤ (2 / 5 : ℝ) * Real.log (C : ℝ) - (m : ℝ) * Real.log 2 := by
     linarith
@@ -249,7 +249,7 @@ lemma fifth_power_bound_implies_exact_weight
           (by norm_num : (2 : ℝ) ≠ 0), Real.log_one]
         ring]
   rw [← Real.exp_add, ← Real.exp_zero]
-  exact Real.exp_le_exp.mpr (by convert htarget using 1 <;> ring)
+  exact Real.exp_le_exp.mpr (by convert htarget using 1; ring)
 
 theorem one_le_naturalGridWeight_of_good
     {K d k : ℕ} (hK : 0 < K) (hk : 0 < k) (hkd : k < d)
@@ -618,7 +618,7 @@ theorem exists_fixedMoment_range_uniform :
     (hmean x Y hx hY)
 
 lemma one_grid_sum_bound
-    {C : ℝ} (hC : 0 ≤ C)
+    {C : ℝ} (_hC : 0 ≤ C)
     (hmoment : ∀ x Y : ℕ, 2 ≤ x → 2 ≤ Y →
       (∑ n ∈ Finset.range x,
         NormalizedDivisorMoment448.fixedMoment Y n) ≤
@@ -910,7 +910,7 @@ lemma naturalLocalEuler_summable (q : ℕ) {p : ℕ} (hp : p.Prime) :
     (naturalMoment_nonneg q) (naturalMoment_one q)
     (by norm_num) (by norm_num) (by norm_num) hpow).1
 
-lemma naturalLocalEuler_nonneg (q : ℕ) {p : ℕ} (hp : p.Prime) :
+lemma naturalLocalEuler_nonneg (q : ℕ) {p : ℕ} (_hp : p.Prime) :
     0 ≤ naturalLocalEuler q p := by
   apply tsum_nonneg
   intro j
