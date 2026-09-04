@@ -440,7 +440,7 @@ private lemma quarter_log_ratio_plus_log2_ratio_bound (k ε : ℝ) (hε : 0 < ε
       · exact Real.log_nonneg (by linarith)
       · linarith
     nlinarith
-  · push_neg at h_eps_le
+  · push Not at h_eps_le
     have h1 : Real.log k / Real.log (k / 2) ≤ 2 := log_k_over_log_k_div_2_le_two k hk_ge_4
     have h2 : Real.log 2 / Real.log (k / 2) ≤ 1 := log_2_over_log_k_div_2_le_one k hk_ge_4
     have h_ratio_nn : 0 ≤ Real.log k / Real.log (k / 2) := by
@@ -455,7 +455,7 @@ private lemma q_minus_one_pos_real (q : ℕ) (hq : q.Prime) : (0 : ℝ) < (q : �
   have h_two_le_real : (2 : ℝ) ≤ (q : ℝ) := by exact_mod_cast h_two_le
   linarith
 
-private lemma exp_log_eps_le_k_of_Kr_le (k : ℕ) (x₀ ε : ℝ) (hε : 0 < ε)
+private lemma exp_log_eps_le_k_of_Kr_le (k : ℕ) (x₀ ε : ℝ) (_hε : 0 < ε)
     (hKr_le_k : max (max (2 * x₀) 4) (2 * Real.exp (2 * Real.log 2 / ε)) ≤ (k : ℝ)) :
     2 * Real.exp (2 * Real.log 2 / ε) ≤ (k : ℝ) :=
   (le_max_right _ _).trans hKr_le_k
@@ -509,7 +509,6 @@ theorem PNT_AP_long (q : ℕ) (hq : q.Prime) (δ : ℝ) (hδ : 0 < δ) :
   obtain ⟨x₀, hx₀_ge, hx₀⟩ :=
     Erdos387.ANT.PNT_fixed_modulus q 1 hq_pos h1_lt_q hcoprime
       (2 * δ) (by linarith) (ε / 4) (by linarith)
-
   set Kr : ℝ := max (max (2 * x₀) 4) (2 * Real.exp (2 * Real.log 2 / ε))
   refine ⟨⌈Kr⌉₊, ?_⟩
   intro k hk u v hu_ge hu_v hv_le hδ_le
@@ -522,7 +521,6 @@ theorem PNT_AP_long (q : ℕ) (hq : q.Prime) (δ : ℝ) (hδ : 0 < δ) :
   have hk_div2_ge_2 : (2 : ℝ) ≤ (k : ℝ) / 2 := by linarith
   have hk_gt_2 : (2 : ℝ) < (k : ℝ) := by linarith
   have hk_div2_pos : (0 : ℝ) < (k : ℝ) / 2 := by linarith
-
   have h2δ_pos : 0 < 2 * δ := by linarith
   have h_window : (k : ℝ) / 2 ≤ u ∧ u < v ∧ v ≤ 2 * ((k : ℝ) / 2) ∧
       2 * δ * ((k : ℝ) / 2) ≤ v - u := by
@@ -531,7 +529,6 @@ theorem PNT_AP_long (q : ℕ) (hq : q.Prime) (δ : ℝ) (hδ : 0 < δ) :
     · have : 2 * δ * ((k : ℝ) / 2) = δ * (k : ℝ) := by ring
       linarith
   obtain ⟨h_u_ge, h_u_v, h_v_le, h_δ_le⟩ := h_window
-
   have hPNT := hx₀ ((k : ℝ) / 2) hk_div2_ge_x₀ u v h_u_ge h_u_v h_v_le h_δ_le
   have h_kr : 2 * Real.exp (2 * Real.log 2 / ε) ≤ (k : ℝ) :=
     (le_max_right _ _).trans hKr_le_k
@@ -1461,7 +1458,7 @@ private lemma avg_prime_supply (m q : ℕ) (hm : 3 ≤ m) (hq : q.Prime) (hmq : 
             push_cast at h_log_lt ⊢; linarith
         _ ≤ ((Nat.log 2 (2 * X) + 1 : ℕ) : ℝ) := h_step
     have h_log_2X_le_L : Real.log (2 * (X : ℝ)) ≤ (L : ℝ) := by
-      have : ((L : ℕ) : ℝ) = (L : ℝ) := by push_cast; ring
+      have : ((L : ℕ) : ℝ) = (L : ℝ) := by rfl
       linarith [h_log_2X_lt, this]
     have hq_minus_one_pos : 0 < q - 1 := by omega
     have h_log_2X_pos : 0 < Real.log (2 * (X : ℝ)) := by
@@ -1517,7 +1514,7 @@ private lemma avg_prime_supply (m q : ℕ) (hm : 3 ≤ m) (hq : q.Prime) (hmq : 
       exact Nat.div_le_of_le_mul h
     have hP_card_pos : 1 ≤ P_card := by
       by_contra h
-      push_neg at h
+      push Not at h
       have hP_card_zero : P_card = 0 := by omega
       rw [hP_card_zero] at h_X_le_nat
       omega
@@ -1593,7 +1590,7 @@ private lemma avg_prime_supply (m q : ℕ) (hm : 3 ≤ m) (hq : q.Prime) (hmq : 
       · rw [Finset.mem_Ico]; exact ⟨le_rfl, by omega⟩
     · intro t ht
       by_contra hnot
-      push_neg at hnot
+      push Not at hnot
       apply hkNotBad
       rw [hBad_def, Finset.mem_filter]
       refine ⟨hkK, ?_⟩

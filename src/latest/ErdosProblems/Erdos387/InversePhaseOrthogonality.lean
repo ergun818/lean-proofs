@@ -162,7 +162,7 @@ theorem sum_norm_characterSum_sq_le_short_box
 family.  This is the coefficient-side input to the complete-frequency
 estimate below. -/
 theorem sum_norm_residueFiberSum_sq_le_short_box_family
-    {I : Type*} [DecidableEq I]
+    {I : Type*}
     (S : Finset I) (modulus frequency scale : I → ℕ)
     [∀ i, NeZero (modulus i)]
     (R : ℕ) (U : Finset ℕ) (weight : I → ℕ → ℂ)
@@ -177,6 +177,7 @@ theorem sum_norm_residueFiberSum_sq_le_short_box_family
         ‖AdditiveOrthogonality.residueFiberSum U
           (phase (modulus i) (frequency i) (scale i)) (weight i) u‖ ^ 2) ≤
       (S.card * U.card : ℕ) := by
+  classical
   calc
     (∑ i ∈ S, ∑ u : ZMod (modulus i),
         ‖AdditiveOrthogonality.residueFiberSum U
@@ -193,7 +194,7 @@ theorem sum_norm_residueFiberSum_sq_le_short_box_family
 family whose modulus, frequency, and coprime scale factor may vary.  The
 right side retains the exact sum of the varying moduli. -/
 theorem sum_norm_characterSum_sq_le_short_box_family
-    {I : Type*} [DecidableEq I]
+    {I : Type*}
     (S : Finset I) (modulus frequency scale : I → ℕ)
     [∀ i, NeZero (modulus i)]
     (R : ℕ) (U : Finset ℕ) (weight : I → ℕ → ℂ)
@@ -208,6 +209,7 @@ theorem sum_norm_characterSum_sq_le_short_box_family
         ‖AdditiveOrthogonality.characterSum U
           (phase (modulus i) (frequency i) (scale i)) (weight i) u‖ ^ 2) ≤
       ((∑ i ∈ S, modulus i * U.card : ℕ) : ℝ) := by
+  classical
   calc
     (∑ i ∈ S, ∑ u : ZMod (modulus i),
         ‖AdditiveOrthogonality.characterSum U

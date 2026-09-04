@@ -87,12 +87,13 @@ theorem card_simultaneousClassIoc_le
 
 /-- Union bound for any finite family of single residue classes. -/
 theorem card_biUnion_modularPreimageIoc_le
-    {I : Type*} [DecidableEq I] {L U : ℕ} (hLU : L ≤ U)
+    {I : Type*} {L U : ℕ} (hLU : L ≤ U)
     (T : Finset I) (q r : I → ℕ)
     (hq : ∀ i ∈ T, 0 < q i) (hr : ∀ i ∈ T, r i < q i) :
     (((T.biUnion fun i =>
         modularPreimageIoc L U (q i) {r i}).card : ℕ) : ℝ) ≤
       ∑ i ∈ T, (((U - L : ℕ) : ℝ) / q i + 2) := by
+  classical
   have hcardNat :
       (T.biUnion fun i => modularPreimageIoc L U (q i) {r i}).card ≤
         ∑ i ∈ T, (modularPreimageIoc L U (q i) {r i}).card :=

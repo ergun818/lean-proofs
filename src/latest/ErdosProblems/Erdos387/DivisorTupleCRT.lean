@@ -38,10 +38,11 @@ theorem value_dvd_choose {D : CoverFactorization n k}
 
 /-- Product divisibility for a finite pairwise-coprime natural family. -/
 theorem finset_prod_dvd_of_pairwise_coprime_nat
-    {I : Type*} [DecidableEq I] (s : Finset I) (f : I → ℕ) (N : ℕ)
+    {I : Type*} (s : Finset I) (f : I → ℕ) (N : ℕ)
     (hpair : ∀ i ∈ s, ∀ j ∈ s, i ≠ j → Nat.Coprime (f i) (f j))
     (hdvd : ∀ i ∈ s, f i ∣ N) :
     ∏ i ∈ s, f i ∣ N := by
+  classical
   induction s using Finset.induction_on with
   | empty => simp
   | @insert a s ha ih =>

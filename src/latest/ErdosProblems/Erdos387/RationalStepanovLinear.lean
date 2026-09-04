@@ -21,7 +21,7 @@ namespace RationalStepanov
 
 /-- One denominator-cleared reduced Hasse term. -/
 noncomputable def rationalReducedTerm
-    {E : Type*} [CommRing E] (p h : ℕ) (c pole : E)
+    {E : Type*} [CommRing E] (p _h : ℕ) (c pole : E)
     (r i k : ℕ) (e lowN lowD : E[X]) : E[X] :=
   ((hasseDeriv r e * (C c * lowD - lowN) ^ i) *
       lowD ^ (p - 1 - i)) * (X - C pole) ^ k

@@ -122,9 +122,10 @@ theorem coverQuotient_dvd_choose (D : CoverFactorization n k) {i : ℕ} (hi : i 
 /-- Every divisor of a finite product can be split into a product of divisors
 of the individual factors.  No coprimality is needed for existence (without
 coprimality the splitting need not be unique). -/
-theorem exists_dvd_factors_of_dvd_prod {ι : Type*} [DecidableEq ι]
+theorem exists_dvd_factors_of_dvd_prod {ι : Type*}
     (s : Finset ι) (f : ι → ℕ) {d : ℕ} (hd : d ∣ ∏ i ∈ s, f i) :
     ∃ e : ι → ℕ, (∀ i ∈ s, e i ∣ f i) ∧ d = ∏ i ∈ s, e i := by
+  classical
   induction s using Finset.induction_on generalizing d with
   | empty =>
       refine ⟨fun _ => 1, by simp, ?_⟩
@@ -162,11 +163,12 @@ uniquely determined by the product of all the chosen divisors.  This is the
 finite unique-factorization statement used to count divisors of a covered
 binomial coefficient by counting tuples. -/
 theorem divisorFactors_unique_of_pairwise_coprime
-    {ι : Type*} [DecidableEq ι] (s : Finset ι) {q e e' : ι → ℕ}
+    {ι : Type*} (s : Finset ι) {q e e' : ι → ℕ}
     (hpair : ∀ i ∈ s, ∀ j ∈ s, i ≠ j → Nat.Coprime (q i) (q j))
     (he : ∀ i ∈ s, e i ∣ q i) (he' : ∀ i ∈ s, e' i ∣ q i)
     (hprod : ∏ i ∈ s, e i = ∏ i ∈ s, e' i) :
     ∀ i ∈ s, e i = e' i := by
+  classical
   intro i hi
   have hdvd : e i ∣ e' i := by
     have hdvdprod : e i ∣ ∏ j ∈ s, e' j := by

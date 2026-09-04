@@ -109,7 +109,8 @@ theorem rootMultiplicity_rationalAuxiliaryTerm_eq_label
   rw [frobeniusOrderSum_succ p (h + 2)]
   have hi : p ^ (h + 3) * p ^ (h + 2) = p ^ (2 * (h + 3) - 1) := by
     rw [← pow_add]
-    congr 1 <;> omega
+    congr 1
+    omega
   have hJ :
       p ^ (h + 3) * ((p - 1 - i) * p ^ (h + 2)) =
         p ^ (2 * (h + 3) - 1) * (p - 1 - i) := by
@@ -183,7 +184,7 @@ theorem exists_rationalAuxiliaryCoefficientPolynomial_ne_zero
 
 /-- Root multiplicity is bounded by degree for a nonzero polynomial. -/
 theorem rootMultiplicity_le_natDegree_of_ne_zero
-    {E : Type*} [Field E] {P : E[X]} (hP : P ≠ 0) (r : E) :
+    {E : Type*} [Field E] {P : E[X]} (_hP : P ≠ 0) (r : E) :
     P.rootMultiplicity r ≤ P.natDegree := by
   rw [rootMultiplicity_eq_natTrailingDegree]
   calc
@@ -194,11 +195,12 @@ theorem rootMultiplicity_le_natDegree_of_ne_zero
 /-- A finite sum of nonzero polynomials with pairwise distinct local orders
 at one point cannot vanish. -/
 theorem polynomial_sum_ne_zero_of_rootMultiplicity_injOn
-    {E : Type*} [Field E] {I : Type*} [DecidableEq I]
+    {E : Type*} [Field E] {I : Type*}
     (r : E) (u : Finset I) (F : I → E[X])
     (hu : u.Nonempty) (hF : ∀ z ∈ u, F z ≠ 0)
     (hinj : Set.InjOn (fun z => (F z).rootMultiplicity r) (u : Set I)) :
     ∑ z ∈ u, F z ≠ 0 := by
+  classical
   obtain ⟨z, hz, hmin⟩ := u.exists_min_image
     (fun w => (F w).rootMultiplicity r) hu
   let n := (F z).rootMultiplicity r

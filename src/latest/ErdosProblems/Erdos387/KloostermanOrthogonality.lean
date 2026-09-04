@@ -132,9 +132,7 @@ theorem sum_isUnit_indicator
   calc
     (∑ v : ZMod q, if IsUnit v then (1 : ℝ) else 0) =
         (((Finset.univ : Finset (ZMod q)).filter IsUnit).card : ℝ) := by
-      simpa using
-        (Finset.sum_boole (R := ℝ) IsUnit
-          (Finset.univ : Finset (ZMod q)))
+      simp
     _ = Fintype.card (ZMod q)ˣ := by
       have hfilter :
           (Finset.univ : Finset (ZMod q)).filter IsUnit =

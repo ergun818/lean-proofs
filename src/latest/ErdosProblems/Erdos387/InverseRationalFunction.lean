@@ -92,7 +92,7 @@ theorem length_poleOffsets (hs : List ℕ) :
   induction hs with
   | nil => simp [poleOffsets]
   | cons h hs ih =>
-      simpa [poleOffsets, ih, pow_succ, Nat.mul_comm, two_mul]
+      simp [poleOffsets, ih, pow_succ, Nat.mul_comm, two_mul]
 
 /-- The recursively defined denominator is exactly the product of the
 translated affine factors indexed by `poleOffsets`. -/

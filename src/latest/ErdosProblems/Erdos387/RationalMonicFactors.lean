@@ -128,6 +128,7 @@ theorem normalizedFactors_monicFactorProduct
       exact P.monic.normalize_eq_self
     _ = s := Multiset.map_id s
 
+omit [DecidableEq K] in
 theorem monicFactorProduct_injective :
     Function.Injective
       (monicFactorProduct : (MonicIrreducibleLE K N →₀ Nat) → K[X]) := by

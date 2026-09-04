@@ -65,10 +65,11 @@ theorem mem_Ioc_natCast_div_iff {B n d : ℕ} (hB : 0 < B) :
 /-- If a finite product is larger than a common upper bound for every one of
 its factors, at least two factors are nontrivial. -/
 theorem exists_two_ne_one_of_prod_gt_bound
-    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {ι : Type*} [Fintype ι]
     (f : ι → ℕ) {N : ℕ} (hN : 1 ≤ N) (hle : ∀ i, f i ≤ N)
     (hlt : N < ∏ i, f i) :
     ∃ i j : ι, i ≠ j ∧ f i ≠ 1 ∧ f j ≠ 1 := by
+  classical
   have hprodNe : (∏ i, f i) ≠ 1 := by omega
   obtain ⟨i, _, hfi⟩ :=
     Finset.exists_ne_one_of_prod_ne_one (s := Finset.univ) hprodNe

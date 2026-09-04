@@ -43,8 +43,9 @@ def brunSubsetTail {ι : Type*} (P : Finset ι) (x : ι → ℝ) (L : ℕ) : ℝ
 /-- Once the truncation level reaches the number of available primes, the
 finite subset tail vanishes identically. -/
 theorem brunSubsetTail_eq_zero_of_card_le
-    {ι : Type*} [DecidableEq ι] (P : Finset ι) (x : ι → ℝ) {L : ℕ}
+    {ι : Type*} (P : Finset ι) (x : ι → ℝ) {L : ℕ}
     (hPL : P.card ≤ L) : brunSubsetTail P x L = 0 := by
+  classical
   unfold brunSubsetTail
   apply Finset.sum_eq_zero
   intro T hT
@@ -53,11 +54,12 @@ theorem brunSubsetTail_eq_zero_of_card_le
     (Finset.mem_powerset.mp hT)).trans hPL)
 
 /-- Exact subset expansion of a finite Euler product. -/
-theorem finiteEulerProduct_eq_sum_powerset {ι : Type*} [DecidableEq ι]
+theorem finiteEulerProduct_eq_sum_powerset {ι : Type*}
     (P : Finset ι) (x : ι → ℝ) :
     finiteEulerProduct P x =
       ∑ T ∈ P.powerset,
         (-1 : ℝ) ^ T.card * subsetMonomial x T := by
+  classical
   unfold finiteEulerProduct subsetMonomial
   simpa using (Finset.prod_sub (fun _ : ι => (1 : ℝ)) x P)
 
@@ -70,10 +72,11 @@ theorem subsetMonomial_nonneg {ι : Type*} {x : ι → ℝ} {T : Finset ι}
 /-- The error of either parity of Brun truncation is bounded by the unsigned
 tail. -/
 theorem abs_brunSubsetSum_sub_finiteEulerProduct_le
-    {ι : Type*} [DecidableEq ι] (P : Finset ι) (x : ι → ℝ) (L : ℕ)
+    {ι : Type*} (P : Finset ι) (x : ι → ℝ) (L : ℕ)
     (hx : ∀ p ∈ P, 0 ≤ x p) :
     |brunSubsetSum P x L - finiteEulerProduct P x| ≤
       brunSubsetTail P x L := by
+  classical
   rw [finiteEulerProduct_eq_sum_powerset]
   unfold brunSubsetSum brunSubsetTail
   rw [← Finset.sum_sub_distrib]
@@ -104,12 +107,13 @@ theorem abs_brunSubsetSum_sub_finiteEulerProduct_le
 
 /-- Two-sided form of the preceding absolute-error estimate. -/
 theorem brunSubsetSum_between_euler_sub_add_tail
-    {ι : Type*} [DecidableEq ι] (P : Finset ι) (x : ι → ℝ) (L : ℕ)
+    {ι : Type*} (P : Finset ι) (x : ι → ℝ) (L : ℕ)
     (hx : ∀ p ∈ P, 0 ≤ x p) :
     finiteEulerProduct P x - brunSubsetTail P x L ≤
         brunSubsetSum P x L ∧
       brunSubsetSum P x L ≤
         finiteEulerProduct P x + brunSubsetTail P x L := by
+  classical
   have h := abs_brunSubsetSum_sub_finiteEulerProduct_le P x L hx
   have hsides := (abs_le.mp h)
   constructor <;> linarith
@@ -117,11 +121,12 @@ theorem brunSubsetSum_between_euler_sub_add_tail
 /-- If the omitted positive tail is at most half of the Euler product, the
 odd and even Brun main terms both lie in a fixed positive window. -/
 theorem brunSubsetSum_half_threeHalves
-    {ι : Type*} [DecidableEq ι] (P : Finset ι) (x : ι → ℝ) (L : ℕ)
+    {ι : Type*} (P : Finset ι) (x : ι → ℝ) (L : ℕ)
     (hx : ∀ p ∈ P, 0 ≤ x p)
     (htail : 2 * brunSubsetTail P x L ≤ finiteEulerProduct P x) :
     finiteEulerProduct P x / 2 ≤ brunSubsetSum P x L ∧
       brunSubsetSum P x L ≤ 3 * finiteEulerProduct P x / 2 := by
+  classical
   obtain ⟨hlo, hhi⟩ :=
     brunSubsetSum_between_euler_sub_add_tail P x L hx
   constructor <;> linarith
@@ -129,9 +134,10 @@ theorem brunSubsetSum_half_threeHalves
 /-- Expanding `∏ (1 + 2 x_p)` gives the powers-of-two moment of the subset
 monomials. -/
 theorem prod_one_add_two_mul_eq_sum_powerset
-    {ι : Type*} [DecidableEq ι] (P : Finset ι) (x : ι → ℝ) :
+    {ι : Type*} (P : Finset ι) (x : ι → ℝ) :
     (∏ p ∈ P, (1 + 2 * x p)) =
       ∑ T ∈ P.powerset, (2 : ℝ) ^ T.card * subsetMonomial x T := by
+  classical
   rw [Finset.prod_one_add]
   apply Finset.sum_congr rfl
   intro T hT
@@ -143,10 +149,11 @@ theorem prod_one_add_two_mul_eq_sum_powerset
 `2^(L+1)` is enough for all omitted subsets because each has at least `L+1`
 members. -/
 theorem pow_two_mul_brunSubsetTail_le
-    {ι : Type*} [DecidableEq ι] (P : Finset ι) (x : ι → ℝ) (L : ℕ)
+    {ι : Type*} (P : Finset ι) (x : ι → ℝ) (L : ℕ)
     (hx : ∀ p ∈ P, 0 ≤ x p) :
     (2 : ℝ) ^ (L + 1) * brunSubsetTail P x L ≤
       ∏ p ∈ P, (1 + 2 * x p) := by
+  classical
   rw [prod_one_add_two_mul_eq_sum_powerset]
   unfold brunSubsetTail
   rw [Finset.mul_sum]
@@ -170,12 +177,13 @@ enough to compare that moment with the Euler product after multiplication by
 `2^(L+1)`.  This formulation avoids divisions and is well suited to later
 explicit estimates. -/
 theorem two_mul_brunSubsetTail_le_of_moment
-    {ι : Type*} [DecidableEq ι] (P : Finset ι) (x : ι → ℝ) (L : ℕ)
+    {ι : Type*} (P : Finset ι) (x : ι → ℝ) (L : ℕ)
     (hx : ∀ p ∈ P, 0 ≤ x p)
     (hmoment :
       2 * (∏ p ∈ P, (1 + 2 * x p)) ≤
         (2 : ℝ) ^ (L + 1) * finiteEulerProduct P x) :
     2 * brunSubsetTail P x L ≤ finiteEulerProduct P x := by
+  classical
   have htail := pow_two_mul_brunSubsetTail_le P x L hx
   have hpow : 0 < (2 : ℝ) ^ (L + 1) := by positivity
   rw [← mul_le_mul_iff_of_pos_left hpow]
@@ -196,11 +204,11 @@ theorem boundingSieve_brunTail_le_half_of_moment
     2 * brunSubsetTail s.prodPrimes.primeFactors (fun p => s.nu p) L ≤
       finiteEulerProduct s.prodPrimes.primeFactors (fun p => s.nu p) := by
   apply two_mul_brunSubsetTail_le_of_moment
-  intro p hp
-  exact (s.nu_pos_of_prime p
-    (Nat.prime_of_mem_primeFactors hp)
-    (Nat.dvd_of_mem_primeFactors hp)).le
-  simpa only using hmoment
+  · intro p hp
+    exact (s.nu_pos_of_prime p
+      (Nat.prime_of_mem_primeFactors hp)
+      (Nat.dvd_of_mem_primeFactors hp)).le
+  · exact hmoment
 
 /-- Harmonic-product factor with a harmless value at the zero index. -/
 noncomputable def harmonicProductFactor (a p : ℕ) : ℝ :=
@@ -235,7 +243,7 @@ theorem prod_range_harmonicProductFactor_le_pow (a z : ℕ) :
       have hfac :
           (z + 1 : ℝ) * (1 + 1 / (z + 1 : ℝ)) = z + 2 := by
         field_simp
-        <;> ring
+        ring
       calc
         (∏ p ∈ Finset.range (z + 1), harmonicProductFactor a p) *
               harmonicProductFactor a (z + 1) ≤

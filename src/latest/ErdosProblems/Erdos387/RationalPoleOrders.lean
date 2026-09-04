@@ -91,7 +91,7 @@ theorem expand_map_zmod_eq_pow
     | zero => simp
     | succ t ih =>
         rw [pow_succ, expand_mul, ih, ZMod.expand_card]
-        simpa only [← pow_mul, Nat.mul_comm]
+        simp only [← pow_mul, Nat.mul_comm]
   rw [← map_expand, hzmod, Polynomial.map_pow]
 
 /-- A useful exact valuation rule: when two nonzero polynomials have
@@ -268,7 +268,7 @@ theorem lowRationalPoleOrders
   induction m using Nat.twoStepInduction with
   | zero => omega
   | one =>
-      simpa [lowRationalDenominator, lowRationalNumerator,
+      simp [lowRationalDenominator, lowRationalNumerator,
         frobeniusOrderSum, A, B, hA, hB, hAr, hBr]
   | more m ih0 ih1 =>
       have hm1 : 0 < m + 1 := by omega

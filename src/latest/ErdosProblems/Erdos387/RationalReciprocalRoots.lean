@@ -161,8 +161,7 @@ theorem X_mul_derivative_reciprocalRootProduct
       reciprocalRootProduct s * reciprocalRootLogDerivative s := by
   induction s using Multiset.induction_on with
   | empty =>
-      simp [reciprocalRootProduct, reciprocalRootLogDerivative,
-        PowerSeries.derivative_one]
+      simp [reciprocalRootProduct, reciprocalRootLogDerivative]
   | cons a s ih =>
       rw [reciprocalRootProduct_cons,
         reciprocalRootLogDerivative_cons]

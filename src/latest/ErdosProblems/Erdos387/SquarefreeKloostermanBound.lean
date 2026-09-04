@@ -99,7 +99,7 @@ private theorem norm_sum_natCast_mul_unit_squarefree_aux :
           simp only [e, uP, map_mul, Prod.snd_mul]
           rw [show (ZMod.chineseRemainder hcop (B : ZMod (m * p))).2 =
               (B : ZMod p) by
-            simp [ZMod.chineseRemainder, ZMod.castHom_apply]]
+            simp [ZMod.chineseRemainder]]
           ring
         have hbM :
             (e ((B : ZMod (m * p)) * u)).1 * (Nat.gcdB m p : ZMod m) =
@@ -107,7 +107,7 @@ private theorem norm_sum_natCast_mul_unit_squarefree_aux :
           simp only [e, uM, map_mul, Prod.fst_mul]
           rw [show (ZMod.chineseRemainder hcop (B : ZMod (m * p))).1 =
               (B : ZMod m) by
-            simp [ZMod.chineseRemainder, ZMod.castHom_apply]]
+            simp [ZMod.chineseRemainder]]
           ring
         have hlocalRaw := norm_sum_le_four_sqrt_mul_ite hpLarge
           aP ((B : ZMod p) * uP)
@@ -154,7 +154,6 @@ private theorem norm_sum_natCast_mul_unit_squarefree_aux :
               simp [hpnot]
             have hsqrtQ : Real.sqrt (m * p : ℝ) =
                 Real.sqrt (m : ℝ) * Real.sqrt (p : ℝ) := by
-              push_cast
               rw [Real.sqrt_mul (Nat.cast_nonneg m)]
             have hgcd : Nat.gcd B (m * p) = Nat.gcd B m * Nat.gcd B p := by
               exact gcd_mul_of_coprime hcop

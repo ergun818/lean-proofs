@@ -235,7 +235,7 @@ theorem residual_add_mul {m k : ℕ} (C : AbsorberCoverValid m k)
     rw [show C.toAbsorberCover.N₀ + (M : ℤ) * (t₀ + Q * u) - k +
           (j.val + 1) =
         (C.toAbsorberCover.N₀ + (M : ℤ) * t₀ - k + (j.val + 1)) +
-          (M : ℤ) * ((Q : ℤ) * u) by push_cast; ring]
+          (M : ℤ) * ((Q : ℤ) * u) by ring]
     rw [Int.add_ediv_of_dvd_right hdiv, hsecondInt]
   apply Int.ofNat_inj.mp
   push_cast

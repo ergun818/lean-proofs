@@ -46,8 +46,6 @@ private theorem derivative_one_sub_C_mul_X_pow (z : R) (e : Nat) :
     PowerSeries.derivative R
         (1 - PowerSeries.C z * PowerSeries.X ^ e) =
       -PowerSeries.C ((e : R) * z) * PowerSeries.X ^ (e - 1) := by
-  change PowerSeries.derivative R
-      (1 - PowerSeries.C z * PowerSeries.X ^ e) = _
   rw [map_sub, ← map_one (PowerSeries.C (R := R)),
     PowerSeries.derivative_C, Derivation.leibniz,
     PowerSeries.derivative_C, PowerSeries.derivative_pow,

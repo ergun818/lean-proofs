@@ -90,7 +90,7 @@ theorem natDegree_denominatorPolynomial
       have hm := monic_denominatorPolynomial a hs
       rw [denominatorPolynomial, (hm.comp_X_add_C _).natDegree_mul hm,
         Polynomial.natDegree_comp, natDegree_X_add_C, mul_one, ih]
-      simpa [pow_succ, Nat.mul_comm, two_mul]
+      simp [pow_succ, Nat.mul_comm, two_mul]
 
 /-- The cleared numerator has degree no larger than the denominator.  The
 slightly coarser bound is enough for the degree factor in a Weil estimate;

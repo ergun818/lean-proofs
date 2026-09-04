@@ -11,7 +11,7 @@ module postulates that proposition.
 -/
 
 open scoped BigOperators
-open Real Classical
+open Real
 open Erdos387.ANT Erdos387
 
 namespace Erdos387.CoverBPZ
@@ -68,7 +68,7 @@ theorem wideCoverBuildData_exists
     ((le_max_right _ _).trans ((le_max_right _ _).trans
       ((le_max_right _ _).trans (le_max_right _ _)))).trans h_consts_le_log4
   have hAq_ge_5 : 5 ≤ Aq := by
-    show 5 ≤ M_B B + 15
+    change 5 ≤ M_B B + 15
     omega
   let Qscale : ℕ := L ^ Aq
   have hQscale_pos : 0 < Qscale := Nat.pow_pos hL_pos
@@ -80,7 +80,7 @@ theorem wideCoverBuildData_exists
   have hq_pos : 0 < q := hq_prime.pos
   have hq_ge_2 : 2 ≤ q := hq_prime.two_le
   have hL_le_Qscale : L ≤ Qscale := by
-    show L ≤ L ^ Aq
+    change L ≤ L ^ Aq
     calc L = L ^ 1 := (pow_one _).symm
       _ ≤ L ^ Aq := Nat.pow_le_pow_right hL_pos (by omega)
   have hL_le_q : L ≤ q := hL_le_Qscale.trans hq_ge_Qscale
@@ -93,18 +93,18 @@ theorem wideCoverBuildData_exists
   let Y : ℕ := q ^ 20
   have hY_eq : Y = q ^ 20 := rfl
   have hY_ge_Y₀ : Y₀ ≤ Y := by
-    show Y₀ ≤ q ^ 20
+    change Y₀ ≤ q ^ 20
     calc Y₀ ≤ q := hq_ge_Y₀
       _ = q ^ 1 := (pow_one _).symm
       _ ≤ q ^ 20 := Nat.pow_le_pow_right hq_pos (by omega)
   have hY_pos : 2 ≤ Y := by
-    show 2 ≤ q ^ 20
+    change 2 ≤ q ^ 20
     calc 2 ≤ q := hq_ge_2
       _ = q ^ 1 := (pow_one _).symm
       _ ≤ q ^ 20 := Nat.pow_le_pow_right hq_pos (by omega)
   have hq_pow20_le_Y : q ^ 20 ≤ Y := le_refl _
   have hY_lt_q_pow21 : Y < q ^ 21 := by
-    show q ^ 20 < q ^ 21
+    change q ^ 20 < q ^ 21
     rw [pow_succ]
     nlinarith [Nat.pow_pos hq_pos (n := 20), hq_prime.one_lt]
   have hM_B : M_B B = B * (20 + 1) := by unfold M_B; ring
@@ -202,7 +202,7 @@ theorem wideCoverBuildData_exists
     exact coprime_h_W_product hq_prime hbTotal_prime hbTotal_range hY_pos1
       hh_ico.2 hh_mod_q
   have hY_big : 8 * q ≤ Y := by
-    show 8 * q ≤ q ^ 20
+    change 8 * q ≤ q ^ 20
     have h8 : (8 : ℕ) ≤ q ^ 3 := by
       calc (8 : ℕ) = 2 ^ 3 := by norm_num
         _ ≤ q ^ 3 := Nat.pow_le_pow_left hq_ge_2 _
@@ -229,9 +229,9 @@ theorem wideCoverBuildData_exists
           Nat.mul_le_mul_right _ this
     exact h1.trans hX_ge_LE
   have hCsw_le_E_big : Csw ≤ E_big := by
-    show 2000 * (B + 1) * (Aq + 1) + 2000 ≤ 3000 * (B + 1) * (M_B B + 20) + 3000
+    change 2000 * (B + 1) * (Aq + 1) + 2000 ≤ 3000 * (B + 1) * (M_B B + 20) + 3000
     have hAq1 : Aq + 1 = 21 * B + 16 := by
-      show M_B B + 15 + 1 = 21 * B + 16
+      change M_B B + 15 + 1 = 21 * B + 16
       have hM : M_B B = 21 * B := by unfold M_B; ring
       omega
     have hM : M_B B + 20 = 21 * B + 20 := by unfold M_B; ring
@@ -244,16 +244,16 @@ theorem wideCoverBuildData_exists
   have hHX_bound : H_X (M_B B) (2 * X) ≤ 16 * L ^ (21 * B + 9) :=
     wcbd_HX_2X_bound hL_def hX_ge_100 hHXconst_le_L4 (by omega)
   have hCsw1_le_E_big : Csw + 1 ≤ E_big := by
-    show 2000 * (B + 1) * (Aq + 1) + 2000 + 1 ≤ 3000 * (B + 1) * (M_B B + 20) + 3000
+    change 2000 * (B + 1) * (Aq + 1) + 2000 + 1 ≤ 3000 * (B + 1) * (M_B B + 20) + 3000
     have hAq1 : Aq + 1 = 21 * B + 16 := by
-      show M_B B + 15 + 1 = 21 * B + 16
+      change M_B B + 15 + 1 = 21 * B + 16
       have hM : M_B B = 21 * B := by unfold M_B; ring
       omega
     have hM : M_B B + 20 = 21 * B + 20 := by unfold M_B; ring
     rw [hM]
     exact wcbd_Csw_succ_le_E_big B Aq hAq1
   have hAq_eq_main : Aq = 21 * B + 15 := by
-    show M_B B + 15 = 21 * B + 15
+    change M_B B + 15 = 21 * B + 15
     have hM : M_B B = 21 * B := by unfold M_B; ring
     omega
   have h_HX_bound :
@@ -284,7 +284,7 @@ theorem wideCoverBuildData_exists
         H_X (M_B B) (2 * X) * Ω.card <
       4 * H_X (M_B B) (2 * X) * Ω.card := by
     have hAq_def : Aq = 21 * B + 15 := by
-      show M_B B + 15 = 21 * B + 15
+      change M_B B + 15 = 21 * B + 15
       have hMB : M_B B = 21 * B := by unfold M_B; ring
       omega
     have hB_ge_1 : 1 ≤ B := by omega
@@ -312,10 +312,10 @@ theorem wideCoverBuildData_exists
     exact this.trans hkX
   have hMB_eq : M_B B = 21 * B := by unfold M_B; ring
   have hE_big_eq_main : E_big = 3000 * (B + 1) * (21 * B + 20) + 3000 := by
-    show 3000 * (B + 1) * (M_B B + 20) + 3000 = _
+    change 3000 * (B + 1) * (M_B B + 20) + 3000 = _
     rw [hMB_eq]
   have hY_sq_small_X : 6 * Y * Y ≤ X := by
-    show 6 * q ^ 20 * q ^ 20 ≤ X
+    change 6 * q ^ 20 * q ^ 20 ≤ X
     exact wcbd_6YY_le_X hL_pos hL_ge_2 hX_ge_LE_loose hAq_eq_main
       hE_big_eq_main hq_le_L_pow_Aq1
   have hY_sq_small_k : 6 * Y * Y ≤ k := hY_sq_small_X.trans hkX
@@ -327,7 +327,7 @@ theorem wideCoverBuildData_exists
       apply Nat.mul_le_mul_right; omega
     omega
   have hE_big_ge_5 : 5 ≤ E_big := by
-    show 5 ≤ 3000 * (B + 1) * (M_B B + 20) + 3000
+    change 5 ≤ 3000 * (B + 1) * (M_B B + 20) + 3000
     omega
   have hk_ge_4m : 4 * B + 4 ≤ k :=
     (wcbd_4Bp4_le_X hL_pos hL_ge_2 hL_ge_7 hB_le_L4 hX_ge_LE_loose
@@ -339,7 +339,7 @@ theorem wideCoverBuildData_exists
     have h2qk : 2 * q ≤ k := h2q_le_X.trans hkX
     rw [Nat.le_div_iff_mul_le (by norm_num)]; omega
   have h4_le_E_big : 4 ≤ E_big := by
-    show 4 ≤ 3000 * (B + 1) * (M_B B + 20) + 3000
+    change 4 ≤ 3000 * (B + 1) * (M_B B + 20) + 3000
     omega
   have hk_ge_k₀ : k₀ ≤ k := by
     have h2 : L ^ 4 ≤ L ^ E_big := Nat.pow_le_pow_right hL_pos h4_le_E_big
@@ -361,7 +361,7 @@ theorem wideCoverBuildData_exists
       ∀ d ∈ smallDeficientSet B Y q, bd.total d = bTotal d := by
     intro d hd
     have hd' : d ∈ bd.D := by rwa [hbd_D_eq]
-    show bd.total d = bTotal d
+    change bd.total d = bTotal d
     rw [bd.total_of_mem hd', hbTotal_eq d hd]
     rfl
   have hbTotal_inj_on : Set.InjOn bd.total bd.D := by
@@ -405,7 +405,7 @@ theorem wideCoverBuildData_exists
       rw [hUbig_def]
       exact residualSet_mono_X hk2X htU_bTotal
     by_contra hgt
-    push_neg at hgt
+    push Not at hgt
     apply hnotBad
     unfold BadK
     rw [Finset.mem_filter, Finset.mem_Icc]
@@ -455,7 +455,7 @@ theorem wideCoverBuildData_exists
       smq.scaffold t ≠ bd.buffer d :=
     wcbd_scaffold_neq_buffer bd smq h_2YY_Y_le_k
   have hDY_card_succ_le_HX : bd.D.card + 1 ≤ H_X (M_B B) k := by
-    show (smallDeficientSet B Y q).card + 1 ≤ H_X (M_B B) k
+    change (smallDeficientSet B Y q).card + 1 ≤ H_X (M_B B) k
     exact D_Y_card_succ_le_H_X hq_prime.one_lt hY_lt_q_pow21 hM_B (by omega)
   have hscaf_card_le_HX : smq.T.card ≤ H_X (M_B B) k := by
     rw [hsmq_T_eq]
@@ -484,7 +484,7 @@ theorem wideCoverBuildData_exists
   have h_dom : k ^ (2 * H_X (M_B B) core.X + 1) <
       ∏ p ∈ (Finset.Ioc (k / 3) (k / 2)).filter Nat.Prime, p ^ 2 := by
     have h := h_dom_all k hk_ge_k₀
-    show k ^ (2 * H_X (M_B B) k + 1) < _
+    change k ^ (2 * H_X (M_B B) k + 1) < _
     simpa [ThirdHalfPrimes] using h
   have hZ := core.Z_gt_B_j_from_dominance hk10 h_dom
   have hB_le_buffer : ∀ d : bd.D, B ≤ bd.buffer d := by
@@ -499,13 +499,13 @@ theorem wideCoverBuildData_exists
   have hzero_lt_B : ∀ p, p.Prime → p < B →
       combinedResidue q bd smq.toScaffoldMatching p = 0 :=
     wcbd_combinedResidue_zero_lt_B bd smq hq_ge_B hB_le_buffer hB_le_scaffold
-  have hk_le_2X : k ≤ 2 * core.X := by show k ≤ 2 * k; omega
+  have hk_le_2X : k ≤ 2 * core.X := by change k ≤ 2 * k; omega
   have hD_eq_core : core.bd.D = smallDeficientSet B Y q := rfl
   have hcore_smq_T_eq :
       core.smq.T =
         (residualSet B core.X core.Y core.q core.bd.total).filter
           (fun t => t ≤ k) := by
-    show smq.T = _
+    change smq.T = _
     exact hsmq_T_eq
   have hb_prime_on :
       ∀ d ∈ smallDeficientSet B Y q, (bd.total d).Prime := fun d hd => by
@@ -520,7 +520,7 @@ theorem wideCoverBuildData_exists
     exact hbTotal_inj_on hx' hy' hxy
   have h_img_eq_core :
       core.bufferImage = (smallDeficientSet B Y q).image bd.total := by
-    show bd.D.attach.image bd.buffer = (smallDeficientSet B Y q).image bd.total
+    change bd.D.attach.image bd.buffer = (smallDeficientSet B Y q).image bd.total
     rw [bufferImage_eq_image_total bd, hbd_D_eq]
   have h_zSet_aux :
       ∀ j, 1 ≤ j → j ≤ k →
@@ -571,7 +571,7 @@ theorem gFromWide_dvd_term_int {B k : ℕ} (wcbd : WideCoverBuildData B k)
   have hcast : ((n.toNat - i.val : ℕ) : ℤ) = n - (i.val : ℤ) := by
     rw [Nat.cast_sub hi_le_n, Int.toNat_of_nonneg hn_nonneg]
   have hz : (gFromWide wcbd i : ℤ) ∣ ((n.toNat - i.val : ℕ) : ℤ) := by
-    show (outerB k wcbd.a (k - i.val) : ℤ) ∣ _
+    change (outerB k wcbd.a (k - i.val) : ℤ) ∣ _
     exact_mod_cast hnat
   rwa [hcast] at hz
 
@@ -776,7 +776,7 @@ private theorem val_sum_innerB_wide {B k : ℕ} (cov : WideCoverData B k)
     exact sum_padicValNat_succ_eq_factorial k p hp
   · by_cases hp_gt : k / 2 < p
     · exact val_sum_innerB_scaffold_a cov.a hk_ge_4 cov.a_lt_p p hp hpk hp_gt ha
-    · push_neg at hp_gt
+    · push Not at hp_gt
       have hp_dvd : p ∣ k := by
         rcases cov.scaffold p hp ha with h | ⟨h1, _, _⟩
         · exact h
@@ -818,7 +818,7 @@ private theorem prod_innerB_eq_factorial_mul_excess_a {k : ℕ} (a : ℕ → ℕ
       rw [Nat.factorization_def _ hp_prime]
       rw [factorization_prod_excessPrimesSet k a p hp_prime]
       exact h_val_sum p hp_prime hpk
-    · push_neg at hpk
+    · push Not at hpk
       have h_LHS_0 : (∏ j : Fin k,
           innerB k a (j.val + 1)).factorization p = 0 := by
         rw [Nat.factorization_eq_zero_iff]
@@ -891,7 +891,7 @@ theorem gFromWide_prod_factorial {B k : ℕ} (wcbd : WideCoverBuildData B k) :
     refine ⟨⟨k - 1 - i.val, by have := i.isLt; omega⟩, Finset.mem_univ _, ?_⟩
     apply Fin.ext
     have hi := i.isLt
-    show k - 1 - (k - 1 - i.val) = i.val
+    change k - 1 - (k - 1 - i.val) = i.val
     omega
   · intro j _
     show outerB k wcbd.a (j.val + 1) =
@@ -899,7 +899,7 @@ theorem gFromWide_prod_factorial {B k : ℕ} (wcbd : WideCoverBuildData B k) :
     unfold gFromWide
     congr 1
     have := j.isLt
-    show j.val + 1 = k - (k - 1 - j.val)
+    change j.val + 1 = k - (k - 1 - j.val)
     omega
 
 structure BPZSection6InputRefined (B K : ℕ) extends BPZSection6Input B K where
@@ -917,7 +917,7 @@ structure BPZSection6InputRefined (B K : ℕ) extends BPZSection6Input B K where
 
 theorem fixed_B_cover_section6_input
     (hSW : ShiftedSiegelWalfiszLower) (B K : ℕ) (hB : 3 ≤ B) :
-    ∃ S : BPZSection6Input B K, True := by
+    ∃ _S : BPZSection6Input B K, True := by
   obtain ⟨k, hkK, hk3, ⟨wcbd⟩⟩ := wideCoverBuildData_exists hSW B hB K
   let cov : WideCoverData B k := wcbd.toWide
   have hcov_a : cov.a = wcbd.a := rfl

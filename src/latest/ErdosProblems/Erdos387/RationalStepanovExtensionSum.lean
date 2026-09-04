@@ -109,7 +109,7 @@ theorem norm_extension_zeroExtendedTraceWeight_le
     unfold average
     calc
       p ^ (2 * (h + 3)) = p ^ ((2 * (h + 3) - 1) + 1) := by
-        congr 1 <;> omega
+        congr 1
       _ = p ^ (2 * (h + 3) - 1) * p := by rw [pow_add, pow_one]
       _ = p * p ^ (2 * (h + 3) - 1) := Nat.mul_comm _ _
   have hcharNe : (ZMod.stdAddChar : AddChar (ZMod p) ℂ) ≠ 1 := by

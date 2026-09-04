@@ -25,8 +25,9 @@ open scoped BigOperators
 
 /-- A prime divides a finite product exactly when it divides one factor. -/
 theorem prime_dvd_finset_prod_iff {p : ℕ} (hp : p.Prime)
-    {ι : Type*} [DecidableEq ι] (s : Finset ι) (f : ι → ℕ) :
+    {ι : Type*} (s : Finset ι) (f : ι → ℕ) :
     p ∣ ∏ i ∈ s, f i ↔ ∃ i ∈ s, p ∣ f i := by
+  classical
   induction s using Finset.induction_on with
   | empty => simp [hp.not_dvd_one]
   | @insert a s ha ih =>
@@ -347,7 +348,7 @@ def modularPreimageIoc (L U g : ℕ) (A : Finset ℕ) : Finset ℕ :=
 
 /-- An interval residue preimage is the difference of two initial residue
 preimages. -/
-theorem modularPreimageIoc_eq_sdiff {L U g : ℕ} (hLU : L ≤ U)
+theorem modularPreimageIoc_eq_sdiff {L U g : ℕ} (_hLU : L ≤ U)
     (A : Finset ℕ) :
     modularPreimageIoc L U g A =
       modularPreimage (U + 1) g A \ modularPreimage (L + 1) g A := by

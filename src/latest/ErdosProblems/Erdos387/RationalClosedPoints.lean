@@ -64,7 +64,8 @@ private theorem conjugacyClassClosedPoint_injective :
   apply ConjRootClass.minpoly_injective
   exact congrArg (fun P : ExtensionClosedPoint K n ↦ P.poly) h
 
-private theorem exists_minpoly_eq_closedPoint
+omit [Fintype K] in
+private theorem exists_minpoly_eq_closedPoint [Finite K]
     (P : ExtensionClosedPoint K n) :
     ∃ x : FiniteField.Extension K p n, minpoly K x = P.poly := by
   let : Fact (Irreducible P.poly) := ⟨P.irreducible⟩
@@ -210,6 +211,7 @@ private noncomputable def finiteConjugacyClassClosedPoint
        monic := c.monic_minpoly
        natDegree_le := Nat.le_of_dvd (NeZero.pos n) hdiv }, hdiv⟩
 
+omit [Fintype K] [FiniteDimensional K L] in
 private theorem finiteConjugacyClassClosedPoint_injective
     (hfin : Module.finrank K L = n) :
     Function.Injective (finiteConjugacyClassClosedPoint K n L hfin) := by
@@ -217,6 +219,7 @@ private theorem finiteConjugacyClassClosedPoint_injective
   apply ConjRootClass.minpoly_injective
   exact congrArg (fun P : ExtensionClosedPoint K n ↦ P.poly) h
 
+omit [Fintype K] [NeZero n] [FiniteDimensional K L] in
 private theorem exists_minpoly_eq_closedPoint_in_finiteExtension
     (hfin : Module.finrank K L = n)
     (P : ExtensionClosedPoint K n) :
@@ -245,6 +248,7 @@ private theorem exists_minpoly_eq_closedPoint_in_finiteExtension
       minpoly.algHom_eq f f.injective _
     _ = P.poly := hminpoly
 
+omit [Fintype K] [FiniteDimensional K L] in
 private theorem finiteConjugacyClassClosedPoint_surjective
     (hfin : Module.finrank K L = n) :
     Function.Surjective (finiteConjugacyClassClosedPoint K n L hfin) := by
@@ -270,6 +274,7 @@ noncomputable local instance : Fintype (ExtensionClosedPoint K n) := by
 noncomputable local instance
     (c : ConjRootClass K L) : Fintype c.carrier := Fintype.ofFinite _
 
+omit [Fintype K] [FiniteDimensional K L] in
 theorem card_finiteConjugacyClass_carrier
     (c : ConjRootClass K L) :
     Fintype.card c.carrier = c.minpoly.natDegree := by
@@ -280,8 +285,9 @@ theorem card_finiteConjugacyClass_carrier
     _ = c.minpoly.natDegree :=
       Polynomial.card_rootSet_eq_natDegree c.separable_minpoly c.splits_minpoly
 
+omit [Fintype K] [NeZero n] in
 theorem sum_finiteExtension_eq_sum_conjugacyClasses
-    (hfin : Module.finrank K L = n)
+    (_hfin : Module.finrank K L = n)
     [Fintype (ConjRootClass K L)]
     {A : Type*} [AddCommMonoid A] (f : K[X] → A) :
     (∑ x : L, f (minpoly K x)) =

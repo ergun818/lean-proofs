@@ -41,7 +41,7 @@ private theorem X_mul_derivativeFun_prod_localEuler
       (∑ i ∈ s, PowerSeries.C (e i : R) *
         (localEuler (e i) (z i) - 1))
   induction s using Finset.induction_on with
-  | empty => simp [PowerSeries.derivative_one]
+  | empty => simp
   | @insert a s ha ih =>
       rw [Finset.prod_insert ha, Finset.sum_insert ha,
         Derivation.leibniz]

@@ -90,7 +90,7 @@ theorem rationalPhaseAllowance_add_K_lt_pow
       calc
         p * p ^ (h + 3) = p ^ 1 * p ^ (h + 3) := by rw [pow_one]
         _ = p ^ (1 + (h + 3)) := (pow_add p 1 (h + 3)).symm
-        _ = p ^ (h + 4) := by congr 1 <;> omega
+        _ = p ^ (h + 4) := by congr 1; omega
 
 /-- The rational reduced system has strictly fewer scalar conditions than
 unknown coefficients. -/

@@ -53,7 +53,7 @@ theorem parameterResidue_lt {m k z d : ℕ}
 
 theorem nNat_zmod {m k z d : ℕ}
     (C : CoverBPZ.AbsorberCoverValid m k)
-    (hd : d ∣ sievePrimeProduct k z) (t : ℕ) :
+    (_hd : d ∣ sievePrimeProduct k z) (t : ℕ) :
     (C.nNat t : ZMod d) =
       (C.toAbsorberCover.N₀ : ZMod d) +
         (C.toAbsorberCover.Mk : ZMod d) * (t : ZMod d) := by
@@ -325,7 +325,7 @@ noncomputable def binomialMomentMajorant (k p : ℕ) : ℝ :=
   if p ≤ 2 * k then 4 * k else 1 + (6 * k : ℝ) / p
 
 theorem binomial_moment_le_small_majorant {k p : ℕ}
-    (hk : 0 < k) (hp : p.Prime) (hkp : k < p) (hpk : p ≤ 2 * k) :
+    (hk : 0 < k) (hp : p.Prime) (hkp : k < p) (_hpk : p ≤ 2 * k) :
     1 + 2 * binomialSieveNu k p ≤
       (4 * k : ℝ) * (1 - binomialSieveNu k p) := by
   rw [binomialSieveNu_prime hp]
@@ -577,8 +577,8 @@ theorem absorber_brunTail_le_half_elementaryDepth {m k z : ℕ}
       (elementaryBrunCoefficient k z : ℝ) ≤
         (2 : ℝ) ^ (elementaryBrunDepth k z + 1) := by
     exact_mod_cast hnat
-  simp only [Nat.cast_add, Nat.cast_one, ge_iff_le] at hreal
-  convert hreal using 1 <;> push_cast <;> ring
+  simpa only [elementaryBrunCoefficient, Nat.cast_mul, Nat.cast_pow, Nat.cast_ofNat,
+    mul_assoc] using hreal
 
 theorem absorberBoundingSieve_mainSum_eq_euler_of_card_le
     {m k T z L : ℕ} (C : CoverBPZ.AbsorberCoverValid m k)
@@ -717,9 +717,6 @@ theorem absorberBoundingSieve_abs_rem_le {m k T z d : ℕ}
       binomialSieveNu k d *
         (AbsorberParameterCandidates T).card| ≤ _
   rw [binomialSieveNu_squarefree hsq]
-  change |((DivisibleAbsorberParameterCandidates C T d).card : ℝ) -
-      ((k : ℝ) ^ d.primeFactors.card / d) *
-        (AbsorberParameterCandidates T).card| ≤ _
   rw [card_absorberParameterCandidates]
   convert abs_card_divisibleAbsorberParameterCandidates_sub_density C hd
     using 1 <;> ring_nf
@@ -1019,7 +1016,7 @@ theorem exists_siftedAbsorberParameter_in_elementaryScale
   have hdom : (E : ℝ) < (N : ℝ) * (V / 2) := by
     have htwo : (2 : ℝ) * E < (N : ℝ) * V := by
       apply lt_of_le_of_lt
-      · convert hEV using 1 <;> ring
+      · exact hEV
       · simpa [mul_assoc] using hscaleV
     linarith
   have htail := absorber_brunTail_le_half_elementaryDepth C hk (z := z)

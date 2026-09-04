@@ -35,7 +35,9 @@ theorem exists_mem_sub_not_mem_of_nonempty_ne_univ
     | zero => simpa using hr
     | succ n ih =>
         have hnext := hclosed (r - (n : ZMod p) * d) ih
-        convert hnext using 1 <;> push_cast <;> ring
+        convert hnext using 1
+        push_cast
+        ring
   apply hproper
   apply Finset.eq_univ_of_forall
   intro x
@@ -155,7 +157,7 @@ theorem poleSupport_differenceCoefficient_nonempty
   have hproper : poleSupport coeff ≠ Finset.univ := by
     intro hfull
     rw [hfull] at hcard
-    simpa using hcard
+    simp at hcard
   have hd : t₁ - t₂ ≠ 0 := sub_ne_zero.mpr hne
   obtain ⟨r, hr, hrsub⟩ :=
     exists_mem_sub_not_mem_of_nonempty_ne_univ
