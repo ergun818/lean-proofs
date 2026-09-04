@@ -347,7 +347,7 @@ theorem pow_scaledUnitary_apply (u : unitary (H →L[ℂ] H)) (lambda : ℂ)
   induction k generalizing xi with
   | zero => simp
   | succ k ih =>
-      rw [pow_succ, ContinuousLinearMap.mul_apply, ih]
+      rw [pow_succ, mul_apply_eq_comp, ih]
       rfl
 
 theorem cfcHom_spectralCesaro_apply (u : unitary (H →L[ℂ] H)) (lambda : ℂ)
@@ -355,8 +355,7 @@ theorem cfcHom_spectralCesaro_apply (u : unitary (H →L[ℂ] H)) (lambda : ℂ)
     cfcHom (Unitary.coe_isStarNormal u) (spectralCesaro u lambda n) xi =
       birkhoffAverage ℂ (scaledUnitary u lambda) id n xi := by
   rw [spectralCesaro, map_smul, map_sum]
-  simp only [map_pow, map_smul, cfcHom_id, _root_.smul_apply,
-    id_eq, birkhoffAverage]
+  simp only [map_pow, map_smul, cfcHom_id, _root_.smul_apply, birkhoffAverage]
   congr 1
   simp only [birkhoffSum, scaledUnitary]
   rw [_root_.sum_apply]
@@ -593,7 +592,7 @@ theorem integral_wienerKernel_eq
             ((starRingEnd ℂ) (p.1 : ℂ) * (p.2 : ℂ)) ^ k) := by
       fun_prop
     exact hc.integrable_of_hasCompactSupport (HasCompactSupport.of_compactSpace _)
-  rw [integral_finset_sum _ hint]
+  rw [integral_finsetSum _ hint]
   congr 1
   apply Finset.sum_congr rfl
   intro k hk
@@ -676,12 +675,13 @@ theorem unitary_correlation_mean_square_tendsto_zero
   have h := wiener_mean_square_tendsto_zero u mu hsingle
   simpa only [mu, integral_monomial_diagMeasure] using h
 
+omit [CompleteSpace H] in
 theorem pow_continuousLinearMap_apply (A : H →L[ℂ] H) (k : ℕ) (v : H) :
     (A ^ k) v = (A : H → H)^[k] v := by
   induction k generalizing v with
   | zero => simp
   | succ k ih =>
-      rw [pow_succ, ContinuousLinearMap.mul_apply, ih]
+      rw [pow_succ, mul_apply_eq_comp, ih]
       rfl
 
 theorem tendsto_birkhoffAverage_zero_of_correlationMean_zero
@@ -783,7 +783,7 @@ theorem tendsto_birkhoffAverage_zero_of_correlation_dominated
     (a : ℕ → ℝ) (ha : ∀ k, 0 ≤ a k)
     (hasq : Tendsto (fun n ↦ (((n + 1 : ℕ) : ℝ))⁻¹ *
       ∑ k ∈ Finset.range (n + 1), (a k) ^ 2) atTop (nhds 0))
-    (C : ℝ) (hC : 0 ≤ C)
+    (C : ℝ) (_hC : 0 ≤ C)
     (hcorr : ∀ k, ‖⟪w, (A ^ k) w⟫_ℂ‖ ≤ C * a k) :
     Tendsto (fun n ↦ birkhoffAverage ℂ A id (n + 1) w) atTop (nhds 0) := by
   have hamean := tendsto_mean_of_tendsto_mean_sq_zero a ha hasq
@@ -1658,7 +1658,7 @@ theorem norm_koopmanL2_le_one {X : Type*} [MeasurableSpace X]
     ‖koopmanL2 T μ hT‖ ≤ 1 := by
   apply ContinuousLinearMap.opNorm_le_bound _ zero_le_one
   intro v
-  simpa [koopmanL2] using Lp.norm_compMeasurePreserving v hT
+  simp [koopmanL2]
 
 /-- In an ergodic probability system, the Hilbert-space mean ergodic
 theorem identifies the `L²` limit of every continuous observable with the
@@ -1855,7 +1855,7 @@ theorem abs_birkhoffAverage_sub_le_norm
   cases n with
   | zero => simp [birkhoffAverage, birkhoffSum]
   | succ n =>
-      simp only [birkhoffAverage, birkhoffSum, Pi.smul_apply, smul_eq_mul]
+      simp only [birkhoffAverage, birkhoffSum, smul_eq_mul]
       rw [← mul_sub, ← Finset.sum_sub_distrib, abs_mul]
       calc
         |((n + 1 : ℕ) : ℝ)⁻¹| *
@@ -2436,7 +2436,7 @@ theorem supportGeneric_of_weaklyGenericAlong
     apply (Measure.mem_support_iff_forall y).mp hy
     apply IsOpen.mem_nhds
     · exact isOpen_ne_fun fb.continuous continuous_const
-    · simpa [hfy]
+    · simp [hfy]
   have hintPos : 0 < ∫ z, fb z ∂μ := by
     rw [integral_pos_iff_support_of_nonneg hnonneg (fb.integrable μ)]
     simpa only [Function.support] using hsupportPos
@@ -2498,7 +2498,7 @@ theorem supportGeneric_of_weaklyGenericAlong_card_tendsto
     apply (Measure.mem_support_iff_forall y).mp hy
     apply IsOpen.mem_nhds
     · exact isOpen_ne_fun fb.continuous continuous_const
-    · simpa [hfy]
+    · simp [hfy]
   have hintPos : 0 < ∫ z, fb z ∂μ := by
     rw [integral_pos_iff_support_of_nonneg hnonneg (fb.integrable μ)]
     simpa only [Function.support] using hsupportPos
@@ -2581,11 +2581,11 @@ theorem returnTimes_shiftedOriginCylinder (A : Set ℕ) (t : ℕ) :
     returnTimes symbolicShift (symbolicPoint A) (shiftedOriginCylinder t) =
       {n : ℕ | n + t ∈ A} := by
   ext n
-  simp [returnTimes, shiftedOriginCylinder, originCylinder,
-    symbolicShift_iterate_apply, symbolicPoint, Nat.add_comm]
-  have hnonneg : (0 : ℤ) ≤ (t : ℤ) + n := by positivity
-  rw [and_iff_right hnonneg]
-  rw [show (t : ℤ) + n = ((t + n : ℕ) : ℤ) by norm_cast, Int.toNat_natCast]
+  change symbolicShift^[t] (symbolicShift^[n] (symbolicPoint A)) 0 = true ↔ n + t ∈ A
+  rw [symbolicShift_iterate_apply, symbolicShift_iterate_apply, zero_add]
+  rw [show (t : ℤ) + n = ((t + n : ℕ) : ℤ) by norm_cast]
+  simp only [symbolicPoint, Int.natCast_nonneg, ↓reduceIte, Int.toNat_natCast,
+    decide_eq_true_eq, Nat.add_comm]
 
 /-- The precise pointed dynamical configuration needed for Problem 656. -/
 def HasPointedKMRRProgression (A : Set ℕ) : Prop :=
@@ -3034,7 +3034,7 @@ theorem exists_uniform_pair_transfer_start
             (birkhoffAverage ℝ (diagonalTransform T) (G j) L (y, x)) < eps ∧
           dist (componentMoment component (G j) (b, x))
             (componentMoment component (G j) (y, x)) < eps} hall
-    simpa only [Set.mem_setOf_eq] using hf
+    simpa only [Set.mem_ofPred_eq] using hf
   exact hfreq.exists
 
 /-- Generic-pair transfer, in the continuous-component form used by KMRR.
@@ -3274,7 +3274,7 @@ theorem exists_supportGeneric_pair_orbit_blocks
         Tendsto
           (fun m ↦ birkhoffAverage ℝ (diagonalTransform T) f (baseLength m) (b, x))
           atTop (nhds (componentMoment component f (b, x)))) :
-    ∃ start length : ℕ → ℕ,
+    ∃ _start length : ℕ → ℕ,
       Tendsto length atTop atTop ∧
         ∀ᵐ x ∂mu, IsSupportGeneric
           (fun n ↦ (T^[n] a, T^[n] x))
@@ -3305,7 +3305,7 @@ theorem exists_supportGeneric_pair_orbit_blocks_of_prod_ae
         Tendsto
           (fun m ↦ birkhoffAverage ℝ (diagonalTransform T) f (m + 1) p)
           atTop (nhds (componentMoment component f p))) :
-    ∃ start length : ℕ → ℕ,
+    ∃ _start length : ℕ → ℕ,
       Tendsto length atTop atTop ∧
         ∀ᵐ x ∂mu, IsSupportGeneric
           (fun n ↦ (T^[n] a, T^[n] x))
@@ -3608,7 +3608,8 @@ theorem relativeProductKernel_eq_difference_comap
   ext z
   rw [Kernel.comap_apply, relativeProductKernel_apply,
     relativeProductKernel_apply]
-  congr 1 <;> abel_nf
+  congr 1
+  abel_nf
 
 theorem relativeProductProbability_eq_difference
     {Z X : Type*} [MeasurableSpace Z] [MeasurableSpace X]
@@ -3846,7 +3847,7 @@ noncomputable def ContinuousKroneckerKMRRData.toContinuousKMRRDecomposition
   snd_sigma_ac := snd_progressionProbability_ac_base m eta (pi a) h.double_ac
   component_chain := factorComponent_chain_ae_progressionProbability m eta pi
     h.measurable_pi a h.fiber h.double_ac
-  self_mem_support := h.support_overlap.mono fun p hp ↦
+  self_mem_support := h.support_overlap.mono fun _ hp ↦
     mem_support_factorComponent_of_overlap m eta pi hp
 
 end Erdos656
@@ -3859,7 +3860,7 @@ open scoped ENNReal Pointwise Topology
 theorem measure_inter_pos_of_three_quarters
     {X : Type*} [MeasurableSpace X]
     (mu : Measure X) [IsFiniteMeasure mu]
-    {A B Q : Set X} (hAmeas : MeasurableSet A)
+    {A B Q : Set X} (_hAmeas : MeasurableSet A)
     (hBmeas : MeasurableSet B) (hAQ : A ⊆ Q) (hBQ : B ⊆ Q)
     (hQpos : 0 < mu.real Q)
     (hA : (3 / 4 : ℝ) * mu.real Q < mu.real A)
@@ -4559,7 +4560,7 @@ theorem measurableSet_conditionalSupportDensitySet
   convert hall using 1
   ext x
   simp only [conditionalSupportDensitySet, Set.mem_iInter,
-    Set.mem_compl_iff, Set.mem_union, Set.mem_preimage, Set.mem_setOf_eq]
+    Set.mem_compl_iff, Set.mem_union, Set.mem_preimage, Set.mem_ofPred_eq]
   constructor
   · intro h i
     by_cases hxi : x ∈ conditionalSupportBasis X i
@@ -4619,7 +4620,7 @@ theorem ae_basis_conditionalSupportDensity
       hB.compl.union (hD.preimage hpi)
     convert hu using 1
     ext x
-    simp only [Set.mem_setOf_eq, Set.mem_union, Set.mem_compl_iff,
+    simp only [Set.mem_ofPred_eq, Set.mem_union, Set.mem_compl_iff,
       Set.mem_preimage]
     tauto
   exact Measure.ae_comp_of_ae_ae hpiece hcond
@@ -4715,7 +4716,7 @@ theorem norm_koopmanL2Complex
     (mu : Measure X) (hT : MeasurePreserving T mu mu)
     (v : Lp ℂ (2 : ℝ≥0∞) mu) :
     ‖koopmanL2Complex T mu hT v‖ = ‖v‖ := by
-  simpa [koopmanL2Complex] using Lp.norm_compMeasurePreserving v hT
+  simp [koopmanL2Complex]
 
 def IsKoopmanEigenvalue
     {X : Type*} [MeasurableSpace X] (T : X → X)
@@ -5183,7 +5184,7 @@ theorem mem_support_map_homeomorph_iff
     [OpensMeasurableSpace X] [BorelSpace X]
     (e : X ≃ₜ X) (mu : Measure X) (x : X) :
     x ∈ (Measure.map e mu).support ↔ e.symm x ∈ mu.support := by
-  simp only [Measure.support_eq_forall_isOpen, Set.mem_setOf_eq]
+  simp only [Measure.support_eq_forall_isOpen, Set.mem_ofPred_eq]
   constructor
   · intro hx V hxV hV
     let U : Set X := e.symm ⁻¹' V
@@ -5218,7 +5219,8 @@ theorem mem_topologicalClosure_zmultiples_sub_of_mem_support
   have hd : y - x ∈ nu.support := by
     rw [mem_support_map_homeomorph_iff e mu]
     change -(-x) + (y - x) ∈ mu.support
-    convert hy using 1 <;> abel
+    convert hy using 1
+    abel
   have hnuRot : Ergodic (fun z : Z ↦ alpha + z) nu := by
     apply ergodic_map_of_ae_semiconj (fun z : Z ↦ alpha + z) mu hrot e
       e.measurable (fun z : Z ↦ alpha + z)
@@ -5278,7 +5280,7 @@ theorem mem_topologicalClosure_zmultiples_sub_of_mem_support
     rw [huv]
     abel
   have hsInv : (fun z : Z ↦ alpha + z) ⁻¹' s = s := by
-    simp only [s, preimage_iUnion, preimage_vadd]
+    simp only [s, preimage_iUnion]
     refine iUnion_congr_of_surjective _ (add_left_surjective (-1)) fun n ↦ ?_
     ext z
     simp only [Set.mem_preimage, Set.mem_vadd_set_iff_neg_vadd_mem]
@@ -5327,16 +5329,20 @@ theorem zsmul_add_mem_support
   | @succ n ih =>
       have hfwd : alpha + ((n : ℤ) • alpha + x) ∈ mu.support := by
         rw [add_mem_support_iff_sub_mem_support mu alpha]
-        · convert ih using 1 <;> abel
+        · convert ih using 1
+          abel
         · exact hpres
-      convert hfwd using 1 <;> push_cast <;> simp [add_zsmul] <;> abel
+      convert hfwd using 1
+      simp [add_zsmul]
+      abel
   | @pred n ih =>
       have ih' : -((n : ℤ) • alpha) + x ∈ mu.support := by
         simpa using ih
       have hbwd : -alpha + (-((n : ℤ) • alpha) + x) ∈ mu.support :=
         (add_mem_support_iff_sub_mem_support mu alpha
           (-((n : ℤ) • alpha) + x) hpres).mp ih'
-      convert hbwd using 1 <;> module
+      convert hbwd using 1
+      module
 
 theorem support_eq_vadd_topologicalClosure_zmultiples
     {Z : Type*} [TopologicalSpace Z] [MeasurableSpace Z]
@@ -5467,7 +5473,7 @@ theorem map_add_left_zsmul_eq_self
       funext z
       rw [Int.negSucc_eq]
       push_cast
-      simp only [Int.cast_id, neg_smul, smul_neg]
+      simp only [neg_smul, smul_neg]
 
 theorem isAddLeftInvariant_of_dense_zmultiples
     {Z : Type*} [MeasurableSpace Z] [TopologicalSpace Z]
@@ -5623,7 +5629,6 @@ theorem kroneckerFactorMap_coe_ae
       KroneckerSubgroup T mu hT.toMeasurePreserving := by
     rw [hsuppEq] at hx
     rcases hx with ⟨q, hq, heq⟩
-    change _ ∈ (KroneckerSubgroup T mu hT.toMeasurePreserving : AddSubgroup Z)
     have : kroneckerAmbientMap T mu hT.toMeasurePreserving x - z0 = q := by
       rw [← heq]
       simp [vadd_eq_add]
@@ -5690,9 +5695,6 @@ theorem kroneckerFactorMap_semiconj_ae
     kroneckerAmbientMap T mu hT.toMeasurePreserving (T x) -
       kroneckerAmbientBasepoint T mu hT at hTx
   apply Subtype.ext
-  change ((kroneckerFactorMap T mu hT (T x) :
-    KroneckerSubgroup T mu hT.toMeasurePreserving) :
-      KroneckerAmbient T mu hT.toMeasurePreserving) = _
   rw [hTx, heigen]
   change kroneckerAmbientRotation T mu hT.toMeasurePreserving +
       kroneckerAmbientMap T mu hT.toMeasurePreserving x -
@@ -6334,7 +6336,6 @@ theorem eq_smul_of_same_koopman_eigenvalue
   have hr2 : ((r : ℂ) ^ 2) ≠ 0 :=
     pow_ne_zero _ (Complex.ofReal_ne_zero.mpr hr0)
   apply (mul_right_cancel₀ hr2)
-  change v x * ((r : ℂ) ^ 2) = (d * w x) * ((r : ℂ) ^ 2)
   have hqc : v x * conj (w x) = c := by simpa [q] using hcx
   calc
     v x * ((r : ℂ) ^ 2) = v x * (conj (w x) * w x) := by
@@ -6517,8 +6518,6 @@ theorem inner_lpTensor_koopman_pow
         (r (e^[k] p.1) * conj (r p.1)) *
           (s (e^[k] p.2) * conj (s p.2))
     rw [diagonalTransform_iterate_apply]
-    change _ = (r (e^[k] p.1) * conj (r p.1)) *
-      (s (e^[k] p.2) * conj (s p.2))
     simp only [RCLike.inner_apply, map_mul]
     ring
   rw [integral_congr_ae hint]
@@ -7016,7 +7015,7 @@ theorem tendstoInMeasure_prod_of_forall_fiber
     measurable_measure_prodMk_left (hbad n)
   have hsectionLim (a : A) : Tendsto (fun n => sectionMeasure n a)
       atTop (nhds 0) := by
-    simpa only [sectionMeasure, bad, Set.preimage_setOf_eq,
+    simpa only [sectionMeasure, bad, Set.preimage_ofPred_eq,
       Prod.mk.eta] using
       (tendstoInMeasure_iff_dist.mp (hfiber a) eps heps)
   have hdom : ∀ n, sectionMeasure n ≤ᵐ[mu] fun _ => (1 : ℝ≥0∞) := by
@@ -7219,7 +7218,7 @@ theorem haarCoordAverage_shear
   congr 1
   apply Finset.sum_congr rfl
   intro i hi
-  simp only [Function.comp_apply, haarCoordObservable_apply,
+  simp only [haarCoordObservable_apply,
     separatedBCF_apply, diagonalTransform_iterate_apply,
     fiberTransform_iterate_apply, haarDifferenceShear]
   congr 2
@@ -7320,7 +7319,7 @@ theorem abs_haarDiagonalLimit_le
       exact BoundedContinuousFunction.norm_compContinuous_le v
         ⟨fun q => q + (p.2 - p.1), continuous_id.add continuous_const⟩
 
-noncomputable def haarDiagonalAverageMemLp
+theorem haarDiagonalAverageMemLp
     {Z : Type*} [MeasurableSpace Z] [PseudoMetricSpace Z] [BorelSpace Z]
     [SecondCountableTopology Z]
     [AddCommGroup Z] [ContinuousAdd Z]
@@ -7336,7 +7335,7 @@ noncomputable def haarDiagonalAverageMemLp
       simpa only [haarDiagonalAverage, Real.norm_eq_abs] using
         abs_haarDiagonalAverage_le a u v n p)
 
-noncomputable def haarDiagonalLimitMemLp
+theorem haarDiagonalLimitMemLp
     {Z : Type*} [MeasurableSpace Z] [PseudoMetricSpace Z] [T2Space Z]
     [BorelSpace Z] [SecondCountableTopology Z] [CompactSpace Z]
     [AddCommGroup Z] [ContinuousAdd Z] [ContinuousSub Z]
@@ -7747,8 +7746,7 @@ theorem continuous_haarCorrelationLp_left
         rw [haarCorrelationLp_sub_left]
       _ ≤ ‖u₁ - u₂‖ * ‖v‖ := norm_haarCorrelationLp_le m _ _
       _ = (⟨‖v‖, norm_nonneg v⟩ : NNReal) * ‖u₁ - u₂‖ := by
-        simp only [NNReal.smul_def]
-        rw [mul_comm]
+        exact mul_comm _ _
   exact hLip.continuous
 
 theorem continuous_haarCorrelationLp_right
@@ -8017,7 +8015,7 @@ theorem tendsto_haarDiagonal_lpTensorReal
   rw [hproj] at hmean
   simpa only [U, D, hD, w] using hmean
 
-noncomputable def kernelResidualRealMemLp
+theorem kernelResidualRealMemLp
     {Z X : Type*} [MeasurableSpace Z] [MeasurableSpace X]
     [TopologicalSpace X] [BorelSpace X]
     (m : Measure Z) [IsProbabilityMeasure m]
@@ -8358,7 +8356,6 @@ theorem kroneckerGraph_eigenvector_factor_ae
     have hsemi : ∀ᵐ x ∂mu, G (e x) = E (G x) := by
       filter_upwards [kroneckerGraphMap_semiconj_ae e mu he] with x hx
       change G (e x) = kroneckerGraphTransform e mu he (G x) at hx
-      change G (e x) = E (G x)
       exact hx
     filter_upwards [Lp.coeFn_compMeasurePreserving v he.toMeasurePreserving,
       Lp.coeFn_smul lambda v, hvcoe, hvcoe_e, hweG, hsemi] with
@@ -8709,7 +8706,7 @@ noncomputable abbrev kroneckerGraphBindMeasure
   Measure.bind (kroneckerFactorMeasure T mu hT)
     (kroneckerGraphFiberKernel T mu hT)
 
-noncomputable def measurePreserving_kroneckerGraphBind
+theorem measurePreserving_kroneckerGraphBind
     {X : Type*} [MeasurableSpace X] [TopologicalSpace X]
     [BorelSpace X] [SecondCountableTopology X]
     [MeasurableSpace.CountablyGenerated X] [StandardBorelSpace X] [Nonempty X]
@@ -9295,7 +9292,7 @@ theorem birkhoffAverage_continuousLinearMap_add
   congr 1
   apply Finset.sum_congr rfl
   intro i hi
-  simp only [Function.comp_apply, id_eq]
+  simp only [id_eq]
   have hiterate : ∀ j : ℕ,
       (U : V → V)^[j] (x + y) =
         (U : V → V)^[j] x + (U : V → V)^[j] y := by
@@ -9319,7 +9316,7 @@ theorem birkhoffAverage_continuousLinearMap_smul
   rw [Finset.smul_sum]
   apply Finset.sum_congr rfl
   intro i hi
-  simp only [Function.comp_apply, id_eq]
+  simp only [id_eq]
   have hiterate : ∀ j : ℕ,
       (U : V → V)^[j] (r • x) = r • (U : V → V)^[j] x := by
     intro j
@@ -9488,11 +9485,9 @@ theorem exists_kroneckerGraph_subalgebra_limit
     simpa only [Q, nu, E, hE, U, hsep] using
       exists_kroneckerGraph_separated_limit e mu he f g
   · refine ⟨0, ?_, ?_⟩
-    · simpa [BoundedContinuousFunction.toLp, birkhoffAverage, birkhoffSum] using
-        (tendsto_const_nhds : Tendsto (fun _ : ℕ =>
-          (0 : Lp ℝ (2 : ℝ≥0∞) (nu.prod nu))) atTop (nhds 0))
+    · simp [BoundedContinuousFunction.toLp, birkhoffAverage, birkhoffSum]
     · filter_upwards [Lp.coeFn_zero ℝ (2 : ℝ≥0∞) (nu.prod nu)] with p hp
-      simpa [componentMoment] using hp
+      simp [componentMoment]
   · intro F G hFs hGs hFlim hGlim
     obtain ⟨LF, hFt, hFae⟩ := hFlim
     obtain ⟨LG, hGt, hGae⟩ := hGlim
@@ -9780,8 +9775,7 @@ theorem exists_open_translationControl
       _ (ENNReal.pow_pos (ENNReal.inv_pos.mpr (by norm_num)) _)
   obtain ⟨Q, hQsub, hQopen, hQzero⟩ := mem_nhds_iff.mp hall
   refine ⟨Q, hQopen, hQzero, ?_⟩
-  intro i hi
-  intro q hq
+  intro i hi q hq
   exact hQsub hq i (Finset.mem_range.mpr (Nat.lt_succ_iff.mpr hi))
 
 def haarFailureSet
@@ -9807,7 +9801,7 @@ theorem measure_goodSection_eq_numerator
   rw [← h]
   congr 1
   ext q
-  simp only [Set.mem_setOf_eq, Set.mem_preimage, Set.mem_inter_iff,
+  simp only [Set.mem_ofPred_eq, Set.mem_preimage, Set.mem_inter_iff,
     leftAddTranslate]
   constructor
   · rintro ⟨hqQ, hzqS⟩
@@ -9906,14 +9900,14 @@ theorem quarter_measure_le_haarFailureMass_of_mem_bad
     exact hqF.2 hqG.2
   have hunion : G ∪ F = Q := by
     ext q
-    simp only [G, F, Set.mem_union, Set.mem_setOf_eq]
+    simp only [G, F, Set.mem_union, Set.mem_ofPred_eq]
     tauto
   have hsum : m G + m F = m Q := by
     rw [← hunion, measure_union hdisj hF]
   have hgood : m G = m (S ∩ leftAddTranslate z Q) :=
     measure_goodSection_eq_numerator m S Q z
   have hbad : (4 : ℝ≥0∞) * m G ≤ (3 : ℝ≥0∞) * m Q := by
-    simpa only [haarBadSet, Set.mem_setOf_eq, hgood] using hz.2
+    simpa only [haarBadSet, Set.mem_ofPred_eq, hgood] using hz.2
   have hfiniteG : m G ≠ ∞ := measure_ne_top m G
   have hfiniteF : m F ≠ ∞ := measure_ne_top m F
   have hfiniteQ : m Q ≠ ∞ := measure_ne_top m Q
@@ -9928,7 +9922,7 @@ theorem quarter_measure_le_haarFailureMass_of_mem_bad
     unfold haarFailureMass
     apply congrArg m
     ext q
-    simp only [F, Set.mem_setOf_eq, hz.1, true_and]
+    simp only [F, Set.mem_ofPred_eq, hz.1, true_and]
   rw [hmass]
   apply (ENNReal.toReal_le_toReal
     (ENNReal.mul_ne_top (by norm_num) hfiniteQ) hfiniteF).mp
@@ -10122,8 +10116,8 @@ theorem measurableSet_conditionalSupportApproxDensitySet
   ext x
   simp only [E, B, S, conditionalSupportApproxDensitySet,
     Set.mem_iInter, Set.mem_union, Set.mem_compl_iff, Set.mem_inter_iff,
-    Set.mem_preimage, Set.mem_iUnion, Set.mem_univ, if_true,
-    eventually_atTop, Set.mem_setOf_eq]
+    Set.mem_preimage, Set.mem_iUnion,
+    eventually_atTop, Set.mem_ofPred_eq]
   constructor
   · intro hx i
     by_cases hxi : x ∈ conditionalSupportBasis X i
@@ -10201,7 +10195,7 @@ theorem ae_mem_conditionalSupportApproxDensitySet
   filter_upwards [hcond, hfiber] with z hz hzpi
   filter_upwards [hz, hzpi] with x hx hxpi
   intro i hxi
-  simpa only [Q, S, B, hxpi, Set.mem_setOf_eq] using hx i hxi
+  simpa only [Q, S, B, hxpi, Set.mem_ofPred_eq] using hx i hxi
 
 theorem hasConditionalSupportDensityAlong_approximateIdentity
     {Z X : Type*} [PseudoMetricSpace Z] [MeasurableSpace Z]
@@ -10259,7 +10253,7 @@ theorem hasConditionalSupportDensityAlong_approximateIdentity
     have hbasis : (3 / 4 : ℝ) * m.real (Q n) <
         m.real (S i ∩ leftAddTranslate (pi x) (Q n)) := by
       dsimp only [num, q] at hltR
-      simp only [ENNReal.toReal_mul, ENNReal.toReal_ofNat, Measure.real] at hltR
+      simp only [ENNReal.toReal_mul, ENNReal.toReal_ofNat] at hltR
       change (3 / 4 : ℝ) * (m (Q n)).toReal <
         (m (S i ∩ leftAddTranslate (pi x) (Q n))).toReal
       calc
