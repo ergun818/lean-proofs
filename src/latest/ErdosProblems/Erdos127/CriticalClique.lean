@@ -7,10 +7,11 @@ open Finset
 
 namespace SimpleGraph
 
-variable {V : Type*} [Fintype V]
+variable {V : Type*}
 
 /-- The degree-sum consequence needed for a finite critical graph. -/
-lemma card_mul_le_twice_edges_of_degree_ge (G : SimpleGraph V) [DecidableRel G.Adj] (d : ℕ)
+lemma card_mul_le_twice_edges_of_degree_ge [Fintype V]
+    (G : SimpleGraph V) [DecidableRel G.Adj] (d : ℕ)
     (hdeg : ∀ v, d ≤ G.degree v) :
     Fintype.card V * d ≤ 2 * G.edgeFinset.card := by
   classical
@@ -21,13 +22,14 @@ lemma card_mul_le_twice_edges_of_degree_ge (G : SimpleGraph V) [DecidableRel G.A
 
 /-- A finite graph of positive finite chromatic number has an induced subgraph
 which is vertex-critical for that chromatic number. -/
-lemma exists_induced_vertex_critical (G : SimpleGraph V) [DecidableEq V]
+lemma exists_induced_vertex_critical [Finite V] (G : SimpleGraph V)
     (q : ℕ) (hq : 0 < q)
     (hχ : G.chromaticNumber = q) :
     ∃ s : Finset V,
       (G.induce (s : Set V)).chromaticNumber = q ∧
       ∀ v : s, ((G.induce (s : Set V)).induce ({v}ᶜ : Set s)).Colorable (q - 1) := by
   classical
+  let := Fintype.ofFinite V
   let bad : Finset (Finset V) :=
     Finset.univ.powerset.filter fun s ↦
       ¬(G.induce (s : Set V)).Colorable (q - 1)
@@ -73,7 +75,7 @@ lemma exists_induced_vertex_critical (G : SimpleGraph V) [DecidableEq V]
 /-- Extend a coloring over one omitted vertex when fewer than `q` colors occur
 among its neighbors. -/
 lemma colorable_of_induce_compl_singleton_colorable_of_degree_lt
-    (G : SimpleGraph V) [DecidableEq V] [DecidableRel G.Adj]
+    [Fintype V] (G : SimpleGraph V) [DecidableRel G.Adj]
     (v : V) (q : ℕ)
     (hc : (G.induce ({v}ᶜ : Set V)).Colorable q)
     (hdeg : G.degree v < q) : G.Colorable q := by
@@ -92,7 +94,7 @@ lemma colorable_of_induce_compl_singleton_colorable_of_degree_lt
       _ = Fintype.card (Fin q) := by simp
   obtain ⟨c, -, hcN⟩ :=
     Finset.exists_mem_notMem_of_card_lt_card (s := N) (t := Finset.univ) hNcard
-  refine ⟨Coloring.mk (fun w ↦ if hw : w = v then c else C ⟨w, by simpa [hw]⟩) ?_⟩
+  refine ⟨Coloring.mk (fun w ↦ if hw : w = v then c else C ⟨w, by simp [hw]⟩) ?_⟩
   intro a b hab
   by_cases ha : a = v
   · subst a
@@ -118,7 +120,7 @@ lemma colorable_of_induce_compl_singleton_colorable_of_degree_lt
 
 /-- Vertex-criticality forces the usual lower bound on minimum degree. -/
 lemma le_minDegree_of_delete_vertex_colorable
-    (G : SimpleGraph V) [DecidableEq V] [DecidableRel G.Adj] [Nonempty V]
+    [Fintype V] (G : SimpleGraph V) [DecidableRel G.Adj] [Nonempty V]
     (q : ℕ) (hnot : ¬G.Colorable q)
     (hdel : ∀ v : V, (G.induce ({v}ᶜ : Set V)).Colorable q) :
     q ≤ G.minDegree := by
@@ -130,7 +132,7 @@ lemma le_minDegree_of_delete_vertex_colorable
 /-- Packaged structural consequence: a finite `q`-chromatic graph has an
 induced `q`-critical subgraph of minimum degree at least `q - 1`. -/
 lemma exists_induced_critical_minDegree
-    (G : SimpleGraph V) [DecidableEq V] [DecidableRel G.Adj]
+    [Finite V] (G : SimpleGraph V) [DecidableRel G.Adj]
     (q : ℕ) (hq : 0 < q) (hχ : G.chromaticNumber = q) :
     ∃ s : Finset V,
       (G.induce (s : Set V)).chromaticNumber = q ∧
@@ -153,7 +155,7 @@ lemma exists_induced_critical_minDegree
 /-- If a `q`-coloring cannot be improved to `q-1` colors, representatives of
 two singleton color classes must be adjacent. -/
 lemma adj_of_singleton_color_classes
-    (G : SimpleGraph V) [DecidableEq V] (q : ℕ)
+    (G : SimpleGraph V) (q : ℕ)
     (C : G.Coloring (Fin q)) (hnot : ¬G.Colorable (q - 1))
     {u v : V} (huv : u ≠ v)
     (hu : ∀ w, C w = C u → w = u)
@@ -198,7 +200,7 @@ lemma adj_of_singleton_color_classes
 /-- In any surjective map to `q` colors, the number of singleton fibers is
 at least `2*q - |V|`, in subtraction-free form. -/
 lemma twice_card_le_card_add_singleton_fibers
-    (q : ℕ) (C : V → Fin q) (hsurj : Function.Surjective C) :
+    [Fintype V] (q : ℕ) (C : V → Fin q) (hsurj : Function.Surjective C) :
     2 * q ≤ Fintype.card V +
       (Finset.univ.filter fun i : Fin q ↦
         (Finset.univ.filter fun v : V ↦ C v = i).card = 1).card := by
@@ -236,7 +238,7 @@ lemma twice_card_le_card_add_singleton_fibers
 /-- The singleton classes of an optimal coloring yield the desired large
 clique.  The bound `2*q ≤ |V| + |S|` is equivalent to `2*q-|V| ≤ |S|`. -/
 lemma exists_clique_twice_chromatic_le_card_add_card
-    (G : SimpleGraph V) [DecidableEq V] (q : ℕ) (hq : 0 < q)
+    [Fintype V] (G : SimpleGraph V) (q : ℕ) (hq : 0 < q)
     (C : G.Coloring (Fin q)) (hχ : G.chromaticNumber = q) :
     ∃ S : Finset V, G.IsClique (S : Set V) ∧
       2 * q ≤ Fintype.card V + S.card := by
@@ -282,7 +284,7 @@ lemma exists_clique_twice_chromatic_le_card_add_card
 /-- One-stop finite structural lemma collecting criticality, the handshake
 bound, and the singleton-class clique bound. -/
 lemma exists_induced_critical_with_handshake_and_clique
-    (G : SimpleGraph V) [DecidableEq V] [DecidableRel G.Adj]
+    [Finite V] (G : SimpleGraph V) [DecidableRel G.Adj]
     (q : ℕ) (hq : 0 < q) (hχ : G.chromaticNumber = q) :
     ∃ s : Finset V,
       let H := G.induce (s : Set V)

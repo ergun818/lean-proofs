@@ -5,13 +5,14 @@ open Finset
 
 namespace SimpleGraph
 
-variable {V : Type*} [Fintype V]
+variable {V : Type*}
 
 /-- For a finite graph, `chromaticNumber.toNat` is its actual chromatic
 number and admits a surjective optimal coloring. -/
-lemma exists_optimal_coloring_toNat (G : SimpleGraph V) :
+lemma exists_optimal_coloring_toNat [Finite V] (G : SimpleGraph V) :
     let q := ENat.toNat G.chromaticNumber
     ∃ C : G.Coloring (Fin q), G.chromaticNumber = q ∧ Function.Surjective C := by
+  let := Fintype.ofFinite V
   let q := ENat.toNat G.chromaticNumber
   have hcol : G.Colorable q := colorable_chromaticNumber_of_fintype G
   have hne : G.chromaticNumber ≠ ⊤ :=
@@ -23,16 +24,17 @@ lemma exists_optimal_coloring_toNat (G : SimpleGraph V) :
   exact ⟨C, hχ, card_le_chromaticNumber_iff_forall_surjective.mp hqχ C⟩
 
 /-- An induced subgraph has no more edges than the original graph. -/
-lemma card_edgeFinset_induce_le (G : SimpleGraph V) [DecidableEq V]
+lemma card_edgeFinset_induce_le [Fintype V] (G : SimpleGraph V)
     [DecidableRel G.Adj] (s : Set V) [DecidablePred (· ∈ s)] :
     (G.induce s).edgeFinset.card ≤ G.edgeFinset.card := by
+  classical
   have h := congrArg Finset.card (G.map_edgeFinset_induce (s := s))
   rw [Finset.card_map] at h
   rw [h]
   exact Finset.card_le_card Finset.inter_subset_left
 
 /-- Instance-independent edge-count monotonicity for induced subgraphs. -/
-lemma ncard_edgeSet_induce_le (G : SimpleGraph V) (s : Set V) :
+lemma ncard_edgeSet_induce_le [Finite V] (G : SimpleGraph V) (s : Set V) :
     (G.induce s).edgeSet.ncard ≤ G.edgeSet.ncard := by
   let f : Sym2 s ↪ Sym2 V := (Function.Embedding.subtype (· ∈ s)).sym2Map
   have hmaps : f '' (G.induce s).edgeSet ⊆ G.edgeSet := by
@@ -47,7 +49,7 @@ lemma ncard_edgeSet_induce_le (G : SimpleGraph V) (s : Set V) :
 /-- The standard critical-subgraph argument gives the quadratic lower bound
 on the edge count in terms of the finite chromatic number. -/
 lemma chromatic_toNat_mul_pred_le_twice_card_edges
-    (G : SimpleGraph V) [DecidableEq V] [DecidableRel G.Adj]
+    [Fintype V] (G : SimpleGraph V) [DecidableRel G.Adj]
     (hedge : G.edgeFinset.Nonempty) :
     let q := ENat.toNat G.chromaticNumber
     q * (q - 1) ≤ 2 * G.edgeFinset.card := by
@@ -56,7 +58,7 @@ lemma chromatic_toNat_mul_pred_le_twice_card_edges
   have hnebot : G ≠ ⊥ := by
     intro hbot
     subst G
-    simpa using hedge
+    simp at hedge
   have h2q : 2 ≤ q := by
     have h2χ : (2 : ℕ∞) ≤ G.chromaticNumber :=
       two_le_chromaticNumber_iff_ne_bot.mpr hnebot

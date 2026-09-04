@@ -31,6 +31,7 @@ lemma edgeFinset_between_compl_eq_cutEdgeFinset (G : SimpleGraph V) [DecidableRe
         mem_cutEdgeFinset_mk]
       tauto
 
+omit [Fintype V] [DecidableEq V] in
 lemma between_compl_isBipartite (G : SimpleGraph V) (S : Finset V) :
     (G.between (S : Set V) (S : Set V)ᶜ).IsBipartite :=
   G.between_isBipartite disjoint_compl_right
@@ -40,6 +41,7 @@ private def colorCrosses {q : ℕ} (c : V → Fin q) (A : Finset (Fin q))
   e ∈ Sym2.fromRel (r := fun u v : V ↦ (c u ∈ A) ≠ (c v ∈ A))
     ⟨fun _ _ ↦ ne_comm.mp⟩
 
+omit [Fintype V] [DecidableEq V] in
 @[simp] private lemma colorCrosses_mk {q : ℕ} (c : V → Fin q)
     (A : Finset (Fin q)) (u v : V) :
     colorCrosses c A s(u, v) ↔ ((c u ∈ A) ≠ (c v ∈ A)) := by
@@ -73,7 +75,7 @@ private lemma card_powersetCard_filter_mem_notMem {q k : ℕ} (hk : 1 ≤ k)
       refine ⟨hcard, ha, ?_⟩
       intro hb
       have := hsub hb
-      simpa using this
+      simp at this
   rw [heq, Finset.card_filter_powersetCard_subset _ _ _ hsingle hcard_single]
   simp [Nat.sub_sub]
 
@@ -97,6 +99,7 @@ private lemma card_powersetCard_filter_separates {q k : ℕ} (hk : 1 ≤ k)
     card_powersetCard_filter_mem_notMem hk hab.symm]
   omega
 
+omit [DecidableEq V] in
 private lemma sum_balanced_colorCuts {G : SimpleGraph V} [DecidableRel G.Adj]
     {q k : ℕ} (hk : 1 ≤ k) (c : G.Coloring (Fin q)) :
     ∑ A ∈ (Finset.univ.powersetCard k),
@@ -178,7 +181,7 @@ private lemma balanced_choose_ineq {q : ℕ} (hq : 2 ≤ q) :
                 (2 * n + 1) * (2 * n - 1) ≤ (2 * n) * (2 * n) := by
               calc
                 (2 * n + 1) * (2 * n - 1) =
-                    ((2 * n - 1) + 2) * (2 * n - 1) := by congr 1 <;> omega
+                    ((2 * n - 1) + 2) * (2 * n - 1) := by congr 1; omega
                 _ ≤ ((2 * n - 1) + 1) * ((2 * n - 1) + 1) := by nlinarith
                 _ = (2 * n) * (2 * n) := by congr 1 <;> omega
             have hpoly : 2 * (2 * n + 1) * (2 * n - 1) ≤ 8 * n * n := by

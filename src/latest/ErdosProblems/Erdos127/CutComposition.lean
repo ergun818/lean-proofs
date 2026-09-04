@@ -20,6 +20,7 @@ vertex type (all vertices outside `U` are isolated). -/
 def insideGraph (G : SimpleGraph V) (U : Finset V) : SimpleGraph V :=
   (G.induce (U : Set V)).spanningCoe
 
+omit [Fintype V] [DecidableEq V] in
 @[simp] lemma insideGraph_adj (G : SimpleGraph V) (U : Finset V) (u v : V) :
     (G.insideGraph U).Adj u v ↔ G.Adj u v ∧ u ∈ U ∧ v ∈ U := by
   constructor
@@ -63,7 +64,7 @@ theorem cutEdgeFinset_insideGraph_eq_localCutEdgeFinset
     (G.insideGraph U).cutEdgeFinset S = G.localCutEdgeFinset U S := by
   ext e
   induction e using Sym2.inductionOn with
-  | _ u v => simp [insideGraph_adj, localCutEdgeFinset, insideEdgeFinset] <;> tauto
+  | _ u v => simp [insideGraph_adj, localCutEdgeFinset, insideEdgeFinset]; tauto
 
 private lemma edgeFinset_partition (G : SimpleGraph V) [DecidableRel G.Adj]
     (U : Finset V) :
@@ -300,6 +301,7 @@ private lemma image_interedges_eq_localCutEdgeFinset
           rw [SimpleGraph.mk_mem_interedges_iff]
           exact ⟨hvA, Finset.mem_sdiff.mpr ⟨huU, huA⟩, (G.adj_comm _ _).mp huv⟩
 
+omit [Fintype V] in
 private lemma sym2OfProd_injOn_interedges
     (G : SimpleGraph V) [DecidableRel G.Adj] (U A : Finset V) :
     Set.InjOn (fun p : V × V ↦ s(p.1, p.2)) (G.interedges A (U \ A)) := by
@@ -324,6 +326,7 @@ theorem card_localCutEdgeFinset_eq_card_interedges
   rw [← image_interedges_eq_localCutEdgeFinset G hA,
     Finset.card_image_of_injOn (sym2OfProd_injOn_interedges G U A)]
 
+omit [Fintype V] in
 private lemma interedges_eq_product_of_isClique
     (G : SimpleGraph V) [DecidableRel G.Adj] {U A : Finset V}
     (hA : A ⊆ U) (hU : G.IsClique (U : Set V)) :

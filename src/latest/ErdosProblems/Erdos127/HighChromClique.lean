@@ -12,7 +12,7 @@ variable {V : Type*} [Fintype V]
 clique.  The edge hypothesis is the division-free form `|E(G)| = N^2 / 2`.
 The witness `s` records the critical induced graph used in the proof. -/
 lemma exists_exact_clique_of_high_chromatic
-    (G : SimpleGraph V) [DecidableEq V] [DecidableRel G.Adj]
+    (G : SimpleGraph V) [DecidableRel G.Adj]
     (N L : ℕ) (hN : 0 < N) (hNL : 2 * L ≤ N)
     (hedges : 2 * G.edgeFinset.card = N ^ 2)
     (hhigh : N - L < ENat.toNat G.chromaticNumber) :

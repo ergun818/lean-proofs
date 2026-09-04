@@ -86,11 +86,12 @@ lemma le_correction_of_guarantees {m k : ℕ} (h : Guarantees m k) :
   exact Nat.le_findGreatest (guarantees_le_edges h) h
 
 /-- Edwards' theorem in the exact form used in Problem 127. -/
-theorem exists_edwards_bipartite_subgraph {V : Type*} [Fintype V]
+theorem exists_edwards_bipartite_subgraph {V : Type*} [Finite V]
     (G : SimpleGraph V) :
     ∃ H : SimpleGraph V, H ≤ G ∧ H.IsBipartite ∧
       baseline G.edgeSet.ncard ≤ (H.edgeSet.ncard : ℝ) := by
   classical
+  let := Fintype.ofFinite V
   let : DecidableRel G.Adj := Classical.decRel _
   by_cases hedge : G.edgeFinset.Nonempty
   · let q := ENat.toNat G.chromaticNumber
@@ -98,7 +99,7 @@ theorem exists_edwards_bipartite_subgraph {V : Type*} [Fintype V]
     have hnebot : G ≠ ⊥ := by
       intro hbot
       subst G
-      simpa using hedge
+      simp at hedge
     have h2χ : (2 : ℕ∞) ≤ G.chromaticNumber :=
       SimpleGraph.two_le_chromaticNumber_iff_ne_bot.mpr hnebot
     have hq : 2 ≤ q := by
@@ -192,7 +193,7 @@ theorem exists_coarse_cut {V : Type*} [Fintype V] [DecidableEq V]
   have hnebot : G ≠ ⊥ := by
     intro hbot
     subst G
-    simpa using hedge
+    simp at hedge
   have h2χ : (2 : ℕ∞) ≤ G.chromaticNumber :=
     SimpleGraph.two_le_chromaticNumber_iff_ne_bot.mpr hnebot
   have hq : 2 ≤ q := by
@@ -236,7 +237,7 @@ lemma localCutEdgeFinset_inter_self {V : Type*} [Fintype V] [DecidableEq V]
     G.localCutEdgeFinset U (S ∩ U) = G.localCutEdgeFinset U S := by
   ext e
   induction e using Sym2.inductionOn with
-  | _ u v => simp [SimpleGraph.mem_localCutEdgeFinset_mk] <;> tauto
+  | _ u v => simp [SimpleGraph.mem_localCutEdgeFinset_mk]; tauto
 
 private theorem thresholdQuarterArithmetic (t : ℕ) (ht : 1 ≤ t) :
     4 * (8 * (128 * t) ^ 2) + 4 * (64 * t) ≤ 2 ^ 20 * t ^ 2 := by
@@ -261,7 +262,7 @@ private theorem smallBonusArithmetic (t : ℕ) (ht : 1 ≤ t) :
 /-- Explicit specialization of Alon's theorem at `N = 2^20 t^2`.  The
 conclusion is the desired cut estimate with all divisions cleared. -/
 theorem explicit_alon_cut {t : ℕ} (ht : 1 ≤ t) {V : Type*} [Fintype V]
-    [DecidableEq V] (G : SimpleGraph V) [DecidableRel G.Adj]
+    (G : SimpleGraph V) [DecidableRel G.Adj]
     (hedges : 2 * #G.edgeFinset = (2 ^ 20 * t ^ 2) ^ 2) :
     ∃ H : SimpleGraph V, ∃ _ : DecidableRel H.Adj,
       H ≤ G ∧ H.IsBipartite ∧
@@ -289,7 +290,7 @@ theorem explicit_alon_cut {t : ℕ} (ht : 1 ≤ t) {V : Type*} [Fintype V]
   have hnebot : G ≠ ⊥ := by
     intro hbot
     subst G
-    simpa using hedge
+    simp at hedge
   have h2χ : (2 : ℕ∞) ≤ G.chromaticNumber :=
     SimpleGraph.two_le_chromaticNumber_iff_ne_bot.mpr hnebot
   have hq : 2 ≤ q := by
@@ -329,7 +330,6 @@ theorem explicit_alon_cut {t : ℕ} (ht : 1 ≤ t) {V : Type*} [Fintype V]
   · have hhigh : N - L < q := by omega
     have hNL : 2 * L ≤ N := by
       dsimp [N, L]
-      norm_num
       nlinarith
     obtain ⟨-, sCrit, -, -, U, hUclique, hUcard⟩ :=
       G.exists_exact_clique_of_high_chromatic N L hN hNL hedges' hhigh
@@ -341,7 +341,6 @@ theorem explicit_alon_cut {t : ℕ} (ht : 1 ≤ t) {V : Type*} [Fintype V]
     have hu : u = N - R := by simpa only [u, R] using hUcard
     have hRle : R ≤ N := by
       dsimp [N, L, R]
-      norm_num
       nlinarith
     have hNuR : u + R = N := by omega
     have huPos : 0 < u := by

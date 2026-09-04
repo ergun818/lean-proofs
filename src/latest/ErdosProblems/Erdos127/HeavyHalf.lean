@@ -4,7 +4,7 @@ open Finset
 
 namespace Finset
 
-variable {α : Type*} [DecidableEq α]
+variable {α : Type*}
 
 /-- Among an even number of nonnegative integer weights, one can choose half the
 indices with the sharp remainder improvement over half the total weight. -/
@@ -15,6 +15,7 @@ theorem exists_half_sum_two_ge_add_min
     (hx : x = Q * #U + s) :
     ∃ A : Finset α, A ⊆ U ∧ #A = #U / 2 ∧
       x + min s (#U - s) ≤ 2 * ∑ i ∈ A, d i := by
+  classical
   let u := #U
   let k := u / 2
   let H := U.filter fun i ↦ Q < d i
