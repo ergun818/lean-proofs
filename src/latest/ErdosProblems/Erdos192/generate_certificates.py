@@ -26,7 +26,11 @@ positive = [mask(v % modulus for v in row[:85]) for row in prefixes]
 negative = [mask(-v % modulus for v in row[:85]) for row in prefixes]
 out = 'import ErdosProblems.Erdos192.BoundaryFast\nimport ErdosProblems.Erdos192.Bitset\n\nnamespace Erdos192\n\n'
 for name, data in [('positiveMasks', positive), ('negativeMasks', negative)]:
-    out += 'def ' + name + ' : Array Nat :=\n  #[' + ',\n    '.join(hex(x) for x in data) + ']\n\n'
+    entries = []
+    for value in data:
+        bits = [i for i in range(value.bit_length()) if (value >> i) & 1]
+        entries.append('bitset [' + ', '.join(map(str, bits)) + ']')
+    out += 'def ' + name + ' : Array Nat :=\n  #[' + ',\n    '.join(entries) + ']\n\n'
 rows = []
 total = 0
 for a in range(4):
@@ -42,5 +46,14 @@ for a in range(4):
             rows.append('    #[' + ', '.join(entries) + ']')
 out += 'def boundaryCandidates : Array (Array (List Nat)) :=\n  #[\n' + ',\n'.join(rows) + '\n  ]\n\n'
 out += 'end Erdos192\n'
-(ROOT / 'BoundaryMaskData.lean').write_text(out)
+lines = []
+for line in out.splitlines():
+    indent = ' ' * (len(line) - len(line.lstrip()) + 2)
+    while len(line) > 100:
+        cut = line.rfind(',', 0, 98) + 1
+        assert cut > len(indent)
+        lines.append(line[:cut])
+        line = indent + line[cut:].lstrip()
+    lines.append(line)
+(ROOT / 'BoundaryMaskData.lean').write_text('\n'.join(lines) + '\n')
 print(f'{total} boundary candidates in {len(rows)} rows')

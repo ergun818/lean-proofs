@@ -17,9 +17,9 @@ theorem max_asf_3letters :
 theorem isFinASF3_complete (w : List (Fin 3)) (hw : FinAbelianSquareFree w) :
     isFinASF3 w = true := by
   unfold isFinASF3;
-  simp +zetaDelta only [gt_iff_lt, Bool.if_false_left, Bool.not_eq_eq_eq_not, Bool.not_true, List.any_eq_false,
-    List.mem_range, List.any_eq_true, Bool.and_eq_true, decide_eq_false_iff_not, not_lt, not_exists, not_and,
-    Bool.not_eq_true] at *;
+  simp +zetaDelta only [gt_iff_lt, Bool.if_false_left, Bool.not_eq_eq_eq_not, Bool.not_true,
+    List.any_eq_false, List.mem_range, List.any_eq_true, Bool.and_eq_true,
+    decide_eq_false_iff_not, not_lt, not_exists, not_and, Bool.not_eq_true] at *
   intro i hi j hj hij; contrapose! hw;
   exact fun h => h i ( j + 1 ) ( Nat.succ_pos _ ) hij ( by simpa [ List.isPerm_iff ] using hw )
 
@@ -37,10 +37,10 @@ an injection.
 theorem inf_asf_comp_inj {α β : Type*} [DecidableEq α] [DecidableEq β]
     (f : ℕ → α) (e : α → β) (he : Function.Injective e)
     (hf : InfAbelianSquareFree f) : InfAbelianSquareFree (e ∘ f) := by
-  intro i l hl; specialize hf i l hl; simp_all +decide [ InfAbelianSquareFree, List.map_eq_map_iff ] ;
-  contrapose! hf;
-  rw [ ← List.map_perm_map_iff he ];
-  unfold infBlock at *; aesop;
+  intro i l hl hperm
+  apply hf i l hl
+  rw [infBlock_comp, infBlock_comp] at hperm
+  exact (List.map_perm_map_iff he).mp hperm
 
 /-
 No infinite word over `Fin 3` is abelian-square-free.
@@ -49,15 +49,15 @@ Proof: by `max_asf_3letters`, every length-8 prefix has an abelian square.
 theorem no_inf_asf_three (f : ℕ → Fin 3) : ¬InfAbelianSquareFree f := by
   intro hf
   have h8 : FinAbelianSquareFree (infBlock f 0 8) := by
-    -- For any i, l, if the two blocks of length l starting at i and i+l are permutations, then they are also permutations of the infinite word.
+    -- Permutations of blocks in the length-8 prefix give permutations in the infinite word.
     intro i l hl h
     have := hf i l hl
     contrapose! this
-    simp_all +decide [ infBlock ];
+    simp_all +decide only [gt_iff_lt, infBlock, zero_add, List.length_map, List.length_range]
     convert this using 1;
-    · refine' List.ext_get _ _ <;> simp +arith +decide [ List.get ];
+    · refine List.ext_get ?_ ?_ <;> simp +arith +decide;
       omega;
-    · refine' List.ext_get _ _ <;> simp +arith +decide;
+    · refine List.ext_get ?_ ?_ <;> simp +arith +decide;
       omega;
   convert isFinASF3_complete _ h8 using 1;
   simp only [false_iff, Bool.not_eq_true];
@@ -75,6 +75,7 @@ theorem hasParikhAP_of_le_three {d : ℕ} (hd : d ≤ 3) (f : ℕ → Fin d) :
   -- If `InfAbelianSquareFree f`, then by `inf_asf_comp_inj`, `InfAbelianSquareFree (e ∘ f)`.
   by_cases h_inf_asf : InfAbelianSquareFree f;
   · exact False.elim <| no_inf_asf_three ( e ∘ f ) <| inf_asf_comp_inj f e he_inj h_inf_asf;
-  · exact Classical.not_not.1 fun h => h_inf_asf <| by simpa [ h ] using infAbelianSquareFree_iff_parikhAPFree f |>.2 h;
+  · exact Classical.not_not.1 fun h => h_inf_asf <| by
+      simpa [h] using infAbelianSquareFree_iff_parikhAPFree f |>.2 h
 
 end Erdos192

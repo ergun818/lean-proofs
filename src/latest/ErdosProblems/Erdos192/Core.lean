@@ -61,8 +61,14 @@ theorem parikhCount_block {k : ℕ} (f : ℕ → Fin k) (s l : ℕ) (c : Fin k) 
     ((infBlock f s l).filter (· = c)).length =
       parikhCount f (s + l) c - parikhCount f s c := by
   unfold parikhCount;
-  rw [ show { j ∈ Finset.range ( s + l ) | f j = c } = Finset.filter ( fun j => f j = c ) ( Finset.range s ) ∪ Finset.filter ( fun j => f j = c ) ( Finset.Ico s ( s + l ) ) from ?_, Finset.card_union_of_disjoint ];
-  · rw [ show { j ∈ Finset.Ico s ( s + l ) | f j = c } = Finset.image ( fun j => s + j ) ( Finset.filter ( fun j => f ( s + j ) = c ) ( Finset.range l ) ) from ?_, Finset.card_image_of_injective _ fun x y hxy => by simpa using hxy ];
+  rw [show {j ∈ Finset.range (s + l) | f j = c} =
+    Finset.filter (fun j => f j = c) (Finset.range s) ∪
+      Finset.filter (fun j => f j = c) (Finset.Ico s (s + l)) from ?_,
+    Finset.card_union_of_disjoint]
+  · rw [show {j ∈ Finset.Ico s (s + l) | f j = c} =
+      Finset.image (fun j => s + j)
+        (Finset.filter (fun j => f (s + j) = c) (Finset.range l)) from ?_,
+      Finset.card_image_of_injective _ fun x y hxy => by simpa using hxy]
     · simp +decide only [add_tsub_cancel_left];
       unfold infBlock
       rw [List.filter_map]
@@ -75,15 +81,20 @@ theorem parikhCount_block {k : ℕ} (f : ℕ → Fin k) (s l : ℕ) (c : Fin k) 
           · simp [h]
           · simp [h]
     · ext; simp only [Finset.mem_filter, Finset.mem_Ico, Finset.mem_image, Finset.mem_range];
-      exact ⟨ fun h => ⟨ ‹_› - s, ⟨ by omega, by simpa [ add_tsub_cancel_of_le h.1.1 ] using h.2 ⟩, by omega ⟩, by rintro ⟨ a, ⟨ ha₁, ha₂ ⟩, rfl ⟩ ; exact ⟨ ⟨ by linarith, by linarith ⟩, ha₂ ⟩ ⟩;
-  · exact Finset.disjoint_left.mpr fun x hx₁ hx₂ => by linarith [ Finset.mem_range.mp ( Finset.mem_filter.mp hx₁ |>.1 ), Finset.mem_Ico.mp ( Finset.mem_filter.mp hx₂ |>.1 ) ] ;
+      exact ⟨fun h => ⟨‹_› - s,
+        ⟨by omega, by simpa [add_tsub_cancel_of_le h.1.1] using h.2⟩, by omega⟩,
+        by rintro ⟨a, ⟨ha₁, ha₂⟩, rfl⟩; exact ⟨⟨by linarith, by linarith⟩, ha₂⟩⟩
+  · exact Finset.disjoint_left.mpr fun x hx₁ hx₂ => by
+      linarith [Finset.mem_range.mp (Finset.mem_filter.mp hx₁ |>.1),
+        Finset.mem_Ico.mp (Finset.mem_filter.mp hx₂ |>.1)]
   · grind
 
 theorem infAbelianSquareFree_iff_parikhAPFree {k : ℕ} (f : ℕ → Fin k) :
     InfAbelianSquareFree f ↔ parikhAPFree f := by
   constructor <;> intro h;
   · rintro ⟨ a, b, c, hab, hbc, h ⟩;
-    have h_count_eq : ∀ d : Fin k, ((infBlock f a (b - a)).filter (· = d)).length = ((infBlock f b (c - b)).filter (· = d)).length := by
+    have h_count_eq : ∀ d : Fin k, ((infBlock f a (b - a)).filter (· = d)).length =
+        ((infBlock f b (c - b)).filter (· = d)).length := by
       intro d;
       rw [ parikhCount_block, parikhCount_block ];
       grind;
@@ -94,18 +105,25 @@ theorem infAbelianSquareFree_iff_parikhAPFree {k : ℕ} (f : ℕ → Fin k) :
       have := h_perm.length_eq; simp_all +decide [ infBlock ] ;
     rw [ eq_tsub_iff_add_eq_of_le ] at h_length_eq <;> try linarith;
     subst h_length_eq;
-    exact ‹InfAbelianSquareFree f› a ( b - a ) ( Nat.sub_pos_of_lt hab ) ( by simpa [ add_assoc, Nat.add_sub_of_le hab.le ] using h_perm );
+    exact ‹InfAbelianSquareFree f› a (b - a) (Nat.sub_pos_of_lt hab)
+      (by simpa [add_assoc, Nat.add_sub_of_le hab.le] using h_perm)
   · intro i l hl;
     contrapose! h;
-    have h_counts : ∀ c : Fin k, parikhCount f (i + l) c - parikhCount f i c = parikhCount f (i + 2 * l) c - parikhCount f (i + l) c := by
+    have h_counts : ∀ c : Fin k, parikhCount f (i + l) c - parikhCount f i c =
+        parikhCount f (i + 2 * l) c - parikhCount f (i + l) c := by
       intro c
-      have h_count_eq : ((infBlock f i l).filter (· = c)).length = ((infBlock f (i + l) l).filter (· = c)).length := by
+      have h_count_eq : ((infBlock f i l).filter (· = c)).length =
+          ((infBlock f (i + l) l).filter (· = c)).length := by
         exact h.filter _ |> List.Perm.length_eq;
       rw [ parikhCount_block, parikhCount_block ] at * ; ring_nf at * ; aesop;
-    refine' fun h => h ⟨ i, i + l, i + 2 * l, _, _, _ ⟩ <;> simp_all +decide [ two_mul, add_assoc ];
-    intro c; specialize h_counts c; rw [ tsub_eq_iff_eq_add_of_le ] at h_counts;
-    · linarith [ Nat.sub_add_cancel ( show parikhCount f ( i + ( l + l ) ) c ≥ parikhCount f ( i + l ) c from by exact Finset.card_mono <| by intros x hx; exact Finset.mem_filter.mpr ⟨ Finset.mem_range.mpr <| by linarith [ Finset.mem_range.mp <| Finset.mem_filter.mp hx |>.1 ], by aesop ⟩ ) ];
-    · exact Finset.card_mono <| Finset.filter_subset_filter _ <| Finset.range_mono <| Nat.le_add_right _ _
+    refine fun h => h ⟨i, i + l, i + 2 * l, by omega, by omega, ?_⟩
+    intro c
+    have hmono (a b : ℕ) (hab : a ≤ b) : parikhCount f a c ≤ parikhCount f b c :=
+      Finset.card_mono (Finset.filter_subset_filter _ (Finset.range_mono hab))
+    have h₁ := hmono i (i + l) (by omega)
+    have h₂ := hmono (i + l) (i + 2 * l) (by omega)
+    have hc := h_counts c
+    omega
 
 /-! ### The main theorem (Keränen 1992) — basic infrastructure -/
 
@@ -214,10 +232,14 @@ theorem isFinASF_complete (w : List (Fin 4)) (hw : FinAbelianSquareFree w) :
     isFinASF w = true := by
   contrapose! hw;
   unfold isFinASF at hw;
-  simp_all +decide [ List.any_eq_true ];
+  simp_all +decide only [ne_eq, Bool.not_eq_eq_eq_not, Bool.not_true, List.any_eq_false,
+    List.mem_range, List.any_eq_true, not_exists, not_and, Bool.not_eq_true, not_forall,
+    Bool.not_eq_false]
   obtain ⟨ i, hi, j, hj, h ⟩ := hw;
   unfold hasAbelianSquareAtFin at h;
-  simp_all +decide [ List.isPerm_iff ];
+  simp_all +decide only [Nat.reduceBeqDiff, Bool.false_eq_true, ↓reduceIte, gt_iff_lt,
+    Bool.if_false_left, Bool.and_eq_true, Bool.not_eq_eq_eq_not, Bool.not_true,
+    decide_eq_false_iff_not, not_lt, List.isPerm_iff]
   exact fun H => H i ( j + 1 ) ( Nat.succ_pos _ ) h.1 h.2
 
 end Erdos192

@@ -44,11 +44,14 @@ theorem exists_inf_from_all_lengths
         choose m hm using h_finite
         use Finset.univ.sup m
         intros c w hwASF hw
-        specialize hm c (w.take (p.length + 1 + m c)) ?_ ?_ <;>
-          simp_all +decide only [List.length_take, inf_eq_left]
-        · exact Finset.le_sup (f := m) (Finset.mem_univ c)
-        · exact finASF_prefix _ hw _
-            (by linarith [Finset.le_sup (f := m) (Finset.mem_univ c)])
+        have hlen : p.length + 1 + m c ≤ w.length := by
+          rw [hwASF]
+          exact Nat.add_le_add_left (Finset.le_sup (f := m) (Finset.mem_univ c)) _
+        have hbad := hm c (w.take (p.length + 1 + m c))
+          (by rw [List.length_take, Nat.min_eq_left hlen])
+          (finASF_prefix _ hw _ hlen)
+        simpa only [List.take_take, Nat.min_eq_left (Nat.le_add_right (p.length + 1) (m c))]
+          using hbad
       obtain ⟨w, hw₁, hw₂, hw₃⟩ := hp (1 + M)
       have h_take : ∃ c : Fin 4, List.take (p.length + 1) w = p ++ [c] := by
         rw [← List.take_append_drop p.length w, hw₃]
@@ -63,9 +66,10 @@ theorem exists_inf_from_all_lengths
           ∀ n : ℕ, ∃ f : ℕ → Fin 4,
             ∀ i < n, f i = c (List.ofFn (fun j : Fin i => f j)) := by
         intro n
-        induction' n with n ih
-        · exact ⟨fun _ => 0, by norm_num⟩
-        · obtain ⟨f, hf⟩ := ih
+        induction n with
+        | zero => exact ⟨fun _ => 0, by norm_num⟩
+        | succ n ih =>
+          obtain ⟨f, hf⟩ := ih
           use fun i =>
             if i < n then f i
             else c (List.ofFn (fun j : Fin i =>
@@ -75,19 +79,21 @@ theorem exists_inf_from_all_lengths
       choose f hf using h_rec
       have h_eq : ∀ n m : ℕ, n ≤ m → ∀ i < n, f n i = f m i := by
         intros n m hnm i hi
-        induction' i using Nat.strong_induction_on with i ih
-        grind +qlia
+        induction i using Nat.strong_induction_on with
+        | h i ih => grind +qlia
       use fun n => f (n + 1) n
       grind
     obtain ⟨f, hf⟩ := h_rec
     use f
     have h_extendable : ∀ n : ℕ, extendable (List.ofFn (fun i : Fin n => f i)) := by
       intro n
-      induction' n with n ih
-      · exact fun m => by
+      induction n with
+      | zero =>
+        exact fun m => by
           obtain ⟨w, hw₁, hw₂⟩ := hall m
           exact ⟨w, by simpa using hw₁, hw₂, by simp +decide⟩
-      · rw [List.ofFn_succ_last]
+      | succ n ih =>
+        rw [List.ofFn_succ_last]
         simpa only [Fin.val_castSucc, Fin.val_last, ← hf n] using hc _ ih
     intro m
     obtain ⟨w, hw₁, hw₂, hw₃⟩ := h_extendable m 0
@@ -95,10 +101,12 @@ theorem exists_inf_from_all_lengths
   use f
   intro i l hl h
   have := hf (i + 2 * l)
-  simp_all +decide [FinAbelianSquareFree]
+  simp_all +decide only [FinAbelianSquareFree, gt_iff_lt, List.length_ofFn,
+    not_false_eq_true, implies_true]
   contrapose! hf
   refine ⟨i + 2 * l, i, l, hl, by linarith, ?_⟩
-  convert h using 1 <;> (refine List.ext_get ?_ ?_ <;> simp +decide [infBlock] <;> omega)
+  convert h using 1 <;>
+    (refine List.ext_get ?_ ?_ <;> simp +decide [infBlock]; omega)
 
 /-- **Keränen 1992, Theorem 1.** There exists an infinite abelian-square-free
 word over a four-letter alphabet. -/

@@ -32,11 +32,15 @@ def hasParikhSolution (wa wb we : Fin 4) (r s : Nat) : Bool :=
   adjMTtimesDelta wa wb we r s 3 % 43435 = 0
 
 def vGivesSomeAS (wa wb we : Fin 4) (v : Fin 4 → Int) : Bool :=
-  ((List.finRange 4).all fun c => (if c = wa then (1:Int) else 0) - (if c = wb then 1 else 0) + v c == 0) ||
-  ((List.finRange 4).all fun c => v c + (if c = wb then (1:Int) else 0) - (if c = we then 1 else 0) == 0) ||
+  ((List.finRange 4).all fun c =>
+    (if c = wa then (1:Int) else 0) - (if c = wb then 1 else 0) + v c == 0) ||
+  ((List.finRange 4).all fun c =>
+    v c + (if c = wb then (1:Int) else 0) - (if c = we then 1 else 0) == 0) ||
   ((List.finRange 4).all fun c => v c - (if c = wb then (1:Int) else 0) == 0) ||
   ((List.finRange 4).all fun c => v c + (if c = wb then (1:Int) else 0) == 0) ||
-  ((List.finRange 4).all fun c => (if c = wa then (1:Int) else 0) - (if c = wb then 1 else 0) - (if c = we then 1 else 0) + v c == 0) ||
-  ((List.finRange 4).all fun c => (if c = wa then (1:Int) else 0) + (if c = wb then 1 else 0) + v c - (if c = we then 1 else 0) == 0)
+  ((List.finRange 4).all fun c => (if c = wa then (1:Int) else 0) -
+    (if c = wb then 1 else 0) - (if c = we then 1 else 0) + v c == 0) ||
+  ((List.finRange 4).all fun c => (if c = wa then (1:Int) else 0) +
+    (if c = wb then 1 else 0) + v c - (if c = we then 1 else 0) == 0)
 
 end Erdos192

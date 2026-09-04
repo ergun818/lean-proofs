@@ -27,7 +27,8 @@ theorem realWalk_positive {d : ℕ} (x : Fin d → ℝ) (f : ℕ → Fin d) :
   refine ⟨f n, ?_⟩
   intro j
   simp only [realWalk, parikhCount_succ, Nat.cast_add]
-  split_ifs <;> simp <;> ring
+  split_ifs <;> simp
+  ring
 
 theorem positiveUnitWalk_representation {d : ℕ} (p : ℕ → Fin d → ℝ)
     (hp : PositiveUnitWalk p) : ∃ f : ℕ → Fin d, p = realWalk (p 0) f := by
@@ -39,7 +40,8 @@ theorem positiveUnitWalk_representation {d : ℕ} (p : ℕ → Fin d → ℝ)
   | succ n ih =>
     rw [hf n j, ih]
     simp only [realWalk, parikhCount_succ, Nat.cast_add]
-    split_ifs <;> simp <;> ring
+    split_ifs <;> simp
+    ring
 
 theorem realWalk_hasAP_iff {d : ℕ} (x : Fin d → ℝ) (f : ℕ → Fin d) :
     HasWalkAP (realWalk x f) ↔ hasParikhAP f := by

@@ -31,7 +31,9 @@ theorem modular_balance (A B x y z : Int)
     Int.add_emod, hAB, Int.zero_add, Int.emod_emod] at h
   have heq : x % 43435 = (-z + 2 * y) % 43435 := by
     rw [Int.emod_eq_emod_iff_emod_sub_eq_zero]
-    convert h using 1 <;> congr 1 <;> ring
+    convert h using 1
+    congr 1
+    ring
   have hn1 := Int.emod_nonneg (-z) (by decide : (43435 : Int) ≠ 0)
   have hn2 := Int.emod_nonneg (2 * y) (by decide : (43435 : Int) ≠ 0)
   have hn3 := Int.emod_nonneg x (by decide : (43435 : Int) ≠ 0)
