@@ -321,6 +321,7 @@ section RegularGraphContainers
 variable {V : Type*} [Fintype V] [DecidableEq V]
 variable (G : SimpleGraph V) [DecidableRel G.Adj]
 
+omit [Fintype V] [DecidableEq V] in
 private lemma sym2_out_mk (e : Sym2 V) : s(e.out.1, e.out.2) = e := by
   rw [Sym2.mk, e.out_eq]
 
@@ -369,7 +370,7 @@ private lemma card_darts_fst_mem (B : Finset V) :
   classical
   calc
     _ = ∑ d : G.Dart, if d.fst ∈ B then 1 else 0 := by
-      simpa using (Finset.sum_boole (fun d : G.Dart ↦ d.fst ∈ B) Finset.univ).symm
+      simp
     _ = ∑ v ∈ B, ∑ d : G.Dart, if d.fst = v then 1 else 0 := by
       rw [Finset.sum_comm]
       apply Finset.sum_congr rfl
@@ -381,7 +382,7 @@ private lemma card_darts_fst_mem (B : Finset V) :
       apply Finset.sum_congr rfl
       intro v _
       rw [← G.dart_fst_fiber_card_eq_degree v]
-      simpa using (Finset.sum_boole (fun d : G.Dart ↦ d.fst = v) Finset.univ)
+      simp
 
 /-- Deleting vertices removes at most the sum of their original degrees. -/
 lemma card_edgeFinset_le_card_edgesInside_add_sum_degree (B : Finset V) :
@@ -449,6 +450,7 @@ lemma degreeInto_le_degree_induce (C : Finset V) (v : C) :
     apply Subtype.ext
     exact congrArg (fun z ↦ (z.1 : V)) h
 
+omit [DecidableEq V] in
 /-- A low-maximum-degree induced set in a regular graph has size close to at most
 half of the vertex set. -/
 theorem regular_container_card_ineq {d Δ : ℕ} (hreg : G.IsRegularOfDegree d)
@@ -494,6 +496,7 @@ theorem regular_container_card_ineq {d Δ : ℕ} (hreg : G.IsRegularOfDegree d)
     _ ≤ (Δ - 1) * C.card + d * Fintype.card V :=
       Nat.add_le_add hinter htotal'.symm.le
 
+omit [DecidableEq V] in
 theorem regular_container_card_ineq' {d Δ : ℕ} (hreg : G.IsRegularOfDegree d)
     (hΔ : Δ ≤ 2 * d) (C : Finset V)
     (hlow : (G.induce (C : Set V)).maxDegree < Δ) :
@@ -737,7 +740,7 @@ def sumFreeCover (n K : ℕ) [NeZero n] : Finset (Finset ℕ) :=
   smallSubsets n K ∪
     (Finset.powersetCard K (Finset.Icc 1 n)).biUnion (headFamily n)
 
-theorem sumFreeSubsets_subset_cover {n K : ℕ} (hn : 0 < n) (hK : 1 ≤ K) :
+theorem sumFreeSubsets_subset_cover {n K : ℕ} (hn : 0 < n) (_hK : 1 ≤ K) :
     sumFreeSubsets n ⊆ @sumFreeCover n K ⟨hn.ne'⟩ := by
   let : NeZero n := ⟨hn.ne'⟩
   classical
@@ -782,7 +785,7 @@ theorem sumFreeSubsets_subset_cover {n K : ℕ} (hn : 0 < n) (hK : 1 ≤ K) :
         · exact Or.inl hxS
         · exact Or.inr ⟨hxA, hxS⟩
     · left
-      push_neg at hlow
+      push Not at hlow
       obtain ⟨s, hsS, hs⟩ := hlow
       rw [highTailFamily, Finset.mem_image]
       refine ⟨A \ S, ?_, ?_⟩
@@ -818,7 +821,7 @@ theorem sumFreeCount_le_container {n K Δ : ℕ} (hn : 0 < n) (hK : 1 ≤ K)
     (∑ j ∈ Finset.range (n / (Δ + 1) + 1), n.choose j) *
       2 ^ ((2 * K) * n / (2 * (2 * K) - Δ + 1))
   have hIcc : (Finset.Icc 1 n).card = n := by
-    simp [Nat.card_Icc, hn]
+    simp [Nat.card_Icc]
   have hsmall : (smallSubsets n K).card ≤ ∑ j ∈ Finset.range K, n.choose j := by
     calc
       (smallSubsets n K).card ≤ ∑ j ∈ Finset.range K,
@@ -1038,7 +1041,6 @@ lemma tendsto_nat_mul_div_const_div_nat (a d : ℕ) (ha : 0 < a) (hd : 0 < d) :
     filter_upwards [eventually_gt_atTop (0 : ℕ)] with n hn
     rw [show ⌊((a : ℝ) * (n : ℝ) / (d : ℝ))⌋₊ = (a * n) / d by
       simpa [Nat.cast_mul] using (Nat.floor_div_eq_div (K := ℝ) (a * n) d)]
-    push_cast
     field_simp
   simpa only [one_mul] using hscaled.congr' heq
 
@@ -1075,8 +1077,8 @@ lemma tendsto_fixedUpperRate (m : ℕ) (hm : 1 ≤ m) :
   have hM := tendsto_nat_mul_div_const_div_nat (2 * m ^ 2)
     (2 * (2 * m ^ 2) - m + 1) (by nlinarith) hden
   unfold fixedUpperRate fixedUpperLimit
-  convert ((hconst.add hlogScaled).add hqScaled).add hM using 1 <;>
-    simp [Nat.cast_pow, Nat.cast_mul]
+  convert ((hconst.add hlogScaled).add hqScaled).add hM using 1
+  simp [Nat.cast_pow, Nat.cast_mul]
 
 lemma eventually_logb_sumFreeCount_div_le_fixedUpperRate (m : ℕ) (hm : 1 ≤ m) :
     ∀ᶠ n : ℕ in atTop,
@@ -1152,7 +1154,8 @@ lemma tendsto_fixedUpperRationalTerm : Tendsto
     tendsto_inv_atTop_zero.comp tendsto_natCast_atTop_atTop
   have hden : Tendsto
       (fun m : ℕ ↦ (4 : ℝ) - (m : ℝ)⁻¹ + ((m : ℝ)⁻¹) ^ 2) atTop (𝓝 4) := by
-    convert (tendsto_const_nhds.sub hu).add (hu.pow 2) using 1 <;> norm_num
+    convert (tendsto_const_nhds.sub hu).add (hu.pow 2) using 1
+    norm_num
   have hrat : Tendsto
       (fun m : ℕ ↦ (2 : ℝ) / ((4 : ℝ) - (m : ℝ)⁻¹ + ((m : ℝ)⁻¹) ^ 2))
       atTop (𝓝 ((2 : ℝ) / 4)) :=
@@ -1173,8 +1176,8 @@ lemma tendsto_fixedUpperRationalTerm : Tendsto
 lemma tendsto_fixedUpperLimit :
     Tendsto fixedUpperLimit atTop (𝓝 (1 / 2 : ℝ)) := by
   unfold fixedUpperLimit
-  convert tendsto_fixedUpperLogTerm.add tendsto_fixedUpperRationalTerm using 1 <;>
-    simp [Nat.cast_pow, Nat.cast_mul]
+  convert tendsto_fixedUpperLogTerm.add tendsto_fixedUpperRationalTerm using 1
+  simp
 
 lemma tendsto_nat_half_div_nat :
     Tendsto (fun n : ℕ ↦ ((n / 2 : ℕ) : ℝ) / (n : ℝ)) atTop
@@ -1182,7 +1185,9 @@ lemma tendsto_nat_half_div_nat :
   have hbase : Tendsto (fun n : ℕ ↦ (n : ℝ) / 2) atTop atTop := by
     have h := tendsto_natCast_atTop_atTop.const_mul_atTop
       (by norm_num : (0 : ℝ) < 1 / 2)
-    convert h using 1 <;> funext n <;> ring
+    convert h using 1
+    funext n
+    ring
   have hfloor : Tendsto
       (fun n : ℕ ↦ ((⌊((n : ℝ) / 2)⌋₊ : ℕ) : ℝ) / ((n : ℝ) / 2)) atTop
         (𝓝 (1 : ℝ)) :=
