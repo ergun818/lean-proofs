@@ -215,15 +215,15 @@ noncomputable def fiberRawEquiv (L : Set OrderedSL) (n : ℕ) :
     · intro h
       exact Or.inr ⟨x.2.2.trans y.2.2.symm, h⟩
     · rintro (hlen | ⟨-, hlex⟩)
-      have hxlen : (show List ℕ from x.1).length = n := x.2.2
-      have hylen : (show List ℕ from y.1).length = n := y.2.2
-      rw [hxlen, hylen] at hlen
-      exact (Nat.lt_irrefl n hlen).elim
-      exact hlex
+      · have hxlen : (show List ℕ from x.1).length = n := x.2.2
+        have hylen : (show List ℕ from y.1).length = n := y.2.2
+        rw [hxlen, hylen] at hlen
+        exact (Nat.lt_irrefl n hlen).elim
+      · exact hlex
 
 theorem type_rawFiber (L : Set OrderedSL) (n : ℕ) :
     typeLT (RawFiber L n) = typeLT (Fiber L n) := by
-  exact (fiberRawEquiv L n).ordinal_type_eq.symm
+  exact (fiberRawEquiv L n).ordinalType_congr.symm
 
 theorem exists_large_rawFiber {L : Set OrderedSL} {k : ℕ}
     (hL : ω ^ ((k + 1 : ℕ) : Ordinal) < typeLT L) :

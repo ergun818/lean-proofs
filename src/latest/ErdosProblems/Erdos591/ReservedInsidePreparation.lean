@@ -49,9 +49,11 @@ theorem reserved_inside_preparation {N H : Set ℕ} (hHN : H ⊆ N) (hH : H.Infi
             v.position.pending = some ⟨false, .advance d⟩ → 2 ≤ d) →
           fine.position.board.left.leafIndex < fine.position.board.left.currentLabel.sup id) ∧
         ∃ frontAtoms, LabeledWord.LegalRun
-          (LabeledWord.rootRelabel L.upper old.position.board.left) frontAtoms fine.position.board.left ∧
+          (LabeledWord.rootRelabel L.upper old.position.board.left)
+            frontAtoms fine.position.board.left ∧
           (∀ atom ∈ frontAtoms, atom.2 ∈ H ∧ max old.position.bound (b old) < atom.2) ∧
-          ∃ M : Managed N J blue b σ true true upperOrigin.position.board.left fine.position.board.right,
+          ∃ M : Managed N J blue b σ true true
+              upperOrigin.position.board.left fine.position.board.right,
             Relation.ReflTransGen ((exactGame N blue).FollowStep σ J b) upperOrigin M.target := by
   let K := max old.position.bound (b old)
   let J := H \ Set.Iic K
@@ -110,7 +112,8 @@ theorem reserved_inside_preparation {N H : Set ℕ} (hHN : H ⊆ N) (hH : H.Infi
   let M : Managed N J blue b σ true true upperOrigin.position.board.left
       fine.position.board.right := .root R hRside (by simp [hRtarget, hRside, Board.get])
         (by simpa only [hRtarget] using hUpperMode)
-  have hMfrom : Relation.ReflTransGen ((exactGame N blue).FollowStep σ J b) upperOrigin M.target := by
+  have hMfrom :
+      Relation.ReflTransGen ((exactGame N blue).FollowStep σ J b) upperOrigin M.target := by
     change Relation.ReflTransGen ((exactGame N blue).FollowStep σ J b) upperOrigin R.target
     rw [hRtarget]
   have hFineS : fine.position.board.left = suLeaf.position.board.left := by
@@ -125,7 +128,8 @@ theorem reserved_inside_preparation {N H : Set ℕ} (hHN : H ⊆ N) (hH : H.Infi
     simpa only [hFineS, Board.get] using hrLeaf
   obtain ⟨r, hparse⟩ := LabeledWord.marker_blocks hmBody
   have hstartBody : suBody.position.board.left.parser ≠ .start := by simp [hparse]
-  obtain ⟨newAtoms, hnewRun, hnewPool⟩ := follow_word_inputs hBodyFine 0 (fun _ => Nat.zero_le _) false
+  obtain ⟨newAtoms, hnewRun, hnewPool⟩ :=
+    follow_word_inputs hBodyFine 0 (fun _ => Nat.zero_le _) false
   have hFineRoot : fine.position.board.left.rootLabel = L.upper :=
     (hnewRun.rootLabel_eq hstartBody).trans hrootBody
   have hfullRun := htailRun.append hnewRun

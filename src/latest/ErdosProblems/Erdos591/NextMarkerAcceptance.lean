@@ -39,8 +39,9 @@ theorem NoLeafPending.read {w v : LabeledWord} (h : w.NoLeafPending)
           intro hj
           have he := h _ hj
           omega
-        simp [relaxed, record, hp, currentLabel] at hn ⊢
-        exact fun _ => hn
+        simpa [relaxed, record, hp, currentLabel] using
+          (fun _ => hn : w.bodyLabels.length ∈ w.rootLabel →
+            w.leafIndex + 1 ∉ w.currentLabel)
 
 theorem NoLeafPending.zero_run {w v : LabeledWord} {xs : List ℕ}
     (h : w.NoLeafPending) (hstart : w.parser ≠ .start) (hrel : w.relaxed = false)

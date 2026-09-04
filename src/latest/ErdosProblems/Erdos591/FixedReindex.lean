@@ -15,6 +15,7 @@ abbrev Cell (F s : Finset A) : Type _ :=
 abbrev MCell (F : Finset A) (M : Set A) (s : Finset A) : Type _ :=
   {x : Cell F s // x.1 ∈ M}
 
+omit [WellFoundedLT A] in
 theorem cut_subset {F : Finset A} {x y : A} (hxy : x ≤ y) :
     cut F x ⊆ cut F y := by
   classical
@@ -22,6 +23,7 @@ theorem cut_subset {F : Finset A} {x y : A} (hxy : x ≤ y) :
   simp only [cut, Finset.mem_filter] at ha ⊢
   exact ⟨ha.1, ha.2.trans_le hxy⟩
 
+omit [WellFoundedLT A] in
 /-- If moving from `x` to `y` crosses a point of `F`, then any two
 points in the corresponding open cells occur in the same order. -/
 theorem lt_of_cut_ne {F : Finset A} {x y u v : A}
@@ -44,6 +46,7 @@ theorem lt_of_cut_ne {F : Finset A} {x y u v : A}
     simpa only [hu] using this
   exact (le_of_not_gt hnotau).trans_lt hav
 
+omit [WellFoundedLT A] in
 /-- An open-cell point whose `F`-cut is the cut at an endpoint `y ∈ F`
 lies strictly below `y`. -/
 theorem lt_endpoint_of_same_cut {F : Finset A} {u y : A}

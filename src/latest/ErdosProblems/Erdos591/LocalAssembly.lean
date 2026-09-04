@@ -26,9 +26,7 @@ theorem source_eq_target_mul_target (n : ℕ) :
 
 theorem one_add_exp (n : ℕ) : (1 : Ordinal.{0}) + exp n = exp n := by
   apply Ordinal.add_of_omega0_le Ordinal.one_lt_omega0
-  simpa [exp] using
-    (Ordinal.mul_le_mul_left (a := (1 : Ordinal.{0}))
-      (b := (n + 1 : ℕ)) (c := ω) (by simp))
+  simp [exp]
 
 theorem omega_mul_target (n : ℕ) :
     (ω : Ordinal.{0}) * target n = target n := by

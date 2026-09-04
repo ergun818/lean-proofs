@@ -16,7 +16,7 @@ def Large (B : Type u) [Preorder B] {X : Type v} [Preorder X]
 /-! The precise partition hypothesis used by the ramification argument.
 It is deliberately stated as an oracle for all finite colourings. -/
 def FinitelyIndivisible (B : Type u) [Preorder B] : Prop :=
-  ∀ (n : ℕ) (hn : 0 < n) (c : B → Fin n),
+  ∀ (n : ℕ) (_hn : 0 < n) (c : B → Fin n),
     ∃ i : Fin n, ∃ e : B ↪o B, ∀ x, c (e x) = i
 
 theorem finitelyIndivisible_of_subsingleton
@@ -113,7 +113,7 @@ theorem diff_union_of_not_large (hind : FinitelyIndivisible B)
     Large B (a \ (s ∪ t)) := by
   have h₁ : Large B (a \ s) := diff_of_not_large hind ha hs
   have h₂ : Large B ((a \ s) \ t) := diff_of_not_large hind h₁ ht
-  convert h₂ using 1 <;> ext x <;> simp only [Set.mem_diff, Set.mem_union]
+  convert h₂ using 1; ext x; simp only [Set.mem_sdiff, Set.mem_union]
   tauto
 
 end Large
@@ -143,13 +143,14 @@ variable {B : Type u} [LinearOrder B] [Nonempty B]
 variable {D : Type v} [LinearOrder D] [Nonempty D]
 variable {V : Type w} [LinearOrder V]
 
+omit [Nonempty B] in
 lemma exists_blue_edge_of_large
     (red blue : SimpleGraph V) (hcompl : IsCompl red blue)
     (hnoRed : ¬ ∃ s : Set V, red.IsClique s ∧ Large B s)
     {s : Set V} (hs : Large B s) :
     ∃ x ∈ s, ∃ y ∈ s, x ≠ y ∧ blue.Adj x y := by
   by_contra h
-  push_neg at h
+  push Not at h
   apply hnoRed
   refine ⟨s, ?_, hs⟩
   intro x hx y hy hxy
@@ -161,6 +162,7 @@ The four-point ramification core.  `A` is the current large set and
 `block d` are the large later blocks.  A point is good when its red
 neighbourhood is large in a large set of block indices.
 -/
+omit [Nonempty B] in
 theorem good_large
     (hindB : FinitelyIndivisible B) (hindD : FinitelyIndivisible D)
     (red blue : SimpleGraph V) (hcompl : IsCompl red blue)
@@ -255,6 +257,7 @@ the candidate set and the blocks is required.  Instead we use the exact
 property needed in the proof: deleting either of the two chosen candidate
 vertices from a large reservoir preserves largeness.
 -/
+omit [Nonempty B] in
 theorem bad_not_large_overlap
     (hindB : FinitelyIndivisible B) (hindD : FinitelyIndivisible D)
     (red blue : SimpleGraph V) (hcompl : IsCompl red blue)
@@ -341,6 +344,7 @@ theorem bad_not_large_overlap
   · simp [Q, hxne, hyne, hx₀y₀_ne, hx₀y₁_ne,
       hx₁y₀_ne, hx₁y₁_ne]
 
+omit [Nonempty B] in
 theorem good_large_overlap
     (hindB : FinitelyIndivisible B) (hindD : FinitelyIndivisible D)
     (red blue : SimpleGraph V) (hcompl : IsCompl red blue)
@@ -387,7 +391,7 @@ theorem bad_not_large
   exact hx.1.2 hx.2
 
 @[simp] theorem large_unit_setOf_const_iff (P : Prop) :
-    Large Unit {u : Unit | P} ↔ P := by
+    Large Unit {_u : Unit | P} ↔ P := by
   constructor
   · intro h
     rcases h with ⟨e⟩
@@ -412,6 +416,7 @@ theorem one_block_bad_not_large
     (fun _ => hZ) (fun _ => hdisjoint)
   simpa only [large_unit_setOf_const_iff] using h
 
+omit [Nonempty B] in
 theorem one_block_bad_not_large_overlap
     (hindB : FinitelyIndivisible B)
     (red blue : SimpleGraph V) (hcompl : IsCompl red blue)
@@ -430,8 +435,9 @@ theorem one_block_bad_not_large_overlap
 largeness.  This is the bookkeeping operation needed after applying
 `bad_not_large` separately to the finitely many open cells cut out by a
 fixed set of indices. -/
+omit [Nonempty B] in
 theorem large_all_finset
-    {I : Type*} [DecidableEq I]
+    {I : Type*}
     (hindB : FinitelyIndivisible B) (A : Set V) (hA : Large B A)
     (P : I → V → Prop) (F : Finset I)
     (hbad : ∀ i ∈ F, ¬ Large B {x | x ∈ A ∧ ¬ P i x}) :
@@ -450,7 +456,7 @@ theorem large_all_finset
         Large.diff_of_not_large hindB hprev (hbad i (Finset.mem_insert_self i F))
       convert hremove using 1
       ext x
-      simp only [Set.mem_setOf_eq, Set.mem_diff, Finset.mem_insert]
+      simp only [Set.mem_ofPred_eq, Set.mem_sdiff, Finset.mem_insert]
       constructor
       · rintro ⟨hxA, hall⟩
         refine ⟨⟨hxA, fun j hj => hall j (Or.inr hj)⟩, ?_⟩

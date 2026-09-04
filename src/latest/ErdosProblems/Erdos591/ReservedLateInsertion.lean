@@ -56,9 +56,11 @@ theorem reserved_late_insertion {N H : Set ℕ} (hHN : H ⊆ N) (hH : H.Infinite
         (∃ j ∈ q.position.board.right.currentLabel, q.position.board.right.leafIndex < j) ∧
         2 ≤ q.position.board.right.currentLabel.card ∧
         ∃ frontAtoms, LabeledWord.LegalRun
-          (LabeledWord.rootRelabel L.upper old.position.board.left) frontAtoms q.position.board.left ∧
+          (LabeledWord.rootRelabel L.upper old.position.board.left)
+            frontAtoms q.position.board.left ∧
           (∀ atom ∈ frontAtoms, atom.2 ∈ H ∧ max old.position.bound (b old) < atom.2) ∧
-          ∃ M : Managed N J blue b σ true true upperOrigin.position.board.left q.position.board.right,
+          ∃ M : Managed N J blue b σ true true
+              upperOrigin.position.board.left q.position.board.right,
             Relation.ReflTransGen ((exactGame N blue).FollowStep σ J b) upperOrigin M.target := by
   obtain ⟨J, hJH, hJ, hJfresh, fine, hfromFine, hwinFine, hnFine, hrFine,
       hFineRoot, hFineBody, hFineStrict, frontAtoms, hfrontRun, hfrontPool, M, hMfrom⟩ :=

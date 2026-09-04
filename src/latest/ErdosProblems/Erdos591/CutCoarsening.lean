@@ -72,7 +72,8 @@ theorem cut_program_coarsens (n m : ℕ) (hnm : root n ≠ root m) (s t : G)
     (hs : Erdos591.Negative.Exact.word s.val = (node hH b n).cursor.coordinates)
     (ht : Erdos591.Negative.Exact.word t.val = (node hH b m).cursor.coordinates) (side : Bool) :
     Atomic.Coarsens
-      (Atomic.tag side (LabeledCode.atoms (CutLabels.root s.val t.val) (CutLabels.bodies s.val t.val)))
+      (Atomic.tag side
+        (LabeledCode.atoms (CutLabels.root s.val t.val) (CutLabels.bodies s.val t.val)))
       (Atomic.tag side (node hH b n).atoms) := by
   have hcode : (node hH b n).atoms =
       LabeledCode.atoms (node hH b n).cursor.rootLabel

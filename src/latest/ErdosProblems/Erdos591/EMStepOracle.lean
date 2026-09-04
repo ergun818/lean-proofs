@@ -94,7 +94,6 @@ theorem stepOracle_of_k4_core
       ∃ y, q = A.embedding b y := by
     rcases hq with ⟨y, rfl⟩
     exact ⟨y, rfl⟩
-
   let PEnd : B → X → Prop := fun b x ↦
     Large Y {z | z ∈ T b ∧ red.Adj x z}
   have hbadEnd : ∀ b ∈ F,
@@ -107,7 +106,6 @@ theorem stepOracle_of_k4_core
       {x | x ∈ L ∧ ∀ b ∈ F, PEnd b x} :=
     K4Core.large_all_finset hindY L hL PEnd F hbadEnd
   let E : Set X := {x | x ∈ L ∧ ∀ b ∈ F, PEnd b x}
-
   let PCell : Finset B → X → Prop := fun s x ↦
     typeLT {d : FixedReindex.Cell F s |
       Large Y {z | z ∈ T d.1 ∧ red.Adj x z}} =
@@ -134,7 +132,6 @@ theorem stepOracle_of_k4_core
       {x | x ∈ E ∧ ∀ s ∈ F.powerset, PCell s x} :=
     K4Core.large_all_finset hindY E hEnd PCell F.powerset hbadCellE
   rcases hAll.nonempty with ⟨x, hx⟩
-
   let M : Set B := {b | PEnd b x}
   have hFM : ∀ b ∈ F, b ∈ M := by
     intro b hb
@@ -230,8 +227,7 @@ theorem stepOracle_of_k4_core
         intro b y
         exact hnext_old b y
       not_adj := by
-        intro b y
-        intro hb
+        intro b y hb
         have hr := hN_red b (redEmb b y).2
         have hboth : (red ⊓ blue).Adj x (nextEmb b y) := ⟨hr, hb⟩
         rw [hcompl.inf_eq_bot] at hboth

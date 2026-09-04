@@ -36,7 +36,8 @@ theorem winning_pending_root_advance_zero {N H : Set ℕ} (hHN : H ⊆ N) (hH : 
           have hdata := of_decide_eq_true hrel
           have hleaf : LabeledWord.UpToLeaf (p.position.board.get side).leafIndex
               (p.position.board.get side) := ⟨hdata.2.1, hdata.2.2, le_rfl⟩
-          obtain ⟨a, k, hparse⟩ := hleaf.parser_leaves ((Position.history_dataInvariant p).2.1 side).1
+          obtain ⟨a, k, hparse⟩ :=
+            hleaf.parser_leaves ((Position.history_dataInvariant p).2.1 side).1
           have hd : d = 0 := by
             rcases hlegal.2 with hd | hstart | hmarker
             · exact hd

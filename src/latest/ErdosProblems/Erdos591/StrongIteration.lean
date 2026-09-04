@@ -54,6 +54,7 @@ variable [LinearOrder B] [Countable B] [Nonempty B]
 noncomputable def enum : ℕ → B :=
   Classical.choose (exists_surjective_nat B)
 
+omit [LinearOrder B] in
 theorem enum_surjective : Function.Surjective (enum : ℕ → B) :=
   Classical.choose_spec (exists_surjective_nat B)
 
@@ -61,9 +62,11 @@ theorem enum_surjective : Function.Surjective (enum : ℕ → B) :=
 noncomputable def code (b : B) : ℕ :=
   Classical.choose (enum_surjective b)
 
+omit [LinearOrder B] in
 @[simp] theorem enum_code (b : B) : enum (code b) = b :=
   Classical.choose_spec (enum_surjective b)
 
+omit [LinearOrder B] in
 theorem code_injective : Function.Injective (code : B → ℕ) := by
   intro b c h
   rw [← enum_code b, ← enum_code c, h]
@@ -90,14 +93,17 @@ theorem index_mem_past_of_le {i n : ℕ} (hin : i ≤ n) :
 noncomputable def occurrence (b : B) (k : ℕ) : ℕ :=
   Nat.pair (code b) k
 
+omit [LinearOrder B] in
 theorem occurrence_strictMono (b : B) : StrictMono (occurrence b) := by
   intro k l hkl
   exact Nat.pair_lt_pair_right _ hkl
 
+omit [LinearOrder B] in
 @[simp] theorem index_occurrence (b : B) (k : ℕ) :
     index (occurrence b k) = b := by
   simp [index, occurrence]
 
+omit [LinearOrder B] in
 theorem occurrence_injective :
     Function.Injective (fun q : B × ℕ ↦ occurrence q.1 q.2) := by
   rintro ⟨b, k⟩ ⟨c, l⟩ h
@@ -140,6 +146,7 @@ noncomputable def backIndex : ℕ → ℕ → B → B
       (stepSeq blue oracle start s).reindex
         (backIndex (s + 1) k b)
 
+omit [Nonempty Y] [WellFoundedLT B] in
 theorem familySeq_range_back (s k : ℕ) (b : B) (y : Y) :
     ∃ z,
       (familySeq blue oracle start (s + k)).embedding b y =
@@ -160,6 +167,7 @@ theorem familySeq_range_back (s k : ℕ) (b : B) (y : Y) :
       refine ⟨w, hz'.trans ?_⟩
       simpa [familySeq, stepSeq, backIndex] using hw
 
+omit [Nonempty Y] [WellFoundedLT B] in
 theorem backIndex_fix {i s : ℕ} (his : i ≤ s) (k : ℕ) :
     backIndex blue oracle start s k (index i) = index i := by
   induction k generalizing s with
@@ -169,6 +177,7 @@ theorem backIndex_fix {i s : ℕ} (his : i ≤ s) (k : ℕ) :
       exact (stepSeq blue oracle start s).fixes _
         (index_mem_past_of_le his)
 
+omit [Nonempty Y] [WellFoundedLT B] in
 theorem backIndex_lt_of_lt {i s : ℕ} (his : i ≤ s) {b : B}
     (hib : index i < b) (k : ℕ) :
     index i < backIndex blue oracle start s k b := by
@@ -181,6 +190,7 @@ theorem backIndex_lt_of_lt {i s : ℕ} (his : i ≤ s) {b : B}
         (index_mem_past_of_le his)] at hrel
       exact hrel
 
+omit [Nonempty Y] [WellFoundedLT B] in
 theorem backIndex_lt_index_of_lt {i s : ℕ} (his : i ≤ s) {b : B}
     (hbi : b < index i) (k : ℕ) :
     backIndex blue oracle start s k b < index i := by
@@ -193,6 +203,7 @@ theorem backIndex_lt_index_of_lt {i s : ℕ} (his : i ≤ s) {b : B}
         (index_mem_past_of_le his)] at hrel
       exact hrel
 
+omit [WellFoundedLT B] [Nonempty Y] in
 theorem point_later_representation (s k : ℕ) :
     ∃ z, pointSeq blue oracle start (s + k) =
       (familySeq blue oracle start s).embedding
@@ -203,6 +214,7 @@ theorem point_later_representation (s k : ℕ) :
     (index n) a
   exact ⟨z, ha.symm.trans hz⟩
 
+omit [Nonempty Y] [WellFoundedLT B] in
 theorem point_lt_next (n : ℕ) {b : B} (hib : index n < b) (y : Y) :
     pointSeq blue oracle start n <
       (familySeq blue oracle start (n + 1)).embedding b y := by
@@ -216,6 +228,7 @@ theorem point_lt_next (n : ℕ) {b : B} (hib : index n < b) (y : Y) :
   change S.point < S.next.embedding b y
   rwa [hz]
 
+omit [Nonempty Y] [WellFoundedLT B] in
 theorem next_lt_point (n : ℕ) {b : B} (hbi : b < index n) (y : Y) :
     (familySeq blue oracle start (n + 1)).embedding b y <
       pointSeq blue oracle start n := by
@@ -229,6 +242,7 @@ theorem next_lt_point (n : ℕ) {b : B} (hbi : b < index n) (y : Y) :
   change S.next.embedding b y < S.point
   rwa [hz]
 
+omit [WellFoundedLT B] [Nonempty Y] in
 theorem point_lt_later_of_index_lt (m k : ℕ)
     (hidx : index (B := B) m < index (B := B) (m + 1 + k)) :
     pointSeq blue oracle start m <
@@ -242,6 +256,7 @@ theorem point_lt_later_of_index_lt (m k : ℕ)
   rw [hz]
   exact h
 
+omit [WellFoundedLT B] [Nonempty Y] in
 theorem later_lt_point_of_index_lt (m k : ℕ)
     (hidx : index (B := B) (m + 1 + k) < index (B := B) m) :
     pointSeq blue oracle start (m + 1 + k) <
@@ -256,6 +271,7 @@ theorem later_lt_point_of_index_lt (m k : ℕ)
   rw [hz]
   exact h
 
+omit [WellFoundedLT B] [Nonempty Y] in
 theorem point_lt_later_of_index_eq (m k : ℕ)
     (hidx : index (B := B) (m + 1 + k) = index (B := B) m) :
     pointSeq blue oracle start m <
@@ -270,6 +286,7 @@ theorem point_lt_later_of_index_eq (m k : ℕ)
     (familySeq blue oracle start (m + 1)).embedding (index m) z at h
   rwa [hz]
 
+omit [WellFoundedLT B] [Nonempty Y] in
 theorem point_not_adj_later (m k : ℕ) :
     ¬ blue.Adj (pointSeq blue oracle start m)
       (pointSeq blue oracle start (m + 1 + k)) := by
@@ -287,6 +304,7 @@ theorem point_not_adj_later (m k : ℕ) :
 index in `B`. -/
 abbrev Fiber (B : Type) [LinearOrder B] := B ×ₗ ℕ
 
+omit [Countable B] [Nonempty B] in
 theorem typeLT_fiber : typeLT (Fiber B) = ω * typeLT B := by
   change type (Prod.Lex ((· < ·) : B → B → Prop)
     ((· < ·) : ℕ → ℕ → Prop)) = _
@@ -296,6 +314,7 @@ noncomputable def selected (q : Fiber B) : X :=
   pointSeq blue oracle start
     (occurrence (ofLex q).1 (ofLex q).2)
 
+omit [WellFoundedLT B] [Nonempty Y] in
 theorem selected_strictMono :
     StrictMono (selected blue oracle start : Fiber B → X) := by
   intro q r hqr
@@ -342,6 +361,7 @@ noncomputable def orderEmbedding : Fiber B ↪o X :=
   OrderEmbedding.ofStrictMono (selected blue oracle start)
     (selected_strictMono blue oracle start)
 
+omit [WellFoundedLT B] [Nonempty Y] in
 theorem orderEmbedding_not_adj {q r : Fiber B} (hqr : q ≠ r) :
     ¬ blue.Adj (orderEmbedding blue oracle start q)
       (orderEmbedding blue oracle start r) := by
@@ -376,12 +396,14 @@ theorem orderEmbedding_not_adj {q r : Fiber B} (hqr : q ≠ r) :
 
 include oracle start
 
+omit [WellFoundedLT B] [Nonempty Y] in
 /-- Order-embedding form of the abstract strong iteration theorem. -/
 theorem exists_orderEmbedding_not_adj :
     ∃ e : Fiber B ↪o X, ∀ q r, q ≠ r → ¬ blue.Adj (e q) (e r) := by
   exact ⟨orderEmbedding blue oracle start,
     fun _ _ h ↦ orderEmbedding_not_adj blue oracle start h⟩
 
+omit [Nonempty Y] in
 /-- Set form, including the exact ordinal type of the fused range. -/
 theorem exists_set_type_not_adj [WellFoundedLT X] :
     ∃ S : Set X, typeLT S = ω * typeLT B ∧
@@ -418,6 +440,7 @@ def NoBlueK4 (blue : SimpleGraph X) : Prop :=
 def NoRedBCopy (blue : SimpleGraph X) : Prop :=
   ¬ ∃ e : B ↪o X, ∀ b c, b ≠ c → ¬ blue.Adj (e b) (e c)
 
+omit [WellFoundedLT B] [Nonempty Y] in
 theorem strong_iteration_under_hypotheses (blue : SimpleGraph X)
     (hK4 : NoBlueK4 blue) (hNoRed : NoRedBCopy (B := B) blue)
     (supply : NoBlueK4 blue → NoRedBCopy (B := B) blue →
