@@ -57,7 +57,7 @@ theorem almostBipartiteCount_balancedWindow_eq
       · unfold Counting.pairCount
         congr 1
         ext p
-        simp only [Finset.mem_filter, Function.uncurry_apply_pair, P]
+        simp only [Finset.mem_filter, P]
       · rw [Counting.binomialCount_eq_sum]
         unfold BinomialCLT.fairBinomialWindowCount
         rw [← Nat.range_succ_eq_Iic]

@@ -21,7 +21,7 @@ graphs and the numerical edge lower bounds.
 
 namespace Erdos622
 
-open scoped SimpleGraph
+open scoped _root_.SimpleGraph
 
 attribute [local instance] Classical.propDecidable
 
@@ -49,7 +49,7 @@ theorem intersectionCount_hasBoundedDifferences
     exact (Finset.mem_erase.mp (hT heT)).1 rfl
   by_cases heC : e ∈ C
   · have hnot : e ∉ T ∩ C := fun h ↦ heT (Finset.mem_inter.mp h).1
-    simp [SamplingSuitable.intersectionCount, heC, heT, hnot]
+    simp [SamplingSuitable.intersectionCount, heC, hnot]
   · have heq : insert e T ∩ C = T ∩ C := by
       ext w
       simp only [Finset.mem_inter, Finset.mem_insert]
@@ -79,7 +79,7 @@ theorem intersectionCount_twoSided
 bound on the test-set cardinality. -/
 theorem intersectionCount_twoSided_of_card_le
     (C : Finset V) {q : ℕ} {t : ℝ}
-    (hq : C.card ≤ q) (hqpos : 0 < q) (ht : 0 < t) :
+    (hq : C.card ≤ q) (_hqpos : 0 < q) (ht : 0 < t) :
     ((((Finset.univ : Finset V).powerset.filter fun S ↦
         t ≤ |SamplingSuitable.intersectionCount C S -
           (C.card : ℝ) / 2|).card : ℝ)) ≤
@@ -116,7 +116,7 @@ theorem intersectionCount_twoSided_of_card_le
 /-- Union bound for a family of sharp intersection-count estimates sharing
 a common cardinality upper bound. -/
 theorem simultaneous_intersectionCount_twoSided_of_card_le
-    {I : Type*} [Fintype I] [DecidableEq I]
+    {I : Type*} [Fintype I]
     (C : I → Finset V) {q : ℕ} {t : ℝ}
     (hcard : ∀ i, (C i).card ≤ q) (hq : 0 < q) (ht : 0 < t) :
     ((((Finset.univ : Finset V).powerset.filter fun S ↦
@@ -126,6 +126,7 @@ theorem simultaneous_intersectionCount_twoSided_of_card_le
       Fintype.card I *
         (2 * (2 : ℝ) ^ Fintype.card V *
           exp (-2 * t ^ 2 / q)) := by
+  classical
   let bad : I → Finset (Finset V) := fun i ↦
     (Finset.univ : Finset V).powerset.filter fun S ↦
       t ≤ |SamplingSuitable.intersectionCount (C i) S -
@@ -174,7 +175,7 @@ theorem degree_induce_eq_intersectionCount
       (J.induce (S : Set V)).neighborSet v =
       (S ∩ J.neighborFinset v.1 : Finset V) := by
     ext w
-    simp [and_comm, and_left_comm]
+    simp [and_comm]
   have hncard := congrArg Set.ncard himage
   rw [Set.ncard_image_of_injective _ Subtype.val_injective,
     Set.ncard_coe_finset] at hncard
@@ -202,6 +203,7 @@ theorem inducedEdgeCount_eq_ncard_induce
     rw [← (J.induce (S : Set V)).coe_edgeFinset, Set.ncard_coe_finset]
   rw [hncard]
 
+omit [DecidableEq V] in
 /-- In a bipartite bounded-degree graph whose left class has `d` vertices,
 the squared-degree variance proxy is at most `2 d q²`.  The left-class
 degree sum counts every edge exactly once; this sharper estimate is what
@@ -214,6 +216,7 @@ theorem sum_degree_sq_le_bipartite_left_card_mul_sq
     (hdegree : ∀ v, J.degree v ≤ q) :
     ∑ v : V, (J.degree v : ℝ) ^ 2 ≤
       2 * (D.card : ℝ) * (q : ℝ) ^ 2 := by
+  classical
   have hedgeNat : J.edgeFinset.card ≤ D.card * q := by
     rw [← J.isBipartiteWith_sum_degrees_eq_card_edges hbip]
     calc
@@ -293,16 +296,18 @@ theorem internalGraph_degree_le_oneTwentyEighth_of_tailored
     rw [hisolated.degree_eq_zero]
     exact Nat.zero_le _
 
+omit [Fintype V] in
 /-- Lift a sampled forest from a bounded internal subgraph to the sampled
 ambient graph, while recovering support in the corresponding restricted
 cut part. -/
-theorem ContainsLinearForestWith.mono_induce_internalGraph
+theorem ContainsLinearForestWith.mono_induce_internalGraph [Finite V]
     {G J : SimpleGraph V} {A S : Finset V} {r : ℕ}
     (hJ : J ≤ internalGraph G A)
     (hforest : ContainsLinearForestWith
       (J.induce (S : Set V)) Finset.univ r) :
     ContainsLinearForestWith (G.induce (S : Set V))
       (restrictedPart S A) r := by
+  let := Fintype.ofFinite V
   obtain ⟨F, hFJ, hlinear, _hsupp, hcard⟩ := hforest
   refine ⟨F, ?_, hlinear, ?_, hcard⟩
   · intro u v huv
@@ -396,6 +401,7 @@ def IsInducedLinearArboricityGood (J : SimpleGraph V) (S : Finset V)
     (r : ℝ) * ((1 + epsilon) * (D : ℝ) / 2) ≤
       ((J.induce (S : Set V)).edgeSet.ncard : ℝ)
 
+omit [DecidableEq V] in
 /-- Explicit uniform exceptional-count bound for the numerical input to
 Alon's theorem on `J[S]`.  The degree exponent uses the ambient maximum
 degree `q`, while the edge exponent retains the sharper squared-degree
@@ -417,6 +423,7 @@ theorem not_isInducedLinearArboricityGood_count_le
         2 * (2 : ℝ) ^ Fintype.card V *
           exp (-2 * tEdge ^ 2 /
             (∑ v : V, (J.degree v : ℝ) ^ 2)) := by
+  classical
   let : DecidableRel J.Adj := Classical.decRel J.Adj
   let badDegree := (Finset.univ : Finset V).powerset.filter fun S ↦
     ∃ v : V, tDegree ≤
@@ -484,6 +491,7 @@ theorem not_isInducedLinearArboricityGood_count_le
       dsimp [badDegree, badEdge] at hdegrees hedges ⊢
       exact add_le_add hdegrees hedges
 
+omit [DecidableEq V] in
 /-- Replace the graph-dependent squared-degree denominator in the preceding
 exceptional-count estimate by any positive explicit upper bound. -/
 theorem not_isInducedLinearArboricityGood_count_le_of_variance_bound
@@ -504,6 +512,7 @@ theorem not_isInducedLinearArboricityGood_count_le_of_variance_bound
             exp (-2 * tDegree ^ 2 / q)) +
         2 * (2 : ℝ) ^ Fintype.card V *
           exp (-2 * tEdge ^ 2 / variance) := by
+  classical
   have hraw := not_isInducedLinearArboricityGood_count_le J hq
     htDegree htEdge hmax hdegreeMargin hedgeMargin
   have hvariancePos' : 0 < variance := hvariancePos.trans_le hvariance
@@ -530,6 +539,7 @@ theorem not_isInducedLinearArboricityGood_count_le_of_variance_bound
     mul_le_mul_of_nonneg_left hexp (by positivity)
   exact hraw.trans (add_le_add (le_refl _) hmul)
 
+omit [DecidableEq V] in
 /-- If half of the expected induced-edge count is left as concentration
 slack, the edge-failure exponent can be written using the useful ratio
 `e(J) / Δ(J)`.  In particular this tends to infinity for the original
@@ -551,6 +561,7 @@ theorem not_isInducedLinearArboricityGood_count_le_of_edge_slack
           exp (-2 * tDegree ^ 2 / q) +
         2 * exp (-(J.edgeFinset.card : ℝ) / (64 * q))) *
           (2 : ℝ) ^ Fintype.card V := by
+  classical
   let : DecidableRel J.Adj := Classical.decRel J.Adj
   have hqR : (0 : ℝ) < q := by exact_mod_cast hq
   have hedgeR : (0 : ℝ) < J.edgeFinset.card := by exact_mod_cast hedge
@@ -606,6 +617,7 @@ theorem not_isInducedLinearArboricityGood_count_le_of_edge_slack
           exp (-(J.edgeFinset.card : ℝ) / (64 * q)) := hraw
     _ = _ := by ring
 
+omit [DecidableEq V] in
 /-- Normalized corollary of the explicit exceptional-count estimate.  All
 asymptotic scalar work is isolated in the two displayed exponential-tail
 hypotheses. -/
@@ -625,6 +637,7 @@ theorem not_isInducedLinearArboricityGood_count_le_fraction
     ((((Finset.univ : Finset V).powerset.filter fun S ↦
         ¬ IsInducedLinearArboricityGood J S epsilon D r).card : ℝ)) ≤
       delta * (2 : ℝ) ^ Fintype.card V := by
+  classical
   have hraw := not_isInducedLinearArboricityGood_count_le J hq
     htDegree htEdge hmax hdegreeMargin hedgeMargin
   have hcoef :
@@ -985,7 +998,6 @@ lemma shrunken_normal_window_bounds
   have hnum :
       (2 * (x + (n - y)) : ℝ) - (2 * n : ℝ) =
         2 * ((x : ℝ) - y) := by
-    push_cast [Nat.cast_sub hy]
     ring
   constructor
   · have hu := hwindow.2
@@ -1067,6 +1079,7 @@ theorem compactLAFailureMajorant_tendsto_zero
     ring
   · norm_num
 
+omit [Fintype V] in
 /-- Exact sampled cardinality identity on the side that loses the balancing
 set. -/
 lemma card_inter_left_balancing

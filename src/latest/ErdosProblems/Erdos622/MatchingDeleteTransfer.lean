@@ -46,6 +46,7 @@ private lemma card_matchingEdgesAt_le
       exact Finset.sum_le_sum fun v _ ↦ hdegree v
     _ = T.card := by simp
 
+omit [DecidableEq V] in
 /-- Delete every matching edge incident with `T`.  At most `|T|` edges are
 lost, and the remaining support avoids `T`. -/
 theorem exists_submatchingGraph_avoiding_finset
@@ -56,6 +57,7 @@ theorem exists_submatchingGraph_avoiding_finset
       (∀ v, H.degree v ≤ 1) ∧
       H.support ⊆ (T : Set V)ᶜ ∧
       F.edgeFinset.card ≤ H.edgeFinset.card + T.card := by
+  classical
   let D := matchingEdgesAt F T
   let H := F.deleteEdges (D : Set (Sym2 V))
   let : DecidableRel H.Adj := fun _ _ ↦ Classical.propDecidable _

@@ -54,6 +54,7 @@ def IsMinimumVertexCoverOn (G : SimpleGraph V) (A C : Finset V) : Prop :=
   IsVertexCoverOn G A C ∧
     ∀ D : Finset V, IsVertexCoverOn G A D → C.card ≤ D.card
 
+omit [DecidableEq V] [Fintype V] in
 /-- Every finite induced part admits a minimum internal vertex cover. -/
 theorem exists_minimumVertexCoverOn (G : SimpleGraph V) (A : Finset V) :
     ∃ C : Finset V, IsMinimumVertexCoverOn G A C := by
@@ -117,6 +118,7 @@ of the induced graph on `S`. -/
 def restrictedPart (S A : Finset V) : Finset (S : Set V) :=
   S.attach.filter fun v ↦ v.1 ∈ A
 
+omit [Fintype V] in
 @[simp]
 theorem mem_restrictedPart {S A : Finset V} {v : (S : Set V)} :
     v ∈ restrictedPart S A ↔ v.1 ∈ A := by
@@ -141,8 +143,10 @@ theorem restrictedParts_isCut {A B S : Finset V} (hAB : IsCut A B) :
     · intro _
       simpa only [Finset.mem_union, mem_restrictedPart] using hv
 
-theorem card_restrictedPart_of_subset {S A : Finset V} (hAS : A ⊆ S) :
+omit [Fintype V] in
+theorem card_restrictedPart_of_subset [Finite V] {S A : Finset V} (hAS : A ⊆ S) :
     (restrictedPart S A).card = A.card := by
+  let := Fintype.ofFinite V
   classical
   apply Finset.card_bij (fun x _ ↦ x.1)
   · intro x hx
@@ -152,10 +156,12 @@ theorem card_restrictedPart_of_subset {S A : Finset V} (hAS : A ⊆ S) :
   · intro y hy
     exact ⟨⟨y, hAS hy⟩, mem_restrictedPart.mpr hy, rfl⟩
 
+omit [Fintype V] in
 /-- The subtype presentation of a sampled part has the same cardinality as
 the corresponding ambient intersection. -/
-theorem card_restrictedPart (S A : Finset V) :
+theorem card_restrictedPart [Finite V] (S A : Finset V) :
     (restrictedPart S A).card = (S ∩ A).card := by
+  let := Fintype.ofFinite V
   classical
   apply Finset.card_bij (fun x _ ↦ x.1)
   · intro x hx
@@ -166,14 +172,16 @@ theorem card_restrictedPart (S A : Finset V) :
     exact ⟨⟨y, (Finset.mem_inter.mp hy).1⟩,
       mem_restrictedPart.mpr (Finset.mem_inter.mp hy).2, rfl⟩
 
+omit [Fintype V] in
 /-- A minimum cover of edges internal to `A` becomes a minimum vertex cover
 of the induced graph on the subtype `A`.  This is the exact bridge from the
 cover-product reduction to the Hall/random-cover machinery. -/
-theorem IsMinimumVertexCoverOn.induce
+theorem IsMinimumVertexCoverOn.induce [Finite V]
     (G : SimpleGraph V) {A C : Finset V}
     (hC : IsMinimumVertexCoverOn G A C) :
     RandomCover.IsMinimumVertexCover (G.induce (A : Set V))
       (restrictedPart A C) := by
+  let := Fintype.ofFinite V
   classical
   have hcard : (restrictedPart A C).card = C.card :=
     card_restrictedPart_of_subset hC.1.1
@@ -208,26 +216,33 @@ passing to the subtype `A`. -/
 def internalGraph (G : SimpleGraph V) (A : Finset V) : SimpleGraph V :=
   (G.induce (A : Set V)).spanningCoe
 
+omit [DecidableEq V] [Fintype V] in
 @[simp]
 theorem internalGraph_adj (G : SimpleGraph V) (A : Finset V) (u v : V) :
     (internalGraph G A).Adj u v ↔
       u ∈ A ∧ v ∈ A ∧ G.Adj u v := by
-  simp only [internalGraph, SimpleGraph.Subgraph.spanningCoe_adj,
-    SimpleGraph.induce_adj]
+  simp only [internalGraph,
+    ]
   aesop
 
-theorem internalGraph_le (G : SimpleGraph V) (A : Finset V) :
+omit [DecidableEq V] [Fintype V] in
+theorem internalGraph_le [Finite V] (G : SimpleGraph V) (A : Finset V) :
     internalGraph G A ≤ G := by
+  classical
+  let := Fintype.ofFinite V
   intro u v huv
   exact (internalGraph_adj G A u v).mp huv |>.2.2
 
+omit [DecidableEq V] [Fintype V] in
 /-- A minimum internal cover is literally a minimum vertex cover of the
 ambient presentation `internalGraph G A`.  A competing cover may contain
 vertices outside `A`; intersecting it with `A` can only decrease its size. -/
-theorem IsMinimumVertexCoverOn.internalGraph
+theorem IsMinimumVertexCoverOn.internalGraph [Finite V]
     (G : SimpleGraph V) {A C : Finset V}
     (hC : IsMinimumVertexCoverOn G A C) :
     RandomCover.IsMinimumVertexCover (internalGraph G A) C := by
+  classical
+  let := Fintype.ofFinite V
   constructor
   · intro u v huv
     rw [internalGraph_adj] at huv
@@ -674,18 +689,21 @@ def IsKGoodSample (G : SimpleGraph V) (A B S : Finset V) (k : ℕ) : Prop :=
   IsKGoodCut (G.induce (S : Set V))
     (restrictedPart S A) (restrictedPart S B) k
 
+omit [Fintype V] in
 /-- Every good-sample witness contains the expected restricted cut. -/
 theorem IsKGoodSample.isCut {G : SimpleGraph V} {A B S : Finset V} {k : ℕ}
     (h : IsKGoodSample G A B S k) :
     IsCut (restrictedPart S A) (restrictedPart S B) :=
   h.1
 
+omit [Fintype V] in
 /-- A positively buffered sampled good cut is, in particular, a good cut. -/
 theorem IsKGoodSample.good {G : SimpleGraph V} {A B S : Finset V} {k : ℕ}
     (h : IsKGoodSample G A B S k) :
     IsKGoodSample G A B S 0 :=
   IsKGoodCut.good h
 
+omit [DecidableEq V] in
 /-- A Mathlib subgraph-level matching supplied by the Hall/random-cover
 argument is a supported linear forest in the graph-level `GoodCut` API.
 The edge count is recovered exactly from the matching's vertex count by the
@@ -694,6 +712,7 @@ theorem RandomCover.HasMatchingAtLeast.containsLinearForestWith
     {G : SimpleGraph V} {S : Finset V} {k : ℕ}
     (h : RandomCover.HasMatchingAtLeast G S (k : ℝ)) :
     ContainsLinearForestWith G S k := by
+  classical
   obtain ⟨M, hM, hMS, hk⟩ := h
   let F : SimpleGraph V := M.spanningCoe
   have hFdegree : ∀ v, F.degree v ≤ 1 := by
@@ -782,17 +801,19 @@ theorem ContainsLinearForestWith.induce
       hedgeNcard, ← hsource]
     exact hcard
 
+omit [Fintype V] in
 /-- A linear forest found in the sampled restriction of an auxiliary graph
 `J` lifts to the sampled restriction of `G`; if every non-isolated vertex of
 `J` lies in `A`, the lifted forest is supported on the sampled part `A`.
 This is the direct bridge consumed by the bounded-internal-graph/Alon stage. -/
-theorem ContainsLinearForestWith.mono_induce_of_support
+theorem ContainsLinearForestWith.mono_induce_of_support [Finite V]
     {G J : SimpleGraph V} {A S : Finset V} {k : ℕ}
     (hJG : J ≤ G) (hsuppJ : J.support ⊆ (A : Set V))
     (h : ContainsLinearForestWith (J.induce (S : Set V))
       Finset.univ k) :
     ContainsLinearForestWith (G.induce (S : Set V))
       (restrictedPart S A) k := by
+  let := Fintype.ofFinite V
   obtain ⟨F, hFJ, hlin, _hsupp, hcard⟩ := h
   refine ⟨F, ?_, hlin, ?_, hcard⟩
   · intro u v huv
@@ -1075,10 +1096,10 @@ theorem almostBipartite_counting_subtraction
     (2 * delta) (-delta) hcut
   · exact Or.inl trivial
   · intro _
-    convert hgood using 1 <;> ring
+    convert hgood using 1; ring
   · exact False.elim
   · exact False.elim
-  · convert hbad using 1 <;> ring
+  · convert hbad using 1; ring
   · exact hdeterministic
 
 /-- The same assembly specialized to the canonical `2 * n`-vertex type used
@@ -1159,6 +1180,7 @@ private def halfProbability (_ : E) : ℝ := 1 / 2
 /-- Number of selected elements belonging to a fixed test set. -/
 def intersectionCount (C S : Finset E) : ℝ := ((S ∩ C).card : ℝ)
 
+omit [Fintype E] in
 private lemma intersectionCount_sum_indicator (C S : Finset E) :
     intersectionCount C S = ∑ v ∈ C, if v ∈ S then (1 : ℝ) else 0 := by
   rw [Finset.sum_boole]
@@ -1195,6 +1217,7 @@ lemma bernoulliExpectation_half_intersectionCount (C : Finset E) :
               (e := v) (Finset.mem_univ v))
     _ = (C.card : ℝ) / 2 := by simp; ring
 
+omit [Fintype E] in
 /-- A two-sided version of the finite-powerset bounded-difference bound. -/
 theorem countEvent_twoSided_le
     {U : Finset E} {F : Finset E → ℝ} {c : E → ℝ} {t : ℝ}
@@ -1248,7 +1271,7 @@ theorem intersectionCount_hasBoundedDifferences_ambient (C : Finset E) :
     exact (mem_erase.mp (hT heT)).1 rfl
   by_cases heC : e ∈ C
   · have hnot : e ∉ T ∩ C := fun h ↦ heT (Finset.mem_inter.mp h).1
-    simp [intersectionCount, heC, heT, hnot]
+    simp [intersectionCount, heC, hnot]
   · have heq : insert e T ∩ C = T ∩ C := by
       ext w
       simp only [Finset.mem_inter, Finset.mem_insert]
@@ -1275,7 +1298,7 @@ theorem intersectionCount_twoSided_ambient (C : Finset E) {t : ℝ} (ht : 0 ≤ 
 /-- Union bound for simultaneous concentration over a finite family of test
 sets, still with the ambient-size variance proxy. -/
 theorem simultaneous_intersectionCount_twoSided_ambient
-    {I : Type*} [Fintype I] [DecidableEq I] (C : I → Finset E)
+    {I : Type*} [Fintype I] (C : I → Finset E)
     {t : ℝ} (ht : 0 ≤ t) :
     ((((univ : Finset E).powerset.filter fun S ↦
         ∃ i : I, t ≤
@@ -1283,6 +1306,7 @@ theorem simultaneous_intersectionCount_twoSided_ambient
       Fintype.card I *
         (2 * (2 : ℝ) ^ Fintype.card E *
           exp (-2 * t ^ 2 / Fintype.card E)) := by
+  classical
   let bad : I → Finset (Finset E) := fun i ↦
     (univ : Finset E).powerset.filter fun S ↦
       t ≤ |intersectionCount (C i) S - ((C i).card : ℝ) / 2|
@@ -1542,8 +1566,8 @@ theorem failureMajorant_tendsto_zero {ρ : ℝ} (hρ : 0 < ρ) :
       atTop (nhds 0) := by
     have htop : Tendsto (fun n : ℕ ↦ ρ ^ 2 * (n : ℝ)) atTop atTop :=
       tendsto_natCast_atTop_atTop.const_mul_atTop hc1
-    convert Real.tendsto_exp_neg_atTop_nhds_zero.comp htop using 1 <;>
-      simp [Function.comp_def] <;> ring
+    convert Real.tendsto_exp_neg_atTop_nhds_zero.comp htop using 1;
+      simp [Function.comp_def]
   have hfirst : Tendsto
       (fun n : ℕ ↦ (3 + 4 * (n : ℝ)) * 2 * exp (-ρ ^ 2 * n))
       atTop (nhds 0) := by
@@ -1555,7 +1579,7 @@ theorem failureMajorant_tendsto_zero {ρ : ℝ} (hρ : 0 < ρ) :
       funext n
       ring
     rw [hrewrite]
-    convert (hzero.const_mul 6).add (hlin1.const_mul 8) using 1 <;>
+    convert (hzero.const_mul 6).add (hlin1.const_mul 8) using 1;
       norm_num
   have hsecond : Tendsto
       (fun n : ℕ ↦ 2 * exp (-((ρ ^ 2) / 4) * n))
@@ -1563,7 +1587,7 @@ theorem failureMajorant_tendsto_zero {ρ : ℝ} (hρ : 0 < ρ) :
     have htop : Tendsto (fun n : ℕ ↦ (ρ ^ 2 / 4) * (n : ℝ)) atTop atTop :=
       tendsto_natCast_atTop_atTop.const_mul_atTop hc2
     convert (Real.tendsto_exp_neg_atTop_nhds_zero.comp htop).const_mul 2 using 1 <;>
-      simp [Function.comp_def] <;> ring
+      simp
   unfold failureMajorant
   simpa only [add_zero] using hfirst.add hsecond
 
@@ -1670,7 +1694,7 @@ theorem uniformCaseDensityBound_almostBipartite_of_sample_bounds
     hgoodCount' hbadCount'
     (fun S _hSuniv _hcut hSuitable hGood ↦
       hnDet G A B S hreg hAB hSuitable hGood)
-  convert hcount using 1 <;> simp only [Fintype.card_fin]
+  convert hcount using 1; simp only [Fintype.card_fin]
   · dsimp [delta]
     ring
 
@@ -1699,13 +1723,11 @@ lemma integral_gaussianKernel_Icc_eq {u v : ℝ} (hu : 0 ≤ u) (hv : 0 ≤ v) :
   have hneg : (∫ x in -u..0, gaussianKernel x) = gaussianHalfInterval u := by
     have hcomp : (∫ x in 0..u, gaussianKernel (-x)) =
         ∫ x in -u..0, gaussianKernel x := by
-      simpa using
-        (intervalIntegral.integral_comp_neg
-          (f := gaussianKernel) (a := 0) (b := u))
+      simp
     rw [← hcomp]
     apply intervalIntegral.integral_congr
     intro x hx
-    simp [gaussianKernel, gaussianHalfInterval]
+    simp [gaussianKernel]
   rw [hneg]
   rfl
 
@@ -1840,8 +1862,8 @@ theorem exists_finite_inner_windows_of_compact
   let U : K → Set K := fun x ↦
     {y | a y.1 < (z x).1 ∧ (z x).2 < b y.1}
   have hUopen (x : K) : IsOpen (U x) := by
-    exact (isOpen_lt ha.restrict continuous_const).inter
-      (isOpen_lt continuous_const hb.restrict)
+    exact (isOpen_lt ha.domRestrict continuous_const).inter
+      (isOpen_lt continuous_const hb.domRestrict)
   let : CompactSpace K := isCompact_iff_compactSpace.mp hK
   have hUcover : (Set.univ : Set K) ⊆ ⋃ x, U x := by
     intro x hx

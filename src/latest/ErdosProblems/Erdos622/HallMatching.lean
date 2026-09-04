@@ -123,16 +123,19 @@ theorem minimum_vertexCover_hall_outside
   have hSCcard : S.card ≤ C.card := Finset.card_le_card hSC
   omega
 
+omit [DecidableEq V] [Fintype V] in
 /-- Hall's theorem turns the preceding cardinal inequalities into distinct
 outside representatives, one adjacent to each vertex of the cover. -/
-theorem exists_injective_outsideNeighbor_of_minimum_vertexCover
-    (G : SimpleGraph V) [DecidableRel G.Adj]
+theorem exists_injective_outsideNeighbor_of_minimum_vertexCover [Finite V]
+    (G : SimpleGraph V)
     {C : Finset V}
     (hI : G.IsIndepSet (C : Set V))
     (hC : G.IsVertexCover (C : Set V))
     (hmin : ∀ D : Finset V, G.IsVertexCover (D : Set V) → C.card ≤ D.card) :
     ∃ f : C → V, Injective f ∧
       ∀ x : C, G.Adj x (f x) ∧ f x ∉ C := by
+  classical
+  let := Fintype.ofFinite V
   obtain ⟨f, hf, hmem⟩ :=
     (Finset.all_card_le_biUnion_card_iff_existsInjective'
       (fun x : C ↦ outsideNeighborFinset G C x)).mp (by
@@ -159,15 +162,18 @@ theorem exists_injective_outsideNeighbor_of_minimum_vertexCover
   intro x
   exact (mem_outsideNeighborFinset G).1 (hmem x)
 
+omit [DecidableEq V] [Fintype V] in
 /-- A minimum independent vertex cover is saturated by a matching.  This is
 the graph-theoretic packaging of `minimum_vertexCover_hall_outside`. -/
-theorem exists_isMatching_saturating_minimum_vertexCover
-    (G : SimpleGraph V) [DecidableRel G.Adj]
+theorem exists_isMatching_saturating_minimum_vertexCover [Finite V]
+    (G : SimpleGraph V)
     {C : Finset V}
     (hI : G.IsIndepSet (C : Set V))
     (hC : G.IsVertexCover (C : Set V))
     (hmin : ∀ D : Finset V, G.IsVertexCover (D : Set V) → C.card ≤ D.card) :
     ∃ M : G.Subgraph, (C : Set V) ⊆ M.verts ∧ M.IsMatching := by
+  classical
+  let := Fintype.ofFinite V
   apply G.exists_isMatching_of_forall_ncard_le
     (isBipartiteWith_of_isIndepSet_isVertexCover G hI hC)
   intro s hsC
@@ -221,10 +227,12 @@ theorem Subgraph.IsMatching.isVertexCover_verts_of_maximal
   have : M.Adj v w := hE.right (SimpleGraph.subgraphOfAdj_adj_self hvw)
   exact h.1 (M.edge_vert this)
 
+omit [Fintype V] in
 omit [DecidableEq V] in
 /-- Every finite graph has a matching whose endpoints form a vertex cover. -/
-theorem exists_isMatching_isVertexCover_verts (G : SimpleGraph V) :
+theorem exists_isMatching_isVertexCover_verts [Finite V] (G : SimpleGraph V) :
     ∃ M : G.Subgraph, M.IsMatching ∧ G.IsVertexCover M.verts := by
+  let := Fintype.ofFinite V
   classical
   have hbot : (⊥ : G.Subgraph).IsMatching := by
     intro v hv

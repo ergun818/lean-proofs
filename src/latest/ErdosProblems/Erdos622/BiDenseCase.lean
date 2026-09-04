@@ -47,6 +47,7 @@ private def halfProbability (_ : V) : ℝ := 1 / 2
 /-- Number of selected elements belonging to a fixed test set. -/
 def intersectionCount (C S : Finset V) : ℝ := ((S ∩ C).card : ℝ)
 
+omit [Fintype V] in
 private lemma intersectionCount_sum_indicator (C S : Finset V) :
     intersectionCount C S = ∑ v ∈ C, if v ∈ S then (1 : ℝ) else 0 := by
   rw [Finset.sum_boole]
@@ -95,7 +96,7 @@ lemma intersectionCount_hasBoundedDifferences (C : Finset V) :
     exact (Finset.mem_erase.mp (hT hvT)).1 rfl
   by_cases hvC : v ∈ C
   · have hnot : v ∉ T ∩ C := fun h ↦ hvT (Finset.mem_inter.mp h).1
-    simp [intersectionCount, hvC, hvT, hnot]
+    simp [intersectionCount, hvC, hnot]
   · have heq : insert v T ∩ C = T ∩ C := by
       ext w
       simp only [Finset.mem_inter, Finset.mem_insert]
@@ -158,7 +159,7 @@ theorem intersectionCount_twoSided (C : Finset V) {t : ℝ} (ht : 0 ≤ t) :
         (C.card : ℝ) / 2 := by
     simpa [U, F] using bernoulliExpectation_half_intersectionCount C
   have hvariance : (∑ v ∈ U, c v ^ 2) = (C.card : ℝ) := by
-    simpa [U, c] using sum_intersection_lipschitz_sq C
+    simp [U, c]
   rw [hmean] at hcardR hA hB
   rw [hvariance] at hA hB
   change ((U.powerset.filter fun S ↦
@@ -205,7 +206,8 @@ theorem count_badIntersections_le [Nonempty V]
       intro C hC
       by_cases hCempty : C = ∅
       · subst C
-        simp only [neg_mul]
+        rw [show bad ∅ = ∅ by simp [bad, intersectionCount, ht.not_ge]]
+        simp only [Finset.card_empty, Nat.cast_zero]
         positivity
       · have hCpos : (0 : ℝ) < C.card := by
           exact_mod_cast (Finset.card_pos.mpr (Finset.nonempty_iff_ne_empty.mpr hCempty))
@@ -291,7 +293,8 @@ theorem card_degreeBadSamples_le [Nonempty V] {t : ℝ} (ht : 0 < t) :
           (2 * (2 : ℝ) ^ Fintype.card V *
             exp (-2 * t ^ 2 / Fintype.card V)) := by
       apply mul_le_mul_of_nonneg_right
-      · exact_mod_cast (Finset.card_image_le.trans (by simp : (univ : Finset V).card ≤ Fintype.card V))
+      · exact_mod_cast
+          (Finset.card_image_le.trans (by simp : (univ : Finset V).card ≤ Fintype.card V))
       · positivity
 
 end Graph
@@ -714,11 +717,13 @@ lemma rectangle_factors_close_of_profileL1
             (((A ∩ profileCell L p).card : ℝ) -
               2 * ((X ∩ profileCell L p).card : ℝ)))
 
-lemma cutProfileValue_halves (L : CutDecomposition V) (A B : Finset V) :
+omit [Fintype V] in
+lemma cutProfileValue_halves [Finite V] (L : CutDecomposition V) (A B : Finset V) :
     cutProfileValue L
         (fun q ↦ ((A ∩ q.1).card : ℝ) / 2)
         (fun q ↦ ((B ∩ q.2.1).card : ℝ) / 2) =
       (1 / 4 : ℝ) * matrixCutSum (cutDecompositionMatrix L) A B := by
+  let := Fintype.ofFinite V
   rw [matrixCutSum_cutDecompositionMatrix_eq_profile]
   induction L with
   | nil => simp [cutProfileValue]
@@ -934,10 +939,13 @@ theorem eventually_profileBadSamples_density_lt
 
 /-! ## Deterministic transfer through a cut decomposition -/
 
-lemma matrixCutSum_graphAdjacencyMatrix_eq_edgeCount
+omit [DecidableEq V] [Fintype V] in
+lemma matrixCutSum_graphAdjacencyMatrix_eq_edgeCount [Finite V]
     (G : SimpleGraph V) (A B : Finset V) :
     matrixCutSum (graphAdjacencyMatrix G) A B =
       Trichotomy.edgeCount G A B := by
+  classical
+  let := Fintype.ofFinite V
   rw [matrixCutSum_graphAdjacencyMatrix,
     Trichotomy.edgeCount_eq_sum_degreeInto]
   apply Finset.sum_congr rfl
@@ -1099,10 +1107,12 @@ end Profiles
 def ambientFinset (S : Finset V) (A : Finset (S : Set V)) : Finset V :=
   A.map (Function.Embedding.subtype _)
 
+omit [DecidableEq V] [Fintype V] in
 @[simp] lemma card_ambientFinset (S : Finset V) (A : Finset (S : Set V)) :
     (ambientFinset S A).card = A.card := by
   simp [ambientFinset]
 
+omit [DecidableEq V] [Fintype V] in
 lemma ambientFinset_subset (S : Finset V) (A : Finset (S : Set V)) :
     ambientFinset S A ⊆ S := by
   intro v hv
@@ -1111,6 +1121,7 @@ lemma ambientFinset_subset (S : Finset V) (A : Finset (S : Set V)) :
   rw [← hav]
   exact a.property
 
+omit [DecidableEq V] [Fintype V] in
 lemma card_interedges_induce_eq_ambient
     (G : SimpleGraph V) (S : Finset V) (A B : Finset (S : Set V))
     (dG : DecidableRel G.Adj)
@@ -1129,15 +1140,18 @@ lemma card_interedges_induce_eq_ambient
     aesop
   rw [← hmap, Finset.card_map]
 
+omit [DecidableEq V] [Fintype V] in
 /-- An ambient edge lower bound for all large subsets of `S` is exactly the
 `BiDenseAbove` condition needed to eliminate the two exceptional KSS
 outcomes in the induced graph. -/
-lemma biDenseAbove_induce_of_ambient
+lemma biDenseAbove_induce_of_ambient [Finite V]
     (G : SimpleGraph V) (S : Finset V) (k b : ℕ)
     (hDense : ∀ X Y : Finset V,
       X ⊆ S → Y ⊆ S → k ≤ X.card → k ≤ Y.card →
         b < (G.interedges X Y).card) :
     DiracStability.BiDenseAbove (G.induce (S : Set V)) k b := by
+  classical
+  let := Fintype.ofFinite V
   intro A B hA hB
   have hd := hDense (ambientFinset S A) (ambientFinset S B)
     (ambientFinset_subset S A) (ambientFinset_subset S B)
@@ -1160,7 +1174,7 @@ the real minimum-degree hypothesis in the fixed-loss KSS theorem. -/
 lemma induced_minDegree_of_degree_typical
     (G : SimpleGraph V) (S : Finset V) (n : ℕ) (rho t sampleError : ℝ)
     (hRegular : G.IsRegularOfDegree (n + 1))
-    (hRhoNonneg : 0 ≤ rho) (hRhoHalf : rho ≤ 1 / 2)
+    (_hRhoNonneg : 0 ≤ rho) (hRhoHalf : rho ≤ 1 / 2)
     (hSampleUpper : (S.card : ℝ) ≤ (n : ℝ) + sampleError)
     (hTypical : ∀ v : V,
       |intersectionCount (G.neighborFinset v) S - (G.degree v : ℝ) / 2| < t)
@@ -1232,7 +1246,6 @@ lemma good_sample_numerics
     have hmul := mul_le_mul_of_nonneg_right hProfileDelta'
       (show 0 ≤ 2 * nr by positivity)
     dsimp [err, nr] at hmul ⊢
-    push_cast at hmul ⊢
     nlinarith
   have herr0 : 0 ≤ err := by
     dsimp [err]
@@ -1267,7 +1280,6 @@ lemma good_sample_numerics
   have hfactorErr : (1 - 2 * rho) * err ≤ err :=
     by nlinarith [mul_le_mul_of_nonneg_right hfactorTwoOne herr0]
   have hTwoQReal : (2 * q : ℝ) ≤ nr := by
-    push_cast
     have hq2 : 2 * (q : ℝ) ≤ 2 * ((1 / 2 - rho) * s) := by linarith
     nlinarith only [hq2, hfactorSize, hfactorErr, herr, hRho.le, hnr]
   have hTwoQ : 2 * q ≤ n := by
@@ -1277,7 +1289,6 @@ lemma good_sample_numerics
     have hmul := mul_le_mul_of_nonneg_right hDeltaRho
       (show 0 ≤ 2 * nr by positivity)
     dsimp [nr] at hmul ⊢
-    push_cast at hmul ⊢
     nlinarith
   have hfactorErrHalf : (1 / 2 - rho) * err ≤ err :=
     by nlinarith [mul_le_mul_of_nonneg_right hfactorOne herr0]
@@ -1340,7 +1351,7 @@ lemma good_sample_numerics
   refine ⟨hCard21, hTwoQ, ?_, ?_⟩
   · simpa [err, nr] using hDegreeNumerical
   · dsimp [s, nr, err, q] at hMargin ⊢
-    convert hMargin using 1 <;> ring
+    convert hMargin using 1; ring
 
 /-- Deterministic conclusion for one sample after the KSS stability
 alternative has been supplied.  This statement is useful independently of
@@ -1592,7 +1603,7 @@ theorem uniformCaseDensityBound_biDense_of_stability
     have hSize : |(S.card : ℝ) - (n : ℝ)| <
         (Fintype.card (CutProfile L) : ℝ) *
           (delta * (2 * n : ℝ)) := by
-      convert hSizeRaw using 1 <;> simp <;> ring
+      convert hSizeRaw using 1; simp
     obtain ⟨hCard, hTwoQ, hDegreeNumerical, hMargin⟩ :=
       good_sample_numerics e C Q rho delta n S
         (Fintype.card (CutProfile L) : ℝ)

@@ -109,7 +109,7 @@ lemma reciprocal_four_mem_cover_window
       4 / beta ≤ 4 / (1 / (4 * K : ℝ)) := by
         rw [div_le_div_iff₀ hbetaPos heta₀]
         nlinarith [hbeta.1]
-      _ = 16 * K := by field_simp [hKreal.ne'] <;> norm_num
+      _ = 16 * K := by field_simp [hKreal.ne']; norm_num
 
 /-- A small integer square-root threshold gives the corresponding normalized
 real bound without any asymptotic rounding loss. -/
@@ -165,7 +165,7 @@ lemma normalized_le_reciprocal_cover_div_sixtyFour
   have hscale : 64 ≤ (L : ℝ) * alpha := by
     calc
       (64 : ℝ) = (16 * (M₀ : ℝ)) * (4 / M₀) := by
-        field_simp [hM₀real.ne'] <;> norm_num
+        field_simp [hM₀real.ne']; norm_num
       _ ≤ (L : ℝ) * alpha :=
         mul_le_mul hLM₀real halphaLower (by positivity) (by positivity)
   simpa only [alpha, beta] using

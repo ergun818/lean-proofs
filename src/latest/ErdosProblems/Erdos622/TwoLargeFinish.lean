@@ -10,7 +10,7 @@ namespace Erdos622
 namespace TwoLargeFinish
 
 open Filter Finset Real Set
-open scoped BigOperators Topology SimpleGraph
+open scoped BigOperators Topology _root_.SimpleGraph
 
 attribute [local instance] Classical.propDecidable
 
@@ -40,7 +40,7 @@ lemma matching_floor_induce_internalGraph'
 
 lemma matching_floor_capacity'
     {c : ℕ} {s eps sigma : ℝ}
-    (hs : 0 < s) (hsigma : 0 < sigma)
+    (hs : 0 < s) (_hsigma : 0 < sigma)
     (hepsc : eps * c ≤ sigma * s / 2)
     (hlarge : 1 ≤ sigma * s / 2) :
     ((c : ℝ) / s / 4 - sigma) * s ≤
@@ -72,7 +72,7 @@ lemma reciprocal_four_mem_compact
       4 / beta ≤ 4 / (1 / (4 * K : ℝ)) := by
         rw [div_le_div_iff₀ hbetaPos heta₀]
         nlinarith [hbeta.1]
-      _ = 16 * K := by field_simp [hKreal.ne'] <;> norm_num
+      _ = 16 * K := by field_simp [hKreal.ne']; norm_num
 
 theorem four_failure_count_le'
     {V : Type*} [Fintype V] [DecidableEq V]
@@ -103,7 +103,6 @@ theorem four_failure_count_le'
           almostBipartiteCount (Finset.univ : Finset V)
             (fun S ↦ F₃ S ∨ F₄ S) := by
     simpa only [or_assoc] using houter
-  norm_cast at houter'
   have hleft :
       (almostBipartiteCount (Finset.univ : Finset V)
         (fun S ↦ F₁ S ∨ F₂ S) : ℝ) ≤
@@ -183,23 +182,23 @@ theorem swapped_large_finish
     {delta delta₀ margin eta M rho sigma eps : ℝ}
     {K₀ n : ℕ}
     (G : SimpleGraph (Fin (2 * n)))
-    (A B T A₀ B₀ C D : Finset (Fin (2 * n)))
+    (A B T A₀ B₀ _C D : Finset (Fin (2 * n)))
     (JB : SimpleGraph (Fin (2 * n)))
-    (hdelta : 0 < delta) (hdelta₀ : delta₀ = delta / 4)
+    (_hdelta : 0 < delta) (hdelta₀ : delta₀ = delta / 4)
     (hmargin : 0 < margin)
     (heta : 0 < eta) (hetaDef : eta ≤ 4 / (D.card / Real.sqrt n))
     (hMbound : 4 / (D.card / Real.sqrt n) ≤ M)
-    (hrho : 0 < rho) (hsigma : 0 < sigma) (htwoSigma : 2 * sigma ≤ rho)
+    (_hrho : 0 < rho) (hsigma : 0 < sigma) (htwoSigma : 2 * sigma ≤ rho)
     (hepsQuarter : eps < 1 / 4)
     (hnpos : 0 < n) (hnRound : 1 ≤ sigma * Real.sqrt n / 2)
     (hAB : IsAlmostBipartiteCut G A B)
     (hTA : T ⊆ A) (hTcard : T.card = A.card - n)
     (hA₀ : A₀ = A \ T) (hB₀ : B₀ = B ∪ T)
-    (hcut₀ : IsCut A₀ B₀) (hA₀card : A₀.card = n)
-    (hB₀card : B₀.card = n)
-    (hD : IsMinimumVertexCoverOn G B₀ D)
+    (_hcut₀ : IsCut A₀ B₀) (hA₀card : A₀.card = n)
+    (_hB₀card : B₀.card = n)
+    (_hD : IsMinimumVertexCoverOn G B₀ D)
     (hJBG : JB ≤ G) (hJBsupp : JB.support ⊆ (A₀ : Set (Fin (2 * n))))
-    (hdUpper : A.card - n ≤ Nat.sqrt n)
+    (_hdUpper : A.card - n ≤ Nat.sqrt n)
     (hkappaUpper : ((A.card - n : ℕ) : ℝ) / Real.sqrt n ≤ 1)
     (hleftCapBeta :
       (1 / ((D.card : ℝ) / Real.sqrt n) - sigma) * Real.sqrt n ≤
@@ -266,11 +265,11 @@ theorem swapped_large_finish
   let right : ℕ := ⌊(1 / 4 - eps) * (D.card : ℝ)⌋₊
   have hleftCap : (alpha / 4 - sigma) * Real.sqrt n ≤ left := by
     dsimp [alpha, beta, left]
-    convert hleftCapBeta using 1 <;> field_simp [hsqrt.ne']
+    convert hleftCapBeta using 1; field_simp [hsqrt.ne']
   have hrightCap : (1 / alpha - sigma) * Real.sqrt n ≤ right := by
     have hcap := matching_floor_capacity' hsqrt hsigma hepsD hnRound
     dsimp [alpha, beta, right]
-    convert hcap using 1 <;> field_simp [hsqrt.ne']
+    convert hcap using 1; field_simp [hsqrt.ne']
   have hthresholdNonneg : 0 ≤ (1 / 4 - eps) * (D.card : ℝ) :=
     mul_nonneg (by linarith) (by positivity)
   let P : Finset (Fin (2 * n)) → Prop := fun S ↦
@@ -373,9 +372,9 @@ theorem swapped_small_finish
     (JB : SimpleGraph (Fin (2 * n)))
     (hdelta : 0 < delta) (hdelta₀ : delta₀ = delta / 4)
     (hmargin : 0 < margin)
-    (hrho : 0 < rho) (hsigma : 0 < sigma)
+    (_hrho : 0 < rho) (hsigma : 0 < sigma)
     (htwoSigma : 2 * sigma ≤ rho) (hepsQuarter : eps < 1 / 4)
-    (hnpos : 0 < n) (hnRound : 1 ≤ sigma * Real.sqrt n / 2)
+    (hnpos : 0 < n) (_hnRound : 1 ≤ sigma * Real.sqrt n / 2)
     (hAB : IsAlmostBipartiteCut G A B)
     (hTA : T ⊆ A) (hTcard : T.card = A.card - n)
     (hA₀ : A₀ = A \ T) (hB₀ : B₀ = B ∪ T)
@@ -385,7 +384,7 @@ theorem swapped_small_finish
     (hkappa : kappa = ((A.card - n : ℕ) : ℝ) / Real.sqrt n)
     (hkappaAlpha : kappa ≤ alpha / 64)
     (hleftCap : (alpha / 4 - sigma) * Real.sqrt n ≤ left)
-    (hepsD : eps * (D.card : ℝ) ≤ sigma * Real.sqrt n / 2)
+    (_hepsD : eps * (D.card : ℝ) ≤ sigma * Real.sqrt n / 2)
     (hrightCap :
       (1 / alpha - sigma) * Real.sqrt n ≤
         (⌊(1 / 4 - eps) * (D.card : ℝ)⌋₊ : ℝ))

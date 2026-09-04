@@ -95,12 +95,14 @@ theorem add_one_le_card_reachableFinset (hDegree : ∀ v : V, k ≤ G.degree v)
     G.card_neighborFinset_eq_degree, Finset.card_singleton] at hcard
   exact (Nat.add_le_add_right (hDegree x) 1).trans hcard
 
+omit [DecidableEq V] in
 /-- Failure of reachability exposes two disjoint large sets with no crossing
 edges.  This is the disconnected branch of Dirac stability. -/
 theorem hasSparsePairAt_of_not_reachable {k b : ℕ}
     (hDegree : ∀ v : V, k ≤ G.degree v) {x y : V}
     (hxy : ¬ G.Reachable x y) :
     DiracStability.HasSparsePairAt G k b := by
+  classical
   let A := reachableFinset G x
   let B := Aᶜ
   have hxA : k ≤ A.card := by
@@ -217,12 +219,14 @@ theorem le_card_cutComponent (hDegree : ∀ v : V, k ≤ G.degree v)
   rw [G.card_neighborFinset_eq_degree, hcardUnion] at hcard
   exact (hDegree x.1).trans hcard
 
+omit [DecidableEq V] in
 /-- A genuine cut vertex gives the sparse-pair conclusion with zero crossing
 edges. -/
 theorem hasSparsePairAt_of_cutVertexWitness {k b : ℕ}
     (hDegree : ∀ v : V, k ≤ G.degree v) {c : V}
     (hc : IsCutVertexWitness G c) :
     DiracStability.HasSparsePairAt G k b := by
+  classical
   obtain ⟨x, y, hxy⟩ := hc
   let A := cutComponent G c x
   let B := Aᶜ.erase c
@@ -279,6 +283,7 @@ surviving vertices in different components. -/
 def HasSeparationWitness (G : SimpleGraph V) : Prop :=
   ¬ G.Preconnected ∨ ∃ c : V, IsCutVertexWitness G c
 
+omit [DecidableEq V] [Fintype V] in
 /-- The local separator formulation in the underlying
 Nash--Williams--Bondy file is definitionally the same one. -/
 theorem hasSeparationWitness_iff_nashWilliamsBondy :
@@ -286,6 +291,7 @@ theorem hasSeparationWitness_iff_nashWilliamsBondy :
       NashWilliamsBondy.HasSeparationWitness G := by
   rfl
 
+omit [DecidableEq V] [Fintype V] in
 /-- Likewise, the independent-set conclusion of Nash--Williams--Bondy is
 exactly the rounded independent-set predicate used by KSS stability. -/
 theorem hasIndependentSetAt_iff_nashWilliamsBondy {k : ℕ} :
@@ -303,6 +309,7 @@ theorem stabilityAlternative_of_separationWitness {k b : ℕ}
   · exact stabilityAlternative_of_not_preconnected hDegree hdisc
   · exact stabilityAlternative_of_cutVertexWitness hDegree hc
 
+omit [DecidableEq V] [Fintype V] in
 /-- Shrinking an independent set preserves independence. -/
 theorem hasIndependentSetAt_mono {j k : ℕ} (hjk : j ≤ k)
     (h : DiracStability.HasIndependentSetAt G k) :

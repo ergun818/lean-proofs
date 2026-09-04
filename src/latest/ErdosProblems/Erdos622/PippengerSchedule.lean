@@ -110,12 +110,14 @@ def matchingSubgraph (G : SimpleGraph V) (M : Finset G.edgeSet) :
     SimpleGraph V :=
   SimpleGraph.fromEdgeSet {e | ∃ he : e ∈ G.edgeSet, (⟨e, he⟩ : G.edgeSet) ∈ M}
 
+omit [DecidableEq V] [Fintype V] in
 lemma matchingSubgraph_le (G : SimpleGraph V) (M : Finset G.edgeSet) :
     matchingSubgraph G M ≤ G := by
   rw [matchingSubgraph, SimpleGraph.fromEdgeSet_le]
   intro e he
   exact he.1.choose
 
+omit [DecidableEq V] in
 /-- The matching subgraph retains exactly the selected edge indices. -/
 lemma map_matchingSubgraph_eq_edgeFinset (G : SimpleGraph V)
     (M : Finset G.edgeSet) :
@@ -134,9 +136,11 @@ lemma map_matchingSubgraph_eq_edgeFinset (G : SimpleGraph V)
     obtain ⟨⟨heG, heM⟩, _⟩ := he
     exact ⟨⟨e, heG⟩, heM, rfl⟩
 
+omit [DecidableEq V] in
 lemma card_edgeFinset_matchingSubgraph (G : SimpleGraph V)
     (M : Finset G.edgeSet) :
     (matchingSubgraph G M).edgeFinset.card = M.card := by
+  classical
   rw [← map_matchingSubgraph_eq_edgeFinset, Finset.card_map]
 
 /-- Disjoint hypergraph supports force maximum graph degree one. -/

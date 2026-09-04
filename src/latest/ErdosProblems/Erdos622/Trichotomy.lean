@@ -77,14 +77,17 @@ def AlmostBipartite (G : SimpleGraph V) (n : ℕ) (ε γ : ℝ) : Prop :=
     CrossMinDegree G A B (γ * (2 * n : ℝ) / 2) ∧
     (A.card = n ∨ InternalMaxDegree G A (γ * (2 * n : ℝ)))
 
+omit [DecidableEq V] [Fintype V] in
 @[simp] theorem edgeCount_empty_left (G : SimpleGraph V) (A : Finset V) :
     edgeCount G ∅ A = 0 := by
   simp [edgeCount]
 
+omit [DecidableEq V] [Fintype V] in
 @[simp] theorem edgeCount_empty_right (G : SimpleGraph V) (A : Finset V) :
     edgeCount G A ∅ = 0 := by
   simp [edgeCount, SimpleGraph.interedges_def]
 
+omit [DecidableEq V] [Fintype V] in
 theorem edgeCount_comm (G : SimpleGraph V) (A B : Finset V) :
     edgeCount G A B = edgeCount G B A := by
   have hnat : (G.interedges A B).card = (G.interedges B A).card :=
@@ -95,12 +98,14 @@ theorem edgeCount_comm (G : SimpleGraph V) (A B : Finset V) :
   unfold edgeCount
   exact_mod_cast hnat
 
+omit [DecidableEq V] [Fintype V] in
 theorem edgeCount_mono (G : SimpleGraph V) {A A' B B' : Finset V}
     (hA : A ⊆ A') (hB : B ⊆ B') :
     edgeCount G A B ≤ edgeCount G A' B' := by
   unfold edgeCount
   exact_mod_cast Finset.card_le_card (G.interedges_mono hA hB)
 
+omit [Fintype V] in
 theorem edgeCount_union_left (G : SimpleGraph V) {A B : Finset V}
     (hAB : Disjoint A B) (C : Finset V) :
     edgeCount G (A ∪ B) C = edgeCount G A C + edgeCount G B C := by
@@ -112,27 +117,33 @@ theorem edgeCount_union_left (G : SimpleGraph V) {A B : Finset V}
   rw [edgeCount, edgeCount, edgeCount, heq, Finset.card_union_of_disjoint hdisj]
   norm_cast
 
-theorem edgeCount_union_right (G : SimpleGraph V) (A : Finset V) {B C : Finset V}
+omit [Fintype V] in
+theorem edgeCount_union_right [Finite V] (G : SimpleGraph V) (A : Finset V) {B C : Finset V}
     (hBC : Disjoint B C) :
     edgeCount G A (B ∪ C) = edgeCount G A B + edgeCount G A C := by
+  let := Fintype.ofFinite V
   rw [edgeCount_comm G A, edgeCount_union_left G hBC,
     edgeCount_comm G B, edgeCount_comm G C]
 
-theorem edgeCount_sdiff_add_inter_right (G : SimpleGraph V) (A B C : Finset V) :
+omit [Fintype V] in
+theorem edgeCount_sdiff_add_inter_right [Finite V] (G : SimpleGraph V) (A B C : Finset V) :
     edgeCount G A (B \ C) + edgeCount G A (B ∩ C) = edgeCount G A B := by
+  let := Fintype.ofFinite V
   rw [← edgeCount_union_right G A (Finset.disjoint_sdiff_inter B C)]
   congr 2
   ext v
   by_cases h : v ∈ C <;> simp [h]
 
-theorem edgeCount_sdiff_add_inter_left (G : SimpleGraph V) (A B C : Finset V) :
+omit [Fintype V] in
+theorem edgeCount_sdiff_add_inter_left [Finite V] (G : SimpleGraph V) (A B C : Finset V) :
     edgeCount G (A \ C) B + edgeCount G (A ∩ C) B = edgeCount G A B := by
+  let := Fintype.ofFinite V
   simpa only [edgeCount_comm G] using edgeCount_sdiff_add_inter_right G B A C
 
+omit [DecidableEq V] [Fintype V] in
 theorem edgeCount_le_card_mul_card (G : SimpleGraph V) (A B : Finset V) :
     edgeCount G A B ≤ (A.card : ℝ) * B.card := by
   unfold edgeCount
-  push_cast
   exact_mod_cast G.card_interedges_le_mul A B
 
 theorem degreeInto_eq_card_filter (G : SimpleGraph V) (v : V) (A : Finset V) :
@@ -143,8 +154,10 @@ theorem degreeInto_eq_card_filter (G : SimpleGraph V) (v : V) (A : Finset V) :
   ext w
   simp [SimpleGraph.mem_neighborFinset, and_comm]
 
+omit [DecidableEq V] [Fintype V] in
 theorem card_interedges_eq_sum_card_filter (G : SimpleGraph V) (A B : Finset V) :
     (G.interedges A B).card = ∑ v ∈ A, (B.filter fun w ↦ G.Adj v w).card := by
+  classical
   rw [SimpleGraph.interedges, Rel.interedges_eq_biUnion]
   rw [Finset.card_biUnion]
   · simp
@@ -315,16 +328,18 @@ theorem card_lowCrossSet_le {n : ℕ} (G : SimpleGraph V)
   dsimp [L, R] at hupp hcardsReal ⊢
   nlinarith
 
+omit [Fintype V] in
 /-- Moving a set `L` from the left side and `R` from the right side does not
 increase the crossing count by more than the two orientations between `L`
 and `R`, provided every moved set has at least as many edges across the old
 cut as inside its old side.  This is the exact cancellation used by KLS. -/
-theorem edgeCount_swap_le {G : SimpleGraph V} {C D L R : Finset V}
+theorem edgeCount_swap_le [Finite V] {G : SimpleGraph V} {C D L R : Finset V}
     (hCD : Disjoint C D) (hLC : L ⊆ C) (hRD : R ⊆ D)
     (hL : edgeCount G L C ≤ edgeCount G L D)
     (hR : edgeCount G R D ≤ edgeCount G R C) :
     edgeCount G ((C \ L) ∪ R) ((D \ R) ∪ L) ≤
       edgeCount G C D + 2 * (L.card : ℝ) * R.card := by
+  let := Fintype.ofFinite V
   let C0 := C \ L
   let D0 := D \ R
   have hLC0 : Disjoint L C0 := by
@@ -388,15 +403,17 @@ theorem edgeCount_swap_le {G : SimpleGraph V} {C D L R : Finset V}
   rw [edgeCount_comm G R L] at hRexp
   nlinarith
 
+omit [Fintype V] in
 /-- The reverse cancellation estimate, used when the moved vertices have at
 least as many neighbours inside their old part as across the old cut. -/
-theorem edgeCount_le_swap_add {G : SimpleGraph V} {C D L R : Finset V}
+theorem edgeCount_le_swap_add [Finite V] {G : SimpleGraph V} {C D L R : Finset V}
     (hCD : Disjoint C D) (hLC : L ⊆ C) (hRD : R ⊆ D)
     (hL : edgeCount G L D ≤ edgeCount G L C)
     (hR : edgeCount G R C ≤ edgeCount G R D) :
     edgeCount G C D ≤
       edgeCount G ((C \ L) ∪ R) ((D \ R) ∪ L) +
         (L.card : ℝ) ^ 2 + (R.card : ℝ) ^ 2 := by
+  let := Fintype.ofFinite V
   let C0 := C \ L
   let D0 := D \ R
   have hLC0 : Disjoint L C0 := by
@@ -448,7 +465,7 @@ the smaller side.  The process stops either at balance or when the larger
 side has the required maximum-degree bound. -/
 theorem balance_or_internalMax {n r : ℕ} (G : SimpleGraph V)
     (hV : Fintype.card V = 2 * n) {γ target upper : ℝ}
-    (hγ : 0 ≤ γ) {A B : Finset V}
+    (_hγ : 0 ≤ γ) {A B : Finset V}
     (hcut : Disjoint A B) (hunion : A ∪ B = Finset.univ)
     (hAcard : A.card = n + r) (hr : (r : ℝ) ≤ γ * n)
     (hupper : (A.card : ℝ) ≤ upper)
@@ -791,11 +808,13 @@ theorem almostTwoCliques_of_small_overlap {n : ℕ} (G : SimpleGraph V)
     · rw [edgeCount_comm G D' C']
       exact hcross'
 
+omit [Fintype V] in
 /-- Every ordered edge from the common part into the union can be oriented as
 an edge from `A` to `B`.  Edges from `A \ B` to `B \ A` account for the
 possible strict inequality. -/
-theorem edgeCount_inter_union_le (G : SimpleGraph V) (A B : Finset V) :
+theorem edgeCount_inter_union_le [Finite V] (G : SimpleGraph V) (A B : Finset V) :
     edgeCount G (A ∩ B) (A ∪ B) ≤ edgeCount G A B := by
+  let := Fintype.ofFinite V
   let X := A ∩ B
   let P := A \ B
   let Q := B \ A
@@ -920,12 +939,12 @@ theorem card_outside_union_eq_card_inter {n : ℕ}
 
 /-- The real-variable overlap dichotomy used after finding sparse half-sets. -/
 theorem overlap_small_or_large {m x : ℝ} {ε : ℝ}
-    (hm : 0 ≤ m) (hx0 : 0 ≤ x) (hxm : x ≤ m / 2)
-    (hε : 0 < ε) (hεmax : ε ≤ 1 / 320)
+    (_hm : 0 ≤ m) (hx0 : 0 ≤ x) (hxm : x ≤ m / 2)
+    (_hε : 0 < ε) (_hεmax : ε ≤ 1 / 320)
     (hsparse : x * (m / 2 - x) < ε * m ^ 2) :
     x < 5 * ε * m ∨ m / 2 - 5 * ε * m < x := by
   by_contra h
-  push_neg at h
+  push Not at h
   rcases h with ⟨hlo, hhi⟩
   have hprod : 0 ≤ (x - 5 * ε * m) * (m / 2 - 5 * ε * m - x) :=
     mul_nonneg (sub_nonneg.mpr hlo) (sub_nonneg.mpr hhi)
@@ -960,6 +979,7 @@ theorem sparse_halfsets_overlap {n : ℕ} (G : SimpleGraph V)
     hε hεmax hprod
   simpa using h
 
+omit [DecidableEq V] [Fintype V] in
 /-- Failure of bi-density is witnessed by a sparse pair of half-sets. -/
 theorem exists_sparse_halfsets_of_not_biDense {n : ℕ} (G : SimpleGraph V)
     {ε : ℝ} (h : ¬ BiDense G n ε) :

@@ -24,10 +24,11 @@ attribute [local instance] Classical.propDecidable
 /-- The cardinality of a filter depends only on the pointwise predicate, not
 on the particular decision procedures used to form the two finsets. -/
 theorem filter_card_congr
-    {α : Type*} [DecidableEq α] (U : Finset α)
+    {α : Type*} (U : Finset α)
     (P Q : α → Prop) [DecidablePred P] [DecidablePred Q]
     (h : ∀ x, P x ↔ Q x) :
     (U.filter P).card = (U.filter Q).card := by
+  classical
   congr 1
   ext x
   simp only [Finset.mem_filter]
@@ -74,7 +75,7 @@ noncomputable def powersetEquivOfCardEq {α : Type*} [DecidableEq α]
     { toFun := fun x ↦ ⟨x, Finset.mem_univ x⟩
       invFun := fun x ↦ x.1
       left_inv := fun _ ↦ rfl
-      right_inv := fun x ↦ Subtype.ext rfl }
+      right_inv := fun _x ↦ Subtype.ext rfl }
   (powersetSubtypeEquiv U).trans <|
     (U.equivFinOfCardEq hU).finsetCongr.trans <|
       eUniv.finsetCongr.trans <|

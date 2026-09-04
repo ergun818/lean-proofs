@@ -50,6 +50,7 @@ variable {G : SimpleGraph V} [DecidableRel G.Adj]
 
 /-! ## Elementary cardinal and cycle facts -/
 
+omit [DecidableEq V] [DecidableRel G.Adj] in
 /-- The deletion formulation of `k`-connectivity forces `k` not to exceed
 the order of the finite graph. -/
 lemma card_connectivity_le {k : ℕ}
@@ -63,12 +64,14 @@ lemma card_connectivity_le {k : ℕ}
   obtain ⟨v⟩ := hempty.nonempty
   exact v.2 (Finset.mem_univ v.1)
 
+omit [DecidableEq V] in
 /-- Deletion-connectivity at level `k` gives the usual minimum-degree bound
 `k - 1`.  This convention also handles complete graphs, for which deleting
 all but one vertex still leaves a connected graph. -/
 lemma connectivity_sub_one_le_degree {k : ℕ}
     (hconn : LongestCycle.VertexConnectedAtLeast G k) (v : V) :
     k - 1 ≤ G.degree v := by
+  classical
   by_contra hdeg
   have hkcard := card_connectivity_le (G := G) hconn
   let C : Finset V := G.neighborFinset v
@@ -94,10 +97,12 @@ lemma connectivity_sub_one_le_degree {k : ℕ}
   have hadjG : G.Adj v p.snd.1 := SimpleGraph.induce_adj.mp hadj
   exact p.snd.2 ((G.mem_neighborFinset v p.snd.1).mpr hadjG)
 
+omit [DecidableEq V] [DecidableRel G.Adj] in
 /-- The length of a simple cycle in a finite graph is at most the order of
 the graph. -/
 lemma isCycle_length_le_card {v : V} {c : G.Walk v v} (hc : c.IsCycle) :
     c.length ≤ Fintype.card V := by
+  classical
   have hnodup : c.support.tail.Nodup := hc.support_nodup
   have hsub : c.support.tail.toFinset ⊆ (Finset.univ : Finset V) :=
     Finset.subset_univ _
@@ -113,9 +118,11 @@ def cycleLengths (G : SimpleGraph V) : Finset ℕ :=
   (Finset.range (Fintype.card V + 1)).filter fun m ↦
     ∃ (v : V) (c : G.Walk v v), c.IsCycle ∧ c.length = m
 
+omit [DecidableEq V] [DecidableRel G.Adj] in
 lemma mem_cycleLengths_iff {m : ℕ} :
     m ∈ cycleLengths G ↔
       ∃ (v : V) (c : G.Walk v v), c.IsCycle ∧ c.length = m := by
+  classical
   constructor
   · intro hm
     exact (Finset.mem_filter.mp hm).2
@@ -124,12 +131,14 @@ lemma mem_cycleLengths_iff {m : ℕ} :
     exact ⟨Finset.mem_range.mpr (Nat.lt_succ_of_le (isCycle_length_le_card hc)),
       ⟨v, c, hc, rfl⟩⟩
 
+omit [DecidableEq V] in
 /-- The standard endpoint argument: a longest path whose terminal endpoint
 has degree `d ≥ 2` contains a cycle of length at least `d + 1`. -/
 lemma exists_cycle_degree_add_one_le_of_isLongestPath
     {a b : V} {p : G.Walk a b} (hp : Erdos622.LongestCycle.IsLongestPath p)
     (hdeg : 2 ≤ G.degree b) :
     ∃ (z : V) (c : G.Walk z z), c.IsCycle ∧ G.degree b + 1 ≤ c.length := by
+  classical
   let I : Finset ℕ := (Finset.range p.length).filter fun i ↦ G.Adj b (p.getVert i)
   have hplen : 2 ≤ p.length := hdeg.trans hp.degree_end_le_length
   have hI : I.Nonempty := by
@@ -190,11 +199,14 @@ lemma exists_cycle_degree_add_one_le_of_isLongestPath
   simp only [c, SimpleGraph.Walk.length_cons, SimpleGraph.Walk.length_reverse]
   omega
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 /-- Under deletion-connectivity at least `k`, a finite graph has a genuine
 cycle of length at least `k` as soon as `k ≥ 3`. -/
-lemma exists_cycle_connectivity_le_length {k : ℕ} (hk : 3 ≤ k)
+lemma exists_cycle_connectivity_le_length [Finite V] {k : ℕ} (hk : 3 ≤ k)
     (hconn : LongestCycle.VertexConnectedAtLeast G k) :
     ∃ (z : V) (c : G.Walk z z), c.IsCycle ∧ k ≤ c.length := by
+  classical
+  let := Fintype.ofFinite V
   have hcard : 0 < Fintype.card V :=
     lt_of_lt_of_le (by omega : 0 < k) (card_connectivity_le (G := G) hconn)
   let : Nonempty V := Fintype.card_pos_iff.mp hcard
@@ -208,13 +220,16 @@ lemma exists_cycle_connectivity_le_length {k : ℕ} (hk : 3 ≤ k)
   have := connectivity_sub_one_le_degree (G := G) hconn b
   omega
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 /-- Choose a genuine cycle of maximum length.  Its length is at least the
 connectivity parameter. -/
-lemma exists_longest_cycle {k : ℕ} (hk : 3 ≤ k)
+lemma exists_longest_cycle [Finite V] {k : ℕ} (hk : 3 ≤ k)
     (hconn : LongestCycle.VertexConnectedAtLeast G k) :
     ∃ (z : V) (c : G.Walk z z),
       c.IsCycle ∧ k ≤ c.length ∧
         ∀ (z' : V) (c' : G.Walk z' z'), c'.IsCycle → c'.length ≤ c.length := by
+  classical
+  let := Fintype.ofFinite V
   obtain ⟨z₀, c₀, hc₀, hklen⟩ :=
     exists_cycle_connectivity_le_length (G := G) hk hconn
   have hnonempty : (cycleLengths G).Nonempty := by
@@ -234,6 +249,7 @@ lemma exists_longest_cycle {k : ℕ} (hk : 3 ≤ k)
 
 /-! ## A maximum cycle and an exterior component -/
 
+omit [DecidableRel G.Adj] [Fintype V] in
 /-- The finite carrier of a genuine cycle has cardinality equal to its
 length (the base vertex is the sole repetition in the closed support). -/
 lemma cycleCarrier_card {z : V} {c : G.Walk z z} (hc : c.IsCycle) :
@@ -244,14 +260,17 @@ lemma cycleCarrier_card {z : V} {c : G.Walk z z} (hc : c.IsCycle) :
   rw [List.length_tail, c.length_support]
   omega
 
+omit [DecidableRel G.Adj] [Fintype V] in
 /-- Lift a cycle to the induced graph on its carrier.  There it is a
 Hamiltonian cycle. -/
-lemma induced_cycle_isHamiltonianCycle {z : V} {c : G.Walk z z}
+lemma induced_cycle_isHamiltonianCycle [Finite V] {z : V} {c : G.Walk z z}
     (hc : c.IsCycle) :
     let C := c.support.toFinset
-    let hC : ∀ x ∈ c.support, x ∈ (C : Set V) := fun x hx ↦
+    let hC : ∀ x ∈ c.support, x ∈ (C : Set V) := fun _x hx ↦
       List.mem_toFinset.mpr hx
     (c.induce (C : Set V) hC).IsHamiltonianCycle := by
+  classical
+  let := Fintype.ofFinite V
   dsimp only
   let C := c.support.toFinset
   let hC : ∀ x ∈ c.support, x ∈ (C : Set V) := fun x hx ↦
@@ -289,11 +308,14 @@ def attachments (G : SimpleGraph V) (C : Finset V)
     (K : (outsideGraph G C).ConnectedComponent) : Finset C :=
   Finset.univ.filter fun u ↦ ∃ y : K, G.Adj u.1 y.1.1
 
+omit [DecidableRel G.Adj] in
 lemma mem_attachments_iff {C : Finset V}
     {K : (outsideGraph G C).ConnectedComponent} {u : C} :
     u ∈ attachments G C K ↔ ∃ y : K, G.Adj u.1 y.1.1 := by
+  classical
   simp [attachments]
 
+omit [DecidableRel G.Adj] in
 /-- The attachment set of an exterior component of a cycle of length at
 least `k` has at least `k` vertices.  This is the only separator argument in
 the proof and follows directly from `VertexConnectedAtLeast`. -/
@@ -302,6 +324,7 @@ lemma card_attachments_ge {k : ℕ} (hconn : LongestCycle.VertexConnectedAtLeast
     (x : {v : V // v ∉ c.support.toFinset}) :
     k ≤ (attachments G c.support.toFinset
       ((outsideGraph G c.support.toFinset).connectedComponentMk x)).card := by
+  classical
   let C : Finset V := c.support.toFinset
   let H : SimpleGraph {v : V // v ∉ C} := outsideGraph G C
   let K : H.ConnectedComponent := H.connectedComponentMk x
@@ -371,6 +394,7 @@ lemma card_attachments_ge {k : ℕ} (hconn : LongestCycle.VertexConnectedAtLeast
 
 /-! ## Paths through an exterior component -/
 
+omit [DecidableRel G.Adj] in
 /-- Two distinct attachment vertices can be joined by a simple path whose
 internal vertices lie outside the cycle carrier. -/
 lemma exists_path_through_component {C : Finset V}
@@ -380,6 +404,7 @@ lemma exists_path_through_component {C : Finset V}
     ∃ r : G.Walk (u : V) (v : V),
       r.IsPath ∧ 2 ≤ r.length ∧
         ∀ w ∈ r.support, w = u ∨ w = v ∨ w ∉ C := by
+  classical
   obtain ⟨yu, huyu⟩ := mem_attachments_iff.mp hu
   obtain ⟨yv, hvv⟩ := mem_attachments_iff.mp hv
   obtain ⟨p, hp⟩ := K.connected_toSimpleGraph.exists_isPath yu yv
@@ -424,13 +449,14 @@ lemma exists_path_through_component {C : Finset V}
 
 /-! ## The two cycle-extension moves -/
 
+omit [DecidableRel G.Adj] [Fintype V] in
 /-- An exterior path cannot join a cycle vertex to its oriented successor
 on a longest cycle: replacing that one cycle edge gives a longer cycle. -/
 lemma next_ne_of_exterior_path_of_longest
     {C : Finset V} {zC : C}
     (q : (G.induce (C : Set V)).Walk zC zC)
     (hq : q.IsHamiltonianCycle)
-    {u v : C} (huv : u ≠ v)
+    {u v : C} (_huv : u ≠ v)
     (r : G.Walk (u : V) (v : V)) (hr : r.IsPath)
     (hrlen : 2 ≤ r.length)
     (hrsupport : ∀ w ∈ r.support, w = u ∨ w = v ∨ w ∉ C)
@@ -454,7 +480,7 @@ lemma next_ne_of_exterior_path_of_longest
   have hp₀ : p₀.IsPath := hqU.isHamiltonian_tail.isPath.map
     (SimpleGraph.Embedding.induce (G := G) (C : Set V)).injective
   let p : G.Walk (v : V) (u : V) := p₀.copy
-    (by simpa [hsnd, hnextEq]) rfl
+    (by simp [hsnd, hnextEq]) rfl
   have hp : p.IsPath := by simpa [p] using hp₀
   have hpC : ∀ w ∈ p.support, w ∈ C := by
     intro w hw
@@ -516,6 +542,7 @@ private lemma isCycle_dart_eq_of_fst_eq
   subst j
   rfl
 
+omit [DecidableRel G.Adj] [Fintype V] in
 lemma snd_dropUntil_tail_eq_next
     {C : Finset V} {zC v : C}
     (q : (G.induce (C : Set V)).Walk zC zC)
@@ -537,10 +564,11 @@ lemma snd_dropUntil_tail_eq_next
   have hsnd := congrArg (fun t : (G.induce (C : Set V)).Dart ↦ t.snd) hde
   simpa [d, s, heSnd] using hsnd
 
+omit [DecidableRel G.Adj] [Fintype V] in
 /-- The successors of two distinct attachment vertices cannot be adjacent on
 a longest cycle.  The alleged successor edge, the exterior path, and the two
 complementary oriented cycle arcs splice to a strictly longer cycle. -/
-lemma not_adj_next_of_exterior_path_of_longest
+lemma not_adj_next_of_exterior_path_of_longest [Finite V]
     {C : Finset V} {zC : C}
     (q : (G.induce (C : Set V)).Walk zC zC)
     (hq : q.IsHamiltonianCycle)
@@ -550,6 +578,8 @@ lemma not_adj_next_of_exterior_path_of_longest
     (hrsupport : ∀ w ∈ r.support, w = u ∨ w = v ∨ w ∉ C)
     (hmax : ∀ (z : V) (c : G.Walk z z), c.IsCycle → c.length ≤ q.length) :
     ¬ G.Adj (hq.next u).1 (hq.next v).1 := by
+  classical
+  let := Fintype.ofFinite V
   intro hadj
   have hnu : hq.next u ≠ v :=
     next_ne_of_exterior_path_of_longest q hq huv r hr hrlen hrsupport hmax
@@ -755,6 +785,7 @@ lemma not_adj_next_of_exterior_path_of_longest
 
 /-! ## Chvatal--Erdos Hamiltonicity -/
 
+omit [DecidableRel G.Adj] in
 /-- **Finite Chvatal--Erdos theorem (strict independence form).**
 
 If a finite graph on at least three vertices is `k`-vertex-connected, in the
@@ -768,6 +799,7 @@ theorem isHamiltonian_of_vertexConnectedAtLeast_of_independence_lt
     (hconn : LongestCycle.VertexConnectedAtLeast G k)
     (hindep : ∀ A : Finset V, G.IsIndepSet (A : Set V) → A.card < k) :
     G.IsHamiltonian := by
+  classical
   by_cases hk2 : k = 2
   · have htop : G = ⊤ := by
       rw [eq_top_iff]

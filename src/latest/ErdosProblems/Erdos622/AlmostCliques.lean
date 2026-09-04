@@ -59,10 +59,13 @@ def IsHamiltonConnectedOn (G : SimpleGraph V) (A : Set V) : Prop :=
   ∀ (a b : A), (a : V) ≠ b →
     ∃ p : G.Walk (a : V) (b : V), IsHamiltonPathOn A p
 
-private lemma IsHamiltonPathOn.length_add_one_eq_ncard
+omit [DecidableEq V] [Fintype V] in
+private lemma IsHamiltonPathOn.length_add_one_eq_ncard [Finite V]
     {A : Set V} {a b : V} {p : G.Walk a b}
     (hp : IsHamiltonPathOn A p) :
     p.length + 1 = A.ncard := by
+  classical
+  let := Fintype.ofFinite V
   have hs : {v : V | v ∈ p.support} = A := Set.ext fun v ↦ hp.2 v
   rw [← hs, Set.ncard_eq_toFinset_card']
   have hfin : ({v : V | v ∈ p.support} : Set V).toFinset = p.support.toFinset := by
@@ -105,8 +108,8 @@ theorem isHamiltonian_of_two_cross_edges
         · exact Set.disjoint_left.1 hAB ha₁ hb₂
         · exact Set.disjoint_left.1 hAB ha₂ hb₁
         · exact hb rfl
-      p_interior := by simp [SimpleGraph.Adj.support_toWalk]
-      q_interior := by simp [SimpleGraph.Adj.support_toWalk] }
+      p_interior := by simp
+      q_interior := by simp }
   let w : G.Walk a₁ a₁ := Erdos58.SpliceData.close L.p d L.q c
   have hwCycle : w.IsCycle := by
     exact Erdos58.Structural.linkage_close_isCycle L hAB c d hc.1 hd.1
@@ -123,7 +126,7 @@ theorem isHamiltonian_of_two_cross_edges
   intro _
   refine ⟨a₁, w, (SimpleGraph.Walk.isHamiltonianCycle_iff_isCycle_and_length_eq).2
     ⟨hwCycle, ?_⟩⟩
-  simp only [w, Erdos58.SpliceData.length_close, SimpleGraph.Adj.length_toWalk]
+  simp only [w, Erdos58.SpliceData.length_close]
   rw [hpLen, hqLen, hcard]
   omega
 
@@ -150,27 +153,33 @@ edges between the two sets. -/
 def pairCount (G : SimpleGraph V) (S T : Finset V) : ℕ :=
   ∑ x ∈ S, ∑ y ∈ T, if G.Adj x y then (1 : ℕ) else 0
 
+omit [DecidableEq V] [Fintype V] in
 lemma pairCount_empty_left (G : SimpleGraph V) (T : Finset V) :
     pairCount G ∅ T = 0 := by simp [pairCount]
 
+omit [DecidableEq V] [Fintype V] in
 lemma pairCount_empty_right (G : SimpleGraph V) (S : Finset V) :
     pairCount G S ∅ = 0 := by simp [pairCount]
 
+omit [Fintype V] in
 lemma pairCount_union_left {S T U : Finset V} (hST : Disjoint S T) :
     pairCount G (S ∪ T) U = pairCount G S U + pairCount G T U := by
   simp [pairCount, Finset.sum_union hST]
 
+omit [Fintype V] in
 lemma pairCount_union_right {S T U : Finset V} (hST : Disjoint S T) :
     pairCount G U (S ∪ T) = pairCount G U S + pairCount G U T := by
   unfold pairCount
   simp_rw [Finset.sum_union hST]
   exact Finset.sum_add_distrib
 
+omit [DecidableEq V] [Fintype V] in
 lemma pairCount_mono_left {S T U : Finset V} (hST : S ⊆ T) :
     pairCount G S U ≤ pairCount G T U := by
   unfold pairCount
   exact Finset.sum_le_sum_of_subset_of_nonneg hST (fun _ _ _ ↦ Nat.zero_le _)
 
+omit [DecidableEq V] [Fintype V] in
 lemma pairCount_mono_right {S T U : Finset V} (hST : S ⊆ T) :
     pairCount G U S ≤ pairCount G U T := by
   unfold pairCount
@@ -178,6 +187,7 @@ lemma pairCount_mono_right {S T U : Finset V} (hST : S ⊆ T) :
   intro x hx
   exact Finset.sum_le_sum_of_subset_of_nonneg hST (fun _ _ _ ↦ Nat.zero_le _)
 
+omit [DecidableEq V] [Fintype V] in
 lemma pairCount_le_card_mul (G : SimpleGraph V) (S T : Finset V) :
     pairCount G S T ≤ S.card * T.card := by
   unfold pairCount
@@ -193,6 +203,7 @@ lemma pairCount_le_card_mul (G : SimpleGraph V) (S T : Finset V) :
         _ = T.card := by simp
     _ = S.card * T.card := by simp
 
+omit [DecidableEq V] [Fintype V] in
 lemma pairCount_eq_zero_of_forall_not_adj
     {S T : Finset V} (h : ∀ x ∈ S, ∀ y ∈ T, ¬G.Adj x y) :
     pairCount G S T = 0 := by
@@ -203,6 +214,7 @@ lemma pairCount_eq_zero_of_forall_not_adj
   intro y hy
   simp [h x hx y hy]
 
+omit [DecidableEq V] [Fintype V] in
 lemma pairCount_symm (G : SimpleGraph V) (S T : Finset V) :
     pairCount G S T = pairCount G T S := by
   simp only [pairCount]
@@ -213,6 +225,7 @@ lemma pairCount_symm (G : SimpleGraph V) (S T : Finset V) :
   intro x hx
   rw [G.adj_comm]
 
+omit [DecidableEq V] in
 lemma pairCount_univ (G : SimpleGraph V) (S : Finset V) :
     pairCount G S Finset.univ = ∑ x ∈ S, G.degree x := by
   unfold pairCount
@@ -224,14 +237,18 @@ lemma pairCount_univ (G : SimpleGraph V) (S : Finset V) :
     simp
   rw [hnf, Finset.sum_filter]
 
+omit [DecidableEq V] in
 lemma pairCount_univ_of_regular
     {d : ℕ} (hreg : G.IsRegularOfDegree d) (S : Finset V) :
     pairCount G S Finset.univ = S.card * d := by
+  classical
   rw [pairCount_univ]
   simp [hreg.degree_eq]
 
+omit [DecidableEq V] [Fintype V] in
 lemma pairCount_add_compl (G : SimpleGraph V) (S : Finset V) :
     pairCount G S S + pairCount Gᶜ S S = S.card * (S.card - 1) := by
+  classical
   unfold pairCount
   simp only [SimpleGraph.compl_adj]
   rw [← Finset.sum_add_distrib]
@@ -260,8 +277,11 @@ lemma pairCount_add_compl (G : SimpleGraph V) (S : Finset V) :
           rw [heq, Finset.card_erase_of_mem hx]
     _ = S.card * (S.card - 1) := by simp
 
-lemma pairCount_cast_eq_edgeCount (G : SimpleGraph V) (S T : Finset V) :
+omit [DecidableEq V] [Fintype V] in
+lemma pairCount_cast_eq_edgeCount [Finite V] (G : SimpleGraph V) (S T : Finset V) :
     (pairCount G S T : ℝ) = Trichotomy.edgeCount G S T := by
+  classical
+  let := Fintype.ofFinite V
   rw [Trichotomy.edgeCount_eq_sum_degreeInto]
   unfold pairCount
   push_cast
@@ -273,6 +293,7 @@ lemma pairCount_cast_eq_edgeCount (G : SimpleGraph V) (S T : Finset V) :
     rw [Finset.card_eq_sum_ones, ← Finset.sum_filter]
   exact_mod_cast hnat
 
+omit [Fintype V] in
 /-- The missing edges of an induced graph are bounded by the ordered missing
 pairs in its ambient vertex set.  We deliberately keep the harmless factor
 two, since it makes monotonicity under further sampling immediate. -/
@@ -303,6 +324,7 @@ lemma card_compl_edgeFinset_induce_le_pairCount
   rw [hdeg] at htwice
   omega
 
+omit [DecidableEq V] [Fintype V] in
 lemma pairCount_self_le_card_mul_pred
     (G : SimpleGraph V) (S : Finset V) :
     pairCount G S S ≤ S.card * (S.card - 1) := by
@@ -331,6 +353,7 @@ def EdgeMatching (G : SimpleGraph V) [DecidableRel G.Adj]
   M ⊆ G.edgeFinset ∧
     (M : Set (Sym2 V)).Pairwise fun e f ↦ Disjoint (e : Set V) (f : Set V)
 
+omit [DecidableEq V] in
 /-- A maximum-cardinality matching is inclusion-maximal in the only form
 needed below: every outside edge meets an edge of the matching. -/
 lemma exists_maximal_edgeMatching (G : SimpleGraph V) [DecidableRel G.Adj] :
@@ -350,7 +373,7 @@ lemma exists_maximal_edgeMatching (G : SimpleGraph V) [DecidableRel G.Adj] :
   refine ⟨M, ⟨hMsub, hMpair⟩, ?_⟩
   intro e heG heM
   by_contra hdisj
-  push_neg at hdisj
+  push Not at hdisj
   have hpairInsert : ((insert e M : Finset (Sym2 V)) : Set (Sym2 V)).Pairwise
       (fun p q ↦ Disjoint (p : Set V) (q : Set V)) := by
     rw [Finset.coe_insert, Set.pairwise_insert]
@@ -386,6 +409,7 @@ noncomputable instance crossingGraph.instDecidableRel
     (G : SimpleGraph V) (A : Set V) : DecidableRel (crossingGraph G A).Adj :=
   Classical.decRel _
 
+omit [DecidableEq V] [Fintype V] in
 @[simp] lemma crossingGraph_adj {A : Set V} {x y : V} :
     (crossingGraph G A).Adj x y ↔
       G.Adj x y ∧ ((x ∈ A ∧ y ∉ A) ∨ (x ∉ A ∧ y ∈ A)) := Iff.rfl
@@ -511,6 +535,7 @@ theorem no_small_crossing_cover_of_regular_balanced
 def matchingVertices (M : Finset (Sym2 V)) : Finset V :=
   M.biUnion Sym2.toFinset
 
+omit [Fintype V] in
 lemma card_matchingVertices_le (M : Finset (Sym2 V)) :
     (matchingVertices M).card ≤ 2 * M.card := by
   unfold matchingVertices
@@ -595,6 +620,7 @@ lemma card_inter_matchingVertices_le_of_crossing
         · exact hyA h.2
     _ = M.card := by simp
 
+omit [DecidableEq V] [Fintype V] in
 private lemma pairCount_singleton_self_le_pred
     (A : Finset V) {x : V} (hx : x ∈ A) :
     pairCount G {x} A ≤ A.card - 1 := by
@@ -612,6 +638,7 @@ private lemma pairCount_singleton_self_le_pred
       rw [Finset.card_eq_sum_ones, ← Finset.sum_filter]
     _ ≤ A.card - 1 := by omega
 
+omit [Fintype V] in
 private lemma pairCount_singleton_le_cover
     (B C : Finset V) {x : V}
     (h : ∀ y ∈ B, G.Adj x y → y ∈ C) :
@@ -892,6 +919,7 @@ private def halfProbability (_ : V) : ℝ := 1 / 2
 /-- Number of sampled vertices in a fixed test set. -/
 def sampleIntersectionCount (C S : Finset V) : ℝ := ((S ∩ C).card : ℝ)
 
+omit [Fintype V] in
 private lemma sampleIntersectionCount_sum_indicator (C S : Finset V) :
     sampleIntersectionCount C S =
       ∑ v ∈ C, if v ∈ S then (1 : ℝ) else 0 := by
@@ -1001,7 +1029,7 @@ theorem sampleIntersectionCount_twoSided (C : Finset V) {t : ℝ} (ht : 0 ≤ t)
       (C.card : ℝ) / 2 := by
     simpa [U, F] using bernoulliExpectation_half_sampleIntersectionCount C
   have hvariance : (∑ v ∈ U, c v ^ 2) = (C.card : ℝ) := by
-    simpa [U, c] using sum_sampleIntersection_lipschitz_sq C
+    simp [U, c]
   rw [hmean] at hcardR hA hB
   rw [hvariance] at hA hB
   change ((U.powerset.filter fun S ↦
@@ -1047,7 +1075,8 @@ theorem card_familyBadSamples_le [Nonempty V]
       intro C hC
       by_cases hCempty : C = ∅
       · subst C
-        simp only [neg_mul]
+        rw [show bad ∅ = ∅ by simp [bad, sampleIntersectionCount, ht.not_ge]]
+        simp only [Finset.card_empty, Nat.cast_zero]
         positivity
       · have hCpos : (0 : ℝ) < C.card := by
           exact_mod_cast (Finset.card_pos.mpr
@@ -1208,7 +1237,7 @@ lemma bernoulliExpectation_half_survivingEdgeCount
       survivingEdgeCount M S =
         ∑ e ∈ M, if e.toFinset ⊆ S then (1 : ℝ) else 0 := by
     rw [survivingEdgeCount]
-    simp [← Finset.sum_filter]
+    simp
   calc
     ∑ S ∈ (Finset.univ : Finset V).powerset,
           Erdos76.FiniteNibble.bernoulliMass Finset.univ halfProbability S *
@@ -1404,7 +1433,7 @@ lemma compl_pairCount_parts_le
       rw [Nat.cast_mul, Nat.cast_sub (by omega : 1 ≤ A.card)] at hcompAR'
       simpa only [Nat.cast_one] using hcompAR'
     · have hAzero : A.card = 0 := by omega
-      simp [hAzero] at hcompA
+      simp only [hAzero, zero_tsub, mul_zero, Nat.add_eq_zero_iff] at hcompA
       rcases hcompA with ⟨hGA, hcA⟩
       simp [hAzero, hGA, hcA]
   have hcompBR : (pairCount G B B : ℝ) + pairCount Gᶜ B B =
@@ -1415,7 +1444,7 @@ lemma compl_pairCount_parts_le
       rw [Nat.cast_mul, Nat.cast_sub (by omega : 1 ≤ B.card)] at hcompBR'
       simpa only [Nat.cast_one] using hcompBR'
     · have hBzero : B.card = 0 := by omega
-      simp [hBzero] at hcompB
+      simp only [hBzero, zero_tsub, mul_zero, Nat.add_eq_zero_iff] at hcompB
       rcases hcompB with ⟨hGB, hcB⟩
       simp [hBzero, hGB, hcB]
   have hBle : (B.card : ℝ) ≤ n := by nlinarith
@@ -1519,7 +1548,7 @@ theorem matchingSurvivalBad_density_lt
 /-- Two surviving edges of a crossing matching have distinct endpoints on
 both sides and therefore provide the splice edges. -/
 lemma exists_two_sampled_cross_edges
-    (A B S : Finset V) (hAB : Disjoint A B)
+    (A B S : Finset V) (_hAB : Disjoint A B)
     (hcover : A ∪ B = Finset.univ)
     (M : Finset (Sym2 V))
     (hM : EdgeMatching (crossingGraph G (A : Set V)) M)
@@ -1567,6 +1596,7 @@ lemma exists_two_sampled_cross_edges
   exact ⟨a₁, a₂, b₁, b₂, ha₁A, ha₂A, hb₁B, hb₂B,
     ha₁S, ha₂S, hb₁S, hb₂S, ha, hb, hab₁, hab₂⟩
 
+omit [Fintype V] in
 /-- Finset-facing wrapper around the sparse-complement Hamilton-path theorem.
 It produces exactly the `IsSpannedByCycle` predicate used by Erdős 622. -/
 theorem isSpannedByCycle_of_two_sparse_finset_parts

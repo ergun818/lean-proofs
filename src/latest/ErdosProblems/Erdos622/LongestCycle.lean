@@ -55,27 +55,33 @@ def IsLongestPath {a b : V} (p : G.Walk a b) : Prop :=
   p.IsPath ∧
     ∀ ⦃u v : V⦄ (q : G.Walk u v), q.IsPath → q.length ≤ p.length
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 /-- Every nonempty finite graph has a longest path. -/
-theorem exists_isLongestPath [Nonempty V] :
+theorem exists_isLongestPath [Finite V] [Nonempty V] :
     ∃ (a b : V) (p : G.Walk a b), IsLongestPath p := by
+  let := Fintype.ofFinite V
   obtain ⟨a, b, p, hp, hmax⟩ :=
     SimpleGraph.Walk.exists_isPath_forall_isPath_length_le_length G
   exact ⟨a, b, p, hp, fun {_ _} q hq ↦ hmax _ _ q hq⟩
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 /-- A neighbour of the terminal endpoint of a longest path already lies on
 the path; otherwise concatenating that edge makes a longer path. -/
 theorem IsLongestPath.end_neighbor_mem_support {a b z : V}
     {p : G.Walk a b} (hp : IsLongestPath p) (hbz : G.Adj b z) :
     z ∈ p.support := by
+  classical
   by_contra hz
   have hlonger : (p.concat hbz).IsPath := hp.1.concat hz hbz
   have hle := hp.2 (p.concat hbz) hlonger
   simp at hle
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 /-- The analogous endpoint fact at the start of a longest path. -/
 theorem IsLongestPath.start_neighbor_mem_support {a b z : V}
     {p : G.Walk a b} (hp : IsLongestPath p) (hza : G.Adj z a) :
     z ∈ p.support := by
+  classical
   by_contra hz
   have hlonger : (p.cons hza).IsPath := hp.1.cons hz
   have hle := hp.2 (p.cons hza) hlonger
@@ -91,11 +97,13 @@ theorem IsLongestPath.neighborFinset_end_subset_erase {a b : V}
   exact Finset.mem_erase.mpr
     ⟨hbz.ne.symm, List.mem_toFinset.mpr (hp.end_neighbor_mem_support hbz)⟩
 
+omit [DecidableEq V] in
 /-- Consequently, each endpoint degree is at most the length of a longest
 path.  This is the basic numerical input to endpoint-rotation arguments. -/
 theorem IsLongestPath.degree_end_le_length {a b : V}
     {p : G.Walk a b} (hp : IsLongestPath p) :
     G.degree b ≤ p.length := by
+  classical
   rw [← G.card_neighborFinset_eq_degree]
   calc
     (G.neighborFinset b).card ≤ (p.support.toFinset.erase b).card :=
@@ -115,10 +123,12 @@ theorem IsLongestPath.neighborFinset_start_subset_erase {a b : V}
   exact Finset.mem_erase.mpr
     ⟨haz.ne.symm, List.mem_toFinset.mpr (hp.start_neighbor_mem_support haz.symm)⟩
 
+omit [DecidableEq V] in
 /-- The same endpoint degree estimate at the start of a longest path. -/
 theorem IsLongestPath.degree_start_le_length {a b : V}
     {p : G.Walk a b} (hp : IsLongestPath p) :
     G.degree a ≤ p.length := by
+  classical
   rw [← G.card_neighborFinset_eq_degree]
   calc
     (G.neighborFinset a).card ≤ (p.support.toFinset.erase a).card :=
@@ -128,9 +138,11 @@ theorem IsLongestPath.degree_start_le_length {a b : V}
       rw [List.toFinset_card_of_nodup hp.1.support_nodup, p.length_support]
       omega
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 private theorem exists_crossing_of_walk {S : Finset V} {u v : V}
     (q : G.Walk u v) (hu : u ∈ S) (hv : v ∉ S) :
     ∃ x y : V, x ∈ S ∧ y ∉ S ∧ G.Adj x y := by
+  classical
   induction q with
   | nil => exact (hv hu).elim
   | @cons u w v huw q ih =>
@@ -138,6 +150,7 @@ private theorem exists_crossing_of_walk {S : Finset V} {u v : V}
       · exact ih hw hv
       · exact ⟨u, w, hu, hw, huw⟩
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 /-- Closing a sufficiently long path by an edge between its endpoints gives
 a cycle with exactly the same vertex support. -/
 theorem IsLongestPath.exists_isCycle_of_end_adj {a b : V}
@@ -166,13 +179,16 @@ theorem IsLongestPath.exists_isCycle_of_end_adj {a b : V}
     · exact hz
   · exact Or.inr
 
+omit [DecidableRel G.Adj] [Fintype V] in
 /-- The standard cycle-extension consequence of longest-path maximality.
 In a connected graph, if the endpoints of a longest path of length at least
 two are adjacent, then the path visits every vertex exactly once. -/
-theorem IsLongestPath.isHamiltonian_of_connected_of_end_adj {a b : V}
+theorem IsLongestPath.isHamiltonian_of_connected_of_end_adj [Finite V] {a b : V}
     {p : G.Walk a b} (hp : IsLongestPath p) (hconn : G.Connected)
     (hba : G.Adj b a) (hlen : 2 ≤ p.length) :
     p.IsHamiltonian := by
+  classical
+  let := Fintype.ofFinite V
   apply hp.1.isHamiltonian_of_mem
   intro w
   by_contra hw
@@ -244,6 +260,7 @@ does not delete the whole graph. -/
 def VertexConnectedAtLeast (G : SimpleGraph V) (k : ℕ) : Prop :=
   ∀ C : Finset V, C.card < k → (deleteVertices G C).Connected
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 /-- Strong bi-density gives the strict independence-number bound needed in a
 longest-cycle argument. -/
 theorem card_lt_of_isIndepSet_of_biDenseAbove {k b : ℕ}
@@ -258,6 +275,7 @@ theorem card_lt_of_isIndepSet_of_biDenseAbove {k b : ℕ}
   exact DiracStability.not_hasIndependentSetAt_of_biDenseAbove G hDense
     ⟨A', hA'card, hA'ind⟩
 
+omit [Fintype V] in
 private theorem card_union_bound (A C : Finset V) :
     (A ∪ C).card ≤ A.card + C.card := by
   exact Finset.card_union_le A C
@@ -268,6 +286,7 @@ private theorem degree_le_card_add_of_neighbor_subset {v : V}
   rw [← G.card_neighborFinset_eq_degree]
   exact (Finset.card_le_card hsub).trans (card_union_bound A C)
 
+omit [DecidableEq V] in
 /-- The core component-exchange lemma.  Under the two numerical hypotheses,
 any two vertices surviving a deletion of fewer than `k` vertices are
 reachable in the induced surviving graph. -/
@@ -277,6 +296,7 @@ theorem reachable_deleteVertices_of_biDenseAbove
     {C : Finset V} (hC : C.card < k)
     (x y : {v : V // v ∉ C}) :
     (deleteVertices G C).Reachable x y := by
+  classical
   let H : SimpleGraph {v : V // v ∉ C} := deleteVertices G C
   by_contra hxy
   let A' : Finset {v : V // v ∉ C} :=
@@ -309,7 +329,7 @@ theorem reachable_deleteVertices_of_biDenseAbove
       (G := G) hneighbors
     have hxdeg := hDegree x.1
     have hmap : A.card = A'.card := by
-      simpa [A] using Finset.card_map e A'
+      simp [A]
     omega
   have hBcard : k ≤ B.card := by
     have hneighbors : G.neighborFinset y.1 ⊆ B ∪ C := by
@@ -331,7 +351,7 @@ theorem reachable_deleteVertices_of_biDenseAbove
       (G := G) hneighbors
     have hydeg := hDegree y.1
     have hmap : B.card = B'.card := by
-      simpa [B] using Finset.card_map e B'
+      simp [B]
     omega
   have hEmpty :
       @SimpleGraph.interedges V G (Classical.decRel G.Adj) A B = ∅ := by
@@ -355,6 +375,7 @@ theorem reachable_deleteVertices_of_biDenseAbove
   rw [hEmpty] at hpositive
   simp at hpositive
 
+omit [DecidableEq V] in
 /-- Strong bi-density and minimum degree `2k-1` imply vertex-connectivity at
 least `k`.  The separate order hypothesis is used only to produce a surviving
 vertex after a deletion; reachability itself is supplied by the preceding
@@ -364,10 +385,11 @@ theorem vertexConnectedAtLeast_of_biDenseAbove
     (hDense : DiracStability.BiDenseAbove G k 0)
     (hDegree : ∀ v : V, 2 * k ≤ G.degree v + 1) :
     VertexConnectedAtLeast G k := by
+  classical
   intro C hC
   have hsurvives : ∃ v : V, v ∉ C := by
     by_contra hnot
-    push_neg at hnot
+    push Not at hnot
     have huniv : (Finset.univ : Finset V) ⊆ C := by
       intro v _
       exact hnot v
@@ -379,6 +401,7 @@ theorem vertexConnectedAtLeast_of_biDenseAbove
   exact ⟨fun x y ↦
     reachable_deleteVertices_of_biDenseAbove hDense hDegree hC x y⟩
 
+omit [DecidableEq V] in
 /-- A packaged form of the two deterministic consequences needed before the
 longest-cycle exchange: `k`-vertex-connectivity and independence number
 strictly below `k`. -/
@@ -388,6 +411,7 @@ theorem connectivity_and_independence_of_biDenseAbove
     (hDegree : ∀ v : V, 2 * k ≤ G.degree v + 1) :
     VertexConnectedAtLeast G k ∧
       ∀ A : Finset V, G.IsIndepSet (A : Set V) → A.card < k := by
+  classical
   exact ⟨vertexConnectedAtLeast_of_biDenseAbove hkV hDense hDegree,
     fun _ hA ↦ card_lt_of_isIndepSet_of_biDenseAbove hDense hA⟩
 

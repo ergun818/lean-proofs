@@ -377,14 +377,17 @@ theorem exists_balancedOrientation (G : SimpleGraph V) [DecidableRel G.Adj] (k :
         rw [hv, Finset.card_product]
         simp
 
+omit [DecidableEq V] in
 /-- The one-step Petersen factor theorem. -/
 theorem exists_twoFactor (G : SimpleGraph V) [DecidableRel G.Adj] (k : ℕ) (hk : 0 < k)
     (hreg : G.IsRegularOfDegree (2 * k)) :
     ∃ H : SimpleGraph V, H ≤ G ∧ H.IsRegularOfDegree 2 := by
+  classical
   obtain ⟨O⟩ := exists_balancedOrientation G k hk hreg
   obtain ⟨p, hp⟩ := O.exists_arc_equiv hk hreg
   exact ⟨O.arcFactor p hp, O.arcFactor_le p hp, O.arcFactor_regular p hp⟩
 
+omit [DecidableEq V] in
 theorem sdiff_twoFactor_regular {G H : SimpleGraph V}
     [DecidableRel G.Adj] [DecidableRel H.Adj] {k : ℕ}
     (hle : H ≤ G) (hG : G.IsRegularOfDegree (2 * (k + 1)))
@@ -410,6 +413,7 @@ structure TwoFactorization (G : SimpleGraph V) (k : ℕ) where
   disjoint : ∀ i j, i ≠ j → Disjoint (factor i) (factor j)
   iSup_eq : ⨆ i, factor i = G
 
+omit [DecidableEq V] in
 /-- Petersen's factorization theorem: every finite `2k`-regular simple graph
 is the edge-disjoint union of `k` spanning two-factors. -/
 theorem exists_twoFactorization (G : SimpleGraph V) [DecidableRel G.Adj] (k : ℕ)
@@ -436,7 +440,7 @@ theorem exists_twoFactorization (G : SimpleGraph V) [DecidableRel G.Adj] (k : �
         exact Fin.elim0 i
       · intro i
         exact Fin.elim0 i
-      · simpa [F, hGbot]
+      · simp [F, hGbot]
   | succ k ih =>
       obtain ⟨H, hHG, hHreg⟩ := exists_twoFactor G (k + 1) (by omega) hreg
       let R : SimpleGraph V := G \ H

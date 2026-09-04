@@ -26,7 +26,7 @@ namespace Erdos622
 namespace TwoLargeCase
 
 open Filter Finset Real Set
-open scoped BigOperators Topology SimpleGraph
+open scoped BigOperators Topology _root_.SimpleGraph
 
 attribute [local instance] Classical.propDecidable
 
@@ -51,7 +51,6 @@ lemma standardized_balanced_window_bounds
   have hnum :
       (2 * (x + (n - y)) : ℝ) - (2 * n : ℝ) =
         2 * ((x : ℝ) - y) := by
-    push_cast [Nat.cast_sub hy]
     ring
   constructor
   · have hu := hwindow.2
@@ -214,7 +213,7 @@ This is stated without a normalized parameter so it can be used in either
 orientation of the bounded-internal construction. -/
 lemma matching_floor_capacity
     {c : ℕ} {s eps sigma : ℝ}
-    (hs : 0 < s) (hsigma : 0 < sigma)
+    (hs : 0 < s) (_hsigma : 0 < sigma)
     (hepsc : eps * c ≤ sigma * s / 2)
     (hlarge : 1 ≤ sigma * s / 2) :
     ((c : ℝ) / s / 4 - sigma) * s ≤
@@ -575,11 +574,11 @@ theorem eventually_compact_twoLargeCover_goodSample_count
     let right : ℕ := ⌊(1 / 4 - eps) * (D.card : ℝ)⌋₊
     have hleftCap : (alpha / 4 - sigma) * Real.sqrt n ≤ left := by
       dsimp [alpha, beta]
-      convert hleftCapBeta using 1 <;> field_simp [hsqrt.ne']
+      convert hleftCapBeta using 1; field_simp [hsqrt.ne']
     have hrightCap : (1 / alpha - sigma) * Real.sqrt n ≤ right := by
       have hcap := matching_floor_capacity hsqrt hsigma hepsD hnRound
       dsimp [alpha, beta, right]
-      convert hcap using 1 <;> field_simp [hsqrt.ne']
+      convert hcap using 1; field_simp [hsqrt.ne']
     have htransferBad := hnTransfer T (hTcard.trans_le hdUpper)
     by_cases hdLarge : sqrtCoverThreshold K₀ n < A.card - n
     · have horiginalBad := hnOriginal G A B hreg hAB hdUpper hdLarge

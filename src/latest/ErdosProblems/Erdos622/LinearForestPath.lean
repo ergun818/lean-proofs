@@ -32,11 +32,13 @@ attribute [local instance] Classical.propDecidable
 
 variable {V : Type*} [Fintype V] [DecidableEq V]
 
+omit [DecidableEq V] [Fintype V] in
 /-- A walk from a vertex in `S` to a vertex outside `S` uses a first edge
 which crosses from `S` to its complement. -/
 private theorem exists_crossing_of_walk {P : SimpleGraph V} {S : Finset V}
     {u v : V} (q : P.Walk u v) (hu : u ∈ S) (hv : v ∉ S) :
     ∃ x y : V, x ∈ S ∧ y ∉ S ∧ P.Adj x y := by
+  classical
   induction q with
   | nil => exact (hv hu).elim
   | @cons u w v huw q ih =>
@@ -64,7 +66,6 @@ theorem exists_spanning_path_of_preconnected_support
     have hle := hmax x y hxy.toWalk (SimpleGraph.Walk.IsPath.of_adj hxy)
     simpa using hle
   have hnon : ¬p.Nil := SimpleGraph.Walk.not_nil_iff_lt_length.mpr hlen
-
   have hstart : P.neighborSet a = {p.snd} := by
     ext z
     simp only [SimpleGraph.mem_neighborSet, Set.mem_singleton_iff]
@@ -91,7 +92,6 @@ theorem exists_spanning_path_of_preconnected_support
       exact hP.1.eq_penultimate_of_adj_end hp hbz hz
     · rintro rfl
       exact (p.adj_penultimate hnon).symm
-
   have hsupp : p.support.toFinset = P.support.toFinset := by
     apply Finset.Subset.antisymm
     · intro v hv
@@ -148,7 +148,6 @@ theorem exists_spanning_path_of_preconnected_support
             exact hzw
           exact hw (List.mem_toFinset.mpr
             (p.mem_support_of_adj_toSubgraph hzw'.symm))
-
   refine ⟨a, b, p, hp, hsupp, ?_, ?_⟩
   · rw [hstart]
     simp

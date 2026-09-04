@@ -103,6 +103,7 @@ def cycleWalk (G : SimpleGraph V) (s : ℕ)
     G.Walk (cycleStart G s C) (cycleStart G s C) :=
   Classical.choose (Classical.choose_spec C.2)
 
+omit [DecidableEq V] in
 theorem cycleWalk_spec (G : SimpleGraph V) (s : ℕ)
     (C : ShortCycleSupport G s) :
     (cycleWalk G s C).IsCycle ∧
@@ -186,6 +187,7 @@ theorem dependency_containsSupportOverlaps (G : SimpleGraph V) (s : ℕ) :
   simp only [dependency, mem_filter, mem_univ, true_and]
   exact ⟨hij.symm, hoverlap⟩
 
+omit [DecidableEq V] in
 /-- A short-cycle support has cardinality equal to the length of any cycle
 witnessing it. -/
 theorem card_shortCycleSupport_eq_length {G : SimpleGraph V} {s : ℕ}
@@ -193,6 +195,7 @@ theorem card_shortCycleSupport_eq_length {G : SimpleGraph V} {s : ℕ}
     (hp : p.IsCycle)
     (hC : ∀ e : Edge G, e ∈ C.1 ↔ e.1 ∈ p.edges) :
     C.1.card = p.length := by
+  classical
   have hcardEdges : p.edges.toFinset.card = p.length := by
     rw [List.toFinset_card_of_nodup hp.edges_nodup, p.length_edges]
   calc
@@ -210,11 +213,13 @@ theorem card_shortCycleSupport_eq_length {G : SimpleGraph V} {s : ℕ}
         refine ⟨⟨e, heG⟩, (hC ⟨e, heG⟩).mpr heList, rfl⟩
     _ = p.length := hcardEdges
 
+omit [DecidableEq V] in
 /-- Consequently every indexed cycle support has between three and `s`
 coordinates. -/
 theorem shortCycleSupport_card_bounds {G : SimpleGraph V} {s : ℕ}
     (C : ShortCycleSupport G s) :
     3 ≤ C.1.card ∧ C.1.card ≤ s := by
+  classical
   rcases C.2 with ⟨v, p, hp, hps, hC⟩
   rw [card_shortCycleSupport_eq_length C hp hC]
   exact ⟨hp.three_le_length, hps⟩
@@ -350,6 +355,7 @@ def RootedCycleWalk.toWalkFrom (G : SimpleGraph V) {n : ℕ} {u : V}
     rw [SimpleGraph.Walk.length_dropLast, p.1.2]
     omega⟩⟩
 
+omit [DecidableEq V] [Fintype V] in
 @[simp] theorem closeWalkFrom_toWalkFrom (G : SimpleGraph V)
     {n : ℕ} {u : V} (p : RootedCycleWalk G n u) :
     closeWalkFrom G p.toWalkFrom = p.1.1 := by
@@ -357,11 +363,14 @@ def RootedCycleWalk.toWalkFrom (G : SimpleGraph V) {n : ℕ} {u : V}
   rw [dif_pos (p.1.1.adj_penultimate p.2.not_nil)]
   exact p.1.1.concat_dropLast _
 
-theorem RootedCycleWalk.toWalkFrom_injective (G : SimpleGraph V)
+omit [DecidableEq V] [Fintype V] in
+theorem RootedCycleWalk.toWalkFrom_injective [Finite V] (G : SimpleGraph V)
     {n : ℕ} {u : V} :
     Function.Injective
       (RootedCycleWalk.toWalkFrom G :
         RootedCycleWalk G n u → WalkFrom G u n) := by
+  classical
+  let := Fintype.ofFinite V
   intro p q hpq
   apply Subtype.ext
   apply Subtype.ext
@@ -521,6 +530,7 @@ def EdgeRootedCycleWalk.toWalkFrom (G : SimpleGraph V)
     rw [SimpleGraph.Walk.length_dropLast, p.1.2]
     omega⟩⟩
 
+omit [DecidableEq V] [Fintype V] in
 @[simp] theorem closeEdgeWalkFrom_toWalkFrom (G : SimpleGraph V)
     {n : ℕ} {u v : V} {huv : G.Adj u v}
     (p : EdgeRootedCycleWalk G n huv) :
@@ -538,11 +548,14 @@ def EdgeRootedCycleWalk.toWalkFrom (G : SimpleGraph V)
   rw [dif_pos (p.1.1.adj_penultimate hpnot)]
   rw [p.1.1.concat_dropLast]
 
-theorem EdgeRootedCycleWalk.toWalkFrom_injective (G : SimpleGraph V)
+omit [DecidableEq V] [Fintype V] in
+theorem EdgeRootedCycleWalk.toWalkFrom_injective [Finite V] (G : SimpleGraph V)
     {n : ℕ} {u v : V} {huv : G.Adj u v} :
     Function.Injective
       (EdgeRootedCycleWalk.toWalkFrom G :
         EdgeRootedCycleWalk G n huv → WalkFrom G v n) := by
+  classical
+  let := Fintype.ofFinite V
   intro p q hpq
   apply Subtype.ext
   apply Subtype.ext
@@ -559,6 +572,7 @@ theorem card_edgeRootedCycleWalk_le_pow (G : SimpleGraph V) (D : ℕ)
     (EdgeRootedCycleWalk.toWalkFrom_injective G)).trans
       (card_walkFrom_le G D hdegree n v)
 
+omit [DecidableEq V] [Fintype V] in
 private lemma snd_dropLast_eq_snd_of_two_le_length {G : SimpleGraph V}
     {u v : V} (p : G.Walk u v) (hp : 2 ≤ p.length) :
     p.dropLast.snd = p.snd := by
@@ -591,6 +605,7 @@ def EdgeRootedCycleWalk.ofCycle (G : SimpleGraph V)
     rw [heq]
     exact hp
 
+omit [DecidableEq V] [Fintype V] in
 @[simp] lemma EdgeRootedCycleWalk.cons_ofCycle (G : SimpleGraph V)
     {n : ℕ} {u v : V} (huv : G.Adj u v) (p : G.Walk u u)
     (hp : p.IsCycle) (hlength : p.length = n + 2) (hsnd : p.snd = v) :
@@ -603,7 +618,7 @@ def EdgeRootedCycleWalk.ofCycle (G : SimpleGraph V)
 
 /-- The edge coordinate underlying a graph dart. -/
 def dartEdgeCoordinate (G : SimpleGraph V) (d : G.Dart) : Edge G :=
-  ⟨d.edge, by simpa [SimpleGraph.mem_edgeFinset] using d.edge_mem⟩
+  ⟨d.edge, by simp⟩
 
 /-- Exact-length short-cycle supports containing a prescribed oriented edge.
 Membership is undirected; the orientation only fixes a canonical code. -/
@@ -627,6 +642,7 @@ def ShortCycleSupportAtDartLength.toVertex
   · refine ⟨dartEdgeCoordinate G d, C.2.2, ?_⟩
     simp [dartEdgeCoordinate, SimpleGraph.Dart.edge]
 
+omit [DecidableEq V] in
 /-- A cycle support containing `d` admits a cyclic enumeration whose first
 oriented edge is exactly `d`. -/
 lemma exists_oriented_cycleWalk_of_mem_dart
@@ -635,6 +651,7 @@ lemma exists_oriented_cycleWalk_of_mem_dart
     ∃ p : G.Walk d.fst d.fst,
       p.IsCycle ∧ p.length = n + 2 ∧ p.snd = d.snd ∧
         ∀ e : Edge G, e ∈ C.1.1 ↔ e.1 ∈ p.edges := by
+  classical
   let Cv := C.toVertex
   let p : G.Walk d.fst d.fst := Cv.toRootedCycleWalk.1.1
   have hpcycle : p.IsCycle := Cv.toRootedCycleWalk.2
@@ -661,7 +678,7 @@ lemma exists_oriented_cycleWalk_of_mem_dart
       · exact h.2.symm
     refine ⟨p.reverse, hpcycle.reverse, ?_, ?_, ?_⟩
     · simpa using hplength
-    · simpa [SimpleGraph.Walk.snd_reverse, hsnd]
+    · simp [SimpleGraph.Walk.snd_reverse, hsnd]
     · intro e
       rw [hsupport e]
       simp
@@ -683,6 +700,7 @@ def orientedCycleWalk {G : SimpleGraph V} {s n : ℕ} {d : G.Dart}
     (C : ShortCycleSupportAtDartLength G s n d) : G.Walk d.fst d.fst :=
   Classical.choose (exists_oriented_cycleWalk_of_mem_dart C)
 
+omit [DecidableEq V] in
 theorem orientedCycleWalk_spec {G : SimpleGraph V} {s n : ℕ} {d : G.Dart}
     (C : ShortCycleSupportAtDartLength G s n d) :
     (orientedCycleWalk C).IsCycle ∧
@@ -699,6 +717,7 @@ def ShortCycleSupportAtDartLength.toEdgeRootedCycleWalk
     (orientedCycleWalk_spec C).1 (orientedCycleWalk_spec C).2.1
     (orientedCycleWalk_spec C).2.2.1
 
+omit [DecidableEq V] in
 lemma ShortCycleSupportAtDartLength.mem_iff_mem_toEdgeRootedCycleWalk_edges
     {G : SimpleGraph V} {s n : ℕ} {d : G.Dart}
     (C : ShortCycleSupportAtDartLength G s n d) (e : Edge G) :
@@ -707,9 +726,9 @@ lemma ShortCycleSupportAtDartLength.mem_iff_mem_toEdgeRootedCycleWalk_edges
         C.toEdgeRootedCycleWalk.1.1).edges := by
   rw [(orientedCycleWalk_spec C).2.2.2 e]
   unfold ShortCycleSupportAtDartLength.toEdgeRootedCycleWalk
-  change e.1 ∈ (orientedCycleWalk C).edges ↔ _
   rw [EdgeRootedCycleWalk.cons_ofCycle]
 
+omit [DecidableEq V] in
 theorem ShortCycleSupportAtDartLength.toEdgeRootedCycleWalk_injective
     {G : SimpleGraph V} {s n : ℕ} {d : G.Dart} :
     Function.Injective
@@ -735,8 +754,9 @@ theorem card_shortCycleSupportAtDartLength_le_pow
     ShortCycleSupportAtDartLength.toEdgeRootedCycleWalk_injective).trans
       (card_edgeRootedCycleWalk_le_pow G D hdegree n d.adj)
 
+omit [DecidableEq V] [Fintype V] in
 private theorem sym2_mk_out (e : Sym2 V) : s(e.out.1, e.out.2) = e := by
-  simpa [Sym2.mk] using e.out_eq
+  simp [Sym2.mk]
 
 /-- A deterministic orientation of an edge coordinate. -/
 def edgeDart (G : SimpleGraph V) (e : Edge G) : G.Dart :=
@@ -744,6 +764,7 @@ def edgeDart (G : SimpleGraph V) (e : Edge G) : G.Dart :=
     rw [← G.mem_edgeSet, sym2_mk_out]
     exact SimpleGraph.mem_edgeFinset.mp e.2⟩
 
+omit [DecidableEq V] in
 @[simp] theorem dartEdgeCoordinate_edgeDart (G : SimpleGraph V) (e : Edge G) :
     dartEdgeCoordinate G (edgeDart G e) = e := by
   apply Subtype.ext
@@ -808,7 +829,7 @@ theorem card_filter_cycle_overlap_cycle_le
 /-- Exact mass of the event that all coordinates in `C` are selected in an
 independent, constant-parameter Bernoulli edge sample. -/
 theorem cycle_eventMass_eq_pow {G : SimpleGraph V} (q : ℝ)
-    (hq0 : 0 ≤ q) (hq1 : q ≤ 1) (C : Finset (Edge G)) :
+    (_hq0 : 0 ≤ q) (_hq1 : q ≤ 1) (C : Finset (Edge G)) :
     Erdos76.FiniteLocalLemma.eventMass
         (fun S : Finset (Edge G) ↦
           Erdos76.FiniteNibble.bernoulliMass Finset.univ (fun _ ↦ q) S)
@@ -989,7 +1010,7 @@ theorem restricted_card_outside_mass_le {E : Type*} [Fintype E]
       split_ifs <;> linarith
     · by_cases hup : upper < T.card
       · have hup' : upper + 1 ≤ T.card := by omega
-        simp [event, hlo, hup, hup', hw]
+        simp [event, hlo, hup, hup']
       · have hup' : ¬ upper + 1 ≤ T.card := by omega
         simp [event, hlo, hup, hup']
   calc
@@ -1191,10 +1212,11 @@ theorem sum_dependency_eq_parts (G : SimpleGraph V) (s : ℕ)
 
 /-- The elementary product estimate used below.  It is the finite union
 bound in multiplicative form. -/
-theorem one_sub_sum_le_prod_one_sub {I : Type*} [DecidableEq I]
+theorem one_sub_sum_le_prod_one_sub {I : Type*}
     (T : Finset I) (x : I → ℝ)
     (hx0 : ∀ i ∈ T, 0 ≤ x i) (hx1 : ∀ i ∈ T, x i ≤ 1) :
     1 - ∑ i ∈ T, x i ≤ ∏ i ∈ T, (1 - x i) := by
+  classical
   induction T using Finset.induction_on with
   | empty => simp
   | @insert a T ha ih =>
@@ -1261,11 +1283,12 @@ theorem card_dependencyVertices_cycle_le (G : SimpleGraph V) (s : ℕ)
     _ = 2 * C.1.card := by omega
 
 /-- Partitioning a finite sum by a bounded natural-valued size. -/
-theorem sum_eq_sum_size_fibers {I : Type*} [DecidableEq I]
+theorem sum_eq_sum_size_fibers {I : Type*}
     (T : Finset I) (size : I → ℕ) (s : ℕ) (f : I → ℝ)
     (hsize : ∀ i ∈ T, size i ≤ s) :
     (∑ i ∈ T, f i) =
       ∑ k ∈ Finset.range (s + 1), ∑ i ∈ T.filter (fun i ↦ size i = k), f i := by
+  classical
   calc
     (∑ i ∈ T, f i) =
         ∑ i ∈ T, ∑ k ∈ Finset.range (s + 1),
@@ -1464,6 +1487,7 @@ theorem sum_dependencyCycles_cycle_weight_le
       simp [nsmul_eq_mul]
       field_simp
 
+omit [DecidableEq V] in
 theorem eventWeight_nonneg (G : SimpleGraph V) (s D : ℕ) :
     ∀ i : Event G s, 0 ≤ eventWeight G s D i := by
   rintro (v | C)
@@ -1472,6 +1496,7 @@ theorem eventWeight_nonneg (G : SimpleGraph V) (s D : ℕ) :
       (mul_nonneg (by norm_num) (Nat.cast_nonneg (s + 1)))
       (pow_nonneg (Nat.cast_nonneg D) _)
 
+omit [DecidableEq V] in
 theorem eventWeight_lt_one (G : SimpleGraph V) (s D : ℕ) (hD : 2 ≤ D) :
     ∀ i : Event G s, eventWeight G s D i < 1 := by
   rintro (v | C)
@@ -1591,7 +1616,7 @@ parameter inequalities. -/
 theorem exists_avoiding_of_lll_parameters
     (G : SimpleGraph V) (s lower upper D : ℕ)
     (q vertexBound : ℝ) (hD : 2 ≤ D)
-    (hq0 : 0 ≤ q) (hq1 : q ≤ 1) (hvertexBound0 : 0 ≤ vertexBound)
+    (hq0 : 0 ≤ q) (hq1 : q ≤ 1) (_hvertexBound0 : 0 ≤ vertexBound)
     (hparameter : ∀ i : Event G s,
       eventBound G s q vertexBound i ≤
         eventWeight G s D i *
@@ -1716,20 +1741,23 @@ def sampledGraph (G : SimpleGraph V) (S : Finset (Edge G)) : SimpleGraph V where
     have heSet : e.1 ∈ G.edgeSet := SimpleGraph.mem_edgeFinset.mp e.2
     have hadj : G.Adj v v := by
       rw [← SimpleGraph.mem_edgeSet]
-      simpa [hval] using heSet
+      simp [hval] at heSet
     exact G.loopless.irrefl v hadj
     ⟩
 
+omit [DecidableEq V] in
 @[simp] theorem sampledGraph_adj {G : SimpleGraph V} {S : Finset (Edge G)}
     {v w : V} :
     (sampledGraph G S).Adj v w ↔
       ∃ e : Edge G, e ∈ S ∧ e.1 = s(v, w) :=
   Iff.rfl
 
+omit [DecidableEq V] in
 /-- The finite edge set of the sampled graph is the image of the sampled
 coordinate set. -/
 theorem edgeFinset_sampledGraph (G : SimpleGraph V) (S : Finset (Edge G)) :
     (sampledGraph G S).edgeFinset = S.map (edgeValEmbedding G) := by
+  classical
   ext e
   induction e using Sym2.inductionOn with
   | _ v w =>
@@ -1741,6 +1769,7 @@ theorem edgeFinset_sampledGraph (G : SimpleGraph V) (S : Finset (Edge G)) :
       · rintro ⟨f, hf, hval⟩
         exact ⟨f, hf, hval⟩
 
+omit [DecidableEq V] in
 /-- A sampled graph is a spanning subgraph of its host. -/
 theorem sampledGraph_le (G : SimpleGraph V) (S : Finset (Edge G)) :
     sampledGraph G S ≤ G := by
@@ -1748,7 +1777,7 @@ theorem sampledGraph_le (G : SimpleGraph V) (S : Finset (Edge G)) :
   rintro ⟨e, _he, hval⟩
   have heSet : e.1 ∈ G.edgeSet := SimpleGraph.mem_edgeFinset.mp e.2
   rw [← SimpleGraph.mem_edgeSet]
-  simpa [hval] using heSet
+  exact hval ▸ heSet
 
 /-- Incidence coordinates selected at `v` map exactly to the sampled graph's
 ordinary incidence finset. -/
@@ -1767,6 +1796,7 @@ theorem degree_sampledGraph (G : SimpleGraph V) (S : Finset (Edge G))
   rw [sampledDegree, ← SimpleGraph.card_incidenceFinset_eq_degree,
     ← map_sampled_incidence G S v, card_map]
 
+omit [DecidableEq V] in
 /-- Avoiding every indexed short-cycle event forces extended girth at least
 `s + 1`.  This formulation also covers an acyclic sampled graph, whose
 extended girth is infinite. -/
@@ -1774,6 +1804,7 @@ theorem succ_le_egirth_sampledGraph_of_avoid
     (G : SimpleGraph V) (S : Finset (Edge G)) (s : ℕ)
     (havoid : ∀ C : ShortCycleSupport G s, ¬ C.1 ⊆ S) :
     ((s + 1 : ℕ) : ℕ∞) ≤ (sampledGraph G S).egirth := by
+  classical
   rw [SimpleGraph.le_egirth]
   intro v p hp
   let hle : sampledGraph G S ≤ G := sampledGraph_le G S
@@ -2029,6 +2060,7 @@ theorem alon_vertex_bound_le
 
 /-! ## The sparse-subgraph extraction theorem -/
 
+omit [DecidableEq V] in
 /-- Pointwise form of Alon's sparse-subgraph lemma.  The assumptions are
 exactly the six scalar inequalities which hold for all sufficiently large
 `D`; all graph- and probability-dependent work has already been discharged
@@ -2048,6 +2080,7 @@ theorem exists_alon_sparse_subgraph_of_conditions
       ((alonGirthCutoff D + 1 : ℕ) : ℕ∞) ≤ H.egirth ∧
       ∀ v, alonLowerDegree D ≤ H.degree v ∧
         H.degree v ≤ alonUpperDegree D := by
+  classical
   have hDpos : 0 < D := by omega
   have hDtwo : 2 ≤ D := by omega
   have hlogOne : 1 < alonLogDegree D := lt_of_lt_of_le (by norm_num) hlog

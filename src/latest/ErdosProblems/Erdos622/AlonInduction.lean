@@ -136,12 +136,15 @@ end Cover
 def edgeRemainder (G H : SimpleGraph V) : SimpleGraph V :=
   G.deleteEdges H.edgeSet
 
+omit [Fintype V] in
 lemma edgeRemainder_le (G H : SimpleGraph V) : edgeRemainder G H ≤ G :=
   SimpleGraph.deleteEdges_le H.edgeSet
 
+omit [Fintype V] in
 /-- A subgraph and its edge remainder cover the original graph. -/
-lemma sup_edgeRemainder_eq {G H : SimpleGraph V} (hHG : H ≤ G) :
+lemma sup_edgeRemainder_eq [Finite V] {G H : SimpleGraph V} (hHG : H ≤ G) :
     H ⊔ edgeRemainder G H = G := by
+  let := Fintype.ofFinite V
   apply le_antisymm
   · exact sup_le hHG (edgeRemainder_le G H)
   · intro v w hvw
@@ -152,21 +155,24 @@ lemma sup_edgeRemainder_eq {G H : SimpleGraph V} (hHG : H ≤ G) :
       refine ⟨hvw, ?_⟩
       simpa only [SimpleGraph.mem_edgeSet] using hH
 
+omit [Fintype V] in
 /-- At each vertex, the remainder neighbour set is the set difference of the
 host and sampled-block neighbour sets. -/
-lemma neighborSet_edgeRemainder {G H : SimpleGraph V} (hHG : H ≤ G) (v : V) :
+lemma neighborSet_edgeRemainder {G H : SimpleGraph V} (_hHG : H ≤ G) (v : V) :
     (edgeRemainder G H).neighborSet v = G.neighborSet v \ H.neighborSet v := by
   ext w
   simp only [SimpleGraph.mem_neighborSet, Set.mem_sdiff, edgeRemainder,
     SimpleGraph.deleteEdges_adj, SimpleGraph.mem_edgeSet]
 
+omit [Fintype V] in
 /-- In a `D`-regular host, removing a block of minimum degree at least `q`
 leaves maximum degree at most `D-q`. -/
-lemma ncard_neighborSet_edgeRemainder_le {G H : SimpleGraph V}
+lemma ncard_neighborSet_edgeRemainder_le [Finite V] {G H : SimpleGraph V}
     (hHG : H ≤ G) {D q : ℕ}
     (hregular : ∀ v, (G.neighborSet v).ncard = D)
     (hminimum : ∀ v, q ≤ (H.neighborSet v).ncard) (v : V) :
     ((edgeRemainder G H).neighborSet v).ncard ≤ D - q := by
+  let := Fintype.ofFinite V
   rw [neighborSet_edgeRemainder hHG,
     Set.ncard_sdiff' (SimpleGraph.neighborSet_mono hHG v), hregular v]
   exact Nat.sub_le_sub_left (hminimum v) D
@@ -319,7 +325,7 @@ theorem blockCost_le_of_normalizedBlockCost_le
         normalizedBlockCost upper lower girth * lower / 2 := by
     rw [normalizedBlockCost]
     field_simp
-    <;> ring
+   ; ring
   rw [hidentity] at hcost
   exact hcost.trans (div_le_div_of_nonneg_right
     (mul_le_mul_of_nonneg_right hnormalized hlower.le) (by norm_num))
@@ -919,7 +925,7 @@ theorem eventually_alonGroupedCost_le {eta : ℝ} (heta : 0 < eta) :
   have hdiv : (alonGroupedCost D : ℝ) / (alonLowerDegree D : ℝ) <
       (1 + eta) / 2 := by
     exact (div_le_div_of_nonneg_right hcost hLR.le).trans_lt (by
-      convert hD using 1 <;> field_simp)
+      convert hD using 1; field_simp)
   calc
     (alonGroupedCost D : ℝ) ≤ ((1 + eta) / 2) * (alonLowerDegree D : ℝ) :=
       ((div_lt_iff₀ hLR).mp hdiv).le
@@ -976,10 +982,11 @@ theorem hasRegularPeelingSteps_of_eventualAlonSparseBlockSelection
 /-- The recurrence behind Alon's proof.  Notice that the induction is on the
 declared degree bound `D`, not on a graph-dependent maximum operation. -/
 theorem PeelingData.exists_cover_bound {eta : ℝ} (p : PeelingData.{u} eta)
-    (heta : 0 ≤ eta) (G : SimpleGraph V) [DecidableRel G.Adj] (D : ℕ)
+    (heta : 0 ≤ eta) (G : SimpleGraph V) (D : ℕ)
     (hdegree : ∀ v, (G.neighborSet v).ncard ≤ D) :
     ∃ k : ℕ, Nonempty (Cover G k) ∧
       (k : ℝ) ≤ (1 + eta) * (D : ℝ) / 2 + p.baseCost := by
+  classical
   induction D using Nat.strong_induction_on generalizing V G with
   | h D ih =>
       by_cases hsmall : D ≤ p.threshold
@@ -1048,13 +1055,14 @@ lemma baseCost_le_quarter_epsilon_mul_degree {epsilon : ℝ}
 theorem PeelingData.exists_decomposition_epsilon
     {epsilon : ℝ} (hepsilon : 0 < epsilon)
     (p : PeelingData.{u} (epsilon / 2))
-    (G : SimpleGraph V) [DecidableRel G.Adj] (D : ℕ)
+    (G : SimpleGraph V) (D : ℕ)
     (hD : absorptionThreshold epsilon p.baseCost ≤ D)
     (hDtwo : 2 ≤ D)
     (hdegree : ∀ v, (G.neighborSet v).ncard ≤ D) :
     ∃ k : ℕ, 0 < k ∧
       (k : ℝ) ≤ (1 + epsilon) * (D : ℝ) / 2 ∧
       Nonempty (Decomposition G k) := by
+  classical
   obtain ⟨k, ⟨ck⟩, hk⟩ := p.exists_cover_bound (by positivity) G D hdegree
   have hc := baseCost_le_quarter_epsilon_mul_degree hepsilon p.baseCost D hD
   have hbound : (k : ℝ) ≤ (1 + epsilon) * (D : ℝ) / 2 := by

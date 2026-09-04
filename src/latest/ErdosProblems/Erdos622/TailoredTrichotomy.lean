@@ -61,8 +61,9 @@ private theorem disjoint_sdiff_outside (A B : Finset V) :
   exact (Finset.mem_sdiff.mp hvO).2
     (Finset.mem_union_right _ (Finset.mem_sdiff.mp hvB).1)
 
+omit [Fintype V] in
 private theorem card_sdiff_of_equal_card {A B : Finset V}
-    (hcard : A.card = B.card) :
+    (_hcard : A.card = B.card) :
     (A \ B).card = A.card - (A ∩ B).card := by
   rw [Finset.card_sdiff]
   rw [Finset.inter_comm B A]
@@ -118,14 +119,16 @@ theorem twoCliqueSeed_of_sparse_of_overlap_small {n : ℕ}
   · ext v
     simp [C]
 
+omit [Fintype V] in
 /-- The ordered number of internal edges of a half-set is controlled by a
 sparse pair of almost coincident half-sets. -/
-theorem internal_small_of_sparse_of_overlap_large {n : ℕ}
+theorem internal_small_of_sparse_of_overlap_large [Finite V] {n : ℕ}
     (G : SimpleGraph V) {ε : ℝ} {A B : Finset V}
     (hA : IsHalfSet n A) (hB : IsHalfSet n B)
     (hsparse : edgeCount G A B < ε * (2 * n : ℝ) ^ 2)
     (hoverlap : (n : ℝ) - 5 * ε * (2 * n : ℝ) < (A ∩ B).card) :
     edgeCount G A A < 4 * ε * (2 * n : ℝ) ^ 2 := by
+  let := Fintype.ofFinite V
   have hcard : A.card = B.card := by simpa [IsHalfSet] using hA.trans hB.symm
   have hdiffCard : (A \ B).card = n - (A ∩ B).card := by
     rw [card_sdiff_of_equal_card hcard]
@@ -234,7 +237,6 @@ theorem seed_trichotomy {n : ℕ} (G : SimpleGraph V)
     have heq : (((n - (A ∩ B).card : ℕ) : ℕ) : ℝ) =
         (2 * n : ℝ) / 2 - ((A ∩ B).card : ℝ) := by
       rw [Nat.cast_sub hcard]
-      push_cast
       ring
     rw [heq] at hbase
     exact hbase.trans_lt hsparse
@@ -246,7 +248,7 @@ theorem seed_trichotomy {n : ℕ} (G : SimpleGraph V)
   · right
     have hlarge' :
         (n : ℝ) - 5 * ε * (2 * n : ℝ) < (A ∩ B).card := by
-      convert hlarge using 1 <;> ring
+      convert hlarge using 1; ring
     exact bipartiteSeed_of_sparse_of_overlap_large
       G hV hmin hA hB hsparse hlarge'
 
@@ -353,6 +355,7 @@ private theorem swapped_partition {C D L R : Finset V}
         · exact Or.inl (Or.inr hvR)
         · exact Or.inr (Or.inl ⟨hvD, hvR⟩)
 
+omit [Fintype V] in
 private theorem card_swapped_left {C D L R : Finset V}
     (hCD : Disjoint C D) (hLC : L ⊆ C) (hRD : R ⊆ D) :
     ((C \ L) ∪ R).card = C.card - L.card + R.card := by
@@ -512,7 +515,8 @@ def BipartiteCleanSeed (G : SimpleGraph V) (n : ℕ) (ε : ℝ) : Prop :=
     CrossMinDegree G A B
       (((1 : ℝ) / 2 - 32 * ε) * n)
 
-private theorem edgeCount_swap_ge {G : SimpleGraph V}
+omit [Fintype V] in
+private theorem edgeCount_swap_ge [Finite V] {G : SimpleGraph V}
     {C D L R : Finset V}
     (hCD : Disjoint C D) (hLC : L ⊆ C) (hRD : R ⊆ D)
     (hL : edgeCount G L D ≤ edgeCount G L C)
@@ -520,6 +524,7 @@ private theorem edgeCount_swap_ge {G : SimpleGraph V}
     edgeCount G C D ≤
       edgeCount G ((C \ L) ∪ R) ((D \ R) ∪ L) +
         (L.card : ℝ) ^ 2 + (R.card : ℝ) ^ 2 := by
+  let := Fintype.ofFinite V
   let C0 := C \ L
   let D0 := D \ R
   have hLC0 : Disjoint L C0 := by
@@ -751,7 +756,7 @@ private theorem degreeInto_erase_self (G : SimpleGraph V)
     refine ⟨hwN, ?_, hwS⟩
     intro hwv
     subst w
-    simpa [SimpleGraph.mem_neighborFinset] using hwN
+    simp [SimpleGraph.mem_neighborFinset] at hwN
 
 private theorem degreeInto_le_erase_add_one (G : SimpleGraph V)
     (S : Finset V) (v w : V) :

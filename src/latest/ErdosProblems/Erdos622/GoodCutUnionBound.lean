@@ -137,8 +137,8 @@ theorem IsKGoodCut.isHamiltonian_of_dense_crossing_union {X Y : Finset V}
         lowCrossSet G Y X (3 * N / 10)).card <= ell := by
     apply card_lowCrossSet_union_le_of_dense_cut G X Y hgood.1 hNcard
       hXlower hYlower hdense
-    · convert hgap using 1 <;> ring
-    · convert hlowNumeric using 1 <;> ring
+    · convert hgap using 1; ring
+    · convert hlowNumeric using 1; ring
   exact IsKGoodCut.isHamiltonian_of_lowCrossUnion_bound hgood anchor hLcard
     hsizeLeft hsizeRight hd hminCross hfirst hcommon hclose hV
 

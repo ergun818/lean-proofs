@@ -127,6 +127,7 @@ theorem truncateDegree_edge_bound (H : SimpleGraph V) (d : ℕ) :
   rw [hedge, Finset.card_sdiff_of_subset hdel]
   omega
 
+omit [DecidableEq V] in
 /-- A budgeted version of simultaneous degree truncation. -/
 theorem exists_bounded_subgraph_of_degree_le_add
     (H : SimpleGraph V) (d : ℕ) (budget : V → ℕ)
@@ -134,6 +135,7 @@ theorem exists_bounded_subgraph_of_degree_le_add
     ∃ J : SimpleGraph V,
       J ≤ H ∧ (∀ v, J.degree v ≤ d) ∧
         H.edgeFinset.card ≤ J.edgeFinset.card + ∑ v, budget v := by
+  classical
   refine ⟨truncateDegree H d, truncateDegree_le H d,
     truncateDegree_degree_le H d, ?_⟩
   refine (truncateDegree_edge_bound H d).trans ?_
@@ -146,6 +148,7 @@ theorem exists_bounded_subgraph_of_degree_le_add
 def betweenGraph (G : SimpleGraph V) (P Q : Finset V) : SimpleGraph V :=
   G ⊓ SimpleGraph.fromRel (fun u v ↦ u ∈ P ∧ v ∈ Q)
 
+omit [DecidableEq V] [Fintype V] in
 @[simp]
 theorem betweenGraph_adj (G : SimpleGraph V) (P Q : Finset V) (u v : V) :
     (betweenGraph G P Q).Adj u v ↔
@@ -159,13 +162,17 @@ theorem betweenGraph_adj (G : SimpleGraph V) (P Q : Finset V) (u v : V) :
   · rintro ⟨huv, hmem⟩
     exact ⟨huv, huv.ne, hmem⟩
 
+omit [DecidableEq V] [Fintype V] in
 theorem betweenGraph_le (G : SimpleGraph V) (P Q : Finset V) :
     betweenGraph G P Q ≤ G :=
   inf_le_left
 
-theorem betweenGraph_isBipartiteWith (G : SimpleGraph V)
+omit [DecidableEq V] [Fintype V] in
+theorem betweenGraph_isBipartiteWith [Finite V] (G : SimpleGraph V)
     {P Q : Finset V} (hPQ : Disjoint P Q) :
     (betweenGraph G P Q).IsBipartiteWith (P : Set V) (Q : Set V) := by
+  classical
+  let := Fintype.ofFinite V
   refine ⟨by simpa using hPQ, ?_⟩
   intro u v huv
   rcases (betweenGraph_adj G P Q u v).mp huv |>.2 with h | h
@@ -192,9 +199,11 @@ theorem betweenGraph_degree_eq_degreeInto_right (G : SimpleGraph V)
   have hvP : v ∉ P := Finset.disjoint_right.mp hPQ hv
   simp [betweenGraph_adj, hv, hvP, and_comm]
 
+omit [DecidableEq V] in
 theorem card_betweenGraph (G : SimpleGraph V)
     {P Q : Finset V} (hPQ : Disjoint P Q) :
     (betweenGraph G P Q).edgeFinset.card = edgesBetween G P Q := by
+  classical
   rw [← SimpleGraph.isBipartiteWith_sum_degrees_eq_card_edges
     (betweenGraph_isBipartiteWith G hPQ)]
   rw [edgesBetween_eq_sum_degreeInto]
@@ -330,8 +339,8 @@ theorem card_between_cover_complement
           edgesBetween Gᶜ (A \ C) (B \ D) := by
       rw [edgesBetween_eq_sum_degreeInto, edgesBetween_eq_sum_degreeInto]
       simp_rw [Finset.sum_add_distrib]
-      simp only [Finset.sum_const_zero, Nat.zero_add, Finset.sum_const,
-        Nat.nsmul_eq_mul, one_mul]
+      simp only [Finset.sum_const,
+        Nat.nsmul_eq_mul]
       omega
 
 /-- The second regularity count in the oriented setup. -/
@@ -399,20 +408,26 @@ def OrientedBoundedInternal
     2 * n ≤ JA.edgeFinset.card + C.card * D.card + C.card + 2 * D.card ∧
     n ≤ JB.edgeFinset.card + D.card
 
-private theorem support_between_subset
+omit [DecidableEq V] [Fintype V] in
+private theorem support_between_subset [Finite V]
     (G : SimpleGraph V) {A P Q : Finset V}
     (hPA : P ⊆ A) (hQA : Q ⊆ A) :
     (betweenGraph G P Q).support ⊆ (A : Set V) := by
+  classical
+  let := Fintype.ofFinite V
   intro v hv
   obtain ⟨w, hvw⟩ := hv
   rcases (betweenGraph_adj G P Q v w).mp hvw |>.2 with h | h
   · exact hPA h.1
   · exact hQA h.2
 
-private theorem isBipartiteWith_of_le_between
+omit [DecidableEq V] [Fintype V] in
+private theorem isBipartiteWith_of_le_between [Finite V]
     {G J : SimpleGraph V} {P Q : Finset V} (hPQ : Disjoint P Q)
     (hJ : J ≤ betweenGraph G P Q) :
     J.IsBipartiteWith (P : Set V) (Q : Set V) := by
+  classical
+  let := Fintype.ofFinite V
   refine ⟨by simpa using hPQ, ?_⟩
   intro v w hvw
   exact (betweenGraph_isBipartiteWith G hPQ).mem_of_adj (hJ hvw)

@@ -25,7 +25,7 @@ namespace Erdos622
 namespace RandomCover
 
 open SimpleGraph
-open Classical Finset Real
+open Finset Real
 
 variable {V : Type*} [Fintype V] [DecidableEq V]
 
@@ -34,10 +34,12 @@ def IsMinimumVertexCover (G : SimpleGraph V) (C : Finset V) : Prop :=
   G.IsVertexCover (C : Set V) ∧
     ∀ D : Finset V, G.IsVertexCover (D : Set V) → C.card ≤ D.card
 
+omit [DecidableEq V] [Fintype V] in
 lemma IsMinimumVertexCover.isVertexCover {G : SimpleGraph V} {C : Finset V}
     (hC : IsMinimumVertexCover G C) : G.IsVertexCover (C : Set V) :=
   hC.1
 
+omit [DecidableEq V] [Fintype V] in
 lemma IsMinimumVertexCover.card_le {G : SimpleGraph V} {C D : Finset V}
     (hC : IsMinimumVertexCover G C) (hD : G.IsVertexCover (D : Set V)) :
     C.card ≤ D.card :=
@@ -47,23 +49,27 @@ lemma IsMinimumVertexCover.card_le {G : SimpleGraph V} {C D : Finset V}
 def outsideGraph (G : SimpleGraph V) (C D : Finset V) : SimpleGraph V :=
   G.between (D : Set V) (C : Set V)ᶜ
 
+omit [DecidableEq V] [Fintype V] in
 lemma outsideGraph_le (G : SimpleGraph V) (C D : Finset V) :
     outsideGraph G C D ≤ G :=
   SimpleGraph.between_le
 
+omit [DecidableEq V] [Fintype V] in
 lemma outsideGraph_isBipartiteWith (G : SimpleGraph V) (C D : Finset V)
     (hDC : D ⊆ C) :
     (outsideGraph G C D).IsBipartiteWith (D : Set V) (C : Set V)ᶜ := by
   apply SimpleGraph.between_isBipartiteWith
   exact Set.disjoint_left.2 fun _ hxD hxC ↦ hxC (hDC hxD)
 
+omit [DecidableEq V] [Fintype V] in
 /-- The set-level exchange argument behind the random-cover matching lemma. -/
-private theorem hall_exchange_set
+private theorem hall_exchange_set [Finite V]
     (J : SimpleGraph V) (C D : Set V)
     (hC : J.IsVertexCover C)
     (hmin : ∀ C' : Set V, J.IsVertexCover C' → C.ncard ≤ C'.ncard)
     (hDC : D ⊆ C) (hD : J.IsIndepSet D) :
     ∃ M : Subgraph (J.between D Cᶜ), D ⊆ M.verts ∧ M.IsMatching := by
+  let := Fintype.ofFinite V
   classical
   have hdisjDC : Disjoint D Cᶜ := by
     exact Set.disjoint_left.2 fun _ hxD hxC ↦ hxC (hDC hxD)
@@ -122,14 +128,16 @@ private theorem hall_exchange_set
   change s.ncard ≤ N.ncard
   omega
 
+omit [DecidableEq V] [Fintype V] in
 /-- Hall's theorem supplies a matching which covers an independent subset of
 a minimum vertex cover and uses only vertices outside the cover on its other
 side. -/
-theorem exists_matching_cover_independent {G : SimpleGraph V} {C D : Finset V}
+theorem exists_matching_cover_independent [Finite V] {G : SimpleGraph V} {C D : Finset V}
     (hC : IsMinimumVertexCover G C) (hDC : D ⊆ C)
     (hDind : G.IsIndepSet (D : Set V)) :
     ∃ M : (outsideGraph G C D).Subgraph,
       (D : Set V) ⊆ M.verts ∧ M.IsMatching := by
+  let := Fintype.ofFinite V
   classical
   have hminSet : ∀ C' : Set V, G.IsVertexCover C' →
       (C : Set V).ncard ≤ C'.ncard := by
@@ -142,14 +150,16 @@ theorem exists_matching_cover_independent {G : SimpleGraph V} {C D : Finset V}
   exact hall_exchange_set G (C : Set V) (D : Set V) hC.1 hminSet
     (by simpa using hDC) hDind
 
+omit [DecidableEq V] [Fintype V] in
 /-- Functional form of the Hall matching: an independent subset of a
 minimum cover has distinct adjacent representatives outside that cover. -/
-theorem exists_injective_outside_partner
+theorem exists_injective_outside_partner [Finite V]
     {G : SimpleGraph V} {C D : Finset V}
     (hC : IsMinimumVertexCover G C) (hDC : D ⊆ C)
     (hDind : G.IsIndepSet (D : Set V)) :
     ∃ f : D → V, Function.Injective f ∧
       ∀ d : D, G.Adj d (f d) ∧ f d ∉ C := by
+  let := Fintype.ofFinite V
   classical
   obtain ⟨N, hDN, hNmatch⟩ :=
     exists_matching_cover_independent hC hDC hDind
@@ -169,11 +179,13 @@ theorem exists_injective_outside_partner
     (outsideGraph_isBipartiteWith G C D hDC).mem_of_mem_adj d.property hJadj
   exact ⟨hGadj, hout⟩
 
+omit [DecidableEq V] [Fintype V] in
+open scoped Classical in
 /-- Deterministic two-stage decomposition used in DKM Lemma 4.4.  For every
 revealed subset `T` of a minimum cover, first take a maximal matching inside
 `T`; the uncovered part `D` is independent, and Hall's theorem then supplies
 a matching from all of `D` to vertices outside the original cover. -/
-theorem exists_internal_outside_matching_decomposition
+theorem exists_internal_outside_matching_decomposition [Finite V]
     {G : SimpleGraph V} {C T : Finset V}
     (hC : IsMinimumVertexCover G C) (hTC : T ⊆ C) :
     ∃ M : G.Subgraph,
@@ -182,6 +194,7 @@ theorem exists_internal_outside_matching_decomposition
       G.IsIndepSet (D : Set V) ∧
         ∃ N : (outsideGraph G C D).Subgraph,
           (D : Set V) ⊆ N.verts ∧ N.IsMatching := by
+  let := Fintype.ofFinite V
   classical
   let H : G.Subgraph := (⊤ : G.Subgraph).induce (T : Set V)
   obtain ⟨K, hKmatch, hKcover⟩ :=
@@ -212,9 +225,11 @@ theorem exists_internal_outside_matching_decomposition
     exists_matching_cover_independent hC hDC hDind
   exact ⟨M, hMmatch, hMverts, hDind, N, hDN, hNmatch⟩
 
+omit [DecidableEq V] [Fintype V] in
+open scoped Classical in
 /-- The same decomposition with Hall's matching exposed as an injective
 outside-partner map, the form convenient for exact powerset counting. -/
-theorem exists_internal_matching_and_partner_injection
+theorem exists_internal_matching_and_partner_injection [Finite V]
     {G : SimpleGraph V} {C T : Finset V}
     (hC : IsMinimumVertexCover G C) (hTC : T ⊆ C) :
     ∃ M : G.Subgraph,
@@ -223,6 +238,8 @@ theorem exists_internal_matching_and_partner_injection
       G.IsIndepSet (D : Set V) ∧
         ∃ f : D → V, Function.Injective f ∧
           ∀ d : D, G.Adj d (f d) ∧ f d ∉ C := by
+  classical
+  let := Fintype.ofFinite V
   obtain ⟨M, hM, hMT, hDind, -⟩ :=
     exists_internal_outside_matching_decomposition hC hTC
   let D := T.filter fun v ↦ v ∉ M.verts
@@ -341,11 +358,12 @@ private lemma powerset_inter_filter_card
 retained by a uniformly sampled subset of `O`, with all unused coordinates
 counted exactly. -/
 theorem powerset_inter_card_lowerTail
-    {A : Type*} [Fintype A] [DecidableEq A]
+    {A : Type*} [Finite A] [DecidableEq A]
     (O R : Finset A) (hRO : R ⊆ O) {t : ℝ} (ht : 0 ≤ t) :
     ((O.powerset.filter fun S ↦
         ((S ∩ R).card : ℝ) ≤ (R.card : ℝ) / 2 - t).card : ℝ) ≤
       (2 : ℝ) ^ O.card * Real.exp (-2 * t ^ 2 / R.card) := by
+  let := Fintype.ofFinite A
   have hsmall := Erdos622.Concentration.subsetCard_lowerTail R ht
   rw [powerset_inter_filter_card O R hRO
     (fun S ↦ (S.card : ℝ) ≤ (R.card : ℝ) / 2 - t)]
@@ -369,6 +387,7 @@ theorem powerset_inter_card_lowerTail
 
 /-! ## Combining the revealed internal matching with surviving Hall edges -/
 
+open scoped Classical in
 /-- A matching has as many edges as half its number of vertices.  We package
 the lower-bound formulation used below without choosing an enumeration of
 the edge finset. -/
@@ -376,6 +395,7 @@ def HasMatchingAtLeast (G : SimpleGraph V) (S : Finset V) (r : ℝ) : Prop :=
   ∃ M : G.Subgraph, M.IsMatching ∧ M.verts ⊆ (S : Set V) ∧
     r ≤ (M.verts.toFinset.card : ℝ) / 2
 
+open scoped Classical in
 /-- If `M` is the matching found inside the revealed cover-set `T` and `f`
 is Hall's injective outside-partner map for the unmatched vertices `D`, then
 the edges whose partners lie in `U` can be added disjointly to `M`.
@@ -490,9 +510,10 @@ theorem exists_matching_of_internal_and_selected_partners
   omega
 
 private lemma card_selected_image
-    {A B : Type*} [DecidableEq A] [DecidableEq B]
+    {A B : Type*} [DecidableEq B]
     (s : Finset A) (f : A → B) (hf : Function.Injective f) (u : Finset B) :
     (s.filter fun a ↦ f a ∈ u).card = (u ∩ s.image f).card := by
+  classical
   have himage : (s.filter fun a ↦ f a ∈ u).image f = u ∩ s.image f := by
     ext b
     simp only [Finset.mem_image, Finset.mem_filter, Finset.mem_inter]
@@ -589,17 +610,20 @@ private lemma powerset_union_filter_card
       · exact Or.inl ⟨hx, hxC⟩
       · exact Or.inr ⟨hx, hxO⟩
 
+open scoped Classical in
 private lemma card_filter_product_eq_sum
-    {A B : Type*} [DecidableEq A] [DecidableEq B]
+    {A B : Type*}
     (s : Finset A) (u : Finset B) (P : A → B → Prop)
     [DecidablePred fun p : A × B ↦ P p.1 p.2] :
     (((s ×ˢ u).filter fun p ↦ P p.1 p.2).card : ℝ) =
       ∑ a ∈ s, ((u.filter fun b ↦ P a b).card : ℝ) := by
+  classical
   simp only [Finset.card_eq_sum_ones, Finset.sum_filter,
-    Finset.sum_product, Finset.sum_ite_irrel, Finset.filter_filter]
+    Finset.sum_product]
   push_cast
   rfl
 
+open scoped Classical in
 /-- Exact conditional finite-counting form of DKM Lemma 4.4.  Once the
 vertices `T = C ∩ S` of the minimum cover have been revealed, all but the
 displayed Hoeffding-sized family of choices outside `C` contain a matching
@@ -733,6 +757,8 @@ theorem conditional_minimumCover_randomMatching
               _ ≤ -(2 * t ^ 2 / (T.card : ℝ)) := hneg
               _ = -2 * t ^ 2 / (T.card : ℝ) := by ring
 
+omit [DecidableEq V] in
+open scoped Classical in
 /-- Unconditional finite-count version of DKM Lemma 4.4.  The two error
 terms are respectively the lower tail for `|C ∩ S|` and the conditional
 lower tail for the Hall partners. -/
@@ -882,6 +908,8 @@ noncomputable def minimumCoverFailureMajorant (eps : ℝ) (m : ℕ) : ℝ :=
   Real.exp ((-2 * eps ^ 2) * (m : ℝ)) +
     Real.exp (-(eps ^ 2 / 2) * (m : ℝ))
 
+omit [DecidableEq V] in
+open scoped Classical in
 /-- Relative-error form of the finite DKM minimum-cover estimate.  Apart
 from the displayed exceptional mass, a subset contains a matching with at
 least `(1/4-eps)|C|` edges. -/
@@ -895,6 +923,7 @@ theorem minimumCover_randomMatching_count_relative
           ((1 / 4 - eps) * C.card)).card : ℝ)) ≤
       (2 : ℝ) ^ Fintype.card V *
         minimumCoverFailureMajorant eps C.card := by
+  classical
   have hCr : (0 : ℝ) < C.card := by exact_mod_cast hCpos
   have harange : 2 * (eps * (C.card : ℝ)) < C.card := by
     nlinarith
@@ -942,6 +971,7 @@ theorem minimumCoverFailureMajorant_tendsto_zero {eps : ℝ}
       Real.exp (-(eps ^ 2 / 2) * (m : ℝ))) Filter.atTop (nhds 0)
   simpa only [add_zero] using hfirst.add hsecond
 
+open scoped Classical in
 /-- Fully uniform eventually/epsilon form of DKM Lemma 4.4.  Once the
 minimum cover has at least `m` vertices, the same threshold works for every
 finite graph, and fewer than a `delta` fraction of all vertex subsets fail
@@ -991,6 +1021,7 @@ theorem eventually_minimumCover_randomMatching_count_le
     _ ≤ delta * (2 : ℝ) ^ Fintype.card W := by
       nlinarith [show 0 < (2 : ℝ) ^ Fintype.card W by positivity]
 
+open scoped Classical in
 /-- The specialization used for graphs on `2*n` vertices.  The conclusion
 is already in unnormalized finite-count form, so it can be combined directly
 with the other exceptional-family estimates in the random-good-cut proof. -/
@@ -1011,6 +1042,7 @@ theorem eventually_minimumCover_randomMatching_fin_two_mul
   simpa only [Fintype.card_fin] using
     hn (Fin (2 * n)) G C hC hnC
 
+open scoped Classical in
 /-- The exceptional proportion for a sequence of minimum covers in graphs
 on `2*n` vertices. -/
 noncomputable def minimumCoverBadProportionTwoMul
@@ -1022,6 +1054,7 @@ noncomputable def minimumCoverBadProportionTwoMul
         ((1 / 4 - eps) * (C n).card)).card : ℝ)) /
     (2 : ℝ) ^ (2 * n)
 
+open scoped Classical in
 /-- Sequence-level asymptotic form of DKM Lemma 4.4: whenever the minimum
 cover sizes tend to infinity, the proportion of subsets failing to contain
 a `(1/4-eps)`-fractional matching tends to zero. -/
@@ -1056,6 +1089,7 @@ theorem minimumCoverBadProportionTwoMul_tendsto_zero
     rw [div_le_iff₀ (by positivity : (0 : ℝ) < (2 : ℝ) ^ (2 * n))]
     simpa only [Fintype.card_fin, mul_comm] using hfinite
 
+open scoped Classical in
 /-- Fully quantified eventually/epsilon form for a growing sequence of
 minimum covers. -/
 theorem eventually_minimumCoverBadProportionTwoMul_lt
@@ -1197,10 +1231,10 @@ theorem cube_upper_tail :
     constructor
     · intro hx
       rw [← neg_le_neg_iff]
-      convert hx using 1 <;> ring
+      convert hx using 1; ring
     · intro hx
       rw [← neg_le_neg_iff] at hx
-      convert hx using 1 <;> ring
+      convert hx using 1; ring
   dsimp only at h ⊢
   rw [heq] at h
   exact h
@@ -1226,7 +1260,7 @@ theorem cube_two_sided_tail
     · exact Or.inl h
     · right
       by_contra h'
-      push_neg at h h'
+      push Not at h h'
       have habs : |mean - f x| < t := (abs_lt).2 ⟨by linarith, by linarith⟩
       linarith
   have hcard := Finset.card_le_card hsub
@@ -1282,12 +1316,12 @@ lemma pairSurviveVec_cons {m : ℕ} (b : Bool × Bool)
       induction i using Fin.cases with
       | zero => simp [C, hb]
       | succ i => simp [C]
-    simp only [pairSurviveVec, hb, if_true]
+    simp only [pairSurviveVec, hb]
     rw [hset]
     have hzero : (0 : Fin (m + 1)) ∉ C.map (Fin.succEmb m) := by simp
     rw [Finset.card_insert_of_notMem hzero, Finset.card_map]
     push_cast
-    simp [C, hb, add_comm]
+    simp [C, add_comm]
   · have hset :
         Finset.univ.filter (fun i : Fin (m + 1) ↦
           (@Fin.cons m (fun _ ↦ Bool × Bool) b z i).1 = true ∧
@@ -1325,7 +1359,6 @@ lemma sum_pairSurviveVec (m : ℕ) :
       simp only [Finset.sum_const, Finset.card_univ, Fintype.card_fun,
         Fintype.card_fin, Fintype.card_prod, Fintype.card_bool, nsmul_eq_mul]
       norm_num [pow_succ]
-      push_cast
       ring
 
 /-- Split two Boolean blocks into the two endpoints of each indexed pair. -/
@@ -1434,9 +1467,9 @@ theorem pairSurvive_concentration (m : ℕ) (t : ℝ) (ht : 0 ≤ t) :
     (fun j x y hxy ↦ pairSurvive_boundedDiff m j x y hxy)
     (fun _ ↦ by norm_num) t ht
   rw [pairSurvive_mean] at h
-  simp only [abs_sub_comm, Finset.sum_const, Finset.card_univ,
+  simp only [Finset.sum_const, Finset.card_univ,
     Fintype.card_fin, nsmul_eq_mul, mul_one, one_pow, Nat.cast_add,
-    mul_assoc] at h
+    ] at h
   by_cases hm : m = 0
   · subst m
     simpa using h

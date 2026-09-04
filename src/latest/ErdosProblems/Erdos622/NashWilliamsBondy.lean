@@ -71,19 +71,23 @@ def HasIndependentSetAt (G : SimpleGraph V) (k : ℕ) : Prop :=
 
 /-! ## From the finite separation witness to ordinary two-connectivity -/
 
+omit [DecidableEq V] [DecidableRel G.Adj] in
 private lemma connected_of_not_separated
     (hCard : 3 ≤ Fintype.card V)
     (hsep : ¬ HasSeparationWitness G) : G.Connected := by
+  classical
   let : Nonempty V := Fintype.card_pos_iff.mp (by omega)
   have hpre : G.Preconnected := by
     by_contra h
     exact hsep (Or.inl h)
   exact ⟨hpre⟩
 
+omit [DecidableEq V] [DecidableRel G.Adj] in
 private lemma delete_connected_of_not_separated
     (hCard : 3 ≤ Fintype.card V)
     (hsep : ¬ HasSeparationWitness G) (c : V) :
     (G.induce ({c}ᶜ : Set V)).Connected := by
+  classical
   let H : SimpleGraph {v : V // v ≠ c} := G.induce {v : V | v ≠ c}
   have hpre : H.Preconnected := by
     intro x y
@@ -106,10 +110,12 @@ private lemma delete_connected_of_not_separated
       map_rel_iff' := by simp [H] }
   exact e.connected_iff.mp hH
 
+omit [DecidableEq V] [DecidableRel G.Adj] in
 /-- Absence of the exported separation witness is precisely enough for the
 standard finite two-connected interface. -/
 theorem twoConnected_of_not_separated (hCard : 3 ≤ Fintype.card V)
     (hsep : ¬ HasSeparationWitness G) : Erdos58.TwoConnected G := by
+  classical
   refine ⟨hCard, connected_of_not_separated hCard hsep, ?_⟩
   exact delete_connected_of_not_separated hCard hsep
 
@@ -124,14 +130,14 @@ lemma degree_three_region {k n u d w : ℕ}
     (hq : k ≤ qu + qd + qw) (hlarge : n + 1 < 3 * k) :
     u < au + bu + qu ∨ d < ad + bd + qd ∨ w < aw + bw + qw := by
   by_contra h
-  push_neg at h
+  push Not at h
   omega
 
 /-- The shifted pigeonhole argument on the first cycle arc. -/
 lemma first_arc_collision {t : ℕ} {A B : Finset (Fin t)}
     (hcard : t < A.card + B.card) : ∃ i, i ∈ A ∧ i ∈ B := by
   by_contra h
-  push_neg at h
+  push Not at h
   have hd : Disjoint A B := Finset.disjoint_left.mpr fun i hiA hiB ↦ h i hiA hiB
   have hle : A.card + B.card ≤ t := by
     rw [← Finset.card_union_of_disjoint hd]
@@ -143,7 +149,7 @@ last point is excluded from `B` (in the application it represents the
 vertex `b` itself), while shifting `Q` backwards can lose only its first
 point. -/
 lemma second_arc_collision {L : ℕ} {A B Q : Finset ℕ}
-    (hA : A ⊆ Finset.range L) (hB : B ⊆ Finset.range L)
+    (hA : A ⊆ Finset.range L) (_hB : B ⊆ Finset.range L)
     (hQ : Q ⊆ Finset.range L)
     (hBlast : ∀ j ∈ B, j + 1 < L)
     (hcard : L + 1 < A.card + B.card + Q.card) :
@@ -181,7 +187,7 @@ lemma second_arc_collision {L : ℕ} {A B Q : Finset ℕ}
     have hi0 : i ≠ 0 := (Finset.mem_erase.mp hi).1
     exact Finset.mem_range.mpr (lt_trans (Nat.pred_lt hi0) hiL)
   by_contra h
-  push_neg at h
+  push Not at h
   rcases h with ⟨hAB, hAQ, hBQ⟩
   have hA_Bs : Disjoint A Bs := by
     rw [Finset.disjoint_left]
@@ -230,6 +236,7 @@ structure ExteriorEar {z : V} (c : G.Walk z z) (x y : V) where
   three_le : 3 ≤ path.length
   outside : ∀ w ∈ path.support, w = x ∨ w = y ∨ w ∉ c.support.toFinset
 
+omit [DecidableRel G.Adj] [Fintype V] in
 private lemma endpoint_not_mem_take_two
     {z x y : V} {q : G.Walk z z} (E : ExteriorEar q x y) :
     y ∉ (E.path.take 2).support := by
@@ -245,6 +252,7 @@ private lemma endpoint_not_mem_take_two
   have hthree : 3 ≤ E.path.length := E.three_le
   omega
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 private lemma cycle_index_ne_base
     {z : V} {q : G.Walk z z} (hq : q.IsCycle)
     {i : ℕ} (hi0 : 0 < i) (hilength : i < q.length) :
@@ -255,6 +263,7 @@ private lemma cycle_index_ne_base
   rw [hq.getVert_endpoint_iff (by omega)] at hi
   omega
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 private lemma cycle_index_inj
     {z : V} {q : G.Walk z z} (hq : q.IsCycle)
     {i j : ℕ} (hi : i < q.length) (hj : j < q.length)
@@ -262,15 +271,18 @@ private lemma cycle_index_inj
   intro h
   apply hij
   exact hq.getVert_injOn'
-    (by simp only [Set.mem_setOf_eq]; omega)
-    (by simp only [Set.mem_setOf_eq]; omega) h
+    (by simp only [Set.mem_ofPred_eq]; omega)
+    (by simp only [Set.mem_ofPred_eq]; omega) h
 
-private lemma shorter_exteriorEar_of_adj_getVert_two
+omit [DecidableRel G.Adj] [Fintype V] in
+private lemma shorter_exteriorEar_of_adj_getVert_two [Finite V]
     {z : V} {q : G.Walk z z} (hq : q.IsCycle)
     {i j : ℕ} (hi0 : 0 < i) (hij : i < j) (hjlen : j < q.length)
     (E : ExteriorEar q (q.getVert 0) (q.getVert j))
     (hadj : G.Adj (E.path.getVert 2) (q.getVert i)) :
     Nonempty (ExteriorEar q (q.getVert 0) (q.getVert i)) := by
+  classical
+  let := Fintype.ofFinite V
   have hilen : i < q.length := hij.trans hjlen
   have hiBase : q.getVert i ≠ q.getVert 0 :=
     cycle_index_ne_base hq hi0 hilen
@@ -314,10 +326,11 @@ private lemma shorter_exteriorEar_of_adj_getVert_two
     outside := hrOutside
   }⟩
 
+omit [DecidableRel G.Adj] [Fintype V] in
 /-- Select an exterior ear whose positive terminal cycle index is least.
 Then the third ear vertex has no neighbour at an earlier positive cycle
 index. -/
-theorem exists_minimal_exteriorEar
+theorem exists_minimal_exteriorEar [Finite V]
     {z : V} {q : G.Walk z z} (hq : q.IsCycle)
     (hex : ∃ j : ℕ, 0 < j ∧ j < q.length ∧
       Nonempty (ExteriorEar q (q.getVert 0) (q.getVert j))) :
@@ -325,6 +338,8 @@ theorem exists_minimal_exteriorEar
       0 < j ∧ j < q.length ∧
       ∀ i : ℕ, 0 < i → i < j →
         ¬ G.Adj (E.path.getVert 2) (q.getVert i) := by
+  classical
+  let := Fintype.ofFinite V
   let I : Finset ℕ := (Finset.range q.length).filter fun j ↦
     0 < j ∧ Nonempty (ExteriorEar q (q.getVert 0) (q.getVert j))
   have hI : I.Nonempty := by
@@ -347,6 +362,7 @@ theorem exists_minimal_exteriorEar
   have hji : j ≤ i := Finset.min'_le I i hiI
   omega
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 private lemma isPath_append_of_inter_eq_end
     {a b c : V} {p : G.Walk a b} {q : G.Walk b c}
     (hp : p.IsPath) (hq : q.IsPath)
@@ -364,10 +380,12 @@ private lemma isPath_append_of_inter_eq_end
   rw [← q.cons_tail_support, List.nodup_cons] at hn
   exact hn.1 hxq
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 private lemma path_support_eq_endpoints_or_interior
-    {a b w : V} {p : G.Walk a b} (hp : p.IsPath)
+    {a b w : V} {p : G.Walk a b} (_hp : p.IsPath)
     (hw : w ∈ p.support) :
     w = a ∨ w = b ∨ w ∈ p.support.tail.dropLast := by
+  classical
   by_cases hwa : w = a
   · exact Or.inl hwa
   by_cases hwb : w = b
@@ -392,6 +410,7 @@ private lemma cycleCarrier_two_le {z : V} {c : G.Walk z z}
   rw [hcard]
   exact hc.three_le_length.trans' (by omega)
 
+omit [DecidableRel G.Adj] in
 /-- Two-connectivity supplies an exterior ear through any prescribed edge
 outside a cycle.  Apply the checked two-set Menger theorem between the cycle
 carrier and the two endpoints of the edge, and join the two disjoint linkage
@@ -402,6 +421,7 @@ theorem exists_exteriorEar_of_external_edge
     (hv : v ∉ c.support.toFinset) (hw : w ∉ c.support.toFinset) :
     ∃ x y : V, x ∈ c.support.toFinset ∧ y ∈ c.support.toFinset ∧
       x ≠ y ∧ Nonempty (ExteriorEar c x y) := by
+  classical
   let C : Set V := (c.support.toFinset : Set V)
   let B : Set V := {v, w}
   have hCB : Disjoint C B := by
@@ -480,6 +500,7 @@ theorem exists_exteriorEar_of_external_edge
   refine ⟨L.a₁, L.a₂, L.a₁_mem, L.a₂_mem, L.a_ne, ⟨?_⟩⟩
   exact { path := r, isPath := hr, three_le := hrlen, outside := hrOutside }
 
+omit [DecidableRel G.Adj] in
 /-- Rotate the cycle to the first end of an exterior ear and then minimize
 the positive index of its other end.  This is the normalized configuration
 used in the incidence argument. -/
@@ -494,6 +515,7 @@ theorem exists_normalized_exteriorEar_of_external_edge
       0 < j ∧ j < q.length ∧
       ∀ i : ℕ, 0 < i → i < j →
         ¬ G.Adj (E.path.getVert 2) (q.getVert i) := by
+  classical
   obtain ⟨x, y, hxC, hyC, hxy, ⟨E₀⟩⟩ :=
     exists_exteriorEar_of_external_edge hTwo hc hvw hv hw
   have hxSupport : x ∈ c.support := List.mem_toFinset.mp hxC
@@ -553,27 +575,30 @@ theorem exists_normalized_exteriorEar_of_external_edge
 /-- The forward subpath of a cycle between two indices before its repeated
 endpoint. -/
 private def cycleArc {z : V} (q : G.Walk z z) (i j : ℕ)
-    (hij : i ≤ j) (hj : j < q.length) :
+    (hij : i ≤ j) (_hj : j < q.length) :
     G.Walk (q.getVert i) (q.getVert j) :=
   ((q.take j).drop i).copy
-    (by simp [SimpleGraph.Walk.drop_getVert, SimpleGraph.Walk.take_getVert,
+    (by simp [SimpleGraph.Walk.take_getVert,
       Nat.min_eq_right hij])
     (by
-      simp [SimpleGraph.Walk.take_getVert, SimpleGraph.Walk.drop_getVert,
-        SimpleGraph.Walk.take_length, Nat.min_eq_left hj.le, hij])
+      simp [
+        ])
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 private lemma cycleArc_isPath {z : V} {q : G.Walk z z} (hq : q.IsCycle)
     {i j : ℕ} (hij : i ≤ j) (hj : j < q.length) :
     (cycleArc q i j hij hj).IsPath := by
   simp only [cycleArc, SimpleGraph.Walk.isPath_copy]
   exact (hq.isPath_take hj).drop i
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 private lemma cycleArc_length {z : V} {q : G.Walk z z}
     {i j : ℕ} (hij : i ≤ j) (hj : j < q.length) :
     (cycleArc q i j hij hj).length = j - i := by
   simp [cycleArc, SimpleGraph.Walk.drop_length,
     SimpleGraph.Walk.take_length, Nat.min_eq_left hj.le]
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 private lemma mem_cycleArc_index {z : V} {q : G.Walk z z}
     {i j : ℕ} (hij : i ≤ j) (hj : j < q.length)
     {a : V} (ha : a ∈ (cycleArc q i j hij hj).support) :
@@ -591,10 +616,13 @@ private lemma mem_cycleArc_index {z : V} {q : G.Walk z z}
     Nat.min_eq_right hitle] at ht
   exact ht
 
-private lemma getVert_mem_cycleArc {z : V} {q : G.Walk z z}
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
+private lemma getVert_mem_cycleArc [Finite V] {z : V} {q : G.Walk z z}
     {i j k : ℕ} (hij : i ≤ j) (hj : j < q.length)
     (hik : i ≤ k) (hkj : k ≤ j) :
     q.getVert k ∈ (cycleArc q i j hij hj).support := by
+  classical
+  let := Fintype.ofFinite V
   let t := k - i
   have htlen : t ≤ (cycleArc q i j hij hj).length := by
     rw [cycleArc_length hij hj]
@@ -609,6 +637,7 @@ private lemma getVert_mem_cycleArc {z : V} {q : G.Walk z z}
     · omega
   exact hget ▸ hmem
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 private lemma cycle_index_eq_of_getVert_eq {z : V} {q : G.Walk z z}
     (hq : q.IsCycle) {i j : ℕ} (hi : i < q.length) (hj : j < q.length)
     (h : q.getVert i = q.getVert j) : i = j := by
@@ -616,6 +645,7 @@ private lemma cycle_index_eq_of_getVert_eq {z : V} {q : G.Walk z z}
     (by simp only [Set.mem_ofPred_eq]; omega)
     (by simp only [Set.mem_ofPred_eq]; omega) h
 
+omit [DecidableRel G.Adj] [Fintype V] in
 private lemma exteriorEar_meets_cycle_only_ends
     {z : V} {q : G.Walk z z} {x y a : V}
     (E : ExteriorEar q x y) (haE : a ∈ E.path.support)
@@ -625,8 +655,9 @@ private lemma exteriorEar_meets_cycle_only_ends
   · exact Or.inr h
   · exact (h (List.mem_toFinset.mpr haq)).elim
 
+omit [DecidableRel G.Adj] [Fintype V] in
 /-- The splice forced by a shifted collision on the first cycle arc. -/
-private lemma longer_cycle_of_first_arc_collision
+private lemma longer_cycle_of_first_arc_collision [Finite V]
     {z : V} {q : G.Walk z z} (hq : q.IsCycle)
     {j p : ℕ} (hj0 : 0 < j) (hj : j < q.length)
     (hp : p + 1 < j)
@@ -634,6 +665,8 @@ private lemma longer_cycle_of_first_arc_collision
     (ha : G.Adj (q.getVert (j - 1)) (q.getVert p))
     (hb : G.Adj (q.getVert (q.length - 1)) (q.getVert (p + 1))) :
     ∃ (a : V) (c : G.Walk a a), c.IsCycle ∧ q.length < c.length := by
+  classical
+  let := Fintype.ofFinite V
   have hm0 : 0 < q.length := by omega
   have hjm : j ≤ q.length - 1 := by omega
   have hpj : p + 1 ≤ j - 1 := by omega
@@ -805,7 +838,8 @@ private lemma longer_cycle_of_first_arc_collision
   have := E.three_le
   omega
 
-private lemma longer_cycle_of_second_arc_collision_a
+omit [DecidableRel G.Adj] [Fintype V] in
+private lemma longer_cycle_of_second_arc_collision_a [Finite V]
     {z : V} {q : G.Walk z z} (hq : q.IsCycle)
     {j i : ℕ} (hj0 : 0 < j) (hji : j ≤ i)
     (hi : i + 1 < q.length)
@@ -813,6 +847,8 @@ private lemma longer_cycle_of_second_arc_collision_a
     (hb : G.Adj (q.getVert (q.length - 1)) (q.getVert i))
     (ha : G.Adj (q.getVert (j - 1)) (q.getVert (i + 1))) :
     ∃ (a : V) (c : G.Walk a a), c.IsCycle ∧ q.length < c.length := by
+  classical
+  let := Fintype.ofFinite V
   have hj : j < q.length := by omega
   have hm0 : 0 < q.length := by omega
   have him : i + 1 ≤ q.length - 1 := by omega
@@ -987,6 +1023,7 @@ private lemma longer_cycle_of_second_arc_collision_a
   have := E.three_le
   omega
 
+omit [DecidableRel G.Adj] [Fintype V] in
 private lemma start_not_mem_drop_two
     {z : V} {q : G.Walk z z} {j : ℕ}
     (E : ExteriorEar q (q.getVert 0) (q.getVert j)) :
@@ -1001,11 +1038,14 @@ private lemma start_not_mem_drop_two
   have := (E.isPath.getVert_eq_start_iff hidx).mp ht
   omega
 
-private lemma drop_two_meets_cycle_only_end
+omit [DecidableRel G.Adj] [Fintype V] in
+private lemma drop_two_meets_cycle_only_end [Finite V]
     {z : V} {q : G.Walk z z} {j : ℕ}
     (E : ExteriorEar q (q.getVert 0) (q.getVert j))
     {a : V} (ha : a ∈ (E.path.drop 2).support) (haq : a ∈ q.support) :
     a = q.getVert j := by
+  classical
+  let := Fintype.ofFinite V
   have haE : a ∈ E.path.support := by
     rw [SimpleGraph.Walk.drop_support_eq_support_drop_min] at ha
     exact List.mem_of_mem_drop ha
@@ -1014,7 +1054,8 @@ private lemma drop_two_meets_cycle_only_end
     exact (start_not_mem_drop_two E ha).elim
   · exact hj
 
-private lemma longer_cycle_of_second_arc_collision_b
+omit [DecidableRel G.Adj] [Fintype V] in
+private lemma longer_cycle_of_second_arc_collision_b [Finite V]
     {z : V} {q : G.Walk z z} (hq : q.IsCycle)
     {j i : ℕ} (hj0 : 0 < j) (hj : j < q.length)
     (hji : j ≤ i) (hi : i + 1 < q.length)
@@ -1022,6 +1063,8 @@ private lemma longer_cycle_of_second_arc_collision_b
     (ha : G.Adj (q.getVert (j - 1)) (q.getVert i))
     (hr : G.Adj (E.path.getVert 2) (q.getVert (i + 1))) :
     ∃ (a : V) (c : G.Walk a a), c.IsCycle ∧ q.length < c.length := by
+  classical
+  let := Fintype.ofFinite V
   have hjm : j - 1 < q.length := by omega
   have hilt : i < q.length := by omega
   have him : i + 1 ≤ q.length - 1 := by omega
@@ -1176,13 +1219,16 @@ private lemma longer_cycle_of_second_arc_collision_b
   have := E.three_le
   omega
 
-private lemma longer_cycle_of_second_arc_collision_c
+omit [DecidableRel G.Adj] [Fintype V] in
+private lemma longer_cycle_of_second_arc_collision_c [Finite V]
     {z : V} {q : G.Walk z z} (hq : q.IsCycle)
     {j i : ℕ} (hj0 : 0 < j) (hji : j ≤ i) (hi2 : i + 2 < q.length)
     (E : ExteriorEar q (q.getVert 0) (q.getVert j))
     (hb : G.Adj (q.getVert (q.length - 1)) (q.getVert i))
     (hr : G.Adj (E.path.getVert 2) (q.getVert (i + 2))) :
     ∃ (a : V) (c : G.Walk a a), c.IsCycle ∧ q.length < c.length := by
+  classical
+  let := Fintype.ofFinite V
   have hm0 : 0 < q.length := by omega
   have hi : i < q.length := by omega
   have hj : j < q.length := hji.trans_lt hi
@@ -1310,13 +1356,14 @@ private lemma longer_cycle_of_second_arc_collision_c
   refine ⟨q.getVert 0, c, hc, ?_⟩
   simp only [c, r₃, r₂, r₁, SimpleGraph.Walk.length_append,
     SimpleGraph.Walk.length_concat, SimpleGraph.Walk.length_reverse,
-    SimpleGraph.Walk.take_length]
+    ]
   rw [hslen, cycleArc_length hi2last (by omega),
     cycleArc_length (by omega) hi]
   omega
 
 /-! ## Outside-region cycle splices -/
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 private lemma start_not_mem_drop {x y : V} {p : G.Walk x y}
     (hp : p.IsPath) {t : ℕ} (ht0 : 0 < t) (ht : t ≤ p.length) :
     x ∉ (p.drop t).support := by
@@ -1332,6 +1379,7 @@ private lemma start_not_mem_drop {x y : V} {p : G.Walk x y}
       exact hget)
   omega
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 private lemma end_not_mem_take {x y : V} {p : G.Walk x y}
     (hp : p.IsPath) {t : ℕ} (ht : t < p.length) :
     y ∉ (p.take t).support := by
@@ -1346,6 +1394,7 @@ private lemma end_not_mem_take {x y : V} {p : G.Walk x y}
   have : n = p.length := (hp.getVert_eq_end_iff hnle).mp hget'
   omega
 
+omit [DecidableRel G.Adj] [Fintype V] in
 private lemma ear_getVert_two_outside_cycle
     {z : V} {q : G.Walk z z} {j : ℕ}
     (E : ExteriorEar q (q.getVert 0) (q.getVert j)) :
@@ -1361,6 +1410,7 @@ private lemma ear_getVert_two_outside_cycle
     omega
   · exact hout
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 private lemma isCycle_append_of_meet_ends
     {u v : V} {p : G.Walk u v} {q : G.Walk v u}
     (hp : p.IsPath) (hq : q.IsPath)
@@ -1395,18 +1445,24 @@ private def wrapArc {z : V} (q : G.Walk z z) (j : ℕ)
   let pre := cycleArc q 0 (j - 1) (by omega) (by omega)
   exact r.append pre
 
-private lemma wrapArc_length {z : V} {q : G.Walk z z}
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
+private lemma wrapArc_length [Finite V] {z : V} {q : G.Walk z z}
     {j : ℕ} (hj0 : 0 < j) (hj : j < q.length) :
     (wrapArc q j hj0 hj).length = q.length - 1 := by
+  classical
+  let := Fintype.ofFinite V
   simp only [wrapArc, SimpleGraph.Walk.length_append,
     SimpleGraph.Walk.length_concat]
   rw [cycleArc_length (by omega) (by omega),
     cycleArc_length (by omega) (by omega)]
   omega
 
-private lemma wrapArc_isPath {z : V} {q : G.Walk z z}
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
+private lemma wrapArc_isPath [Finite V] {z : V} {q : G.Walk z z}
     (hq : q.IsCycle) {j : ℕ} (hj0 : 0 < j) (hj : j < q.length) :
     (wrapArc q j hj0 hj).IsPath := by
+  classical
+  let := Fintype.ofFinite V
   let d := cycleArc q j (q.length - 1) (by omega) (by omega)
   have hd : d.IsPath := cycleArc_isPath hq (by omega) (by omega)
   have hlast : G.Adj (q.getVert (q.length - 1)) (q.getVert 0) := by
@@ -1438,9 +1494,12 @@ private lemma wrapArc_isPath {z : V} {q : G.Walk z z}
   simpa only [wrapArc, d, r, pre] using
     isPath_append_of_inter_eq_end hr hpre hinter
 
-private lemma wrapArc_support_subset_cycle {z : V} {q : G.Walk z z}
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
+private lemma wrapArc_support_subset_cycle [Finite V] {z : V} {q : G.Walk z z}
     {j : ℕ} (hj0 : 0 < j) (hj : j < q.length) {a : V}
     (ha : a ∈ (wrapArc q j hj0 hj).support) : a ∈ q.support := by
+  classical
+  let := Fintype.ofFinite V
   simp only [wrapArc, SimpleGraph.Walk.mem_support_append_iff,
     SimpleGraph.Walk.support_concat, List.mem_append, List.mem_singleton] at ha
   rcases ha with (had | rfl) | hap
@@ -1453,13 +1512,16 @@ private lemma wrapArc_support_subset_cycle {z : V} {q : G.Walk z z}
 /- If the predecessor `a` of the terminal ear endpoint sees a proper
 internal ear vertex, replace the cycle edge `a--y` by the ear suffix and
 the new chord. -/
-lemma longer_cycle_of_a_adj_ear_internal
+omit [DecidableRel G.Adj] [Fintype V] in
+lemma longer_cycle_of_a_adj_ear_internal [Finite V]
     {z : V} {q : G.Walk z z} (hq : q.IsCycle)
     {j t : ℕ} (hj0 : 0 < j) (hj : j < q.length)
     (E : ExteriorEar q (q.getVert 0) (q.getVert j))
     (ht0 : 0 < t) (ht : t < E.path.length)
     (hadj : G.Adj (q.getVert (j - 1)) (E.path.getVert t)) :
     ∃ (a : V) (c : G.Walk a a), c.IsCycle ∧ q.length < c.length := by
+  classical
+  let := Fintype.ofFinite V
   let s := E.path.drop t
   have hs : s.IsPath := E.isPath.drop t
   let w := wrapArc q j hj0 hj
@@ -1504,13 +1566,16 @@ lemma longer_cycle_of_a_adj_ear_internal
 
 /- The symmetric splice at the last cycle vertex `b`: replace the closing
 cycle edge `b--x` by an ear prefix and the new chord. -/
-lemma longer_cycle_of_b_adj_ear_internal
+omit [DecidableRel G.Adj] [Fintype V] in
+lemma longer_cycle_of_b_adj_ear_internal [Finite V]
     {z : V} {q : G.Walk z z} (hq : q.IsCycle)
     {j t : ℕ} (hj0 : 0 < j) (hj : j < q.length)
     (E : ExteriorEar q (q.getVert 0) (q.getVert j))
     (ht0 : 0 < t) (ht : t < E.path.length)
     (hadj : G.Adj (q.getVert (q.length - 1)) (E.path.getVert t)) :
     ∃ (a : V) (c : G.Walk a a), c.IsCycle ∧ q.length < c.length := by
+  classical
+  let := Fintype.ofFinite V
   let s := E.path.take t
   have hs : s.IsPath := E.isPath.take t
   have hbNotS : q.getVert (q.length - 1) ∉ s.support := by
@@ -1575,7 +1640,8 @@ lemma longer_cycle_of_b_adj_ear_internal
 /- A vertex outside both the cycle and the ear which is adjacent to `a`
 and the third ear vertex gives the two-edge replacement
 `a--w--r` of the chord in the preceding splice. -/
-lemma longer_cycle_of_external_common_neighbor_ar
+omit [DecidableRel G.Adj] [Fintype V] in
+lemma longer_cycle_of_external_common_neighbor_ar [Finite V]
     {z : V} {q : G.Walk z z} (hq : q.IsCycle)
     {j : ℕ} (hj0 : 0 < j) (hj : j < q.length)
     (E : ExteriorEar q (q.getVert 0) (q.getVert j))
@@ -1584,6 +1650,8 @@ lemma longer_cycle_of_external_common_neighbor_ar
     (haw : G.Adj (q.getVert (j - 1)) w)
     (hrw : G.Adj (E.path.getVert 2) w) :
     ∃ (a : V) (c : G.Walk a a), c.IsCycle ∧ q.length < c.length := by
+  classical
+  let := Fintype.ofFinite V
   let s := E.path.drop 2
   have hs : s.IsPath := E.isPath.drop 2
   let wa := wrapArc q j hj0 hj
@@ -1608,7 +1676,7 @@ lemma longer_cycle_of_external_common_neighbor_ar
     intro h
     exact hrOut (List.mem_toFinset.mpr (h ▸ q.getVert_mem_support (j - 1)))
   have hrNotEdge : E.path.getVert 2 ∉ haw.toWalk.support := by
-    simp [SimpleGraph.Adj.support_toWalk, hra, hrw.ne]
+    simp [hra, hrw.ne]
   let e := haw.toWalk.concat hrw.symm
   have he : e.IsPath := haw.isPath_toWalk.concat hrNotEdge hrw.symm
   have hwNotR : w ∉ r.support := by
@@ -1648,7 +1716,8 @@ lemma longer_cycle_of_external_common_neighbor_ar
   have := E.three_le
   omega
 
-lemma longer_cycle_of_external_common_neighbor_br
+omit [DecidableRel G.Adj] [Fintype V] in
+lemma longer_cycle_of_external_common_neighbor_br [Finite V]
     {z : V} {q : G.Walk z z} (hq : q.IsCycle)
     {j : ℕ} (hj0 : 0 < j) (hj : j < q.length)
     (E : ExteriorEar q (q.getVert 0) (q.getVert j))
@@ -1657,6 +1726,8 @@ lemma longer_cycle_of_external_common_neighbor_br
     (hbw : G.Adj (q.getVert (q.length - 1)) w)
     (hrw : G.Adj (E.path.getVert 2) w) :
     ∃ (a : V) (c : G.Walk a a), c.IsCycle ∧ q.length < c.length := by
+  classical
+  let := Fintype.ofFinite V
   have htwo : 2 < E.path.length := by
     have := E.three_le
     omega
@@ -1728,7 +1799,8 @@ lemma longer_cycle_of_external_common_neighbor_br
 /- A common outside neighbour of the two predecessor vertices.  The new
 cycle follows the whole ear, the terminal cycle arc, `b--w--a`, and the
 initial cycle arc backwards. -/
-lemma longer_cycle_of_external_common_neighbor_ab
+omit [DecidableRel G.Adj] [Fintype V] in
+lemma longer_cycle_of_external_common_neighbor_ab [Finite V]
     {z : V} {q : G.Walk z z} (hq : q.IsCycle)
     {j : ℕ} (hj0 : 0 < j) (hj : j < q.length)
     (E : ExteriorEar q (q.getVert 0) (q.getVert j))
@@ -1737,6 +1809,8 @@ lemma longer_cycle_of_external_common_neighbor_ab
     (haw : G.Adj (q.getVert (j - 1)) w)
     (hbw : G.Adj (q.getVert (q.length - 1)) w) :
     ∃ (a : V) (c : G.Walk a a), c.IsCycle ∧ q.length < c.length := by
+  classical
+  let := Fintype.ofFinite V
   let d := cycleArc q j (q.length - 1) (by omega) (by omega)
   have hd : d.IsPath := cycleArc_isPath hq (by omega) (by omega)
   have hEdMeet : ∀ v : V, v ∈ E.path.support → v ∈ d.support →
@@ -1756,7 +1830,7 @@ lemma longer_cycle_of_external_common_neighbor_ab
     have := cycle_index_eq_of_getVert_eq hq (by omega) (by omega) h
     omega
   have haNotEdge : q.getVert (j - 1) ∉ hbw.toWalk.support := by
-    simp [SimpleGraph.Adj.support_toWalk, hab, haw.ne]
+    simp [hab, haw.ne]
   let e := hbw.toWalk.concat haw.symm
   have he : e.IsPath := hbw.isPath_toWalk.concat haNotEdge haw.symm
   let pre := cycleArc q 0 (j - 1) (by omega) (by omega)
@@ -1840,7 +1914,8 @@ lemma longer_cycle_of_external_common_neighbor_ab
 
 /- The single outside-region interface used by the degree pigeonhole
 argument. -/
-theorem longer_cycle_of_outside_collision
+omit [DecidableRel G.Adj] [Fintype V] in
+theorem longer_cycle_of_outside_collision [Finite V]
     {z : V} {q : G.Walk z z} (hq : q.IsCycle)
     {j : ℕ} (hj0 : 0 < j) (hj : j < q.length)
     (E : ExteriorEar q (q.getVert 0) (q.getVert j))
@@ -1856,6 +1931,8 @@ theorem longer_cycle_of_outside_collision
           (G.Adj (q.getVert (q.length - 1)) w ∧
             G.Adj (E.path.getVert 2) w)))) :
     ∃ (a : V) (c : G.Walk a a), c.IsCycle ∧ q.length < c.length := by
+  classical
+  let := Fintype.ofFinite V
   rcases hcollision with ⟨t, ht0, ht, ha | hb⟩ |
       ⟨w, hwq, hwE, hab | har | hbr⟩
   · exact longer_cycle_of_a_adj_ear_internal hq hj0 hj E ht0 ht ha
@@ -1873,10 +1950,12 @@ theorem longer_cycle_of_outside_collision
 private def cyclePrefix {z : V} (q : G.Walk z z) (j : ℕ) : Finset V :=
   (Finset.range j).image q.getVert
 
+omit [DecidableRel G.Adj] [Fintype V] in
 private lemma mem_cyclePrefix_iff {z : V} {q : G.Walk z z} {j : ℕ} {a : V} :
     a ∈ cyclePrefix q j ↔ ∃ i < j, q.getVert i = a := by
   simp [cyclePrefix]
 
+omit [DecidableRel G.Adj] [Fintype V] in
 private lemma card_cyclePrefix {z : V} {q : G.Walk z z} (hq : q.IsCycle)
     {j : ℕ} (hj : j ≤ q.length) : (cyclePrefix q j).card = j := by
   change ((Finset.range j).image q.getVert).card = j
@@ -1890,8 +1969,11 @@ private lemma card_cyclePrefix {z : V} {q : G.Walk z z} (hq : q.IsCycle)
       (by simp only [Set.mem_ofPred_eq]; omega) hil)
   simpa using himage
 
-private lemma cyclePrefix_length_eq_carrier {z : V} {q : G.Walk z z}
+omit [DecidableRel G.Adj] [Fintype V] in
+private lemma cyclePrefix_length_eq_carrier [Finite V] {z : V} {q : G.Walk z z}
     (hq : q.IsCycle) : cyclePrefix q q.length = q.support.toFinset := by
+  classical
+  let := Fintype.ofFinite V
   ext a
   constructor
   · intro ha
@@ -1907,9 +1989,12 @@ private lemma cyclePrefix_length_eq_carrier {z : V} {q : G.Walk z z}
       simpa using hi
     · exact mem_cyclePrefix_iff.mpr ⟨i, by omega, hi⟩
 
-private lemma cyclePrefix_subset_carrier {z : V} {q : G.Walk z z}
+omit [DecidableRel G.Adj] [Fintype V] in
+private lemma cyclePrefix_subset_carrier [Finite V] {z : V} {q : G.Walk z z}
     (hq : q.IsCycle) {j : ℕ} (hj : j ≤ q.length) :
     cyclePrefix q j ⊆ q.support.toFinset := by
+  classical
+  let := Fintype.ofFinite V
   rw [← cyclePrefix_length_eq_carrier hq]
   intro a ha
   obtain ⟨i, hi, hia⟩ := mem_cyclePrefix_iff.mp ha
@@ -1937,6 +2022,7 @@ private def regionDegree (G : SimpleGraph V) [dG : DecidableRel G.Adj]
     (v : V) (S : Finset V) : ℕ :=
   (adjacencyFinset (dG := dG) G v ∩ S).card
 
+omit [DecidableRel G.Adj] [Fintype V] in
 private lemma cycleRegion_card {z : V} {q : G.Walk z z} (hq : q.IsCycle) :
     (cycleRegion q).card = q.length := by
   have hz : z ∈ q.support.tail := q.end_mem_tail_support hq.not_nil
@@ -1947,13 +2033,15 @@ private lemma cycleRegion_card {z : V} {q : G.Walk z z} (hq : q.IsCycle) :
   rw [List.length_tail, q.length_support]
   omega
 
+omit [DecidableRel G.Adj] [Fintype V] in
 private lemma firstRegion_subset_cycleRegion {z : V} {q : G.Walk z z}
-    {j : ℕ} (hj : j ≤ q.length) :
+    {j : ℕ} (_hj : j ≤ q.length) :
     firstRegion q j ⊆ cycleRegion q := by
   intro v hv
   obtain ⟨i, hi, rfl⟩ := Finset.mem_image.mp hv
   exact List.mem_toFinset.mpr (q.getVert_mem_support i)
 
+omit [DecidableRel G.Adj] [Fintype V] in
 private lemma firstRegion_card {z : V} {q : G.Walk z z} (hq : q.IsCycle)
     {j : ℕ} (hj : j ≤ q.length) :
     (firstRegion q j).card = j := by
@@ -1970,14 +2058,19 @@ private lemma firstRegion_card {z : V} {q : G.Walk z z} (hq : q.IsCycle)
       omega
     · exact hik
 
-private lemma secondRegion_card {z : V} {q : G.Walk z z} (hq : q.IsCycle)
+omit [DecidableRel G.Adj] [Fintype V] in
+private lemma secondRegion_card [Finite V] {z : V} {q : G.Walk z z} (hq : q.IsCycle)
     {j : ℕ} (hj : j ≤ q.length) :
     (secondRegion q j).card = q.length - j := by
+  classical
+  let := Fintype.ofFinite V
   rw [secondRegion, Finset.card_sdiff_of_subset (firstRegion_subset_cycleRegion hj),
     cycleRegion_card hq, firstRegion_card hq hj]
 
+omit [DecidableRel G.Adj] in
 private lemma outsideRegion_card {z : V} {q : G.Walk z z} (hq : q.IsCycle) :
     (outsideRegion q).card = Fintype.card V - q.length := by
+  classical
   rw [outsideRegion, Finset.card_sdiff_of_subset (Finset.subset_univ _),
     Finset.card_univ, cycleRegion_card hq]
 
@@ -2008,7 +2101,7 @@ private lemma regionDegree_add {z : V} (q : G.Walk z z) (j : ℕ) (v : V)
   have hunion : ((N ∩ U) ∪ (N ∩ D)) ∪ (N ∩ W) = N := by
     ext x
     simp only [Finset.mem_union, Finset.mem_inter, Finset.mem_sdiff,
-      Finset.mem_univ, true_and, N, U, C, D, W, secondRegion, outsideRegion]
+      Finset.mem_univ, true_and, N, U, D, W, secondRegion, outsideRegion]
     tauto
   have hdegree : N.card = G.degree v := by
     simp only [N, adjacencyFinset]
@@ -2025,7 +2118,7 @@ private lemma regionDegree_add {z : V} (q : G.Walk z z) (j : ℕ) (v : V)
 
 private lemma minimal_first_region_degree_le_one
     {z : V} {q : G.Walk z z} {j : ℕ}
-    (hj : j ≤ q.length) (r : V)
+    (_hj : j ≤ q.length) (r : V)
     (hminimal : ∀ i : ℕ, 0 < i → i < j → ¬ G.Adj r (q.getVert i)) :
     regionDegree G r (firstRegion q j) ≤ 1 := by
   let N := adjacencyFinset G r
@@ -2159,6 +2252,7 @@ private lemma first_region_collision
 
 /-! ## Remaining region collisions -/
 
+omit [DecidableRel G.Adj] [Fintype V] in
 lemma secondRegion_eq_image
     {z : V} {q : G.Walk z z} (hq : q.IsCycle)
     {j : ℕ} (hj0 : 0 < j) (hj : j < q.length) :
@@ -2379,8 +2473,10 @@ def IsLongestCycle {z : V} (c : G.Walk z z) : Prop :=
   c.IsCycle ∧
     ∀ ⦃z' : V⦄ (c' : G.Walk z' z'), c'.IsCycle → c'.length ≤ c.length
 
+omit [DecidableEq V] [DecidableRel G.Adj] in
 lemma isCycle_length_le_card {z : V} {c : G.Walk z z} (hc : c.IsCycle) :
     c.length ≤ Fintype.card V := by
+  classical
   have hnodup : c.support.tail.Nodup := hc.support_nodup
   have hsub : c.support.tail.toFinset ⊆ (Finset.univ : Finset V) :=
     Finset.subset_univ _
@@ -2395,9 +2491,11 @@ private def cycleLengths (G : SimpleGraph V) : Finset ℕ :=
   (Finset.range (Fintype.card V + 1)).filter fun m ↦
     ∃ (z : V) (c : G.Walk z z), c.IsCycle ∧ c.length = m
 
+omit [DecidableEq V] [DecidableRel G.Adj] in
 private lemma mem_cycleLengths_iff {m : ℕ} :
     m ∈ cycleLengths G ↔
       ∃ (z : V) (c : G.Walk z z), c.IsCycle ∧ c.length = m := by
+  classical
   constructor
   · intro hm
     exact (Finset.mem_filter.mp hm).2
@@ -2406,8 +2504,10 @@ private lemma mem_cycleLengths_iff {m : ℕ} :
     exact ⟨Finset.mem_range.mpr (Nat.lt_succ_of_le (isCycle_length_le_card hc)),
       ⟨z, c, hc, rfl⟩⟩
 
+omit [DecidableEq V] [DecidableRel G.Adj] in
 theorem exists_isLongestCycle (hTwo : Erdos58.TwoConnected G) :
     ∃ (z : V) (c : G.Walk z z), IsLongestCycle c := by
+  classical
   let : Nonempty V := Fintype.card_pos_iff.mp (by
     have := hTwo.card_three_le
     omega)
@@ -2428,6 +2528,7 @@ theorem exists_isLongestCycle (hTwo : Erdos58.TwoConnected G) :
   have hc'mem := mem_cycleLengths_iff.mpr ⟨z', c', hc', rfl⟩
   simpa using hmax c'.length hc'mem
 
+omit [DecidableRel G.Adj] [Fintype V] in
 lemma cycleCarrier_card {z : V} {c : G.Walk z z} (hc : c.IsCycle) :
     c.support.toFinset.card = c.length := by
   have hz : z ∈ c.support.tail := c.end_mem_tail_support hc.not_nil
@@ -2436,22 +2537,24 @@ lemma cycleCarrier_card {z : V} {c : G.Walk z z} (hc : c.IsCycle) :
   rw [List.length_tail, c.length_support]
   omega
 
+omit [DecidableRel G.Adj] in
 theorem compl_isIndepSet_of_isLongestCycle_of_extension
     {z : V} {c : G.Walk z z} (hc : IsLongestCycle c)
     (hextend : ∀ ⦃x y : V⦄,
       x ∉ c.support.toFinset → y ∉ c.support.toFinset → G.Adj x y →
         ∃ (z' : V) (c' : G.Walk z' z'), c'.IsCycle ∧ c.length < c'.length) :
     G.IsIndepSet ((c.support.toFinsetᶜ : Finset V) : Set V) := by
-  intro x hx y hy hxy
-  intro hadj
+  intro x hx y hy hxy hadj
   obtain ⟨z', c', hc', hlong⟩ := hextend
     (by simpa using hx) (by simpa using hy) hadj
   exact (Nat.not_lt_of_ge (hc.2 c' hc')) hlong
 
+omit [DecidableRel G.Adj] in
 theorem isHamiltonian_of_cycle_support_eq_univ
     {z : V} {c : G.Walk z z} (hc : c.IsCycle)
     (hspan : c.support.toFinset = (Finset.univ : Finset V)) :
     G.IsHamiltonian := by
+  classical
   intro _
   refine ⟨z, c, ?_⟩
   rw [SimpleGraph.Walk.isHamiltonianCycle_iff_isCycle_and_length_eq]

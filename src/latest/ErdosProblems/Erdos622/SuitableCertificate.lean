@@ -67,20 +67,22 @@ lemma card_crossNeighbors_induce_restrictedParts
     exact card_neighborFinset_induce_inter_restrictedPart G S A v
 
 lemma induce_crossingGraph_eq_crossingSubgraph
-    (G : SimpleGraph V) [DecidableRel G.Adj]
+    (G : SimpleGraph V)
     {S A B : Finset V} (hcut : IsCut A B) :
     (crossingGraph G A).induce (S : Set V) =
       GoodCutHamiltonicity.crossingSubgraph (G.induce (S : Set V))
         (restrictedPart S A) (restrictedPart S B) := by
+  classical
   ext u v
   simp only [SimpleGraph.induce_adj, crossingGraph,
     GoodCutHamiltonicity.crossingSubgraph_adj, mem_restrictedPart]
   rw [hcut.mem_right_iff u.1, hcut.mem_right_iff v.1]
 
 lemma crossingGraph_eq_crossingSubgraph
-    (G : SimpleGraph V) [DecidableRel G.Adj]
+    (G : SimpleGraph V)
     {A B : Finset V} (hcut : IsCut A B) :
     crossingGraph G A = GoodCutHamiltonicity.crossingSubgraph G A B := by
+  classical
   ext u v
   simp only [crossingGraph, GoodCutHamiltonicity.crossingSubgraph_adj]
   rw [hcut.mem_right_iff u, hcut.mem_right_iff v]
@@ -125,11 +127,12 @@ lemma card_edgeFinset_crossingSubgraph_eq_edgeCount
       (Trichotomy.edgeCount_eq_sum_degreeInto G X Y).symm
 
 lemma inducedEdgeCount_crossingGraph_eq_edgeCount_induce
-    (G : SimpleGraph V) [DecidableRel G.Adj]
+    (G : SimpleGraph V)
     {S A B : Finset V} (hcut : IsCut A B) :
     Concentration.inducedEdgeCount (crossingGraph G A) S =
       Trichotomy.edgeCount (G.induce (S : Set V))
         (restrictedPart S A) (restrictedPart S B) := by
+  classical
   rw [Concentration.inducedEdgeCount_eq,
     Erdos88.inducedEdges_eq_card_edgeFinset_induce]
   have hedgeFinset :
@@ -145,10 +148,11 @@ lemma inducedEdgeCount_crossingGraph_eq_edgeCount_induce
     (G.induce (S : Set V)) (restrictedParts_isCut hcut)
 
 lemma card_crossingGraph_eq_edgeCount
-    (G : SimpleGraph V) [DecidableRel G.Adj]
+    (G : SimpleGraph V)
     {A B : Finset V} (hcut : IsCut A B) :
     ((crossingGraph G A).edgeFinset.card : ℝ) =
       Trichotomy.edgeCount G A B := by
+  classical
   have hedgeFinset :
       (crossingGraph G A).edgeFinset =
         (GoodCutHamiltonicity.crossingSubgraph G A B).edgeFinset := by
@@ -236,7 +240,7 @@ private lemma two_sub_add_le_of_abs_lt
 /-- Sharp low-cross-degree estimates for the numerical constants used in
 the suitable-sample adapter. -/
 theorem sharp_lowCrossSet_bounds
-    (G : SimpleGraph V) [DecidableRel G.Adj]
+    (G : SimpleGraph V)
     (X Y : Finset V) {n : ℕ}
     (hn : 65536 ≤ n)
     (hXlower :
@@ -266,6 +270,7 @@ theorem sharp_lowCrossSet_bounds
     (2 * (Y.card - X.card) + L.card + 1 ≤ n / 2048) ∧
     (2 * (X.card - Y.card) + n / 6000 + 1 ≤ n / 2048) ∧
     (2 * (Y.card - X.card) + n / 6000 + 1 ≤ n / 2048) := by
+  classical
   dsimp only
   have hnpos : 0 < n := lt_of_lt_of_le (by norm_num) hn
   have hnR : (0 : ℝ) < n := by exact_mod_cast hnpos

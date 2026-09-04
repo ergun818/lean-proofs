@@ -44,18 +44,22 @@ abbrev CutDecomposition (V : Type*) := List (Finset V × Finset V × ℝ)
 noncomputable def cutDecompositionMatrix (L : CutDecomposition V) : V → V → ℝ :=
   fun i j ↦ (L.map fun q ↦ cutPiece q.1 q.2.1 q.2.2 i j).sum
 
+omit [DecidableEq V] [Fintype V] in
 @[simp] lemma matrixCutSum_empty_left (A : V → V → ℝ) (T : Finset V) :
     matrixCutSum A ∅ T = 0 := by
   simp [matrixCutSum]
 
+omit [DecidableEq V] [Fintype V] in
 @[simp] lemma matrixCutSum_empty_right (A : V → V → ℝ) (S : Finset V) :
     matrixCutSum A S ∅ = 0 := by
   simp [matrixCutSum]
 
+omit [DecidableEq V] [Fintype V] in
 lemma matrixCutSum_sub (A B : V → V → ℝ) (S T : Finset V) :
     matrixCutSum (A - B) S T = matrixCutSum A S T - matrixCutSum B S T := by
   simp [matrixCutSum, Finset.sum_sub_distrib]
 
+omit [DecidableEq V] [Fintype V] in
 lemma matrixCutSum_add (A B : V → V → ℝ) (S T : Finset V) :
     matrixCutSum (A + B) S T = matrixCutSum A S T + matrixCutSum B S T := by
   simp [matrixCutSum, Finset.sum_add_distrib]
@@ -85,14 +89,17 @@ lemma sum_ite_rectangle (f : V → V → ℝ) (S T : Finset V) :
           intro j _ hj
           simp [hj]
 
+omit [DecidableEq V] [Fintype V] in
 lemma matrixCutSum_mul_const (A : V → V → ℝ) (S T : Finset V) (c : ℝ) :
     matrixCutSum (fun i j ↦ A i j * c) S T = matrixCutSum A S T * c := by
   simp [matrixCutSum, Finset.sum_mul]
 
+omit [DecidableEq V] [Fintype V] in
 lemma matrixCutSum_const_mul (A : V → V → ℝ) (S T : Finset V) (c : ℝ) :
     matrixCutSum (fun i j ↦ c * A i j) S T = c * matrixCutSum A S T := by
   simp [matrixCutSum, Finset.mul_sum]
 
+omit [Fintype V] in
 lemma matrixCutSum_cutPiece (S T : Finset V) (c : ℝ) :
     matrixCutSum (cutPiece S T c) S T = S.card * T.card * c := by
   unfold matrixCutSum
@@ -108,15 +115,18 @@ lemma matrixCutSum_cutPiece (S T : Finset V) (c : ℝ) :
       simp
       ring
 
+omit [Fintype V] in
 private lemma sum_indicator_inter (X S : Finset V) (c : ℝ) :
     (∑ i ∈ X, if i ∈ S then c else 0) = (X ∩ S).card * c := by
   rw [← Finset.sum_filter]
   simp [Finset.filter_mem_eq_inter]
 
+omit [Fintype V] in
 /-- Rectangle cut sums depend only on the two intersection cardinalities. -/
-lemma matrixCutSum_cutPiece_general (S T X Y : Finset V) (c : ℝ) :
+lemma matrixCutSum_cutPiece_general [Finite V] (S T X Y : Finset V) (c : ℝ) :
     matrixCutSum (cutPiece S T c) X Y =
       (X ∩ S).card * (Y ∩ T).card * c := by
+  let := Fintype.ofFinite V
   unfold matrixCutSum
   calc
     (∑ i ∈ X, ∑ j ∈ Y, cutPiece S T c i j) =
@@ -132,9 +142,11 @@ lemma matrixCutSum_cutPiece_general (S T X Y : Finset V) (c : ℝ) :
       sum_indicator_inter X S _
     _ = (X ∩ S).card * (Y ∩ T).card * c := by ring
 
+omit [DecidableEq V] in
 lemma matrixEnergy_nonneg (A : V → V → ℝ) : 0 ≤ matrixEnergy A := by
   exact Finset.sum_nonneg fun _ _ ↦ Finset.sum_nonneg fun _ _ ↦ sq_nonneg _
 
+omit [DecidableEq V] in
 lemma matrixEnergy_eq_zero_iff (A : V → V → ℝ) :
     matrixEnergy A = 0 ↔ A = 0 := by
   constructor
@@ -210,11 +222,13 @@ def IsCutRegular (ε : ℝ) (A : V → V → ℝ) : Prop :=
   ∀ S T : Finset V,
     |matrixCutSum A S T| ≤ ε * (Fintype.card V : ℝ) ^ 2
 
+omit [Fintype V] in
 @[simp] lemma cutDecompositionMatrix_nil :
     cutDecompositionMatrix ([] : CutDecomposition V) = 0 := by
   funext i j
   simp [cutDecompositionMatrix]
 
+omit [Fintype V] in
 @[simp] lemma cutDecompositionMatrix_cons (S T : Finset V) (c : ℝ)
     (L : CutDecomposition V) :
     cutDecompositionMatrix ((S, T, c) :: L) =
@@ -222,14 +236,16 @@ def IsCutRegular (ε : ℝ) (A : V → V → ℝ) : Prop :=
   funext i j
   simp [cutDecompositionMatrix]
 
+omit [Fintype V] in
 /-- The explicit profile formula for a rectangle decomposition.  This is the
 form used with simultaneous concentration of the finitely many intersection
 cardinalities. -/
-lemma matrixCutSum_cutDecompositionMatrix (L : CutDecomposition V)
+lemma matrixCutSum_cutDecompositionMatrix [Finite V] (L : CutDecomposition V)
     (X Y : Finset V) :
     matrixCutSum (cutDecompositionMatrix L) X Y =
       (L.map fun q ↦
         ((X ∩ q.1).card : ℝ) * ((Y ∩ q.2.1).card : ℝ) * q.2.2).sum := by
+  let := Fintype.ofFinite V
   induction L with
   | nil => simp [cutDecompositionMatrix, matrixCutSum]
   | cons q L ih =>
@@ -238,6 +254,7 @@ lemma matrixCutSum_cutDecompositionMatrix (L : CutDecomposition V)
         matrixCutSum_cutPiece_general, ih]
       simp
 
+omit [DecidableEq V] in
 lemma matrixEnergy_le_card_sq (A : V → V → ℝ)
     (hA : ∀ i j, |A i j| ≤ 1) :
     matrixEnergy A ≤ (Fintype.card V : ℝ) ^ 2 := by
@@ -254,6 +271,7 @@ lemma matrixEnergy_le_card_sq (A : V → V → ℝ)
       simp
       ring
 
+omit [DecidableEq V] [Fintype V] in
 lemma abs_matrixCutSum_le (A : V → V → ℝ) (S T : Finset V) (M : ℝ)
     (hA : ∀ i ∈ S, ∀ j ∈ T, |A i j| ≤ M) :
     |matrixCutSum A S T| ≤ (S.card * T.card : ℝ) * M := by
@@ -510,12 +528,14 @@ noncomputable def cutProfileValue (L : CutDecomposition V)
     (a b : (Finset V × Finset V × ℝ) → ℝ) : ℝ :=
   (L.map fun q ↦ q.2.2 * a q * b q).sum
 
-lemma matrixCutSum_cutDecompositionMatrix_eq_profile
+omit [Fintype V] in
+lemma matrixCutSum_cutDecompositionMatrix_eq_profile [Finite V]
     (L : CutDecomposition V) (X Y : Finset V) :
     matrixCutSum (cutDecompositionMatrix L) X Y =
       cutProfileValue L
         (fun q ↦ ((X ∩ q.1).card : ℝ))
         (fun q ↦ ((Y ∩ q.2.1).card : ℝ)) := by
+  let := Fintype.ofFinite V
   rw [matrixCutSum_cutDecompositionMatrix]
   unfold cutProfileValue
   apply congrArg List.sum
@@ -523,6 +543,7 @@ lemma matrixCutSum_cutDecompositionMatrix_eq_profile
   intro q hq
   ring
 
+omit [DecidableEq V] [Fintype V] in
 lemma cutProfileValue_sub_le (L : CutDecomposition V)
     (a b a' b' : (Finset V × Finset V × ℝ) → ℝ) (E : ℝ) (_hE : 0 ≤ E)
     (hterm : ∀ q ∈ L, |a q * b q - a' q * b' q| ≤ E) :
@@ -574,25 +595,28 @@ lemma abs_mul_sub_mul_le {a b a' b' N δ : ℝ} (hN : 0 ≤ N) (_hδ : 0 ≤ δ)
         (mul_le_mul hb' haa' (abs_nonneg _) hN)
     _ = 2 * N * δ := by ring
 
+omit [Fintype V] in
 /-- Profile-density transfer estimate.  The exact cut value of a rectangle
 decomposition is within `mass · E` of any profile whose two-factor products
 are termwise within `E` of the exact intersection-cardinality products. -/
-lemma matrixCutSum_cutDecompositionMatrix_sub_profile_le
+lemma matrixCutSum_cutDecompositionMatrix_sub_profile_le [Finite V]
     (L : CutDecomposition V) (X Y : Finset V)
     (a b : (Finset V × Finset V × ℝ) → ℝ) (E : ℝ) (hE : 0 ≤ E)
     (hterm : ∀ q ∈ L,
       |((X ∩ q.1).card : ℝ) * ((Y ∩ q.2.1).card : ℝ) - a q * b q| ≤ E) :
     |matrixCutSum (cutDecompositionMatrix L) X Y - cutProfileValue L a b| ≤
       cutCoefficientMass L * E := by
+  let := Fintype.ofFinite V
   rw [matrixCutSum_cutDecompositionMatrix_eq_profile]
   exact cutProfileValue_sub_le L _ _ a b E hE hterm
 
+omit [Fintype V] in
 /-- Uniform profile-density transfer in the form used after simultaneous
 concentration.  The exact intersection factors and the comparison profile
 are within `δ`; their relevant magnitudes are at most `N`; and the total
 coefficient mass is at most `C`.  The resulting cut-value error is at most
 `2 C N δ`. -/
-lemma profile_density_transfer_estimate
+lemma profile_density_transfer_estimate [Finite V]
     (L : CutDecomposition V) (X Y : Finset V)
     (a b : (Finset V × Finset V × ℝ) → ℝ)
     (C N δ : ℝ) (hC : cutCoefficientMass L ≤ C)
@@ -603,6 +627,7 @@ lemma profile_density_transfer_estimate
     (hYclose : ∀ q ∈ L, |((Y ∩ q.2.1).card : ℝ) - b q| ≤ δ) :
     |matrixCutSum (cutDecompositionMatrix L) X Y - cutProfileValue L a b| ≤
       C * (2 * N * δ) := by
+  let := Fintype.ofFinite V
   have hterm : ∀ q ∈ L,
       |((X ∩ q.1).card : ℝ) * ((Y ∩ q.2.1).card : ℝ) - a q * b q| ≤
         2 * N * δ := by
@@ -617,6 +642,7 @@ lemma profile_density_transfer_estimate
     _ ≤ C * (2 * N * δ) :=
       mul_le_mul_of_nonneg_right hC (mul_nonneg (mul_nonneg (by norm_num) hN) hδ)
 
+omit [DecidableEq V] [Fintype V] in
 lemma cutCoefficientMass_le (L : CutDecomposition V) (B : ℝ)
     (hB : ∀ q ∈ L, |q.2.2| ≤ B) :
     cutCoefficientMass L ≤ (L.length : ℝ) * B := by
@@ -657,6 +683,7 @@ theorem finite_weak_regularity_bounded (ε : ℝ) (hε : 0 < ε) (k : ℕ)
     _ ≤ (k : ℝ) * (2 : ℝ) ^ k := by
       exact mul_le_mul_of_nonneg_right (by exact_mod_cast hlength) (pow_nonneg (by norm_num) _)
 
+omit [DecidableEq V] in
 /-- Cut-regularity of a difference is exactly the uniform additive estimate
 needed to transfer lower bounds between the original and approximating
 matrices. -/
@@ -664,6 +691,7 @@ lemma cutSum_sub_le_of_isCutRegular {ε : ℝ} {A B : V → V → ℝ}
     (h : IsCutRegular ε (A - B)) (S T : Finset V) :
     matrixCutSum A S T - ε * (Fintype.card V : ℝ) ^ 2 ≤
       matrixCutSum B S T := by
+  classical
   have habs := h S T
   rw [matrixCutSum_sub] at habs
   have hupper : matrixCutSum A S T - matrixCutSum B S T ≤
@@ -676,10 +704,12 @@ an internal edge is counted twice when both inputs are the same set. -/
 noncomputable def graphAdjacencyMatrix (G : SimpleGraph V) : V → V → ℝ :=
   fun i j ↦ if G.Adj i j then 1 else 0
 
+omit [DecidableEq V] [Fintype V] in
 lemma abs_graphAdjacencyMatrix_le_one (G : SimpleGraph V) (i j : V) :
     |graphAdjacencyMatrix G i j| ≤ 1 := by
   by_cases h : G.Adj i j <;> simp [graphAdjacencyMatrix, h]
 
+omit [DecidableEq V] [Fintype V] in
 lemma matrixCutSum_graphAdjacencyMatrix (G : SimpleGraph V) (S T : Finset V) :
     matrixCutSum (graphAdjacencyMatrix G) S T =
       ∑ i ∈ S, ∑ j ∈ T, if G.Adj i j then 1 else 0 := by

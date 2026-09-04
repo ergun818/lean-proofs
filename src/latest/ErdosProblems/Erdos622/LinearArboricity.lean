@@ -125,6 +125,7 @@ def colorGraph {G : SimpleGraph V} {k : ℕ} (c : EdgePartition G k)
     (i : Fin k) : SimpleGraph V :=
   SimpleGraph.fromEdgeSet {e | ∃ he : e ∈ G.edgeSet, c ⟨e, he⟩ = i}
 
+omit [Fintype V] in
 lemma colorGraph_le {G : SimpleGraph V} {k : ℕ} (c : EdgePartition G k)
     (i : Fin k) : colorGraph c i ≤ G := by
   change SimpleGraph.fromEdgeSet
@@ -133,6 +134,7 @@ lemma colorGraph_le {G : SimpleGraph V} {k : ℕ} (c : EdgePartition G k)
   intro e he
   exact he.1.choose
 
+omit [Fintype V] in
 lemma mem_colorGraph_edgeSet_iff {G : SimpleGraph V} {k : ℕ}
     (c : EdgePartition G k) (i : Fin k) (e : Sym2 V) :
     e ∈ (colorGraph c i).edgeSet ↔
@@ -150,17 +152,21 @@ lemma mem_colorGraph_edgeSet_iff {G : SimpleGraph V} {k : ℕ}
     refine ⟨⟨heG, hc⟩, ?_⟩
     exact G.not_isDiag_of_mem_edgeSet heG
 
-lemma mem_colorGraph_edgeSet {G : SimpleGraph V} {k : ℕ}
+omit [Fintype V] in
+lemma mem_colorGraph_edgeSet [Finite V] {G : SimpleGraph V} {k : ℕ}
     (c : EdgePartition G k) (e : G.edgeSet) :
-    e.1 ∈ (colorGraph c (c e)).edgeSet :=
-  (mem_colorGraph_edgeSet_iff c (c e) e.1).2 ⟨e.2, rfl⟩
+    e.1 ∈ (colorGraph c (c e)).edgeSet := by
+  let := Fintype.ofFinite V
+  exact
+    (mem_colorGraph_edgeSet_iff c (c e) e.1).2 ⟨e.2, rfl⟩
 
 /-- The abstract edge fiber and the ordinary edge finset of its color graph
 have the same cardinality. -/
-lemma map_colorClass_eq_edgeFinset [DecidableEq V] {G : SimpleGraph V}
+lemma map_colorClass_eq_edgeFinset {G : SimpleGraph V}
     {k : ℕ} (c : EdgePartition G k) (i : Fin k) :
     (colorClass c i).map (Function.Embedding.subtype G.edgeSet) =
       (colorGraph c i).edgeFinset := by
+  classical
   ext e
   simp only [Finset.mem_map, SimpleGraph.mem_edgeFinset]
   constructor
@@ -171,15 +177,18 @@ lemma map_colorClass_eq_edgeFinset [DecidableEq V] {G : SimpleGraph V}
     obtain ⟨heG, hc⟩ := (mem_colorGraph_edgeSet_iff c i e).1 heColor
     exact ⟨⟨e, heG⟩, (mem_colorClass c i ⟨e, heG⟩).2 hc, rfl⟩
 
-lemma card_edgeFinset_colorGraph [DecidableEq V] {G : SimpleGraph V}
+lemma card_edgeFinset_colorGraph {G : SimpleGraph V}
     {k : ℕ} (c : EdgePartition G k) (i : Fin k) :
     (colorGraph c i).edgeFinset.card = (colorClass c i).card := by
+  classical
   rw [← map_colorClass_eq_edgeFinset c i, Finset.card_map]
 
+omit [Fintype V] in
 /-- The color graphs cover the original graph.  This remains true for zero
 colors: in that case the edge subtype of `G` is empty. -/
-lemma iSup_colorGraph {G : SimpleGraph V} {k : ℕ} (c : EdgePartition G k) :
+lemma iSup_colorGraph [Finite V] {G : SimpleGraph V} {k : ℕ} (c : EdgePartition G k) :
     (⨆ i, colorGraph c i) = G := by
+  let := Fintype.ofFinite V
   apply le_antisymm
   · exact iSup_le fun i ↦ colorGraph_le c i
   · intro v w hvw
@@ -189,9 +198,11 @@ lemma iSup_colorGraph {G : SimpleGraph V} {k : ℕ} (c : EdgePartition G k) :
       exact mem_colorGraph_edgeSet c e
     exact (le_iSup (fun i ↦ colorGraph c i) (c e)) hcolor
 
+omit [Fintype V] in
 /-- Distinct color graphs have disjoint edge sets. -/
-lemma colorGraph_disjoint {G : SimpleGraph V} {k : ℕ} (c : EdgePartition G k)
+lemma colorGraph_disjoint [Finite V] {G : SimpleGraph V} {k : ℕ} (c : EdgePartition G k)
     {i j : Fin k} (hij : i ≠ j) : Disjoint (colorGraph c i) (colorGraph c j) := by
+  let := Fintype.ofFinite V
   rw [← SimpleGraph.disjoint_edgeSet, Set.disjoint_left]
   intro e hei hej
   obtain ⟨heG, hci⟩ := (mem_colorGraph_edgeSet_iff c i e).1 hei
@@ -225,7 +236,7 @@ lemma exists_card_le_mul_colorClass {G : SimpleGraph V} {k : ℕ}
     ∑ j : Fin k, (colorClass c j).card ≤
         ∑ _j : Fin k, (colorClass c i).card := by
           exact Finset.sum_le_sum fun j _hj ↦ hi j (by simp)
-    _ = k * (colorClass c i).card := by simp [Nat.mul_comm]
+    _ = k * (colorClass c i).card := by simp
 
 /-- A linear-forest edge decomposition, represented by its total edge-color
 function.  Exact coverage and pairwise edge-disjointness follow from the
@@ -256,12 +267,13 @@ lemma exists_large_class (d : Decomposition G k) (hk : 0 < k) :
 
 /-- Real-valued averaging form used in the induced-edge estimates of the
 DKM argument. -/
-lemma exists_large_linearForest [DecidableEq V] (d : Decomposition G k)
+lemma exists_large_linearForest (d : Decomposition G k)
     (hk : 0 < k) :
     ∃ F : SimpleGraph V,
       F ≤ G ∧ Erdos622.SimpleGraph.IsLinearForest F ∧
       (Fintype.card G.edgeSet : ℝ) / (k : ℝ) ≤
         (Fintype.card F.edgeSet : ℝ) := by
+  classical
   obtain ⟨i, hi, hlinear⟩ := d.exists_large_class hk
   refine ⟨colorGraph d.color i, colorGraph_le d.color i, hlinear, ?_⟩
   have hkR : (0 : ℝ) < k := by exact_mod_cast hk

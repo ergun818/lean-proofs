@@ -68,7 +68,6 @@ lemma oneSmall_positive_window_bounds
   have hnum :
       (2 * (x + ((n - d) - y)) : ℝ) - (2 * n : ℝ) =
         2 * ((x : ℝ) - y - d) := by
-    push_cast [Nat.cast_sub hdn, Nat.cast_sub hy]
     ring
   have hlower : (0 : ℝ) ≤ (x : ℝ) - y - d := by
     have hw := hwindow.1
@@ -245,7 +244,7 @@ theorem eventually_oneSmallCover_left_goodSample_count
   have hgood := goodSample_count_of_window_failure G P Failure
     (((1 / 2 : ℝ) - ε / 2) * (2 : ℝ) ^ (2 * n)) (ε / 2)
     hgoodWindow hwindowRaw (by simpa using hfailure)
-  convert hgood using 1 <;> simp <;> ring
+  convert hgood using 1; simp; ring
 
 /-- Unconditional parameterized form of the symmetric one-small-cover arm.
 For every positive error, a fixed integer scale `K` is chosen once and for

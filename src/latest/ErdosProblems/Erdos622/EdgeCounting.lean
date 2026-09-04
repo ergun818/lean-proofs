@@ -99,7 +99,7 @@ theorem degreeInto_eq_sum (G : SimpleGraph V) [DecidableRel G.Adj]
     ext w
     simp [and_comm]
   rw [degreeInto, heq]
-  simpa using (Finset.sum_boole (fun w ↦ G.Adj v w) S).symm
+  simp
 
 /-- Degree in an induced graph is degree into the finite inducing set. -/
 theorem degree_induce_eq_degreeInto_toFinset
@@ -213,16 +213,19 @@ def edgesAcross (G : SimpleGraph V) [DecidableRel G.Adj]
     (S T : Finset V) : ℕ :=
   (G.interedges S T).card
 
+omit [DecidableEq V] [Fintype V] in
 @[simp]
 theorem edgesAcross_empty_left (G : SimpleGraph V) [DecidableRel G.Adj]
     (T : Finset V) : edgesAcross G ∅ T = 0 := by
   simp [edgesAcross]
 
+omit [DecidableEq V] [Fintype V] in
 @[simp]
 theorem edgesAcross_empty_right (G : SimpleGraph V) [DecidableRel G.Adj]
     (S : Finset V) : edgesAcross G S ∅ = 0 := by
   simp [edgesAcross, SimpleGraph.interedges_def]
 
+omit [DecidableEq V] [Fintype V] in
 theorem edgesAcross_comm (G : SimpleGraph V) [DecidableRel G.Adj]
     (S T : Finset V) :
     edgesAcross G S T = edgesAcross G T S := by
@@ -242,8 +245,7 @@ theorem edgesAcross_eq_sum_degreeInto (G : SimpleGraph V) [DecidableRel G.Adj]
   calc
     (G.interedges S T).card =
         ∑ e ∈ S ×ˢ T, if G.Adj e.1 e.2 then 1 else 0 := by
-      simpa [SimpleGraph.interedges_def] using
-        (Finset.sum_boole (fun e : V × V ↦ G.Adj e.1 e.2) (S ×ˢ T)).symm
+      simp [SimpleGraph.interedges_def]
     _ = ∑ v ∈ S, ∑ w ∈ T, if G.Adj v w then 1 else 0 := by
       rw [Finset.sum_product]
     _ = ∑ v ∈ S, degreeInto G v T := by
@@ -251,40 +253,50 @@ theorem edgesAcross_eq_sum_degreeInto (G : SimpleGraph V) [DecidableRel G.Adj]
       intro v hv
       rw [degreeInto_eq_sum]
 
+omit [DecidableEq V] [Fintype V] in
 theorem edgesAcross_le_card_mul_card (G : SimpleGraph V) [DecidableRel G.Adj]
     (S T : Finset V) :
     edgesAcross G S T ≤ S.card * T.card := by
   exact G.card_interedges_le_mul S T
 
+omit [DecidableEq V] [Fintype V] in
 theorem edgesAcross_mono (G : SimpleGraph V) [DecidableRel G.Adj]
     {S S' T T' : Finset V} (hS : S ⊆ S') (hT : T ⊆ T') :
     edgesAcross G S T ≤ edgesAcross G S' T' := by
   exact Finset.card_le_card (G.interedges_mono hS hT)
 
-theorem edgesAcross_union_left (G : SimpleGraph V) [DecidableRel G.Adj]
+omit [Fintype V] in
+theorem edgesAcross_union_left [Finite V] (G : SimpleGraph V) [DecidableRel G.Adj]
     {S T : Finset V} (hST : Disjoint S T) (U : Finset V) :
     edgesAcross G (S ∪ T) U = edgesAcross G S U + edgesAcross G T U := by
+  let := Fintype.ofFinite V
   rw [edgesAcross_eq_sum_degreeInto, Finset.sum_union hST,
     ← edgesAcross_eq_sum_degreeInto, ← edgesAcross_eq_sum_degreeInto]
 
-theorem edgesAcross_union_right (G : SimpleGraph V) [DecidableRel G.Adj]
+omit [Fintype V] in
+theorem edgesAcross_union_right [Finite V] (G : SimpleGraph V) [DecidableRel G.Adj]
     (S : Finset V) {T U : Finset V} (hTU : Disjoint T U) :
     edgesAcross G S (T ∪ U) = edgesAcross G S T + edgesAcross G S U := by
+  let := Fintype.ofFinite V
   rw [edgesAcross_comm G S, edgesAcross_union_left G hTU,
     edgesAcross_comm G T, edgesAcross_comm G U]
 
-theorem edgesAcross_sdiff_add_inter_right
+omit [Fintype V] in
+theorem edgesAcross_sdiff_add_inter_right [Finite V]
     (G : SimpleGraph V) [DecidableRel G.Adj] (S T U : Finset V) :
     edgesAcross G S (T \ U) + edgesAcross G S (T ∩ U) = edgesAcross G S T := by
+  let := Fintype.ofFinite V
   rw [← edgesAcross_union_right G S (Finset.disjoint_sdiff_inter T U)]
   congr 2
   ext v
   simp only [Finset.mem_union, Finset.mem_sdiff, Finset.mem_inter]
   tauto
 
-theorem edgesAcross_sdiff_add_inter_left
+omit [Fintype V] in
+theorem edgesAcross_sdiff_add_inter_left [Finite V]
     (G : SimpleGraph V) [DecidableRel G.Adj] (S T U : Finset V) :
     edgesAcross G (S \ U) T + edgesAcross G (S ∩ U) T = edgesAcross G S T := by
+  let := Fintype.ofFinite V
   simpa only [edgesAcross_comm G] using edgesAcross_sdiff_add_inter_right G T S U
 
 theorem edgesAcross_compl_add_right
@@ -302,6 +314,7 @@ theorem edgesAcross_self (G : SimpleGraph V) [DecidableRel G.Adj]
     edgesAcross G S S = 2 * (edgesInside G S).card := by
   rw [edgesAcross_eq_sum_degreeInto, sum_degreeInto_self]
 
+omit [Fintype V] in
 /-- Across a disjoint pair, graph and complement edge counts fill the rectangle. -/
 theorem edgesAcross_add_compl (G : SimpleGraph V) [DecidableRel G.Adj]
     {S T : Finset V} (hST : Disjoint S T) :

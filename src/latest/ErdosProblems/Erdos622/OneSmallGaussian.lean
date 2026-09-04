@@ -19,7 +19,7 @@ noncomputable section
 /-- A Gaussian window wholly on the negative half-line is the difference of
 the corresponding two positive half-integrals. -/
 lemma gaussianWindowMass_neg_neg {u v : ℝ}
-    (hv : 0 ≤ v) (hvu : v ≤ u) :
+    (_hv : 0 ≤ v) (hvu : v ≤ u) :
     BinomialCLT.gaussianWindowMass (-u) (-v) =
       (gaussianHalfInterval u - gaussianHalfInterval v) /
         Real.sqrt (2 * Real.pi) := by
@@ -35,9 +35,7 @@ lemma gaussianWindowMass_neg_neg {u v : ℝ}
     have hcomp :
         (∫ x : ℝ in v..u, gaussianKernel (-x)) =
           ∫ x : ℝ in -u..-v, gaussianKernel x := by
-      simpa using
-        (intervalIntegral.integral_comp_neg
-          (f := gaussianKernel) (a := v) (b := u))
+      simp
     rw [← hcomp]
     have heven : (fun x : ℝ ↦ gaussianKernel (-x)) = gaussianKernel := by
       funext x

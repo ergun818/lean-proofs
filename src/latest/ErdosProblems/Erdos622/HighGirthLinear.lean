@@ -56,13 +56,15 @@ variable {V : Type u} [Fintype V]
 
 /-! ## Passing from a factor family to an edge partition -/
 
+omit [Fintype V] in
 /-- A pairwise edge-disjoint family covering `G` canonically determines an
 edge partition whose color graphs are exactly the members of the family. -/
-theorem exists_edgePartition_colorGraph_eq
+theorem exists_edgePartition_colorGraph_eq [Finite V]
     {G : SimpleGraph V} {k : ℕ} (F : Fin k → SimpleGraph V)
     (hdisjoint : Pairwise fun i j ↦ Disjoint (F i) (F j))
     (hcover : (⨆ i, F i) = G) :
     ∃ c : EdgePartition G k, ∀ i, colorGraph c i = F i := by
+  let := Fintype.ofFinite V
   have hexists (e : G.edgeSet) : ∃ i, e.1 ∈ (F i).edgeSet := by
     have he : e.1 ∈ (⨆ i, F i).edgeSet := by
       rw [hcover]
@@ -133,6 +135,7 @@ def flattenColor {G : SimpleGraph V} {s t : ℕ}
     EdgePartition G (s * t) := fun e ↦
   finProdFinEquiv (outer e, inner (outer e) (toOwnColorEdge outer e))
 
+omit [Fintype V] in
 /-- A flattened color graph is exactly the corresponding inner color graph. -/
 lemma colorGraph_flattenColor {G : SimpleGraph V} {s t : ℕ}
     (outer : EdgePartition G s)
@@ -354,7 +357,7 @@ noncomputable instance CycleBlockIndex.instFintype (G : SimpleGraph V) {k : ℕ}
       ∃ (i : Fin k) (v : V) (p : (F i).Walk v v),
         p.IsCycle ∧ R = cycleEdgeBlock G p)
   intro R
-  simp [CycleBlockIndex]
+  simp
 
 def cycleBlocks (G : SimpleGraph V) {k : ℕ} (F : Fin k → SimpleGraph V) :
     CycleBlockIndex G F → Finset G.edgeSet := fun a => a.1
@@ -435,6 +438,7 @@ theorem cycleBlocks_card_ge {G : SimpleGraph V} {k g : ℕ}
 def edgeValues (G : SimpleGraph V) (W : Finset G.edgeSet) : Set (Sym2 V) :=
   Subtype.val '' (W : Set G.edgeSet)
 
+omit [Fintype V] in
 @[simp] lemma edge_mem_edgeValues (G : SimpleGraph V) (W : Finset G.edgeSet)
     (e : G.edgeSet) : e.1 ∈ edgeValues G W ↔ e ∈ W := by
   constructor
@@ -469,7 +473,7 @@ theorem isAcyclic_deleteEdges_of_hits_cycleBlocks
 def selectedCycleEdges {G : SimpleGraph V} {k : ℕ}
     {F : Fin k → SimpleGraph V}
     (pick : (a : CycleBlockIndex G F) → G.edgeSet)
-    (hpick : ∀ a, pick a ∈ cycleBlocks G F a) : Finset G.edgeSet :=
+    (_hpick : ∀ a, pick a ∈ cycleBlocks G F a) : Finset G.edgeSet :=
   Finset.univ.image pick
 
 theorem isAcyclic_deleteEdges_selectedCycleEdges
@@ -522,13 +526,14 @@ independent set meeting every block.  This is the arbitrary-indexed block
 form of Alon's Proposition 2.4, obtained from the published partition form
 by inducing on the union of the blocks. -/
 theorem exists_independent_set_hitting_disjoint_parts
-    {X : Type u} {I : Type*} [Fintype X] [Fintype I]
+    {X : Type u} {I : Type*} [Fintype X] [Finite I]
     (L : SimpleGraph X) (parts : I → Finset X) (d : ℕ) (hd : 0 < d)
     (hdegree : ∀ x, L.degree x ≤ d)
     (hcard : ∀ i, 25 * d ≤ (parts i).card)
     (hdisjoint : ∀ i j, i ≠ j → Disjoint (parts i) (parts j)) :
     ∃ W : Finset X, L.IsIndepSet (W : Set X) ∧
       ∀ i, ¬ Disjoint W (parts i) := by
+  let := Fintype.ofFinite I
   classical
   let S : Set X := {x | ∃ i, x ∈ parts i}
   let label : S → I := fun x ↦ Classical.choose x.2
@@ -592,13 +597,16 @@ theorem exists_independent_set_hitting_disjoint_parts
       exact hxpart
     simpa [hli] using hlabel x
 
+omit [Fintype V] in
 /-- An independent vertex set of the conflict graph is a hypergraph
 matching. -/
 theorem isMatching_of_conflictGraph_isIndepSet
-    {E : Type*} [Fintype E] [DecidableEq E] [DecidableEq V]
+    {E : Type*} [Finite E]
     (H : Erdos76.FiniteHypergraph V E) (W : Finset E)
     (hW : H.conflictGraph.IsIndepSet (W : Set E)) :
     H.IsMatching W := by
+  classical
+  let := Fintype.ofFinite E
   intro e he f hf hef
   by_contra hdisj
   exact hW he hf hef ⟨hef, hdisj⟩
@@ -621,6 +629,7 @@ theorem exists_matchingSubgraph_of_conflictIndependent [DecidableEq V]
       (PippengerSchedule.matchingSubgraph_degree_le_one G W hmatch),
     PippengerSchedule.card_edgeFinset_matchingSubgraph G W⟩
 
+omit [Fintype V] in
 /-- The matching subgraph has precisely the selected underlying edges. -/
 lemma edgeSet_matchingSubgraph_eq_edgeValues (G : SimpleGraph V)
     (W : Finset G.edgeSet) :
@@ -684,10 +693,12 @@ def withBreakerPartition {G M : SimpleGraph V} {k : ℕ}
     (c : EdgePartition G k) : EdgePartition G (k + 1) :=
   fun e ↦ if e.1 ∈ M.edgeSet then 0 else Fin.succ (c e)
 
+omit [Fintype V] in
 /-- The breaker color is exactly the breaker graph. -/
-theorem colorGraph_withBreakerPartition_zero {G M : SimpleGraph V} {k : ℕ}
+theorem colorGraph_withBreakerPartition_zero [Finite V] {G M : SimpleGraph V} {k : ℕ}
     (c : EdgePartition G k) (hMG : M ≤ G) :
     colorGraph (withBreakerPartition (M := M) c) 0 = M := by
+  let := Fintype.ofFinite V
   ext v w
   rw [← SimpleGraph.mem_edgeSet, mem_colorGraph_edgeSet_iff]
   constructor
@@ -701,11 +712,13 @@ theorem colorGraph_withBreakerPartition_zero {G M : SimpleGraph V} {k : ℕ}
     refine ⟨G.mem_edgeSet.mpr (hMG hMAdj), ?_⟩
     simp [withBreakerPartition, hM]
 
+omit [Fintype V] in
 /-- Every old color is shifted and has the breaker edges removed. -/
-theorem colorGraph_withBreakerPartition_succ {G M : SimpleGraph V} {k : ℕ}
+theorem colorGraph_withBreakerPartition_succ [Finite V] {G M : SimpleGraph V} {k : ℕ}
     (c : EdgePartition G k) (i : Fin k) :
     colorGraph (withBreakerPartition (M := M) c) (Fin.succ i) =
       (colorGraph c i).deleteEdges M.edgeSet := by
+  let := Fintype.ofFinite V
   ext v w
   rw [← SimpleGraph.mem_edgeSet, mem_colorGraph_edgeSet_iff,
     SimpleGraph.deleteEdges_adj]
@@ -827,7 +840,7 @@ theorem exists_highGirth_decomposition_of_maxDegree
     exists_degreeTwo_edgePartition_of_maxDegree G k hdegree
   apply exists_decomposition_succ_of_degreeTwo_partition
     G c hcdegree hdegree (by omega)
-  convert hgirth using 1 <;> omega
+  convert hgirth using 1; omega
 
 /-! ## Factor grouping: Alon's Corollary 2.7 -/
 
@@ -842,6 +855,7 @@ def groupedHost {k q : ℕ} (F : Fin k → SimpleGraph V)
     (j : Fin (k / q + 1)) : SimpleGraph V :=
   ⨆ r, groupedFactor F j r
 
+omit [Fintype V] in
 lemma groupedFactor_le {G : SimpleGraph V} {k q : ℕ}
     {F : Fin k → SimpleGraph V} (hFG : ∀ i, F i ≤ G)
     (j : Fin (k / q + 1)) (r : Fin q) : groupedFactor F j r ≤ G := by
@@ -860,6 +874,7 @@ lemma groupedFactor_degree_le {k q : ℕ}
   · rw [groupedFactor, dif_neg h]
     simp
 
+omit [Fintype V] in
 lemma groupedFactor_disjoint {k q : ℕ}
     {F : Fin k → SimpleGraph V}
     (hdisjoint : ∀ i j, i ≠ j → Disjoint (F i) (F j))
@@ -875,6 +890,7 @@ lemma groupedFactor_disjoint {k q : ℕ}
     exact Nat.add_left_cancel hval
   all_goals simp
 
+omit [Fintype V] in
 lemma groupedHost_disjoint {k q : ℕ} (hq : 0 < q)
     {F : Fin k → SimpleGraph V}
     (hdisjoint : ∀ i j, i ≠ j → Disjoint (F i) (F j))
@@ -901,10 +917,12 @@ lemma groupedHost_disjoint {k q : ℕ} (hq : 0 < q)
       (hdisjoint _ _ hidx)) her hes
   all_goals simp at her hes
 
+omit [Fintype V] in
 /-- Quotient blocks cover all original color classes. -/
-lemma iSup_groupedHost_eq {G : SimpleGraph V} {k q : ℕ} (hq : 0 < q)
+lemma iSup_groupedHost_eq [Finite V] {G : SimpleGraph V} {k q : ℕ} (hq : 0 < q)
     (c : EdgePartition G k) :
     (⨆ j, groupedHost (q := q) (fun i ↦ colorGraph c i) j) = G := by
+  let := Fintype.ofFinite V
   apply le_antisymm
   · apply iSup_le
     intro j
@@ -1043,7 +1061,7 @@ theorem exists_grouped_decomposition
     have hlen : 100 * q ≤ p.length := by exact_mod_cast hlenE
     rw [cycleBlocks_apply, ha, card_cycleEdgeBlock
       (colorGraph_le (cLocal j) r) hp]
-    convert hlen using 1 <;> omega
+    convert hlen using 1; omega
   let decomp : ∀ j : Fin (k / q + 1),
       Decomposition (groupedHost (q := q) F j) (q + 1) :=
     fun j ↦ Classical.choice (hgroupDecomp j)

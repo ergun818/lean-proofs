@@ -178,25 +178,31 @@ lemma card_hasBoundedDifferences (U : Finset E) :
     exact (mem_erase.mp (hT heT)).1 rfl
   simp [card_insert_of_notMem heT]
 
+omit [DecidableEq E] in
 /-- One-sided uniform Hoeffding bound for subset cardinality. -/
 theorem subsetCard_upperTail (U : Finset E) {t : ℝ} (ht : 0 ≤ t) :
     ((U.powerset.filter fun S ↦ (U.card : ℝ) / 2 + t ≤ S.card).card : ℝ) ≤
       (2 : ℝ) ^ U.card * exp (-2 * t ^ 2 / U.card) := by
+  classical
   simpa [bernoulliExpectation_half_card] using
     countEvent_upperTail_le (card_hasBoundedDifferences U) ht
 
+omit [DecidableEq E] in
 /-- One-sided lower Hoeffding bound for subset cardinality. -/
 theorem subsetCard_lowerTail (U : Finset E) {t : ℝ} (ht : 0 ≤ t) :
     ((U.powerset.filter fun S ↦ (S.card : ℝ) ≤ (U.card : ℝ) / 2 - t).card : ℝ) ≤
       (2 : ℝ) ^ U.card * exp (-2 * t ^ 2 / U.card) := by
+  classical
   simpa [bernoulliExpectation_half_card] using
     countEvent_lowerTail_le (card_hasBoundedDifferences U) ht
 
+omit [DecidableEq E] in
 /-- The standard two-sided Hoeffding bound, in exact finite counting form. -/
 theorem subsetCard_twoSided (U : Finset E) {t : ℝ} (ht : 0 ≤ t) :
     ((U.powerset.filter fun S ↦
         t ≤ |(S.card : ℝ) - (U.card : ℝ) / 2|).card : ℝ) ≤
       2 * (2 : ℝ) ^ U.card * exp (-2 * t ^ 2 / U.card) := by
+  classical
   let A := U.powerset.filter fun S ↦ (U.card : ℝ) / 2 + t ≤ S.card
   let B := U.powerset.filter fun S ↦ (S.card : ℝ) ≤ (U.card : ℝ) / 2 - t
   have hsub : U.powerset.filter (fun S ↦
@@ -278,7 +284,7 @@ lemma bernoulliExpectation_half_inducedEdgeCount
       inducedEdgeCount G S =
         ∑ e ∈ G.edgeFinset, if e.toFinset ⊆ S then (1 : ℝ) else 0 := by
     rw [inducedEdgeCount]
-    simp [← sum_filter]
+    simp
   calc
     ∑ S ∈ (univ : Finset V).powerset,
           Erdos76.FiniteNibble.bernoulliMass univ halfProbability S * inducedEdgeCount G S =
@@ -320,7 +326,7 @@ lemma inducedEdgeCount_hasBoundedDifferences
     exact ⟨he.1, he.2.trans (subset_insert v T)⟩
   have hAI : A ⊆ B ∪ I := by
     intro e he
-    simp only [A, B, I, mem_filter, mem_union]
+    simp only [B, I, mem_filter, mem_union]
     by_cases heT : e.toFinset ⊆ T
     · exact Or.inl ⟨(mem_filter.mp he).1, heT⟩
     · right
@@ -383,6 +389,7 @@ theorem inducedEdgeCount_twoSided
   rw [bernoulliExpectation_half_inducedEdgeCount] at hcardR hA hB
   linarith
 
+omit [DecidableEq V] in
 /-- The squared-degree proxy is bounded by `2 Δ e`, the estimate used in
 the DKM induced-edge concentration argument. -/
 lemma sum_degree_sq_le_maxDegree_mul_edges

@@ -34,7 +34,7 @@ lemma degreeInto_eq_sum (G : SimpleGraph V) [DecidableRel G.Adj]
     ext w
     simp [and_comm]
   rw [degreeInto, heq]
-  simpa using (Finset.sum_boole (fun w ↦ G.Adj v w) S).symm
+  simp
 
 lemma degreeInto_union_of_disjoint (G : SimpleGraph V) [DecidableRel G.Adj]
     (v : V) {S T : Finset V} (hST : Disjoint S T) :
@@ -76,6 +76,7 @@ lemma edgesBetween_eq_sum_degreeInto (G : SimpleGraph V) [DecidableRel G.Adj]
   intro v hv
   exact (degreeInto_eq_sum G v T).symm
 
+omit [DecidableEq V] [Fintype V] in
 lemma edgesBetween_comm (G : SimpleGraph V) [DecidableRel G.Adj]
     (S T : Finset V) :
     edgesBetween G S T = edgesBetween G T S := by
@@ -86,9 +87,12 @@ lemma edgesBetween_comm (G : SimpleGraph V) [DecidableRel G.Adj]
   intro v hv
   simp only [G.adj_comm]
 
-lemma edgesBetween_le_card_mul_card (G : SimpleGraph V) [DecidableRel G.Adj]
+omit [DecidableEq V] [Fintype V] in
+lemma edgesBetween_le_card_mul_card [Finite V] (G : SimpleGraph V) [DecidableRel G.Adj]
     (S T : Finset V) :
     edgesBetween G S T ≤ S.card * T.card := by
+  classical
+  let := Fintype.ofFinite V
   rw [edgesBetween_eq_sum_degreeInto]
   calc
     (∑ v ∈ S, degreeInto G v T) ≤ ∑ _v ∈ S, T.card := by
@@ -114,17 +118,21 @@ lemma degreeInto_sdiff_eq_zero (G : SimpleGraph V) [DecidableRel G.Adj]
   · exact hv'.2 h
   · exact hw'.2 h
 
-lemma edgesBetween_sdiff_self_eq_zero (G : SimpleGraph V) [DecidableRel G.Adj]
+omit [Fintype V] in
+lemma edgesBetween_sdiff_self_eq_zero [Finite V] (G : SimpleGraph V) [DecidableRel G.Adj]
     {S C : Finset V} (hC : IsVertexCoverOn G S C) :
     edgesBetween G (S \ C) (S \ C) = 0 := by
+  let := Fintype.ofFinite V
   rw [edgesBetween_eq_sum_degreeInto]
   exact Finset.sum_eq_zero fun v hv ↦ degreeInto_sdiff_eq_zero G hC hv
 
-lemma edgesBetween_union_right_of_disjoint
+omit [Fintype V] in
+lemma edgesBetween_union_right_of_disjoint [Finite V]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (S : Finset V) {T U : Finset V} (hTU : Disjoint T U) :
     edgesBetween G S (T ∪ U) =
       edgesBetween G S T + edgesBetween G S U := by
+  let := Fintype.ofFinite V
   simp_rw [edgesBetween_eq_sum_degreeInto,
     degreeInto_union_of_disjoint G _ hTU, Finset.sum_add_distrib]
 
@@ -140,21 +148,25 @@ lemma sum_degree_eq_edgesBetween_partition
   intro v hv
   rw [← degreeInto_union_of_disjoint G v hAB, hpart, degreeInto_univ]
 
+omit [DecidableEq V] in
 lemma edgesBetween_add_le_sum_degree
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (S : Finset V) {T U : Finset V} (hTU : Disjoint T U) :
     edgesBetween G S T + edgesBetween G S U ≤ ∑ v ∈ S, G.degree v := by
+  classical
   rw [← edgesBetween_union_right_of_disjoint G S hTU,
     edgesBetween_eq_sum_degreeInto]
   exact Finset.sum_le_sum fun v hv ↦
     (degreeInto_mono G v (Finset.subset_univ (T ∪ U))).trans_eq
       (degreeInto_univ G v)
 
+omit [DecidableEq V] in
 lemma sum_degree_regular (G : SimpleGraph V) [DecidableRel G.Adj]
     {r : ℕ} (hreg : G.IsRegularOfDegree r) (S : Finset V) :
     (∑ v ∈ S, G.degree v) = S.card * r := by
   simp [hreg.degree_eq]
 
+omit [DecidableEq V] in
 /-- A vertex cover of size `c` in a graph of maximum degree at most `D`
 covers at most `cD` edges. -/
 theorem card_edgeFinset_le_card_mul_of_vertexCover
@@ -163,6 +175,7 @@ theorem card_edgeFinset_le_card_mul_of_vertexCover
     (hcover : G.IsVertexCover (C : Set V))
     (hdegree : ∀ v ∈ C, G.degree v ≤ D) :
     G.edgeFinset.card ≤ C.card * D := by
+  classical
   have hsub : G.edgeFinset ⊆ C.biUnion (fun v ↦ G.incidenceFinset v) := by
     intro e he
     obtain ⟨u, v⟩ := e
@@ -188,12 +201,15 @@ theorem card_edgeFinset_le_card_mul_of_vertexCover
     _ ≤ ∑ _v ∈ C, D := Finset.sum_le_sum fun v hv ↦ hdegree v hv
     _ = C.card * D := by simp
 
+omit [DecidableEq V] in
 theorem card_edgeFinset_le_card_mul_maxDegree_of_vertexCover
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (C : Finset V) (hcover : G.IsVertexCover (C : Set V)) :
-    G.edgeFinset.card ≤ C.card * G.maxDegree :=
-  card_edgeFinset_le_card_mul_of_vertexCover G C G.maxDegree hcover
-    (fun v hv ↦ G.degree_le_maxDegree v)
+    G.edgeFinset.card ≤ C.card * G.maxDegree := by
+  classical
+  exact
+    card_edgeFinset_le_card_mul_of_vertexCover G C G.maxDegree hcover
+      (fun v _hv ↦ G.degree_le_maxDegree v)
 
 /-- The cover-product inequality forced by degree `n+1` across a balanced
 cut of a graph on `2n` vertices. -/

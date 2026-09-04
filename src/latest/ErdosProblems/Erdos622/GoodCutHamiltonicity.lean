@@ -38,9 +38,10 @@ open Trichotomy
 as many available representatives as there are demands altogether, then the
 representatives can be chosen distinctly. -/
 theorem exists_injective_choice_of_card_le_all
-    {I W : Type*} [Fintype I] [DecidableEq I] [DecidableEq W]
+    {I W : Type*} [Fintype I]
     (S : I → Finset W) (hlarge : ∀ i, Fintype.card I ≤ (S i).card) :
     ∃ f : I → W, Function.Injective f ∧ ∀ i, f i ∈ S i := by
+  classical
   apply (Finset.all_card_le_biUnion_card_iff_existsInjective' S).mp
   intro T
   by_cases hT : T.Nonempty
@@ -51,7 +52,7 @@ theorem exists_injective_choice_of_card_le_all
       _ ≤ (T.biUnion S).card := Finset.card_le_card (by
         intro w hw
         exact Finset.mem_biUnion.mpr ⟨i, hiT, hw⟩)
-  · simpa [Finset.not_nonempty_iff_eq_empty.mp hT]
+  · simp [Finset.not_nonempty_iff_eq_empty.mp hT]
 
 /-- The attachment demands at vertices of `T`: a vertex receives enough new
 leaf edges to bring its degree in `F` up to two.  The definition is used only
@@ -154,6 +155,7 @@ def attachmentGraph (F : SimpleGraph V) (T : Finset V)
     (f : AttachmentSlot F T → V) : SimpleGraph V :=
   ⨆ s : AttachmentSlot F T, SimpleGraph.edge s.1.1 (f s)
 
+omit [DecidableEq V] in
 @[simp]
 theorem attachmentGraph_adj {F : SimpleGraph V} {T : Finset V}
     {f : AttachmentSlot F T → V} {u v : V} :
@@ -162,26 +164,30 @@ theorem attachmentGraph_adj {F : SimpleGraph V} {T : Finset V}
         ((u = s.1.1 ∧ v = f s) ∨ (u = f s ∧ v = s.1.1)) ∧ u ≠ v := by
   simp only [attachmentGraph, SimpleGraph.iSup_adj, SimpleGraph.edge_adj]
 
+omit [DecidableEq V] [DecidableRel G.Adj] in
 /-- All selected attachment edges lie in the ambient graph. -/
 theorem attachmentGraph_le
     {F : SimpleGraph V} {T : Finset V}
     {f : AttachmentSlot F T → V}
     (hadj : ∀ s, G.Adj s.1.1 (f s)) :
     attachmentGraph F T f ≤ G := by
+  classical
   intro u v huv
   obtain ⟨s, h, -⟩ := attachmentGraph_adj.mp huv
   rcases h with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩
   · exact hadj s
   · exact (hadj s).symm
 
+omit [DecidableEq V] in
 /-- Every new attachment vertex is incident with at most one attachment
 edge, because representatives are chosen injectively and all sources lie in
 `T` while all representatives lie outside `T`. -/
 theorem attachmentGraph_degree_le_one_of_not_mem
     {F : SimpleGraph V} {T : Finset V}
     {f : AttachmentSlot F T → V} (hf : Function.Injective f)
-    (hout : ∀ s, f s ∉ T) {w : V} (hw : w ∉ T) :
+    (_hout : ∀ s, f s ∉ T) {w : V} (hw : w ∉ T) :
     (attachmentGraph F T f).degree w ≤ 1 := by
+  classical
   rw [← SimpleGraph.card_neighborFinset_eq_degree]
   apply Finset.card_le_one.mpr
   intro x hx y hy
@@ -209,6 +215,7 @@ theorem attachmentGraph_degree_le_one_of_not_mem
     · exact hys
   exact hxval.trans ((congrArg (fun s : AttachmentSlot F T ↦ s.1.1) hs).trans hyval.symm)
 
+omit [DecidableEq V] in
 /-- Outside `T`, the original forest contributes no edges. -/
 theorem forest_degree_eq_zero_of_support_subset
     {F : SimpleGraph V} {T : Finset V}
@@ -217,6 +224,7 @@ theorem forest_degree_eq_zero_of_support_subset
   rw [SimpleGraph.degree_eq_zero_iff_notMem_support]
   exact fun h ↦ hw (hsupp h)
 
+omit [DecidableEq V] in
 /-- The selected leaves give every source exactly its requested number of
 distinct attachment neighbours. -/
 theorem attachmentGraph_degree_source
@@ -224,6 +232,7 @@ theorem attachmentGraph_degree_source
     {f : AttachmentSlot F T → V} (hf : Function.Injective f)
     (hout : ∀ s, f s ∉ T) (v : (T : Set V)) :
     (attachmentGraph F T f).degree v.1 = 2 - F.degree v.1 := by
+  classical
   let e : Fin (2 - F.degree v.1) → V := fun i ↦ f ⟨v, i⟩
   have heinj : Function.Injective e := fun i j hij ↦ by
     cases hf hij
@@ -231,7 +240,6 @@ theorem attachmentGraph_degree_source
   have hne : ∀ i, e i ≠ v.1 := by
     intro i hi
     apply hout ⟨v, i⟩
-    change f ⟨v, i⟩ ∈ T
     change f ⟨v, i⟩ = v.1 at hi
     rw [hi]
     exact v.2
@@ -254,6 +262,7 @@ theorem attachmentGraph_degree_source
   rw [← SimpleGraph.card_neighborFinset_eq_degree, hneighbors,
     Finset.card_map, Finset.card_univ, Fintype.card_fin]
 
+omit [DecidableEq V] in
 /-- Attaching the chosen distinct leaves fills every degree deficit without
 creating a cycle.  This packages the first absorption step as a genuine
 linear forest rather than merely a family of chosen vertices. -/
@@ -263,6 +272,7 @@ theorem linearForest_sup_attachmentGraph
     (hlin : LinearForest F) (hsupp : F.support ⊆ (T : Set V))
     (hf : Function.Injective f) (hout : ∀ s, f s ∉ T) :
     LinearForest (F ⊔ attachmentGraph F T f) := by
+  classical
   let P := F ⊔ attachmentGraph F T f
   let : DecidableRel P.Adj := Classical.decRel _
   have hdegree : ∀ v, P.degree v ≤ 2 := by
@@ -343,6 +353,7 @@ theorem mem_attachmentVertices {F : SimpleGraph V} {T : Finset V}
     w ∈ attachmentVertices F T f ↔ ∃ s, f s = w := by
   simp [attachmentVertices]
 
+omit [DecidableEq V] in
 /-- There are at most two attachment demands per source. -/
 theorem card_attachmentSlot_le_two_mul (F : SimpleGraph V) (T : Finset V) :
     Fintype.card (AttachmentSlot F T) ≤ 2 * T.card := by
@@ -378,6 +389,7 @@ theorem support_sup_attachmentGraph_subset
     · exact Or.inl s.1.2
     · exact Or.inr (mem_attachmentVertices.mpr ⟨s, rfl⟩)
 
+omit [DecidableEq V] in
 /-- The support of the initial attached forest has size at most three times
 the number of sources. -/
 theorem card_support_sup_attachmentGraph_le_three_mul
@@ -385,6 +397,7 @@ theorem card_support_sup_attachmentGraph_le_three_mul
     {f : AttachmentSlot F T → V}
     (hsupp : F.support ⊆ (T : Set V)) :
     (F ⊔ attachmentGraph F T f).support.toFinset.card ≤ 3 * T.card := by
+  classical
   have hsub : (F ⊔ attachmentGraph F T f).support.toFinset ⊆
       T ∪ attachmentVertices F T f := by
     intro v hv
@@ -404,6 +417,7 @@ theorem card_support_sup_attachmentGraph_le_three_mul
       (card_attachmentSlot_le_two_mul F T) _
     _ = 3 * T.card := by omega
 
+omit [DecidableEq V] in
 /-- At a source vertex the old and new neighbourhoods are disjoint, hence
 the degree is exactly two after filling the deficit. -/
 theorem degree_sup_attachmentGraph_source_eq_two
@@ -413,6 +427,7 @@ theorem degree_sup_attachmentGraph_source_eq_two
     (hf : Function.Injective f) (hout : ∀ s, f s ∉ T)
     (v : (T : Set V)) :
     (F ⊔ attachmentGraph F T f).degree v.1 = 2 := by
+  classical
   have hdisj : Disjoint (F.neighborFinset v.1)
       ((attachmentGraph F T f).neighborFinset v.1) := by
     rw [Finset.disjoint_left]
@@ -434,6 +449,7 @@ theorem degree_sup_attachmentGraph_source_eq_two
   rw [attachmentGraph_degree_source hf hout v]
   exact Nat.add_sub_of_le (hlin.2 v.1)
 
+omit [DecidableEq V] in
 /-- In particular every endpoint of the attached forest is a newly chosen
 vertex, and therefore lies outside the source set. -/
 theorem endpoint_not_mem_of_sup_attachmentGraph
@@ -443,12 +459,14 @@ theorem endpoint_not_mem_of_sup_attachmentGraph
     (hf : Function.Injective f) (hout : ∀ s, f s ∉ T)
     {v : V} (hdeg : (F ⊔ attachmentGraph F T f).degree v ≤ 1) :
     v ∉ T := by
+  classical
   intro hv
   let vT : (T : Set V) := ⟨v, hv⟩
   have heq := degree_sup_attachmentGraph_source_eq_two hlin hsupp hf hout vT
   change (F ⊔ attachmentGraph F T f).degree v = 2 at heq
   omega
 
+omit [DecidableEq V] in
 /-- Instance-independent form of the exact source-degree statement. -/
 theorem ncard_neighborSet_sup_attachmentGraph_source_eq_two
     {F : SimpleGraph V} {T : Finset V}
@@ -457,10 +475,12 @@ theorem ncard_neighborSet_sup_attachmentGraph_source_eq_two
     (hf : Function.Injective f) (hout : ∀ s, f s ∉ T)
     (v : (T : Set V)) :
     ((F ⊔ attachmentGraph F T f).neighborSet v.1).ncard = 2 := by
+  classical
   have hdeg := degree_sup_attachmentGraph_source_eq_two hlin hsupp hf hout v
   rw [← Set.fintypeCard_eq_ncard, SimpleGraph.card_neighborSet_eq_degree]
   exact hdeg
 
+omit [DecidableEq V] in
 /-- Every source actually occurs in the support of the attached forest. -/
 theorem subset_support_sup_attachmentGraph
     {F : SimpleGraph V} {T : Finset V}
@@ -469,6 +489,7 @@ theorem subset_support_sup_attachmentGraph
     (hf : Function.Injective f)
     (hout : ∀ s, f s ∉ T) :
     T ⊆ (F ⊔ attachmentGraph F T f).support.toFinset := by
+  classical
   intro v hv
   have hdeg := degree_sup_attachmentGraph_source_eq_two hlin
     hsupp hf hout (⟨v, hv⟩ : (T : Set V))
@@ -476,6 +497,7 @@ theorem subset_support_sup_attachmentGraph
   apply (SimpleGraph.degree_pos_iff_mem_support _ _).mp
   exact hdeg ▸ Nat.zero_lt_succ 1
 
+omit [DecidableEq V] [Fintype V] in
 /-- Adding a fresh leaf to one component does not make that leaf reachable
 from a different component.  This elementary fact lets the connector
 construction apply `LinearForest.sup_edge_of_not_reachable` successively. -/
@@ -506,7 +528,8 @@ theorem not_reachable_sup_edge_fresh
   have hwDrop : w ∉ p.dropLast.support := by
     intro hwd
     have hn := hp.support_nodup
-    rw [SimpleGraph.Walk.support_eq_concat, List.nodup_concat] at hn
+    rw [← SimpleGraph.Walk.dropLast_support_concat,
+      ← List.concat_eq_append, List.nodup_concat] at hn
     exact hn.1 (by simpa [SimpleGraph.Walk.support_dropLast hqNotNil] using hwd)
   have hedge : ∀ e, e ∈ p.dropLast.edges → e ∈ P.edgeSet := by
     intro e he
@@ -528,6 +551,7 @@ theorem not_reachable_sup_edge_fresh
   rw [hpen] at hwalk
   exact huv hwalk.reachable
 
+omit [DecidableEq V] [Fintype V] in
 /-- Pigeonhole form of the common-neighbour estimate.  Two subsets of a
 finite reservoir whose total size exceeds the reservoir plus a forbidden set
 have a common element outside the forbidden set. -/
@@ -535,8 +559,9 @@ theorem exists_mem_inter_not_mem_of_card_add_lt
     {A B U Z : Finset V} (hAU : A ⊆ U) (hBU : B ⊆ U)
     (hcard : U.card + Z.card < A.card + B.card) :
     ∃ w, w ∈ A ∧ w ∈ B ∧ w ∉ Z := by
+  classical
   by_contra h
-  push_neg at h
+  push Not at h
   have hinter : A ∩ B ⊆ Z := by
     intro w hw
     exact h w (Finset.mem_inter.mp hw).1 (Finset.mem_inter.mp hw).2
@@ -578,7 +603,7 @@ theorem crossNeighbors_subset_left {X Y : Finset V} {v : V} (hv : v ∉ X) :
 
 /-- Same-side high-degree endpoints have a fresh common crossing neighbour. -/
 theorem exists_common_crossNeighbor_not_mem
-    {X Y Z : Finset V} (hcut : IsCut X Y) {u v : V}
+    {X Y Z : Finset V} (_hcut : IsCut X Y) {u v : V}
     (huX : u ∈ X) (hvX : v ∈ X)
     (hcard : Y.card + Z.card <
       (crossNeighbors G X Y u).card + (crossNeighbors G X Y v).card) :
@@ -606,6 +631,7 @@ theorem exists_common_crossNeighbor_not_mem_right
   have hv := mem_crossNeighbors.mp hwv
   exact ⟨w, hu.1, hv.1, by simpa [huX] using hu.2, hwZ⟩
 
+omit [DecidableEq V] in
 /-- A graph of maximum degree two has no more edges than supported
 vertices.  This weak form is exactly what the absorber resource inequality
 needs. -/
@@ -621,6 +647,7 @@ theorem card_edgeFinset_le_card_support_of_degree_le_two
   simp only [Finset.sum_const, Nat.nsmul_eq_mul] at hle
   omega
 
+omit [DecidableEq V] in
 /-- Every supported vertex contributes at least one to the degree sum. -/
 theorem ncard_support_le_twice_card_edgeFinset (P : SimpleGraph V) :
     P.support.ncard ≤ 2 * P.edgeFinset.card := by
@@ -654,12 +681,15 @@ def AdmissibleForest (G F : SimpleGraph V) (X Y L : Finset V)
 
 namespace AdmissibleForest
 
+omit [DecidableEq V] [DecidableRel G.Adj] in
 theorem linearForest {F X Y L budget P}
     (h : AdmissibleForest G F X Y L budget P) : LinearForest P := h.2.2.1
 
+omit [DecidableEq V] [DecidableRel G.Adj] in
 theorem support_card_le_budget {F X Y L budget P}
     (h : AdmissibleForest G F X Y L budget P) :
     P.support.ncard ≤ budget := by
+  classical
   have hedge := card_edgeFinset_le_card_support_of_degree_le_two
     (h.linearForest.2)
   have hedge' : P.edgeSet.ncard ≤ P.support.ncard := by
@@ -681,7 +711,7 @@ steps preserve the associated potential. -/
 theorem exists_initial_admissibleForest
     {F : SimpleGraph V} {X Y L : Finset V}
     (hcut : IsCut X Y) (hFG : F ≤ G) (hlin : LinearForest F)
-    (hsuppX : F.support ⊆ (X : Set V))
+    (_hsuppX : F.support ⊆ (X : Set V))
     (hcross : ∀ v ∈ F.support.toFinset ∪ L,
       Fintype.card (AttachmentSlot F (F.support.toFinset ∪ L)) +
           (F.support.toFinset ∪ L).card ≤
@@ -773,6 +803,7 @@ theorem exists_initial_admissibleForest
     have hbase : 3 * P.support.ncard ≤ 9 * T.card := by omega
     exact hbase.trans (Nat.le_add_right _ _)
 
+omit [DecidableEq V] [Fintype V] in
 /-- Passing to a connected-component subtype does not change the cardinality
 of a vertex neighbourhood: every neighbour remains in the same component. -/
 theorem ncard_neighborSet_toSimpleGraph_connectedComponent
@@ -788,11 +819,13 @@ theorem ncard_neighborSet_toSimpleGraph_connectedComponent
     let z : C := ⟨w, hwC⟩
     refine ⟨z, (C.toSimpleGraph_adj v.2 z.2).mpr hw, rfl⟩
 
+omit [DecidableEq V] in
 /-- Every supported component of a finite linear forest has a leaf. -/
 theorem LinearForest.exists_leaf_reachable
     {P : SimpleGraph V} (hP : LinearForest P) {x : V}
     (hx : x ∈ P.support) :
     ∃ u, P.Reachable x u ∧ (P.neighborSet u).ncard = 1 := by
+  classical
   let C := P.connectedComponentMk x
   have hxC : x ∈ C.supp := by
     exact (C.mem_supp_iff x).mpr rfl
@@ -816,6 +849,7 @@ theorem LinearForest.exists_leaf_reachable
       ← Set.fintypeCard_eq_ncard, SimpleGraph.card_neighborSet_eq_degree]
     exact hu
 
+omit [DecidableEq V] [DecidableRel G.Adj] in
 /-- Since the ambient vertex type is finite, an admissible forest with a
 maximum number of edges exists whenever the admissible family is nonempty. -/
 theorem exists_edge_maximal_admissibleForest
@@ -837,18 +871,22 @@ theorem exists_edge_maximal_admissibleForest
   · intro Q hQ
     exact hmax Q (by simp [C, hQ])
 
+omit [DecidableEq V] in
 theorem ncard_edgeSet_eq_card_edgeFinset (P : SimpleGraph V) :
     P.edgeSet.ncard = P.edgeFinset.card := by
   rw [← P.coe_edgeFinset, Set.ncard_coe_finset]
 
-theorem ncard_edgeSet_sup_edge {P : SimpleGraph V} {u v : V}
+omit [DecidableEq V] [Fintype V] in
+theorem ncard_edgeSet_sup_edge [Finite V] {P : SimpleGraph V} {u v : V}
     (hn : ¬P.Adj u v) (hne : u ≠ v) :
     (P ⊔ SimpleGraph.edge u v).edgeSet.ncard = P.edgeSet.ncard + 1 := by
+  let := Fintype.ofFinite V
   rw [SimpleGraph.edgeSet_sup, SimpleGraph.edgeSet_edge_of_ne hne]
   have hedge : s(u, v) ∉ P.edgeSet := by
     simpa only [SimpleGraph.mem_edgeSet] using hn
   rw [Set.union_singleton, Set.ncard_insert_of_notMem hedge]
 
+omit [DecidableEq V] [Fintype V] in
 /-- The support after adjoining a two-edge connector uses at most its one
 fresh middle vertex in addition to the old support. -/
 theorem support_sup_two_edge_subset
@@ -871,6 +909,7 @@ theorem support_sup_two_edge_subset
     · exact h.1 ▸ Or.inr rfl
     · exact h.1 ▸ Or.inl hv
 
+omit [DecidableEq V] in
 /-- A fresh two-edge connector between distinct components preserves the
 linear-forest property. -/
 theorem LinearForest.sup_two_edge_connector
@@ -880,6 +919,7 @@ theorem LinearForest.sup_two_edge_connector
     (hdu : (P.neighborSet u).ncard ≤ 1)
     (hdv : (P.neighborSet v).ncard ≤ 1) :
     LinearForest ((P ⊔ SimpleGraph.edge u w) ⊔ SimpleGraph.edge w v) := by
+  classical
   have huw : ¬ P.Reachable u w := by
     intro h
     have huwne : u ≠ w := fun huw ↦ hw (huw ▸ hu)
@@ -944,6 +984,7 @@ theorem LinearForest.sup_two_edge_connector
       exact hdwN)
   simpa only [P1, SimpleGraph.edge_comm v w] using hres
 
+omit [DecidableEq V] [DecidableRel G.Adj] in
 /-- Adding a fresh two-edge crossing connector between two components
 preserves admissibility and raises the edge count by exactly two. -/
 theorem AdmissibleForest.sup_two_edge_connector
@@ -959,6 +1000,7 @@ theorem AdmissibleForest.sup_two_edge_connector
     let H := (P ⊔ SimpleGraph.edge u w) ⊔ SimpleGraph.edge w v
     AdmissibleForest G F X Y L budget H ∧
       H.edgeSet.ncard = P.edgeSet.ncard + 2 := by
+  classical
   let P1 := P ⊔ SimpleGraph.edge u w
   let H := P1 ⊔ SimpleGraph.edge w v
   have huwP : ¬P.Adj u w := fun h ↦ hw h.mem_support_right
@@ -999,11 +1041,11 @@ theorem AdmissibleForest.sup_two_edge_connector
   · intro x hxH hdxH hxL
     by_cases hxP : x ∈ P.support
     · apply hP.2.2.2.2.1 x hxP
-      have hsub : P.neighborSet x ⊆ H.neighborSet x := by
-        intro z hxz
-        exact hPH hxz
-      exact (Set.ncard_le_ncard hsub).trans hdxH
-      exact hxL
+      · have hsub : P.neighborSet x ⊆ H.neighborSet x := by
+          intro z hxz
+          exact hPH hxz
+        exact (Set.ncard_le_ncard hsub).trans hdxH
+      · exact hxL
     · have hxw : x = w := by
         have := hsuppSub hxH
         rcases this with hx | hx
@@ -1048,6 +1090,7 @@ theorem AdmissibleForest.sup_two_edge_connector
     change 3 * H.support.ncard ≤ budget + 2 * H.edgeSet.ncard
     omega
 
+omit [DecidableEq V] [Fintype V] in
 /-- The support of a three-edge connector uses only its two new internal
 vertices in addition to the old support. -/
 theorem support_sup_three_edge_subset
@@ -1078,6 +1121,7 @@ theorem support_sup_three_edge_subset
     · exact h.1 ▸ Or.inr (by simp)
     · exact h.1 ▸ Or.inl hv
 
+omit [DecidableEq V] in
 /-- Joining two different components of a linear forest by a fresh
 three-edge path preserves the linear-forest property. -/
 theorem LinearForest.sup_three_edge_connector
@@ -1089,6 +1133,7 @@ theorem LinearForest.sup_three_edge_connector
     (hdv : (P.neighborSet v).ncard ≤ 1) :
     LinearForest (((P ⊔ SimpleGraph.edge u w) ⊔
       SimpleGraph.edge w z) ⊔ SimpleGraph.edge z v) := by
+  classical
   let P1 := P ⊔ SimpleGraph.edge u w
   have huwne : u ≠ w := fun h ↦ hw (h ▸ hu)
   have huwReach : ¬P.Reachable u w := by
@@ -1161,6 +1206,7 @@ theorem LinearForest.sup_three_edge_connector
     hwv1 hdw1 hdv1
   simpa only [P1] using hres
 
+omit [DecidableEq V] [DecidableRel G.Adj] in
 /-- Adding a fresh three-edge crossing connector between two components
 preserves admissibility and raises the edge count by exactly three. -/
 theorem AdmissibleForest.sup_three_edge_connector
@@ -1179,6 +1225,7 @@ theorem AdmissibleForest.sup_three_edge_connector
       SimpleGraph.edge w z) ⊔ SimpleGraph.edge z v)
     AdmissibleForest G F X Y L budget H ∧
       H.edgeSet.ncard = P.edgeSet.ncard + 3 := by
+  classical
   let P1 := P ⊔ SimpleGraph.edge u w
   let P2 := P1 ⊔ SimpleGraph.edge w z
   let H := P2 ⊔ SimpleGraph.edge z v
@@ -1244,11 +1291,11 @@ theorem AdmissibleForest.sup_three_edge_connector
   · intro x hxH hdxH hxL
     by_cases hxP : x ∈ P.support
     · apply hP.2.2.2.2.1 x hxP
-      have hsub : P.neighborSet x ⊆ H.neighborSet x := by
-        intro a hxa
-        exact hPH hxa
-      exact (Set.ncard_le_ncard hsub).trans hdxH
-      exact hxL
+      · have hsub : P.neighborSet x ⊆ H.neighborSet x := by
+          intro a hxa
+          exact hPH hxa
+        exact (Set.ncard_le_ncard hsub).trans hdxH
+      · exact hxL
     · have hxnew : x = w ∨ x = z := by
         have hx := hsuppSub hxH
         rcases hx with hx | hx
@@ -1407,17 +1454,20 @@ noncomputable instance crossingSubgraph.instDecidableRel
     DecidableRel (crossingSubgraph G X Y).Adj :=
   Classical.decRel _
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 @[simp]
 theorem crossingSubgraph_adj {X Y : Finset V} {u v : V} :
     (crossingSubgraph G X Y).Adj u v ↔ G.Adj u v ∧
       ((u ∈ X ∧ v ∈ Y) ∨ (u ∈ Y ∧ v ∈ X)) :=
   Iff.rfl
 
+omit [DecidableEq V] [Fintype V] in
 theorem crossingSubgraph_le (G : SimpleGraph V) (X Y : Finset V) :
     crossingSubgraph G X Y ≤ G := by
   intro u v huv
   exact huv.1
 
+omit [DecidableRel G.Adj] in
 /-- The crossing subgraph is bipartite with the two sides of a cut. -/
 theorem crossingSubgraph_isBipartiteWith {X Y : Finset V}
     (hcut : IsCut X Y) :
@@ -1430,6 +1480,7 @@ theorem crossingSubgraph_isBipartiteWith {X Y : Finset V}
 def restrictedPart (R X : Finset V) : Finset (R : Set V) :=
   R.attach.filter fun v ↦ v.1 ∈ X
 
+omit [Fintype V] in
 @[simp]
 theorem mem_restrictedPart {R X : Finset V} {v : (R : Set V)} :
     v ∈ restrictedPart R X ↔ v.1 ∈ X := by
@@ -1449,6 +1500,7 @@ theorem restrictedParts_isCut {X Y R : Finset V} (hcut : IsCut X Y) :
     have hv : v.1 ∈ X ∪ Y := by rw [hcut.2]; simp
     simpa only [Finset.mem_union] using hv
 
+omit [DecidableRel G.Adj] in
 /-- The crossing graph induced by retained vertices is bipartite with the
 restricted parts. -/
 theorem induce_crossingSubgraph_isBipartiteWith
@@ -1473,26 +1525,31 @@ def pathInterior {a b : V} (p : G.Walk a b) : Finset V :=
 def pathRemainder {a b : V} (p : G.Walk a b) : Finset V :=
   Finset.univ \ pathInterior p
 
+omit [DecidableRel G.Adj] in
 @[simp]
 theorem mem_pathRemainder {a b v : V} {p : G.Walk a b} :
     v ∈ pathRemainder p ↔ v ∉ pathInterior p := by
   simp [pathRemainder]
 
+omit [DecidableRel G.Adj] in
 theorem start_mem_pathRemainder {a b : V} {p : G.Walk a b}
     (hp : p.IsPath) : a ∈ pathRemainder p := by
+  classical
   rw [mem_pathRemainder]
-  simp only [pathInterior, List.mem_toFinset, not_false_eq_true]
+  simp only [pathInterior, List.mem_toFinset]
   intro ha
   have haTail : a ∈ p.support.tail :=
     List.dropLast_subset p.support.tail ha
   have hn := hp.support_nodup
-  rw [SimpleGraph.Walk.support_eq_cons] at hn
+  rw [← SimpleGraph.Walk.cons_tail_support] at hn
   exact (List.nodup_cons.mp hn).1 haTail
 
+omit [DecidableRel G.Adj] in
 theorem end_mem_pathRemainder {a b : V} {p : G.Walk a b}
     (hp : p.IsPath) : b ∈ pathRemainder p := by
+  classical
   rw [mem_pathRemainder]
-  simp only [pathInterior, List.mem_toFinset, not_false_eq_true]
+  simp only [pathInterior, List.mem_toFinset]
   intro hb
   have hbDrop : b ∈ p.support.dropLast := by
     -- `tail.dropLast` is contained in `support.dropLast`.
@@ -1506,11 +1563,12 @@ theorem end_mem_pathRemainder {a b : V} {p : G.Walk a b}
             rw [List.dropLast_cons_cons]
             exact List.mem_cons_of_mem c hb
   have hn := hp.support_nodup
-  rw [SimpleGraph.Walk.support_eq_concat, List.nodup_concat] at hn
+  rw [← SimpleGraph.Walk.dropLast_support_concat, ← List.concat_eq_append, List.nodup_concat] at hn
   exact hn.1 hbDrop
 
+omit [DecidableRel G.Adj] [Fintype V] in
 theorem mem_pathInterior_of_mem_support_of_ne_endpoints
-    {a b v : V} {p : G.Walk a b} (hp : p.IsPath)
+    {a b v : V} {p : G.Walk a b} (_hp : p.IsPath)
     (hv : v ∈ p.support) (hva : v ≠ a) (hvb : v ≠ b) :
     v ∈ pathInterior p := by
   simp only [pathInterior, List.mem_toFinset]
@@ -1525,7 +1583,7 @@ theorem mem_pathInterior_of_mem_support_of_ne_endpoints
         rw [hs] at hcons
         exact (List.cons.inj hcons).1.symm
       subst c
-      simp only [hs, List.tail_cons]
+      simp only [List.tail_cons]
       cases l with
       | nil =>
           rw [hs] at hvDrop
@@ -1534,11 +1592,13 @@ theorem mem_pathInterior_of_mem_support_of_ne_endpoints
           rw [hs, List.dropLast_cons_cons, List.mem_cons] at hvDrop
           exact hvDrop.resolve_left hva
 
+omit [DecidableRel G.Adj] in
 /-- A simple absorbing path meets its remainder exactly at its two
 endpoints. -/
 theorem support_inter_pathRemainder {a b : V} {p : G.Walk a b}
     (hp : p.IsPath) (hab : a ≠ b) :
     p.support.toFinset ∩ pathRemainder p = {a, b} := by
+  classical
   ext v
   simp only [Finset.mem_inter, List.mem_toFinset, Finset.mem_insert,
     Finset.mem_singleton]
@@ -1555,10 +1615,12 @@ theorem support_inter_pathRemainder {a b : V} {p : G.Walk a b}
     · exact ⟨p.start_mem_support, start_mem_pathRemainder hp⟩
     · exact ⟨p.end_mem_support, end_mem_pathRemainder hp⟩
 
+omit [DecidableRel G.Adj] in
 /-- The path together with the vertices left after deleting its interior
 covers the ambient type. -/
 theorem support_union_pathRemainder {a b : V} (p : G.Walk a b) :
     p.support.toFinset ∪ pathRemainder p = Finset.univ := by
+  classical
   ext v
   simp only [Finset.mem_union, List.mem_toFinset, Finset.mem_univ, iff_true]
   by_cases hv : v ∈ p.support
@@ -1570,6 +1632,7 @@ theorem support_union_pathRemainder {a b : V} (p : G.Walk a b) :
     exact List.mem_of_mem_tail
       (List.dropLast_subset _ (List.mem_toFinset.mp hvInterior))
 
+omit [DecidableRel G.Adj] in
 /-- Two paths with the same endpoints, no other common vertex, and whose
 supports cover the ambient finite type close to a Hamilton cycle.  This is
 the exact walk-level gluing operation needed after the absorbing path has
@@ -1583,11 +1646,11 @@ theorem isHamiltonianCycle_append_reverse_of_complementary_paths
     (p.append q.reverse).IsHamiltonianCycle := by
   have haNotP : a ∉ p.support.tail := by
     have hn := hp.support_nodup
-    rw [SimpleGraph.Walk.support_eq_cons] at hn
+    rw [← SimpleGraph.Walk.cons_tail_support] at hn
     exact (List.nodup_cons.mp hn).1
   have hbNotQrev : b ∉ q.reverse.support.tail := by
     have hn := hq.reverse.support_nodup
-    rw [SimpleGraph.Walk.support_eq_cons] at hn
+    rw [← SimpleGraph.Walk.cons_tail_support] at hn
     exact (List.nodup_cons.mp hn).1
   have hdisj : p.support.tail.Disjoint q.reverse.support.tail := by
     rw [List.disjoint_left]
@@ -1788,7 +1851,7 @@ theorem exists_mem_crossNeighbors_not_mem_of_card_lt
     (hcard : Z.card < (crossNeighbors G X Y v).card) :
     ∃ w, w ∈ crossNeighbors G X Y v ∧ w ∉ Z := by
   by_contra h
-  push_neg at h
+  push Not at h
   have hsub : crossNeighbors G X Y v ⊆ Z := by
     intro w hw
     exact h w hw
@@ -1955,6 +2018,7 @@ private def edgeSign (X : Finset V) (e : Sym2 V) : ℤ :=
     intro u v
     simp only [add_comm]⟩
 
+omit [DecidableRel P.Adj] [Fintype V] in
 private theorem two_mul_sum_vertexSign_support
     {a b : V} (p : P.Walk a b) (X : Finset V) :
     2 * (p.support.map (vertexSign X)).sum =
@@ -1967,6 +2031,7 @@ private theorem two_mul_sum_vertexSign_support
         List.map_cons, List.sum_cons, edgeSign, Sym2.lift_mk]
       omega
 
+omit [DecidableRel P.Adj] in
 private theorem edgeSign_eq_indicator
     {X Y : Finset V} (hcut : IsCut X Y)
     (hsuppF : F.support ⊆ (X : Set V))
@@ -2005,6 +2070,7 @@ private theorem list_sum_eq_two_mul_filter_length
       rw [List.map_cons, List.sum_cons, ih htail]
       by_cases heS : e ∈ s <;> simp [heS] at he ⊢ <;> omega
 
+omit [DecidableRel P.Adj] in
 private theorem sum_edgeSign_eq_two_mul_filter_length
     {X Y : Finset V} (hcut : IsCut X Y)
     (hsuppF : F.support ⊆ (X : Set V))
@@ -2013,6 +2079,7 @@ private theorem sum_edgeSign_eq_two_mul_filter_length
     {a b : V} (p : P.Walk a b) :
     (p.edges.map (edgeSign X)).sum =
       2 * (p.edges.filter fun e ↦ e ∈ F.edgeFinset).length := by
+  classical
   apply list_sum_eq_two_mul_filter_length F.edgeFinset
   intro e he
   exact edgeSign_eq_indicator hcut hsuppF hclass p he
@@ -2055,6 +2122,7 @@ private theorem edgeFinset_subset_walk_edges
       exact List.mem_toFinset.mpr
         (p.mem_edges_toSubgraph.mp (SimpleGraph.Subgraph.edgeSet_mono hq heq'))
 
+omit [DecidableRel P.Adj] in
 private theorem filter_walk_edges_length_eq_card
     {a b : V} {p : P.Walk a b} (hp : p.IsPath)
     (hsub : F.edgeFinset ⊆ p.edges.toFinset) :
@@ -2069,6 +2137,7 @@ private theorem filter_walk_edges_length_eq_card
     exact fun he ↦ List.mem_toFinset.mp (hsub he)
   rw [← List.toFinset_card_of_nodup hnodup, heq]
 
+omit [Fintype V] in
 private theorem list_sum_eq_finset_sum_of_nodup
     (f : V → ℤ) {l : List V} (hl : l.Nodup) :
     (l.map f).sum = ∑ v ∈ l.toFinset, f v := by
@@ -2079,6 +2148,7 @@ private theorem list_sum_eq_finset_sum_of_nodup
       have hln : l.Nodup := (List.nodup_cons.mp hl).2
       simp [hv, ih hln]
 
+omit [DecidableRel P.Adj] in
 private theorem sum_vertexSign_support_eq_card_sub
     {X Y : Finset V} (hcut : IsCut X Y)
     {a b : V} {p : P.Walk a b} (hp : p.IsPath) :
@@ -2141,8 +2211,10 @@ theorem support_part_card_eq_add_forest_edges
   simp only [vertexSign, if_pos ha, if_neg hbX] at htel
   omega
 
-theorem card_restrictedPart_eq_filter (R X : Finset V) :
+omit [Fintype V] in
+theorem card_restrictedPart_eq_filter [Finite V] (R X : Finset V) :
     (restrictedPart R X).card = (R.filter fun v ↦ v ∈ X).card := by
+  let := Fintype.ofFinite V
   apply Finset.card_bij (fun x _ ↦ x.1)
   · intro x hx
     exact Finset.mem_filter.mpr ⟨x.2, mem_restrictedPart.mp hx⟩
@@ -2277,6 +2349,7 @@ theorem isHamiltonian_of_balanced_absorbing_path_of_crossDegree
   have hside : X.card ≤ max X.card Y.card := Nat.le_max_left _ _
   omega
 
+omit [DecidableRel G.Adj] in
 theorem exists_balanced_extension_of_endpoints_mem_left
     {X Y : Finset V} (hcut : IsCut X Y) (hYX : Y.card ≤ X.card)
     (hlinP : LinearForest P) (hFP : F ≤ P) (hPG : P ≤ G)
@@ -2387,6 +2460,7 @@ theorem exists_balanced_extension_of_endpoints_mem_left
       hsuppF hforestCard' hclassH q hq hqSupport hb hwY
   exact ⟨q, hHG, hq, hqSupport, hbalance⟩
 
+omit [DecidableRel G.Adj] in
 theorem exists_balanced_extension_of_endpoints_mem_right
     {X Y : Finset V} (hcut : IsCut X Y) (hYX : Y.card ≤ X.card)
     (hlinP : LinearForest P) (hFP : F ≤ P) (hPG : P ≤ G)
@@ -2492,6 +2566,7 @@ theorem exists_balanced_extension_of_endpoints_mem_right
       hsuppF hforestCard' hclassH q hq hqSupport hwX hb
   exact ⟨q, hHG, hq, hqSupport, hbalance⟩
 
+omit [DecidableEq V] [Fintype V] in
 /-- Adding an edge from a supported vertex to one new vertex enlarges the
 support by at most that new vertex. -/
 theorem support_sup_edge_subset {P : SimpleGraph V} {w a : V}
@@ -2507,13 +2582,17 @@ theorem support_sup_edge_subset {P : SimpleGraph V} {w a : V}
     · exact Or.inr rfl
     · exact Or.inl ha
 
-theorem ncard_support_sup_edge_le {P : SimpleGraph V} {w a : V}
+omit [DecidableEq V] [Fintype V] in
+theorem ncard_support_sup_edge_le [Finite V] {P : SimpleGraph V} {w a : V}
     (ha : a ∈ P.support) :
     (P ⊔ SimpleGraph.edge w a).support.ncard ≤ P.support.ncard + 1 := by
+  classical
+  let := Fintype.ofFinite V
   have hsub := support_sup_edge_subset (P := P) (w := w) ha
   exact (Set.ncard_le_ncard hsub).trans <| by
     simpa using Set.ncard_union_le P.support ({w} : Set V)
 
+omit [DecidableRel G.Adj] [Fintype V] in
 theorem pathInterior_card_le_support {a b : V} (p : G.Walk a b) :
     (pathInterior p).card ≤ p.support.toFinset.card := by
   apply Finset.card_le_card
@@ -2762,385 +2841,387 @@ theorem isHamiltonian_of_oriented_goodCut
         (d := d) (m := 9 * T.card + 1) hHG hcut hwX hbY q hq
           hqSpans hbalance hTH hwT hbT hHcard hV hhigh hclose
 
- /-- The numerical and neighbourhood data needed after an exact imbalance
- forest has been selected on the larger side of an oriented cut. -/
- def OrientedGoodCutCertificate (G F : SimpleGraph V) [DecidableRel G.Adj]
-     (X Y : Finset V) : Prop :=
-   ∃ (T : Finset V) (d : ℕ),
-     F.support.toFinset ⊆ T ∧ T.Nonempty ∧
-     (∀ v ∈ T,
-       Fintype.card (AttachmentSlot F T) + T.card ≤
-         (crossNeighbors G X Y v).card) ∧
-     (∀ v, v ∉ T → d < (crossNeighbors G X Y v).card) ∧
-     9 * T.card + T.card < d + 1 ∧
-     max X.card Y.card + 9 * T.card + 1 < 2 * (d + 1) ∧
-     max X.card Y.card + 2 + 2 * (9 * T.card + 1) ≤ 2 * (d + 1)
+/-- The numerical and neighbourhood data needed after an exact imbalance
+forest has been selected on the larger side of an oriented cut. -/
+def OrientedGoodCutCertificate (G F : SimpleGraph V) [DecidableRel G.Adj]
+    (X Y : Finset V) : Prop :=
+  ∃ (T : Finset V) (d : ℕ),
+    F.support.toFinset ⊆ T ∧ T.Nonempty ∧
+    (∀ v ∈ T,
+      Fintype.card (AttachmentSlot F T) + T.card ≤
+        (crossNeighbors G X Y v).card) ∧
+    (∀ v, v ∉ T → d < (crossNeighbors G X Y v).card) ∧
+    9 * T.card + T.card < d + 1 ∧
+    max X.card Y.card + 9 * T.card + 1 < 2 * (d + 1) ∧
+    max X.card Y.card + 2 + 2 * (9 * T.card + 1) ≤ 2 * (d + 1)
 
- theorem OrientedGoodCutCertificate.of_bounds
-     {F : SimpleGraph V} {X Y T : Finset V} {d : ℕ}
-     (hFT : F.support.toFinset ⊆ T) (hT : T.Nonempty)
-     (hprotectedDegree : ∀ v ∈ T,
-       3 * T.card ≤ (crossNeighbors G X Y v).card)
-     (hhigh : ∀ v, v ∉ T → d < (crossNeighbors G X Y v).card)
-     (hfirst : 9 * T.card + T.card < d + 1)
-     (hcommon : max X.card Y.card + 9 * T.card + 1 < 2 * (d + 1))
-     (hclose : max X.card Y.card + 2 + 2 * (9 * T.card + 1) ≤
-       2 * (d + 1)) :
-     OrientedGoodCutCertificate G F X Y := by
-   refine ⟨T, d, hFT, hT, ?_, hhigh, hfirst, hcommon, hclose⟩
-   intro v hv
-   have hslots := card_attachmentSlot_le_two_mul F T
-   have hdeg := hprotectedDegree v hv
-   omega
+theorem OrientedGoodCutCertificate.of_bounds
+    {F : SimpleGraph V} {X Y T : Finset V} {d : ℕ}
+    (hFT : F.support.toFinset ⊆ T) (hT : T.Nonempty)
+    (hprotectedDegree : ∀ v ∈ T,
+      3 * T.card ≤ (crossNeighbors G X Y v).card)
+    (hhigh : ∀ v, v ∉ T → d < (crossNeighbors G X Y v).card)
+    (hfirst : 9 * T.card + T.card < d + 1)
+    (hcommon : max X.card Y.card + 9 * T.card + 1 < 2 * (d + 1))
+    (hclose : max X.card Y.card + 2 + 2 * (9 * T.card + 1) ≤
+      2 * (d + 1)) :
+    OrientedGoodCutCertificate G F X Y := by
+  refine ⟨T, d, hFT, hT, ?_, hhigh, hfirst, hcommon, hclose⟩
+  intro v hv
+  have hslots := card_attachmentSlot_le_two_mul F T
+  have hdeg := hprotectedDegree v hv
+  omega
 
- /-- Construct the protected set automatically from the exact imbalance
- forest, a specified low-cross-degree set, and one anchor vertex.  The
- parameter `t` is only an upper bound: callers never need to expose the
- resulting protected set. -/
- theorem isHamiltonian_of_oriented_goodCut_of_lowSet
-     {F : SimpleGraph V} {X Y L : Finset V} {anchor : V} {t d : ℕ}
-     (hcut : IsCut X Y) (hYX : Y.card ≤ X.card)
-     (hFG : F ≤ G) (hlinF : LinearForest F)
-     (hsuppF : F.support ⊆ (X : Set V))
-     (hforestCard : F.edgeFinset.card = X.card - Y.card)
-     (hsize : 2 * (X.card - Y.card) + L.card + 1 ≤ t)
-     (hminCross : ∀ v, 3 * t ≤ (crossNeighbors G X Y v).card)
-     (hhigh : ∀ v, v ∉ L → d < (crossNeighbors G X Y v).card)
-     (hfirst : 10 * t < d + 1)
-     (hcommon : max X.card Y.card + 9 * t + 1 < 2 * (d + 1))
-     (hclose : max X.card Y.card + 2 + 2 * (9 * t + 1) ≤
-       2 * (d + 1))
-     (hV : 3 ≤ Fintype.card V) : G.IsHamiltonian := by
-   let T := insert anchor (F.support.toFinset ∪ L)
-   have hsuppCard : F.support.toFinset.card ≤ 2 * (X.card - Y.card) := by
-     have hsuppN := ncard_support_le_twice_card_edgeFinset F
-     have hsuppEq : F.support.toFinset.card = F.support.ncard := by
-       have h := Set.ncard_coe_finset F.support.toFinset
-       rw [Set.coe_toFinset] at h
-       exact h.symm
-     calc
-       F.support.toFinset.card = F.support.ncard := hsuppEq
-       _ ≤ 2 * F.edgeFinset.card := hsuppN
-       _ = 2 * (X.card - Y.card) := by rw [hforestCard]
-   have hTcard : T.card ≤ t := by
-     have hu := Finset.card_union_le F.support.toFinset L
-     have hi := Finset.card_insert_le anchor (F.support.toFinset ∪ L)
-     dsimp only [T]
-     omega
-   have hFT : F.support.toFinset ⊆ T := by
-     intro v hv
-     exact Finset.mem_insert_of_mem (Finset.mem_union_left L hv)
-   have hT : T.Nonempty := ⟨anchor, Finset.mem_insert_self _ _⟩
-   have hprotectedDegree : ∀ v ∈ T,
-       3 * T.card ≤ (crossNeighbors G X Y v).card := by
-     intro v _
-     have := hminCross v
-     omega
-   have hhighT : ∀ v, v ∉ T → d < (crossNeighbors G X Y v).card := by
-     intro v hv
-     apply hhigh v
-     intro hvL
-     exact hv (Finset.mem_insert_of_mem (Finset.mem_union_right _ hvL))
-   have hfirstT : 9 * T.card + T.card < d + 1 := by omega
-   have hcommonT : max X.card Y.card + 9 * T.card + 1 <
-       2 * (d + 1) := by omega
-   have hcloseT : max X.card Y.card + 2 + 2 * (9 * T.card + 1) ≤
-       2 * (d + 1) := by omega
-   have hcertificate : OrientedGoodCutCertificate G F X Y :=
-     OrientedGoodCutCertificate.of_bounds hFT hT hprotectedDegree hhighT
-       hfirstT hcommonT hcloseT
-   obtain ⟨T', d', hFT', hT', hattach, hhigh', hfirst', hcommon', hclose'⟩ :=
-     hcertificate
-   exact isHamiltonian_of_oriented_goodCut (G := G) hcut hYX hFG hlinF
-     hsuppF hforestCard hFT' hT' hattach hhigh' hfirst' hcommon' hclose' hV
+/-- Construct the protected set automatically from the exact imbalance
+forest, a specified low-cross-degree set, and one anchor vertex.  The
+parameter `t` is only an upper bound: callers never need to expose the
+resulting protected set. -/
+theorem isHamiltonian_of_oriented_goodCut_of_lowSet
+    {F : SimpleGraph V} {X Y L : Finset V} {anchor : V} {t d : ℕ}
+    (hcut : IsCut X Y) (hYX : Y.card ≤ X.card)
+    (hFG : F ≤ G) (hlinF : LinearForest F)
+    (hsuppF : F.support ⊆ (X : Set V))
+    (hforestCard : F.edgeFinset.card = X.card - Y.card)
+    (hsize : 2 * (X.card - Y.card) + L.card + 1 ≤ t)
+    (hminCross : ∀ v, 3 * t ≤ (crossNeighbors G X Y v).card)
+    (hhigh : ∀ v, v ∉ L → d < (crossNeighbors G X Y v).card)
+    (hfirst : 10 * t < d + 1)
+    (hcommon : max X.card Y.card + 9 * t + 1 < 2 * (d + 1))
+    (hclose : max X.card Y.card + 2 + 2 * (9 * t + 1) ≤
+      2 * (d + 1))
+    (hV : 3 ≤ Fintype.card V) : G.IsHamiltonian := by
+  let T := insert anchor (F.support.toFinset ∪ L)
+  have hsuppCard : F.support.toFinset.card ≤ 2 * (X.card - Y.card) := by
+    have hsuppN := ncard_support_le_twice_card_edgeFinset F
+    have hsuppEq : F.support.toFinset.card = F.support.ncard := by
+      have h := Set.ncard_coe_finset F.support.toFinset
+      rw [Set.coe_toFinset] at h
+      exact h.symm
+    calc
+      F.support.toFinset.card = F.support.ncard := hsuppEq
+      _ ≤ 2 * F.edgeFinset.card := hsuppN
+      _ = 2 * (X.card - Y.card) := by rw [hforestCard]
+  have hTcard : T.card ≤ t := by
+    have hu := Finset.card_union_le F.support.toFinset L
+    have hi := Finset.card_insert_le anchor (F.support.toFinset ∪ L)
+    dsimp only [T]
+    omega
+  have hFT : F.support.toFinset ⊆ T := by
+    intro v hv
+    exact Finset.mem_insert_of_mem (Finset.mem_union_left L hv)
+  have hT : T.Nonempty := ⟨anchor, Finset.mem_insert_self _ _⟩
+  have hprotectedDegree : ∀ v ∈ T,
+      3 * T.card ≤ (crossNeighbors G X Y v).card := by
+    intro v _
+    have := hminCross v
+    omega
+  have hhighT : ∀ v, v ∉ T → d < (crossNeighbors G X Y v).card := by
+    intro v hv
+    apply hhigh v
+    intro hvL
+    exact hv (Finset.mem_insert_of_mem (Finset.mem_union_right _ hvL))
+  have hfirstT : 9 * T.card + T.card < d + 1 := by omega
+  have hcommonT : max X.card Y.card + 9 * T.card + 1 <
+      2 * (d + 1) := by omega
+  have hcloseT : max X.card Y.card + 2 + 2 * (9 * T.card + 1) ≤
+      2 * (d + 1) := by omega
+  have hcertificate : OrientedGoodCutCertificate G F X Y :=
+    OrientedGoodCutCertificate.of_bounds hFT hT hprotectedDegree hhighT
+      hfirstT hcommonT hcloseT
+  obtain ⟨T', d', hFT', hT', hattach, hhigh', hfirst', hcommon', hclose'⟩ :=
+    hcertificate
+  exact isHamiltonian_of_oriented_goodCut (G := G) hcut hYX hFG hlinF
+    hsuppF hforestCard hFT' hT' hattach hhigh' hfirst' hcommon' hclose' hV
 
- /-- Symmetric automatic-low-set form.  The crossing-neighbour hypotheses
- are stated once in the original orientation and transported across the cut
- when the good-cut witness lies on the other side. -/
- theorem IsKGoodCut.isHamiltonian_of_lowSet {k : ℕ}
-     (hgood : IsKGoodCut G X Y k) (L : Finset V) (anchor : V) {t d : ℕ}
-     (hsizeLeft : 2 * (X.card - Y.card) + L.card + 1 ≤ t)
-     (hsizeRight : 2 * (Y.card - X.card) + L.card + 1 ≤ t)
-     (hminCross : ∀ v, 3 * t ≤ (crossNeighbors G X Y v).card)
-     (hhigh : ∀ v, v ∉ L → d < (crossNeighbors G X Y v).card)
-     (hfirst : 10 * t < d + 1)
-     (hcommon : max X.card Y.card + 9 * t + 1 < 2 * (d + 1))
-     (hclose : max X.card Y.card + 2 + 2 * (9 * t + 1) ≤
-       2 * (d + 1))
-     (hV : 3 ≤ Fintype.card V) : G.IsHamiltonian := by
-   rcases hgood.good.exists_exact with hF | hF
-   · obtain ⟨F, hYX, hFG, hlinF, hsuppF, hcard0⟩ := hF
-     have hcard : F.edgeFinset.card = X.card - Y.card := by
-       simpa only [Nat.zero_add] using hcard0
-     exact isHamiltonian_of_oriented_goodCut_of_lowSet
-       (G := G) (anchor := anchor) hgood.1 hYX hFG hlinF hsuppF hcard
-         hsizeLeft hminCross hhigh hfirst hcommon hclose hV
-   · obtain ⟨F, hXY, hFG, hlinF, hsuppF, hcard0⟩ := hF
-     have hcard : F.edgeFinset.card = Y.card - X.card := by
-       simpa only [Nat.zero_add] using hcard0
-     have hminCross' : ∀ v, 3 * t ≤ (crossNeighbors G Y X v).card := by
-       intro v
-       rw [crossNeighbors_swap (G := G) hgood.1]
-       exact hminCross v
-     have hhigh' : ∀ v, v ∉ L → d < (crossNeighbors G Y X v).card := by
-       intro v hv
-       rw [crossNeighbors_swap (G := G) hgood.1]
-       exact hhigh v hv
-     have hcommon' : max Y.card X.card + 9 * t + 1 < 2 * (d + 1) := by
-       simpa only [max_comm] using hcommon
-     have hclose' : max Y.card X.card + 2 + 2 * (9 * t + 1) ≤
-         2 * (d + 1) := by
-       simpa only [max_comm] using hclose
-     exact isHamiltonian_of_oriented_goodCut_of_lowSet
-       (G := G) (anchor := anchor) hgood.1.symm hXY hFG hlinF hsuppF hcard
-         hsizeRight hminCross' hhigh' hfirst hcommon' hclose' hV
+/-- Symmetric automatic-low-set form.  The crossing-neighbour hypotheses
+are stated once in the original orientation and transported across the cut
+when the good-cut witness lies on the other side. -/
+theorem IsKGoodCut.isHamiltonian_of_lowSet {k : ℕ}
+    (hgood : IsKGoodCut G X Y k) (L : Finset V) (anchor : V) {t d : ℕ}
+    (hsizeLeft : 2 * (X.card - Y.card) + L.card + 1 ≤ t)
+    (hsizeRight : 2 * (Y.card - X.card) + L.card + 1 ≤ t)
+    (hminCross : ∀ v, 3 * t ≤ (crossNeighbors G X Y v).card)
+    (hhigh : ∀ v, v ∉ L → d < (crossNeighbors G X Y v).card)
+    (hfirst : 10 * t < d + 1)
+    (hcommon : max X.card Y.card + 9 * t + 1 < 2 * (d + 1))
+    (hclose : max X.card Y.card + 2 + 2 * (9 * t + 1) ≤
+      2 * (d + 1))
+    (hV : 3 ≤ Fintype.card V) : G.IsHamiltonian := by
+  rcases hgood.good.exists_exact with hF | hF
+  · obtain ⟨F, hYX, hFG, hlinF, hsuppF, hcard0⟩ := hF
+    have hcard : F.edgeFinset.card = X.card - Y.card := by
+      simpa only [Nat.zero_add] using hcard0
+    exact isHamiltonian_of_oriented_goodCut_of_lowSet
+      (G := G) (anchor := anchor) hgood.1 hYX hFG hlinF hsuppF hcard
+        hsizeLeft hminCross hhigh hfirst hcommon hclose hV
+  · obtain ⟨F, hXY, hFG, hlinF, hsuppF, hcard0⟩ := hF
+    have hcard : F.edgeFinset.card = Y.card - X.card := by
+      simpa only [Nat.zero_add] using hcard0
+    have hminCross' : ∀ v, 3 * t ≤ (crossNeighbors G Y X v).card := by
+      intro v
+      rw [crossNeighbors_swap (G := G) hgood.1]
+      exact hminCross v
+    have hhigh' : ∀ v, v ∉ L → d < (crossNeighbors G Y X v).card := by
+      intro v hv
+      rw [crossNeighbors_swap (G := G) hgood.1]
+      exact hhigh v hv
+    have hcommon' : max Y.card X.card + 9 * t + 1 < 2 * (d + 1) := by
+      simpa only [max_comm] using hcommon
+    have hclose' : max Y.card X.card + 2 + 2 * (9 * t + 1) ≤
+        2 * (d + 1) := by
+      simpa only [max_comm] using hclose
+    exact isHamiltonian_of_oriented_goodCut_of_lowSet
+      (G := G) (anchor := anchor) hgood.1.symm hXY hFG hlinF hsuppF hcard
+        hsizeRight hminCross' hhigh' hfirst hcommon' hclose' hV
 
- /-- Consumer form for a sharp two-sided low-degree estimate.  Unlike the
- separate deficiency bounds below, this theorem uses the cardinality of the
- union directly and therefore loses no factor of two. -/
- theorem IsKGoodCut.isHamiltonian_of_lowCrossUnion_bound
-     {k ell t d : ℕ} (hgood : IsKGoodCut G X Y k) (anchor : V)
-     {q : ℝ}
-     (hLcard :
-       (lowCrossSet G X Y q ∪ lowCrossSet G Y X q).card ≤ ell)
-     (hsizeLeft : 2 * (X.card - Y.card) + ell + 1 ≤ t)
-     (hsizeRight : 2 * (Y.card - X.card) + ell + 1 ≤ t)
-     (hd : (d : ℝ) ≤ q)
-     (hminCross : ∀ v, 3 * t ≤ (crossNeighbors G X Y v).card)
-     (hfirst : 10 * t < d + 1)
-     (hcommon : max X.card Y.card + 9 * t + 1 < 2 * (d + 1))
-     (hclose : max X.card Y.card + 2 + 2 * (9 * t + 1) ≤
-       2 * (d + 1))
-     (hV : 3 ≤ Fintype.card V) : G.IsHamiltonian := by
-   let LX := lowCrossSet G X Y q
-   let LY := lowCrossSet G Y X q
-   let L := LX ∪ LY
-   have hLcard' : L.card ≤ ell := by
-     simpa only [L, LX, LY] using hLcard
-   have hsizeLeft' : 2 * (X.card - Y.card) + L.card + 1 ≤ t := by omega
-   have hsizeRight' : 2 * (Y.card - X.card) + L.card + 1 ≤ t := by omega
-   have hhigh : ∀ v, v ∉ L → d < (crossNeighbors G X Y v).card := by
-     intro v hvL
-     by_cases hvX : v ∈ X
-     · have hvLX : v ∉ LX := by
-         intro hv
-         exact hvL (Finset.mem_union_left LY hv)
-       have hdegReal : q < degreeInto G v Y := by
-         apply lt_of_not_ge
-         intro hdeg
-         apply hvLX
-         exact mem_lowCrossSet.mpr ⟨hvX, hdeg⟩
-       have hcrossReal : (d : ℝ) <
-           ((crossNeighbors G X Y v).card : ℝ) := by
-         have heq : degreeInto G v Y =
-             ((crossNeighbors G X Y v).card : ℝ) := by
-           simp only [degreeInto, crossNeighbors, hvX, if_true]
-           congr 1
-           apply congrArg Finset.card
-           ext w
-           simp only [SimpleGraph.mem_neighborFinset, Finset.mem_inter]
-         rw [← heq]
-         exact hd.trans_lt hdegReal
-       exact_mod_cast hcrossReal
-     · have hvY : v ∈ Y := (hgood.1.mem_right_iff v).mpr hvX
-       have hvLY : v ∉ LY := by
-         intro hv
-         exact hvL (Finset.mem_union_right LX hv)
-       have hdegReal : q < degreeInto G v X := by
-         apply lt_of_not_ge
-         intro hdeg
-         apply hvLY
-         exact mem_lowCrossSet.mpr ⟨hvY, hdeg⟩
-       have hcrossReal : (d : ℝ) <
-           ((crossNeighbors G X Y v).card : ℝ) := by
-         have heq : degreeInto G v X =
-             ((crossNeighbors G X Y v).card : ℝ) := by
-           simp only [degreeInto, crossNeighbors, hvX, if_false]
-           congr 1
-           apply congrArg Finset.card
-           ext w
-           simp only [SimpleGraph.mem_neighborFinset, Finset.mem_inter]
-         rw [← heq]
-         exact hd.trans_lt hdegReal
-       exact_mod_cast hcrossReal
-   exact IsKGoodCut.isHamiltonian_of_lowSet hgood L anchor
-     hsizeLeft' hsizeRight' hminCross hhigh hfirst hcommon hclose hV
+/-- Consumer form for a sharp two-sided low-degree estimate.  Unlike the
+separate deficiency bounds below, this theorem uses the cardinality of the
+union directly and therefore loses no factor of two. -/
+theorem IsKGoodCut.isHamiltonian_of_lowCrossUnion_bound
+    {k ell t d : ℕ} (hgood : IsKGoodCut G X Y k) (anchor : V)
+    {q : ℝ}
+    (hLcard :
+      (lowCrossSet G X Y q ∪ lowCrossSet G Y X q).card ≤ ell)
+    (hsizeLeft : 2 * (X.card - Y.card) + ell + 1 ≤ t)
+    (hsizeRight : 2 * (Y.card - X.card) + ell + 1 ≤ t)
+    (hd : (d : ℝ) ≤ q)
+    (hminCross : ∀ v, 3 * t ≤ (crossNeighbors G X Y v).card)
+    (hfirst : 10 * t < d + 1)
+    (hcommon : max X.card Y.card + 9 * t + 1 < 2 * (d + 1))
+    (hclose : max X.card Y.card + 2 + 2 * (9 * t + 1) ≤
+      2 * (d + 1))
+    (hV : 3 ≤ Fintype.card V) : G.IsHamiltonian := by
+  let LX := lowCrossSet G X Y q
+  let LY := lowCrossSet G Y X q
+  let L := LX ∪ LY
+  have hLcard' : L.card ≤ ell := by
+    simpa only [L, LX, LY] using hLcard
+  have hsizeLeft' : 2 * (X.card - Y.card) + L.card + 1 ≤ t := by omega
+  have hsizeRight' : 2 * (Y.card - X.card) + L.card + 1 ≤ t := by omega
+  have hhigh : ∀ v, v ∉ L → d < (crossNeighbors G X Y v).card := by
+    intro v hvL
+    by_cases hvX : v ∈ X
+    · have hvLX : v ∉ LX := by
+        intro hv
+        exact hvL (Finset.mem_union_left LY hv)
+      have hdegReal : q < degreeInto G v Y := by
+        apply lt_of_not_ge
+        intro hdeg
+        apply hvLX
+        exact mem_lowCrossSet.mpr ⟨hvX, hdeg⟩
+      have hcrossReal : (d : ℝ) <
+          ((crossNeighbors G X Y v).card : ℝ) := by
+        have heq : degreeInto G v Y =
+            ((crossNeighbors G X Y v).card : ℝ) := by
+          simp only [degreeInto, crossNeighbors, hvX, if_true]
+          congr 1
+          apply congrArg Finset.card
+          ext w
+          simp only [SimpleGraph.mem_neighborFinset, Finset.mem_inter]
+        rw [← heq]
+        exact hd.trans_lt hdegReal
+      exact_mod_cast hcrossReal
+    · have hvY : v ∈ Y := (hgood.1.mem_right_iff v).mpr hvX
+      have hvLY : v ∉ LY := by
+        intro hv
+        exact hvL (Finset.mem_union_right LX hv)
+      have hdegReal : q < degreeInto G v X := by
+        apply lt_of_not_ge
+        intro hdeg
+        apply hvLY
+        exact mem_lowCrossSet.mpr ⟨hvY, hdeg⟩
+      have hcrossReal : (d : ℝ) <
+          ((crossNeighbors G X Y v).card : ℝ) := by
+        have heq : degreeInto G v X =
+            ((crossNeighbors G X Y v).card : ℝ) := by
+          simp only [degreeInto, crossNeighbors, hvX, if_false]
+          congr 1
+          apply congrArg Finset.card
+          ext w
+          simp only [SimpleGraph.mem_neighborFinset, Finset.mem_inter]
+        rw [← heq]
+        exact hd.trans_lt hdegReal
+      exact_mod_cast hcrossReal
+  exact IsKGoodCut.isHamiltonian_of_lowSet hgood L anchor
+    hsizeLeft' hsizeRight' hminCross hhigh hfirst hcommon hclose hV
 
- /-- High-level deterministic DKM lemma. Near-half part sizes and a dense
- crossing graph bound the vertices of crossing degree at most `3N/10` on
- both sides. Their union is the low set for the automatic absorber. -/
- theorem IsKGoodCut.isHamiltonian_of_dense_crossing {k ell t d : ℕ}
-     (hgood : IsKGoodCut G X Y k) (anchor : V)
-     {N delta eps : ℝ}
-     (hN : 0 ≤ N) (hdelta : 0 ≤ delta)
-     (hXlower : N / 2 - delta ≤ (X.card : ℝ))
-     (hXupper : (X.card : ℝ) ≤ N / 2 + delta)
-     (hYlower : N / 2 - delta ≤ (Y.card : ℝ))
-     (hYupper : (Y.card : ℝ) ≤ N / 2 + delta)
-     (hdense : N ^ 2 / 4 - eps * N ^ 2 ≤ edgeCount G X Y)
-     (hgap : 0 < N / 5 - delta)
-     (hlowNumeric : delta * N + delta ^ 2 + eps * N ^ 2 <
-       ((ell + 1 : ℕ) : ℝ) * (N / 5 - delta))
-     (hsizeLeft : 2 * (X.card - Y.card) + 2 * ell + 1 ≤ t)
-     (hsizeRight : 2 * (Y.card - X.card) + 2 * ell + 1 ≤ t)
-     (hd : (d : ℝ) ≤ 3 * N / 10)
-     (hminCross : ∀ v, 3 * t ≤ (crossNeighbors G X Y v).card)
-     (hfirst : 10 * t < d + 1)
-     (hcommon : max X.card Y.card + 9 * t + 1 < 2 * (d + 1))
-     (hclose : max X.card Y.card + 2 + 2 * (9 * t + 1) ≤
-       2 * (d + 1))
-     (hV : 3 ≤ Fintype.card V) : G.IsHamiltonian := by
-   let LX := lowCrossSet G X Y (3 * N / 10)
-   let LY := lowCrossSet G Y X (3 * N / 10)
-   let L := LX ∪ LY
-   have hK : (0 : ℝ) ≤ ((ell + 1 : ℕ) : ℝ) := by positivity
-   have hLXreal : ((LX.card : ℕ) : ℝ) < ((ell + 1 : ℕ) : ℝ) := by
-     simpa only [LX] using card_lowCrossSet_three_tenths_lt
-       G X Y hN hdelta hK hXupper hYlower hYupper hdense hgap hlowNumeric
-   have hdense' : N ^ 2 / 4 - eps * N ^ 2 ≤ edgeCount G Y X := by
-     rw [edgeCount_comm]
-     exact hdense
-   have hLYreal : ((LY.card : ℕ) : ℝ) < ((ell + 1 : ℕ) : ℝ) := by
-     simpa only [LY] using card_lowCrossSet_three_tenths_lt
-       G Y X hN hdelta hK hYupper hXlower hXupper hdense' hgap hlowNumeric
-   have hLXcard : LX.card ≤ ell := by
-     have hnat : LX.card < ell + 1 := by exact_mod_cast hLXreal
-     omega
-   have hLYcard : LY.card ≤ ell := by
-     have hnat : LY.card < ell + 1 := by exact_mod_cast hLYreal
-     omega
-   have hLcard : L.card ≤ 2 * ell := by
-     have hu := Finset.card_union_le LX LY
-     dsimp only [L]
-     omega
-   have hsizeLeft' : 2 * (X.card - Y.card) + L.card + 1 ≤ t := by omega
-   have hsizeRight' : 2 * (Y.card - X.card) + L.card + 1 ≤ t := by omega
-   have hhigh : ∀ v, v ∉ L → d < (crossNeighbors G X Y v).card := by
-     intro v hvL
-     by_cases hvX : v ∈ X
-     · have hvLX : v ∉ LX := by
-         intro hv
-         exact hvL (Finset.mem_union_left LY hv)
-       have hdegReal : 3 * N / 10 < degreeInto G v Y := by
-         apply lt_of_not_ge
-         intro hdeg
-         apply hvLX
-         exact mem_lowCrossSet.mpr ⟨hvX, hdeg⟩
-       have hcrossReal : (d : ℝ) <
-           ((crossNeighbors G X Y v).card : ℝ) := by
-         have heq : degreeInto G v Y =
-             ((crossNeighbors G X Y v).card : ℝ) := by
-           simp only [degreeInto, crossNeighbors, hvX, if_true]
-           congr 1
-           apply congrArg Finset.card
-           ext w
-           simp only [SimpleGraph.mem_neighborFinset, Finset.mem_inter]
-         rw [← heq]
-         exact hd.trans_lt hdegReal
-       exact_mod_cast hcrossReal
-     · have hvY : v ∈ Y := (hgood.1.mem_right_iff v).mpr hvX
-       have hvLY : v ∉ LY := by
-         intro hv
-         exact hvL (Finset.mem_union_right LX hv)
-       have hdegReal : 3 * N / 10 < degreeInto G v X := by
-         apply lt_of_not_ge
-         intro hdeg
-         apply hvLY
-         exact mem_lowCrossSet.mpr ⟨hvY, hdeg⟩
-       have hcrossReal : (d : ℝ) <
-           ((crossNeighbors G X Y v).card : ℝ) := by
-         have heq : degreeInto G v X =
-             ((crossNeighbors G X Y v).card : ℝ) := by
-           simp only [degreeInto, crossNeighbors, hvX, if_false]
-           congr 1
-           apply congrArg Finset.card
-           ext w
-           simp only [SimpleGraph.mem_neighborFinset, Finset.mem_inter]
-         rw [← heq]
-         exact hd.trans_lt hdegReal
-       exact_mod_cast hcrossReal
-   exact IsKGoodCut.isHamiltonian_of_lowSet hgood L anchor
-     hsizeLeft' hsizeRight' hminCross hhigh hfirst hcommon hclose hV
+/-- High-level deterministic DKM lemma. Near-half part sizes and a dense
+crossing graph bound the vertices of crossing degree at most `3N/10` on
+both sides. Their union is the low set for the automatic absorber. -/
+theorem IsKGoodCut.isHamiltonian_of_dense_crossing {k ell t d : ℕ}
+    (hgood : IsKGoodCut G X Y k) (anchor : V)
+    {N delta eps : ℝ}
+    (hN : 0 ≤ N) (hdelta : 0 ≤ delta)
+    (hXlower : N / 2 - delta ≤ (X.card : ℝ))
+    (hXupper : (X.card : ℝ) ≤ N / 2 + delta)
+    (hYlower : N / 2 - delta ≤ (Y.card : ℝ))
+    (hYupper : (Y.card : ℝ) ≤ N / 2 + delta)
+    (hdense : N ^ 2 / 4 - eps * N ^ 2 ≤ edgeCount G X Y)
+    (hgap : 0 < N / 5 - delta)
+    (hlowNumeric : delta * N + delta ^ 2 + eps * N ^ 2 <
+      ((ell + 1 : ℕ) : ℝ) * (N / 5 - delta))
+    (hsizeLeft : 2 * (X.card - Y.card) + 2 * ell + 1 ≤ t)
+    (hsizeRight : 2 * (Y.card - X.card) + 2 * ell + 1 ≤ t)
+    (hd : (d : ℝ) ≤ 3 * N / 10)
+    (hminCross : ∀ v, 3 * t ≤ (crossNeighbors G X Y v).card)
+    (hfirst : 10 * t < d + 1)
+    (hcommon : max X.card Y.card + 9 * t + 1 < 2 * (d + 1))
+    (hclose : max X.card Y.card + 2 + 2 * (9 * t + 1) ≤
+      2 * (d + 1))
+    (hV : 3 ≤ Fintype.card V) : G.IsHamiltonian := by
+  let LX := lowCrossSet G X Y (3 * N / 10)
+  let LY := lowCrossSet G Y X (3 * N / 10)
+  let L := LX ∪ LY
+  have hK : (0 : ℝ) ≤ ((ell + 1 : ℕ) : ℝ) := by positivity
+  have hLXreal : ((LX.card : ℕ) : ℝ) < ((ell + 1 : ℕ) : ℝ) := by
+    simpa only [LX] using card_lowCrossSet_three_tenths_lt
+      G X Y hN hdelta hK hXupper hYlower hYupper hdense hgap hlowNumeric
+  have hdense' : N ^ 2 / 4 - eps * N ^ 2 ≤ edgeCount G Y X := by
+    rw [edgeCount_comm]
+    exact hdense
+  have hLYreal : ((LY.card : ℕ) : ℝ) < ((ell + 1 : ℕ) : ℝ) := by
+    simpa only [LY] using card_lowCrossSet_three_tenths_lt
+      G Y X hN hdelta hK hYupper hXlower hXupper hdense' hgap hlowNumeric
+  have hLXcard : LX.card ≤ ell := by
+    have hnat : LX.card < ell + 1 := by exact_mod_cast hLXreal
+    omega
+  have hLYcard : LY.card ≤ ell := by
+    have hnat : LY.card < ell + 1 := by exact_mod_cast hLYreal
+    omega
+  have hLcard : L.card ≤ 2 * ell := by
+    have hu := Finset.card_union_le LX LY
+    dsimp only [L]
+    omega
+  have hsizeLeft' : 2 * (X.card - Y.card) + L.card + 1 ≤ t := by omega
+  have hsizeRight' : 2 * (Y.card - X.card) + L.card + 1 ≤ t := by omega
+  have hhigh : ∀ v, v ∉ L → d < (crossNeighbors G X Y v).card := by
+    intro v hvL
+    by_cases hvX : v ∈ X
+    · have hvLX : v ∉ LX := by
+        intro hv
+        exact hvL (Finset.mem_union_left LY hv)
+      have hdegReal : 3 * N / 10 < degreeInto G v Y := by
+        apply lt_of_not_ge
+        intro hdeg
+        apply hvLX
+        exact mem_lowCrossSet.mpr ⟨hvX, hdeg⟩
+      have hcrossReal : (d : ℝ) <
+          ((crossNeighbors G X Y v).card : ℝ) := by
+        have heq : degreeInto G v Y =
+            ((crossNeighbors G X Y v).card : ℝ) := by
+          simp only [degreeInto, crossNeighbors, hvX, if_true]
+          congr 1
+          apply congrArg Finset.card
+          ext w
+          simp only [SimpleGraph.mem_neighborFinset, Finset.mem_inter]
+        rw [← heq]
+        exact hd.trans_lt hdegReal
+      exact_mod_cast hcrossReal
+    · have hvY : v ∈ Y := (hgood.1.mem_right_iff v).mpr hvX
+      have hvLY : v ∉ LY := by
+        intro hv
+        exact hvL (Finset.mem_union_right LX hv)
+      have hdegReal : 3 * N / 10 < degreeInto G v X := by
+        apply lt_of_not_ge
+        intro hdeg
+        apply hvLY
+        exact mem_lowCrossSet.mpr ⟨hvY, hdeg⟩
+      have hcrossReal : (d : ℝ) <
+          ((crossNeighbors G X Y v).card : ℝ) := by
+        have heq : degreeInto G v X =
+            ((crossNeighbors G X Y v).card : ℝ) := by
+          simp only [degreeInto, crossNeighbors, hvX, if_false]
+          congr 1
+          apply congrArg Finset.card
+          ext w
+          simp only [SimpleGraph.mem_neighborFinset, Finset.mem_inter]
+        rw [← heq]
+        exact hd.trans_lt hdegReal
+      exact_mod_cast hcrossReal
+  exact IsKGoodCut.isHamiltonian_of_lowSet hgood L anchor
+    hsizeLeft' hsizeRight' hminCross hhigh hfirst hcommon hclose hV
 
- /-- Symmetric good-cut wrapper.  A `k`-good cut is first weakened to a good
- cut and truncated to the exact imbalance forest; the matching orientation's
- certificate then invokes `isHamiltonian_of_oriented_goodCut`. -/
- theorem IsKGoodCut.isHamiltonian_of_certificates {k : ℕ}
-     (hgood : IsKGoodCut G X Y k)
-     (hleft : ∀ F : SimpleGraph V, F ≤ G → LinearForest F →
-       F.support ⊆ (X : Set V) →
-       F.edgeFinset.card = X.card - Y.card →
-       OrientedGoodCutCertificate G F X Y)
-     (hright : ∀ F : SimpleGraph V, F ≤ G → LinearForest F →
-       F.support ⊆ (Y : Set V) →
-       F.edgeFinset.card = Y.card - X.card →
-       OrientedGoodCutCertificate G F Y X)
-     (hV : 3 ≤ Fintype.card V) : G.IsHamiltonian := by
-   rcases hgood.good.exists_exact with hF | hF
-   · obtain ⟨F, hYX, hFG, hlinF, hsuppF, hcard0⟩ := hF
-     have hcard : F.edgeFinset.card = X.card - Y.card := by
-       simpa only [Nat.zero_add] using hcard0
-     obtain ⟨T, d, hFT, hT, hattach, hhigh, hfirst, hcommon, hclose⟩ :=
-       hleft F hFG hlinF hsuppF hcard
-     exact isHamiltonian_of_oriented_goodCut (G := G) hgood.1 hYX hFG hlinF
-       hsuppF hcard hFT hT hattach hhigh hfirst hcommon hclose hV
-   · obtain ⟨F, hXY, hFG, hlinF, hsuppF, hcard0⟩ := hF
-     have hcard : F.edgeFinset.card = Y.card - X.card := by
-       simpa only [Nat.zero_add] using hcard0
-     obtain ⟨T, d, hFT, hT, hattach, hhigh, hfirst, hcommon, hclose⟩ :=
-       hright F hFG hlinF hsuppF hcard
-     exact isHamiltonian_of_oriented_goodCut (G := G) hgood.1.symm hXY hFG
-       hlinF hsuppF hcard hFT hT hattach hhigh hfirst hcommon hclose hV
+/-- Symmetric good-cut wrapper.  A `k`-good cut is first weakened to a good
+cut and truncated to the exact imbalance forest; the matching orientation's
+certificate then invokes `isHamiltonian_of_oriented_goodCut`. -/
+theorem IsKGoodCut.isHamiltonian_of_certificates {k : ℕ}
+    (hgood : IsKGoodCut G X Y k)
+    (hleft : ∀ F : SimpleGraph V, F ≤ G → LinearForest F →
+      F.support ⊆ (X : Set V) →
+      F.edgeFinset.card = X.card - Y.card →
+      OrientedGoodCutCertificate G F X Y)
+    (hright : ∀ F : SimpleGraph V, F ≤ G → LinearForest F →
+      F.support ⊆ (Y : Set V) →
+      F.edgeFinset.card = Y.card - X.card →
+      OrientedGoodCutCertificate G F Y X)
+    (hV : 3 ≤ Fintype.card V) : G.IsHamiltonian := by
+  rcases hgood.good.exists_exact with hF | hF
+  · obtain ⟨F, hYX, hFG, hlinF, hsuppF, hcard0⟩ := hF
+    have hcard : F.edgeFinset.card = X.card - Y.card := by
+      simpa only [Nat.zero_add] using hcard0
+    obtain ⟨T, d, hFT, hT, hattach, hhigh, hfirst, hcommon, hclose⟩ :=
+      hleft F hFG hlinF hsuppF hcard
+    exact isHamiltonian_of_oriented_goodCut (G := G) hgood.1 hYX hFG hlinF
+      hsuppF hcard hFT hT hattach hhigh hfirst hcommon hclose hV
+  · obtain ⟨F, hXY, hFG, hlinF, hsuppF, hcard0⟩ := hF
+    have hcard : F.edgeFinset.card = Y.card - X.card := by
+      simpa only [Nat.zero_add] using hcard0
+    obtain ⟨T, d, hFT, hT, hattach, hhigh, hfirst, hcommon, hclose⟩ :=
+      hright F hFG hlinF hsuppF hcard
+    exact isHamiltonian_of_oriented_goodCut (G := G) hgood.1.symm hXY hFG
+      hlinF hsuppF hcard hFT hT hattach hhigh hfirst hcommon hclose hV
 
- /-- Induced-sample form of the symmetric theorem, with the conclusion in
- the repository's exact `IsSpannedByCycle` predicate. -/
- theorem isSpannedByCycle_of_induce_goodCut_certificates
-     {S : Finset V} (hS : 3 ≤ S.card)
-     {X Y : Finset (S : Set V)} {k : ℕ}
-     (hgood : IsKGoodCut (G.induce (S : Set V)) X Y k)
-     (hleft : ∀ F : SimpleGraph (S : Set V),
-       F ≤ G.induce (S : Set V) → LinearForest F →
-       F.support ⊆ (X : Set (S : Set V)) →
-       F.edgeFinset.card = X.card - Y.card →
-       OrientedGoodCutCertificate (G.induce (S : Set V)) F X Y)
-     (hright : ∀ F : SimpleGraph (S : Set V),
-       F ≤ G.induce (S : Set V) → LinearForest F →
-       F.support ⊆ (Y : Set (S : Set V)) →
-       F.edgeFinset.card = Y.card - X.card →
-       OrientedGoodCutCertificate (G.induce (S : Set V)) F Y X) :
-   IsSpannedByCycle G S := by
-   apply (isSpannedByCycle_iff_isHamiltonian hS).2
-   exact IsKGoodCut.isHamiltonian_of_certificates hgood hleft hright (by
-     simpa using hS)
+omit [Fintype V] in
+/-- Induced-sample form of the symmetric theorem, with the conclusion in
+the repository's exact `IsSpannedByCycle` predicate. -/
+theorem isSpannedByCycle_of_induce_goodCut_certificates
+    {S : Finset V} (hS : 3 ≤ S.card)
+    {X Y : Finset (S : Set V)} {k : ℕ}
+    (hgood : IsKGoodCut (G.induce (S : Set V)) X Y k)
+    (hleft : ∀ F : SimpleGraph (S : Set V),
+      F ≤ G.induce (S : Set V) → LinearForest F →
+      F.support ⊆ (X : Set (S : Set V)) →
+      F.edgeFinset.card = X.card - Y.card →
+      OrientedGoodCutCertificate (G.induce (S : Set V)) F X Y)
+    (hright : ∀ F : SimpleGraph (S : Set V),
+      F ≤ G.induce (S : Set V) → LinearForest F →
+      F.support ⊆ (Y : Set (S : Set V)) →
+      F.edgeFinset.card = Y.card - X.card →
+      OrientedGoodCutCertificate (G.induce (S : Set V)) F Y X) :
+  IsSpannedByCycle G S := by
+  apply (isSpannedByCycle_iff_isHamiltonian hS).2
+  exact IsKGoodCut.isHamiltonian_of_certificates hgood hleft hright (by
+    simpa using hS)
 
- /-- Induced-sample version of the high-level dense-crossing theorem. -/
- theorem isSpannedByCycle_of_induce_goodCut_dense_crossing
-     {S : Finset V} (hS : 3 ≤ S.card)
-     {X Y : Finset (S : Set V)} {k ell t d : ℕ}
-     (hgood : IsKGoodCut (G.induce (S : Set V)) X Y k)
-     (anchor : (S : Set V)) {N delta eps : ℝ}
-     (hN : 0 ≤ N) (hdelta : 0 ≤ delta)
-     (hXlower : N / 2 - delta ≤ (X.card : ℝ))
-     (hXupper : (X.card : ℝ) ≤ N / 2 + delta)
-     (hYlower : N / 2 - delta ≤ (Y.card : ℝ))
-     (hYupper : (Y.card : ℝ) ≤ N / 2 + delta)
-     (hdense : N ^ 2 / 4 - eps * N ^ 2 ≤
-       edgeCount (G.induce (S : Set V)) X Y)
-     (hgap : 0 < N / 5 - delta)
-     (hlowNumeric : delta * N + delta ^ 2 + eps * N ^ 2 <
-       ((ell + 1 : ℕ) : ℝ) * (N / 5 - delta))
-     (hsizeLeft : 2 * (X.card - Y.card) + 2 * ell + 1 ≤ t)
-     (hsizeRight : 2 * (Y.card - X.card) + 2 * ell + 1 ≤ t)
-     (hd : (d : ℝ) ≤ 3 * N / 10)
-     (hminCross : ∀ v, 3 * t ≤
-       (crossNeighbors (G.induce (S : Set V)) X Y v).card)
-     (hfirst : 10 * t < d + 1)
-     (hcommon : max X.card Y.card + 9 * t + 1 < 2 * (d + 1))
-     (hclose : max X.card Y.card + 2 + 2 * (9 * t + 1) ≤
-       2 * (d + 1)) : IsSpannedByCycle G S := by
-   apply (isSpannedByCycle_iff_isHamiltonian hS).2
-   exact IsKGoodCut.isHamiltonian_of_dense_crossing hgood anchor hN hdelta
-     hXlower hXupper hYlower hYupper hdense hgap hlowNumeric hsizeLeft
-     hsizeRight hd hminCross hfirst hcommon hclose (by simpa using hS)
+omit [Fintype V] in
+/-- Induced-sample version of the high-level dense-crossing theorem. -/
+theorem isSpannedByCycle_of_induce_goodCut_dense_crossing
+    {S : Finset V} (hS : 3 ≤ S.card)
+    {X Y : Finset (S : Set V)} {k ell t d : ℕ}
+    (hgood : IsKGoodCut (G.induce (S : Set V)) X Y k)
+    (anchor : (S : Set V)) {N delta eps : ℝ}
+    (hN : 0 ≤ N) (hdelta : 0 ≤ delta)
+    (hXlower : N / 2 - delta ≤ (X.card : ℝ))
+    (hXupper : (X.card : ℝ) ≤ N / 2 + delta)
+    (hYlower : N / 2 - delta ≤ (Y.card : ℝ))
+    (hYupper : (Y.card : ℝ) ≤ N / 2 + delta)
+    (hdense : N ^ 2 / 4 - eps * N ^ 2 ≤
+      edgeCount (G.induce (S : Set V)) X Y)
+    (hgap : 0 < N / 5 - delta)
+    (hlowNumeric : delta * N + delta ^ 2 + eps * N ^ 2 <
+      ((ell + 1 : ℕ) : ℝ) * (N / 5 - delta))
+    (hsizeLeft : 2 * (X.card - Y.card) + 2 * ell + 1 ≤ t)
+    (hsizeRight : 2 * (Y.card - X.card) + 2 * ell + 1 ≤ t)
+    (hd : (d : ℝ) ≤ 3 * N / 10)
+    (hminCross : ∀ v, 3 * t ≤
+      (crossNeighbors (G.induce (S : Set V)) X Y v).card)
+    (hfirst : 10 * t < d + 1)
+    (hcommon : max X.card Y.card + 9 * t + 1 < 2 * (d + 1))
+    (hclose : max X.card Y.card + 2 + 2 * (9 * t + 1) ≤
+      2 * (d + 1)) : IsSpannedByCycle G S := by
+  apply (isSpannedByCycle_iff_isHamiltonian hS).2
+  exact IsKGoodCut.isHamiltonian_of_dense_crossing hgood anchor hN hdelta
+    hXlower hXupper hYlower hYupper hdense hgap hlowNumeric hsizeLeft
+    hsizeRight hd hminCross hfirst hcommon hclose (by simpa using hS)
 
- end Erdos622.GoodCutHamiltonicity
+end Erdos622.GoodCutHamiltonicity

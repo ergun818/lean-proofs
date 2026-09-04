@@ -117,8 +117,10 @@ theorem cut_difference_window_count {A B : Finset V}
   · simp only [hmem, ↓reduceIte]
   · simp only [hmem, ↓reduceIte]
 
-lemma card_restrictedPart_eq_inter (S A : Finset V) :
+omit [Fintype V] in
+lemma card_restrictedPart_eq_inter [Finite V] (S A : Finset V) :
     (restrictedPart S A).card = (S ∩ A).card := by
+  let := Fintype.ofFinite V
   classical
   apply Finset.card_bij (fun v _ ↦ v.1)
   · intro v hv
@@ -220,7 +222,7 @@ orientation, and its signed difference is at most twice the cut excess. -/
 lemma largeImbalance_window_bounds
     {n a b x y : ℕ}
     (hsum : a + b = 2 * n) (hna : n ≤ a)
-    (hx : x ≤ a) (hy : y ≤ b)
+    (_hx : x ≤ a) (hy : y ≤ b)
     (hlarge : Nat.sqrt n < a - n)
     (hwindow : BinomialCLT.standardizedBinomialPoint (2 * n)
         (x + (b - y)) ∈
@@ -488,7 +490,7 @@ lemma oneSmall_negative_window_bounds
     have ha0 : a = 0 := by omega
     have hb0 : b = 0 := by omega
     have hy0 : y = 0 := by omega
-    simp [ha0, hb0, hy0, BinomialCLT.standardizedBinomialPoint] at hwindow
+    simp [hb0, hy0, BinomialCLT.standardizedBinomialPoint] at hwindow
     have hKReal : (0 : ℝ) < K := by exact_mod_cast hK
     have hpos : 0 < Real.sqrt 2 / (K : ℝ) := div_pos (by positivity) hKReal
     linarith
@@ -687,7 +689,7 @@ theorem eventually_oneSmallCover_right_goodSample_count
   have hgood := goodSample_count_of_window_failure G P Failure
     (((1 / 2 : ℝ) - ε / 2) * (2 : ℝ) ^ (2 * n)) (ε / 2)
     hgoodWindow hwindowRaw (by simpa using hfailure)
-  convert hgood using 1 <;> simp <;> ring
+  convert hgood using 1; simp; ring
 
 /-- Parameter-free form of the right one-small-cover count.  The Gaussian
 window lemma chooses a single integer scale `K`; the resulting eventual

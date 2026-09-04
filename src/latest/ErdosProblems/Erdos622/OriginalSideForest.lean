@@ -17,7 +17,7 @@ moving vertices across the cut.
 namespace Erdos622.OriginalSideForest
 
 open Filter Finset Real
-open scoped BigOperators Topology SimpleGraph
+open scoped BigOperators Topology _root_.SimpleGraph
 
 attribute [local instance] Classical.propDecidable
 

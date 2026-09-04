@@ -56,10 +56,13 @@ private def IsHamiltonPathOn {G : SimpleGraph V}
     (A : Set V) {a b : V} (p : G.Walk a b) : Prop :=
   p.IsPath ∧ ∀ v, v ∈ p.support ↔ v ∈ A
 
-private lemma IsHamiltonPathOn.length_add_one_eq_ncard
+omit [DecidableEq V] [Fintype V] in
+private lemma IsHamiltonPathOn.length_add_one_eq_ncard [Finite V]
     {G : SimpleGraph V} {A : Set V} {a b : V} {p : G.Walk a b}
     (hp : IsHamiltonPathOn A p) :
     p.length + 1 = A.ncard := by
+  classical
+  let := Fintype.ofFinite V
   have hs : {v : V | v ∈ p.support} = A := Set.ext fun v ↦ hp.2 v
   rw [← hs, Set.ncard_eq_toFinset_card']
   have hfin : ({v : V | v ∈ p.support} : Set V).toFinset =
@@ -104,8 +107,8 @@ private theorem isHamiltonian_of_two_cross_edges
         · exact Set.disjoint_left.1 hAB ha₁ hb₂
         · exact Set.disjoint_left.1 hAB ha₂ hb₁
         · exact hb rfl
-      p_interior := by simp [SimpleGraph.Adj.support_toWalk]
-      q_interior := by simp [SimpleGraph.Adj.support_toWalk] }
+      p_interior := by simp
+      q_interior := by simp }
   let w : G.Walk a₁ a₁ := Erdos58.SpliceData.close L.p d L.q c
   have hwCycle : w.IsCycle := by
     exact Erdos58.Structural.linkage_close_isCycle L hAB c d hc.1 hd.1
@@ -154,18 +157,22 @@ def endpointAugment (G : SimpleGraph V) (a b : V) : SimpleGraph (Option V) where
     | none => exact h
     | some x => exact G.loopless.irrefl x h⟩
 
+omit [DecidableEq V] [Fintype V] in
 @[simp] lemma endpointAugment_adj_some_some
     (G : SimpleGraph V) (a b u v : V) :
     (endpointAugment G a b).Adj (some u) (some v) ↔ G.Adj u v := Iff.rfl
 
+omit [DecidableEq V] [Fintype V] in
 @[simp] lemma endpointAugment_adj_none_some
     (G : SimpleGraph V) (a b v : V) :
     (endpointAugment G a b).Adj none (some v) ↔ v = a ∨ v = b := Iff.rfl
 
+omit [DecidableEq V] [Fintype V] in
 @[simp] lemma endpointAugment_adj_some_none
     (G : SimpleGraph V) (a b u : V) :
     (endpointAugment G a b).Adj (some u) none ↔ u = a ∨ u = b := Iff.rfl
 
+omit [DecidableEq V] [Fintype V] in
 @[simp] lemma endpointAugment_not_adj_none_none
     (G : SimpleGraph V) (a b : V) :
     ¬(endpointAugment G a b).Adj none none := by simp [endpointAugment]
@@ -178,6 +185,7 @@ def endpointAugmentEmbedding (G : SimpleGraph V) (a b : V) :
   inj' := Option.some_injective V
   map_rel_iff' := Iff.rfl
 
+omit [DecidableEq V] in
 private lemma degree_le_degree_option_of_old_edges
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (K : SimpleGraph (Option V)) [DecidableRel K.Adj]
@@ -224,7 +232,6 @@ private theorem old_complete_of_closed_sparse
       huvK (hclosed hne h)
     simpa [N, d] using (Nat.lt_of_not_ge hnge)
   have hdle : d ≤ N - δ := by omega
-
   let R : Finset V :=
     (Finset.univ.erase u).filter fun w ↦ K.Adj (some u) (some w)
   let Q : Finset V :=
@@ -251,7 +258,6 @@ private theorem old_complete_of_closed_sparse
     have hc := Finset.card_le_card hsub
     simpa [d, SimpleGraph.card_neighborFinset_eq_degree] using hc
   have hQcard : N - 1 - d ≤ Q.card := by omega
-
   have hQdegree : ∀ w ∈ Q, d - 1 ≤ Gᶜ.degree w := by
     intro w hwQ
     have hwu : w ≠ u := (Finset.mem_erase.mp (Finset.mem_filter.mp hwQ).1).1
@@ -426,6 +432,7 @@ private theorem endpointAugment_isHamiltonian
   apply top_option_isHamiltonian
   omega
 
+omit [DecidableEq V] [Fintype V] in
 private theorem exists_old_preimage {G : SimpleGraph V} {a b x y : V}
     (p : (endpointAugment G a b).Walk (some x) (some y))
     (hold : ∀ z ∈ p.support, z ∈ Set.range (some : V → Option V)) :
@@ -487,13 +494,13 @@ private theorem hamiltonPath_of_endpointAugment_isHamiltonian
   cases hs : q.snd with
   | none =>
       rw [hs] at hleft
-      have : False := by simpa [J, endpointAugment] using hleft
+      have : False := by simp [endpointAugment] at hleft
       exact this.elim
   | some x =>
       cases ht : q.penultimate with
       | none =>
           rw [ht] at hright
-          have : False := by simpa [J, endpointAugment] using hright
+          have : False := by simp [endpointAugment] at hright
           exact this.elim
       | some y =>
           have hx : x = a ∨ x = b := by
@@ -543,17 +550,13 @@ private theorem hamiltonPath_of_endpointAugment_isHamiltonian
             have hvTail : (some v : Option V) ∈ q.tail.support := by
               simpa [SimpleGraph.Walk.support_tail_of_not_nil q hqNonNil] using
                 (show (some v : Option V) ∈ q.support.tail from by
-                  rw [SimpleGraph.Walk.support_eq_cons] at hvq
+                  rw [← SimpleGraph.Walk.cons_tail_support] at hvq
                   simp only [List.mem_cons] at hvq
                   exact hvq.resolve_left (by simp))
-            have hlast : q.tail.support.getLast (by
-                simpa [SimpleGraph.Walk.length_support] using
-                  (show 0 < q.tail.support.length by
-                    rw [SimpleGraph.Walk.length_support]
-                    exact SimpleGraph.Walk.not_nil_iff_lt_length.mp htailNonNil)) = none := by
+            have hlast : q.tail.support.getLast (by simp) = none := by
               exact SimpleGraph.Walk.getLast_support q.tail
             have hvDrop : (some v : Option V) ∈ q.tail.support.dropLast :=
-              List.mem_dropLast_of_mem_of_ne_getLast hvTail (by simpa [hlast])
+              List.mem_dropLast_of_mem_of_ne_getLast hvTail (by simp [hlast])
             have hvm : (some v : Option V) ∈ m.support := by
               simpa [m, m₀, SimpleGraph.Walk.support_dropLast htailNonNil] using hvDrop
             have hvm' : (some v : Option V) ∈

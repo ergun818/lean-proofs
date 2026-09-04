@@ -138,7 +138,7 @@ theorem capacity_gaussianWindow_uniform_margin {η M : ℝ}
 /-- The first capacity has a uniform explicit positive lower bound when
 `α` is bounded away from zero. -/
 lemma fifteen_mul_alpha_div_sixtyFour_le_first_capacity
-    {α κ : ℝ} (hα : 0 < α) (hκ : 0 ≤ κ) :
+    {α κ : ℝ} (_hα : 0 < α) (_hκ : 0 ≤ κ) :
     15 * α / 64 ≤ max (α / 4 - κ) (15 * κ) := by
   by_cases hsmall : κ ≤ α / 64
   · calc

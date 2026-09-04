@@ -28,12 +28,15 @@ namespace ContainsLinearForestWith
 
 variable {G : SimpleGraph V} {X : Finset V} {r : ℕ}
 
+omit [DecidableEq V] in
 /-- A supported matching, in the degree-at-most-one formulation, is an internal linear-forest
 witness. -/
 theorem of_degree_le_one {F : SimpleGraph V} (hFG : F ≤ G)
     (hdegree : ∀ v, F.degree v ≤ 1) (hsupp : F.support ⊆ (X : Set V))
-    (hcard : r ≤ F.edgeFinset.card) : ContainsLinearForestWith G X r :=
-  ⟨F, hFG, (MatchingGraph.of_degree_le_one hdegree).linearForest, hsupp, hcard⟩
+    (hcard : r ≤ F.edgeFinset.card) : ContainsLinearForestWith G X r := by
+  classical
+  exact
+    ⟨F, hFG, (MatchingGraph.of_degree_le_one hdegree).linearForest, hsupp, hcard⟩
 
 end ContainsLinearForestWith
 
@@ -55,7 +58,7 @@ theorem mem_right_iff (h : IsCut X Y) (v : V) : v ∈ Y ↔ v ∉ X := by
   · intro hvY hvX
     exact Finset.disjoint_left.mp h.1 hvX hvY
   · intro hvX
-    have hvUnion : v ∈ X ∪ Y := by simpa [h.2]
+    have hvUnion : v ∈ X ∪ Y := by simp [h.2]
     simpa [hvX] using hvUnion
 
 /-- Membership in the left side is the complement of membership in the right side. -/
@@ -66,6 +69,7 @@ theorem mem_left_iff (h : IsCut X Y) (v : V) : v ∈ X ↔ v ∉ Y := by
 theorem card_add_card (h : IsCut X Y) : X.card + Y.card = Fintype.card V := by
   rw [← Finset.card_union_of_disjoint h.1, h.2, Finset.card_univ]
 
+omit [DecidableEq V] [Fintype V] in
 /-- On an oriented cut, the larger side is the smaller side plus the imbalance. -/
 theorem card_eq_card_add_sub (hcard : Y.card ≤ X.card) :
     X.card = Y.card + (X.card - Y.card) := by

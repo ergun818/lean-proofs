@@ -209,11 +209,14 @@ def pullbackColor (f : G ↪g H) (c : LinearArboricity.EdgePartition H k) :
     LinearArboricity.EdgePartition G k :=
   fun e ↦ c (f.mapEdgeSet e)
 
+omit [Fintype V] [Fintype W] in
 /-- Pulling back a color graph is graph comapping. -/
-theorem colorGraph_pullback (f : G ↪g H)
+theorem colorGraph_pullback [Finite V] [Finite W] (f : G ↪g H)
     (c : LinearArboricity.EdgePartition H k) (i : Fin k) :
     LinearArboricity.colorGraph (pullbackColor f c) i =
       (LinearArboricity.colorGraph c i).comap f := by
+  let := Fintype.ofFinite V
+  let := Fintype.ofFinite W
   ext v w
   change (LinearArboricity.colorGraph (pullbackColor f c) i).Adj v w ↔
     (LinearArboricity.colorGraph c i).Adj (f v) (f w)
@@ -272,13 +275,15 @@ def pairColor (c : LinearArboricity.EdgePartition G (p * 2)) :
     LinearArboricity.EdgePartition G p :=
   fun e ↦ (finProdFinEquiv.symm (c e)).1
 
+omit [Fintype V] in
 /-- The graph of one paired color is exactly the union of its two original
 color graphs. -/
-theorem colorGraph_pairColor (c : LinearArboricity.EdgePartition G (p * 2))
+theorem colorGraph_pairColor [Finite V] (c : LinearArboricity.EdgePartition G (p * 2))
     (i : Fin p) :
     LinearArboricity.colorGraph (pairColor c) i =
       LinearArboricity.colorGraph c (finProdFinEquiv (i, 0)) ⊔
         LinearArboricity.colorGraph c (finProdFinEquiv (i, 1)) := by
+  let := Fintype.ofFinite V
   ext v w
   change (LinearArboricity.colorGraph (pairColor c) i).Adj v w ↔
     (LinearArboricity.colorGraph c (finProdFinEquiv (i, 0))).Adj v w ∨
@@ -380,15 +385,17 @@ def cycleBrokenColor (c : LinearArboricity.EdgePartition G (p * 2))
   fun e ↦ if e.1 ∈ R then Fin.natAdd p (remainderColor e)
     else Fin.castAdd r (pairColor c e)
 
+omit [Fintype V] in
 /-- The old-color part of `cycleBrokenColor` is exactly the paired graph with
 the marked cycle-breaking edges deleted. -/
-theorem colorGraph_cycleBrokenColor_castAdd
+theorem colorGraph_cycleBrokenColor_castAdd [Finite V]
     (c : LinearArboricity.EdgePartition G (p * 2))
     (R : Set (Sym2 V)) {r : ℕ} (remainderColor : G.edgeSet → Fin r)
     (i : Fin p) :
     LinearArboricity.colorGraph (cycleBrokenColor c R remainderColor)
         (Fin.castAdd r i) =
       (LinearArboricity.colorGraph (pairColor c) i).deleteEdges R := by
+  let := Fintype.ofFinite V
   ext v w
   rw [SimpleGraph.deleteEdges_adj, ← SimpleGraph.mem_edgeSet,
     ← SimpleGraph.mem_edgeSet]
@@ -519,9 +526,10 @@ def extendMarkedColor (G : SimpleGraph V) (R : Set (Sym2 V)) {q : ℕ}
     LinearArboricity.EdgePartition G q :=
   fun e ↦ if heR : e.1 ∈ R then c (toMarkedEdge G R e heR) else ⟨0, hq⟩
 
+omit [Fintype V] in
 /-- In the extra-color range, the assembled coloring is exactly the coloring
 of the marked-edge graph. -/
-theorem colorGraph_cycleBrokenColor_natAdd
+theorem colorGraph_cycleBrokenColor_natAdd [Finite V]
     {p q : ℕ} (base : LinearArboricity.EdgePartition G (p * 2))
     (R : Set (Sym2 V)) (hq : 0 < q)
     (c : LinearArboricity.EdgePartition (G.deleteEdges Rᶜ) q) (j : Fin q) :
@@ -529,6 +537,7 @@ theorem colorGraph_cycleBrokenColor_natAdd
         (cycleBrokenColor base R (extendMarkedColor G R hq c))
         (Fin.natAdd p j) =
       LinearArboricity.colorGraph c j := by
+  let := Fintype.ofFinite V
   ext v w
   rw [← SimpleGraph.mem_edgeSet, ← SimpleGraph.mem_edgeSet]
   rw [LinearArboricity.mem_colorGraph_edgeSet_iff,

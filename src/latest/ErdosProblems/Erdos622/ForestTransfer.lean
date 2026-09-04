@@ -244,6 +244,7 @@ theorem card_sampledPart (S A : Finset V) :
     exact ⟨⟨y, (Finset.mem_inter.mp hy).1⟩,
       mem_sampledPart.mpr (Finset.mem_inter.mp hy).2, rfl⟩
 
+omit [Fintype V] in
 /-- Safe sampled transfer on the side changed from `A` to `A \ T`.
 No edges are lost. -/
 theorem ContainsLinearForestWith.transfer_sampled_left
@@ -256,6 +257,7 @@ theorem ContainsLinearForestWith.transfer_sampled_left
   rw [hA₀]
   exact Finset.sdiff_subset
 
+omit [Fintype V] in
 /-- Sampled transfer on the side changed from `B` to `B ∪ T`.  All
 edges incident with sampled moved vertices are deleted; the resulting
 forest is supported on the original sampled side and loses at most
@@ -273,17 +275,20 @@ theorem ContainsLinearForestWith.transfer_sampled_right
   rw [card_sampledPart] at htransfer
   exact htransfer
 
+omit [Fintype V] in
 /-- Full balancing-context form.  The hypotheses record
 `T ⊆ A`, `A₀ = A \ T`, and `B₀ = B ∪ T`; the right-side forest
 transfer only needs the last identity, while the first two are retained in
 the interface to match the structural decomposition that produces the cut. -/
-theorem ContainsLinearForestWith.transfer_sampled_balancing_right
+theorem ContainsLinearForestWith.transfer_sampled_balancing_right [Finite V]
     {S A B T A₀ B₀ : Finset V} {G : SimpleGraph (S : Set V)} {r : ℕ}
     (_hTA : T ⊆ A) (_hA₀ : A₀ = A \ T) (hB₀ : B₀ = B ∪ T)
     (h : ContainsLinearForestWith G (sampledPart S B₀) r) :
     ContainsLinearForestWith G (sampledPart S B)
-      (r - 2 * (S ∩ T).card) :=
-  ContainsLinearForestWith.transfer_sampled_right hB₀ h
+      (r - 2 * (S ∩ T).card) := by
+  let := Fintype.ofFinite V
+  exact
+    ContainsLinearForestWith.transfer_sampled_right hB₀ h
 
 end ForestTransfer
 end Erdos622

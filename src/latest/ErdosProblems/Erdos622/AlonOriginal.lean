@@ -123,7 +123,7 @@ each bad event is supported on a finite set of edge coordinates and the
 dependency graph contains every overlap of supports. -/
 theorem exists_avoiding_bernoulli_localEvents
     {E I : Type*} [Fintype E] [DecidableEq E]
-    [Fintype I] [DecidableEq I]
+    [Finite I]
     (prob : E → ℝ) (hprob0 : ∀ e, 0 ≤ prob e)
     (hprob1 : ∀ e, prob e ≤ 1)
     (support : I → Finset E) (bad : I → Finset E → Prop)
@@ -142,6 +142,8 @@ theorem exists_avoiding_bernoulli_localEvents
           Erdos76.FiniteNibble.bernoulliMass Finset.univ prob S)
         (bad i) ≤ bound) :
     ∃ S : Finset E, ∀ i, ¬ bad i S := by
+  classical
+  let := Fintype.ofFinite I
   let mass : Finset E → ℝ := fun S ↦
     Erdos76.FiniteNibble.bernoulliMass Finset.univ prob S
   refine Erdos76.FiniteLocalLemma.exists_avoiding_all
@@ -156,9 +158,10 @@ theorem exists_avoiding_bernoulli_localEvents
       prob hprob0 hprob1 support bad dependency hlocal hoverlap hmarginal
 
 /-- Containing a fixed coordinate set is an event supported on that set. -/
-lemma eventDependsOn_superset {E : Type*} [Fintype E] [DecidableEq E]
+lemma eventDependsOn_superset {E : Type*} [Finite E] [DecidableEq E]
     (R : Finset E) :
     Erdos76.FiniteNibble.EventDependsOn R (fun S : Finset E ↦ R ⊆ S) := by
+  let := Fintype.ofFinite E
   intro S T hST
   unfold Erdos76.FiniteNibble.AgreesOn at hST
   constructor
@@ -197,10 +200,11 @@ lemma bernoulli_eventMass_superset
     simp [hnot]
 
 /-- Avoiding a fixed coordinate set is also supported on that set. -/
-lemma eventDependsOn_disjoint {E : Type*} [Fintype E] [DecidableEq E]
+lemma eventDependsOn_disjoint {E : Type*} [Finite E] [DecidableEq E]
     (R : Finset E) :
     Erdos76.FiniteNibble.EventDependsOn R
       (fun S : Finset E ↦ Disjoint S R) := by
+  let := Fintype.ofFinite E
   intro S T hST
   unfold Erdos76.FiniteNibble.AgreesOn at hST
   change Disjoint S R ↔ Disjoint T R
@@ -251,6 +255,7 @@ def HasIndexedLocalBound (mass : Omega → ℝ) (bad : I → Omega → Prop)
       bound i * Erdos76.FiniteLocalLemma.eventMass mass
         (Erdos76.FiniteLocalLemma.Avoid bad S)
 
+omit [DecidableEq I] [Fintype I] in
 /-- Exact independence outside the dependency neighbourhood, together with
 event-wise marginal estimates, supplies the indexed conditional bounds. -/
 lemma hasIndexedLocalBound_of_independentOutside
@@ -267,6 +272,7 @@ lemma hasIndexedLocalBound_of_independentOutside
     (Erdos76.FiniteLocalLemma.eventMass_nonneg mass hmass
       (Erdos76.FiniteLocalLemma.Avoid bad S))
 
+omit [DecidableEq I] [Fintype I] in
 private theorem conditional_event_le
     (mass : Omega → ℝ) (hmass : ∀ omega, 0 ≤ mass omega)
     (bad : I → Omega → Prop) (dependency : I → Finset I)
@@ -281,6 +287,7 @@ private theorem conditional_event_le
           Erdos76.FiniteLocalLemma.Avoid bad S omega) ≤
       weight i * Erdos76.FiniteLocalLemma.eventMass mass
         (Erdos76.FiniteLocalLemma.Avoid bad S) := by
+  classical
   induction hcard : S.card using Nat.strong_induction_on generalizing S i with
   | h n ih =>
       let T := S \ dependency i
@@ -427,9 +434,10 @@ private theorem conditional_event_le
               (Erdos76.FiniteLocalLemma.Avoid bad S) :=
           mul_le_mul_of_nonneg_left hlower (hweight0 i)
 
+omit [DecidableEq I] [Fintype I] in
 /-- Finite asymmetric local lemma in the event-dependent product form used
 in Alon's proof. -/
-theorem exists_avoiding_all
+theorem exists_avoiding_all [Finite I]
     (mass : Omega → ℝ) (hmass : ∀ omega, 0 ≤ mass omega)
     (hmass_total : ∑ omega, mass omega = 1)
     (bad : I → Omega → Prop) (dependency : I → Finset I)
@@ -439,6 +447,8 @@ theorem exists_avoiding_all
       bound i ≤ weight i * ∏ j ∈ dependency i, (1 - weight j))
     (hlocal : HasIndexedLocalBound mass bad dependency bound) :
     ∃ omega, ∀ i, ¬ bad i omega := by
+  classical
+  let := Fintype.ofFinite I
   have hcond : ∀ (S : Finset I) (i : I), i ∉ S →
       Erdos76.FiniteLocalLemma.eventMass mass
           (fun omega ↦ bad i omega ∧
@@ -516,6 +526,7 @@ def edgeWeight (d : ℕ) : ℝ := 1 / (100 * (d : ℝ) ^ 2)
 def partFiber {r : ℕ} (part : V → Fin r) (i : Fin r) : Finset V :=
   Finset.univ.filter fun v ↦ part v = i
 
+omit [DecidableEq V] in
 @[simp] lemma mem_partFiber {r : ℕ} (part : V → Fin r) (i : Fin r) (v : V) :
     v ∈ partFiber part i ↔ part v = i := by
   simp [partFiber]
@@ -612,6 +623,7 @@ lemma meetingEdges_card_le {G : SimpleGraph V} {d : ℕ}
   simpa [meetingEdges, Erdos622.PippengerSchedule.graphHypergraph_edgeDegree]
     using hdegree v
 
+omit [DecidableEq V] [Fintype V] in
 lemma eventWeight_nonneg {r : ℕ} (G : SimpleGraph V) {d : ℕ} (hd : 0 < d)
     (i : EventIndex r G) : 0 ≤ eventWeight G d i := by
   cases i with
@@ -620,6 +632,7 @@ lemma eventWeight_nonneg {r : ℕ} (G : SimpleGraph V) {d : ℕ} (hd : 0 < d)
       rw [eventWeight, edgeWeight]
       positivity
 
+omit [DecidableEq V] [Fintype V] in
 lemma eventWeight_lt_one {r : ℕ} (G : SimpleGraph V) {d : ℕ} (hd : 0 < d)
     (i : EventIndex r G) : eventWeight G d i < 1 := by
   cases i with
@@ -869,6 +882,7 @@ lemma event_parameter {r : ℕ} (G : SimpleGraph V) (part : V → Fin r)
       exact (selectedEdge_parameter hd).trans
         (by simpa [mul_assoc] using mul_le_mul_of_nonneg_left hprod hq0)
 
+omit [DecidableEq V] in
 /-- Alon's Proposition 2.4 in the equal-size form: a graph of maximum degree
 `d` whose vertex partition has classes of size `25 d` has an independent
 transversal.  The original at-least-size form follows by trimming each class;
@@ -880,6 +894,7 @@ theorem exists_independent_transversal_exact {r d : ℕ} (hd : 0 < d)
     ∃ W : Finset V,
       (∀ i : Fin r, ∃ v, v ∈ W ∧ part v = i) ∧
       ∀ u ∈ W, ∀ v ∈ W, ¬ G.Adj u v := by
+  classical
   let p : V → ℝ := fun _ ↦ vertexProbability d
   let mass : Finset V → ℝ := fun W ↦
     Erdos76.FiniteNibble.bernoulliMass Finset.univ p W
@@ -943,6 +958,7 @@ theorem exists_independent_transversal_exact {r d : ℕ} (hd : 0 < d)
         And.intro huW hvW
     exact hW (Sum.inr e) hbad
 
+omit [DecidableEq V] in
 /-- Alon's Proposition 2.4 exactly as published: classes may be larger than
 `25 d`.  Trim every class, apply the exact-size result to the induced graph,
 and map its transversal back to the original vertex type. -/
@@ -1030,7 +1046,7 @@ variable {V : Type u} [Fintype V]
 decomposition.  This is the only consequence of linear arboricity used in
 the induced-edge part of the almost-bipartite argument. -/
 theorem Decomposition.exists_linearForest_edgeDensity
-    [DecidableEq V] {G : SimpleGraph V} {k D : ℕ}
+     {G : SimpleGraph V} {k D : ℕ}
     (d : Decomposition G k) (hk : 0 < k) (hD : 0 < D)
     {epsilon : ℝ} (hepsilon : -1 < epsilon)
     (hkBound : (k : ℝ) ≤ (1 + epsilon) * (D : ℝ) / 2) :
@@ -1039,6 +1055,7 @@ theorem Decomposition.exists_linearForest_edgeDensity
       2 * (Fintype.card G.edgeSet : ℝ) /
           ((1 + epsilon) * (D : ℝ)) ≤
         (Fintype.card F.edgeSet : ℝ) := by
+  classical
   obtain ⟨F, hFG, hlinear, haverage⟩ := d.exists_large_linearForest hk
   refine ⟨F, hFG, hlinear, ?_⟩
   have hkR : (0 : ℝ) < k := by exact_mod_cast hk

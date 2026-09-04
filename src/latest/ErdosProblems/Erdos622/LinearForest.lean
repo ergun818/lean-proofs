@@ -61,6 +61,7 @@ namespace CycleTransversal
 
 variable {G : SimpleGraph V} {D : Set (Sym2 V)}
 
+omit [DecidableEq V] [Fintype V] in
 /-- If deleting `D` leaves an acyclic graph, then `D` meets every cycle of the original graph. -/
 theorem of_isAcyclic_deleteEdges (hD : (G.deleteEdges D).IsAcyclic) :
     CycleTransversal G D := by
@@ -83,6 +84,7 @@ namespace LinearForest
 
 variable {F H K : SimpleGraph V}
 
+omit [DecidableEq V] in
 /-- The empty graph is a linear forest. -/
 @[simp]
 theorem bot : LinearForest (⊥ : SimpleGraph V) := by
@@ -90,42 +92,51 @@ theorem bot : LinearForest (⊥ : SimpleGraph V) := by
   intro v
   simp
 
+omit [DecidableEq V] in
 /-- A spanning subgraph of a linear forest is again a linear forest. -/
 theorem anti (hF : LinearForest F) (hHF : H ≤ F) : LinearForest H := by
   refine ⟨hF.1.anti hHF, ?_⟩
   intro v
   exact (H.degree_le_of_le hHF).trans (hF.2 v)
 
+omit [DecidableEq V] in
 /-- A linear forest with at least `r` edges has a spanning subforest with exactly `r` edges. -/
 theorem exists_subforest_card_eq (hF : LinearForest F) {r : ℕ}
     (hr : r ≤ F.edgeFinset.card) :
     ∃ H : SimpleGraph V, H ≤ F ∧ LinearForest H ∧ H.edgeFinset.card = r := by
+  classical
   obtain ⟨s, hsF, hscard⟩ := Finset.exists_subset_card_eq hr
   refine ⟨F.deleteEdges (↑(F.edgeFinset \ s) : Set (Sym2 V)), SimpleGraph.deleteEdges_le _,
     hF.anti (SimpleGraph.deleteEdges_le _), ?_⟩
   rw [SimpleGraph.edgeFinset_deleteEdges,
     Finset.sdiff_sdiff_eq_self hsF, hscard]
 
+omit [DecidableEq V] in
 /-- Exact truncation, with the subgraph relation and cardinality ordered for convenient use. -/
 theorem exists_subforest_card_eq_and_le (hF : LinearForest F) {r : ℕ}
     (hr : r ≤ F.edgeFinset.card) :
     ∃ H : SimpleGraph V, H ≤ F ∧ H.edgeFinset.card = r ∧ LinearForest H := by
+  classical
   obtain ⟨H, hHF, hlin, hcard⟩ := hF.exists_subforest_card_eq hr
   exact ⟨H, hHF, hcard, hlin⟩
 
+omit [DecidableEq V] in
 /-- Reachable vertices in a linear forest are joined by a unique simple path. -/
 theorem existsUnique_path (hF : LinearForest F) {u v : V} (huv : F.Reachable u v) :
     ∃! p : F.Walk u v, p.IsPath := by
+  classical
   let p : F.Path u v := huv.some.toPath
   refine ⟨p, p.property, ?_⟩
   intro q hq
   exact Subtype.mk.inj (hF.1.subsingleton_path u v |>.elim ⟨q, hq⟩ p)
 
+omit [DecidableEq V] in
 /-- Add an edge between two different components at vertices of degree at most one.
 The result is again a linear forest. -/
 theorem sup_edge_of_not_reachable (hF : LinearForest F) {u v : V}
     (huv : ¬F.Reachable u v) (hu : F.degree u ≤ 1) (hv : F.degree v ≤ 1) :
     LinearForest (F ⊔ SimpleGraph.edge u v) := by
+  classical
   refine ⟨hF.1.sup_edge_of_not_reachable huv, ?_⟩
   intro w
   by_cases hwu : w = u
@@ -165,6 +176,7 @@ theorem sup_edge_of_not_reachable (hF : LinearForest F) {u v : V}
         SimpleGraph.neighborFinset_sup, hedge, Finset.union_empty]
       exact hF.2 w
 
+omit [DecidableEq V] [Fintype V] in
 /-- Two paths that meet only at their common endpoint splice to a simple path.
 
 The paths may initially lie in different spanning subgraphs of a common ambient graph. -/
@@ -189,6 +201,7 @@ namespace MatchingGraph
 
 variable {M M₁ M₂ : SimpleGraph V}
 
+omit [DecidableEq V] in
 /-- The usual degree-at-most-one definition produces a graph-level matching. -/
 theorem of_degree_le_one (hM : ∀ v, M.degree v ≤ 1) : MatchingGraph M := by
   refine ⟨?_, hM⟩
@@ -202,17 +215,22 @@ theorem of_degree_le_one (hM : ∀ v, M.degree v ≤ 1) : MatchingGraph M := by
   rw [htwo, hdegree] at hle
   omega
 
+omit [DecidableEq V] in
 /-- Graph-level matchings are exactly graphs of maximum degree at most one. -/
 theorem iff_degree_le_one : MatchingGraph M ↔ ∀ v, M.degree v ≤ 1 := by
+  classical
   exact ⟨fun h ↦ h.2, of_degree_le_one⟩
 
+omit [DecidableEq V] in
 /-- Every graph-level matching is a linear forest. -/
 theorem linearForest (hM : MatchingGraph M) : LinearForest M := by
   exact ⟨hM.1, fun v ↦ (hM.2 v).trans (by omega)⟩
 
+omit [DecidableEq V] in
 /-- The union of two graph-level matchings has maximum degree at most two. -/
 theorem degree_sup_le_two (hM₁ : MatchingGraph M₁) (hM₂ : MatchingGraph M₂) (v : V) :
     (M₁ ⊔ M₂).degree v ≤ 2 := by
+  classical
   rw [← SimpleGraph.card_neighborFinset_eq_degree,
     SimpleGraph.neighborFinset_sup]
   calc
@@ -222,6 +240,7 @@ theorem degree_sup_le_two (hM₁ : MatchingGraph M₁) (hM₂ : MatchingGraph M�
     _ ≤ 1 + 1 := Nat.add_le_add (hM₁.2 v) (hM₂.2 v)
     _ = 2 := rfl
 
+omit [DecidableEq V] in
 /-- The union of two matchings has a cycle-breaking spanning linear forest.
 
 The retained forest has exactly the same reachability relation as the union.  Thus on each cyclic
@@ -231,12 +250,14 @@ removing one edge from every cyclic component. -/
 theorem exists_spanning_linearForest (hM₁ : MatchingGraph M₁) (hM₂ : MatchingGraph M₂) :
     ∃ F : SimpleGraph V,
       F ≤ M₁ ⊔ M₂ ∧ LinearForest F ∧ F.Reachable = (M₁ ⊔ M₂).Reachable := by
+  classical
   obtain ⟨F, hFU, hFac, hreach⟩ :=
     (M₁ ⊔ M₂).exists_isAcyclic_reachable_eq_le
   refine ⟨F, hFU, ⟨hFac, ?_⟩, hreach⟩
   intro v
   exact (F.degree_le_of_le hFU).trans (degree_sup_le_two hM₁ hM₂ v)
 
+omit [DecidableEq V] in
 /-- Edge-set form of `exists_spanning_linearForest`: all cycles can be opened by deleting a set
 of edges without changing connected components. -/
 theorem exists_cycleBreakingSet (hM₁ : MatchingGraph M₁) (hM₂ : MatchingGraph M₂) :
@@ -244,11 +265,13 @@ theorem exists_cycleBreakingSet (hM₁ : MatchingGraph M₁) (hM₂ : MatchingGr
       D ⊆ (M₁ ⊔ M₂).edgeSet ∧
       LinearForest ((M₁ ⊔ M₂).deleteEdges D) ∧
       ((M₁ ⊔ M₂).deleteEdges D).Reachable = (M₁ ⊔ M₂).Reachable := by
+  classical
   obtain ⟨F, hFU, hlin, hreach⟩ := exists_spanning_linearForest hM₁ hM₂
   refine ⟨(M₁ ⊔ M₂).edgeSet \ F.edgeSet, Set.sdiff_subset, ?_, ?_⟩
   · simpa only [SimpleGraph.deleteEdges_sdiff_eq_of_le hFU] using hlin
   · simpa only [SimpleGraph.deleteEdges_sdiff_eq_of_le hFU] using hreach
 
+omit [DecidableEq V] in
 /-- The cycle-breaking set can be chosen to meet every cycle while retaining all connected
 components.  In the maximum-degree-two union of two matchings, this is the formal cycle-opening
 property used when one edge is removed from every cyclic component. -/
@@ -258,6 +281,7 @@ theorem exists_cycleTransversal (hM₁ : MatchingGraph M₁) (hM₂ : MatchingGr
       CycleTransversal (M₁ ⊔ M₂) D ∧
       LinearForest ((M₁ ⊔ M₂).deleteEdges D) ∧
       ((M₁ ⊔ M₂).deleteEdges D).Reachable = (M₁ ⊔ M₂).Reachable := by
+  classical
   obtain ⟨D, hDsub, hlin, hreach⟩ := exists_cycleBreakingSet hM₁ hM₂
   exact ⟨D, hDsub, CycleTransversal.of_isAcyclic_deleteEdges hlin.1, hlin, hreach⟩
 
@@ -275,39 +299,47 @@ namespace ContainsLinearForestWith
 
 variable {G G' : SimpleGraph V} {X Y : Finset V} {r s : ℕ}
 
+omit [DecidableEq V] in
 /-- A witness supported in `X` is also supported in any larger vertex set. -/
 theorem mono_vertexSet (h : ContainsLinearForestWith G X r) (hXY : X ⊆ Y) :
     ContainsLinearForestWith G Y r := by
   obtain ⟨F, hFG, hlin, hsupp, hcard⟩ := h
   exact ⟨F, hFG, hlin, hsupp.trans (by simpa using hXY), hcard⟩
 
+omit [DecidableEq V] in
 /-- Lowering the requested edge count preserves the property. -/
 theorem mono_requirement (h : ContainsLinearForestWith G X r) (hsr : s ≤ r) :
     ContainsLinearForestWith G X s := by
   obtain ⟨F, hFG, hlin, hsupp, hcard⟩ := h
   exact ⟨F, hFG, hlin, hsupp, hsr.trans hcard⟩
 
+omit [DecidableEq V] in
 /-- Enlarging the ambient graph preserves the property. -/
 theorem mono_graph (h : ContainsLinearForestWith G X r) (hGG' : G ≤ G') :
     ContainsLinearForestWith G' X r := by
   obtain ⟨F, hFG, hlin, hsupp, hcard⟩ := h
   exact ⟨F, hFG.trans hGG', hlin, hsupp, hcard⟩
 
+omit [DecidableEq V] in
 /-- The empty forest witnesses the zero-edge requirement. -/
 @[simp]
 theorem zero (G : SimpleGraph V) (X : Finset V) : ContainsLinearForestWith G X 0 := by
+  classical
   refine ⟨⊥, bot_le, LinearForest.bot, ?_, by simp⟩
   simp
 
+omit [DecidableEq V] in
 /-- Replace a lower-bound witness by one with exactly the requested number of edges. -/
 theorem exists_exact (h : ContainsLinearForestWith G X r) :
     ∃ F : SimpleGraph V,
       F ≤ G ∧ LinearForest F ∧ F.support ⊆ (X : Set V) ∧ F.edgeFinset.card = r := by
+  classical
   obtain ⟨F, hFG, hlin, hsupp, hcard⟩ := h
   obtain ⟨H, hHF, hHlin, hHcard⟩ := hlin.exists_subforest_card_eq hcard
   exact ⟨H, hHF.trans hFG, hHlin,
     (SimpleGraph.support_mono hHF).trans hsupp, hHcard⟩
 
+omit [DecidableEq V] in
 /-- An exact witness is a lower-bound witness. -/
 theorem of_exact {F : SimpleGraph V} (hFG : F ≤ G) (hlin : LinearForest F)
     (hsupp : F.support ⊆ (X : Set V)) (hcard : F.edgeFinset.card = r) :

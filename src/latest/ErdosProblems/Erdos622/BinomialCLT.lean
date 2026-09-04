@@ -150,7 +150,7 @@ theorem standardizedFairBinomial_tendsto :
   have h := tendsto_charFun_inv_sqrt_mul_pow
     (P := fairRademacher) (X := fun x : ℝ ↦ x) (by fun_prop)
     integral_id_fairRademacher integral_sq_fairRademacher t
-  convert h using 1 <;> simp [standardGaussian, charFun_gaussianReal] <;> ring_nf
+  convert h using 1 <;> simp [standardGaussian, charFun_gaussianReal]; ring_nf
 
 /-- Probability that a standardized fair binomial lies in the fixed closed
 interval `[a,b]`, as a real number. -/

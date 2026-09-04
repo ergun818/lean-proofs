@@ -20,6 +20,7 @@ open SimpleGraph
 variable {V : Type*} [Fintype V] [DecidableEq V]
 variable {G : SimpleGraph V} [DecidableRel G.Adj]
 
+omit [DecidableRel G.Adj] in
 /-- Closing the endpoints of a Hamilton path by one edge gives a Hamilton
 cycle, provided the graph has at least three vertices. -/
 theorem isHamiltonianCycle_cons_of_isHamiltonian
@@ -39,6 +40,7 @@ theorem isHamiltonianCycle_cons_of_isHamiltonian
     SimpleGraph.Walk.support_cons, List.tail_cons]
   exact hp v
 
+omit [DecidableRel G.Adj] [Fintype V] in
 /-- Splice two vertices outside `s` onto the two ends of the path obtained by
 cutting a Hamilton cycle of `G[s]` at its base vertex.
 
@@ -92,9 +94,10 @@ theorem isHamiltonian_splice_induced_cycle
 /-- Two subsets of a finite ambient type whose cardinalities sum to more than
 the order of the type intersect. -/
 private theorem exists_mem_inter_of_card_lt_add {W : Type*} [Fintype W]
-    [DecidableEq W] {A B : Finset W}
+     {A B : Finset W}
     (hcard : Fintype.card W < A.card + B.card) :
     ∃ x, x ∈ A ∧ x ∈ B := by
+  classical
   by_contra h
   push Not at h
   have hdisj : Disjoint A B := Finset.disjoint_left.mpr h
@@ -103,13 +106,14 @@ private theorem exists_mem_inter_of_card_lt_add {W : Type*} [Fintype W]
   rw [Finset.card_union_of_disjoint hdisj, Finset.card_univ] at hle
   omega
 
+omit [Fintype V] in
 /-- A cardinal form of the cycle-splicing argument.  If the two endpoint
 neighbourhoods inside `s` have total size larger than `|s|`, then a Hamilton
 cycle of `G[s]` can be cut and spliced into a Hamilton `a`--`b` path in `G`.
 
 This formulation is convenient in applications: all degree bookkeeping is
 isolated in the single strict cardinal inequality. -/
-theorem exists_isHamiltonianPath_of_induced_cycle_of_card_lt_add
+theorem exists_isHamiltonianPath_of_induced_cycle_of_card_lt_add [Finite V]
     {s : Set V} [Fintype s] {x : s} {a b : V}
     (q : (G.induce s).Walk x x) (hq : q.IsHamiltonianCycle)
     (ha : a ∉ s) (hb : b ∉ s) (hab : a ≠ b)
@@ -118,6 +122,7 @@ theorem exists_isHamiltonianPath_of_induced_cycle_of_card_lt_add
       ((Finset.univ : Finset s).filter fun z ↦ G.Adj a z.1).card +
         ((Finset.univ : Finset s).filter fun z ↦ G.Adj z.1 b).card) :
     ∃ p : G.Walk a b, p.IsHamiltonian := by
+  let := Fintype.ofFinite V
   let A : Finset s := (Finset.univ : Finset s).filter fun z ↦ G.Adj a z.1
   let B : Finset s := (Finset.univ : Finset s).filter fun z ↦ G.Adj z.1 b
   let nextB : Finset s := B.image hq.next
