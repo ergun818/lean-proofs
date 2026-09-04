@@ -61,9 +61,9 @@ structure UniformGenericSharpGeometry
           (distortionRank sigma)))⁻¹
       (Nat.ceil sigma))
     (S : GenericSharpSectionData X N)
-    (hA : A.Nonempty) (hcard : 1 < A.card)
-    (hXrank : X.1 ≤ rankBound) (hX : EnlargedInjective s X)
-    (hsum : ((twoA A).card : ℝ) ≤ sigma * A.card),
+    (_hA : A.Nonempty) (hcard : 1 < A.card)
+    (_hXrank : X.1 ≤ rankBound) (_hX : EnlargedInjective s X)
+    (_hsum : ((twoA A).card : ℝ) ≤ sigma * A.card),
       ∃ Z : RankedBodyPresentation A,
         Z.1 ≤ rankBound ∧
         bodyVolume Z ≤ affineLoss *
@@ -106,7 +106,7 @@ def uniformSharpReplacementOfGenericGeometry
         uniformSharpProductRankBound rankBound proportionConstant sigma)
       (rankBound := rankBound) X N S hcard
       (initialRank_le_uniformSharpProductRankBound
-        (s := s) X N hXrank)
+        (_s := s) X N hXrank)
       hXrank hrankBound hepsilon haffineLoss.le hZvolume
 
 /-- Uniform construction of the geometric packages is now literally the

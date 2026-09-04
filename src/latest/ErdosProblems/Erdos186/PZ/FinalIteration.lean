@@ -576,12 +576,10 @@ theorem change_excess_lower_bound
         | up =>
             simp only [hkind] at htransition
             simp [changeCount, hkind]
-            push_cast
             linarith [ih, htransition.2]
         | down =>
             simp only [hkind] at htransition
             simp [changeCount, hkind]
-            push_cast
             linarith [ih, htransition.2]
         | same => exact (hsame hkind).elim
 

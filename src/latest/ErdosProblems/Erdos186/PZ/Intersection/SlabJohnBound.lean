@@ -173,7 +173,7 @@ all geometric hypotheses about the thin region are discharged by
 `functionalSlabInBox` and its relative-volume theorem above. -/
 theorem exists_functionalSlabContradictionConstants
     (d : ℕ) (hd : 0 < d) :
-    ∃ factorBound : ℕ, ∃ constant : ℝ, 1 ≤ constant ∧
+    ∃ _factorBound : ℕ, ∃ constant : ℝ, 1 ≤ constant ∧
       ∀ {s D k loss referenceVolume boxFactor : ℕ}
         {A : Finset (LatticePoint d)}
         (W : CFP.EnhancedCFPWitness A s D k loss)

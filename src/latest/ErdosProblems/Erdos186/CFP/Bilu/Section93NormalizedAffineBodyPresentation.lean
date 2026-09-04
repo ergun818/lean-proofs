@@ -296,7 +296,7 @@ theorem normalizedHomogeneousProductSeminorm_standard_le_one
           simp [standardIntegralPoint, Pi.basisFun]
         · have hcast : Fin.castAdd 1 i ≠ Fin.castAdd 1 k := by
             exact fun h ↦ hik ((Fin.castAddEmb 1).injective h)
-          simp [standardIntegralPoint, Pi.basisFun, Pi.single_apply,
+          simp [standardIntegralPoint, Pi.basisFun,
             hik, hcast]
       have hlast : homogeneousLastReal
           (integralReal (standardIntegralPoint (Fin.castAdd 1 i) :
@@ -306,9 +306,9 @@ theorem normalizedHomogeneousProductSeminorm_standard_le_one
         have hne : Fin.castAdd 1 i ≠ Fin.natAdd X.1 0 := by
           intro h
           have hh := congrArg finSumFinEquiv.symm h
-          simpa [finSumFinEquiv_symm_apply_castAdd,
-            finSumFinEquiv_symm_apply_natAdd] using hh
-        simp [standardIntegralPoint, Pi.basisFun, Pi.single_apply, hne]
+          simp [finSumFinEquiv_symm_apply_castAdd,
+            finSumFinEquiv_symm_apply_natAdd] at hh
+        simp [standardIntegralPoint, Pi.basisFun, hne]
       rw [homogeneousProductSeminorm_apply, hhead, hlast, norm_zero]
       change max
         (normalizedMahlerSeminorm X
@@ -331,9 +331,9 @@ theorem normalizedHomogeneousProductSeminorm_standard_le_one
         have hne : Fin.natAdd X.1 0 ≠ Fin.castAdd 1 k := by
           intro h
           have hh := congrArg finSumFinEquiv.symm h
-          simpa [finSumFinEquiv_symm_apply_castAdd,
-            finSumFinEquiv_symm_apply_natAdd] using hh
-        simp [standardIntegralPoint, Pi.basisFun, Pi.single_apply, hne]
+          simp [finSumFinEquiv_symm_apply_castAdd,
+            finSumFinEquiv_symm_apply_natAdd] at hh
+        simp [standardIntegralPoint, Pi.basisFun, hne]
       have hlast : homogeneousLastReal
           (integralReal (standardIntegralPoint (Fin.natAdd X.1 0) :
             IntegralPoint (X.1 + 1))) = 1 := by
@@ -400,5 +400,5 @@ end Erdos186.CFP.Bilu.Section93NormalizedAffineBodyPresentation
 
 #print axioms
   Erdos186.CFP.Bilu.Section93NormalizedAffineBodyPresentation.normalizedProperAffineBodyPresentation
-#print axioms
-  Erdos186.CFP.Bilu.Section93NormalizedAffineBodyPresentation.rank_rankedNormalizedProperAffineBodyPresentation_le
+open Erdos186.CFP.Bilu.Section93NormalizedAffineBodyPresentation in
+#print axioms rank_rankedNormalizedProperAffineBodyPresentation_le

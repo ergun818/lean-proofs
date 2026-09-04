@@ -326,7 +326,7 @@ end
 
 end Erdos186.CFP.Bilu.Section8PresentationNormalization
 
-#print axioms
-  Erdos186.CFP.Bilu.Section8PresentationNormalization.standardRadius_normalizedMahlerSeminorm_le_rank
+open Erdos186.CFP.Bilu.Section8PresentationNormalization in
+#print axioms standardRadius_normalizedMahlerSeminorm_le_rank
 #print axioms
   Erdos186.CFP.Bilu.Section8PresentationNormalization.volume_normalizedMahlerUnitBall

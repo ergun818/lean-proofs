@@ -134,9 +134,9 @@ theorem second_shell_uniform_mass
 capture estimate in the form used by `capturedFraction`. -/
 theorem capturedFraction_le_selected_mass
     {n m N L M labels capCard Kabs : ℕ} {c q : ℝ}
-    (hN : 0 < N) (hL : 0 < L) (hm : 0 < m)
+    (_hN : 0 < N) (hL : 0 < L) (hm : 0 < m)
     (hlabels : 0 < labels) (hcapCard : 0 < capCard) (hK : 0 < Kabs)
-    (hc : 0 ≤ c) (hq : 0 ≤ q)
+    (_hc : 0 ≤ c) (_hq : 0 ≤ q)
     (hfirst : N ≤ 4 * L * M * labels)
     (hcap : c * q ^ n * (labels : ℝ) ≤ (capCard : ℝ)) :
     (c / 4) * q ^ n * relativeGraphOccupancy n m capCard Kabs /
@@ -151,15 +151,14 @@ theorem capturedFraction_le_selected_mass
   rw [relativeGraphOccupancy]
   push_cast
   field_simp
-  nlinarith [mul_nonneg hc (Real.rpow_nonneg hq n),
-    mul_nonneg hKR (show (0 : ℝ) ≤ M by positivity)]
+  nlinarith [mul_nonneg hKR (show (0 : ℝ) ≤ M by positivity)]
 
 /-- The second-shell mass inequality converts the Lemma 2 denominator
 `cells` into the normalized relative occupancy. -/
 theorem inv_cells_le_relativeGraphOccupancy
     {n m capCard Kabs L cells : ℕ}
-    (hm : 0 < m) (hcap : 0 < capCard) (hK : 0 < Kabs)
-    (hL : 0 < L) (hcells : 0 < cells)
+    (hm : 0 < m) (hcap : 0 < capCard) (_hK : 0 < Kabs)
+    (_hL : 0 < L) (hcells : 0 < cells)
     (hmass : capCard ≤ 2 * L * Kabs * cells) :
     (1 : ℝ) / (cells : ℝ) ≤
       2 * (L : ℝ) * relativeGraphOccupancy n m capCard Kabs /

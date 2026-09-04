@@ -38,6 +38,7 @@ def projectedSlice {S : Finset V} {rank : ℕ}
     (T : Finset (V ⧸ P.kernel)) : Finset V :=
   S.filter fun x ↦ P.kernel.mkQ x ∈ T
 
+omit [FiniteDimensional ℝ V] in
 @[simp]
 theorem mem_projectedSlice {S : Finset V} {rank : ℕ}
     (P : GenericProjection S rank)
@@ -45,6 +46,7 @@ theorem mem_projectedSlice {S : Finset V} {rank : ℕ}
     x ∈ projectedSlice P T ↔ x ∈ S ∧ P.kernel.mkQ x ∈ T := by
   rw [projectedSlice, Finset.mem_filter]
 
+omit [FiniteDimensional ℝ V] in
 /-- Pulling back a subset of the quotient image and mapping forward recovers
 that subset exactly. -/
 theorem image_projectedSlice_eq {S : Finset V} {rank : ℕ}
@@ -63,6 +65,7 @@ theorem image_projectedSlice_eq {S : Finset V} {rank : ℕ}
     exact Finset.mem_image.mpr
       ⟨x, mem_projectedSlice P T x |>.mpr ⟨hxS, hy⟩, rfl⟩
 
+omit [FiniteDimensional ℝ V] in
 /-- The generic quotient preserves the size of every pulled-back subset of
 its image. -/
 theorem card_projectedSlice_eq {S : Finset V} {rank : ℕ}
@@ -80,6 +83,7 @@ theorem card_projectedSlice_eq {S : Finset V} {rank : ℕ}
           (mem_projectedSlice P T y |>.mp hy).1 hxy)).symm
     _ = T.card := congrArg Finset.card (image_projectedSlice_eq P T hT)
 
+omit [FiniteDimensional ℝ V] in
 /-- The quotient map commutes with the finite double-sumset construction. -/
 theorem pairSumset_image_mkQ {S : Finset V} {rank : ℕ}
     (P : GenericProjection S rank) :
@@ -98,6 +102,7 @@ theorem pairSumset_image_mkQ {S : Finset V} {rank : ℕ}
     exact ⟨P.kernel.mkQ x, Finset.mem_image.mpr ⟨x, hx, rfl⟩,
       P.kernel.mkQ y, Finset.mem_image.mpr ⟨y, hy, rfl⟩, by simp⟩
 
+omit [FiniteDimensional ℝ V] in
 /-- The generic quotient preserves the cardinality of the double sumset. -/
 theorem card_pairSumset_image_mkQ {S : Finset V} {rank : ℕ}
     (P : GenericProjection S rank) (hrank : 0 < rank) :

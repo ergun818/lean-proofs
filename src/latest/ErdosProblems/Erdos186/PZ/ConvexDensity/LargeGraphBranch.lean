@@ -26,7 +26,7 @@ below.  The returned chart is the single centred Householder affine isometry,
 so it can later be composed with `graphWindowAffineEquiv` and transported
 back by `convexDensityOutput_of_affineChart_disjointFibers`. -/
 theorem exists_cap_centered_upperBoundary_window
-    {ι : Type*} [DecidableEq ι] {n m : ℕ}
+    {ι : Type*} {n m : ℕ}
     (hm : 0 < m) (hmLarge : 4 * Real.sqrt n ≤ m)
     {inner outer q : ℝ} (hinner : 0 < inner) (hqinner : q < inner)
     (hcapWindow : outer * (2 * Real.sqrt n / m) ≤ q)
@@ -66,7 +66,7 @@ theorem exists_cap_centered_upperBoundary_window
     intro y hy
     refine ⟨y + center, hinnerBall ?_, ?_⟩
     · simpa [Metric.mem_closedBall, dist_eq_norm] using hy
-    · simp [T, sub_eq_add_neg, add_assoc]
+    · simp [T]
   have hP0outer : P0 ⊆ Metric.closedBall 0 outer := by
     rintro y ⟨x, hx, rfl⟩
     have hxball := houterBall hx

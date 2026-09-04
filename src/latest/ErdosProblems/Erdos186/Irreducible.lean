@@ -370,7 +370,7 @@ theorem gapSize_le_multiplierProduct (t : MoveTrace p length) {m : ℕ}
       have hfactor_nonneg :
           0 ≤ stepMultiplier p (t.kind m) (t.upSaving m) := by
         cases hkind : t.kind m
-        · simp [stepMultiplier, hkind, mul_nonneg p.cost_nonneg
+        · simp [stepMultiplier, mul_nonneg p.cost_nonneg
               (t.upSaving_nonneg m (by omega))]
         · simpa [stepMultiplier, hkind] using p.cost_nonneg
         · simpa [stepMultiplier, hkind] using p.shrinkFactor_nonneg

@@ -82,8 +82,7 @@ theorem volume_badAffineSlice {n : ℕ} (B : Set (Fin n → ℝ)) (C : ℝ)
         (v - integerPoint x) + (q : ℝ) • z by module]
   rw [hset, volume.addHaar_preimage_smul hqR]
   have hT : volume T = volume (C • B) := by
-    simpa [T] using
-      (measure_preimage_add volume (v - integerPoint x) (C • B))
+    simp [T]
   rw [hT, volume.addHaar_smul]
   simp only [Module.finrank_fin_fun ℝ]
 

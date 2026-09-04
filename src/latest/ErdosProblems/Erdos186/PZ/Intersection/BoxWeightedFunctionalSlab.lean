@@ -337,7 +337,7 @@ theorem relativeVolume_boxWeightedFunctionalSlabInBox_le_dimension
 /-- Source-facing John contradiction for the side-length-normalized slab. -/
 theorem exists_boxWeightedFunctionalSlabContradictionConstants
     (d : ℕ) (hd : 0 < d) :
-    ∃ factorBound : ℕ, ∃ constant : ℝ, 1 ≤ constant ∧
+    ∃ _factorBound : ℕ, ∃ constant : ℝ, 1 ≤ constant ∧
       ∀ {s D k loss referenceVolume boxFactor : ℕ}
         {A : Finset (LatticePoint d)}
         (W : CFP.EnhancedCFPWitness A s D k loss)

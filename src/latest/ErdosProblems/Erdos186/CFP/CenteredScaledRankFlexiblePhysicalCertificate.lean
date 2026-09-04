@@ -103,7 +103,7 @@ theorem exists_centeredScaledRankFlexiblePhysicalCertificateConstants
             T ⊆ integerColorClass A c i →
             (integerColorClass A c i).card ≤ T.card + x →
             ∃ e : ℕ, 0 < e ∧ e ≤ D ∧
-              ∃ V : HDimension.HApproximation
+              ∃ _V : HDimension.HApproximation
                   (insert 0 T) (2 ^ level i) e 1 scaleDen,
                 (2 * scaleDen) ^ e * (2 ^ level i + 1) ^ (e - 1) <
                   (2 ^ level i) ^ e) →
@@ -183,7 +183,7 @@ theorem exists_centeredScaledRankFlexiblePhysicalCertificateConstants
         hglobalTarget
     dsimp only [cDen, rankFlexiblePhysicalDensityDenominator,
       rankFlexiblePhysicalComparisonCoefficient]
-    convert hvolume using 1 <;> ring
+    convert hvolume using 1; ring
   have hrunSource : ∀ i, (run i).steps + cDen ≤ sourceScale := by
     intro i
     exact (Nat.add_le_add_right (run i).steps_le_cap cDen).trans hcapSource

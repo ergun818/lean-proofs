@@ -268,7 +268,8 @@ theorem projectedIntegralCoordinates_eq :
       simp
     rw [hreal, hproj, hcoord]
     simp
-  · simp only [fullIntegralBasis_inr, projectedIntegralCoordinates_apply, LinearMap.coe_comp, Function.comp_apply,
+  · simp only [fullIntegralBasis_inr, projectedIntegralCoordinates_apply, LinearMap.coe_comp,
+    Function.comp_apply,
     reducedIntegralRealLinear_apply]
     have hleft :
         integralReal
@@ -311,5 +312,7 @@ end
 
 end Erdos186.CFP.Bilu.Section92ShortKernel.PrimitiveKernelStep
 
-#print axioms Erdos186.CFP.Bilu.Section92ShortKernel.PrimitiveKernelStep.linearIndependent_projectedComplementFamily
-#print axioms Erdos186.CFP.Bilu.Section92ShortKernel.PrimitiveKernelStep.projectedComplementEquiv_projectedComplementFamily
+open Erdos186.CFP.Bilu.Section92ShortKernel.PrimitiveKernelStep in
+#print axioms linearIndependent_projectedComplementFamily
+open Erdos186.CFP.Bilu.Section92ShortKernel.PrimitiveKernelStep in
+#print axioms projectedComplementEquiv_projectedComplementFamily

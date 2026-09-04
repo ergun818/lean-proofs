@@ -293,7 +293,7 @@ theorem genericSharpProduct_unitBall_eq_preimage :
       genericSplitMeasurableEquiv X N ⁻¹'
         ({u | S.seminorm u ≤ 1} ×ˢ {v | ‖v‖ ≤ 1}) := by
   ext x
-  simp only [Set.mem_setOf_eq, Set.mem_preimage, Set.mem_prod,
+  simp only [Set.mem_ofPred_eq, Set.mem_preimage, Set.mem_prod,
     genericSplitMeasurableEquiv_apply,
     genericSharpProductSeminorm_apply]
   exact max_le_iff
@@ -302,7 +302,7 @@ theorem genericCenter_unitBall_eq_Icc :
     {v : N.cover.centers → ℝ | ‖v‖ ≤ 1} =
       Set.Icc (fun _ ↦ (-1 : ℝ)) (fun _ ↦ (1 : ℝ)) := by
   ext v
-  simp only [Set.mem_setOf_eq, Set.mem_Icc]
+  simp only [Set.mem_ofPred_eq, Set.mem_Icc]
   rw [pi_norm_le_iff_of_nonneg (by norm_num), Pi.le_def, Pi.le_def]
   simp only [Real.norm_eq_abs, abs_le, forall_and]
 
@@ -352,14 +352,14 @@ theorem genericSplitLinearEquiv_integralEmbed_independentFamily
   cases h : genericInitialIndexEquiv X N j with
   | inl i =>
       apply Prod.ext
-      · simp [genericSplitIntegralFamily, genericSplitRealFamily, h]
+      · simp [genericSplitIntegralFamily, genericSplitRealFamily]
       · funext c
-        simp [genericSplitIntegralFamily, genericSplitRealFamily, h]
+        simp [genericSplitIntegralFamily, genericSplitRealFamily]
   | inr c =>
       apply Prod.ext
-      · simp [genericSplitIntegralFamily, genericSplitRealFamily, h]
+      · simp [genericSplitIntegralFamily, genericSplitRealFamily]
       · funext c'
-        simp [genericSplitIntegralFamily, genericSplitRealFamily, h,
+        simp [genericSplitIntegralFamily, genericSplitRealFamily,
           Pi.single_apply]
 
 theorem linearIndependent_genericSplitRealFamily :
@@ -399,10 +399,10 @@ theorem genericSharpIndependentFamily_mem_unitBall
     genericSplitLinearEquiv_integralEmbed_independentFamily]
   cases h : genericInitialIndexEquiv X N j with
   | inl i =>
-      simp only [genericSplitRealFamily, h, max_le_iff, norm_zero]
+      simp only [genericSplitRealFamily, max_le_iff, norm_zero]
       exact ⟨S.full.choose_spec.2 i, by norm_num⟩
   | inr c =>
-      simp only [genericSplitRealFamily, h, max_le_iff, map_zero]
+      simp only [genericSplitRealFamily, max_le_iff, map_zero]
       refine ⟨by norm_num, ?_⟩
       rw [Pi.norm_single]
       norm_num

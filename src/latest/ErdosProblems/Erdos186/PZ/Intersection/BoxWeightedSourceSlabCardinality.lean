@@ -40,16 +40,16 @@ theorem exists_boxWeightedSourceFunctionalSlabCardinalityConstants
     {ambient : ℕ} {A : Finset (LatticePoint ambient)}
     (hA : selector.Eligible A)
     (hd : 0 < (selector.chosen A hA).dimension) :
-    ∃ factorBound : ℕ, ∃ constant : ℝ, 1 ≤ constant ∧
+    ∃ _factorBound : ℕ, ∃ constant : ℝ, 1 ≤ constant ∧
       ∀ {delta gamma : ℝ}
-        (hirr : Reduction.IsBoundedCoordinateIrreducible selector A hA
+        (_hirr : Reduction.IsBoundedCoordinateIrreducible selector A hA
           delta gamma)
-        (hclosed : selector.CandidateClosedAt A hA delta)
-        (hgamma : 0 < gamma)
+        (_hclosed : selector.CandidateClosedAt A hA delta)
+        (_hgamma : 0 < gamma)
         (X : Finset (LatticePoint (selector.chosen A hA).dimension))
-        (hX : X ⊆ (selector.chosen A hA).identifiedCore)
+        (_hX : X ⊆ (selector.chosen A hA).identifiedCore)
         (a : LatticePoint (selector.chosen A hA).dimension)
-        (ha : a ∈ (gapCoefficientBox
+        (_ha : a ∈ (gapCoefficientBox
           (selector.chosen A hA).progression).carrier)
         {s D k loss : ℕ}
         (W : CFP.EnhancedCFPWitness

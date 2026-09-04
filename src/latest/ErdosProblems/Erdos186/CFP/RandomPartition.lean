@@ -46,22 +46,27 @@ def colorClass {q : ℕ} (c : X → Fin (q + 1)) (i : Fin (q + 1)) :
     Finset X :=
   Finset.univ.filter fun x ↦ c x = i
 
+omit [DecidableEq X] in
 @[simp]
 theorem mem_colorClass_iff {q : ℕ} {c : X → Fin (q + 1)}
     {i : Fin (q + 1)} {x : X} :
     x ∈ colorClass c i ↔ c x = i := by
   simp [colorClass]
 
+omit [DecidableEq X] in
 /-- The color classes form an exact partition of the finite ground type. -/
 theorem mem_exactly_one_colorClass {q : ℕ} (c : X → Fin (q + 1)) (x : X) :
     ∃! i, x ∈ colorClass c i := by
+  classical
   refine ⟨c x, by simp, ?_⟩
   intro i hi
   exact (mem_colorClass_iff.mp hi).symm
 
+omit [DecidableEq X] in
 theorem colorClass_disjoint {q : ℕ} (c : X → Fin (q + 1))
     {i j : Fin (q + 1)} (hij : i ≠ j) :
     Disjoint (colorClass c i) (colorClass c j) := by
+  classical
   rw [Finset.disjoint_left]
   intro x hxi hxj
   exact hij ((mem_colorClass_iff.mp hxi).symm.trans
@@ -143,6 +148,7 @@ private def totalize {q : ℕ}
     X → Fin (q + 1) :=
   fun x ↦ f x (Finset.mem_univ x)
 
+omit [DecidableEq X] in
 private theorem totalize_injective {q : ℕ} :
     Function.Injective (totalize (X := X) (q := q)) := by
   intro f g h
@@ -195,10 +201,6 @@ private theorem card_avoidingColorings {q r : ℕ}
     Finset.card_image_of_injective _ (totalize_injective (X := X)),
     Finset.card_pi]
   simp only [apply_ite]
-  change (∏ x ∈ (Finset.univ : Finset X),
-      if x ∈ T then
-        ((Finset.univ : Finset (Fin (q + 1))).erase i).card
-      else (Finset.univ : Finset (Fin (q + 1))).card) = _
   rw [Finset.prod_ite]
   have hyes : (Finset.univ : Finset X).filter (fun x ↦ x ∈ T) = T := by
     ext x
@@ -211,7 +213,7 @@ private theorem card_avoidingColorings {q r : ℕ}
   simp only [Finset.card_erase_of_mem (Finset.mem_univ i), Finset.card_univ,
     Fintype.card_fin, Finset.prod_const, Finset.card_sdiff_of_subset
       (Finset.subset_univ T), hT]
-  congr 2 <;> omega
+  congr 2
 
 /-! ## Chunk systems and the union bound -/
 
@@ -223,6 +225,7 @@ structure ChunkSystem (obstacle : I → Finset X) (t r : ℕ) where
   card_chunk : ∀ o j, (chunk o j).card = r
   disjoint_chunk : ∀ o, ∀ {j k}, j ≠ k → Disjoint (chunk o j) (chunk o k)
 
+omit [DecidableEq X] [Fintype X] in
 /-- A finite set of size at least `k * r` contains `k` pairwise disjoint
 `r`-element chunks. -/
 private theorem exists_disjoint_chunks (B : Finset X) (k r : ℕ)
@@ -294,6 +297,7 @@ private theorem exists_disjoint_chunks (B : Finset X) (k r : ℕ)
               exact Fin.ext hz)
             omega
 
+omit [DecidableEq I] [DecidableEq X] [Fintype I] [Fintype X] in
 /-- Cardinal lower bounds on a finite obstacle family produce the chunk
 certificate used by the exact union bound. -/
 theorem exists_chunkSystem_of_card {t r : ℕ} {obstacle : I → Finset X}
@@ -318,6 +322,7 @@ private noncomputable def badColorings {q t r : ℕ}
     (Finset.univ : Finset (Fin (q + 1))).biUnion fun i ↦
       avoidingColorings (chunks.chunk p.1 p.2) i
 
+omit [DecidableEq I] in
 /-- Exact union-bound estimate for bad colorings. -/
 private theorem card_badColorings_le {q t r : ℕ}
     {obstacle : I → Finset X} (chunks : ChunkSystem obstacle t r) :
@@ -350,6 +355,7 @@ private theorem card_badColorings_le {q t r : ℕ}
           (q ^ r * (q + 1) ^ (Fintype.card X - r)) := by
       simp [mul_assoc]
 
+omit [DecidableEq I] in
 /-- Finite probabilistic method: if the union-bound numerator is smaller
 than the exact number of colorings, there is a coloring hitting every chunk
 in every color. -/
@@ -369,7 +375,7 @@ theorem exists_coloring_hits_every_chunk {q t r : ℕ}
   have hex : ∃ c : X → Fin (q + 1),
       c ∉ badColorings (q := q) chunks := by
     by_contra h
-    push_neg at h
+    push Not at h
     have hsub : (Finset.univ : Finset (X → Fin (q + 1))) ⊆
         badColorings (q := q) chunks := by
       intro c hc
@@ -386,12 +392,13 @@ theorem exists_coloring_hits_every_chunk {q t r : ℕ}
     have hxcolor : x ∈ colorClass c i := mem_colorClass_iff.mpr hxi
     have : x ∈ chunks.chunk o j ∩ colorClass c i :=
       Finset.mem_inter.mpr ⟨hx, hxcolor⟩
-    simpa [hempty] using this
+    simp [hempty] at this
   apply hc
   apply Finset.mem_biUnion.mpr
   refine ⟨(o, j), Finset.mem_univ _, ?_⟩
   exact Finset.mem_biUnion.mpr ⟨i, Finset.mem_univ _, havoid⟩
 
+omit [DecidableEq I] in
 /-- Meeting `t + 1` disjoint chunks leaves more than `t` elements of every
 obstacle in every color class.  This is the resilience conclusion for one
 random-coloring partition. -/
@@ -419,7 +426,6 @@ theorem exists_coloring_robust_on_obstacles {q t r : ℕ}
     rw [Finset.disjoint_left] at hdisj
     apply hdisj (Finset.mem_inter.mp (hpoint j)).1
     have hpointeq : point j = point k := by
-      change point j = point k
       exact congrArg Subtype.val hjk
     rw [hpointeq]
     exact (Finset.mem_inter.mp (hpoint k)).1
@@ -429,6 +435,7 @@ theorem exists_coloring_robust_on_obstacles {q t r : ℕ}
   simp only [Fintype.card_fin, Fintype.card_coe] at hcard
   omega
 
+omit [DecidableEq I] in
 /-- Logarithmic form of the finite coloring lemma.  The chunk size is chosen
 internally as
 
@@ -473,6 +480,7 @@ coordinate group. -/
 private def generatedProfile (S : Finset X) : ∀ d, AddSubgroup (G d) :=
   fun d ↦ AddSubgroup.closure (φ d '' (S : Set X))
 
+omit [(d : D) → DecidableEq (G d)] [DecidableEq D] [DecidableEq X] [Fintype D] [Fintype X] in
 private theorem generatedProfile_mono {S T : Finset X} (hST : S ⊆ T) :
     ∀ d, generatedProfile G φ S d ≤ generatedProfile G φ T d := by
   intro d
@@ -531,6 +539,7 @@ noncomputable def distinctSpanObstacle (w : DistinctSpanIndex G φ) :
   classical
   exact Finset.univ.filter fun x ↦ φ w.1 x ∉ w.2.1
 
+omit [(d : D) → DecidableEq (G d)] [DecidableEq D] [DecidableEq X] [Fintype D] in
 /-- Public closure-form elimination rule for membership in
 `generatedSubgroupValues`.  This keeps the internal profile representation
 out of downstream random-partition interfaces. -/
@@ -541,11 +550,13 @@ theorem exists_closure_eq_of_mem_generatedSubgroupValues (d : D)
   obtain ⟨S, hS, rfl⟩ := Finset.mem_image.mp hH
   exact ⟨S, by rfl⟩
 
+omit [(d : D) → DecidableEq (G d)] [DecidableEq D] [DecidableEq X] [Fintype D] in
 /-- Public closure-form properness clause of a distinct span index. -/
 theorem distinctSpanIndex_lt_closure_univ (w : DistinctSpanIndex G φ) :
     w.2.1 < AddSubgroup.closure (φ w.1 '' ((Finset.univ : Finset X) : Set X)) := by
   simpa [generatedProfile] using w.2.2.2
 
+omit [(d : D) → DecidableEq (G d)] [DecidableEq D] [Fintype D] in
 /-- If every color class contains more than `t` points outside every proper
 subset-generated subgroup, then deleting at most `t` points from a color
 class preserves the full generated subgroup in every coordinate. -/
@@ -597,6 +608,7 @@ theorem generatedProfile_eq_of_robust_obstacles {q t : ℕ}
     have := hrobust w i
     omega
 
+omit [(d : D) → DecidableEq (G d)] [DecidableEq D] [Fintype D] in
 /-- Distinct-value version of `generatedProfile_eq_of_robust_obstacles`. -/
 theorem generatedProfile_eq_of_distinct_robust_obstacles {q t : ℕ}
     (c : X → Fin (q + 1))
@@ -650,6 +662,7 @@ theorem generatedProfile_eq_of_distinct_robust_obstacles {q t : ℕ}
     have := hrobust w i
     omega
 
+omit [(d : D) → DecidableEq (G d)] [DecidableEq D] [DecidableEq X] in
 /-- Exact finite subgroup-span inheritance theorem for a random-coloring
 partition.  Its sole numerical hypothesis is the explicit union-bound
 inequality; no probabilistic or concentration principle is assumed. -/
@@ -668,6 +681,7 @@ theorem exists_coloring_generatedProfile_robust {q t r : ℕ}
   obtain ⟨c, hc⟩ := exists_coloring_robust_on_obstacles chunks hcount
   exact ⟨c, generatedProfile_eq_of_robust_obstacles G φ c hc⟩
 
+omit [(d : D) → DecidableEq (G d)] [DecidableEq D] [DecidableEq X] in
 /-- Cardinal lower bounds for all proper-span obstacles are the only
 structural input needed by the finite counting argument.  In particular,
 callers do not need to construct the disjoint chunks themselves. -/
@@ -688,6 +702,7 @@ theorem exists_coloring_generatedProfile_robust_of_card {q t r : ℕ}
     Classical.choice (exists_chunkSystem_of_card hsize)
   exact exists_coloring_generatedProfile_robust G φ chunks hcount
 
+omit [(d : D) → DecidableEq (G d)] [DecidableEq D] [DecidableEq X] in
 /-- Source-shaped logarithmic form of generated-span inheritance.  The exact
 counting inequality has been discharged by `coloring_union_bound_logarithmic`;
 only the lower bound on proper-span complements remains. -/
@@ -712,6 +727,7 @@ theorem exists_coloring_generatedProfile_robust_logarithmic {q t : ℕ}
     exists_coloring_robust_on_obstacles_logarithmic hq hrange hsize
   exact ⟨c, generatedProfile_eq_of_robust_obstacles G φ c hc⟩
 
+omit [(d : D) → DecidableEq (G d)] [DecidableEq D] [DecidableEq X] in
 /-- Logarithmic generated-span inheritance indexed by distinct subgroup
 values.  This is the source-scale form used by the final strong-stability
 theorem. -/
@@ -1167,6 +1183,7 @@ noncomputable def strongObstacle {A : Finset ℤ}
         (fun d : {d // d ∈ relevant} ↦ LatticePoint d.1)
         (fun d (a : {a // a ∈ A}) ↦ φ d.1 a.1) w
 
+omit [DecidableEq W] in
 /-- Source-sharp finite form of the random-partition inheritance clause in
 CFP Lemma 2.34.  A finite geometric enumeration supplies the bounded family
 of weak boxes; proper generated spans are enumerated canonically.  The
@@ -1255,8 +1272,7 @@ theorem exists_coloring_stronglyStableFor_logarithmic
     · exact b.2
   have hweakPart : WeaklyStableFor part box t maxRank differenceBound := by
     refine ⟨by simp [part, anchoredColorClass], ?_⟩
-    intro B hBpart hlarge hzeroB d hd hdRank P hsteps hvolume
-    intro hcontained
+    intro B hBpart hlarge hzeroB d hd hdRank P hsteps hvolume hcontained
     have hzeroP : integerPoint 0 ∈ P.carrier :=
       hcontained (integerPoint_mem_integerPoints_iff.mpr hzeroB)
     obtain ⟨w, hw⟩ := family.covers hd hdRank P hsteps hvolume hzeroP

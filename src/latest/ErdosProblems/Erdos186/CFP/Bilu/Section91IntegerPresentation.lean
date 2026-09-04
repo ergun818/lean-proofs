@@ -102,5 +102,7 @@ end
 end Erdos186.CFP.Bilu.Section91IntegerPresentation
 
 #print axioms Erdos186.CFP.Bilu.Section91IntegerPresentation.InitialPresentation.exists_integerLift
-#print axioms Erdos186.CFP.Bilu.Section91IntegerPresentation.InitialPresentation.subset_range_integerPresentationMap
-#print axioms Erdos186.CFP.Bilu.Section91IntegerPresentation.InitialPresentation.exists_primitiveKernelStep_of_not_injOn
+open Erdos186.CFP.Bilu.Section91IntegerPresentation.InitialPresentation in
+#print axioms subset_range_integerPresentationMap
+open Erdos186.CFP.Bilu.Section91IntegerPresentation.InitialPresentation in
+#print axioms exists_primitiveKernelStep_of_not_injOn

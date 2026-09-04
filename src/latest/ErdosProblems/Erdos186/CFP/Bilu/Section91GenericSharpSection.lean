@@ -45,7 +45,7 @@ variable
 
 /-- Discreteness of the full coordinate intersection lattice, obtained
 from a saturated presentation. -/
-noncomputable def coordinateIntegralPointsDiscreteTopology :
+theorem coordinateIntegralPointsDiscreteTopology :
     DiscreteTopology (integralPoints (coordinateC0 D)) := by
   classical
   obtain ⟨presentationRank, P, hSat⟩ :=

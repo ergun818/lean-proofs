@@ -76,7 +76,7 @@ def realLiftSet (K : Finset (IntegralPoint n)) :
 
 /-- The cone map based at `a`: `(d,t) ↦ (d+t a,t)`. -/
 def homogeneousConeMap (K : Finset (IntegralPoint n))
-    (a : IntegralPoint n) (ha : a ∈ K) :
+    (a : IntegralPoint n) (_ha : a ∈ K) :
     (affineDirection (realLiftSet K) × ℝ) →ₗ[ℝ]
       EuclideanSpace ℝ (Fin (n + 1)) where
   toFun z := WithLp.toLp 2 <| fun j ↦
@@ -88,8 +88,7 @@ def homogeneousConeMap (K : Finset (IntegralPoint n))
   map_add' x y := by
     ext j
     generalize hs : finSumFinEquiv.symm j = s
-    cases s <;> simp [hs, add_smul, add_assoc, add_left_comm,
-      WithLp.toLp_add]
+    cases s <;> simp [hs, add_smul, add_assoc, add_left_comm]
   map_smul' c x := by
     ext j
     generalize hs : finSumFinEquiv.symm j = s
@@ -217,7 +216,7 @@ body presentation. -/
 theorem presentationLiftSet_homogeneous_rank_le_two_mul_ceil
     {A : Finset ℤ} (s : ℕ) (hs : 0 < s)
     (X : RankedBodyPresentation A) (hX : EnlargedInjective s X)
-    (hA : A.Nonempty) (sigma : ℝ) (hsigma : 0 ≤ sigma)
+    (hA : A.Nonempty) (sigma : ℝ) (_hsigma : 0 ≤ sigma)
     (hdouble : ((twoA A).card : ℝ) ≤ sigma * A.card) :
     finrank ℝ (homogeneousSubspace (presentationLiftSet X)) ≤
       2 * Nat.ceil sigma := by
@@ -258,7 +257,7 @@ end
 
 end Erdos186.CFP.Bilu.Section93HomogeneousAffineSpan
 
-#print axioms
-  Erdos186.CFP.Bilu.Section93HomogeneousAffineSpan.normalizedLiftSet_homogeneous_rank_le_two_mul_ceil
+open Erdos186.CFP.Bilu.Section93HomogeneousAffineSpan in
+#print axioms normalizedLiftSet_homogeneous_rank_le_two_mul_ceil
 #print axioms
   Erdos186.CFP.Bilu.Section93HomogeneousAffineSpan.span_integralPoints_homogeneousSubspace

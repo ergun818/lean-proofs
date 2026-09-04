@@ -758,7 +758,7 @@ the actual rank `e ≤ d`; it is intentionally a proposition, not an assumed
 inhabitant. -/
 def DiscreteJohnStatement : Prop :=
   ∀ d : ℕ, ∃ factorBound : ℕ,
-    ∀ (K : Set (Fin d → ℝ)) (hK : SymmetricConvexBody K)
+    ∀ (K : Set (Fin d → ℝ)) (_hK : SymmetricConvexBody K)
       (points : Finset (LatticePoint d)),
       (∀ z, z ∈ points ↔ integralEmbed z ∈ K) →
         ∃ (e factor : ℕ), e ≤ d ∧ factor ≤ factorBound ∧

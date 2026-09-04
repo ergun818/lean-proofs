@@ -67,7 +67,7 @@ theorem step_mem_points_of_shrunkenRadius_pos
         exact_mod_cast hi
       omega
     · have hij : i ≠ j := Ne.symm hji
-      simp only [c, Pi.single_apply, hij, if_false]
+      simp only [c, Pi.single_apply]
       have hr : (0 : ℤ) ≤ (radii j : ℤ) := Int.natCast_nonneg _
       omega
   have hmem : integerCombination C.steps c ∈ C.inner.carrier :=
@@ -210,13 +210,13 @@ theorem exists_mixedRadius_integralCrosspolytope
         by_cases hi : 0 < q i
         · rw [if_pos hi, Nat.max_eq_right (Nat.succ_le_iff.mpr hi)]
         · have hq : q i = 0 := Nat.eq_zero_of_not_pos hi
-          simp [hi, hq]
+          simp [hq]
       _ = ∏ i ∈ A, (q i : ℝ) := by
         simpa [A] using
           (Finset.prod_filter (s := Finset.univ)
             (fun i : Fin d ↦ 0 < q i) (fun i ↦ (q i : ℝ))).symm
       _ = ∏ i : Active, (q i.1 : ℝ) := by
-        exact Finset.prod_subtype A (by simp [A, Active]) (fun i ↦ (q i : ℝ))
+        exact Finset.prod_subtype A (by simp [A]) (fun i ↦ (q i : ℝ))
   calc
     (∏ i : Fin d, (((max 1 (C.radii i / factor)) : ℕ) : ℝ)) =
         ∏ i : Fin d, (((max 1 (q i)) : ℕ) : ℝ) := by rfl

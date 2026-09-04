@@ -73,7 +73,7 @@ theorem uniformGenericAffineLoss_pos
 
 /-- Source-faithful realization of both remaining fields of
 `UniformGenericSharpGeometry`. -/
-def uniformGenericSharpGeometry
+theorem uniformGenericSharpGeometry
     (s : ℕ) (hs : 0 < s) (sigma : ℝ) (hsigma : 1 ≤ sigma)
     (proportionConstant : ℕ) :
     UniformGenericSharpGeometry s sigma proportionConstant
@@ -92,7 +92,7 @@ def uniformGenericSharpGeometry
     have hYrank : Y.1 ≤ sharpRankBound := by
       dsimp only [Y, sharpRankBound, uniformGenericSharpRankBound]
       exact initialRank_le_uniformSharpProductRankBound
-        (s := s) X N hXrank
+        (_s := s) X N hXrank
     obtain ⟨W, hWinjective, hWrank, hweighted⟩ :=
       exists_enlargedInjective_of_canonicalQuotient
         s sharpRankBound hcard Y hYrank

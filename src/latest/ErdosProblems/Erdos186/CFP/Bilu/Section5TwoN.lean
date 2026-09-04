@@ -71,7 +71,7 @@ theorem mem_symmetricFiber (S : Finset G) (center x : G) :
     refine Finset.mem_image.mpr ⟨(x, center - x), ?_, rfl⟩
     apply mem_sumPairFiber S center _ |>.mpr
     refine ⟨hx, hy, ?_⟩
-    simp [sub_eq_add_neg, add_assoc, add_left_comm, add_comm]
+    simp [sub_eq_add_neg, add_left_comm]
 
 /-- The fiber is symmetric: reflecting `x` across the half-center gives
 another point of the same fiber. -/
@@ -209,6 +209,7 @@ def AffineSliceWitness.of_dimension_lt {rank : ℕ} (S : Finset V)
   slice_mem_plane := fun _x hx ↦ subset_affineSpan ℝ (S : Set V) hx
   card_le := by simp
 
+omit [DecidableEq V] [FiniteDimensional ℝ V] in
 /-- A nonempty set of cardinality at most `rank` has affine dimension below
 `rank`.  This is the bounded-cardinality base of the induction in
 Theorem 5.6. -/
@@ -229,11 +230,13 @@ theorem finrank_direction_affineSpan_lt_of_card_le {rank : ℕ}
   rw [direction_affineSpan]
   omega
 
+omit [DecidableEq V] [FiniteDimensional ℝ V] in
 /-- The bounded-cardinality branch of Bilu's Theorem 5.6, with no
 doubling hypothesis needed. -/
 theorem exists_affineSlice_of_card_le {rank : ℕ}
     (S : Finset V) (hS : S.Nonempty) (hcard : S.card ≤ rank) :
     Nonempty (AffineSliceWitness rank 1 S) := by
+  classical
   exact ⟨AffineSliceWitness.of_dimension_lt S
     (finrank_direction_affineSpan_lt_of_card_le S hS hcard)⟩
 

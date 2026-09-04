@@ -23,7 +23,7 @@ def chartFiberSaving (d : ℕ) (epsilon : ℝ) : ℝ :=
   1 / (d : ℝ) - tau epsilon - 2 * gridRate d
 
 theorem chartFiberSaving_pos {d : ℕ} {epsilon : ℝ}
-    (hd : 2 ≤ d) (hepsilon : 0 < epsilon)
+    (hd : 2 ≤ d) (_hepsilon : 0 < epsilon)
     (hepsilonLe : epsilon ≤ 1 / ((d : ℝ) + 1)) :
     0 < chartFiberSaving d epsilon := by
   have hdR : (2 : ℝ) ≤ d := by exact_mod_cast hd

@@ -36,7 +36,7 @@ theorem graphThickeningCost_nonneg {n : ℕ}
 cell.  The coefficient bound is uniform in every coordinate. -/
 theorem volume_graphCell_thickening_mul_reference_le
     {n : ℕ} {q outer m epsilon r slope : ℝ}
-    (hq : 0 ≤ q) (houter : 0 ≤ outer) (hm : 0 < m)
+    (_hq : 0 ≤ q) (_houter : 0 ≤ outer) (hm : 0 < m)
     (hepsilon : 0 ≤ epsilon) (hr : 0 ≤ r) (hslope : 0 ≤ slope)
     (hrcell : r ≤ 1 / m)
     (lower : Fin n → ℝ)
@@ -71,7 +71,7 @@ theorem volume_graphCell_thickening_mul_reference_le
       (∏ i, ENNReal.ofReal
         ((1 + 2 * (1 : ℝ)) * (upper i - lower i))) =
         ENNReal.ofReal ((3 / m) ^ n) := by
-    simp only [upper, add_sub_cancel_left, one_mul, OfNat.ofNat]
+    simp only [upper, add_sub_cancel_left, OfNat.ofNat]
     rw [Finset.prod_const, Finset.card_univ, Fintype.card_fin]
     rw [← ENNReal.ofReal_pow (by positivity) n]
     congr 1

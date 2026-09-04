@@ -108,7 +108,7 @@ structure UniformReducedOuterDecayPackage
     A.card ≤ cardinalityThreshold →
       volume (initial A hA) ≤
         ((volumeConstant * A.card : ℕ) : ℝ)
-  decay : ∀ (A : Finset ℤ) (hA : A.Nonempty),
+  decay : ∀ (A : Finset ℤ) (_hA : A.Nonempty),
     ((twoA A).card : ℝ) ≤
         Real.rpow 2 ((d : ℝ) + 1 - delta) * A.card →
     cardinalityThreshold < A.card →
@@ -171,7 +171,7 @@ end Erdos186.CFP.Bilu.Section4UniformVolumeDecay
 
 #print axioms
   Erdos186.CFP.Bilu.Section4UniformVolumeDecay.exists_candidate_le_of_bounded_or_pow_decay
-#print axioms
-  Erdos186.CFP.Bilu.Section4UniformVolumeDecay.UniformReducedOuterDecayPackage.exists_reducedOuterRealization
+open Erdos186.CFP.Bilu.Section4UniformVolumeDecay.UniformReducedOuterDecayPackage in
+#print axioms exists_reducedOuterRealization
 #print axioms
   Erdos186.CFP.Bilu.Section4UniformVolumeDecay.reducedOuterExistenceStatement_of_uniformVolumeDecay

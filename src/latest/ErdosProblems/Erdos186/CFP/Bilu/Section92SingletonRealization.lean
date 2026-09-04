@@ -98,7 +98,7 @@ theorem singletonSeminorm_unitBall_volume :
       normSeminorm ℝ (Fin 1 → ℝ) x ≤ 1} =
       Set.Icc (fun _ ↦ (-1 : ℝ)) (fun _ ↦ (1 : ℝ)) := by
     ext x
-    simp only [Set.mem_setOf_eq, Set.mem_Icc]
+    simp only [Set.mem_ofPred_eq, Set.mem_Icc]
     change ‖x‖ ≤ 1 ↔ _
     rw [pi_norm_le_iff_of_nonempty, Pi.le_def, Pi.le_def]
     simp only [Real.norm_eq_abs, abs_le, forall_and]

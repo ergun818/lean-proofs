@@ -51,7 +51,7 @@ private theorem starProjection_eq_sub_normalProjection
     (Submodule.id_eq_sum_starProjection_self_orthogonalComplement (K := W))
   have hfirst : W.starProjection x = x - Wᗮ.starProjection x := by
     apply (eq_sub_iff_add_eq).2
-    simpa using hsum.symm
+    simp
   have horth := orthogonal_eq_span_of_codim_one W w hcodim hw hw0
   have hproj : Wᗮ.starProjection x = (inner ℝ w x / ‖w‖ ^ 2) • w := by
     have hs := Submodule.starProjection_singleton ℝ (v := w) x
@@ -117,8 +117,7 @@ private theorem normDet_projectionRestrict_sq
     simp only [a]
     have hinner (i : Fin (finrank ℝ L)) :
         inner ℝ (L.orthogonalProjectionOnto w) (b i) = inner ℝ w (b i : E) :=
-      by simpa [real_inner_comm] using
-        L.inner_orthogonalProjectionOnto_eq_of_mem_left (b i) w
+      by simp
     simp_rw [hinner]
     simp_rw [div_pow]
     rw [Finset.sum_div]

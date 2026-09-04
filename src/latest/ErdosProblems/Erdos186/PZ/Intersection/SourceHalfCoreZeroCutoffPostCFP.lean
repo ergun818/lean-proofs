@@ -131,7 +131,7 @@ def ofFullCoefficientSource_halfCore
     (hpopulation : 32 / mu ≤ (A.card : ℝ))
     (hdeltaMu : delta < mu / 8)
     (hdelta : 0 < delta) (hmu : 0 < mu) (hgamma : 0 < gamma) :
-    let theta : ℝ := 0
+    let _theta : ℝ := 0
     let hcap : 0 < (mu *
         (selector.chosen A hA).identifiedCore.card)⁻¹ :=
       inv_mu_mul_coreCard_pos_of_coreRetention

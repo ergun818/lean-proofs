@@ -135,7 +135,7 @@ theorem volume_distortionBody {m r : ℕ}
       rw [lintegral_indicator hscaled, setLIntegral_const]
     _ = (2 : ENNReal) ^ r * ((2 : ENNReal) ^ m * volume B) := by
       rw [volume.addHaar_smul]
-      simp [Module.finrank_fin_fun]
+      simp
     _ = (2 : ENNReal) ^ (m + r) * volume B := by
       rw [pow_add]
       ac_rfl

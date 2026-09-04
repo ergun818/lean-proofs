@@ -498,10 +498,9 @@ theorem distortingSet_measure_lower_bound {m : ℕ}
   have hden : 0 < σ * (K.card : ℝ) := mul_pos hσ hkpos
   apply (div_le_iff₀ hden).2
   have := hlower.trans hupper
-  apply le_of_mul_le_mul_right
-  ring_nf at this ⊢
-  · nlinarith
-  · exact hkpos
+  apply le_of_mul_le_mul_right (a := (K.card : ℝ) ^ 2)
+  · nlinarith only [this]
+  · exact pow_pos hkpos 2
 
 /-- **Bilu, Proposition 8.1 (normalized-Haar form).**
 

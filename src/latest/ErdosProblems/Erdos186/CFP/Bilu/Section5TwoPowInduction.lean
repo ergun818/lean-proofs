@@ -36,7 +36,7 @@ def twoPowCubeDenominator (n : ℕ) : ℕ :=
 def twoPowCubeDensity (n : ℕ) : ℝ :=
   1 / (twoPowCubeDenominator n : ℝ)
 
-theorem twoPowCubeDenominator_pos {n : ℕ} (hn : 0 < n) :
+theorem twoPowCubeDenominator_pos {n : ℕ} (_hn : 0 < n) :
     0 < twoPowCubeDenominator n := by
   unfold twoPowCubeDenominator cubeLemmaConstant
   exact Nat.mul_pos (Nat.pow_pos (by omega))
@@ -65,6 +65,7 @@ theorem twoPowCubeDenominator_mul_density {n : ℕ} (hn : 0 < n) :
 variable {V : Type u} [NormedAddCommGroup V] [NormedSpace ℝ V]
   [FiniteDimensional ℝ V] [DecidableEq V]
 
+omit [DecidableEq V] [FiniteDimensional ℝ V] [NormedAddCommGroup V] [NormedSpace ℝ V] in
 /-- A source-coefficient Cube-Lemma slice contains the stated fraction. -/
 theorem twoPowCubeDensity_mul_card_le_of_card_le {n : ℕ} (hn : 0 < n)
     {S T : Finset V}

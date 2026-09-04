@@ -280,7 +280,7 @@ theorem reduced_of_zero_mem_generatedSublattice_eq_top {d : ℕ}
     intro y
     refine ⟨fun i ↦ (y i).val, ?_⟩
     funext i
-    simpa [q, rectangularResidue] using ZMod.natCast_zmod_val (y i)
+    simp [q, rectangularResidue]
   have hzeroY : 0 ∈ Y := by
     exact Finset.mem_image.mpr ⟨0, hzero, map_zero q⟩
   have hgenY : AddSubgroup.closure (Y : Set (RectangularQuotient v)) = ⊤ := by

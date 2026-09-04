@@ -270,8 +270,7 @@ theorem dilate_centeredBasisGAP {n : ℕ}
     intro i _
     ring
   · funext i
-    simp [GAP.dilate_widths, centeredBasisGAP_widths, Nat.mul_assoc,
-      Nat.mul_left_comm, Nat.mul_comm]
+    simp [GAP.dilate_widths, centeredBasisGAP_widths, Nat.mul_assoc, Nat.mul_comm]
 
 /-- Every integral dilation of a centered box in a genuine lattice basis
 is proper.  This is the `F_s` input required downstream. -/
@@ -433,4 +432,5 @@ theorem exists_proper_outerGAP_containing_unitBall_with_two_sided_volume
 
 end Erdos186.CFP.Bilu.MahlerOuterContainer
 
-#print axioms Erdos186.CFP.Bilu.MahlerOuterContainer.exists_proper_outerGAP_containing_unitBall_with_two_sided_volume
+open Erdos186.CFP.Bilu.MahlerOuterContainer in
+#print axioms exists_proper_outerGAP_containing_unitBall_with_two_sided_volume

@@ -111,7 +111,7 @@ theorem exists_boxWeightedConstants_ofFullCoefficientSource_halfCore
       (selector.eligible_nonempty hA).card_pos hmu hdeltaMu hhalf hpopulation
     let E := chooseHighCoefficientSideSelectionData selector D hirr hclosed
       hdelta (show (0 : ℝ) ≤ 0 by rfl) hcap hmass
-    ∃ factorBound : ℕ, ∃ constant : ℝ, 1 ≤ constant ∧
+    ∃ _factorBound : ℕ, ∃ constant : ℝ, 1 ≤ constant ∧
       ∀ (slab : ℕ) (t radius : ℝ),
         HighCoefficientBoundedSupportScalarHierarchies E →
         BoxWeightedZeroCutoffScalarHierarchies

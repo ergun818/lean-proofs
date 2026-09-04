@@ -123,7 +123,7 @@ theorem exists_centeredPopulatedDyadicCertificateConstants
   have hobstacles := canonicalObstaclePolynomialBound_centered
     hn hDn hBW hzeroW hinterval hproper hrank
   obtain ⟨c, hpopulated, hstableColor, hspan⟩ :=
-    exists_strictlyPopulated_eraseZero_coloring_stronglyStableFor_with_commonSpan_of_polynomial_bound_additive
+    exists_strictlyPopulated_eraseZero_coloring_of_polynomial_bound_additive
       hstable
       (fun e he ↦ Stability.centeredMinimalIdentificationFamily_zero
         hproper e)

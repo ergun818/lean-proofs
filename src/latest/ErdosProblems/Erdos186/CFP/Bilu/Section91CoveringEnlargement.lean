@@ -162,4 +162,5 @@ end
 end Erdos186.CFP.Bilu.Section91CoveringEnlargement
 
 #print axioms Erdos186.CFP.Bilu.Section91CoveringEnlargement.integralReal_latticeHead
-#print axioms Erdos186.CFP.Bilu.Section91CoveringEnlargement.Lemma45SectionSeed.exists_coveringEnlargement
+open Erdos186.CFP.Bilu.Section91CoveringEnlargement.Lemma45SectionSeed in
+#print axioms exists_coveringEnlargement

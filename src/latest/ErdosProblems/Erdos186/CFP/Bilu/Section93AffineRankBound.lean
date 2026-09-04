@@ -109,7 +109,7 @@ theorem normalizedLiftSet_affineRank_add_one_le_two_mul
 theorem normalizedLiftSet_affineRank_add_one_le_two_mul_ceil
     {A : Finset ℤ} (s : ℕ) (hs : 0 < s)
     (X : RankedBodyPresentation A) (hX : EnlargedInjective s X)
-    (hA : A.Nonempty) (sigma : ℝ) (hsigma : 0 ≤ sigma)
+    (hA : A.Nonempty) (sigma : ℝ) (_hsigma : 0 ≤ sigma)
     (hdouble : ((twoA A).card : ℝ) ≤ sigma * A.card) :
     finrank ℝ (affineDirection (embeddedNormalizedLiftSet X)) + 1 ≤
       2 * Nat.ceil sigma := by

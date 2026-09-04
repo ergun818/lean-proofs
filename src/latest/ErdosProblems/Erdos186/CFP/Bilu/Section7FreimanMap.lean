@@ -232,7 +232,7 @@ theorem mem_pairSumset {G : Type*} [Add G] [DecidableEq G]
 /-- Two maps on the same finite set with exactly the same collision relation
 have images of the same cardinality. -/
 theorem card_image_eq_card_image_of_eq_iff
-    {X Y Z : Type*} [Inhabited X] [DecidableEq X]
+    {X Y Z : Type*} [Inhabited X]
     [DecidableEq Y] [DecidableEq Z]
     (P : Finset X) (f : X → Y) (g : X → Z)
     (hker : ∀ x ∈ P, ∀ y ∈ P, f x = f y ↔ g x = g y) :
@@ -357,19 +357,19 @@ theorem freimanMap_add_eq_of_inResidueCell {m r : ℕ}
     have hx₁lo : c ≤ Int.fract (phase a b x₁ i) := by
       simpa [c] using (hx₁ i).1
     have hx₁hi : Int.fract (phase a b x₁ i) < c + 1 / 2 := by
-      convert (hx₁ i).2 using 1 <;> dsimp [c] <;> ring
+      convert (hx₁ i).2 using 1; dsimp [c]; ring
     have hx₂lo : c ≤ Int.fract (phase a b x₂ i) := by
       simpa [c] using (hx₂ i).1
     have hx₂hi : Int.fract (phase a b x₂ i) < c + 1 / 2 := by
-      convert (hx₂ i).2 using 1 <;> dsimp [c] <;> ring
+      convert (hx₂ i).2 using 1; dsimp [c]; ring
     have hy₁lo : c ≤ Int.fract (phase a b y₁ i) := by
       simpa [c] using (hy₁ i).1
     have hy₁hi : Int.fract (phase a b y₁ i) < c + 1 / 2 := by
-      convert (hy₁ i).2 using 1 <;> dsimp [c] <;> ring
+      convert (hy₁ i).2 using 1; dsimp [c]; ring
     have hy₂lo : c ≤ Int.fract (phase a b y₂ i) := by
       simpa [c] using (hy₂ i).1
     have hy₂hi : Int.fract (phase a b y₂ i) < c + 1 / 2 := by
-      convert (hy₂ i).2 using 1 <;> dsimp [c] <;> ring
+      convert (hy₂ i).2 using 1; dsimp [c]; ring
     apply floor_add_eq_floor_add_of_common_half
       (c := c) hx₁lo hx₁hi hx₂lo hx₂hi hy₁lo hy₁hi hy₂lo hy₂hi
       (phase_pair_sum_eq a b hsum i)

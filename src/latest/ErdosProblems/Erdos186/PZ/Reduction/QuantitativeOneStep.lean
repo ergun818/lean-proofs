@@ -195,7 +195,7 @@ theorem CoordinateReplacement.selectedVolume_nonup_uniform
     (hSrank : S.selected.dimension ≤ R)
     (hTrank : T.selected.dimension ≤ R)
     (hTambient : T.ambientDimension ≤ Q)
-    (hrank : T.selected.dimension < S.selected.dimension) :
+    (_hrank : T.selected.dimension < S.selected.dimension) :
     (T.selected.progression.volume : ℝ) ≤
       uniformStepCost R (scaleDenSum C Q) *
         (S.selected.progression.volume : ℝ) := by

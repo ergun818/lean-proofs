@@ -145,7 +145,7 @@ theorem exists_lemma45SectionSeed_of_proposition83_biased_fixed
     (hepsilon : proposition83Threshold m (distortionRank sigma) sigma <
       epsilon) :
     ∃ a : Fin (distortionRank sigma) → EuclideanSpace ℝ (Fin m),
-      ∃ b : Fin (distortionRank sigma) → ℝ,
+      ∃ _b : Fin (distortionRank sigma) → ℝ,
         ∃ D : GeometricData B a,
           (∀ i, WithLp.ofLp (a i) ∈
             cubeDistortingSet (distortionDelta sigma) K) ∧
@@ -283,7 +283,7 @@ def uniformSharpProductRankBound
 
 theorem initialRank_le_uniformSharpProductRankBound
     {proportionConstant : ℕ}
-    {s : ℕ} {sigma : ℝ} {constant scale : ENNReal}
+    {_s : ℕ} {sigma : ℝ} {constant scale : ENNReal}
     (X : RankedBodyPresentation A)
     {a : Fin (distortionRank sigma) → EuclideanSpace ℝ (Fin X.1)}
     {D : GeometricData (normalizedEuclideanBody X) a}
@@ -302,7 +302,7 @@ end
 
 end Erdos186.CFP.Bilu.Section9UniformPresentationReplacement
 
-#print axioms
-  Erdos186.CFP.Bilu.Section9UniformPresentationReplacement.exists_coveredNormalizedReplacement_of_presentation_fixed
-#print axioms
-  Erdos186.CFP.Bilu.Section9UniformPresentationReplacement.initialRank_le_uniformSharpProductRankBound
+open Erdos186.CFP.Bilu.Section9UniformPresentationReplacement in
+#print axioms exists_coveredNormalizedReplacement_of_presentation_fixed
+open Erdos186.CFP.Bilu.Section9UniformPresentationReplacement in
+#print axioms initialRank_le_uniformSharpProductRankBound

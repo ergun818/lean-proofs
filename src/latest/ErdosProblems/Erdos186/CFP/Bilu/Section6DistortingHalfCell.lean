@@ -91,7 +91,7 @@ theorem lowerHalfIndices_add_half {ι : Type*} [Fintype ι]
       Finset.univ \ lowerHalfIndices y b := by
   ext i
   simp only [mem_lowerHalfIndices, Finset.mem_sdiff, Finset.mem_univ, true_and]
-  convert fract_sub_half_lt_half_iff (y i - b) using 1 <;> ring_nf
+  convert fract_sub_half_lt_half_iff (y i - b) using 1; ring_nf
 
 theorem card_lowerHalfIndices_add_half {ι : Type*} [Fintype ι]
     [DecidableEq ι] (y : ι → ℝ) (b : ℝ) :
@@ -153,7 +153,7 @@ def phaseDistribution {ι : Type*} [Fintype ι]
   ∑ i, if Int.fract (y i) < x then 1 else 0
 
 theorem phaseDistribution_eq_card {ι : Type*} [Fintype ι]
-    [DecidableEq ι] (y : ι → ℝ) (x : ℝ) :
+    (y : ι → ℝ) (x : ℝ) :
     phaseDistribution y x =
       ((Finset.univ.filter fun i ↦ Int.fract (y i) < x).card : ℝ) := by
   classical
@@ -284,7 +284,7 @@ theorem cosSum_eq_distributionIntegral {ι : Type*} [Fintype ι]
         simp [Set.indicator, hx]
     rw [heq]
     exact hindicator
-  have hsum := intervalIntegral.integral_finset_sum
+  have hsum := intervalIntegral.integral_finsetSum
     (s := Finset.univ)
     (f := fun i x ↦
       (if Int.fract (y i) < x then 1 else 0) *
@@ -409,7 +409,7 @@ theorem distributionIntegral_eq_neg_lowerHalfIntegral
             (fun x ↦ Real.sin (2 * Real.pi * (x + 1 / 2))) := by
         funext x
         by_cases hx : Int.fract (y i) < x + 1 / 2 <;>
-          simp [Set.indicator, hx]
+          simp [Set.indicator]
       rw [heq]
       exact hindicator
     have hsum : IntervalIntegrable
@@ -448,7 +448,7 @@ theorem distributionIntegral_eq_neg_lowerHalfIntegral
     have hx' : x ∈ Set.Icc (0 : ℝ) (1 / 2) := by simpa using hx
     have hsin : Real.sin (2 * Real.pi * (x + 1 / 2)) =
         -Real.sin (2 * Real.pi * x) := by
-      convert Real.sin_add_pi (2 * Real.pi * x) using 1 <;> ring_nf
+      convert Real.sin_add_pi (2 * Real.pi * x) using 1; ring_nf
     have hcount := phaseDistribution_add_half_sub y x hx'.1 hx'.2
     dsimp only [f]
     rw [hsin]
@@ -511,7 +511,7 @@ theorem lowerHalfCard_mul_sin_intervalIntegrable
       (if Int.fract (y i - x) < 1 / 2 then 1 else 0) *
         Real.sin (2 * Real.pi * x)
     simp only [fract_sub_lt_half_iff_of_mem_firstHalf (y i) x hx'.1 hx'.2]
-    simp only [S, Set.indicator, Set.mem_inter_iff, Set.mem_setOf_eq]
+    simp only [S, Set.indicator, Set.mem_inter_iff, Set.mem_ofPred_eq]
     by_cases hmem : x ≤ Int.fract (y i) ∧
         Int.fract (y i) < x + 1 / 2 <;> simp [hmem]
   have hsum : IntervalIntegrable
@@ -616,7 +616,7 @@ theorem exists_lowerHalf_of_cosSum
       (1 + delta) / 2 * Fintype.card ι <
         (lowerHalfIndices y b).card := by
   by_contra hnone
-  push_neg at hnone
+  push Not at hnone
   have hintegral := lowerHalfIntegral_ge_of_card_upper y delta hnone
   have hdistIntegral := distributionIntegral_eq_neg_lowerHalfIntegral y
   have hcos := cosSum_eq_distributionIntegral y
@@ -716,7 +716,6 @@ theorem exists_lowerHalf_of_exponentialSum
   have hsets : lowerHalfIndices y' b = lowerHalfIndices y (b + theta) := by
     ext i
     simp only [mem_lowerHalfIndices, y']
-    congr 2
     ring_nf
   rwa [← hsets]
 
@@ -813,7 +812,7 @@ theorem exists_offsets_biased_halfCells_of_mem_cubeDistortingSet
     ((K.filter fun x ↦
       0 ≤ Int.fract (phase a b x i) ∧
         Int.fract (phase a b x i) < 1 / 2).card : ℝ)
-  convert hb i using 1 <;> rfl
+  convert hb i using 1; rfl
 
 end
 

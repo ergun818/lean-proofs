@@ -24,9 +24,9 @@ theorem exists_centeredScaledActiveProjectedPhysicalDensityTargetCertificateCons
       ∀ {W B A : Finset ℤ}
         (P : BoundingBox.BoundingGAP W d)
         (hPproper : P.progression.Proper)
-        (hPnondegenerate : P.progression.Nondegenerate)
-        (hBW : B ⊆ W) (hAB : A ⊆ B)
-        (hzeroW : 0 ∈ W) (hzeroB : 0 ∈ B),
+        (_hPnondegenerate : P.progression.Nondegenerate)
+        (_hBW : B ⊆ W) (_hAB : A ⊆ B)
+        (hzeroW : 0 ∈ W) (_hzeroB : 0 ∈ B),
         ∀ {q cap target sourceScale s D block : ℕ}
           (c : {a // a ∈ A} → Fin (q + 1))
           (run : ∀ i, Greedy.PhysicalTargetRun
@@ -127,5 +127,5 @@ end
 
 end Erdos186.CFP
 
-#print axioms
-  Erdos186.CFP.RandomPartition.exists_centeredScaledActiveProjectedPhysicalDensityTargetCertificateConstants
+open Erdos186.CFP.RandomPartition in
+#print axioms exists_centeredScaledActiveProjectedPhysicalDensityTargetCertificateConstants

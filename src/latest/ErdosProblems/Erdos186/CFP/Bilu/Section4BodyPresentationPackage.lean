@@ -50,7 +50,7 @@ def uniformReducedOuterDecayPackageOfBodyPresentations
     (hvolumeConstant : 0 < volumeConstant)
     (hexponent : 0 < exponent)
     (hcube : 2 ^ cardinalityThreshold ≤ volumeConstant)
-    (hdecay : ∀ (A : Finset ℤ) (hA : A.Nonempty),
+    (hdecay : ∀ (A : Finset ℤ) (_hA : A.Nonempty),
       ((twoA A).card : ℝ) ≤
           Real.rpow 2 ((d : ℝ) + 1 - delta) * A.card →
       cardinalityThreshold < A.card →
@@ -89,5 +89,5 @@ end
 
 end Erdos186.CFP.Bilu.Section4BodyPresentationPackage
 
-#print axioms
-  Erdos186.CFP.Bilu.Section4BodyPresentationPackage.uniformReducedOuterDecayPackageOfBodyPresentations
+open Erdos186.CFP.Bilu.Section4BodyPresentationPackage in
+#print axioms uniformReducedOuterDecayPackageOfBodyPresentations

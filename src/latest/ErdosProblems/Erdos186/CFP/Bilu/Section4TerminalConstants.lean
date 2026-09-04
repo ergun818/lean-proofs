@@ -163,9 +163,9 @@ end Erdos186.CFP.Bilu.Section4TerminalConstants
 
 #print axioms
   Erdos186.CFP.Bilu.Section4TerminalConstants.terminalVolumeConstant_pos
-#print axioms
-  Erdos186.CFP.Bilu.Section4TerminalConstants.two_mul_uniformMahlerOuterVolumeConstant_le_terminalVolumeConstant
-#print axioms
-  Erdos186.CFP.Bilu.Section4TerminalConstants.uniformTerminalScale_mul_two_pow_le_terminalVolumeConstant_mul
-#print axioms
-  Erdos186.CFP.Bilu.Section4TerminalConstants.uniformTerminalScale_mul_rawConstant_mul_le_terminalVolumeConstant_mul
+open Erdos186.CFP.Bilu.Section4TerminalConstants in
+#print axioms two_mul_uniformMahlerOuterVolumeConstant_le_terminalVolumeConstant
+open Erdos186.CFP.Bilu.Section4TerminalConstants in
+#print axioms uniformTerminalScale_mul_two_pow_le_terminalVolumeConstant_mul
+open Erdos186.CFP.Bilu.Section4TerminalConstants in
+#print axioms uniformTerminalScale_mul_rawConstant_mul_le_terminalVolumeConstant_mul

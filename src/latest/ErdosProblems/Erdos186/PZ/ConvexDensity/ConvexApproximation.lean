@@ -59,7 +59,7 @@ theorem pzLineIndex_add_axis {n m : ℕ} (i : Fin n)
   · subst j
     simp [pzGridPoint, pzLineIndex]
     ring
-  · simp [pzGridPoint, pzLineIndex, Pi.single_apply, h]
+  · simp [pzGridPoint, pzLineIndex, h]
 
 theorem pzFinGridPoint_mem_cell {n m : ℕ} (hm : 0 < m)
     (v : Fin n → Fin m) : pzFinGridPoint v ∈ pzGridCell v := by
@@ -68,7 +68,7 @@ theorem pzFinGridPoint_mem_cell {n m : ℕ} (hm : 0 < m)
   · intro i
     exact le_add_of_nonneg_right (one_div_nonneg.mpr (by positivity))
 
-theorem pzGridCell_coord {n m : ℕ} (hm : 0 < m)
+theorem pzGridCell_coord {n m : ℕ} (_hm : 0 < m)
     {v : Fin n → Fin m} {x : Fin n → ℝ} (hx : x ∈ pzGridCell v) (i : Fin n) :
     0 ≤ x i - pzFinGridPoint v i ∧
       x i - pzFinGridPoint v i ≤ 1 / (m : ℝ) := by
@@ -98,7 +98,7 @@ theorem mem_interior_pzExpandedBox_of_bounds {n : ℕ} {c : ℝ}
   intro i _hi
   simpa only [interior_Icc, Set.mem_Ioo] using hx i
 
-theorem pzGridPoint_bounded_interior {n m K : ℕ} (hm : 0 < m)
+theorem pzGridPoint_bounded_interior {n m _K : ℕ} (hm : 0 < m)
     {c : ℝ} (hc : 2 * ((n : ℝ) + 1) / (m : ℝ) < c)
     (i : Fin n) (t : pzTransverseKey (m := m) i) (a : ℕ)
     (ha : a ≤ m + n) :
@@ -158,7 +158,7 @@ theorem pzFinGridPoint_axis_interior {n m : ℕ} (hm : 0 < m)
   have ha : (v i : ℕ) + (n + 1) ≤ m + n := by
     have := (v i).isLt
     omega
-  have hmem := pzGridPoint_bounded_interior (K := 0) hm hc i t
+  have hmem := pzGridPoint_bounded_interior (_K := 0) hm hc i t
     ((v i : ℕ) + (n + 1)) ha
   have hb : pzGridPoint m (pzLineIndex i t (v i)) = pzFinGridPoint v := by
     rw [pzLineIndex_transverse]
@@ -224,9 +224,9 @@ theorem pzGridPoint_halfShift_mem {n m : ℕ} (hm : 0 < m)
     have hx := pzGridPoint_bounded_coord hm i t a ha j
     by_cases hji : j = i
     · subst j
-      simp only [Pi.sub_apply, Pi.smul_apply, Pi.single_eq_same, smul_eq_mul, mul_one]
+      simp only [Pi.single_eq_same, mul_one]
       constructor <;> nlinarith [hx.1, hx.2]
-    · simp [Pi.single_apply, hji]
+    · simp [hji]
       constructor <;> nlinarith [hx.1, hx.2]
   have hplusCoord (j : Fin n) :
       -c ≤ pzGridPoint m (pzLineIndex i t a) j +
@@ -236,9 +236,9 @@ theorem pzGridPoint_halfShift_mem {n m : ℕ} (hm : 0 < m)
     have hx := pzGridPoint_bounded_coord hm i t a ha j
     by_cases hji : j = i
     · subst j
-      simp only [Pi.add_apply, Pi.smul_apply, Pi.single_eq_same, smul_eq_mul, mul_one]
+      simp only [Pi.single_eq_same, mul_one]
       constructor <;> nlinarith [hx.1, hx.2]
-    · simp [Pi.single_apply, hji]
+    · simp [hji]
       constructor <;> nlinarith [hx.1, hx.2]
   exact ⟨⟨fun j ↦ by simpa using (hminusCoord j).1,
       fun j ↦ by simpa using (hminusCoord j).2⟩,
@@ -322,7 +322,7 @@ theorem exists_gridCell_tangentAffine_approximation {n m : ℕ}
       intro hg
       apply hgood
       exact ⟨v, hv, p, hsupp, hg⟩
-    push_neg at hnotGood
+    push Not at hnotGood
     obtain ⟨y, hycell, hybad⟩ := hnotGood
     refine ⟨y, hycell, ?_⟩
     have hsupportY := hsupp y (interior_subset (hcellInt v hycell))
@@ -409,7 +409,7 @@ theorem exists_gridCell_tangentAffine_approximation {n m : ℕ}
   let g : ℕ → ℝ := fun a ↦ P (line a) (Pi.single i 1)
   let Delta := delta / (((n : ℝ) + 1) / (m : ℝ))
   have hlineInt (a : ℕ) : line a ∈ interior s := by
-    exact pzGridPoint_bounded_interior (K := 0) hm hc i tr (min a K)
+    exact pzGridPoint_bounded_interior (_K := 0) hm hc i tr (min a K)
       (by simp [K])
   have hgmono : Monotone g := by
     intro a b hab
@@ -484,10 +484,10 @@ theorem exists_gridCell_tangentAffine_approximation {n m : ℕ}
     constructor
     · have := hb.1
       dsimp [g]
-      convert this using 1 <;> field_simp [hcpos.ne']
+      convert this using 1; field_simp [hcpos.ne']
     · have := hb.2
       dsimp [g]
-      convert this using 1 <;> field_simp [hcpos.ne']
+      convert this using 1; field_simp [hcpos.ne']
   have hlower (a : ℕ) (ha : a ∈ positions) : -2 / c ≤ g a := by
     obtain ⟨v, _hvJ, rfl⟩ := Finset.mem_image.mp ha
     exact (hgBound (v i) (by dsimp [K]; omega)).1
@@ -501,7 +501,7 @@ theorem exists_gridCell_tangentAffine_approximation {n m : ℕ}
   have hosc := card_mul_jump_le_oscillation hqnat positions hpositions r
     g Delta (-2 / c) (2 / c) hresidue hgmono hjump hlower hupper
   have hosc' : (positions.card : ℝ) * Delta ≤ 4 / c := by
-    convert hosc using 1 <;> field_simp [hcpos.ne'] <;> ring
+    convert hosc using 1; field_simp [hcpos.ne']; ring
   have hcountNat : I.card ≤
       (n * (m ^ (n - 1) * (n + 1))) * positions.card := by
     calc

@@ -205,7 +205,7 @@ theorem exists_centeredActivePopulatedDyadicCertificateConstants
   have hobstacles := canonicalObstaclePolynomialBound_centered
     hn hDn hBW hzeroW hinterval hproper hrank
   obtain ⟨c, hpopulated, hstableColor, hspan⟩ :=
-    exists_strictlyPopulated_eraseZero_coloring_stronglyStableFor_with_commonSpan_of_polynomial_bound_additive
+    exists_strictlyPopulated_eraseZero_coloring_of_polynomial_bound_additive
       hstable
       (fun e he ↦ Stability.centeredMinimalIdentificationFamily_zero
         hproper e)
@@ -316,7 +316,7 @@ theorem exists_centeredActivePopulatedDyadicCertificateConstants
         hglobalTarget
     dsimp only [cDen, rankFlexiblePhysicalDensityDenominator,
       rankFlexiblePhysicalComparisonCoefficient]
-    convert hvolume using 1 <;> ring
+    convert hvolume using 1; ring
   let Pfull := BoundingBox.dBoundingBox W d hd
   let Pactive := Pfull.activeDimensions
   have hactivePos : 0 < Pfull.progression.activeRank :=

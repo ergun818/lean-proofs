@@ -94,7 +94,7 @@ the number of removed generators times the coordinate width. -/
 theorem abs_zonotopeCenter_sub_le_card_sdiff_mul
     {d : ℕ} {A B : Finset (LatticePoint d)}
     (hBA : B ⊆ A) (q : LatticePoint d → ℝ)
-    {width : ℝ} (hwidth : 0 ≤ width)
+    {width : ℝ} (_hwidth : 0 ≤ width)
     (hq : ∀ x ∈ A, 0 ≤ q x ∧ q x ≤ (1 : ℝ) / 2)
     (hbound : ∀ x ∈ A, ∀ i, |(x i : ℝ)| ≤ width)
     (i : Fin d) :

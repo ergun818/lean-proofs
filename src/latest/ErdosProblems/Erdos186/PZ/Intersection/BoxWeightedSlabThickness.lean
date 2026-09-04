@@ -33,7 +33,7 @@ theorem apply_le_coordinateBoxSupport {d : ℕ}
     rw [Finset.sum_apply, Finset.sum_eq_single j]
     · simp
     · intro i _hi hij
-      simp [Pi.single_apply, hij]
+      simp [hij]
     · simp
   calc
     f y ≤ |f y| := le_abs_self _

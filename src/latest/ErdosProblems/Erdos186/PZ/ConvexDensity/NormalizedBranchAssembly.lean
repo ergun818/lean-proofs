@@ -89,8 +89,8 @@ theorem densityExponent_eq_alpha_add (d : ℕ) (epsilon : ℝ) :
 
 theorem half_le_relativeGraphOccupancy_mul
     {n m capCard Kabs L cells : ℕ}
-    (hm : 0 < m) (hcap : 0 < capCard) (hK : 0 < Kabs)
-    (hL : 0 < L) (hcells : cells ≤ m ^ n)
+    (hm : 0 < m) (hcap : 0 < capCard) (_hK : 0 < Kabs)
+    (_hL : 0 < L) (hcells : cells ≤ m ^ n)
     (hmass : capCard ≤ 2 * L * Kabs * cells) :
     (1 / 2 : ℝ) ≤ relativeGraphOccupancy n m capCard Kabs * L := by
   have hmR : (0 : ℝ) < (m : ℝ) ^ n := by positivity
@@ -230,7 +230,7 @@ theorem convexDensityOutput_of_normalizedGraphSlab
     {S : Finset {k // k ∈ J₀}}
     {witness : {k // k ∈ J₀} → EuclideanPoint (n + 1)}
     {W : Set (EuclideanPoint n × ℝ)}
-    (hn : 0 < n) (hq : 0 < q) (houter : 0 < outer)
+    (_hn : 0 < n) (hq : 0 < q) (houter : 0 < outer)
     (center direction : EuclideanPoint (n + 1))
     (hEta : eta ∈ Set.Icc delta (delta ^ tau epsilon))
     (heta : 0 ≤ eta)

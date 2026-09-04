@@ -356,7 +356,7 @@ theorem branchSavingExponents_pos {d : ℕ} {epsilon : ℝ}
         0 < epsilon / 10 *
           (((d : ℝ) + 2) / ((d : ℝ) + 1) + epsilon * ((d : ℝ) - 1)) := by
       exact mul_pos (by positivity) (add_pos hfrac (mul_pos hepsilon hD))
-    convert hsimple using 1 <;> field_simp
+    convert hsimple using 1; field_simp
     all_goals ring
   constructor
   · have hD0 : 0 ≤ (d : ℝ) - 2 := by linarith
@@ -371,7 +371,7 @@ theorem branchSavingExponents_pos {d : ℕ} {epsilon : ℝ}
       exact add_pos_of_nonneg_of_pos
         (mul_nonneg (by positivity) hD0)
         (mul_pos (by positivity) hdiff)
-    convert hsimple using 1 <;> field_simp
+    convert hsimple using 1; field_simp
     all_goals ring
   constructor
   · have hD0 : 0 ≤ (d : ℝ) - 2 := by linarith
@@ -381,7 +381,7 @@ theorem branchSavingExponents_pos {d : ℕ} {epsilon : ℝ}
       exact add_pos_of_nonneg_of_pos
         (mul_nonneg (by positivity) hD0)
         (mul_pos (by positivity) (by linarith))
-    convert hsimple using 1 <;> field_simp
+    convert hsimple using 1; field_simp
     all_goals ring
   constructor <;> field_simp <;> nlinarith
 

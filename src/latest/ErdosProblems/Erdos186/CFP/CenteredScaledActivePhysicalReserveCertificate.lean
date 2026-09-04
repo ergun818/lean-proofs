@@ -57,8 +57,8 @@ theorem exists_centeredScaledActivePhysicalReserveCertificateConstants
       ∀ {W B : Finset ℤ}
         (P : BoundingBox.BoundingGAP W d)
         (hPproper : P.progression.Proper)
-        (hPnondegenerate : P.progression.Nondegenerate)
-        (hBW : B ⊆ W) (hzeroW : 0 ∈ W) (hzeroB : 0 ∈ B),
+        (_hPnondegenerate : P.progression.Nondegenerate)
+        (_hBW : B ⊆ W) (hzeroW : 0 ∈ W) (_hzeroB : 0 ∈ B),
         ∀ {q sourceScale s D block : ℕ}
           (selected completed : Fin (q + 1) → Finset ℤ),
           denseEll ≤ q + 1 →

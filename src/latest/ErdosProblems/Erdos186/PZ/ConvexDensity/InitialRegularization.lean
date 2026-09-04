@@ -62,7 +62,7 @@ theorem card_lt_initialOccupancyCutoff_mul_two_pow_dyadicLevelCount
           ring
         _ ≤ (initialOccupancyCutoff delta n : ℝ) *
             ((2 : ℝ) ^ (Nat.ceil x : ℕ) * 4) := by
-          gcongr <;> positivity
+          gcongr
     linarith
   have hpowNat : 2 ^ (dyadicLevelCount delta + 1) =
       2 ^ (Nat.ceil x) * 4 := by

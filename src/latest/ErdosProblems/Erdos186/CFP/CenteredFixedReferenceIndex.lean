@@ -32,7 +32,7 @@ theorem card_centeredSubsetCoordinateGeneratorIteratedSumset_le_dilate_volume
     (hzeroA : 0 ∈ A)
     (hraw : ∀ z (hz : z ∈ A), raw z =
       P.identificationMap hproper ⟨z, hAW hz⟩)
-    (hcentered : ∀ z (hz : z ∈ A), centered z = raw z - raw 0)
+    (hcentered : ∀ z (_hz : z ∈ A), centered z = raw z - raw 0)
     (k : ℕ) :
     (constantIteratedSumset (coordinateGeneratorFinset centered A) k).card ≤
       (P.progression.dilate k).volume := by
@@ -84,8 +84,8 @@ theorem card_centeredSubsetCoordinateGeneratorIteratedSumset_le_dilate_volume
       exact hfa i
     have hshiftEq : shift x = ∑ i, g i := by
       funext j
-      simp only [shift, hxsum, g, Finset.sum_apply, Pi.add_apply,
-        Pi.smul_apply, nsmul_eq_mul, hcentered (a _) (ha _), Pi.sub_apply]
+      simp only [shift, hxsum, g, Finset.sum_apply, Pi.add_apply, nsmul_eq_mul,
+        hcentered (a _) (ha _), Pi.sub_apply]
       simp
     rw [hshiftEq]
     exact hsumBox
@@ -228,5 +228,5 @@ end
 
 end Erdos186.CFP
 
-#print axioms
-  Erdos186.CFP.Preprocessing.HApproximation.fixedMinimalReference_centered_relIndex_general_ne_zero_and_le
+open Erdos186.CFP.Preprocessing.HApproximation in
+#print axioms fixedMinimalReference_centered_relIndex_general_ne_zero_and_le

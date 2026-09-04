@@ -87,7 +87,7 @@ displayed lower bound on `last` is the finite version of taking `n`
 sufficiently large. -/
 theorem terminal_card_sq_lt_of_source_horizon
     {A : Finset ℤ} {n h horizonFactor D first last : ℕ}
-    (hzero : 0 ∈ A)
+    (_hzero : 0 ∈ A)
     (hA : A ⊆ Finset.Icc (0 : ℤ) ((n : ℤ) - 1))
     (horizonFactor_pos : 0 < horizonFactor)
     (hD : 2 ≤ D)
@@ -344,7 +344,7 @@ def PreprocessingHApproximationArgument
   ∀ {W : Finset ℤ}, W ⊆ A → 0 ∈ W →
     Stability.WeaklyStableMinimalFor W (2 * stableBudget) maxRank n →
     ∃ (relevant : Finset ℕ)
-      (hproper : Stability.RelevantBoxesProper W relevant)
+      (_hproper : Stability.RelevantBoxesProper W relevant)
       (hAt : {d // d ∈ relevant} → ℕ),
       (∀ d : {d // d ∈ relevant},
         Nonempty
@@ -362,7 +362,7 @@ def PreprocessingHApproximationArgument
                 (4 * scaleDen) ^ maxRank) + 1) →
         0 ∈ B → ∀ d : {d // d ∈ relevant},
           ∃ e : ℕ, 0 < e ∧ e ≤ maxRank ∧
-            ∃ V : HApproximation B (hAt d) e scaleNum scaleDen,
+            ∃ _V : HApproximation B (hAt d) e scaleNum scaleDen,
               (2 * scaleDen) ^ e * (hAt d + 1) ^ (e - 1) <
                 (scaleNum * hAt d) ^ e) ∧
       (stableBudget / C0) *
@@ -421,7 +421,7 @@ theorem preprocessingHApproximationArgument_of_uniform_source
           (HApproximation S q rank 1
             (preprocessingScaleDen propernessDenominator)))
     {A : Finset ℤ} {n h last stableBudget : ℕ}
-    (hzero : 0 ∈ A)
+    (_hzero : 0 ∈ A)
     (hA : A ⊆ Finset.Icc (0 : ℤ) ((n : ℤ) - 1))
     (hh : h = horizonFactor * 2 ^ last)
     (hhle : h ≤ n)

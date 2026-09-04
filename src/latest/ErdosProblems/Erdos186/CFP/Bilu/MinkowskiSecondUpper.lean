@@ -117,8 +117,7 @@ theorem strictShort_mem_span_preceding {n : ℕ}
               exact hallLI
             · intro j
               refine Fin.lastCases ?_ (fun k ↦ ?_) j
-              · simpa [v, r] using
-                  le_max_right (successiveMinimum p i.castSucc) (p (integralEmbed y))
+              · simp [v, r]
               · have hk : Fin.castLE i.succ.isLt.le k ≤ i.castSucc := by
                   exact Fin.mk_le_mk.mpr (Nat.lt_succ_iff.mp k.isLt)
                 rw [show v k.castSucc = x (Fin.castLE i.succ.isLt.le k) by
@@ -168,7 +167,7 @@ theorem exists_prefixBasis_strictShort_repr_zero {n : ℕ}
     have hset : Set.Iic ip = Set.Iio i := by
       ext k
       simp only [Set.mem_Iic, Set.mem_Iio, Fin.le_iff_val_le_val,
-        Fin.lt_iff_val_lt_val, ip]
+        Fin.lt_def, ip]
       omega
     have hymem : y ∈ Erdos186.CFP.Bilu.SaturatedFlag.realPrefixLattice x ip := by
       rw [Erdos186.CFP.Bilu.SaturatedFlag.mem_realPrefixLattice]
@@ -190,13 +189,13 @@ theorem exists_prefixBasis_strictShort_repr_zero {n : ℕ}
 noncomputable def dyadicFloor (r : ℝ) : ℝ :=
   (2 : ℝ) ^ (Int.log 2 r)
 
-theorem dyadicFloor_pos {r : ℝ} (hr : 0 < r) : 0 < dyadicFloor r := by
+theorem dyadicFloor_pos {r : ℝ} (_hr : 0 < r) : 0 < dyadicFloor r := by
   exact zpow_pos (by norm_num) _
 
 theorem dyadicFloor_le {r : ℝ} (hr : 0 < r) : dyadicFloor r ≤ r := by
   exact Int.zpow_log_le_self (R := ℝ) (by norm_num : 1 < (2 : ℕ)) hr
 
-theorem half_lt_dyadicFloor {r : ℝ} (hr : 0 < r) : r / 2 < dyadicFloor r := by
+theorem half_lt_dyadicFloor {r : ℝ} (_hr : 0 < r) : r / 2 < dyadicFloor r := by
   have h := Int.lt_zpow_succ_log_self (R := ℝ) (b := 2)
     (by norm_num : 1 < (2 : ℕ)) r
   calc
@@ -275,7 +274,7 @@ theorem abs_det_integralBasisMatrix {n : ℕ}
         · subst col
           simp [standardIntegralPoint]
         · have h' : col ≠ row := Ne.symm h
-          simp [standardIntegralPoint, h, h']
+          simp [standardIntegralPoint, h]
   have hdetmul : A.det * R.det = 1 := by
     rw [← Matrix.det_mul, hAR, Matrix.det_one]
   have hdetunit : IsUnit A.det := by

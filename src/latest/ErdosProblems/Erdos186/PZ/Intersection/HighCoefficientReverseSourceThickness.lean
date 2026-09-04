@@ -33,7 +33,7 @@ theorem exists_sourceReverseZonotopeThicknessConstants
     {ambient : ℕ} {A : Finset (LatticePoint ambient)}
     (hA : selector.Eligible A)
     (hd : 0 < (selector.chosen A hA).dimension) :
-    ∃ factorBound : ℕ, ∃ constant : ℝ, 1 ≤ constant ∧
+    ∃ _factorBound : ℕ, ∃ constant : ℝ, 1 ≤ constant ∧
       ∀ {delta gamma mu theta scale radius t : ℝ}
         {a₀ : realImage (selector.chosen A hA).identifiedCore}
         {c : realImage (selector.chosen A hA).identifiedCore → ℝ}

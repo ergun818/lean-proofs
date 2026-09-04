@@ -321,4 +321,5 @@ end Presentation
 
 end Erdos186.CFP.Bilu.SubspaceLattice
 
-#print axioms Erdos186.CFP.Bilu.SubspaceLattice.Presentation.exists_integral_normal_abs_le_integralPoints_covolume
+open Erdos186.CFP.Bilu.SubspaceLattice.Presentation in
+#print axioms exists_integral_normal_abs_le_integralPoints_covolume

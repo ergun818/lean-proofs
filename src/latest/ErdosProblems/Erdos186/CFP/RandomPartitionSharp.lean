@@ -115,7 +115,7 @@ theorem coloringWeight_eq {q : ℕ} (T : Finset X) (i : Fin (q + 1))
       T.card - colorHits T i c := by
     rw [colorHits]
     omega
-  simpa only [Finset.sum_boole, mul_one, hexp]
+  simp only [mul_one, hexp]
 
 theorem pow_card_sub_le_coloringWeight_of_few {q t : ℕ}
     (T : Finset X) (i : Fin (q + 1))
@@ -254,6 +254,7 @@ private noncomputable def badFewColorings {q t : ℕ}
     (Finset.univ : Finset (Fin (q + 1))).biUnion fun i ↦
       fewColorColorings (obstacle o) i t
 
+omit [DecidableEq I] in
 private theorem card_badFewColorings_mul_pow_le {q t k : ℕ}
     (obstacle : I → Finset X)
     (hsize : ∀ o, (2 * q + 1) * (t + k) ≤ (obstacle o).card) :
@@ -296,6 +297,7 @@ private theorem card_badFewColorings_mul_pow_le {q t k : ℕ}
     _ = Fintype.card I * (q + 1) *
           (q + 1) ^ Fintype.card X := by simp [mul_assoc]
 
+omit [DecidableEq I] in
 /-- Additive-capacity finite coloring lemma.  The logarithmic cost `k` is
 added to, rather than multiplied by, the required survivor count `t`. -/
 theorem exists_coloring_robust_on_obstacles_additive {q t k : ℕ}
@@ -358,6 +360,7 @@ section StrongInheritance
 
 variable {W : Type*} [Fintype W] [DecidableEq W]
 
+omit [DecidableEq W] [Fintype W] in
 /-- Deterministic part of full strong-stability inheritance, separated from
 the coloring estimate. -/
 theorem stronglyStableFor_anchoredColorClass_of_robust_obstacles
@@ -386,8 +389,7 @@ theorem stronglyStableFor_anchoredColorClass_of_robust_obstacles
     · exact b.2
   have hweakPart : WeaklyStableFor part box t maxRank differenceBound := by
     refine ⟨by simp [part, anchoredColorClass], ?_⟩
-    intro B hBpart hlarge hzeroB d hd hdRank P hsteps hvolume
-    intro hcontained
+    intro B hBpart hlarge hzeroB d hd hdRank P hsteps hvolume hcontained
     have hzeroP : integerPoint 0 ∈ P.carrier :=
       hcontained (integerPoint_mem_integerPoints_iff.mpr hzeroB)
     obtain ⟨w, hw⟩ := family.covers hd hdRank P hsteps hvolume hzeroP
@@ -478,6 +480,7 @@ theorem stronglyStableFor_anchoredColorClass_of_robust_obstacles
   · rw [← hSA]
     exact generatedSubgroup_mono hmapSB
 
+omit [DecidableEq W] [Fintype W] in
 /-- The distinct-span obstacles also retain the original generated subgroup
 in every relevant coordinate system.  This is recorded separately because
 `StronglyStableFor` only remembers robustness inside the color class, not
@@ -651,5 +654,5 @@ end Erdos186.CFP.RandomPartition
   Erdos186.CFP.RandomPartition.exists_coloring_robust_on_obstacles_additive
 #print axioms
   Erdos186.CFP.RandomPartition.exists_coloring_stronglyStableFor_of_polynomial_bound_additive
-#print axioms
-  Erdos186.CFP.RandomPartition.exists_coloring_stronglyStableFor_with_commonSpan_of_polynomial_bound_additive
+open Erdos186.CFP.RandomPartition in
+#print axioms exists_coloring_stronglyStableFor_with_commonSpan_of_polynomial_bound_additive

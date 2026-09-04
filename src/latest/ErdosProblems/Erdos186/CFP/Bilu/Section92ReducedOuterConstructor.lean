@@ -57,4 +57,5 @@ end
 
 end Erdos186.CFP.Bilu.Section92ReducedOuterConstructor
 
-#print axioms Erdos186.CFP.Bilu.Section92ReducedOuterConstructor.exists_reducedOuterRealization_of_body
+open Erdos186.CFP.Bilu.Section92ReducedOuterConstructor in
+#print axioms exists_reducedOuterRealization_of_body

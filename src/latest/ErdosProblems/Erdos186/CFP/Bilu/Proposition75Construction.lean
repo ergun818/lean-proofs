@@ -163,7 +163,7 @@ theorem exists_large_rpow_residueCell {m r : ℕ}
 unconditional `2n` theorem.  This is the quantitative calculation in
 Section 7.1. -/
 theorem exists_large_lowDoubling_residueCell {m r : ℕ}
-    (hr : 0 < r) (K : Finset (Mahler.IntegralPoint m)) (hK : K.Nonempty)
+    (_hr : 0 < r) (K : Finset (Mahler.IntegralPoint m)) (hK : K.Nonempty)
     (a : Fin r → EuclideanSpace ℝ (Fin m)) (b : Fin r → ℝ)
     (sigma : ℝ) (hsigma : 0 ≤ sigma)
     (hsum : ((sumset K).card : ℝ) ≤ sigma * K.card)
@@ -472,7 +472,7 @@ theorem exists_geometricData_of_proposition83_rpow {m r : ℕ}
 /-- The common expansion parameter `X=C=epsilon^q` in Proposition 8.3 is
 strictly positive in the nondegenerate source range. -/
 theorem proposition83Parameter_pos {m r : ℕ} {sigma epsilon : ℝ}
-    (hsigma : 1 ≤ sigma) (hdim : 0 < 2 * m + r)
+    (hsigma : 1 ≤ sigma) (_hdim : 0 < 2 * m + r)
     (hepsilon : proposition83Threshold m r sigma < epsilon) :
     0 < epsilon ^ proposition83Exponent m r := by
   have hsigma_pos : 0 < sigma := zero_lt_one.trans_le hsigma
@@ -645,4 +645,5 @@ end Erdos186.CFP.Bilu.Proposition75Construction
 #print axioms Erdos186.CFP.Bilu.Proposition75Construction.exists_geometricData_of_proposition83_rpow
 #print axioms Erdos186.CFP.Bilu.Proposition75Construction.case1Branch_of_covolume_ge
 #print axioms Erdos186.CFP.Bilu.Proposition75Construction.proposition75Cases_of_badlyApproximable
-#print axioms Erdos186.CFP.Bilu.Proposition75Construction.proposition75Conclusion_of_badlyApproximable
+open Erdos186.CFP.Bilu.Proposition75Construction in
+#print axioms proposition75Conclusion_of_badlyApproximable

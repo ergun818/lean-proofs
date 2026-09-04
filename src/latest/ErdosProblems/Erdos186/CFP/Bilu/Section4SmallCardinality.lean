@@ -112,7 +112,7 @@ theorem cubeSeminorm_unitBall
       Set.Icc (fun _ ↦ (-1 : ℝ)) (fun _ ↦ (1 : ℝ)) := by
   let : Nonempty (Fin A.card) := Fin.pos_iff_nonempty.mp hA.card_pos
   ext x
-  simp only [Set.mem_setOf_eq, Set.mem_Icc]
+  simp only [Set.mem_ofPred_eq, Set.mem_Icc]
   rw [cubeSeminorm_apply, pi_norm_le_iff_of_nonempty,
     Pi.le_def, Pi.le_def]
   simp only [Real.norm_eq_abs, abs_le, forall_and]

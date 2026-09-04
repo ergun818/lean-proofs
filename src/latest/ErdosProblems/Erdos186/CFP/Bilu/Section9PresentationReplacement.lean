@@ -149,5 +149,5 @@ end
 
 end Erdos186.CFP.Bilu.Section9PresentationReplacement
 
-#print axioms
-  Erdos186.CFP.Bilu.Section9PresentationReplacement.exists_coveredNormalizedReplacement_of_presentation
+open Erdos186.CFP.Bilu.Section9PresentationReplacement in
+#print axioms exists_coveredNormalizedReplacement_of_presentation

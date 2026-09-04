@@ -882,7 +882,7 @@ theorem coordPoint_eq_centeredFirstDimensions_of_remaining_zero
     P.centeredFirstDimensions_coordPoint hP d n]
   funext j
   simp only [CFP.CenteredCertificate.relativePoint]
-  rw [sum_eq_first_add_remaining
+  rw [sum_eq_first_add_remaining (d := d)
     (fun i ↦ hP.relativeCoeff n i * P.steps i j)]
   have htailsum :
       (∑ i : Fin (rank - min rank d),
@@ -929,7 +929,7 @@ theorem centeredFirstDimensions_coordPoint_eq_relativePoint
   funext j
   simp only [coordPoint, centeredFirstDimensions,
     CFP.CenteredCertificate.relativePoint]
-  rw [sum_eq_first_add_remaining
+  rw [sum_eq_first_add_remaining (d := d)
     (fun i ↦ P.centeredFirstRelativeCoeff hP d n i * P.steps i j)]
   have hprefix :
       (∑ i : Fin (min rank d),
@@ -1751,8 +1751,7 @@ theorem carrier_activeDimensions {ambient rank : ℕ}
     funext i
     apply Fin.ext
     by_cases hi : 2 ≤ P.widths i
-    · change (P.activeCoordToFull a i : ℕ) = n i
-      rw [P.activeCoordToFull_activeDirection a ⟨i, hi⟩]
+    · rw [P.activeCoordToFull_activeDirection a ⟨i, hi⟩]
       dsimp only [a]
       have hidx := Equiv.apply_symm_apply P.activeIndex ⟨i, hi⟩
       exact congrArg (fun q : ActiveDirection P ↦ (n q : ℕ)) hidx
@@ -1809,7 +1808,7 @@ theorem dilate_activeDimensions_carrier_subset_dilate
       intro i _hi
       have hsub :
           (⟨i.val, i.property⟩ : ActiveDirection P) = i := Subtype.ext rfl
-      simp only [m, i.property, dite_true, hsub]
+      simp only [m, i.property, dite_true]
     _ = ∑ q : Fin P.activeRank,
         (n q : ℤ) * P.steps (P.activeIndex q) j := by
       symm
@@ -1963,8 +1962,7 @@ theorem image_basisContraction_proper_of_corollary217
     intro i
     have hqxi := ((AxisBox.mem_carrier_iff _).mp hqx) i
     have hqyi := ((AxisBox.mem_carrier_iff _).mp hqy) i
-    simp only [AxisBox.dilate_lower, Pi.zero_apply, AxisBox.dilate_width,
-      add_zero] at hqxi hqyi
+    simp only [AxisBox.dilate_lower, Pi.zero_apply, AxisBox.dilate_width] at hqxi hqyi
     have hqdiff : |qx i - qy i| ≤
         (cert.constant : ℤ) * (Q.widths i - 1 : ℕ) := by
       rw [abs_le]
@@ -2955,7 +2953,7 @@ theorem lemma222BlockApproximation_of_biluPrefix_of_uniformCorollary217
     (W : BiluFreiman.Witness 2 d C
       (multifoldSumset (2 ^ y) A))
     (hP : CenteredCertificate W.progression)
-    (hzero : 0 ∈ A) (hCpos : 0 < C) (hC : C < 2 ^ (y + 1))
+    (hzero : 0 ∈ A) (_hCpos : 0 < C) (hC : C < 2 ^ (y + 1))
     (hprefixProper :
       (W.progression.centeredFirstDimensions hP d).Proper)
     (hprefixVolume :
@@ -2964,7 +2962,7 @@ theorem lemma222BlockApproximation_of_biluPrefix_of_uniformCorollary217
     (hwide : 0 < (W.progression.centeredFirstDimensions hP d).wideRank
       (2 ^ (y + 1)))
     (corollaryConstant widthThreshold : ℕ)
-    (hcorollaryConstant : 0 < corollaryConstant)
+    (_hcorollaryConstant : 0 < corollaryConstant)
     (hcor : ∀ r : ℕ, 0 < r → r ≤ d →
       ∀ (R : AxisBox r) (B : Finset (BoxPoint r)),
         widthThreshold ≤ R.minWidth →

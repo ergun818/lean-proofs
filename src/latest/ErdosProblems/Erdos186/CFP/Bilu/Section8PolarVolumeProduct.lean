@@ -36,7 +36,7 @@ assumption on the original set. -/
 theorem isClosed_euclideanPolar {n : ℕ} (B : Set (Fin n → ℝ)) :
     IsClosed (euclideanPolar B) := by
   change IsClosed {z | ∀ x, x ∈ B → |euclideanPairing x z| ≤ 1}
-  simp only [Set.setOf_forall]
+  simp only [Set.ofPred_forall]
   apply isClosed_iInter
   intro x
   apply isClosed_iInter

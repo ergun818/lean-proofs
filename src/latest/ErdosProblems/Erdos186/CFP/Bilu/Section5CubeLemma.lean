@@ -77,16 +77,19 @@ def tubeCubeConstant : ℕ → ℕ → ℕ
 @[simp] theorem tubeCubeConstant_one (tau : ℕ) :
     tubeCubeConstant 1 tau = 1 := rfl
 
+omit [DecidableEq V] [FiniteDimensional ℝ V] [NormedSpace ℝ V] in
 /-- Reflection about the centre is an involution. -/
 theorem reflect_reflect (center x : V) :
     2 • center - (2 • center - x) = x := by
   module
 
+omit [DecidableEq V] [FiniteDimensional ℝ V] [NormedSpace ℝ V] in
 /-- A symmetric finite set contains the reflection of each of its points. -/
 theorem SymmetricAbout.reflect_mem {S : Finset V} {center x : V}
     (hS : SymmetricAbout S center) (hx : x ∈ S) :
     2 • center - x ∈ S := hS x hx
 
+omit [DecidableEq V] in
 /-- A codimension-one subspace is the kernel of a real functional. -/
 theorem exists_linearMap_ker_eq_of_codim_one (L : Submodule ℝ V)
     (hcodim : finrank ℝ L + 1 = finrank ℝ V) :
@@ -98,8 +101,9 @@ theorem exists_linearMap_ker_eq_of_codim_one (L : Submodule ℝ V)
     LinearEquiv.ofFinrankEq (V ⧸ L) ℝ (by simpa using hquot)
   refine ⟨e.toLinearMap.comp L.mkQ, ?_⟩
   ext x
-  simp [LinearMap.mem_ker, e.injective.eq_iff]
+  simp
 
+omit [DecidableEq V] [FiniteDimensional ℝ V] in
 /-- In codimension one, choose a point whose functional distance from the
 central affine hyperplane is maximal. -/
 theorem exists_max_abs_apply (S : Finset V) (hS : S.Nonempty)
@@ -117,6 +121,7 @@ theorem exists_max_abs_apply (S : Finset V) (hS : S.Nonempty)
       Finset.le_max' values _ (Finset.mem_image.mpr ⟨x, hx, rfl⟩)
     _ = |f (a - center)| := haM.symm
 
+omit [DecidableEq V] in
 /-- The base (`r = 1`) case of Proposition 5.4.  The whole symmetric set
 lies in the tube around the segment joining a farthest point to its
 reflection. -/
@@ -125,6 +130,7 @@ theorem exists_tubeCubeWitness_one
     (hsym : SymmetricAbout S center) (L : Submodule ℝ V)
     (hcodim : finrank ℝ L + 1 = finrank ℝ V) :
     Nonempty (TubeCubeWitness 1 1 S center L) := by
+  classical
   obtain ⟨f, hfker⟩ := exists_linearMap_ker_eq_of_codim_one L hcodim
   obtain ⟨a, haS, hmax⟩ := exists_max_abs_apply S hS center f
   let dirs : Fin 1 → V := fun _ ↦ a - center
@@ -140,7 +146,7 @@ theorem exists_tubeCubeWitness_one
         simp [signVector, hs]
       rw [cubeVertex, cubePoint, hsign]
       simp only [Fin.sum_univ_one, dirs]
-      convert haReflection using 1 <;> module
+      convert haReflection using 1; module
     · have hsign : signVector s = fun _ : Fin 1 ↦ (1 : ℝ) := by
         funext i
         have hi : i = 0 := Subsingleton.elim _ _
@@ -194,21 +200,25 @@ def positivePart (S : Finset V) (center : V) (f : V →ₗ[ℝ] ℝ) : Finset V 
 def negativePart (S : Finset V) (center : V) (f : V →ₗ[ℝ] ℝ) : Finset V :=
   S.filter fun x ↦ f (x - center) < 0
 
+omit [DecidableEq V] [FiniteDimensional ℝ V] in
 @[simp] theorem mem_centralPart {S : Finset V} {center : V}
     {L : Submodule ℝ V} {x : V} :
     x ∈ centralPart S center L ↔ x ∈ S ∧ x - center ∈ L := by
   simp [centralPart]
 
+omit [DecidableEq V] [FiniteDimensional ℝ V] in
 @[simp] theorem mem_positivePart {S : Finset V} {center : V}
     {f : V →ₗ[ℝ] ℝ} {x : V} :
     x ∈ positivePart S center f ↔ x ∈ S ∧ 0 < f (x - center) := by
   simp [positivePart]
 
+omit [DecidableEq V] [FiniteDimensional ℝ V] in
 @[simp] theorem mem_negativePart {S : Finset V} {center : V}
     {f : V →ₗ[ℝ] ℝ} {x : V} :
     x ∈ negativePart S center f ↔ x ∈ S ∧ f (x - center) < 0 := by
   simp [negativePart]
 
+omit [DecidableEq V] [FiniteDimensional ℝ V] in
 /-- A finite collection of vectors outside `L` admits a quotient
 functional which is nonzero on every one of them.  Consequently its pullback
 has kernel containing `L` and no extra point of the prescribed affine
@@ -261,6 +271,7 @@ theorem exists_separating_functional (S : Finset V) (center : V)
   · intro hxL
     exact LinearMap.mem_ker.mp (hfL hxL)
 
+omit [FiniteDimensional ℝ V] in
 /-- Reflection switches the positive and negative half-parts. -/
 theorem image_reflect_positivePart (S : Finset V) (center : V)
     (f : V →ₗ[ℝ] ℝ) (hsym : SymmetricAbout S center) :
@@ -287,10 +298,12 @@ theorem image_reflect_positivePart (S : Finset V) (center : V)
       linarith
     · exact reflect_reflect center y
 
+omit [DecidableEq V] [FiniteDimensional ℝ V] in
 /-- Symmetry makes the two open half-parts equinumerous. -/
 theorem card_positivePart_eq_card_negativePart (S : Finset V) (center : V)
     (f : V →ₗ[ℝ] ℝ) (hsym : SymmetricAbout S center) :
     (positivePart S center f).card = (negativePart S center f).card := by
+  classical
   rw [← image_reflect_positivePart S center f hsym]
   symm
   apply Finset.card_image_of_injOn
@@ -298,6 +311,7 @@ theorem card_positivePart_eq_card_negativePart (S : Finset V) (center : V)
   have h := congrArg (fun z ↦ 2 • center - z) hxy
   simpa [reflect_reflect] using h
 
+omit [DecidableEq V] [FiniteDimensional ℝ V] in
 /-- If a separator has no extra zeros on `S`, the central part and the two
 open half-parts form a disjoint partition. -/
 theorem card_central_add_positive_add_negative (S : Finset V) (center : V)
@@ -305,6 +319,7 @@ theorem card_central_add_positive_add_negative (S : Finset V) (center : V)
     (hexact : ∀ x ∈ S, f (x - center) = 0 ↔ x - center ∈ L) :
     (centralPart S center L).card + (positivePart S center f).card +
       (negativePart S center f).card = S.card := by
+  classical
   let C := centralPart S center L
   let P := positivePart S center f
   let N := negativePart S center f
@@ -348,6 +363,7 @@ theorem card_central_add_positive_add_negative (S : Finset V) (center : V)
         Finset.card_union_of_disjoint hCP]
     _ = S.card := congrArg Finset.card hpartition
 
+omit [DecidableEq V] [FiniteDimensional ℝ V] in
 /-- If fewer than one third of a symmetric set lies in the central plane,
 then each open half contains more than one third of the set.  The natural
 number form avoids division. -/
@@ -357,6 +373,7 @@ theorem card_le_three_mul_card_positivePart (S : Finset V) (center : V)
     (hexact : ∀ x ∈ S, f (x - center) = 0 ↔ x - center ∈ L)
     (hcentral : 3 * (centralPart S center L).card < S.card) :
     S.card ≤ 3 * (positivePart S center f).card := by
+  classical
   have hpartition := card_central_add_positive_add_negative
     S center L f hexact
   have heq := card_positivePart_eq_card_negativePart S center f hsym
@@ -376,6 +393,7 @@ def TubeCubeWitness.mono_constant {r C D : ℕ} {S : Finset V}
   slice_mem_tube := W.slice_mem_tube
   card_le := W.card_le.trans (Nat.mul_le_mul_right W.slice.card hCD)
 
+omit [DecidableEq V] [FiniteDimensional ℝ V] in
 /-- If the central affine copy of `L` already contains one third of `S`,
 a degenerate cube supported in `L` proves Proposition 5.4.  Degenerate
 cubes are explicitly allowed in Bilu's statement. -/
@@ -384,10 +402,11 @@ theorem exists_tubeCubeWitness_of_large_central {r : ℕ} (hr : 0 < r)
     (hsym : SymmetricAbout S center) (L : Submodule ℝ V)
     (hcentral : S.card ≤ 3 * (centralPart S center L).card) :
     Nonempty (TubeCubeWitness r 3 S center L) := by
+  classical
   have hcentralNonempty : (centralPart S center L).Nonempty := by
     by_contra hnone
     rw [Finset.not_nonempty_iff_eq_empty.mp hnone] at hcentral
-    simp at hcentral
+    simp only [Finset.card_empty, mul_zero, Nat.le_zero, Finset.card_eq_zero] at hcentral
     exact hS.ne_empty hcentral
   obtain ⟨a, ha⟩ := hcentralNonempty
   have ha' := mem_centralPart.mp ha
@@ -402,7 +421,7 @@ theorem exists_tubeCubeWitness_of_large_central {r : ℕ} (hr : 0 < r)
     rw [cubeVertex, cubePoint, hsum]
     by_cases hs : s i₀ = 0
     · rw [show signVector s i₀ = -1 by simp [signVector, hs]]
-      convert hsym a ha'.1 using 1 <;> module
+      convert hsym a ha'.1 using 1; module
     · rw [show signVector s i₀ = 1 by
         simp [signVector, hs]]
       simpa using ha'.1
@@ -426,6 +445,7 @@ theorem three_le_tubeCubeConstant_add_two (r tau : ℕ) :
 
 /-! ## The positive-half symmetric subset -/
 
+omit [FiniteDimensional ℝ V] [NormedSpace ℝ V] in
 /-- Pair sumsets are monotone. -/
 theorem pairSumset_mono {A B : Finset V} (hAB : A ⊆ B) :
     Section7FreimanMap.pairSumset A ⊆
@@ -436,6 +456,7 @@ theorem pairSumset_mono {A B : Finset V} (hAB : A ⊆ B) :
   exact Section7FreimanMap.mem_pairSumset B _ |>.mpr
     ⟨x, hAB hx, y, hAB hy, rfl⟩
 
+omit [FiniteDimensional ℝ V] in
 /-- In the non-central branch, Proposition 5.3 supplies a large symmetric
 subset wholly contained in the positive half-space.  This is precisely the
 quantitative input used at the next inductive rank in Proposition 5.4. -/
@@ -456,7 +477,7 @@ theorem exists_positive_symmetric_subset
   have hP : P.Nonempty := by
     by_contra hnone
     rw [Finset.not_nonempty_iff_eq_empty.mp hnone] at hpositive
-    simp at hpositive
+    simp only [Finset.card_empty, mul_zero, Nat.le_zero, Finset.card_eq_zero] at hpositive
     exact hS.ne_empty hpositive
   have hPS : P ⊆ S := fun _ hx ↦ (mem_positivePart.mp hx).1
   have hPdouble :
@@ -474,7 +495,7 @@ theorem exists_positive_symmetric_subset
   have hT : T.Nonempty := by
     by_contra hnone
     rw [Finset.not_nonempty_iff_eq_empty.mp hnone] at hPT
-    simp at hPT
+    simp only [Finset.card_empty, mul_zero, Nat.le_zero, Finset.card_eq_zero] at hPT
     exact hP.ne_empty hPT
   have hTS : T ⊆ S := fun _ hx ↦ hPS (hTP hx)
   have hsym : SymmetricAbout T b₁ := by
@@ -511,6 +532,7 @@ theorem exists_positive_symmetric_subset
     nlinarith [hxP.2, hrefP.2]
   exact ⟨b₁, T, ⟨x, hxT⟩, hTP, hsym, hST, hTdouble, hbpos⟩
 
+omit [DecidableEq V] in
 /-- Enlarging `L` by the new positive direction lowers its codimension by
 one, the dimension transition used in the induction. -/
 theorem finrank_sup_span_add_succ_of_codim
@@ -523,6 +545,7 @@ theorem finrank_sup_span_add_succ_of_codim
 
 /-! ## Folding a lower-dimensional tube -/
 
+omit [DecidableEq V] [FiniteDimensional ℝ V] in
 /-- A linear functional which is positive at every cube vertex is positive
 throughout the closed cube.  This is the elementary convexity estimate
 used in the folding step of Proposition 5.4. -/
@@ -571,6 +594,7 @@ theorem linear_positive_on_cubePoint_of_vertices {r : ℕ}
   rw [hpointFormula]
   linarith
 
+omit [DecidableEq V] [FiniteDimensional ℝ V] in
 /-- The closed cube is centrally symmetric. -/
 theorem cubePoint_reflection {r : ℕ} (center : V) (dirs : Fin r → V)
     (t : Fin r → ℝ) :
@@ -578,6 +602,7 @@ theorem cubePoint_reflection {r : ℕ} (center : V) (dirs : Fin r → V)
   simp only [cubePoint, Pi.neg_apply, neg_smul, Finset.sum_neg_distrib]
   module
 
+omit [DecidableEq V] [FiniteDimensional ℝ V] in
 /-- A vector in `L + span a` can be reduced to `L` by subtracting the
 coefficient detected by a functional which vanishes on `L`. -/
 theorem sub_div_apply_smul_mem_of_mem_sup_span
@@ -602,18 +627,20 @@ def flipPattern {r : ℕ} (s : Fin r → Fin 2) : Fin r → Fin 2 :=
   by_cases hi : s i = 0
   · simp [flipPattern, signVector, hi]
   · have hs1 : s i = 1 := Fin.eq_one_of_ne_zero _ hi
-    simp [flipPattern, signVector, hi, hs1]
+    simp [flipPattern, signVector, hs1]
 
 /-- Add a new leading cube direction. -/
 def extendDirs {r : ℕ} (a : V) (dirs : Fin r → V) : Fin (r + 1) → V :=
   Fin.cons a dirs
 
+omit [DecidableEq V] [FiniteDimensional ℝ V] in
 theorem cubePoint_extend {r : ℕ} (center a : V) (dirs : Fin r → V)
     (t : Fin (r + 1) → ℝ) :
     cubePoint center (extendDirs a dirs) t =
       center + t 0 • a + ∑ i, t i.succ • dirs i := by
   simp [cubePoint, extendDirs, Fin.sum_univ_succ, add_assoc]
 
+omit [DecidableEq V] [FiniteDimensional ℝ V] in
 /-- A positive-leading vertex of the extended cube is a vertex of the
 lower cube. -/
 theorem cubeVertex_extend_zero {r : ℕ} (center b₁ a : V)
@@ -621,11 +648,13 @@ theorem cubeVertex_extend_zero {r : ℕ} (center b₁ a : V)
     (s : Fin (r + 1) → Fin 2) (hs : s 0 ≠ 0) :
     cubeVertex center (extendDirs a dirs) s =
       cubeVertex b₁ dirs (Fin.tail s) := by
+  classical
   rw [cubeVertex, cubePoint_extend, cubeVertex, cubePoint]
   have hs0 : signVector s 0 = 1 := by simp [signVector, hs]
   rw [hs0, one_smul, hb₁]
   congr 1
 
+omit [DecidableEq V] [FiniteDimensional ℝ V] in
 /-- A negative-leading vertex of the extended cube is the reflection,
 about the old centre, of the opposite lower-cube vertex. -/
 theorem cubeVertex_extend_zero_reflection {r : ℕ} (center b₁ a : V)
@@ -633,6 +662,7 @@ theorem cubeVertex_extend_zero_reflection {r : ℕ} (center b₁ a : V)
     (s : Fin (r + 1) → Fin 2) (hs : s 0 = 0) :
     cubeVertex center (extendDirs a dirs) s =
       2 • center - cubeVertex b₁ dirs (flipPattern (Fin.tail s)) := by
+  classical
   rw [cubeVertex, cubePoint_extend, cubeVertex, cubePoint]
   have hs0 : signVector s 0 = -1 := by simp [signVector, hs]
   have hsum :
@@ -645,6 +675,7 @@ theorem cubeVertex_extend_zero_reflection {r : ℕ} (center b₁ a : V)
   rw [hs0, neg_one_smul, hsum, hb₁]
   abel
 
+omit [DecidableEq V] [FiniteDimensional ℝ V] in
 /-- The source's folding construction: a lower-dimensional tube inside a
 positive symmetric subset is folded across the two centres into a tube one
 dimension higher.  The fold is injective because its two branches lie in
@@ -659,6 +690,7 @@ theorem exists_folded_tubeCubeWitness {r C D : ℕ}
     (W : TubeCubeWitness r C T b₁
       (L ⊔ Submodule.span ℝ {a} : Submodule ℝ V)) :
     Nonempty (TubeCubeWitness (r + 1) (D * C) S center L) := by
+  classical
   let coeff : V → (Fin r → ℝ) := fun x ↦
     if hx : x ∈ W.slice then
       (W.slice_mem_tube x hx).choose
@@ -894,7 +926,7 @@ theorem exists_tubeCubeWitness {r : ℕ} (hr : 0 < r)
                 3 * (centralPart S center L).card < S.card := by omega
             have houtside : ∃ x ∈ S, x - center ∉ L := by
               by_contra hnone
-              push_neg at hnone
+              push Not at hnone
               have hcentralEq : centralPart S center L = S := by
                 ext x
                 constructor
@@ -965,7 +997,7 @@ theorem exists_cubeLemmaWitness {n : ℕ} (hn : 0 < n)
   have hT : T.Nonempty := by
     by_contra hnone
     rw [Finset.not_nonempty_iff_eq_empty.mp hnone] at hST
-    simp at hST
+    simp only [Finset.card_empty, mul_zero, Nat.le_zero, Finset.card_eq_zero] at hST
     exact hS.ne_empty hST
   let center : V := (1 / 2 : ℝ) • sumCenter
   have hsymT : SymmetricAbout T center := by

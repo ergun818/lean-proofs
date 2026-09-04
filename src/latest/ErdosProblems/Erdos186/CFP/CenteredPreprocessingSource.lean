@@ -35,7 +35,7 @@ def RetainedDyadicPreprocessingHApproximationArgument
   ∀ {W : Finset ℤ}, W ⊆ A → 0 ∈ W →
     Stability.WeaklyStableMinimalFor W (2 * stableBudget) maxRank n →
     ∃ (relevant : Finset ℕ)
-      (hproper : Stability.RelevantBoxesProper W relevant)
+      (_hproper : Stability.RelevantBoxesProper W relevant)
       (hAt : {d // d ∈ relevant} → ℕ),
       (∀ d : {d // d ∈ relevant},
         Nonempty (HApproximation W (hAt d) d.1 scaleNum scaleDen)) ∧
@@ -52,7 +52,7 @@ def RetainedDyadicPreprocessingHApproximationArgument
                 (4 * scaleDen) ^ maxRank) + 1) →
         0 ∈ B → ∀ d : {d // d ∈ relevant},
           ∃ e : ℕ, 0 < e ∧ e ≤ maxRank ∧
-            ∃ V : HApproximation B (hAt d) e scaleNum scaleDen,
+            ∃ _V : HApproximation B (hAt d) e scaleNum scaleDen,
               (2 * scaleDen) ^ e * (hAt d + 1) ^ (e - 1) <
                 (scaleNum * hAt d) ^ e) ∧
       (stableBudget / C0) *
@@ -132,7 +132,7 @@ theorem retainedDyadicPreprocessingHApproximationArgument_of_uniform_source
           (HApproximation S q rank 1
             (preprocessingScaleDen propernessDenominator)))
     {A : Finset ℤ} {n horizon fold last stableBudget : ℕ}
-    (hzero : 0 ∈ A)
+    (_hzero : 0 ∈ A)
     (hA : A ⊆ Finset.Icc (0 : ℤ) ((n : ℤ) - 1))
     (hhorizon : horizon = horizonFactor * 2 ^ last)
     (hhorizonFold : horizon ≤ fold)
@@ -256,7 +256,7 @@ theorem retainedDyadicPreprocessingHApproximationArgument_of_uniform_source
     have hsmall : W.card ≤ 1 +
         (stableBudget / C0) * (D * Nat.log 2 indexBound + 1) := by
       simp only [AccessibleNontrivial] at haccessible
-      push_neg at haccessible
+      push Not at haccessible
       obtain ⟨B, hBW, hcard, hzeroB, hB⟩ := haccessible
       have hBcard : B.card = 1 := by rw [hB]; simp
       omega

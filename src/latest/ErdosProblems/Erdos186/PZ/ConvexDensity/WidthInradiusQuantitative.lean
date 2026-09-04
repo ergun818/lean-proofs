@@ -47,7 +47,7 @@ private theorem convex_translateConstraint {d : ℕ}
           q • (a • ((z.1 : EuclideanPoint d) - (z.2 : EuclideanPoint d))) := by
     rw [← add_smul, hpq, one_smul]
   rw [hv]
-  convert h using 1 <;> module
+  convert h using 1; module
 
 private theorem compact_translateConstraint {d : ℕ}
     {P : Set (EuclideanPoint d)} (hP : IsCompact P) (a : ℝ) (z : P × P) :
@@ -80,7 +80,7 @@ theorem exists_center_inv_succ_smul_sub_mem {d : ℕ}
     intro I hI
     by_cases hI0 : I = ∅
     · subst I
-      simpa using (Set.univ_nonempty : (Set.univ : Set (EuclideanPoint d)).Nonempty)
+      simp
     obtain ⟨z0, hz0⟩ := I.nonempty_iff_ne_empty.mpr hI0
     let base : EuclideanPoint d := hPne.some
     let n : ℝ := I.card
@@ -90,7 +90,6 @@ theorem exists_center_inv_succ_smul_sub_mem {d : ℕ}
     refine ⟨c, ?_⟩
     rw [Set.mem_iInter₂]
     intro z hz
-    change c ∈ F z
     let point : P × P → EuclideanPoint d := fun t ↦
       if t = z then (z.1 : EuclideanPoint d) else (t.2 : EuclideanPoint d)
     let y : EuclideanPoint d := ∑ t ∈ I, n⁻¹ • point t
@@ -161,7 +160,7 @@ theorem exists_center_inv_succ_smul_sub_mem {d : ℕ}
   refine ⟨c, fun p hp q hq ↦ ?_⟩
   let z : P × P := ⟨⟨p, hp⟩, ⟨q, hq⟩⟩
   have hcz : c ∈ F z := Set.mem_iInter.mp hc z
-  simpa only [F, translateConstraint, a, Set.mem_setOf_eq] using hcz
+  simpa only [F, translateConstraint, a, Set.mem_ofPred_eq] using hcz
 
 /-- A directional width of a compact set is realized by a difference of two
 points of the set. -/
@@ -180,7 +179,7 @@ theorem exists_sub_directionalValue_eq_width {d : ℕ}
 contains the radius-`w` closed ball. -/
 theorem closedBall_zero_subset_sub_of_forall_width {d : ℕ}
     {P : Set (EuclideanPoint d)} (hPconv : Convex ℝ P)
-    (hPcomp : IsCompact P) (hPne : P.Nonempty) {w : ℝ} (hw : 0 ≤ w)
+    (hPcomp : IsCompact P) (hPne : P.Nonempty) {w : ℝ} (_hw : 0 ≤ w)
     (hwidth : ∀ u : EuclideanPoint d, ‖u‖ = 1 →
       w ≤ directionalWidth P u) :
     Metric.closedBall (0 : EuclideanPoint d) w ⊆ P - P := by
@@ -200,7 +199,7 @@ theorem closedBall_zero_subset_sub_of_forall_width {d : ℕ}
     intro hf
     have hzero := hft 0 hzeroD
     rw [hf] at hzero hty
-    simp only [ContinuousLinearMap.zero_apply] at hzero hty
+    simp only [zero_apply] at hzero hty
     linarith
   let v : EuclideanPoint d := (InnerProductSpace.toDual ℝ (EuclideanPoint d)).symm f
   have hvne : v ≠ 0 := by
@@ -352,7 +351,7 @@ theorem exists_closedBall_width_div_succ_subset {d : ℕ}
   dsimp only [z, N] at hmem
   have hcast : ((d + 1 : ℕ) : ℝ) ≠ 0 := by positivity
   rw [smul_smul, inv_mul_cancel₀ hcast, one_smul] at hmem
-  convert hmem using 1 <;> module
+  convert hmem using 1; module
 
 /-- The quantitative inball theorem, packaged for `IsConvexBody`. -/
 theorem IsConvexBody.exists_closedBall_width_div_succ_subset {d : ℕ}

@@ -52,7 +52,7 @@ def familySumset : {ℓ : ℕ} → (Fin ℓ → Finset ℤ) → Finset ℤ
 theorem listSumset_ofFn_eq_familySumset {ℓ : ℕ} (S : Fin ℓ → Finset ℤ) :
     LevMultipleAddition.listSumset (List.ofFn S) = familySumset S := by
   induction ℓ with
-  | zero => simp [familySumset, LevMultipleAddition.listSumset]
+  | zero => simp [familySumset]
   | succ ℓ ih =>
       rw [List.ofFn_succ, LevMultipleAddition.listSumset_cons,
         familySumset_succ, ih]
@@ -228,8 +228,7 @@ theorem exists_monotone_reindex {k : ℕ} (w : Fin k → ℕ) :
   let : Std.Total r := ⟨fun a b ↦ le_total (key a) (key b)⟩
   let l := (Finset.univ : Finset (Fin k)).sort r
   have hlen : l.length = k := by simp [l]
-  have hnodup : l.Nodup := by simpa [l] using
-    (Finset.sort_nodup (Finset.univ : Finset (Fin k)) r)
+  have hnodup : l.Nodup := by simp [l]
   have hall : ∀ i : Fin k, i ∈ l := by intro i; simp [l]
   let e₀ : Fin l.length ≃ Fin k := hnodup.getEquivOfForallMemList l hall
   let c : Fin k ≃ Fin l.length := finCongr hlen.symm
@@ -584,21 +583,21 @@ theorem base_interval_of_growth {k n : ℕ} (hk : 0 < k) (hn : 3 ≤ n)
     (hdiam : ∀ i, n - 1 ≤ diameter (S i) (hS i))
     (hEO :
       diameter (familySumset (evenFamily S))
-          (familySumset_nonempty (fun i ↦ hS _)) ≤
+          (familySumset_nonempty (fun _i ↦ hS _)) ≤
         diameter (familySumset (oddFamily S))
-          (familySumset_nonempty (fun i ↦ hS _)))
+          (familySumset_nonempty (fun _i ↦ hS _)))
     (hgap :
       diameter (familySumset (oddFamily S))
-          (familySumset_nonempty (fun i ↦ hS _)) ≤
+          (familySumset_nonempty (fun _i ↦ hS _)) ≤
         diameter (familySumset (evenFamily S))
-          (familySumset_nonempty (fun i ↦ hS _)) + 2 * k * (n - 1))
+          (familySumset_nonempty (fun _i ↦ hS _)) + 2 * k * (n - 1))
     (hgE :
       diameter (familySumset (evenFamily S))
-          (familySumset_nonempty (fun i ↦ hS _)) + k * (n - 1) + 2 ≤
+          (familySumset_nonempty (fun _i ↦ hS _)) + k * (n - 1) + 2 ≤
         2 * (familySumset (evenFamily S)).card)
     (hgO :
       diameter (familySumset (oddFamily S))
-          (familySumset_nonempty (fun i ↦ hS _)) + k * (n - 1) + 2 ≤
+          (familySumset_nonempty (fun _i ↦ hS _)) + k * (n - 1) + 2 ≤
         2 * (familySumset (oddFamily S)).card) :
     ∃ d : ℤ, Finset.Icc d (d + (2 * k * (n - 1) : ℕ)) ⊆ familySumset S := by
   let E : Fin k → Finset ℤ := evenFamily S
@@ -921,7 +920,6 @@ theorem lev_interval : LevIntervalStatement := by
     intro i j hij
     apply hRmono
     apply Fin.mk_le_mk.mpr
-    change i.val ≤ j.val
     exact hij
   let B : Fin (k + k) → Finset ℤ := fun i ↦ U (Fin.castAdd r i)
   let Tail : Fin r → Finset ℤ := fun i ↦ U (Fin.natAdd (k + k) i)

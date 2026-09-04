@@ -207,7 +207,7 @@ end
 
 end Erdos186.CFP.Bilu.Section92MahlerVolumeConversion
 
-#print axioms
-  Erdos186.CFP.Bilu.Section92MahlerVolumeConversion.MappedOuterContainer.source_volume_cast_le_uniform_mul_bodyVolume
-#print axioms
-  Erdos186.CFP.Bilu.Section92MahlerVolumeConversion.exists_reducedOuterRealization_of_terminalScaledBodyVolume
+open Erdos186.CFP.Bilu.Section92MahlerVolumeConversion.MappedOuterContainer in
+#print axioms source_volume_cast_le_uniform_mul_bodyVolume
+open Erdos186.CFP.Bilu.Section92MahlerVolumeConversion in
+#print axioms exists_reducedOuterRealization_of_terminalScaledBodyVolume

@@ -203,7 +203,7 @@ theorem commonCenter_forward_zero_coordinate_error
         (realVector W.translatePoint +
           zonotopeCenter (canonicalRoundingCore W)
             (D.scaledForwardCoefficient scale)) i| := by
-      simp only [commonCenter, S, scale, W]
+      simp only [commonCenter, scale, W]
       rw [hcenterInputAt]
     _ ≤ (((E.side₁.loss + E.side₁.reserveBound : ℕ) : ℝ) *
           ((1 : ℝ) / 2 *
@@ -268,7 +268,7 @@ theorem commonCenter_reverse_zero_coordinate_error
         (realVector W.translatePoint +
           zonotopeCenter (canonicalRoundingCore W)
             (D.scaledReverseCoefficient scale)) i| := by
-      simp only [commonCenter, S, scale, W]
+      simp only [commonCenter, scale, W]
       rw [D.zonotopeCenter_scaledForward_eq_scaledReverse scale,
         hcenterInputAt]
     _ ≤ (((E.side₂.loss + E.side₂.reserveBound : ℕ) : ℝ) *

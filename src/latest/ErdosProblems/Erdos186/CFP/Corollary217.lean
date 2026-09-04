@@ -83,7 +83,7 @@ theorem exists_corollary217Certificate
   have hlength (i : Fin d) : 1 ≤ grid.lengths i := by
     have hb4 : 4 ≤ Q.widths i / (2 * cDen) := by
       apply (Nat.le_div_iff_mul_le (by positivity : 0 < 2 * cDen)).2
-      convert hwidth i using 1 <;> ring
+      convert hwidth i using 1; ring
     rw [grid.lengths_eq i]
     exact (Nat.one_le_iff_ne_zero).2
       (Nat.ne_of_gt (Nat.mul_pos hLpos (by omega)))
@@ -226,7 +226,7 @@ theorem exists_corollary217Certificate
     rw [← hy]
     exact y.property
   have hsteps (i : Fin d) : P.steps i ∈ Gamma := by
-    simpa [P, AdaptedHNF.centeredBasisGAP] using (b i).property
+    simp [P, AdaptedHNF.centeredBasisGAP]
   refine ⟨{
     constant := C
     constant_pos := hCpos

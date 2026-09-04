@@ -89,7 +89,7 @@ theorem exists_sourceParameters_ofHighCoefficientSource_boundedSupport
       ∀ (selector : Reduction.BoundedCFPSelector context)
         {ambient : ℕ} (A : Finset (LatticePoint ambient))
         (hA : selector.Eligible A)
-        (hrank : (selector.chosen A hA).dimension ≤ rankCeiling)
+        (_hrank : (selector.chosen A hA).dimension ≤ rankCeiling)
         (delta gamma mu : ℝ)
         (hparams : Theorem4Parameters A beta C C' M delta gamma mu)
         (hclosed : selector.CandidateClosedAt A hA delta)
@@ -106,7 +106,7 @@ theorem exists_sourceParameters_ofHighCoefficientSource_boundedSupport
                 (mu * (selector.chosen A hA).identifiedCore.card)⁻¹ <
             (1 - 2 *
               (mu * (selector.chosen A hA).identifiedCore.card)⁻¹) / 2),
-        let theta := sourceCoefficientThreshold A.card
+        let _theta := sourceCoefficientThreshold A.card
         let hcap : 0 < (mu *
             (selector.chosen A hA).identifiedCore.card)⁻¹ :=
           inv_mu_mul_coreCard_pos_of_coreRetention

@@ -177,10 +177,11 @@ theorem tangentAffine_error_le_dim_mul {n : ℕ}
 
 /-- A finite map has a fibre of at least the average size, in a
 division-free exact form. -/
-theorem exists_large_fiber {α β : Type*} [DecidableEq α]
+theorem exists_large_fiber {α β : Type*}
     [Fintype β] [DecidableEq β] (I : Finset α) (hI : I.Nonempty)
     (key : α → β) :
     ∃ b : β, I.card ≤ Fintype.card β * (I.filter fun a ↦ key a = b).card := by
+  classical
   have : Nonempty β := ⟨key hI.choose⟩
   have hcardβ : (0 : ℝ) < Fintype.card β := by
     exact_mod_cast Fintype.card_pos
@@ -213,12 +214,13 @@ theorem exists_large_fiber {α β : Type*} [DecidableEq α]
 /-- Pigeonhole a coordinate label and an arbitrary finite transverse key at
 once.  This is the abstract form used before adding the residue class which
 separates selected grid positions. -/
-theorem exists_large_coordinate_fiber {α κ β : Type*} [DecidableEq α]
+theorem exists_large_coordinate_fiber {α κ β : Type*}
     [Fintype κ] [DecidableEq κ] [Fintype β] [DecidableEq β]
     (I : Finset α) (hI : I.Nonempty) (axis : α → κ) (fiber : α → β) :
     ∃ i : κ, ∃ b : β,
       I.card ≤ Fintype.card κ * Fintype.card β *
         (I.filter fun a ↦ axis a = i ∧ fiber a = b).card := by
+  classical
   obtain ⟨key, hkey⟩ := exists_large_fiber I hI (fun a ↦ (axis a, fiber a))
   obtain ⟨i, b⟩ := key
   refine ⟨i, b, ?_⟩
@@ -226,7 +228,7 @@ theorem exists_large_coordinate_fiber {α κ β : Type*} [DecidableEq α]
 
 /-- Adding a residue class costs exactly a factor `q`. -/
 theorem exists_large_coordinate_fiber_residue {α κ β : Type*}
-    [DecidableEq α] [Fintype κ] [DecidableEq κ]
+    [Fintype κ] [DecidableEq κ]
     [Fintype β] [DecidableEq β]
     (I : Finset α) (hI : I.Nonempty) (q : ℕ)
     (axis : α → κ) (fiber : α → β) (residue : α → Fin q) :
@@ -234,6 +236,7 @@ theorem exists_large_coordinate_fiber_residue {α κ β : Type*}
       I.card ≤ Fintype.card κ * Fintype.card β * q *
         (I.filter fun a ↦
           axis a = i ∧ fiber a = b ∧ residue a = r).card := by
+  classical
   obtain ⟨key, hkey⟩ := exists_large_fiber I hI
     (fun a ↦ (axis a, fiber a, residue a))
   obtain ⟨i, b, r⟩ := key

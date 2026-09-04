@@ -54,7 +54,7 @@ def roundingError {d : ℕ} {ι : Type*} (s : Finset ι) (c : ι → ℝ)
 /-- Independent rounding in squared-error form.  This is the usual
 expectation bound, proved here by conditional-expectation induction and hence
 without a probability-space API. -/
-theorem exists_rounding_energy {d : ℕ} {ι : Type*} [DecidableEq ι]
+theorem exists_rounding_energy {d : ℕ} {ι : Type*}
     (s : Finset ι) (c : ι → ℝ) (v : ι → Fin d → ℝ)
     (hc : ∀ a ∈ s, 0 ≤ c a ∧ c a ≤ 1) :
     ∃ t : Finset ι, t ⊆ s ∧
@@ -112,7 +112,7 @@ theorem exists_rounding_energy {d : ℕ} {ι : Type*} [DecidableEq ι]
 /-- Coordinatewise form of `exists_rounding_energy`.  If every coordinate of
 every generator has absolute value at most `width`, then the rounded subset
 sum is within `sqrt (d * |s|) * width` in every coordinate. -/
-theorem exists_subset_sum_approximation {d : ℕ} {ι : Type*} [DecidableEq ι]
+theorem exists_subset_sum_approximation {d : ℕ} {ι : Type*}
     (s : Finset ι) (c : ι → ℝ) (v : ι → Fin d → ℝ) (width : ℝ)
     (hc : ∀ a ∈ s, 0 ≤ c a ∧ c a ≤ 1) (hwidth : 0 ≤ width)
     (hv : ∀ a ∈ s, ∀ i, |v a i| ≤ width) :

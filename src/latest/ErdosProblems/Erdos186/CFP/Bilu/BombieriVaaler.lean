@@ -323,4 +323,5 @@ theorem exists_ne_zero_mulVec_eq_zero_abs_cast_le_sqrt_det_gram
 
 end Erdos186.CFP.Bilu.BombieriVaaler
 
-#print axioms Erdos186.CFP.Bilu.BombieriVaaler.exists_ne_zero_mulVec_eq_zero_abs_cast_le_sqrt_det_gram
+open Erdos186.CFP.Bilu.BombieriVaaler in
+#print axioms exists_ne_zero_mulVec_eq_zero_abs_cast_le_sqrt_det_gram

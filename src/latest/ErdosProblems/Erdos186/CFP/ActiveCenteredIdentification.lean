@@ -58,12 +58,12 @@ theorem activeRank_pos {A : Finset ℤ} {d : ℕ}
     0 < P.progression.activeRank := by
   have hex : ∃ z ∈ A, z ≠ 0 := by
     by_contra hnot
-    push_neg at hnot
+    push Not at hnot
     apply hne
     ext z
     constructor
     · intro hz
-      simpa [hnot z hz]
+      simp [hnot z hz]
     · intro hz
       have hz0 : z = 0 := by simpa using hz
       simpa [hz0] using hzero
@@ -169,8 +169,7 @@ theorem centeredIdentification_activeDimensions {A : Finset ℤ} {d : ℕ}
       centeredIdentification_apply _ _ _ hz,
       map_sub, activeDimensions_identificationMap,
       activeDimensions_identificationMap]
-  · simp only [centeredIdentification, dif_neg hz, map_neg,
-      activeDimensions_identificationMap]
+  · simp only [centeredIdentification, dif_neg hz, map_neg]
     rw [activeDimensions_identificationMap]
 
 /-- Canonical centered minimal-box coordinates, after deleting inactive

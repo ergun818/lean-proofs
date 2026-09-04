@@ -264,7 +264,7 @@ theorem appendixEndpointPolynomialBound_le_coarseAppendixParameter_pow
     R * (2 * U + 2) ^ (d + 1) ≤
         X * (X ^ (d + 6)) ^ (d + 1) := by gcongr
     _ = X ^ appendixEndpointDegree d := by
-      simp only [appendixEndpointDegree, pow_mul]
+      simp only [appendixEndpointDegree]
       rw [pow_add]
       ring
 
@@ -585,5 +585,6 @@ end Erdos186.CFP.HigherDimensionalCorollary
 
 #print axioms
   Erdos186.CFP.HigherDimensionalCorollary.scaleNum_le_scaleDen_of_integerConclusion
+open Erdos186.CFP.HigherDimensionalCorollary in
 #print axioms
-  Erdos186.CFP.HigherDimensionalCorollary.nonemptyHigherDimensionalCorollary5_of_nonemptyIntegerTheorem15_of_projectedProperization
+  nonemptyHigherDimensionalCorollary5_of_nonemptyIntegerTheorem15_of_projectedProperization

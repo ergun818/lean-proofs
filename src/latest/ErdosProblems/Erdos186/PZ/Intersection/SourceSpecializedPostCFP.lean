@@ -140,7 +140,7 @@ def ofHighCoefficientSource_specialized
       ((((selector.chosen A hA).identifiedCore.card - 2) / 2 : ℕ) : ℝ))
     (hdelta : 0 < delta) (hmu : 0 < mu) (hgamma : 0 < gamma)
     (Hsource : SourceSpecializedMassHierarchy selector A hA delta mu) :
-    let theta := sourceCoefficientThreshold A.card
+    let _theta := sourceCoefficientThreshold A.card
     let hcap : 0 < (mu *
         (selector.chosen A hA).identifiedCore.card)⁻¹ :=
       inv_mu_mul_coreCard_pos_of_coreRetention
@@ -185,7 +185,7 @@ theorem exists_sourceParameters_ofHighCoefficientSource_specialized
       ∀ (selector : Reduction.BoundedCFPSelector context)
         {ambient : ℕ} (A : Finset (LatticePoint ambient))
         (hA : selector.Eligible A)
-        (hrank : (selector.chosen A hA).dimension ≤ rankCeiling)
+        (_hrank : (selector.chosen A hA).dimension ≤ rankCeiling)
         (delta gamma mu : ℝ)
         (hparams : Theorem4Parameters A beta C C' M delta gamma mu)
         (hclosed : selector.CandidateClosedAt A hA delta)
@@ -197,7 +197,7 @@ theorem exists_sourceParameters_ofHighCoefficientSource_specialized
         (D : ConvexPoolsData (selector.chosen A hA).identifiedCore a₀ c mu)
         (hirr : Reduction.IsBoundedCoordinateIrreducible selector A hA
           delta gamma),
-        let theta := sourceCoefficientThreshold A.card
+        let _theta := sourceCoefficientThreshold A.card
         let hcap : 0 < (mu *
             (selector.chosen A hA).identifiedCore.card)⁻¹ :=
           inv_mu_mul_coreCard_pos_of_coreRetention

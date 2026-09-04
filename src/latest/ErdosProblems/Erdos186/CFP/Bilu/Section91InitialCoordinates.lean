@@ -129,6 +129,8 @@ end
 
 end Erdos186.CFP.Bilu.Section91InitialCoordinates
 
-#print axioms Erdos186.CFP.Bilu.Section91InitialCoordinates.InitialPresentation.exists_coordinateLift
-#print axioms Erdos186.CFP.Bilu.Section91InitialCoordinates.InitialPresentation.subset_range_coordinatePresentationMap
+open Erdos186.CFP.Bilu.Section91InitialCoordinates.InitialPresentation in
+#print axioms exists_coordinateLift
+open Erdos186.CFP.Bilu.Section91InitialCoordinates.InitialPresentation in
+#print axioms subset_range_coordinatePresentationMap
 #print axioms Erdos186.CFP.Bilu.Section91InitialCoordinates.InitialPresentation.coordinateRank_le

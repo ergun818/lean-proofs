@@ -1608,7 +1608,7 @@ theorem sameRank_halfCore_scalar_budget
       newExponent * oldExponent⁻¹ - 1 = gain * oldExponent⁻¹ := by
     rw [hnew]
     field_simp
-    <;> ring
+    ; ring
   have hlastCoefficientLe :
       newExponent * oldExponent⁻¹ - 1 ≤ 4 * gain := by
     rw [hlastCoefficient]

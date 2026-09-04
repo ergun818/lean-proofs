@@ -132,7 +132,7 @@ def dilate (k : ℕ) (Q : AxisBox d) : AxisBox d where
   classical
   ext x
   simp only [mem_carrier_iff, dilate_lower, Pi.zero_apply, dilate_width,
-    zero_mul, zero_add, Nat.cast_one, add_zero, Finset.mem_singleton]
+    zero_mul, zero_add, Nat.cast_one, Finset.mem_singleton]
   constructor
   · intro hx
     funext i
@@ -547,7 +547,7 @@ theorem card_coordinateBase_mul_width {d : ℕ} (Q : AxisBox d) (k : Fin d) :
   classical
   simp only [coordinateBase, Fintype.card_piFinset, AxisBox.volume]
   rw [← Finset.prod_erase_mul Finset.univ Q.widths (Finset.mem_univ k)]
-  rw [Finset.prod_eq_mul_prod_diff_singleton k
+  rw [Finset.prod_eq_mul_prod_sdiff_singleton k
     (fun i ↦ (if i = k then {Q.lower i} else Q.interval i).card) (by simp)]
   simp only [if_pos, Finset.card_singleton, one_mul, Finset.sdiff_singleton_eq_erase]
   congr 1
@@ -637,7 +637,7 @@ theorem exists_primitiveNormalization (S : Finset ℤ) (hcard : 2 ≤ S.card) :
   let g : ℤ := S.gcd fun x ↦ x - a
   have hxne : ∃ x ∈ S, x - a ≠ 0 := by
     by_contra h
-    push_neg at h
+    push Not at h
     have hsub : S ⊆ {a} := by
       intro x hx
       have := h x hx
@@ -832,7 +832,6 @@ theorem exists_boundedStep_primitive_coordinateFiber {d : ℕ}
     constructor
     · exact hx'.1
     · have hwpos := Q.width_pos k
-      push_cast
       omega
   have hspacing := N.step_mul_card_sub_one_le
     (Q.lower k) (Q.widths k - 1) hinterval
@@ -1005,7 +1004,7 @@ def axisLine {d : ℕ} (y : BoxPoint d) (k : Fin d) (v n : ℕ) :
       ∃ b : ℕ, b ≤ n ∧
         y + axisVector k ((v : ℤ) * (b : ℤ)) = x := by
   classical
-  simp [axisLine, Nat.lt_succ_iff]
+  simp [axisLine]
 
 /-- An arithmetic axis line is the coordinate-line image of its scalar
 arithmetic progression. -/
@@ -1314,7 +1313,7 @@ theorem iteratedSumset_const_subset_generatedSublattice {d : ℕ}
   | zero =>
       intro x hx
       have hx0 : x = 0 := by simpa using hx
-      simpa [hx0]
+      simp [hx0]
   | succ m ih =>
       rw [iteratedSumset_succ]
       intro x hx
@@ -1811,7 +1810,7 @@ remaining elementary size estimates exposed as explicit natural-number
 hypotheses.  Unlike `DenseBoxCertificate`, this theorem constructs the
 certificate from the density and reducedness assumptions. -/
 theorem exists_denseBoxCertificate_of_numerics
-    {d ell V L R k₀ : ℕ} (hd : 0 < d)
+    {d ell V L R k₀ : ℕ} (_hd : 0 < d)
     (Q : AxisBox d) (A : Fin ell → Finset (BoxPoint d))
     (cNum cDen : ℕ) (hcNum : 0 < cNum) (hcDen : 0 < cDen)
     (hsubset : ∀ i, A i ⊆ Q.carrier)
@@ -1978,7 +1977,6 @@ theorem exists_denseBoxCertificate_of_numerics
     have heqi := congrFun hyx i
     have hw := Q.width_pos i
     simp only [Pi.neg_apply, Pi.add_apply] at heqi
-    push_cast
     omega
   have hbound0 : CoordinateBound (iteratedSumset residueNat r)
       (fun i ↦ r * (Q.widths i - 1)) := by
@@ -2140,7 +2138,7 @@ theorem centeredBasisGAP_carrier_eq_basisProgression {d : ℕ}
     simp only [AdaptedHNF.centeredBasisGAP_widths] at hn
     dsimp [a]
     rw [abs_le]
-    constructor <;> norm_num at ⊢ <;> omega
+    constructor <;> omega
   · intro x hx
     obtain ⟨a, ha, rfl⟩ := Finset.mem_image.mp hx
     have ha' := mem_centeredCoefficientBox_iff.mp ha
@@ -2343,7 +2341,7 @@ theorem denseBoxLemma : DenseBoxLemma := by
       simpa [width₀, W] using hwidthMin.trans (Q.minWidth_le hd i)
     have hb12 : 12 * cDen ≤ b := by
       apply (Nat.le_div_iff_mul_le (by positivity : 0 < 2 * cDen)).2
-      convert hwide using 1 <;> ring
+      convert hwide using 1; ring
     have hbpos : 0 < b - 2 := by omega
     have hwlt : W < (2 * cDen) * (b + 1) := by
       simpa [b] using Nat.lt_mul_div_succ W
@@ -2380,7 +2378,7 @@ theorem denseBoxLemma : DenseBoxLemma := by
     let b := W / (2 * cDen)
     have hb4 : 4 ≤ b := by
       apply (Nat.le_div_iff_mul_le (by positivity : 0 < 2 * cDen)).2
-      convert hwidth i using 1 <;> ring
+      convert hwidth i using 1; ring
     have hwlt : W < (2 * cDen) * (b + 1) := by
       simpa [b] using Nat.lt_mul_div_succ W
         (by positivity : 0 < 2 * cDen)
@@ -2835,7 +2833,7 @@ theorem exists_corollary217Certificate_of_reduced
     rw [← hy]
     exact y.property
   have hsteps (i : Fin d) : P.steps i ∈ Γ := by
-    simpa [P, AdaptedHNF.centeredBasisGAP] using (b i).property
+    simp [P, AdaptedHNF.centeredBasisGAP]
   exact ⟨{
     constant := ell
     constant_pos := hellpos
@@ -2873,7 +2871,7 @@ theorem corollary217_lev_large {d cDen M R : ℕ} (hcDen : 0 < cDen)
   have hwide : 24 * cDen * cDen ≤ W := by simpa [W] using hwidth i
   have hb12 : 12 * cDen ≤ b := by
     apply (Nat.le_div_iff_mul_le (by positivity : 0 < 2 * cDen)).2
-    convert hwide using 1 <;> ring
+    convert hwide using 1; ring
   have hbpos : 0 < b - 2 := by omega
   have hwlt : W < (2 * cDen) * (b + 1) := by
     simpa [b] using Nat.lt_mul_div_succ W
@@ -2914,7 +2912,7 @@ theorem corollary217_grid_margin {d cDen M R : ℕ} (hcDen : 0 < cDen)
   let q := W / (2 * cDen)
   have hq4 : 4 ≤ q := by
     apply (Nat.le_div_iff_mul_le (by positivity : 0 < 2 * cDen)).2
-    convert hwidth i using 1 <;> ring
+    convert hwidth i using 1; ring
   have hwlt : W < (2 * cDen) * (q + 1) := by
     simpa [q] using Nat.lt_mul_div_succ W
       (by positivity : 0 < 2 * cDen)

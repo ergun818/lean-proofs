@@ -327,7 +327,7 @@ theorem sectionBody_mem_nhds_zero
       interior (sectionBody points K) := by
     have hmid := hconv.add_smul_sub_mem_interior hneg hx
       (show (1 / 2 : ℝ) ∈ Set.Ioc 0 1 by norm_num)
-    convert hmid using 1 <;> module
+    convert hmid using 1; module
   exact mem_interior_iff_mem_nhds.mp hzero
 
 /-- The pullback to active lattice coordinates is an honest symmetric
@@ -401,8 +401,8 @@ exactly the rank of the lattice section. -/
 def EffectiveSectionDiscreteJohnStatement : Prop :=
   ∀ d : ℕ, ∃ factorBound : ℕ,
     ∀ (K : Set (Fin d → ℝ))
-      (hbalanced : Balanced ℝ K) (hconvex : Convex ℝ K)
-      (hclosed : IsClosed K) (hbounded : Bornology.IsVonNBounded ℝ K)
+      (_hbalanced : Balanced ℝ K) (_hconvex : Convex ℝ K)
+      (_hclosed : IsClosed K) (_hbounded : Bornology.IsVonNBounded ℝ K)
       (points : Finset (LatticePoint d)),
       (∀ z, z ∈ points ↔ integralEmbed z ∈ K) →
       points.Nonempty →

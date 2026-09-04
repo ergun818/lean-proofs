@@ -97,7 +97,7 @@ theorem two_mul_sigma_lt_biasGamma_pow_distortionRank
   rw [← Real.exp_nat_mul] at hpow
   have hpow' : Real.exp ((r : ℝ) / (8 * sigma)) <
       biasGamma (distortionDelta sigma) ^ r := by
-    convert hpow using 1 <;> field_simp
+    convert hpow using 1; field_simp
   exact hexpLe.trans_lt hpow'
 
 /-- The corrected numerical premise for the target affine rank `r-1`
@@ -127,7 +127,7 @@ theorem corrected_rank_inequality {sigma : ℝ} (hsigma : 1 ≤ sigma) :
   have hquot : sigma * (2 / gamma) ^ r < (2 : ℝ) ^ r / 2 := by
     rw [div_pow, mul_div,
       div_lt_iff₀ (pow_pos hgamma r)]
-    convert hmul using 1 <;> ring
+    convert hmul using 1; ring
   have hright : (2 : ℝ) ^ r / 2 =
       Real.rpow 2 ((((r - 1 : ℕ) : ℝ) + 1 - 1)) := by
     have hrEq : r = (r - 1) + 1 := by omega

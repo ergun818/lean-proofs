@@ -45,8 +45,7 @@ theorem pzTranslate_identifiedTranslate {d : ℕ}
 theorem identifiedTranslate_pzTranslate {d : ℕ}
     (a : LatticePoint d) (X : Finset (LatticePoint d)) :
     Reduction.identifiedTranslate (PZ.translate a X) a = X := by
-  simpa [Reduction.identifiedTranslate] using
-    pzTranslate_neg_pzTranslate a X
+  simp [Reduction.identifiedTranslate]
 
 /-- Pulling a subset of a translated side back by the inverse translation
 puts it in the original side. -/

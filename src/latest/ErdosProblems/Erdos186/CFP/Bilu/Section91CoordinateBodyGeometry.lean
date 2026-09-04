@@ -184,7 +184,7 @@ theorem zero_mem_interior_coordinateB0 {m r : ℕ}
       (interior_subset hx)
   have hmid := hconv.add_smul_sub_mem_interior hneg hx
     (show (1 / 2 : ℝ) ∈ Set.Ioc 0 1 by norm_num)
-  convert hmid using 1 <;> module
+  convert hmid using 1; module
 
 /-! Specializations to the normalized body used by the presentation
 replacement. -/

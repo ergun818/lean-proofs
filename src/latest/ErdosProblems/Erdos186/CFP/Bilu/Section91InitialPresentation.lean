@@ -158,5 +158,6 @@ end
 end Erdos186.CFP.Bilu.Section91InitialPresentation
 
 #print axioms Erdos186.CFP.Bilu.Section91InitialPresentation.InitialPresentation.exists_initialLift
-#print axioms Erdos186.CFP.Bilu.Section91InitialPresentation.InitialPresentation.subset_range_initialMap
+open Erdos186.CFP.Bilu.Section91InitialPresentation.InitialPresentation in
+#print axioms subset_range_initialMap
 #print axioms Erdos186.CFP.Bilu.Section91InitialPresentation.InitialPresentation.initialRank_le

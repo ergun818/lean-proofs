@@ -1244,8 +1244,7 @@ theorem constantIteratedSumset_mono {G : Type*} [AddCommMonoid G]
     constantIteratedSumset X a ⊆ constantIteratedSumset X b := by
   obtain ⟨c, rfl⟩ := Nat.exists_eq_add_of_le hab
   induction c with
-  | zero => simpa using (Finset.Subset.rfl :
-      constantIteratedSumset X a ⊆ constantIteratedSumset X a)
+  | zero => simp
   | succ c ih =>
       have ih' : constantIteratedSumset X a ⊆
           constantIteratedSumset X (a + c) :=
@@ -1633,7 +1632,7 @@ theorem card_multifoldSumset_le_ambientSubsetIteratedSumset
     dsimp [e]
     have hcoeg : Gamma.subtype (∑ i, g i) =
         ∑ i, Gamma.subtype (g i) := by
-      simpa using map_sum Gamma.subtype g (Finset.univ : Finset (Fin h))
+      simp
     change stepEvaluation P.progression (Gamma.subtype (∑ i, g i)) = τ z
     rw [hcoeg]
     change stepEvaluation P.progression (∑ i, φ (f i)) = τ z
@@ -1940,7 +1939,7 @@ theorem accessibleSpanIndexBound_of_hApproximations
       A.card ≤ B.card + deletionCap → 0 ∈ B →
       ∀ d : {d // d ∈ relevant},
         ∃ e : ℕ, 0 < e ∧ e ≤ D ∧
-          ∃ W : HDimension.HApproximation B (hAt d) e scaleNum scaleDen,
+          ∃ _W : HDimension.HApproximation B (hAt d) e scaleNum scaleDen,
             (2 * scaleDen) ^ e * (hAt d + 1) ^ (e - 1) <
               (scaleNum * hAt d) ^ e)
     (hcap : deletionCap ≤ x) :
@@ -2267,7 +2266,7 @@ theorem span_pruning_lemma232_of_hApproximations
             (4 * (6 * scaleDen) ^ D * (4 * scaleDen) ^ D) + 1) →
       0 ∈ B → ∀ d : {d // d ∈ relevant},
         ∃ e : ℕ, 0 < e ∧ e ≤ D ∧
-          ∃ W : HDimension.HApproximation B (hAt d) e scaleNum scaleDen,
+          ∃ _W : HDimension.HApproximation B (hAt d) e scaleNum scaleDen,
             (2 * scaleDen) ^ e * (hAt d + 1) ^ (e - 1) <
               (scaleNum * hAt d) ^ e)
     (hcap : robustBudget *
@@ -2430,7 +2429,7 @@ theorem preprocessing_lemma238 {A : Finset ℤ}
     (happrox : ∀ {W : Finset ℤ}, W ⊆ A → 0 ∈ W →
       Stability.WeaklyStableMinimalFor W (2 * stableBudget) maxRank n →
       ∃ (relevant : Finset ℕ)
-        (hproper : Stability.RelevantBoxesProper W relevant)
+        (_hproper : Stability.RelevantBoxesProper W relevant)
         (hAt : {d // d ∈ relevant} → ℕ),
         (∀ d : {d // d ∈ relevant},
           Nonempty
@@ -2447,7 +2446,7 @@ theorem preprocessing_lemma238 {A : Finset ℤ}
                   (4 * scaleDen) ^ maxRank) + 1) →
           0 ∈ B → ∀ d : {d // d ∈ relevant},
             ∃ e : ℕ, 0 < e ∧ e ≤ maxRank ∧
-              ∃ V : HDimension.HApproximation B (hAt d) e
+              ∃ _V : HDimension.HApproximation B (hAt d) e
                   scaleNum scaleDen,
                 (2 * scaleDen) ^ e * (hAt d + 1) ^ (e - 1) <
                   (scaleNum * hAt d) ^ e) ∧

@@ -87,7 +87,7 @@ theorem centeredBoxSeminorm_admitsIndependent
     by_cases hji : j = i
     · subst j
       simp [Pi.basisFun_apply, Pi.single, div_eq_mul_inv]
-    · simp [Pi.basisFun_apply, Pi.single, hji, Ne.symm hji]
+    · simp [Pi.basisFun_apply, Pi.single, hji]
   rw [hscaled, Pi.norm_single, Real.norm_eq_abs, abs_inv,
     abs_of_nonneg (Nat.cast_nonneg (radii i))]
   exact (inv_le_one₀ (by exact_mod_cast hradii i)).2

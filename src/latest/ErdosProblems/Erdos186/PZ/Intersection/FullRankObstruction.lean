@@ -101,8 +101,7 @@ theorem collinearProperGAP_stepLattice_infinite_quotient :
     obtain ⟨z, hzL, hz⟩ := hxy
     have hz0 : z 1 = 0 := gapStepLattice_collinear_le hzL
     have hcoord := congrFun hz 1
-    simp [vertical, hz0] at hcoord
-    exact hcoord
+    simpa [vertical, hz0] using hcoord
   exact Infinite.of_injective f hf
 
 /-- Thus displayed rank = ambient dimension, finite properness, symmetry,

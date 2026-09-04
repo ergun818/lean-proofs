@@ -119,7 +119,7 @@ theorem exists_sourceThicknessConstants_ofHighCoefficientSource_specialized
       ((((selector.chosen A hA).identifiedCore.card - 2) / 2 : ℕ) : ℝ))
     (hdelta : 0 < delta) (hmu : 0 < mu) (hgamma : 0 < gamma)
     (Hsource : SourceSpecializedMassHierarchy selector A hA delta mu) :
-    let theta := sourceCoefficientThreshold A.card
+    let _theta := sourceCoefficientThreshold A.card
     let hcap : 0 < (mu *
         (selector.chosen A hA).identifiedCore.card)⁻¹ :=
       inv_mu_mul_coreCard_pos_of_coreRetention
@@ -128,7 +128,7 @@ theorem exists_sourceThicknessConstants_ofHighCoefficientSource_specialized
       hdelta (sourceCoefficientThreshold_pos
         (selector.eligible_nonempty hA).card_pos).le hcap
       (Hsource.highCoefficient_massBudget hmu)
-    ∃ forwardFactor reverseFactor : ℕ,
+    ∃ _forwardFactor _reverseFactor : ℕ,
       ∃ forwardConstant reverseConstant : ℝ,
         1 ≤ forwardConstant ∧ 1 ≤ reverseConstant ∧
         ∀ (slab : ℕ) (t : ℝ),

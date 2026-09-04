@@ -33,7 +33,7 @@ theorem exists_HApproximation_numeric_of_dyadicRange
     (hlarge : preprocessingIndexBound D propernessDenominator ≤
       2 ^ level) :
     ∃ rank : ℕ, 0 < rank ∧ rank ≤ D ∧
-      ∃ V : HDimension.HApproximation S (2 ^ level) rank 1
+      ∃ _V : HDimension.HApproximation S (2 ^ level) rank 1
           (preprocessingScaleDen propernessDenominator),
         (2 * preprocessingScaleDen propernessDenominator) ^ rank *
             (2 ^ level + 1) ^ (rank - 1) < (2 ^ level) ^ rank := by

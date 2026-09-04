@@ -172,7 +172,7 @@ theorem exists_occupied_upperBoundary_affine_slab_nd
         Convex ℝ ambientSlab ∧
         K ≤ (pointsIn X ambientSlab).card ∧
         volume ambientSlab =
-          (∏ i : Fin n, ENNReal.ofReal ((m : ℝ)⁻¹)) *
+          (∏ _i : Fin n, ENNReal.ofReal ((m : ℝ)⁻¹)) *
             ENNReal.ofReal (2 * epsilon) := by
   let X' := lastCoordinateImageFinset X
   have hgraph' : ∀ z ∈ X', z.2 = h (WithLp.ofLp z.1) := by

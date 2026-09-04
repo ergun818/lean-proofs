@@ -23,10 +23,11 @@ open scoped BigOperators Pointwise
 /-- A finite generating set containing zero is not contained in a coset of
 a proper subgroup. -/
 theorem notInProperCoset_of_zero_mem_closure_eq_top
-    {G : Type*} [AddCommGroup G] [DecidableEq G]
+    {G : Type*} [AddCommGroup G]
     (A : Finset G) (hzero : 0 ∈ A)
     (hgen : AddSubgroup.closure (A : Set G) = ⊤) :
     NotInProperCoset (A : Set G) := by
+  classical
   intro K hK a hcontained
   have hnega : -a ∈ K := by
     simpa using hcontained 0 hzero

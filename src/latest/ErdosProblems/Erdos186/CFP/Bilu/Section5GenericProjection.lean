@@ -152,6 +152,7 @@ variable [DecidableEq V]
 def differenceFinset (S : Finset V) : Finset V :=
   (S.product S).image fun p ↦ p.1 - p.2
 
+omit [FiniteDimensional ℝ V] [Module ℝ V] in
 @[simp]
 theorem mem_differenceFinset (S : Finset V) (z : V) :
     z ∈ differenceFinset S ↔
@@ -171,6 +172,7 @@ def differenceSpanFamily (S : Finset V) : Finset (Submodule ℝ V) := by
   exact (differenceFinset S).powerset.image fun (T : Finset V) ↦
     Submodule.span ℝ (T : Set V)
 
+omit [FiniteDimensional ℝ V] in
 theorem span_mem_differenceSpanFamily (S T : Finset V)
     (hT : T ⊆ differenceFinset S) :
     Submodule.span ℝ (T : Set V) ∈ differenceSpanFamily S := by
@@ -204,6 +206,7 @@ def genericProjection (S : Finset V) (rank : ℕ) :
         intro T hT
         exact hA.2 _ (span_mem_differenceSpanFamily (pairSumset S) T hT) }
 
+omit [FiniteDimensional ℝ V] in
 /-- The quotient map along Bilu's generic kernel is injective on the whole
 double sumset. -/
 theorem GenericProjection.mkQ_injOn_pairSumset
@@ -255,6 +258,7 @@ theorem GenericProjection.finrank_quotient_eq
   rw [P.finrank_kernel] at hquotient
   omega
 
+omit [FiniteDimensional ℝ V] in
 /-- For a nonempty source set, injectivity on the double sumset implies
 injectivity on the source itself by translating both points by one fixed
 element of the set. -/
@@ -273,6 +277,7 @@ theorem GenericProjection.mkQ_injOn
   exact add_right_cancel
     (P.mkQ_injOn_pairSumset hrank hxz hyz hsum)
 
+omit [FiniteDimensional ℝ V] in
 /-- Genericity is precisely what prevents a low-dimensional quotient image
 from hiding a high-dimensional source span.  This is the dimension argument
 at the end of Bilu's proof of Theorem 5.6. -/
@@ -318,4 +323,5 @@ end Erdos186.CFP.Bilu.Section5GenericProjection
 #print axioms Erdos186.CFP.Bilu.Section5GenericProjection.GenericProjection.mkQ_injOn_pairSumset
 #print axioms Erdos186.CFP.Bilu.Section5GenericProjection.GenericProjection.finrank_quotient_eq
 #print axioms Erdos186.CFP.Bilu.Section5GenericProjection.GenericProjection.mkQ_injOn
-#print axioms Erdos186.CFP.Bilu.Section5GenericProjection.GenericProjection.finrank_span_lt_of_map_lt
+open Erdos186.CFP.Bilu.Section5GenericProjection.GenericProjection in
+#print axioms finrank_span_lt_of_map_lt

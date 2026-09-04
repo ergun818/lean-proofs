@@ -77,7 +77,6 @@ theorem isBoxNonaveraging_translate {d : ℕ} {A : Finset (BoxPoint d)}
     · intro hx
       obtain ⟨y, hy, hxy⟩ := Finset.mem_image.mp (hTsub hx)
       refine Finset.mem_map.mpr ⟨y, Finset.mem_preimage.mpr ?_, hxy⟩
-      change e y ∈ T
       rw [show e y = x by simpa [e] using hxy]
       exact hx
   have hSsub : S ⊆ A.erase a := by
@@ -90,7 +89,7 @@ theorem isBoxNonaveraging_translate {d : ℕ} {A : Finset (BoxPoint d)}
     refine ⟨?_, ?_⟩
     · intro hxa
       apply hxe.1
-      simpa [e, hxa]
+      simp [e, hxa]
     · simpa [translate, e] using hxe.2
   have hcardS : S.card = T.card := by rw [← hmap]; simp
   intro heq
@@ -149,7 +148,7 @@ theorem averaging_witness_of_common_deviation_sum {d : ℕ}
     simpa [Finset.sum_sub_distrib] using h
   dsimp [S]
   rw [Finset.sum_union hdisj, Finset.card_union_of_disjoint hdisj]
-  simp only [Pi.smul_apply, Pi.add_apply, Finset.sum_apply, smul_eq_mul]
+  simp only [Pi.add_apply, Finset.sum_apply]
   change ((A₁.card + A₂.card : ℕ) : ℤ) * a i =
     (∑ x ∈ A₁, x i) + ∑ x ∈ A₂, x i
   push_cast
@@ -204,8 +203,7 @@ theorem gapCoordLattice_injective {d r : ℕ} (P : GAP d r) :
 theorem gapCoefficientBox_card {d r : ℕ} (P : GAP d r) :
     (gapCoefficientBox P).carrier.card = P.volume := by
   classical
-  simp [gapCoefficientBox, IntegerBox.carrier, GAP.volume,
-    show ∀ i, 1 ≤ P.widths i by exact fun i ↦ P.width_pos i]
+  simp [gapCoefficientBox, IntegerBox.carrier, GAP.volume]
 
 /-- The integer coefficient of a point in a proper GAP. -/
 noncomputable def gapIdentify {d r : ℕ} (P : GAP d r) (hP : P.Proper)

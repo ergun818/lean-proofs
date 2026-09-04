@@ -59,7 +59,7 @@ theorem insert_core_subset_dilate_two_outer
   · have hminus : x - J.center ∈ J.certificate.outer.carrier := by
       apply hcentered
       exact Finset.mem_image.mpr ⟨x, hcore hx, by
-        simp [sub_eq_add_neg, add_comm]⟩
+        simp [sub_eq_add_neg]⟩
     have hadd := J.certificate.outer.add_mem_dilate_two hminus hplusCenter
     simpa [sub_eq_add_neg, add_assoc] using hadd
 

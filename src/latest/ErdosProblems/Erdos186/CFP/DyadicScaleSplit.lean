@@ -105,7 +105,7 @@ theorem dyadicTerminalBelow_window
 /-- The logarithmic factor in the low-prefix estimate is uniformly linear
 in the source dyadic logarithm. -/
 theorem dyadicLowPrefix_log_le
-    {m n low H : ℕ} (hm : 0 < m)
+    {m n low H : ℕ} (_hm : 0 < m)
     (hlow : 2 ^ low ≤ m)
     (hn : Nat.log 2 n + 1 ≤ H * (Nat.log 2 m + 1)) :
     Nat.log 2 (2 ^ low * n + 1) + 1 ≤

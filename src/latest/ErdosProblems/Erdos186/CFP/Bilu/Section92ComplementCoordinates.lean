@@ -121,5 +121,7 @@ end
 
 end Erdos186.CFP.Bilu.Section92ShortKernel.PrimitiveIntegralQuotient
 
-#print axioms Erdos186.CFP.Bilu.Section92ShortKernel.PrimitiveIntegralQuotient.reducedMap_complementCoordinates
-#print axioms Erdos186.CFP.Bilu.Section92ShortKernel.PrimitiveIntegralQuotient.exists_reducedLift_of_exists_lift
+open Erdos186.CFP.Bilu.Section92ShortKernel.PrimitiveIntegralQuotient in
+#print axioms reducedMap_complementCoordinates
+open Erdos186.CFP.Bilu.Section92ShortKernel.PrimitiveIntegralQuotient in
+#print axioms exists_reducedLift_of_exists_lift

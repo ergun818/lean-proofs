@@ -29,7 +29,7 @@ open VolumeSections Section8GeometrySynthesis
 /-- The strict real polar-separation estimate implies the `ENNReal`
 cross-multiplied form of equation (8.7). -/
 theorem equation87_of_strict_polar_separation
-    {C gauge innerAbs : ℝ} (hC : 0 < C) (hgauge0 : 0 ≤ gauge)
+    {C gauge innerAbs : ℝ} (hC : 0 < C) (_hgauge0 : 0 ≤ gauge)
     (hgauge : 2 * gauge ≤ 1) (hinner : C < innerAbs) :
     2 * ENNReal.ofReal C * ENNReal.ofReal gauge ≤
       ENNReal.ofReal innerAbs := by

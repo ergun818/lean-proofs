@@ -215,7 +215,7 @@ end Erdos186.CFP.Bilu.Section92PresentationQuotientAssembly
 
 #print axioms
   Erdos186.CFP.Bilu.Section92PresentationQuotientAssembly.reducedBodyPresentation
-#print axioms
-  Erdos186.CFP.Bilu.Section92PresentationQuotientAssembly.exists_rankDecrease_of_not_enlargedInjective
-#print axioms
-  Erdos186.CFP.Bilu.Section92PresentationQuotientAssembly.exists_canonicalRankDecrease_of_not_enlargedInjective
+open Erdos186.CFP.Bilu.Section92PresentationQuotientAssembly in
+#print axioms exists_rankDecrease_of_not_enlargedInjective
+open Erdos186.CFP.Bilu.Section92PresentationQuotientAssembly in
+#print axioms exists_canonicalRankDecrease_of_not_enlargedInjective

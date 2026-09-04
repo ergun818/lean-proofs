@@ -246,7 +246,7 @@ theorem steps_le_shiftedDyadicPrefix_add
         rw [← Finset.mul_sum, sum_range_two_pow]
       _ ≤ (8 * ratio) * 2 ^ terminal :=
         Nat.mul_le_mul_left _ (Nat.sub_le _ _)
-      _ ≤ 16 * ratio * 2 ^ terminal := by gcongr <;> omega
+      _ ≤ 16 * ratio * 2 ^ terminal := by gcongr; omega
   have hprefixSteps :
       dyadicBinStart A deletionBudget steps low ≤ steps :=
     dyadicBinStart_le A deletionBudget steps low

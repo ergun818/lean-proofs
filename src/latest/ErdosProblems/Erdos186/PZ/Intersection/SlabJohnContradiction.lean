@@ -28,11 +28,11 @@ set_option autoImplicit false
 for every selected CFP witness whose core lies in the thin region. -/
 theorem exists_slabJohnContradictionConstants
     (hJohn : PZLemmaSevenStatement) (d : ℕ) (hd : 0 < d) :
-    ∃ factorBound : ℕ, ∃ constant : ℝ, 1 ≤ constant ∧
+    ∃ _factorBound : ℕ, ∃ constant : ℝ, 1 ≤ constant ∧
       ∀ {s D k loss referenceVolume boxFactor : ℕ}
         {A : Finset (LatticePoint d)}
         (W : CFP.EnhancedCFPWitness A s D k loss)
-        (hrank : W.rank = d)
+        (_hrank : W.rank = d)
         (B : IntegerBox d)
         (Omega : Set (ConvexDensity.EuclideanPoint d))
         (eta gamma : ℝ),

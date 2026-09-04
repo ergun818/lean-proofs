@@ -136,7 +136,7 @@ lemma cast_mem_modImage_of_mem_upperShifts {S : Finset ℕ} {v z : ℕ}
   simp only [upperShifts, mem_image] at hz
   obtain ⟨c, -, rfl⟩ := hz
   rw [Nat.cast_add, residueMax_cast]
-  simpa using c.2
+  simp
 
 /-- The shifted upper representatives lie strictly above the old set. -/
 lemma disjoint_upperShifts (S : Finset ℕ) {v : ℕ} (hv : 0 < v) :
@@ -391,7 +391,7 @@ lemma listSumset_map_addStab {G : Type*} [AddCommGroup G] [DecidableEq G]
     listSumset ((X :: Xs).map fun Y ↦ Y + C.addStab) =
       listSumset (X :: Xs) + C.addStab := by
   have hHH : C.addStab + C.addStab = C.addStab := by
-    simpa [add_comm] using add_addStab_addStab C ({0} : Finset G)
+    simp
   induction Xs generalizing X with
   | nil =>
       change (X + C.addStab) + {0} = (X + {0}) + C.addStab
@@ -502,13 +502,13 @@ theorem family_saturation_fiber {v : ℕ} {H : Finset (ZMod v)}
         refine ⟨x, mem_residueFiberSet.mpr ⟨hx, ?_⟩⟩
         apply mem_vadd_finset.mpr
         refine ⟨0, hH0, ?_⟩
-        simpa [hxa]
+        simp [hxa]
       have hSne : S.Nonempty := by
         obtain ⟨x, hx, hxb⟩ := mem_modImage.mp hb
         refine ⟨x, mem_residueFiberSet.mpr ⟨hx, ?_⟩⟩
         apply mem_vadd_finset.mpr
         refine ⟨0, hH0, ?_⟩
-        simpa [hxb]
+        simp [hxb]
       have hRSF : R + S ⊆ F := by
         have hs := residueFiberSet_add_subset_sumsOverResidues
           (A := A) (B := listSumset (B :: Bs)) hab hHadd

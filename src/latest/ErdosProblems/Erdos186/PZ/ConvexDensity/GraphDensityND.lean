@@ -151,7 +151,7 @@ theorem exists_occupied_graph_cell_affine_slab_nd
         Convex ℝ slab ∧
         K ≤ (graphPointsInND X slab).card ∧
         volume slab =
-          (∏ i : Fin n, ENNReal.ofReal ((m : ℝ)⁻¹)) *
+          (∏ _i : Fin n, ENNReal.ofReal ((m : ℝ)⁻¹)) *
             ENNReal.ofReal (2 * epsilon) := by
   let f : (Fin n → ℝ) → ℝ := fun x ↦ 1 - h x
   have hf : ConvexOn ℝ (pzExpandedBox n c) f := by

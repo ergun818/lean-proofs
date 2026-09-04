@@ -145,7 +145,7 @@ theorem succ_mul_projectionTestRadius_le_source
         (D + 1) * projectionTestRadius D k :=
       Nat.mul_le_mul_right _ hcount
     _ = projectionUnit D * projectionScale D k := by
-      simp only [projectionTestRadius, projectionUnit, Nat.mul_assoc,
+      simp only [projectionTestRadius, projectionUnit,
         Nat.mul_left_comm, Nat.mul_comm]
     _ ≤ k := by
       simpa only [projectionScale] using

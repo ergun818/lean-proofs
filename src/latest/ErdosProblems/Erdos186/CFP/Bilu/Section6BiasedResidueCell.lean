@@ -54,7 +54,7 @@ theorem biasGamma_eq_entropyProduct {δ : ℝ} (hδneg : -1 < δ)
       rfl
     _ = (((1 + δ) / (1 - δ)) ^ p) * (1 - δ) := by
       field_simp
-      <;> ring
+      ; ring
     _ = ((1 + δ) ^ p / (1 - δ) ^ p) * (1 - δ) := by
       rw [Real.div_rpow hplus.le hminus.le]
     _ = (1 + δ) ^ p * ((1 - δ) / (1 - δ) ^ p) := by ring
@@ -467,7 +467,7 @@ theorem exists_large_biased_residueCell
         simpa [residueColor] using hcolor
       · rintro ⟨hxK, _hnonneg, hhalf⟩
         refine ⟨hxK, ?_⟩
-        simp only [residueColor, if_pos]
+        simp only [residueColor]
         norm_num at hhalf ⊢
         exact hhalf
     rw [hfilter]

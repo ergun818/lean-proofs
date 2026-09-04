@@ -44,7 +44,7 @@ theorem exists_sourceThicknessConstants_ofHighCoefficientSource_halfCore
     (hpopulation : 32 / mu ≤ (A.card : ℝ))
     (hdeltaMu : delta < mu / 8)
     (hdelta : 0 < delta) (hmu : 0 < mu) (hgamma : 0 < gamma) :
-    let theta := sourceCoefficientThreshold A.card
+    let _theta := sourceCoefficientThreshold A.card
     let hcap : 0 < (mu *
         (selector.chosen A hA).identifiedCore.card)⁻¹ :=
       inv_mu_mul_coreCard_pos_of_coreRetention
@@ -54,7 +54,7 @@ theorem exists_sourceThicknessConstants_ofHighCoefficientSource_halfCore
     let E := chooseHighCoefficientSideSelectionData selector D hirr hclosed
       hdelta (sourceCoefficientThreshold_pos
         (selector.eligible_nonempty hA).card_pos).le hcap hmass
-    ∃ forwardFactor reverseFactor : ℕ,
+    ∃ _forwardFactor _reverseFactor : ℕ,
       ∃ forwardConstant reverseConstant : ℝ,
         1 ≤ forwardConstant ∧ 1 ≤ reverseConstant ∧
         ∀ (slab : ℕ) (t : ℝ),

@@ -384,9 +384,9 @@ end
 
 end Erdos186.CFP.Bilu.Section94ReducedCoordinates
 
-#print axioms
-  Erdos186.CFP.Bilu.Section94ReducedCoordinates.ReducedOuterRealization.card_pairSumset_realCoordinateSet_eq_twoA
-#print axioms
-  Erdos186.CFP.Bilu.Section94ReducedCoordinates.ReducedOuterRealization.exists_coefficientSet_of_sourceDoubling
+open Erdos186.CFP.Bilu.Section94ReducedCoordinates.ReducedOuterRealization in
+#print axioms card_pairSumset_realCoordinateSet_eq_twoA
+open Erdos186.CFP.Bilu.Section94ReducedCoordinates.ReducedOuterRealization in
+#print axioms exists_coefficientSet_of_sourceDoubling
 #print axioms
   Erdos186.CFP.Bilu.Section94ReducedCoordinates.reducedOuterRealizationStatement_iff_existence

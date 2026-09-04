@@ -140,7 +140,7 @@ theorem measurableSet_rawCoordinateCone {d : ℕ}
   have hset : rawCoordinateCone S h =
       (Prod.fst ⁻¹' Set.Ioo (0 : ℝ) h) ∩ q ⁻¹' S := by
     ext p
-    simp only [rawCoordinateCone, mem_setOf_eq, mem_inter_iff, mem_preimage, q]
+    simp only [rawCoordinateCone, mem_ofPred_eq, mem_inter_iff, mem_preimage, q]
     constructor
     · rintro ⟨hp, y, hy, hpy⟩
       refine ⟨hp, ?_⟩
@@ -258,7 +258,7 @@ theorem intrinsicVolume_coordinateCone {d : ℕ}
       have hset : Prod.mk r ⁻¹' rawCoordinateCone S h =
           (1 - r / h) • S := by
         ext x
-        simp only [mem_preimage, rawCoordinateCone, mem_setOf_eq]
+        simp only [mem_preimage, rawCoordinateCone, mem_ofPred_eq]
         simp [hr]
       rw [hset, addHaar_smul_of_nonneg volume
         (sub_nonneg.mpr ((div_le_one hh).2 hr.2.le))]
@@ -266,7 +266,7 @@ theorem intrinsicVolume_coordinateCone {d : ℕ}
     · rw [if_neg hr]
       have hset : Prod.mk r ⁻¹' rawCoordinateCone S h = ∅ := by
         ext x
-        simp only [mem_preimage, rawCoordinateCone, mem_setOf_eq, mem_empty_iff_false]
+        simp only [mem_preimage, rawCoordinateCone, mem_ofPred_eq, mem_empty_iff_false]
         simp [hr]
       simp [hset]
   have hscale_meas : Measurable
@@ -792,7 +792,7 @@ theorem gauge_firstFiber_volume_lower_bound {l m : ℕ} (hl : 0 < l)
   · have hz0 : z = 0 :=
       (gauge_eq_zero (absorbent_nhds_zero hPnhds) hPbounded).mp hq.symm
     subst z
-    simp [q, P, centralFiber, firstFiber]
+    simp [centralFiber, firstFiber]
   rcases hq1.eq_or_lt with hq | hqlt
   · change (‖1 - q‖₊ ^ l) • intrinsicVolume l (centralFiber B) ≤ _
     simp [hq, Nat.ne_of_gt hl]
@@ -947,7 +947,7 @@ sets when the dimensions match the two Euclidean factors. -/
 theorem intrinsicVolume_prod {d k : ℕ}
     {S : Set (EuclideanSpace ℝ (Fin d))}
     {T : Set (EuclideanSpace ℝ (Fin k))}
-    (hS : MeasurableSet S) (hT : MeasurableSet T) :
+    (_hS : MeasurableSet S) (_hT : MeasurableSet T) :
     intrinsicVolume (d + k)
         (orthogonalPairMap '' (S ×ˢ T)) =
       intrinsicVolume d S * intrinsicVolume k T := by
@@ -1085,7 +1085,7 @@ theorem coarse_section_bound_coordinate {d k : ℕ} (hk : 0 < k)
             (V := EuclideanSpace ℝ (Fin k)))]
     change volume (Metric.closedBall (0 : EuclideanSpace ℝ (Fin k)) ρ) = _
     rw [EuclideanSpace.volume_closedBall]
-    simp [hk]
+    simp
   rwa [hTvolume] at hmid
 
 /-- An affine set has the dimension used to measure it.  Keeping this as a

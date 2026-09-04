@@ -25,5 +25,5 @@ theorem nonemptyHigherDimensionalCorollary5_of_nonemptyIntegerTheorem15
 
 end Erdos186.CFP.HigherDimensionalCorollary
 
-#print axioms
-  Erdos186.CFP.HigherDimensionalCorollary.nonemptyHigherDimensionalCorollary5_of_nonemptyIntegerTheorem15
+open Erdos186.CFP.HigherDimensionalCorollary in
+#print axioms nonemptyHigherDimensionalCorollary5_of_nonemptyIntegerTheorem15

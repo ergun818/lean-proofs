@@ -121,12 +121,13 @@ theorem twoNEpsilon_div_mul {n : ℕ} {d delta eta : ℝ}
   field_simp
 
 /-- Equal-weight Jensen in the form used in equation (5.14). -/
-theorem sum_rpow_one_sub_le {ι : Type*} [DecidableEq ι]
+theorem sum_rpow_one_sub_le {ι : Type*}
     (s : Finset ι) (eta : ι → ℝ) {nu : ℝ}
     (hs : s.Nonempty) (heta : ∀ i ∈ s, 0 ≤ eta i)
     (hnu0 : 0 ≤ nu) (hnu1 : nu ≤ 1) :
     ∑ i ∈ s, eta i ^ (1 - nu) ≤
       (s.card : ℝ) ^ nu * (∑ i ∈ s, eta i) ^ (1 - nu) := by
+  classical
   let m : ℝ := s.card
   have hm : 0 < m := by
     simpa [m] using (show (0 : ℝ) < s.card by
@@ -204,7 +205,7 @@ theorem cellCount_rpow_epsilonExponent_le {n : ℕ} {d : ℝ}
 theorem rpow_one_sub_le_one_sub_quarter {q d nu : ℝ}
     (hd0 : 0 < d) (hd1 : d ≤ 1)
     (hq0 : 0 ≤ q) (hq : q ≤ 1 - d / 2)
-    (hnu0 : 0 ≤ nu) (hnuHalf : nu ≤ 1 / 2) :
+    (_hnu0 : 0 ≤ nu) (hnuHalf : nu ≤ 1 / 2) :
     q ^ (1 - nu) ≤ 1 - d / 4 := by
   have hq1 : q ≤ 1 := by linarith
   have hqpos_or_zero : q = 0 ∨ 0 < q :=
@@ -247,7 +248,7 @@ theorem cell_error_factor_lt_one {n : ℕ} {d q : ℝ}
 
 /-- The complete weighted error estimate used after applying the induction
 hypothesis to all nonempty outside cells. -/
-theorem sum_twoNEpsilon_div_mul_lt {ι : Type*} [DecidableEq ι]
+theorem sum_twoNEpsilon_div_mul_lt {ι : Type*}
     {n : ℕ} {d delta : ℝ} (s : Finset ι) (eta : ι → ℝ)
     (hn : 0 < n) (hd0 : 0 < d) (hd1 : d ≤ 1) (hdelta : 0 < delta)
     (heta : ∀ i ∈ s, 0 < eta i)
@@ -255,6 +256,7 @@ theorem sum_twoNEpsilon_div_mul_lt {ι : Type*} [DecidableEq ι]
     (hsum : ∑ i ∈ s, eta i ≤ 1 - d / 2) :
     ∑ i ∈ s, twoNEpsilon n d (delta / eta i) * eta i <
       twoNEpsilon n d delta := by
+  classical
   by_cases hs : s.Nonempty
   · have hsum0 : 0 ≤ ∑ i ∈ s, eta i :=
       Finset.sum_nonneg fun i hi ↦ (heta i hi).le
@@ -295,7 +297,7 @@ theorem sum_twoNEpsilon_div_mul_lt {ι : Type*} [DecidableEq ι]
 /-- Zero-size cells contribute zero, so the weighted estimate may be stated
 directly over all coordinate cells. -/
 theorem sum_twoNEpsilon_div_mul_lt_of_nonneg
-    {ι : Type*} [DecidableEq ι] {n : ℕ} {d delta : ℝ}
+    {ι : Type*} {n : ℕ} {d delta : ℝ}
     (s : Finset ι) (eta : ι → ℝ)
     (hn : 0 < n) (hd0 : 0 < d) (hd1 : d ≤ 1) (hdelta : 0 < delta)
     (heta : ∀ i ∈ s, 0 ≤ eta i)
@@ -303,6 +305,7 @@ theorem sum_twoNEpsilon_div_mul_lt_of_nonneg
     (hsum : ∑ i ∈ s, eta i ≤ 1 - d / 2) :
     ∑ i ∈ s, twoNEpsilon n d (delta / eta i) * eta i <
       twoNEpsilon n d delta := by
+  classical
   let t := s.filter fun i ↦ 0 < eta i
   have hteta : ∀ i ∈ t, 0 < eta i := by
     intro i hi

@@ -180,14 +180,15 @@ theorem centered_stepExtreme_mem_dilate
     by_cases hji : j = i
     · subst j
       simp [a]
-    · simp only [Nat.cast_mul]
+    · have ha0 : a j = 0 := by simp [a, hji]
+      rw [ha0, abs_zero]
       positivity
   have hsum : (k * radii i : ℤ) • P.steps i =
       ∑ j, a j • P.steps j := by
     rw [Finset.sum_eq_single i]
     · simp [a]
     · intro j _hj hji
-      simp [a, Pi.single_apply, hji]
+      simp [a, hji]
     · simp
   exact mem_dilate_of_stepCoefficients_le P hP a hsum ha
 

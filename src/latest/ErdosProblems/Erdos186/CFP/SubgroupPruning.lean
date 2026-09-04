@@ -258,7 +258,7 @@ The potential `rank` is evaluated on the entire subgroup profile.  The
 decrease hypothesis says exactly that any deletion which changes at least one
 generated coordinate subgroup makes strict progress. -/
 theorem exists_subset_generatedProfile_stable_of_rank
-    {α D : Type*} [DecidableEq α] [Fintype D]
+    {α D : Type*} [DecidableEq α]
     (G : D → Type*) [∀ d, AddGroup (G d)]
     (φ : ∀ d, α → G d)
     (rank : (∀ d, AddSubgroup (G d)) → ℕ) (budget : ℕ)
@@ -289,7 +289,7 @@ theorem exists_subset_generatedProfile_stable_of_rank
 elements are lost, and every subsequent deletion of at most `budget` elements
 preserves every generated subgroup. -/
 theorem exists_subset_generatedProfile_stable
-    {α D : Type*} [DecidableEq α] [Fintype D]
+    {α D : Type*} [DecidableEq α]
     (G : D → Type*) [∀ d, AddGroup (G d)]
     (φ : ∀ d, α → G d)
     (rank : (∀ d, AddSubgroup (G d)) → ℕ) (budget L : ℕ)

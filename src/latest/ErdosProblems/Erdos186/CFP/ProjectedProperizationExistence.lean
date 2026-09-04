@@ -144,7 +144,7 @@ although their dependent `Coord` types are not definitionally equal. -/
 def castMapGAPCoord {d e r : ℕ}
     (f : LatticePoint d →+ LatticePoint e) (P : GAP d r)
     (n : P.Coord) : (mapGAP f P).Coord :=
-  fun i ↦ ⟨n i, by simpa [mapGAP] using (n i).isLt⟩
+  fun i ↦ ⟨n i, by simp [mapGAP]⟩
 
 @[simp]
 theorem castMapGAPCoord_apply {d e r : ℕ}
@@ -222,7 +222,7 @@ theorem BoxProjectedCollision.coefficientDifference_mem_ker
   funext j
   have hj := congrFun hpoint j
   simp only [GAP.coordPoint, GAP.dilate_offset, GAP.dilate_steps, mapGAP,
-    Pi.add_apply, castMapGAPCoord_apply] at hj
+    castMapGAPCoord_apply] at hj
   simp only [coefficientDifference, sub_mul, Finset.sum_sub_distrib,
     Pi.zero_apply, Q, mapGAP]
   linear_combination hj

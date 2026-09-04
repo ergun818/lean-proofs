@@ -238,5 +238,5 @@ end
 
 end Erdos186.CFP.Bilu.Section92WeightedRankRepair
 
-#print axioms
-  Erdos186.CFP.Bilu.Section92WeightedRankRepair.exists_enlargedInjective_of_canonicalWeightedQuotient
+open Erdos186.CFP.Bilu.Section92WeightedRankRepair in
+#print axioms exists_enlargedInjective_of_canonicalWeightedQuotient

@@ -60,11 +60,11 @@ theorem positiveDyadicThreshold_succ_le_of_approximations
     (hinterval : ∀ z ∈ insert 0 A, 0 ≤ z ∧ z < (n : ℤ))
     (WA : HDimension.HApproximation
       (insert 0 A) (2 ^ h) dA scaleNum scaleDen)
-    (hdA : 0 < dA) (hdAD : dA ≤ D) (hfoldn : 2 ^ h ≤ n)
+    (_hdA : 0 < dA) (hdAD : dA ≤ D) (hfoldn : 2 ^ h ≤ n)
     (haccessible : ∀ B : Finset ℤ, B ⊆ A →
       A.card ≤ B.card + deletionBudget →
       ∃ dB : ℕ, 0 < dB ∧ dB ≤ D ∧
-        ∃ WB : HDimension.HApproximation
+        ∃ _WB : HDimension.HApproximation
             (insert 0 B) (2 ^ h) dB scaleNum scaleDen,
           (2 * scaleDen) ^ dB * (2 ^ h + 1) ^ (dB - 1) <
             (scaleNum * 2 ^ h) ^ dB) :

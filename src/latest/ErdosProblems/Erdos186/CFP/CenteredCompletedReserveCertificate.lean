@@ -155,7 +155,7 @@ theorem exists_centeredCompletedReserveCertificateConstants
       apply GAP.mem_subsetSums_iff.mpr
       refine ⟨{Preprocessing.centeredIdentification P
         (hproper.proper hdrel) (hBW hzeroB) z}, ?_, by simp⟩
-      simpa
+      simp
     exact Preprocessing.centeredCoordinateSubsetSums_subset_centeredCoordinateAxisBox
       hsingleton hcard P (hproper.proper hdrel) (hBW hzeroB) hzsum
   have hcoreLattice : ∀ z ∈ B,

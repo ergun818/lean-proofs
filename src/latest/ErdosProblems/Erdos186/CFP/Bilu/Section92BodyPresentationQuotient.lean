@@ -90,7 +90,7 @@ theorem complementRank_pos_of_one_lt_card (hA : 1 < A.card) :
 /-- The old full independent unit-ball family descends to a full
 independent family in complement coordinates. -/
 theorem coordinateProjectedSeminorm_admitsIndependent
-    (hA : 1 < A.card) :
+    (_hA : 1 < A.card) :
     AdmitsIndependent (S.coordinateProjectedSeminorm X.definite)
       S.quotient.complementRank 1 := by
   obtain ⟨v, hvli, hvunit⟩ := X.full
@@ -99,7 +99,7 @@ theorem coordinateProjectedSeminorm_admitsIndependent
   let w : Fin n → (Fin S.quotient.complementRank → ℝ) :=
     fun i ↦ F (vR i)
   have hvspan : Submodule.span ℝ (Set.range vR) = ⊤ := by
-    exact hvli.span_eq_top_of_card_eq_finrank' (by simp [vR])
+    exact hvli.span_eq_top_of_card_eq_finrank' (by simp)
   have hFsurj : Function.Surjective F :=
     coordinateProjectionReal_surjective X S
   have hwspan : Submodule.span ℝ (Set.range w) = ⊤ := by

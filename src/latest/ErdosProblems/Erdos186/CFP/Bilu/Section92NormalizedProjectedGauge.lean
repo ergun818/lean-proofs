@@ -133,14 +133,8 @@ theorem orthonormalToComplementEquiv_eq_equivFun :
       S.orthonormalProjectedComplementBasis.equivFun.toLinearMap := by
     apply S.orthonormalProjectedComplementBasis.ext
     intro i
-    simp only [LinearEquiv.coe_coe, Basis.equivFun_apply, Basis.repr_self]
-    rw [← S.projectedComplementBasis_apply i]
-    simp only [Basis.equivFun_apply, Basis.repr_self]
-    ext j
-    by_cases hji : j = i
-    · subst j
-      simp [Pi.single]
-    · simp [Pi.single, hji, Ne.symm hji]
+    simp [orthonormalToComplementEquiv, orthonormalProjectedComplementBasis,
+      projectedComplementEquiv]
   apply LinearEquiv.ext
   intro x
   exact LinearMap.congr_fun hmaps x
@@ -286,5 +280,7 @@ end
 
 end Erdos186.CFP.Bilu.Section92ShortKernel.PrimitiveKernelStep
 
-#print axioms Erdos186.CFP.Bilu.Section92ShortKernel.PrimitiveKernelStep.unitBall_coordinateProjectedSeminorm
-#print axioms Erdos186.CFP.Bilu.Section92ShortKernel.PrimitiveKernelStep.coordinateProjectedSeminorm_complementCoordinates_le_one
+open Erdos186.CFP.Bilu.Section92ShortKernel.PrimitiveKernelStep in
+#print axioms unitBall_coordinateProjectedSeminorm
+open Erdos186.CFP.Bilu.Section92ShortKernel.PrimitiveKernelStep in
+#print axioms coordinateProjectedSeminorm_complementCoordinates_le_one

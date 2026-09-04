@@ -45,7 +45,7 @@ theorem card_largeCoefficientPool_of_mass
     (S : Finset α) (q : α → ℝ)
     (N : ℕ) (theta cap delta massLower : ℝ)
     (hS : S.card ≤ N)
-    (htheta : 0 ≤ theta) (hcap : 0 < cap) (hdelta : 0 ≤ delta)
+    (htheta : 0 ≤ theta) (hcap : 0 < cap) (_hdelta : 0 ≤ delta)
     (hq : ∀ x ∈ S, 0 ≤ q x ∧ q x ≤ cap)
     (hmass : massLower ≤ ∑ x ∈ S, q x)
     (hbudget : (N : ℝ) * theta + delta * (N : ℝ) * cap < massLower) :

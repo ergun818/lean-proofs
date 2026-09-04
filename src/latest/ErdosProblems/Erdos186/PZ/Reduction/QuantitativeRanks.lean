@@ -105,7 +105,7 @@ theorem exists_first_coordinateUpwardJump_gt {J : ℕ}
   have hnle : Nat.find hex ≤ length := Nat.find_min' hex hcross
   have hn0 : Nat.find hex ≠ 0 := by
     intro hn
-    have : J < 0 := by simpa [P, hn] using hnP
+    have : J < 0 := by simp [P, hn] at hnP
     omega
   obtain ⟨i, hi⟩ := Nat.exists_eq_succ_of_ne_zero hn0
   refine ⟨i, by omega, ?_, ?_⟩

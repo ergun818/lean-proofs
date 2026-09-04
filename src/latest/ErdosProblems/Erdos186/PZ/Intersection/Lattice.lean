@@ -101,13 +101,12 @@ theorem exists_two_common_points_memCube {d R : ℕ} (hd : 0 < d)
     calc
       |(y₁ i : ℝ) - center i| =
           |((y₁ i : ℝ) - (x₁ i : ℝ)) +
-            ((x₁ i : ℝ) - center i)| := by congr 1 <;> ring
+            ((x₁ i : ℝ) - center i)| := by congr 1; ring
       _ ≤ |(y₁ i : ℝ) - (x₁ i : ℝ)| +
           |(x₁ i : ℝ) - center i| := htri
       _ ≤ (R : ℝ) + 1 := add_le_add hy' (by simpa [x₁] using hfloor)
       _ ≤ 3 * R + 2 := by
         have hR : (0 : ℝ) ≤ R := by positivity
-        push_cast
         linarith
   · intro i
     have hy := hy₂ i
@@ -136,7 +135,7 @@ theorem exists_two_common_points_memCube {d R : ℕ} (hd : 0 < d)
             |(y₂ i : ℝ) - center i| =
                 |((y₂ i : ℝ) - (x₂ i : ℝ)) +
                   ((x₂ i : ℝ) - (x₁ i : ℝ)) +
-                  ((x₁ i : ℝ) - center i)| := by congr 1 <;> ring
+                  ((x₁ i : ℝ) - center i)| := by congr 1; ring
             _ ≤ |(y₂ i : ℝ) - (x₂ i : ℝ)| +
                   |(x₂ i : ℝ) - (x₁ i : ℝ)| +
                   |(x₁ i : ℝ) - center i| := by

@@ -38,10 +38,12 @@ def cubeDirsLinearMap {n : ℕ} (dirs : Fin n → V) :
     simp only [Pi.smul_apply, RingHom.id_apply, smul_eq_mul, smul_smul,
       Finset.smul_sum]
 
+omit [DecidableEq V] [FiniteDimensional ℝ V] in
 @[simp] theorem cubeDirsLinearMap_apply {n : ℕ} (dirs : Fin n → V)
     (t : Fin n → ℝ) :
     cubeDirsLinearMap dirs t = ∑ i, t i • dirs i := rfl
 
+omit [DecidableEq V] [FiniteDimensional ℝ V] in
 /-- The synthesis range is the span of the cube directions. -/
 theorem range_cubeDirsLinearMap {n : ℕ} (dirs : Fin n → V) :
     LinearMap.range (cubeDirsLinearMap dirs) =
@@ -59,6 +61,7 @@ theorem range_cubeDirsLinearMap {n : ℕ} (dirs : Fin n → V) :
     refine ⟨singleCoordinate i 1, ?_⟩
     simp [cubeDirsLinearMap, singleCoordinate]
 
+omit [DecidableEq V] [FiniteDimensional ℝ V] in
 /-- A spanning `n`-tuple in an `n`-dimensional real vector space gives a
 linear coordinate equivalence. -/
 theorem exists_cubeDirsLinearEquiv_of_span_eq_top {n : ℕ}
@@ -66,6 +69,7 @@ theorem exists_cubeDirsLinearEquiv_of_span_eq_top {n : ℕ}
     (hspan : Submodule.span ℝ (Set.range dirs) = ⊤) :
     ∃ e : (Fin n → ℝ) ≃ₗ[ℝ] V,
       ∀ t, e t = ∑ i, t i • dirs i := by
+  classical
   let F := cubeDirsLinearMap dirs
   have hrange : LinearMap.range F = ⊤ := by
     simpa [F, range_cubeDirsLinearMap] using hspan
@@ -89,6 +93,7 @@ def cubeDirectionPlane {n : ℕ} (center : V) (dirs : Fin n → V) :
     AffineSubspace ℝ V :=
   AffineSubspace.mk' center (Submodule.span ℝ (Set.range dirs))
 
+omit [DecidableEq V] [FiniteDimensional ℝ V] in
 /-- Every point in the zero-subspace tube lies in the direction plane. -/
 theorem mem_cubeDirectionPlane_of_mem_cubeTube_bot {n : ℕ}
     (center : V) (dirs : Fin n → V) {x : V}
@@ -128,6 +133,7 @@ def affineSliceWitnessOfCubeSpanNeTop {n C : ℕ} {S : Finset V}
       (W.slice_mem_tube x hx)
   card_le := W.card_le
 
+omit [DecidableEq V] in
 /-- Exact dichotomy needed after the Cube Lemma: either its large slice is
 already contained in a proper affine plane, or its directions provide the
 coordinate equivalence used by equation (5.13). -/
@@ -139,6 +145,7 @@ theorem affineSlice_or_cubeDirsLinearEquiv {n C : ℕ} {S : Finset V}
         (∀ t, e t = ∑ i, t i • W.dirs i) ∧
         (∀ s, affineCubeVertex e center s =
           cubeVertex center W.dirs s) := by
+  classical
   by_cases hspan : Submodule.span ℝ (Set.range W.dirs) = ⊤
   · right
     obtain ⟨e, he⟩ := exists_cubeDirsLinearEquiv_of_span_eq_top
@@ -162,6 +169,7 @@ structure FullCubeWitness (n proportionConstant : ℕ) (S : Finset V) where
     affineCubeVertex coordinates center s ∈ S
   card_le : S.card ≤ proportionConstant * slice.card
 
+omit [DecidableEq V] [FiniteDimensional ℝ V] in
 /-- Translate zero-tube membership through the direction equivalence. -/
 theorem mem_affineCubeClosed_of_mem_cubeTube_bot {n : ℕ}
     (center : V) (dirs : Fin n → V)

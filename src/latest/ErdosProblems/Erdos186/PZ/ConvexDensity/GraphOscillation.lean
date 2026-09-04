@@ -205,7 +205,7 @@ theorem exists_indexed_upperBoundary_constant_slab_high
     AffineMap.const ℝ (EuclideanPoint n) (h (pzFinGridPoint v))
   refine ⟨v, hvI, ?_, ?_, ?_, hoccupied v hvI, ?_⟩
   · intro i
-    simp [L, affineCoordinateCoefficient]
+    simp [affineCoordinateCoefficient]
   · intro i hi
     have hi' := mem_indexedLabelsOverCellND_iff.mp hi
     have hibase : WithLp.ofLp (baseCoordinates (z i)) ∈ pzGridCell v :=
@@ -289,7 +289,7 @@ theorem exists_indexed_upperBoundary_constant_slab_high_2d
     AffineMap.const ℝ (EuclideanPoint 1) (h (gridPoint m k))
   refine ⟨k, hkI, ?_, ?_, ?_, hoccupied k hkI, ?_⟩
   · intro i
-    simp [L, affineCoordinateCoefficient]
+    simp [affineCoordinateCoefficient]
   · intro i hi
     have hi' := mem_indexedLabelsOverCell1D_iff.mp hi
     have hibounds := mem_graphBaseCell_iff.mp hi'.2

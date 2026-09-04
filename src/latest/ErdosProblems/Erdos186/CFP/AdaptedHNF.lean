@@ -120,7 +120,6 @@ inside the original lattice. -/
 def tailKernelEquiv {n : ℕ} (Gamma : Sublattice (n + 1)) :
     tailSublattice Gamma ≃ₗ[ℤ] headKernel Gamma where
   toFun x := ⟨⟨zeroConsLinear n x, by
-    change zeroConsLinear n (x : LatticePoint n) ∈ Gamma
     exact x.property⟩, by
       rw [mem_headKernel]
       simp⟩
@@ -128,7 +127,7 @@ def tailKernelEquiv {n : ℕ} (Gamma : Sublattice (n + 1)) :
     ⟨tailLinear n (y.1 : LatticePoint (n + 1)), by
       have hy0 : (y.1 : LatticePoint (n + 1)) 0 = 0 :=
         mem_headKernel.mp y.2
-      simpa [mem_tailSublattice, zeroCons_tail n _ hy0] using y.1.property⟩
+      simp [mem_tailSublattice, zeroCons_tail n _ hy0]⟩
   left_inv x := by
     apply Subtype.ext
     funext i
@@ -323,10 +322,6 @@ theorem headStep_dvd {n : ℕ} {v : Fin (n + 1) → ℕ}
         q * (((headVector hv Gamma hrect : Gamma) : LatticePoint (n + 1)) 0) = r
     rw [headVector_head]
     dsimp only [q, r, a]
-    change ((x : LatticePoint (n + 1)) 0) -
-      (((x : LatticePoint (n + 1)) 0) /
-        (headStep hv Gamma hrect : ℤ)) * (headStep hv Gamma hrect : ℤ) =
-      ((x : LatticePoint (n + 1)) 0) % (headStep hv Gamma hrect : ℤ)
     have hdiv := Int.mul_ediv_add_emod
       ((x : LatticePoint (n + 1)) 0) (headStep hv Gamma hrect : ℤ)
     clear hr0 hra
@@ -422,18 +417,14 @@ theorem exists_adapted_basis_with_pos : ∀ {d : ℕ} {v : Fin d → ℕ},
                   LatticePoint (n + 1)) 0) ≤ (v 0 : ℤ)
             rw [hk0]
             exact ⟨fun _ ↦ rfl, le_rfl, by exact_mod_cast Nat.zero_le (v 0)⟩
-          · simp only [b, Basis.coe_mkFinCons, Fin.cons_succ, bk,
-              Basis.map_apply, coe_tailKernelEquiv_apply,
-              zeroConsLinear_apply_succ]
+          · simp only [b, Basis.coe_mkFinCons, Fin.cons_succ, bk]
             simpa [vt] using hbt.1 ii jj
       · intro i
         refine Fin.cases ?_ (fun ii ↦ ?_) i
         · simp only [b, Basis.coe_mkFinCons, Fin.cons_zero, y,
             reducedHeadVector_head]
           exact_mod_cast headStep_pos hv Gamma hrect
-        · simp only [b, Basis.coe_mkFinCons, Fin.cons_succ, bk,
-            Basis.map_apply, coe_tailKernelEquiv_apply,
-            zeroConsLinear_apply_succ]
+        · simp only [b, Basis.coe_mkFinCons, Fin.cons_succ, bk]
           exact hbt.2 ii
 
 /-- The adapted-basis existence theorem with the pivot information
@@ -495,7 +486,7 @@ theorem weighted_column_sum_le {d : ℕ} {v w : Fin d → ℕ}
         rw [(hb i j).1 hji, abs_zero, mul_zero]
         positivity
     _ = (d : ℤ) * (v j : ℤ) * (w j : ℤ) := by
-      simp [mul_assoc, mul_left_comm, mul_comm]
+      simp [mul_assoc, mul_comm]
 
 /-- Coordinate form of bounding-box containment. Any linear combination
 whose `i`th coefficient has absolute value at most `w i` lies in the
@@ -569,7 +560,7 @@ def permutedSublatticeEquiv {d : ℕ} (sigma : Equiv.Perm (Fin d))
     Gamma ≃ₗ[ℤ] permutedSublattice sigma Gamma where
   toFun x := ⟨coordinatePerm sigma x, by
     rw [mem_permutedSublattice_iff]
-    simpa using x.property⟩
+    simp⟩
   invFun y := ⟨(coordinatePerm sigma).symm y, by
     exact (mem_permutedSublattice_iff sigma Gamma _).mp y.property⟩
   left_inv x := by
@@ -672,7 +663,7 @@ noncomputable def centeredBasisGAP {d : ℕ} {Gamma : Sublattice d}
     (((b i : Gamma) : LatticePoint d) j)
   steps := fun i ↦ ((b i : Gamma) : LatticePoint d)
   widths := fun i ↦ 2 * radius i + 1
-  width_pos := fun i ↦ Nat.zero_lt_succ _
+  width_pos := fun _i ↦ Nat.zero_lt_succ _
 
 @[simp] theorem centeredBasisGAP_widths {d : ℕ} {Gamma : Sublattice d}
     (b : Basis (Fin d) ℤ Gamma) (radius : Fin d → ℕ) (i : Fin d) :
@@ -751,7 +742,7 @@ theorem centeredBasisGAP_carrier_coordinate_le {d : ℕ}
   have hn := (n i).isLt
   simp only [centeredBasisGAP_widths] at hn
   rw [abs_le]
-  constructor <;> norm_num at ⊢ <;> omega
+  constructor <;> omega
 
 /-- Fully packaged arbitrary-width output: a proper homogeneous centered
 basis GAP whose carrier lies in the required anisotropic axis box. -/

@@ -77,7 +77,7 @@ theorem mem_boundedAnnulus_centeredHouseholderEquiv_iff {n : ℕ}
     centeredHouseholderEquiv center direction z ∈
         boundedAnnulus inner outer ↔
       inner ≤ dist z center ∧ dist z center ≤ outer := by
-  simp only [boundedAnnulus, mem_setOf_eq,
+  simp only [boundedAnnulus, mem_ofPred_eq,
     norm_centeredHouseholderEquiv]
 
 /-- Compactness of the common hull survives the chart. -/
@@ -125,7 +125,7 @@ cap of points on the upper-boundary graph after the representative
 Householder reflection.  The size lower bound is the exact indexed cap
 pigeonhole bound, so coincident geometric witnesses retain their labels. -/
 theorem exists_large_indexed_cap_upperBoundary_chart
-    {ι : Type*} [DecidableEq ι] {n m : ℕ}
+    {ι : Type*} {n m : ℕ}
     (hm : 0 < m) (hmLarge : 4 * Real.sqrt n ≤ m)
     {inner outer : ℝ} (hinnerPos : 0 < inner)
     (hbaseSmall : outer * (2 * Real.sqrt n / m) < inner)

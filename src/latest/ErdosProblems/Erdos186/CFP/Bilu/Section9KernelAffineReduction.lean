@@ -31,6 +31,7 @@ section Kernel
 variable {G H : Type*} [AddCommGroup G] [AddCommGroup H]
   [DecidableEq G] [DecidableEq H]
 
+omit [DecidableEq H] in
 /-- Injectivity of an additive map on a finite set is exactly the absence
 of a nonzero kernel vector in its difference set.  This is the algebraic
 test used in Bilu Section 9.2 before quotienting by a primitive direction.
@@ -51,12 +52,14 @@ theorem injOn_iff_sub_ker_eq_zero (f : G →+ H) (S : Finset G) :
     · exact Finset.mem_sub.mpr ⟨x, hx, y, hy, rfl⟩
     · rw [map_sub, hxy, sub_self]
 
+omit [DecidableEq H] in
 /-- Failure of enlarged-body injectivity supplies the literal short
 nonzero kernel difference along which Section 9.2 projects. -/
 theorem exists_nonzero_mem_sub_ker_of_not_injOn
     (f : G →+ H) (S : Finset G)
     (h : ¬ Set.InjOn f S) :
     ∃ z ∈ S - S, z ≠ 0 ∧ f z = 0 := by
+  classical
   rw [injOn_iff_sub_ker_eq_zero] at h
   push Not at h
   obtain ⟨z, hz, hfz, hz0⟩ := h
@@ -93,6 +96,7 @@ factors through the quotient. -/
 def factoredMap : (V ⧸ (ℝ ∙ Q.collision)) →ₗ[ℝ] W :=
   Submodule.liftQSpanSingleton Q.collision f Q.collision_mem_ker
 
+omit [FiniteDimensional ℝ V] in
 @[simp]
 theorem factoredMap_quotientMap (x : V) :
     Q.factoredMap (Q.quotientMap x) = f x := rfl
@@ -105,6 +109,7 @@ theorem finrank_quotient_lt :
   rw [finrank_span_singleton Q.collision_ne_zero] at hdim
   omega
 
+omit [FiniteDimensional ℝ V] in
 /-- The finite image represented by the realization is unchanged after
 the quotient and factorization. -/
 theorem image_factoredMap_image_quotientMap :
@@ -118,6 +123,7 @@ theorem image_factoredMap_image_quotientMap :
 
 end KernelQuotientStep
 
+omit [FiniteDimensional ℝ V] in
 /-- A failed injectivity test constructs the concrete lower-dimensional
 quotient through which the realization factors. -/
 theorem exists_kernelQuotientStep_of_not_injOn
@@ -204,11 +210,13 @@ def affineRestriction (S : Finset V) (a : V) (ha : a ∈ S) :
     Finset (affineDirection S) :=
   S.attach.image (toAffineDirection S a ha)
 
+omit [DecidableEq V] [FiniteDimensional ℝ V] in
 @[simp]
 theorem coe_toAffineDirection (S : Finset V) (a : V) (ha : a ∈ S)
     (x : {x // x ∈ S}) :
     (toAffineDirection S a ha x : V) = (x : V) - a := rfl
 
+omit [DecidableEq V] [FiniteDimensional ℝ V] in
 /-- Translation into the affine direction is injective. -/
 theorem toAffineDirection_injective (S : Finset V) (a : V) (ha : a ∈ S) :
     Function.Injective (toAffineDirection S a ha) := by
@@ -217,6 +225,7 @@ theorem toAffineDirection_injective (S : Finset V) (a : V) (ha : a ∈ S) :
   have hxy' := congrArg ((↑) : affineDirection S → V) hxy
   exact sub_left_inj.mp hxy'
 
+omit [FiniteDimensional ℝ V] in
 /-- Affine-span restriction loses no points. -/
 @[simp]
 theorem card_affineRestriction (S : Finset V) (a : V) (ha : a ∈ S) :
@@ -225,6 +234,7 @@ theorem card_affineRestriction (S : Finset V) (a : V) (ha : a ∈ S) :
     (toAffineDirection_injective S a ha)]
   exact Finset.card_attach
 
+omit [DecidableEq V] [FiniteDimensional ℝ V] in
 /-- Pair sums are translated by the fixed vector `2a`, so equality of pair
 sums is reflected exactly by affine-span restriction. -/
 theorem add_toAffineDirection_eq_iff
@@ -247,6 +257,7 @@ theorem add_toAffineDirection_eq_iff
       _ = ((u : V) + v) - (a + a) := by rw [h]
       _ = (u : V) - a + (v - a) := by abel
 
+omit [FiniteDimensional ℝ V] in
 /-- The restriction map induces a bijection between the original pair
 sumset and the intrinsic pair sumset. -/
 theorem card_pairSumset_affineRestriction
@@ -302,12 +313,14 @@ theorem card_pairSumset_affineRestriction
     f x.1 + f x.2 = f y.1 + f y.2
   exact (add_toAffineDirection_eq_iff S a ha x.1 x.2 y.1 y.2).symm
 
+omit [DecidableEq V] [FiniteDimensional ℝ V] in
 /-- The intrinsic ambient rank is exactly the affine dimension of `S`. -/
 @[simp]
 theorem finrank_affineDirection (S : Finset V) :
     finrank ℝ (affineDirection S) =
       finrank ℝ (affineSpan ℝ (S : Set V)).direction := rfl
 
+omit [FiniteDimensional ℝ V] in
 /-- Source-facing existential form: every nonempty finite set has a
 cardinality- and doubling-preserving realization in a vector space whose
 rank is its affine dimension. -/

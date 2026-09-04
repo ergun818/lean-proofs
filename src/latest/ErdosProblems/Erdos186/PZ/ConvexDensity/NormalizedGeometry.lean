@@ -148,7 +148,7 @@ absolute lower bound, provided the ambient body has a known absolute volume
 lower bound. -/
 theorem relativeVolume_le_or_volume_lower {d : ℕ}
     {P Omega : Set (EuclideanPoint d)} {eta c : ℝ}
-    (hOmega : IsConvexBody Omega) (heta : 0 ≤ eta) (hc : 0 ≤ c)
+    (hOmega : IsConvexBody Omega) (heta : 0 ≤ eta) (_hc : 0 ≤ c)
     (hOmegaLower : ENNReal.ofReal c ≤ volume Omega) :
     relativeVolume P Omega ≤ ENNReal.ofReal eta ∨
       ENNReal.ofReal (eta * c) ≤ volume P := by

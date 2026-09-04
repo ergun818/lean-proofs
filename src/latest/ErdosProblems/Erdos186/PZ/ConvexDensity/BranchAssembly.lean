@@ -134,7 +134,7 @@ theorem convexDensityOutput_or_commonGridHull_inball
 chart and transport its output back.  The labels and their fibre
 multiplicities are preserved because the affine equivalence is injective. -/
 theorem convexDensityOutput_of_affineChart_disjointFibers
-    {ι : Type*} [DecidableEq ι] {n : ℕ}
+    {ι : Type*} {n : ℕ}
     {epsilon tau delta eta r : ℝ}
     {Omega : Set (EuclideanPoint (n + 1))}
     {X : Finset (EuclideanPoint (n + 1))}
@@ -155,6 +155,7 @@ theorem convexDensityOutput_of_affineChart_disjointFibers
     (hCard : eta ^ densityExponent (n + 1) epsilon * (X.card : ℝ) ≤
       (∑ i ∈ J, (Y i).card : ℕ)) :
     ConvexDensityOutput epsilon tau delta Omega X := by
+  classical
   let X' := affineEquivImageFinset e X
   let Y' : ι → Finset (EuclideanPoint (n + 1)) :=
     fun i ↦ affineEquivImageFinset e (Y i)

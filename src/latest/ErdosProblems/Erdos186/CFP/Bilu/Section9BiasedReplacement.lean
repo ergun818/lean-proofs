@@ -149,7 +149,7 @@ theorem exists_lemma45SectionSeed_of_proposition83_biased
     (hepsilon : proposition83Threshold m (distortionRank sigma) sigma < epsilon) :
     ∃ proportionConstant : ℕ,
       ∃ a : Fin (distortionRank sigma) → EuclideanSpace ℝ (Fin m),
-        ∃ b : Fin (distortionRank sigma) → ℝ,
+        ∃ _b : Fin (distortionRank sigma) → ℝ,
           ∃ D : GeometricData B a,
             (∀ i, WithLp.ofLp (a i) ∈
               cubeDistortingSet (distortionDelta sigma) K) ∧

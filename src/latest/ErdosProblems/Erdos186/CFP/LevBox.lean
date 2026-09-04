@@ -20,7 +20,7 @@ open scoped Pointwise
 
 /-- Truncating a set contained in `[0,L]` at an integer `n ≤ L` loses at
 most `L-n` elements.  The cardinality inequality is stated in `ℤ` so that
-it composes directly with the endpoint estimates in `dense_two_sumset_Icc`.-/
+it composes directly with the endpoint estimates in `dense_two_sumset_Icc`. -/
 private theorem card_le_card_filter_le_add_sub {L : ℕ} {S : Finset ℤ}
     (hS : S ⊆ Finset.Icc 0 (L : ℤ)) {n : ℤ} (hnL : n ≤ (L : ℤ)) :
     (S.card : ℤ) ≤ ((S.filter fun x ↦ x ≤ n).card : ℤ) + (L : ℤ) - n := by
@@ -61,7 +61,7 @@ Let `S₁ ⊆ [0,L₁]` and `S₂ ⊆ [0,L₂]`, with both lengths positive.  Pu
 The proof truncates both sets at a proposed sum `n` and reflects the second
 truncation by `b ↦ n-b`.  The two resulting subsets of `[0,n]` have more
 than `n+1` elements in total, so the pigeonhole principle gives an
-intersection point and hence a representation of `n` as a sum.-/
+intersection point and hence a representation of `n` as a sum. -/
 theorem dense_two_sumset_Icc {L₁ L₂ : ℕ} (hL₁ : 0 < L₁) (hL₂ : 0 < L₂)
     {S₁ S₂ : Finset ℤ}
     (hS₁ : S₁ ⊆ Finset.Icc 0 (L₁ : ℤ))

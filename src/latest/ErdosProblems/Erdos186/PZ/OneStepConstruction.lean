@@ -378,7 +378,7 @@ maximized. -/
 theorem exists_boundedDimension_convexJohnRestrictionData
     (hConvexDensity : ConvexDensity.PZLemmaOneStatement)
     {convexLoss : ℝ} (hconvexLoss : 0 < convexLoss)
-    (dimensionCeiling : ℕ) (hdimensionCeiling : 0 < dimensionCeiling) :
+    (dimensionCeiling : ℕ) (_hdimensionCeiling : 0 < dimensionCeiling) :
     ∃ tau deltaZero : Fin dimensionCeiling → ℝ,
       ∃ factorBound : Fin dimensionCeiling → ℕ,
       ∃ johnConstant : Fin dimensionCeiling → ℝ,
@@ -654,7 +654,7 @@ theorem exists_rankChange_scalarHierarchy_below
       _ ≤ (2 * (dimensionCeiling : ℝ) * cap) /
           (4 * (dimensionCeiling : ℝ)) := by
         exact div_le_div_of_nonneg_right hreducedCap (by positivity)
-      _ = cap / 2 := by field_simp <;> norm_num
+      _ = cap / 2 := by field_simp; norm_num
   refine ⟨epsilon, changeGain, slack, hepsilon, hepsilonThird,
     hepsilonOne, ?_, hchangeGain, hslack, ?_, ?_, hgap⟩
   · linarith
@@ -1420,7 +1420,7 @@ theorem exists_terminal_theorem4Parameters_threshold
         (current : State zeta)
         {hA : selector.Eligible
           (Reduction.normalizeSet (toCFPBox current.box) current.points)}
-        (H : SlowlyVaryingSourceHierarchy current.points beta C C' kappa
+        (_H : SlowlyVaryingSourceHierarchy current.points beta C C' kappa
           deltaZero M K)
         (R : Reduction.IrreducibleReplacementResult selector
           (toCFPBox current.box) current.points hA epsilon
@@ -1522,7 +1522,7 @@ theorem exists_slowlyVarying_terminalIntersectionBudgets_threshold
         (current : State zeta)
         {hA : selector.Eligible
           (Reduction.normalizeSet (toCFPBox current.box) current.points)}
-        (H : SlowlyVaryingSourceHierarchy current.points beta C C' kappa
+        (_H : SlowlyVaryingSourceHierarchy current.points beta C C' kappa
           deltaZero M K)
         (R : Reduction.IrreducibleReplacementResult selector
           (toCFPBox current.box) current.points hA epsilon
@@ -1701,7 +1701,8 @@ directly from capped convex pools.  This formulation avoids routing the
 argument through the obsolete all-purpose `Theorem4Parameters` boundary:
 the only scalar premise needed to extract the capped combination is
 `0 < mu`, while every source hierarchy is discharged by `hpost`. -/
-theorem Reduction.IrreducibleReplacementResult.identifiedCore_isDeltaConvexPosition_of_convexPoolsPost
+theorem
+    Reduction.IrreducibleReplacementResult.identifiedCore_isDeltaConvexPosition_of_convexPoolsPost
     {beta eta : ℝ}
     {context : Reduction.HigherDimensionalContext beta eta}
     {selector : Reduction.BoundedCFPSelector context}
@@ -1858,8 +1859,8 @@ same-step field used by maximal same-dimensional run persistence. -/
 theorem boxConstant_mul_scale_le_scale_rpow
     {boxConstant mu tau a convexScale : ℝ}
     (hboxConstant : 0 < boxConstant)
-    (hmu : 0 < mu) (hmuOne : mu < 1)
-    (htau : 0 < tau) (ha : 0 ≤ a) (haOne : a < 1)
+    (hmu : 0 < mu) (_hmuOne : mu < 1)
+    (_htau : 0 < tau) (_ha : 0 ≤ a) (haOne : a < 1)
     (hscale : 0 < convexScale)
     (hscaleUpper : convexScale ≤ mu ^ tau)
     (hbudget :
@@ -2052,7 +2053,7 @@ theorem Reduction.IrreducibleReplacementResult.terminal_powerFloor
     (R : Reduction.IrreducibleReplacementResult selector
       (toCFPBox current.box) current.points hA epsilon delta gamma K constant)
     (hlower : (initialCard : ℝ) ^ p ≤ (current.points.card : ℝ))
-    (hp : 0 ≤ p) (hepsilon : epsilon ≤ 1) :
+    (_hp : 0 ≤ p) (hepsilon : epsilon ≤ 1) :
     (initialCard : ℝ) ^ (p * (1 - epsilon)) ≤
       (R.points.card : ℝ) := by
   have hinitialNonneg : (0 : ℝ) ≤ (initialCard : ℝ) := by positivity
@@ -2695,7 +2696,8 @@ theorem oneStepAssembly : OneStepAssemblyStatement := by
   have hterminalPersistence : 0 < terminalPersistence :=
     mul_pos hpersistence (sub_pos.mpr (hepsilonThird.trans (by norm_num)))
   obtain ⟨postThreshold, hpost⟩ :=
-    Intersection.Theorem4PostCFPData.exists_powerRangeSource_boxWeightedFullCoefficientPostCFP_threshold
+    open Intersection.Theorem4PostCFPData in
+    exists_powerRangeSource_boxWeightedFullCoefficientPostCFP_threshold
       (exponent := Reduction.guardedScaleExponent epsilon)
       context analyticCeiling (by norm_num : (0 : ℝ) < 1 / 2)
       terminalPersistence hterminalPersistence kappa (K : ℝ) hkappa
@@ -2887,7 +2889,7 @@ theorem oneStepAssembly : OneStepAssemblyStatement := by
       (Erdos186.mu kappa initial.points.card)
       (Intersection.realImage S.identifiedCore) := by
     exact
-      Erdos186.PZ.OneStepAssembly.Reduction.IrreducibleReplacementResult.identifiedCore_isDeltaConvexPosition_of_convexPoolsPost
+      Reduction.IrreducibleReplacementResult.identifiedCore_isDeltaConvexPosition_of_convexPoolsPost
         R hmuPos hpostForR
   have hpositionNu : ConvexGeometry.IsDeltaConvexPosition nu
       (Intersection.realImage S.identifiedCore) :=

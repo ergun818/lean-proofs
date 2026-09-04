@@ -70,6 +70,7 @@ def cubeCell {n : ℕ} (S : Finset V) (e : (Fin n → ℝ) ≃ₗ[ℝ] V)
     (center : V) (alpha : Fin n → Fin 3) : Finset V :=
   S.filter fun x ↦ cubeCellIndex e center x = alpha
 
+omit [DecidableEq V] [FiniteDimensional ℝ V] in
 @[simp] theorem mem_cubeCell {n : ℕ} {S : Finset V}
     {e : (Fin n → ℝ) ≃ₗ[ℝ] V} {center : V}
     {alpha : Fin n → Fin 3} {x : V} :
@@ -77,14 +78,15 @@ def cubeCell {n : ℕ} (S : Finset V) (e : (Fin n → ℝ) ≃ₗ[ℝ] V)
       x ∈ S ∧ cubeCellIndex e center x = alpha := by
   simp [cubeCell]
 
+omit [FiniteDimensional ℝ V] in
 /-- The middle cell is exactly the open-cube part. -/
 theorem cubeCell_middle_eq_interiorPart {n : ℕ} (S : Finset V)
     (e : (Fin n → ℝ) ≃ₗ[ℝ] V) (center : V) :
     cubeCell S e center (middleCellIndex n) =
       affineCubeInteriorPart S e center := by
   ext x
-  simp only [mem_cubeCell, affineCubeInteriorPart, Finset.mem_filter,
-    affineCubeInterior, Set.mem_setOf_eq]
+  rw [mem_cubeCell, show x ∈ affineCubeInteriorPart S e center ↔
+    x ∈ S ∧ x ∈ affineCubeInterior e center from Finset.mem_filter]
   constructor
   · rintro ⟨hxS, hxindex⟩
     refine ⟨hxS, ?_⟩
@@ -97,6 +99,7 @@ theorem cubeCell_middle_eq_interiorPart {n : ℕ} (S : Finset V)
     funext i
     exact (coordinateCell_eq_one_iff _).mpr (hxinterior i)
 
+omit [DecidableEq V] [FiniteDimensional ℝ V] in
 /-- Equality of two vector sums forces equality of the corresponding sums
 of affine cube coordinates. -/
 theorem cubeCoordinate_add_eq {n : ℕ}
@@ -125,6 +128,7 @@ theorem coordinate_pair_sum_ne_of_cell_ne
   all_goals try { exact (hab rfl).elim }
   all_goals linarith
 
+omit [DecidableEq V] [FiniteDimensional ℝ V] in
 /-- Two pairs of points from different coordinate cells cannot have the
 same sum. -/
 theorem add_ne_of_cubeCellIndex_ne {n : ℕ}
@@ -136,6 +140,7 @@ theorem add_ne_of_cubeCellIndex_ne {n : ℕ}
     (hy₂ : cubeCellIndex e center y₂ = beta)
     (hab : alpha ≠ beta) :
     x₁ + x₂ ≠ y₁ + y₂ := by
+  classical
   intro hsum
   obtain ⟨i, hi⟩ := Function.ne_iff.mp hab
   have hcoord := cubeCoordinate_add_eq e center x₁ x₂ y₁ y₂ hsum i
@@ -153,6 +158,7 @@ theorem add_ne_of_cubeCellIndex_ne {n : ℕ}
     simpa [cubeCellIndex] using hy₂i
   exact coordinate_pair_sum_ne_of_cell_ne ha ha₂ hb hb₂ hi hcoord
 
+omit [FiniteDimensional ℝ V] in
 /-- Self-sumsets of distinct coordinate cells are disjoint. -/
 theorem pairSumset_cubeCell_disjoint {n : ℕ} (S : Finset V)
     (e : (Fin n → ℝ) ≃ₗ[ℝ] V) (center : V)
@@ -170,6 +176,7 @@ theorem pairSumset_cubeCell_disjoint {n : ℕ} (S : Finset V)
     (mem_cubeCell.mp hy₁).2 (mem_cubeCell.mp hy₂).2 hab
   exact hne (hxsum.trans hysum.symm)
 
+omit [DecidableEq V] [FiniteDimensional ℝ V] in
 /-- An outside-cell self-sum cannot equal the sum of an interior point and
 a cube vertex. -/
 theorem add_ne_of_outsideCell_and_interior_vertex {n : ℕ}
@@ -180,6 +187,7 @@ theorem add_ne_of_outsideCell_and_interior_vertex {n : ℕ}
     (halpha : alpha ≠ middleCellIndex n)
     (hy : y ∈ affineCubeInterior e center) :
     x₁ + x₂ ≠ y + affineCubeVertex e center s := by
+  classical
   intro hsum
   obtain ⟨i, hi⟩ := Function.ne_iff.mp halpha
   have hai : alpha i ≠ 1 := by
@@ -212,6 +220,7 @@ theorem add_ne_of_outsideCell_and_interior_vertex {n : ℕ}
     rw [hvertex] at hcoord
     linarith
 
+omit [FiniteDimensional ℝ V] in
 /-- The affine-cube sumset from equation (5.13) is disjoint from every
 outside-cell self-sumset. -/
 theorem affineCubeSumFinset_disjoint_pairSumset_cubeCell {n : ℕ}
@@ -241,6 +250,7 @@ def outsideCellIndices (n : ℕ) : Finset (Fin n → Fin 3) :=
     (outsideCellIndices n).card = 3 ^ n - 1 := by
   simp [outsideCellIndices]
 
+omit [DecidableEq V] [FiniteDimensional ℝ V] in
 /-- The cell fibers partition `S`. -/
 theorem sum_card_cubeCell {n : ℕ} (S : Finset V)
     (e : (Fin n → ℝ) ≃ₗ[ℝ] V) (center : V) :
@@ -250,6 +260,7 @@ theorem sum_card_cubeCell {n : ℕ} (S : Finset V)
     (t := (Finset.univ : Finset (Fin n → Fin 3))) (by simp)
   simpa [cubeCell] using hpartition.symm
 
+omit [FiniteDimensional ℝ V] in
 /-- The open cube together with all outside cells accounts for all
 points of `S`. -/
 theorem card_interiorPart_add_sum_outsideCells {n : ℕ} (S : Finset V)
@@ -275,6 +286,7 @@ def outsidePairSumUnion {n : ℕ} (S : Finset V)
   (outsideCellIndices n).biUnion fun alpha ↦
     pairSumset (cubeCell S e center alpha)
 
+omit [FiniteDimensional ℝ V] in
 /-- The outside self-sumsets form a genuinely disjoint union. -/
 theorem card_outsidePairSumUnion {n : ℕ} (S : Finset V)
     (e : (Fin n → ℝ) ≃ₗ[ℝ] V) (center : V) :
@@ -290,6 +302,7 @@ def cubeAndOutsideSumUnion {n : ℕ} (S S₀ : Finset V)
     (e : (Fin n → ℝ) ≃ₗ[ℝ] V) (center : V) : Finset V :=
   affineCubeSumFinset S₀ e center ∪ outsidePairSumUnion S e center
 
+omit [FiniteDimensional ℝ V] in
 /-- Exact cardinality of the complete disjoint family. -/
 theorem card_cubeAndOutsideSumUnion {n : ℕ} (S S₀ : Finset V)
     (e : (Fin n → ℝ) ≃ₗ[ℝ] V) (center : V)
@@ -306,6 +319,7 @@ theorem card_cubeAndOutsideSumUnion {n : ℕ} (S S₀ : Finset V)
   exact affineCubeSumFinset_disjoint_pairSumset_cubeCell S S₀ e center
     hS₀ (Finset.ne_of_mem_erase halpha)
 
+omit [FiniteDimensional ℝ V] in
 /-- Every sum in the disjoint family is a sum of two points of `S`. -/
 theorem cubeAndOutsideSumUnion_subset_pairSumset {n : ℕ} (S S₀ : Finset V)
     (e : (Fin n → ℝ) ≃ₗ[ℝ] V) (center : V)
@@ -326,6 +340,7 @@ theorem cubeAndOutsideSumUnion_subset_pairSumset {n : ℕ} (S S₀ : Finset V)
     exact mem_pairSumset S _ |>.mpr
       ⟨x, (mem_cubeCell.mp hx).1, y, (mem_cubeCell.mp hy).1, rfl⟩
 
+omit [FiniteDimensional ℝ V] in
 /-- Master outside-cell inequality: equation (5.13) and all outside-cell
 self-sumsets inject disjointly into `S+S`. -/
 theorem interior_and_outside_pairSum_card_le {n : ℕ} (S S₀ : Finset V)

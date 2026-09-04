@@ -59,7 +59,7 @@ def IsAdaptedTo {κ : Type*} (b : Basis κ ℤ M)
 
 /-- Saturation descends to a submodule of a containing submodule. -/
 theorem IsSaturated.comap_subtype {P O : Submodule ℤ M}
-    (hP : IsSaturated P) (hPO : P ≤ O) :
+    (hP : IsSaturated P) (_hPO : P ≤ O) :
     IsSaturated (P.comap O.subtype) := by
   intro a x ha hx
   change (a • (x : M)) ∈ P at hx
@@ -194,9 +194,10 @@ section Smith
 
 variable {ι : Type*} [Finite ι]
 
+omit [Finite ι] in
 /-- The ambient Smith vectors selected by the Smith embedding already lie in
 a saturated submodule.  This is the exact point where saturation is used. -/
-theorem smithVector_mem_of_isSaturated (b : Basis ι ℤ M)
+theorem smithVector_mem_of_isSaturated (_b : Basis ι ℤ M)
     (P : Submodule ℤ M) (hP : IsSaturated P) {n : ℕ}
     (snf : Basis.SmithNormalForm P ι n) (i : Fin n) :
     snf.bM (snf.f i) ∈ P := by
@@ -205,7 +206,7 @@ theorem smithVector_mem_of_isSaturated (b : Basis ι ℤ M)
     intro hai
     apply (snf.bN.ne_zero i)
     apply Subtype.ext
-    simpa [snf.snf i, hai]
+    simp [snf.snf i, hai]
   exact hP (snf.a i) (snf.bM (snf.f i)) hai <| by
     simpa [snf.snf i] using (snf.bN i).property
 
@@ -264,7 +265,7 @@ theorem exists_basis_extending_of_isSaturated (b : Basis ι ℤ M)
   let bM : Basis (κ ⊕ Fin m) ℤ M := (bP.prod bQ).map e
   refine ⟨m, bM, ?_⟩
   intro i
-  simp [bM, e, Basis.prod_apply_inl_fst, Basis.prod_apply_inl_snd]
+  simp [bM, e]
 
 /-- If an ambient basis extends a basis of `P`, then any submodule of `P`
 spanned by selected old basis vectors is spanned by the same selected vectors
@@ -294,7 +295,7 @@ theorem span_image_inl_eq_of_span_comap_eq
 /-- In a basis obtained from complementary submodules, the left block spans
 the first summand. -/
 theorem span_range_inl_prod_eq {P Q : Submodule ℤ M} (hPQ : IsCompl P Q)
-    {κ μ : Type*} [Fintype κ] [Fintype μ]
+    {κ μ : Type*}
     (bP : Basis κ ℤ P) (bQ : Basis μ ℤ Q) :
     let bM := (bP.prod bQ).map (P.prodEquivOfIsCompl Q hPQ)
     P = Submodule.span ℤ (bM '' Set.range Sum.inl) := by
@@ -320,7 +321,7 @@ theorem span_range_inl_prod_eq {P Q : Submodule ℤ M} (hPQ : IsCompl P Q)
       hxp
   · refine Submodule.span_le.mpr ?_
     rintro _ ⟨_, ⟨i, rfl⟩, rfl⟩
-    simpa [bM] using (bP i).property
+    simp
 
 /-- Coordinate form of the preceding extension theorem: membership in the
 saturated submodule is equivalent to vanishing of all complementary basis
@@ -574,7 +575,7 @@ theorem exists_prefix_adapted_basis_realPrefixLattice
       have hset : Set.Iic ip = Set.Iio i := by
         ext k
         simp only [Set.mem_Iic, Set.mem_Iio, Fin.le_iff_val_le_val,
-          Fin.lt_iff_val_lt_val, ip]
+          Fin.lt_def, ip]
         omega
       have hnot : x i ∉ realPrefixLattice x ip := by
         intro hmem

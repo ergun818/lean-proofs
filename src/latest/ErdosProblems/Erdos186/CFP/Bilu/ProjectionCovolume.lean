@@ -244,5 +244,6 @@ theorem exists_integral_normal_projection_covolume_bound_of_codim_one
 end Erdos186.CFP.Bilu.ProjectionCovolume
 
 #print axioms Erdos186.CFP.Bilu.ProjectionCovolume.exists_integral_normal_projection_covolume_bound
-#print axioms Erdos186.CFP.Bilu.ProjectionCovolume.exists_integral_normal_projection_covolume_bound_of_codim_one
+open Erdos186.CFP.Bilu.ProjectionCovolume in
+#print axioms exists_integral_normal_projection_covolume_bound_of_codim_one
 #print axioms Erdos186.CFP.Bilu.ProjectionCovolume.exists_integral_normal_projection_volume_bound

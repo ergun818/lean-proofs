@@ -75,9 +75,9 @@ theorem exists_sourceParameters_highCoefficientScalarHierarchies
       ∀ (selector : Reduction.BoundedCFPSelector context)
         {ambient : ℕ} (A : Finset (LatticePoint ambient))
         (hA : selector.Eligible A)
-        (hrank : (selector.chosen A hA).dimension ≤ rankCeiling)
+        (_hrank : (selector.chosen A hA).dimension ≤ rankCeiling)
         (delta gamma mu : ℝ)
-        (hparams : Theorem4Parameters A beta C C' M delta gamma mu)
+        (_hparams : Theorem4Parameters A beta C C' M delta gamma mu)
         {a₀ : realImage (selector.chosen A hA).identifiedCore}
         {c : realImage (selector.chosen A hA).identifiedCore → ℝ}
         (D : ConvexPoolsData (selector.chosen A hA).identifiedCore a₀ c mu)

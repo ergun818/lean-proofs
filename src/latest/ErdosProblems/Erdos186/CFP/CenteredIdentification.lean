@@ -65,7 +65,7 @@ iterated sums are at least as numerous as ordinary multifold sums. -/
 theorem card_multifoldSumset_le_ambientSubsetIteratedSumset_of_evaluation
     {A B : Finset ℤ} {d h : ℕ} (hBA : B ⊆ A)
     (phi : ℤ → LatticePoint d) (eval : LatticePoint d →+ ℤ)
-    (heval : ∀ z (hz : z ∈ A), eval (phi z) = z) :
+    (heval : ∀ z (_hz : z ∈ A), eval (phi z) = z) :
     (GrowthLemmas.multifoldSumset h B).card ≤
       (constantIteratedSumset
         (ambientSubsetGeneratorFinset phi A B hBA) h).card := by
@@ -96,7 +96,7 @@ theorem card_multifoldSumset_le_ambientSubsetIteratedSumset_of_evaluation
     change eval (Gamma.subtype (∑ i, g i)) = z
     have hcoeg : Gamma.subtype (∑ i, g i) =
         ∑ i, Gamma.subtype (g i) := by
-      simpa using map_sum Gamma.subtype g (Finset.univ : Finset (Fin h))
+      simp
     rw [hcoeg, map_sum]
     change (∑ i, eval (phi (f i))) = z
     simp_rw [heval (f _) (hBA (hf _))]
@@ -138,7 +138,7 @@ theorem card_centeredCoordinateGeneratorIteratedSumset_le_dilate_volume
     (raw centered : ℤ → LatticePoint d) (hzero : 0 ∈ A)
     (hraw : ∀ z (hz : z ∈ A), raw z =
       P.identificationMap hproper ⟨z, hz⟩)
-    (hcentered : ∀ z (hz : z ∈ A), centered z = raw z - raw 0)
+    (hcentered : ∀ z (_hz : z ∈ A), centered z = raw z - raw 0)
     (k : ℕ) :
     (constantIteratedSumset (coordinateGeneratorFinset centered A) k).card ≤
       (P.progression.dilate k).volume := by
@@ -191,8 +191,8 @@ theorem card_centeredCoordinateGeneratorIteratedSumset_le_dilate_volume
       exact hfa i
     have hshiftEq : shift x = ∑ i, g i := by
       funext j
-      simp only [shift, hxsum, g, Finset.sum_apply, Pi.add_apply,
-        Pi.smul_apply, nsmul_eq_mul, hcentered (a _) (ha _), Pi.sub_apply]
+      simp only [shift, hxsum, g, Finset.sum_apply, Pi.add_apply, nsmul_eq_mul,
+        hcentered (a _) (ha _), Pi.sub_apply]
       simp
     rw [hshiftEq]
     exact hsumBox
@@ -345,7 +345,7 @@ theorem accessibleSpanIndexBound_of_centeredHApproximations
       A.card ≤ B.card + deletionCap → 0 ∈ B →
       ∀ d : {d // d ∈ relevant},
         ∃ e : ℕ, 0 < e ∧ e ≤ D ∧
-          ∃ W : HDimension.HApproximation B (hAt d) e scaleNum scaleDen,
+          ∃ _W : HDimension.HApproximation B (hAt d) e scaleNum scaleDen,
             (2 * scaleDen) ^ e * (hAt d + 1) ^ (e - 1) <
               (scaleNum * hAt d) ^ e)
     (hcap : deletionCap ≤ x) :
@@ -404,7 +404,7 @@ theorem span_pruning_lemma232_of_centeredHApproximations
             (4 * (6 * scaleDen) ^ D * (4 * scaleDen) ^ D) + 1) →
       0 ∈ B → ∀ d : {d // d ∈ relevant},
         ∃ e : ℕ, 0 < e ∧ e ≤ D ∧
-          ∃ W : HDimension.HApproximation B (hAt d) e scaleNum scaleDen,
+          ∃ _W : HDimension.HApproximation B (hAt d) e scaleNum scaleDen,
             (2 * scaleDen) ^ e * (hAt d + 1) ^ (e - 1) <
               (scaleNum * hAt d) ^ e)
     (hcap : robustBudget *
@@ -462,7 +462,7 @@ theorem preprocessing_lemma238_centered {A : Finset ℤ}
     (happrox : ∀ {W : Finset ℤ}, W ⊆ A → 0 ∈ W →
       Stability.WeaklyStableMinimalFor W (2 * stableBudget) maxRank n →
       ∃ (relevant : Finset ℕ)
-        (hproper : Stability.RelevantBoxesProper W relevant)
+        (_hproper : Stability.RelevantBoxesProper W relevant)
         (hAt : {d // d ∈ relevant} → ℕ),
         (∀ d : {d // d ∈ relevant},
           Nonempty
@@ -479,7 +479,7 @@ theorem preprocessing_lemma238_centered {A : Finset ℤ}
                   (4 * scaleDen) ^ maxRank) + 1) →
           0 ∈ B → ∀ d : {d // d ∈ relevant},
             ∃ e : ℕ, 0 < e ∧ e ≤ maxRank ∧
-              ∃ V : HDimension.HApproximation B (hAt d) e
+              ∃ _V : HDimension.HApproximation B (hAt d) e
                   scaleNum scaleDen,
                 (2 * scaleDen) ^ e * (hAt d + 1) ^ (e - 1) <
                   (scaleNum * hAt d) ^ e) ∧
@@ -553,8 +553,8 @@ end Erdos186.CFP
   Erdos186.CFP.Preprocessing.card_multifoldSumset_le_centeredMinimalIdentificationIteratedSumset
 #print axioms
   Erdos186.CFP.Preprocessing.card_centeredMinimalIdentificationIteratedSumset_le_dilate_volume
-#print axioms
-  Erdos186.CFP.Preprocessing.HApproximation.centeredMinimalIdentification_relIndex_general_ne_zero_and_le
+open Erdos186.CFP.Preprocessing.HApproximation in
+#print axioms centeredMinimalIdentification_relIndex_general_ne_zero_and_le
 #print axioms
   Erdos186.CFP.Preprocessing.accessibleSpanIndexBound_of_centeredHApproximations
 #print axioms

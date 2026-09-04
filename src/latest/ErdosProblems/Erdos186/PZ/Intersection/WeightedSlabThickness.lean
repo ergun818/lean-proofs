@@ -25,7 +25,7 @@ set_option autoImplicit false
 /-- A bounded weight function has at most `card * cap` mass on any finite
 set on which the pointwise cap is valid. -/
 theorem sum_le_card_mul_of_le
-    {α : Type*} [DecidableEq α]
+    {α : Type*}
     (S : Finset α) (q : α → ℝ) (cap : ℝ)
     (hq : ∀ x ∈ S, q x ≤ cap) :
     (∑ x ∈ S, q x) ≤ (S.card : ℝ) * cap := by

@@ -277,7 +277,7 @@ theorem ceilDyadicAmbient_bounds
 bound in the original source cardinality. -/
 theorem ceilDyadicAmbient_log_le
     {m n s sourceScale horizonCoefficient : ℕ}
-    (hm : 2 ≤ m) (hn : n + 1 ≤ m ^ horizonCoefficient)
+    (_hm : 2 ≤ m) (hn : n + 1 ≤ m ^ horizonCoefficient)
     (hs : s ≤ m) (hsource : 0 < sourceScale)
     (hsourceLe : sourceScale ≤ s) :
     Nat.log 2 (max (n + 1) (2 ^ Nat.clog 2 sourceScale)) + 1 ≤
@@ -681,8 +681,8 @@ theorem uniformCenteredLargeInputLogLossCoverage :
             gcongr
             exact le_max_right _ _
           _ ≤ s := hlargeInput
-      convert hhor using 1 <;>
-        simp only [horizonK, offset, Nat.mul_pow] <;> ring
+      convert hhor using 1;
+        simp only [horizonK, offset, Nat.mul_pow]; ring
   have hwindow : PreprocessingBilu.DyadicRangeWindow N low globalLevel
       first horizonFactor D propernessDenominator := by
     apply PreprocessingBilu.DyadicRangeWindow.of_endpoints hlowOffset

@@ -36,7 +36,7 @@ theorem unitNormal_ne_zero {u : EuclideanSpace ℝ (Fin n)} (hu : u ≠ 0) :
     unitNormal u ≠ 0 := by
   intro h
   have := congrArg norm h
-  simpa [norm_unitNormal hu] using this
+  simp [norm_unitNormal hu] at this
 
 /-- A nonzero vector in the orthogonal complement of a codimension-one
 subspace spans that complement. -/
@@ -106,7 +106,7 @@ theorem normalCoordinateEquiv_apply
     (x : Base d) (t : ℝ) :
     normalCoordinateEquiv W u q hcodim huW hu0 (WithLp.toLp 2 (x, t)) =
       (q x : EuclideanSpace ℝ (Fin n)) + t • unitNormal u := by
-  simp [normalCoordinateEquiv, Submodule.coe_orthogonalDecomposition_symm]
+  simp [normalCoordinateEquiv]
 
 /-- The same coordinate change as a measurable equivalence from the
 ordinary product.  This is the representation used by `volume.prod volume`.
@@ -310,4 +310,5 @@ end Erdos186.CFP.Bilu.Case2Coordinates
 #print axioms Erdos186.CFP.Bilu.Case2Coordinates.volume_preimage_normalCoordinate
 #print axioms Erdos186.CFP.Bilu.Case2Coordinates.convex_preimage_normalCoordinate
 #print axioms Erdos186.CFP.Bilu.Case2Coordinates.image_baseProjection_preimage_normalCoordinate
-#print axioms Erdos186.CFP.Bilu.Case2Coordinates.closedBall_subset_baseProjection_preimage_normalCoordinate
+open Erdos186.CFP.Bilu.Case2Coordinates in
+#print axioms closedBall_subset_baseProjection_preimage_normalCoordinate

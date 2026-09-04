@@ -49,7 +49,7 @@ structure CenteredPreprocessingData (A : Finset ℤ)
             (4 * scaleDen) ^ maxRank) + 1) →
     0 ∈ B → ∀ d : {d // d ∈ relevant},
       ∃ e : ℕ, 0 < e ∧ e ≤ maxRank ∧
-        ∃ V : HDimension.HApproximation B (hAt d) e
+        ∃ _V : HDimension.HApproximation B (hAt d) e
             scaleNum scaleDen,
           (2 * scaleDen) ^ e * (hAt d + 1) ^ (e - 1) <
             (scaleNum * hAt d) ^ e

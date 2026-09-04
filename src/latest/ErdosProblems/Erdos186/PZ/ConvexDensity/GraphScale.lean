@@ -45,7 +45,7 @@ theorem graphGridSize_cast_le_two_mul_realGridScale (d : ℕ)
 /-- The rounded graph scale is positive throughout the small-parameter
 range. -/
 theorem graphGridSize_pos (d : ℕ) {delta : ℝ}
-    (hdelta : 0 < delta) (hdelta_one : delta ≤ 1) :
+    (hdelta : 0 < delta) (_hdelta_one : delta ≤ 1) :
     0 < graphGridSize d delta := by
   exact Nat.ceil_pos.mpr (realGridScale_pos d hdelta)
 
@@ -105,7 +105,7 @@ theorem two_mul_graphWindowRadius_le {n : ℕ} (hn : 0 < n)
 both the finite cap and the upper-boundary graph chart. -/
 theorem exists_deltaZero_graphGrid_cap_window
     (d n : ℕ) {inner outer : ℝ}
-    (hn : 0 < n) (hinner : 0 < inner) (houter : 0 ≤ outer) :
+    (_hn : 0 < n) (hinner : 0 < inner) (_houter : 0 ≤ outer) :
     ∃ deltaZero : ℝ, 0 < deltaZero ∧ deltaZero < 1 ∧
       ∀ delta : ℝ, 0 < delta → delta < deltaZero →
         0 < graphGridSize d delta ∧

@@ -129,7 +129,7 @@ the mass of labelled disjoint grid fibres, transports the product thickening
 back to ambient Euclidean space without volume loss, and clips by the convex
 hull of the retained original points. -/
 theorem convexDensityOutput_of_disjoint_fibers_in_product_thickening
-    {ι : Type*} [DecidableEq ι] {n : ℕ}
+    {ι : Type*} {n : ℕ}
     {epsilon tau delta eta r : ℝ}
     {Omega : Set (EuclideanPoint (n + 1))}
     {X : Finset (EuclideanPoint (n + 1))}
@@ -149,6 +149,7 @@ theorem convexDensityOutput_of_disjoint_fibers_in_product_thickening
     (hCard : eta ^ densityExponent (n + 1) epsilon * (X.card : ℝ) ≤
       (∑ i ∈ J, (Y i).card : ℕ)) :
     ConvexDensityOutput epsilon tau delta Omega X := by
+  classical
   let T := retainedFiberUnion J Y
   let S := ambientProductThickening n W r
   apply convexDensityOutput_of_retainedConvexHull hEta hOmega hXOmega

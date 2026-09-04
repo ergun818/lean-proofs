@@ -30,7 +30,7 @@ bound `m^eta ≤ s` eventually pays both the population term and every
 obstacle event. -/
 theorem exists_cutoff_sharpColorCapacity
     (q C0 E H : ℕ) (eta : ℝ)
-    (hq : 0 < q) (hC0 : 0 < C0) (heta : 0 < eta) :
+    (_hq : 0 < q) (hC0 : 0 < C0) (heta : 0 < eta) :
     ∃ cutoff : ℕ, 2 ≤ cutoff ∧
       ∀ {m n s : ℕ}, cutoff ≤ m →
         Nat.log 2 n + 1 ≤ H * (Nat.log 2 m + 1) →

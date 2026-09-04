@@ -152,7 +152,7 @@ theorem abs_basisCoeff_le_inverseCoefficientBase_pow {d : ℕ}
                   (∑ j, (v j : ℤ))) := by
             apply mul_le_mul_of_nonneg_right
             · have hc : (Finset.Iio i).card ≤ d := by
-                simpa using Finset.card_le_univ (Finset.Iio i)
+                simp
               exact_mod_cast hc
             · exact mul_nonneg
                 (mul_nonneg

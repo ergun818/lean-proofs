@@ -62,7 +62,7 @@ theorem volume_mul_measure_le_prod_of_fiber_lower_bound
 over the half-scaled projection. -/
 theorem fiber_halfBaseProjection_lower_bound
     {B : Set (Base d × ℝ)} {h : ℝ}
-    (hh : 0 ≤ h) (hconv : Convex ℝ B)
+    (_hh : 0 ≤ h) (hconv : Convex ℝ B)
     (hsegment : ∀ t ∈ Set.Icc (-h) h, ((0 : Base d), t) ∈ B) :
     ∀ y ∈ halfBaseProjection B,
       ENNReal.ofReal h ≤ volume (verticalSection B y) := by
@@ -156,4 +156,5 @@ end Erdos186.CFP.Bilu.ProjectionVolumeCoarse
 
 #print axioms Erdos186.CFP.Bilu.ProjectionVolumeCoarse.half_projection_volume_le_prod_volume
 #print axioms Erdos186.CFP.Bilu.ProjectionVolumeCoarse.projection_volume_scaled_le_prod_volume
-#print axioms Erdos186.CFP.Bilu.ProjectionVolumeCoarse.projection_volume_scaled_le_prod_volume_of_isCompact
+open Erdos186.CFP.Bilu.ProjectionVolumeCoarse in
+#print axioms projection_volume_scaled_le_prod_volume_of_isCompact

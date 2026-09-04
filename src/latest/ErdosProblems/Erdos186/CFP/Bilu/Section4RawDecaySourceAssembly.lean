@@ -45,7 +45,7 @@ structure RawBodyDecaySourcePackage (s d : ℕ) (delta : ℝ) where
   initial_eq_small : ∀ (A : Finset ℤ) (hA : A.Nonempty),
     A.card ≤ cardinalityThreshold →
       (initial A hA).1 = rankedBodyPresentationOfSmallCard A hA
-  rawDecay : ∀ (A : Finset ℤ) (hA : A.Nonempty),
+  rawDecay : ∀ (A : Finset ℤ) (_hA : A.Nonempty),
     ((twoA A).card : ℝ) ≤
         Real.rpow 2 ((d : ℝ) + 1 - delta) * A.card →
     cardinalityThreshold < A.card →
@@ -64,7 +64,7 @@ and an initializer needed only above the cutoff. -/
 def initialOfSmallOrLarge
     (rankBound cardinalityThreshold : ℕ)
     (hthresholdRank : cardinalityThreshold ≤ rankBound)
-    (largeInitial : ∀ (A : Finset ℤ) (hA : A.Nonempty),
+    (largeInitial : ∀ (A : Finset ℤ) (_hA : A.Nonempty),
       cardinalityThreshold < A.card →
         RankBoundedBodyPresentation A rankBound)
     (A : Finset ℤ) (hA : A.Nonempty) :
@@ -78,7 +78,7 @@ def initialOfSmallOrLarge
 @[simp] theorem initialOfSmallOrLarge_eq_small
     (rankBound cardinalityThreshold : ℕ)
     (hthresholdRank : cardinalityThreshold ≤ rankBound)
-    (largeInitial : ∀ (A : Finset ℤ) (hA : A.Nonempty),
+    (largeInitial : ∀ (A : Finset ℤ) (_hA : A.Nonempty),
       cardinalityThreshold < A.card →
         RankBoundedBodyPresentation A rankBound)
     (A : Finset ℤ) (hA : A.Nonempty)
@@ -96,10 +96,10 @@ def rawBodyDecaySourcePackageOfLarge
     (hthreshold : 1 ≤ cardinalityThreshold)
     (hthresholdRank : cardinalityThreshold ≤ rankBound)
     (hexponent : 0 < exponent)
-    (largeInitial : ∀ (A : Finset ℤ) (hA : A.Nonempty),
+    (largeInitial : ∀ (A : Finset ℤ) (_hA : A.Nonempty),
       cardinalityThreshold < A.card →
         RankBoundedBodyPresentation A rankBound)
-    (hrawDecay : ∀ (A : Finset ℤ) (hA : A.Nonempty),
+    (hrawDecay : ∀ (A : Finset ℤ) (_hA : A.Nonempty),
       ((twoA A).card : ℝ) ≤
           Real.rpow 2 ((d : ℝ) + 1 - delta) * A.card →
       cardinalityThreshold < A.card →
@@ -170,8 +170,8 @@ end Erdos186.CFP.Bilu.Section4RawDecaySourceAssembly
 
 #print axioms
   Erdos186.CFP.Bilu.Section4RawDecaySourceAssembly.rawBodyDecaySourcePackageOfLarge
-#print axioms
-  Erdos186.CFP.Bilu.Section4RawDecaySourceAssembly.RawBodyDecaySourcePackage.toUniformReducedOuterDecayPackage
+open Erdos186.CFP.Bilu.Section4RawDecaySourceAssembly.RawBodyDecaySourcePackage in
+#print axioms toUniformReducedOuterDecayPackage
 #print axioms
   Erdos186.CFP.Bilu.Section4RawDecaySourceAssembly.reducedOuterRealizationStatement_of_rawBodyDecay
 #print axioms

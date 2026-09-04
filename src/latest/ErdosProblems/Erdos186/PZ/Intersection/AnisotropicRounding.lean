@@ -22,7 +22,7 @@ noncomputable section
 set_option autoImplicit false
 
 theorem exists_subset_sum_approximation_anisotropic
-    {d : ℕ} {ι : Type*} [DecidableEq ι]
+    {d : ℕ} {ι : Type*}
     (s : Finset ι) (c : ι → ℝ) (v : ι → Fin d → ℝ)
     (width : Fin d → ℝ)
     (hc : ∀ a ∈ s, 0 ≤ c a ∧ c a ≤ 1)
@@ -31,6 +31,7 @@ theorem exists_subset_sum_approximation_anisotropic
     ∃ t : Finset ι, t ⊆ s ∧ ∀ i,
       |(∑ a ∈ s, c a * v a i) - ∑ a ∈ t, v a i| ≤
         Real.sqrt (((d * s.card : ℕ) : ℝ)) * width i := by
+  classical
   let normalized : ι → Fin d → ℝ := fun a i ↦ v a i / width i
   have hnormalized : ∀ a ∈ s, ∀ i, |normalized a i| ≤ 1 := by
     intro a ha i

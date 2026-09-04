@@ -613,7 +613,7 @@ theorem exists_sourceLatticeBasis_of_saturatedPresentation {m r s : ℕ}
       exact congrArg Subtype.val
         ((coordinateC0Equiv D).apply_symm_apply (P.rowBasis j))
     rw [hi, hj, P.rowBasis_coe i, P.rowBasis_coe j] at hinner
-    simpa [bS, xi, xj, Matrix.gram_apply, P.rowBasis_coe] using hinner.symm
+    simp [bS, Matrix.gram_apply, P.rowBasis_coe]
   exact ⟨bS, hsourceBasis, hgram⟩
 
 /-- Covolume equality for any saturated coordinate presentation. -/
@@ -1239,7 +1239,8 @@ end
 end Erdos186.CFP.Bilu.Proposition75Case2Construction
 
 #print axioms Erdos186.CFP.Bilu.Proposition75Case2Construction.exists_coordinate_separator
-#print axioms Erdos186.CFP.Bilu.Proposition75Case2Construction.exists_coordinate_separator_of_presentation
+open Erdos186.CFP.Bilu.Proposition75Case2Construction in
+#print axioms exists_coordinate_separator_of_presentation
 #print axioms Erdos186.CFP.Bilu.Proposition75Case2Construction.exists_case2Witness_of_separator
 #print axioms Erdos186.CFP.Bilu.Proposition75Case2Construction.exists_case2Witness_of_presentation
 #print axioms Erdos186.CFP.Bilu.Proposition75Case2Construction.exists_case2Witness

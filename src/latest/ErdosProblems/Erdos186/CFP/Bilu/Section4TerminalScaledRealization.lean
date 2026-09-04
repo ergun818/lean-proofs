@@ -133,7 +133,7 @@ def uniformReducedOuterDecayPackageOfRankBoundedBodies
       A.card ≤ cardinalityThreshold →
         uniformTerminalBodyVolume s rankBound (initial A hA).1 ≤
           ((volumeConstant * A.card : ℕ) : ℝ))
-    (hdecay : ∀ (A : Finset ℤ) (hA : A.Nonempty),
+    (hdecay : ∀ (A : Finset ℤ) (_hA : A.Nonempty),
       ((CFP.BiluFreiman.twoA A).card : ℝ) ≤
           Real.rpow 2 ((d : ℝ) + 1 - delta) * A.card →
       cardinalityThreshold < A.card →
@@ -188,7 +188,7 @@ def uniformReducedOuterDecayPackageOfRawBodyDecay
     (hsmall : ∀ (A : Finset ℤ) (hA : A.Nonempty),
       A.card ≤ cardinalityThreshold →
         (initial A hA).1 = rankedBodyPresentationOfSmallCard A hA)
-    (hrawDecay : ∀ (A : Finset ℤ) (hA : A.Nonempty),
+    (hrawDecay : ∀ (A : Finset ℤ) (_hA : A.Nonempty),
       ((CFP.BiluFreiman.twoA A).card : ℝ) ≤
           Real.rpow 2 ((d : ℝ) + 1 - delta) * A.card →
       cardinalityThreshold < A.card →
@@ -226,11 +226,11 @@ end
 
 end Erdos186.CFP.Bilu.Section4TerminalScaledRealization
 
-#print axioms
-  Erdos186.CFP.Bilu.Section4TerminalScaledRealization.exists_reducedOuterRealization_of_uniformTerminalBodyVolume
-#print axioms
-  Erdos186.CFP.Bilu.Section4TerminalScaledRealization.uniformTerminalBodyVolume_decay_of_bodyVolume_decay
-#print axioms
-  Erdos186.CFP.Bilu.Section4TerminalScaledRealization.uniformReducedOuterDecayPackageOfRankBoundedBodies
+open Erdos186.CFP.Bilu.Section4TerminalScaledRealization in
+#print axioms exists_reducedOuterRealization_of_uniformTerminalBodyVolume
+open Erdos186.CFP.Bilu.Section4TerminalScaledRealization in
+#print axioms uniformTerminalBodyVolume_decay_of_bodyVolume_decay
+open Erdos186.CFP.Bilu.Section4TerminalScaledRealization in
+#print axioms uniformReducedOuterDecayPackageOfRankBoundedBodies
 #print axioms
   Erdos186.CFP.Bilu.Section4TerminalScaledRealization.uniformReducedOuterDecayPackageOfRawBodyDecay

@@ -246,7 +246,11 @@ theorem combine_case2_of_isometric_section_identification
 end Erdos186.CFP.Bilu.Section8Case2Canonical
 
 #print axioms Erdos186.CFP.Bilu.Section8Case2Canonical.section_le_of_factor_mul_le
-#print axioms Erdos186.CFP.Bilu.Section8Case2Canonical.projection_section_volume_eq_canonical_pullback
-#print axioms Erdos186.CFP.Bilu.Section8Case2Canonical.projection_section_volume_le_canonical_pullback
-#print axioms Erdos186.CFP.Bilu.Section8Case2Canonical.combine_case2_of_polar_projection_and_canonical_flag
-#print axioms Erdos186.CFP.Bilu.Section8Case2Canonical.combine_case2_of_isometric_section_identification
+open Erdos186.CFP.Bilu.Section8Case2Canonical in
+#print axioms projection_section_volume_eq_canonical_pullback
+open Erdos186.CFP.Bilu.Section8Case2Canonical in
+#print axioms projection_section_volume_le_canonical_pullback
+open Erdos186.CFP.Bilu.Section8Case2Canonical in
+#print axioms combine_case2_of_polar_projection_and_canonical_flag
+open Erdos186.CFP.Bilu.Section8Case2Canonical in
+#print axioms combine_case2_of_isometric_section_identification

@@ -154,7 +154,7 @@ abbrev reverseRoundingCore
 /-- The common full balanced center, before the low-coefficient and CFP
 discard errors are paid. -/
 def commonCenter
-    (E : HighCoefficientSideSelectionData selector hA D theta gamma) :
+    (_E : HighCoefficientSideSelectionData selector hA D theta gamma) :
     Fin (selector.chosen A hA).dimension → ℝ :=
   zonotopeCenter (orientedTranslate .forward D.a D.A₁)
     (D.scaledForwardCoefficient (highCoefficientZonotopeScale D))

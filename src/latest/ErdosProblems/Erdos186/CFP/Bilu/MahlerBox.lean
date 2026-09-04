@@ -500,6 +500,8 @@ end Erdos186.CFP.Bilu.MahlerBox
 #print axioms Erdos186.CFP.Bilu.MahlerBox.exists_basis_coefficientBox_mapsTo_unitBall
 #print axioms Erdos186.CFP.Bilu.MahlerBox.exists_proper_centeredGAP_subset_unitBall
 #print axioms Erdos186.CFP.Bilu.MahlerBox.exists_proper_centeredGAP_subset_unitBall_with_volume
-#print axioms Erdos186.CFP.Bilu.MahlerBox.exists_canonical_proper_centeredGAP_subset_unitBall_with_volume
+open Erdos186.CFP.Bilu.MahlerBox in
+#print axioms exists_canonical_proper_centeredGAP_subset_unitBall_with_volume
 #print axioms Erdos186.CFP.Bilu.MahlerBox.unitBall_volume_le_constant_mul_canonicalGAP_volume
-#print axioms Erdos186.CFP.Bilu.MahlerBox.exists_canonical_proper_centeredGAP_subset_unitBall_with_two_sided_volume
+open Erdos186.CFP.Bilu.MahlerBox in
+#print axioms exists_canonical_proper_centeredGAP_subset_unitBall_with_two_sided_volume

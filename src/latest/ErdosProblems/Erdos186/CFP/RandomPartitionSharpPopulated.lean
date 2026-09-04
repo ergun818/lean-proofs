@@ -152,7 +152,7 @@ theorem anchoredColorClass_restrictEraseZeroColoring
 nonzero part.  A colour can lose at most the point zero, so the strict
 population bound becomes the weak bound exactly required by greedy
 selection. -/
-theorem exists_populated_eraseZero_coloring_stronglyStableFor_with_commonSpan_of_polynomial_bound_additive
+theorem exists_populated_eraseZero_coloring_of_polynomial_bound_additive
     {B : Finset ℤ} {box : (d : ℕ) → GAP 1 d}
     {x maxRank differenceBound C0 q t n exponent : ℕ}
     {relevant : Finset ℕ} {φ : (d : ℕ) → ℤ → LatticePoint d}
@@ -221,7 +221,7 @@ theorem exists_populated_eraseZero_coloring_stronglyStableFor_with_commonSpan_of
 larger than the deletion budget.  Stability is then restricted back from
 `t+1` deletions to `t`; this is the exact interface required by the dyadic
 range adapter. -/
-theorem exists_strictlyPopulated_eraseZero_coloring_stronglyStableFor_with_commonSpan_of_polynomial_bound_additive
+theorem exists_strictlyPopulated_eraseZero_coloring_of_polynomial_bound_additive
     {B : Finset ℤ} {box : (d : ℕ) → GAP 1 d}
     {x maxRank differenceBound C0 q t n exponent : ℕ}
     {relevant : Finset ℕ} {φ : (d : ℕ) → ℤ → LatticePoint d}
@@ -248,7 +248,7 @@ theorem exists_strictlyPopulated_eraseZero_coloring_stronglyStableFor_with_commo
         generatedSubgroup (φ d) (anchoredColorClass (B.erase 0) c i) =
           generatedSubgroup (φ d) B) := by
   obtain ⟨c, hcard, hstableColor, hspan⟩ :=
-    exists_populated_eraseZero_coloring_stronglyStableFor_with_commonSpan_of_polynomial_bound_additive
+    exists_populated_eraseZero_coloring_of_polynomial_bound_additive
       (t := t + 1) hstable hφzero hfamily hq hcapacity hpopulation
   refine ⟨c, ?_, ?_, hspan⟩
   · intro i
@@ -260,9 +260,10 @@ end
 
 end Erdos186.CFP.RandomPartition
 
+open Erdos186.CFP.RandomPartition in
 #print axioms
-  Erdos186.CFP.RandomPartition.exists_populated_coloring_stronglyStableFor_with_commonSpan_of_polynomial_bound_additive
+  exists_populated_coloring_stronglyStableFor_with_commonSpan_of_polynomial_bound_additive
 #print axioms
-  Erdos186.CFP.RandomPartition.exists_populated_eraseZero_coloring_stronglyStableFor_with_commonSpan_of_polynomial_bound_additive
-#print axioms
-  Erdos186.CFP.RandomPartition.exists_strictlyPopulated_eraseZero_coloring_stronglyStableFor_with_commonSpan_of_polynomial_bound_additive
+  Erdos186.CFP.RandomPartition.exists_populated_eraseZero_coloring_of_polynomial_bound_additive
+open Erdos186.CFP.RandomPartition in
+#print axioms exists_strictlyPopulated_eraseZero_coloring_of_polynomial_bound_additive

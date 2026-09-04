@@ -28,9 +28,9 @@ needed by retained centered preprocessing.  The empty-relevant alternative
 is selected exactly when a qualifying accessible subset can be `{0}`. -/
 theorem retainedDyadicPreprocessingHApproximationArgument_of_dyadicSourceFamily
     {A : Finset ℤ} {stableBudget D n propernessDenominator fold : ℕ}
-    (hzero : 0 ∈ A)
+    (_hzero : 0 ∈ A)
     (hdenominator : 0 < propernessDenominator)
-    (hA : A ⊆ Finset.Icc (0 : ℤ) ((n : ℤ) - 1))
+    (_hA : A ⊆ Finset.Icc (0 : ℤ) ((n : ℤ) - 1))
     (hfamily : DyadicSourceHApproximationFamily A fold D 1
       (preprocessingScaleDen propernessDenominator))
     (hfoldn : fold ≤ n)
@@ -127,7 +127,7 @@ theorem retainedDyadicPreprocessingHApproximationArgument_of_dyadicSourceFamily
     have hsmall : W.card ≤ 1 +
         (stableBudget / C0) * (D * Nat.log 2 indexBound + 1) := by
       simp only [AccessibleNontrivial] at haccessible
-      push_neg at haccessible
+      push Not at haccessible
       obtain ⟨B, hBW, hcard, hzeroB, hB⟩ := haccessible
       have hBcard : B.card = 1 := by rw [hB]; simp
       omega
@@ -192,7 +192,7 @@ end
 
 end Erdos186.CFP.Preprocessing
 
-#print axioms
-  Erdos186.CFP.PreprocessingBilu.retainedDyadicPreprocessingHApproximationArgument_of_dyadicSourceFamily
+open Erdos186.CFP.PreprocessingBilu in
+#print axioms retainedDyadicPreprocessingHApproximationArgument_of_dyadicSourceFamily
 #print axioms
   Erdos186.CFP.Preprocessing.exists_dyadicCenteredPreprocessingData_of_dyadicSourceFamily

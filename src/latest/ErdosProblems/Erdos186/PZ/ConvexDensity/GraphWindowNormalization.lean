@@ -157,7 +157,7 @@ theorem normalizedUpperRoof_concave_range {n : ℕ} (hn : 0 < n)
 /-- A physical upper-boundary point becomes a point on the normalized roof. -/
 theorem normalizeGraphPoint_on_normalizedUpperRoof {n : ℕ}
     {P : Set (EuclideanPoint (n + 1))} (hPcompact : IsCompact P)
-    {q outer : ℝ} (hq : 0 < q) (houter : 0 < outer)
+    {q outer : ℝ} (hq : 0 < q) (_houter : 0 < outer)
     {z : EuclideanPoint (n + 1)}
     (hz : z = upperBoundaryPoint P hPcompact (baseCoordinates z)) :
     lastCoordinate (normalizeGraphPoint q outer z) =

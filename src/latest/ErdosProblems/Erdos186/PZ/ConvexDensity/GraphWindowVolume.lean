@@ -53,7 +53,7 @@ theorem mem_graphWindowReferenceBox_iff {n : ℕ} {q outer : ℝ}
   · rintro ⟨p, hp, rfl⟩
     have hp' := hp
     simp only [graphWindowReferenceProduct, affineGraphSlab,
-      AffineMap.const_apply, sub_zero, zero_add, mem_setOf_eq] at hp'
+      AffineMap.const_apply, zero_add, mem_ofPred_eq] at hp'
     simpa [baseCoordinates_lastCoordinateCLE_symm,
       lastCoordinate_lastCoordinateCLE_symm] using hp'
   · intro hz
@@ -74,7 +74,7 @@ theorem mem_graphWindowUnitBox_iff {n : ℕ}
   · rintro ⟨p, hp, rfl⟩
     have hp' := hp
     simp only [graphWindowUnitProduct, affineGraphSlab,
-      AffineMap.const_apply, sub_zero, zero_add, mem_setOf_eq] at hp'
+      AffineMap.const_apply, zero_add, mem_ofPred_eq] at hp'
     simpa [baseCoordinates_lastCoordinateCLE_symm,
       lastCoordinate_lastCoordinateCLE_symm] using hp'
   · intro hz
@@ -124,7 +124,7 @@ theorem graphWindowAffineEquiv_image_referenceBox {n : ℕ} {q outer : ℝ}
         dsimp only [z, half]
         simp only [baseCoordinates_appendCoordinate, coordinate,
           WithLp.ofLp_smul, Pi.smul_apply, smul_eq_mul, WithLp.ofLp_sub,
-          Pi.sub_apply, WithLp.ofLp_toLp]
+          Pi.sub_apply]
         constructor <;> nlinarith
       · dsimp only [z]
         rw [lastCoordinate_appendCoordinate]
@@ -178,7 +178,7 @@ theorem graphWindowVolumeFactor_mul_referenceVolume {n : ℕ}
 original body after multiplying by the physical reference volume. -/
 theorem graphWindow_volume_le_chart_body
     {n : ℕ} {q outer eta c : ℝ}
-    (hq : 0 < q) (houter : 0 < outer) (heta : 0 ≤ eta) (hc : 0 ≤ c)
+    (hq : 0 < q) (houter : 0 < outer) (_heta : 0 ≤ eta) (_hc : 0 ≤ c)
     {Omega : Set (EuclideanPoint (n + 1))}
     (hOmegaLower : ENNReal.ofReal c ≤ volume Omega)
     {W : Set (EuclideanPoint n × ℝ)} {r : ℝ}

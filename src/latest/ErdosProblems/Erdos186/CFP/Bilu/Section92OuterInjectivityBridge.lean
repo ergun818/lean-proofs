@@ -120,5 +120,7 @@ end
 
 end Erdos186.CFP.Bilu.Section92OuterInjectivityBridge
 
-#print axioms Erdos186.CFP.Bilu.Section92OuterInjectivityBridge.seminorm_le_outerDilationBound_of_mem
-#print axioms Erdos186.CFP.Bilu.Section92OuterInjectivityBridge.enlarged_injective_of_injectiveOn_seminormBall
+open Erdos186.CFP.Bilu.Section92OuterInjectivityBridge in
+#print axioms seminorm_le_outerDilationBound_of_mem
+open Erdos186.CFP.Bilu.Section92OuterInjectivityBridge in
+#print axioms enlarged_injective_of_injectiveOn_seminormBall

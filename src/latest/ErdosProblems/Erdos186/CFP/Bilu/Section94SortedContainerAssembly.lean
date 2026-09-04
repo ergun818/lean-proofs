@@ -166,6 +166,9 @@ end
 end Erdos186.CFP.Bilu.Section94SortedContainerAssembly
 
 #print axioms Erdos186.CFP.Bilu.Section94SortedContainerAssembly.tail_width_le_uniformTailBound
-#print axioms Erdos186.CFP.Bilu.Section94SortedContainerAssembly.MappedOuterContainer.toSortedFsContainer_of_smallDoublingCoordinates
-#print axioms Erdos186.CFP.Bilu.Section94SortedContainerAssembly.exists_sortedFsContainer_of_reducedBody
-#print axioms Erdos186.CFP.Bilu.Section94SortedContainerAssembly.ReducedOuterRealization.toSortedFsContainer_of_smallDoublingCoordinates
+open Erdos186.CFP.Bilu.Section94SortedContainerAssembly.MappedOuterContainer in
+#print axioms toSortedFsContainer_of_smallDoublingCoordinates
+open Erdos186.CFP.Bilu.Section94SortedContainerAssembly in
+#print axioms exists_sortedFsContainer_of_reducedBody
+open Erdos186.CFP.Bilu.Section94SortedContainerAssembly.ReducedOuterRealization in
+#print axioms toSortedFsContainer_of_smallDoublingCoordinates

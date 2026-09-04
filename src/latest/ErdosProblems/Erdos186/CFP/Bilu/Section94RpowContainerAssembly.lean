@@ -71,7 +71,7 @@ bundled by `ReducedOuterRealization` is a coefficient realization preserving
 the original `rpow` doubling inequality. -/
 def toSortedFsContainer_of_rpowAffineSlice
     (R : ReducedOuterRealization s volumeConstant rankBound A)
-    (hd : 0 < d)
+    (_hd : 0 < d)
     (hslice : RpowAffineSliceStatement d proportionConstant delta)
     (hcoordinates : d + 1 ≤ R.rank →
       ∃ K : Finset R.outer.source.Coord,
@@ -200,11 +200,11 @@ end Erdos186.CFP.Bilu.Section94RpowContainerAssembly
 
 #print axioms
   Erdos186.CFP.Bilu.Section94RpowContainerAssembly.tail_width_le_rpowTailBound
-#print axioms
-  Erdos186.CFP.Bilu.Section94RpowContainerAssembly.ReducedOuterRealization.toSortedFsContainer_of_rpowAffineSlice
-#print axioms
-  Erdos186.CFP.Bilu.Section94RpowContainerAssembly.ReducedOuterRealization.exists_sortedFsContainer_of_rpowAffineSlice
-#print axioms
-  Erdos186.CFP.Bilu.Section94RpowContainerAssembly.ReducedOuterRealization.exists_tailBound_and_sortedFsContainer_of_sourceDoubling
-#print axioms
-  Erdos186.CFP.Bilu.Section94RpowContainerAssembly.sortedFsContainerStatement_of_reducedOuterRealization
+open Erdos186.CFP.Bilu.Section94RpowContainerAssembly.ReducedOuterRealization in
+#print axioms toSortedFsContainer_of_rpowAffineSlice
+open Erdos186.CFP.Bilu.Section94RpowContainerAssembly.ReducedOuterRealization in
+#print axioms exists_sortedFsContainer_of_rpowAffineSlice
+open Erdos186.CFP.Bilu.Section94RpowContainerAssembly.ReducedOuterRealization in
+#print axioms exists_tailBound_and_sortedFsContainer_of_sourceDoubling
+open Erdos186.CFP.Bilu.Section94RpowContainerAssembly in
+#print axioms sortedFsContainerStatement_of_reducedOuterRealization

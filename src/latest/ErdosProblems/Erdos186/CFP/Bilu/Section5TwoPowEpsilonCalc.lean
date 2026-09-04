@@ -79,7 +79,7 @@ theorem twoPowNEpsilon_div_mul
 /-- The complete weighted error estimate, now with leading coefficient
 `2 ^ n`. -/
 theorem sum_twoPowNEpsilon_div_mul_lt_of_nonneg
-    {ι : Type*} [DecidableEq ι] {n : ℕ} {density delta : ℝ}
+    {ι : Type*} {n : ℕ} {density delta : ℝ}
     (s : Finset ι) (eta : ι → ℝ)
     (hn : 0 < n) (hdensity0 : 0 < density) (hdensity1 : density ≤ 1)
     (hdelta : 0 < delta)
@@ -88,6 +88,7 @@ theorem sum_twoPowNEpsilon_div_mul_lt_of_nonneg
     (hsum : ∑ i ∈ s, eta i ≤ 1 - density / 2) :
     ∑ i ∈ s, twoPowNEpsilon n density (delta / eta i) * eta i <
       twoPowNEpsilon n density delta := by
+  classical
   let t := s.filter fun i ↦ 0 < eta i
   have hteta : ∀ i ∈ t, 0 < eta i := by
     intro i hi
@@ -162,7 +163,7 @@ theorem sum_twoPowNEpsilon_div_mul_lt_of_nonneg
       have hnpos : ¬ 0 < eta i := by
         intro hipos
         have : i ∈ t := Finset.mem_filter.mpr ⟨hi, hipos⟩
-        simpa [htempty] using this
+        simp [htempty] at this
       exact le_antisymm (not_lt.mp hnpos) hi0
     rw [show ∑ i ∈ s, twoPowNEpsilon n density (delta / eta i) * eta i = 0 by
       apply Finset.sum_eq_zero

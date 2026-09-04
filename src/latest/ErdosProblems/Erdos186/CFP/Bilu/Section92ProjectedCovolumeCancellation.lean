@@ -159,7 +159,7 @@ private theorem det_gram_projectedFullRealFin :
   rw [show Matrix.gram ℝ S.projectedFullRealFin = M.conjTranspose * M by
     simpa [M] using hgram]
   rw [Matrix.det_mul, Matrix.det_conjTranspose, hM]
-  simp only [starRingEnd_apply, star_trivial]
+  simp only [star_trivial]
   have h := S.projectedFullMatrix_det_abs
   nlinarith [sq_abs S.projectedFullMatrix.det]
 
@@ -204,7 +204,7 @@ private theorem det_gram_projectedFullReal_eq :
     · rfl
   rw [hblock, Matrix.det_fromBlocks_zero₂₁]
   have hA : A.det = ‖S.primitiveReal‖ ^ 2 := by
-    simp [A, Matrix.gram_apply, real_inner_self_eq_norm_sq]
+    simp [A, Matrix.gram_apply]
   rw [hA]
 
 private theorem gram_orthonormalProjectedComplementBasis :
@@ -240,7 +240,7 @@ theorem norm_primitiveReal_mul_projectedComplementLattice_covolume :
 /-- After unimodular covolume cancellation, the coarse projected-volume
 estimate has no lattice-dependent scalar. -/
 theorem volume_coordinateProjectedBody_le_rank_mul
-    (hn : 0 < n) (hp : IsDefinite p) (hT : 0 ≤ T) :
+    (hn : 0 < n) (hp : IsDefinite p) (_hT : 0 ≤ T) :
     volume S.coordinateProjectedBody ≤
       (n : ENNReal) * ENNReal.ofReal T * volume (unitBall p) := by
   have hraw := S.coordinateProjectedBody_volume_bound_two_mul hn hp
@@ -307,6 +307,9 @@ end
 
 end Erdos186.CFP.Bilu.Section92ShortKernel.PrimitiveKernelStep
 
-#print axioms Erdos186.CFP.Bilu.Section92ShortKernel.PrimitiveKernelStep.norm_primitiveReal_mul_projectedComplementLattice_covolume
-#print axioms Erdos186.CFP.Bilu.Section92ShortKernel.PrimitiveKernelStep.volume_coordinateProjectedBody_le_rank_mul
-#print axioms Erdos186.CFP.Bilu.Section92ShortKernel.PrimitiveKernelStep.coordinateProjectedBody_volumeReal_le_rank_mul
+open Erdos186.CFP.Bilu.Section92ShortKernel.PrimitiveKernelStep in
+#print axioms norm_primitiveReal_mul_projectedComplementLattice_covolume
+open Erdos186.CFP.Bilu.Section92ShortKernel.PrimitiveKernelStep in
+#print axioms volume_coordinateProjectedBody_le_rank_mul
+open Erdos186.CFP.Bilu.Section92ShortKernel.PrimitiveKernelStep in
+#print axioms coordinateProjectedBody_volumeReal_le_rank_mul

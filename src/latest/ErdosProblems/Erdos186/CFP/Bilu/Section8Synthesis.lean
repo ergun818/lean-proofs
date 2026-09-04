@@ -278,8 +278,8 @@ theorem bilu_proposition_8_3 {m r : ℕ}
     exact Real.sq_sqrt hepsilon_pos.le
   have hlarge : 2 * sigma * A < Real.sqrt epsilon := by
     have hsq : (2 * sigma * A) ^ 2 < epsilon := by
-      convert hepsilon using 1 <;>
-        simp only [proposition83Threshold, A] <;> ring
+      convert hepsilon using 1;
+        simp only [proposition83Threshold, A]; ring
     nlinarith
   have hsimple : A * Real.sqrt epsilon / epsilon < 1 / (2 * sigma) := by
     rw [div_lt_div_iff₀ hepsilon_pos (by positivity)]
@@ -296,7 +296,7 @@ theorem bilu_proposition_8_3 {m r : ℕ}
           (1 / (2 * sigma)) / K.card := by
       dsimp only [delta]
       field_simp
-      <;> ring
+      ; ring
     rw [hdelta_simp]
     rw [show
       ((6 : ℝ) ^ m * 3 ^ r * T ^ (m + r) * T ^ m) * P =

@@ -63,7 +63,7 @@ theorem convexDensityOutput_of_normalized_large_stage_2d
               K (realGridScale 2 delta) (branchLogScale delta)))
     (X : Finset (EuclideanPoint 2))
     (hXne : X.Nonempty)
-    (hposition : ConvexGeometry.IsDeltaConvexPosition delta X)
+    (_hposition : ConvexGeometry.IsDeltaConvexPosition delta X)
     (hinner : normalizedInnerCube 2 ⊆ convexHull ℝ (X : Set _))
     (houterHull : convexHull ℝ (X : Set _) ⊆ normalizedOuterCube 2)
     {j₁ : ℕ} {J : Finset (Fin 2 → ℕ)}
@@ -172,7 +172,7 @@ theorem convexDensityOutput_of_normalized_large_stage_2d
         (GridPartition.candidateGridIndices 2 (initialRadius 2 delta))
         (GridPartition.gridIndex (initialRadius 2 delta)) hdelta hXne
         hJcells (fun x hx ↦ GridPartition.gridIndex_mem_candidateGridIndices
-          (by simp [initialRadius]; positivity) (hXcube hx)) hheavy)
+          (by dsimp [initialRadius]; positivity) (hXcube hx)) hheavy)
   have hClt : C.card < 2 ^ (dyadicLevelCount delta + 1) := by
     have hCJ : C.card ≤ J.card := by
       simpa using Finset.card_le_card (Finset.subset_univ C)
@@ -337,7 +337,7 @@ theorem convexDensityOutput_of_normalized_large_stage_2d
         ∑ i ∈ S, (gridAssignmentFiberFinset X (initialRadius 2 delta) i.1).card := by
       calc
         Kabs * M ≤ S.card * M := Nat.mul_le_mul_right M hcount
-        _ = ∑ _i ∈ S, M := by simp [mul_comm]
+        _ = ∑ _i ∈ S, M := by simp
         _ ≤ ∑ i ∈ S,
             (gridAssignmentFiberFinset X (initialRadius 2 delta) i.1).card := by
           apply Finset.sum_le_sum
@@ -360,12 +360,12 @@ theorem convexDensityOutput_of_normalized_large_stage_2d
           hq.ne' houter.ne' (witness i) = z i by
         simp [z, w', w₀, R, direction, T,
           centeredGraphWindowAffineEquiv, centeredHouseholderEquiv,
-          graphWindowAffineEquiv_apply, sub_eq_add_neg]]
+          graphWindowAffineEquiv_apply]]
       exact hwi
     · intro i hi x hx
       exact dist_gridAssignmentFiberFinset_witness_le
-        (by simp [initialRadius]; positivity) hXcube le_rfl hx (hwitness i).1
-    · simpa [q, outer, normalizedChartFiberRadius] using le_rfl
+        (by dsimp [initialRadius]; positivity) hXcube le_rfl hx (hwitness i).1
+    · simp [q, outer, normalizedChartFiberRadius]
     · exact hnorm
     · calc
         eta ^ densityExponent 2 epsilon * X.card ≤
@@ -429,7 +429,7 @@ theorem convexDensityOutput_of_normalized_large_stage_2d
         ∑ i ∈ S, (gridAssignmentFiberFinset X (initialRadius 2 delta) i.1).card := by
       calc
         Kabs * M ≤ S.card * M := Nat.mul_le_mul_right M hcountHigh
-        _ = ∑ _i ∈ S, M := by simp [mul_comm]
+        _ = ∑ _i ∈ S, M := by simp
         _ ≤ ∑ i ∈ S,
             (gridAssignmentFiberFinset X (initialRadius 2 delta) i.1).card := by
           apply Finset.sum_le_sum
@@ -452,12 +452,12 @@ theorem convexDensityOutput_of_normalized_large_stage_2d
           hq.ne' houter.ne' (witness i) = z i by
         simp [z, w', w₀, R, direction, T,
           centeredGraphWindowAffineEquiv, centeredHouseholderEquiv,
-          graphWindowAffineEquiv_apply, sub_eq_add_neg]]
+          graphWindowAffineEquiv_apply]]
       exact hwi
     · intro i hi x hx
       exact dist_gridAssignmentFiberFinset_witness_le
-        (by simp [initialRadius]; positivity) hXcube le_rfl hx (hwitness i).1
-    · simpa [q, outer, normalizedChartFiberRadius] using le_rfl
+        (by dsimp [initialRadius]; positivity) hXcube le_rfl hx (hwitness i).1
+    · simp [q, outer, normalizedChartFiberRadius]
     · exact hnorm
     · calc
         eta ^ densityExponent 2 epsilon * X.card ≤

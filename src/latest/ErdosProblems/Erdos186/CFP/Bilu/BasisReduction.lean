@@ -460,7 +460,7 @@ theorem shearBasis_apply_eq_add_Iio {n : ℕ} {M : Type*}
           ∑ j ∈ Finset.Iio i, shearMatrix t j i • b j := by
       rw [Finset.sum_insert (by simp)]
     _ = b i + ∑ j ∈ Finset.Iio i, t i j • b j := by
-      apply congrArg₂ (.+.)
+      apply congrArg₂ (·+·)
       · simp
       · apply Finset.sum_congr rfl
         intro j hj

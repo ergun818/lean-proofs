@@ -95,7 +95,6 @@ theorem sign_eq_of_add_affineCubeVertex_eq
 patterns. -/
 theorem affineCube_add_vertex_injOn
     {n : ℕ} {V : Type*} [AddCommGroup V] [Module ℝ V]
-    [DecidableEq V]
     (S₀ : Finset V) (e : (Fin n → ℝ) ≃ₗ[ℝ] V) (center : V)
     (hS₀ : ∀ x ∈ S₀, x ∈ affineCubeInterior e center) :
     Set.InjOn
@@ -103,6 +102,7 @@ theorem affineCube_add_vertex_injOn
         p.1 + affineCubeVertex e center p.2)
       (S₀.product (Finset.univ : Finset (Fin n → Fin 2)) :
         Set (V × (Fin n → Fin 2))) := by
+  classical
   rintro ⟨x, s⟩ hxs ⟨y, t⟩ hyt hsum
   have hxs' := Finset.mem_product.mp hxs
   have hyt' := Finset.mem_product.mp hyt
@@ -229,7 +229,7 @@ theorem exists_face_of_mem_closed_not_mem_interior
     (hnotInterior : x ∉ affineCubeInterior e center) :
     ∃ i : Fin n, x ∈ affineCubeFacePlane e center i (-1) ∨
       x ∈ affineCubeFacePlane e center i 1 := by
-  simp only [affineCubeInterior, Set.mem_setOf_eq, not_forall] at hnotInterior
+  simp only [affineCubeInterior, Set.mem_ofPred_eq, not_forall] at hnotInterior
   obtain ⟨i, hi⟩ := hnotInterior
   refine ⟨i, ?_⟩
   have hb := hclosed i
@@ -348,7 +348,7 @@ theorem card_affineCubeBoundaryPart_le
     _ ≤ (Finset.univ : Finset (Fin n × Fin 2)).card * hyperplaneBound :=
       Finset.card_biUnion_le_card_mul _ _ _ hface
     _ = 2 * n * hyperplaneBound := by
-      simp [mul_assoc, mul_left_comm, mul_comm]
+      simp [mul_left_comm, mul_comm]
 
 /-- Combined form of (5.10): a lower bound for the number of closed-cube
 points and a hyperplane-sparsity bound force many points into the interior. -/

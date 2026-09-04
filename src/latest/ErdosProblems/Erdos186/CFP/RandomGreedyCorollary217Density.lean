@@ -214,11 +214,11 @@ theorem abs_centeredIdentification_apply_le {A : Finset ℤ} {d : ℕ}
   have hznonneg : 0 ≤
       ((P.progression.coordinateMap hproper
         ⟨BoundingBox.intPoint z, P.bounds ⟨z, hz⟩⟩ i : ℕ) : ℤ) := by
-    exact Int.ofNat_nonneg _
+    exact Int.natCast_nonneg _
   have h0nonneg : 0 ≤
       ((P.progression.coordinateMap hproper
         ⟨BoundingBox.intPoint 0, P.bounds ⟨0, hzero⟩⟩ i : ℕ) : ℤ) := by
-    exact Int.ofNat_nonneg _
+    exact Int.natCast_nonneg _
   rw [abs_le]
   constructor <;> omega
 
@@ -272,8 +272,7 @@ theorem centeredCoordinateSubsetSums_subset_centeredCoordinateAxisBox
   rw [hwidth]
   constructor
   · exact habs'.1
-  ·
-    push_cast
+  · push_cast
     omega
 
 /-! ## Fixed-reference volume control -/
@@ -453,7 +452,7 @@ theorem HApproximation.fixedMinimalReference_dilate_volume_le_positiveDyadicThre
     (haccessible : ∀ B : Finset ℤ, B ⊆ S →
       S.card ≤ B.card + deletionBudget →
       ∃ e : ℕ, 0 < e ∧ e ≤ D ∧
-        ∃ VB : HDimension.HApproximation
+        ∃ _VB : HDimension.HApproximation
             (insert 0 B) (2 ^ level) e scaleNum scaleDen,
           (2 * scaleDen) ^ e * (2 ^ level + 1) ^ (e - 1) <
             (scaleNum * 2 ^ level) ^ e) :

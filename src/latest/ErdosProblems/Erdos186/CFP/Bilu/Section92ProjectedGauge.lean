@@ -47,7 +47,7 @@ theorem primitiveGenerator_ne_zero {q : IntegralPoint n}
     apply Subtype.ext
     exact hzero
   have hrepr := congrArg (fun x ↦ Q.primitiveBasis.repr x (0 : Fin 1)) hbzero
-  simpa using hrepr
+  simp at hrepr
 
 /-- The original short vector is an integral multiple of the selected
 primitive generator. -/
@@ -95,7 +95,7 @@ end PrimitiveIntegralQuotient
 namespace PrimitiveKernelStep
 
 /-- The old seminorm transported to its canonical Euclidean-space copy. -/
-def euclideanSeminorm (S : PrimitiveKernelStep p phi T) :
+def euclideanSeminorm (_S : PrimitiveKernelStep p phi T) :
     Seminorm ℝ (EuclideanSpace ℝ (Fin n)) :=
   p.comp (EuclideanSpace.equiv (Fin n) ℝ).toLinearMap
 
@@ -277,7 +277,7 @@ theorem zero_mem_projectedBody (S : PrimitiveKernelStep p phi T) :
   · exact map_zero _
 
 theorem projectedBody_mem_nhds_zero (S : PrimitiveKernelStep p phi T)
-    (hp : IsDefinite p) : projectedBody S ∈ nhds 0 := by
+    (_hp : IsDefinite p) : projectedBody S ∈ nhds 0 := by
   let f := (ℝ ∙ primitiveReal S)ᗮ.orthogonalProjectionOnto.toLinearMap
   have hfSurj : Function.Surjective f := by
     intro y

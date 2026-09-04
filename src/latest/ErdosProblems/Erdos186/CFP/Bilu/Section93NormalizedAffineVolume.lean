@@ -171,7 +171,7 @@ theorem normalizedTopProduct_unitBall_eq_preimage
         ((EuclideanSpace.equiv (Fin (X.1 + 1)) ℝ).symm x)) ≤ 1 ∧
     ‖homogeneousLastReal
       ((EuclideanSpace.equiv (Fin (X.1 + 1)) ℝ).symm x)‖ ≤ 1 ↔ _
-  simp only [Set.mem_preimage, Set.mem_prod, Set.mem_setOf_eq]
+  simp only [Set.mem_preimage, Set.mem_prod, Set.mem_ofPred_eq]
   have hhead : (homogeneousTopSplitMeasurableEquiv X.1 x).1 =
       homogeneousHeadReal
         ((EuclideanSpace.equiv (Fin (X.1 + 1)) ℝ).symm x) := by
@@ -204,7 +204,7 @@ theorem volume_singletonCoordinate_unitBall :
   have hset : {v : Fin 1 → ℝ | ‖v‖ ≤ 1} =
       Set.Icc (fun _ ↦ (-1 : ℝ)) (fun _ ↦ (1 : ℝ)) := by
     ext v
-    simp only [Set.mem_setOf_eq, Set.mem_Icc]
+    simp only [Set.mem_ofPred_eq, Set.mem_Icc]
     rw [pi_norm_le_iff_of_nonneg (by norm_num), Pi.le_def, Pi.le_def]
     simp only [Real.norm_eq_abs, abs_le, forall_and]
   rw [hset, Real.volume_Icc_pi]
@@ -379,7 +379,7 @@ end
 
 end Erdos186.CFP.Bilu.Section93NormalizedAffineVolume
 
-#print axioms
-  Erdos186.CFP.Bilu.Section93NormalizedAffineVolume.bodyVolume_rankedNormalizedTopAffineBodyPresentation
+open Erdos186.CFP.Bilu.Section93NormalizedAffineVolume in
+#print axioms bodyVolume_rankedNormalizedTopAffineBodyPresentation
 #print axioms
   Erdos186.CFP.Bilu.Section93NormalizedAffineVolume.volume_normalizedProperAffine_unitBall

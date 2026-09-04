@@ -117,7 +117,7 @@ theorem chosenLift_mem_cubifiedUnitBall
   exact norm_chosenLift_le_liftRadius phi hlifts a
 
 theorem cubifiedSeminorm_admitsIndependent
-    (hrank : 0 < rank) (phi : IntegralPoint rank →+ ℤ)
+    (_hrank : 0 < rank) (phi : IntegralPoint rank →+ ℤ)
     (hlifts : ∀ a ∈ A, ∃ z : IntegralPoint rank, phi z = a) :
     AdmitsIndependent (cubifiedSeminorm phi hlifts) rank 1 := by
   refine ⟨standardIntegralPoint,
@@ -135,7 +135,7 @@ theorem cubifiedUnitBall_eq_closedBall
     {x : Fin rank → ℝ | cubifiedSeminorm phi hlifts x ≤ 1} =
       Metric.closedBall 0 (liftRadius phi hlifts) := by
   ext x
-  simp only [Set.mem_setOf_eq, Metric.mem_closedBall, dist_zero_right]
+  simp only [Set.mem_ofPred_eq, Metric.mem_closedBall, dist_zero_right]
   rw [cubifiedSeminorm_apply,
     inv_mul_le_one₀ (liftRadius_pos phi hlifts)]
 

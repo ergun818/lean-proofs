@@ -69,9 +69,9 @@ theorem isCompact_commonAssignmentFiberHull {d : ℕ}
 its closed geometric grid box. -/
 theorem gridFiberRepresentative_properties {d : ℕ}
     {X : Finset (EuclideanPoint d)} {mesh delta : ℝ}
-    (hmesh : 0 < mesh) (hdelta : 0 < delta)
+    (_hmesh : 0 < mesh) (hdelta : 0 < delta)
     (hXne : X.Nonempty)
-    (hXcube : (X : Set (EuclideanPoint d)) ⊆ normalizedCube d)
+    (_hXcube : (X : Set (EuclideanPoint d)) ⊆ normalizedCube d)
     {J : Finset (Fin d → ℕ)}
     (hheavy : ∀ k ∈ J,
       delta * (X.card : ℝ) <

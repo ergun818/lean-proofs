@@ -69,7 +69,7 @@ theorem homogeneousHeadReal_homogeneousRealPoint
     (z : IntegralPoint n) :
     homogeneousLastReal (homogeneousRealPoint z) = 1 := by
   change (homogeneousRealPoint z) (Fin.natAdd n 0) = 1
-  simp [homogeneousLastReal, homogeneousRealPoint,
+  simp [homogeneousRealPoint,
     homogeneousIntegralPoint, joinIntegralCoordinates, integralReal,
     finSumFinEquiv_symm_apply_natAdd]
 

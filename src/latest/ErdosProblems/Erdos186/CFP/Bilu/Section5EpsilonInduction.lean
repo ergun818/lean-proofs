@@ -131,6 +131,7 @@ theorem boundary_card_lt {n : ℕ} (hn : 0 < n)
   simp [faces]
   ring
 
+omit [DecidableEq V] [FiniteDimensional ℝ V] [NormedAddCommGroup V] [NormedSpace ℝ V] in
 /-- A Cube-Lemma slice has at least the reciprocal-denominator fraction of
 the original set. -/
 theorem cubeDensity_mul_card_le_of_card_le {n : ℕ} (hn : 0 < n)

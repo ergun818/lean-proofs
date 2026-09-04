@@ -63,7 +63,7 @@ theorem add_one_le_card_multifoldSumset
     push Not at hnot
     have hsubset : W ⊆ {0} := by
       intro a haW
-      simpa [hnot a haW]
+      simp [hnot a haW]
     have hsingleton : W = {0} :=
       Finset.Subset.antisymm hsubset (by simpa using hzero)
     exact hnontrivial hsingleton

@@ -90,7 +90,7 @@ theorem shrunkenStep_mem_body
       have hq : (0 : ℤ) ≤ (q : ℤ) := Int.natCast_nonneg q
       exact ⟨(neg_nonpos.mpr hq).trans hq, le_rfl⟩
     · have hij : i ≠ j := Ne.symm hji
-      simp only [c, Pi.single_apply, hij, if_false]
+      simp only [c, Pi.single_apply]
       omega
   have hinner : integerCombination C.steps c ∈ C.inner.carrier := by
     exact integerCombination_mem_symmetricGAP C.steps

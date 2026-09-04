@@ -59,7 +59,7 @@ theorem isCompact_centeredZonotope {d : ℕ}
         simpa [t, hx] using hcx
       · intro i
         dsimp only [F]
-        simpa +contextual [← A.sum_attach, t]
+        simp +contextual [← A.sum_attach, t]
   rw [hEq]
   exact hK.image hF
 
@@ -112,7 +112,7 @@ theorem apply_le_cubeSupport {d : ℕ}
     rw [Finset.sum_apply, Finset.sum_eq_single j]
     · simp
     · intro i _hi hij
-      simp [Pi.single_apply, hij]
+      simp [hij]
     · simp
   calc
     f y ≤ |f y| := le_abs_self _

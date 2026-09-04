@@ -82,7 +82,7 @@ theorem adjugate_entry_mul_widthProductExcept_le_factorial_mul_boxCard
     apply Finset.prod_congr rfl
     intro k hk
     have hki : k ≠ i := Finset.ne_of_mem_erase hk
-    simp [s, hki]
+    simp [hki]
   have hprodU : (∏ l, u l) = (B.carrier.card : ℝ) := by
     rw [B.card_carrier]
     push_cast

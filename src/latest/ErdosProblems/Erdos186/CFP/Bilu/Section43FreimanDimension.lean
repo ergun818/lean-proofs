@@ -63,6 +63,7 @@ structure FreimanPeelingCertificate (K : Finset V) where
     (pairSumset (K.erase point)).card + affineRank K + 1 ≤
       (pairSumset K).card
 
+omit [DecidableEq V] in
 /-- Affine rank is monotone under inclusion. -/
 theorem affineRank_mono {K L : Finset V} (hKL : K ⊆ L) :
     affineRank K ≤ affineRank L := by
@@ -71,13 +72,14 @@ theorem affineRank_mono {K L : Finset V} (hKL : K ⊆ L) :
   apply affineSpan_mono ℝ
   exact_mod_cast hKL
 
+omit [FiniteDimensional ℝ V] in
 /-- Adjoining one point increases affine rank by at most one. -/
 theorem affineRank_le_erase_add_one (K : Finset V) {x : V} (hx : x ∈ K) :
     affineRank K ≤ affineRank (K.erase x) + 1 := by
   rw [affineRank, affineRank, direction_affineSpan, direction_affineSpan]
   have hset : (K : Set V) = insert x (K.erase x : Set V) := by
     ext y
-    simp only [Finset.coe_sort_coe, Finset.mem_coe, Finset.mem_erase,
+    simp only [ Finset.mem_coe, Finset.mem_erase,
       Set.mem_insert_iff]
     constructor
     · intro hy
@@ -90,6 +92,7 @@ theorem affineRank_le_erase_add_one (K : Finset V) {x : V} (hx : x ∈ K) :
   rw [hset]
   exact finrank_vectorSpan_insert_le_set ℝ (K.erase x : Set V) x
 
+omit [FiniteDimensional ℝ V] in
 /-- A point whose deletion lowers affine rank is not in the affine span of
 the remaining points. -/
 theorem not_mem_affineSpan_erase_of_rank_lt (K : Finset V) {x : V}
@@ -118,16 +121,19 @@ theorem not_mem_affineSpan_erase_of_rank_lt (K : Finset V) {x : V}
 def pointTranslate (x : V) (K : Finset V) : Finset V :=
   K.image fun y ↦ x + y
 
+omit [FiniteDimensional ℝ V] [NormedSpace ℝ V] in
 @[simp] theorem card_pointTranslate (x : V) (K : Finset V) :
     (pointTranslate x K).card = K.card := by
   rw [pointTranslate, Finset.card_image_of_injective]
   intro y z hyz
   exact add_left_cancel hyz
 
+omit [FiniteDimensional ℝ V] [NormedSpace ℝ V] in
 @[simp] theorem mem_pointTranslate (x : V) (K : Finset V) (z : V) :
     z ∈ pointTranslate x K ↔ ∃ y ∈ K, x + y = z := by
   rw [pointTranslate, Finset.mem_image]
 
+omit [FiniteDimensional ℝ V] in
 /-- If `x` is outside the affine span of `K`, then the layer `x + K`
 does not meet `K + K`. -/
 theorem disjoint_pairSumset_pointTranslate_of_not_mem_affineSpan
@@ -157,6 +163,7 @@ theorem disjoint_pairSumset_pointTranslate_of_not_mem_affineSpan
   rw [heq]
   exact S.direction.add_mem huy hvy
 
+omit [FiniteDimensional ℝ V] in
 /-- The exceptional sum `x+x` is outside both lower layers whenever `x`
 is outside the affine span of `K`. -/
 theorem point_self_not_mem_lower_layers_of_not_mem_affineSpan
@@ -189,6 +196,7 @@ theorem point_self_not_mem_lower_layers_of_not_mem_affineSpan
     have hxK : x ∈ K := by simpa [this] using hy
     exact hx (subset_affineSpan ℝ (K : Set V) hxK)
 
+omit [FiniteDimensional ℝ V] [NormedAddCommGroup V] [NormedSpace ℝ V] in
 /-- Cardinal bookkeeping for three disjoint layers inside one finite set. -/
 theorem card_add_card_add_one_le_of_three_layers
     {A B T : Finset V} {z : V} (hAB : Disjoint A B)
@@ -202,6 +210,7 @@ theorem card_add_card_add_one_le_of_three_layers
         Finset.card_union_of_disjoint hAB, Finset.card_singleton]
     _ ≤ T.card := Finset.card_le_card hsub
 
+omit [FiniteDimensional ℝ V] in
 /-- The rank-drop branch in the peeling certificate. -/
 theorem pairSumset_growth_of_rank_drop (K : Finset V) {x : V}
     (hx : x ∈ K) (hrank : affineRank (K.erase x) < affineRank K) :
@@ -250,6 +259,7 @@ structure VisibleFacetCertificate (K : Finset V) (x : V) where
   set_le : ∀ y ∈ K, functional y ≤ level
   point_gt : level < functional x
 
+omit [FiniteDimensional ℝ V] in
 /-- A visible facet contributes its translate as a new layer beyond the
 old double sumset. -/
 theorem VisibleFacetCertificate.disjoint_pairSumset_pointTranslate
@@ -266,6 +276,7 @@ theorem VisibleFacetCertificate.disjoint_pairSumset_pointTranslate
     rw [← hxy, map_add, F.face_level y hy]
   linarith [F.point_gt]
 
+omit [FiniteDimensional ℝ V] in
 /-- The exposed point doubled is beyond both the old and facet layers. -/
 theorem VisibleFacetCertificate.point_self_not_mem_layers
     {K : Finset V} {x : V} (F : VisibleFacetCertificate K x) :
@@ -286,6 +297,7 @@ theorem VisibleFacetCertificate.point_self_not_mem_layers
     simp only [map_add, F.face_level y hy] at heq
     linarith [F.point_gt]
 
+omit [FiniteDimensional ℝ V] in
 /-- The same-rank branch of the peeling argument, assuming its visible
 facet certificate. -/
 theorem pairSumset_growth_of_visibleFacet (K : Finset V) {x : V}
@@ -329,6 +341,7 @@ def visibleFinset (K : Finset V) (x : V) : Finset V :=
     classical
     exact K.filter fun y ↦ IsVisible ℝ (convexHull ℝ (K : Set V)) x y
 
+omit [DecidableEq V] [FiniteDimensional ℝ V] in
 @[simp] theorem mem_visibleFinset (K : Finset V) (x y : V) :
     y ∈ visibleFinset K x ↔
       y ∈ K ∧ IsVisible ℝ (convexHull ℝ (K : Set V)) x y := by
@@ -383,6 +396,7 @@ theorem affineRank_insert_le_card_visibleFinset (K : Finset V) {x : V}
   rw [hspan]
   exact hrankNat
 
+omit [FiniteDimensional ℝ V] in
 /-- The translates by points visible from `x` do not meet the old double
 sumset: a collision would put the midpoint of `x` and the visible point in
 the old convex hull. -/
@@ -419,6 +433,7 @@ theorem disjoint_pairSumset_pointTranslate_visibleFinset
   exact (hydata.2 hmidHull)
     (sbtw_lineMap_iff.mpr ⟨hxyne, by norm_num⟩)
 
+omit [FiniteDimensional ℝ V] in
 /-- The doubled exposed point is outside both old and visible-translate
 layers. -/
 theorem point_self_not_mem_visible_layers
@@ -528,6 +543,7 @@ theorem exists_freimanPeelingCertificate (K : Finset V) (hK : 1 < K.card) :
     growth_same := fun _hrank ↦ pairSumset_growth_of_visibleFinset K hxK hxErase
   }⟩
 
+omit [DecidableEq V] [FiniteDimensional ℝ V] in
 /-- A nonempty finite set contains at least one more point than its affine
 dimension. -/
 theorem affineRank_add_one_le_card (K : Finset V) (hK : K.Nonempty) :
@@ -543,6 +559,7 @@ theorem affineRank_add_one_le_card (K : Finset V) (hK : K.Nonempty) :
   rw [affineRank, direction_affineSpan]
   exact hdim
 
+omit [FiniteDimensional ℝ V] in
 /-- Arithmetic induction once the exposed-vertex/visible-facet peeling
 certificate is available for every non-singleton finite set. -/
 theorem freiman_dimension_lower_bound_of_peeling
@@ -559,7 +576,7 @@ theorem freiman_dimension_lower_bound_of_peeling
         subst K
         unfold freimanDimensionLowerBound
         simp only [Finset.card_empty, Nat.cast_zero, mul_zero, zero_sub,
-          pairSumset, Finset.image_empty, Finset.card_empty]
+          pairSumset, Finset.card_empty]
         exact neg_nonpos.mpr (by positivity)
       by_cases hK1 : K.card = 1
       · obtain ⟨x, rfl⟩ := Finset.card_eq_one.mp hK1
@@ -596,7 +613,6 @@ theorem freiman_dimension_lower_bound_of_peeling
         nlinarith
       · have hranklt : affineRank K' < affineRank K :=
           lt_of_le_of_ne P.rank_erase_le hrank
-
         have hrankeq : affineRank K' + 1 = affineRank K := by
           have hle : affineRank K ≤ affineRank K' + 1 := by
             simpa [K'] using P.rank_le_erase_add_one
@@ -625,6 +641,7 @@ theorem freiman_dimension_lower_bound (K : Finset V) :
   freiman_dimension_lower_bound_of_peeling
     (fun L hL ↦ exists_freimanPeelingCertificate L hL) K
 
+omit [FiniteDimensional ℝ V] in
 /-- The fixed rank consequence needed in Section 9: small doubling bounds
 the homogenized affine rank solely in terms of the doubling constant. -/
 theorem affineRank_add_one_le_two_mul_of_dimension_bound

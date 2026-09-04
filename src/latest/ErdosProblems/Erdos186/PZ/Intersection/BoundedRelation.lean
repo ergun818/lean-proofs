@@ -30,7 +30,7 @@ set_option autoImplicit false
 value. -/
 theorem toNat_le_natAbs (z : ℤ) : z.toNat ≤ z.natAbs := by
   by_cases hz : 0 ≤ z
-  · simpa [Int.natAbs_of_nonneg hz] using Int.toNat_of_nonneg hz
+  · simp [Int.natAbs_of_nonneg hz]
   · have hneg : z < 0 := lt_of_not_ge hz
     simp [Int.toNat_of_nonpos hneg.le]
 

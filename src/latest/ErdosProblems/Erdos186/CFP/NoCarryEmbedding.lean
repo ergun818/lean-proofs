@@ -1307,7 +1307,7 @@ theorem sum_symmetryRadii_le_rank_mul_pow_s
         (Finset.univ : Finset (Fin W.rank)).card • (2 ^ s) :=
       Finset.sum_le_card_nsmul Finset.univ W.symmetryRadii (2 ^ s)
         (fun i _ ↦ hradius i)
-    _ = W.rank * 2 ^ s := by simp [nsmul_eq_mul]
+    _ = W.rank * 2 ^ s := by simp
 
 /-- Appendix polynomial volume bound.  Injectivity on the source input lets
 every target reserve subset sum be pulled back to a source sum of at most
@@ -1808,7 +1808,7 @@ theorem exists_centered_bounded_homogeneous_translateLift
     rw [((liftedProgression_centered W stepLift).dilate k).offset_eq]
     ext j
     simp only [translateLift, liftedProgression, centeredLiftGAP, liftGAP,
-      Pi.add_apply, Pi.neg_apply, Finset.sum_apply, Pi.smul_apply,
+      Pi.add_apply, Finset.sum_apply, Pi.smul_apply,
       smul_eq_mul, GAP.dilate_steps]
     simp_rw [sub_mul]
     rw [Finset.sum_sub_distrib]
@@ -1889,7 +1889,7 @@ theorem exists_bounded_homogeneous_translateLift
     rw [((liftedProgression_centered W stepLift).dilate k).offset_eq]
     ext j
     simp only [translateLift, liftedProgression, centeredLiftGAP, liftGAP,
-      Pi.add_apply, Pi.neg_apply, Finset.sum_apply, Pi.smul_apply,
+      Pi.add_apply, Finset.sum_apply, Pi.smul_apply,
       smul_eq_mul, GAP.dilate_steps]
     change (∑ i, z i * stepLift i j) +
         -(∑ i, (k * W.symmetryRadii i : ℕ) * stepLift i j) = _
@@ -2171,7 +2171,7 @@ noncomputable def liftEnhancedCFPWitness_horner_of_largeBase
     centered_carrier_subset_coordinateWindow
       (liftedProgression_centered W stepLift) hstepBoundL
   have hbaseRadius : 3 * (∑ i, W.symmetryRadii i) * L ≤ M := by
-    simp [M, hornerLiftWindowRadius, L, T]
+    simp [M, hornerLiftWindowRadius, L]
   have hbase :
       ((liftedProgression W stepLift).carrier : Set (LatticePoint d)) ⊆
         coordinateWindow d M :=
@@ -2428,7 +2428,7 @@ theorem injOn_carrier_of_injOn_translate {d e r : ℕ}
   have hty : t + y ∈ translate t P.carrier :=
     mem_translate_iff.mpr ⟨y, hy, rfl⟩
   have htranslated : t + x = t + y := hinjective htx hty (by
-    simpa only [map_add, hxy])
+    simp only [map_add, hxy])
   exact add_left_cancel htranslated
 
 /-- The requested projected presentation is simply the mapped GAP whenever

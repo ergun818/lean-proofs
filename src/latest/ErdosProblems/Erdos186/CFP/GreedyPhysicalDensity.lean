@@ -38,7 +38,7 @@ the `H`-dilation. -/
 theorem HApproximation.card_global_multifoldSumset_le_rankFlexible_inner
     {W A B : Finset ℤ}
     {x D n h H M e scaleNum scaleDen : ℕ}
-    (hAW : A ⊆ W)
+    (_hAW : A ⊆ W)
     (hstable : Stability.WeaklyStableFor A
       (Stability.minimalBoxFamily W) x D (n ^ 2))
     (hBA : B ⊆ A) (hloss : A.card ≤ B.card + x)
@@ -133,7 +133,7 @@ theorem HApproximation.card_global_multifoldSumset_le_positiveDyadicThreshold
     (haccessible : ∀ B : Finset ℤ, B ⊆ A →
       A.card ≤ B.card + x →
       ∃ e : ℕ, 0 < e ∧ e ≤ D ∧
-        ∃ V : HDimension.HApproximation
+        ∃ _V : HDimension.HApproximation
             (insert 0 B) (2 ^ level) e scaleNum scaleDen,
           (2 * scaleDen) ^ e * (2 ^ level + 1) ^ (e - 1) <
             (scaleNum * 2 ^ level) ^ e)
@@ -213,7 +213,7 @@ def physicalDensityTarget (ambientCard coefficient : ℕ) : ℕ :=
 bounded by `coefficient * threshold`. -/
 theorem physicalDensityTarget_le_of_le_mul
     {ambientCard coefficient threshold : ℕ}
-    (hcoefficient : 0 < coefficient)
+    (_hcoefficient : 0 < coefficient)
     (hambient : ambientCard ≤ coefficient * threshold) :
     physicalDensityTarget ambientCard coefficient ≤ threshold := by
   exact Nat.div_le_of_le_mul hambient
@@ -262,7 +262,7 @@ theorem exists_common_physicalTargetRun_of_rankFlexible_threshold
       B ⊆ integerColorClass A c i →
       (integerColorClass A c i).card ≤ B.card + x →
         ∃ e : ℕ, 0 < e ∧ e ≤ D ∧
-        ∃ V : HDimension.HApproximation
+        ∃ _V : HDimension.HApproximation
             (insert 0 B) (2 ^ level i) e scaleNum scaleDen,
           (2 * scaleDen) ^ e * (2 ^ level i + 1) ^ (e - 1) <
             (scaleNum * 2 ^ level i) ^ e)
@@ -271,7 +271,7 @@ theorem exists_common_physicalTargetRun_of_rankFlexible_threshold
     (hlarge :
       8 * (M + 1) ^ D * (2 * scaleDen) ^ D ≤
         (GrowthLemmas.multifoldSumset H W).card) :
-    ∃ target : ℕ, ∃ run : ∀ i, Greedy.PhysicalTargetRun
+    ∃ target : ℕ, ∃ _run : ∀ i, Greedy.PhysicalTargetRun
         (integerColorClass A c i) cap target,
       (GrowthLemmas.multifoldSumset H W).card ≤
         2 * (8 * (M + 1) ^ D * (2 * scaleDen) ^ D) * target ∧

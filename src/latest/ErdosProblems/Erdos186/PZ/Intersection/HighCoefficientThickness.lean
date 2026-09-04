@@ -110,11 +110,12 @@ theorem card_sub_missing_slab_le_filter_ge
 /-- A uniform lower radius turns the surviving outside-slab cardinality
 into weighted mass. -/
 theorem minRadius_mul_card_filter_le_sum
-    {α : Type*} [DecidableEq α]
+    {α : Type*}
     (core : Finset α) (q : α → ℝ) (p : α → Prop) [DecidablePred p]
     (minRadius : ℝ) (hq : ∀ x ∈ core, minRadius ≤ q x) :
     minRadius * ((core.filter p).card : ℝ) ≤
       ∑ x ∈ core.filter p, q x := by
+  classical
   calc
     minRadius * ((core.filter p).card : ℝ) =
         ∑ _x ∈ core.filter p, minRadius := by simp [mul_comm]
@@ -164,7 +165,7 @@ theorem cube_subset_centeredZonotope_of_highCoefficient_slabCard
   intro f
   by_cases hf : f = 0
   · subst f
-    simp only [ContinuousLinearMap.zero_apply, abs_zero,
+    simp only [zero_apply, abs_zero,
       Finset.sum_const_zero, mul_zero]
     exact mul_nonneg (hthreshold 0) (Finset.sum_nonneg fun x hx ↦
       hqnonneg x (Finset.mem_filter.mp hx).1)
