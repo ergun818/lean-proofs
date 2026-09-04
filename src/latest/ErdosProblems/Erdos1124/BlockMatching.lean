@@ -36,7 +36,7 @@ noncomputable def closedBlockNeighborhood (neighbors : I → Finset I)
   exact s ∪ s.biUnion neighbors
 
 @[simp]
-lemma mem_closedBlockNeighborhood [DecidableEq I] {neighbors : I → Finset I}
+lemma mem_closedBlockNeighborhood {neighbors : I → Finset I}
     {s : Finset I} {j : I} :
     j ∈ closedBlockNeighborhood neighbors s ↔
       j ∈ s ∨ ∃ i ∈ s, j ∈ neighbors i := by
@@ -56,6 +56,8 @@ structure PointBlockData (A B : Set X) (I : Type*) where
 
 namespace PointBlockData
 
+omit [AddGroup X]
+
 variable {A B : Set X} (P : PointBlockData A B I)
 
 /-- The `A`-points in a finite family of blocks. -/
@@ -68,7 +70,7 @@ noncomputable def pointsBUnion (s : Finset I) : Finset B := by
   classical
   exact s.biUnion P.pointsB
 
-lemma pairwiseDisjoint_pointsA [DecidableEq I] (s : Finset I) :
+lemma pairwiseDisjoint_pointsA (s : Finset I) :
     (↑s : Set I).PairwiseDisjoint P.pointsA := by
   classical
   intro i hi j hj hij
@@ -79,7 +81,7 @@ lemma pairwiseDisjoint_pointsA [DecidableEq I] (s : Finset I) :
   have hja : P.blockA a = j := (P.mem_pointsA j a).mp haj
   exact hij (hia.symm.trans hja)
 
-lemma pairwiseDisjoint_pointsB [DecidableEq I] (s : Finset I) :
+lemma pairwiseDisjoint_pointsB (s : Finset I) :
     (↑s : Set I).PairwiseDisjoint P.pointsB := by
   classical
   intro i hi j hj hij
@@ -90,14 +92,14 @@ lemma pairwiseDisjoint_pointsB [DecidableEq I] (s : Finset I) :
   have hjb : P.blockB b = j := (P.mem_pointsB j b).mp hbj
   exact hij (hib.symm.trans hjb)
 
-lemma card_biUnion_pointsA [DecidableEq I] (s : Finset I) :
+lemma card_biUnion_pointsA (s : Finset I) :
     (P.pointsAUnion s).card = ∑ i ∈ s, (P.pointsA i).card :=
   by
     classical
     rw [pointsAUnion]
     exact Finset.card_biUnion (P.pairwiseDisjoint_pointsA s)
 
-lemma card_biUnion_pointsB [DecidableEq I] (s : Finset I) :
+lemma card_biUnion_pointsB (s : Finset I) :
     (P.pointsBUnion s).card = ∑ i ∈ s, (P.pointsB i).card :=
   by
     classical
@@ -112,7 +114,7 @@ Hall conditions used by `Erdos1124.exists_equidecomp_of_hall`.
 The compatibility hypothesis is deliberately stated using the actual
 displacement finset.  It is therefore equally useful for abstract block
 partitions and for the standard `n`-cube tiling of every free `ℤ^d` orbit. -/
-theorem finiteDisplacementHall_of_blockHall [DecidableEq I]
+theorem finiteDisplacementHall_of_blockHall
     {A B : Set X} {D : Finset X} {neighbors : I → Finset I}
     (P : PointBlockData A B I)
     (hforward : ∀ t : Finset I,
@@ -358,7 +360,7 @@ lemma sum_outgoing_le_boundary_bCount [DecidableEq I]
 
 /-- The bounded integral flow and the positive-density room estimate imply
 the forward block Hall inequality. -/
-theorem sum_aCount_le_closedNeighborhood [DecidableEq I]
+theorem sum_aCount_le_closedNeighborhood
     (hroomB : ∀ i : I, F.degree * F.capacity ≤ bCount i)
     (s : Finset I) :
     ∑ i ∈ s, aCount i ≤
@@ -420,7 +422,7 @@ def reverse : BoundedBlockFlow bCount aCount where
         exact (hanti j hj).symm
 
 /-- The reverse block Hall inequality, obtained by reversing the flow. -/
-theorem sum_bCount_le_closedNeighborhood [DecidableEq I]
+theorem sum_bCount_le_closedNeighborhood
     (hroomA : ∀ i : I, F.degree * F.capacity ≤ aCount i)
     (s : Finset I) :
     ∑ i ∈ s, bCount i ≤
@@ -434,7 +436,7 @@ end BoundedBlockFlow
 
 section FlowToEquidecomposition
 
-variable {X I : Type*} [AddGroup X] [DecidableEq I]
+variable {X I : Type*} [AddGroup X]
 variable {A B : Set X} {D : Finset X}
 
 /-- **Bounded integral block flow implies finite-displacement Hall.**

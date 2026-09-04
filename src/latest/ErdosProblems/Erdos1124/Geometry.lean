@@ -83,14 +83,12 @@ lemma mem_gridSquare_iff_gridIndex_eq {m : ℕ} (hm : 0 < m)
         x 0 < (((⌊(m : ℝ) * x 0⌋ : ℤ) : ℝ) + 1) / (m : ℝ)
       exact ⟨(div_le_iff₀ hmR).2 (by simpa [mul_comm] using
           (Int.floor_le ((m : ℝ) * x 0))),
-        (lt_div_iff₀ hmR).2 (by simpa [mul_comm] using
-          (Int.lt_floor_add_one ((m : ℝ) * x 0)))⟩
+        (lt_div_iff₀ hmR).2 (by simp [mul_comm])⟩
     · change ((⌊(m : ℝ) * x 1⌋ : ℤ) : ℝ) / (m : ℝ) ≤ x 1 ∧
         x 1 < (((⌊(m : ℝ) * x 1⌋ : ℤ) : ℝ) + 1) / (m : ℝ)
       exact ⟨(div_le_iff₀ hmR).2 (by simpa [mul_comm] using
           (Int.floor_le ((m : ℝ) * x 1))),
-        (lt_div_iff₀ hmR).2 (by simpa [mul_comm] using
-          (Int.lt_floor_add_one ((m : ℝ) * x 1)))⟩
+        (lt_div_iff₀ hmR).2 (by simp [mul_comm])⟩
 
 lemma mem_gridSquare_gridIndex {m : ℕ} (hm : 0 < m) (x : Plane) :
     x ∈ gridSquare m (gridIndex m x) :=
@@ -208,7 +206,7 @@ def unitDisk : Set Plane := closedBall 0 1
 
 lemma unitCircle_eq_sphere : unitCircle = sphere (0 : Plane) 1 := by
   ext x
-  rw [unitCircle, mem_setOf_eq, mem_sphere, dist_zero_right]
+  rw [unitCircle, mem_ofPred_eq, mem_sphere, dist_zero_right]
   constructor
   · intro h
     have hsq : ‖x‖ ^ 2 = 1 := by
@@ -266,12 +264,16 @@ lemma orientedIndex_mono_of_cell {m : ℕ} (hm : 0 < m) (positive : Bool)
     (hz : ⌊(m : ℝ) * x⌋ = z) (hw : ⌊(m : ℝ) * y⌋ = w)
     (hxy : orientedCoord positive x ≤ orientedCoord positive y) :
     orientedIndex positive z ≤ orientedIndex positive w := by
-  cases positive <;> simp [orientedCoord, orientedIndex] at hxy ⊢
-  · have hmul : (m : ℝ) * y ≤ (m : ℝ) * x :=
-      mul_le_mul_of_nonneg_left hxy (by positivity)
+  cases positive
+  · change -x ≤ -y at hxy
+    change -z ≤ -w
+    have hmul : (m : ℝ) * y ≤ (m : ℝ) * x :=
+      mul_le_mul_of_nonneg_left (neg_le_neg_iff.mp hxy) (by positivity)
     have hf := Int.floor_mono hmul
     omega
-  · have hmul : (m : ℝ) * x ≤ (m : ℝ) * y :=
+  · change x ≤ y at hxy
+    change z ≤ w
+    have hmul : (m : ℝ) * x ≤ (m : ℝ) * y :=
       mul_le_mul_of_nonneg_left hxy (by positivity)
     simpa [hz, hw] using Int.floor_mono hmul
 
@@ -491,7 +493,7 @@ lemma frontier_equalAreaSquare_subset_sides :
   have hxnot : x ∉ interior equalAreaSquare := hx.2
   have hend : |x 0| = squareHalfSide ∨ |x 1| = squareHalfSide := by
     by_contra h
-    push_neg at h
+    push Not at h
     have hx0 : |x 0| < squareHalfSide := lt_of_le_of_ne hxsq.1 h.1
     have hx1 : |x 1| < squareHalfSide := lt_of_le_of_ne hxsq.2 h.2
     have hr : 0 < min (squareHalfSide - |x 0|) (squareHalfSide - |x 1|) := by
@@ -553,7 +555,7 @@ lemma squareSide_transverse_injective {m : ℕ} (hm : 0 < m)
   · have hfixed : z.2 = w.2 := by
       have hz2 : ⌊(m : ℝ) * x 1⌋ = z.2 := congrArg Prod.snd hxidx
       have hw2 : ⌊(m : ℝ) * y 1⌋ = w.2 := congrArg Prod.snd hyidx
-      simp only [squareSide, Bool.false_eq_true, if_false, mem_setOf_eq] at hxside hyside
+      simp only [squareSide, Bool.false_eq_true, if_false, mem_ofPred_eq] at hxside hyside
       rw [hxside.1] at hz2
       rw [hyside.1] at hw2
       omega
@@ -563,7 +565,7 @@ lemma squareSide_transverse_injective {m : ℕ} (hm : 0 < m)
   · have hfixed : z.1 = w.1 := by
       have hz1 : ⌊(m : ℝ) * x 0⌋ = z.1 := congrArg Prod.fst hxidx
       have hw1 : ⌊(m : ℝ) * y 0⌋ = w.1 := congrArg Prod.fst hyidx
-      simp only [squareSide, if_true, mem_setOf_eq] at hxside hyside
+      simp only [squareSide, if_true, mem_ofPred_eq] at hxside hyside
       rw [hxside.1] at hz1
       rw [hyside.1] at hw1
       omega
@@ -682,7 +684,7 @@ lemma equalAreaSquare_eq_coordinateBox :
       (@WithLp.ofLp 2 (Fin 2 → ℝ)) ⁻¹'
         Icc (fun _ ↦ -squareHalfSide) (fun _ ↦ squareHalfSide) := by
   ext x
-  simp only [equalAreaSquare, mem_setOf_eq, mem_preimage, mem_Icc, Pi.le_def]
+  simp only [equalAreaSquare, mem_ofPred_eq, mem_preimage, mem_Icc, Pi.le_def]
   constructor
   · intro hx
     constructor
@@ -730,10 +732,10 @@ lemma volume_torusEmbed_image (E : Set Plane) :
   have htranslate (S : Set Plane) :
       volume ((fun y ↦ torusCenter + y) '' S) = volume S := by
     rw [show (fun y ↦ torusCenter + y) '' S =
-        (fun y ↦ -torusCenter + y) ⁻¹' S by ext y; simp [eq_comm]]
+        (fun y ↦ -torusCenter + y) ⁻¹' S by ext y; simp]
     exact measure_preimage_add volume (-torusCenter) S
   rw [htranslate]
-  simpa using volume.addHaar_smul_of_nonneg (by norm_num : (0 : ℝ) ≤ 1 / 4) E
+  simp
 
 lemma volume_torusEmbed_unitDisk :
     volume (torusEmbed '' unitDisk) = ENNReal.ofReal ((1 / 4 : ℝ) ^ 2 * Real.pi) := by
@@ -761,10 +763,14 @@ lemma gridIndex_torusEmbed_four_mul (n : ℕ) (x : Plane) :
   apply Prod.ext
   · change ⌊((4 * n : ℕ) : ℝ) * (1 / 2 + (1 / 4 : ℝ) * x 0)⌋ =
       ((2 * n : ℕ) : ℤ) + ⌊(n : ℝ) * x 0⌋
-    convert Int.floor_natCast_add (2 * n) ((n : ℝ) * x 0) using 1 <;> push_cast <;> ring_nf
+    convert Int.floor_natCast_add (2 * n) ((n : ℝ) * x 0) using 1
+    push_cast
+    ring_nf
   · change ⌊((4 * n : ℕ) : ℝ) * (1 / 2 + (1 / 4 : ℝ) * x 1)⌋ =
       ((2 * n : ℕ) : ℤ) + ⌊(n : ℝ) * x 1⌋
-    convert Int.floor_natCast_add (2 * n) ((n : ℝ) * x 1) using 1 <;> push_cast <;> ring_nf
+    convert Int.floor_natCast_add (2 * n) ((n : ℝ) * x 1) using 1
+    push_cast
+    ring_nf
 
 def unshiftEmbeddedIndex (n : ℕ) (z : GridIndex) : GridIndex :=
   (z.1 - ((2 * n : ℕ) : ℤ), z.2 - ((2 * n : ℕ) : ℤ))
@@ -859,23 +865,18 @@ lemma fundamentalBoundaryCells_mapTo_integerCells {m : ℕ} :
   rw [fundamentalBoundaryCells, Finset.mem_filter] at hc
   apply mem_gridCellsMeeting.mpr
   constructor
-  · change finGridIndex c ∈ candidateCells 1 m
-    rw [candidateCells, Finset.mem_product]
+  · rw [candidateCells, Finset.mem_product]
     constructor
     · rw [indexInterval, Finset.mem_Icc]
       · constructor
         · unfold finGridIndex
-          exact (neg_nonpos.mpr (Int.ofNat_zero_le _)).trans (Int.ofNat_zero_le _)
-        · have hc0 : ((c 0).val : ℤ) ≤ (m : ℤ) := by
-            exact_mod_cast (c 0).isLt.le
-          simpa [finGridIndex] using hc0
+          exact (neg_nonpos.mpr (Int.natCast_nonneg _)).trans (Int.natCast_nonneg _)
+        · simp [finGridIndex]
     · rw [indexInterval, Finset.mem_Icc]
       constructor
       · unfold finGridIndex
-        exact (neg_nonpos.mpr (Int.ofNat_zero_le _)).trans (Int.ofNat_zero_le _)
-      · have hc1 : ((c 1).val : ℤ) ≤ (m : ℤ) := by
-          exact_mod_cast (c 1).isLt.le
-        simpa [finGridIndex] using hc1
+        exact (neg_nonpos.mpr (Int.natCast_nonneg _)).trans (Int.natCast_nonneg _)
+      · simp [finGridIndex]
   · exact hc.2
 
 lemma card_fundamentalBoundaryCells_le (m : ℕ) (E : Set Plane) :
@@ -1455,7 +1456,8 @@ lemma five_mul_le_rpow_five_fourths {m : ℕ} (hm : 625 ≤ m) :
   have hbase : (625 : ℝ) ≤ (m : ℝ) := by exact_mod_cast hm
   have h625 : (625 : ℝ) ^ (1 / 4 : ℝ) = 5 := by
     convert Real.pow_rpow_inv_natCast (x := (5 : ℝ)) (n := 4)
-      (by positivity) (by norm_num) using 1 <;> norm_num
+      (by positivity) (by norm_num) using 1
+    norm_num
   have hroot : (5 : ℝ) ≤ (m : ℝ) ^ (1 / 4 : ℝ) := by
     rw [← h625]
     exact Real.rpow_le_rpow (by norm_num) hbase (by norm_num)

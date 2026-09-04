@@ -97,6 +97,7 @@ noncomputable def ambientEquivFun {A B : Set X} (e : A ≃ B) (x : X) : X := by
   classical
   exact if hx : x ∈ A then (e ⟨x, hx⟩ : B) else x
 
+omit [AddGroup X] in
 @[simp]
 theorem ambientEquivFun_apply_mem {A B : Set X} (e : A ≃ B) {x : X} (hx : x ∈ A) :
     ambientEquivFun e x = e ⟨x, hx⟩ := by
@@ -111,7 +112,7 @@ theorem exists_bijOn_displacement_of_hall {A B : Set X} {D : Finset X}
   refine ⟨ambientEquivFun e, ?_, ?_⟩
   · refine ⟨?_, ?_, ?_⟩
     · intro x hx
-      simpa [ambientEquivFun, hx] using (e ⟨x, hx⟩).property
+      simp [ambientEquivFun, hx]
     · intro x hx y hy hxy
       have hv : ((e ⟨x, hx⟩ : B) : X) = ((e ⟨y, hy⟩ : B) : X) := by
         simpa only [ambientEquivFun_apply_mem e hx,
@@ -130,6 +131,7 @@ additive displacement set `D`. -/
 def multiplicativeDisplacements (D : Finset X) : Finset (Multiplicative X) :=
   D.map Multiplicative.ofAdd.toEmbedding
 
+omit [AddGroup X] in
 @[simp]
 theorem mem_multiplicativeDisplacements {D : Finset X} {d : X} :
     Multiplicative.ofAdd d ∈ multiplicativeDisplacements D ↔ d ∈ D := by

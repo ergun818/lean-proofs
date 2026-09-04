@@ -576,7 +576,7 @@ Fejér/Erdős--Turán argument. -/
 theorem exists_eventual_concrete_dyadic_discrepancy_of_oneDimensional
     {u v : Fin ProductOrbit.coordinateDimension → Circle}
     (hu : FreeTuple.CircleFree u) (hv : FreeTuple.CircleFree v)
-    (Ku Kv : ℝ) (hKu : 0 < Ku) (hKv : 0 < Kv)
+    (Ku Kv : ℝ) (hKu : 0 < Ku) (_hKv : 0 < Kv)
     (huDisc : ∀ N : ℕ, 0 < N → ∀ z : Circle,
       OneDimensionalDiscrepancy.intervalDiscrepancy
         (OneDimensionalDiscrepancy.negativeOrbitFinset u N z) ≤
@@ -671,7 +671,7 @@ lemma cubeCount_le_pow {d k : ℕ} (u : Fin d → TorusAction.Torus k)
       apply Finset.sum_le_sum
       intro a _
       split <;> omega
-    _ = N ^ d := by simp [Fintype.card_fun, Fintype.card_fin]
+    _ = N ^ d := by simp [Fintype.card_fin]
 
 lemma cubeDensity_mem_Icc {d k : ℕ} (u : Fin d → TorusAction.Torus k)
     (E : Set (TorusAction.Torus k)) {N : ℕ} (hN : 0 < N)
@@ -701,7 +701,7 @@ lemma concrete_density_error_le_two
 constant by an explicit finite sum. -/
 theorem exists_uniform_powerDecay_of_eventually
     {X : Type*} (f : ℕ → X → ℝ) (q₀ : ℕ) (K M δ : ℝ)
-    (hK : 0 < K) (hM : 0 ≤ M) (hδ : 0 < δ)
+    (hK : 0 < K) (hM : 0 ≤ M) (_hδ : 0 < δ)
     (heventual : ∀ q : ℕ, q₀ ≤ q → ∀ x : X,
       |f q x| ≤ K * ((((2 ^ q : ℕ) : ℝ)) ^ (-1 - δ)))
     (hinitial : ∀ q : ℕ, q < q₀ → ∀ x : X, |f q x| ≤ M) :

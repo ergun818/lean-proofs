@@ -13,7 +13,7 @@ namespace Erdos1124
 
 noncomputable section
 
-variable {V : Type*} [AddCommGroup V] [Module ℝ V]
+variable {V : Type*} [AddCommGroup V]
 
 /-- Translation by a fixed vector as an equivalence. -/
 def translateEquiv (t : V) : V ≃ V where
@@ -70,6 +70,8 @@ noncomputable def translateEquidecomp
     exact ⟨-t + x, hx, by abel⟩
   · rintro ⟨y, hy, rfl⟩
     simpa only [neg_add_cancel_left] using hy
+
+variable [Module ℝ V]
 
 /-- Multiplication by a nonzero real scalar as an equivalence. -/
 def scaleEquiv (c : ℝ) (hc : c ≠ 0) : V ≃ V where

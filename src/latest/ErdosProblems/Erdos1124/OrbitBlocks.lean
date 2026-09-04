@@ -289,7 +289,7 @@ namespace FiniteBlockPartition
 
 variable (P : FiniteBlockPartition X I)
 
-lemma pairwiseDisjoint_points [DecidableEq I] (s : Finset I) :
+lemma pairwiseDisjoint_points (s : Finset I) :
     (↑s : Set I).PairwiseDisjoint P.points := by
   classical
   intro i hi j hj hij
@@ -329,21 +329,21 @@ def adjacentBlocks (P : FiniteBlockPartition X I) (move : ι → Equiv.Perm X)
   classical
   exact (outgoingBlocks P move i ∪ incomingBlocks P move i).erase i
 
-lemma mem_outgoingBlocks_iff [DecidableEq I]
+lemma mem_outgoingBlocks_iff
     {P : FiniteBlockPartition X I} {move : ι → Equiv.Perm X} {i j : I} :
     j ∈ outgoingBlocks P move i ↔
       ∃ x ∈ P.points i, ∃ g : ι, P.block (move g x) = j := by
   classical
   simp [outgoingBlocks]
 
-lemma mem_incomingBlocks_iff [DecidableEq I]
+lemma mem_incomingBlocks_iff
     {P : FiniteBlockPartition X I} {move : ι → Equiv.Perm X} {i j : I} :
     j ∈ incomingBlocks P move i ↔
       ∃ x ∈ P.points i, ∃ g : ι, P.block ((move g).symm x) = j := by
   classical
   simp [incomingBlocks]
 
-lemma mem_adjacentBlocks_iff [DecidableEq I]
+lemma mem_adjacentBlocks_iff
     {P : FiniteBlockPartition X I} {move : ι → Equiv.Perm X} {i j : I} :
     j ∈ adjacentBlocks P move i ↔
       j ≠ i ∧
@@ -353,7 +353,7 @@ lemma mem_adjacentBlocks_iff [DecidableEq I]
   simp only [adjacentBlocks, Finset.mem_erase, Finset.mem_union,
     mem_outgoingBlocks_iff, mem_incomingBlocks_iff]
 
-lemma adjacentBlocks_symm [DecidableEq I]
+lemma adjacentBlocks_symm
     (P : FiniteBlockPartition X I) (move : ι → Equiv.Perm X)
     {i j : I} (hji : j ∈ adjacentBlocks P move i) :
     i ∈ adjacentBlocks P move j := by
@@ -509,6 +509,7 @@ lemma netBlockFlow_le_of_bound [DecidableEq I]
       push_cast
       ring
 
+omit [Fintype ι] in
 private lemma sum_move_filter_eq [DecidableEq I]
     (P : FiniteBlockPartition X I) (move : ι → Equiv.Perm X)
     (φ : X → ι → ℤ) (i j : I) (g : ι) :
@@ -653,7 +654,7 @@ lemma sum_netBlockFlow_adjacent [DecidableEq I]
       incomingRawBlockFlow P move φ i i :=
     rawBlockFlow_eq_incoming P move φ i i
   rw [hloop]
-  simp only [pointDivergence, Finset.sum_sub_distrib, Finset.sum_neg_distrib]
+  simp only [pointDivergence, Finset.sum_sub_distrib]
   ring
 
 /-- Restrict a finite partition fiber to a subset. -/

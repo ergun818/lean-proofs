@@ -82,6 +82,7 @@ def cubeSum (f : X → 𝕜) (n : ℕ) (x : X) : 𝕜 :=
 def cubeAverage (f : X → 𝕜) (n : ℕ) (x : X) : 𝕜 :=
   (((n : 𝕜) ^ d)⁻¹) * cubeSum (d := d) f n x
 
+omit [CharZero 𝕜] in
 @[simp]
 lemma cubeSum_one (f : X → 𝕜) (x : X) : cubeSum (d := d) f 1 x = f x := by
   have hz : cubeIndex (fun _ : Fin d ↦ (0 : Fin 1)) = 0 := by
@@ -89,10 +90,12 @@ lemma cubeSum_one (f : X → 𝕜) (x : X) : cubeSum (d := d) f 1 x = f x := by
     simp [cubeIndex]
   simp [cubeSum, hz]
 
+omit [CharZero 𝕜] in
 @[simp]
 lemma cubeAverage_one (f : X → 𝕜) (x : X) : cubeAverage (d := d) f 1 x = f x := by
   simp [cubeAverage]
 
+omit [CharZero 𝕜] in
 /-- The unnormalized doubled cube is the sum of its `2^d` translated
 subcubes. -/
 lemma cubeSum_two_mul (f : X → 𝕜) (n : ℕ) (x : X) :
@@ -150,6 +153,7 @@ removed by `divergence_eq_sum_erase_zero`. -/
 def divergence (φ : DirectionalFlow (d := d) (X := X) (𝕜 := 𝕜)) (x : X) : 𝕜 :=
   ∑ g : BitDirection d, (φ g (-bitVector g +ᵥ x) - φ g x)
 
+omit [CharZero 𝕜] in
 /-- The zero bit direction contributes nothing, so this is exactly the sum
 over `({0,1}^d \ {0})` used in the circle-squaring flow. -/
 lemma divergence_eq_sum_erase_zero
@@ -168,6 +172,7 @@ def pathFlow (F : X → 𝕜) (n : ℕ) : DirectionalFlow (d := d) (X := X) (�
   fun g x ↦ dyadicFactor (d := d) (𝕜 := 𝕜) *
     ∑ m ∈ Finset.range n, F (-(m • bitVector g) +ᵥ x)
 
+omit [CharZero 𝕜] in
 /-- The one-dimensional sum along a path telescopes after shifting the base
 point back by one step. -/
 lemma path_sum_telescope (F : X → 𝕜) (n : ℕ) (g : BitDirection d) (x : X) :
@@ -188,6 +193,7 @@ lemma path_sum_telescope (F : X → 𝕜) (n : ℕ) (g : BitDirection d) (x : X)
     rfl
   · simp
 
+omit [CharZero 𝕜] in
 /-- Divergence of the path flow, before using the cube-partition identity. -/
 lemma divergence_pathFlow (F : X → 𝕜) (n : ℕ) (x : X) :
     divergence (d := d) (pathFlow (d := d) F n) x =
@@ -230,6 +236,7 @@ def dyadicPartialFlow (f : X → 𝕜) (m : ℕ) :
     DirectionalFlow (d := d) (X := X) (𝕜 := 𝕜) :=
   fun g x ↦ ∑ q ∈ Finset.range m, scaleFlow (d := d) f (2 ^ q) g x
 
+omit [CharZero 𝕜] in
 /-- Divergence commutes with the finite sum defining `dyadicPartialFlow`. -/
 lemma divergence_dyadicPartialFlow (f : X → 𝕜) (m : ℕ) (x : X) :
     divergence (d := d) (dyadicPartialFlow (d := d) f m) x =

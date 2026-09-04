@@ -100,7 +100,7 @@ lemma abs_cubeDensity_sub_mean_le {d k n : ℕ} (u : Fin d → Torus k)
 enlarging its constant over the finite initial range. -/
 theorem exists_uniformMeanDyadicDensity_of_eventually
     {d k : ℕ} (u : Fin d → Torus k) (E : Set (Torus k))
-    (μ : ℝ) (q₀ : ℕ) (K δ : ℝ) (hK : 0 ≤ K) (hδ : 0 < δ)
+    (μ : ℝ) (q₀ : ℕ) (K δ : ℝ) (hK : 0 ≤ K) (_hδ : 0 < δ)
     (heventual : ∀ q, q₀ ≤ q → ∀ x,
       |cubeDensity u E (2 ^ q) x - μ| ≤
         K * ((((2 ^ q : ℕ) : ℝ)) ^ (-1 - δ))) :

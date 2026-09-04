@@ -216,8 +216,7 @@ private lemma blockOf_inverseBitMove_mem_ternary
     change i.2 k + ((δ k : Fin 3) : ℕ) - 1 = c k
     rcases hc k with hk | hk
     · simp [δ, hk]
-    · have hne : c k ≠ i.2 k := by omega
-      simp [δ, hne, hk]
+    · simp [δ, hk]
 
 lemma orbitAdjacentBlocks_subset_ternaryBlockNeighborhood
     (hfree : FreeAction (d := d) (X := X))
@@ -314,7 +313,7 @@ private lemma card_outgoing_crossings_le
     exact Prod.ext hfirst h
   have hpExists : ∃ p : Fin d, i.2 p ≠ j.2 p := by
     by_contra h
-    push_neg at h
+    push Not at h
     exact hsecond (funext h)
   obtain ⟨p, hp⟩ := hpExists
   let last : Fin M := ⟨M - 1, Nat.sub_lt (NeZero.pos M) (by omega)⟩
@@ -424,7 +423,7 @@ private lemma abs_rawBlockFlow_orbit_le
           exact_mod_cast Nat.mul_le_mul_right b
             (card_outgoing_crossings_le hfree M i j hij g)
     _ = ((2 ^ d * b * M ^ (d - 1) : ℕ) : ℤ) := by
-      simp [mul_assoc, mul_comm, mul_left_comm]
+      simp [mul_comm, mul_left_comm]
 
 private lemma orbitNetBlockFlow_eq_raw_sub
     (hfree : FreeAction (d := d) (X := X))

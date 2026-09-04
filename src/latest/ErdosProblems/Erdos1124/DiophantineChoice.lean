@@ -154,7 +154,8 @@ private lemma eventual_distanceProduct_lower {d : ℕ} {u : Fin d → Circle}
   filter_upwards [hlarge] with n hn
   have hp : 0 < distanceProduct (frequency n) u :=
     distanceProduct_pos_of_coordinates (hnz _ (frequency_ne_zero n))
-  have hm : OneDimensionalDiscrepancy.tupleNegativeHalfMomentAt (frequency n) u < momentThreshold n := by
+  have hm :
+      OneDimensionalDiscrepancy.tupleNegativeHalfMomentAt (frequency n) u < momentThreshold n := by
     simpa [largeMoment] using hn
   rw [tupleMomentAt_eq_rpow_distanceProduct] at hm
   have hsqrt : distanceProduct (frequency n) u ^ (1 / 2 : ℝ) >
@@ -240,9 +241,9 @@ theorem exists_generators32_product_lower :
     obtain ⟨n, rfl⟩ := Nat.exists_eq_succ_of_ne_zero hm
     rw [distanceProduct_neg]
     convert hu n using 1
-    rw [Int.cast_neg, Int.cast_natCast, Nat.cast_succ,
-      abs_of_nonpos (by have hn0 : (0 : ℝ) ≤ n := Nat.cast_nonneg n; linarith)]
-    · simp
+    · rw [Int.cast_neg, Int.cast_natCast, Nat.cast_succ,
+        abs_of_nonpos (by have hn0 : (0 : ℝ) ≤ n := Nat.cast_nonneg n; linarith)]
+      simp
     · simp [frequency]
 
 private lemma tupleHaar_eq_volume (d : ℕ) :
@@ -283,9 +284,9 @@ theorem exists_generators32_free_product_lower :
     obtain ⟨n, rfl⟩ := Nat.exists_eq_succ_of_ne_zero hm
     rw [distanceProduct_neg]
     convert hu n using 1
-    rw [Int.cast_neg, Int.cast_natCast, Nat.cast_succ,
-      abs_of_nonpos (by have hn0 : (0 : ℝ) ≤ n := Nat.cast_nonneg n; linarith)]
-    · simp
+    · rw [Int.cast_neg, Int.cast_natCast, Nat.cast_succ,
+        abs_of_nonpos (by have hn0 : (0 : ℝ) ≤ n := Nat.cast_nonneg n; linarith)]
+      simp
     · simp [frequency]
 
 /-- Two independent coordinate families, each free and each satisfying the

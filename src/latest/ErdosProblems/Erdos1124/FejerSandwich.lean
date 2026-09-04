@@ -203,7 +203,7 @@ lemma integral_fejerPolynomial {N : ℕ} (hN : 0 < N) :
           (fejerCoefficient N h : ℂ) * character (h • x) ∂circleHaar).re :=
       integral_re hint
     _ = 1 := by
-      rw [integral_finset_sum (fejerFrequencies N) hterm]
+      rw [integral_finsetSum (fejerFrequencies N) hterm]
       simp_rw [integral_const_mul, integral_character]
       rw [Finset.sum_eq_single 0]
       · rw [if_pos rfl, mul_one]
@@ -273,7 +273,7 @@ lemma fejerSmooth_eq_fullFourier (N : ℕ) {f : Circle → ℝ}
       realTrigTail (fejerFrequencies N) (fejerSmoothCoefficient N f) x := by
   unfold fejerSmooth realTrigTail
   let q : ℤ → Circle → ℂ := fun h y =>
-    (f y : ℂ) * ((fejerCoefficient N h : ℂ) * character (h • (x-y)))
+    (f y : ℂ) * ((fejerCoefficient N h : ℂ) * character (h • (x - y)))
   have hq : ∀ h ∈ fejerFrequencies N, Integrable (q h) circleHaar := by
     intro h hh
     unfold q
@@ -295,15 +295,15 @@ lemma fejerSmooth_eq_fullFourier (N : ℕ) {f : Circle → ℝ}
     rw [← heq]
     exact hi
   calc
-    (∫ y : Circle, f y * fejerPolynomial N (x-y) ∂circleHaar) =
+    (∫ y : Circle, f y * fejerPolynomial N (x - y) ∂circleHaar) =
         ∫ y : Circle, (∑ h ∈ fejerFrequencies N, q h y).re ∂circleHaar := by
       apply integral_congr_ae
       filter_upwards [] with y
       unfold q
       rw [← Finset.mul_sum]
-      change f y * fejerPolynomial N (x-y) =
+      change f y * fejerPolynomial N (x - y) =
         ((f y : ℂ) * (∑ h ∈ fejerFrequencies N,
-          (fejerCoefficient N h : ℂ) * character (h • (x-y)))).re
+          (fejerCoefficient N h : ℂ) * character (h • (x - y)))).re
       rw [complex_fejerPolynomial_eq, fejerPolynomial_eq]
       simp only [Complex.mul_re, Complex.ofReal_re, Complex.ofReal_im,
         mul_zero, sub_zero]
@@ -311,14 +311,14 @@ lemma fejerSmooth_eq_fullFourier (N : ℕ) {f : Circle → ℝ}
           ∂circleHaar).re := integral_re hsum
     _ = (∑ h ∈ fejerFrequencies N,
         fejerSmoothCoefficient N f h * character (h • x)).re := by
-      rw [integral_finset_sum (fejerFrequencies N) hq]
+      rw [integral_finsetSum (fejerFrequencies N) hq]
       congr 1
       apply Finset.sum_congr rfl
       intro h hh
       unfold q fejerSmoothCoefficient
       rw [show (∫ y : Circle,
           (f y : ℂ) * ((fejerCoefficient N h : ℂ) *
-            character (h • (x-y))) ∂circleHaar) =
+            character (h • (x - y))) ∂circleHaar) =
           ∫ y : Circle, ((fejerCoefficient N h : ℂ) * character (h • x)) *
             ((f y : ℂ) * character ((-h) • y)) ∂circleHaar by
         apply integral_congr_ae
@@ -357,13 +357,13 @@ private lemma integral_arcIndicator_zero {ℓ : ℝ} (hℓ0 : 0 ≤ ℓ) (hℓ1 
       (Ioo 0 ℓ).indicator (fun _ : ℝ => (1 : ℝ)) := by
     filter_upwards [ae_restrict_mem measurableSet_Ioc,
       ae_restrict_le ((volume : Measure ℝ).ae_ne 1)] with x hx hx1
-    have hx1' : x ≠ 1 := by simpa only [Set.mem_setOf_eq] using hx1
+    have hx1' : x ≠ 1 := by simpa only [Set.mem_ofPred_eq] using hx1
     have hxIco : x ∈ Ico (0 : ℝ) 1 := ⟨hx.1.le, lt_of_le_of_ne hx.2 hx1'⟩
     rw [arcIndicator]
     have heq := AddCircle.equivIco_coe_eq
       (p := (1 : ℝ)) (a := (0 : ℝ)) (x := x)
       (by simpa only [zero_add] using hxIco)
-    simp only [arc, sub_zero, heq, Set.mem_setOf_eq,
+    simp only [arc, sub_zero, heq, Set.mem_ofPred_eq,
       Set.indicator_apply, Set.mem_Ioo]
     split_ifs <;> simp_all
   rw [integral_congr_ae hae, setIntegral_indicator measurableSet_Ioo]
@@ -412,7 +412,7 @@ lemma circleHaarReal_arc (a : Circle) {ℓ : ℝ} (hℓ0 : 0 ≤ ℓ) (hℓ1 : �
 /-- A point within circle-distance `η` of an arc lies in the arc expanded by
 `η` at each end. -/
 lemma mem_expanded_arc_of_integerDistance_lt
-    {a x y : Circle} {ℓ η : ℝ} (hη : 0 < η) (hsize : ℓ + 2 * η ≤ 1)
+    {a x y : Circle} {ℓ η : ℝ} (_hη : 0 < η) (hsize : ℓ + 2 * η ≤ 1)
     (hx : x ∈ arc a ℓ) (hxy : integerDistance (x - y) < η) :
     y ∈ arc (a - (η : Circle)) (ℓ + 2 * η) := by
   let r : ℝ := ((AddCircle.equivIco 1 0) (x - a) : ℝ)
@@ -426,11 +426,9 @@ lemma mem_expanded_arc_of_integerDistance_lt
     · exact hp.1
     · linarith [hp.2]
   have hrcoe : (r : Circle) = x - a := by
-    simpa [r] using (AddCircle.coe_equivIco (p := (1 : ℝ)) (a := (0 : ℝ))
-      (y := x - a))
+    simp [r]
   have hecoe : (e : Circle) = y - x := by
-    simpa [e] using (AddCircle.coe_equivIco (p := (1 : ℝ))
-      (a := (-(1 / 2 : ℝ))) (y := y - x))
+    simp [e]
   have heabs : |e| = integerDistance (y - x) := by
     symm
     rw [integerDistance, ← hecoe]
@@ -447,14 +445,13 @@ lemma mem_expanded_arc_of_integerDistance_lt
     rw [← abs_lt, heabs]
     exact hdist
   have hrlt : r < ℓ := by
-    simpa only [arc, r, mem_setOf_eq] using hx
+    simpa only [arc, r, mem_ofPred_eq] using hx
   let s : ℝ := η + r + e
   have hspos : 0 < s := by dsimp [s]; linarith [hrmem.1, he.1]
   have hsupper : s < ℓ + 2 * η := by dsimp [s]; linarith [hrlt, he.2]
   have hsIco : s ∈ Ico (0 : ℝ) 1 := ⟨hspos.le, hsupper.trans_le hsize⟩
   have hscoe : (s : Circle) = y - (a - (η : Circle)) := by
     dsimp [s]
-    push_cast
     rw [hrcoe, hecoe]
     abel
   change ((AddCircle.equivIco 1 0) (y - (a - (η : Circle))) : ℝ) <
@@ -528,7 +525,7 @@ lemma continuous_fejerPolynomial (N : ℕ) : Continuous (fejerPolynomial N) := b
   apply Continuous.pow
   apply Continuous.norm
   unfold geometricCharacterSum
-  apply continuous_finset_sum
+  apply continuous_finsetSum
   intro n hn
   unfold character
   exact continuous_subtype_val.comp
@@ -552,12 +549,12 @@ lemma fejerPolynomial_le_card (N : ℕ) (x : Circle) :
     simpa [pow_two] using mul_self_le_mul_self (norm_nonneg _) h
 
 lemma integrable_fejerPolynomial_comp_sub (N : ℕ) (x : Circle) :
-    Integrable (fun y : Circle => fejerPolynomial N (x-y)) circleHaar := by
+    Integrable (fun y : Circle => fejerPolynomial N (x - y)) circleHaar := by
   apply Integrable.of_bound
     ((continuous_fejerPolynomial N).comp
       (continuous_const.sub continuous_id)).aestronglyMeasurable N
   exact ae_of_all _ fun y => by
-    change |fejerPolynomial N (x-y)| ≤ (N : ℝ)
+    change |fejerPolynomial N (x - y)| ≤ (N : ℝ)
     rw [abs_of_nonneg (fejerPolynomial_nonneg N _)]
     exact fejerPolynomial_le_card N _
 
@@ -579,9 +576,9 @@ lemma fejerPolynomial_neg (N : ℕ) (x : Circle) :
     _ = _ := Complex.norm_conj _
 
 lemma integral_fejerPolynomial_comp_sub {N : ℕ} (hN : 0 < N) (x : Circle) :
-    ∫ y : Circle, fejerPolynomial N (x-y) ∂circleHaar = 1 := by
+    ∫ y : Circle, fejerPolynomial N (x - y) ∂circleHaar = 1 := by
   calc
-    ∫ y : Circle, fejerPolynomial N (x-y) ∂circleHaar =
+    ∫ y : Circle, fejerPolynomial N (x - y) ∂circleHaar =
         ∫ y : Circle, fejerPolynomial N (y-x) ∂circleHaar := by
       apply integral_congr_ae
       filter_upwards [] with y
@@ -608,9 +605,9 @@ lemma integrable_realSetIndicator {E : Set Circle} (hE : MeasurableSet E) :
 indicator of `E` is at least one minus the Fejer tail. -/
 lemma fejerSmooth_indicator_upper {N : ℕ} (hN : 0 < N)
     {η : ℝ} (hη : 0 < η) {E : Set Circle} (hE : MeasurableSet E)
-    {x : Circle} (hfar : ∀ y, y ∉ E → η ≤ integerDistance (x-y)) :
+    {x : Circle} (hfar : ∀ y, y ∉ E → η ≤ integerDistance (x - y)) :
     1 ≤ fejerSmooth N (realSetIndicator E) x + 1 / (4*N*η^2) := by
-  let K : Circle → ℝ := fun y => fejerPolynomial N (x-y)
+  let K : Circle → ℝ := fun y => fejerPolynomial N (x - y)
   let f : Circle → ℝ := fun y => realSetIndicator E y * K y
   let t : ℝ := 1 / (4*N*η^2)
   have hK : Integrable K circleHaar := integrable_fejerPolynomial_comp_sub N x
@@ -640,9 +637,9 @@ lemma fejerSmooth_indicator_upper {N : ℕ} (hN : 0 < N)
 of `E` is at most the Fejer tail. -/
 lemma fejerSmooth_indicator_lower {N : ℕ} (hN : 0 < N)
     {η : ℝ} (hη : 0 < η) {E : Set Circle} (hE : MeasurableSet E)
-    {x : Circle} (hfar : ∀ y, y ∈ E → η ≤ integerDistance (x-y)) :
+    {x : Circle} (hfar : ∀ y, y ∈ E → η ≤ integerDistance (x - y)) :
     fejerSmooth N (realSetIndicator E) x ≤ 1 / (4*N*η^2) := by
-  let K : Circle → ℝ := fun y => fejerPolynomial N (x-y)
+  let K : Circle → ℝ := fun y => fejerPolynomial N (x - y)
   let f : Circle → ℝ := fun y => realSetIndicator E y * K y
   let t : ℝ := 1 / (4*N*η^2)
   have hK : Integrable K circleHaar := integrable_fejerPolynomial_comp_sub N x
@@ -834,7 +831,7 @@ lemma contracted_fejerSmooth_le_arcIndicator {N : ℕ} (hN : 0 < N)
       by_contra hdist
       apply hx
       have hdist' : integerDistance (y - x) < η := by
-        rw [show y - x = -(x-y) by abel, integerDistance_neg]
+        rw [show y - x = -(x - y) by abel, integerDistance_neg]
         exact lt_of_not_ge hdist
       have hsize : (ℓ - 2 * η) + 2 * η ≤ 1 := by linarith
       have hm := mem_expanded_arc_of_integerDistance_lt hη (x := y) (y := x)
@@ -962,7 +959,7 @@ Erdos--Turan inequality.  Its coefficients are merely bounded by one; this is
 sufficient for the high-dimensional orbit construction used here. -/
 theorem abs_arcMass_sub_le_fejer {F : Finset Circle} (hF : F.Nonempty)
     {N : ℕ} (hN : 0 < N) {η : ℝ} (hη : 0 < η)
-    (a : Circle) {ℓ : ℝ} (hℓ : ℓ ∈ Icc (0:ℝ) 1) :
+    (a : Circle) {ℓ : ℝ} (hℓ : ℓ ∈ Icc (0 : ℝ) 1) :
     |arcMass F a ℓ - ℓ| ≤
       2*η + 1/(4*N*η^2) +
         2 * ∑ h ∈ fejerNonzeroFrequencies N,
@@ -1179,7 +1176,7 @@ theorem exists_uniform_intervalDiscrepancy_negativeOrbitFinset
   refine ⟨(9 / 4 : ℝ) + 2 * c⁻¹, by positivity, fun N hN x => ?_⟩
   have H := intervalDiscrepancy_negativeOrbitFinset_le_cubic hfree hc hu hN x
   rw [show (-(2 : ℝ)) = -(2 : ℕ) by norm_num, Real.rpow_neg_natCast]
-  simp only [zpow_neg, zpow_ofNat]
+  simp only [zpow_neg]
   simpa [div_eq_mul_inv, mul_assoc] using H
 
 end

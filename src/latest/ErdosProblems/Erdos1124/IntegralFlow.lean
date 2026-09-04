@@ -198,7 +198,7 @@ lemma finiteWeight_sum {V E : Type*} [Fintype V] [DecidableEq V]
     Fintype.sum_ite_eq (src e) (fun _ ↦ 1 - Int.fract (flow e))]
   ring
 
-lemma finiteWeight_column {V E : Type*} [Fintype V] [Fintype E]
+lemma finiteWeight_column {V E : Type*} [Fintype E]
     [DecidableEq V] (src dst : E → V) (flow : E → ℝ)
     (rhs : V → ℤ) (hdiv : ∀ v, finiteDivergence src dst flow v = rhs v)
     (v : V) :
@@ -216,7 +216,7 @@ lemma finiteWeight_column {V E : Type*} [Fintype V] [Fintype E]
 /-- Every finite real flow with integral divergence can be rounded edgewise
 to a floor or ceiling while preserving all divergences.  The ceiling is used
 only on genuinely nonintegral edges. -/
-theorem finite_integral_rounding {V E : Type*} [Fintype V] [Fintype E]
+theorem finite_integral_rounding {V E : Type*} [Finite V] [Fintype E]
     [DecidableEq V] (src dst : E → V) (flow : E → ℝ) (rhs : V → ℤ)
     (hdiv : ∀ v, finiteDivergence src dst flow v = rhs v) :
     ∃ rounded : E → ℤ,
@@ -224,6 +224,7 @@ theorem finite_integral_rounding {V E : Type*} [Fintype V] [Fintype E]
       ∀ e, rounded e = ⌊flow e⌋ ∨
         (rounded e = ⌊flow e⌋ + 1 ∧ 0 < Int.fract (flow e)) := by
   classical
+  let := Fintype.ofFinite V
   let need : V → ℤ := fun v ↦
     (#{e | src e = v} : ℤ) + rhs v -
       finiteDivergence src dst (fun e ↦ ⌊flow e⌋) v
@@ -311,7 +312,7 @@ theorem finite_integral_rounding {V E : Type*} [Fintype V] [Fintype E]
       simp [rounded, bit, hb]
 
 /-- The finite rounding theorem with an integral symmetric capacity. -/
-theorem finite_integral_rounding_bounded {V E : Type*} [Fintype V] [Fintype E]
+theorem finite_integral_rounding_bounded {V E : Type*} [Finite V] [Fintype E]
     [DecidableEq V] (src dst : E → V) (flow : E → ℝ) (rhs : V → ℤ) (b : ℕ)
     (hdiv : ∀ v, finiteDivergence src dst flow v = rhs v)
     (hbound : ∀ e, |flow e| ≤ b) :
@@ -451,7 +452,7 @@ lemma sum_finiteDivergence {V E R : Type*} [Fintype V] [Fintype E]
 /-- Finite satisfiability for a locally finite permutation graph, obtained by
 collapsing the complement of the requested vertex set to one boundary vertex
 and applying finite integral rounding. -/
-theorem exists_local_integral_flow [DecidableEq X] [DecidableEq ι]
+theorem exists_local_integral_flow
     (G : PermutationGraph X ι) (flow : X → ι → ℝ) (rhs : X → ℤ) (b : ℕ)
     (hdiv : ∀ x, G.divergence flow x = rhs x)
     (hbound : ∀ x i, |flow x i| ≤ b) (s : Finset X) :

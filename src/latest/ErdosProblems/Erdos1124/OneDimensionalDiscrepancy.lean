@@ -96,7 +96,7 @@ theorem character_finset_sum {I : Type*} (s : Finset I) (f : I → Circle) :
 @[simp]
 theorem character_fintype_sum {I : Type*} [Fintype I] (f : I → Circle) :
     character (∑ i, f i) = ∏ i, character (f i) := by
-  simpa using character_finset_sum Finset.univ f
+  simp
 
 @[simp]
 theorem norm_character (x : Circle) : ‖character x‖ = 1 := by
@@ -218,7 +218,7 @@ theorem orbitBoxCharacterSum_eq_prod {d : ℕ} (N : ℕ) (u : Fin d → Circle) 
   intro n
   rw [← character_fintype_sum]
   congr 1
-  simp only [smul_sum, nsmul_eq_mul, zsmul_eq_mul]
+  simp only [smul_sum]
   apply Finset.sum_congr rfl
   intro i _
   module
@@ -295,7 +295,7 @@ theorem aestronglyMeasurable_negativeHalfMoment :
     unfold negativeHalfMoment integerDistance
     exact
     continuous_norm.continuousOn.rpow_const fun x hx ↦ Or.inl <| norm_ne_zero_iff.mpr <| by
-      simpa only [mem_setOf_eq] using hx
+      simpa only [mem_ofPred_eq] using hx
   exact (continuousOn_iff_continuous_domRestrict.mp hc).measurable
 
 theorem integrable_negativeHalfMoment :
@@ -317,7 +317,8 @@ theorem integrable_negativeHalfMoment :
   have hc' : Integrable
       (negativeHalfMoment ∘ ((↑) : ℝ → Circle))
       (volume.restrict (Ioc (-(1 / 2 : ℝ)) (-(1 / 2 : ℝ) + 1))) := by
-    convert hc using 1 <;> norm_num [IntegrableOn, Function.comp_def]
+    convert hc using 1
+    norm_num [IntegrableOn, Function.comp_def]
   rw [← hvol]
   have hm : AEStronglyMeasurable negativeHalfMoment (volume : Measure Circle) := by
     rw [hvol]
