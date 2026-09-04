@@ -605,9 +605,11 @@ structure CycleSplit {V : Type*} (G : SimpleGraph V) where
   middle : WalkOfLength G 6 x₂ x₈
   tail : WalkOfLength G 5 x₈ x₁
 
-instance CycleSplit.instFinite {V : Type*} [Fintype V] [DecidableEq V]
-    (G : SimpleGraph V) [DecidableRel G.Adj] :
+instance CycleSplit.instFinite {V : Type*} [Finite V]
+    (G : SimpleGraph V) :
     Finite (CycleSplit G) := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   let e : CycleSplit G →
       Σ x₁ x₂ x₈ : V,
         WalkOfLength G 6 x₂ x₈ × WalkOfLength G 5 x₈ x₁ := fun c ↦
@@ -657,7 +659,7 @@ lemma CycleSplit.toClosedWalk_ofClosedWalk {V : Type*} {G : SimpleGraph V}
     exact hk
   interval_cases k <;>
     simp [CycleSplit.toClosedWalk, CycleSplit.ofClosedWalk, w.2.2,
-      SimpleGraph.Walk.getVert_append, SimpleGraph.Walk.getVert_cons,
+      SimpleGraph.Walk.getVert_append,
       SimpleGraph.Walk.take_getVert, SimpleGraph.Walk.drop_getVert]
 
 lemma CycleSplit.ofClosedWalk_injective {V : Type*} {G : SimpleGraph V} :
@@ -695,15 +697,18 @@ lemma ClosedWalk.cycleSupport_getElem? {V : Type*} {G : SimpleGraph V}
     (w : ClosedWalk G 12) (k : Fin 12) :
     w.cycleSupport[k.1]? = some (w.2.1.getVert k.1) := by
   rw [ClosedWalk.cycleSupport, List.getElem?_dropLast,
-    if_pos (by simpa [SimpleGraph.Walk.length_support, w.2.2] using k.2)]
+    if_pos (by simp [SimpleGraph.Walk.length_support, w.2.2])]
   exact (w.2.1.getVert_eq_support_getElem? (by rw [w.2.2]; exact k.2.le)).symm
 
 lemma ClosedWalk.cycleSupport_rotate12 {V : Type*} {G : SimpleGraph V}
     (w : ClosedWalk G 12) (i : Fin 12) :
     (w.rotate12 i).cycleSupport = w.cycleSupport.rotate i.1 := by
-  simp [ClosedWalk.cycleSupport, ClosedWalk.rotate12,
+  simp only [ClosedWalk.cycleSupport, ClosedWalk.rotate12,
     SimpleGraph.Walk.support_append_eq_support_dropLast_append,
-    List.rotate_eq_drop_append_take, w.2.2]
+    SimpleGraph.Walk.drop_support_eq_support_drop_min, w.2.2, Fin.is_le', inf_of_le_left,
+    ne_eq, SimpleGraph.Walk.support_ne_nil, not_false_eq_true, List.dropLast_append_of_ne_nil,
+    List.length_dropLast, SimpleGraph.Walk.length_support, Nat.reduceAdd,
+    Nat.add_one_sub_one, List.rotate_eq_drop_append_take]
   rw [List.dropLast_drop_eq_drop_dropLast]
   rw [SimpleGraph.Walk.support_take, List.dropLast_take_eq_take_dropLast]
   simp
@@ -719,9 +724,7 @@ lemma ClosedWalk.rotate12_getVert {V : Type*} {G : SimpleGraph V}
       ((w.rotate12 i).cycleSupport_getElem? k).symm
     _ = (w.cycleSupport.rotate i.1)[k.1]? := by rw [w.cycleSupport_rotate12]
     _ = w.cycleSupport[(k.1 + i.1) % 12]? := by
-      simpa [w.cycleSupport_length] using
-        (List.getElem?_rotate (l := w.cycleSupport) (n := i.1) (m := k.1)
-          (by rw [w.cycleSupport_length]; exact k.2))
+      simp [w.cycleSupport_length]
     _ = some (w.2.1.getVert ((k.1 + i.1) % 12)) := w.cycleSupport_getElem? t
 
 lemma ClosedWalk.cycleSupport_injective {V : Type*} {G : SimpleGraph V} :
@@ -740,11 +743,11 @@ lemma ClosedWalk.cycleSupport_injective {V : Type*} {G : SimpleGraph V} :
     calc
       p.support = p.support.dropLast ++ [v] := by
         symm
-        simpa using (List.dropLast_append_getLast p.support_ne_nil)
+        simp
       _ = q.support.dropLast ++ [v] := by
         simpa [ClosedWalk.cycleSupport] using congrArg (fun l : List V ↦ l ++ [v]) h
       _ = q.support := by
-        simpa using (List.dropLast_append_getLast q.support_ne_nil)
+        simp
   have hpq : p = q := SimpleGraph.Walk.ext_support hsupp
   subst q
   rfl

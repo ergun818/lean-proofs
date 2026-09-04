@@ -19,9 +19,12 @@ structure LeftCycleSplit {L R : Type*} (B : L → R → Prop) where
   tail : WalkOfLength (bipartiteRelGraph B) 5 (Sum.inr x₈) (Sum.inl x₁)
 
 instance LeftCycleSplit.instFinite
-    {L R : Type*} [Fintype L] [Fintype R] [DecidableEq L] [DecidableEq R]
-    (B : L → R → Prop) [∀ l r, Decidable (B l r)] :
+    {L R : Type*} [Finite L] [Finite R]
+    (B : L → R → Prop) :
     Finite (LeftCycleSplit B) := by
+  classical
+  let : Fintype L := Fintype.ofFinite L
+  let : Fintype R := Fintype.ofFinite R
   let e : LeftCycleSplit B →
       Σ x₁ : L, Σ x₂ x₈ : R,
         WalkOfLength (bipartiteRelGraph B) 6 (Sum.inr x₂) (Sum.inr x₈) ×
@@ -143,7 +146,7 @@ abbrev LeftLowCode
     {L R : Type*} [Fintype L] [Fintype R] [DecidableEq L] [DecidableEq R]
     (B : L → R → Prop) [∀ l r, Decidable (B l r)] (q : ℝ) :=
   Σ x₁ : L, Σ x₂ x₈ : R,
-    {p : WalkOfLength (bipartiteRelGraph B) 6 (Sum.inr x₂) (Sum.inr x₈) ×
+    {_p : WalkOfLength (bipartiteRelGraph B) 6 (Sum.inr x₂) (Sum.inr x₈) ×
         WalkOfLength (bipartiteRelGraph B) 5 (Sum.inr x₈) (Sum.inl x₁) //
       B x₁ x₂ ∧
         leftMiddleMultiplicity B x₂ x₈ < q * leftTailMultiplicity B x₁ x₈}
@@ -294,7 +297,7 @@ abbrev LeftHighCode
   Σ x₂ x₈ : R,
     Σ middle : WalkOfLength (bipartiteRelGraph B) 6 (Sum.inr x₂) (Sum.inr x₈),
       Σ i : Fin 6, Σ x₁ : L,
-        {tail : WalkOfLength (bipartiteRelGraph B) 5 (Sum.inr x₈) (Sum.inl x₁) //
+        {_tail : WalkOfLength (bipartiteRelGraph B) 5 (Sum.inr x₈) (Sum.inl x₁) //
           B x₁ x₂ ∧ C (Sum.inl x₁) (middle.1.getVert i.1) ∧
             q * leftTailMultiplicity B x₁ x₈ ≤ leftMiddleMultiplicity B x₂ x₈}
 
@@ -334,7 +337,7 @@ lemma card_leftHighCode
           right_inv := fun _ ↦ rfl }
       exact Fintype.card_congr e
     rw [if_pos h, hsubcard]
-    simp [A, P, leftTailMultiplicity, walkCount_eq_card]
+    simp [A, leftTailMultiplicity, walkCount_eq_card]
   · simp [P, h]
 
 lemma leftMiddleSquareSum_le_homCycleCount_twelve
@@ -559,10 +562,9 @@ lemma cycleConflictStart_offset (i j : Fin 12) (hij : i ≠ j) :
   decide +revert
 
 lemma ClosedWalk.rotate12_has_oriented_conflict
-    {L R : Type*} [Fintype L] [Fintype R] [DecidableEq L] [DecidableEq R]
-    (B : L → R → Prop) [∀ l r, Decidable (B l r)]
-    (C : (L ⊕ R) → (L ⊕ R) → Prop) [DecidableRel C]
-    (hCsymm : Symmetric C) (w : ClosedWalk (bipartiteRelGraph B) 12)
+    {L R : Type*} (B : L → R → Prop)
+    (C : (L ⊕ R) → (L ⊕ R) → Prop)
+    (hCsymm : Std.Symm C) (w : ClosedWalk (bipartiteRelGraph B) 12)
     (i j : Fin 12) (hij : i ≠ j)
     (hC : C (w.2.1.getVert i.1) (w.2.1.getVert j.1)) :
     let w' := w.rotate12 (cycleConflictStart i j)
@@ -585,7 +587,7 @@ lemma ClosedWalk.rotate12_has_oriented_conflict
     have ht' : (k.1 + j.1) % 12 = i.1 := by
       simpa [k, hs, Nat.add_comm, Nat.add_left_comm, Nat.add_assoc] using ht
     rw [ht']
-    exact hCsymm hC
+    exact hCsymm.symm _ _ hC
 
 abbrev ConflictClosedWalk
     {L R : Type*} [Fintype L] [Fintype R] [DecidableEq L] [DecidableEq R]
@@ -654,7 +656,7 @@ noncomputable def encodeConflictClosedWalk
     {L R : Type*} [Fintype L] [Fintype R] [DecidableEq L] [DecidableEq R]
     (B : L → R → Prop) [∀ l r, Decidable (B l r)]
     (C : (L ⊕ R) → (L ⊕ R) → Prop) [DecidableRel C]
-    (hCsymm : Symmetric C) (z : ConflictClosedWalk B C) :
+    (hCsymm : Std.Symm C) (z : ConflictClosedWalk B C) :
     (Fin 12 × Fin 12) ×
       (LeftBadSplit B C ⊕ LeftBadSplit (fun r l ↦ B l r) (swapConflict C)) := by
   let i := conflictFirstIndex z
@@ -670,7 +672,7 @@ lemma encodeConflictClosedWalk_injective
     {L R : Type*} [Fintype L] [Fintype R] [DecidableEq L] [DecidableEq R]
     (B : L → R → Prop) [∀ l r, Decidable (B l r)]
     (C : (L ⊕ R) → (L ⊕ R) → Prop) [DecidableRel C]
-    (hCsymm : Symmetric C) : Function.Injective (encodeConflictClosedWalk B C hCsymm) := by
+    (hCsymm : Std.Symm C) : Function.Injective (encodeConflictClosedWalk B C hCsymm) := by
   intro z z' hzz'
   let i := conflictFirstIndex z
   let j := conflictSecondIndex z
@@ -700,7 +702,7 @@ lemma card_conflictClosedWalk_le
     {L R : Type*} [Fintype L] [Fintype R] [DecidableEq L] [DecidableEq R]
     (B : L → R → Prop) [∀ l r, Decidable (B l r)]
     (C : (L ⊕ R) → (L ⊕ R) → Prop) [DecidableRel C]
-    (hCsymm : Symmetric C) :
+    (hCsymm : Std.Symm C) :
     (Nat.card (ConflictClosedWalk B C) : ℝ) ≤ 144 *
       (Nat.card (LeftBadSplit B C) +
         Nat.card (LeftBadSplit (fun r l ↦ B l r) (swapConflict C))) := by
@@ -862,7 +864,7 @@ lemma homCycleCount_twelve_le_of_all_conflicting
     {L R : Type*} [Fintype L] [Fintype R] [DecidableEq L] [DecidableEq R]
     (B : L → R → Prop) [∀ l r, Decidable (B l r)]
     (C : (L ⊕ R) → (L ⊕ R) → Prop) [DecidableRel C]
-    (hCsymm : Symmetric C) (D₁ D₂ s₁ s₂ : ℝ)
+    (hCsymm : Std.Symm C) (D₁ D₂ s₁ s₂ : ℝ)
     (hD₁ : 0 < D₁) (hD₂ : 0 < D₂) (hs₁ : 0 < s₁) (hs₂ : 0 < s₂)
     (hDord : D₁ ≤ D₂)
     (hdeg₁ : ∀ l, relLeftDegreeReal B l ≤ D₁)

@@ -15,7 +15,7 @@ noncomputable def walkTotal {V : Type*} [Fintype V] [DecidableEq V]
 lemma walkTotal_zero {V : Type*} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj] (u : V) : walkTotal G 0 u = 1 := by
   classical
-  simp [walkTotal, walkCount, Matrix.one_apply, Pi.single_apply]
+  simp [walkTotal, walkCount, Matrix.one_apply]
 
 lemma walkTotal_succ {V : Type*} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj] (j : ℕ) (u : V) :
@@ -42,7 +42,7 @@ lemma walkTotal_succ_left_lower
     s * A ≤ walkTotal (bipartiteRelGraph B) (j + 1) (Sum.inl l) := by
   rw [walkTotal_succ]
   simp only [Fintype.sum_sum_type, bipartiteRelGraph, ite_false, zero_mul,
-    Finset.sum_const_zero, zero_add, ite_mul, one_mul]
+    Finset.sum_const_zero, zero_add]
   calc
     s * A ≤ relLeftDegreeReal B l * A :=
       mul_le_mul_of_nonneg_right (hdeg l) hA
@@ -70,7 +70,7 @@ lemma walkTotal_succ_right_lower
     t * A ≤ walkTotal (bipartiteRelGraph B) (j + 1) (Sum.inr r) := by
   rw [walkTotal_succ]
   simp only [Fintype.sum_sum_type, bipartiteRelGraph, ite_false, zero_mul,
-    Finset.sum_const_zero, add_zero, ite_mul, one_mul]
+    Finset.sum_const_zero, add_zero]
   calc
     t * A ≤ relLeftDegreeReal (fun r l ↦ B l r) r * A :=
       mul_le_mul_of_nonneg_right (hdeg r) hA
@@ -159,12 +159,14 @@ lemma homCycleCount_twelve_lower_of_minDegrees
     intro l
     have := walkTotal_succ_left_lower B 3 (t * (s * t)) s
       (mul_nonneg ht (mul_nonneg hs ht)) hR3 hdegL l
-    convert this using 1 <;> ring
+    convert this using 1
+    ring
   have hR4 : ∀ r, (s * t) ^ 2 ≤ walkTotal Q 4 (Sum.inr r) := by
     intro r
     have := walkTotal_succ_right_lower B 3 (s * (t * s)) t
       (mul_nonneg hs (mul_nonneg ht hs)) hL3 hdegR r
-    convert this using 1 <;> ring
+    convert this using 1
+    ring
   have hL5 : ∀ l, s * (s * t) ^ 2 ≤ walkTotal Q 5 (Sum.inl l) := by
     intro l
     simpa [Q] using walkTotal_succ_left_lower B 4 ((s * t) ^ 2) s
@@ -177,7 +179,8 @@ lemma homCycleCount_twelve_lower_of_minDegrees
     intro l
     have := walkTotal_succ_left_lower B 5 (t * (s * t) ^ 2) s
       (mul_nonneg ht (sq_nonneg _)) hR5 hdegL l
-    convert this using 1 <;> ring
+    convert this using 1
+    ring
   let T : ℝ := ∑ l : L, ∑ l' : L, walkCount Q 6 (Sum.inl l) (Sum.inl l')
   let S : ℝ := ∑ l : L, ∑ l' : L, walkCount Q 6 (Sum.inl l) (Sum.inl l') ^ 2
   have htotal_l (l : L) : (s * t) ^ 3 ≤
@@ -237,7 +240,7 @@ def directedEdgeFinset {V : Type*} [Fintype V]
     (u, v) ∈ directedEdgeFinset G ↔ G.Adj u v := by
   simp [directedEdgeFinset]
 
-lemma directedEdgeFinset_card_eq_sum_degree {V : Type*} [Fintype V] [DecidableEq V]
+lemma directedEdgeFinset_card_eq_sum_degree {V : Type*} [Fintype V]
     (G : SimpleGraph V) [DecidableRel G.Adj] :
     (directedEdgeFinset G).card = ∑ v : V, G.degree v := by
   classical
@@ -370,7 +373,8 @@ noncomputable instance pairSupportConflictVia.instDecidableRel
 
 lemma pairSupportConflictVia_symm {L R V : Type*} [DecidableEq V]
     (fL : L → OrderedPair V) (fR : R → OrderedPair V) :
-    Symmetric (pairSupportConflictVia fL fR) := by
+    Std.Symm (pairSupportConflictVia fL fR) := by
+  refine ⟨?_⟩
   intro x y h
   exact fun hdisj ↦ h hdisj.symm
 
@@ -384,20 +388,20 @@ def ClosedWalk.mapHom12 {V W : Type*} {G : SimpleGraph V} {H : SimpleGraph W}
   simp [ClosedWalk.mapHom12, SimpleGraph.Walk.getVert_map]
 
 lemma all_closedWalks_conflicting_of_free
-    {L R V : Type*} [Fintype L] [Fintype R] [Fintype V]
-    [DecidableEq L] [DecidableEq R] [DecidableEq V]
-    (G : SimpleGraph V) [DecidableRel G.Adj]
-    (B : L → R → Prop) [∀ l r, Decidable (B l r)]
+    {L R V : Type*} [Finite V] [DecidableEq V]
+    (G : SimpleGraph V) (B : L → R → Prop)
     (fL : L → OrderedPair V) (fR : R → OrderedPair V)
     (hmap : ∀ l r, B l r → pairComplete G (fL l) (fR r))
     (hfree : counterexampleGraph.Free G)
     (w : ClosedWalk (bipartiteRelGraph B) 12) :
     ∃ i j : Fin 12, i ≠ j ∧
       pairSupportConflictVia fL fR (w.2.1.getVert i.1) (w.2.1.getVert j.1) := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   let f := bipartiteRelGraphHom (pairAuxGraph G) fL fR hmap
   let w' := w.mapHom12 f
   by_contra hn
-  push_neg at hn
+  push Not at hn
   have hgood : w'.HasDisjointPairSupports G := by
     intro i j hij
     have := hn i j hij
@@ -413,7 +417,7 @@ lemma all_closedWalks_conflicting_of_free
 
 lemma relLeftDegreeReal_le_auxDegree
     {L R V : Type*} [Fintype L] [Fintype R] [Fintype V]
-    [DecidableEq L] [DecidableEq R] [DecidableEq V]
+    [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (B : L → R → Prop) [∀ l r, Decidable (B l r)]
     (fL : L → OrderedPair V) (fR : R → OrderedPair V)
@@ -424,7 +428,7 @@ lemma relLeftDegreeReal_le_auxDegree
   let candidates := Finset.univ.filter fun r ↦ B l r
   have hcard : (candidates.card : ℝ) = relLeftDegreeReal B l := by
     rw [relLeftDegreeReal]
-    simp [candidates, apply_ite]
+    simp [candidates]
   rw [← hcard]
   norm_cast
   apply Finset.card_le_card_of_injOn fR
@@ -436,7 +440,7 @@ lemma relLeftDegreeReal_le_auxDegree
 
 lemma leftConflictDegreeReal_le_auxConflict
     {L R V : Type*} [Fintype L] [Fintype R] [Fintype V]
-    [DecidableEq L] [DecidableEq R] [DecidableEq V]
+    [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (B : L → R → Prop) [∀ l r, Decidable (B l r)]
     (fL : L → OrderedPair V) (fR : R → OrderedPair V)
@@ -451,7 +455,7 @@ lemma leftConflictDegreeReal_le_auxConflict
   have hcard : (Nat.card candidates : ℝ) =
       leftConflictDegreeReal B (pairSupportConflictVia fL fR) u r := by
     rw [Nat.card_eq_fintype_card, Fintype.card_subtype, leftConflictDegreeReal]
-    simp [candidates]
+    simp
   rw [← hcard]
   let encode : candidates →
       LocalConflictNeighbor G (sumPairMap fL fR u) (fR r) := fun z ↦
@@ -482,7 +486,7 @@ instance coreRel.instDecidable {L R : Type*} (B : L → R → Prop)
   exact inferInstanceAs (Decidable (B l.1 r.1))
 
 lemma relLeftDegreeReal_coreRel
-    {L R : Type*} [Fintype L] [Fintype R] [DecidableEq L] [DecidableEq R]
+    {L R : Type*} [Fintype R]
     (B : L → R → Prop) [∀ l r, Decidable (B l r)]
     (S : Finset L) (T : Finset R) (l : CoreLeft S) :
     relLeftDegreeReal (coreRel B S T) l = restrictedLeftDegree B T l.1 := by
@@ -499,11 +503,10 @@ lemma relLeftDegreeReal_coreRel
       (Finset.sum_subtype T (fun _ ↦ Iff.rfl)
         (fun r ↦ if B l.1 r then (1 : ℝ) else 0)).symm
     _ = restrictedLeftDegree B T l.1 := by
-      simpa [restrictedLeftDegree] using
-        (Finset.sum_boole (R := ℝ) (fun r : R ↦ B l.1 r) T)
+      simp [restrictedLeftDegree]
 
 lemma relRightDegreeReal_coreRel
-    {L R : Type*} [Fintype L] [Fintype R] [DecidableEq L] [DecidableEq R]
+    {L R : Type*} [Fintype L]
     (B : L → R → Prop) [∀ l r, Decidable (B l r)]
     (S : Finset L) (T : Finset R) (r : CoreRight T) :
     relLeftDegreeReal (fun r l ↦ coreRel B S T l r) r =
@@ -521,8 +524,7 @@ lemma relRightDegreeReal_coreRel
       (Finset.sum_subtype S (fun _ ↦ Iff.rfl)
         (fun l ↦ if B l r.1 then (1 : ℝ) else 0)).symm
     _ = restrictedRightDegree B S r.1 := by
-      simpa [restrictedRightDegree] using
-        (Finset.sum_boole (R := ℝ) (fun l : L ↦ B l r.1) S)
+      simp [restrictedRightDegree]
 
 lemma relEdgeFinset_card_real_eq_sum_left
     {L R : Type*} [Fintype L] [Fintype R]
@@ -537,7 +539,6 @@ lemma relEdgeFinset_card_real_eq_sum_left
 
 lemma relLeftDegreeReal_le_graphDegree
     {L R V : Type*} [Fintype L] [Fintype R] [Fintype V]
-    [DecidableEq R] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (B : L → R → Prop) [∀ l r, Decidable (B l r)]
     (fL : L → V) (fR : R → V) (hfR : Function.Injective fR)
@@ -547,8 +548,7 @@ lemma relLeftDegreeReal_le_graphDegree
   let candidates := Finset.univ.filter fun r ↦ B l r
   have hcard : (candidates.card : ℝ) = relLeftDegreeReal B l := by
     rw [relLeftDegreeReal]
-    simpa [candidates] using
-      (Finset.sum_boole (R := ℝ) (fun r : R ↦ B l r) Finset.univ).symm
+    simp [candidates]
   rw [← hcard]
   norm_cast
   apply Finset.card_le_card_of_injOn fR
@@ -557,7 +557,7 @@ lemma relLeftDegreeReal_le_graphDegree
   · exact fun _ _ _ _ h ↦ hfR h
 
 lemma relEdgeFinset_coreRel_card_le
-    {L R : Type*} [Fintype L] [Fintype R] [DecidableEq L] [DecidableEq R]
+    {L R : Type*} [Fintype L] [Fintype R]
     (B : L → R → Prop) [∀ l r, Decidable (B l r)]
     (S : Finset L) (T : Finset R) :
     (relEdgeFinset (coreRel B S T)).card ≤ (relEdgeFinset B).card := by

@@ -494,7 +494,7 @@ lemma colored_rectangleCount_eq_pairAux_directedEdge_card
     orderedRectangleFinset_card_eq_pairAux_directedEdge_card]
 
 lemma colored_edgeCount_eq_twice_card_edges
-    {V : Type*} [Fintype V] [DecidableEq V]
+    {V : Type*} [Fintype V]
     (G : SimpleGraph V) [DecidableRel G.Adj] :
     Erdos888.ColoredGraph.edgeCount (fun x y ↦ G.Adj x y) =
       2 * (G.edgeFinset.card : ℝ) := by

@@ -29,7 +29,7 @@ noncomputable def restrictedRelEdgeFinset {L R : Type*} [Fintype L] [Fintype R]
     (B : L → R → Prop) [∀ l r, Decidable (B l r)]
     (S : Finset L) (T : Finset R) (l : L) (r : R) :
     (l, r) ∈ restrictedRelEdgeFinset B S T ↔ B l r ∧ l ∈ S ∧ r ∈ T := by
-  simp [restrictedRelEdgeFinset, and_assoc]
+  simp [restrictedRelEdgeFinset]
 
 noncomputable def restrictedLeftDegree {L R : Type*} [Fintype R]
     (B : L → R → Prop) [∀ l r, Decidable (B l r)]
@@ -78,7 +78,7 @@ lemma restrictedRelEdgeFinset_card_erase_left
       · exact he₁A.2.trans he₂A.2.symm
       · exact h
     · intro r hr
-      simp only [restrictedLeftDegree, Finset.mem_filter] at hr
+      simp only [Finset.mem_filter] at hr
       refine ⟨(l, r), ?_, rfl⟩
       simp [A, U, hl, hr]
   have hC : C = restrictedRelEdgeFinset B (S.erase l) T := by
@@ -128,7 +128,7 @@ which each left degree is at least one quarter of the original left average,
 and similarly on the right.  The inequalities are cross-multiplied to avoid
 rounding. -/
 lemma exists_twoSided_relCore
-    {L R : Type*} [Fintype L] [Fintype R] [DecidableEq L] [DecidableEq R]
+    {L R : Type*} [Fintype L] [Fintype R]
     (B : L → R → Prop) [∀ l r, Decidable (B l r)]
     (hE : (relEdgeFinset B).Nonempty) :
     ∃ (S : Finset L) (T : Finset R), S.Nonempty ∧ T.Nonempty ∧
@@ -169,7 +169,9 @@ lemma exists_twoSided_relCore
     have : relCorePotential B q z ≤ 0 := by
       change relCorePotential B q (S, T) ≤ 0
       rw [hS]
-      simp [relCorePotential, restrictedRelEdgeFinset]
+      simp only [relCorePotential, restrictedRelEdgeFinset, Finset.notMem_empty, false_and,
+        Finset.filter_false, Finset.card_empty, CharP.cast_eq_zero, mul_zero, sub_self,
+        zero_sub, Left.neg_nonpos_iff]
       exact mul_nonneg (mul_nonneg (by positivity) (by positivity)) (by positivity)
     exact (not_lt_of_ge this) hpos
   have hTne : T.Nonempty := by
@@ -178,7 +180,9 @@ lemma exists_twoSided_relCore
     have : relCorePotential B q z ≤ 0 := by
       change relCorePotential B q (S, T) ≤ 0
       rw [hT]
-      simp [relCorePotential, restrictedRelEdgeFinset]
+      simp only [relCorePotential, restrictedRelEdgeFinset, Finset.notMem_empty, and_false,
+        Finset.filter_false, Finset.card_empty, CharP.cast_eq_zero, mul_zero, zero_sub,
+        sub_zero, Left.neg_nonpos_iff]
       exact mul_nonneg (mul_nonneg (by positivity) (by positivity)) (by positivity)
     exact (not_lt_of_ge this) hpos
   refine ⟨S, T, hSne, hTne, ?_, ?_⟩
@@ -187,7 +191,7 @@ lemma exists_twoSided_relCore
     have hedge := restrictedRelEdgeFinset_card_erase_left B S T hl
     change relCorePotential B q (S.erase l, T) ≤
       relCorePotential B q (S, T) at hmax
-    simp only [relCorePotential, Prod.fst, Prod.snd, Finset.card_erase_of_mem hl] at hmax
+    simp only [relCorePotential, Finset.card_erase_of_mem hl] at hmax
     have hedgeZ :
         ((restrictedRelEdgeFinset B (S.erase l) T).card : ℤ) +
             restrictedLeftDegree B T l =
@@ -214,7 +218,7 @@ lemma exists_twoSided_relCore
     have hedge := restrictedRelEdgeFinset_card_erase_right B S T hr
     change relCorePotential B q (S, T.erase r) ≤
       relCorePotential B q (S, T) at hmax
-    simp only [relCorePotential, Prod.fst, Prod.snd, Finset.card_erase_of_mem hr] at hmax
+    simp only [relCorePotential, Finset.card_erase_of_mem hr] at hmax
     have hedgeZ :
         ((restrictedRelEdgeFinset B S (T.erase r)).card : ℤ) +
             restrictedRightDegree B S r =
