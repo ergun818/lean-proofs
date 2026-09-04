@@ -165,14 +165,14 @@ theorem primePowerAvoidanceProbability_eq_sum_cycleWeight
     · rintro ⟨hmu, havoid⟩
       refine ⟨hmu, ?_⟩
       rw [prime_pow_dvd_multiset_lcm_iff hp ha mu] at havoid
-      · push_neg at havoid
+      · push Not at havoid
         exact havoid
       · intro j hj
         exact Nat.zero_lt_two.trans_le ((mem_cycleTypes.mp hmu).2 j hj)
     · rintro ⟨hmu, havoid⟩
       refine ⟨hmu, ?_⟩
       rw [prime_pow_dvd_multiset_lcm_iff hp ha mu]
-      · push_neg
+      · push Not
         exact havoid
       · intro j hj
         exact Nat.zero_lt_two.trans_le ((mem_cycleTypes.mp hmu).2 j hj)
@@ -199,7 +199,7 @@ theorem cycleDenominator_eq_fixed_mul_complete (s : ℕ) (mu : Multiset ℕ) :
 /-- Adding a distinguished `q`-cycle changes the cycle-index denominator by
 the expected factor `q (a_q+1)`. -/
 theorem cycleDenominator_cons {s q : ℕ} {nu : Multiset ℕ}
-    (hqs : q ≤ s) (hnu : nu ∈ cycleTypes (s - q)) :
+    (_hqs : q ≤ s) (hnu : nu ∈ cycleTypes (s - q)) :
     cycleDenominator s (q ::ₘ nu) =
       q * (nu.count q + 1) * cycleDenominator (s - q) nu := by
   rw [cycleDenominator_eq_fixed_mul_complete,
@@ -248,7 +248,7 @@ theorem qCycleFirstMoment_eq_sum_containing (s q : ℕ) :
   intro mu hmu
   by_cases hqmu : q ∈ mu
   · simp [hqmu]
-  · simp [hqmu, Multiset.count_eq_zero.mpr hqmu]
+  · simp [hqmu]
 
 /-- Exact first-moment identity: a uniform permutation on `s` letters has
 expectedly `1/q` cycles of length `q`. -/
@@ -330,7 +330,7 @@ theorem qCycleEventCount_probability (s q : ℕ) :
     cycleTypeEventProbability_eq_sum_cycleWeight s (fun mu ↦ q ∈ mu)
 
 theorem cycleWeight_nonneg {s : ℕ} {mu : Multiset ℕ}
-    (hmu : mu ∈ cycleTypes s) : 0 ≤ cycleWeight s mu := by
+    (_hmu : mu ∈ cycleTypes s) : 0 ≤ cycleWeight s mu := by
   rw [cycleWeight]
   positivity
 
@@ -360,7 +360,7 @@ theorem count_le_div_of_mem_cycleTypes {s q : ℕ} {mu : Multiset ℕ}
   have hsum : mu.count q * q ≤ mu.sum := by
     calc
       mu.count q * q = (Multiset.replicate (mu.count q) q).sum := by
-        simp [nsmul_eq_mul]
+        simp
       _ ≤ (Multiset.replicate (mu.count q) q + rest).sum := by
         simp [Multiset.sum_add]
       _ = mu.sum := (congrArg Multiset.sum hrest).symm
@@ -441,7 +441,7 @@ theorem orderDivisibilityWeight_add_avoidance (s q : ℕ) :
 prime-power hypothesis is exactly what turns divisibility of an LCM into
 divisibility of one member. -/
 theorem primePower_orderDivisibilityWeight_le_sum {s p a : ℕ}
-    (hp : p.Prime) (ha : 0 < a) (hqs : p ^ a ≤ s) :
+    (hp : p.Prime) (ha : 0 < a) (_hqs : p ^ a ≤ s) :
     orderDivisibilityWeight s (p ^ a) ≤
       ∑ k ∈ Finset.Icc 1 (s / (p ^ a)),
         (1 : ℚ) / ((k * p ^ a : ℕ) : ℚ) := by
@@ -586,7 +586,7 @@ theorem exists_maximal_prime_power_not_dvd {s d : ℕ}
   have hnle : ¬(Nat.lcmUpto s).factorization ≤ d.factorization := by
     simpa [Nat.factorization_le_iff_dvd hL hd] using hnot
   rw [Finsupp.le_def] at hnle
-  push_neg at hnle
+  push Not at hnle
   obtain ⟨p, hpbad⟩ := hnle
   have hp : p.Prime := by
     by_contra hprime
@@ -657,7 +657,7 @@ theorem cycleType_lcm_ne_zero {s : ℕ} {mu : Multiset ℕ}
 /-- For the maximal missing prime power, either every order-divisible type
 or every order-avoiding type lies in the residual failure event. -/
 theorem primePower_residual_failure_dichotomy
-    {s d m p a : ℕ} (hp : p.Prime) (ha : 0 < a)
+    {s d m p a : ℕ} (hp : p.Prime) (_ha : 0 < a)
     (hamax : a = p.log s) (hd : d ≠ 0) (hqnot : ¬p ^ a ∣ d) :
     (∀ mu ∈ cycleTypes s, p ^ a ∣ mu.lcm →
       Nat.lcm mu.lcm d ≠ m) ∨
@@ -746,7 +746,7 @@ theorem lcmUpto_dvd_of_residualFailureWeight_le
     {s d m : ℕ} (hs : 0 < s) (hd : d ≠ 0) (delta : ℚ)
     (hfailure : residualFailureWeight s d m ≤ delta)
     (hsmallS : delta < 1 / (s : ℚ))
-    (hsmallConst : delta < 7 / 16)
+    (_hsmallConst : delta < 7 / 16)
     (hsmallFinite : delta < 1 / ((Nat.factorial 225) : ℚ)) :
     Nat.lcmUpto s ∣ d := by
   by_contra hnot

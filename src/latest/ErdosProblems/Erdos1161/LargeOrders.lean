@@ -70,7 +70,7 @@ theorem sum_orderExactCycleCount (n m : ℕ) :
             intro ell _
             apply congrArg Finset.card
             ext σ
-            simp [orderExactCycleCount, S, and_assoc]
+            simp [S]
     _ = S.card := by
       have h := Finset.sum_card_fiberwise_eq_card_filter S
         (Finset.range (n + 1)) totalCycleCount
@@ -400,7 +400,7 @@ theorem highCyclePart_le (n m : ℕ) :
             apply Finset.sum_congr rfl
             intro ell _
             by_cases h : highCycleCutoff n < ell <;>
-              simp [highCyclePart, orderExactCycleProbability, h]
+              simp [orderExactCycleProbability, h]
     _ =
         ((∑ ell ∈ Finset.range (n + 1),
           if highCycleCutoff n < ell then orderExactCycleCount n m ell else 0 : ℕ) : ℝ) /
@@ -485,7 +485,7 @@ private theorem power_div_factorial_le_two_pow_neg {x : ℝ} {q : ℕ}
     _ = (x / ((q : ℝ) / Real.exp 1)) ^ q := by
       exact (div_pow x ((q : ℝ) / Real.exp 1) q).symm
     _ ≤ (1 / 2 : ℝ) ^ q := pow_le_pow_left₀ (by positivity) hratio q
-    _ = 1 / (2 : ℝ) ^ q := by simp [div_pow]
+    _ = 1 / (2 : ℝ) ^ q := by simp
 
 private theorem loglog_le_four_mul_loglog_of_le_cutoff_pow
     {n m : ℕ}
@@ -661,7 +661,6 @@ private theorem cutoff_geometric_decay
     rw [Real.exp_log hlognpos]
   have hBplus : (highCycleCutoff n + 1 : ℝ) ≤ 18 * Real.exp L := by
     have hexpLone : 1 ≤ Real.exp L := (Real.one_le_exp_iff.mpr hLpos.le)
-    push_cast
     rw [hexpL]
     nlinarith
   have hexp5 : (72 : ℝ) < Real.exp 5 := by
@@ -767,8 +766,8 @@ private theorem eventually_middleCyclePart_lt_quarter_inv :
       · have hpown : n ^ ell ≤ n ^ highCycleCutoff n :=
           Nat.pow_le_pow_right hnpos hellmid.2
         have hz := orderExactCycleCount_eq_zero_of_pow_lt (hpown.trans_lt hmpow)
-        simp [middleCyclePart, hellmid, orderExactCycleProbability, hz]
-      · simp [middleCyclePart, hellmid]
+        simp [hellmid, orderExactCycleProbability, hz]
+      · simp [hellmid]
     rw [hzero]
     exact hrightpos
 
@@ -876,7 +875,7 @@ private theorem low_rpow_product_lt_quarter_inv
     simp only [Real.log_exp]
     rw [← Real.exp_add, ← Real.exp_add, ← Real.exp_add]
     apply Real.exp_lt_exp.mpr
-    convert hexponent using 1 <;> ring
+    convert hexponent using 1; ring
   calc
     (n : ℝ) ^ (1 / 18 : ℝ) *
           ((m : ℝ) ^ (1 / 12 : ℝ) / (m : ℝ)) =

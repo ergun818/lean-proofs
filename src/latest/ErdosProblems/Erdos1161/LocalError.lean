@@ -262,7 +262,7 @@ theorem restrictedPartitionMass_le_one (D : Finset ℕ) (n : ℕ) :
       · subst n
         simp only [restrictedPartitionMass, localPartitionMass,
           localCompleteCycleWeight, localCompleteCycleDenominator,
-          Fintype.sum_unique, Nat.cast_zero]
+          Fintype.sum_unique]
         split_ifs <;> norm_num
       · have hnpos : 0 < n := Nat.pos_of_ne_zero hn
         rw [restrictedPartitionMass_recursion D hnpos]
@@ -415,7 +415,7 @@ def reducedDivisors (m : ℕ) : Finset ℕ :=
   by_cases hm : m = 0
   · subst m
     simp [reducedDivisors]
-  · simp [reducedDivisors, hm, and_assoc]
+  · simp [reducedDivisors, hm]
 
 theorem reducedDivisors_card_le_divisors_card (m : ℕ) :
     (reducedDivisors m).card ≤ m.divisors.card :=
@@ -460,7 +460,7 @@ theorem reducedDivisorMass_full_bound {m r : ℕ} (hm : 6 ≤ m) :
 
 /-- Two-step bound at the residual degree after one half-cycle. -/
 theorem reducedDivisorMass_half_bound {m h r : ℕ}
-    (hm : 7 ≤ m) (hmh : m = 2 * h) (hr : 2 * r < m) :
+    (hm : 7 ≤ m) (hmh : m = 2 * h) (_hr : 2 * r < m) :
     restrictedPartitionMass (reducedDivisors m) (h + r) ≤
       ((reducedDivisors m).card : ℚ) ^ 2 /
         (((h + r : ℕ) : ℚ) * (m / 7 : ℕ)) := by
@@ -712,7 +712,7 @@ theorem oneHalfReducedMass_eq {D : Finset ℕ} {n h : ℕ}
     simp only [hone, true_and]
     simp only [hnot, not_false_eq_true, true_and]
     rw [← hpcons, localCompleteCycleWeight_cons_of_not_mem hh hnot hpos]
-    simp [hnot]
+    simp
   · have hmemErase : h ∈ p.1.parts.erase h := by
       rw [← Multiset.count_pos, Multiset.count_erase_self]
       have hcpos : 0 < p.1.parts.count h := Multiset.count_pos.mpr p.2
@@ -728,7 +728,9 @@ theorem oneHalfReducedMass_le {D : Finset ℕ} {n h : ℕ}
   unfold restrictedPartitionMass localPartitionMass
   apply Finset.sum_le_sum
   intro q _
-  split_ifs <;> simp_all
+  split_ifs <;>
+    simp_all only [Finset.mem_univ, and_true, Std.le_refl, and_false,
+      Decidable.not_not, not_false_eq_true]
   unfold localCompleteCycleWeight
   positivity
 
@@ -819,14 +821,14 @@ theorem nonLongPartitionMass_le_reduced_add_one_add_two
     · rcases Nat.eq_or_lt_of_le hcountle with htwo | hlt
       · have hhmem : h ∈ p.parts := Multiset.count_pos.mp (by omega)
         simp [hevent, htwo, hhmem]
-        split_ifs <;> simp [localCompleteCycleWeight] <;> positivity
+        split_ifs <;> simp [localCompleteCycleWeight]
       · have hone : p.parts.count h = 1 := by omega
         have hhmem : h ∈ p.parts := Multiset.count_pos.mp (by omega)
         have hall := allPartsIn_erase_reduced_of_count_half_one hm hmh hevent hone
         simp [hevent, hone, hhmem, hall]
-        split_ifs <;> simp [localCompleteCycleWeight] <;> positivity
+        split_ifs <;> simp [localCompleteCycleWeight]
   · simp [hevent]
-    split_ifs <;> simp [localCompleteCycleWeight] <;> positivity
+    split_ifs <;> simp [localCompleteCycleWeight]
 
 open scoped BigOperators Finset
 
@@ -987,7 +989,7 @@ theorem twoHalfCycleTypes_eq_map_exceptional {m h r : ℕ}
         · rcases Multiset.mem_cons.mp hmmem with hmh' | hmmem
           · omega
           · exact hmnot hmmem
-      · simp [Multiset.count_cons, hhnot]
+      · simp [hhnot]
 
 theorem twoHalfOrderMass_cast_eq_exceptionalHalfContribution {m h r : ℕ}
     (hmh : m = 2 * h) (hh : 2 ≤ h) (hr : r < h) :
@@ -1044,7 +1046,7 @@ theorem twoHalfOrderMass_le_nonLongPartitionMass (n m h : ℕ) :
   by_cases hh : h ∈ p.parts <;>
     by_cases he : NonLongFullCycleEvent m p.parts <;>
       by_cases hc : p.parts.count h = 2 <;>
-        simp [hh, he, hc, localCompleteCycleWeight] <;> positivity
+        simp [hh, he, hc, localCompleteCycleWeight]
 
 theorem even_nonLong_sub_halfCycleCorrection_bound
     {m h r : ℕ} (hm : 4 ≤ m) (hmh : m = 2 * h)
@@ -1187,7 +1189,7 @@ private theorem odd_nonLongPartitionMass_le_reduced {m r : ℕ}
       exact ⟨d, by omega⟩
     simp [hevent, hall]
   · simp [hevent]
-    split_ifs <;> simp [localCompleteCycleWeight] <;> positivity
+    split_ifs <;> simp [localCompleteCycleWeight]
 
 private theorem halfCycleCorrection_eq_zero_of_odd {m r : ℕ}
     (hodd : ¬ 2 ∣ m) (hadm : Nat.lcmUpto r ∣ m) :

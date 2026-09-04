@@ -220,7 +220,7 @@ theorem lcmUpto_dvd_half_of_next_two_pow_dvd {r m : ℕ}
     simpa using hfacLm
 
 theorem cycleType_lcm_not_dvd_half_iff_logTwo_mem {r m : ℕ}
-    (hr : 2 ≤ r) (hm : 0 < m) (hadm : Nat.lcmUpto r ∣ m)
+    (hr : 2 ≤ r) (_hm : 0 < m) (hadm : Nat.lcmUpto r ∣ m)
     (hnext : ¬ 2 ^ (Nat.log 2 r + 1) ∣ m)
     {mu : Multiset ℕ} (hmu : mu ∈ cycleTypes r) :
     ¬ mu.lcm ∣ m / 2 ↔ 2 ^ Nat.log 2 r ∈ mu := by
@@ -323,7 +323,7 @@ theorem exceptionalHalfResidualTypes_eq {r m : ℕ} (hrhalf : r < m / 2)
       simp at hmu
       omega
     · intro h
-      simpa using h
+      simp at h
   · have hr : 2 ≤ r := by omega
     by_cases hnext : 2 ^ (Nat.log 2 r + 1) ∣ m
     · rw [if_pos (Or.inr hnext)]
@@ -341,7 +341,7 @@ theorem exceptionalHalfResidualTypes_eq {r m : ℕ} (hrhalf : r < m / 2)
           ((exceptionalCycleType_lcm_dvd_lcmUpto hmu.1).trans hadm)).mp hmu.2
         exact this hmulhalf
       · intro h
-        simpa using h
+        simp at h
     · rw [if_neg (by simp [hrsmall, hnext])]
       ext mu
       rw [mem_exceptionalHalfResidualTypes, mem_logTwoCycleTypes]
@@ -398,9 +398,9 @@ theorem cycleDenominator_cons_two_equal_long {r h : ℕ} {mu : Multiset ℕ}
     simp [hjne]
   rw [Finset.insert_idem]
   rw [Finset.prod_insert (by simpa using hhnot)]
-  simp only [Multiset.count_cons_self, hcount, zero_add, Nat.factorial_two]
+  simp only [Multiset.count_cons_self, hcount, zero_add]
   rw [hcounts]
-  simp [cycleDenominator]
+  simp
   ring
 
 theorem cycleWeightReal_cons_two_equal_long {r h : ℕ} {mu : Multiset ℕ}

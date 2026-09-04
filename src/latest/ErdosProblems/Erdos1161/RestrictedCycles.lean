@@ -563,7 +563,7 @@ theorem restrictedCycleCount_normalized_le
   let embedFull : ↑E → Sym ℕ ell := fun p ↦
     ⟨completeCycleType n p.val, by
       have hpE : p.val ∈ cycleTypeEventTypes n A := by
-        simpa [E] using p.property
+        simp [E]
       have hp := mem_cycleTypeEventTypes.mp hpE
       have hpA : IsRestrictedCycleType n ell I p.val := by
         simpa [A] using hp.2
@@ -572,7 +572,7 @@ theorem restrictedCycleCount_normalized_le
       embedFull p ∈ restrictedMultisetCycleTypes I n ell := by
     rw [mem_restrictedMultisetCycleTypes]
     have hpE : p.val ∈ cycleTypeEventTypes n A := by
-      simpa [E] using p.property
+      simp [E]
     have hp := mem_cycleTypeEventTypes.mp hpE
     have hpA : IsRestrictedCycleType n ell I p.val := by
       simpa [A] using hp.2
@@ -582,10 +582,10 @@ theorem restrictedCycleCount_normalized_le
     apply Subtype.ext
     apply completeCycleType_injective_on_cycleTypes
     · have hpE : p.val ∈ cycleTypeEventTypes n A := by
-        simpa [E] using p.property
+        simp [E]
       exact (mem_cycleTypeEventTypes (A := A)).mp hpE |>.1
     · have hqE : q.val ∈ cycleTypeEventTypes n A := by
-        simpa [E] using q.property
+        simp [E]
       exact (mem_cycleTypeEventTypes (A := A)).mp hqE |>.1
     · simpa [embedFull] using congrArg Subtype.val heq
   have hprob :
@@ -603,7 +603,7 @@ theorem restrictedCycleCount_normalized_le
       intro p hp
       rw [multisetCycleWeight_completeCycleType_eq_cycleWeightReal]
       have hpE : p.val ∈ cycleTypeEventTypes n A := by
-        simpa [E] using p.property
+        simp [E]
       exact (mem_cycleTypeEventTypes (A := A)).mp hpE |>.1
     _ = ∑ rho ∈ Finset.image embedFull E.attach,
         multisetCycleWeight rho.val := by

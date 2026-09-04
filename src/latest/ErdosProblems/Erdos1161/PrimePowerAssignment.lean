@@ -568,7 +568,7 @@ theorem prod_assignedDivisors (factors : List ℕ) (ell : ℕ)
   rw [assignedDivisors, List.prod_ofFn]
   rw [Finset.prod_fiberwise (Finset.univ : Finset (Fin factors.length))
     assignment factors.get]
-  simpa using (List.prod_ofFn factors.get).symm
+  simp
 
 theorem assignedDivisors_pos {factors : List ℕ} {ell : ℕ}
     {assignment : Fin factors.length → Fin ell}

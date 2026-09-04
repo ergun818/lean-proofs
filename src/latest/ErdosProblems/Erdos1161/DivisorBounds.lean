@@ -159,8 +159,7 @@ private lemma primePower_divisorSum_ratio_le (p a : ℕ) (hp : p.Prime) :
   have hpSub : 0 < (p : ℝ) - 1 := sub_pos.mpr (by exact_mod_cast hp.one_lt)
   rw [geom_sum_eq hpOne]
   field_simp [hpR.ne', hpSub.ne']
-  simpa [pow_succ, mul_comm] using
-    (sub_le_self ((p : ℝ) ^ (a + 1)) (show (0 : ℝ) ≤ 1 by norm_num))
+  simp [pow_succ, mul_comm]
 
 /-- The abundancy index is bounded by the finite Euler product over the
 distinct prime divisors. -/

@@ -63,7 +63,7 @@ theorem isCycle_swap_mul_of_mem_support_of_not_mem_support
   subst a
   rw [← hform, hlt, ← List.formPerm_cons_cons]
   exact List.isCycle_formPerm (by simpa [hlt] using hlnodup.cons hxl)
-    (by simpa [hlt] using Nat.succ_le_succ hl2)
+    (by simp)
 
 theorem card_support_swap_mul_of_mem_support_of_not_mem_support
     {α : Type*} [Fintype α] [DecidableEq α] {c : Perm α} (hc : c.IsCycle)
@@ -303,7 +303,10 @@ theorem exactCycleCount_succ_succ (n ell : ℕ) :
   · rw [Finset.disjoint_left]
     intro pe hA hB
     rcases pe with ⟨p, e⟩
-    simp [A, B] at hA hB
+    simp only [Finset.singleton_product, totalCycleCount_eq, Finset.mem_map,
+      Finset.mem_filter, Finset.mem_univ, true_and, Function.Embedding.coeFn_mk,
+      Prod.mk.injEq, exists_eq_right_right, Finset.mem_product, Finset.mem_erase,
+      ne_eq, and_true, A, B] at hA hB
     exact hB.1 hA.2.symm
 
 theorem totalCycleCount_pos {n : ℕ} (hn : 0 < n) (e : Perm (Fin n)) :
