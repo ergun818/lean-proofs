@@ -25,6 +25,7 @@ variable {V W : Type*} [DecidableEq V] [DecidableEq W]
 def edgeFiber (H : Hypergraph V) (π : V → W) (F : Finset W) : Hypergraph V :=
   H.filter fun E ↦ E.image π = F
 
+omit [DecidableEq V] in
 @[simp] lemma mem_edgeFiber {H : Hypergraph V} {π : V → W} {F : Finset W}
     {E : Finset V} : E ∈ edgeFiber H π F ↔ E ∈ H ∧ E.image π = F := by
   simp [edgeFiber]
@@ -33,6 +34,7 @@ def edgeFiber (H : Hypergraph V) (π : V → W) (F : Finset W) : Hypergraph V :=
 def subsetFiber [Fintype V] (π : V → W) (K : Finset W) : Hypergraph V :=
   Finset.univ.powerset.filter fun L ↦ L.image π = K
 
+omit [DecidableEq V] in
 @[simp] lemma mem_subsetFiber [Fintype V] {π : V → W} {K : Finset W}
     {L : Finset V} : L ∈ subsetFiber π K ↔ L.image π = K := by
   simp [subsetFiber]
@@ -41,17 +43,22 @@ def subsetFiber [Fintype V] (π : V → W) (K : Finset W) : Hypergraph V :=
 def edgeLift (π : V → W) (E : Finset V) (K : Finset W) : Finset V :=
   E.filter fun v ↦ π v ∈ K
 
+omit [DecidableEq V] in
 @[simp] lemma mem_edgeLift {π : V → W} {E : Finset V} {K : Finset W} {v : V} :
     v ∈ edgeLift π E K ↔ v ∈ E ∧ π v ∈ K := by
   simp [edgeLift]
 
+omit [DecidableEq V] in
 lemma edgeLift_subset (π : V → W) (E : Finset V) (K : Finset W) :
     edgeLift π E K ⊆ E := by
+  classical
   intro v hv
   exact (mem_edgeLift.mp hv).1
 
+omit [DecidableEq V] in
 lemma image_edgeLift {π : V → W} {E : Finset V} {K : Finset W}
     (hK : K ⊆ E.image π) : (edgeLift π E K).image π = K := by
+  classical
   ext w
   simp only [Finset.mem_image, mem_edgeLift]
   constructor
@@ -61,9 +68,11 @@ lemma image_edgeLift {π : V → W} {E : Finset V} {K : Finset W}
     obtain ⟨v, hvE, hvEq⟩ := Finset.mem_image.mp (hK hwK)
     exact ⟨v, ⟨hvE, hvEq ▸ hwK⟩, hvEq⟩
 
+omit [DecidableEq V] in
 lemma eq_edgeLift_of_subset_image_eq {π : V → W} {E L : Finset V} {K : Finset W}
     (hinj : Set.InjOn π E) (hLE : L ⊆ E) (himage : L.image π = K) :
     L = edgeLift π E K := by
+  classical
   apply Finset.Subset.antisymm
   · intro v hvL
     exact mem_edgeLift.mpr ⟨hLE hvL, himage ▸ Finset.mem_image_of_mem π hvL⟩
@@ -103,6 +112,7 @@ lemma subsetFiber_filter_subset [Fintype V] {π : V → W} {E : Finset V}
 def EdgewiseInjective (H : Hypergraph V) (π : V → W) : Prop :=
   ∀ E ∈ H, Set.InjOn π E
 
+omit [DecidableEq V] in
 lemma edgewiseInjective_iff_card_image (H : Hypergraph V) (π : V → W) :
     EdgewiseInjective H π ↔ ∀ E ∈ H, (E.image π).card = E.card := by
   simp only [EdgewiseInjective, Finset.card_image_iff]
@@ -112,16 +122,20 @@ noncomputable def averagePullback (H : Hypergraph V) (π : V → W)
     (μ : EdgeWeight (H.map π)) : EdgeWeight H :=
   fun E ↦ μ (E.image π) / (edgeFiber H π (E.image π)).card
 
+omit [DecidableEq V] in
 lemma edgeFiber_card_pos {H : Hypergraph V} {π : V → W} {F : Finset W}
     (hF : F ∈ H.map π) : 0 < (edgeFiber H π F).card := by
+  classical
   rw [Finset.card_pos]
   obtain ⟨E, hE, hEq⟩ := mem_map.mp hF
   exact ⟨E, mem_edgeFiber.mpr ⟨hE, hEq⟩⟩
 
+omit [DecidableEq V] in
 /-- The averaged weights in one edge fibre add up to the original projected weight. -/
 lemma sum_averagePullback_edgeFiber {H : Hypergraph V} {π : V → W}
     (μ : EdgeWeight (H.map π)) {F : Finset W} (hF : F ∈ H.map π) :
     ∑ E ∈ edgeFiber H π F, (averagePullback H π μ E : ℝ) = (μ F : ℝ) := by
+  classical
   have hcard : (edgeFiber H π F).card ≠ 0 := Nat.ne_of_gt (edgeFiber_card_pos hF)
   have himage : ∀ E ∈ edgeFiber H π F, E.image π = F :=
     fun E hE ↦ (mem_edgeFiber.mp hE).2
@@ -137,11 +151,13 @@ lemma sum_averagePullback_edgeFiber {H : Hypergraph V} {π : V → W}
       simp only [Finset.sum_const, nsmul_eq_mul, NNReal.coe_natCast, NNReal.coe_div]
       exact mul_div_cancel₀ (μ F : ℝ) (Nat.cast_ne_zero.mpr hcard)
 
+omit [DecidableEq V] in
 /-- Fibre averaging preserves any sum selected by a predicate on projected edges. -/
 lemma sum_averagePullback_image_filter {H : Hypergraph V} {π : V → W}
     (μ : EdgeWeight (H.map π)) (P : Finset W → Prop) [DecidablePred P] :
     ∑ E ∈ H with P (E.image π), (averagePullback H π μ E : ℝ) =
       ∑ F ∈ H.map π with P F, (μ F : ℝ) := by
+  classical
   let s : Hypergraph V := H.filter fun E ↦ P (E.image π)
   let t : Hypergraph W := (H.map π).filter P
   have hmaps : ∀ E ∈ s, E.image π ∈ t := by
@@ -167,10 +183,12 @@ lemma sum_averagePullback_image_filter {H : Hypergraph V} {π : V → W}
   rw [hfiber]
   exact sum_averagePullback_edgeFiber μ hFmap
 
+omit [DecidableEq V] in
 /-- Fibre averaging preserves total mass. -/
 lemma mass_averagePullback {H : Hypergraph V} {π : V → W}
     (μ : EdgeWeight (H.map π)) :
     mass H (averagePullback H π μ) = mass (H.map π) μ := by
+  classical
   simpa [mass] using
     (sum_averagePullback_image_filter (H := H) (π := π) μ (fun _ ↦ True))
 
@@ -210,6 +228,7 @@ lemma weightedDegree_averagePullback_fiber [Fintype V] {H : Hypergraph V} {π : 
     _ = weightedDegree (H.map π) μ K := by
       rfl
 
+omit [DecidableEq W] in
 /-- A source set on which `π` is not injective cannot be contained in an edge on which `π` is
 injective, so its weighted degree is zero. -/
 lemma weightedDegree_eq_zero_of_not_injOn {H : Hypergraph V} {π : V → W}
@@ -226,6 +245,7 @@ zero under an edgewise-injective projection. -/
 noncomputable def faithfulJansonSets [Fintype V] (π : V → W) : Hypergraph V :=
   jansonSets.filter fun L ↦ Set.InjOn π L
 
+omit [DecidableEq V] in
 @[simp] lemma mem_faithfulJansonSets [Fintype V] {π : V → W} {L : Finset V} :
     L ∈ faithfulJansonSets π ↔ L ∈ jansonSets ∧ Set.InjOn π L := by
   classical

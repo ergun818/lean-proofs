@@ -251,6 +251,7 @@ def rootedGraphEmbeddingOn (G : SimpleGraph V) (v : V) (U : Finset V)
   __ := rootedEmbeddingOn v U hv
   map_rel_iff' := Iff.rfl
 
+omit [Fintype V] in
 @[simp] theorem range_rootedGraphEmbeddingOn
     (G : SimpleGraph V) (v : V) (U : Finset V) (hv : v ∉ U) :
     Finset.univ.map (rootedGraphEmbeddingOn G v U hv).toEmbedding = insert v U := by
@@ -265,26 +266,31 @@ def rootedGraphEmbeddingOn (G : SimpleGraph V) (v : V) (U : Finset V)
     · exact ⟨none, rfl⟩
     · exact ⟨some ⟨x, hx⟩, rfl⟩
 
+omit [DecidableEq V] [Fintype V] in
 @[simp] theorem rootedRestrictionOn_adj_star
     (G : SimpleGraph V) (v : V) (U : Finset V) (hv : v ∉ U) (u : ↑U) :
     (rootedRestrictionOn G v U hv).Adj none (some u) ↔ G.Adj v u.1 := Iff.rfl
 
+omit [DecidableEq V] [Fintype V] in
 @[simp] theorem rootedRestrictionOn_adj_star_symm
     (G : SimpleGraph V) (v : V) (U : Finset V) (hv : v ∉ U) (u : ↑U) :
     (rootedRestrictionOn G v U hv).Adj (some u) none ↔ G.Adj u.1 v := Iff.rfl
 
+omit [DecidableEq V] [Fintype V] in
 @[simp] theorem oldPart_rootedRestrictionOn
     (G : SimpleGraph V) (v : V) (U : Finset V) (hv : v ∉ U) :
     Erdos565.oldPart (rootedRestrictionOn G v U hv) =
       G.induce (↑U : Set V) := by
   rfl
 
+omit [DecidableEq V] [Fintype V] in
 theorem rootedRestrictionOn_mono {G' G : SimpleGraph V} (h : G' ≤ G)
     (v : V) (U : Finset V) (hv : v ∉ U) :
     rootedRestrictionOn G' v U hv ≤ rootedRestrictionOn G v U hv := by
   intro x y hxy
   exact h hxy
 
+omit [DecidableEq V] [Fintype V] in
 @[simp] theorem labelGraph_pullback_rootedGraphEmbeddingOn
     {C : Type*} {G : SimpleGraph V} (coloring : G.EdgeLabeling C) (i : C)
     (v : V) (U : Finset V) (hv : v ∉ U) :
@@ -342,6 +348,7 @@ section InducedRelabelling
 
 variable {V : Type*} [Fintype V] [DecidableEq V]
 
+omit [DecidableEq V] [Fintype V] in
 theorem labelGraph_pullback_induce_eq_induce
     {C : Type*} {G : SimpleGraph V} (coloring : G.EdgeLabeling C) (i : C)
     (W : Finset V) :
@@ -359,13 +366,14 @@ theorem labelGraph_pullback_induce_eq_induce
 /-- Jansonness of a globally restricted copy family is equivalent in the
 direction needed here to Jansonness on the induced subtype. -/
 theorem localCopy_isJanson_of_global_restrict
-    {A C : Type*} [Fintype A] {G : SimpleGraph V}
+    {A C : Type*} [Finite A] {G : SimpleGraph V}
     (target : SimpleGraph A) (coloring : G.EdgeLabeling C) (i : C)
     (W : Finset V) {p R : ℝ} (hp : 0 < p)
     (h : ((copyHypergraph target (coloring.labelGraph i) G).restrict W).IsJanson p R) :
     (copyHypergraph target ((coloring.labelGraph i).induce (↑W : Set V))
       (G.induce (↑W : Set V))).IsJanson p R := by
   classical
+  let := Fintype.ofFinite A
   let H := copyHypergraph target ((coloring.labelGraph i).induce (↑W : Set V))
     (G.induce (↑W : Set V))
   let f : (↑W : Set V) → V := fun x ↦ x.1
@@ -432,7 +440,7 @@ variable {V : Type*} [Fintype V] [DecidableEq V]
 /-- Inject a graph event into its unordered-edge-coordinate event. -/
 theorem card_graphEvent_le_eventSamples
     (Q : SimpleGraph V → Prop) (P : Finset (RandomGraph.Edge V) → Prop)
-    [DecidablePred Q] [DecidablePred P]
+    [DecidablePred Q]
     (hQP : ∀ G, Q G → P (RandomGraph.edgesOfGraph G)) :
     ((Finset.univ : Finset (SimpleGraph V)).filter Q).card ≤
       (RandomGraph.eventSamples (RandomGraph.edgeUniverse V) P).card := by
@@ -649,8 +657,7 @@ theorem copySeed_extensionFailure_rooted
         (range_rootedGraphEmbeddingOn G v result.U hvU)
     have hcolor : (coloring.pullback e.toHom).labelGraph i =
         rootedRestrictionOn (Events.colorClassGraph coloring i) v result.U hvU := by
-      simpa [e, K, Events.colorClassGraph] using
-        (labelGraph_pullback_rootedGraphEmbeddingOn coloring i v result.U hvU)
+      simp [e, K, Events.colorClassGraph]
     rw [hcolor] at hmap0
     simpa [H, K] using hmap0
   have hmapJanson : (H.map (fun x ↦ e x)).IsJanson p (result.R i + 1) :=
@@ -1109,7 +1116,7 @@ def liftOldGraph {U : Type*} (H : SimpleGraph U) : SimpleGraph (Option U) :=
   rw [SimpleGraph.map_adj]
   constructor
   · rintro ⟨a, b, hab, ha, hb⟩
-    simp at ha hb
+    simp only [Function.Embedding.coeFn_mk, Option.some.injEq] at ha hb
     subst a
     subst b
     exact hab
@@ -1225,7 +1232,8 @@ section FixedFiber
 
 variable {V : Type*} [Fintype V] [DecidableEq V]
 
-theorem map_graphStar_rooted_color
+omit [DecidableEq V] [Fintype V] in
+theorem map_graphStar_rooted_color [Finite V]
     {r : ℕ} {G : SimpleGraph V} (coloring : G.EdgeLabeling (Fin r))
     (i : Fin r) (v : V) (U : Finset V) (hv : v ∉ U) :
     (Extension.graphStar
@@ -1233,6 +1241,7 @@ theorem map_graphStar_rooted_color
         ⟨Subtype.val, Subtype.val_injective⟩ =
       KeyFixedTuple.colorNeighbors coloring U v i := by
   classical
+  let := Fintype.ofFinite V
   ext u
   simp only [Finset.mem_map, Extension.mem_graphStar,
     KeyFixedTuple.colorNeighbors, Finset.mem_filter]

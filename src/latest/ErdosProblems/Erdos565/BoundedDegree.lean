@@ -83,15 +83,18 @@ lemma exists_normalized_of_restrict_isJanson {H : Hypergraph V} {W : Finset V}
 def convexWeight {H : Hypergraph V} (t : ℝ≥0) (ν μ : EdgeWeight H) : EdgeWeight H :=
   scale (1 - t) ν + scale t μ
 
+omit [DecidableEq V] [Fintype V] in
 lemma mass_convexWeight {H : Hypergraph V} {t : ℝ≥0} (ht : t ≤ 1)
     (ν μ : EdgeWeight H) :
     mass H (convexWeight t ν μ) =
       (1 - (t : ℝ)) * mass H ν + (t : ℝ) * mass H μ := by
+  classical
   rw [convexWeight, mass_add, mass_scale, mass_scale]
   norm_cast
   rw [NNReal.coe_sub ht]
   norm_num
 
+omit [Fintype V] in
 lemma weightedDegree_convexWeight {H : Hypergraph V} {t : ℝ≥0} (ht : t ≤ 1)
     (ν μ : EdgeWeight H) (L : Finset V) :
     weightedDegree H (convexWeight t ν μ) L =
@@ -144,6 +147,7 @@ lemma Lambda_convexWeight {H : Hypergraph V} {p : ℝ} (hp : 0 < p)
           field_simp
           ring
 
+omit [Fintype V] in
 lemma weightedDegree_eq_zero_of_supported_on {H : Hypergraph V} {W : Finset V}
     (ν : EdgeWeight H) (hsupp : ∀ E, E ∉ H.restrict W → ν E = 0)
     {v : V} (hv : v ∉ W) : weightedDegree H ν {v} = 0 := by
@@ -202,7 +206,7 @@ lemma contractionParameter_mul_le_half {β M : ℝ} (hβ : 0 < β) (hM : 0 < M) 
 lemma contractionParameter_le_one (β M : ℝ) : contractionParameter β M ≤ 1 :=
   (contractionParameter_le_half β M).trans (by norm_num)
 
-lemma contractionFactor_pos {β M : ℝ} (hβ : 0 < β) (hM : 0 < M) :
+lemma contractionFactor_pos {β M : ℝ} (_ : 0 < β) (_ : 0 < M) :
     0 < 1 - contractionParameter β M / 2 := by
   have ht := contractionParameter_le_half β M
   linarith
@@ -236,7 +240,8 @@ private lemma exists_normalized_unit_of_restrict_isJanson {H : Hypergraph V}
     Lambda H p ν < Real.sqrt R ^ 2 / R := hL
     _ = 1 := by rw [Real.sq_sqrt hR.le]; exact div_self hR.ne'
 
-private lemma lowDegreeSet_large (C : Finset V) {H : Hypergraph V} {s : ℕ}
+omit [Fintype V] in
+private lemma lowDegreeSet_large [Finite V] (C : Finset V) {H : Hypergraph V} {s : ℕ}
     (hH : H.IsUniform s) (hs : 0 < s) (ν : EdgeWeight H) {y β : ℝ}
     (hmass : mass H ν = y) (hy : 0 < y) (hβ : 0 < β)
     (hC : 0 < C.card) :
@@ -245,6 +250,7 @@ private lemma lowDegreeSet_large (C : Finset V) {H : Hypergraph V} {s : ℕ}
     let W := C.filter fun v : V ↦ weightedDegree H ν {v} ≤ T
     (1 - β) * M ≤ W.card := by
   classical
+  let := Fintype.ofFinite V
   dsimp only
   let M : ℝ := C.card
   let T : ℝ := (s : ℝ) * y / (β * M)

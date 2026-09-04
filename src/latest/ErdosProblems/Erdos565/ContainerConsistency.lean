@@ -61,16 +61,19 @@ def execute {s : ℕ} (selector : Selector (V := V) s) (I : Finset V) :
           (state.next choice.layerIndex choice.seed branch)
         ⟨tail.finalState, branch :: tail.branches⟩
 
+omit [Fintype V] in
 @[simp] theorem execute_zero {s : ℕ} (selector : Selector (V := V) s)
     (I : Finset V) (state : State V) :
     execute selector I 0 state = ⟨state, []⟩ := rfl
 
+omit [Fintype V] in
 @[simp] theorem execute_succ_of_terminal {s : ℕ}
     (selector : Selector (V := V) s) (I : Finset V) {fuel : ℕ}
     {state : State V} (hterminal : selector.terminal state.family) :
     execute selector I (fuel + 1) state = ⟨state, []⟩ := by
   simp [execute, hterminal]
 
+omit [Fintype V] in
 theorem execute_succ_of_not_terminal {s : ℕ}
     (selector : Selector (V := V) s) (I : Finset V) {fuel : ℕ}
     {state : State V} (hterminal : ¬ selector.terminal state.family) :
@@ -82,12 +85,15 @@ theorem execute_succ_of_not_terminal {s : ℕ}
       ⟨tail.finalState, branch :: tail.branches⟩ := by
   simp [execute, hterminal]
 
+omit [Fintype V] in
 /-- The current fingerprint is contained in the final fingerprint of every
 finite execution. -/
-theorem fingerprint_subset_execute {s : ℕ}
+theorem fingerprint_subset_execute [Finite V] {s : ℕ}
     (selector : Selector (V := V) s) (I : Finset V) :
     ∀ fuel state,
       state.fingerprint ⊆ (execute selector I fuel state).finalState.fingerprint := by
+  classical
+  let := Fintype.ofFinite V
   intro fuel
   induction fuel with
   | zero =>
@@ -100,6 +106,7 @@ theorem fingerprint_subset_execute {s : ℕ}
       · rw [execute_succ_of_not_terminal selector I hterminal]
         exact (fingerprint_mono_next state _ _ _).trans (ih _)
 
+omit [Fintype V] in
 theorem toOracle_next_eq_direct {s : ℕ}
     (selector : Selector (V := V) s) (I : Finset V) {state : State V}
     (hterminal : ¬ selector.terminal state.family) :
@@ -125,14 +132,17 @@ theorem algorithmStep_eq_toOracle_next (p : ℝ) (s : ℕ) (hs : 0 < s)
     rw [Oracle.next_eq_round_of_not_terminal]
     rfl
 
+omit [Fintype V] in
 /-- The state component of `execute` is exactly the existing oracle/fuel
 execution from `ContainerA`. -/
-theorem execute_finalState_eq_run {s : ℕ}
+theorem execute_finalState_eq_run [Finite V] {s : ℕ}
     (selector : Selector (V := V) s) (I : Finset V) :
     ∀ fuel state,
       (execute selector I fuel state).finalState =
         @ContainerFuel.run (State V) (selector.toOracle I).terminal
           (selector.toOracle I).decision (selector.toOracle I).next fuel state := by
+  classical
+  let := Fintype.ofFinite V
   intro fuel
   induction fuel with
   | zero =>
@@ -150,6 +160,7 @@ theorem execute_finalState_eq_run {s : ℕ}
           apply ih
         · exact hterminal
 
+omit [Fintype V] in
 /-- Equal final fingerprints force equality of the entire canonical
 execution, provided (as guaranteed by the algorithm invariant) each final
 fingerprint is contained in the corresponding input.
@@ -158,7 +169,7 @@ The proof compares the first branch.  If one input accepts the common seed
 and the other rejects it, the seed lies in the first final fingerprint by
 monotonicity.  Equality of final fingerprints and containment in the second
 input then force the second branch to accept as well, a contradiction. -/
-theorem execute_eq_of_final_fingerprint_eq {s : ℕ}
+theorem execute_eq_of_final_fingerprint_eq [Finite V] {s : ℕ}
     (selector : Selector (V := V) s) (I J : Finset V) :
     ∀ fuel state,
       let outI := execute selector I fuel state
@@ -167,6 +178,8 @@ theorem execute_eq_of_final_fingerprint_eq {s : ℕ}
       outJ.finalState.fingerprint ⊆ J →
       outI.finalState.fingerprint = outJ.finalState.fingerprint →
       outI = outJ := by
+  classical
+  let := Fintype.ofFinite V
   intro fuel
   induction fuel with
   | zero =>
@@ -223,9 +236,10 @@ theorem execute_eq_of_final_fingerprint_eq {s : ℕ}
                 Execution.mk tail.finalState (Branch.reject :: tail.branches))
               (ih _ hsubI hsubJ hfp)
 
+omit [Fintype V] in
 /-- State-level form of fingerprint consistency, phrased with the established
 `ContainerFuel.run`/`Oracle.next` API. -/
-theorem run_eq_of_final_fingerprint_eq {s : ℕ}
+theorem run_eq_of_final_fingerprint_eq [Finite V] {s : ℕ}
     (selector : Selector (V := V) s) (I J : Finset V) (fuel : ℕ)
     (state : State V)
     (hsubI :
@@ -243,6 +257,8 @@ theorem run_eq_of_final_fingerprint_eq {s : ℕ}
         (selector.toOracle I).decision (selector.toOracle I).next fuel state =
       @ContainerFuel.run (State V) (selector.toOracle J).terminal
         (selector.toOracle J).decision (selector.toOracle J).next fuel state := by
+  classical
+  let := Fintype.ofFinite V
   rw [← execute_finalState_eq_run selector I fuel state] at hsubI
   rw [← execute_finalState_eq_run selector J fuel state] at hsubJ
   rw [← execute_finalState_eq_run selector I fuel state,
@@ -250,10 +266,11 @@ theorem run_eq_of_final_fingerprint_eq {s : ℕ}
   exact congrArg Execution.finalState
     (execute_eq_of_final_fingerprint_eq selector I J fuel state hsubI hsubJ hfp)
 
+omit [Fintype V] in
 /-- Transcript-level form of the same result.  This exposes equality of the
 branch histories while accepting hypotheses stated for the established
 oracle runs. -/
-theorem execute_eq_of_run_final_fingerprint_eq {s : ℕ}
+theorem execute_eq_of_run_final_fingerprint_eq [Finite V] {s : ℕ}
     (selector : Selector (V := V) s) (I J : Finset V) (fuel : ℕ)
     (state : State V)
     (hsubI :
@@ -268,6 +285,8 @@ theorem execute_eq_of_run_final_fingerprint_eq {s : ℕ}
       (@ContainerFuel.run (State V) (selector.toOracle J).terminal
         (selector.toOracle J).decision (selector.toOracle J).next fuel state).fingerprint) :
     execute selector I fuel state = execute selector J fuel state := by
+  classical
+  let := Fintype.ofFinite V
   rw [← execute_finalState_eq_run selector I fuel state] at hsubI
   rw [← execute_finalState_eq_run selector J fuel state] at hsubJ
   rw [← execute_finalState_eq_run selector I fuel state,
@@ -309,8 +328,9 @@ theorem execute_eq_of_final_fingerprint_eq_of_invariant {s : ℕ}
     ((selector.toOracle I).invariant_run hinvI fuel).fingerprint_subset
     ((selector.toOracle J).invariant_run hinvJ fuel).fingerprint_subset hfp
 
+omit [Fintype V] in
 /-- Therefore the final hypergraph depends only on the final fingerprint. -/
-theorem run_family_eq_of_final_fingerprint_eq {s : ℕ}
+theorem run_family_eq_of_final_fingerprint_eq [Finite V] {s : ℕ}
     (selector : Selector (V := V) s) (I J : Finset V) (fuel : ℕ)
     (state : State V)
     (hsubI :
@@ -328,6 +348,8 @@ theorem run_family_eq_of_final_fingerprint_eq {s : ℕ}
         (selector.toOracle I).decision (selector.toOracle I).next fuel state).family =
       (@ContainerFuel.run (State V) (selector.toOracle J).terminal
         (selector.toOracle J).decision (selector.toOracle J).next fuel state).family := by
+  classical
+  let := Fintype.ofFinite V
   exact congrArg State.family
     (run_eq_of_final_fingerprint_eq selector I J fuel state hsubI hsubJ hfp)
 

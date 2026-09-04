@@ -72,18 +72,20 @@ private lemma radius_le_ground_card {r N : ℕ} {S U : Finset α}
       _ = U.card := h.2.1.symm
       _ ≤ S.card := Finset.card_le_card h.1
 
+omit [Fintype α] in
 /-- Exact finite maximal-seed selection.
 
 The only semantic assumptions on `Good` are the two facts used in the paper:
 radius zero is available on an initial `b_N`-set, and enlarging the vertex set
 preserves `Good` at a fixed radius. -/
-theorem exists_result (r N : ℕ) (S : Finset α)
+theorem exists_result [Finite α] (r N : ℕ) (S : Finset α)
     (Good : Fin r → Finset α → ℕ → Prop)
     (hseed : seedThreshold r N ≤ S.card)
     (hzero : ∀ U ⊆ S, U.card = seedThreshold r N → ∀ i, Good i U 0)
     (hmono : ∀ i U T R, U ⊆ T → Good i U R → Good i T R) :
     Nonempty (Result r N S Good) := by
   classical
+  let := Fintype.ofFinite α
   obtain ⟨U₀, hU₀S, hU₀card⟩ := S.exists_subset_card_eq hseed
   let R₀ : Fin r → Fin (S.card + 1) := fun _ ↦ ⟨0, Nat.succ_pos _⟩
   let x₀ : Code r S := (U₀, R₀)
@@ -254,11 +256,12 @@ lemma result_card_bounds {r N : ℕ} {S : Finset α}
     four_mul_le_ceilDiv (Nat.pow_pos (by omega)) hratio hsize.2.2
   exact ⟨hsize.1, hsize.2.1, hsize.2.2, hfour, hfour.trans hsample⟩
 
+omit [Fintype α] in
 /-- Packaging of the exact candidate properties with the source's real-valued
 radius estimate.  The estimate is a theorem parameter because its proof is the
 copy-hypergraph/Janson contradiction, while every finite selection and
 arithmetic consequence is proved here. -/
-theorem exists_result_with_bounds (r N : ℕ) (S : Finset α)
+theorem exists_result_with_bounds [Finite α] (r N : ℕ) (S : Finset α)
     (Good : Fin r → Finset α → ℕ → Prop) (p : ℝ)
     (hr : 0 < r) (hp : p ≤ 1)
     (hseed : seedThreshold r N ≤ S.card)
@@ -269,6 +272,8 @@ theorem exists_result_with_bounds (r N : ℕ) (S : Finset α)
     ∃ result : Result r N S Good,
       (∀ i, (result.R i : ℝ) ≤ p * result.U.card / (512 * r)) ∧
       512 * (∑ i, result.R i) ≤ result.U.card := by
+  classical
+  let := Fintype.ofFinite α
   obtain ⟨result⟩ := exists_result r N S Good hseed hzero hmono
   refine ⟨result, hradius result.U result.R result.candidate, ?_⟩
   exact aggregate_radius_bound result.R hr hp

@@ -62,8 +62,8 @@ noncomputable def filterUnivEquivSubtype (P : A → Prop) [DecidablePred P] :
     ↥((Finset.univ : Finset A).filter P) ≃ {a : A // P a} where
   toFun a := ⟨a.1, (Finset.mem_filter.mp a.2).2⟩
   invFun a := ⟨a.1, Finset.mem_filter.mpr ⟨Finset.mem_univ _, a.2⟩⟩
-  left_inv a := Subtype.ext rfl
-  right_inv a := Subtype.ext rfl
+  left_inv _ := Subtype.ext rfl
+  right_inv _ := Subtype.ext rfl
 
 theorem card_filter_univ_eq_card_subtype (P : A → Prop) [DecidablePred P] :
     ((Finset.univ : Finset A).filter P).card = Fintype.card {a : A // P a} := by
@@ -79,7 +79,7 @@ theorem card_eq_card_mul_fiber (f : A → B) (b₀ : B)
   simp
 
 theorem card_preimage_eq_card_mul_fiber (f : A → B) (b₀ : B) (P : B → Prop)
-    [DecidablePred P] [DecidablePred (P ∘ f)]
+    [DecidablePred P]
     (hfiber : ∀ b, Fintype.card (Fiber f b) = Fintype.card (Fiber f b₀)) :
     Fintype.card {a : A // P (f a)} =
       Fintype.card {b : B // P b} * Fintype.card (Fiber f b₀) := by
@@ -91,10 +91,11 @@ theorem card_preimage_eq_card_mul_fiber (f : A → B) (b₀ : B) (P : B → Prop
 /-- A denominator-cleared density estimate transfers through a map whose
 fibres all have the same finite cardinality. -/
 theorem uniformFiber_transfer (f : A → B) (b₀ : B) (P : B → Prop) (Q : ℕ)
-    [DecidablePred P] [DecidablePred (P ∘ f)]
+    [DecidablePred P]
     (hfiber : ∀ b, Fintype.card (Fiber f b) = Fintype.card (Fiber f b₀))
     (h : Fintype.card {b : B // P b} * Q ≤ Fintype.card B) :
     Fintype.card {a : A // P (f a)} * Q ≤ Fintype.card A := by
+  classical
   rw [card_preimage_eq_card_mul_fiber f b₀ P hfiber,
     card_eq_card_mul_fiber f b₀ hfiber]
   calc
@@ -115,6 +116,7 @@ open SimpleGraph
 variable {V W : Type*} [Fintype V] [DecidableEq V]
   [Fintype W] [DecidableEq W]
 
+omit [DecidableEq V] [DecidableEq W] [Fintype V] [Fintype W] in
 /-- Pullback of symmetric difference is symmetric difference of pullbacks. -/
 lemma comap_symmDiff (f : W → V) (G K : SimpleGraph V) :
     (G ∆ K).comap f = G.comap f ∆ K.comap f := by
@@ -141,7 +143,7 @@ noncomputable def graphFiberEquiv (f : W ↪ V) (H K : SimpleGraph W) :
 /-- Exact finite uniformity of an induced restriction: every graph-event
 estimate on `W` transfers to graphs on `V` pulled back along `f`. -/
 theorem card_comap_preimage_mul_le (f : W ↪ V) (P : SimpleGraph W → Prop)
-    [DecidablePred P] [DecidablePred (P ∘ SimpleGraph.comap f)]
+    [DecidablePred P]
     (Q : ℕ) (h : Fintype.card {H : SimpleGraph W // P H} * Q ≤
       Fintype.card (SimpleGraph W)) :
     Fintype.card {G : SimpleGraph V // P (G.comap f)} * Q ≤
@@ -239,7 +241,7 @@ theorem card_le (k : ℕ) :
     _ = (k + 1) * 2 ^ k.choose 2 := by simp
 
 /-- The order-choice factor is absorbed into `2^k` for `k ≥ 2`. -/
-theorem card_le_two_pow {k : ℕ} (hk : 2 ≤ k) :
+theorem card_le_two_pow {k : ℕ} (_ : 2 ≤ k) :
     Fintype.card (BoundedTarget k) ≤ 2 ^ (k + k.choose 2) := by
   calc
     Fintype.card (BoundedTarget k) ≤ (k + 1) * 2 ^ k.choose 2 := card_le k
@@ -271,7 +273,7 @@ theorem card_descentState_le {N r k : ℕ} (hk : 2 ≤ k) :
       exact BoundedTarget.card_le_two_pow hk
     _ = 2 ^ (N + r * k + r * k.choose 2) := by
       simp only [Finset.prod_const, Finset.card_univ, Fintype.card_fin,
-        Nat.card_eq_fintype_card, nsmul_eq_mul, ← pow_mul, ← pow_add]
+        ← pow_mul, ← pow_add]
       congr 1
       ring
 
@@ -599,10 +601,11 @@ def flattenEmbedding {V : Type*} [DecidableEq V] (G : SimpleGraph V)
     Subtype.ext (congrArg (fun z : (↑S : Set V) ↦ z.1) h)
   map_rel_iff' := Iff.rfl
 
-@[simp] theorem range_flattenEmbedding {V : Type*} [Fintype V] [DecidableEq V]
+@[simp] theorem range_flattenEmbedding {V : Type*} [Finite V] [DecidableEq V]
     (G : SimpleGraph V) (S : Finset V) (W : Finset (↑S : Set V)) :
     Finset.univ.map (flattenEmbedding G S W).toEmbedding = W := by
   classical
+  let := Fintype.ofFinite V
   ext x
   constructor
   · intro hx
@@ -628,7 +631,7 @@ def flattenEmbedding {V : Type*} [DecidableEq V] (G : SimpleGraph V)
 /-- Pulling a coloring back along an induced embedding whose image is `W`
 transports a restricted non-Janson obstruction to the source graph. -/
 theorem badForColoringOn_pullback_embedding
-    {U X V : Type*} [Fintype U] [Fintype X] [DecidableEq X]
+    {U X V : Type*} [Finite U] [Fintype X] [DecidableEq X]
     [Nonempty X] [Fintype V] [DecidableEq V]
     {r : ℕ} {order : Fin r → ℕ} {pNum pDen : ℕ}
     (targets : Events.TargetVector r order)
@@ -643,6 +646,7 @@ theorem badForColoringOn_pullback_embedding
         (Events.jansonRadius pNum pDen (Fintype.card X))) :
     Events.BadForColoringOn pNum pDen targets K (coloring.pullback e.toHom) := by
   classical
+  let := Fintype.ofFinite U
   intro i hi
   have hi' :
       Hypergraph.IsJanson
@@ -660,7 +664,7 @@ theorem badForColoringOn_pullback_embedding
 restriction to a nested finite set remains bad on the directly flattened
 induced graph. -/
 theorem badForColoringOn_flatten
-    {V : Type*} [Fintype V] [DecidableEq V]
+    {V : Type*} [Finite V] [DecidableEq V]
     {r : ℕ} {order : Fin r → ℕ} {pNum pDen : ℕ}
     (targets : Events.TargetVector r order) (G : SimpleGraph V)
     (S : Finset V) (W : Finset (↑S : Set V))
@@ -676,6 +680,7 @@ theorem badForColoringOn_flatten
       (G.induce (↑(flattenFinset S W) : Set V))
       (coloring.pullback (flattenEmbedding G S W).toHom) := by
   classical
+  let := Fintype.ofFinite V
   have hflatPos : 0 < (flattenFinset S W).card := by
     rw [card_flattenFinset]
     exact Finset.card_pos.mpr hW

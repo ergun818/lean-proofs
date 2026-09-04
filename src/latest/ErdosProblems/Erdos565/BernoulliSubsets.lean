@@ -47,23 +47,29 @@ def Increasing (event : Finset V → Prop) : Prop :=
 def Decreasing (event : Finset V → Prop) : Prop :=
   ∀ ⦃X Y⦄, X ⊆ Y → event Y → event X
 
+omit [Fintype V] in
 @[simp] theorem weight_eq (q : ℝ) (U X : Finset V) :
     weight q U X = (∏ _x ∈ X, q) * ∏ _x ∈ U \ X, (1 - q) := rfl
 
+omit [Fintype V] in
 /-- Cardinality form of the homogeneous mass. -/
 theorem weight_eq_pow (q : ℝ) (U X : Finset V) :
     weight q U X = q ^ X.card * (1 - q) ^ (U \ X).card := by
   simp [weight, Erdos76.FiniteNibble.bernoulliMass]
 
+omit [Fintype V] in
 theorem weight_nonneg {q : ℝ} (hq0 : 0 ≤ q) (hq1 : q ≤ 1)
     {U X : Finset V} (hXU : X ⊆ U) :
     0 ≤ weight q U X := by
   exact Erdos76.FiniteNibble.bernoulliMass_nonneg hXU
     (fun _ _ ↦ hq0) (fun _ _ ↦ hq1)
 
-theorem eventMass_nonneg {q : ℝ} (hq0 : 0 ≤ q) (hq1 : q ≤ 1)
+omit [Fintype V] in
+theorem eventMass_nonneg [Finite V] {q : ℝ} (hq0 : 0 ≤ q) (hq1 : q ≤ 1)
     (U : Finset V) (event : Finset V → Prop) :
     0 ≤ eventMass q U event := by
+  classical
+  let := Fintype.ofFinite V
   unfold eventMass
   exact sum_nonneg fun X hX ↦ by
     split
@@ -90,20 +96,27 @@ theorem eventMass_eq_restrictedEventMass (q : ℝ) (U : Finset V)
           (fun X : Finset V ↦ if event X then weight q U X else 0))
     _ = eventMass q U event := rfl
 
+omit [Fintype V] in
 /-- The masses of all subsets add to one. -/
-@[simp] theorem eventMass_true (q : ℝ) (U : Finset V) :
+@[simp] theorem eventMass_true [Finite V] (q : ℝ) (U : Finset V) :
     eventMass q U (fun _ ↦ True) = 1 := by
+  classical
+  let := Fintype.ofFinite V
   rw [eventMass_eq_restrictedEventMass]
   exact Erdos76.FiniteNibble.restrictedEventMass_true U (fun _ ↦ q)
 
+omit [Fintype V] in
 @[simp] theorem eventMass_false (q : ℝ) (U : Finset V) :
     eventMass q U (fun _ ↦ False) = 0 := by
   simp [eventMass]
 
-theorem eventMass_mono {q : ℝ} (hq0 : 0 ≤ q) (hq1 : q ≤ 1)
+omit [Fintype V] in
+theorem eventMass_mono [Finite V] {q : ℝ} (hq0 : 0 ≤ q) (hq1 : q ≤ 1)
     {U : Finset V} {A B : Finset V → Prop}
     (hAB : ∀ X, A X → B X) :
     eventMass q U A ≤ eventMass q U B := by
+  classical
+  let := Fintype.ofFinite V
   unfold eventMass
   apply sum_le_sum
   intro X hX
@@ -114,54 +127,70 @@ theorem eventMass_mono {q : ℝ} (hq0 : 0 ≤ q) (hq1 : q ≤ 1)
     · exact weight_nonneg hq0 hq1 (mem_powerset.mp hX)
     · exact le_rfl
 
-theorem eventMass_le_one {q : ℝ} (hq0 : 0 ≤ q) (hq1 : q ≤ 1)
+omit [Fintype V] in
+theorem eventMass_le_one [Finite V] {q : ℝ} (hq0 : 0 ≤ q) (hq1 : q ≤ 1)
     (U : Finset V) (event : Finset V → Prop) :
     eventMass q U event ≤ 1 := by
+  classical
+  let := Fintype.ofFinite V
   rw [← eventMass_true q U]
   exact eventMass_mono hq0 hq1 (fun _ _ ↦ trivial)
 
+omit [Fintype V] in
 /-- Exact factorisation for events on disjoint coordinate blocks. -/
-theorem eventMass_and_of_disjoint {q : ℝ} {U W : Finset V}
+theorem eventMass_and_of_disjoint [Finite V] {q : ℝ} {U W : Finset V}
     {A B : Finset V → Prop} (hUW : Disjoint U W)
     (hA : Erdos76.FiniteNibble.EventDependsOn U A)
     (hB : Erdos76.FiniteNibble.EventDependsOn W B) :
     eventMass q (U ∪ W) (fun X ↦ A X ∧ B X) =
       eventMass q U A * eventMass q W B := by
+  classical
+  let := Fintype.ofFinite V
   rw [eventMass_eq_restrictedEventMass, eventMass_eq_restrictedEventMass,
     eventMass_eq_restrictedEventMass]
   exact Erdos76.FiniteNibble.restrictedEventMass_and_of_disjoint hUW hA hB
 
+omit [Fintype V] in
 /-- A local event has the same mass after irrelevant coordinates are added. -/
-theorem eventMass_union_of_dependsOn_left {q : ℝ} {U W : Finset V}
+theorem eventMass_union_of_dependsOn_left [Finite V] {q : ℝ} {U W : Finset V}
     {A : Finset V → Prop} (hUW : Disjoint U W)
     (hA : Erdos76.FiniteNibble.EventDependsOn U A) :
     eventMass q (U ∪ W) A = eventMass q U A := by
+  classical
+  let := Fintype.ofFinite V
   have h := eventMass_and_of_disjoint (q := q) hUW hA
     (Erdos76.FiniteNibble.eventDependsOn_true W)
   simpa using h
 
+omit [Fintype V] in
 /-- A local event has the same mass after irrelevant coordinates are added. -/
-theorem eventMass_union_of_dependsOn_right {q : ℝ} {U W : Finset V}
+theorem eventMass_union_of_dependsOn_right [Finite V] {q : ℝ} {U W : Finset V}
     {B : Finset V → Prop} (hUW : Disjoint U W)
     (hB : Erdos76.FiniteNibble.EventDependsOn W B) :
     eventMass q (U ∪ W) B = eventMass q W B := by
+  classical
+  let := Fintype.ofFinite V
   have h := eventMass_and_of_disjoint (q := q) hUW
     (Erdos76.FiniteNibble.eventDependsOn_true U) hB
   simpa [mul_comm] using h
 
+omit [Fintype V] in
 /-- Conditioning on an event in a disjoint coordinate block leaves the first
 event's mass unchanged. -/
-theorem conditionalMass_of_disjoint {q : ℝ} {U W : Finset V}
+theorem conditionalMass_of_disjoint [Finite V] {q : ℝ} {U W : Finset V}
     {A B : Finset V → Prop} (hUW : Disjoint U W)
     (hA : Erdos76.FiniteNibble.EventDependsOn U A)
     (hB : Erdos76.FiniteNibble.EventDependsOn W B)
     (hBpos : eventMass q W B ≠ 0) :
     conditionalMass q (U ∪ W) A B = eventMass q U A := by
+  classical
+  let := Fintype.ofFinite V
   unfold conditionalMass
   rw [eventMass_and_of_disjoint hUW hA hB,
     eventMass_union_of_dependsOn_right hUW hB]
   exact mul_div_cancel_right₀ _ hBpos
 
+omit [Fintype V] in
 /-- The event that every coordinate of `L` is present depends only on `L`. -/
 theorem contains_dependsOn (L : Finset V) :
     Erdos76.FiniteNibble.EventDependsOn L (fun X ↦ L ⊆ X) := by
@@ -177,10 +206,13 @@ theorem contains_dependsOn (L : Finset V) :
     rw [← hXY] at hx
     exact (mem_inter.mp hx).1
 
+omit [Fintype V] in
 /-- The cylinder probability `P(L ⊆ X) = q^|L|`. -/
-theorem eventMass_contains {q : ℝ} (hq0 : 0 ≤ q) (hq1 : q ≤ 1)
+theorem eventMass_contains [Finite V] {q : ℝ} (_ : 0 ≤ q) (_ : q ≤ 1)
     {U L : Finset V} (hLU : L ⊆ U) :
     eventMass q U (fun X ↦ L ⊆ X) = q ^ L.card := by
+  classical
+  let := Fintype.ofFinite V
   -- Split `U` into `L` and its complement.  On the `L` block only the full
   -- subset contributes, while the complementary block has total mass one.
   have hdisj : Disjoint L (U \ L) := disjoint_sdiff
@@ -188,7 +220,7 @@ theorem eventMass_contains {q : ℝ} (hq0 : 0 ≤ q) (hq1 : q ≤ 1)
   rw [← hcover, eventMass_union_of_dependsOn_left hdisj (contains_dependsOn L)]
   unfold eventMass
   rw [sum_eq_single L]
-  · simp [weight_eq_pow]
+  · simp
   · intro X hX hXL
     have hsub : X ⊆ L := mem_powerset.mp hX
     have hnsub : ¬L ⊆ X := by
@@ -200,11 +232,13 @@ theorem eventMass_contains {q : ℝ} (hq0 : 0 ≤ q) (hq1 : q ≤ 1)
 private def indicator (event : Finset V → Prop) (X : Finset V) : ℝ :=
   if event X then 1 else 0
 
+omit [DecidableEq V] [Fintype V] in
 private theorem indicator_nonneg (event : Finset V → Prop) :
     0 ≤ indicator event := by
   intro X
   by_cases h : event X <;> simp [indicator, h]
 
+omit [DecidableEq V] [Fintype V] in
 private theorem indicator_monotone {event : Finset V → Prop}
     (hevent : Increasing event) : Monotone (indicator event) := by
   intro X Y hXY
@@ -213,6 +247,7 @@ private theorem indicator_monotone {event : Finset V → Prop}
     simp [indicator, hX, hY]
   · by_cases hY : event Y <;> simp [indicator, hX, hY]
 
+omit [DecidableEq V] [Fintype V] in
 private theorem indicator_antitone {event : Finset V → Prop}
     (hevent : Decreasing event) : Antitone (indicator event) := by
   intro X Y hXY
@@ -325,7 +360,7 @@ theorem harris_decreasing {q : ℝ} (hq0 : 0 ≤ q) (hq1 : q ≤ 1)
   have hh := harris_increasing (V := V) hq'0 hq'1 hAc hBc
   have hweight_compl (X : Finset V) :
       weight (1 - q) Finset.univ Xᶜ = weight q Finset.univ X := by
-    simp [weight_eq_pow, Finset.card_compl, card_sdiff, inter_univ]
+    simp [Finset.card_compl, card_sdiff, inter_univ]
     ring
   let e : Finset V ≃ Finset V := Equiv.ofBijective (fun X ↦ Xᶜ) compl_bijective
   have mass_compl (C : Finset V → Prop) :

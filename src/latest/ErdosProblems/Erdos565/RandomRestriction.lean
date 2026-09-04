@@ -32,10 +32,12 @@ def adjoinWeight (v : V) {H : Hypergraph V} (ν : EdgeWeight H) :
     EdgeWeight (adjoinVertex v H) :=
   fun F ↦ ν (F.erase v)
 
+omit [Fintype V] in
 @[simp] lemma mem_adjoinVertex {v : V} {H : Hypergraph V} {F : Finset V} :
     F ∈ adjoinVertex v H ↔ ∃ E ∈ H, insert v E = F := by
   simp [adjoinVertex]
 
+omit [Fintype V] in
 lemma insert_injOn_of_fresh {v : V} {H : Hypergraph V} (hFresh : FreshFor v H) :
     Set.InjOn (insert v) (↑H : Set (Finset V)) := by
   intro E hE F hF hEq
@@ -44,10 +46,12 @@ lemma insert_injOn_of_fresh {v : V} {H : Hypergraph V} (hFresh : FreshFor v H) :
   simpa [Finset.erase_insert hEv, Finset.erase_insert hFv] using
     congrArg (fun A : Finset V ↦ A.erase v) hEq
 
+omit [Fintype V] in
 lemma erase_insert_of_fresh {v : V} {H : Hypergraph V} (hFresh : FreshFor v H)
     {E : Finset V} (hE : E ∈ H) : (insert v E).erase v = E := by
   exact Finset.erase_insert (hFresh E hE)
 
+omit [Fintype V] in
 lemma subset_insert_iff_erase_subset {v : V} {E L : Finset V} :
     L ⊆ insert v E ↔ L.erase v ⊆ E := by
   constructor
@@ -57,30 +61,37 @@ lemma subset_insert_iff_erase_subset {v : V} {E L : Finset V} :
     simpa [hxne] using h hxL
   · intro h x hx
     by_cases hxv : x = v
-    · simpa [hxv]
+    · simp [hxv]
     · have hxerase : x ∈ L.erase v := Finset.mem_erase.mpr ⟨hxv, hx⟩
       exact Finset.mem_insert_of_mem (h hxerase)
 
+omit [Fintype V] in
 @[simp] lemma adjoinWeight_insert {v : V} {H : Hypergraph V}
     (hFresh : FreshFor v H) (ν : EdgeWeight H) {E : Finset V} (hE : E ∈ H) :
     adjoinWeight v ν (insert v E) = ν E := by
   simp [adjoinWeight, Finset.erase_insert (hFresh E hE)]
 
+omit [Fintype V] in
 /-- Adjoining a fresh vertex preserves total mass. -/
-lemma mass_adjoinWeight {v : V} {H : Hypergraph V} (hFresh : FreshFor v H)
+lemma mass_adjoinWeight [Finite V] {v : V} {H : Hypergraph V} (hFresh : FreshFor v H)
     (ν : EdgeWeight H) :
     mass (adjoinVertex v H) (adjoinWeight v ν) = mass H ν := by
+  classical
+  let := Fintype.ofFinite V
   rw [mass, mass, adjoinVertex, Finset.sum_image (insert_injOn_of_fresh hFresh)]
   apply Finset.sum_congr rfl
   intro E hE
   simp [adjoinWeight, Finset.erase_insert (hFresh E hE)]
 
+omit [Fintype V] in
 /-- Claim 7.10: after adjoining a fresh vertex, the degree of `L` is the
 degree of `L.erase v` in the original measure. -/
-lemma weightedDegree_adjoinWeight {v : V} {H : Hypergraph V}
+lemma weightedDegree_adjoinWeight [Finite V] {v : V} {H : Hypergraph V}
     (hFresh : FreshFor v H) (ν : EdgeWeight H) (L : Finset V) :
     weightedDegree (adjoinVertex v H) (adjoinWeight v ν) L =
       weightedDegree H ν (L.erase v) := by
+  classical
+  let := Fintype.ofFinite V
   rw [weightedDegree, weightedDegree, adjoinVertex]
   rw [Finset.filter_image]
   have hInj : Set.InjOn (insert v)
@@ -109,6 +120,7 @@ lemma singletonEnergy_nonneg (H : Hypergraph V) (ν : EdgeWeight H) :
     0 ≤ singletonEnergy H ν := by
   exact Finset.sum_nonneg fun _ _ ↦ sq_nonneg _
 
+omit [Fintype V] in
 lemma weightedDegree_eq_zero_of_fresh_mem {v : V} {H : Hypergraph V}
     (hFresh : FreshFor v H) (ν : EdgeWeight H) {L : Finset V} (hvL : v ∈ L) :
     weightedDegree H ν L = 0 := by
@@ -118,9 +130,12 @@ lemma weightedDegree_eq_zero_of_fresh_mem {v : V} {H : Hypergraph V}
   have hsub : L ⊆ E := (Finset.mem_filter.mp hE).2
   exact (hFresh E (Finset.mem_filter.mp hE).1 (hsub hvL)).elim
 
-lemma singletonDegree_eq_zero_of_fresh {v : V} {H : Hypergraph V}
+omit [Fintype V] in
+lemma singletonDegree_eq_zero_of_fresh [Finite V] {v : V} {H : Hypergraph V}
     (hFresh : FreshFor v H) (ν : EdgeWeight H) :
     weightedDegree H ν {v} = 0 := by
+  classical
+  let := Fintype.ofFinite V
   exact weightedDegree_eq_zero_of_fresh_mem hFresh ν (Finset.mem_singleton_self v)
 
 private noncomputable def lambdaTerm (H : Hypergraph V) (p : ℝ) (ν : EdgeWeight H)
@@ -168,7 +183,7 @@ private lemma not_mem_of_mem_positiveSetsWithout {v : V} {K : Finset V}
   exact Finset.notMem_erase v Finset.univ ((mem_positiveSetsWithout.mp hK).1 hvK)
 
 private lemma adjoin_sum_with_fresh {v : V} {H : Hypergraph V}
-    (hFresh : FreshFor v H) {p : ℝ} (hp : p ≠ 0) (ν : EdgeWeight H) :
+    (hFresh : FreshFor v H) {p : ℝ} (_ : p ≠ 0) (ν : EdgeWeight H) :
     (∑ L ∈ jansonSets with v ∈ L,
       lambdaTerm (adjoinVertex v H) p (adjoinWeight v ν) L) =
       ∑ K ∈ positiveSetsWithout v,
@@ -245,7 +260,7 @@ private lemma positive_large_sum {v : V} {H : Hypergraph V}
   simp only [lambdaTerm]
   rw [pow_succ]
   field_simp
-  <;> ring
+  ring
 
 private lemma positive_singleton_sum {v : V} {H : Hypergraph V}
     (hFresh : FreshFor v H) {p : ℝ} (hp : p ≠ 0) (ν : EdgeWeight H) :
@@ -281,7 +296,7 @@ private lemma positive_singleton_sum {v : V} {H : Hypergraph V}
           exact ⟨by
             intro x hx
             have hxu : x = u := Finset.mem_singleton.mp hx
-            simpa [hxu, huv] using hu,
+            simp [hxu, huv],
             by simp⟩
         · simp
       · simp
@@ -308,7 +323,6 @@ private lemma positive_singleton_sum {v : V} {H : Hypergraph V}
   apply Finset.sum_congr rfl
   intro u hu
   field_simp
-  <;> ring
 
 private lemma positive_sum_expansion {v : V} {H : Hypergraph V}
     (hFresh : FreshFor v H) {p : ℝ} (hp : p ≠ 0) (ν : EdgeWeight H) :
@@ -336,12 +350,14 @@ theorem Lambda_adjoinWeight {v : V} {H : Hypergraph V}
 
 /-! ## Pointwise domination -/
 
+omit [DecidableEq V] [Fintype V] in
 lemma mass_le_of_pointwise {H : Hypergraph V} {μ ν : EdgeWeight H} {c : ℝ}
     (hpoint : ∀ E ∈ H, (μ E : ℝ) ≤ c * (ν E : ℝ)) :
     mass H μ ≤ c * mass H ν := by
   rw [mass, mass, Finset.mul_sum]
   exact Finset.sum_le_sum fun E hE ↦ hpoint E hE
 
+omit [Fintype V] in
 lemma weightedDegree_le_of_pointwise {H : Hypergraph V} {μ ν : EdgeWeight H} {c : ℝ}
     (hpoint : ∀ E ∈ H, (μ E : ℝ) ≤ c * (ν E : ℝ))
     (L : Finset V) :
@@ -353,7 +369,7 @@ lemma weightedDegree_le_of_pointwise {H : Hypergraph V} {μ ν : EdgeWeight H} {
 
 /-- A pointwise scalar bound squares in the Janson energy. -/
 lemma Lambda_le_of_pointwise {H : Hypergraph V} {μ ν : EdgeWeight H} {c p : ℝ}
-    (hp : 0 < p) (hc : 0 ≤ c)
+    (hp : 0 < p) (_ : 0 ≤ c)
     (hpoint : ∀ E ∈ H, (μ E : ℝ) ≤ c * (ν E : ℝ)) :
     Lambda H p μ ≤ c ^ 2 * Lambda H p ν := by
   rw [Lambda, Lambda, Finset.mul_sum]
@@ -373,7 +389,7 @@ lemma Lambda_le_of_pointwise {H : Hypergraph V} {μ ν : EdgeWeight H} {c p : �
     _ = c ^ 2 * (weightedDegree H ν L ^ 2 / p ^ L.card) := by ring
 
 lemma singletonEnergy_le_of_pointwise {H : Hypergraph V}
-    {μ ν : EdgeWeight H} {c : ℝ} (hc : 0 ≤ c)
+    {μ ν : EdgeWeight H} {c : ℝ} (_ : 0 ≤ c)
     (hpoint : ∀ E ∈ H, (μ E : ℝ) ≤ c * (ν E : ℝ)) :
     singletonEnergy H μ ≤ c ^ 2 * singletonEnergy H ν := by
   rw [singletonEnergy, singletonEnergy, Finset.mul_sum]
@@ -397,6 +413,7 @@ noncomputable def inverseProbabilityWeight {H : Hypergraph V}
     (edgeEvent : Finset V → Finset Omega) (omega : Omega) : EdgeWeight H :=
   fun E ↦ gamma * ν E * (if omega ∈ edgeEvent E then 1 else 0) / probability E
 
+omit [DecidableEq V] [Fintype V] in
 @[simp] lemma inverseProbabilityWeight_apply {H : Hypergraph V}
     (gamma : NNReal) (ν : EdgeWeight H) (probability : Finset V → NNReal)
     (edgeEvent : Finset V → Finset Omega) (omega : Omega) (E : Finset V) :
@@ -404,15 +421,18 @@ noncomputable def inverseProbabilityWeight {H : Hypergraph V}
       gamma * ν E * (if omega ∈ edgeEvent E then 1 else 0) / probability E := by
   rfl
 
+omit [DecidableEq V] [Fintype V] in
 /-- Claim 7.12, pointwise form: a uniform lower bound `a` on all inclusion
 probabilities gives domination by `gamma / a`. -/
-lemma inverseProbabilityWeight_pointwise {H : Hypergraph V}
+lemma inverseProbabilityWeight_pointwise [Finite V] {H : Hypergraph V}
     {gamma a : NNReal} {ν : EdgeWeight H} {probability : Finset V → NNReal}
     {edgeEvent : Finset V → Finset Omega} {omega : Omega}
     (ha : 0 < a) (hprob : ∀ E ∈ H, a ≤ probability E) :
     ∀ E ∈ H,
       (inverseProbabilityWeight gamma ν probability edgeEvent omega E : ℝ) ≤
         ((gamma : ℝ) / (a : ℝ)) * (ν E : ℝ) := by
+  classical
+  let := Fintype.ofFinite V
   intro E hE
   by_cases hkeep : omega ∈ edgeEvent E
   · simp only [inverseProbabilityWeight_apply, hkeep, if_pos, mul_one,
@@ -450,6 +470,7 @@ lemma singletonEnergy_inverseProbabilityWeight_le {H : Hypergraph V}
     (div_nonneg (NNReal.coe_nonneg gamma) (NNReal.coe_nonneg a))
     (inverseProbabilityWeight_pointwise ha hprob)
 
+omit [DecidableEq V] [Fintype V] in
 /-- Claim 7.10, edgewise unbiasedness: inverse-probability reweighting
 has expected value `gamma * nu E`. -/
 theorem conditionalExpectation_inverseProbabilityWeight_apply
@@ -483,8 +504,9 @@ theorem conditionalExpectation_inverseProbabilityWeight_apply
   rw [hfun]
   exact h
 
+omit [DecidableEq V] [Fintype V] in
 /-- Expected total mass of the random restriction. -/
-theorem conditionalExpectation_mass_inverseProbabilityWeight
+theorem conditionalExpectation_mass_inverseProbabilityWeight [Finite V]
     {H : Hypergraph V} (gamma : NNReal) (ν : EdgeWeight H)
     (probability : Finset V → NNReal) (edgeEvent : Finset V → Finset Omega)
     (outcomes given : Finset Omega) (sampleWeight : Omega → ℝ)
@@ -497,6 +519,8 @@ theorem conditionalExpectation_mass_inverseProbabilityWeight
         (fun omega ↦ mass H
           (inverseProbabilityWeight gamma ν probability edgeEvent omega)) =
       (gamma : ℝ) * mass H ν := by
+  classical
+  let := Fintype.ofFinite V
   simp only [mass]
   rw [FiniteExpectation.conditionalExpectation_sum, Finset.mul_sum]
   apply Finset.sum_congr rfl
@@ -504,9 +528,10 @@ theorem conditionalExpectation_mass_inverseProbabilityWeight
   exact conditionalExpectation_inverseProbabilityWeight_apply gamma ν probability
     edgeEvent outcomes given sampleWeight hmass hprob hprob0 E
 
+omit [Fintype V] in
 /-- Expected weighted degrees are unbiased simultaneously for every finite
 set `L`. -/
-theorem conditionalExpectation_weightedDegree_inverseProbabilityWeight
+theorem conditionalExpectation_weightedDegree_inverseProbabilityWeight [Finite V]
     {H : Hypergraph V} (gamma : NNReal) (ν : EdgeWeight H)
     (probability : Finset V → NNReal) (edgeEvent : Finset V → Finset Omega)
     (outcomes given : Finset Omega) (sampleWeight : Omega → ℝ)
@@ -519,6 +544,8 @@ theorem conditionalExpectation_weightedDegree_inverseProbabilityWeight
         (fun omega ↦ weightedDegree H
           (inverseProbabilityWeight gamma ν probability edgeEvent omega) L) =
       (gamma : ℝ) * weightedDegree H ν L := by
+  classical
+  let := Fintype.ofFinite V
   simp only [weightedDegree]
   rw [FiniteExpectation.conditionalExpectation_sum, Finset.mul_sum]
   apply Finset.sum_congr rfl
@@ -660,7 +687,7 @@ lemma acdfm_restriction_bracket_le {p t : ℝ}
 /-- The paper's hypothesis `p <= q / (2^11 r s^2)`, with `q <= 1`,
 implies the cross-multiplied smallness used above. -/
 lemma acdfm_smallness_of_p_le {p q t : ℝ}
-    (hp : 0 < p) (hq : q ≤ 1) (ht : 1 ≤ t)
+    (_ : 0 < p) (hq : q ≤ 1) (ht : 1 ≤ t)
     (hpq : p ≤ q / (2048 * t)) :
     2048 * t * p ≤ 1 := by
   have hden : 0 < 2048 * t := mul_pos (by norm_num) (lt_of_lt_of_le (by norm_num) ht)
@@ -681,7 +708,7 @@ theorem Lambda_adjoin_inverseProbabilityWeight_lt
     {ν : EdgeWeight H} {probability : Finset V → NNReal}
     {edgeEvent : Finset V → Finset Omega} {omega : Omega}
     (hp : 0 < p) (ht : 1 ≤ t) (hsmall : 2048 * t * p ≤ 1)
-    (hgamma : 0 < gamma) (ha : 0 < a) (hsqrtEta : 0 < sqrtEta)
+    (hgamma : 0 < gamma) (ha : 0 < a) (_ : 0 < sqrtEta)
     (hsqrt : sqrtEta = p ^ 2 * (a : ℝ) ^ 2)
     (hLambda : Lambda H p ν < 1)
     (hsingleton : singletonEnergy H ν ≤ 256 * t * p)

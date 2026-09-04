@@ -57,6 +57,7 @@ def scale {H : Hypergraph V} (c : NNReal) (ν : EdgeWeight H) : EdgeWeight H :=
 def zeroExtend {H K : Hypergraph V} (_hHK : H ⊆ K) (ν : EdgeWeight H) : EdgeWeight K :=
   fun E ↦ if E ∈ H then ν E else 0
 
+omit [DecidableEq V] in
 @[simp] lemma scale_apply {H : Hypergraph V} (c : NNReal) (ν : EdgeWeight H)
     (E : Finset V) : scale c ν E = c * ν E := by
   rfl
@@ -73,13 +74,16 @@ def zeroExtend {H K : Hypergraph V} (_hHK : H ⊆ K) (ν : EdgeWeight H) : EdgeW
 
 /-! ## Linearity of mass and degree -/
 
+omit [DecidableEq V] in
 @[simp] lemma mass_zero (H : Hypergraph V) : mass H (0 : EdgeWeight H) = 0 := by
   simp [mass]
 
+omit [DecidableEq V] in
 lemma mass_add (H : Hypergraph V) (ν μ : EdgeWeight H) :
     mass H (ν + μ) = mass H ν + mass H μ := by
   simp [mass, Finset.sum_add_distrib]
 
+omit [DecidableEq V] in
 lemma mass_scale (H : Hypergraph V) (c : NNReal) (ν : EdgeWeight H) :
     mass H (scale c ν) = (c : ℝ) * mass H ν := by
   simp [mass, scale, Finset.mul_sum]
@@ -98,6 +102,7 @@ lemma weightedDegree_scale (H : Hypergraph V) (c : NNReal) (ν : EdgeWeight H)
     weightedDegree H (scale c ν) L = (c : ℝ) * weightedDegree H ν L := by
   simp [weightedDegree, scale, Finset.mul_sum]
 
+omit [DecidableEq V] in
 lemma mass_nonneg (H : Hypergraph V) (ν : EdgeWeight H) : 0 ≤ mass H ν := by
   exact Finset.sum_nonneg fun E _ ↦ NNReal.coe_nonneg (ν E)
 
@@ -232,7 +237,7 @@ lemma nonempty [Fintype V] {H : Hypergraph V} {p R : ℝ}
   rw [Finset.nonempty_iff_ne_empty]
   intro hEmpty
   subst H
-  simpa [mass] using hm
+  simp [mass] at hm
 
 /-- Scale a positive-radius witness to any prescribed positive total mass. -/
 lemma exists_normalized [Fintype V] {H : Hypergraph V} {p R y : ℝ}

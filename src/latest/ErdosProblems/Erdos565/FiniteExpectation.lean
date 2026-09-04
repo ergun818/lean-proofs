@@ -100,20 +100,24 @@ theorem conditioningMass_ne_zero_of_pos {outcomes given : Finset Ω}
 
 /-! ## Linearity -/
 
+omit [DecidableEq Ω] in
 @[simp] theorem expectation_zero (outcomes : Finset Ω) (weight : Ω → ℝ) :
     expectation outcomes weight (fun _ ↦ 0) = 0 := by
   simp [expectation]
 
+omit [DecidableEq Ω] in
 theorem expectation_add (outcomes : Finset Ω) (weight f g : Ω → ℝ) :
     expectation outcomes weight (fun ω ↦ f ω + g ω) =
       expectation outcomes weight f + expectation outcomes weight g := by
   simp only [expectation, mul_add, Finset.sum_add_distrib]
 
+omit [DecidableEq Ω] in
 theorem expectation_sub (outcomes : Finset Ω) (weight f g : Ω → ℝ) :
     expectation outcomes weight (fun ω ↦ f ω - g ω) =
       expectation outcomes weight f - expectation outcomes weight g := by
   simp only [expectation, mul_sub, Finset.sum_sub_distrib]
 
+omit [DecidableEq Ω] in
 theorem expectation_const_mul (outcomes : Finset Ω) (weight f : Ω → ℝ) (c : ℝ) :
     expectation outcomes weight (fun ω ↦ c * f ω) =
       c * expectation outcomes weight f := by
@@ -160,7 +164,7 @@ theorem conditionalExpectation_mul_const (outcomes given : Finset Ω)
       conditionalExpectation outcomes given weight f * c := by
   simpa [mul_comm] using conditionalExpectation_const_mul outcomes given weight f c
 
-theorem conditionalExpectation_sum [DecidableEq ι] (outcomes given : Finset Ω)
+theorem conditionalExpectation_sum (outcomes given : Finset Ω)
     (weight : Ω → ℝ) (indices : Finset ι) (f : ι → Ω → ℝ) :
     conditionalExpectation outcomes given weight (fun ω ↦ ∑ i ∈ indices, f i ω) =
       ∑ i ∈ indices, conditionalExpectation outcomes given weight (f i) := by
@@ -177,7 +181,7 @@ theorem expectation_indicator (outcomes event : Finset Ω) (weight : Ω → ℝ)
       conditioningMass outcomes event weight := by
   classical
   unfold expectation conditioningMass conditioningSet
-  simp [Finset.sum_filter]
+  simp
 
 theorem conditionalExpectation_indicator (outcomes given event : Finset Ω)
     (weight : Ω → ℝ) :
@@ -192,7 +196,7 @@ theorem conditionalExpectation_indicator (outcomes given event : Finset Ω)
   unfold conditioningMass conditioningSet
   congr 1
   ext ω
-  simp [and_left_comm, and_assoc]
+  simp
 
 theorem conditionalProbability_eq_mass_div (outcomes given event : Finset Ω)
     (weight : Ω → ℝ) :
@@ -223,7 +227,7 @@ theorem conditionalExpectation_unbiased_indicator
 
 /-- A finite sum of inverse-probability-weighted indicators is unbiased
 term-by-term.  This is the form used for random restricted edge weights. -/
-theorem conditionalExpectation_unbiased_sum [DecidableEq ι]
+theorem conditionalExpectation_unbiased_sum
     (outcomes given : Finset Ω) (weight : Ω → ℝ) (indices : Finset ι)
     (event : ι → Finset Ω) (coefficient : ι → ℝ)
     (hmass : conditioningMass outcomes given weight ≠ 0)
@@ -234,6 +238,7 @@ theorem conditionalExpectation_unbiased_sum [DecidableEq ι]
           coefficient i * (if ω ∈ event i then 1 else 0) /
             conditionalProbability outcomes given (event i) weight) =
       ∑ i ∈ indices, coefficient i := by
+  classical
   rw [conditionalExpectation_sum]
   apply Finset.sum_congr rfl
   intro i hi
@@ -297,7 +302,7 @@ theorem sq_conditionalExpectation_le (outcomes given : Finset Ω)
 
 /-- Conditional expectation commutes with the finite cross-degree sum which
 appears when expanding a quadratic Janson energy. -/
-theorem conditionalExpectation_crossDegree_sum [DecidableEq ι]
+theorem conditionalExpectation_crossDegree_sum
     (outcomes given : Finset Ω) (weight : Ω → ℝ) (sets : Finset ι)
     (kernel fixedDegree : ι → ℝ) (randomDegree : Ω → ι → ℝ) :
     conditionalExpectation outcomes given weight
@@ -306,13 +311,14 @@ theorem conditionalExpectation_crossDegree_sum [DecidableEq ι]
       ∑ L ∈ sets, kernel L * fixedDegree L *
         conditionalExpectation outcomes given weight
           (fun ω ↦ randomDegree ω L) := by
+  classical
   rw [conditionalExpectation_sum]
   apply Finset.sum_congr rfl
   intro L hL
   rw [conditionalExpectation_const_mul]
 
 /-- Substitute unbiased expected degrees in the preceding identity. -/
-theorem conditionalExpectation_crossDegree_sum_of_unbiased [DecidableEq ι]
+theorem conditionalExpectation_crossDegree_sum_of_unbiased
     (outcomes given : Finset Ω) (weight : Ω → ℝ) (sets : Finset ι)
     (kernel fixedDegree baseDegree : ι → ℝ) (randomDegree : Ω → ι → ℝ)
     (scale : ℝ)
@@ -323,6 +329,7 @@ theorem conditionalExpectation_crossDegree_sum_of_unbiased [DecidableEq ι]
         (fun ω ↦ ∑ L ∈ sets,
           kernel L * fixedDegree L * randomDegree ω L) =
       scale * ∑ L ∈ sets, kernel L * fixedDegree L * baseDegree L := by
+  classical
   rw [conditionalExpectation_crossDegree_sum]
   rw [Finset.mul_sum]
   apply Finset.sum_congr rfl

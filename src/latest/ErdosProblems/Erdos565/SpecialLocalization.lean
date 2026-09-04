@@ -21,7 +21,7 @@ open scoped BigOperators NNReal
 namespace Erdos565
 namespace SpecialLocalization
 
-open Hypergraph
+open Erdos565.Hypergraph
 
 variable {V U : Type*}
 
@@ -34,30 +34,34 @@ noncomputable def restrictWeight (K : Hypergraph V) {H : Hypergraph V}
     (nu : EdgeWeight H) : EdgeWeight K :=
   fun E => if E ∈ K then nu E else 0
 
+omit [Fintype V] in
 @[simp] theorem restrictWeight_apply_of_mem {K H : Hypergraph V}
     (nu : EdgeWeight H) {E : Finset V} (hE : E ∈ K) :
     restrictWeight K nu E = nu E := by
   simp [restrictWeight, hE]
 
+omit [Fintype V] in
 @[simp] theorem restrictWeight_apply_of_not_mem {K H : Hypergraph V}
     (nu : EdgeWeight H) {E : Finset V} (hE : E ∉ K) :
     restrictWeight K nu E = 0 := by
   simp [restrictWeight, hE]
 
+omit [Fintype V] in
 theorem mass_restrictWeight (K : Hypergraph V) {H : Hypergraph V}
     (nu : EdgeWeight H) :
     mass K (restrictWeight K nu) = ∑ E ∈ K, (nu E : ℝ) := by
   apply Finset.sum_congr rfl
   intro E hE
-  simp [mass, restrictWeight, hE]
+  simp [restrictWeight, hE]
 
+omit [Fintype V] in
 theorem weightedDegree_restrictWeight (K : Hypergraph V) {H : Hypergraph V}
     (nu : EdgeWeight H) (L : Finset V) :
     weightedDegree K (restrictWeight K nu) L =
       ∑ E ∈ K with L ⊆ E, (nu E : ℝ) := by
   apply Finset.sum_congr rfl
   intro E hE
-  simp [weightedDegree, restrictWeight, (Finset.mem_filter.mp hE).1]
+  simp [restrictWeight, (Finset.mem_filter.mp hE).1]
 
 /-- Passing to a subhypergraph and restricting the weight cannot increase
 the Janson energy. -/
@@ -82,11 +86,14 @@ theorem Lambda_restrictWeight_le {K H : Hypergraph V} (hKH : K ⊆ H)
       weightedDegree H nu L ^ 2 := by nlinarith
   exact div_le_div_of_nonneg_right hsquare (pow_pos hp _).le
 
+omit [Fintype V] in
 /-- The mass of a weight splits over a hypergraph and its complement inside
 a larger hypergraph. -/
-theorem mass_inter_add_sdiff (H C : Hypergraph V) (nu : EdgeWeight H) :
+theorem mass_inter_add_sdiff [Finite V] (H C : Hypergraph V) (nu : EdgeWeight H) :
     mass (H ∩ C) (restrictWeight (H ∩ C) nu) +
         mass (H \ C) (restrictWeight (H \ C) nu) = mass H nu := by
+  classical
+  let := Fintype.ofFinite V
   rw [mass_restrictWeight, mass_restrictWeight, mass]
   have hi : H.filter (fun E => E ∈ C) = H ∩ C := by
     ext E
@@ -98,10 +105,13 @@ theorem mass_inter_add_sdiff (H C : Hypergraph V) (nu : EdgeWeight H) :
   exact Finset.sum_filter_add_sum_filter_not H (fun E => E ∈ C)
     (fun E => (nu E : ℝ))
 
+omit [Fintype V] in
 /-- Restricting a weight to more edges can only increase its mass. -/
-theorem mass_restrictWeight_mono {K L H : Hypergraph V} (hKL : K ⊆ L)
+theorem mass_restrictWeight_mono [Finite V] {K L H : Hypergraph V} (hKL : K ⊆ L)
     (nu : EdgeWeight H) :
     mass K (restrictWeight K nu) ≤ mass L (restrictWeight L nu) := by
+  classical
+  let := Fintype.ofFinite V
   rw [mass_restrictWeight, mass_restrictWeight]
   exact Finset.sum_le_sum_of_subset_of_nonneg hKL
     (fun E _ _ => NNReal.coe_nonneg (nu E))
@@ -176,6 +186,7 @@ section FixedContainer
 
 variable [Fintype V] [Fintype U] [DecidableEq V] [DecidableEq U]
 
+omit [Fintype U] [Fintype V] in
 private theorem projected_vertices_subset (pi : V → U) (H : Hypergraph V)
     (X : Finset V) :
     (((H.restrict X).map pi).vertices) ⊆ X.image pi := by
@@ -185,11 +196,16 @@ private theorem projected_vertices_subset (pi : V → U) (H : Hypergraph V)
   obtain ⟨x, hxE, rfl⟩ := Finset.mem_image.mp huK
   exact Finset.mem_image.mpr ⟨x, (mem_restrict.mp hEX).2 hxE, rfl⟩
 
-private theorem fresh_projected_restrict
+omit [Fintype U] [Fintype V] in
+private theorem fresh_projected_restrict [Finite U] [Finite V]
     (pi : V → U) (v : U) (H : Hypergraph V)
     (hv : ∀ x, pi x ≠ v) (X : Finset V) :
-    FreshFor v ((H.restrict X).map pi) :=
-  SpecialContainerTheorem.freshFor_projected_restrict pi v H hv X
+    FreshFor v ((H.restrict X).map pi) := by
+  classical
+  let := Fintype.ofFinite U
+  let := Fintype.ofFinite V
+  exact
+    SpecialContainerTheorem.freshFor_projected_restrict pi v H hv X
 
 /-- A large fixed container cannot remain locally Janson after every small
 deletion.  This is the deterministic first half of the Section 7 argument:
@@ -384,12 +400,14 @@ noncomputable def chosenLift (G : Hypergraph V) (pi : V → U)
   classical
   exact if h : K ∈ G.map pi then Classical.choose (mem_map.mp h) else ∅
 
+omit [DecidableEq V] [Fintype U] [Fintype V] in
 theorem chosenLift_mem {G : Hypergraph V} {pi : V → U} {K : Finset U}
     (hK : K ∈ G.map pi) : chosenLift G pi K ∈ G := by
   classical
   simp only [chosenLift, dif_pos hK]
   exact (Classical.choose_spec (mem_map.mp hK)).1
 
+omit [DecidableEq V] [Fintype U] [Fintype V] in
 theorem image_chosenLift {G : Hypergraph V} {pi : V → U}
     {K : Finset U} (hK : K ∈ G.map pi) :
     (chosenLift G pi K).image pi = K := by
@@ -397,6 +415,7 @@ theorem image_chosenLift {G : Hypergraph V} {pi : V → U}
   simp only [chosenLift, dif_pos hK]
   exact (Classical.choose_spec (mem_map.mp hK)).2
 
+omit [DecidableEq V] [Fintype U] [Fintype V] in
 theorem chosenLift_eq_empty_of_not_mem {G : Hypergraph V} {pi : V → U}
     {K : Finset U} (hK : K ∉ G.map pi) : chosenLift G pi K = ∅ := by
   classical
@@ -442,10 +461,11 @@ theorem coe_conditionalProbabilityNNReal
   intro omega homega
   split <;> norm_num
 
+omit [Fintype U] in
 /-- The conditional decomposition gives the uniform lower bound needed for
 inverse-probability reweighting, including the case where the residual lift
 is empty. -/
-private theorem residual_probability_lower
+private theorem residual_probability_lower [Finite U]
     (pi : V → U) (H : Hypergraph V) (J : Hypergraph V)
     (q : ℝ) (s : ℕ) (T X : Finset V)
     (hH : H.IsUniform s) (hq : 0 < q) (hq8 : q < 1 / 8)
@@ -463,6 +483,7 @@ private theorem residual_probability_lower
     ((q / 2) ^ s : ℝ) ≤
       FiniteExpectation.conditionalProbability outcomes given event weight := by
   classical
+  let := Fintype.ofFinite U
   dsimp only
   let C := SpecialContainerTheorem.uniformizedCover q J s T
   let Gout := H.restrict X \ C
@@ -519,11 +540,12 @@ private theorem residual_probability_lower
     rw [hevent, conditionalProbability_univ _ _ _ hmass.ne']
     exact pow_le_one₀ hbase0 hbase1
 
+omit [Fintype U] [Fintype V] in
 /-- Removing the cover edges in the source and then projecting leaves more
 than half of the normalized mass.  Projection collisions can only add mass,
 which is why an inequality rather than an equality is used here. -/
-private theorem projected_out_mass_gt_half
-    (pi : V → U) (H C : Hypergraph V) {p R : ℝ} (X : Finset V)
+private theorem projected_out_mass_gt_half [Finite U] [Finite V]
+    (pi : V → U) (H C : Hypergraph V) {R : ℝ} (X : Finset V)
     (hpi : SpecialContainer.ProjectionConditions pi H)
     (mu : EdgeWeight ((H.restrict X).map pi))
     (hmass : mass ((H.restrict X).map pi) mu = Real.sqrt R)
@@ -535,6 +557,8 @@ private theorem projected_out_mass_gt_half
     let Kout := Gout.map pi
     Real.sqrt R / 2 < mass Kout (restrictWeight Kout mu) := by
   classical
+  let := Fintype.ofFinite U
+  let := Fintype.ofFinite V
   dsimp only at hcover ⊢
   let G : Hypergraph V := H.restrict X
   let Gout : Hypergraph V := G \ C
@@ -586,10 +610,13 @@ noncomputable def joinedWeight (v : U) (A B : Hypergraph U)
   zeroExtend Finset.subset_union_left rho +
     zeroExtend Finset.subset_union_right (adjoinWeight v mu)
 
-theorem mass_joinedWeight {v : U} {A B : Hypergraph U}
+omit [Fintype U] in
+theorem mass_joinedWeight [Finite U] {v : U} {A B : Hypergraph U}
     (hBfresh : FreshFor v B) (rho : EdgeWeight A) (mu : EdgeWeight B) :
     mass (A ∪ adjoinVertex v B) (joinedWeight v A B rho mu) =
       mass A rho + mass B mu := by
+  classical
+  let := Fintype.ofFinite U
   rw [joinedWeight, mass_add, mass_zeroExtend, mass_zeroExtend,
     mass_adjoinWeight hBfresh]
 
@@ -622,10 +649,11 @@ theorem Lambda_joinedWeight {v : U} {A B : Hypergraph U}
 /-- Two finite sums agree if the summand vanishes on both sides of their
 symmetric difference. -/
 private theorem sum_eq_of_zero_off
-    {alpha : Type*} [DecidableEq alpha] (S T : Finset alpha) (f : alpha → ℝ)
+    {alpha : Type*} (S T : Finset alpha) (f : alpha → ℝ)
     (hST : ∀ x ∈ S, x ∉ T → f x = 0)
     (hTS : ∀ x ∈ T, x ∉ S → f x = 0) :
     ∑ x ∈ S, f x = ∑ x ∈ T, f x := by
+  classical
   rw [← S.sum_inter_add_sum_sdiff T f,
     ← T.sum_inter_add_sum_sdiff S f]
   have hSzero : ∑ x ∈ S \ T, f x = 0 := by
@@ -643,12 +671,14 @@ private theorem sum_eq_of_zero_off
   · intro x hx
     rfl
 
+omit [DecidableEq U] [Fintype U] in
 /-- Mass and all degrees depend only on the edge support of the weight. -/
 private theorem mass_eq_of_zero_off (S T : Hypergraph U)
     (nu : Finset U → NNReal)
     (hST : ∀ E ∈ S, E ∉ T → nu E = 0)
     (hTS : ∀ E ∈ T, E ∉ S → nu E = 0) :
     mass S nu = mass T nu := by
+  classical
   unfold mass
   apply sum_eq_of_zero_off
   · intro E hES hET
@@ -656,6 +686,7 @@ private theorem mass_eq_of_zero_off (S T : Hypergraph U)
   · intro E hET hES
     simp [hTS E hET hES]
 
+omit [Fintype U] in
 private theorem weightedDegree_eq_of_zero_off (S T : Hypergraph U)
     (nu : Finset U → NNReal)
     (hST : ∀ E ∈ S, E ∉ T → nu E = 0)
@@ -789,7 +820,7 @@ private theorem finish_localization_contradiction
         (1 : ℝ) < 2048 * 2 := by norm_num
         _ ≤ 2048 * ((r : ℝ) * (s : ℝ) ^ 2) :=
           mul_le_mul_of_nonneg_left hrs (by norm_num)
-        _ = (2 ^ 11 : ℝ) * r * (s : ℝ) ^ 2 := by norm_num <;> ring
+        _ = (2 ^ 11 : ℝ) * r * (s : ℝ) ^ 2 := by norm_num; ring
     exact hpq.trans_lt (div_lt_self hq hden)
   have hp8 : p < 1 / 8 := hp_lt_q.trans hq8
   have hfactor : 0 ≤ (q / 2) ^ (4 * s) ∧
@@ -888,7 +919,7 @@ private theorem finish_localization_contradiction
           rw [zeroExtend_apply_of_mem _ _ hEadj]
           subst E
           rw [adjoinWeight_insert hKoutFresh (randomWeight omega) hBK]
-          simp [hrandomDef, inverseProbabilityWeight, hnotEvent]
+          simp [hrandomDef, hnotEvent]
         rw [htotalDef]
         simp [joinedWeight, hfirst, hsecond]
     have hTS : ∀ E ∈ Womega, E ∉ fixedUnion → totalWeight omega E = 0 := by
@@ -964,7 +995,7 @@ theorem fixedContainer_localize
       s r q p R R' eta)
     (hs : 0 < s)
     (hH : H.IsUniform s)
-    (hF : F.IsUniform (s + 1))
+    (_ : F.IsUniform (s + 1))
     (hFJ : F.IsJanson p R')
     (hpi : SpecialContainer.ProjectionConditions pi H)
     (hv : ∀ x, pi x ≠ v)
@@ -1015,7 +1046,7 @@ theorem fixedContainer_localize
   have hmuoutMass : Real.sqrt R / 2 <
       mass Kout (restrictWeight Kout mu) := by
     simpa [G, Gout, Kout] using
-      projected_out_mass_gt_half (p := p) pi H C X hpi mu hmumass hcover
+      projected_out_mass_gt_half pi H C X hpi mu hmumass hcover
   let muout : EdgeWeight Kout := restrictWeight Kout mu
   have hKoutK : Kout ⊆ K := by
     exact map_mono Finset.sdiff_subset
@@ -1026,7 +1057,7 @@ theorem fixedContainer_localize
     have hz : (X.image pi).card = 0 := Nat.eq_zero_of_not_pos hnot
     have hproj := hpi.1 X
     rw [hz] at hproj
-    simp at hproj
+    simp only [mul_zero, Nat.le_zero, Finset.card_eq_zero] at hproj
     rw [hproj] at hX
     exact Finset.not_nonempty_empty hX
   have hncarrier : Fintype.card V ≤ 16 * r * (X.image pi).card := by
@@ -1089,7 +1120,7 @@ theorem fixedContainer_localize
     nlinarith [sq_nonneg ((s : ℝ) - 1)]
   have hsmall : 2048 * ((r : ℝ) * (s : ℝ) ^ 2) * p ≤ 1 := by
     apply acdfm_smallness_of_p_le hp (by linarith : q ≤ 1) ht
-    convert hpq using 1 <;> norm_num <;> ring
+    convert hpq using 1; norm_num; ring
   let outcomes : Finset (Finset V) := (Finset.univ : Finset V).powerset
   let given : Finset (Finset V) :=
     ConditionalDecomposition.independentContainingEvent Finset.univ J T
@@ -1175,7 +1206,7 @@ theorem fixedContainer_localize
     calc
       (gamma : ℝ) ^ 2 / (2 * sqrtEta) = 4 * sqrtEta := by
         rw [hgammaSq, hetaEq]
-        field_simp <;> ring
+        field_simp; ring
       _ < 2 * (gamma : ℝ) := by linarith
   let randomWeight : Finset V → EdgeWeight Kout := fun omega =>
     inverseProbabilityWeight gamma muout probability edgeEvent omega

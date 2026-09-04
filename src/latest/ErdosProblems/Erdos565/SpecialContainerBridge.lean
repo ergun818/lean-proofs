@@ -23,7 +23,7 @@ open scoped BigOperators
 namespace Erdos565
 namespace SpecialContainerTheorem
 
-open Hypergraph
+open Erdos565.Hypergraph
 
 variable {V U : Type*}
 
@@ -142,22 +142,31 @@ def retainedByProjectedSet (π : V → U) (X : Finset V) (W : Finset U) :
     Finset V :=
   X.filter fun x ↦ π x ∈ W
 
+omit [DecidableEq V] [Fintype U] [Fintype V] in
 @[simp] theorem mem_retainedByProjectedSet {π : V → U} {X : Finset V}
     {W : Finset U} {x : V} :
     x ∈ retainedByProjectedSet π X W ↔ x ∈ X ∧ π x ∈ W := by
   simp [retainedByProjectedSet]
 
-theorem retainedByProjectedSet_subset (π : V → U) (X : Finset V)
+omit [DecidableEq V] [Fintype U] [Fintype V] in
+theorem retainedByProjectedSet_subset [Finite U] [Finite V] (π : V → U) (X : Finset V)
     (W : Finset U) : retainedByProjectedSet π X W ⊆ X := by
+  classical
+  let := Fintype.ofFinite U
+  let := Fintype.ofFinite V
   intro x hx
   exact (mem_retainedByProjectedSet.mp hx).1
 
+omit [Fintype U] [Fintype V] in
 /-- Restricting the projected hypergraph to `W` is exactly restriction to
 the inverse image of `W` before projecting. -/
-theorem map_restrict_retained (π : V → U) (H : Hypergraph V)
+theorem map_restrict_retained [Finite U] [Finite V] (π : V → U) (H : Hypergraph V)
     (X : Finset V) (W : Finset U) :
     ((H.restrict X).map π).restrict W =
       (H.restrict (retainedByProjectedSet π X W)).map π := by
+  classical
+  let := Fintype.ofFinite U
+  let := Fintype.ofFinite V
   ext K
   constructor
   · intro hK
@@ -179,6 +188,7 @@ theorem map_restrict_retained (π : V → U) (H : Hypergraph V)
     obtain ⟨x, hxE, rfl⟩ := Finset.mem_image.mp hu
     exact (mem_retainedByProjectedSet.mp (hEY'.2 hxE)).2
 
+omit [Fintype U] [Fintype V] in
 /-- The source points deleted by retaining `W` are precisely the projected
 container deletion from `ProjectionFibers`. -/
 theorem sdiff_retained_eq_removed (π : V → U) (X : Finset V)
@@ -190,10 +200,14 @@ theorem sdiff_retained_eq_removed (π : V → U) (X : Finset V)
     simp [retainedByProjectedSet,
       ProjectionFibers.removedByProjectedContainer, hx, hu]
 
-theorem retained_card_loss_eq_removed_card (π : V → U) (X : Finset V)
+omit [DecidableEq V] [Fintype U] [Fintype V] in
+theorem retained_card_loss_eq_removed_card [Finite U] [Finite V] (π : V → U) (X : Finset V)
     (W : Finset U) :
     X.card - (retainedByProjectedSet π X W).card =
       (ProjectionFibers.removedByProjectedContainer π X W).card := by
+  classical
+  let := Fintype.ofFinite U
+  let := Fintype.ofFinite V
   let Y := retainedByProjectedSet π X W
   have hYX : Y ⊆ X := retainedByProjectedSet_subset π X W
   calc
@@ -203,19 +217,24 @@ theorem retained_card_loss_eq_removed_card (π : V → U) (X : Finset V)
     _ = (ProjectionFibers.removedByProjectedContainer π X W).card := by
       rw [sdiff_retained_eq_removed]
 
+omit [Fintype U] [Fintype V] in
 /-- The global half-image hypothesis controls the cost of restricting to a
 projected set, without first converting it to a fibre-bound predicate. -/
-theorem retained_card_loss_le_twice
+theorem retained_card_loss_le_twice [Finite U] [Finite V]
     (π : V → U) (H : Hypergraph V)
     (hπ : SpecialContainer.ProjectionConditions π H)
     (X : Finset V) (W : Finset U) :
     X.card - (retainedByProjectedSet π X W).card ≤
       2 * (X.image π \ W).card := by
+  classical
+  let := Fintype.ofFinite U
+  let := Fintype.ofFinite V
   rw [retained_card_loss_eq_removed_card]
   have h := hπ.1
     (ProjectionFibers.removedByProjectedContainer π X W)
   rwa [ProjectionFibers.image_removedByProjectedContainer] at h
 
+omit [Fintype U] [Fintype V] in
 /-- Projection preserves uniformity because the theorem assumes injectivity
 on every source edge. -/
 theorem projected_restrict_isUniform
@@ -229,6 +248,7 @@ theorem projected_restrict_isUniform
   have hE := (mem_restrict.mp hEX).1
   rw [hπ.2 E hE, hH E hE]
 
+omit [Fintype U] [Fintype V] in
 theorem projected_restrict_edgewiseInjective
     (π : V → U) (H : Hypergraph V)
     (hπ : SpecialContainer.ProjectionConditions π H)
@@ -238,6 +258,7 @@ theorem projected_restrict_edgewiseInjective
   intro E hEX
   exact hπ.2 E (mem_restrict.mp hEX).1
 
+omit [Fintype U] [Fintype V] in
 /-- A genuinely new extension vertex is fresh for every projected
 restriction. -/
 theorem freshFor_projected_restrict
@@ -259,10 +280,12 @@ variable [Fintype V] [DecidableEq V]
 def containmentEvent (ground L : Finset V) : Finset (Finset V) :=
   ground.powerset.filter fun X ↦ L ⊆ X
 
+omit [Fintype V] in
 @[simp] theorem mem_containmentEvent {ground L X : Finset V} :
     X ∈ containmentEvent ground L ↔ X ⊆ ground ∧ L ⊆ X := by
   simp [containmentEvent]
 
+omit [Fintype V] in
 /-- `FiniteExpectation`'s conditioning mass agrees with the binomial mass
 used by the conditional decomposition. -/
 theorem conditioningMass_independentContaining
@@ -279,13 +302,16 @@ theorem conditioningMass_independentContaining
   ext X
   simp
 
-theorem conditioningMass_independentContaining_inter
+omit [Fintype V] in
+theorem conditioningMass_independentContaining_inter [Finite V]
     (q : ℝ) (ground T L : Finset V) (G : Hypergraph V) :
     FiniteExpectation.conditioningMass ground.powerset
         (ConditionalDecomposition.independentContainingEvent ground G T ∩
           containmentEvent ground L)
         (ConditionalDecomposition.subsetWeight q ground) =
       ConditionalDecomposition.independentContainingMass q ground G (T ∪ L) := by
+  classical
+  let := Fintype.ofFinite V
   unfold FiniteExpectation.conditioningMass
     FiniteExpectation.conditioningSet
     ConditionalDecomposition.independentContainingMass
@@ -295,28 +321,34 @@ theorem conditioningMass_independentContaining_inter
   simp [and_assoc, Finset.union_subset_iff]
   aesop
 
+omit [Fintype V] in
 /-- The abstract conditional probability of a containment cylinder is the
 `extensionProbability` used in the decomposition theorem. -/
-theorem conditionalProbability_containmentEvent
+theorem conditionalProbability_containmentEvent [Finite V]
     (q : ℝ) (ground T L : Finset V) (G : Hypergraph V) :
     FiniteExpectation.conditionalProbability ground.powerset
         (ConditionalDecomposition.independentContainingEvent ground G T)
         (containmentEvent ground L)
         (ConditionalDecomposition.subsetWeight q ground) =
       ConditionalDecomposition.extensionProbability q ground G T L := by
+  classical
+  let := Fintype.ofFinite V
   rw [FiniteExpectation.conditionalProbability_eq_mass_div]
   rw [conditioningMass_independentContaining_inter,
     conditioningMass_independentContaining]
   rfl
 
+omit [Fintype V] in
 /-- Positivity of the finite conditioning distribution. -/
-theorem conditioningMass_independentContaining_pos
+theorem conditioningMass_independentContaining_pos [Finite V]
     {q : ℝ} {ground T : Finset V} {G : Hypergraph V}
     (hq : 0 < q) (hq1 : q < 1) (hTground : T ⊆ ground)
     (hTind : G.IsIndependent T) :
     0 < FiniteExpectation.conditioningMass ground.powerset
       (ConditionalDecomposition.independentContainingEvent ground G T)
       (ConditionalDecomposition.subsetWeight q ground) := by
+  classical
+  let := Fintype.ofFinite V
   rw [conditioningMass_independentContaining]
   exact ConditionalDecomposition.independentContainingMass_pos
     hTground hTind hq hq1
@@ -393,7 +425,7 @@ theorem parameter_p_le_containerZeta
       1 / (2048 * (r : ℝ) * (s : ℝ) ^ 2) := by
     unfold containerZeta
     field_simp [ne_of_gt hrR, ne_of_gt hsR]
-    <;> ring
+    ring
   rw [htarget]
   exact (le_div_iff₀ hden).2 (hmul.trans hq1)
 
@@ -414,7 +446,6 @@ theorem parameter_secondFingerprint_bound
   have hz : p / containerZeta r = 256 * (r : ℝ) * p := by
     unfold containerZeta
     field_simp [ne_of_gt hrR]
-    <;> ring
   rw [hz]
   nlinarith [mul_nonneg hn (sub_nonneg.mpr hmul)]
 

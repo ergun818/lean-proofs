@@ -76,11 +76,13 @@ structure Choice (H : Hypergraph V) (p : ℝ) (s : ℕ) extends Candidate H p s 
     (∃ E ∈ H.layer layerIndex, K ⊆ E) →
       linkWeight p H layerIndex K < threshold s
 
+omit [Fintype V] in
 /-- Finite minimization in the layer followed by maximum seed cardinality
 produces a least-layer, inclusion-maximal heavy seed. -/
-theorem exists_choice_of_candidate {H : Hypergraph V} {p : ℝ} {s : ℕ}
+theorem exists_choice_of_candidate [Finite V] {H : Hypergraph V} {p : ℝ} {s : ℕ}
     (hex : Nonempty (Candidate H p s)) : Nonempty (Choice H p s) := by
   classical
+  let := Fintype.ofFinite V
   let P : ℕ → Prop := fun a => ∃ c : Candidate H p s, c.layerIndex = a
   have hP : ∃ a, P a := by
     obtain ⟨c⟩ := hex
@@ -152,11 +154,14 @@ theorem card_activeLayers_le_succ (s : ℕ) :
   exact (Finset.card_le_card (activeLayers_subset_range_succ s)) |>.trans_eq
     (by simp)
 
+omit [Fintype V] in
 /-- Every non-singleton edge of a rank-`s` family belongs to one of the active
 uniform layers. -/
-theorem aboveOne_subset_biUnion_layers {H : Hypergraph V} {s : ℕ}
+theorem aboveOne_subset_biUnion_layers [Finite V] {H : Hypergraph V} {s : ℕ}
     (hbounded : H.IsBounded s) :
     H.aboveOne ⊆ (activeLayers s).biUnion H.layer := by
+  classical
+  let := Fintype.ofFinite V
   intro E hE
   obtain ⟨hEH, htwo⟩ := mem_aboveOne.mp hE
   rw [Finset.mem_biUnion]
@@ -176,7 +181,7 @@ theorem strictLink_layer_eq_empty_of_not_mem_container {H : Hypergraph V}
   have hsv : ({v} : Finset V) ∈ H := by
     simpa [containerVertices] using hv
   have hEq : ({v} : Finset V) = E := hanti hsv (mem_layer.mp hE).1 hvE
-  have hcard : E.card = 1 := by simpa [← hEq]
+  have hcard : E.card = 1 := by simp [← hEq]
   have haEq : E.card = a := (mem_layer.mp hE).2
   omega
 
@@ -191,10 +196,13 @@ theorem linkWeight_eq_zero_of_not_mem_container {H : Hypergraph V}
     strictLink_layer_eq_empty_of_not_mem_container hanti (mem_activeLayers.mp ha).1 hv]
   exact pWeight_empty p
 
-theorem aboveOne_pWeight_le_sum_layers {H : Hypergraph V} {s : ℕ}
+omit [DecidableEq V] [Fintype V] in
+theorem aboveOne_pWeight_le_sum_layers [Finite V] {H : Hypergraph V} {s : ℕ}
     (hbounded : H.IsBounded s) {p : ℝ} (hp : 0 ≤ p) :
     H.aboveOne.pWeight p ≤
       ∑ a ∈ activeLayers s, (H.layer a).pWeight p := by
+  classical
+  let := Fintype.ofFinite V
   calc
     H.aboveOne.pWeight p ≤
         Hypergraph.pWeight ((activeLayers s).biUnion H.layer) p :=
@@ -202,10 +210,12 @@ theorem aboveOne_pWeight_le_sum_layers {H : Hypergraph V} {s : ℕ}
     _ ≤ ∑ a ∈ activeLayers s, (H.layer a).pWeight p :=
       ContainerWeight.pWeight_biUnion_le _ _ hp
 
+omit [DecidableEq V] [Fintype V] in
 theorem sum_layers_le_weighted_sum (H : Hypergraph V) (s : ℕ) {p : ℝ}
     (hp : 0 ≤ p) :
     ∑ a ∈ activeLayers s, (H.layer a).pWeight p ≤
       ∑ a ∈ activeLayers s, (a : ℝ) * (H.layer a).pWeight p := by
+  classical
   apply Finset.sum_le_sum
   intro a ha
   have hnonneg := (H.layer a).pWeight_nonneg hp
@@ -354,7 +364,7 @@ structure Selector (p : ℝ) (s : ℕ) where
 
 noncomputable def canonicalSelector (p : ℝ) (s : ℕ) (hs : 0 < s) (hp : 0 < p) :
     Selector (V := V) p s where
-  choose H hanti hbounded hstop :=
+  choose _ hanti hbounded hstop :=
     Classical.choice (exists_choice_of_not_stop hs hp hanti hbounded hstop)
 
 /-! ## Preservation of the low-link invariant -/
@@ -395,16 +405,21 @@ theorem linkWeight_update_le_add (H C : Hypergraph V) (a : ℕ) (L : Finset V)
     _ ≤ linkWeight p H a L + linkWeight p C a L :=
       ContainerWeight.pWeight_union_le _ _ hp
 
+omit [DecidableEq V] [Fintype V] in
 theorem layer_eq_empty_of_uniform_of_ne {C : Hypergraph V} {u a : ℕ}
     (hC : C.IsUniform u) (hau : a ≠ u) : C.layer a = ∅ := by
+  classical
   ext E
   simp only [mem_layer, Finset.notMem_empty, iff_false]
   rintro ⟨hEC, hcard⟩
   exact hau (hcard ▸ hC E hEC)
 
-theorem linkWeight_layer_eq_zero_of_uniform_of_ne {C : Hypergraph V} {u a : ℕ}
+omit [Fintype V] in
+theorem linkWeight_layer_eq_zero_of_uniform_of_ne [Finite V] {C : Hypergraph V} {u a : ℕ}
     (hC : C.IsUniform u) (hau : a ≠ u) (p : ℝ) (L : Finset V) :
     linkWeight p C a L = 0 := by
+  classical
+  let := Fintype.ofFinite V
   rw [linkWeight, layer_eq_empty_of_uniform_of_ne hC hau]
   have hlink : (∅ : Hypergraph V).link L = ∅ := by
     ext E
@@ -419,6 +434,7 @@ theorem linkWeight_update_le_old_of_uniform_of_ne {H C : Hypergraph V}
   rw [linkWeight_layer_eq_zero_of_uniform_of_ne hC hau p L, add_zero] at h
   exact h
 
+omit [Fintype V] in
 theorem Choice.old_link_lt_threshold {H : Hypergraph V} {p : ℝ} {s : ℕ}
     (choice : Choice H p s) (hanti : H.IsAntichain) (hs : 0 < s)
     {b : ℕ} (hb : b < choice.layerIndex) {K : Finset V}
@@ -445,6 +461,7 @@ theorem Choice.old_link_lt_threshold {H : Hypergraph V} {p : ℝ} {s : ℕ}
     rw [threshold]
     positivity
 
+omit [DecidableEq V] [Fintype V] in
 /-- The singleton rejection family is uniform of rank equal to the seed size. -/
 theorem singleton_isUniform (L : Finset V) :
     ({L} : Hypergraph V).IsUniform L.card := by
@@ -453,16 +470,19 @@ theorem singleton_isUniform (L : Finset V) :
   subst E
   rfl
 
+omit [Fintype V] in
 /-- Link weight inside a singleton replacement is at most `p` below its
 uniform rank. -/
-theorem linkWeight_singleton_le_p {p : ℝ} (hp : 0 ≤ p) (hp1 : p ≤ 1)
+theorem linkWeight_singleton_le_p [Finite V] {p : ℝ} (hp : 0 ≤ p) (hp1 : p ≤ 1)
     {L K : Finset V} (hKcard : K.card < L.card) :
     linkWeight p ({L} : Hypergraph V) L.card K ≤ p := by
+  classical
+  let := Fintype.ofFinite V
   have hlayer : ({L} : Hypergraph V).layer L.card = {L} :=
     (isUniform_iff_layer_eq ({L} : Hypergraph V) L.card).mp (singleton_isUniform L)
   by_cases hKL : K ⊆ L
   · rw [linkWeight, hlayer, link_singleton_of_subset hKL, pWeight, weight]
-    simp only [Finset.sum_singleton, Nat.cast_id]
+    simp only [Finset.sum_singleton]
     rw [Finset.card_sdiff_of_subset hKL]
     have hone : 1 ≤ L.card - K.card := by omega
     simpa using (pow_le_pow_of_le_one hp hp1 hone)
@@ -503,21 +523,28 @@ theorem lowLinks_update_reject {H : Hypergraph V} {p : ℝ} {s : ℕ}
   · exact (linkWeight_update_le_old_of_uniform_of_ne hCu hbu hp K).trans
       (hlow b hbs K hK hKb)
 
+omit [Fintype V] in
 /-- The accepting replacement has the expected lower uniform rank. -/
-theorem acceptReplacement_isUniform {H : Hypergraph V} {p : ℝ} {s : ℕ}
+theorem acceptReplacement_isUniform [Finite V] {H : Hypergraph V} {p : ℝ} {s : ℕ}
     (choice : Choice H p s) :
     ((H.layer choice.layerIndex).link choice.seed).IsUniform
-      (choice.layerIndex - choice.seed.card) :=
-  link_layer_isUniform H choice.layerIndex choice.seed
+      (choice.layerIndex - choice.seed.card) := by
+  classical
+  let := Fintype.ofFinite V
+  exact
+    link_layer_isUniform H choice.layerIndex choice.seed
 
+omit [Fintype V] in
 /-- Maximality of the chosen seed controls every lower link inside the
 accepting replacement. -/
-theorem Choice.accept_link_lt_threshold {H : Hypergraph V} {p : ℝ} {s : ℕ}
+theorem Choice.accept_link_lt_threshold [Finite V] {H : Hypergraph V} {p : ℝ} {s : ℕ}
     (choice : Choice H p s) (hanti : H.IsAntichain) (hs : 0 < s)
     {K : Finset V} (hK : K.Nonempty)
     (hKcard : K.card < choice.layerIndex - choice.seed.card) :
     linkWeight p ((H.layer choice.layerIndex).link choice.seed)
       (choice.layerIndex - choice.seed.card) K < threshold s := by
+  classical
+  let := Fintype.ofFinite V
   let C := (H.layer choice.layerIndex).link choice.seed
   let u := choice.layerIndex - choice.seed.card
   have hCu : C.IsUniform u := acceptReplacement_isUniform choice

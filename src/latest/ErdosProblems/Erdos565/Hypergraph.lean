@@ -110,7 +110,7 @@ theorem trace_edge_subset {H : Hypergraph V} {X t : Finset V} (ht : t ∈ H.trac
     simp [this, trace] at h
   · intro hH
     ext e
-    simp only [mem_trace, Finset.inter_empty, exists_eq_right, Finset.mem_singleton]
+    simp only [mem_trace, Finset.inter_empty, Finset.mem_singleton]
     constructor
     · rintro ⟨_, _, rfl⟩
       rfl
@@ -130,11 +130,14 @@ def deleteVertices (H : Hypergraph V) (X : Finset V) : Hypergraph V :=
 def layer (H : Hypergraph V) (k : ℕ) : Hypergraph V :=
   H.filter fun e => e.card = k
 
+omit [DecidableEq V] in
 @[simp] theorem mem_layer {H : Hypergraph V} {k : ℕ} {e : Finset V} :
     e ∈ H.layer k ↔ e ∈ H ∧ e.card = k := by
   simp [layer]
 
+omit [DecidableEq V] in
 theorem layer_subset (H : Hypergraph V) (k : ℕ) : H.layer k ⊆ H := by
+  classical
   intro e he
   exact (mem_layer.mp he).1
 
@@ -142,8 +145,10 @@ theorem layer_subset (H : Hypergraph V) (k : ℕ) : H.layer k ⊆ H := by
 def IsUniform (H : Hypergraph V) (k : ℕ) : Prop :=
   ∀ e ∈ H, e.card = k
 
+omit [DecidableEq V] in
 theorem isUniform_iff_layer_eq (H : Hypergraph V) (k : ℕ) :
     H.IsUniform k ↔ H.layer k = H := by
+  classical
   constructor
   · intro h
     apply Finset.Subset.antisymm (layer_subset H k)
@@ -153,10 +158,12 @@ theorem isUniform_iff_layer_eq (H : Hypergraph V) (k : ℕ) :
     have : e ∈ H.layer k := h.symm ▸ he
     exact (mem_layer.mp this).2
 
+omit [DecidableEq V] in
 theorem IsUniform.card_eq {H : Hypergraph V} {k : ℕ} (hH : H.IsUniform k)
     {e : Finset V} (he : e ∈ H) : e.card = k :=
   hH e he
 
+omit [DecidableEq V] in
 theorem IsUniform.subset_card_eq {H : Hypergraph V} {k : ℕ} (hH : H.IsUniform k)
     {e f : Finset V} (he : e ∈ H) (hf : f ∈ H) (hef : e ⊆ f) : e = f := by
   exact Finset.eq_of_subset_of_card_le hef (by simp [hH e he, hH f hf])
@@ -165,6 +172,7 @@ theorem IsUniform.subset_card_eq {H : Hypergraph V} {k : ℕ} (hH : H.IsUniform 
 def IsBounded (H : Hypergraph V) (k : ℕ) : Prop :=
   ∀ e ∈ H, e.card ≤ k
 
+omit [DecidableEq V] in
 theorem IsUniform.isBounded {H : Hypergraph V} {k : ℕ} (hH : H.IsUniform k) :
     H.IsBounded k := by
   intro e he
@@ -236,7 +244,7 @@ def strictLink (H : Hypergraph V) (S : Finset V) : Hypergraph V :=
 
 @[simp] theorem mem_strictLink {H : Hypergraph V} {S t : Finset V} :
     t ∈ H.strictLink S ↔ t ≠ ∅ ∧ ∃ e ∈ H, S ⊆ e ∧ e \ S = t := by
-  simp [strictLink, and_left_comm, and_assoc]
+  simp [strictLink, and_left_comm]
 
 theorem strictLink_subset_link (H : Hypergraph V) (S : Finset V) :
     H.strictLink S ⊆ H.link S := by
@@ -354,10 +362,12 @@ theorem covers_iff_subset_upClosure [Fintype V] {C H : Hypergraph V} :
   · intro h e he
     exact mem_upClosure.mp (h he)
 
+omit [DecidableEq V] in
 theorem Covers.refl (H : Hypergraph V) : H.Covers H := by
   intro e he
   exact ⟨e, he, Finset.Subset.rfl⟩
 
+omit [DecidableEq V] in
 theorem Covers.trans {A B C : Hypergraph V} (hAB : A.Covers B) (hBC : B.Covers C) :
     A.Covers C := by
   intro e he
@@ -365,12 +375,14 @@ theorem Covers.trans {A B C : Hypergraph V} (hAB : A.Covers B) (hBC : B.Covers C
   obtain ⟨a, ha, hab⟩ := hAB b hb
   exact ⟨a, ha, hab.trans hbe⟩
 
+omit [DecidableEq V] in
 theorem Covers.mono_left {C D H : Hypergraph V} (hCD : C ⊆ D) (h : C.Covers H) :
     D.Covers H := by
   intro e he
   obtain ⟨c, hc, hce⟩ := h e he
   exact ⟨c, hCD hc, hce⟩
 
+omit [DecidableEq V] in
 theorem Covers.mono_right {C H K : Hypergraph V} (hHK : H ⊆ K) (h : C.Covers K) :
     C.Covers H := by
   intro e he
@@ -380,8 +392,10 @@ theorem Covers.mono_right {C H K : Hypergraph V} (hHK : H ⊆ K) (h : C.Covers K
 def IsIndependent (H : Hypergraph V) (A : Finset V) : Prop :=
   ∀ e ∈ H, ¬ e ⊆ A
 
+omit [DecidableEq V] in
 theorem not_isIndependent_iff {H : Hypergraph V} {A : Finset V} :
     ¬ H.IsIndependent A ↔ ∃ e ∈ H, e ⊆ A := by
+  classical
   simp [IsIndependent]
 
 theorem isIndependent_iff_not_mem_upClosure [Fintype V]
@@ -389,16 +403,19 @@ theorem isIndependent_iff_not_mem_upClosure [Fintype V]
     H.IsIndependent A ↔ A ∉ H.upClosure := by
   simp [IsIndependent]
 
+omit [DecidableEq V] in
 theorem IsIndependent.mono {H : Hypergraph V} {A B : Finset V}
     (hA : H.IsIndependent A) (hBA : B ⊆ A) : H.IsIndependent B := by
   intro e he heB
   exact hA e he (heB.trans hBA)
 
+omit [DecidableEq V] in
 theorem IsIndependent.anti_hypergraph {H K : Hypergraph V} {A : Finset V}
     (hK : K.IsIndependent A) (hHK : H ⊆ K) : H.IsIndependent A := by
   intro e he
   exact hK e (hHK he)
 
+omit [DecidableEq V] in
 theorem Covers.independent_of {C H : Hypergraph V} (hCH : C.Covers H)
     {A : Finset V} (hA : C.IsIndependent A) : H.IsIndependent A := by
   intro e he heA
@@ -415,12 +432,15 @@ variable [DecidableEq V] [DecidableEq W] [DecidableEq U]
 def map (f : V → W) (H : Hypergraph V) : Hypergraph W :=
   H.image fun e => e.image f
 
+omit [DecidableEq V] in
 @[simp] theorem mem_map {f : V → W} {H : Hypergraph V} {t : Finset W} :
     t ∈ H.map f ↔ ∃ e ∈ H, e.image f = t := by
   simp [map]
 
+omit [DecidableEq V] in
 theorem map_mono {f : V → W} {H K : Hypergraph V} (hHK : H ⊆ K) :
     H.map f ⊆ K.map f := by
+  classical
   intro t ht
   obtain ⟨e, he, rfl⟩ := mem_map.mp ht
   exact mem_map.mpr ⟨e, hHK he, rfl⟩
@@ -429,8 +449,10 @@ theorem map_mono {f : V → W} {H K : Hypergraph V} (hHK : H ⊆ K) :
   ext e
   simp
 
+omit [DecidableEq V] in
 theorem map_comp (g : W → U) (f : V → W) (H : Hypergraph V) :
     (H.map f).map g = H.map (g ∘ f) := by
+  classical
   ext t
   simp only [mem_map]
   constructor
@@ -439,18 +461,23 @@ theorem map_comp (g : W → U) (f : V → W) (H : Hypergraph V) :
   · rintro ⟨e, he, rfl⟩
     exact ⟨e.image f, ⟨e, he, rfl⟩, by rw [Finset.image_image]⟩
 
+omit [DecidableEq V] in
 theorem card_map_le (f : V → W) (H : Hypergraph V) :
     (H.map f).card ≤ H.card := by
   exact Finset.card_image_le
 
+omit [DecidableEq V] in
 theorem edge_card_map_le {f : V → W} {H : Hypergraph V} {t : Finset W}
     (ht : t ∈ H.map f) : ∃ e ∈ H, t.card ≤ e.card := by
+  classical
   obtain ⟨e, he, rfl⟩ := mem_map.mp ht
   exact ⟨e, he, Finset.card_image_le⟩
 
+omit [DecidableEq V] in
 theorem edge_card_map_eq_of_injective {f : V → W} (hf : Function.Injective f)
     {H : Hypergraph V} {t : Finset W} (ht : t ∈ H.map f) :
     ∃ e ∈ H, t.card = e.card := by
+  classical
   obtain ⟨e, he, rfl⟩ := mem_map.mp ht
   exact ⟨e, he, Finset.card_image_of_injective e hf⟩
 
@@ -458,18 +485,23 @@ theorem edge_card_map_eq_of_injective {f : V → W} (hf : Function.Injective f)
 def comap [Fintype V] (f : V → W) (K : Hypergraph W) : Hypergraph V :=
   Finset.univ.powerset.filter fun e => e.image f ∈ K
 
+omit [DecidableEq V] in
 @[simp] theorem mem_comap [Fintype V] {f : V → W} {K : Hypergraph W}
     {e : Finset V} : e ∈ K.comap f ↔ e.image f ∈ K := by
   simp [comap]
 
+omit [DecidableEq V] in
 theorem map_comap_subset [Fintype V] (f : V → W) (K : Hypergraph W) :
     (K.comap f).map f ⊆ K := by
+  classical
   intro t ht
   obtain ⟨e, he, rfl⟩ := mem_map.mp ht
   exact mem_comap.mp he
 
+omit [DecidableEq V] in
 theorem subset_comap_map [Fintype V] (f : V → W) (H : Hypergraph V) :
     H ⊆ (H.map f).comap f := by
+  classical
   intro e he
   exact mem_comap.mpr (mem_map.mpr ⟨e, he, rfl⟩)
 
@@ -483,17 +515,20 @@ variable [DecidableEq V]
 def weight {R : Type*} [AddCommMonoid R] (H : Hypergraph V) (w : Finset V → R) : R :=
   ∑ e ∈ H, w e
 
+omit [DecidableEq V] in
 @[simp] theorem weight_empty {R : Type*} [AddCommMonoid R] (w : Finset V → R) :
     weight (∅ : Hypergraph V) w = 0 := by
   simp [weight]
 
+omit [DecidableEq V] in
 @[simp] theorem weight_zero {R : Type*} [AddCommMonoid R] (H : Hypergraph V) :
     H.weight (fun _ => (0 : R)) = 0 := by
   simp [weight]
 
+omit [DecidableEq V] in
 theorem weight_congr {R : Type*} [AddCommMonoid R] {H K : Hypergraph V}
-    {w z : Finset V → R} (hHK : H = K) (
-      hw : ∀ e ∈ K, w e = z e) : H.weight w = K.weight z := by
+    {w z : Finset V → R} (hHK : H = K)
+    (hw : ∀ e ∈ K, w e = z e) : H.weight w = K.weight z := by
   subst H
   exact Finset.sum_congr rfl hw
 
@@ -510,10 +545,12 @@ theorem weight_sdiff_add_weight_inter {R : Type*} [AddCommMonoid R]
     exact Finset.sdiff_union_inter H K
   · exact Finset.disjoint_sdiff_inter H K
 
+omit [DecidableEq V] in
 theorem weight_nonneg (H : Hypergraph V) {w : Finset V → ℝ}
     (hw : ∀ e ∈ H, 0 ≤ w e) : 0 ≤ H.weight w := by
   exact Finset.sum_nonneg hw
 
+omit [DecidableEq V] in
 theorem weight_mono {H K : Hypergraph V} (hHK : H ⊆ K) {w : Finset V → ℝ}
     (hw : ∀ e ∈ K, 0 ≤ w e) : H.weight w ≤ K.weight w := by
   exact Finset.sum_le_sum_of_subset_of_nonneg hHK (fun e heK _ => hw e heK)
@@ -522,19 +559,27 @@ theorem weight_mono {H K : Hypergraph V} (hHK : H ⊆ K) {w : Finset V → ℝ}
 def pWeight (H : Hypergraph V) (p : ℝ) : ℝ :=
   H.weight fun e => p ^ e.card
 
+omit [DecidableEq V] in
 @[simp] theorem pWeight_empty (p : ℝ) : pWeight (∅ : Hypergraph V) p = 0 := by
+  classical
   simp [pWeight]
 
+omit [DecidableEq V] in
 theorem pWeight_nonneg (H : Hypergraph V) {p : ℝ} (hp : 0 ≤ p) :
     0 ≤ H.pWeight p := by
+  classical
   exact H.weight_nonneg fun e _ => pow_nonneg hp _
 
+omit [DecidableEq V] in
 theorem pWeight_mono {H K : Hypergraph V} (hHK : H ⊆ K) {p : ℝ} (hp : 0 ≤ p) :
     H.pWeight p ≤ K.pWeight p := by
+  classical
   exact weight_mono hHK (fun e _ => pow_nonneg hp e.card)
 
+omit [DecidableEq V] in
 theorem pWeight_layer (H : Hypergraph V) (p : ℝ) (k : ℕ) :
     (H.layer k).pWeight p = (H.layer k).card * p ^ k := by
+  classical
   rw [pWeight, weight]
   calc
     ∑ e ∈ H.layer k, p ^ e.card = ∑ _e ∈ H.layer k, p ^ k := by

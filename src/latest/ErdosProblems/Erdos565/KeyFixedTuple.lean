@@ -220,6 +220,7 @@ noncomputable def ambientNeighbors (G : SimpleGraph V) (U : Finset V) (v : V) : 
   classical
   exact U.filter fun u ↦ G.Adj v u
 
+omit [DecidableEq V] [Fintype V] in
 theorem pairwiseDisjoint_colorNeighbors {r : ℕ} {G : SimpleGraph V}
     (coloring : G.EdgeLabeling (Fin r)) (U : Finset V) (v : V) :
     (Set.univ : Set (Fin r)).PairwiseDisjoint (colorNeighbors coloring U v) := by
@@ -233,6 +234,7 @@ theorem pairwiseDisjoint_colorNeighbors {r : ℕ} {G : SimpleGraph V}
   exact (SimpleGraph.disjoint_left.1
     (SimpleGraph.EdgeLabeling.pairwise_disjoint_labelGraph hij) v u hi) hj
 
+omit [Fintype V] in
 theorem biUnion_colorNeighbors {r : ℕ} {G : SimpleGraph V}
     (coloring : G.EdgeLabeling (Fin r)) (U : Finset V) (v : V) :
     Finset.univ.biUnion (colorNeighbors coloring U v) = ambientNeighbors G U v := by
@@ -248,20 +250,25 @@ theorem biUnion_colorNeighbors {r : ℕ} {G : SimpleGraph V}
     exact ⟨coloring e, hu,
       (SimpleGraph.EdgeLabeling.labelGraph_adj v u).2 ⟨hG, rfl⟩⟩
 
-theorem sum_card_colorNeighbors {r : ℕ} {G : SimpleGraph V}
+omit [DecidableEq V] [Fintype V] in
+theorem sum_card_colorNeighbors [Finite V] {r : ℕ} {G : SimpleGraph V}
     (coloring : G.EdgeLabeling (Fin r)) (U : Finset V) (v : V) :
     ∑ i, (colorNeighbors coloring U v i).card = (ambientNeighbors G U v).card := by
   classical
+  let := Fintype.ofFinite V
   rw [← biUnion_colorNeighbors coloring U v,
     Finset.card_biUnion (by simpa using pairwiseDisjoint_colorNeighbors coloring U v)]
 
+omit [DecidableEq V] [Fintype V] in
 /-- A vertex of ambient degree greater than `|U|/4` has color degree greater
 than `|U|/(4r)` in at least one color. -/
-theorem exists_highColor {r : ℕ} {G : SimpleGraph V}
+theorem exists_highColor [Finite V] {r : ℕ} {G : SimpleGraph V}
     (coloring : G.EdgeLabeling (Fin r)) (U : Finset V) (v : V)
     (hr : 0 < r)
     (hdegree : U.card < 4 * (ambientNeighbors G U v).card) :
     ∃ i : Fin r, U.card < 4 * r * (colorNeighbors coloring U v i).card := by
+  classical
+  let := Fintype.ofFinite V
   by_contra hnot
   push Not at hnot
   have hsum : ∑ i : Fin r, 4 * r * (colorNeighbors coloring U v i).card ≤
@@ -284,10 +291,11 @@ theorem exists_highColor {r : ℕ} {G : SimpleGraph V}
     exact Nat.le_of_mul_le_mul_left hsum' hr
   omega
 
+omit [DecidableEq V] [Fintype V] in
 /-- Pigeonhole the high-degree vertices once more, this time by their chosen
 high color.  The output `A` satisfies the exact bounds used in the key lemma.
 -/
-theorem exists_common_highColor {r : ℕ} {G : SimpleGraph V}
+theorem exists_common_highColor [Finite V] {r : ℕ} {G : SimpleGraph V}
     (coloring : G.EdgeLabeling (Fin r)) (U T : Finset V)
     (hr : 0 < r)
     (hdegree : ∀ v ∈ T, U.card < 4 * (ambientNeighbors G U v).card) :
@@ -295,6 +303,7 @@ theorem exists_common_highColor {r : ℕ} {G : SimpleGraph V}
       A ⊆ T ∧ T.card ≤ r * A.card ∧
         ∀ v ∈ A, U.card < 4 * r * (colorNeighbors coloring U v i).card := by
   classical
+  let := Fintype.ofFinite V
   let chosen : (v : ↑T) → Fin r := fun v ↦
     Classical.choose (exists_highColor coloring U v.1 hr (hdegree v.1 v.2))
   let choiceOn : V → Fin r := fun v ↦
@@ -415,7 +424,7 @@ rooted at `v`. -/
 def starEdgeEmbedding : ↑U ↪ RandomGraph.Edge V where
   toFun u := ⟨s(v, u.1), by
     rw [Sym2.mk_isDiag_iff]
-    exact fun h ↦ hv (by simpa [h] using u.2)⟩
+    exact fun h ↦ hv (by simp [h])⟩
   inj' := by
     intro x y hxy
     apply Subtype.ext
@@ -425,8 +434,11 @@ def starEdgeEmbedding : ↑U ↪ RandomGraph.Edge V where
 def liftStar (B : Finset ↑U) : Finset (RandomGraph.Edge V) :=
   B.map (starEdgeEmbedding v U hv)
 
-@[simp] theorem liftStar_univ :
+omit [Fintype V] in
+@[simp] theorem liftStar_univ [Finite V] :
     liftStar v U hv Finset.univ = RandomGraph.starEdges v U hv := by
+  classical
+  let := Fintype.ofFinite V
   ext e
   unfold liftStar
   rw [Finset.mem_map, RandomGraph.mem_starEdges_iff]
@@ -438,6 +450,7 @@ def liftStar (B : Finset ↑U) : Finset (RandomGraph.Edge V) :=
     apply Subtype.ext
     exact he.symm
 
+omit [DecidableEq V] [Fintype V] in
 theorem liftStar_injective : Function.Injective (liftStar v U hv) := by
   intro B C h
   exact Finset.map_injective (starEdgeEmbedding v U hv) h
@@ -448,33 +461,43 @@ def liftedBadStars (bad : Finset (Finset ↑U)) :
     Finset (Finset (RandomGraph.Edge V)) :=
   bad.image (liftStar v U hv)
 
-@[simp] theorem card_liftedBadStars (bad : Finset (Finset ↑U)) :
+omit [Fintype V] in
+@[simp] theorem card_liftedBadStars [Finite V] (bad : Finset (Finset ↑U)) :
     (liftedBadStars v U hv bad).card = bad.card := by
+  classical
+  let := Fintype.ofFinite V
   rw [liftedBadStars, Finset.card_image_iff.mpr]
   intro B _ C _ h
   exact liftStar_injective v U hv h
 
+omit [Fintype V] in
 theorem mem_liftedBadStars_iff {bad : Finset (Finset ↑U)}
     {S : Finset (RandomGraph.Edge V)} :
     S ∈ liftedBadStars v U hv bad ↔
       ∃ B ∈ bad, liftStar v U hv B = S := by
   simp [liftedBadStars]
 
-theorem liftedBadStars_subset_powerset (bad : Finset (Finset ↑U)) :
+omit [Fintype V] in
+theorem liftedBadStars_subset_powerset [Finite V] (bad : Finset (Finset ↑U)) :
     liftedBadStars v U hv bad ⊆ (RandomGraph.starEdges v U hv).powerset := by
+  classical
+  let := Fintype.ofFinite V
   intro S hS
   obtain ⟨B, _hB, rfl⟩ := (mem_liftedBadStars_iff
     (v := v) (U := U) (hv := hv)).1 hS
   rw [Finset.mem_powerset, ← liftStar_univ v U hv]
   exact Finset.map_subset_map.2 (Finset.subset_univ B)
 
+omit [Fintype V] in
 /-- Any one-vertex bad-star family (in particular
 `Extension.graphExtensionBadStars`) has exactly the same cardinality after
 being transported to the unordered-edge block seen by `RandomGraph`. -/
-theorem card_liftedBadStars_mul_pow_le
+theorem card_liftedBadStars_mul_pow_le [Finite V]
     (bad : Finset (Finset ↑U)) (t : ℕ)
     (h : bad.card * 2 ^ t ≤ 2 ^ U.card) :
     (liftedBadStars v U hv bad).card * 2 ^ t ≤ 2 ^ U.card := by
+  classical
+  let := Fintype.ofFinite V
   simpa using h
 
 end StarCoordinates

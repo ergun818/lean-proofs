@@ -70,11 +70,13 @@ def extensionVertexEmbedding (root : A) (e : DeletedVertices root ↪ U) :
           simpa [hx, hy] using hxy
         exact congrArg Subtype.val (e.injective he)
 
+omit [DecidableEq U] [Fintype A] [Fintype U] in
 @[simp]
 theorem extensionVertexEmbedding_root (root : A) (e : DeletedVertices root ↪ U) :
     extensionVertexEmbedding root e root = none := by
   simp [extensionVertexEmbedding]
 
+omit [DecidableEq U] [Fintype A] [Fintype U] in
 @[simp]
 theorem extensionVertexEmbedding_of_ne (root : A) (e : DeletedVertices root ↪ U)
     {x : A} (hx : x ≠ root) :
@@ -95,6 +97,7 @@ noncomputable def extensionEdge (F : SimpleGraph A) (root : A)
     (e : DeletedVertices root ↪ U) : Finset (U × Fin 2) :=
   Finset.univ.map (requiredPairEmbedding F root e)
 
+omit [DecidableEq U] [Fintype U] in
 @[simp]
 theorem mem_extensionEdge (F : SimpleGraph A) (root : A)
     (e : DeletedVertices root ↪ U) (p : U × Fin 2) :
@@ -111,6 +114,7 @@ theorem mem_extensionEdge (F : SimpleGraph A) (root : A)
     refine ⟨x, Finset.mem_univ _, ?_⟩
     exact Prod.ext hx hb
 
+omit [DecidableEq U] [Fintype U] in
 @[simp]
 theorem card_extensionEdge (F : SimpleGraph A) (root : A)
     (e : DeletedVertices root ↪ U) :
@@ -125,6 +129,7 @@ def layerProjection (E : Finset (U × Fin 2)) : Finset U :=
 def embeddingImage (root : A) (e : DeletedVertices root ↪ U) : Finset U :=
   Finset.univ.map e
 
+omit [Fintype U] in
 @[simp]
 theorem layerProjection_extensionEdge (F : SimpleGraph A) (root : A)
     (e : DeletedVertices root ↪ U) :
@@ -144,6 +149,7 @@ noncomputable def extensionIota (G' G : SimpleGraph (Option U)) : Finset (U × F
     (p.2 = 0 ∧ ¬ G.Adj (some p.1) none) ∨
       (p.2 = 1 ∧ G'.Adj (some p.1) none)
 
+omit [DecidableEq U] in
 @[simp]
 theorem mem_extensionIota (G' G : SimpleGraph (Option U)) (u : U) (b : Fin 2) :
     (u, b) ∈ extensionIota G' G ↔
@@ -151,11 +157,13 @@ theorem mem_extensionIota (G' G : SimpleGraph (Option U)) (u : U) (b : Fin 2) :
         (b = 1 ∧ G'.Adj (some u) none) := by
   simp [extensionIota]
 
+omit [DecidableEq U] in
 @[simp]
 theorem mem_extensionIota_zero (G' G : SimpleGraph (Option U)) (u : U) :
     (u, 0) ∈ extensionIota G' G ↔ ¬ G.Adj (some u) none := by
   simp [extensionIota]
 
+omit [DecidableEq U] in
 @[simp]
 theorem mem_extensionIota_one (G' G : SimpleGraph (Option U)) (u : U) :
     (u, 1) ∈ extensionIota G' G ↔ G'.Adj (some u) none := by
@@ -272,6 +280,7 @@ def inducedExtensionEmbedding (F : SimpleGraph A) (root : A)
   __ := extensionVertexEmbedding root e
   map_rel_iff' := (hAdj _ _).symm
 
+omit [DecidableEq A] [DecidableEq U] [Fintype A] in
 /-- Membership of a required pair says exactly that the adjacency prescribed
 by the target is realized at the new vertex, and that a prescribed edge lies
 in the chosen colour graph. -/
@@ -281,6 +290,7 @@ theorem requiredPair_mem_iota_iff (F : SimpleGraph A) (root : A)
     (e x, requiredBit F root x) ∈ extensionIota G' G ↔
       (F.Adj root x ↔ G.Adj none (some (e x))) ∧
         (F.Adj root x → G'.Adj none (some (e x))) := by
+  classical
   by_cases hx : F.Adj root x
   · rw [show requiredBit F root x = 1 by simp [requiredBit, hx],
       mem_extensionIota_one]
@@ -294,6 +304,7 @@ theorem requiredPair_mem_iota_iff (F : SimpleGraph A) (root : A)
       simpa [SimpleGraph.adj_comm] using h' trivial
   · simp [requiredBit, hx, SimpleGraph.adj_comm]
 
+omit [DecidableEq U] in
 /-- The central deterministic equivalence of the extension construction.
 
 The embedding `e` is an induced copy of the deleted target in the ambient
@@ -309,6 +320,7 @@ theorem extensionEdge_subset_iota_iff (F : SimpleGraph A) (root : A)
       (deleteVertex F root).Adj x y → G'.Adj (some (e x)) (some (e y))) :
     extensionEdge F root e.toEmbedding ⊆ extensionIota G' G ↔
       IsInducedMonochromaticExtension F root G' G e.toEmbedding := by
+  classical
   constructor
   · intro hsub
     have hnew (x : DeletedVertices root) :
@@ -358,6 +370,7 @@ theorem extensionEdge_subset_iota_iff (F : SimpleGraph A) (root : A)
     · intro hx
       simpa [extensionVertexEmbedding, x.property] using hMonoAll hx
 
+omit [DecidableEq U] in
 /-- In embedding language, the right side of
 `extensionEdge_subset_iota_iff` supplies the canonical induced embedding of
 the full target and certifies that all of its edges lie in `G'`. -/
@@ -370,6 +383,7 @@ theorem extensionEdge_subset_iota_iff_exists_embedding (F : SimpleGraph A) (root
       ∃ f : F ↪g G,
         (∀ x, f x = extensionVertexEmbedding root e.toEmbedding x) ∧
           ∀ {x y}, F.Adj x y → G'.Adj (f x) (f y) := by
+  classical
   rw [extensionEdge_subset_iota_iff F root G' G hG e hMono]
   constructor
   · rintro ⟨hAdj, hAll⟩
@@ -394,7 +408,7 @@ noncomputable def graphEmbeddingImage {B C : Type*} [Fintype B] [DecidableEq C]
   Finset.univ.map f.toEmbedding
 
 theorem graphEmbeddingImage_mem_copyHypergraph
-    {B C : Type*} [Fintype B] [DecidableEq B] [Fintype C] [DecidableEq C]
+    {B C : Type*} [Fintype B] [Fintype C] [DecidableEq C]
     (H : SimpleGraph B) (K' K : SimpleGraph C) (hK : K' ≤ K)
     (f : H ↪g K)
     (hMono : ∀ {x y : B}, H.Adj x y → K'.Adj (f x) (f y)) :
@@ -426,9 +440,10 @@ theorem graphEmbeddingImage_mem_copyHypergraph
   rw [heq]
   exact ⟨eK⟩
 
+omit [Fintype U] in
 /-- The image of the canonical extension embedding is the old image together
 with the new vertex. -/
-theorem graphEmbeddingImage_inducedExtensionEmbedding
+theorem graphEmbeddingImage_inducedExtensionEmbedding [Finite U]
     (F : SimpleGraph A) (root : A) (G : SimpleGraph (Option U))
     (e : DeletedVertices root ↪ U)
     (hAdj : ∀ x y, F.Adj x y ↔
@@ -437,6 +452,7 @@ theorem graphEmbeddingImage_inducedExtensionEmbedding
     graphEmbeddingImage (inducedExtensionEmbedding F root G e hAdj) =
       insert none ((embeddingImage root e).image some) := by
   classical
+  let := Fintype.ofFinite U
   ext z
   constructor
   · intro hz
@@ -462,6 +478,7 @@ theorem graphEmbeddingImage_inducedExtensionEmbedding
       refine ⟨x, Finset.mem_univ _, ?_⟩
       simp [inducedExtensionEmbedding, extensionVertexEmbedding, x.property]
 
+omit [Fintype U] in
 /-- Projecting an auxiliary edge directly to the one-new-vertex host agrees
 with first forgetting its layer and then injecting old vertices by `some`. -/
 theorem image_some_fst_eq_image_some_layerProjection (E : Finset (U × Fin 2)) :

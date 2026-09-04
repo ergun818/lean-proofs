@@ -28,6 +28,7 @@ variable {V : Type*} [DecidableEq V]
 abbrev Independent (G : Hypergraph V) (I : Finset V) : Prop :=
   G.IsIndependent I
 
+omit [DecidableEq V] in
 @[simp] theorem independent_iff_isIndependent {G : Hypergraph V} {I : Finset V} :
     Independent G I ↔ G.IsIndependent I := Iff.rfl
 
@@ -80,32 +81,40 @@ def threshold (q α : ℝ) (T : Finset V) : ℝ :=
     independentContainingMass q U G ∅ =
       qMass q U (independentContainingEvent U G ∅) := rfl
 
+omit [DecidableEq V] in
 @[simp] theorem threshold_empty (q α : ℝ) : threshold q α (∅ : Finset V) = 1 := by
   simp [threshold]
 
+omit [DecidableEq V] in
 theorem independent_mono {G : Hypergraph V} {I J : Finset V}
     (hI : Independent G I) (hJI : J ⊆ I) : Independent G J := by
   intro E hE hsub
   exact hI E hE (hsub.trans hJI)
 
+omit [DecidableEq V] in
 theorem independent_empty (G : Hypergraph V) (hG : ∅ ∉ G) : Independent G ∅ := by
   intro E hE hsub
   have : E = ∅ := Finset.subset_empty.mp hsub
   exact hG (this ▸ hE)
 
+omit [DecidableEq V] in
 theorem subsetWeight_nonneg {q : ℝ} (hq0 : 0 ≤ q) (hq1 : q ≤ 1)
     (U X : Finset V) : 0 ≤ subsetWeight q U X := by
   exact mul_nonneg (pow_nonneg hq0 _) (pow_nonneg (sub_nonneg.mpr hq1) _)
 
+omit [DecidableEq V] in
 theorem subsetWeight_pos {q : ℝ} (hq0 : 0 < q) (hq1 : q < 1)
     (U X : Finset V) : 0 < subsetWeight q U X := by
   exact mul_pos (pow_pos hq0 _) (pow_pos (sub_pos.mpr hq1) _)
 
+omit [DecidableEq V] in
 theorem qMass_nonneg {q : ℝ} (hq0 : 0 ≤ q) (hq1 : q ≤ 1)
     (U : Finset V) (A : Finset (Finset V)) : 0 ≤ qMass q U A := by
+  classical
   unfold qMass
   exact Finset.sum_nonneg fun X _ ↦ subsetWeight_nonneg hq0 hq1 U X
 
+omit [DecidableEq V] in
 /-- The mass of the whole powerset is one. -/
 theorem qMass_true (q : ℝ) (U : Finset V) : qMass q U U.powerset = 1 := by
   rw [qMass]
@@ -123,8 +132,10 @@ theorem qMass_true (q : ℝ) (U : Finset V) : qMass q U U.powerset = 1 := by
     _ = (q + (1 - q)) ^ U.card := (add_pow q (1 - q) U.card).symm
     _ = 1 := by ring
 
+omit [DecidableEq V] in
 theorem qMass_le_one {q : ℝ} (hq0 : 0 ≤ q) (hq1 : q ≤ 1)
     (U : Finset V) (A : Finset (Finset V)) (hA : A ⊆ U.powerset) : qMass q U A ≤ 1 := by
+  classical
   rw [← qMass_true q U]
   unfold qMass
   exact Finset.sum_le_sum_of_subset_of_nonneg hA fun X _ _ ↦ subsetWeight_nonneg hq0 hq1 U X
@@ -132,7 +143,7 @@ theorem qMass_le_one {q : ℝ} (hq0 : 0 ≤ q) (hq1 : q ≤ 1)
 @[simp] theorem mem_independentContainingEvent {U T X : Finset V} {G : Hypergraph V} :
     X ∈ independentContainingEvent U G T ↔ X ⊆ U ∧ Independent G X ∧ T ⊆ X := by
   classical
-  simp [independentContainingEvent, and_assoc]
+  simp [independentContainingEvent]
 
 /-- The singleton sample `T` contributes its full binomial weight. -/
 theorem subsetWeight_le_independentContainingMass {q : ℝ} {U T : Finset V}
@@ -187,6 +198,7 @@ theorem extensionProbability_nonneg {q : ℝ} {U T L : Finset V} {G : Hypergraph
   unfold extensionProbability
   exact div_nonneg (qMass_nonneg hq0 hq1 _ _) (qMass_nonneg hq0 hq1 _ _)
 
+omit [DecidableEq V] in
 theorem threshold_nonneg {q α : ℝ} (hq : 0 ≤ q) (hα : α ≤ 1) (T : Finset V) :
     0 ≤ threshold q α T := by
   exact pow_nonneg (mul_nonneg (sub_nonneg.mpr hα) hq) _
@@ -267,7 +279,7 @@ noncomputable def badExtensions (q α : ℝ) (U : Finset V) (G : Hypergraph V)
       L ⊆ U \ T ∧ L.Nonempty ∧
         extensionProbability q U G T L ≤ threshold q α L := by
   classical
-  simp [badExtensions, and_assoc]
+  simp [badExtensions]
 
 /-- A finite output package for the conditional-probability decomposition. -/
 structure Decomposition (q α : ℝ) (U : Finset V) (G : Hypergraph V)
@@ -397,7 +409,7 @@ theorem decompose_nonempty (q α : ℝ) (U : Finset V) (G : Hypergraph V)
             · exact Finset.mem_union_right T (Finset.mem_sdiff.mpr ⟨hxE, hxT⟩)
           exact (hXdata.2.1 E hEG (hEUnion.trans hXdata.2.2)).elim
         · intro hX
-          simpa using hX
+          simp at hX
       rw [hevent]
       simp
     have hExt0 : extensionProbability q U G T L = 0 := by

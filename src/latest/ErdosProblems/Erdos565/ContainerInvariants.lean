@@ -68,6 +68,7 @@ def upRank (H : Hypergraph V) : ℕ :=
     v ∈ H.containerVertices ↔ ({v} : Finset V) ∉ H := by
   simp [containerVertices]
 
+omit [DecidableEq V] [Fintype V] in
 @[simp] theorem mem_aboveOne {H : Hypergraph V} {e : Finset V} :
     e ∈ H.aboveOne ↔ e ∈ H ∧ 2 ≤ e.card := by
   simp [aboveOne]
@@ -82,11 +83,14 @@ theorem update_eq_filter_union (H F : Hypergraph V) :
   ext E
   simp [update]
 
+omit [DecidableEq V] [Fintype V] in
 theorem IsUniform.isAntichain {H : Hypergraph V} {s : ℕ}
     (hH : H.IsUniform s) : H.IsAntichain := by
+  classical
   intro A hAH B hBH hAB
   exact hH.subset_card_eq hAH hBH hAB
 
+omit [DecidableEq V] [Fintype V] in
 theorem IsAntichain.subset_card_eq {H : Hypergraph V} (hH : H.IsAntichain)
     {A B : Finset V} (hAH : A ∈ H) (hBH : B ∈ H) (hAB : A ⊆ B) : A = B :=
   hH hAH hBH hAB
@@ -173,6 +177,7 @@ theorem IsIndependent.update {H F : Hypergraph V} {I : Finset V}
   rw [mem_update] at hE
   exact hE.elim (fun h => hH E h.1) (fun h => hF E h)
 
+omit [DecidableEq V] [Fintype V] in
 theorem isIndependent_singleton {L I : Finset V} (hLI : ¬ L ⊆ I) :
     (singleton L : Hypergraph V).IsIndependent I := by
   intro E hE
@@ -180,6 +185,7 @@ theorem isIndependent_singleton {L I : Finset V} (hLI : ¬ L ⊆ I) :
   subst E
   exact hLI
 
+omit [Fintype V] in
 /-- If the seed is contained in an independent input, then the corresponding
 link is independent as well. -/
 theorem IsIndependent.link_of_subset {H : Hypergraph V} {I L : Finset V}
@@ -212,7 +218,7 @@ theorem IsAntichain.aboveOne_subset_containerVertices {H : Hypergraph V}
   rw [mem_containerVertices]
   intro hsv
   have heq : ({v} : Finset V) = E := hH hsv hEH (by simpa using hvE)
-  have : E.card = 1 := by simpa [← heq]
+  have : E.card = 1 := by simp [← heq]
   omega
 
 /-- If the generated up-set of `H₀` is contained in that of `H`, then the
@@ -239,16 +245,22 @@ theorem cover_restrict_by_aboveOne {H₀ H : Hypergraph V}
 
 /-! ## Uniform layers and links -/
 
+omit [Fintype V] in
 theorem link_layer_isUniform (H : Hypergraph V) (a : ℕ) (L : Finset V) :
     (H.layer a).link L |>.IsUniform (a - L.card) := by
   intro F hF
   obtain ⟨E, hE, hLE, rfl⟩ := mem_link.mp hF
   rw [Finset.card_sdiff_of_subset hLE, (mem_layer.mp hE).2]
 
-theorem link_layer_isAntichain (H : Hypergraph V) (a : ℕ) (L : Finset V) :
-    ((H.layer a).link L).IsAntichain :=
-  (link_layer_isUniform H a L).isAntichain
+omit [Fintype V] in
+theorem link_layer_isAntichain [Finite V] (H : Hypergraph V) (a : ℕ) (L : Finset V) :
+    ((H.layer a).link L).IsAntichain := by
+  classical
+  let := Fintype.ofFinite V
+  exact
+    (link_layer_isUniform H a L).isAntichain
 
+omit [Fintype V] in
 theorem link_layer_hasNonemptyEdges {H : Hypergraph V} {a : ℕ} {L : Finset V}
     (hLnot : L ∉ H) : ((H.layer a).link L).HasNonemptyEdges := by
   intro F hF
@@ -258,6 +270,7 @@ theorem link_layer_hasNonemptyEdges {H : Hypergraph V} {a : ℕ} {L : Finset V}
   have hEq : E = L := Finset.Subset.antisymm hEL hLE
   exact hLnot (hEq ▸ (mem_layer.mp hE).1)
 
+omit [Fintype V] in
 /-- A link edge at a nonempty seed is a proper subset of the old edge which
 generated it. -/
 theorem link_layer_edge_ssubset {H : Hypergraph V} {a : ℕ} {L F : Finset V}
@@ -291,19 +304,24 @@ theorem IsAntichain.seed_outside_upClosure {H : Hypergraph V} {a : ℕ}
   exact hH.ssubset_not_mem_upClosure (mem_layer.mp hE).1
     (Finset.ssubset_iff_subset_ne.mpr ⟨hLE, hne⟩)
 
+omit [DecidableEq V] [Fintype V] in
 theorem seed_card_lt_layer {H : Hypergraph V} {a : ℕ} {L : Finset V}
     (hext : ∃ E ∈ H.layer a, L ⊆ E) (hLnot : L ∉ H) : L.card < a := by
+  classical
   obtain ⟨E, hE, hLE⟩ := hext
   have hproper : L ⊂ E := Finset.ssubset_iff_subset_ne.mpr ⟨hLE, by
     intro hEq
     exact hLnot (hEq ▸ (mem_layer.mp hE).1)⟩
   simpa [(mem_layer.mp hE).2] using Finset.card_lt_card hproper
 
+omit [Fintype V] in
 /-- Links compose by taking the union of disjoint seeds.  This is the exact
 identity used in the maximal-seed proof for a positive update. -/
-theorem link_link_of_disjoint (H : Hypergraph V) {A B : Finset V}
+theorem link_link_of_disjoint [Finite V] (H : Hypergraph V) {A B : Finset V}
     (hAB : Disjoint A B) :
     (H.link A).link B = H.link (A ∪ B) := by
+  classical
+  let := Fintype.ofFinite V
   ext t
   constructor
   · intro ht
@@ -324,6 +342,7 @@ theorem link_link_of_disjoint (H : Hypergraph V) {A B : Finset V}
     refine mem_link.mpr ⟨e \ A, mem_link.mpr ⟨e, he, hAe, rfl⟩, hBdiff, ?_⟩
     simpa only [sdiff_sdiff, Finset.sup_eq_union] using het
 
+omit [Fintype V] in
 theorem link_singleton_of_subset {E L : Finset V} (hLE : L ⊆ E) :
     (({E} : Hypergraph V).link L) = {E \ L} := by
   ext t
@@ -334,6 +353,7 @@ theorem link_singleton_of_subset {E L : Finset V} (hLE : L ⊆ E) :
   · rintro rfl
     exact ⟨E, rfl, hLE, rfl⟩
 
+omit [Fintype V] in
 theorem link_singleton_of_not_subset {E L : Finset V} (hLE : ¬ L ⊆ E) :
     (({E} : Hypergraph V).link L) = ∅ := by
   ext t

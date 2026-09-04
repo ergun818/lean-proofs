@@ -123,7 +123,7 @@ theorem fixedLowRows_card_le (s u : ℕ) (A : Finset (Fin s)) :
   rw [← Fintype.card_coe]
   refine le_trans (Fintype.card_le_of_injective encode hencode) ?_
   have hcomp : Fintype.card {i : Fin s // i ∉ A} = s - A.card := by
-    simpa using Fintype.card_subtype_compl (fun i : Fin s ↦ i ∈ A)
+    simp
   simp [Fintype.card_pi, hcomp]
 
 /-- Union bound over the choice of `k` low rows.  This is the product-counting
@@ -331,6 +331,7 @@ noncomputable def crossEdges (U S : Finset V) (hUS : Disjoint U S) :
   classical
   exact (S.attach.product U.attach).image fun x ↦ crossEdge U S hUS x
 
+omit [Fintype V] in
 theorem mem_crossEdges_iff {U S : Finset V} {hUS : Disjoint U S}
     {e : RandomGraph.Edge V} :
     e ∈ crossEdges U S hUS ↔
@@ -346,6 +347,7 @@ theorem mem_crossEdges_iff {U S : Finset V} {hUS : Disjoint U S}
     apply Subtype.ext
     exact he.symm
 
+omit [Fintype V] in
 @[simp] theorem card_crossEdges (U S : Finset V) (hUS : Disjoint U S) :
     (crossEdges U S hUS).card = S.card * U.card := by
   classical
@@ -360,7 +362,7 @@ theorem mem_crossEdges_iff {U S : Finset V} {hUS : Disjoint U S}
 /-- The Boolean cross-edge matrix of a graph, with rows indexed by `S` and
 columns indexed by `U`. -/
 noncomputable def graphCrossMatrix (G : SimpleGraph V)
-    (U S : Finset V) (hUS : Disjoint U S) :
+    (U S : Finset V) (_ : Disjoint U S) :
     Fin S.card → Fin U.card → Bool := by
   classical
   exact fun i j ↦
@@ -391,6 +393,7 @@ noncomputable def highDegreeVertices (G : SimpleGraph V)
   classical
   exact S.filter fun v ↦ U.card < 4 * degreeInto G U v
 
+omit [DecidableEq V] [Fintype V] in
 @[simp] theorem rowDegree_graphCrossMatrix (G : SimpleGraph V)
     (U S : Finset V) (hUS : Disjoint U S) (i : Fin S.card) :
     rowDegree (graphCrossMatrix G U S hUS i) =
@@ -412,10 +415,12 @@ noncomputable def highDegreeVertices (G : SimpleGraph V)
       simpa [graphCrossMatrix] using (Finset.mem_filter.mp hu).2
     · simp [f]
 
-@[simp] theorem graphHighCount_eq_card_highDegreeVertices (G : SimpleGraph V)
+omit [DecidableEq V] [Fintype V] in
+@[simp] theorem graphHighCount_eq_card_highDegreeVertices [Finite V] (G : SimpleGraph V)
     (U S : Finset V) (hUS : Disjoint U S) :
     graphHighCount G U S hUS = (highDegreeVertices G U S).card := by
   classical
+  let := Fintype.ofFinite V
   unfold graphHighCount highRowCount
   let f : Fin S.card → V := fun i ↦ ((S.equivFin).symm i).1
   apply Finset.card_bij (fun i _ ↦ f i)

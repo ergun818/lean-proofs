@@ -19,7 +19,7 @@ open scoped BigOperators
 namespace Erdos565
 namespace SpecialContainerTheorem
 
-open Hypergraph
+open Erdos565.Hypergraph
 
 variable {V U : Type*}
 

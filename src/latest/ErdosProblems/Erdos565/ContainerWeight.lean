@@ -34,50 +34,64 @@ variable {V : Type*} [Fintype V] [DecidableEq V]
 
 open Hypergraph
 
+omit [Fintype V] in
 /-- Deleting a fixed subset is injective on the sets which contain it. -/
 theorem sdiff_injective_on_supersets (L : Finset V) :
     Set.InjOn (fun E : Finset V => E \ L) {E | L ⊆ E} := by
   intro A hLA B hLB h
-  rw [Set.mem_setOf_eq] at hLA hLB
+  rw [Set.mem_ofPred_eq] at hLA hLB
   change A \ L = B \ L at h
   calc
     A = L ∪ (A \ L) := (Finset.union_sdiff_of_subset hLA).symm
     _ = L ∪ (B \ L) := congrArg (fun X => L ∪ X) h
     _ = B := Finset.union_sdiff_of_subset hLB
 
+omit [Fintype V] in
 /-- Taking a link does not identify two edges containing the seed. -/
-theorem card_link_eq_degree (H : Hypergraph V) (L : Finset V) :
+theorem card_link_eq_degree [Finite V] (H : Hypergraph V) (L : Finset V) :
     (H.link L).card = H.degree L := by
+  classical
+  let := Fintype.ofFinite V
   rw [link, degree]
   exact Finset.card_image_iff.mpr fun A hA B hB h =>
     sdiff_injective_on_supersets L (Finset.mem_filter.mp hA).2
       (Finset.mem_filter.mp hB).2 h
 
+omit [Fintype V] in
 /-- A link of an `a`-uniform layer is `(a-|L|)`-uniform. -/
 theorem link_layer_edge_card {H : Hypergraph V} {a : ℕ} {L F : Finset V}
     (hF : F ∈ (H.layer a).link L) : F.card = a - L.card := by
   obtain ⟨E, hE, hLE, rfl⟩ := mem_link.mp hF
   rw [Finset.card_sdiff_of_subset hLE, (mem_layer.mp hE).2]
 
+omit [Fintype V] in
 /-- If the seed is smaller than the uniformity, the link has no empty edge. -/
-theorem empty_not_mem_link_layer_of_card_lt {H : Hypergraph V} {a : ℕ}
+theorem empty_not_mem_link_layer_of_card_lt [Finite V] {H : Hypergraph V} {a : ℕ}
     {L : Finset V} (hLa : L.card < a) : ∅ ∉ (H.layer a).link L := by
+  classical
+  let := Fintype.ofFinite V
   intro h
   have hc : (0 : ℕ) = a - L.card := by
     simpa using link_layer_edge_card h
   omega
 
+omit [Fintype V] in
 /-- On a uniform layer and below the top rank, strict and ordinary links agree. -/
-theorem strictLink_layer_eq_link_of_card_lt {H : Hypergraph V} {a : ℕ}
+theorem strictLink_layer_eq_link_of_card_lt [Finite V] {H : Hypergraph V} {a : ℕ}
     {L : Finset V} (hLa : L.card < a) :
     (H.layer a).strictLink L = (H.layer a).link L := by
+  classical
+  let := Fintype.ofFinite V
   simp [strictLink, empty_not_mem_link_layer_of_card_lt hLa]
 
+omit [Fintype V] in
 /-- Exact `p`-weight of a strict link in a uniform layer. -/
-theorem pWeight_strictLink_layer {H : Hypergraph V} {a : ℕ}
+theorem pWeight_strictLink_layer [Finite V] {H : Hypergraph V} {a : ℕ}
     {L : Finset V} (hLa : L.card < a) (p : ℝ) :
     ((H.layer a).strictLink L).pWeight p =
       (H.layer a).degree L * p ^ (a - L.card) := by
+  classical
+  let := Fintype.ofFinite V
   rw [strictLink_layer_eq_link_of_card_lt hLa, pWeight, weight]
   calc
     ∑ F ∈ (H.layer a).link L, p ^ F.card =
@@ -89,18 +103,21 @@ theorem pWeight_strictLink_layer {H : Hypergraph V} {a : ℕ}
     _ = (H.layer a).degree L * p ^ (a - L.card) := by
       rw [card_link_eq_degree]
 
+omit [Fintype V] in
 /-- The strict-link weight, restored by the weight of the seed, equals the
 weight of all layer edges containing the seed. -/
-theorem seed_mul_pWeight_strictLink_layer {H : Hypergraph V} {a : ℕ}
+theorem seed_mul_pWeight_strictLink_layer [Finite V] {H : Hypergraph V} {a : ℕ}
     {L : Finset V} (hLa : L.card < a) (p : ℝ) :
     p ^ L.card * ((H.layer a).strictLink L).pWeight p =
       (H.layer a).degree L * p ^ a := by
+  classical
+  let := Fintype.ofFinite V
   rw [pWeight_strictLink_layer hLa]
   calc
     p ^ L.card * ((H.layer a).degree L * p ^ (a - L.card)) =
         (H.layer a).degree L * (p ^ L.card * p ^ (a - L.card)) := by ring
     _ = (H.layer a).degree L * p ^ (L.card + (a - L.card)) := by rw [pow_add]
-    _ = (H.layer a).degree L * p ^ a := by congr 2 <;> omega
+    _ = (H.layer a).degree L * p ^ a := by congr 2; omega
 
 /-- Incidence double counting for one uniform layer. -/
 theorem sum_singleton_degree_layer (H : Hypergraph V) (a : ℕ) :
@@ -153,13 +170,17 @@ theorem sum_singleton_strictLink_pWeight_layer (H : Hypergraph V) (a : ℕ)
 def strictSupersets (H : Hypergraph V) (L : Finset V) : Hypergraph V :=
   H.filter fun E => L ⊂ E
 
+omit [Fintype V] in
 @[simp] theorem mem_strictSupersets {H : Hypergraph V} {L E : Finset V} :
     E ∈ strictSupersets H L ↔ E ∈ H ∧ L ⊂ E := by
   simp [strictSupersets]
 
-theorem union_seed_mem_strictSupersets_of_mem_strictLink
+omit [Fintype V] in
+theorem union_seed_mem_strictSupersets_of_mem_strictLink [Finite V]
     {H : Hypergraph V} {L F : Finset V} (hF : F ∈ H.strictLink L) :
     L ∪ F ∈ strictSupersets H L := by
+  classical
+  let := Fintype.ofFinite V
   obtain ⟨hne, E, hEH, hLE, hdiff⟩ := mem_strictLink.mp hF
   have hEq : L ∪ F = E := by
     rw [← hdiff]
@@ -171,6 +192,7 @@ theorem union_seed_mem_strictSupersets_of_mem_strictLink
     (hEqLE ▸ Finset.Subset.rfl)
   exact hne (hdiff ▸ this)
 
+omit [Fintype V] in
 theorem union_seed_injective_on_strictLink (H : Hypergraph V) (L : Finset V) :
     Set.InjOn (fun F : Finset V => L ∪ F) {F | F ∈ H.strictLink L} := by
   intro F hF G hG hEq
@@ -185,9 +207,12 @@ theorem union_seed_injective_on_strictLink (H : Hypergraph V) (L : Finset V) :
     _ = G \ L := hdiff
     _ = G := Finset.sdiff_eq_self_of_disjoint hGd
 
-theorem exists_strictLink_union_seed_eq_of_mem_strictSupersets
+omit [Fintype V] in
+theorem exists_strictLink_union_seed_eq_of_mem_strictSupersets [Finite V]
     {H : Hypergraph V} {L E : Finset V} (hE : E ∈ strictSupersets H L) :
     ∃ F ∈ H.strictLink L, L ∪ F = E := by
+  classical
+  let := Fintype.ofFinite V
   obtain ⟨hEH, hLE⟩ := mem_strictSupersets.mp hE
   refine ⟨E \ L, ?_, Finset.union_sdiff_of_subset hLE.1⟩
   rw [mem_strictLink]
@@ -195,11 +220,14 @@ theorem exists_strictLink_union_seed_eq_of_mem_strictSupersets
       (Finset.sdiff_nonempty.mpr (fun hEL => hLE.2 hEL)),
     E, hEH, hLE.1, rfl⟩
 
+omit [Fintype V] in
 /-- Restoring the seed restores exactly the original edge weight.  This is
 the basic identity behind all charging estimates in the algorithm. -/
-theorem seed_mul_pWeight_strictLink (H : Hypergraph V) (L : Finset V) (p : ℝ) :
+theorem seed_mul_pWeight_strictLink [Finite V] (H : Hypergraph V) (L : Finset V) (p : ℝ) :
     p ^ L.card * (H.strictLink L).pWeight p =
       (strictSupersets H L).pWeight p := by
+  classical
+  let := Fintype.ofFinite V
   rw [pWeight, pWeight, weight, weight, Finset.mul_sum]
   refine Finset.sum_bij (fun F _ => L ∪ F) ?_ ?_ ?_ ?_
   · intro F hF
@@ -216,18 +244,22 @@ theorem seed_mul_pWeight_strictLink (H : Hypergraph V) (L : Finset V) (p : ℝ) 
         (strictLink_subset_link H L hF)).symm
     rw [Finset.card_union_of_disjoint hdis, pow_add]
 
+omit [Fintype V] in
 /-- The fixed-layer identity above is also an immediate upper bound whenever
 one has a numerical degree estimate. -/
-theorem pWeight_strictLink_layer_le {H : Hypergraph V} {a : ℕ}
+theorem pWeight_strictLink_layer_le [Finite V] {H : Hypergraph V} {a : ℕ}
     {L : Finset V} (hLa : L.card < a) {p R : ℝ}
     (hdegree : ((H.layer a).degree L : ℝ) * p ^ (a - L.card) ≤ R) :
     ((H.layer a).strictLink L).pWeight p ≤ R := by
+  classical
+  let := Fintype.ofFinite V
   rwa [pWeight_strictLink_layer hLa]
 
 /-- Edges of rank strictly below `s`. -/
 def belowRank (H : Hypergraph V) (s : ℕ) : Hypergraph V :=
   H.filter fun E => E.card < s
 
+omit [DecidableEq V] [Fintype V] in
 @[simp] theorem mem_belowRank {H : Hypergraph V} {s : ℕ} {E : Finset V} :
     E ∈ belowRank H s ↔ E ∈ H ∧ E.card < s := by
   simp [belowRank]
@@ -236,6 +268,7 @@ def belowRank (H : Hypergraph V) (s : ℕ) : Hypergraph V :=
 def aboveOne (H : Hypergraph V) : Hypergraph V :=
   H.filter fun E => 2 ≤ E.card
 
+omit [DecidableEq V] [Fintype V] in
 @[simp] theorem mem_aboveOne {H : Hypergraph V} {E : Finset V} :
     E ∈ aboveOne H ↔ E ∈ H ∧ 2 ≤ E.card := by
   simp [aboveOne]
@@ -248,12 +281,13 @@ def availableVertices (H : Hypergraph V) : Finset V :=
     v ∈ availableVertices H ↔ ({v} : Finset V) ∉ H := by
   simp [availableVertices]
 
+omit [Fintype V] in
 /-- `p`-weight is subadditive under union. -/
 theorem pWeight_union_le (H K : Hypergraph V) {p : ℝ} (hp : 0 ≤ p) :
     (H ∪ K).pWeight p ≤ H.pWeight p + K.pWeight p := by
   have hEq : H ∪ K = H ∪ (K \ H) := by
     ext E
-    simp [or_and_right]
+    simp
   have hdis : Disjoint H (K \ H) := by
     rw [Finset.disjoint_left]
     intro E hEH hEK
@@ -262,11 +296,13 @@ theorem pWeight_union_le (H K : Hypergraph V) {p : ℝ} (hp : 0 ≤ p) :
   exact add_le_add_right
     (pWeight_mono (H := K \ H) (K := K) Finset.sdiff_subset (p := p) hp) _
 
+omit [Fintype V] in
 /-- Union bound for a finite union of hypergraphs. -/
-theorem pWeight_biUnion_le {A : Type*} [DecidableEq A]
+theorem pWeight_biUnion_le [Finite V] {A : Type*}
     (S : Finset A) (K : A → Hypergraph V) {p : ℝ} (hp : 0 ≤ p) :
     Hypergraph.pWeight (S.biUnion K) p ≤ ∑ a ∈ S, (K a).pWeight p := by
   classical
+  let := Fintype.ofFinite V
   induction S using Finset.induction_on with
   | empty => simp
   | @insert a S ha ih =>
@@ -274,12 +310,15 @@ theorem pWeight_biUnion_le {A : Type*} [DecidableEq A]
       exact (pWeight_union_le (K a) (S.biUnion K) hp).trans
         (add_le_add le_rfl ih)
 
+omit [Fintype V] in
 /-- Every strict link in the below-rank family occurs in the strict link of
 one of its uniform layers. -/
-theorem strictLink_belowRank_subset_biUnion_layers (H : Hypergraph V)
+theorem strictLink_belowRank_subset_biUnion_layers [Finite V] (H : Hypergraph V)
     (L : Finset V) (s : ℕ) :
     (belowRank H s).strictLink L ⊆
       (Finset.range s).biUnion (fun a => (H.layer a).strictLink L) := by
+  classical
+  let := Fintype.ofFinite V
   intro F hF
   obtain ⟨hne, E, hE, hLE, hdiff⟩ := mem_strictLink.mp hF
   obtain ⟨hEH, hEs⟩ := mem_belowRank.mp hE
@@ -288,12 +327,15 @@ theorem strictLink_belowRank_subset_biUnion_layers (H : Hypergraph V)
   exact mem_strictLink.mpr
     ⟨hne, E, mem_layer.mpr ⟨hEH, rfl⟩, hLE, hdiff⟩
 
+omit [Fintype V] in
 /-- Low link bounds on the uniform layers sum to a low link bound on all
 edges below the top rank. -/
-theorem pWeight_strictLink_belowRank_le_sum_layers
+theorem pWeight_strictLink_belowRank_le_sum_layers [Finite V]
     (H : Hypergraph V) (L : Finset V) (s : ℕ) {p : ℝ} (hp : 0 ≤ p) :
     ((belowRank H s).strictLink L).pWeight p ≤
       ∑ a ∈ Finset.range s, ((H.layer a).strictLink L).pWeight p := by
+  classical
+  let := Fintype.ofFinite V
   calc
     ((belowRank H s).strictLink L).pWeight p ≤
         Hypergraph.pWeight ((Finset.range s).biUnion
@@ -318,13 +360,16 @@ theorem sum_range_le_half {s : ℕ} (hs : 0 < s) {f : ℕ → ℝ}
       rw [div_eq_iff hden]
       ring
 
+omit [Fintype V] in
 /-- The form of the low-link invariant consumed by the charging argument. -/
-theorem pWeight_strictLink_belowRank_le_half
+theorem pWeight_strictLink_belowRank_le_half [Finite V]
     (H : Hypergraph V) (L : Finset V) {s : ℕ} (hs : 0 < s)
     {p : ℝ} (hp : 0 ≤ p)
     (hlayer : ∀ a ∈ Finset.range s,
       ((H.layer a).strictLink L).pWeight p ≤ 1 / (2 * (s : ℝ))) :
     ((belowRank H s).strictLink L).pWeight p ≤ 1 / 2 := by
+  classical
+  let := Fintype.ofFinite V
   exact (pWeight_strictLink_belowRank_le_sum_layers H L s hp).trans
     (sum_range_le_half hs hlayer)
 
@@ -332,27 +377,34 @@ theorem pWeight_strictLink_belowRank_le_half
 def removedBy (H C : Hypergraph V) : Hypergraph V :=
   H.filter fun E => ∃ F ∈ C, F ⊆ E
 
+omit [Fintype V] in
 @[simp] theorem mem_removedBy {H C : Hypergraph V} {E : Finset V} :
     E ∈ removedBy H C ↔ E ∈ H ∧ ∃ F ∈ C, F ⊆ E := by
   simp [removedBy]
 
+omit [Fintype V] in
 /-- Removed edges are covered by the strict supersets of replacement edges,
 provided no replacement edge was already old. -/
-theorem removedBy_subset_biUnion_strictSupersets {H C : Hypergraph V}
+theorem removedBy_subset_biUnion_strictSupersets [Finite V] {H C : Hypergraph V}
     (hout : ∀ F ∈ C, F ∉ H) :
     removedBy H C ⊆ C.biUnion (strictSupersets H) := by
+  classical
+  let := Fintype.ofFinite V
   intro E hE
   obtain ⟨hEH, F, hFC, hFE⟩ := mem_removedBy.mp hE
   rw [Finset.mem_biUnion]
   refine ⟨F, hFC, mem_strictSupersets.mpr ⟨hEH, ?_⟩⟩
   exact Finset.ssubset_iff_subset_ne.mpr ⟨hFE, fun h => hout F hFC (h ▸ hEH)⟩
 
+omit [Fintype V] in
 /-- Charging inequality: charge each removed old edge to a replacement edge
 which it contains. -/
-theorem pWeight_removedBy_le_sum_seed_links {H C : Hypergraph V}
+theorem pWeight_removedBy_le_sum_seed_links [Finite V] {H C : Hypergraph V}
     {p : ℝ} (hp : 0 ≤ p) (hout : ∀ F ∈ C, F ∉ H) :
     (removedBy H C).pWeight p ≤
       ∑ F ∈ C, p ^ F.card * (H.strictLink F).pWeight p := by
+  classical
+  let := Fintype.ofFinite V
   calc
     (removedBy H C).pWeight p ≤
         Hypergraph.pWeight (C.biUnion (strictSupersets H)) p :=
@@ -364,12 +416,15 @@ theorem pWeight_removedBy_le_sum_seed_links {H C : Hypergraph V}
       intro F _
       rw [seed_mul_pWeight_strictLink]
 
+omit [Fintype V] in
 /-- If every replacement edge has a low old link, at most half of the
 replacement weight is lost by deletion. -/
-theorem pWeight_removedBy_le_half_mul {H C : Hypergraph V}
+theorem pWeight_removedBy_le_half_mul [Finite V] {H C : Hypergraph V}
     {p : ℝ} (hp : 0 ≤ p) (hout : ∀ F ∈ C, F ∉ H)
     (hlow : ∀ F ∈ C, (H.strictLink F).pWeight p ≤ 1 / 2) :
     (removedBy H C).pWeight p ≤ (1 / 2 : ℝ) * C.pWeight p := by
+  classical
+  let := Fintype.ofFinite V
   calc
     (removedBy H C).pWeight p ≤
         ∑ F ∈ C, p ^ F.card * (H.strictLink F).pWeight p :=
@@ -383,6 +438,7 @@ theorem pWeight_removedBy_le_half_mul {H C : Hypergraph V}
       intro F _
       ring
 
+omit [Fintype V] in
 /-- Weight decomposition after deleting a subfamily. -/
 theorem pWeight_sdiff_add {H D : Hypergraph V} (hDH : D ⊆ H) (p : ℝ) :
     (H \ D).pWeight p + D.pWeight p = H.pWeight p := by
@@ -391,13 +447,16 @@ theorem pWeight_sdiff_add {H D : Hypergraph V} (hDH : D ⊆ H) (p : ℝ) :
   simpa [pWeight, hinter] using
     (weight_sdiff_add_weight_inter H D (fun E : Finset V => p ^ E.card))
 
+omit [Fintype V] in
 /-- Abstract gain inequality: all retained old edges and all inserted edges
 are present in the next family. -/
-theorem pWeight_retained_inserted_le {H D C K : Hypergraph V}
+theorem pWeight_retained_inserted_le [Finite V] {H D C K : Hypergraph V}
     {p : ℝ} (hp : 0 ≤ p) (hDH : D ⊆ H)
     (hkeep : H \ D ⊆ K) (hinsert : C ⊆ K)
     (hdis : Disjoint (H \ D) C) :
     H.pWeight p + C.pWeight p - D.pWeight p ≤ K.pWeight p := by
+  classical
+  let := Fintype.ofFinite V
   have hunion : (H \ D) ∪ C ⊆ K := by
     intro E hE
     rcases Finset.mem_union.mp hE with hE | hE
@@ -409,16 +468,19 @@ theorem pWeight_retained_inserted_le {H D C K : Hypergraph V}
   have hdecomp := pWeight_sdiff_add hDH p
   nlinarith
 
+omit [Fintype V] in
 /-- One accepting step gains at least `1/(8s)` in below-rank weight once
 the replacement has weight at least `1/(4s)` and at most half of it is
 charged to deleted edges. -/
-theorem accepting_step_gain {H D C K : Hypergraph V} {s : ℕ}
+theorem accepting_step_gain [Finite V] {H D C K : Hypergraph V} {s : ℕ}
     (hs : 0 < s) {p : ℝ} (hp : 0 ≤ p) (hDH : D ⊆ H)
     (hkeep : H \ D ⊆ K) (hinsert : C ⊆ K)
     (hdis : Disjoint (H \ D) C)
     (hremoved : D.pWeight p ≤ (1 / 2 : ℝ) * C.pWeight p)
     (hreplacement : 1 / (4 * (s : ℝ)) ≤ C.pWeight p) :
     H.pWeight p + 1 / (8 * (s : ℝ)) ≤ K.pWeight p := by
+  classical
+  let := Fintype.ofFinite V
   have hbase := pWeight_retained_inserted_le hp hDH hkeep hinsert hdis
   have hsR : (0 : ℝ) < s := by exact_mod_cast hs
   have hfour : (0 : ℝ) < 4 * s := mul_pos (by norm_num) hsR
@@ -488,13 +550,14 @@ theorem accepting_count_bound {w : ℕ → ℝ} {accepted : Finset ℕ}
     _ ≤ M * (8 * (s : ℝ)) := mul_le_mul_of_nonneg_right this hden.le
     _ = 8 * (s : ℝ) * M := by ring
 
+omit [DecidableEq V] [Fintype V] in
 /-- If every accepting seed has at most `s` vertices, the union fingerprint
 has the advertised `8s²M` bound. -/
 theorem fingerprint_card_bound {S : Finset V} {accepted : Finset ℕ}
     {s : ℕ} {M : ℝ}
     (hScard : (S.card : ℝ) ≤ (s : ℝ) * accepted.card)
     (haccept : (accepted.card : ℝ) ≤ 8 * (s : ℝ) * M)
-    (hM : 0 ≤ M) :
+    (_ : 0 ≤ M) :
     (S.card : ℝ) ≤ 8 * (s : ℝ) ^ 2 * M := by
   have hs0 : (0 : ℝ) ≤ s := by positivity
   calc
@@ -556,11 +619,14 @@ theorem pWeight_layer_one_eq_complement (H : Hypergraph V) (p : ℝ) :
       Fintype.card V - (availableVertices H).card := by omega
   rw [pWeight_layer_one, heq]
 
+omit [Fintype V] in
 /-- A hypergraph with no empty edge is the disjoint union of its singleton
 layer and its edges of size at least two. -/
-theorem layer_one_union_aboveOne {H : Hypergraph V}
+theorem layer_one_union_aboveOne [Finite V] {H : Hypergraph V}
     (hne : ∀ E ∈ H, E.Nonempty) :
     H.layer 1 ∪ aboveOne H = H := by
+  classical
+  let := Fintype.ofFinite V
   ext E
   constructor
   · intro hE
@@ -573,8 +639,11 @@ theorem layer_one_union_aboveOne {H : Hypergraph V}
     · exact Finset.mem_union_left _ (mem_layer.mpr ⟨hEH, hcard⟩)
     · exact Finset.mem_union_right _ (mem_aboveOne.mpr ⟨hEH, by omega⟩)
 
-theorem disjoint_layer_one_aboveOne (H : Hypergraph V) :
+omit [DecidableEq V] [Fintype V] in
+theorem disjoint_layer_one_aboveOne [Finite V] (H : Hypergraph V) :
     Disjoint (H.layer 1) (aboveOne H) := by
+  classical
+  let := Fintype.ofFinite V
   rw [Finset.disjoint_left]
   intro E hE1 hE2
   have hcard1 := (mem_layer.mp hE1).2
@@ -600,7 +669,6 @@ theorem terminal_pWeight_le (H : Hypergraph V) {p : ℝ} (hp : 0 ≤ p)
             (fun E : Finset V => p ^ E.card))
   have hsingle := pWeight_layer_one H p
   have hcard := card_forbidden_add_available H
-  norm_num at hsingle
   have hcardR : ((forbiddenVertices H).card : ℝ) +
       (availableVertices H).card = Fintype.card V := by exact_mod_cast hcard
   rw [hdecomp, hsingle]

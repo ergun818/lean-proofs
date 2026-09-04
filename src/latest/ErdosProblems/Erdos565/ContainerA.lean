@@ -98,14 +98,17 @@ theorem update_eq_hypergraph_update (H F : Family V) :
     A ∈ upClosure H ↔ ∃ E ∈ H, E ⊆ A := by
   simp [upClosure]
 
+omit [Fintype V] in
 @[simp] theorem mem_layer {H : Family V} {a : ℕ} {E : Finset V} :
     E ∈ layer H a ↔ E ∈ H ∧ E.card = a := by
   simp [layer]
 
+omit [Fintype V] in
 @[simp] theorem mem_below {H : Family V} {s : ℕ} {E : Finset V} :
     E ∈ below H s ↔ E ∈ H ∧ E.card < s := by
   simp [below]
 
+omit [Fintype V] in
 @[simp] theorem mem_aboveOne {H : Family V} {E : Finset V} :
     E ∈ aboveOne H ↔ E ∈ H ∧ 2 ≤ E.card := by
   simp [aboveOne]
@@ -114,6 +117,7 @@ theorem update_eq_hypergraph_update (H F : Family V) :
     v ∈ containerVertices H ↔ ({v} : Finset V) ∉ H := by
   simp [containerVertices]
 
+omit [Fintype V] in
 theorem mem_link {H : Family V} {L F : Finset V} :
     F ∈ link H L ↔ ∃ E ∈ H, L ⊆ E ∧ E \ L = F := by
   simp only [link, Finset.mem_image, Finset.mem_filter]
@@ -123,11 +127,15 @@ theorem mem_link {H : Family V} {L F : Finset V} :
   · rintro ⟨E, hEH, hLE, hdiff⟩
     exact ⟨E, ⟨hEH, hLE⟩, hdiff⟩
 
-@[simp] theorem mem_update {H F : Family V} {E : Finset V} :
+omit [Fintype V] in
+@[simp] theorem mem_update [Finite V] {H F : Family V} {E : Finset V} :
     E ∈ update H F ↔
       (E ∈ H ∧ ¬ ∃ A ∈ F, A ⊆ E) ∨ E ∈ F := by
+  classical
+  let := Fintype.ofFinite V
   simp [update]
 
+omit [Fintype V] in
 theorem IsUniform.isAntichain {H : Family V} {s : ℕ}
     (hH : IsUniform H s) : IsAntichain H := by
   intro A hAH B hBH hAB
@@ -198,32 +206,43 @@ theorem update_isAntichain {H F : Family V}
     exact hB.2 ⟨A, hA, hAB⟩
   · exact hF hA hB hAB
 
-theorem update_hasNonemptyEdges {H F : Family V}
+omit [Fintype V] in
+theorem update_hasNonemptyEdges [Finite V] {H F : Family V}
     (hH : HasNonemptyEdges H) (hF : HasNonemptyEdges F) :
     HasNonemptyEdges (update H F) := by
+  classical
+  let := Fintype.ofFinite V
   intro E hE
   rw [mem_update] at hE
   exact hE.elim (fun h ↦ hH h.1) (fun h ↦ hF h)
 
-theorem update_isRankAtMost {H F : Family V} {s : ℕ}
+omit [Fintype V] in
+theorem update_isRankAtMost [Finite V] {H F : Family V} {s : ℕ}
     (hH : IsRankAtMost H s) (hF : IsRankAtMost F s) :
     IsRankAtMost (update H F) s := by
+  classical
+  let := Fintype.ofFinite V
   intro E hE
   rw [mem_update] at hE
   exact hE.elim (fun h ↦ hH h.1) (fun h ↦ hF h)
 
+omit [Fintype V] in
 theorem Independent.mono_family {H K : Family V} {I : Finset V}
     (hI : Independent K I) (hHK : H ⊆ K) : Independent H I := by
   intro E hEH
   exact hI (hHK hEH)
 
-theorem independent_update {H F : Family V} {I : Finset V}
+omit [Fintype V] in
+theorem independent_update [Finite V] {H F : Family V} {I : Finset V}
     (hH : Independent H I) (hF : Independent F I) :
     Independent (update H F) I := by
+  classical
+  let := Fintype.ofFinite V
   intro E hE
   rw [mem_update] at hE
   exact hE.elim (fun h ↦ hH h.1) (fun h ↦ hF h)
 
+omit [Fintype V] in
 theorem independent_singleton_family {L I : Finset V} (hLI : ¬ L ⊆ I) :
     Independent ({L} : Family V) I := by
   intro E hE
@@ -231,9 +250,12 @@ theorem independent_singleton_family {L I : Finset V} (hLI : ¬ L ⊆ I) :
   subst E
   exact hLI
 
-theorem independent_link_of_seed_subset {H : Family V} {I L : Finset V}
+omit [Fintype V] in
+theorem independent_link_of_seed_subset [Finite V] {H : Family V} {I L : Finset V}
     (hI : Independent H I) (hLI : L ⊆ I) :
     Independent (link H L) I := by
+  classical
+  let := Fintype.ofFinite V
   intro F hF hFI
   obtain ⟨E, hEH, hLE, rfl⟩ := mem_link.mp hF
   apply hI hEH
@@ -256,7 +278,7 @@ theorem aboveOne_subset_container {H : Family V} (hH : IsAntichain H) :
   rw [mem_containerVertices]
   intro hsv
   have heq : ({v} : Finset V) = E := hH hsv hEH (by simpa using hvE)
-  have : E.card = 1 := by simpa [← heq]
+  have : E.card = 1 := by simp [← heq]
   omega
 
 theorem cover_aboveOne_of_upClosure {H₀ H : Family V}
@@ -278,18 +300,28 @@ theorem cover_aboveOne_of_upClosure {H₀ H : Family V}
     omega
   exact ⟨L, mem_aboveOne.mpr ⟨hLH, hLcard⟩, hLE⟩
 
-theorem link_layer_isUniform (H : Family V) (a : ℕ) (L : Finset V) :
+omit [Fintype V] in
+theorem link_layer_isUniform [Finite V] (H : Family V) (a : ℕ) (L : Finset V) :
     IsUniform (link (layer H a) L) (a - L.card) := by
+  classical
+  let := Fintype.ofFinite V
   intro F hF
   obtain ⟨E, hE, hLE, rfl⟩ := mem_link.mp hF
   rw [Finset.card_sdiff_of_subset hLE, (mem_layer.mp hE).2]
 
-theorem link_layer_isAntichain (H : Family V) (a : ℕ) (L : Finset V) :
-    IsAntichain (link (layer H a) L) :=
-  (link_layer_isUniform H a L).isAntichain
+omit [Fintype V] in
+theorem link_layer_isAntichain [Finite V] (H : Family V) (a : ℕ) (L : Finset V) :
+    IsAntichain (link (layer H a) L) := by
+  classical
+  let := Fintype.ofFinite V
+  exact
+    (link_layer_isUniform H a L).isAntichain
 
-theorem link_layer_hasNonemptyEdges {H : Family V} {a : ℕ} {L : Finset V}
+omit [Fintype V] in
+theorem link_layer_hasNonemptyEdges [Finite V] {H : Family V} {a : ℕ} {L : Finset V}
     (hLnot : L ∉ H) : HasNonemptyEdges (link (layer H a) L) := by
+  classical
+  let := Fintype.ofFinite V
   intro F hF
   obtain ⟨E, hE, hLE, hEF⟩ := mem_link.mp hF
   subst F
@@ -298,9 +330,12 @@ theorem link_layer_hasNonemptyEdges {H : Family V} {a : ℕ} {L : Finset V}
   have hEq : E = L := Finset.Subset.antisymm hEL hLE
   exact hLnot (hEq ▸ (mem_layer.mp hE).1)
 
-theorem link_layer_edges_proper_old {H : Family V} {a : ℕ} {L F : Finset V}
+omit [Fintype V] in
+theorem link_layer_edges_proper_old [Finite V] {H : Family V} {a : ℕ} {L F : Finset V}
     (hL : L.Nonempty) (hF : F ∈ link (layer H a) L) :
     ∃ E ∈ H, F ⊂ E := by
+  classical
+  let := Fintype.ofFinite V
   obtain ⟨E, hE, hLE, rfl⟩ := mem_link.mp hF
   refine ⟨E, (mem_layer.mp hE).1, Finset.ssubset_iff_subset_ne.mpr
     ⟨Finset.sdiff_subset, ?_⟩⟩
@@ -327,8 +362,11 @@ theorem seed_outside_upClosure {H : Family V} {a : ℕ} {L : Finset V}
   exact proper_subset_not_mem_upClosure hH (mem_layer.mp hE).1
     (Finset.ssubset_iff_subset_ne.mpr ⟨hLE, hne⟩)
 
-theorem seed_rank_lt {H : Family V} {a : ℕ} {L : Finset V}
+omit [Fintype V] in
+theorem seed_rank_lt [Finite V] {H : Family V} {a : ℕ} {L : Finset V}
     (hext : ∃ E ∈ layer H a, L ⊆ E) (hLnot : L ∉ H) : L.card < a := by
+  classical
+  let := Fintype.ofFinite V
   obtain ⟨E, hE, hLE⟩ := hext
   have hproper : L ⊂ E := Finset.ssubset_iff_subset_ne.mpr ⟨hLE, by
     intro hEq
@@ -352,9 +390,12 @@ def replacement (H : Family V) (a : ℕ) (L : Finset V) : Branch → Family V
   | .accept => link (layer H a) L
   | .reject => {L}
 
-theorem replacement_isAntichain {H : Family V} {a : ℕ} {L : Finset V}
-    (hH : IsAntichain H) (b : Branch) :
+omit [Fintype V] in
+theorem replacement_isAntichain [Finite V] {H : Family V} {a : ℕ} {L : Finset V}
+    (_ : IsAntichain H) (b : Branch) :
     IsAntichain (replacement H a L b) := by
+  classical
+  let := Fintype.ofFinite V
   cases b with
   | accept => exact link_layer_isAntichain H a L
   | reject =>
@@ -363,9 +404,12 @@ theorem replacement_isAntichain {H : Family V} {a : ℕ} {L : Finset V}
       subst A
       exact hB.symm
 
-theorem replacement_hasNonemptyEdges {H : Family V} {a : ℕ} {L : Finset V}
+omit [Fintype V] in
+theorem replacement_hasNonemptyEdges [Finite V] {H : Family V} {a : ℕ} {L : Finset V}
     (hL : L.Nonempty) (hLnot : L ∉ H) (b : Branch) :
     HasNonemptyEdges (replacement H a L b) := by
+  classical
+  let := Fintype.ofFinite V
   cases b with
   | accept => exact link_layer_hasNonemptyEdges hLnot
   | reject =>
@@ -385,9 +429,12 @@ theorem replacement_outside_upClosure {H : Family V} {a : ℕ} {L : Finset V}
       subst F
       exact seed_outside_upClosure hH hLnot hext
 
-theorem replacement_nonempty {H : Family V} {a : ℕ} {L : Finset V}
-    (hLnot : L ∉ H) (hext : ∃ E ∈ layer H a, L ⊆ E) (b : Branch) :
+omit [Fintype V] in
+theorem replacement_nonempty [Finite V] {H : Family V} {a : ℕ} {L : Finset V}
+    (_ : L ∉ H) (hext : ∃ E ∈ layer H a, L ⊆ E) (b : Branch) :
     (replacement H a L b).Nonempty := by
+  classical
+  let := Fintype.ofFinite V
   cases b with
   | reject => simp [replacement]
   | accept =>
@@ -395,10 +442,13 @@ theorem replacement_nonempty {H : Family V} {a : ℕ} {L : Finset V}
       refine ⟨E \ L, ?_⟩
       exact mem_link.mpr ⟨E, hE, hLE, rfl⟩
 
-theorem replacement_isRankAtMost {H : Family V} {a s : ℕ} {L : Finset V}
+omit [Fintype V] in
+theorem replacement_isRankAtMost [Finite V] {H : Family V} {a s : ℕ} {L : Finset V}
     (has : a ≤ s) (hLnot : L ∉ H)
     (hext : ∃ E ∈ layer H a, L ⊆ E) (b : Branch) :
     IsRankAtMost (replacement H a L b) s := by
+  classical
+  let := Fintype.ofFinite V
   cases b with
   | accept =>
       intro F hF
@@ -489,13 +539,15 @@ def AlgorithmChoice.ofShared {H : Family V} {p : ℝ} {s : ℕ}
     simpa [linkThreshold, ContainerSelector.threshold, linkWeight,
       ContainerSelector.linkWeight] using choice.maximal_seed K hK hKnot hKext
 
+omit [Fintype V] in
 /-- From any heavy candidate, finite minimization in the layer and finite
 maximization of seed cardinality produce the canonical structural choice
 needed by the algorithm. -/
-theorem exists_algorithmChoice_of_candidate {H : Family V} {p : ℝ} {s : ℕ}
+theorem exists_algorithmChoice_of_candidate [Finite V] {H : Family V} {p : ℝ} {s : ℕ}
     (hex : Nonempty (Candidate H p s)) :
     Nonempty (AlgorithmChoice H p s) := by
   classical
+  let := Fintype.ofFinite V
   let P : ℕ → Prop := fun a ↦ ∃ c : Candidate H p s, c.layerIndex = a
   have hP : ∃ a, P a := by
     obtain ⟨c⟩ := hex
@@ -556,6 +608,7 @@ theorem exists_algorithmChoice_of_candidate {H : Family V} {p : ℝ} {s : ℕ}
 def branchFor (I L : Finset V) : Branch :=
   if L ⊆ I then .accept else .reject
 
+omit [Fintype V] in
 @[simp] theorem branchFor_eq_accept_iff {I L : Finset V} :
     branchFor I L = .accept ↔ L ⊆ I := by
   simp [branchFor]
@@ -624,6 +677,7 @@ theorem Round.next_rank_gt {st : State V} {I : Finset V} {s : ℕ}
     replacement_outside_upClosure hinv.family_antichain rd.seed_nonempty
       rd.seed_not_edge rd.extension rd.branch hF⟩
 
+omit [Fintype V] in
 theorem fingerprint_subset_next_of_accept {st : State V} {a : ℕ} {L I : Finset V}
     (hS : st.fingerprint ⊆ I) (hL : L ⊆ I) :
     (st.next a L .accept).fingerprint ⊆ I := by
@@ -631,23 +685,31 @@ theorem fingerprint_subset_next_of_accept {st : State V} {a : ℕ} {L I : Finset
   simp only [State.next, Finset.mem_union] at hv
   exact hv.elim (fun h ↦ hS h) (fun h ↦ hL h)
 
+omit [Fintype V] in
 @[simp] theorem fingerprint_next_reject (st : State V) (a : ℕ) (L : Finset V) :
     (st.next a L .reject).fingerprint = st.fingerprint := rfl
 
+omit [Fintype V] in
 theorem fingerprint_mono_next (st : State V) (a : ℕ) (L : Finset V) (b : Branch) :
     st.fingerprint ⊆ (st.next a L b).fingerprint := by
   cases b <;> simp [State.next]
 
-theorem independent_next_accept {st : State V} {a : ℕ} {L I : Finset V}
+omit [Fintype V] in
+theorem independent_next_accept [Finite V] {st : State V} {a : ℕ} {L I : Finset V}
     (hI : Independent st.family I) (hLI : L ⊆ I) :
     Independent (st.next a L .accept).family I := by
+  classical
+  let := Fintype.ofFinite V
   apply independent_update hI
   apply independent_link_of_seed_subset
     (hI.mono_family (by intro E hE; exact (mem_layer.mp hE).1)) hLI
 
-theorem independent_next_reject {st : State V} {a : ℕ} {L I : Finset V}
+omit [Fintype V] in
+theorem independent_next_reject [Finite V] {st : State V} {a : ℕ} {L I : Finset V}
     (hI : Independent st.family I) (hLI : ¬ L ⊆ I) :
     Independent (st.next a L .reject).family I := by
+  classical
+  let := Fintype.ofFinite V
   exact independent_update hI (independent_singleton_family hLI)
 
 theorem Round.next_invariant {st : State V} {I : Finset V} {s : ℕ}
@@ -677,7 +739,7 @@ theorem Round.next_invariant {st : State V} {I : Finset V} {s : ℕ}
         have hunion : (st.fingerprint ∪ rd.seed).card ≤
             st.fingerprint.card + rd.seed.card :=
           Finset.card_union_le st.fingerprint rd.seed
-        simp only [State.next, hb]
+        simp only [State.next]
         calc
           (st.fingerprint ∪ rd.seed).card ≤
               st.fingerprint.card + rd.seed.card := hunion
@@ -795,10 +857,12 @@ def Oracle.next {I : Finset V} {s : ℕ} (O : Oracle I s) (st : State V) : State
     let rd := O.choose st h
     st.next rd.layerIndex rd.seed rd.branch
 
+omit [Fintype V] in
 theorem Oracle.next_eq_of_terminal {I : Finset V} {s : ℕ} (O : Oracle I s)
     {st : State V} (hst : O.terminal st) : O.next st = st := by
   simp [Oracle.next, hst]
 
+omit [Fintype V] in
 theorem Oracle.next_eq_round_of_not_terminal {I : Finset V} {s : ℕ}
     (O : Oracle I s) {st : State V} (hst : ¬ O.terminal st) :
     O.next st =
@@ -820,17 +884,23 @@ theorem Oracle.next_invariant {I : Finset V} {s : ℕ} (O : Oracle I s)
   · rw [O.next_eq_round_of_not_terminal hst]
     exact (O.choose st hst).next_invariant hinv
 
-theorem Oracle.fingerprint_mono_next {I : Finset V} {s : ℕ}
+omit [Fintype V] in
+theorem Oracle.fingerprint_mono_next [Finite V] {I : Finset V} {s : ℕ}
     (O : Oracle I s) (st : State V) : st.fingerprint ⊆ (O.next st).fingerprint := by
+  classical
+  let := Fintype.ofFinite V
   by_cases hst : O.terminal st
   · rw [O.next_eq_of_terminal hst]
   · rw [O.next_eq_round_of_not_terminal hst]
     exact ContainerA.fingerprint_mono_next _ _ _ _
 
-theorem Oracle.fingerprint_subset_run {I : Finset V} {s : ℕ}
+omit [Fintype V] in
+theorem Oracle.fingerprint_subset_run [Finite V] {I : Finset V} {s : ℕ}
     (O : Oracle I s) : ∀ (fuel : ℕ) (st : State V),
     st.fingerprint ⊆
       (@ContainerFuel.run (State V) O.terminal O.decision O.next fuel st).fingerprint := by
+  classical
+  let := Fintype.ofFinite V
   let : DecidablePred O.terminal := O.decision
   intro fuel
   induction fuel with
@@ -887,6 +957,7 @@ theorem Oracle.terminates {I : Finset V} {s : ℕ} (O : Oracle I s)
 
 /-! ## Quantitative invariants for the concrete selector -/
 
+omit [Fintype V] in
 /-- An `s`-uniform initial family has no lower layers, hence satisfies the
 low-link invariant. -/
 theorem lowLinks_initial {H : Family V} {p : ℝ} {s : ℕ} (hs : 0 < s)
@@ -905,6 +976,7 @@ theorem lowLinks_initial {H : Family V} {p : ℝ} {s : ℕ} (hs : 0 < s)
   rw [hlink, Hypergraph.pWeight_empty]
   positivity
 
+omit [Fintype V] in
 /-- A strict link of an `a`-uniform layer is empty unless the seed has
 cardinality strictly below `a`. -/
 theorem strictLink_layer_eq_empty_of_not_card_lt (H : Family V) (a : ℕ)
@@ -924,12 +996,15 @@ theorem strictLink_layer_eq_empty_of_not_card_lt (H : Family V) (a : ℕ)
   have hEa : E.card = a := (Hypergraph.mem_layer.mp hE).2
   omega
 
+omit [Fintype V] in
 /-- Summing the layerwise low-link invariant gives the half-weight bound
 needed by the deletion charging argument. -/
-theorem lowLinks_strictBelow_le_half {H : Family V} {p : ℝ} {s : ℕ}
+theorem lowLinks_strictBelow_le_half [Finite V] {H : Family V} {p : ℝ} {s : ℕ}
     (hs : 0 < s) (hp : 0 ≤ p) (hlow : ContainerSelector.LowLinks H p s)
     {L : Finset V} (hL : L.Nonempty) :
     ((ContainerWeight.belowRank H s).strictLink L).pWeight p ≤ 1 / 2 := by
+  classical
+  let := Fintype.ofFinite V
   apply ContainerWeight.pWeight_strictLink_belowRank_le_half H L hs hp
   intro a ha
   have has : a < s := Finset.mem_range.mp ha
@@ -940,11 +1015,14 @@ theorem lowLinks_strictBelow_le_half {H : Family V} {p : ℝ} {s : ℕ}
       Hypergraph.pWeight_empty]
     positivity
 
+omit [Fintype V] in
 /-- Every inserted edge has rank strictly below the selected layer. -/
-theorem replacement_card_lt_layer {H : Family V} {p : ℝ} {s : ℕ}
+theorem replacement_card_lt_layer [Finite V] {H : Family V} {p : ℝ} {s : ℕ}
     (choice : AlgorithmChoice H p s) (b : Branch) {E : Finset V}
     (hE : E ∈ replacement H choice.layerIndex choice.seed b) :
     E.card < choice.layerIndex := by
+  classical
+  let := Fintype.ofFinite V
   cases b with
   | accept =>
       rw [link_layer_isUniform H choice.layerIndex choice.seed hE]
@@ -957,9 +1035,10 @@ theorem replacement_card_lt_layer {H : Family V} {p : ℝ} {s : ℕ}
       subst E
       exact seed_rank_lt choice.extension choice.seed_not_edge
 
+omit [Fintype V] in
 /-- The below-rank weight inequality for one concrete round.  Rejecting a
 seed is nondecreasing; accepting it gains at least `1/(8s)`. -/
-theorem below_step_gain {H : Family V} {p : ℝ} {s : ℕ}
+theorem below_step_gain [Finite V] {H : Family V} {p : ℝ} {s : ℕ}
     (hs : 0 < s) (hp : 0 ≤ p) (hanti : IsAntichain H)
     (hlow : ContainerSelector.LowLinks H p s)
     (choice : ContainerSelector.Choice H p s) (b : Branch) :
@@ -967,6 +1046,8 @@ theorem below_step_gain {H : Family V} {p : ℝ} {s : ℕ}
         (if b = .accept then 1 / (8 * (s : ℝ)) else 0) ≤
       (ContainerWeight.belowRank
         (update H (replacement H choice.layerIndex choice.seed b)) s).pWeight p := by
+  classical
+  let := Fintype.ofFinite V
   let localChoice : AlgorithmChoice H p s := AlgorithmChoice.ofShared choice
   let C : Family V := replacement H choice.layerIndex choice.seed b
   let HB : Family V := ContainerWeight.belowRank H s
@@ -1148,7 +1229,7 @@ theorem algorithmStep_quantInvariant {H₀ : Family V} {I : Finset V}
                 (replacement st.family choice.layerIndex choice.seed b)) s).pWeight p := by
           simpa [hb] using hstep
         rw [hb] at hstep'
-        simp only [State.next, b, hb, Nat.cast_add, Nat.cast_one]
+        simp only [State.next, Nat.cast_add, Nat.cast_one]
         calc
           ((st.acceptCount : ℝ) + 1) * (1 / (8 * (s : ℝ))) =
               (st.acceptCount : ℝ) * (1 / (8 * (s : ℝ))) +

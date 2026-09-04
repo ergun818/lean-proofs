@@ -134,7 +134,7 @@ lemma extension_fingerprintCount_bound {r m : ℕ} (hr : 2 ≤ r) :
       2 ^ (m / (512 * r)) := by
   dsimp only
   let d := 2 ^ 14 * r ^ 2
-  have hd : 0 < d := by simp [d]; positivity
+  have hd : 0 < d := by dsimp [d]; positivity
   have h2d : 0 < 2 * d := Nat.mul_pos (by omega) hd
   calc
     SpecialContainer.fingerprintCount (2 * m) ((2 * m) / d) *
@@ -183,13 +183,16 @@ noncomputable def graphStar (G : SimpleGraph (Option U)) : Finset U := by
   classical
   exact Finset.univ.filter fun u ↦ G.Adj (some u) none
 
+omit [DecidableEq U] in
 @[simp] theorem mem_graphStar {G : SimpleGraph (Option U)} {u : U} :
     u ∈ graphStar G ↔ G.Adj (some u) none := by
   classical
   simp [graphStar]
 
+omit [DecidableEq U] in
 theorem graphStar_mono {G' G : SimpleGraph (Option U)} (hG : G' ≤ G) :
     graphStar G' ⊆ graphStar G := by
+  classical
   intro u hu
   exact mem_graphStar.mpr (hG (mem_graphStar.mp hu))
 
@@ -266,12 +269,13 @@ theorem isJanson_map_of_injective {S T : Type*}
 one-vertex extension.  The statement is deliberately about the current pair of graphs, so it
 can be applied after rewriting their old parts to the fixed graphs exposed earlier. -/
 theorem image_some_mem_copyHypergraph_of_mem_oldPart
-    {A U : Type*} [Fintype A] [Fintype U] [DecidableEq U]
+    {A U : Type*} [Finite A] [Fintype U] [DecidableEq U]
     (target : SimpleGraph A) (G' G : SimpleGraph (Option U))
     {L : Finset U}
     (hL : L ∈ copyHypergraph target (oldPart G') (oldPart G)) :
     L.image some ∈ copyHypergraph target G' G := by
   classical
+  let := Fintype.ofFinite A
   obtain ⟨⟨e⟩, heq⟩ :=
     (mem_copyHypergraph target (oldPart G') (oldPart G) L).mp hL
   let j : (oldPart G').induce (↑L : Set U) ↪g G' :=
@@ -311,12 +315,14 @@ theorem image_some_mem_copyHypergraph_of_mem_oldPart
 /-- The mapped old-copy family is contained in the full copy family of every one-vertex
 extension having those old parts. -/
 theorem map_oldCopies_subset_fullCopies
-    {A U : Type*} [Fintype A] [Fintype U] [DecidableEq U]
+    {A U : Type*} [Finite A] [Fintype U] [DecidableEq U]
     (target : SimpleGraph A) (oldColor oldAmbient : SimpleGraph U)
     (G' G : SimpleGraph (Option U))
     (hG' : oldPart G' = oldColor) (hG : oldPart G = oldAmbient) :
     (copyHypergraph target oldColor oldAmbient).map some ⊆
       copyHypergraph target G' G := by
+  classical
+  let := Fintype.ofFinite A
   intro E hE
   obtain ⟨L, hL, rfl⟩ := Hypergraph.mem_map.mp hE
   apply image_some_mem_copyHypergraph_of_mem_oldPart target G' G
@@ -460,6 +466,7 @@ noncomputable def graphExtensionBadStars
         graphStar G = S ∧ d ≤ (graphStar G').card ∧
           ¬ (copyHypergraph target G' G).IsJanson p badRadius
 
+omit [DecidableEq A] [Fintype A] in
 @[simp] theorem mem_graphExtensionBadStars
     {target : SimpleGraph A} {oldColor oldAmbient : SimpleGraph U}
     {p badRadius : ℝ} {d : ℕ} {S : Finset U} :
@@ -502,7 +509,7 @@ theorem taggedLayer_union_image {U : Finset V} {X : Finset (V × Fin 2)}
   rcases z with ⟨u, b⟩
   fin_cases b
   · constructor
-    · simpa [taggedLayer]
+    · simp [taggedLayer]
     · intro hz
       change (u, (0 : Fin 2)) ∈ X at hz
       have hu : u ∈ U := by
@@ -510,7 +517,7 @@ theorem taggedLayer_union_image {U : Finset V} {X : Finset (V × Fin 2)}
         simpa [twoLayerUniverse] using this
       simp [taggedLayer, hz, hu]
   · constructor
-    · simpa [taggedLayer]
+    · simp [taggedLayer]
     · intro hz
       change (u, (1 : Fin 2)) ∈ X at hz
       have hu : u ∈ U := by
@@ -603,7 +610,7 @@ def extensionBadStars (U : Finset V) (containers : Finset (Finset (V × Fin 2)))
 /-- Any mechanism which places each bad extension set `extensionIota G' G` in a member of a
 fixed container family turns the graph-facing bad event into `extensionBadStars`. -/
 theorem graphExtensionBadStars_subset_of_capture
-    {A U : Type*} [Fintype A] [DecidableEq A] [Fintype U] [DecidableEq U]
+    {A U : Type*} [Finite A] [Fintype U] [DecidableEq U]
     (target : SimpleGraph A) (oldColor oldAmbient : SimpleGraph U)
     (p badRadius : ℝ) (d : ℕ)
     (containers : Finset (Finset (U × Fin 2)))
@@ -614,6 +621,8 @@ theorem graphExtensionBadStars_subset_of_capture
       ∃ X ∈ containers, extensionIota G' G ⊆ X) :
     graphExtensionBadStars target oldColor oldAmbient p badRadius d ⊆
       extensionBadStars (Finset.univ : Finset U) containers d := by
+  classical
+  let := Fintype.ofFinite A
   intro S hS
   rw [mem_graphExtensionBadStars] at hS
   rcases hS with ⟨_, G', G, hle, hOldColor, hOldAmbient, rfl, hdegree, hbad⟩
@@ -715,6 +724,7 @@ the `2 ^ |U|` equally likely subsets. -/
 noncomputable def uniformStarProbability (U : Finset V) (event : Finset (Finset V)) : ℝ :=
   event.card / (2 : ℝ) ^ U.card
 
+omit [DecidableEq V] in
 theorem uniformStarProbability_nonneg (U : Finset V) (event : Finset (Finset V)) :
     0 ≤ uniformStarProbability U event := by
   exact div_nonneg (Nat.cast_nonneg _) (by positivity)
@@ -764,7 +774,7 @@ theorem card_extensionBadStars_mul_pow_le (U : Finset V)
       pow_le_pow_right' (by omega : 1 ≤ (2 : ℕ)) hexp
 
 theorem card_graphExtensionBadStars_mul_pow_le_of_capture
-    {A U : Type*} [Fintype A] [DecidableEq A] [Fintype U] [DecidableEq U]
+    {A U : Type*} [Finite A] [Fintype U] [DecidableEq U]
     (target : SimpleGraph A) (oldColor oldAmbient : SimpleGraph U)
     (p badRadius : ℝ) (d a c t : ℕ)
     (containers : Finset (Finset (U × Fin 2)))
@@ -780,6 +790,8 @@ theorem card_graphExtensionBadStars_mul_pow_le_of_capture
       ∃ X ∈ containers, extensionIota G' G ⊆ X) :
     (graphExtensionBadStars target oldColor oldAmbient p badRadius d).card * 2 ^ t ≤
       2 ^ Fintype.card U := by
+  classical
+  let := Fintype.ofFinite A
   have hsub := graphExtensionBadStars_subset_of_capture target oldColor oldAmbient
     p badRadius d containers capture
   have hcard := Finset.card_le_card hsub
@@ -1130,7 +1142,7 @@ All constants, real parameters, fingerprint floors, and the radius increment are
 the proof; in particular, no container theorem or probabilistic assertion remains as a
 hypothesis. -/
 theorem strongExtensionLemma
-    {A U : Type*} [Fintype A] [DecidableEq A]
+    {A U : Type*} [Fintype A]
     [Fintype U] [Nonempty U] [DecidableEq U]
     (target : SimpleGraph A) (root : A)
     (baseColor baseAmbient : SimpleGraph (Option U))

@@ -44,6 +44,7 @@ noncomputable def eventSamples (U : Finset α) (P : Finset α → Prop) :
   classical
   exact U.powerset.filter P
 
+omit [DecidableEq α] in
 @[simp] theorem card_samples (U : Finset α) : (samples U).card = 2 ^ U.card := by
   simp [samples]
 
@@ -330,7 +331,6 @@ theorem subset_blockUnion {ι : Type*} [DecidableEq ι]
 disjoint coordinate blocks. -/
 theorem card_pairwise_disjoint_events {ι : Type*} [DecidableEq ι]
     (I : Finset ι) (D : ι → Finset α) (P : ι → Finset α → Prop)
-    [∀ i, DecidablePred (P i)]
     (hdis : ∀ i ∈ I, ∀ j ∈ I, i ≠ j → Disjoint (D i) (D j)) :
     (eventSamples (blockUnion I D) (supportedEvents I D P)).card =
       ∏ i ∈ I, (eventSamples (D i) (P i)).card := by
@@ -373,7 +373,7 @@ theorem card_pairwise_disjoint_events {ι : Type*} [DecidableEq ι]
               ((blockUnion I D).powerset.filter Q).card := hraw
           _ = (eventSamples (D a) (P a)).card *
               (eventSamples (blockUnion I D) Q).card := by
-            congr 1 <;> congr 1 <;> ext S <;> simp [eventSamples]
+            rfl
       have hfilter :
           (eventSamples (blockUnion (insert a I) D)
               (supportedEvents (insert a I) D P)).card =
@@ -397,12 +397,11 @@ theorem card_pairwise_disjoint_events {ι : Type*} [DecidableEq ι]
           simpa [Q, supportedEvents,
             restrict_restrict_of_subset (subset_blockUnion hj)] using hPI j hj
       rw [hfilter, hbinary, ih hdisI]
-      simp [Finset.prod_insert, ha, Q, eventSamples]
+      simp [Finset.prod_insert, ha, eventSamples]
 
 /-- The corresponding formula inside a larger uniform coordinate space. -/
 theorem card_family_event (U : Finset α) {ι : Type*} [DecidableEq ι]
     (I : Finset ι) (D : ι → Finset α) (P : ι → Finset α → Prop)
-    [∀ i, DecidablePred (P i)]
     (hdis : ∀ i ∈ I, ∀ j ∈ I, i ≠ j → Disjoint (D i) (D j))
     (hU : blockUnion I D ⊆ U) :
     (eventSamples U (supportedEvents I D P)).card =
@@ -436,8 +435,7 @@ has been fixed.  The local fixed-block event has cardinality one, so it drops
 out of the product. -/
 theorem card_fixed_and_family_event (U F T : Finset α)
     {ι : Type*} [DecidableEq ι] (I : Finset ι) (D : ι → Finset α)
-    (P : ι → Finset α → Prop) [∀ i, DecidablePred (P i)]
-    (hT : T ⊆ F)
+    (P : ι → Finset α → Prop) (hT : T ⊆ F)
     (hdis : ∀ i ∈ I, ∀ j ∈ I, i ≠ j → Disjoint (D i) (D j))
     (hFdis : Disjoint F (blockUnion I D))
     (hU : F ∪ blockUnion I D ⊆ U) :
@@ -505,6 +503,7 @@ def edgeUniverse (V : Type*) [Fintype V] [DecidableEq V] : Finset (Edge V) :=
 def graphOfEdges (S : Finset (Edge V)) : SimpleGraph V :=
   SimpleGraph.fromEdgeSet (Subtype.val '' (S : Set (Edge V)))
 
+omit [DecidableEq V] [Fintype V] in
 @[simp] theorem mem_graphOfEdges_edgeSet {S : Finset (Edge V)} {e : Edge V} :
     e.1 ∈ (graphOfEdges S).edgeSet ↔ e ∈ S := by
   simp [graphOfEdges, SimpleGraph.edgeSet_fromEdgeSet, e.property]
@@ -558,7 +557,6 @@ noncomputable def edgeSetEquivGraph : Finset (Edge V) ≃ SimpleGraph V where
 theorem card_simpleGraph : Fintype.card (SimpleGraph V) = 2 ^ (Fintype.card V).choose 2 := by
   classical
   rw [← Fintype.card_congr edgeSetEquivGraph]
-  change Fintype.card (Finset (Edge V)) = _
   rw [Fintype.card_finset]
   congr 1
   exact card_edgeUniverse (V := V)
@@ -571,7 +569,7 @@ private def starEdge (u : V) (W : Finset V) (hu : u ∉ W) (w : W) : Edge V :=
     rw [Sym2.mk_isDiag_iff]
     intro huw
     apply hu
-    simpa [huw] using w.2⟩
+    simp [huw]⟩
 
 /-- The coordinate block formed by all edges from `u` to `W`.
 
@@ -580,6 +578,7 @@ non-diagonal. -/
 def starEdges (u : V) (W : Finset V) (hu : u ∉ W) : Finset (Edge V) :=
   W.attach.image (starEdge u W hu)
 
+omit [Fintype V] in
 theorem mem_starEdges_iff {u : V} {W : Finset V} {hu : u ∉ W} {e : Edge V} :
     e ∈ starEdges u W hu ↔ ∃ w ∈ W, e.1 = s(u, w) := by
   constructor
@@ -592,6 +591,7 @@ theorem mem_starEdges_iff {u : V} {W : Finset V} {hu : u ∉ W} {e : Edge V} :
     apply Subtype.ext
     exact he.symm
 
+omit [Fintype V] in
 @[simp] theorem card_starEdges (u : V) (W : Finset V) (hu : u ∉ W) :
     (starEdges u W hu).card = W.card := by
   rw [starEdges, Finset.card_image_iff.mpr]
@@ -605,11 +605,14 @@ theorem starEdges_subset_edgeUniverse (u : V) (W : Finset V) (hu : u ∉ W) :
     starEdges u W hu ⊆ edgeUniverse V := by
   simp [edgeUniverse]
 
+omit [Fintype V] in
 /-- Stars with distinct roots outside the common target set use disjoint edge
 coordinates. -/
-theorem disjoint_starEdges {u v : V} {W : Finset V}
+theorem disjoint_starEdges [Finite V] {u v : V} {W : Finset V}
     (huv : u ≠ v) (hu : u ∉ W) (hv : v ∉ W) :
     Disjoint (starEdges u W hu) (starEdges v W hv) := by
+  classical
+  let := Fintype.ofFinite V
   rw [Finset.disjoint_left]
   intro e heu hev
   rcases mem_starEdges_iff.1 heu with ⟨w, hwW, hew⟩
@@ -655,6 +658,7 @@ theorem card_uniform_two_star_event {u v : V} {W : Finset V}
 
 /-! ### The complete bipartite coordinate block `A × W` -/
 
+omit [DecidableEq V] [Fintype V] in
 private theorem root_not_mem_of_disjoint {A W : Finset V}
     (hAW : Disjoint A W) (a : A) : a.1 ∉ W := by
   intro haW
@@ -670,23 +674,30 @@ This is expressed as the disjoint union of the stars rooted in `A`. -/
 def crossStarEdges (A W : Finset V) (hAW : Disjoint A W) : Finset (Edge V) :=
   blockUnion Finset.univ (indexedStarEdges A W hAW)
 
-theorem pairwiseDisjoint_indexedStarEdges (A W : Finset V)
+omit [Fintype V] in
+theorem pairwiseDisjoint_indexedStarEdges [Finite V] (A W : Finset V)
     (hAW : Disjoint A W) :
     (Set.univ : Set A).PairwiseDisjoint (indexedStarEdges A W hAW) := by
+  classical
+  let := Fintype.ofFinite V
   intro a _ha b _hb hab
   apply disjoint_starEdges
   · intro hav
     exact hab (Subtype.ext hav)
 
+omit [Fintype V] in
 @[simp] theorem card_indexedStarEdges (A W : Finset V)
     (hAW : Disjoint A W) (a : A) :
     (indexedStarEdges A W hAW a).card = W.card := by
   simp [indexedStarEdges]
 
+omit [Fintype V] in
 /-- There are exactly `|A| |W|` unordered pairs between two disjoint vertex
 sets. -/
-@[simp] theorem card_crossStarEdges (A W : Finset V) (hAW : Disjoint A W) :
+@[simp] theorem card_crossStarEdges [Finite V] (A W : Finset V) (hAW : Disjoint A W) :
     (crossStarEdges A W hAW).card = A.card * W.card := by
+  classical
+  let := Fintype.ofFinite V
   have hpair : (↑(Finset.univ : Finset A) : Set A).PairwiseDisjoint
       (indexedStarEdges A W hAW) := by
     simpa using pairwiseDisjoint_indexedStarEdges A W hAW
@@ -709,6 +720,7 @@ private def liftInternalEdge (W : Finset V) (e : Edge W) : Edge V :=
     intro hdiag
     exact e.2 ((Sym2.isDiag_map Subtype.val_injective).1 hdiag)⟩
 
+omit [DecidableEq V] [Fintype V] in
 private theorem liftInternalEdge_injective (W : Finset V) :
     Function.Injective (liftInternalEdge W) := by
   intro e f hef
@@ -720,12 +732,14 @@ private theorem liftInternalEdge_injective (W : Finset V) :
 def internalEdges (W : Finset V) : Finset (Edge V) :=
   (edgeUniverse W).image (liftInternalEdge W)
 
-@[simp] theorem card_internalEdges (W : Finset V) :
+omit [Fintype V] in
+@[simp] theorem card_internalEdges [Finite V] (W : Finset V) :
     (internalEdges W).card = W.card.choose 2 := by
+  classical
+  let := Fintype.ofFinite V
   rw [internalEdges, Finset.card_image_iff.mpr]
-  · simpa using card_edgeUniverse (V := W)
-  · intro e _he f _hf
-    intro hef
+  · simp
+  · intro e _he f _hf hef
     exact liftInternalEdge_injective W hef
 
 theorem internalEdges_subset_edgeUniverse (W : Finset V) :
@@ -733,22 +747,30 @@ theorem internalEdges_subset_edgeUniverse (W : Finset V) :
   intro e he
   exact Finset.mem_univ e
 
+omit [DecidableEq V] [Fintype V] in
 private theorem endpoint_mem_map_subtype (W : Finset V)
     {z : Sym2 W} {x : V} (hx : x ∈ Sym2.map Subtype.val z) : x ∈ W := by
   induction z using Sym2.inductionOn with
   | _ p q =>
       rw [Sym2.map_mk, Sym2.mem_iff] at hx
       rcases hx with hxp | hxq
-      · simpa [hxp] using p.2
-      · simpa [hxq] using q.2
+      · simp [hxp]
+      · simp [hxq]
 
-private theorem endpoint_mem_of_mem_liftInternalEdge (W : Finset V)
-    (e : Edge W) {x : V} (hx : x ∈ (liftInternalEdge W e).1) : x ∈ W :=
-  endpoint_mem_map_subtype W hx
+omit [DecidableEq V] [Fintype V] in
+private theorem endpoint_mem_of_mem_liftInternalEdge [Finite V] (W : Finset V)
+    (e : Edge W) {x : V} (hx : x ∈ (liftInternalEdge W e).1) : x ∈ W := by
+  classical
+  let := Fintype.ofFinite V
+  exact
+    endpoint_mem_map_subtype W hx
 
-theorem disjoint_internalEdges_indexedStarEdges (A W : Finset V)
+omit [Fintype V] in
+theorem disjoint_internalEdges_indexedStarEdges [Finite V] (A W : Finset V)
     (hAW : Disjoint A W) (a : A) :
     Disjoint (internalEdges W) (indexedStarEdges A W hAW a) := by
+  classical
+  let := Fintype.ofFinite V
   rw [Finset.disjoint_left]
   intro e heInt heStar
   rcases Finset.mem_image.1 heInt with ⟨f, _hf, rfl⟩
@@ -758,9 +780,12 @@ theorem disjoint_internalEdges_indexedStarEdges (A W : Finset V)
   rw [heq]
   exact Sym2.mem_mk_left _ _
 
-theorem disjoint_internalEdges_crossStarEdges (A W : Finset V)
+omit [Fintype V] in
+theorem disjoint_internalEdges_crossStarEdges [Finite V] (A W : Finset V)
     (hAW : Disjoint A W) :
     Disjoint (internalEdges W) (crossStarEdges A W hAW) := by
+  classical
+  let := Fintype.ofFinite V
   rw [Finset.disjoint_left]
   intro e heInt heCross
   rcases Finset.mem_biUnion.1 heCross with ⟨a, _ha, hea⟩
@@ -772,11 +797,12 @@ events see precisely, and only, the edge coordinates from their root to `W`.
 Thus the theorem can be used after the graph induced by `W` has been fixed. -/
 theorem card_uniform_star_family_event (A W : Finset V)
     (hAW : Disjoint A W) (P : A → Finset (Edge V) → Prop)
-    [∀ a, DecidablePred (P a)] :
+     :
     (eventSamples (edgeUniverse V)
       (supportedEvents Finset.univ (indexedStarEdges A W hAW) P)).card =
       2 ^ ((Fintype.card V).choose 2 - A.card * W.card) *
         ∏ a : A, (eventSamples (indexedStarEdges A W hAW a) (P a)).card := by
+  classical
   have hdis : ∀ a ∈ (Finset.univ : Finset A), ∀ b ∈ (Finset.univ : Finset A),
       a ≠ b → Disjoint (indexedStarEdges A W hAW a)
         (indexedStarEdges A W hAW b) := by
@@ -799,12 +825,13 @@ independent and uniform. -/
 theorem card_uniform_fixed_internal_star_family_event (A W : Finset V)
     (hAW : Disjoint A W) (fixed : Finset (Edge V))
     (hfixed : fixed ⊆ internalEdges W)
-    (P : A → Finset (Edge V) → Prop) [∀ a, DecidablePred (P a)] :
+    (P : A → Finset (Edge V) → Prop) :
     (eventSamples (edgeUniverse V) fun S ↦
       restrict (internalEdges W) S = fixed ∧
         supportedEvents Finset.univ (indexedStarEdges A W hAW) P S).card =
       2 ^ ((Fintype.card V).choose 2 - (W.card.choose 2 + A.card * W.card)) *
         ∏ a : A, (eventSamples (indexedStarEdges A W hAW a) (P a)).card := by
+  classical
   have hdis : ∀ a ∈ (Finset.univ : Finset A), ∀ b ∈ (Finset.univ : Finset A),
       a ≠ b → Disjoint (indexedStarEdges A W hAW a)
         (indexedStarEdges A W hAW b) := by

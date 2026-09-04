@@ -25,6 +25,7 @@ namespace Hypergraph
 
 variable {V : Type*} [Fintype V] [DecidableEq V]
 
+omit [Fintype V] in
 /-- A cover counts every unit of edge mass at least once when its weighted
 degrees are summed. -/
 theorem mass_le_sum_weightedDegree_of_covers {C H : Hypergraph V}
@@ -58,6 +59,7 @@ theorem sum_cover_energy_le_Lambda {C H : Hypergraph V} {p : ℝ}
   · intro c hcj hcC
     exact div_nonneg (sq_nonneg _) (pow_nonneg hp _)
 
+omit [Fintype V] in
 /-- Weighted Cauchy--Schwarz in precisely the form used by the cover-to-Janson
 conversion. -/
 theorem sq_sum_weightedDegree_le_pWeight_mul_cover_energy
@@ -121,6 +123,7 @@ theorem not_isJanson_of_covers_of_pWeight_le {C H : Hypergraph V} {p R : ℝ}
     simpa [mul_comm] using (lt_div_iff₀ hR).mp hnu
   exact (not_lt_of_ge (hfund.trans hmul)) hstrict
 
+omit [DecidableEq V] [Fintype V] in
 /-- The exact rescaling used after applying a finite cover theorem at
 `q = p / zeta`: if all cover edges have size at least two, their `p`-weight
 gains a factor `zeta^2`. -/

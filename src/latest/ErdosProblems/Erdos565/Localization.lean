@@ -38,6 +38,7 @@ def containmentFiber (family : Finset (Finset V)) (L : Finset V) :
     Finset (Finset V) :=
   family.filter (L ⊆ ·)
 
+omit [Fintype V] in
 @[simp] lemma mem_containmentFiber {family : Finset (Finset V)} {L S : Finset V} :
     S ∈ containmentFiber family L ↔ S ∈ family ∧ L ⊆ S := by
   simp [containmentFiber]
@@ -48,6 +49,7 @@ noncomputable def summedLocalWeight (H : Hypergraph V)
     (mu : (S : Finset V) → EdgeWeight (H.restrict S)) : EdgeWeight H :=
   fun E ↦ ∑ S ∈ family, zeroExtend (H.restrict_subset S) (mu S) E
 
+omit [Fintype V] in
 lemma mass_summedLocalWeight (H : Hypergraph V)
     (family : Finset (Finset V))
     (mu : (S : Finset V) → EdgeWeight (H.restrict S)) :
@@ -59,13 +61,16 @@ lemma mass_summedLocalWeight (H : Hypergraph V)
   intro S hS
   exact mass_zeroExtend (H.restrict_subset S) (mu S)
 
+omit [Fintype V] in
 /-- Summing local witnesses normalized to mass one gives total mass equal to
 the number of local vertex sets. -/
-lemma mass_summedLocalWeight_of_normalized (H : Hypergraph V)
+lemma mass_summedLocalWeight_of_normalized [Finite V] (H : Hypergraph V)
     (family : Finset (Finset V))
     (mu : (S : Finset V) → EdgeWeight (H.restrict S))
     (hmass : ∀ S ∈ family, (H.restrict S).mass (mu S) = 1) :
     H.mass (summedLocalWeight H family mu) = family.card := by
+  classical
+  let := Fintype.ofFinite V
   rw [mass_summedLocalWeight]
   calc
     ∑ S ∈ family, (H.restrict S).mass (mu S) =
@@ -75,6 +80,7 @@ lemma mass_summedLocalWeight_of_normalized (H : Hypergraph V)
           exact hmass S hS
     _ = family.card := by simp
 
+omit [Fintype V] in
 lemma weightedDegree_summedLocalWeight (H : Hypergraph V)
     (family : Finset (Finset V))
     (mu : (S : Finset V) → EdgeWeight (H.restrict S)) (L : Finset V) :
@@ -86,6 +92,7 @@ lemma weightedDegree_summedLocalWeight (H : Hypergraph V)
   intro S hS
   exact weightedDegree_zeroExtend (H.restrict_subset S) (mu S) L
 
+omit [Fintype V] in
 /-- A local weighted degree vanishes unless the local vertex set contains
 `L`.  This is what changes the Cauchy--Schwarz cardinal factor from the size
 of the whole family to the size of `containmentFiber family L`. -/
@@ -98,12 +105,15 @@ lemma weightedDegree_restrict_eq_zero_of_not_subset (H : Hypergraph V)
   have hES : E ⊆ S := (Hypergraph.mem_restrict.mp (Finset.mem_filter.mp hE).1).2
   exact False.elim (hLS ((Finset.mem_filter.mp hE).2.trans hES))
 
-lemma weightedDegree_summedLocalWeight_eq_fiber (H : Hypergraph V)
+omit [Fintype V] in
+lemma weightedDegree_summedLocalWeight_eq_fiber [Finite V] (H : Hypergraph V)
     (family : Finset (Finset V))
     (mu : (S : Finset V) → EdgeWeight (H.restrict S)) (L : Finset V) :
     H.weightedDegree (summedLocalWeight H family mu) L =
       ∑ S ∈ containmentFiber family L,
         (H.restrict S).weightedDegree (mu S) L := by
+  classical
+  let := Fintype.ofFinite V
   rw [weightedDegree_summedLocalWeight]
   symm
   apply Finset.sum_subset (Finset.filter_subset _ _)
@@ -111,14 +121,17 @@ lemma weightedDegree_summedLocalWeight_eq_fiber (H : Hypergraph V)
   rw [weightedDegree_restrict_eq_zero_of_not_subset]
   simpa [containmentFiber, hSfamily] using hSnot
 
+omit [Fintype V] in
 /-- Cauchy--Schwarz for the weighted degree of the summed local weight. -/
-lemma sq_weightedDegree_summedLocalWeight_le (H : Hypergraph V)
+lemma sq_weightedDegree_summedLocalWeight_le [Finite V] (H : Hypergraph V)
     (family : Finset (Finset V))
     (mu : (S : Finset V) → EdgeWeight (H.restrict S)) (L : Finset V) :
     H.weightedDegree (summedLocalWeight H family mu) L ^ 2 ≤
       ((containmentFiber family L).card : ℝ) *
         ∑ S ∈ containmentFiber family L,
           (H.restrict S).weightedDegree (mu S) L ^ 2 := by
+  classical
+  let := Fintype.ofFinite V
   rw [weightedDegree_summedLocalWeight_eq_fiber]
   exact FiniteAnalysis.sq_sum_le_card_mul_sum_sq _ _
 
@@ -277,10 +290,10 @@ lemma choose_two_containment_identity {N s : ℕ} (hs : 2 ≤ s) (hsN : s ≤ N)
   have hN : N = n + 2 := by dsimp [n]; omega
   have hs' : s = k + 2 := by dsimp [k]; omega
   rw [hN, hs']
-  simp only [show n + 2 - 2 = n by omega, show 2 + n - 2 = n by omega,
-    show k + 2 - 2 = k by omega, show 2 + k - 2 = k by omega,
-    show n + 2 - 1 = n + 1 by omega, show 2 + n - 1 = n + 1 by omega,
-    show k + 2 - 1 = k + 1 by omega, show 2 + k - 1 = k + 1 by omega]
+  simp only [show n + 2 - 2 = n by omega,
+    show k + 2 - 2 = k by omega,
+    show n + 2 - 1 = n + 1 by omega,
+    show k + 2 - 1 = k + 1 by omega]
   change n.choose k * ((n + 2) * (n + 1)) =
     (n + 2).choose (k + 2) * ((k + 2) * (k + 1))
   calc
@@ -308,7 +321,7 @@ lemma sampleThreshold_product_bound {r N : ℕ} (hr : 2 ≤ r)
     by_contra hN
     have hNzero : N = 0 := Nat.eq_zero_of_not_pos hN
     subst N
-    simp [s, sampleThreshold] at hs
+    simp [sampleThreshold] at hs
   have hceil_lower : N ≤ d * s := by
     exact ceilDiv_lower N d hd
   have hpred_lt : d * (s - 1) < N := by
@@ -326,7 +339,7 @@ lemma sampleThreshold_product_bound {r N : ℕ} (hr : 2 ≤ r)
   have hds : d * s ≤ 2 * N := by
     have hpred_le : d * (s - 1) ≤ N - 1 := by omega
     calc
-      d * s = d * ((s - 1) + 1) := by congr 1 <;> omega
+      d * s = d * ((s - 1) + 1) := by congr 1; omega
       _ = d * (s - 1) + d := by rw [mul_add, mul_one]
       _ ≤ (N - 1) + (N - 1) := Nat.add_le_add hpred_le hdN
       _ ≤ 2 * N := by omega

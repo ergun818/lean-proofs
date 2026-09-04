@@ -156,8 +156,8 @@ theorem mem_copyHypergraph_labelGraph_iff {U V K : Type*}
 /-- Copy hypergraphs commute with restricting the host to a finite induced vertex set.  The
 left-hand side lives on the subtype `W`; mapping by subtype coercion identifies it with precisely
 the edges of the ambient copy hypergraph that are contained in `W`. -/
-theorem map_copyHypergraph_pullback_induce_eq_restrict {U V K : Type*}
-    [Fintype U] [Fintype V] [DecidableEq V]
+theorem map_copyHypergraph_pullback_induce_eq_restrict {U V K : Type*} [Finite U]
+    [Fintype V] [DecidableEq V]
     (F : SimpleGraph U) (G : SimpleGraph V) (coloring : G.EdgeLabeling K)
     (color : K) (W : Finset V) :
     (copyHypergraph F
@@ -166,6 +166,7 @@ theorem map_copyHypergraph_pullback_induce_eq_restrict {U V K : Type*}
         (G.induce (↑W : Set V))).map (fun x : (↑W : Set V) ↦ x.1) =
       (copyHypergraph F (coloring.labelGraph color) G).restrict W := by
   classical
+  let := Fintype.ofFinite U
   let j : G.induce (↑W : Set V) ↪g G :=
     SimpleGraph.Embedding.induce (G := G) (↑W : Set V)
   ext L
@@ -243,7 +244,7 @@ theorem map_copyHypergraph_pullback_induce_eq_restrict {U V K : Type*}
 finite-set equality `range_e` records that the image of `e` is exactly the ambient vertex set
 `W`; no particular subtype presentation of that image is required. -/
 theorem map_copyHypergraph_pullback_embedding_eq_restrict
-    {U X V KColor : Type*} [Fintype U] [Fintype X] [Fintype V]
+    {U X V KColor : Type*} [Finite U] [Fintype X] [Fintype V]
     [DecidableEq X] [DecidableEq V]
     (F : SimpleGraph U) (K : SimpleGraph X) (G : SimpleGraph V)
     (coloring : G.EdgeLabeling KColor) (color : KColor)
@@ -253,6 +254,7 @@ theorem map_copyHypergraph_pullback_embedding_eq_restrict
         (fun x ↦ e x) =
       (copyHypergraph F (coloring.labelGraph color) G).restrict W := by
   classical
+  let := Fintype.ofFinite U
   ext L
   constructor
   · intro hL

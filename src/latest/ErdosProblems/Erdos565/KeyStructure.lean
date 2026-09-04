@@ -33,7 +33,7 @@ The second component is a subtype only to record the restriction `Small U`;
 its value is the vertex set on which every graph in `colors` lives. -/
 abbrev RestrictedStructure (V : Type*) [Fintype V] [DecidableEq V]
     (r N : ℕ) (Small : Finset V → Prop) :=
-  (S : Finset V) × (U : {U : Finset V // Small U}) ×
+  (_ : Finset V) × (U : {U : Finset V // Small U}) ×
     (KeyUnion.RVector r N × ((i : Fin r) → SimpleGraph ↑(U : Finset V)))
 
 /-- Exact cardinality of the restricted dependent structural-data type. -/
@@ -44,8 +44,9 @@ theorem card_restrictedStructure
       ∑ _S : Finset V, ∑ U : {U : Finset V // Small U},
         (N + 1) ^ r * 2 ^ (r * U.1.card.choose 2) := by
   classical
-  simp only [Fintype.card_sigma, Fintype.card_prod, Fintype.card_pi, Fintype.card_fin, Finset.prod_const,
-    Finset.card_univ, Finset.sum_const, Fintype.card_finset, smul_eq_mul, mul_eq_mul_left_iff, Nat.pow_eq_zero,
+  simp only [Fintype.card_sigma, Fintype.card_prod, Fintype.card_pi, Fintype.card_fin,
+    Finset.prod_const, Finset.card_univ, Finset.sum_const, Fintype.card_finset, smul_eq_mul,
+    mul_eq_mul_left_iff, Nat.pow_eq_zero,
     OfNat.ofNat_ne_zero, ne_eq, false_and, or_false]
   apply Finset.sum_congr rfl
   intro U hU

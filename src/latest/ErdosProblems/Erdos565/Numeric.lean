@@ -293,7 +293,7 @@ lemma radius_vector_count_le {r k t N : ℕ}
     (N + 1) ^ r ≤ 2 ^ N := by
   let a := 4 * r
   let x := N / a
-  have ha : 0 < a := by simp [a]; positivity
+  have ha : 0 < a := by dsimp [a]; positivity
   have haa : a * a ≤ N := by
     simpa [a, pow_two] using four_r_sq_le_of_key_scale hr hk hscale
   have hax : a ≤ x := by
@@ -332,7 +332,7 @@ lemma choose_seed_le_four_key_quotient {r k t N u : ℕ}
     r * u.choose 2 ≤ 4 * r * (N ^ 2 / r ^ 100) := by
   let d := r ^ 100
   let D := N ^ 2 / d
-  have hd : 0 < d := by simp [d]; positivity
+  have hd : 0 < d := by dsimp [d]; positivity
   have hD : 1 ≤ D := by
     simpa [d, D] using one_le_key_quotient hr hk hscale
   have hsquare : d * u ^ 2 < 4 * N ^ 2 := by
@@ -394,7 +394,7 @@ lemma extension_container_count {r m : ℕ} (hr : 2 ≤ r) :
   let d := 2 ^ 14 * r ^ 2
   let b := 2 * r + 16
   let e := (2 * m) / d + (2 * m) / (2 * d)
-  have hd : 0 < d := by simp [d]; positivity
+  have hd : 0 < d := by dsimp [d]; positivity
   have hbase : 16 * d ≤ 2 ^ b := by
     calc
       16 * d = 2 ^ 18 * r ^ 2 := by
