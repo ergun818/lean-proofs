@@ -354,7 +354,7 @@ structure IsBoundedC4Test (psi : ℝ → ℝ) (M : ℝ) : Prop where
 /-- Global fourth-order Taylor remainder with the normalization used in the
 Lindeberg argument. -/
 lemma taylor_remainder_four (psi : ℝ → ℝ) (M a h : ℝ)
-    (hpsi : ContDiff ℝ 4 psi) (hM : 0 ≤ M)
+    (hpsi : ContDiff ℝ 4 psi) (_hM : 0 ≤ M)
     (hbound : ∀ x : ℝ, |iteratedDeriv 4 psi x| ≤ M) :
     |psi (a + h) -
         (psi a + deriv psi a * h + iteratedDeriv 2 psi a * h ^ 2 / 2 +
@@ -369,7 +369,7 @@ lemma taylor_remainder_four (psi : ℝ → ℝ) (M a h : ℝ)
     linarith
   have hu : UniqueDiffOn ℝ (Set.uIcc a (a + h)) := uniqueDiffOn_uIcc hax
   have hpsi' : ContDiffOn ℝ (3 + 1) psi (Set.uIcc a (a + h)) := by
-    convert hpsi.contDiffOn using 1 <;> norm_num
+    convert hpsi.contDiffOn using 1 ; norm_num
   obtain ⟨c, _hc, hrem⟩ :=
     taylor_mean_remainder_lagrange_iteratedDeriv (f := psi) (x := a + h) (x₀ := a)
       (n := 3) hax hpsi'
@@ -391,14 +391,14 @@ lemma taylor_remainder_four (psi : ℝ → ℝ) (M a h : ℝ)
           iteratedDeriv 3 psi a * h ^ 3 / 6 := by
     rw [taylor_within_apply]
     norm_num [Finset.sum_range_succ, hder0, hder1, hder2, hder3,
-      iteratedDeriv_zero, iteratedDeriv_one] <;> ring
+      iteratedDeriv_zero, iteratedDeriv_one] ; ring
   rw [hta] at hrem
   rw [hrem]
   calc
     |iteratedDeriv 4 psi c * ((a + h) - a) ^ 4 / (Nat.factorial 4 : ℝ)| =
         |iteratedDeriv 4 psi c| * |h| ^ 4 / 24 := by
       rw [abs_div, abs_mul, abs_pow]
-      norm_num <;> ring
+      norm_num
     _ ≤ M * |h| ^ 4 / 24 := by
       gcongr
       exact hbound c
@@ -493,7 +493,7 @@ lemma deriv_standardGaussian_mgf_three :
 
 @[simp] lemma standardGaussian_moment_one :
     ∫ x : ℝ, x ^ 1 ∂standardGaussian = 0 := by
-  simpa using (integral_id_gaussianReal (μ := (0 : ℝ)) (v := (1 : ℝ≥0)))
+  simp
 
 @[simp] lemma standardGaussian_moment_two :
     ∫ x : ℝ, x ^ 2 ∂standardGaussian = 1 := by
@@ -658,7 +658,7 @@ lemma remainder_integral_rademacher_bound {psi : ℝ → ℝ} {M : ℝ}
         _ = (M * |s| ^ 4 / 24) * x ^ 4 := by
           rw [abs_mul, mul_pow]
           have hx : |x| ^ 4 = x ^ 4 := by
-            rw [← abs_pow, abs_of_nonneg] <;> positivity
+            rw [← abs_pow, abs_of_nonneg] ; positivity
           rw [hx]
           ring
     _ = M * |s| ^ 4 / 24 := by
@@ -686,7 +686,7 @@ lemma remainder_integral_standardGaussian_bound {psi : ℝ → ℝ} {M : ℝ}
         _ = (M * |s| ^ 4 / 24) * x ^ 4 := by
           rw [abs_mul, mul_pow]
           have hx : |x| ^ 4 = x ^ 4 := by
-            rw [← abs_pow, abs_of_nonneg] <;> positivity
+            rw [← abs_pow, abs_of_nonneg] ; positivity
           rw [hx]
           ring
     _ = M * |s| ^ 4 / 8 := by
@@ -909,9 +909,9 @@ lemma integrable_add_pow_four
           ((|X w| - |Y w|) ^ 2 + 6 * (|X w| + |Y w|) ^ 2) := by positivity
       nlinarith
     have hXabs : |X w| ^ 4 = X w ^ 4 := by
-      rw [← abs_pow, abs_of_nonneg] <;> positivity
+      rw [← abs_pow, abs_of_nonneg] ; positivity
     have hYabs : |Y w| ^ 4 = Y w ^ 4 := by
-      rw [← abs_pow, abs_of_nonneg] <;> positivity
+      rw [← abs_pow, abs_of_nonneg] ; positivity
     rw [abs_pow]
     calc
       |X w + Y w| ^ 4 ≤ 8 * (|X w| ^ 4 + |Y w| ^ 4) := hpow.trans hpoly
@@ -923,7 +923,7 @@ lemma HasReplacementMoments.const_mul
     HasReplacementMoments P (fun w ↦ a * X w) (a ^ 2 * v) where
   measurable := hX.measurable.const_mul _
   integrable_fourth := by
-    convert hX.integrable_fourth.const_mul (a ^ 4) using 1 <;> funext w <;> ring
+    convert hX.integrable_fourth.const_mul (a ^ 4) using 1 ; funext w ; ring
   first := by rw [integral_const_mul, hX.first, mul_zero]
   second := by
     simp_rw [show ∀ w, (a * X w) ^ 2 = a ^ 2 * X w ^ 2 by intro; ring]
@@ -956,7 +956,7 @@ lemma standardGaussian_hasReplacementMoments :
     HasReplacementMoments standardGaussian id 1 where
   measurable := measurable_id
   integrable_fourth := integrable_pow_standardGaussian 4
-  first := by simpa using standardGaussian_moment_one
+  first := by simp
   second := by simpa only [id_eq] using standardGaussian_moment_two
   third := by simpa only [id_eq] using standardGaussian_moment_three
   fourth_le := by
@@ -968,12 +968,14 @@ lemma standardGaussian_hasReplacementMoments :
 /-- Sharp `2 -> 4` estimate for an affine linear form in independent
 coordinates whose first four moments are Gaussian-dominated. -/
 theorem affineLinear_fourthMoment_le
-    {Omega I : Type*} [MeasurableSpace Omega] [Fintype I] [DecidableEq I]
+    {Omega I : Type*} [MeasurableSpace Omega] [Finite I]
     {P : Measure Omega} [IsProbabilityMeasure P] (xi : I → Omega → ℝ)
     (hindep : iIndepFun xi P) (hmom : ∀ i, HasReplacementMoments P (xi i) 1)
     (b : ℝ) (a : I → ℝ) (s : Finset I) :
     ∫ w, (b + ∑ i ∈ s, a i * xi i w) ^ 4 ∂P ≤
       3 * (b ^ 2 + ∑ i ∈ s, a i ^ 2) ^ 2 := by
+  classical
+  let : Fintype I := Fintype.ofFinite I
   have hall : ∀ u : Finset I,
       Integrable (fun w ↦ (b + ∑ i ∈ u, a i * xi i w) ^ 4) P ∧
       (∫ w, (b + ∑ i ∈ u, a i * xi i w) ^ 2 ∂P) =
@@ -984,7 +986,7 @@ theorem affineLinear_fourthMoment_le
     induction u using Finset.induction_on with
     | empty =>
         constructor
-        · simpa using (integrable_const (b ^ 4) : Integrable (fun _ : Omega ↦ b ^ 4) P)
+        · simp
         constructor <;> simp
         nlinarith [sq_nonneg (b ^ 2)]
     | @insert i u hi ihu =>
@@ -1089,14 +1091,16 @@ lemma hybridEval_iIndepFun (n t : ℕ) :
 /-- Fourth powers of affine linear forms are integrable under the same
 coordinate hypotheses used by `affineLinear_fourthMoment_le`. -/
 theorem affineLinear_fourthMoment_integrable
-    {Omega I : Type*} [MeasurableSpace Omega] [Fintype I] [DecidableEq I]
+    {Omega I : Type*} [MeasurableSpace Omega] [Finite I]
     {P : Measure Omega} [IsFiniteMeasure P] (xi : I → Omega → ℝ)
     (hmom : ∀ i, HasReplacementMoments P (xi i) 1)
     (b : ℝ) (a : I → ℝ) (s : Finset I) :
     Integrable (fun w ↦ (b + ∑ i ∈ s, a i * xi i w) ^ 4) P := by
+  classical
+  let : Fintype I := Fintype.ofFinite I
   induction s using Finset.induction_on with
   | empty =>
-      simpa using (integrable_const (b ^ 4) : Integrable (fun _ : Omega ↦ b ^ 4) P)
+      simp
   | @insert i s his ih =>
       let X : Omega → ℝ := fun w ↦ b + ∑ j ∈ s, a j * xi j w
       let Y : Omega → ℝ := fun w ↦ a i * xi i w
@@ -1139,8 +1143,7 @@ lemma hybridMeasure_succAbove_succ {n : ℕ} (t : Fin (n + 1)) :
     have hnot : ¬t.val < j.val := fun h ↦ (Nat.lt_asymm hjval h)
     simp [hybridCoordinateMeasure, Fin.succAbove_of_castSucc_lt t j hj, hjval, hnot]
   · have htj : t ≤ j.castSucc := le_of_not_gt hj
-    simp [hybridCoordinateMeasure, Fin.succAbove_of_le_castSucc t j htj,
-      Nat.succ_lt_succ_iff]
+    simp [hybridCoordinateMeasure, Fin.succAbove_of_le_castSucc t j htj]
 
 /-- Splitting the coordinate at the current replacement time exhibits a
 Rademacher factor and the common law of the remaining coordinates. -/
@@ -1255,7 +1258,7 @@ theorem hybrid_step_quadratic {n : ℕ} (q : QuadraticCoeffs (n + 1))
         (hybridMeasure n t.val) := by
       convert hslope4 using 1
       funext y
-      rw [← abs_pow, abs_of_nonneg] <;> positivity
+      rw [← abs_pow, abs_of_nonneg] ; positivity
     convert habs.const_mul (M / 6) using 1
     funext y
     ring
@@ -1280,7 +1283,7 @@ theorem hybrid_step_quadratic {n : ℕ} (q : QuadraticCoeffs (n + 1))
       apply integral_congr_ae
       exact Filter.Eventually.of_forall fun y ↦ by
         have habs : |q.coordinateSlope t y| ^ 4 = q.coordinateSlope t y ^ 4 := by
-          rw [← abs_pow, abs_of_nonneg] <;> positivity
+          rw [← abs_pow, abs_of_nonneg] ; positivity
         change M * |q.coordinateSlope t y| ^ 4 / 6 =
           (M / 6) * q.coordinateSlope t y ^ 4
         rw [habs]

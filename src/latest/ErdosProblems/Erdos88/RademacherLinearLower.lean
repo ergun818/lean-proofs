@@ -143,7 +143,7 @@ lemma thirdAbsMass_nonneg {I : Type*} [Fintype I] (a : I → ℝ) :
 
 lemma thirdAbsMass_le_max_mul_sqMass
     {I : Type*} [Fintype I] (a : I → ℝ) {B : ℝ}
-    (hB : 0 ≤ B) (hmax : ∀ i, |a i| ≤ B) :
+    (_hB : 0 ≤ B) (hmax : ∀ i, |a i| ≤ B) :
     thirdAbsMass a ≤ B * ∑ i, a i ^ 2 := by
   unfold thirdAbsMass
   rw [Finset.mul_sum]

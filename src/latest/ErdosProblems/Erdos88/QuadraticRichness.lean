@@ -27,7 +27,6 @@ for the diverse-neighborhood tuples in Lemma 8.2.
 namespace Erdos88
 namespace QuadraticCancellation
 
-open Classical
 
 /-- The source-shaped rich-core/greedy-packing interface behind KSSS
 Lemma 8.2. The remaining side conditions are exactly the two numerical

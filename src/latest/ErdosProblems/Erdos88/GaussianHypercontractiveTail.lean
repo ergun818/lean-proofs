@@ -168,7 +168,7 @@ lemma diagonalPartialSum_lowerTail_le {ι : Type*} [Fintype ι]
         (Real.exp_nonneg _)
     _ = Real.exp (-t * x + 2 * t ^ 2 * partialVariance a lam S) := by
       rw [Real.exp_add]
-      congr 1 <;> ring_nf
+      congr 1 ; ring_nf
 
 lemma diagonalPartialSum_absTail_le {ι : Type*} [Fintype ι]
     (a lam : ι → ℝ) (S : Finset ι) {t x : ℝ}
@@ -614,7 +614,7 @@ lemma fiveBlock_large_cover {ι : Type*} [Fintype ι]
     (a lam : ι → ℝ) (J : Fin 5 → Finset ι)
     (hdecomp : ∀ z, diagonalPartialSum a lam Finset.univ z =
       ∑ h : Fin 5, diagonalPartialSum a lam (J h) z)
-    {eps x : ℝ} (heps : 0 ≤ eps) (hx : eps < |x|) :
+    {eps x : ℝ} (_heps : 0 ≤ eps) (hx : eps < |x|) :
     {z | diagonalPartialSum a lam Finset.univ z ∈ Icc (x - eps) (x + eps)} ⊆
       ⋃ h : Fin 5, {z | (|x| - eps) / 5 ≤
         |diagonalPartialSum a lam (J h) z|} := by
@@ -633,7 +633,7 @@ lemma fiveBlock_large_cover {ι : Type*} [Fintype ι]
   have hexists : ∃ h : Fin 5, (|x| - eps) / 5 ≤
       |diagonalPartialSum a lam (J h) z| := by
     by_contra hnone
-    push_neg at hnone
+    push Not at hnone
     have hsumLt : (∑ h : Fin 5, |diagonalPartialSum a lam (J h) z|) <
         ∑ _h : Fin 5, ((|x| - eps) / 5) := by
       exact Finset.sum_lt_sum (fun h _ ↦ (hnone h).le)

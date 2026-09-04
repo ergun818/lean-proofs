@@ -117,7 +117,7 @@ private lemma integral_add_pow_four_of_independent_centered
 Gaussian remainder.  The fourth-moment constant `15` is stronger than the
 constant `81` used in KSSS Lemma 5.9. -/
 theorem diagonalPartialSum_moments
-    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {ι : Type*} [Fintype ι]
     (a lam : ι → ℝ) (S : Finset ι) :
     Integrable (fun z : ι → ℝ ↦ diagonalPartialSum a lam S z ^ 4)
         (Measure.pi fun _ : ι ↦ standardGaussian) ∧
@@ -128,6 +128,7 @@ theorem diagonalPartialSum_moments
       (∫ z : ι → ℝ, diagonalPartialSum a lam S z ^ 4
         ∂(Measure.pi fun _ : ι ↦ standardGaussian)) ≤
           15 * partialVariance a lam S ^ 2 := by
+  classical
   let P : Measure (ι → ℝ) := Measure.pi fun _ : ι ↦ standardGaussian
   let X : ι → (ι → ℝ) → ℝ := fun i z ↦
     centeredCoordinatePolynomial (a i) (lam i) (z i)
@@ -187,7 +188,7 @@ theorem diagonalPartialSum_moments
     induction u using Finset.induction_on with
     | empty =>
         constructor
-        · simpa using (integrable_const (0 : ℝ) : Integrable (fun _ : ι → ℝ ↦ 0) P)
+        · simp
         simp
     | @insert i u hi ihu =>
         let U : (ι → ℝ) → ℝ := fun z ↦ ∑ j ∈ u, X j z
@@ -198,7 +199,7 @@ theorem diagonalPartialSum_moments
         have hYmeas : AEStronglyMeasurable Y P := (hmeas i).aestronglyMeasurable
         have hUY : IndepFun U Y P := by
           have h := hindep.indepFun_finsetSum_of_notMem hmeas hi
-          convert h using 1 <;> funext z <;> simp only [U, Y, Finset.sum_apply]
+          convert h using 1 ; funext z ; simp only [U, Finset.sum_apply]
         have hY4 : Integrable (fun z ↦ Y z ^ 4) P := hcoord4 i
         have hsum4 : Integrable (fun z ↦ (U z + Y z) ^ 4) P :=
           Invariance.integrable_add_pow_four hUmeas hYmeas hU4 hY4
@@ -254,23 +255,26 @@ theorem diagonalPartialSum_moments
   simpa only [diagonalPartialSum, partialVariance, X] using hall S
 
 theorem diagonalPartialSum_fourthMoment_le
-    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {ι : Type*} [Fintype ι]
     (a lam : ι → ℝ) (S : Finset ι) :
     ∫ z : ι → ℝ, diagonalPartialSum a lam S z ^ 4
         ∂(Measure.pi fun _ : ι ↦ standardGaussian) ≤
       15 * partialVariance a lam S ^ 2 :=
-  (diagonalPartialSum_moments a lam S).2.2.2
+  by
+  classical
+  exact (diagonalPartialSum_moments a lam S).2.2.2
 
 /-- KSSS Lemma 5.9 for any nondegenerate complementary block of a centered
 diagonal Gaussian quadratic. -/
 theorem measureReal_diagonalPartialSum_oneSided_ge
-    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {ι : Type*} [Fintype ι]
     (a lam : ι → ℝ) (S : Finset ι)
     (hvariance : 0 < partialVariance a lam S) :
     1 / 75 ≤
       (Measure.pi fun _ : ι ↦ standardGaussian).real
         ((diagonalPartialSum a lam S) ⁻¹'
           Set.Icc (-2 * Real.sqrt 15 * Real.sqrt (partialVariance a lam S)) 0) := by
+  classical
   let P : Measure (ι → ℝ) := Measure.pi fun _ : ι ↦ standardGaussian
   let X : (ι → ℝ) → ℝ := diagonalPartialSum a lam S
   let sigma := Real.sqrt (partialVariance a lam S)

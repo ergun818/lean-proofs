@@ -54,7 +54,7 @@ private lemma smallBall_map_mul_sign
 for which the lower interval estimate holds on the positive half-line.  The
 sign depends only on the quadratic coefficients. -/
 theorem exists_sign_uniform_diagonal_lower
-    {ι : Type*} [Fintype ι] [DecidableEq ι] [Nonempty ι]
+    {ι : Type*} [Fintype ι] [Nonempty ι]
     (a lam : ι → ℝ) {M x eps : ℝ}
     (hsum : totalVariance a lam = 1)
     (hM : 0 ≤ M) (hx : 0 ≤ x) (hxM : x ≤ M)
@@ -78,9 +78,9 @@ theorem exists_sign_uniform_diagonal_lower
   have hsk : s * lam k = |lam k| := by
     dsimp only [s]
     split_ifs with hkNonneg
-    · simpa [abs_of_nonneg hkNonneg]
+    · simp [abs_of_nonneg hkNonneg]
     · have hkNeg : lam k < 0 := lt_of_not_ge hkNonneg
-      simpa [abs_of_neg hkNeg]
+      simp [abs_of_neg hkNeg]
   have hsum' :
       totalVariance (fun i ↦ s * a i) (fun i ↦ s * lam i) = 1 := by
     calc
@@ -168,9 +168,9 @@ theorem exists_sign_gaussianQuadraticCenteredLaw_normalized_lower_uniform
   have hsk : s * hF.eigenvalues k = |hF.eigenvalues k| := by
     dsimp only [s]
     split_ifs with hkNonneg
-    · simpa [abs_of_nonneg hkNonneg]
+    · simp [abs_of_nonneg hkNonneg]
     · have hkNeg : hF.eigenvalues k < 0 := lt_of_not_ge hkNonneg
-      simpa [abs_of_neg hkNeg]
+      simp [abs_of_neg hkNeg]
   refine ⟨s, hsCases, ?_⟩
   intro f sigma M x eps hsigma hsigmaSq hM hx hxM heps hepsOne
   let a : Fin n → ℝ := fun i ↦ eigenLinearCoefficient hF f i / sigma

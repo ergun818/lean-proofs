@@ -41,8 +41,8 @@ lemma abs_exp_neg_sub_exp_neg_le {a b : ℝ}
 
 namespace GraphQuadratic
 
-open Classical
 
+open Classical in
 /-- Equation (4.34) in the coefficient normalization used by the Gaussian
 comparison: total variance is linear Gaussian variance plus the edge term. -/
 lemma graphPerturbedSigma_sq_eq_linear_add_edge {n : ℕ}
@@ -53,6 +53,7 @@ lemma graphPerturbedSigma_sq_eq_linear_add_edge {n : ℕ}
   rw [graphPerturbedSigma_sq, variance_half_perturbedEdgePolynomial,
     vectorSqNorm_graphSliceLinear]
 
+open Classical in
 /-- The centered Gaussian linear approximation differs from the standard
 normal characteristic function only through the edge contribution in
 equation (4.34). -/
@@ -104,6 +105,7 @@ lemma norm_centeredGraphLinearGaussian_sub_standardNormalChar_le {n : ℕ}
       abs_exp_neg_sub_exp_neg_le ha hb
     _ = t ^ 2 * E / (32 * σ ^ 2) := hab
 
+open Classical in
 /-- At normalized frequency `t / σ`, the centered graph Gaussian quadratic
 is close to the standard normal characteristic function.  The two terms are
 respectively the quadratic `L¹` error and the exact variance mismatch. -/
@@ -148,6 +150,7 @@ theorem norm_centeredGraphGaussianQuadratic_sub_standardNormalChar_le {n : ℕ}
           t ^ 2 * (G.edgeFinset.card : ℝ) / (32 * σ ^ 2) :=
       add_le_add hquad hlin
 
+open Classical in
 /-- The exact normalized characteristic-function comparison obtained by
 combining the quadratic invariance estimate with Gaussian linear
 cancellation.  This is the quantitative core of KSSS Lemma 7.1 before its
@@ -200,7 +203,7 @@ theorem norm_centeredGraphCharacteristic_sub_standardNormalChar_le {n : ℕ}
         Finset.sum_const_zero]
     rw [hdiag, mul_zero, Real.sqrt_zero, mul_zero, add_zero] at hsliceRaw
     dsimp only [sliceChar, gaussChar, Q]
-    convert hsliceRaw using 1 <;> ring
+    convert hsliceRaw using 1 ; ring
   have hphase : ‖phase‖ = 1 := by
     dsimp only [phase]
     rw [Complex.norm_exp]
@@ -227,6 +230,7 @@ theorem norm_centeredGraphCharacteristic_sub_standardNormalChar_le {n : ℕ}
         exact hslice
       · exact hgauss
 
+open Classical in
 lemma edgeFinset_card_cast_le_sq {n : ℕ} (G : SimpleGraph (Fin n)) :
     (G.edgeFinset.card : ℝ) ≤ (n : ℝ) ^ 2 := by
   have hedgeNat : G.edgeFinset.card ≤ n ^ 2 := by
@@ -249,6 +253,7 @@ lemma scale_three_halves_eq_mul_sqrt {n : ℕ} (hn : 0 < n) :
     _ = (n : ℝ) * √(n : ℝ) := by
       rw [Real.rpow_one, ← Real.sqrt_eq_rpow]
 
+open Classical in
 lemma sqrt_edge_card_div_sixteen_le {n : ℕ} (G : SimpleGraph (Fin n)) :
     √((G.edgeFinset.card : ℝ) / 16) ≤ (n : ℝ) / 4 := by
   rw [Real.sqrt_le_iff]
@@ -354,6 +359,7 @@ lemma invariance_scale_bound_one_fifth {n : ℕ}
       exact mul_le_mul_of_nonneg_left hratio (by positivity)
     _ = (5400 / a ^ 4) * q / √(n : ℝ) := by ring
 
+open Classical in
 lemma gaussian_graph_terms_le_sqrt_scale {n : ℕ}
     (G : SimpleGraph (Fin n)) (σ a t : ℝ)
     (hn : 1 ≤ n) (ha : 0 < a) (hσ : 0 < σ)
@@ -456,6 +462,7 @@ lemma graphSliceLinear_abs_le_scale_one_fifth {n : ℕ}
     (hlarge : H / 2 + 1 / 4 ≤ BooleanSlices.scale n (1 / 10)) :
     ∀ i, |graphSliceLinear G c i| ≤
       BooleanSlices.scale n (1 / 2 + 3 * (1 / 5 : ℝ)) := by
+  classical
   intro i
   have hnR : (0 : ℝ) ≤ n := by positivity
   have hdegNat : G.degree i ≤ n :=
@@ -480,6 +487,7 @@ lemma graphSliceLinear_abs_le_scale_one_fifth {n : ℕ}
       congr 1
       ring
 
+open Classical in
 /-- KSSS Lemma 7.1 on an explicit central band.  Positive edge density and
 bounded nonnegative perturbations give a normalized characteristic-function
 error of order `|t| / √n`; all constants and the eventual coefficient-size
@@ -540,13 +548,14 @@ theorem ksssLemma71_explicit {n : ℕ}
         (|t / σ| * √((G.edgeFinset.card : ℝ) / 16) +
           t ^ 2 * (G.edgeFinset.card : ℝ) / (32 * σ ^ 2)) := by
       dsimp only [σ] at hinv hgauss ⊢
-      convert hbase using 1 <;> ring_nf
+      convert hbase using 1 ; ring_nf
     _ ≤ (5400 / a ^ 4) * |t| / √(n : ℝ) +
           (1 / (2 * a) + 1 / (8 * a ^ 2)) * |t| / √(n : ℝ) :=
       add_le_add hinv hgauss
     _ = (5400 / a ^ 4 + 1 / (2 * a) + 1 / (8 * a ^ 2)) *
         |t| / √(n : ℝ) := by ring
 
+open Classical in
 /-- Characteristic function of the centered (but unnormalized) perturbed
 induced-edge count. -/
 noncomputable def centeredGraphCharacteristic {n : ℕ}
@@ -562,6 +571,7 @@ noncomputable def matchingGraphGaussianCharacteristic {n : ℕ}
     (G : SimpleGraph (Fin n)) (e₀ : ℝ) (c : Fin n → ℝ) (τ : ℝ) : ℂ :=
   GaussianQuadratic.standardNormalChar (graphPerturbedSigma G e₀ c * τ)
 
+open Classical in
 /-- Raw-frequency form of the explicit Lemma 7.1 estimate. -/
 theorem ksssLemma71_raw_explicit {n : ℕ}
     (G : SimpleGraph (Fin n)) (e₀ : ℝ) (c : Fin n → ℝ)
@@ -581,9 +591,10 @@ theorem ksssLemma71_raw_explicit {n : ℕ}
   have h := ksssLemma71_explicit G e₀ c a H hn ha hcNonneg hcUpper
     hedge hlarge (graphPerturbedSigma G e₀ c * τ) hτ
   unfold centeredGraphCharacteristic matchingGraphGaussianCharacteristic
-  convert h using 1 <;> field_simp [hσ.ne'] <;>
-    simp only [abs_mul, abs_of_pos hσ] <;> ring
+  convert h using 1 <;> field_simp [hσ.ne'] ;
+    simp only [abs_mul, abs_of_pos hσ]
 
+open Classical in
 /-- Raw-frequency Lemma 7.1 on the central band used by the unstructured
 Fourier decomposition.  The source later takes `2 * γ = 1 / 5000`, well
 inside the normalized range `n^(1/30)`. -/
@@ -619,6 +630,7 @@ theorem ksssLemma71_linearBand_explicit {n : ℕ}
       field_simp
     _ ≤ BooleanSlices.scale n (1 / 30) := hscale
 
+open Classical in
 /-- Eventual, source-shaped statement of KSSS Lemma 7.1. -/
 def KSSSLemma71 : Prop :=
   ∀ a H : ℝ, 0 < a → 0 ≤ H →

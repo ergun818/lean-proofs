@@ -117,7 +117,7 @@ Umbrella module for the formalization of the Kwan--Sah--Sauermann--Sawhney
 approach to prescribed induced-edge counts.
 -/
 
-open Classical SimpleGraph
+open SimpleGraph
 
 namespace Erdos88
 

@@ -396,7 +396,7 @@ theorem smallBall_diagonalCenteredLaw_le_of_relative_rankTwo_tail
   · have hraw := smallBall_diagonalCenteredLaw_le_two_mul_of_small_coordinates
       a lam hsum hsmall heps x
     linarith
-  · push_neg at hsmall
+  · push Not at hsmall
     obtain ⟨j, hj⟩ := hsmall
     have hraw := smallBall_diagonalCenteredLaw_le_of_influential_rankTwo_tail
       a lam j hrho htail hj heps x

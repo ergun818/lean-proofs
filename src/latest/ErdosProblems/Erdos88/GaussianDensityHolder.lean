@@ -41,7 +41,7 @@ lemma threeSpectralQuarterBase_integrable :
   have hmajor : Integrable (fun t : ℝ ↦ (1 + t ^ 2) ^ (-5 / 8 : ℝ)) := by
     have h := integrable_rpow_neg_one_add_norm_sq
       (E := ℝ) (μ := volume) (r := (5 / 4 : ℝ)) (by norm_num)
-    convert h using 1 <;> norm_num [Real.norm_eq_abs, sq_abs]
+    convert h using 1 ; norm_num [Real.norm_eq_abs, sq_abs]
   apply hmajor.mono
   · exact (continuous_abs.rpow_const (by norm_num)).mul
       ((continuous_const.add (continuous_id.pow 2)).rpow_const
@@ -217,10 +217,11 @@ theorem inverseFourierDensityCandidate_holder_of_modulus_le_threeEnvelope
       field_simp [Real.pi_ne_zero]
 
 lemma diagonalCenteredLaw_absTail_le_optimized
-    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {ι : Type*} [Fintype ι]
     (a lam : ι → ℝ) (hsum : totalVariance a lam = 1) (r : ℝ) :
     (diagonalCenteredLaw a lam).real {z | r ≤ |z|} ≤
       2 * Real.exp (-r / 4 + 1 / 8) := by
+  classical
   have hV : partialVariance a lam Finset.univ = 1 := by
     simpa only [partialVariance, totalVariance] using hsum
   have htail := diagonalPartialSum_absTail_le_optimized

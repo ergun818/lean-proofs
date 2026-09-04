@@ -247,7 +247,7 @@ theorem ksssBoundedWindowFinUnstructuredLowerAtCanonical
   have heps : 0 < eps := by dsimp only [eps]; positivity
   have hcutEps : 2 / eps ≤ nu := by
     dsimp only [eps]
-    convert hcut using 1 <;> field_simp <;> norm_num
+    convert hcut using 1 ; field_simp ; norm_num
   have hRbound : 16 * (cE + 1) / base ≤ R := by
     dsimp only [R]
     exact le_max_right _ _
@@ -266,7 +266,6 @@ theorem ksssBoundedWindowFinUnstructuredLowerAtCanonical
       cE * eta = (base / 16) * (cE / (cE + 1)) := by
         dsimp only [eta]
         field_simp [hcE1.ne']
-        <;> ring
       _ ≤ (base / 16) * 1 :=
         mul_le_mul_of_nonneg_left hratio (by positivity)
       _ = base / 16 := mul_one _

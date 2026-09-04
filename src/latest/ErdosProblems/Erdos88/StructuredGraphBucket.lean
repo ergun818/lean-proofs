@@ -86,7 +86,7 @@ lemma ramseyFree_finCoveredGraph
       simp only [Finset.coe_map, Set.mem_image] at hx hy
       obtain ⟨u, hu, rfl⟩ := hx
       obtain ⟨v, hv, rfl⟩ := hy
-      have huv : u ≠ v := fun h ↦ hxy (by simpa [h])
+      have huv : u ≠ v := fun h ↦ hxy (by simp [h])
       exact (D.finCoveredGraph_adj G u v).mp
         (hclique hu hv huv)
     · right
@@ -95,7 +95,7 @@ lemma ramseyFree_finCoveredGraph
       simp only [Finset.coe_map, Set.mem_image] at hx hy
       obtain ⟨u, hu, rfl⟩ := hx
       obtain ⟨v, hv, rfl⟩ := hy
-      have huv : u ≠ v := fun h ↦ hxy (by simpa [h])
+      have huv : u ≠ v := fun h ↦ hxy (by simp [h])
       exact hindep hu hv huv ((D.finCoveredGraph_adj G u v).mpr hadj)
   have hsmall := hG S hhom
   rw [hcardS] at hsmall

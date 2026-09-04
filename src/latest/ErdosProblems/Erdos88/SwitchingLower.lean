@@ -11,7 +11,6 @@ a large family of outside assignments on which the switching equations and
 the bounded edge-count window can be completed simultaneously.
 -/
 
-open Classical
 open scoped BigOperators
 
 namespace Erdos88.Switching
@@ -24,6 +23,7 @@ lemma degreeInto_union_of_disjoint {V : Type*} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) (v : V) {A B : Finset V} (hAB : Disjoint A B) :
     AKSGraph.degreeInto G v (A ∪ B) =
       AKSGraph.degreeInto G v A + AKSGraph.degreeInto G v B := by
+  classical
   rw [AKSGraph.degreeInto, AKSGraph.degreeInto, AKSGraph.degreeInto]
   have hinter : G.neighborFinset v ∩ (A ∪ B) =
       (G.neighborFinset v ∩ A) ∪ (G.neighborFinset v ∩ B) := by
@@ -83,6 +83,7 @@ lemma edgeScore_union_of_disjoint {n : ℕ} (G : SimpleGraph (Fin n))
   push_cast at h
   exact h
 
+open Classical in
 /-- After exposing a disjoint outside set, the remaining induced-edge
 statistic is exactly a linearly perturbed edge polynomial.  This is the
 finite conditioning identity used when Theorem 3.1 is applied on the
@@ -107,6 +108,7 @@ lemma edgeScore_union_eq_perturbedEdgePolynomial {n : ℕ}
   rw [hsum]
   exact_mod_cast edgeCount_union_of_disjoint G hAB
 
+open Classical in
 /-- Conditioning a perturbed edge polynomial on a disjoint fixed set folds
 that set into the constant term and adds its cross-degrees to the remaining
 linear coefficients. -/
@@ -160,12 +162,13 @@ lemma perturbedEdgePolynomial_union_of_disjoint
 a disjoint prescribed excluded set.  This is the endpoint-orientation factor
 in the first exposure of the lower half of KSSS Lemma 13.4. -/
 lemma card_powerset_filter_forcedIncludedExcluded
-    {V : Type*} [Fintype V] [DecidableEq V]
+    {V : Type*} [Finite V] [DecidableEq V]
     (A Y Z : Finset V) (hY : Y ⊆ A) (hZ : Z ⊆ A)
     (hYZ : Disjoint Y Z) :
     (A.powerset.filter fun O ↦ Y ⊆ O ∧ Disjoint O Z).card =
       2 ^ (A.card - (Y ∪ Z).card) := by
   classical
+  let : Fintype V := Fintype.ofFinite V
   let source := (A \ (Y ∪ Z)).powerset
   let target := A.powerset.filter fun O ↦ Y ⊆ O ∧ Disjoint O Z
   have hcard : source.card = target.card := by
@@ -235,11 +238,12 @@ lemma card_powerset_filter_forcedIncludedExcluded
   rw [Finset.card_powerset,
     Finset.card_sdiff_of_subset (Finset.union_subset hY hZ)]
 
+open Classical in
 /-- Subtracting a finite union of bad events from a prescribed endpoint
 orientation.  The bad-event counts are deliberately taken on the whole
 cube, which is the form directly supplied by Chebyshev. -/
 lemma card_powerset_filter_forcedIncludedExcluded_avoid_ge
-    {V I : Type*} [Fintype V] [DecidableEq V]
+    {V I : Type*} [Finite V] [DecidableEq V]
     [Fintype I]
     (A Y Z : Finset V) (hY : Y ⊆ A) (hZ : Z ⊆ A)
     (hYZ : Disjoint Y Z) (Q : I → Finset V → Prop) :
@@ -248,6 +252,7 @@ lemma card_powerset_filter_forcedIncludedExcluded_avoid_ge
       ((A.powerset.filter fun O ↦
         Y ⊆ O ∧ Disjoint O Z ∧ ∀ i, ¬ Q i O).card : ℝ) := by
   classical
+  let : Fintype V := Fintype.ofFinite V
   let endpoint := A.powerset.filter fun O ↦ Y ⊆ O ∧ Disjoint O Z
   let bad := A.powerset.filter fun O ↦ ∃ i, Q i O
   let good := A.powerset.filter fun O ↦
@@ -286,10 +291,11 @@ lemma card_powerset_filter_forcedIncludedExcluded_avoid_ge
   rw [hendpoint] at hendpointCard
   linarith
 
+open Classical in
 /-- The uniform law on subsets of an arbitrary finite type is the
 Bernoulli-`1/2` law. -/
 lemma uniformProbability_eq_eventProbability_half_finite
-    {V : Type*} [Fintype V] [DecidableEq V]
+    {V : Type*} [Fintype V]
     (P : Finset V → Prop) :
     uniformProbability P = eventProbability (1 / 2 : ℝ) P := by
   classical
@@ -305,7 +311,7 @@ lemma uniformProbability_eq_eventProbability_half_finite
 /-- Counting Chebyshev inequality on the powerset of a specified coordinate
 set, expressed after forgetting subtype membership proofs. -/
 lemma card_powerset_centered_tail_le
-    {V : Type*} [Fintype V] [DecidableEq V]
+    {V : Type*} [Finite V] [DecidableEq V]
     (A : Finset V) (X : Finset V → ℝ) (t : ℝ) (ht : 0 < t) :
     ((A.powerset.filter fun O ↦
         t ≤ |X O - expectation (1 / 2 : ℝ)
@@ -316,6 +322,7 @@ lemma card_powerset_centered_tail_le
           (fun R : Finset (A : Set V) ↦
             X (BoundedWindow.subtypeSubsetImage A R)) / t ^ 2) := by
   classical
+  let : Fintype V := Fintype.ofFinite V
   let X' := fun R : Finset (A : Set V) ↦
     X (BoundedWindow.subtypeSubsetImage A R)
   let P := fun R : Finset (A : Set V) ↦
@@ -345,7 +352,7 @@ lemma card_powerset_centered_tail_le
   have hden : (Fintype.card (Finset (A : Set V)) : ℝ) =
       (2 : ℝ) ^ A.card := by
     have hAcard : Fintype.card (A : Set V) = A.card := by
-      simpa using Fintype.card_coe A
+      simp
     rw [Fintype.card_finset, hAcard]
     norm_num [Nat.cast_pow]
   rw [hden] at hprob
@@ -456,13 +463,15 @@ lemma variance_linearBits_half
 linear Boolean form on the subtype cut out by `A`. -/
 lemma switchingDifferenceMatrix_mulVec_subtypeSubsetImage
     {V I : Type*} [Fintype V] [DecidableEq V]
-    [Fintype I] [DecidableEq I]
+    [Finite I]
     (G : SimpleGraph V) (p : I → V × V) (A : Finset V)
     (R : Finset (A : Set V)) (i : I) :
     (switchingDifferenceMatrix G p).mulVec
         (finsetIndicator (BoundedWindow.subtypeSubsetImage A R)) i =
       ∑ v : (A : Set V),
         switchingDifferenceMatrix G p i v.1 * Probability.bit v R := by
+  classical
+  let : Fintype I := Fintype.ofFinite I
   rw [Matrix.mulVec_apply]
   change (∑ v : V, switchingDifferenceMatrix G p i v *
       (if v ∈ BoundedWindow.subtypeSubsetImage A R then 1 else 0)) = _
@@ -494,13 +503,15 @@ lemma switchingDifferenceMatrix_mulVec_subtypeSubsetImage
 quarter of the number of exposed coordinates. -/
 lemma variance_switchingDifferenceMatrix_mulVec_on_powerset_le
     {V I : Type*} [Fintype V] [DecidableEq V]
-    [Fintype I] [DecidableEq I]
+    [Finite I]
     (G : SimpleGraph V) (p : I → V × V) (A : Finset V) (i : I) :
     Probability.variance (1 / 2 : ℝ)
         (fun R : Finset (A : Set V) ↦
           (switchingDifferenceMatrix G p).mulVec
             (finsetIndicator (BoundedWindow.subtypeSubsetImage A R)) i) ≤
       (A.card : ℝ) / 4 := by
+  classical
+  let : Fintype I := Fintype.ofFinite I
   have hfun : (fun R : Finset (A : Set V) ↦
       (switchingDifferenceMatrix G p).mulVec
         (finsetIndicator (BoundedWindow.subtypeSubsetImage A R)) i) =
@@ -528,7 +539,7 @@ lemma variance_switchingDifferenceMatrix_mulVec_on_powerset_le
 cube. -/
 lemma card_switchingDifferenceMatrix_mulVec_centered_tail_le
     {V I : Type*} [Fintype V] [DecidableEq V]
-    [Fintype I] [DecidableEq I]
+    [Finite I]
     (G : SimpleGraph V) (p : I → V × V) (A : Finset V)
     (i : I) (t : ℝ) (ht : 0 < t) :
     ((A.powerset.filter fun O ↦
@@ -540,6 +551,8 @@ lemma card_switchingDifferenceMatrix_mulVec_centered_tail_le
                   (finsetIndicator
                     (BoundedWindow.subtypeSubsetImage A R)) i)|).card : ℝ) ≤
       (2 : ℝ) ^ A.card * (((A.card : ℝ) / 4) / t ^ 2) := by
+  classical
+  let : Fintype I := Fintype.ofFinite I
   exact (card_powerset_centered_tail_le A
     (fun O ↦ (switchingDifferenceMatrix G p).mulVec
       (finsetIndicator O) i) t ht).trans
@@ -553,7 +566,7 @@ mean-polynomial deviation is combined with every switching-row deviation,
 while the endpoint orientation is counted exactly. -/
 lemma card_switching_firstExposure_good_ge
     {V I : Type*} [Fintype V] [DecidableEq V]
-    [Fintype I] [DecidableEq I]
+    [Fintype I]
     (G : SimpleGraph V) (p : I → V × V)
     (A Y Z : Finset V) (hY : Y ⊆ A) (hZ : Z ⊆ A)
     (hYZ : Disjoint Y Z) (X : Finset V → ℝ)
@@ -751,7 +764,7 @@ lemma sum_switchingDifferenceMatrix_row_outside_private_common
           ∑ v ∈ A, switchingDifferenceMatrix G p i v := by
     rw [show (Finset.univ : Finset V) = (B ∪ N) ∪ A by
       ext v
-      by_cases hv : v ∈ B ∪ N <;> simp [A, hv]]
+      by_cases hv : v ∈ B ∪ N <;> simp [A]]
     rw [Finset.sum_union]
     rw [Finset.disjoint_left]
     intro v hv hvc
@@ -1032,7 +1045,7 @@ lemma requiredPrivateCount_centered_of_row_good
         (FiniteES.vertexDegree G (p i).1 : ℝ)) / 2 -
           ((switchingPrivateNeighbors G p i S₀).card : ℝ) / 2)| ≤
       rowRadius := by
-    convert hrow using 1 <;> ring_nf
+    convert hrow using 1 ; ring_nf
   have hreal := abs_requiredTarget_sub_half_le hlabel hrow'
   exact abs_sub_natHalf_le_of_abs_sub_realHalf_le hreal
 
@@ -1074,7 +1087,7 @@ lemma switchingLeftEndpoints_disjoint_right
   obtain ⟨j, _hj, hjv⟩ := Finset.mem_image.mp hvR
   have heq : switchingEndpointMap p (Sum.inl i) =
       switchingEndpointMap p (Sum.inr j) := by
-    simpa only [switchingEndpointMap, hiv, hjv]
+    simp only [switchingEndpointMap, hiv, hjv]
   have := hp heq
   cases this
 
@@ -1436,9 +1449,10 @@ lemma card_reindexedBlock
 
 lemma reindexedBlock_pairwiseDisjoint
     {V ι : Type*} [Fintype V] [DecidableEq V]
-    [Fintype ι] [DecidableEq ι]
+    [Fintype ι]
     (W : ι → Finset V) (hW : Set.PairwiseDisjoint Set.univ W) :
     Set.PairwiseDisjoint Set.univ (reindexedBlock W) := by
+  classical
   apply pairwiseDisjoint_equivFinsetPreimage
   intro i _hi j _hj hij
   change Disjoint
@@ -1455,8 +1469,9 @@ lemma reindexedBlock_pairwiseDisjoint
 
 lemma biUnion_reindexedBlock_eq_univ
     {V ι : Type*} [Fintype V] [DecidableEq V]
-    [Fintype ι] [DecidableEq ι] (W : ι → Finset V) :
+    [Fintype ι] (W : ι → Finset V) :
     Finset.univ.biUnion (reindexedBlock W) = Finset.univ := by
+  classical
   ext x
   simp only [Finset.mem_biUnion, Finset.mem_univ, true_and]
   constructor
@@ -1536,11 +1551,12 @@ lemma reindexedSubsetImage_inter_block
 /-- Induced-edge counts are invariant under an equivalence used to pull a
 graph back to the source type. -/
 lemma inducedEdges_comap_equiv {α β : Type*}
-    [Fintype α] [DecidableEq α] [Fintype β] [DecidableEq β]
-    (G : SimpleGraph β) [DecidableRel G.Adj]
+    [Fintype α] [Fintype β] [DecidableEq β]
+    (G : SimpleGraph β)
     (e : α ≃ β) (S : Finset α) :
     inducedEdges (G.comap e) S =
       inducedEdges G (equivFinsetImage e S) := by
+  classical
   let H := G.comap e
   let sα : Set α := S
   let sβ : Set β := e '' sα
@@ -1688,7 +1704,7 @@ lemma fixedOutsideReindexedSliceMap_injective
 for `S₀` give the corresponding linear lower bound for the switching
 reservoir. -/
 lemma switchingCommonNonneighbors_card_ge_linear
-    {n : ℕ} {I : Type*} [Fintype I] [DecidableEq I]
+    {n : ℕ} {I : Type*} [Fintype I]
     (G : SimpleGraph (Fin n)) (S S₀ : Finset (Fin n))
     (p : I → Fin n × Fin n) (δ base : ℝ) (D : ℕ)
     (hδ : 0 ≤ δ)
@@ -1698,6 +1714,7 @@ lemma switchingCommonNonneighbors_card_ge_linear
     (hS₀ : base * n ≤ (S₀.card : ℝ)) :
     δ * base * n ≤
       ((switchingCommonNonneighbors G p S₀).card : ℝ) := by
+  classical
   calc
     δ * base * n = δ * (base * n) := by ring
     _ ≤ δ * S₀.card := mul_le_mul_of_nonneg_left hS₀ hδ
@@ -1747,7 +1764,7 @@ lemma exists_sqrt_le_mul_natCast (eta : ℝ) (heta : 0 < eta) :
 /-- The concrete Ramsey and coefficient hypotheses needed to apply the
 bounded-window theorem on a switching common-nonneighbor reservoir. -/
 lemma switchingCommonNonneighbors_boundedWindow_hypotheses
-    {n : ℕ} {I : Type*} [Fintype I] [DecidableEq I]
+    {n : ℕ} {I : Type*} [Fintype I]
     (G : SimpleGraph (Fin n)) (S S₀ : Finset (Fin n))
     (p : I → Fin n × Fin n) {C δ base : ℝ} {D : ℕ}
     (hC : 0 < C) (hn : 1 ≤ n) (hG : RamseyFree C G)
@@ -1764,6 +1781,7 @@ lemma switchingCommonNonneighbors_boundedWindow_hypotheses
         (AKSGraph.degreeInto G v O : ℝ) ≤
           (δ * base)⁻¹ *
             (switchingCommonNonneighbors G p S₀).card := by
+  classical
   let N := switchingCommonNonneighbors G p S₀
   have heta : 0 < δ * base := mul_pos hδ hbase
   have hN : δ * base * n ≤ (N.card : ℝ) := by
@@ -1782,6 +1800,7 @@ lemma sum_degreeInto_comm {V : Type*} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) (A B : Finset V) :
     (∑ v ∈ A, AKSGraph.degreeInto G v B) =
       ∑ w ∈ B, AKSGraph.degreeInto G w A := by
+  classical
   have hdeg (v : V) (S : Finset V) :
       AKSGraph.degreeInto G v S =
         ∑ w ∈ S, if G.Adj v w then 1 else 0 := by
@@ -1798,6 +1817,7 @@ lemma sum_degreeInto_comm {V : Type*} [Fintype V] [DecidableEq V]
   intro v _hv
   rw [G.adj_comm]
 
+open Classical in
 /-- As a function of the exposed set `O`, the mean of the remaining
 edge-score polynomial on `N` is again a perturbed edge polynomial. -/
 noncomputable def conditionalMeanPolynomial {V : Type*} [Fintype V]
@@ -1807,6 +1827,7 @@ noncomputable def conditionalMeanPolynomial {V : Type*} [Fintype V]
     ((AKSGraph.edgeCount G N : ℝ) / 4)
     (fun v ↦ (AKSGraph.degreeInto G v N : ℝ) / 2) O
 
+open Classical in
 /-- Exact conditional-mean identity for the fair subset model. -/
 lemma expectation_conditional_edgeScore_eq_conditionalMeanPolynomial
     {V : Type*} [Fintype V] [DecidableEq V]
@@ -1868,6 +1889,7 @@ lemma outsideGraph_adj {V : Type*} (G : SimpleGraph V)
   · rintro ⟨huv, hu, hv⟩
     exact ⟨⟨u, hu⟩, ⟨v, hv⟩, huv, rfl, rfl⟩
 
+open Classical in
 lemma outsideGraph_edgePolynomial_eq
     {V : Type*} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) (N O : Finset V) (hON : Disjoint O N) :
@@ -1892,6 +1914,7 @@ lemma outsideGraph_edgePolynomial_eq
   unfold inducedEdges
   rw [hgraph]
 
+open Classical in
 /-- The full-cube polynomial whose restriction to sets disjoint from `N`
 is the conditional mean of the remaining edge score on `N`.  Its graph and
 linear coefficient both vanish on `N`, so its fair-cube expectation is the
@@ -1909,6 +1932,7 @@ lemma outsideConditionalMeanPolynomial_eq_conditionalMeanPolynomial
     (G : SimpleGraph V) (N O : Finset V) (hON : Disjoint O N) :
     outsideConditionalMeanPolynomial G N O =
       conditionalMeanPolynomial G N O := by
+  classical
   unfold outsideConditionalMeanPolynomial conditionalMeanPolynomial
   unfold Probability.perturbedEdgePolynomial
   rw [show Probability.edgePolynomial (outsideGraph G N) O =
@@ -1923,6 +1947,7 @@ lemma outsideConditionalMeanPolynomial_eq_conditionalMeanPolynomial
     simp [hvN, hvO, Probability.bit]
   · simp [hvN]
 
+open Classical in
 lemma outsideGraph_edgeFinset_card
     {V : Type*} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) (N : Finset V) :
@@ -1960,6 +1985,7 @@ lemma outsideGraph_edgeFinset_card
     exact_mod_cast hpoly
   exact hfull.symm.trans hpolyNat
 
+open Classical in
 /-- The outside conditional-mean polynomial has exactly the same fair-cube
 mean as the original induced-edge count. -/
 lemma expectation_outsideConditionalMeanPolynomial
@@ -1981,9 +2007,6 @@ lemma expectation_outsideConditionalMeanPolynomial
       (∑ v : V, if v ∈ N then (0 : ℝ) else
           (AKSGraph.degreeInto G v N : ℝ) / 2) =
         ∑ v ∈ O, (AKSGraph.degreeInto G v N : ℝ) / 2 := by
-    change (∑ v ∈ (Finset.univ : Finset V),
-        if v ∈ N then (0 : ℝ) else
-          (AKSGraph.degreeInto G v N : ℝ) / 2) = _
     calc
       _ = ∑ v ∈ (Finset.univ : Finset V),
           if v ∉ N then (AKSGraph.degreeInto G v N : ℝ) / 2 else 0 := by
@@ -2020,6 +2043,7 @@ lemma expectation_outsideConditionalMeanPolynomial
   rw [hOutsideCard, hcoeff, ← Finset.sum_div, htotal]
   ring
 
+open Classical in
 /-- A centered outside-state estimate supplies exactly the bulk hypothesis
 for the bounded-window lower bound on the remaining reservoir. -/
 lemma conditional_bulk_of_outsideConditionalMean_close
@@ -2057,6 +2081,7 @@ lemma conditional_bulk_of_outsideConditionalMean_close
       exact abs_sub_comm E (outsideConditionalMeanPolynomial G N O)
     _ < A + t := add_lt_add_of_le_of_lt hx hO
 
+open Classical in
 lemma conditional_bulk_of_outsideConditionalMean_close_le
     {V : Type*} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) (N O : Finset V) (hON : Disjoint O N)
@@ -2074,6 +2099,7 @@ lemma conditional_bulk_of_outsideConditionalMean_close_le
   (conditional_bulk_of_outsideConditionalMean_close
     G N O hON x A t hx hO).le.trans hscale
 
+open Classical in
 /-- A reservoir occupying an `eta` fraction of the ambient vertices converts
 ambient `n^(3/2)` bulk and centering errors into the reservoir normalization
 required by the lower half of the bounded-window theorem. -/
@@ -2127,6 +2153,7 @@ lemma conditional_bulk_of_outsideConditionalMean_close_scaled
           (N.card : ℝ) ^ (3 / 2 : ℝ) := by ring
   exact hbulk.trans_le hscale
 
+open Classical in
 /-- A bounded-window probability estimate on the graph induced by `N`
 becomes the exact conditional count needed after exposing the disjoint set
 `O`.  The target statistic is rewritten using
@@ -2163,6 +2190,7 @@ lemma card_conditional_edgeScore_window_ge_of_probability
   rw [hfilter] at hcount
   exact hcount
 
+open Classical in
 /-- Upper-count companion of
 `card_conditional_edgeScore_window_ge_of_probability`. -/
 lemma card_conditional_edgeScore_window_le_of_probability
@@ -2197,6 +2225,7 @@ lemma card_conditional_edgeScore_window_le_of_probability
   rw [hfilter] at hcount
   exact hcount
 
+open Classical in
 /-- The lower half of KSSS Theorem 3.1, specialized to a disjoint exposed
 set and an induced reservoir.  All transport and counting normalization is
 discharged here; the remaining hypotheses are exactly Ramsey inheritance,
@@ -2340,6 +2369,7 @@ theorem exists_switchingConditional_window_upper_of_ksssBoundedWindow
     (by simpa only [N] using hdata.1)
     (by simpa only [eta, N] using hdata.2 O) x
 
+open Classical in
 /-- The matching lower conditional count.  The sole remaining per-outside
 hypothesis is now exactly the bulk condition, for which
 `conditional_bulk_of_outsideConditionalMean_close` supplies the deterministic
@@ -2403,6 +2433,7 @@ theorem exists_switchingConditional_window_lower_of_ksssBoundedWindow
     (by simpa only [eta, N] using hdata.2 O) x
     (by simpa only [N] using hbulk)
 
+open Classical in
 /-- Source-shaped form of the lower conditional window estimate.  It is
 enough to center the target and the exposed outside state on the global
 edge-count mean at ambient scale: the linear-size switching reservoir then
@@ -2464,7 +2495,7 @@ theorem exists_switchingConditional_window_lower_of_ksssBoundedWindow_of_outside
 /-- The powers of two from a disjoint family of blocks and its complement
 combine to the Boolean-cube factor, for an arbitrary finite index type. -/
 lemma finite_family_lower_factor_eq {n : ℕ} {I : Type*}
-    [Fintype I] [DecidableEq I]
+    [Fintype I]
     (W : I → Finset (Fin n))
     (hdisj : Set.PairwiseDisjoint Set.univ W) (C : ℝ) :
     (∏ i : I, (((2 : ℝ) ^ (W i).card / (8 * Real.sqrt n)) *
@@ -2472,6 +2503,7 @@ lemma finite_family_lower_factor_eq {n : ℕ} {I : Type*}
       (2 : ℝ) ^ (n - (Finset.univ.biUnion W).card) =
     (2 : ℝ) ^ n *
       (Real.exp (-8 * C) / (8 * Real.sqrt n)) ^ Fintype.card I := by
+  classical
   have hWcard : (Finset.univ.biUnion W).card = ∑ i, (W i).card := by
     apply Finset.card_biUnion
     intro i _hi j _hj hij
@@ -2499,6 +2531,7 @@ lemma finite_family_lower_factor_eq {n : ℕ} {I : Type*}
         (Real.exp (-8 * C) / (8 * Real.sqrt n)) ^ Fintype.card I := by
       rw [← pow_add, ← hWcard, Nat.add_sub_of_le hWle]
 
+open Classical in
 /-- Source-shaped lower count for one good ordered switching tuple.  A
 `q`-fraction (in counting normalization) of outside assignments may be
 completed using near-central counts in every private-neighbour block.  The
@@ -2623,6 +2656,7 @@ lemma card_states_containing_switchingTuple_and_window_ge_of_outsides
         p ∈ switchingTupleFinset T (edgeScore G) labels a U ∧
           window U).card : ℝ) := rfl
 
+open Classical in
 /-- Source-shaped lower count when only a fixed fraction of each exact
 private-block fibre satisfies the window-producing good event.  The two
 factors separate the first exposure (`qOutside`) from the conditional slice
@@ -2947,6 +2981,7 @@ lemma card_outside_states_containing_switchingTuple_ge_of_outsides
       field_simp
     _ ≤ _ := by simpa only [N] using hbase
 
+open Classical in
 /-- Good private-block fibres can be counted entirely outside the common
 reservoir while retaining an additional predicate needed by the later
 conditional window step. -/
@@ -3093,6 +3128,7 @@ lemma card_outside_states_containing_switchingTuple_and_good_ge_of_goodFibers
       · rintro ⟨hsub, htuple, hgood⟩
         exact ⟨htuple, hsub, hgood⟩
 
+open Classical in
 /-- The first-exposure event supplies all structural inputs to a private-block
 good-fibre count, retaining the fibre predicate in the completed outside
 state. -/
@@ -3296,6 +3332,7 @@ lemma card_outside_states_containing_switchingTuple_ge_of_firstExposureRate
   rw [card_switchingFirstExposureDomain G p S₀] at hcount
   exact hcount
 
+open Classical in
 /-- Multiply an outside switching-state lower bound by a uniform conditional
 window lower bound on the common-nonneighbor reservoir. -/
 lemma card_states_containing_switchingTuple_and_window_ge_of_conditional
@@ -3324,6 +3361,7 @@ lemma card_states_containing_switchingTuple_and_window_ge_of_conditional
       T G labels a p S₀ window windowLower hwindow
   exact (mul_le_mul_of_nonneg_right houtside hwindowLower).trans hconditional
 
+open Classical in
 /-- Source-normalized product of the outside private-block count and the
 conditional common-nonneighbor window count.  The two Boolean-cube factors
 multiply back to `2^n` exactly. -/
@@ -3374,6 +3412,7 @@ lemma card_states_containing_switchingTuple_and_window_ge_of_normalized_factors
       ring
     _ ≤ _ := hcombined
 
+open Classical in
 /-- Lower raw-moment assembly for KSSS Lemma 13.4.  The good-tuple count
 supplies the factor `|T|^s / 2`; for every good tuple the correctly
 normalized outside count and the conditional common-nonneighbor count
@@ -3437,6 +3476,7 @@ noncomputable def privateBlockGraph {n : ℕ} {I : Type*} [Fintype I]
   (G.induce (Finset.univ.biUnion W : Set (Fin n))).comap
     (blockUnionVertexEquiv W)
 
+open Classical in
 /-- Constant term after conditioning a perturbed edge polynomial on the
 fixed outside assignment. -/
 noncomputable def privateBlockConstant {n : ℕ}
@@ -3453,6 +3493,7 @@ noncomputable def privateBlockCoefficient {n : ℕ} {I : Type*} [Fintype I]
   c (blockUnionVertexEquiv W i).1 +
     AKSGraph.degreeInto G (blockUnionVertexEquiv W i).1 O
 
+open Classical in
 /-- Fair-cube mean of the conditioned polynomial on the union of the private
 blocks. -/
 noncomputable def privateBlockMean {n : ℕ} {I : Type*} [Fintype I]
@@ -3462,6 +3503,7 @@ noncomputable def privateBlockMean {n : ℕ} {I : Type*} [Fintype I]
     (Probability.perturbedEdgePolynomial (privateBlockGraph W G)
       (privateBlockConstant G e₀ c O) (privateBlockCoefficient W G c O))
 
+open Classical in
 /-- KSSS Lemma 13.6(2) on the private-block union after a fixed outside
 exposure.  The complement bucket disappears after reindexing the union, so
 the count is exactly a fraction of the product of the prescribed binomial
@@ -3589,7 +3631,7 @@ lemma card_fixedOutside_privateBlockSlice_centered_window_lower
       q * (((∏ k : Fin m, (W' k).card.choose (ell k)) *
           2 ^ ((Finset.univ.biUnion W).card -
             (Finset.univ.biUnion W').card) : ℕ) : ℝ) ≤ source.card := by
-    convert hbase using 1 <;> rfl
+    convert hbase using 1 ; rfl
   have hUnion : Finset.univ.biUnion W' = Finset.univ := by
     simpa only [W'] using biUnion_reindexedBlock_eq_univ W
   have hfactor :
@@ -3658,6 +3700,7 @@ lemma abs_natCast_sub_realHalf_le_of_dist_le
         exact_mod_cast h
       · exact abs_natHalf_cast_sub_realHalf_le b
 
+open Classical in
 /-- Lemma 13.6(2), applied fibrewise after the canonical first exposure.
 The retained outside states have their full outside-reservoir conditional
 mean close to the first-exposure conditional mean. -/
@@ -3892,7 +3935,7 @@ lemma uniformExpectation_equiv
 /-- Fair Bernoulli expectation factors over two disjoint finite coordinate
 sets, with the two subsets combined by union. -/
 lemma expectation_half_disjoint_union_fubini
-    {V : Type*} [Fintype V] [DecidableEq V]
+    {V : Type*} [Finite V] [DecidableEq V]
     (A B : Finset V) (hAB : Disjoint A B) (f : Finset V → ℝ) :
     Probability.expectation (1 / 2 : ℝ)
         (fun SA : Finset (A : Set V) ↦
@@ -3903,6 +3946,7 @@ lemma expectation_half_disjoint_union_fubini
       Probability.expectation (1 / 2 : ℝ)
         (fun S : Finset ((A ∪ B : Finset V) : Set V) ↦
           f (BoundedWindow.subtypeSubsetImage (A ∪ B) S)) := by
+  let : Fintype V := Fintype.ofFinite V
   let eUnion : (A : Set V) ⊕ (B : Set V) ≃ ((A ∪ B : Finset V) : Set V) :=
     Equiv.Finset.union A B hAB
   let E : Finset ((A ∪ B : Finset V) : Set V) ≃
@@ -3921,16 +3965,19 @@ lemma expectation_half_disjoint_union_fubini
       intro S
       congr 1
       ext v
-      simp only [SetLike.coe_sort_coe, Finset.mem_union]
+      simp only [BoundedWindow.subtypeSubsetImage, Finset.mem_image,
+        Subtype.exists, exists_and_right, exists_eq_right,
+        SetLike.coe_sort_coe, Finset.mem_union]
       constructor
       · rintro ⟨hvA | hvB, hvS⟩
-        · exact Or.inl ⟨hvA, by simpa using hvS⟩
-        · exact Or.inr ⟨hvB, by simpa using hvS⟩
+        · exact Or.inl ⟨hvA, by simpa [E, eUnion] using hvS⟩
+        · exact Or.inr ⟨hvB, by simpa [E, eUnion] using hvS⟩
       · rintro (⟨hvA, hvS⟩ | ⟨hvB, hvS⟩)
-        · exact ⟨Or.inl hvA, by simpa using hvS⟩
-        · exact ⟨Or.inr hvB, by simpa using hvS⟩)
+        · exact ⟨Or.inl hvA, by simpa [E, eUnion] using hvS⟩
+        · exact ⟨Or.inr hvB, by simpa [E, eUnion] using hvS⟩)
   exact htransport.symm
 
+open Classical in
 /-- The private-block mean is the conditional fair expectation obtained by
 adjoining a random subset of the private-block union to the fixed outside
 assignment. -/
@@ -4059,6 +4106,7 @@ lemma expectation_outsideConditionalMeanPolynomial_restrict
       (by norm_num) (by norm_num)]
   rw [hEdge, hCoeff]
 
+open Classical in
 /-- The fair expectation of the first-exposure conditional mean is exactly
 the global fair induced-edge mean. -/
 lemma expectation_switchingFirstExposureMeanPolynomial
@@ -4237,7 +4285,7 @@ lemma finiteUniformVariance_finset_eq_variance_half
 /-- The fair-cube variance of the conditional expectation over one half of a
 disjoint coordinate decomposition is at most the variance on the union. -/
 lemma variance_half_disjoint_union_conditional_le
-    {V : Type*} [Fintype V] [DecidableEq V]
+    {V : Type*} [Finite V] [DecidableEq V]
     (A B : Finset V) (hAB : Disjoint A B) (f : Finset V → ℝ) :
     Probability.variance (1 / 2 : ℝ)
         (fun SA : Finset (A : Set V) ↦
@@ -4248,6 +4296,7 @@ lemma variance_half_disjoint_union_conditional_le
       Probability.variance (1 / 2 : ℝ)
         (fun S : Finset ((A ∪ B : Finset V) : Set V) ↦
           f (BoundedWindow.subtypeSubsetImage (A ∪ B) S)) := by
+  let : Fintype V := Fintype.ofFinite V
   let eUnion : (A : Set V) ⊕ (B : Set V) ≃ ((A ∪ B : Finset V) : Set V) :=
     Equiv.Finset.union A B hAB
   let E : Finset ((A ∪ B : Finset V) : Set V) ≃
@@ -4271,14 +4320,16 @@ lemma variance_half_disjoint_union_conditional_le
       intro S
       congr 1
       ext v
-      simp only [SetLike.coe_sort_coe, Finset.mem_union]
+      simp only [BoundedWindow.subtypeSubsetImage, Finset.mem_image,
+        Subtype.exists, exists_and_right, exists_eq_right,
+        SetLike.coe_sort_coe, Finset.mem_union]
       constructor
       · rintro ⟨hvA | hvB, hvS⟩
-        · exact Or.inl ⟨hvA, by simpa using hvS⟩
-        · exact Or.inr ⟨hvB, by simpa using hvS⟩
+        · exact Or.inl ⟨hvA, by simpa [E, eUnion] using hvS⟩
+        · exact Or.inr ⟨hvB, by simpa [E, eUnion] using hvS⟩
       · rintro (⟨hvA, hvS⟩ | ⟨hvB, hvS⟩)
-        · exact ⟨Or.inl hvA, by simpa using hvS⟩
-        · exact ⟨Or.inr hvB, by simpa using hvS⟩)).symm
+        · exact ⟨Or.inl hvA, by simpa [E, eUnion] using hvS⟩
+        · exact ⟨Or.inr hvB, by simpa [E, eUnion] using hvS⟩)).symm
 
 /-- Adding vertices from the common reservoir does not change the outside
 conditional-mean polynomial. -/
@@ -4287,6 +4338,7 @@ lemma outsideConditionalMeanPolynomial_union_subset
     (G : SimpleGraph V) (N O R : Finset V) (hRN : R ⊆ N) :
     outsideConditionalMeanPolynomial G N (O ∪ R) =
       outsideConditionalMeanPolynomial G N O := by
+  classical
   let H := outsideGraph G N
   let c : V → ℝ := fun v ↦ if v ∈ N then 0 else
     (AKSGraph.degreeInto G v N : ℝ) / 2
@@ -4396,6 +4448,7 @@ lemma variance_outsideConditionalMeanPolynomial_le_cube
     {n : ℕ} (G : SimpleGraph (Fin n)) (N : Finset (Fin n)) :
     Probability.variance (1 / 2 : ℝ)
         (outsideConditionalMeanPolynomial G N) ≤ (n : ℝ) ^ 3 := by
+  classical
   let H := outsideGraph G N
   let e₀ := (AKSGraph.edgeCount G N : ℝ) / 4
   let c : Fin n → ℝ := fun v ↦ if v ∈ N then 0 else
@@ -4683,6 +4736,7 @@ lemma canonicalFirstExposure_scaled_budget (n s : ℕ) (hn : 1 ≤ n) :
   simpa only [canonicalFirstExposureScale, canonicalFirstExposureRate]
     using canonicalFirstExposureBudget s
 
+open Classical in
 /-- Conditional extension over the common reservoir for an arbitrary selected
 family of outside states.  This lets the first-exposure mean-good event be
 retained when the bounded-window theorem is applied fibrewise. -/
@@ -4791,6 +4845,7 @@ lemma card_selectedOutside_switchingTuple_and_window_ge_conditional
     _ = (selectedFull.card : ℝ) := by rw [hcard, Nat.cast_sum]
     _ ≤ (fullEvent.card : ℝ) := hselected
 
+open Classical in
 /-- Complete first-exposure/private-block lower count, followed by a
 fibrewise window extension on the common reservoir. -/
 lemma card_states_containing_switchingTuple_and_window_ge_of_firstExposure
@@ -4852,7 +4907,7 @@ lemma card_states_containing_switchingTuple_and_window_ge_of_firstExposure
     (hwindow :
       let W := switchingPrivateBlocksFin G p S₀
       let W' := reindexedBlock W
-      let outside := (Finset.univ : Finset
+      let _outside := (Finset.univ : Finset
         (Fin (Finset.univ.biUnion W).card)) \ Finset.univ.biUnion W'
       let radius := t +
         (((Fintype.card (RawTupleIndex labels a) + 1 : ℕ) : ℝ) *
@@ -5164,7 +5219,7 @@ lemma exists_privateCompletionScales (m : ℕ) (R : ℝ) :
 labels into the label-to-half-degree-difference estimate required by the
 private-block completion step. -/
 lemma switchingLabel_degreeDifference_close
-    {n : ℕ} {I : Type*} [Fintype I]
+    {n : ℕ} {I : Type*} [Finite I]
     (G : SimpleGraph (Fin n)) (S : Finset (Fin n))
     (p : I → Fin n × Fin n) (label : I → ℤ) (B : ℝ)
     (hpS : ∀ i, p i ∈ S ×ˢ S)
@@ -5176,6 +5231,7 @@ lemma switchingLabel_degreeDifference_close
         ((FiniteES.vertexDegree G (p i).2 : ℝ) -
           (FiniteES.vertexDegree G (p i).1 : ℝ)) / 2| ≤
       B + Real.sqrt n := by
+  let : Fintype I := Fintype.ofFinite I
   intro i
   have hpair := hpS i
   simp only [Finset.mem_product] at hpair
@@ -5529,6 +5585,7 @@ lemma ambient_switching_lower_factor_le
           (2 : ℝ) ^ N.card) := by
       gcongr
 
+open Classical in
 /-- The complete first-exposure/private-block estimate with the common
 reservoir supplied by the lower half of `KSSSBoundedWindow`. -/
 theorem exists_card_states_containing_switchingTuple_and_boundedWindow_ge_of_firstExposure
@@ -5732,6 +5789,7 @@ theorem exists_card_states_containing_switchingTuple_and_boundedWindow_ge_of_fir
   ext U
   simp only [Finset.mem_filter, Finset.mem_univ, true_and]
 
+open Classical in
 /-- The lower half of the bounded-window theorem transported to an induced
 reservoir while keeping its already selected common radius fixed.  This is
 the quantifier-correct adapter used when the label set and all subsequent
@@ -5793,6 +5851,7 @@ lemma conditional_edgeScore_window_lower_of_boundedWindowData
       (kappa * (N.card : ℝ) ^ (-(3 / 2 : ℝ)))
       (by simpa only [card_subtype_coe_finset N] using hprob)
 
+open Classical in
 theorem exists_card_states_containing_switchingTuple_and_boundedWindow_ge_of_firstExposure_of_data
     (CRam : ℝ) (Bwin : ℕ)
     (hlower : ∀ H A : ℝ, 0 < H → 0 < A →
@@ -6020,6 +6079,7 @@ lemma canonicalPrivateCoefficientScale_ratio_le (eta : ℝ) :
     3 / (2 * eta) ≤ canonicalPrivateCoefficientScale eta := by
   exact le_max_right _ _
 
+open Classical in
 theorem exists_canonical_goodTuple_state_lower_of_data
     (CRam : ℝ) (Bwin : ℕ)
     (hlower : ∀ H A : ℝ, 0 < H → 0 < A →
@@ -6063,8 +6123,8 @@ theorem exists_canonical_goodTuple_state_lower_of_data
             (Probability.edgePolynomial G)| ≤ A * (n : ℝ) ^ (3 / 2 : ℝ) →
         let s := Fintype.card (RawTupleIndex (switchingLabels Bwin) a)
         let R := canonicalPrivateCoefficientScale etaPrivate
-        let Kvar := privateVarianceScale R
-        let Ktail := Classical.choose (exists_binomialTailScale s)
+        let _Kvar := privateVarianceScale R
+        let _Ktail := Classical.choose (exists_binomialTailScale s)
         let CPrivate := canonicalPrivateQuadraticConstant etaPrivate Bwin s
         (1 / 2 * canonicalFirstExposureRate s * kappa) *
             ((2 : ℝ) ^ n *
@@ -6264,6 +6324,7 @@ lemma canonical_completion_radius_le_of_le
     _ ≤ _ := canonical_completion_radius_le B d n hn R Kvar Ktail
       hR hKtail U
 
+open Classical in
 theorem exists_uniform_canonical_goodTuple_state_lower_of_data
     (CRam : ℝ) (Bwin : ℕ)
     (hlower : ∀ H A : ℝ, 0 < H → 0 < A →
@@ -6307,8 +6368,8 @@ theorem exists_uniform_canonical_goodTuple_state_lower_of_data
             (Probability.edgePolynomial G)| ≤ A * (n : ℝ) ^ (3 / 2 : ℝ) →
         let s := Fintype.card (RawTupleIndex (switchingLabels Bwin) a)
         let R := canonicalPrivateCoefficientScale etaPrivate
-        let Kvar := privateVarianceScale R
-        let Ktail := Classical.choose (exists_binomialTailScale d)
+        let _Kvar := privateVarianceScale R
+        let _Ktail := Classical.choose (exists_binomialTailScale d)
         let CPrivate := canonicalPrivateQuadraticConstant etaPrivate Bwin d
         (1 / 2 * canonicalFirstExposureRate d * kappa) *
             ((2 : ℝ) ^ n *
@@ -6419,7 +6480,7 @@ theorem exists_uniform_canonical_goodTuple_state_lower_of_data
             change v ∈ Finset.univ.biUnion
               (switchingPrivateBlocksFin G p S₀) at hv
             rw [biUnion_switchingPrivateBlocksFin] at hv
-            simpa using hv
+            simp at hv
           exact this.elim
       | inr hI =>
           let : Nonempty (RawTupleIndex (switchingLabels Bwin) a) := hI
@@ -6542,7 +6603,7 @@ lemma eventually_switchingPairs_large_from_lemma131_sizes :
         (6 : ℝ) * b ≤ 12 * (n : ℝ) ^ (1 / 5 : ℝ) := by
           nlinarith [Real.rpow_nonneg hnpos.le (1 / 5 : ℝ)]
         _ ≤ (n : ℝ) ^ (12 / 25 : ℝ) := by
-          convert hgrowth using 1 <;> norm_num
+          convert hgrowth using 1 ; norm_num
         _ ≤ S.card := hS)
   have hS₀n : (S₀.card : ℝ) ≤ n := by
     exact_mod_cast (show S₀.card ≤ n by

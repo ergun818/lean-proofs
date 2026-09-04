@@ -671,7 +671,7 @@ lemma half_abs_linear_sub_center_sub_buffer_le_abs_shifted
     |L - center| / 2 - buffer / 2 ≤ |center - L - qshift| := by
   have htri : |L - center| ≤ |center - L - qshift| + |qshift| := by
     calc
-      |L - center| = |-(center - L - qshift) - qshift| := by congr 1 <;> ring
+      |L - center| = |-(center - L - qshift) - qshift| := by congr 1 ; ring
       _ ≤ |-(center - L - qshift)| + |-qshift| := abs_add_le _ _
       _ = |center - L - qshift| + |qshift| := by simp only [abs_neg]
   have hx : 0 ≤ |center - L - qshift| := abs_nonneg _
@@ -1640,12 +1640,12 @@ lemma countVectorMass_bufferedAbsoluteCellIndex_le
         leftA ≤ L ell ∧ L ell ≤ leftA + width) ≤ rate * width := by
       have hw : width ≤ leftA + width - leftA := by
         rw [show leftA + width - leftA = width by ring]
-      convert hinterval leftA (leftA + width) hw using 1 <;> ring
+      convert hinterval leftA (leftA + width) hw using 1 ; ring
     have hrightMass : countVectorMass P (fun ell ↦
         rightA ≤ L ell ∧ L ell ≤ rightA + width) ≤ rate * width := by
       have hw : width ≤ rightA + width - rightA := by
         rw [show rightA + width - rightA = width by ring]
-      convert hinterval rightA (rightA + width) hw using 1 <;> ring
+      convert hinterval rightA (rightA + width) hw using 1 ; ring
     calc
       countVectorMass P (fun ell ↦
           bufferedAbsoluteCellIndex center buffer width (L ell) = j) ≤
@@ -1760,13 +1760,13 @@ lemma countVectorMass_and_bufferedAbsoluteCellIndex_le
         rate * width := by
       have hw : width ≤ leftA + width - leftA := by
         rw [show leftA + width - leftA = width by ring]
-      convert hinterval leftA (leftA + width) hw using 1 <;> ring
+      convert hinterval leftA (leftA + width) hw using 1 ; ring
     have hrightMass : countVectorMass P (fun ell ↦
         R ell ∧ rightA ≤ L ell ∧ L ell ≤ rightA + width) ≤
         rate * width := by
       have hw : width ≤ rightA + width - rightA := by
         rw [show rightA + width - rightA = width by ring]
-      convert hinterval rightA (rightA + width) hw using 1 <;> ring
+      convert hinterval rightA (rightA + width) hw using 1 ; ring
     calc
       countVectorMass P (fun ell ↦ R ell ∧
           bufferedAbsoluteCellIndex center buffer width (L ell) = j) ≤
@@ -1855,8 +1855,8 @@ lemma countVectorMass_zeroCountScale_absoluteCell_le
   apply countVectorMass_absoluteCellIndex_le_two P L hwidthPos
   intro a
   have h := hmass a (a + width) (by linarith) (by
-    convert hwidthAdmissible using 1 <;> ring)
-  convert h using 1 <;> ring
+    convert hwidthAdmissible using 1 ; ring)
+  convert h using 1 ; ring
 
 /-- Finite cell summation against an arbitrary nonnegative summable
 envelope. -/
@@ -2616,7 +2616,7 @@ lemma countVector_weighted_claim121_shift_dominated_cells
     (L W qshift cond sigma x : BucketCountVector P → ℝ)
     (Good : BucketCountVector P → Prop)
     {A Pgood c B eta base center err : ℝ}
-    (hA : 0 ≤ A) (hPgood : 0 ≤ Pgood) (hc : 0 ≤ c) (hB : 0 ≤ B)
+    (hA : 0 ≤ A) (_hPgood : 0 ≤ Pgood) (hc : 0 ≤ c) (hB : 0 ≤ B)
     (heta : 0 < eta) (hbase : 1 ≤ base) (herr : 0 ≤ err)
     (hW : ∀ ell, 0 ≤ W ell)
     (hgoodMass : countVectorMass P Good ≤ Pgood)
@@ -2691,7 +2691,7 @@ lemma countVector_weighted_claim121_shift_dominated_cells
             congrArg Prod.fst hp
           have hp2 : claim121ShiftSpatialCell center base (W ell) (L ell) =
               p.2 := congrArg Prod.snd hp
-          simp only [hp, hp1, hp2, and_self, if_true]
+          simp only [hp1, hp2, and_self, if_true]
         · have hnot : ¬(claim121ShiftDyadicLevel base (W ell) = p.1 ∧
               claim121ShiftSpatialCell center base (W ell) (L ell) = p.2) := by
             intro hpair
@@ -2745,9 +2745,9 @@ lemma countVector_weighted_claim121_shift_dominated_cells
       have hgeo := bufferedAbsoluteCellIndex_mul_width_div_two_le_abs
         (center := center) (buffer := 4 * s) (width := 16 * s)
         (x := x ell) (L := L ell) (by dsimp only [s]; positivity) hcenter
-      convert hgeo using 1 <;>
+      convert hgeo using 1 ;
         dsimp only [cell, claim121ShiftSpatialCell, level,
-          claim121ShiftDyadicLevel, s] <;> ring
+          claim121ShiftDyadicLevel, s] ; ring
     · simp only [x', hgood, if_false]
       rw [abs_of_nonneg]
       positivity
@@ -2773,8 +2773,7 @@ lemma countVector_weighted_claim121_shift_dominated_cells
         apply Finset.sum_congr rfl
         intro ell hell
         by_cases hgood : Good ell <;>
-          simp only [weight', cond', hgood, if_true, if_false, mul_zero,
-            zero_mul]
+          simp only [weight', cond', hgood, if_true, if_false, mul_zero]
     _ ≤ c * (((∑' p : ℕ × ℕ,
           (A * (1 / 2 : ℝ) ^ p.1) *
             claim121ComparableCellKernel B eta 1 p.2) / base) +
@@ -3098,8 +3097,7 @@ lemma countVector_weighted_claim121_comparable_cells_on_mass
       apply Finset.sum_congr rfl
       intro ell hell
       by_cases hgood : Good ell <;>
-        simp only [weight', cond', hgood, if_true, if_false, mul_zero,
-          zero_mul]
+        simp only [weight', cond', hgood, if_true, if_false, mul_zero]
     _ ≤ c * ((2 * rate * (buffer + kappa * sigma0)) *
           (∑' j, claim121ComparableCellKernel B eta kappa j) / sigma0 +
         Pgood * (B * err)) := hsum
@@ -3122,7 +3120,7 @@ lemma countVector_weighted_claim121_low_shift_cells
       countVectorMass P (fun ell ↦ a ≤ L ell ∧ L ell ≤ b) ≤
         rate * (b - a))
     (hgoodMass : countVectorMass P Good ≤ Pgood)
-    (hW : ∀ ell, 0 ≤ W ell)
+    (_hW : ∀ ell, 0 ≤ W ell)
     (hgoodW : ∀ ell, Good ell → W ell ≤ base ^ 2)
     (hqshift : ∀ ell, qshift ell ^ 2 ≤ W ell)
     (hsigmaLower : ∀ ell, Good ell → base / 2 ≤ sigma ell)
@@ -3412,7 +3410,7 @@ lemma finProbability_structuredResidual_tail_mul_pow_le
     ring
   simp_rw [hpoint]
   rw [haNorm, hFNorm] at htail
-  convert htail using 1 <;> ring
+  convert htail using 1 ; ring
 
 /-- At zero count shift, the linear part of the structured residual has
 exactly one quarter of the squared norm of the unscaled centered vector. -/
@@ -3808,7 +3806,7 @@ lemma conditionedProductSlice_window_upper_of_claim121_at
             (-trace F) f F S - (x - shift)| ≤ B) := by
     funext S
     rw [hpoly S]
-    congr 2 <;> ring
+    congr 2 ; ring
   rw [hevent]
   change Fourier.finProbability
       (ProductSlicePoint D.finCoveredPartition ell)
@@ -4230,7 +4228,7 @@ theorem countVectorMass_claim121ShiftDyadicCell_le
             a ≤ L ell ∧ L ell ≤ b ∧ s ^ 2 ≤ W ell) := by
         apply congrArg (countVectorMass P)
         funext ell
-        simp only [R, and_assoc, and_left_comm, and_comm]
+        simp only [R, and_assoc, and_comm]
       _ ≤ (K * Real.sqrt (Fintype.card D.Covered) * (b - a)) /
           s ^ 2 := by
         simpa only [P, L, W, y] using hraw
@@ -4687,7 +4685,7 @@ the moderate region. -/
 lemma claim121_four_branch_bound_le_scale
     {q : ℕ} (hq : 0 < q)
     {rho K Cmass c B eta kappa frobBase sigma0 Pgood err : ℝ}
-    (hrho : 0 < rho) (hK : 0 ≤ K) (hCmass : 0 ≤ Cmass)
+    (hrho : 0 < rho) (hK : 0 ≤ K) (_hCmass : 0 ≤ Cmass)
     (hc : 0 ≤ c) (hB : 0 ≤ B) (heta : 0 < eta)
     (hfrobBase : 0 < frobBase) (hsigma0 : 0 < sigma0)
     (hbaseFSq : 2 * rho * (q : ℝ) ^ 2 ≤ frobBase ^ 2)

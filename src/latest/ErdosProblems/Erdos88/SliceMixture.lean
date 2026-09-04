@@ -13,7 +13,7 @@ open scoped BigOperators
 
 namespace Erdos88.BooleanSlices
 
-open Classical Finset
+open Finset
 
 /-- A coupling of the uniform laws on two nonempty finite types, represented
 by its nonnegative joint probability mass function. -/
@@ -29,6 +29,7 @@ namespace FiniteUniformCoupling
 variable {A B : Type*} [Fintype A] [Nonempty A]
   [Fintype B] [Nonempty B]
 
+open Classical in
 /-- The joint mass function encoded by a finite uniform coupling. -/
 noncomputable def jointWeight (C : FiniteUniformCoupling A B) (a : A) (b : B) : ℝ :=
   ((Finset.univ.filter fun ω : Fin C.size ↦ C.left ω = a ∧ C.right ω = b).card : ℝ) /
@@ -39,6 +40,7 @@ lemma jointWeight_nonneg (C : FiniteUniformCoupling A B) (a : A) (b : B) :
   unfold jointWeight
   positivity
 
+open Classical in
 /-- Forget the common denominator of a finite uniform coupling and retain its
 joint probability mass function. -/
 noncomputable def toWeighted (C : FiniteUniformCoupling A B) :
@@ -93,6 +95,7 @@ namespace FiniteWeightedCoupling
 variable {A B : Type*} [Fintype A] [Nonempty A]
   [Fintype B] [Nonempty B]
 
+open Classical in
 /-- The probability mass of an event under a weighted finite coupling. -/
 noncomputable def mass (C : FiniteWeightedCoupling A B)
     (p : A → B → Prop) : ℝ :=
@@ -159,6 +162,7 @@ noncomputable def mapRight (C : FiniteWeightedCoupling A B) (e : B ≃ E) :
 lemma mapRight_mass (C : FiniteWeightedCoupling A B) (e : B ≃ E)
     (p : A → E → Prop) :
     (C.mapRight e).mass p = C.mass (fun a b ↦ p a (e b)) := by
+  classical
   unfold mass mapRight
   apply Finset.sum_congr rfl
   intro a ha
@@ -234,6 +238,7 @@ lemma sigmaMixture_mass
   intro b hb
   by_cases h : p a ⟨j, b⟩ <;> simp [h]
 
+open Classical in
 /-- The marginal probability of a set of sigma indices. -/
 noncomputable def indexMass (E : J → Prop) : ℝ :=
   ∑ j, if E j then
@@ -245,8 +250,7 @@ lemma indexMass_nonneg (E : J → Prop) :
   unfold indexMass
   apply Finset.sum_nonneg
   intro j hj
-  by_cases hE : E j <;> simp only [Fintype.card_sigma, Nat.cast_sum]
-  positivity
+  split_ifs <;> positivity
 
 lemma indexMass_add_compl (E : J → Prop) :
     indexMass (D := D) E + indexMass (D := D) (fun j ↦ ¬ E j) = 1 := by
@@ -311,6 +315,7 @@ namespace FiniteUniformCoupling
 variable {A B : Type*} [Fintype A] [Nonempty A]
   [Fintype B] [Nonempty B]
 
+open Classical in
 lemma toWeighted_mass_maps (C : FiniteUniformCoupling A B)
     (p : A → B → Prop) :
     C.toWeighted.mass p =
@@ -436,6 +441,7 @@ def bucketCounts (P : BucketPartition α κ) (S : Finset α) :
   fun k ↦ ⟨(S ∩ P.fiber k).card,
     Nat.lt_succ_of_le (Finset.card_le_card Finset.inter_subset_right)⟩
 
+omit [Fintype κ] in
 @[simp] lemma bucketCounts_apply (P : BucketPartition α κ)
     (S : Finset α) (k : κ) :
     (bucketCounts P S k).val = (S ∩ P.fiber k).card := rfl
@@ -494,9 +500,11 @@ noncomputable def boolFunEquivFinset : (α → Bool) ≃ Finset α where
     i ∈ boolFunEquivFinset x ↔ x i = true := by
   simp [boolFunEquivFinset]
 
+omit [DecidableEq α] in
 lemma bernoulliWeight_half_finite (W : Finset α) :
     Probability.bernoulliWeight (1 / 2 : ℝ) W =
       (1 / 2 : ℝ) ^ Fintype.card α := by
+  classical
   rw [Probability.bernoulliWeight, Erdos202.ParkPham.bernoulliMass]
   have hcardUniv : W.card ≤ (Finset.univ : Finset α).card :=
     Finset.card_le_card (by simp)
@@ -505,10 +513,12 @@ lemma bernoulliWeight_half_finite (W : Finset α) :
   congr 1
   exact (Nat.add_sub_of_le hcardUniv).trans (Finset.card_univ.trans rfl)
 
+omit [DecidableEq α] in
 lemma uniformExpectation_finset_eq_probability_half_finite
     (X : Finset α → ℝ) :
     Concentration.uniformExpectation X =
       Probability.expectation (1 / 2 : ℝ) X := by
+  classical
   rw [Concentration.uniformExpectation]
   unfold Probability.expectation
   simp_rw [bernoulliWeight_half_finite]
@@ -555,6 +565,7 @@ lemma boolCount_eq_card_inter (I : Finset α) (x : α → Bool) :
   push_cast
   rfl
 
+omit [Fintype α] in
 lemma boolCount_boundedDifference (I : Finset α) :
     ∀ i x y, (∀ j, j ≠ i → x j = y j) →
       |boolCount I x - boolCount I y| ≤ if i ∈ I then 1 else 0 := by
@@ -583,7 +594,7 @@ lemma boolCount_boundedDifference (I : Finset α) :
 lemma sum_boolCount_lipschitzSq (I : Finset α) :
     (∑ i : α, (if i ∈ I then (1 : ℝ) else 0) ^ 2) = I.card := by
   simp only [ite_pow, one_pow, zero_pow (by norm_num : (2 : ℕ) ≠ 0)]
-  simp [Finset.sum_ite]
+  simp
 
 lemma boolCount_mean {n : ℕ} (I : Finset (Fin n)) :
     (∑ x : Fin n → Bool, boolCount I x) / (2 ^ n : ℝ) =
@@ -763,6 +774,7 @@ section CountVectorLaw
 variable {α κ : Type*} [Fintype α] [DecidableEq α]
   [Fintype κ] [DecidableEq κ]
 
+open Classical in
 /-- Probability mass of a set of bucket-count vectors under a uniform random
 subset of the coordinates.  The displayed slice cardinalities make the
 binomial-mixture weights explicit. -/
@@ -777,6 +789,7 @@ lemma countVectorMass_eq_uniformProbability
     (P : BucketPartition α κ) (E : BucketCountVector P → Prop) :
     countVectorMass P E =
       Concentration.uniformProbability (fun S : Finset α ↦ E (bucketCounts P S)) := by
+  classical
   let D := fun ell : BucketCountVector P ↦
     ProductSlicePoint P (fun k ↦ (ell k).val)
   let e : Finset α ≃ Sigma D := finsetEquivSigmaProductSlices P
@@ -907,7 +920,7 @@ lemma sigmaMixture_indexMass
     ring
   · simp only [hE, if_false]
     unfold FiniteWeightedCoupling.mass
-    simp [hE]
+    simp
 
 lemma sliceSigma_indexMass_eq_countVectorMass
     (P : BucketPartition α κ) (E : BucketCountVector P → Prop) :
@@ -954,6 +967,7 @@ theorem quadraticRademacherWeightedCoupling_of_conditional
       (failure + Concentration.uniformProbability
         (fun S : Finset (Fin n) ↦
           ¬ IsNearBalanced d P (fun k ↦ (bucketCounts P S k).val))) := by
+  classical
   have hself := hconditional ell hell
   unfold HasQuadraticSliceCoupling at hself
   let hleft : Nonempty (ProductSlicePoint P ell) := hself.choose

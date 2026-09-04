@@ -80,7 +80,7 @@ def affinePoly : {n : ℕ} → ℝ → (Fin n → ℝ) → CubePoly n
 def quadraticPoly : {n : ℕ} → ℝ → (Fin n → ℝ) →
     (Fin n → Fin n → ℝ) → CubePoly n
   | 0, c, _, _ => const c
-  | n + 1, c, a, A =>
+  | _n + 1, c, a, A =>
       split
         (quadraticPoly (c + A 0 0) (fun i ↦ a i.succ)
           (fun i j ↦ A i.succ j.succ))
@@ -125,7 +125,7 @@ def powPoly {n : ℕ} (p : CubePoly n) : ℕ → CubePoly n
         cases q with
         | split g' h' =>
           simp only [mul, eval, eval_add, ih]
-          cases hξ : ξ 0 <;> simp [hξ] <;> ring
+          cases hξ : ξ 0 <;> simp <;> ring
 
 @[simp] theorem eval_smul {n : ℕ} (a : ℝ) (p : CubePoly n) (ξ : Fin n → Bool) :
     eval (smul a p) ξ = a * eval p ξ := by
@@ -210,12 +210,12 @@ lemma mean_split {n k : ℕ} (g h : CubePoly n) :
   simp_rw [show ∀ ξ : Fin n → Bool,
       eval (split g h) (e.symm (true, ξ)) = eval (add g h) ξ by
         intro ξ
-        simp [e, eval, add]]
+        simp [e, eval]]
   simp_rw [show ∀ ξ : Fin n → Bool,
       eval (split g h) (e.symm (false, ξ)) = eval (sub g h) ξ by
         intro ξ
-        simp [e, eval, sub, neg]]
-  simp only [Fintype.card_fun, Fintype.card_fin, Fintype.card_bool, Nat.reducePow]
+        simp [e, eval, sub]]
+  simp only [Fintype.card_fun, Fintype.card_fin, Fintype.card_bool]
   push_cast
   ring
 

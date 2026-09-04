@@ -21,7 +21,7 @@ open Erdos88.BooleanSlices
 open Erdos88.GaussianQuadratic
 
 lemma eventProbability_half_eq_uniformProbability
-    {A : Type*} [Fintype A] [DecidableEq A]
+    {A : Type*} [Fintype A]
     (E : Finset A → Prop) :
     Probability.eventProbability (1 / 2 : ℝ) E =
       Concentration.uniformProbability E := by
@@ -83,30 +83,10 @@ lemma outsideAssignmentSet_remainderSubsetEquiv
       (D.remainderSubsetEquivOutsideAssignment R)).image Subtype.val =
         R.image Subtype.val
   rw [hdecode]
-  ext v
-  simp only [Finset.mem_image, Subtype.exists, Finset.mem_biUnion, id_eq, not_exists, not_and, exists_and_right,
-    exists_eq_right, SetLike.coe_sort_coe]
-  constructor
-  · rintro ⟨hnot, hvR⟩
-    have hvnotCovered : v ∉ D.blocks.biUnion id := by
-      intro hv
-      rw [Finset.mem_biUnion] at hv
-      obtain ⟨I, hI, hvI⟩ := hv
-      exact hnot I hI hvI
-    have hvRem : v ∈ D.remainder := by
-      rw [D.remainder_eq]
-      exact Finset.mem_sdiff.mpr ⟨Finset.mem_univ v, hvnotCovered⟩
-    refine ⟨hvRem, ?_⟩
-    convert hvR using 1
-  · rintro ⟨hvRem, hvR⟩
-    have hvnotCovered : v ∉ D.blocks.biUnion id := by
-      have := hvRem
-      rw [D.remainder_eq, Finset.mem_sdiff] at this
-      exact this.2
-    refine ⟨?_, ?_⟩
-    · intro I hI hvI
-      exact hvnotCovered (Finset.mem_biUnion.mpr ⟨I, hI, hvI⟩)
-    · convert hvR using 1
+  change (R.map D.outsideEquivRemainder.symm.toEmbedding).image Subtype.val =
+    R.image Subtype.val
+  rw [Finset.map_eq_image]
+  exact Finset.image_image
 
 /-- The exceptional remainder assignments from the simultaneous degree
 estimate occupy at most an `n⁻³ᵐ²` fraction of the outer probability
@@ -296,7 +276,7 @@ lemma conditionedProductSlice_window_upper_of_claim121
             (-trace F) f F S - (x - shift)| ≤ B) := by
     funext S
     rw [hpoly S]
-    congr 2 <;> ring
+    congr 2 ; ring
   rw [hevent]
   change Fourier.finProbability
       (ProductSlicePoint D.finCoveredPartition ell)

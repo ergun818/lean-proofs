@@ -51,7 +51,7 @@ lemma proposition102_equalCard_with_constant
     simpa [A₀, Matrix.reindex_apply] using hA (eι.symm i) (eκ.symm j)
   have hB₀rank : B₀.rank ≤ r := by
     rw [show B₀.rank = B.rank by
-      simpa [B₀] using Matrix.rank_reindex eι eκ B]
+      simp [B₀]]
     exact hBrank
   have hclose₀ : frobeniusSq (A₀ - B₀) ≤ ε * (q : ℝ) ^ 2 := by
     have hsub : A₀ - B₀ = (A - B).submatrix eι.symm eκ.symm := by rfl
@@ -64,7 +64,7 @@ lemma proposition102_equalCard_with_constant
   · intro i j
     simpa [Q] using hQ₀ (eι i) (eκ j)
   · rw [show Q.rank = Q₀.rank by
-      simpa [Q] using Matrix.rank_submatrix Q₀ eι eκ]
+      simp [Q]]
     exact hQ₀rank
   · have hsub : A - Q = (A₀ - Q₀).submatrix eι eκ := by
       ext i j
@@ -358,7 +358,7 @@ lemma sum_graphAdjacencyMatrix_eq_twice_edgeCount
 lemma refined_vertices_ne
     {n m D : ℕ} {bucket : Fin n → Fin m} {sel : Fin D → Fin m}
     (hsel : Function.Injective sel)
-    (J : ∀ a : Fin D, Finset (bucketFiber bucket (sel a)))
+    (_J : ∀ a : Fin D, Finset (bucketFiber bucket (sel a)))
     {a b : Fin D} (hab : a ≠ b)
     {i : bucketFiber bucket (sel a)} {j : bucketFiber bucket (sel b)} :
     i.1 ≠ j.1 := by
@@ -503,12 +503,12 @@ lemma block_sum_graph_le_card_sq
       apply Finset.sum_le_sum
       intro j hj
       rcases graphAdjacencyMatrix_isBinary G i.1 j.1 with h | h <;>
-        rw [h] <;> norm_num
+        rw [h] ; norm_num
     _ = (q : ℝ) ^ 2 := by simp [hJcard, pow_two]
 
 lemma sum_block_bounds
     {D q : ℕ} {H : Finset (Fin D)} {E0 : ℝ}
-    (hE0 : 0 ≤ E0) (hblock : ∀ a ∈ H, ∀ b ∈ H,
+    (hE0 : 0 ≤ E0) (_hblock : ∀ a ∈ H, ∀ b ∈ H,
       (if a = b then (q : ℝ) ^ 2 else E0) ≥ 0) :
     (∑ a ∈ H, ∑ b ∈ H,
         (if a = b then (q : ℝ) ^ 2 else E0)) ≤
@@ -850,7 +850,7 @@ lemma refined_quotient_rpow_bounds {n s K : ℕ} {delta : ℝ}
       _ = Real.rpow (n : ℝ)
           (((1 - delta) / 2) + ((1 - delta) / 2)) :=
         (Real.rpow_add hnreal _ _).symm
-      _ = Real.rpow (n : ℝ) (1 - delta) := by congr 1 <;> ring
+      _ = Real.rpow (n : ℝ) (1 - delta) := by congr 1 ; ring
   have hgrowthReal : (4 * (K : ℝ)) ≤ x := by
     exact_mod_cast hgrowth
   have hfitReal : (2 : ℝ) * (K : ℝ) ≤ (s : ℝ) := by
@@ -1074,7 +1074,7 @@ theorem ksssLemma101 : KSSSLemma101 := by
     have heq : 64 * (D : ℝ) * c = alpha / 2 := by
       dsimp [c]
       field_simp [ne_of_gt (show (0 : ℝ) < D by positivity)]
-      <;> ring
+      ; ring
     rw [heq]
     linarith
   obtain ⟨Ndelta, hNdelta⟩ := exists_nat_rpow_ge delta (16 * D) hdelta
@@ -1146,7 +1146,6 @@ theorem ksssLemma101 : KSSSLemma101 := by
       C * Real.logb 2 n = Dens * (p * Real.logb 2 n) := by
         dsimp [Dens, p]
         field_simp [ne_of_gt (sub_pos.mpr hdelta1)]
-        <;> ring
       _ ≤ Dens * Real.logb 2 (t * R.q : ℕ) :=
         mul_le_mul_of_nonneg_left hlogLower hDens.le
   have hdivLower := nat_div_real_lower_half hcodeCount hcodefit2
@@ -1169,7 +1168,7 @@ theorem ksssLemma101 : KSSSLemma101 := by
       _ = (a / 8) * (R.q : ℝ) ^ 2 := by
         dsimp [beta]
         field_simp [ne_of_gt hCr, ne_of_gt (show (0 : ℝ) < codeCount by positivity)]
-        <;> ring
+        ; ring
   have hgap : (t : ℝ) * ((R.q : ℝ) ^ 2 +
       t * (Cr * Real.sqrt alpha * (s : ℝ) ^ 2)) <
       a * (t * R.q : ℕ) ^ 2 := by

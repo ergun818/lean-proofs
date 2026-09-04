@@ -284,7 +284,7 @@ lemma claim121_fixed_remainder_rhs_le_ambient
 /-- Split a Bernoulli expectation into a uniformly bounded exceptional
 event and a pointwise bound on its complement. -/
 lemma expectation_half_le_add_eventProbability
-    {V : Type*} [Fintype V] [DecidableEq V]
+    {V : Type*} [Fintype V]
     (f : Finset V → ℝ) (Bad : Finset V → Prop) [DecidablePred Bad]
     (A : ℝ)
     (hA : 0 ≤ A) (hgood : ∀ W, ¬ Bad W → f W ≤ A)
@@ -409,8 +409,7 @@ theorem exists_eventual_graphEffective_smallRLCD_window_upper_threshold
     exists_eventual_graphEffective_smallRLCD_common_claims_threshold
       C gamma hC hgamma hgammaSmall
   refine ⟨B0, hB0, ?_⟩
-  intro B hB0B
-  intro H hH
+  intro B hB0B H hH
   obtain ⟨Adens, hAdens, rhoF, hrhoF, Dshift, hDshift, hcommon⟩ :=
     hcommonAll H L hH hL
   have hB : 0 < B := hB0.trans_le hB0B

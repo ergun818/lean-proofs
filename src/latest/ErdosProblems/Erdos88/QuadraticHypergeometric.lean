@@ -61,7 +61,7 @@ lemma hypergeomWeight_succ_recurrence (m ell j : ℕ) (hj : j < ell) :
 /-- Polynomial comparison of the two factors in the adjacent recurrence. -/
 lemma hypergeom_step_factor_le (m ell j : ℕ)
     (hell : ell ≤ 2 * m) (hj : 2 * j + 1 ≤ ell)
-    (hsupport : ell ≤ m + j + 1) :
+    (_hsupport : ell ≤ m + j + 1) :
     (j + 1) * (m - (ell - (j + 1))) ≤ (m - j) * (ell - j) := by
   rw [mul_comm (m - j)]
   exact Nat.mul_le_mul (by omega) (by omega)
@@ -199,7 +199,7 @@ lemma hypergeomWeight_middle_mul_pow_le
     rw [sub_nonneg, div_le_one hspos]
     exact_mod_cast hGle
   induction d with
-  | zero => simp [c, b]
+  | zero => simp
   | succ d ih =>
       have hdD : d < D := by omega
       have hdle : d ≤ D := by omega
@@ -604,7 +604,7 @@ lemma sum_right_of_antitone_of_block_card
     intro q hqN
     by_cases hAempty : A (q + 1) = ∅
     · rw [hAempty]
-      simp only [Finset.sum_empty, zero_le]
+      simp only [Finset.sum_empty]
       exact mul_nonneg
         (div_nonneg (Nat.cast_nonneg _) (Nat.cast_nonneg _))
         (Finset.sum_nonneg fun i _hi ↦ hf0 i)
@@ -756,7 +756,7 @@ lemma round_eq_of_distToInt_add_lt_one
     calc
       |((round x : ℤ) : ℝ) - ((round y : ℤ) : ℝ)| =
           |(((round x : ℤ) : ℝ) - x) + (x - y) +
-            (y - ((round y : ℤ) : ℝ))| := by congr 1 <;> ring
+            (y - ((round y : ℤ) : ℝ))| := by congr 1 ; ring
       _ ≤ |((round x : ℤ) : ℝ) - x| + |x - y| +
           |y - ((round y : ℤ) : ℝ)| := by
             exact (abs_add_le _ _).trans
@@ -821,7 +821,7 @@ lemma card_residue_block_le
                 ((tau * j₀ - alpha) -
                   (round (tau * j₀ - alpha) : ℝ))| := by
                     rw [hround]
-                    congr 1 <;> ring
+                    congr 1 ; ring
           _ ≤ RLCD.distToInt (tau * i - alpha) +
                 RLCD.distToInt (tau * j₀ - alpha) := by
                   rw [RLCD.distToInt, RLCD.distToInt]
@@ -831,7 +831,7 @@ lemma card_residue_block_le
                           (round (tau * j₀ - alpha) : ℝ))| =
                       |((tau * i - alpha) - (round (tau * i - alpha) : ℝ)) +
                         -((tau * j₀ - alpha) -
-                          (round (tau * j₀ - alpha) : ℝ))| := by congr 1 <;> ring
+                          (round (tau * j₀ - alpha) : ℝ))| := by congr 1
                     _ ≤ |(tau * i - alpha) - (round (tau * i - alpha) : ℝ)| +
                         |-((tau * j₀ - alpha) -
                           (round (tau * j₀ - alpha) : ℝ))| := abs_add_le _ _
@@ -962,7 +962,7 @@ lemma sum_hypergeomWeight_residue_le_of_block
       refine ⟨Finset.mem_range.mpr (by dsimp only [N]; omega), ?_⟩
       dsimp only [alphaL]
       rw [Nat.cast_sub hjc]
-      convert hjE.2 using 1 <;> ring_nf
+      convert hjE.2 using 1 ; ring_nf
     · intro j₁ hj₁ j₂ hj₂ heq
       have hj₁c := (Finset.mem_filter.mp hj₁).2
       have hj₂c := (Finset.mem_filter.mp hj₂).2
@@ -980,7 +980,7 @@ lemma sum_hypergeomWeight_residue_le_of_block
         dsimp only [j]
         rw [Nat.cast_sub hdc]
         dsimp only [alphaL] at hdDL
-        convert hdDL.2 using 1 <;> ring_nf
+        convert hdDL.2 using 1 ; ring_nf
       refine ⟨j, ⟨?_, ?_⟩⟩
       · rw [Finset.mem_filter]
         refine ⟨?_, hjc⟩
@@ -1009,7 +1009,7 @@ lemma sum_hypergeomWeight_residue_le_of_block
       · omega
       · dsimp only [alphaR]
         rw [Nat.cast_sub htail, Nat.cast_sub hjell]
-        convert hjE.2 using 1 <;> ring_nf
+        convert hjE.2 using 1 ; ring_nf
     · intro j₁ hj₁ j₂ hj₂ heq
       have hj₁E := Finset.mem_filter.mp (Finset.mem_filter.mp hj₁).1
       have hj₂E := Finset.mem_filter.mp (Finset.mem_filter.mp hj₂).1
@@ -1039,7 +1039,7 @@ lemma sum_hypergeomWeight_residue_le_of_block
         dsimp only [j]
         rw [Nat.cast_sub (by omega : c - d ≤ ell), Nat.cast_sub hdc]
         dsimp only [alphaR] at hdDR
-        convert hdDR.2.2 using 1 <;> ring_nf
+        convert hdDR.2.2 using 1 ; ring_nf
       refine ⟨j, ⟨?_, ?_⟩⟩
       · rw [Finset.mem_filter]
         refine ⟨?_, by omega⟩
@@ -1297,7 +1297,7 @@ lemma hypergeomResidue_ratio_le_of_density
     (heta : 0 < eta) (hm : 1 ≤ m)
     (hellower : eta * (2 * m : ℕ) ≤ ell)
     (hellupper : (ell : ℝ) ≤ (1 - eta) * (2 * m : ℕ))
-    (htau : tau ≠ 0) (hdelta : 0 ≤ delta) (hdeltaUpper : delta ≤ 1 / 2) :
+    (htau : tau ≠ 0) (hdelta : 0 ≤ delta) (_hdeltaUpper : delta ≤ 1 / 2) :
     (∑ j ∈ hypergeomResidueSet ell tau alpha delta,
         (hypergeomWeight m ell j : ℝ)) / Nat.choose (2 * m) ell ≤
       4096 / eta *

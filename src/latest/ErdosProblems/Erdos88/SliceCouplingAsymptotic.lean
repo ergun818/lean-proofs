@@ -34,7 +34,7 @@ lemma eventually_const_mul_log_le_scale (C p : ℝ)
       ring
 
 lemma eventually_const_mul_log_sq_le_scale (C p : ℝ)
-    (hC : 0 ≤ C) (hp : 0 < p) :
+    (_hC : 0 ≤ C) (hp : 0 < p) :
     ∀ᶠ n : ℕ in Filter.atTop,
       C * Real.log n ^ 2 ≤ scale n p := by
   let D := max 1 C
@@ -75,7 +75,7 @@ lemma bucketCount_mul_fiberCard {n m : ℕ}
 lemma scale_one_sub_mul_scale {n : ℕ} (hn : 0 < n) (d : ℝ) :
     scale n d * scale n (1 - d) = (n : ℝ) := by
   rw [scale_mul hn]
-  convert Real.rpow_one (n : ℝ) using 1 <;> simp [scale] <;> ring
+  convert Real.rpow_one (n : ℝ) using 1 ; simp [scale]
 
 lemma scale_mul_three {n : ℕ} (hn : 0 < n) (a b c : ℝ) :
     scale n a * scale n b * scale n c = scale n (a + b + c) := by
@@ -121,7 +121,7 @@ lemma two_mul_floor_half_sub_le (s : ℕ) (W : ℝ)
     nlinarith)
 
 lemma nat_sub_two_floor_pos_of_margin_pos (s : ℕ) (W : ℝ)
-    (hW0 : 0 ≤ W) (hWpos : 0 < W) (hW : W ≤ (s : ℝ) / 2) :
+    (_hW0 : 0 ≤ W) (hWpos : 0 < W) (hW : W ≤ (s : ℝ) / 2) :
     0 < s - 2 * Nat.floor ((s : ℝ) / 2 - W) := by
   let x : ℝ := (s : ℝ) / 2 - W
   have hx0 : 0 ≤ x := by dsimp only [x]; linarith
@@ -329,7 +329,7 @@ lemma ksss_meanGap_le_half_target {n m : ℕ}
     rw [hWsq]
     dsimp only [D]
     field_simp [ne_of_gt (scale_pos hn (1 - d))]
-    <;> ring
+    ; ring
   have hm0 : 0 ≤ (m : ℝ) := by positivity
   have hlog0 : 0 ≤ Real.log n :=
     Real.log_nonneg (by exact_mod_cast (show 1 ≤ n by omega))

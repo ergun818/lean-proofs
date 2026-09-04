@@ -351,7 +351,7 @@ def fourierErrorAtRadius (φX φZ : ℝ → ℂ) (r : ℝ) : ℝ :=
 the nonnegative Fourier error. -/
 lemma fourierErrorAtRadius_le_full
     {φX φZ : ℝ → ℂ} {ν r : ℝ}
-    (hν : 0 ≤ ν) (hr : 0 < r) (hcut : 2 / r ≤ ν)
+    (_hν : 0 ≤ ν) (hr : 0 < r) (hcut : 2 / r ≤ ν)
     (hint : IntervalIntegrable (fun t ↦ ‖φX t - φZ t‖) volume (-ν) ν) :
     fourierErrorAtRadius φX φZ r ≤ fourierL1Error φX φZ ν := by
   rw [fourierErrorAtRadius, fourierL1Error]
@@ -433,7 +433,7 @@ theorem unstructured_bounded_window
     (hFourier : fourierL1Error φX φZ ν ≤ ηFourier / σ)
     (hE : RelativeEsseenHypotheses φX φZ smallBallX smallBallZ
       concentrationZ Bulk σ ν cEsseen gaussianUpper gaussianLower R)
-    (hmargin : 0 < gaussianLower / 8 -
+    (_hmargin : 0 < gaussianLower / 8 -
       cEsseen * (gaussianUpper / R + ηFourier)) :
     (∀ x : ℝ,
       smallBallX (unstructuredWindowRadius ν) x ≤
@@ -556,7 +556,7 @@ theorem unstructured_bounded_window_of_bands
     (fourierL1Error_le_div_of_scaled_bound h hscale hσlower habsorb) hE hmargin
 
 lemma one_div_sigma_le_rpow
-    {n σ scaleLower : ℝ} (hn : 0 < n) (hσ : 0 < σ)
+    {n σ scaleLower : ℝ} (hn : 0 < n) (_hσ : 0 < σ)
     (hscale : 0 < scaleLower)
     (hσlower : scaleLower * n ^ ((3 : ℝ) / 2) ≤ σ) :
     1 / σ ≤ (1 / scaleLower) * n ^ (-(3 : ℝ) / 2) := by

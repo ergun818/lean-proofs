@@ -16,7 +16,7 @@ open scoped BigOperators
 namespace Erdos88
 namespace BooleanSlices
 
-open Classical Finset
+open Finset
 
 universe u
 
@@ -80,9 +80,11 @@ def signedSliceFamilyFiberFactor {K : ℕ} (I : Fin K → Finset α)
   ∏ k, (plus k).factorial * (minus k).factorial *
     ((I k).card - plus k - minus k).factorial
 
+omit [DecidableEq α] [Fintype α] in
 lemma signedSliceFamilyFiberFactor_pos {K : ℕ}
     (I : Fin K → Finset α) (plus minus : Fin K → ℕ) :
     0 < signedSliceFamilyFiberFactor I plus minus := by
+  classical
   apply Finset.prod_pos
   intro k _
   positivity
@@ -212,10 +214,10 @@ lemma signedSliceFamilyDecode_left_swap {K : ℕ}
       rw [hk, signedSliceValue_decode_left_swap]
       by_cases hvx : v = x
       · subst v
-        simp [x, y, hxy]
+        simp [x, y]
       · by_cases hvy : v = y
         · subst v
-          simp [x, y, hxy, hxy.symm]
+          simp [x, y, hxy.symm]
         · rw [Equiv.swap_apply_of_ne_of_ne hvx hvy]
           simp [x, y, hvx, hvy]
     · simp only [signedSliceFamilyDecode]
@@ -421,10 +423,13 @@ abbrev BooleanSliceFamilyPoint {K : ℕ} (I : Fin K → Finset α)
     (ell : Fin K → ℕ) :=
   ∀ k, BooleanSlicePoint (I k) (ell k)
 
-lemma booleanSliceFamilyPoint_nonempty {K : ℕ}
+omit [DecidableEq α] [Fintype α] in
+lemma booleanSliceFamilyPoint_nonempty [Finite α] {K : ℕ}
     (I : Fin K → Finset α) (ell : Fin K → ℕ)
     (hell : ∀ k, ell k ≤ (I k).card) :
     Nonempty (BooleanSliceFamilyPoint I ell) := by
+  classical
+  let : Fintype α := Fintype.ofFinite α
   exact ⟨fun k ↦ Classical.choice (booleanSlicePoint_nonempty (hell k))⟩
 
 /-- A full-support signed slice is exactly an ordinary Boolean slice: its
@@ -512,9 +517,10 @@ private lemma uniformProbability_comp_equiv_family {Ω Ω' : Type*}
   simpa [Concentration.uniformProbability, Fintype.expect_eq_sum_div_card,
     Finset.sum_ite] using h
 
+omit [Fintype α] in
 /-- Exact two-sided concentration for bounded linear forms on an arbitrary
 family of Boolean slices. -/
-theorem booleanSliceFamilyLinear_two_sided_probability {K : ℕ}
+theorem booleanSliceFamilyLinear_two_sided_probability [Finite α] {K : ℕ}
     (I : Fin K → Finset α) (ell : Fin K → ℕ)
     (hell : ∀ k, ell k ≤ (I k).card)
     (e : ∀ k, Fin (I k).card ≃ ↑(I k))
@@ -532,6 +538,7 @@ theorem booleanSliceFamilyLinear_two_sided_probability {K : ℕ}
       2 * Real.exp
         (-t ^ 2 / (2 * (∑ k : Fin K, ((I k).card : ℝ)) *
           (4 * C) ^ 2)) := by
+  let : Fintype α := Fintype.ofFinite α
   let minus : Fin K → ℕ := fun k ↦ (I k).card - ell k
   have hcount : ∀ k, ell k + minus k ≤ (I k).card := by
     intro k
@@ -630,6 +637,7 @@ noncomputable def balancedBooleanSliceFamilyComplementEquiv {K : ℕ}
   Equiv.piCongrRight fun k ↦
     balancedBooleanSliceComplementEquiv (I k) (ell k) (hbal k)
 
+omit [Fintype α] in
 lemma booleanSliceFamilyLinear_complement {K : ℕ}
     (I : Fin K → Finset α) (ell : Fin K → ℕ)
     (hbal : ∀ k, 2 * ell k = (I k).card)
@@ -649,14 +657,16 @@ lemma booleanSliceFamilyLinear_complement {K : ℕ}
   by_cases hiS : i ∈ (S k).1 <;>
     simp [signOfSet, hiS, hi]
 
+omit [Fintype α] in
 /-- Every linear form on a product of balanced slices has mean zero, by the
 exact complement involution. -/
-lemma uniformExpectation_booleanSliceFamilyLinear_eq_zero {K : ℕ}
+lemma uniformExpectation_booleanSliceFamilyLinear_eq_zero [Finite α] {K : ℕ}
     (I : Fin K → Finset α) (ell : Fin K → ℕ)
     (hbal : ∀ k, 2 * ell k = (I k).card)
     (c : Fin K → α → ℝ) :
     Concentration.uniformExpectation
       (booleanSliceFamilyLinearOfCounts (ell := ell) I c) = 0 := by
+  let : Fintype α := Fintype.ofFinite α
   let E := balancedBooleanSliceFamilyComplementEquiv I ell hbal
   let f : BooleanSliceFamilyPoint I ell → ℝ :=
     booleanSliceFamilyLinearOfCounts I c
@@ -671,9 +681,10 @@ lemma uniformExpectation_booleanSliceFamilyLinear_eq_zero {K : ℕ}
   have hzero : (∑ S, f S) = 0 := by linarith
   rw [Concentration.uniformExpectation, hzero, zero_div]
 
+omit [Fintype α] in
 /-- Balanced specialization of the family linear tail, centered exactly at
 zero. -/
-theorem balancedBooleanSliceFamilyLinear_two_sided_probability {K : ℕ}
+theorem balancedBooleanSliceFamilyLinear_two_sided_probability [Finite α] {K : ℕ}
     (I : Fin K → Finset α) (ell : Fin K → ℕ)
     (hbal : ∀ k, 2 * ell k = (I k).card)
     (e : ∀ k, Fin (I k).card ≃ ↑(I k))
@@ -692,6 +703,7 @@ theorem balancedBooleanSliceFamilyLinear_two_sided_probability {K : ℕ}
       2 * Real.exp
         (-t ^ 2 / (2 * (∑ k : Fin K, ((I k).card : ℝ)) *
           (4 * C) ^ 2)) := by
+  let : Fintype α := Fintype.ofFinite α
   let hell : ∀ k, ell k ≤ (I k).card := fun k ↦ by
     have := hbal k
     omega

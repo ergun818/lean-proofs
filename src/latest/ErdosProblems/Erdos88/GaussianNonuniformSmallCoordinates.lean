@@ -6,11 +6,12 @@ open scoped ENNReal NNReal BigOperators
 namespace Erdos88.GaussianQuadratic
 
 lemma exists_subset_sum_between_one_two_public
-    {ι : Type*} [Fintype ι] (w : ι → ℝ) (S : Finset ι)
+    {ι : Type*} [Finite ι] (w : ι → ℝ) (S : Finset ι)
     {c : ℝ} (hc : 0 < c) (hsmall : ∀ i ∈ S, w i < c)
     (hsum : c ≤ ∑ i ∈ S, w i) :
     ∃ T ⊆ S, c ≤ ∑ i ∈ T, w i ∧ ∑ i ∈ T, w i < 2 * c := by
   classical
+  let : Fintype ι := Fintype.ofFinite ι
   induction S using Finset.induction_on with
   | empty =>
       simp only [Finset.sum_empty] at hsum
@@ -202,7 +203,7 @@ lemma diagonalPartialSum_compl_smallBall_le_four_mul
 /-- The five-block estimate specialized to the normalized
 no-influential-coordinate case. -/
 lemma diagonalPartialSum_univ_smallBall_le_far_of_small_coordinates
-    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {ι : Type*} [Fintype ι]
     (a lam : ι → ℝ)
     (hsum : partialVariance a lam Finset.univ = 1)
     (hsmall : ∀ i, coordinateVariance (a i) (lam i) ≤ 1 / 10)
@@ -211,6 +212,7 @@ lemma diagonalPartialSum_univ_smallBall_le_far_of_small_coordinates
         ((Measure.pi fun _ : ι ↦ standardGaussian).map
           (diagonalPartialSum a lam Finset.univ)) eps x ≤
       40 * eps * Real.exp (-((|x| - eps) / 5) / 4 + 1 / 8) := by
+  classical
   obtain ⟨J, hdecomp, hJpos, hJle, hcomp⟩ :=
     exists_five_variance_blocks_of_small_coordinates a lam hsum hsmall
   have hraw := diagonalPartialSum_smallBall_le_of_five_blocks
@@ -229,7 +231,7 @@ lemma diagonalPartialSum_univ_smallBall_le_far_of_small_coordinates
 /-- An explicit nonuniform small-ball estimate for the normalized diagonal
 sum when no coordinate carries more than one tenth of the variance. -/
 theorem diagonalPartialSum_univ_smallBall_le_nonuniform_of_small_coordinates
-    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {ι : Type*} [Fintype ι]
     (a lam : ι → ℝ)
     (hsum : partialVariance a lam Finset.univ = 1)
     (hsmall : ∀ i, coordinateVariance (a i) (lam i) ≤ 1 / 10)
@@ -238,6 +240,7 @@ theorem diagonalPartialSum_univ_smallBall_le_nonuniform_of_small_coordinates
         ((Measure.pi fun _ : ι ↦ standardGaussian).map
           (diagonalPartialSum a lam Finset.univ)) eps x ≤
       (eps / (1 / 10000)) * Real.exp (-(1 / 10000) * |x|) := by
+  classical
   have hVpos : 0 < partialVariance a lam Finset.univ := by rw [hsum]; norm_num
   have hcoord : ∀ i ∈ (Finset.univ : Finset ι),
       coordinateVariance (a i) (lam i) ≤
@@ -280,23 +283,25 @@ theorem diagonalPartialSum_univ_smallBall_le_nonuniform_of_small_coordinates
         nlinarith
 
 lemma map_diagonalPartialSum_univ_eq_diagonalCenteredLaw
-    {ι : Type*} [Fintype ι] [DecidableEq ι] (a lam : ι → ℝ) :
+    {ι : Type*} [Fintype ι] (a lam : ι → ℝ) :
     (Measure.pi fun _ : ι ↦ standardGaussian).map
         (diagonalPartialSum a lam Finset.univ) =
       diagonalCenteredLaw a lam := by
+  classical
   rw [diagonalCenteredLaw_eq_map_diagonalCenteredSum]
   congr 1
 
 /-- Law-level no-influential-coordinate branch of the normalized
 nonuniform Gaussian small-ball theorem. -/
 theorem smallBall_diagonalCenteredLaw_le_nonuniform_of_small_coordinates
-    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {ι : Type*} [Fintype ι]
     (a lam : ι → ℝ)
     (hsum : totalVariance a lam = 1)
     (hsmall : ∀ i, coordinateVariance (a i) (lam i) ≤ 1 / 10)
     {eps : ℝ} (heps : 0 ≤ eps) (hepsOne : eps ≤ 1) (x : ℝ) :
     Erdos88.Esseen.smallBall (diagonalCenteredLaw a lam) eps x ≤
       (eps / (1 / 10000)) * Real.exp (-(1 / 10000) * |x|) := by
+  classical
   rw [← map_diagonalPartialSum_univ_eq_diagonalCenteredLaw a lam]
   apply diagonalPartialSum_univ_smallBall_le_nonuniform_of_small_coordinates
   · simpa only [totalVariance, partialVariance] using hsum

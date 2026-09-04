@@ -103,9 +103,9 @@ lemma norm_centeredCoordinate_cexp_sub_taylor_le (a lam t x : ℝ) :
     ((((t * centeredCoordinatePolynomial a lam x : ℝ) : ℂ) * Complex.I))
   norm_num only [Nat.reduceAdd, Nat.factorial_two, Nat.cast_ofNat] at h
   simp only [Complex.mul_re, Complex.ofReal_re, Complex.I_re, mul_zero,
-    Complex.ofReal_im, Complex.I_im, zero_mul, sub_zero, max_self,
+    Complex.ofReal_im, Complex.I_im, sub_zero, max_self,
     Real.exp_zero, one_mul, Complex.norm_mul, Complex.norm_real,
-    Complex.norm_I, mul_one, abs_mul, mul_pow] at h
+    Complex.norm_I, mul_one, mul_pow] at h
   convert h using 1
   · congr 2
     norm_num [Finset.sum_range_succ]
@@ -183,7 +183,6 @@ theorem norm_centeredCoordinateCharFactor_sub_quadratic_le (a lam t : ℝ) :
       integral_add (integrable_const (1 : ℂ)) hz, integral_const,
       hzInt, integral_div, hz2Int]
     simp
-    push_cast
     ring
   have hdiff : centeredCoordinateCharFactor a lam t -
         ((1 : ℂ) - ((t ^ 2 * coordinateVariance a lam / 2 : ℝ) : ℂ)) =
@@ -776,7 +775,6 @@ theorem norm_centeredCoordinateCharFactor_sub_quadratic_le_sharp
       taylorWithinEval (charFun μ) 2 (Set.uIcc 0 t) 0 t =
         (1 : ℂ) - ((t ^ 2 * coordinateVariance a lam / 2 : ℝ) : ℂ) := by
     norm_num [taylorWithinEval_succ, RCLike.real_smul_eq_coe_mul, hi1, hi2]
-    push_cast
     ring
   have hthird (y : ℝ) :
       ‖∫ x : ℝ, x ^ 3 * Complex.exp (y * x * Complex.I) ∂μ‖ ≤
@@ -941,7 +939,7 @@ theorem norm_centeredCoordinateCharFactor_sub_gaussian_le
   have hexpComplex :
       ‖(((1 - x : ℝ) : ℂ) - ((Real.exp (-x) : ℝ) : ℂ))‖ ≤ x ^ 2 := by
     rw [← Complex.ofReal_sub, Complex.norm_real, Real.norm_eq_abs, abs_sub_comm]
-    convert hexpReal using 1 <;> ring_nf
+    convert hexpReal using 1 ; ring_nf
   have hxSq : x ^ 2 ≤ β * |t| ^ 3 / 8 := by
     calc
       x ^ 2 = y ^ 3 * y / 4 := by
@@ -1202,8 +1200,7 @@ theorem charFun_diagonalCenteredLaw {ι : Type*} [Fintype ι]
   unfold diagonalCenteredCharProduct
   rw [show (∏ i, charFun (centeredCoordinateLaw (a i) (lam i))) t =
       ∏ i, charFun (centeredCoordinateLaw (a i) (lam i)) t by
-    simpa using Finset.prod_apply t (Finset.univ : Finset ι)
-      (fun i ↦ charFun (centeredCoordinateLaw (a i) (lam i)))]
+    simp]
   apply Finset.prod_congr rfl
   intro i hi
   exact (centeredCoordinateCharFactor_eq_charFun (a i) (lam i) t).symm

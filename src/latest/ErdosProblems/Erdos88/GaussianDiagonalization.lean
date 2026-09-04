@@ -34,7 +34,7 @@ lemma continuous_eigenvectorSynthesis {n : ℕ}
   classical
   apply continuous_pi
   intro i
-  apply continuous_finset_sum
+  apply continuous_finsetSum
   intro j _
   exact (continuous_apply j).mul continuous_const
 
@@ -92,7 +92,7 @@ lemma quadraticPart_eigenvectorSynthesis {n : ℕ}
         ⟪WithLp.toLp 2 (eigenvectorSynthesis hF z),
           F.toEuclideanLin (WithLp.toLp 2 (eigenvectorSynthesis hF z))⟫_ℝ := by
       simp only [quadraticPart, PiLp.inner_apply,
-        Matrix.toEuclideanLin_apply,
+        Matrix.toLpLin_apply,
         Matrix.mulVec, dotProduct, Real.inner_apply]
       apply Finset.sum_congr rfl
       intro i _
@@ -188,7 +188,6 @@ lemma integral_diagonalCenteredSum_cexp {ι : Type*} [Fintype ι]
     (continuous_diagonalCenteredSum a lam).aemeasurable (by fun_prop)]
   apply integral_congr_ae
   exact Filter.Eventually.of_forall fun z ↦ by
-    congr 1
     push_cast
     ring
 
@@ -331,7 +330,7 @@ theorem norm_gaussianQuadraticCharacteristic_eq_diagonalCharModulus {n : ℕ}
     (hF : F.IsHermitian) (t : ℝ) :
     ‖gaussianQuadraticCharacteristic f₀ f F t‖ =
       diagonalCharModulus (eigenLinearCoefficient hF f) hF.eigenvalues t := by
-  rw [gaussianQuadraticCharacteristic_eq_phase_mul_diagonal,
+  rw [gaussianQuadraticCharacteristic_eq_phase_mul_diagonal (hF := hF),
     norm_mul, Complex.norm_exp]
   have hre :
       ((((t * (f₀ + ∑ j, hF.eigenvalues j) : ℝ) : ℂ) *
@@ -378,8 +377,7 @@ lemma frobeniusSq_eq_trace_transpose_mul_self {n : ℕ}
     (A : Matrix (Fin n) (Fin n) ℝ) :
     frobeniusSq A = (Aᵀ * A).trace := by
   classical
-  simp only [frobeniusSq, Matrix.trace, Matrix.mul_apply,
-    Matrix.transpose_apply]
+  simp only [frobeniusSq, Matrix.trace]
   rw [Finset.sum_comm]
   apply Finset.sum_congr rfl
   intro i _
@@ -528,7 +526,7 @@ lemma sum_sq_eigenLinearCoefficient_eq_vectorSqNorm {n : ℕ}
       eigenLinearCoefficient hF f j = ⟪b j, v⟫_ℝ := by
     unfold eigenLinearCoefficient
     dsimp only [b, v]
-    simp only [PiLp.inner_apply, Real.inner_apply, WithLp.ofLp_toLp]
+    simp only [PiLp.inner_apply, Real.inner_apply]
     apply Finset.sum_congr rfl
     intro i _
     ring
@@ -606,7 +604,6 @@ theorem charFun_gaussianQuadraticCenteredLaw {n : ℕ}
   rw [gaussianQuadraticCharacteristic_eq_integral_cexp]
   apply integral_congr_ae
   exact Filter.Eventually.of_forall fun x ↦ by
-    congr 1
     push_cast
     congr 1
     dsimp only [g]
@@ -628,7 +625,6 @@ theorem charFun_gaussianQuadraticCenteredLaw_map_div {n : ℕ}
   rw [charFun_apply_real]
   apply integral_congr_ae
   exact Filter.Eventually.of_forall fun x ↦ by
-    congr 1
     push_cast
     field_simp
 
@@ -659,7 +655,6 @@ lemma charFun_finiteUniformLaw_eq_finiteCharacteristic
   congr 1
   apply Finset.sum_congr rfl
   intro x _hx
-  congr 1
   push_cast
   ring_nf
 
@@ -884,7 +879,7 @@ linear lower bound.  The slightly more flexible hypothesis `δ < 1 / 80`
 records the exact exponent gap: the slower term is
 `n ^ (-1 / 4 + 4 * δ)`. -/
 lemma eventually_fourierComparison_rhs_le_scale
-    {delta eps a : ℝ} (hdelta : 0 ≤ delta)
+    {delta eps a : ℝ} (_hdelta : 0 ≤ delta)
     (hdeltaSmall : delta < 1 / 80) (heps : 0 < eps) (ha : 0 < a) :
     ∀ᶠ n : ℕ in Filter.atTop, ∀ {sigma : ℝ},
       a * (n : ℝ) ≤ sigma →
@@ -982,7 +977,7 @@ lemma eventually_fourierComparison_rhs_le_scale
   have hquarticScale : scale n (-1 + 12 * delta) ≤
       scale n (-1 / 4 + 4 * delta) := by
     apply scale_mono_exponent hn
-    linarith [hdelta]
+    linarith
   calc
     (4 / eps) *
           (((675 / 2 : ℝ) * scale n (3 + 12 * delta)) *
@@ -1203,12 +1198,13 @@ theorem exists_continuousDensity_gaussianQuadratic_normalized
   rw [gaussianQuadraticCenteredLaw_map_div_eq_diagonal f hF hsigma.ne']
   exact hp
 
-private lemma exists_subset_sum_between_one_two {ι : Type*} [Fintype ι]
+private lemma exists_subset_sum_between_one_two {ι : Type*} [Finite ι]
     (w : ι → ℝ) (S : Finset ι) {c : ℝ} (hc : 0 < c)
     (hsmall : ∀ i ∈ S, w i < c)
     (hsum : c ≤ ∑ i ∈ S, w i) :
     ∃ T ⊆ S, c ≤ ∑ i ∈ T, w i ∧ ∑ i ∈ T, w i < 2 * c := by
   classical
+  let : Fintype ι := Fintype.ofFinite ι
   induction S using Finset.induction_on with
   | empty =>
       simp only [Finset.sum_empty] at hsum
@@ -1228,7 +1224,7 @@ private lemma exists_subset_sum_between_one_two {ι : Type*} [Fintype ι]
 at least `2kc`, contains `k` pairwise-disjoint pieces of weight at least
 `c`.  This is the greedy packing step behind the rank-`r` form of KSSS
 Lemma 5.11. -/
-private lemma exists_disjoint_blocks_of_sum {ι : Type*} [Fintype ι]
+private lemma exists_disjoint_blocks_of_sum {ι : Type*} [Finite ι]
     (w : ι → ℝ) (S : Finset ι) {c : ℝ} (hc : 0 < c)
     (hsmall : ∀ i ∈ S, w i < c) :
     ∀ k : ℕ, 2 * (k : ℝ) * c ≤ ∑ i ∈ S, w i →
@@ -1236,6 +1232,7 @@ private lemma exists_disjoint_blocks_of_sum {ι : Type*} [Fintype ι]
         Set.PairwiseDisjoint (Set.univ : Set (Fin k)) B ∧
           (∀ j, B j ⊆ S) ∧ ∀ j, c ≤ ∑ i ∈ B j, w i := by
   classical
+  let : Fintype ι := Fintype.ofFinite ι
   intro k
   induction k generalizing S with
   | zero =>
@@ -1355,7 +1352,7 @@ private lemma exists_disjoint_blocks_of_tail_mass
       exists_disjoint_blocks_of_sum w S hc hsmall k hsumS
     exact ⟨B, hdisj, by simpa only [c] using hmass⟩
 
-private lemma exists_four_disjoint_blocks_of_sum {ι : Type*} [Fintype ι]
+private lemma exists_four_disjoint_blocks_of_sum {ι : Type*} [Finite ι]
     (w : ι → ℝ) (S : Finset ι) {c : ℝ} (hc : 0 < c)
     (hsmall : ∀ i ∈ S, w i < c)
     (hsum : 8 * c ≤ ∑ i ∈ S, w i) :
@@ -1363,6 +1360,7 @@ private lemma exists_four_disjoint_blocks_of_sum {ι : Type*} [Fintype ι]
       Set.PairwiseDisjoint (Set.univ : Set (Fin 4)) B ∧
         ∀ j, c ≤ ∑ i ∈ B j, w i := by
   classical
+  let : Fintype ι := Fintype.ofFinite ι
   have hcS : c ≤ ∑ i ∈ S, w i := by linarith
   obtain ⟨B0, hB0S, hB0c, hB0lt⟩ :=
     exists_subset_sum_between_one_two w S hc hsmall hcS
@@ -1547,7 +1545,7 @@ theorem norm_gaussianQuadraticCharacteristic_le_rank400
         (Real.rpow_mul_natCast hnpos.le (-99 / 100 : ℝ) 2).symm
       _ = (n : ℝ) ^ (-99 / 50 : ℝ) := by norm_num
   have hnSq : (n : ℝ) ^ 2 = (n : ℝ) ^ (2 : ℝ) := by
-    simpa using (Real.rpow_natCast (n : ℝ) 2).symm
+    simp
   have hcombine : (n : ℝ) ^ 2 *
       (n : ℝ) ^ (-99 / 50 : ℝ) = (n : ℝ) ^ (1 / 50 : ℝ) := by
     rw [hnSq, ← Real.rpow_add hnpos]
@@ -1578,7 +1576,7 @@ theorem norm_gaussianQuadraticCharacteristic_le_rank400
           (-((400 : ℝ)) / 4 : ℝ) ≤
         ((c / 200) * (n : ℝ) ^ (1 / 50 : ℝ)) ^ (-100 : ℝ) := by
     convert Real.rpow_le_rpow_of_nonpos hbasePos hbase
-      (by norm_num : (-100 : ℝ) ≤ 0) using 1 <;> norm_num
+      (by norm_num : (-100 : ℝ) ≤ 0) using 1 ; norm_num
   have hnormalize :
       ((c / 200) * (n : ℝ) ^ (1 / 50 : ℝ)) ^ (-100 : ℝ) =
         (c / 200) ^ (-100 : ℝ) * (n : ℝ) ^ (-2 : ℝ) := by

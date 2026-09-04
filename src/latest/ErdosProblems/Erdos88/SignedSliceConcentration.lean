@@ -7,7 +7,7 @@ open scoped BigOperators
 namespace Erdos88
 namespace BooleanSlices
 
-open Classical Finset
+open Finset
 open FiniteSliceConcentration
 
 variable {α : Type*} [Fintype α] [DecidableEq α]
@@ -51,6 +51,7 @@ lemma signedSliceDecode_eq_of_prefix (I : Finset α) (plus minus : ℕ)
     rw [hfi]
     exact hστ j
 
+omit [Fintype α] in
 /-- Decoding after a left transposition of permutation images transposes the
 corresponding two actual coordinates. -/
 lemma decodedCoordinateEmbedding_left_swap (I : Finset α)
@@ -68,7 +69,8 @@ lemma decodedCoordinateEmbedding_left_swap (I : Finset α)
   rw [Equiv.Perm.mul_apply]
   exact he.map_swap p q (σ r)
 
-lemma signedSlicePositiveSupport_left_swap (I : Finset α)
+omit [Fintype α] in
+lemma signedSlicePositiveSupport_left_swap [Finite α] (I : Finset α)
     (plus minus : ℕ) (hcount : plus + minus ≤ I.card)
     (e : Fin I.card ≃ ↑I) (σ : Equiv.Perm (Fin I.card))
     (p q : Fin I.card) :
@@ -76,13 +78,15 @@ lemma signedSlicePositiveSupport_left_swap (I : Finset α)
         (Equiv.swap p q * σ) =
       (signedSlicePositiveSupport I plus minus hcount e σ).map
         (Equiv.swap (e p).1 (e q).1).toEmbedding := by
+  let : Fintype α := Fintype.ofFinite α
   unfold signedSlicePositiveSupport
   rw [Finset.map_map]
   congr 1
   ext r
   exact decodedCoordinateEmbedding_left_swap I e σ p q _
 
-lemma signedSliceNegativeSupport_left_swap (I : Finset α)
+omit [Fintype α] in
+lemma signedSliceNegativeSupport_left_swap [Finite α] (I : Finset α)
     (plus minus : ℕ) (hcount : plus + minus ≤ I.card)
     (e : Fin I.card ≃ ↑I) (σ : Equiv.Perm (Fin I.card))
     (p q : Fin I.card) :
@@ -90,6 +94,7 @@ lemma signedSliceNegativeSupport_left_swap (I : Finset α)
         (Equiv.swap p q * σ) =
       (signedSliceNegativeSupport I plus minus hcount e σ).map
         (Equiv.swap (e p).1 (e q).1).toEmbedding := by
+  let : Fintype α := Fintype.ofFinite α
   unfold signedSliceNegativeSupport
   rw [Finset.map_map]
   congr 1
@@ -108,7 +113,7 @@ lemma signedSliceValue_decode_left_swap (I : Finset α)
         (Equiv.swap (e p).1 (e q).1 v) := by
   simp only [signedSliceValue, signedSliceDecode]
   simp [signedSlicePositiveSupport_left_swap,
-    signedSliceNegativeSupport_left_swap] <;> rfl
+    signedSliceNegativeSupport_left_swap] ; rfl
 
 variable {κ : Type*}
 
@@ -177,13 +182,13 @@ lemma productSignedSliceDecode_left_swap [Fintype κ] [DecidableEq κ]
       by_cases hvi : v = i
       · subst v
         rw [hbq]
-        simp [i, j, hbi, hbj, hij]
+        simp [i, j]
       · by_cases hvj : v = j
         · subst v
           rw [hbp]
-          simp [i, j, hbi, hbj, hij, hij.symm]
+          simp [i, j, hij.symm]
         · rw [Equiv.swap_apply_of_ne_of_ne hvi hvj]
-          simp [i, j, hbi, hbj, hvk, hvi, hvj]
+          simp [i, j, hvi, hvj]
     · have hvi : v ≠ i := by
         intro h
         apply hvk
@@ -330,7 +335,7 @@ lemma sum_abs_sub_productSignedSliceValue_le_four {K : ℕ}
             (abs_signedSliceValue_le_one (T (P.bucket p)) p)
           _ = 2 := by norm_num
       · by_cases hiq : i = q
-        · simp only [hip, hiq, or_true, if_true]
+        · simp only [hiq, or_true, if_true]
           calc
             |productSignedSliceValue P S q - productSignedSliceValue P T q| ≤
                 |productSignedSliceValue P S q| +

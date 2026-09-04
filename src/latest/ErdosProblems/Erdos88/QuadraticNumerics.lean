@@ -6,7 +6,7 @@ namespace QuadraticCancellation
 open scoped Topology
 
 lemma eventually_const_mul_rpow_le_rpow
-    (K a b : ℝ) (hK : 0 ≤ K) (hab : a < b) :
+    (K a b : ℝ) (_hK : 0 ≤ K) (hab : a < b) :
     ∀ᶠ n : ℕ in Filter.atTop,
       K * (n : ℝ) ^ a ≤ (n : ℝ) ^ b := by
   obtain ⟨N, hN⟩ := exists_nat_rpow_ge (b - a) K (sub_pos.mpr hab)
@@ -183,7 +183,7 @@ lemma lemma82_residual_numeric
             rw [Real.rpow_one]
       _ = (n : ℝ) ^ ((1 - beta / 2) - 1) :=
         (Real.rpow_sub hnpos _ _).symm
-      _ = (n : ℝ) ^ (-beta / 2) := by congr 1 <;> ring
+      _ = (n : ℝ) ^ (-beta / 2) := by congr 1 ; ring
   calc
     (((n : ℝ) ^ (1 - beta / 2) / n) ^ rho) =
         (((n : ℝ) ^ (-beta / 2)) ^ rho) := by rw [hquot]
@@ -361,7 +361,7 @@ lemma eventually_lemma82_supply
 
 lemma eventually_lemma82_cell_budget
     (beta rho zeta : ℝ) (hbeta : 0 < beta) (hbeta1 : beta ≤ 1 / 2)
-    (hrho : 0 < rho) (hrho1 : rho < 1) (hzeta : 0 ≤ zeta) :
+    (_hrho : 0 < rho) (hrho1 : rho < 1) (hzeta : 0 ≤ zeta) :
     ∀ᶠ n : ℕ in Filter.atTop,
       (n : ℝ) ^ (1 - beta) +
           (Nat.ceil ((n : ℝ) ^ (1 - beta)) *

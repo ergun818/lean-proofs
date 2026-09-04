@@ -9,10 +9,11 @@ inputs.  The inputs are explicit propositions, not axioms: later modules must
 construct proofs of them.
 -/
 
-open Classical SimpleGraph
+open SimpleGraph
 
 namespace Erdos88
 
+open Classical in
 /-- Constant quadratic edge density for every sufficiently large Ramsey graph. -/
 def HasRamseyDensity : Prop :=
   ∀ C : ℝ, 0 < C →
@@ -24,12 +25,14 @@ def HasRamseyDensity : Prop :=
 /-- The finite Erdős--Szemerédi theorem supplies the density input used by the
 final assembly. -/
 theorem hasRamseyDensity : HasRamseyDensity := by
+  classical
   intro C hC
   obtain ⟨a, ha, N, hN⟩ := FiniteES.ramseyFree_edgeCount_density_lower C hC
   refine ⟨a, ha, N, ?_⟩
   intro n G hn hG
   simpa [FiniteES.edgeCount] using hN n hn G hG
 
+open Classical in
 /-- The KSSS prescribed-count theorem, in the exact finite interface needed here. -/
 def HasPrescribedCounts : Prop :=
   ∀ C : ℝ, 0 < C → ∀ η : ℝ, 0 < η →
@@ -50,6 +53,7 @@ theorem erdos_88_of_deep_inputs
           HomogeneousFree ε G →
             ∀ m : ℕ, (m : ℝ) ≤ δ * (n : ℝ) ^ 2 →
               ∃ S : Finset (Fin n), inducedEdges G S = m := by
+  classical
   intro ε hε
   have hlogTwo : 0 < Real.log (2 : ℝ) := Real.log_pos (by norm_num)
   let C : ℝ := ε * Real.log 2
@@ -119,6 +123,6 @@ theorem erdos_88_of_deep_inputs
     have hmNat : m < 1 := by exact_mod_cast hmOne
     have hmZero : m = 0 := by omega
     refine ⟨∅, ?_⟩
-    simpa [hmZero]
+    simp [hmZero]
 
 end Erdos88

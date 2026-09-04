@@ -6,7 +6,6 @@ open scoped BigOperators
 namespace Erdos88
 namespace GraphQuadratic
 
-open Classical
 
 noncomputable def sym2Weight {V : Type*} (w : V → V → ℝ)
     (hw : ∀ i j, w i j = w j i) : Sym2 V → ℝ :=
@@ -37,13 +36,14 @@ lemma sum_adj_eq_sum_dart {V : Type*} [Fintype V]
     _ = ∑ s : Σ i, G.neighborSet i, w s.1 s.2 := by
       rw [Fintype.sum_sigma]
     _ = ∑ d : G.Dart, w d.fst d.snd := by
-      convert e.sum_comp (fun d : G.Dart => w d.fst d.snd) using 1 <;> rfl
+      convert e.sum_comp (fun d : G.Dart => w d.fst d.snd) using 1 ; rfl
 
 lemma sum_dart_eq_two_mul_sum_edge {V : Type*} [Fintype V]
-    [DecidableEq V] (G : SimpleGraph V) [DecidableRel G.Adj]
+    (G : SimpleGraph V) [DecidableRel G.Adj]
     (w : V → V → ℝ) (hw : ∀ i j, w i j = w j i) :
     (∑ d : G.Dart, w d.fst d.snd) =
       2 * ∑ e ∈ G.edgeFinset, sym2Weight w hw e := by
+  classical
   let edgeOf : G.Dart → {e // e ∈ G.edgeFinset} :=
     fun d => ⟨d.edge, by simpa only [SimpleGraph.mem_edgeFinset] using d.edge_mem⟩
   rw [← Finset.sum_fiberwise Finset.univ edgeOf
@@ -77,10 +77,12 @@ lemma sum_dart_eq_two_mul_sum_edge {V : Type*} [Fintype V]
       rw [sym2Weight_mk, ← hw u v]
       ring
 
+open Classical in
 noncomputable def graphSliceConstant {n : ℕ} (G : SimpleGraph (Fin n))
     (e₀ : ℝ) (c : Fin n → ℝ) : ℝ :=
   e₀ + (G.edgeFinset.card : ℝ) / 4 + (∑ i, c i) / 2
 
+open Classical in
 noncomputable def graphSliceLinear {n : ℕ} (G : SimpleGraph (Fin n))
     (c : Fin n → ℝ) (i : Fin n) : ℝ :=
   c i / 2 + (G.degree i : ℝ) / 4
@@ -89,6 +91,7 @@ noncomputable def graphSliceMatrix {n : ℕ} (G : SimpleGraph (Fin n)) :
     Fin n → Fin n → ℝ :=
   fun i j => (1 / 8 : ℝ) * RobustRank.graphAdjacencyMatrix G i j
 
+open Classical in
 lemma graphSliceMatrix_apply {n : ℕ} (G : SimpleGraph (Fin n))
     (i j : Fin n) :
     graphSliceMatrix G i j = if G.Adj i j then (1 / 8 : ℝ) else 0 := by
@@ -97,13 +100,15 @@ lemma graphSliceMatrix_apply {n : ℕ} (G : SimpleGraph (Fin n))
 
 lemma graphSliceMatrix_symmetric {n : ℕ} (G : SimpleGraph (Fin n))
     (i j : Fin n) : graphSliceMatrix G i j = graphSliceMatrix G j i := by
+  classical
   rw [graphSliceMatrix_apply, graphSliceMatrix_apply]
   rw [G.adj_comm]
 
+open Classical in
 lemma sym2_signWeight_eq_walsh {n : ℕ} (G : SimpleGraph (Fin n))
     (W : Finset (Fin n)) (e : Sym2 (Fin n)) (he : e ∈ G.edgeFinset) :
     sym2Weight (fun i j => BooleanSlices.signOfSet W i *
-        BooleanSlices.signOfSet W j) (fun i j => mul_comm _ _) e =
+        BooleanSlices.signOfSet W j) (fun _i _j => mul_comm _ _) e =
       Probability.walsh e.toFinset W := by
   induction e using Sym2.inductionOn with
   | _ i j =>
@@ -114,6 +119,7 @@ lemma sym2_signWeight_eq_walsh {n : ℕ} (G : SimpleGraph (Fin n))
       simp [Probability.walsh, Sym2.toFinset_mk_eq, hij,
         BooleanSlices.signOfSet, Probability.sign]
 
+open Classical in
 lemma quadraticPart_graphSliceMatrix {n : ℕ} (G : SimpleGraph (Fin n))
     (W : Finset (Fin n)) :
     BooleanSlices.quadraticPart (graphSliceMatrix G)
@@ -138,7 +144,7 @@ lemma quadraticPart_graphSliceMatrix {n : ℕ} (G : SimpleGraph (Fin n))
             apply Finset.sum_congr rfl
             intro j _
             dsimp only [w]
-            by_cases hij : G.Adj i j <;> simp [hij] <;> ring
+            by_cases hij : G.Adj i j <;> simp [hij] ; ring
     _ = (1 / 8 : ℝ) * ∑ d : G.Dart, w d.fst d.snd := by rw [hadj]
     _ = (1 / 8 : ℝ) *
         (2 * ∑ e ∈ G.edgeFinset, sym2Weight w hw e) := by rw [hedge]
@@ -154,6 +160,7 @@ lemma quadraticPart_graphSliceMatrix {n : ℕ} (G : SimpleGraph (Fin n))
     _ = (1 / 4 : ℝ) * ∑ e ∈ G.edgeFinset,
         Probability.walsh e.toFinset W := rfl
 
+open Classical in
 lemma sliceQuadratic_graph_coefficients {n : ℕ}
     (G : SimpleGraph (Fin n)) (e₀ : ℝ) (c : Fin n → ℝ)
     (W : Finset (Fin n)) :
@@ -171,12 +178,14 @@ lemma sliceQuadratic_graph_coefficients {n : ℕ}
 
 lemma graphSliceMatrix_abs_le_one {n : ℕ} (G : SimpleGraph (Fin n))
     (i j : Fin n) : |graphSliceMatrix G i j| ≤ 1 := by
+  classical
   rw [graphSliceMatrix_apply]
   split <;> norm_num
 
 lemma graphSliceLinear_nonneg {n : ℕ} (G : SimpleGraph (Fin n))
     (c : Fin n → ℝ) (hc : ∀ i, 0 ≤ c i) (i : Fin n) :
     0 ≤ graphSliceLinear G c i := by
+  classical
   dsimp only [graphSliceLinear]
   exact add_nonneg (div_nonneg (hc i) (by norm_num))
     (div_nonneg (by positivity) (by norm_num))

@@ -2,7 +2,7 @@ import ErdosProblems.Erdos88.SwitchingLocal
 import Mathlib.Combinatorics.Pigeonhole
 import Mathlib.LinearAlgebra.Matrix.Rank
 
-open Classical SimpleGraph
+open SimpleGraph
 open scoped BigOperators
 
 namespace Erdos88.Switching
@@ -19,13 +19,17 @@ noncomputable def switchingEndpointFinset (p : I → V × V) : Finset V :=
   (Finset.univ.image fun i ↦ (p i).1) ∪
     (Finset.univ.image fun i ↦ (p i).2)
 
+omit [DecidableEq I] [Fintype V] in
 @[simp] lemma mem_switchingEndpointFinset {p : I → V × V} {w : V} :
     w ∈ switchingEndpointFinset p ↔
       (∃ i, (p i).1 = w) ∨ ∃ i, (p i).2 = w := by
+  classical
   simp [switchingEndpointFinset]
 
+omit [DecidableEq I] [Fintype V] in
 lemma card_switchingEndpointFinset_le (p : I → V × V) :
     (switchingEndpointFinset p).card ≤ 2 * Fintype.card I := by
+  classical
   unfold switchingEndpointFinset
   calc
     _ ≤ (Finset.univ.image fun i ↦ (p i).1).card +
@@ -34,6 +38,7 @@ lemma card_switchingEndpointFinset_le (p : I → V × V) :
       Nat.add_le_add Finset.card_image_le Finset.card_image_le
     _ = 2 * Fintype.card I := by simp; omega
 
+open Classical in
 /-- The vertices in `S₀` which avoid every vertex in `A`, both as vertices
 and as neighbours.  This is the paper's `N(v₁, ..., vₛ) ∩ S₀`. -/
 noncomputable def nonneighborsOf (G : SimpleGraph V) (A S₀ : Finset V) : Finset V :=
@@ -58,6 +63,7 @@ noncomputable def switchingOtherEndpoints (p : I → V × V) (i : I) : Finset V 
     (((Finset.univ.erase i).image fun j ↦ (p j).1) ∪
       ((Finset.univ.erase i).image fun j ↦ (p j).2))
 
+omit [Fintype V] in
 lemma card_switchingOtherEndpoints_le (p : I → V × V) (i : I) :
     (switchingOtherEndpoints p i).card ≤ 2 * Fintype.card I := by
   have hIpos : 0 < Fintype.card I := Fintype.card_pos_iff.mpr ⟨i⟩
@@ -77,6 +83,7 @@ lemma card_switchingOtherEndpoints_le (p : I → V × V) (i : I) :
     _ = 2 * Fintype.card I - 1 := by rw [herase]; omega
     _ ≤ 2 * Fintype.card I := Nat.sub_le _ _
 
+omit [Fintype V] in
 lemma switchingOtherEndpoints_subset {S : Finset V} {p : I → V × V}
     (hp : ∀ j, p j ∈ S ×ˢ S) (i : I) :
     switchingOtherEndpoints p i ⊆ S := by
@@ -95,6 +102,7 @@ def HasLargeCommonNonneighbors (G : SimpleGraph V) (S S₀ : Finset V)
   ∀ A ⊆ S, A.card ≤ D →
     δ * S₀.card ≤ ((nonneighborsOf G A S₀).card : ℝ)
 
+omit [DecidableEq I] in
 /-- Property (2) of KSSS Lemma 13.1 applied simultaneously to every
 endpoint of a switching tuple. -/
 lemma HasLargeCommonNonneighbors.on_switchingEndpointFinset
@@ -104,6 +112,7 @@ lemma HasLargeCommonNonneighbors.on_switchingEndpointFinset
     (hp : ∀ j, p j ∈ S ×ˢ S) :
     δ * S₀.card ≤
       ((switchingCommonNonneighbors G p S₀).card : ℝ) := by
+  classical
   apply h (switchingEndpointFinset p)
   · intro w hw
     rcases mem_switchingEndpointFinset.mp hw with ⟨j, hj⟩ | ⟨j, hj⟩
@@ -147,20 +156,27 @@ def switchingEndpointMap (p : I → V × V) : I ⊕ I → V
 def PairEndpointsDistinct (p : I → V × V) : Prop :=
   Function.Injective (switchingEndpointMap p)
 
-lemma switchingEndpointFinset_eq_image (p : I → V × V) :
+omit [DecidableEq I] [Fintype V] in
+lemma switchingEndpointFinset_eq_image [Finite V] (p : I → V × V) :
     switchingEndpointFinset p =
       Finset.univ.image (switchingEndpointMap p) := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   ext w
   simp [switchingEndpointMap]
 
-lemma card_switchingEndpointFinset_eq (p : I → V × V)
+omit [DecidableEq I] [Fintype V] in
+lemma card_switchingEndpointFinset_eq [Finite V] (p : I → V × V)
     (hp : PairEndpointsDistinct p) :
     (switchingEndpointFinset p).card = 2 * Fintype.card I := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   rw [switchingEndpointFinset_eq_image,
     Finset.card_image_iff.mpr hp.injOn]
   simp only [Finset.card_univ, Fintype.card_sum]
   omega
 
+omit [Fintype V] in
 lemma right_endpoint_mem_switchingOtherEndpoints {p : I → V × V}
     {i j : I} (hij : i ≠ j) :
     (p i).2 ∈ switchingOtherEndpoints p j := by
@@ -170,6 +186,7 @@ lemma right_endpoint_mem_switchingOtherEndpoints {p : I → V × V}
   exact Finset.mem_image.mpr
     ⟨i, Finset.mem_erase.mpr ⟨hij, Finset.mem_univ i⟩, rfl⟩
 
+omit [Fintype V] in
 lemma left_endpoint_mem_switchingOtherEndpoints {p : I → V × V}
     {i j : I} (hij : i ≠ j) :
     (p i).1 ∈ switchingOtherEndpoints p j := by
@@ -181,7 +198,7 @@ lemma left_endpoint_mem_switchingOtherEndpoints {p : I → V × V}
 
 lemma switchingPrivateNeighbors_pairwise_disjoint
     (G : SimpleGraph V) (p : I → V × V) (S₀ : Finset V)
-    (hp : PairEndpointsDistinct p) {i j : I} (hij : i ≠ j) :
+    (_hp : PairEndpointsDistinct p) {i j : I} (hij : i ≠ j) :
     Disjoint (switchingPrivateNeighbors G p i S₀)
       (switchingPrivateNeighbors G p j S₀) := by
   rw [Finset.disjoint_left]
@@ -215,7 +232,7 @@ lemma switchingEndpointFinset_disjoint_privateUnion
   · by_cases hji : j = i
     · subst j
       have : G.Adj w w := by simpa [hj] using hwi'.2.1
-      simpa using this
+      simp at this
     · have hzMem : (p j).2 ∈ switchingOtherEndpoints p i :=
         right_endpoint_mem_switchingOtherEndpoints hji
       exact hwi'.2.2.1 (by simpa [hj] using hzMem)
@@ -231,6 +248,7 @@ lemma switchingCommonNonneighbors_disjoint_private
     exact (mem_nonneighborsOf.mp hwN).2.2 _ hmem
   exact hnot (mem_switchingPrivateNeighbors.mp hwi).2.1
 
+omit [Fintype V] in
 lemma switchingOtherEndpoints_update_same_left (p : I → V × V) (i : I)
     (y z z' : V) :
     switchingOtherEndpoints (Function.update p i (y, z)) i =
@@ -262,6 +280,7 @@ lemma switchingOtherEndpoints_update_same_left (p : I → V × V) (i : I)
   rw [show (Function.update p i (y, z) i).1 = y by simp,
     show (Function.update p i (y, z') i).1 = y by simp, hleft, hright]
 
+open Classical in
 /-- Richness bounds the possible right endpoints which make one fixed
 private neighborhood too small.  The other tuple coordinates and the left
 endpoint are fixed; the occurrence-sensitive endpoint definition makes the
@@ -346,6 +365,7 @@ section TupleMatrix
 variable {V : Type u} [Fintype V] [DecidableEq V]
 variable {I : Type v} [Fintype I]
 
+open Classical in
 /-- The signed neighbourhood-difference matrix of KSSS Definition 13.7. -/
 noncomputable def switchingDifferenceMatrix (G : SimpleGraph V)
     (p : I → V × V) : Matrix I V ℝ := fun i w ↦
@@ -381,6 +401,7 @@ lemma switchingDifferenceMatrix_apply_of_mem_private
     unfold switchingDifferenceMatrix
     simp [hyNot, hzNot]
 
+omit [Fintype I] [Fintype V] in
 lemma switchingDifferenceMatrix_ternary (G : SimpleGraph V)
     (p : I → V × V) (i : I) (w : V) :
     switchingDifferenceMatrix G p i w = -1 ∨
@@ -436,12 +457,15 @@ noncomputable def switchingColumnCode (G : SimpleGraph V)
     (p : I → V × V) (B : Finset I) (w : V) : B → Fin 3 := fun i ↦
   ternaryEncode (switchingDifferenceMatrix G p i.1 w)
 
-lemma switchingColumnCode_eq_iff (G : SimpleGraph V)
+omit [Fintype I] [Fintype V] in
+lemma switchingColumnCode_eq_iff [Finite V] [Finite I] (G : SimpleGraph V)
     (p : I → V × V) (B : Finset I) (x y : V) :
     switchingColumnCode G p B x = switchingColumnCode G p B y ↔
       ∀ i ∈ B,
         switchingDifferenceMatrix G p i x =
           switchingDifferenceMatrix G p i y := by
+  let : Fintype I := Fintype.ofFinite I
+  let : Fintype V := Fintype.ofFinite V
   constructor
   · intro h i hi
     apply ternaryEncode_injective_of_ternary
@@ -458,6 +482,7 @@ noncomputable def switchingColumnFiber (G : SimpleGraph V)
     (t : B → Fin 3) : Finset V :=
   A.filter fun w ↦ switchingColumnCode G p B w = t
 
+omit [Fintype I] [Fintype V] in
 @[simp] lemma mem_switchingColumnFiber {G : SimpleGraph V}
     {p : I → V × V} {B : Finset I} {A : Finset V}
     {t : B → Fin 3} {w : V} :
@@ -465,6 +490,7 @@ noncomputable def switchingColumnFiber (G : SimpleGraph V)
       w ∈ A ∧ switchingColumnCode G p B w = t := by
   simp [switchingColumnFiber]
 
+omit [Fintype I] [Fintype V] in
 /-- Pigeonhole among the `3^|B|` selected-row column types. -/
 lemma exists_large_switchingColumnFiber (G : SimpleGraph V)
     (p : I → V × V) (B : Finset I) (A : Finset V) (m : ℕ)
@@ -485,11 +511,13 @@ lemma exists_large_switchingColumnFiber (G : SimpleGraph V)
 noncomputable def finsetIndicator (U : Finset V) : V → ℝ := fun w ↦
   if w ∈ U then 1 else 0
 
+omit [Fintype I] in
 lemma switchingDifferenceMatrix_mulVec (G : SimpleGraph V)
     (p : I → V × V) (U : Finset V) (i : I) :
     (switchingDifferenceMatrix G p).mulVec (finsetIndicator U) i =
       (AKSGraph.degreeInto G (p i).2 (U.erase (p i).1) : ℝ) -
         (AKSGraph.degreeInto G (p i).1 (U.erase (p i).2) : ℝ) := by
+  classical
   simp only [Matrix.mulVec_apply, dotProduct, Matrix.row_apply,
     switchingDifferenceMatrix, finsetIndicator, sub_mul]
   rw [Finset.sum_sub_distrib]
@@ -506,7 +534,6 @@ lemma switchingDifferenceMatrix_mulVec (G : SimpleGraph V)
       rcases _hwErase with hwy | hwU
       · simp [hwy]
       · simp [hwU]
-
   · rw [AKSGraph.degreeInto_eq_sum]
     push_cast
     rw [← Finset.sum_subset (Finset.subset_univ (U.erase (p i).2))]
@@ -520,6 +547,7 @@ lemma switchingDifferenceMatrix_mulVec (G : SimpleGraph V)
       · simp [hwz]
       · simp [hwU]
 
+open Classical in
 /-- Removing one vertex from the full ambient set subtracts exactly its
 adjacency indicator from the real degree. -/
 lemma degreeInto_erase_univ_real (G : SimpleGraph V) (x y : V) :
@@ -552,14 +580,16 @@ lemma degreeInto_erase_univ_real (G : SimpleGraph V) (x y : V) :
       FiniteES.vertexDegree_eq_degree, ← G.card_neighborFinset_eq_degree]
     simp
 
+omit [Fintype I] in
 /-- The sum of a row of the switching-difference matrix is the difference
 of the endpoint degrees.  The possible edge between the two endpoints is
 deleted from both sides and therefore cancels. -/
-lemma sum_switchingDifferenceMatrix_row (G : SimpleGraph V)
+lemma sum_switchingDifferenceMatrix_row [Finite I] (G : SimpleGraph V)
     (p : I → V × V) (i : I) :
     (∑ w : V, switchingDifferenceMatrix G p i w) =
       (FiniteES.vertexDegree G (p i).2 : ℝ) -
         (FiniteES.vertexDegree G (p i).1 : ℝ) := by
+  let : Fintype I := Fintype.ofFinite I
   have hmul := switchingDifferenceMatrix_mulVec G p
     (Finset.univ : Finset V) i
   have hind : finsetIndicator (Finset.univ : Finset V) = fun _ ↦ (1 : ℝ) := by
@@ -576,16 +606,18 @@ lemma sum_switchingDifferenceMatrix_row (G : SimpleGraph V)
       h ((G.adj_comm (p i).1 (p i).2).mp h'))] at hmul
     linarith
 
+omit [Fintype I] in
 /-- Under the unbiased product measure, a switching row evaluated on the
 random indicator vector has mean one half of the endpoint-degree
 difference. -/
-lemma expectation_switchingDifferenceMatrix_mulVec_half
+lemma expectation_switchingDifferenceMatrix_mulVec_half [Finite I]
     (G : SimpleGraph V) (p : I → V × V) (i : I) :
     Probability.expectation (1 / 2 : ℝ)
         (fun U ↦ (switchingDifferenceMatrix G p).mulVec
           (finsetIndicator U) i) =
       ((FiniteES.vertexDegree G (p i).2 : ℝ) -
         (FiniteES.vertexDegree G (p i).1 : ℝ)) / 2 := by
+  let : Fintype I := Fintype.ofFinite I
   simp only [Matrix.mulVec_apply, dotProduct, Matrix.row_apply,
     finsetIndicator]
   change Probability.expectation (1 / 2 : ℝ)
@@ -604,6 +636,7 @@ lemma expectation_switchingDifferenceMatrix_mulVec_half
   rw [← Finset.sum_mul, sum_switchingDifferenceMatrix_row]
   ring
 
+omit [Fintype I] [Fintype V] in
 lemma switchingDifferenceMatrix_eq_one_iff (G : SimpleGraph V)
     (p : I → V × V) (i : I) {w : V}
     (hwy : w ≠ (p i).1) (hwz : w ≠ (p i).2) :
@@ -611,7 +644,7 @@ lemma switchingDifferenceMatrix_eq_one_iff (G : SimpleGraph V)
       G.Adj (p i).2 w ∧ ¬G.Adj (p i).1 w := by
   by_cases hz : G.Adj (p i).2 w <;>
     by_cases hy : G.Adj (p i).1 w <;>
-    simp [switchingDifferenceMatrix, hwy, hwz, hz, hy] <;> norm_num
+    simp [switchingDifferenceMatrix, hwy, hwz, hz, hy] ; norm_num
 
 /-- KSSS Definition 13.7 with an explicit integral deletion budget. -/
 def IsKDegenerate (G : SimpleGraph V) (p : I → V × V)
@@ -625,10 +658,12 @@ Definition 13.7. -/
 noncomputable def switchingDegeneracyBudget (delta rho : ℝ) (n : ℕ) : ℕ :=
   Nat.floor (delta ^ (3 / rho) * (n : ℝ))
 
+omit [DecidableEq V] [Fintype V] in
 lemma card_le_switchingDegeneracyBudget_iff {Q : Finset V}
     {delta rho : ℝ} {n : ℕ} (hdelta : 0 ≤ delta) :
     Q.card ≤ switchingDegeneracyBudget delta rho n ↔
       (Q.card : ℝ) ≤ delta ^ (3 / rho) * (n : ℝ) := by
+  classical
   have hnonneg : 0 ≤ delta ^ (3 / rho) * (n : ℝ) :=
     mul_nonneg (Real.rpow_nonneg hdelta _) (Nat.cast_nonneg _)
   constructor
@@ -656,6 +691,7 @@ lemma IsKDegenerate.mono {G : SimpleGraph V} {p : I → V × V}
   obtain ⟨Q, hQ, hrank⟩ := h
   exact ⟨Q, hQ, hrank.trans (by omega)⟩
 
+open Classical in
 /-- The maximum degeneracy in KSSS Definition 13.7. -/
 noncomputable def switchingDegeneracy (G : SimpleGraph V)
     (p : I → V × V) (budget : ℕ) : ℕ :=
@@ -665,6 +701,7 @@ noncomputable def switchingDegeneracy (G : SimpleGraph V)
 lemma switchingDegeneracy_le (G : SimpleGraph V) (p : I → V × V)
     (budget : ℕ) :
     switchingDegeneracy G p budget ≤ Fintype.card I := by
+  classical
   exact Nat.findGreatest_le _
 
 lemma isKDegenerate_switchingDegeneracy (G : SimpleGraph V)
@@ -680,13 +717,15 @@ lemma le_switchingDegeneracy_of_isKDegenerate
   classical
   exact Nat.le_findGreatest hk h
 
+omit [Fintype I] in
 /-- A matrix of rank at most `r` has at most `r` actual rows spanning all of
 its rows.  This is the row-selection step used in KSSS Lemma 13.9. -/
-lemma exists_spanning_rows {J : Type w} [Fintype J]
+lemma exists_spanning_rows [Finite I] {J : Type w} [Fintype J]
     (A : Matrix I J ℝ) (r : ℕ) (hrank : A.rank ≤ r) :
     ∃ B : Finset I, B.card ≤ r ∧
       ∀ i, A i ∈ Submodule.span ℝ (A '' (B : Set I)) := by
   classical
+  let : Fintype I := Fintype.ofFinite I
   let rows : Set (J → ℝ) := Set.range A.row
   obtain ⟨T, hTsub, hTcard, hTspan, _hTind⟩ :=
     Submodule.exists_finset_span_eq_linearIndepOn ℝ rows
@@ -725,6 +764,7 @@ lemma exists_spanning_rows {J : Type w} [Fintype J]
   rw [hTspan]
   exact Submodule.subset_span ⟨i, rfl⟩
 
+omit [Fintype I] in
 lemma eq_on_spanning_rows_imp_all {J : Type w}
     (A : Matrix I J ℝ) (B : Finset I)
     (hspan : ∀ i, A i ∈ Submodule.span ℝ (A '' (B : Set I)))
@@ -743,13 +783,15 @@ lemma eq_on_spanning_rows_imp_all {J : Type w}
   intro i
   exact hall (A i) (hspan i)
 
+omit [Fintype I] in
 /-- Column equality on at most `r` selected rows forces column equality on
 all rows of a rank-at-most-`r` matrix. -/
-lemma exists_rows_determining_columns {J : Type w} [Fintype J]
+lemma exists_rows_determining_columns [Finite I] {J : Type w} [Fintype J]
     (A : Matrix I J ℝ) (r : ℕ) (hrank : A.rank ≤ r) :
     ∃ B : Finset I, B.card ≤ r ∧
       ∀ x y : J, (∀ i ∈ B, A i x = A i y) →
         ∀ i, A i x = A i y := by
+  let : Fintype I := Fintype.ofFinite I
   obtain ⟨B, hBcard, hspan⟩ := exists_spanning_rows A r hrank
   exact ⟨B, hBcard, fun x y hxy ↦
     eq_on_spanning_rows_imp_all A B hspan hxy⟩
@@ -779,9 +821,10 @@ lemma IsKDegenerate.exists_determining_rows
   intro x y hxy
   exact hB x y hxy
 
+omit [Fintype I] [Fintype V] in
 /-- Once the determining rows are fixed, a value on any remaining row is
 constant throughout each column-code fiber away from the deleted columns. -/
-lemma row_eq_one_on_switchingColumnFiber
+lemma row_eq_one_on_switchingColumnFiber [Finite V] [Finite I]
     {G : SimpleGraph V} {p : I → V × V}
     {Q : Finset V} {B : Finset I}
     (hdet : ∀ x y : {w : V // w ∉ Q},
@@ -796,6 +839,8 @@ lemma row_eq_one_on_switchingColumnFiber
     (hxQ : x ∉ Q) (hxone : switchingDifferenceMatrix G p j x = 1) :
     ∀ y ∈ switchingColumnFiber G p B A t, y ∉ Q →
       switchingDifferenceMatrix G p j y = 1 := by
+  let : Fintype I := Fintype.ofFinite I
+  let : Fintype V := Fintype.ofFinite V
   intro y hy hyQ
   have hcode : switchingColumnCode G p B x =
       switchingColumnCode G p B y :=
@@ -805,10 +850,11 @@ lemma row_eq_one_on_switchingColumnFiber
     ((switchingColumnCode_eq_iff G p B x y).mp hcode) j
   exact hrows ▸ hxone
 
+omit [Fintype I] [Fintype V] in
 /-- If a row equals `1` away from the deleted columns and its two endpoint
 vertices, then the first endpoint has few neighbours and the second endpoint
 has few nonneighbours in the set. -/
-lemma row_eq_one_degree_bounds
+lemma row_eq_one_degree_bounds [Finite V] [Finite I]
     {G : SimpleGraph V} {p : I → V × V} {j : I}
     (W Q : Finset V)
     (hrow : ∀ w ∈ W, w ∉ Q → w ≠ (p j).1 → w ≠ (p j).2 →
@@ -816,6 +862,8 @@ lemma row_eq_one_degree_bounds
     (neighborsIn G (p j).1 W).card ≤ Q.card + 2 ∧
       (W \ neighborsIn G (p j).2 W).card ≤ Q.card + 2 := by
   classical
+  let : Fintype I := Fintype.ofFinite I
+  let : Fintype V := Fintype.ofFinite V
   let E : Finset V := Q ∪ {(p j).1, (p j).2}
   have hEcard : E.card ≤ Q.card + 2 := by
     have hpair : ({(p j).1, (p j).2} : Finset V).card ≤ 2 := by
@@ -849,9 +897,10 @@ lemma row_eq_one_degree_bounds
       (switchingDifferenceMatrix_eq_one_iff G p j hout.2.1 hout.2.2).mp hM
     exact hw'.2 (mem_neighborsIn.mpr ⟨hw'.1, hadj.1⟩)
 
+omit [Fintype I] [Fintype V] in
 /-- The selected-row certificate turns one `+1` witness in a fiber into the
 two exceptional-neighbourhood bounds used in KSSS Lemma 13.9. -/
-lemma switchingColumnFiber_degree_bounds
+lemma switchingColumnFiber_degree_bounds [Finite V] [Finite I]
     {G : SimpleGraph V} {p : I → V × V}
     {Q : Finset V} {B : Finset I}
     (hdet : ∀ x y : {w : V // w ∉ Q},
@@ -869,10 +918,13 @@ lemma switchingColumnFiber_degree_bounds
       (switchingColumnFiber G p B A t \
           neighborsIn G (p j).2 (switchingColumnFiber G p B A t)).card ≤
         Q.card + 2 := by
+  let : Fintype I := Fintype.ofFinite I
+  let : Fintype V := Fintype.ofFinite V
   apply row_eq_one_degree_bounds
   intro w hw hwQ _hwy _hwz
   exact row_eq_one_on_switchingColumnFiber hdet hx hxQ hxone w hw hwQ
 
+open Classical in
 /-- The undeleted columns on which row `j` is visibly `+1`; this is the
 exclusive neighbourhood of `zⱼ` over `yⱼ`, with the deleted columns and the
 two endpoint vertices removed. -/
@@ -881,6 +933,7 @@ noncomputable def positiveDifferenceColumns (G : SimpleGraph V)
   (S₀.filter fun w ↦ G.Adj (p j).2 w ∧ ¬G.Adj (p j).1 w) \
     (Q ∪ {(p j).1, (p j).2})
 
+omit [Fintype I] [Fintype V] in
 @[simp] lemma mem_positiveDifferenceColumns {G : SimpleGraph V}
     {p : I → V × V} {j : I} {S₀ Q : Finset V} {w : V} :
     w ∈ positiveDifferenceColumns G p j S₀ Q ↔
@@ -890,23 +943,30 @@ noncomputable def positiveDifferenceColumns (G : SimpleGraph V)
     Finset.mem_union, Finset.mem_insert, Finset.mem_singleton, not_or]
   aesop
 
-lemma positiveDifferenceColumns_subset (G : SimpleGraph V)
+omit [Fintype I] [Fintype V] in
+lemma positiveDifferenceColumns_subset [Finite V] [Finite I] (G : SimpleGraph V)
     (p : I → V × V) (j : I) (S₀ Q : Finset V) :
     positiveDifferenceColumns G p j S₀ Q ⊆ S₀ := by
+  let : Fintype I := Fintype.ofFinite I
+  let : Fintype V := Fintype.ofFinite V
   intro w hw
   exact (mem_positiveDifferenceColumns.mp hw).1
 
-lemma positiveDifferenceColumns_row_eq_one (G : SimpleGraph V)
+omit [Fintype I] [Fintype V] in
+lemma positiveDifferenceColumns_row_eq_one [Finite V] [Finite I] (G : SimpleGraph V)
     (p : I → V × V) (j : I) (S₀ Q : Finset V) :
     ∀ w ∈ positiveDifferenceColumns G p j S₀ Q,
       w ∉ Q ∧ switchingDifferenceMatrix G p j w = 1 := by
+  let : Fintype I := Fintype.ofFinite I
+  let : Fintype V := Fintype.ofFinite V
   intro w hw
   have h := mem_positiveDifferenceColumns.mp hw
   refine ⟨h.2.2.2.1, ?_⟩
   exact (switchingDifferenceMatrix_eq_one_iff G p j h.2.2.2.2.1
     h.2.2.2.2.2).mpr ⟨h.2.1, h.2.2.1⟩
 
-lemma positiveDifferenceColumns_card_lower
+omit [Fintype V] in
+lemma positiveDifferenceColumns_card_lower [Finite V]
     (G : SimpleGraph V) (p : I → V × V) (j : I)
     (S S₀ Q : Finset V) (q budget k m : ℕ)
     (hp : p j ∈ switchingPairs G S S₀ q)
@@ -915,6 +975,7 @@ lemma positiveDifferenceColumns_card_lower
     3 ^ (Fintype.card I - k) * m ≤
       (positiveDifferenceColumns G p j S₀ Q).card := by
   classical
+  let : Fintype V := Fintype.ofFinite V
   let A := S₀.filter fun w ↦ G.Adj (p j).2 w ∧ ¬G.Adj (p j).1 w
   let R : Finset V := Q ∪ {(p j).1, (p j).2}
   have hAcard : q ≤ A.card := by
@@ -1061,12 +1122,13 @@ lemma IsKDegenerate.exists_switching_fibers_with_exceptional_endpoints
       _ ≤ ρ * (switchingColumnFiber G p B S₀ t).card := by
         gcongr
 
+open Classical in
 /-- The counting step in KSSS Lemma 13.10(b), for one fixed choice of the
 determining rows.  Each large ternary fiber contributes at most `b` choices
 for either exceptional endpoint, so the union over all codes contributes at
 most `|C| b²` ordered pairs. -/
 lemma card_pairs_with_large_exceptional_fiber_le
-    {C : Type*} [Fintype C] [DecidableEq C]
+    {C : Type*} [Fintype C]
     (G : SimpleGraph V) (S S₀ : Finset V) (δ ρ α : ℝ)
     (m b : ℕ) (W : C → Finset V)
     (hrich : RichOn G S₀ δ ρ α)
@@ -1143,6 +1205,7 @@ lemma card_pairs_with_large_exceptional_fiber_le
       Finset.sum_le_sum fun c _hc ↦ hPcard c
     _ = Fintype.card C * (b * b) := by simp
 
+open Classical in
 /-- A finite Cartesian-product bound used to iterate the one-coordinate
 estimate in Lemma 13.10(b).  Values on `B` are fixed, while every remaining
 coordinate has at most `b` choices. -/
@@ -1198,14 +1261,17 @@ lemma card_functions_fixed_on_subset_with_choices_le
     _ = b ^ (Fintype.card J - B.card) := by
       simp [Finset.card_sdiff]
 
+omit [Fintype I] [Fintype V] in
 /-- Column fibers depend only on the rows indexed by `B`. -/
-lemma switchingColumnFiber_eq_of_eq_on
+lemma switchingColumnFiber_eq_of_eq_on [Finite V] [Finite I]
     {G : SimpleGraph V} {p r : I → V × V} {B : Finset I}
     {A : Finset V} {t : B → Fin 3}
     (hpr : ∀ i ∈ B, p i = r i) :
     switchingColumnFiber G p B A t =
       switchingColumnFiber G r B A t := by
   classical
+  let : Fintype I := Fintype.ofFinite I
+  let : Fintype V := Fintype.ofFinite V
   ext w
   simp only [mem_switchingColumnFiber]
   apply and_congr_right
@@ -1217,6 +1283,7 @@ lemma switchingColumnFiber_eq_of_eq_on
       hpr i.1 i.2]
   rw [hcode]
 
+open Classical in
 /-- Fixed-basis form of the tuple count in KSSS Lemma 13.10(b).  Once the
 values on the determining set `B` are fixed, every remaining coordinate has
 at most `3^|B| b²` choices, hence the displayed Cartesian-product bound. -/
@@ -1327,15 +1394,16 @@ lemma extendFinsetAssignment_erase_eq_update
     rw [Function.update_of_ne hji]
     simp only [extendFinsetAssignment_apply_mem a hj]
 
+open Classical in
 /-- Count a filtered Cartesian product from uniform bounds on its right
 fibers. -/
 lemma card_filter_product_le_mul_of_right_fiber_le
-    {A B : Type*} [DecidableEq A] [DecidableEq B]
+    {A B : Type*}
     (X : Finset A) (Y : Finset B) (P : A → B → Prop)
-    [DecidablePred fun xy : A × B ↦ P xy.1 xy.2]
     [∀ x, DecidablePred (P x)] (b : ℕ)
     (h : ∀ x ∈ X, (Y.filter (P x)).card ≤ b) :
     ((X ×ˢ Y).filter fun xy ↦ P xy.1 xy.2).card ≤ X.card * b := by
+  classical
   rw [Finset.card_filter]
   calc
     _ = ∑ x ∈ X, ∑ y ∈ Y, if P x y then 1 else 0 := by
@@ -1348,6 +1416,7 @@ lemma card_filter_product_le_mul_of_right_fiber_le
     _ ≤ ∑ _x ∈ X, b := Finset.sum_le_sum fun x hx ↦ h x hx
     _ = X.card * b := by simp
 
+open Classical in
 /-- A one-coordinate fiber bound for a predicate on a finite Cartesian
 power.  This is the reusable counting form of "fix all other coordinates". -/
 lemma card_functions_property_le_of_update_fiber_le
@@ -1398,7 +1467,7 @@ lemma card_functions_property_le_of_update_fiber_le
       · subst j
         simp [full, B, extendFinsetAssignment]
       · have hjB : j ∈ B := by simp [B, hji]
-        simpa only [full, a, extendFinsetAssignment_apply_mem a hjB]
+        simp only [full, a, extendFinsetAssignment_apply_mem a hjB]
     rw [Finset.mem_biUnion]
     refine ⟨a, ha, Finset.mem_image.mpr ⟨p i, ?_, hfullp⟩⟩
     apply Finset.mem_filter.mpr
@@ -1421,6 +1490,7 @@ lemma card_functions_property_le_of_update_fiber_le
     _ = T.card ^ (Fintype.card J - 1) * b := by
       simp [hassignments]
 
+open Classical in
 /-- Exact count of ordered functions whose coordinates all lie in one finite
 choice set. -/
 lemma card_tupleFunctions (T : Finset (V × V)) :
@@ -1436,6 +1506,8 @@ lemma card_tupleFunctions (T : Finset (V × V)) :
   rw [heq, Fintype.card_piFinset]
   simp
 
+omit [Fintype V] in
+open Classical in
 lemma card_pairs_with_fixed_first_le (T : Finset (V × V)) (S : Finset V)
     (hT : T ⊆ S ×ˢ S) (x : V) :
     (T.filter fun yz ↦ x = yz.1).card ≤ S.card := by
@@ -1443,9 +1515,11 @@ lemma card_pairs_with_fixed_first_le (T : Finset (V × V)) (S : Finset V)
     intro yz hyz
     have hyz' := Finset.mem_filter.mp hyz
     have hyzS := Finset.mem_product.mp (hT hyz'.1)
-    exact Finset.mem_product.mpr ⟨by simpa [hyz'.2], hyzS.2⟩
+    exact Finset.mem_product.mpr ⟨by simp [hyz'.2], hyzS.2⟩
   exact (Finset.card_le_card hsub).trans (by simp)
 
+omit [Fintype V] in
+open Classical in
 lemma card_pairs_with_fixed_second_le (T : Finset (V × V)) (S : Finset V)
     (hT : T ⊆ S ×ˢ S) (x : V) :
     (T.filter fun yz ↦ x = yz.2).card ≤ S.card := by
@@ -1453,9 +1527,11 @@ lemma card_pairs_with_fixed_second_le (T : Finset (V × V)) (S : Finset V)
     intro yz hyz
     have hyz' := Finset.mem_filter.mp hyz
     have hyzS := Finset.mem_product.mp (hT hyz'.1)
-    exact Finset.mem_product.mpr ⟨hyzS.1, by simpa [hyz'.2]⟩
+    exact Finset.mem_product.mpr ⟨hyzS.1, by simp [hyz'.2]⟩
   exact (Finset.card_le_card hsub).trans (by simp)
 
+omit [Fintype V] in
+open Classical in
 lemma card_diagonal_pairs_le (T : Finset (V × V)) (S : Finset V)
     (hT : T ⊆ S ×ˢ S) :
     (T.filter fun yz ↦ yz.1 = yz.2).card ≤ S.card := by
@@ -1467,6 +1543,7 @@ lemma card_diagonal_pairs_le (T : Finset (V × V)) (S : Finset V)
     exact Finset.mem_image.mpr ⟨yz.1, hyzS.1, by ext <;> simp [hyz'.2]⟩
   exact (Finset.card_le_card hsub).trans Finset.card_image_le
 
+open Classical in
 /-- For two distinct endpoint slots, tuples in `T^s` on which the endpoints
 coincide have the source-size bound `|T|^(s-1)|S|`. -/
 lemma card_tuples_with_fixed_endpoint_collision_le
@@ -1526,6 +1603,7 @@ lemma card_tuples_with_fixed_endpoint_collision_le
     simpa [switchingEndpointMap, Function.update_of_ne hij] using
       card_pairs_with_fixed_second_le T S hT (r i).2
 
+open Classical in
 /-- The `O_s(|T|^(s-1)|S|)` repetition estimate from KSSS Lemma
 13.10(a), with the explicit harmless constant `(2s)^2`. -/
 lemma card_tuples_with_repeated_endpoint_le
@@ -1560,7 +1638,7 @@ lemma card_tuples_with_repeated_endpoint_le
     have hp' := (Finset.mem_filter.mp hp).2
     have hnot : ¬Function.Injective (switchingEndpointMap p) := hp'.2
     simp only [Function.Injective] at hnot
-    push_neg at hnot
+    push Not at hnot
     obtain ⟨a, b, heq, hab⟩ := hnot
     rw [Finset.mem_biUnion]
     refine ⟨(a, b), Finset.mem_univ _, ?_⟩
@@ -1580,6 +1658,7 @@ lemma card_tuples_with_repeated_endpoint_le
       simp only [Fintype.card_prod, Fintype.card_sum]
       ring
 
+open Classical in
 /-- The first counting estimate in KSSS Lemma 13.10(a), for one fixed
 coordinate.  After fixing the other `s-1` pairs and the left endpoint, the
 richness bound leaves at most `b` bad choices for the right endpoint. -/
@@ -1667,7 +1746,7 @@ lemma card_tuples_bad_private_at_le
       · subst j
         simp [full, B, extendFinsetAssignment]
       · have hjB : j ∈ B := by simp [B, hji]
-        simpa only [full, a, extendFinsetAssignment_apply_mem a hjB]
+        simp only [full, a, extendFinsetAssignment_apply_mem a hjB]
     apply Finset.mem_image.mpr
     refine ⟨p i, ?_, hfullp⟩
     apply Finset.mem_filter.mpr
@@ -1697,6 +1776,7 @@ lemma card_tuples_bad_private_at_le
     _ = (switchingPairs G S S₀ q).card ^ (Fintype.card I - 1) *
         S.card * b := by rfl
 
+open Classical in
 /-- Union bound over the coordinates in the first half of KSSS Lemma
 13.10(a). -/
 lemma card_tuples_with_some_bad_private_le
@@ -1755,6 +1835,7 @@ lemma card_tuples_with_some_bad_private_le
         ((switchingPairs G S S₀ q).card ^ (Fintype.card I - 1) *
           S.card * b) := by simp
 
+open Classical in
 /-- Before excluding repeated endpoints, at least three quarters of the
 ordered tuples have all private neighborhoods of the required size. -/
 lemma three_mul_tuple_count_le_four_mul_card_good_private
@@ -1796,7 +1877,7 @@ lemma three_mul_tuple_count_le_four_mul_card_good_private
     · rintro ⟨hT, hnot⟩
       refine ⟨hT, ?_⟩
       by_contra hnone
-      push_neg at hnone
+      push Not at hnone
       exact hnot ⟨hT, hnone⟩
     · rintro ⟨hT, i, hi⟩
       refine ⟨hT, ?_⟩
@@ -1824,6 +1905,7 @@ lemma three_mul_tuple_count_le_four_mul_card_good_private
   rw [hGoodEq] at hmain
   simpa only [A, card_tupleFunctions] using hmain
 
+open Classical in
 /-- Finite combinatorial form of KSSS Lemma 13.10(a).  The two displayed
 smallness assumptions are exactly the coordinate-union and endpoint-repeat
 estimates; the source asymptotics make both automatic. -/
@@ -1909,6 +1991,7 @@ lemma switchingTuple_good_half
   rw [hGoodEq] at hmain
   simpa only [T] using hmain
 
+open Classical in
 /-- KSSS Lemma 13.10(b) with the determining index set fixed.  There are at
 most `|T|^|B|` assignments on the determining rows, and the previous lemma
 bounds every corresponding extension fiber. -/
@@ -1976,13 +2059,13 @@ lemma card_tuples_with_fixed_basis_exceptional_certificate_le
     · intro j
       exact hT (hp'.1 j)
     · intro j hj
-      simpa only [a, extendFinsetAssignment_apply_mem a hj]
+      simp only [a, extendFinsetAssignment_apply_mem a hj]
     · intro j hj
       obtain ⟨t, ht, hy, hz⟩ := hp'.2 j hj
       have hEqOn : ∀ i ∈ B,
           p i = extendFinsetAssignment B default a i := by
         intro i hi
-        simpa only [a, extendFinsetAssignment_apply_mem a hi]
+        simp only [a, extendFinsetAssignment_apply_mem a hi]
       have hfiber := switchingColumnFiber_eq_of_eq_on
         (G := G) (A := S₀) (t := t) hEqOn
       exact ⟨t, by simpa only [hfiber] using ht,
@@ -2010,6 +2093,7 @@ lemma card_tuples_with_fixed_basis_exceptional_certificate_le
         (3 ^ B.card * (b * b)) ^ (Fintype.card I - B.card) := by
       simp [hassignments]
 
+open Classical in
 /-- Finite counting core of KSSS Lemma 13.10(b).  The matrix argument supplies
 one determining set `B` for every degenerate tuple; taking the union over all
 subsets of the row index set costs only `2^s`.  Thus the sole remaining input
@@ -2088,8 +2172,9 @@ lemma card_kDegenerate_switchingTuples_le
     _ ≤ ∑ _B ∈ Finset.univ.powerset, M :=
       Finset.sum_le_sum fun B _hB ↦ hPcard B
     _ = 2 ^ Fintype.card I * M := by
-      simp [Finset.card_powerset]
+      simp
 
+open Classical in
 /-- Part (b) of KSSS Lemma 13.10 at `k = 0`: every tuple is
 zero-degenerate, so the upper bound is exactly `|T|^s`. -/
 lemma card_zeroDegenerate_switchingTuples
@@ -2136,6 +2221,7 @@ lemma pow_mul_pow_le_pow_mul_pow_of_le
       rw [hski, pow_add]
       ac_rfl
 
+open Classical in
 /-- Uniform finite form of KSSS Lemma 13.10(b).  The code/fiber choice count
 `c = 3^(s-k)b²` is assumed no larger than the switching reservoir; this turns
 the fixed-basis estimate into total degree `s`. -/
@@ -2176,6 +2262,7 @@ lemma card_kDegenerate_switchingTuples_le_uniform
           c ^ k :=
       pow_mul_pow_le_pow_mul_pow_of_le hk hB hchoice
 
+open Classical in
 /-- Real-valued source normalization of Lemma 13.10(b).  The single
 inequality `hratio` is exactly the eventual numerical comparison left after
 the finite graph/matrix counting argument. -/
@@ -2380,6 +2467,7 @@ lemma eventually_switchingDegeneracy_ratio (D : ℕ) :
       simp only [mul_pow]
     _ ≤ (T : ℝ) ^ k := pow_le_pow_left₀ (by positivity) hbase k
 
+open Classical in
 /-- Source-shaped eventual form of KSSS Lemma 13.10(b), for positive
 degeneracy.  All graph and richness hypotheses remain quantified after the
 single threshold depending only on the bounded tuple dimension `D`. -/
@@ -2387,7 +2475,7 @@ lemma eventually_card_kDegenerate_switchingTuples_le_div_sqrt
     (D : ℕ) (hI : Fintype.card I ≤ D) :
     ∀ᶠ n : ℕ in Filter.atTop,
       ∀ (G : SimpleGraph V) (S S₀ : Finset V) (δ ρ α : ℝ)
-        (q budget k m : ℕ) (default : V × V),
+        (q budget k m : ℕ) (_default : V × V),
         0 < k → k ≤ Fintype.card I →
         0 < m → 0 ≤ ρ → RichOn G S₀ δ ρ α → S ⊆ S₀ →
         3 ^ (Fintype.card I - k) * m + budget + 2 ≤ q →
@@ -2498,12 +2586,13 @@ lemma eventually_switchingTuple_good_smallness (D : ℕ) :
       _ ≤ T ^ (s - 1) * T := Nat.mul_le_mul_left _ hbaseR
       _ = T ^ s := by rw [← pow_succ]; congr 1; omega
 
+open Classical in
 /-- Source-shaped eventual form of KSSS Lemma 13.10(a).  The only
 structural input left is precisely property (2) of Lemma 13.1. -/
 lemma eventually_switchingTuple_good_half_of_commonNonneighbors (D : ℕ) :
     ∀ᶠ n : ℕ in Filter.atTop,
       ∀ (G : SimpleGraph V) (S S₀ : Finset V) (δ ρ α : ℝ)
-        (q : ℕ) (default : V × V),
+        (q : ℕ) (_default : V × V),
         0 < Fintype.card I → 2 * Fintype.card I ≤ D →
         RichOn G S₀ δ ρ α → S ⊆ S₀ → 0 ≤ ρ →
         HasLargeCommonNonneighbors G S S₀ δ D →

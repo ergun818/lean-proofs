@@ -56,14 +56,16 @@ variable (K : Type u) (J : Type v) [Fintype K] [Fintype J]
 noncomputable def bucketProjection : Matrix (K × J) (K × J) ℝ :=
   fun i j ↦ if i.1 = j.1 then (Fintype.card J : ℝ)⁻¹ else 0
 
+omit [DecidableEq J] [Nonempty J] in
 /-- Applying `Q` really is averaging over the second coordinate. -/
 lemma bucketProjection_mulVec (x : K × J → ℝ) :
     bucketProjection K J *ᵥ x =
       fun i ↦ (∑ j : J, x (i.1, j)) / Fintype.card J := by
+  classical
   funext i
   classical
   simp only [bucketProjection, Matrix.mulVec, dotProduct, div_eq_mul_inv,
-    ← Finset.univ_product_univ, Finset.sum_product, Prod.fst, ite_mul, zero_mul]
+    ← Finset.univ_product_univ, Finset.sum_product, ite_mul, zero_mul]
   calc
     (∑ k : K, ∑ j : J,
         if i.1 = k then (Fintype.card J : ℝ)⁻¹ * x (k, j) else 0) =
@@ -77,15 +79,18 @@ lemma bucketProjection_mulVec (x : K × J → ℝ) :
       rw [← Finset.mul_sum]
       ring
 
+omit [DecidableEq J] [Fintype K] [Nonempty J] in
 /-- The bucket-averaging matrix is symmetric. -/
 lemma bucketProjection_transpose :
     (bucketProjection K J)ᵀ = bucketProjection K J := by
+  classical
   ext i j
   simp only [Matrix.transpose_apply, bucketProjection]
   by_cases h : i.1 = j.1
   · rw [if_pos h, if_pos h.symm]
   · rw [if_neg h, if_neg (Ne.symm h)]
 
+omit [DecidableEq J] in
 /-- The bucket-averaging matrix is a projection. -/
 lemma bucketProjection_mul_self :
     bucketProjection K J * bucketProjection K J = bucketProjection K J := by
@@ -132,15 +137,19 @@ lemma bucketProjection_mul_self :
       rw [if_pos hik, if_neg hkj, mul_zero]
     · rw [if_neg hik, zero_mul]
 
+omit [DecidableEq J] in
 /-- Bucket averaging is idempotent, in operator form. -/
 lemma bucketProjection_idempotent (x : K × J → ℝ) :
     bucketProjection K J *ᵥ (bucketProjection K J *ᵥ x) =
       bucketProjection K J *ᵥ x := by
+  classical
   rw [Matrix.mulVec_mulVec, bucketProjection_mul_self]
 
+omit [DecidableEq J] in
 /-- The sum of the centered coordinates in every bucket is zero. -/
 lemma sum_sub_bucketProjection (x : K × J → ℝ) (k : K) :
     ∑ j : J, (x - bucketProjection K J *ᵥ x) (k, j) = 0 := by
+  classical
   have hQ : ∀ j : J, (bucketProjection K J *ᵥ x) (k, j) =
       (∑ j : J, x (k, j)) / Fintype.card J := by
     intro j
@@ -167,9 +176,11 @@ structure IsOrthogonalProjection (Q : Matrix I I ℝ) : Prop where
 projection interface. -/
 lemma bucketProjection_isOrthogonalProjection
     (K : Type u) (J : Type v) [Fintype K] [Fintype J]
-    [DecidableEq K] [DecidableEq J] [Nonempty J] :
+    [DecidableEq K] [Nonempty J] :
     IsOrthogonalProjection (bucketProjection K J) :=
-  ⟨bucketProjection_transpose K J, bucketProjection_mul_self K J⟩
+  by
+  classical
+  exact ⟨bucketProjection_transpose K J, bucketProjection_mul_self K J⟩
 
 /-- `I-Q`, the projection onto the bucket-centered coordinates. -/
 def centeredProjection (Q : Matrix I I ℝ) : Matrix I I ℝ := 1 - Q
@@ -294,11 +305,13 @@ lemma dot_mStar (Q M : Matrix I I ℝ) (hQ : IsOrthogonalProjection Q)
           (residual Q x ⬝ᵥ (M *ᵥ residual Q x)) := by
             rw [residual, dotProduct_comm]
 
+omit [DecidableEq I] in
 lemma quadratic_add_of_symmetric (M : Matrix I I ℝ) (hM : Mᵀ = M)
     (d r : I → ℝ) :
     (d + r) ⬝ᵥ (M *ᵥ (d + r)) =
       d ⬝ᵥ (M *ᵥ d) + 2 * (r ⬝ᵥ (M *ᵥ d)) +
         r ⬝ᵥ (M *ᵥ r) := by
+  classical
   have hcross : d ⬝ᵥ (M *ᵥ r) = r ⬝ᵥ (M *ᵥ d) := by
     calc
       d ⬝ᵥ (M *ᵥ r) = d ⬝ᵥ (Mᵀ *ᵥ r) := by rw [hM]
@@ -385,6 +398,7 @@ lemma finiteMean_const (c : ℝ) : finiteMean (fun _ : Ω ↦ c) = c := by
     exact_mod_cast Fintype.card_ne_zero
   field_simp
 
+omit [Nonempty Ω] in
 lemma finiteMean_add (X Y : Ω → ℝ) :
     finiteMean (fun ω ↦ X ω + Y ω) = finiteMean X + finiteMean Y := by
   simp only [finiteMean, Finset.sum_add_distrib]
@@ -474,12 +488,12 @@ lemma conditional_variance_interval {sigmaSq frobSq weightSq error : ℝ}
 (12.5) and robust rank: a nonnegative standard deviation whose square has
 the required lower bound is itself linear in `n`. -/
 lemma sigma_lower_bound {sigma c n : ℝ} (hsigma : 0 ≤ sigma)
-    (hc : 0 ≤ c) (hn : 0 ≤ n) (hvar : (c * n) ^ 2 ≤ sigma ^ 2) :
+    (_hc : 0 ≤ c) (_hn : 0 ≤ n) (hvar : (c * n) ^ 2 ≤ sigma ^ 2) :
     c * n ≤ sigma := by
   nlinarith
 
 /-- Upper counterpart used in the near-balanced range. -/
-lemma sigma_upper_bound {sigma U : ℝ} (hsigma : 0 ≤ sigma)
+lemma sigma_upper_bound {sigma U : ℝ} (_hsigma : 0 ≤ sigma)
     (hU : 0 ≤ U) (hvar : sigma ^ 2 ≤ U ^ 2) : sigma ≤ U := by
   nlinarith
 
@@ -504,7 +518,7 @@ lemma structured_lower_assembly
     (hK : 0 < K) (hsigma : 0 < sigma) (hscale : 0 < scale)
     (hevent : a * sigma / scale ≤ eventProb)
     (hconditional : b / (K ^ 2 * sigma) ≤ conditionalProb)
-    (ha : 0 ≤ a) (hb : 0 ≤ b)
+    (_ha : 0 ≤ a) (hb : 0 ≤ b)
     (hevent_nonneg : 0 ≤ eventProb) (_hcond_nonneg : 0 ≤ conditionalProb) :
     a * b / K ^ 2 / scale ≤ eventProb * conditionalProb := by
   have hprod := mul_le_mul hevent hconditional

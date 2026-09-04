@@ -340,11 +340,14 @@ noncomputable def booleanSlicePointSubsetEquiv
   left_inv S := by
     apply Subtype.ext
     have hSI := (Erdos88.BooleanSlices.mem_booleanSlice.mp S.2).1
-    ext i
-    simp only [SetLike.coe_sort_coe, Finset.mem_map, Finset.mem_map_equiv, Equiv.symm_symm, Finset.mem_map_mk,
-    Function.Embedding.subtype_apply, Subtype.exists, exists_and_right, exists_eq_right]
-    intro hi
-    exact hSI hi
+    have hcancel :
+        ((Erdos88.BooleanSlices.finsetLift I S.1).map e.toEmbedding).map
+            e.symm.toEmbedding = Erdos88.BooleanSlices.finsetLift I S.1 :=
+      (Equiv.finsetCongr e).symm_apply_apply _
+    change (((Erdos88.BooleanSlices.finsetLift I S.1).map e.toEmbedding).map
+      e.symm.toEmbedding).map _ = S.1
+    rw [hcancel]
+    exact Erdos88.BooleanSlices.map_finsetLift I S.1 hSI
   right_inv T := by
     apply Subtype.ext
     ext b
@@ -478,7 +481,7 @@ lemma exists_perturbedEdgePolynomial_of_graphSlice
   exact Erdos88.GraphQuadratic.sliceQuadratic_graph_coefficients H e0 coeff S
 
 lemma exists_perturbedEdgePolynomial_of_splitQuadratic
-    {n q ell : ℕ} {R : Type*} [Fintype R]
+    {n q ell : ℕ} {R : Type*} [Finite R]
     (e : Fin n ≃ Fin q ⊕ R) (H : SimpleGraph (Fin q))
     (f0 : ℝ) (f : Fin n → ℝ) (F : Matrix (Fin n) (Fin n) ℝ)
     (d : R → ℝ) (r c : Fin q → ℝ)
@@ -493,6 +496,7 @@ lemma exists_perturbedEdgePolynomial_of_splitQuadratic
               (Erdos88.BooleanSlices.signOfSet S.1) d (e i)) =
           Erdos88.Probability.perturbedEdgePolynomial H e0 coeff S.1 := by
   classical
+  let : Fintype R := Fintype.ofFinite R
   let f0' := splitQuadraticConstant e f0 f F d
   let f' := splitQuadraticLinear e f F d
   let F' := splitQuadraticMatrix e F

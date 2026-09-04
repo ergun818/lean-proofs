@@ -36,7 +36,7 @@ theorem diagonalCharModulus_le_relative_rankTwoEnvelope
   · exact (diagonalCharModulus_le_holderEnvelope a lam hsum hsmall t).trans
       (holderEnvelope_le_threeSpectralEnvelope
         (by positivity) (by have := min_le_right rho 1; nlinarith) t)
-  · push_neg at hsmall
+  · push Not at hsmall
     obtain ⟨j, hj⟩ := hsmall
     have hraw := diagonalCharModulus_le_influential_rankTwoEnvelope
       a lam j hrho htail t

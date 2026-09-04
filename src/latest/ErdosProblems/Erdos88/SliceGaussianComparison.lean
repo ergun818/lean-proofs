@@ -11,7 +11,7 @@ open scoped BigOperators
 
 namespace Erdos88.BooleanSlices
 
-open Classical Finset
+open Finset
 
 namespace FiniteWeightedCoupling
 
@@ -137,6 +137,7 @@ lemma bad_mass_le_of_isClose (C : FiniteWeightedCoupling A B)
     linarith
   simpa only [not_le] using hbad
 
+open Classical in
 lemma expectation_indicator_const (C : FiniteWeightedCoupling A B)
     (p : A → B → Prop) (c : ℝ) :
     C.expectation (fun a b ↦ if p a b then c else 0) = c * C.mass p := by
@@ -144,7 +145,7 @@ lemma expectation_indicator_const (C : FiniteWeightedCoupling A B)
   simp_rw [show ∀ a b, C.weight a b * (if p a b then c else 0) =
       c * (if p a b then C.weight a b else 0) by
     intro a b
-    by_cases hp : p a b <;> simp [hp] <;> ring]
+    by_cases hp : p a b <;> simp [hp] ; ring]
   simp_rw [← Finset.mul_sum]
 
 lemma expectation_abs_difference_le_of_isClose
@@ -775,7 +776,7 @@ lemma productSlice_variance_error_ksss_of_weightedCoupling
     calc
       T * scale n (3 / 2 + 8 * δ) =
           scale n ((2 + 6 * δ) + (3 / 2 + 8 * δ)) := scale_mul hnpos _ _
-      _ = scale n ((7 / 4 + 7 * δ) * 2) := by congr 1 <;> ring
+      _ = scale n ((7 / 4 + 7 * δ) * 2) := by congr 1 ; ring
       _ = S ^ 2 := by symm; exact scale_sq (Nat.zero_le n) _
   have hproduct :
       (2 * frobeniusSq F + vectorSqNorm f) * E₂ ≤ 6 * S ^ 2 := by
@@ -926,7 +927,7 @@ lemma integral_sq_gaussianCoordinateCorrection
             ∫ x : ℝ, 2 * x ^ 2 ∂standardGaussian := by
         convert integral_sub
           (integrable_pow_standardGaussian 4)
-          ((integrable_pow_standardGaussian 2).const_mul 2) using 1 <;> rfl
+          ((integrable_pow_standardGaussian 2).const_mul 2) using 1
       rw [hadd, hsub,
         integral_const_mul, standardGaussian_moment_four,
         standardGaussian_moment_two]
@@ -977,7 +978,7 @@ lemma integral_gaussianDiagonalCorrection
       ((gaussianCoordinateCorrection_memLp_two F i).integrable (by norm_num))
   rw [show gaussianDiagonalCorrection F = fun x ↦
       ∑ i, gaussianCoordinateCorrection F i (x i) by funext x; rfl,
-    integral_finset_sum Finset.univ (fun i _ ↦ hcoord i)]
+    integral_finsetSum Finset.univ (fun i _ ↦ hcoord i)]
   apply Finset.sum_eq_zero
   intro i hi
   unfold gaussianProductMeasure
@@ -1262,7 +1263,7 @@ lemma cos_multilinearGaussian_to_full_le
     simpa only [Real.norm_eq_abs] using hDint.norm.const_mul |τ|
   have hdiffAbs : Integrable (fun x ↦ |Real.cos (U x) - Real.cos (V x)|)
       (gaussianProductMeasure n) := by
-    convert (hcosU.sub hcosV).norm using 1 <;> rfl
+    convert (hcosU.sub hcosV).norm using 1 ; rfl
   unfold gaussianExpectation
   rw [← integral_sub hcosU hcosV]
   calc
@@ -1333,7 +1334,7 @@ lemma sin_multilinearGaussian_to_full_le
     simpa only [Real.norm_eq_abs] using hDint.norm.const_mul |τ|
   have hdiffAbs : Integrable (fun x ↦ |Real.sin (U x) - Real.sin (V x)|)
       (gaussianProductMeasure n) := by
-    convert (hsinU.sub hsinV).norm using 1 <;> rfl
+    convert (hsinU.sub hsinV).norm using 1 ; rfl
   unfold gaussianExpectation
   rw [← integral_sub hsinU hsinV]
   calc

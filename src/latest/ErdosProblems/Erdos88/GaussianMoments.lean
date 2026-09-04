@@ -144,20 +144,20 @@ lemma centeredCoordinatePolynomial_fourth_integrable (a lam : ℝ) :
   have hYmeas : AEStronglyMeasurable Y standardGaussian := by
     exact (continuous_const.mul ((continuous_id.pow 2).sub continuous_const)).aestronglyMeasurable
   have hX4 : Integrable (fun x ↦ X x ^ 4) standardGaussian := by
-    convert (Invariance.integrable_pow_standardGaussian 4).const_mul (a ^ 4) using 1 <;>
-      funext x <;> simp only [X] <;> ring
+    convert (Invariance.integrable_pow_standardGaussian 4).const_mul (a ^ 4) using 1 ;
+      funext x ; simp only [X] ; ring
   have hU4 : Integrable (fun x ↦ U x ^ 4) standardGaussian := by
-    convert Invariance.integrable_pow_standardGaussian 8 using 1 <;>
-      funext x <;> simp only [U] <;> ring
+    convert Invariance.integrable_pow_standardGaussian 8 using 1 ;
+      funext x ; simp only [U] ; ring
   have hV4 : Integrable (fun x ↦ V x ^ 4) standardGaussian := by
     convert (integrable_const (1 : ℝ) :
-      Integrable (fun _ : ℝ ↦ (1 : ℝ)) standardGaussian) using 1 <;>
-      funext x <;> norm_num [V]
+      Integrable (fun _ : ℝ ↦ (1 : ℝ)) standardGaussian) using 1 ;
+      funext x ; norm_num [V]
   have hUV4 : Integrable (fun x ↦ (U x + V x) ^ 4) standardGaussian :=
     Invariance.integrable_add_pow_four hUmeas hVmeas hU4 hV4
   have hY4 : Integrable (fun x ↦ Y x ^ 4) standardGaussian := by
-    convert hUV4.const_mul (lam ^ 4) using 1 <;>
-      funext x <;> simp only [Y, U, V] <;> ring
+    convert hUV4.const_mul (lam ^ 4) using 1 ;
+      funext x ; simp only [Y, U, V] ; ring
   have hsum := Invariance.integrable_add_pow_four hXmeas hYmeas hX4 hY4
   exact hsum.congr (Filter.Eventually.of_forall fun x ↦ by
     simp only [X, Y, centeredCoordinatePolynomial])
@@ -433,7 +433,7 @@ theorem coordinateThirdAbsMoment_lower (a lam : ℝ) :
   have hrootCube :
       (coordinateThirdAbsMoment a lam ^ (1 / (3 : ℝ))) ^ 3 =
         coordinateThirdAbsMoment a lam := by
-    convert Real.rpow_inv_natCast_pow hm3' (by norm_num : (3 : ℕ) ≠ 0) using 1 <;>
+    convert Real.rpow_inv_natCast_pow hm3' (by norm_num : (3 : ℕ) ≠ 0) using 1 ;
       norm_num
   rw [hrootCube] at hcube
   exact hcube

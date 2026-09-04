@@ -14,7 +14,7 @@ open scoped BigOperators
 namespace Erdos88
 namespace Concentration
 
-open Classical Finset Real
+open Finset Real
 
 section UniformFinite
 
@@ -31,6 +31,7 @@ noncomputable def uniformProbability (P : Ω → Prop) : ℝ := by
     uniformExpectation (fun _ : Ω => c) = c := by
   simp [uniformExpectation]
 
+omit [Nonempty Ω] in
 lemma uniformExpectation_add (X Y : Ω → ℝ) :
     uniformExpectation (fun ω => X ω + Y ω) =
       uniformExpectation X + uniformExpectation Y := by
@@ -60,14 +61,16 @@ lemma uniformProbability_mono {P Q : Ω → Prop}
     simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hω ⊢
     exact hPQ ω hω)
 
+omit [Nonempty Ω] in
 /-- Counting form of Markov's inequality. -/
-lemma counting_markov (g : Ω → ℝ) (c : ℝ) (hc : 0 < c)
+lemma counting_markov (g : Ω → ℝ) (c : ℝ) (_hc : 0 < c)
     (hg : ∀ ω, 0 ≤ g ω) :
     ((Finset.univ.filter fun ω => g ω ≥ c).card : ℝ) * c ≤ ∑ ω, g ω := by
   have h := Finset.sum_le_sum fun x (_hx : x ∈ Finset.univ) =>
     show g x ≥ if g x ≥ c then c else 0 by split_ifs <;> linarith [hg x]
   simpa [Finset.sum_ite] using h
 
+omit [Nonempty Ω] in
 /-- Division-free second-moment form of Markov's inequality. -/
 lemma counting_second_moment_tail (X : Ω → ℝ) (u : ℝ) (hu : 0 < u) :
     ((Finset.univ.filter fun ω => u ≤ |X ω|).card : ℝ) * u ^ 2 ≤
@@ -136,7 +139,7 @@ lemma avgFn_bounded_diff {n : ℕ} (f : (Fin (n + 1) → Bool) → ℝ)
     ∀ i : Fin n, ∀ x y : Fin n → Bool,
       (∀ j, j ≠ i → x j = y j) → |avgFn f x - avgFn f y| ≤ b (Fin.succ i) := by
   intros i x y hxy
-  simp [avgFn]
+  simp only [avgFn]
   rw [abs_le]
   constructor <;>
     linarith [abs_le.mp (hbd i.succ (Fin.cons false x) (Fin.cons false y)

@@ -243,7 +243,7 @@ statistic has the same norm bound.  This is the exact finite conditioning
 principle used to average Claim 8.5 over the possible sizes of the `I`-part. -/
 theorem norm_finExpectation_le_of_fiberwise
     {Ω κ : Type*} [Fintype Ω] [Nonempty Ω]
-    [Fintype κ] [DecidableEq κ]
+    [Finite κ] [DecidableEq κ]
     (f : Ω → ℂ) (d : Ω → κ) (B : ℝ)
     (h : ∀ a,
       0 < (Finset.univ.filter (fun ω ↦ d ω = a)).card →
@@ -251,6 +251,7 @@ theorem norm_finExpectation_le_of_fiberwise
             ((Finset.univ.filter (fun ω ↦ d ω = a)).card : ℂ)‖ ≤ B) :
     ‖finExpectation Ω f‖ ≤ B := by
   classical
+  let : Fintype κ := Fintype.ofFinite κ
   let F : κ → Finset Ω := fun a ↦
     Finset.univ.filter (fun ω ↦ d ω = a)
   have hsum : (∑ a, ∑ ω ∈ F a, f ω) = ∑ ω, f ω := by
@@ -292,12 +293,13 @@ argument lets each conditional expectation use the canonical finite subtype
 without assuming that empty fibers exist as probability spaces. -/
 theorem norm_finExpectation_sq_le_of_fiberwise
     {Ω κ : Type*} [Fintype Ω] [Nonempty Ω]
-    [Fintype κ] [DecidableEq κ]
+    [Finite κ] [DecidableEq κ]
     (f : Ω → ℂ) (d : Ω → κ) (B : ℝ) (hB : 0 ≤ B)
     (h : ∀ a (ha : Nonempty {ω : Ω // d ω = a}),
       ‖@finExpectation {ω : Ω // d ω = a} inferInstance ha
           ℂ inferInstance (fun ω ↦ f ω.1)‖ ^ 2 ≤ B) :
     ‖finExpectation Ω f‖ ^ 2 ≤ B := by
+  let : Fintype κ := Fintype.ofFinite κ
   have hglobal : ‖finExpectation Ω f‖ ≤ Real.sqrt B := by
     apply norm_finExpectation_le_of_fiberwise f d (Real.sqrt B)
     intro a hpos
@@ -331,9 +333,9 @@ has pointwise norm at most one, a squared-norm bound `B` on every good
 conditional expectation loses only the probability of the bad statistic. -/
 theorem norm_finExpectation_sq_le_of_fiberwise_except
     {Ω κ : Type*} [Fintype Ω] [Nonempty Ω]
-    [Fintype κ] [DecidableEq κ]
+    [Finite κ] [DecidableEq κ]
     (f : Ω → ℂ) (d : Ω → κ) (Bad : κ → Prop)
-    [DecidablePred Bad] (B eps : ℝ) (hB : 0 ≤ B)
+    (B eps : ℝ) (hB : 0 ≤ B)
     (hnorm : ∀ ω, ‖f ω‖ ≤ 1)
     (hgood : ∀ a (ha : Nonempty {ω : Ω // d ω = a}), ¬Bad a →
       ‖@finExpectation {ω : Ω // d ω = a} inferInstance ha
@@ -341,6 +343,7 @@ theorem norm_finExpectation_sq_le_of_fiberwise_except
     (hbad : finProbability Ω (fun ω ↦ Bad (d ω)) ≤ eps) :
     ‖finExpectation Ω f‖ ^ 2 ≤ B + eps := by
   classical
+  let : Fintype κ := Fintype.ofFinite κ
   let F : κ → Finset Ω := fun a ↦
     Finset.univ.filter (fun ω ↦ d ω = a)
   let avg : κ → ℂ := fun a ↦
@@ -535,7 +538,7 @@ theorem norm_finCharFun_sq_le_of_partition_boolSlices_except
     (hcover : I ∪ J = Finset.univ) (hdisjoint : Disjoint I J)
     (X : BooleanSlices.BooleanSlicePoint
       (Finset.univ : Finset α) k → ℝ)
-    (t : ℝ) (Bad : Fin (k + 1) → Prop) [DecidablePred Bad]
+    (t : ℝ) (Bad : Fin (k + 1) → Prop)
     (B eps : ℝ) (hB : 0 ≤ B)
     (hgood : ∀ (a : Fin (k + 1))
       (ha : Nonempty (BoolSlice ↑I a.1 × BoolSlice ↑J (k - a.1))),
@@ -886,7 +889,7 @@ theorem norm_perturbedEdgePolynomial_booleanSlice_sq_le_of_split_except
     [Nonempty (BooleanSlices.BooleanSlicePoint
       (Finset.univ : Finset (Fin n)) k)]
     (e₀ : ℝ) (c : Fin n → ℝ) (t : ℝ)
-    (Bad : Fin (k + 1) → Prop) [DecidablePred Bad]
+    (Bad : Fin (k + 1) → Prop)
     (B eps : ℝ) (hB : 0 ≤ B)
     (hgood : ∀ (a : Fin (k + 1))
       (ha : Nonempty (BoolSlice ↑w.I a.1 × BoolSlice ↑w.J (k - a.1))),
@@ -906,6 +909,7 @@ theorem norm_perturbedEdgePolynomial_booleanSlice_sq_le_of_split_except
           (Finset.univ : Finset (Fin n)) k)
         (fun S ↦ Probability.perturbedEdgePolynomial G e₀ c S.1) t‖ ^ 2 ≤
       B + eps := by
+  classical
   apply norm_finCharFun_sq_le_of_partition_boolSlices_except w.I w.J k
     w.partition w.disjoint
     (fun S ↦ Probability.perturbedEdgePolynomial G e₀ c S.1)
@@ -1766,8 +1770,11 @@ def lemma85PairEmbedding
     subst ky
     have hi := w.tuple_injective (e kx) hv
     have hb : bx = byy := by
-      cases bx <;> cases byy <;> simp_all only [Bool.true_eq_false]
-      exact Fin.succ_ne_zero _ hi.symm
+      cases bx <;> cases byy
+      · rfl
+      · exact (Fin.succ_ne_zero _ hi).elim
+      · exact (Fin.succ_ne_zero _ hi.symm).elim
+      · rfl
     exact Prod.ext rfl hb
 
 @[simp] theorem lemma85PairEmbedding_false
@@ -2604,7 +2611,7 @@ theorem ksssLemma81_raw_sourceBalance
     have hsupportN' :
         ((Nat.ceil ((n : ℝ) ^ (1 - beta)) *
           Nat.floor (zeta * Real.log n) : ℕ) : ℝ) ≤ eta * n / 4 := by
-      convert hsupportN using 1 <;> ring
+      convert hsupportN using 1 ; ring
     exact ⟨hn₈₂, hsupportN', hqposN, hn1, hclaimN⟩
   obtain ⟨N, hN⟩ := Filter.eventually_atTop.mp hall
   refine ⟨zeta, hzeta, N, ?_⟩
@@ -2673,7 +2680,7 @@ lemma lemma81Cutoff_pos {eta zeta : ℝ} (heta : 0 < eta) :
 one-tuple base uniformly small throughout the Lemma 8.1 frequency band. -/
 lemma eventually_lemma81_middle_base_le
     (eta zeta : ℝ) (heta : 0 < eta) (hetaHalf : eta < 1 / 2)
-    (hzeta : 0 < zeta) :
+    (_hzeta : 0 < zeta) :
     ∀ᶠ n : ℕ in Filter.atTop, ∀ t : ℝ,
       (n : ℝ) ^ (-1 + eta) ≤ |t| →
       |t| ≤ lemma81Cutoff eta zeta →

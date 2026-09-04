@@ -50,8 +50,10 @@ def neighborsIn (G : SimpleGraph V) (v : V) (W : Finset V) : Finset V :=
   letI := Classical.decPred fun w ↦ G.Adj v w
   W.filter fun w ↦ G.Adj v w
 
+omit [DecidableEq V] [Fintype V] in
 @[simp] lemma mem_neighborsIn {G : SimpleGraph V} {v w : V} {W : Finset V} :
     w ∈ neighborsIn G v W ↔ w ∈ W ∧ G.Adj v w := by
+  classical
   simp [neighborsIn]
 
 /-- The vertices whose neighbourhood in `W` is unusually small or unusually
@@ -121,7 +123,7 @@ lemma rich_of_one_le_alpha [Nonempty V] (G : SimpleGraph V) (δ ρ : ℝ)
   simpa using Real.rpow_le_rpow_of_exponent_le hbase hα
 
 /-- If the size cutoff exceeds the whole vertex set, richness is vacuous. -/
-lemma rich_of_one_lt_delta (G : SimpleGraph V) (ρ α : ℝ) { δ : ℝ }
+lemma rich_of_one_lt_delta (G : SimpleGraph V) (ρ α : ℝ) {δ : ℝ}
     (hδ : 1 < δ) : Rich G δ ρ α := by
   intro W hW
   have hcard : (W.card : ℝ) ≤ Fintype.card V := by
@@ -143,7 +145,7 @@ lemma not_rich_iff (G : SimpleGraph V) (δ ρ α : ℝ) :
             (exceptionalVertices G W ρ).card := by
   constructor
   · intro h
-    simp only [Rich, Classical.not_forall, Classical.not_imp, not_le] at h
+    simp only [Rich, Classical.not_forall, not_le] at h
     obtain ⟨W, hW, hbad⟩ := h
     exact ⟨W, hW, hbad⟩
   · rintro ⟨W, hW, hbad⟩ hrich
@@ -162,7 +164,7 @@ lemma exceptionalVertices_eq_union (G : SimpleGraph V) (W : Finset V) (ρ : ℝ)
     exceptionalVertices G W ρ =
       lowExceptionalVertices G W ρ ∪ highExceptionalVertices G W ρ := by
   ext v
-  simp [exceptionalVertices, lowExceptionalVertices, highExceptionalVertices, or_comm]
+  simp [exceptionalVertices, lowExceptionalVertices, highExceptionalVertices]
 
 lemma exceptionalVertices_inter_eq_union (G : SimpleGraph V) (U W : Finset V) (ρ : ℝ) :
     exceptionalVertices G W ρ ∩ U =
@@ -214,33 +216,41 @@ lemma exists_oneSided_exceptional_block {G : SimpleGraph V} {U W : Finset V}
       highExceptionalVertices] at hmem
     exact hmem.1
 
+omit [Fintype V] in
 /-- Neighbourhoods in an induced graph are obtained by transporting the
 corresponding ambient neighbourhood to the subtype. -/
-lemma neighborsIn_induce_image {G : SimpleGraph V} {U : Finset V}
+lemma neighborsIn_induce_image [Finite V] {G : SimpleGraph V} {U : Finset V}
     (v : U) (W : Finset U) :
     (neighborsIn (G.induce (U : Set V)) v W).image Subtype.val =
       neighborsIn G v.1 (W.image Subtype.val) := by
+  let : Fintype V := Fintype.ofFinite V
   ext w
-  simp [and_left_comm, and_comm]
+  simp [and_comm]
 
-lemma card_neighborsIn_induce {G : SimpleGraph V} {U : Finset V}
+omit [Fintype V] in
+lemma card_neighborsIn_induce [Finite V] {G : SimpleGraph V} {U : Finset V}
     (v : U) (W : Finset U) :
     (neighborsIn (G.induce (U : Set V)) v W).card =
       (neighborsIn G v.1 (W.image Subtype.val)).card := by
+  let : Fintype V := Fintype.ofFinite V
   rw [← neighborsIn_induce_image (G := G) v W, Finset.card_image_iff.mpr]
   exact Subtype.val_injective.injOn
 
-lemma sdiff_neighborsIn_induce_image {G : SimpleGraph V} {U : Finset V}
+omit [Fintype V] in
+lemma sdiff_neighborsIn_induce_image [Finite V] {G : SimpleGraph V} {U : Finset V}
     (v : U) (W : Finset U) :
     (W \ neighborsIn (G.induce (U : Set V)) v W).image Subtype.val =
       W.image Subtype.val \ neighborsIn G v.1 (W.image Subtype.val) := by
+  let : Fintype V := Fintype.ofFinite V
   rw [Finset.image_sdiff _ _ Subtype.val_injective,
     neighborsIn_induce_image]
 
-lemma card_sdiff_neighborsIn_induce {G : SimpleGraph V} {U : Finset V}
+omit [Fintype V] in
+lemma card_sdiff_neighborsIn_induce [Finite V] {G : SimpleGraph V} {U : Finset V}
     (v : U) (W : Finset U) :
     (W \ neighborsIn (G.induce (U : Set V)) v W).card =
       (W.image Subtype.val \ neighborsIn G v.1 (W.image Subtype.val)).card := by
+  let : Fintype V := Fintype.ofFinite V
   rw [← sdiff_neighborsIn_induce_image (G := G) v W, Finset.card_image_iff.mpr]
   exact Subtype.val_injective.injOn
 
@@ -260,7 +270,7 @@ lemma not_richOn_iff (G : SimpleGraph V) (U : Finset V) (δ ρ α : ℝ) :
           (U.card : ℝ) ^ α < (exceptionalVertices G W ρ ∩ U).card := by
   constructor
   · intro h
-    simp only [RichOn, Classical.not_forall, Classical.not_imp, not_le] at h
+    simp only [RichOn, Classical.not_forall, not_le] at h
     obtain ⟨W, hWU, hW, hbad⟩ := h
     exact ⟨W, hWU, hW, hbad⟩
   · rintro ⟨W, hWU, hW, hbad⟩ hrich
@@ -319,8 +329,7 @@ lemma rich_induce_iff_richOn (G : SimpleGraph V) (U : Finset V) (δ ρ α : ℝ)
         rw [card_neighborsIn_induce, card_sdiff_neighborsIn_induce, himage, hcardW]
         exact hw
     rw [← hexceptional, Finset.card_image_iff.mpr Subtype.val_injective.injOn]
-    convert hbound using 1 <;> simp
-
+    convert hbound using 1 ; simp
   · intro h W hW
     let WI : Finset V := W.image Subtype.val
     have hWIU : WI ⊆ U := by
@@ -356,7 +365,7 @@ lemma rich_induce_iff_richOn (G : SimpleGraph V) (U : Finset V) (δ ρ α : ℝ)
         exact hw
     rw [← hexceptional] at hbound
     rw [Finset.card_image_iff.mpr Subtype.val_injective.injOn] at hbound
-    convert hbound using 1 <;> simp
+    convert hbound using 1 ; simp
 
 /-- Arithmetic endpoint of the KSSS Lemma 4.4 density contradiction.
 Once the nested blocks give density at most `4ρ + 1/K`, this contradicts
@@ -370,6 +379,7 @@ lemma richness_density_contradiction_endpoint
   have hqreal : (0 : ℝ) < q := by exact_mod_cast hq
   nlinarith [sq_pos_of_pos hqreal]
 
+omit [DecidableEq V] [Fintype V] in
 /-- Finite Markov-counting lemma in the exact form used in the nested-set
 construction: if the total mass is at most half of `T |U|`, then at least
 half the elements have mass at most `T`. -/
@@ -400,16 +410,20 @@ def relNeighbors (r : V → V → Prop) (v : V) (W : Finset V) : Finset V :=
   letI := Classical.decPred (r v)
   W.filter (r v)
 
+omit [DecidableEq V] [Fintype V] in
 @[simp] lemma mem_relNeighbors {r : V → V → Prop} {v w : V} {W : Finset V} :
     w ∈ relNeighbors r v W ↔ w ∈ W ∧ r v w := by
+  classical
   simp [relNeighbors]
 
+omit [DecidableEq V] [Fintype V] in
 /-- Double counting a symmetric relation between two finite sets. -/
-lemma sum_card_relNeighbors_comm (r : V → V → Prop)
+lemma sum_card_relNeighbors_comm [Finite V] (r : V → V → Prop)
     (hsymm : ∀ v w, r v w ↔ r w v) (S W : Finset V) :
     ∑ v ∈ S, (relNeighbors r v W).card =
       ∑ w ∈ W, (relNeighbors r w S).card := by
   classical
+  let : Fintype V := Fintype.ofFinite V
   calc
     ∑ v ∈ S, (relNeighbors r v W).card =
         ∑ v ∈ S, (W.bipartiteAbove r v).card := by
@@ -426,9 +440,10 @@ lemma sum_card_relNeighbors_comm (r : V → V → Prop)
       ext v
       simp [hsymm]
 
+omit [Fintype V] in
 /-- One step of the nested-set construction in KSSS Lemma 4.4, uniformly
 for adjacency or non-adjacency. -/
-lemma oneSided_block_retains_quarter (r : V → V → Prop)
+lemma oneSided_block_retains_quarter [Finite V] (r : V → V → Prop)
     (hsymm : ∀ v w, r v w ↔ r w v)
     {W S : Finset V} {ρ : ℝ} (hρ : 0 < ρ) (hS : 0 < S.card)
     (hsmall : ∀ v ∈ S,
@@ -439,6 +454,7 @@ lemma oneSided_block_retains_quarter (r : V → V → Prop)
         ∀ u ∈ U,
           ((relNeighbors r u S).card : ℝ) ≤ 4 * ρ * S.card := by
   classical
+  let : Fintype V := Fintype.ofFinite V
   let T := W \ S
   have hTcard : (W.card : ℝ) / 2 ≤ T.card := by
     have hinter : (S ∩ W).card ≤ S.card := Finset.card_le_card Finset.inter_subset_left
@@ -486,19 +502,23 @@ lemma oneSided_block_retains_quarter (r : V → V → Prop)
     (fun u ↦ ((relNeighbors r u S).card : ℝ)) (4 * ρ * S.card)
     hthreshold (fun _ _ ↦ Nat.cast_nonneg _) hsumT
   refine ⟨U, Finset.filter_subset _ _, ?_, ?_⟩
-  · change (W.card : ℝ) / 4 ≤ U.card
-    change (T.card : ℝ) / 2 ≤ U.card at hmarkov
+  · change (T.card : ℝ) / 2 ≤ U.card at hmarkov
     linarith
   · intro u hu
     exact (Finset.mem_filter.mp hu).2
 
-@[simp] lemma relNeighbors_adj (G : SimpleGraph V) (v : V) (W : Finset V) :
+omit [DecidableEq V] [Fintype V] in
+@[simp] lemma relNeighbors_adj [Finite V] (G : SimpleGraph V) (v : V) (W : Finset V) :
     relNeighbors G.Adj v W = neighborsIn G v W := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   ext w
   simp
 
-@[simp] lemma relNeighbors_not_adj (G : SimpleGraph V) (v : V) (W : Finset V) :
+omit [Fintype V] in
+@[simp] lemma relNeighbors_not_adj [Finite V] (G : SimpleGraph V) (v : V) (W : Finset V) :
     relNeighbors (fun x y ↦ ¬ G.Adj x y) v W = W \ neighborsIn G v W := by
+  let : Fintype V := Fintype.ofFinite V
   ext w
   simp only [mem_relNeighbors, Finset.mem_sdiff, mem_neighborsIn]
   constructor
@@ -611,6 +631,7 @@ def NestedRichnessChain.colorUnion {G : SimpleGraph V} {δ ρ : ℝ} {q K : ℕ}
       if direction = inGraph then S ∪ tail.colorUnion inGraph
       else tail.colorUnion inGraph
 
+omit [Fintype V] in
 @[simp] lemma NestedRichnessChain.blocks_length {G : SimpleGraph V}
     {δ ρ : ℝ} {q K : ℕ} {U : Finset V}
     (chain : NestedRichnessChain G δ ρ q K U) :
@@ -619,6 +640,7 @@ def NestedRichnessChain.colorUnion {G : SimpleGraph V} {δ ρ : ℝ} {q K : ℕ}
   | nil => simp [NestedRichnessChain.blocks]
   | cons step tail ih => simp [NestedRichnessChain.blocks, ih]
 
+omit [Fintype V] in
 @[simp] lemma NestedRichnessChain.colorCount_true_add_false
     {G : SimpleGraph V} {δ ρ : ℝ} {q K : ℕ} {U : Finset V}
     (chain : NestedRichnessChain G δ ρ q K U) :
@@ -630,6 +652,7 @@ def NestedRichnessChain.colorUnion {G : SimpleGraph V} {δ ρ : ℝ} {q K : ℕ}
         simpa [NestedRichnessChain.colorCount, NestedRichnessChain.blocks,
           Nat.add_assoc, Nat.add_comm, Nat.add_left_comm] using congrArg Nat.succ ih
 
+omit [Fintype V] in
 lemma NestedRichnessChain.colorUnion_subset
     {G : SimpleGraph V} {δ ρ : ℝ} {q K : ℕ} {U : Finset V}
     (chain : NestedRichnessChain G δ ρ q K U) (inGraph : Bool) :
@@ -642,10 +665,12 @@ lemma NestedRichnessChain.colorUnion_subset
       · exact Finset.union_subset step.block_subset (ih.trans step.residual_subset)
       · exact ih.trans step.residual_subset
 
-@[simp] lemma NestedRichnessChain.card_colorUnion
+omit [Fintype V] in
+@[simp] lemma NestedRichnessChain.card_colorUnion [Finite V]
     {G : SimpleGraph V} {δ ρ : ℝ} {q K : ℕ} {U : Finset V}
     (chain : NestedRichnessChain G δ ρ q K U) (inGraph : Bool) :
     (chain.colorUnion inGraph).card = chain.colorCount inGraph * q := by
+  let : Fintype V := Fintype.ofFinite V
   induction chain with
   | nil => simp [NestedRichnessChain.colorUnion, NestedRichnessChain.colorCount,
       NestedRichnessChain.blocks]
@@ -666,41 +691,52 @@ is therefore convenient for the upper bound. -/
 def colorRelation (G : SimpleGraph V) (inGraph : Bool) : V → V → Prop :=
   if inGraph then G.Adj else fun v w ↦ ¬ G.Adj v w
 
+omit [DecidableEq V] [Fintype V] in
 lemma colorRelation_symm (G : SimpleGraph V) (inGraph : Bool) :
     ∀ v w, colorRelation G inGraph v w ↔ colorRelation G inGraph w v := by
+  classical
   intro v w
   cases inGraph <;> simp [colorRelation, G.adj_comm]
 
-@[simp] lemma card_relNeighbors_colorRelation (G : SimpleGraph V)
+omit [Fintype V] in
+@[simp] lemma card_relNeighbors_colorRelation [Finite V] (G : SimpleGraph V)
     (inGraph : Bool) (u : V) (S : Finset V) :
     (relNeighbors (colorRelation G inGraph) u S).card =
       blockDegree G inGraph u S := by
+  let : Fintype V := Fintype.ofFinite V
   cases inGraph <;> simp [colorRelation, blockDegree]
 
 /-- Ordered relation mass inside a finite set. -/
 def relationMass (r : V → V → Prop) (A : Finset V) : ℝ :=
   ∑ u ∈ A, ((relNeighbors r u A).card : ℝ)
 
-lemma relNeighbors_union (r : V → V → Prop) (u : V) (S T : Finset V) :
+omit [Fintype V] in
+lemma relNeighbors_union [Finite V] (r : V → V → Prop) (u : V) (S T : Finset V) :
     relNeighbors r u (S ∪ T) = relNeighbors r u S ∪ relNeighbors r u T := by
+  let : Fintype V := Fintype.ofFinite V
   ext v
   simp only [mem_relNeighbors, Finset.mem_union]
   aesop
 
-lemma disjoint_relNeighbors (r : V → V → Prop) (u : V) {S T : Finset V}
+omit [DecidableEq V] [Fintype V] in
+lemma disjoint_relNeighbors [Finite V] (r : V → V → Prop) (u : V) {S T : Finset V}
     (hST : Disjoint S T) :
     Disjoint (relNeighbors r u S) (relNeighbors r u T) := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   exact hST.mono (by intro v hv; exact (mem_relNeighbors.mp hv).1)
     (by intro v hv; exact (mem_relNeighbors.mp hv).1)
 
+omit [Fintype V] in
 /-- Split ordered relation mass across a disjoint union. -/
-lemma relationMass_union (r : V → V → Prop)
+lemma relationMass_union [Finite V] (r : V → V → Prop)
     (hsymm : ∀ v w, r v w ↔ r w v) {S T : Finset V}
     (hST : Disjoint S T) :
     relationMass r (S ∪ T) =
       relationMass r S + relationMass r T +
         2 * ∑ u ∈ T, ((relNeighbors r u S).card : ℝ) := by
   classical
+  let : Fintype V := Fintype.ofFinite V
   have hcrossNat := sum_card_relNeighbors_comm r hsymm S T
   have hcross :
       ∑ u ∈ S, ((relNeighbors r u T).card : ℝ) =
@@ -712,8 +748,11 @@ lemma relationMass_union (r : V → V → Prop)
   rw [hcross]
   ring
 
-lemma relationMass_le_card_sq (r : V → V → Prop) (S : Finset V) :
+omit [DecidableEq V] [Fintype V] in
+lemma relationMass_le_card_sq [Finite V] (r : V → V → Prop) (S : Finset V) :
     relationMass r S ≤ (S.card : ℝ) ^ 2 := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   unfold relationMass
   calc
     ∑ u ∈ S, ((relNeighbors r u S).card : ℝ) ≤
@@ -725,16 +764,18 @@ lemma relationMass_le_card_sq (r : V → V → Prop) (S : Finset V) :
         exact (mem_relNeighbors.mp hv).1)
     _ = (S.card : ℝ) ^ 2 := by simp [pow_two]
 
+omit [Fintype V] in
 /-- The union of all blocks of one colour has small ordered relation mass.
 The term `4ρ c²` accounts for cross-block pairs and `c` for the uncontrolled
 mass internal to each of the `c` blocks. -/
-lemma NestedRichnessChain.relationMass_colorUnion_le
+lemma NestedRichnessChain.relationMass_colorUnion_le [Finite V]
     {G : SimpleGraph V} {δ ρ : ℝ} {q K : ℕ} {U : Finset V}
     (chain : NestedRichnessChain G δ ρ q K U) (inGraph : Bool)
     (hρ : 0 ≤ ρ) :
     relationMass (colorRelation G inGraph) (chain.colorUnion inGraph) ≤
       (4 * ρ * (chain.colorCount inGraph : ℝ) ^ 2 +
           chain.colorCount inGraph) * (q : ℝ) ^ 2 := by
+  let : Fintype V := Fintype.ofFinite V
   induction chain with
   | nil => simp [NestedRichnessChain.colorUnion, NestedRichnessChain.colorCount,
       NestedRichnessChain.blocks, relationMass]
@@ -805,25 +846,29 @@ lemma NestedRichnessChain.relationMass_colorUnion_le
         rw [hUnion, hCount]
         exact ih
 
+omit [Fintype V] in
 /-- One of the two colours occurs on at least half of the steps. -/
-lemma NestedRichnessChain.exists_majority_color
+lemma NestedRichnessChain.exists_majority_color [Finite V]
     {G : SimpleGraph V} {δ ρ : ℝ} {q K : ℕ} {U : Finset V}
     (chain : NestedRichnessChain G δ ρ q K U) :
     ∃ inGraph : Bool, K ≤ 2 * chain.colorCount inGraph := by
+  let : Fintype V := Fintype.ofFinite V
   have hsum := chain.colorCount_true_add_false
   by_cases hle : chain.colorCount false ≤ chain.colorCount true
   · exact ⟨true, by omega⟩
   · exact ⟨false, by omega⟩
 
+omit [Fintype V] in
 /-- Divide the ordered-mass estimate by the exact square of the union size.
 This is the `4ρ + 1/c` density bound in the KSSS proof. -/
-lemma NestedRichnessChain.relationMass_colorUnion_density
+lemma NestedRichnessChain.relationMass_colorUnion_density [Finite V]
     {G : SimpleGraph V} {δ ρ : ℝ} {q K : ℕ} {U : Finset V}
     (chain : NestedRichnessChain G δ ρ q K U) (inGraph : Bool)
     (hρ : 0 ≤ ρ) (hc : 0 < chain.colorCount inGraph) :
     relationMass (colorRelation G inGraph) (chain.colorUnion inGraph) ≤
       (4 * ρ + (chain.colorCount inGraph : ℝ)⁻¹) *
         (chain.colorUnion inGraph).card ^ 2 := by
+  let : Fintype V := Fintype.ofFinite V
   have hmain := chain.relationMass_colorUnion_le inGraph hρ
   rw [chain.card_colorUnion inGraph]
   have hcreal : (0 : ℝ) < chain.colorCount inGraph := by exact_mod_cast hc
@@ -836,14 +881,16 @@ lemma NestedRichnessChain.relationMass_colorUnion_density
 def colorGraph (G : SimpleGraph V) (inGraph : Bool) : SimpleGraph V :=
   if inGraph then G else Gᶜ
 
+omit [Fintype V] in
 /-- The actual degree in the selected graph is bounded by `blockDegree`.
 For the complement colour `blockDegree` also counts the diagonal, hence the
 inequality rather than equality. -/
-lemma degree_induce_colorGraph_le_blockDegree (G : SimpleGraph V)
+lemma degree_induce_colorGraph_le_blockDegree [Finite V] (G : SimpleGraph V)
     (inGraph : Bool) (A : Finset V) (v : A) :
     FiniteES.vertexDegree ((colorGraph G inGraph).induce (A : Set V)) v ≤
       blockDegree G inGraph v.1 A := by
   classical
+  let : Fintype V := Fintype.ofFinite V
   let H := (colorGraph G inGraph).induce (A : Set V)
   let f : H.neighborSet v →
       {w // w ∈ relNeighbors (colorRelation G inGraph) v.1 A} := fun w ↦
@@ -868,13 +915,15 @@ lemma degree_induce_colorGraph_le_blockDegree (G : SimpleGraph V)
       rw [Nat.card_eq_fintype_card, Fintype.card_coe]
     _ = blockDegree G inGraph v.1 A := card_relNeighbors_colorRelation _ _ _ _
 
+omit [DecidableEq V] [Fintype V] in
 /-- Convert the ordered relation-mass bound into an upper bound for the
 ordinary unordered edge count of the selected induced graph. -/
-lemma edgeCount_induce_colorGraph_le_relationMass (G : SimpleGraph V)
+lemma edgeCount_induce_colorGraph_le_relationMass [Finite V] (G : SimpleGraph V)
     (inGraph : Bool) (A : Finset V) :
     (FiniteES.edgeCount ((colorGraph G inGraph).induce (A : Set V)) : ℝ) ≤
       relationMass (colorRelation G inGraph) A := by
   classical
+  let : Fintype V := Fintype.ofFinite V
   let H := (colorGraph G inGraph).induce (A : Set V)
   let : DecidableRel H.Adj := Classical.decRel _
   have hdegNat :
@@ -980,7 +1029,7 @@ lemma exists_richness_iteration_parameters {a α : ℝ}
 /-- Uniform numerical budget for all `K` nested steps. -/
 lemma richness_iteration_budget {n : ℕ} {m ρ : ℝ} {K : ℕ}
     (hn : 0 < n) (hm : 0 < m) (hmn : m ≤ n) (hmρ : m ≤ ρ * n)
-    (hρ : 0 < ρ) (hρK : ρ * K ≤ 1 / 3)
+    (_hρ : 0 < ρ) (hρK : ρ * K ≤ 1 / 3)
     (hρsmall :
       ρ ≤ ((4 : ℝ) ^ (-(K : ℝ))) ^ (3 / 2 : ℝ)) :
     m ≤ (((m / n) ^ ρ) / 4) ^ K * n := by
@@ -1206,7 +1255,7 @@ lemma exists_nestedRichnessChain {G : SimpleGraph V} {U₀ : Finset V}
         failed_richness_nested_step hρ hqpos hfail hqpowU hqWU
       have hnextBudget : m ≤ (δ / 4) ^ K * U'.card := by
         have hstepCard : (δ / 4) * U₀.card ≤ (U'.card : ℝ) := by
-          convert hU'card using 1 <;> ring
+          convert hU'card using 1 ; ring
         have hmul := mul_le_mul_of_nonneg_left hstepCard (pow_nonneg hfac K)
         calc
           m ≤ (δ / 4) ^ (K + 1) * U₀.card := hbudget
@@ -1325,7 +1374,7 @@ theorem ksssLemma44 : KSSSLemma44 := by
   have hbudget : m ≤ (δ / 4) ^ K * (Finset.univ : Finset (Fin n)).card := by
     simpa [δ] using richness_iteration_budget hnpos hmpos hmn hmρ hρ hρK hρsmall
   by_contra hnone
-  push_neg at hnone
+  push Not at hnone
   have hnoRichOn : ∀ U : Finset (Fin n), U ⊆ Finset.univ → m ≤ U.card →
       ¬ RichOn G U δ ρ α := by
     intro U _hU hUm hrichOn
@@ -1400,6 +1449,7 @@ section DependentRandomChoice
 
 variable {V : Type u} [Fintype V] [DecidableEq V]
 
+omit [DecidableEq V] [Fintype V] in
 /-- Delete at most one point for every nonempty forbidden set. -/
 lemma delete_forbidden_sets (X : Finset V) (B : Finset (Finset V))
     (hne : ∀ R ∈ B, R.Nonempty) :
@@ -1429,7 +1479,7 @@ lemma delete_forbidden_sets (X : Finset V) (B : Finset (Finset V))
       · intro S hS hSU
         rcases (Finset.mem_insert.mp hS) with rfl | hSB
         · have hx : x ∈ U.erase x := hSU hxR
-          simpa using hx
+          simp at hx
         · exact havoid S hSB (hSU.trans (Finset.erase_subset x U))
 
 /-- Division-free finite averaging: a large total score gives one outcome
@@ -1440,7 +1490,7 @@ lemma exists_add_badCount_le {Omega : Type*} [Fintype Omega] [Nonempty Omega]
       ∑ ω : Omega, value ω) :
     ∃ ω : Omega, a + badCount ω ≤ value ω := by
   by_contra h
-  push_neg at h
+  push Not at h
   have hlt :
       ∑ ω : Omega, value ω < ∑ ω : Omega, (a + badCount ω) := by
     exact Finset.sum_lt_sum_of_nonempty Finset.univ_nonempty (fun ω _ ↦ h ω)
@@ -1451,12 +1501,13 @@ lemma exists_add_badCount_le {Omega : Type*} [Fintype Omega] [Nonempty Omega]
   rw [hrhs] at hlt
   exact (not_lt_of_ge hsum) hlt
 
+omit [Fintype V] in
 /-- Exact finite selection/deletion core of dependent random choice.
 
 `X ω` is the common-neighbour set generated by outcome `ω`, while `B`
 is the family of bad `r`-sets.  The displayed assumption is precisely the
 unnormalized expectation inequality in KSSS Lemma 13.3. -/
-theorem finite_drc_core {Omega : Type*} [Fintype Omega] [Nonempty Omega]
+theorem finite_drc_core [Finite V] {Omega : Type*} [Fintype Omega] [Nonempty Omega]
     (X : Omega → Finset V) (B : Finset (Finset V)) (a : ℕ)
     (hne : ∀ R ∈ B, R.Nonempty)
     (hsum : Fintype.card Omega * a +
@@ -1464,6 +1515,7 @@ theorem finite_drc_core {Omega : Type*} [Fintype Omega] [Nonempty Omega]
       ∑ ω : Omega, (X ω).card) :
     ∃ (ω : Omega) (U : Finset V),
       U ⊆ X ω ∧ a ≤ U.card ∧ ∀ R ∈ B, ¬ R ⊆ U := by
+  let : Fintype V := Fintype.ofFinite V
   let badCount : Omega → ℕ := fun ω ↦ (B.filter fun R ↦ R ⊆ X ω).card
   obtain ⟨ω, hω⟩ := exists_add_badCount_le (fun ω ↦ (X ω).card) badCount a hsum
   let Bω := B.filter fun R ↦ R ⊆ X ω
@@ -1484,17 +1536,23 @@ def commonNeighborFinset (G : SimpleGraph V) (R : Finset V) : Finset V :=
   letI := Classical.decPred fun w ↦ ∀ v ∈ R, G.Adj v w
   Finset.univ.filter fun w ↦ ∀ v ∈ R, G.Adj v w
 
+omit [DecidableEq V] in
 @[simp] lemma mem_commonNeighborFinset {G : SimpleGraph V} {R : Finset V} {w : V} :
     w ∈ commonNeighborFinset G R ↔ ∀ v ∈ R, G.Adj v w := by
+  classical
   simp [commonNeighborFinset]
 
+omit [DecidableEq V] in
 @[simp] lemma commonNeighborFinset_empty (G : SimpleGraph V) :
     commonNeighborFinset G ∅ = Finset.univ := by
+  classical
   ext w
   simp [commonNeighborFinset]
 
+omit [DecidableEq V] in
 lemma commonNeighborFinset_anti {G : SimpleGraph V} {R S : Finset V}
     (h : R ⊆ S) : commonNeighborFinset G S ⊆ commonNeighborFinset G R := by
+  classical
   intro w hw
   simp only [mem_commonNeighborFinset] at hw ⊢
   intro v hv
@@ -1504,18 +1562,23 @@ lemma commonNeighborFinset_anti {G : SimpleGraph V} {R S : Finset V}
 def HasCommonNeighbors (G : SimpleGraph V) (A : Finset V) (r s : ℕ) : Prop :=
   ∀ R ⊆ A, R.card = r → s ≤ (commonNeighborFinset G R).card
 
+omit [DecidableEq V] in
 lemma HasCommonNeighbors.mono_subset {G : SimpleGraph V} {A B : Finset V}
     {r s : ℕ} (h : HasCommonNeighbors G A r s) (hBA : B ⊆ A) :
     HasCommonNeighbors G B r s := by
+  classical
   intro R hR hr
   exact h R (hR.trans hBA) hr
 
+omit [DecidableEq V] in
 lemma HasCommonNeighbors.mono_s {G : SimpleGraph V} {A : Finset V}
     {r s₁ s₂ : ℕ} (h : HasCommonNeighbors G A r s₂) (hs : s₁ ≤ s₂) :
     HasCommonNeighbors G A r s₁ := by
+  classical
   intro R hR hr
   exact hs.trans (h R hR hr)
 
+omit [DecidableEq V] in
 /-- Deterministic deletion core of dependent random choice.  If a set `A`
 has `b` bad `r`-subsets, deleting one chosen vertex from every bad subset
 leaves at least `|A|-b` vertices and no bad `r`-subset.  This is the final,

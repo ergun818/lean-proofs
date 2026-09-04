@@ -124,7 +124,7 @@ lemma concentration_centeredGaussianLaw_le {sigma eps : ℝ}
   exact smallBall_centeredGaussianLaw_le hsigma heps
 
 lemma centeredGaussianDensity_le_localTail {sigma eps y z : ℝ}
-    (hsigma : 0 < sigma) (heps : 0 < eps) (hepssigma : eps ≤ sigma)
+    (hsigma : 0 < sigma) (_heps : 0 < eps) (hepssigma : eps ≤ sigma)
     (hz : z ∈ Set.Icc (y - eps) (y + eps)) :
     centeredGaussianDensity sigma z ≤
       (4 / sigma) * Real.exp (-|y| / (8 * sigma)) := by
@@ -133,7 +133,7 @@ lemma centeredGaussianDensity_le_localTail {sigma eps y z : ℝ}
     constructor <;> linarith [hz.1, hz.2]
   have hyabs : |y| ≤ |z| + eps := by
     calc
-      |y| = |z + (y - z)| := by congr 1 <;> ring
+      |y| = |z + (y - z)| := by congr 1 ; ring
       _ ≤ |z| + |y - z| := abs_add_le _ _
       _ = |z| + |z - y| := by rw [abs_sub_comm]
       _ ≤ |z| + eps := add_le_add_right hzdist _
@@ -251,7 +251,7 @@ lemma smallBall_centeredGaussianLaw_lower {sigma eps M x : ℝ}
         rw [abs_le]
         constructor <;> linarith [hz.1, hz.2]
       calc
-        |z| = |x + (z - x)| := by congr 1 <;> ring
+        |z| = |x + (z - x)| := by congr 1 ; ring
         _ ≤ |x| + |z - x| := abs_add_le _ _
         _ ≤ M * sigma + eps := add_le_add hx hzdist
         _ ≤ (M + 1) * sigma := by nlinarith
@@ -300,12 +300,12 @@ lemma densityRatioOn_centeredGaussian_three {sigma x eps R : ℝ}
     exact ⟨by linarith [z.2.1], by linarith [z.2.2]⟩
   have hyabs : |y.1| ≤ |x| + d := by
     calc
-      |y.1| = |x + (y.1 - x)| := by congr 1 <;> ring
+      |y.1| = |x + (y.1 - x)| := by congr 1 ; ring
       _ ≤ |x| + |y.1 - x| := abs_add_le _ _
       _ ≤ |x| + d := add_le_add_right hydist _
   have hzabs : |z.1| ≤ |x| + d := by
     calc
-      |z.1| = |x + (z.1 - x)| := by congr 1 <;> ring
+      |z.1| = |x + (z.1 - x)| := by congr 1 ; ring
       _ ≤ |x| + |z.1 - x| := abs_add_le _ _
       _ ≤ |x| + d := add_le_add_right hzdist _
   have hzydist : |z.1 - y.1| ≤ 2 * d := by

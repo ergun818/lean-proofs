@@ -6,8 +6,8 @@ open scoped BigOperators
 namespace Erdos88
 namespace GraphQuadratic
 
-open Classical
 
+open Classical in
 /-- The standard deviation of the perturbed induced-edge count under the
 uniform Boolean-cube law. -/
 noncomputable def graphPerturbedSigma {n : ℕ} (G : SimpleGraph (Fin n))
@@ -15,6 +15,7 @@ noncomputable def graphPerturbedSigma {n : ℕ} (G : SimpleGraph (Fin n))
   Real.sqrt (Probability.variance (1 / 2 : ℝ)
     (Probability.perturbedEdgePolynomial G e₀ c))
 
+open Classical in
 lemma variance_half_perturbedEdgePolynomial_nonneg {n : ℕ}
     (G : SimpleGraph (Fin n)) (e₀ : ℝ) (c : Fin n → ℝ) :
     0 ≤ Probability.variance (1 / 2 : ℝ)
@@ -27,6 +28,7 @@ lemma graphPerturbedSigma_nonneg {n : ℕ} (G : SimpleGraph (Fin n))
     0 ≤ graphPerturbedSigma G e₀ c :=
   Real.sqrt_nonneg _
 
+open Classical in
 lemma graphPerturbedSigma_sq {n : ℕ} (G : SimpleGraph (Fin n))
     (e₀ : ℝ) (c : Fin n → ℝ) :
     graphPerturbedSigma G e₀ c ^ 2 =
@@ -39,6 +41,7 @@ lemma n_rpow_three_halves_sq (n : ℕ) :
   rw [← Real.rpow_natCast, ← Real.rpow_mul (Nat.cast_nonneg n)]
   norm_num
 
+open Classical in
 /-- Positive edge density and nonnegative perturbations give the lower
 `n^(3/2)` standard-deviation scale. -/
 theorem graphPerturbedSigma_lower {n : ℕ}
@@ -62,6 +65,7 @@ theorem graphPerturbedSigma_lower {n : ℕ}
         (Probability.perturbedEdgePolynomial G e₀ c) :=
       variance_half_perturbedEdgePolynomial_lower G e₀ c hn ha hc hedge
 
+open Classical in
 lemma graphPerturbedSigma_pos {n : ℕ}
     (G : SimpleGraph (Fin n)) (e₀ : ℝ) (c : Fin n → ℝ)
     {a : ℝ} (hn : 0 < n) (ha : 0 < a)
@@ -81,6 +85,7 @@ theorem graphPerturbedSigma_upper {n : ℕ}
     (hR : 1 ≤ R) (hc : ∀ v, |c v| ≤ R * n) :
     graphPerturbedSigma G e₀ c ≤
       R * (n : ℝ) ^ ((3 : ℝ) / 2) := by
+  classical
   have hrhs : 0 ≤ R * (n : ℝ) ^ ((3 : ℝ) / 2) := by positivity
   rw [graphPerturbedSigma]
   apply (Real.sqrt_le_left hrhs).2
@@ -93,6 +98,7 @@ theorem graphPerturbedSigma_upper {n : ℕ}
       rw [mul_pow]
       rw [n_rpow_three_halves_sq n]
 
+open Classical in
 /-- The graph hypotheses used in the analytic branches place the standard
 deviation between two explicit constant multiples of `n^(3/2)`. -/
 theorem graphPerturbedSigma_scale {n : ℕ}

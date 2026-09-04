@@ -6,7 +6,6 @@ open scoped BigOperators
 namespace Erdos88
 namespace GraphQuadratic
 
-open Classical
 
 lemma graphSliceMatrix_diagonal {n : ℕ} (G : SimpleGraph (Fin n))
     (i : Fin n) : graphSliceMatrix G i i = 0 := by
@@ -17,6 +16,7 @@ lemma trace_graphSliceMatrix {n : ℕ} (G : SimpleGraph (Fin n)) :
     BooleanSlices.trace (graphSliceMatrix G) = 0 := by
   simp [BooleanSlices.trace, graphSliceMatrix_diagonal]
 
+open Classical in
 lemma frobeniusSq_graphSliceMatrix {n : ℕ} (G : SimpleGraph (Fin n)) :
     BooleanSlices.frobeniusSq (graphSliceMatrix G) =
       (G.edgeFinset.card : ℝ) / 32 := by
@@ -42,9 +42,10 @@ lemma frobeniusSq_graphSliceMatrix {n : ℕ} (G : SimpleGraph (Fin n)) :
       apply Finset.sum_congr rfl
       intro j _
       by_cases hij : G.Adj i j <;>
-        simp [RobustRank.graphAdjacencyMatrix, hij] <;> norm_num
+        simp [RobustRank.graphAdjacencyMatrix, hij] ; norm_num
     _ = (G.edgeFinset.card : ℝ) / 32 := by rw [hcount]; ring
 
+open Classical in
 noncomputable def graphEffectiveLinear {n : ℕ} (G : SimpleGraph (Fin n))
     (c : Fin n → ℝ) (i : Fin n) : ℝ :=
   c i + (G.degree i : ℝ) / 2
@@ -65,6 +66,7 @@ lemma vectorSqNorm_graphSliceLinear {n : ℕ} (G : SimpleGraph (Fin n))
   rw [graphSliceLinear_eq_half_effective]
   ring
 
+open Classical in
 lemma graphSliceConstant_eq_expectation_half {n : ℕ}
     (G : SimpleGraph (Fin n))
     (e₀ : ℝ) (c : Fin n → ℝ) :
@@ -72,7 +74,7 @@ lemma graphSliceConstant_eq_expectation_half {n : ℕ}
       Probability.expectation (1 / 2 : ℝ)
         (Probability.perturbedEdgePolynomial G e₀ c) := by
   rw [Probability.expectation_perturbedEdgePolynomial G (by norm_num) (by norm_num)]
-  simp [graphSliceConstant] <;> ring
+  simp [graphSliceConstant] ; ring
 
 lemma uniformVariance_finset_eq_probability_half {n : ℕ}
     (X : Finset (Fin n) → ℝ) :
@@ -84,6 +86,7 @@ lemma uniformVariance_finset_eq_probability_half {n : ℕ}
   funext W
   rw [BooleanSlices.uniformExpectation_finset_eq_probability_half]
 
+open Classical in
 /-- Exact variance identity (4.34) for the perturbed induced-edge count. -/
 theorem variance_half_perturbedEdgePolynomial {n : ℕ}
     (G : SimpleGraph (Fin n))
@@ -106,6 +109,7 @@ theorem variance_half_perturbedEdgePolynomial {n : ℕ}
     ring
   · exact graphSliceMatrix_symmetric G
 
+open Classical in
 lemma sum_graphEffectiveLinear {n : ℕ} (G : SimpleGraph (Fin n))
     (c : Fin n → ℝ) :
     (∑ i, graphEffectiveLinear G c i) =
@@ -118,6 +122,7 @@ lemma sum_graphEffectiveLinear {n : ℕ} (G : SimpleGraph (Fin n))
   rw [hdeg]
   ring
 
+open Classical in
 /-- The linear Walsh part alone already has variance of order `n^3`
 when the graph has positive quadratic edge density and the perturbation is
 coordinatewise nonnegative. -/

@@ -197,7 +197,7 @@ lemma abs_bucketProjection_mul_matrix_le_one
 lemma abs_bucketProjection_mulVec_le
     {n m : ℕ} (P : BucketPartition (Fin n) (Fin m))
     (hbucket : RobustRank.HasEqualBuckets P.bucket)
-    (z : Fin n → ℝ) {B : ℝ} (hB : 0 ≤ B)
+    (z : Fin n → ℝ) {B : ℝ} (_hB : 0 ≤ B)
     (hz : ∀ i, |z i| ≤ B) (i : Fin n) :
     |(bucketProjectionMatrix P.bucket hbucket.choose *ᵥ z) i| ≤ B := by
   classical
@@ -259,7 +259,7 @@ lemma abs_centeredProjection_mulVec_le_two
 the ambient dimension in `L∞`. -/
 lemma abs_matrix_mulVec_le_card_mul
     {n : ℕ} (M : Matrix (Fin n) (Fin n) ℝ) (z : Fin n → ℝ)
-    {B : ℝ} (hB : 0 ≤ B) (hM : ∀ i j, |M i j| ≤ 1)
+    {B : ℝ} (_hB : 0 ≤ B) (hM : ∀ i j, |M i j| ≤ 1)
     (hz : ∀ j, |z j| ≤ B) (i : Fin n) :
     |(M *ᵥ z) i| ≤ (n : ℝ) * B := by
   change |∑ j, M i j * z j| ≤ (n : ℝ) * B
@@ -488,8 +488,7 @@ lemma abs_bucketCenteredAdjacency_le_one {n m : ℕ}
         (1 / 8 : ℝ) *
           (M i j - (M * Q) i j - (Q * M) i j + (Q * M * Q) i j) := by
     rw [bucketCenteredAdjacency_eq_mStar]
-    simp only [Structured.mStar, Structured.centeredProjection,
-      smul_apply, smul_eq_mul]
+    simp only [Structured.mStar, Structured.centeredProjection]
     rw [hmatrix]
     rfl
   rw [hentry, abs_mul]

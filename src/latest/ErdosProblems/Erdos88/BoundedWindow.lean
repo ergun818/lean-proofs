@@ -32,11 +32,12 @@ lemma finiteRamseyFree_fin_iff {n : ℕ} (C : ℝ)
 /-- Ramsey-freeness passes to an induced finite subtype whenever the target
 logarithmic threshold dominates the ambient one. -/
 lemma finiteRamseyFree_induce_of_threshold {V : Type*} [Fintype V]
-    [DecidableEq V] (G : SimpleGraph V) (A : Finset V) {C D : ℝ}
+    (G : SimpleGraph V) (A : Finset V) {C D : ℝ}
     (hG : FiniteRamseyFree C G)
     (hthreshold : C * Real.logb 2 (Fintype.card V) ≤
       D * Real.logb 2 A.card) :
     FiniteRamseyFree D (G.induce (A : Set V)) := by
+  classical
   intro T hT
   let S : Finset V := T.image Subtype.val
   have hcard : S.card = T.card := by
@@ -140,13 +141,14 @@ lemma subtypeSubsetImage_subset {V : Type*} [DecidableEq V]
 
 /-- Subsets of the subtype cut out by `A` and members of `A.powerset` have
 the same filtered cardinality under the forgetful map. -/
-lemma card_filter_subtypeSubsetImage {V : Type*} [Fintype V]
+lemma card_filter_subtypeSubsetImage {V : Type*} [Finite V]
     [DecidableEq V] (A : Finset V) (P : Finset V → Prop)
     [DecidablePred P] :
     ((Finset.univ : Finset (Finset (A : Set V))).filter fun R ↦
         P (subtypeSubsetImage A R)).card =
       (A.powerset.filter P).card := by
   classical
+  let : Fintype V := Fintype.ofFinite V
   apply Finset.card_bij (fun R _hR ↦ subtypeSubsetImage A R)
   · intro R hR
     simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hR ⊢
@@ -161,9 +163,9 @@ lemma card_filter_subtypeSubsetImage {V : Type*} [Fintype V]
           Subtype.ext (congrArg (fun z : (A : Set V) ↦ z.1) h)⟩
     let R : Finset (A : Set V) := S.attach.map emb
     have hEq : subtypeSubsetImage A R = S := by
-      ext x
-      simp [subtypeSubsetImage, R, emb]
-      exact fun hx ↦ hS' hx
+      change (S.attach.map emb).image Subtype.val = S
+      rw [Finset.map_eq_image, Finset.image_image]
+      exact Finset.attach_image_val
     refine ⟨R, ?_, hEq⟩
     simp only [Finset.mem_filter, Finset.mem_univ, true_and]
     rw [hEq]
@@ -172,10 +174,11 @@ lemma card_filter_subtypeSubsetImage {V : Type*} [Fintype V]
 /-- Inducing on `A` and then on a subtype subset counts the same edges as
 forgetting the subtype proofs first. -/
 lemma inducedEdges_subtypeSubsetImage {V : Type*} [Fintype V]
-    [DecidableEq V] (G : SimpleGraph V) [DecidableRel G.Adj]
+    [DecidableEq V] (G : SimpleGraph V)
     (A : Finset V) (R : Finset (A : Set V)) :
     inducedEdges (G.induce (A : Set V)) R =
       inducedEdges G (subtypeSubsetImage A R) := by
+  classical
   let H := G.induce (A : Set V)
   let sA : Set A := R
   let sV : Set V := Subtype.val '' sA

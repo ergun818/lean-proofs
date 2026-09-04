@@ -10,7 +10,7 @@ balancedness interface there to an arbitrary positive power scale.  The AKS
 application uses the specialization `theta = 1 / 5`.
 -/
 
-open Classical SimpleGraph
+open SimpleGraph
 
 namespace Erdos88
 namespace AKSGraph
@@ -55,6 +55,7 @@ theorem ramseyFree_eventually_balanced_rpow
       ∀ {n : ℕ}, 1 ≤ n → ∀ (G : SimpleGraph (Fin n)), RamseyFree C G →
         ∀ {t : ℕ}, N ≤ t → (n : ℝ) ^ theta ≤ (t : ℝ) →
           IsBalanced G gamma t ∧ IsBalanced Gᶜ gamma t := by
+  classical
   obtain ⟨a, ha, N, hDensity⟩ :=
     FiniteES.ramseyFree_edgeCount_density_lower (C / theta)
       (div_pos hC htheta)
@@ -1193,7 +1194,7 @@ lemma base_le_reservoirRequirement {Q base k : ℕ} (hQ : 0 < Q) :
 
 /-- Closed geometric upper bound for the backward reservoir recurrence. -/
 lemma reservoirRequirement_add_two_le
-    {Q base k : ℕ} (hQ : 0 < Q) :
+    {Q base k : ℕ} (_hQ : 0 < Q) :
     reservoirRequirement Q base k + 2 ≤
       (pairSelectedSize Q + 1) ^ k * (base + 2) := by
   induction k with
@@ -1502,7 +1503,7 @@ lemma rpow_le_two_pow_logarithmicStageCount
   have hexponent :
       Real.log n * (1 / (16 * (B : ℝ))) ≤
         (K : ℝ) * Real.log 2 := by
-    convert hhalf using 1 <;> field_simp <;> ring
+    convert hhalf using 1 ; field_simp ; ring
   rw [Real.rpow_def_of_pos hnReal]
   calc
     Real.exp (Real.log n * (1 / (16 * (B : ℝ)))) ≤

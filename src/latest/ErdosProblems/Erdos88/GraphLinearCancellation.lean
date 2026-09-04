@@ -7,7 +7,7 @@ open MeasureTheory ProbabilityTheory
 namespace Erdos88
 namespace BooleanSlices
 
-open Classical Finset Invariance
+open Finset Invariance
 
 lemma hybridEval_memLp_two {n t : ℕ} (i : Fin n) :
     MemLp (fun x : Fin n → ℝ ↦ x i) 2 (hybridMeasure n t) := by
@@ -518,7 +518,7 @@ end Erdos88
 namespace Erdos88
 namespace BooleanSlices
 
-open Classical Finset Invariance
+open Finset Invariance
 
 /-- Centering cancels the phase of an affine Gaussian characteristic
 function exactly. -/
@@ -552,8 +552,8 @@ end BooleanSlices
 
 namespace GraphQuadratic
 
-open Classical
 
+open Classical in
 /-- Graph-coefficient specialization of the sharp Gaussian quadratic-to-linear
 characteristic estimate. -/
 theorem norm_graphGaussianQuadratic_sub_linear_le {n : ℕ}
@@ -572,6 +572,7 @@ theorem norm_graphGaussianQuadratic_sub_linear_le {n : ℕ}
       (graphSliceMatrix G) (graphSliceMatrix_symmetric G)
       (graphSliceMatrix_diagonal G) t
 
+open Classical in
 /-- Centered graph Gaussian characteristic estimate in the exact edge-count
 normalization. -/
 theorem norm_centeredGraphGaussianQuadratic_sub_linearGaussian_le {n : ℕ}

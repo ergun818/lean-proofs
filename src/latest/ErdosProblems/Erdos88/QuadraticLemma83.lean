@@ -66,7 +66,7 @@ lemma mem_prefixEventFinset_full {Ω : Type u} [Fintype Ω] {q : ℕ}
 special case: the successor inequality is stated without division. -/
 lemma card_prefixEventFinset_le_pow {Ω : Type u} [Fintype Ω] {q : ℕ}
     (E : Fin q → Ω → Prop) (B : ℝ) (hB : 0 ≤ B)
-    (hstep : ∀ k (hk : k < q),
+    (hstep : ∀ k (_hk : k < q),
       ((prefixEventFinset E (k + 1)).card : ℝ) ≤
         B * (prefixEventFinset E k).card) :
     ((prefixEventFinset E q).card : ℝ) ≤ B ^ q * Fintype.card Ω := by
@@ -92,7 +92,7 @@ lemma card_prefixEventFinset_le_pow {Ω : Type u} [Fintype Ω] {q : ℕ}
 theorem uniformProbability_all_fin_le_pow
     {Ω : Type u} [Fintype Ω] [Nonempty Ω] {q : ℕ}
     (E : Fin q → Ω → Prop) (B : ℝ) (hB : 0 ≤ B)
-    (hstep : ∀ k (hk : k < q),
+    (hstep : ∀ k (_hk : k < q),
       ((prefixEventFinset E (k + 1)).card : ℝ) ≤
         B * (prefixEventFinset E k).card) :
     Concentration.uniformProbability (fun ω ↦ ∀ i, E i ω) ≤ B ^ q := by
@@ -135,11 +135,12 @@ def finInitialSegment (N L : ℕ) (hL : L ≤ N) : Finset (Fin N) :=
 
 /-- Changing a predicate only on an exceptional set changes the real
 cardinality of its filter by at most the size of that exceptional set. -/
-lemma abs_card_filter_sub_le_card_exception {α : Type*} [DecidableEq α]
+lemma abs_card_filter_sub_le_card_exception {α : Type*}
     (s : Finset α) (P Q : α → Prop) [DecidablePred P] [DecidablePred Q]
     [DecidablePred fun x ↦ P x ↔ ¬Q x] :
     |((s.filter P).card : ℝ) - (s.filter Q).card| ≤
       ((s.filter fun x ↦ P x ↔ ¬Q x).card : ℝ) := by
+  classical
   let D := s.filter fun x ↦ P x ↔ ¬Q x
   have hPD : s.filter P ⊆ s.filter Q ∪ D := by
     intro x hx
@@ -391,7 +392,7 @@ theorem permutationInitialCount_two_sided_tail_count
     (permutationInitialCount_prefix (N + 1) R L hR hL)
     (permutationInitialCount_leftSwap_diff_le (N + 1) R L hR hL)
   rw [uniformExpectation_permutationInitialCount N R L hR hL] at htail
-  convert htail using 1 <;> ring_nf
+  convert htail using 1 ; ring_nf
 
 /-- Normalized probability form of
 `permutationInitialCount_two_sided_tail_count`. -/
@@ -415,13 +416,14 @@ theorem permutationInitialCount_two_sided_probability
 
 /-- Enumerate a finite ambient set so that an arbitrary subset occupies
 the first block of slots. -/
-lemma exists_aligned_finEquiv {α : Type*} [Fintype α] [DecidableEq α]
+lemma exists_aligned_finEquiv {α : Type*} [Finite α]
     (I W : Finset α) (hW : W ⊆ I) :
     ∃ e : Fin I.card ≃ ↑I,
       (finInitialSegment I.card W.card (Finset.card_le_card hW)).map
           (e.toEmbedding.trans
             (Function.Embedding.subtype fun i : α ↦ i ∈ I)) = W := by
   classical
+  let : Fintype α := Fintype.ofFinite α
   let e₀ : Fin I.card ≃ ↑I := (Finset.equivFin I).symm
   let A := finInitialSegment I.card W.card (Finset.card_le_card hW)
   let C₀ := BooleanSlices.finsetLift I W
@@ -454,7 +456,7 @@ lemma exists_aligned_finEquiv {α : Type*} [Fintype α] [DecidableEq α]
 /-- With an aligned enumeration, decoding the inverse permutation turns
 intersection with `W` into the short-prefix permutation count. -/
 lemma card_signedSlicePositiveSupport_inter_aligned
-    {α : Type*} [Fintype α] [DecidableEq α]
+    {α : Type*} [Finite α] [DecidableEq α]
     (I W : Finset α) (R ell : ℕ)
     (hR : R ≤ I.card) (hell : ell ≤ I.card)
     (e : Fin I.card ≃ ↑I)
@@ -466,6 +468,7 @@ lemma card_signedSlicePositiveSupport_inter_aligned
         (by simpa using hell) e σ.symm) ∩ W).card : ℝ) =
       permutationInitialCount I.card R ell hR hell σ := by
   classical
+  let : Fintype α := Fintype.ofFinite α
   let A := finInitialSegment I.card R hR
   let T := finInitialSegment I.card ell hell
   let emb : Fin I.card ↪ α := e.toEmbedding.trans
@@ -533,7 +536,7 @@ lemma uniformProbability_comp_equiv {Ω Ω' : Type*}
 /-- Hypergeometric concentration for the intersection of a uniform
 fixed-size subset with an arbitrary fixed coordinate set. -/
 theorem booleanSlice_intersection_two_sided_probability
-    {α : Type*} [Fintype α] [DecidableEq α]
+    {α : Type*} [Finite α] [DecidableEq α]
     (I W : Finset α) (ell : ℕ) (hW : W ⊆ I)
     (hell : ell ≤ I.card) (hWpos : 0 < W.card)
     (t : ℝ) (ht : 0 ≤ t) :
@@ -543,6 +546,7 @@ theorem booleanSlice_intersection_two_sided_probability
             (W.card : ℝ) * ell / I.card|) ≤
       2 * Real.exp (-t ^ 2 / (8 * W.card)) := by
   classical
+  let : Fintype α := Fintype.ofFinite α
   let : Nonempty (BooleanSlices.BooleanSlicePoint I ell) :=
     BooleanSlices.booleanSlicePoint_nonempty hell
   let hR : W.card ≤ I.card := Finset.card_le_card hW
@@ -701,11 +705,12 @@ noncomputable def booleanSliceTwoBlockFiberEquiv
     · exact hInterB P Q
 
 lemma card_booleanSliceTwoBlockFiber
-    {α : Type*} [Fintype α] [DecidableEq α]
+    {α : Type*} [Finite α] [DecidableEq α]
     (A B : Finset α) (hAB : Disjoint A B) (ell j : ℕ) (hj : j ≤ ell) :
     Fintype.card {U : BooleanSlices.BooleanSlicePoint (A ∪ B) ell //
         (U.1 ∩ A).card = j} =
       Nat.choose A.card j * Nat.choose B.card (ell - j) := by
+  let : Fintype α := Fintype.ofFinite α
   rw [Fintype.card_congr
     (booleanSliceTwoBlockFiberEquiv A B hAB ell j hj),
     Fintype.card_prod, BooleanSlices.card_booleanSlicePoint,
@@ -714,7 +719,7 @@ lemma card_booleanSliceTwoBlockFiber
 /-- Exact hypergeometric mass identity for a statistic depending only on
 the number chosen from the first of two equal disjoint blocks. -/
 lemma card_booleanSliceTwoBlock_filter
-    {α : Type*} [Fintype α] [DecidableEq α]
+    {α : Type*} [Finite α] [DecidableEq α]
     (A B : Finset α) (hAB : Disjoint A B) (m ell : ℕ)
     (hA : A.card = m) (hB : B.card = m) (P : ℕ → Prop)
     [DecidablePred P] :
@@ -724,6 +729,7 @@ lemma card_booleanSliceTwoBlock_filter
       ∑ j ∈ (Finset.range (ell + 1)).filter P,
         hypergeomWeight m ell j := by
   classical
+  let : Fintype α := Fintype.ofFinite α
   let Ω := BooleanSlices.BooleanSlicePoint (A ∪ B) ell
   let event : Finset Ω := Finset.univ.filter fun U ↦ P ((U.1 ∩ A).card)
   let g : Ω → ℕ := fun U ↦ (U.1 ∩ A).card
@@ -771,7 +777,7 @@ lemma card_booleanSliceTwoBlock_filter
 
 /-- Lemma 8.4 transported to a uniform slice on two concrete equal blocks. -/
 theorem booleanSliceTwoBlock_residue_probability
-    {α : Type*} [Fintype α] [DecidableEq α]
+    {α : Type*} [Finite α] [DecidableEq α]
     (A B : Finset α) (hAB : Disjoint A B) (m ell : ℕ)
     (hA : A.card = m) (hB : B.card = m)
     (eta tau x delta : ℝ)
@@ -787,6 +793,7 @@ theorem booleanSliceTwoBlock_residue_probability
         ((|tau| + delta) *
           (|tau| + 1 / Real.sqrt (2 * m : ℕ)) / |tau|) := by
   classical
+  let : Fintype α := Fintype.ofFinite α
   have hUnion : (A ∪ B).card = 2 * m := by
     rw [Finset.card_union_of_disjoint hAB, hA, hB]
     omega
@@ -883,7 +890,7 @@ noncomputable def booleanSliceOutsideFiberEquiv
 outside two equal blocks, the remaining statistic has the symmetric
 hypergeometric law controlled by Lemma 8.4. -/
 theorem booleanSliceOutsideFiber_residue_probability
-    {α : Type*} [Fintype α] [DecidableEq α]
+    {α : Type*} [Finite α] [DecidableEq α]
     (I A B T : Finset α) (m ell : ℕ)
     (hAB : Disjoint A B) (hA : A.card = m) (hB : B.card = m)
     (hS : A ∪ B ⊆ I) (hT : T ⊆ I \ (A ∪ B))
@@ -904,6 +911,7 @@ theorem booleanSliceOutsideFiber_residue_probability
         ((|tau| + delta) *
           (|tau| + 1 / Real.sqrt (2 * m : ℕ)) / |tau|) := by
   classical
+  let : Fintype α := Fintype.ofFinite α
   let E := booleanSliceOutsideFiberEquiv I (A ∪ B) T ell hS hT hTell
   have hell : ell - T.card ≤ 2 * m := by
     have hη : 1 - eta ≤ 1 := by linarith
@@ -1007,7 +1015,7 @@ lemma degreeInto_inter_eq_outside_of_nonadj
 lemma degreeInto_inter_eq_outside_add_card
     {V : Type*} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) (v : V) (U J A B : Finset V)
-    (hAB : Disjoint A B) (hAJ : A ⊆ J) (hBJ : B ⊆ J)
+    (_hAB : Disjoint A B) (hAJ : A ⊆ J) (_hBJ : B ⊆ J)
     (hadjA : ∀ z ∈ A, G.Adj v z)
     (hnonadjB : ∀ z ∈ B, ¬G.Adj v z) :
     AKSGraph.degreeInto G v (U ∩ J) =
@@ -1026,7 +1034,7 @@ lemma degreeInto_inter_eq_outside_add_card
       · have hzB : z ∉ B := by
           intro hzB
           exact hnonadjB z hzB hzAdj
-        exact Or.inl ⟨hzAdj, ⟨hzU, by simpa [hzA, hzB]⟩, hzJ⟩
+        exact Or.inl ⟨hzAdj, ⟨hzU, by simp [hzA, hzB]⟩, hzJ⟩
     · rintro (⟨hzAdj, ⟨hzU, _hzUAB⟩, hzJ⟩ | ⟨hzU, hzAin⟩)
       · exact ⟨hzAdj, hzU, hzJ⟩
       · exact ⟨hadjA z hzAin, hzU, hAJ hzAin⟩
@@ -1187,7 +1195,7 @@ theorem lemma83Blocks_outsideFiber_residue_probability
 with the bad fibers paid for additively.  This is the finite counting form of
 the conditioning step in the proof of Lemma 8.3. -/
 lemma card_and_le_mul_add_bad_of_fibers
-    {Ω : Type u} {Θ : Type*} [Fintype Ω] [Fintype Θ]
+    {Ω : Type u} {Θ : Type*} [Fintype Ω] [Finite Θ]
     [DecidableEq Θ]
     (f : Ω → Θ) (P Q : Ω → Prop) (Good : Θ → Prop) (B : ℝ)
     [DecidablePred P] [DecidablePred Q] [DecidablePred Good]
@@ -1201,6 +1209,7 @@ lemma card_and_le_mul_add_bad_of_fibers
       B * (((Finset.univ : Finset Ω).filter P).card : ℝ) +
         (((Finset.univ : Finset Ω).filter fun ω ↦ ¬Good (f ω)).card : ℝ) := by
   classical
+  let : Fintype Θ := Fintype.ofFinite Θ
   let E : Finset Ω := Finset.univ.filter fun ω ↦ P ω ∧ Q ω
   let EG : Finset Ω := E.filter fun ω ↦ Good (f ω)
   let EB : Finset Ω := E.filter fun ω ↦ ¬Good (f ω)
@@ -1302,7 +1311,7 @@ lemma uniformProbability_eq_filter_div
   simp
 
 lemma card_fiber_le_mul_of_uniformProbability
-    {Ω : Type u} {Θ : Type*} [Fintype Ω] [Fintype Θ]
+    {Ω : Type u} {Θ : Type*} [Fintype Ω] [Finite Θ]
     [DecidableEq Θ] (f : Ω → Θ) (Q : Ω → Prop) [DecidablePred Q]
     (t : Θ) (B : ℝ)
     (hprob : Concentration.uniformProbability
@@ -1310,6 +1319,7 @@ lemma card_fiber_le_mul_of_uniformProbability
     (((Finset.univ : Finset Ω).filter fun ω ↦ f ω = t ∧ Q ω).card : ℝ) ≤
       B * (((Finset.univ : Finset Ω).filter fun ω ↦ f ω = t).card : ℝ) := by
   classical
+  let : Fintype Θ := Fintype.ofFinite Θ
   let E : {ω : {ω : Ω // f ω = t} // Q ω} ≃
       {ω : Ω // f ω = t ∧ Q ω} :=
     { toFun := fun ω ↦ ⟨ω.1.1, ω.1.2, ω.2⟩
@@ -1356,7 +1366,7 @@ lemma card_fiber_le_mul_of_uniformProbability
 /-- If a prefix predicate is constant on a fiber, a bound for the whole
 fiber remains valid after intersecting with that prefix. -/
 lemma card_fiber_and_le_of_invariant
-    {Ω : Type u} {Θ : Type*} [Fintype Ω] [Fintype Θ]
+    {Ω : Type u} {Θ : Type*} [Fintype Ω] [Finite Θ]
     [DecidableEq Θ] (f : Ω → Θ) (P Q : Ω → Prop)
     [DecidablePred P] [DecidablePred Q] (t : Θ) (B : ℝ)
     (hPinvariant : ∀ ω₁ ω₂, f ω₁ = f ω₂ → (P ω₁ ↔ P ω₂))
@@ -1368,6 +1378,7 @@ lemma card_fiber_and_le_of_invariant
       B * (((Finset.univ : Finset Ω).filter fun ω ↦
         f ω = t ∧ P ω).card : ℝ) := by
   classical
+  let : Fintype Θ := Fintype.ofFinite Θ
   by_cases hP : ∃ ω, f ω = t ∧ P ω
   · obtain ⟨ω₀, hω₀t, hω₀P⟩ := hP
     have hPt : ∀ ω, f ω = t → P ω := by
@@ -1409,10 +1420,11 @@ lemma card_fiber_and_le_of_invariant
 /-! ### Balanced outside fibers -/
 
 lemma booleanSlice_inside_card_eq_sub_outside
-    {α : Type*} [Fintype α] [DecidableEq α]
+    {α : Type*} [Finite α] [DecidableEq α]
     (I S : Finset α) (ell : ℕ)
     (U : BooleanSlices.BooleanSlicePoint I ell) :
     (U.1 ∩ S).card = ell - (U.1 \ S).card := by
+  let : Fintype α := Fintype.ofFinite α
   have hsplit : U.1 = (U.1 \ S) ∪ (U.1 ∩ S) := by
     ext x
     by_cases hx : x ∈ S <;> simp [hx]
@@ -1423,10 +1435,11 @@ lemma booleanSlice_inside_card_eq_sub_outside
   omega
 
 lemma booleanSlice_outside_subset
-    {α : Type*} [Fintype α] [DecidableEq α]
+    {α : Type*} [Finite α] [DecidableEq α]
     {I S : Finset α} {ell : ℕ}
     (U : BooleanSlices.BooleanSlicePoint I ell) :
     U.1 \ S ⊆ I \ S := by
+  let : Fintype α := Fintype.ofFinite α
   intro x hx
   have hx' := Finset.mem_sdiff.mp hx
   exact Finset.mem_sdiff.mpr
@@ -1449,7 +1462,7 @@ noncomputable def lemma83BadResidueFinset
 /-- The bad outside fibers have exponentially small total mass under a
 uniform fixed-size slice. -/
 theorem booleanSlice_bad_residue_probability
-    {α : Type*} [Fintype α] [DecidableEq α]
+    {α : Type*} [Finite α] [DecidableEq α]
     (I S : Finset α) (ell m : ℕ) (eta : ℝ)
     (hS : S ⊆ I) (hScard : S.card = 2 * m)
     (hell : ell ≤ I.card) (hm : 1 ≤ m) (heta : 0 < eta)
@@ -1460,6 +1473,7 @@ theorem booleanSlice_bad_residue_probability
           ¬lemma83BalancedResidue eta m ell (U.1 \ S).card) ≤
       2 * Real.exp (-(eta * m) ^ 2 / (8 * S.card)) := by
   classical
+  let : Fintype α := Fintype.ofFinite α
   let : Nonempty (BooleanSlices.BooleanSlicePoint I ell) :=
     BooleanSlices.booleanSlicePoint_nonempty hell
   have hSpos : 0 < S.card := by omega
@@ -1640,7 +1654,7 @@ theorem lemma83Blocks_oneStep_card
         have : U ∈ (Finset.univ : Finset Ω).filter (fun V ↦ f V = T) :=
           Finset.mem_filter.mpr ⟨Finset.mem_univ _, hUT⟩
         rw [hbase] at this
-        simpa using this
+        simp at this
       rw [hleft, hbase]
       norm_num
 
@@ -1661,7 +1675,7 @@ theorem lemma83Blocks_oneStep_probability
     (hellupper : (ell : ℝ) ≤ (1 - eta) * I.card)
     (htau : tau ≠ 0) (hdelta : 0 < delta)
     (hdeltaUpper : delta ≤ 1 / 2)
-    (P : BooleanSlices.BooleanSlicePoint I ell → Prop) [DecidablePred P]
+    (P : BooleanSlices.BooleanSlicePoint I ell → Prop)
     (hPinvariant : ∀ U V,
       U.1 \ (A ∪ B) = V.1 \ (A ∪ B) → (P U ↔ P V)) :
     Concentration.uniformProbability
@@ -1936,7 +1950,7 @@ lemma affine_recurrence_le_pow_add
   | succ q ih =>
       have hrec := hstep q (Nat.lt_succ_self q)
       have hprev : p q ≤ C ^ q + (q : ℝ) * eps :=
-        ih (fun k hk => hstep k (Nat.lt.step hk))
+        ih (fun k hk => hstep k (Nat.lt_succ_of_lt hk))
       have hscale : C * ((q : ℝ) * eps) ≤ (q : ℝ) * eps := by
         have hnonneg : 0 ≤ (q : ℝ) * eps := mul_nonneg (by positivity) heps
         simpa only [one_mul] using mul_le_mul_of_nonneg_right hC1 hnonneg

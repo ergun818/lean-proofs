@@ -136,11 +136,12 @@ private lemma binary_eq_of_decide_eq {a b : ℝ}
 /-- A finite family of binary vectors spanning a `d`-dimensional real
 subspace has at most `2^d` members.  This is the linear-algebraic counting
 step behind KSSS Lemma 10.4. -/
-lemma card_binary_vectors_le_two_pow_finrank {κ : Type v} [Fintype κ]
+lemma card_binary_vectors_le_two_pow_finrank {κ : Type v} [Finite κ]
     (S : Finset (κ → ℝ))
     (hS : ∀ x ∈ S, ∀ j, x j = 0 ∨ x j = 1) :
     S.card ≤ 2 ^ Module.finrank ℝ (Submodule.span ℝ (S : Set (κ → ℝ))) := by
   classical
+  let : Fintype κ := Fintype.ofFinite κ
   let W : Submodule ℝ (κ → ℝ) := Submodule.span ℝ (S : Set (κ → ℝ))
   let coords : Set (W →ₗ[ℝ] ℝ) := Set.range (coordinateOn W)
   have hcoords : Submodule.span ℝ coords = ⊤ := by
@@ -152,7 +153,7 @@ lemma card_binary_vectors_le_two_pow_finrank {κ : Type v} [Fintype κ]
       exact Subtype.ext h
     obtain ⟨j, hj⟩ : ∃ j, z.1 j ≠ 0 := by
       by_contra h
-      push_neg at h
+      push Not at h
       exact hzfun (funext h)
     exact ⟨coordinateOn W j, ⟨j, rfl⟩, hj⟩
   obtain ⟨T, hTsub, hTcard, hTspan, hTind⟩ :=
@@ -220,12 +221,13 @@ lemma rowTypes_card_le_two_pow_rank {ι : Type u} {κ : Type v}
 `colCode` are the two partitions; every rectangle formed by two fibres is
 constant. -/
 theorem binary_low_rank_partition (r : ℕ) {ι : Type u} {κ : Type v}
-    [Fintype ι] [Fintype κ] (Q : Matrix ι κ ℝ)
+    [Finite ι] [Fintype κ] (Q : Matrix ι κ ℝ)
     (hQ : IsBinary Q) (hrank : Q.rank ≤ r) :
     ∃ rowCode : ι → Fin (2 ^ r), ∃ colCode : κ → Fin (2 ^ r),
       ∀ ⦃i i' j j'⦄, rowCode i = rowCode i' → colCode j = colCode j' →
         Q i j = Q i' j' := by
   classical
+  let : Fintype ι := Fintype.ofFinite ι
   let R := rowTypes Q
   have hRcard : R.card ≤ 2 ^ r :=
     (rowTypes_card_le_two_pow_rank Q hQ).trans (Nat.pow_le_pow_right (by omega) hrank)
@@ -354,7 +356,7 @@ lemma redCount_eq_sum_colDegree
 /-- There are few rows whose red degree exceeds a threshold. -/
 lemma threshold_mul_card_highRedRows_le
     {ι : Type u} {κ : Type v} [Fintype ι] [Fintype κ]
-    (red : ι → κ → Prop) {t : ℝ} (ht : 0 ≤ t) :
+    (red : ι → κ → Prop) {t : ℝ} (_ht : 0 ≤ t) :
     (((Finset.univ.filter fun i ↦ t < (redRowDegree red i : ℝ)).card : ℕ) : ℝ) * t ≤
       redCount red := by
   classical
@@ -375,7 +377,7 @@ lemma threshold_mul_card_highRedRows_le
 /-- Column version of `threshold_mul_card_highRedRows_le`. -/
 lemma threshold_mul_card_highRedCols_le
     {ι : Type u} {κ : Type v} [Fintype ι] [Fintype κ]
-    (red : ι → κ → Prop) {t : ℝ} (ht : 0 ≤ t) :
+    (red : ι → κ → Prop) {t : ℝ} (_ht : 0 ≤ t) :
     (((Finset.univ.filter fun j ↦ t < (redColDegree red j : ℝ)).card : ℕ) : ℝ) * t ≤
       redCount red := by
   classical
@@ -414,7 +416,7 @@ lemma card_highRedCols_lt
 /-- The union of all code fibres of size at most `s` has cardinality at
 most the number of occurring codes times `s`. -/
 lemma card_small_code_fibers_le
-    {I C : Type*} [DecidableEq I] [DecidableEq C]
+    {I C : Type*} [DecidableEq C]
     (S : Finset I) (code : I → C) {s : ℝ} (hs : 0 ≤ s) :
     let types := S.image code
     let smallTypes := types.filter fun c ↦
@@ -445,7 +447,7 @@ lemma card_small_code_fibers_le
       exact Finset.filter_subset _ _
 
 /-- At most `2^l` Boolean words of length `l` can occur as codes. -/
-lemma card_bool_codes_le_two_pow {I : Type*} [DecidableEq I]
+lemma card_bool_codes_le_two_pow {I : Type*}
     (S : Finset I) {l : ℕ} (code : I → Fin l → Bool) :
     (S.image code).card ≤ 2 ^ l := by
   classical
@@ -508,7 +510,7 @@ lemma editDistance_le_redCount_add_discard
 red/green coloring in Proposition 10.2. -/
 lemma threshold_mul_redCount_le_frobeniusSq
     {ι : Type u} {κ : Type v} [Fintype ι] [Fintype κ]
-    (A B : Matrix ι κ ℝ) {τ : ℝ} (hτ : 0 ≤ τ) :
+    (A B : Matrix ι κ ℝ) {τ : ℝ} (_hτ : 0 ≤ τ) :
     (redCount (fun i j ↦ τ < (A i j - B i j) ^ 2) : ℝ) * τ ≤
       frobeniusSq (A - B) := by
   classical
@@ -959,7 +961,7 @@ private lemma coreColCode_eq_entries
 /-- For Boolean words of length `l`, the union of the occurring fibres of
 size at most `s` has size at most `2^l s`. -/
 lemma card_small_bool_code_fibers_le
-    {I : Type*} [DecidableEq I] (S : Finset I) {l : ℕ}
+    {I : Type*} (S : Finset I) {l : ℕ}
     (code : I → Fin l → Bool) {s : ℝ} (hs : 0 ≤ s) :
     let types := S.image code
     let smallTypes := types.filter fun c ↦
@@ -1296,7 +1298,7 @@ lemma exists_green_in_large_rectangle
     ∃ i ∈ S, ∃ j ∈ T, ¬ red i j := by
   classical
   by_contra hgreen
-  push_neg at hgreen
+  push Not at hgreen
   have hsubset : S.product T ⊆
       (Finset.univ.product Finset.univ).filter fun p ↦ red p.1 p.2 := by
     intro p hp
@@ -1635,7 +1637,7 @@ zero, so the zero matrix changes only red cells. -/
 theorem ksssLemma103_rank_zero
     (n : ℕ) (η : ℝ) (A : Matrix (Fin n) (Fin n) ℝ)
     (red : Fin n → Fin n → Prop)
-    (hη : 0 < η) (hηone : η ≤ 1) (hA : IsBinary A)
+    (hη : 0 < η) (hηone : η ≤ 1) (_hA : IsBinary A)
     (hred : (redCount red : ℝ) <
       η ^ 2 / (10 * (2 : ℝ) ^ (0 : ℕ)) ^ 2 * (n : ℝ) ^ 2)
     (hsingular : AllGreenMinorSingular 0 A red) :
@@ -1734,7 +1736,6 @@ theorem ksssLemma103 : KSSSLemma103 := by
     rw [hsdef]
     dsimp [p]
     field_simp
-    <;> ring
   have hsMulP : s ≤ p * s := by
     simpa [one_mul] using mul_le_mul_of_nonneg_right hpone (le_of_lt hs)
   have hsEta : s ≤ η * (n : ℝ) / 10 := by
@@ -1846,7 +1847,6 @@ theorem proposition102_of_lemma103_and_minorSeparation
       dsimp [η, Cr]
       rw [mul_pow, mul_pow, hsratio, hsε]
       field_simp [ne_of_gt hd]
-      <;> ring
     have hbase : 0 < ε / τ * (n : ℝ) ^ 2 :=
       mul_pos (div_pos hεpos hτ) (sq_pos_of_pos hnreal)
     have hredstrict :
@@ -1931,7 +1931,7 @@ theorem ksssProposition102_equalCard
     simpa [A₀, Matrix.reindex_apply] using hA (eι.symm i) (eκ.symm j)
   have hB₀rank : B₀.rank ≤ r := by
     rw [show B₀.rank = B.rank by
-      simpa [B₀] using Matrix.rank_reindex eι eκ B]
+      simp [B₀]]
     exact hBrank
   have hclose₀ : frobeniusSq (A₀ - B₀) ≤ ε * (q : ℝ) ^ 2 := by
     have hsub : A₀ - B₀ = (A - B).submatrix eι.symm eκ.symm := by
@@ -1945,7 +1945,7 @@ theorem ksssProposition102_equalCard
   · intro i j
     simpa [Q] using hQ₀ (eι i) (eκ j)
   · rw [show Q.rank = Q₀.rank by
-      simpa [Q] using Matrix.rank_submatrix Q₀ eι eκ]
+      simp [Q]]
     exact hQ₀rank
   · have hsub : A - Q = (A₀ - Q₀).submatrix eι eκ := by
       ext i j
@@ -2090,8 +2090,8 @@ point; the strict ordered-pair budget supplies a point of bad degree `< q`
 at every step. -/
 lemma exists_pairwise_not_relation_of_pair_budget
     {α : Type*} [DecidableEq α] (bad : α → α → Prop)
-    (hbadSymm : Symmetric bad) (S : Finset α) (L q k : ℕ)
-    (hL : 0 < L) (hsize : L + k * q ≤ S.card)
+    (hbadSymm : Std.Symm bad) (S : Finset α) (L q k : ℕ)
+    (_hL : 0 < L) (hsize : L + k * q ≤ S.card)
     (hpairs : (relationPairs bad S).card < q * L) :
     ∃ T : Finset α, T ⊆ S ∧ T.card = k ∧
       Set.Pairwise (T : Set α) fun x y ↦ ¬ bad x y := by
@@ -2159,7 +2159,7 @@ lemma exists_pairwise_not_relation_of_pair_budget
           exact hxnot (by
             simp only [removed, Finset.mem_insert, Finset.mem_filter]
             exact Or.inr ⟨hUSub hxU, hvx⟩)
-        exact ⟨hnotvx, fun hxvbad ↦ hnotvx (hbadSymm hxvbad)⟩
+        exact ⟨hnotvx, fun hxvbad ↦ hnotvx (hbadSymm.symm _ _ hxvbad)⟩
 
 /-- Squared error contributed by one ordered bucket block. -/
 noncomputable def bucketError {n m : ℕ} (bucket : Fin n → Fin m)
@@ -2179,7 +2179,8 @@ def badBlockPair {n m : ℕ} (bucket : Fin n → Fin m)
 
 lemma badBlockPair_symmetric {n m : ℕ} (bucket : Fin n → Fin m)
     (M : Matrix (Fin n) (Fin n) ℝ) (θ : ℝ) :
-    Symmetric (badBlockPair bucket M θ) := by
+    Std.Symm (badBlockPair bucket M θ) := by
+  constructor
   intro a b hab
   simpa [badBlockPair, add_comm] using hab
 
@@ -2187,7 +2188,7 @@ lemma badBlockPair_symmetric {n m : ℕ} (bucket : Fin n → Fin m)
 the global squared Frobenius error. -/
 lemma threshold_mul_card_badBlockPairs_le {n m : ℕ}
     (bucket : Fin n → Fin m) (M : Matrix (Fin n) (Fin n) ℝ)
-    {θ : ℝ} (hθ : 0 ≤ θ) :
+    {θ : ℝ} (_hθ : 0 ≤ θ) :
     ((relationPairs (badBlockPair bucket M θ)
         (Finset.univ : Finset (Fin m))).card : ℝ) * θ ≤
       2 * frobeniusSq M := by

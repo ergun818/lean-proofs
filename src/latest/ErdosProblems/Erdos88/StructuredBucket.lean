@@ -255,7 +255,7 @@ lemma isKSSSPartition_finCovered_of_remainder_and_block_bounds
           (n : ℝ) ^ ((1 - δ) + δ) :=
         (Real.rpow_add (show (0 : ℝ) < (n : ℝ) by exact_mod_cast hn)
           (1 - δ) δ).symm
-      _ = (n : ℝ) ^ (1 : ℝ) := by congr 1 <;> ring
+      _ = (n : ℝ) ^ (1 : ℝ) := by congr 1 ; ring
       _ = (n : ℝ) := Real.rpow_one _
   have hLowerM : T / 2 ≤ M := by
     apply (mul_le_mul_iff_of_pos_right (show (0 : ℝ) < (k : ℝ) by
@@ -315,7 +315,7 @@ lemma isKSSSPartition_finCovered_smallRLCD
           (BooleanSlices.scale_nonneg n (1 - γ))
       _ = BooleanSlices.scale n ((1 - γ) + γ) :=
         BooleanSlices.scale_mul hn (1 - γ) γ
-      _ = BooleanSlices.scale n 1 := by congr 1 <;> ring
+      _ = BooleanSlices.scale n 1 := by congr 1 ; ring
       _ = (n : ℝ) := by
         unfold BooleanSlices.scale
         exact Real.rpow_one _

@@ -3,8 +3,8 @@ import ErdosProblems.Erdos88.QuadraticNumerics
 namespace Erdos88
 namespace QuadraticCancellation
 
-open Classical
 
+open Classical in
 noncomputable def tuplePriorSet {V : Type*} [Fintype V]
     {q : ℕ} (G : SimpleGraph V) (v : Fin q → V) (i : Fin q) : Finset V :=
   Finset.univ.filter fun x ↦ ∀ j : Fin q, j < i → ¬G.Adj (v j) x
@@ -13,6 +13,7 @@ noncomputable def tupleNewNeighborCell {V : Type*} [Fintype V]
     {q : ℕ} (G : SimpleGraph V) (v : Fin q → V) (i : Fin q) : Finset V :=
   neighborsIn G (v i) (tuplePriorSet G v i)
 
+open Classical in
 noncomputable def tupleRemainingCell {V : Type*} [Fintype V]
     {q : ℕ} (G : SimpleGraph V) (v : Fin q → V) (i : Fin q) : Finset V :=
   tuplePriorSet G v i \ tupleNewNeighborCell G v i

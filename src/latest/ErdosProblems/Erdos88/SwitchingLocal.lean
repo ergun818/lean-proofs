@@ -11,7 +11,7 @@ step from the raw moment estimate of KSSS Lemma 13.4 to the local point lower
 bound required for Erdős Problem 88.
 -/
 
-open Classical SimpleGraph
+open SimpleGraph
 open scoped BigOperators
 
 namespace Erdos88
@@ -62,7 +62,7 @@ lemma switchIncrement_edgeScore {n : ℕ} (G : SimpleGraph (Fin n))
         (AKSGraph.edgeCount G (insert y W) : ℤ) =
           (AKSGraph.edgeCount G W : ℤ) +
             (AKSGraph.degreeInto G y W : ℤ) := by
-      exact_mod_cast AKSGraph.edgeCount_insert G y W (by simpa [W])
+      exact_mod_cast AKSGraph.edgeCount_insert G y W (by simp [W])
     simpa only [hU] using hyInsert
   have hreplace := congrArg₂ (fun a b : ℤ ↦ a - b) hzEdge hyEdge
   rw [switchIncrement, edgeScore_eq_edgeCount, edgeScore_eq_edgeCount,
@@ -86,12 +86,12 @@ universe u
 variable {V : Type u} [Fintype V] [DecidableEq V]
 
 private lemma card_filter_product_le_mul_of_fiber_le
-    {α β : Type*} [DecidableEq α] [DecidableEq β]
+    {α β : Type*}
     (S : Finset α) (T : Finset β) (p : α → β → Prop)
-    [DecidablePred fun ab : α × β ↦ p ab.1 ab.2]
     [∀ a, DecidablePred (p a)] (b : ℕ)
     (h : ∀ a ∈ S, (T.filter (p a)).card ≤ b) :
     ((S ×ˢ T).filter fun ab ↦ p ab.1 ab.2).card ≤ S.card * b := by
+  classical
   rw [Finset.card_filter]
   calc
     _ = ∑ a ∈ S, ∑ b ∈ T, if p a b then 1 else 0 := by
@@ -106,11 +106,9 @@ private lemma card_filter_product_le_mul_of_fiber_le
     _ = S.card * b := by simp
 
 private lemma card_good_pairs
-    {α : Type*} [DecidableEq α] (S : Finset α)
+    {α : Type*} (S : Finset α)
     (bad0 : α → Prop) (bad1 bad2 : α → α → Prop)
     [DecidablePred bad0]
-    [DecidablePred fun ab : α × α ↦ bad1 ab.1 ab.2]
-    [DecidablePred fun ab : α × α ↦ bad2 ab.1 ab.2]
     [∀ a, DecidablePred (bad1 a)] [∀ a, DecidablePred (bad2 a)]
     (b : ℕ)
     (h0 : (S.filter bad0).card ≤ b)
@@ -189,6 +187,7 @@ private lemma card_good_pairs
   change S.card * S.card ≤ 2 * Good.card
   omega
 
+omit [Fintype V] in
 /-- The directed exclusive-neighbour count is a degree into the part of
 `S₀` missed by the other vertex. -/
 lemma exclusiveNeighborCount_eq (G : SimpleGraph V) (S₀ : Finset V)
@@ -202,6 +201,7 @@ lemma exclusiveNeighborCount_eq (G : SimpleGraph V) (S₀ : Finset V)
   simp only [Finset.mem_filter, Finset.mem_sdiff]
   aesop
 
+omit [Fintype V] in
 /-- The reverse exclusive-neighbour count is the non-neighbour portion of
 the first vertex's neighbourhood in `S₀`. -/
 lemma exclusiveNeighborCount_reverse_eq (G : SimpleGraph V) (S₀ : Finset V)
@@ -480,9 +480,9 @@ lemma uniformMeanOn_indicator_eq_eventProbability_half
   rw [div_eq_mul_inv, mul_comm]
   norm_num [Nat.cast_pow]
   norm_cast
-  simpa using
-    (Finset.sum_boole (R := ℕ) P (Finset.univ : Finset (Finset V)))
+  simp
 
+open Classical in
 /-- The precise remaining graph-specific input from KSSS Section 13:
 Lemma 13.4 for the unbiased induced-edge statistic, with the switching set
 and its symmetry included. -/

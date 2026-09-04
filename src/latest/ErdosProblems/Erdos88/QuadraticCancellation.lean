@@ -33,7 +33,7 @@ open scoped BigOperators ComplexConjugate
 namespace Erdos88
 namespace QuadraticCancellation
 
-open Fourier
+open _root_.Erdos88.Fourier
 
 universe u v w
 
@@ -72,7 +72,7 @@ lemma finExpectation_swap
       have h :=
         (finExpectation_equiv (Ψ × Ω) (Ω × Ψ) (Equiv.prodComm Ψ Ω)
           (fun p ↦ f p.1 p.2)).symm
-      convert h using 1 <;> rfl
+      convert h using 1 ; rfl
     _ = finExpectation Ψ (fun j ↦ finExpectation Ω (fun i ↦ f i j)) :=
       finExpectation_prod Ψ Ω (fun p ↦ f p.2 p.1)
 
@@ -86,10 +86,10 @@ lemma finExpectation_re
     exact_mod_cast Fintype.card_ne_zero
   change ((∑ i, f i) / (c : ℂ)).re = (∑ i, (f i).re) / c
   have hre : (∑ i, f i).re = ∑ i, (f i).re := by
-    simpa using map_sum Complex.reCLM f (Finset.univ : Finset Ω)
+    simp
   rw [Complex.div_re]
-  simp only [Complex.ofReal_re, Complex.ofReal_im, mul_zero, add_zero,
-    Complex.normSq_ofReal, map_sum]
+  simp only [Complex.ofReal_re, Complex.ofReal_im, mul_zero,
+    Complex.normSq_ofReal]
   rw [hre]
   field_simp [hc]
   ring
@@ -250,11 +250,12 @@ lemma finExpectation_indicator
 of the exceptional event. -/
 lemma finExpectation_le_add_probability
     (Ω : Type u) [Fintype Ω] [Nonempty Ω] (f : Ω → ℝ)
-    (P : Ω → Prop) [DecidablePred P] {q ε : ℝ}
+    (P : Ω → Prop) {q ε : ℝ}
     (hq : 0 ≤ q) (hall : ∀ i, f i ≤ 1)
     (hgood : ∀ i, ¬P i → f i ≤ q)
     (hbad : finProbability Ω P ≤ ε) :
     finExpectation Ω f ≤ q + ε := by
+  classical
   have hpoint : ∀ i, f i ≤ q + if P i then 1 else 0 := by
     intro i
     by_cases hi : P i
@@ -389,7 +390,7 @@ theorem norm_splitQuadraticCharFun_sq_le_of_good {s r : ℕ}
     (fI : BoolSlice I s → ℝ) (fJ : BoolSlice J r → ℝ)
     (A : I → J → ℝ) (t : ℝ)
     (Good : BoolSlice J r × BoolSlice J r → Prop)
-    [DecidablePred Good] {q ε : ℝ} (hq : 0 ≤ q)
+    {q ε : ℝ} (hq : 0 ≤ q)
     (hgood : ∀ p, Good p →
       ‖sliceCharFun s (crossSliceCoefficient A p.1.1 p.2.1) t‖ ≤ q)
     (hbad : finProbability (BoolSlice J r × BoolSlice J r)
@@ -397,6 +398,7 @@ theorem norm_splitQuadraticCharFun_sq_le_of_good {s r : ℕ}
     ‖finCharFun (BoolSlice I s × BoolSlice J r)
         (fun p ↦ splitQuadraticValue fI fJ A p.1 p.2) t‖ ^ 2 ≤
       q + ε := by
+  classical
   calc
     ‖finCharFun (BoolSlice I s × BoolSlice J r)
         (fun p ↦ splitQuadraticValue fI fJ A p.1 p.2) t‖ ^ 2 ≤
@@ -421,12 +423,11 @@ fraction of the two-copy exposures yield many disjoint coefficient pairs
 separated modulo one, Lemma 4.8 turns the decoupled linear slice into
 exponential decay. -/
 theorem norm_splitQuadraticCharFun_sq_le_balanced
-    {K : Type w} [Fintype K] [DecidableEq K] {s r : ℕ}
+    {K : Type w} [Fintype K] {s r : ℕ}
     [Nonempty (BoolSlice I s)] [Nonempty (BoolSlice J r)]
     (fI : BoolSlice I s → ℝ) (fJ : BoolSlice J r → ℝ)
     (A : I → J → ℝ) (t delta c ε : ℝ)
     (Good : BoolSlice J r × BoolSlice J r → Prop)
-    [DecidablePred Good]
     (pairing : ∀ p, Good p → PairEmbedding K I)
     (center : ∀ p, Good p → K → ℝ)
     (hc0 : 0 < c) (hc1 : c ≤ 1 / 2)
@@ -448,6 +449,7 @@ theorem norm_splitQuadraticCharFun_sq_le_balanced
         (fun p ↦ splitQuadraticValue fI fJ A p.1 p.2) t‖ ^ 2 ≤
       Real.exp 1 * Real.exp
         (-(c ^ 3 / 256) * Fintype.card K * delta ^ 2) + ε := by
+  classical
   apply norm_splitQuadraticCharFun_sq_le_of_good
     fI fJ A t Good
   · positivity
@@ -589,7 +591,6 @@ section RichTupleFamilies
 
 variable {V : Type u} [Fintype V] [DecidableEq V]
 
-open Classical
 
 structure DiverseNeighborhoodStage (G : SimpleGraph V) (ρ : ℝ) where
   vertex : V
@@ -656,6 +657,7 @@ noncomputable def DiverseNeighborhoodChain.stageAt
       (Fin.last k)).priorResidual = W := by
   simp [DiverseNeighborhoodChain.stageAt]
 
+open Classical in
 lemma DiverseNeighborhoodChain.finalResidual_eq
     {G : SimpleGraph V} {ρ : ℝ} {U used W : Finset V} {k : ℕ}
     (chain : DiverseNeighborhoodChain G ρ U k used W) :
@@ -675,6 +677,7 @@ lemma DiverseNeighborhoodChain.finalResidual_eq
       rw [ihx]
       tauto
 
+open Classical in
 lemma DiverseNeighborhoodChain.stageAt_priorResidual_eq
     {G : SimpleGraph V} {ρ : ℝ} {U used W : Finset V} {k : ℕ}
     (chain : DiverseNeighborhoodChain G ρ U k used W) (i : Fin k) :
@@ -778,6 +781,7 @@ lemma DiverseNeighborhoodChain.vertexAt_injective
             simpa using hij
           exact congrArg Fin.castSucc (ih hij')
 
+open Classical in
 noncomputable def DiverseNeighborhoodChain.priorSet
     {G : SimpleGraph V} {ρ : ℝ} {U used W : Finset V} {k : ℕ}
     (chain : DiverseNeighborhoodChain G ρ U k used W) (i : Fin k) :
@@ -977,6 +981,7 @@ lemma DiverseNeighborhoodFamily.chainAt_disjoint
             exact congrArg Fin.castSucc h'
           simpa using ih hij'
 
+omit [Fintype V] in
 lemma card_sdiff_lower_of_add_le_of_lt
     {S D : Finset V} {a b : ℝ}
     (hbudget : a + D.card ≤ b) (hlower : b < S.card) :

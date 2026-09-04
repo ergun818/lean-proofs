@@ -109,7 +109,7 @@ theorem smallBall_productSlice_le_of_normalized_gaussianNonuniform
       rw [abs_div, abs_of_pos hsigma]
       congr 1
       field_simp [hsigma.ne', heta.ne']
-      <;> ring
+
 
 /-- Raw Fourier-window form of the preceding transfer.  This is the form
 fed by KSSS Lemma 11.1: a raw `L¹` comparison of size `E` becomes a
@@ -295,7 +295,7 @@ theorem exists_eventual_productSlice_claim121_nonuniform_upper_threshold
         exact div_le_div_of_nonneg_left (by norm_num) hB0 hB0B
       _ = nu := by
         dsimp only [B0]
-        field_simp [hnu.ne'] <;> norm_num
+        field_simp [hnu.ne']
   have heps : 0 < B / sigma := div_pos hB hsigma
   have hepsOne : B / sigma ≤ 1 := (div_le_one hsigma).2 hBsigma
   have hgauss : ∀ y : ℝ,

@@ -54,7 +54,7 @@ private lemma oneSidedFourthMoment_polynomial_le_on
     _ = 9 * B ^ 2 := by ring
 
 private lemma oneSidedFourthMoment_polynomial_nonpos_off
-    {B x : ℝ} (hB : 1 ≤ B)
+    {B x : ℝ} (_hB : 1 ≤ B)
     (hx : x ∉ Set.Icc (-2 * Real.sqrt B) 0) :
     -x * (x + 2 * Real.sqrt B) * (x - Real.sqrt B) ^ 2 ≤ 0 := by
   have hs0 : 0 ≤ Real.sqrt B := Real.sqrt_nonneg _

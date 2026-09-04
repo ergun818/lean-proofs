@@ -303,7 +303,7 @@ theorem standardNormal_hasInverseFourierDensity :
           (((2 * π) ^ (1 / 2 : ℝ) : ℝ) : ℂ) :=
         by
           convert (Complex.ofReal_cpow (by positivity : (0 : ℝ) ≤ 2 * π)
-            (1 / 2 : ℝ)).symm using 1 <;> norm_num
+            (1 / 2 : ℝ)).symm using 1 ; norm_num
       _ = ((√(2 * π) : ℝ) : ℂ) := by rw [Real.sqrt_eq_rpow]
   rw [ofReal_div, ofReal_exp]
   rw [hroot]

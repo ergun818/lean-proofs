@@ -2,7 +2,7 @@ import ErdosProblems.Erdos88.AKSPrescribed
 import ErdosProblems.Erdos88.Assembly
 import ErdosProblems.Erdos88.Probability
 
-open Classical SimpleGraph
+open SimpleGraph
 
 namespace Erdos88
 
@@ -25,6 +25,7 @@ lemma inducedEdges_liftOverFinSubset {n : ℕ} (G : SimpleGraph (Fin n))
     inducedEdges G (liftOverFinSubset G A T) =
       inducedEdges ((G.induce (A : Set (Fin n))).overFin
         (card_subtype_coe_finset A)) T := by
+  classical
   let H := G.induce (A : Set (Fin n))
   let e := H.overFinIso (card_subtype_coe_finset A)
   let sT : Set (Fin A.card) := T
@@ -108,6 +109,7 @@ lemma edgeCount_finPrefix_succ_le {n k : ℕ} (G : SimpleGraph (Fin n))
       simpa [card_finPrefix (Nat.le_trans (Nat.le_add_right k 1) hk)] using
         AKSGraph.degreeInto_le_card G v (finPrefix n k)
 
+open Classical in
 /-- The lower half of KSSS Theorem 1.2 in the explicit finite Bernoulli
 model used throughout this development. -/
 def KSSSLocalPointLower : Prop :=
@@ -122,6 +124,7 @@ def KSSSLocalPointLower : Prop :=
                 Probability.eventProbability p
                   (fun S : Finset (Fin n) ↦ inducedEdges G S = x)
 
+open Classical in
 lemma exists_inducedEdges_eq_of_localPointLower
     (hlocal : KSSSLocalPointLower)
     {C A lambda : ℝ} (hC : 0 < C) (hA : 0 < A)
@@ -150,6 +153,7 @@ lemma exists_inducedEdges_eq_of_localPointLower
 small-count theorem implies the full prescribed-count theorem. -/
 theorem hasPrescribedCounts_of_localPointLower
     (hlocal : KSSSLocalPointLower) : HasPrescribedCounts := by
+  classical
   intro C hC eta heta
   by_cases hetaOne : 1 ≤ eta
   · refine ⟨0, ?_⟩
@@ -350,6 +354,7 @@ theorem erdos_88_of_localPointLower
   erdos_88_of_deep_inputs hasRamseyDensity
     (hasPrescribedCounts_of_localPointLower hlocal)
 
+open Classical in
 /-- The specialization of the local lower estimate actually needed for
 Problem 88: unbiased sampling and no linear perturbation. -/
 def KSSSUnbiasedEdgeLocalLower : Prop :=
@@ -363,6 +368,7 @@ def KSSSUnbiasedEdgeLocalLower : Prop :=
               Probability.eventProbability (1 / 2 : ℝ)
                 (fun S : Finset (Fin n) ↦ inducedEdges G S = x)
 
+open Classical in
 lemma exists_inducedEdges_eq_of_unbiasedEdgeLocalLower
     (hlocal : KSSSUnbiasedEdgeLocalLower) {C A : ℝ}
     (hC : 0 < C) (hA : 0 < A) :
@@ -384,6 +390,7 @@ lemma exists_inducedEdges_eq_of_unbiasedEdgeLocalLower
   push Not at hnone
   simp [Probability.eventProbability, Probability.expectation, hnone] at hprobpos
 
+open Classical in
 /-- Uniform prescribed counts through one quarter of the edge set.  This
 fixed positive fraction is enough for Erdős Problem 88. -/
 def HasQuarterPrescribedCounts : Prop :=
@@ -396,6 +403,7 @@ def HasQuarterPrescribedCounts : Prop :=
 all prescribed counts through a fixed quarter of the edges. -/
 theorem hasQuarterPrescribedCounts_of_unbiasedEdgeLocalLower
     (hlocal : KSSSUnbiasedEdgeLocalLower) : HasQuarterPrescribedCounts := by
+  classical
   intro C hC
   obtain ⟨alpha, halpha, Naks, haks⟩ :=
     AKSGraph.aksPrescribedSmallCounts C hC
@@ -562,6 +570,7 @@ theorem erdos_88_of_unbiasedEdgeLocalLower
           HomogeneousFree epsilon G →
             ∀ m : ℕ, (m : ℝ) ≤ delta * (n : ℝ) ^ 2 →
               ∃ S : Finset (Fin n), inducedEdges G S = m := by
+  classical
   intro epsilon hepsilon
   have hlogTwo : 0 < Real.log (2 : ℝ) := Real.log_pos (by norm_num)
   let C : ℝ := epsilon * Real.log 2

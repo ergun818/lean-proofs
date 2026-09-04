@@ -1,6 +1,6 @@
 import ErdosProblems.Erdos88.SwitchingDegeneracy
 
-open Classical SimpleGraph
+open SimpleGraph
 open scoped BigOperators
 
 namespace Erdos88
@@ -127,6 +127,7 @@ private lemma sum_bad_tuple_count_le (G : SimpleGraph V) (t r s : ℕ) :
       dsimp only [bad]
       exact (Finset.card_filter_le _ _).trans_eq (by simp)
 
+omit [DecidableEq V] in
 /-- Division-free finite form of KSSS Lemma 13.3. -/
 theorem dependentRandomChoice_of_powerSum (G : SimpleGraph V)
     [Nonempty V]
@@ -171,16 +172,20 @@ theorem dependentRandomChoice_of_powerSum (G : SimpleGraph V)
 noncomputable def highDegreeVertices (G : SimpleGraph V) (d : ℕ) : Finset V :=
   Finset.univ.filter fun v ↦ d ≤ FiniteES.vertexDegree G v
 
+omit [DecidableEq V] in
 @[simp] lemma mem_highDegreeVertices {G : SimpleGraph V} {d : ℕ} {v : V} :
     v ∈ highDegreeVertices G d ↔ d ≤ FiniteES.vertexDegree G v := by
+  classical
   simp [highDegreeVertices]
 
+omit [DecidableEq V] in
 private lemma vertexDegree_le_card (G : SimpleGraph V) (v : V) :
     FiniteES.vertexDegree G v ≤ Fintype.card V := by
   classical
   rw [FiniteES.vertexDegree, Nat.card_eq_fintype_card]
   exact Fintype.card_subtype_le _
 
+omit [DecidableEq V] in
 private lemma sum_vertexDegree_eq (G : SimpleGraph V) :
     ∑ v : V, FiniteES.vertexDegree G v = 2 * FiniteES.edgeCount G := by
   classical
@@ -188,6 +193,7 @@ private lemma sum_vertexDegree_eq (G : SimpleGraph V) :
   simpa only [FiniteES.vertexDegree_eq_degree, FiniteES.edgeCount] using
     G.sum_degrees_eq_twice_card_edges
 
+omit [DecidableEq V] in
 /-- A graph with at least `d*n` edges has at least `d` vertices of degree
 at least `d`.  This deliberately crude consequence is sufficient for the
 power-sum input to dependent random choice. -/
@@ -242,6 +248,7 @@ lemma card_highDegreeVertices_ge (G : SimpleGraph V) [Nonempty V] (d : ℕ)
     omega
   exact Nat.le_of_mul_le_mul_right hmain hn
 
+omit [DecidableEq V] in
 lemma pow_succ_le_sum_vertexDegree_pow (G : SimpleGraph V) [Nonempty V]
     (d t : ℕ) (hedge : d * Fintype.card V ≤ FiniteES.edgeCount G) :
     d ^ (t + 1) ≤ ∑ v : V, (FiniteES.vertexDegree G v) ^ t := by
@@ -260,6 +267,7 @@ lemma pow_succ_le_sum_vertexDegree_pow (G : SimpleGraph V) [Nonempty V]
       Finset.sum_le_sum_of_subset_of_nonneg (Finset.subset_univ H)
         (fun _ _ _ ↦ Nat.zero_le _)
 
+omit [DecidableEq V] in
 /-- Edge-density form of dependent random choice.  The single displayed
 natural-number inequality is the unnormalized numerical hypothesis. -/
 theorem dependentRandomChoice_of_edgeCount (G : SimpleGraph V) [Nonempty V]
@@ -269,6 +277,7 @@ theorem dependentRandomChoice_of_edgeCount (G : SimpleGraph V) [Nonempty V]
         (Fintype.card V).choose r * s ^ t ≤ d ^ (t + 1)) :
     ∃ W : Finset V,
       a ≤ W.card ∧ HasCommonNeighbors G W r s := by
+  classical
   apply dependentRandomChoice_of_powerSum G t r s a hr
   exact hnumeric.trans (pow_succ_le_sum_vertexDegree_pow G d t hedge)
 
@@ -317,7 +326,7 @@ lemma hasLargeCommonNonneighbors_of_induced_compl
     refine ⟨x.2, ?_, ?_⟩
     · intro hxA
       have hadjSelf := (mem_commonNeighborFinset.mp hxCN) x (hA'R (hmemA' hxA))
-      exact (by simpa using hadjSelf)
+      exact (by simp at hadjSelf)
     · intro v hvA
       have hvS₀ : v ∈ S₀ := by
         have hvImage : v ∈ W.image Subtype.val := hA hvA
@@ -361,7 +370,7 @@ def KSSSLemma131 : Prop :=
                 Real.sqrt n
 
 /-- Pigeonhole real scores into intervals of width `w`. -/
-lemma exists_large_score_cluster {W : Type u} [Fintype W] [DecidableEq W]
+lemma exists_large_score_cluster {W : Type u} [Finite W]
     (A : Finset W) (f : W → ℝ) (w : ℝ) (q b : ℕ)
     (hw : 0 < w) (hq : 0 < q)
     (hf0 : ∀ v ∈ A, 0 ≤ f v)
@@ -370,6 +379,7 @@ lemma exists_large_score_cluster {W : Type u} [Fintype W] [DecidableEq W]
     ∃ S ⊆ A, b ≤ S.card ∧
       ∀ v ∈ S, ∀ z ∈ S, |f v - f z| ≤ w := by
   classical
+  let : Fintype W := Fintype.ofFinite W
   let bucket : W → Fin q := fun v ↦
     if hv : v ∈ A then
       ⟨⌊f v / w⌋₊, by
@@ -568,8 +578,8 @@ private lemma first_drc_bound_of_gap (Q n : ℕ) (hQ : 0 < Q) (hn : 1 ≤ n)
         ring
       _ ≤ (n : ℝ) ^ (1 / 1000 : ℝ) := by
         apply Real.rpow_le_rpow (by positivity)
-        exact_mod_cast hQpowNat
-        norm_num
+        · exact_mod_cast hQpowNat
+        · norm_num
   have hpow1 : (1 : ℝ) ≤ (n : ℝ) ^ (99 / 100 : ℝ) := by
     exact Real.one_le_rpow (by exact_mod_cast hn) (by norm_num)
   have hceil : ((⌈(n : ℝ) ^ (99 / 100 : ℝ)⌉₊ : ℕ) : ℝ) ≤
@@ -616,7 +626,7 @@ lemma eventually_first_drc_bound (Q : ℕ) (hQ : 0 < Q) :
     (4 * Q : ℝ) (991 / 1000 : ℝ) (9 / 1000 : ℝ) (by norm_num)
   filter_upwards [Filter.eventually_ge_atTop 1, hgap] with n hn hgapn
   apply first_drc_bound_of_gap Q n hQ hn
-  convert hgapn using 1 <;> norm_num
+  convert hgapn using 1 ; norm_num
 
 private lemma second_drc_bound (Q D n : ℕ) (hQ : 2 ≤ Q) (hD : 0 < D)
     (hlog : D ≤ Nat.log (Q ^ 1000) n) :
@@ -796,8 +806,8 @@ noncomputable def SimpleGraph.Iso.compl
         fun hadj ↦ hnadj (e.map_rel_iff.mp hadj)⟩
 
 lemma HasCommonNeighbors.comap_iso
-    {X Y : Type*} [Fintype X] [DecidableEq X]
-    [Fintype Y] [DecidableEq Y]
+    {X Y : Type*} [Fintype X]
+    [Fintype Y]
     {G : SimpleGraph X} {H : SimpleGraph Y} (e : G ≃g H)
     {A : Finset Y} {r s : ℕ} (h : HasCommonNeighbors H A r s) :
     HasCommonNeighbors G (A.map e.symm.toEquiv.toEmbedding) r s := by

@@ -15,7 +15,7 @@ lemma threeSpectralBase_integrable :
     Integrable (fun t : ℝ ↦ (1 + t ^ 2) ^ (-3 / 4 : ℝ)) := by
   have h := integrable_rpow_neg_one_add_norm_sq
     (E := ℝ) (μ := volume) (r := (3 / 2 : ℝ)) (by norm_num)
-  convert h using 1 <;> norm_num [Real.norm_eq_abs, sq_abs]
+  convert h using 1 ; norm_num [Real.norm_eq_abs, sq_abs]
 
 lemma threeSpectralEnvelope_nonneg {s : ℝ} (hs : 0 ≤ s) (t : ℝ) :
     0 ≤ threeSpectralEnvelope s t := by
@@ -199,7 +199,7 @@ theorem smallBall_diagonalCenteredLaw_le_of_three_spectralBlocks
       ring
 
 private lemma exists_three_disjoint_blocks_of_sum
-    {ι : Type*} [Fintype ι]
+    {ι : Type*} [Finite ι]
     (w : ι → ℝ) (S : Finset ι) {c : ℝ} (hc : 0 < c)
     (hsmall : ∀ i ∈ S, w i < c)
     (hsum : 6 * c ≤ ∑ i ∈ S, w i) :
@@ -207,6 +207,7 @@ private lemma exists_three_disjoint_blocks_of_sum
       Set.PairwiseDisjoint (Set.univ : Set (Fin 3)) B ∧
         ∀ j, c ≤ ∑ i ∈ B j, w i := by
   classical
+  let : Fintype ι := Fintype.ofFinite ι
   obtain ⟨B0, hB0S, hB0c, hB0lt⟩ :=
     exists_subset_sum_between_one_two_public w S hc hsmall (by linarith)
   let S1 := S \ B0

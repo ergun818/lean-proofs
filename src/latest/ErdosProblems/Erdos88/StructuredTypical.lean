@@ -46,7 +46,7 @@ lemma graphCrossCoefficient_sq_sum_le_compl {n : ℕ}
       intro j hj
       by_cases hij : G.Adj i.1 j.1 <;>
         simp [graphCrossCoefficient,
-          RobustRank.graphAdjacencyMatrix, hij] <;> norm_num
+          RobustRank.graphAdjacencyMatrix, hij] ; norm_num
     _ = (Fintype.card {v : Fin n // v ∉ I} : ℝ) / 16 := by
       simp
       ring
@@ -187,7 +187,7 @@ lemma sum_graphAdjacencyMatrix_compl {n : ℕ}
         RobustRank.graphAdjacencyMatrix G i.1 j.1) =
         ∑ j : R, RobustRank.graphAdjacencyMatrix G i.1 j.1 := by
       convert e.sum_comp (fun j : R ↦
-        RobustRank.graphAdjacencyMatrix G i.1 j.1) using 1 <;> rfl
+        RobustRank.graphAdjacencyMatrix G i.1 j.1) using 1 ; rfl
     _ = ∑ j ∈ R, RobustRank.graphAdjacencyMatrix G i.1 j := by
       exact (Finset.sum_subtype R (fun _ ↦ Iff.rfl)
         (fun j ↦ RobustRank.graphAdjacencyMatrix G i.1 j)).symm
@@ -251,7 +251,7 @@ lemma degreeInto_outsideAssignmentSet_sub_half_eq_two_mul_graphCrossLinear
         apply Finset.sum_congr rfl
         intro j hj
         cases hz : z j <;>
-          simp [Fourier.rademacherSign, hz] <;> ring
+          simp [Fourier.rademacherSign] ; ring
       _ = 2 * (∑ j, if z j = true then A j else 0) - ∑ j, A j := by
         rw [Finset.sum_sub_distrib, Finset.mul_sum]
   have hcross : graphCrossLinear G I i z =
@@ -579,7 +579,7 @@ theorem eventually_card_badRemainderConditionings_sqrt_le
           constructor
           · intro hv
             have := hOsub hv
-            simpa [hremEmpty] using this
+            simp [hremEmpty] at this
           · intro hv
             simp at hv
         rw [hOempty, hremEmpty] at hi

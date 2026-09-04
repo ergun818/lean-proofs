@@ -28,7 +28,7 @@ lemma densityRatioOn_two_of_holder_and_smallBall_lower
     (mu : Measure ℝ) [IsProbabilityMeasure mu] (p : ℝ → ℝ)
     (hdens : Erdos88.Esseen.HasContinuousDensity mu p)
     {x eps R c L : ℝ} (heps : 0 < eps) (hR : 1 ≤ R)
-    (hc : 0 < c) (hL : 0 ≤ L)
+    (_hc : 0 < c) (hL : 0 ≤ L)
     (hholder : ∀ y z : ℝ,
       |p y - p z| ≤ L * |y - z| ^ (1 / 4 : ℝ))
     (hlower : c * eps ≤ Erdos88.Esseen.smallBall mu eps x)
@@ -497,7 +497,7 @@ theorem productSlice_lower_positive_of_gaussianUpper_at_sign
           ((gaussianQuadraticCenteredLaw f F).map (fun z ↦ z / sigma))
           (B / sigma) y ≤
         ((B / sigma) / eta) * Real.exp (-eta * |y|))
-    (hB : 0 < B) (hBsigma : B ≤ sigma)
+    (hB : 0 < B) (_hBsigma : B ≤ sigma)
     (hM : 0 ≤ M) (hcut : 2 / B ≤ nuCut)
     (hraw : (∫ t in -nuCut..nuCut,
       ‖finiteCharacteristic
@@ -943,7 +943,7 @@ theorem conditionedProductSlice_window_lower_of_claim121_at
             (-trace F) f F S - (x - shift)| ≤ B) := by
     funext S
     rw [hpoly S]
-    congr 2 <;> ring
+    congr 2 ; ring
   rw [hevent]
   change K ≤ Fourier.finProbability
       (ProductSlicePoint D.finCoveredPartition ell)
@@ -1135,7 +1135,7 @@ theorem exists_eventual_productSlice_claim121_lower_uniform
         nlinarith [sq_nonneg (scale n (1 + 3 * delta))]
   have hcut : 2 / B0 ≤ nu := by
     dsimp only [B0]
-    field_simp [hnu.ne'] <;> norm_num
+    field_simp [hnu.ne'] ; norm_num
   have heps : 0 < B0 / sigma := div_pos hB0 hsigma
   have hepsOne : B0 / sigma ≤ 1 := (div_le_one hsigma).2 hBsigma
   have hgauss : ∀ y : ℝ,
@@ -1368,7 +1368,7 @@ theorem exists_fixedWindow_eventual_productSlice_claim121_lower_uniform
         nlinarith [sq_nonneg (scale n (1 + 3 * delta))]
   have hcut : 2 / B0 ≤ nu := by
     dsimp only [B0]
-    field_simp [hnu.ne'] <;> norm_num
+    field_simp [hnu.ne'] ; norm_num
   have heps : 0 < B0 / sigma := div_pos hB0 hsigma
   have hepsOne : B0 / sigma ≤ 1 := (div_le_one hsigma).2 hBsigma
   have hgauss : ∀ y : ℝ,

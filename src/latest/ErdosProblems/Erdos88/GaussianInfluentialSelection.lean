@@ -65,7 +65,7 @@ lemma influentialLowerConstant_pos {M rho : ℝ} (hM : 0 ≤ M) (hrho : 0 < rho)
 Theorem 5.2(2), normalized to total variance one.  The constant is uniform in
 the center and interval length. -/
 theorem uniform_diagonal_lower_of_ordered_eigenvalues_influential
-    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {ι : Type*} [Fintype ι]
     (a lam : ι → ℝ) (k : ι) {rho M : ℝ}
     (hsum : totalVariance a lam = 1)
     (hrho : 0 < rho) (hrhoOne : rho ≤ 1)
@@ -78,6 +78,7 @@ theorem uniform_diagonal_lower_of_ordered_eigenvalues_influential
       influentialLowerConstant M rho * eps ≤
         (Measure.pi fun _ : ι ↦ standardGaussian).real
           ((diagonalPartialSum a lam Finset.univ) ⁻¹' Set.Icc x (x + eps)) := by
+  classical
   let T := 4 * (((M + 2 * Real.sqrt 15) / rho) + 1) + 1
   let rho0 := rho / (16 * T)
   let A0 := (M + 2 * Real.sqrt 15) / rho0
@@ -195,7 +196,7 @@ theorem uniform_diagonal_lower_of_ordered_eigenvalues_influential
 /-- Existential packaging of the coefficient-uniform influential lower
 constant. -/
 theorem exists_uniform_diagonal_lower_of_ordered_eigenvalues_influential
-    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {ι : Type*} [Fintype ι]
     (a lam : ι → ℝ) (k : ι) {rho M : ℝ}
     (hsum : totalVariance a lam = 1)
     (hrho : 0 < rho) (hrhoOne : rho ≤ 1)
@@ -208,6 +209,7 @@ theorem exists_uniform_diagonal_lower_of_ordered_eigenvalues_influential
       c * eps ≤
         (Measure.pi fun _ : ι ↦ standardGaussian).real
           ((diagonalPartialSum a lam Finset.univ) ⁻¹' Set.Icc x (x + eps)) := by
+  classical
   exact ⟨influentialLowerConstant M rho,
     influentialLowerConstant_pos hM hrho,
     uniform_diagonal_lower_of_ordered_eigenvalues_influential

@@ -651,7 +651,7 @@ theorem exists_eventual_productSlice_claim121_upper
   have hs : 0 < c * (n : ℝ) ^ 2 := mul_pos hc (sq_pos_of_pos hnR)
   have hcut : 2 / B ≤ nu := by
     dsimp only [B]
-    field_simp [hnu.ne'] <;> norm_num
+    field_simp [hnu.ne'] ; norm_num
   have hsqrt : Real.sqrt (c * (n : ℝ) ^ 2) =
       Real.sqrt c * (n : ℝ) := by
     rw [Real.sqrt_mul hc.le, Real.sqrt_sq hnR.le]
@@ -681,7 +681,7 @@ theorem exists_eventual_productSlice_claim121_upper
       apply mul_le_mul_of_nonneg_left _ hW.le
       rw [hsqrt, hscaleNegOne]
       apply add_le_add
-      · field_simp [hnR.ne', (Real.sqrt_pos.2 hc).ne'] <;> norm_num
+      · field_simp [hnR.ne', (Real.sqrt_pos.2 hc).ne'] ; norm_num
       · exact mul_le_mul_of_nonneg_left hpowInv hB.le
     _ = D * scale n (-1) := by
       dsimp only [D]

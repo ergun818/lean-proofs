@@ -941,12 +941,13 @@ lemma finExpectation_rademacherWalshMonomial_mul
 /-- Parseval for a finite complex Walsh sum whose supports are distinct. -/
 lemma finExpectation_norm_sq_walshSum
     {I J : Type*} [Fintype I] [DecidableEq I]
-    [Fintype J] [DecidableEq J]
+    [Fintype J]
     (c : J → ℂ) (support : J → Finset I)
     (hsupport : Function.Injective support) :
     Fourier.finExpectation (I → Bool) (fun xi ↦
       ((‖∑ j, c j * rademacherWalshMonomial (support j) xi‖ ^ 2 : ℝ) : ℂ)) =
       ∑ j, ((‖c j‖ ^ 2 : ℝ) : ℂ) := by
+  classical
   have hpoint (xi : I → Bool) :
       ((‖∑ j, c j * rademacherWalshMonomial (support j) xi‖ ^ 2 : ℝ) : ℂ) =
         (∑ j, c j * rademacherWalshMonomial (support j) xi) *
@@ -1051,9 +1052,10 @@ lemma sum_sq_norm_quadraticPowerWalshCoeff_two_le
 The statement is phrased for the bounded support type used by a quadratic
 power, but the proof only uses injectivity of the underlying finset. -/
 lemma card_quadraticPowerWalshSupport_filter_le_pow
-    {I : Type*} [Fintype I] [DecidableEq I] (k l : ℕ) :
+    {I : Type*} [Fintype I] (k l : ℕ) :
     ((Finset.univ : Finset (QuadraticPowerWalshSupport I k)).filter
       (fun S ↦ S.1.card = l)).card ≤ Fintype.card I ^ l := by
+  classical
   let D := (Finset.univ : Finset (QuadraticPowerWalshSupport I k)).filter
     (fun S ↦ S.1.card = l)
   let f : ↑D → {S : Finset I // S.card = l} := fun S ↦
@@ -1130,9 +1132,10 @@ def quadraticPowerSupportCardFour
 
 /-- Regroup a sum over degree-at-most-four supports by exact cardinality. -/
 lemma sum_quadraticPowerWalshSupport_eq_sum_cardFour
-    {I : Type*} [Fintype I] [DecidableEq I]
+    {I : Type*} [Fintype I]
     (f : QuadraticPowerWalshSupport I 2 → ℝ) :
     ∑ S, f S = ∑ l : Fin 5, ∑ S with S.1.card = l.1, f S := by
+  classical
   let sigma : QuadraticPowerWalshSupport I 2 → Fin 5 :=
     quadraticPowerSupportCardFour
   calc
@@ -1298,7 +1301,7 @@ lemma Gamma_card_le_four_le_two (m : ℕ) (hm : m ≤ 4) :
       Real.Gamma_one_half_eq]
     have hsqrt : Real.sqrt Real.pi ≤ Real.sqrt 4 :=
       Real.sqrt_le_sqrt Real.pi_le_four
-    convert hsqrt using 1 <;> norm_num
+    convert hsqrt using 1 ; norm_num
   · norm_num [Real.Gamma_one]
   · norm_num
     exact Real.Gamma_three_div_two_lt_one.le.trans (by norm_num)
@@ -1496,9 +1499,10 @@ def quadraticPowerSupportCardTwo
   ⟨S.1.card, by omega⟩
 
 lemma sum_quadraticPowerWalshSupport_one_eq_sum_cardTwo
-    {I : Type*} [Fintype I] [DecidableEq I]
+    {I : Type*} [Fintype I]
     (f : QuadraticPowerWalshSupport I 1 → ℝ) :
     ∑ S, f S = ∑ l : Fin 3, ∑ S with S.1.card = l.1, f S := by
+  classical
   let sigma : QuadraticPowerWalshSupport I 1 → Fin 3 :=
     quadraticPowerSupportCardTwo
   calc
@@ -1607,7 +1611,6 @@ lemma firstDegreeSlice_le_sourceScale {N M q : ℝ} {m : ℕ}
         norm_num only [Nat.cast_zero, zero_add]
         rw [show q * N / 32 = (q / 32) * N by ring,
           Real.mul_rpow hq32pos.le hNpos.le]
-        norm_num only
         have hleft :
             N * ((q / 32) ^ (-(1 : ℝ) / 2) * N ^ (-(1 : ℝ) / 2)) =
               (q / 32) ^ (-(1 : ℝ) / 2) * N ^ (1 / 2 : ℝ) := by
@@ -1639,7 +1642,6 @@ lemma firstDegreeSlice_le_sourceScale {N M q : ℝ} {m : ℕ}
         norm_num only [Nat.cast_one]
         rw [show q * N / 32 = (q / 32) * N by ring,
           Real.mul_rpow hq32pos.le hNpos.le]
-        norm_num only
         have hNinv : N * N ^ (-(1 : ℝ)) = 1 := by
           rw [Real.rpow_neg_one, mul_inv_cancel₀]
           exact ne_of_gt hNpos
@@ -1666,12 +1668,11 @@ lemma firstDegreeSlice_le_sourceScale {N M q : ℝ} {m : ℕ}
           _ ≤ 4 * (q / 32) ^ (-(3 : ℝ) / 2) * N ^ (1 / 2 : ℝ) := by
             exact le_mul_of_one_le_right
               (mul_nonneg (by norm_num) (Real.rpow_nonneg hq32pos.le _)) hsqrt
-        convert hcalc using 1 <;> ring_nf
+        convert hcalc using 1 ; ring_nf
       · rw [if_neg (by norm_num : (2 : ℕ) ≠ 0)]
         norm_num only [Nat.cast_ofNat]
         rw [show q * N / 32 = (q / 32) * N by ring,
           Real.mul_rpow hq32pos.le hNpos.le]
-        norm_num only
         rw [Real.sqrt_eq_rpow]
         have hleft :
             4 * N ^ 2 *
@@ -1873,7 +1874,7 @@ theorem finExpectation_shiftMoment_indicator_le_sourceScale
       N * N ^ (1 / 2 : ℝ) = N ^ (1 : ℝ) * N ^ (1 / 2 : ℝ) := by
         rw [Real.rpow_one]
       _ = N ^ ((1 : ℝ) + 1 / 2) := by rw [Real.rpow_add hNpos]
-      _ = N ^ (3 / 2 : ℝ) := by congr 1 <;> ring
+      _ = N ^ (3 / 2 : ℝ) := by congr 1 ; ring
   have htwo := finExpectation_rademacherQuadratic_sq_indicator_le_sourceScale
     beta A target q hbeta hA hAdiag hAbound hq hq1 hmass hqmass
   have hone := finExpectation_rademacherQuadratic_indicator_le_sourceScale
@@ -1888,7 +1889,7 @@ theorem finExpectation_shiftMoment_indicator_le_sourceScale
       (fun xi ↦ (1 / 64 : ℝ) *
         (if |L xi - target| ≤ 1 then QA xi ^ 2 else 0)) := by
       funext xi
-      by_cases hx : |L xi - target| ≤ 1 <;> simp [hx] <;> ring
+      by_cases hx : |L xi - target| ≤ 1 <;> simp [hx] ; ring
     rw [hfun, finExpectation_const_mul_real]
     calc
       (1 / 64 : ℝ) * Fourier.finExpectation (I → Bool) (fun xi ↦
@@ -2285,7 +2286,7 @@ theorem finExpectation_shiftMoment_indicator_le_sourceScale_general
       N * N ^ (1 / 2 : ℝ) = N ^ (1 : ℝ) * N ^ (1 / 2 : ℝ) := by
         rw [Real.rpow_one]
       _ = N ^ ((1 : ℝ) + 1 / 2) := by rw [Real.rpow_add hNpos]
-      _ = N ^ (3 / 2 : ℝ) := by congr 1 <;> ring
+      _ = N ^ (3 / 2 : ℝ) := by congr 1 ; ring
   have htwo :=
     finExpectation_rademacherQuadratic_sq_indicator_le_sourceScale_general
       beta A target q hbeta hA hAbound hq hq1 hmass hqmass

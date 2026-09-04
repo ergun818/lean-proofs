@@ -83,7 +83,7 @@ lemma sum_signOfSet_on_finset {n : ℕ} (S I : Finset (Fin n)) :
   classical
   have hpoint (i : Fin n) :
       signOfSet S i = 2 * (if i ∈ S then (1 : ℝ) else 0) - 1 := by
-    by_cases hi : i ∈ S <;> simp [signOfSet, hi] <;> norm_num
+    by_cases hi : i ∈ S <;> simp [signOfSet, hi] ; norm_num
   calc
     (∑ i ∈ I, signOfSet S i) =
         ∑ i ∈ I, (2 * (if i ∈ S then (1 : ℝ) else 0) - 1) := by

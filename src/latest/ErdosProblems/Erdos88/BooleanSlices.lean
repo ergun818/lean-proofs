@@ -83,18 +83,29 @@ noncomputable instance (I : Finset α) (ell : ℕ) :
     Fintype (BooleanSlicePoint I ell) :=
   Fintype.ofFinset (booleanSlice I ell) fun _ ↦ Iff.rfl
 
+omit [DecidableEq α] [Fintype α] in
 @[simp] lemma mem_booleanSlice {I : Finset α} {ell : ℕ} {S : Finset α} :
     S ∈ booleanSlice I ell ↔ S ⊆ I ∧ S.card = ell := by
+  classical
   simp [booleanSlice, and_comm]
 
+omit [DecidableEq α] [Fintype α] in
 lemma booleanSlice_nonempty_iff {I : Finset α} {ell : ℕ} :
-    (booleanSlice I ell).Nonempty ↔ ell ≤ I.card := by simp [booleanSlice]
+    (booleanSlice I ell).Nonempty ↔ ell ≤ I.card := by
+  classical
+  simp [booleanSlice]
 
+omit [DecidableEq α] [Fintype α] in
 lemma card_booleanSlice (I : Finset α) (ell : ℕ) :
-    (booleanSlice I ell).card = I.card.choose ell := by simp [booleanSlice]
+    (booleanSlice I ell).card = I.card.choose ell := by
+  classical
+  simp [booleanSlice]
 
-@[simp] lemma card_booleanSlicePoint (I : Finset α) (ell : ℕ) :
+omit [DecidableEq α] [Fintype α] in
+@[simp] lemma card_booleanSlicePoint [Finite α] (I : Finset α) (ell : ℕ) :
     Fintype.card (BooleanSlicePoint I ell) = I.card.choose ell := by
+  classical
+  let : Fintype α := Fintype.ofFinite α
   calc
     Fintype.card (BooleanSlicePoint I ell) = (booleanSlice I ell).card := by
       exact Fintype.card_ofFinset (booleanSlice I ell) fun _ ↦ Iff.rfl
@@ -104,18 +115,22 @@ lemma card_booleanSlice (I : Finset α) (ell : ℕ) :
 def signOfSet (S : Finset α) (i : α) : ℝ :=
   if i ∈ S then 1 else -1
 
+omit [Fintype α] in
 @[simp] lemma signOfSet_eq_one_iff (S : Finset α) (i : α) :
     signOfSet S i = 1 ↔ i ∈ S := by
-  by_cases hi : i ∈ S <;> simp [signOfSet, hi] <;> norm_num
+  by_cases hi : i ∈ S <;> simp [signOfSet, hi] ; norm_num
 
+omit [Fintype α] in
 @[simp] lemma signOfSet_eq_neg_one_iff (S : Finset α) (i : α) :
     signOfSet S i = -1 ↔ i ∉ S := by
-  by_cases hi : i ∈ S <;> simp [signOfSet, hi] <;> norm_num
+  by_cases hi : i ∈ S <;> simp [signOfSet, hi] ; norm_num
 
+omit [Fintype α] in
 @[simp] lemma signOfSet_sq (S : Finset α) (i : α) :
     signOfSet S i ^ 2 = 1 := by
   by_cases hi : i ∈ S <;> simp [signOfSet, hi]
 
+omit [Fintype α] in
 lemma abs_signOfSet (S : Finset α) (i : α) :
     |signOfSet S i| = 1 := by
   by_cases hi : i ∈ S <;> simp [signOfSet, hi]
@@ -308,10 +323,10 @@ def signedSliceValue {I : Finset α} {plus minus : ℕ}
     (S : SignedSlicePoint I plus minus) (i : α) :
     signedSliceValue S i = 1 ↔ i ∈ S.1.1 := by
   by_cases hiP : i ∈ S.1.1
-  · simp [signedSliceValue, hiP] <;> norm_num
+  · simp [signedSliceValue, hiP]
   · by_cases hiN : i ∈ S.1.2
-    · simp [signedSliceValue, hiP, hiN] <;> norm_num
-    · simp [signedSliceValue, hiP, hiN] <;> norm_num
+    · simp [signedSliceValue, hiP, hiN] ; norm_num
+    · simp [signedSliceValue, hiP, hiN]
 
 @[simp] lemma signedSliceValue_eq_neg_one_iff
     {I : Finset α} {plus minus : ℕ}
@@ -320,10 +335,10 @@ def signedSliceValue {I : Finset α} {plus minus : ℕ}
   have hdisj := (mem_signedSlice.mp S.2).2.2.1
   by_cases hiP : i ∈ S.1.1
   · have hiN : i ∉ S.1.2 := Finset.disjoint_left.mp hdisj hiP
-    simp [signedSliceValue, hiP, hiN] <;> norm_num
+    simp [signedSliceValue, hiP, hiN] ; norm_num
   · by_cases hiN : i ∈ S.1.2
-    · simp [signedSliceValue, hiP, hiN] <;> norm_num
-    · simp [signedSliceValue, hiP, hiN] <;> norm_num
+    · simp [signedSliceValue, hiP, hiN]
+    · simp [signedSliceValue, hiP, hiN]
 
 /-- Product of independently uniform signed slices over all buckets. -/
 abbrev ProductSignedSlicePoint [Fintype κ] [DecidableEq κ]
@@ -368,13 +383,13 @@ lemma isProductSignedSwitch_symm [Fintype κ] [DecidableEq κ]
   · subst v
     simp only [if_pos]
     have hj := hswap j
-    simp [hij, hij.symm] at hj
+    simp [hij.symm] at hj
     exact hj.symm
   · by_cases hvj : v = j
     · subst v
       simp only [hvi, if_false, if_pos]
       have hi := hswap i
-      simp [hij] at hi
+      simp at hi
       exact hi.symm
     · simp only [hvi, hvj, if_false]
       have hv := hswap v
@@ -470,42 +485,52 @@ def signedSliceNegativeSupport (I : Finset α) (plus minus : ℕ)
   Finset.univ.map ((finIntervalEmbedding I.card plus minus hcount).trans
     (decodedCoordinateEmbedding I e σ))
 
+omit [DecidableEq α] [Fintype α] in
 lemma signedSlicePositiveSupport_subset (I : Finset α) (plus minus : ℕ)
     (hcount : plus + minus ≤ I.card) (e : Fin I.card ≃ ↑I)
     (σ : Equiv.Perm (Fin I.card)) :
     signedSlicePositiveSupport I plus minus hcount e σ ⊆ I := by
+  classical
   intro i hi
   rw [signedSlicePositiveSupport, Finset.mem_map] at hi
   obtain ⟨j, _hj, rfl⟩ := hi
   exact (e (σ (Fin.castLE
     (le_trans (Nat.le_add_right plus minus) hcount) j))).2
 
+omit [DecidableEq α] [Fintype α] in
 lemma signedSliceNegativeSupport_subset (I : Finset α) (plus minus : ℕ)
     (hcount : plus + minus ≤ I.card) (e : Fin I.card ≃ ↑I)
     (σ : Equiv.Perm (Fin I.card)) :
     signedSliceNegativeSupport I plus minus hcount e σ ⊆ I := by
+  classical
   intro i hi
   rw [signedSliceNegativeSupport, Finset.mem_map] at hi
   obtain ⟨j, _hj, rfl⟩ := hi
   exact (e (σ (finIntervalEmbedding I.card plus minus hcount j))).2
 
+omit [DecidableEq α] [Fintype α] in
 @[simp] lemma card_signedSlicePositiveSupport (I : Finset α)
     (plus minus : ℕ) (hcount : plus + minus ≤ I.card)
     (e : Fin I.card ≃ ↑I) (σ : Equiv.Perm (Fin I.card)) :
     (signedSlicePositiveSupport I plus minus hcount e σ).card = plus := by
+  classical
   simp [signedSlicePositiveSupport]
 
+omit [DecidableEq α] [Fintype α] in
 @[simp] lemma card_signedSliceNegativeSupport (I : Finset α)
     (plus minus : ℕ) (hcount : plus + minus ≤ I.card)
     (e : Fin I.card ≃ ↑I) (σ : Equiv.Perm (Fin I.card)) :
     (signedSliceNegativeSupport I plus minus hcount e σ).card = minus := by
+  classical
   simp [signedSliceNegativeSupport]
 
+omit [DecidableEq α] [Fintype α] in
 lemma signedSliceSupports_disjoint (I : Finset α) (plus minus : ℕ)
     (hcount : plus + minus ≤ I.card) (e : Fin I.card ≃ ↑I)
     (σ : Equiv.Perm (Fin I.card)) :
     Disjoint (signedSlicePositiveSupport I plus minus hcount e σ)
       (signedSliceNegativeSupport I plus minus hcount e σ) := by
+  classical
   rw [Finset.disjoint_left]
   intro i hiP hiN
   rw [signedSlicePositiveSupport, Finset.mem_map] at hiP
@@ -553,6 +578,7 @@ noncomputable def productSignedSliceDecode [Fintype κ] [DecidableEq κ]
 def finsetLift (I S : Finset α) : Finset ↑I :=
   Finset.univ.filter fun i ↦ (i : α) ∈ S
 
+omit [Fintype α] in
 lemma map_finsetLift (I S : Finset α) (hS : S ⊆ I) :
     (finsetLift I S).map (Function.Embedding.subtype fun i : α ↦ i ∈ I) = S := by
   ext i
@@ -565,11 +591,14 @@ lemma map_finsetLift (I S : Finset α) (hS : S ⊆ I) :
     rw [Finset.mem_map]
     exact ⟨⟨i, hS hi⟩, by simp [finsetLift, hi], rfl⟩
 
-@[simp] lemma card_finsetLift (I S : Finset α) (hS : S ⊆ I) :
+omit [Fintype α] in
+@[simp] lemma card_finsetLift [Finite α] (I S : Finset α) (hS : S ⊆ I) :
     (finsetLift I S).card = S.card := by
+  let : Fintype α := Fintype.ofFinite α
   rw [← Finset.card_map (Function.Embedding.subtype fun i : α ↦ i ∈ I),
     map_finsetLift I S hS]
 
+omit [Fintype α] in
 lemma disjoint_finsetLift (I A B : Finset α) (hAB : Disjoint A B) :
     Disjoint (finsetLift I A) (finsetLift I B) := by
   rw [Finset.disjoint_left]
@@ -579,12 +608,13 @@ lemma disjoint_finsetLift (I A B : Finset α) (hAB : Disjoint A B) :
 
 /-- A permutation can simultaneously carry two disjoint finite colour
 classes to any other two disjoint classes of the same respective sizes. -/
-lemma exists_perm_map_disjoint_pair { β : Type* } [Fintype β] [DecidableEq β]
+lemma exists_perm_map_disjoint_pair {β : Type*} [Finite β]
     (A B C D : Finset β) (hAB : Disjoint A B) (hCD : Disjoint C D)
     (hAC : A.card = C.card) (hBD : B.card = D.card) :
     ∃ ρ : Equiv.Perm β,
       A.map ρ.toEmbedding = C ∧ B.map ρ.toEmbedding = D := by
   classical
+  let : Fintype β := Fintype.ofFinite β
   have hABset : Disjoint (↑A : Set β) (↑B : Set β) := by
     rw [Set.disjoint_left]
     intro i hiA hiB
@@ -692,14 +722,18 @@ def signedSupportSlots (I S : Finset α) (e : Fin I.card ≃ ↑I) :
     Finset (Fin I.card) :=
   (finsetLift I S).map e.symm.toEmbedding
 
-@[simp] lemma card_signedSupportSlots (I S : Finset α)
+omit [Fintype α] in
+@[simp] lemma card_signedSupportSlots [Finite α] (I S : Finset α)
     (e : Fin I.card ≃ ↑I) (hS : S ⊆ I) :
     (signedSupportSlots I S e).card = S.card := by
+  let : Fintype α := Fintype.ofFinite α
   simp [signedSupportSlots, card_finsetLift I S hS]
 
-lemma signedSupportSlots_disjoint (I A B : Finset α)
+omit [Fintype α] in
+lemma signedSupportSlots_disjoint [Finite α] (I A B : Finset α)
     (e : Fin I.card ≃ ↑I) (hAB : Disjoint A B) :
     Disjoint (signedSupportSlots I A e) (signedSupportSlots I B e) := by
+  let : Fintype α := Fintype.ofFinite α
   rw [Finset.disjoint_left]
   intro i hiA hiB
   rw [signedSupportSlots, Finset.mem_map] at hiA hiB
@@ -709,10 +743,12 @@ lemma signedSupportSlots_disjoint (I A B : Finset α)
   subst b
   exact Finset.disjoint_left.mp (disjoint_finsetLift I A B hAB) ha hb
 
-lemma map_signedSupportSlots (I S : Finset α)
+omit [Fintype α] in
+lemma map_signedSupportSlots [Finite α] (I S : Finset α)
     (e : Fin I.card ≃ ↑I) (hS : S ⊆ I) :
     (signedSupportSlots I S e).map
         (e.toEmbedding.trans (Function.Embedding.subtype fun i : α ↦ i ∈ I)) = S := by
+  let : Fintype α := Fintype.ofFinite α
   rw [signedSupportSlots, Finset.map_map]
   have hemb : e.symm.toEmbedding.trans
       (e.toEmbedding.trans (Function.Embedding.subtype fun i : α ↦ i ∈ I)) =
@@ -721,20 +757,24 @@ lemma map_signedSupportSlots (I S : Finset α)
     simp
   rw [hemb, map_finsetLift I S hS]
 
+omit [DecidableEq α] [Fintype α] in
 lemma signedSlicePositiveSupport_eq_slots_map (I : Finset α)
     (plus minus : ℕ) (hcount : plus + minus ≤ I.card)
     (e : Fin I.card ≃ ↑I) (σ : Equiv.Perm (Fin I.card)) :
     signedSlicePositiveSupport I plus minus hcount e σ =
       (signedPositiveSlots I.card plus minus hcount).map
         (decodedCoordinateEmbedding I e σ) := by
+  classical
   rw [signedSlicePositiveSupport, signedPositiveSlots, Finset.map_map]
 
+omit [DecidableEq α] [Fintype α] in
 lemma signedSliceNegativeSupport_eq_slots_map (I : Finset α)
     (plus minus : ℕ) (hcount : plus + minus ≤ I.card)
     (e : Fin I.card ≃ ↑I) (σ : Equiv.Perm (Fin I.card)) :
     signedSliceNegativeSupport I plus minus hcount e σ =
       (signedNegativeSlots I.card plus minus hcount).map
         (decodedCoordinateEmbedding I e σ) := by
+  classical
   rw [signedSliceNegativeSupport, signedNegativeSlots, Finset.map_map]
 
 /-- Every signed slice is obtained from the explicit permutation decoder. -/
@@ -852,10 +892,10 @@ lemma card_signedSliceDecode_fiber_eq (I : Finset α) (plus minus : ℕ)
     exists_perm_map_disjoint_pair SP SN TP TN hSdisj hTdisj hPcard hNcard
   have hρP_inv : TP.map ρ.symm.toEmbedding = SP := by
     rw [← hρP, Finset.map_map]
-    simpa using Finset.map_refl SP
+    simp
   have hρN_inv : TN.map ρ.symm.toEmbedding = SN := by
     rw [← hρN, Finset.map_map]
-    simpa using Finset.map_refl SN
+    simp
   let E : {σ : Equiv.Perm (Fin I.card) //
         signedSliceDecode I plus minus hcount e σ = S} ≃
       {σ : Equiv.Perm (Fin I.card) //
@@ -993,7 +1033,7 @@ lemma card_signedSliceDecode_fiber (I : Finset α) (plus minus : ℕ)
 /-- A finite map with fibers of cardinality `c` pushes counting measure
 forward to `c` times counting measure. -/
 lemma sum_comp_eq_card_fiber_mul_sum {A B : Type*} [Fintype A] [Fintype B]
-    [DecidableEq B] (d : A → B) (c : ℕ)
+    (d : A → B) (c : ℕ)
     (hcard : ∀ b, Nat.card {a : A // d a = b} = c)
     (g : B → ℝ) :
     ∑ a, g (d a) = (c : ℝ) * ∑ b, g b := by
@@ -1102,12 +1142,13 @@ lemma sum_productSignedSliceDecode [Fintype κ] [DecidableEq κ]
 /-- Normalizing a positive constant-fiber pushforward preserves uniform
 expectation exactly. -/
 lemma uniformExpectation_comp_of_card_fiber {A B : Type*}
-    [Fintype A] [Fintype B] [Nonempty A] [Nonempty B] [DecidableEq B]
+    [Fintype A] [Fintype B] [Nonempty A] [Nonempty B]
     (d : A → B) (c : ℕ) (hc : 0 < c)
     (hcard : ∀ b, Nat.card {a : A // d a = b} = c)
     (g : B → ℝ) :
     Concentration.uniformExpectation (fun a ↦ g (d a)) =
       Concentration.uniformExpectation g := by
+  classical
   have hsum := sum_comp_eq_card_fiber_mul_sum d c hcard g
   have hden : (Fintype.card A : ℝ) = c * Fintype.card B := by
     simpa using sum_comp_eq_card_fiber_mul_sum d c hcard (fun _ ↦ (1 : ℝ))
@@ -1116,7 +1157,7 @@ lemma uniformExpectation_comp_of_card_fiber {A B : Type*}
 
 /-- The analogous constant-fiber identity for uniform event probability. -/
 lemma uniformProbability_comp_of_card_fiber {A B : Type*}
-    [Fintype A] [Fintype B] [Nonempty A] [Nonempty B] [DecidableEq B]
+    [Fintype A] [Fintype B] [Nonempty A] [Nonempty B]
     (d : A → B) (c : ℕ) (hc : 0 < c)
     (hcard : ∀ b, Nat.card {a : A // d a = b} = c)
     (Q : B → Prop) :
@@ -1321,7 +1362,7 @@ lemma gaussianVarianceTarget_le_ksss (δ : ℝ) (hδ : 0 ≤ δ) (hn : 1 ≤ n)
       ((n : ℝ) ^ (1 / 2 + 3 * δ)) ^ 2 =
           (n : ℝ) ^ ((1 / 2 + 3 * δ) * 2) :=
         (Real.rpow_mul_natCast hn0 (1 / 2 + 3 * δ) 2).symm
-      _ = (n : ℝ) ^ (1 + 6 * δ) := by congr 1 <;> ring
+      _ = (n : ℝ) ^ (1 + 6 * δ) := by congr 1 ; ring
   have hmul : (n : ℝ) * scale n (1 + 6 * δ) = scale n (2 + 6 * δ) := by
     unfold scale
     calc
@@ -1330,7 +1371,7 @@ lemma gaussianVarianceTarget_le_ksss (δ : ℝ) (hδ : 0 ≤ δ) (hn : 1 ≤ n)
         rw [Real.rpow_one]
       _ = (n : ℝ) ^ (1 + (1 + 6 * δ)) :=
         (Real.rpow_add hnpos _ _).symm
-      _ = (n : ℝ) ^ (2 + 6 * δ) := by congr 1 <;> ring
+      _ = (n : ℝ) ^ (2 + 6 * δ) := by congr 1 ; ring
   have hnpow : (n : ℝ) ^ 2 ≤ scale n (2 + 6 * δ) := by
     unfold scale
     calc
@@ -1483,11 +1524,14 @@ section TwoStageSliceCoupling
 
 variable {α : Type u} {κ : Type v} [Fintype α] [DecidableEq α]
 
+omit [DecidableEq α] [Fintype α] in
 /-- A Boolean slice is inhabited exactly in the range in which its prescribed
 cardinality fits in the ambient set.  This packaged form is convenient for
 the dependent two-stage sampler below. -/
-lemma booleanSlicePoint_nonempty {I : Finset α} {ell : ℕ}
+lemma booleanSlicePoint_nonempty [Finite α] {I : Finset α} {ell : ℕ}
     (hell : ell ≤ I.card) : Nonempty (BooleanSlicePoint I ell) := by
+  classical
+  let : Fintype α := Fintype.ofFinite α
   obtain ⟨S, hS⟩ := booleanSlice_nonempty_iff.mpr hell
   exact ⟨⟨S, hS⟩⟩
 
@@ -1518,7 +1562,7 @@ noncomputable def booleanSlicePermEquiv (I : Finset α) (ell : ℕ)
           (I.map ρ.toEmbedding).map ρ.symm.toEmbedding := by rw [hI]
       _ = I := by
         rw [Finset.map_map]
-        simpa using Finset.map_refl I
+        simp
   exact {
     toFun := booleanSliceMap ρ.toEmbedding hI
     invFun := booleanSliceMap ρ.symm.toEmbedding hIinv
@@ -1544,7 +1588,7 @@ noncomputable def booleanSliceEquivOfPerm {I J : Finset α} (ell : ℕ)
           (I.map ρ.toEmbedding).map ρ.symm.toEmbedding := by rw [hIJ]
       _ = I := by
         rw [Finset.map_map]
-        simpa using Finset.map_refl I
+        simp
   exact {
     toFun := booleanSliceMap ρ.toEmbedding hIJ
     invFun := booleanSliceMap ρ.symm.toEmbedding hJI
@@ -1589,6 +1633,7 @@ noncomputable def twoStageSlicePermEquiv
       (booleanSliceEquivOfPerm b ρ hR)
       (booleanSliceEquivOfPerm h ρ hcomp))
 
+omit [Fintype α] in
 @[simp] lemma twoStageSlicePermEquiv_first_val
     (I : Finset α) (r a b h : ℕ)
     (ρ : Equiv.Perm α) (hI : I.map ρ.toEmbedding = I)
@@ -1597,6 +1642,7 @@ noncomputable def twoStageSlicePermEquiv
       ω.1.1.map ρ.toEmbedding := by
   rfl
 
+omit [Fintype α] in
 @[simp] lemma twoStageSlicePermEquiv_left_val
     (I : Finset α) (r a b h : ℕ)
     (ρ : Equiv.Perm α) (hI : I.map ρ.toEmbedding = I)
@@ -1605,6 +1651,7 @@ noncomputable def twoStageSlicePermEquiv
       ω.2.1.1.map ρ.toEmbedding := by
   rfl
 
+omit [Fintype α] in
 @[simp] lemma twoStageSlicePermEquiv_right_val
     (I : Finset α) (r a b h : ℕ)
     (ρ : Equiv.Perm α) (hI : I.map ρ.toEmbedding = I)
@@ -1613,6 +1660,7 @@ noncomputable def twoStageSlicePermEquiv
       ω.2.2.1.1.map ρ.toEmbedding := by
   rfl
 
+omit [Fintype α] in
 @[simp] lemma twoStageSlicePermEquiv_shared_val
     (I : Finset α) (r a b h : ℕ)
     (ρ : Equiv.Perm α) (hI : I.map ρ.toEmbedding = I)
@@ -1621,11 +1669,13 @@ noncomputable def twoStageSlicePermEquiv
       ω.2.2.2.1.map ρ.toEmbedding := by
   rfl
 
+omit [DecidableEq α] [Fintype α] in
 @[simp] lemma booleanSlicePermEquiv_val
     (I : Finset α) (ell : ℕ)
     (ρ : Equiv.Perm α) (hI : I.map ρ.toEmbedding = I)
     (S : BooleanSlicePoint I ell) :
     (booleanSlicePermEquiv I ell ρ hI S).1 = S.1.map ρ.toEmbedding := by
+  classical
   rfl
 
 noncomputable instance (I : Finset α) (r a b h : ℕ) :
@@ -1656,9 +1706,11 @@ noncomputable instance (I : Finset α) (r a b h : ℕ) :
         subst C'
         rfl)
 
-lemma twoStageSlicePoint_nonempty (I : Finset α) (r a b h : ℕ)
+omit [Fintype α] in
+lemma twoStageSlicePoint_nonempty [Finite α] (I : Finset α) (r a b h : ℕ)
     (hr : r ≤ I.card) (ha : a ≤ r) (hb : b ≤ r)
     (hh : h ≤ I.card - r) : Nonempty (TwoStageSlicePoint I r a b h) := by
+  let : Fintype α := Fintype.ofFinite α
   let R : BooleanSlicePoint I r :=
     Classical.choice (booleanSlicePoint_nonempty hr)
   have hRI : R.1 ⊆ I := (mem_booleanSlice.mp R.2).1
@@ -1712,8 +1764,9 @@ def twoStageSliceRight (I : Finset α) (r a b h : ℕ)
       (hC.1.trans Finset.sdiff_subset),
     by rw [Finset.card_union_of_disjoint hBC, hB.2, hC.2]⟩⟩
 
+omit [Fintype α] in
 /-- Relabeling the two-stage sample relabels its left marginal. -/
-lemma twoStageSliceLeft_permEquiv
+lemma twoStageSliceLeft_permEquiv [Finite α]
     (I : Finset α) (r a b h : ℕ)
     (ρ : Equiv.Perm α) (hI : I.map ρ.toEmbedding = I)
     (ω : TwoStageSlicePoint I r a b h) :
@@ -1721,6 +1774,7 @@ lemma twoStageSliceLeft_permEquiv
       booleanSlicePermEquiv I (a + h) ρ hI
         (twoStageSliceLeft I r a b h ω) := by
   classical
+  let : Fintype α := Fintype.ofFinite α
   apply Subtype.ext
   change
     (twoStageSlicePermEquiv I r a b h ρ hI ω).2.1.1 ∪
@@ -1734,8 +1788,9 @@ lemma twoStageSliceLeft_permEquiv
     (ω.2.1.1 ∪ ω.2.2.2.1).map ρ.toEmbedding
   rw [Finset.map_union]
 
+omit [Fintype α] in
 /-- Relabeling the two-stage sample relabels its right marginal. -/
-lemma twoStageSliceRight_permEquiv
+lemma twoStageSliceRight_permEquiv [Finite α]
     (I : Finset α) (r a b h : ℕ)
     (ρ : Equiv.Perm α) (hI : I.map ρ.toEmbedding = I)
     (ω : TwoStageSlicePoint I r a b h) :
@@ -1743,6 +1798,7 @@ lemma twoStageSliceRight_permEquiv
       booleanSlicePermEquiv I (b + h) ρ hI
         (twoStageSliceRight I r a b h ω) := by
   classical
+  let : Fintype α := Fintype.ofFinite α
   apply Subtype.ext
   change
     (twoStageSlicePermEquiv I r a b h ρ hI ω).2.2.1.1 ∪
@@ -1756,14 +1812,16 @@ lemma twoStageSliceRight_permEquiv
     (ω.2.2.1.1 ∪ ω.2.2.2.1).map ρ.toEmbedding
   rw [Finset.map_union]
 
+omit [DecidableEq α] [Fintype α] in
 /-- Any two points in the same Boolean slice are related by a permutation
 that preserves the ambient finite set. -/
-lemma exists_perm_preserving_map_booleanSlice
+lemma exists_perm_preserving_map_booleanSlice [Finite α]
     (I : Finset α) (ell : ℕ)
     (S T : BooleanSlicePoint I ell) :
     ∃ (ρ : Equiv.Perm α) (hI : I.map ρ.toEmbedding = I),
       booleanSlicePermEquiv I ell ρ hI S = T := by
   classical
+  let : Fintype α := Fintype.ofFinite α
   have hSI : S.1 ⊆ I := (mem_booleanSlice.mp S.2).1
   have hTI : T.1 ⊆ I := (mem_booleanSlice.mp T.2).1
   have hScard : S.1.card = ell := (mem_booleanSlice.mp S.2).2
@@ -1787,9 +1845,10 @@ lemma exists_perm_preserving_map_booleanSlice
   apply Subtype.ext
   exact hST
 
+omit [Fintype α] in
 /-- All fibers of the left marginal of a two-stage bucket have equal finite
 cardinality. -/
-lemma card_twoStageSliceLeft_fiber_eq
+lemma card_twoStageSliceLeft_fiber_eq [Finite α]
     (I : Finset α) (r a b h : ℕ)
     (S T : BooleanSlicePoint I (a + h)) :
     Nat.card {ω : TwoStageSlicePoint I r a b h //
@@ -1797,6 +1856,7 @@ lemma card_twoStageSliceLeft_fiber_eq
       Nat.card {ω : TwoStageSlicePoint I r a b h //
         twoStageSliceLeft I r a b h ω = T} := by
   classical
+  let : Fintype α := Fintype.ofFinite α
   obtain ⟨ρ, hI, hST⟩ :=
     exists_perm_preserving_map_booleanSlice I (a + h) S T
   let e := twoStageSlicePermEquiv I r a b h ρ hI
@@ -1832,9 +1892,10 @@ lemma card_twoStageSliceLeft_fiber_eq
   }
   exact Nat.card_congr E
 
+omit [Fintype α] in
 /-- All fibers of the right marginal of a two-stage bucket have equal finite
 cardinality. -/
-lemma card_twoStageSliceRight_fiber_eq
+lemma card_twoStageSliceRight_fiber_eq [Finite α]
     (I : Finset α) (r a b h : ℕ)
     (S T : BooleanSlicePoint I (b + h)) :
     Nat.card {ω : TwoStageSlicePoint I r a b h //
@@ -1842,6 +1903,7 @@ lemma card_twoStageSliceRight_fiber_eq
       Nat.card {ω : TwoStageSlicePoint I r a b h //
         twoStageSliceRight I r a b h ω = T} := by
   classical
+  let : Fintype α := Fintype.ofFinite α
   obtain ⟨ρ, hI, hST⟩ :=
     exists_perm_preserving_map_booleanSlice I (b + h) S T
   let e := twoStageSlicePermEquiv I r a b h ρ hI
@@ -2095,7 +2157,7 @@ lemma uniformProbability_productSlicePermutationDecode
 
 /-- Complex-valued version of the constant-fiber counting identity. -/
 lemma sum_comp_eq_card_fiber_mul_sum_complex {A B : Type*}
-    [Fintype A] [Fintype B] [DecidableEq B]
+    [Fintype A] [Fintype B]
     (d : A → B) (c : ℕ)
     (hcard : ∀ b, Nat.card {a : A // d a = b} = c)
     (g : B → ℂ) :
@@ -2118,11 +2180,12 @@ lemma sum_comp_eq_card_fiber_mul_sum_complex {A B : Type*}
 /-- A positive constant-fiber map preserves finite uniform expectations of
 complex-valued tests. -/
 lemma complexExpectation_comp_of_card_fiber {A B : Type*}
-    [Fintype A] [Fintype B] [Nonempty A] [Nonempty B] [DecidableEq B]
+    [Fintype A] [Fintype B] [Nonempty A] [Nonempty B]
     (d : A → B) (c : ℕ) (hc : 0 < c)
     (hcard : ∀ b, Nat.card {a : A // d a = b} = c)
     (g : B → ℂ) :
     (𝔼 a, g (d a)) = 𝔼 b, g b := by
+  classical
   have hsum := sum_comp_eq_card_fiber_mul_sum_complex d c hcard g
   have hden : (Fintype.card A : ℂ) = c * Fintype.card B := by
     exact_mod_cast (show Fintype.card A = c * Fintype.card B by
@@ -2168,12 +2231,14 @@ lemma complexExpectation_productSlicePermutationDecode
 /-- If all fibers of a map from a nonempty finite type have the same
 cardinality, that common cardinality is positive. -/
 lemma exists_positive_common_fiber {A B : Type*}
-    [Fintype A] [Nonempty A] [Fintype B]
+    [Finite A] [Nonempty A] [Finite B]
     (d : A → B)
     (heq : ∀ x y, Nat.card {a : A // d a = x} =
       Nat.card {a : A // d a = y}) :
     ∃ c : ℕ, 0 < c ∧ ∀ y, Nat.card {a : A // d a = y} = c := by
   classical
+  let : Fintype A := Fintype.ofFinite A
+  let : Fintype B := Fintype.ofFinite B
   let a₀ : A := Classical.choice (inferInstance : Nonempty A)
   let b₀ : B := d a₀
   let c : ℕ := Nat.card {a : A // d a = b₀}
@@ -2495,7 +2560,7 @@ lemma scaleQuadraticCoeffs_symPair (τ : ℝ)
   · simp [scaleQuadraticCoeffs, Invariance.QuadraticCoeffs.symPair, hij]
   · by_cases hji : j < i
     · simp [scaleQuadraticCoeffs, Invariance.QuadraticCoeffs.symPair, hij, hji]
-    · simp [scaleQuadraticCoeffs, Invariance.QuadraticCoeffs.symPair, hij, hji]
+    · simp [Invariance.QuadraticCoeffs.symPair, hij, hji]
 
 lemma scaleQuadraticCoeffs_eval (τ : ℝ)
     (q : Invariance.QuadraticCoeffs n) (x : Fin n → ℝ) :
@@ -2708,7 +2773,7 @@ lemma toQuadraticCoeffs_influence (f : Fin n → ℝ)
     intro j hj
     have htj : t < j := (Finset.mem_filter.mp hj).2
     have hnjt : ¬j < t := not_lt_of_ge htj.le
-    simp [toQuadraticCoeffs, Invariance.QuadraticCoeffs.symPair, htj, hnjt]
+    simp [toQuadraticCoeffs, Invariance.QuadraticCoeffs.symPair, htj]
   have hall :
       (∑ j, (toQuadraticCoeffs 0 f F).symPair t j ^ 2) =
         ∑ j ∈ Finset.univ.erase t,
@@ -2869,30 +2934,36 @@ noncomputable def uniformVariance (X : Ω → ℝ) : ℝ :=
 lemma uniformExpectation_const (c : ℝ) :
     uniformExpectation (fun _ : Ω ↦ c) = c := by simp [uniformExpectation]
 
+omit [Nonempty Ω] in
 lemma uniformExpectation_add (X Y : Ω → ℝ) :
     uniformExpectation (fun ω ↦ X ω + Y ω) =
       uniformExpectation X + uniformExpectation Y := by
   simp [uniformExpectation, Finset.expect_add_distrib]
 
+omit [Nonempty Ω] in
 lemma uniformExpectation_sum {ι : Type*} [Fintype ι] (X : ι → Ω → ℝ) :
     uniformExpectation (fun ω ↦ ∑ i, X i ω) =
       ∑ i, uniformExpectation (X i) := by
   simp only [uniformExpectation]
   exact Finset.expect_sum_comm Finset.univ Finset.univ (fun ω i ↦ X i ω)
 
+omit [Nonempty Ω] in
 lemma uniformExpectation_const_mul (c : ℝ) (X : Ω → ℝ) :
     uniformExpectation (fun ω ↦ c * X ω) = c * uniformExpectation X := by
   simp [uniformExpectation, Finset.mul_expect]
 
+omit [Nonempty Ω] in
 lemma uniformExpectation_mul_const (X : Ω → ℝ) (c : ℝ) :
     uniformExpectation (fun ω ↦ X ω * c) = uniformExpectation X * c := by
   simp [uniformExpectation, Finset.expect_mul]
 
+omit [Nonempty Ω] in
 lemma uniformExpectation_sub (X Y : Ω → ℝ) :
     uniformExpectation (fun ω ↦ X ω - Y ω) =
       uniformExpectation X - uniformExpectation Y := by
   simp [uniformExpectation, Finset.expect_sub_distrib]
 
+omit [Nonempty Ω] in
 lemma uniformExpectation_congr {X Y : Ω → ℝ} (h : ∀ ω, X ω = Y ω) :
     uniformExpectation X = uniformExpectation Y := by
   apply congrArg uniformExpectation
@@ -2904,6 +2975,7 @@ lemma uniformExpectation_centered (X : Ω → ℝ) :
   rw [uniformExpectation_sub, uniformExpectation_const]
   ring
 
+omit [Nonempty Ω] in
 lemma uniformVariance_nonneg (X : Ω → ℝ) : 0 ≤ uniformVariance X := by
   exact Finset.expect_nonneg (fun _ _ ↦ sq_nonneg _)
 
@@ -3071,13 +3143,13 @@ lemma degreeTwoMonomialSupport_injective :
           apply Prod.ext
           · have hp_mem : p.1.1 ∈ ({q.1.1, q.1.2} : Finset (Fin n)) := by
               rw [← hpq]
-              simp [degreeTwoMonomialSupport]
+              simp
             simp only [Finset.mem_insert, Finset.mem_singleton] at hp_mem
             rcases hp_mem with hfirst | hsecond
             · exact hfirst
             · have hp2_mem : p.1.2 ∈ ({q.1.1, q.1.2} : Finset (Fin n)) := by
                 rw [← hpq]
-                simp [degreeTwoMonomialSupport]
+                simp
               simp only [Finset.mem_insert, Finset.mem_singleton] at hp2_mem
               rcases hp2_mem with h21 | h22
               · exfalso
@@ -3086,12 +3158,12 @@ lemma degreeTwoMonomialSupport_injective :
               · exact False.elim ((ne_of_lt p.2) (hsecond.trans h22.symm))
           · have hp2_mem : p.1.2 ∈ ({q.1.1, q.1.2} : Finset (Fin n)) := by
               rw [← hpq]
-              simp [degreeTwoMonomialSupport]
+              simp
             simp only [Finset.mem_insert, Finset.mem_singleton] at hp2_mem
             rcases hp2_mem with hfirst | hsecond
             · have hp1_mem : p.1.1 ∈ ({q.1.1, q.1.2} : Finset (Fin n)) := by
                 rw [← hpq]
-                simp [degreeTwoMonomialSupport]
+                simp
               simp only [Finset.mem_insert, Finset.mem_singleton] at hp1_mem
               rcases hp1_mem with h11 | h12
               · exact False.elim ((ne_of_lt p.2) (h11.trans hfirst.symm))
@@ -3261,10 +3333,11 @@ lemma uniformExpectation_probability_walsh_mul (T U : Finset (Fin n)) :
   rw [uniformExpectation_probability_walsh]
   simp
 
-lemma uniformExpectation_sq_walsh_sum {I : Type*} [Fintype I] [DecidableEq I]
+lemma uniformExpectation_sq_walsh_sum {I : Type*} [Fintype I]
     (a : I → ℝ) (T : I → Finset (Fin n)) (hT : Function.Injective T) :
     uniformExpectation (fun W : Finset (Fin n) ↦
       (∑ i, a i * Probability.walsh (T i) W) ^ 2) = ∑ i, a i ^ 2 := by
+  classical
   have hpoint : (fun W : Finset (Fin n) ↦
       (∑ i, a i * Probability.walsh (T i) W) ^ 2) =
       fun W ↦ ∑ i, ∑ j,
@@ -3301,7 +3374,7 @@ lemma uniformExpectation_signOfSet_mul {i j : Fin n} (hij : i ≠ j) :
     funext W
     simp [Probability.walsh, Probability.sign, signOfSet, hij]
   rw [hpoint, uniformExpectation_probability_walsh]
-  simp [hij]
+  simp
 
 lemma uniformExpectation_signOfSet_mul_apply (i j : Fin n) :
     uniformExpectation (fun W : Finset (Fin n) ↦
@@ -3450,6 +3523,7 @@ structure HasStandardGaussianMoments (z : Ω → Fin n → ℝ) : Prop where
       (if i = k ∧ j = l then 1 else 0) +
       (if i = l ∧ j = k then 1 else 0)
 
+omit [Nonempty Ω] in
 lemma gaussian_linear_mean (z : Ω → Fin n → ℝ) (hz : HasStandardGaussianMoments z)
     (f : Fin n → ℝ) :
     uniformExpectation (fun ω ↦ linearPart f (z ω)) = 0 := by
@@ -3458,6 +3532,7 @@ lemma gaussian_linear_mean (z : Ω → Fin n → ℝ) (hz : HasStandardGaussianM
   simp_rw [uniformExpectation_const_mul, hz.first]
   simp
 
+omit [Nonempty Ω] in
 lemma gaussian_quadratic_mean (z : Ω → Fin n → ℝ)
     (hz : HasStandardGaussianMoments z) (F : Fin n → Fin n → ℝ) :
     uniformExpectation (fun ω ↦ quadraticPart F (z ω)) = trace F := by
@@ -3480,6 +3555,7 @@ theorem gaussian_quadraticPolynomial_mean (z : Ω → Fin n → ℝ)
     gaussian_linear_mean z hz f, gaussian_quadratic_mean z hz F]
   ring
 
+omit [Nonempty Ω] in
 lemma gaussian_linear_sq_mean (z : Ω → Fin n → ℝ)
     (hz : HasStandardGaussianMoments z) (f : Fin n → ℝ) :
     uniformExpectation (fun ω ↦ linearPart f (z ω) ^ 2) = vectorSqNorm f := by
@@ -3499,6 +3575,7 @@ lemma gaussian_linear_sq_mean (z : Ω → Fin n → ℝ)
   classical
   simp [vectorSqNorm, pow_two]
 
+omit [Nonempty Ω] in
 lemma gaussian_linear_mul_centeredQuadratic_mean (z : Ω → Fin n → ℝ)
     (hz : HasStandardGaussianMoments z) (f : Fin n → ℝ)
     (F : Fin n → Fin n → ℝ) :
@@ -3528,6 +3605,7 @@ lemma gaussian_linear_mul_centeredQuadratic_mean (z : Ω → Fin n → ℝ)
   simp_rw [uniformExpectation_sum, uniformExpectation_const_mul, hz.third, hz.first]
   simp
 
+omit [Nonempty Ω] in
 lemma gaussian_quadratic_sq_mean (z : Ω → Fin n → ℝ)
     (hz : HasStandardGaussianMoments z) (F : Fin n → Fin n → ℝ) :
     uniformExpectation (fun ω ↦ quadraticPart F (z ω) ^ 2) =
@@ -3552,7 +3630,9 @@ lemma gaussian_quadratic_sq_mean (z : Ω → Fin n → ℝ)
   simp_rw [uniformExpectation_const_mul, hz.fourth]
   classical
   simp only [mul_add, Finset.sum_add_distrib, mul_ite, mul_one, mul_zero]
-  simp [ite_and, trace, frobeniusSq, pow_two, Finset.sum_mul, Finset.mul_sum]
+  simp only [ite_and, Finset.sum_ite_eq, Finset.mem_univ, ↓reduceIte,
+    Finset.sum_ite_irrel, Finset.sum_const_zero, Finset.sum_ite_eq', trace, pow_two,
+    Finset.mul_sum, Finset.sum_mul, frobeniusSq, add_right_inj]
   apply Finset.sum_congr rfl
   intro i _
   apply Finset.sum_congr rfl
@@ -3769,7 +3849,7 @@ lemma FiniteUniformCoupling.expectation_abs_difference_le_of_isClose
         rw [Finset.sum_add_distrib]
         simp [Finset.sum_ite, mul_comm]
       rw [hsum, FiniteUniformCoupling.probability]
-      field_simp [Nat.ne_of_gt C.size_pos] <;> ring
+      field_simp [Nat.ne_of_gt C.size_pos]
     _ ≤ r + D * q := by
       gcongr
 
@@ -3818,7 +3898,7 @@ lemma FiniteUniformCoupling.abs_expectation_sub_le_of_isClose
         rw [Finset.sum_add_distrib]
         simp [Finset.sum_ite, mul_comm]
       rw [hsum, FiniteUniformCoupling.probability]
-      field_simp [Nat.ne_of_gt C.size_pos] <;> ring
+      field_simp [Nat.ne_of_gt C.size_pos]
     _ ≤ r + D * q := by
       gcongr
 
@@ -3863,7 +3943,7 @@ lemma FiniteUniformCoupling.expectation_sq_difference_le_of_isClose
         rw [Finset.sum_add_distrib]
         simp [Finset.sum_ite, mul_comm]
       rw [hsum, FiniteUniformCoupling.probability]
-      field_simp [Nat.ne_of_gt C.size_pos] <;> ring
+      field_simp [Nat.ne_of_gt C.size_pos]
     _ ≤ r ^ 2 + D ^ 2 * q := by
       gcongr
 
@@ -3883,6 +3963,7 @@ variable {Ω : Type*} [Fintype Ω] [Nonempty Ω]
 noncomputable def finiteCharacteristic (X : Ω → ℝ) (τ : ℝ) : ℂ :=
   𝔼 ω, Complex.exp (Complex.I * (τ * X ω : ℝ))
 
+omit [Nonempty Ω] in
 lemma finiteCharacteristic_comp_left_eq {A B : Type*}
     [Fintype A] [Nonempty A] [Fintype B] [Nonempty B]
     {left : Ω → A} {right : Ω → B} (h : IsUniformCoupling left right)
@@ -3890,6 +3971,7 @@ lemma finiteCharacteristic_comp_left_eq {A B : Type*}
     finiteCharacteristic (X ∘ left) τ = finiteCharacteristic X τ := by
   exact h.1 fun a ↦ Complex.exp (Complex.I * (τ * X a : ℝ))
 
+omit [Nonempty Ω] in
 lemma finiteCharacteristic_comp_right_eq {A B : Type*}
     [Fintype A] [Nonempty A] [Fintype B] [Nonempty B]
     {left : Ω → A} {right : Ω → B} (h : IsUniformCoupling left right)
@@ -4029,7 +4111,7 @@ lemma FiniteUniformCoupling.norm_characteristic_sub_le_of_isClose
   have hevent : eventFraction (fun ω : Fin C.size ↦
       r < |(X ∘ C.left) ω - (Y ∘ C.right) ω|) =
       C.probability (fun ω ↦ r < |X (C.left ω) - Y (C.right ω)|) := by
-    simp [eventFraction, FiniteUniformCoupling.probability, Function.comp_def]
+    simp [eventFraction, FiniteUniformCoupling.probability]
   rw [hevent] at htransfer
   linarith
 
@@ -4271,7 +4353,7 @@ lemma productSlice_variance_error_ksss_of_coupling
       T * scale n (3 / 2 + 8 * δ) =
           scale n ((2 + 6 * δ) + (3 / 2 + 8 * δ)) := by
         exact scale_mul hnpos _ _
-      _ = scale n ((7 / 4 + 7 * δ) * 2) := by congr 1 <;> ring
+      _ = scale n ((7 / 4 + 7 * δ) * 2) := by congr 1 ; ring
       _ = S ^ 2 := by
         symm
         exact scale_sq (Nat.zero_le n) _

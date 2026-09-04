@@ -107,9 +107,7 @@ private lemma sum_card_retained [Fintype ι] [DecidableEq ι]
           apply Finset.sum_congr rfl
           intro w _
           symm
-          simpa using
-            (Finset.sum_boole (R := ℕ) (fun i : ι ↦ i ∈ retained F t w)
-              (Finset.univ : Finset ι))
+          simp
     _ = ∑ i : ι, ∑ w ∈ samples M t,
           if i ∈ retained F t w then 1 else 0 := by
           rw [Finset.sum_comm]
@@ -117,8 +115,7 @@ private lemma sum_card_retained [Fintype ι] [DecidableEq ι]
           ((samples M t).filter fun w ↦ i ∈ retained F t w).card := by
           apply Finset.sum_congr rfl
           intro i _
-          simpa using
-            (Finset.sum_boole (R := ℕ) (fun w ↦ i ∈ retained F t w) (samples M t))
+          simp
     _ = ∑ i : ι, (F i).card ^ t * (M \ F i).card ^ t := by
           apply Finset.sum_congr rfl
           intro i _
@@ -259,9 +256,7 @@ private lemma sum_card_survivingBad_le [Fintype ι] [DecidableEq ι]
       apply Finset.sum_congr rfl
       intro w _
       symm
-      simpa [survivingBad] using
-        (Finset.sum_boole (R := ℕ) (fun A : Finset ι ↦ A ⊆ retained F t w)
-          (badTuples M F a d))
+      simp [survivingBad]
     _ = ∑ A ∈ badTuples M F a d, ∑ w ∈ samples M t,
           if A ⊆ retained F t w then 1 else 0 := by
       rw [Finset.sum_comm]
@@ -269,8 +264,7 @@ private lemma sum_card_survivingBad_le [Fintype ι] [DecidableEq ι]
           ((samples M t).filter fun w ↦ A ⊆ retained F t w).card := by
       apply Finset.sum_congr rfl
       intro A _
-      simpa using
-        (Finset.sum_boole (R := ℕ) (fun w ↦ A ⊆ retained F t w) (samples M t))
+      simp
     _ ≤ ∑ _A ∈ badTuples M F a d, d ^ t * M.card ^ t := by
       exact Finset.sum_le_sum fun A hA ↦ card_surviving_tuple_le M F a d t hA
     _ = (badTuples M F a d).card * (d ^ t * M.card ^ t) := by simp

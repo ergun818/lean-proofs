@@ -204,7 +204,7 @@ lemma degreeInto_erase_le_add_one (G : SimpleGraph V) (u v : V) (S : Finset V) :
     · simp [Finset.erase_eq_of_notMem hv]
   have herase : A.erase v = G.neighborFinset u ∩ S.erase v := by
     ext w
-    simp [A, and_assoc, and_left_comm, and_comm]
+    simp [A, and_assoc, and_comm]
   simpa [degreeInto, A, herase] using hcard
 
 lemma degreeInto_erase_self (G : SimpleGraph V) (v : V) (S : Finset V) :
@@ -227,7 +227,7 @@ lemma degreeInto_eq_sum (G : SimpleGraph V) (v : V) (S : Finset V) :
     ext w
     simp [and_comm]
   rw [degreeInto, heq]
-  simpa using (Finset.sum_boole (fun w ↦ G.Adj v w) S).symm
+  simp
 
 lemma degreeInto_insert (G : SimpleGraph V) (u v : V) (S : Finset V)
     (hv : v ∉ S) :
@@ -240,7 +240,7 @@ lemma degreeInto_insert (G : SimpleGraph V) (u v : V) (S : Finset V)
     have hinter : G.neighborFinset u ∩ insert v S =
         insert v (G.neighborFinset u ∩ S) := by
       ext w
-      simp [huv, and_or_left, and_comm, and_left_comm]
+      simp [huv, and_comm]
     rw [hinter, Finset.card_insert_of_notMem hvNS]
     simp [huv]
   · have hvN : v ∉ G.neighborFinset u := by simpa
@@ -248,7 +248,7 @@ lemma degreeInto_insert (G : SimpleGraph V) (u v : V) (S : Finset V)
     have hinter : G.neighborFinset u ∩ insert v S =
         G.neighborFinset u ∩ S := by
       ext w
-      simp [huv, and_or_left, and_comm, and_left_comm]
+      simp [huv, and_comm]
     rw [hinter]
     simp [huv]
 
@@ -295,7 +295,7 @@ lemma edgeCount_insert (G : SimpleGraph V) (v : V) (S : Finset V)
   rw [Finset.sum_insert hv] at hnew
   rw [degreeInto_insert G v v S hv] at hnew
   have hloop : ¬G.Adj v v := G.loopless.irrefl v
-  simp [hloop] at hnew
+  simp only [SimpleGraph.irrefl, ↓reduceIte, add_zero] at hnew
   have hterms :
       (∑ x ∈ S, degreeInto G x (insert v S)) =
         (∑ x ∈ S, degreeInto G x S) + degreeInto G v S := by
@@ -333,7 +333,7 @@ lemma edgeCount_insert_pair (G : SimpleGraph V) (A : Finset V) (p q : V)
 subsets.  Every edge of `S` occurs in exactly
 `choose (|S|-2) (k-2)` of its `k`-subsets. -/
 lemma sum_edgeCount_powersetCard (G : SimpleGraph V) (S : Finset V)
-    {k : ℕ} (hkTwo : 2 ≤ k) (hkS : k ≤ S.card) :
+    {k : ℕ} (hkTwo : 2 ≤ k) (_hkS : k ≤ S.card) :
     ∑ A ∈ S.powersetCard k, edgeCount G A =
       edgeCount G S * (S.card - 2).choose (k - 2) := by
   let E := G.edgeFinset.filter fun e ↦ e.toFinset ⊆ S
@@ -353,8 +353,7 @@ lemma sum_edgeCount_powersetCard (G : SimpleGraph V) (S : Finset V)
         exact ⟨he, heA⟩
     rw [edgeCount, hfilter]
     symm
-    simpa using
-      (Finset.sum_boole (R := ℕ) (fun e ↦ e.toFinset ⊆ A) E)
+    simp
   calc
     ∑ A ∈ S.powersetCard k, edgeCount G A =
         ∑ A ∈ S.powersetCard k,
@@ -489,6 +488,7 @@ noncomputable def commonNonneighbors (G : SimpleGraph V) (M B : Finset V) : Fins
 def BThrough (B : ℕ → Finset V) (d : ℕ) : Finset V :=
   (Finset.range (d + 1)).biUnion B
 
+omit [Fintype V] in
 lemma BThrough_mono (B : ℕ → Finset V) {d e : ℕ} (hde : d ≤ e) :
     BThrough B d ⊆ BThrough B e := by
   intro v hv
@@ -497,6 +497,7 @@ lemma BThrough_mono (B : ℕ → Finset V) {d e : ℕ} (hde : d ≤ e) :
   exact ⟨i, Finset.mem_range.mpr
     ((Finset.mem_range.mp hi).trans_le (Nat.add_le_add_right hde 1)), hvi⟩
 
+omit [Fintype V] in
 lemma subset_BThrough (B : ℕ → Finset V) {i d : ℕ} (hid : i ≤ d) :
     B i ⊆ BThrough B d := by
   intro v hv
@@ -525,7 +526,7 @@ theorem exists_pair_with_large_common_parts (G : SimpleGraph V)
     intro u
     have heq : M \ F u = M \ G.neighborFinset u.1 := by
       ext x
-      simp [F, and_assoc]
+      simp [F]
     rw [heq]
     exact hq u.1 u.2
   have hnumeric' :
@@ -678,7 +679,7 @@ theorem exists_family_with_good_triples (G : SimpleGraph V)
     intro u
     have heq : M \ F u = M \ G.neighborFinset u.1 := by
       ext x
-      simp [F, and_assoc]
+      simp [F]
     rw [heq]
     exact hq u.1 u.2
   have hnumeric' :
@@ -832,7 +833,7 @@ lemma edgeCount_union_independent (G : SimpleGraph V) (A B : Finset V)
         edgeCount G (A ∪ insert v B) = edgeCount G (insert v (A ∪ B)) := by
           congr 2
           ext x
-          simp [or_assoc, or_left_comm, or_comm]
+          simp
         _ = edgeCount G (A ∪ B) + degreeInto G v (A ∪ B) :=
           edgeCount_insert G v (A ∪ B) hvUnion
         _ = (edgeCount G A + ∑ x ∈ B, degreeInto G x A) +
@@ -1167,7 +1168,7 @@ namespace LowerDegreePeeling
 selected vertex retains its original density lower bound, up to the number
 of selected vertices that were deleted. -/
 lemma exists_selected {G : SimpleGraph V} {γ : ℝ} {S : Finset V} {k : ℕ}
-    (h : LowerDegreePeeling G γ S k) (hγ0 : 0 ≤ γ) (hγ1 : γ ≤ 1) :
+    (h : LowerDegreePeeling G γ S k) (_hγ0 : 0 ≤ γ) (hγ1 : γ ≤ 1) :
     ∃ U ⊆ S, U.card = k ∧ ∀ v ∈ U,
       γ * ((S.card : ℝ) - 1) - (k : ℝ) ≤
         (degreeInto G v (S \ U) : ℝ) := by
@@ -1201,7 +1202,7 @@ lemma exists_selected {G : SimpleGraph V} {γ : ℝ} {S : Finset V} {k : ℕ}
       · have hxTail := hUdeg x hxU
         have hsets : (S.erase v) \ U = S \ U' := by
           ext z
-          simp [U', and_assoc, and_left_comm, and_comm]
+          simp [U', and_assoc, and_left_comm]
         rw [hsets] at hxTail
         have hcardPos : 0 < S.card := Finset.card_pos.mpr ⟨v, hv⟩
         have hcardErase : ((S.erase v).card : ℝ) = (S.card : ℝ) - 1 := by
@@ -1211,7 +1212,7 @@ lemma exists_selected {G : SimpleGraph V} {γ : ℝ} {S : Finset V} {k : ℕ}
         rw [hcardErase] at hxTail
         have hkcast : (((k + 1 : ℕ) : ℝ)) = (k : ℝ) + 1 := by norm_num
         rw [hkcast]
-        nlinarith [hxTail, hγ1, hγ0]
+        nlinarith [hxTail, hγ1]
 
 end LowerDegreePeeling
 
@@ -1307,7 +1308,7 @@ lemma card_sdiff_neighborFinset_add_degreeInto (G : SimpleGraph V) (v : V)
     (W : Finset V) :
     (W \ G.neighborFinset v).card + degreeInto G v W = W.card := by
   have hsplit := Finset.card_sdiff_add_card_inter W (G.neighborFinset v)
-  simpa [degreeInto, Finset.inter_comm] using hsplit
+  simp [degreeInto, Finset.inter_comm]
 
 /-- The output of one positive-index AKS block step.  Besides the diagonal
 complete pair and its dense dyadic block, the structure records a large
@@ -2141,7 +2142,7 @@ lemma exists_subset_with_small_deficit (G : SimpleGraph V)
         edgeCount G (Q ∪ P) + degreeInto G v (Q ∪ P) := by
       rw [show Q ∪ insert v P = insert v (Q ∪ P) by
         ext x
-        simp [or_assoc, or_left_comm, or_comm]]
+        simp]
       exact edgeCount_insert G v (Q ∪ P) hvQP
     have hdeg : degreeInto G v (Q ∪ P) ≤ Q.card + A.card := by
       exact (degreeInto_le_card G v (Q ∪ P)).trans <|
@@ -2155,7 +2156,7 @@ recorded by `e ≤ 1`.  After adding the first correction vertex, either the
 deficit has entered the next dyadic band, or adding the second vertex does
 so without overshooting. -/
 lemma dyadic_pair_reduction (i D x₁ x₂ e : ℕ)
-    (hDlow : 2 ^ (i + 1) ≤ D) (hDhigh : D < 2 ^ (i + 2))
+    (_hDlow : 2 ^ (i + 1) ≤ D) (hDhigh : D < 2 ^ (i + 2))
     (hx₁low : 2 ^ i ≤ x₁) (hx₁high : x₁ < 2 ^ (i + 1))
     (hx₂low : 2 ^ i ≤ x₂) (hx₂high : x₂ < 2 ^ (i + 1))
     (he : e ≤ 1) :
@@ -2199,7 +2200,6 @@ lemma exists_pair_correction (G : SimpleGraph V) (X : Finset V)
       simpa [Finset.union_comm] using edgeCount_insert G p X hpX
     rw [hcount]
     omega
-
   · refine ⟨{p, q}, Finset.Subset.rfl,
       (D - degreeInto G p X) - (degreeInto G q X + e), hsecond.2, ?_⟩
     have hcount : edgeCount G (X ∪ {p, q}) =
@@ -2376,12 +2376,15 @@ partial prefix of `A (d+1)`. -/
 def blockPrefix (A : ℕ → Finset V) (d : ℕ) (P : Finset V) : Finset V :=
   ABefore A (d + 1) ∪ P
 
+omit [Fintype V] in
 @[simp] lemma mem_ABefore {A : ℕ → Finset V} {r : ℕ} {v : V} :
     v ∈ ABefore A r ↔ ∃ i < r, v ∈ A i := by
   simp [ABefore]
 
-lemma ABefore_succ (A : ℕ → Finset V) (r : ℕ) :
+omit [Fintype V] in
+lemma ABefore_succ [Finite V] (A : ℕ → Finset V) (r : ℕ) :
     ABefore A (r + 1) = ABefore A r ∪ A r := by
+  let : Fintype V := Fintype.ofFinite V
   ext v
   simp only [mem_ABefore, Finset.mem_union]
   constructor
@@ -2423,9 +2426,11 @@ structure AKSBlockSystem (G : SimpleGraph V) (ε : ℝ) (K : ℕ)
   dense_A : ∀ i, i ≤ K + 1 →
     6 * ε * ((2 ^ i).choose 2 : ℝ) ≤ (edgeCount G (A i) : ℝ)
 
+omit [DecidableEq V] [Fintype V] in
 /-- Reverse an anticomplete relation, using symmetry of graph adjacency. -/
 lemma AnticompleteTo.symm {G : SimpleGraph V} {S T : Finset V}
     (h : AnticompleteTo G S T) : AnticompleteTo G T S := by
+  classical
   intro t ht s hs
   simpa only [G.adj_comm] using h hs ht
 

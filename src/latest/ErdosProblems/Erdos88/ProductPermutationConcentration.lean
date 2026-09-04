@@ -6,12 +6,12 @@ open scoped BigOperators
 namespace Erdos88
 namespace FiniteSliceConcentration
 
-open Classical Finset
+open Finset
 
 /-- Uniform averaging preserves a pointwise absolute-difference bound. -/
 lemma abs_uniformExpectation_sub_uniformExpectation_le
     {β : Type*} [Fintype β] [Nonempty β]
-    (f g : β → ℝ) (a : ℝ) (ha : 0 ≤ a)
+    (f g : β → ℝ) (a : ℝ) (_ha : 0 ≤ a)
     (h : ∀ x, |f x - g x| ≤ a) :
     |Concentration.uniformExpectation f -
         Concentration.uniformExpectation g| ≤ a := by

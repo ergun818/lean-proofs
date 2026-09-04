@@ -68,6 +68,7 @@ noncomputable def switchingPairs (G : SimpleGraph V) (S S₀ : Finset V)
       q ≤ exclusiveNeighborCount G S₀ yz.2 yz.1 ∧
         q ≤ exclusiveNeighborCount G S₀ yz.1 yz.2
 
+omit [Fintype V] in
 lemma mem_switchingPairs_iff (G : SimpleGraph V) (S S₀ : Finset V)
     (q : ℕ) (y z : V) :
     (y, z) ∈ switchingPairs G S S₀ q ↔
@@ -77,11 +78,13 @@ lemma mem_switchingPairs_iff (G : SimpleGraph V) (S S₀ : Finset V)
   classical
   simp [switchingPairs, and_assoc]
 
+omit [Fintype V] in
 /-- Reversing an admissible graph pair remains admissible. -/
-lemma switchingPairs_symm (G : SimpleGraph V) (S S₀ : Finset V)
+lemma switchingPairs_symm [Finite V] (G : SimpleGraph V) (S S₀ : Finset V)
     (q : ℕ) (y z : V) :
     (y, z) ∈ switchingPairs G S S₀ q ↔
       (z, y) ∈ switchingPairs G S S₀ q := by
+  let : Fintype V := Fintype.ofFinite V
   rw [mem_switchingPairs_iff, mem_switchingPairs_iff]
   aesop
 
@@ -96,10 +99,12 @@ noncomputable def swapSubset (U : Finset V) (y z : V) : Finset V := by
   classical
   exact insert z (U.erase y)
 
+omit [Fintype V] in
 @[simp] lemma mem_swapSubset_right (U : Finset V) (y z : V) :
     z ∈ swapSubset U y z := by
   simp [swapSubset]
 
+omit [Fintype V] in
 lemma not_mem_swapSubset_left {U : Finset V} {y z : V}
     (hy : y ∈ U) (hz : z ∉ U) : y ∉ swapSubset U y z := by
   classical
@@ -109,6 +114,7 @@ lemma not_mem_swapSubset_left {U : Finset V} {y z : V}
   · exact hz (h ▸ hy)
   · exact h.1 rfl
 
+omit [Fintype V] in
 /-- An admissible replacement is undone by reversing its ordered pair. -/
 lemma swapSubset_reverse {U : Finset V} {y z : V}
     (hy : y ∈ U) (hz : z ∉ U) :
@@ -128,19 +134,23 @@ noncomputable def switchIncrement (score : Finset V → ℤ) (U : Finset V)
     (y z : V) : ℤ :=
   score (swapSubset U y z) - score U
 
+omit [Fintype V] in
 /-- Reversing a valid switch negates its increment. -/
-lemma switchIncrement_reverse (score : Finset V → ℤ)
+lemma switchIncrement_reverse [Finite V] (score : Finset V → ℤ)
     {U : Finset V} {y z : V} (hy : y ∈ U) (hz : z ∉ U) :
     switchIncrement score (swapSubset U y z) z y =
       -switchIncrement score U y z := by
+  let : Fintype V := Fintype.ofFinite V
   simp [switchIncrement, swapSubset_reverse hy hz]
 
 /-- Symmetry of an abstract finset of ordered switch pairs. -/
 def IsSymmetric (T : Finset (V × V)) : Prop :=
   ∀ y z, (y, z) ∈ T ↔ (z, y) ∈ T
 
-lemma switchingPairs_isSymmetric (G : SimpleGraph V) (S S₀ : Finset V)
+omit [Fintype V] in
+lemma switchingPairs_isSymmetric [Finite V] (G : SimpleGraph V) (S S₀ : Finset V)
     (q : ℕ) : IsSymmetric (switchingPairs G S S₀ q) := by
+  let : Fintype V := Fintype.ofFinite V
   intro y z
   exact switchingPairs_symm G S S₀ q y z
 
@@ -183,7 +193,7 @@ noncomputable def reverseConfiguration {T : Finset (V × V)}
     change score U = x at hx
     change score (swapSubset U y z) - score U = ℓ at hinc
     omega
-  · simpa only [switchIncrement_reverse score hy hz, hinc]
+  · simp only [switchIncrement_reverse score hy hz, hinc]
 
 @[simp] lemma reverseConfiguration_val {T : Finset (V × V)}
     {score : Finset V → ℤ} (hT : IsSymmetric T) {ℓ x : ℤ}
@@ -209,7 +219,7 @@ noncomputable def reverseConfigurationBack {T : Finset (V × V)}
     change score U = x + ℓ at hx
     change score (swapSubset U z y) - score U = -ℓ at hinc
     omega
-  · simpa only [switchIncrement_reverse score hz hy, hinc, neg_neg]
+  · simp only [switchIncrement_reverse score hz hy, hinc, neg_neg]
 
 @[simp] lemma reverseConfigurationBack_val {T : Finset (V × V)}
     {score : Finset V → ℤ} (hT : IsSymmetric T) {ℓ x : ℤ}
@@ -231,12 +241,12 @@ noncomputable def reverseConfigurationEquiv {T : Finset (V × V)}
   left_inv c := by
     apply Subtype.ext
     rcases c with ⟨⟨U, ⟨y, z⟩⟩, hyz, hy, hz, hx, hinc⟩
-    simp only [reverseConfigurationBack_val, reverseConfiguration_val]
+    simp only [reverseConfigurationBack_val]
     exact Prod.ext (swapSubset_reverse hy hz) rfl
   right_inv c := by
     apply Subtype.ext
     rcases c with ⟨⟨U, ⟨z, y⟩⟩, hyz, hz, hy, hx, hinc⟩
-    simp only [reverseConfiguration_val, reverseConfigurationBack_val]
+    simp only [reverseConfiguration_val]
     exact Prod.ext (swapSubset_reverse hz hy) rfl
 
 /-- The unnormalised expectation `∑_U Y_ℓ(U) Z_x(U)`, represented as
@@ -247,12 +257,14 @@ noncomputable def switchingMass (T : Finset (V × V))
     classical
     exact Nat.card (SwitchConfiguration T score ℓ x)
 
+omit [Fintype V] in
 /-- Exact switch reversal, KSSS (4.52), before division by the size of the
 uniform sample space. -/
-theorem switchingMass_reverse {T : Finset (V × V)}
+theorem switchingMass_reverse [Finite V] {T : Finset (V × V)}
     {score : Finset V → ℤ} (hT : IsSymmetric T) (ℓ x : ℤ) :
     switchingMass T score ℓ x = switchingMass T score (-ℓ) (x + ℓ) := by
   classical
+  let : Fintype V := Fintype.ofFinite V
   exact Nat.card_congr (reverseConfigurationEquiv hT ℓ x)
 
 end ExactSwitch
@@ -369,7 +381,7 @@ label `i`. -/
 abbrev RawTupleIndex {J : Type u} (labels : Finset J) (a : J → ℕ) :=
   Σ i : {i // i ∈ labels}, Fin (a i.1)
 
-lemma card_rawTupleIndex {J : Type u} [DecidableEq J]
+lemma card_rawTupleIndex {J : Type u}
     (labels : Finset J) (a : J → ℕ) :
     Nat.card (RawTupleIndex labels a) = ∑ i ∈ labels, a i := by
   classical
@@ -384,10 +396,11 @@ lemma card_rawTupleIndex {J : Type u} [DecidableEq J]
 
 /-- Exponents in `{0,1,2}` produce at most twice as many ordered tuple
 coordinates as labels.  For the window `[-B,B]` this is `4B+2`. -/
-lemma card_rawTupleIndex_le_two_mul {J : Type u} [DecidableEq J]
+lemma card_rawTupleIndex_le_two_mul {J : Type u}
     (labels : Finset J) (a : J → ℕ)
     (ha : ∀ i ∈ labels, a i ≤ 2) :
     Nat.card (RawTupleIndex labels a) ≤ 2 * labels.card := by
+  classical
   rw [card_rawTupleIndex]
   calc
     (∑ i ∈ labels, a i) ≤ ∑ _i ∈ labels, 2 :=
@@ -506,14 +519,14 @@ def RawMomentComparison (states : Finset Omega) (event : Omega → Prop)
 
 /-- Finite averaging step (4.53): if a window moment is the sum of its
 point moments, one point carries at least the average mass. -/
-lemma exists_pointMoment_ge_window_average [DecidableEq I]
+lemma exists_pointMoment_ge_window_average
     (labels : Finset I) (hlabels : labels.Nonempty)
     (windowMoment : ℝ) (pointMoment : I → ℝ)
     (hpartition : windowMoment = ∑ i ∈ labels, pointMoment i) :
     ∃ i ∈ labels, windowMoment / (labels.card : ℝ) ≤ pointMoment i := by
   classical
   by_contra h
-  push_neg at h
+  push Not at h
   have hsum :
       (∑ i ∈ labels, pointMoment i) <
         ∑ i ∈ labels, windowMoment / (labels.card : ℝ) :=
@@ -571,7 +584,7 @@ lemma rawMomentExpectation_oneUnsquared [DecidableEq I]
     intro i hi
     simp [oneUnsquaredExponent, (Finset.mem_erase.mp hi).1]
   rw [htail]
-  simp [rawMoment, oneUnsquaredExponent, oneUnsquaredProduct, mul_comm]
+  simp [oneUnsquaredExponent, oneUnsquaredProduct, mul_comm]
 
 lemma rawMomentExpectation_singleSquared [DecidableEq I]
     (states : Finset Omega) (event : Omega → Prop)
@@ -585,7 +598,7 @@ lemma rawMomentExpectation_singleSquared [DecidableEq I]
   apply Finset.sum_congr rfl
   intro ω hω
   rw [Finset.prod_eq_mul_prod_sdiff_singleton_of_mem hselected]
-  simp [rawMoment, singleSquaredExponent, Finset.sdiff_singleton_eq_erase, mul_comm]
+  simp [singleSquaredExponent, Finset.sdiff_singleton_eq_erase, mul_comm]
 
 /-- Pointwise factorization behind the first Cauchy--Schwarz application. -/
 lemma product_sq_factorization [DecidableEq I] (labels : Finset I)
@@ -929,7 +942,7 @@ theorem scaledRawMomentBounds_force_pointProbability
       calc
         (scale ^ labels.card) ^ 4 = scale ^ (labels.card * 4) :=
           (pow_mul scale labels.card 4).symm
-        _ = scale ^ (4 * labels.card) := by congr 1 <;> omega
+        _ = scale ^ (4 * labels.card) := by congr 1 ; omega
     rw [div_pow, mul_pow, hs]
   have hright :
       (upper * scale ^ (2 * labels.card - 1) / normalizer) ^ 2 *
@@ -980,7 +993,6 @@ partition that window, so one point supplies the all-one lower moment; their
 upper moments follow by monotonicity.  Exact reversal then transfers its
 one-unsquared factor to the fixed target point. -/
 theorem windowRawMomentComparison_force_pointProbability
-    [DecidableEq I]
     (states : Finset Omega) (hstates : states.Nonempty)
     (labels : Finset I) (hlabels : labels.Nonempty)
     (point : I → Omega → Prop) (window target : Omega → Prop)
@@ -1145,7 +1157,6 @@ event, the normalized target point mass is bounded below by
 `lower^4 / (upper^3 * normalizer)`.  In the graph application the scale
 powers cancel completely, while `normalizer = n^(3/2)`. -/
 theorem rawMomentComparisons_force_pointProbability
-    [DecidableEq I]
     (states : Finset Omega) (hstates : states.Nonempty)
     (labels : Finset I) (hlabels : labels.Nonempty)
     {selected reverse : I} (hselected : selected ∈ labels)
@@ -1163,6 +1174,7 @@ theorem rawMomentComparisons_force_pointProbability
         (fun ω ↦ Y selected ω * indicator (target ω))) :
     lower ^ 4 / (upper ^ 3 * normalizer) ≤
       uniformMeanOn states (fun ω ↦ indicator (target ω)) := by
+  classical
   rcases hsource with ⟨hscale, hnormalizer, hlower, hupper, hsource⟩
   rcases htarget with ⟨_hscale', _hnormalizer', _hlower', _hupper', htarget⟩
   have hD : 1 ≤ labels.card := Finset.one_le_card.mpr hlabels
@@ -1235,7 +1247,7 @@ theorem rawMomentComparisons_force_pointProbability
       calc
         (scale ^ labels.card) ^ 4 = scale ^ (labels.card * 4) :=
           (pow_mul scale labels.card 4).symm
-        _ = scale ^ (4 * labels.card) := by congr 1 <;> omega
+        _ = scale ^ (4 * labels.card) := by congr 1 ; omega
     rw [div_pow, mul_pow, hs]
   have hright :
       (upper * scale ^ (2 * labels.card - 1) / normalizer) ^ 2 *

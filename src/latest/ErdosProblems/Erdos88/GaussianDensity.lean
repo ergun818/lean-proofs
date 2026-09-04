@@ -303,7 +303,6 @@ theorem measure_eq_withDensity_inverseFourierDensityCandidate
       field_simp [Real.pi_ne_zero]
       apply integral_congr_ae
       exact Filter.Eventually.of_forall fun x ↦ by
-        congr 2
         ring_nf
     _ = _ := by
       rw [← integral_const_mul]

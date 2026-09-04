@@ -14,7 +14,7 @@ open scoped BigOperators
 namespace Erdos88
 namespace BooleanSlices
 
-open Classical Finset
+open Finset
 
 universe u
 
@@ -1141,6 +1141,7 @@ lemma uniformProbability_sigma_le
     (hq : ∀ a, Concentration.uniformProbability
       (fun b ↦ E ⟨a, b⟩) ≤ q) :
     Concentration.uniformProbability E ≤ q := by
+  classical
   let a₀ : A := Classical.choice inferInstance
   let : Nonempty (Σ a, B a) :=
     ⟨⟨a₀, Classical.choice (inferInstance : Nonempty (B a₀))⟩⟩
@@ -1243,7 +1244,7 @@ lemma FiniteUniformCoupling.ofMaps_isClose_of_uniformProbability_bad
         Q ((Fintype.equivFin Ω).symm i)) ≤ q := by
     rw [uniformProbability_comp_equiv (Fintype.equivFin Ω).symm Q]
     exact hbad
-  convert hcomp using 1 <;> rfl
+  convert hcomp using 1 ; rfl
 
 /-- The data revealed before sampling the common outside slice in every
 bucket. -/
@@ -1526,7 +1527,7 @@ theorem productTwoStage_quadratic_difference_probability {n K : ℕ}
           (tE ≤ |XR ω - μ|) ∨ tC ≤ |Z ω| := by
     intro ω hlarge
     by_contra hgood
-    push_neg at hgood
+    push Not at hgood
     have hdecomp := productTwoStage_quadratic_sub_decomposition
       P r a a h ω f₀ f F
     change _ = XL ω - XR ω + Z ω at hdecomp
@@ -2099,7 +2100,7 @@ noncomputable def signedSlicePermEquiv (I : Finset α) (plus minus : ℕ)
           (I.map ρ.toEmbedding).map ρ.symm.toEmbedding := by rw [hI]
       _ = I := by
         rw [Finset.map_map]
-        simpa using Finset.map_refl I
+        simp
   exact {
     toFun := signedSliceMap ρ.toEmbedding hI
     invFun := signedSliceMap ρ.symm.toEmbedding hIinv
@@ -2156,10 +2157,11 @@ noncomputable def productSignedSlicePermEquiv
     (P.fiber (P.bucket i)) (plus (P.bucket i)) (minus (P.bucket i))
       ρ (hP (P.bucket i)) (S (P.bucket i)) i
 
-lemma bucketSwap_preserves_fibers [Fintype κ] [DecidableEq κ]
+lemma bucketSwap_preserves_fibers [Finite κ] [DecidableEq κ]
     (P : BucketPartition α κ) {i j : α}
     (hij : P.bucket i = P.bucket j) (k : κ) :
     (P.fiber k).map (Equiv.swap i j).toEmbedding = P.fiber k := by
+  let : Fintype κ := Fintype.ofFinite κ
   have hb : ∀ x : α, P.bucket (Equiv.swap i j x) = P.bucket x := by
     intro x
     by_cases hxi : x = i
@@ -2312,13 +2314,14 @@ lemma sum_sq_fiber_productSignedSliceValue
 
 /-- Two ordered pairs of distinct coordinates in one bucket are carried to
 one another by an ambient permutation that preserves every bucket. -/
-lemma exists_bucketPerm_map_pair [Fintype κ] [DecidableEq κ]
+lemma exists_bucketPerm_map_pair [Finite κ] [DecidableEq κ]
     (P : BucketPartition α κ) (k : κ) {i j u v : α}
     (hi : i ∈ P.fiber k) (hj : j ∈ P.fiber k)
     (hu : u ∈ P.fiber k) (hv : v ∈ P.fiber k)
     (hij : i ≠ j) (huv : u ≠ v) :
     ∃ ρ : Equiv.Perm α, ρ i = u ∧ ρ j = v ∧
       ∀ h, (P.fiber h).map ρ.toEmbedding = P.fiber h := by
+  let : Fintype κ := Fintype.ofFinite κ
   let ii : ↑(P.fiber k) := ⟨i, hi⟩
   let jj : ↑(P.fiber k) := ⟨j, hj⟩
   let uu : ↑(P.fiber k) := ⟨u, hu⟩
@@ -2417,11 +2420,12 @@ lemma uniformExpectation_productSignedSliceValue_mul_eq_of_sameBucket
     Fintype.expect_eq_sum_div_card] using heq
 
 /-- Uniform expectation commutes with a sum over an arbitrary finite set. -/
-lemma uniformExpectation_finset_sum {I : Type*} [DecidableEq I]
+lemma uniformExpectation_finset_sum {I : Type*}
     {Omega : Type*} [Fintype Omega] [Nonempty Omega]
     (s : Finset I) (X : I → Omega → ℝ) :
     Concentration.uniformExpectation (fun omega ↦ ∑ i ∈ s, X i omega) =
       ∑ i ∈ s, Concentration.uniformExpectation (X i) := by
+  classical
   unfold Concentration.uniformExpectation
   rw [Finset.sum_comm, Finset.sum_div]
 
@@ -2575,12 +2579,13 @@ lemma uniformExpectation_productSignedSliceValue_sq_eq_of_sameBucket
     Fintype.expect_eq_sum_div_card] using heq
 
 /-- Composing bucket-preserving permutations preserves every bucket. -/
-lemma bucketPerm_trans_preserves_fibers [Fintype κ] [DecidableEq κ]
+lemma bucketPerm_trans_preserves_fibers [Finite κ] [DecidableEq κ]
     (P : BucketPartition α κ) (rho sigma : Equiv.Perm α)
     (hrho : ∀ k, (P.fiber k).map rho.toEmbedding = P.fiber k)
     (hsigma : ∀ k, (P.fiber k).map sigma.toEmbedding = P.fiber k)
     (k : κ) :
     (P.fiber k).map (rho.trans sigma).toEmbedding = P.fiber k := by
+  let : Fintype κ := Fintype.ofFinite κ
   calc
     (P.fiber k).map (rho.trans sigma).toEmbedding =
         ((P.fiber k).map rho.toEmbedding).map sigma.toEmbedding := by
@@ -3146,7 +3151,7 @@ lemma abs_uniformExpectation_signedSliceQuadratic_sub_le
     (hrow : ∀ k h i, i ∈ P.fiber k → ∑ j ∈ P.fiber h, F i j = 0)
     (hcard : ∀ k, 2 ≤ (P.fiber k).card)
     (hsupport : ∀ k, plus k + minus k = plus' k + minus' k)
-    (hA : 0 ≤ A) (hW : 0 ≤ W)
+    (_hA : 0 ≤ A) (hW : 0 ≤ W)
     (hdiag : ∀ i, |F i i| ≤ A)
     (himb : ∀ k, |(plus k : ℝ) - minus k| ≤ W)
     (himb' : ∀ k, |(plus' k : ℝ) - minus' k| ≤ W) :
@@ -3684,7 +3689,7 @@ theorem quadraticCrossCoefficient_two_sided_probability
         t ≤ |XL ω| ∨ t ≤ |XR ω| := by
     intro ω hlarge
     by_contra hgood
-    push_neg at hgood
+    push Not at hgood
     have hrewrite := quadraticCrossCoefficient_eq_crossRowLinear_sub F
       (productSignedSliceValue P
         (productTwoStageSignedLeft P r a b h ω))
@@ -3783,7 +3788,7 @@ theorem quadraticCrossLinear_assemble_two_sided_probability_of_coeff_bound
     (F : Fin n → Fin n → ℝ) (C t : ℝ)
     (hL : 0 < ∑ k : Fin K, (P.fiber k \ (R k).1).card)
     (hC : 0 < C) (ht : 0 ≤ t)
-    (hc : ∀ (k : Fin K) (i : Fin n),
+    (hc : ∀ (_k : Fin K) (i : Fin n),
       |quadraticCrossCoefficient F
         (productSignedSliceValue P (productRevealedSigned P r a R Aset))
         (productSignedSliceValue P (productRevealedSigned P r b R Bset)) i| ≤
@@ -3931,7 +3936,8 @@ theorem quadraticCrossLinear_two_sided_probability_refined
         · intro hFalse
           contradiction
       rw [hfalse]
-      simp only [ge_iff_le]
+      simp only [Concentration.uniformProbability, Finset.filter_false,
+        Finset.card_empty, Nat.cast_zero, zero_div]
       positivity
     · have hbalR : ∀ k,
           2 * h k = (P.fiber k \ (R k).1).card := by

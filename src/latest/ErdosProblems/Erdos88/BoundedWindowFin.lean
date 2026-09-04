@@ -36,9 +36,10 @@ def KSSSBoundedWindowFin : Prop :=
 namespace BoundedWindow
 
 lemma finiteRamseyFree_comap_equiv {α β : Type*}
-    [Fintype α] [DecidableEq α] [Fintype β] [DecidableEq β]
+    [Fintype α] [Fintype β]
     (G : SimpleGraph β) (e : α ≃ β) {C : ℝ}
     (hG : FiniteRamseyFree C G) : FiniteRamseyFree C (G.comap e) := by
+  classical
   intro S hS
   let T : Finset β := Switching.equivFinsetImage e S
   have hcard : T.card = S.card := by simp [T, Switching.equivFinsetImage]

@@ -179,7 +179,7 @@ lemma ramseyNumber_le_pow_of_scale {h t k : ℕ}
 final comparison of a power of `k` with `n` left as a hypothesis.  This is
 the useful purely-natural interface for the later logarithmic calculation. -/
 lemma pattern_bound_of_power {n k h : ℕ} (L : Finset (Fin n))
-    (hk : 64 ≤ k) (hkh : k < 16 * h)
+    (hk : 64 ≤ k) (_hkh : k < 16 * h)
     (hLh : L.card < h) (hscaleL : k ≤ 16 * L.card)
     (hpower :
       let s := (16 * L.card) ⌈/⌉ k
@@ -335,7 +335,7 @@ lemma pattern_bound_of_log_scale {n k h : ℕ} (L : Finset (Fin n))
 
 /-- The floor defining `esTarget` satisfies exactly the cross-multiplied
 logarithmic upper bound used by the finite argument. -/
-lemma esTarget_log_scale {n k : ℕ} (hn : 2 ≤ n) (hk : 2 ≤ k) :
+lemma esTarget_log_scale {n k : ℕ} (_hn : 2 ≤ n) (hk : 2 ≤ k) :
     (512 : ℝ) * esTarget k n * Real.log k ≤
       (k : ℝ) * Real.log n := by
   have hlogTwo : 0 < Real.log (2 : ℝ) := Real.log_pos (by norm_num)
@@ -622,14 +622,14 @@ theorem exists_maximum_independent_subset
 /-- Maximality consequence: every vertex of `D \ L` has a neighbor in a
 maximum independent subset `L`. -/
 lemma exists_neighbor_in_maximum_independent_subset
-    {n : ℕ} {G : SimpleGraph (Fin n)} [DecidableRel G.Adj]
+    {n : ℕ} {G : SimpleGraph (Fin n)}
     {D L : Finset (Fin n)} (hLD : L ⊆ D) (hL : G.IsIndepSet L)
     (hmax : ∀ I : Finset (Fin n), I ⊆ D → G.IsIndepSet I → I.card ≤ L.card)
     {v : Fin n} (hv : v ∈ D \ L) :
     ∃ x ∈ L, G.Adj x v := by
   classical
   by_contra hnone
-  push_neg at hnone
+  push Not at hnone
   have hvD : v ∈ D := (Finset.mem_sdiff.mp hv).1
   have hvL : v ∉ L := (Finset.mem_sdiff.mp hv).2
   have hindep : G.IsIndepSet (↑(insert v L) : Set (Fin n)) := by
@@ -648,10 +648,11 @@ lemma exists_neighbor_in_maximum_independent_subset
 /-- The vertices outside a maximum independent subset are covered by the
 neighborhoods of its vertices. -/
 lemma card_sdiff_le_sum_vertexDegree
-    {n : ℕ} {G : SimpleGraph (Fin n)} [DecidableRel G.Adj]
+    {n : ℕ} {G : SimpleGraph (Fin n)}
     {D L : Finset (Fin n)} (hLD : L ⊆ D) (hL : G.IsIndepSet L)
     (hmax : ∀ I : Finset (Fin n), I ⊆ D → G.IsIndepSet I → I.card ≤ L.card) :
     (D \ L).card ≤ ∑ x ∈ L, vertexDegree G x := by
+  classical
   have hcover : D \ L ⊆ L.biUnion fun x ↦ G.neighborFinset x := by
     intro v hv
     obtain ⟨x, hxL, hxv⟩ :=
@@ -680,7 +681,7 @@ lemma sum_card_neighborFinset_inter_comm
           intro a ha
           congr 1
           ext b
-          simp [and_comm, G.adj_comm]
+          simp [and_comm]
     _ = ∑ b ∈ B, #(A.bipartiteBelow G.Adj b) :=
       Finset.sum_card_bipartiteAbove_eq_sum_card_bipartiteBelow G.Adj
     _ = ∑ b ∈ B, #(G.neighborFinset b ∩ A) := by
@@ -796,7 +797,7 @@ lemma card_residualSet_gt_eighth
 independent subset of the low-degree set has size at least `k/16`, in the
 cross-multiplied form `k ≤ 16 * |L|`. -/
 lemma sixteen_mul_card_maximum_independent_ge
-    {n k h : ℕ} {G : SimpleGraph (Fin n)} [DecidableRel G.Adj]
+    {n k h : ℕ} {G : SimpleGraph (Fin n)}
     {D L : Finset (Fin n)}
     (hD : D = lowDegreeSet G k) (hk : 64 ≤ k)
     (hkh : k < 16 * h) (hhn : 8 * h ≤ n)
@@ -1084,7 +1085,7 @@ lemma cliqueFree_and_indepSetFree_of_ramseyFree
 `DensityCertificate`.  The separate numerical theorem below is the only
 ingredient needed to remove the certificate hypothesis. -/
 theorem ramseyFree_edgeCount_density_lower_of_certificate
-    (C : ℝ) (hC : 0 < C) (hcert : DensityCertificate C) :
+    (C : ℝ) (_hC : 0 < C) (hcert : DensityCertificate C) :
     ∃ a : ℝ, 0 < a ∧ ∃ N : ℕ, ∀ n : ℕ, N ≤ n →
       ∀ G : SimpleGraph (Fin n), RamseyFree C G →
         a * (n : ℝ) ^ 2 ≤ (edgeCount G : ℝ) := by

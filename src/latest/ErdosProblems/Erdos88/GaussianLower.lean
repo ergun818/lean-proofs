@@ -18,7 +18,7 @@ namespace Erdos88.GaussianQuadratic
 /-- In the no-influential-coordinate regime, the actual continuous density
 is uniformly close to the standard normal density. -/
 theorem exists_continuousDensity_diagonal_comparison_of_small_coordinates
-    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {ι : Type*} [Fintype ι]
     (a lam : ι → ℝ) {rho : ℝ}
     (hsum : totalVariance a lam = 1)
     (hrho : 0 < rho) (hrhoHalf : rho ≤ 1 / 2)
@@ -27,6 +27,7 @@ theorem exists_continuousDensity_diagonal_comparison_of_small_coordinates
       Erdos88.Esseen.HasContinuousDensity (diagonalCenteredLaw a lam) p ∧
         ∀ u : ℝ, |p u - standardNormalDensity u| ≤
           (2 * Real.pi)⁻¹ * (1408 * rho) := by
+  classical
   let p := inverseFourierDensityCandidate (diagonalCenteredCharProduct a lam)
   have hsmallVar : ∀ i, coordinateVariance (a i) (lam i) ≤ 1 / 4 := by
     intro i
@@ -126,7 +127,7 @@ theorem exists_continuousDensity_diagonal_comparison_of_small_coordinates
 /-- The no-influential-coordinate interval lower bound on a fixed compact
 positive half-line. -/
 theorem diagonal_lower_of_small_coordinates
-    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {ι : Type*} [Fintype ι]
     (a lam : ι → ℝ) {rho M x eps : ℝ}
     (hsum : totalVariance a lam = 1)
     (hrho : 0 < rho) (hrhoHalf : rho ≤ 1 / 2)
@@ -139,6 +140,7 @@ theorem diagonal_lower_of_small_coordinates
     (standardNormalDensity (M + 1) / 2) * eps ≤
       (Measure.pi fun _ : ι ↦ standardGaussian).real
         ((diagonalPartialSum a lam Finset.univ) ⁻¹' Set.Icc x (x + eps)) := by
+  classical
   by_cases hepsZero : eps = 0
   · subst eps
     simp only [mul_zero]
@@ -209,7 +211,7 @@ lemma orderedGaussianLowerConstant_pos {M : ℝ} (hM : 0 ≤ M) :
 /-- Complete normalized lower half of KSSS Theorem 5.2(2) for an ordered
 diagonal quadratic Gaussian. -/
 theorem uniform_diagonal_lower_of_ordered_eigenvalues
-    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {ι : Type*} [Fintype ι]
     (a lam : ι → ℝ) (k : ι) {M x eps : ℝ}
     (hsum : totalVariance a lam = 1)
     (hM : 0 ≤ M)
@@ -220,6 +222,7 @@ theorem uniform_diagonal_lower_of_ordered_eigenvalues
     orderedGaussianLowerConstant M * eps ≤
       (Measure.pi fun _ : ι ↦ standardGaussian).real
         ((diagonalPartialSum a lam Finset.univ) ⁻¹' Set.Icc x (x + eps)) := by
+  classical
   let rho := orderedGaussianSmallThreshold M
   have hrho : 0 < rho := orderedGaussianSmallThreshold_pos M
   have hrhoHalf : rho ≤ 1 / 2 := by

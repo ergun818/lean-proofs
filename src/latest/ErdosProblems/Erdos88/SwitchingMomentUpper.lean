@@ -1,6 +1,5 @@
 import ErdosProblems.Erdos88.SwitchingMomentLower
 
-open Classical
 open scoped BigOperators
 
 namespace Erdos88.Switching
@@ -262,7 +261,7 @@ lemma eventually_switchingUpper_parameter_bounds
   constructor
   · calc
       3 ^ s * (halaszFiberSize - 1) ≤
-          3 ^ D * halaszFiberSize := by gcongr <;> omega
+          3 ^ D * halaszFiberSize := by gcongr ; omega
       _ = deletionBudget := by rfl
   · intro k hks
     have hpowsubNat : 3 ^ (s - k) ≤ 3 ^ D :=
@@ -340,7 +339,7 @@ lemma canonicalUpperFiberRate_gaps
   have hden : 0 < (3 : ℝ) ^ (2 * d + 1) := by positivity
   have hdenLowerNat : 3 * 3 ^ d ≤ 3 ^ (2 * d + 1) := by
     rw [show 3 * 3 ^ d = 3 ^ (d + 1) by
-      simpa only [pow_succ']]
+      simp only [pow_succ']]
     exact Nat.pow_le_pow_right (by omega) (by omega)
   have hdenLower : 3 * P ≤ (3 : ℝ) ^ (2 * d + 1) := by
     dsimp only [P]
@@ -516,6 +515,7 @@ lemma ambient_switchingPairs_lower_of_source_bounds
       gcongr
     _ ≤ T := hT
 
+open Classical in
 /-- Upper half of the raw-moment comparison required by KSSS Lemma 13.4. -/
 def KSSSUnbiasedSwitchingUpperMoments : Prop :=
   ∀ (C A : ℝ), 0 < C → 0 < A →

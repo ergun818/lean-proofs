@@ -25,10 +25,11 @@ lemma partialVariance_erase_add_coordinate
 degenerate complementary-block case omitted by the one-sided fourth-moment
 argument. -/
 lemma diagonalPartialSum_eq_zero_of_partialVariance_eq_zero
-    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {ι : Type*} [Fintype ι]
     (a lam : ι → ℝ) (S : Finset ι)
     (hzero : partialVariance a lam S = 0) :
     diagonalPartialSum a lam S = 0 := by
+  classical
   have hcoord : ∀ j ∈ S, coordinateVariance (a j) (lam j) = 0 := by
     apply (Finset.sum_eq_zero_iff_of_nonneg fun j _ ↦
       coordinateVariance_nonneg (a j) (lam j)).mp
@@ -150,7 +151,7 @@ theorem measureReal_diagonalPartialSum_univ_Icc_ge_of_normalized_influential_non
 including the degenerate case where the complementary block has variance
 zero. -/
 theorem measureReal_diagonalPartialSum_univ_Icc_ge_of_normalized_influential_nonneg_all
-    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {ι : Type*} [Fintype ι]
     (a lam : ι → ℝ) (i : ι) {rho M x eps : ℝ}
     (hsum : totalVariance a lam = 1)
     (hlam : 0 ≤ lam i) (hrho : 0 < rho) (hrhoOne : rho ≤ 1)
@@ -163,6 +164,7 @@ theorem measureReal_diagonalPartialSum_univ_Icc_ge_of_normalized_influential_non
           (1 / 75) ≤
       (Measure.pi fun _ : ι ↦ standardGaussian).real
         ((diagonalPartialSum a lam Finset.univ) ⁻¹' Set.Icc x (x + eps)) := by
+  classical
   let V := partialVariance a lam (Finset.univ.erase i)
   have hVnonneg : 0 ≤ V := partialVariance_nonneg a lam _
   rcases hVnonneg.eq_or_lt with hVzero | hVpos
@@ -287,7 +289,7 @@ theorem measureReal_diagonalPartialSum_univ_Icc_ge_of_normalized_influential_non
 /-- Unit-variance form of the linearly dominated influential-coordinate
 branch, including a zero-variance complementary block. -/
 theorem measureReal_diagonalPartialSum_univ_Icc_ge_of_normalized_influential_linear_dominates_all
-    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {ι : Type*} [Fintype ι]
     (a lam : ι → ℝ) (i : ι) {rho M x eps : ℝ}
     (hsum : totalVariance a lam = 1)
     (hrho : 0 < rho) (hrhoOne : rho ≤ 1)
@@ -302,6 +304,7 @@ theorem measureReal_diagonalPartialSum_univ_Icc_ge_of_normalized_influential_lin
           (1 / 75) ≤
       (Measure.pi fun _ : ι ↦ standardGaussian).real
         ((diagonalPartialSum a lam Finset.univ) ⁻¹' Set.Icc x (x + eps)) := by
+  classical
   let P : Measure (ι → ℝ) := Measure.pi fun _ : ι ↦ standardGaussian
   let sigma := coordinateSigma (a i) (lam i)
   let V := partialVariance a lam (Finset.univ.erase i)

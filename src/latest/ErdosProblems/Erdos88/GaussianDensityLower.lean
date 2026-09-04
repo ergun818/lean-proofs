@@ -48,7 +48,7 @@ lemma standardNormalDensity_le_of_abs_le
   exact Real.exp_le_exp.mpr (by linarith)
 
 private lemma abs_le_of_mem_centered_Icc
-    {x r M y : ℝ} (hr : 0 ≤ r) (hM : |x| + r ≤ M)
+    {x r M y : ℝ} (_hr : 0 ≤ r) (hM : |x| + r ≤ M)
     (hy : y ∈ Set.Icc (x - r) (x + r)) :
     |y| ≤ M := by
   rw [abs_le]
@@ -83,7 +83,7 @@ bound, then the comparison density has ratio at most `4 / φ(M)` on every
 window contained in `[-M,M]`. -/
 theorem densityRatioOn_of_uniform_standardNormal_close
     {p : ℝ → ℝ} {delta M x eps R : ℝ}
-    (hdelta : 0 ≤ delta) (hdeltaOne : delta ≤ 1)
+    (_hdelta : 0 ≤ delta) (hdeltaOne : delta ≤ 1)
     (hM : 0 ≤ M)
     (hsmall : 2 * delta ≤ standardNormalDensity M)
     (heps : 0 ≤ eps) (hR : 0 ≤ R)
@@ -151,7 +151,7 @@ theorem smallBall_ge_of_uniform_standardNormal_close
 theorem concentration_le_of_uniform_standardNormal_close
     (mu : Measure ℝ) [IsProbabilityMeasure mu]
     {p : ℝ → ℝ} (hdens : Erdos88.Esseen.HasContinuousDensity mu p)
-    {delta eps : ℝ} (hdelta : 0 ≤ delta) (heps : 0 < eps)
+    {delta eps : ℝ} (_hdelta : 0 ≤ delta) (heps : 0 < eps)
     (hclose : ∀ v : ℝ, |p v - standardNormalDensity v| ≤ delta) :
     Erdos88.Esseen.concentration mu eps ≤ 2 * eps * (1 + delta) := by
   apply csSup_le (Set.range_nonempty _)

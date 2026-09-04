@@ -561,7 +561,7 @@ lemma graphCrossCoefficient_sq_sum_le {n : ℕ}
       intro j hj
       by_cases hij : G.Adj i.1 j.1 <;>
         simp [graphCrossCoefficient,
-          RobustRank.graphAdjacencyMatrix, hij] <;> norm_num
+          RobustRank.graphAdjacencyMatrix, hij] ; norm_num
     _ = (Fintype.card {v : Fin n // v ∉ I} : ℝ) / 16 := by
       simp
       ring
@@ -1178,9 +1178,7 @@ lemma sum_exp_rademacher_linear_mul_walshMonomial
   have hmono : rademacherWalshMonomial S ξ =
       ∏ i, if i ∈ S then (Fourier.rademacherSign (ξ i) : ℂ) else 1 := by
     rw [rademacherWalshMonomial]
-    simpa using (Finset.prod_filter (s := (Finset.univ : Finset I))
-      (p := fun i ↦ i ∈ S)
-      (f := fun i ↦ (Fourier.rademacherSign (ξ i) : ℂ))).symm
+    simp
   rw [hexp, hmono, ← Finset.prod_mul_distrib]
 
 lemma finExpectation_exp_rademacher_linear_mul_walshMonomial
@@ -1391,7 +1389,7 @@ lemma rademacherWalshMonomial_mul {I : Type*} [Fintype I] [DecidableEq I]
 def xorSupport {I J : Type*} [DecidableEq I] (support : J → Finset I) :
     {j : ℕ} → (Fin j → J) → Finset I
   | 0, _ => ∅
-  | j + 1, q => support (q 0) ∆ xorSupport support (fun r ↦ q r.succ)
+  | _j + 1, q => support (q 0) ∆ xorSupport support (fun r ↦ q r.succ)
 
 lemma xorSupport_card_le {I J : Type*} [DecidableEq I]
     (support : J → Finset I) {m : ℕ}
@@ -2416,13 +2414,13 @@ lemma finiteCharacteristic_neg {Ω : Type*} [Fintype Ω]
   rw [Fintype.expect_eq_sum_div_card, Fintype.expect_eq_sum_div_card]
   rw [map_div₀, map_sum]
   congr 1
-  apply Finset.sum_congr rfl
-  intro x hx
-  rw [← Complex.exp_conj]
-  congr 1
-  push_cast
-  simp
-  simp
+  · apply Finset.sum_congr rfl
+    intro x hx
+    rw [← Complex.exp_conj]
+    congr 1
+    push_cast
+    simp
+  · simp
 
 open ComplexConjugate in
 lemma norm_centeredGraphCharacteristic_neg
@@ -2715,7 +2713,7 @@ lemma scale_rpow_three_halves {n : ℕ} (hn : 0 < n) (a : ℝ) :
     Real.rpow (Real.rpow (n : ℝ) a) ((3 : ℝ) / 2) =
         Real.rpow (n : ℝ) (a * ((3 : ℝ) / 2)) :=
       (Real.rpow_mul (by positivity : (0 : ℝ) ≤ n) a ((3 : ℝ) / 2)).symm
-    _ = Real.rpow (n : ℝ) (3 * a / 2) := by congr 1 <;> ring
+    _ = Real.rpow (n : ℝ) (3 * a / 2) := by congr 1 ; ring
 
 lemma sqrt_scale {n : ℕ} (hn : 0 < n) (a : ℝ) :
     Real.sqrt (BooleanSlices.scale n a) =
@@ -2727,13 +2725,13 @@ lemma sqrt_scale {n : ℕ} (hn : 0 < n) (a : ℝ) :
     Real.rpow (Real.rpow (n : ℝ) a) ((1 : ℝ) / 2) =
         Real.rpow (n : ℝ) (a * ((1 : ℝ) / 2)) :=
       (Real.rpow_mul (by positivity : (0 : ℝ) ≤ n) a ((1 : ℝ) / 2)).symm
-    _ = Real.rpow (n : ℝ) (a / 2) := by congr 1 <;> ring
+    _ = Real.rpow (n : ℝ) (a / 2) := by congr 1 ; ring
 
 lemma normalized_lcd_theta_upper
     {n : ℕ} {gamma b H alpha sigma t lcd k : ℝ}
-    (hn : 0 < n) (hgamma0 : 0 ≤ gamma) (hb : 0 < b)
+    (hn : 0 < n) (_hgamma0 : 0 ≤ gamma) (hb : 0 < b)
     (hH : 0 ≤ H) (hsigma : b / 2 * BooleanSlices.scale n (3 / 2) ≤ sigma)
-    (hk0 : 0 ≤ k) (hk : k ≤ 2 * BooleanSlices.scale n (1 - gamma))
+    (_hk0 : 0 ≤ k) (hk : k ≤ 2 * BooleanSlices.scale n (1 - gamma))
     (ht : 0 ≤ t)
     (htupper : t ≤ alpha * BooleanSlices.scale n (gamma / 2) * lcd)
     (hlcd : 0 < lcd) (halpha : 0 ≤ alpha)
@@ -2771,7 +2769,7 @@ lemma normalized_lcd_theta_upper
       simp [BooleanSlices.scale]]
     rw [BooleanSlices.scale_mul hn, BooleanSlices.scale_mul hn]
     rw [show BooleanSlices.scale n (gamma / 2 + (1 - gamma) / 2 + 1) =
-        BooleanSlices.scale n (3 / 2) by congr 1 <;> ring]
+        BooleanSlices.scale n (3 / 2) by congr 1 ; ring]
     field_simp [ne_of_gt (BooleanSlices.scale_pos hn (3 / 2))]
   calc
     (t / sigma) * (Real.sqrt k * ((H + 1 / 2) * n)) /
@@ -2867,7 +2865,7 @@ lemma normalized_frequency_upper
     {n : ℕ} {b sigma t A q : ℝ}
     (hn : 0 < n) (hb : 0 < b)
     (hsigma : b / 2 * BooleanSlices.scale n (3 / 2) ≤ sigma)
-    (ht0 : 0 ≤ t) (hA : 0 ≤ A)
+    (_ht0 : 0 ≤ t) (hA : 0 ≤ A)
     (ht : t ≤ A * BooleanSlices.scale n q) :
     t / sigma ≤ (2 * A / b) * BooleanSlices.scale n (q - 3 / 2) := by
   have hbasePos : 0 < b / 2 * BooleanSlices.scale n (3 / 2) :=
@@ -2907,7 +2905,7 @@ lemma normalized_cross_perturbation_upper
     (hsigma : b / 2 * BooleanSlices.scale n (3 / 2) ≤ sigma)
     (ht0 : 0 ≤ t)
     (ht : t ≤ alpha * BooleanSlices.scale n (1 / 2 + gamma / 8))
-    (hk0 : 0 ≤ k)
+    (_hk0 : 0 ≤ k)
     (hk : k ≤ 2 * BooleanSlices.scale n (1 - gamma)) :
     (t / sigma) * Real.sqrt k *
         BooleanSlices.scale n (1 / 2 + gamma / 8) / Real.pi ≤
@@ -3073,7 +3071,7 @@ theorem graphEffectiveLinear_restrict_norm_lower_of_sq
   exact hmass
 
 lemma taylor_sum_exp_log_bound
-    (m n : ℕ) (x Q : ℝ) (hm : 0 < m) (hn : 1 ≤ n)
+    (m n : ℕ) (x Q : ℝ) (_hm : 0 < m) (hn : 1 ≤ n)
     (hx0 : 0 ≤ x) (hQ : 1 ≤ Q) (hx : x ≤ Q * n) :
     (∑ j : Fin m, x ^ j.val / j.val.factorial) *
         Real.exp (-((m + 6 : ℕ) : ℝ) * Real.log n) ≤
@@ -3136,7 +3134,7 @@ lemma taylor_sum_exp_log_bound
 
 lemma power_factorial_decay_bound
     (n p m : ℕ) (gamma x B Q : ℝ) (hn : 1 ≤ n)
-    (hgamma : 0 ≤ gamma) (hx0 : 0 ≤ x) (hB : 0 ≤ B) (hQ : 0 ≤ Q)
+    (_hgamma : 0 ≤ gamma) (hx0 : 0 ≤ x) (hB : 0 ≤ B) (hQ : 0 ≤ Q)
     (hx : x ≤ B * BooleanSlices.scale n (-7 * gamma / 4))
     (hp : 10 ≤ gamma * p) :
     Q * x ^ p / m.factorial ≤
@@ -3156,7 +3154,6 @@ lemma power_factorial_decay_bound
     exact (Real.rpow_mul_natCast (x := (n : ℝ))
       (by positivity) (-7 * gamma / 4) p).symm
   have hexp : (-7 * gamma / 4) * p ≤ (-5 : ℝ) := by
-    push_cast at hp
     nlinarith
   have hscale : BooleanSlices.scale n ((-7 * gamma / 4) * p) ≤
       BooleanSlices.scale n (-5) :=
@@ -3284,7 +3281,7 @@ lemma eventually_lcd_log_budget
       _ = Ktheta * BooleanSlices.scale n q := by ring
   have htheta : BooleanSlices.scale n q ≤
       Ktheta * BooleanSlices.scale n (gamma / 2) := by
-    rw [show gamma / 2 = q + q by dsimp only [q] <;> ring,
+    rw [show gamma / 2 = q + q by dsimp only [q] ; ring,
       ← BooleanSlices.scale_mul hnpos]
     nlinarith [hqscalePos.le]
   have hlogScale : Real.log (BooleanSlices.scale n q) =
@@ -3394,7 +3391,6 @@ lemma lcd_budget_coefficient
       6 * ((2 ^ r : ℕ) : ℝ) + 6 := by
     push_cast
     rw [pow_succ]
-    push_cast
     ring
   have hleft : 16 * gamma * (((3 * (2 ^ (r + 1)) + 6 : ℕ) : ℝ)) <
       4000 := by
@@ -3683,7 +3679,7 @@ theorem ksssLemma72 : KSSSLemma72 := by
       rw [BooleanSlices.scale_sq (Nat.zero_le n)]
       rw [show (1 / 2 + gamma / 8) * 2 = 1 + gamma / 4 by ring]
       rw [← BooleanSlices.scale_mul hnpos]
-      simp only [BooleanSlices.scale, Real.rpow_one]
+      simp only [BooleanSlices.scale]
       field_simp [show (n : ℝ) ≠ 0 by positivity]
       exact Real.rpow_one (n : ℝ)
     have htailExp : -8 * BooleanSlices.scale n (1 / 2 + gamma / 8) ^ 2 / n =

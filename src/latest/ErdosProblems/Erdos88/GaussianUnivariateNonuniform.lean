@@ -19,7 +19,7 @@ value of size at most `2x` has derivative bounded below by `|a|/3`.  This
 is the deterministic change-of-variables estimate in the proof. -/
 lemma abs_linear_div_three_le_abs_deriv_of_dominated
     {a lam t u x : ℝ}
-    (hx : 0 ≤ x) (hu : |u| ≤ 2 * x)
+    (_hx : 0 ≤ x) (hu : |u| ≤ 2 * x)
     (hdom : |lam| * x ≤ a ^ 2 / 10)
     (hvalue : centeredCoordinatePolynomial a lam t = u) :
     |a| / 3 ≤ |a + 2 * lam * t| := by
@@ -45,7 +45,7 @@ lemma abs_linear_div_three_le_abs_deriv_of_dominated
 far-away value cannot lie near the origin. -/
 lemma abs_preimage_ge_of_dominated
     {a lam t u x sigma : ℝ}
-    (ha : 0 < |a|) (hsigma : 0 ≤ sigma)
+    (ha : 0 < |a|) (_hsigma : 0 ≤ sigma)
     (haSigma : |a| ≤ sigma) (hlamSigma : |lam| ≤ sigma)
     (hx : 1000 * sigma ≤ x)
     (hu : x / 10 ≤ |u|)
@@ -53,7 +53,7 @@ lemma abs_preimage_ge_of_dominated
     (hvalue : centeredCoordinatePolynomial a lam t = u) :
     x / (20 * |a|) ≤ |t| := by
   have hx0 : 0 ≤ x := by
-    nlinarith [mul_nonneg (by norm_num : (0 : ℝ) ≤ 1000) hsigma]
+    nlinarith
   have hxpos : 0 < x := by
     have hsigmaPos : 0 < sigma := lt_of_lt_of_le ha haSigma
     nlinarith
@@ -205,8 +205,8 @@ lemma hasDerivAt_centeredCoordinatePolynomial (a lam t : ℝ) :
     HasDerivAt (centeredCoordinatePolynomial a lam) (a + 2 * lam * t) t := by
   unfold centeredCoordinatePolynomial
   convert! ((hasDerivAt_id t).const_mul a).add
-      (((hasDerivAt_id t).pow 2).sub_const 1 |>.const_mul lam) using 1 <;>
-    norm_num <;> ring
+      (((hasDerivAt_id t).pow 2).sub_const 1 |>.const_mul lam) using 1 ;
+    norm_num ; ring
 
 lemma centeredCoordinatePolynomial_sub (a lam x y : ℝ) :
     centeredCoordinatePolynomial a lam y -
@@ -536,7 +536,7 @@ lemma map_centeredCoordinatePolynomial_measureReal_Icc_le_far_of_eq_zero
     · exact (ha0 haZero).elim
   have hderiv0 (t : ℝ) : HasDerivAt p a t := by
     change HasDerivAt (fun y : ℝ => a * y + 0 * (y ^ 2 - 1)) a t
-    convert! (hasDerivAt_const_mul (x := t) a) using 1 <;> norm_num
+    convert! (hasDerivAt_const_mul (x := t) a) using 1 ; norm_num
   have hvolumeRaw : volume.real S ≤
       ((u + eps) - (u - eps)) / |a| := by
     apply volumeReal_le_intervalLength_div_of_injOn_deriv
@@ -698,7 +698,7 @@ lemma neg_sub_log_one_sub_le_two_sq
     nlinarith
   calc
     -y - Real.log (1 - y) ≤ -y + ((1 - y)⁻¹ - 1) := by linarith
-    _ = y ^ 2 / (1 - y) := by field_simp [hden] <;> ring
+    _ = y ^ 2 / (1 - y) := by field_simp [hden] ; ring
     _ ≤ 2 * y ^ 2 := hfrac
 
 /-- One-coordinate sub-exponential MGF estimate.  The bound is symmetric in
@@ -726,7 +726,7 @@ lemma centeredCoordinate_mgf_le_exp
     apply (div_le_iff₀ (by positivity : 0 < 2 * (1 - y))).2
     have hdenOne : 1 ≤ 2 * (1 - y) := by linarith
     have hnum : 0 ≤ a ^ 2 * t ^ 2 := by positivity
-    convert mul_le_mul_of_nonneg_left hdenOne hnum using 1 <;> ring
+    convert mul_le_mul_of_nonneg_left hdenOne hnum using 1 ; ring
   have hexpArg :
       -t * lam + a ^ 2 * t ^ 2 / (2 * (1 - 2 * t * lam)) -
           Real.log (1 - y) / 2 ≤

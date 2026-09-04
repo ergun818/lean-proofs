@@ -8,7 +8,6 @@ to specialize KSSS Theorem 13.8 to the ternary neighbourhood-difference
 matrices occurring in Section 13.
 -/
 
-open Classical
 open scoped BigOperators
 
 namespace Erdos88.Switching
@@ -100,10 +99,11 @@ variable {V R : Type*} [Fintype V] [DecidableEq V]
 /-- A matrix of rank at least `r` contains `r` linearly independent actual
 columns. -/
 lemma exists_linearIndependent_columns {I J : Type*}
-    [Fintype I] [Fintype J] (A : Matrix I J ℝ) (r : ℕ)
+    [Finite I] [Fintype J] (A : Matrix I J ℝ) (r : ℕ)
     (hrank : r ≤ A.rank) :
     ∃ e : Fin r → J, LinearIndependent ℝ (fun i ↦ A.col (e i)) := by
   classical
+  let : Fintype I := Fintype.ofFinite I
   let cols : Set (I → ℝ) := Set.range A.col
   obtain ⟨T, hTsub, hTcard, _hTspan, hTind⟩ :=
     Submodule.exists_finset_span_eq_linearIndepOn ℝ cols
@@ -130,19 +130,21 @@ lemma exists_linearIndependent_columns {I J : Type*}
 
 /-- Matrix multiplication by a subset indicator is the sum of the selected
 columns. -/
-lemma mulVec_finsetIndicator_eq_sum_cols {I : Type*} [Fintype I]
+lemma mulVec_finsetIndicator_eq_sum_cols {I : Type*} [Finite I]
     (A : Matrix I V ℝ) (U : Finset V) :
     A.mulVec (finsetIndicator U) = ∑ w ∈ U, A.col w := by
+  let : Fintype I := Fintype.ofFinite I
   funext i
   simp [Matrix.mulVec_apply, dotProduct, finsetIndicator, Matrix.col_apply]
 
 /-- Removing coordinates whose matrix columns vanish does not change the
 matrix sum. -/
-lemma mulVec_finsetIndicator_sdiff_of_cols_zero {I : Type*} [Fintype I]
+lemma mulVec_finsetIndicator_sdiff_of_cols_zero {I : Type*} [Finite I]
     (A : Matrix I V ℝ) (N U : Finset V)
     (hzero : ∀ w ∈ N, A.col w = 0) :
     A.mulVec (finsetIndicator (U \ N)) =
       A.mulVec (finsetIndicator U) := by
+  let : Fintype I := Fintype.ofFinite I
   rw [mulVec_finsetIndicator_eq_sum_cols,
     mulVec_finsetIndicator_eq_sum_cols]
   apply Finset.sum_subset (Finset.sdiff_subset)
@@ -152,9 +154,10 @@ lemma mulVec_finsetIndicator_sdiff_of_cols_zero {I : Type*} [Fintype I]
     exact hwNot (Finset.mem_sdiff.mpr ⟨hwU, hwN⟩)
   rw [hzero w hwN]
 
+omit [DecidableEq R] [Fintype V] in
 /-- Regroup a selected column sum into its part outside the blocks and the
 cardinality-weighted block patterns. -/
-lemma sum_cols_eq_outside_add_blockCounts {I : Type*} [Fintype I]
+lemma sum_cols_eq_outside_add_blockCounts {I : Type*} [Finite I]
     (A : Matrix I V ℝ) (blocks : R → Finset V) (patterns : R → I → ℝ)
     (hdisjoint : Set.PairwiseDisjoint Set.univ blocks)
     (hcols : ∀ r w, w ∈ blocks r → A.col w = patterns r)
@@ -163,6 +166,7 @@ lemma sum_cols_eq_outside_add_blockCounts {I : Type*} [Fintype I]
       (∑ w ∈ U \ Finset.univ.biUnion blocks, A.col w) +
         ∑ r, ((U ∩ blocks r).card : ℝ) • patterns r := by
   classical
+  let : Fintype I := Fintype.ofFinite I
   let W := Finset.univ.biUnion blocks
   have hpartition : (U \ W) ∪ (U ∩ W) = U := by
     ext w
@@ -203,7 +207,7 @@ lemma sum_cols_eq_outside_add_blockCounts {I : Type*} [Fintype I]
         ∑ w ∈ U ∩ W, A.col w := Finset.sum_union houtDisjoint
     _ = (∑ w ∈ U \ Finset.univ.biUnion blocks, A.col w) +
         ∑ r, ((U ∩ blocks r).card : ℝ) • patterns r := by
-      simpa only [W, hinside]
+      simp only [W, hinside]
 
 /-- The private-neighbour blocks diagonalize the switching equations: after
 the outside assignment is fixed, the `j`th equation changes exactly by the
@@ -247,9 +251,10 @@ lemma switchingDifferenceMatrix_mulVec_private_decompose
   rw [hsum] at hj
   exact hj
 
+omit [DecidableEq R] in
 /-- On linearly independent constant-column blocks, the matrix sum together
 with the outside part uniquely determines every block cardinality. -/
-lemma blockCards_eq_of_mulVec_eq {I : Type*} [Fintype I]
+lemma blockCards_eq_of_mulVec_eq {I : Type*} [Finite I]
     (A : Matrix I V ℝ) (blocks : R → Finset V) (patterns : R → I → ℝ)
     (hdisjoint : Set.PairwiseDisjoint Set.univ blocks)
     (hcols : ∀ r w, w ∈ blocks r → A.col w = patterns r)
@@ -260,6 +265,8 @@ lemma blockCards_eq_of_mulVec_eq {I : Type*} [Fintype I]
     (hmul : A.mulVec (finsetIndicator U) =
       A.mulVec (finsetIndicator Z)) :
     ∀ r, (U ∩ blocks r).card = (Z ∩ blocks r).card := by
+  classical
+  let : Fintype I := Fintype.ofFinite I
   have hcolsEq : (∑ w ∈ U, A.col w) = ∑ w ∈ Z, A.col w := by
     rw [← mulVec_finsetIndicator_eq_sum_cols,
       ← mulVec_finsetIndicator_eq_sum_cols, hmul]
@@ -284,6 +291,7 @@ lemma blockCards_eq_of_mulVec_eq {I : Type*} [Fintype I]
       ((Z ∩ blocks r).card : ℝ) := sub_eq_zero.mp hr
   exact_mod_cast hcast
 
+omit [DecidableEq R] in
 /-- Fixing a subset outside a family of blocks and fixing its cardinality in
 each block leaves at most the product of the corresponding binomial
 coefficients.  Disjointness is not needed for this purely fibrewise bound. -/
@@ -329,6 +337,7 @@ lemma card_subsets_with_outside_and_blockCards_le
     _ = ∏ i, Nat.choose (blocks i).card (counts i) := by
       simp only [target, Fintype.card_piFinset, Finset.card_powersetCard]
 
+omit [DecidableEq R] in
 /-- For pairwise-disjoint blocks, every independent choice of the prescribed
 number of elements in each block gives a distinct subset.  Fixing a disjoint
 outside part therefore leaves at least the product of the corresponding
@@ -419,6 +428,7 @@ lemma prod_choose_le_card_subsets_with_outside_and_blockCards
         U \ Finset.univ.biUnion blocks = outside ∧
           ∀ i, (U ∩ blocks i).card = counts i).card := rfl
 
+omit [DecidableEq R] in
 /-- Exact fibre cardinality for pairwise-disjoint blocks and a fixed
 outside assignment. -/
 lemma card_subsets_with_outside_and_blockCards_eq
@@ -429,11 +439,13 @@ lemma card_subsets_with_outside_and_blockCards_eq
         U \ Finset.univ.biUnion blocks = outside ∧
           ∀ i, (U ∩ blocks i).card = counts i).card =
       ∏ i, Nat.choose (blocks i).card (counts i) := by
+  classical
   apply Nat.le_antisymm
   · exact card_subsets_with_outside_and_blockCards_le blocks outside counts
   · exact prod_choose_le_card_subsets_with_outside_and_blockCards
       blocks outside counts hdisjoint houtside
 
+omit [DecidableEq R] in
 /-- Dependent prescribed counts: the desired count in each disjoint block
 may depend on the outside assignment.  Summing the exact binomial fibre
 sizes gives a lower bound for the resulting family of subsets. -/
@@ -448,6 +460,7 @@ lemma sum_prod_choose_le_card_dependent_blockCounts
         U \ Finset.univ.biUnion blocks ∈ outsides ∧
           ∀ i, (U ∩ blocks i).card =
             counts (U \ Finset.univ.biUnion blocks) i).card := by
+  classical
   let event := (Finset.univ : Finset (Finset V)).filter fun U ↦
     U \ Finset.univ.biUnion blocks ∈ outsides ∧
       ∀ i, (U ∩ blocks i).card =
@@ -483,6 +496,8 @@ lemma sum_prod_choose_le_card_dependent_blockCounts
   rw [hfiber, card_subsets_with_outside_and_blockCards_eq
     blocks O (counts O) hdisjoint (houtside O hO)]
 
+omit [DecidableEq R] in
+open Classical in
 /-- Exact fibre decomposition for dependent prescribed block counts, with an
 additional predicate on the assembled subset.  This is the counting form
 needed when only a positive fraction of each private-block fibre satisfies a
@@ -498,6 +513,7 @@ lemma sum_card_dependent_blockGoodFibers_eq
         U \ Finset.univ.biUnion blocks ∈ outsides ∧
           (∀ i, (U ∩ blocks i).card =
             counts (U \ Finset.univ.biUnion blocks) i) ∧ good U).card := by
+  classical
   let event := (Finset.univ : Finset (Finset V)).filter fun U ↦
     U \ Finset.univ.biUnion blocks ∈ outsides ∧
       (∀ i, (U ∩ blocks i).card =
@@ -531,6 +547,7 @@ lemma sum_card_dependent_blockGoodFibers_eq
     intro i
     simpa only [hEq] using hCount i
 
+omit [DecidableEq R] in
 /-- A fibre of the Bernoulli matrix sum is bounded by the number of outside
 subsets times one central binomial coefficient for each independent constant
 column block. -/
@@ -574,7 +591,7 @@ lemma card_mulVec_fiber_le {I : Type*} [Fintype I]
         · simpa only [W] using hUout
         · have hout : U \ Finset.univ.biUnion blocks =
               Z \ Finset.univ.biUnion blocks := by
-            simpa only [W, hUout, hZout]
+            simp only [W, hUout, hZout]
           have hmul : A.mulVec (finsetIndicator U) =
               A.mulVec (finsetIndicator Z) := by
             exact (Finset.mem_filter.mp hUevent).2.trans
@@ -614,6 +631,7 @@ lemma card_mulVec_fiber_le {I : Type*} [Fintype I]
       Finset.card_univ, hWcard]
   simpa only [event, central, houtcard] using hsum
 
+omit [DecidableEq R] in
 /-- The same fibre bound when Bernoulli subsets are restricted to a fixed
 ambient vertex set. -/
 lemma card_mulVec_fiber_on_ambient_le {I : Type*} [Fintype I]
@@ -660,7 +678,7 @@ lemma card_mulVec_fiber_on_ambient_le {I : Type*} [Fintype I]
         · simpa only [W] using hUout
         · have hout : U \ Finset.univ.biUnion blocks =
               Z \ Finset.univ.biUnion blocks := by
-            simpa only [W, hUout, hZout]
+            simp only [W, hUout, hZout]
           have hmul : A.mulVec (finsetIndicator U) =
               A.mulVec (finsetIndicator Z) := by
             exact (Finset.mem_filter.mp hUevent).2.trans
@@ -703,6 +721,7 @@ lemma card_mulVec_fiber_on_ambient_le {I : Type*} [Fintype I]
     rw [Finset.card_sdiff_of_subset hWsub, hWcard]
   simpa only [event, central, houtcard] using hsum
 
+omit [DecidableEq R] in
 /-- Real-normalized ambient-set form. -/
 lemma card_mulVec_fiber_on_ambient_real_le {I : Type*} [Fintype I]
     (A : Matrix I V ℝ) (ambient : Finset V)
@@ -716,6 +735,7 @@ lemma card_mulVec_fiber_on_ambient_real_le {I : Type*} [Fintype I]
         A.mulVec (finsetIndicator U) = targetValue).card : ℝ) ≤
       (2 : ℝ) ^ ambient.card *
         (2 : ℝ) ^ Fintype.card R / Real.sqrt m ^ Fintype.card R := by
+  classical
   let event := ambient.powerset.filter fun U ↦
     A.mulVec (finsetIndicator U) = targetValue
   have hfinite := card_mulVec_fiber_on_ambient_le A ambient blocks patterns
@@ -849,6 +869,7 @@ lemma card_matrixFiber_and_window_le_of_conditional
           A.mulVec (finsetIndicator O) = targetValue).card : ℝ) *
         windowBound := by rfl
 
+omit [DecidableEq R] in
 /-- Real-normalized form for equally sized independent blocks.  Relative to
 all `2^|V|` subsets, each independent block contributes one factor
 `2 / √m`. -/
@@ -862,6 +883,7 @@ lemma card_mulVec_fiber_real_le {I : Type*} [Fintype I]
         A.mulVec (finsetIndicator U) = targetValue).card : ℝ) ≤
       (2 : ℝ) ^ Fintype.card V *
         (2 : ℝ) ^ Fintype.card R / Real.sqrt m ^ Fintype.card R := by
+  classical
   let event := (Finset.univ : Finset (Finset V)).filter fun U ↦
     A.mulVec (finsetIndicator U) = targetValue
   have hfinite := card_mulVec_fiber_le A blocks patterns hdisjoint hcols hLI
@@ -970,6 +992,7 @@ lemma large_switchingColumnFiber_of_not_mem_small
   simp only [if_pos hsmall, mem_switchingColumnFiber,
     Finset.mem_univ, true_and]
 
+omit [DecidableEq I] in
 /-- Robust rank after every permitted column deletion produces `r`
 linearly independent ternary column patterns, each repeated on `m` pairwise
 disjoint columns.  This is the finite-pattern specialization of the
@@ -1034,6 +1057,7 @@ lemma exists_large_independent_switchingColumnBlocks
   exact (switchingColumnCode_eq_iff G p Finset.univ w (selected i)).mp
     hcode a (Finset.mem_univ a)
 
+omit [DecidableEq I] in
 /-- Explicit finite Halász estimate for a switching tuple that is not
 `(k+1)`-degenerate.  The exponent is the surviving robust rank `s-k`. -/
 lemma card_mulVec_fiber_real_le_of_not_isKDegenerate
@@ -1048,6 +1072,7 @@ lemma card_mulVec_fiber_real_le_of_not_isKDegenerate
       (2 : ℝ) ^ Fintype.card V *
         (2 : ℝ) ^ (Fintype.card I - k) /
           Real.sqrt m ^ (Fintype.card I - k) := by
+  classical
   have hrank : ∀ Q : Finset V, Q.card ≤ budget →
       Fintype.card I - k ≤
         Matrix.rank ((switchingDifferenceMatrix G p).submatrix id
@@ -1070,6 +1095,7 @@ section SwitchingScoreFiber
 
 variable {n : ℕ} {I : Type*} [Fintype I] [DecidableEq I]
 
+omit [DecidableEq I] in
 /-- Every column indexed by a common nonneighbor of all tuple endpoints is
 zero. -/
 lemma switchingDifferenceMatrix_col_eq_zero_of_mem_commonNonneighbors
@@ -1077,6 +1103,7 @@ lemma switchingDifferenceMatrix_col_eq_zero_of_mem_commonNonneighbors
     (S₀ : Finset (Fin n)) {w : Fin n}
     (hw : w ∈ switchingCommonNonneighbors G p S₀) :
     (switchingDifferenceMatrix G p).col w = 0 := by
+  classical
   funext i
   change w ∈ nonneighborsOf G (switchingEndpointFinset p) S₀ at hw
   have hw' := mem_nonneighborsOf.mp hw
@@ -1088,14 +1115,17 @@ lemma switchingDifferenceMatrix_col_eq_zero_of_mem_commonNonneighbors
       (Or.inr ⟨i, rfl⟩))
   simp [Matrix.col_apply, switchingDifferenceMatrix, hy, hz]
 
+omit [DecidableEq I] [Fintype I] in
 /-- For an admissible oriented switch, the corresponding row of the
 neighbourhood-difference matrix is exactly the real switch increment. -/
-lemma switchingDifferenceMatrix_mulVec_eq_switchIncrement_edgeScore
+lemma switchingDifferenceMatrix_mulVec_eq_switchIncrement_edgeScore [Finite I]
     (G : SimpleGraph (Fin n)) (p : I → Fin n × Fin n)
     (U : Finset (Fin n)) (i : I)
     (hy : (p i).1 ∈ U) (hz : (p i).2 ∉ U) :
     (switchingDifferenceMatrix G p).mulVec (finsetIndicator U) i =
       (switchIncrement (edgeScore G) U (p i).1 (p i).2 : ℝ) := by
+  classical
+  let : Fintype I := Fintype.ofFinite I
   rw [switchingDifferenceMatrix_mulVec,
     switchIncrement_edgeScore G hy hz,
     Finset.erase_eq_self.mpr hz,
@@ -1158,6 +1188,7 @@ lemma mem_switchingTupleFinset_of_private_counts
     houtside, hcounts j]
   exact hrequired j
 
+open Classical in
 /-- Sum the exact private-block fibres over any family of admissible outside
 assignments.  Endpoint orientations are imposed only on the outside part;
 the endpoint/private-block disjointness then preserves them after the blocks
@@ -1234,6 +1265,7 @@ lemma sum_private_choose_le_card_states_containing_switchingTuple_and_window
     simpa only [blocks, O] using hU'.2 j
   · exact hrequired O hO
 
+open Classical in
 /-- Sum arbitrary good subfamilies of the exact private-block fibres into the
 fixed-switching-tuple window event.  In contrast with the preceding binomial
 fibre bound, this form retains a further property supplied by a slice
@@ -1416,6 +1448,7 @@ lemma mem_switchingTupleFinset_sdiff_commonNonneighbors_iff
       rw [← hsame]
       simpa only [A, U'] using hmul
 
+open Classical in
 /-- Lower conditional exposure on the common-nonneighbor reservoir.  Each
 outside switching configuration has at least `windowLower` extensions inside
 the zero-column reservoir which satisfy the window event, and the outside
@@ -1528,6 +1561,7 @@ lemma card_states_containing_switchingTuple_and_window_ge_conditional
       exact Finset.sum_le_sum fun O hO ↦ hfiber O hO
     _ = (fullEvent.card : ℝ) := by rw [hcard, Nat.cast_sum]
 
+open Classical in
 /-- Double-count the pairs `(state, ordered switching tuple)` occurring in a
 windowed raw moment, with the tuple chosen first on the right-hand side. -/
 lemma rawMoment_switchingCount_eq_sum_stateCounts
@@ -1604,6 +1638,7 @@ noncomputable def goodSwitchingTupleClass
   classical
   simp [goodSwitchingTupleClass]
 
+open Classical in
 /-- Sum a uniform lower bound for the number of admissible states over any
 chosen class of ordered switching tuples. -/
 lemma card_tupleClass_mul_stateLower_le_rawMoment
@@ -1612,7 +1647,7 @@ lemma card_tupleClass_mul_stateLower_le_rawMoment
     (T : Finset (Fin n × Fin n)) (G : SimpleGraph (Fin n))
     (labels : Finset ℤ) (a : ℤ → ℕ)
     (tuples : Finset (RawTupleIndex labels a → Fin n × Fin n))
-    (stateLower : ℝ) (hstateLower : 0 ≤ stateLower)
+    (stateLower : ℝ) (_hstateLower : 0 ≤ stateLower)
     (hstate : ∀ p ∈ tuples,
       stateLower ≤
         (((states.filter fun U ↦
@@ -1637,6 +1672,7 @@ lemma card_tupleClass_mul_stateLower_le_rawMoment
             window U).card : ℝ)) := by
       exact Finset.sum_le_univ_sum_of_nonneg fun _p ↦ by positivity
 
+open Classical in
 /-- Lower-moment bookkeeping from KSSS Lemma 13.10(a).  Once its good-tuple
 cardinality inequality is available and every good tuple has at least
 `stateLower` admissible window states, one obtains the factor `|T|^s / 2`.
@@ -1707,6 +1743,7 @@ noncomputable def exactSwitchingDegeneracyClass
   classical
   simp [exactSwitchingDegeneracyClass]
 
+open Classical in
 /-- A tuple using a pair outside `T` is admissible in no state. -/
 lemma card_states_containing_switchingTuple_eq_zero_of_not_all_mem
     (states : Finset (Finset (Fin n)))
@@ -1729,6 +1766,7 @@ lemma card_states_containing_switchingTuple_eq_zero_of_not_all_mem
     simpa only [admissibleSwitches, Finset.mem_filter] using hj
   exact hj'.1
 
+open Classical in
 /-- Exact decomposition of a windowed raw moment by the maximal switching
 degeneracy of the ordered tuple.  Tuples outside `T` contribute zero. -/
 lemma rawMoment_switchingCount_eq_sum_exactDegeneracy
@@ -1790,6 +1828,7 @@ lemma not_isKDegenerate_succ_of_switchingDegeneracy_lt
     (k := switchingDegeneracy G p budget + 1) (by omega) hsucc
   omega
 
+open Classical in
 /-- An exact degeneracy class is contained in the cumulative class counted
 by KSSS Lemma 13.10(b). -/
 lemma exactSwitchingDegeneracyClass_subset_kDegenerate
@@ -1806,6 +1845,7 @@ lemma exactSwitchingDegeneracyClass_subset_kDegenerate
   rw [← hp'.2]
   exact isKDegenerate_switchingDegeneracy G p budget
 
+open Classical in
 lemma card_exactSwitchingDegeneracyClass_le_kDegenerate
     (T : Finset (Fin n × Fin n)) (G : SimpleGraph (Fin n))
     (labels : Finset ℤ) (a : ℤ → ℕ) (budget k : ℕ) :
@@ -1856,6 +1896,7 @@ lemma card_states_containing_nondegenerate_switchingTuple_le
     exact_mod_cast hcard
   exact hcardReal.trans (by simpa only [Fintype.card_fin] using hhalasz)
 
+omit [DecidableEq I] in
 /-- Halász count after exposing the common-nonneighbor reservoir.  Since all
 columns on that reservoir vanish, the independent repeated blocks lie in its
 complement and the ambient power of two is reduced accordingly. -/
@@ -1874,6 +1915,7 @@ lemma card_outside_commonNonneighbors_mulVec_fiber_le
           switchingCommonNonneighbors G p S₀).card *
         (2 : ℝ) ^ (Fintype.card I - k) /
           Real.sqrt m ^ (Fintype.card I - k) := by
+  classical
   have hrank : ∀ Q : Finset (Fin n), Q.card ≤ budget →
       Fintype.card I - k ≤
         Matrix.rank ((switchingDifferenceMatrix G p).submatrix id
@@ -2138,6 +2180,7 @@ lemma card_states_containing_switchingTuple_and_window_le_cube
       simpa only [outside, N] using hbase
     _ = (2 : ℝ) ^ n * q := by rw [← mul_assoc, hpow]
 
+open Classical in
 /-- Sum a pointwise state-count bound over the exact degeneracy classes.
 This is the finite upper-moment bookkeeping in KSSS Lemma 13.4. -/
 lemma rawMoment_switchingCount_le_of_exactDegeneracy_bounds
@@ -2159,7 +2202,7 @@ lemma rawMoment_switchingCount_le_of_exactDegeneracy_bounds
       ∑ k ∈ Finset.range (Fintype.card (RawTupleIndex labels a) + 1),
         tupleBound k * stateBound k := by
   classical
-  rw [rawMoment_switchingCount_eq_sum_exactDegeneracy]
+  rw [rawMoment_switchingCount_eq_sum_exactDegeneracy (budget := budget)]
   apply Finset.sum_le_sum
   intro k hk
   have hk' : k ≤ Fintype.card (RawTupleIndex labels a) := by
@@ -2178,6 +2221,7 @@ lemma rawMoment_switchingCount_le_of_exactDegeneracy_bounds
     _ ≤ tupleBound k * stateBound k := by
       exact mul_le_mul_of_nonneg_right (htuple k hk') (hstateNonneg k)
 
+open Classical in
 /-- The complete finite upper-moment assembly from two source inputs:
 the Lemma 13.10 bound on each cumulative degeneracy class, encoded by
 `tupleBound`, and the conditional bounded-window estimate on every exposed
@@ -2242,6 +2286,7 @@ lemma rawMoment_switchingCount_le_of_conditional_window
       simpa only [stateBound, s, hkeq, Nat.sub_self, pow_zero, mul_one,
         div_one] using hbound
 
+open Classical in
 /-- Upper half of KSSS Lemma 13.4 after inserting the already-proved finite
 Lemma 13.10.  The large fiber used in the richness argument and the smaller
 repeated-column fiber used in the Halasz estimate are kept separate.  The

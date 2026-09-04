@@ -9,7 +9,7 @@ open MeasureTheory Real
 namespace Erdos88
 namespace FiniteSliceConcentration
 
-open Classical Finset
+open Finset
 
 variable {β : Type*} [Fintype β] [Nonempty β]
 
@@ -184,7 +184,7 @@ lemma permBranchSwapEquiv_spec {N : ℕ} (p q : Fin (N + 1))
 hence a switch-Lipschitz statistic has branch means at distance at most `a`. -/
 lemma permBranchExpectation_diff_le {N : ℕ}
     (F : Equiv.Perm (Fin (N + 1)) → ℝ) (a : ℝ)
-    (ha : 0 ≤ a)
+    (_ha : 0 ≤ a)
     (hswitch : ∀ (σ : Equiv.Perm (Fin (N + 1))) p q,
       |F σ - F (Equiv.swap p q * σ)| ≤ a)
     (p q : Fin (N + 1)) :
@@ -248,9 +248,9 @@ lemma decomposeFin_tail_swap {N : ℕ} (p : Fin (N + 1))
   · simp only [Equiv.Perm.decomposeFin_symm_apply_succ,
       Equiv.Perm.mul_apply]
     by_cases hxu : e x = u
-    · simp [hxu, ι]
+    · simp [hxu]
     by_cases hxv : e x = v
-    · simp [hxv, hxu, ι]
+    · simp [hxv]
     · have hιu : ι (e x) ≠ ι u := fun h => hxu (hι h)
       have hιv : ι (e x) ≠ ι v := fun h => hxv (hι h)
       rw [Equiv.swap_apply_of_ne_of_ne hxu hxv]
@@ -261,7 +261,7 @@ permutation. At a successor step every conditional branch has a certificate,
 and any two branch conditional means are at distance at most `a`. -/
 noncomputable def PermRevealBounded :
     (N L : ℕ) → (Equiv.Perm (Fin N) → ℝ) → ℝ → Prop
-  | N, 0, F, _ => ∀ σ τ, F σ = F τ
+  | _N, 0, F, _ => ∀ σ τ, F σ = F τ
   | 0, _ + 1, _, _ => False
   | N + 1, L + 1, F, a =>
       (∀ p : Fin (N + 1),

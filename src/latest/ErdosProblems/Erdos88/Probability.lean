@@ -25,7 +25,6 @@ open scoped BigOperators
 namespace Erdos88
 namespace Probability
 
-open Classical
 
 section FiniteProduct
 
@@ -64,12 +63,15 @@ def monomial (T W : Finset V) : ℝ := if T ⊆ W then 1 else 0
 /-- A Walsh character on the discrete cube. -/
 def walsh (T W : Finset V) : ℝ := ∏ v ∈ T, sign v W
 
+omit [Fintype V] in
 @[simp] lemma monomial_empty (W : Finset V) : monomial ∅ W = 1 := by
   simp [monomial]
 
+omit [Fintype V] in
 @[simp] lemma walsh_empty (W : Finset V) : walsh ∅ W = 1 := by
   simp [walsh]
 
+omit [Fintype V] in
 lemma monomial_eq_prod_bit (T W : Finset V) :
     monomial T W = ∏ v ∈ T, bit v W := by
   classical
@@ -83,35 +85,49 @@ lemma monomial_eq_prod_bit (T W : Finset V) :
     rw [monomial, if_neg h]
     exact (Finset.prod_eq_zero hvT (by simp [bit, hvW])).symm
 
+omit [DecidableEq V] in
 lemma sum_univ_eq_sum_powerset (f : Finset V → ℝ) :
     (∑ W : Finset V, f W) = ∑ W ∈ (Finset.univ : Finset V).powerset, f W := by
+  classical
   simp
 
+omit [DecidableEq V] in
 lemma sum_bernoulliWeight (p : ℝ) :
     ∑ W : Finset V, bernoulliWeight p W = 1 := by
+  classical
   rw [sum_univ_eq_sum_powerset]
   simpa [bernoulliWeight] using
     (Erdos202.ParkPham.sum_bernoulliMass_eq_one
       (X := (Finset.univ : Finset V)) (p := p) (by ring))
 
+omit [DecidableEq V] in
 lemma bernoulliWeight_nonneg {p : ℝ} (hp0 : 0 ≤ p) (hp1 : p ≤ 1)
     (W : Finset V) : 0 ≤ bernoulliWeight p W := by
+  classical
   exact Erdos202.ParkPham.bernoulliMass_nonneg hp0 hp1
 
+omit [DecidableEq V] in
 @[simp] lemma expectation_const (p c : ℝ) :
     expectation (V := V) p (fun _ => c) = c := by
+  classical
   simp [expectation, ← Finset.sum_mul, sum_bernoulliWeight]
 
+omit [DecidableEq V] in
 lemma expectation_add (p : ℝ) (f g : Finset V → ℝ) :
     expectation p (fun W => f W + g W) = expectation p f + expectation p g := by
+  classical
   simp [expectation, mul_add, Finset.sum_add_distrib]
 
+omit [DecidableEq V] in
 lemma expectation_sub (p : ℝ) (f g : Finset V → ℝ) :
     expectation p (fun W => f W - g W) = expectation p f - expectation p g := by
+  classical
   simp [expectation, mul_sub, Finset.sum_sub_distrib]
 
+omit [DecidableEq V] in
 lemma expectation_smul (p c : ℝ) (f : Finset V → ℝ) :
     expectation p (fun W => c * f W) = c * expectation p f := by
+  classical
   unfold expectation
   calc
     (∑ W : Finset V, bernoulliWeight p W * (c * f W)) =
@@ -122,6 +138,7 @@ lemma expectation_smul (p c : ℝ) (f : Finset V → ℝ) :
     _ = c * ∑ W : Finset V, bernoulliWeight p W * f W := by
       rw [Finset.mul_sum]
 
+omit [DecidableEq V] in
 lemma expectation_sum {I : Type*} (p : ℝ) (s : Finset I)
     (f : I → Finset V → ℝ) :
     expectation p (fun W => ∑ i ∈ s, f i W) =
@@ -152,6 +169,7 @@ lemma expectation_monomial {p : ℝ} (hp0 : 0 ≤ p) (hp1 : p ≤ 1)
   rw [hfun, expectation_monomial hp0 hp1]
   simp
 
+omit [Fintype V] in
 /-- The product-over-powerset factorization behind finite product measures. -/
 lemma sum_prod_ite_mem (X : Finset V) (a b : V → ℝ) :
     (∑ W ∈ X.powerset, ∏ v ∈ X, if v ∈ W then a v else b v) =
@@ -191,6 +209,7 @@ lemma sum_prod_ite_mem (X : Finset V) (a b : V → ℝ) :
       rw [hfirst, hsecond, ih, Finset.prod_insert hx]
       ring
 
+omit [Fintype V] in
 lemma prod_ite_const_of_subset {X W : Finset V} (hWX : W ⊆ X) (a b : ℝ) :
     (∏ v ∈ X, if v ∈ W then a else b) =
       a ^ W.card * b ^ (X.card - W.card) := by
@@ -210,10 +229,12 @@ lemma prod_ite_const_of_subset {X W : Finset V} (hWX : W ⊆ X) (a b : ℝ) :
   simp only [Finset.prod_const]
   rw [Finset.card_sdiff_of_subset hWX]
 
+omit [DecidableEq V] in
 /-- Exact moment-generating function of the sample size. -/
 lemma expectation_exp_card (p t : ℝ) :
     expectation (V := V) p (fun W => Real.exp (t * W.card)) =
       (1 - p + p * Real.exp t) ^ Fintype.card V := by
+  classical
   rw [expectation, sum_univ_eq_sum_powerset]
   simp only [bernoulliWeight, Erdos202.ParkPham.bernoulliMass]
   calc
@@ -237,9 +258,11 @@ lemma expectation_exp_card (p t : ℝ) :
     _ = (1 - p + p * Real.exp t) ^ Fintype.card V := by
       simp [add_comm]
 
+omit [DecidableEq V] in
 /-- Variance is the second moment minus the square of the first moment. -/
 lemma variance_eq_expectation_sq_sub (p : ℝ) (f : Finset V → ℝ) :
     variance p f = expectation p (fun W => f W ^ 2) - (expectation p f) ^ 2 := by
+  classical
   unfold variance
   have hfun : (fun W => (f W - expectation p f) ^ 2) =
       (fun W => f W ^ 2 - (2 * expectation p f) * f W +
@@ -250,10 +273,12 @@ lemma variance_eq_expectation_sq_sub (p : ℝ) (f : Finset V → ℝ) :
     expectation_smul, expectation_const]
   ring
 
+omit [DecidableEq V] in
 /-- Covariance is the mixed second moment minus the product of means. -/
 lemma covariance_eq_expectation_mul_sub (p : ℝ) (f g : Finset V → ℝ) :
     covariance p f g =
       expectation p (fun W => f W * g W) - expectation p f * expectation p g := by
+  classical
   unfold covariance
   have hfun :
       (fun W => (f W - expectation p f) * (g W - expectation p g)) =
@@ -265,6 +290,7 @@ lemma covariance_eq_expectation_mul_sub (p : ℝ) (f g : Finset V → ℝ) :
     expectation_smul, expectation_smul, expectation_const]
   ring
 
+omit [Fintype V] in
 lemma monomial_mul (A B W : Finset V) :
     monomial A W * monomial B W = monomial (A ∪ B) W := by
   by_cases hA : A ⊆ W <;> by_cases hB : B ⊆ W <;>
@@ -295,19 +321,23 @@ noncomputable def eventProbability (p : ℝ) (P : Finset V → Prop)
     [DecidablePred P] : ℝ :=
   expectation p fun W => if P W then 1 else 0
 
+omit [DecidableEq V] in
 lemma eventProbability_nonneg {p : ℝ} (hp0 : 0 ≤ p) (hp1 : p ≤ 1)
     (P : Finset V → Prop) [DecidablePred P] :
     0 ≤ eventProbability p P := by
+  classical
   unfold eventProbability expectation
   apply Finset.sum_nonneg
   intro W hW
   exact mul_nonneg (bernoulliWeight_nonneg hp0 hp1 W) (by positivity)
 
+omit [DecidableEq V] in
 /-- Monotonicity of the explicit finite Bernoulli event probability. -/
 lemma eventProbability_mono {p : ℝ} (hp0 : 0 ≤ p) (hp1 : p ≤ 1)
     {P Q : Finset V → Prop} [DecidablePred P] [DecidablePred Q]
     (hPQ : ∀ W, P W → Q W) :
     eventProbability p P ≤ eventProbability p Q := by
+  classical
   unfold eventProbability expectation
   apply Finset.sum_le_sum
   intro W hW
@@ -318,10 +348,12 @@ lemma eventProbability_mono {p : ℝ} (hp0 : 0 ≤ p) (hp1 : p ≤ 1)
   · simp only [hP, if_false]
     positivity
 
+omit [DecidableEq V] in
 /-- Markov's inequality for an explicit finite probability mass function. -/
 lemma markov_bound {p a : ℝ} (hp0 : 0 ≤ p) (hp1 : p ≤ 1) (ha : 0 < a)
     (Y : Finset V → ℝ) (hY : ∀ W, 0 ≤ Y W) :
     eventProbability p (fun W => a ≤ Y W) ≤ expectation p Y / a := by
+  classical
   unfold eventProbability expectation
   apply (le_div_iff₀ ha).mpr
   rw [mul_comm]
@@ -340,12 +372,14 @@ lemma markov_bound {p a : ℝ} (hp0 : 0 ≤ p) (hp1 : p ≤ 1) (ha : 0 < a)
         simpa [mul_comm] using mul_le_mul_of_nonneg_left h hw
       · simp [h, mul_nonneg hw (hY W)]
 
+omit [DecidableEq V] in
 /-- Chebyshev's inequality, in the squared-deviation form used in KSSS. -/
 lemma chebyshev_sq_bound {p t : ℝ} (hp0 : 0 ≤ p) (hp1 : p ≤ 1) (ht : 0 < t)
     (f : Finset V → ℝ) :
     eventProbability p
         (fun W => t ^ 2 ≤ (f W - expectation p f) ^ 2) ≤
       variance p f / t ^ 2 := by
+  classical
   exact markov_bound hp0 hp1 (sq_pos_of_pos ht)
     (fun W => (f W - expectation p f) ^ 2) (fun W => sq_nonneg _)
 
@@ -430,7 +464,6 @@ lemma variance_edgePolynomial {p : ℝ} (hp0 : 0 ≤ p) (hp1 : p ≤ 1) :
       (p ^ 2 * (G.edgeFinset.card : ℝ)) ^ 2 =
         ∑ _e ∈ G.edgeFinset, ∑ _f ∈ G.edgeFinset, p ^ 4 := by
     simp
-    push_cast
     ring
   rw [hconst]
   rw [← Finset.sum_sub_distrib]
@@ -545,6 +578,7 @@ lemma expectation_perturbedEdgePolynomial {p : ℝ}
     ring
   rw [hlin]
 
+omit [Fintype V] in
 lemma bit_eq_half_one_add_sign (v : V) (W : Finset V) :
     bit v W = (1 + sign v W) / 2 := by
   by_cases h : v ∈ W <;> simp [bit, sign, h]
@@ -623,7 +657,6 @@ lemma perturbedEdgePolynomial_walsh (e₀ : ℝ) (c : V → ℝ) (W : Finset V) 
           (∑ e ∈ G.edgeFinset, walsh e.toFinset W) / 4 := by
     simp only [div_eq_mul_inv, add_mul, Finset.sum_add_distrib,
       Finset.sum_const, nsmul_eq_mul]
-    push_cast
     rw [Finset.sum_mul, Finset.sum_mul]
     ring
   have hcExpand :

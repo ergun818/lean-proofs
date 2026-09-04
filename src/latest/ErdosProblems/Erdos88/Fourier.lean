@@ -279,8 +279,6 @@ lemma finCharFun_rademacher_linear {I : Type u} [Fintype I] [DecidableEq I]
       t * (∑ i, a i * rademacherSign (ω i)) =
         ∑ i, (t * a i) * rademacherSign (ω i) := by
     intro ω
-    change t * Finset.univ.sum (fun i ↦ a i * rademacherSign (ω i)) =
-      Finset.univ.sum (fun i ↦ (t * a i) * rademacherSign (ω i))
     simpa only [mul_assoc] using
       Finset.mul_sum (Finset.univ : Finset I)
         (fun i ↦ a i * rademacherSign (ω i)) t
@@ -350,7 +348,6 @@ lemma abs_cos_le_exp_neg_centeredModOne_sq {r d : ℝ}
   have hcos : |Real.cos r| = |Real.cos (Real.pi * d)| := by
     rw [hr]
     have heq : Real.pi * ((k : ℝ) + d) = Real.pi * d + k * Real.pi := by
-      push_cast
       ring
     rw [heq, Real.cos_add_int_mul_pi]
     simp
@@ -470,7 +467,7 @@ noncomputable def pairSwap {K : Type v} {I : Type u}
   apply congrArg x
   apply (pairVertexPerm p σ).symm_apply_eq.mpr
   rw [pairVertexPerm_apply_endpoint]
-  cases h : σ k <;> cases b <;> simp [h]
+  cases h : σ k <;> cases b <;> simp
 
 lemma boolWeight_eq_sum {I : Type u} [Fintype I] [DecidableEq I]
     (x : I → Bool) :
@@ -545,13 +542,13 @@ lemma pairRademacherCoeff_centered {K : Type v} {I : Type u}
         pairRademacherCoeff p a x k / Real.pi =
           (a (p (k, false)) - a (p (k, true))) / (2 * Real.pi) := by
         simp [pairRademacherCoeff, hleft, hright, boolIndicator]
-        field_simp <;> ring
+        field_simp
     simpa [pairCenteredRep, hleft, hright, heq] using hq
   · have heq :
         pairRademacherCoeff p a x k / Real.pi =
           -((a (p (k, false)) - a (p (k, true))) / (2 * Real.pi)) := by
         simp [pairRademacherCoeff, hleft, hright, boolIndicator]
-        field_simp <;> ring
+        field_simp ; ring
     simpa [pairCenteredRep, hleft, hright, heq] using hq.neg
   · simpa [pairRademacherCoeff, pairCenteredRep, hleft, hright,
       boolIndicator] using IsCenteredModOne.zero
@@ -586,10 +583,10 @@ lemma pairCenteredRep_sq_ge {K : Type v} {I : Type u}
         sq_abs (q k)]
     cases hleft : x (p (k, false)) <;>
       cases hright : x (p (k, true)) <;>
-      simp_all [pairCenteredRep, hsq]
+      simp_all [pairCenteredRep]
 
 private lemma sum_eq_sum_pairEmbedding_of_eq_zero
-    {K : Type v} {I : Type u} [Fintype K] [Fintype I] [DecidableEq I]
+    {K : Type v} {I : Type u} [Fintype K] [Fintype I]
     (p : PairEmbedding K I) (f : I → ℝ)
     (hf : ∀ i, i ∉ Set.range p → f i = 0) :
     (∑ i, f i) = ∑ z : K × Bool, f (p z) := by
@@ -676,7 +673,7 @@ lemma pairSwap_linear_phase_rademacher {K : Type v} {I : Type u}
     rw [← Finset.sum_add_distrib]
     apply Finset.sum_congr rfl
     intro k _
-    cases h : σ k <;> simp [h, rademacherSign] <;> ring
+    cases h : σ k <;> simp [rademacherSign] ; ring
   rw [hsum]
   ring
 
@@ -876,7 +873,7 @@ lemma card_boolSliceExtensions {I : Type u} [Fintype I] [DecidableEq I]
   classical
   rw [Fintype.card_congr (boolSliceExtensionsEquiv J y s hy), card_boolSlice]
   congr 2
-  simpa using Fintype.card_subtype_compl (fun i : I ↦ i ∈ J)
+  simp
 
 /-- A term shifted down by `k`, interpreted as zero when the requested
 index is negative. -/
@@ -914,7 +911,6 @@ lemma choose_add_two (n s : ℕ) :
       cases s with
       | zero =>
           simp [Nat.choose_succ_succ, lowerTerm]
-          push_cast
           ring
       | succ s =>
           simp only [lowerTerm, Nat.reduceLeDiff, ↓reduceIte, Nat.add_sub_cancel]
@@ -1087,7 +1083,6 @@ lemma pairedSlicePartition_le
                 mul_le_mul_of_nonneg_right hmid (sub_nonneg.mpr hz1)
               _ = 2 * (1 - z) * lowerTerm 1
                     (fun t ↦ (Nat.choose (r + 2 * m) t : ℝ)) s := by ring
-          push_cast at hpascal hmid' ⊢
           calc
             (Nat.choose (r + 2 * m) s : ℝ) +
                   2 * z * lowerTerm 1
@@ -1106,7 +1101,6 @@ lemma pairedSlicePartition_le
                   Nat.choose ((r + 2 * m) + 2) s := by ring
         _ = (1 - p * (1 - z)) ^ (m + 1) *
               Nat.choose (r + 2 * (m + 1)) s := by
-          push_cast
           rw [pow_succ]
           ring_nf
 
@@ -1346,8 +1340,8 @@ lemma pairAssignmentPartition_eq (m r s : ℕ) (z : ℝ) :
               exact hhead b
             _ = _ := by
               rw [Fintype.sum_prod_type]
-              simp only [Fintype.univ_bool, Finset.mem_singleton, Bool.true_eq_false, not_false_eq_true, Finset.sum_insert,
-    Finset.sum_singleton]
+              simp only [Fintype.univ_bool, Finset.mem_singleton, Bool.true_eq_false,
+                not_false_eq_true, Finset.sum_insert, Finset.sum_singleton]
               simp [pairPatternSingleton, pairPatternWeight, lowerTerm]
               split_ifs <;> ring
         _ = pairedSlicePartition m r s z +
@@ -1553,10 +1547,11 @@ noncomputable def endpointAssignmentEquivFin (K : Type v) [Fintype K] :
     simp
 
 lemma boolWeight_pairAssignmentOnRange_eq {K : Type v} {I : Type u}
-    [Fintype K] [DecidableEq K] [Fintype I] [DecidableEq I]
+    [Fintype K] [Fintype I] [DecidableEq I]
     (p : PairEmbedding K I) (y : K × Bool → Bool) :
     boolWeight (pairAssignmentOnRange p y) =
       pairAssignmentWeight (Fintype.card K) (endpointAssignmentEquivFin K y) := by
+  classical
   rw [boolWeight_eq_sum, pairAssignmentWeight_eq_sum]
   calc
     (∑ i : pairEndpointFinset p,
@@ -1663,7 +1658,6 @@ lemma sliceSingletonLaplace_eq_pairedSlicePartition
   intro x _
   rw [← Real.exp_nat_mul]
   congr 1
-  push_cast
   ring
 
 /-- Assumption-free slice Laplace estimate once an integer reserve remains
@@ -1729,7 +1723,7 @@ lemma norm_sliceCharFun_le_sliceSingletonLaplace
     rw [Finset.mul_sum]
     apply Finset.sum_congr rfl
     intro i _
-    cases h : x.1 i <;> simp [a', boolIndicator, h]
+    cases h : x.1 i <;> simp [a', boolIndicator]
   rw [hchar]
   calc
     ‖finExpectation (BoolSlice I s) phase‖ ≤
@@ -1754,7 +1748,7 @@ lemma norm_sliceCharFun_le_sliceSingletonLaplace
 
 lemma norm_sliceCharFun_le_exp_of_reserve
     {K : Type v} {I : Type u}
-    [Fintype K] [DecidableEq K] [Fintype I] [DecidableEq I]
+    [Fintype K] [Fintype I] [DecidableEq I]
     (p : PairEmbedding K I) (s A : ℕ) [Nonempty (BoolSlice I s)]
     (a : I → ℝ) (t delta : ℝ) (q : K → ℝ)
     (hA : 1 ≤ A) (h2A : 2 * A ≤ Fintype.card I)
@@ -1767,6 +1761,7 @@ lemma norm_sliceCharFun_le_exp_of_reserve
     ‖sliceCharFun s a t‖ ≤
       Real.exp (-((A : ℝ) / Fintype.card I) ^ 2 *
         Fintype.card K * delta ^ 2) := by
+  classical
   calc
     ‖sliceCharFun s a t‖ ≤ sliceSingletonLaplace p s (delta ^ 2) :=
       norm_sliceCharFun_le_sliceSingletonLaplace p s a t delta q
@@ -1791,7 +1786,7 @@ noncomputable def finEmbeddingOfCardLe (K : Type v) [Fintype K] {m : ℕ}
 /-- KSSS Lemma 4.8, with completely explicit universal constants. -/
 lemma norm_sliceCharFun_le_balanced
     {K : Type v} {I : Type u}
-    [Fintype K] [DecidableEq K] [Fintype I] [DecidableEq I]
+    [Fintype K] [Fintype I] [DecidableEq I]
     (p : PairEmbedding K I) (s : ℕ) [Nonempty (BoolSlice I s)]
     (a : I → ℝ) (t delta c : ℝ) (q : K → ℝ)
     (hc0 : 0 < c) (hc1 : c ≤ 1 / 2)
@@ -1803,6 +1798,7 @@ lemma norm_sliceCharFun_le_balanced
     (hqdelta : ∀ k, delta ≤ |q k|) :
     ‖sliceCharFun s a t‖ ≤
       Real.exp 1 * Real.exp (-(c ^ 3 / 256) * Fintype.card K * delta ^ 2) := by
+  classical
   let N := Fintype.card I
   let M := Fintype.card K
   let Q := min s (N - s)

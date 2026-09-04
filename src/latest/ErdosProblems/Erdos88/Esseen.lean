@@ -199,9 +199,9 @@ lemma smallBall_mono_radius (mu : Measure ℝ) [IsFiniteMeasure mu]
     {eps eps' : ℝ} (heps : eps ≤ eps') (x : ℝ) :
     smallBall mu eps x ≤ smallBall mu eps' x := by
   apply measureReal_mono
-  intro y hy
-  exact ⟨by linarith [hy.1], by linarith [hy.2]⟩
-  finiteness
+  · intro y hy
+    exact ⟨by linarith [hy.1], by linarith [hy.2]⟩
+  · finiteness
 
 lemma smallBall_le_concentration (mu : Measure ℝ) [IsProbabilityMeasure mu]
     (eps x : ℝ) : smallBall mu eps x ≤ concentration mu eps := by
@@ -352,8 +352,7 @@ lemma smoothingKernel_fourier (x : ℝ) :
         (frequencyKernel t : ℂ) * Complex.exp (-(t * x) * Complex.I) := by
   by_cases hx : x = 0
   · subst x
-    simp only [smoothingKernel, Real.sinc_zero, one_pow, mul_one, ofReal_ofNat,
-      mul_zero, neg_zero, zero_mul, Complex.exp_zero, mul_one]
+    simp only [smoothingKernel, Real.sinc_zero, one_pow, mul_one, ofReal_ofNat, mul_one]
     have hleft : (∫ t in (-2 : ℝ)..0, (frequencyKernel t : ℂ)) = 2 := by
       rw [show (∫ t in (-2 : ℝ)..0, (frequencyKernel t : ℂ)) =
           ∫ t in (-2 : ℝ)..0, ((2 + t : ℝ) : ℂ) by
@@ -449,7 +448,7 @@ lemma smoothingKernel_fourier (x : ℝ) :
       have hInt := intervalIntegral.integral_eq_sub_of_hasDerivAt
         (a := (-2 : ℝ)) (b := 0) (fun t _ ↦ hprimitive t) hIntegrable
       rw [hInt]
-      simp [hxC]
+      simp
       field_simp [hxC]
       ring
     have hright :
@@ -499,7 +498,7 @@ lemma smoothingKernel_fourier (x : ℝ) :
       have hInt := intervalIntegral.integral_eq_sub_of_hasDerivAt
         (a := (0 : ℝ)) (b := 2) (fun t _ ↦ hprimitive t) hIntegrable
       rw [hInt]
-      simp [hxC]
+      simp
       field_simp [hxC]
       ring
     rw [← intervalIntegral.integral_add_adjacent_intervals
@@ -514,7 +513,6 @@ lemma smoothingKernel_fourier (x : ℝ) :
           change (frequencyKernel t : ℂ) * Complex.exp (-(t * x) * Complex.I) =
             ((2 + t : ℝ) : ℂ) * Complex.exp (-(t * x) * Complex.I)
           congr 1
-          change (frequencyKernel t : ℂ) = ((2 + t : ℝ) : ℂ)
           norm_cast
           rw [frequencyKernel_eq_two_sub_abs]
           · simp [abs_of_nonpos ht.2]
@@ -529,7 +527,6 @@ lemma smoothingKernel_fourier (x : ℝ) :
           change (frequencyKernel t : ℂ) * Complex.exp (-(t * x) * Complex.I) =
             ((2 - t : ℝ) : ℂ) * Complex.exp (-(t * x) * Complex.I)
           congr 1
-          change (frequencyKernel t : ℂ) = ((2 - t : ℝ) : ℂ)
           norm_cast
           rw [frequencyKernel_eq_two_sub_abs]
           · simp [abs_of_nonneg ht.1]
@@ -630,13 +627,13 @@ lemma ofReal_kernelAverage_eq_kernelFourierAverage
             ∫ (t : ℝ) in (-2 : ℝ)..2, f t y := by
         intro y
         dsimp only [f]
-        convert smoothingKernel_fourier ((y - x) / eps) using 1 <;> norm_cast
+        convert smoothingKernel_fourier ((y - x) / eps) using 1 ; norm_cast
       have hint := integral_congr_ae (μ := mu) (Filter.Eventually.of_forall hpoint)
-      convert hint using 1 <;> rfl
+      convert hint using 1
     _ = ∫ (t : ℝ) in (-2 : ℝ)..2, ∫ (y : ℝ), f t y ∂mu :=
       by
         have hswap := (intervalIntegral_integral_swap (μ := mu) hprod).symm
-        convert hswap using 1 <;> rfl
+        convert hswap using 1
     _ = ∫ (t : ℝ) in (-2 : ℝ)..2,
           (frequencyKernel t : ℂ) *
             Complex.exp (((t * x) / eps : ℝ) * Complex.I) * charFun mu (-t / eps) := by
@@ -695,7 +692,6 @@ lemma integral_norm_comp_neg_div {g : ℝ → ℝ} (_hg : Continuous g)
         ∫ t in (-2 : ℝ)..2, g (t / (-eps)) := by
       apply intervalIntegral.integral_congr
       intro t _
-      congr 1
       field_simp [heps.ne']
     _ = (-eps) * ∫ t in (-2 : ℝ) / (-eps)..2 / (-eps), g t := by
       simpa only [smul_eq_mul] using hsub
@@ -776,7 +772,7 @@ lemma iUnion_kernelCell (x : ℝ) {eps : ℝ} (heps : 0 < eps) :
     ⋃ k : ℤ, kernelCell x eps k = univ := by
   exact iUnion_Ico_add_zsmul (mul_pos (by norm_num) heps) x
 
-lemma kernelCell_subset_smallBall (x : ℝ) {eps : ℝ} (heps : 0 < eps) (k : ℤ) :
+lemma kernelCell_subset_smallBall (x : ℝ) {eps : ℝ} (_heps : 0 < eps) (k : ℤ) :
     kernelCell x eps k ⊆
       Icc (x + ((2 * (k : ℝ) + 1) * eps) - eps)
         (x + ((2 * (k : ℝ) + 1) * eps) + eps) := by
@@ -1618,11 +1614,11 @@ lemma smallBall_le_mul_smallBall_of_densityRatio
   have huShift : (∫ s in (-eps)..eps, f (s + u)) =
       ∫ y in (u - eps)..(u + eps), f y := by
     convert intervalIntegral.integral_comp_add_right
-      (f := f) (a := -eps) (b := eps) u using 1 <;> ring_nf
+      (f := f) (a := -eps) (b := eps) u using 1 ; ring_nf
   have hvShift : (∫ s in (-eps)..eps, f (s + v)) =
       ∫ y in (v - eps)..(v + eps), f y := by
     convert intervalIntegral.integral_comp_add_right
-      (f := f) (a := -eps) (b := eps) v using 1 <;> ring_nf
+      (f := f) (a := -eps) (b := eps) v using 1 ; ring_nf
   rw [hdens.smallBall_eq_integral eps u heps.le,
     hdens.smallBall_eq_integral eps v heps.le, ← huShift, ← hvShift,
     ← intervalIntegral.integral_const_mul]
@@ -1909,8 +1905,8 @@ lemma reverseEsseenBase_fourier_double (z : ℝ) :
       Complex.exp (-((t * (z / 4) : ℝ) : ℂ) * Complex.I)
   have hk : (smoothingKernel (z / 4) : ℂ) =
       ∫ t in (-2 : ℝ)..2, f t := by
-    convert smoothingKernel_fourier (z / 4) using 1 <;>
-      simp only [f] <;> push_cast <;> ring
+    convert smoothingKernel_fourier (z / 4) using 1 ;
+      simp only [f] ; push_cast ; ring
   rw [reverseEsseenBase]
   push_cast
   rw [hk]
@@ -2505,7 +2501,7 @@ This finite covering is the only radius conversion needed by the
 derivative-free reverse-Esseen argument. -/
 lemma smallBall_four_mul_le_concentration
     (mu : Measure ℝ) [IsProbabilityMeasure mu]
-    {eps : ℝ} (heps : 0 < eps) (x : ℝ) :
+    {eps : ℝ} (_heps : 0 < eps) (x : ℝ) :
     smallBall mu (4 * eps) x ≤ 4 * concentration mu eps := by
   let A := Icc (x - 4 * eps) (x - 2 * eps)
   let B := Icc (x - 2 * eps) x
@@ -2537,20 +2533,20 @@ lemma smallBall_four_mul_le_concentration
     measureReal_union_le C D
   have hA : mu.real A ≤ concentration mu eps := by
     dsimp [A]
-    convert smallBall_le_concentration mu eps (x - 3 * eps) using 1 <;>
-      simp only [smallBall] <;> ring_nf
+    convert smallBall_le_concentration mu eps (x - 3 * eps) using 1 ;
+      simp only [smallBall] ; ring_nf
   have hB : mu.real B ≤ concentration mu eps := by
     dsimp [B]
-    convert smallBall_le_concentration mu eps (x - eps) using 1 <;>
-      simp only [smallBall] <;> ring_nf
+    convert smallBall_le_concentration mu eps (x - eps) using 1 ;
+      simp only [smallBall] ; ring_nf
   have hC : mu.real C ≤ concentration mu eps := by
     dsimp [C]
-    convert smallBall_le_concentration mu eps (x + eps) using 1 <;>
-      simp only [smallBall] <;> ring_nf
+    convert smallBall_le_concentration mu eps (x + eps) using 1 ;
+      simp only [smallBall] ; ring_nf
   have hD : mu.real D ≤ concentration mu eps := by
     dsimp [D]
-    convert smallBall_le_concentration mu eps (x + 3 * eps) using 1 <;>
-      simp only [smallBall] <;> ring_nf
+    convert smallBall_le_concentration mu eps (x + 3 * eps) using 1 ;
+      simp only [smallBall] ; ring_nf
   rw [smallBall]
   linarith
 

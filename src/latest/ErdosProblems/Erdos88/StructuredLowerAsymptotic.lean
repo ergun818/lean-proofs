@@ -25,7 +25,7 @@ attribute [local instance] Classical.propDecidable
 /-- Passing from an ambient order at most twice `q` to the natural
 three-halves scale costs only the harmless factor four. -/
 lemma scale_three_halves_le_four_of_le_two
-    {n q : ℕ} (hq : 1 ≤ q) (hnq : n ≤ 2 * q) :
+    {n q : ℕ} (_hq : 1 ≤ q) (hnq : n ≤ 2 * q) :
     scale n (3 / 2 : ℝ) ≤ 4 * scale q (3 / 2 : ℝ) := by
   have hnqR : (n : ℝ) ≤ 2 * (q : ℝ) := by exact_mod_cast hnq
   have hpow := Real.rpow_le_rpow (Nat.cast_nonneg n) hnqR
@@ -383,7 +383,7 @@ lemma countVectorClaim121Scale_lower_of_shiftMoment
     (G : SimpleGraph (Fin n)) (c : Fin n → ℝ) (O : Finset (Fin n))
     (hbucket : RobustRank.HasEqualBuckets D.finCoveredPartition.bucket)
     {rhoF T : ℝ} (hrhoF : 0 < rhoF) (hT : 0 ≤ T)
-    (hq : 0 < Fintype.card D.Covered)
+    (_hq : 0 < Fintype.card D.Covered)
     (hFrob : Real.sqrt rhoF * (Fintype.card D.Covered : ℝ) ≤
       claim121FrobeniusBase
         (bucketCenteredAdjacency D.finCoveredPartition.bucket
@@ -557,7 +557,7 @@ lemma outer_coefficient_after_two_errors
 variance upper constant into the actual inverse-standard-deviation bound. -/
 lemma inverse_three_halves_local_to_variance
     (q : ℕ) {b k C sigma : ℝ}
-    (hq : 0 < q) (hb : 0 ≤ b) (hk : 0 ≤ k) (hC : 0 < C)
+    (hq : 0 < q) (hb : 0 ≤ b) (hk : 0 ≤ k) (_hC : 0 < C)
     (hsigma : 0 < sigma)
     (hupper : sigma ≤ C * scale q (3 / 2 : ℝ)) :
     (b * k / (4 * C)) * scale q (-(3 : ℝ) / 2) ≤
@@ -602,7 +602,7 @@ lemma shift_cutoff_coefficient_bound
 conditional standard deviation. -/
 lemma epsilon_le_sqrt_of_density_scale
     {q : ℕ} {eps c A V : ℝ}
-    (hc0 : 0 ≤ c) (hc1 : c ≤ 1) (hA : 0 ≤ A)
+    (_hc0 : 0 ≤ c) (hc1 : c ≤ 1) (hA : 0 ≤ A)
     (hsmall : eps ≤ c * (A / 2) * scale q (3 / 2 : ℝ))
     (hlower : (A / 2) * scale q (3 / 2 : ℝ) ≤ Real.sqrt V) :
     eps ≤ Real.sqrt V := by

@@ -15,7 +15,6 @@ open scoped BigOperators
 
 namespace Erdos88.Switching
 
-open Classical
 open Erdos88.Probability
 open Erdos88.BooleanSlices
 open Erdos88.Concentration
@@ -24,6 +23,7 @@ section PerturbedVariance
 
 variable {n : ℕ}
 
+open Classical in
 /-- Degree-one coordinates and actual graph edges index all nonconstant
 Walsh characters in a perturbed induced-edge count. -/
 abbrev PerturbedEdgeWalshIndex (G : SimpleGraph (Fin n)) :=
@@ -34,6 +34,7 @@ def perturbedEdgeWalshSupport (G : SimpleGraph (Fin n)) :
   | Sum.inl v => {v}
   | Sum.inr e => e.1.toFinset
 
+open Classical in
 noncomputable def perturbedEdgeWalshCoeff (G : SimpleGraph (Fin n))
     (c : Fin n → ℝ) : PerturbedEdgeWalshIndex G → ℝ
   | Sum.inl v => c v / 2 + (G.degree v : ℝ) / 4
@@ -41,6 +42,7 @@ noncomputable def perturbedEdgeWalshCoeff (G : SimpleGraph (Fin n))
 
 lemma perturbedEdgeWalshSupport_injective (G : SimpleGraph (Fin n)) :
     Function.Injective (perturbedEdgeWalshSupport G) := by
+  classical
   intro x y hxy
   cases x with
   | inl i =>
@@ -71,6 +73,7 @@ lemma perturbedEdgeWalshSupport_injective (G : SimpleGraph (Fin n)) :
           simpa only [Sym2.mem_toFinset] using
             Finset.ext_iff.mp hxy v
 
+open Classical in
 /-- The centered perturbed edge count is precisely the sum of its
 degree-one and graph-edge Walsh characters. -/
 lemma perturbedEdgePolynomial_centered_eq_walshSum
@@ -99,6 +102,7 @@ lemma perturbedEdgePolynomial_centered_eq_walshSum
   simp only [walsh, Finset.prod_singleton]
   ring
 
+open Classical in
 /-- Exact variance formula in KSSS Lemma 13.6(1). -/
 lemma variance_perturbedEdgePolynomial_half
     (G : SimpleGraph (Fin n)) (e₀ : ℝ) (c : Fin n → ℝ) :
@@ -121,6 +125,7 @@ lemma variance_perturbedEdgePolynomial_half
     ring
   rw [hedge]
 
+open Classical in
 /-- The quantitative variance estimate in KSSS Lemma 13.6(1). -/
 lemma variance_perturbedEdgePolynomial_half_le
     (G : SimpleGraph (Fin n)) (e₀ : ℝ) (c : Fin n → ℝ) (R : ℝ)
@@ -194,6 +199,7 @@ universe u
 
 variable {V : Type u} [Fintype V] [DecidableEq V]
 
+omit [Fintype V] in
 /-- Telescoping a one-coordinate bounded-difference estimate over a disjoint
 finite set of inserted coordinates. -/
 lemma abs_finsetFunction_union_sub_le_card_mul
@@ -223,14 +229,16 @@ lemma abs_finsetFunction_union_sub_le_card_mul
           add_le_add (hstep (A ∪ S) v hvUnion) (ih hAS')
         _ = (insert v A).card * L := by simp [hv, add_mul, add_comm]
 
+omit [Fintype V] in
 /-- A one-coordinate bounded-difference estimate implies a symmetric-
 difference estimate between arbitrary finite sets. -/
-lemma abs_finsetFunction_sub_le_symmDiff_card_mul
+lemma abs_finsetFunction_sub_le_symmDiff_card_mul [Finite V]
     (f : Finset V → ℝ) (L : ℝ)
     (hstep : ∀ (S : Finset V) (v : V), v ∉ S →
       |f (insert v S) - f S| ≤ L)
     (S T : Finset V) :
     |f S - f T| ≤ ((S \ T).card + (T \ S).card) * L := by
+  let : Fintype V := Fintype.ofFinite V
   let I := S ∩ T
   have hSI : (S \ T) ∪ I = S := by
     ext v
@@ -262,11 +270,11 @@ lemma abs_finsetFunction_sub_le_symmDiff_card_mul
     _ ≤ (S \ T).card * L + (T \ S).card * L :=
       add_le_add hS hT
     _ = ((S \ T).card + (T \ S).card) * L := by
-      push_cast
       ring
 
 variable {n : ℕ}
 
+open Classical in
 /-- Exact change in a perturbed induced-edge count after inserting one new
 vertex. -/
 lemma perturbedEdgePolynomial_insert_sub
@@ -303,6 +311,7 @@ lemma perturbedEdgePolynomial_insert_sub
     _ = (AKSGraph.degreeInto G v S : ℝ) + c v := by
       rw [hedge, hlinear]
 
+open Classical in
 /-- Editing one vertex changes the perturbed edge statistic by at most
 `(R+1)n`. -/
 lemma abs_perturbedEdgePolynomial_insert_sub_le
@@ -326,6 +335,7 @@ lemma abs_perturbedEdgePolynomial_insert_sub_le
     _ ≤ (n : ℝ) + R * n := add_le_add hdegree (hc v)
     _ = (R + 1) * n := by ring
 
+open Classical in
 /-- Deterministic edit bound used in KSSS Lemma 13.6(2). -/
 lemma abs_perturbedEdgePolynomial_sub_le_editDistance
     (G : SimpleGraph (Fin n)) (e₀ : ℝ) (c : Fin n → ℝ) (R : ℝ)
@@ -348,6 +358,7 @@ open Erdos88.Concentration
 variable {A B : Type*} [Fintype A] [Nonempty A]
   [Fintype B] [Nonempty B]
 
+open Classical in
 /-- The event probability of the left marginal of a finite uniform coupling
 is its uniform probability. -/
 lemma FiniteUniformCoupling.left_probability
@@ -360,6 +371,7 @@ lemma FiniteUniformCoupling.left_probability
     Fintype.expect_eq_sum_div_card, Fintype.card_fin,
     Finset.sum_ite] using h
 
+open Classical in
 /-- The analogous exact event identity for the right marginal. -/
 lemma FiniteUniformCoupling.right_probability
     (C : FiniteUniformCoupling A B) (P : B → Prop) :
@@ -371,6 +383,7 @@ lemma FiniteUniformCoupling.right_probability
     Fintype.expect_eq_sum_div_card, Fintype.card_fin,
     Finset.sum_ite] using h
 
+open Classical in
 /-- Union bound on the explicit finite sample space of a coupling. -/
 lemma FiniteUniformCoupling.probability_or_le
     (C : FiniteUniformCoupling A B) (P Q : Fin C.size → Prop) :
@@ -397,8 +410,9 @@ lemma uniformProbability_add_compl (P : A → Prop) :
   field_simp
   norm_cast
   convert hcard.trans Finset.card_univ using 1
-  congr 1 <;> apply congrArg Finset.card <;> apply Finset.ext <;> simp
+  congr 1 ; apply congrArg Finset.card ; apply Finset.ext ; simp
 
+open Classical in
 /-- At density one half, the explicit Bernoulli event probability is the
 uniform probability on all subsets. -/
 lemma uniformProbability_eq_eventProbability_half {m : ℕ}
@@ -434,6 +448,7 @@ lemma uniformProbability_centered_tail_le {m : ℕ}
   rw [uniformProbability_eq_eventProbability_half]
   simpa only [hiff] using hcheb
 
+open Classical in
 /-- Push an event on the right marginal into an event on the left marginal,
 up to one exceptional event on the coupling space. -/
 lemma FiniteUniformCoupling.right_probability_le_left_add
@@ -525,6 +540,7 @@ lemma FiniteUniformCoupling.target_centered_window_lower {m : ℕ}
   rw [hgoodEq] at hpartition
   linarith
 
+open Classical in
 /-- KSSS Lemma 13.6(2), reduced to its explicit editing-coupling input:
 the variance term is discharged by part (1), so only the construction and
 failure estimate for the conditioned block-slice coupling remain. -/
@@ -603,7 +619,7 @@ lemma FiniteWeightedCoupling.left_mass
       · simp only [hPa, if_false, Finset.sum_const_zero]
     _ = ((Finset.univ.filter P).card : ℝ) / Fintype.card A := by
       rw [Finset.sum_ite]
-      simp only [one_div, Finset.sum_const, nsmul_eq_mul, Finset.sum_const_zero, add_zero]
+      simp only [one_div, Finset.sum_const, nsmul_eq_mul, mul_zero, add_zero]
       rw [Finset.card_filter]
       rw [div_eq_mul_inv]
 
@@ -624,7 +640,7 @@ lemma FiniteWeightedCoupling.right_mass
       · simp only [hPb, if_false, Finset.sum_const_zero]
     _ = ((Finset.univ.filter P).card : ℝ) / Fintype.card B := by
       rw [Finset.sum_ite]
-      simp only [one_div, Finset.sum_const, nsmul_eq_mul, Finset.sum_const_zero, add_zero]
+      simp only [one_div, Finset.sum_const, nsmul_eq_mul, mul_zero, add_zero]
       rw [Finset.card_filter]
       rw [div_eq_mul_inv]
 
@@ -753,12 +769,14 @@ universe u v
 
 variable {α : Type u} [Fintype α] [DecidableEq α]
 
+omit [DecidableEq α] [Fintype α] in
 /-- Prefixes of two lengths in the same decoded permutation are nested. -/
 lemma signedSlicePositiveSupport_mono (I : Finset α) {p q : ℕ}
     (hpq : p ≤ q) (hp : p ≤ I.card) (hq : q ≤ I.card)
     (e : Fin I.card ≃ ↑I) (σ : Equiv.Perm (Fin I.card)) :
     signedSlicePositiveSupport I p 0 (by simpa using hp) e σ ⊆
       signedSlicePositiveSupport I q 0 (by simpa using hq) e σ := by
+  classical
   intro x hx
   rw [signedSlicePositiveSupport, Finset.mem_map] at hx ⊢
   obtain ⟨i, _hi, rfl⟩ := hx
@@ -779,7 +797,7 @@ lemma productSlicePermutationDecode_bucket
       signedSlicePositiveSupport (P.fiber k) (ell k) 0
         (by simpa using hell k) (e k) (σ k) := by
   simp [productSlicePermutationDecode, productSignedSliceZeroEquiv,
-    signedSliceZeroEquiv, productSignedSliceDecode, signedSliceDecode] <;> rfl
+    signedSliceZeroEquiv, productSignedSliceDecode, signedSliceDecode] ; rfl
 
 /-- A partition decomposes the cardinality of every finite set into the
 cardinalities of its bucket restrictions. -/
@@ -837,7 +855,7 @@ lemma productSlicePermutationDecode_symmDiff_card
         have hcontra : False := hx.1.2 (Finset.mem_inter.mp hmem).1
         contradiction
       · intro hx
-        simpa using hx
+        simp at hx
     have hright : (T \ S) ∩ P.fiber k =
         (T ∩ P.fiber k) \ (S ∩ P.fiber k) := by
       ext x
@@ -862,7 +880,7 @@ lemma productSlicePermutationDecode_symmDiff_card
         have hcontra : False := hx.1.2 (Finset.mem_inter.mp hmem).1
         contradiction
       · intro hx
-        simpa using hx
+        simp at hx
     have hleft : (S \ T) ∩ P.fiber k =
         (S ∩ P.fiber k) \ (T ∩ P.fiber k) := by
       ext x
@@ -979,6 +997,7 @@ lemma productSliceCubeCoupling_isClose
   have heinv (s : Sigma D) : ef.symm s = s.2.1 := rfl
   simpa only [Ysigma, heinv] using hmix
 
+open Classical in
 /-- For a perturbed induced-edge statistic, the shared-prefix cube coupling
 is close whenever the total bucket-count displacement is bounded. -/
 lemma perturbedEdge_productSliceCubeCoupling_isClose {n m : ℕ}
@@ -1033,6 +1052,7 @@ lemma natCast_dist_eq_abs_sub (a b : ℕ) :
     rw [Nat.dist_comm, Nat.dist_eq_sub_of_le h', Nat.cast_sub h']
     rw [abs_of_nonneg (sub_nonneg.mpr (by exact_mod_cast h'))]
 
+open Classical in
 /-- Real-budget version of the preceding edit coupling, convenient when the
 count window is expressed using square roots. -/
 lemma perturbedEdge_productSliceCubeCoupling_isClose_real {n m : ℕ}
@@ -1212,6 +1232,7 @@ lemma countVectorMass_totalDist_gt_le_sharp {n m : ℕ}
       _ = (m : ℝ) * (A + W) := by simp; ring
   exact (not_lt_of_ge hbound) hS
 
+open Classical in
 /-- A product slice whose bucket sizes are close to half inherits a centered
 window lower bound from the full Boolean cube.  The two error terms are the
 Chebyshev loss for the quadratic polynomial and the binomial loss for the
@@ -1383,6 +1404,7 @@ lemma card_partialProductSlice {n m : ℕ}
     ((P.fiber (Fin.last m)).card + 1)]
   rw [Nat.sum_range_choose]
 
+open Classical in
 /-- The free final-bucket index has its exact binomial law. -/
 lemma partialProductSlice_indexMass_eq {n m : ℕ}
     (P : BucketPartition (Fin n) (Fin (m + 1))) (ell : Fin m → ℕ)
@@ -1412,6 +1434,7 @@ lemma partialProductSlice_indexMass_eq {n m : ℕ}
     field_simp
   · simp only [hE, if_false]
 
+open Classical in
 /-- The explicit binomial index mass equals uniform subset probability. -/
 lemma binomialIndexMass_eq_uniformProbability (M : ℕ)
     (E : Fin (M + 1) → Prop) :
@@ -1489,6 +1512,7 @@ lemma partialProductSlice_indexMass_not_near_le {n m : ℕ}
   simpa only [not_le, Finset.inter_univ, Finset.card_univ,
     Fintype.card_fin, binomialTailBound] using htail
 
+open Classical in
 /-- Centered-window lower bound on the sigma presentation of a partially
 prescribed product slice. -/
 lemma partialProductSlice_centered_window_lower {n m : ℕ}
@@ -1584,6 +1608,7 @@ lemma partialProductSlice_centered_window_lower {n m : ℕ}
           (q + FiniteWeightedCoupling.indexMass (D := D) (fun h ↦ ¬good h))).trans
     (by simpa only [D, X, Y, radius, q] using hwindow)
 
+open Classical in
 /-- KSSS Lemma 13.6(2), at the exact finite-probability level, for a
 partition whose first `m` buckets have prescribed counts and whose final
 bucket is unrestricted. -/
@@ -1756,6 +1781,7 @@ lemma card_prescribedFamilySlicePoint {n m : ℕ}
   intro k _hk
   rw [prescribedFamilyPartition_fiber_castSucc W hdisj k]
 
+open Classical in
 /-- KSSS Lemma 13.6(2) at the exact finite-probability level for a
 pairwise-disjoint prescribed family. -/
 lemma prescribedFamilySlice_centered_window_lower {n m : ℕ}
@@ -1831,6 +1857,7 @@ lemma prescribedFamilySlice_centered_window_lower {n m : ℕ}
   rw [← hfun]
   simpa only [P, outside, hsum, hlast] using hbase
 
+open Classical in
 /-- Clearing the uniform denominator turns a probability lower bound into
 an exact finite-cardinality lower bound. -/
 lemma card_filter_ge_of_uniformProbability_ge {Ω : Type*}
@@ -1840,6 +1867,7 @@ lemma card_filter_ge_of_uniformProbability_ge {Ω : Type*}
   rw [uniformProbability] at h
   rwa [le_div_iff₀ (by exact_mod_cast Fintype.card_pos)] at h
 
+open Classical in
 /-- Counting form of the prescribed-family finite probability estimate in
 KSSS Lemma 13.6(2).  The factor multiplying the probability lower bound is
 the exact number of subsets with the prescribed intersections. -/
@@ -1886,6 +1914,7 @@ lemma card_prescribedFamilySlice_centered_window_lower {n m : ℕ}
   rw [card_prescribedFamilySlicePoint W hdisj ell] at hcount
   simpa only [q, P, outside] using hcount
 
+open Classical in
 /-- Replacing every prescribed binomial coefficient by its explicit
 near-central lower bound preserves any nonnegative state-count estimate. -/
 lemma card_prescribedFamilySlice_near_lower {n m D : ℕ}
@@ -1967,6 +1996,7 @@ lemma prescribed_family_lower_factor_eq {n m : ℕ}
         (Real.exp (-8 * C) / (8 * Real.sqrt n)) ^ m := by
       rw [← pow_add, ← hWcard, Nat.add_sub_of_le hWle]
 
+open Classical in
 /-- Source-shaped state-count lower bound from KSSS Lemma 13.6(2): for
 `m` disjoint near-balanced blocks, the prescribed event has the full
 `2^n n^{-m/2}` scale, with an explicit Gaussian constant. -/

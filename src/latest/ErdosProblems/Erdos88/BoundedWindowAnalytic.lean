@@ -10,7 +10,6 @@ open scoped BigOperators
 namespace Erdos88
 namespace BoundedWindowAnalytic
 
-open Classical
 
 /-- The finite characteristic function used by the Boolean-slice modules is
 the normalized finite characteristic function used by the Fourier modules. -/
@@ -28,19 +27,22 @@ lemma booleanFiniteCharacteristic_eq_finCharFun
   push_cast
   ring
 
+open Classical in
 /-- On the Boolean cube, normalized finite counting probability agrees with
 the unbiased Bernoulli product probability. -/
 lemma finProbability_finset_eq_eventProbability_half
-    {V : Type*} [Fintype V] [DecidableEq V]
+    {V : Type*} [Fintype V]
     (P : Finset V → Prop) :
     Fourier.finProbability (Finset V) P =
       Probability.eventProbability (1 / 2 : ℝ) P := by
+  classical
   rw [BoundedWindow.eventProbability_half_eq_card_div]
   unfold Fourier.finProbability
   rw [Fintype.card_finset]
   rw [Nat.cast_pow]
   norm_num
 
+open Classical in
 /-- The law of the centered perturbed induced-edge polynomial under the
 uniform Boolean-cube measure. -/
 noncomputable def graphCenteredLaw {n : ℕ}
@@ -60,6 +62,7 @@ lemma charFun_graphCenteredLaw {n : ℕ}
   unfold GraphQuadratic.centeredGraphCharacteristic
   rw [booleanFiniteCharacteristic_eq_finCharFun]
 
+open Classical in
 /-- Closed windows for `graphCenteredLaw` are exactly the corresponding
 unbiased Boolean-cube events for the uncentered polynomial. -/
 lemma smallBall_graphCenteredLaw {n : ℕ}
@@ -96,7 +99,7 @@ conditional characteristic functions to the corresponding Boolean slices.
 Bad cardinalities contribute only their total probability. -/
 theorem norm_finCharFun_sq_le_of_card_slices_except {n : ℕ}
     (X : Finset (Fin n) → ℝ) (t : ℝ)
-    (Bad : Fin (n + 1) → Prop) [DecidablePred Bad]
+    (Bad : Fin (n + 1) → Prop)
     (B eps : ℝ) (hB : 0 ≤ B)
     (hgood : ∀ (k : Fin (n + 1))
       (hk : Nonempty (BooleanSlices.BooleanSlicePoint
@@ -240,7 +243,7 @@ theorem ksssLemma81_booleanCube
     have hdecay := hNtail n hnTail
     have hdecay' : 2 * Real.exp (-(n : ℝ) / 32) ≤
         (n : ℝ) ^ (-10 : ℝ) := by
-      convert hdecay using 1 <;> simp only [Real.rpow_one] <;> ring_nf
+      convert hdecay using 1 ; simp only [Real.rpow_one] ; ring_nf
     have hbinomial' : Fourier.finProbability (Finset (Fin n))
         (fun U ↦ Bad (subsetCardStatistic n U)) ≤
           2 * Real.exp (-(n : ℝ) / 32) := by
@@ -299,6 +302,7 @@ theorem ksssLemma81_booleanCube
     (mul_nonneg (by norm_num) (Real.rpow_nonneg hnpos.le _))).mp htargetSq
   simpa only [X] using htarget
 
+open Classical in
 lemma norm_centeredGraphCharacteristic_eq_finCharFun {n : ℕ}
     (G : SimpleGraph (Fin n)) (e₀ : ℝ) (coeff : Fin n → ℝ) (t : ℝ) :
     ‖GraphQuadratic.centeredGraphCharacteristic G e₀ coeff t‖ =

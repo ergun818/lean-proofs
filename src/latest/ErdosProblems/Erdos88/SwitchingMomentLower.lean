@@ -1,6 +1,5 @@
 import ErdosProblems.Erdos88.SwitchingLower
 
-open Classical
 open scoped BigOperators
 
 namespace Erdos88.Switching
@@ -19,6 +18,7 @@ noncomputable def richSwitchingTupleClass
       ∀ i, privateLower ≤
         ((switchingPrivateNeighbors G p i S₀).card : ℝ)
 
+open Classical in
 @[simp] lemma mem_richSwitchingTupleClass
     {V : Type u} [Fintype V] [DecidableEq V]
     {I : Type v} [Fintype I]
@@ -31,6 +31,7 @@ noncomputable def richSwitchingTupleClass
   classical
   simp [richSwitchingTupleClass]
 
+open Classical in
 /-- Generic form of the good-half conclusion of Lemma 13.10(a), expressed
 through the named rich-tuple class. -/
 lemma switchingTuple_good_half_richClass
@@ -60,6 +61,7 @@ lemma switchingTuple_good_half_richClass
   exact switchingTuple_good_half G S S₀ delta rho (1 / 5 : ℝ)
     q b default hrich hSS₀ hrho hcommon hbudget hsmallPrivate hsmallRepeat
 
+open Classical in
 /-- The good-half estimate with the zero-dimensional tuple case included. -/
 lemma switchingTuple_good_half_richClass_or_empty
     {V : Type u} [Fintype V] [DecidableEq V]
@@ -185,6 +187,7 @@ lemma rawTuple_richSwitchingTupleClass_half_of_smallness
   exact hsmallData _ S.card (switchingPairs G S S₀ q).card hspos
     (by omega) hlarge
 
+open Classical in
 /-- Lower half of the raw-moment comparison required by KSSS Lemma 13.4. -/
 def KSSSUnbiasedSwitchingLowerMoments : Prop :=
   ∀ (C A : ℝ), 0 < C → 0 < A →
@@ -255,6 +258,7 @@ lemma rawMomentExpectation_lower_of_rawMoment
       field_simp
     _ ≤ _ := by simpa only [s] using hraw
 
+open Classical in
 /-- Convert a sufficiently large tuple class with a uniform state count into
 the corresponding unnormalised raw-moment lower bound. -/
 lemma rawMoment_ge_of_tupleClass
@@ -292,6 +296,7 @@ lemma rawMoment_ge_of_tupleClass
     _ ≤ _ := card_tupleClass_mul_stateLower_le_rawMoment
       states window T G labels a tuples stateLower hstateLower hstate
 
+open Classical in
 /-- Combine tuple-class summation with Boolean-cube normalization. -/
 lemma rawMomentExpectation_lower_of_tupleClass
     {n d : ℕ} (hn : 1 ≤ n)
@@ -329,6 +334,7 @@ lemma rawMomentExpectation_lower_of_tupleClass
     (fun ell U ↦ (switchingCount T (edgeScore G) ell U : ℝ))
     labels a c z hc hz0 hz1 hsd hraw
 
+open Classical in
 /-- Version of `rawMomentExpectation_lower_of_tupleClass` that keeps the
 uniform state lower bound abstract at the call site.  This avoids unfolding a
 large dependent tuple type merely to pass the state-count hypothesis. -/
@@ -373,6 +379,7 @@ lemma delta_le_rho_of_lemma131_bound {rho delta : ℝ} {D : ℕ}
     nlinarith [sq_nonneg rho, mul_nonneg hrho.le (sq_nonneg rho)]
   exact hdelta.le.trans ((div_le_self (by positivity) hden).trans hrho3)
 
+open Classical in
 /-- Strengthen the uniform fixed-tuple state count so that it applies
 directly to membership in the named rich switching-tuple class. -/
 theorem exists_uniform_richTupleClass_state_lower_of_data
@@ -480,6 +487,7 @@ theorem exists_uniform_richTupleClass_state_lower_of_data
   · exact hblock'
   · exact hx
 
+open Classical in
 /-- Convert the edge-polynomial centering used by the fixed-tuple estimate to
 the quarter-edge-count centering used in the raw switching moment. -/
 lemma rawTuple_stateLower_of_edgeCountCenter
@@ -551,6 +559,7 @@ lemma rawTuple_stateLower_of_edgeCountCenter
   simpa only [div_div] using
     hstate hdegree' (x : ℤ) hx' p hp
 
+open Classical in
 /-- Pointwise tuple/state bounds assembled uniformly over an abstract label
 set.  This prevents repeated unfolding of the raw sigma index. -/
 lemma rawMomentExpectation_lower_of_tupleFamily

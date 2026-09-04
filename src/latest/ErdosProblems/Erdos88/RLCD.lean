@@ -344,10 +344,11 @@ lemma sum_sq_le_sq_of_euclidNorm_le {ι : Type*} [Fintype ι]
 
 /-- Finite counting form of the elementary second-moment bound: the
 coordinates larger than `T` consume at least `T^2` each. -/
-lemma card_large_coordinates_mul_sq_le_sum_sq {ι : Type*} [DecidableEq ι]
+lemma card_large_coordinates_mul_sq_le_sum_sq {ι : Type*}
     (s : Finset ι) (x : ι → ℝ) (T : ℝ) (hT : 0 ≤ T) :
     ((s.filter fun i ↦ T < |x i|).card : ℝ) * T ^ 2 ≤
       ∑ i ∈ s, (x i) ^ 2 := by
+  classical
   let bad := s.filter fun i ↦ T < |x i|
   calc
     (bad.card : ℝ) * T ^ 2 = ∑ _i ∈ bad, T ^ 2 := by
@@ -465,7 +466,6 @@ lemma euclidNorm_normalizedRestrict {ι : Type*} (d : ι → ℝ) (I : Finset ι
       _ = a ^ 2 / a ^ 2 := by rw [ha2]
       _ = 1 := div_self (pow_ne_zero 2 ha)
   rw [euclidNorm, Real.sqrt_eq_one]
-  change (∑ i : I, (normalizedRestrict d I i) ^ 2) = 1
   exact hsum
 
 /-- Coordinate sets of a prescribed cardinality. -/
@@ -581,7 +581,7 @@ lemma regularizedLCDCard_le_iff {n k : ℕ} (L : ℝ) (d : Fin n → ℝ)
   rw [regularizedLCDCard, dif_pos hne, Finset.sup'_le_iff]
 
 lemma regularizedLCDCard_nonneg {n k : ℕ} {L : ℝ} (hL : 1 ≤ L)
-    {d : Fin n → ℝ} (hk : k ≤ n) (hz : (zeroCoordinates d).card < k) :
+    {d : Fin n → ℝ} (hk : k ≤ n) (_hz : (zeroCoordinates d).card < k) :
     0 ≤ regularizedLCDCard L k d := by
   obtain ⟨I, _hI, hmax⟩ := exists_coordinateSet_eq_regularizedLCDCard L d hk
   rw [hmax]
@@ -613,10 +613,11 @@ lemma IsBucket.mono_radius {α : Type*} {d : α → ℝ} {k : ℕ}
   obtain ⟨hcard, κ, hκ, hclose⟩ := hI
   exact ⟨hcard, κ, hκ, fun i hi ↦ (hclose i hi).trans hρ⟩
 
-lemma IsBucket.map_subtype {α : Type*} [DecidableEq α] {S : Finset α}
+lemma IsBucket.map_subtype {α : Type*} {S : Finset α}
     {d : α → ℝ} {k : ℕ} {ρ : ℝ} {I : Finset S}
     (hI : IsBucket (fun i : S ↦ d i) k ρ I) :
     IsBucket d k ρ (I.map ⟨Subtype.val, Subtype.val_injective⟩) := by
+  classical
   obtain ⟨hcard, κ, hκ, hclose⟩ := hI
   refine ⟨by simpa using hcard, κ, hκ, ?_⟩
   intro i hi
@@ -627,12 +628,13 @@ lemma IsBucket.map_subtype {α : Type*} [DecidableEq α] {S : Finset α}
 approximated, after a positive rescaling, by nonnegative integers in a
 fixed finite range, then a prescribed-size subfamily lies in one bucket. -/
 theorem exists_bucket_of_many_good_integer_approximations
-    {α : Type*} [Fintype α] (d : α → ℝ) (w : α → ℕ)
+    {α : Type*} [Finite α] (d : α → ℝ) (w : α → ℕ)
     (G : Finset α) (a τ : ℝ) (M k : ℕ) (ha : 0 < a)
     (hgood : ∀ i ∈ G, |a * d i - (w i : ℝ)| ≤ τ ∧ w i ≤ M)
     (hcard : (M + 1) * k ≤ G.card) :
     ∃ I : Finset α, I ⊆ G ∧ IsBucket d k (τ / a) I := by
   classical
+  let : Fintype α := Fintype.ofFinite α
   have hmaps : ∀ i ∈ G, w i ∈ Finset.range (M + 1) := by
     intro i hi
     exact Finset.mem_range.mpr (Nat.lt_succ_iff.mpr (hgood i hi).2)
@@ -732,7 +734,6 @@ theorem exists_bucket_of_small_LCD
     have ha2 : (euclidNorm d) ^ 2 = ∑ i, (d i) ^ 2 := by
       simpa [euclidNorm] using Real.sq_sqrt hs
     rw [euclidNorm, Real.sqrt_eq_one]
-    change (∑ i, (v i) ^ 2) = 1
     calc
       ∑ i, (v i) ^ 2 = (∑ i, (d i) ^ 2) / (euclidNorm d) ^ 2 := by
         simp only [v, div_pow, Finset.sum_div]
@@ -785,7 +786,6 @@ theorem exists_bucket_of_small_LCD_of_norm_le
     have ha2 : (euclidNorm d) ^ 2 = ∑ i, (d i) ^ 2 := by
       simpa [euclidNorm] using Real.sq_sqrt hs
     rw [euclidNorm, Real.sqrt_eq_one]
-    change (∑ i, (v i) ^ 2) = 1
     calc
       ∑ i, (v i) ^ 2 = (∑ i, (d i) ^ 2) / (euclidNorm d) ^ 2 := by
         simp only [v, div_pow, Finset.sum_div]
@@ -1098,7 +1098,7 @@ lemma smallRLCD_capacity_of_growth (γ : ℝ) (hγ : 0 < γ) (hγ4 : γ < 1 / 4)
       _ = 4 * ((n : ℝ) ^ (2 * γ / 3) * (n : ℝ) ^ (1 - 2 * γ)) := by ring
       _ = 4 * (n : ℝ) ^ (2 * γ / 3 + (1 - 2 * γ)) := by
         rw [Real.rpow_add hn0]
-      _ = 4 * (n : ℝ) ^ (1 - 4 * γ / 3) := by congr 2 <;> ring
+      _ = 4 * (n : ℝ) ^ (1 - 4 * γ / 3) := by congr 2 ; ring
   have herr : ((smallRLCDErrorCount n γ : ℕ) : ℝ) ≤
       (n : ℝ) ^ (1 - 4 * γ / 3) := by
     calc

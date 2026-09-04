@@ -1,7 +1,6 @@
 import ErdosProblems.Erdos88.SwitchingMomentUpper
 import ErdosProblems.Erdos88.BoundedWindowFin
 
-open Classical
 open scoped BigOperators
 
 namespace Erdos88.Switching

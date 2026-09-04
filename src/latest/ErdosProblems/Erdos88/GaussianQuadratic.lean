@@ -573,7 +573,6 @@ lemma holderEnvelope_integrable : Integrable holderEnvelope := by
   have h := integrable_inv_one_add_sq.comp_div hsqrt
   refine h.congr (Filter.Eventually.of_forall fun t ↦ ?_)
   unfold holderEnvelope
-  congr 1
   field_simp [hsqrt]
   rw [Real.sq_sqrt (by norm_num : (0 : ℝ) ≤ 2)]
   ring
@@ -603,7 +602,7 @@ theorem holderEnvelope_integral_Ioi_le {K : ℝ} (hK : 0 < K) :
     _ = 2 / K := by
       rw [integral_const_mul, integral_Ioi_rpow_of_lt (by norm_num) hK]
       norm_num [Real.rpow_neg_natCast, zpow_neg, hK.ne']
-      simpa only [Real.rpow_neg_one, div_eq_mul_inv]
+      simp only [Real.rpow_neg_one, div_eq_mul_inv]
 
 /-- The two-sided universal tail integral used in KSSS Lemma 5.5(b). -/
 theorem holderEnvelope_integral_twoSided_le {K : ℝ} (hK : 0 < K) :
@@ -692,7 +691,6 @@ lemma standardNormalChar_integrable : Integrable standardNormalChar := by
     hreal.ofReal
   refine hcomplex.congr (Filter.Eventually.of_forall fun t ↦ ?_)
   unfold standardNormalChar
-  congr 1
   ring_nf
 
 lemma norm_standardNormalChar (t : ℝ) :
@@ -805,7 +803,7 @@ theorem densityComparison_of_central_and_tail
   have hL1 :
       ∫ t : ℝ, ‖phi t - standardNormalChar t‖ ≤
         (central + 128) / Gamma + tail := by
-    rw [← integral_add_compl measurableSet_Ioc hdiff]
+    rw [← integral_add_compl (s := centralSet) measurableSet_Ioc hdiff]
     have hcompl : centralSetᶜ = tailSet := by
       simp only [centralSet, tailSet, Set.compl_Ioc]
     rw [hcompl]
@@ -841,7 +839,7 @@ lemma localCLTEnvelope_integrable : Integrable localCLTEnvelope := by
   refine h.norm.congr (Filter.Eventually.of_forall fun t ↦ ?_)
   unfold localCLTEnvelope
   have hp3 : t ^ (3 : ℝ) = t ^ (3 : ℕ) := by
-    simpa using Real.rpow_natCast t 3
+    simp
   change ‖t ^ (3 : ℝ) * rexp (-(1 / 3 : ℝ) * t ^ 2)‖ =
     |t| ^ 3 * rexp (-t ^ 2 / 3)
   rw [Real.norm_eq_abs, abs_mul, abs_of_pos (Real.exp_pos _), hp3, abs_pow]
@@ -864,9 +862,9 @@ theorem integral_localCLTEnvelope :
               intro t ht
               unfold localCLTEnvelope
               have hp3 : t ^ (3 : ℝ) = t ^ (3 : ℕ) := by
-                simpa using Real.rpow_natCast t 3
+                simp
               have hp2 : t ^ (2 : ℝ) = t ^ (2 : ℕ) := by
-                simpa using Real.rpow_natCast t 2
+                simp
               rw [abs_of_pos ht]
               change t ^ (3 : ℕ) * rexp (-t ^ (2 : ℕ) / 3) =
                 t ^ (3 : ℝ) * rexp (-(1 / 3 : ℝ) * t ^ (2 : ℝ))
@@ -891,7 +889,7 @@ band gives the central contribution in KSSS Lemma 5.5(a).  The hypothesis
 integration and constants are proved here. -/
 theorem centralCharIntegral_le_of_localCLT
     {phi : ℝ → ℂ} {Gamma L : ℝ}
-    (hGamma : 0 < Gamma) (hL : 0 ≤ L) (hLle : L ≤ 8 / Gamma)
+    (_hGamma : 0 < Gamma) (hL : 0 ≤ L) (hLle : L ≤ 8 / Gamma)
     (hphi : Integrable phi)
     (hlocal : ∀ t : ℝ, |t| ≤ Gamma / 32 →
       ‖phi t - standardNormalChar t‖ ≤ 16 * L * localCLTEnvelope t) :
@@ -1042,7 +1040,7 @@ lemma frobenius_diagonal_sub_restriction_sq {ι : Type*} [Fintype ι]
     split_ifs <;> simp_all
   rw [hmat, Matrix.frobenius_norm_diagonal]
   rw [PiLp.norm_sq_eq_of_L2]
-  simp [Matrix.diagonal_apply, sq_abs, Finset.sum_filter]
+  simp [sq_abs, Finset.sum_filter]
 
 /-- A robust-rank hypothesis forces every diagonal truncation with at most
 `r` retained coordinates to have the corresponding spectral tail at least
@@ -1459,7 +1457,7 @@ theorem diagonalCharModulus_le_of_spectralBlocks
       apply Finset.prod_congr rfl
       intro i hi
       convert (Real.rpow_neg
-        (by positivity : 0 ≤ 1 + 4 * (lam i) ^ 2 * t ^ 2) (1 / 4 : ℝ)).symm using 1 <;>
+        (by positivity : 0 ≤ 1 + 4 * (lam i) ^ 2 * t ^ 2) (1 / 4 : ℝ)).symm using 1 ;
         ring_nf
     rw [hfactor]
     calc
@@ -1469,7 +1467,7 @@ theorem diagonalCharModulus_le_of_spectralBlocks
       _ = q := by
         dsimp [q]
         convert Real.rpow_neg
-          (by positivity : 0 ≤ 1 + 4 * s * t ^ 2) (1 / 4 : ℝ) using 1 <;>
+          (by positivity : 0 ≤ 1 + 4 * s * t ^ 2) (1 / 4 : ℝ) using 1 ;
           ring_nf
   have hunion : (∏ i ∈ U, f i) = ∏ j, ∏ i ∈ B j, f i := by
     simpa only [U] using (Finset.prod_biUnion (f := f) hdisj)
