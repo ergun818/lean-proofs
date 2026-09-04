@@ -69,6 +69,7 @@ def colorOf {n d : ℕ} {layer : Fin n → Fin (n + 1)}
     (c : Fin n → Fin (d + 1)) (x : Fin n) :
     colorOf (part layer c x) = c x := rfl
 
+@[implicit_reducible]
 def vertexOrder {n d : ℕ} (layer : Fin n → Fin (n + 1))
     (c : Fin n → Fin (d + 1)) : LinearOrder (Fin n) :=
   LinearOrder.lift'

@@ -29,10 +29,13 @@ instance colorGraph_decidableAdj (G : SimpleGraph α) [DecidableRel G.Adj]
     (c : Bool) : DecidableRel (colorGraph G c).Adj := by
   cases c <;> simp only [colorGraph] <;> infer_instance
 
+omit [DecidableEq α] [Fintype α] in
 @[simp] theorem colorGraph_false (G : SimpleGraph α) : colorGraph G false = G := rfl
 
+omit [DecidableEq α] [Fintype α] in
 @[simp] theorem colorGraph_true (G : SimpleGraph α) : colorGraph G true = Gᶜ := rfl
 
+omit [Fintype α] in
 theorem neighborFilters_card_add
     (G : SimpleGraph α) [DecidableRel G.Adj]
     (S : Finset α) {y : α} (hy : y ∈ S) :
@@ -46,7 +49,7 @@ theorem neighborFilters_card_add
     intro z hzR hzB
     have hr : G.Adj z y := (Finset.mem_filter.mp hzR).2
     have hb : Gᶜ.Adj z y := (Finset.mem_filter.mp hzB).2
-    simpa [SimpleGraph.compl_adj, hr] using hb
+    simp [SimpleGraph.compl_adj, hr] at hb
   have hunion : R ∪ B = S.erase y := by
     ext z
     simp only [R, B, Finset.mem_union, Finset.mem_filter, Finset.mem_erase]
@@ -58,7 +61,7 @@ theorem neighborFilters_card_add
     · rintro ⟨hzy, hzS⟩
       by_cases hz : G.Adj z y
       · exact Or.inl ⟨hzS, hz⟩
-      · exact Or.inr ⟨hzS, by simpa [SimpleGraph.compl_adj, hzy, hz]⟩
+      · exact Or.inr ⟨hzS, by simp [SimpleGraph.compl_adj, hzy, hz]⟩
   calc
     (S.filter fun z => G.Adj z y).card +
           (S.filter fun z => Gᶜ.Adj z y).card = (R ∪ B).card := by
@@ -66,6 +69,7 @@ theorem neighborFilters_card_add
     _ = (S.erase y).card := congrArg Finset.card hunion
     _ = S.card - 1 := Finset.card_erase_of_mem hy
 
+omit [Fintype α] in
 theorem edgeMass_add_compl
     (G : SimpleGraph α) [DecidableRel G.Adj]
     (S : Finset α) :
@@ -84,6 +88,7 @@ theorem edgeMass_add_compl
       exact neighborFilters_card_add G S hy
     _ = S.card * (S.card - 1) := by simp
 
+omit [Fintype α] in
 /-- On a set of at least two vertices, one colour has oriented edge density
 at least `1/4`.  The slack from `1/2` absorbs the missing diagonal. -/
 theorem exists_color_density_quarter

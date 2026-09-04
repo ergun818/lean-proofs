@@ -134,7 +134,7 @@ theorem exists_hostNumericalPackage (d : ℕ) (hd : 1 ≤ d) :
     calc
       (256 : ℝ) * Q * L * Bcoef ≤
           C * C * C * C ^ (4 * D + 3) := by
-        gcongr <;> exact_mod_cast (show 256 ≤ C from h256C)
+        gcongr; exact_mod_cast (show 256 ≤ C from h256C)
       _ = C ^ (4 * D + 6) := by
         rw [show 4 * D + 6 = (4 * D + 3) + 3 by omega, pow_add]
         ring
@@ -267,7 +267,8 @@ theorem largeOrderDegenerateRamsey : LargeOrderDegenerateRamsey := by
     exact col.map_rel hxy
   let P := TargetParts.OccupiedPart layer c
   let part : Fin n → P := TargetParts.part layer c
-  let color : P → Fin r := fun p => ⟨(TargetParts.colorOf p).1, by simpa [r] using (TargetParts.colorOf p).2⟩
+  let color : P → Fin r := fun p =>
+    ⟨(TargetParts.colorOf p).1, by simpa [r] using (TargetParts.colorOf p).2⟩
   let q : P → ℝ := TargetWeights.mass L Q
   let threshold : P → ℕ := TargetWeights.threshold L Q τ
   let := TargetParts.vertexOrder layer c
@@ -294,10 +295,15 @@ theorem largeOrderDegenerateRamsey : LargeOrderDegenerateRamsey := by
         by_cases hj : j.1 = 0
         · let k : Fin r := ⟨1, hr⟩
           exact (Finset.card_pos.mp ((by positivity : 0 < oldθ).trans_le (hAcard' k))).mono
-            (HostDirections.subset_unionExcept A (by intro h; simpa [k, hj] using congrArg Fin.val h))
+            (HostDirections.subset_unionExcept A (by
+              intro h
+              simpa [k, hj] using congrArg Fin.val h))
         · let k : Fin r := ⟨0, by omega⟩
           exact (Finset.card_pos.mp ((by positivity : 0 < oldθ).trans_le (hAcard' k))).mono
-            (HostDirections.subset_unionExcept A (by intro h; apply hj; exact (congrArg Fin.val h).symm))
+            (HostDirections.subset_unionExcept A (by
+              intro h
+              apply hj
+              exact (congrArg Fin.val h).symm))
       · exact hε.le
       · intro k hk
         dsimp [Λ]

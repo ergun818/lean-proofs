@@ -18,7 +18,7 @@ namespace Defect
 
 universe u
 
-variable {α : Type u} [Fintype α] [DecidableEq α]
+variable {α : Type u}
 
 /-- Common neighbors in `T` of every entry of an indexed tuple. -/
 def commonNeighbors (G : SimpleGraph α) [DecidableRel G.Adj]

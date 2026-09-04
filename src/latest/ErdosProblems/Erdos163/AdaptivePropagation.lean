@@ -28,12 +28,14 @@ structure CostBoundState (C : ℝ) (state : State α β) : Prop where
   cost_le : ∀ x, RandomGreedy.assigned state.core x →
     state.core.costSeen x ≤ C * max 1 (state.core.defectSeen x)
 
+omit [DecidableEq α] [DecidableEq β] [Fintype β] [LinearOrder α] in
 theorem costBoundState_initial (C : ℝ) :
     CostBoundState C (initialState : State α β) := by
   constructor <;> intro x hx
   · simp [RandomGreedy.assigned, initialState, RandomGreedy.initialState] at hx
   · simp [RandomGreedy.assigned, initialState, RandomGreedy.initialState] at hx
 
+omit [DecidableEq β] [DecidableEq ι] [LinearOrder ι] in
 theorem costBoundState_stepAt
     (G : SimpleGraph β) [DecidableRel G.Adj]
     (H : SimpleGraph α) [DecidableRel H.Adj]

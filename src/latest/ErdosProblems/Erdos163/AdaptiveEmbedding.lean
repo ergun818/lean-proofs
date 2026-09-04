@@ -213,12 +213,14 @@ structure ScheduleState (part : α → ι) (state : State α β) : Prop where
   parts_ordered : ∀ ⦃x y⦄, x ∈ state.remaining →
     RandomGreedy.assigned state.core y → part x ≤ part y
 
+omit [DecidableEq α] [DecidableEq β] [DecidableEq ι] [Fintype α] [Fintype β] in
 theorem ScheduleState.of_good
     (G : SimpleGraph β) (H : SimpleGraph α) (host : ι → Finset β)
     (part : α → ι) (default : β) {state : State α β}
     (hgood : GoodState G H host part default state) : ScheduleState part state :=
   ⟨hgood.assigned_iff, hgood.parts_ordered⟩
 
+omit [DecidableEq α] [DecidableEq β] [DecidableEq ι] [Fintype β] [LinearOrder α] in
 theorem scheduleState_initial (part : α → ι) :
     ScheduleState part (initialState : State α β) := by
   constructor
@@ -227,6 +229,7 @@ theorem scheduleState_initial (part : α → ι) :
   · intro x y hx hy
     simp [RandomGreedy.assigned, initialState, RandomGreedy.initialState] at hy
 
+omit [DecidableEq β] [DecidableEq ι] in
 theorem scheduleState_step
     (G : SimpleGraph β) [DecidableRel G.Adj]
     (H : SimpleGraph α) [DecidableRel H.Adj]
@@ -262,6 +265,7 @@ theorem scheduleState_step
         ((RandomGreedy.assigned_step_of_ne G H host part (threshold ∘ part)
           momentExponent default state.core hbx z).mp hb)
 
+omit [DecidableEq β] in
 theorem partDefectMass_stepAt_same_part
     (G : SimpleGraph β) [DecidableRel G.Adj]
     (H : SimpleGraph α) [DecidableRel H.Adj]
@@ -306,6 +310,7 @@ theorem partDefectMass_stepAt_same_part
       simp only [realizedDefect, if_neg hyassigned', if_neg hyassigned]
       exact congrArg (fun t : ℝ => t ^ s) hstable
 
+omit [DecidableEq β] in
 theorem partDefectMass_stepAt_of_part_assigned
     (G : SimpleGraph β) [DecidableRel G.Adj]
     (H : SimpleGraph α) [DecidableRel H.Adj]

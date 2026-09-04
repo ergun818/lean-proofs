@@ -24,6 +24,7 @@ universe u v
 
 variable {α : Type u} {β : Type v} [DecidableEq α] [DecidableEq β]
 
+omit [DecidableEq β] in
 /-- Fubini for a finite product whose coordinates are indexed by `Fin (n+1)`. -/
 theorem expect_piFinset_cons {n : ℕ} (S : Fin (n + 1) → Finset β)
     (F : (Fin (n + 1) → β) → ℝ) :
@@ -65,13 +66,14 @@ def applyTuple : (xs : List α) → (α → β) → (Fin xs.length → β) → �
   | _x :: xs, f, q =>
       applyTuple xs (Function.update f _x (q 0)) (Fin.tail q)
 
+omit [DecidableEq β] in
 theorem coordinateAverage_eq_tupleAverage (A : α → Finset β)
     (xs : List α) (f : α → β) (payoff : (α → β) → ℝ) :
     coordinateAverage A xs f payoff =
       𝔼 q ∈ Fintype.piFinset (listTupleSets A xs),
         payoff (applyTuple xs f q) := by
   induction xs generalizing f with
-  | nil => simp [listTupleSets, applyTuple]
+  | nil => simp [applyTuple]
   | cons x xs ih =>
       rw [coordinateAverage_cons]
       simp_rw [ih]
@@ -92,8 +94,9 @@ theorem coordinateAverage_eq_tupleAverage (A : α → Finset β)
             apply Finset.expect_congr
             · congr 1
             · intro q hq
-              simp [applyTuple, listTupleSets]
+              simp [applyTuple]
 
+omit [DecidableEq β] in
 theorem applyTuple_eq_of_not_mem (Axs : List α) (f : α → β)
     (q : Fin Axs.length → β) {a : α} (ha : a ∉ Axs) :
     applyTuple Axs f q a = f a := by
@@ -106,6 +109,7 @@ theorem applyTuple_eq_of_not_mem (Axs : List α) (f : α → β)
       have hax : a ≠ x := hsplit.1
       simp [Function.update, hax]
 
+omit [DecidableEq β] in
 theorem applyTuple_get {xs : List α} (hxs : xs.Nodup)
     (f : α → β) (q : Fin xs.length → β) (i : Fin xs.length) :
     applyTuple xs f q (xs.get i) = q i := by
@@ -121,6 +125,7 @@ theorem applyTuple_get {xs : List α} (hxs : xs.Nodup)
         simpa [Fin.tail] using
           ih htail (Function.update f x (q 0)) (Fin.tail q) j
 
+omit [DecidableEq β] in
 /-- If `xs` enumerates the index type without repetition, applying a list
 tuple is exactly transport of that tuple across the enumeration equivalence. -/
 theorem applyTuple_eq_piCongrLeft {xs : List α} (hxs : xs.Nodup)
@@ -141,9 +146,10 @@ theorem applyTuple_eq_piCongrLeft {xs : List α} (hxs : xs.Nodup)
   change q i = E q (e i)
   exact (Equiv.piCongrLeft_apply_apply (fun _ : α => β) e q i).symm
 
+omit [DecidableEq β] in
 /-- A sequential independent-coordinate average over a complete, duplicate-free
 list is the uniform average over the corresponding function product. -/
-theorem coordinateAverage_eq_familyAverage [Fintype α] [Fintype β]
+theorem coordinateAverage_eq_familyAverage [Fintype α]
     (A : α → Finset β) (xs : List α) (hxs : xs.Nodup)
     (hall : ∀ a : α, a ∈ xs) (f : α → β) (payoff : (α → β) → ℝ) :
     coordinateAverage A xs f payoff =
@@ -173,6 +179,7 @@ theorem coordinateAverage_eq_familyAverage [Fintype α] [Fintype β]
     congr 1
     exact applyTuple_eq_piCongrLeft hxs hall f q
 
+omit [DecidableEq β] in
 /-- Coordinates outside `S` may be deleted from an independent process when
 the payoff only depends on the coordinates in `S`. -/
 theorem coordinateAverage_filter (A : α → Finset β)
@@ -212,10 +219,11 @@ theorem coordinateAverage_filter (A : α → Finset β)
           _ = coordinateAverage A (xs.filter (· ∈ S)) f payoff :=
             Finset.expect_const (hA x) _
 
+omit [DecidableEq β] in
 /-- A no-duplicate list whose members are exactly `S` realizes the product
 average indexed by the subtype `S`.  Outside `S` the initial assignment is
 left unchanged. -/
-theorem coordinateAverage_eq_familyAverage_on [Fintype β]
+theorem coordinateAverage_eq_familyAverage_on
     (A : α → Finset β) (S : Finset α) (xs : List α) (hxs : xs.Nodup)
     (hmem : ∀ a : α, a ∈ xs ↔ a ∈ S)
     (f : α → β) (payoff : (α → β) → ℝ) :
@@ -269,9 +277,10 @@ theorem coordinateAverage_eq_familyAverage_on [Fintype β]
       rw [applyTuple_eq_of_not_mem xs f q hnot]
       simp [ha]
 
+omit [DecidableEq β] in
 /-- Independent-coordinate averages do not depend on the order of a
 duplicate-free enumeration. -/
-theorem coordinateAverage_eq_of_nodup_same_mem [Fintype β]
+theorem coordinateAverage_eq_of_nodup_same_mem
     (A : α → Finset β) (xs ys : List α) (hxs : xs.Nodup) (hys : ys.Nodup)
     (hmem : ∀ a : α, a ∈ xs ↔ a ∈ ys)
     (f : α → β) (payoff : (α → β) → ℝ) :

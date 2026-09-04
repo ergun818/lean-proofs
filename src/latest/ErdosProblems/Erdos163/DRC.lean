@@ -19,7 +19,7 @@ namespace DRC
 
 universe u
 
-variable {α : Type u} [Fintype α] [DecidableEq α]
+variable {α : Type u} [Fintype α]
 
 noncomputable def indicator (P : Prop) : ℝ :=
   @ite ℝ P (Classical.propDecidable P) 1 0
@@ -34,6 +34,7 @@ theorem indicator_nonneg (P : Prop) : 0 ≤ indicator P := by
   unfold indicator
   split_ifs <;> norm_num
 
+omit [Fintype α] in
 theorem sum_indicator_eq_card_filter (s : Finset α) (p : α → Prop) [DecidablePred p] :
     ∑ x ∈ s, indicator (p x) = ((s.filter p).card : ℝ) := by
   classical
@@ -44,10 +45,11 @@ theorem sum_indicator_eq_card_filter (s : Finset α) (p : α → Prop) [Decidabl
       by_cases hp : p a
       · rw [indicator_true hp]
         simp [ha, hp]
-        <;> ring
+        ring
       · rw [indicator_false hp]
-        simp [ha, hp]
+        simp [hp]
 
+omit [Fintype α] in
 theorem card_commonNeighbors_eq_sum_indicator
     (G : SimpleGraph α) [DecidableRel G.Adj]
     {ι : Type*} [Fintype ι] (q : ι → α) (B : Finset α) :
@@ -57,6 +59,7 @@ theorem card_commonNeighbors_eq_sum_indicator
   rw [sum_indicator_eq_card_filter]
   rfl
 
+omit [Fintype α] in
 theorem expect_all_adjacent
     (G : SimpleGraph α) [DecidableRel G.Adj]
     (A : Finset α) (t : ℕ) (y : α) :
@@ -90,6 +93,7 @@ theorem expect_all_adjacent
     _ = (((A.filter fun z => G.Adj z y).card : ℝ) / A.card) ^ t := by
       rw [hsingle]
 
+omit [Fintype α] in
 theorem expect_all_predicate (A : Finset α) (t : ℕ) (p : α → Prop)
     [DecidablePred p] :
     𝔼 x ∈ FiniteDefect.samples t A, indicator (∀ i, p (x i)) =
@@ -116,6 +120,7 @@ theorem expect_all_predicate (A : Finset α) (t : ℕ) (p : α → Prop)
         (Finset.expect_pow A (fun z => indicator (p z)) t)
     _ = (((A.filter p).card : ℝ) / A.card) ^ t := by rw [hsingle]
 
+omit [Fintype α] in
 /-- Mean size of the common neighborhood of a sample tuple. -/
 theorem expect_card_commonNeighbors
     (G : SimpleGraph α) [DecidableRel G.Adj]
@@ -135,6 +140,7 @@ def edgeMass (G : SimpleGraph α) [DecidableRel G.Adj]
     (A B : Finset α) : ℕ :=
   ∑ y ∈ B, (A.filter fun z => G.Adj z y).card
 
+omit [Fintype α] in
 theorem sum_degree_ratios
     (G : SimpleGraph α) [DecidableRel G.Adj]
     (A B : Finset α) :
@@ -157,12 +163,14 @@ theorem pow_expect_le_expect_pow {ι : Type*} (S : Finset ι)
   have hJ := Real.pow_arith_mean_le_arith_mean_pow S w f hw hw_sum hf t
   simpa [Finset.expect, NNRat.smul_def, w, div_eq_inv_mul, ← Finset.mul_sum] using hJ
 
+omit [Fintype α] in
 theorem samples_nonempty (t : ℕ) {A : Finset α} (hA : A.Nonempty) :
     (FiniteDefect.samples t A).Nonempty := by
   obtain ⟨a, ha⟩ := hA
   refine ⟨fun _ => a, ?_⟩
   simp [FiniteDefect.samples, ha]
 
+omit [Fintype α] in
 /-- First Jensen estimate in dependent random choice. -/
 theorem expect_card_commonNeighbors_lower
     (G : SimpleGraph α) [DecidableRel G.Adj]
@@ -194,6 +202,7 @@ theorem expect_card_commonNeighbors_lower
   apply (le_div_iff₀ (by exact_mod_cast hB.card_pos)).mp at hpow
   simpa [f, mul_comm] using hpow
 
+omit [Fintype α] in
 /-- The `D`-th moment form used by defect DRC. -/
 theorem expect_card_commonNeighbors_pow_lower
     (G : SimpleGraph α) [DecidableRel G.Adj]
@@ -417,7 +426,7 @@ theorem rawMoment_eq_card_pow_mul_moment
 theorem exists_drc_power_and_moment
     (G : SimpleGraph α) [DecidableRel G.Adj]
     {A B : Finset α} (hA : A.Nonempty) (hB : B.Nonempty)
-    {θ s D t : ℕ} (hD : 0 < D) (ht : 0 < t) (hst : s ≤ t)
+    {θ s D t : ℕ} (_hD : 0 < D) (ht : 0 < t) (hst : s ≤ t)
     {η ρ : ℝ} (hη : 0 < η) (hρ : 0 < ρ)
     (hdensity : ρ * A.card * B.card ≤ edgeMass G A B)
     (hθ : (θ : ℝ) ≤ η * ρ ^ D * A.card) :

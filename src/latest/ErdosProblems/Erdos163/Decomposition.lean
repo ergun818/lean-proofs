@@ -26,15 +26,18 @@ def degreeIn (H : SimpleGraph α) [DecidableRel H.Adj]
     (S : Finset α) (x : α) : ℕ :=
   (S.filter fun y => H.Adj x y).card
 
+omit [DecidableEq α] [Fintype α] in
 @[simp] theorem degreeIn_empty (H : SimpleGraph α) [DecidableRel H.Adj] (x : α) :
     degreeIn H ∅ x = 0 := by
   simp [degreeIn]
 
+omit [DecidableEq α] [Fintype α] in
 theorem degreeIn_mono (H : SimpleGraph α) [DecidableRel H.Adj]
     {S T : Finset α} (hST : S ⊆ T) (x : α) :
     degreeIn H S x ≤ degreeIn H T x := by
   exact card_le_card (filter_subset_filter _ hST)
 
+omit [DecidableEq α] [Fintype α] in
 /-- The induced-graph degree is the elementary filtered degree used in the
 definition of degeneracy. -/
 theorem degree_induce_finset (H : SimpleGraph α) [DecidableRel H.Adj]
@@ -74,6 +77,7 @@ noncomputable def eraseInduceIso (H : SimpleGraph α) [DecidableRel H.Adj]
     intro a b
     rfl
 
+omit [DecidableEq α] in
 /-- A `d`-degenerate graph has at most `d|S|` edges in every induced vertex
 set `S`. -/
 theorem card_induced_edges_le (H : SimpleGraph α) [DecidableRel H.Adj]
@@ -138,6 +142,7 @@ theorem card_induced_edges_le (H : SimpleGraph α) [DecidableRel H.Adj]
         rw [hempty]
         simp) S
 
+omit [DecidableEq α] [Fintype α] in
 /-- Handshaking on an induced finset, stated using `degreeIn`. -/
 theorem sum_degreeIn_eq_twice_edges (H : SimpleGraph α) [DecidableRel H.Adj]
     (S : Finset α) :
@@ -149,6 +154,7 @@ theorem sum_degreeIn_eq_twice_edges (H : SimpleGraph α) [DecidableRel H.Adj]
   intro x hx
   exact (degree_induce_finset H S x).symm
 
+omit [DecidableEq α] in
 /-- Consequently, the degree sum in every vertex subset is at most
 `2*d*|S|`. -/
 theorem sum_degreeIn_le (H : SimpleGraph α) [DecidableRel H.Adj]
@@ -165,10 +171,12 @@ def high (H : SimpleGraph α) [DecidableRel H.Adj]
     (d : ℕ) (S : Finset α) : Finset α :=
   S.filter fun x => 4 * d ≤ degreeIn H S x
 
+omit [DecidableEq α] [Fintype α] in
 theorem high_subset (H : SimpleGraph α) [DecidableRel H.Adj]
     (d : ℕ) (S : Finset α) : high H d S ⊆ S :=
   filter_subset _ _
 
+omit [DecidableEq α] in
 /-- At least half the current vertices disappear at each high-degree pruning
 step. -/
 theorem twice_card_high_le (H : SimpleGraph α) [DecidableRel H.Adj]
@@ -176,13 +184,13 @@ theorem twice_card_high_le (H : SimpleGraph α) [DecidableRel H.Adj]
     2 * (high H d S).card ≤ S.card := by
   classical
   have hlocal : ∀ x ∈ high H d S, 4 * d ≤ degreeIn H S x := by
-    simpa [high] using fun x (hx : x ∈ high H d S) => hx
+    simp [high]
   have hsum_low :
       4 * d * (high H d S).card ≤ ∑ x ∈ S, degreeIn H S x := by
     calc
       4 * d * (high H d S).card =
           ∑ x ∈ high H d S, 4 * d := by
-            simp [Nat.mul_assoc, Nat.mul_comm, Nat.mul_left_comm]
+            simp [Nat.mul_assoc, Nat.mul_comm]
       _ ≤ ∑ x ∈ high H d S, degreeIn H S x :=
         Finset.sum_le_sum hlocal
       _ ≤ ∑ x ∈ S, degreeIn H S x :=
@@ -200,21 +208,26 @@ def levels (H : SimpleGraph α) [DecidableRel H.Adj] (d : ℕ) : ℕ → Finset 
   | 0 => Finset.univ
   | i + 1 => high H d (levels H d i)
 
+omit [DecidableEq α] in
 @[simp] theorem levels_zero (H : SimpleGraph α) [DecidableRel H.Adj] (d : ℕ) :
     levels H d 0 = Finset.univ := rfl
 
+omit [DecidableEq α] in
 @[simp] theorem levels_succ (H : SimpleGraph α) [DecidableRel H.Adj]
     (d i : ℕ) : levels H d (i + 1) = high H d (levels H d i) := rfl
 
+omit [DecidableEq α] in
 theorem levels_antitone (H : SimpleGraph α) [DecidableRel H.Adj] (d i : ℕ) :
     levels H d (i + 1) ⊆ levels H d i :=
   high_subset H d _
 
+omit [DecidableEq α] in
 theorem twice_card_levels_succ_le (H : SimpleGraph α) [DecidableRel H.Adj]
     {d : ℕ} (hd : 1 ≤ d) (hdeg : IsDegenerateAtMost H d) (i : ℕ) :
     2 * (levels H d (i + 1)).card ≤ (levels H d i).card := by
   exact twice_card_high_le H hd hdeg _
 
+omit [DecidableEq α] in
 /-- Quantitative geometric decay of the filtration. -/
 theorem pow_mul_card_levels_le (H : SimpleGraph α) [DecidableRel H.Adj]
     {d : ℕ} (hd : 1 ≤ d) (hdeg : IsDegenerateAtMost H d) (i : ℕ) :
@@ -229,6 +242,7 @@ theorem pow_mul_card_levels_le (H : SimpleGraph α) [DecidableRel H.Adj]
           Nat.mul_le_mul_left _ (twice_card_levels_succ_le H hd hdeg i)
         _ ≤ Fintype.card α := ih
 
+omit [DecidableEq α] in
 /-- Later filtration levels are contained in earlier ones. -/
 theorem levels_subset_of_le (H : SimpleGraph α) [DecidableRel H.Adj]
     (d : ℕ) {i j : ℕ} (hij : i ≤ j) : levels H d j ⊆ levels H d i := by
@@ -236,6 +250,7 @@ theorem levels_subset_of_le (H : SimpleGraph α) [DecidableRel H.Adj]
   | base => exact subset_rfl
   | succ j hij ih => exact (levels_antitone H d j).trans ih
 
+omit [DecidableEq α] in
 /-- The filtration is empty by the ambient cardinality index. -/
 theorem levels_card_eq_empty (H : SimpleGraph α) [DecidableRel H.Adj]
     {d : ℕ} (hd : 1 ≤ d) (hdeg : IsDegenerateAtMost H d) :
@@ -253,6 +268,7 @@ theorem levels_card_eq_empty (H : SimpleGraph α) [DecidableRel H.Adj]
       _ ≤ Fintype.card α := hdecay
   exact Nat.not_le_of_lt (Fintype.card α).lt_two_pow_self hpow
 
+omit [DecidableEq α] in
 /-- The bounded search used to assign a pruning layer always has a witness. -/
 theorem layerSearch_exists (H : SimpleGraph α) [DecidableRel H.Adj]
     (d : ℕ) (x : α) :
@@ -265,6 +281,7 @@ noncomputable def layerIndex (H : SimpleGraph α) [DecidableRel H.Adj]
     (d : ℕ) (x : α) : ℕ :=
   Nat.find (layerSearch_exists H d x)
 
+omit [DecidableEq α] in
 theorem exists_not_mem_levels_succ (H : SimpleGraph α) [DecidableRel H.Adj]
     {d : ℕ} (hd : 1 ≤ d) (hdeg : IsDegenerateAtMost H d) (x : α) :
     ∃ i, x ∉ levels H d (i + 1) := by
@@ -272,7 +289,7 @@ theorem exists_not_mem_levels_succ (H : SimpleGraph α) [DecidableRel H.Adj]
   intro hx
   have hsub := levels_subset_of_le H d (Nat.le_succ (Fintype.card α)) hx
   rw [levels_card_eq_empty H hd hdeg] at hsub
-  simpa using hsub
+  simp at hsub
 
 theorem layerIndex_spec (H : SimpleGraph α) [DecidableRel H.Adj]
     {d : ℕ} (hd : 1 ≤ d) (hdeg : IsDegenerateAtMost H d) (x : α) :
@@ -282,16 +299,16 @@ theorem layerIndex_spec (H : SimpleGraph α) [DecidableRel H.Adj]
     intro hx
     have hsub := levels_subset_of_le H d (Nat.le_succ (Fintype.card α)) hx
     rw [levels_card_eq_empty H hd hdeg] at hsub
-    simpa using hsub
+    simp at hsub
   · exact hexit
 
 theorem layerIndex_le_card (H : SimpleGraph α) [DecidableRel H.Adj]
-    {d : ℕ} (hd : 1 ≤ d) (hdeg : IsDegenerateAtMost H d) (x : α) :
+    {d : ℕ} (_hd : 1 ≤ d) (_hdeg : IsDegenerateAtMost H d) (x : α) :
     layerIndex H d x ≤ Fintype.card α := by
   exact Nat.find_min' (layerSearch_exists H d x) (Or.inl rfl)
 
 theorem mem_levels_layerIndex (H : SimpleGraph α) [DecidableRel H.Adj]
-    {d : ℕ} (hd : 1 ≤ d) (hdeg : IsDegenerateAtMost H d) (x : α) :
+    {d : ℕ} (_hd : 1 ≤ d) (_hdeg : IsDegenerateAtMost H d) (x : α) :
     x ∈ levels H d (layerIndex H d x) := by
   let hsearch := layerSearch_exists H d x
   change x ∈ levels H d (Nat.find hsearch)

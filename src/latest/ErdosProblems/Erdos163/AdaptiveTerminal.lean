@@ -24,6 +24,7 @@ variable {α : Type u} {β : Type v} {ι : Type w}
   [Fintype β] [DecidableEq β]
   [DecidableEq ι] [LinearOrder ι]
 
+omit [DecidableEq β] [DecidableEq ι] [LinearOrder ι] in
 theorem value_step_eq_update
     (G : SimpleGraph β) [DecidableRel G.Adj]
     (H : SimpleGraph α) [DecidableRel H.Adj]
@@ -185,6 +186,7 @@ structure ObservationState
           RandomGreedy.value default state.core y)
         (host (part x)) momentExponent
 
+omit [DecidableEq α] [DecidableEq β] [DecidableEq ι] [LinearOrder ι] in
 theorem observationState_initial
     (G : SimpleGraph β) [DecidableRel G.Adj]
     (H : SimpleGraph α) [DecidableRel H.Adj]
@@ -196,6 +198,7 @@ theorem observationState_initial
   intro x hx
   simp [RandomGreedy.assigned, initialState, RandomGreedy.initialState] at hx
 
+omit [DecidableEq β] [DecidableEq ι] in
 theorem observationState_step
     (G : SimpleGraph β) [DecidableRel G.Adj]
     (H : SimpleGraph α) [DecidableRel H.Adj]
@@ -382,6 +385,7 @@ theorem terminalNeutralAverage_eq_familyMoment (I : Finset α)
           funext y
           simp [y.property]
 
+omit [DecidableEq β] in
 /-- Complete adaptive embedding theorem from literal host-part defect
 moments. -/
 theorem hasCopy_of_family_moments
@@ -409,6 +413,7 @@ theorem hasCopy_of_family_moments
       ∑ x : α, (2 / (threshold (part x) : ℝ)) *
         (2 * RandomGreedy.branchCoefficient (2 * γ) D * μ) < 1) :
     HasCopy H G := by
+  classical
   apply hasCopy_of_terminal_moments G H host part threshold defaultTarget default
     hhostNonempty hhostDisjoint hpart horder hthreshold hpartSize hγ hsize D
     hD hforward μ hμ

@@ -65,7 +65,7 @@ theorem sum_range_blockWeight_le {L : ℕ} (hL : 0 < L) (m : ℕ) :
             _ = L := by ring
         exact (add_le_add hfirst hhalf).trans_eq (by ring)
 
-theorem block_le_index {L i : ℕ} (hL : 0 < L) : i / L ≤ i := by
+theorem block_le_index {L i : ℕ} (_hL : 0 < L) : i / L ≤ i := by
   exact Nat.div_le_self i L
 
 theorem twice_block_le_index {L i : ℕ} (hL : 2 ≤ L) : 2 * (i / L) ≤ i := by

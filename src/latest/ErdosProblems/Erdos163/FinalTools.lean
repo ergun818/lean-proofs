@@ -251,11 +251,11 @@ theorem prod_mass_sq_mul_scale_ge
         ((Q : ℝ) ^ (2 * D) * scale n) /
           (((Q : ℝ) ^ Fintype.card I * X) ^ 2) :=
       (le_div_iff₀ (pow_pos hdenPos 2)).2 (by simpa using hdenR)
-    convert this using 1 <;> field_simp <;> ring
+    convert this using 1; field_simp
 
 /-- Exponential decay beats any fixed polynomial along natural numbers. -/
 theorem eventually_const_mul_pow_mul_exp_neg_lt
-    (K : ℝ) (p : ℕ) {c δ : ℝ} (hK : 0 ≤ K) (hc : 0 < c)
+    (K : ℝ) (p : ℕ) {c δ : ℝ} (_hK : 0 ≤ K) (hc : 0 < c)
     (hδ : 0 < δ) :
     ∃ a₀ : ℕ, ∀ a : ℕ, a₀ ≤ a →
       K * (a : ℝ) ^ p * Real.exp (-c * a) < δ := by
@@ -405,7 +405,7 @@ theorem diagonal_term_le
             D ^ 4 * C ^ (2 * D) * a ^ (16 * (k - 1)) by
           rw [mul_pow, mul_pow, ← pow_mul, ← pow_mul, ← pow_mul]
           ring]
-        simp only [S, pow_succ]
+        simp only [pow_succ]
         ring
       _ ≤ ((a : ℝ) ^ 15 * μ ^ 2) * S := hKS
       _ = μ ^ 2 * (a : ℝ) ^ (16 * k) := by
@@ -603,7 +603,7 @@ theorem size_exp_ge {Q a N : ℕ} {q : ℝ}
 theorem tail_exp_ge
     {D k C T Q a lam : ℕ} {μ qprod : ℝ}
     (hk : k ≤ D) (hC : 0 < C) (hT : 2 ≤ T) (hQ : 0 < Q)
-    (ha : 0 < a) (hlam : 0 < lam) (hμ : 0 < μ) (hq : 0 < qprod)
+    (ha : 0 < a) (hlam : 0 < lam) (hμ : 0 < μ) (_hq : 0 < qprod)
     (hmass : (1 : ℝ) ≤ (Q : ℝ) ^ (2 * D) * a * qprod ^ 2) :
     (μ ^ 2 / (2 * (C : ℝ) * (Q : ℝ) ^ (2 * D) *
         ((lam : ℝ) ^ 2 + 1))) * a ≤

@@ -50,6 +50,7 @@ structure GoodState (G : SimpleGraph β) (H : SimpleGraph α)
     H.Adj x y → G.Adj (value default state x) (value default state y)
   before_remaining : ∀ ⦃x y⦄, x ∈ remaining → assigned state y → x < y
 
+omit [DecidableEq α] [DecidableEq β] [DecidableEq ι] [Fintype α] [Fintype β] in
 theorem goodState_initial (G : SimpleGraph β) (H : SimpleGraph α)
     (host : ι → Finset β) (part : α → ι) (default : β)
     (remaining : List α) (hcover : ∀ x, x ∈ remaining) :
@@ -66,6 +67,7 @@ theorem goodState_initial (G : SimpleGraph β) (H : SimpleGraph α)
   · intro x y hx hy
     simp [assigned, initialState] at hy
 
+omit [DecidableEq β] [DecidableEq ι] in
 @[simp] theorem assigned_step_self
     (G : SimpleGraph β) [DecidableRel G.Adj]
     (H : SimpleGraph α) [DecidableRel H.Adj]
@@ -74,6 +76,7 @@ theorem goodState_initial (G : SimpleGraph β) (H : SimpleGraph α)
     assigned (step G H host part threshold momentExponent default x state z) x := by
   simp [assigned, step]
 
+omit [DecidableEq β] [DecidableEq ι] in
 @[simp] theorem value_step_self
     (G : SimpleGraph β) [DecidableRel G.Adj]
     (H : SimpleGraph α) [DecidableRel H.Adj]
@@ -82,6 +85,7 @@ theorem goodState_initial (G : SimpleGraph β) (H : SimpleGraph α)
     value default (step G H host part threshold momentExponent default x state z) x = z := by
   simp [value, step]
 
+omit [DecidableEq β] [DecidableEq ι] in
 theorem assigned_step_of_ne
     (G : SimpleGraph β) [DecidableRel G.Adj]
     (H : SimpleGraph α) [DecidableRel H.Adj]
@@ -92,6 +96,7 @@ theorem assigned_step_of_ne
       assigned state y := by
   simp [assigned, step, hyx]
 
+omit [DecidableEq β] [DecidableEq ι] in
 theorem value_step_of_ne
     (G : SimpleGraph β) [DecidableRel G.Adj]
     (H : SimpleGraph α) [DecidableRel H.Adj]
@@ -102,6 +107,7 @@ theorem value_step_of_ne
       value default state y := by
   simp [value, step, hyx]
 
+omit [DecidableEq α] [Fintype β] [LinearOrder α] in
 theorem mem_usedInPart_of_assigned
     (part : α → ι) (default : β) (state : State α β)
     {x y : α} (hy : assigned state y) (hpart : part y = part x) :
@@ -118,7 +124,7 @@ theorem goodState_step
     (host : ι → Finset β) (part : α → ι) (threshold : α → ℕ)
     (momentExponent : ℕ) (default : β)
     (hhost : ∀ ⦃i j⦄, i ≠ j → Disjoint (host i) (host j))
-    (hpart : ∀ ⦃a b⦄, H.Adj a b → part a ≠ part b)
+    (_hpart : ∀ ⦃a b⦄, H.Adj a b → part a ≠ part b)
     {x : α} {xs : List α} {state : State α β} {z : β}
     (hxs : x ∉ xs) (hbelow : ∀ y ∈ xs, y < x)
     (hgood : GoodState G H host part default (x :: xs) state)
@@ -143,7 +149,7 @@ theorem goodState_step
   · intro y
     by_cases hyx : y = x
     · subst y
-      simp [state', assigned, step, hxs]
+      simp [assigned, step, hxs]
     · rw [assigned_step_of_ne G H host part threshold momentExponent default state hyx z]
       rw [hgood.assigned_iff]
       simp [hyx]
@@ -160,17 +166,21 @@ theorem goodState_step
       by_cases hbx : b = x
       · exact hbx.symm
       · exfalso
-        have hbOld := (assigned_step_of_ne G H host part threshold momentExponent default state hbx z).mp hb
+        have hbOld :=
+          (assigned_step_of_ne G H host part threshold momentExponent default state hbx z).mp hb
         have hvb := value_step_of_ne G H host part threshold momentExponent default state hbx z
         exact hnew_old_ne hbOld (by simpa [state', hvb] using hab)
     · by_cases hbx : b = x
       · subst b
         exfalso
-        have haOld := (assigned_step_of_ne G H host part threshold momentExponent default state hax z).mp ha
+        have haOld :=
+          (assigned_step_of_ne G H host part threshold momentExponent default state hax z).mp ha
         have hva := value_step_of_ne G H host part threshold momentExponent default state hax z
         exact hnew_old_ne haOld (by simpa [state', hva] using hab.symm)
-      · have haOld := (assigned_step_of_ne G H host part threshold momentExponent default state hax z).mp ha
-        have hbOld := (assigned_step_of_ne G H host part threshold momentExponent default state hbx z).mp hb
+      · have haOld :=
+          (assigned_step_of_ne G H host part threshold momentExponent default state hax z).mp ha
+        have hbOld :=
+          (assigned_step_of_ne G H host part threshold momentExponent default state hbx z).mp hb
         apply hgood.injective haOld hbOld
         simpa [state', value_step_of_ne G H host part threshold momentExponent default state hax z,
           value_step_of_ne G H host part threshold momentExponent default state hbx z] using hab
@@ -178,7 +188,8 @@ theorem goodState_step
     by_cases hax : a = x
     · subst a
       have hbx : b ≠ x := fun h => H.irrefl (h ▸ hab)
-      have hbOld := (assigned_step_of_ne G H host part threshold momentExponent default state hbx z).mp hb
+      have hbOld :=
+        (assigned_step_of_ne G H host part threshold momentExponent default state hbx z).mp hb
       have hxb : x < b := hgood.before_remaining (by simp) hbOld
       have hbforward : b ∈ forwardNeighbors H x := by
         simp [forwardNeighbors, hab, hxb]
@@ -198,8 +209,10 @@ theorem goodState_step
             ⟨a, haforward⟩).symm
         simpa [state', value_step_of_ne G H host part threshold momentExponent default state hax z]
           using hadj.symm
-      · have haOld := (assigned_step_of_ne G H host part threshold momentExponent default state hax z).mp ha
-        have hbOld := (assigned_step_of_ne G H host part threshold momentExponent default state hbx z).mp hb
+      · have haOld :=
+          (assigned_step_of_ne G H host part threshold momentExponent default state hax z).mp ha
+        have hbOld :=
+          (assigned_step_of_ne G H host part threshold momentExponent default state hbx z).mp hb
         simpa [state', value_step_of_ne G H host part threshold momentExponent default state hax z,
           value_step_of_ne G H host part threshold momentExponent default state hbx z] using
           hgood.map_adj haOld hbOld hab
@@ -266,6 +279,7 @@ theorem SuccessfulRun.hasCopy
 def partVertices (part : α → ι) (x : α) : Finset α :=
   Finset.univ.filter fun y => part y = part x
 
+omit [DecidableEq α] [Fintype β] [LinearOrder α] in
 theorem usedInPart_card_le (part : α → ι) (default : β)
     (state : State α β) (x : α) :
     (usedInPart part default state x).card ≤ (partVertices part x).card := by
@@ -277,9 +291,10 @@ theorem usedInPart_card_le (part : α → ι) (default : β)
     _ ≤ (partVertices part x).card := by
       apply Finset.card_le_card
       intro y hy
-      simp [partVertices] at hy ⊢
+      simp only [partVertices, Finset.mem_filter, Finset.mem_univ, true_and] at hy ⊢
       exact hy.2
 
+omit [DecidableEq α] [Fintype β] in
 theorem choices_eq_unused_of_large
     (G : SimpleGraph β) [DecidableRel G.Adj]
     (H : SimpleGraph α) [DecidableRel H.Adj]
@@ -307,7 +322,7 @@ theorem choices_eq_unused_of_large
   have hnotSmall : ¬2 * L.card < N.card := by omega
   unfold choices
   dsimp
-  simpa [N, L, hNne, hnotSmall]
+  simp [N, L, hNne, hnotSmall]
 
 theorem stateRun_failures_le
     (G : SimpleGraph β) [DecidableRel G.Adj]
@@ -359,10 +374,12 @@ theorem stateRun_toSuccessfulRun
         (hthreshold x) (hpartSize x) hfull
       exact .cons (hchoices ▸ hz) (ih hfinal)
 
+omit [DecidableEq α] in
 theorem order_pairwise :
     (order : List α).Pairwise fun x y => y < x := by
   simpa [order] using (Finset.sortedGT_sort (Finset.univ : Finset α)).pairwise
 
+omit [DecidableEq α] in
 theorem order_mem (x : α) : x ∈ (order : List α) := by
   rw [← List.mem_toFinset, order_toFinset]
   exact Finset.mem_univ x
@@ -417,6 +434,7 @@ structure FailureState (remaining : List α) (state : State α β) : Prop where
   observed_zero : ∀ x ∈ remaining, state.observed x = 0
   failures_le : (state.failures : ℝ) ≤ ∑ x, state.observed x
 
+omit [DecidableEq α] [DecidableEq β] [Fintype β] [LinearOrder α] in
 theorem failureState_initial (remaining : List α) :
     FailureState remaining (initialState : State α β) := by
   constructor
@@ -424,6 +442,7 @@ theorem failureState_initial (remaining : List α) :
     rfl
   · simp [initialState]
 
+omit [DecidableEq β] in
 theorem one_le_defectPower_of_small
     (G : SimpleGraph β) [DecidableRel G.Adj]
     {θ exponent : ℕ} (hθ : 0 < θ)
@@ -441,6 +460,7 @@ theorem one_le_defectPower_of_small
   have hone := FiniteDefect.one_le_defect_of_ne_zero G hne
   simpa using pow_le_pow_left₀ (by norm_num : (0 : ℝ) ≤ 1) hone exponent
 
+omit [DecidableEq β] [DecidableEq ι] in
 theorem failureState_step
     (G : SimpleGraph β) [DecidableRel G.Adj]
     (H : SimpleGraph α) [DecidableRel H.Adj]

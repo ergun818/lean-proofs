@@ -22,7 +22,6 @@ universe u v
 theorem activeCard_lower_bound
     {X : Type u} {P : Type v}
     [Fintype X] [DecidableEq X] [LinearOrder X]
-    [Fintype P] [DecidableEq P]
     {N r D oldθ τ R M a : ℕ} {ε : ℝ}
     (G : SimpleGraph (Fin N)) [DecidableRel G.Adj]
     (H : SimpleGraph X) [DecidableRel H.Adj]

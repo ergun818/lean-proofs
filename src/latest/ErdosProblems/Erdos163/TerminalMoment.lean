@@ -33,6 +33,7 @@ structure ObservationState
         (fun y : forwardNeighbors H a => value default state y)
         (host (part a)) momentExponent
 
+omit [DecidableEq α] [DecidableEq β] [DecidableEq ι] in
 theorem observationState_initial
     (G : SimpleGraph β) [DecidableRel G.Adj]
     (H : SimpleGraph α) [DecidableRel H.Adj]
@@ -46,6 +47,7 @@ theorem observationState_initial
   · intro a ha
     exact (ha (order_mem a)).elim
 
+omit [DecidableEq β] [DecidableEq ι] in
 theorem observationState_step
     (G : SimpleGraph β) [DecidableRel G.Adj]
     (H : SimpleGraph α) [DecidableRel H.Adj]
@@ -128,6 +130,7 @@ theorem final_observed_formula (I : Finset α)
       (observationState_initial G H host part threshold momentExponent default)
   exact hfinal.formula x (by simp)
 
+omit [DecidableEq β] in
 theorem defectPower_sq (G : SimpleGraph β) [DecidableRel G.Adj]
     (θ D : ℕ) {κ : Type*} [Fintype κ] (q : κ → β) (T : Finset β) :
     (FiniteDefect.defectPower G θ q T (2 * D)) ^ 2 =

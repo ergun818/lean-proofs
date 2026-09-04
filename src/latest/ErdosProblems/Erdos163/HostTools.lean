@@ -19,9 +19,9 @@ namespace HostTools
 
 universe u v
 
-variable {α : Type u} [Fintype α] [DecidableEq α]
+variable {α : Type u} [Fintype α]
 
-theorem expect_const_mul {Ω : Type v} [DecidableEq Ω]
+theorem expect_const_mul {Ω : Type v}
     (S : Finset Ω) (c : ℝ) (f : Ω → ℝ) :
     (𝔼 x ∈ S, c * f x) = c * (𝔼 x ∈ S, f x) := by
   simp only [Finset.expect_eq_sum_div_card, ← Finset.mul_sum]
@@ -31,7 +31,7 @@ theorem expect_const_mul {Ω : Type v} [DecidableEq Ω]
 strictly below one, one outcome makes every individual cost smaller than its
 normalizing bound. -/
 theorem exists_simultaneously_lt
-    {Ω : Type u} {κ : Type v} [DecidableEq Ω]
+    {Ω : Type u} {κ : Type v}
     (S : Finset Ω) (hS : S.Nonempty) (I : Finset κ)
     (F : κ → Ω → ℝ) (a : κ → ℝ)
     (hF : ∀ i ∈ I, ∀ x ∈ S, 0 ≤ F i x)
@@ -170,8 +170,7 @@ theorem moment_le_pow_mul_of_subset
     (fun _ => hUB) htuples T
   rw [FiniteDefect.familyMoment_fin, FiniteDefect.familyMoment_fin] at hbase
   simp only [FiniteDefect.card_familyTuples, Finset.prod_const,
-    Finset.card_univ, Fintype.card_fin, nsmul_eq_mul, Nat.cast_pow,
-    Nat.cast_ofNat] at hbase
+    Finset.card_univ, Fintype.card_fin, Nat.cast_pow] at hbase
   have hUpow : (0 : ℝ) < (U.card : ℝ) ^ D := by
     exact pow_pos (by exact_mod_cast hU.card_pos) D
   have hpowNat : B.card ^ D ≤ (K * U.card) ^ D :=
@@ -250,15 +249,16 @@ def appendTupleSets {D t : ℕ} (B A : Finset α) :
 def appendEquiv (D t : ℕ) :
     (Fin D → α) × (Fin t → α) ≃ (Fin (D + t) → α) where
   toFun p := Fin.append p.1 p.2
-  invFun z := (λ i => z (Fin.castAdd t i), λ j => z (Fin.natAdd D j))
+  invFun z := (fun i => z (Fin.castAdd t i), fun j => z (Fin.natAdd D j))
   left_inv p := by
     ext i
     · simp
     · simp
   right_inv z := by
     funext i
-    refine Fin.addCases (λ j => ?_) (λ j => ?_) i <;> simp
+    refine Fin.addCases (fun j => ?_) (fun j => ?_) i <;> simp
 
+omit [Fintype α] in
 theorem commonNeighbors_commonNeighbors_eq_append
     (G : SimpleGraph α) [DecidableRel G.Adj]
     {D t : ℕ} (q : Fin D → α) (x : Fin t → α) (T : Finset α) :
@@ -272,7 +272,7 @@ theorem commonNeighbors_commonNeighbors_eq_append
   · rintro ⟨⟨hzT, hx⟩, hq⟩
     refine ⟨hzT, ?_⟩
     intro i
-    refine Fin.addCases (λ j => ?_) (λ j => ?_) i
+    refine Fin.addCases (fun j => ?_) (fun j => ?_) i
     · simpa using hq j
     · simpa using hx j
   · rintro ⟨hzT, hall⟩
@@ -315,7 +315,7 @@ theorem expect_moment_commonNeighbors
         simp only [Finset.mem_product, Fintype.mem_piFinset]
         constructor
         · rintro ⟨hp, hx⟩ i
-          refine Fin.addCases (λ j => ?_) (λ j => ?_) i
+          refine Fin.addCases (fun j => ?_) (fun j => ?_) i
           · rw [show e p = Fin.append p.1 p.2 from rfl,
               Fin.append_left]
             simpa [appendTupleSets] using hp j
@@ -410,7 +410,7 @@ theorem moment_mono_dimension
   have hsets : appendTupleSets (D := d) (t := k) A A =
       (fun _ : Fin (d + k) => A) := by
     funext i
-    refine Fin.addCases (λ j => ?_) (λ j => ?_) i <;>
+    refine Fin.addCases (fun j => ?_) (fun j => ?_) i <;>
       simp [appendTupleSets]
   rw [hsets] at havg
   exact havg

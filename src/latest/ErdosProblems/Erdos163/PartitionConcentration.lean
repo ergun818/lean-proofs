@@ -61,12 +61,14 @@ def selectedCoordinates {N : ℕ} {ι : Type v}
     (label : Fin N → Option P) : ι → Finset (Fin N) := fun i =>
   (base i).filter fun a => label a = some (prescribed i)
 
+omit [Fintype P] in
 theorem selectedCoordinates_subset {N : ℕ} {ι : Type v}
     (base : ι → Finset (Fin N)) (prescribed : ι → P)
     (label : Fin N → Option P) (i : ι) :
     selectedCoordinates base prescribed label i ⊆ base i :=
   Finset.filter_subset _ _
 
+omit [Fintype P] in
 theorem cylinder_of_mem_selected_family
     {N : ℕ} {ι : Type v} [Fintype ι] [DecidableEq ι]
     (base : ι → Finset (Fin N)) (prescribed : ι → P)
@@ -79,6 +81,7 @@ theorem cylinder_of_mem_selected_family
   have hi := hg i
   exact (Finset.mem_filter.mp hi).2
 
+omit [Fintype P] in
 /-- The selected raw family sum is dominated by the P2 statistic on the
 unrestricted coordinate product. -/
 theorem rawFamilyMoment_selected_le_rawStatistic
@@ -118,6 +121,7 @@ theorem rawFamilyMoment_selected_le_rawStatistic
       · exact FiniteDefect.defectPower_nonneg G θ g T s
       · exact le_rfl
 
+omit [DecidableEq P] in
 theorem weightedMean_indicator_eq_eventMass
     {N : ℕ} (q : P → ℝ) (E : Set (Fin N → Option P)) :
     Erdos136.McDiarmid.weightedMean (fun _ : Fin N => HostPartition.labelWeight q)
@@ -129,6 +133,7 @@ theorem weightedMean_indicator_eq_eventMass
   intro x hx
   by_cases hE : x ∈ E <;> simp [hE]
 
+omit [DecidableEq P] in
 theorem weightedMean_indicator_nonneg
     {N : ℕ} (q : P → ℝ) (E : Set (Fin N → Option P))
     (hq : ∀ p, 0 ≤ q p) (hqsum : ∑ p, q p ≤ 1) :
@@ -139,6 +144,7 @@ theorem weightedMean_indicator_nonneg
   exact Erdos136.McDiarmid.eventMass_nonneg _
     (fun _ => HostPartition.labelWeight_nonneg q hq hqsum) E
 
+omit [DecidableEq P] in
 theorem weightedMean_indicator_le_one
     {N : ℕ} (q : P → ℝ) (E : Set (Fin N → Option P))
     (hq : ∀ p, 0 ≤ q p) (hqsum : ∑ p, q p ≤ 1) :
@@ -150,6 +156,7 @@ theorem weightedMean_indicator_le_one
     (fun _ => HostPartition.labelWeight_nonneg q hq hqsum)
     (fun _ => HostPartition.labelWeight_sum_one q) E
 
+omit [DecidableEq P] in
 theorem weightedMean_rawStatistic_eq_sum
     {N : ℕ} {ι : Type v} [Fintype ι]
     (q : P → ℝ) (S : Finset (ι → Fin N)) (prescribed : ι → P)
@@ -171,10 +178,11 @@ theorem weightedMean_rawStatistic_eq_sum
   intro x hx
   by_cases hc : HostPartition.cylinder g prescribed x <;> simp [hc]
 
+omit [DecidableEq P] in
 /-- The mean is a product-probability main term plus the entire diagonal
 weight.  No estimate for the diagonal has yet been inserted. -/
 theorem weightedMean_rawStatistic_le
-    {N : ℕ} {ι : Type v} [Fintype ι] [DecidableEq ι]
+    {N : ℕ} {ι : Type v} [Fintype ι]
     (q : P → ℝ) (S : Finset (ι → Fin N)) (prescribed : ι → P)
     (weight : (ι → Fin N) → ℝ)
     (hq : ∀ p, 0 ≤ q p) (hqsum : ∑ p, q p ≤ 1)
@@ -218,6 +226,7 @@ theorem weightedMean_rawStatistic_le
         ∑ g ∈ S.filter (fun g => ¬Function.Injective g), weight g := by
       rw [Finset.mul_sum]
 
+omit [DecidableEq P] [Fintype P] in
 theorem cylinder_congr_of_not_uses
     {N : ℕ} {ι : Type v} [Fintype ι] [DecidableEq ι]
     (g : ι → Fin N) (prescribed : ι → P) (a : Fin N)
@@ -233,6 +242,7 @@ theorem cylinder_congr_of_not_uses
     exact hxy (g i) fun hia => ha <|
       Finset.mem_image.mpr ⟨i, Finset.mem_univ i, hia⟩
 
+omit [DecidableEq P] [Fintype P] in
 /-- Changing one host label changes the raw statistic by at most the total
 weight of tuples incident with that host vertex. -/
 theorem rawStatistic_oscillation
@@ -261,8 +271,7 @@ theorem rawStatistic_oscillation
       · simp only [huse, if_true]
         by_cases hx : HostPartition.cylinder g prescribed x <;>
           by_cases hy : HostPartition.cylinder g prescribed y <;>
-            simp [hx, hy, abs_of_nonneg (hweight g hg)] <;>
-              exact hweight g hg
+            simp [hx, hy, abs_of_nonneg (hweight g hg), hweight g hg]
       · have hc := cylinder_congr_of_not_uses g prescribed a x y hxy huse
         by_cases hx : HostPartition.cylinder g prescribed x
         · have hy := hc.mp hx
@@ -558,7 +567,7 @@ theorem noninjective_weight_le_pair_sum
       · simp [collisionWeight, hab, Finset.sum_filter]
 
 theorem noninjective_weight_le_card_sq_mul
-    {N : ℕ} {ι : Type v} [Fintype ι] [DecidableEq ι]
+    {N : ℕ} {ι : Type v} [Fintype ι]
     (S : Finset (ι → Fin N)) (weight : (ι → Fin N) → ℝ)
     (hweight : ∀ g ∈ S, 0 ≤ weight g) (Δ : ℝ) (hΔ : 0 ≤ Δ)
     (hdiag : ∀ a b : ι, a ≠ b →
@@ -583,11 +592,12 @@ theorem noninjective_weight_le_card_sq_mul
       simp [pow_two]
       ring
 
+omit [DecidableEq P] in
 /-- A convenient dominated form of the P2 mean estimate.  The selected
 coordinate family `S` may be a restriction of a larger family `S₀`; both
 its total weight and every specified diagonal are estimated in `S₀`. -/
 theorem weightedMean_rawStatistic_le_of_domination
-    {N : ℕ} {ι : Type v} [Fintype ι] [DecidableEq ι]
+    {N : ℕ} {ι : Type v} [Fintype ι]
     (q : P → ℝ) (S S₀ : Finset (ι → Fin N)) (prescribed : ι → P)
     (weight weight₀ : (ι → Fin N) → ℝ) (R Δ : ℝ)
     (hq : ∀ p, 0 ≤ q p) (hqsum : ∑ p, q p ≤ 1)

@@ -159,13 +159,14 @@ theorem neutralAverage_observed_le_branch
 def higherCount (x : α) : ℕ :=
   (Finset.univ.filter fun y => x < y).card
 
+omit [DecidableEq α] in
 theorem higherCount_lt_of_lt {x y : α} (hxy : x < y) :
     higherCount y < higherCount x := by
   apply Finset.card_lt_card
   apply Finset.ssubset_iff_subset_ne.mpr
   constructor
   · intro z hz
-    simp only [higherCount, Finset.mem_filter, Finset.mem_univ, true_and] at hz ⊢
+    simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hz ⊢
     exact hxy.trans hz
   · intro heq
     have hyx : y ∈ (Finset.univ.filter fun z => x < z) := by

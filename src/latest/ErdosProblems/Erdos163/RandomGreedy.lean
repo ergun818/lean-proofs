@@ -85,6 +85,7 @@ noncomputable def localCost (G : SimpleGraph β) [DecidableRel G.Adj]
   let m := (fullCandidates G H host part default state x).card
   if m = 0 then 1 else 2 * (host (part x)).card / m
 
+omit [DecidableEq α] [DecidableEq β] [DecidableEq ι] [Fintype β] in
 theorem localCost_nonneg (G : SimpleGraph β) [DecidableRel G.Adj]
     (H : SimpleGraph α) [DecidableRel H.Adj]
     (host : ι → Finset β) (part : α → ι) (default : β)
@@ -96,6 +97,7 @@ theorem localCost_nonneg (G : SimpleGraph β) [DecidableRel G.Adj]
   · norm_num
   · positivity
 
+omit [DecidableEq α] [Fintype β] in
 theorem choices_nonempty (G : SimpleGraph β) [DecidableRel G.Adj]
     (H : SimpleGraph α) [DecidableRel H.Adj]
     (host : ι → Finset β) (hhost : ∀ i, (host i).Nonempty)
@@ -121,6 +123,7 @@ theorem choices_nonempty (G : SimpleGraph β) [DecidableRel G.Adj]
     have hLzero : L.card = 0 := Nat.eq_zero_of_not_pos hLpos
     exact hsmall (by simpa [hLzero] using hNpos)
 
+omit [DecidableEq α] [Fintype β] in
 theorem choices_subset_host (G : SimpleGraph β) [DecidableRel G.Adj]
     (H : SimpleGraph α) [DecidableRel H.Adj]
     (host : ι → Finset β) (part : α → ι) (default : β)
@@ -135,6 +138,7 @@ theorem choices_subset_host (G : SimpleGraph β) [DecidableRel G.Adj]
   · exact (Finset.sdiff_subset.trans
       (Defect.commonNeighbors_subset_target G _ _))
 
+omit [DecidableEq α] [Fintype β] in
 theorem host_card_div_choices_card_le_cost
     (G : SimpleGraph β) [DecidableRel G.Adj]
     (H : SimpleGraph α) [DecidableRel H.Adj]
@@ -175,6 +179,7 @@ theorem host_card_div_choices_card_le_cost
       (show (0 : ℝ) ≤ (host (part x)).card by positivity)
     simpa [mul_assoc, mul_comm, mul_left_comm] using hmul
 
+omit [DecidableEq α] [DecidableEq β] [DecidableEq ι] in
 theorem localCost_le_defect
     (G : SimpleGraph β) [DecidableRel G.Adj]
     (H : SimpleGraph α) [DecidableRel H.Adj]
@@ -254,6 +259,7 @@ noncomputable def step (G : SimpleGraph β) [DecidableRel G.Adj]
 /-- Descending enumeration of the target vertices. -/
 def order : List α := Finset.univ.sort (fun x y => y ≤ x)
 
+omit [DecidableEq α] in
 theorem order_nodup : (order : List α).Nodup :=
   Finset.sort_nodup _ _
 

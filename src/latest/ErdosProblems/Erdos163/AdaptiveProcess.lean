@@ -23,7 +23,7 @@ namespace AdaptiveProcess
 
 universe u v
 
-variable {β : Type u} {σ : Type v} [DecidableEq β]
+variable {β : Type u} {σ : Type v}
 
 inductive StateRun (choices : σ → Finset β) (step : σ → β → σ) :
     ℕ → σ → σ → Prop
@@ -98,7 +98,7 @@ theorem average_congr (choices : σ → Finset β) (step : σ → β → σ)
   · exact average_mono choices step fuel state fun final hrun => (h final hrun).le
   · exact average_mono choices step fuel state fun final hrun => (h final hrun).ge
 
-theorem average_sum {κ : Type*} [DecidableEq κ]
+theorem average_sum {κ : Type*}
     (choices : σ → Finset β) (step : σ → β → σ)
     (fuel : ℕ) (state : σ) (S : Finset κ) (payoff : κ → σ → ℝ) :
     average choices step fuel state (fun final => ∑ i ∈ S, payoff i final) =
@@ -162,7 +162,7 @@ theorem average_le_weightedAverage
     (oldChoices newChoices : σ → Finset β) (step : σ → β → σ)
     (weight : σ → ℝ)
     (hold : ∀ state, (oldChoices state).Nonempty)
-    (hnew : ∀ state, (newChoices state).Nonempty)
+    (_hnew : ∀ state, (newChoices state).Nonempty)
     (hsub : ∀ state, oldChoices state ⊆ newChoices state)
     (hratio : ∀ state,
       ((newChoices state).card : ℝ) / (oldChoices state).card ≤ weight state)

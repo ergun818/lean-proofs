@@ -168,10 +168,10 @@ theorem colorable_succ_of_degenerate {α : Type u} [Finite α]
               ∃ cx : Fin (d + 1),
                 cx ∉ Finset.image c (S.filter fun y => H.Adj x y) := by
             by_contra h
-            push_neg at h
+            push Not at h
             have hall : Finset.image c (S.filter fun y => H.Adj x y) = univ :=
               eq_univ_of_forall h
-            simpa [hall] using hcard
+            simp [hall] at hcard
           refine ⟨fun y => if y = x then cx else c y, ?_⟩
           intro u hu v hv huv
           by_cases hu' : u = x <;> by_cases hv' : v = x

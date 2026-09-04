@@ -112,6 +112,7 @@ theorem maskedChoices_ratio_le_weight {I₁ I₂ : Finset α} (hI : I₁ ⊆ I�
         exact_mod_cast hne.card_ne_zero
       simp [maskedChoices, changeWeight, changeSet, x, hx₁, hx₂, hcard]
 
+omit [DecidableEq β] [DecidableEq ι] in
 theorem changeWeight_nonneg (I₁ I₂ : Finset α)
     (G : SimpleGraph β) [DecidableRel G.Adj]
     (H : SimpleGraph α) [DecidableRel H.Adj]
@@ -186,6 +187,7 @@ theorem stateRun_costSeen_eq_of_not_mem (I : Finset α)
       rw [ih hfuel' (by simpa [step, stepAt, x, hax] using ha)]
       simp [step, stepAt, RandomGreedy.step, x, hax]
 
+omit [DecidableEq β] [Fintype α] [Fintype β] [LinearOrder α] in
 theorem costProduct_erase_of_mem (J remaining : Finset α) {x : α}
     (hxJ : x ∈ J) (hxrem : x ∈ remaining) (state : State α β) :
     costProduct J remaining state =
@@ -207,6 +209,7 @@ theorem costProduct_erase_of_mem (J remaining : Finset α) {x : α}
   rw [hfilter, Finset.prod_insert]
   simp
 
+omit [DecidableEq β] [Fintype α] [Fintype β] [LinearOrder α] in
 theorem costProduct_erase_of_not_mem (J remaining : Finset α) {x : α}
     (hxJ : x ∉ J) (state : State α β) :
     costProduct J remaining state = costProduct J (remaining.erase x) state := by

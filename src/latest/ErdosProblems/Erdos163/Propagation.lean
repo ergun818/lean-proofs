@@ -26,6 +26,7 @@ structure CostBoundState (C : ℝ) (remaining : List α) (state : State α β) :
   cost_le : ∀ x, x ∉ remaining →
     state.costSeen x ≤ C * max 1 (state.defectSeen x)
 
+omit [DecidableEq α] [DecidableEq β] [Fintype α] [Fintype β] [LinearOrder α] in
 theorem costBoundState_initial (C : ℝ) (remaining : List α)
     (hcover : ∀ x, x ∈ remaining) :
     CostBoundState C remaining (initialState : State α β) := by
@@ -33,6 +34,7 @@ theorem costBoundState_initial (C : ℝ) (remaining : List α)
   · exact (hx (hcover x)).elim
   · exact (hx (hcover x)).elim
 
+omit [DecidableEq β] [DecidableEq ι] in
 theorem costBoundState_step
     (G : SimpleGraph β) [DecidableRel G.Adj]
     (H : SimpleGraph α) [DecidableRel H.Adj]
@@ -40,7 +42,7 @@ theorem costBoundState_step
     (momentExponent : ℕ) (default : β) {γ : ℝ} (hγ : 1 ≤ γ)
     (hsize : ∀ x, ((host (part x)).card : ℝ) ≤ γ * threshold x)
     {x : α} {xs : List α} {state : State α β} (z : β)
-    (hxs : x ∉ xs)
+    (_hxs : x ∉ xs)
     (hstate : CostBoundState (2 * γ) (x :: xs) state) :
     CostBoundState (2 * γ) xs
       (step G H host part threshold momentExponent default x state z) := by
@@ -138,6 +140,7 @@ structure RecordedDefects (momentExponent : ℕ) (remaining : List α)
   defect_zero_or_one_le : ∀ x, x ∉ remaining →
     state.defectSeen x = 0 ∨ 1 ≤ state.defectSeen x
 
+omit [DecidableEq α] [DecidableEq β] [Fintype α] [Fintype β] [LinearOrder α] in
 theorem recordedDefects_initial (momentExponent : ℕ) (remaining : List α)
     (hcover : ∀ x, x ∈ remaining) :
     RecordedDefects momentExponent remaining (initialState : State α β) := by
@@ -145,6 +148,7 @@ theorem recordedDefects_initial (momentExponent : ℕ) (remaining : List α)
   · exact (hx (hcover x)).elim
   · exact (hx (hcover x)).elim
 
+omit [DecidableEq β] [DecidableEq ι] in
 theorem recordedDefects_step
     (G : SimpleGraph β) [DecidableRel G.Adj]
     (H : SimpleGraph α) [DecidableRel H.Adj]
@@ -279,7 +283,7 @@ theorem final_defect_pow_le_observed (I : Finset α)
 
 /-- A product of `q` nonnegative factors is controlled by the largest
 `2q`-th power, hence by the sum of all such powers. -/
-theorem prod_sq_le_sum_pow_card {κ : Type*} [DecidableEq κ]
+theorem prod_sq_le_sum_pow_card {κ : Type*}
     {J : Finset κ} (hJ : J.Nonempty) (a : κ → ℝ)
     (ha : ∀ x ∈ J, 0 ≤ a x) :
     (∏ x ∈ J, a x) ^ 2 ≤ ∑ x ∈ J, a x ^ (2 * J.card) := by
@@ -308,7 +312,7 @@ theorem prod_sq_le_sum_pow_card {κ : Type*} [DecidableEq κ]
 /-- Scaled Young inequality used at a branching vertex of the propagation
 tree.  The factor `J.card` makes the total coefficient of all children at
 most one half. -/
-theorem two_mul_product_le_scaled_sum {κ : Type*} [DecidableEq κ]
+theorem two_mul_product_le_scaled_sum {κ : Type*}
     {J : Finset κ} (hJ : J.Nonempty) (a : κ → ℝ)
     (ha : ∀ x ∈ J, 0 ≤ a x) (C X : ℝ) :
     2 * (C ^ J.card * X * ∏ x ∈ J, a x) ≤
@@ -327,7 +331,6 @@ theorem two_mul_product_le_scaled_sum {κ : Type*} [DecidableEq κ]
         2 * ((J.card : ℝ) * C ^ J.card * X) *
           ((∏ x ∈ J, a x) / (J.card : ℝ)) := by
             field_simp
-            <;> ring
     _ ≤ (((J.card : ℝ) * C ^ J.card * X) ^ 2) +
         ((∏ x ∈ J, a x) / (J.card : ℝ)) ^ 2 :=
       two_mul_le_add_sq _ _
@@ -352,7 +355,7 @@ theorem max_pow_le_sq_add {X d Y : ℝ} {q : ℕ}
 /-- Pointwise branching estimate.  A zero root contributes nothing.  For a
 nonzero root observation, its being at least one absorbs the `max 1` terms;
 the scaled Young inequality leaves total child coefficient at most `1/2`. -/
-theorem root_mul_product_le_root_sq_add_children {κ : Type*} [DecidableEq κ]
+theorem root_mul_product_le_root_sq_add_children {κ : Type*}
     {J : Finset κ} (hJ : J.Nonempty) (a Y : κ → ℝ) (C X : ℝ)
     (hX : X = 0 ∨ 1 ≤ X) (hY : ∀ y ∈ J, 0 ≤ Y y)
     (hpow : ∀ y ∈ J, a y ^ (2 * J.card) ≤ Y y) :
@@ -425,7 +428,6 @@ theorem root_mul_product_le_root_sq_add_children {κ : Type*} [DecidableEq κ]
         2 * (((((J.card : ℝ) * C ^ J.card) ^ 2 + 1) / 2) * X ^ 2 +
           (∑ y ∈ J, Y y) / (2 * (J.card : ℝ) ^ 2)) := by
     field_simp
-    <;> ring
   rw [heq] at htwo
   linarith
 

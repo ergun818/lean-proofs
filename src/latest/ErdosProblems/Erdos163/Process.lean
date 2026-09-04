@@ -18,7 +18,7 @@ namespace Process
 
 universe u v
 
-variable {α : Type u} {β : Type v} [DecidableEq α] [DecidableEq β]
+variable {α : Type u} {β : Type v} [DecidableEq α]
 
 /-! ## General state process -/
 
@@ -39,10 +39,12 @@ noncomputable def stateAverage {σ : Type w} (choices : α → σ → Finset β)
       𝔼 y ∈ choices x state,
         stateAverage choices step xs (step x state y) payoff
 
+omit [DecidableEq α] in
 @[simp] theorem stateAverage_nil {σ : Type w} (choices : α → σ → Finset β)
     (step : α → σ → β → σ) (state : σ) (payoff : σ → ℝ) :
     stateAverage choices step [] state payoff = payoff state := rfl
 
+omit [DecidableEq α] in
 @[simp] theorem stateAverage_cons {σ : Type w} (choices : α → σ → Finset β)
     (step : α → σ → β → σ) (x : α) (xs : List α) (state : σ)
     (payoff : σ → ℝ) :
@@ -50,6 +52,7 @@ noncomputable def stateAverage {σ : Type w} (choices : α → σ → Finset β)
       𝔼 y ∈ choices x state,
         stateAverage choices step xs (step x state y) payoff := rfl
 
+omit [DecidableEq α] in
 theorem exists_stateRun_le_average {σ : Type w} (choices : α → σ → Finset β)
     (step : α → σ → β → σ) (hne : ∀ x state, (choices x state).Nonempty)
     (order : List α) (state : σ) (payoff : σ → ℝ) :
@@ -64,6 +67,7 @@ theorem exists_stateRun_le_average {σ : Type w} (choices : α → σ → Finset
       obtain ⟨final, hrun, hfinal⟩ := ih (step x state y)
       exact ⟨final, .cons hy hrun, hfinal.trans hyavg⟩
 
+omit [DecidableEq α] in
 theorem stateAverage_nonneg {σ : Type w} (choices : α → σ → Finset β)
     (step : α → σ → β → σ) (order : List α) (state : σ)
     {payoff : σ → ℝ}
@@ -78,6 +82,7 @@ theorem stateAverage_nonneg {σ : Type w} (choices : α → σ → Finset β)
       · exact Finset.sum_nonneg fun y hy => ih (step x state y)
           (fun final hrun => h final (.cons hy hrun))
 
+omit [DecidableEq α] in
 theorem stateAverage_mono {σ : Type w} (choices : α → σ → Finset β)
     (step : α → σ → β → σ) (order : List α) (state : σ)
     {payoff payoff' : σ → ℝ}
@@ -92,6 +97,7 @@ theorem stateAverage_mono {σ : Type w} (choices : α → σ → Finset β)
       intro y hy
       exact ih (step x state y) fun final hrun => h final (.cons hy hrun)
 
+omit [DecidableEq α] in
 theorem stateAverage_congr {σ : Type w} (choices : α → σ → Finset β)
     (step : α → σ → β → σ) (order : List α) (state : σ)
     {payoff payoff' : σ → ℝ}
@@ -105,7 +111,8 @@ theorem stateAverage_congr {σ : Type w} (choices : α → σ → Finset β)
   · exact stateAverage_mono choices step order state fun final hrun =>
       (h final hrun).ge
 
-theorem stateAverage_sum {σ : Type w} {κ : Type*} [DecidableEq κ]
+omit [DecidableEq α] in
+theorem stateAverage_sum {σ : Type w} {κ : Type*}
     (choices : α → σ → Finset β) (step : α → σ → β → σ)
     (order : List α) (state : σ) (S : Finset κ) (payoff : κ → σ → ℝ) :
     stateAverage choices step order state (fun final => ∑ i ∈ S, payoff i final) =
@@ -117,6 +124,7 @@ theorem stateAverage_sum {σ : Type w} {κ : Type*} [DecidableEq κ]
       simp_rw [ih]
       rw [Finset.expect_sum_comm]
 
+omit [DecidableEq α] in
 theorem stateAverage_const_mul {σ : Type w}
     (choices : α → σ → Finset β) (step : α → σ → β → σ)
     (order : List α) (state : σ) (c : ℝ) (payoff : σ → ℝ) :
@@ -142,11 +150,13 @@ noncomputable def weightedStateAverage {σ : Type w}
         weight x state *
           weightedStateAverage choices step weight xs (step x state y) payoff
 
+omit [DecidableEq α] in
 @[simp] theorem weightedStateAverage_nil {σ : Type w}
     (choices : α → σ → Finset β) (step : α → σ → β → σ)
     (weight : α → σ → ℝ) (state : σ) (payoff : σ → ℝ) :
     weightedStateAverage choices step weight [] state payoff = payoff state := rfl
 
+omit [DecidableEq α] in
 @[simp] theorem weightedStateAverage_cons {σ : Type w}
     (choices : α → σ → Finset β) (step : α → σ → β → σ)
     (weight : α → σ → ℝ) (x : α) (xs : List α) (state : σ)
@@ -156,6 +166,7 @@ noncomputable def weightedStateAverage {σ : Type w}
         weight x state *
           weightedStateAverage choices step weight xs (step x state y) payoff := rfl
 
+omit [DecidableEq α] in
 theorem weightedStateAverage_nonneg {σ : Type w}
     (choices : α → σ → Finset β) (step : α → σ → β → σ)
     (weight : α → σ → ℝ) (hweight : ∀ x state, 0 ≤ weight x state)
@@ -173,7 +184,7 @@ theorem weightedStateAverage_nonneg {σ : Type w}
 
 /-- Change of measure from a uniform nonempty subset to a larger uniform
 finset. -/
-theorem expect_subset_le_card_ratio {γ : Type*} [DecidableEq γ]
+theorem expect_subset_le_card_ratio {γ : Type*}
     {S T : Finset γ} (hS : S.Nonempty) (hsub : S ⊆ T)
     (f : γ → ℝ) (hf : ∀ x ∈ T, 0 ≤ f x) :
     (𝔼 x ∈ S, f x) ≤
@@ -192,6 +203,7 @@ theorem expect_subset_le_card_ratio {γ : Type*} [DecidableEq γ]
         ((∑ x ∈ T, f x) / (T.card : ℝ)) := by
       field_simp
 
+omit [DecidableEq α] in
 /-- Finite change of measure for a sequential process.  At every history the
 old choice set is contained in the new one, and `weight` bounds the ratio of
 their cardinalities. -/
@@ -199,7 +211,7 @@ theorem stateAverage_le_weightedStateAverage {σ : Type w}
     (oldChoices newChoices : α → σ → Finset β)
     (step : α → σ → β → σ) (weight : α → σ → ℝ)
     (hold : ∀ x state, (oldChoices x state).Nonempty)
-    (hnew : ∀ x state, (newChoices x state).Nonempty)
+    (_hnew : ∀ x state, (newChoices x state).Nonempty)
     (hsub : ∀ x state, oldChoices x state ⊆ newChoices x state)
     (hratio : ∀ x state,
       ((newChoices x state).card : ℝ) / (oldChoices x state).card ≤ weight x state)
@@ -237,6 +249,7 @@ theorem stateAverage_le_weightedStateAverage {σ : Type w}
           rw [← Finset.mul_sum]
           ring
 
+omit [DecidableEq α] in
 theorem stateAverage_add {σ : Type w}
     (choices : α → σ → Finset β) (step : α → σ → β → σ)
     (order : List α) (state : σ) (payoff payoff' : σ → ℝ) :
@@ -250,6 +263,7 @@ theorem stateAverage_add {σ : Type w}
       simp_rw [ih]
       rw [Finset.expect_add_distrib]
 
+omit [DecidableEq α] in
 theorem stateAverage_div {σ : Type w}
     (choices : α → σ → Finset β) (step : α → σ → β → σ)
     (order : List α) (state : σ) (payoff : σ → ℝ) (c : ℝ) :

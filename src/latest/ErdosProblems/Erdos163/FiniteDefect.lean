@@ -20,7 +20,7 @@ namespace FiniteDefect
 
 universe u
 
-variable {α : Type u} [Fintype α] [DecidableEq α]
+variable {α : Type u} [Fintype α]
 
 def commonNeighbors (G : SimpleGraph α) [DecidableRel G.Adj]
     {ι : Type*} [Fintype ι] (q : ι → α) (T : Finset α) : Finset α :=
@@ -160,10 +160,12 @@ theorem defectPower_mono_exponent (G : SimpleGraph α) [DecidableRel G.Adj]
 def tuples {D : ℕ} (A : Fin D → Finset α) : Finset (Fin D → α) :=
   Fintype.piFinset A
 
+omit [Fintype α] in
 @[simp] theorem mem_tuples {D : ℕ} (A : Fin D → Finset α) (q : Fin D → α) :
     q ∈ tuples A ↔ ∀ i, q i ∈ A i := by
   simp [tuples]
 
+omit [Fintype α] in
 @[simp] theorem card_tuples {D : ℕ} (A : Fin D → Finset α) :
     (tuples A).card = ∏ i, (A i).card := by
   simp [tuples]
@@ -192,10 +194,12 @@ theorem moment_mono_exponent (G : SimpleGraph α) [DecidableRel G.Adj]
 def samples (t : ℕ) (A : Finset α) : Finset (Fin t → α) :=
   Fintype.piFinset fun _ => A
 
+omit [Fintype α] in
 @[simp] theorem mem_samples (t : ℕ) (A : Finset α) (x : Fin t → α) :
     x ∈ samples t A ↔ ∀ i, x i ∈ A := by
   simp [samples]
 
+omit [Fintype α] in
 @[simp] theorem card_samples (t : ℕ) (A : Finset α) :
     (samples t A).card = A.card ^ t := by
   simp [samples]
@@ -206,11 +210,13 @@ def familyTuples {ι : Type*} [Fintype ι] [DecidableEq ι]
     (A : ι → Finset α) : Finset (ι → α) :=
   Fintype.piFinset A
 
+omit [Fintype α] in
 @[simp] theorem mem_familyTuples {ι : Type*} [Fintype ι] [DecidableEq ι]
     (A : ι → Finset α) (q : ι → α) :
     q ∈ familyTuples A ↔ ∀ i, q i ∈ A i := by
   simp [familyTuples]
 
+omit [Fintype α] in
 @[simp] theorem card_familyTuples {ι : Type*} [Fintype ι] [DecidableEq ι]
     (A : ι → Finset α) :
     (familyTuples A).card = ∏ i, (A i).card := by

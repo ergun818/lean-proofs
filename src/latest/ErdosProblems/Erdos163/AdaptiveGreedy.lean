@@ -32,6 +32,7 @@ variable {α : Type u} {β : Type v} {ι : Type w}
 
 /-! ## The numerical estimate in Lee's deterministic criterion -/
 
+omit [DecidableEq β] in
 /-- If `j` positive target vertices all contribute at least the current
 defect and their total contribution is at most `θ / 2`, then the current
 common neighborhood has at least `2j` vertices.  The separate hypothesis
@@ -100,6 +101,7 @@ noncomputable def priorityKey (G : SimpleGraph β) [DecidableRel G.Adj]
   toLex (part x,
     toLex (currentDefect G H host part threshold default state x, x))
 
+omit [DecidableEq α] [DecidableEq β] [DecidableEq ι] [LinearOrder ι] in
 theorem priorityKey_injective (G : SimpleGraph β) [DecidableRel G.Adj]
     (H : SimpleGraph α) [DecidableRel H.Adj]
     (host : ι → Finset β) (part : α → ι) (threshold : ι → ℕ)
@@ -124,22 +126,16 @@ noncomputable def next (G : SimpleGraph β) [DecidableRel G.Adj]
       state.remaining)
   else defaultTarget
 
+omit [DecidableEq α] [DecidableEq β] [DecidableEq ι] in
 theorem next_mem (G : SimpleGraph β) [DecidableRel G.Adj]
     (H : SimpleGraph α) [DecidableRel H.Adj]
     (host : ι → Finset β) (part : α → ι) (threshold : ι → ℕ)
     (defaultTarget : α) (default : β) (state : State α β)
     (hne : state.remaining.Nonempty) :
     next G H host part threshold defaultTarget default state ∈ state.remaining := by
-  let key := priorityKey G H host part threshold default state
-  let subkey : state.remaining → Lex (ι × Lex (ℝ × α)) := fun x => key x
-  let ord : LinearOrder state.remaining := LinearOrder.lift' subkey
-    ((priorityKey_injective G H host part threshold default state).comp
-      Subtype.val_injective)
-  let m : state.remaining :=
-    @Finset.max' state.remaining ord state.remaining.attach (by simpa using hne)
-  have hm : (m : α) ∈ state.remaining := m.property
-  simpa [next, hne, key, subkey, m] using hm
+  simp [next, hne]
 
+omit [DecidableEq α] [DecidableEq β] [DecidableEq ι] in
 /-- The selected vertex lies in a greatest target part among those still
 unexposed. -/
 theorem part_le_part_next (G : SimpleGraph β) [DecidableRel G.Adj]
@@ -172,6 +168,7 @@ theorem part_le_part_next (G : SimpleGraph β) [DecidableRel G.Adj]
     exact Or.inl hlt
   exact (not_lt_of_ge hkey) hkeylt
 
+omit [DecidableEq α] [DecidableEq β] [DecidableEq ι] in
 /-- Within the greatest remaining target part, the selected vertex has
 maximum realized defect. -/
 theorem currentDefect_le_next (G : SimpleGraph β) [DecidableRel G.Adj]
@@ -214,6 +211,7 @@ theorem currentDefect_le_next (G : SimpleGraph β) [DecidableRel G.Adj]
 
 /-! ## The injective branch -/
 
+omit [DecidableEq α] [Fintype β] [LinearOrder ι] in
 /-- If the full common neighborhood is nonempty and at least twice as large
 as the already used set, Lee's three-branch rule is exactly the unused
 common-neighborhood branch. -/
@@ -241,7 +239,7 @@ theorem choices_eq_unused_of_two_used_le
     omega
   unfold RandomGreedy.choices
   dsimp
-  simpa [N, L, hNne, hnotSmall]
+  simp [N, L, hNne, hnotSmall]
 
 /-- Update at an explicitly specified target vertex. -/
 noncomputable def stepAt (G : SimpleGraph β) [DecidableRel G.Adj]
@@ -293,6 +291,7 @@ structure GoodState (G : SimpleGraph β) (H : SimpleGraph α)
   parts_ordered : ∀ ⦃x y⦄, x ∈ state.remaining →
     RandomGreedy.assigned state.core y → part x ≤ part y
 
+omit [DecidableEq α] [DecidableEq β] [DecidableEq ι] [Fintype β] in
 theorem goodState_initial (G : SimpleGraph β) (H : SimpleGraph α)
     (host : ι → Finset β) (part : α → ι) (default : β) :
     GoodState G H host part default (initialState : State α β) := by
@@ -316,7 +315,7 @@ theorem goodState_stepAt
     (host : ι → Finset β) (part : α → ι) (threshold : ι → ℕ)
     (momentExponent : ℕ) (default : β)
     (hhost : ∀ ⦃i j⦄, i ≠ j → Disjoint (host i) (host j))
-    (hpart : ∀ ⦃a b⦄, H.Adj a b → part a ≠ part b)
+    (_hpart : ∀ ⦃a b⦄, H.Adj a b → part a ≠ part b)
     {state : State α β} {x : α} (hx : x ∈ state.remaining) {z : β}
     (hmaxpart : ∀ ⦃a⦄, a ∈ state.remaining → part a ≤ part x)
     (hbelow : ∀ ⦃a⦄, a ∈ state.remaining.erase x → H.Adj a x → a < x)
@@ -343,14 +342,14 @@ theorem goodState_stepAt
   · intro y
     by_cases hyx : y = x
     · subst y
-      simp [state', stepAt, RandomGreedy.assigned, RandomGreedy.step, hx]
+      simp [stepAt, RandomGreedy.assigned, RandomGreedy.step, hx]
     · change RandomGreedy.assigned
         (RandomGreedy.step G H host part (threshold ∘ part) momentExponent
           default x state.core z) y ↔ y ∉ state.remaining.erase x
       rw [RandomGreedy.assigned_step_of_ne G H host part (threshold ∘ part)
         momentExponent default state.core hyx z]
       rw [hgood.assigned_iff]
-      simp [state', stepAt, hyx]
+      simp [hyx]
   · intro y hy
     by_cases hyx : y = x
     · subst y
@@ -478,6 +477,7 @@ theorem goodState_step
 
 /-! ## Maximum-defect order inside a target part -/
 
+omit [DecidableEq β] [DecidableEq ι] [LinearOrder ι] in
 theorem currentDefect_stepAt_of_same_part
     (G : SimpleGraph β) [DecidableRel G.Adj]
     (H : SimpleGraph α) [DecidableRel H.Adj]
@@ -509,6 +509,7 @@ structure DefectsOrdered (G : SimpleGraph β) [DecidableRel G.Adj]
     x ∈ state.remaining → part y = part x →
     currentDefect G H host part threshold default state x ≤ state.core.defectSeen y
 
+omit [DecidableEq α] [DecidableEq β] [DecidableEq ι] [LinearOrder ι] in
 theorem defectsOrdered_initial
     (G : SimpleGraph β) [DecidableRel G.Adj]
     (H : SimpleGraph α) [DecidableRel H.Adj]
@@ -519,6 +520,7 @@ theorem defectsOrdered_initial
   intro y x hy
   simp [RandomGreedy.assigned, initialState, RandomGreedy.initialState] at hy
 
+omit [DecidableEq β] [DecidableEq ι] in
 theorem defectsOrdered_step
     (G : SimpleGraph β) [DecidableRel G.Adj]
     (H : SimpleGraph α) [DecidableRel H.Adj]
@@ -574,6 +576,7 @@ noncomputable def assignedInPart (part : α → ι) (state : State α β)
   exact Finset.univ.filter fun y =>
     RandomGreedy.assigned state.core y ∧ part y = part x
 
+omit [DecidableEq α] [DecidableEq β] [Fintype β] [LinearOrder α] [LinearOrder ι] in
 @[simp] theorem mem_assignedInPart (part : α → ι) (state : State α β)
     (x y : α) :
     y ∈ assignedInPart part state x ↔
@@ -581,6 +584,7 @@ noncomputable def assignedInPart (part : α → ι) (state : State α β)
   classical
   simp [assignedInPart]
 
+omit [DecidableEq α] [Fintype β] [LinearOrder α] [LinearOrder ι] in
 theorem usedInPart_card_le_assignedInPart_card
     (part : α → ι) (default : β) (state : State α β) (x : α) :
     (RandomGreedy.usedInPart part default state.core x).card ≤
@@ -597,6 +601,7 @@ theorem usedInPart_card_le_assignedInPart_card
       rw [mem_assignedInPart]
       simp [RandomGreedy.assigned]
 
+omit [DecidableEq α] [DecidableEq β] [Fintype β] in
 theorem assignedInPart_card_add_one_le_partVertices_card
     (G : SimpleGraph β) (H : SimpleGraph α)
     (host : ι → Finset β) (part : α → ι) (default : β)
@@ -636,6 +641,7 @@ noncomputable def partDefectMass
   ∑ x ∈ Finset.univ.filter fun x => part x = i,
     realizedDefect G H host part threshold default state x ^ s
 
+omit [DecidableEq α] [DecidableEq β] in
 theorem mul_currentDefect_le_partDefectMass
     (G : SimpleGraph β) [DecidableRel G.Adj]
     (H : SimpleGraph α) [DecidableRel H.Adj]
@@ -721,6 +727,7 @@ theorem mul_currentDefect_le_partDefectMass
     _ = partDefectMass G H host part threshold default state (part x) s := by
       rfl
 
+omit [DecidableEq α] in
 /-- Local form of Lee's deterministic success criterion. -/
 theorem choices_eq_unused_of_partDefectMass_le
     (G : SimpleGraph β) [DecidableRel G.Adj]

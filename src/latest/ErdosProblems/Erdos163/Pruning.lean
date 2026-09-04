@@ -91,7 +91,7 @@ def badVertices (G : SimpleGraph V) [DecidableRel G.Adj]
 theorem badVertices_mul_le
     (G : SimpleGraph V) [DecidableRel G.Adj]
     {ι : Type*} [Fintype ι] [DecidableEq ι]
-    (θ s : ℕ) (U T : Finset V) (B : ℝ) (hB : 0 ≤ B) :
+    (θ s : ℕ) (U T : Finset V) (B : ℝ) (_hB : 0 ≤ B) :
     ((badVertices (G := G) (ι := ι) θ s U T B).card : ℝ) * B ≤
       (Fintype.card ι : ℝ) * HostTools.rawFamilyMoment G θ s
         (fun _ : ι => U) T := by
@@ -166,10 +166,12 @@ abbrev eraseCoord {ι : Type*} [Fintype ι] [DecidableEq ι] (b : ι) :=
 def restrictCoord {ι : Type*} [Fintype ι] [DecidableEq ι] (b : ι)
     (g : ι → V) : eraseCoord b → V := fun i => g i.1
 
+omit [DecidableEq V] [Fintype V] in
 @[simp] theorem restrictCoord_apply
     {ι : Type*} [Fintype ι] [DecidableEq ι] (b : ι)
     (g : ι → V) (i : eraseCoord b) : restrictCoord b g i = g i.1 := rfl
 
+omit [DecidableEq V] [Fintype V] in
 theorem restrictCoord_injective_on_diagonal
     {ι : Type*} [Fintype ι] [DecidableEq ι]
     {a b : ι} (hab : a ≠ b) :
@@ -183,6 +185,7 @@ theorem restrictCoord_injective_on_diagonal
     simpa using congrFun heq ⟨a, hab⟩
   · simpa using congrFun heq ⟨i, hib⟩
 
+omit [DecidableEq V] [Fintype V] in
 theorem commonNeighbors_restrictCoord_of_eq
     (G : SimpleGraph V) [DecidableRel G.Adj]
     {ι : Type*} [Fintype ι] [DecidableEq ι]
@@ -203,6 +206,7 @@ theorem commonNeighbors_restrictCoord_of_eq
       exact hall ⟨a, hab⟩
     · exact hall ⟨i, hib⟩
 
+omit [DecidableEq V] in
 theorem defectPower_restrictCoord_of_eq
     (G : SimpleGraph V) [DecidableRel G.Adj]
     {ι : Type*} [Fintype ι] [DecidableEq ι]

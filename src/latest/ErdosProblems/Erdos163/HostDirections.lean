@@ -25,6 +25,7 @@ variable {α : Type u} [Fintype α] [DecidableEq α]
 def unionExcept {r : ℕ} (A : Fin r → Finset α) (j : Fin r) : Finset α :=
   Finset.univ.biUnion fun k => if k = j then ∅ else A k
 
+omit [Fintype α] in
 @[simp] theorem mem_unionExcept {r : ℕ} (A : Fin r → Finset α)
     (j : Fin r) (x : α) :
     x ∈ unionExcept A j ↔ ∃ k : Fin r, k ≠ j ∧ x ∈ A k := by
@@ -38,6 +39,7 @@ def unionExcept {r : ℕ} (A : Fin r → Finset α) (j : Fin r) : Finset α :=
   · rintro ⟨k, hkj, hx⟩
     exact ⟨k, by simpa [hkj] using hx⟩
 
+omit [Fintype α] in
 theorem subset_unionExcept {r : ℕ} (A : Fin r → Finset α)
     {j k : Fin r} (hkj : k ≠ j) : A k ⊆ unionExcept A j := by
   intro x hx
@@ -58,17 +60,20 @@ def intersectOthers (G : SimpleGraph α) [DecidableRel G.Adj]
     Fin r → Finset α := fun j =>
   if j = i then A j else FiniteDefect.commonNeighbors G x (A j)
 
+omit [DecidableEq α] [Fintype α] in
 @[simp] theorem intersectOthers_self (G : SimpleGraph α) [DecidableRel G.Adj]
     {r t : ℕ} (A : Fin r → Finset α) (i : Fin r) (x : Fin t → α) :
     intersectOthers G A i x i = A i := by
   simp [intersectOthers]
 
+omit [DecidableEq α] [Fintype α] in
 theorem intersectOthers_of_ne (G : SimpleGraph α) [DecidableRel G.Adj]
     {r t : ℕ} (A : Fin r → Finset α) (i j : Fin r) (x : Fin t → α)
     (hji : j ≠ i) :
     intersectOthers G A i x j = FiniteDefect.commonNeighbors G x (A j) := by
   simp [intersectOthers, hji]
 
+omit [DecidableEq α] [Fintype α] in
 theorem intersectOthers_subset (G : SimpleGraph α) [DecidableRel G.Adj]
     {r t : ℕ} (A : Fin r → Finset α) (i j : Fin r) (x : Fin t → α) :
     intersectOthers G A i x j ⊆ A j := by
@@ -78,6 +83,7 @@ theorem intersectOthers_subset (G : SimpleGraph α) [DecidableRel G.Adj]
   · rw [intersectOthers_of_ne G A i j x hji]
     exact Defect.commonNeighbors_subset_target G x (A j)
 
+omit [Fintype α] in
 /-- Common neighbourhood distributes over the finite union of all other
 parts.  This identifies the raw reverse-direction defect supplied by DRC
 with the new union-except product. -/
@@ -103,6 +109,7 @@ theorem unionExcept_intersectOthers_self
       FiniteDefect.commonNeighbors, Defect.mem_commonNeighbors]
     exact ⟨hzk, hx⟩
 
+omit [Fintype α] in
 theorem unionExcept_mono {r : ℕ} {A B : Fin r → Finset α}
     (hAB : ∀ j, A j ⊆ B j) (i : Fin r) :
     unionExcept A i ⊆ unionExcept B i := by
@@ -301,6 +308,7 @@ noncomputable def updateCost
     futureRawCost G A i L dim ε' x j +
     doneRawCost G A i θ s dim τ ε' x j)
 
+omit [DecidableEq α] [Fintype α] in
 theorem cardinalCost_nonneg
     (G : SimpleGraph α) [DecidableRel G.Adj]
     {r t : ℕ} (A : Fin r → Finset α) (i : Fin r)
@@ -312,6 +320,7 @@ theorem cardinalCost_nonneg
   · exact DRC.indicator_nonneg _
   · exact DRC.indicator_nonneg _
 
+omit [DecidableEq α] in
 theorem futureRawCost_nonneg
     (G : SimpleGraph α) [DecidableRel G.Adj]
     {r t : ℕ} (A : Fin r → Finset α) (i : Fin r)
@@ -375,7 +384,7 @@ theorem expect_cardinalCost_le
     let p : ℕ := j.1 - 1
     have hp : p + 1 = j.1 := by omega
     have hpi : i ≤ p := by omega
-    have hpR : p + 1 < r := by simpa [hp] using j.2
+    have hpR : p + 1 < r := by simp [hp]
     let prev : Fin r := ⟨p, (Nat.lt_succ_self p).trans hpR⟩
     have hsub : S.sets ii ⊆ S.sets prev := by
       exact S.future_subset G (a := i) (b := p) (by omega) hpi
@@ -863,7 +872,7 @@ theorem expect_updateCost_lt_one
     (G : SimpleGraph α) [DecidableRel G.Adj]
     {r i L τ s dim t K : ℕ} {ε ε' η : ℝ}
     (S : DirectionState G r i L τ τ s (dim + t) ε)
-    (hi : i < r) (hr : 2 ≤ r) (hK : 1 ≤ K)
+    (hi : i < r) (_hr : 2 ≤ r) (hK : 1 ≤ K)
     (hτ : 0 < τ) (hτL : τ ≤ L) (ht : 0 < t) (hst : s ≤ t)
     (hε : 0 ≤ ε) (hε' : 0 < ε') (hη : 0 ≤ η)
     (hglobal : Fintype.card α ≤ K * τ)
@@ -910,7 +919,7 @@ theorem expect_updateCost_lt_one
               futureRawCost G S.sets ii L dim ε' x j +
               doneRawCost G S.sets ii τ s dim τ ε' x j)) ≤
             ∑ _j : Fin r, B := Finset.sum_le_sum fun j _ => hj j
-        _ = (r : ℝ) * B := by simp [mul_comm]
+        _ = (r : ℝ) * B := by simp
     exact hle.trans_lt (by simpa [B] using hnum)
   exact hmean
 
@@ -925,7 +934,7 @@ theorem exists_next_of_expect_updateCost_lt_one
     (hsample : (FiniteDefect.samples t (S.sets ⟨i, hi⟩)).Nonempty)
     (hmean : (𝔼 x ∈ FiniteDefect.samples t (S.sets ⟨i, hi⟩),
       updateCost G S.sets ⟨i, hi⟩ L τ θ s dim ε' x) < 1) :
-    ∃ S' : DirectionState G r (i + 1) L τ θ s dim ε', True := by
+    ∃ _S' : DirectionState G r (i + 1) L τ θ s dim ε', True := by
   classical
   obtain ⟨x, hx, hcost⟩ := Finset.exists_lt_of_expect_lt hsample hmean
   have hterm (j : Fin r) :
@@ -966,7 +975,7 @@ theorem exists_next_of_expect_updateCost_lt_one
         simp at this
         omega
       have hc := hcardTerm j
-      simp only [ge_iff_le] at hc
+      simp only [cardinalCost, if_neg hjne, if_pos hj] at hc
       by_contra hbad
       have hlt : (intersectOthers G S.sets ⟨i, hi⟩ x j).card < L :=
         Nat.lt_of_not_ge hbad
@@ -980,7 +989,7 @@ theorem exists_next_of_expect_updateCost_lt_one
         omega
       have hnfuture : ¬i < j.1 := by omega
       have hc := hcardTerm j
-      simp only [ge_iff_le] at hc
+      simp only [cardinalCost, if_neg hjne, if_neg hnfuture] at hc
       by_contra hbad
       have hlt : (intersectOthers G S.sets ⟨i, hi⟩ x j).card < τ :=
         Nat.lt_of_not_ge hbad
@@ -991,7 +1000,7 @@ theorem exists_next_of_expect_updateCost_lt_one
       have hcond : i < jj.1 ∧ jj.1 + 1 < r := by
         simpa [jj] using And.intro (by omega : i < j) hjr
       have hrawRatio := hfutureTerm jj
-      simp only [ge_iff_le] at hrawRatio
+      simp only [futureRawCost, dif_pos hcond] at hrawRatio
       have hden : (0 : ℝ) < (L : ℝ) ^ dim * ε' := by positivity
       have hraw : DRC.rawMoment G L 0 dim
           (intersectOthers G S.sets ⟨i, hi⟩ x jj)
@@ -1006,7 +1015,7 @@ theorem exists_next_of_expect_updateCost_lt_one
             have := congrArg Fin.val h
             simp [jj] at this
             omega
-          simp only [ge_iff_le] at this
+          simp only [cardinalCost, if_neg hjne, if_pos hcond.1] at this
           by_contra hbad
           have hlt : (intersectOthers G S.sets ⟨i, hi⟩ x jj).card < L :=
             Nat.lt_of_not_ge hbad
@@ -1016,7 +1025,7 @@ theorem exists_next_of_expect_updateCost_lt_one
     (fun j hj => by
       have hcond : j.1 ≤ i := by omega
       have hrawRatio := hdoneTerm j
-      simp only [ge_iff_le] at hrawRatio
+      simp only [doneRawCost, if_pos hcond] at hrawRatio
       have hden : (0 : ℝ) < (τ : ℝ) ^ dim * ε' := by positivity
       have hraw : DRC.rawMoment G θ s dim
           (unionExcept (intersectOthers G S.sets ⟨i, hi⟩ x) j)
@@ -1039,7 +1048,7 @@ theorem exists_next_of_expect_updateCost_lt_one
     (by
       let ii : Fin r := ⟨i, hi⟩
       have hrawRatio := hdoneTerm ii
-      simp only [intersectOthers_self, ge_iff_le] at hrawRatio
+      simp only [ii, doneRawCost, if_pos (le_refl i), intersectOthers_self] at hrawRatio
       have hden : (0 : ℝ) < (τ : ℝ) ^ dim * ε' := by positivity
       have hraw : DRC.rawMoment G θ s dim
           (unionExcept (intersectOthers G S.sets ii x) ii)
@@ -1049,10 +1058,11 @@ theorem exists_next_of_expect_updateCost_lt_one
           (unionExcept (intersectOthers G S.sets ii x) ii).card := by
         have hupdatedCard (k : Fin r) (hki : k ≠ ii) :
             τ ≤ (intersectOthers G S.sets ii x k).card := by
+          simp only [ii] at hki
           by_cases hik : i < k.1
           · exact hτL.trans (by
               have := hcardTerm k
-              simp only [ge_iff_le] at this
+              simp only [cardinalCost, if_neg hki, if_pos hik] at this
               by_contra hbad
               have hlt : (intersectOthers G S.sets ii x k).card < L :=
                 Nat.lt_of_not_ge hbad
@@ -1065,7 +1075,7 @@ theorem exists_next_of_expect_updateCost_lt_one
                 exact Fin.ext h
               omega
             have := hcardTerm k
-            simp only [ge_iff_le] at this
+            simp only [cardinalCost, if_neg hki, if_neg hik] at this
             by_contra hbad
             have hlt : (intersectOthers G S.sets ii x k).card < τ :=
               Nat.lt_of_not_ge hbad
@@ -1106,7 +1116,7 @@ theorem exists_direction_step
         (K : ℝ) ^ (dim + (dim + t)) * ε / ε' +
         ((K : ℝ) ^ (dim + (dim + t)) * ε / ε' +
           (K : ℝ) ^ dim * η ^ t / ε')) < 1) :
-    ∃ S' : DirectionState G r (i + 1) L τ τ s dim ε', True := by
+    ∃ _S' : DirectionState G r (i + 1) L τ τ s dim ε', True := by
   let ii : Fin r := ⟨i, hi⟩
   have hBi : (S.sets ii).Nonempty := by
     exact Finset.card_pos.mp ((hτ.trans_le hτL).trans_le
@@ -1134,7 +1144,7 @@ theorem iterate_directions
           (K : ℝ) ^ (dnext + (dnext + t)) * err q / err (q + 1) +
           ((K : ℝ) ^ (dnext + (dnext + t)) * err q / err (q + 1) +
             (K : ℝ) ^ dnext * η ^ t / err (q + 1))) < 1) :
-    ∃ S' : DirectionState G r (stage + m) L τ τ s dim (err m), True := by
+    ∃ _S' : DirectionState G r (stage + m) L τ τ s dim (err m), True := by
   induction m generalizing stage err with
   | zero =>
       let S0 : DirectionState G r stage L τ τ s dim (err 0) := by
@@ -1208,7 +1218,7 @@ theorem iterate_directions_list
           (K : ℝ) ^ (dnext + (dnext + w)) * err q / err (q + 1) +
           ((K : ℝ) ^ (dnext + (dnext + w)) * err q / err (q + 1) +
             (K : ℝ) ^ dnext * η ^ w / err (q + 1))) < 1) :
-    ∃ S' : DirectionState G r (stage + widths.length) L τ τ s dim
+    ∃ _S' : DirectionState G r (stage + widths.length) L τ τ s dim
       (err widths.length), True := by
   induction widths generalizing stage err with
   | nil =>
@@ -1221,7 +1231,7 @@ theorem iterate_directions_list
       have hstageLt : stage < r := by simp only [List.length_cons] at hstage; omega
       let dnext := dim + ws.sum
       have hdim : dim + (w :: ws).sum = dnext + w := by
-        simp [dnext, Nat.add_comm, Nat.add_left_comm, Nat.add_assoc]
+        simp [dnext, Nat.add_comm, Nat.add_left_comm]
       let S0 : DirectionState G r stage L τ τ s (dnext + w) (err 0) := by
         rw [← hdim]
         exact S

@@ -45,6 +45,7 @@ noncomputable def changeWeight (I₁ I₂ : Finset α)
     (x : α) (state : State α β) : ℝ :=
   if x ∈ changeSet I₁ I₂ then localCost G H host part default state x else 1
 
+omit [Fintype β] in
 theorem maskedChoices_nonempty (I : Finset α)
     (G : SimpleGraph β) [DecidableRel G.Adj]
     (H : SimpleGraph α) [DecidableRel H.Adj]
@@ -56,6 +57,7 @@ theorem maskedChoices_nonempty (I : Finset α)
   · exact hhost _
   · exact choices_nonempty G H host hhost part default state x
 
+omit [Fintype β] in
 theorem maskedChoices_mono {I₁ I₂ : Finset α} (hI : I₁ ⊆ I₂)
     (G : SimpleGraph β) [DecidableRel G.Adj]
     (H : SimpleGraph α) [DecidableRel H.Adj]
@@ -71,6 +73,7 @@ theorem maskedChoices_mono {I₁ I₂ : Finset α} (hI : I₁ ⊆ I₂)
         choices_subset_host G H host part default state x
     · simp [maskedChoices, hx₁, hx₂]
 
+omit [Fintype β] in
 theorem maskedChoices_ratio_le_weight {I₁ I₂ : Finset α} (hI : I₁ ⊆ I₂)
     (G : SimpleGraph β) [DecidableRel G.Adj]
     (H : SimpleGraph α) [DecidableRel H.Adj]
@@ -93,6 +96,7 @@ theorem maskedChoices_ratio_le_weight {I₁ I₂ : Finset α} (hI : I₁ ⊆ I�
         exact_mod_cast hne.card_ne_zero
       simp [maskedChoices, changeWeight, changeSet, hx₁, hx₂, hcard]
 
+omit [DecidableEq β] [DecidableEq ι] [Fintype β] in
 theorem changeWeight_nonneg (I₁ I₂ : Finset α)
     (G : SimpleGraph β) [DecidableRel G.Adj]
     (H : SimpleGraph α) [DecidableRel H.Adj]
@@ -154,6 +158,7 @@ theorem stateRun_costSeen_eq_of_not_mem
       rw [ih haTail]
       simp [step, hax]
 
+omit [DecidableEq β] [Fintype α] [Fintype β] [LinearOrder α] in
 theorem costProduct_cons_of_mem (J : Finset α) {x : α} {xs : List α}
     (hxJ : x ∈ J) (hxs : x ∉ xs) (state : State α β) :
     costProduct J (x :: xs) state =
@@ -175,6 +180,7 @@ theorem costProduct_cons_of_mem (J : Finset α) {x : α} {xs : List α}
   rw [hfilter, Finset.prod_insert]
   simp [hxs]
 
+omit [DecidableEq β] [Fintype α] [Fintype β] [LinearOrder α] in
 theorem costProduct_cons_of_not_mem (J : Finset α) {x : α} {xs : List α}
     (hxJ : x ∉ J) (state : State α β) :
     costProduct J (x :: xs) state = costProduct J xs state := by

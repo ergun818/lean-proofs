@@ -34,6 +34,7 @@ noncomputable def average
     (step G H host part threshold momentExponent defaultTarget default)
     (Fintype.card α) initialState payoff
 
+omit [DecidableEq α] in
 theorem choices_nonempty
     (G : SimpleGraph β) [DecidableRel G.Adj]
     (H : SimpleGraph α) [DecidableRel H.Adj]
@@ -44,6 +45,7 @@ theorem choices_nonempty
   exact RandomGreedy.choices_nonempty G H host hhost part default state.core
     (next G H host part threshold defaultTarget default state)
 
+omit [DecidableEq β] [DecidableEq ι] in
 theorem stateRun_remaining_card
     (G : SimpleGraph β) [DecidableRel G.Adj]
     (H : SimpleGraph α) [DecidableRel H.Adj]
@@ -82,6 +84,7 @@ theorem stateRun_remaining_card
               state z).remaining.card + 1 := by rw [ih hfuel']
         _ = state.remaining.card := hcard
 
+omit [DecidableEq β] [DecidableEq ι] in
 theorem stateRun_schedule_final
     (G : SimpleGraph β) [DecidableRel G.Adj]
     (H : SimpleGraph α) [DecidableRel H.Adj]
@@ -122,12 +125,14 @@ structure RecordedDefects (momentExponent : ℕ) (state : State α β) : Prop wh
   defect_zero_or_one_le : ∀ x, RandomGreedy.assigned state.core x →
     state.core.defectSeen x = 0 ∨ 1 ≤ state.core.defectSeen x
 
+omit [DecidableEq α] [DecidableEq β] [Fintype β] [LinearOrder α] in
 theorem recordedDefects_initial (momentExponent : ℕ) :
     RecordedDefects momentExponent (initialState : State α β) := by
   constructor <;> intro x hx
   · simp [RandomGreedy.assigned, initialState, RandomGreedy.initialState] at hx
   · simp [RandomGreedy.assigned, initialState, RandomGreedy.initialState] at hx
 
+omit [DecidableEq β] [DecidableEq ι] [LinearOrder ι] in
 theorem recordedDefects_stepAt
     (G : SimpleGraph β) [DecidableRel G.Adj]
     (H : SimpleGraph α) [DecidableRel H.Adj]
@@ -161,6 +166,7 @@ theorem recordedDefects_stepAt
       simpa [stepAt, RandomGreedy.step, hyx] using
         hstate.defect_zero_or_one_le y hyold
 
+omit [DecidableEq β] [DecidableEq ι] in
 theorem stateRun_recordedDefects_final
     (G : SimpleGraph β) [DecidableRel G.Adj]
     (H : SimpleGraph α) [DecidableRel H.Adj]
@@ -180,6 +186,7 @@ theorem stateRun_recordedDefects_final
       exact ih (recordedDefects_stepAt G H host part threshold momentExponent
         default (next G H host part threshold defaultTarget default state) z hstate)
 
+omit [DecidableEq α] [DecidableEq β] [Fintype α] [Fintype β] [LinearOrder α] in
 theorem final_observed_nonneg
     (momentExponent : ℕ) {state : State α β}
     (hrecorded : RecordedDefects momentExponent state) {x : α}
@@ -191,6 +198,7 @@ theorem final_observed_nonneg
   · exact pow_nonneg
       ((hrecorded.defect_zero_or_one_le x hx).resolve_left hz |>.trans' zero_le_one) _
 
+omit [DecidableEq α] [DecidableEq β] in
 theorem partDefectMass_eq_sum_observed_of_complete
     (G : SimpleGraph β) [DecidableRel G.Adj]
     (H : SimpleGraph α) [DecidableRel H.Adj]

@@ -36,6 +36,7 @@ def labelWeight (q : P → ℝ) : Option P → ℝ
   | none => 1 - ∑ p, q p
   | some p => q p
 
+omit [DecidableEq P] in
 theorem labelWeight_nonneg (q : P → ℝ)
     (hq : ∀ p, 0 ≤ q p) (hqsum : ∑ p, q p ≤ 1) :
     ∀ z, 0 ≤ labelWeight q z := by
@@ -44,6 +45,7 @@ theorem labelWeight_nonneg (q : P → ℝ)
   | none => simp [labelWeight, sub_nonneg.mpr hqsum]
   | some p => simpa [labelWeight] using hq p
 
+omit [DecidableEq P] in
 theorem labelWeight_sum_one (q : P → ℝ) :
     ∑ z : Option P, labelWeight q z = 1 := by
   rw [Fintype.sum_option]
@@ -71,8 +73,7 @@ theorem weightedMean_label_eq {N : ℕ} (q : P → ℝ) (i : Fin N) (p : P) :
                     if x 0 = some p then (1 : ℝ) else 0) =
                 fun _ : Fin N → Option P => q p := by
             funext y
-            simp [Erdos136.McDiarmid.sectionAverage, labelWeight,
-              Fintype.sum_option]
+            simp [Erdos136.McDiarmid.sectionAverage, labelWeight]
           rw [hsection]
           simp only [Erdos136.McDiarmid.weightedMean]
           rw [← Finset.sum_mul,
@@ -118,6 +119,7 @@ theorem weightedMean_sampleCount {N : ℕ} (q : P → ℝ)
       rw [← Finset.sum_filter]
       simp [mul_comm]
 
+omit [DecidableEq P] in
 theorem sum_product_apply {N : ℕ} (h : Fin N → Option P → ℝ) :
     ∑ x : Fin N → Option P, ∏ i, h i (x i) = ∏ i, ∑ z, h i z := by
   induction N with
@@ -134,10 +136,11 @@ def cylinder {N : ℕ} {ι : Type*} [Fintype ι]
     (g : ι → Fin N) (p : ι → P) (x : Fin N → Option P) : Prop :=
   ∀ i, x (g i) = some (p i)
 
+omit [DecidableEq P] in
 /-- Distinct requested coordinates have the expected product probability in
 the finite label product space. -/
 theorem weightedMean_cylinder_of_injective
-    {N : ℕ} {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {N : ℕ} {ι : Type*} [Fintype ι]
     (q : P → ℝ) (g : ι → Fin N) (p : ι → P)
     (hg : Function.Injective g) :
     Erdos136.McDiarmid.weightedMean (fun _ : Fin N => labelWeight q)
@@ -265,6 +268,7 @@ theorem weightedMean_cylinder_of_injective
         (Finset.mem_image.mp (show g i ∈ Finset.univ.image g from
           Finset.mem_image.mpr ⟨i, Finset.mem_univ i, rfl⟩))).2.symm
 
+omit [Fintype P] in
 theorem sampleCount_oscillation {N : ℕ} (active : Fin N → Prop) (p : P)
     (i : Fin N) (x y : Fin N → Option P)
     (hxy : ∀ j, j ≠ i → x j = y j) :
@@ -302,6 +306,7 @@ theorem sum_active_bounds_sq {N : ℕ} (active : Fin N → Prop) :
       ((Finset.univ.filter active).card : ℝ) := by
   simp
 
+omit [DecidableEq P] in
 /-- A strict union bound in the arbitrary finite label product space. -/
 theorem exists_avoiding_of_eventMass_sum_lt_one
     {N : ℕ} {K : Type*} [Fintype K]
@@ -320,7 +325,7 @@ theorem exists_avoiding_of_eventMass_sum_lt_one
       w hw0 Finset.univ Bad).trans_lt ?_
     simpa using hfail
   by_contra hnone
-  push_neg at hnone
+  push Not at hnone
   have hall : (⋃ k ∈ (Finset.univ : Finset K), Bad k) = Set.univ := by
     ext x
     simp only [Set.mem_univ, iff_true]
@@ -362,7 +367,7 @@ theorem exists_assignment_sampleCount_gt_half
               (sampleCount (active k) (bucket k)) -
             q (bucket k) * ((Finset.univ.filter (active k)).card : ℝ) / 2} := by
       ext x
-      simp only [Bad, Set.mem_setOf_eq]
+      simp only [Bad, Set.mem_ofPred_eq]
       rw [hmean]
       ring_nf
     rw [hset]
@@ -428,7 +433,7 @@ theorem exists_assignment_lower_and_upper
               (sampleCount (active k) (bucket k)) -
             q (bucket k) * ((Finset.univ.filter (active k)).card : ℝ) / 2} := by
       ext x
-      simp only [Bad, Set.mem_setOf_eq]
+      simp only [Bad, Set.mem_ofPred_eq]
       rw [hmean]
       ring_nf
     rw [hset]
@@ -724,7 +729,7 @@ theorem commonNeighbors_nonempty_of_familyMoment
     {N θ s : ℕ} (G : SimpleGraph (Fin N)) [DecidableRel G.Adj]
     {ι : Type*} [Fintype ι] [DecidableEq ι]
     (A : ι → Finset (Fin N)) (T : Finset (Fin N)) {μ : ℝ}
-    (hθ : 0 < θ) (hμ : 0 ≤ μ)
+    (hθ : 0 < θ) (_hμ : 0 ≤ μ)
     (hmoment : FiniteDefect.familyMoment G θ s A T ≤ μ)
     (hsmall : ((FiniteDefect.familyTuples A).card : ℝ) * μ <
       ((θ : ℝ) * (N + 1)) ^ s)
@@ -757,12 +762,14 @@ def bucket {N : ℕ} {J : Type*} [DecidableEq J]
     (x : Fin N → Option P) (p : P) : Finset (Fin N) :=
   (A (color p)).filter fun v => x v = some p
 
+omit [Fintype P] in
 theorem bucket_subset {N : ℕ} {J : Type*} [DecidableEq J]
     (A : J → Finset (Fin N)) (color : P → J)
     (x : Fin N → Option P) (p : P) :
     bucket A color x p ⊆ A (color p) := by
   exact Finset.filter_subset _ _
 
+omit [Fintype P] in
 theorem bucket_disjoint {N : ℕ} {J : Type*} [DecidableEq J]
     (A : J → Finset (Fin N)) (color : P → J)
     (x : Fin N → Option P) {{p p' : P}} (hpp' : p ≠ p') :
@@ -773,6 +780,7 @@ theorem bucket_disjoint {N : ℕ} {J : Type*} [DecidableEq J]
   have hp' := (Finset.mem_filter.mp hv').2
   exact hpp' (Option.some.inj (hp.symm.trans hp'))
 
+omit [Fintype P] in
 theorem sampleCount_eq_filter_card {N : ℕ} (active : Fin N → Prop)
     (x : Fin N → Option P) (p : P) :
     sampleCount active p x =
@@ -786,6 +794,7 @@ theorem sampleCount_eq_filter_card {N : ℕ} (active : Fin N → Prop)
   unfold sampleCount
   exact_mod_cast hnat
 
+omit [Fintype P] in
 theorem sampleCount_mem_eq_card {N : ℕ} {J : Type*} [DecidableEq J]
     (A : J → Finset (Fin N)) (color : P → J)
     (x : Fin N → Option P) (p : P) :
@@ -797,6 +806,7 @@ theorem sampleCount_mem_eq_card {N : ℕ} {J : Type*} [DecidableEq J]
   ext v
   simp [bucket]
 
+omit [Fintype P] in
 theorem sampleCount_common_eq_card
     {N : ℕ} {J : Type*} [DecidableEq J]
     (G : SimpleGraph (Fin N)) [DecidableRel G.Adj]

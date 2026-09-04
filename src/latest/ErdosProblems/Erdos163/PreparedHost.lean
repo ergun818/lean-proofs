@@ -23,8 +23,7 @@ universe u
 
 theorem card_eraseCoord {ι : Type u} [Fintype ι] [DecidableEq ι] (b : ι) :
     Fintype.card (Pruning.eraseCoord b) = Fintype.card ι - 1 := by
-  simpa [Pruning.eraseCoord] using
-    (Fintype.card_subtype_compl (fun i : ι => i = b))
+  simp [Pruning.eraseCoord]
 
 /-- A dimension-`D` constant-coordinate moment controls the raw sum in any
 smaller finite dimension. -/
@@ -118,7 +117,7 @@ theorem incident_le_of_domination
 /-- All-direction moment bound, including the precise repeated-coordinate
 error, for a restricted coordinate product and dominated defect weights. -/
 theorem weightedMean_raw_le_of_all_direction
-    {P : Type*} [Fintype P] [DecidableEq P]
+    {P : Type*} [Fintype P]
     {N D θ s : ℕ} {ε : ℝ}
     (G : SimpleGraph (Fin N)) [DecidableRel G.Adj]
     {ι : Type u} [Fintype ι] [DecidableEq ι]
@@ -172,7 +171,7 @@ theorem commonNeighbors_card_gt_of_familyMoment
     (G : SimpleGraph (Fin N)) [DecidableRel G.Adj]
     {ι : Type u} [Fintype ι] [DecidableEq ι]
     (A : ι → Finset (Fin N)) (T : Finset (Fin N))
-    (hM : 0 < M) (hMθ : M < θ) (hε : 0 ≤ ε)
+    (hM : 0 < M) (hMθ : M < θ) (_hε : 0 ≤ ε)
     (hmoment : FiniteDefect.familyMoment G θ s A T ≤ ε)
     (hsmall : ((FiniteDefect.familyTuples A).card : ℝ) * ε <
       ((θ : ℝ) / M) ^ s)
