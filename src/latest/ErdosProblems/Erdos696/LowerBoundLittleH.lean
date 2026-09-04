@@ -41,6 +41,7 @@ Mirrors §5 of `erdos_696_paper.tex`.
 
 open Real
 
+omit sw in
 lemma integral_one_div_mul_log_of_one_lt {a b : ℝ} (ha : 1 < a) (hab : a ≤ b) :
     (∫ t in a..b, 1 / (t * Real.log t)) =
       Real.log (Real.log b) - Real.log (Real.log a) := by
@@ -70,6 +71,7 @@ lemma integral_one_div_mul_log_of_one_lt {a b : ℝ} (ha : 1 < a) (hab : a ≤ b
       (fun t ht => mul_ne_zero (hpos t ht).ne' (ne_of_gt (hlogpos t ht)))
   exact intervalIntegral.integral_eq_sub_of_hasDerivAt hderiv hcont.intervalIntegrable
 
+omit sw in
 private lemma integral_exp_exp_one_div_mul_log {y η : ℝ} (hy : 0 ≤ y) (hη : 1 ≤ η) :
     (∫ t in Real.exp (Real.exp y)..Real.exp (Real.exp (η * y)),
         1 / (t * Real.log t)) =
@@ -81,6 +83,7 @@ private lemma integral_exp_exp_one_div_mul_log {y η : ℝ} (hy : 0 ≤ y) (hη 
   rw [integral_one_div_mul_log_of_one_lt ha hab]
   simp [sub_mul]
 
+omit sw in
 private lemma exp_decay_eventually_small {C c₀ : ℝ} (hC : 0 < C) (hc₀ : 0 < c₀) :
     ∃ Y : ℝ, ∀ y : ℝ, Y ≤ y →
       C * Real.exp (-c₀ * Real.sqrt (Real.exp y)) ≤ (1 / 2 : ℝ) := by
@@ -210,6 +213,7 @@ lemma prime_successor_mass :
     le_trans htarget_le hS_lower
   simpa [S, X, Y, div_eq_mul_inv, mul_comm, mul_left_comm, mul_assoc] using hfinal
 
+omit sw in
 lemma almostAll_of_forall {P : ℕ → Prop} (h : ∀ n, P n) : almostAll P := by
   unfold almostAll
   have hzero : (fun x : ℝ =>
@@ -222,6 +226,7 @@ lemma almostAll_of_forall {P : ℕ → Prop} (h : ∀ n, P n) : almostAll P := b
   rw [hzero]
   exact tendsto_const_nhds
 
+omit sw in
 private lemma greedy_h_chain_large_epsilon :
     ∀ ε : ℝ, (1 / 2 : ℝ) ≤ ε →
       almostAll (fun n => (hChain n : ℝ) ≥ (1 / 2 - ε) * (logStar n : ℝ)) := by
@@ -239,6 +244,7 @@ private lemma greedy_h_chain_large_epsilon :
 private def HasPrimeChainLengthAtLeast (R n : ℕ) : Prop :=
   ∃ ps : List ℕ, IsPrimeChain n ps ∧ R ≤ ps.length
 
+omit sw in
 private lemma IsPrimeChain.length_le_self {n : ℕ} (hn : n ≠ 0) {ps : List ℕ}
     (hps : IsPrimeChain n ps) : ps.length ≤ n := by
   rcases hps with ⟨hprime, hpair, _hmod⟩
@@ -252,6 +258,7 @@ private lemma IsPrimeChain.length_le_self {n : ℕ} (hn : n ≠ 0) {ps : List �
         ⟨(hprime p hp).1.one_le, Nat.le_of_dvd (Nat.pos_of_ne_zero hn) (hprime p hp).2⟩)
   exact (Finset.card_le_card hsub).trans (by simp)
 
+omit sw in
 private lemma hChain_ge_of_hasPrimeChainLengthAtLeast {R n : ℕ} (hn : n ≠ 0)
     (hR : HasPrimeChainLengthAtLeast R n) : R ≤ hChain n := by
   rcases hR with ⟨ps, hps, hRle⟩
@@ -272,6 +279,7 @@ private def GoodLowerPrimeChain (ε : ℝ) (n : ℕ) : Prop :=
   ∃ R : ℕ, n ≠ 0 ∧ HasPrimeChainLengthAtLeast R n ∧
     (1 / 2 - ε) * (logStar (n : ℝ) : ℝ) ≤ (R : ℝ)
 
+omit sw in
 private lemma lower_bound_of_good_prime_chain {ε : ℝ} {n : ℕ}
     (hgood : GoodLowerPrimeChain ε n) :
     (hChain n : ℝ) ≥ (1 / 2 - ε) * (logStar (n : ℝ) : ℝ) := by
@@ -280,6 +288,7 @@ private lemma lower_bound_of_good_prime_chain {ε : ℝ} {n : ℕ}
   have hreal : (R : ℝ) ≤ (hChain n : ℝ) := by exact_mod_cast hnat
   exact hR.trans hreal
 
+omit sw in
 private lemma lower_bound_from_good_prime_chains {ε : ℝ}
     (hgood : almostAll (GoodLowerPrimeChain ε)) :
     almostAll (fun n => (hChain n : ℝ) ≥ (1 / 2 - ε) * (logStar n : ℝ)) :=
@@ -305,10 +314,12 @@ private noncomputable def lowerHWindowY (L j : ℕ) : ℝ :=
 private noncomputable def lowerHChainLength (L : ℕ) : ℕ :=
   (L - lowerHWindowM0 L - 2) / 2
 
+omit sw in
 private lemma lowerHChainLength_le (L : ℕ) : lowerHChainLength L ≤ L := by
   dsimp [lowerHChainLength]
   omega
 
+omit sw in
 private lemma lowerHWindowM_add_four_le_of_mem_range {L j : ℕ}
     (hj : j ∈ Finset.range (lowerHChainLength L)) :
     lowerHWindowM L j + 4 ≤ L := by
@@ -316,6 +327,7 @@ private lemma lowerHWindowM_add_four_le_of_mem_range {L j : ℕ}
   rw [Finset.mem_range] at hj
   omega
 
+omit sw in
 private lemma exp_nat_le_tower (m : ℕ) : Real.exp (m : ℝ) ≤ tower m := by
   induction m with
   | zero =>
@@ -325,6 +337,7 @@ private lemma exp_nat_le_tower (m : ℕ) : Real.exp (m : ℝ) ≤ tower m := by
       apply Real.exp_le_exp.mpr
       simpa [Nat.cast_add, Nat.cast_one] using tower_ge m
 
+omit sw in
 private lemma lowerHWindowY_zero_tendsto_atTop :
     Filter.Tendsto (fun L : ℕ => lowerHWindowY L 0) Filter.atTop Filter.atTop := by
   rw [Filter.tendsto_atTop]
@@ -429,21 +442,23 @@ private noncomputable def LowerHStageFailure (L j n : ℕ) : Prop :=
     lowerHGreedyPrime? L n j = some p ∧
       finsetLeastNat? (lowerHSelectedSuccessors L j p n) = none
 
+omit sw in
 private lemma finsetLeastNat?_mem {s : Finset ℕ} {p : ℕ}
     (hp : finsetLeastNat? s = some p) : p ∈ s := by
   classical
   by_cases hne : s.Nonempty
-  · simp [finsetLeastNat?, hne] at hp
+  · simp only [finsetLeastNat?, dif_pos hne, Option.some.injEq] at hp
     subst p
     exact Finset.min'_mem s hne
   · simp [finsetLeastNat?, hne] at hp
 
+omit sw in
 private lemma lowerHGreedyPrime?_prime_dvd {L n j p : ℕ}
     (hp : lowerHGreedyPrime? L n j = some p) : p.Prime ∧ p ∣ n := by
   induction j generalizing p with
   | zero =>
       have hmem : p ∈ lowerHInitialSelectedPrimes L n := finsetLeastNat?_mem hp
-      simp [lowerHInitialSelectedPrimes] at hmem
+      simp only [lowerHInitialSelectedPrimes, Finset.mem_filter, Finset.mem_Iic] at hmem
       exact ⟨hmem.2.1, hmem.2.2.1⟩
   | succ j ih =>
       cases hp₀ : lowerHGreedyPrime? L n j with
@@ -452,9 +467,11 @@ private lemma lowerHGreedyPrime?_prime_dvd {L n j p : ℕ}
       | some p₀ =>
           have hmem : p ∈ lowerHSelectedSuccessors L j p₀ n := by
             exact finsetLeastNat?_mem (by simpa [lowerHGreedyPrime?, hp₀] using hp)
-          simp [lowerHSelectedSuccessors, lowerHSuccessorCandidates] at hmem
+          simp only [lowerHSelectedSuccessors, lowerHSuccessorCandidates,
+            Finset.mem_filter, Finset.mem_Iic] at hmem
           exact ⟨hmem.1.2.1, hmem.2⟩
 
+omit sw in
 private lemma lowerHGreedyPrime?_succ_mem {L n j p q : ℕ}
     (hp : lowerHGreedyPrime? L n j = some p)
     (hq : lowerHGreedyPrime? L n (j + 1) = some q) :
@@ -463,6 +480,7 @@ private lemma lowerHGreedyPrime?_succ_mem {L n j p q : ℕ}
   rw [hp] at hq
   exact finsetLeastNat?_mem hq
 
+omit sw in
 private lemma prime_lt_of_mod_eq_one {p q : ℕ} (_hp : p.Prime) (hq : q.Prime)
     (hmod : q % p = 1) : p < q := by
   by_contra hnot
@@ -478,6 +496,7 @@ private lemma prime_lt_of_mod_eq_one {p q : ℕ} (_hp : p.Prime) (hq : q.Prime)
     omega
   exact hq.ne_one hq_one
 
+omit sw in
 private lemma lowerHGreedyPrime?_succ_lt {L n j p q : ℕ}
     (hp : lowerHGreedyPrime? L n j = some p)
     (hq : lowerHGreedyPrime? L n (j + 1) = some q) : p < q := by
@@ -485,17 +504,21 @@ private lemma lowerHGreedyPrime?_succ_lt {L n j p q : ℕ}
   have hqprime : q.Prime := (lowerHGreedyPrime?_prime_dvd hq).1
   have hmem := lowerHGreedyPrime?_succ_mem hp hq
   have hmod : q % p = 1 := by
-    simp [lowerHSelectedSuccessors, lowerHSuccessorCandidates] at hmem
+    simp only [lowerHSelectedSuccessors, lowerHSuccessorCandidates,
+      Finset.mem_filter, Finset.mem_Iic] at hmem
     exact hmem.1.2.2.1
   exact prime_lt_of_mod_eq_one hpprime hqprime hmod
 
+omit sw in
 private lemma lowerHGreedyPrime?_succ_mod {L n j p q : ℕ}
     (hp : lowerHGreedyPrime? L n j = some p)
     (hq : lowerHGreedyPrime? L n (j + 1) = some q) : q % p = 1 := by
   have hmem := lowerHGreedyPrime?_succ_mem hp hq
-  simp [lowerHSelectedSuccessors, lowerHSuccessorCandidates] at hmem
+  simp only [lowerHSelectedSuccessors, lowerHSuccessorCandidates,
+    Finset.mem_filter, Finset.mem_Iic] at hmem
   exact hmem.1.2.2.1
 
+omit sw in
 private lemma lowerHGreedyPrime?_exists_succ_of_not_stage_failure {L n j p : ℕ}
     (hp : lowerHGreedyPrime? L n j = some p) (hnot : ¬ LowerHStageFailure L j n) :
     ∃ q : ℕ, lowerHGreedyPrime? L n (j + 1) = some q := by
@@ -512,6 +535,7 @@ private lemma lowerHGreedyPrime?_exists_succ_of_not_stage_failure {L n j p : ℕ
       refine ⟨q, ?_⟩
       simpa [lowerHGreedyPrime?, hp] using hleast
 
+omit sw in
 private lemma hasPrimeChainLengthAtLeast_of_greedy_successes {L n R : ℕ}
     (hinit : ¬ LowerHInitialFailure L n)
     (hstages : ∀ j ∈ Finset.range R, ¬ LowerHStageFailure L j n) :
@@ -557,11 +581,11 @@ private lemma hasPrimeChainLengthAtLeast_of_greedy_successes {L n R : ℕ}
   refine ⟨ps, ?_, by simp [ps]⟩
   constructor
   · intro p hp
-    simp [ps, List.mem_ofFn] at hp
+    simp only [ps, List.mem_ofFn] at hp
     rcases hp with ⟨i, rfl⟩
     exact lowerHGreedyPrime?_prime_dvd (hpval i.isLt)
   constructor
-  · simp [ps, List.pairwise_ofFn]
+  · simp only [ps, List.pairwise_ofFn]
     intro i j hij
     exact hpval_lt_of_lt hij j.isLt
   · intro i hi
@@ -574,12 +598,14 @@ private lemma hasPrimeChainLengthAtLeast_of_greedy_successes {L n R : ℕ}
     have hmod := lowerHGreedyPrime?_succ_mod hcur hnext
     simpa [ps] using hmod
 
+omit sw in
 private lemma nat_cast_div_two_sub_one_le (a : ℕ) :
     (a : ℝ) / 2 - 1 ≤ ((a / 2 : ℕ) : ℝ) := by
   have h : a ≤ 2 * (a / 2) + 1 := by omega
   have hr : (a : ℝ) ≤ 2 * ((a / 2 : ℕ) : ℝ) + 1 := by exact_mod_cast h
   linarith
 
+omit sw in
 private lemma sqrt_le_mul_self_of_inv_sq_le {δ L : ℝ} (hδ : 0 < δ) (hLnonneg : 0 ≤ L)
     (hL : (1 / δ) ^ 2 ≤ L) : Real.sqrt L ≤ δ * L := by
   rw [Real.sqrt_le_left]
@@ -591,6 +617,7 @@ private lemma sqrt_le_mul_self_of_inv_sq_le {δ L : ℝ} (hδ : 0 < δ) (hLnonne
     nlinarith [hone, hLnonneg]
   · positivity
 
+omit sw in
 private lemma exists_iteratedLog_le_exp_one_of_le_tower_le (K : ℕ) {x : ℝ}
     (hx : x ≤ tower K) : ∃ k : ℕ, k ≤ K ∧ iteratedLog k x ≤ Real.exp 1 := by
   induction K generalizing x with
@@ -606,6 +633,7 @@ private lemma exists_iteratedLog_le_exp_one_of_le_tower_le (K : ℕ) {x : ℝ}
         rcases ih hlog_le with ⟨k, hk_le, hk⟩
         exact ⟨k + 1, Nat.succ_le_succ hk_le, by simpa [iteratedLog_log] using hk⟩
 
+omit sw in
 theorem logStar_le_of_le_tower (K : ℕ) {x : ℝ} (hx : x ≤ tower K) :
     logStar x ≤ K := by
   classical
@@ -615,12 +643,14 @@ theorem logStar_le_of_le_tower (K : ℕ) {x : ℝ} (hx : x ≤ tower K) :
   rcases exists_iteratedLog_le_exp_one_of_le_tower_le K hx with ⟨k, hk_le, hk⟩
   exact (Nat.find_min' h hk).trans hk_le
 
+omit sw in
 theorem logStar_nat_le_logStar_of_le_floor {x : ℝ} {n : ℕ} (hx_nonneg : 0 ≤ x)
     (hnx : n ≤ ⌊x⌋₊) : logStar (n : ℝ) ≤ logStar x := by
   have hn_floor : (n : ℝ) ≤ (⌊x⌋₊ : ℝ) := by exact_mod_cast hnx
   have hn_le_x : (n : ℝ) ≤ x := hn_floor.trans (Nat.floor_le hx_nonneg)
   exact logStar_le_of_le_tower (logStar x) (hn_le_x.trans (self_le_tower_logStar x))
 
+omit sw in
 private lemma lowerHChainLength_eventually_ge (ε : ℝ) (hε : 0 < ε)
     (hε_lt : ε < 1 / 2) :
     ∃ L₀ : ℕ, ∀ L : ℕ, L₀ ≤ L →
@@ -672,6 +702,7 @@ private lemma lowerHChainLength_eventually_ge (ε : ℝ) (hε : 0 < ε)
     nlinarith [hm₀_le, htwo_le]
   exact hmain.trans (by simpa [lowerHChainLength, m₀] using hdiv)
 
+omit sw in
 private lemma card_bad_le_one_add_failure_sum {N R : ℕ} {P I : ℕ → Prop}
     {S : ℕ → ℕ → Prop}
     (hsub : ∀ n : ℕ, n ≤ N → ¬ P n →
@@ -688,13 +719,13 @@ private lemma card_bad_le_one_add_failure_sum {N R : ℕ} {P I : ℕ → Prop}
   let U : Finset ℕ := zeroF ∪ initF ∪ stageU
   have hbad_subset : badF ⊆ U := by
     intro n hn
-    simp [badF] at hn
+    simp only [badF, Finset.mem_filter, Finset.mem_Iic] at hn
     rcases hsub n hn.1 hn.2 with hzero | hinit | hstage
     · simp [U, zeroF, hzero]
     · simp [U, initF, hn.1, hinit]
     · rcases hstage with ⟨j, hj, hSj⟩
-      simp [U, stageU, stageF]
-      right
+      simp only [U, stageU, stageF, Finset.mem_union, Finset.mem_biUnion,
+        Finset.mem_filter, Finset.mem_Iic, Finset.mem_range]
       right
       exact ⟨j, Finset.mem_range.mp hj, hn.1, hSj⟩
   have hcard_fin :
@@ -753,17 +784,20 @@ private noncomputable def lowerHStageFailureResidueProb (L j : ℕ) : ℝ :=
         LowerHStageFailure L j r.val} : ℝ) /
     (primorial (lowerHStageCutoff L j) : ℝ)
 
+omit sw in
 lemma primorial_pos (P : ℕ) : 0 < primorial P := by
   unfold primorial
   exact Finset.prod_pos (by
     intro p hp
     exact (Finset.mem_filter.mp hp).2.pos)
 
+omit sw in
 lemma prime_dvd_primorial_of_le {p P : ℕ} (hp : p.Prime) (hle : p ≤ P) :
     p ∣ primorial P := by
   unfold primorial
   exact Finset.dvd_prod_of_mem _ (by simp [hp, hle])
 
+omit sw in
 private lemma dvd_iff_of_mod_primorial_eq {P q n n' : ℕ} (hqprime : q.Prime)
     (hqle : q ≤ P) (hmod : n % primorial P = n' % primorial P) :
     q ∣ n ↔ q ∣ n' := by
@@ -771,6 +805,7 @@ private lemma dvd_iff_of_mod_primorial_eq {P q n n' : ℕ} (hqprime : q.Prime)
     simpa [Nat.ModEq] using hmod
   exact hmodeq.dvd_iff (prime_dvd_primorial_of_le hqprime hqle)
 
+omit sw in
 private lemma self_le_exp_exp_half (t : ℝ) : t ≤ Real.exp (Real.exp (t / 2)) := by
   have h1 : t ≤ Real.exp (t / 2) := by
     have h := (Real.two_mul_le_exp (x := t / 2))
@@ -781,11 +816,13 @@ private lemma self_le_exp_exp_half (t : ℝ) : t ≤ Real.exp (Real.exp (t / 2))
     linarith
   exact h1.trans h2
 
+omit sw in
 private lemma lowerHStageExponent_eq {L j : ℕ} (hBne : lowerHWindowB L ≠ 0) :
     (lowerHWindowB L / 2) * lowerHWindowY L j = tower (lowerHWindowM L j) / 2 := by
   unfold lowerHWindowY
   field_simp [hBne]
 
+omit sw in
 private lemma lowerHStageCutoff_mono_right {L k j : ℕ}
     (hB : 2 ≤ lowerHWindowB L) (hkj : k ≤ j) :
     lowerHStageCutoff L k ≤ lowerHStageCutoff L j := by
@@ -802,6 +839,7 @@ private lemma lowerHStageCutoff_mono_right {L k j : ℕ}
     (strictMono_nat_of_lt_succ tower_lt_succ).monotone hm
   linarith
 
+omit sw in
 private lemma lowerHInitialSelectedPrime_le_cutoff {L j n q : ℕ}
     (hB : 2 ≤ lowerHWindowB L) (hq : q ∈ lowerHInitialSelectedPrimes L n) :
     q ≤ lowerHStageCutoff L j := by
@@ -823,6 +861,7 @@ private lemma lowerHInitialSelectedPrime_le_cutoff {L j n q : ℕ}
     exact self_le_exp_exp_half _
   exact Nat.le_floor (hqY.trans (hy0_le_tower.trans hend))
 
+omit sw in
 private lemma lowerHSuccessorCandidate_le_cutoff {L k j p q : ℕ}
     (hB : 2 ≤ lowerHWindowB L) (hkj : k ≤ j)
     (hq : q ∈ lowerHSuccessorCandidates L k p) :
@@ -833,6 +872,7 @@ private lemma lowerHSuccessorCandidate_le_cutoff {L k j p q : ℕ}
     simpa [lowerHStageCutoff] using hq.1
   exact hqk.trans (lowerHStageCutoff_mono_right hB hkj)
 
+omit sw in
 private lemma lowerHInitialSelectedPrimes_eq_of_mod {L j n n' : ℕ}
     (hB : 2 ≤ lowerHWindowB L)
     (hmod : n % primorial (lowerHStageCutoff L j) =
@@ -861,6 +901,7 @@ private lemma lowerHInitialSelectedPrimes_eq_of_mod {L j n n' : ℕ}
     have hqle := lowerHInitialSelectedPrime_le_cutoff (L := L) (j := j) hB hqmem
     exact ⟨hqfloor, hqprime, (dvd_iff_of_mod_primorial_eq hqprime hqle hmod).mpr hqdiv, hqY⟩
 
+omit sw in
 private lemma lowerHSelectedSuccessors_eq_of_mod {L k j p n n' : ℕ}
     (hB : 2 ≤ lowerHWindowB L) (hkj : k ≤ j)
     (hmod : n % primorial (lowerHStageCutoff L j) =
@@ -893,6 +934,7 @@ private lemma lowerHSelectedSuccessors_eq_of_mod {L k j p n n' : ℕ}
       (p := p) hB hkj hqcand
     exact ⟨hqcand, (dvd_iff_of_mod_primorial_eq hqprime hqle hmod).mpr hqdiv⟩
 
+omit sw in
 lemma lowerHGreedyPrime?_eq_of_mod {L j k n n' : ℕ}
     (hB : 2 ≤ lowerHWindowB L) (hkj : k ≤ j)
     (hmod : n % primorial (lowerHStageCutoff L j) =
@@ -911,6 +953,7 @@ lemma lowerHGreedyPrime?_eq_of_mod {L j k n n' : ℕ}
           simp [lowerHSelectedSuccessors_eq_of_mod (L := L) (k := k) (j := j)
             (p := p) hB hk_le_j hmod]
 
+omit sw in
 private lemma LowerHStageFailure_iff_of_mod {L j n n' : ℕ}
     (hB : 2 ≤ lowerHWindowB L)
     (hmod : n % primorial (lowerHStageCutoff L j) =
@@ -930,6 +973,7 @@ private lemma LowerHStageFailure_iff_of_mod {L j n n' : ℕ}
       (p := p) (n := n) (n' := n') hB le_rfl hmod
     exact ⟨p, by simpa [hgp_eq] using hgp, by simpa [hsucc_eq] using hnone⟩
 
+omit sw in
 private lemma lowerHInitialFailure_not_dvd {L n p : ℕ}
     (hp : p.Prime) (hpY : (p : ℝ) ≤ lowerHWindowY L 0)
     (hfail : LowerHInitialFailure L n) :
@@ -943,7 +987,8 @@ private lemma lowerHInitialFailure_not_dvd {L n p : ℕ}
   unfold LowerHInitialFailure at hfail
   simp [lowerHGreedyPrime?, finsetLeastNat?, hne] at hfail
 
-private lemma card_bounded_periodic {P : ℕ → Prop} [DecidablePred P] {M N : ℕ}
+omit sw in
+private lemma card_bounded_periodic {P : ℕ → Prop} {M N : ℕ}
     (hM : 0 < M) (hperiod : ∀ n, P n ↔ P (n % M)) :
     Nat.card {n : ℕ | n ≤ N ∧ P n} ≤
       Nat.card {r : Fin M // P r.val} * (N / M + 1) := by
@@ -966,7 +1011,8 @@ private lemma card_bounded_periodic {P : ℕ → Prop} [DecidablePred P] {M N : 
   change Nat.card {n : ℕ // n ≤ N ∧ P n} ≤ _
   simpa only [Nat.card_prod, Nat.card_fin] using hle
 
-lemma periodic_count_le {P : ℕ → Prop} [DecidablePred P] {M N : ℕ}
+omit sw in
+lemma periodic_count_le {P : ℕ → Prop} {M N : ℕ}
     (hM : 0 < M) (hperiod : ∀ n, P n ↔ P (n % M)) :
     (Nat.card {n : ℕ | n ≤ N ∧ P n} : ℝ) ≤
       ((Nat.card {r : Fin M // P r.val} : ℝ) / (M : ℝ)) * (N : ℝ) + (M : ℝ) := by
@@ -996,6 +1042,7 @@ lemma periodic_count_le {P : ℕ → Prop} [DecidablePred P] {M N : ℕ}
     _ ≤ ((C : ℝ) / (M : ℝ)) * (N : ℝ) + (M : ℝ) := by
       linarith
 
+omit sw in
 private lemma coprime_to_primorial_count_le_sieve_product (P N : ℕ) :
     let M := primorial P
     let T := Finset.filter Nat.Prime (Finset.Iic P)
@@ -1007,10 +1054,8 @@ private lemma coprime_to_primorial_count_le_sieve_product (P N : ℕ) :
   have hMpos : 0 < M := primorial_pos P
   have hperiod : ∀ n : ℕ, M.Coprime n ↔ M.Coprime (n % M) := by
     intro n
-    have hmod : n % M = (n % M) % M := by
-      rw [Nat.mod_eq_of_lt (Nat.mod_lt n hMpos)]
     have hmodeq : n ≡ n % M [MOD M] := by
-      simpa [Nat.ModEq] using hmod
+      simp [Nat.ModEq]
     have hg : n.gcd M = (n % M).gcd M := hmodeq.gcd_eq
     rw [Nat.coprime_iff_gcd_eq_one, Nat.coprime_iff_gcd_eq_one]
     rw [Nat.gcd_comm M n, Nat.gcd_comm M (n % M)]
@@ -1075,6 +1120,7 @@ Proof structure:
 These compose with `prod_one_sub_inv_le_exp_neg_sum` (1−x ≤ e^{−x}) and
 `prime_successor_mass` (∑1/q ≥ B/8) to bound `lowerHStageFailureResidueProb` by
 `exp(−B/8)`, matching paper line 1170 exactly. -/
+omit sw in
 /-- **Paper §5.2 line 1158 ("independent Bernoulli with probabilities `1/q`")** —
 formalised as `totient(∏Q) = ∏(q − 1)` for distinct primes. Iterated `Nat.totient_mul`. -/
 private lemma pmodel_totient_prod_distinct_primes :
@@ -1098,6 +1144,7 @@ private lemma pmodel_totient_prod_distinct_primes :
       exact (Nat.coprime_primes hp_prime hq_prime).mpr hpq
     rw [Nat.totient_mul hp_cop, Nat.totient_prime hp_prime, ih hP_prime]
 
+omit sw in
 /-- Per-block coprime count: in any interval `[i·N, (i+1)·N)` of length `N`,
 the count of residues coprime to `N` is exactly `totient(N)`. Wraps Mathlib's
 `Nat.filter_coprime_Ico_eq_totient`. -/
@@ -1107,6 +1154,7 @@ private lemma pmodel_count_coprime_in_block (N i : ℕ) :
   rw [h_eq]
   exact Nat.filter_coprime_Ico_eq_totient N (i * N)
 
+omit sw in
 /-- **Paper §5.2 line 1158 — abstract CRT factored count.**
 
 For coprime `a, b` and predicates `Pa, Pb : ℕ → Prop` periodic mod `a, b` resp.,
@@ -1204,6 +1252,7 @@ private lemma pmodel_crt_factored_count {a b : ℕ}
       · simp [hmod_a, hz_eq_a]
       · simp [hmod_b, hz_eq_b]
 
+omit sw in
 /-- **Block-count lemma** (paper-faithful CRT lift):
 For `P` periodic mod `N`, count on `[0, N·k)` equals `k · count on [0, N)`.
 
@@ -1266,6 +1315,7 @@ lemma pmodel_block_count_periodic
     rw [hblock_bij]
     ring
 
+omit sw in
 /-- **Lifted CRT factored count** (paper §5.2 line 1158, applied to `[0, M)`):
 when `a·b ∣ M` with `a, b` coprime and `Pa, Pb` periodic, the joint count factors.
 
@@ -1307,6 +1357,7 @@ lemma pmodel_crt_factored_count_lifted {a b M : ℕ}
     rw [hk]; exact Nat.mul_div_cancel_left k (Nat.mul_pos ha hb)
   rw [hk_eq]
 
+omit sw in
 /-- **Paper §5.2 lines 1162-1170 — exact (no slack).**
 
 For a Finset `Q` of distinct primes whose product divides `M` (e.g. `M = primorial(P)`,
@@ -1341,7 +1392,7 @@ lemma pmodel_count_avoid_primes_eq
       obtain ⟨p, hp_prime, hp_dvd⟩ := Nat.exists_prime_and_dvd (Nat.ne_of_gt hgcd_pos)
       have hp_N : p ∣ N := hp_dvd.trans (Nat.gcd_dvd_left _ _)
       have hp_r : p ∣ r := hp_dvd.trans (Nat.gcd_dvd_right _ _)
-      rcases (Prime.dvd_finset_prod_iff hp_prime.prime _).mp hp_N with ⟨q, hq, hpq⟩
+      rcases (Prime.dvd_finsetProd_iff hp_prime.prime _).mp hp_N with ⟨q, hq, hpq⟩
       have hq_prime : q.Prime := hQ_prime q hq
       have hpq_eq : p = q := (Nat.prime_dvd_prime_iff_eq hp_prime hq_prime).mp hpq
       exact h q hq (hpq_eq ▸ hp_r)
@@ -1358,7 +1409,7 @@ lemma pmodel_count_avoid_primes_eq
   obtain ⟨k, hk⟩ := hprodQ_dvd
   have hk_pos : 0 < k := by
     by_contra hk_zero
-    push_neg at hk_zero
+    push Not at hk_zero
     interval_cases k
     rw [hk] at hMpos
     simp at hMpos
@@ -1424,6 +1475,7 @@ lemma pmodel_count_avoid_primes_eq
   push_cast
   ring
 
+omit sw in
 private lemma prod_one_sub_inv_le_exp_neg_sum (T : Finset ℕ) (hpos : ∀ q ∈ T, 0 < q) :
     (∏ q ∈ T, (1 - (1 : ℝ) / (q : ℝ))) ≤
       Real.exp (-(∑ q ∈ T, (1 : ℝ) / (q : ℝ))) := by
@@ -1451,6 +1503,7 @@ private lemma prod_one_sub_inv_le_exp_neg_sum (T : Finset ℕ) (hpos : ∀ q ∈
             ring
           rw [hterm, Finset.sum_neg_distrib]
 
+omit sw in
 private lemma prime_reciprocal_sum_eventually_ge (A : ℝ) :
     ∃ Y₀ : ℝ, 2 ≤ Y₀ ∧
       ∀ y : ℝ, Y₀ ≤ y →
@@ -1491,6 +1544,7 @@ private lemma prime_reciprocal_sum_eventually_ge (A : ℝ) :
     nlinarith [hloglog_ge, neg_abs_le M, hCdiv]
   exact hmain.trans hm_lower
 
+omit sw in
 private lemma chebyshev_stage_exponent_eventually (Cθ : ℝ) (hCθ : 0 < Cθ) :
     ∀ᶠ m : ℕ in Filter.atTop,
       Cθ * Real.exp (Real.exp (tower m / 2)) ≤ (1 / 2 : ℝ) * tower (m + 2) := by
@@ -1526,6 +1580,7 @@ private lemma chebyshev_stage_exponent_eventually (Cθ : ℝ) (hCθ : 0 < Cθ) :
       rw [hEtower]
       rfl
 
+omit sw in
 private lemma linear_le_delta_exp_half_eventually (δ : ℝ) (hδ : 0 < δ) :
     ∀ᶠ n : ℕ in Filter.atTop,
       (n : ℝ) + 2 ≤ δ * Real.exp ((n : ℝ) / 2) := by
@@ -1555,6 +1610,7 @@ private lemma linear_le_delta_exp_half_eventually (δ : ℝ) (hδ : 0 < δ) :
   have hn2 : (n : ℝ) + 2 ≤ 2 * (n : ℝ) := by nlinarith
   exact hn2.trans h2n
 
+omit sw in
 private lemma primorial_le_exp_chebyshev {Cθ : ℝ}
     (htheta : ∀ t : ℝ, 2 ≤ t →
       (∑ p ∈ Finset.filter Nat.Prime (Finset.Iic ⌊t⌋₊), Real.log (p : ℝ)) ≤
@@ -1580,6 +1636,7 @@ private lemma primorial_le_exp_chebyshev {Cθ : ℝ}
       rw [hlog]
       exact Real.exp_le_exp.mpr hthetaP
 
+omit sw in
 private lemma lowerHStageCutoff_le_exp_exp_tower {L j : ℕ}
     (hj : j ∈ Finset.range (lowerHChainLength L)) :
     (lowerHStageCutoff L j : ℝ) ≤ Real.exp (Real.exp (tower (L - 4) / 2)) := by
@@ -1607,6 +1664,7 @@ private lemma lowerHStageCutoff_le_exp_exp_tower {L j : ℕ}
     _ ≤ Real.exp (Real.exp (tower (L - 4) / 2)) := by
           gcongr
 
+omit sw in
 /-- Bridge: `Nat.card {r : Fin M // P r.val} = ((Finset.range M).filter P).card`.
 This connects the `Fin M`-subtype counting form (used in
 `lowerHStageFailureResidueProb`) with the `Finset.range M`-filter form (used in
@@ -1630,6 +1688,7 @@ lemma fin_card_subtype_eq_range_filter_card {M : ℕ} (P : ℕ → Prop)
     refine ⟨⟨v, hv.1⟩, ?_, rfl⟩
     simp [Finset.mem_filter, hv.2]
 
+omit sw in
 /-- Helper: if `lowerHSelectedSuccessors L j p r` is empty (no chosen successor),
 then no `q ∈ Q_j(p)` divides `r`. -/
 private lemma no_q_dvd_of_no_selected (L j p r : ℕ)
@@ -1644,6 +1703,7 @@ private lemma no_q_dvd_of_no_selected (L j p r : ℕ)
   · simp [hne] at hsucc
   · exact hne ⟨q, hmem⟩
 
+omit sw in
 /-- Helper: if no `q ∈ Q_j(p)` divides `r`, then no chosen successor exists. -/
 private lemma no_selected_of_no_q_dvd (L j p r : ℕ)
     (hsucc : ∀ q ∈ lowerHSuccessorCandidates L j p, ¬ q ∣ r) :
@@ -1652,10 +1712,11 @@ private lemma no_selected_of_no_q_dvd (L j p r : ℕ)
   unfold finsetLeastNat?
   have hempty : ¬ (lowerHSelectedSuccessors L j p r).Nonempty := by
     rintro ⟨q, hq⟩
-    simp [lowerHSelectedSuccessors, Finset.mem_filter] at hq
+    simp only [lowerHSelectedSuccessors, Finset.mem_filter] at hq
     exact hsucc q hq.1 hq.2
   simp [hempty]
 
+omit sw in
 /-- The bad set decomposes as a disjoint union over prime values `p`, indexed
 by an arbitrary Finset `S` of primes containing all possible `p_j(r)` values.
 The hypothesis `hS` ensures the index is large enough; in the application
@@ -1690,10 +1751,12 @@ private lemma lowerHStageFailure_finset_card_eq_sum_by_prime (L j M : ℕ)
   intro r _ ⟨hgp, _⟩ ⟨hgp', _⟩
   exact hpp' (Option.some_inj.mp (hgp.symm.trans hgp'))
 
+omit sw in
 /-- For `x ≥ 1`, `log x ≤ x - 1`. Direct from `Real.log_le_sub_one_of_pos`. -/
 private lemma log_le_sub_one {x : ℝ} (hx : 1 ≤ x) : Real.log x ≤ x - 1 :=
   Real.log_le_sub_one_of_pos (by linarith)
 
+omit sw in
 /-- For `x ≥ 1`, `2 * log x ≤ x`. Standard: log grows slower than identity.
 Proof via case analysis on x ≤ 4 (using log x ≤ x-1 and 2(x-1) ≤ x for x ≥ 2; numerical for x ≤ 2)
 and x ≥ 4 (using monotonicity). -/
@@ -1725,6 +1788,7 @@ private lemma two_log_le_self {x : ℝ} (hx : 1 ≤ x) : 2 * Real.log x ≤ x :=
     linarith
   nlinarith [h_log_sqrt]
 
+omit sw in
 /-- For `x ≥ 1`, `log x ≤ √x`. Apply `two_log_le_self` at `√x`:
 `2 log √x ≤ √x`, and `log x = 2 log √x`, so `log x ≤ √x`. -/
 private lemma log_le_sqrt {x : ℝ} (hx : 1 ≤ x) : Real.log x ≤ Real.sqrt x := by
@@ -1743,6 +1807,7 @@ private lemma log_le_sqrt {x : ℝ} (hx : 1 ≤ x) : Real.log x ≤ Real.sqrt x 
     ring
   linarith
 
+omit sw in
 /-- `exp 2 > 7`. Numerical bound from `Real.exp_one_gt_d9`. -/
 private lemma exp_two_gt_seven : (7 : ℝ) < Real.exp 2 := by
   have h_e_gt : (2.7182818283 : ℝ) < Real.exp 1 := Real.exp_one_gt_d9
@@ -1751,10 +1816,11 @@ private lemma exp_two_gt_seven : (7 : ℝ) < Real.exp 2 := by
   rw [h_exp2]
   nlinarith [Real.exp_pos 1]
 
+omit sw in
 /-- `tower 1 = exp(exp 1) > 7`. -/
 private lemma tower_one_gt_seven : (7 : ℝ) < tower 1 := by
-  show (7 : ℝ) < Real.exp (tower 0)
-  show (7 : ℝ) < Real.exp (Real.exp 1)
+  change (7 : ℝ) < Real.exp (tower 0)
+  change (7 : ℝ) < Real.exp (Real.exp 1)
   -- exp(exp 1) > exp 2 > 7 (via exp 1 > 2 and exp monotone).
   have h_e_gt_two : (2 : ℝ) < Real.exp 1 := by
     have := Real.exp_one_gt_d9; linarith
@@ -1762,6 +1828,7 @@ private lemma tower_one_gt_seven : (7 : ℝ) < tower 1 := by
     Real.exp_lt_exp.mpr h_e_gt_two
   linarith [exp_two_gt_seven]
 
+omit sw in
 /-- For `L ∈ {1, 2, 3}`, `4 log L ≤ tower 1`. Uses `log 3 < 2 log 2 < 1.4`. -/
 private lemma four_log_le_tower_one_of_le_three {L : ℝ}
     (hL_one_le : 1 ≤ L) (hL_le_three : L ≤ 3) :
@@ -1783,6 +1850,7 @@ private lemma four_log_le_tower_one_of_le_three {L : ℝ}
   have h2 : 8 * Real.log 2 < 5.6 := by linarith
   linarith [tower_one_gt_seven]
 
+omit sw in
 /-- For `L ≥ 16`, `4 log L ≤ exp(√L)`. Chain `4 log L ≤ 4 √L ≤ L ≤ exp(√L)`. -/
 private lemma four_log_le_exp_sqrt_of_ge_16 {L : ℝ} (hL : 16 ≤ L) :
     4 * Real.log L ≤ Real.exp (Real.sqrt L) := by
@@ -1807,10 +1875,11 @@ private lemma four_log_le_exp_sqrt_of_ge_16 {L : ℝ} (hL : 16 ≤ L) :
       _ ≤ Real.exp (Real.sqrt L) := Real.exp_le_exp.mpr h_log_sqrt
   linarith
 
+omit sw in
 /-- `tower 2 > 100`. Big bound for analytic uses.
 `tower 2 = exp(tower 1) > exp(7) > 100` (since exp 7 ≈ 1097). -/
 private lemma tower_two_gt_hundred : (100 : ℝ) < tower 2 := by
-  show (100 : ℝ) < Real.exp (tower 1)
+  change (100 : ℝ) < Real.exp (tower 1)
   have h_t1_gt7 : (7 : ℝ) < tower 1 := tower_one_gt_seven
   have h_exp_t1 : Real.exp 7 < Real.exp (tower 1) := Real.exp_lt_exp.mpr h_t1_gt7
   -- exp(7) > 100. Use exp(7) = exp(2) * exp(2) * exp(2) * exp(1) and bounds.
@@ -1831,6 +1900,7 @@ private lemma tower_two_gt_hundred : (100 : ℝ) < tower 2 := by
     rw [h_exp7]; linarith
   linarith
 
+omit sw in
 /-- For `4 ≤ L ≤ 15`, `4 log L ≤ tower 2`. -/
 private lemma four_log_le_tower_two_of_le_fifteen {L : ℝ}
     (hL_ge : 4 ≤ L) (hL_le : L ≤ 15) :
@@ -1856,6 +1926,7 @@ private lemma four_log_le_tower_two_of_le_fifteen {L : ℝ}
   -- 4 log L < 4 · 3 = 12 ≤ tower 2 (since tower 2 > 100)
   linarith [tower_two_gt_hundred]
 
+omit sw in
 /-- Tower lower bound: `T_m ≥ exp(m+1)` for `m ≥ 0`.
 By induction, using `tower 0 = exp 1` and `Real.add_one_le_exp`. -/
 private lemma tower_ge_exp_succ (m : ℕ) :
@@ -1863,10 +1934,10 @@ private lemma tower_ge_exp_succ (m : ℕ) :
   induction m with
   | zero =>
       simp only [Nat.cast_zero, zero_add]
-      show Real.exp 1 ≤ Real.exp 1
+      change Real.exp 1 ≤ Real.exp 1
       exact le_refl _
   | succ k ih =>
-      show Real.exp (((k + 1 : ℕ) : ℝ) + 1) ≤ Real.exp (tower k)
+      change Real.exp (((k + 1 : ℕ) : ℝ) + 1) ≤ Real.exp (tower k)
       apply Real.exp_le_exp.mpr
       push_cast
       have h := Real.add_one_le_exp ((k : ℝ) + 1)
@@ -1879,6 +1950,7 @@ primes lying below the present search interval."
 
 Formalised here as: `lowerHGreedyPrime? L · j` is periodic mod `primorial(⌊y_j⌋₊)`. -/
 
+omit sw in
 /-- **Analytic bound (paper line 1133-1141):** `exp(exp((B/2)*y_k)) ≤ y_{k+1}`.
 
 Paper: `exp(exp((B/2)y_j)) ≪ exp(exp(B y_j))/B = y_{j+1}` (eq 1136-1141).
@@ -1902,7 +1974,7 @@ private lemma exp_exp_half_le_y_succ {L k : ℕ} (hB : 2 ≤ lowerHWindowB L) :
     unfold lowerHWindowY
     rw [hm_succ]
     -- tower(m+1+1) = exp(tower(m+1)) = exp(exp(tower m))
-    show Real.exp (tower (lowerHWindowM L k + 1)) / lowerHWindowB L = _
+    change Real.exp (tower (lowerHWindowM L k + 1)) / lowerHWindowB L = _
     have htower_unfold : tower (lowerHWindowM L k + 1) =
         Real.exp (tower (lowerHWindowM L k)) := rfl
     rw [htower_unfold]
@@ -1917,7 +1989,7 @@ private lemma exp_exp_half_le_y_succ {L k : ℕ} (hB : 2 ≤ lowerHWindowB L) :
   set yk := lowerHWindowY L k
   set BL := lowerHWindowB L
   have hBy_eq : BL * yk = tower (lowerHWindowM L k) := by
-    show lowerHWindowB L * lowerHWindowY L k = tower (lowerHWindowM L k)
+    change lowerHWindowB L * lowerHWindowY L k = tower (lowerHWindowM L k)
     unfold lowerHWindowY
     rw [mul_div_cancel₀ _ hB_ne]
   have hBhalf_yk : (BL / 2) * yk = tower (lowerHWindowM L k) / 2 := by
@@ -1928,7 +2000,7 @@ private lemma exp_exp_half_le_y_succ {L k : ℕ} (hB : 2 ≤ lowerHWindowB L) :
   set t := tower (lowerHWindowM L k) with ht_def
   -- Step 2: t ≥ T_0 = exp(1).
   have ht_ge_e : Real.exp 1 ≤ t := by
-    show tower 0 ≤ tower (lowerHWindowM L k)
+    change tower 0 ≤ tower (lowerHWindowM L k)
     exact (strictMono_nat_of_lt_succ tower_lt_succ).monotone (Nat.zero_le _)
   -- Step 3: t/2 ≥ exp(1)/2 ≈ 1.36 ≥ log 2 ≈ 0.69.
   have ht_half_ge : Real.exp 1 / 2 ≤ t / 2 := by linarith
@@ -1963,7 +2035,8 @@ private lemma exp_exp_half_le_y_succ {L k : ℕ} (hB : 2 ≤ lowerHWindowB L) :
   -- Key inequality: For L ≥ 1, exp(√L) ≥ 4 log L. (Holds: at L=1, 0 ≤ exp(1) = e ≥ 0;
   -- at L=4, 4 log 4 ≈ 5.55 ≤ exp(2) ≈ 7.39; at L=100, 4 log 100 ≈ 18.4 ≤ exp(10) ≈ 22026.)
   --
-  -- We further reduce to: (a) log L ≤ √L (log grows slower than sqrt), (b) 4 ≤ exp(√L)/√L for √L ≥ 1.
+  -- We further reduce to: (a) log L ≤ √L (log grows slower than sqrt), (b) 4 ≤ exp(√L)/√L
+  -- for √L ≥ 1.
   --
   -- Standard chain: log L ≤ L - 1 ≤ L ≤ √L · √L. For √L ≥ 4, log L ≤ √L · √L ≤ √L · exp(√L)/4
   --   (using exp(x) ≥ 4 for x ≥ log 4 ≈ 1.39). So 4 log L ≤ exp(√L).
@@ -1973,7 +2046,7 @@ private lemma exp_exp_half_le_y_succ {L k : ℕ} (hB : 2 ≤ lowerHWindowB L) :
     -- B = L^2 ≥ 2, so L^2 ≥ 2, hence L ≥ √2 > 1
     have : 2 ≤ (L : ℝ)^2 := by
       have := hB
-      show 2 ≤ lowerHWindowB L
+      change 2 ≤ lowerHWindowB L
       exact this
     have hL_sq_ge : (L : ℝ)^2 ≥ 2 := this
     have : (L : ℝ) ≥ 0 := Nat.cast_nonneg L
@@ -1983,7 +2056,7 @@ private lemma exp_exp_half_le_y_succ {L k : ℕ} (hB : 2 ≤ lowerHWindowB L) :
     have ht_half_le_exp : t / 2 ≤ Real.exp (t / 2) := by
       have := Real.add_one_le_exp (t / 2); linarith
     apply le_trans _ ht_half_le_exp
-    have hBL_eq : BL = (L : ℝ)^2 := by show lowerHWindowB L = (L : ℝ)^2; rfl
+    have hBL_eq : BL = (L : ℝ)^2 := by change lowerHWindowB L = (L : ℝ)^2; rfl
     rw [hBL_eq]
     rw [Real.log_pow]
     push_cast
@@ -2004,7 +2077,7 @@ private lemma exp_exp_half_le_y_succ {L k : ℕ} (hB : 2 ≤ lowerHWindowB L) :
       have h_t1_le_t : tower 1 ≤ t :=
         (strictMono_nat_of_lt_succ tower_lt_succ).monotone hmk_ge_one
       linarith
-    · push_neg at hL_le_3
+    · push Not at hL_le_3
       by_cases hL_le_15 : L ≤ 15
       · -- 4 ≤ L ≤ 15: 4 log L ≤ tower 2 ≤ t (via m_k ≥ 2)
         have hL_real_ge_4 : (4 : ℝ) ≤ (L : ℝ) := by exact_mod_cast hL_le_3
@@ -2022,7 +2095,7 @@ private lemma exp_exp_half_le_y_succ {L k : ℕ} (hB : 2 ≤ lowerHWindowB L) :
           (strictMono_nat_of_lt_succ tower_lt_succ).monotone hmk_ge_two
         linarith
       · -- L ≥ 16: 4 log L ≤ exp(√L) ≤ exp(m_k + 1) ≤ tower m_k = t
-        push_neg at hL_le_15
+        push Not at hL_le_15
         have hL_real_ge_16 : (16 : ℝ) ≤ (L : ℝ) := by exact_mod_cast hL_le_15
         have h1 := four_log_le_exp_sqrt_of_ge_16 hL_real_ge_16
         have h_floor_lt : Real.sqrt L < (⌊Real.sqrt L⌋₊ : ℝ) + 1 := Nat.lt_floor_add_one _
@@ -2049,6 +2122,7 @@ private lemma exp_exp_half_le_y_succ {L k : ℕ} (hB : 2 ≤ lowerHWindowB L) :
       Real.exp (Real.log BL + Real.exp (t / 2)) from by rw [← Real.exp_add]]
   exact Real.exp_le_exp.mpr hsum_ineq
 
+omit sw in
 /-- **Successor candidate bound (paper line 1133):** `q ∈ Q_k(p) → q ≤ ⌊y_{k+1}⌋₊`. -/
 private lemma lowerHSuccessorCandidate_le_y_succ_floor
     {L k p q : ℕ} (hB : 2 ≤ lowerHWindowB L)
@@ -2062,6 +2136,7 @@ private lemma lowerHSuccessorCandidate_le_y_succ_floor
   -- ⌊exp(exp((B/2)*y_k))⌋₊ ≤ ⌊y_{k+1}⌋₊ via the analytic bound
   exact hq_le_cand.trans (Nat.floor_le_floor (exp_exp_half_le_y_succ hB))
 
+omit sw in
 /-- y_k is monotone in k (since m_k = m_0 + 2k is monotone and tower is monotone). -/
 private lemma lowerHWindowY_mono_k {L : ℕ} (hB : 2 ≤ lowerHWindowB L)
     {k k' : ℕ} (hkk' : k ≤ k') :
@@ -2074,12 +2149,14 @@ private lemma lowerHWindowY_mono_k {L : ℕ} (hB : 2 ≤ lowerHWindowB L)
     (strictMono_nat_of_lt_succ tower_lt_succ).monotone hm_le
   exact div_le_div_of_nonneg_right htower_le hB_pos.le
 
+omit sw in
 /-- ⌊y_k⌋₊ is monotone in k. -/
 private lemma lowerHWindowY_floor_mono_k {L : ℕ} (hB : 2 ≤ lowerHWindowB L)
     {k k' : ℕ} (hkk' : k ≤ k') :
     ⌊lowerHWindowY L k⌋₊ ≤ ⌊lowerHWindowY L k'⌋₊ :=
   Nat.floor_le_floor (lowerHWindowY_mono_k hB hkk')
 
+omit sw in
 /-- **Successor candidate bounded by `⌊y_j⌋₊`** when `k+1 ≤ j` (paper line 1124-1128). -/
 private lemma lowerHSuccessorCandidate_le_y_j_floor
     {L k j p q : ℕ} (hB : 2 ≤ lowerHWindowB L) (hkj : k + 1 ≤ j)
@@ -2088,6 +2165,7 @@ private lemma lowerHSuccessorCandidate_le_y_j_floor
   (lowerHSuccessorCandidate_le_y_succ_floor hB hq).trans
     (lowerHWindowY_floor_mono_k hB hkj)
 
+omit sw in
 /-- **Initial selected prime bounded by `⌊y_j⌋₊`** (paper line 1124-1125). -/
 private lemma lowerHInitialSelectedPrime_le_y_j_floor
     {L j n q : ℕ} (hB : 2 ≤ lowerHWindowB L)
@@ -2097,6 +2175,7 @@ private lemma lowerHInitialSelectedPrime_le_y_j_floor
   simp only [Finset.mem_filter, Finset.mem_Iic] at hq
   exact hq.1.trans (lowerHWindowY_floor_mono_k hB (Nat.zero_le j))
 
+omit sw in
 /-- **Tighter periodicity for initial primes** (using `⌊y_j⌋₊` modulus). -/
 private lemma lowerHInitialSelectedPrimes_eq_of_mod_y_j_floor
     {L j n n' : ℕ} (hB : 2 ≤ lowerHWindowB L)
@@ -2126,6 +2205,7 @@ private lemma lowerHInitialSelectedPrimes_eq_of_mod_y_j_floor
     have hqle := lowerHInitialSelectedPrime_le_y_j_floor (j := j) hB hqmem
     exact ⟨hqfloor, hqprime, (dvd_iff_of_mod_primorial_eq hqprime hqle hmod).mpr hqdiv, hqY⟩
 
+omit sw in
 /-- **Tighter periodicity for selected successors** (using `⌊y_j⌋₊` modulus). -/
 private lemma lowerHSelectedSuccessors_eq_of_mod_y_j_floor
     {L k j p n n' : ℕ} (hB : 2 ≤ lowerHWindowB L) (hkj : k + 1 ≤ j)
@@ -2159,6 +2239,7 @@ private lemma lowerHSelectedSuccessors_eq_of_mod_y_j_floor
       (p := p) hB hkj hqcand
     exact ⟨hqcand, (dvd_iff_of_mod_primorial_eq hqprime hqle hmod).mpr hqdiv⟩
 
+omit sw in
 /-- **Paper §5.2 line 1142:** every chain prime `p_j` (returned by
 `lowerHGreedyPrime?`) is bounded by `⌊y_j⌋₊`.
 
@@ -2188,6 +2269,7 @@ private lemma lowerHGreedyPrime?_le_y_j_floor
       have hp_in_cand : p ∈ lowerHSuccessorCandidates L k p_prev := hp_mem.1
       exact lowerHSuccessorCandidate_le_y_succ_floor hB hp_in_cand
 
+omit sw in
 /-- **Phase 1D — paper line 1156:** `lowerHGreedyPrime? L · k` for `k ≤ j` is
 periodic modulo `primorial(⌊y_j⌋₊)`. -/
 private lemma lowerHGreedyPrime?_eq_of_mod_y_j_floor {L j k n n' : ℕ}
@@ -2208,6 +2290,7 @@ private lemma lowerHGreedyPrime?_eq_of_mod_y_j_floor {L j k n n' : ℕ}
           simp [lowerHSelectedSuccessors_eq_of_mod_y_j_floor (L := L) (k := k) (j := j)
             (p := p) hB hkj hmod]
 
+omit sw in
 /-- **Paper §5.2 line 1146 ("for L large"):** `lowerHWindowY L j → ∞` as `L → ∞`.
 
 Proof chain:
@@ -2276,7 +2359,7 @@ private lemma lowerHWindowY_tendsto_atTop (j : ℕ) :
       rw [Real.exp_add]; ring
     rw [hexp_split] at htower_ge'
     -- Now: lowerHWindowY = tower / lowerHWindowB = tower / L²
-    show Real.exp (2 * j) * (Real.exp (Real.sqrt L) / (L : ℝ)^2) ≤
+    change Real.exp (2 * j) * (Real.exp (Real.sqrt L) / (L : ℝ)^2) ≤
          tower (lowerHWindowM L j) / lowerHWindowB L
     have hB_eq : lowerHWindowB L = (L : ℝ)^2 := rfl
     rw [hB_eq]
@@ -2287,6 +2370,7 @@ private lemma lowerHWindowY_tendsto_atTop (j : ℕ) :
   refine Filter.tendsto_atTop_mono' Filter.atTop ?_ hexp_2j_L2
   exact Filter.eventually_atTop.mpr ⟨1, hbound⟩
 
+omit sw in
 /-- For any threshold `y₀`, eventually `y_j ≥ y₀` as `L → ∞`. Direct application of
 `lowerHWindowY_tendsto_atTop`. -/
 private lemma lowerHWindowY_eventually_ge (j : ℕ) (y₀ : ℝ) :
@@ -2304,7 +2388,7 @@ private lemma lowerHWindowY_eventually_ge (j : ℕ) (y₀ : ℝ) :
 `hyj_thresh` encodes paper line 1146's "for L large" condition. -/
 private lemma stage_h_pmodel_failure_prob (j L : ℕ)
     (hB : 2 ≤ lowerHWindowB L)
-    (hyj_thresh : Classical.choose (prime_successor_mass 2 (by norm_num : (2:ℝ) ≤ 2))
+    (hyj_thresh : Classical.choose (prime_successor_mass 2 (by norm_num : (2 : ℝ) ≤ 2))
                   ≤ lowerHWindowY L j) :
     lowerHStageFailureResidueProb L j ≤ Real.exp (-(lowerHWindowB L) / 8) := by
   classical
@@ -2342,7 +2426,7 @@ private lemma stage_h_pmodel_failure_prob (j L : ℕ)
   have ha_pos : 0 < a := primorial_pos _
   -- ⌊y_j⌋₊ ≤ stage_cut (already proven inline below)
   have hyj_floor_le_cut : yj_floor ≤ stage_cut := by
-    show ⌊yj⌋₊ ≤ lowerHStageCutoff L j
+    change ⌊yj⌋₊ ≤ lowerHStageCutoff L j
     unfold lowerHStageCutoff
     apply Nat.floor_le_floor
     unfold lowerHWindowY
@@ -2363,7 +2447,7 @@ private lemma stage_h_pmodel_failure_prob (j L : ℕ)
                 have hB_half : 1 ≤ lowerHWindowB L / 2 := by linarith
                 nlinarith [hyj_nn, hB_half]
   have ha_dvd_M : a ∣ M := by
-    show primorial yj_floor ∣ primorial stage_cut
+    change primorial yj_floor ∣ primorial stage_cut
     -- primorial(a) | primorial(b) when a ≤ b
     apply Finset.prod_dvd_prod_of_subset
     intro p hp
@@ -2424,7 +2508,7 @@ private lemma stage_h_pmodel_failure_prob (j L : ℕ)
           have := Real.add_one_le_exp (Real.exp (lowerHWindowY L j))
           linarith)
       have hfloor_le : (yj_floor_for_S : ℝ) ≤ lowerHWindowY L j := by
-        show (⌊lowerHWindowY L j⌋₊ : ℝ) ≤ lowerHWindowY L j
+        change (⌊lowerHWindowY L j⌋₊ : ℝ) ≤ lowerHWindowY L j
         exact Nat.floor_le hyj_nn
       linarith
     -- Q-primes are > yj_floor (Nat version)
@@ -2454,7 +2538,7 @@ private lemma stage_h_pmodel_failure_prob (j L : ℕ)
     -- a · b ∣ M: a ∣ M (proven), b ∣ M (Q ⊆ primes ≤ stage_cut), coprime ⟹ product ∣ M.
     have hb_dvd_M : b ∣ M := by
       rw [hb_def]
-      show (∏ q ∈ Q, q) ∣ primorial stage_cut
+      change (∏ q ∈ Q, q) ∣ primorial stage_cut
       unfold primorial
       apply Finset.prod_dvd_prod_of_subset
       intro q hq
@@ -2463,7 +2547,7 @@ private lemma stage_h_pmodel_failure_prob (j L : ℕ)
       simp only [Finset.mem_filter, Finset.mem_Iic]
       refine ⟨?_, hq.2.1⟩
       -- q ≤ stage_cut: q ≤ ⌊exp(exp((B/2)*y_j))⌋₊ = stage_cut
-      show q ≤ lowerHStageCutoff L j
+      change q ≤ lowerHStageCutoff L j
       unfold lowerHStageCutoff
       exact hq.1
     have hab_dvd : a * b ∣ M := (Nat.Coprime.mul_dvd_of_dvd_of_dvd hcop ha_dvd_M hb_dvd_M)
@@ -2521,7 +2605,8 @@ private lemma stage_h_pmodel_failure_prob (j L : ℕ)
       exact Nat.mul_div_cancel_left k' (Nat.mul_pos ha_pos hb_pos)
     -- Combine: card{Pa ∧ Pb in [0, M)} = (M/(a·b)) · card{Pa in a} · card{Pb in b}.
     -- Show: (M/(a·b)) · card{Pa in a} = card{Pa in [0, M)} / b.
-    -- (M/(a·b)) · card{Pa in a} = (M/(a·b)) · ((M/a)/(M/a)) ·  card{Pa in a} = ((M/a)/b) · ((M/a) · card{Pa in a}/M) · (M)
+    -- (M/(a·b)) · card{Pa in a} = (M/(a·b)) · ((M/a)/(M/a)) ·  card{Pa in a} = ((M/a)/b)
+    -- · ((M/a) · card{Pa in a}/M) · (M)
     --
     -- Cleaner: card{Pa ∧ Pb in [0, M)} = (M/(a·b)) · card{Pa in a} · b · ∏(1-1/q)
     --                                  = (M·b/(a·b)) · card{Pa in a} · ∏(1-1/q)
@@ -2536,7 +2621,8 @@ private lemma stage_h_pmodel_failure_prob (j L : ℕ)
     push_cast
     rw [hPb_count]
     rw [show (((Finset.range M).filter (fun r => lowerHGreedyPrime? L r j = some p)).card : ℝ) =
-        ((k * ((Finset.range a).filter (fun r => lowerHGreedyPrime? L r j = some p)).card : ℕ) : ℝ) from by
+        ((k * ((Finset.range a).filter
+          (fun r => lowerHGreedyPrime? L r j = some p)).card : ℕ) : ℝ) from by
       exact_mod_cast hPa_block]
     push_cast
     -- Goal: (M/(a·b)) · card{Pa in a} · (b · ∏(1-1/q)) = (k · card{Pa in a}) · ∏(1-1/q)
@@ -2564,32 +2650,32 @@ private lemma stage_h_pmodel_failure_prob (j L : ℕ)
       exact hp.1
     -- Real version: p ≤ y_j
     have hyj_nn : 0 ≤ yj := by
-      show 0 ≤ lowerHWindowY L j
+      change 0 ≤ lowerHWindowY L j
       unfold lowerHWindowY
       have hB_pos : 0 < lowerHWindowB L := by linarith
       exact div_nonneg (tower_pos _).le hB_pos.le
     have hp_le_yj_real : (p : ℝ) ≤ yj := by
       have h1 : (p : ℝ) ≤ (yj_floor_for_S : ℝ) := by exact_mod_cast hp_le_yj_floor_nat
       have h2 : (yj_floor_for_S : ℝ) ≤ yj := by
-        show (⌊yj⌋₊ : ℝ) ≤ yj
+        change (⌊yj⌋₊ : ℝ) ≤ yj
         exact Nat.floor_le hyj_nn
       linarith
     -- B ≥ 4 (since B = L² ≥ 2 with L Nat ⟹ L ≥ 2 ⟹ B ≥ 4)
     have hB_ge_4 : (4 : ℝ) ≤ lowerHWindowB L := by
       have h_sq : (2 : ℝ) ≤ (L : ℝ)^2 := by
-        have := hB; show (2 : ℝ) ≤ (L : ℝ)^2; exact this
+        have := hB; change (2 : ℝ) ≤ (L : ℝ)^2; exact this
       have hL_nat : 2 ≤ L := by
         by_contra hLlt
-        push_neg at hLlt
+        push Not at hLlt
         interval_cases L
         · norm_num at h_sq
         · norm_num at h_sq
       have hL_real : (2 : ℝ) ≤ L := by exact_mod_cast hL_nat
-      show (4 : ℝ) ≤ (L : ℝ)^2
+      change (4 : ℝ) ≤ (L : ℝ)^2
       nlinarith
     -- Apply prime_successor_mass with B' = 2.
     -- Use `Classical.choose_spec` to extract the y₀ matching `hyj_thresh`.
-    set pm := prime_successor_mass 2 (by norm_num : (2:ℝ) ≤ 2) with hpm_def
+    set pm := prime_successor_mass 2 (by norm_num : (2 : ℝ) ≤ 2) with hpm_def
     set y₀ := Classical.choose pm with hy₀_def
     have hy₀_spec := Classical.choose_spec pm
     obtain ⟨hy₀_pos, hmass⟩ := hy₀_spec
@@ -2717,7 +2803,7 @@ private lemma stage_failure_density_h_uniform :
   classical
   rcases eventually_logStar_ge 2 with ⟨N₁, hN₁⟩
   -- Paper line 1146 "for L large": uniform threshold via y_0 (since y_j ≥ y_0).
-  set y₀ := Classical.choose (prime_successor_mass 2 (by norm_num : (2:ℝ) ≤ 2)) with hy₀_def
+  set y₀ := Classical.choose (prime_successor_mass 2 (by norm_num : (2 : ℝ) ≤ 2)) with hy₀_def
   rcases lowerHWindowY_eventually_ge 0 y₀ with ⟨N_y, hN_y⟩
   rcases eventually_logStar_ge N_y with ⟨N₂, hN₂⟩
   let N := max N₁ N₂
@@ -2797,6 +2883,7 @@ private lemma stage_failure_density_h_uniform :
       Real.exp (-B / 8) * x + (M : ℝ) + ηerr * x
   linarith
 
+omit sw in
 private lemma stage_failure_sum_from_uniform_bound {x ηstep : ℝ}
     (hbound : ∀ j : ℕ,
       let L := logStar x
@@ -2837,6 +2924,7 @@ private lemma stage_failure_sum_from_uniform_bound {x ηstep : ℝ}
         simp [Finset.sum_add_distrib, Finset.sum_const, nsmul_eq_mul]
         ring
 
+omit sw in
 private lemma stage_failure_exp_sum_small :
     ∀ η : ℝ, 0 < η →
       ∃ x₀ : ℝ, 0 < x₀ ∧
@@ -2910,6 +2998,7 @@ private lemma stage_failure_exp_sum_small :
       ring
     _ ≤ (η / 3) * x := by gcongr
 
+omit sw in
 private lemma stage_failure_eta_sum_small {x η : ℝ} (hη : 0 < η) (hx_nonneg : 0 ≤ x) :
     let L := logStar x
     let R := lowerHChainLength L
@@ -2930,6 +3019,7 @@ private lemma stage_failure_eta_sum_small {x η : ℝ} (hη : 0 < η) (hx_nonneg
       gcongr
     _ = η / 3 * x := by ring
 
+omit sw in
 private lemma lemma_initial_failure_decay :
     ∀ δ : ℝ, 0 < δ →
       ∃ x₀ : ℝ, 0 < x₀ ∧
@@ -3002,7 +3092,7 @@ private lemma lemma_initial_failure_decay :
     rcases Nat.Prime.not_coprime_iff_dvd.mp hcop with ⟨p, hp, hpM, hpn⟩
     have hp_mem : p ∈ T₀ := by
       dsimp [M₀, primorial] at hpM
-      rcases (Prime.dvd_finset_prod_iff hp.prime (fun q : ℕ => q)).mp hpM with
+      rcases (Prime.dvd_finsetProd_iff hp.prime (fun q : ℕ => q)).mp hpM with
         ⟨q, hq, hpq⟩
       have hqprime : q.Prime := (Finset.mem_filter.mp hq).2
       have hpq_eq : p = q := (Nat.prime_dvd_prime_iff_eq hp hqprime).mp hpq
@@ -3049,6 +3139,7 @@ private lemma lemma_initial_failure_decay :
     _ ≤ δ * x := by
       nlinarith
 
+omit sw in
 private lemma lemma_primorial_sum_small :
     ∀ δ : ℝ, 0 < δ →
       ∃ x₀ : ℝ, 0 < x₀ ∧
@@ -3360,7 +3451,7 @@ private lemma good_lower_prime_chains_from_stage_sums :
   intro ε hε hε_lt
   rcases lowerHChainLength_eventually_ge ε hε hε_lt with ⟨L₀, hL₀⟩
   unfold almostAll
-  rw [NormedAddCommGroup.tendsto_nhds_zero]
+  rw [NormedAddGroup.tendsto_nhds_zero]
   intro δ hδ
   have hη : 0 < δ / 3 := by positivity
   rcases stage_failure_sum_h (δ / 3) hη with ⟨xsum, hxsum_pos, hsum⟩

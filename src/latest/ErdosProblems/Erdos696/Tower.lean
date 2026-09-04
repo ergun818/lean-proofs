@@ -35,7 +35,7 @@ lemma log_tower_succ (m : ℕ) :
     Real.log (tower (m + 1)) = tower m := by
   -- `tower (m+1) = exp (tower m)` by definition;
   -- then `log (exp x) = x` for any real `x`.
-  show Real.log (Real.exp (tower m)) = tower m
+  change Real.log (Real.exp (tower m)) = tower m
   exact Real.log_exp _
 
 /-- The tower is strictly positive: `T_m > 0`. -/
@@ -43,30 +43,28 @@ lemma tower_pos (m : ℕ) : 0 < tower m := by
   induction m with
   | zero =>
       -- `tower 0 = exp 1 > 0`.
-      show 0 < Real.exp 1
+      change 0 < Real.exp 1
       exact Real.exp_pos 1
   | succ m _ =>
       -- `tower (m+1) = exp (tower m) > 0`.
-      show 0 < Real.exp (tower m)
+      change 0 < Real.exp (tower m)
       exact Real.exp_pos _
 
 /-- Auxiliary lemma: every value in the tower satisfies `T_m ≥ 1`. -/
 lemma one_le_tower (m : ℕ) : 1 ≤ tower m := by
   induction m with
   | zero =>
-      show (1 : ℝ) ≤ Real.exp 1
-      have : Real.exp 0 ≤ Real.exp 1 :=
-        Real.exp_le_exp.mpr (by norm_num)
-      simpa [Real.exp_zero] using this
+      change (1 : ℝ) ≤ Real.exp 1
+      simp
   | succ m ih =>
-      show (1 : ℝ) ≤ Real.exp (tower m)
+      change (1 : ℝ) ≤ Real.exp (tower m)
       have : Real.exp 0 ≤ Real.exp (tower m) :=
         Real.exp_le_exp.mpr (le_trans (by norm_num : (0 : ℝ) ≤ 1) ih)
       simpa [Real.exp_zero] using this
 
 /-- The tower is strictly monotonic: `T_m < T_{m+1}`. -/
 lemma tower_lt_succ (m : ℕ) : tower m < tower (m + 1) := by
-  show tower m < Real.exp (tower m)
+  change tower m < Real.exp (tower m)
   have h1 : tower m + 1 ≤ Real.exp (tower m) := Real.add_one_le_exp _
   linarith
 
@@ -75,8 +73,7 @@ lemma tower_ge (m : ℕ) : (m : ℝ) + 1 ≤ tower m := by
   induction m with
   | zero =>
       -- tower 0 = exp 1, and exp 1 ≥ 1 = 0 + 1
-      have h1 : Real.exp 0 ≤ Real.exp 1 := Real.exp_le_exp.mpr (by norm_num)
-      have h2 : (1 : ℝ) ≤ Real.exp 1 := by simpa [Real.exp_zero] using h1
+      have h2 : (1 : ℝ) ≤ Real.exp 1 := by simp
       simp only [Nat.cast_zero, zero_add]
       exact h2
   | succ k ih =>
@@ -101,7 +98,7 @@ lemma tower_tendsto_atTop :
 lemma log_Um_succ (m : ℕ) :
     Real.log (Um (m + 1)) = 3 * tower m := by
   -- `log (T_{m+1}^3) = 3 log T_{m+1} = 3 T_m`.
-  show Real.log ((tower (m+1)) ^ 3) = 3 * tower m
+  change Real.log ((tower (m+1)) ^ 3) = 3 * tower m
   rw [Real.log_pow, log_tower_succ]
   ring
 

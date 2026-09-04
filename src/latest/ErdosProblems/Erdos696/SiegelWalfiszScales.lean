@@ -53,7 +53,7 @@ lemma eventually_log_rpow_le_sqrt (A : ℝ) :
 /-- A pointwise exponential error remains of the same shape after taking
 the maximum over all smaller endpoints. -/
 lemma swError_le_of_sqrt_le {x y c d : ℝ}
-    (hx : 0 < x) (hy : 0 < y) (hlog : 0 ≤ Real.log x)
+    (hx : 0 < x) (_ : 0 < y) (hlog : 0 ≤ Real.log x)
     (hys : Real.sqrt x ≤ y) (hyx : y ≤ x) (hd : 0 ≤ d) (hcd : c ≤ d / 2) :
     swError d y ≤ swError c x := by
   have hlogxy : Real.log x / 2 ≤ Real.log y := by

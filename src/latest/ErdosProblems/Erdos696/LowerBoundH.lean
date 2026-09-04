@@ -44,6 +44,7 @@ to `composite_successor` and `crt_transfer` is straightforward.
 
 open Real
 
+omit sw in
 /-- **Lemma 7.2 (scale property for `H`).**
 
 For all sufficiently large `L` and all `1 ≤ j < R`,
@@ -98,6 +99,7 @@ lemma scale_H (A B : ℝ) (hA : 0 < A) (hAB : A + 10 ≤ B) :
     _ ≤ Real.exp (tower m) := by
       exact Real.exp_le_exp.mpr hlin
 
+omit sw in
 /-- **Strong form of scale_H (paper line 1853 verbatim)**: for `m` sufficiently large,
 `exp(y_m^A) ≤ y_{m+1}` (where `y_m := exp(T_m/B)`).
 
@@ -138,6 +140,7 @@ private lemma scale_H_strong (A B : ℝ) (hA : 0 < A) (hAB : A + 10 ≤ B) :
       rw [Real.exp_add]
     _ ≤ Real.exp (tower m) := Real.exp_le_exp.mpr hlin
 
+omit sw in
 private lemma greedy_H_chain_large_epsilon :
     ∀ ε : ℝ, 1 ≤ ε →
       almostAll (fun n => (HChain n : ℝ) ≥ (1 - ε) * (logStar n : ℝ)) := by
@@ -155,6 +158,7 @@ private lemma greedy_H_chain_large_epsilon :
 private def HasDivisorChainLengthAtLeast (R n : ℕ) : Prop :=
   ∃ ds : List ℕ, IsDivisorChain n ds ∧ R ≤ ds.length
 
+omit sw in
 private lemma divisorChain_length_le_self {n : ℕ} (hn : n ≠ 0) {ds : List ℕ}
     (hds : IsDivisorChain n ds) : ds.length ≤ n := by
   rcases hds with ⟨hdiv, hpair, _hmod⟩
@@ -168,6 +172,7 @@ private lemma divisorChain_length_le_self {n : ℕ} (hn : n ≠ 0) {ds : List �
         ⟨(hdiv d hd).1, Nat.le_of_dvd (Nat.pos_of_ne_zero hn) (hdiv d hd).2⟩)
   exact (Finset.card_le_card hsub).trans (by simp)
 
+omit sw in
 private lemma HChain_ge_of_hasDivisorChainLengthAtLeast {R n : ℕ} (hn : n ≠ 0)
     (hn1 : n ≠ 1) (hR : HasDivisorChainLengthAtLeast R n) : R ≤ HChain n := by
   rcases hR with ⟨ds, hds, hRle⟩
@@ -189,6 +194,7 @@ private def GoodLowerDivisorChain (ε : ℝ) (n : ℕ) : Prop :=
   ∃ R : ℕ, n ≠ 0 ∧ HasDivisorChainLengthAtLeast R n ∧
     (1 - ε) * (logStar (n : ℝ) : ℝ) ≤ (R : ℝ)
 
+omit sw in
 private lemma lower_bound_of_good_divisor_chain {ε : ℝ} {n : ℕ}
     (hgood : GoodLowerDivisorChain ε n) :
     (HChain n : ℝ) ≥ (1 - ε) * (logStar (n : ℝ) : ℝ) := by
@@ -198,13 +204,11 @@ private lemma lower_bound_of_good_divisor_chain {ε : ℝ} {n : ℕ}
     subst hn1
     have h_logStar_zero : logStar ((1 : ℕ) : ℝ) = 0 := by
       classical
-      have h_one_le_exp : (1 : ℝ) ≤ Real.exp 1 := by
-        have := Real.exp_one_gt_d9; linarith
       have hex : ∃ k : ℕ, iteratedLog k ((1 : ℕ) : ℝ) ≤ Real.exp 1 :=
         ⟨0, by simp [iteratedLog]⟩
       unfold logStar
       rw [dif_pos hex, Nat.find_eq_zero]
-      simpa [iteratedLog] using h_one_le_exp
+      simp [iteratedLog]
     have hgoal : (1 - ε) * ((logStar ((1 : ℕ) : ℝ) : ℝ)) = 0 := by
       rw [h_logStar_zero]; push_cast; ring
     have hHC_nn : (0 : ℝ) ≤ ((HChain 1 : ℕ) : ℝ) := by exact_mod_cast Nat.zero_le _
@@ -213,6 +217,7 @@ private lemma lower_bound_of_good_divisor_chain {ε : ℝ} {n : ℕ}
   have hreal : (R : ℝ) ≤ (HChain n : ℝ) := by exact_mod_cast hnat
   exact hR.trans hreal
 
+omit sw in
 private lemma lower_bound_from_good_divisor_chains {ε : ℝ}
     (hgood : almostAll (GoodLowerDivisorChain ε)) :
     almostAll (fun n => (HChain n : ℝ) ≥ (1 - ε) * (logStar n : ℝ)) :=
@@ -271,6 +276,7 @@ private def HChainEvent (A B : ℝ) (m₀ R : ℕ) (n : ℕ) : Prop :=
         (p : ℝ) ≤ Real.exp ((Real.exp (tower (m₀ + k) / B)) ^ (A - 1))) ∧
       (ds.get ⟨k, hk⟩ : ℝ) ≤ Real.exp ((Real.exp (tower (m₀ + k) / B)) ^ A)
 
+omit sw in
 /-- A squarefree natural number with all prime factors `≤ P` divides `primorial P`. -/
 private lemma squarefree_dvd_primorial_of_primeFactors_le {d P : ℕ}
     (hd_sqf : Squarefree d) (hd_primes : ∀ p ∈ Nat.primeFactors d, p ≤ P) :
@@ -286,6 +292,7 @@ private lemma squarefree_dvd_primorial_of_primeFactors_le {d P : ℕ}
   rw [Finset.mem_filter, Finset.mem_Iic]
   exact ⟨hd_primes p hp, Nat.prime_of_mem_primeFactors hp⟩
 
+omit sw in
 /-- Paper §7.4 line 2031-2045: `HChainEvent` is `M`-periodic for
 `M = primorial(P)`, where `P` bounds every prime used in any chain element.
 
@@ -334,6 +341,7 @@ private lemma HChainEvent_periodic (A B : ℝ) (m₀ R : ℕ) (P : ℕ)
              exact (hmodeq.symm.dvd_iff hd_dvd_M).mp h_old
   }
 
+omit sw in
 /-- Companion to `HChainEvent_density_via_crt` for the BAD event: density of
 `¬HChainEvent` is within `M/x` of some `q_prod`.  By `crt_transfer` applied to
 the (also `M`-periodic) negation. -/
@@ -349,6 +357,7 @@ private lemma HChainEvent_complement_density_via_crt (A B : ℝ) (m₀ R : ℕ) 
   have h := HChainEvent_periodic A B m₀ R P hP_bound n n' hmod
   exact not_iff_not.mpr h
 
+omit sw in
 /-- Periodicity form `∀ n, E n ↔ E (n % M)`, derived from
 `HChainEvent_periodic`'s pairwise form. -/
 private lemma HChainEvent_periodic_alt (A B : ℝ) (m₀ R : ℕ) (P : ℕ)
@@ -358,6 +367,7 @@ private lemma HChainEvent_periodic_alt (A B : ℝ) (m₀ R : ℕ) (P : ℕ)
   apply HChainEvent_periodic A B m₀ R P hP_bound
   rw [Nat.mod_mod]
 
+omit sw in
 /-- The `q_prod` from `crt_transfer` applied to the BAD event equals the residue
 density of `¬HChainEvent` mod `primorial P` (i.e., the count of bad residues
 divided by `primorial P`).
@@ -391,7 +401,8 @@ private lemma HChainEvent_q_prod_eq_residue_density
     intro n
     exact not_iff_not.mpr (HChainEvent_periodic_alt A B m₀ R P hP_bound n)
   -- By periodic_count_le, |bad_count - rd · ⌊x⌋| ≤ M for x ≥ 1.
-  -- Hence |bad_count/x - rd · (⌊x⌋/x)| ≤ M/x, and ⌊x⌋/x ≤ 1, so |bad_count/x - rd| ≤ 2M/x for x ≥ 1.
+  -- Hence |bad_count/x - rd · (⌊x⌋/x)| ≤ M/x, and ⌊x⌋/x ≤ 1, so |bad_count/x - rd| ≤ 2M/x
+  -- for x ≥ 1.
   have h_count_density : ∀ x : ℝ, 1 ≤ x →
       |((Nat.card {n : ℕ | n ≤ ⌊x⌋₊ ∧ ¬ HChainEvent A B m₀ R n} : ℝ)) / x - rd| ≤
         2 * (M : ℝ) / x := by
@@ -519,8 +530,7 @@ private lemma HChainEvent_q_prod_eq_residue_density
         rw [show (1 : ℝ) = (M : ℝ) / (M : ℝ) from (div_self hMpos_real.ne').symm]
         apply div_le_div_of_nonneg_right _ hMpos_real.le
         have h_card_le : Nat.card {r : Fin M // ¬ HChainEvent A B m₀ R r.val} ≤ M := by
-          have := Fintype.card_subtype_le (fun r : Fin M => ¬ HChainEvent A B m₀ R r.val)
-          simpa [Nat.card_eq_fintype_card] using this
+          simp [Nat.card_eq_fintype_card]
         exact_mod_cast h_card_le
       have hx_minus_floor : (x - (⌊x⌋₊ : ℝ)) < 1 := by
         have := Nat.lt_floor_add_one x
@@ -545,7 +555,8 @@ private lemma HChainEvent_q_prod_eq_residue_density
       have h_M_le_2M : (M : ℝ) / x ≤ 2 * (M : ℝ) / x :=
         div_le_div_of_nonneg_right (by linarith [hMpos_real]) hxpos.le
       linarith
-  -- Combine with h_crt: for x ≥ 1, |q_prod - rd| ≤ |density - q_prod| + |density - rd| ≤ M/x + 2M/x = 3M/x.
+  -- Combine with h_crt: for x ≥ 1, |q_prod - rd| ≤ |density - q_prod| + |density - rd| ≤
+  -- M/x + 2M/x = 3M/x.
   have h_q_prod_close_rd : ∀ x : ℝ, 1 ≤ x → |q_prod - rd| ≤ 3 * (M : ℝ) / x := by
     intro x hx
     have h1 := h_crt x hx
@@ -572,7 +583,7 @@ private lemma HChainEvent_q_prod_eq_residue_density
   -- Take limit: |q_prod - rd| ≤ 3M/x for all x ≥ 1.  Hence |q_prod - rd| = 0.
   have h_le_zero : |q_prod - rd| ≤ 0 := by
     by_contra h_pos_neg
-    push_neg at h_pos_neg
+    push Not at h_pos_neg
     -- h_pos_neg : 0 < |q_prod - rd|.
     -- Choose x large enough that 3M/x < |q_prod - rd|.
     have h_diff_pos : 0 < |q_prod - rd| := h_pos_neg
@@ -597,6 +608,7 @@ private lemma HChainEvent_q_prod_eq_residue_density
   have h_sub : q_prod - rd = 0 := abs_eq_zero.mp h_eq
   linarith
 
+omit sw in
 /-- `HChainEvent` directly witnesses `HasDivisorChainLengthAtLeast R`. -/
 private lemma hasDivisorChainLengthAtLeast_of_HChainEvent
     {A B : ℝ} {m₀ R : ℕ} {n : ℕ} (h : HChainEvent A B m₀ R n) :
@@ -629,6 +641,7 @@ private def HChainEventStrict (A B : ℝ) (m₀ R : ℕ) (n : ℕ) : Prop :=
       (ds.get ⟨k, hk⟩ : ℝ) ≤ Real.exp ((Real.exp (tower (m₀ + k) / B)) ^ A)) ∧
     (R = 0 ∨ ∃ (h0 : 0 < ds.length), 2 ≤ ds.get ⟨0, h0⟩)
 
+omit sw in
 /-- HChainEventStrict implies HChainEvent (just drops the strictness condition). -/
 private lemma HChainEvent_of_strict {A B : ℝ} {m₀ R : ℕ} {n : ℕ}
     (h : HChainEventStrict A B m₀ R n) : HChainEvent A B m₀ R n := by
@@ -687,6 +700,7 @@ private noncomputable def hChainEndpoint?
       | none => none
       | some d_prev => hFinsetLeastNat? (hChainAdmissibleNext A B m₀ k d_prev n)
 
+omit sw in
 /-- Membership characterisation for `hChainAdmissibleNext`. -/
 private lemma hChainAdmissibleNext_mem {A B : ℝ} {m₀ k d_prev n e : ℕ} :
     e ∈ hChainAdmissibleNext A B m₀ k d_prev n ↔
@@ -700,20 +714,23 @@ private lemma hChainAdmissibleNext_mem {A B : ℝ} {m₀ k d_prev n e : ℕ} :
   unfold hChainAdmissibleNext
   simp only [Finset.mem_filter, Finset.mem_Iic]
 
+omit sw in
 /-- Membership of `hFinsetLeastNat?` result. -/
 private lemma hFinsetLeastNat?_mem {s : Finset ℕ} {p : ℕ}
     (hp : hFinsetLeastNat? s = some p) : p ∈ s := by
   classical
   by_cases hne : s.Nonempty
-  · simp [hFinsetLeastNat?, hne] at hp
+  · simp only [hFinsetLeastNat?, dif_pos hne, Option.some.injEq] at hp
     subst p
     exact Finset.min'_mem s hne
   · simp [hFinsetLeastNat?, hne] at hp
 
+omit sw in
 /-- `hChainEndpoint? n 0 = some 1`. -/
 private lemma hChainEndpoint?_zero (A B : ℝ) (m₀ n : ℕ) :
     hChainEndpoint? A B m₀ n 0 = some 1 := rfl
 
+omit sw in
 /-- If `hChainEndpoint?` returns `some d` at level `k+1`, the previous level returns `some`. -/
 private lemma hChainEndpoint?_succ_prev_some {A B : ℝ} {m₀ n k d : ℕ}
     (hk : hChainEndpoint? A B m₀ n (k + 1) = some d) :
@@ -725,6 +742,7 @@ private lemma hChainEndpoint?_succ_prev_some {A B : ℝ} {m₀ n k d : ℕ}
     rw [h_some] at hk
     simp at hk
 
+omit sw in
 /-- If `hChainEndpoint?` returns `some d` at level `k+1`, then `d` is in the
 admissible set for the previous endpoint. -/
 private lemma hChainEndpoint?_succ_mem_admissible {A B : ℝ} {m₀ n k d : ℕ}
@@ -737,6 +755,7 @@ private lemma hChainEndpoint?_succ_mem_admissible {A B : ℝ} {m₀ n k d : ℕ}
   rw [hd_prev] at hk
   exact hFinsetLeastNat?_mem hk
 
+omit sw in
 /-- **Nat-form periodicity (paper line 1916, 1923 — paper-faithful).**
 
 Strengthened version of `hChainAdmissibleNext_eq_of_mod_primorial` using a
@@ -784,6 +803,7 @@ private lemma hChainAdmissibleNext_eq_of_mod_primorial_floor
       exact ⟨hp_le_P, hp_prime⟩
     exact (hmod.dvd_iff h_e_dvd_M).mpr h_dvd
 
+omit sw in
 /-- **Unpack `hChainEndpoint?_succ` constraints (paper line 1925-1930).**
 
 If `hChainEndpoint? A B m₀ n (k+1) = some d`, then the previous level returned
@@ -810,6 +830,7 @@ private lemma hChainEndpoint?_succ_constraints {A B : ℝ} {m₀ n k d : ℕ}
     ⟨_h_le, h1, h2, h3, h4, h5, h6⟩
   exact ⟨d_prev, hd_prev, h1, h2, h3, h4, h5, h6⟩
 
+omit sw in
 /-- **`hChainEndpoint?` at level 1 implies `d ≥ 2` (paper line 1891).**
 
 For `k ≥ 1`, the chain element `d_{k+1}` satisfies `d_{k+1} > d_k ≥ 1`, hence `d ≥ 2`.
@@ -826,6 +847,7 @@ private lemma hChainEndpoint?_one_ge_two {A B : ℝ} {m₀ n d : ℕ}
   -- h_lt : 1 < d
   omega
 
+omit sw in
 /-- **All hChainEndpoint? values are ≥ 1.** -/
 private lemma hChainEndpoint?_some_ge_one {A B : ℝ} {m₀ : ℕ} :
     ∀ {k n d : ℕ}, hChainEndpoint? A B m₀ n k = some d → 1 ≤ d := by
@@ -841,6 +863,7 @@ private lemma hChainEndpoint?_some_ge_one {A B : ℝ} {m₀ : ℕ} :
     rcases hChainEndpoint?_succ_constraints hk with ⟨_, _, h_lt, _, _, _, _, _⟩
     omega
 
+omit sw in
 /-- **Soundness: greedy success at level k implies HCEStrict_k holds.**
 
 This is the converse direction connecting the deterministic greedy construction
@@ -945,7 +968,7 @@ private lemma HCEStrict_of_hChainEndpoint?_some {A B : ℝ} {m₀ : ℕ} :
           rw [h_get_i, h_get_i1]
           exact hmodChain ⟨idx.val, hidx_in_ds⟩ hidx1_in_ds
         · -- idx.val + 1 = k (boundary): ds_prev[k-1] = d_prev, d at position k.
-          push_neg at hidx_lt
+          push Not at hidx_lt
           have hidx_val_eq : idx.val = k - 1 := by omega
           have hidx_in_ds : idx.val < ds_prev.length := by rw [hlen_prev]; omega
           have h_get_i : (ds_prev ++ [d]).get idx = d_prev := by
@@ -958,7 +981,7 @@ private lemma HCEStrict_of_hChainEndpoint?_some {A B : ℝ} {m₀ : ℕ} :
             have hk_ge_1 : 1 ≤ k := by
               rw [hlen_prev] at hidx_in_ds
               by_contra h_neg
-              push_neg at h_neg
+              push Not at h_neg
               interval_cases k
               omega
             have h_d_prev_eq : ds_prev.get ⟨k - 1, h_klast_pos⟩ = d_prev := by
@@ -979,7 +1002,7 @@ private lemma HCEStrict_of_hChainEndpoint?_some {A B : ℝ} {m₀ : ℕ} :
           -- ds_prev[k-1] = d_prev (from h_last_eq), with k ≥ 1 (hk_zero negated).
           have hk_ge_1 : 1 ≤ k := by
             by_contra h_neg
-            push_neg at h_neg
+            push Not at h_neg
             interval_cases k
             -- k = 0: ds_prev = [], so hidx_in_ds : idx.val < 0, contradiction.
             rw [hlen_prev] at hidx_in_ds
@@ -1065,6 +1088,7 @@ private lemma HCEStrict_of_hChainEndpoint?_some {A B : ℝ} {m₀ : ℕ} :
       have h_idx_eq : (k + 1) - 1 = ds_prev.length := by rw [hlen_prev]; omega
       simp [List.get_eq_getElem, List.getElem_append_right, h_idx_eq]
 
+omit sw in
 /-- **Nat-form periodicity for `hChainEndpoint?` (paper line 1913, 1923 — paper-faithful).**
 
 Strengthened version using Nat-form hypothesis `⌊exp(...)⌋₊ ≤ P` instead of
@@ -1087,7 +1111,7 @@ private lemma hChainEndpoint?_eq_of_mod_primorial_floor
       apply ih (P := P) ?_ hmod
       intro j' hj'
       exact hP_bound j' (Nat.lt_succ_of_lt hj')
-    show (match hChainEndpoint? A B m₀ n j with
+    change (match hChainEndpoint? A B m₀ n j with
           | none => none
           | some d_prev => hFinsetLeastNat? (hChainAdmissibleNext A B m₀ j d_prev n)) =
          (match hChainEndpoint? A B m₀ n' j with
@@ -1111,6 +1135,7 @@ This is paper's `S_k` event (line 1939). -/
 private def hGreedySucc (A B : ℝ) (m₀ k n : ℕ) : Prop :=
   ∃ d : ℕ, hChainEndpoint? A B m₀ n k = some d
 
+omit sw in
 /-- **Soundness corollary: greedy success implies HCEStrict.**
 
 Direct application of `HCEStrict_of_hChainEndpoint?_some` — the greedy chain is a
@@ -1122,6 +1147,7 @@ private lemma HChainEventStrict_of_hGreedySucc {A B : ℝ} {m₀ k n : ℕ}
     ⟨ds, hchain, hlen, hprop, hstrict, _⟩
   exact ⟨ds, hchain, hlen, hprop, hstrict⟩
 
+omit sw in
 /-- **Soundness contrapositive: ¬HCEStrict implies ¬greedy_succ.**
 
 Used to bound `density({¬HCEStrict_R})` via greedy events
@@ -1141,6 +1167,7 @@ private noncomputable instance hGreedySucc_decidable {A B : ℝ} {m₀ k n : ℕ
     rw [h_some] at hd
     cases hd
 
+omit sw in
 /-- **Equivalence: `hChainAdmissibleNext` non-empty iff `GoodCompositeSuccessor`.**
 
 Paper line 1905-1908 verbatim: a "squarefree product `e` admissible at stage j+1"
@@ -1211,6 +1238,7 @@ private lemma hChainAdmissibleNext_nonempty_iff_GoodCompositeSuccessor
       rw [h_pf] at hp
       exact (hT_prime p hp).2
 
+omit sw in
 /-- **Greedy stage failure event characterization (paper line 1942).**
 
 Greedy succeeds at level `k` but fails at level `k+1` iff there exists a chain endpoint `d`
@@ -1225,7 +1253,8 @@ private lemma hGreedyStageFailure_iff
   · rintro ⟨⟨d, hd⟩, hnot⟩
     refine ⟨d, hd, ?_⟩
     -- ¬hGreedySucc (k+1) means hChainEndpoint? n (k+1) = none.
-    -- hChainEndpoint? n (k+1) = match endpoint k with | some d => hFinsetLeastNat? (admissible) | none => none.
+    -- hChainEndpoint? n (k+1) = match endpoint k with | some d => hFinsetLeastNat?
+    -- (admissible) | none => none.
     -- With endpoint k = some d: it's hFinsetLeastNat? (hChainAdmissibleNext A B m₀ k d n).
     -- This is none iff hChainAdmissibleNext = ∅ iff ¬nonempty iff (by equivalence) ¬GoodComposite.
     intro hgood
@@ -1263,7 +1292,8 @@ private lemma hGreedyStageFailure_iff
       by_contra h
       simp [hFinsetLeastNat?, h] at h_unf
     exact hnotgood
-      ((hChainAdmissibleNext_nonempty_iff_GoodCompositeSuccessor hA h_d_pos).mp h_admissible_nonempty)
+      ((hChainAdmissibleNext_nonempty_iff_GoodCompositeSuccessor hA h_d_pos).mp
+        h_admissible_nonempty)
 
 -- NOTE: Under the paper-faithful IsDivisorChain definition (using `Nat.ModEq d e 1`,
 -- which is vacuous for d=1), chains can start with `ds[0] = 1`.  So the previous
@@ -1271,6 +1301,7 @@ private lemma hGreedyStageFailure_iff
 -- forward direction (`HChainEvent_of_strict`) is true.  Callers that need the
 -- forward direction use `HChainEvent_of_strict` directly.
 
+omit sw in
 /-- Helper: convert subtype card on Fin M to filter card on Finset.range M. -/
 private lemma h_fin_subtype_card_eq_range {M : ℕ} (P : ℕ → Prop) [DecidablePred P] :
     Nat.card {r : Fin M // P r.val} = ((Finset.range M).filter P).card := by
@@ -1289,6 +1320,7 @@ private lemma h_fin_subtype_card_eq_range {M : ℕ} (P : ℕ → Prop) [Decidabl
     refine ⟨⟨v, hv.1⟩, ?_, rfl⟩
     simp [Finset.mem_filter, hv.2]
 
+omit sw in
 /-- **Greedy success at higher level implies greedy success at lower level.**
 
 Direct corollary of `hChainEndpoint?_succ_prev_some`. -/
@@ -1297,6 +1329,7 @@ private lemma hGreedySucc_truncate {A B : ℝ} {m₀ : ℕ} {R : ℕ} {n : ℕ}
   rcases h with ⟨d, hd⟩
   exact hChainEndpoint?_succ_prev_some hd
 
+omit sw in
 /-- **Greedy event telescope (paper line 1957-1962, greedy version).**
 
 Decomposes "greedy fails at level R" into a sum over "greedy succeeds at j-1 but fails at j"
@@ -1377,7 +1410,7 @@ private lemma hGreedySucc_failure_telescope_le
         ∑ j ∈ Finset.range R,
           (Nat.card {r : Fin M // hGreedySucc A B m₀ j r.val ∧
                                 ¬ hGreedySucc A B m₀ (j+1) r.val} : ℝ) := ih
-    show (Nat.card notR1 : ℝ) ≤
+    change (Nat.card notR1 : ℝ) ≤
       (∑ j ∈ Finset.range R,
         (Nat.card {r : Fin M // hGreedySucc A B m₀ j r.val ∧
             ¬ hGreedySucc A B m₀ (j+1) r.val} : ℝ)) + (Nat.card transR : ℝ)
@@ -1405,6 +1438,7 @@ mirrors paper §7.4 line 2031-2049 — define an `M`-periodic chain event, apply
 the product-model failure probability by `∑ y_j^{-c}` via the disjoint-window
 union bound (paper line 1957-1972). -/
 
+omit sw in
 /-- **Phase 6 helper (paper §7.1 line 1846-1848 chain length).**
 For ε ∈ (0, 1), there exists L₀ such that for all L ≥ L₀,
 `(1 - ε) · L ≤ L - ⌊L^{1/2}⌋ - 4`.  Packages "chain has length R = L - m_0 - 4"
@@ -1523,6 +1557,7 @@ private lemma chain_length_packaging
     linarith
   linarith
 
+omit sw in
 /-- Auxiliary tower monotonicity (tower is monotone in ℕ argument). -/
 private lemma tower_le_of_le {a b : ℕ} (hab : a ≤ b) : tower a ≤ tower b := by
   induction b with
@@ -1536,6 +1571,7 @@ private lemma tower_le_of_le {a b : ℕ} (hab : a ≤ b) : tower a ≤ tower b :
     · have h_a_eq : a = b + 1 := le_antisymm hab h_ge
       rw [h_a_eq]
 
+omit sw in
 /-- **Phase 2 helper (paper §7.2 line 1965-1973 tower-decay sum).**
 For c > 0, η > 0, there exists L₀ such that for all L ≥ L₀ and B ≥ 1,
 `2 · exp(-c · T_{⌊L^{1/2}⌋} / B) ≤ η`.
@@ -1555,7 +1591,8 @@ private lemma tower_decay_sum_bound
   -- Equivalently: T_{√L} ≥ B · log(2/η) / c.
   -- Need: T_{√L} → ∞ as L → ∞.  Since √L → ∞ and T monotonic, T_{√L} → ∞.
   -- Use tower_tendsto_atTop on `Nat.sqrt L`.
-  -- For m_0 := tower-arg, want T_{m_0} ≥ M.  By tower_tendsto_atTop, ∃ m₀ s.t. tower m ≥ M for m ≥ m₀.
+  -- For m_0 := tower-arg, want T_{m_0} ≥ M.  By tower_tendsto_atTop, ∃ m₀ s.t. tower m ≥
+  -- M for m ≥ m₀.
   have h_tower : Filter.Tendsto tower Filter.atTop Filter.atTop := tower_tendsto_atTop
   rcases (Filter.tendsto_atTop.mp h_tower (B * Real.log (2 / η) / c)) with hev
   rcases Filter.eventually_atTop.mp hev with ⟨m₀, hm₀⟩
@@ -1628,6 +1665,7 @@ private lemma tower_decay_sum_bound
       exact this
     linarith
 
+omit sw in
 /-- **Phase 5 helper (paper §7.3 line 2006-2007 Chebyshev primorial bound).**
 Given the Chebyshev θ-witness, `primorial t ≤ exp(C_θ · t)` for all `t ≥ 2`.
 Equivalently, `log primorial t ≤ C_θ · t`.
@@ -1658,6 +1696,7 @@ private lemma chebyshev_primorial_bound
   rw [h_log_prod]
   exact htheta t ht
 
+omit sw in
 /-- **Threshold inequality** (paper-faithful: y_target ≥ exp(c+2) sufficient).
 
 For `y ≥ exp(c+2)`, `A ≥ 2`, `c ≥ 0`: `2 · y^{2+c} ≤ exp(y^A)`.
@@ -1714,6 +1753,7 @@ private lemma h_threshold_inequality {y c A : ℝ}
   linarith
 
 open scoped Classical in
+omit sw in
 /-- Transfer the successor residue estimate to a future prime window. -/
 private lemma future_window_failure_bound
     {A : ℝ} (hA_eq : A = 20) {c : ℝ} (hc : 0 < c)
@@ -1767,12 +1807,14 @@ private lemma future_window_failure_bound
     linarith
   --
   -- **Step 4**: Convert CompositeSuccessorBadSet card to Finset card on range M.
-  -- CompositeSuccessorBadSet 20 y_target d M = {n : 0 < n ∧ n ≤ ⌊M⌋₊ ∧ d ∣ n ∧ ¬GoodComp(20, y_target, d, n)}.
+  -- CompositeSuccessorBadSet 20 y_target d M = {n : 0 < n ∧ n ≤ ⌊M⌋₊ ∧ d ∣ n ∧
+  -- ¬GoodComp(20, y_target, d, n)}.
   -- For x = (M : ℝ), ⌊x⌋₊ = M.  So set = {n : 1 ≤ n ≤ M ∧ d ∣ n ∧ ¬GoodComp(20, ·)}.
   -- Match A = 20 via hA_eq.
   have hA_eq_20 : A = 20 := hA_eq
   -- **Step 5**: Use coreBad_card_eq_no_good_quotient at d, P = M/d.
-  -- ((Finset.range (d * (M/d))).filter (CoreBad)).card = ((Finset.range (M/d)).filter (¬GoodComp)).card.
+  -- ((Finset.range (d * (M/d))).filter (CoreBad)).card = ((Finset.range (M/d)).filter
+  -- (¬GoodComp)).card.
   -- Note: d * (M/d) = M (since d ∣ M).
   have hd_dvd_M : d ∣ M := dvd_trans hd_dvd_a ha_dvd_M
   have hd_M_eq : d * (M / d) = M := Nat.mul_div_cancel' hd_dvd_M
@@ -1781,7 +1823,8 @@ private lemma future_window_failure_bound
   -- hcoreBad_eq : ((Finset.range (d * (M/d))).filter CoreBad).card =
   --              ((Finset.range (M/d)).filter (¬GoodComp 20 y_target d)).card
   rw [hd_M_eq] at hcoreBad_eq
-  -- hcoreBad_eq : ((Finset.range M).filter CoreBad).card = ((Finset.range (M/d)).filter ¬GoodComp).card
+  -- hcoreBad_eq : ((Finset.range M).filter CoreBad).card = ((Finset.range (M/d)).filter
+  -- ¬GoodComp).card
   --
   -- **Step 6**: Bound LHS via h_strong.  count{CoreBad} ≤ y_target^{-c} · M / d.
   -- The CompositeSuccessorBadSet bound transfers to Finset.range M with adjustment for n=0 vs n=M.
@@ -1885,7 +1928,8 @@ private lemma future_window_failure_bound
   have h_finset_le_strong :
       (((Finset.range M).filter (fun r => CompositeSuccessorCoreBad 20 y_target d r)).card : ℝ) ≤
         Real.exp (-c * Real.log y_target) / (2 * (d : ℝ)) * (M : ℝ) + (M_d : ℝ) := by
-    rw [show (((Finset.range M).filter (fun r => CompositeSuccessorCoreBad 20 y_target d r)).card : ℝ) =
+    rw [show (((Finset.range M).filter
+      (fun r => CompositeSuccessorCoreBad 20 y_target d r)).card : ℝ) =
           (Nat.card (CompositeSuccessorBadSet 20 y_target d (M : ℝ)) : ℝ) from by
         exact_mod_cast h_card_eq]
     exact hcount_strong
@@ -1920,10 +1964,12 @@ private lemma future_window_failure_bound
   -- **Step 8**: Combine.
   -- (M/(d·b)) · count{Pb on b} ≤ y^{-c} · M/d
   -- ⟹ count{Pb on b} ≤ y^{-c} · b.
-  have h_count_eq : ((Finset.range (M / d)).filter (fun r => ¬ GoodCompositeSuccessor 20 y_target d r)).card =
+  have h_count_eq : ((Finset.range (M / d)).filter
+      (fun r => ¬ GoodCompositeSuccessor 20 y_target d r)).card =
       ((Finset.range M).filter (fun r => CompositeSuccessorCoreBad 20 y_target d r)).card := by
     exact hcoreBad_eq.symm
-  have h_PbA_eq : (((Finset.range b).filter (fun r => ¬ GoodCompositeSuccessor A y_target d r)).card : ℝ) =
+  have h_PbA_eq : (((Finset.range b).filter
+      (fun r => ¬ GoodCompositeSuccessor A y_target d r)).card : ℝ) =
       (((Finset.range b).filter (fun r => ¬ GoodCompositeSuccessor 20 y_target d r)).card : ℝ) := by
     rw [hA_eq_20]
   rw [h_PbA_eq]
@@ -1978,7 +2024,8 @@ private lemma future_window_failure_bound
   -- h_combine: ((M/d)/b : ℝ) * count_Pb ≤ y^{-c}/(2d) · M + M_d.
   have h_combine : (((M / d) / b : ℕ) : ℝ) * (count_Pb : ℝ) ≤
       Real.exp (-c * Real.log y_target) / (2 * (d : ℝ)) * (M : ℝ) + (M_d : ℝ) := by
-    have h_block_R : (((Finset.range (M / d)).filter (fun r => ¬ GoodCompositeSuccessor 20 y_target d r)).card : ℝ) =
+    have h_block_R : (((Finset.range (M / d)).filter
+        (fun r => ¬ GoodCompositeSuccessor 20 y_target d r)).card : ℝ) =
         (((M / d) / b : ℕ) : ℝ) * (count_Pb : ℝ) := by
       exact_mod_cast h_block
     rw [← h_block_R, h_count_eq]
@@ -1990,7 +2037,8 @@ private lemma future_window_failure_bound
   --           = y^{-c}/2 · b + M_d · d · b / M.
   rw [hMdb_R_eq] at h_combine
   -- **Sub-claim**: M_d · d · b / M ≤ y^{-c}/2 · b (requires M ≥ 2 · M_d · d · y^c).
-  -- This is the "L₀ sufficiently large" step (paper §7.4 line 1980-1985: P = exp(y_R^{A-1}) dominates).
+  -- This is the "L₀ sufficiently large" step (paper §7.4 line 1980-1985: P =
+  -- exp(y_R^{A-1}) dominates).
   -- Closure path (multi-fire):
   --
   -- 1. From hP_bound at index k+1 (need k+1 < L - √L - 4, restrict L₀ if needed):
@@ -2014,11 +2062,14 @@ private lemma future_window_failure_bound
   --    Hence primorial outer_P / primorial(⌊exp(y_target^A)⌋₊) ≥ exp(y_target^A).
   --
   -- 7. M_d = d · primorial(⌊exp(y_target^A)⌋₊).
-  --    M = primorial outer_P ≥ primorial(⌊exp(y_target^A)⌋₊) · exp(y_target^A) = M_d/d · exp(y_target^A).
-  --    M_d · d / M ≤ d² · primorial(⌊exp(y_target^A)⌋₊) / (primorial(⌊exp(y_target^A)⌋₊) · exp(y_target^A))
+  --    M = primorial outer_P ≥ primorial(⌊exp(y_target^A)⌋₊) · exp(y_target^A) = M_d/d ·
+  -- exp(y_target^A).
+  --    M_d · d / M ≤ d² · primorial(⌊exp(y_target^A)⌋₊) / (primorial(⌊exp(y_target^A)⌋₊)
+  -- · exp(y_target^A))
   --             = d² / exp(y_target^A) ≤ y_target² / exp(y_target^A).
   --
-  -- 8. For y_target large, y_target² / exp(y_target^A) ≤ y_target^{-c}/2 (since exp grows faster than poly).
+  -- 8. For y_target large, y_target² / exp(y_target^A) ≤ y_target^{-c}/2 (since exp grows
+  -- faster than poly).
   --
   -- ~150-200 LOC for full Lean proof.  Closes in subsequent fires.
   have hMd_extra_le :
@@ -2078,7 +2129,8 @@ private lemma future_window_failure_bound
     have hprim_ge_prod : primorial N * p₀ ≤ primorial P := by
       -- primorial outer_P = ∏ primes ≤ outer_P. Includes primes ≤ N (= primorial N) and p₀.
       -- Since p₀ > N, p₀ ∉ primes ≤ N, so primorial N and p₀ are coprime.
-      -- p₀ ∣ primorial outer_P, primorial N ∣ primorial outer_P, gcd = 1 ⟹ primorial N · p₀ ∣ primorial outer_P.
+      -- p₀ ∣ primorial outer_P, primorial N ∣ primorial outer_P, gcd = 1 ⟹ primorial N ·
+      -- p₀ ∣ primorial outer_P.
       have hp₀_in_P : p₀ ∈ Finset.filter Nat.Prime (Finset.Iic P) := by
         rw [Finset.mem_filter, Finset.mem_Iic]
         exact ⟨hp₀_le_P, hp₀_prime⟩
@@ -2326,7 +2378,8 @@ private lemma h_chain_per_greedy_stage_failure_bound
   have hB_pos : 0 < B := by linarith
   -- tow_target combines:
   --  * `B · log y₀`: ensures y_target ≥ y₀ (for step7_combine applicability).
-  --  * `2 · B · log 2 / c`: ensures tower ≥ 2B·log 2/c (for y_target^{-c} ≤ y_target^{-c/2}/2 conversion).
+  --  * `2 · B · log 2 / c`: ensures tower ≥ 2B·log 2/c (for y_target^{-c} ≤
+  -- y_target^{-c/2}/2 conversion).
   --  * `B · log 2`: ensures y_target ≥ 2 (for coreBad_card_eq_no_good_quotient's hy : 2 ≤ y).
   --  * `B · (c + 2)`: ensures y_target ≥ exp(c+2) for threshold inequality
   --    `2 · y_target^{2+c} ≤ exp(y_target^A)` (paper §7.4 line 1980-1985 outer_P bound).
@@ -2358,7 +2411,8 @@ private lemma h_chain_per_greedy_stage_failure_bound
     rw [hy_target_def]
     -- The existential form gives us paper's "F_{k+1} ∩ S_k" in terms of GoodCompositeSuccessor.
     -- Use hGreedyStageFailure_iff but adjust for A = 20 / generic A consistency:
-    -- hGreedyStageFailure_iff returns a condition with A (unchanged) used in GoodCompositeSuccessor.
+    -- hGreedyStageFailure_iff returns a condition with A (unchanged) used in
+    -- GoodCompositeSuccessor.
     exact hGreedyStageFailure_iff hA_one_le
   -- Convert subtype card via the iff.
   have h_card_eq : Nat.card {r : Fin M //
@@ -2462,7 +2516,8 @@ private lemma h_chain_per_greedy_stage_failure_bound
         -- Need d ≤ ⌊exp(y_target^A)⌋₊ where y_target = exp(tower(m₀+k)/B).
         -- Since tower(m₀+(k-1)) ≤ tower(m₀+k), y_k ≤ y_target.
         rw [hdc_def, hy_target_def]
-        -- Show ⌊exp((exp(tower((Nat.sqrt L) + (k - 1))/B))^A)⌋₊ ≤ ⌊exp((exp(tower((Nat.sqrt L) + k)/B))^A)⌋₊.
+        -- Show ⌊exp((exp(tower((Nat.sqrt L) + (k - 1))/B))^A)⌋₊ ≤
+        -- ⌊exp((exp(tower((Nat.sqrt L) + k)/B))^A)⌋₊.
         have h_sub_eq : Nat.sqrt L + (k - 1) + 1 = Nat.sqrt L + k := by omega
         apply le_trans h_d_le_floor
         apply Nat.floor_le_floor
@@ -2615,9 +2670,8 @@ private lemma h_chain_per_greedy_stage_failure_bound
     -- Simpler approach: show past_cutoff < q directly via past_cutoff < exp(y_target) < q.
     have hpc_lt_q : past_cutoff < q := by
       by_cases hk_zero : k = 0
-      · rw [hpc_def]
-        simp only [dite_eq_ite]
-        exact Nat.lt_of_le_of_lt (Nat.zero_le _) (Nat.lt_of_le_of_lt (Nat.zero_le _) hq_prime.one_lt)
+      · rw [hpc_def, dif_neg (by omega : ¬ 1 ≤ k)]
+        exact hq_prime.pos
       · -- k ≥ 1: past_cutoff ≤ ⌊exp(y_k^{A-1})⌋₊.
         have hk_pos : 1 ≤ k := Nat.one_le_iff_ne_zero.mpr hk_zero
         rw [hpc_def, dif_pos hk_pos]
@@ -2625,7 +2679,8 @@ private lemma h_chain_per_greedy_stage_failure_bound
         -- We have q > future_lower_floor = ⌊exp(y_target)⌋₊.
         -- Need ⌊exp(y_k^{A-1})⌋₊ ≤ future_lower_floor (then strict via q > future_lower_floor).
         -- exp(y_k^{A-1}) ≤ exp(y_target) (since y_k^{A-1} ≤ y_target by scale_H).
-        -- Actually, scale_H gives y_target ≥ exp(y_k^A) > y_k^{A-1}, hence exp(y_k^{A-1}) < exp(y_target).
+        -- Actually, scale_H gives y_target ≥ exp(y_k^A) > y_k^{A-1}, hence exp(y_k^{A-1})
+        -- < exp(y_target).
         -- So ⌊exp(y_k^{A-1})⌋₊ ≤ ⌊exp(y_target)⌋₊ = future_lower_floor.
         -- Then ⌊exp(y_k^{A-1})⌋₊ ≤ future_lower_floor < q.
         have h_y_k_lt_y_target : (Real.exp (tower (Nat.sqrt L + (k - 1)) / B)) ^ (A - 1) <
@@ -2817,7 +2872,8 @@ private lemma h_chain_per_greedy_stage_failure_bound
   --     count{n ∈ [1, M] : d ∣ n ∧ ¬GoodComp(d, n)} = count{j ∈ [1, M/d] : ¬GoodComp(d, j)}.
   --  4. b-periodicity (paper line 1916), with b ∣ M/d (since d ∣ a, b ∣ M, gcd(a,b)=1):
   --     count{j ∈ range(M/d) : ¬GoodComp(d, j)} = (M/(db)) · count{Pb on b}.
-  --  5. Combine: (M/(db)) · count{Pb on b} ≤ y_target^{-c} · M/d, hence count{Pb on b} ≤ y_target^{-c} · b.
+  --  5. Combine: (M/(db)) · count{Pb on b} ≤ y_target^{-c} · M/d, hence count{Pb on b} ≤
+  -- y_target^{-c} · b.
   have hPbBound : ∀ d : ℕ, d ∈ valid_d → 1 ≤ d → (d : ℝ) ≤ y_target → d ∣ a →
       (((Finset.range b).filter (fun r => ¬ GoodCompositeSuccessor A y_target d r)).card : ℝ) ≤
         (b : ℝ) * Real.exp (-c * Real.log y_target) := by
@@ -2934,7 +2990,8 @@ private lemma h_chain_per_greedy_stage_failure_bound
         hChainEndpoint? A B (Nat.sqrt L) r k = some d ∧
           ¬ GoodCompositeSuccessor A y_target d r)).card : ℝ) ≤
       ((M : ℝ) / ((a : ℝ) * (b : ℝ))) *
-        ((((Finset.range a).filter (fun r => hChainEndpoint? A B (Nat.sqrt L) r k = some d)).card : ℝ) *
+        ((((Finset.range a).filter
+          (fun r => hChainEndpoint? A B (Nat.sqrt L) r k = some d)).card : ℝ) *
           ((b : ℝ) * Real.exp (-c * Real.log y_target))) := by
     intro d _hd_mem
     have hpf := hpc_factor d
@@ -2942,25 +2999,30 @@ private lemma h_chain_per_greedy_stage_failure_bound
           hChainEndpoint? A B (Nat.sqrt L) r k = some d ∧
             ¬ GoodCompositeSuccessor A y_target d r)).card : ℝ) =
         ((M / (a * b) : ℕ) : ℝ) *
-          ((((Finset.range a).filter (fun r => hChainEndpoint? A B (Nat.sqrt L) r k = some d)).card : ℝ) *
-            (((Finset.range b).filter (fun r => ¬ GoodCompositeSuccessor A y_target d r)).card : ℝ)) := by
+          ((((Finset.range a).filter
+            (fun r => hChainEndpoint? A B (Nat.sqrt L) r k = some d)).card : ℝ) *
+            (((Finset.range b).filter
+              (fun r => ¬ GoodCompositeSuccessor A y_target d r)).card : ℝ)) := by
       exact_mod_cast hpf
     rw [hpf_R, hMab_div_eq]
     -- Case-split: if count{Pa(d) on a} = 0, term = 0.  Otherwise, d is a chain endpoint
     -- ⟹ 1 ≤ d ≤ ⌊y_target⌋₊ AND d ∣ a (from past-window admissibility, paper line 1899-1908).
-    by_cases h_count_zero : ((Finset.range a).filter (fun r => hChainEndpoint? A B (Nat.sqrt L) r k = some d)).card = 0
+    by_cases h_count_zero : ((Finset.range a).filter
+      (fun r => hChainEndpoint? A B (Nat.sqrt L) r k = some d)).card = 0
     · -- Pa-trivial case: term = 0.
       rw [h_count_zero]
       push_cast
       have h_exp_pos : 0 < Real.exp (-c * Real.log y_target) := Real.exp_pos _
       have h_b_nn : (0 : ℝ) ≤ (b : ℝ) := Nat.cast_nonneg _
-      have h_pos : (0 : ℝ) ≤ (M : ℝ) / ((a : ℝ) * (b : ℝ)) * (0 * ((b : ℝ) * Real.exp (-c * Real.log y_target))) := by
+      have h_pos : (0 : ℝ) ≤
+          (M : ℝ) / ((a : ℝ) * (b : ℝ)) * (0 * ((b : ℝ) * Real.exp (-c * Real.log y_target))) := by
         positivity
       linarith
     · -- Pa-nontrivial: ∃ r ∈ range a with hChainEndpoint? = some d.  Extract.
-      push_neg at h_count_zero
+      push Not at h_count_zero
       have h_count_pos : 0 < ((Finset.range a).filter
-          (fun r => hChainEndpoint? A B (Nat.sqrt L) r k = some d)).card := Nat.pos_of_ne_zero h_count_zero
+          (fun r => hChainEndpoint? A B (Nat.sqrt L) r k = some d)).card :=
+        Nat.pos_of_ne_zero h_count_zero
       have h_filter_nonempty : ((Finset.range a).filter
           (fun r => hChainEndpoint? A B (Nat.sqrt L) r k = some d)).Nonempty :=
         Finset.card_pos.mp h_count_pos
@@ -3002,7 +3064,8 @@ private lemma h_chain_per_greedy_stage_failure_bound
           exact Nat.le_floor hp_window.2
       have hPbBound_d := hPbBound d _hd_mem h1d hd_le_y hd_dvd_a
       have hPa_card_nn : (0 : ℝ) ≤
-          (((Finset.range a).filter (fun r => hChainEndpoint? A B (Nat.sqrt L) r k = some d)).card : ℝ) := by
+          (((Finset.range a).filter
+            (fun r => hChainEndpoint? A B (Nat.sqrt L) r k = some d)).card : ℝ) := by
         exact Nat.cast_nonneg _
       have hMab_div_nn : (0 : ℝ) ≤ (M : ℝ) / ((a : ℝ) * (b : ℝ)) := by
         apply div_nonneg (Nat.cast_nonneg _)
@@ -3017,22 +3080,26 @@ private lemma h_chain_per_greedy_stage_failure_bound
             ¬ GoodCompositeSuccessor A y_target d r)).card : ℝ)) ≤
       ((M : ℝ) / (a * b)) * ((b : ℝ) * Real.exp (-c * Real.log y_target)) *
         (∑ d ∈ valid_d,
-          (((Finset.range a).filter (fun r => hChainEndpoint? A B (Nat.sqrt L) r k = some d)).card : ℝ)) := by
+          (((Finset.range a).filter
+            (fun r => hChainEndpoint? A B (Nat.sqrt L) r k = some d)).card : ℝ)) := by
     calc (∑ d ∈ valid_d, _)
         ≤ ∑ d ∈ valid_d, ((M : ℝ) / (a * b)) *
-              ((((Finset.range a).filter (fun r => hChainEndpoint? A B (Nat.sqrt L) r k = some d)).card : ℝ) *
+              ((((Finset.range a).filter
+                (fun r => hChainEndpoint? A B (Nat.sqrt L) r k = some d)).card : ℝ) *
                 ((b : ℝ) * Real.exp (-c * Real.log y_target))) :=
           Finset.sum_le_sum h_per_d_bound
       _ = ((M : ℝ) / (a * b)) * ((b : ℝ) * Real.exp (-c * Real.log y_target)) *
             (∑ d ∈ valid_d,
-              (((Finset.range a).filter (fun r => hChainEndpoint? A B (Nat.sqrt L) r k = some d)).card : ℝ)) := by
+              (((Finset.range a).filter
+                (fun r => hChainEndpoint? A B (Nat.sqrt L) r k = some d)).card : ℝ)) := by
           rw [Finset.mul_sum]
           apply Finset.sum_congr rfl
           intro d _; ring
   -- **Step 4**: ∑_d count{Pa(d) on a} ≤ a (partition).
   have h_sum_Pa_le_a :
       (∑ d ∈ valid_d,
-        (((Finset.range a).filter (fun r => hChainEndpoint? A B (Nat.sqrt L) r k = some d)).card : ℝ)) ≤
+        (((Finset.range a).filter
+          (fun r => hChainEndpoint? A B (Nat.sqrt L) r k = some d)).card : ℝ)) ≤
       (a : ℝ) := by
     -- The sets {r : Pa(d, r)}_{d ∈ valid_d} are disjoint subsets of Fin a.
     have h_eq : (∑ d ∈ valid_d, ((Finset.range a).filter
@@ -3068,12 +3135,14 @@ private lemma h_chain_per_greedy_stage_failure_bound
     -- LHS ≤ ∑_d term (h_card_eq_sum) ≤ (M/(ab)) · b · y^{-c} · a (h_sum_bound + h_sum_Pa_le_a).
     have h_step1 : ((M : ℝ) / (a * b)) * ((b : ℝ) * Real.exp (-c * Real.log y_target)) *
             (∑ d ∈ valid_d,
-              (((Finset.range a).filter (fun r => hChainEndpoint? A B (Nat.sqrt L) r k = some d)).card : ℝ)) ≤
+              (((Finset.range a).filter
+                (fun r => hChainEndpoint? A B (Nat.sqrt L) r k = some d)).card : ℝ)) ≤
         ((M : ℝ) / (a * b)) * ((b : ℝ) * Real.exp (-c * Real.log y_target)) * (a : ℝ) := by
       apply mul_le_mul_of_nonneg_left h_sum_Pa_le_a
       have h_exp_pos : 0 < Real.exp (-c * Real.log y_target) := Real.exp_pos _
       positivity
-    have h_simplify : ((M : ℝ) / (a * b)) * ((b : ℝ) * Real.exp (-c * Real.log y_target)) * (a : ℝ) =
+    have h_simplify :
+        ((M : ℝ) / (a * b)) * ((b : ℝ) * Real.exp (-c * Real.log y_target)) * (a : ℝ) =
         (M : ℝ) * Real.exp (-c * Real.log y_target) := by
       have hab_ne : (a : ℝ) * (b : ℝ) ≠ 0 := by positivity
       field_simp
@@ -3086,7 +3155,8 @@ private lemma h_chain_per_greedy_stage_failure_bound
   --   ⟺ 2 ≤ exp((c/2)·tower/B)
   --   ⟺ log 2 ≤ (c/2)·tower/B
   --   ⟺ tower ≥ 2B·log 2 / c.
-  -- Holds for tower(√L+k) ≥ 2B·log 2 / c.  L₀ choice (m₀_thr) was made for tow_target = max 0 (B·log y₀)
+  -- Holds for tower(√L+k) ≥ 2B·log 2 / c.  L₀ choice (m₀_thr) was made for tow_target =
+  -- max 0 (B·log y₀)
   -- which only ensures y_target ≥ y₀.  For c-related threshold, we need additional bound on L.
   -- For now: subsume via stronger L₀ (might need to revisit if not auto-satisfied).
   have h_log_y_target : Real.log y_target = tower (Nat.sqrt L + k) / B := by
@@ -3106,12 +3176,14 @@ private lemma h_chain_per_greedy_stage_failure_bound
   -- ⟺ tower ≥ 2B·log 2 / c.
   -- Tower(√L+k) ≥ tower(√L) ≥ T₀ from L₀ choice, where T₀ ≥ B·log y₀.
   -- We need T₀ ≥ 2B·log 2 / c additionally.  Add to L₀.
-  -- Actually our existing tow_target := max 0 (B · log y₀).  For y₀ ≥ 4, B·log y₀ ≥ 2B·log 2/c if log y₀ ≥ 2 log 2 / c.
+  -- Actually our existing tow_target := max 0 (B · log y₀).  For y₀ ≥ 4, B·log y₀ ≥
+  -- 2B·log 2/c if log y₀ ≥ 2 log 2 / c.
   -- Equivalently y₀ ≥ exp(2 log 2/c) = 2^{2/c}.  For c arbitrary, may not hold.
   -- Workaround: pick c'_outer < c sufficiently small for the existing L₀.
   --
   -- Simpler bridging: use exp(-c·tower/B) ≤ exp(-(c/2)·tower/B) (since c/2 < c, exp grows in -arg).
-  -- That gives M · exp(-c·tower/B) ≤ M · exp(-(c/2)·tower/B), but we need ≤ M · exp(-(c/2)·tower/B)/2.
+  -- That gives M · exp(-c·tower/B) ≤ M · exp(-(c/2)·tower/B), but we need ≤ M ·
+  -- exp(-(c/2)·tower/B)/2.
   -- So a factor of 2 missing.
   --
   -- Tighter bridging: exp(-c·tower/B) = exp(-(c/2)·tower/B) · exp(-(c/2)·tower/B).
@@ -3144,7 +3216,8 @@ private lemma h_chain_per_greedy_stage_failure_bound
       have hB_pos_R : 0 < B := hB_pos
       -- Multiply: 2 * B * log 2 / c ≤ tower ⟹ log 2 ≤ (c/(2B)) · tower = (c/2) · (tower/B).
       rw [div_le_iff₀ hc_pos_R] at h_thr
-      have h_paren_eq : (c/2) * (tower (Nat.sqrt L + k) / B) = tower (Nat.sqrt L + k) * c / (2 * B) := by
+      have h_paren_eq : (c/2) * (tower (Nat.sqrt L + k) / B) =
+          tower (Nat.sqrt L + k) * c / (2 * B) := by
         field_simp
       rw [h_paren_eq]
       rw [le_div_iff₀ (by positivity : (0 : ℝ) < 2 * B)]
@@ -3178,6 +3251,7 @@ private lemma h_chain_per_greedy_stage_failure_bound
   -- Conclude via h_main_bound.
   linarith [h_main_bound, h_final]
 
+omit sw in
 /-- **Geometric sum bound (paper line 1963-1972).**
 
 For `L ≥ Lscale` (where scale_H gives `y_{j+1} ≥ exp(y_j^A) ≥ y_j^{A-1} ≥ y_j^2` for `A ≥ 3`),
@@ -3236,14 +3310,16 @@ private lemma H_chain_geometric_sum_bound
     have h_exp_ge_2t : 2 * tower (Nat.sqrt L + k) ≤ Real.exp (tower (Nat.sqrt L + k)) := by
       -- exp(1) ≈ 2.718 > 2.
       -- For t ≥ 1, exp(t) ≥ exp(1) · t ≥ 2t (since exp(1) ≥ 2 and... wait this needs care).
-      -- Use: exp(t)/t is increasing for t ≥ 1. At t=1: exp(1)/1 ≈ 2.71. So exp(t)/t ≥ 2.71 for t ≥ 1.
+      -- Use: exp(t)/t is increasing for t ≥ 1. At t=1: exp(1)/1 ≈ 2.71. So exp(t)/t ≥
+      -- 2.71 for t ≥ 1.
       -- Hence exp(t) ≥ 2.71 · t > 2t.
       have h_e_ge_2 : (2 : ℝ) ≤ Real.exp 1 := by
         have := Real.exp_one_gt_d9; linarith
       -- exp(t) - 2t at t=1: exp(1) - 2 ≈ 0.71 ≥ 0. Derivative: exp(t) - 2.
       -- For t ≥ log 2, exp(t) ≥ 2, so derivative ≥ 0, function increasing.
       -- Since log 2 < 1, function is increasing on [1, ∞), starting at 0.71 > 0. ✓
-      -- Concrete proof: induction on t, using exp(t+1) = e · exp(t) ≥ 2 · exp(t) ≥ 2(t+1) for t ≥ 1.
+      -- Concrete proof: induction on t, using exp(t+1) = e · exp(t) ≥ 2 · exp(t) ≥ 2(t+1)
+      -- for t ≥ 1.
       -- Easier: use that exp is convex with exp(0) = 1, slope exp(1).
       -- For now: use Real.add_one_le_exp t or similar.
       -- Strategy: exp(t) ≥ 1 + t + t²/2 (Taylor, second-order).
@@ -3251,7 +3327,8 @@ private lemma H_chain_geometric_sum_bound
       -- Hmm that doesn't work for t > 2.
       -- Better: exp(t) ≥ (1+1/n)^{n·t} for various n.  Or use Real.exp_one_lt_d9 / known bounds.
       -- Simplest: exp(t) is convex, exp(0) = 1, exp'(0) = 1, exp''(t) = exp(t) ≥ 1.
-      -- So exp(t) ≥ 1 + t + t²/2 for t ≥ 0.  For t ≥ 2, exp(t) ≥ 1 + t + 2 ≥ 2t. (1+t+2 ≥ 2t iff 3 ≥ t, conflict with t ≥ 2 only if t > 3.)
+      -- So exp(t) ≥ 1 + t + t²/2 for t ≥ 0.  For t ≥ 2, exp(t) ≥ 1 + t + 2 ≥ 2t. (1+t+2 ≥
+      -- 2t iff 3 ≥ t, conflict with t ≥ 2 only if t > 3.)
       -- Hmm.  Use a cleaner fact: exp(t) ≥ e^{t/2} · e^{t/2} ≥ (1 + t/2)² = 1 + t + t²/4.
       -- For t ≥ 4: 1 + t + t²/4 ≥ 1 + t + t = 1 + 2t > 2t. ✓
       -- For 1 ≤ t < 4: just verify directly that exp(t) ≥ 2t.
@@ -3510,7 +3587,7 @@ private lemma HChainEvent_pmodel_bound_via_greedy
         have h_step1 : Real.exp (y_target ^ A) ≤
             Real.exp (tower (Nat.sqrt L + (k + 1)) / B) := h_scale_y_to_kp2
         linarith [h_step1, h_y_kp2_pow_ge_self]
-      show 2 * Real.exp (y_target ^ A) ≤ (P : ℝ)
+      change 2 * Real.exp (y_target ^ A) ≤ (P : ℝ)
       linarith [h_two_exp_le, h_chain, hP_at_k1]
     · -- Boundary k = L - √L - 5: use hP_strong_at_R directly.
       have hk_eq : k = L - Nat.sqrt L - 5 := by omega
@@ -3629,6 +3706,7 @@ private lemma HChainEvent_pmodel_bound_via_greedy
   rw [div_le_iff₀ hMpos_real]
   exact h_card_le_η
 
+omit sw in
 /-- **Phase 5 main (paper §7.3 line 2003-2007 primorial decay).**
 For `Cθ > 0`, `η > 0`, there exists `L₀` such that for all `L ≥ L₀` and any `t ≤ T_{L-3}`
 and `x ≥ T_L`, we have `primorial t / x ≤ η`.
@@ -3668,7 +3746,8 @@ private lemma primorial_decay_bound
   -- T_{L₀-2} = exp(T_{L₀-3}) ≥ T_{L₀-3} + 1.
   -- So T_{L₀-1} ≥ T_{L₀-3} + 2.  Weak.
   -- Need: exp(exp(T_{L₀-3})) ≥ Cθ · T_{L₀-3} + bound.
-  -- Use tower_tendsto_atTop: choose m₀ s.t. tower m ≥ Cθ · tower (m-2) + |log η| + 1 for m ≥ m₀ + 2.
+  -- Use tower_tendsto_atTop: choose m₀ s.t. tower m ≥ Cθ · tower (m-2) + |log η| + 1 for
+  -- m ≥ m₀ + 2.
   -- Hmm, this needs analytic argument about tower growth rate.  Let me just use the
   -- existence: tower → ∞, so tower (L - 1) → ∞ as L → ∞.  And the ratio
   -- (tower(L-1)) / (Cθ · tower(L-3)) → ∞ super-exponentially.
@@ -3684,7 +3763,8 @@ private lemma primorial_decay_bound
   -- Concrete approach using Mathlib's `tendsto_exp_div_pow_atTop` (n=1):
   -- exp(t)/t → ∞.  Hence ∃ t₀, ∀ t ≥ t₀, exp(t) ≥ (Cθ+1)·t + |log η⁻¹|.
   -- For T_{L-3} ≥ t₀ (achievable for L large via tower_tendsto):
-  --   T_{L-1} = exp(exp(T_{L-3})) ≥ exp(T_{L-3}) ≥ (Cθ+1)·T_{L-3} + |log η⁻¹| ≥ Cθ·T_{L-3} + |log η⁻¹|.
+  --   T_{L-1} = exp(exp(T_{L-3})) ≥ exp(T_{L-3}) ≥ (Cθ+1)·T_{L-3} + |log η⁻¹| ≥
+  -- Cθ·T_{L-3} + |log η⁻¹|.
   -- Then for x ≥ T_L = exp(T_{L-1}):
   --   log x ≥ T_{L-1} ≥ Cθ·T_{L-3} + |log η⁻¹|.
   --   log M ≤ Cθ · t ≤ Cθ · T_{L-3} (from chebyshev_primorial_bound + ht_le_T).
@@ -3718,7 +3798,8 @@ private lemma primorial_decay_bound
   -- Step 4: exp(T_{L-3}) / T_{L-3} ≥ (Cθ+1) + (|log η⁻¹|+1).
   have h_ratio := ht₀ (tower (L - 3)) h_tower_L3_ge_t₀
   -- Step 5: exp(T_{L-3}) ≥ ((Cθ+1) + (|log η⁻¹|+1)) · T_{L-3}.
-  have h_exp_bound : ((Cθ + 1) + (|Real.log η⁻¹| + 1)) * tower (L - 3) ≤ Real.exp (tower (L - 3)) := by
+  have h_exp_bound : ((Cθ + 1) + (|Real.log η⁻¹| + 1)) * tower (L - 3) ≤
+      Real.exp (tower (L - 3)) := by
     have := mul_le_mul_of_nonneg_right h_ratio h_tower_L3_pos.le
     rw [div_mul_cancel₀ _ (ne_of_gt h_tower_L3_pos)] at this
     linarith
@@ -3730,7 +3811,7 @@ private lemma primorial_decay_bound
     have hL2_eq : L - 2 = k + 2 := by omega
     have hL3_eq : L - 3 = k + 1 := by omega
     rw [hL2_eq, hL3_eq]
-    show tower (k + 1 + 1) = Real.exp (tower (k + 1))
+    change tower (k + 1 + 1) = Real.exp (tower (k + 1))
     rfl
   have h_T_L_minus_1_eq : tower (L - 1) = Real.exp (tower (L - 2)) := by
     have hL_minus_1_eq : L - 1 = (L - 2) + 1 := by omega
@@ -3757,7 +3838,8 @@ private lemma primorial_decay_bound
     calc Real.log _ ≤ Cθ * t := h_log_M
       _ ≤ Cθ * tower (L - 3) := mul_le_mul_of_nonneg_left ht_le_T hCθ_pos.le
   -- Step 10: M/x ≤ η.
-  -- log(M/x) = log M - log x ≤ Cθ·T_{L-3} - T_{L-1} ≤ Cθ·T_{L-3} - exp(T_{L-3}) ≤ -|log η⁻¹| ≤ log η.
+  -- log(M/x) = log M - log x ≤ Cθ·T_{L-3} - T_{L-1} ≤ Cθ·T_{L-3} - exp(T_{L-3}) ≤ -|log
+  -- η⁻¹| ≤ log η.
   have h_M_pos : (0 : ℝ) < ((∏ p ∈ Finset.filter Nat.Prime (Finset.Iic ⌊t⌋₊), p : ℕ) : ℝ) := by
     have h_nat_pos : 0 < ∏ p ∈ Finset.filter Nat.Prime (Finset.Iic ⌊t⌋₊), p := by
       apply Finset.prod_pos
@@ -3769,7 +3851,8 @@ private lemma primorial_decay_bound
       (((∏ p ∈ Finset.filter Nat.Prime (Finset.Iic ⌊t⌋₊), p : ℕ) : ℝ) / x) ≤ Real.log η := by
     rw [Real.log_div (ne_of_gt h_M_pos) (ne_of_gt h_x_pos)]
     -- log M - log x ≤ Cθ·T_{L-3} - T_{L-2} (since log x ≥ T_{L-2})
-    have h_diff_bound : Real.log ((∏ p ∈ Finset.filter Nat.Prime (Finset.Iic ⌊t⌋₊), p : ℕ) : ℝ) - Real.log x ≤
+    have h_diff_bound : Real.log
+        ((∏ p ∈ Finset.filter Nat.Prime (Finset.Iic ⌊t⌋₊), p : ℕ) : ℝ) - Real.log x ≤
         Cθ * tower (L - 3) - tower (L - 2) := by linarith
     -- Cθ·T_{L-3} - T_{L-2} ≤ -|log η⁻¹|.
     -- T_{L-2} = exp(T_{L-3}) ≥ ((Cθ+1) + (|log η⁻¹|+1)) · T_{L-3}.
@@ -3801,7 +3884,8 @@ private lemma primorial_decay_bound
       linarith
     linarith [h_neg_abs_le]
   -- Convert log(M/x) ≤ log η to M/x ≤ η.
-  have h_M_x_pos : (0 : ℝ) < ((∏ p ∈ Finset.filter Nat.Prime (Finset.Iic ⌊t⌋₊), p : ℕ) : ℝ) / x := by
+  have h_M_x_pos : (0 : ℝ) <
+      ((∏ p ∈ Finset.filter Nat.Prime (Finset.Iic ⌊t⌋₊), p : ℕ) : ℝ) / x := by
     positivity
   have h_eta_pos : (0 : ℝ) < η := hη
   rw [show η = Real.exp (Real.log η) from (Real.exp_log h_eta_pos).symm,
@@ -3810,6 +3894,7 @@ private lemma primorial_decay_bound
     from (Real.exp_log h_M_x_pos).symm]
   exact Real.exp_le_exp.mpr h_log_diff
 
+omit sw in
 /-- **Paper §7.4 line 1989-1999: P bound.**
 
 For `L` sufficiently large and any `k < L - √L - 4` (i.e., k < R), the
@@ -3877,7 +3962,7 @@ private lemma hP_chain_bound_existence :
     induction m with
     | zero => simp [tower]
     | succ k ih =>
-      show Real.exp 1 ≤ Real.exp (tower k)
+      change Real.exp 1 ≤ Real.exp (tower k)
       apply Real.exp_le_exp.mpr
       have h1 : (1 : ℝ) ≤ Real.exp 1 := Real.one_le_exp (by norm_num : (0 : ℝ) ≤ 1)
       linarith
@@ -3960,9 +4045,11 @@ private lemma hP_chain_bound_existence :
     linarith
   -- Combine: exp(exp(19q)) ≤ tower(L-4)/2 ≤ exp(tower(L-4)/2) ≤ tower(L-3) - 1 ≤ ⌊tower(L-3)⌋₊.
   -- Wait — actually exp(exp(19q)) ≤ exp(tower(L-4)/2), not ≤ tower(L-4)/2.  Let me re-thread.
-  -- exp(exp(19q)) ≤ exp(tower(L-4)/2) (Step 9) ≤ tower(L-3) - 1 (Step 10) ≤ ⌊tower(L-3)⌋₊ (Step 11).
+  -- exp(exp(19q)) ≤ exp(tower(L-4)/2) (Step 9) ≤ tower(L-3) - 1 (Step 10) ≤ ⌊tower(L-3)⌋₊
+  -- (Step 11).
   linarith [h_exp_exp_19q, h_u_plus_1, h_floor_lower]
 
+omit sw in
 /-- A fixed gap between two exponential towers absorbs rounding to an integer. -/
 private lemma double_exp_floor_gap {T : ℝ} (hT : 3 ≤ T) :
     2 * Real.exp (Real.exp (2 * T / 3)) ≤ (⌊Real.exp (Real.exp T)⌋₊ : ℝ) := by
@@ -4094,7 +4181,7 @@ private lemma stage_failure_sum_H (ε : ℝ) (hε : 0 < ε) (hε_lt_one : ε < 1
   set L : ℕ := logStar x with hL_def
   have hL_ge_L₀ : L₀ ≤ L := by
     by_contra h_lt
-    push_neg at h_lt
+    push Not at h_lt
     have h_tower_strict : tower (logStar x) < tower L₀ :=
       strictMono_nat_of_lt_succ tower_lt_succ h_lt
     have h_x_le : x ≤ tower (logStar x) := self_le_tower_logStar x
@@ -4149,7 +4236,7 @@ private lemma stage_failure_sum_H (ε : ℝ) (hε : 0 < ε) (hε_lt_one : ε < 1
         | zero => simp [tower]
         | succ k ih =>
           show Real.exp 1 ≤ tower (k + 1)
-          show Real.exp 1 ≤ Real.exp (tower k)
+          change Real.exp 1 ≤ Real.exp (tower k)
           apply Real.exp_le_exp.mpr
           calc (1 : ℝ) ≤ Real.exp 1 := Real.one_le_exp (by norm_num : (0 : ℝ) ≤ 1)
             _ ≤ tower k := ih
@@ -4163,13 +4250,13 @@ private lemma stage_failure_sum_H (ε : ℝ) (hε : 0 < ε) (hε_lt_one : ε < 1
   have hP_bound_chain : ∀ k : ℕ, k < L - Nat.sqrt L - 4 →
       Real.exp ((Real.exp (tower (Nat.sqrt L + k) / 30)) ^ ((20 : ℝ) - 1)) ≤ (P : ℝ) := by
     intro k hk
-    show Real.exp ((Real.exp (tower (Nat.sqrt L + k) / 30)) ^ ((20 : ℝ) - 1)) ≤
+    change Real.exp ((Real.exp (tower (Nat.sqrt L + k) / 30)) ^ ((20 : ℝ) - 1)) ≤
         (⌊tower (L - 3)⌋₊ : ℝ)
     exact hL₄ L hL_ge_L₄ k hk
   -- Apply HChainEvent_pmodel_bound to get residue density ≤ η/4.
   -- For L ≥ 16, tower (L - 3) ≥ tower 13 ≫ 2, so ⌊tower(L-3)⌋ ≥ 2.
   have hP_ge_2 : 2 ≤ P := by
-    show 2 ≤ ⌊tower (L - 3)⌋₊
+    change 2 ≤ ⌊tower (L - 3)⌋₊
     have h_tower_ge_two : (2 : ℝ) ≤ tower (L - 3) := by
       -- tower (L-3) ≥ tower 0 = exp 1 > 2 for L ≥ 4.
       -- Actually tower 0 = exp 1 ≈ 2.71 > 2.
@@ -4178,7 +4265,7 @@ private lemma stage_failure_sum_H (ε : ℝ) (hε : 0 < ε) (hε_lt_one : ε < 1
       have h_tower_mono : tower 1 ≤ tower (L - 3) := by
         exact (strictMono_nat_of_lt_succ tower_lt_succ).monotone hL_minus_3_ge_1
       have h_tower_one : tower 1 = Real.exp (Real.exp 1) := by
-        show tower (0 + 1) = Real.exp (Real.exp 1)
+        change tower (0 + 1) = Real.exp (Real.exp 1)
         rfl
       -- exp(exp 1) > 2.
       have h_exp_exp_one_ge : (2 : ℝ) ≤ Real.exp (Real.exp 1) := by
@@ -4269,7 +4356,7 @@ private lemma stage_failure_sum_H (ε : ℝ) (hε : 0 < ε) (hε_lt_one : ε < 1
       have h_floor_le : (⌊tower (L - 3)⌋₊ : ℝ) ≤ tower (L - 3) := by
         apply Nat.floor_le
         exact (tower_pos _).le
-      show (⌊tower (L - 3)⌋₊ : ℝ) ≤ tower (L - 3)
+      change (⌊tower (L - 3)⌋₊ : ℝ) ≤ tower (L - 3)
       exact h_floor_le
     have h_primorial_eq :
         ((∏ p ∈ Finset.filter Nat.Prime (Finset.Iic ⌊(P : ℝ)⌋₊), p : ℕ) : ℝ) =
@@ -4355,7 +4442,8 @@ private lemma stage_failure_sum_H (ε : ℝ) (hε : 0 < ε) (hε_lt_one : ε < 1
     -- bad_finset.card ≤ ({0} ∪ nE_finset).card ≤ 1 + nE_finset.card.
     have h_card_le : bad_finset.card ≤ ({0} ∪ nE_finset : Finset ℕ).card :=
       Finset.card_le_card h_subset
-    have h_union_card : ({0} ∪ nE_finset : Finset ℕ).card ≤ ({0} : Finset ℕ).card + nE_finset.card :=
+    have h_union_card : ({0} ∪ nE_finset : Finset ℕ).card ≤
+        ({0} : Finset ℕ).card + nE_finset.card :=
       Finset.card_union_le _ _
     have h_singleton : ({0} : Finset ℕ).card = 1 := Finset.card_singleton _
     have h_total : bad_finset.card ≤ 1 + nE_finset.card := by
@@ -4384,6 +4472,7 @@ private lemma stage_failure_sum_H (ε : ℝ) (hε : 0 < ε) (hε_lt_one : ε < 1
     linarith
   exact h_final
 
+omit sw in
 private lemma good_lower_divisor_chains_from_stage_sums {ε A c y₀ : ℝ}
     (hsum : StageFailureSumH ε A c y₀) :
     almostAll (GoodLowerDivisorChain ε) := by
@@ -4392,7 +4481,7 @@ private lemma good_lower_divisor_chains_from_stage_sums {ε A c y₀ : ℝ}
   unfold StageFailureSumH at hsum
   rcases hsum with ⟨_hA, _hc, _hy₀, hsmall⟩
   unfold almostAll
-  rw [NormedAddCommGroup.tendsto_nhds_zero]
+  rw [NormedAddGroup.tendsto_nhds_zero]
   intro δ hδ
   rcases hsmall (δ / 2) (by positivity) with ⟨x₀, hx₀_pos, hx₀⟩
   filter_upwards [Filter.eventually_ge_atTop x₀] with x hx

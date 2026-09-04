@@ -105,8 +105,9 @@ lemma li_eq_abel {x : ℝ} (hx : 2 ≤ x) :
     have ht2 : 2 ≤ t := (Set.uIcc_of_le hx ▸ ht).1
     have ht0 : t ≠ 0 := by linarith only [ht2]
     have hl0 : Real.log t ≠ 0 := (Real.log_pos (by linarith only [ht2])).ne'
-    convert! (hasDerivAt_id t).div (Real.hasDerivAt_log ht0) hl0 using 1 <;>
-      simp only [id_eq] <;> field_simp <;> ring
+    convert! (hasDerivAt_id t).div (Real.hasDerivAt_log ht0) hl0 using 1
+    simp only [id_eq]
+    field_simp
   have hFTC := intervalIntegral.integral_eq_sub_of_hasDerivAt hderiv
     ((inv_log_intervalIntegrable hx).sub (inv_log_sq_intervalIntegrable hx))
   rw [intervalIntegral.integral_sub (inv_log_intervalIntegrable hx)

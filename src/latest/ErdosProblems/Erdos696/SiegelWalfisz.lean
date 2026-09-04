@@ -75,7 +75,7 @@ theorem exists_centered_prime_count_bound (A : ℝ) (hA : 0 < A) :
             C * ((x : ℝ) * Real.exp (-c * Real.sqrt (Real.log (x : ℝ)))) := by
         apply mul_le_mul_of_nonneg_left _ (by positivity)
         exact Finset.sum_le_sum fun χ _ => hbound x hx q hq hqLog χ
-      _ = _ := by simp [hcard, hphi, mul_assoc]
+      _ = _ := by simp [hcard, hphi]
   have hx2 : 2 ≤ x := by omega
   calc
     _ ≤ (Real.log 2)⁻¹ * maxCenteredThetaProgressionDiscrepancyUpTo x q :=
@@ -156,7 +156,7 @@ lemma piMod_natCast_eq (x q a : ℕ) :
   have hset : {p : ℕ | p ≤ x ∧ p.Prime ∧ p % q = a % q} =
       ↑((Finset.range (x + 1)).filter (fun p => p.Prime ∧ p % q = a % q)) := by
     ext p
-    simp [Nat.lt_succ_iff, and_assoc]
+    simp
   rw [piMod, Nat.floor_natCast, hset, Nat.card_coe_set_eq, Set.ncard_coe_finset]
   rfl
 

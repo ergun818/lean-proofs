@@ -121,7 +121,7 @@ theorem mertens :
       _ ≤ max C₀ (B * Real.log T₀' + 1) / Real.log t :=
           div_le_div_of_nonneg_right (le_max_left _ _) hlog_t_pos.le
   · -- For t ∈ [2, T₀'), use crude bound
-    push_neg at htT₀
+    push Not at htT₀
     have hlog_t_pos : 0 < Real.log t := hlog_t_pos_helper t ht
     have hlog_t_le : Real.log t ≤ Real.log T₀' :=
       Real.log_le_log (by linarith) htT₀.le
@@ -242,13 +242,13 @@ then the density of `n ≤ x` for which `E(n)` holds equals the periodic average
 -/
 theorem crt_transfer :
     ∀ (P : ℕ), 2 ≤ P →
-    ∀ (E : ℕ → Prop) [DecidablePred E],
+    ∀ (E : ℕ → Prop),
       (∀ n n' : ℕ, n % primorial P = n' % primorial P → (E n ↔ E n')) →
     ∃ p_prod : ℝ,
       ∀ x : ℝ, 1 ≤ x →
         |((Nat.card {n : ℕ | n ≤ ⌊x⌋₊ ∧ E n} : ℝ)) / x - p_prod| ≤
           (primorial P : ℝ) / x := by
-  intro P hP E _ hperiodic
+  intro P hP E hperiodic
   classical
   set M : ℕ := primorial P with hM_def
   have hM_pos : 0 < M := by
@@ -291,7 +291,7 @@ theorem crt_transfer :
     rw [hset, Nat.card_coe_set_eq, Set.ncard_coe_finset]
   set count_X : ℕ := ((Finset.Iic X).filter E).card with hcount_X_def
   rw [h_card_eq]
-  show |(count_X : ℝ) / x - (A : ℝ) / (M : ℝ)| ≤ (M : ℝ) / x
+  change |(count_X : ℝ) / x - (A : ℝ) / (M : ℝ)| ≤ (M : ℝ) / x
   -- Divmod decomposition: X = qM + s.
   set q : ℕ := X / M with hq_def
   set s : ℕ := X % M with hs_def
@@ -323,7 +323,8 @@ theorem crt_transfer :
         ((Finset.Iio (q * M)).filter E) ∪ ((Finset.Icc (q * M) X).filter E) := by
       apply Finset.ext
       intro n
-      simp only [Finset.mem_filter, Finset.mem_Iic, Finset.mem_union, Finset.mem_Iio, Finset.mem_Icc]
+      simp only [Finset.mem_filter, Finset.mem_Iic, Finset.mem_union, Finset.mem_Iio,
+        Finset.mem_Icc]
       constructor
       · rintro ⟨hn_le_X, hEn⟩
         by_cases h : n < q * M
@@ -509,9 +510,9 @@ private lemma apCoeffMod_sum_eq_piMod (t : ℝ) (q a : ℕ) :
   have hset : {p : ℕ | p ≤ ⌊t⌋₊ ∧ p.Prime ∧ p % q = a % q} =
       ↑((Finset.Icc 0 ⌊t⌋₊).filter (fun p => p.Prime ∧ p % q = a % q)) := by
     ext p
-    simp [and_assoc]
+    simp
   rw [piMod, hset, Nat.card_coe_set_eq, Set.ncard_coe_finset]
-  simp [apCoeffMod, Finset.sum_ite]
+  simp [apCoeffMod]
 
 
 private lemma sum_filter_eq_Ioc_indicator_real {q a : ℕ} {X Y : ℝ}
@@ -660,8 +661,9 @@ private lemma li_div_hasDerivAt {t : ℝ} (ht : 2 < t) :
       (1 / (t * Real.log t) - li t / t ^ 2) t := by
   have ht0 : t ≠ 0 := by positivity
   have hlog_ne : Real.log t ≠ 0 := ne_of_gt (Real.log_pos (by linarith))
-  convert! (li_hasDerivAt ht).div (hasDerivAt_id t) ht0 using 1 <;>
-    simp only [id_eq] <;> field_simp [ht0, hlog_ne]
+  convert! (li_hasDerivAt ht).div (hasDerivAt_id t) ht0 using 1
+  simp only [id_eq]
+  field_simp [ht0, hlog_ne]
 
 private lemma intervalIntegrable_of_continuousOn_Icc {f : ℝ → ℝ} {X Y : ℝ}
     (hXY : X ≤ Y) (hf : ContinuousOn f (Set.Icc X Y)) :
@@ -1674,7 +1676,8 @@ private lemma chunk_AP_sum_le {p : ℕ} (hp : p.Prime) :
         have h2pdivp : (2 * p) / p = 2 :=
           Nat.mul_div_cancel _ (by omega : 0 < p)
         omega
-      have hk_pos_real : (0 : ℝ) < (((q - 1) / p : ℕ) : ℝ) := by exact_mod_cast (by omega : 0 < (q - 1) / p)
+      have hk_pos_real : (0 : ℝ) < (((q - 1) / p : ℕ) : ℝ) := by
+        exact_mod_cast (by omega : 0 < (q - 1) / p)
       positivity
     have hprod_le_q : (((q - 1) / p : ℕ) : ℝ) * (p : ℝ) ≤ (q : ℝ) := by
       have h : ((q - 1) / p) * p ≤ q := by
@@ -1892,7 +1895,7 @@ theorem bt_reciprocal_AP_tail :
         have hcoefB_nonneg : 0 ≤ 2 * CBT := by positivity
         have hlogpp_nonneg : 0 ≤ Real.log p / (p : ℝ) := by
           have := hlogp_pos.le; positivity
-        show (2 * CBT / (Real.log 2) ^ 2) * (Real.log p / (p : ℝ)) +
+        change (2 * CBT / (Real.log 2) ^ 2) * (Real.log p / (p : ℝ)) +
             2 * CBT * (1 / (Real.log p) ^ 2) ≤
           (2 * CBT / (Real.log 2) ^ 2 + 2 * CBT) *
             (Real.log p / (p : ℝ) + 1 / (Real.log p) ^ 2)

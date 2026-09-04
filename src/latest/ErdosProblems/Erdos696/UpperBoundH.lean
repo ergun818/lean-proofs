@@ -96,7 +96,7 @@ lemma inv_mul_sqrt_le_tel (d : ℕ) (hd : 1 ≤ d) :
   have ha_nonneg : 0 ≤ a := by simp [a]
   have hb_nonneg : 0 ≤ b := by simp [b]
   have ha_le_b : a ≤ b := by
-    simp [a, b]
+    dsimp only [a, b]
     exact Real.sqrt_le_sqrt (by norm_num : (d : ℝ) ≤ d + 1)
   have ha_sq : a ^ 2 = (d : ℝ) := by simp [a, Real.sq_sqrt (le_of_lt hdpos)]
   have hb_sq : b ^ 2 = (d : ℝ) + 1 := by
@@ -727,7 +727,7 @@ private lemma divisor_chain_length_aux {n T : ℕ}
         have hd_ge_2 : 2 ≤ d := by linarith [hT100, hTd]
         have hmod_old : e % d = 1 := by
           have h := hrel_modeq.2
-          show e % d = 1
+          change e % d = 1
           have : e % d = 1 % d := h
           rwa [Nat.mod_eq_of_lt (by linarith : 1 < d)] at this
         have hrel : d < e ∧ e % d = 1 := ⟨hrel_modeq.1, hmod_old⟩
@@ -772,7 +772,7 @@ private lemma HChain_le_rank_add_of_no_bad {n T : ℕ}
   · subst hn1; simp [HChain]
   have hne : ({u | ∃ ds : List ℕ, IsDivisorChain n ds ∧ ds.length = u} : Set ℕ).Nonempty :=
     ⟨0, ⟨[], by simp [IsDivisorChain]⟩⟩
-  show HChain n ≤ T + Urank n + 1
+  change HChain n ≤ T + Urank n + 1
   rw [HChain, if_neg hn1]
   exact csSup_le hne (by
     intro u hu

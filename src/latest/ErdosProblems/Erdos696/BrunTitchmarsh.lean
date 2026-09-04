@@ -46,7 +46,7 @@ noncomputable def primesBetween_AP (a₀ b : ℝ) (q a : ℕ) : ℕ :=
 
 /-- Sieve restricted to integers in `(x, x+y]` lying in `a (mod q)`. -/
 noncomputable def primeInterSieveAP
-    (x y z : ℝ) (q a : ℕ) (hq : 1 ≤ q) (hz : 1 ≤ z) : LPSelbergSieve where
+    (x y z : ℝ) (q a : ℕ) (_ : 1 ≤ q) (hz : 1 ≤ z) : LPSelbergSieve where
   support := (Finset.Icc (Nat.ceil x) (Nat.floor (x+y))).filter (fun n => n % q = a % q)
   prodPrimes := primorialRestricted q (Nat.floor z)
   prodPrimes_squarefree := primorialRestricted_squarefree q _
@@ -67,7 +67,7 @@ noncomputable def primeInterSieveAP
 
 /-- For `d` coprime to `q`, the joint condition "d ∣ x" and "x ≡ a (mod q)" reduces
 to "x ≡ k (mod dq)" where `k = chineseRemainder hdq 0 a`. -/
-private lemma joint_iff_crt {d q a : ℕ} (hd : d ≠ 0) (hq : 1 ≤ q) (hdq : Nat.Coprime d q) :
+private lemma joint_iff_crt {d q a : ℕ} (_ : d ≠ 0) (_ : 1 ≤ q) (hdq : Nat.Coprime d q) :
     ∀ x : ℕ,
       (d ∣ x ∧ x ≡ a [MOD q]) ↔
       x ≡ (Nat.chineseRemainder hdq 0 a : ℕ) [MOD (d * q)] := by
@@ -209,11 +209,11 @@ private lemma abs_count_modEq_sub_le (a b m v : ℕ) (hm : 0 < m) (hab : a ≤ b
         linarith
       · linarith
     rw [abs_le]; constructor <;> linarith
-  · push_neg at h
+  · push Not at h
     rw [max_eq_left h.le]
     push_cast
     rw [h_q_to_R_b, h_q_to_R_a]
-    show |FbR - FaR - ((b : ℝ) - a) / m| ≤ 2
+    change |FbR - FaR - ((b : ℝ) - a) / m| ≤ 2
     exact h_FF_close
 
 /-- Bound the AP remainder by a fixed constant `5 = 2 + 3`. -/
@@ -268,7 +268,7 @@ theorem abs_rem_AP_le (x y z : ℝ) (hx : 0 < x) (hy : 0 < y) (q a : ℕ) (hq : 
   have hyqm : ((d : ℝ))⁻¹ * (y / q) = y / m := by
     rw [hm_def]; push_cast; field_simp
   rw [hyqm]
-  show |N - y / m| ≤ 5
+  change |N - y / m| ≤ 5
   calc |N - y / m|
       = |(N - ((b : ℝ) - a') / m) + (((b : ℝ) - a') / m - y / m)| := by congr 1; ring
     _ ≤ |N - ((b : ℝ) - a') / m| + |((b : ℝ) - a') / m - y / m| := abs_add_le _ _
@@ -358,7 +358,7 @@ We prove `selbergBoundingSum ≥ log(z) · φ(q) / (4q)` under the strong hypoth
 /-- Helper: the radical of `m` (coprime to `q`, bounded by `z`) divides
 `primorialRestricted q ⌊z⌋`. -/
 private lemma rad_dvd_primorialRestricted
-    (q : ℕ) (z : ℝ) (hz : 1 ≤ z) {m : ℕ} (hm_pos : 0 < m) (hm_le : (m : ℝ) ≤ z)
+    (q : ℕ) (z : ℝ) (_ : 1 ≤ z) {m : ℕ} (hm_pos : 0 < m) (hm_le : (m : ℝ) ≤ z)
     (hmq : Nat.Coprime m q) :
     (∏ p ∈ m.primeFactors, p) ∣ primorialRestricted q (Nat.floor z) := by
   unfold primorialRestricted
@@ -383,7 +383,7 @@ private lemma rad_dvd_primorialRestricted
 /-- Lower bound for the AP-sieve Selberg bounding sum by the coprime harmonic sum.
 This is the AP-analogue of `boundingSum_ge_sum`, adapted from `selbergBoundingSum_ge_sum_div`
 in lean-pool. The key change is that we restrict the inner sum to `m` coprime to `q`. -/
-private lemma selbergBoundingSum_AP_ge_coprime_sum (x y z : ℝ) (hx : 0 < x) (hy : 0 < y)
+private lemma selbergBoundingSum_AP_ge_coprime_sum (x y z : ℝ) (_ : 0 < x) (_ : 0 < y)
     (q a : ℕ) (hq : 1 ≤ q) (hz : 1 ≤ z) :
     ((primeInterSieveAP x y z q a hq hz).selbergBoundingSum : ℝ) ≥
       ∑ m ∈ (Finset.Icc 1 (Nat.floor (Real.sqrt z))).filter
@@ -393,7 +393,7 @@ private lemma selbergBoundingSum_AP_ge_coprime_sum (x y z : ℝ) (hx : 0 < x) (h
     PrimeUpperBound.CompletelyMultiplicative.zeta.pdiv PrimeUpperBound.CompletelyMultiplicative.id
   have hnu_nonneg : ∀ n, 0 ≤ s.nu n := by
     intro n
-    show 0 ≤ ((ζ : ArithmeticFunction ℝ).pdiv .id) n
+    change 0 ≤ ((ζ : ArithmeticFunction ℝ).pdiv .id) n
     by_cases h : n = 0
     · simp [h]
     · apply div_nonneg
@@ -402,7 +402,7 @@ private lemma selbergBoundingSum_AP_ge_coprime_sum (x y z : ℝ) (hx : 0 < x) (h
   have hnu_lt : ∀ p, p.Prime → p ∣ s.prodPrimes → s.nu p < 1 := s.nu_lt_one_of_prime
   have hsqrt_nn : (0 : ℝ) ≤ Real.sqrt z := Real.sqrt_nonneg z
   -- Chain of inequalities mirroring lean-pool's selbergBoundingSum_ge_sum_div.
-  show s.selbergBoundingSum ≥ _
+  change s.selbergBoundingSum ≥ _
   dsimp only [LPSelbergSieve.selbergBoundingSum]
   calc ∑ l ∈ s.prodPrimes.divisors,
           (if ((l ^ 2 : ℕ) : ℝ) ≤ s.level then s.selbergTerms l else 0)
@@ -507,7 +507,7 @@ private lemma selbergBoundingSum_AP_ge_coprime_sum (x y z : ℝ) (hx : 0 < x) (h
     intro m hm
     rw [Finset.mem_filter, Finset.mem_Icc] at hm
     have hm_ne : m ≠ 0 := by omega
-    show ((ζ : ArithmeticFunction ℝ).pdiv .id) m = 1 / (m : ℝ)
+    change ((ζ : ArithmeticFunction ℝ).pdiv .id) m = 1 / (m : ℝ)
     simp [ArithmeticFunction.pdiv_apply, ArithmeticFunction.natCoe_apply,
       ArithmeticFunction.zeta_apply_ne hm_ne, ArithmeticFunction.id_apply, one_div]
 
@@ -584,7 +584,7 @@ private lemma card_block_coprime (q : ℕ) (hq : 1 ≤ q) (k : ℕ) :
       constructor
       · rintro ⟨⟨h1, h2⟩, hmq⟩
         refine ⟨⟨h1, ?_⟩, hmq⟩
-        by_contra hc; push_neg at hc
+        by_contra hc; push Not at hc
         have : m = q := by omega
         rw [this] at hmq; exact h_q_not_co hmq
       · rintro ⟨⟨h1, h2⟩, hmq⟩; exact ⟨⟨h1, by omega⟩, hmq⟩
@@ -595,7 +595,7 @@ private lemma card_block_coprime (q : ℕ) (hq : 1 ≤ q) (k : ℕ) :
       constructor
       · rintro ⟨hm, hmq⟩
         refine ⟨⟨?_, hm⟩, Nat.coprime_comm.mp hmq⟩
-        by_contra hc; push_neg at hc
+        by_contra hc; push Not at hc
         have : m = 0 := by omega
         rw [this] at hmq; exact h_0_not_co' hmq
       · rintro ⟨⟨h1, h2⟩, hmq⟩
@@ -733,7 +733,7 @@ The constant `1/4` is explicit. The hypothesis ensures `√z/q ≥ 4q ≥ 4` and
 `z^{1/4}/q ≥ 2`, which together give enough room for the `log(z)/4` lower bound
 after the elementary block-counting argument. -/
 theorem boundingSum_AP_ge (x y z : ℝ) (hx : 0 < x) (hy : 0 < y) (q a : ℕ)
-    (hq : 1 ≤ q) (hz : 1 ≤ z) (hzq : 16 * (q : ℝ)^4 ≤ z) :
+    (hq : 1 ≤ q) (hz : 1 ≤ z) (hzq : 16 * (q : ℝ) ^ 4 ≤ z) :
     ((primeInterSieveAP x y z q a hq hz).selbergBoundingSum : ℝ) ≥
       Real.log z * (q.totient : ℝ) / (4 * q) := by
   classical
@@ -741,8 +741,8 @@ theorem boundingSum_AP_ge (x y z : ℝ) (hx : 0 < x) (hy : 0 < y) (q a : ℕ)
   have hq_R : (0 : ℝ) < q := by exact_mod_cast hq_pos
   have hφ_nn : (0 : ℝ) ≤ (q.totient : ℝ) := by exact_mod_cast Nat.zero_le _
   -- Step 0: hypothesis implications.
-  have hq4_nn : (0 : ℝ) ≤ (q : ℝ)^4 := by positivity
-  have hq4_ge_1 : (1 : ℝ) ≤ (q : ℝ)^4 := by
+  have hq4_nn : (0 : ℝ) ≤ (q : ℝ) ^ 4 := by positivity
+  have hq4_ge_1 : (1 : ℝ) ≤ (q : ℝ) ^ 4 := by
     apply one_le_pow₀; exact_mod_cast hq
   have hz4 : (16 : ℝ) ≤ z := by linarith
   have hz_pos : 0 < z := by linarith
@@ -755,7 +755,7 @@ theorem boundingSum_AP_ge (x y z : ℝ) (hx : 0 < x) (hy : 0 < y) (q a : ℕ)
   -- 4 q² ≤ √z
   have h_4q2_le_sqrtz : 4 * (q : ℝ)^2 ≤ Real.sqrt z := by
     have h_sq : (4 * (q : ℝ)^2)^2 ≤ z := by
-      have heq : (4 * (q : ℝ)^2)^2 = 16 * (q : ℝ)^4 := by ring
+      have heq : (4 * (q : ℝ)^2)^2 = 16 * (q : ℝ) ^ 4 := by ring
       linarith
     rw [← Real.sqrt_sq (by positivity : (0 : ℝ) ≤ 4 * (q : ℝ)^2)]
     exact Real.sqrt_le_sqrt h_sq
@@ -882,7 +882,7 @@ theorem boundingSum_AP_ge (x y z : ℝ) (hx : 0 < x) (hy : 0 < y) (q a : ℕ)
 
 /-- The Selberg sieve bound applied to the AP sieve. -/
 theorem siftedSum_AP_le (x y z : ℝ) (hx : 0 < x) (hy : 0 < y) (q a : ℕ)
-    (hq : 1 ≤ q) (hz : 1 ≤ z) (hzq : 16 * (q : ℝ)^4 ≤ z) (hz1 : 1 < z) :
+    (hq : 1 ≤ q) (hz : 1 ≤ z) (hzq : 16 * (q : ℝ) ^ 4 ≤ z) (hz1 : 1 < z) :
     (primeInterSieveAP x y z q a hq hz).siftedSum ≤
       4 * q * (y / q) / ((q.totient : ℝ) * Real.log z) +
       5 * z * (1 + Real.log z) ^ 3 := by
@@ -970,7 +970,7 @@ theorem siftedSum_AP_eq_card (x y z : ℝ) (q a : ℕ) (hq : 1 ≤ q) (hz : 1 �
         have h_prod_eq : s.prodPrimes = primorialRestricted q (Nat.floor z) := rfl
         rw [h_prod_eq] at hpprod
         unfold primorialRestricted at hpprod
-        rcases (Prime.dvd_finset_prod_iff (Nat.prime_iff.mp hpp) _).mp hpprod with ⟨r, hr, hpr⟩
+        rcases (Prime.dvd_finsetProd_iff (Nat.prime_iff.mp hpp) _).mp hpprod with ⟨r, hr, hpr⟩
         rcases Finset.mem_filter.mp hr with ⟨hr_range, hr_prime, hr_nq⟩
         have hpr_eq : p = r := (Nat.prime_dvd_prime_iff_eq hpp hr_prime).mp hpr
         have hp_range_mem : p ∈ Finset.range (Nat.floor z + 1) := by
@@ -983,7 +983,7 @@ theorem siftedSum_AP_eq_card (x y z : ℝ) (q a : ℕ) (hq : 1 ≤ q) (hz : 1 �
         have hp_nq : ¬ p ∣ q := by rw [hpr_eq]; exact hr_nq
         exact h_pf p hpp hpz hp_nq hpd
   -- Now unfold siftedSum and convert to filtered card.
-  show s.siftedSum = _
+  change s.siftedSum = _
   dsimp only [LPSieve.siftedSum]
   -- weights = 1, so siftedSum = ∑ d ∈ A, if Coprime then 1 else 0 = (A.filter Coprime).card
   have h_weights : ∀ d ∈ s.support, s.weights d = 1 := fun _ _ => rfl
@@ -998,7 +998,7 @@ theorem siftedSum_AP_eq_card (x y z : ℝ) (q a : ℕ) (hq : 1 ≤ q) (hz : 1 �
   rw [this, h_set_eq]
 
 /-- Number of primes in an AP `≤ siftedSum + z`. -/
-theorem primesBetween_AP_le_siftedSum_add (x y z : ℝ) (hx : 0 < x) (hy : 0 < y)
+theorem primesBetween_AP_le_siftedSum_add (x y z : ℝ) (_ : 0 < x) (_ : 0 < y)
     (q a : ℕ) (hq : 1 ≤ q) (hz : 1 ≤ z) :
     (primesBetween_AP x (x + y) q a : ℝ) ≤
       (primeInterSieveAP x y z q a hq hz).siftedSum + z := by
@@ -1021,7 +1021,7 @@ theorem primesBetween_AP_le_siftedSum_add (x y z : ℝ) (hx : 0 < x) (hy : 0 < y
     · right
       refine Finset.mem_Icc.mpr ⟨hp_prime.one_le, Nat.le_floor hpz⟩
     · left
-      push_neg at hpz
+      push Not at hpz
       refine Finset.mem_filter.mpr ⟨Finset.mem_Icc.mpr hp_range, hp_mod, ?_⟩
       intro p' hp'_prime hp'_le _ hp'_dvd
       rw [hp_prime.dvd_iff_eq hp'_prime.ne_one] at hp'_dvd
@@ -1057,7 +1057,7 @@ theorem primesBetween_AP_le_siftedSum_add (x y z : ℝ) (hx : 0 < x) (hy : 0 < y
 /-- Combined Brun–Titchmarsh AP bound: number of primes in an AP is
 bounded by the sifted sum plus z. -/
 theorem primesBetween_AP_le (x y z : ℝ) (hx : 0 < x) (hy : 0 < y) (q a : ℕ)
-    (hq : 1 ≤ q) (hz : 1 ≤ z) (hz1 : 1 < z) (hzq : 16 * (q : ℝ)^4 ≤ z) :
+    (hq : 1 ≤ q) (hz : 1 ≤ z) (hz1 : 1 < z) (hzq : 16 * (q : ℝ) ^ 4 ≤ z) :
     (primesBetween_AP x (x + y) q a : ℝ) ≤
       4 * q * (y / q) / ((q.totient : ℝ) * Real.log z) +
       5 * z * (1 + Real.log z) ^ 3 + z := by
@@ -1066,7 +1066,7 @@ theorem primesBetween_AP_le (x y z : ℝ) (hx : 0 < x) (hy : 0 < y) (q a : ℕ)
   linarith
 
 /-- `piMod t q a` (from `Erdos696.lean`) is bounded by our `primesBetween_AP 1 t q a`. -/
-theorem piMod_le_via_primesBetween_AP (t : ℝ) (q a : ℕ) (hq : 1 ≤ q) (ht : 1 ≤ t) :
+theorem piMod_le_via_primesBetween_AP (t : ℝ) (q a : ℕ) (_ : 1 ≤ q) (_ : 1 ≤ t) :
     (Erdos696.piMod t q a : ℝ) ≤ primesBetween_AP 1 t q a := by
   classical
   unfold Erdos696.piMod primesBetween_AP
@@ -1077,8 +1077,8 @@ theorem piMod_le_via_primesBetween_AP (t : ℝ) (q a : ℕ) (hq : 1 ≤ q) (ht :
       {p : ℕ | p ≤ ⌊t⌋₊ ∧ p.Prime ∧ p % q = a % q} =
       ((Finset.Icc 1 ⌊t⌋₊).filter (fun n => n.Prime ∧ n % q = a % q) : Set ℕ) := by
     ext p
-    simp only [Set.mem_setOf_eq, Finset.coe_filter, Finset.mem_coe, Finset.mem_Icc,
-      Set.mem_setOf_eq]
+    simp only [Set.mem_ofPred_eq, Finset.coe_filter, Finset.mem_Icc,
+      Set.mem_ofPred_eq]
     constructor
     · rintro ⟨hp_le, hp_prime, hp_mod⟩
       exact ⟨⟨hp_prime.one_le, hp_le⟩, hp_prime, hp_mod⟩

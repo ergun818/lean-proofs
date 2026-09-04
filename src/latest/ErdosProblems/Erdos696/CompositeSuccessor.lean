@@ -60,6 +60,7 @@ private noncomputable def compositePrimeSubWindow_d_1 (y : ℝ) : Finset ℕ :=
     (fun q => q.Prime ∧ Real.exp y < (q : ℝ) ∧ (q : ℝ) ≤ Real.exp (y ^ (2 : ℝ)))
     (Finset.Iic ⌊Real.exp (y ^ (2 : ℝ))⌋₊)
 
+omit sw in
 /-- Sub-window is a subset of the full window: `(exp y, exp(y^2)] ⊆ (exp y, exp(y^{A-1})]`
 since `y^2 ≤ y^{19}` for `y ≥ 1`.  Used in the paper §6.2 d=1 dispatch (line 1542-1548). -/
 private lemma compositePrimeSubWindow_d_1_subset_window {y : ℝ} (hy : 1 ≤ y) :
@@ -115,6 +116,7 @@ private noncomputable def goodBlockIndices (S : Finset ℕ) (y : ℝ) : Finset �
   (Finset.range (compositeBlockCount y)).filter
     (fun k => (compositeBlock y k ∩ S).card = 1)
 
+omit sw in
 private lemma goodBlockCount_eq_card_indices (S : Finset ℕ) (y : ℝ) :
     goodBlockCount S y = (goodBlockIndices S y).card := rfl
 
@@ -129,6 +131,7 @@ private noncomputable def selectedPrimeInBlock (S : Finset ℕ) (y : ℝ) (k : �
     else
       1
 
+omit sw in
 /-- When block `k` is good for `S`, `selectedPrimeInBlock S y k ∈ compositeBlock y k ∩ S`. -/
 private lemma selectedPrimeInBlock_mem {S : Finset ℕ} {y : ℝ} {k : ℕ}
     (h : (compositeBlock y k ∩ S).card = 1) :
@@ -138,6 +141,7 @@ private lemma selectedPrimeInBlock_mem {S : Finset ℕ} {y : ℝ} {k : ℕ}
   rw [dif_pos h]
   exact Finset.min'_mem _ _
 
+omit sw in
 /-- Paper §6.2 line 1716: every prime in `compositeBlock y k` exceeds `exp y`. -/
 private lemma compositeBlock_prime_gt_exp_y {y : ℝ} {k : ℕ} (hy : 0 ≤ y) {q : ℕ}
     (hq : q ∈ compositeBlock y k) : Real.exp y < (q : ℝ) := by
@@ -155,6 +159,7 @@ private lemma compositeBlock_prime_gt_exp_y {y : ℝ} {k : ℕ} (hy : 0 ≤ y) {
     linarith
   exact hβk.trans_lt hq_gt
 
+omit sw in
 /-- Primes in `compositeBlock y k` are prime (from filter definition). -/
 private lemma compositeBlock_prime {y : ℝ} {k : ℕ} {q : ℕ}
     (hq : q ∈ compositeBlock y k) : q.Prime := by
@@ -163,6 +168,7 @@ private lemma compositeBlock_prime {y : ℝ} {k : ℕ} {q : ℕ}
   exact hq.2.1
 
 
+omit sw in
 /-- Paper §6.2 line 1717: when block `k` is good for `S`, the selected prime is coprime
 to `d` (since `q > exp y > y ≥ d` and `q` is prime). -/
 private lemma selectedPrimeInBlock_coprime_d {S : Finset ℕ} {y : ℝ} {d : ℕ}
@@ -231,6 +237,7 @@ private noncomputable def blockConditionalResidueProbability
 private noncomputable def selectionWeight (U S : Finset ℕ) : ℝ :=
   ∏ q ∈ U, if q ∈ S then (1 : ℝ) / (q : ℝ) else 1 - (1 : ℝ) / (q : ℝ)
 
+omit sw in
 /-- Algebraic identity relating per-block "good with specific selection" probability
 to `blockGoodProbability` and `blockConditionalResidueProbability`:
 for `q ∈ B` with `q ≥ 2`, `(1/q) · ∏_{r ∈ B \ {q}} (1 - 1/r) = ∏_{r ∈ B} (1 - 1/r) · 1/(q-1)`.
@@ -257,6 +264,7 @@ private lemma reciprocal_block_identity {B : Finset ℕ} {q : ℕ}
   rw [h_subst]
   field_simp
 
+omit sw in
 /-- Per-block joint probability of "exactly one selected ∧ residue = a mod d":
 equals `blockGoodProbability B · blockConditionalResidueProbability B d a` for B
 consisting of primes.  This is the key per-block factorization underlying paper line 1732. -/
@@ -328,6 +336,7 @@ private def blockEvents (F : ℕ → Finset ℕ) (A B : Finset ℕ) (S : Finset 
     Prop :=
   (∀ k ∈ A, (F k ∩ S).card = 1) ∧ ∀ k ∈ B, (F k ∩ S).card ≠ 1
 
+omit sw in
 private lemma selectionWeight_eq_prod_sdiff (U S : Finset ℕ) (hS : S ⊆ U) :
     selectionWeight U S =
       (∏ q ∈ S, (1 : ℝ) / (q : ℝ)) *
@@ -354,6 +363,7 @@ private lemma selectionWeight_eq_prod_sdiff (U S : Finset ℕ) (hS : S ⊆ U) :
           ∏ q ∈ U \ S, (1 - (1 : ℝ) / (q : ℝ)) := by
       ring
 
+omit sw in
 private lemma finitePrimeModelProb_true (U : Finset ℕ) :
     finitePrimeModelProb U (fun _S => True) = 1 := by
   classical
@@ -373,6 +383,7 @@ private lemma finitePrimeModelProb_true (U : Finset ℕ) :
     _ = 1 := by
       simp
 
+omit sw in
 private lemma finitePrimeModelProb_compl (U : Finset ℕ) (Q : Finset ℕ → Prop) :
     finitePrimeModelProb U (fun S => ¬ Q S) = 1 - finitePrimeModelProb U Q := by
   classical
@@ -386,6 +397,7 @@ private lemma finitePrimeModelProb_compl (U : Finset ℕ) (Q : Finset ℕ → Pr
   rw [htrue] at hsum
   linarith
 
+omit sw in
 private lemma selectionWeight_singleton (C : Finset ℕ) {q : ℕ} (hq : q ∈ C) :
     selectionWeight C {q} =
       ((1 : ℝ) / (q : ℝ)) * ∏ r ∈ C.erase q, (1 - (1 : ℝ) / (r : ℝ)) := by
@@ -400,6 +412,7 @@ private lemma selectionWeight_singleton (C : Finset ℕ) {q : ℕ} (hq : q ∈ C
     have hrne : r ≠ q := Finset.ne_of_mem_erase hr
     simp [hrne]
 
+omit sw in
 private lemma finitePrimeModelProb_block_good (C : Finset ℕ) :
     finitePrimeModelProb C (fun S => (C ∩ S).card = 1) = blockGoodProbability C := by
   classical
@@ -426,12 +439,14 @@ private lemma finitePrimeModelProb_block_good (C : Finset ℕ) :
   · intro q hq
     exact (selectionWeight_singleton C hq).symm
 
+omit sw in
 private lemma finitePrimeModelProb_block_bad (C : Finset ℕ) :
     finitePrimeModelProb C (fun S => (C ∩ S).card ≠ 1) =
       1 - blockGoodProbability C := by
   rw [finitePrimeModelProb_compl C (fun S => (C ∩ S).card = 1),
     finitePrimeModelProb_block_good]
 
+omit sw in
 /-- Per-block good-with-residue probability: for B consisting of primes,
 the pmodel of "exactly one selected ∧ that one has residue ≡ a mod d" equals
 `blockGoodProbability B · blockConditionalResidueProbability B d a`.
@@ -476,6 +491,7 @@ private lemma finitePrimeModelProb_block_good_with_residue {B : Finset ℕ} {d a
     have hq_mem : q ∈ B := hq_filter.1
     exact (selectionWeight_singleton B hq_mem).symm
 
+omit sw in
 private lemma selectionWeight_union {U V S T : Finset ℕ} (hUV : Disjoint U V)
     (hS : S ⊆ U) (hT : T ⊆ V) :
     selectionWeight (U ∪ V) (S ∪ T) = selectionWeight U S * selectionWeight V T := by
@@ -496,6 +512,7 @@ private lemma selectionWeight_union {U V S T : Finset ℕ} (hUV : Disjoint U V)
       exact (Finset.disjoint_left.mp hUV) (hS hqS) hqV
     by_cases hqT : q ∈ T <;> simp [hqS, hqT]
 
+omit sw in
 private lemma sum_powerset_union_disjoint {U V : Finset ℕ} (hUV : Disjoint U V)
     (F : Finset ℕ → Finset ℕ → ℝ) :
     (∑ X ∈ (U ∪ V).powerset, F (X ∩ U) (X ∩ V)) =
@@ -550,6 +567,7 @@ private lemma sum_powerset_union_disjoint {U V : Finset ℕ} (hUV : Disjoint U V
   · intro X hX
     rfl
 
+omit sw in
 private lemma finitePrimeModelProb_union_inter {U V : Finset ℕ} (hUV : Disjoint U V)
     (P Q : Finset ℕ → Prop) :
     finitePrimeModelProb (U ∪ V) (fun X => P (X ∩ U) ∧ Q (X ∩ V)) =
@@ -571,7 +589,7 @@ private lemma finitePrimeModelProb_union_inter {U V : Finset ℕ} (hUV : Disjoin
       intro X hX
       dsimp [W]
       by_cases hPQ : P (X ∩ U) ∧ Q (X ∩ V)
-      · simp [hPQ]
+      · simp only [if_pos hPQ]
         have hsub : X ⊆ U ∪ V := Finset.mem_powerset.mp hX
         have hsplit : (X ∩ U) ∪ (X ∩ V) = X := by
           ext x
@@ -613,6 +631,7 @@ private lemma finitePrimeModelProb_union_inter {U V : Finset ℕ} (hUV : Disjoin
           ∑ T ∈ V.powerset.filter Q, selectionWeight V T := by
       rw [Finset.sum_filter, Finset.sum_filter]
 
+omit sw in
 private lemma finitePrimeModelProb_congr {U : Finset ℕ} {Q R : Finset ℕ → Prop}
     (h : ∀ S, S ⊆ U → (Q S ↔ R S)) :
     finitePrimeModelProb U Q = finitePrimeModelProb U R := by
@@ -629,6 +648,7 @@ private lemma finitePrimeModelProb_congr {U : Finset ℕ} {Q R : Finset ℕ → 
   · intro hS
     exact ⟨hS.1, (h S hS.1).mpr hS.2⟩
 
+omit sw in
 private lemma inter_inter_of_subset_right {D S R : Finset ℕ} (hD : D ⊆ R) :
     D ∩ (S ∩ R) = D ∩ S := by
   ext x
@@ -639,11 +659,13 @@ private lemma inter_inter_of_subset_right {D S R : Finset ℕ} (hD : D ⊆ R) :
   · intro h
     exact ⟨h.1, h.2, hD h.1⟩
 
+omit sw in
 private lemma subset_sdiff_of_subset_of_disjoint {D C U : Finset ℕ} (hDU : D ⊆ U)
     (hdisj : Disjoint D C) : D ⊆ U \ C := by
   intro x hx
   exact Finset.mem_sdiff.mpr ⟨hDU hx, fun hxC => (Finset.disjoint_left.mp hdisj) hx hxC⟩
 
+omit sw in
 private lemma finitePrimeModelProb_badEvents (U : Finset ℕ) (F : ℕ → Finset ℕ)
     (B : Finset ℕ)
     (hBU : ∀ k ∈ B, F k ⊆ U)
@@ -718,6 +740,7 @@ private lemma finitePrimeModelProb_badEvents (U : Finset ℕ) (F : ℕ → Finse
         dsimp [C]
         rw [Finset.prod_insert hkB]
 
+omit sw in
 private lemma finitePrimeModelProb_blockEvents (U : Finset ℕ) (F : ℕ → Finset ℕ)
     (A B : Finset ℕ)
     (hsub : ∀ k ∈ A ∪ B, F k ⊆ U)
@@ -844,6 +867,7 @@ private lemma finitePrimeModelProb_blockEvents (U : Finset ℕ) (F : ℕ → Fin
         rw [Finset.prod_insert hkA]
         ring
 
+omit sw in
 /-- Residue-extended `blockEvents` factorization (paper §6.2 line 1722-1735).
 For good blocks (in A), include both "good" and "specific residue" conditions;
 for bad blocks (in B), only "not good".  The factorization includes residue
@@ -978,7 +1002,7 @@ private lemma finitePrimeModelProb_blockEvents_with_residues (U : Finset ℕ)
               refine ⟨q, hq_mem, ?_, hq_res⟩
               have h_inter_eq : F k' ∩ (S ∩ F k') = F k' ∩ S := by
                 ext x; simp only [Finset.mem_inter]; tauto
-              show F k' ∩ S = ({q} : Finset ℕ)
+              change F k' ∩ S = ({q} : Finset ℕ)
               rw [← h_inter_eq]; exact hq_eq
             · -- k' ∈ A
               rcases h_A_rest k' hk'_A with ⟨q, hq_mem, hq_eq, hq_res⟩
@@ -1095,16 +1119,19 @@ squarefree products of primes from the window. -/
 noncomputable def compositeSuccessorCRTPeriod (A y : ℝ) (d : ℕ) : ℕ :=
   d * primorial (compositeSuccessorCutoff A y)
 
+omit sw in
 lemma compositeSuccessorCRTPeriod_pos {A y : ℝ} {d : ℕ} (hd : 1 ≤ d) :
     0 < compositeSuccessorCRTPeriod A y d := by
   dsimp [compositeSuccessorCRTPeriod]
   exact Nat.mul_pos (lt_of_lt_of_le Nat.zero_lt_one hd) (primorial_pos _)
 
+omit sw in
 private lemma d_dvd_compositeSuccessorCRTPeriod (A y : ℝ) (d : ℕ) :
     d ∣ compositeSuccessorCRTPeriod A y d := by
   dsimp [compositeSuccessorCRTPeriod]
   exact dvd_mul_right d (primorial (compositeSuccessorCutoff A y))
 
+omit sw in
 private lemma finset_prod_dvd_of_forall_prime_dvd {T : Finset ℕ} {n : ℕ}
     (hprime : ∀ q ∈ T, q.Prime) (hdiv : ∀ q ∈ T, q ∣ n) :
     (∏ q ∈ T, q) ∣ n := by
@@ -1132,6 +1159,7 @@ private lemma finset_prod_dvd_of_forall_prime_dvd {T : Finset ℕ} {n : ℕ}
         (hprime r (Finset.mem_insert_of_mem hr))).mpr hqr
     exact Nat.Coprime.mul_dvd_of_dvd_of_dvd hcop hqdiv hTdiv
 
+omit sw in
 /-- Product of admissible primes from window divides the primorial CRT period.
 Each prime `q ∈ T` lies in `(exp y, exp(y^{A-1})]` so `q ≤ exp(y^A) = cutoff`,
 hence `q ∣ primorial(cutoff)`, and the product is squarefree so `∏T ∣ primorial`. -/
@@ -1165,6 +1193,7 @@ private lemma prod_dvd_compositeSuccessorCRTPeriod_of_admissible {A y : ℝ} {d 
   dsimp [compositeSuccessorCRTPeriod]
   exact dvd_mul_of_dvd_right hprod_dvd_primorial d
 
+omit sw in
 private lemma dvd_iff_of_mod_compositeSuccessorCRTPeriod_eq {A y : ℝ} {d e n n' : ℕ}
     (heM : e ∣ compositeSuccessorCRTPeriod A y d)
     (hmod : n % compositeSuccessorCRTPeriod A y d =
@@ -1174,6 +1203,7 @@ private lemma dvd_iff_of_mod_compositeSuccessorCRTPeriod_eq {A y : ℝ} {d e n n
     simpa [Nat.ModEq] using hmod
   exact hmodeq.dvd_iff heM
 
+omit sw in
 private lemma GoodCompositeSuccessor_iff_of_mod {A y : ℝ} {d n n' : ℕ}
     (_hd : 1 ≤ d) (hy : 1 ≤ y)
     (hmod : n % compositeSuccessorCRTPeriod A y d =
@@ -1189,6 +1219,7 @@ private lemma GoodCompositeSuccessor_iff_of_mod {A y : ℝ} {d n n' : ℕ}
       (d := d) hy hadm
     exact ⟨T, hadm, (dvd_iff_of_mod_compositeSuccessorCRTPeriod_eq heM hmod).mpr hTdvd⟩
 
+omit sw in
 lemma CompositeSuccessorCoreBad_iff_of_mod_eq {A y : ℝ} {d n n' : ℕ}
     (hd : 1 ≤ d) (hy : 1 ≤ y)
     (hmod : n % compositeSuccessorCRTPeriod A y d =
@@ -1210,6 +1241,7 @@ lemma CompositeSuccessorCoreBad_iff_of_mod_eq {A y : ℝ} {d n n' : ℕ}
       exact hgood ((GoodCompositeSuccessor_iff_of_mod (A := A) (y := y) hd hy hmod).mp
         hgood')
 
+omit sw in
 lemma CompositeSuccessorCoreBad_iff_of_mod {A y : ℝ} {d n : ℕ}
     (hd : 1 ≤ d) (hy : 1 ≤ y) :
     CompositeSuccessorCoreBad A y d n ↔
@@ -1218,6 +1250,7 @@ lemma CompositeSuccessorCoreBad_iff_of_mod {A y : ℝ} {d n : ℕ}
   have hMpos := compositeSuccessorCRTPeriod_pos (A := A) (y := y) hd
   rw [Nat.mod_eq_of_lt (Nat.mod_lt n hMpos)]
 
+omit sw in
 lemma composite_successor_bad_count_le_periodic {A y : ℝ} {d : ℕ}
     (hd : 1 ≤ d) (hy : 1 ≤ y) {x : ℝ} (hx : 0 ≤ x) :
     (Nat.card (CompositeSuccessorBadSet A y d x) : ℝ) ≤
@@ -1263,6 +1296,7 @@ lemma composite_successor_bad_count_le_periodic {A y : ℝ} {d : ℕ}
       have hmul := mul_le_mul_of_nonneg_left hfloor_le hratio_nonneg
       linarith
 
+omit sw in
 private lemma compositeBlock_mem_cumulative_sdiff (y : ℝ) (k q : ℕ) :
     q ∈ compositeBlock y k ↔
       q ∈ (Finset.filter Nat.Prime
@@ -1293,6 +1327,7 @@ private lemma compositeBlock_mem_cumulative_sdiff (y : ℝ) (k q : ℕ) :
       exact hqnotA (Finset.mem_filter.mpr ⟨hqAIic, hqprime⟩)
     exact Finset.mem_filter.mpr ⟨hqBIic, hqprime, hqgt, hqle⟩
 
+omit sw in
 private lemma reciprocalPrimeMass_compositeBlock_eq_sub (y : ℝ) (k : ℕ)
     (hy : 0 ≤ y) :
     reciprocalPrimeMass (compositeBlock y k) =
@@ -1333,6 +1368,7 @@ private lemma reciprocalPrimeMass_compositeBlock_eq_sub (y : ℝ) (k : ℕ)
 
 /-! ### Paper §6.2 Step 1--7 decomposition for the `A = 20` core. -/
 
+omit sw in
 private lemma reciprocalPrimeMass_prime_window_eq_sub (L U : ℝ)
     (hL : 0 ≤ L) (hU : 0 ≤ U) (hLU : L ≤ U) :
     (∑ q ∈ Finset.filter
@@ -1347,16 +1383,13 @@ private lemma reciprocalPrimeMass_prime_window_eq_sub (L U : ℝ)
       Finset.filter (fun q : ℕ => q.Prime ∧ L < (q : ℝ) ∧ (q : ℝ) ≤ U)
           (Finset.Iic ⌊U⌋₊) = sU \ sL := by
     ext q
-    simp only [Finset.mem_filter, Finset.mem_Iic, Finset.mem_sdiff]
-    intro hp hqU
+    simp only [sL, sU, Finset.mem_filter, Finset.mem_Iic, Finset.mem_sdiff,
+      Nat.le_floor_iff hU, Nat.le_floor_iff hL]
     constructor
-    · intro h hqL _hp'
-      exact (not_le_of_gt h.1 hqL).elim
     · intro h
-      constructor
-      · by_contra hn
-        exact h (le_of_not_gt hn) hp
-      · exact hqU
+      exact ⟨⟨h.1, h.2.1⟩, fun hqL => (not_le_of_gt h.2.2.1) hqL.1⟩
+    · intro h
+      exact ⟨h.1.1, h.1.2, lt_of_not_ge (fun hqL => h.2 ⟨hqL, h.1.2⟩), h.1.1⟩
   have hsub : sL ⊆ sU := by
     intro q hq
     simp only [sL, sU, Finset.mem_filter, Finset.mem_Iic] at hq ⊢
@@ -1364,6 +1397,7 @@ private lemma reciprocalPrimeMass_prime_window_eq_sub (L U : ℝ)
   rw [hset]
   exact Finset.sum_sdiff_eq_sub hsub
 
+omit sw in
 /-- Paper §6.2 line 1534-1540 (d=1 dispatch): Mertens reciprocal mass on the d=1 sub-window
 `(exp y, exp(y^2)]` equals `log y + O(1)`. -/
 private lemma step1_mertens_subwindow_d_1_mass :
@@ -1452,6 +1486,7 @@ private lemma step1_mertens_subwindow_d_1_mass :
   rw [hwindow, ← hmainlog]
   exact hbound.trans (by linarith)
 
+omit sw in
 /-- Step 2: block decomposition with `γ = 15`.
 
 The first `M = floor(15 log y)` blocks `(exp(y e^k), exp(y e^(k+1))]` lie in
@@ -1620,6 +1655,7 @@ private lemma step2_block_decomposition :
         _ ≤ C₀ / y + C₀ / y := add_le_add hCb hCa
         _ = (2 * C₀) / y := by ring
 
+omit sw in
 private lemma log_prod_one_sub_inv (B : Finset ℕ) (hgt : ∀ q ∈ B, 1 < q) :
     Real.log (∏ q ∈ B, (1 - (1 : ℝ) / (q : ℝ))) =
       ∑ q ∈ B, Real.log (1 - (1 : ℝ) / (q : ℝ)) := by
@@ -1649,6 +1685,7 @@ private lemma log_prod_one_sub_inv (B : Finset ℕ) (hgt : ∀ q ∈ B, 1 < q) :
     have hsne : (∏ q ∈ s, (1 - (1 : ℝ) / (q : ℝ))) ≠ 0 := ne_of_gt hspos
     rw [Finset.prod_insert has, Finset.sum_insert has, Real.log_mul ha hsne, ih hgt_s]
 
+omit sw in
 private lemma abs_log_one_sub_inv_add_inv_le {q : ℕ} (hq : 1 < q) :
     |Real.log (1 - (1 : ℝ) / (q : ℝ)) + (1 : ℝ) / (q : ℝ)| ≤
       2 * ((1 : ℝ) / (q : ℝ)) ^ 2 := by
@@ -1688,6 +1725,7 @@ private lemma abs_log_one_sub_inv_add_inv_le {q : ℕ} (hq : 1 < q) :
       _ = 2 * ((1 : ℝ) / (q : ℝ)) ^ 2 := by ring
   simpa [add_comm] using hmain.trans hdiv_le
 
+omit sw in
 private lemma blockGoodProbability_eq_prod_sum_inv_sub_one
     (B : Finset ℕ) (hgt : ∀ q ∈ B, 1 < q) :
     blockGoodProbability B =
@@ -1710,6 +1748,7 @@ private lemma blockGoodProbability_eq_prod_sum_inv_sub_one
   rw [hqsub]
   field_simp [hqne, hqm1ne]
 
+omit sw in
 private lemma sum_inv_sq_le_exp_neg_mul_reciprocalPrimeMass
     (y : ℝ) (B : Finset ℕ) (hlower : ∀ q ∈ B, Real.exp y < (q : ℝ)) :
     (∑ q ∈ B, ((1 : ℝ) / (q : ℝ)) ^ 2) ≤
@@ -1729,6 +1768,7 @@ private lemma sum_inv_sq_le_exp_neg_mul_reciprocalPrimeMass
     _ ≤ Real.exp (-y) * ((1 : ℝ) / (q : ℝ)) :=
       mul_le_mul_of_nonneg_right hle hnon
 
+omit sw in
 private lemma blockGoodProbability_close_to_mass_exp
     (B : Finset ℕ) (hgt : ∀ q ∈ B, 1 < q)
     (hmu_le_two : reciprocalPrimeMass B ≤ 2)
@@ -1879,6 +1919,7 @@ private lemma blockGoodProbability_close_to_mass_exp
       _ = 10 * ν := by ring
   simpa [hprob_eq, μ, ν, mul_comm, mul_left_comm, mul_assoc] using hmain
 
+omit sw in
 private lemma mass_exp_close_exp_neg_one {μ : ℝ}
     (hmu_nonneg : 0 ≤ μ) (hclose : |μ - 1| ≤ 1) :
     |μ * Real.exp (-μ) - Real.exp (-1)| ≤ 5 * |μ - 1| := by
@@ -1929,6 +1970,7 @@ private lemma mass_exp_close_exp_neg_one {μ : ℝ}
         _ = 5 * |t| := by ring
     _ = 5 * |μ - 1| := by simp [t]
 
+omit sw in
 /-- Step 3: good-block probability.
 
 For every block from Step 2, the probability of selecting exactly one prime is
@@ -2041,6 +2083,7 @@ private lemma step3_good_block_probability :
           (mul_le_mul_of_nonneg_left hmass_abs (by norm_num))
       _ = (5 * C₂ + 20) / y := by ring
 
+omit sw in
 private lemma compositeBlockEndpoint_mono {y : ℝ} (hy : 0 ≤ y) {i j : ℕ}
     (hij : i ≤ j) :
     compositeBlockEndpoint y i ≤ compositeBlockEndpoint y j := by
@@ -2048,6 +2091,7 @@ private lemma compositeBlockEndpoint_mono {y : ℝ} (hy : 0 ≤ y) {i j : ℕ}
   apply Real.exp_le_exp.mpr
   exact mul_le_mul_of_nonneg_left (Real.exp_le_exp.mpr (by exact_mod_cast hij)) hy
 
+omit sw in
 private lemma compositeBlock_disjoint {y : ℝ} (hy : 0 ≤ y) {i j : ℕ} (hij : i ≠ j) :
     Disjoint (compositeBlock y i) (compositeBlock y j) := by
   classical
@@ -2067,6 +2111,7 @@ private lemma compositeBlock_disjoint {y : ℝ} (hy : 0 ≤ y) {i j : ℕ} (hij 
     rcases Finset.mem_filter.mp hqj with ⟨_hIic_j, _hprime_j, _hgt_j, hle_j⟩
     linarith
 
+omit sw in
 /-- Step 4 independence bridge: block-good indicators are mutually independent in the
 finite prime model because distinct blocks depend on disjoint prime sets.  The form with
 two disjoint index sets records the joint law of prescribed good and bad block outcomes. -/
@@ -2110,6 +2155,7 @@ private lemma step4_independence_lemma :
     exact compositeBlock_disjoint hy_nonneg hij
   convert! finitePrimeModelProb_blockEvents U F A B hsub hpair hAB using 1
 
+omit sw in
 /-- Step 4 expectation bridge: Step 3 gives an expected number of good blocks of order
 `e^{-1} M`, which dominates the paper threshold `K = ceil(e^{-1}15 log y / 2)`. -/
 private lemma step4_expectation_lower_bound
@@ -2227,6 +2273,7 @@ private lemma step4_expectation_lower_bound
     exact ⟨(le_of_lt hceil_lt).trans (hfirst_aux.trans htwo_thirds_EW),
       hsecond_aux.trans hEW_lower⟩
 
+omit sw in
 private lemma selectionWeight_nonneg {U S : Finset ℕ} (hU : ∀ q ∈ U, 1 ≤ q) :
     0 ≤ selectionWeight U S := by
   classical
@@ -2240,6 +2287,7 @@ private lemma selectionWeight_nonneg {U S : Finset ℕ} (hU : ∀ q ∈ U, 1 ≤
     have hq_pos : (0 : ℝ) < q := by exact_mod_cast (Nat.zero_lt_one.trans_le (hU q hq))
     exact (div_le_one hq_pos).mpr (by exact_mod_cast hU q hq)
 
+omit sw in
 private lemma finitePrimeModelProb_nonneg {U : Finset ℕ} (hU : ∀ q ∈ U, 1 ≤ q)
     (Q : Finset ℕ → Prop) :
     0 ≤ finitePrimeModelProb U Q := by
@@ -2247,12 +2295,14 @@ private lemma finitePrimeModelProb_nonneg {U : Finset ℕ} (hU : ∀ q ∈ U, 1 
   dsimp [finitePrimeModelProb]
   exact Finset.sum_nonneg (fun _S _hS => selectionWeight_nonneg hU)
 
+omit sw in
 private lemma compositePrimeWindow_one_le {A y : ℝ} {q : ℕ}
     (hq : q ∈ compositePrimeWindow A y) :
     1 ≤ q := by
   rcases Finset.mem_filter.mp hq with ⟨_hqIic, hqprime, _hqgt, _hqle⟩
   exact hqprime.one_lt.le
 
+omit sw in
 /-- `conditionalResidueMeasure` is nonneg.  Both numerator and denominator are
 finite-prime-model probabilities, hence nonneg. -/
 private lemma conditionalResidueMeasure_nonneg {y : ℝ} {d K : ℕ}
@@ -2262,12 +2312,13 @@ private lemma conditionalResidueMeasure_nonneg {y : ℝ} {d K : ℕ}
   · exact finitePrimeModelProb_nonneg (fun _q hq => compositePrimeWindow_one_le hq) _
   · exact finitePrimeModelProb_nonneg (fun _q hq => compositePrimeWindow_one_le hq) _
 
+omit sw in
 /-- Helper: partition `finitePrimeModelProb U P` by the value of an extraction map
 `extract : Finset ℕ → α` (with `α` finite).  Paper §6.2 line 1732-1735 framework: for
 each `S` with `P S`, the extraction takes exactly one value `g`, so summing over `g`
 recovers the original probability. -/
 private lemma finitePrimeModelProb_sum_partition {U : Finset ℕ} {α : Type*}
-    [Fintype α] [DecidableEq α] (P : Finset ℕ → Prop)
+    [Fintype α] (P : Finset ℕ → Prop)
     (extract : Finset ℕ → α) :
     (∑ g : α, finitePrimeModelProb U (fun S => P S ∧ extract S = g)) =
       finitePrimeModelProb U P := by
@@ -2286,6 +2337,7 @@ private lemma finitePrimeModelProb_sum_partition {U : Finset ℕ} {α : Type*}
       (s := U.powerset.filter P) (t := (Finset.univ : Finset α))
       (g := extract) (fun S _hS => Finset.mem_univ (extract S)) (selectionWeight U)
 
+omit sw in
 /-- Paper §6.2 line 1722-1735: μ as a conditional probability sums to 1 when
 the conditioning event has positive probability. -/
 private lemma conditionalResidueMeasure_sum_eq_one {y : ℝ} {d K : ℕ} [NeZero d]
@@ -2299,6 +2351,7 @@ private lemma conditionalResidueMeasure_sum_eq_one {y : ℝ} {d K : ℕ} [NeZero
         (fun S => firstKResidueVector S y d K)]
   exact div_self hpos
 
+omit sw in
 /-- Paper §6.2 line 1796-1815 connection: when `S ⊆ window` has `K` good blocks and
 `CompositeProductFailure d S` (no admissible product), the residue vector
 `firstKResidueVector S y d K` is in the "bad" set: no nonempty `T ⊆ Fin K` with
@@ -2446,7 +2499,8 @@ private lemma failure_implies_bad_residue
         exact Finset.prod_image h_inj_on
       -- (c) Cast each prime's residue in ZMod d.  When block k is good ∧ coprime to d,
       --     residueOfSelectedPrime S y d k = ZMod.unitOfCoprime (selectedPrimeInBlock S y k) _.
-      --     So ((firstKResidueVector S y d K i) : ZMod d) = (selectedPrimeInBlock S y (extract_idx i) : ZMod d).
+      --     So ((firstKResidueVector S y d K i) : ZMod d) = (selectedPrimeInBlock S y
+      -- (extract_idx i) : ZMod d).
       have hd_pos : 0 < d := by omega
       have h_residue_cast : ∀ i ∈ T,
           ((firstKResidueVector S y d K i : (ZMod d)ˣ) : ZMod d) =
@@ -2659,10 +2713,11 @@ private lemma failure_implies_bad_residue
           ≤ Real.exp ((T_actual.card : ℝ) * y ^ ((20 : ℝ) - 1)) := h_prod_le_exp_sum
         _ ≤ Real.exp (y ^ (20 : ℝ)) := Real.exp_le_exp.mpr h_card_yA1_le
 
+omit sw in
 /-- Triangle inequality for product measures (paper §6.2 line 1748-1750 standard fact).
 For any two product measures `∏_i f_i` and `∏_i u_i` on `G^K` with each f_i, u_i a probability,
 the L1 distance is at most the sum of marginal L1 distances. -/
-private lemma prod_tv_le_sum_tv {G : Type*} [Fintype G] [DecidableEq G]
+private lemma prod_tv_le_sum_tv {G : Type*} [Fintype G]
     {K : ℕ} (f : Fin K → G → ℝ) (u : G → ℝ)
     (hu_nn : ∀ g, 0 ≤ u g)
     (hu_sum : (∑ g, u g) = 1)
@@ -2671,6 +2726,7 @@ private lemma prod_tv_le_sum_tv {G : Type*} [Fintype G] [DecidableEq G]
     (ε : ℝ)
     (h_tv : ∀ i, (∑ g, |f i g - u g|) ≤ ε) :
     (∑ gvec : Fin K → G, |(∏ i, f i (gvec i)) - (∏ i, u (gvec i))|) ≤ K * ε := by
+  classical
   induction K with
   | zero =>
     -- K = 0: both products are 1 (empty product), sum over Fin 0 → G has one element.
@@ -2799,6 +2855,7 @@ private noncomputable def extractKVec {y : ℝ} (hM_pos : 0 < compositeBlockCoun
   else
     ⟨0, hM_pos⟩
 
+omit sw in
 /-- When `K ≤ #good`, `extractKVec` exposes `firstKGoodBlockIndices` directly. -/
 private lemma extractKVec_val_of_le {y : ℝ} {hM_pos : 0 < compositeBlockCount y}
     {S : Finset ℕ} {K : ℕ} (hKle : K ≤ goodBlockCount S y) (i : Fin K) :
@@ -2806,6 +2863,7 @@ private lemma extractKVec_val_of_le {y : ℝ} {hM_pos : 0 < compositeBlockCount 
   unfold extractKVec
   rw [dif_pos hKle]
 
+omit sw in
 /-- Under "K ≤ #good ∧ extractKVec = kvec", the residue vector `firstKResidueVector` equals
 the per-block-selected-prime residue at `(kvec i).val`.  Direct from
 `firstKResidueVector` def + `extractKVec_val_of_le`. -/
@@ -2819,6 +2877,7 @@ private lemma firstKResidueVector_eq_via_extractKVec
     rw [← extractKVec_val_of_le (hM_pos := hM_pos) hKle i, hext]
   rw [h_eq]
 
+omit sw in
 /-- Function-level version of `firstKResidueVector_eq_via_extractKVec`: residue vector
 equality reduces to per-block-selected-prime residue equality at kvec indices. -/
 private lemma firstKResidueVector_eq_iff_per_block
@@ -2836,6 +2895,7 @@ private lemma firstKResidueVector_eq_iff_per_block
     rw [firstKResidueVector_eq_via_extractKVec (hM_pos := hM_pos) hKle hext i]
     exact h_per_i i
 
+omit sw in
 /-- Paper §6.2 line 1722-1735: mixture decomposition of `conditionalResidueMeasure`.
 For each realized index vector `kvec : Fin K → Fin M`, the joint conditional residue
 distribution factorizes as a product (paper line 1722-1726: "blocks are disjoint →
@@ -2874,7 +2934,8 @@ private lemma conditionalResidueMeasure_mixture_identity
   classical
   -- Paper §6.2 line 1722-1735: build pdist by partitioning {S : ≥K good} according to
   -- the realized firstKGoodBlockIndices.
-  -- pdist(kvec) = pmodel(K ≤ #good ∧ ∀ i, firstKGoodBlockIndices S y K i = (kvec i).val) / pmodel_K_good.
+  -- pdist(kvec) = pmodel(K ≤ #good ∧ ∀ i, firstKGoodBlockIndices S y K i = (kvec i).val)
+  -- / pmodel_K_good.
   set pmodel_K_good : ℝ := finitePrimeModelProb (compositePrimeWindow 20 y)
     (fun S => K ≤ goodBlockCount S y) with hpmodel_K_good_def
   let pdist : (Fin K → Fin (compositeBlockCount y)) → ℝ := fun kvec =>
@@ -2893,7 +2954,8 @@ private lemma conditionalResidueMeasure_mixture_identity
   · -- (2) ∑ pdist = 1: case split K = 0 vs K > 0.
     classical
     by_cases hK_zero : K = 0
-    · -- K = 0: Fin 0 → α has unique element (empty fn).  pdist(empty) = pmodel(0≤#good)/pmodel_K_good.
+    · -- K = 0: Fin 0 → α has unique element (empty fn).  pdist(empty) =
+      -- pmodel(0≤#good)/pmodel_K_good.
       subst hK_zero
       -- Show univ = {empty fn}
       have h_univ_singleton :
@@ -2907,7 +2969,7 @@ private lemma conditionalResidueMeasure_mixture_identity
       -- Goal: pdist (empty fn) = 1
       -- Predicate simplifies: 0 ≤ x always, ∀ i : Fin 0 vacuous.
       have h_K_good : pmodel_K_good = 1 := by
-        show finitePrimeModelProb (compositePrimeWindow 20 y)
+        change finitePrimeModelProb (compositePrimeWindow 20 y)
           (fun S => 0 ≤ goodBlockCount S y) = 1
         have h_eq : (fun S : Finset ℕ => 0 ≤ goodBlockCount S y) = (fun _ => True) := by
           funext S
@@ -2916,7 +2978,7 @@ private lemma conditionalResidueMeasure_mixture_identity
         exact finitePrimeModelProb_true _
       -- pdist (empty fn) = pmodel(0 ≤ #good ∧ vacuous) / pmodel_K_good = pmodel(0 ≤ #good) / 1 = 1
       have h_pi : pdist (fun i : Fin 0 => (Fin.elim0 i : Fin (compositeBlockCount y))) = 1 := by
-        show finitePrimeModelProb (compositePrimeWindow 20 y)
+        change finitePrimeModelProb (compositePrimeWindow 20 y)
             (fun S => 0 ≤ goodBlockCount S y ∧ ∀ i : Fin 0, _) /
           pmodel_K_good = 1
         rw [show (fun S : Finset ℕ => 0 ≤ goodBlockCount S y ∧
@@ -2932,9 +2994,9 @@ private lemma conditionalResidueMeasure_mixture_identity
       -- Derive M ≥ K from hpos.
       have hM_ge_K : K ≤ compositeBlockCount y := by
         by_contra h_lt
-        push_neg at h_lt
+        push Not at h_lt
         apply hpos
-        show finitePrimeModelProb (compositePrimeWindow 20 y)
+        change finitePrimeModelProb (compositePrimeWindow 20 y)
           (fun S => K ≤ goodBlockCount S y) = 0
         have h_good_le_M : ∀ S, goodBlockCount S y ≤ compositeBlockCount y := by
           intro S
@@ -2942,7 +3004,7 @@ private lemma conditionalResidueMeasure_mixture_identity
           calc (goodBlockIndices S y).card
               ≤ (Finset.range (compositeBlockCount y)).card := by
                 apply Finset.card_le_card
-                show (Finset.range (compositeBlockCount y)).filter _ ⊆ _
+                change (Finset.range (compositeBlockCount y)).filter _ ⊆ _
                 exact Finset.filter_subset _ _
             _ = compositeBlockCount y := Finset.card_range _
         have h_pred_false : (fun S : Finset ℕ => K ≤ goodBlockCount S y) = (fun _ => False) := by
@@ -2960,7 +3022,8 @@ private lemma conditionalResidueMeasure_mixture_identity
         (P := fun S => K ≤ goodBlockCount S y)
         (α := Fin K → Fin (compositeBlockCount y))
         (extractKVec hM_pos · K)
-      -- Match predicates: under K ≤ #good, (∀ i, firstKGood... = (kvec i).val) ↔ extractKVec = kvec.
+      -- Match predicates: under K ≤ #good, (∀ i, firstKGood... = (kvec i).val) ↔
+      -- extractKVec = kvec.
       have h_pi_pred : ∀ kvec : Fin K → Fin (compositeBlockCount y),
           finitePrimeModelProb (compositePrimeWindow 20 y)
               (fun S => K ≤ goodBlockCount S y ∧
@@ -2983,7 +3046,7 @@ private lemma conditionalResidueMeasure_mixture_identity
           have h_extract_i := congr_fun hext i
           rw [← h_extract_i, extractKVec_val_of_le hKle]
       -- Final: ∑ pdist = ∑ pmodel(P_kvec) / pmodel_K_good = pmodel_K_good / pmodel_K_good = 1.
-      show ∑ kvec, finitePrimeModelProb (compositePrimeWindow 20 y) _ / pmodel_K_good = 1
+      change ∑ kvec, finitePrimeModelProb (compositePrimeWindow 20 y) _ / pmodel_K_good = 1
       rw [← Finset.sum_div]
       rw [show (∑ kvec : Fin K → Fin (compositeBlockCount y),
           finitePrimeModelProb (compositePrimeWindow 20 y)
@@ -3019,7 +3082,7 @@ private lemma conditionalResidueMeasure_mixture_identity
               (compositeBlock y _) d _) = 1 from Finset.prod_empty.trans rfl]
       rw [mul_one]
       -- Goal: μ g = pdist (empty fn).  For K = 0, both predicates are equivalent (vacuous).
-      show finitePrimeModelProb (compositePrimeWindow 20 y)
+      change finitePrimeModelProb (compositePrimeWindow 20 y)
             (fun S => 0 ≤ goodBlockCount S y ∧ firstKResidueVector S y d 0 = g) /
           pmodel_K_good =
           finitePrimeModelProb (compositePrimeWindow 20 y)
@@ -3043,9 +3106,9 @@ private lemma conditionalResidueMeasure_mixture_identity
       -- Derive M ≥ K from hpos.
       have hM_ge_K : K ≤ compositeBlockCount y := by
         by_contra h_lt
-        push_neg at h_lt
+        push Not at h_lt
         apply hpos
-        show finitePrimeModelProb (compositePrimeWindow 20 y)
+        change finitePrimeModelProb (compositePrimeWindow 20 y)
           (fun S => K ≤ goodBlockCount S y) = 0
         have h_good_le_M : ∀ S, goodBlockCount S y ≤ compositeBlockCount y := by
           intro S
@@ -3053,7 +3116,7 @@ private lemma conditionalResidueMeasure_mixture_identity
           calc (goodBlockIndices S y).card
               ≤ (Finset.range (compositeBlockCount y)).card := by
                 apply Finset.card_le_card
-                show (Finset.range (compositeBlockCount y)).filter _ ⊆ _
+                change (Finset.range (compositeBlockCount y)).filter _ ⊆ _
                 exact Finset.filter_subset _ _
             _ = compositeBlockCount y := Finset.card_range _
         have h_pred_false : (fun S : Finset ℕ => K ≤ goodBlockCount S y) = (fun _ => False) := by
@@ -3177,15 +3240,15 @@ private lemma conditionalResidueMeasure_mixture_identity
                   exact Finset.orderEmbOfFin_mem _ _ _
                 rw [h_extract_eq] at h_in_good
                 rw [← hi_eq]
-                show (F (kvec i).val ∩ S).card = 1
-                show (compositeBlock y (kvec i).val ∩ S).card = 1
+                change (F (kvec i).val ∩ S).card = 1
+                change (compositeBlock y (kvec i).val ∩ S).card = 1
                 exact (Finset.mem_filter.mp h_in_good).2
               · intro k hk_in_B
                 rw [hB_kvec_def, Finset.mem_sdiff] at hk_in_B
                 obtain ⟨hk_in_range, hk_not_A⟩ := hk_in_B
                 intro hk_good
                 have hk_in_GBI : k ∈ goodBlockIndices S y := by
-                  show k ∈ (Finset.range (compositeBlockCount y)).filter _
+                  change k ∈ (Finset.range (compositeBlockCount y)).filter _
                   rw [Finset.mem_filter]
                   refine ⟨?_, hk_good⟩
                   rw [Finset.mem_range]
@@ -3204,12 +3267,12 @@ private lemma conditionalResidueMeasure_mixture_identity
                 rcases hk_in_range' with ⟨l, hl_eq⟩
                 have hj_lt_K : l.val < K := by
                   by_contra hj_ge
-                  push_neg at hj_ge
+                  push Not at hj_ge
                   have hKm1_lt_good : K - 1 < goodBlockCount S y := by
                     have : 1 ≤ K := hK_pos; omega
                   let Km1_fin : Fin (goodBlockCount S y) := ⟨K - 1, hKm1_lt_good⟩
                   have hKm1_lt_l : Km1_fin < l := by
-                    show (K - 1) < l.val
+                    change (K - 1) < l.val
                     have : 1 ≤ K := hK_pos; omega
                   have h_strict :=
                     (Finset.orderEmbOfFin (goodBlockIndices S y) rfl).strictMono hKm1_lt_l
@@ -3245,7 +3308,7 @@ private lemma conditionalResidueMeasure_mixture_identity
               rintro ⟨hA_good, hB_bad⟩
               have hA_sub_GBI : A_kvec ⊆ goodBlockIndices S y := by
                 intro k hk
-                show k ∈ (Finset.range (compositeBlockCount y)).filter _
+                change k ∈ (Finset.range (compositeBlockCount y)).filter _
                 rw [Finset.mem_filter]
                 refine ⟨hA_sub_range hk, ?_⟩
                 exact hA_good k hk
@@ -3264,7 +3327,7 @@ private lemma conditionalResidueMeasure_mixture_identity
                   have hKm1_lt_K : K - 1 < K := by omega
                   let i_K_target : Fin K := ⟨K - 1, hKm1_lt_K⟩
                   have hi_le_target : i ≤ i_K_target := by
-                    show i.val ≤ K - 1; omega
+                    change i.val ≤ K - 1; omega
                   exact h_mono.monotone hi_le_target
                 · rintro ⟨hk_GBI, hk_le⟩
                   by_contra hk_not_A
@@ -3273,7 +3336,7 @@ private lemma conditionalResidueMeasure_mixture_identity
                     refine ⟨?_, hk_not_A⟩
                     rw [Finset.mem_range]; omega
                   apply hB_bad k hk_in_B
-                  show (compositeBlock y k ∩ S).card = 1
+                  change (compositeBlock y k ∩ S).card = 1
                   exact (Finset.mem_filter.mp hk_GBI).2
               have hf_orderEmb : (fun i : Fin K => (kvec i).val) =
                   Finset.orderEmbOfFin A_kvec hA_card := by
@@ -3293,7 +3356,7 @@ private lemma conditionalResidueMeasure_mixture_identity
                   ⟨j.val, lt_of_lt_of_le j.isLt hKle⟩
               have hg_mono : StrictMono g_oeb := by
                 intro a b hab
-                show Finset.orderEmbOfFin _ rfl ⟨a.val, _⟩ <
+                change Finset.orderEmbOfFin _ rfl ⟨a.val, _⟩ <
                   Finset.orderEmbOfFin _ rfl ⟨b.val, _⟩
                 apply (Finset.orderEmbOfFin _ rfl).strictMono
                 exact hab
@@ -3302,7 +3365,7 @@ private lemma conditionalResidueMeasure_mixture_identity
                 rw [hA_eq]
                 refine ⟨Finset.orderEmbOfFin_mem _ _ _, ?_⟩
                 by_contra h_gt
-                push_neg at h_gt
+                push Not at h_gt
                 have h_filter_card_K : (Finset.univ.filter
                     (fun l : Fin (goodBlockCount S y) =>
                       Finset.orderEmbOfFin (goodBlockIndices S y) rfl l ≤ kvec_last_val)).card =
@@ -3320,7 +3383,9 @@ private lemma conditionalResidueMeasure_mixture_identity
                     · intro hx
                       rcases Finset.mem_image.mp hx with ⟨l, hl, rfl⟩
                       exact (hA_eq _).mpr ⟨Finset.orderEmbOfFin_mem _ _ _,
-                        ((@Finset.mem_filter _ (fun l : Fin (goodBlockCount S y) => Finset.orderEmbOfFin (goodBlockIndices S y) rfl l ≤ kvec_last_val) (fun _ => Classical.propDecidable _) _ _).mp hl).2⟩
+                        ((@Finset.mem_filter _ (fun l : Fin (goodBlockCount S y) =>
+                          Finset.orderEmbOfFin (goodBlockIndices S y) rfl l ≤ kvec_last_val)
+                          (fun _ => Classical.propDecidable _) _ _).mp hl).2⟩
                     · intro hx
                       obtain ⟨hx_GBI, hx_le⟩ := (hA_eq x).mp hx
                       have h_range := Finset.range_orderEmbOfFin (goodBlockIndices S y)
@@ -3332,7 +3397,10 @@ private lemma conditionalResidueMeasure_mixture_identity
                         exact hx_GBI
                       obtain ⟨l, hl_eq⟩ := hx_range
                       exact Finset.mem_image.mpr ⟨l,
-                        (@Finset.mem_filter _ (fun l : Fin (goodBlockCount S y) => Finset.orderEmbOfFin (goodBlockIndices S y) rfl l ≤ kvec_last_val) (fun _ => Classical.propDecidable _) _ _).mpr ⟨Finset.mem_univ _, hl_eq.symm ▸ hx_le⟩, hl_eq⟩
+                        (@Finset.mem_filter _ (fun l : Fin (goodBlockCount S y) =>
+                          Finset.orderEmbOfFin (goodBlockIndices S y) rfl l ≤ kvec_last_val)
+                          (fun _ => Classical.propDecidable _) _ _).mpr
+                            ⟨Finset.mem_univ _, hl_eq.symm ▸ hx_le⟩, hl_eq⟩
                   have h_card_image := Finset.card_image_of_injective
                     (Finset.univ.filter (fun l : Fin (goodBlockCount S y) =>
                       Finset.orderEmbOfFin (goodBlockIndices S y) rfl l ≤ kvec_last_val))
@@ -3356,10 +3424,10 @@ private lemma conditionalResidueMeasure_mixture_identity
                   rw [Finset.mem_filter] at hl ⊢
                   refine ⟨Finset.mem_univ _, ?_⟩
                   by_contra h_l_ge
-                  push_neg at h_l_ge
+                  push Not at h_l_ge
                   have h_j_le_l :
                       (⟨j.val, lt_of_lt_of_le j.isLt hKle⟩ : Fin (goodBlockCount S y)) ≤ l := by
-                    show j.val ≤ l.val; exact h_l_ge
+                    change j.val ≤ l.val; exact h_l_ge
                   have h_mono_le := (Finset.orderEmbOfFin (goodBlockIndices S y) rfl).monotone
                     h_j_le_l
                   have : g_oeb j ≤ kvec_last_val := h_mono_le.trans hl.2
@@ -3389,7 +3457,7 @@ private lemma conditionalResidueMeasure_mixture_identity
                 exact absurd h_K_le_j (not_le.mpr j.isLt)
               have hg_eq : g_oeb = Finset.orderEmbOfFin A_kvec hA_card :=
                 Finset.orderEmbOfFin_unique hA_card hg_in_A hg_mono
-              show g_oeb i = (kvec i).val
+              change g_oeb i = (kvec i).val
               rw [hg_eq]
               exact (congrFun hf_orderEmb i).symm
           -- Helper: resvec at (kvec i).val equals (g i).val.
@@ -3605,7 +3673,7 @@ private lemma conditionalResidueMeasure_mixture_identity
             intro S ⟨hK, hext⟩
             apply h_mono
             intro i j hij
-            show (kvec i).val < (kvec j).val
+            change (kvec i).val < (kvec j).val
             have h_extract_i : (extractKVec hM_pos S K i).val = firstKGoodBlockIndices S y K i :=
               extractKVec_val_of_le hK i
             have h_extract_j : (extractKVec hM_pos S K j).val = firstKGoodBlockIndices S y K j :=
@@ -3659,7 +3727,7 @@ private lemma conditionalResidueMeasure_mixture_identity
       -- (Step 3) Combine: μ(g) = ∑_kvec pdist(kvec) · ∏ p.
       -- pdist(kvec) := pmodel(... ∧ ∀ i, firstKGood... = (kvec i).val) / pmodel_K_good
       -- Need to relate pdist's predicate to "extractKVec = kvec" for K ≤ #good.
-      show finitePrimeModelProb (compositePrimeWindow 20 y)
+      change finitePrimeModelProb (compositePrimeWindow 20 y)
             (fun S => K ≤ goodBlockCount S y ∧ firstKResidueVector S y d K = g) /
           pmodel_K_good = _
       rw [h_step1_partition]
@@ -3693,6 +3761,7 @@ private lemma conditionalResidueMeasure_mixture_identity
       rw [h_pi_pred]
       ring
 
+omit sw in
 /-- Paper §6.2 line 1741-1753: μ is `K · ε_y`-close to uniform on `(Fin K → G)`,
 where `G = (ZMod d)ˣ`.  Follows from step5 (per-block ε_y-uniformity) + independence
 of disjoint blocks (Remark `block-uniformity`).
@@ -3738,18 +3807,21 @@ private lemma conditionalResidueMeasure_near_uniform {y : ℝ} {d K : ℕ} [NeZe
   --     ε_y-close to product-uniform.  TV is convex, so mixture's TV ≤ avg ε_y = K · ε_y.
   --
   -- Implementation strategy:
-  -- - Sub-step (a): build product measure `productMeasure` from per-block `blockConditionalResidueProbability`,
+  -- - Sub-step (a): build product measure `productMeasure` from per-block
+  -- `blockConditionalResidueProbability`,
   --   show conditionalResidueMeasure equals an average of product measures over realized vectors.
   --   ~80 LOC of pmodel sum manipulation.
   -- - Sub-step (b)-(d): triangle/convexity argument.  ~60 LOC.
   --
   -- TWO STRUCTURAL CLAIMS:
   -- (P1) Mixture decomposition (paper line 1732 + 1722-1735):
-  --      μ(g) = ∑_kvec pdist(kvec) · ∏_i blockConditionalResidueProbability (compositeBlock y (kvec i)) d (g i).val
+  --      μ(g) = ∑_kvec pdist(kvec) · ∏_i blockConditionalResidueProbability
+  -- (compositeBlock y (kvec i)) d (g i).val
   --      where pdist(kvec) = pmodel(firstKGoodBlockIndices = kvec | ≥K good).
   -- (P2) Triangle inequality + prod_tv_le_sum_tv:
   --      For each kvec, ∑_g |∏_i p_i(g_i) - 1/N^K| ≤ K · ε_y by prod_tv_le_sum_tv.
-  --      Then mixture preservation: ∑_g |μ(g) - U(g)| ≤ ∑_kvec pdist(kvec) · K·ε_y = K·ε_y · ∑_kvec pdist(kvec) = K·ε_y.
+  --      Then mixture preservation: ∑_g |μ(g) - U(g)| ≤ ∑_kvec pdist(kvec) · K·ε_y =
+  -- K·ε_y · ∑_kvec pdist(kvec) = K·ε_y.
   --
   -- PROOF SKELETON:
   -- Set ε_y := C_step5 * y^(-1/2).
@@ -3862,7 +3934,8 @@ private lemma conditionalResidueMeasure_near_uniform {y : ℝ} {d K : ℕ} [NeZe
     _ = (K * ε_y) * 1 := by rw [hπ_sum]
     _ = (K : ℝ) * (C_step5 * y ^ (-(1 : ℝ) / 2)) := by rw [mul_one, hε_y_def]
 
-private lemma sum_filter_pattern_eq_sum_fibers {α ι : Type*} [DecidableEq α]
+omit sw in
+private lemma sum_filter_pattern_eq_sum_fibers {α ι : Type*}
     [DecidableEq ι] (U : Finset α) (s : Finset ι) (E : ι → α → Prop)
     [DecidableRel E] (w : α → ℝ) (K : ℕ) :
     (∑ a ∈ U.filter (fun a => ((s.filter (fun i => E i a)).card < K)), w a) =
@@ -3905,6 +3978,7 @@ private lemma sum_filter_pattern_eq_sum_fibers {α ι : Type*} [DecidableEq α]
       ∑ T ∈ s.powerset.filter (fun T => T.card < K),
         ∑ a ∈ U.filter (fun a => s.filter (fun i => E i a) = T), w a := by rfl
 
+omit sw in
 private lemma filter_eq_iff_forall_and_forall_sdiff {ι α : Type*} [DecidableEq ι]
     (s T : Finset ι) (E : ι → α → Prop) [DecidableRel E] (a : α) (hT : T ⊆ s) :
     s.filter (fun i => E i a) = T ↔
@@ -3932,6 +4006,7 @@ private lemma filter_eq_iff_forall_and_forall_sdiff {ι α : Type*} [DecidableEq
     · intro hiT
       exact Finset.mem_filter.mpr ⟨hT hiT, hgood i hiT⟩
 
+omit sw in
 private lemma bernoulli_lower_tail_chernoff_sum {ι : Type*} [DecidableEq ι]
     (s : Finset ι) (p : ι → ℝ)
     (hp0 : ∀ i ∈ s, 0 ≤ p i) (hp1 : ∀ i ∈ s, p i ≤ 1)
@@ -4065,6 +4140,7 @@ private lemma bernoulli_lower_tail_chernoff_sum {ι : Type*} [DecidableEq ι]
             exact Finset.sum_nonneg (fun i hi => hp0 i hi)
           nlinarith
 
+omit sw in
 private lemma finitePrimeModelProb_goodBlockCount_lt_eq_bernoulli_sum {y : ℝ}
     (hind_y :
       let M := compositeBlockCount y
@@ -4132,6 +4208,7 @@ private lemma finitePrimeModelProb_goodBlockCount_lt_eq_bernoulli_sum {y : ℝ}
         (fun k S => (compositeBlock y k ∩ S).card = 1) S hTsub)
   simpa [finitePrimeModelProb, hpred] using hprob
 
+omit sw in
 /-- Step 4 Chernoff bridge: independence plus the expectation lower bound imply the
 polynomial lower-tail estimate for having fewer than `K` good blocks. -/
 private lemma step4_chernoff_combined
@@ -4247,6 +4324,7 @@ private lemma step4_chernoff_combined
           ring_nf
     exact htail_exp.trans hpow_decay
 
+omit sw in
 /-- Analytic core of Step 4: the finite-product-model Chernoff bound for good blocks.
 
 This isolates the remaining probability-theory obligation from the wrapper lemma below.
@@ -4271,6 +4349,7 @@ private lemma step4_chernoff_good_blocks_core
   exact step4_chernoff_combined step4_independence_lemma
     (step4_expectation_lower_bound _hstep3)
 
+omit sw in
 /-- Step 4: Chernoff lower-tail estimate for the number of good blocks.
 
 **Paper §6.2 Step 4 (lines 1690-1697):** in the independent prime-selection
@@ -4312,6 +4391,7 @@ private lemma step4_chernoff_good_blocks :
       rw [Real.rpow_def_of_pos hy_pos]
       ring_nf
 
+omit sw in
 private lemma integral_compositeBlockEndpoint {y : ℝ} (hy : 0 < y) (k : ℕ) :
     (∫ t in compositeBlockEndpoint y k..compositeBlockEndpoint y (k + 1),
       1 / (t * Real.log t)) = 1 := by
@@ -4338,6 +4418,7 @@ private lemma integral_compositeBlockEndpoint {y : ℝ} (hy : 0 < y) (k : ℕ) :
   rw [hlogk, hlogsk]
   norm_num
 
+omit sw in
 /-- `C · y · exp(-c·√y) ≤ y^{-1/2}` eventually.  Used to convert L1 sums over `(ZMod d)ˣ`
 of super-poly per-residue bounds (multiplied by `φ(d) ≤ d ≤ y` factor) to polynomial
 `y^{-1/2}` L1 bounds.  Paper §6.2 line 1741: TV bound. -/
@@ -4386,6 +4467,7 @@ private lemma poly_times_exp_sqrt_decay_eventually_le_rpow {C c : ℝ} (_hC : 0 
     ring
   simpa [hrpow] using hdiv
 
+omit sw in
 private lemma exp_sqrt_decay_eventually_le_rpow {C c : ℝ} (_hC : 0 < C) (hc : 0 < c) :
     ∃ Y : ℝ, ∀ y : ℝ, Y ≤ y →
       C * Real.exp (-c * Real.sqrt y) ≤ y ^ (-(1 : ℝ) / 2) := by
@@ -4635,7 +4717,8 @@ private lemma block_residue_reciprocal_prime_uniform_l1 :
     linarith
   -- Sum the pointwise super-poly bound over coprime residues.
   -- Card of filtered Finset = totient by Mathlib's Nat.totient_eq_card_lt_and_coprime (or similar).
-  have hcard : (((Finset.range d).filter (fun a => Nat.Coprime a d)).card : ℝ) = (d.totient : ℝ) := by
+  have hcard : (((Finset.range d).filter (fun a => Nat.Coprime a d)).card : ℝ) =
+      (d.totient : ℝ) := by
     rw [Nat.totient]
     have hset : (Finset.range d).filter (fun a => Nat.Coprime a d) =
         (Finset.range d).filter (fun a => Nat.Coprime d a) := by
@@ -4681,6 +4764,7 @@ private lemma block_residue_reciprocal_prime_uniform_l1 :
     _ ≤ y ^ (-(1 : ℝ) / 2) := hdecay
     _ = 1 * y ^ (-(1 : ℝ) / 2) := by ring
 
+omit sw in
 private lemma inv_sub_one_sub_inv_le_exp {y : ℝ} {q : ℕ} (hy2 : (2 : ℝ) ≤ y)
     (hqgt : Real.exp y < (q : ℝ)) :
     0 ≤ (1 : ℝ) / ((q - 1 : ℕ) : ℝ) - 1 / (q : ℝ) ∧
@@ -4733,6 +4817,7 @@ private lemma inv_sub_one_sub_inv_le_exp {y : ℝ} {q : ℕ} (hy2 : (2 : ℝ) �
         exact mul_le_mul_of_nonneg_left htwo_inv_le (by positivity)
       _ = (2 * Real.exp (-y)) * (1 / (q : ℝ)) := by ring
 
+omit sw in
 private lemma compositeBlock_inv_sub_one_sum_sub_inv_sum_le {y : ℝ} {k : ℕ}
     {S : Finset ℕ} (hy2 : (2 : ℝ) ≤ y) (hS : S ⊆ compositeBlock y k)
     (hT : reciprocalPrimeMass (compositeBlock y k) ≤ 2) :
@@ -4785,6 +4870,7 @@ private lemma compositeBlock_inv_sub_one_sum_sub_inv_sum_le {y : ℝ} {k : ℕ}
     _ ≤ (2 * Real.exp (-y)) * 2 := mul_le_mul_of_nonneg_left hT hfactor_nonneg
     _ = 4 * Real.exp (-y) := by ring
 
+omit sw in
 private lemma compositeBlock_reciprocalPrimeMass_le_sub_one_sum {y : ℝ} {k : ℕ}
     (hy2 : (2 : ℝ) ≤ y) :
     reciprocalPrimeMass (compositeBlock y k) ≤
@@ -4807,6 +4893,7 @@ private lemma compositeBlock_reciprocalPrimeMass_le_sub_one_sum {y : ℝ} {k : �
   have hnonneg := (inv_sub_one_sub_inv_le_exp hy2 (lt_of_le_of_lt hendpoint_lower hqgt)).1
   linarith
 
+omit sw in
 private lemma one_div_le_rpow_neg_half {y : ℝ} (hy1 : (1 : ℝ) ≤ y) :
     (1 : ℝ) / y ≤ y ^ (-(1 : ℝ) / 2) := by
   have hypos : 0 < y := lt_of_lt_of_le zero_lt_one hy1
@@ -4827,6 +4914,7 @@ private lemma one_div_le_rpow_neg_half {y : ℝ} (hy1 : (1 : ℝ) ≤ y) :
     ring
   simpa [hrpow] using hinv
 
+omit sw in
 private lemma ratio_close {N D u EN ED : ℝ}
     (hDpos : (1 / 2 : ℝ) ≤ D) (hu_nonneg : 0 ≤ u) (hu_le_one : u ≤ 1)
     (hN : |N - u| ≤ EN) (hD : |D - 1| ≤ ED) :
@@ -4867,6 +4955,7 @@ private lemma ratio_close {N D u EN ED : ℝ}
       positivity
     _ = 2 * (EN + ED) := by ring
 
+omit sw in
 private lemma exp_neg_eventually_le_rpow_neg_half :
     ∃ Y : ℝ, 1 ≤ Y ∧
       ∀ y : ℝ, Y ≤ y → 4 * Real.exp (-y) ≤ y ^ (-(1 : ℝ) / 2) := by
@@ -5068,6 +5157,7 @@ private lemma block_uniform_total_variation_bound :
       dsimp [C]
       ring
 
+omit sw in
 /-- Absorb the exponentially small block error into the common power scale. -/
 private lemma block_l1_error_absorb (Cnum Cden y φ r : ℝ)
     (hy : 1 ≤ y) (hφ : φ ≤ y)
@@ -5398,6 +5488,7 @@ private lemma step5_combined :
   block_uniform_total_variation_bound
 
 
+omit sw in
 /-- Step 6: application of the subset-product lemma.
 
 Conditioned on having the first `K` good blocks, the near-uniform independent
@@ -5474,6 +5565,7 @@ and self-contained. -/
 
 -- Helper: window primes are coprime to d, since each prime q ∈ window satisfies
 -- q > exp y ≥ y ≥ d, so q > d, hence (since q is prime) q ∤ d, hence Coprime.
+omit sw in
 private lemma compositePrimeWindow_coprime_d {y : ℝ} (hy : 2 ≤ y)
     {d : ℕ} (hd : 1 ≤ d) (hd_le_y : (d : ℝ) ≤ y)
     {q : ℕ} (hq : q ∈ compositePrimeWindow 20 y) :
@@ -5500,6 +5592,7 @@ private lemma compositePrimeWindow_coprime_d {y : ℝ} (hy : 2 ≤ y)
 -- Helper: for a window prime q (coprime to d), q ∣ (d * r') iff q ∣ r'.
 -- This is the key fact for the CRT bridge: window-prime divisibility of r = d · r'
 -- is determined entirely by r'.
+omit sw in
 private lemma admissible_subset_window {y : ℝ} {d : ℕ} {T : Finset ℕ}
     (hT : AdmissibleCompositeProduct 20 y d T) :
     T ⊆ compositePrimeWindow 20 y := by
@@ -5510,8 +5603,10 @@ private lemma admissible_subset_window {y : ℝ} {d : ℕ} {T : Finset ℕ}
   refine ⟨?_, hq_prime, hq_gt, hq_le⟩
   exact Nat.le_floor hq_le
 
--- Helper: for an admissible product T (whose primes lie in the window) and d coprime to those primes,
+-- Helper: for an admissible product T (whose primes lie in the window) and d coprime to
+-- those primes,
 -- ∏T is coprime to d.  Used to show ∏T ∣ (d · r') ↔ ∏T ∣ r'.
+omit sw in
 private lemma admissibleProduct_coprime_d {y : ℝ} (hy : 2 ≤ y)
     {d : ℕ} (hd : 1 ≤ d) (hd_le_y : (d : ℝ) ≤ y)
     {T : Finset ℕ} (hT : AdmissibleCompositeProduct 20 y d T) :
@@ -5522,6 +5617,7 @@ private lemma admissibleProduct_coprime_d {y : ℝ} (hy : 2 ≤ y)
 
 -- Helper: for a finset T of primes, ∏T divides n iff each prime q ∈ T divides n.
 -- Forward: q ∣ ∏T (since q ∈ T) and ∏T ∣ n.  Backward: Finset.prod_primes_dvd.
+omit sw in
 private lemma finset_primes_prod_dvd_iff (T : Finset ℕ) (n : ℕ)
     (hT_prime : ∀ q ∈ T, q.Prime) :
     (∏ q ∈ T, q) ∣ n ↔ ∀ q ∈ T, q ∣ n := by
@@ -5537,6 +5633,7 @@ private lemma finset_primes_prod_dvd_iff (T : Finset ℕ) (n : ℕ)
 -- Helper: GoodCompositeSuccessor 20 y d (d * r') iff GoodCompositeSuccessor 20 y d r'.
 -- Since admissible products consist of window primes (all coprime to d), divisibility
 -- of d · r' by ∏T equals divisibility of r' by ∏T.
+omit sw in
 private lemma goodCompositeSuccessor_mul_d_iff {y : ℝ} (hy : 2 ≤ y)
     {d : ℕ} (hd : 1 ≤ d) (hd_le_y : (d : ℝ) ≤ y) (r' : ℕ) :
     GoodCompositeSuccessor 20 y d (d * r') ↔ GoodCompositeSuccessor 20 y d r' := by
@@ -5554,6 +5651,7 @@ private lemma goodCompositeSuccessor_mul_d_iff {y : ℝ} (hy : 2 ≤ y)
 -- Helper: GoodCompositeSuccessor 20 y d r' iff CompositeProductExists 20 y d S
 -- where S = {q ∈ window : q ∣ r'}.  Encodes that "good successor for r'" means
 -- the selected window primes (those dividing r') form an admissible product.
+omit sw in
 private lemma goodCompositeSuccessor_iff_productExists_filter (y : ℝ) (d r' : ℕ) :
     GoodCompositeSuccessor 20 y d r' ↔
     CompositeProductExists 20 y d ((compositePrimeWindow 20 y).filter (fun q => q ∣ r')) := by
@@ -5581,6 +5679,7 @@ private lemma goodCompositeSuccessor_iff_productExists_filter (y : ℝ) (d r' : 
 
 -- Helper: bridge between `Nat.card {r : Fin M // P r.val}` and Finset filter card.
 -- (LBL has `fin_card_subtype_eq_range_filter_card` which is private; re-prove for CS.)
+omit sw in
 private lemma cs_fin_card_subtype_eq_range_filter_card {M : ℕ} (P : ℕ → Prop)
     [DecidablePred P] :
     Nat.card {r : Fin M // P r.val} =
@@ -5603,6 +5702,7 @@ private lemma cs_fin_card_subtype_eq_range_filter_card {M : ℕ} (P : ℕ → Pr
 -- Helper: count of multiples of d in [0, d*P) = P.
 -- Standard counting fact, used in Step A of the CRT bridge:
 -- {r ∈ Fin (d * P) : d ∣ r} ≃ Fin P via r ↦ r/d.
+omit sw in
 lemma card_filter_dvd_range_mul {d P : ℕ} (hd_pos : 0 < d) (Q : ℕ → Prop)
     [DecidablePred Q] :
     ((Finset.range (d * P)).filter (fun r => d ∣ r ∧ Q r)).card =
@@ -5630,12 +5730,14 @@ lemma card_filter_dvd_range_mul {d P : ℕ} (hd_pos : 0 < d) (Q : ℕ → Prop)
     · exact Nat.mul_div_cancel_left k hd_pos
 
 -- Helper: primorial P > 0 (LBL has private version; re-prove for CS).
+omit sw in
 private lemma cs_primorial_pos (P : ℕ) : 0 < primorial P := by
   unfold primorial
   exact Finset.prod_pos (fun p hp => (Finset.mem_filter.mp hp).2.pos)
 
 -- Helper: distinct primes in a finset are pairwise coprime.
 -- Used in primorial CRT decomposition (`ZMod.prodEquivPi`).
+omit sw in
 private lemma compositePrimeWindow_subset_primesIic_cutoff {y : ℝ} (hy : 1 ≤ y) :
     compositePrimeWindow 20 y ⊆
       (Finset.Iic (compositeSuccessorCutoff 20 y)).filter Nat.Prime := by
@@ -5658,6 +5760,7 @@ private lemma compositePrimeWindow_subset_primesIic_cutoff {y : ℝ} (hy : 1 ≤
 -- Helper: combine card_filter_dvd_range_mul + goodCompositeSuccessor_mul_d_iff.
 -- The count of CoreBad residues in [0, d * P) equals the count of "no good successor" in [0, P).
 open Classical in
+omit sw in
 lemma coreBad_card_eq_no_good_quotient {y : ℝ} (hy : 2 ≤ y)
     {d P : ℕ} (hd : 1 ≤ d) (hd_le_y : (d : ℝ) ≤ y) :
     ((Finset.range (d * P)).filter
@@ -5690,6 +5793,7 @@ lemma coreBad_card_eq_no_good_quotient {y : ℝ} (hy : 2 ≤ y)
 -- step_b and bridge moved AFTER `compositeProductFailure_d_1_iff_empty` since they need it.
 
 -- Helper: pmodel probability of "S is empty" equals product of (1 - 1/q).
+omit sw in
 private lemma finitePrimeModelProb_eq_empty (U : Finset ℕ) :
     finitePrimeModelProb U (fun S => S = ∅) =
       ∏ q ∈ U, (1 - (1 : ℝ) / (q : ℝ)) := by
@@ -5709,6 +5813,7 @@ private lemma finitePrimeModelProb_eq_empty (U : Finset ℕ) :
 
 -- Helper: For d=1, CompositeProductFailure iff S = ∅ (paper §6.2 line 1551-1552).
 -- Any single window prime q satisfies all admissibility conditions for T := {q}.
+omit sw in
 private lemma compositeProductFailure_d_1_iff_empty {y : ℝ} (hy : 1 ≤ y)
     {S : Finset ℕ} (hS : S ⊆ compositePrimeWindow 20 y) :
     CompositeProductFailure 20 y 1 S ↔ S = ∅ := by
@@ -5743,6 +5848,7 @@ private lemma compositeProductFailure_d_1_iff_empty {y : ℝ} (hy : 1 ≤ y)
 
 -- Helper A: pattern equivalence — `Q.filter (· ∣ r) = S` iff every prime in `S` divides `r`
 -- and no prime in `Q \ S` divides `r`.  Used in the CRT count formula below.
+omit sw in
 private lemma cs_pattern_iff_dvd_and_avoid {Q : Finset ℕ} {S : Finset ℕ} (hSQ : S ⊆ Q)
     (r : ℕ) :
     Q.filter (fun q => q ∣ r) = S ↔
@@ -5773,6 +5879,7 @@ private lemma cs_pattern_iff_dvd_and_avoid {Q : Finset ℕ} {S : Finset ℕ} (hS
 -- with `∏Q ∣ M`, and `S ⊆ Q`:
 -- count of `r ∈ Fin M` with `Q.filter (· ∣ r) = S` equals `M · selectionWeight Q S`.
 -- This is the d-general analog of `pmodel_count_avoid_primes_eq` (which is the `S = ∅` case).
+omit sw in
 private lemma cs_count_pattern_eq_M_selectionWeight
     {Q : Finset ℕ} (hQ_prime : ∀ q ∈ Q, q.Prime)
     {M : ℕ} (hMpos : 0 < M)
@@ -5791,7 +5898,7 @@ private lemma cs_count_pattern_eq_M_selectionWeight
   obtain ⟨K, hM_eq⟩ := hN_dvd_M
   have hK_pos : 0 < K := by
     by_contra hKne
-    push_neg at hKne
+    push Not at hKne
     interval_cases K
     rw [hM_eq] at hMpos
     simp at hMpos
@@ -5888,6 +5995,7 @@ private lemma cs_count_pattern_eq_M_selectionWeight
 -- M · ∑_{S : Failure d S} selectionWeight Q S = M · finitePrimeModelProb.
 -- This gives EQUALITY (stronger than the required ≤).
 open Classical in
+omit sw in
 private lemma step_b_count_no_good_le_primorial_pmodel_d_ge_2 {y : ℝ} (hy : 2 ≤ y)
     {d : ℕ} (_hd_ge_2 : 2 ≤ d) (_hd_le_y : (d : ℝ) ≤ y) :
     (((Finset.range (primorial (compositeSuccessorCutoff 20 y))).filter
@@ -5934,7 +6042,7 @@ private lemma step_b_count_no_good_le_primorial_pmodel_d_ge_2 {y : ℝ} (hy : 2 
   have hMaps : (s : Set ℕ).MapsTo (fun r' => Q.filter (fun q => q ∣ r')) t := by
     intro r' hr'
     rw [Finset.mem_coe] at hr'
-    show Q.filter (fun q => q ∣ r') ∈ (t : Finset (Finset ℕ))
+    change Q.filter (fun q => q ∣ r') ∈ (t : Finset (Finset ℕ))
     rw [hs_def, Finset.mem_filter] at hr'
     rw [ht_def, Finset.mem_filter, Finset.mem_powerset]
     exact ⟨Finset.filter_subset _ Q, hr'.2⟩
@@ -5977,6 +6085,7 @@ private lemma step_b_count_no_good_le_primorial_pmodel_d_ge_2 {y : ℝ} (hy : 2 
 --           ∀ q ∈ window, ¬ q ∣ r' (paper §6.2 line 1551-1552).
 -- d ≥ 2 case: deferred to `step_b_count_no_good_le_primorial_pmodel_d_ge_2`.
 open Classical in
+omit sw in
 private lemma step_b_count_no_good_le_primorial_pmodel {y : ℝ} (hy : 2 ≤ y)
     {d : ℕ} (hd : 1 ≤ d) (hd_le_y : (d : ℝ) ≤ y) :
     (((Finset.range (primorial (compositeSuccessorCutoff 20 y))).filter
@@ -6027,7 +6136,8 @@ private lemma step_b_count_no_good_le_primorial_pmodel {y : ℝ} (hy : 2 ≤ y)
     have hcount_eq := pmodel_count_avoid_primes_eq (Q := compositePrimeWindow 20 y)
       hwindow_prime hprimorial_pos hwindow_dvd_primorial
     rw [hcount_eq]
-    -- pmodel_prob (d=1) = ∏(1-1/q) by `finitePrimeModelProb_eq_empty` + `compositeProductFailure_d_1_iff_empty`.
+    -- pmodel_prob (d=1) = ∏(1-1/q) by `finitePrimeModelProb_eq_empty` +
+    -- `compositeProductFailure_d_1_iff_empty`.
     have hpmodel_eq :
         finitePrimeModelProb (compositePrimeWindow 20 y) (CompositeProductFailure 20 y 1) =
         ∏ q ∈ compositePrimeWindow 20 y, (1 - (1 : ℝ) / (q : ℝ)) := by
@@ -6041,6 +6151,7 @@ private lemma step_b_count_no_good_le_primorial_pmodel {y : ℝ} (hy : 2 ≤ y)
     have hd_ge_2 : 2 ≤ d := by omega
     exact step_b_count_no_good_le_primorial_pmodel_d_ge_2 hy hd_ge_2 hd_le_y
 
+omit sw in
 /-- **A1: Residue-density-to-pmodel bridge.**
 
 For `r ∈ Fin M` with `M := compositeSuccessorCRTPeriod 20 y d = d · primorial(⌊exp(y^20)⌋)`:
@@ -6051,7 +6162,8 @@ For `r ∈ Fin M` with `M := compositeSuccessorCRTPeriod 20 y d = d · primorial
   `(p ∣ r' : p ∈ compositePrimeWindow 20 y)` is distributed exactly as the
   selection model `selectionWeight` over `compositePrimeWindow 20 y`.
 
-Proven via Step A (`coreBad_card_eq_no_good_quotient`) + Step B (`step_b_count_no_good_le_primorial_pmodel`). -/
+Proven via Step A (`coreBad_card_eq_no_good_quotient`) +
+Step B (`step_b_count_no_good_le_primorial_pmodel`). -/
 private lemma residue_density_le_pmodel_bridge {y : ℝ} (hy : 2 ≤ y)
     {d : ℕ} (hd : 1 ≤ d) (hd_le_y : (d : ℝ) ≤ y) :
     (Nat.card {r : Fin (compositeSuccessorCRTPeriod 20 y d) //
@@ -6093,6 +6205,7 @@ private lemma residue_density_le_pmodel_bridge {y : ℝ} (hy : 2 ≤ y)
 
 -- Paper §6.2 lines 1533-1554 (case d=1, Mertens on sub-window `(exp y, exp(y^2)]`).
 -- pmodel(failure d=1) = ∏_FULL (1-1/q) ≤ ∏_SUB (1-1/q) ≤ exp(-(log y - C)) ≤ y^{-1/2}.
+omit sw in
 private lemma pmodel_failure_d_1_bound :
     ∃ y₀ : ℝ, 2 ≤ y₀ ∧
       ∀ y : ℝ, y₀ ≤ y →
@@ -6209,11 +6322,13 @@ private lemma pmodel_failure_d_1_bound :
     linarith
   exact hprod_FULL_le_SUB.trans (hprod_le_exp.trans (hexp_neg_le.trans hbound))
 
+omit sw in
 /-- **A2: Product-model failure bound.**
 
 In the finite prime selection model on `compositePrimeWindow 20 y`, the probability
 that no admissible squarefree product exists is `O(y^{-c})`.  This combines:
-* `step4_chernoff_good_blocks`: `P(< K good blocks) ≤ y^{-c₁}` for `K := compositeGoodBlockThreshold y`.
+* `step4_chernoff_good_blocks`: `P(< K good blocks) ≤ y^{-c₁}` for `K :=
+compositeGoodBlockThreshold y`.
 * `step5_conditional_residue`: conditional residue distribution is `O(y^{-1/2})`-uniform.
 * `step6_subset_product_application`: given `K` good blocks with near-uniform residues,
   `P(no admissible subproduct) ≤ φ(d)/(2^K - 1) + K · ε_y`. -/
@@ -6234,13 +6349,14 @@ private lemma finitePrimeModelProb_le_split {U : Finset ℕ}
     · simp [hQ, hB]
     · simp [hQ, hB]
   · by_cases hB : B S
-    · simp only [ge_iff_le]; exact h_nonneg
+    · simpa [hQ, hB] using h_nonneg
     · simp [hQ, hB]
 
 -- Numerical helper: paper §6.2 line 1683 ("Numerically ρ=e⁻¹≈0.368, 1/log2≈1.443,
 -- so it suffices to take γ≥14"). Concretely κ := ρ γ / 2 with ρ = e⁻¹, γ = 15 gives
 -- κ · log 2 = 15 · log 2 / (2e) ≈ 1.913 > 1.  Used in the Step 6 algebraic bound.
 -- Paper line 1679: chooses κ so κ > 1/log 2 + 1, equivalent to κ·log 2 > 1 + log 2.
+omit sw in
 private lemma kappa_log_two_gt_one :
     ((Real.exp (-1) * 15) / 2) * Real.log 2 > 1 := by
   -- Need: (e⁻¹ · 15 / 2) · log 2 > 1.
@@ -6262,7 +6378,8 @@ private lemma kappa_log_two_gt_one :
 -- Used in the Step 6 parent algebra to bound term `K · ε_y`.
 -- Proof: log y ≤ y^ε/ε for any ε > 0 (Mathlib `Real.log_le_rpow_div`).  Pick ε = (1/2-c)/2.
 -- Then (κ log y + 1) · C · y^{-1/2} ≤ A · y^{ε - 1/2} ≤ y^ε · y^{ε - 1/2} = y^{2ε - 1/2} = y^{-c}.
-private lemma kappa_logy_eps_decays (C : ℝ) (hC : 0 < C) {c : ℝ} (hc : 0 < c) (hc_lt : c < 1/2) :
+omit sw in
+private lemma kappa_logy_eps_decays (C : ℝ) (hC : 0 < C) {c : ℝ} (hc : 0 < c) (hc_lt : c < 1 / 2) :
     ∃ y₀ : ℝ, 2 ≤ y₀ ∧
       ∀ y : ℝ, y₀ ≤ y →
         (((Real.exp (-1) * 15) / 2) * Real.log y + 1) * (C * y ^ (-(1:ℝ)/2)) ≤
@@ -6356,12 +6473,14 @@ private lemma step6_pmodel_bound :
                 (compositeGoodBlockThreshold y : ℝ) * (C_step5 * y ^ (-(1:ℝ)/2)) := by
   -- Paper §6.2 Step 5 + Step 6 (lines 1706-1788).
   -- Strategy:
-  -- (1) Extract C_step5 from `step5_combined` (gives ε_y = C_step5 · y^{-1/2} per-block uniformity).
+  -- (1) Extract C_step5 from `step5_combined` (gives ε_y = C_step5 · y^{-1/2} per-block
+  -- uniformity).
   -- (2) Construct μ : (Fin K → (ZMod d)ˣ) → ℝ as the joint distribution of residues from
   --     the first K good blocks, conditional on ≥K good blocks (paper lines 1719-1753).
   -- (3) Verify μ has K·ε_y near-uniform property (paper line 1751).
   -- (4) Apply `step6_subset_product_application` (paper lines 1769-1773) to get bound.
-  -- (5) Connect: pmodel(failure ∧ ≥K good) ≤ μ-mass on bad g via paper line 1799-1814 admissibility.
+  -- (5) Connect: pmodel(failure ∧ ≥K good) ≤ μ-mass on bad g via paper line 1799-1814
+  -- admissibility.
   rcases step5_combined with ⟨C_step5_pw, hC_step5_pw_pos, y₀_step5_pw, hy₀_step5_pw, hstep5_pw⟩
   -- Also extract L1 version for hstep5_l1 (paper §6.2 line 1741: TV-close).
   rcases block_uniform_total_variation_bound_l1 with
@@ -6535,7 +6654,7 @@ private lemma step6_pmodel_bound :
     -- (ZMod d)ˣ → {a < d : Coprime a d} given by `.val`.
     have hy_l1 : y₀_step5_l1 ≤ y := by
       have h1 : y₀_step5_l1 ≤ y₀_step5 := le_max_right _ _
-      exact h1.trans (by show y₀_step5 ≤ y; exact hy)
+      exact h1.trans (by change y₀_step5 ≤ y; exact hy)
     have hstep5_l1 :
         ∀ k : ℕ, k < compositeBlockCount y →
           (∑ a : (ZMod d)ˣ,
@@ -6596,7 +6715,7 @@ private lemma step6_pmodel_bound :
               ((ZMod.unitOfCoprime a (Finset.mem_filter.mp ha).2 : ZMod d).val) = a := by
             rw [ZMod.coe_unitOfCoprime, ZMod.val_natCast]
             exact Nat.mod_eq_of_lt ha_lt
-          show |blockConditionalResidueProbability (compositeBlock y k) d a -
+          change |blockConditionalResidueProbability (compositeBlock y k) d a -
                   (1 : ℝ) / (d.totient : ℝ)| =
               |blockConditionalResidueProbability (compositeBlock y k) d
                   (((ZMod.unitOfCoprime a (Finset.mem_filter.mp ha).2 : (ZMod d)ˣ) :
@@ -6691,7 +6810,8 @@ private lemma step6_pmodel_bound :
         have hcop_q : Nat.Coprime q d := hcoprime q hq
         have h_a₀_coe : (ZMod.unitOfCoprime q hcop_q : ZMod d) = (q : ZMod d) :=
           ZMod.coe_unitOfCoprime q hcop_q
-        -- For each q, the inner sum has exactly one nonzero term: a₀ := ZMod.unitOfCoprime q hcop_q.
+        -- For each q, the inner sum has exactly one nonzero term: a₀ :=
+        -- ZMod.unitOfCoprime q hcop_q.
         -- Use Finset.sum_eq_single to extract this term.
         rw [Finset.sum_eq_single (ZMod.unitOfCoprime q hcop_q)]
         · -- f (ZMod.unitOfCoprime q hcop_q) = (1/(q-1))
@@ -6829,7 +6949,8 @@ private lemma step6_pmodel_bound :
               simp only [Finset.mem_filter] at hS
               exact hS.2.2)
             (selectionWeight (compositePrimeWindow 20 y))
-        -- After symm above, goal is: ∑_{g ∈ bad} ∑_{S in filter (≥K good ∧ extract = g)} weight = ∑_{S in filter (≥K good ∧ extract ∈ bad)} weight.
+        -- After symm above, goal is: ∑_{g ∈ bad} ∑_{S in filter (≥K good ∧ extract = g)}
+        -- weight = ∑_{S in filter (≥K good ∧ extract ∈ bad)} weight.
         convert h_fiber using 3 with g hg
         ext i
         simp only [Finset.mem_filter, Finset.mem_powerset]
@@ -6978,7 +7099,8 @@ private lemma pmodel_failure_K_good_no_subproduct :
       (Real.exp_log (by norm_num : (0:ℝ) < 2)).symm]
     rw [← Real.exp_nat_mul]
     rw [Real.exp_log (by norm_num : (0:ℝ) < 2)]
-  -- N/(2^K - 1) ≤ 2 y · exp(-(κ log 2) · log y) = 2 · exp(-(κ log 2 - 1) · log y) = 2 · exp(-c1 log y).
+  -- N/(2^K - 1) ≤ 2 y · exp(-(κ log 2) · log y) = 2 · exp(-(κ log 2 - 1) · log y) = 2 ·
+  -- exp(-c1 log y).
   have hterm1 : (d.totient : ℝ) / ((2:ℝ)^K - 1) ≤ 2 * Real.exp (-c1 * Real.log y) := by
     have hdiv1 : (d.totient : ℝ) / ((2:ℝ)^K - 1) ≤ y / ((2:ℝ)^K - 1) :=
       div_le_div_of_nonneg_right hN_le_y h2K_minus_1_pos.le
@@ -7003,7 +7125,8 @@ private lemma pmodel_failure_K_good_no_subproduct :
     have hclean : 2 * y * Real.exp (-((κ * Real.log 2) * Real.log y)) =
         2 * Real.exp (-c1 * Real.log y) := by
       rw [hc1_def]
-      -- Express `y * exp(-(κ log 2) log y) = exp(log y - (κ log 2) log y) = exp(-(κ log 2 - 1) log y)`
+      -- Express `y * exp(-(κ log 2) log y) = exp(log y - (κ log 2) log y) = exp(-(κ log 2
+      -- - 1) log y)`
       -- without rewriting `y` everywhere (which would loop on `log y`).
       have h_y_factor : y * Real.exp (-((κ * Real.log 2) * Real.log y)) =
           Real.exp (-(κ * Real.log 2 - 1) * Real.log y) := by
@@ -7014,7 +7137,8 @@ private lemma pmodel_failure_K_good_no_subproduct :
           2 * (y * Real.exp (-((κ * Real.log 2) * Real.log y))) by ring]
       rw [h_y_factor]
     linarith [hclean ▸ (hdiv1.trans (hdiv2.trans (hdiv3.trans_le hdiv4)))]
-  -- K · ε_y ≤ exp(-c log y).  Use crude bound K ≤ y^{1/12}, C5 · y^{1/12 - 1/2} ≤ y^{-1/3} for y large.
+  -- K · ε_y ≤ exp(-c log y).  Use crude bound K ≤ y^{1/12}, C5 · y^{1/12 - 1/2} ≤
+  -- y^{-1/3} for y large.
   -- We bound this term by exp(-c log y) directly using y₀ ≥ exp(4/c).
   -- Specifically: K ≤ κ log y + 1, ε_y = C5 · y^{-1/2}.
   -- K · ε_y ≤ (κ log y + 1) · C5 · y^{-1/2}.
@@ -7049,7 +7173,8 @@ private lemma pmodel_failure_K_good_no_subproduct :
       _ ≤ Real.exp (-(2*c) * Real.log y) := hb_term2
   -- Combine: pmodel ≤ term1 + term2 ≤ 2 · exp(-c1 log y) + exp(-2c · log y) ≤ exp(-c log y).
   -- Bound term1 + term2:
-  --   term1 = N/(2^K - 1) ≤ 2 exp(-c1 log y) ≤ exp(-2c log y) (since c1 ≥ 4c, log y ≥ log 2 / (c1 - 2c)).
+  --   term1 = N/(2^K - 1) ≤ 2 exp(-c1 log y) ≤ exp(-2c log y) (since c1 ≥ 4c, log y ≥ log
+  -- 2 / (c1 - 2c)).
   --   term2 ≤ exp(-2c log y).
   --   sum ≤ 2 exp(-2c log y) ≤ exp(-c log y) (since log y ≥ log 2 / c).
   --
@@ -7135,8 +7260,10 @@ private lemma pmodel_failure_d_ge_2_bound :
   have hc_pos : 0 < c := by
     rw [hc_def]; exact div_pos (lt_min hc1 hc2) (by norm_num)
   have hmin_pos : (0 : ℝ) < min c1 c2 := lt_min hc1 hc2
-  -- y₀ : need y ≥ y0_step4, y0_step6, and 2 ≤ y^{min(c1,c2)/2} (so 2 exp(-min*log y) ≤ exp(-c log y)).
-  set y₀ : ℝ := max (max y0_step4 y0_step6) (max 2 (Real.exp (2 * Real.log 2 / min c1 c2))) with hy0_def
+  -- y₀ : need y ≥ y0_step4, y0_step6, and 2 ≤ y^{min(c1,c2)/2} (so 2 exp(-min*log y) ≤
+  -- exp(-c log y)).
+  set y₀ : ℝ := max (max y0_step4 y0_step6)
+    (max 2 (Real.exp (2 * Real.log 2 / min c1 c2))) with hy0_def
   refine ⟨c, hc_pos, y₀, ?_, ?_⟩
   · rw [hy0_def]; exact le_max_of_le_right (le_max_left _ _)
   intro y hy d hd_ge_2 hd_le_y
@@ -7211,7 +7338,8 @@ private lemma pmodel_composite_product_failure_bound :
             finitePrimeModelProb (compositePrimeWindow 20 y)
                 (CompositeProductFailure 20 y d) ≤
               Real.exp (-c * Real.log y) / 2 := by
-  -- Paper §6.2 line 1533-1554 (case d=1, Mertens on sub-window) + lines 1556-1816 (case d≥2, steps 1-7).
+  -- Paper §6.2 line 1533-1554 (case d=1, Mertens on sub-window) + lines 1556-1816 (case
+  -- d≥2, steps 1-7).
   rcases pmodel_failure_d_1_bound with ⟨y0_d1, hy0_d1, hbound_d1⟩
   rcases pmodel_failure_d_ge_2_bound with ⟨c2, hc2, y0_d2, hy0_d2, hbound_d2⟩
   -- Take c := min(1/2, c2) / 2.  Always satisfies c ≤ 1/4 (so 1/2 - c ≥ 1/4 > 0)
@@ -7356,6 +7484,7 @@ for the d-summation in the H-chain proof (paper §7.2 line 1944-1976):
 `∑_{d ≤ y_j} 1/d = O(log y_j)`, so the d-conditional sum
 `∑_d exp(-c log y) · x / d ≤ (log y) · exp(-c log y) · x → 0`. -/
 
+omit sw in
 /-- Strong d-conditional residue-density bridge: `ρ(y,d) ≤ pmodel/d`.
 
 The existing `residue_density_le_pmodel_bridge` uses `1 ≤ d` to weaken the
