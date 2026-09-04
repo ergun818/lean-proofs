@@ -55,7 +55,6 @@ matching edges leaves a cubic subgraph.
 -/
 
 open Finset Fintype
-open scoped Classical
 
 namespace Erdos715
 
@@ -83,6 +82,7 @@ variable {W : Type*} [Fintype W]
 
 noncomputable section
 
+omit [Fintype W] in
 @[ext]
 lemma ext {G H : Pseudograph W} (h : ∀ u v, G.mult u v = H.mult u v) :
     G = H := by
@@ -96,6 +96,7 @@ lemma ext {G H : Pseudograph W} (h : ∀ u v, G.mult u v = H.mult u v) :
           subst hm
           rfl
 
+open scoped Classical in
 /-- If two pointwise ordered finite families have total sums differing by
 one, then any strict coordinate accounts for the unique unit of deficit. -/
 lemma functions_eq_sub_indicator_of_sum_eq_add_one
@@ -134,7 +135,7 @@ lemma functions_eq_sub_indicator_of_sum_eq_add_one
     omega
 
 /-- The degree in a pseudograph.  A loop has two incidences. -/
-def degree (G : Pseudograph W) (v : W) : ℕ :=
+def degree (G : Pseudograph W) (v : W) : ℕ := open scoped Classical in
   2 * G.mult v v + ∑ w ∈ Finset.univ.erase v, G.mult v w
 
 /-- A loop contributes its second incidence separately; after that, degree
@@ -152,10 +153,12 @@ that in `G`.  Isolated ambient vertices are immaterial. -/
 def IsPart (H G : Pseudograph W) : Prop :=
   ∀ u v, H.mult u v ≤ G.mult u v
 
+omit [Fintype W] in
 lemma IsPart.refl (G : Pseudograph W) : G.IsPart G := by
   intro u v
   exact le_rfl
 
+omit [Fintype W] in
 lemma IsPart.trans {F H G : Pseudograph W} (hFH : F.IsPart H)
     (hHG : H.IsPart G) : F.IsPart G := by
   intro u v
@@ -176,6 +179,7 @@ def add (G H : Pseudograph W) : Pseudograph W where
 
 instance : Add (Pseudograph W) := ⟨add⟩
 
+omit [Fintype W] in
 @[simp]
 lemma add_mult (G H : Pseudograph W) (u v : W) :
     (G + H).mult u v = G.mult u v + H.mult u v :=
@@ -193,11 +197,13 @@ def sdiff (G H : Pseudograph W) : Pseudograph W where
   mult u v := G.mult u v - H.mult u v
   mult_comm u v := by rw [G.mult_comm, H.mult_comm]
 
+omit [Fintype W] in
 @[simp]
 lemma sdiff_mult (G H : Pseudograph W) (u v : W) :
     (G.sdiff H).mult u v = G.mult u v - H.mult u v :=
   rfl
 
+omit [Fintype W] in
 lemma sdiff_isPart_left (G H : Pseudograph W) : (G.sdiff H).IsPart G := by
   intro u v
   exact Nat.sub_le _ _
@@ -228,6 +234,7 @@ lemma degree_sdiff_add (G H : Pseudograph W) (hHG : H.IsPart G) (v : W) :
     rw [← Nat.mul_add, Nat.sub_add_cancel hloop]
   omega
 
+open scoped Classical in
 /-- Delete every edge incident with one vertex, leaving that ambient vertex
 isolated. -/
 def deleteIncidence (G : Pseudograph W) (u : W) : Pseudograph W where
@@ -238,12 +245,15 @@ def deleteIncidence (G : Pseudograph W) (u : W) : Pseudograph W where
     · have h' : ¬ (y = u ∨ x = u) := by tauto
       rw [if_neg h, if_neg h', G.mult_comm]
 
+omit [Fintype W] in
+open scoped Classical in
 @[simp]
 lemma deleteIncidence_mult (G : Pseudograph W) (u x y : W) :
     (G.deleteIncidence u).mult x y =
       if x = u ∨ y = u then 0 else G.mult x y :=
   rfl
 
+omit [Fintype W] in
 lemma deleteIncidence_isPart (G : Pseudograph W) (u : W) :
     (G.deleteIncidence u).IsPart G := by
   intro x y
@@ -281,11 +291,13 @@ def induce (G : Pseudograph W) (S : Finset W) : Pseudograph S where
   mult u v := G.mult u v
   mult_comm u v := G.mult_comm u v
 
+omit [Fintype W] in
 @[simp]
 lemma induce_mult (G : Pseudograph W) (S : Finset W) (u v : S) :
     (G.induce S).mult u v = G.mult u v :=
   rfl
 
+open scoped Classical in
 /-- One undirected edge, allowing its two endpoints to coincide.  When they
 coincide this is one loop and therefore contributes two to the degree. -/
 def singleEdge (a b : W) : Pseudograph W where
@@ -299,12 +311,15 @@ def singleEdge (a b : W) : Pseudograph W where
       rw [if_neg]
       tauto
 
+omit [Fintype W] in
+open scoped Classical in
 @[simp]
 lemma singleEdge_mult (a b u v : W) :
     (singleEdge a b).mult u v =
       if (u = a ∧ v = b) ∨ (u = b ∧ v = a) then 1 else 0 :=
   rfl
 
+omit [Fintype W] in
 lemma singleEdge_comm (a b : W) : singleEdge a b = singleEdge b a := by
   ext u v
   simp only [singleEdge_mult]
@@ -312,6 +327,7 @@ lemma singleEdge_comm (a b : W) : singleEdge a b = singleEdge b a := by
   · rw [if_pos h, if_pos (by tauto)]
   · rw [if_neg h, if_neg (by tauto)]
 
+open scoped Classical in
 /-- `k` parallel copies of one (possibly loop) edge. -/
 def edgeCopies (k : ℕ) (a b : W) : Pseudograph W where
   mult u v := if (u = a ∧ v = b) ∨ (u = b ∧ v = a) then k else 0
@@ -324,12 +340,15 @@ def edgeCopies (k : ℕ) (a b : W) : Pseudograph W where
       rw [if_neg]
       tauto
 
+omit [Fintype W] in
+open scoped Classical in
 @[simp]
 lemma edgeCopies_mult (k : ℕ) (a b u v : W) :
     (edgeCopies k a b).mult u v =
       if (u = a ∧ v = b) ∨ (u = b ∧ v = a) then k else 0 :=
   rfl
 
+omit [Fintype W] in
 lemma edgeCopies_isPart {G : Pseudograph W} {k : ℕ} {a b : W}
     (h : k ≤ G.mult a b) : (edgeCopies k a b).IsPart G := by
   intro u v
@@ -340,6 +359,7 @@ lemma edgeCopies_isPart {G : Pseudograph W} {k : ℕ} {a b : W}
     · simpa only [G.mult_comm] using h
   · exact Nat.zero_le _
 
+omit [Fintype W] in
 /-- The four edges of a `K₂,₂` on four distinct vertices form a part as
 soon as each of those four edges is present. -/
 lemma fourCrossEdges_isPart
@@ -358,7 +378,7 @@ lemma fourCrossEdges_isPart
   · have h₂ : ¬ P a d := by
       intro h
       rcases h₁ with h₁ | h₁ <;> rcases h with h | h <;>
-        simp_all [P]
+        simp_all []
     have h₃ : ¬ P b c := by
       intro h
       rcases h₁ with h₁ | h₁ <;> rcases h with h | h <;>
@@ -405,6 +425,7 @@ lemma fourCrossEdges_isPart
         · simp only [P] at h₁ h₂ h₃ h₄
           simp [h₁, h₂, h₃, h₄]
 
+open scoped Classical in
 /-- The degree contribution of one edge is one incidence at each endpoint,
 and hence two incidences when the edge is a loop. -/
 lemma degree_singleEdge (a b v : W) :
@@ -424,8 +445,9 @@ lemma degree_singleEdge (a b v : W) :
     · by_cases hvb : v = b
       · subst v
         simp [degree, singleEdge, hab, hba]
-      · simp [degree, singleEdge, hva, hvb, hab, hba]
+      · simp [degree, singleEdge, hva, hvb]
 
+open scoped Classical in
 lemma degree_edgeCopies_of_ne (k : ℕ) {a b : W} (hab : a ≠ b) (v : W) :
     (edgeCopies k a b).degree v = if v = a ∨ v = b then k else 0 := by
   classical
@@ -436,7 +458,7 @@ lemma degree_edgeCopies_of_ne (k : ℕ) {a b : W} (hab : a ≠ b) (v : W) :
   · by_cases hvb : v = b
     · subst v
       simp [degree, edgeCopies, hab, hba]
-    · simp [degree, edgeCopies, hva, hvb, hab, hba]
+    · simp [degree, edgeCopies, hva, hvb]
 
 /-- A nonempty `k`-regular part.  Vertices outside the part have degree zero. -/
 def ContainsRegularPart (G : Pseudograph W) (k : ℕ) : Prop :=
@@ -453,7 +475,7 @@ the three-outside-vertex branch of Proposition 2.3. -/
 lemma four_neighbors_saturate
     (G : Pseudograph W) (hreg : G.IsRegularOfDegree 4)
     {x a b c d : W}
-    (hxa : x ≠ a) (hxb : x ≠ b) (hxc : x ≠ c) (hxd : x ≠ d)
+    (_ : x ≠ a) (_ : x ≠ b) (_ : x ≠ c) (_ : x ≠ d)
     (hab : a ≠ b) (hac : a ≠ c) (had : a ≠ d)
     (hbc : b ≠ c) (hbd : b ≠ d) (hcd : c ≠ d)
     (hA : 0 < G.mult x a) (hB : 0 < G.mult x b)
@@ -490,7 +512,7 @@ lemma four_neighbors_saturate
       (∑ z ∈ ({a, b, c, d, y} : Finset W), G.mult x z) ≤
         ∑ z : W, G.mult x z :=
     Finset.sum_le_sum_of_subset (Finset.subset_univ _)
-  simp [hab, hac, had, hbc, hbd, hcd, hya, hyb, hyc, hyd,
+  simp [hab, hac, had, hbc, hbd, hcd,
     hya.symm, hyb.symm, hyc.symm, hyd.symm] at hfiveSum
   omega
 
@@ -516,7 +538,7 @@ lemma containsRegularPart_of_two_doubleEdges_and_links
     · have h₂ : ¬ P a b := by
         intro h
         rcases h₁ with h₁ | h₁ <;> rcases h with h | h <;>
-          simp_all [P]
+          simp_all []
       have h₃ : ¬ P u a := by
         intro h
         rcases h₁ with h₁ | h₁ <;> rcases h with h | h <;>
@@ -564,7 +586,7 @@ lemma containsRegularPart_of_two_doubleEdges_and_links
             simp [h₁, h₂, h₃, h₄]
   refine ⟨H, hpart, ⟨u, ?_⟩, ?_⟩
   · simp [H, degree_add, degree_edgeCopies_of_ne, degree_singleEdge,
-      huv, hua, hub, hva, hvb, hab]
+      huv, hua, hub, hab]
   · intro x
     simp only [H, degree_add, degree_singleEdge]
     rw [degree_edgeCopies_of_ne 2 huv,
@@ -596,7 +618,7 @@ lemma containsRegularPart_of_doubleEdge_twoLoops_and_links
     · have h₂ : ¬ P a a := by
         intro h
         rcases h₁ with h₁ | h₁ <;> rcases h with h | h <;>
-          simp_all [P]
+          simp_all []
       have h₃ : ¬ P b b := by
         intro h
         rcases h₁ with h₁ | h₁ <;> rcases h with h | h <;>
@@ -666,7 +688,7 @@ lemma containsRegularPart_of_doubleEdge_twoLoops_and_links
               simp [h₁, h₂', h₃', h₄, h₅]
   refine ⟨H, hpart, ⟨u, ?_⟩, ?_⟩
   · simp [H, degree_add, degree_edgeCopies_of_ne,
-      degree_singleEdge, huv, hua, hub, hva, hvb, hab]
+      degree_singleEdge, huv, hua, hub]
   · intro x
     simp only [H, degree_add, degree_singleEdge]
     rw [degree_edgeCopies_of_ne 2 huv]
@@ -679,7 +701,7 @@ neighbors exhausts a quartic vertex. -/
 lemma double_and_two_neighbors_saturate
     (G : Pseudograph W) (hreg : G.IsRegularOfDegree 4)
     {x y a b : W}
-    (hxy : x ≠ y) (hxa : x ≠ a) (hxb : x ≠ b)
+    (_ : x ≠ y) (_ : x ≠ a) (_ : x ≠ b)
     (hya : y ≠ a) (hyb : y ≠ b) (hab : a ≠ b)
     (hloop : G.mult x x = 0) (hdouble : G.mult x y = 2)
     (hA : 0 < G.mult x a) (hB : 0 < G.mult x b) :
@@ -704,7 +726,7 @@ lemma double_and_two_neighbors_saturate
       (∑ w ∈ ({y, a, b, z} : Finset W), G.mult x w) ≤
         ∑ w : W, G.mult x w :=
     Finset.sum_le_sum_of_subset (Finset.subset_univ _)
-  simp [hya, hyb, hab, hzy, hza, hzb, hzy.symm, hza.symm,
+  simp [hya, hyb, hab, hzy.symm, hza.symm,
     hzb.symm] at hfourSum
   omega
 
@@ -737,6 +759,7 @@ def threeMatchingEdges (f : Fin 6 → W) : Pseudograph W :=
   (singleEdge (f 0) (f 1) + singleEdge (f 2) (f 3)) +
     singleEdge (f 4) (f 5)
 
+omit [Fintype W] in
 lemma threeMatchingEdges_isPart
     (G : Pseudograph W) (f : Fin 6 → W) (hf : Function.Injective f)
     (h01 : 0 < G.mult (f 0) (f 1))
@@ -751,7 +774,7 @@ lemma threeMatchingEdges_isPart
   · have h₂ : ¬ P (f 2) (f 3) := by
       intro h
       rcases h₁ with h₁ | h₁ <;> rcases h with h | h <;>
-        simp_all [P, hf.eq_iff]
+        simp_all [hf.eq_iff]
     have h₃ : ¬ P (f 4) (f 5) := by
       intro h
       rcases h₁ with h₁ | h₁ <;> rcases h with h | h <;>
@@ -788,10 +811,11 @@ lemma degree_threeMatchingEdges_eq_one
   fin_cases i <;>
     simp [threeMatchingEdges, degree_add, degree_singleEdge, hf.eq_iff]
 
+open scoped Classical in
 /-- In a six-vertex matching whose first edge joins `none` to `some a`,
 the row at `none` is precisely the indicator of `a`. -/
 lemma threeMatchingEdges_none_row
-    {X : Type*} [Fintype X] (a b c d e v : X) :
+    {X : Type*} (a b c d e v : X) :
     (threeMatchingEdges
       (![none, some a, some b, some c, some d, some e] :
         Fin 6 → Option X)).mult none (some v) =
@@ -854,9 +878,9 @@ lemma eq_or_eq_of_fintype_card_two {X : Type*} [Fintype X]
     x = a ∨ x = b := by
   classical
   by_contra hx
-  push_neg at hx
+  push Not at hx
   have hthree : ({a, b, x} : Finset X).card = 3 := by
-    simp [hab, hx.1, hx.2, hx.1.symm, hx.2.symm]
+    simp [hab, hx.1.symm, hx.2.symm]
   have hle : ({a, b, x} : Finset X).card ≤ Fintype.card X := by
     simpa only [Fintype.card] using
       Finset.card_le_card (Finset.subset_univ ({a, b, x} : Finset X))
@@ -882,7 +906,7 @@ lemma degree_singleEdge_eq_one_of_fintype_card_two
   rw [degree_singleEdge]
   rcases eq_or_eq_of_fintype_card_two hab hcard x with rfl | rfl
   · simp [hab]
-  · simp [hab, hab.symm]
+  · simp [hab.symm]
 
 lemma degree_edgeCopies_eq_of_fintype_card_two
     {X : Type*} [Fintype X] (k : ℕ) {a b : X} (hab : a ≠ b)
@@ -892,7 +916,7 @@ lemma degree_edgeCopies_eq_of_fintype_card_two
   rcases eq_or_eq_of_fintype_card_two hab hcard x with rfl | rfl <;> simp
 
 /-- Number of incidences from `v` to the complementary shore. -/
-def outsideDegree (G : Pseudograph W) (S : Finset W) (v : W) : ℕ :=
+def outsideDegree (G : Pseudograph W) (S : Finset W) (v : W) : ℕ := open scoped Classical in
   ∑ w ∈ Sᶜ, G.mult v w
 
 /-- Restriction loses exactly the incidences going outside the shore. -/
@@ -915,6 +939,7 @@ structure CrossingEdge (G : Pseudograph W) (S : Finset W) where
   outside_notMem : outside ∉ S
   index : Fin (G.mult inside outside)
 
+omit [Fintype W] in
 @[ext]
 lemma CrossingEdge.ext {G : Pseudograph W} {S : Finset W}
     {e f : CrossingEdge G S} (hinside : e.inside = f.inside)
@@ -928,6 +953,7 @@ lemma CrossingEdge.ext {G : Pseudograph W} {S : Finset W}
   congr
   exact Fin.ext hindex
 
+omit [Fintype W] in
 lemma two_le_mult_of_distinct_crossingEdges_same_endpoints
     {G : Pseudograph W} {S : Finset W}
     {e f : CrossingEdge G S} (hef : e ≠ f)
@@ -943,6 +969,7 @@ lemma two_le_mult_of_distinct_crossingEdges_same_endpoints
       _ = G.mult e.inside e.outside := by rw [hin, hout]
   omega
 
+open scoped Classical in
 /-- Coordinate description used to obtain finiteness of labelled crossing
 edges without quotienting undirected edges. -/
 noncomputable def crossingEdgeEquivSigma (G : Pseudograph W) (S : Finset W) :
@@ -962,7 +989,7 @@ noncomputable def crossingEdgeEquivSigma (G : Pseudograph W) (S : Finset W) :
     rfl
 
 noncomputable instance crossingEdgeFintype (G : Pseudograph W) (S : Finset W) :
-    Fintype (CrossingEdge G S) :=
+    Fintype (CrossingEdge G S) := open scoped Classical in
   Fintype.ofEquiv _ (crossingEdgeEquivSigma G S).symm
 
 /-- Crossing edges whose endpoint on the shore is a prescribed vertex. -/
@@ -976,6 +1003,7 @@ noncomputable instance crossingAtFintype (G : Pseudograph W)
     exact Fintype.subtype
       (Finset.univ.filter fun e : CrossingEdge G S ↦ e.inside = v) (by simp)
 
+open scoped Classical in
 /-- The labelled crossing edges at `v` are the disjoint union, over outside
 vertices, of the parallel copies joining that outside vertex to `v`. -/
 noncomputable def crossingAtEquivSigma (G : Pseudograph W)
@@ -1051,6 +1079,7 @@ lemma loopCount_add (G H : Pseudograph W) :
   classical
   simp [loopCount, add_mult, Finset.sum_add_distrib]
 
+open scoped Classical in
 lemma loopCount_singleEdge (a b : W) :
     (singleEdge a b).loopCount = if a = b then 1 else 0 := by
   classical
@@ -1069,9 +1098,10 @@ lemma loopCount_singleEdge (a b : W) :
 
 /-- The number of unordered distinct vertex pairs carrying parallel edges.
 The division by two removes the two orientations of each off-diagonal pair. -/
-def parallelPairCount (G : Pseudograph W) : ℕ :=
+def parallelPairCount (G : Pseudograph W) : ℕ := open scoped Classical in
   ((Finset.univ.filter fun p : W × W ↦ p.1 ≠ p.2 ∧ 2 ≤ G.mult p.1 p.2).card) / 2
 
+open scoped Classical in
 /-- The ordered-pair filter used to define `parallelPairCount` has exactly
 two orientations for every unordered parallel pair. -/
 lemma parallelPairFilter_card_eq_two_mul (G : Pseudograph W) :
@@ -1141,21 +1171,26 @@ lemma parallelPairFilter_card_eq_two_mul (G : Pseudograph W) :
   rw [hcard']
   omega
 
+open scoped Classical in
 /-- The pseudograph associated to a simple graph. -/
 def ofSimple (G : SimpleGraph W) : Pseudograph W where
   mult u v := if G.Adj u v then 1 else 0
   mult_comm u v := by rw [G.adj_comm]
 
+omit [Fintype W] in
+open scoped Classical in
 @[simp]
 lemma ofSimple_mult (G : SimpleGraph W) (u v : W) :
     (ofSimple G).mult u v = if G.Adj u v then 1 else 0 :=
   rfl
 
+omit [Fintype W] in
 @[simp]
 lemma ofSimple_mult_self (G : SimpleGraph W) (v : W) :
     (ofSimple G).mult v v = 0 := by
   simp
 
+open scoped Classical in
 /-- A simple graph and its multiplicity pseudograph have the same degrees. -/
 lemma degree_ofSimple (G : SimpleGraph W) (v : W) :
     (ofSimple G).degree v = G.degree v := by
@@ -1171,6 +1206,7 @@ lemma degree_ofSimple (G : SimpleGraph W) (v : W) :
   rw [hneighbors]
   simp [ofSimple_mult]
 
+open scoped Classical in
 lemma isRegularOfDegree_ofSimple_iff (G : SimpleGraph W) (r : ℕ) :
     (ofSimple G).IsRegularOfDegree r ↔ G.IsRegularOfDegree r := by
   simp only [IsRegularOfDegree, SimpleGraph.IsRegularOfDegree, degree_ofSimple]
@@ -1183,11 +1219,13 @@ def toSimple (G : Pseudograph W) : SimpleGraph W where
     exact ⟨huv.1.symm, by simpa only [G.mult_comm] using huv.2⟩⟩
   loopless := ⟨by simp⟩
 
+omit [Fintype W] in
 @[simp]
 lemma toSimple_adj (G : Pseudograph W) (u v : W) :
     G.toSimple.Adj u v ↔ u ≠ v ∧ 0 < G.mult u v :=
   Iff.rfl
 
+open scoped Classical in
 /-- Forgetting multiplicities preserves degree when the pseudograph is
 loopless and every edge multiplicity is at most one. -/
 lemma degree_toSimple (G : Pseudograph W)
@@ -1217,12 +1255,14 @@ lemma degree_toSimple (G : Pseudograph W)
     _ = ((Finset.univ.erase v).filter fun w ↦ 0 < G.mult v w).card := by
       simp
 
+omit [Fintype W] in
 lemma loopless_of_isPart_ofSimple {G : SimpleGraph W} {H : Pseudograph W}
     (hHG : H.IsPart (ofSimple G)) (v : W) : H.mult v v = 0 := by
   have := hHG v v
   simp only [ofSimple_mult_self] at this
   omega
 
+omit [Fintype W] in
 lemma mult_le_one_of_isPart_ofSimple {G : SimpleGraph W} {H : Pseudograph W}
     (hHG : H.IsPart (ofSimple G)) (u v : W) : H.mult u v ≤ 1 := by
   exact (hHG u v).trans (by simp only [ofSimple_mult]; split_ifs <;> omega)
@@ -1242,7 +1282,7 @@ lemma mult_le_degree_of_ne (G : Pseudograph W) {u v : W} (huv : u ≠ v) :
 `SimpleGraph.Subgraph`.  This is the bridge from Tashkinov's pseudograph
 induction to the repository's literal problem statement. -/
 theorem containsRegularSubgraph_of_containsRegularPart_ofSimple
-    (G : SimpleGraph W) {k : ℕ} (hk : 0 < k)
+    (G : SimpleGraph W) {k : ℕ} (_ : 0 < k)
     (hpart : (ofSimple G).ContainsRegularPart k) :
     ContainsRegularSubgraph G k := by
   classical
@@ -1311,7 +1351,6 @@ theorem containsRegularPart_of_containsRegularSubgraph
     refine ⟨v, ?_⟩
     change (ofSimple H.spanningCoe).degree v = k
     rw [degree_ofSimple, SimpleGraph.Subgraph.degree_spanningCoe]
-    change H.degree v = k
     have hcoe : H.coe.degree ⟨v, hv⟩ = k := by
       rw [← SimpleGraph.card_neighborSet_eq_degree,
         Set.fintypeCard_eq_ncard]
@@ -1322,7 +1361,6 @@ theorem containsRegularPart_of_containsRegularSubgraph
     · right
       change (ofSimple H.spanningCoe).degree v = k
       rw [degree_ofSimple, SimpleGraph.Subgraph.degree_spanningCoe]
-      change H.degree v = k
       have hcoe : H.coe.degree ⟨v, hv⟩ = k := by
         rw [← SimpleGraph.card_neighborSet_eq_degree,
           Set.fintypeCard_eq_ncard]
@@ -1339,6 +1377,7 @@ def ofUnderlyingSubgraph (G : Pseudograph W) (M : G.toSimple.Subgraph) :
     Pseudograph W :=
   ofSimple M.spanningCoe
 
+omit [Fintype W] in
 lemma ofUnderlyingSubgraph_isPart (G : Pseudograph W)
     (M : G.toSimple.Subgraph) : (ofUnderlyingSubgraph G M).IsPart G := by
   intro u v
@@ -1354,6 +1393,7 @@ lemma degree_ofUnderlyingSubgraph_of_isPerfectMatching
     (G : Pseudograph W) (M : G.toSimple.Subgraph)
     (hM : M.IsPerfectMatching) (v : W) :
     (ofUnderlyingSubgraph G M).degree v = 1 := by
+  classical
   rw [ofUnderlyingSubgraph, degree_ofSimple,
     SimpleGraph.Subgraph.degree_spanningCoe]
   exact (SimpleGraph.Subgraph.isPerfectMatching_iff_forall_degree.mp hM) v
@@ -1394,25 +1434,26 @@ theorem containsRegularPart_of_isPerfectMatching [Nonempty W]
 def edgeMultiplicity (G : Pseudograph W) : Sym2 W → ℕ :=
   Sym2.lift ⟨G.mult, G.mult_comm⟩
 
+omit [Fintype W] in
 @[simp]
 lemma edgeMultiplicity_mk (G : Pseudograph W) (u v : W) :
     G.edgeMultiplicity s(u, v) = G.mult u v :=
   rfl
 
 /-- The number (zero, one, or two) of ends of an edge lying in `S`. -/
-def incidencesIn (S : Finset W) : Sym2 W → ℕ :=
+def incidencesIn (S : Finset W) : Sym2 W → ℕ := open scoped Classical in
   Sym2.lift ⟨fun u v ↦ (if u ∈ S then 1 else 0) + (if v ∈ S then 1 else 0), by
     intro u v
     exact Nat.add_comm _ _⟩
 
 /-- Indicator that both ends of an edge lie in `S`. -/
-def internalIndicator (S : Finset W) : Sym2 W → ℕ :=
+def internalIndicator (S : Finset W) : Sym2 W → ℕ := open scoped Classical in
   Sym2.lift ⟨fun u v ↦ if u ∈ S ∧ v ∈ S then 1 else 0, by
     intro u v
     by_cases hu : u ∈ S <;> by_cases hv : v ∈ S <;> simp [hu, hv]⟩
 
 /-- Indicator that exactly one end of an edge lies in `S`. -/
-def crossingIndicator (S : Finset W) : Sym2 W → ℕ :=
+def crossingIndicator (S : Finset W) : Sym2 W → ℕ := open scoped Classical in
   Sym2.lift ⟨fun u v ↦
     if (u ∈ S ∧ v ∉ S) ∨ (u ∉ S ∧ v ∈ S) then 1 else 0, by
       intro u v
@@ -1420,7 +1461,7 @@ def crossingIndicator (S : Finset W) : Sym2 W → ℕ :=
 
 /-- Indicator that an unordered edge has one end in `S` and the other in
 `T`.  It is used for the nine-block barrier-intersection ledgers. -/
-def betweenIndicator (S T : Finset W) : Sym2 W → ℕ :=
+def betweenIndicator (S T : Finset W) : Sym2 W → ℕ := open scoped Classical in
   Sym2.lift ⟨fun u v ↦
     if (u ∈ S ∧ v ∈ T) ∨ (u ∈ T ∧ v ∈ S) then 1 else 0, by
       intro u v
@@ -1428,29 +1469,38 @@ def betweenIndicator (S T : Finset W) : Sym2 W → ℕ :=
         by_cases huT : u ∈ T <;> by_cases hvT : v ∈ T <;>
         simp [huS, hvS, huT, hvT]⟩
 
+omit [Fintype W] in
+open scoped Classical in
 @[simp]
 lemma incidencesIn_mk (S : Finset W) (u v : W) :
     incidencesIn S s(u, v) =
       (if u ∈ S then 1 else 0) + (if v ∈ S then 1 else 0) :=
   rfl
 
+omit [Fintype W] in
+open scoped Classical in
 @[simp]
 lemma internalIndicator_mk (S : Finset W) (u v : W) :
     internalIndicator S s(u, v) = if u ∈ S ∧ v ∈ S then 1 else 0 :=
   rfl
 
+omit [Fintype W] in
+open scoped Classical in
 @[simp]
 lemma crossingIndicator_mk (S : Finset W) (u v : W) :
     crossingIndicator S s(u, v) =
       if (u ∈ S ∧ v ∉ S) ∨ (u ∉ S ∧ v ∈ S) then 1 else 0 :=
   rfl
 
+omit [Fintype W] in
+open scoped Classical in
 @[simp]
 lemma betweenIndicator_mk (S T : Finset W) (u v : W) :
     betweenIndicator S T s(u, v) =
       if (u ∈ S ∧ v ∈ T) ∨ (u ∈ T ∧ v ∈ S) then 1 else 0 :=
   rfl
 
+omit [Fintype W] in
 lemma betweenIndicator_comm (S T : Finset W) :
     betweenIndicator S T = betweenIndicator T S := by
   funext e
@@ -1460,6 +1510,7 @@ lemma betweenIndicator_comm (S T : Finset W) :
         by_cases huT : u ∈ T <;> by_cases hvT : v ∈ T <;>
         simp [huS, hvS, huT, hvT]
 
+omit [Fintype W] in
 @[simp]
 lemma betweenIndicator_empty_left (T : Finset W) :
     betweenIndicator (∅ : Finset W) T = 0 := by
@@ -1467,11 +1518,13 @@ lemma betweenIndicator_empty_left (T : Finset W) :
   induction e using Sym2.inductionOn with
   | _ u v => simp
 
+omit [Fintype W] in
 @[simp]
 lemma betweenIndicator_empty_right (S : Finset W) :
     betweenIndicator S (∅ : Finset W) = 0 := by
   rw [betweenIndicator_comm, betweenIndicator_empty_left]
 
+omit [Fintype W] in
 @[simp]
 lemma crossingIndicator_empty :
     crossingIndicator (∅ : Finset W) = 0 := by
@@ -1479,6 +1532,7 @@ lemma crossingIndicator_empty :
   induction e using Sym2.inductionOn with
   | _ u v => simp
 
+omit [Fintype W] in
 /-- Each internal edge contributes two incidences and each cut edge one. -/
 lemma incidencesIn_eq_two_internal_add_crossing (S : Finset W) (e : Sym2 W) :
     incidencesIn S e = 2 * internalIndicator S e + crossingIndicator S e := by
@@ -1518,6 +1572,7 @@ lemma betweenMultiplicity_empty_right (G : Pseudograph W) (S : Finset W) :
     G.betweenMultiplicity S ∅ = 0 := by
   rw [G.betweenMultiplicity_comm, G.betweenMultiplicity_empty_left]
 
+open scoped Classical in
 /-- Between-block multiplicity is additive in a disjoint union, provided
 the opposite block is disjoint from both summands.  The disjointness
 hypotheses ensure that an edge cannot be counted in both summands. -/
@@ -1546,6 +1601,7 @@ lemma betweenMultiplicity_union_left (G : Pseudograph W)
         by_cases huC : u ∈ C <;> by_cases hvC : v ∈ C
       all_goals simp_all
 
+open scoped Classical in
 /-- Additivity in the right block, obtained by symmetry. -/
 lemma betweenMultiplicity_union_right (G : Pseudograph W)
     (A B C : Finset W) (hBC : Disjoint B C) (hABC : Disjoint A (B ∪ C)) :
@@ -1584,6 +1640,7 @@ lemma betweenMultiplicity_eq_sum_singleton_left (G : Pseudograph W)
         _ = ∑ y ∈ insert x S, G.betweenMultiplicity {y} T := by
           simp [hx]
 
+open scoped Classical in
 /-- Expanding an edge count across two three-block partitions. -/
 lemma betweenMultiplicity_three_by_three (G : Pseudograph W)
     (A₁ A₂ A₃ B₁ B₂ B₃ : Finset W)
@@ -1711,13 +1768,14 @@ lemma betweenMultiplicity_singleton (G : Pseudograph W) (v : W)
         (fun e ↦ G.edgeMultiplicity e.1 * betweenIndicator {v} T e.1)
         (fun w ↦ by
           by_cases hwv : w = v <;> by_cases hwT : w ∈ T <;>
-            simp [incidentEdgeEquiv, hwv, hwT, hvT, eq_comm])).symm
+            simp [incidentEdgeEquiv, hwv, hwT, hvT])).symm
     _ = ∑ w : W, if w ∈ T then G.mult v w else 0 := by
       apply Finset.sum_congr rfl
       intro w _
       by_cases hw : w ∈ T <;> simp [hw]
     _ = ∑ w ∈ T, G.mult v w := by simp
 
+open scoped Classical in
 /-- For a simple graph, the preceding singleton count is literally the
 number of neighbours lying in the target block. -/
 lemma betweenMultiplicity_singleton_ofSimple (G : SimpleGraph W) (v : W)
@@ -1760,7 +1818,7 @@ lemma incidenceSum_singleton (G : Pseudograph W) (v : W) :
             (fun w ↦ G.mult v w * (if w = v then 2 else 1))
             (fun e ↦ G.edgeMultiplicity e.1 * incidencesIn {v} e.1)
             (fun w ↦ by
-              by_cases hwv : w = v <;> simp [incidentEdgeEquiv, hwv, eq_comm])).symm
+              by_cases hwv : w = v <;> simp [incidentEdgeEquiv, hwv])).symm
     _ = 2 * G.mult v v + ∑ w ∈ Finset.univ.erase v, G.mult v w := by
           have herase :
               (∑ w ∈ Finset.univ.erase v,
@@ -1793,7 +1851,6 @@ lemma sum_degree_eq_incidenceSum (G : Pseudograph W) (S : Finset W) :
       by_cases hu : u ∈ S <;> by_cases hv : v ∈ S <;>
         simp only [incidencesIn_mk, Finset.mem_singleton,
           Finset.sum_add_distrib, Finset.sum_ite_eq]
-      all_goals simp [hu, hv]
 
 /-- The pseudograph degree-sum/cut identity used throughout the proof. -/
 lemma sum_degree_eq_two_internal_add_boundary (G : Pseudograph W) (S : Finset W) :
@@ -1825,6 +1882,7 @@ lemma boundaryMultiplicity_even_of_even_regular (G : Pseudograph W)
   symm
   simpa [Nat.add_mod, Nat.mul_mod] using hmod
 
+open scoped Classical in
 /-- Replacing a shore by its complement does not change its edge boundary. -/
 lemma boundaryMultiplicity_compl (G : Pseudograph W) (S : Finset W) :
     G.boundaryMultiplicity Sᶜ = G.boundaryMultiplicity S := by
@@ -1838,6 +1896,7 @@ lemma boundaryMultiplicity_compl (G : Pseudograph W) (S : Finset W) :
       by_cases hu : u ∈ S <;> by_cases hv : v ∈ S <;>
         simp [crossingIndicator, hu, hv]
 
+open scoped Classical in
 /-- Splitting the complementary shore into two disjoint blocks splits the
 boundary multiplicity into the two corresponding between-block counts. -/
 lemma boundaryMultiplicity_eq_between_add_between
@@ -1850,7 +1909,6 @@ lemma boundaryMultiplicity_eq_between_add_between
   rw [← Finset.sum_add_distrib]
   apply Finset.sum_congr rfl
   intro e _
-  congr 1
   induction e using Sym2.inductionOn with
   | _ a b =>
       have ha : a ∉ S ↔ a ∈ T ∨ a ∈ R := by
@@ -1914,6 +1972,7 @@ noncomputable def crossingAtEquivCutFiber (G : Pseudograph W)
     intro e
     simp only [cutEdge, Equiv.symm_apply_apply])
 
+open scoped Classical in
 /-- General labelled endpoint count for a finite cut. -/
 lemma outsideDegree_eq_cutEndpointSum (G : Pseudograph W)
     (S : Finset W) {n : ℕ} (hcut : G.boundaryMultiplicity S = n)
@@ -1925,6 +1984,7 @@ lemma outsideDegree_eq_cutEndpointSum (G : Pseudograph W)
     Fintype.card_congr (crossingAtEquivCutFiber G S hcut v),
     Fintype.card_subtype, Finset.card_filter]
 
+open scoped Classical in
 /-- Reverse the orientation of a labelled crossing edge. -/
 def reverseCrossingEdge (G : Pseudograph W) (S : Finset W)
     (e : CrossingEdge G S) : CrossingEdge G Sᶜ where
@@ -1934,6 +1994,7 @@ def reverseCrossingEdge (G : Pseudograph W) (S : Finset W)
   outside_notMem := by simpa using e.inside_mem
   index := Fin.cast (G.mult_comm e.inside e.outside) e.index
 
+open scoped Classical in
 /-- Reverse an edge already oriented out of the complementary shore.  This is
 stated separately so that its result has exactly shore `S`, rather than a
 definitionally awkward double complement. -/
@@ -1950,11 +2011,13 @@ lemma reverseCrossingEdge_leftInverse (G : Pseudograph W) (S : Finset W)
     reverseCrossingEdgeBack G S (reverseCrossingEdge G S e) = e := by
   apply CrossingEdge.ext <;> simp [reverseCrossingEdgeBack, reverseCrossingEdge]
 
+open scoped Classical in
 lemma reverseCrossingEdge_rightInverse (G : Pseudograph W) (S : Finset W)
     (e : CrossingEdge G Sᶜ) :
     reverseCrossingEdge G S (reverseCrossingEdgeBack G S e) = e := by
   apply CrossingEdge.ext <;> simp [reverseCrossingEdgeBack, reverseCrossingEdge]
 
+open scoped Classical in
 /-- Reversing gives the canonical bijection between the two orientations of
 the same cut, retaining the parallel-copy label. -/
 def reverseCrossingEdgeEquiv (G : Pseudograph W) (S : Finset W) :
@@ -1967,7 +2030,7 @@ def reverseCrossingEdgeEquiv (G : Pseudograph W) (S : Finset W) :
 /-- Number of entries of a labelled cut listing whose shore endpoint is
 `v`. -/
 def listingEndpointCount {n : ℕ} (G : Pseudograph W) (S : Finset W)
-    (E : Fin n ≃ CrossingEdge G S) (v : W) : ℕ :=
+    (E : Fin n ≃ CrossingEdge G S) (v : W) : ℕ := open scoped Classical in
   ∑ i : Fin n, if (E i).inside = v then 1 else 0
 
 noncomputable def crossingAtEquivListingFiber {n : ℕ}
@@ -1989,6 +2052,7 @@ lemma outsideDegree_eq_listingEndpointCount {n : ℕ}
     Fintype.card_subtype, Finset.card_filter]
   rfl
 
+omit [Fintype W] in
 /-- Summing endpoint multiplicities over the shore counts every entry of the
 listing once. -/
 lemma sum_listingEndpointCount {n : ℕ} (G : Pseudograph W)
@@ -2033,18 +2097,21 @@ def closeFourCutStarWith (G : Pseudograph W) (S : Finset W)
     cases u <;> cases v <;> simp only
     exact G.mult_comm _ _
 
+omit [Fintype W] in
 @[simp]
 lemma closeFourCutStarWith_mult_none_none (G : Pseudograph W)
     (S : Finset W) (E : Fin 4 ≃ CrossingEdge G S) :
     (G.closeFourCutStarWith S E).mult none none = 0 :=
   rfl
 
+omit [Fintype W] in
 @[simp]
 lemma closeFourCutStarWith_mult_some_some (G : Pseudograph W)
     (S : Finset W) (E : Fin 4 ≃ CrossingEdge G S) (u v : S) :
     (G.closeFourCutStarWith S E).mult (some u) (some v) = G.mult u v :=
   rfl
 
+omit [Fintype W] in
 @[simp]
 lemma closeFourCutStarWith_mult_none_some (G : Pseudograph W)
     (S : Finset W) (E : Fin 4 ≃ CrossingEdge G S) (v : S) :
@@ -2052,6 +2119,7 @@ lemma closeFourCutStarWith_mult_none_some (G : Pseudograph W)
       G.listingEndpointCount S E v :=
   rfl
 
+omit [Fintype W] in
 @[simp]
 lemma closeFourCutStarWith_mult_some_none (G : Pseudograph W)
     (S : Finset W) (E : Fin 4 ≃ CrossingEdge G S) (v : S) :
@@ -2059,6 +2127,7 @@ lemma closeFourCutStarWith_mult_some_none (G : Pseudograph W)
       G.listingEndpointCount S E v :=
   rfl
 
+omit [Fintype W] in
 /-- The new star center has degree four. -/
 lemma degree_closeFourCutStarWith_none (G : Pseudograph W)
     (S : Finset W) (E : Fin 4 ≃ CrossingEdge G S) :
@@ -2121,14 +2190,16 @@ lemma closeFourCutStarWith_isRegularOfDegree (G : Pseudograph W)
 def dropStarCenter {S : Finset W} (H : Pseudograph (Option S)) :
     Pseudograph S where
   mult u v := H.mult (some u) (some v)
-  mult_comm u v := H.mult_comm _ _
+  mult_comm _ _ := H.mult_comm _ _
 
+omit [Fintype W] in
 @[simp]
 lemma dropStarCenter_mult {S : Finset W} (H : Pseudograph (Option S))
     (u v : S) :
     H.dropStarCenter.mult u v = H.mult (some u) (some v) :=
   rfl
 
+omit [Fintype W] in
 /-- The degree lost when the star center is deleted is precisely the number
 of selected artificial star edges at that vertex. -/
 lemma degree_dropStarCenter_add {S : Finset W}
@@ -2139,6 +2210,7 @@ lemma degree_dropStarCenter_add {S : Finset W}
   simp only [dropStarCenter_mult, Fintype.sum_option]
   omega
 
+omit [Fintype W] in
 lemma dropStarCenter_isPart {G : Pseudograph W} {S : Finset W}
     {E : Fin 4 ≃ CrossingEdge G S} {H : Pseudograph (Option S)}
     (hH : H.IsPart (G.closeFourCutStarWith S E)) :
@@ -2146,12 +2218,14 @@ lemma dropStarCenter_isPart {G : Pseudograph W} {S : Finset W}
   intro u v
   exact hH (some u) (some v)
 
+omit [Fintype W] in
 lemma starEdgeMultiplicity_le {G : Pseudograph W} {S : Finset W}
     {E : Fin 4 ≃ CrossingEdge G S} {H : Pseudograph (Option S)}
     (hH : H.IsPart (G.closeFourCutStarWith S E)) (v : S) :
     H.mult none (some v) ≤ G.listingEndpointCount S E v := by
   exact hH none (some v)
 
+omit [Fintype W] in
 lemma starCenter_loop_eq_zero {G : Pseudograph W} {S : Finset W}
     {E : Fin 4 ≃ CrossingEdge G S} {H : Pseudograph (Option S)}
     (hH : H.IsPart (G.closeFourCutStarWith S E)) :
@@ -2163,11 +2237,12 @@ lemma starCenter_loop_eq_zero {G : Pseudograph W} {S : Finset W}
 cut edge `i` and uses all other three labelled cut edges. -/
 def StarOmitsExactly {G : Pseudograph W} {S : Finset W}
     (E : Fin 4 ≃ CrossingEdge G S) (H : Pseudograph (Option S))
-    (i : Fin 4) : Prop :=
+    (i : Fin 4) : Prop := open scoped Classical in
   ∀ v : S, H.mult none (some v) =
     G.listingEndpointCount S E v -
       if (E i).inside = (v : W) then 1 else 0
 
+omit [Fintype W] in
 /-- A cubic part which contains the star center uses three of the four
 labelled star edges and therefore omits exactly one cut-edge label. -/
 lemma exists_starOmitsExactly_of_center_degree_three
@@ -2189,7 +2264,7 @@ lemma exists_starOmitsExactly_of_center_degree_three
   obtain ⟨v, hvlt⟩ : ∃ v : S,
       H.mult none (some v) < G.listingEndpointCount S E v := by
     by_contra h
-    push_neg at h
+    push Not at h
     have heq : ∀ v : S,
         H.mult none (some v) = G.listingEndpointCount S E v := by
       intro v
@@ -2236,6 +2311,7 @@ noncomputable def closeFourCutStar (G : Pseudograph W) (S : Finset W)
     (hcut : G.boundaryMultiplicity S = 4) : Pseudograph (Option S) :=
   G.closeFourCutStarWith S (G.cutEquiv S hcut).symm
 
+open scoped Classical in
 /-- The aligned listing on the opposite shore reverses exactly the same four
 labelled original edges. -/
 noncomputable def reversedFourCutListing (G : Pseudograph W) (S : Finset W)
@@ -2337,7 +2413,6 @@ lemma exists_two_cross_pairings (f : Fin 4 → Bool)
   cases h0 : f 0 <;> cases h1 : f 1 <;>
     cases h2 : f 2 <;> cases h3 : f 3
   all_goals simp [h0, h1, h2, h3] at hcount
-  all_goals try omega
   next =>
     refine ⟨.p02_13, .p03_12, by decide, ?_⟩
     simp [a, b, c, d, h0, h1, h2, h3]
@@ -2377,11 +2452,12 @@ lemma all_values_eq_of_block_values_eq_of_same_color
 
 lemma exists_two_labels_of_right_color
     {α : Type*} (p : FourPairing) (color : Fin 4 → α)
-    {u v : α} (huv : u ≠ v)
+    {u v : α} (_ : u ≠ v)
     (hvalues : ∀ i, color i = u ∨ color i = v)
     (hcross₁ : color p.a ≠ color p.b)
     (hcross₂ : color p.c ≠ color p.d) :
     ∃ i j : Fin 4, i ≠ j ∧ color i = v ∧ color j = v := by
+  classical
   let i := if color p.a = v then p.a else p.b
   let j := if color p.c = v then p.c else p.d
   have hi : color i = v := by
@@ -2553,14 +2629,14 @@ lemma other_block_eq_of_block_eq_of_count_two
   · exact hc.trans hd.symm
   · by_cases ha : value p.a = x
     · have hb := habx.mp ha
-      simp [ha, hb, hc, hd, hxy, hxy.symm] at htotal
+      simp [ha, hb, hc, hd, hxy.symm] at htotal
     · have hb : value p.b ≠ x := fun h ↦ ha (habx.mpr h)
-      simp [ha, hb, hc, hd, hxy, hxy.symm] at htotal
+      simp [ha, hb, hc, hd, hxy.symm] at htotal
   · by_cases ha : value p.a = x
     · have hb := habx.mp ha
-      simp [ha, hb, hc, hd, hxy, hxy.symm] at htotal
+      simp [ha, hb, hc, hd, hxy.symm] at htotal
     · have hb : value p.b ≠ x := fun h ↦ ha (habx.mpr h)
-      simp [ha, hb, hc, hd, hxy, hxy.symm] at htotal
+      simp [ha, hb, hc, hd, hxy.symm] at htotal
   · exact hc.trans hd.symm
 
 lemma first_block_eq_of_second_block_eq_of_count_two
@@ -2577,14 +2653,14 @@ lemma first_block_eq_of_second_block_eq_of_count_two
   · exact ha.trans hb.symm
   · by_cases hc : value p.c = x
     · have hd := hcdx.mp hc
-      simp [ha, hb, hc, hd, hxy, hxy.symm] at htotal
+      simp [ha, hb, hc, hd, hxy.symm] at htotal
     · have hd : value p.d ≠ x := fun h ↦ hc (hcdx.mpr h)
-      simp [ha, hb, hc, hd, hxy, hxy.symm] at htotal
+      simp [ha, hb, hc, hd, hxy.symm] at htotal
   · by_cases hc : value p.c = x
     · have hd := hcdx.mp hc
-      simp [ha, hb, hc, hd, hxy, hxy.symm] at htotal
+      simp [ha, hb, hc, hd, hxy.symm] at htotal
     · have hd : value p.d ≠ x := fun h ↦ hc (hcdx.mpr h)
-      simp [ha, hb, hc, hd, hxy, hxy.symm] at htotal
+      simp [ha, hb, hc, hd, hxy.symm] at htotal
   · exact ha.trans hb.symm
 
 /-- Two bichromatic blocks whose values all lie in a two-element set are
@@ -2613,6 +2689,7 @@ def closeFourCutPairWith (G : Pseudograph W) (S : Finset W)
   G.induce S + singleEdge (endpoint p.a) (endpoint p.b) +
     singleEdge (endpoint p.c) (endpoint p.d)
 
+open scoped Classical in
 /-- The paired closure on the opposite shore, packaged so its complement's
 `DecidableEq` choice is not exposed in downstream theorem signatures. -/
 noncomputable def oppositePairClosure (G : Pseudograph W) (S : Finset W)
@@ -2685,6 +2762,7 @@ noncomputable def crossingAtEquivTwoCutFiber (G : Pseudograph W)
     intro e
     simp only [twoCutEdge, Equiv.symm_apply_apply])
 
+open scoped Classical in
 /-- At each vertex, the lost degree across a two-cut is exactly the number
 of occurrences of that vertex among the two enumerated shore endpoints. -/
 lemma outsideDegree_eq_twoCutEndpointCount (G : Pseudograph W)
@@ -2728,6 +2806,7 @@ lemma closeTwoCut_isRegularOfDegree (G : Pseudograph W)
   rw [← hout']
   exact hdegree
 
+open scoped Classical in
 /-- Extend a pseudograph on a shore to the ambient vertex type by making all
 vertices outside the shore isolated. -/
 noncomputable def extendFrom (S : Finset W) (H : Pseudograph S) :
@@ -2744,18 +2823,21 @@ noncomputable def extendFrom (S : Finset W) (H : Pseudograph S) :
     · simp [hu, hv]
     · simp [hu, hv]
 
+omit [Fintype W] in
 @[simp]
 lemma extendFrom_mult_of_mem (S : Finset W) (H : Pseudograph S)
     {u v : W} (hu : u ∈ S) (hv : v ∈ S) :
     (extendFrom S H).mult u v = H.mult ⟨u, hu⟩ ⟨v, hv⟩ := by
   simp [extendFrom, hu, hv]
 
+omit [Fintype W] in
 @[simp]
 lemma extendFrom_mult_of_notMem_left (S : Finset W) (H : Pseudograph S)
     {u v : W} (hu : u ∉ S) :
     (extendFrom S H).mult u v = 0 := by
   simp [extendFrom, hu]
 
+omit [Fintype W] in
 @[simp]
 lemma extendFrom_mult_of_notMem_right (S : Finset W) (H : Pseudograph S)
     {u v : W} (hv : v ∉ S) :
@@ -2801,6 +2883,7 @@ lemma degree_extendFrom_of_notMem (S : Finset W) (H : Pseudograph S)
   classical
   simp [degree, extendFrom, hv]
 
+open scoped Classical in
 /-- Remove one copy of the (possibly loop) edge `ab`. -/
 def removeSingleEdge (H : Pseudograph W) (a b : W) : Pseudograph W where
   mult u v := if (u = a ∧ v = b) ∨ (u = b ∧ v = a) then
@@ -2816,6 +2899,8 @@ def removeSingleEdge (H : Pseudograph W) (a b : W) : Pseudograph W where
       · exact H.mult_comm u v
       · tauto
 
+omit [Fintype W] in
+open scoped Classical in
 @[simp]
 lemma removeSingleEdge_mult (H : Pseudograph W) (a b u v : W) :
     (H.removeSingleEdge a b).mult u v =
@@ -2823,6 +2908,7 @@ lemma removeSingleEdge_mult (H : Pseudograph W) (a b u v : W) :
         H.mult u v - 1 else H.mult u v :=
   rfl
 
+omit [Fintype W] in
 /-- If the indicated edge is present, deleting then re-adding one copy
 recovers the original pseudograph. -/
 lemma removeSingleEdge_add (H : Pseudograph W) (a b : W)
@@ -2840,6 +2926,7 @@ lemma removeSingleEdge_add (H : Pseudograph W) (a b : W)
     omega
   · simp [h]
 
+open scoped Classical in
 /-- Degree bookkeeping for deleting one present edge. -/
 lemma degree_removeSingleEdge_add (H : Pseudograph W) (a b v : W)
     (hpos : 0 < H.mult a b) :
@@ -2850,6 +2937,7 @@ lemma degree_removeSingleEdge_add (H : Pseudograph W) (a b v : W)
   rw [degree_add, degree_singleEdge] at hdeg
   omega
 
+open scoped Classical in
 /-- The spanning part consisting of exactly the edges crossing `S`. -/
 def crossingPart (G : Pseudograph W) (S : Finset W) : Pseudograph W where
   mult u v := if (u ∈ S ∧ v ∉ S) ∨ (v ∈ S ∧ u ∉ S) then
@@ -2864,6 +2952,8 @@ def crossingPart (G : Pseudograph W) (S : Finset W) : Pseudograph W where
       rw [if_neg]
       tauto
 
+omit [Fintype W] in
+open scoped Classical in
 @[simp]
 lemma crossingPart_mult (G : Pseudograph W) (S : Finset W) (u v : W) :
     (G.crossingPart S).mult u v =
@@ -2871,6 +2961,7 @@ lemma crossingPart_mult (G : Pseudograph W) (S : Finset W) (u v : W) :
         G.mult u v else 0 :=
   rfl
 
+omit [Fintype W] in
 lemma crossingPart_isPart (G : Pseudograph W) (S : Finset W) :
     (G.crossingPart S).IsPart G := by
   intro u v
@@ -2903,6 +2994,7 @@ lemma degree_crossingPart_of_mem (G : Pseudograph W) (S : Finset W)
       · intro w _
         rfl
 
+open scoped Classical in
 /-- On the complementary shore, the same crossing part has the complementary
 outside degree. -/
 lemma degree_crossingPart_of_notMem (G : Pseudograph W) (S : Finset W)
@@ -2930,6 +3022,7 @@ lemma degree_crossingPart_of_notMem (G : Pseudograph W) (S : Finset W)
         rfl
     _ = ∑ w ∈ (Sᶜ)ᶜ, G.mult v w := by simp
 
+omit [Fintype W] in
 /-- An internal part on a shore remains a part after extension to the
 ambient vertices. -/
 lemma extendFrom_isPart {G : Pseudograph W} {S : Finset W}
@@ -2945,6 +3038,7 @@ lemma extendFrom_isPart {G : Pseudograph W} {S : Finset W}
   · rw [extendFrom_mult_of_notMem_left S H hu]
     omega
 
+omit [Fintype W] in
 /-- Removing the possible extra copy from a part of `H + ab` leaves a part
 of `H`. -/
 lemma removeSingleEdge_isPart_left {K H : Pseudograph W} {a b : W}
@@ -2960,6 +3054,7 @@ lemma removeSingleEdge_isPart_left {K H : Pseudograph W} {a b : W}
   · rw [if_neg h] at huv ⊢
     omega
 
+omit [Fintype W] in
 /-- If a part of `H + ab` does not exceed `H` on the exceptional pair, the
 part did not need the closing edge anywhere. -/
 lemma isPart_left_of_isPart_add_of_mult_le {K H : Pseudograph W} {a b : W}
@@ -2975,6 +3070,7 @@ lemma isPart_left_of_isPart_add_of_mult_le {K H : Pseudograph W} {a b : W}
   · rw [if_neg h] at huv
     omega
 
+omit [Fintype W] in
 lemma starEdge_eq_zero_of_center_degree_zero
     {S : Finset W} {H : Pseudograph (Option S)}
     (hcenter : H.degree none = 0) (v : S) :
@@ -3025,6 +3121,7 @@ def crossingPartExcept {G : Pseudograph W} {S : Finset W} {n : ℕ}
     (E : Fin n ≃ CrossingEdge G S) (i : Fin n) : Pseudograph W :=
   (G.crossingPart S).removeSingleEdge (E i).inside (E i).outside
 
+omit [Fintype W] in
 lemma crossingPartExcept_isPart {G : Pseudograph W} {S : Finset W} {n : ℕ}
     (E : Fin n ≃ CrossingEdge G S) (i : Fin n) :
     (crossingPartExcept E i).IsPart G := by
@@ -3033,6 +3130,7 @@ lemma crossingPartExcept_isPart {G : Pseudograph W} {S : Finset W} {n : ℕ}
   simp only [crossingPartExcept, removeSingleEdge_mult]
   split <;> omega
 
+open scoped Classical in
 lemma degree_crossingPartExcept_add_of_mem
     {G : Pseudograph W} {S : Finset W} {n : ℕ}
     (E : Fin n ≃ CrossingEdge G S) (i : Fin n)
@@ -3057,6 +3155,7 @@ lemma degree_crossingPartExcept_add_of_mem
   rw [degree_crossingPart_of_mem G S v hv, if_neg hvout] at hrem
   simpa [crossingPartExcept, eq_comm, Nat.add_zero, Nat.add_assoc] using hrem
 
+open scoped Classical in
 lemma degree_crossingPartExcept_add_of_notMem
     {G : Pseudograph W} {S : Finset W} {n : ℕ}
     (E : Fin n ≃ CrossingEdge G S) (i : Fin n)
@@ -3081,6 +3180,7 @@ lemma degree_crossingPartExcept_add_of_notMem
   rw [degree_crossingPart_of_notMem G S v hv, if_neg hvin] at hrem
   simpa [crossingPartExcept, eq_comm, Nat.zero_add, Nat.add_assoc] using hrem
 
+open scoped Classical in
 /-- Splice two star-closure parts which omit the same labelled cut edge.
 The internal portions are retained on their respective shores and the other
 three original crossing-edge copies are restored. -/
@@ -3091,6 +3191,7 @@ def spliceFourCutStars {G : Pseudograph W} {S : Finset W}
   extendFrom S H.dropStarCenter + extendFrom Sᶜ K.dropStarCenter +
     crossingPartExcept E i
 
+open scoped Classical in
 /-- The star splice has exactly the first witness's degree on the chosen
 shore. -/
 lemma degree_spliceFourCutStars_of_mem
@@ -3117,6 +3218,7 @@ lemma degree_spliceFourCutStars_of_mem
     Nat.add_zero]
   omega
 
+open scoped Classical in
 /-- The star splice has exactly the second witness's degree on the opposite
 shore. -/
 lemma degree_spliceFourCutStars_of_notMem
@@ -3147,6 +3249,7 @@ lemma degree_spliceFourCutStars_of_notMem
     Nat.zero_add]
   omega
 
+open scoped Classical in
 /-- The star splice uses no edge outside the original pseudograph. -/
 lemma spliceFourCutStars_isPart
     (G : Pseudograph W) (S : Finset W)
@@ -3186,9 +3289,10 @@ lemma spliceFourCutStars_isPart
     have hvC : v ∈ Sᶜ := Finset.mem_compl.mpr hv
     have hcross0 : (crossingPartExcept E i).mult u v = 0 := by
       simp [crossingPartExcept, crossingPart, hu, hv]
-    simp [spliceFourCutStars, extendFrom, hu, hv, huC, hvC, hcross0]
+    simp [spliceFourCutStars, extendFrom, hu, hv, hcross0]
     simpa using hKC ⟨u, huC⟩ ⟨v, hvC⟩
 
+open scoped Classical in
 lemma reversedFourCutListing_inside
     (G : Pseudograph W) (S : Finset W)
     (hcut : G.boundaryMultiplicity S = 4) (i : Fin 4) :
@@ -3196,6 +3300,7 @@ lemma reversedFourCutListing_inside
       ((G.cutEquiv S hcut).symm i).outside := by
   rfl
 
+open scoped Classical in
 /-- **Four-edge star gluing (Tashkinov, Proposition 2.4).**  If the first
 shore supplies a cubic star-closure part omitting each prescribed label,
 then any cubic part on the opposite star closure splices to a cubic part of
@@ -3239,7 +3344,7 @@ theorem containsRegularPart_of_fourCutStarClosures
                 using hthree
             obtain ⟨x, hx⟩ : ∃ x : S, H.degree (some x) = 3 := by
               by_contra hn
-              push_neg at hn
+              push Not at hn
               have hzeroAll : ∀ x : S, H.degree (some x) = 0 := by
                 intro x
                 rcases hHdeg (some x) with hx0 | hx3
@@ -3314,6 +3419,7 @@ lemma containsRegularPart_of_closeTwoCut_of_not_uses
     · simpa [degree_extendFrom_of_mem S H v hv] using hdegrees ⟨v, hv⟩
     · exact Or.inl (degree_extendFrom_of_notMem S H v hv)
 
+open scoped Classical in
 /-- Both closure witnesses use their artificial edge exactly in the case
 where they must be spliced. -/
 noncomputable def spliceTwoCut (G : Pseudograph W) (S : Finset W)
@@ -3333,6 +3439,7 @@ noncomputable def spliceTwoCut (G : Pseudograph W) (S : Finset W)
   extendFrom S (H.removeSingleEdge a b) +
     extendFrom Sᶜ (K.removeSingleEdge c d) + G.crossingPart S
 
+open scoped Classical in
 /-- On the first shore, splicing restores exactly the degree of the first
 closure witness. -/
 lemma degree_spliceTwoCut_of_mem (G : Pseudograph W) (S : Finset W)
@@ -3371,6 +3478,7 @@ lemma degree_spliceTwoCut_of_mem (G : Pseudograph W) (S : Finset W)
   rw [hout']
   split_ifs at hrem ⊢ <;> omega
 
+open scoped Classical in
 /-- On the complementary shore, splicing restores exactly the degree of the
 second closure witness. -/
 lemma degree_spliceTwoCut_of_notMem (G : Pseudograph W) (S : Finset W)
@@ -3410,6 +3518,7 @@ lemma degree_spliceTwoCut_of_notMem (G : Pseudograph W) (S : Finset W)
   rw [hout']
   split_ifs at hrem ⊢ <;> omega
 
+open scoped Classical in
 /-- The spliced witness uses no edge outside the original pseudograph. -/
 lemma spliceTwoCut_isPart (G : Pseudograph W) (S : Finset W)
     (hcut : G.boundaryMultiplicity S = 2)
@@ -3437,19 +3546,20 @@ lemma spliceTwoCut_isPart (G : Pseudograph W) (S : Finset W)
     simpa [closeTwoCut, c, d] using hK
   intro u v
   by_cases hu : u ∈ S <;> by_cases hv : v ∈ S
-  · simp [spliceTwoCut, crossingPart, hu, hv, a, b, c, d]
+  · simp [spliceTwoCut, crossingPart, hu, hv]
     simpa [a, b] using hHA ⟨u, hu⟩ ⟨v, hv⟩
   · have huC : u ∉ Sᶜ := by simp [hu]
     have hvC : v ∈ Sᶜ := Finset.mem_compl.mpr hv
-    simp [spliceTwoCut, crossingPart, hu, hv, huC, hvC, a, b, c, d]
+    simp [spliceTwoCut, crossingPart, hu, hv, huC]
   · have huC : u ∈ Sᶜ := Finset.mem_compl.mpr hu
     have hvC : v ∉ Sᶜ := by simp [hv]
-    simp [spliceTwoCut, crossingPart, hu, hv, huC, hvC, a, b, c, d]
+    simp [spliceTwoCut, crossingPart, hu, hv, huC, hvC]
   · have huC : u ∈ Sᶜ := Finset.mem_compl.mpr hu
     have hvC : v ∈ Sᶜ := Finset.mem_compl.mpr hv
-    simp [spliceTwoCut, crossingPart, hu, hv, huC, hvC, a, b, c, d]
+    simp [spliceTwoCut, crossingPart, hu, hv, huC, hvC]
     simpa [c, d] using hKC ⟨u, huC⟩ ⟨v, hvC⟩
 
+open scoped Classical in
 /-- **Two-edge gluing.** Cubic parts in both shore closures always produce a
 cubic part of the original pseudograph. -/
 theorem containsRegularPart_of_twoCutClosures
@@ -3481,6 +3591,7 @@ theorem containsRegularPart_of_twoCutClosures
   · exact containsRegularPart_of_closeTwoCut_of_not_uses
       G S hcut hHpart hHne hHdeg hHuses
 
+open scoped Classical in
 /-- Internal edges of a disjoint union are the internal edges of its two
 blocks plus the edges between them. -/
 lemma internalMultiplicity_union
@@ -3503,8 +3614,8 @@ lemma internalMultiplicity_union
         by_cases haT : a ∈ T <;> by_cases hbT : b ∈ T
       all_goals simp [internalIndicator_mk, betweenIndicator_mk,
         haS, hbS, haT, hbT] at *
-      all_goals ring
 
+open scoped Classical in
 /-- In a regular pseudograph, toggling two disjoint shores gives the usual
 cut-union identity: the two original cuts count the between-shore edges
 twice. -/
@@ -3571,7 +3682,7 @@ disjoint from `U`, different shores are disjoint, and every edge leaving a
 shore ends in `U`.  Consequently their cut multiplicities sum to at most the
 cut multiplicity of `U`. -/
 lemma sum_boundaryMultiplicity_le_boundaryMultiplicity
-    {ι : Type*} [Fintype ι] (G : Pseudograph W) (U : Finset W)
+    {ι : Type*} (G : Pseudograph W) (U : Finset W)
     (I : Finset ι) (S : ι → Finset W)
     (hdisjU : ∀ i ∈ I, Disjoint (S i) U)
     (hdisj : ∀ i ∈ I, ∀ j ∈ I, i ≠ j → Disjoint (S i) (S j))
@@ -3641,7 +3752,7 @@ lemma sum_boundaryMultiplicity_le_boundaryMultiplicity
 /-- Exact cut double-counting when the disjoint shores cover the complement
 of `U`.  This is the componentwise form of the master deficiency identity. -/
 lemma sum_boundaryMultiplicity_eq_boundaryMultiplicity
-    {ι : Type*} [Fintype ι] (G : Pseudograph W) (U : Finset W)
+    {ι : Type*} (G : Pseudograph W) (U : Finset W)
     (I : Finset ι) (S : ι → Finset W)
     (hdisjU : ∀ i ∈ I, Disjoint (S i) U)
     (hdisj : ∀ i ∈ I, ∀ j ∈ I, i ≠ j → Disjoint (S i) (S j))
@@ -3689,7 +3800,7 @@ lemma sum_boundaryMultiplicity_eq_boundaryMultiplicity
 family of disjoint shores separated by `U`, each with boundary at least four,
 has strictly fewer members than `U` whenever `U` contains an internal edge. -/
 lemma card_lt_of_four_le_boundaryMultiplicity
-    {ι : Type*} [Fintype ι] (G : Pseudograph W)
+    {ι : Type*} (G : Pseudograph W)
     (hreg : G.IsRegularOfDegree 4) (U : Finset W)
     (I : Finset ι) (S : ι → Finset W)
     (hdisjU : ∀ i ∈ I, Disjoint (S i) U)
@@ -4068,6 +4179,7 @@ lemma parallelPairCount_induce_add_two_le_of_two_parallel_pairs_outside
   change Fintype.card A / 2 + 2 ≤ Fintype.card B / 2
   omega
 
+open scoped Classical in
 lemma induce_compl_defect_le_one_of_parallel_pair
     (G : Pseudograph W) (hclass : G.InTashkinovClass)
     {u v : W} (huv : u ≠ v) (hparallel : 2 ≤ G.mult u v) :
@@ -4181,6 +4293,7 @@ lemma parallelPairCount_ofSimple (G : SimpleGraph W) :
   rw [hfilter]
   simp
 
+open scoped Classical in
 /-- Every quartic simple graph belongs to Tashkinov's induction class. -/
 lemma inTashkinovClass_ofSimple (G : SimpleGraph W)
     (hreg : G.IsRegularOfDegree 4) :
@@ -4194,13 +4307,15 @@ variable {Z : Type*} [Fintype Z]
 /-- Transport a pseudograph along a vertex equivalence. -/
 def relabel (e : W ≃ Z) (G : Pseudograph W) : Pseudograph Z where
   mult u v := G.mult (e.symm u) (e.symm v)
-  mult_comm u v := G.mult_comm _ _
+  mult_comm _ _ := G.mult_comm _ _
 
+omit [Fintype W] [Fintype Z] in
 @[simp]
 lemma relabel_mult (e : W ≃ Z) (G : Pseudograph W) (u v : Z) :
     (G.relabel e).mult u v = G.mult (e.symm u) (e.symm v) :=
   rfl
 
+omit [Fintype W] [Fintype Z] in
 lemma relabel_symm_relabel (e : W ≃ Z) (G : Pseudograph W) :
     (G.relabel e).relabel e.symm = G := by
   ext u v
@@ -4262,6 +4377,7 @@ lemma inTashkinovClass_relabel_iff (e : W ≃ Z) (G : Pseudograph W) :
     isRegularOfDegree_relabel_iff, loopCount_relabel,
     parallelPairCount_relabel]
 
+omit [Fintype W] [Fintype Z] in
 lemma isPart_relabel {H G : Pseudograph W} (e : W ≃ Z)
     (hHG : H.IsPart G) : (H.relabel e).IsPart (G.relabel e) := by
   intro u v
@@ -4392,15 +4508,13 @@ theorem IsVertexMinimalCounterexample.underlying_connected
   have : Nonempty (Fin n) := Fin.pos_iff_nonempty.mp hmin.positive_order
   by_contra hnot
   rw [SimpleGraph.connected_iff_exists_forall_reachable] at hnot
-  push_neg at hnot
+  push Not at hnot
   let v : Fin n := Classical.choice inferInstance
   obtain ⟨w, hw⟩ := hnot v
   let c : G.toSimple.ConnectedComponent := G.toSimple.connectedComponentMk v
   let S : Finset (Fin n) := c.supp.toFinset
   have hvS : v ∈ S := by
-    simpa [S, c] using
-      (SimpleGraph.ConnectedComponent.connectedComponentMk_mem
-        (G := G.toSimple) (v := v))
+    simp [S, c]
   have hwNotS : w ∉ S := by
     intro hwS
     have hwSupp : w ∈ c.supp := by simpa [S] using hwS
@@ -4440,6 +4554,7 @@ definitionally with its underlying `SimpleGraph`. -/
 def HasSimpleMultiplicities (G : Pseudograph W) : Prop :=
   (∀ v, G.mult v v = 0) ∧ ∀ u v, G.mult u v ≤ 1
 
+omit [Fintype W] in
 lemma eq_ofSimple_toSimple_of_hasSimpleMultiplicities
     (G : Pseudograph W) (h : G.HasSimpleMultiplicities) :
     ofSimple G.toSimple = G := by
@@ -4458,11 +4573,13 @@ lemma eq_ofSimple_toSimple_of_hasSimpleMultiplicities
       · intro hbad
         exact hpos hbad.2
 
+omit [Fintype W] in
 lemma induce_hasSimpleMultiplicities (G : Pseudograph W)
     (h : G.HasSimpleMultiplicities) (S : Finset W) :
     (G.induce S).HasSimpleMultiplicities := by
   exact ⟨fun v ↦ h.1 v, fun u v ↦ h.2 u v⟩
 
+open scoped Classical in
 /-- If one loop and one parallel pair already consume the whole defect
 budget of a class-`B` graph, the complement of their endpoints is simple. -/
 lemma induce_compl_hasSimpleMultiplicities_of_loop_and_parallel
@@ -4992,6 +5109,7 @@ lemma add_two_singleEdges_inTashkinovClass_of_hasSimpleMultiplicities
     (hreg : ((H + singleEdge a b) + singleEdge c d).IsRegularOfDegree 4)
     (hnotTwoLoops : ¬(a = b ∧ c = d)) :
     ((H + singleEdge a b) + singleEdge c d).InTashkinovClass := by
+  classical
   have hloopH : H.loopCount = 0 := by
     unfold loopCount
     simp [hsimple.1]
@@ -5028,7 +5146,7 @@ lemma add_two_singleEdges_inTashkinovClass_of_hasSimpleMultiplicities
       rw [loopCount_add, loopCount_add, loopCount_singleEdge,
         loopCount_singleEdge, hloopH]
       simp only [Nat.zero_add]
-      push_neg at haddedLoop
+      push Not at haddedLoop
       simp [haddedLoop]
     have hp : ((H + singleEdge a b) + singleEdge c d).parallelPairCount ≤ 2 := by
       simpa [haddedLoop] using hparallel
@@ -5142,8 +5260,9 @@ lemma closeTwoCut_endpoints_and_mult_of_two_unit_outsideDegrees
     · simp [closeTwoCut, singleEdge_mult, e0, e1, h0a, h1b,
         Subtype.ext_iff]
     · simp [closeTwoCut, singleEdge_mult, e0, e1, h0b, h1a,
-        Subtype.ext_iff, G.mult_comm, hab]
+        Subtype.ext_iff, hab]
 
+open scoped Classical in
 /-- The two-vertex shore formed by a looped endpoint and a parallel pair
 has a two-cut closure with an explicit cubic part: retain one loop at each
 endpoint and one copy of the joining edge. -/
@@ -5251,7 +5370,7 @@ lemma exists_loop_double_twoCut_cubicClosure
       rcases eq_or_eq_of_fintype_card_two huvs hcard y with rfl | rfl <;>
       simp [H, closeTwoCut, a, b, us, vs, ha, hb, singleEdge_mult,
         edgeCopies_mult, huLoopEq, huvEq, hvLoop, G.mult_comm,
-        huv, huv.symm, huvs, huvs.symm] <;> omega
+        huvs, huvs.symm]
   have hHdeg (x : S) : H.degree x = 3 := by
     rcases eq_or_eq_of_fintype_card_two huvs hcard x with rfl | rfl <;>
       simp [H, degree_add, degree_singleEdge, degree_edgeCopies_of_ne,
@@ -5533,7 +5652,7 @@ lemma exists_cubicStarPart_omitting_of_isPerfectMatching
       simpa [ht] using hMi
     have hAdjM : M.Adj none (some v) := by simpa using hAdj
     simp [H, F, Q, Pseudograph.sdiff_mult, ofUnderlyingSubgraph,
-      heq, hAdj, hAdjM]
+      heq, hAdjM]
   · have hnotAdj : ¬ M.spanningCoe.Adj none (some v) := by
       intro hAdj
       have hAdj' : M.Adj none (some v) := by simpa using hAdj
@@ -5543,7 +5662,7 @@ lemma exists_cubicStarPart_omitting_of_isPerfectMatching
         match z with | none => (E i).inside | some x => (x : W)) ht
     have hnotAdjM : ¬ M.Adj none (some v) := by simpa using hnotAdj
     simp [H, F, Q, Pseudograph.sdiff_mult, ofUnderlyingSubgraph,
-      heq, hnotAdj, hnotAdjM]
+      heq, hnotAdjM]
 
 /-- A finset is equivalent to its image under an embedding. -/
 noncomputable def finsetMapEquiv {A B : Type*}
@@ -5568,6 +5687,7 @@ lemma finsetMapEquiv_apply {A B : Type*}
     ((finsetMapEquiv s f x : ↑(s.map f)) : B) = f x := by
   rfl
 
+open scoped Classical in
 /-- A cut is the between-block multiplicity of the shore and its
 complement. -/
 lemma boundaryMultiplicity_eq_between_compl
@@ -5597,6 +5717,7 @@ lemma boundaryMultiplicity_eq_sum_outsideDegree
   rw [G.betweenMultiplicity_singleton v Sᶜ (by simp [hv])]
   rfl
 
+open scoped Classical in
 /-- The two vertices of a loopless double edge form a four-edge shore in a
 quartic pseudograph.  Moreover the four labelled cut ends support the two
 cross-pairings used in Proposition 2.5. -/
@@ -5636,7 +5757,6 @@ lemma exists_two_cross_pairings_of_double_edge
     change (G.induce S).degree us + G.outsideDegree S u = G.degree u at h
     rw [hdu, hreg u] at h
     omega
-
   have houtV : G.outsideDegree S v = 2 := by
     have h := G.degree_induce_add_outsideDegree S v (by simp [S])
     change (G.induce S).degree vs + G.outsideDegree S v = G.degree v at h
@@ -5677,6 +5797,7 @@ lemma exists_two_cross_pairings_of_double_edge
     simp only [f]
     rw [h]
 
+open scoped Classical in
 /-- Subtracting any spanning degree-one part of a quartic star closure
 gives a cubic part.  The stated star-edge row identifies the omitted cut
 label. -/
@@ -5862,6 +5983,7 @@ noncomputable def crossingLabelPart {G : Pseudograph W} {S : Finset W}
     (e : CrossingEdge G S) : Pseudograph W :=
   singleEdge e.inside e.outside
 
+omit [Fintype W] in
 lemma crossingLabelPart_isPart_crossingPart
     {G : Pseudograph W} {S : Finset W} (e : CrossingEdge G S) :
     (crossingLabelPart e).IsPart (G.crossingPart S) := by
@@ -5886,6 +6008,7 @@ noncomputable def twoCrossingLabelPart {G : Pseudograph W} {S : Finset W}
     (e f : CrossingEdge G S) : Pseudograph W :=
   crossingLabelPart e + crossingLabelPart f
 
+omit [Fintype W] in
 lemma twoCrossingLabelPart_isPart_crossingPart
     {G : Pseudograph W} {S : Finset W}
     (e f : CrossingEdge G S) (hef : e ≠ f) :
@@ -5948,6 +6071,7 @@ lemma twoCrossingLabelPart_isPart_crossingPart
   · rw [if_neg he, if_neg hf]
     exact Nat.zero_le _
 
+open scoped Classical in
 lemma degree_twoCrossingLabelPart
     {G : Pseudograph W} {S : Finset W}
     (e f : CrossingEdge G S) (v : W) :
@@ -5966,7 +6090,7 @@ def pairEndpoint {G : Pseudograph W} {S : Finset W}
 
 noncomputable def pairIncidenceInside {G : Pseudograph W} {S : Finset W}
     (E : Fin 4 ≃ CrossingEdge G S) (p : FourPairing)
-    (use₁ use₂ : Bool) (v : W) : ℕ :=
+    (use₁ use₂ : Bool) (v : W) : ℕ := open scoped Classical in
   (if use₁ then
       (if v = (E p.a).inside then 1 else 0) +
       (if v = (E p.b).inside then 1 else 0)
@@ -5978,7 +6102,7 @@ noncomputable def pairIncidenceInside {G : Pseudograph W} {S : Finset W}
 
 noncomputable def pairIncidenceOutside {G : Pseudograph W} {S : Finset W}
     (E : Fin 4 ≃ CrossingEdge G S) (p : FourPairing)
-    (use₁ use₂ : Bool) (v : W) : ℕ :=
+    (use₁ use₂ : Bool) (v : W) : ℕ := open scoped Classical in
   (if use₁ then
       (if v = (E p.a).outside then 1 else 0) +
       (if v = (E p.b).outside then 1 else 0)
@@ -5988,6 +6112,8 @@ noncomputable def pairIncidenceOutside {G : Pseudograph W} {S : Finset W}
       (if v = (E p.d).outside then 1 else 0)
     else 0)
 
+omit [Fintype W] in
+open scoped Classical in
 lemma pairIncidenceInside_coe {G : Pseudograph W} {S : Finset W}
     (E : Fin 4 ≃ CrossingEdge G S) (p : FourPairing)
     (use₁ use₂ : Bool) (v : S) :
@@ -6020,6 +6146,7 @@ noncomputable def pairClosingDegree {G : Pseudograph W} {S : Finset W}
       (singleEdge (pairEndpoint E p.c) (pairEndpoint E p.d)).degree v
     else 0)
 
+omit [Fintype W] in
 lemma pairClosingDegree_eq_incidence
     {G : Pseudograph W} {S : Finset W}
     (E : Fin 4 ≃ CrossingEdge G S) (p : FourPairing)
@@ -6054,6 +6181,7 @@ lemma fourPairing_ab_ne (p : FourPairing) : p.a ≠ p.b := by
 lemma fourPairing_cd_ne (p : FourPairing) : p.c ≠ p.d := by
   cases p <;> decide
 
+omit [Fintype W] in
 lemma crossingPairSelection_isPart
     {G : Pseudograph W} {S : Finset W}
     (E : Fin 4 ≃ CrossingEdge G S) (p : FourPairing)
@@ -6112,7 +6240,7 @@ lemma degree_crossingPairSelection_of_mem
     simp [crossingPairSelection, pairIncidenceInside,
       hnotOut p.c, hnotOut p.d] at hdiff ⊢
     omega
-  · simp [crossingPairSelection, pairIncidenceInside]
+  · simp only [crossingPairSelection, pairIncidenceInside, ↓reduceIte]
     rw [G.degree_crossingPart_of_mem S v hv, hall]
     omega
 
@@ -6170,7 +6298,7 @@ lemma degree_crossingPairSelection_of_notMem
     simp [crossingPairSelection, pairIncidenceOutside,
       hnotIn p.c, hnotIn p.d] at hdiff ⊢
     omega
-  · simp [crossingPairSelection, pairIncidenceOutside]
+  · simp only [crossingPairSelection, pairIncidenceOutside, ↓reduceIte]
     rw [G.degree_crossingPart_of_notMem S v hv, hall]
     omega
 
@@ -6185,6 +6313,8 @@ def PairClosureDecomposition
     ∀ v : S, F.degree v + pairClosingDegree E p use₁ use₂ v =
       H.degree v
 
+omit [Fintype W] in
+open scoped Classical in
 /-- On a two-vertex shore with two original parallel edges, any pairing
 whose two artificial edges join the two different vertices realizes all
 three nonzero artificial-edge use patterns by an explicit cubic part. -/
@@ -6246,7 +6376,7 @@ lemma pairClosure_twoVertex_localWitnesses
     refine ⟨H, F, hHpart, ⟨us, hHdeg us⟩,
       fun w ↦ .inr (hHdeg w), hFpart, ?_⟩
     intro w
-    simp [pairClosingDegree, H, degree_add, a, b, c, d]
+    simp [pairClosingDegree, H, degree_add, c, d]
   · let F : Pseudograph S := edgeCopies 2 us vs
     let H : Pseudograph S := F + singleEdge a b
     have hFpart : F.IsPart (G.induce S) := edgeCopies_isPart hbase
@@ -6264,7 +6394,7 @@ lemma pairClosure_twoVertex_localWitnesses
     refine ⟨H, F, hHpart, ⟨us, hHdeg us⟩,
       fun w ↦ .inr (hHdeg w), hFpart, ?_⟩
     intro w
-    simp [pairClosingDegree, H, degree_add, a, b, c, d]
+    simp [pairClosingDegree, H, degree_add, a, b]
   · let F : Pseudograph S := edgeCopies 1 us vs
     let H : Pseudograph S := (F + singleEdge a b) + singleEdge c d
     have hFpart : F.IsPart (G.induce S) :=
@@ -6288,6 +6418,7 @@ lemma pairClosure_twoVertex_localWitnesses
     simp [pairClosingDegree, H, degree_add, a, b, c, d]
     omega
 
+omit [Fintype W] in
 /-- Every part of a paired closure admits a labelled decomposition.  The
 greedy order allocates a coincident artificial copy to the first pair unless
 both copies are used; this makes the statement valid even for parallel
@@ -6330,7 +6461,7 @@ lemma exists_pairClosureDecomposition
       intro v
       have h1 := hdeg₁ v
       have h2 := hdeg₂ v
-      simp [pairClosingDegree]
+      simp only [pairClosingDegree, ↓reduceIte]
       change F.degree v +
         ((singleEdge a b).degree v + (singleEdge c d).degree v) =
         H.degree v
@@ -6340,7 +6471,7 @@ lemma exists_pairClosureDecomposition
       refine ⟨false, true, H₂, hH₂B, ?_⟩
       intro v
       have h2 := hdeg₂ v
-      simp [pairClosingDegree]
+      simp only [pairClosingDegree, Bool.false_eq_true, ↓reduceIte, zero_add]
       change H₂.degree v + (singleEdge c d).degree v = H.degree v
       exact h2
   · have hHB₁ : H.IsPart (B + singleEdge a b) :=
@@ -6358,7 +6489,7 @@ lemma exists_pairClosureDecomposition
       refine ⟨true, false, F, hF, ?_⟩
       intro v
       have h1 := hdeg₁ v
-      simp [pairClosingDegree]
+      simp only [pairClosingDegree, ↓reduceIte, Bool.false_eq_true, add_zero]
       change F.degree v + (singleEdge a b).degree v = H.degree v
       exact h1
     · have hHB : H.IsPart B :=
@@ -6367,11 +6498,13 @@ lemma exists_pairClosureDecomposition
       intro v
       simp [pairClosingDegree]
 
+open scoped Classical in
 noncomputable def reverseFourCutListing
     {G : Pseudograph W} {S : Finset W}
     (E : Fin 4 ≃ CrossingEdge G S) : Fin 4 ≃ CrossingEdge G Sᶜ :=
   E.trans (G.reverseCrossingEdgeEquiv S)
 
+open scoped Classical in
 @[simp]
 lemma reverseFourCutListing_inside
     {G : Pseudograph W} {S : Finset W}
@@ -6379,6 +6512,7 @@ lemma reverseFourCutListing_inside
     (reverseFourCutListing E i).inside = (E i).outside :=
   rfl
 
+open scoped Classical in
 lemma pairClosingDegree_reverse_eq_outside
     {G : Pseudograph W} {S : Finset W}
     (E : Fin 4 ≃ CrossingEdge G S) (p : FourPairing)
@@ -6396,6 +6530,7 @@ lemma pairClosingDegree_reverse_eq_outside
       reverseFourCutListing, reverseCrossingEdgeEquiv, reverseCrossingEdge,
       ha, hb, hc, hd]
 
+open scoped Classical in
 /-- Splice two decomposed paired-closure parts using exactly the two labelled
 blocks selected by their common use pattern. -/
 noncomputable def spliceFourCutPairs
@@ -6406,6 +6541,7 @@ noncomputable def spliceFourCutPairs
   extendFrom S F + extendFrom Sᶜ L +
     crossingPairSelection E p use₁ use₂
 
+open scoped Classical in
 lemma degree_spliceFourCutPairs_of_mem
     {G : Pseudograph W} {S : Finset W}
     (E : Fin 4 ≃ CrossingEdge G S) (p : FourPairing)
@@ -6424,6 +6560,7 @@ lemma degree_spliceFourCutPairs_of_mem
   rw [← hclose]
   exact hdec.2 ⟨v, hv⟩
 
+open scoped Classical in
 lemma degree_spliceFourCutPairs_of_notMem
     {G : Pseudograph W} {S : Finset W}
     (E : Fin 4 ≃ CrossingEdge G S) (p : FourPairing)
@@ -6445,6 +6582,7 @@ lemma degree_spliceFourCutPairs_of_notMem
   rw [← hclose]
   exact hdec.2 ⟨v, hvC⟩
 
+open scoped Classical in
 lemma spliceFourCutPairs_isPart
     {G : Pseudograph W} {S : Finset W}
     (E : Fin 4 ≃ CrossingEdge G S) (p : FourPairing)
@@ -6488,6 +6626,7 @@ lemma spliceFourCutPairs_isPart
       extendFrom_mult_of_mem Sᶜ L huC hvC, hsel, zero_add, Nat.add_zero]
     simpa only [induce_mult] using hL ⟨u, huC⟩ ⟨v, hvC⟩
 
+open scoped Classical in
 /-- **Paired four-cut gluing (Tashkinov, Proposition 2.5).**  Three local
 witnesses realizing the nonzero use patterns of the two artificial closing
 edges splice against every cubic part of the oppositely oriented closure. -/
@@ -6517,7 +6656,7 @@ theorem containsRegularPart_of_fourCutPairClosures
       G.ContainsRegularPart 3 := by
     have hLdeg (v : ↑(Sᶜ)) : L.degree v = K.degree v := by
       have h := hKdec'.2 v
-      simp [pairClosingDegree, h₁, h₂] at h
+      simp only [pairClosingDegree, h₁, Bool.false_eq_true, ↓reduceIte, h₂, add_zero] at h
       exact h
     refine ⟨extendFrom Sᶜ L, extendFrom_isPart hKdec'.1, ?_, ?_⟩
     · obtain ⟨v, hv⟩ := hKne
@@ -6554,6 +6693,7 @@ theorem containsRegularPart_of_fourCutPairClosures
   · exact hsplice (.inl rfl)
   · exact hsplice (.inl rfl)
 
+open scoped Classical in
 /-- In either bad cross-pair closure of a loopless double edge, two distinct
 cut labels at the same double-edge endpoint must have distinct outside
 endpoints.  Equality would create a second parallel pair, exhaust the defect
@@ -6682,6 +6822,7 @@ lemma outside_ne_of_same_inside_of_bad_oppositePairClosure
   simpa [oppositePairClosure, EC, a, b, c, d,
     closeFourCutPairWith, pairEndpoint] using hclosure
 
+open scoped Classical in
 /-- Failure of an opposite paired closure to remain in class `B` is witnessed
 on its four labelled outside endpoints by a loop, a pre-existing edge, or
 coincidence of the two unordered closing pairs. -/
@@ -6722,6 +6863,7 @@ lemma oppositePairClosure_local_obstruction_of_parallelPair
   exact local_obstruction_of_add_two_edges_not_inTashkinovClass
     (G.induce Sᶜ) hdefect hreg hbad'
 
+open scoped Classical in
 /-- If both closing edges of a bad opposite-shore closure are nonloops,
 they cannot be two copies of the same unordered edge.  Two such copies use
 only one parallel-pair unit and therefore remain inside class `B`. -/
@@ -6779,6 +6921,7 @@ lemma bad_oppositePairClosure_closingPairs_ne
     apply hbad'
     simpa only [singleEdge_comm b a] using hin
 
+open scoped Classical in
 /-- Once the two nonloop closing pairs of a bad closure are genuinely
 different, each closing edge was already present on the unclosed shore.
 Otherwise adding the absent one and the other edge consumes at most one new
@@ -6830,6 +6973,7 @@ lemma bad_oppositePairClosure_forces_existing_closingEdges
     exact hbad' (add_two_distinct_nonloop_edges_inTashkinovClass_of_one_fresh
       (G.induce Sᶜ) hdefect hab hcd hne₁ hne₂ (.inr hz') hreg)
 
+open scoped Classical in
 /-- The explicit cubic part in the four-distinct-endpoint branch of
 Tashkinov's parallel-edge argument.  It consists of one copy of `uv`, all
 four cut edges, and the `K₂,₂` between their four outside endpoints. -/
@@ -6896,11 +7040,11 @@ lemma containsRegularPart_of_doubleEdge_fourOutside_complete
     · have hyu : y ≠ u := by
         intro h
         subst y
-        exact hy (by simpa [hS])
+        exact hy (by simp [hS])
       have hyv : y ≠ v := by
         intro h
         subst y
-        exact hy (by simpa [hS])
+        exact hy (by simp [hS])
       have hxa : x ≠ a := fun h ↦ haS (h ▸ hx)
       have hxb : x ≠ b := fun h ↦ hbS (h ▸ hx)
       have hxc : x ≠ c := fun h ↦ hcS (h ▸ hx)
@@ -6910,11 +7054,11 @@ lemma containsRegularPart_of_doubleEdge_fourOutside_complete
     · have hxu : x ≠ u := by
         intro h
         subst x
-        exact hx (by simpa [hS])
+        exact hx (by simp [hS])
       have hxv : x ≠ v := by
         intro h
         subst x
-        exact hx (by simpa [hS])
+        exact hx (by simp [hS])
       have hya : y ≠ a := fun h ↦ haS (h ▸ hy)
       have hyb : y ≠ b := fun h ↦ hbS (h ▸ hy)
       have hyc : y ≠ c := fun h ↦ hcS (h ▸ hy)
@@ -6924,19 +7068,19 @@ lemma containsRegularPart_of_doubleEdge_fourOutside_complete
     · have hxu : x ≠ u := by
         intro h
         subst x
-        exact hx (by simpa [hS])
+        exact hx (by simp [hS])
       have hxv : x ≠ v := by
         intro h
         subst x
-        exact hx (by simpa [hS])
+        exact hx (by simp [hS])
       have hyu : y ≠ u := by
         intro h
         subst y
-        exact hy (by simpa [hS])
+        exact hy (by simp [hS])
       have hyv : y ≠ v := by
         intro h
         subst y
-        exact hy (by simpa [hS])
+        exact hy (by simp [hS])
       have hk := hKpart x y
       simpa [H, add_mult, crossingPart_mult, hx, hy,
         edgeCopies_mult, hxu, hxv, hyu, hyv] using hk
@@ -6965,9 +7109,8 @@ lemma containsRegularPart_of_doubleEdge_fourOutside_complete
     by_cases hxa : x = a <;> by_cases hxb : x = b <;>
       by_cases hxc : x = c <;> by_cases hxd : x = d <;>
       simp_all only [a, b, c, d, eq_comm, if_pos, if_neg, ne_eq,
-        not_true_eq_false,
-        not_false_eq_true, true_or, or_true, false_or, or_false,
-        true_and, and_true, false_and, and_false, add_zero, zero_add]
+        not_false_eq_true,
+        add_zero, zero_add]
   have hdegree (x : W) : H.degree x = 0 ∨ H.degree x = 3 := by
     by_cases hx : x ∈ S
     · have hxuv : x = u ∨ x = v := by
@@ -6987,11 +7130,11 @@ lemma containsRegularPart_of_doubleEdge_fourOutside_complete
     · have hxu : x ≠ u := by
         intro h
         subst x
-        exact hx (by simpa [hS])
+        exact hx (by simp [hS])
       have hxv : x ≠ v := by
         intro h
         subst x
-        exact hx (by simpa [hS])
+        exact hx (by simp [hS])
       simp only [H]
       rw [degree_add, degree_add,
         degree_edgeCopies_of_ne 1 huv, hcrossOutside x hx]
@@ -7009,6 +7152,7 @@ lemma containsRegularPart_of_doubleEdge_fourOutside_complete
   rw [degree_edgeCopies_of_ne 1 huv, hz] at hpartDegree
   simp at hpartDegree
 
+open scoped Classical in
 /-- The two cross-pairings complementary to a monochromatic pairing supply
 all four edges of the `K₂,₂` between the two monochromatic blocks, provided
 the four outside endpoints are distinct. -/
@@ -7073,6 +7217,7 @@ lemma bad_crossPairings_force_completeOutside
       FourPairing.d] at hpq hrp hrq hp hq hp' hq' ⊢ <;>
     aesop
 
+open scoped Classical in
 /-- In the three-outside-endpoint branch, suppose the first endpoints of
 the two monochromatic blocks coincide.  The complementary cross-pairing
 which avoids that coincidence is one of the two bad closures, so both of
@@ -7142,6 +7287,7 @@ lemma bad_crossPairings_force_threeOutside_links
     simpa [t, FourPairing.oppositeCross, FourPairing.a,
       FourPairing.b, FourPairing.c, FourPairing.d, G.mult_comm] using hexisting'
 
+open scoped Classical in
 /-- The other complementary cross-pairing gives the analogous links when
 the coincidence is between the first block's first endpoint and the second
 block's second endpoint. -/
@@ -7208,6 +7354,7 @@ lemma bad_crossPairings_force_threeOutside_otherLinks
     simpa [t, FourPairing.otherCross, FourPairing.a,
       FourPairing.b, FourPairing.c, FourPairing.d, G.mult_comm] using hexisting'
 
+open scoped Classical in
 /-- The four cut ends of a loopless double edge cannot collapse to only two
 outside vertices.  Of the two cross-pairings, one would then add two copies
 of the same nonloop edge, contradicting the bad-closure defect bound. -/
@@ -7390,7 +7537,7 @@ theorem IsVertexMinimalCounterexample.exists_two_bad_pairClosures_of_double_edge
       intro h
       have hSempty : S = ∅ := (Finset.compl_eq_univ_iff S).mp h
       have huS : u ∈ S := by simp [S]
-      simpa [hSempty] using huS
+      simp [hSempty] at huS
     have hlt := Finset.card_lt_card
       (Finset.ssubset_iff_subset_ne.mpr
         ⟨Finset.subset_univ Sᶜ, hproperC⟩)
@@ -7418,13 +7565,14 @@ namespace Pseudograph
 
 variable {X : Type*} [Fintype X]
 
+open scoped Classical in
 /-- If a two-cut has one incidence at each of `a,b` on one shore and both
 opposite incidences meet the same vertex `w`, then the edges `aw,bw` are
 present. -/
 lemma twoCut_common_opposite_endpoint_edges
     (G : Pseudograph X) (S : Finset X)
     (hcut : G.boundaryMultiplicity S = 2) {a b : X}
-    (haS : a ∈ S) (hbS : b ∈ S) (hab : a ≠ b)
+    (_ : a ∈ S) (_ : b ∈ S) (_ : a ≠ b)
     (houtA : G.outsideDegree S a = 1)
     (houtB : G.outsideDegree S b = 1)
     (honly : ∀ x, x ∈ S → x ≠ a → x ≠ b →
@@ -7460,7 +7608,7 @@ lemma twoCut_common_opposite_endpoint_edges
   have hendpoint (e : CrossingEdge G Sᶜ) :
       e.outside = a ∨ e.outside = b := by
     by_contra h
-    push_neg at h
+    push Not at h
     have hz := honly e.outside (houtMem e) h.1 h.2
     have hp := houtsidePos e
     omega
@@ -7502,13 +7650,14 @@ lemma twoCut_common_opposite_endpoint_edges
     · simpa [w, e0, e1, he1w, h1a] using hpos e1
     · simpa [w, h0b] using hpos e0
 
+open scoped Classical in
 /-- If all incidences of a two-cut on one shore occur at a single vertex
 `w` and the two opposite incidences also meet one vertex `x`, then `wx` is
 a parallel pair. -/
 lemma twoCut_common_opposite_endpoint_parallel
     (G : Pseudograph X) (S : Finset X)
     (hcut : G.boundaryMultiplicity S = 2) {w : X}
-    (hwS : w ∈ S)
+    (_ : w ∈ S)
     (honly : ∀ y, y ∈ S → y ≠ w → G.outsideDegree S y = 0)
     (heq :
       (twoCutEdge G Sᶜ ((G.boundaryMultiplicity_compl S).trans hcut) 0).inside =
@@ -7729,7 +7878,7 @@ lemma ThreeOutsideDoubleCore.single_outer_twoCut
     have hxU : x ∉ U := by
       simpa only [Finset.mem_compl] using hx
     apply huOther x
-    all_goals intro h <;> subst x <;> simp [U] at hxU
+    all_goals intro h; subst x; simp [U] at hxU
   have houtV : G.outsideDegree U C.v = 0 := by
     unfold Pseudograph.outsideDegree
     apply Finset.sum_eq_zero
@@ -7737,7 +7886,7 @@ lemma ThreeOutsideDoubleCore.single_outer_twoCut
     have hxU : x ∉ U := by
       simpa only [Finset.mem_compl] using hx
     apply hvOther x
-    all_goals intro h <;> subst x <;> simp [U] at hxU
+    all_goals intro h; subst x; simp [U] at hxU
   have houtZ : G.outsideDegree U C.z = 0 := by
     unfold Pseudograph.outsideDegree
     apply Finset.sum_eq_zero
@@ -7745,7 +7894,7 @@ lemma ThreeOutsideDoubleCore.single_outer_twoCut
     have hxU : x ∉ U := by
       simpa only [Finset.mem_compl] using hx
     apply hzOther x
-    all_goals intro h <;> subst x <;> simp [U] at hxU
+    all_goals intro h; subst x; simp [U] at hxU
   let as : U := ⟨C.a, by simp [U]⟩
   let bs : U := ⟨C.b, by simp [U]⟩
   have hub : G.mult C.u C.b = 0 := by
@@ -7756,14 +7905,12 @@ lemma ThreeOutsideDoubleCore.single_outer_twoCut
     rw [Pseudograph.degree_eq_mult_self_add_sum, Finset.univ_eq_attach U]
     change G.mult C.a C.a + ∑ x ∈ U.attach, G.mult C.a (x : Fin n) = 3
     rw [Finset.sum_attach]
-    change G.mult C.a C.a + ∑ x ∈ U, G.mult C.a x = 3
     simp [U, haa, hau, hav, haz, hab, C.uv_ne, C.ua_ne, C.uz_ne,
       C.ub_ne, C.va_ne, C.vz_ne, C.vb_ne, C.az_ne, C.ab_ne, C.zb_ne]
   have hdegB : (G.induce U).degree bs = 3 := by
     rw [Pseudograph.degree_eq_mult_self_add_sum, Finset.univ_eq_attach U]
     change G.mult C.b C.b + ∑ x ∈ U.attach, G.mult C.b (x : Fin n) = 3
     rw [Finset.sum_attach]
-    change G.mult C.b C.b + ∑ x ∈ U, G.mult C.b x = 3
     simp [U, hbb, hbu, hbv, hbz, hba, C.uv_ne, C.ua_ne,
       C.uz_ne, C.ub_ne, C.va_ne, C.vz_ne, C.vb_ne, C.az_ne,
       C.ab_ne, C.zb_ne]
@@ -7937,23 +8084,23 @@ lemma IsVertexMinimalCounterexample.single_outer_common_vertex_loopless
   have hwu : w ≠ C.u := by
     intro h
     subst w
-    exact hw (by simp [U])
+    exact hw (by simp)
   have hwv : w ≠ C.v := by
     intro h
     subst w
-    exact hw (by simp [U])
+    exact hw (by simp)
   have hwa : w ≠ C.a := by
     intro h
     subst w
-    exact hw (by simp [U])
+    exact hw (by simp)
   have hwz : w ≠ C.z := by
     intro h
     subst w
-    exact hw (by simp [U])
+    exact hw (by simp)
   have hwb : w ≠ C.b := by
     intro h
     subst w
-    exact hw (by simp [U])
+    exact hw (by simp)
   obtain ⟨_haa, _hau, _haz, _hab, hawOne, haOther⟩ :=
     G.four_neighbors_saturate hmin.in_class.1
       C.ua_ne.symm C.az_ne C.ab_ne hwa.symm
@@ -7987,17 +8134,17 @@ lemma IsVertexMinimalCounterexample.single_outer_common_vertex_loopless
     simp only [T, Finset.mem_insert, Finset.mem_singleton] at hx
     rcases hx with rfl | rfl | rfl | rfl | rfl | rfl
     · apply huOther y
-      all_goals intro h <;> subst y <;> simp [T] at hyT
+      all_goals intro h; subst y; simp [T] at hyT
     · apply hvOther y
-      all_goals intro h <;> subst y <;> simp [T] at hyT
+      all_goals intro h; subst y; simp [T] at hyT
     · apply haOther y
-      all_goals intro h <;> subst y <;> simp [T] at hyT
+      all_goals intro h; subst y; simp [T] at hyT
     · apply hzOther y
-      all_goals intro h <;> subst y <;> simp [T] at hyT
+      all_goals intro h; subst y; simp [T] at hyT
     · apply hbOther y
-      all_goals intro h <;> subst y <;> simp [T] at hyT
+      all_goals intro h; subst y; simp [T] at hyT
     · apply hwOther y
-      all_goals intro h <;> subst y <;> simp [T] at hyT
+      all_goals intro h; subst y; simp [T] at hyT
   have hTreg : (G.induce T).IsRegularOfDegree 4 :=
     G.induce_isRegularOfDegree_of_outsideDegree_eq_zero T
       hmin.in_class.1 hout
@@ -8052,23 +8199,23 @@ lemma IsVertexMinimalCounterexample.single_outer_edge_impossible
   have hwu : w ≠ C.u := by
     intro h
     subst w
-    exact hw (by simp [U])
+    exact hw (by simp)
   have hwv : w ≠ C.v := by
     intro h
     subst w
-    exact hw (by simp [U])
+    exact hw (by simp)
   have hwa : w ≠ C.a := by
     intro h
     subst w
-    exact hw (by simp [U])
+    exact hw (by simp)
   have hwz : w ≠ C.z := by
     intro h
     subst w
-    exact hw (by simp [U])
+    exact hw (by simp)
   have hwb : w ≠ C.b := by
     intro h
     subst w
-    exact hw (by simp [U])
+    exact hw (by simp)
   obtain ⟨_haa, _hau, _haz, _hab, hawOne, haOther⟩ :=
     G.four_neighbors_saturate hmin.in_class.1
       C.ua_ne.symm C.az_ne C.ab_ne hwa.symm
@@ -8108,23 +8255,22 @@ lemma IsVertexMinimalCounterexample.single_outer_edge_impossible
     simp only [U, Finset.mem_insert, Finset.mem_singleton] at hx
     rcases hx with rfl | rfl | rfl | rfl | rfl
     · apply huOther y
-      all_goals intro h <;> subst y <;> simp [T] at hyT
+      all_goals intro h; subst y; simp [T] at hyT
     · apply hvOther y
-      all_goals intro h <;> subst y <;> simp [T] at hyT
+      all_goals intro h; subst y; simp [T] at hyT
     · apply haOther y
-      all_goals intro h <;> subst y <;> simp [T] at hyT
+      all_goals intro h; subst y; simp [T] at hyT
     · apply hzOther y
-      all_goals intro h <;> subst y <;> simp [T] at hyT
+      all_goals intro h; subst y; simp [T] at hyT
     · apply hbOther y
-      all_goals intro h <;> subst y <;> simp [T] at hyT
+      all_goals intro h; subst y; simp [T] at hyT
   let ws : T := ⟨w, by simp [T]⟩
   have hdegW : (G.induce T).degree ws = 2 := by
     rw [Pseudograph.degree_eq_mult_self_add_sum, Finset.univ_eq_attach T]
     change G.mult w w + ∑ x ∈ T.attach, G.mult w (x : Fin n) = 2
     rw [Finset.sum_attach]
-    change G.mult w w + ∑ x ∈ T, G.mult w x = 2
-    simp [T, hww, hwu0, hwv0, hwz0, hwaOne, hwbOne, hwu, hwv,
-      hwa, hwz, hwb, hwu.symm, hwv.symm, hwa.symm, hwz.symm,
+    simp [T, hww, hwu0, hwv0, hwz0, hwaOne, hwbOne,
+      hwu.symm, hwv.symm, hwa.symm, hwz.symm,
       hwb.symm, C.uv_ne, C.ua_ne, C.uz_ne, C.ub_ne,
       C.va_ne, C.vz_ne, C.vb_ne, C.az_ne, C.ab_ne, C.zb_ne]
   have houtW : G.outsideDegree T w = 2 := by
@@ -8141,7 +8287,7 @@ lemma IsVertexMinimalCounterexample.single_outer_edge_impossible
     have hb := houtCore C.b (by simp [U])
     simp [T, hu, hv, ha, hz, hb, houtW, C.uv_ne, C.ua_ne,
       C.uz_ne, C.ub_ne, C.va_ne, C.vz_ne, C.vb_ne, C.az_ne,
-      C.ab_ne, C.zb_ne, hwu, hwv, hwa, hwz, hwb]
+      C.ab_ne, C.zb_ne]
   have hlocal : (G.closeTwoCut T hcut).ContainsRegularPart 3 := by
     let Q := G.closeTwoCut T hcut
     have hQreg : Q.IsRegularOfDegree 4 :=
@@ -8215,7 +8361,7 @@ lemma IsVertexMinimalCounterexample.single_outer_edge_impossible
           Tᶜ huC hvC C.uv_ne (by rw [C.uv_two])
       exact G.closeTwoCut_inTashkinovClass_of_defect_le_one_of_endpoints_ne
         hmin.in_class.1 Tᶜ hcutC hdefect hne
-    · push_neg at hne
+    · push Not at hne
       have honly : ∀ y, y ∈ T → y ≠ w →
           G.outsideDegree T y = 0 := by
         intro y hy hyw
@@ -8295,7 +8441,6 @@ lemma IsVertexMinimalCounterexample.first_outer_loopless_of_no_outer_edge
       rw [Pseudograph.degree_eq_mult_self_add_sum, Finset.univ_eq_attach U]
       change G.mult C.b C.b + ∑ x ∈ U.attach, G.mult C.b (x : Fin n) = 2
       rw [Finset.sum_attach]
-      change G.mult C.b C.b + ∑ x ∈ U, G.mult C.b x = 2
       simp [U, hbb, hbu, hbv, hbz, hba, C.uv_ne, C.ua_ne,
         C.uz_ne, C.ub_ne, C.va_ne, C.vz_ne, C.vb_ne, C.az_ne,
         C.ab_ne, C.zb_ne]
@@ -8309,28 +8454,28 @@ lemma IsVertexMinimalCounterexample.first_outer_loopless_of_no_outer_edge
     intro x hx
     have hxU : x ∉ U := by simpa only [Finset.mem_compl] using hx
     apply huOther x
-    all_goals intro h <;> subst x <;> simp [U] at hxU
+    all_goals intro h; subst x; simp [U] at hxU
   have houtV : G.outsideDegree U C.v = 0 := by
     unfold Pseudograph.outsideDegree
     apply Finset.sum_eq_zero
     intro x hx
     have hxU : x ∉ U := by simpa only [Finset.mem_compl] using hx
     apply hvOther x
-    all_goals intro h <;> subst x <;> simp [U] at hxU
+    all_goals intro h; subst x; simp [U] at hxU
   have houtA : G.outsideDegree U C.a = 0 := by
     unfold Pseudograph.outsideDegree
     apply Finset.sum_eq_zero
     intro x hx
     have hxU : x ∉ U := by simpa only [Finset.mem_compl] using hx
     apply haOther x
-    all_goals intro h <;> subst x <;> simp [U] at hxU
+    all_goals intro h; subst x; simp [U] at hxU
   have houtZ : G.outsideDegree U C.z = 0 := by
     unfold Pseudograph.outsideDegree
     apply Finset.sum_eq_zero
     intro x hx
     have hxU : x ∉ U := by simpa only [Finset.mem_compl] using hx
     apply hzOther x
-    all_goals intro h <;> subst x <;> simp [U] at hxU
+    all_goals intro h; subst x; simp [U] at hxU
   have hcut : G.boundaryMultiplicity U = 2 := by
     rw [G.boundaryMultiplicity_eq_sum_outsideDegree]
     simp [U, houtU, houtV, houtA, houtZ, hbOutside, C.uv_ne,
@@ -8461,14 +8606,12 @@ lemma IsVertexMinimalCounterexample.no_outer_fourCut
     rw [Pseudograph.degree_eq_mult_self_add_sum, Finset.univ_eq_attach U]
     change G.mult C.a C.a + ∑ x ∈ U.attach, G.mult C.a (x : Fin n) = 2
     rw [Finset.sum_attach]
-    change G.mult C.a C.a + ∑ x ∈ U, G.mult C.a x = 2
     simp [U, haa, hau, hav, haz, hab, C.uv_ne, C.ua_ne, C.uz_ne,
       C.ub_ne, C.va_ne, C.vz_ne, C.vb_ne, C.az_ne, C.ab_ne, C.zb_ne]
   have hdegB : (G.induce U).degree ⟨C.b, by simp [U]⟩ = 2 := by
     rw [Pseudograph.degree_eq_mult_self_add_sum, Finset.univ_eq_attach U]
     change G.mult C.b C.b + ∑ x ∈ U.attach, G.mult C.b (x : Fin n) = 2
     rw [Finset.sum_attach]
-    change G.mult C.b C.b + ∑ x ∈ U, G.mult C.b x = 2
     simp [U, hbb, hbu, hbv, hbz, hba, C.uv_ne, C.ua_ne, C.uz_ne,
       C.ub_ne, C.va_ne, C.vz_ne, C.vb_ne, C.az_ne, C.ab_ne, C.zb_ne]
   have houtA : G.outsideDegree U C.a = 2 := by
@@ -8489,21 +8632,21 @@ lemma IsVertexMinimalCounterexample.no_outer_fourCut
     intro x hx
     have hxU : x ∉ U := by simpa only [Finset.mem_compl] using hx
     apply huOther x
-    all_goals intro h <;> subst x <;> simp [U] at hxU
+    all_goals intro h; subst x; simp [U] at hxU
   have houtV : G.outsideDegree U C.v = 0 := by
     unfold Pseudograph.outsideDegree
     apply Finset.sum_eq_zero
     intro x hx
     have hxU : x ∉ U := by simpa only [Finset.mem_compl] using hx
     apply hvOther x
-    all_goals intro h <;> subst x <;> simp [U] at hxU
+    all_goals intro h; subst x; simp [U] at hxU
   have houtZ : G.outsideDegree U C.z = 0 := by
     unfold Pseudograph.outsideDegree
     apply Finset.sum_eq_zero
     intro x hx
     have hxU : x ∉ U := by simpa only [Finset.mem_compl] using hx
     apply hzOther x
-    all_goals intro h <;> subst x <;> simp [U] at hxU
+    all_goals intro h; subst x; simp [U] at hxU
   have hcut : G.boundaryMultiplicity U = 4 := by
     rw [G.boundaryMultiplicity_eq_sum_outsideDegree]
     simp [U, houtA, houtB, houtU, houtV, houtZ, C.uv_ne, C.ua_ne,
@@ -8836,11 +8979,7 @@ lemma IsVertexMinimalCounterexample.no_outer_pair_localWitnesses
         simp [F, Pseudograph.degree_add,
           Pseudograph.degree_edgeCopies_of_ne,
           Pseudograph.degree_singleEdge, us, vs, as, zs, bs, hsel,
-          C.uv_ne, C.ua_ne, C.uz_ne, C.ub_ne, C.va_ne,
-          C.vz_ne, C.vb_ne, C.az_ne, C.ab_ne, C.zb_ne,
-          C.uv_ne.symm, C.ua_ne.symm, C.uz_ne.symm,
-          C.ub_ne.symm, C.va_ne.symm, C.vz_ne.symm,
-          C.vb_ne.symm, C.az_ne.symm, C.ab_ne.symm, C.zb_ne.symm]
+          C.uv_ne, C.ua_ne, C.uz_ne, C.ub_ne]
     exact ⟨F, hFpart, hdeg, hpos⟩
   cases use₁ <;> cases use₂
   · simp at huse
@@ -8857,8 +8996,8 @@ lemma IsVertexMinimalCounterexample.no_outer_pair_localWitnesses
     have hdec : Pseudograph.PairClosureDecomposition E p H false true F := by
       refine ⟨hFpart, ?_⟩
       intro w
-      simp [Pseudograph.pairClosingDegree, H, x₁, y₁, x₂, y₂,
-        Pseudograph.degree_add] <;> omega
+      simp [Pseudograph.pairClosingDegree, H, x₂, y₂,
+        Pseudograph.degree_add]
     refine ⟨H, F, hHpart, ⟨us, ?_⟩, ?_, ?_⟩
     · simpa [H, hx₂y₂] using hHpos
     · intro w
@@ -8877,7 +9016,7 @@ lemma IsVertexMinimalCounterexample.no_outer_pair_localWitnesses
     have hdec : Pseudograph.PairClosureDecomposition E p H true false F := by
       refine ⟨hFpart, ?_⟩
       intro w
-      simp [Pseudograph.pairClosingDegree, H, x₁, y₁, x₂, y₂,
+      simp [Pseudograph.pairClosingDegree, H, x₁, y₁,
         Pseudograph.degree_add]
     refine ⟨H, F, hHpart, ⟨us, ?_⟩, ?_, ?_⟩
     · simpa [H, hx₁y₁] using hHpos
@@ -8897,11 +9036,11 @@ lemma IsVertexMinimalCounterexample.no_outer_pair_localWitnesses
         simp [F, Pseudograph.edgeCopies_mult,
           Pseudograph.singleEdge_mult, us, vs, as, zs, bs,
           C.uv_two, hua, hvb, C.uv_ne, C.ua_ne,
-          C.uz_ne, C.ub_ne, C.va_ne, C.vz_ne, C.vb_ne,
-          C.az_ne, C.ab_ne, C.zb_ne, C.uv_ne.symm,
+          C.ub_ne, C.va_ne, C.vb_ne,
+          C.ab_ne, C.zb_ne, C.uv_ne.symm,
           C.ua_ne.symm, C.uz_ne.symm, C.ub_ne.symm,
           C.va_ne.symm, C.vz_ne.symm, C.vb_ne.symm,
-          C.az_ne.symm, C.ab_ne.symm, C.zb_ne.symm, G.mult_comm]
+          C.az_ne.symm, C.ab_ne.symm, G.mult_comm]
     have hHpart : H.IsPart (G.closeFourCutPairWith U E p) := by
       intro r s
       have hle := hFpart r s
@@ -8929,22 +9068,22 @@ lemma IsVertexMinimalCounterexample.no_outer_pair_localWitnesses
           simp [H, F, h₁, h₂, hy₁, hy₂,
             Pseudograph.degree_add, Pseudograph.degree_edgeCopies_of_ne,
             Pseudograph.degree_singleEdge, us, vs, as, zs, bs,
-            C.uv_ne, C.ua_ne, C.uz_ne, C.ub_ne, C.va_ne,
-            C.vz_ne, C.vb_ne, C.az_ne, C.ab_ne, C.zb_ne,
+            C.uv_ne, C.ua_ne, C.ub_ne, C.va_ne,
+            C.vb_ne, C.ab_ne, C.zb_ne,
             C.uv_ne.symm, C.ua_ne.symm, C.uz_ne.symm,
             C.ub_ne.symm, C.va_ne.symm, C.vz_ne.symm,
-            C.vb_ne.symm, C.az_ne.symm, C.ab_ne.symm, C.zb_ne.symm]
+            C.vb_ne.symm, C.az_ne.symm, C.ab_ne.symm]
       · have hy₁ : y₁ = bs := hx₁y₁.symm.trans h₁
         have hy₂ : y₂ = as := hx₂y₂.symm.trans h₂
         rcases hcover w with rfl | rfl | rfl | rfl | rfl <;>
           simp [H, F, h₁, h₂, hy₁, hy₂,
             Pseudograph.degree_add, Pseudograph.degree_edgeCopies_of_ne,
             Pseudograph.degree_singleEdge, us, vs, as, zs, bs,
-            C.uv_ne, C.ua_ne, C.uz_ne, C.ub_ne, C.va_ne,
-            C.vz_ne, C.vb_ne, C.az_ne, C.ab_ne, C.zb_ne,
+            C.uv_ne, C.ua_ne, C.ub_ne, C.va_ne,
+            C.vb_ne, C.ab_ne, C.zb_ne,
             C.uv_ne.symm, C.ua_ne.symm, C.uz_ne.symm,
             C.ub_ne.symm, C.va_ne.symm, C.vz_ne.symm,
-            C.vb_ne.symm, C.az_ne.symm, C.ab_ne.symm, C.zb_ne.symm]
+            C.vb_ne.symm, C.az_ne.symm, C.ab_ne.symm]
     refine ⟨H, F, hHpart, ⟨us, ?_⟩, hHdeg, ?_⟩
     · exact (hHdeg us).resolve_left (by
         intro hzero
@@ -8952,7 +9091,6 @@ lemma IsVertexMinimalCounterexample.no_outer_pair_localWitnesses
           change 2 ≤ (((F + Pseudograph.singleEdge x₁ y₁) +
             Pseudograph.singleEdge x₂ y₂).degree us)
           rw [Pseudograph.degree_add, Pseudograph.degree_add]
-          change 2 ≤ F.degree us + _ + _
           simp [F, Pseudograph.degree_add,
             Pseudograph.degree_edgeCopies_of_ne, huvs]
           omega
@@ -8995,7 +9133,7 @@ lemma IsVertexMinimalCounterexample.no_outer_edge_impossible
     simp [U, C.uv_ne, C.ua_ne, C.uz_ne, C.ub_ne, C.va_ne,
       C.vz_ne, C.vb_ne, C.az_ne, C.ab_ne, C.zb_ne]
   have hcardsum : U.card + Uᶜ.card = n := by
-    simpa using Finset.card_add_card_compl U
+    simp
   have hUC : Uᶜ.Nonempty := by
     rw [Finset.nonempty_iff_ne_empty]
     intro hC
@@ -9115,8 +9253,8 @@ lemma IsVertexMinimalCounterexample.no_outer_edge_impossible
               Pseudograph.reverseCrossingEdge] using h)
       let S₀ : Finset (Fin n) := {C.u, C.v}
       have hins₁ : (E r.a).inside ∉ S₀ := by
-        rcases hlocalValues r.a with h | h <;> simp [S₀, h, C.ua_ne,
-          C.ub_ne, C.va_ne, C.vb_ne, C.ua_ne.symm, C.ub_ne.symm,
+        rcases hlocalValues r.a with h | h <;> simp [S₀, h,
+          C.ua_ne.symm, C.ub_ne.symm,
           C.va_ne.symm, C.vb_ne.symm]
       have hout₁ : (E r.a).outside ∉ S₀ := by
         intro h
@@ -9124,8 +9262,8 @@ lemma IsVertexMinimalCounterexample.no_outer_edge_impossible
         have hU : (E r.a).outside ∈ U := hsub h
         exact (E r.a).outside_notMem hU
       have hins₂ : (E r.c).inside ∉ S₀ := by
-        rcases hlocalValues r.c with h | h <;> simp [S₀, h, C.ua_ne,
-          C.ub_ne, C.va_ne, C.vb_ne, C.ua_ne.symm, C.ub_ne.symm,
+        rcases hlocalValues r.c with h | h <;> simp [S₀, h,
+          C.ua_ne.symm, C.ub_ne.symm,
           C.va_ne.symm, C.vb_ne.symm]
       have hpairAdd :=
         G.parallelPairCount_induce_add_two_le_of_two_parallel_pairs_outside
@@ -9323,7 +9461,7 @@ theorem IsVertexMinimalCounterexample.no_parallel_edges
     have hAB : A ≠ B := by simpa [A, B] using hrAB
     have hCD : C₀ ≠ D := by simpa [C₀, D] using hrCD
     have hcrossEq : A = C₀ ∨ A = D ∨ B = C₀ ∨ B = D := by
-      push_neg at hall
+      push Not at hall
       obtain ⟨i, j, hij, heq⟩ := hall
       rcases Pseudograph.FourPairing.label_eq_one_of r i with
         rfl | rfl | rfl | rfl <;>
@@ -9369,8 +9507,8 @@ theorem IsVertexMinimalCounterexample.no_parallel_edges
         rcases hlocalValues iA with hu | hv <;>
           rcases hlocalValues iC with hu' | hv'
         · exact (hinDiff (hu.trans hu'.symm)).elim
-        · simpa [u₀, v₀, hu, hv', huvEq]
-        · simpa [u₀, v₀, hv, hu', huvEq, G.mult_comm]
+        · simp [u₀, v₀, hu, hv', huvEq]
+        · simp [u₀, v₀, hv, hu', huvEq, G.mult_comm]
         · exact (hinDiff (hv.trans hv'.symm)).elim
       have hloopU : G.mult u₀ u₀ = 0 := by
         rcases hlocalValues iA with hu | hv
@@ -9583,7 +9721,7 @@ theorem IsVertexMinimalCounterexample.no_nontrivial_two_cut_of_no_parallel_edges
         G.closeTwoCut_inTashkinovClass_of_defect_le_one_of_endpoints_ne
           hreg A hcutA hdefectA (by simpa [e₀, e₁] using hends)
       exact hfinish A hcutA hA hAC hclassA (by simpa [hcutAC] using hclassAC)
-    · push_neg at hends
+    · push Not at hends
       let v : Fin n := e₀
       have hvA : v ∈ A := by
         exact (Pseudograph.twoCutEdge G A hcutA 0).inside_mem
@@ -9753,11 +9891,11 @@ theorem IsVertexMinimalCounterexample.no_nontrivial_two_cut_of_no_parallel_edges
         have hproperT : T ≠ Finset.univ := by
           intro h
           have hvT : v ∈ T := by rw [h]; simp
-          simpa [T] using hvT
+          simp [T] at hvT
         obtain ⟨x, hxT⟩ := hTnonempty
         have hexists : ∃ y : Fin n, y ∉ T := by
           by_contra h
-          push_neg at h
+          push Not at h
           apply hproperT
           ext y
           simp [h y]
@@ -9834,11 +9972,12 @@ noncomputable def deleteInducedSubgraph (G : SimpleGraph V) (A : Set V)
 noncomputable def deletedComponentShore (G : SimpleGraph V) (A : Set V)
     (X : Set A)
     (c : (deleteInducedSubgraph G A X).coe.ConnectedComponent) : Finset V :=
+  open scoped Classical in
   c.supp.toFinset.image fun w ↦ (w.1.1 : V)
 
 /-- The ambient deletion set: vertices outside `A`, together with the lift of
 `X` from the induced vertex subtype. -/
-noncomputable def ambientDeletionSet (A : Set V) (X : Set A) : Finset V :=
+noncomputable def ambientDeletionSet (A : Set V) (X : Set A) : Finset V := open scoped Classical in
   Aᶜ.toFinset ∪ X.toFinset.image fun a : A ↦ a.1
 
 @[simp]
@@ -9972,6 +10111,7 @@ lemma exists_mem_deletedComponentShore_of_notMem_ambientDeletionSet
   refine ⟨c, mem_deletedComponentShore.mpr ⟨w, ?_, rfl⟩⟩
   exact SimpleGraph.ConnectedComponent.connectedComponentMk_mem
 
+open scoped Classical in
 /-- The cuts of all components of an induced deletion partition the cut of
 the ambient deletion set. -/
 lemma sum_boundaryMultiplicity_deletedComponentShore
@@ -9995,6 +10135,7 @@ lemma sum_boundaryMultiplicity_deletedComponentShore
         exists_mem_deletedComponentShore_of_notMem_ambientDeletionSet G A X hv
       exact ⟨c, Finset.mem_univ c, hc⟩)
 
+open scoped Classical in
 /-- Tashkinov's master incidence count before rearranging it as a deficiency
 identity: the four incidences at each deleted vertex split into twice the
 internal edges and the cuts of all remaining components. -/
@@ -10013,6 +10154,7 @@ lemma quartic_deletion_master_count
     ((Pseudograph.isRegularOfDegree_ofSimple_iff G 4).mpr hreg)
     (ambientDeletionSet A X)
 
+open scoped Classical in
 /-- Applying the quartic cut ledger to all odd components of `G[A] - X`.
 If every one of their ambient shores has cut at least four and the ambient
 deletion set contains an internal edge, then there are fewer odd components
@@ -10055,6 +10197,7 @@ def liftInducedSubgraph (G : SimpleGraph V) (A : Set V)
     (M : (G.induce A).Subgraph) : G.Subgraph :=
   M.map (SimpleGraph.Embedding.induce A).toHom
 
+omit [Fintype V] in
 lemma liftInducedSubgraph_verts {G : SimpleGraph V} {A : Set V}
     {M : (G.induce A).Subgraph} (hM : M.IsSpanning) :
     (liftInducedSubgraph G A M).verts = A := by
@@ -10062,6 +10205,7 @@ lemma liftInducedSubgraph_verts {G : SimpleGraph V} {A : Set V}
   ext v
   simp [liftInducedSubgraph, hM.verts_eq_univ]
 
+omit [Fintype V] in
 lemma liftInducedSubgraph_isMatching {G : SimpleGraph V} {A : Set V}
     {M : (G.induce A).Subgraph} (hM : M.IsMatching) :
     (liftInducedSubgraph G A M).IsMatching := by
@@ -10093,10 +10237,11 @@ lemma ambientDeletionSet_compl_pair_card {x y : V} (hxy : x ≠ y)
   rw [ambientDeletionSet_card]
   simp [hxy, Nat.add_comm]
 
+omit [Fintype V] in
 /-- Deleting `X` from an even-order graph leaves a number of odd components
 with the same parity as `|X|`.  This is the parity half of every Tutte
 deficiency argument below. -/
-lemma odd_ncard_oddComponents_delete_iff
+lemma odd_ncard_oddComponents_delete_iff [Finite V]
     (G : SimpleGraph V) (heven : Even (Nat.card V)) (X : Set V) :
     Odd ((⊤ : G.Subgraph).deleteVerts X).coe.oddComponents.ncard ↔
       Odd X.ncard := by
@@ -10110,10 +10255,11 @@ lemma odd_ncard_oddComponents_delete_iff
   rw [htop, huniv]
   exact Set.odd_ncard_compl_iff heven X
 
+omit [Fintype V] in
 /-- When the ambient graph has even order and two distinct vertices have
 been removed before a further deletion `X`, the number of odd components of
 what remains has the same parity as `|X|`. -/
-lemma odd_ncard_oddComponents_delete_compl_pair_iff
+lemma odd_ncard_oddComponents_delete_compl_pair_iff [Finite V]
     (heven : Even (Nat.card V)) {x y : V} (hxy : x ≠ y)
     (X : Set ↑(({x, y} : Set V)ᶜ)) :
     Odd (deleteInducedSubgraph G (({x, y} : Set V)ᶜ) X).coe.oddComponents.ncard ↔
@@ -10347,6 +10493,7 @@ lemma boundaryMultiplicity_eq_between_of_crossing_neighbors_subset
         by_cases huv : G.Adj u v
       all_goals simp_all [Pseudograph.ofSimple_mult]
 
+open scoped Classical in
 /-- Degree summation over an independent block whose entire neighbourhood
 lies in a second block. -/
 lemma betweenMultiplicity_eq_regular_mul_card_of_independent
@@ -10365,6 +10512,7 @@ lemma betweenMultiplicity_eq_regular_mul_card_of_independent
   rw [hint, Nat.mul_zero, Nat.zero_add, hboundary] at hdegree
   exact hdegree.symm
 
+open scoped Classical in
 /-- The easy parity part of Tashkinov's independent-complement lemma: in an
 odd-order quartic graph, the complement of an independent set contains at
 least two internal edges.  The hard remaining equality case is exactly what
@@ -10399,6 +10547,7 @@ lemma two_le_internalMultiplicity_compl_of_independent_of_odd
         (Pseudograph.ofSimple G).internalMultiplicity Uᶜ = 1 := by omega
     omega
 
+open scoped Classical in
 /-- Every singleton shore of a simple quartic graph has boundary exactly
 four. -/
 lemma boundaryMultiplicity_singleton_of_quartic
@@ -10413,11 +10562,12 @@ lemma boundaryMultiplicity_singleton_of_quartic
 
 /-- Tashkinov's actual conclusion about six-edge cuts: a six-cut may
 remain only when one of its shores is the trivial two-vertex shore. -/
-def HasOnlyTrivialSixCuts (G : SimpleGraph V) : Prop :=
+def HasOnlyTrivialSixCuts (G : SimpleGraph V) : Prop := open scoped Classical in
   ∀ S : Finset V,
     (Pseudograph.ofSimple G).boundaryMultiplicity S = 6 →
       S.card = 2 ∨ Sᶜ.card = 2
 
+open scoped Classical in
 /-- Hence a shore of boundary six or eight in a simple quartic graph is
 nontrivial on both sides. -/
 lemma card_ne_one_of_boundaryMultiplicity_ne_four
@@ -10465,7 +10615,7 @@ lemma boundaryMultiplicity_pos_of_connected (G : SimpleGraph V)
   obtain ⟨x, hx⟩ := hS
   have hexists : ∃ y : V, y ∉ S := by
     by_contra h
-    push_neg at h
+    push Not at h
     apply hproper
     ext y
     simp [h y]
@@ -10505,7 +10655,7 @@ lemma boundaryMultiplicity_pos_of_underlying_connected
   obtain ⟨x, hx⟩ := hS
   have hexists : ∃ y : V, y ∉ S := by
     by_contra h
-    push_neg at h
+    push Not at h
     apply hproper
     ext y
     simp [h y]
@@ -10541,6 +10691,7 @@ lemma eq_empty_of_boundaryMultiplicity_eq_zero_of_connected
   have hpos := boundaryMultiplicity_pos_of_connected G hconn S hS hproper
   omega
 
+open scoped Classical in
 /-- In a connected quartic graph, excluding a two-edge cut is exactly enough
 to obtain the lower bound four used by the prescribed-edge Tutte argument. -/
 lemma four_le_boundaryMultiplicity_of_connected_of_ne_two
@@ -10559,6 +10710,7 @@ lemma four_le_boundaryMultiplicity_of_connected_of_ne_two
   rcases heven with ⟨k, hk⟩
   omega
 
+open scoped Classical in
 /-- Under the structural cut conclusions of the minimal counterexample,
 every nontrivial proper shore has boundary at least eight. -/
 lemma eight_le_boundaryMultiplicity_of_nontrivial
@@ -10569,7 +10721,7 @@ lemma eight_le_boundaryMultiplicity_of_nontrivial
     (hno4 : ∀ S : Finset V, S.Nonempty → S ≠ Finset.univ →
       (Pseudograph.ofSimple G).boundaryMultiplicity S = 4 →
         S.card = 1 ∨ Sᶜ.card = 1)
-    (hno6 : HasOnlyTrivialSixCuts G)
+    (_ : HasOnlyTrivialSixCuts G)
     (S : Finset V) (hS : S.Nonempty) (hproper : S ≠ Finset.univ)
     (hScard : S.card ≠ 1) (hcompcard : Sᶜ.card ≠ 1)
     (hcut6 : (Pseudograph.ofSimple G).boundaryMultiplicity S ≠ 6) :
@@ -10593,6 +10745,7 @@ lemma eight_le_boundaryMultiplicity_of_nontrivial
     · exact hcompcard h1
   · exact hcut6 h6
 
+open scoped Classical in
 /-- Two disjoint eight-shores joined by six edges have a four-edge union.
 If both sides of that union contain at least two vertices, this contradicts
 the minimal-counterexample four-cut property. -/
@@ -10645,6 +10798,7 @@ lemma false_of_two_eight_shores_between_six
   rcases hno4 (S ∪ T) (Finset.union_nonempty.mpr (.inl hSnonempty))
       hproper hcut with hcard | hcard <;> omega
 
+omit [Fintype V] in
 /-- A perfect matching on all vertices except the endpoints of an edge
 extends, using that edge, to a perfect matching of the ambient graph. -/
 lemma exists_isPerfectMatching_of_compl_pair
@@ -10671,6 +10825,7 @@ lemma exists_isPerfectMatching_of_compl_pair
 
 /-! ## The first Tutte argument -/
 
+open scoped Classical in
 /-- Tashkinov's Proposition 3.2 in the simple-graph setting.  In an
 even-order quartic graph with no nontrivial cut of size below four, every
 prescribed edge belongs to a perfect matching. -/
@@ -10890,7 +11045,7 @@ theorem IsVertexMinimalCounterexample.odd_order_of_no_parallel_edges
       (shore c).card = 1 ∨
         Fintype.card (Fin n) - (shore c).card = 1 := by
     by_contra hcards
-    push_neg at hcards
+    push Not at hcards
     have hSnonempty : (shore c).Nonempty := by
       simpa [shore] using deletedComponentShore_nonempty G.toSimple A X c
     have hSpos : 0 < (shore c).card := Finset.card_pos.mpr hSnonempty
@@ -11104,7 +11259,7 @@ theorem IsVertexMinimalCounterexample.no_loop_edges_of_no_parallel_edges
   let S : Finset (Fin n) := Tᶜ
   have hTcard : T.card = 3 := by simp [T, huv₁, huv₂, hv₁v₂]
   have hcards : S.card + T.card = n := by
-    simpa [S, Nat.card_eq_fintype_card] using Finset.card_add_card_compl T
+    simp [S]
   have hevenS : Even S.card := by
     rcases hodd with ⟨k, hk⟩
     refine ⟨k - 1, ?_⟩
@@ -11164,11 +11319,11 @@ theorem IsVertexMinimalCounterexample.no_loop_edges_of_no_parallel_edges
           have hvv₁ : v ≠ v₁ := by
             intro h
             subst v
-            simpa [A, S, T] using hvA
+            simp [A, S, T] at hvA
           have hvv₂ : v ≠ v₂ := by
             intro h
             subst v
-            simpa [A, S, T] using hvA
+            simp [A, S, T] at hvA
           have huvzero : G.mult u v = 0 := huOther v hvu hvv₁ hvv₂
           have hvuzero : G.mult v u = 0 := by simpa only [G.mult_comm] using huvzero
           have hFone : F.degree v = 1 := by rw [hFdegree, if_pos hvA]
@@ -11265,7 +11420,7 @@ theorem IsVertexMinimalCounterexample.no_loop_edges_of_no_parallel_edges
     · obtain ⟨x, _hxX, hxu⟩ := Finset.mem_image.mp huXF
       have hxS : (x : Fin n) ∈ S := x.2
       have huS : u ∈ S := hxu ▸ hxS
-      simpa [S, T] using huS
+      simp [S, T] at huS
   have hv₁U : v₁ ∈ U := by simp [U]
   have hv₂U : v₂ ∈ U := by simp [U]
   have hcutU : G.boundaryMultiplicity {u} = 2 := by
@@ -11329,7 +11484,7 @@ theorem IsVertexMinimalCounterexample.no_loop_edges_of_no_parallel_edges
       have hwu : w ≠ u := by
         intro h
         subst w
-        simpa [S, T] using hwS
+        simp [S, T] at hwS
       have hsum := G.mult_self_add_mult_self_le_loopCount hwu
       have hcLoop := hmin.in_class.2.1
       omega
@@ -11426,15 +11581,15 @@ theorem IsVertexMinimalCounterexample.no_loop_edges_of_no_parallel_edges
             have hau : a ≠ u := by
               intro h
               subst a
-              simpa [S, T] using haS
+              simp [S, T] at haS
             have hav₁ : a ≠ v₁ := by
               intro h
               subst a
-              simpa [S, T] using haS
+              simp [S, T] at haS
             have hav₂ : a ≠ v₂ := by
               intro h
               subst a
-              simpa [S, T] using haS
+              simp [S, T] at haS
             have hzero := huOther a hau hav₁ hav₂
             rw [G.mult_comm] at hzero
             exact hab hzero
@@ -11713,7 +11868,7 @@ theorem IsVertexMinimalCounterexample.only_trivial_four_cuts_of_hasSimpleMultipl
       exact G.closeFourCutStarWith_inTashkinovClass_of_hasSimpleMultiplicities
         hreg hsimple Rᶜ EC
     have hcardsum : R.card + Rᶜ.card = n := by
-      simpa using Finset.card_add_card_compl R
+      simp
     have hQCcard : Fintype.card (Option ↑(Rᶜ)) < n := by
       rw [Fintype.card_option, Fintype.card_coe]
       omega
@@ -11726,7 +11881,7 @@ theorem IsVertexMinimalCounterexample.only_trivial_four_cuts_of_hasSimpleMultipl
   by_cases hSodd : Odd S.card
   · exact hcontr S hcut hSodd hStwo hCtwo
   · have hcardsum : S.card + Sᶜ.card = n := by
-      simpa using Finset.card_add_card_compl S
+      simp
     have hsumodd : Odd (S.card + Sᶜ.card) := by
       simpa [hcardsum] using hoddn
     have hCevenNot : ¬ Even Sᶜ.card := by
@@ -11739,6 +11894,7 @@ theorem IsVertexMinimalCounterexample.only_trivial_four_cuts_of_hasSimpleMultipl
     apply hcontr Sᶜ hcutC hCodd hCtwo
     simpa using hStwo
 
+open scoped Classical in
 /-- Deleting a perfect matching from a quartic graph gives a spanning cubic
 subgraph. -/
 theorem containsThreeRegular_of_isPerfectMatching [Nonempty V]
@@ -11766,6 +11922,7 @@ theorem containsThreeRegular_of_isPerfectMatching [Nonempty V]
     simpa only [SimpleGraph.mem_neighborFinset] using M.spanningCoe_le
       (by simpa only [SimpleGraph.mem_neighborFinset] using hw)
 
+open scoped Classical in
 /-- The even-order, no-small-cut case of the main theorem. -/
 theorem containsThreeRegular_of_even_of_four_le_boundary [Nonempty V]
     (G : SimpleGraph V) (hreg : G.IsRegularOfDegree 4)
@@ -11780,6 +11937,7 @@ theorem containsThreeRegular_of_even_of_four_le_boundary [Nonempty V]
       G hreg heven hcut huv
   exact containsThreeRegular_of_isPerfectMatching G hreg M hM
 
+open scoped Classical in
 /-- The even-order connected case in the customary edge-connectivity form:
 there is no proper shore whose boundary consists of exactly two edges. -/
 theorem containsThreeRegular_of_even_of_connected_of_no_two_cut
@@ -11793,6 +11951,7 @@ theorem containsThreeRegular_of_even_of_connected_of_no_two_cut
     four_le_boundaryMultiplicity_of_connected_of_ne_two
       G hreg hconn hno2 S hS hproper
 
+open scoped Classical in
 /-- A literal regular subgraph of an induced graph lifts to the ambient
 graph. -/
 lemma containsRegularSubgraph_of_induce (G : SimpleGraph V) (A : Set V)
@@ -11817,17 +11976,19 @@ lemma containsRegularSubgraph_of_induce (G : SimpleGraph V) (A : Set V)
     rw [← hev, ← Set.ncard_congr' (e.mapNeighborSet xH)]
     exact hHreg xH
 
+open scoped Classical in
 /-- It is enough to prove the theorem for one connected component: regularity
 is inherited by components, and an arbitrary regular subgraph of that
 component lifts to the original graph. -/
 lemma containsThreeRegular_of_connected_component
-    (G : SimpleGraph V) (hreg : G.IsRegularOfDegree 4)
+    (G : SimpleGraph V) (_ : G.IsRegularOfDegree 4)
     (c : G.ConnectedComponent)
     (hcomponent : ContainsRegularSubgraph c.toSimpleGraph 3) :
     ContainsRegularSubgraph G 3 := by
   simpa [SimpleGraph.ConnectedComponent.toSimpleGraph] using
     containsRegularSubgraph_of_induce G c.supp hcomponent
 
+open scoped Classical in
 lemma connectedComponent_isRegularOfDegree
     (G : SimpleGraph V) (hreg : G.IsRegularOfDegree 4)
     (c : G.ConnectedComponent) :
@@ -11857,16 +12018,19 @@ lemma connectedComponent_isRegularOfDegree
 def antiNeighborhood (G : SimpleGraph V) (u : V) : Set V :=
   {v | v ≠ u ∧ ¬ G.Adj u v}
 
+omit [Fintype V] in
 @[simp]
 lemma mem_antiNeighborhood {G : SimpleGraph V} {u v : V} :
     v ∈ antiNeighborhood G u ↔ v ≠ u ∧ ¬ G.Adj u v :=
   Iff.rfl
 
+omit [Fintype V] in
 lemma antiNeighborhood_eq_compl_insert_neighborSet (G : SimpleGraph V) (u : V) :
     antiNeighborhood G u = (insert u (G.neighborSet u))ᶜ := by
   ext v
   simp [antiNeighborhood]
 
+open scoped Classical in
 /-- A quartic vertex has a five-element closed neighborhood. -/
 lemma ncard_insert_neighborSet_of_quartic (G : SimpleGraph V)
     (hreg : G.IsRegularOfDegree 4) (u : V) :
@@ -11874,6 +12038,7 @@ lemma ncard_insert_neighborSet_of_quartic (G : SimpleGraph V)
   rw [Set.ncard_insert_of_notMem G.notMem_neighborSet_self]
   rw [← Set.fintypeCard_eq_ncard, SimpleGraph.card_neighborSet_eq_degree, hreg u]
 
+open scoped Classical in
 /-- In an odd-order quartic graph, deleting a closed neighborhood leaves an
 even number of vertices. -/
 lemma even_natCard_antiNeighborhood_of_odd_quartic
@@ -11890,6 +12055,7 @@ lemma even_natCard_antiNeighborhood_of_odd_quartic
   use k - 2
   omega
 
+open scoped Classical in
 lemma ambientDeletionSet_antiNeighborhood_card
     (G : SimpleGraph V) (hreg : G.IsRegularOfDegree 4) (u : V)
     (X : Set (antiNeighborhood G u)) :
@@ -11902,6 +12068,7 @@ lemma ambientDeletionSet_antiNeighborhood_card
   rw [hcomp, hclosed]
   omega
 
+open scoped Classical in
 /-- An odd component left after deleting `N[u] ∪ X` cannot be either
 shore of a trivial six-cut: its own order is odd, while its complement
 contains the whole deletion set, which has at least five vertices. -/
@@ -11945,7 +12112,7 @@ lemma false_of_six_cut_deleted_odd_component
 /-- The middle part of the barrier arising from a Tutte set outside `N[u]`:
 the four neighbours of `u`, together with the lifted Tutte set. -/
 noncomputable def barrierMiddle (G : SimpleGraph V) (u : V)
-    (X : Set (antiNeighborhood G u)) : Finset V :=
+    (X : Set (antiNeighborhood G u)) : Finset V := open scoped Classical in
   G.neighborFinset u ∪ X.toFinset.image
     (fun x : antiNeighborhood G u ↦ (x : V))
 
@@ -11965,6 +12132,7 @@ lemma notMem_barrierMiddle_self (G : SimpleGraph V) (u : V)
   · exact huu.ne rfl
   · exact x.2.1 hx
 
+open scoped Classical in
 /-- The ambient deletion set used in the ledger is the disjoint union of
 `u` and the barrier middle. -/
 lemma ambientDeletionSet_antiNeighborhood_eq_insert_barrierMiddle
@@ -11986,6 +12154,7 @@ lemma ambientDeletionSet_antiNeighborhood_eq_insert_barrierMiddle
     · exact .inl (fun huA ↦ huA.2 huv)
     · exact .inr ⟨x, hxX, hxv⟩
 
+open scoped Classical in
 /-- Adding a vertex to a shore which already contains all of its neighbours
 adds exactly its degree to the internal-edge count.  The graph is simple, so
 there is no loop correction. -/
@@ -12016,6 +12185,7 @@ lemma internalMultiplicity_insert_of_neighborFinset_subset
         by_cases hab : G.Adj a b
       all_goals simp_all [Pseudograph.ofSimple_mult]
 
+open scoped Classical in
 /-- In the anti-neighbourhood ledger, the internal edges in the ambient
 deletion set are exactly the four edges at `u` plus the edges internal to the
 barrier middle. -/
@@ -12034,6 +12204,7 @@ lemma internalMultiplicity_ambientDeletionSet_antiNeighborhood
       apply mem_barrierMiddle.mpr
       exact .inl (by simpa only [SimpleGraph.mem_neighborFinset] using hv)
 
+open scoped Classical in
 /-- The four edges at `u` are all internal to the ambient deletion set
 `N[u] ∪ X`.  Thus its internal-edge multiplicity is at least four. -/
 lemma four_le_internalMultiplicity_ambientDeletionSet_antiNeighborhood
@@ -12092,6 +12263,7 @@ lemma four_le_internalMultiplicity_ambientDeletionSet_antiNeighborhood
   exact Finset.sum_le_sum_of_subset_of_nonneg (by simp [E])
     (fun _ _ _ ↦ Nat.zero_le _)
 
+open scoped Classical in
 /-- Under the small-cut conclusions used in Tashkinov's minimal
 counterexample, an even component left by a deletion has boundary at least
 six.  A boundary of four would have a singleton shore; the component shore
@@ -12179,6 +12351,7 @@ lemma six_le_boundaryMultiplicity_deletedComponentShore_of_even
   · exact hScard_ne_one hcard
   · exact hcompcard_ne_one hcard
 
+open scoped Classical in
 /-- If the graph outside `N[u]` has no perfect matching, Tutte supplies a
 violator with a parity-strengthened gap of at least two. -/
 lemma exists_antiNeighborhood_tutte_gap_of_no_perfectMatching
@@ -12188,7 +12361,8 @@ lemma exists_antiNeighborhood_tutte_gap_of_no_perfectMatching
       M.IsPerfectMatching) :
     ∃ X : Set (antiNeighborhood G u),
       X.ncard + 2 ≤
-        (((⊤ : (G.induce (antiNeighborhood G u)).Subgraph).deleteVerts X).coe.oddComponents.ncard) := by
+        (((⊤ : (G.induce (antiNeighborhood G u)).Subgraph).deleteVerts
+          X).coe.oddComponents.ncard) := by
   classical
   let J := G.induce (antiNeighborhood G u)
   have hno' : ∀ M : J.Subgraph, ¬ M.IsPerfectMatching := by
@@ -12214,6 +12388,7 @@ lemma exists_antiNeighborhood_tutte_gap_of_no_perfectMatching
     rcases hevenq with ⟨b, hb⟩
     omega
 
+open scoped Classical in
 /-- The numerical heart of the barrier trichotomy.  If odd components of
 `G - (N[u] ∪ X)` have cut at least four and even components have cut at
 least six, a parity-sharp Tutte witness has exactly `|X|+2` odd components,
@@ -12331,6 +12506,7 @@ lemma antiNeighborhood_tutte_numeric_ledger
     have : 0 < E.card := Finset.card_pos.mpr ⟨c, hcE⟩
     omega
 
+open scoped Classical in
 /-- The sharpened form of `antiNeighborhood_tutte_numeric_ledger`: after
 subtracting the compulsory four edges from every residual component cut,
 the total cut excess plus twice the number of internal edges in
@@ -12458,8 +12634,6 @@ lemma classify_small_even_cut_excess
         _ = 2 * ∑ c : C, (if cut c = 6 then 1 else 0) := by
           rw [Finset.mul_sum]
         _ = 2 * C6.card := by
-          change 2 * (∑ c ∈ (Finset.univ : Finset C),
-            if cut c = 6 then 1 else 0) = _
           rw [Finset.sum_boole]
           rfl
     have hsum8 : (∑ c : C, if cut c = 8 then 4 else 0) = 4 * C8.card := by
@@ -12472,8 +12646,6 @@ lemma classify_small_even_cut_excess
         _ = 4 * ∑ c : C, (if cut c = 8 then 1 else 0) := by
           rw [Finset.mul_sum]
         _ = 4 * C8.card := by
-          change 4 * (∑ c ∈ (Finset.univ : Finset C),
-            if cut c = 8 then 1 else 0) = _
           rw [Finset.sum_boole]
           rfl
     calc
@@ -12516,6 +12688,7 @@ lemma classify_small_even_cut_excess
     right
     omega
 
+open scoped Classical in
 /-- Tashkinov's barrier trichotomy at the level of its exact cut data.  In
 an odd connected quartic graph with no two-cut and only trivial four-cuts,
 failure of the anti-neighbourhood matching certificate produces a Tutte set
@@ -12635,7 +12808,7 @@ inductive BarrierKind
 /-- The literal internal-edge and component-cut data attached to a barrier
 kind. -/
 def IsAntiNeighborhoodBarrierPattern (G : SimpleGraph V) (u : V)
-    (X : Set (antiNeighborhood G u)) (kind : BarrierKind) : Prop :=
+    (X : Set (antiNeighborhood G u)) (kind : BarrierKind) : Prop := open scoped Classical in
   let J := (deleteInducedSubgraph G (antiNeighborhood G u) X).coe
   let cut : J.ConnectedComponent → ℕ := fun c ↦
     (Pseudograph.ofSimple G).boundaryMultiplicity
@@ -12652,6 +12825,7 @@ def IsAntiNeighborhoodBarrierPattern (G : SimpleGraph V) (u : V)
   | .C => middleEdges = 0 ∧ C6.card = 0 ∧ C8.card = 1
   | .degenerate => middleEdges = 2 ∧ C6.card = 0 ∧ C8.card = 0
 
+open scoped Classical in
 /-- The structural cut-pattern theorem restated in the published A/B/C
 language, with the unique pre-barrier degeneracy made explicit. -/
 theorem exists_antiNeighborhood_barrier_pattern_of_noPerfectMatching
@@ -12722,6 +12896,7 @@ theorem exists_antiNeighborhood_barrier_pattern_of_noPerfectMatching
         (barrierMiddle G u X) = 2 ∧ C6.card = 0 ∧ C8.card = 0
     omega
 
+open scoped Classical in
 /-- Tashkinov's independent-complement lemma eliminates the only
 degenerate numerical barrier pattern.  This formulation isolates exactly
 the property used by the trichotomy: the complement of any independent set
@@ -12814,8 +12989,7 @@ lemma not_degenerate_antiNeighborhood_barrierPattern
     · exact (hcompcard_ne_one hcard).elim
   have hMindependent : G.IsIndepSet (Mᶜ : Set V) := by
     rw [SimpleGraph.isIndepSet_iff]
-    intro a ha b hb hab
-    intro habG
+    intro a ha b hb hab habG
     have haM : a ∉ M := by simpa using ha
     have hbM : b ∉ M := by simpa using hb
     by_cases hau : a = u
@@ -12848,6 +13022,7 @@ lemma not_degenerate_antiNeighborhood_barrierPattern
     simpa using hlarge
   omega
 
+open scoped Classical in
 /-- Tashkinov's A/B/C trichotomy, conditional only on the four structural
 properties which his minimal-counterexample reduction establishes. -/
 theorem exists_genuine_antiNeighborhood_barrier_pattern
@@ -12882,6 +13057,7 @@ theorem exists_genuine_antiNeighborhood_barrier_pattern
     exact (not_degenerate_antiNeighborhood_barrierPattern
       G hreg hno4 hindependentComplement u X hvalues) hkind
 
+open scoped Classical in
 /-- If six-cuts have already been eliminated, a genuine barrier can only be
 of type C. -/
 lemma barrierKind_eq_C_of_no_six_cut
@@ -12916,6 +13092,7 @@ lemma barrierKind_eq_C_of_no_six_cut
   · rfl
   · simp at hgenuine
 
+open scoped Classical in
 /-- After the no-six-cut proposition, every vertex whose
 anti-neighbourhood lacks a perfect matching has a type-C barrier pattern. -/
 theorem exists_typeC_antiNeighborhood_barrier_pattern
@@ -12972,8 +13149,7 @@ lemma barrierMiddle_isIndepSet_of_typeC_pattern
     (hpattern : IsAntiNeighborhoodBarrierPattern G u X .C) :
     G.IsIndepSet (barrierMiddle G u X : Set V) := by
   rw [SimpleGraph.isIndepSet_iff]
-  intro a ha b hb hab
-  intro habG
+  intro a ha b hb hab habG
   have hpos := internalMultiplicity_pos_of_adj_mem G (barrierMiddle G u X)
     habG (by simpa using ha) (by simpa using hb)
   change (Pseudograph.ofSimple G).internalMultiplicity
@@ -13017,7 +13193,7 @@ noncomputable def right {G : SimpleGraph V} {u : V}
   deletedComponentShore G (antiNeighborhood G u) B.X B.component
 
 noncomputable def left {G : SimpleGraph V} {u : V}
-    (B : TutteTypeCBarrier G u) : Finset V :=
+    (B : TutteTypeCBarrier G u) : Finset V := open scoped Classical in
   (B.middle ∪ B.right)ᶜ
 
 lemma right_cut {G : SimpleGraph V} {u : V} (B : TutteTypeCBarrier G u) :
@@ -13036,6 +13212,7 @@ lemma odd_right_card {G : SimpleGraph V} {u : V}
   simpa [right, card_deletedComponentShore G
     (antiNeighborhood G u) B.X B.component] using hc
 
+open scoped Classical in
 lemma other_component_singleton {G : SimpleGraph V} {u : V}
     (B : TutteTypeCBarrier G u) (hreg : G.IsRegularOfDegree 4)
     (hno4 : ∀ S : Finset V, S.Nonempty → S ≠ Finset.univ →
@@ -13109,6 +13286,7 @@ lemma mem_left_distinguished {G : SimpleGraph V} {u : V}
       (deletedComponentShore_disjoint_ambientDeletionSet
         G (antiNeighborhood G u) B.X B.component)) huRight huD
 
+open scoped Classical in
 /-- The left side of a full type-C barrier is independent. -/
 lemma left_isIndepSet {G : SimpleGraph V} {u : V}
     (B : TutteTypeCBarrier G u) (hreg : G.IsRegularOfDegree 4)
@@ -13119,8 +13297,7 @@ lemma left_isIndepSet {G : SimpleGraph V} {u : V}
     G.IsIndepSet (B.left : Set V) := by
   classical
   rw [SimpleGraph.isIndepSet_iff]
-  intro a ha b hb hab
-  intro habG
+  intro a ha b hb hab habG
   have haM : a ∉ B.middle := by
     intro haM
     apply (show a ∉ B.middle ∪ B.right by simpa [left] using ha)
@@ -13166,6 +13343,7 @@ lemma left_isIndepSet {G : SimpleGraph V} {u : V}
     subst b
     exact haM (mem_barrierMiddle.mpr (.inl habG.symm))
 
+open scoped Classical in
 /-- There are no edges from the left side of a type-C barrier to its right
 eight-component. -/
 lemma not_adj_left_right {G : SimpleGraph V} {u : V}
@@ -13254,11 +13432,13 @@ lemma disjoint_left_right {G : SimpleGraph V} {u : V}
   have hvnot : v ∉ B.middle ∪ B.right := by simpa [left] using hvL
   exact hvnot (Finset.mem_union_right _ hvR)
 
+open scoped Classical in
 lemma middle_union_right_eq_left_compl {G : SimpleGraph V} {u : V}
     (B : TutteTypeCBarrier G u) : B.middle ∪ B.right = B.leftᶜ := by
   classical
   simp [left]
 
+open scoped Classical in
 lemma left_union_right_eq_middle_compl {G : SimpleGraph V} {u : V}
     (B : TutteTypeCBarrier G u) : B.left ∪ B.right = B.middleᶜ := by
   classical
@@ -13270,6 +13450,7 @@ lemma left_union_right_eq_middle_compl {G : SimpleGraph V} {u : V}
   · simp [left, hvM, hvR]
   · simp [left, hvM, hvR]
 
+open scoped Classical in
 lemma middle_union_left_eq_right_compl {G : SimpleGraph V} {u : V}
     (B : TutteTypeCBarrier G u) : B.middle ∪ B.left = B.rightᶜ := by
   classical
@@ -13281,6 +13462,7 @@ lemma middle_union_left_eq_right_compl {G : SimpleGraph V} {u : V}
   · simp [left, hvM, hvR]
   · simp [left, hvM, hvR]
 
+open scoped Classical in
 /-- The basic degree ledger of a type-C barrier: all eight edges leaving
 the right component enter the middle, all four incidences at each left
 vertex enter the middle, and consequently the middle has exactly two more
@@ -13336,6 +13518,7 @@ lemma typeC_degree_ledger {G : SimpleGraph V} {u : V}
   refine ⟨hLRzero, hRM, hLM, ?_⟩
   omega
 
+open scoped Classical in
 /-- The eight-component of a type-C barrier has at least three vertices. -/
 lemma three_le_right_card {G : SimpleGraph V} {u : V}
     (B : TutteTypeCBarrier G u) (hreg : G.IsRegularOfDegree 4) :
@@ -13352,6 +13535,7 @@ lemma three_le_right_card {G : SimpleGraph V} {u : V}
   obtain ⟨k, hk⟩ := B.odd_right_card
   omega
 
+open scoped Classical in
 /-- Proposition 4.1 rules out a three-vertex eight-shore: applying it to
 the independent middle leaves exactly the internal edges of the right
 shore in the complement. -/
@@ -13380,6 +13564,7 @@ lemma five_le_right_card {G : SimpleGraph V} {u : V}
   obtain ⟨k, hk⟩ := B.odd_right_card
   omega
 
+open scoped Classical in
 /-- The complement of the right component has at least four vertices. -/
 lemma three_le_right_compl_card {G : SimpleGraph V} {u : V}
     (B : TutteTypeCBarrier G u) (hreg : G.IsRegularOfDegree 4)
@@ -13396,6 +13581,7 @@ lemma three_le_right_compl_card {G : SimpleGraph V} {u : V}
   rw [B.middle_union_left_eq_right_compl] at hcard
   omega
 
+open scoped Classical in
 lemma right_union_singleton_nontrivial
     {G : SimpleGraph V} {u : V}
     (B : TutteTypeCBarrier G u) (hreg : G.IsRegularOfDegree 4)
@@ -13417,7 +13603,7 @@ lemma right_union_singleton_nontrivial
   have herase := Finset.card_erase_add_one hvcomp
   have hcompEq : (B.right ∪ {v})ᶜ = B.rightᶜ.erase v := by
     ext x
-    simp [and_comm]
+    simp
   have hcomptwo : 2 ≤ (B.right ∪ {v})ᶜ.card := by
     rw [hcompEq]
     omega
@@ -13428,6 +13614,7 @@ lemma right_union_singleton_nontrivial
     omega
   exact ⟨hScard, hcompcard, hproper⟩
 
+open scoped Classical in
 lemma right_erase_nontrivial
     {G : SimpleGraph V} {u : V}
     (B : TutteTypeCBarrier G u) (hreg : G.IsRegularOfDegree 4)
@@ -13460,6 +13647,7 @@ lemma right_erase_nontrivial
     omega
   exact ⟨hRcard, hcompcard, hproper⟩
 
+open scoped Classical in
 lemma right_union_singleton_cut_equation
     {G : SimpleGraph V} {u : V}
     (B : TutteTypeCBarrier G u) (hreg : G.IsRegularOfDegree 4)
@@ -13478,6 +13666,7 @@ lemma right_union_singleton_cut_equation
   rw [B.right_cut, hsingle] at htoggle
   omega
 
+open scoped Classical in
 lemma between_singleton_right_ne_three
     {G : SimpleGraph V} {u : V}
     (B : TutteTypeCBarrier G u) (hreg : G.IsRegularOfDegree 4)
@@ -13504,11 +13693,12 @@ lemma between_singleton_right_ne_three
     have herase := Finset.card_erase_add_one hvcomp
     have heq : (B.right ∪ {v})ᶜ = B.rightᶜ.erase v := by
       ext x
-      simp [and_comm]
+      simp
     rw [heq]
     omega
   rcases hno6 (B.right ∪ {v}) hcut with htwo | htwo <;> omega
 
+open scoped Classical in
 lemma between_singleton_right_ne_four
     {G : SimpleGraph V} {u : V}
     (B : TutteTypeCBarrier G u) (hreg : G.IsRegularOfDegree 4)
@@ -13530,6 +13720,7 @@ lemma between_singleton_right_ne_four
   · exact hScard h
   · exact hcompcard h
 
+open scoped Classical in
 /-- For a vertex outside an eight-component, at most two incident edges
 enter the component.  Three would create a six-cut after adjoining the
 vertex; four would create a nontrivial four-cut. -/
@@ -13560,6 +13751,7 @@ lemma between_singleton_right_le_two
   change q ≤ 2
   omega
 
+open scoped Classical in
 lemma right_erase_cut_equation
     {G : SimpleGraph V} {u : V}
     (B : TutteTypeCBarrier G u) (hreg : G.IsRegularOfDegree 4)
@@ -13575,7 +13767,7 @@ lemma right_erase_cut_equation
     intro a haR ha
     simp only [Finset.mem_singleton] at ha
     subst a
-    simpa [R] using haR
+    simp [R] at haR
   have hregular : P.IsRegularOfDegree 4 :=
     (Pseudograph.isRegularOfDegree_ofSimple_iff G 4).mpr hreg
   have htoggle := P.boundaryMultiplicity_union_add_two_between
@@ -13590,6 +13782,7 @@ lemma right_erase_cut_equation
   rw [hunion, B.right_cut, hsingle] at htoggle
   exact htoggle
 
+open scoped Classical in
 lemma between_singleton_right_erase_ne_zero
     {G : SimpleGraph V} {u : V}
     (B : TutteTypeCBarrier G u) (hreg : G.IsRegularOfDegree 4)
@@ -13618,6 +13811,7 @@ lemma between_singleton_right_erase_ne_zero
   · exact hRcard h
   · exact hcompcard h
 
+open scoped Classical in
 lemma between_singleton_right_erase_ne_one
     {G : SimpleGraph V} {u : V}
     (B : TutteTypeCBarrier G u) (hreg : G.IsRegularOfDegree 4)
@@ -13651,6 +13845,7 @@ lemma between_singleton_right_erase_ne_one
     exact hbase.trans (Finset.card_le_card hsub)
   rcases hno6 (B.right.erase v) hcut with htwo | htwo <;> omega
 
+open scoped Classical in
 /-- Dually, every vertex in an eight-component has at least two neighbours
 inside it.  Otherwise deleting the vertex creates a forbidden four- or
 six-cut. -/
@@ -13678,6 +13873,7 @@ lemma two_le_between_singleton_right_erase
   change q ≠ 1 at hne1
   omega
 
+open scoped Classical in
 /-- Some vertex of the eight-component has two distinct neighbours inside
 that component.  This is the elementary connected-graph fact used when the
 second distinguished vertex is selected in Section 5. -/
@@ -13697,7 +13893,7 @@ lemma exists_vertex_with_two_right_neighbors
         exact Fintype.card_congr (Equiv.setCongr rfl)
       _ = B.component.supp.ncard := by
         rw [Set.ncard_eq_toFinset_card']
-        simpa using Fintype.card_coe B.component.supp.toFinset
+        simp
       _ = B.right.card := by
         simpa [right] using
           (card_deletedComponentShore G (antiNeighborhood G u) B.X B.component).symm
@@ -13706,7 +13902,7 @@ lemma exists_vertex_with_two_right_neighbors
     exact B.three_le_right_card hreg
   have hdegree : ∃ w : B.component, 2 ≤ H.degree w := by
     by_contra h
-    push_neg at h
+    push Not at h
     have hsum_le : ∑ w : B.component, H.degree w ≤
         ∑ _w : B.component, 1 := by
       exact Finset.sum_le_sum fun w _ ↦ Nat.le_of_lt_succ (h w)
@@ -13749,6 +13945,7 @@ The last section of Tashkinov's proof constructs new barriers by recombining
 the shores of two Tutte barriers.  From this point onward only the checked
 partition properties are used, so we package exactly those properties. -/
 
+open scoped Classical in
 structure TypeCBarrier (G : SimpleGraph V) (u : V) where
   left : Finset V
   middle : Finset V
@@ -13769,6 +13966,7 @@ structure TypeCBarrier (G : SimpleGraph V) (u : V) where
 
 namespace TypeCBarrier
 
+open scoped Classical in
 /-- Forget the Tutte witness while retaining every shore property used by
 the overlay/minimality argument. -/
 noncomputable def ofTutte {G : SimpleGraph V} {u : V}
@@ -13823,6 +14021,7 @@ lemma disjoint_middle_right {G : SimpleGraph V} {u : V}
     (B : TypeCBarrier G u) : Disjoint B.middle B.right :=
   B.middle_right_disjoint
 
+open scoped Classical in
 lemma left_isIndepSet {G : SimpleGraph V} {u : V}
     (B : TypeCBarrier G u) (_hreg : G.IsRegularOfDegree 4)
     (_hno4 : ∀ S : Finset V, S.Nonempty → S ≠ Finset.univ →
@@ -13835,6 +14034,7 @@ lemma middle_isIndepSet {G : SimpleGraph V} {u : V}
     (B : TypeCBarrier G u) : G.IsIndepSet (B.middle : Set V) :=
   B.middle_independent
 
+open scoped Classical in
 lemma not_adj_left_right {G : SimpleGraph V} {u : V}
     (B : TypeCBarrier G u) (_hreg : G.IsRegularOfDegree 4)
     (_hno4 : ∀ S : Finset V, S.Nonempty → S ≠ Finset.univ →
@@ -13851,6 +14051,7 @@ lemma right_cut {G : SimpleGraph V} {u : V} (B : TypeCBarrier G u) :
 lemma odd_right_card {G : SimpleGraph V} {u : V}
     (B : TypeCBarrier G u) : Odd B.right.card := B.right_odd
 
+open scoped Classical in
 lemma middle_union_right_eq_left_compl {G : SimpleGraph V} {u : V}
     (B : TypeCBarrier G u) : B.middle ∪ B.right = B.leftᶜ := by
   classical
@@ -13862,6 +14063,7 @@ lemma middle_union_right_eq_left_compl {G : SimpleGraph V} {u : V}
   simp only [Finset.mem_union, Finset.mem_compl]
   tauto
 
+open scoped Classical in
 lemma left_union_right_eq_middle_compl {G : SimpleGraph V} {u : V}
     (B : TypeCBarrier G u) : B.left ∪ B.right = B.middleᶜ := by
   classical
@@ -13873,6 +14075,7 @@ lemma left_union_right_eq_middle_compl {G : SimpleGraph V} {u : V}
   simp only [Finset.mem_union, Finset.mem_compl]
   tauto
 
+open scoped Classical in
 lemma middle_union_left_eq_right_compl {G : SimpleGraph V} {u : V}
     (B : TypeCBarrier G u) : B.middle ∪ B.left = B.rightᶜ := by
   classical
@@ -13884,6 +14087,7 @@ lemma middle_union_left_eq_right_compl {G : SimpleGraph V} {u : V}
   simp only [Finset.mem_union, Finset.mem_compl]
   tauto
 
+open scoped Classical in
 /-- The standard degree ledger follows from the abstract partition axioms. -/
 lemma typeC_degree_ledger {G : SimpleGraph V} {u : V}
     (B : TypeCBarrier G u) (hreg : G.IsRegularOfDegree 4)
@@ -13932,6 +14136,7 @@ lemma typeC_degree_ledger {G : SimpleGraph V} {u : V}
   refine ⟨hLR, hRM, hLM, ?_⟩
   omega
 
+open scoped Classical in
 lemma three_le_right_card {G : SimpleGraph V} {u : V}
     (B : TypeCBarrier G u) (hreg : G.IsRegularOfDegree 4) :
     3 ≤ B.right.card := by
@@ -13947,6 +14152,7 @@ lemma three_le_right_card {G : SimpleGraph V} {u : V}
   obtain ⟨k, hk⟩ := B.odd_right_card
   omega
 
+open scoped Classical in
 lemma three_le_right_compl_card {G : SimpleGraph V} {u : V}
     (B : TypeCBarrier G u) (hreg : G.IsRegularOfDegree 4)
     (hno4 : ∀ S : Finset V, S.Nonempty → S ≠ Finset.univ →
@@ -13961,6 +14167,7 @@ lemma three_le_right_compl_card {G : SimpleGraph V} {u : V}
   rw [B.middle_union_left_eq_right_compl] at hcard
   omega
 
+open scoped Classical in
 lemma right_union_singleton_cut_equation
     {G : SimpleGraph V} {u : V}
     (B : TypeCBarrier G u) (hreg : G.IsRegularOfDegree 4)
@@ -13975,6 +14182,7 @@ lemma right_union_singleton_cut_equation
   rw [B.right_cut, boundaryMultiplicity_singleton_of_quartic G hreg v] at htoggle
   omega
 
+open scoped Classical in
 lemma between_singleton_right_le_two
     {G : SimpleGraph V} {u : V}
     (B : TypeCBarrier G u) (hreg : G.IsRegularOfDegree 4)
@@ -13988,7 +14196,7 @@ lemma between_singleton_right_le_two
   let q := P.betweenMultiplicity {v} B.right
   have hqle : q ≤ 4 := by
     exact (P.betweenMultiplicity_le_boundaryMultiplicity {v} B.right
-      (by simp [Finset.disjoint_left, hv])).trans_eq
+      (by simp [hv])).trans_eq
         (boundaryMultiplicity_singleton_of_quartic G hreg v)
   have heq := B.right_union_singleton_cut_equation hreg v hv
   rw [P.betweenMultiplicity_comm] at heq
@@ -14001,7 +14209,7 @@ lemma between_singleton_right_le_two
   have herase := Finset.card_erase_add_one hvcomp
   have hcompEq : (B.right ∪ {v})ᶜ = B.rightᶜ.erase v := by
     ext x
-    simp [and_comm]
+    simp
   have hcomptwo : 3 ≤ (B.right ∪ {v})ᶜ.card := by
     rw [hcompEq]
     omega
@@ -14025,6 +14233,7 @@ lemma between_singleton_right_le_two
     have hnonempty : (B.right ∪ {v}).Nonempty := ⟨v, by simp⟩
     rcases hno4 (B.right ∪ {v}) hnonempty hproper hcut4 with h | h <;> omega
 
+open scoped Classical in
 lemma right_erase_cut_equation
     {G : SimpleGraph V} {u : V}
     (B : TypeCBarrier G u) (hreg : G.IsRegularOfDegree 4)
@@ -14038,7 +14247,7 @@ lemma right_erase_cut_equation
     intro x hx hxv
     simp only [Finset.mem_singleton] at hxv
     subst x
-    simpa using hx
+    simp at hx
   have htoggle := P.boundaryMultiplicity_union_add_two_between
     ((Pseudograph.isRegularOfDegree_ofSimple_iff G 4).mpr hreg)
     (B.right.erase v) {v} hdis
@@ -14049,17 +14258,19 @@ lemma right_erase_cut_equation
     at htoggle
   exact htoggle
 
+open scoped Classical in
 lemma two_le_between_singleton_right_erase
     {G : SimpleGraph V} {u : V}
-    (B : TypeCBarrier G u) (hreg : G.IsRegularOfDegree 4)
-    (hno4 : ∀ S : Finset V, S.Nonempty → S ≠ Finset.univ →
+    (B : TypeCBarrier G u) (_ : G.IsRegularOfDegree 4)
+    (_ : ∀ S : Finset V, S.Nonempty → S ≠ Finset.univ →
       (Pseudograph.ofSimple G).boundaryMultiplicity S = 4 →
         S.card = 1 ∨ Sᶜ.card = 1)
-    (hno6 : HasOnlyTrivialSixCuts G)
+    (_ : HasOnlyTrivialSixCuts G)
     (v : V) (hv : v ∈ B.right) :
     2 ≤ (Pseudograph.ofSimple G).betweenMultiplicity {v} (B.right.erase v) := by
   exact B.right_two_neighbors v hv
 
+open scoped Classical in
 lemma exists_vertex_with_two_right_neighbors
     {G : SimpleGraph V} {u : V}
     (B : TypeCBarrier G u) (hreg : G.IsRegularOfDegree 4) :
@@ -14128,6 +14339,7 @@ lemma disjoint_side {G : SimpleGraph V} {u : V}
       | M => exact B.disjoint_middle_right.symm
       | R => exact (hst rfl).elim
 
+open scoped Classical in
 /-- The three coordinates cover the ambient vertex set. -/
 lemma union_sides {G : SimpleGraph V} {u : V} (B : TypeCBarrier G u) :
     B.side .L ∪ B.side .M ∪ B.side .R = Finset.univ := by
@@ -14162,23 +14374,24 @@ lemma existsUnique_mem_side {G : SimpleGraph V} {u : V}
 /-- One of the nine blocks obtained by overlaying two type-C partitions. -/
 noncomputable def block {G : SimpleGraph V} {u v : V}
     (B : TypeCBarrier G u) (C : TypeCBarrier G v) (s t : Side) : Finset V :=
+  open scoped Classical in
   B.side s ∩ C.side t
 
 /-- The four auxiliary shores `H1,...,H4` in Tashkinov's overlay. -/
 noncomputable def overlayH1 {G : SimpleGraph V} {u v : V}
-    (B : TypeCBarrier G u) (C : TypeCBarrier G v) : Finset V :=
+    (B : TypeCBarrier G u) (C : TypeCBarrier G v) : Finset V := open scoped Classical in
   block B C .L .L ∪ block B C .M .M
 
 noncomputable def overlayH2 {G : SimpleGraph V} {u v : V}
-    (B : TypeCBarrier G u) (C : TypeCBarrier G v) : Finset V :=
+    (B : TypeCBarrier G u) (C : TypeCBarrier G v) : Finset V := open scoped Classical in
   block B C .L .M ∪ block B C .M .L
 
 noncomputable def overlayH3 {G : SimpleGraph V} {u v : V}
-    (B : TypeCBarrier G u) (C : TypeCBarrier G v) : Finset V :=
+    (B : TypeCBarrier G u) (C : TypeCBarrier G v) : Finset V := open scoped Classical in
   block B C .L .R ∪ block B C .M .R
 
 noncomputable def overlayH4 {G : SimpleGraph V} {u v : V}
-    (B : TypeCBarrier G u) (C : TypeCBarrier G v) : Finset V :=
+    (B : TypeCBarrier G u) (C : TypeCBarrier G v) : Finset V := open scoped Classical in
   block B C .R .L ∪ block B C .R .M
 
 /-- Edge multiplicity between two named blocks of an overlay. -/
@@ -14220,6 +14433,7 @@ lemma disjoint_block {G : SimpleGraph V} {u v : V}
   · exact (Finset.disjoint_left.mp (B.disjoint_side hs)) hx.1 hx'.1
   · exact (Finset.disjoint_left.mp (C.disjoint_side ht)) hx.2 hx'.2
 
+open scoped Classical in
 /-- The three blocks in one row recover the corresponding first-barrier
 side. -/
 lemma block_row_union {G : SimpleGraph V} {u v : V}
@@ -14246,6 +14460,7 @@ lemma block_row_union {G : SimpleGraph V} {u v : V}
     | R =>
         exact Finset.mem_union_right _ (mem_block.mpr ⟨hx, hxt⟩)
 
+open scoped Classical in
 /-- The three blocks in one column recover the corresponding second-barrier
 side. -/
 lemma block_column_union {G : SimpleGraph V} {u v : V}
@@ -14272,6 +14487,7 @@ lemma block_column_union {G : SimpleGraph V} {u v : V}
     | R =>
         exact Finset.mem_union_right _ (mem_block.mpr ⟨hxs, hx⟩)
 
+open scoped Classical in
 /-- The nine blocks cover all vertices. -/
 lemma union_blocks {G : SimpleGraph V} {u v : V}
     (B : TypeCBarrier G u) (C : TypeCBarrier G v) :
@@ -14288,6 +14504,7 @@ lemma block_row_card {G : SimpleGraph V} {u v : V}
     (B : TypeCBarrier G u) (C : TypeCBarrier G v) (s : Side) :
     (block B C s .L).card + (block B C s .M).card +
       (block B C s .R).card = (B.side s).card := by
+  classical
   have hLM : Disjoint (block B C s .L) (block B C s .M) :=
     B.disjoint_block C (.inr (by decide))
   have hLR : Disjoint (block B C s .L) (block B C s .R) :=
@@ -14304,6 +14521,7 @@ lemma block_row_card {G : SimpleGraph V} {u v : V}
 
 lemma sides_card {G : SimpleGraph V} {u : V} (B : TypeCBarrier G u) :
     B.left.card + B.middle.card + B.right.card = Nat.card V := by
+  classical
   have hLMR : Disjoint (B.left ∪ B.middle) B.right :=
     Finset.disjoint_union_left.mpr
       ⟨B.disjoint_left_right, B.disjoint_middle_right⟩
@@ -14317,6 +14535,7 @@ lemma overlayH1_card {G : SimpleGraph V} {u v : V}
     (B : TypeCBarrier G u) (C : TypeCBarrier G v) :
     (overlayH1 B C).card = (block B C .L .L).card +
       (block B C .M .M).card := by
+  classical
   exact Finset.card_union_of_disjoint
     (B.disjoint_block C (.inl (by decide)))
 
@@ -14324,6 +14543,7 @@ lemma overlayH2_card {G : SimpleGraph V} {u v : V}
     (B : TypeCBarrier G u) (C : TypeCBarrier G v) :
     (overlayH2 B C).card = (block B C .L .M).card +
       (block B C .M .L).card := by
+  classical
   exact Finset.card_union_of_disjoint
     (B.disjoint_block C (.inl (by decide)))
 
@@ -14331,6 +14551,7 @@ lemma overlayH3_card {G : SimpleGraph V} {u v : V}
     (B : TypeCBarrier G u) (C : TypeCBarrier G v) :
     (overlayH3 B C).card = (block B C .L .R).card +
       (block B C .M .R).card := by
+  classical
   exact Finset.card_union_of_disjoint
     (B.disjoint_block C (.inl (by decide)))
 
@@ -14338,6 +14559,7 @@ lemma overlayH4_card {G : SimpleGraph V} {u v : V}
     (B : TypeCBarrier G u) (C : TypeCBarrier G v) :
     (overlayH4 B C).card = (block B C .R .L).card +
       (block B C .R .M).card := by
+  classical
   exact Finset.card_union_of_disjoint
     (B.disjoint_block C (.inr (by decide)))
 
@@ -14380,6 +14602,7 @@ lemma second_right_overlay_card {G : SimpleGraph V} {u v : V}
 lemma disjoint_H1_H3 {G : SimpleGraph V} {u v : V}
     (B : TypeCBarrier G u) (C : TypeCBarrier G v) :
     Disjoint (overlayH1 B C) (overlayH3 B C) := by
+  classical
   exact Finset.disjoint_union_left.mpr
     ⟨Finset.disjoint_union_right.mpr
         ⟨B.disjoint_block C (.inr (by decide)),
@@ -14391,6 +14614,7 @@ lemma disjoint_H1_H3 {G : SimpleGraph V} {u v : V}
 lemma disjoint_H1_H2 {G : SimpleGraph V} {u v : V}
     (B : TypeCBarrier G u) (C : TypeCBarrier G v) :
     Disjoint (overlayH1 B C) (overlayH2 B C) := by
+  classical
   exact Finset.disjoint_union_left.mpr
     ⟨Finset.disjoint_union_right.mpr
         ⟨B.disjoint_block C (.inr (by decide)),
@@ -14402,6 +14626,7 @@ lemma disjoint_H1_H2 {G : SimpleGraph V} {u v : V}
 lemma disjoint_H1_H4 {G : SimpleGraph V} {u v : V}
     (B : TypeCBarrier G u) (C : TypeCBarrier G v) :
     Disjoint (overlayH1 B C) (overlayH4 B C) := by
+  classical
   exact Finset.disjoint_union_left.mpr
     ⟨Finset.disjoint_union_right.mpr
         ⟨B.disjoint_block C (.inl (by decide)),
@@ -14413,6 +14638,7 @@ lemma disjoint_H1_H4 {G : SimpleGraph V} {u v : V}
 lemma disjoint_H2_H3 {G : SimpleGraph V} {u v : V}
     (B : TypeCBarrier G u) (C : TypeCBarrier G v) :
     Disjoint (overlayH2 B C) (overlayH3 B C) := by
+  classical
   exact Finset.disjoint_union_left.mpr
     ⟨Finset.disjoint_union_right.mpr
         ⟨B.disjoint_block C (.inr (by decide)),
@@ -14424,6 +14650,7 @@ lemma disjoint_H2_H3 {G : SimpleGraph V} {u v : V}
 lemma disjoint_H2_H4 {G : SimpleGraph V} {u v : V}
     (B : TypeCBarrier G u) (C : TypeCBarrier G v) :
     Disjoint (overlayH2 B C) (overlayH4 B C) := by
+  classical
   exact Finset.disjoint_union_left.mpr
     ⟨Finset.disjoint_union_right.mpr
         ⟨B.disjoint_block C (.inl (by decide)),
@@ -14435,6 +14662,7 @@ lemma disjoint_H2_H4 {G : SimpleGraph V} {u v : V}
 lemma disjoint_H3_H4 {G : SimpleGraph V} {u v : V}
     (B : TypeCBarrier G u) (C : TypeCBarrier G v) :
     Disjoint (overlayH3 B C) (overlayH4 B C) := by
+  classical
   exact Finset.disjoint_union_left.mpr
     ⟨Finset.disjoint_union_right.mpr
         ⟨B.disjoint_block C (.inl (by decide)),
@@ -14452,6 +14680,7 @@ def ForbiddenSidePair : Side → Side → Prop
   | .R, .L => True
   | _, _ => False
 
+open scoped Classical in
 /-- A forbidden pair of sides carries no ambient edge. -/
 lemma not_adj_of_forbiddenSidePair {G : SimpleGraph V} {u : V}
     (B : TypeCBarrier G u) (hreg : G.IsRegularOfDegree 4)
@@ -14485,6 +14714,7 @@ lemma not_adj_of_forbiddenSidePair {G : SimpleGraph V} {u : V}
       | M => simp [ForbiddenSidePair] at hst
       | R => simp [ForbiddenSidePair] at hst
 
+open scoped Classical in
 /-- Every neighbour of a left-side vertex lies in the middle side. -/
 lemma mem_middle_of_adj_left {G : SimpleGraph V} {u x y : V}
     (B : TypeCBarrier G u) (hreg : G.IsRegularOfDegree 4)
@@ -14514,6 +14744,7 @@ lemma mem_left_or_right_of_adj_middle {G : SimpleGraph V} {u x y : V}
       exact B.middle_isIndepSet hx hys hxy.ne hxy
   | R => exact .inr hys
 
+open scoped Classical in
 /-- Any vertex of the right component has at least two neighbours remaining
 in that component; when it is used as the distinguished vertex of a second
 barrier, those neighbours lie in the overlay block `X32`. -/
@@ -14542,6 +14773,7 @@ lemma two_le_right_middle_block_of_mem_right
     exact mem_block.mpr ⟨hxR, hxM⟩
   exact hcount.trans (Finset.card_le_card hsub)
 
+open scoped Classical in
 /-- Dually, if a prospective distinguished vertex lies in the first middle
 set and has two neighbours in the first right component, those neighbours
 again form two vertices of `X32`. -/
@@ -14600,6 +14832,7 @@ structure TashkinovSelection {G : SimpleGraph V} {u : V}
   right_middle_count_le_one : vertex ∈ B.middle → ∀ w ∈ B.right,
     (Pseudograph.ofSimple G).betweenMultiplicity {w} B.middle ≤ 1
 
+open scoped Classical in
 /-- Tashkinov's selection rule can always be carried out.  The proof uses
 exactly its three branches: a right vertex with at least two cut edges; if
 none, the unique right neighbour of a middle vertex with one cut edge; and,
@@ -14637,15 +14870,9 @@ lemma exists_tashkinovSelection
       middle_has_right_neighbor := ?_
       middle_right_count := ?_
       right_middle_count_le_one := ?_ }⟩
-    intro hwMiddle
-    exact False.elim ((Finset.disjoint_left.mp B.disjoint_middle_right)
-      hwMiddle hwR)
-    intro hwMiddle
-    exact False.elim ((Finset.disjoint_left.mp B.disjoint_middle_right)
-      hwMiddle hwR)
-    intro hwMiddle
-    exact False.elim ((Finset.disjoint_left.mp B.disjoint_middle_right)
-      hwMiddle hwR)
+    all_goals exact fun hwMiddle ↦
+      False.elim ((Finset.disjoint_left.mp B.disjoint_middle_right)
+        hwMiddle hwR)
   · by_cases hone : ∃ x ∈ B.middle,
         P.betweenMultiplicity {x} B.right = 1
     · obtain ⟨x, hxM, hxone⟩ := hone
@@ -14670,18 +14897,12 @@ lemma exists_tashkinovSelection
         middle_has_right_neighbor := ?_
         middle_right_count := ?_
         right_middle_count_le_one := ?_ }⟩
-      intro hwMiddle
-      exact False.elim ((Finset.disjoint_left.mp B.disjoint_middle_right)
-        hwMiddle hw'.1)
-      intro hwMiddle
-      exact False.elim ((Finset.disjoint_left.mp B.disjoint_middle_right)
-        hwMiddle hw'.1)
-      intro hwMiddle
-      exact False.elim ((Finset.disjoint_left.mp B.disjoint_middle_right)
-        hwMiddle hw'.1)
+      all_goals exact fun hwMiddle ↦
+        False.elim ((Finset.disjoint_left.mp B.disjoint_middle_right)
+          hwMiddle hw'.1)
     · have hadj : ∃ x ∈ B.middle, ∃ w ∈ B.right, G.Adj x w := by
         by_contra hn
-        push_neg at hn
+        push Not at hn
         have hz := betweenMultiplicity_eq_zero_of_no_adj
           G B.middle B.right (fun x hx w hw ↦ hn x hx w hw)
         have hRM := (B.typeC_degree_ledger hreg hno4 hno6).2.1
@@ -14741,6 +14962,7 @@ lemma exists_tashkinovSelection
         change P.betweenMultiplicity {z} B.middle ≤ 1
         omega
 
+open scoped Classical in
 /-- Select the second distinguished vertex inside the first right
 component.  Two of its neighbours remain in that component; since every
 neighbour of a barrier's distinguished left vertex lies in its middle, the
@@ -14768,6 +14990,7 @@ lemma exists_distinguished_with_two_le_right_middle_block
     ⟨x, mem_block.mpr ⟨hxR, hxM⟩,
       y, mem_block.mpr ⟨hyR, hyM⟩, hxy⟩
 
+open scoped Classical in
 /-- If the first right component is globally minimal and `X32` is nonempty,
 the part of the second right component lying outside the first one is
 nonempty.  Otherwise the second right component is a strict subset of the
@@ -14791,12 +15014,12 @@ lemma upper_right_column_nonempty_of_rightMinimal
         exfalso
         have hxS : x ∈ S :=
           Finset.mem_union_left _ (mem_block.mpr ⟨hxs, hxC⟩)
-        simpa [hSempty] using hxS
+        simp [hSempty] at hxS
     | M =>
         exfalso
         have hxS : x ∈ S :=
           Finset.mem_union_right _ (mem_block.mpr ⟨hxs, hxC⟩)
-        simpa [hSempty] using hxS
+        simp [hSempty] at hxS
     | R => exact hxs
   obtain ⟨x, hx⟩ := Finset.card_pos.mp (by omega :
     0 < (block B C .R .M).card)
@@ -14811,6 +15034,7 @@ lemma upper_right_column_nonempty_of_rightMinimal
       (Finset.ssubset_iff_subset_ne.mpr ⟨hsub, hne⟩)
   exact (Nat.not_lt_of_ge (hminimal w C)) hlt
 
+open scoped Classical in
 /-- The opposite shore cannot be a singleton either: the selected block
 `X₃₂` contributes at least two vertices to the first right component,
 whereas a singleton opposite shore would contribute only one to the second.
@@ -14853,6 +15077,7 @@ lemma upper_right_column_card_ne_one_of_rightMinimal
   have hmin := hminimal w C
   omega
 
+open scoped Classical in
 /-- If a pair of row coordinates is forbidden by the first barrier, every
 edge count between the corresponding overlay blocks is zero. -/
 lemma between_block_eq_zero_of_forbidden_row
@@ -14871,6 +15096,7 @@ lemma between_block_eq_zero_of_forbidden_row
   exact B.not_adj_of_forbiddenSidePair hreg hno4 hno6 hss
     (mem_block.mp hx).1 (mem_block.mp hy).1
 
+open scoped Classical in
 /-- The analogous zero rule for column coordinates and the second barrier. -/
 lemma between_block_eq_zero_of_forbidden_column
     {G : SimpleGraph V} {u v : V}
@@ -14888,6 +15114,7 @@ lemma between_block_eq_zero_of_forbidden_column
   exact C.not_adj_of_forbiddenSidePair hreg hno4 hno6 htt
     (mem_block.mp hx).2 (mem_block.mp hy).2
 
+open scoped Classical in
 /-- The first exact five-term equation in Tashkinov's final overlay ledger:
 expand the eight edges from the first barrier's right side to its middle,
 then remove the four terms forbidden by the second partition. -/
@@ -14961,6 +15188,7 @@ lemma first_right_middle_overlay_ledger
     P.betweenMultiplicity A₃ D₃ = 8
   omega
 
+open scoped Classical in
 /-- The transposed five-term equation, obtained from the eight edges between
 the second barrier's right and middle sides. -/
 lemma second_right_middle_overlay_ledger
@@ -14980,6 +15208,7 @@ lemma second_right_middle_overlay_ledger
   simpa only [block_swap] using
     C.first_right_middle_overlay_ledger B hreg hno4 hno6
 
+open scoped Classical in
 /-- Every edge incident with the left-left overlay block enters the
 middle-middle block.  Summing the quartic degrees gives the first diagonal
 degree equation used in (5.5). -/
@@ -15012,16 +15241,17 @@ lemma left_left_middle_middle_degree_ledger
   exact betweenMultiplicity_eq_regular_mul_card_of_independent
     G hreg S T hST hS hneighbors
 
+open scoped Classical in
 /-- Expanding the degrees of the middle-middle block: its neighbours lie in
 the four corner blocks. -/
 lemma middle_middle_corner_degree_ledger
     {G : SimpleGraph V} {u v : V}
     (B : TypeCBarrier G u) (C : TypeCBarrier G v)
     (hreg : G.IsRegularOfDegree 4)
-    (hno4 : ∀ S : Finset V, S.Nonempty → S ≠ Finset.univ →
+    (_ : ∀ S : Finset V, S.Nonempty → S ≠ Finset.univ →
       (Pseudograph.ofSimple G).boundaryMultiplicity S = 4 →
         S.card = 1 ∨ Sᶜ.card = 1)
-    (hno6 : HasOnlyTrivialSixCuts G) :
+    (_ : HasOnlyTrivialSixCuts G) :
     let P := Pseudograph.ofSimple G
     P.betweenMultiplicity (block B C .M .M) (block B C .L .L) +
       P.betweenMultiplicity (block B C .M .M) (block B C .L .R) +
@@ -15100,6 +15330,7 @@ lemma middle_middle_corner_degree_ledger
     P.betweenMultiplicity_union_right S T₁ T₂ hT₁₂ hST₁₂] at hdegree
   simpa [P, S, T₁, T₂, T₃, T₄] using hdegree
 
+open scoped Classical in
 /-- The pre-parity form of equation (5.5).  It is the difference between
 the middle-middle and left-left degree sums; the third term is later forced
 to zero by the two eight-cut inequalities. -/
@@ -15142,6 +15373,7 @@ lemma overlay_first_stage_arithmetic
     d = 0 ∧ l₁ = l₂ ∧ a₁ + b₁ = a₂ + b₂ := by
   omega
 
+open scoped Classical in
 /-- The degree-sum form of the boundary identity for `H1`. -/
 lemma diagonal_boundary_card_ledger
     {G : SimpleGraph V} {u v : V}
@@ -15183,6 +15415,7 @@ lemma diagonal_boundary_card_ledger
   change S.card = A.card + D.card at hcard
   omega
 
+open scoped Classical in
 /-- The boundary of `H1 = X11 ∪ X22` is `nu1 + nu + nu2`.
 This is the cut identity used in both numerical cases of Section 5. -/
 lemma diagonal_boundary_ledger
@@ -15208,6 +15441,7 @@ lemma diagonal_boundary_ledger
         4 * (block B C .M .M).card at hdiag
   omega
 
+open scoped Classical in
 /-- After the shared diagonal count has vanished, the diagonal degree
 ledger is the exact natural-number form of `4t = ν₁+ν₂`. -/
 lemma diagonal_card_difference_of_overlay_first_stage
@@ -15231,6 +15465,7 @@ lemma diagonal_card_difference_of_overlay_first_stage
   rw [hzero, Nat.add_zero] at h
   exact h
 
+open scoped Classical in
 /-- The boundary of `X₃₁ ∪ X₃₂` is exactly the four-term expression in the
 first inequality of (5.3). -/
 lemma lower_right_row_boundary_ledger
@@ -15385,6 +15620,7 @@ lemma lower_right_row_boundary_ledger
     P.betweenMultiplicity S₂ T₄
   simpa [Nat.add_assoc] using hboundary
 
+open scoped Classical in
 /-- The transposed boundary identity for `X₁₃ ∪ X₂₃`. -/
 lemma upper_right_column_boundary_ledger
     {G : SimpleGraph V} {u v : V}
@@ -15404,6 +15640,7 @@ lemma upper_right_column_boundary_ledger
   simpa only [block_swap] using
     C.lower_right_row_boundary_ledger B hreg hno4 hno6
 
+open scoped Classical in
 /-- The boundary of the common right-right block `X33` has exactly the
 three contributions `nu,lambda1,lambda2`. -/
 lemma right_right_boundary_ledger
@@ -15522,6 +15759,7 @@ lemma diagonal_eq_empty_of_boundary_zero
   exact eq_empty_of_boundaryMultiplicity_eq_zero_of_connected
     G hconn (overlayH1 B C) hproper hzero
 
+open scoped Classical in
 /-- Only the `X22--X13` block pair joins `H1` to `H3`. -/
 lemma between_H1_H3
     {G : SimpleGraph V} {u v : V}
@@ -15573,6 +15811,7 @@ lemma between_H1_H3
     hz11_13, hz11_23, hz22_23, Nat.zero_add, Nat.add_zero,
     P.betweenMultiplicity_comm]
 
+open scoped Classical in
 /-- Only the `X22--X31` block pair joins `H1` to `H4`. -/
 lemma between_H1_H4
     {G : SimpleGraph V} {u v : V}
@@ -15589,6 +15828,7 @@ lemma between_H1_H4
   simpa only [block_swap, overlayH1, overlayH3, overlayH4,
     Pseudograph.betweenMultiplicity_comm] using C.between_H1_H3 B hreg hno4 hno6
 
+open scoped Classical in
 /-- If `X₃₂` has at least two vertices, the first shore in (5.3) is
 automatically nontrivial.  The general cut lower bound therefore turns its
 exact boundary expansion into the required inequality. -/
@@ -15677,6 +15917,7 @@ lemma lower_right_row_eight_of_two_le_block
   rw [hledger] at hcut
   exact hcut
 
+open scoped Classical in
 /-- A version of the first lower bound which exposes precisely the two
 nontrivial-shore obligations used in Tashkinov's minimal-choice argument.
 Keeping those obligations separate avoids duplicating the rather large
@@ -15715,6 +15956,7 @@ lemma lower_right_row_eight_of_card_ne_one
   rw [hledger] at hcut
   exact hcut
 
+open scoped Classical in
 /-- The transposed nontrivial-shore lower bound for `X₁₃ ∪ X₂₃`. -/
 lemma upper_right_column_eight_of_card_ne_one
     {G : SimpleGraph V} {u v : V}
@@ -15841,6 +16083,7 @@ lemma upper_right_column_eight_of_card_ne_one
   rw [hledger] at hcut
   exact hcut
 
+open scoped Classical in
 /-- Every edge leaving the off-diagonal union X12 union X21 enters
 X23 union X32. -/
 lemma offDiagonal_boundary_eq_between
@@ -15896,6 +16139,7 @@ lemma offDiagonal_boundary_eq_between
     G S T hST hneighbors
   simpa [P, S, S1, S2, T, T1, T2] using hboundary
 
+open scoped Classical in
 /-- Expanding that between-set count leaves precisely the two counts denoted
 mu1 and mu2 in Section 5. -/
 lemma offDiagonal_between_ledger
@@ -15949,6 +16193,7 @@ lemma offDiagonal_between_ledger
   rw [P.betweenMultiplicity_comm T2 S2, P.betweenMultiplicity_comm T1 S1,
     Nat.add_comm]
 
+open scoped Classical in
 /-- The boundary of the off-diagonal union consists of exactly mu1+mu2. -/
 lemma offDiagonal_boundary_ledger
     {G : SimpleGraph V} {u v : V}
@@ -15964,6 +16209,7 @@ lemma offDiagonal_boundary_ledger
   (B.offDiagonal_boundary_eq_between C hreg hno4 hno6).trans
     (B.offDiagonal_between_ledger C hreg hno4 hno6)
 
+open scoped Classical in
 /-- All four incidences at `X12` enter `X21 ∪ X23`. -/
 lemma x12_union_degree_ledger
     {G : SimpleGraph V} {u v : V}
@@ -16002,6 +16248,7 @@ lemma x12_union_degree_ledger
     G hreg S T hST hS hneighbors
   exact hdegree
 
+open scoped Classical in
 /-- Degree ledger for `X12`: expand the preceding two-block target. -/
 lemma x12_degree_ledger
     {G : SimpleGraph V} {u v : V}
@@ -16031,6 +16278,7 @@ lemma x12_degree_ledger
   rw [P.betweenMultiplicity_comm T₂ S]
   exact h
 
+open scoped Classical in
 /-- All four incidences at `X21` enter `X12 ∪ X32`. -/
 lemma x21_union_degree_ledger
     {G : SimpleGraph V} {u v : V}
@@ -16067,6 +16315,7 @@ lemma x21_union_degree_ledger
   exact betweenMultiplicity_eq_regular_mul_card_of_independent
     G hreg S T hST hS hneighbors
 
+open scoped Classical in
 /-- The transposed degree ledger for `X21`. -/
 lemma x21_degree_ledger
     {G : SimpleGraph V} {u v : V}
@@ -16095,6 +16344,7 @@ lemma x21_degree_ledger
   rw [P.betweenMultiplicity_union_right S T₁ T₂ hTdis hST] at h
   exact h
 
+open scoped Classical in
 /-- The off-diagonal shore cannot be a singleton.  If only X21 is present,
 all four incident edges enter the first right component, contradicting the
 two-edge per-vertex bound; the X12 case is symmetric. -/
@@ -16179,6 +16429,7 @@ lemma offDiagonal_card_ne_one
     change P.betweenMultiplicity {x} C.right ≤ 2 at hle
     omega
 
+open scoped Classical in
 /-- If at least one of `mu1,mu2` is positive, their sum is at least eight.
 This is (5.8): their sum is the cut of `X12 ∪ X21`, that shore is not a
 singleton by the toggle-cut argument, and its complement contains the
@@ -16345,6 +16596,7 @@ structure CrossedLowerBounds {G : SimpleGraph V} {u v : V}
     overlayEdge B C .M .R .L .M + overlayEdge B C .M .R .R .M +
     overlayEdge B C .M .R .R .R
 
+open scoped Classical in
 /-- The two crossed lower bounds follow from the selected `X₃₂` block,
 global minimality of the first right component, and the sole remaining
 minimal-choice obligation that the opposite shore is not a singleton. -/
@@ -16379,6 +16631,7 @@ structure FirstStageConclusion {G : SimpleGraph V} {u v : V}
       overlayEdge B C .R .M .M .L =
     overlayEdge B C .L .R .M .M + overlayEdge B C .M .R .L .M
 
+open scoped Classical in
 /-- The shared diagonal count in (5.4) vanishes.  This projection is kept
 separate from the other two conclusions so its theorem type stays small. -/
 lemma sharedDiagonal_zero
@@ -16411,6 +16664,7 @@ lemma sharedDiagonal_zero
     overlayEdge_comm B C .M .R .R .R] at hlower₂
   omega
 
+open scoped Classical in
 /-- The two tail counts in (5.4) are equal. -/
 lemma overlay_tails_eq
     {G : SimpleGraph V} {u v : V}
@@ -16443,6 +16697,7 @@ lemma overlay_tails_eq
   have hzero := B.sharedDiagonal_zero C hreg hno4 hno6 hlower
   omega
 
+open scoped Classical in
 /-- The two head sums in (5.4) are equal. -/
 lemma overlay_heads_eq
     {G : SimpleGraph V} {u v : V}
@@ -16471,6 +16726,7 @@ lemma overlay_heads_eq
   have htails := B.overlay_tails_eq C hreg hno4 hno6 hlower
   omega
 
+open scoped Classical in
 /-- Equation (5.5) before introducing the nonnegative cardinal difference
 `t`: the two head counts are exactly four times the difference between the
 middle-middle and left-left block sizes. -/
@@ -16492,6 +16748,7 @@ lemma overlay_diagonal_degree
       overlayEdge B C .R .L .M .M = 4 * (block B C .M .M).card at h
   omega
 
+open scoped Classical in
 /-- The natural-number form of (5.5): there is a nonnegative difference
 `t` with `|X₂₂|=|X₁₁|+t` and `ν₁+ν₂=4t`. -/
 lemma exists_overlay_card_difference
@@ -16513,6 +16770,7 @@ lemma exists_overlay_card_difference
   refine ⟨t, ht, ?_⟩
   omega
 
+open scoped Classical in
 /-- The parity clause of (5.5): the difference `t` has the parity of the
 diagonal union `X₁₁ ∪ X₂₂`. -/
 lemma overlay_card_difference_parity
@@ -16525,6 +16783,7 @@ lemma overlay_card_difference_parity
   rw [Finset.card_union_of_disjoint hdis, ht]
   omega
 
+open scoped Classical in
 /-- In the positive-`mu` case, equations (5.2)--(5.5) and (5.8) leave
 only the three possibilities `nu1+nu2 = 0,4,8`.  This lemma deliberately
 contains only the Presburger part of the argument; the next structural
@@ -16567,6 +16826,7 @@ lemma positive_offDiagonal_nu_sum_cases
     hcard₃₂ hpos
   omega
 
+open scoped Classical in
 /-- If the positive-`mu` case reaches `nu1+nu2=8`, all the inequalities
 used above are equalities: the off-diagonal cut is eight and both the
 crossing term `mu` and the common tail `lambda` vanish. -/
@@ -16623,6 +16883,7 @@ lemma cross_values_two_six_of_odd_card_sum
   obtain ⟨k, hk⟩ := hodd
   omega
 
+open scoped Classical in
 lemma right_right_empty_of_positive_nu_sum_eight
     {G : SimpleGraph V} {u v : V}
     (B : TypeCBarrier G u) (C : TypeCBarrier G v)
@@ -16650,6 +16911,7 @@ lemma right_right_empty_of_positive_nu_sum_eight
     omega
   exact B.right_right_eq_empty_of_boundary_zero C hconn hcard₃₂ hzero
 
+open scoped Classical in
 lemma overlayH2_odd_of_positive_nu_sum_eight
     {G : SimpleGraph V} {u v : V}
     (B : TypeCBarrier G u) (C : TypeCBarrier G v)
@@ -16690,6 +16952,7 @@ lemma overlayH2_odd_of_positive_nu_sum_eight
   obtain ⟨k4, hk4⟩ := hH4odd
   exact ⟨k - k1 - k3 - k4 - 1, by omega⟩
 
+open scoped Classical in
 lemma cross_values_of_positive_nu_sum_eight
     {G : SimpleGraph V} {u v : V}
     (B : TypeCBarrier G u) (C : TypeCBarrier G v)
@@ -16750,6 +17013,7 @@ structure NuEightCutData {G : SimpleGraph V} {u v : V}
   between14 : (Pseudograph.ofSimple G).betweenMultiplicity
       (overlayH1 B C) (overlayH4 B C) = overlayEdge B C .R .L .M .M
 
+open scoped Classical in
 lemma nuEightCutData
     {G : SimpleGraph V} {u v : V}
     (B : TypeCBarrier G u) (C : TypeCBarrier G v)
@@ -16797,6 +17061,7 @@ lemma nuEightCutData
   change _ = overlayEdge B C .R .L .M .M at h14
   refine ⟨?_, ?_, ?_, h13, h14⟩ <;> omega
 
+open scoped Classical in
 /-- The value `nu1+nu2=8` in the positive-`mu` case creates a nontrivial
 four-cut, exactly as in Tashkinov's Case 2. -/
 lemma positive_nu_sum_ne_eight
@@ -16880,6 +17145,7 @@ structure NuFourData {G : SimpleGraph V} {u v : V}
   nu1 : overlayEdge B C .R .L .M .M = 2
   nu2 : overlayEdge B C .L .R .M .M = 2
 
+open scoped Classical in
 /-- In the value-four branch, `H1` is the trivial four-component.  The
 per-vertex cut bound (5.1) then splits its four cut edges as two and two. -/
 lemma nuFourData
@@ -16964,6 +17230,7 @@ lemma nuFourData
     rw [hx22, P.betweenMultiplicity_comm]
   refine ⟨hHcard, h11empty, h22card, ?_, ?_⟩ <;> omega
 
+open scoped Classical in
 lemma right_right_even_of_nu_sum_four
     {G : SimpleGraph V} {u v : V}
     (B : TypeCBarrier G u) (C : TypeCBarrier G v)
@@ -17008,6 +17275,7 @@ lemma right_right_even_of_nu_sum_four
   rw [Nat.even_iff]
   omega
 
+open scoped Classical in
 lemma tail_le_two_of_positive_nu_sum_four
     {G : SimpleGraph V} {u v : V}
     (B : TypeCBarrier G u) (C : TypeCBarrier G v)
@@ -17038,6 +17306,7 @@ lemma tail_le_two_of_positive_nu_sum_four
   have hnu2 := hdata.nu2
   omega
 
+open scoped Classical in
 lemma right_right_empty_of_positive_nu_sum_four
     {G : SimpleGraph V} {u v : V}
     (B : TypeCBarrier G u) (C : TypeCBarrier G v)
@@ -17099,6 +17368,7 @@ lemma right_right_empty_of_positive_nu_sum_four
   refine ⟨hsempty, ?_⟩
   omega
 
+open scoped Classical in
 /-- In the value-four branch, the independent set used by Tashkinov is
 `C.left ∪ X23`. -/
 lemma left_union_x23_isIndepSet
@@ -17122,6 +17392,7 @@ lemma left_union_x23_isIndepSet
   · exact B.middle_isIndepSet (mem_block.mp hx23).1
       (mem_block.mp hy23).1 hxy
 
+open scoped Classical in
 /-- If `X33` is empty, the complement of `C.left ∪ X23` is exactly
 `C.middle ∪ X13`. -/
 lemma compl_left_union_x23
@@ -17158,6 +17429,7 @@ lemma compl_left_union_x23
     · exact (Finset.disjoint_left.mp B.disjoint_left_middle)
         (mem_block.mp hx13).1 (mem_block.mp hx23).1
 
+open scoped Classical in
 /-- The only edges from the whole middle side of `C` to `X13` are the
 `X22--X13` edges. -/
 lemma between_second_middle_x13
@@ -17216,6 +17488,7 @@ lemma disjoint_second_middle_x13
   exact Disjoint.mono (by rfl) (fun _ hx ↦ (mem_block.mp hx).2)
     C.disjoint_middle_right
 
+open scoped Classical in
 /-- All of the cut and parity arithmetic in the value-four branch, isolated
 from the final independent-complement contradiction. -/
 lemma right_right_empty_of_nu_sum_four
@@ -17245,6 +17518,7 @@ lemma right_right_empty_of_nu_sum_four
     hno4 hno6 hlower hcard₃₂ heven htail
   exact ⟨hdata, h33.1⟩
 
+open scoped Classical in
 /-- The independent-complement contradiction at the end of the
 value-four branch. -/
 lemma false_of_nuFourData_of_right_right_empty
@@ -17289,6 +17563,7 @@ lemma false_of_nuFourData_of_right_right_empty
   rw [hcomp, hTint] at hlarge
   omega
 
+open scoped Classical in
 /-- The value-four branch is impossible: the source's independent set has
 a complement containing exactly two edges, contrary to Proposition 4.1. -/
 lemma positive_nu_sum_ne_four
@@ -17317,6 +17592,7 @@ lemma positive_nu_sum_ne_four
   exact B.false_of_nuFourData_of_right_right_empty C hreg hno4 hno6
     hindependentComplement hdata h33
 
+open scoped Classical in
 /-- Thus the two `nu` terms vanish in Tashkinov's positive-`mu` case. -/
 lemma positive_nu_values_zero
     {G : SimpleGraph V} {u v : V}
@@ -17349,6 +17625,7 @@ lemma positive_nu_values_zero
   · exact False.elim (hne4 hfour)
   · exact False.elim (hne8 height)
 
+open scoped Classical in
 /-- Once `nu1=0`, the faithful selection cannot have chosen a vertex in
 the first right component: its retained middle neighbour would itself be a
 positive `X31--X22` edge. -/
@@ -17378,6 +17655,7 @@ lemma selection_vertex_mem_middle_of_nu1_zero
     omega
   · exact hwM
 
+open scoped Classical in
 lemma mu_values_equal_of_nu_values_zero
     {G : SimpleGraph V} {u v : V}
     (B : TypeCBarrier G u) (C : TypeCBarrier G v)
@@ -17394,6 +17672,7 @@ lemma mu_values_equal_of_nu_values_zero
   have hheads := B.overlay_heads_eq C hreg hno4 hno6 hlower
   omega
 
+open scoped Classical in
 lemma diagonal_empty_of_nu_values_zero
     {G : SimpleGraph V} {u v : V}
     (B : TypeCBarrier G u) (C : TypeCBarrier G v)
@@ -17416,6 +17695,7 @@ lemma diagonal_empty_of_nu_values_zero
     omega
   exact B.diagonal_eq_empty_of_boundary_zero C hconn hcard₃₂ hzero
 
+open scoped Classical in
 lemma offDiagonal_even_of_mu_values_equal
     {G : SimpleGraph V} {u v : V}
     (B : TypeCBarrier G u) (C : TypeCBarrier G v)
@@ -17462,6 +17742,7 @@ lemma right_right_odd_of_diagonal_empty_of_offDiagonal_even
   rw [Nat.odd_iff]
   omega
 
+open scoped Classical in
 lemma x12_card_eq_x21_of_mu_values_equal
     {G : SimpleGraph V} {u v : V}
     (B : TypeCBarrier G u) (C : TypeCBarrier G v)
@@ -17485,6 +17766,7 @@ lemma x12_card_eq_x21_of_mu_values_equal
     4 * (block B C .M .L).card at h21
   omega
 
+open scoped Classical in
 /-- With the diagonal blocks empty, `B.left ∪ C.middle` is independent.
 This is the set used to exclude `lambda=2`. -/
 lemma first_left_union_second_middle_isIndepSet
@@ -17515,6 +17797,7 @@ lemma first_left_union_second_middle_isIndepSet
     simp at this
   · exact C.middle_isIndepSet hxM hyM hxy
 
+open scoped Classical in
 /-- If `X11=X22=∅`, `|X12|=|X21|`, and `X33` is a singleton, the
 complement of `B.left ∪ C.middle` has exactly one more vertex. -/
 lemma compl_first_left_union_second_middle_card
@@ -17547,10 +17830,11 @@ lemma compl_first_left_union_second_middle_card
   have hcompl := Finset.card_add_card_compl U
   have htotal := B.sides_card
   have hcompl' : U.card + Uᶜ.card = Nat.card V := by
-    simpa [Nat.card_eq_fintype_card] using hcompl
+    simp [Nat.card_eq_fintype_card]
   change Uᶜ.card = U.card + 1
   omega
 
+open scoped Classical in
 /-- The quartic degree identity turns the preceding one-vertex imbalance
 into exactly two internal edges in the complement. -/
 lemma internal_compl_first_left_union_second_middle_eq_two
@@ -17578,6 +17862,7 @@ lemma internal_compl_first_left_union_second_middle_eq_two
   change P.internalMultiplicity Uᶜ = 2
   omega
 
+open scoped Classical in
 lemma right_right_boundary_eq_twice_tail
     {G : SimpleGraph V} {u v : V}
     (B : TypeCBarrier G u) (C : TypeCBarrier G v)
@@ -17594,6 +17879,7 @@ lemma right_right_boundary_eq_twice_tail
   have htails := B.overlay_tails_eq C hreg hno4 hno6 hlower
   omega
 
+open scoped Classical in
 /-- Equations (5.9) force the common tail value `lambda` to be at least
 four.  Values zero, one, and three give forbidden cuts; value two is the
 independent-complement equality case. -/
@@ -17628,7 +17914,7 @@ lemma four_le_tail_of_positive_core
     intro hEmpty
     change Odd S.card at h33odd
     rw [hEmpty] at h33odd
-    simpa using h33odd
+    simp at h33odd
   have hSX : Disjoint S (block B C .R .M) :=
     B.disjoint_block C (.inr (by decide))
   have hXsub : block B C .R .M ⊆ Sᶜ := by
@@ -17708,6 +17994,7 @@ structure PositiveEdgeCounts {G : SimpleGraph V} {u v : V}
   tail23_four : overlayEdge B C .R .R .M .R = 4
   tail32_four : overlayEdge B C .R .R .R .M = 4
 
+open scoped Classical in
 /-- The inequalities now meet the two eight-edge ledgers sharply:
 `mu=0` and `lambda=mu1=mu2=4`. -/
 lemma positive_core_edge_counts
@@ -17741,6 +18028,7 @@ lemma positive_core_edge_counts
     hcard₃₂ hpos
   refine ⟨?_, ?_, ?_, ?_, ?_⟩ <;> omega
 
+open scoped Classical in
 /-- In the selected-middle branch, each `X23` vertex sends either zero or
 two edges to `X33`.  The vanished `X23--X32` count and the forbidden
 `C.left--C.right` pair remove all other possible first-right neighbours. -/
@@ -17821,20 +18109,22 @@ noncomputable def activeX23 {G : SimpleGraph V} {u : V}
       (block B C .R .R) = 2
 
 lemma sum_if_two_eq_two_mul_filter_card
-    {W : Type*} [DecidableEq W] (S : Finset W) (p : W → Prop)
+    {W : Type*} (S : Finset W) (p : W → Prop)
     [DecidablePred p] :
     (∑ x ∈ S, if p x then 2 else 0) = 2 * (S.filter p).card := by
+  classical
   induction S using Finset.induction_on with
   | empty => simp
   | @insert x S hx ih =>
       rw [Finset.sum_insert hx, Finset.filter_insert]
       by_cases hpx : p x
-      · simp [hpx, ih]
+      · simp only [hpx, ↓reduceIte, ih]
         have hxfilter : x ∉ S.filter p := fun h ↦ hx (Finset.mem_filter.mp h).1
         rw [Finset.card_insert_of_notMem hxfilter]
         omega
-      · simp [hx, hpx, ih]
+      · simp [hpx, ih]
 
+open scoped Classical in
 /-- The four `X23--X33` edges are carried by exactly two vertices of
 `X23`, two edges at each vertex. -/
 lemma activeX23_card_eq_two
@@ -17880,6 +18170,7 @@ lemma activeX23_card_eq_two
   change A.card = 2
   omega
 
+open scoped Classical in
 lemma exists_two_activeX23_vertices
     {G : SimpleGraph V} {u : V}
     (B : TypeCBarrier G u) (selection : TashkinovSelection B)
@@ -17889,6 +18180,7 @@ lemma exists_two_activeX23_vertices
   obtain ⟨x, y, hxy, hEq⟩ := Finset.card_eq_two.mp hcard
   exact ⟨x, y, hxy, hEq⟩
 
+open scoped Classical in
 /-- A general eight-shore with odd size and at least two vertices on the
 other side has two internal neighbours at each of its vertices. -/
 lemma two_le_singleton_erase_of_odd_eight_shore
@@ -17899,7 +18191,7 @@ lemma two_le_singleton_erase_of_odd_eight_shore
     (hno6 : HasOnlyTrivialSixCuts G)
     (S : Finset V)
     (hcut : (Pseudograph.ofSimple G).boundaryMultiplicity S = 8)
-    (hodd : Odd S.card) (hfive : 5 ≤ S.card) (hcomp : 2 ≤ Sᶜ.card)
+    (_ : Odd S.card) (hfive : 5 ≤ S.card) (hcomp : 2 ≤ Sᶜ.card)
     (v : V) (hv : v ∈ S) :
     2 ≤ (Pseudograph.ofSimple G).betweenMultiplicity {v} (S.erase v) := by
   classical
@@ -17942,7 +18234,7 @@ lemma two_le_singleton_erase_of_odd_eight_shore
     intro x hx hxv
     simp only [Finset.mem_singleton] at hxv
     subst x
-    simpa [R] using hx
+    simp [R] at hx
   have hregular : P.IsRegularOfDegree 4 :=
     (Pseudograph.isRegularOfDegree_ofSimple_iff G 4).mpr hreg
   have htoggle := P.boundaryMultiplicity_union_add_two_between
@@ -17969,6 +18261,7 @@ lemma two_le_singleton_erase_of_odd_eight_shore
       omega
     rcases hno6 R hcut6 with htwo | htwo <;> omega
 
+open scoped Classical in
 /-- Constructor for the abstract barriers used by the final shore
 recombination. -/
 noncomputable def ofPartition
@@ -18034,7 +18327,7 @@ vertices of `X23` move to the second left shore. -/
 noncomputable def recombinedSecondLeft
     {G : SimpleGraph V} {u : V}
     (B : TypeCBarrier G u) (selection : TashkinovSelection B)
-    (C : TypeCBarrier G selection.vertex) : Finset V :=
+    (C : TypeCBarrier G selection.vertex) : Finset V := open scoped Classical in
   C.left ∪ (block B C .M .R \ activeX23 B selection C)
 
 /-- The right shore in Tashkinov's recombined barrier: `X33` together
@@ -18042,7 +18335,7 @@ with the two active vertices of `X23`. -/
 noncomputable def recombinedSecondRight
     {G : SimpleGraph V} {u : V}
     (B : TypeCBarrier G u) (selection : TashkinovSelection B)
-    (C : TypeCBarrier G selection.vertex) : Finset V :=
+    (C : TypeCBarrier G selection.vertex) : Finset V := open scoped Classical in
   block B C .R .R ∪ activeX23 B selection C
 
 /-- The remaining vertices form the middle shore of the recombined
@@ -18050,7 +18343,7 @@ barrier. -/
 noncomputable def recombinedSecondMiddle
     {G : SimpleGraph V} {u : V}
     (B : TypeCBarrier G u) (selection : TashkinovSelection B)
-    (C : TypeCBarrier G selection.vertex) : Finset V :=
+    (C : TypeCBarrier G selection.vertex) : Finset V := open scoped Classical in
   (recombinedSecondLeft B selection C ∪
     recombinedSecondRight B selection C)ᶜ
 
@@ -18062,6 +18355,7 @@ lemma activeX23_subset
   intro x hx
   exact (Finset.mem_filter.mp hx).1
 
+open scoped Classical in
 lemma inactiveX23_not_adj_x33
     {G : SimpleGraph V} {u : V}
     (B : TypeCBarrier G u) (selection : TashkinovSelection B)
@@ -18152,6 +18446,7 @@ lemma mem_recombinedSecondMiddle_cases
           exact False.elim (hxnot (Finset.mem_union_right _
             (Finset.mem_union_left _ hx33)))
 
+open scoped Classical in
 lemma recombinedSecondMiddle_isIndepSet
     {G : SimpleGraph V} {u : V}
     (B : TypeCBarrier G u) (selection : TashkinovSelection B)
@@ -18188,6 +18483,7 @@ lemma recombinedSecondMiddle_isIndepSet
   · exact C.middle_isIndepSet (mem_block.mp hx32).2
       (mem_block.mp hy32).2 hxy hAdj
 
+open scoped Classical in
 lemma recombinedSecondLeft_isIndepSet
     {G : SimpleGraph V} {u : V}
     (B : TypeCBarrier G u) (selection : TashkinovSelection B)
@@ -18213,6 +18509,7 @@ lemma recombinedSecondLeft_isIndepSet
       (mem_block.mp (Finset.mem_sdiff.mp hxI).1).1
       (mem_block.mp (Finset.mem_sdiff.mp hyI).1).1 hxy hAdj
 
+open scoped Classical in
 lemma recombinedSecond_no_left_right_adj
     {G : SimpleGraph V} {u : V}
     (B : TypeCBarrier G u) (selection : TashkinovSelection B)
@@ -18275,6 +18572,7 @@ lemma activeX23_to_x33_eq_four
   change A.card = 2 at hcard
   omega
 
+open scoped Classical in
 lemma activeX23_boundary_eq_eight
     {G : SimpleGraph V} {u : V}
     (B : TypeCBarrier G u) (selection : TashkinovSelection B)
@@ -18300,6 +18598,7 @@ lemma activeX23_boundary_eq_eight
   rw [hint] at hdegree
   omega
 
+open scoped Classical in
 lemma recombinedSecondRight_boundary_eq_eight
     {G : SimpleGraph V} {u : V}
     (B : TypeCBarrier G u) (selection : TashkinovSelection B)
@@ -18363,6 +18662,7 @@ lemma recombinedSecondRight_odd
   rw [recombinedSecondRight, hcardUnion, hcard]
   omega
 
+open scoped Classical in
 lemma two_le_recombinedSecondRight_compl
     {G : SimpleGraph V} {u : V}
     (B : TypeCBarrier G u) (selection : TashkinovSelection B)
@@ -18405,6 +18705,7 @@ lemma disjoint_recombinedSecondLeft_right
       (mem_block.mp (Finset.mem_sdiff.mp hxI).1).1 (mem_block.mp hy33).1
   · exact (Finset.mem_sdiff.mp hxI).2 hyA
 
+open scoped Classical in
 /-- The recombination at the two active `X23` vertices is again a
 type-C barrier with the same distinguished vertex as the second one. -/
 noncomputable def recombinedSecondBarrier
@@ -18472,6 +18773,7 @@ noncomputable def recombinedSecondBarrier
   · exact B.two_le_recombinedSecondRight_compl selection C hcard32
   · exact hindependentComplement
 
+open scoped Classical in
 lemma second_minimal_forces_x13_x23
     {G : SimpleGraph V} {u : V}
     (B : TypeCBarrier G u) (selection : TashkinovSelection B)
@@ -18567,6 +18869,7 @@ lemma selected_middle_contradiction_of_x32_two_mu1_four
   change X.card = 2 at h32
   omega
 
+open scoped Classical in
 lemma selection_vertex_mem_right_of_mu1_zero
     {G : SimpleGraph V} {u : V}
     (B : TypeCBarrier G u) (selection : TashkinovSelection B)
@@ -18593,6 +18896,7 @@ lemma selection_vertex_mem_right_of_mu1_zero
     change 0 < overlayEdge B C .R .M .M .L at hpos
     omega
 
+open scoped Classical in
 lemma nu1_pos_of_selection_mem_right
     {G : SimpleGraph V} {u : V}
     (B : TypeCBarrier G u) (selection : TashkinovSelection B)
@@ -18614,6 +18918,7 @@ lemma nu1_pos_of_selection_mem_right
     (block B C .R .L) (block B C .M .M)
     (B.disjoint_block C (.inl (by decide))) hwx hw31 hx22
 
+open scoped Classical in
 lemma nu_values_equal_of_mu_values_zero
     {G : SimpleGraph V} {u v : V}
     (B : TypeCBarrier G u) (C : TypeCBarrier G v)
@@ -18630,12 +18935,13 @@ lemma nu_values_equal_of_mu_values_zero
   have hheads := B.overlay_heads_eq C hreg hno4 hno6 hlower
   omega
 
+open scoped Classical in
 lemma nu1_ne_two_of_selected_right
     {G : SimpleGraph V} {u : V}
     (B : TypeCBarrier G u) (selection : TashkinovSelection B)
     (C : TypeCBarrier G selection.vertex)
     (hreg : G.IsRegularOfDegree 4)
-    (hconn : G.Connected)
+    (_ : G.Connected)
     (hno4 : ∀ S : Finset V, S.Nonempty → S ≠ Finset.univ →
       (Pseudograph.ofSimple G).boundaryMultiplicity S = 4 →
         S.card = 1 ∨ Sᶜ.card = 1)
@@ -18737,6 +19043,7 @@ lemma nu1_ne_two_of_selected_right
     rw [hycount] at hfilterR
     omega
 
+open scoped Classical in
 lemma offDiagonal_empty_of_mu_values_zero
     {G : SimpleGraph V} {u v : V}
     (B : TypeCBarrier G u) (C : TypeCBarrier G v)
@@ -18772,9 +19079,10 @@ lemma offDiagonal_empty_of_mu_values_zero
 union of both left shores and the (at most singleton) common right block. -/
 noncomputable def zeroCaseIndependentSet
     {G : SimpleGraph V} {u v : V}
-    (B : TypeCBarrier G u) (C : TypeCBarrier G v) : Finset V :=
+    (B : TypeCBarrier G u) (C : TypeCBarrier G v) : Finset V := open scoped Classical in
   (B.left ∪ C.left) ∪ block B C .R .R
 
+open scoped Classical in
 lemma zeroCaseIndependentSet_isIndepSet
     {G : SimpleGraph V} {u v : V}
     (B : TypeCBarrier G u) (C : TypeCBarrier G v)
@@ -18816,6 +19124,7 @@ lemma zeroCaseIndependentSet_isIndepSet
       (mem_block.mp hx33).2 hAdj.symm
   · exact hxy ((Finset.card_le_one.mp h33card) x hx33 y hy33)
 
+open scoped Classical in
 lemma compl_zeroCaseIndependentSet_eq
     {G : SimpleGraph V} {u v : V}
     (B : TypeCBarrier G u) (C : TypeCBarrier G v) :
@@ -18873,6 +19182,7 @@ lemma compl_zeroCaseIndependentSet_eq
         (s := .R) (t := .M) (s' := .R) (t' := .R) (.inr (by decide))))
         hx32 h33
 
+open scoped Classical in
 lemma internal_compl_zeroCaseIndependentSet_eq_cross
     {G : SimpleGraph V} {u v : V}
     (B : TypeCBarrier G u) (C : TypeCBarrier G v) :
@@ -18917,6 +19227,7 @@ lemma internal_compl_zeroCaseIndependentSet_eq_cross
   simp only [Nat.zero_add]
   exact P.betweenMultiplicity_comm _ _
 
+open scoped Classical in
 lemma right_right_card_le_one_of_tail_le_two
     {G : SimpleGraph V} {u v : V}
     (B : TypeCBarrier G u) (C : TypeCBarrier G v)
@@ -18976,6 +19287,7 @@ lemma right_right_card_le_one_of_tail_le_two
       omega
     · exact False.elim (by omega)
 
+open scoped Classical in
 lemma even_cross_of_zeroCaseIndependentSet
     {G : SimpleGraph V} {u v : V}
     (B : TypeCBarrier G u) (C : TypeCBarrier G v)
@@ -18998,6 +19310,7 @@ lemma even_cross_of_zeroCaseIndependentSet
   refine ⟨Uᶜ.card - U.card, ?_⟩
   omega
 
+open scoped Classical in
 lemma four_le_nu1_of_mu_values_zero
     {G : SimpleGraph V} {u v : V}
     (B : TypeCBarrier G u) (C : TypeCBarrier G v)
@@ -19015,6 +19328,7 @@ lemma four_le_nu1_of_mu_values_zero
   have hdegree := B.overlay_diagonal_degree C hreg hno4 hno6 hlower
   omega
 
+open scoped Classical in
 lemma false_of_H2_empty_nu_four_x33_empty
     {G : SimpleGraph V} {u v : V}
     (B : TypeCBarrier G u) (C : TypeCBarrier G v)
@@ -19040,9 +19354,10 @@ lemma false_of_H2_empty_nu_four_x33_empty
   obtain ⟨kC, hkC⟩ := C.odd_right_card
   rw [hH2, h33] at hgroups
   rw [h33] at hBcard hCcard
-  simp only [Finset.card_empty, Nat.zero_add, Nat.add_zero] at hgroups hBcard hCcard
+  simp only [Finset.card_empty, Nat.add_zero] at hgroups hBcard hCcard
   omega
 
+open scoped Classical in
 lemma four_le_tail_of_zero_core
     {G : SimpleGraph V} {u : V}
     (B : TypeCBarrier G u) (selection : TashkinovSelection B)
@@ -19061,8 +19376,8 @@ lemma four_le_tail_of_zero_core
     (hlower : CrossedLowerBounds B C)
     (hcard32 : 2 ≤ (block B C .R .M).card)
     (hmu1 : overlayEdge B C .R .M .M .L = 0)
-    (hmu2 : overlayEdge B C .M .R .L .M = 0)
-    (hnuPos : 0 < overlayEdge B C .R .L .M .M)
+    (_ : overlayEdge B C .M .R .L .M = 0)
+    (_ : 0 < overlayEdge B C .R .L .M .M)
     (hnuEq : overlayEdge B C .R .L .M .M =
       overlayEdge B C .L .R .M .M)
     (hnuLower : 4 ≤ overlayEdge B C .R .L .M .M)
@@ -19120,7 +19435,7 @@ lemma four_le_tail_of_zero_core
       obtain ⟨kB, hkB⟩ := B.odd_right_card
       obtain ⟨kC, hkC⟩ := C.odd_right_card
       rw [hH2] at hgroups
-      simp only [Finset.card_empty, Nat.zero_add] at hgroups
+      simp only [Finset.card_empty] at hgroups
       rw [Nat.odd_iff]
       omega
     have hXodd : Odd X.card := by simpa [X] using hXodd0
@@ -19167,6 +19482,7 @@ structure ZeroEdgeCounts {G : SimpleGraph V} {u v : V}
   tail23_four : overlayEdge B C .R .R .M .R = 4
   tail32_four : overlayEdge B C .R .R .R .M = 4
 
+open scoped Classical in
 lemma zero_core_edge_counts
     {G : SimpleGraph V} {u v : V}
     (B : TypeCBarrier G u) (C : TypeCBarrier G v)
@@ -19192,6 +19508,7 @@ lemma zero_core_edge_counts
     overlayEdge B C .R .R .M .R = 8 at hfirst
   refine ⟨?_, ?_, ?_, ?_, ?_⟩ <;> omega
 
+open scoped Classical in
 lemma right_right_odd_of_H2_empty_nu_four
     {G : SimpleGraph V} {u v : V}
     (B : TypeCBarrier G u) (C : TypeCBarrier G v)
@@ -19216,18 +19533,18 @@ lemma right_right_odd_of_H2_empty_nu_four
   obtain ⟨kB, hkB⟩ := B.odd_right_card
   obtain ⟨kC, hkC⟩ := C.odd_right_card
   rw [hH2] at hgroups
-  simp only [Finset.card_empty, Nat.zero_add] at hgroups
+  simp only [Finset.card_empty] at hgroups
   rw [Nat.odd_iff]
   omega
 
 noncomputable def mergedZeroLeft
     {G : SimpleGraph V} {u v : V}
-    (B : TypeCBarrier G u) (C : TypeCBarrier G v) : Finset V :=
+    (B : TypeCBarrier G u) (C : TypeCBarrier G v) : Finset V := open scoped Classical in
   B.left ∪ C.left
 
 noncomputable def mergedZeroMiddle
     {G : SimpleGraph V} {u v : V}
-    (B : TypeCBarrier G u) (C : TypeCBarrier G v) : Finset V :=
+    (B : TypeCBarrier G u) (C : TypeCBarrier G v) : Finset V := open scoped Classical in
   B.middle ∪ C.middle
 
 noncomputable def mergedZeroRight
@@ -19235,6 +19552,7 @@ noncomputable def mergedZeroRight
     (B : TypeCBarrier G u) (C : TypeCBarrier G v) : Finset V :=
   block B C .R .R
 
+open scoped Classical in
 lemma mergedZeroLeft_isIndepSet
     {G : SimpleGraph V} {u v : V}
     (B : TypeCBarrier G u) (C : TypeCBarrier G v)
@@ -19263,14 +19581,15 @@ lemma mergedZeroLeft_isIndepSet
     simp at hxH2
   · exact C.left_isIndepSet hreg hno4 hno6 hxC hyC hxy hAdj
 
+open scoped Classical in
 lemma mergedZeroMiddle_isIndepSet
     {G : SimpleGraph V} {u v : V}
     (B : TypeCBarrier G u) (C : TypeCBarrier G v)
-    (hreg : G.IsRegularOfDegree 4)
-    (hno4 : ∀ S : Finset V, S.Nonempty → S ≠ Finset.univ →
+    (_ : G.IsRegularOfDegree 4)
+    (_ : ∀ S : Finset V, S.Nonempty → S ≠ Finset.univ →
       (Pseudograph.ofSimple G).boundaryMultiplicity S = 4 →
         S.card = 1 ∨ Sᶜ.card = 1)
-    (hno6 : HasOnlyTrivialSixCuts G)
+    (_ : HasOnlyTrivialSixCuts G)
     (hH2 : overlayH2 B C = ∅)
     (hcross : overlayEdge B C .R .M .M .R = 0) :
     G.IsIndepSet ((mergedZeroMiddle B C : Finset V) : Set V) := by
@@ -19364,6 +19683,7 @@ lemma disjoint_mergedZeroMiddle_right
   · exact (Finset.disjoint_left.mp C.disjoint_middle_right) hxC
       (mem_block.mp hy).2
 
+open scoped Classical in
 lemma mergedZero_cover
     {G : SimpleGraph V} {u v : V}
     (B : TypeCBarrier G u) (C : TypeCBarrier G v) :
@@ -19383,6 +19703,7 @@ lemma mergedZero_cover
       | M => exact Or.inl (Or.inr (Finset.mem_union_right _ hxt))
       | R => exact Or.inr (mem_block.mpr ⟨hxs, hxt⟩)
 
+open scoped Classical in
 /-- The final Case-1 recombination is a type-C barrier whose right shore
 is just the common block `X33`. -/
 noncomputable def mergedZeroBarrier
@@ -19443,6 +19764,7 @@ noncomputable def mergedZeroBarrier
   · exact hcomp
   · exact hindependentComplement
 
+open scoped Classical in
 lemma false_of_mergedZeroBarrier_minimal
     {G : SimpleGraph V} {u : V}
     (B : TypeCBarrier G u) (selection : TashkinovSelection B)
@@ -19487,6 +19809,7 @@ for any fixed distinguished vertex. -/
 lemma exists_rightMinimalAt {G : SimpleGraph V} {u : V}
     (hexists : Nonempty (TypeCBarrier G u)) :
     ∃ B : TypeCBarrier G u, IsRightMinimalAt B := by
+  classical
   let p : ℕ → Prop := fun n ↦ ∃ B : TypeCBarrier G u, B.right.card = n
   have hp : ∃ n, p n := by
     obtain ⟨B⟩ := hexists
@@ -19502,6 +19825,7 @@ component when every vertex has a type-C barrier. -/
 lemma exists_rightMinimal [Nonempty V] {G : SimpleGraph V}
     (hexists : ∀ u : V, Nonempty (TypeCBarrier G u)) :
     ∃ (u : V) (B : TypeCBarrier G u), IsRightMinimal B := by
+  classical
   let p : ℕ → Prop := fun n ↦
     ∃ (u : V) (B : TypeCBarrier G u), B.right.card = n
   have hp : ∃ n, p n := by
@@ -19526,6 +19850,7 @@ structure SelectedPair (G : SimpleGraph V) where
   two_le_block₃₂ : 2 ≤ (block first second .R .M).card
   crossedLowerBounds : CrossedLowerBounds first second
 
+open scoped Classical in
 lemma exists_selectedPair [Nonempty V] {G : SimpleGraph V}
     (hreg : G.IsRegularOfDegree 4) (hconn : G.Connected)
     (hno2 : ∀ S : Finset V, S.Nonempty → S ≠ Finset.univ →
@@ -19545,6 +19870,7 @@ lemma exists_selectedPair [Nonempty V] {G : SimpleGraph V}
     hminimal hcard
   exact ⟨⟨u, B, hminimal, selection, C, hCminimal, hcard, hlower⟩⟩
 
+open scoped Classical in
 /-- Tashkinov's positive-`mu` branch ends with four `X32--X21` edges
 distributed over two `X32` vertices, although the selection rule permits
 at most one such edge at each vertex. -/
@@ -19591,6 +19917,7 @@ lemma false_of_selectedPair_positive
   exact B.selected_middle_contradiction_of_x32_two_mu1_four selection C
     hselectionMiddle h3132.2 hcounts.mu1_four
 
+open scoped Classical in
 /-- Tashkinov's zero-`mu` branch ends by merging the two barriers and
 obtaining a strictly smaller right shore. -/
 lemma false_of_selectedPair_zero
@@ -19634,6 +19961,7 @@ lemma false_of_selectedPair_zero
   exact B.false_of_mergedZeroBarrier_minimal selection C hBminimal hodd hreg
     hno4 hno6 hindependentComplement hlower hH2 hcard32 hcounts
 
+open scoped Classical in
 lemma false_of_selectedPair
     {G : SimpleGraph V} (pair : SelectedPair G)
     (hodd : Odd (Nat.card V))
@@ -19658,6 +19986,7 @@ lemma false_of_selectedPair
 
 end TypeCBarrier
 
+open scoped Classical in
 /-- The full type-C witness exists after the no-six-cut stage. -/
 theorem exists_typeCBarrier
     (G : SimpleGraph V) (hreg : G.IsRegularOfDegree 4)
@@ -19719,6 +20048,7 @@ def liftAntiNeighborhoodMatching (G : SimpleGraph V) (u : V)
     (M : (G.induce (antiNeighborhood G u)).Subgraph) : G.Subgraph :=
   M.map (SimpleGraph.Embedding.induce (antiNeighborhood G u)).toHom
 
+omit [Fintype V] in
 lemma liftAntiNeighborhoodMatching_verts {G : SimpleGraph V} {u : V}
     {M : (G.induce (antiNeighborhood G u)).Subgraph}
     (hM : M.IsSpanning) :
@@ -19727,6 +20057,7 @@ lemma liftAntiNeighborhoodMatching_verts {G : SimpleGraph V} {u : V}
   ext v
   simp [liftAntiNeighborhoodMatching, hM.verts_eq_univ]
 
+omit [Fintype V] in
 lemma liftAntiNeighborhoodMatching_isMatching {G : SimpleGraph V} {u : V}
     {M : (G.induce (antiNeighborhood G u)).Subgraph}
     (hM : M.IsMatching) :
@@ -19734,6 +20065,7 @@ lemma liftAntiNeighborhoodMatching_isMatching {G : SimpleGraph V} {u : V}
   exact hM.map _
     (SimpleGraph.Embedding.induce (G := G) (antiNeighborhood G u)).injective
 
+open scoped Classical in
 /-- The elementary matching certificate at the heart of Tashkinov's proof:
 if deleting the closed neighborhood of one vertex leaves a perfect matching,
 then deleting that vertex and those matching edges leaves a cubic subgraph. -/
@@ -19772,7 +20104,7 @@ theorem containsThreeRegular_of_isPerfectMatching_antiNeighborhood
         if G.Adj u v then G.neighborFinset v \ {u} else G.neighborFinset v := by
       ext w
       by_cases huv : G.Adj u v
-      · simp [B, SimpleGraph.deleteIncidenceSet_adj, huv, G.adj_comm, hvu]
+      · simp [B, SimpleGraph.deleteIncidenceSet_adj, huv, hvu]
       · simp only [if_neg huv, SimpleGraph.mem_neighborFinset, B,
           SimpleGraph.deleteIncidenceSet_adj]
         constructor
@@ -19830,7 +20162,7 @@ theorem containsThreeRegular_of_isPerfectMatching_antiNeighborhood
         exact v.2
       simpa only [Set.mem_compl_iff, Set.mem_singleton_iff] using hv
     rw [← Set.fintypeCard_eq_ncard, SimpleGraph.card_neighborSet_eq_degree]
-    change (K.induce ({u}ᶜ : Set V)).degree ⟨v, by simpa using hvu⟩ = 3
+    change (K.induce ({u}ᶜ : Set V)).degree ⟨v, by simp⟩ = 3
     rw [K.degree_induce_of_neighborSet_subset]
     · exact hKdegree v hvu
     · intro w hvw
@@ -19842,6 +20174,7 @@ theorem containsThreeRegular_of_isPerfectMatching_antiNeighborhood
       have hvwB : B.Adj (v : V) u := hKB hvwK
       exact (SimpleGraph.deleteIncidenceSet_adj.mp hvwB).2.2 rfl
 
+open scoped Classical in
 /-- The complete barrier contradiction, packaged under the structural
 properties established for Tashkinov's minimal counterexample. -/
 theorem containsThreeRegular_of_odd_of_structural_properties
@@ -19874,6 +20207,7 @@ theorem containsThreeRegular_of_odd_of_structural_properties
   exact TypeCBarrier.false_of_selectedPair pair hodd hreg hconn hno2 hno4
     hno6 hindependentComplement
 
+open scoped Classical in
 /-- Once the structural part of Tashkinov's argument rules out all genuine
 A/B/C barrier patterns, the matching certificate immediately supplies the
 required cubic subgraph. -/
@@ -20000,6 +20334,7 @@ def SixClosureDecomposition
     ∀ v, F.degree v + sixClosingDegree E use₀₁ use₂₃ use₄₅ v =
       H.degree v
 
+omit [Fintype W] in
 /-- Every part of a six-cut matching closure admits a decomposition into
 its genuine shore part and three artificial-edge use bits. -/
 lemma exists_sixClosureDecomposition
@@ -20038,11 +20373,13 @@ lemma exists_sixClosureDecomposition
   simp only [sixClosingDegree]
   omega
 
+open scoped Classical in
 noncomputable def reverseSixCutListing
     {G : Pseudograph W} {S : Finset W}
     (E : Fin 6 ≃ CrossingEdge G S) : Fin 6 ≃ CrossingEdge G Sᶜ :=
   E.trans (G.reverseCrossingEdgeEquiv S)
 
+open scoped Classical in
 @[simp]
 lemma reverseSixCutListing_inside
     {G : Pseudograph W} {S : Finset W}
@@ -20053,7 +20390,7 @@ lemma reverseSixCutListing_inside
 noncomputable def sixIncidenceInside
     {G : Pseudograph W} {S : Finset W}
     (E : Fin 6 ≃ CrossingEdge G S) (use₀₁ use₂₃ use₄₅ : Bool)
-    (v : W) : ℕ :=
+    (v : W) : ℕ := open scoped Classical in
   (if use₀₁ then
       (if v = (E 0).inside then 1 else 0) +
       (if v = (E 1).inside then 1 else 0)
@@ -20070,7 +20407,7 @@ noncomputable def sixIncidenceInside
 noncomputable def sixIncidenceOutside
     {G : Pseudograph W} {S : Finset W}
     (E : Fin 6 ≃ CrossingEdge G S) (use₀₁ use₂₃ use₄₅ : Bool)
-    (v : W) : ℕ :=
+    (v : W) : ℕ := open scoped Classical in
   (if use₀₁ then
       (if v = (E 0).outside then 1 else 0) +
       (if v = (E 1).outside then 1 else 0)
@@ -20084,12 +20421,14 @@ noncomputable def sixIncidenceOutside
       (if v = (E 5).outside then 1 else 0)
     else 0)
 
+omit [Fintype W] in
 lemma sixClosingDegree_eq_incidence
     {G : Pseudograph W} {S : Finset W}
     (E : Fin 6 ≃ CrossingEdge G S) (use₀₁ use₂₃ use₄₅ : Bool)
     (v : S) :
     sixClosingDegree E use₀₁ use₂₃ use₄₅ v =
       sixIncidenceInside E use₀₁ use₂₃ use₄₅ (v : W) := by
+  classical
   cases use₀₁ <;> cases use₂₃ <;> cases use₄₅ <;>
     simp [sixClosingDegree, sixIncidenceInside, degree_singleEdge,
       sixPairEndpoint, Subtype.ext_iff]
@@ -20114,6 +20453,7 @@ noncomputable def sixCrossingSelection
       (G.crossingPart S).sdiff (twoCrossingLabelPart (E 4) (E 5))
   | true, true, true => G.crossingPart S
 
+omit [Fintype W] in
 lemma sixCrossingSelection_isPart
     {G : Pseudograph W} {S : Finset W}
     (E : Fin 6 ≃ CrossingEdge G S) (use₀₁ use₂₃ use₄₅ : Bool) :
@@ -20144,6 +20484,7 @@ lemma sixCrossingSelection_isPart
       (G.crossingPart_isPart S)
   · exact G.crossingPart_isPart S
 
+omit [Fintype W] in
 lemma sixCrossingSelection_isPart_crossingPart
     {G : Pseudograph W} {S : Finset W}
     (E : Fin 6 ≃ CrossingEdge G S) (use₀₁ use₂₃ use₄₅ : Bool) :
@@ -20205,10 +20546,10 @@ lemma degree_sixCrossingSelection_of_mem
     omega
   · simp only [sixCrossingSelection]
     rw [degree_twoCrossingLabelPart, sixIncidenceInside]
-    simp [sixCrossingSelection, hout]
+    simp [hout]
   · simp only [sixCrossingSelection]
     rw [degree_twoCrossingLabelPart, sixIncidenceInside]
-    simp [sixCrossingSelection, hout]
+    simp [hout]
   · have hrem := twoCrossingLabelPart_isPart_crossingPart (E 0) (E 1) h01
     have hdiff := (G.crossingPart S).degree_sdiff_add
       (twoCrossingLabelPart (E 0) (E 1)) hrem v
@@ -20218,7 +20559,7 @@ lemma degree_sixCrossingSelection_of_mem
     omega
   · simp only [sixCrossingSelection]
     rw [degree_twoCrossingLabelPart, sixIncidenceInside]
-    simp [sixCrossingSelection, hout]
+    simp [hout]
   · have hrem := twoCrossingLabelPart_isPart_crossingPart (E 2) (E 3) h23
     have hdiff := (G.crossingPart S).degree_sdiff_add
       (twoCrossingLabelPart (E 2) (E 3)) hrem v
@@ -20235,7 +20576,7 @@ lemma degree_sixCrossingSelection_of_mem
     omega
   · simp only [sixCrossingSelection]
     rw [G.degree_crossingPart_of_mem S v hv, htotal]
-    simp only [sixIncidenceInside, Bool.true_eq, if_true]
+    simp only [sixIncidenceInside, if_true]
     omega
 
 lemma degree_sixCrossingSelection_of_notMem
@@ -20277,10 +20618,10 @@ lemma degree_sixCrossingSelection_of_notMem
     omega
   · simp only [sixCrossingSelection]
     rw [degree_twoCrossingLabelPart, sixIncidenceOutside]
-    simp [sixCrossingSelection, hin]
+    simp [hin]
   · simp only [sixCrossingSelection]
     rw [degree_twoCrossingLabelPart, sixIncidenceOutside]
-    simp [sixCrossingSelection, hin]
+    simp [hin]
   · have hrem := twoCrossingLabelPart_isPart_crossingPart (E 0) (E 1) h01
     have hdiff := (G.crossingPart S).degree_sdiff_add
       (twoCrossingLabelPart (E 0) (E 1)) hrem v
@@ -20290,7 +20631,7 @@ lemma degree_sixCrossingSelection_of_notMem
     omega
   · simp only [sixCrossingSelection]
     rw [degree_twoCrossingLabelPart, sixIncidenceOutside]
-    simp [sixCrossingSelection, hin]
+    simp [hin]
   · have hrem := twoCrossingLabelPart_isPart_crossingPart (E 2) (E 3) h23
     have hdiff := (G.crossingPart S).degree_sdiff_add
       (twoCrossingLabelPart (E 2) (E 3)) hrem v
@@ -20307,9 +20648,10 @@ lemma degree_sixCrossingSelection_of_notMem
     omega
   · simp only [sixCrossingSelection]
     rw [G.degree_crossingPart_of_notMem S v hv, htotal]
-    simp only [sixIncidenceOutside, Bool.true_eq, if_true]
+    simp only [sixIncidenceOutside, if_true]
     omega
 
+open scoped Classical in
 lemma sixClosingDegree_reverse_eq_outside
     {G : Pseudograph W} {S : Finset W}
     (E : Fin 6 ≃ CrossingEdge G S) (use₀₁ use₂₃ use₄₅ : Bool)
@@ -20323,6 +20665,7 @@ lemma sixClosingDegree_reverse_eq_outside
       reverseCrossingEdgeEquiv, reverseCrossingEdge]
   all_goals rfl
 
+open scoped Classical in
 /-- Splice the genuine parts of two aligned six-cut matching closures and
 restore exactly the original labelled cut-edge pairs selected by their
 common use bits. -/
@@ -20333,6 +20676,7 @@ noncomputable def spliceSixCutMatchings
   extendFrom S F + extendFrom Sᶜ L +
     sixCrossingSelection E use₀₁ use₂₃ use₄₅
 
+open scoped Classical in
 lemma degree_spliceSixCutMatchings_of_mem
     {G : Pseudograph W} {S : Finset W}
     (E : Fin 6 ≃ CrossingEdge G S)
@@ -20354,6 +20698,7 @@ lemma degree_spliceSixCutMatchings_of_mem
   rw [← hinc]
   exact hdec.2 ⟨v, hv⟩
 
+open scoped Classical in
 lemma degree_spliceSixCutMatchings_of_notMem
     {G : Pseudograph W} {S : Finset W}
     (E : Fin 6 ≃ CrossingEdge G S)
@@ -20374,6 +20719,7 @@ lemma degree_spliceSixCutMatchings_of_notMem
     E use₀₁ use₂₃ use₄₅ v hv]
   exact hdec.2 ⟨v, hvC⟩
 
+open scoped Classical in
 lemma spliceSixCutMatchings_isPart
     {G : Pseudograph W} {S : Finset W}
     (E : Fin 6 ≃ CrossingEdge G S) (use₀₁ use₂₃ use₄₅ : Bool)
@@ -20413,6 +20759,7 @@ lemma spliceSixCutMatchings_isPart
     simpa [spliceSixCutMatchings, extendFrom, hu, hv, huC, hvC, hsel] using
       hL ⟨u, huC⟩ ⟨v, hvC⟩
 
+open scoped Classical in
 /-- The canonical matching closure on the complementary shore, with the
 same six original cut-edge labels reversed. -/
 noncomputable def oppositeSixCutMatchingClosure
@@ -20421,6 +20768,7 @@ noncomputable def oppositeSixCutMatchingClosure
   G.closeSixCutMatchingWith Sᶜ
     (reverseSixCutListing (G.cutEquiv S hcut).symm)
 
+open scoped Classical in
 /-- Six-cut matching gluing: local witnesses for every nonzero artificial
 use pattern splice against an arbitrary cubic part on the oppositely
 oriented matching closure. -/
@@ -20447,7 +20795,8 @@ theorem containsRegularPart_of_sixCutMatchingClosures
   by_cases hzero : use₀₁ = false ∧ use₂₃ = false ∧ use₄₅ = false
   · have hLdeg (v : ↑(Sᶜ)) : L.degree v = K.degree v := by
       have h := hKdec.2 v
-      simp [sixClosingDegree, hzero.1, hzero.2.1, hzero.2.2] at h
+      simp only [sixClosingDegree, hzero.1, Bool.false_eq_true, ↓reduceIte, hzero.2.1,
+        add_zero, hzero.2.2] at h
       exact h
     refine ⟨extendFrom Sᶜ L, extendFrom_isPart hKdec.1, ?_, ?_⟩
     · obtain ⟨v, hv⟩ := hKne
@@ -20484,6 +20833,7 @@ theorem containsRegularPart_of_sixCutMatchingClosures
         E H use₀₁ use₂₃ use₄₅ F hHdec L v v.2]
     exact hv
 
+open scoped Classical in
 /-- Labelled form of six-cut matching gluing.  Unlike the canonical wrapper
 above, this theorem accepts any listing of the six cut-edge copies; this is
 needed when the three pairs are chosen to control loops and parallel edges
@@ -20509,7 +20859,8 @@ theorem containsRegularPart_of_sixCutMatchingClosuresWith
   by_cases hzero : use₀₁ = false ∧ use₂₃ = false ∧ use₄₅ = false
   · have hLdeg (v : ↑(Sᶜ)) : L.degree v = K.degree v := by
       have h := hKdec.2 v
-      simp [sixClosingDegree, hzero.1, hzero.2.1, hzero.2.2] at h
+      simp only [sixClosingDegree, hzero.1, Bool.false_eq_true, ↓reduceIte, hzero.2.1,
+        add_zero, hzero.2.2] at h
       exact h
     refine ⟨extendFrom Sᶜ L, extendFrom_isPart hKdec.1, ?_, ?_⟩
     · obtain ⟨v, hv⟩ := hKne
@@ -20552,6 +20903,7 @@ The line-colouring step in Proposition 3.6 must distinguish an artificial
 closing edge from an original edge parallel to it.  The following oriented
 copy type exposes precisely that label information. -/
 
+open scoped Classical in
 /-- A genuine bipartition of every vertex of a pseudograph.  The last field
 is stated for positive multiplicity, so it also covers parallel copies. -/
 structure IsBipartiteWith (P : Pseudograph W) (A B : Finset W) : Prop where
@@ -20565,6 +20917,7 @@ bipartition to the second. -/
 abbrev BipartiteEdge (P : Pseudograph W) (A B : Finset W) :=
   Σ a : A, Σ b : B, Fin (P.mult a b)
 
+omit [Fintype W] in
 lemma bipartiteEdge_eq_of_endpoints_of_mult_eq_one
     {P : Pseudograph W} {A B : Finset W}
     (e f : BipartiteEdge P A B)
@@ -20595,12 +20948,14 @@ noncomputable def bipartiteMultigraph (P : Pseudograph W)
 lemma IsBipartiteWith.mem_right_of_not_mem_left
     {P : Pseudograph W} {A B : Finset W}
     (h : P.IsBipartiteWith A B) {v : W} (hv : v ∉ A) : v ∈ B := by
+  classical
   have hvU : v ∈ A ∪ B := by rw [h.cover]; simp
   simpa [hv] using hvU
 
 lemma IsBipartiteWith.mem_left_of_not_mem_right
     {P : Pseudograph W} {A B : Finset W}
     (h : P.IsBipartiteWith A B) {v : W} (hv : v ∉ B) : v ∈ A := by
+  classical
   have hvU : v ∈ A ∪ B := by rw [h.cover]; simp
   simpa [hv] using hvU
 
@@ -20791,6 +21146,7 @@ lemma colorClassSubgraph_adj_iff
           ((e.1 : W) = v ∧ (e.2.1 : W) = u)) :=
   Iff.rfl
 
+omit [Fintype W] in
 private lemma exists_left_color_of_properColoring
     {P : Pseudograph W} {A B : Finset W}
     (hreg : (P.bipartiteMultigraph A B).IsRegular 4)
@@ -20820,6 +21176,7 @@ private lemma exists_left_color_of_properColoring
   obtain ⟨e, he⟩ := hsurj c
   exact ⟨e.1, e.2, he⟩
 
+omit [Fintype W] in
 private lemma exists_right_color_of_properColoring
     {P : Pseudograph W} {A B : Finset W}
     (hreg : (P.bipartiteMultigraph A B).IsRegular 4)
@@ -20932,11 +21289,13 @@ vertex in the minimal-shore argument. -/
 def IsBipartiteOn (G : SimpleGraph W) (S : Finset W) : Prop :=
   ∃ c : W → Fin 2, ∀ {u v}, u ∈ S → v ∈ S → G.Adj u v → c u ≠ c v
 
+omit [Fintype W] in
 lemma IsBipartiteOn.mono {G : SimpleGraph W} {S T : Finset W}
     (h : IsBipartiteOn G S) (hTS : T ⊆ S) : IsBipartiteOn G T := by
   obtain ⟨c, hc⟩ := h
   exact ⟨c, fun hu hv huv ↦ hc (hTS hu) (hTS hv) huv⟩
 
+omit [Fintype W] in
 lemma isBipartiteOn_iff_induce_isBipartite
     (G : SimpleGraph W) (S : Finset W) :
     IsBipartiteOn G S ↔ (G.induce (S : Set W)).IsBipartite := by
@@ -20953,6 +21312,7 @@ lemma isBipartiteOn_iff_induce_isBipartite
     simpa [d, hu, hv] using hc (show (G.induce (S : Set W)).Adj
       ⟨u, by simpa using hu⟩ ⟨v, by simpa using hv⟩ from huv)
 
+open scoped Classical in
 /-- The four incidences at a vertex of a quartic shore split into its
 internal neighbours and its cut incidences. -/
 lemma between_erase_add_outsideDegree_eq_four
@@ -20979,6 +21339,7 @@ lemma between_erase_add_outsideDegree_eq_four
   rw [hsingle, hout] at hsplit
   exact hsplit.symm
 
+open scoped Classical in
 /-- Removing one vertex from a shore gives the exact cut-toggle equation
 used in the endpoint-distinctness part of Proposition 3.6. -/
 lemma erase_vertex_cut_equation
@@ -21056,6 +21417,7 @@ lemma IsBipartiteWith.add_singleEdge
         · exact .inl ⟨hab.2, hab.1⟩
     · omega
 
+omit [Fintype W] in
 lemma closeSixCutMatchingWith_isBipartiteWith
     {G : Pseudograph W} {S : Finset W}
     (E : Fin 6 ≃ CrossingEdge G S) (A B : Finset S)
@@ -21069,6 +21431,7 @@ lemma closeSixCutMatchingWith_isBipartiteWith
     (G.closeSixCutMatchingWith S E).IsBipartiteWith A B := by
   exact ((hbip.add_singleEdge h01).add_singleEdge h23).add_singleEdge h45
 
+omit [Fintype W] in
 lemma closeSixCutMatchingWith_mult_pair01
     {G : Pseudograph W} {S : Finset W}
     (E : Fin 6 ≃ CrossingEdge G S)
@@ -21083,6 +21446,7 @@ lemma closeSixCutMatchingWith_mult_pair01
     hne 0 4 (by decide), hne 0 5 (by decide), hne 1 2 (by decide),
     hne 1 3 (by decide), hne 1 4 (by decide), hne 1 5 (by decide)]
 
+omit [Fintype W] in
 lemma closeSixCutMatchingWith_mult_pair23
     {G : Pseudograph W} {S : Finset W}
     (E : Fin 6 ≃ CrossingEdge G S)
@@ -21097,6 +21461,7 @@ lemma closeSixCutMatchingWith_mult_pair23
     hne 2 4 (by decide), hne 2 5 (by decide), hne 3 0 (by decide),
     hne 3 1 (by decide), hne 3 4 (by decide), hne 3 5 (by decide)]
 
+omit [Fintype W] in
 lemma closeSixCutMatchingWith_mult_pair45
     {G : Pseudograph W} {S : Finset W}
     (E : Fin 6 ≃ CrossingEdge G S)
@@ -21162,8 +21527,7 @@ exact deficit-one form is what the cut-counting arguments in Tashkinov's
 proof require. -/
 lemma exists_exact_hallDefect
     {L R : Type*} [Fintype L] [Fintype R]
-    (rel : L → R → Prop) [DecidableRel rel]
-    (hcard : Fintype.card L = Fintype.card R)
+    (rel : L → R → Prop) (hcard : Fintype.card L = Fintype.card R)
     (hno : ¬ ∃ f : L → R, Function.Injective f ∧ ∀ x, rel x (f x)) :
     ∃ A : Finset L, ∃ B : Finset R,
       A.card = B.card + 1 ∧
@@ -21210,6 +21574,7 @@ noncomputable def internalEdgeFinset (G : SimpleGraph W) (S : Finset W) :
   Finset.univ.filter fun e ↦
     (ofSimple G).edgeMultiplicity e * internalIndicator S e = 1
 
+omit [Fintype W] in
 lemma ofSimple_internalTerm_le_one (G : SimpleGraph W) (S : Finset W)
     (e : Sym2 W) :
     (ofSimple G).edgeMultiplicity e * internalIndicator S e ≤ 1 := by
@@ -21234,7 +21599,7 @@ lemma card_internalEdgeFinset (G : SimpleGraph W) (S : Finset W) :
   · have hzero :
         (ofSimple G).edgeMultiplicity e * internalIndicator S e = 0 := by
       omega
-    simp [hterm, hzero]
+    simp [hzero]
 
 lemma mem_internalEdgeFinset_mk_iff (G : SimpleGraph W) (S : Finset W)
     (a b : W) :
@@ -21249,6 +21614,7 @@ noncomputable def betweenEdgeFinset (G : SimpleGraph W)
   Finset.univ.filter fun e ↦
     (ofSimple G).edgeMultiplicity e * betweenIndicator S T e = 1
 
+omit [Fintype W] in
 lemma ofSimple_betweenTerm_le_one (G : SimpleGraph W)
     (S T : Finset W) (e : Sym2 W) :
     (ofSimple G).edgeMultiplicity e * betweenIndicator S T e ≤ 1 := by
@@ -21322,6 +21688,7 @@ lemma exists_two_internal_edges_of_internalMultiplicity_eq_two
           rw [hfinset] at hmem
           simpa only [Finset.mem_insert, Finset.mem_singleton] using hmem
 
+open scoped Classical in
 /-- Two adjacent vertices in a simple quartic graph form a six-edge shore. -/
 lemma boundaryMultiplicity_pair_of_adj_quartic
     (G : SimpleGraph W) (hreg : G.IsRegularOfDegree 4)
@@ -21362,6 +21729,7 @@ def HasNoNontrivialBipartiteSixShore (G : SimpleGraph W) : Prop :=
     (ofSimple G).boundaryMultiplicity S = 6 →
       IsBipartiteOn G S → S.card = 2
 
+open scoped Classical in
 /-- If the only two edges inside the complement of an independent set have
 a common endpoint, deleting the endpoints of either edge leaves a
 nontrivial bipartite six-shore.  This is the first case of Proposition 4.1. -/
@@ -21371,8 +21739,8 @@ lemma false_of_two_internal_edges_with_common_endpoint
     (hnoBip6 : HasNoNontrivialBipartiteSixShore G)
     (U : Finset W) (hU : G.IsIndepSet (U : Set W))
     {a b c : W}
-    (hab : G.Adj a b) (hac : G.Adj a c)
-    (haX : a ∈ Uᶜ) (hbX : b ∈ Uᶜ) (hcX : c ∈ Uᶜ)
+    (hab : G.Adj a b) (_ : G.Adj a c)
+    (_ : a ∈ Uᶜ) (_ : b ∈ Uᶜ) (_ : c ∈ Uᶜ)
     (hclass : ∀ {x y : W}, G.Adj x y → x ∈ Uᶜ → y ∈ Uᶜ →
       s(x, y) = s(a, b) ∨ s(x, y) = s(a, c)) : False := by
   classical
@@ -21411,11 +21779,12 @@ lemma false_of_two_internal_edges_with_common_endpoint
             exact (Finset.mem_compl.mp hyS) (by simp [T])
   have hScard : S.card = 2 := hnoBip6 S hcutS hbip
   have hcards : T.card + S.card = Nat.card W := by
-    simpa [S, Nat.card_eq_fintype_card] using Finset.card_add_card_compl T
+    simp [S, Nat.card_eq_fintype_card]
   have hTcard : T.card = 2 := by simp [T, hab.ne]
   rcases hodd with ⟨k, hk⟩
   omega
 
+open scoped Classical in
 /-- Consequently, in the remaining equality case of Proposition 4.1 the
 two internal edges have four distinct endpoints. -/
 lemma exists_two_vertex_disjoint_internal_edges
@@ -21475,6 +21844,7 @@ lemma exists_two_vertex_disjoint_internal_edges
   exact ⟨a, b, c, d, hab, hcd, haX, hbX, hcX, hdX,
     habne, hac, had, hbc, hbd, hcdne, hclass⟩
 
+open scoped Classical in
 lemma other_neighbors_subset_independent
     (G : SimpleGraph W) (U : Finset W)
     {a b c d : W}
@@ -21500,6 +21870,7 @@ lemma other_neighbors_subset_independent
     · exact hac hac'
     · exact had had'
 
+open scoped Classical in
 lemma other_neighbors_card_eq_three
     (G : SimpleGraph W) (hreg : G.IsRegularOfDegree 4)
     {a b : W} (hab : G.Adj a b) :
@@ -21509,6 +21880,7 @@ lemma other_neighbors_card_eq_three
   rw [Finset.sdiff_singleton_eq_erase, Finset.card_erase_of_mem hbmem,
     SimpleGraph.card_neighborFinset_eq_degree, hreg a]
 
+open scoped Classical in
 /-- A Hall transversal between two displayed equal shores is a perfect
 matching.  This endpoint-level constructor avoids passing through a
 separate bipartite-graph object. -/
@@ -21581,6 +21953,7 @@ lemma exists_isPerfectMatching_of_transversal
           exact hl'z.symm
   · rw [SimpleGraph.Subgraph.isSpanning_iff]
 
+open scoped Classical in
 /-- A transversal on all but two vertices, together with an edge joining
 the two omitted vertices, is a perfect matching. -/
 lemma exists_isPerfectMatching_of_transversal_and_edge
@@ -21688,6 +22061,7 @@ noncomputable def matchingOnInduce
   edge_vert h := M.edge_vert h
   symm := ⟨fun u v h ↦ M.symm.symm u v h⟩
 
+omit [Fintype W] in
 lemma matchingOnInduce_isPerfectMatching
     (K : SimpleGraph W) (A : Set W) (M : K.Subgraph)
     (hverts : M.verts = A) (hmatch : M.IsMatching) :
@@ -21708,6 +22082,7 @@ lemma matchingOnInduce_isPerfectMatching
     ext v
     simp [matchingOnInduce, hverts]
 
+open scoped Classical in
 noncomputable def transversalSubgraph
     (K : SimpleGraph W) (L R : Finset W)
     (f : L → R) (hadj : ∀ l : L, K.Adj l (f l)) : K.Subgraph where
@@ -21733,6 +22108,7 @@ noncomputable def transversalSubgraph
     rintro u v ⟨l, huv⟩
     exact ⟨l, huv.symm⟩⟩
 
+omit [Fintype W] in
 lemma transversalSubgraph_isMatching
     (K : SimpleGraph W) (L R : Finset W)
     (hdisj : Disjoint L R) (hcard : L.card = R.card)
@@ -21781,6 +22157,8 @@ lemma transversalSubgraph_isMatching
         subst l'
         exact hl'z.symm
 
+omit [Fintype W] in
+open scoped Classical in
 /-- Partial version of the preceding constructor, retaining its precise
 ambient vertex set for subsequent restriction to an induced graph. -/
 lemma exists_matching_of_transversal_and_edge
@@ -21813,6 +22191,7 @@ lemma exists_matching_of_transversal_and_edge
   ext v
   simp [P, transversalSubgraph]
 
+open scoped Classical in
 /-- The disjoint-edge equality case of Proposition 4.1, stopped exactly at
 the Hall dichotomy.  A transversal supplies the anti-neighbourhood matching;
 otherwise `A,B` are the deficit-one sets used to expose a six-cut. -/
@@ -22008,6 +22387,7 @@ lemma containsThreeRegular_or_exactHallDefect_of_disjoint_internal_edges
         simpa [hxval] using hxy)
       exact hyB' hmem
 
+open scoped Classical in
 /-- The exact Hall defect in the preceding lemma cuts out a bipartite
 six-shore containing the three other neighbours of `a`. -/
 lemma exists_nontrivial_bipartiteSixShore_of_exactHallDefect
@@ -22293,6 +22673,7 @@ lemma exists_nontrivial_bipartiteSixShore_of_exactHallDefect
       _ ≤ S.card := Finset.card_le_card Finset.subset_union_left
   exact ⟨S, hScut, hbip, by omega⟩
 
+open scoped Classical in
 /-- Tashkinov's Proposition 4.1.  In a cubic-subgraph-free odd quartic
 graph with Proposition 3.6 available, the complement of every independent
 set contains strictly more than two edges. -/
@@ -22321,6 +22702,7 @@ theorem two_lt_internalMultiplicity_compl_of_independent
           hcount hclass A B hAsub hBsub hABcard hno
     exact hcard (hnoBip6 S hcut hbip)
 
+open scoped Classical in
 /-- A bipartite shore of a six-cut in a simple quartic graph cannot have
 three vertices: the degree ledger would force all three possible edges,
 forming a triangle. -/
@@ -22346,12 +22728,13 @@ lemma card_ne_three_of_bipartite_six_shore
         have hb : b = x ∨ b = y ∨ b = z := by
           simpa [hS] using hm.2.2
         rcases ha with rfl | rfl | rfl <;> rcases hb with rfl | rfl | rfl
-        all_goals simp [Eall, Sym2.eq_swap]
+        all_goals simp only [Sym2.eq_swap, mem_insert, Sym2.eq, Sym2.rel_iff', Prod.mk.injEq,
+          and_true, Prod.swap_prod_mk, true_and, or_self, mem_singleton, Eall, true_or, or_true]
         all_goals exact (G.loopless.irrefl _ hm.1).elim
   have hEcard : (internalEdgeFinset G S).card = 3 := by
     rw [card_internalEdgeFinset, hint]
   have hAllcard : Eall.card = 3 := by
-    simp [Eall, Sym2.eq_iff, hxy, hxz, hyz, ne_comm]
+    simp [Eall, hxy, hxz, hyz]
   have hEq : internalEdgeFinset G S = Eall :=
     Finset.eq_of_subset_of_card_le hsub (by omega)
   have hxyAdj : G.Adj x y := by
@@ -22408,6 +22791,7 @@ lemma exists_minimalBipartiteSixShore
   rw [hcard]
   exact Nat.find_min' hp ⟨R, hRcut, hRbip, hRnontrivial, rfl⟩
 
+open scoped Classical in
 lemma MinimalBipartiteSixShore.four_le_card
     {G : SimpleGraph W} (M : MinimalBipartiteSixShore G)
     (hreg : G.IsRegularOfDegree 4) : 4 ≤ M.shore.card := by
@@ -22444,6 +22828,7 @@ lemma MinimalBipartiteSixShore.shore_ne_univ
   rw [huniv] at hcut
   omega
 
+open scoped Classical in
 /-- Minimality and the already excluded two- and nontrivial four-cuts force
 each vertex of a minimal bipartite six-shore to carry at most one cut
 incidence. -/
@@ -22510,13 +22895,14 @@ lemma MinimalBipartiteSixShore.outsideDegree_le_one
           · simpa [hxv] using hv
           · have hxTc : x ∉ Tᶜ := by
               rw [hw]
-              simpa [hxv]
+              simp [hxv]
             have hxT : x ∈ T := by simpa using hxTc
             exact Finset.mem_of_mem_erase hxT
       exact M.shore_ne_univ hTuniv
   · have hcutT : (ofSimple G).boundaryMultiplicity T = 2 := by omega
     exact hno2 T hTnonempty hTproper hcutT
 
+open scoped Classical in
 lemma MinimalBipartiteSixShore.cutEndpoints_injective
     {G : SimpleGraph W} (M : MinimalBipartiteSixShore G)
     (hreg : G.IsRegularOfDegree 4)
@@ -22551,7 +22937,7 @@ lemma MinimalBipartiteSixShore.cutEndpoints_injective
 
 noncomputable def sixLabelCount
     {G : Pseudograph W} {S : Finset W}
-    (E : Fin 6 ≃ CrossingEdge G S) (A : Finset S) : ℕ :=
+    (E : Fin 6 ≃ CrossingEdge G S) (A : Finset S) : ℕ := open scoped Classical in
   ((Finset.univ : Finset (Fin 6)).filter fun i ↦ sixPairEndpoint E i ∈ A).card
 
 lemma sum_outsideDegree_eq_sixLabelCount
@@ -22579,7 +22965,7 @@ lemma sum_outsideDegree_eq_sixLabelCount
           apply Subtype.ext
           apply Subtype.ext
           exact h.symm
-        simp [a, sixPairEndpoint, hne]
+        simp [hne]
       · simp]
     simp [hi]
   · have hnone (x : A) : (E i).inside ≠ (x : W) := by
@@ -22592,6 +22978,7 @@ lemma sum_outsideDegree_eq_sixLabelCount
       exact x.2
     simp [hi, hnone]
 
+omit [Fintype W] in
 lemma sixLabelCount_add_of_cover
     {G : Pseudograph W} {S : Finset W}
     (E : Fin 6 ≃ CrossingEdge G S) (A B : Finset S)
@@ -22626,7 +23013,7 @@ lemma sixLabelCount_add_of_cover
 cut ends on each side, or differ by one with cut-end distribution `1,5`. -/
 lemma bipartiteSixShore_card_and_labelCount_cases
     (G : Pseudograph W) (hreg : G.IsRegularOfDegree 4)
-    (S : Finset W) (hcut : G.boundaryMultiplicity S = 6)
+    (S : Finset W) (_ : G.boundaryMultiplicity S = 6)
     (E : Fin 6 ≃ CrossingEdge G S) (A B : Finset S)
     (hbip : (G.induce S).IsBipartiteWith A B) :
     (A.card = B.card ∧ sixLabelCount E A = 3 ∧ sixLabelCount E B = 3) ∨
@@ -22670,6 +23057,7 @@ lemma bipartiteSixShore_card_and_labelCount_cases
   have hlabels := sixLabelCount_add_of_cover E A B hbip.disjoint hcover
   omega
 
+omit [Fintype W] in
 lemma exists_isBipartiteWith_induce_of_isBipartiteOn
     (G : SimpleGraph W) (S : Finset W) (hbip : IsBipartiteOn G S) :
     ∃ A B : Finset S, ((ofSimple G).induce S).IsBipartiteWith A B := by
@@ -22845,6 +23233,7 @@ noncomputable def finsetPartitionEquiv
       · exact ⟨Sum.inl ⟨x, hx⟩, rfl⟩
       · exact ⟨Sum.inr ⟨x, hx⟩, rfl⟩⟩
 
+omit [Fintype W] in
 /-- Reindex a balanced bipartite six-cut so each of the three artificial
 closing edges crosses the displayed bipartition. -/
 lemma exists_alternatingSixCutListing
@@ -22944,8 +23333,7 @@ lemma boundaryMultiplicity_closeSixCutMatchingWith_image_of_no_internal
       Q.induce U = (G.induce A).relabel eA.symm := by
     apply Pseudograph.ext
     intro x y
-    simp only [induce_mult, relabel_mult, Equiv.symm_symm,
-      Equiv.apply_symm_apply]
+    simp only [induce_mult, relabel_mult, Equiv.symm_symm]
     change Q.mult (x : S) (y : S) = G.mult (x : W) (y : W)
     rw [show Q.mult (x : S) (y : S) =
         (((G.induce S + singleEdge (sixPairEndpoint E 0)
@@ -23054,20 +23442,24 @@ def liftUnderlyingSubgraphOfPart
   edge_vert := M.edge_vert
   symm := M.symm
 
+omit [Fintype W] in
 lemma liftUnderlyingSubgraphOfPart_isPerfectMatching
     {P Q : Pseudograph W} (hPQ : P.IsPart Q)
     (M : P.toSimple.Subgraph) (hM : M.IsPerfectMatching) :
     (liftUnderlyingSubgraphOfPart hPQ M).IsPerfectMatching := by
   exact hM
 
+omit [Fintype W] in
 lemma ofUnderlyingSubgraph_liftUnderlyingSubgraphOfPart_isPart
     {P Q : Pseudograph W} (hPQ : P.IsPart Q)
     (M : P.toSimple.Subgraph) :
     (Q.ofUnderlyingSubgraph (liftUnderlyingSubgraphOfPart hPQ M)).IsPart P := by
+  classical
   intro u v
   simpa [ofUnderlyingSubgraph, ofSimple_mult,
     liftUnderlyingSubgraphOfPart] using P.ofUnderlyingSubgraph_isPart M u v
 
+omit [Fintype W] in
 @[simp]
 lemma liftUnderlyingSubgraphOfPart_adj
     {P Q : Pseudograph W} (hPQ : P.IsPart Q)
@@ -23126,7 +23518,7 @@ lemma boundaryMultiplicity_union_eq_four_of_bipartite_neighbor_closed
             intro hwu
             subst w
             exact (Finset.disjoint_left.mp hbip.disjoint) huA hwT
-          simp [hwu]
+          simp
         · intro w hwAll hwT
           have hzero : P.mult u w = 0 := by
             by_contra hne
@@ -23150,7 +23542,6 @@ lemma boundaryMultiplicity_union_eq_four_of_bipartite_neighbor_closed
           by_cases haT : a ∈ T <;> by_cases hbT : b ∈ T
         all_goals simp [internalIndicator_mk, betweenIndicator_mk,
           haU, hbU, haT, hbT] at *
-        all_goals ring
   rw [hintU, hintT, hbetween] at hint
   have hYcard : (U ∪ T).card = U.card + T.card :=
     Finset.card_union_of_disjoint hUT
@@ -23160,11 +23551,11 @@ lemma boundaryMultiplicity_union_eq_four_of_bipartite_neighbor_closed
   rw [hYcard, hcard] at hledger
   omega
 
+omit [Fintype W] in
 /-- A Hall transversal on the remaining two shores, together with two
 vertex-disjoint prescribed edges, is a perfect matching containing both
 prescribed edges. -/
 lemma exists_isPerfectMatching_of_transversal_and_two_edges
-    [DecidableEq W]
     (K : SimpleGraph W) (L R : Finset W) {a b c d : W}
     (hLR : Disjoint L R) (hcard : L.card = R.card)
     (ha : a ∉ L ∧ a ∉ R) (hb : b ∉ L ∧ b ∉ R)
@@ -23238,8 +23629,7 @@ lemma exists_isPerfectMatching_of_transversal_and_two_edges
     rw [hPverts]
     ext v
     simp only [Set.mem_union, Finset.mem_coe,
-      Set.mem_insert_iff, Set.mem_singleton_iff, Set.mem_univ, iff_true,
-      Finset.mem_union]
+      Set.mem_insert_iff, Set.mem_singleton_iff, Set.mem_univ, iff_true]
     have hv := hcover v
     tauto
   refine ⟨M, ⟨hMmatch, hMspan⟩, ?_, ?_⟩
@@ -23248,6 +23638,7 @@ lemma exists_isPerfectMatching_of_transversal_and_two_edges
   · change ((P ⊔ E₁) ⊔ E₂).Adj c d
     exact .inr (K.subgraphOfAdj_adj_self hcd)
 
+open scoped Classical in
 /-- In the balanced case of Proposition 3.6, the first two artificial
 edges of the bipartite matching closure extend to a perfect matching.  A
 Hall defect would cut the closure into complementary nontrivial four-edge
@@ -23773,6 +24164,7 @@ lemma colorClassSubgraphD_adj_iff
           ((e.1 : W) = v ∧ (e.2.1 : W) = u)) :=
   Iff.rfl
 
+omit [Fintype W] in
 private lemma exists_left_color_of_properColoringD
     {P : Pseudograph W} {A B : Finset W} {D : ℕ}
     (hreg : (P.bipartiteMultigraph A B).IsRegular D)
@@ -23802,6 +24194,7 @@ private lemma exists_left_color_of_properColoringD
   obtain ⟨e, he⟩ := hsurj c
   exact ⟨e.1, e.2, he⟩
 
+omit [Fintype W] in
 private lemma exists_right_color_of_properColoringD
     {P : Pseudograph W} {A B : Finset W} {D : ℕ}
     (hreg : (P.bipartiteMultigraph A B).IsRegular D)
@@ -23900,6 +24293,7 @@ def emptyGraph : Pseudograph W where
   mult _ _ := 0
   mult_comm _ _ := rfl
 
+omit [Fintype W] in
 @[simp] lemma emptyGraph_mult (u v : W) :
     (emptyGraph : Pseudograph W).mult u v = 0 := rfl
 
@@ -23923,6 +24317,7 @@ noncomputable def selectedSixClosingPart
       singleEdge (sixPairEndpoint E 4) (sixPairEndpoint E 5)
     else emptyGraph)
 
+omit [Fintype W] in
 lemma degree_selectedSixClosingPart
     {G : Pseudograph W} {S : Finset W}
     (E : Fin 6 ≃ CrossingEdge G S) (use₀₁ use₂₃ use₄₅ : Bool)
@@ -24039,7 +24434,7 @@ lemma exists_sixClosureWitness_of_perfectMatching
           (by decide) (by decide) x y ⟨hs01, hs45⟩
       cases use₀₁ with
       | false =>
-          simp [shape01, shape23, shape45, hs01, hs23, hs45]
+          simp [shape23, shape45, hs23, hs45]
       | true =>
           have hp : 0 < H.mult (sixPairEndpoint E 0)
               (sixPairEndpoint E 1) := by
@@ -24060,7 +24455,7 @@ lemma exists_sixClosureWitness_of_perfectMatching
             (by decide) (by decide) x y ⟨hs23, hs45⟩
         cases use₂₃ with
         | false =>
-            simp [shape01, shape23, shape45, hs01, hs23, hs45]
+            simp [shape01, shape45, hs01, hs45]
         | true =>
             have hp : 0 < H.mult (sixPairEndpoint E 2)
                 (sixPairEndpoint E 3) := by
@@ -24077,7 +24472,7 @@ lemma exists_sixClosureWitness_of_perfectMatching
       · by_cases hs45 : shape45
         · cases use₄₅ with
           | false =>
-              simp [shape01, shape23, shape45, hs01, hs23, hs45]
+              simp [shape01, shape23, hs01, hs23]
           | true =>
               have hp : 0 < H.mult (sixPairEndpoint E 4)
                   (sixPairEndpoint E 5) := by
@@ -24182,6 +24577,7 @@ def HasSixClosureWitness
     (∀ v, H.degree v = 0 ∨ H.degree v = 3) ∧
     SixClosureDecomposition E H use₀₁ use₂₃ use₄₅ F
 
+open scoped Classical in
 /-- Balanced base case of Tashkinov's Proposition 3.6.  Prescribe the first
 two artificial pairs in a perfect matching.  Unless its complement is
 already an original cubic part, the remaining cubic bipartite graph is
@@ -24341,7 +24737,6 @@ lemma balancedSixClosure_basePatterns
             (sixPairEndpoint E 5) = 1 := by
           change Q.mult _ _ - P₁.mult _ _ = 1
           rw [closeSixCutMatchingWith_mult_pair45 E hinj, hP₁45, hbase]
-      
         have hnotAdj : ¬ McR.Adj (sixPairEndpoint E 4)
             (sixPairEndpoint E 5) := by
           intro hadj
@@ -24412,6 +24807,7 @@ noncomputable def finSixPairSwapEquiv : Fin 6 ≃ Fin 6 :=
 @[simp] lemma finSixPairSwapEquiv_four : finSixPairSwapEquiv 4 = 2 := rfl
 @[simp] lemma finSixPairSwapEquiv_five : finSixPairSwapEquiv 5 = 3 := rfl
 
+omit [Fintype W] in
 lemma closeSixCutMatchingWith_cyclePairs
     (G : Pseudograph W) (S : Finset W)
     (E : Fin 6 ≃ CrossingEdge G S) :
@@ -24422,6 +24818,7 @@ lemma closeSixCutMatchingWith_cyclePairs
   simp [closeSixCutMatchingWith, sixPairEndpoint, add_mult]
   ring
 
+omit [Fintype W] in
 lemma closeSixCutMatchingWith_swapPairs
     (G : Pseudograph W) (S : Finset W)
     (E : Fin 6 ≃ CrossingEdge G S) :
@@ -24432,6 +24829,7 @@ lemma closeSixCutMatchingWith_swapPairs
   simp [closeSixCutMatchingWith, sixPairEndpoint, add_mult]
   ring
 
+omit [Fintype W] in
 lemma sixClosingDegree_cyclePairs
     {G : Pseudograph W} {S : Finset W}
     (E : Fin 6 ≃ CrossingEdge G S) (b₀₁ b₂₃ b₄₅ : Bool) (v : S) :
@@ -24441,6 +24839,7 @@ lemma sixClosingDegree_cyclePairs
     simp [sixClosingDegree, sixPairEndpoint, degree_singleEdge]
   all_goals omega
 
+omit [Fintype W] in
 lemma sixClosingDegree_swapPairs
     {G : Pseudograph W} {S : Finset W}
     (E : Fin 6 ≃ CrossingEdge G S) (b₀₁ b₂₃ b₄₅ : Bool) (v : S) :
@@ -24450,6 +24849,7 @@ lemma sixClosingDegree_swapPairs
     simp [sixClosingDegree, sixPairEndpoint, degree_singleEdge]
   all_goals omega
 
+omit [Fintype W] in
 lemma HasSixClosureWitness.reindex
     (G : Pseudograph W) (S : Finset W)
     (E E' : Fin 6 ≃ CrossingEdge G S)
@@ -24468,6 +24868,7 @@ lemma HasSixClosureWitness.reindex
     rw [← hdegree v]
     exact hdec.2 v
 
+open scoped Classical in
 /-- Every nonzero artificial-edge use pattern is available on a balanced
 bipartite six-shore, unless that shore already contains an original cubic
 part. -/
@@ -24535,6 +24936,7 @@ lemma balancedSixClosure_all_nonzero_patterns
   · exact hi110
   · exact hi111
 
+omit [Fintype W] in
 lemma HasSimpleMultiplicities.add_fresh_nonloop
     {H : Pseudograph W} (hsimple : H.HasSimpleMultiplicities)
     {a b : W} (hab : a ≠ b) (hfresh : H.mult a b = 0) :
@@ -24638,10 +25040,11 @@ noncomputable def finThreePairEquiv (i j : Fin 3) : Fin 3 ≃ Fin 3 :=
   rw [Equiv.swap_apply_of_ne_of_ne (by decide) hk',
     Equiv.swap_apply_left]
 
-@[simp] lemma finThreePairEquiv_one {i j : Fin 3} (hij : i ≠ j) :
+@[simp] lemma finThreePairEquiv_one {i j : Fin 3} (_ : i ≠ j) :
     finThreePairEquiv i j 1 = j := by
   simp [finThreePairEquiv]
 
+omit [Fintype W] in
 lemma exists_right_reindex_avoiding_two_loops
     (L R : Fin 3 → W) (eA eB : Fin 3 ≃ Fin 3)
     (hLrem : L (eA 1) ≠ L (eA 2)) :
@@ -24709,12 +25112,14 @@ noncomputable def alternatingRightOutside
     (E : Fin 6 ≃ CrossingEdge G S) (i : Fin 3) : W :=
   (E (alternatingRightLabel i)).outside
 
+omit [Fintype W] in
 lemma alternatingLeftOutside_notMem
     {G : Pseudograph W} {S : Finset W}
     (E : Fin 6 ≃ CrossingEdge G S) (i : Fin 3) :
     alternatingLeftOutside E i ∉ S :=
   (E (alternatingLeftLabel i)).outside_notMem
 
+omit [Fintype W] in
 lemma alternatingRightOutside_notMem
     {G : Pseudograph W} {S : Finset W}
     (E : Fin 6 ≃ CrossingEdge G S) (i : Fin 3) :
@@ -24748,6 +25153,7 @@ lemma three_le_degree_of_three_distinct_neighbors
   unfold degree
   exact hsmall.trans (hlarge.trans (Nat.le_add_left _ _))
 
+open scoped Classical in
 /-- If every vertex on the opposite shore carries at most two cut
 incidences, no three distinct labels can have the same outside endpoint. -/
 lemma not_three_outsideEndpoints_eq_of_outsideDegree_le_two
@@ -24773,7 +25179,7 @@ lemma not_three_outsideEndpoints_eq_of_outsideDegree_le_two
             rw [Finset.sum_insert (by simp [hij, hik]),
               Finset.sum_insert (by simp [hjk]),
               Finset.sum_singleton]
-            simp [EC, reverseSixCutListing_inside, v, heq.1, heq.2, hkj]
+            simp [EC, reverseSixCutListing_inside, v, heq.1, hkj]
       _ ≤ ∑ q ∈ (Finset.univ : Finset (Fin 6)),
           if (EC q).inside = v then 1 else 0 := by
             exact Finset.sum_le_sum_of_subset (Finset.subset_univ _)
@@ -24781,6 +25187,7 @@ lemma not_three_outsideEndpoints_eq_of_outsideDegree_le_two
   rw [hcount] at hle
   omega
 
+open scoped Classical in
 lemma outsideDegree_compl_eq_two_of_two_outsideEndpoints_eq
     {G : Pseudograph W} {S : Finset W}
     (E : Fin 6 ≃ CrossingEdge G S)
@@ -24809,30 +25216,35 @@ lemma outsideDegree_compl_eq_two_of_two_outsideEndpoints_eq
   rw [hcount]
   omega
 
+open scoped Classical in
 noncomputable def alternatingLeftOutsideCompl
     {G : Pseudograph W} {S : Finset W}
     (E : Fin 6 ≃ CrossingEdge G S) (i : Fin 3) : ↑(Sᶜ) :=
   ⟨alternatingLeftOutside E i,
     Finset.mem_compl.mpr (alternatingLeftOutside_notMem E i)⟩
 
+open scoped Classical in
 noncomputable def alternatingRightOutsideCompl
     {G : Pseudograph W} {S : Finset W}
     (E : Fin 6 ≃ CrossingEdge G S) (i : Fin 3) : ↑(Sᶜ) :=
   ⟨alternatingRightOutside E i,
     Finset.mem_compl.mpr (alternatingRightOutside_notMem E i)⟩
 
+open scoped Classical in
 @[simp] lemma coe_alternatingLeftOutsideCompl
     {G : Pseudograph W} {S : Finset W}
     (E : Fin 6 ≃ CrossingEdge G S) (i : Fin 3) :
     (alternatingLeftOutsideCompl E i : W) = alternatingLeftOutside E i :=
   rfl
 
+open scoped Classical in
 @[simp] lemma coe_alternatingRightOutsideCompl
     {G : Pseudograph W} {S : Finset W}
     (E : Fin 6 ≃ CrossingEdge G S) (i : Fin 3) :
     (alternatingRightOutsideCompl E i : W) = alternatingRightOutside E i :=
   rfl
 
+open scoped Classical in
 /-- A reindexed opposite closure is in class `B` when its first artificial
 edge is a fresh nonloop and its last two are not both loops. -/
 lemma reindexedOppositeSixClosure_inTashkinovClass_of_first_fresh
@@ -24871,6 +25283,7 @@ lemma reindexedOppositeSixClosure_inTashkinovClass_of_first_fresh
   rw [← hclosure]
   exact G.closeSixCutMatchingWith_isRegularOfDegree Sᶜ EC hreg
 
+open scoped Classical in
 /-- A reindexed opposite closure is in class `B` when its first two
 artificial edges are the same nonloop edge. -/
 lemma reindexedOppositeSixClosure_inTashkinovClass_of_duplicate
@@ -24913,6 +25326,7 @@ lemma reindexedOppositeSixClosure_inTashkinovClass_of_duplicate
   rw [← hclosure]
   exact G.closeSixCutMatchingWith_isRegularOfDegree Sᶜ EC hreg
 
+open scoped Classical in
 /-- The same duplicate-edge certificate when the second artificial edge
 has the two endpoints in the opposite order. -/
 lemma reindexedOppositeSixClosure_inTashkinovClass_of_swappedDuplicate
@@ -24992,12 +25406,15 @@ lemma completeBipartiteThree_containsThreeRegular :
     SimpleGraph.Subgraph.coe_degree]
   change H.degree (v : Fin 3 ⊕ Fin 3) = 3
   rw [SimpleGraph.degree_toSubgraph]
-  change K.degree (v : Fin 3 ⊕ Fin 3) = 3
   rcases v with ⟨v, _⟩
   rcases v with i | j
-  · simp [K, SimpleGraph.degree, SimpleGraph.neighborFinset_eq_filter]
+  · simp only [SimpleGraph.degree, SimpleGraph.neighborFinset_eq_filter,
+    completeBipartiteGraph_adj, Sum.isLeft_inl, true_and, Sum.isRight_inl, Bool.false_eq_true,
+    false_and, or_false, K]
     decide
-  · simp [K, SimpleGraph.degree, SimpleGraph.neighborFinset_eq_filter]
+  · simp only [SimpleGraph.degree, SimpleGraph.neighborFinset_eq_filter,
+    completeBipartiteGraph_adj, Sum.isLeft_inr, Bool.false_eq_true, false_and, Sum.isRight_inr,
+    true_and, false_or, K]
     decide
 
 /-- Three distinct left vertices completely joined to three distinct right
@@ -25031,6 +25448,7 @@ lemma containsThreeRegular_of_completeBipartiteTriples
   exact containsRegularSubgraph_of_graphCopy C
     completeBipartiteThree_containsThreeRegular
 
+open scoped Classical in
 /-- For a balanced bipartite six-shore, a compatible pairing of the six
 opposite endpoints either closes in Tashkinov's induction class or the
 opposite shore already contains the cubic graph `K₃,₃`. -/
@@ -25124,8 +25542,8 @@ lemma containsThreeRegular_or_reindexedOppositeSixClosure_inClass
                 (x := ⟨L (eA₀ 0), hxC⟩)
                 (y₀ := RC (eB₀ 1)) (y₁ := RC (eB₀ 2))
                 (y₂ := LC (eA₀ 1))
-              · simp [P, induce_mult, ofSimple_mult, L, R, LC, RC, h₁]
-              · simp [P, induce_mult, ofSimple_mult, L, R, LC, RC, h₂]
+              · simp [P, induce_mult, ofSimple_mult, L, R, RC, h₁]
+              · simp [P, induce_mult, ofSimple_mult, L, R, RC, h₂]
               · simp only [P, induce_mult, ofSimple_mult]
                 rw [if_pos]
                 · omega
@@ -25253,7 +25671,7 @@ lemma containsThreeRegular_or_reindexedOppositeSixClosure_inClass
         · exact .inl (containsThreeRegular_of_completeBipartiteTriples
             G L R hLinj hRinj hall)
         · right
-          push_neg at hall
+          push Not at hall
           obtain ⟨i, j, hijAdj⟩ := hall
           let eA : Fin 3 ≃ Fin 3 := Equiv.swap 0 i
           let eB₀ : Fin 3 ≃ Fin 3 := Equiv.swap 0 j
@@ -25298,7 +25716,7 @@ lemma containsThreeRegular_or_reindexedOppositeSixClosure_inClass
         · exact congrArg Subtype.val heq |>.symm
       have hexFresh : ∃ i, ¬ G.Adj (L i) (R (eB 0)) := by
         by_contra hnone
-        push_neg at hnone
+        push Not at hnone
         let x := R (eB 0)
         have houtTwo : P.outsideDegree Sᶜ x = 2 := by
           have ht := outsideDegree_compl_eq_two_of_two_outsideEndpoints_eq
@@ -25362,7 +25780,7 @@ lemma containsThreeRegular_or_reindexedOppositeSixClosure_inClass
     by_cases hRinj : Function.Injective R
     · have hexFresh : ∃ k, ¬ G.Adj (L (eA 0)) (R k) := by
         by_contra hnone
-        push_neg at hnone
+        push Not at hnone
         let x := L (eA 0)
         have houtTwo : P.outsideDegree Sᶜ x = 2 := by
           have ht := outsideDegree_compl_eq_two_of_two_outsideEndpoints_eq
@@ -25456,6 +25874,7 @@ lemma containsThreeRegular_or_reindexedOppositeSixClosure_inClass
         · simpa [L, alternatingLeftOutside, eA, hij] using hLij
         · exact congrArg Subtype.val heq
 
+open scoped Classical in
 /-- On the complementary side of a balanced bipartite six-shore, no vertex
 can carry three cut incidences.  Four incidences give a forbidden two-cut;
 three give a four-cut whose only possible trivial shore contradicts the odd
@@ -25682,7 +26101,7 @@ lemma IsVertexMinimalCounterexample.false_of_balanced_minimalBipartiteSixShore
       let : Nonempty ↑(M.shoreᶜ) :=
         ⟨⟨hCnonempty.choose, hCnonempty.choose_spec⟩⟩
       have hcardsum : M.shore.card + M.shoreᶜ.card = n := by
-        simpa using Finset.card_add_card_compl M.shore
+        simp
       have hCcard : Fintype.card ↑(M.shoreᶜ) < n := by
         rw [Fintype.card_coe]
         omega
@@ -25706,7 +26125,7 @@ four-star is independent of a cut listing and is convenient for that hybrid
 closure. -/
 
 noncomputable def fourEndpointCount {X : Type*} [Fintype X]
-    (f : Fin 4 → X) (v : X) : ℕ :=
+    (f : Fin 4 → X) (v : X) : ℕ := open scoped Classical in
   ∑ i : Fin 4, if f i = v then 1 else 0
 
 noncomputable def fourStarClosure {X : Type*} [Fintype X]
@@ -25927,8 +26346,9 @@ lemma parallelPairCount_fourStarClosure_le
     omega
   unfold parallelPairCount
   dsimp only [R, D, heavy] at hfinal
-  convert hfinal using 1 <;> congr 2 <;> ext p <;> simp
+  convert hfinal using 1; congr 2; ext p; simp
 
+open scoped Classical in
 lemma fourEndpointCount_update
     {X : Type*} [Fintype X] (f : Fin 4 → X) (i : Fin 4) (z v : X) :
     fourEndpointCount (Function.update f i z) v +
@@ -25947,7 +26367,7 @@ lemma fourEndpointCount_pos_iff
   constructor
   · intro h
     by_contra hn
-    push_neg at hn
+    push Not at hn
     simp [hn] at h
   · rintro ⟨i, hi⟩
     fin_cases i <;> simp_all
@@ -25986,7 +26406,7 @@ lemma exists_update_fourEndpointCount_heavy_le_one
   have hy2 : fourEndpointCount f y = 2 := by omega
   have hall (k : Fin 4) : f k = x ∨ f k = y := by
     by_contra hk
-    push_neg at hk
+    push Not at hk
     have hkpos : 0 < fourEndpointCount f (f k) :=
       (fourEndpointCount_pos_iff f (f k)).2 ⟨k, rfl⟩
     have hthree :
@@ -25996,7 +26416,7 @@ lemma exists_update_fourEndpointCount_heavy_le_one
         _ = ∑ v ∈ ({x, y, f k} : Finset X),
             fourEndpointCount f v := by
               rw [Finset.sum_insert
-                  (by simp [hxy, Ne.symm hk.1, Ne.symm hk.2]),
+                  (by simp [hxy, Ne.symm hk.1]),
                 Finset.sum_insert (by simp [Ne.symm hk.2]),
                 Finset.sum_singleton]
               simp [Nat.add_assoc]
@@ -26106,6 +26526,7 @@ noncomputable def finSixOneFiveEquiv : Fin 6 ≃ (Fin 1 ⊕ Fin 5) :=
 @[simp] lemma finSixOneFiveEquiv_five :
     finSixOneFiveEquiv 5 = Sum.inr 4 := rfl
 
+omit [Fintype W] in
 /-- Reindex a `1,5` bipartite six-cut so the unique small-side label is
 `0` and the five large-side labels are `1,...,5`. -/
 lemma exists_oneFiveSixCutListing
@@ -26392,6 +26813,7 @@ lemma finSixMiddleSwap_middle_of_ne {i j : Fin 4} (hij : j ≠ i) :
   · exact fun h ↦ hij (finFourMiddleLabel_injective h)
   · exact finFourMiddleLabel_ne_five j
 
+open scoped Classical in
 lemma fourStarEndpoints_reverse_middleSwap
     (G : Pseudograph W) (S : Finset W)
     (E : Fin 6 ≃ CrossingEdge G S) (i : Fin 4) :
@@ -26413,6 +26835,7 @@ lemma fourStarEndpoints_reverse_middleSwap
       reverseSixCutListing_inside, Equiv.trans_apply,
       finSixMiddleSwap_middle_of_ne]
 
+open scoped Classical in
 /-- Reindexing only among the five large-side labels can always make the
 opposite imbalanced hybrid closure a member of Tashkinov's class. -/
 lemma exists_middleReindex_oppositeImbalancedClosure_inTashkinovClass
@@ -26532,7 +26955,7 @@ lemma boundaryMultiplicity_imbalancedSixClosure_map_some
     apply Pseudograph.ext
     intro x y
     simp only [relabel_mult, Equiv.symm_symm,
-      Equiv.apply_symm_apply, induce_mult]
+      induce_mult]
     change Q.mult (some (x : S)) (some (y : S)) =
       G.mult (x : W) (y : W)
     change (G.induce S + singleEdge (sixPairEndpoint E 0)
@@ -26624,7 +27047,7 @@ lemma boundaryMultiplicity_imbalancedSixClosure_map_some_of_pair_not_internal
     apply Pseudograph.ext
     intro x y
     simp only [relabel_mult, Equiv.symm_symm,
-      Equiv.apply_symm_apply, induce_mult]
+      induce_mult]
     change Q.mult (some (x : S)) (some (y : S)) =
       G.mult (x : W) (y : W)
     change (G.induce S + singleEdge (sixPairEndpoint E 0)
@@ -26716,7 +27139,7 @@ lemma boundaryMultiplicity_imbalancedSixClosure_map_some_add_two
     apply Pseudograph.ext
     intro x y
     simp only [relabel_mult, Equiv.symm_symm,
-      Equiv.apply_symm_apply, induce_mult, add_mult]
+      induce_mult, add_mult]
     change Q.mult (some (x : S)) (some (y : S)) =
       G.mult (x : W) (y : W) + (singleEdge z p).mult x y
     change (G.induce S + singleEdge (sixPairEndpoint E 0)
@@ -26797,9 +27220,9 @@ lemma boundaryMultiplicity_imbalancedSixClosure_map_some_add_two
     simp_rw [degree_singleEdge]
     rw [Finset.sum_add_distrib]
     have hzsum : (∑ x : U, if x = z then 1 else 0) = 1 := by
-      simpa using (Fintype.sum_ite_eq' z (fun _ : U ↦ (1 : ℕ)))
+      simp
     have hpsum : (∑ x : U, if x = p then 1 else 0) = 1 := by
-      simpa using (Fintype.sum_ite_eq' p (fun _ : U ↦ (1 : ℕ)))
+      simp
     rw [hzsum, hpsum]
   rw [boundaryMultiplicity_eq_sum_outsideDegree,
     boundaryMultiplicity_eq_sum_outsideDegree]
@@ -26832,6 +27255,7 @@ lemma boundaryMultiplicity_imbalancedSixClosure_map_some_add_two
       symm
       exact Finset.sum_map U (Function.Embedding.subtype _) _
 
+open scoped Classical in
 /-- Symmetric submodularity of finite pseudograph cuts, in the diagonal
 form used for intersecting two Hall partitions. -/
 lemma boundaryMultiplicity_inter_add_compl_inter_compl_le
@@ -26848,8 +27272,9 @@ lemma boundaryMultiplicity_inter_add_compl_inter_compl_le
   | _ a b =>
       by_cases haX : a ∈ X <;> by_cases hbX : b ∈ X <;>
         by_cases haY : a ∈ Y <;> by_cases hbY : b ∈ Y <;>
-          simp [crossingIndicator_mk, haX, hbX, haY, hbY] <;> omega
+          simp [crossingIndicator_mk, haX, hbX, haY, hbY]
 
+open scoped Classical in
 /-- The exact form of symmetric cut submodularity.  The slack is twice the
 number of edges between the two omitted diagonal blocks. -/
 lemma boundaryMultiplicity_inter_add_compl_inter_compl_add_two_between
@@ -26876,7 +27301,7 @@ small colour class.  These explicit finite sides let the prescribed-edge
 Hall lemma be used without coercion bookkeeping at every call. -/
 
 noncomputable def optionLeftSide {X : Type*} [Fintype X] (A : Finset X) :
-    Finset (Option X) :=
+    Finset (Option X) := open scoped Classical in
   insert none (A.map Function.Embedding.some)
 
 noncomputable def optionRightSide {X : Type*} [Fintype X] (B : Finset X) :
@@ -26915,6 +27340,7 @@ lemma card_optionRightSide
   classical
   simp [optionRightSide, Finset.card_map]
 
+omit [Fintype W] in
 /-- The `1,5` endpoint distribution makes the hybrid closure bipartite:
 the center joins the small side, the pair edge joins label `0` to label
 `5`, and all four star edges run to the large side. -/
@@ -26937,7 +27363,7 @@ lemma imbalancedSixClosure_isBipartiteWith
   · rw [Finset.disjoint_left]
     intro x hxL hxR
     cases x with
-    | none => simpa using hxR
+    | none => simp at hxR
     | some x =>
         have hxA : x ∈ A := by simpa using hxL
         have hxB : x ∈ B := by simpa using hxR
@@ -27003,6 +27429,7 @@ lemma imbalancedSixClosure_isBipartiteWith
                     by simpa [hshape.2] using h₀⟩
               · omega
 
+open scoped Classical in
 /-- A four-boundary Hall set in the hybrid closure, containing two distinct
 old vertices but neither the center nor label `0`, pulls back to a
 nontrivial four-cut of the original graph. -/
@@ -27083,6 +27510,7 @@ lemma false_of_imbalancedSixClosure_hallFour
   · omega
   · omega
 
+omit [Fintype W] in
 /-- An injective six-cut listing records exactly one incidence at each of
 its six shore endpoints. -/
 lemma listingEndpointCount_eq_one_of_sixPairEndpoint_injective
@@ -27104,6 +27532,7 @@ lemma listingEndpointCount_eq_one_of_sixPairEndpoint_injective
     simp [hne]
   · simp
 
+open scoped Classical in
 /-- A simple graph vertex of degree three has a neighbour outside any two
 prescribed vertices. -/
 lemma exists_neighbor_ne_two_of_degree_three
@@ -27129,6 +27558,7 @@ lemma exists_neighbor_ne_two_of_degree_three
   have hpq : ({p, q} : Finset X).card ≤ 2 := Finset.card_insert_le p {q}
   omega
 
+open scoped Classical in
 /-- At an injectively listed boundary endpoint of a simple quartic graph,
 the induced shore graph has degree three. -/
 lemma degree_induce_eq_three_of_sixPairEndpoint_injective
@@ -27155,6 +27585,7 @@ lemma degree_induce_eq_three_of_sixPairEndpoint_injective
     (fun u v ↦ hsimple.2 (u : W) (v : W))]
   exact hinduce
 
+omit [Fintype W] in
 lemma imbalancedSixClosure_adj_star
     (G : Pseudograph W) (S : Finset W)
     (E : Fin 6 ≃ CrossingEdge G S) (i : Fin 4) :
@@ -27167,6 +27598,7 @@ lemma imbalancedSixClosure_adj_star
       (sixPairEndpoint E (finFourMiddleLabel i))
     exact (fourEndpointCount_pos_iff _ _).2 ⟨i, rfl⟩
 
+omit [Fintype W] in
 lemma imbalancedSixClosure_adj_pair
     (G : Pseudograph W) (S : Finset W)
     (E : Fin 6 ≃ CrossingEdge G S)
@@ -27185,6 +27617,7 @@ lemma imbalancedSixClosure_adj_pair
       simp [singleEdge_mult]
     omega
 
+omit [Fintype W] in
 lemma imbalancedSixClosure_adj_of_induce_adj
     (G : Pseudograph W) (S : Finset W)
     (E : Fin 6 ≃ CrossingEdge G S) {u v : S}
@@ -27198,6 +27631,7 @@ lemma imbalancedSixClosure_adj_of_induce_adj
     have hpos := h.2
     omega
 
+open scoped Classical in
 /-- In the center-active branch, the bipartite shore supplies perfect
 matchings realizing both possible states of the paired artificial edge.
 One matching contains the pair; the other matches label `0` to a fresh
@@ -27311,7 +27745,7 @@ lemma exists_centerActive_imbalancedPerfectMatchings
 
 def FourStarOmitsExactly
     {X : Type*} [Fintype X] (f : Fin 4 → X)
-    (H : Pseudograph (Option X)) (i : Fin 4) : Prop :=
+    (H : Pseudograph (Option X)) (i : Fin 4) : Prop := open scoped Classical in
   ∀ v : X, H.mult none (some v) =
     fourEndpointCount f v - if f i = v then 1 else 0
 
@@ -27336,7 +27770,7 @@ lemma exists_fourStarOmitsExactly_of_center_degree_three
   obtain ⟨v, hvlt⟩ : ∃ v : X,
       H.mult none (some v) < fourEndpointCount f v := by
     by_contra h
-    push_neg at h
+    push Not at h
     have heq : ∀ v : X,
         H.mult none (some v) = fourEndpointCount f v := by
       intro v
@@ -27379,7 +27813,7 @@ lemma fourStarCenter_edges_zero_of_degree_zero
 noncomputable def hybridStarDegree
     {G : Pseudograph W} {S : Finset W}
     (E : Fin 6 ≃ CrossingEdge G S) (active : Option (Fin 4))
-    (v : S) : ℕ :=
+    (v : S) : ℕ := open scoped Classical in
   match active with
   | none => 0
   | some i =>
@@ -27410,6 +27844,7 @@ def HybridClosureDecomposition
       | some _ => 3) ∧
     ∀ v : S, H.mult none (some v) = hybridStarDegree E active v
 
+omit [Fintype W] in
 /-- Every cubic-or-isolated part of a hybrid closure has a labelled
 decomposition.  The option is `none` when the center is isolated and is the
 unique omitted star label when the center has degree three. -/
@@ -27433,40 +27868,40 @@ lemma exists_hybridClosureDecomposition
         simpa [B] using hdrop)
   rcases hcenter with hzero | hthree
   · refine ⟨none, usePair, F, hF, ?_, hzero, ?_⟩
-    intro v
-    have hdropDegree := degree_dropStarCenter_add H v
-    have hstarZero : H.mult (some v) none = 0 := by
-      rw [H.mult_comm]
+    · intro v
+      have hdropDegree := degree_dropStarCenter_add H v
+      have hstarZero : H.mult (some v) none = 0 := by
+        rw [H.mult_comm]
+        exact fourStarCenter_edges_zero_of_degree_zero hzero v
+      rw [hstarZero, Nat.add_zero] at hdropDegree
+      have hp := hpairDegree v
+      simp only [hybridClosingDegree, hybridStarDegree, Nat.add_zero]
+      omega
+    · intro v
+      simp only [hybridStarDegree]
       exact fourStarCenter_edges_zero_of_degree_zero hzero v
-    rw [hstarZero, Nat.add_zero] at hdropDegree
-    have hp := hpairDegree v
-    simp only [hybridClosingDegree, hybridStarDegree, Nat.add_zero]
-    omega
-    intro v
-    simp only [hybridStarDegree]
-    exact fourStarCenter_edges_zero_of_degree_zero hzero v
   · obtain ⟨i, hi⟩ :=
       exists_fourStarOmitsExactly_of_center_degree_three hH hthree
     refine ⟨some i, usePair, F, hF, ?_, hthree, ?_⟩
-    intro v
-    have hdropDegree := degree_dropStarCenter_add H v
-    have hstar : H.mult (some v) none =
-        fourEndpointCount
-            (fun j ↦ sixPairEndpoint E (finFourMiddleLabel j)) v -
-          if sixPairEndpoint E (finFourMiddleLabel i) = v then 1 else 0 := by
-      rw [H.mult_comm]
+    · intro v
+      have hdropDegree := degree_dropStarCenter_add H v
+      have hstar : H.mult (some v) none =
+          fourEndpointCount
+              (fun j ↦ sixPairEndpoint E (finFourMiddleLabel j)) v -
+            if sixPairEndpoint E (finFourMiddleLabel i) = v then 1 else 0 := by
+        rw [H.mult_comm]
+        by_cases h : sixPairEndpoint E (finFourMiddleLabel i) = v
+        · simpa [h] using hi v
+        · simpa [h] using hi v
+      rw [hstar] at hdropDegree
+      have hp := hpairDegree v
+      simp only [hybridClosingDegree, hybridStarDegree]
+      omega
+    · intro v
+      rw [hybridStarDegree]
       by_cases h : sixPairEndpoint E (finFourMiddleLabel i) = v
       · simpa [h] using hi v
       · simpa [h] using hi v
-    rw [hstar] at hdropDegree
-    have hp := hpairDegree v
-    simp only [hybridClosingDegree, hybridStarDegree]
-    omega
-    intro v
-    rw [hybridStarDegree]
-    by_cases h : sixPairEndpoint E (finFourMiddleLabel i) = v
-    · simpa [h] using hi v
-    · simpa [h] using hi v
 
 noncomputable def hybridCrossingSelection
     {G : Pseudograph W} {S : Finset W}
@@ -27480,6 +27915,7 @@ noncomputable def hybridCrossingSelection
       (crossingPartExcept E (finFourMiddleLabel i)).sdiff
         (twoCrossingLabelPart (E 0) (E 5))
 
+omit [Fintype W] in
 lemma twoCrossingLabelPart_isPart_crossingPartExcept_of_inside_ne
     {G : Pseudograph W} {S : Finset W} {n : ℕ}
     (E : Fin n ≃ CrossingEdge G S) {i j k : Fin n}
@@ -27517,10 +27953,11 @@ lemma twoCrossingLabelPart_isPart_crossingPartExcept_of_inside_ne
   · rw [if_neg hk]
     exact hbase
 
+omit [Fintype W] in
 lemma hybridCrossingSelection_isPart
     {G : Pseudograph W} {S : Finset W}
     (E : Fin 6 ≃ CrossingEdge G S)
-    (hinj : Function.Injective (sixPairEndpoint E))
+    (_ : Function.Injective (sixPairEndpoint E))
     (active : Option (Fin 4)) (usePair : Bool) :
     (hybridCrossingSelection E active usePair).IsPart G := by
   cases active with
@@ -27538,6 +27975,7 @@ lemma hybridCrossingSelection_isPart
           _).trans (crossingPartExcept_isPart E (finFourMiddleLabel i))
       · exact crossingPartExcept_isPart E (finFourMiddleLabel i)
 
+omit [Fintype W] in
 lemma crossingPartExcept_isPart_crossingPart
     {G : Pseudograph W} {S : Finset W} {n : ℕ}
     (E : Fin n ≃ CrossingEdge G S) (i : Fin n) :
@@ -27546,6 +27984,7 @@ lemma crossingPartExcept_isPart_crossingPart
   simp only [crossingPartExcept, removeSingleEdge_mult]
   split <;> omega
 
+omit [Fintype W] in
 lemma hybridCrossingSelection_isPart_crossingPart
     {G : Pseudograph W} {S : Finset W}
     (E : Fin 6 ≃ CrossingEdge G S)
@@ -27569,6 +28008,7 @@ lemma hybridCrossingSelection_isPart_crossingPart
       · exact crossingPartExcept_isPart_crossingPart E
           (finFourMiddleLabel i)
 
+omit [Fintype W] in
 lemma pairPart_isPart_crossingPartExcept_middle
     {G : Pseudograph W} {S : Finset W}
     (E : Fin 6 ≃ CrossingEdge G S)
@@ -27622,7 +28062,7 @@ lemma degree_hybridCrossingSelection_of_mem
           (sixPairEndpoint E 5)).degree ⟨v, hv⟩ =
         (if v = (E 0).inside then 1 else 0) +
         (if v = (E 5).inside then 1 else 0) := by
-    simp [degree_singleEdge, sixPairEndpoint, Subtype.ext_iff, eq_comm]
+    simp [degree_singleEdge, sixPairEndpoint, Subtype.ext_iff]
   have homit (i : Fin 4) :
       (if sixPairEndpoint E (finFourMiddleLabel i) = ⟨v, hv⟩
         then 1 else 0) =
@@ -27656,7 +28096,7 @@ lemma degree_hybridCrossingSelection_of_mem
       · rw [hybridCrossingSelection, hybridClosingDegree,
           hybridStarDegree, Nat.add_zero, hpairTotal,
           degree_twoCrossingLabelPart]
-        simp [hout, eq_comm]
+        simp [hout]
   | some i =>
       have hcross := degree_crossingPartExcept_add_of_mem
         E (finFourMiddleLabel i) v hv
@@ -27684,7 +28124,7 @@ lemma degree_hybridCrossingSelection_of_mem
               (singleEdge (sixPairEndpoint E 0)
                 (sixPairEndpoint E 5)).degree ⟨v, hv⟩ := by
           rw [degree_twoCrossingLabelPart, hpairTotal]
-          simp [hout, eq_comm]
+          simp [hout]
         rw [htwoPair] at hdiff
         have hselection :
             ((crossingPartExcept E
@@ -27713,6 +28153,7 @@ lemma degree_hybridCrossingSelection_of_mem
       · simpa only [hybridCrossingSelection, hybridClosingDegree,
           Bool.true_eq, if_true] using hdecomp
 
+open scoped Classical in
 lemma degree_hybridCrossingSelection_of_notMem
     {G : Pseudograph W} {S : Finset W}
     (E : Fin 6 ≃ CrossingEdge G S)
@@ -27756,7 +28197,7 @@ lemma degree_hybridCrossingSelection_of_notMem
         (if v = (E 0).outside then 1 else 0) +
         (if v = (E 5).outside then 1 else 0) := by
     simp [EC, degree_singleEdge, sixPairEndpoint,
-      reverseSixCutListing_inside, Subtype.ext_iff, eq_comm]
+      reverseSixCutListing_inside, Subtype.ext_iff]
   have homit (i : Fin 4) :
       (if sixPairEndpoint EC (finFourMiddleLabel i) = ⟨v, hvC⟩
         then 1 else 0) =
@@ -27792,7 +28233,7 @@ lemma degree_hybridCrossingSelection_of_notMem
       · rw [hybridCrossingSelection, hybridClosingDegree,
           hybridStarDegree, Nat.add_zero, hpairTotal,
           degree_twoCrossingLabelPart]
-        simp [EC, hin, eq_comm]
+        simp [hin]
   | some i =>
       have hcross := degree_crossingPartExcept_add_of_notMem
         E (finFourMiddleLabel i) v hv
@@ -27820,7 +28261,7 @@ lemma degree_hybridCrossingSelection_of_notMem
               (singleEdge (sixPairEndpoint EC 0)
                 (sixPairEndpoint EC 5)).degree ⟨v, hvC⟩ := by
           rw [degree_twoCrossingLabelPart, hpairTotal]
-          simp [EC, hin, eq_comm]
+          simp [hin]
         rw [htwoPair] at hdiff
         have hselection :
             ((crossingPartExcept E
@@ -27850,6 +28291,7 @@ lemma degree_hybridCrossingSelection_of_notMem
       · simpa only [hybridCrossingSelection, hybridClosingDegree,
           Bool.true_eq, if_true, EC] using hdecomp
 
+open scoped Classical in
 /-- Retain the two genuine shore parts of aligned hybrid closures and
 restore exactly the original crossing copies prescribed by their common
 center/pair pattern. -/
@@ -27861,6 +28303,7 @@ noncomputable def spliceImbalancedSixClosures
   extendFrom S F + extendFrom Sᶜ L +
     hybridCrossingSelection E active usePair
 
+open scoped Classical in
 lemma degree_spliceImbalancedSixClosures_of_mem
     {G : Pseudograph W} {S : Finset W}
     (E : Fin 6 ≃ CrossingEdge G S)
@@ -27880,6 +28323,7 @@ lemma degree_spliceImbalancedSixClosures_of_mem
     Nat.add_zero]
   exact hdec.2.1 ⟨v, hv⟩
 
+open scoped Classical in
 lemma degree_spliceImbalancedSixClosures_of_notMem
     {G : Pseudograph W} {S : Finset W}
     (E : Fin 6 ≃ CrossingEdge G S)
@@ -27900,6 +28344,7 @@ lemma degree_spliceImbalancedSixClosures_of_notMem
     Nat.zero_add]
   exact hdec.2.1 ⟨v, hvC⟩
 
+open scoped Classical in
 lemma spliceImbalancedSixClosures_isPart
     {G : Pseudograph W} {S : Finset W}
     (E : Fin 6 ≃ CrossingEdge G S)
@@ -27942,6 +28387,7 @@ lemma spliceImbalancedSixClosures_isPart
     simpa [spliceImbalancedSixClosures, extendFrom, hu, hv,
       huC, hvC, hsel] using hL ⟨u, huC⟩ ⟨v, hvC⟩
 
+open scoped Classical in
 /-- Hybrid six-cut gluing.  A nonzero decomposition pattern of an arbitrary
 cubic part on the opposite hybrid closure is matched on the chosen shore;
 the zero pattern already lies wholly on that opposite shore. -/
@@ -27968,7 +28414,8 @@ theorem containsRegularPart_of_imbalancedSixClosuresWith
   by_cases hzero : active = none ∧ usePair = false
   · have hLdeg (v : ↑(Sᶜ)) : L.degree v = K.degree (some v) := by
       have h := hKdec.2.1 v
-      simp [hybridClosingDegree, hybridStarDegree, hzero.1, hzero.2] at h
+      simp only [hybridClosingDegree, hzero.2, Bool.false_eq_true, ↓reduceIte,
+        hybridStarDegree, hzero.1, add_zero] at h
       exact h
     refine ⟨extendFrom Sᶜ L, extendFrom_isPart hKdec.1, ?_, ?_⟩
     · obtain ⟨v, hv⟩ := hKne
@@ -28145,7 +28592,6 @@ lemma exists_hybridClosureWitness_of_perfectMatching
           using hdrop
       · intro v
         simpa [hybridStarDegree, f] using hstar v
-
   | true =>
       have hMpair := htrue rfl
       have hnotAdj : ¬ M.spanningCoe.Adj (some z) (some p) := by
@@ -28174,7 +28620,7 @@ lemma exists_hybridClosureWitness_of_perfectMatching
         have hdrop := degree_dropStarCenter_add H v
         rw [← H.mult_comm, hstar] at hdrop
         have hpv := hFdeg v
-        simp only [hybridClosingDegree, Bool.true_eq, if_true,
+        simp only [hybridClosingDegree, if_true,
           hybridStarDegree]
         change F.degree v + ((singleEdge z p).degree v +
             (fourEndpointCount f v - if f i = v then 1 else 0)) =
@@ -28190,6 +28636,7 @@ lemma exists_hybridClosureWitness_of_perfectMatching
       · intro v
         simpa [hybridStarDegree, f] using hstar v
 
+open scoped Classical in
 lemma exists_centerActive_hybridClosureWitness
     (G : Pseudograph W) (hreg : G.IsRegularOfDegree 4)
     (hsimple : G.HasSimpleMultiplicities)
@@ -28264,7 +28711,6 @@ lemma boundaryMultiplicity_union_eq_six_of_bipartite
           by_cases haT : a ∈ T <;> by_cases hbT : b ∈ T
         all_goals simp [internalIndicator_mk, betweenIndicator_mk,
           haU, hbU, haT, hbT] at *
-        all_goals ring
   simp only [hintU, hintT, Nat.zero_add] at hint
   have hYcard : (U ∪ T).card = U.card + T.card :=
     Finset.card_union_of_disjoint hUT
@@ -28276,10 +28722,11 @@ lemma boundaryMultiplicity_union_eq_six_of_bipartite
 /-- The four large-side endpoints joined to the artificial center. -/
 noncomputable def imbalancedMiddleFinset
     {G : Pseudograph W} {S : Finset W}
-    (E : Fin 6 ≃ CrossingEdge G S) : Finset S :=
+    (E : Fin 6 ≃ CrossingEdge G S) : Finset S := open scoped Classical in
   Finset.univ.image fun i : Fin 4 ↦
     sixPairEndpoint E (finFourMiddleLabel i)
 
+omit [Fintype W] in
 lemma mem_imbalancedMiddleFinset
     {G : Pseudograph W} {S : Finset W}
     (E : Fin 6 ≃ CrossingEdge G S) (v : S) :
@@ -28288,6 +28735,7 @@ lemma mem_imbalancedMiddleFinset
   classical
   simp [imbalancedMiddleFinset]
 
+omit [Fintype W] in
 lemma card_imbalancedMiddleFinset
     {G : Pseudograph W} {S : Finset W}
     (E : Fin 6 ≃ CrossingEdge G S)
@@ -28306,11 +28754,12 @@ endpoint. -/
 noncomputable def imbalancedDeletedLeft
     (G : Pseudograph W) (S : Finset W)
     (E : Fin 6 ≃ CrossingEdge G S) (i : Fin 4) :
-    Finset (Option S) :=
+    Finset (Option S) := open scoped Classical in
   insert none (((G.induce S).toSimple.neighborFinset
     (sixPairEndpoint E (finFourMiddleLabel i))).map
       Function.Embedding.some)
 
+omit [Fintype W] in
 lemma mem_imbalancedDeletedLeft_none
     (G : Pseudograph W) (S : Finset W)
     (E : Fin 6 ≃ CrossingEdge G S) (i : Fin 4) :
@@ -28318,6 +28767,7 @@ lemma mem_imbalancedDeletedLeft_none
   classical
   simp [imbalancedDeletedLeft]
 
+omit [Fintype W] in
 lemma mem_imbalancedDeletedLeft_some
     (G : Pseudograph W) (S : Finset W)
     (E : Fin 6 ≃ CrossingEdge G S) (i : Fin 4) (v : S) :
@@ -28347,7 +28797,6 @@ lemma card_imbalancedDeletedLeft
 /-- All quartic incidences of a left block land in a displayed right
 block when the latter contains every positive-multiplicity neighbour. -/
 lemma betweenMultiplicity_eq_four_mul_card_of_bipartite_neighbor_closed
-    [DecidableEq W]
     (P : Pseudograph W) (hreg : P.IsRegularOfDegree 4)
     (A B U T : Finset W) (hbip : P.IsBipartiteWith A B)
     (hUA : U ⊆ A) (hTB : T ⊆ B)
@@ -28382,7 +28831,7 @@ lemma betweenMultiplicity_eq_four_mul_card_of_bipartite_neighbor_closed
           intro hwu
           subst w
           exact (Finset.disjoint_left.mp hbip.disjoint) huA hwT
-        simp [hwu]
+        simp
       · intro w _hwAll hwT
         have hzero : P.mult u w = 0 := by
           by_contra hne
@@ -28390,6 +28839,7 @@ lemma betweenMultiplicity_eq_four_mul_card_of_bipartite_neighbor_closed
         exact hzero
     _ = 4 * U.card := by simp [Nat.mul_comm]
 
+open scoped Classical in
 lemma degree_ofUnderlyingSubgraph_of_isMatching
     (P : Pseudograph W) (M : P.toSimple.Subgraph)
     (hM : M.IsMatching) (v : W) :
@@ -28402,6 +28852,7 @@ lemma degree_ofUnderlyingSubgraph_of_isMatching
     exact (SimpleGraph.Subgraph.isMatching_iff_forall_degree.mp hM) v hv
   · rw [if_neg hv, M.degree_of_notMem_verts hv]
 
+open scoped Classical in
 /-- Hall's dichotomy for the graph obtained by deleting one middle
 endpoint, its four left neighbours (including the artificial center), and
 all four middle endpoints.  Failure of a residual transversal produces the
@@ -28462,7 +28913,7 @@ lemma exists_residualTransversal_or_hallSixCut
   have hCcard : C.card = 4 := by
     simpa [C] using card_imbalancedMiddleFinset E hinj
   have htC : some t ∈ C := by
-    simp [C, t, fmid, imbalancedMiddleFinset]
+    simp [C, t, imbalancedMiddleFinset]
   have hCsub : C ⊆ Rs := by
     intro x hx
     obtain ⟨v, hvC, rfl⟩ := Finset.mem_map.mp hx
@@ -28535,7 +28986,7 @@ lemma exists_residualTransversal_or_hallSixCut
       intro x hxT hxC
       exact (Finset.mem_sdiff.mp (hT₀subR hxT)).2 hxC
     have hC'card : C'.card = 3 := by
-      simpa [C', Finset.card_erase_of_mem htC, hCcard]
+      simp [C', Finset.card_erase_of_mem htC, hCcard]
     have hT₀C' : Disjoint T₀ C' :=
       hT₀C.mono_right (Finset.erase_subset _ _)
     have hUcard : U.card = U'.card := by
@@ -28704,7 +29155,6 @@ lemma exists_residualTransversal_or_hallSixCut
       have hnoneT : Q.betweenMultiplicity {none} {some t} = 1 := by
         rw [Q.betweenMultiplicity_singleton none {some t} (by simp)]
         simp only [Finset.sum_singleton]
-        change Q.mult none (some t) = 1
         change fourEndpointCount fmid t = 1
         exact fourEndpointCount_eq_one_of_injective fmid hfmid i
       have hUTzero : Q.betweenMultiplicity U {some t} = 0 := by
@@ -28794,6 +29244,7 @@ lemma exists_residualTransversal_or_hallSixCut
         exact (Finset.disjoint_left.mp hQbip.disjoint)
           hvLs (hTsubRs hvT)
 
+open scoped Classical in
 /-- A residual transversal is deleted after isolating the artificial center
 and its chosen middle neighbour.  Every remaining old vertex then has
 degree three: deleted-neighbour vertices lose the chosen middle edge,
@@ -29099,6 +29550,7 @@ lemma residualTransversal_cubicPart
         omega
   refine ⟨M, H, hMmatch, hMverts, hHQ, hHcenter, hHt, hHold, rfl⟩
 
+open scoped Classical in
 /-- A residual transversal has the precise alternative used by Tashkinov.
 If it uses the artificial pair, deleting it leaves a cubic part wholly in
 the original shore.  If it avoids the pair, the pair survives and the same
@@ -29230,27 +29682,28 @@ lemma containsRegularPart_or_centerIsolatedWitness_of_residualTransversal
     refine ⟨H, F, hHQ, ⟨z, hHold z hzt⟩, hdegrees,
       hFpart, ?_, hHcenter, ?_⟩
     · intro v
-      simp only [hybridClosingDegree, Bool.true_eq, if_true,
+      simp only [hybridClosingDegree, if_true,
         hybridStarDegree, Nat.add_zero]
       rw [hFdegree, hDdegree]
     · intro v
       simpa [hybridStarDegree] using hstarZero v
 
+open scoped Classical in
 /-- Minimality of the chosen bipartite six-shore forces both endpoints of
 the artificial pair into the old-vertex complement of every residual Hall
 six-cut.  Otherwise the complement transfers to a strictly smaller
 nontrivial bipartite six-shore of the original graph. -/
 lemma hallSixCut_pair_mem_compl
     (G : SimpleGraph W) (hreg : G.IsRegularOfDegree 4)
-    (hno2 : ∀ T : Finset W, T.Nonempty → T ≠ Finset.univ →
+    (_ : ∀ T : Finset W, T.Nonempty → T ≠ Finset.univ →
       (ofSimple G).boundaryMultiplicity T ≠ 2)
-    (hno4 : ∀ T : Finset W, T.Nonempty → T ≠ Finset.univ →
+    (_ : ∀ T : Finset W, T.Nonempty → T ≠ Finset.univ →
       (ofSimple G).boundaryMultiplicity T = 4 →
         T.card = 1 ∨ Tᶜ.card = 1)
     (M : MinimalBipartiteSixShore G)
     (E : Fin 6 ≃ CrossingEdge (ofSimple G) M.shore)
     (A B : Finset M.shore)
-    (hbip : ((ofSimple G).induce M.shore).IsBipartiteWith A B)
+    (_ : ((ofSimple G).induce M.shore).IsBipartiteWith A B)
     (hinj : Function.Injective (sixPairEndpoint E))
     (i : Fin 4) (X : Finset (Option M.shore))
     (hcut : ((ofSimple G).imbalancedSixClosure M.shore E).boundaryMultiplicity X = 6)
@@ -29348,6 +29801,8 @@ lemma hallSixCut_pair_mem_compl
   have hminimal := M.minimal T hTcut hTbip hTnontrivial
   omega
 
+omit [Fintype W] in
+open scoped Classical in
 lemma between_center_map_some_eq_card_middle_inter
     (G : Pseudograph W) (S : Finset W)
     (E : Fin 6 ≃ CrossingEdge G S)
@@ -29385,9 +29840,9 @@ lemma between_center_map_some_eq_card_middle_inter
         intro j hj
         exact hvM ((mem_imbalancedMiddleFinset E v).mpr ⟨j, hj⟩)
     _ = (U ∩ imbalancedMiddleFinset E).card := by
-      simpa [Finset.filter_mem_eq_inter] using
-        (Finset.sum_boole (fun v ↦ v ∈ imbalancedMiddleFinset E) U)
+      simp
 
+open scoped Classical in
 /-- Adding the center to an old block containing exactly two of the four
 star endpoints does not change its hybrid boundary.  If the paired label
 `0` is absent, this boundary therefore transfers unchanged to the original
@@ -29437,6 +29892,7 @@ lemma boundaryMultiplicity_centeredMiddlePair_transfer
   change Q.boundaryMultiplicity Y = _ at hmap
   omega
 
+open scoped Classical in
 /-- The imbalanced half of Proposition 3.6.  Two failed residual matchings
 give Hall six-cuts for the first two middle endpoints.  Their diagonal
 intersection contains exactly the other two middle endpoints, while the
@@ -29750,7 +30206,7 @@ lemma containsRegularPart_or_centerIsolatedWitness_of_imbalancedMinimalShore
         · exact hf₃U₁
       symm
       exact Finset.eq_of_subset_of_card_le hpairSub (by
-        simpa [hUcard2, hfmid.ne (by decide : (2 : Fin 4) ≠ 3)])
+        simp [hUcard2, hfmid.ne (by decide : (2 : Fin 4) ≠ 3)])
     have hTind : G.IsIndepSet (T₁ : Set W) := by
       intro u hu v hv huv hadj
       obtain ⟨u', hu'U, huEq⟩ := Finset.mem_map.mp hu
@@ -29817,7 +30273,7 @@ lemma containsRegularPart_or_centerIsolatedWitness_of_imbalancedMinimalShore
         {sixPairEndpoint E 0, sixPairEndpoint E 5} := by
       symm
       exact Finset.eq_of_subset_of_card_le hpairSub (by
-        simpa [hU₂cardTwo,
+        simp [hU₂cardTwo,
           hinj.ne (by decide : (0 : Fin 6) ≠ 5)])
     let Z₀ : Finset (Option M.shore) := X₀ᶜ ∩ X₁
     let Z₁ : Finset (Option M.shore) := X₀ ∩ X₁ᶜ
@@ -30181,7 +30637,7 @@ lemma IsVertexMinimalCounterexample.false_of_imbalanced_minimalBipartiteSixShore
   let : Nonempty ↑(M.shoreᶜ) :=
     ⟨⟨hCnonempty.choose, hCnonempty.choose_spec⟩⟩
   have hcardsum : M.shore.card + M.shoreᶜ.card = n := by
-    simpa using Finset.card_add_card_compl M.shore
+    simp
   have hCcard : Fintype.card ↑(M.shoreᶜ) < n := by
     rw [Fintype.card_coe]
     have hScard := M.four_le_card hreg
@@ -30238,6 +30694,7 @@ The first part of Section 4 of Tashkinov's proof uses the full Tutte
 certificate before six-cuts have been eliminated.  A type-A certificate has
 one residual odd six-component and exactly one edge in its middle shore. -/
 
+open scoped Classical in
 structure TypeABarrier (G : SimpleGraph V) (u : V) where
   left : Finset V
   middle : Finset V
@@ -30270,6 +30727,7 @@ lemma disjoint_middle_right {G : SimpleGraph V} {u : V}
     (B : TypeABarrier G u) : Disjoint B.middle B.right :=
   B.middle_right_disjoint
 
+open scoped Classical in
 lemma middle_union_right_eq_left_compl {G : SimpleGraph V} {u : V}
     (B : TypeABarrier G u) : B.middle ∪ B.right = B.leftᶜ := by
   classical
@@ -30281,6 +30739,7 @@ lemma middle_union_right_eq_left_compl {G : SimpleGraph V} {u : V}
   simp only [Finset.mem_union, Finset.mem_compl]
   tauto
 
+open scoped Classical in
 lemma left_union_right_eq_middle_compl {G : SimpleGraph V} {u : V}
     (B : TypeABarrier G u) : B.left ∪ B.right = B.middleᶜ := by
   classical
@@ -30292,6 +30751,7 @@ lemma left_union_right_eq_middle_compl {G : SimpleGraph V} {u : V}
   simp only [Finset.mem_union, Finset.mem_compl]
   tauto
 
+open scoped Classical in
 lemma middle_union_left_eq_right_compl {G : SimpleGraph V} {u : V}
     (B : TypeABarrier G u) : B.middle ∪ B.left = B.rightᶜ := by
   classical
@@ -30350,6 +30810,7 @@ lemma existsUnique_sixComponent_of_typeA_pattern
     have hdmem : d ∈ C6 := by simpa [A, J, cut, C6] using hd
     simpa [hc] using hdmem
 
+open scoped Classical in
 /-- Every residual component other than the unique six-component of a
 type-A certificate is a singleton four-component. -/
 lemma typeA_other_component_singleton
@@ -30393,7 +30854,7 @@ lemma typeA_other_component_singleton
     · have hc8 : c ∈ C8 := by simpa [A, J, cut, C8] using h8
       have : C8.Nonempty := ⟨c, hc8⟩
       rw [Finset.card_eq_zero.mp hC8card] at this
-      simpa using this
+      simp at this
   have hSnonempty : S.Nonempty := by
     simpa [S] using deletedComponentShore_nonempty G A X c
   have huD : u ∈ D := by
@@ -30429,6 +30890,7 @@ lemma typeA_other_component_singleton
   · simpa [A, S] using hcard
   · exact (hcompcard_ne_one hcard).elim
 
+open scoped Classical in
 /-- Extract the concrete three-shore type-A barrier from the full Tutte
 certificate. -/
 theorem exists_typeABarrier_of_pattern
@@ -30497,8 +30959,7 @@ theorem exists_typeABarrier_of_pattern
     exact mem_barrierMiddle.mpr (.inl huv)
   have hLindependent : G.IsIndepSet (L : Set V) := by
     rw [SimpleGraph.isIndepSet_iff]
-    intro a ha b hb hab
-    intro habG
+    intro a ha b hb hab habG
     have haM : a ∉ M := by
       intro haM
       have : a ∉ M ∪ R := by simpa [L] using ha
@@ -30608,6 +31069,7 @@ theorem exists_typeABarrier_of_pattern
     right_boundary := hRcut
     right_odd := hRodd }⟩
 
+open scoped Classical in
 /-- If two neighbours of `u` are adjacent, every genuine Tutte barrier at
 `u` is type A: its middle has a positive internal edge count, whereas types
 B and C have none. -/
@@ -30686,7 +31148,7 @@ exactly one edge joins the subblocks. -/
 lemma betweenMultiplicity_eq_one_of_unique_internal_edge
     (G : SimpleGraph V) (S A B : Finset V) {x y : V}
     (hcount : (Pseudograph.ofSimple G).internalMultiplicity S = 1)
-    (hAB : Disjoint A B) (hAS : A ⊆ S) (hBS : B ⊆ S)
+    (_ : Disjoint A B) (hAS : A ⊆ S) (hBS : B ⊆ S)
     (hxy : G.Adj x y) (hx : x ∈ A) (hy : y ∈ B) :
     (Pseudograph.ofSimple G).betweenMultiplicity A B = 1 := by
   classical
@@ -30702,9 +31164,9 @@ lemma betweenMultiplicity_eq_one_of_unique_internal_edge
           have he' := (Pseudograph.mem_betweenEdgeFinset_mk_iff G A B a b).mp he
           rcases he'.2 with ⟨ha, hb⟩ | ⟨ha, hb⟩
           · have := hunique he'.1 (hAS ha) (hBS hb)
-            simpa [this]
+            simp [this]
           · have := hunique he'.1 (hBS ha) (hAS hb)
-            simpa [this]
+            simp [this]
         · intro he
           simp only [Finset.mem_singleton] at he
           rw [he]
@@ -30746,12 +31208,13 @@ lemma disjoint_side {G : SimpleGraph V} {u : V}
   · exact B.middle_right_disjoint.symm
   · exact (hab rfl).elim
 
+open scoped Classical in
 lemma union_sides {G : SimpleGraph V} {u : V} (B : TypeABarrier G u) :
     B.side .L ∪ B.side .M ∪ B.side .R = Finset.univ := B.cover
 
 noncomputable def block {G : SimpleGraph V} {u v : V}
     (B : TypeABarrier G u) (C : TypeABarrier G v)
-    (a b : Side) : Finset V := B.side a ∩ C.side b
+    (a b : Side) : Finset V := open scoped Classical in B.side a ∩ C.side b
 
 @[simp] lemma mem_block {G : SimpleGraph V} {u v x : V}
     {B : TypeABarrier G u} {C : TypeABarrier G v} {a b : Side} :
@@ -30770,6 +31233,7 @@ lemma disjoint_block {G : SimpleGraph V} {u v : V}
   · exact (Finset.disjoint_left.mp (B.disjoint_side ha)) hx.1 hx'.1
   · exact (Finset.disjoint_left.mp (C.disjoint_side hb)) hx.2 hx'.2
 
+open scoped Classical in
 lemma block_row_union {G : SimpleGraph V} {u v : V}
     (B : TypeABarrier G u) (C : TypeABarrier G v) (a : Side) :
     block B C a .L ∪ block B C a .M ∪ block B C a .R = B.side a := by
@@ -30793,6 +31257,7 @@ lemma block_row_union {G : SimpleGraph V} {u v : V}
         (Finset.mem_union_right _ (mem_block.mpr ⟨hx, hxM⟩))
     · exact Finset.mem_union_right _ (mem_block.mpr ⟨hx, hxR⟩)
 
+open scoped Classical in
 lemma block_column_union {G : SimpleGraph V} {u v : V}
     (B : TypeABarrier G u) (C : TypeABarrier G v) (b : Side) :
     block B C .L b ∪ block B C .M b ∪ block B C .R b = C.side b := by
@@ -30960,6 +31425,7 @@ lemma triangle_right_ledgers
   exact ⟨by simpa [P, X31, X32, X33, X21, X22, X23] using hfirst.symm,
     by simpa [P, X13, X23, X33, X12, X22, X32] using hsecond.symm⟩
 
+open scoped Classical in
 /-- The diagonal, off-diagonal, and right-right cut identities in the
 type-A triangle overlay. -/
 lemma triangle_auxiliary_cut_ledgers
@@ -31352,6 +31818,7 @@ lemma triangle_auxiliary_cut_ledgers
 
 end TypeABarrier
 
+open scoped Classical in
 /-- In a connected even-regular graph with no two-cut, every proper
 nonempty shore has boundary at least four. -/
 lemma four_le_boundaryMultiplicity_of_nonempty_proper
@@ -31364,7 +31831,7 @@ lemma four_le_boundaryMultiplicity_of_nonempty_proper
   have hproper : S ≠ Finset.univ := by
     intro h
     rw [h] at hcomp
-    simpa using hcomp
+    simp at hcomp
   have hpos := boundaryMultiplicity_pos_of_connected G hconn S hS hproper
   have heven := Pseudograph.boundaryMultiplicity_even_of_even_regular
     (Pseudograph.ofSimple G) (r := 2)
@@ -31376,6 +31843,7 @@ lemma four_le_boundaryMultiplicity_of_nonempty_proper
     omega
   exact hno2 S hS hproper htwo
 
+open scoped Classical in
 /-- Before six-cuts themselves are eliminated, the two- and four-cut
 conclusions already force every shore nontrivial on both sides to have
 boundary at least six. -/
@@ -31408,6 +31876,7 @@ lemma six_le_boundaryMultiplicity_of_two_sided_nontrivial
   · exact hno2 S hS hproper h2
   · rcases hno4 S hS hproper h4 with h1 | h1 <;> omega
 
+open scoped Classical in
 /-- Proposition 3.6 upgrades the preceding lower bound to eight whenever a
 bipartite shore contains two vertices in one independent colour class. -/
 lemma eight_le_boundaryMultiplicity_of_bipartite_with_independent_pair
@@ -31455,6 +31924,8 @@ lemma eight_le_boundaryMultiplicity_of_bipartite_with_independent_pair
   rcases heven with ⟨k, hk⟩
   omega
 
+omit [Fintype V] in
+open scoped Classical in
 /-- Two disjoint independent colour classes give an ambient two-colouring
 of their union. -/
 lemma isBipartiteOn_union_of_independent
@@ -31479,6 +31950,7 @@ lemma isBipartiteOn_union_of_independent
     · exact False.elim (hB (by simpa using hxB) (by simpa using hyB)
         hxy.ne hxy)
 
+open scoped Classical in
 /-- Tashkinov's Proposition 4.3 in the abstract type-A language: two
 barriers centred at adjacent vertices of a triangle yield incompatible cut
 ledgers. -/
@@ -31737,14 +32209,14 @@ theorem false_of_typeABarriers_triangle
       rw [← Pseudograph.betweenMultiplicity_singleton_ofSimple G u X23 huNotX23]
       rw [P.betweenMultiplicity_comm, ← hX12eq]
       exact hbvals.2
-    exact le_trans (by simpa [hfilter] : 2 ≤ (X23.filter (G.Adj u)).card)
+    exact le_trans (by simp [hfilter] : 2 ≤ (X23.filter (G.Adj u)).card)
       (Finset.card_filter_le _ _)
   have hX32card : 2 ≤ X32.card := by
     have hfilter : (X32.filter (G.Adj v)).card = 2 := by
       rw [← Pseudograph.betweenMultiplicity_singleton_ofSimple G v X32 hvNotX32]
       rw [P.betweenMultiplicity_comm, ← hX21eq]
       exact hbvals.1
-    exact le_trans (by simpa [hfilter] : 2 ≤ (X32.filter (G.Adj v)).card)
+    exact le_trans (by simp [hfilter] : 2 ≤ (X32.filter (G.Adj v)).card)
       (Finset.card_filter_le _ _)
   have hH3bip : Pseudograph.IsBipartiteOn G H3 :=
     isBipartiteOn_union_of_independent G X13 X23
@@ -31813,8 +32285,7 @@ theorem false_of_typeABarriers_triangle
     ext x
     simp only [H3, X13, X23, TypeABarrier.block,
       TypeABarrier.side_L, TypeABarrier.side_M,
-      TypeABarrier.side_R, Finset.mem_inter, Finset.mem_union,
-      Finset.mem_compl]
+      TypeABarrier.side_R, Finset.mem_inter, Finset.mem_union]
     tauto
   have hsecond :
       (letI : DecidableEq V := Classical.decEq _;
@@ -31824,8 +32295,7 @@ theorem false_of_typeABarriers_triangle
     ext x
     simp only [H4, X31, X32, TypeABarrier.block,
       TypeABarrier.side_L, TypeABarrier.side_M,
-      TypeABarrier.side_R, Finset.mem_inter, Finset.mem_union,
-      Finset.mem_compl, not_not]
+      TypeABarrier.side_R, Finset.mem_inter, Finset.mem_union]
     tauto
   have hBRcut : P.boundaryMultiplicity BRc = 6 := by
     have hcompl :
@@ -31911,6 +32381,7 @@ theorem IsVertexMinimalCounterexample.hasNoTriangles
   exact false_of_typeABarriers_triangle K hreg hconn hno2 hno4 hnoBip
     huv huw hvw B C
 
+open scoped Classical in
 structure MinimalSixShore (G : SimpleGraph V) where
   shore : Finset V
   cut : (Pseudograph.ofSimple G).boundaryMultiplicity shore = 6
@@ -31938,6 +32409,7 @@ lemma exists_minimalSixShore
 
 namespace MinimalSixShore
 
+open scoped Classical in
 lemma three_le_card {G : SimpleGraph V} (M : MinimalSixShore G)
     (hreg : G.IsRegularOfDegree 4) : 3 ≤ M.shore.card := by
   have hne0 : M.shore.card ≠ 0 := by
@@ -31956,6 +32428,7 @@ lemma three_le_card {G : SimpleGraph V} (M : MinimalSixShore G)
   have hne2 : M.shore.card ≠ 2 := M.nontrivial.1
   exact by omega
 
+open scoped Classical in
 lemma three_le_compl_card {G : SimpleGraph V} (M : MinimalSixShore G)
     (hreg : G.IsRegularOfDegree 4) : 3 ≤ M.shoreᶜ.card := by
   have hcutC : (Pseudograph.ofSimple G).boundaryMultiplicity M.shoreᶜ = 6 := by
@@ -31975,6 +32448,7 @@ lemma three_le_compl_card {G : SimpleGraph V} (M : MinimalSixShore G)
   have hne2 : M.shoreᶜ.card ≠ 2 := M.nontrivial.2
   exact by omega
 
+open scoped Classical in
 /-- No vertex on the shore carries three incidences of the minimal
 six-cut. -/
 lemma outsideDegree_le_two
@@ -32033,6 +32507,7 @@ lemma outsideDegree_le_two
       omega
     exact hno2 T hTnonempty hTproper hcutT
 
+open scoped Classical in
 /-- Nor can a vertex outside the shore send three edges into it. -/
 lemma insideDegree_of_notMem_le_two
     {G : SimpleGraph V} (M : MinimalSixShore G)
@@ -32055,7 +32530,7 @@ lemma insideDegree_of_notMem_le_two
   rw [M.cut, hsingle, P.betweenMultiplicity_comm M.shore {v}] at htoggle
   have hTunion : M.shore ∪ {v} = T := by
     ext x
-    simp [T, or_comm]
+    simp [T]
   rw [hTunion] at htoggle
   change P.boundaryMultiplicity T + 2 * P.betweenMultiplicity {v} M.shore = 10 at htoggle
   have hTnonempty : T.Nonempty := ⟨v, by simp [T]⟩
@@ -32111,6 +32586,7 @@ end MinimalSixShore
 /-! A uniform barrier partition for Proposition 4.4.  Type B retains its
 two six-components because the proof uses them separately. -/
 
+open scoped Classical in
 structure Section4Barrier (G : SimpleGraph V) (u : V) where
   kind : BarrierKind
   left : Finset V
@@ -32169,6 +32645,7 @@ lemma genuine {G : SimpleGraph V} {u : V} (B : Section4Barrier G u) :
   · exact .inr (.inr rfl)
   · simpa [h] using B.kind_data
 
+open scoped Classical in
 /-- Build the abstract partition from a selected union of residual
 components.  Every unselected component is required to be a singleton; this
 single hypothesis proves both independence of the left shore and absence of
@@ -32326,6 +32803,7 @@ noncomputable def ofSelectedComponents
 
 end Section4Barrier
 
+open scoped Classical in
 lemma residual_four_component_singleton
     (G : SimpleGraph V) (hreg : G.IsRegularOfDegree 4)
     (hno4 : ∀ S : Finset V, S.Nonempty → S ≠ Finset.univ →
@@ -32375,6 +32853,7 @@ lemma residual_four_component_singleton
   · simpa [A, S] using h
   · exact (hcompcard_ne_one h).elim
 
+open scoped Classical in
 /-- Construct the pre-six-cut type-C barrier directly from its unique
 eight-component; unlike the later `TypeCBarrier`, this needs no no-six-cut
 hypothesis. -/
@@ -32440,6 +32919,7 @@ theorem exists_section4Barrier_C
     (Pseudograph.ofSimple G).boundaryMultiplicity R = 8 ∧ Odd R.card
   exact ⟨hpattern.1, by simpa [R] using hc8, hoddR⟩
 
+open scoped Classical in
 /-- Construct the type-B barrier from its two residual six-components. -/
 theorem exists_section4Barrier_B
     (G : SimpleGraph V) (hreg : G.IsRegularOfDegree 4)
@@ -32556,6 +33036,7 @@ theorem exists_section4Barrier_B
     by simpa [R₁, cut] using hc1Cut, by simpa [R₂, cut] using hc2Cut,
     hodd1, hodd2⟩
 
+open scoped Classical in
 theorem exists_section4Barrier
     (G : SimpleGraph V) (hreg : G.IsRegularOfDegree 4)
     (hodd : Odd (Nat.card V)) (hconn : G.Connected)
@@ -32602,6 +33083,7 @@ def IsNearBipartiteEdge (G : SimpleGraph V) (S : Finset V) (x y : V) : Prop :=
     ∃ color : V → Fin 2, ∀ {a b : V}, a ∈ S → b ∈ S → G.Adj a b →
       s(a, b) ≠ s(x, y) → color a ≠ color b
 
+open scoped Classical in
 /-- A triangle-free quartic graph cannot have a three-vertex six-shore:
 the degree ledger would force all three possible internal edges. -/
 lemma card_ne_three_of_triangle_free_six_shore
@@ -32628,12 +33110,13 @@ lemma card_ne_three_of_triangle_free_six_shore
         have hb : b = x ∨ b = y ∨ b = z := by
           simpa [hS] using hm.2.2
         rcases ha with rfl | rfl | rfl <;> rcases hb with rfl | rfl | rfl
-        all_goals simp [Eall, Sym2.eq_swap]
+        all_goals simp only [Sym2.eq_swap, mem_insert, Sym2.eq, Sym2.rel_iff', Prod.mk.injEq,
+          and_true, Prod.swap_prod_mk, true_and, or_self, mem_singleton, Eall, true_or, or_true]
         all_goals exact (G.loopless.irrefl _ hm.1).elim
   have hEcard : (Pseudograph.internalEdgeFinset G S).card = 3 := by
     rw [Pseudograph.card_internalEdgeFinset, hint]
   have hAllcard : Eall.card = 3 := by
-    simp [Eall, Sym2.eq_iff, hxy, hxz, hyz, ne_comm]
+    simp [Eall, hxy, hxz, hyz]
   have hEq : Pseudograph.internalEdgeFinset G S = Eall :=
     Finset.eq_of_subset_of_card_le hsub (by omega)
   have hxyAdj : G.Adj x y := by
@@ -32653,6 +33136,7 @@ lemma card_ne_three_of_triangle_free_six_shore
     exact ((Pseudograph.mem_internalEdgeFinset_mk_iff G S y z).mp hm).1
   exact htri hxyAdj hxzAdj hyzAdj
 
+open scoped Classical in
 /-- A vertex of a minimal nontrivial six-shore cannot carry exactly two
 incidences of that cut.  Erasing such a vertex leaves another six-shore;
 minimality makes the remainder a pair, and hence the original shore a
@@ -32696,6 +33180,7 @@ lemma MinimalSixShore.outsideDegree_ne_two_of_triangle_free
   exact card_ne_three_of_triangle_free_six_shore
     G hreg htri M.shore M.cut hScard
 
+open scoped Classical in
 /-- On a minimal nontrivial six-shore there is at most one edge whose
 deletion makes the induced graph bipartite.  For two such edges, compare the
 two 2-colourings.  The vertices where the colourings agree and disagree form
@@ -32804,7 +33289,7 @@ theorem nearBipartiteEdge_unique_on_minimalSixShore
       s(p, q) = s(x, y) ∨ s(p, q) = s(a, b) := by
     intro p q hpq hpA hqB
     by_contra hne
-    push_neg at hne
+    push Not at hne
     have hpS := (Finset.mem_filter.mp hpA).1
     have hqS := (Finset.mem_filter.mp hqB).1
     have hdiff₁ := hcolor₁ hpS hqS hpq hne.1
@@ -32898,7 +33383,7 @@ theorem nearBipartiteEdge_unique_on_minimalSixShore
     · have hAproper : A ≠ Finset.univ := by
         intro h
         rw [h] at hAcompNonempty
-        simpa using hAcompNonempty
+        simp at hAcompNonempty
       rcases hno4 A hAnonempty hAproper hcuts.1 with hAone | hAcOne
       · have hBcompNe2 : Bᶜ.card ≠ 2 := by
           have hle := Finset.card_le_card hScompSubB
@@ -32935,7 +33420,7 @@ theorem nearBipartiteEdge_unique_on_minimalSixShore
     · have hBproper : B ≠ Finset.univ := by
         intro h
         rw [h] at hBcompNonempty
-        simpa using hBcompNonempty
+        simp at hBcompNonempty
       rcases hno4 B hBnonempty hBproper hcuts.2 with hBone | hBcOne
       · have hAcompNe2 : Aᶜ.card ≠ 2 := by
           have hle := Finset.card_le_card hScompSubA
@@ -33002,6 +33487,7 @@ lemma center_mem_or_two_inside
 
 end SixCutCenterSelection
 
+open scoped Classical in
 theorem exists_sixCutCenterSelection
     (G : SimpleGraph V) (hreg : G.IsRegularOfDegree 4)
     (hconn : G.Connected)
@@ -33028,7 +33514,7 @@ theorem exists_sixCutCenterSelection
   obtain ⟨x, hx⟩ := hSnonempty.exists_mem
   have hyexists : ∃ y, y ∉ M.shore := by
     by_contra h
-    push_neg at h
+    push Not at h
     have huniv : M.shore = Finset.univ := by ext y; simp [h y]
     have hcut := M.cut
     rw [huniv] at hcut
@@ -33071,6 +33557,7 @@ theorem exists_sixCutCenterSelection
     omega
   exact ⟨⟨u, .inr (.inr ⟨hnear, hone, huNot, htwo⟩)⟩⟩
 
+open scoped Classical in
 /-- The centre-selection rule guarantees that at least two vertices of the
 minimal shore lie in the middle part of every barrier centred there. -/
 lemma SixCutCenterSelection.two_le_middle_inter_shore
@@ -33121,6 +33608,7 @@ lemma SixCutCenterSelection.two_le_middle_inter_shore
       exact hout
   exact le_trans hTcard (Finset.card_le_card hTsub)
 
+open scoped Classical in
 /-- The nonempty-intersection subcase for a type-A barrier in Proposition
 4.4.  Symmetric cut submodularity makes both crossed shores six-shores;
 minimality reduces one to an adjacent pair, and the centre rule then creates
@@ -33325,6 +33813,7 @@ theorem false_of_section4Barrier_A_of_right_inter_nonempty
     exact (Finset.mem_filter.mp this).2
   exact htri hux huy hxy
 
+open scoped Classical in
 /-- The remaining type-A case of Proposition 4.4.  If the barrier's right
 shore misses the minimal six-shore, that shore is the union of the independent
 left block and the middle block, whose unique internal edge is therefore a
@@ -33393,7 +33882,7 @@ theorem false_of_section4Barrier_A_of_right_inter_empty
     omega
   have hexists : ∃ x ∈ M1, ∃ y ∈ M1, x ≠ y ∧ G.Adj x y := by
     by_contra hnot
-    push_neg at hnot
+    push Not at hnot
     apply hM1notInd
     rw [SimpleGraph.isIndepSet_iff]
     intro x hx y hy hxy
@@ -33448,6 +33937,7 @@ theorem false_of_section4Barrier_A_of_right_inter_empty
     G hreg hconn hno2 hno4 hnoBip6 htri M hnearXY hnearCenter
   exact hedgeNe heq
 
+open scoped Classical in
 /-- The type-B case of Proposition 4.4.  The part of the crossed shore on
 the left/middle side is bipartite and therefore has boundary at least eight.
 Each of the two residual six-shores contributes a nontrivial outside part,
@@ -33700,6 +34190,7 @@ theorem false_of_section4Barrier_B
   change 8 ≤ P.boundaryMultiplicity H at hHlower
   omega
 
+open scoped Classical in
 /-- The type-C case of Proposition 4.4.  We cross the minimal six-shore
 with the barrier's eight-shore.  The two off-diagonal blocks have cuts eight
 and six, and the exact uncrossing identity shows that the other diagonal
@@ -34260,7 +34751,7 @@ theorem false_of_section4Barrier_C
         {x} {y} hdisj
       have hxcut := boundaryMultiplicity_singleton_of_quartic G hreg x
       have hycut := boundaryMultiplicity_singleton_of_quartic G hreg y
-      rw [show ({x} : Finset V) ∪ {y} = Rin by simpa [hRinEq],
+      rw [show ({x} : Finset V) ∪ {y} = Rin by simp [hRinEq],
         hRinCut, hxcut, hycut] at hunion
       have hbetween : P.betweenMultiplicity {x} {y} = 1 := by omega
       rw [Pseudograph.betweenMultiplicity_singleton_ofSimple G x {y}
@@ -34441,7 +34932,7 @@ theorem false_of_section4Barrier_C
         · intro hx
           have hx' := Finset.mem_filter.mp hx
           have hxeq := hzUnique x (Finset.mem_inter.mp hx'.1).1 hx'.2
-          simpa [hxeq]
+          simp [hxeq]
         · intro hx
           have hxeq : x = selection.center := by simpa using hx
           subst x
@@ -34472,7 +34963,7 @@ theorem false_of_section4Barrier_C
             {z} {l} hdisj
           have hzcut := boundaryMultiplicity_singleton_of_quartic G hreg z
           have hlcut := boundaryMultiplicity_singleton_of_quartic G hreg l
-          rw [show ({z} : Finset V) ∪ {l} = A by simpa [hAlpair],
+          rw [show ({z} : Finset V) ∪ {l} = A by simp [hAlpair],
             hAtwo.1, hzcut, hlcut] at hunion
           have hbetween : P.betweenMultiplicity {z} {l} = 1 := by omega
           rw [Pseudograph.betweenMultiplicity_singleton_ofSimple G z {l}
@@ -34546,7 +35037,7 @@ theorem false_of_section4Barrier_C
         have hsplitA := P.betweenMultiplicity_union_left
           {z} {l} H hzlDisj hpairH
         have hAHcount : P.betweenMultiplicity A H = 4 := by
-          rw [show A = ({z} : Finset V) ∪ {l} by simpa [hAlpair],
+          rw [show A = ({z} : Finset V) ∪ {l} by simp [hAlpair],
             hsplitA, hzHcount, hlHcount]
         rw [hAtwo.1, hAHcount] at hAHcut
         omega
@@ -34586,7 +35077,7 @@ theorem false_of_section4Barrier_C
             G hreg selection.center
           have hmcut := boundaryMultiplicity_singleton_of_quartic G hreg m
           rw [show ({selection.center} : Finset V) ∪ {m} = A by
-              simpa [hAeqPair], hAtwo.1, hucut, hmcut] at hunion
+              simp [hAeqPair], hAtwo.1, hucut, hmcut] at hunion
           have hbetween : P.betweenMultiplicity {selection.center} {m} = 1 := by omega
           rw [Pseudograph.betweenMultiplicity_singleton_ofSimple
             G selection.center {m} (by simp [hum])] at hbetween
@@ -34781,6 +35272,7 @@ theorem Pseudograph.containsRegularPart_three_of_inTashkinovClass
     K hreg hodd hconn hno2 hno4 hindependent hno6
   exact hnoCubic hcubic
 
+open scoped Classical in
 /-- **Erdős Problem 715 (Tashkinov).**  Every finite nonempty simple
 4-regular graph contains a nonempty 3-regular subgraph. -/
 theorem erdos_715 [Nonempty V] (G : SimpleGraph V)
@@ -34794,7 +35286,7 @@ universe u
 
 /-- A degree is cubic-forcing when every finite nonempty simple regular graph
 of that degree contains a nonempty cubic subgraph. -/
-def IsCubicForcingDegree (r : ℕ) : Prop :=
+def IsCubicForcingDegree (r : ℕ) : Prop := open scoped Classical in
   ∀ (W : Type u) [Fintype W] [Nonempty W], ∀ G : SimpleGraph W,
     G.IsRegularOfDegree r → ContainsRegularSubgraph G 3
 
