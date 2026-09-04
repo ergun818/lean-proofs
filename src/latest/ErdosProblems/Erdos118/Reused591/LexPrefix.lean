@@ -271,7 +271,7 @@ theorem typeLT_le_one_of_subsingleton (X : Type*) [LinearOrder X]
 `p` is strictly larger than `q`.  The definition is made on the ambient
 level so that the existing child calculus can be reused verbatim. -/
 def Above {n : ℕ} (W : Set (RawLevel n)) (p : List ℕ)
-    (hp : p.length < n) (q : ℕ) : Set (RawLevel n) :=
+    (_hp : p.length < n) (q : ℕ) : Set (RawLevel n) :=
   {x | x ∈ W ∧ p <+: x.1 ∧
     q < (x.1.drop p.length).headD 0}
 
@@ -279,7 +279,7 @@ theorem fiber_above_eq {n : ℕ} (W : Set (RawLevel n))
     (p : List ℕ) (hp : p.length < n) (q : ℕ) :
     Fiber (Above W p hp q) p = Above W p hp q := by
   ext x
-  simp only [mem_fiber, Above, Set.mem_setOf_eq]
+  simp only [mem_fiber, Above, Set.mem_ofPred_eq]
   aesop
 
 theorem child_above_empty_of_le {n : ℕ} (W : Set (RawLevel n))
@@ -430,7 +430,7 @@ theorem exists_large_child_above {n k j : ℕ} (W : Set (RawLevel n))
       exact_mod_cast Nat.ne_of_gt (Nat.zero_lt_of_lt hjk)
     exact (not_le_of_gt hpow) (htype ▸ hle)
   by_contra h
-  push_neg at h
+  push Not at h
   have hdelta0 : 0 < ω ^ (j : Ordinal) :=
     Ordinal.opow_pos _ Ordinal.omega0_pos
   have htail : typeLT (Above W p hp' q) ≤ ω ^ (j : Ordinal) :=

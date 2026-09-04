@@ -160,7 +160,8 @@ theorem checkpoint {H K : Set ℕ} (hK : K.Infinite) (hKH : K ⊆ H)
       obtain ⟨E, u, hr', he, hm'⟩ := ih D hlt t.next hd
       exact ⟨E, u, hr.trans hr', he, hm'⟩
 
-def ofOpening {H : Set ℕ} {B : SimpleGraph G} (F : JointOpening.Opening H B .inside) : Config H B where
+def ofOpening {H : Set ℕ} {B : SimpleGraph G}
+    (F : JointOpening.Opening H B .inside) : Config H B where
   S₀ := F.S
   S₁ := F.S
   T₀ := F.T₀

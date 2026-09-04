@@ -86,6 +86,7 @@ theorem typeLT_unionList_of_consecutive :
         typeLT_unionList_of_consecutive ss h.2.2]
       rfl
 
+omit [LinearOrder α] [WellFoundedLT α] in
 theorem unionList_mono :
     ∀ {ss tt : List (Set α)}, List.Forall₂ (· ⊆ ·) ss tt → unionList ss ⊆ unionList tt
   | [], [], _ => by simp [unionList]
@@ -122,6 +123,7 @@ theorem typeLT_unionList_eq_of_piecewise :
                 htyHead,
                 typeLT_unionList_eq_of_piecewise hcon.2.2 hsubTail htyTail]
 
+omit [LinearOrder α] [WellFoundedLT α] in
 theorem unionList_subset_of_forall_mem {ss : List (Set α)} {u : Set α}
     (h : ∀ s ∈ ss, s ⊆ u) : unionList ss ⊆ u := by
   induction ss with
@@ -139,10 +141,10 @@ form.  Peeling off the leading `ω`-power is considerably easier to use in
 Lean: `sub_omega0_opow_log_lt` is exactly the termination theorem. -/
 
 noncomputable def principalTerms (o : Ordinal) : List Ordinal :=
-  if h : o = 0 then []
+  if _h : o = 0 then []
   else ω ^ log ω o :: principalTerms (o - ω ^ log ω o)
 termination_by o
-decreasing_by exact sub_omega0_opow_log_lt h
+decreasing_by exact sub_omega0_opow_log_lt _h
 
 @[simp] theorem principalTerms_zero : principalTerms 0 = [] := by
   rw [principalTerms, dif_pos rfl]
@@ -264,7 +266,7 @@ theorem leftCut_disjoint_rightCut (p : Ordinal) :
 theorem leftCut_union_rightCut (p : Ordinal) :
     leftCut (β := β) p ∪ rightCut (β := β) p = Set.univ := by
   ext x
-  simp only [leftCut, rightCut, Set.mem_union, Set.mem_setOf_eq,
+  simp only [leftCut, rightCut, Set.mem_union, Set.mem_ofPred_eq,
     Set.mem_univ, iff_true]
   exact lt_or_ge _ _
 
@@ -312,10 +314,12 @@ theorem typeLT_liftSet (u : Set β) (s : Set u) :
     typeLT (liftSet u s) = typeLT s :=
   (liftSetRelIso u s).ordinalType_congr.symm
 
+omit [LinearOrder β] [WellFoundedLT β] in
 theorem liftSet_subset (u : Set β) (s : Set u) : liftSet u s ⊆ u := by
   rintro x ⟨y, _, rfl⟩
   exact y.2
 
+omit [LinearOrder β] [WellFoundedLT β] in
 @[simp] theorem liftSet_univ (u : Set β) : liftSet u Set.univ = u := by
   ext x
   constructor
@@ -324,14 +328,17 @@ theorem liftSet_subset (u : Set β) (s : Set u) : liftSet u s ⊆ u := by
   · intro hx
     exact ⟨⟨x, hx⟩, Set.mem_univ _, rfl⟩
 
+omit [LinearOrder β] [WellFoundedLT β] in
 theorem liftSet_union (u : Set β) (s t : Set u) :
     liftSet u (s ∪ t) = liftSet u s ∪ liftSet u t := by
   exact Set.image_union _ _ _
 
+omit [LinearOrder β] [WellFoundedLT β] in
 theorem liftSet_disjoint {u : Set β} {s t : Set u} (h : Disjoint s t) :
     Disjoint (liftSet u s) (liftSet u t) :=
   Set.disjoint_image_of_injective Subtype.val_injective h
 
+omit [WellFoundedLT β] in
 theorem liftSet_lt {u : Set β} {s t : Set u}
     (h : ∀ x ∈ s, ∀ y ∈ t, x < y) :
     ∀ x ∈ liftSet u s, ∀ y ∈ liftSet u t, x < y := by
@@ -341,6 +348,7 @@ theorem liftSet_lt {u : Set β} {s t : Set u}
 def liftList (u : Set β) (ss : List (Set u)) : List (Set β) :=
   ss.map (liftSet u)
 
+omit [LinearOrder β] [WellFoundedLT β] in
 theorem unionList_liftList (u : Set β) :
     ∀ ss : List (Set u), unionList (liftList u ss) = liftSet u (unionList ss)
   | [] => by simp [liftList, unionList, liftSet]
@@ -350,6 +358,7 @@ theorem unionList_liftList (u : Set β) :
         liftSet u (s ∪ unionList ss)
       rw [unionList_liftList, liftSet_union]
 
+omit [WellFoundedLT β] in
 theorem consecutive_liftList (u : Set β) :
     ∀ {ss : List (Set u)}, Consecutive ss → Consecutive (liftList u ss)
   | [], _ => by simp [liftList, Consecutive]
@@ -362,6 +371,7 @@ theorem consecutive_liftList (u : Set β) :
       exact ⟨liftSet_disjoint h.1, liftSet_lt h.2.1,
         consecutive_liftList u h.2.2⟩
 
+omit [LinearOrder β] [WellFoundedLT β] in
 theorem mem_liftList {u : Set β} {ss : List (Set u)} {s : Set β}
     (hs : s ∈ liftList u ss) : ∃ t ∈ ss, s = liftSet u t := by
   rw [liftList, List.mem_map] at hs

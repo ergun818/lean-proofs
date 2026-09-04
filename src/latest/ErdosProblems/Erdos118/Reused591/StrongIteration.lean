@@ -50,7 +50,7 @@ def StepOracle [LinearOrder B] [LinearOrder Y] [LinearOrder X]
 
 section Schedule
 
-variable [LinearOrder B] [Countable B] [Nonempty B]
+variable [Countable B] [Nonempty B]
 
 /-- A chosen enumeration of a nonempty countable type. -/
 noncomputable def enum : ℕ → B :=
@@ -74,8 +74,9 @@ theorem code_injective : Function.Injective (code : B → ℕ) := by
 noncomputable def index (n : ℕ) : B := enum n.unpair.1
 
 /-- The finite set of all indices used through stage `n`. -/
-noncomputable def past (n : ℕ) : Finset B :=
-  (Finset.range (n + 1)).image index
+noncomputable def past (n : ℕ) : Finset B := by
+  classical
+  exact (Finset.range (n + 1)).image index
 
 theorem index_mem_past (n : ℕ) : index n ∈ (past n : Finset B) := by
   classical
@@ -110,8 +111,8 @@ end Schedule
 
 section Fusion
 
-variable [LinearOrder B] [WellFoundedLT B] [Countable B] [Nonempty B]
-variable [LinearOrder Y] [Nonempty Y]
+variable [LinearOrder B] [Countable B] [Nonempty B]
+variable [LinearOrder Y]
 variable [LinearOrder X]
 variable (blue : SimpleGraph X) (oracle : StepOracle (B := B) (Y := Y) blue)
 variable (start : BlockFamily B Y X)
@@ -289,7 +290,8 @@ theorem point_not_adj_later (m k : ℕ) :
 index in `B`. -/
 abbrev Fiber (B : Type) [LinearOrder B] := B ×ₗ ℕ
 
-theorem typeLT_fiber : typeLT (Fiber B) = ω * typeLT B := by
+omit [Countable B] [Nonempty B] in
+theorem typeLT_fiber [WellFoundedLT B] : typeLT (Fiber B) = ω * typeLT B := by
   change type (Prod.Lex ((· < ·) : B → B → Prop)
     ((· < ·) : ℕ → ℕ → Prop)) = _
   rw [Ordinal.type_prod_lex, Ordinal.type_nat_lt]
@@ -385,7 +387,7 @@ theorem exists_orderEmbedding_not_adj :
     fun _ _ h ↦ orderEmbedding_not_adj blue oracle start h⟩
 
 /-- Set form, including the exact ordinal type of the fused range. -/
-theorem exists_set_type_not_adj [WellFoundedLT X] :
+theorem exists_set_type_not_adj [WellFoundedLT B] [WellFoundedLT X] :
     ∃ S : Set X, typeLT S = ω * typeLT B ∧
       ∀ x ∈ S, ∀ y ∈ S, x ≠ y → ¬ blue.Adj x y := by
   let e := orderEmbedding blue oracle start
@@ -410,8 +412,8 @@ an argument makes the exact logical boundary explicit. -/
 
 section Wrapper
 
-variable [LinearOrder B] [WellFoundedLT B] [Countable B] [Nonempty B]
-variable [LinearOrder Y] [Nonempty Y]
+variable [LinearOrder B] [Countable B] [Nonempty B]
+variable [LinearOrder Y]
 variable [LinearOrder X]
 
 def NoBlueK4 (blue : SimpleGraph X) : Prop :=

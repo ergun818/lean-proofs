@@ -6,7 +6,7 @@ open Ordinal
 
 namespace FixedReindex
 
-variable {A : Type*} [LinearOrder A] [WellFoundedLT A]
+variable {A : Type*} [LinearOrder A]
 
 noncomputable def cut (F : Finset A) (x : A) : Finset A :=
   F.filter (fun a => a < x)
@@ -58,6 +58,8 @@ theorem lt_endpoint_of_same_cut {F : Finset A} {u y : A}
   · have hymem : y ∈ cut F u := Finset.mem_filter.mpr ⟨hyF, hyu⟩
     have : y ∈ cut F y := by simpa only [hcut] using hymem
     exact (lt_irrefl y) (Finset.mem_filter.mp this).2
+
+variable [WellFoundedLT A]
 
 /-- Equality of the ordinal types of every open cell with its part in
 `M` supplies an order isomorphism for that cell. -/

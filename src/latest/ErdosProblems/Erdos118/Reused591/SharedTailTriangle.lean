@@ -62,7 +62,8 @@ theorem triangle_of_two_pending_tails {N H : Set ℕ} (hHN : H ⊆ N) (hH : H.In
   obtain ⟨su', hsu, hsuNone, hsuShape, hsuOther⟩ := hfinish 1
   have hstShape' : LabeledWord.SameStructure st'.position.board.right last.position.board.left := by
     simpa [old, requests, sides, hsST, Board.get] using hstShape
-  have hsuShape' : LabeledWord.SameStructure su'.position.board.right last.position.board.right := by
+  have hsuShape' :
+      LabeledWord.SameStructure su'.position.board.right last.position.board.right := by
     simpa [old, requests, sides, hsSU, Board.get] using hsuShape
   have hstOther' : st'.position.board.left = st.position.board.left := by
     simpa [old, requests, hsST, Board.get] using hstOther

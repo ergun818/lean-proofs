@@ -78,7 +78,8 @@ theorem inside_last_singleton_of_first_large {N H : Set ℕ}
       simpa [hqBoard, Board.get] using hr.other_eq
     simp [ho, hBodyBoard, hrootOther, hboard, Board.initial]
   have hSTbody : st.position.board.left.bodyLabels.length = L.firstLower := by
-    have hb : st.position.board.left.bodyLabels = body.position.board.left.bodyLabels ++ [D.upper] :=
+    have hb :
+        st.position.board.left.bodyLabels = body.position.board.left.bodyLabels ++ [D.upper] :=
       hbST
     rw [hb, List.length_append, List.length_singleton]
     exact hiBody
@@ -90,7 +91,8 @@ theorem inside_last_singleton_of_first_large {N H : Set ℕ}
   have hSTcurrent : st.position.board.left.currentLabel = D.upper := by
     simp [LabeledWord.currentLabel, show st.position.board.left.bodyLabels =
       body.position.board.left.bodyLabels ++ [D.upper] from hbST]
-  have hSTstrict : st.position.board.left.leafIndex < st.position.board.left.currentLabel.sup id := by
+  have hSTstrict :
+      st.position.board.left.leafIndex < st.position.board.left.currentLabel.sup id := by
     rw [hSTcurrent, show st.position.board.left.leafIndex = D.pivot from hiST]
     exact D.pivot_lt_upper_sup hdLarge
   obtain ⟨old, upper, c, hstOld, hpUpper, hpOld, hOldRoot, hOldBody, hOldRel, hOldNo,
@@ -98,7 +100,8 @@ theorem inside_last_singleton_of_first_large {N H : Set ℕ}
     inside_singleton_early_histories hHN hH blue htri hroot p st L hwin hp hboard hmode
       hpST hall hnST hSTinit hrST hSTroot hSTbody hSTstrict
   have hbodyOld := (Relation.ReflTransGen.single hBodyLeaf).trans hstOld
-  obtain ⟨newAtoms, hnewRun, hnewPool⟩ := follow_word_inputs hbodyOld 0 (fun _ => Nat.zero_le _) false
+  obtain ⟨newAtoms, hnewRun, hnewPool⟩ :=
+    follow_word_inputs hbodyOld 0 (fun _ => Nat.zero_le _) false
   have hfullRun := hbaseRun.append hnewRun
   let atoms := (tail.map fun n => (∅, n)) ++ newAtoms
   have hraw : (LabeledCode.rootCursor L.lower L.marker).runAtoms atoms =

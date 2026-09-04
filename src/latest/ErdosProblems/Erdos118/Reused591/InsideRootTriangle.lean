@@ -75,7 +75,8 @@ theorem inside_triangle_of_root_forks {N H : Set ℕ} (hHN : H ⊆ N) (hH : H.In
       (by simpa [hbST, Board.get] using hnext) hfine
       (max oldST.position.bound (b oldST)) le_rfl
   have hwinMarkerSU := hwinSUK.of_reachable (exactGame N blue) hpathSU
-  have hwinMarkerST := hwinSTK.of_reachable (exactGame N blue) (Relation.ReflTransGen.single hstepST)
+  have hwinMarkerST :=
+    hwinSTK.of_reachable (exactGame N blue) (Relation.ReflTransGen.single hstepST)
   obtain ⟨pendingST, e, hrequestST, hbPendingST, hpPendingST, he⟩ :=
     winning_request_at_marker hKN hK blue hwinMarkerST false hnMarkerST hmMarkerST
   let B := max (max markerSU.position.bound (b markerSU))
@@ -116,7 +117,8 @@ theorem inside_triangle_of_root_forks {N H : Set ℕ} (hHN : H ⊆ N) (hH : H.In
     have hotherST' : markerST.position.board.right = st.position.board.right := by
       simpa [Board.get, hbST] using hotherST
     simpa [Board.get, hbPendingST, hotherST'] using hotherCurST
-  have hsharedT : LabeledWord.SameStructure oldTU.position.board.left curST.position.board.right := by
+  have hsharedT :
+      LabeledWord.SameStructure oldTU.position.board.left curST.position.board.right := by
     rw [hremainST, hbTU]
     exact History.sameStructure_of_coordinates tu st false true hT
   exact inside_completion_triangle hKN hK blue curST curSU oldTU hwinCurST hwinCurSU

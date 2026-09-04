@@ -142,8 +142,8 @@ def g2Gaps (s : G2) : List TaggedGap :=
 
 @[simp] theorem g2Gaps_fst (s : G2) :
     (g2Gaps s).map Prod.fst = g2Word s := by
-  simp only [g2Gaps, g2Word, List.map_cons, Prod.fst,
-    List.map_flatMap, Function.comp_apply, levelGaps_fst]
+  simp only [g2Gaps, g2Word, List.map_cons,
+    List.map_flatMap, levelGaps_fst]
 
 @[simp] theorem g2Gaps_ne_nil (s : G2) : g2Gaps s ≠ [] := by
   simp [g2Gaps]

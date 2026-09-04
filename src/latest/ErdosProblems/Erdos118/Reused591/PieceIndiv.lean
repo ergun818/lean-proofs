@@ -48,7 +48,7 @@ theorem typeLT_Iic {A : Type*} [LinearOrder A] [WellFoundedLT A] (a : A) :
     Ordinal.type_Iio_lt]
   have hone : typeLT ({a} : Set A) = 1 := by simp
   rw [hone]
-  exact Ordinal.add_one_eq_succ _
+  exact (Order.succ_eq_add_one _).symm
 
 theorem not_large_Iic_of_isSuccLimit
     {A : Type*} [LinearOrder A] [WellFoundedLT A]
@@ -130,7 +130,7 @@ theorem omegaPower_finitelyIndivisible_of_le
         rw [← Ordinal.opow_natCast, Ordinal.opow_add]
       _ = ω ^ e := by rw [her]
       _ = Ordinal.type ((· < ·) : D → D → Prop) := by
-        simpa [hD] using (show typeLT D = _ from hD).symm
+        simp [hD]
   let iso : (Prod.Lex S R) ≃r ((· < ·) : D → D → Prop) :=
     Classical.choice (Ordinal.type_eq.mp htype)
   exact k4_of_relFiniteIndivisible (hprod.congr iso)

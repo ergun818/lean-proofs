@@ -175,7 +175,7 @@ structure SegmentBlock where
 def BlockLT (a b : SegmentBlock) : Prop := AllLT a.coords b.coords
 
 instance blockLTTrans : Trans BlockLT BlockLT BlockLT where
-  trans := fun {a b c} h₁ h₂ ↦ h₁.trans h₂ b.nonempty
+  trans := fun {_ b _} h₁ h₂ ↦ h₁.trans h₂ b.nonempty
 
 def InterlacingWitness.blockList {x y : List TaggedCoord}
     (w : InterlacingWitness x y) : List SegmentBlock :=
@@ -193,7 +193,7 @@ theorem InterlacingWitness.blockList_chain {x y : List TaggedCoord}
 
 def InterlacingWitness.blockAt {x y : List TaggedCoord}
     (w : InterlacingWitness x y) (i : Fin 9) : SegmentBlock :=
-  w.blockList.get ⟨i, by simpa [InterlacingWitness.blockList] using i.isLt⟩
+  w.blockList.get ⟨i, by simp [InterlacingWitness.blockList]⟩
 
 def InterlacingWitness.InBlock {x y : List TaggedCoord}
     (w : InterlacingWitness x y) (a : TaggedCoord) (i : Fin 9) : Prop :=
@@ -203,9 +203,9 @@ theorem InterlacingWitness.blockAt_lt {x y : List TaggedCoord}
     (w : InterlacingWitness x y) {i j : Fin 9} (hij : i < j) :
     BlockLT (w.blockAt i) (w.blockAt j) := by
   let ii : Fin w.blockList.length :=
-    ⟨i, by simpa [InterlacingWitness.blockList] using i.isLt⟩
+    ⟨i, by simp [InterlacingWitness.blockList]⟩
   let jj : Fin w.blockList.length :=
-    ⟨j, by simpa [InterlacingWitness.blockList] using j.isLt⟩
+    ⟨j, by simp [InterlacingWitness.blockList]⟩
   have hij' : ii < jj := hij
   exact w.blockList_chain.pairwise.rel_get_of_lt hij'
 
@@ -634,7 +634,7 @@ theorem triangle_exists_coord_between
     (wyz : InterlacingWitness y z)
     {qx qy : TaggedCoord}
     (hqx : IsBoxCoord x qx) (hqy : IsBoxCoord y qy)
-    (hqxz : Inside z qx) (hqyz : Inside z qy) :
+    (hqxz : Inside z qx) (_hqyz : Inside z qy) :
     ∃ qz ∈ z,
       (qx.value < qz.value ∧ qz.value < qy.value) ∨
       (qy.value < qz.value ∧ qz.value < qx.value) := by

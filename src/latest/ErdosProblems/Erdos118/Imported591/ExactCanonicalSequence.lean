@@ -24,7 +24,7 @@ def taggedWord (s : G2) : List TaggedCoord :=
 
 @[simp] theorem taggedWord_values (s : G2) :
     (taggedWord s).map TaggedCoord.value = word s := by
-  simp [taggedWord, word, List.map_flatMap, Function.comp_def]
+  simp [taggedWord, word, List.map_flatMap]
 
 @[simp] theorem taggedWord_ne_nil (s : G2) : taggedWord s ≠ [] := by
   simp [taggedWord]

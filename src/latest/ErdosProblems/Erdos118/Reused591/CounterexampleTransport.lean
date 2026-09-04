@@ -70,7 +70,7 @@ theorem not_ordinalCardinalRamsey_of_model
       { toFun := fun x ↦ ⟨e x.1, x.2⟩
         invFun := fun y ↦ ⟨e.symm y.1, by
           change e (e.symm y.1) ∈ S
-          simpa using y.2⟩
+          simp⟩
         left_inv := by intro x; apply Subtype.ext; simp
         right_inv := by intro y; apply Subtype.ext; simp }
     apply hfree
