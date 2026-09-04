@@ -416,12 +416,12 @@ def absentCoordinates {n k : ℕ} (b : TriangleBlock n k) :
   · intro hi
     have hi' : i = (labelEquiv n k).symm (b.apex, b.singleton) := by
       simpa [absentCoordinates] using hi
-    simpa [hi']
+    simp [hi']
   · intro hi
     have : i = (labelEquiv n k).symm (b.apex, b.singleton) := by
       rw [← hi]
       exact (labelEquiv n k).symm_apply_apply i |>.symm
-    simpa [absentCoordinates, this]
+    simp [absentCoordinates, this]
 
 @[simp] theorem card_positiveCoordinates {n k : ℕ}
     (b : TriangleBlock n k) : (positiveCoordinates b).card = 5 := by
@@ -437,7 +437,7 @@ def absentCoordinates {n k : ℕ} (b : TriangleBlock n k) :
 theorem absent_label_not_mem_positiveLabels {n k : ℕ}
     (b : TriangleBlock n k) :
     (b.apex, b.singleton) ∉ b.positiveLabels := by
-  simp [TriangleBlock.positiveLabels, b.colors_ne, b.colors_ne.symm,
+  simp [TriangleBlock.positiveLabels, b.colors_ne.symm,
     b.apex_ne_left, b.apex_ne_right]
 
 theorem positiveCoordinates_disjoint_absentCoordinates {n k : ℕ}
@@ -472,7 +472,7 @@ theorem eligibilityIndicator_eq_cylinderMonomial {n k : ℕ}
         hE.1 ((mem_positiveCoordinates_iff b i).mp hiP)
       have hbit : bits i = true := by
         simpa using (mem_retainedOfBits bits (labelEquiv n k i)).mp hret
-      simp [cylinderMonomial, hiP, hbit]
+      simp [hiP, hbit]
     · by_cases hiA : i ∈ absentCoordinates b
       · have hlabel : labelEquiv n k i = (b.apex, b.singleton) :=
           (mem_absentCoordinates_iff b i).mp hiA
@@ -486,8 +486,8 @@ theorem eligibilityIndicator_eq_cylinderMonomial {n k : ℕ}
               apply hnot
               exact (mem_retainedOfBits bits (labelEquiv n k i)).mpr (by
                 simpa using hbi)
-        simp [cylinderMonomial, hiP, hiA, hbit]
-      · simp [cylinderMonomial, hiP, hiA]
+        simp [hiP, hiA, hbit]
+      · simp [hiP, hiA]
   · rw [eligibilityIndicator, if_neg hE]
     by_cases hP : b.positiveLabels ⊆ retainedOfBits bits
     · have hA : (b.apex, b.singleton) ∈ retainedOfBits bits := by
@@ -506,7 +506,7 @@ theorem eligibilityIndicator_eq_cylinderMonomial {n k : ℕ}
       have hbit : bits i = true := by
         simpa [i] using
           (mem_retainedOfBits bits (b.apex, b.singleton)).mp hA
-      simp [cylinderMonomial, hiP, hiA, hbit]
+      simp [hiP, hiA, hbit]
     · obtain ⟨z, hzP, hznot⟩ := Finset.not_subset.mp hP
       let i := (labelEquiv n k).symm z
       symm
@@ -521,7 +521,7 @@ theorem eligibilityIndicator_eq_cylinderMonomial {n k : ℕ}
             exfalso
             apply hznot
             exact (mem_retainedOfBits bits z).mpr (by simpa [i] using hbi)
-      simp [cylinderMonomial, hiP, hbit]
+      simp [hiP, hbit]
 
 /-- Every universal block has eligibility probability `q^5(1-q)`. -/
 theorem weightedMean_eligibilityIndicator {n k : ℕ} (q : ℝ)
@@ -802,43 +802,52 @@ theorem card_paintedNeighbors_of_roleFits {n k : ℕ}
     (r : RootRole) (b : TriangleBlock n k) (root : Fin n) (colour : Fin k)
     (hfit : RoleFits r b root colour) :
     (paintedNeighbors b root colour).card = r.multiplicity := by
+  have hmem (u z : Fin n) (c : Fin k) :
+      z ∈ paintedNeighbors b u c ↔ b.Paints u z c := by
+    rw [mem_paintedNeighbors_iff]
+    exact and_iff_right_of_imp fun h ↦ (b.paints_ne h).symm
   cases r with
   | repeatedApex =>
       rcases hfit with ⟨rfl, rfl⟩
       rw [show paintedNeighbors b b.apex b.repeated = {b.left, b.right} by
         ext z
-        simp only [mem_paintedNeighbors_iff, ne_eq, mem_insert, mem_singleton]
-        rintro (rfl | rfl)
-        · exact b.apex_ne_left.symm
-        · exact b.apex_ne_right.symm]
+        rw [hmem]
+        simp only [TriangleBlock.Paints, Sym2.eq, Sym2.rel_iff', Prod.mk.injEq, true_and,
+          Prod.swap_prod_mk, b.apex_ne_left, false_and, or_false, b.apex_ne_right, and_true,
+          or_self, b.colors_ne, and_self, mem_insert, mem_singleton]]
       simp [RootRole.multiplicity, b.left_ne_right]
   | repeatedLeaf =>
       rcases hfit with ⟨rfl, rfl | rfl⟩
       · rw [show paintedNeighbors b b.left b.repeated = {b.apex} by
           ext z
-          simp only [mem_paintedNeighbors_iff, ne_eq, mem_singleton]
-          rintro rfl
-          exact b.apex_ne_left]
+          rw [hmem]
+          simp only [TriangleBlock.Paints, Sym2.eq, Sym2.rel_iff', Prod.mk.injEq,
+            b.apex_ne_left.symm, false_and, Prod.swap_prod_mk, true_and, false_or,
+            b.left_ne_right, or_self, or_false, and_true, b.colors_ne, and_false, mem_singleton]]
         rfl
       · rw [show paintedNeighbors b b.right b.repeated = {b.apex} by
           ext z
-          simp only [mem_paintedNeighbors_iff, ne_eq, mem_singleton]
-          rintro rfl
-          exact b.apex_ne_right]
+          rw [hmem]
+          simp only [TriangleBlock.Paints, Sym2.eq, Sym2.rel_iff', Prod.mk.injEq,
+            b.apex_ne_right.symm, false_and, Prod.swap_prod_mk, b.left_ne_right.symm, or_self,
+            true_and, false_or, and_true, b.colors_ne, and_false, or_false, mem_singleton]]
         rfl
   | singletonLeaf =>
       rcases hfit with ⟨rfl, rfl | rfl⟩
       · rw [show paintedNeighbors b b.left b.singleton = {b.right} by
           ext z
-          simp only [mem_paintedNeighbors_iff, ne_eq, mem_singleton]
-          rintro rfl
-          exact b.left_ne_right.symm]
+          rw [hmem]
+          simp only [TriangleBlock.Paints, Sym2.eq, Sym2.rel_iff', Prod.mk.injEq,
+            b.apex_ne_left.symm, false_and, Prod.swap_prod_mk, true_and, false_or,
+            b.left_ne_right, or_self, or_false, b.colors_ne.symm, and_false, and_true,
+            mem_singleton]]
         rfl
       · rw [show paintedNeighbors b b.right b.singleton = {b.left} by
           ext z
-          simp only [mem_paintedNeighbors_iff, ne_eq, mem_singleton]
-          rintro rfl
-          exact b.left_ne_right]
+          rw [hmem]
+          simp only [TriangleBlock.Paints, Sym2.eq, Sym2.rel_iff', Prod.mk.injEq,
+            b.apex_ne_right.symm, false_and, Prod.swap_prod_mk, b.left_ne_right.symm, or_self,
+            true_and, false_or, b.colors_ne.symm, and_false, and_true, mem_singleton]]
         rfl
 
 def PairWitness.leftPaintedNeighbors {n k : ℕ}
@@ -1162,7 +1171,7 @@ theorem rootRoleChoiceCount_sub_two_bounds {n : ℕ} (hn : 6 ≤ n)
   have hnR : (6 : ℝ) ≤ n := by exact_mod_cast hn
   cases r <;> simp only [roleLeadingCoefficient]
   all_goals repeat' apply And.intro
-  all_goals norm_num <;> nlinarith
+  all_goals norm_num ; nlinarith
 
 theorem rootRoleChoiceCount_sub_four_bounds {n : ℕ} (hn : 6 ≤ n)
     (r : RootRole) :
@@ -1176,7 +1185,7 @@ theorem rootRoleChoiceCount_sub_four_bounds {n : ℕ} (hn : 6 ≤ n)
   have hnR : (6 : ℝ) ≤ n := by exact_mod_cast hn
   cases r <;> simp only [roleLeadingCoefficient]
   all_goals repeat' apply And.intro
-  all_goals norm_num <;> nlinarith
+  all_goals norm_num ; nlinarith
 
 theorem colourSelectionCount_bounds {k : ℕ} (hk : 1 ≤ k) :
     0 ≤ ((k * (k - 1) ^ 2 : ℕ) : ℝ) ∧
@@ -1741,12 +1750,13 @@ def codegreeInfluenceNat {n k : ℕ} (a : SameColorIndex n k)
 def codegreeInfluence {n k : ℕ} (a : SameColorIndex n k)
     (i : Fin (labelCount n k)) : ℝ := codegreeInfluenceNat a i
 
-theorem card_filter_abs_sub_le_affected {α : Type*} [DecidableEq α]
+theorem card_filter_abs_sub_le_affected {α : Type*}
     (S : Finset α) (p q affected : α → Prop)
     [DecidablePred p] [DecidablePred q] [DecidablePred affected]
     (hout : ∀ a ∈ S, ¬affected a → (p a ↔ q a)) :
     |(((S.filter p).card : ℝ) - ((S.filter q).card : ℝ))| ≤
       ((S.filter affected).card : ℝ) := by
+  classical
   let P := S.filter p
   let Q := S.filter q
   let A := S.filter affected
@@ -1884,7 +1894,7 @@ theorem codegree_boundedDiff {n k : ℕ}
           simpa using (congrArg Prod.fst hp).symm
         have hneidx' : (labelEquiv n k).symm (a.left, a.color) ≠
             (labelEquiv n k).symm (a.right, a.color) := Ne.symm hneidx
-        simp [forceSameColorRoots, forceLabel, hidx, hneidx, hneidx']
+        simp [forceSameColorRoots, forceLabel, hidx, hneidx']
       · exact forceSameColorRoots_coordinate_eq hxy a j hj
     simp [stabilizedSameColorStatistic, codegreeInfluence, codegreeInfluenceNat,
       haa, hil, hf]
@@ -1899,7 +1909,7 @@ theorem codegree_boundedDiff {n k : ℕ}
         simp [forceSameColorRoots, forceLabel, hidx]
       · exact forceSameColorRoots_coordinate_eq hxy a j hj
     simp [stabilizedSameColorStatistic, codegreeInfluence, codegreeInfluenceNat,
-      haa, hil, hir, hf]
+      haa, hir, hf]
   simp only [stabilizedSameColorStatistic, haa, ↓reduceIte,
     sameColorCodegreeStatistic]
   rw [codegree_auxiliary_eq_blocks, codegree_auxiliary_eq_blocks]
@@ -2137,7 +2147,7 @@ theorem le_safeInfluence {I : Type*} (f : I → ℝ) (i : I) :
     f i ≤ safeInfluence f i := by exact le_max_right _ _
 
 theorem sum_safeInfluence_sq_le {N : ℕ} (f : Fin N → ℝ)
-    (hf : ∀ i, 0 ≤ f i) :
+    (_ : ∀ i, 0 ≤ f i) :
     ∑ i, safeInfluence f i ^ 2 ≤ (∑ i, f i ^ 2) + N := by
   calc
     ∑ i, safeInfluence f i ^ 2 ≤ ∑ i, (f i ^ 2 + 1) := by
@@ -2188,7 +2198,7 @@ theorem safePairRole_boundedDiff {n k : ℕ}
   by_cases hxyroot : a.x = a.y
   · simp only [stabilizedPairRoleStatistic, hxyroot, if_pos, sub_self, abs_zero]
     exact safeInfluence_nonneg _ _
-  · simp only [stabilizedPairRoleStatistic, hxyroot, if_neg]
+  · simp only [stabilizedPairRoleStatistic, hxyroot]
     exact (pairRoleWitnessStatistic_boundedDifference
       (allTriangleBlocks n k) a i x y hxy).trans (le_safeInfluence _ _)
 
@@ -2545,7 +2555,7 @@ theorem graph_mem_auxSupport_iff_vertices {n k : ℕ}
   · aesop
   · rintro ⟨hx, hy⟩
     rcases hx with (rfl | rfl | rfl) <;> rcases hy with (rfl | rfl | rfl)
-    all_goals simp_all [Sym2.eq_iff]
+    all_goals simp_all []
 
 abbrev AvoidTwo {n : ℕ} (x y : Fin n) :=
   {z : Fin n // z ≠ x ∧ z ≠ y}
@@ -2577,7 +2587,7 @@ def avoidTwoEquivFinset {n : ℕ} (x y : Fin n) :
 def tripleSetOfThird {n : ℕ} (x y : Fin n) (hxy : x ≠ y)
     (z : AvoidTwo x y) : TripleSet n :=
   ⟨{x, y, z.1}, by
-    simp [hxy, hxy.symm, z.2.1, z.2.1.symm, z.2.2, z.2.2.symm]⟩
+    simp [hxy, z.2.1.symm, z.2.2.symm]⟩
 
 theorem tripleSetOfThird_injective {n : ℕ} (x y : Fin n) (hxy : x ≠ y) :
     Function.Injective (tripleSetOfThird x y hxy) := by
@@ -2991,7 +3001,7 @@ def sameColorLocalChoiceRoleEquiv {n k : ℕ} (S : TripleSet n)
       have hsr : s ≠ r := by
         intro hsr
         exact hrep (hsx.1.trans hsr)
-      simp [hsx.1, hsy.1, hsr]
+      simp [hsx.1, hsr]
   right_inv q := by
     rcases q with q | q
     · rcases q with ⟨a, d⟩
@@ -3147,7 +3157,7 @@ def colorPairContainingEquiv (k : ℕ) (c : Fin k) :
       have hsr : s ≠ r := by
         intro hsr
         exact h (hs.trans hsr)
-      simp [h, hs, hsr]
+      simp [hs, hsr]
   right_inv q := by
     rcases q with d | d
     · simp
@@ -3187,7 +3197,7 @@ theorem card_labelLocalChoice_with_other_color_le {n k : ℕ}
       have hdr : d = r := hdep.resolve_right (fun hds ↦ hdc (hds.trans hcs.symm))
       subst r
       subst s
-      simp [f, g, fixedOther, labelLocalChoiceRoleEquiv, hdc, hcr]
+      simp [f, g, fixedOther, labelLocalChoiceRoleEquiv, hcr]
   have hf : Function.Injective f := by
     intro q r hqr
     apply Subtype.ext
@@ -3339,7 +3349,7 @@ theorem card_label_dependency_blocks_le {n k : ℕ}
     have hchoose : (n - 1).choose 2 ≤ n ^ 2 := by
       calc
         (n - 1).choose 2 ≤ (n - 1) ^ 2 := Nat.choose_le_pow (n - 1) 2
-        _ ≤ n ^ 2 := by gcongr <;> omega
+        _ ≤ n ^ 2 := by gcongr ; omega
     calc
       Fintype.card A ≤ Fintype.card B := Fintype.card_le_of_injective f hf
       _ ≤ (n - 1).choose 2 * 5 := by
@@ -3386,10 +3396,10 @@ theorem card_blocksThrough_label_le {n k : ℕ}
   have hchoose : (n - 1).choose 2 ≤ n ^ 2 := by
     calc
       (n - 1).choose 2 ≤ (n - 1) ^ 2 := Nat.choose_le_pow (n - 1) 2
-      _ ≤ n ^ 2 := by gcongr <;> omega
+      _ ≤ n ^ 2 := by gcongr ; omega
   calc
     5 * (n - 1).choose 2 * (k - 1) ≤ 5 * n ^ 2 * k := by
-      gcongr <;> omega
+      gcongr ; omega
 
 theorem degreeInfluenceNat_graph_le {n k : ℕ}
     (e : Sym2 (Fin n)) (he : ¬e.IsDiag) :
@@ -3496,7 +3506,7 @@ theorem card_sameColorLocalChoice_with_other_color_le {n k : ℕ}
       have hdr : d = r := hdep.resolve_right (fun hds ↦ hdc (hds.trans hcs.symm))
       subst r
       subst s
-      simp [f, g, fixedOther, sameColorLocalChoiceRoleEquiv, hdc, hcr]
+      simp [f, g, fixedOther, sameColorLocalChoiceRoleEquiv, hcr]
   have hf : Function.Injective f := by
     intro q r hqr
     apply Subtype.ext
@@ -3823,7 +3833,7 @@ theorem card_markedTripleContainingVertex {n : ℕ} (x : Fin n) :
       rw [card_tripleContainingVertex]
 
 def distinctVertexTwoColorPairCode {n k : ℕ}
-    (x y : Fin n) (c d : Fin k) (hxy : x ≠ y) :
+    (x y : Fin n) (c d : Fin k) (_ : x ≠ y) :
     {b : TriangleBlock n k //
       b ∈ blocksThroughAuxPair
         (Sum.inr (x, c) : AuxVertex n k) (Sum.inr (y, d))} →
@@ -4376,19 +4386,19 @@ theorem orderedLeaves_eq_of_otherLeaf_eq {n k : ℕ}
     (ho : otherLeaf b root = otherLeaf b' root) :
     b.left = b'.left ∧ b.right = b'.right := by
   rcases hb with hl | hr <;> rcases hb' with hl' | hr'
-  · simp [otherLeaf, hl, hl'] at ho
+  · simp only [otherLeaf, hl, ↓reduceIte, hl'] at ho
     exact ⟨hl.trans hl'.symm, ho⟩
   · have hnl' : b'.left ≠ root := by
       intro h
       exact (ne_of_lt b'.left_lt_right) (h.trans hr'.symm)
-    simp [otherLeaf, hl, hnl'] at ho
+    simp only [otherLeaf, hl, ↓reduceIte, hnl'] at ho
     have h₁ : root < b'.left := by simpa [hl, ho] using b.left_lt_right
     have h₂ : b'.left < root := by simpa [hr'] using b'.left_lt_right
     exact False.elim (lt_asymm h₁ h₂)
   · have hnl : b.left ≠ root := by
       intro h
       exact (ne_of_lt b.left_lt_right) (h.trans hr.symm)
-    simp [otherLeaf, hnl, hl'] at ho
+    simp only [otherLeaf, hnl, ↓reduceIte, hl'] at ho
     have h₁ : b.left < root := by simpa [hr] using b.left_lt_right
     have h₂ : root < b.left := by simpa [hl', ho] using b'.left_lt_right
     exact False.elim (lt_asymm h₁ h₂)
@@ -4400,7 +4410,7 @@ theorem orderedLeaves_eq_of_otherLeaf_eq {n k : ℕ}
       intro h
       have : b'.left = b'.right := h.trans hr'.symm
       exact (ne_of_lt b'.left_lt_right) this
-    simp [otherLeaf, hnl, hnl'] at ho
+    simp only [otherLeaf, hnl, ↓reduceIte, hnl'] at ho
     exact ⟨ho, hr.trans hr'.symm⟩
 
 abbrev RootBlockCode (n k : ℕ) := Fin n × (Fin n × Fin k)
@@ -4426,7 +4436,6 @@ theorem rootBlockCode_inj {n k : ℕ} {r : RootRole} {root : Fin n}
       cases b
       cases b'
       simp_all
-
   | repeatedLeaf =>
       simp only [RoleFits] at hb hb'
       simp only [rootBlockCode, Prod.mk.injEq] at hc
@@ -4559,7 +4568,10 @@ theorem rolePaletteTouchCode_injective {k : ℕ} (c : Fin k) :
   all_goals by_cases hq0 : q.1.1 = c
   all_goals by_cases hq1 : q.1.2.1 = c
   all_goals
-    simp_all [rolePaletteTouchCode, RolePalette.Touches, Prod.ext_iff]
+    simp_all only [rolePaletteTouchCode, RolePalette.Touches, ↓reduceIte, Fin.isValue,
+      Prod.ext_iff, true_and, true_or, or_self, Prod.mk.eta, not_true_eq_false, zero_ne_one,
+      false_and, Fin.reduceEq, and_false, false_or, not_false_eq_true, one_ne_zero, and_self,
+      or_true]
   all_goals ext <;> simp_all [RolePalette.Touches]
 
 theorem card_rolePaletteTouches_le {k : ℕ} (c : Fin k) :
@@ -5322,7 +5334,6 @@ theorem weightedMean_stabilizedSameColor_universal {n k : ℕ} (q : ℝ)
 strictly below one, some outcome avoids every bad event. -/
 theorem exists_avoiding_three_families
     {N : ℕ} {I J K : Type*} [Fintype I] [Fintype J] [Fintype K]
-    [DecidableEq I] [DecidableEq J] [DecidableEq K]
     (w : Fin N → Bool → ℝ)
     (hw0 : ∀ i b, 0 ≤ w i b) (hw1 : ∀ i, ∑ b, w i b = 1)
     (A : I → Set (Fin N → Bool))
@@ -5572,7 +5583,7 @@ theorem exists_retainedLabels_with_estimates {n k : ℕ}
                   (fun z ↦ stabilizedDegreeStatistic candidates degreeTarget z v)) +
               (McDiarmid.weightedMean w
                   (fun z ↦ stabilizedDegreeStatistic candidates degreeTarget z v) -
-                degreeTarget v)| := by congr 1 <;> ring
+                degreeTarget v)| := by congr 1 ; ring
       _
           ≤ |auxDegreeStatistic candidates bits v -
                 McDiarmid.weightedMean w
@@ -5604,7 +5615,7 @@ theorem exists_retainedLabels_with_estimates {n k : ℕ}
                   (fun z ↦ stabilizedSameColorStatistic candidates codegreeTarget z a)) +
               (McDiarmid.weightedMean w
                   (fun z ↦ stabilizedSameColorStatistic candidates codegreeTarget z a) -
-                codegreeTarget a)| := by congr 1 <;> ring
+                codegreeTarget a)| := by congr 1 ; ring
       _
           ≤ |sameColorCodegreeStatistic candidates bits a -
                 McDiarmid.weightedMean w
@@ -5636,7 +5647,7 @@ theorem exists_retainedLabels_with_estimates {n k : ℕ}
               (McDiarmid.weightedMean w
                   (fun z ↦ stabilizedPairRoleStatistic candidates pairTarget z a) -
                 pairTarget a)| := by
-                congr 1 <;> ring
+                congr 1 ; ring
       _
           ≤ |pairRoleWitnessStatistic candidates bits a -
                 McDiarmid.weightedMean w
@@ -5717,7 +5728,7 @@ theorem pairRetentionIndicator_eq_cylinderMonomial {n k : ℕ}
         hV.1 ((mem_pairPositiveCoordinates_iff w i).mp hiP)
       have hbit : bits i = true := by
         simpa using (mem_retainedOfBits bits (labelEquiv n k i)).mp hret
-      simp [cylinderMonomial, hiP, hbit]
+      simp [hiP, hbit]
     · by_cases hiA : i ∈ pairNegativeCoordinates w
       · have hneg : labelEquiv n k i ∈ w.negativeLabels :=
           (mem_pairNegativeCoordinates_iff w i).mp hiA
@@ -5731,8 +5742,8 @@ theorem pairRetentionIndicator_eq_cylinderMonomial {n k : ℕ}
               apply hnot
               exact (mem_retainedOfBits bits (labelEquiv n k i)).mpr (by
                 simpa using hbi)
-        simp [cylinderMonomial, hiP, hiA, hbit]
-      · simp [cylinderMonomial, hiP, hiA]
+        simp [hiP, hiA, hbit]
+      · simp [hiP, hiA]
   · rw [pairRetentionIndicator, if_neg hV]
     by_cases hP : w.positiveLabels ⊆ retainedOfBits bits
     · have hND : ¬Disjoint w.negativeLabels (retainedOfBits bits) := by
@@ -5960,7 +5971,7 @@ def meanRootBlockCode {n k : ℕ} (r : RootRole) (root : Fin n)
   | .repeatedLeaf => (b.apex, meanOtherLeaf b root, b.singleton)
   | .singletonLeaf => (b.apex, meanOtherLeaf b root, b.repeated)
 
-def MeanRootCodeValid {n k : ℕ} (r : RootRole) (root : Fin n)
+def MeanRootCodeValid {n k : ℕ} (r : RootRole) (_ : Fin n)
     (common : Fin k) (A : Finset (Fin n)) (code : MeanRootBlockCode n k) : Prop :=
   code.1 ∈ A ∧ code.2.1 ∈ A ∧
     (match r with
@@ -6036,7 +6047,7 @@ theorem meanLeafBlock_root_mem_leaves {n k : ℕ} (apex root other : Fin n)
   simp only [meanLeafBlock]
   split_ifs with h
   · simp [meanOtherLeaf]
-  · simp [meanOtherLeaf, hro, hro.symm]
+  · simp [meanOtherLeaf, hro.symm]
 
 theorem meanOrderedLeaves_eq_of_otherLeaf_eq {n k : ℕ}
     {b b' : TriangleBlock n k} {root : Fin n}
@@ -6045,12 +6056,12 @@ theorem meanOrderedLeaves_eq_of_otherLeaf_eq {n k : ℕ}
     (ho : meanOtherLeaf b root = meanOtherLeaf b' root) :
     b.left = b'.left ∧ b.right = b'.right := by
   rcases hb with hl | hr <;> rcases hb' with hl' | hr'
-  · simp [meanOtherLeaf, hl, hl'] at ho
+  · simp only [meanOtherLeaf, hl, ↓reduceIte, hl'] at ho
     exact ⟨hl.trans hl'.symm, ho⟩
   · have hnl' : b'.left ≠ root := by
       intro h
       exact b'.left_ne_right (h.trans hr'.symm)
-    simp [meanOtherLeaf, hl, hnl'] at ho
+    simp only [meanOtherLeaf, hl, ↓reduceIte, hnl'] at ho
     exfalso
     have hbad : b'.right < b'.left := by
       simpa [hl, hr', ho] using b.left_lt_right
@@ -6058,7 +6069,7 @@ theorem meanOrderedLeaves_eq_of_otherLeaf_eq {n k : ℕ}
   · have hnl : b.left ≠ root := by
       intro h
       exact b.left_ne_right (h.trans hr.symm)
-    simp [meanOtherLeaf, hnl, hl'] at ho
+    simp only [meanOtherLeaf, hnl, ↓reduceIte, hl'] at ho
     exfalso
     have hbad : b.right < b.left := by
       simpa [hr, hl', ho] using b'.left_lt_right
@@ -6069,7 +6080,7 @@ theorem meanOrderedLeaves_eq_of_otherLeaf_eq {n k : ℕ}
     have hnl' : b'.left ≠ root := by
       intro h
       exact b'.left_ne_right (h.trans hr'.symm)
-    simp [meanOtherLeaf, hnl, hnl'] at ho
+    simp only [meanOtherLeaf, hnl, ↓reduceIte, hnl'] at ho
     exact ⟨ho, hr.trans hr'.symm⟩
 
 theorem meanRootBlockCode_injective_on_role {n k : ℕ}
@@ -6309,7 +6320,7 @@ theorem meanRootBlockCode_shape {n k : ℕ} (r : RootRole) (root : Fin n)
         · exact fun h ↦ b.apex_ne_right (h.trans hs.2.symm)
         · exact fun h ↦ b.apex_ne_left (h.trans hs.1.symm)
       · rcases hs.2 with hs | hs
-        · ext z; simp [blockVertices, hs.1, hs.2, or_comm, or_left_comm]
+        · ext z; simp [blockVertices, hs.1, hs.2, or_left_comm]
         · ext z; simp [blockVertices, hs.1, hs.2, or_comm, or_left_comm]
   | singletonLeaf =>
       simp only [RoleFits] at hfit
@@ -6324,7 +6335,7 @@ theorem meanRootBlockCode_shape {n k : ℕ} (r : RootRole) (root : Fin n)
         · exact fun h ↦ b.apex_ne_right (h.trans hs.2.symm)
         · exact fun h ↦ b.apex_ne_left (h.trans hs.1.symm)
       · rcases hs.2 with hs | hs
-        · ext z; simp [blockVertices, hs.1, hs.2, or_comm, or_left_comm]
+        · ext z; simp [blockVertices, hs.1, hs.2, or_left_comm]
         · ext z; simp [blockVertices, hs.1, hs.2, or_comm, or_left_comm]
 
 theorem auxSupport_disjoint_of_blockVertices_disjoint {n k : ℕ}
@@ -6362,7 +6373,7 @@ theorem auxSupport_disjoint_of_blockVertices_disjoint {n k : ℕ}
         rcases he with he | he | he
         all_goals simp only [Sym2.eq_iff] at he
         all_goals rcases he with ⟨h1, h2⟩ | ⟨h1, h2⟩
-        all_goals simp [blockVertices, h1, h2]
+        all_goals simp [blockVertices, h1]
       · cases hbad
     · intro z hu
       subst u
@@ -6780,7 +6791,6 @@ theorem sum_weightedMean_vertexDisjointRoleWitnesses {n k : ℕ}
     _ = (pairRoleDisjointCount k a : ℝ) * q ^ 10 * (1 - q) ^ 2 := by
       rw [Finset.sum_const, nsmul_eq_mul,
         card_vertexDisjointRoleWitnesses a hxy]
-      push_cast
       ring
 
 theorem weightedMean_pairRetentionIndicator_mem_Icc {n k : ℕ}
@@ -7183,7 +7193,7 @@ theorem weightedMean_stabilizedPairRole_universal_error {n k : ℕ}
   rw [hraw]
   calc
     |main + rem - pairRoleTarget k q a| =
-        |rem - (pairRoleTarget k q a - main)| := by congr 1 <;> ring
+        |rem - (pairRoleTarget k q a - main)| := by congr 1 ; ring
     _ ≤ |rem| + |pairRoleTarget k q a - main| := abs_sub _ _
     _ = rem + (pairRoleTarget k q a - main) := by
       rw [abs_of_nonneg hrem0, abs_of_nonneg hmainGap0]

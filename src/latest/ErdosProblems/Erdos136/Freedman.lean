@@ -29,7 +29,7 @@ set_option autoImplicit false
 
 section FiniteSpace
 
-variable {Ω ι : Type*} [Fintype Ω] [DecidableEq Ω]
+variable {Ω ι : Type*}
 
 /-- A real-valued function is known at time `k` if it is constant on every
 fibre of the time-`k` information map. -/
@@ -43,7 +43,7 @@ def IsFiltration (info : ℕ → Ω → ι) : Prop :=
     info j ω = info j ω' → info i ω = info i ω'
 
 /-- Expectation with respect to a finite real-valued mass function. -/
-def expectation (p : Ω → ℝ) (X : Ω → ℝ) : ℝ :=
+def expectation [Fintype Ω] (p : Ω → ℝ) (X : Ω → ℝ) : ℝ :=
   ∑ ω, p ω * X ω
 
 /-- The mass of a finite event in a finite real-valued mass function. -/
@@ -120,6 +120,8 @@ lemma exp_mul_le (a x : ℝ) (hax : |a * x| ≤ 1) :
     Real.exp (a * x) ≤ 1 + a * x + (a * x) ^ 2 :=
       exp_le_one_add_add_sq hax
     _ = 1 + a * x + a ^ 2 * x ^ 2 := by ring
+
+variable [Fintype Ω]
 
 /-- The integrated finite-space form of the conditional first- and
 second-moment hypotheses.  `mean` says `E[Z dₖ] ≤ 0` and `variance` says

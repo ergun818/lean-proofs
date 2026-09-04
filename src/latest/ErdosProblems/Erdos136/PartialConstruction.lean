@@ -87,7 +87,7 @@ theorem vertices_pairwise (b : TriangleBlock n k) :
   ⟨b.apex_ne_left, b.apex_ne_right, b.left_ne_right⟩
 
 @[simp] theorem graphEdges_card (b : TriangleBlock n k) : b.graphEdges.card = 3 := by
-  simp [graphEdges, Sym2.eq_iff, b.apex_ne_left, b.apex_ne_right,
+  simp [graphEdges, b.apex_ne_left, b.apex_ne_right,
     b.left_ne_right]
 
 @[simp] theorem positiveLabels_card (b : TriangleBlock n k) :
@@ -173,17 +173,15 @@ theorem paint_unique (b : TriangleBlock n k) {x y : Fin n} {c d : Fin k}
   · exfalso
     rcases hc with hc | hc
     · have he := hc.symm.trans hd
-      simpa [Sym2.eq_iff, b.apex_ne_left, b.apex_ne_right] using he
+      simp [b.apex_ne_left, b.apex_ne_right] at he
     · have he := hc.symm.trans hd
-      simpa [Sym2.eq_iff, b.apex_ne_left, b.apex_ne_right,
-        b.left_ne_right] using he
+      simp [b.apex_ne_left, b.apex_ne_right] at he
   · exfalso
     rcases hd with hd | hd
     · have he := hd.symm.trans hc
-      simpa [Sym2.eq_iff, b.apex_ne_left, b.apex_ne_right] using he
+      simp [b.apex_ne_left, b.apex_ne_right] at he
     · have he := hd.symm.trans hc
-      simpa [Sym2.eq_iff, b.apex_ne_left, b.apex_ne_right,
-        b.left_ne_right] using he
+      simp [b.apex_ne_left, b.apex_ne_right] at he
   · rfl
 
 /-- In one block, an edge painted with the singleton colour is precisely
@@ -327,7 +325,7 @@ theorem blocksOfAuxFamily_supports {n k : ℕ}
   · intro he
     obtain ⟨b, hb, rfl⟩ := Finset.mem_image.mp he
     obtain ⟨e', he', rfl⟩ := Finset.mem_image.mp hb
-    simpa [blockOfAuxEdge_support] using e'.2
+    simp [blockOfAuxEdge_support]
   · intro he
     apply Finset.mem_image.2
     let e' : {e // e ∈ M} := ⟨e, he⟩
@@ -963,10 +961,9 @@ theorem completion_edgeColor_of_paints {n k B : ℕ} (P : PartialGood n k B)
       simp only [Completion.topEdge, completionBlock] at h
       rcases h with h | h
       · have hbad := h.symm.trans he
-        simpa [Sym2.eq_iff, b.1.apex_ne_left, b.1.apex_ne_right] using hbad
+        simp [b.1.apex_ne_left, b.1.apex_ne_right] at hbad
       · have hbad := h.symm.trans he
-        simpa [Sym2.eq_iff, b.1.apex_ne_left, b.1.apex_ne_right,
-          b.1.left_ne_right] using hbad
+        simp [b.1.apex_ne_left, b.1.apex_ne_right] at hbad
     rw [if_neg hneg]
     rfl
 
@@ -1012,7 +1009,7 @@ theorem completionOld_eq_owner {n k B : ℕ} (P : PartialGood n k B)
 
 theorem completion_same_old_path_same_owner {n k B : ℕ}
     (P : PartialGood n k B) (x y z : Fin n)
-    (hxy : x ≠ y) (hyz : y ≠ z) (hxz : x ≠ z) (c : Fin k)
+    (hxy : x ≠ y) (hyz : y ≠ z) (_ : x ≠ z) (c : Fin k)
     (h₁ : completionOld P (Completion.topEdge x y hxy) = some c)
     (h₂ : completionOld P (Completion.topEdge y z hyz) = some c) :
     completionOwner P (Completion.topEdge x y hxy) =
@@ -1093,7 +1090,7 @@ theorem edge4_exists_other (e : Completion.Edge4) {x : Fin 4}
   intro hxy
   subst y
   have he := e.2
-  simpa [hy] using he
+  simp [hy] at he
 
 @[simp] theorem completion_pullOld_topEdge {n k B : ℕ}
     (P : PartialGood n k B) (v : Fin 4 ↪ Fin n)
@@ -1333,7 +1330,7 @@ theorem edge4_matching01_23_avoiding_path {x y z : Fin 4}
         x ∈ (Completion.edge01 : Completion.Edge4).1) := by
   fin_cases x <;> fin_cases y <;> fin_cases z <;>
     simp_all [Completion.edge01, Completion.edge23, Completion.topEdge,
-      Sym2.mem_iff, Sym2.eq_iff]
+      Sym2.mem_iff]
 
 theorem edge4_matching02_13_avoiding_path {x y z : Fin 4}
     (hxy : x ≠ y) (hxz : x ≠ z) (hyz : y ≠ z)
@@ -1347,7 +1344,7 @@ theorem edge4_matching02_13_avoiding_path {x y z : Fin 4}
         x ∈ (Completion.edge02 : Completion.Edge4).1) := by
   fin_cases x <;> fin_cases y <;> fin_cases z <;>
     simp_all [Completion.edge02, Completion.edge13, Completion.topEdge,
-      Sym2.mem_iff, Sym2.eq_iff]
+      Sym2.mem_iff]
 
 theorem edge4_matching03_12_avoiding_path {x y z : Fin 4}
     (hxy : x ≠ y) (hxz : x ≠ z) (hyz : y ≠ z)
@@ -1361,7 +1358,7 @@ theorem edge4_matching03_12_avoiding_path {x y z : Fin 4}
         x ∈ (Completion.edge03 : Completion.Edge4).1) := by
   fin_cases x <;> fin_cases y <;> fin_cases z <;>
     simp_all [Completion.edge03, Completion.edge12, Completion.topEdge,
-      Sym2.mem_iff, Sym2.eq_iff]
+      Sym2.mem_iff]
 
 theorem edge4_matching_avoiding_path
     {e f g h : Completion.Edge4} {x y z : Fin 4}
@@ -1553,8 +1550,6 @@ theorem edge4_matching_pairs_cycle
     rcases hg with ⟨rfl, rfl⟩
   all_goals try { exact (heg rfl).elim }
   all_goals try { exact (heh rfl).elim }
-  all_goals try { exact (hfg rfl).elim }
-  all_goals try { exact (hfh rfl).elim }
   all_goals simp only [FourDistinct]
   all_goals decide
 
@@ -1630,7 +1625,7 @@ theorem completion_oldRepeatUniqueOnK4 {n k B : ℕ} (P : PartialGood n k B) :
 theorem completion_oldFourCycleUsesThree {n k B : ℕ} (P : PartialGood n k B) :
     ∀ (a b c d : Fin n)
       (hab : a ≠ b) (hbc : b ≠ c) (hcd : c ≠ d) (hda : d ≠ a)
-      (hac : a ≠ c) (hbd : b ≠ d)
+      (_ : a ≠ c) (_ : b ≠ d)
       (cab cbc ccd cda : Fin k),
       completionOld P (Completion.topEdge a b hab) = some cab →
       completionOld P (Completion.topEdge b c hbc) = some cbc →
@@ -1727,7 +1722,7 @@ quantitative conclusion of the conflict-free matching theorem.  The matching
 constructs P0--P3; the terminal tracked-test estimates supply P4--P5. -/
 theorem partialGood_of_specializedCFMConclusion
     (n k B : ℕ) (candidates : Finset (TriangleBlock n k))
-    (R : RetainedLabels n k) {iota : Type} [Fintype iota]
+    (R : RetainedLabels n k) {iota : Type}
     (d eta : ℝ) (j : iota → ℕ)
     (w : iota → TestWeight (AuxVertex n k))
     (hconclusion :

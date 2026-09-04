@@ -23,8 +23,7 @@ attribute [local instance] Classical.propDecidable
 
 noncomputable section
 
-variable {α : Type*} [Fintype α] [Nonempty α]
-  [MeasurableSpace α] [MeasurableSingletonClass α]
+variable {α : Type*} [Fintype α]
 
 /-- The mass of a point in a finite product distribution. -/
 def productMass {n : ℕ} (w : Fin n → α → ℝ) (x : Fin n → α) : ℝ :=
@@ -35,24 +34,26 @@ def weightedMean {n : ℕ} (w : Fin n → α → ℝ) (f : (Fin n → α) → �
   ∑ x, productMass w x * f x
 
 /-- A finite probability measure associated to normalized real weights. -/
-def finiteWeightMeasure (w : α → ℝ) : Measure α :=
+def finiteWeightMeasure [MeasurableSpace α] (w : α → ℝ) : Measure α :=
   Measure.sum fun a ↦ ENNReal.ofReal (w a) • Measure.dirac a
 
-lemma finiteWeightMeasure_isProbability (w : α → ℝ)
+lemma finiteWeightMeasure_isProbability [MeasurableSpace α] (w : α → ℝ)
     (hw0 : ∀ a, 0 ≤ w a) (hw1 : ∑ a, w a = 1) :
     IsProbabilityMeasure (finiteWeightMeasure w) := by
   unfold finiteWeightMeasure
   apply HasSum.isProbabilityMeasure_sum_dirac hw0
   simpa [hw1] using hasSum_fintype w
 
-lemma integral_finiteWeightMeasure (w : α → ℝ) (hw0 : ∀ a, 0 ≤ w a)
+lemma integral_finiteWeightMeasure [MeasurableSpace α] [MeasurableSingletonClass α]
+    (w : α → ℝ) (hw0 : ∀ a, 0 ≤ w a)
     (g : α → ℝ) :
     ∫ a, g a ∂finiteWeightMeasure w = ∑ a, w a * g a := by
   rw [finiteWeightMeasure, integral_sum_dirac (by simp)]
   simp only [ENNReal.toReal_ofReal (hw0 _), smul_eq_mul, tsum_fintype]
 
 /-- Hoeffding's lemma for a finite normalized weighted sum. -/
-lemma finite_weighted_hoeffding (w : α → ℝ) (g : α → ℝ) (lo hi lam : ℝ)
+lemma finite_weighted_hoeffding [Nonempty α] [MeasurableSpace α]
+    [MeasurableSingletonClass α] (w : α → ℝ) (g : α → ℝ) (lo hi lam : ℝ)
     (hw0 : ∀ a, 0 ≤ w a) (hw1 : ∑ a, w a = 1)
     (hg : ∀ a, g a ∈ Set.Icc lo hi) :
     ∑ a, w a * exp (lam * (g a - ∑ z, w z * g z)) ≤
@@ -72,7 +73,8 @@ lemma finite_weighted_hoeffding (w : α → ℝ) (g : α → ℝ) (lo hi lam : �
 
 /-- Hoeffding's lemma in the form useful for bounded differences: only the pairwise
 oscillation of the finite random variable is specified. -/
-lemma finite_weighted_hoeffding_of_pairwise (w : α → ℝ) (g : α → ℝ) (b lam : ℝ)
+lemma finite_weighted_hoeffding_of_pairwise [Nonempty α] [MeasurableSpace α]
+    [MeasurableSingletonClass α] (w : α → ℝ) (g : α → ℝ) (b lam : ℝ)
     (hw0 : ∀ a, 0 ≤ w a) (hw1 : ∑ a, w a = 1) (hb : 0 ≤ b)
     (hosc : ∀ a z, |g a - g z| ≤ b) :
     ∑ a, w a * exp (lam * (g a - ∑ z, w z * g z)) ≤
@@ -108,6 +110,7 @@ lemma sum_fin_succ_eq {n : ℕ} {β : Type*} [AddCommMonoid β]
   rw [← (Fin.consEquiv (fun _ : Fin (n + 1) ↦ α)).sum_comp]
   exact Fintype.sum_prod_type _
 
+omit [Fintype α] in
 @[simp] lemma productMass_cons {n : ℕ} (w : Fin (n + 1) → α → ℝ)
     (a : α) (y : Fin n → α) :
     productMass w (Fin.cons a y) =
@@ -162,6 +165,7 @@ lemma sectionAverage_boundedDiff {n : ℕ} (w : Fin (n + 1) → α → ℝ)
               exact hxy j (fun h ↦ hj (congrArg (fun k : Fin n ↦ k.succ) h))
     _ = b i.succ := by rw [← Finset.sum_mul, hw1]; simp
 
+omit [Fintype α] in
 lemma productMass_nonneg {n : ℕ} (w : Fin n → α → ℝ)
     (hw0 : ∀ i a, 0 ≤ w i a) (x : Fin n → α) :
     0 ≤ productMass w x := by
@@ -170,7 +174,8 @@ lemma productMass_nonneg {n : ℕ} (w : Fin n → α → ℝ)
 /-! ## Exponential moments and the tail bound -/
 
 /-- The centered exponential-moment estimate behind McDiarmid's inequality. -/
-theorem expMomentBound (n : ℕ) (w : Fin n → α → ℝ)
+theorem expMomentBound [Nonempty α] [MeasurableSpace α]
+    [MeasurableSingletonClass α] (n : ℕ) (w : Fin n → α → ℝ)
     (f : (Fin n → α) → ℝ) (b : Fin n → ℝ)
     (hw0 : ∀ i a, 0 ≤ w i a) (hw1 : ∀ i, ∑ a, w i a = 1)
     (hb : ∀ i, 0 ≤ b i)
@@ -318,10 +323,11 @@ lemma eventMass_union_le {n : ℕ} (w : Fin n → α → ℝ)
 
 /-- Finite union bound, useful for turning one McDiarmid estimate into simultaneous
 control of polynomially many bad events. -/
-lemma eventMass_biUnion_le_sum {n : ℕ} {ι : Type*} [DecidableEq ι]
+lemma eventMass_biUnion_le_sum {n : ℕ} {ι : Type*}
     (w : Fin n → α → ℝ) (hw0 : ∀ i a, 0 ≤ w i a)
     (s : Finset ι) (E : ι → Set (Fin n → α)) :
     eventMass w (⋃ i ∈ s, E i) ≤ ∑ i ∈ s, eventMass w (E i) := by
+  classical
   induction s using Finset.induction_on with
   | empty => simp [eventMass]
   | @insert i s his ih =>
@@ -334,7 +340,8 @@ lemma eventMass_biUnion_le_sum {n : ℕ} {ι : Type*} [DecidableEq ι]
 
 /-- Upper-tail McDiarmid inequality for an arbitrary normalized finite product distribution.
 The positivity assumption merely excludes the degenerate all-zero bounded-difference budget. -/
-theorem mcdiarmid_upper (n : ℕ) (w : Fin n → α → ℝ)
+theorem mcdiarmid_upper [Nonempty α] [MeasurableSpace α]
+    [MeasurableSingletonClass α] (n : ℕ) (w : Fin n → α → ℝ)
     (f : (Fin n → α) → ℝ) (b : Fin n → ℝ)
     (hw0 : ∀ i a, 0 ≤ w i a) (hw1 : ∀ i, ∑ a, w i a = 1)
     (hb : ∀ i, 0 ≤ b i)
@@ -392,7 +399,8 @@ theorem mcdiarmid_upper (n : ℕ) (w : Fin n → α → ℝ)
 /-- Degenerate-safe upper-tail form.  When all difference bounds vanish, the event has
 mass at most one, which is exactly the right-hand side under Lean's division-by-zero
 convention. -/
-theorem mcdiarmid_upper_all (n : ℕ) (w : Fin n → α → ℝ)
+theorem mcdiarmid_upper_all [Nonempty α] [MeasurableSpace α]
+    [MeasurableSingletonClass α] (n : ℕ) (w : Fin n → α → ℝ)
     (f : (Fin n → α) → ℝ) (b : Fin n → ℝ)
     (hw0 : ∀ i a, 0 ≤ w i a) (hw1 : ∀ i, ∑ a, w i a = 1)
     (hb : ∀ i, 0 ≤ b i)
@@ -414,7 +422,8 @@ theorem mcdiarmid_upper_all (n : ℕ) (w : Fin n → α → ℝ)
   simp only [weightedMean, mul_neg, Finset.sum_neg_distrib]
 
 /-- Lower-tail McDiarmid inequality. -/
-theorem mcdiarmid_lower_all (n : ℕ) (w : Fin n → α → ℝ)
+theorem mcdiarmid_lower_all [Nonempty α] [MeasurableSpace α]
+    [MeasurableSingletonClass α] (n : ℕ) (w : Fin n → α → ℝ)
     (f : (Fin n → α) → ℝ) (b : Fin n → ℝ)
     (hw0 : ∀ i a, 0 ≤ w i a) (hw1 : ∀ i, ∑ a, w i a = 1)
     (hb : ∀ i, 0 ≤ b i)
@@ -440,7 +449,8 @@ theorem mcdiarmid_lower_all (n : ℕ) (w : Fin n → α → ℝ)
   exact h
 
 /-- Two-sided bounded-differences inequality. -/
-theorem mcdiarmid_two_sided (n : ℕ) (w : Fin n → α → ℝ)
+theorem mcdiarmid_two_sided [Nonempty α] [MeasurableSpace α]
+    [MeasurableSingletonClass α] (n : ℕ) (w : Fin n → α → ℝ)
     (f : (Fin n → α) → ℝ) (b : Fin n → ℝ)
     (hw0 : ∀ i a, 0 ≤ w i a) (hw1 : ∀ i, ∑ a, w i a = 1)
     (hb : ∀ i, 0 ≤ b i)

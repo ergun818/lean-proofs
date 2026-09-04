@@ -34,17 +34,21 @@ section Elementary
 
 variable [Fintype Ω] [Nonempty Ω] [DecidableEq Ω]
 
+omit [DecidableEq Ω] in
 lemma card_pos : 0 < (Fintype.card Ω : ℝ) := by
   exact_mod_cast Fintype.card_pos
 
+omit [DecidableEq Ω] in
 lemma uniformProbability_nonneg (s : Finset Ω) : 0 ≤ uniformProbability s := by
   exact div_nonneg (by positivity) card_pos.le
 
+omit [DecidableEq Ω] in
 lemma uniformProbability_mono {s t : Finset Ω} (hst : s ⊆ t) :
     uniformProbability s ≤ uniformProbability t := by
   unfold uniformProbability
   exact div_le_div_of_nonneg_right (by exact_mod_cast Finset.card_le_card hst) card_pos.le
 
+omit [DecidableEq Ω] in
 lemma uniformProbability_univ : uniformProbability (Finset.univ : Finset Ω) = 1 := by
   simp [uniformProbability, ne_of_gt card_pos]
 
@@ -54,7 +58,7 @@ lemma uniformProbability_union_le (s t : Finset Ω) :
   rw [← add_div]
   exact div_le_div_of_nonneg_right (by exact_mod_cast Finset.card_union_le s t) card_pos.le
 
-lemma uniformProbability_biUnion_le [DecidableEq ι]
+lemma uniformProbability_biUnion_le
     (S : Finset ι) (f : ι → Finset Ω) :
     uniformProbability (S.biUnion f) ≤ ∑ i ∈ S, uniformProbability (f i) := by
   unfold uniformProbability
@@ -62,6 +66,7 @@ lemma uniformProbability_biUnion_le [DecidableEq ι]
   exact div_le_div_of_nonneg_right (by
     exact_mod_cast (Finset.card_biUnion_le (s := S) (t := f))) card_pos.le
 
+omit [DecidableEq Ω] in
 lemma uniformProbability_pos_iff_nonempty (s : Finset Ω) :
     0 < uniformProbability s ↔ s.Nonempty := by
   constructor
@@ -78,8 +83,7 @@ end Elementary
 
 section Avoiding
 
-variable [Fintype Ω] [Nonempty Ω] [DecidableEq Ω]
-variable [Fintype ι] [DecidableEq ι]
+variable [Fintype Ω] [DecidableEq Ω] [DecidableEq ι]
 variable (event : ι → Finset Ω)
 
 @[simp] lemma avoiding_empty : avoiding event ∅ = Finset.univ := by
@@ -122,8 +126,8 @@ The hypotheses `h_px` and `h_Dx` are the standard inequalities
 theorem exists_avoiding_of_aux
     (event : ι → Finset Ω) (dep : ι → ι → Prop) [DecidableRel dep]
     (p x : ℝ) (D : ℕ)
-    (hp : 0 ≤ p) (hx : 0 < x) (hx1 : x < 1)
-    (h_Dx : (D : ℝ) * x ≤ 1)
+    (_ : 0 ≤ p) (hx : 0 < x) (hx1 : x < 1)
+    (_ : (D : ℝ) * x ≤ 1)
     (h_px : p ≤ x * (1 - (D : ℝ) * x))
     (h_event : ∀ i, uniformProbability (event i) ≤ p)
     (h_degree : ∀ i, ((Finset.univ.erase i).filter (dep i)).card ≤ D)
@@ -137,7 +141,6 @@ theorem exists_avoiding_of_aux
       p ≤ x * (1 - (D : ℝ) * x) := h_px
       _ ≤ x * 1 := mul_le_mul_of_nonneg_left (sub_le_self 1 hnonneg) hx.le
       _ = x := mul_one x
-
   /- The inductive conditional estimate
        P(A_i ∩ avoid S) ≤ x P(avoid S).
      It is stated without division, so it remains meaningful even if an
@@ -205,7 +208,7 @@ theorem exists_avoiding_of_aux
         · exact Finset.mem_union_left _ hωS
         · have : ∃ j ∈ N, ω ∈ event j := by
             simp only [avoiding, Finset.mem_filter, Finset.mem_univ, true_and] at hωF hωS
-            push_neg at hωS
+            push Not at hωS
             obtain ⟨j, hjS, hωj⟩ := hωS
             have hjN_or_F : j ∈ N ∨ j ∈ F := by
               rw [← Finset.mem_union, ← hNF]
@@ -274,7 +277,6 @@ theorem exists_avoiding_of_aux
         _ = x * ((1 - (D : ℝ) * x) * uniformProbability (avoiding event F)) := by ring
         _ ≤ x * uniformProbability (avoiding event S) :=
           mul_le_mul_of_nonneg_left hdenom hx.le
-
   have havoid_pos : ∀ S : Finset ι, 0 < uniformProbability (avoiding event S) := by
     intro S
     induction S using Finset.induction with

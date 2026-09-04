@@ -288,7 +288,7 @@ theorem jmNormalizedUpper_tendsto {delta : ℝ} (hdelta : 0 < delta) :
     tendsto_inv_atTop_nhds_zero_nat
   unfold jmNormalizedUpper
   convert ((tendsto_const_nhds.mul (tendsto_const_nhds.add hrho)).add hrho).add
-      (tendsto_const_nhds.mul hinv) using 1 <;> norm_num
+      (tendsto_const_nhds.mul hinv) using 1 ; norm_num
 
 /-- The exact old-plus-fresh palette, with natural-number ceilings, has the
 required normalized limit. -/
@@ -298,7 +298,7 @@ theorem jmTotalColors_tendsto {delta : ℝ} (hdelta : 0 < delta) :
   have hlower : Tendsto (fun n : ℕ =>
       (5 / 6 : ℝ) * (1 + jmRho delta n)) atTop (nhds (5 / 6 : ℝ)) := by
     convert tendsto_const_nhds.mul (tendsto_const_nhds.add
-      (jmRho_tendsto_zero hdelta)) using 1 <;> norm_num
+      (jmRho_tendsto_zero hdelta)) using 1 ; norm_num
   apply tendsto_of_tendsto_of_tendsto_of_le_of_le' hlower
     (jmNormalizedUpper_tendsto hdelta)
   · filter_upwards [eventually_gt_atTop (0 : ℕ)] with n hn
@@ -347,7 +347,7 @@ theorem jmPaletteUpperError_normalized_tendsto_zero
       (5 / 6 : ℝ) * jmRho delta n + jmRho delta n +
         2 * (n : ℝ)⁻¹) atTop (nhds 0) := by
     convert ((tendsto_const_nhds.mul hrho).add hrho).add
-      (tendsto_const_nhds.mul hinv) using 1 <;> norm_num
+      (tendsto_const_nhds.mul hinv) using 1 ; norm_num
   refine hmodel.congr' ?_
   filter_upwards [eventually_gt_atTop (0 : ℕ)] with n hn
   exact (jmPaletteUpperError_div hn).symm
@@ -443,7 +443,7 @@ theorem jmAuxDegreeReal_ratio_tendsto {delta : ℝ} (hdelta : 0 < delta) :
         (nhds ((1 : ℝ) ^ 4)) := (jmDeletion_tendsto_one hdelta).pow 4
     have hc : Tendsto (fun _ : ℕ => (25 / 12 : ℝ)) atTop
         (nhds (25 / 12 : ℝ)) := tendsto_const_nhds
-    convert hc.mul hq4 using 1 <;> norm_num
+    convert hc.mul hq4 using 1 ; norm_num
   refine hmodel.congr' ?_
   filter_upwards [eventually_gt_atTop (0 : ℕ)] with n hn
   exact (jmAuxDegreeReal_ratio hn).symm
@@ -568,7 +568,7 @@ theorem jmLLLFactor_tendsto_zero {delta : ℝ} (hdelta : 0 < delta) :
     Tendsto (jmLLLFactor delta) atTop (nhds 0) := by
   change Tendsto (fun n : ℕ => 28 * Real.exp 1 * jmRho delta n)
     atTop (nhds 0)
-  convert tendsto_const_nhds.mul (jmRho_tendsto_zero hdelta) using 1 <;>
+  convert tendsto_const_nhds.mul (jmRho_tendsto_zero hdelta) using 1 ;
     norm_num
 
 theorem eventually_jmLLLFactor_le_one {delta : ℝ} (hdelta : 0 < delta) :
@@ -601,15 +601,15 @@ theorem jmExactLLLExpression_tendsto_zero
     have hscaled : Tendsto (fun n : ℕ => (13 : ℝ) * jmRho delta n)
         atTop (nhds 0) := by
       convert (show Tendsto (fun _ : ℕ => (13 : ℝ)) atTop (nhds 13) from
-        tendsto_const_nhds).mul (jmRho_tendsto_zero hdelta0) using 1 <;>
+        tendsto_const_nhds).mul (jmRho_tendsto_zero hdelta0) using 1 ;
           norm_num
     have hinside : Tendsto (fun n : ℕ =>
         13 * jmRho delta n + (jmFreshColors delta n : ℝ)⁻¹ ^ 2)
         atTop (nhds 0) := by
-      convert hscaled.add (htinv.pow 2) using 1 <;> norm_num
+      convert hscaled.add (htinv.pow 2) using 1 ; norm_num
     have hout : Tendsto (fun _ : ℕ => (2 * Real.exp 1 : ℝ)) atTop
         (nhds (2 * Real.exp 1)) := tendsto_const_nhds
-    convert hout.mul hinside using 1 <;> norm_num
+    convert hout.mul hinside using 1 ; norm_num
   refine hmodel.congr' ?_
   filter_upwards [eventually_gt_atTop (0 : ℕ)] with n hn
   have htpos : 0 < jmFreshColors delta n := by
@@ -709,13 +709,13 @@ theorem jm_leave_ratio_tendsto_zero_of_affine_bound
       atTop (nhds 0) := by
     have h₁ : Tendsto (fun n : ℕ => C * jmRho delta n) atTop (nhds 0) := by
       convert (show Tendsto (fun _ : ℕ => C) atTop (nhds C) from
-        tendsto_const_nhds).mul (jmRho_tendsto_zero hdelta0) using 1 <;>
+        tendsto_const_nhds).mul (jmRho_tendsto_zero hdelta0) using 1 ;
           norm_num
     have h₂ : Tendsto (fun n : ℕ =>
         C0 * (jmFreshPaletteReal delta n)⁻¹) atTop (nhds 0) := by
       convert (show Tendsto (fun _ : ℕ => C0) atTop (nhds C0) from
-        tendsto_const_nhds).mul hfreshInv using 1 <;> norm_num
-    convert h₁.add h₂ using 1 <;> norm_num
+        tendsto_const_nhds).mul hfreshInv using 1 ; norm_num
+    convert h₁.add h₂ using 1 ; norm_num
   apply tendsto_of_tendsto_of_tendsto_of_le_of_le'
     (tendsto_const_nhds : Tendsto (fun _ : ℕ => (0 : ℝ)) atTop (nhds 0))
     hupper
@@ -784,22 +784,22 @@ theorem jmLeaveFourMulExpression_tendsto_zero
       (192 : ℝ) * ((B n : ℝ) / (jmFreshColors delta n : ℝ)))
       atTop (nhds 0) := by
     convert (show Tendsto (fun _ : ℕ => (192 : ℝ)) atTop (nhds 192) from
-      tendsto_const_nhds).mul hratio using 1 <;> norm_num
+      tendsto_const_nhds).mul hratio using 1 ; norm_num
   have hterm2 : Tendsto (fun n : ℕ =>
       (256 : ℝ) * ((B n : ℝ) / (jmFreshColors delta n : ℝ)) ^ 2)
       atTop (nhds 0) := by
     convert (show Tendsto (fun _ : ℕ => (256 : ℝ)) atTop (nhds 256) from
-      tendsto_const_nhds).mul (hratio.pow 2) using 1 <;> norm_num
+      tendsto_const_nhds).mul (hratio.pow 2) using 1 ; norm_num
   have hterm3 : Tendsto (fun n : ℕ =>
       (4 : ℝ) * (jmFreshColors delta n : ℝ)⁻¹ ^ 2)
       atTop (nhds 0) := by
     convert (show Tendsto (fun _ : ℕ => (4 : ℝ)) atTop (nhds 4) from
-      tendsto_const_nhds).mul (htinv.pow 2) using 1 <;> norm_num
+      tendsto_const_nhds).mul (htinv.pow 2) using 1 ; norm_num
   have hmodel : Tendsto (fun n : ℕ =>
       192 * ((B n : ℝ) / (jmFreshColors delta n : ℝ)) +
       256 * ((B n : ℝ) / (jmFreshColors delta n : ℝ)) ^ 2 +
       4 * (jmFreshColors delta n : ℝ)⁻¹ ^ 2) atTop (nhds 0) := by
-    convert (hterm1.add hterm2).add hterm3 using 1 <;> norm_num
+    convert (hterm1.add hterm2).add hterm3 using 1 ; norm_num
   refine hmodel.congr' ?_
   filter_upwards [eventually_gt_atTop (0 : ℕ)] with n hn
   exact (jmLeaveFourMulExpression_eq B hn).symm
@@ -839,22 +839,22 @@ theorem jmLeaveFourMulExpression_tendsto_zero_of_affine_bound
       (192 : ℝ) * ((B n : ℝ) / (jmFreshColors delta n : ℝ)))
       atTop (nhds 0) := by
     convert (show Tendsto (fun _ : ℕ => (192 : ℝ)) atTop (nhds 192) from
-      tendsto_const_nhds).mul hratio using 1 <;> norm_num
+      tendsto_const_nhds).mul hratio using 1 ; norm_num
   have hterm2 : Tendsto (fun n : ℕ =>
       (256 : ℝ) * ((B n : ℝ) / (jmFreshColors delta n : ℝ)) ^ 2)
       atTop (nhds 0) := by
     convert (show Tendsto (fun _ : ℕ => (256 : ℝ)) atTop (nhds 256) from
-      tendsto_const_nhds).mul (hratio.pow 2) using 1 <;> norm_num
+      tendsto_const_nhds).mul (hratio.pow 2) using 1 ; norm_num
   have hterm3 : Tendsto (fun n : ℕ =>
       (4 : ℝ) * (jmFreshColors delta n : ℝ)⁻¹ ^ 2)
       atTop (nhds 0) := by
     convert (show Tendsto (fun _ : ℕ => (4 : ℝ)) atTop (nhds 4) from
-      tendsto_const_nhds).mul (htinv.pow 2) using 1 <;> norm_num
+      tendsto_const_nhds).mul (htinv.pow 2) using 1 ; norm_num
   have hmodel : Tendsto (fun n : ℕ =>
       192 * ((B n : ℝ) / (jmFreshColors delta n : ℝ)) +
       256 * ((B n : ℝ) / (jmFreshColors delta n : ℝ)) ^ 2 +
       4 * (jmFreshColors delta n : ℝ)⁻¹ ^ 2) atTop (nhds 0) := by
-    convert (hterm1.add hterm2).add hterm3 using 1 <;> norm_num
+    convert (hterm1.add hterm2).add hterm3 using 1 ; norm_num
   refine hmodel.congr' ?_
   filter_upwards [eventually_gt_atTop (0 : ℕ)] with n hn
   exact (jmLeaveFourMulExpression_eq B hn).symm
@@ -909,7 +909,7 @@ theorem eventually_jmCeilLeaveBound_four_mul_le_one
 a larger real power.  Keeping this elementary bridge here avoids repeating
 the same limit argument in every CFM numerical check. -/
 theorem eventually_const_mul_rpow_le_rpow
-    {C a b : ℝ} (hC : 0 ≤ C) (hab : a < b) :
+    {C a b : ℝ} (_ : 0 ≤ C) (hab : a < b) :
     ∀ᶠ n : ℕ in atTop, C * (n : ℝ) ^ a ≤ (n : ℝ) ^ b := by
   have htop : Tendsto (fun n : ℕ => (n : ℝ) ^ (b - a)) atTop atTop :=
     (tendsto_rpow_atTop (sub_pos.mpr hab)).comp tendsto_natCast_atTop_atTop
@@ -1102,7 +1102,7 @@ theorem eventually_auxDegree_cfmError_le_rho_sq {eta0 : ℝ}
 /-- Fixed coefficients can be absorbed into the exponential capacity. -/
 theorem eventually_const_mul_rpow_le_jmExponentialCapacity
     {delta eta C a : ℝ} (hdelta : delta < 3) (heta : 0 < eta)
-    (hC : 0 ≤ C) :
+    (_ : 0 ≤ C) :
     ∀ᶠ n : ℕ in atTop,
       C * (n : ℝ) ^ a ≤ jmExponentialCapacity delta eta n := by
   have hnatCast : Tendsto (fun n : ℕ => (n : ℝ)) atTop atTop :=
@@ -1221,7 +1221,7 @@ constant requirement is explicit: the chosen conflict-size cutoff `ell`
 must absorb the coefficient `512 C_L^3`. -/
 theorem eventually_jmConflict_degree_comparison
     (L : ℕ → ℕ) {eta0 C_L : ℝ} (ell : ℕ)
-    (heta0 : 0 < eta0) (hCL : 0 ≤ C_L)
+    (heta0 : 0 < eta0) (_ : 0 ≤ C_L)
     (hconstant : 512 * C_L ^ 3 ≤ (ell : ℝ))
     (hL : ∀ᶠ n : ℕ in atTop,
       (L n : ℝ) ≤ C_L * (n : ℝ) ^ (2 - jmDelta eta0)) :

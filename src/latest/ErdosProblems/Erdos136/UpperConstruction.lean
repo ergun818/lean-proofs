@@ -62,8 +62,10 @@ theorem card_jmcTrackedIndex_le (n : ℕ) :
     rfl
   have hf : Function.Injective f := by
     intro a b h
-    cases a <;> cases b <;> simp only [JMCTrackedIndex.leave.injEq, JMCTrackedIndex.pairRole.injEq,
-    JMCTrackedIndex.tripleRole.injEq] at h ⊢
+    cases a <;> cases b <;>
+      simp only [Sum.inl.injEq, JMCTrackedIndex.leave.injEq, f, reduceCtorEq,
+        Sum.inr.injEq, Prod.mk.injEq, JMCTrackedIndex.pairRole.injEq,
+        JMCTrackedIndex.tripleRole.injEq] at h ⊢
     · exact h
     · apply hrole
       simp only [Prod.mk.injEq]
@@ -98,7 +100,6 @@ theorem eventually_jmcTrackedIndex_le_auxDegree_exponential
       (C := 19) (a := 2) (by norm_num)
   filter_upwards with n
   have h := card_jmcTrackedIndex_le n
-  norm_num only [Nat.cast_ofNat, Nat.cast_mul, Nat.cast_pow]
   exact_mod_cast h
 
 /-- A role-independent lower bound for the nine Joos--Mubayi pair-test
@@ -300,7 +301,7 @@ def jmCoverMultiplicity (eta0 : ℝ) (n : ℕ) : ℕ :=
 
 /-- Finite arithmetic for the floor-defined cover multiplicity. -/
 theorem jmCoverMultiplicity_bounds {eta0 : ℝ} {n : ℕ}
-    (heta0 : 0 < eta0)
+    (_ : 0 < eta0)
     (hsmall : 8 * Real.rpow (jmSelectedHostDegree eta0 n)
         (1 - jmEta eta0) + 2 ≤ jmSelectedHostDegree eta0 n)
     (hambient : ((16 * (6 * n ^ 2) : ℕ) : ℝ) ≤
@@ -413,7 +414,7 @@ theorem eventually_jmCoverMultiplicity_numerics {eta0 : ℝ}
   constructor
   · simpa [d]
   · norm_num only [Nat.cast_mul, Nat.cast_ofNat, Nat.cast_pow] at hambient' ⊢
-    convert hambient' using 1 <;> ring
+    convert hambient' using 1 ; ring
 
 /-- A common coarse power envelope for every exponent used by the role
 tests.  Keeping the real exponent visible avoids hiding any ceiling loss. -/
@@ -455,7 +456,7 @@ theorem selectedHostDegree_rpow_le_1296_mul {eta0 b : ℝ} {n : ℕ}
 def jmRoleNumeratorBudget : ℝ := 1000000000000
 
 /-- The two exponent gaps behind all role-test lower and extension bounds. -/
-theorem eventually_jmRoleGrowthWindows {eta0 : ℝ} (heta0 : 0 < eta0) :
+theorem eventually_jmRoleGrowthWindows {eta0 : ℝ} (_ : 0 < eta0) :
     ∀ᶠ n : ℕ in atTop,
       jmRoleNumeratorBudget * (n : ℝ) ^ (6 + 3 * jmEta eta0) ≤
           (1 / 80000 : ℝ) * (n : ℝ) ^ (7 - 2 * jmDelta eta0) ∧
@@ -629,13 +630,13 @@ theorem eventually_jmcTrackedTestNumerics {eta0 : ℝ} (heta0 : 0 < eta0) :
     have h := selectedHostDegree_rpow_le_1296_mul
       (eta0 := eta0) (b := 2 + eta) hn0 (by simpa [d] using hd0)
         (by simpa [d] using hdSix) (by linarith) (by linarith)
-    convert h using 1 <;> simp [d, eta] <;> ring_nf
+    convert h using 1 ; simp [eta] ; ring_nf
   have hpowOne : d ^ (1 + eta) ≤
       1296 * (n : ℝ) ^ (3 + 3 * eta) := by
     have h := selectedHostDegree_rpow_le_1296_mul
       (eta0 := eta0) (b := 1 + eta) hn0 (by simpa [d] using hd0)
         (by simpa [d] using hdSix) (by linarith) (by linarith)
-    convert h using 1 <;> simp [d, eta] <;> ring_nf
+    convert h using 1 ; simp [eta] ; ring_nf
   have hpowTwo : d ^ (2 + eta) ≤
       1296 * (n : ℝ) ^ (6 + 3 * eta) := hpowPair
   have hpowThree : d ^ (3 + eta) ≤
@@ -643,7 +644,7 @@ theorem eventually_jmcTrackedTestNumerics {eta0 : ℝ} (heta0 : 0 < eta0) :
     have h := selectedHostDegree_rpow_le_1296_mul
       (eta0 := eta0) (b := 3 + eta) hn0 (by simpa [d] using hd0)
         (by simpa [d] using hdSix) (by linarith) (by linarith)
-    convert h using 1 <;> simp [d, eta] <;> ring_nf
+    convert h using 1 ; simp [eta] ; ring_nf
   have hbudget0 : (0 : ℝ) ≤ jmRoleNumeratorBudget := by
     norm_num [jmRoleNumeratorBudget]
   have h1296 : (1296 : ℝ) ≤ jmRoleNumeratorBudget := by

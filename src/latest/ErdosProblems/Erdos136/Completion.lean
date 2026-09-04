@@ -108,7 +108,6 @@ lemma five_le_card_image_of_fibers
     have huniv : (Finset.univ : Finset Edge4).card = 6 := by
       exact card_edge4
     omega
-
   by_contra hnot
   change ¬ 5 ≤ I.card at hnot
   have hI : I.card ≤ 4 := by omega

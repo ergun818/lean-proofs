@@ -8,7 +8,7 @@ open Finset
 
 section FiniteImage
 
-variable {α β : Type*} [DecidableEq α] [DecidableEq β]
+variable {α β : Type*} [DecidableEq β]
 
 /-- Two independent collisions in a six-element domain leave at most four
 values.  We keep this elementary cardinal lemma separate from the graph
@@ -18,6 +18,7 @@ private lemma card_image_le_four_of_two_collisions
     {a b c d : α} (ha : a ∈ s) (hb : b ∈ s) (hc : c ∈ s) (hd : d ∈ s)
     (hab : a ≠ b) (had : a ≠ d) (hcb : c ≠ b) (hcd : c ≠ d) (hbd : b ≠ d)
     (h₁ : f a = f b) (h₂ : f c = f d) : #(s.image f) ≤ 4 := by
+  classical
   let t := (s.erase b).erase d
   have hsub : s.image f ⊆ t.image f := by
     intro y hy
@@ -45,6 +46,7 @@ private lemma card_image_le_four_of_three_equal
     {a b c : α} (ha : a ∈ s) (hb : b ∈ s) (hc : c ∈ s)
     (hab : a ≠ b) (hac : a ≠ c) (hbc : b ≠ c)
     (h₁ : f a = f b) (h₂ : f a = f c) : #(s.image f) ≤ 4 := by
+  classical
   let t := (s.erase b).erase c
   have hsub : s.image f ⊆ t.image f := by
     intro y hy

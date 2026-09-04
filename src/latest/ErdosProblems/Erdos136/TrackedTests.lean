@@ -1168,53 +1168,14 @@ theorem paintMultiplicity_eq_role {n k : ℕ} (b : TriangleBlock n k)
     paintMultiplicity b x c = r.multiplicity := by
   cases r with
   | repeatedApex =>
-      rcases h with ⟨rfl, rfl⟩
-      unfold paintMultiplicity
-      rw [show (Finset.univ.filter fun z : Fin n =>
-          z ≠ b.apex ∧ b.Paints b.apex z b.repeated) =
-          {b.left, b.right} by
-        ext z
-        simp only [ne_eq, mem_filter, mem_univ, true_and, mem_insert, mem_singleton]
-        rintro (rfl | rfl)
-        · exact b.apex_ne_left.symm
-        · exact b.apex_ne_right.symm]
-      simp [JMCPaintRole.multiplicity, b.left_ne_right]
+    exact AuxConcentration.card_paintedNeighbors_of_roleFits .repeatedApex b x c
+      (by simpa only [AuxConcentration.RoleFits, HasJMCPaintRole, eq_comm] using h)
   | repeatedLeaf =>
-      rcases h with ⟨rfl, rfl | rfl⟩
-      · unfold paintMultiplicity
-        rw [show (Finset.univ.filter fun z : Fin n =>
-            z ≠ b.left ∧ b.Paints b.left z b.repeated) = {b.apex} by
-          ext z
-          simp only [ne_eq, mem_filter, mem_univ, true_and, mem_singleton]
-          rintro rfl
-          exact b.apex_ne_left]
-        rfl
-      · unfold paintMultiplicity
-        rw [show (Finset.univ.filter fun z : Fin n =>
-            z ≠ b.right ∧ b.Paints b.right z b.repeated) = {b.apex} by
-          ext z
-          simp only [ne_eq, mem_filter, mem_univ, true_and, mem_singleton]
-          rintro rfl
-          exact b.apex_ne_right]
-        rfl
+    exact AuxConcentration.card_paintedNeighbors_of_roleFits .repeatedLeaf b x c
+      (by simpa only [AuxConcentration.RoleFits, HasJMCPaintRole, eq_comm] using h)
   | singletonLeaf =>
-      rcases h with ⟨rfl, rfl | rfl⟩
-      · unfold paintMultiplicity
-        rw [show (Finset.univ.filter fun z : Fin n =>
-            z ≠ b.left ∧ b.Paints b.left z b.singleton) = {b.right} by
-          ext z
-          simp only [ne_eq, mem_filter, mem_univ, true_and, mem_singleton]
-          rintro rfl
-          exact b.left_ne_right.symm]
-        rfl
-      · unfold paintMultiplicity
-        rw [show (Finset.univ.filter fun z : Fin n =>
-            z ≠ b.right ∧ b.Paints b.right z b.singleton) = {b.left} by
-          ext z
-          simp only [ne_eq, mem_filter, mem_univ, true_and, mem_singleton]
-          rintro rfl
-          exact b.left_ne_right]
-        rfl
+    exact AuxConcentration.card_paintedNeighbors_of_roleFits .singletonLeaf b x c
+      (by simpa only [AuxConcentration.RoleFits, HasJMCPaintRole, eq_comm] using h)
 
 /-- The role-refined version of the nine pair families. -/
 def HasJMCRolePair {n k : ℕ}
@@ -3799,7 +3760,7 @@ theorem card_jmcKeyVertexFiber_le {n k L : ℕ}
         codegree (auxiliaryHypergraph candidates R) {q.key, v} := by
       congr 1
       ext e
-      simp only [jmcKeyVertexFiber, codegree, Finset.mem_filter,
+      simp only [jmcKeyVertexFiber, Finset.mem_filter,
         Finset.insert_subset_iff, Finset.singleton_subset_iff]
     _ ≤ L := hcodeg _ (by simp [hne])
 
@@ -4595,7 +4556,7 @@ theorem roleTrackedHostBounds_of_universalHost {n k m B : ℕ}
           (leaveDegreeWeight
             (auxiliaryHypergraph (AuxConcentration.allTriangleBlocks n k) R) x)
           (auxiliaryHypergraph (AuxConcentration.allTriangleBlocks n k) R) 1 ≤ B)
-    (hcoeff : ∀ (a : JMCDistinctRootPair n) (rx ry : JMCPaintRole),
+    (hcoeff : ∀ (_ : JMCDistinctRootPair n) (_ _ : JMCPaintRole),
       0 ≤
         (1 + err) * Real.rpow d (-2 : ℝ) -
           (1 - err) * Real.rpow d (-3 : ℝ) * (m : ℝ))

@@ -51,7 +51,7 @@ def DependsOn {E A : Type*} [Fintype E] [DecidableEq E]
   ∀ ω ω', (∀ e ∈ S, ω e = ω' e) → (ω ∈ U ↔ ω' ∈ U)
 
 lemma dependsOn_filter {E A : Type*} [Fintype E] [DecidableEq E]
-    [Fintype A] [DecidableEq A]
+    [Fintype A]
     (S : Finset E) (p : (E → A) → Prop) [DecidablePred p]
     (hp : ∀ ω ω', (∀ e ∈ S, ω e = ω' e) → (p ω ↔ p ω')) :
     DependsOn S (Finset.univ.filter p) := by
@@ -106,7 +106,6 @@ lemma card_inter_mul_card_eq
   let y₀ : Y := fun _ ↦ Classical.choice inferInstance
   let UX := {x : X // Φ.symm (x, y₀) ∈ U}
   let VY := {y : Y // Φ.symm (x₀, y) ∈ V}
-
   have hU_coord (x : X) (y : Y) :
       Φ.symm (x, y) ∈ U ↔ Φ.symm (x, y₀) ∈ U := by
     apply hU
@@ -118,11 +117,10 @@ lemma card_inter_mul_card_eq
     intro e he
     have heS : e ∉ S := by simpa using he
     simp [Φ, splitEquiv, Equiv.piEquivPiSubtypeProd, heS]
-
   let eU : {w : E → A // w ∈ U} ≃ UX × Y :=
     { toFun := fun w ↦
         (⟨(Φ w.1).1, (hU_coord (Φ w.1).1 (Φ w.1).2).mp (by
-          simpa using w.2)⟩, (Φ w.1).2)
+          simp)⟩, (Φ w.1).2)
       invFun := fun p ↦
         ⟨Φ.symm (p.1.1, p.2), (hU_coord p.1.1 p.2).mpr p.1.2⟩
       left_inv := by intro w; apply Subtype.ext; exact Φ.symm_apply_apply w.1
@@ -133,7 +131,7 @@ lemma card_inter_mul_card_eq
   let eV : {w : E → A // w ∈ V} ≃ X × VY :=
     { toFun := fun w ↦
         ((Φ w.1).1, ⟨(Φ w.1).2,
-          (hV_coord (Φ w.1).1 (Φ w.1).2).mp (by simpa using w.2)⟩)
+          (hV_coord (Φ w.1).1 (Φ w.1).2).mp (by simp)⟩)
       invFun := fun p ↦
         ⟨Φ.symm (p.1, p.2.1), (hV_coord p.1 p.2.1).mpr p.2.2⟩
       left_inv := by intro w; apply Subtype.ext; exact Φ.symm_apply_apply w.1
@@ -156,7 +154,6 @@ lemma card_inter_mul_card_eq
         intro p
         rcases p with ⟨⟨x, hx⟩, ⟨y, hy⟩⟩
         apply Prod.ext <;> simp [Φ] }
-
   have hcardU : U.card = Fintype.card UX * Fintype.card Y := by
     rw [← Fintype.card_coe]
     simpa using Fintype.card_congr eU
@@ -272,7 +269,6 @@ noncomputable instance instFintypeCycleIndex {n oldK : ℕ}
   have h1 := congrFun h 1
   have h2 := congrFun h 2
   have h3 := congrFun h 3
-  simp at h0 h1 h2 h3
   exact cycleIndex_ext h0 h1 h2 h3
 
 noncomputable instance instFintypeCrossIndex {n oldK t : ℕ}
@@ -288,7 +284,6 @@ noncomputable instance instFintypeCrossIndex {n oldK t : ℕ}
   have h3 := congrFun hedges 3
   have hcold := congrArg (fun z ↦ z.2.1) h
   have hcfresh := congrArg (fun z ↦ z.2.2) h
-  simp at h0 h1 h2 h3
   exact crossIndex_ext h0 h1 h2 h3 hcold hcfresh
 
 namespace WedgeIndex
@@ -1062,10 +1057,10 @@ def orderedEnds {n : ℕ} (e : EdgeN n) : Fin n × Fin n :=
 lemma edge_out_ne {n : ℕ} (e : EdgeN n) : e.1.out.1 ≠ e.1.out.2 := by
   intro h
   have heq : e.1 = s(e.1.out.1, e.1.out.2) := by
-    simpa [Sym2.mk] using e.1.out_eq.symm
+    simp [Sym2.mk]
   have he := e.2
   rw [heq, h] at he
-  simpa [SimpleGraph.mem_edgeSet] using he
+  simp [] at he
 
 lemma orderedEnds_lt {n : ℕ} (e : EdgeN n) :
     (orderedEnds e).1 < (orderedEnds e).2 := by
@@ -1078,9 +1073,9 @@ lemma edge_eq_mk_orderedEnds {n : ℕ} (e : EdgeN n) :
     e.1 = s((orderedEnds e).1, (orderedEnds e).2) := by
   unfold orderedEnds
   split_ifs
-  · simpa [Sym2.mk] using e.1.out_eq.symm
+  · simp [Sym2.mk]
   · have hout : e.1 = s(e.1.out.1, e.1.out.2) := by
-      simpa [Sym2.mk] using e.1.out_eq.symm
+      simp [Sym2.mk]
     exact hout.trans Sym2.eq_swap
 
 lemma orderedEnds_injective {n : ℕ} : Function.Injective (@orderedEnds n) := by
@@ -1143,8 +1138,8 @@ lemma old_endpoints_in_fresh_union {n oldK t : ℕ}
 /-- An edge distinct from two disjoint edges on their four endpoints is
 one of the four cross edges. -/
 lemma edge_cross_cases {n : ℕ} {x y u v : Fin n}
-    (hxy : x ≠ y) (huv : u ≠ v)
-    (hxu : x ≠ u) (hxv : x ≠ v) (hyu : y ≠ u) (hyv : y ≠ v)
+    (_ : x ≠ y) (_ : u ≠ v)
+    (_ : x ≠ u) (_ : x ≠ v) (_ : y ≠ u) (_ : y ≠ v)
     (g : EdgeN n)
     (hsub : g.1.toFinset ⊆ ({x, y} : Finset (Fin n)) ∪ {u, v})
     (hne₁ : g.1 ≠ s(x, y)) (hne₂ : g.1 ≠ s(u, v)) :
@@ -1152,7 +1147,7 @@ lemma edge_cross_cases {n : ℕ} {x y u v : Fin n}
   let a := g.1.out.1
   let b := g.1.out.2
   have hg : g.1 = s(a, b) := by
-    simpa [a, b, Sym2.mk] using g.1.out_eq.symm
+    simp [a, b, Sym2.mk]
   have hab : a ≠ b := by simpa [a, b] using edge_out_ne g
   rw [hg] at hsub hne₁ hne₂ ⊢
   simp only [Sym2.toFinset_mk_eq, insert_subset_iff, singleton_subset_iff,
@@ -1329,9 +1324,9 @@ def crossEdges {n : ℕ} (x y u v : Fin n) : Finset (Sym2 (Fin n)) :=
 
 lemma crossEdges_card {n : ℕ} {x y u v : Fin n}
     (hxy : x ≠ y) (huv : u ≠ v)
-    (hxu : x ≠ u) (hxv : x ≠ v) (hyu : y ≠ u) (hyv : y ≠ v) :
+    (hxu : x ≠ u) (hxv : x ≠ v) (_ : y ≠ u) (hyv : y ≠ v) :
     (crossEdges x y u v).card = 4 := by
-  simp [crossEdges, Sym2.eq_iff, hxy, huv, hxu, hxv, hyu, hyv]
+  simp [crossEdges, hxy, huv, hxu, hxv, hyv]
 
 /-- A normalized raw index supplies exactly one obstruction counted by P5. -/
 lemma obstruction_of_normalized {n k t : ℕ}
@@ -1804,7 +1799,7 @@ lemma card_le_two_of_pairwise_disjoint
       _ = 4 := by simp
   omega
 
-lemma combined_eq_inr_iff {Old Fresh : Type*} [DecidableEq Old]
+lemma combined_eq_inr_iff {Old Fresh : Type*}
     (old : Completion.Edge4 → Option Old) (fresh : Completion.Edge4 → Fresh)
     (e : Completion.Edge4) (c : Fresh) :
     Completion.combined old fresh e = Sum.inr c ↔ old e = none ∧ fresh e = c := by

@@ -204,7 +204,7 @@ theorem hasDerivAt_pV (N x : ℝ) : HasDerivAt (pV N) (-8 / N) x := by
     (((hasDerivAt_id x).mul_const 8).div_const N)
   refine (h.congr_of_eventuallyEq (Filter.Eventually.of_forall fun y => ?_)).congr_deriv ?_
   · simp only [pV]
-    simp only [Pi.sub_apply, Pi.mul_apply, id_eq]
+    simp only [Pi.sub_apply, id_eq]
     ring
   · ring
 
@@ -212,7 +212,7 @@ theorem hasDerivAt_pM (d N x : ℝ) : HasDerivAt (pM d N) (8 / (d * N)) x := by
   have h := ((hasDerivAt_id x).mul_const 8).div_const (d * N)
   refine (h.congr_of_eventuallyEq (Filter.Eventually.of_forall fun y => ?_)).congr_deriv ?_
   · simp only [pM]
-    simp only [Pi.mul_apply, id_eq]
+    simp only [id_eq]
     ring
   · ring
 
@@ -227,7 +227,7 @@ theorem hasDerivAt_GammaHat (D₂ D₃ D₄ d N x : ℝ) :
       (((hasDerivAt_pM d N x).pow 2).mul_const D₃)).add
       (((hasDerivAt_pM d N x).pow 3).mul_const D₄)
   refine (h.congr_of_eventuallyEq (Filter.Eventually.of_forall fun y => ?_)).congr_deriv ?_
-  · simp only [Pi.add_apply, Pi.mul_apply, Pi.pow_apply]
+  · simp only [Pi.add_apply, Pi.pow_apply]
     ring
   · norm_num
     ring
@@ -289,7 +289,7 @@ theorem hasDerivAt_dHat (D₂ D₃ D₄ d N x : ℝ) :
     (((hasDerivAt_pV N x).pow 7).mul
       ((hasDerivAt_GammaHat D₂ D₃ D₄ d N x).neg.exp)).const_mul d
   refine (h.congr_of_eventuallyEq (Filter.Eventually.of_forall fun y => ?_)).congr_deriv ?_
-  · simp only [dHat, Pi.mul_apply, Pi.pow_apply, Pi.neg_apply, id_eq]
+  · simp only [dHat, Pi.mul_apply, Pi.pow_apply, Pi.neg_apply]
     ring
   · norm_num
     ring_nf
@@ -428,7 +428,7 @@ theorem hasDerivAt_zHat_raw {D₂ D₃ D₄ d N x : ℝ} (j s : ℕ)
   refine (h.congr_of_eventuallyEq (Filter.Eventually.of_forall fun y => ?_)).congr_deriv ?_
   · simp only [zHat, Pi.mul_apply, Pi.pow_apply]
     ring
-  · simp only [Pi.mul_apply, Pi.pow_apply]
+  · simp only [Pi.pow_apply]
 
 /-- Exact test-trajectory differential identity from the conflict-free
 matching process.  Only `j ≤ 4` is needed in the present specialization;
@@ -493,12 +493,12 @@ theorem hasDerivAt_zeta {D₂ D₃ D₄ Gamma epsilon d N x : ℝ} {j s : ℕ}
     cases s with
     | zero =>
         simp only [zeta, aux, Nat.cast_zero, Nat.choose_zero_right, pow_zero,
-          zero_mul, zero_add, one_mul, mul_one, Pi.add_apply, Pi.mul_apply]
+          zero_mul, zero_add, mul_one, Pi.add_apply]
         field_simp
         ring
     | succ s =>
         simp only [zeta, aux, Nat.cast_succ, Nat.succ_sub_one, pow_succ,
-          Pi.add_apply, Pi.mul_apply]
+          Pi.add_apply]
         field_simp
         ring
 
@@ -644,7 +644,7 @@ theorem conflictLoad_le_six_mul {D₂ D₃ D₄ Gamma d N x : ℝ}
 theorem GammaHat_le_three_mul {D₂ D₃ D₄ Gamma d N x : ℝ}
     (hd : 0 < d) (hGamma : 0 ≤ Gamma)
     (hpM0 : 0 ≤ pM d N x) (hpM1 : pM d N x ≤ d⁻¹)
-    (hD₂ : 0 ≤ D₂) (hD₃ : 0 ≤ D₃) (hD₄ : 0 ≤ D₄)
+    (_ : 0 ≤ D₂) (_ : 0 ≤ D₃) (_ : 0 ≤ D₄)
     (hD₂' : D₂ ≤ Gamma * d) (hD₃' : D₃ ≤ Gamma * d ^ 2)
     (hD₄' : D₄ ≤ Gamma * d ^ 3) :
     GammaHat D₂ D₃ D₄ d N x ≤ 3 * Gamma := by
@@ -736,7 +736,7 @@ theorem delta_bounds {D₂ D₃ D₄ Gamma epsilon d N x : ℝ}
         mul_le_mul hxiUpper hdUpper hdHat0 hxiPower0
       _ = d := by
         rw [← Real.rpow_add hd]
-        convert Real.rpow_one d using 1 <;> ring_nf
+        convert Real.rpow_one d using 1 ; ring_nf
 
 /-- The exact source exponents for the degree envelope. -/
 theorem delta_bounds_exact {D₂ D₃ D₄ Gamma epsilon d N x : ℝ}
@@ -769,7 +769,7 @@ theorem delta_bounds_exact {D₂ D₃ D₄ Gamma epsilon d N x : ℝ}
           d ^ (-epsilon / 64) * d = d ^ (-epsilon / 64) * d ^ (1 : ℝ) := by
             rw [Real.rpow_one]
           _ = d ^ (-epsilon / 64 + 1) := by rw [Real.rpow_add hd]
-          _ = d ^ (1 - epsilon / 64) := by congr 1 <;> ring
+          _ = d ^ (1 - epsilon / 64) := by congr 1 ; ring
 
 /-! ## Derivative margins and one-step estimates -/
 
@@ -914,7 +914,7 @@ def degreeHazard (D₂ D₃ D₄ d N x : ℝ) : ℝ :=
   8 / (d * N) * conflictLoad D₂ D₃ D₄ d N x + 56 / (N * pV N x)
 
 /-- Derivative of `degreeHazard`. -/
-def degreeHazardSlope (D₂ D₃ D₄ d N x : ℝ) : ℝ :=
+def degreeHazardSlope (_ D₃ D₄ d N x : ℝ) : ℝ :=
   (8 / (d * N)) ^ 2 * (2 * D₃ + 6 * D₄ * pM d N x) +
     448 / (N ^ 2 * pV N x ^ 2)
 
@@ -1134,7 +1134,7 @@ theorem degreeHazard_le {D₂ D₃ D₄ Gamma d N x : ℝ}
 theorem degreeHazardSlope_nonneg {D₃ D₄ d N x : ℝ}
     (hd : 0 < d) (hN : 0 < N) (hpV : 0 < pV N x)
     (hD₃ : 0 ≤ D₃) (hD₄ : 0 ≤ D₄) (hpM : 0 ≤ pM d N x) :
-    0 ≤ degreeHazardSlope (D₂ := (0 : ℝ)) D₃ D₄ d N x := by
+    0 ≤ degreeHazardSlope 0 D₃ D₄ d N x := by
   unfold degreeHazardSlope
   positivity
 
@@ -1341,7 +1341,7 @@ theorem deltaCurvature_bound {D₂ D₃ D₄ Gamma epsilon d N x : ℝ}
 needed by the discrete process: a derivative approximation whose error is
 controlled uniformly on the next unit interval. -/
 theorem oneStepTaylorEstimate {f f' : ℝ → ℝ} {x B : ℝ}
-    (hB : 0 ≤ B)
+    (_ : 0 ≤ B)
     (hf : ∀ y ∈ Icc x (x + 1), HasDerivAt f (f' y) y)
     (hvar : ∀ y ∈ Icc x (x + 1), |f' y - f' x| ≤ B) :
     |f (x + 1) - f x - f' x| ≤ B := by
@@ -1352,7 +1352,7 @@ theorem oneStepTaylorEstimate {f f' : ℝ → ℝ} {x B : ℝ}
       (((hasDerivAt_id y).sub_const x).mul_const (f' x))
     change HasDerivAt (fun z => f z - f x - (z - x) * f' x) (f' y - f' x) y
     refine (h.congr_of_eventuallyEq (Filter.Eventually.of_forall fun z => ?_)).congr_deriv ?_
-    · simp only [Pi.sub_apply, Pi.mul_apply, id_eq]
+    · simp only [Pi.sub_apply, id_eq]
     · ring
   have hbound : ∀ y ∈ Ico x (x + 1), ‖f' y - f' x‖ ≤ B := by
     intro y hy
@@ -1498,7 +1498,7 @@ theorem DegreeStepRegistry.of_source
 /-- `xi` bounds obtained directly from the stopping lower bound on `pV`
 and the numerical amplification inequality. -/
 theorem xi_source_bounds {Gamma epsilon d N y : ℝ}
-    (hd : 1 ≤ d) (hGamma : 1 ≤ Gamma) (hepsilon : 0 ≤ epsilon)
+    (hd : 1 ≤ d) (hGamma : 1 ≤ Gamma) (_ : 0 ≤ epsilon)
     (hpV : 0 < pV N y) (hpV1 : pV N y ≤ 1)
     (hpVfloor : d ^ (-epsilon ^ 3) ≤ pV N y)
     (hamp : 9600 * Gamma * epsilon ^ 3 ≤ epsilon / 64) :
@@ -2037,7 +2037,7 @@ theorem zeta_oneStepTaylor_of_registry
 def qHazard (D₂ D₃ D₄ d N x : ℝ) : ℝ :=
   8 / (d * N) * conflictLoad D₂ D₃ D₄ d N x + 64 / (N * pV N x)
 
-def qHazardSlope (D₂ D₃ D₄ d N x : ℝ) : ℝ :=
+def qHazardSlope (_ D₃ D₄ d N x : ℝ) : ℝ :=
   (8 / (d * N)) ^ 2 * (2 * D₃ + 6 * D₄ * pM d N x) +
     512 / (N ^ 2 * pV N x ^ 2)
 
@@ -2269,7 +2269,7 @@ theorem hasDerivAt_zHat_rawRate {D₂ D₃ D₄ d N x : ℝ} (j s : ℕ)
   refine (h.congr_of_eventuallyEq (Filter.Eventually.of_forall fun y => ?_)).congr_deriv ?_
   · simp only [Pi.mul_apply, Pi.pow_apply]
     ring
-  · simp only [Pi.mul_apply, Pi.pow_apply]
+  · simp only [Pi.pow_apply]
 
 theorem zHatRate_eq_rawRate {D₂ D₃ D₄ d N x : ℝ} {j s : ℕ}
     (hd : 0 < d) (hN : 0 < N) (hpV : 0 < pV N x)
@@ -2382,7 +2382,8 @@ theorem rawCore_bound {Q M QR QC V U R : ℝ} {j s : ℕ}
       |2 * (s : ℝ) * (r : ℝ) * Q ^ (s - 1) * QR * M ^ (r - 1) * V| ≤
         28672 * R ^ 2 * U ^ r := by
     by_cases hr0 : r = 0
-    · simp [hr0]
+    · simp only [hr0, CharP.cast_eq_zero, mul_zero, zero_mul, zero_tsub, pow_zero,
+        mul_one, abs_zero, Nat.ofNat_pos, mul_nonneg_iff_of_pos_left]
       exact sq_nonneg R
     · have hr1 : 1 ≤ r := Nat.one_le_iff_ne_zero.mpr hr0
       have hmix : M ^ (r - 1) * U ≤ U ^ r := by
@@ -2422,9 +2423,11 @@ theorem rawCore_bound {Q M QR QC V U R : ℝ} {j s : ℕ}
           mul_le_mul_of_nonneg_left hmix (by positivity)
     · have hrsmall : r = 0 ∨ r = 1 := by omega
       rcases hrsmall with hzero | hone
-      · simp [hzero]
+      · simp only [hzero, zero_tsub, mul_zero, CharP.cast_eq_zero, zero_mul, pow_zero,
+          mul_one, abs_zero, Nat.ofNat_pos, mul_nonneg_iff_of_pos_left, ge_iff_le]
         exact sq_nonneg R
-      · simp [hone]
+      · simp only [hone, tsub_self, mul_zero, CharP.cast_eq_zero, zero_mul, Nat.one_le_ofNat,
+          Nat.sub_eq_zero_of_le, pow_zero, mul_one, abs_zero, pow_one, ge_iff_le]
         exact mul_nonneg (mul_nonneg (by norm_num) (sq_nonneg R)) hU0
   rw [abs_mul, abs_of_nonneg hchoose0]
   have hcore : |rawCore Q M QR QC V j s| ≤ 235968 * R ^ 2 * U ^ r := by
@@ -2548,9 +2551,9 @@ theorem zHatCurvature_bound_source {D₂ D₃ D₄ Gamma d N x : ℝ} {j s : ℕ
   · exact inv_nonneg.mpr hdpos.le
   · positivity
   · convert qRate_bound hdpos hN hGamma hpV hpV1 hpM0 hpM1
-      hD₂0 hD₃0 hD₄0 hD₂ hD₃ hD₄ using 1 <;> ring
+      hD₂0 hD₃0 hD₄0 hD₂ hD₃ hD₄ using 1 ; ring
   · convert qCurvature_bound hdpos hN hGamma hpV hpV1 hpM0 hpM1
-      hD₂0 hD₃0 hD₄0 hD₂ hD₃ hD₄ using 1 <;> ring
+      hD₂0 hD₃0 hD₄0 hD₂ hD₃ hD₄ using 1 ; ring
   · rw [abs_of_nonneg (by positivity : 0 ≤ 8 / (d * N))]
     have hden : 0 < N * pV N x := mul_pos hN hpV
     have hone : 1 / N ≤ Gamma / (N * pV N x) := by
@@ -2637,18 +2640,18 @@ def zetaCurvatureFormula (D₂ D₃ D₄ Gamma epsilon d N : ℝ) (j s : ℕ) (x
     xi Gamma epsilon d N x * testInsideCurvature2 D₂ D₃ D₄ Gamma d N j s x
 
 theorem hasDerivAt_correction {D₂ D₃ D₄ Gamma d N x : ℝ} {j s : ℕ}
-    (hd : 0 < d) (hN : 0 < N) (hGamma : 0 < Gamma) (hpV : 0 < pV N x) :
+    (hd : 0 < d) (hN : 0 < N) (_ : 0 < Gamma) (hpV : 0 < pV N x) :
     HasDerivAt (correction D₂ D₃ D₄ Gamma d N j s)
       (correctionRate D₂ D₃ D₄ Gamma d N j s x) x := by
   have h := (((hasDerivAt_dHat_degreeRate (D₂ := D₂) (D₃ := D₃) (D₄ := D₄)
     hd hN hpV).pow s).const_mul (Nat.choose j s : ℝ)).div_const (4 * Gamma * d ^ j)
   refine (h.congr_of_eventuallyEq (Eventually.of_forall fun y => ?_)).congr_deriv ?_
-  · simp only [correction, Pi.mul_apply, Pi.pow_apply]
-  · simp only [correctionRate, Pi.mul_apply, Pi.pow_apply]
+  · simp only [correction, Pi.pow_apply]
+  · simp only [correctionRate, ]
     ring
 
 theorem hasDerivAt_correctionRate {D₂ D₃ D₄ Gamma d N x : ℝ} {j s : ℕ}
-    (hd : 0 < d) (hN : 0 < N) (hGamma : 0 < Gamma) (hpV : 0 < pV N x) :
+    (hd : 0 < d) (hN : 0 < N) (_ : 0 < Gamma) (hpV : 0 < pV N x) :
     HasDerivAt (correctionRate D₂ D₃ D₄ Gamma d N j s)
       (correctionCurvature D₂ D₃ D₄ Gamma d N j s x) x := by
   have h := (((hasDerivAt_dHat_degreeRate (D₂ := D₂) (D₃ := D₃) (D₄ := D₄)
@@ -2658,15 +2661,15 @@ theorem hasDerivAt_correctionRate {D₂ D₃ D₄ Gamma d N x : ℝ} {j s : ℕ}
   refine (h.congr_of_eventuallyEq (Eventually.of_forall fun y => ?_)).congr_deriv ?_
   · simp only [correctionRate, Pi.mul_apply, Pi.pow_apply]
     ring
-  · simp only [correctionCurvature, Pi.mul_apply, Pi.pow_apply]
+  · simp only [correctionCurvature, Pi.pow_apply]
     cases s with
     | zero => simp
     | succ s =>
       cases s with
       | zero => simp; ring
       | succ s =>
-        simp only [Nat.cast_succ, Nat.succ_sub_one, Nat.succ_sub_succ_eq_sub,
-          Nat.sub_zero, Nat.add_sub_cancel]
+        simp only [Nat.cast_succ, Nat.succ_sub_succ_eq_sub,
+          Nat.sub_zero]
         ring
 
 theorem hasDerivAt_testInside2 {D₂ D₃ D₄ Gamma d N x : ℝ} {j s : ℕ}
@@ -2715,7 +2718,7 @@ theorem hasDerivAt_zetaProductRate {D₂ D₃ D₄ Gamma epsilon d N x : ℝ} {j
   have h := hleft.add hright
   refine (h.congr_of_eventuallyEq (Eventually.of_forall fun y => ?_)).congr_deriv ?_
   · simp only [zetaProductRate, Pi.add_apply, Pi.mul_apply]
-  · simp only [zetaCurvatureFormula, Pi.add_apply, Pi.mul_apply]
+  · simp only [zetaCurvatureFormula, Pi.mul_apply]
     ring
 
 theorem hasDerivAt_zeta_product {D₂ D₃ D₄ Gamma epsilon d N x : ℝ} {j s : ℕ}
@@ -2728,7 +2731,7 @@ theorem hasDerivAt_zeta_product {D₂ D₃ D₄ Gamma epsilon d N x : ℝ} {j s 
       hd hN hGamma hpV hsj hj)
   refine (h.congr_of_eventuallyEq (Eventually.of_forall fun y => ?_)).congr_deriv ?_
   · simp only [zeta, testInside, Pi.mul_apply]
-  · simp only [zetaProductRate, Pi.mul_apply]
+  · simp only [zetaProductRate]
 
 theorem zetaCurvature_eq_formula {D₂ D₃ D₄ Gamma epsilon d N x : ℝ} {j s : ℕ}
     (hd : 0 < d) (hN : 0 < N) (hGamma : 0 < Gamma) (hpV : 0 < pV N x)
@@ -2751,7 +2754,7 @@ theorem zetaCurvature_eq_formula {D₂ D₃ D₄ Gamma epsilon d N x : ℝ} {j s
 
 theorem zetaCurvatureFormula_bound
     {D₂ D₃ D₄ Gamma epsilon d N x X U V W G H : ℝ} {j s : ℕ}
-    (hX : 0 ≤ X) (hU : 0 ≤ U) (hV : 0 ≤ V) (hW : 0 ≤ W)
+    (hX : 0 ≤ X) (_ : 0 ≤ U) (_ : 0 ≤ V) (_ : 0 ≤ W)
     (hG : 0 ≤ G) (hH : 0 ≤ H)
     (hxi : |xi Gamma epsilon d N x| ≤ X)
     (hin : |testInside D₂ D₃ D₄ Gamma d N j s x| ≤ U)

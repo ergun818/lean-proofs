@@ -2163,49 +2163,49 @@ theorem existsUnique_isPaintThird {b : TriangleBlock n k}
     · rcases h with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩
       · refine ⟨b.right, ?_, ?_⟩
         · exact ⟨b.apex_ne_right.symm, b.left_ne_right.symm, by
-            ext z; simp [blockVertices, or_assoc, or_left_comm, or_comm]⟩
+            ext z; simp [blockVertices, ]⟩
         · intro z hz
           exact isPaintThird_unique
             ⟨b.apex_ne_right.symm, b.left_ne_right.symm, by
-              ext z; simp [blockVertices, or_assoc, or_left_comm, or_comm]⟩ hz
+              ext z; simp [blockVertices, ]⟩ hz
       · refine ⟨b.right, ?_, ?_⟩
         · exact ⟨b.left_ne_right.symm, b.apex_ne_right.symm, by
-            ext z; simp [blockVertices, or_assoc, or_left_comm, or_comm]⟩
+            ext z; simp [blockVertices, or_left_comm]⟩
         · intro z hz
           exact isPaintThird_unique
             ⟨b.left_ne_right.symm, b.apex_ne_right.symm, by
-              ext z; simp [blockVertices, or_assoc, or_left_comm, or_comm]⟩ hz
+              ext z; simp [blockVertices, or_left_comm]⟩ hz
     · rcases h with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩
       · refine ⟨b.left, ?_, ?_⟩
         · exact ⟨b.apex_ne_left.symm, b.left_ne_right, by
-            ext z; simp [blockVertices, or_assoc, or_left_comm, or_comm]⟩
+            ext z; simp [blockVertices, or_comm]⟩
         · intro z hz
           exact isPaintThird_unique
             ⟨b.apex_ne_left.symm, b.left_ne_right, by
-              ext z; simp [blockVertices, or_assoc, or_left_comm, or_comm]⟩ hz
+              ext z; simp [blockVertices, or_comm]⟩ hz
       · refine ⟨b.left, ?_, ?_⟩
         · exact ⟨b.left_ne_right, b.apex_ne_left.symm, by
-            ext z; simp [blockVertices, or_assoc, or_left_comm, or_comm]⟩
+            ext z; simp [blockVertices, or_left_comm, or_comm]⟩
         · intro z hz
           exact isPaintThird_unique
             ⟨b.left_ne_right, b.apex_ne_left.symm, by
-              ext z; simp [blockVertices, or_assoc, or_left_comm, or_comm]⟩ hz
+              ext z; simp [blockVertices, or_left_comm, or_comm]⟩ hz
   · rw [Sym2.eq_iff] at h
     rcases h with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩
     · refine ⟨b.apex, ?_, ?_⟩
       · exact ⟨b.apex_ne_left, b.apex_ne_right, by
-          ext z; simp [blockVertices, or_assoc, or_left_comm, or_comm]⟩
+          ext z; simp [blockVertices, or_left_comm, or_comm]⟩
       · intro z hz
         exact isPaintThird_unique
           ⟨b.apex_ne_left, b.apex_ne_right, by
-            ext z; simp [blockVertices, or_assoc, or_left_comm, or_comm]⟩ hz
+            ext z; simp [blockVertices, or_left_comm, or_comm]⟩ hz
     · refine ⟨b.apex, ?_, ?_⟩
       · exact ⟨b.apex_ne_right, b.apex_ne_left, by
-          ext z; simp [blockVertices, or_assoc, or_left_comm, or_comm]⟩
+          ext z; simp [blockVertices, or_left_comm, or_comm]⟩
       · intro z hz
         exact isPaintThird_unique
           ⟨b.apex_ne_right, b.apex_ne_left, by
-            ext z; simp [blockVertices, or_assoc, or_left_comm, or_comm]⟩ hz
+            ext z; simp [blockVertices, or_left_comm, or_comm]⟩ hz
 
 /-- A proof-independent canonical third vertex. -/
 noncomputable def paintThird (b : TriangleBlock n k) (x y : Fin n)
@@ -2235,7 +2235,7 @@ theorem vertexOfRole_apexRole (p : OrientedPaint n k) (b : PaintedBlock p) :
   · simp [vertexOfRole, apexRole, hl]
   · by_cases hr : b.1.apex = p.right
     · have hrl : p.right ≠ p.left := (b.1.paints_ne b.2).symm
-      simp [vertexOfRole, apexRole, hl, hr, hrl]
+      simp [vertexOfRole, apexRole, hr, hrl]
     · have hm : b.1.apex =
           paintThird b.1 p.left p.right p.color b.2 := by
         have h := congrArg (fun S => b.1.apex ∈ S)
@@ -2467,7 +2467,7 @@ theorem commonLink_subset_right_other_supports
     T.1 ⊆ {w.b₁.auxSupport, w.b₂.auxSupport, w.b₃.auxSupport} := by
   -- The preceding argument is root-symmetric.
   let T' : CommonThreeLink candidates R f e :=
-    ⟨T.1, by simpa [inter_comm] using T.2⟩
+    ⟨T.1, by simp [inter_comm]⟩
   simpa [commonLeftWitness, commonRightWitness, commonLeftConflict,
     commonRightConflict] using
     (commonLink_subset_other_supports T')

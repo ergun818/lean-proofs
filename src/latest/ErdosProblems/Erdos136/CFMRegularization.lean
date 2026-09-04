@@ -456,7 +456,7 @@ def badPartnersAt (H : Hypergraph V) (C : ConflictSystem V)
 /-- Double-count common members of a fixed finite family `A` and the
 families `B f`. -/
 theorem sum_card_inter_eq_sum_filter_card
-    {X Y : Type*} [DecidableEq X] [DecidableEq Y]
+    {X Y : Type*} [DecidableEq Y]
     (F : Finset X) (A : Finset Y) (B : X -> Finset Y) :
     ∑ x ∈ F, (A ∩ B x).card =
       ∑ y ∈ A, (F.filter fun x => y ∈ B x).card := by
@@ -729,7 +729,7 @@ theorem degree_badPairConflicts_le_allBadPartners
               have hle := Finset.card_le_card hthree
               rw [hcardthree, hp2] at hle
               omega
-            simpa [hzxy]
+            simp [hzxy]
           · simp only [Finset.insert_subset_iff, Finset.singleton_subset_iff]
             exact ⟨hxp, hyp⟩
         have hexy : e = x ∨ e = y := by
@@ -997,7 +997,7 @@ theorem badPartnersAt_three_trackableCutoff_bound_card_four
   have hlink : ((conflictLinkLayer C e 3).card : ℝ) ≤
       (ell : ℝ) * Real.rpow d 3 := by
     rw [card_conflictLinkLayer_eq_degree_layer]
-    convert hC.layer_degree (j := 4) (by norm_num) hell e using 1 <;>
+    convert hC.layer_degree (j := 4) (by norm_num) hell e using 1 ;
       norm_num
   have hK : (K : ℝ) ≤ Real.rpow d (1 - etaRaw) :=
     Nat.floor_le (Real.rpow_nonneg hd.le _)
@@ -1424,7 +1424,7 @@ theorem six_mul_elementaryWeight_three {α : Type*} [DecidableEq α]
                 (a x ^ 2 + ∑ y ∈ s, (a y) ^ 2) +
               2 * (a x ^ 3 + ∑ y ∈ s, (a y) ^ 3) := by ring
 
-theorem sum_sq_le_upper_mul_sum {α : Type*} [DecidableEq α]
+theorem sum_sq_le_upper_mul_sum {α : Type*}
     (s : Finset α) (a : α → ℝ) (U : ℝ)
     (ha0 : ∀ x ∈ s, 0 ≤ a x) (haU : ∀ x ∈ s, a x ≤ U) :
     (∑ x ∈ s, (a x) ^ 2) ≤ U * ∑ x ∈ s, a x := by
@@ -1482,7 +1482,7 @@ theorem elementaryWeight_nonneg {α : Type*} [DecidableEq α]
   intro x hx
   exact ha x ((Finset.mem_powersetCard.mp ht).1 hx)
 
-theorem sum_cube_nonneg {α : Type*} [DecidableEq α]
+theorem sum_cube_nonneg {α : Type*}
     (s : Finset α) (a : α → ℝ)
     (ha : ∀ x ∈ s, 0 ≤ a x) :
     0 ≤ ∑ x ∈ s, (a x) ^ 3 := by
@@ -1490,13 +1490,13 @@ theorem sum_cube_nonneg {α : Type*} [DecidableEq α]
   intro x hx
   exact pow_nonneg (ha x hx) 3
 
-theorem term_le_sum_of_nonneg {α : Type*} [DecidableEq α]
+theorem term_le_sum_of_nonneg {α : Type*}
     {s : Finset α} {a : α → ℝ} {x : α}
     (hx : x ∈ s) (ha : ∀ y ∈ s, 0 ≤ a y) :
     a x ≤ ∑ y ∈ s, a y := by
   exact Finset.single_le_sum (fun y hy => ha y hy) hx
 
-theorem sum_cube_le_sum_mul_sum_sq {α : Type*} [DecidableEq α]
+theorem sum_cube_le_sum_mul_sum_sq {α : Type*}
     (s : Finset α) (a : α → ℝ)
     (ha : ∀ x ∈ s, 0 ≤ a x) :
     (∑ x ∈ s, (a x) ^ 3) ≤
@@ -2082,7 +2082,7 @@ theorem weightedMean_incidenceSum {n : ℕ}
       simp only [Finset.sum_filter]
       apply Finset.sum_congr rfl
       intro S _hS
-      by_cases hiS : candidate i ⊆ S <;> simp [hiS] <;> ring
+      by_cases hiS : candidate i ⊆ S <;> simp [hiS] ; ring
 
 /-- The source expectation bound for killed test mass, before substituting
 the pointwise upper bound on the completion probabilities. -/
@@ -2934,7 +2934,7 @@ theorem incidentProdSum
         ∑ A ∈ (insert e (H.erase e)).powersetCard ((j - 1) + 1),
           if e ∈ A then ∏ f ∈ A, a f else 0 := by
             rw [← hH]
-            congr 2 <;> omega
+            congr 2 ; omega
     _ = a e * elementaryWeight (H.erase e) (j - 1) a :=
       incidentProdSum_insert
         (fun hmem => (Finset.mem_erase.mp hmem).1 rfl) (j - 1) a
@@ -3545,7 +3545,7 @@ theorem sampledKilledWeight_boundedDiff {n : ℕ}
       · simp only [hiS, if_true]
         by_cases hxkill : ∃ q, x q = true ∧ candidate q ⊆ S <;>
           by_cases hykill : ∃ q, y q = true ∧ candidate q ⊆ S <;>
-          simp [hxkill, hykill, abs_of_nonneg (hw S)] <;> exact hw S
+          simp [hxkill, hykill, abs_of_nonneg (hw S), hw S]
       · have hkill_iff :
             (∃ q, x q = true ∧ candidate q ⊆ S) ↔
               ∃ q, y q = true ∧ candidate q ⊆ S := by
@@ -3757,7 +3757,7 @@ def minimalMatchingCore (H : Hypergraph V) (C : ConflictSystem V) :
     c ∈ minimalMatchingCore H C ↔
       c ∈ C ∧ IsMatching H c ∧
         ¬∃ c' ∈ C, IsMatching H c' ∧ c' ⊂ c := by
-  simp [minimalMatchingCore, and_assoc]
+  simp [minimalMatchingCore]
 
 theorem minimalMatchingCore_members_match
     {H : Hypergraph V} {C : ConflictSystem V} {c : Hypergraph V}
@@ -4267,7 +4267,7 @@ theorem killedWeight_addCompletionLayer_eq_sampledKilledWeight {n : ℕ}
         exact fun h => hnfree (hiff.mpr h)
       simp [hpos, hnfree, hselected]
   · have hz : w S = 0 := le_antisymm (not_lt.mp hpos) (hw S)
-    simp [hpos, hz]
+    simp [hz]
 
 @[simp] theorem restrictWeight_apply_free {D : ConflictSystem V}
     {w : TestWeight V} {S : Hypergraph V} (hS : ConflictFree D S) :
@@ -4325,10 +4325,10 @@ theorem testTotal_restrictWeight_add_killedWeight
   intro S hS
   by_cases hpos : 0 < w S
   · by_cases hfree : ConflictFree D S
-    · simp [restrictWeight, hfree, killedSupport, positiveSupport, hS, hpos]
-    · simp [restrictWeight, hfree, killedSupport, positiveSupport, hS, hpos]
+    · simp [restrictWeight, hfree, hpos]
+    · simp [restrictWeight, hfree, hpos]
   · have hz : w S = 0 := le_antisymm (not_lt.mp hpos) (hw S)
-    simp [restrictWeight, killedSupport, positiveSupport, hS, hpos, hz]
+    simp [restrictWeight, hz]
 
 /-- Lost mass telescopes across one completion stage: the final loss of the
 original weight is its old loss plus the newly killed mass of its
@@ -4833,6 +4833,7 @@ def stageBlockRight {H : Hypergraph V} {current : ConflictSystem V}
   | Sum.inl a => a.pair.right
   | Sum.inr a => a.pair.right
 
+omit [Fintype V] in
 /-- Property-(II) codegrees split as the old codegree plus the selected
 candidate incidence count. -/
 theorem codegree_addCompletionLayer_sampled_eq
@@ -4891,6 +4892,7 @@ def CandidateRealizesRemainder (H : Hypergraph V)
   e ∈ completionCandidate H current stage i ∧
     (completionCandidate H current stage i).erase e = T
 
+omit [Fintype V] in
 theorem candidateRealizesRemainder_injective
     (H : Hypergraph V) (current : ConflictSystem V) (stage : ℕ)
     (e : Finset V) (T : Hypergraph V)
@@ -4961,6 +4963,7 @@ def commonLinkBlockCount (H : Hypergraph V)
     allCoordinatesSelected x
       (commonLinkRequiredCoordinates H current stage e f T.1)).card
 
+omit [Fintype V] in
 /-- Exact membership decoder for one side of a sampled completion. -/
 theorem mem_conflictLinkLayer_addCompletionLayer_sampled_iff
     (H : Hypergraph V) (current : ConflictSystem V) (stage : ℕ)
@@ -5027,6 +5030,7 @@ theorem mem_conflictLinkLayer_addCompletionLayer_sampled_iff
       rw [hcstage, hi.2] at this
       omega
 
+omit [Fintype V] in
 theorem not_mem_remainder_of_mem_conflictLinkLayer
     {C : ConflictSystem V} {stage : ℕ} {e : Finset V} {T : Hypergraph V}
     (hT : T ∈ conflictLinkLayer C e (stage - 1)) :
@@ -5036,6 +5040,7 @@ theorem not_mem_remainder_of_mem_conflictLinkLayer
   rw [← hcerase]
   simp
 
+omit [Fintype V] in
 theorem not_mem_remainder_of_candidateRealizes
     (H : Hypergraph V) (current : ConflictSystem V) (stage : ℕ)
     {e : Finset V} {T : Hypergraph V}
@@ -5045,6 +5050,7 @@ theorem not_mem_remainder_of_candidateRealizes
   rw [← hi.2]
   simp
 
+omit [Fintype V] in
 theorem CommonLinkBlockLabel.not_mem_left
     (H : Hypergraph V) (current : ConflictSystem V) (stage : ℕ)
     (e f : Finset V) (T : CommonLinkBlockLabel H current stage e f) :
@@ -5053,6 +5059,7 @@ theorem CommonLinkBlockLabel.not_mem_left
   · exact not_mem_remainder_of_mem_conflictLinkLayer hold
   · exact not_mem_remainder_of_candidateRealizes H current stage hi
 
+omit [Fintype V] in
 theorem CommonLinkBlockLabel.not_mem_right
     (H : Hypergraph V) (current : ConflictSystem V) (stage : ℕ)
     (e f : Finset V) (T : CommonLinkBlockLabel H current stage e f) :
@@ -5061,6 +5068,7 @@ theorem CommonLinkBlockLabel.not_mem_right
   · exact not_mem_remainder_of_mem_conflictLinkLayer hold
   · exact not_mem_remainder_of_candidateRealizes H current stage hi
 
+omit [Fintype V] in
 /-- On a statically admissible remainder, selecting every required
 coordinate is equivalent to making the remainder occur in both final
 links. -/
@@ -5117,6 +5125,7 @@ theorem allCoordinatesSelected_commonLinkRequired_iff
       · rwa [candidateRealizesRemainder_injective H current stage f T.1
           hif hi'f]
 
+omit [Fintype V] in
 /-- Different common-link remainders use disjoint coordinate blocks.  The
 cross-oriented case is excluded because an `e`-remainder never contains
 `e`, while one candidate realizing both orientations would force it to
@@ -5195,6 +5204,7 @@ theorem card_filter_stageBlockFamily_eq_commonLinkBlockCount
   rw [← Fintype.card_subtype P, ← Fintype.card_subtype Q]
   exact Fintype.card_congr EQ
 
+omit [Fintype V] in
 theorem commonLinkRequiredCoordinates_card_le_two
     (H : Hypergraph V) (current : ConflictSystem V) (stage : ℕ)
     (e f : Finset V) (T : CommonLinkBlockLabel H current stage e f) :
@@ -5239,6 +5249,7 @@ theorem commonLinkRequiredCoordinates_card_le_two
           exact candidateRealizesRemainder_injective H current stage f T.1 hif hkf
     _ = 2 := by simp
 
+omit [Fintype V] in
 theorem commonLinkRequiredCoordinates_nonempty
     (H : Hypergraph V) (current : ConflictSystem V) (stage : ℕ)
     (e f : Finset V) (T : CommonLinkBlockLabel H current stage e f) :
@@ -5343,6 +5354,7 @@ theorem commonLinkIntersection_addCompletionLayer_le_blockCount
           commonLinkBlockCount H current stage e f x := by
       rfl
 
+omit [Fintype V] in
 /-- For a genuine conflict system, one-links are exactly singleton images
 of two-conflict neighbours. -/
 theorem conflictLinkLayer_one_eq_image_twoConflictNeighbors
@@ -5357,13 +5369,13 @@ theorem conflictLinkLayer_one_eq_image_twoConflictNeighbors
       mem_conflictLinkLayer.mp hT
     obtain ⟨g, rfl⟩ := Finset.card_eq_one.mp hTcard
     have hcg : g ∈ c := by
-      have : g ∈ c.erase e := by simpa [hcerase]
+      have : g ∈ c.erase e := by simp [hcerase]
       exact (Finset.mem_erase.mp this).2
     have hge : g ≠ e := by
       intro h
       subst g
-      have : e ∈ c.erase e := by simpa [hcerase]
-      simpa using this
+      have : e ∈ c.erase e := by simp [hcerase]
+      simp at this
     have hc2 : c.card = 2 := by
       have hcard := Finset.card_erase_add_one hec
       rw [hcerase] at hcard
@@ -5393,6 +5405,7 @@ theorem conflictLinkLayer_one_eq_image_twoConflictNeighbors
     · simp
     · simp [Ne.symm hg'.2.1]
 
+omit [Fintype V] in
 theorem conditionC5Count_eq_commonOneLinks
     (H : Hypergraph V) (C : ConflictSystem V)
     (hC : IsConflictSystem H C) (e f : Finset V) :
@@ -5441,6 +5454,7 @@ def stageLinearUpperActive (H : Hypergraph V) (current : ConflictSystem V)
   | Sum.inr c4 => CandidateCreatesC4 c4.edge c4.vertex
       (completionCandidate H current stage i)
 
+omit [Fintype V] in
 theorem conditionC4Count_addCompletionLayer_le_selected
     (H : Hypergraph V) (current : ConflictSystem V)
     (e : Finset V) (v : V)
@@ -5551,7 +5565,7 @@ def PropertyVRoom (H : Hypergraph V) (current : ConflictSystem V)
         2 * threshold (Sum.inr (StageCommonBlockIndex.mk pair hnot)) ≤
       Real.rpow d ((stage - 1 : ℕ) - eps / 4)
 
-def StagePropertyII (H : Hypergraph V) (next : ConflictSystem V)
+def StagePropertyII (_ : Hypergraph V) (next : ConflictSystem V)
     (d eps : ℝ) (stage : ℕ) : Prop :=
   ∀ q, 2 ≤ q → q < stage → ∀ root : Hypergraph V, root.card = q →
     (codegree (conflictLayer next stage) root : ℝ) ≤
@@ -5615,6 +5629,7 @@ theorem propertyIISampledCount_le
     H current stage root.1 root.2 x]
   exact (hlinear (Sum.inl root)).le
 
+omit [Fintype V] in
 theorem codegree_addCompletionLayer_sampled_le_of_count
     (H : Hypergraph V) (current : ConflictSystem V) (stage : ℕ)
     (x : CompletionCoordinate H current stage → Bool)
@@ -5659,6 +5674,7 @@ theorem stagePropertyII_of_linearBounds
   · simpa [indexed] using hcount
   · simpa [indexed, hroot] using hr
 
+omit [Fintype V] in
 theorem conditionC4Count_addCompletionLayer_real_le_selected
     (H : Hypergraph V) (current : ConflictSystem V)
     (e : Finset V) (v : V)
@@ -5692,6 +5708,7 @@ theorem propertyIIISampledCount_le
       (fun B => CandidateCreatesC4 e v B) x] at hbit
   exact hbit.le
 
+omit [Fintype V] in
 theorem conditionC4Count_addCompletionLayer_le_of_count
     (H : Hypergraph V) (current : ConflictSystem V)
     (e : Finset V) (v : V)
@@ -5842,6 +5859,7 @@ theorem stagePropertyIV_of_blockBounds
   rw [StagePropertyIV] at htwo
   exact htwo rfl
 
+omit [Fintype V] in
 theorem conflictLayer_two_subset_addCompletionLayer_sampled
     (H : Hypergraph V) (current : ConflictSystem V) (stage : ℕ)
     (hstage2 : 2 ≤ stage)
@@ -6914,7 +6932,7 @@ theorem thirtysecond_rpow_le_host_card
       _ = 8 * (H.card : ℝ) := hhandshake
   have hrpow : Real.rpow d (1 + eta) = Real.rpow d eta * d := by
     calc
-      Real.rpow d (1 + eta) = Real.rpow d (eta + 1) := by congr 1 <;> ring
+      Real.rpow d (1 + eta) = Real.rpow d (eta + 1) := by congr 1 ; ring
       _ = Real.rpow d eta * Real.rpow d 1 := Real.rpow_add hd eta 1
       _ = Real.rpow d eta * d := by
         congr 1
@@ -8244,8 +8262,7 @@ theorem trackable_completionCandidate_influenceSq_pos_of_freeZero
       (completionCandidate H Ccurrent stage i)) ^ 2 := by
   apply trackable_completionCandidate_influenceSq_pos
     H Ccurrent Ctest testJ stage d eps w hw hd hstage
-  intro S hS hwS
-  intro c hc hsub
+  intro S hS hwS c hc hsub
   have hz := hfreeZero S hS ⟨c, hc, hsub⟩
   linarith
 
@@ -9008,7 +9025,6 @@ theorem card_forbiddenIncidentCompletions_four_le
 /-- The common analytic absorption behind stages 2, 3, and 4.  Once the
 combinatorial estimate has the form `K*d*n^(j-2)`, the source bias and the
 host-size lower bound leave the exponent gap `eta - 5*eps`. -/
-
  
 theorem forbiddenMass_absorbed
     {j : ℕ} (hj2 : 2 ≤ j)
@@ -9352,6 +9368,7 @@ theorem stageBlockFamily_card_le_two
     (stageBlockLeft a) (stageBlockRight a)
     ((Fintype.equivFin (StageBlockLabel H current stage a)).symm i)
 
+omit [Fintype V] in
 theorem candidateRealizesRemainder_same_coordinate_root_eq
     (H : Hypergraph V) (current : ConflictSystem V) (stage : ℕ)
     {e f : Finset V} {T : Hypergraph V}
@@ -9372,6 +9389,7 @@ theorem candidateRealizesRemainder_same_coordinate_root_eq
     simp
   simpa [heT] using this
 
+omit [Fintype V] in
 theorem stageBlockLeft_mem (H : Hypergraph V) (current : ConflictSystem V)
     (stage : ℕ) (a : StageBlockUpperIndex H current stage) :
     stageBlockLeft a ∈ H := by
@@ -9379,6 +9397,7 @@ theorem stageBlockLeft_mem (H : Hypergraph V) (current : ConflictSystem V)
   · exact a.pair.left_mem
   · exact a.pair.left_mem
 
+omit [Fintype V] in
 theorem stageBlockRight_mem (H : Hypergraph V) (current : ConflictSystem V)
     (stage : ℕ) (a : StageBlockUpperIndex H current stage) :
     stageBlockRight a ∈ H := by
@@ -9386,6 +9405,7 @@ theorem stageBlockRight_mem (H : Hypergraph V) (current : ConflictSystem V)
   · exact a.pair.right_mem
   · exact a.pair.right_mem
 
+omit [Fintype V] in
 theorem stageBlock_disjoint (H : Hypergraph V) (current : ConflictSystem V)
     (stage : ℕ) (a : StageBlockUpperIndex H current stage) :
     Disjoint (stageBlockLeft a) (stageBlockRight a) := by
@@ -9393,6 +9413,7 @@ theorem stageBlock_disjoint (H : Hypergraph V) (current : ConflictSystem V)
   · exact a.pair.disjoint
   · exact a.pair.disjoint
 
+omit [Fintype V] in
 theorem stageBlockLabel_old_side_of_card_one
     (H : Hypergraph V) (current : ConflictSystem V) (stage : ℕ)
     (hhostNonempty : ∀ e ∈ H, e.Nonempty)
@@ -9403,7 +9424,7 @@ theorem stageBlockLabel_old_side_of_card_one
     T.1 ∈ conflictLinkLayer current (stageBlockLeft a) (stage - 1) ∨
       T.1 ∈ conflictLinkLayer current (stageBlockRight a) (stage - 1) := by
   by_contra hnot
-  push_neg at hnot
+  push Not at hnot
   obtain ⟨ie, hie⟩ := T.2.2.1.resolve_left hnot.1
   obtain ⟨if_, hif⟩ := T.2.2.2.1.resolve_left hnot.2
   have hieMem : ie ∈ commonLinkRequiredCoordinates H current stage
@@ -9537,7 +9558,7 @@ theorem stageC4UpperMean_le_degree_mul
 /-- The direct source threshold for the linear families: host-card power for
 codegrees, and the host vertex degree for the stage-two C4 count. -/
 def sourceLinearUpperThreshold (H : Hypergraph V)
-    (current : ConflictSystem V) (stage : ℕ) (pmax : ℝ) :
+    (_ : ConflictSystem V) (stage : ℕ) (pmax : ℝ) :
     StageLinearUpperIndex H stage → ℝ
   | Sum.inl root => (H.card : ℝ) ^ (stage - root.1.card) * pmax
   | Sum.inr c4 => (degree H c4.vertex : ℝ) * pmax
@@ -9635,6 +9656,7 @@ def sourceRefinedBlockUpperThreshold (H : Hypergraph V)
       ((conflictLinkLayer current (stageBlockRight a) (stage - 1)).card : ℝ)) *
       pmax + (H.card : ℝ) ^ (stage - 1) * pmax ^ 2
 
+omit [Fintype V] in
 theorem sourceRefinedBlockUpperThreshold_eq_degrees
     (H : Hypergraph V) (current : ConflictSystem V) (stage : ℕ)
     (hstage : 1 ≤ stage) (pmax : ℝ)
@@ -9648,6 +9670,7 @@ theorem sourceRefinedBlockUpperThreshold_eq_degrees
     card_conflictLinkLayer_eq_degree_layer,
     show stage - 1 + 1 = stage by omega]
 
+omit [Fintype V] in
 theorem sourceRefinedBlockUpperThreshold_nonneg
     (H : Hypergraph V) (current : ConflictSystem V) (stage : ℕ)
     (pmax : ℝ) (hpmax0 : 0 ≤ pmax) :
@@ -9679,7 +9702,6 @@ theorem stageBlockUpperMean_le_refinedSourceThreshold
 
 /-- Thresholds after replacing the literal host cardinal and local degrees
 by external scales `N`, `D`, and `layerBound`. -/
-
 def hostBoundLinearUpperThreshold (H : Hypergraph V) (stage : ℕ)
     (N D pmax : ℝ) : StageLinearUpperIndex H stage → ℝ
   | Sum.inl root => N ^ (stage - root.1.card) * pmax
@@ -9696,6 +9718,7 @@ theorem hostBoundLinearUpperThreshold_nonneg
     ∀ a, 0 ≤ hostBoundLinearUpperThreshold H stage N D pmax a := by
   rintro (root | c4) <;> simp only [hostBoundLinearUpperThreshold] <;> positivity
 
+omit [Fintype V] in
 theorem hostBoundBlockUpperThreshold_nonneg
     (H : Hypergraph V) (current : ConflictSystem V) (stage : ℕ)
     (N layerBound pmax : ℝ)
@@ -9790,17 +9813,17 @@ theorem hostBoundThreshold_propertyRooms
       (codegree (conflictLayer current stage) root.1 : ℝ) +
           2 * (N ^ (stage - root.1.card) * pmax) ≤
         Real.rpow d ((stage : ℝ) - (root.1.card : ℝ) - eps / 4))
-    (hIII : ∀ (hs : stage = 2) (e : Finset V) (he : e ∈ H) (v : V),
+    (hIII : ∀ (_ : stage = 2) (e : Finset V) (_ : e ∈ H) (v : V),
       (conditionC4Count H current e v : ℝ) + 2 * (D * pmax) ≤
         Real.rpow d (1 - eps / 4))
-    (hIV : ∀ (hs : stage = 2) (e : Finset V) (he : e ∈ H)
-      (f : Finset V) (hf : f ∈ H) (hdisj : Disjoint e f),
+    (hIV : ∀ (_ : stage = 2) (e : Finset V) (_ : e ∈ H)
+      (f : Finset V) (_ : f ∈ H) (_ : Disjoint e f),
       (conditionC5Count H current e f : ℝ) +
           2 * (2 * layerBound * pmax + N ^ (stage - 1) * pmax ^ 2) ≤
         Real.rpow d (1 - eps / 4))
-    (hV : ∀ (e : Finset V) (he : e ∈ H)
-      (f : Finset V) (hf : f ∈ H) (hdisj : Disjoint e f)
-      (hnot : {e, f} ∉ conflictLayer current 2),
+    (hV : ∀ (e : Finset V) (_ : e ∈ H)
+      (f : Finset V) (_ : f ∈ H) (_ : Disjoint e f)
+      (_ : {e, f} ∉ conflictLayer current 2),
       ((conflictLinkLayer current e (stage - 1) ∩
           conflictLinkLayer current f (stage - 1)).card : ℝ) +
           2 * (2 * layerBound * pmax + N ^ (stage - 1) * pmax ^ 2) ≤
@@ -10187,8 +10210,9 @@ end Erdos136
     (concreteStageBlockFamily_pairwiseDisjoint H current stage)
     hblock0 hblockMean hw hfreeZero hgap hkillMean hfail hdecode
 
+omit [Fintype V] in
 theorem assemble_threeConcreteStagesWeighted
-    {ι : Type*} [Fintype ι]
+    {ι : Type*}
     (H : Hypergraph V) (base C0 A2 A3 A4 : ConflictSystem V)
     (d eps : ℝ) (testJ : ι → ℕ) (w : ι → TestWeight V)
     (limit2 limit3 limit4 : ι → ℝ)
@@ -10322,7 +10346,7 @@ theorem layerMaxDegree_minimalBadCore_three_eq_zero
     have hcC := minimalCore_union_layer_ge_three_subset_left H hB 3
       (by norm_num) hc
     rw [conflictLayer_eq_empty_of_card_four C hCcard 3 (by norm_num)] at hcC
-    simpa using hcC
+    simp at hcC
   · simp
 
 theorem layerMaxDegree_minimalBadCore_four_le
@@ -11831,7 +11855,7 @@ theorem RawObservableCutoffSpec.linearObservableRoom
     calc
       Real.rpow d r * Real.rpow d (-eps / 4) =
           Real.rpow d (r + (-eps / 4)) := (Real.rpow_add hd _ _).symm
-      _ = Real.rpow d (r - eps / 4) := by congr 1 <;> ring
+      _ = Real.rpow d (r - eps / 4) := by congr 1 ; ring
   rw [← htarget]
   have ht0 : 0 ≤ Real.rpow d r * Real.rpow d (-eps / 4) :=
     mul_nonneg (Real.rpow_nonneg hd.le _) (Real.rpow_nonneg hd.le _)
@@ -11842,7 +11866,7 @@ theorem RawObservableCutoffSpec.linearObservableRoom
 theorem RawObservableCutoffSpec.blockObservableRoom
     {eta Gamma K d r old mean : ℝ}
     (h : RawObservableCutoffSpec eta Gamma K d)
-    (hGamma : 0 ≤ Gamma)
+    (_ : 0 ≤ Gamma)
     (hold : old ≤ Real.rpow d (r - rawRegularizationEps eta / 3))
     (hmean : mean ≤ 32 * (4 * Gamma + 1) *
       Real.rpow d (r + 20 * rawRegularizationEps eta - eta)) :
@@ -11897,7 +11921,7 @@ theorem RawObservableCutoffSpec.blockObservableRoom
     calc
       Real.rpow d r * Real.rpow d (-eps / 4) =
           Real.rpow d (r + (-eps / 4)) := (Real.rpow_add hd _ _).symm
-      _ = Real.rpow d (r - eps / 4) := by congr 1 <;> ring
+      _ = Real.rpow d (r - eps / 4) := by congr 1 ; ring
   rw [← htarget]
   have ht0 : 0 ≤ Real.rpow d r * Real.rpow d (-eps / 4) :=
     mul_nonneg (Real.rpow_nonneg hd.le _) (Real.rpow_nonneg hd.le _)
@@ -11970,7 +11994,7 @@ theorem RawObservableCutoffSpec.linearMean_le_eighthTarget
     calc
       Real.rpow d r * Real.rpow d (-eps / 4) =
           Real.rpow d (r + (-eps / 4)) := (Real.rpow_add hd _ _).symm
-      _ = Real.rpow d (r - eps / 4) := by congr 1 <;> ring
+      _ = Real.rpow d (r - eps / 4) := by congr 1 ; ring
   rw [htarget] at h8
   linarith
 
@@ -12009,7 +12033,7 @@ theorem RawObservableCutoffSpec.blockMean_le_eighthTarget
     calc
       Real.rpow d r * Real.rpow d (-eps / 4) =
           Real.rpow d (r + (-eps / 4)) := (Real.rpow_add hd _ _).symm
-      _ = Real.rpow d (r - eps / 4) := by congr 1 <;> ring
+      _ = Real.rpow d (r - eps / 4) := by congr 1 ; ring
   rw [htarget] at h8
   linarith
 
@@ -12043,7 +12067,7 @@ theorem RawObservableCutoffSpec.oldPlusEighthThreshold_le
     calc
       Real.rpow d r * Real.rpow d (-eps / 4) =
           Real.rpow d (r + (-eps / 4)) := (Real.rpow_add hd _ _).symm
-      _ = Real.rpow d (r - eps / 4) := by congr 1 <;> ring
+      _ = Real.rpow d (r - eps / 4) := by congr 1 ; ring
   rw [htarget] at h4
   have ht0 : 0 ≤ Real.rpow d (r - eps / 4) := Real.rpow_nonneg hd.le _
   let T := Real.rpow d (r - rawRegularizationEps eta / 4)
@@ -12131,7 +12155,7 @@ theorem RawObservableCutoffSpec.rawPropertyIIIRoom
     {V : Type*} [Fintype V] [DecidableEq V]
     {eta Gamma K d : ℝ} (h : RawObservableCutoffSpec eta Gamma K d)
     (H : Hypergraph V) (current : ConflictSystem V) (stage : ℕ)
-    (hold : ∀ (hs : stage = 2) (e : Finset V) (he : e ∈ H) (v : V),
+    (hold : ∀ (_ : stage = 2) (e : Finset V) (_ : e ∈ H) (v : V),
       (conditionC4Count H current e v : ℝ) ≤
         Real.rpow d (1 - rawRegularizationEps eta / 3)) :
     PropertyIIIRoom H current d (rawRegularizationEps eta) stage
@@ -12143,8 +12167,8 @@ theorem RawObservableCutoffSpec.rawPropertyIVRoom
     {V : Type*} [Fintype V] [DecidableEq V]
     {eta Gamma K d : ℝ} (h : RawObservableCutoffSpec eta Gamma K d)
     (H : Hypergraph V) (current : ConflictSystem V) (stage : ℕ)
-    (hold : ∀ (hs : stage = 2) (e : Finset V) (he : e ∈ H)
-      (f : Finset V) (hf : f ∈ H) (hdisj : Disjoint e f),
+    (hold : ∀ (_ : stage = 2) (e : Finset V) (_ : e ∈ H)
+      (f : Finset V) (_ : f ∈ H) (_ : Disjoint e f),
       (conditionC5Count H current e f : ℝ) ≤
         Real.rpow d (1 - rawRegularizationEps eta / 3)) :
     PropertyIVRoom H current d (rawRegularizationEps eta) stage
@@ -12158,9 +12182,9 @@ theorem RawObservableCutoffSpec.rawPropertyVRoom
     {V : Type*} [Fintype V] [DecidableEq V]
     {eta Gamma K d : ℝ} (h : RawObservableCutoffSpec eta Gamma K d)
     (H : Hypergraph V) (current : ConflictSystem V) (stage : ℕ)
-    (hold : ∀ (e : Finset V) (he : e ∈ H)
-      (f : Finset V) (hf : f ∈ H) (hdisj : Disjoint e f)
-      (hnot : {e, f} ∉ conflictLayer current 2),
+    (hold : ∀ (e : Finset V) (_ : e ∈ H)
+      (f : Finset V) (_ : f ∈ H) (_ : Disjoint e f)
+      (_ : {e, f} ∉ conflictLayer current 2),
       (((conflictLinkLayer current e (stage - 1) ∩
         conflictLinkLayer current f (stage - 1)).card : ℕ) : ℝ) ≤
         Real.rpow d (((stage - 1 : ℕ) : ℝ) -
@@ -12188,13 +12212,13 @@ abbrev ActiveHostVertex (H : Hypergraph V) :=
   {v : V // v ∈ vertexFinset H}
 
 abbrev ActiveStageC4Index (H : Hypergraph V) (stage : ℕ) :=
-  {p : ActiveHostEdge H × ActiveHostVertex H // stage = 2}
+  {_p : ActiveHostEdge H × ActiveHostVertex H // stage = 2}
 
 abbrev ActiveStageLinearUpperIndex (H : Hypergraph V) (stage : ℕ) :=
   Sum (ActiveStageCodegreeIndex H stage) (ActiveStageC4Index H stage)
 
 abbrev ActiveStageC5BlockIndex (H : Hypergraph V) (stage : ℕ) :=
-  {p : HostEdgePair H // stage = 2}
+  {_p : HostEdgePair H // stage = 2}
 
 abbrev ActiveStageCommonBlockIndex (H : Hypergraph V)
     (current : ConflictSystem V) :=
@@ -12231,6 +12255,7 @@ theorem activeStageCodegreeIndex_card_le
     _ ≤ H.card ^ 2 + H.card ^ 3 :=
       Nat.add_le_add (Nat.choose_le_pow _ _) (Nat.choose_le_pow _ _)
 
+omit [Fintype V] in
 theorem activeStageC4Index_card_le (H : Hypergraph V) (stage : ℕ) :
     Fintype.card (ActiveStageC4Index H stage) ≤
       H.card * (vertexFinset H).card := by
@@ -12285,6 +12310,7 @@ theorem activeStageBlockUpperIndex_card_le
         (hostEdgePair_card_le_square H)
     _ = 2 * H.card ^ 2 := by ring
 
+omit [Fintype V] in
 theorem activeHostEdge_card_eq (H : Hypergraph V) :
     Fintype.card (ActiveHostEdge H) = H.card := by simp
 
@@ -12522,8 +12548,8 @@ theorem sourceExpression_two_le_rawSourcePmax
     _ ≤ Real.rpow d (8 * rawRegularizationEps eta) *
           Real.rpow d (1 + 2 * rawRegularizationEps eta) / n := by
       apply div_le_div_of_nonneg_right
-      exact mul_le_mul_of_nonneg_right hcoeff (Real.rpow_nonneg hd0 _)
-      exact hn.le
+      · exact mul_le_mul_of_nonneg_right hcoeff (Real.rpow_nonneg hd0 _)
+      · exact hn.le
     _ = rawSourcePmax d eta n 2 := by
       rw [hpow]
       norm_num [rawSourcePmax]
@@ -12600,8 +12626,8 @@ theorem sourceExpression_three_le_rawSourcePmax
     _ ≤ Real.rpow d (6 * rawRegularizationEps eta) *
           Real.rpow d (2 + 4 * rawRegularizationEps eta) / n ^ 2 := by
       apply div_le_div_of_nonneg_right
-      exact mul_le_mul_of_nonneg_right hcoeff (Real.rpow_nonneg hd0 _)
-      positivity
+      · exact mul_le_mul_of_nonneg_right hcoeff (Real.rpow_nonneg hd0 _)
+      · positivity
     _ = rawSourcePmax d eta n 3 := by
       rw [hpow]
       norm_num [rawSourcePmax]
@@ -12677,8 +12703,8 @@ theorem sourceExpression_four_le_rawSourcePmax
     _ ≤ Real.rpow d (4 * rawRegularizationEps eta) *
           Real.rpow d (3 + 6 * rawRegularizationEps eta) / n ^ 3 := by
       apply div_le_div_of_nonneg_right
-      exact mul_le_mul_of_nonneg_right hcoeff (Real.rpow_nonneg hd0 _)
-      positivity
+      · exact mul_le_mul_of_nonneg_right hcoeff (Real.rpow_nonneg hd0 _)
+      · positivity
     _ = rawSourcePmax d eta n 4 := by
       rw [hpow]
       norm_num [rawSourcePmax]
@@ -13302,7 +13328,7 @@ theorem rawSource_propertyI_degreeRoom_of_stageCoeff
   have hK : 0 ≤ rawForbiddenCoeff A B j := by
     simp only [Finset.mem_insert, Finset.mem_singleton] at hj
     rcases hj with rfl | rfl | rfl <;>
-      simp [rawForbiddenCoeff] <;> positivity
+      simp only [rawForbiddenCoeff] <;> positivity
   have hKabsorb : 32 * rawForbiddenCoeff A B j ≤
       Real.rpow d (eta - 12 * rawRegularizationEps eta) := by
     simp only [Finset.mem_insert, Finset.mem_singleton] at hj
@@ -13327,6 +13353,7 @@ attribute [local instance] Classical.propDecidable
 
 noncomputable section
 
+omit [Fintype V] in
 theorem scratch_layerMaxDegree_le_of_normalizedDegreeSum
     (H : Hypergraph V) (C : ConflictSystem V)
     {d Gamma : ℝ} {r : ℕ}
@@ -13349,6 +13376,7 @@ theorem scratch_layerMaxDegree_le_of_normalizedDegreeSum
     have := mul_le_mul_of_nonneg_right hsum hden.le
     simpa [mul_comm] using this)
 
+omit [Fintype V] in
 theorem scratch_commonLink_upper_of_not_mem_minimalBadCore
     (H : Hypergraph V) (C : ConflictSystem V)
     {d etaBad : ℝ}
@@ -13506,7 +13534,7 @@ theorem RawTransferCutoffSpec.testInfluence_stage
 theorem RawTransferCutoffSpec.sourceKilledCoefficient
     {eta K d pmax : ℝ} {stage : ℕ}
     (h : RawTransferCutoffSpec eta K d) (hd : 0 < d)
-    (hstage : 2 ≤ stage) (hpmax0 : 0 ≤ pmax)
+    (hstage : 2 ≤ stage) (_ : 0 ≤ pmax)
     (hpmax : pmax ≤ K * Real.rpow d (-eta + 10 * rawRegularizationEps eta)) :
     16 * pmax ≤ (4 : ℝ) ^ stage /
       (2 * Real.rpow d (2 * rawRegularizationEps eta)) := by
@@ -13539,7 +13567,7 @@ theorem RawTransferCutoffSpec.sourceKilledCoefficient
                   Real.rpow d ((eta - 12 * rawRegularizationEps eta) +
                     (-eta + 12 * rawRegularizationEps eta)) :=
                     (Real.rpow_add hd _ _).symm
-              _ = Real.rpow d 0 := by congr 1 <;> ring
+              _ = Real.rpow d 0 := by congr 1 ; ring
               _ = 1 := Real.rpow_zero d
   have hp : 2 * pmax ≤ 1 / Real.rpow d (2 * rawRegularizationEps eta) :=
     (mul_le_mul_of_nonneg_left hpmax (by norm_num)).trans hKpow
@@ -13606,7 +13634,7 @@ theorem RawTransferCutoffSpec.finalDegreeSumGap
 
 theorem transfer_W1_scale
     {d eta eps T T' : ℝ} {j : ℕ}
-    (hd : 0 < d) (hT0 : 0 ≤ T)
+    (hd : 0 < d) (_ : 0 ≤ T)
     (hT : Real.rpow d ((j : ℝ) + eta) ≤ T)
     (hT' : (1 - Real.rpow d (-eps)) * T ≤ T')
     (hscalar : Real.rpow d (eps / 5 - eta) +
@@ -13623,7 +13651,7 @@ theorem transfer_W1_scale
       calc
         Real.rpow d ((j : ℝ) + eps / 5) =
             Real.rpow d (((j : ℝ) + eta) + (eps / 5 - eta)) := by
-              congr 1 <;> ring
+              congr 1 ; ring
         _ = _ := Real.rpow_add hd _ _
     _ ≤ Real.rpow d ((j : ℝ) + eta) *
         (1 - Real.rpow d (-eps)) :=
@@ -13655,7 +13683,7 @@ theorem transfer_W2_scale
     calc
       Real.rpow d ((j' : ℝ) + eps / 5) =
           Real.rpow d (((j' : ℝ) + eta) + (eps / 5 - eta)) := by
-            congr 1 <;> ring
+            congr 1 ; ring
       _ = _ := Real.rpow_add hd _ _
   rw [hden]
   calc
@@ -13792,7 +13820,7 @@ theorem minimalBadCore_normalizedDegreeSum_le
       _ = Real.rpow d (-etaBad) * Real.rpow d 1 := by
         calc
           Real.rpow d (1 - etaBad) = Real.rpow d (-etaBad + 1) := by
-            congr 1 <;> ring
+            congr 1 ; ring
           _ = _ := Real.rpow_add hd _ _
   have hn3 : (layerMaxDegree H C0 3 : ℝ) / Real.rpow d 2 ≤
       (ell : ℝ) := by
@@ -13870,7 +13898,7 @@ theorem threeStage_normalizedDegreeSum_le
     {H : Hypergraph V} {base final : ConflictSystem V}
     {d eps Gamma : ℝ}
     (h : ThreeStageProperties H base final d eps)
-    (hd : 0 < d) (hGamma : 0 ≤ Gamma)
+    (hd : 0 < d) (_ : 0 ≤ Gamma)
     (hbase :
       (∑ r ∈ Finset.Icc 2 4,
         (layerMaxDegree H base r : ℝ) /
@@ -13933,7 +13961,7 @@ theorem threeStage_normalizedDegreeSum_le
             Real.rpow d ((r : ℝ) - 1) =
           Real.rpow d (((r : ℝ) - 1 - eps / 600) - ((r : ℝ) - 1)) :=
             (Real.rpow_sub hd _ _).symm
-        _ = Real.rpow d (-eps / 600) := by congr 1 <;> ring
+        _ = Real.rpow d (-eps / 600) := by congr 1 ; ring
     calc
       (layerMaxDegree H final r : ℝ) /
           Real.rpow d ((r : ℝ) - 1) ≤ D /
@@ -14473,7 +14501,7 @@ open scoped BigOperators
 attribute [local instance] Classical.propDecidable
 
 theorem regularizationCertificate_of_not_nonempty_raw
-    {V ι : Type*} [DecidableEq V] [Fintype V] [Fintype ι]
+    {V ι : Type*} [DecidableEq V] [Fintype ι]
     (H : Hypergraph V) (C : ConflictSystem V)
     (d eta : ℝ) (ell : ℕ) (j : ι → ℕ) (w : ι → TestWeight V)
     (hC : IsConflictSystem H C)
@@ -14621,7 +14649,7 @@ theorem rawSourcePmax_le_basic
         calc
           Real.rpow d (1 + 10 * rawRegularizationEps eta) =
               Real.rpow d ((10 * rawRegularizationEps eta - eta) +
-                (1 + eta)) := by congr 1 <;> ring
+                (1 + eta)) := by congr 1 ; ring
           _ = _ := Real.rpow_add hd0 _ _
       _ ≤ (32 * Real.rpow d (10 * rawRegularizationEps eta - eta)) * n := by
         exact mul_le_mul_of_nonneg_left hhost
@@ -14641,7 +14669,7 @@ theorem rawSourcePmax_le_basic
         calc
           Real.rpow d (2 + 10 * rawRegularizationEps eta) =
               Real.rpow d ((10 * rawRegularizationEps eta - eta) +
-                1 + (1 + eta)) := by congr 1 <;> ring
+                1 + (1 + eta)) := by congr 1 ; ring
           _ = Real.rpow d ((10 * rawRegularizationEps eta - eta) + 1) *
               Real.rpow d (1 + eta) := Real.rpow_add hd0 _ _
           _ = (Real.rpow d (10 * rawRegularizationEps eta - eta) *
@@ -14673,7 +14701,7 @@ theorem rawSourcePmax_le_basic
         calc
           Real.rpow d (3 + 10 * rawRegularizationEps eta) =
               Real.rpow d ((10 * rawRegularizationEps eta - eta) +
-                2 + (1 + eta)) := by congr 1 <;> ring
+                2 + (1 + eta)) := by congr 1 ; ring
           _ = Real.rpow d ((10 * rawRegularizationEps eta - eta) + 2) *
               Real.rpow d (1 + eta) := Real.rpow_add hd0 _ _
           _ = (Real.rpow d (10 * rawRegularizationEps eta - eta) *
@@ -14757,7 +14785,7 @@ theorem rawSourcePmax_codegreeMean_le
         calc
           d ^ (2 + 10 * rawRegularizationEps eta) =
               d ^ ((1 + 10 * rawRegularizationEps eta - eta) + (1 + eta)) := by
-                congr 1 <;> ring
+                congr 1 ; ring
           _ = _ := Real.rpow_add hd0 _ _
       _ ≤ 32 * Real.rpow d (1 + 10 * rawRegularizationEps eta - eta) * n := by
         exact mul_le_mul_of_nonneg_left hhost
@@ -14782,7 +14810,7 @@ theorem rawSourcePmax_codegreeMean_le
         calc
           d ^ (3 + 10 * rawRegularizationEps eta) =
               d ^ ((2 + 10 * rawRegularizationEps eta - eta) + (1 + eta)) := by
-                congr 1 <;> ring
+                congr 1 ; ring
           _ = _ := Real.rpow_add hd0 _ _
       _ ≤ 32 * Real.rpow d (2 + 10 * rawRegularizationEps eta - eta) * n := by
         exact mul_le_mul_of_nonneg_left hhost
@@ -14809,7 +14837,7 @@ theorem rawSourcePmax_codegreeMean_le
         calc
           Real.rpow d (3 + 10 * rawRegularizationEps eta) =
               Real.rpow d ((1 + 10 * rawRegularizationEps eta - eta) +
-                1 + (1 + eta)) := by congr 1 <;> ring
+                1 + (1 + eta)) := by congr 1 ; ring
           _ = Real.rpow d ((1 + 10 * rawRegularizationEps eta - eta) + 1) *
               Real.rpow d (1 + eta) := Real.rpow_add hd0 _ _
           _ = (Real.rpow d (1 + 10 * rawRegularizationEps eta - eta) *
@@ -15159,7 +15187,7 @@ theorem rawSource_propertyI_degreeRoom_coarse
   have hK : 0 ≤ rawForbiddenCoeff A B j := by
     simp only [Finset.mem_insert, Finset.mem_singleton] at hj
     rcases hj with rfl | rfl | rfl <;>
-      simp [rawForbiddenCoeff] <;> positivity
+      simp only [rawForbiddenCoeff] <;> positivity
   have hKabsorb : 32 * rawForbiddenCoeff A B j ≤
       Real.rpow d (eta - 12 * rawRegularizationEps eta) := by
     simp only [Finset.mem_insert, Finset.mem_singleton] at hj
@@ -15199,7 +15227,6 @@ theorem degreeDeficit_strong_lower_of_layer_subset
   have htb : t * baseline =
       Real.rpow d ((stage : ℝ) - 1 - eps / 4 - eps / 600) := by
     dsimp [t, baseline]
-    change d ^ (-eps / 4) * d ^ ((stage : ℝ) - 1 - eps / 600) = _
     rw [← Real.rpow_add hd0]
     congr 1
     ring
@@ -15242,8 +15269,6 @@ theorem RawEndpointCutoffSpec.degreeErrorRoom_le_halfStrong
       Real.rpow d ((stage : ℝ) - 1 - rawRegularizationEps eta / 4 -
         rawRegularizationEps eta / 600) := by
     dsimp [p]
-    change d ^ ((stage : ℝ) - 1) *
-      d ^ (-rawRegularizationEps eta / 4 - rawRegularizationEps eta / 600) = _
     rw [← Real.rpow_add hd0]
     congr 1
     ring
@@ -15278,7 +15303,7 @@ theorem RawEndpointCutoffSpec.degreeFailureScale
           (Real.rpow_natCast _ 2).symm
         _ = Real.rpow d ((-rawRegularizationEps eta) * 2) :=
           (Real.rpow_mul hd0.le _ 2).symm
-        _ = _ := by congr 1 <;> ring
+        _ = _ := by congr 1 ; ring
     have hmul : Real.rpow d (-2 * rawRegularizationEps eta) *
         Real.rpow d ((stage : ℝ) - 1 - rawRegularizationEps eta / 4 -
           rawRegularizationEps eta / 600) =
@@ -15340,16 +15365,16 @@ theorem exists_rawRegularizationStage_nonempty
       (codegree (conflictLayer current stage) root.1 : ℝ) ≤
         Real.rpow d ((stage : ℝ) - (root.1.card : ℝ) -
           rawRegularizationEps eta / 3))
-    (holdIII : ∀ (hs : stage = 2) (e : Finset V) (he : e ∈ H) (v : V),
+    (holdIII : ∀ (_ : stage = 2) (e : Finset V) (_ : e ∈ H) (v : V),
       (conditionC4Count H current e v : ℝ) ≤
         Real.rpow d (1 - rawRegularizationEps eta / 3))
-    (holdIV : ∀ (hs : stage = 2) (e : Finset V) (he : e ∈ H)
-      (f : Finset V) (hf : f ∈ H) (hdisj : Disjoint e f),
+    (holdIV : ∀ (_ : stage = 2) (e : Finset V) (_ : e ∈ H)
+      (f : Finset V) (_ : f ∈ H) (_ : Disjoint e f),
       (conditionC5Count H current e f : ℝ) ≤
         Real.rpow d (1 - rawRegularizationEps eta / 3))
-    (holdV : ∀ (e : Finset V) (he : e ∈ H)
-      (f : Finset V) (hf : f ∈ H) (hdisj : Disjoint e f)
-      (hnot : {e, f} ∉ conflictLayer current 2),
+    (holdV : ∀ (e : Finset V) (_ : e ∈ H)
+      (f : Finset V) (_ : f ∈ H) (_ : Disjoint e f)
+      (_ : {e, f} ∉ conflictLayer current 2),
       (((conflictLinkLayer current e (stage - 1) ∩
         conflictLinkLayer current f (stage - 1)).card : ℕ) : ℝ) ≤
           Real.rpow d (((stage - 1 : ℕ) : ℝ) -
@@ -15423,7 +15448,7 @@ theorem exists_rawRegularizationStage_nonempty
     calc
       pmax ≤ 32 * Real.rpow d (10 * eps - eta) := by
         simpa [pmax, n, eps] using hp
-      _ = 32 * Real.rpow d (-eta + 10 * eps) := by congr 2 <;> ring
+      _ = 32 * Real.rpow d (-eta + 10 * eps) := by congr 2 ; ring
   have hweightMax : ∀ A ∈ H.powersetCard stage,
       completionWeight H stage (degreeDeficit current stage target) A ≤ pmax := by
     intro A hA
@@ -15745,6 +15770,7 @@ attribute [local instance] Classical.propDecidable
 
 noncomputable section
 
+omit [Fintype V] in
 theorem scratch_completion_link_intersection_upper_target
     {H : Hypergraph V} {base current A : ConflictSystem V}
     {stage j ell : ℕ} {d eps etaOld etaNew : ℝ} {w : TestWeight V}
@@ -15803,6 +15829,7 @@ theorem scratch_completion_link_intersection_upper_target
       _ ≤ Real.rpow d ((j' : ℝ) - etaNew) :=
         Real.rpow_le_rpow_of_exponent_le hd (by linarith)
 
+omit [Fintype V] in
 theorem scratch_restrictWeight_W1_W2_target
     {H : Hypergraph V} {C D : ConflictSystem V} {j ell : ℕ}
     {d etaOld etaNew epsLoss : ℝ} {w : TestWeight V}
@@ -15881,6 +15908,7 @@ theorem scratch_restrictWeight_W1_W2_target
         · simpa [mul_comm] using hT'
         · exact Real.rpow_nonneg hd.le _
 
+omit [Fintype V] in
 theorem scratch_restrictWeight_isTrackable_addCompletionLayer_target
     {H : Hypergraph V} {base current A : ConflictSystem V}
     {stage j ell : ℕ} {d eps etaOld etaNew : ℝ} {w : TestWeight V}
@@ -15932,6 +15960,7 @@ noncomputable section
 
 attribute [local instance] Classical.propDecidable
 
+omit [Fintype V] in
 theorem scratch_stage_layerMaxDegree_le_fourGamma
     (H : Hypergraph V) (base next : ConflictSystem V)
     {d eta Gamma : ℝ} {stage : ℕ}
@@ -16101,6 +16130,7 @@ structure RawStagePremises
       (Fintype.card (ActiveStageTest H current stage testJ w) : ℝ) ≤
         Real.exp (8 * Real.rpow d (eta ^ 3))
 
+omit [Fintype V] in
 theorem RawStagePremises.exists_completion
     {ι : Type*} [Fintype ι] [Fintype V]
     {H : Hypergraph V} {base current : ConflictSystem V}
@@ -16132,6 +16162,7 @@ theorem RawStagePremises.exists_completion
     p.oldIII p.oldIV p.oldV p.trackable hj p.trackExponent hreg hsource hobs
     htransfer hendpoint hhostLower p.cards
 
+omit [Fintype V] in
 theorem rawStage_card_bounds
     {ι : Type*} [Fintype ι] [Fintype V]
     {H : Hypergraph V} {current : ConflictSystem V}
@@ -16159,14 +16190,15 @@ theorem rawStage_card_bounds
     exact_mod_cast card_activeStageTest_le H current stage testJ w
   exact hactive.trans htest
 
-theorem exists_rawRegularization_nonempty
+omit [Fintype V] in
+theorem exists_rawRegularization_nonempty [Finite V]
     {ι : Type*} [Fintype ι]
     (H : Hypergraph V) (C : ConflictSystem V)
     (d eta : ℝ) (ell : ℕ) (j : ι → ℕ) (w : ι → TestWeight V)
     (hHuniform : IsUniform H 8)
     (hC : IsConflictSystem H C)
     (hCcard : ∀ c ∈ C, c.card = 4)
-    (heta : 0 < eta) (heta1 : eta < 1) (hd : 1 ≤ d)
+    (heta : 0 < eta) (_ : eta < 1) (hd : 1 ≤ d)
     (hvertex : ((vertexFinset H).card : ℝ) ≤
       Real.exp (Real.rpow d (eta ^ 3)))
     (hdegree : ∀ v ∈ vertexFinset H,
@@ -16188,6 +16220,7 @@ theorem exists_rawRegularization_nonempty
     (hendpoint : RawEndpointCutoffSpec eta d) :
     Nonempty (RegularizationCertificate H C d (rawRegularizationEps eta)
       (2 * (ell : ℝ) + 1) ell j w) := by
+  let := Fintype.ofFinite V
   have hi : (inferInstance : DecidableEq V) = @Classical.decEq V :=
     Subsingleton.elim _ _
   cases hi
@@ -16252,7 +16285,7 @@ theorem exists_rawRegularization_nonempty
         (∑ r ∈ Finset.Icc 2 4,
           (layerMaxDegree H C0 r : ℝ) /
             Real.rpow d ((r : ℝ) - 1)) ≤ 2 * (Gamma / 2) := by
-      convert hbaseSum using 1 <;> ring
+      convert hbaseSum using 1 ; ring
     have hraw := minimalCore_with_badPairs_isRegularizedBounded_of_degreeSum
       H C hbounded hCcard hreg.rankAtLeastFour hd
       (by simp [eps, rawRegularizationEps]; linarith) hBdegree
@@ -16407,7 +16440,7 @@ theorem exists_rawRegularization_nonempty
         (conflictLayer_minimalMatchingCore_union_two_subset hBuniform (by omega))) e ht
     rw [conflictLinkLayer_eq_empty_of_card_four_of_lt_three
       hCcard e 2 (by omega)] at hlink0
-    simpa using hlink0
+    simp at hlink0
   have p3 : RawStagePremises H C0 C2 d eta (eps / 4) Gamma ell 3 j w2 := by
     refine {
       currentSystem := hC2system

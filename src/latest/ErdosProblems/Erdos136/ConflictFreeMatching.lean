@@ -470,7 +470,7 @@ end CFMRegularization
 
 /-- Double-count incidences between a finite vertex set and the edges of a
 finite hypergraph. -/
-theorem sum_degree_on_eq_sum_card_inter [Fintype V]
+theorem sum_degree_on_eq_sum_card_inter
     (H : Hypergraph V) (S : Finset V) :
     ∑ v ∈ S, degree H v = ∑ e ∈ H, (S ∩ e).card := by
   classical
@@ -508,7 +508,7 @@ theorem sum_degree_eq_uniform_mul_card [Fintype V]
 
 /-- Handshake identity over the actual vertex set rather than an ambient
 finite type which may contain isolated labels. -/
-theorem sum_degree_vertexFinset_eq_sum_edge_card [Fintype V]
+theorem sum_degree_vertexFinset_eq_sum_edge_card
     (H : Hypergraph V) :
     ∑ v ∈ vertexFinset H, degree H v = ∑ e ∈ H, e.card := by
   rw [sum_degree_on_eq_sum_card_inter]
@@ -518,7 +518,7 @@ theorem sum_degree_vertexFinset_eq_sum_edge_card [Fintype V]
   apply Finset.inter_eq_right.mpr
   exact edge_subset_vertexFinset he
 
-theorem sum_degree_vertexFinset_eq_uniform_mul_card [Fintype V]
+theorem sum_degree_vertexFinset_eq_uniform_mul_card
     {H : Hypergraph V} {r : ℕ} (hH : IsUniform H r) :
     ∑ v ∈ vertexFinset H, degree H v = r * H.card := by
   rw [sum_degree_vertexFinset_eq_sum_edge_card]
@@ -592,9 +592,9 @@ theorem card_uncoveredVertices_of_uniform_matching
     card_vertexFinset_eq_of_pairwiseDisjoint_uniform hM.2 (hH.mono hM.1)]
 
 /-- Handshake over precisely the uncovered host vertices. -/
-theorem sum_degree_uncoveredVertices_eq_uniform_mul_card [Fintype V]
+theorem sum_degree_uncoveredVertices_eq_uniform_mul_card
     {H A M : Hypergraph V} {r : ℕ}
-    (hA : A ⊆ H) (hdisj : vertexFinset A ⊆ uncoveredVertices H M)
+    (_ : A ⊆ H) (hdisj : vertexFinset A ⊆ uncoveredVertices H M)
     (hunif : IsUniform A r) :
     ∑ v ∈ uncoveredVertices H M, degree A v = r * A.card := by
   rw [sum_degree_on_eq_sum_card_inter]
@@ -618,7 +618,7 @@ def AvailableDegreeWithin (H : Hypergraph V) (C : ConflictSystem V)
 
 /-- The degree corridor determines the available-edge count up to the same
 relative error, using the exact eight-uniform handshake identity. -/
-theorem availableEdges_card_bounds_of_degreeWithin [Fintype V]
+theorem availableEdges_card_bounds_of_degreeWithin
     {H : Hypergraph V} {C : ConflictSystem V} {M : Hypergraph V}
     {lo hi : ℝ}
     (hH : IsUniform H 8) (htrack : AvailableDegreeWithin H C M lo hi) :
@@ -860,7 +860,7 @@ theorem sum_missLostDegree_swap (A : Hypergraph V) (v : V) :
 /-- Second Bonferroni inequality for a finite union, in the uniform
 pair-overlap form used by the eight-uniform degree drift. -/
 theorem sum_card_le_card_biUnion_add_choose_two_mul
-    {iota alpha : Type*} [DecidableEq iota] [DecidableEq alpha]
+    {iota alpha : Type*} [DecidableEq alpha]
     (S : Finset iota) (F : iota → Finset alpha) (L : ℕ)
     (hpair : ∀ x ∈ S, ∀ y ∈ S, x ≠ y → (F x ∩ F y).card ≤ L) :
     ∑ x ∈ S, (F x).card ≤
@@ -899,8 +899,7 @@ theorem sum_card_le_card_biUnion_add_choose_two_mul
       have hFU : (F a).card + U.card ≤ (F a ∪ U).card + S.card * L := by
         omega
       have hchoose : (S.card + 1).choose 2 = S.card.choose 2 + S.card := by
-        simpa [Nat.choose_succ_succ, Nat.choose_one_right, Nat.add_comm]
-          using Nat.choose_succ_succ S.card 1
+        simp [Nat.choose_succ_succ, Nat.choose_one_right, Nat.add_comm]
       simp only [Finset.sum_insert ha, Finset.biUnion_insert,
         Finset.card_insert_of_notMem ha, hchoose, Nat.add_mul]
       change (F a).card + ∑ x ∈ S, (F x).card ≤
@@ -988,7 +987,7 @@ theorem missLossFiber_bounds_eight_uniform
         have hey := Finset.mem_filter.mp he'.2
         have hex' := Finset.mem_filter.mp hex.1
         have hey' := Finset.mem_filter.mp hey.1
-        simp only [codegree, Finset.mem_filter, Finset.insert_subset_iff,
+        simp only [Finset.mem_filter, Finset.insert_subset_iff,
           Finset.singleton_subset_iff]
         exact ⟨hex'.1, hex'.2, hey'.2⟩
       _ ≤ L := by
@@ -2166,7 +2165,7 @@ noncomputable def greedyFirstFailureEvent {ι : Type*}
 /-- Avoiding every component's first-failure event forces the simultaneous
 corridor to persist through the whole finite run. -/
 theorem greedyPrefixGood_of_avoids_firstFailureEvents
-    {ι : Type*} [Fintype ι]
+    {ι : Type*}
     (H : Hypergraph V) (C : ConflictSystem V) (M : Hypergraph V) (T : ℕ)
     (P : ι → ℕ → Hypergraph V → Prop) (omega : GreedyOutcome H T)
     (hinitial : ∀ i, P i 0 M)
@@ -3529,7 +3528,7 @@ theorem survivingDegreeLowerExit_imp_terminalTail
     D₂ D₃ D₄ Gamma epsilon d N omega hk hgood hactive hinitial hexit
 
 theorem degreeUpperFirstFailureEvent_subset_tail
-    {ι : Type*} [Fintype ι]
+    {ι : Type*}
     (H : Hypergraph V) (C : ConflictSystem V) (M : Hypergraph V) (T : ℕ)
     (P : ι → ℕ → Hypergraph V → Prop) (i : ι) (v : V)
     (D₂ D₃ D₄ Gamma epsilon d N t : ℝ)
@@ -3568,7 +3567,7 @@ theorem degreeUpperFirstFailureEvent_subset_tail
       omega hk hgood hfailure hactive hinitial hbad.2⟩
 
 theorem degreeLowerFirstFailureEvent_subset_tail
-    {ι : Type*} [Fintype ι]
+    {ι : Type*}
     (H : Hypergraph V) (C : ConflictSystem V) (M : Hypergraph V) (T : ℕ)
     (P : ι → ℕ → Hypergraph V → Prop) (i : ι) (v : V)
     (D₂ D₃ D₄ Gamma epsilon d N t : ℝ)
@@ -4385,7 +4384,7 @@ theorem emptyDegree_freedman (H : Hypergraph V) (M : Hypergraph V)
 
 /-! ## Simultaneous good-outcome extraction -/
 
-theorem eventMass_mono_of_nonneg {Omega : Type*} [Fintype Omega]
+theorem eventMass_mono_of_nonneg {Omega : Type*}
     (p : Omega → ℝ) (hp : ∀ omega, 0 ≤ p omega)
     {A B : Finset Omega} (hAB : A ⊆ B) :
     Freedman.eventMass p A ≤ Freedman.eventMass p B := by
@@ -4393,7 +4392,7 @@ theorem eventMass_mono_of_nonneg {Omega : Type*} [Fintype Omega]
   exact Finset.sum_le_sum_of_subset_of_nonneg hAB (fun omega _ _ ↦ hp omega)
 
 theorem exists_positive_avoiding_of_eventMass_sum_lt_one
-    {Omega iota : Type*} [Fintype Omega] [DecidableEq Omega] [Fintype iota]
+    {Omega iota : Type*} [Fintype Omega] [Fintype iota]
     (p : Omega → ℝ) (hp : ∀ omega, 0 ≤ p omega)
     (hp_one : ∑ omega, p omega = 1)
     (Bad : iota → Finset Omega) (bound : iota → ℝ)
@@ -4803,7 +4802,7 @@ theorem conflictBlockerChoices_subset_activeConflictBlockers
       rcases Finset.mem_insert.mp (hcsub hgC) with hgf' | hgrest
       · exact False.elim (hgf hgf')
       · rcases Finset.mem_insert.mp hgrest with hge | hgM
-        · simpa [hge]
+        · simp [hge]
         · exact False.elim ((mem_availableEdges.mp hgA).2.1 hgM)
     · intro hg
       have hge : g = e := Finset.mem_singleton.mp hg
@@ -5284,7 +5283,7 @@ theorem card_activeConflictBlockers_available_through_le_C4_add_local
       mem_conflictLinkLayer.mp hQlink
     have hfErase : f ∈ c.erase e := by
       rw [hcErase]
-      simpa [hQa]
+      simp [hQa]
     have hfe : f ≠ e := (Finset.mem_erase.mp hfErase).1
     have hcEq : c = {e, f} := by
       calc
@@ -5377,7 +5376,7 @@ theorem sourceConflictLinkInteractionAtVertex_uniform
 layer by reinserting the distinguished edge. -/
 theorem codegree_conflictLinkLayer_le_insert
     (C : ConflictSystem V) (e : Finset V) (q : ℕ)
-    (root : Hypergraph V) (heroot : e ∉ root) :
+    (root : Hypergraph V) (_ : e ∉ root) :
     codegree (conflictLinkLayer C e q) root ≤
       codegree (conflictLayer C (q + 1)) (insert e root) := by
   let S := (conflictLinkLayer C e q).filter (root ⊆ ·)
@@ -5544,9 +5543,9 @@ theorem codegree_conflictLinkLayer_singleton_le_rpow
       C e q {e} (by simp), Nat.cast_zero]
     exact Real.rpow_nonneg hd.le _
   · have heSingleton : e ∉ ({f} : Hypergraph V) := by
-      simpa [Ne.symm hfe]
+      simp [Ne.symm hfe]
     have hInsertCard : (insert e ({f} : Hypergraph V)).card = 2 := by
-      simp [hfe, Ne.symm hfe]
+      simp [Ne.symm hfe]
     have hLayer := hB.layer_codegree
       (r := q + 1) (q := 2)
       (by omega) (by omega) (by omega) (by omega)
@@ -6028,7 +6027,7 @@ theorem abs_partialTestTotal_sub_le_incidenceCharge
         have hcard : (1 : ℝ) ≤
             ((S ∩ partialTestStatusChanges A M A' M').card : ℝ) := by
           exact_mod_cast Finset.card_pos.mpr hne
-        simp only [ge_iff_le]
+        rw [if_neg hNew, if_pos hOld, zero_sub, abs_neg, abs_of_nonneg (hw S)]
         calc
           w S = w S * 1 := by ring
           _ ≤ w S * ((S ∩ partialTestStatusChanges A M A' M').card : ℝ) :=
@@ -6046,7 +6045,7 @@ theorem abs_partialTestTotal_sub_le_incidenceCharge
         have hcard : (1 : ℝ) ≤
             ((S ∩ partialTestStatusChanges A M A' M').card : ℝ) := by
           exact_mod_cast Finset.card_pos.mpr hne
-        simp only [ge_iff_le]
+        rw [if_pos hNew, if_neg hOld, sub_zero, abs_of_nonneg (hw S)]
         calc
           w S = w S * 1 := by ring
           _ ≤ w S * ((S ∩ partialTestStatusChanges A M A' M').card : ℝ) :=
@@ -6598,7 +6597,7 @@ theorem externalTestCorridors_terminal_bounds
   constructor <;> linarith
 
 theorem externalTestUpperFirstFailureEvent_subset_tail
-    {iota : Type*} [Fintype iota]
+    {iota : Type*}
     (w : TestWeight V) (H : Hypergraph V) (C : ConflictSystem V)
     (M : Hypergraph V) (T : ℕ)
     (P : iota → ℕ → Hypergraph V → Prop) (i : iota)
@@ -6643,7 +6642,7 @@ theorem externalTestUpperFirstFailureEvent_subset_tail
       hinitial hbad⟩
 
 theorem externalTestLowerFirstFailureEvent_subset_tail
-    {iota : Type*} [Fintype iota]
+    {iota : Type*}
     (w : TestWeight V) (H : Hypergraph V) (C : ConflictSystem V)
     (M : Hypergraph V) (T : ℕ)
     (P : iota → ℕ → Hypergraph V → Prop) (i : iota)
@@ -7485,7 +7484,7 @@ theorem externalTestFreedman_of_sourceBudgets
       hm.2 hR0 ht hW0 hden hinc.2 hW
 
 theorem externalTestFirstFailureMass_le_of_sourceBudgets
-    {iota : Type*} [Fintype iota]
+    {iota : Type*}
     (w : TestWeight V) (H : Hypergraph V) (C : ConflictSystem V)
     (M : Hypergraph V) (T : ℕ)
     (Pgood : iota → ℕ → Hypergraph V → Prop)
@@ -8223,7 +8222,7 @@ theorem activeInternalConflictLinkSteps_abs_le
       activeInternalConflictLinkLowerStep, hf, add_nonneg hR0 hQ0]
 
 theorem internalConflictLinkUpperFirstFailureEvent_subset_tail
-    {ι : Type*} [Fintype ι]
+    {ι : Type*}
     (H : Hypergraph V) (C : ConflictSystem V) (M : Hypergraph V) (T : ℕ)
     (P : ι → ℕ → Hypergraph V → Prop) (i : ι) (f : Finset V)
     (D₂ D₃ D₄ Gamma epsilon d N scale t : ℝ) (j s : ℕ)
@@ -8269,7 +8268,7 @@ theorem internalConflictLinkUpperFirstFailureEvent_subset_tail
       hinitial hbad.2⟩
 
 theorem internalConflictLinkLowerFirstFailureEvent_subset_tail
-    {ι : Type*} [Fintype ι]
+    {ι : Type*}
     (H : Hypergraph V) (C : ConflictSystem V) (M : Hypergraph V) (T : ℕ)
     (P : ι → ℕ → Hypergraph V → Prop) (i : ι) (f : Finset V)
     (D₂ D₃ D₄ Gamma epsilon d N scale t : ℝ) (j s : ℕ)
@@ -9192,7 +9191,7 @@ theorem activeInternalConflictLinkFreedman_of_sourceBudgets
       hm.2 hR0 ht hW0 hden hinc.2 hW
 
 theorem internalConflictLinkFirstFailureMass_le_of_sourceBudgets
-    {ι : Type*} [Fintype ι]
+    {ι : Type*}
     (H : Hypergraph V) (C : ConflictSystem V) (hC : IsConflictSystem H C)
     (M : Hypergraph V) (T : ℕ)
     (Pgood : ι → ℕ → Hypergraph V → Prop)
@@ -9858,7 +9857,7 @@ theorem survivingDegreeFreedman_of_sourceBudgets
 
 /-- First-failure tails for the corrected surviving-degree source budget. -/
 theorem degreeFirstFailureMass_le_of_sourceBudgets
-    {ι : Type*} [Fintype ι]
+    {ι : Type*}
     (H : Hypergraph V) (C : ConflictSystem V) (M : Hypergraph V) (T : ℕ)
     (P : ι → ℕ → Hypergraph V → Prop) (iUpper iLower : ι) (v : V)
     (D₂ D₃ D₄ Gamma epsilon d N Pscale : ℝ)
@@ -9924,7 +9923,7 @@ theorem partialTestObservable_initial_all
     simp
   · have hlt : s < j := lt_of_le_of_ne hsj hsj'
     have hsub : j - s ≠ 0 := by omega
-    simp [partialTestTotal, hsj', hsub, hsub.symm]
+    simp [partialTestTotal, hsj', hsub.symm]
 
 /-- The normalized `(j,s)` trajectory is the Kronecker delta at time zero. -/
 theorem zHat_zero_eq_indicator
@@ -9964,7 +9963,7 @@ positive margin.  The bounds on `j` record the specialized test range. -/
 theorem externalTestCorridors_initial
     (w : TestWeight V) (H : Hypergraph V) (C : ConflictSystem V)
     (D₂ D₃ D₄ Gamma epsilon d N : ℝ) {j s : ℕ}
-    (hj1 : 1 ≤ j) (hj3 : j ≤ 3) (hsj : s ≤ j)
+    (_ : 1 ≤ j) (_ : j ≤ 3) (hsj : s ≤ j)
     (hCcard : ∀ c ∈ C, 2 ≤ c.card)
     (hW : 0 < testTotal w H j) (hd : 0 < d) (hGamma : 0 < Gamma) :
     let W := testTotal w H j
@@ -10004,7 +10003,6 @@ theorem zHat_zero_available_eq_scale_mul
   have hpM : pM d N x = d⁻¹ * (8 * x / N) := by
     unfold pM
     field_simp [hd.ne', hN.ne']
-    <;> ring
   have hinv : (d⁻¹ : ℝ) ^ j = Real.rpow d (-(j : ℝ)) := by
     rw [Real.rpow_eq_pow, Real.rpow_neg hd.le, Real.rpow_natCast, inv_pow]
   unfold zHat
@@ -10025,7 +10023,6 @@ theorem zeta_zero_available_eq_scale_mul
       Real.rpow d (-(j : ℝ)) * (1 / (4 * Gamma)) := by
     rw [hinv]
     field_simp [hd.ne', hGamma.ne']
-    <;> ring
   unfold zeta
   simp only [Nat.choose_zero_right, Nat.cast_one, pow_zero, one_mul]
   rw [hz, hterm]
@@ -10075,7 +10072,6 @@ theorem externalTestCorridors_terminal_absorb
       _ < partialTestObservable w H C j 0 M := by linarith
       _ = testTotal w M j := hobs
     exact hstrict.le
-
   · have hstrict : testTotal w M j <
         (1 + err) * Real.rpow d (-(j : ℝ)) * testTotal w H j := by
       calc
@@ -10295,7 +10291,7 @@ coordinates.  The stored coordinate `u : Fin q` represents the actual
 partial status `u + 1`, so the impossible internal status-zero corridor is
 not part of the simultaneous Good event. -/
 abbrev InternalLinkCoordinate (H : Hypergraph V) :=
-  (f : {e : Finset V // e ∈ H}) ×'
+  (_f : {e : Finset V // e ∈ H}) ×'
     (q : Fin 3) ×' Fin (q.1 + 1)
 
 /-- One upper or lower corridor for every degree, external-test, and internal
@@ -10584,7 +10580,7 @@ corridor index.  The only non-freezing input is positivity of the lower
 degree trajectory; all test conclusions are read from the terminal
 zero-available corridors. -/
 theorem exists_regularizedGreedyCore_of_componentFirstFailureBounds
-    {ι : Type*} [Fintype ι] [Fintype V]
+    {ι : Type*} [Fintype ι]
     (H : Hypergraph V) (C : ConflictSystem V) (T : ℕ)
     (D₂ D₃ D₄ Gamma epsilon d err : ℝ)
     (j : ι → ℕ) (w : ι → TestWeight V)
@@ -11010,7 +11006,7 @@ theorem testSourceVarianceScale_externalTestNaturalScale
 
 theorem partialTestDrift_abs_le_of_choice_abs_le
     (w : TestWeight V) (H : Hypergraph V) (C : ConflictSystem V)
-    (j s : ℕ) (M : Hypergraph V) {B : ℝ} (hB0 : 0 ≤ B)
+    (j s : ℕ) (M : Hypergraph V) {B : ℝ} (_ : 0 ≤ B)
     (hchoice : ∀ o : GreedyChoice H,
       |partialTestObservable w H C j s (greedyChoiceStep H C M o) -
         partialTestObservable w H C j s M| ≤ B) :
@@ -11293,7 +11289,7 @@ theorem restrictedExternalSingletonSourceBudgets_of_statusSpread
     (a : io) (hja : j a = 1)
     (Good : ℕ → Hypergraph V → Prop) (T s : ℕ)
     (D₂ D₃ D₄ epsilonCore N Pfloor testScale : ℝ) (L : ℕ → ℝ)
-    (hd : 0 ≤ d) (htestScale : 0 ≤ testScale)
+    (_ : 0 ≤ d) (_ : 0 ≤ testScale)
     (hL0 : ∀ k, 0 ≤ L k)
     (hspread : ∀ k, k < T → ∀ M, Good k M →
       HasExternalTestStatusSpread H R.regularized M (L k))
@@ -11585,7 +11581,7 @@ noncomputable def indexedRegularizedStatusCap
         CFMTrajectories.zeta D₂ D₃ D₄ Gamma epsilon d N 3 1 (k : ℝ))))
 
 theorem indexedRegularizedGreedyGood_statusSpread
-    {io : Type*} [Fintype io]
+    {io : Type*}
     (H : Hypergraph V) (C : ConflictSystem V)
     (D₂ D₃ D₄ Gamma epsilon d N : ℝ)
     (j : io → ℕ) (w : io → TestWeight V)
@@ -11769,7 +11765,7 @@ theorem internalConflictLinkSourceBudgets_of_certificateLinkCap
     (f : Finset V) (hf : f ∈ H)
     (Good : ℕ → Hypergraph V → Prop) (T : ℕ)
     (D₂ D₃ D₄ epsilonCore N Pfloor scale : ℝ) (q s : ℕ)
-    (hq1 : 1 ≤ q) (hq3 : q ≤ 3) (hscale : 0 ≤ scale)
+    (_ : 1 ≤ q) (_ : q ≤ 3) (hscale : 0 ≤ scale)
     (hregistry : ∀ k, k < T → ∀ M, Good k M →
       CFMTrajectories.TestStepRegistry
         D₂ D₃ D₄ Gamma epsilonCore d N (k : ℝ) Pfloor q s)
@@ -12041,7 +12037,7 @@ theorem partialLinkOne_card_le_openConflictCount
       mem_conflictLinkLayer.mp hQlink
     have heErase : e ∈ c.erase f := by
       rw [hcErase]
-      simpa [hQa]
+      simp [hQa]
     have hef : e ≠ f := (Finset.mem_erase.mp heErase).1
     have hec : e ∈ c := (Finset.mem_erase.mp heErase).2
     have hedisj : Disjoint e f :=
@@ -12050,7 +12046,7 @@ theorem partialLinkOne_card_le_openConflictCount
       unfold activeConflictBlockers
       exact Finset.mem_biUnion.mpr
         ⟨1, by norm_num,
-          Finset.mem_biUnion.mpr ⟨Q, hQF, by simpa [hQa]⟩⟩
+          Finset.mem_biUnion.mpr ⟨Q, hQF, by simp [hQa]⟩⟩
     exact Finset.mem_filter.mpr ⟨hactive, heA, hedisj⟩
   rw [openConflictCount, ← hcardUnion]
   exact Finset.card_le_card hsub
@@ -12120,7 +12116,7 @@ theorem card_activeConflictBlockers_available_through_le
       mem_conflictLinkLayer.mp hQlink
     have hfErase : f ∈ c.erase e := by
       rw [hcErase]
-      simpa [hQa]
+      simp [hQa]
     have hfe : f ≠ e := (Finset.mem_erase.mp hfErase).1
     have hfc : f ∈ c := (Finset.mem_erase.mp hfErase).2
     have hcEq : c = {e, f} := by
@@ -12547,7 +12543,7 @@ theorem survivingDegreeSourceBudgets_of_regularizationCertificate_scalar
 /-- The certificate is built with `(epsRaw, GammaCert)`, while the greedy
 core is run with the independent `(epsilonCore, GammaCore)` parameters. -/
 abbrev certificateIndexedGreedyGoodWithCore
-    { ι : Type*} [Fintype ι]
+    {ι : Type*} [Fintype ι]
     (H : Hypergraph V) (C : ConflictSystem V)
     (d epsRaw GammaCert : ℝ) (ellCert : ℕ)
     (j : ι → ℕ) (w : ι → TestWeight V)
@@ -14180,7 +14176,7 @@ theorem partialTestStepGain_add_loss_le_incidenceCharge
   intro S hS
   by_cases hOld : partialTestCondition A M j s S <;>
     by_cases hNew : partialTestCondition A' M' j s S
-  · simp [hOld, hNew]
+  · simp only [hOld, not_true_eq_false, hNew, and_true, ↓reduceIte, and_false, add_zero]
     exact mul_nonneg (hw S) (Nat.cast_nonneg _)
   · have hne : (S ∩ partialTestStatusChanges A M A' M').Nonempty := by
       by_contra hnone
@@ -14206,7 +14202,7 @@ theorem partialTestStepGain_add_loss_le_incidenceCharge
       exact_mod_cast Finset.card_pos.mpr hne
     simp [hOld, hNew]
     simpa only [mul_one] using mul_le_mul_of_nonneg_left hcard (hw S)
-  · simp [hOld, hNew]
+  · simp only [hOld, not_false_eq_true, hNew, and_false, ↓reduceIte, and_true, add_zero]
     exact mul_nonneg (hw S) (Nat.cast_nonneg _)
 
 theorem partialTestStepGain_add_loss_le_sum_extensions
@@ -15025,7 +15021,7 @@ theorem zHatSecondOrder_of_cutoff
 
 theorem xi_source_bounds_stopExponent
     {Gamma epsilon sigma d N y : ℝ}
-    (hd : 1 ≤ d) (hGamma : 1 ≤ Gamma) (hepsilon : 0 ≤ epsilon)
+    (hd : 1 ≤ d) (hGamma : 1 ≤ Gamma) (_ : 0 ≤ epsilon)
     (hpV : 0 < pV N y) (hpV1 : pV N y ≤ 1)
     (hpVfloor : d ^ (-sigma) ≤ pV N y)
     (hamp : 9600 * Gamma * sigma ≤ epsilon / 64) :
@@ -15606,14 +15602,14 @@ theorem pairedFamilySum_le_sixth
     _ = 2 * exp (y - x) := by
       rw [show 2 * exp y * exp (-x) = 2 * (exp y * exp (-x)) by ring,
         ← Real.exp_add]
-      congr 2 <;> ring
+      congr 2
     _ ≤ 2 * (1 / 12) := by gcongr
     _ = 1 / 6 := by norm_num
 
 theorem pairedThreeFamilyFailureSum_lt_one
     {I₁ I₂ I₃ : Type*} [Fintype I₁] [Fintype I₂] [Fintype I₃]
     (x y : ℝ) (t₁ : I₁ → ℝ) (t₂ : I₂ → ℝ) (t₃ : I₃ → ℝ)
-    (hy : 0 ≤ y) (hpower : 24 * y ≤ x) (hlog : 4 * Real.log 12 ≤ x)
+    (_ : 0 ≤ y) (hpower : 24 * y ≤ x) (hlog : 4 * Real.log 12 ≤ x)
     (hc₁ : (Fintype.card I₁ : ℝ) ≤ exp y)
     (hc₂ : (Fintype.card I₂ : ℝ) ≤ exp y)
     (hc₃ : (Fintype.card I₃ : ℝ) ≤ exp y)
@@ -15861,13 +15857,13 @@ theorem degreeEnvelopeTrajectory_step_abs_le
   have hrem := degreeTaylorRemainder_le_rateScale R.degree hepsilon
   have hA : |A| ≤ 104 * base + rem := by
     calc
-      |A| = |(A - rA) + rA| := by congr 1 <;> ring
+      |A| = |(A - rA) + rA| := by congr 1 ; ring
       _ ≤ |A - rA| + |rA| := abs_add_le _ _
       _ ≤ rem + 104 * Gamma * d / (N * P) := add_le_add hAtaylor hrA
       _ = 104 * base + rem := by ring
   have hB : |B| ≤ 76904 * base + rem := by
     calc
-      |B| = |(B - rB) + rB| := by congr 1 <;> ring
+      |B| = |(B - rB) + rB| := by congr 1 ; ring
       _ ≤ |B - rB| + |rB| := abs_add_le _ _
       _ ≤ rem + 76904 * Gamma * d / (N * P) := add_le_add hBtaylor hrB
       _ = 76904 * base + rem := by ring
@@ -15936,7 +15932,7 @@ theorem degreeTrajectoryScale_sq_le_sourceVariance
         calc
           d ^ (eta - 2 * eta ^ 3 - 3 * coreEpsilon eta / 16 + 2) / 2048 =
               d ^ ((2 - 3 * coreEpsilon eta / 16) +
-                (eta - 2 * eta ^ 3)) / 2048 := by congr 2 <;> ring
+                (eta - 2 * eta ^ 3)) / 2048 := by congr 2 ; ring
           _ = (d ^ (2 - 3 * coreEpsilon eta / 16) *
                 d ^ (eta - 2 * eta ^ 3)) / 2048 := by
             rw [Real.rpow_add hd]
@@ -16006,7 +16002,7 @@ theorem degreeTrajectoryScale_le_sourceJump
         calc
           d ^ (2 * eta - 2 * eta ^ 3 - coreEpsilon eta / 2 + 2) / 4096 =
               d ^ ((2 - coreEpsilon eta / 2) +
-                (2 * eta - 2 * eta ^ 3)) / 4096 := by congr 2 <;> ring
+                (2 * eta - 2 * eta ^ 3)) / 4096 := by congr 2 ; ring
           _ = (d ^ (2 - coreEpsilon eta / 2) *
                 d ^ (2 * eta - 2 * eta ^ 3)) / 4096 := by
             rw [Real.rpow_add hd]
@@ -16032,7 +16028,7 @@ theorem degreeTrajectoryScale_le_sourceJump
             d ^ (1 - coreEpsilon eta / 4) := by ring
       _ = d ^ ((1 - coreEpsilon eta / 4) +
           (1 - coreEpsilon eta / 4)) := (Real.rpow_add hd _ _).symm
-      _ = d ^ (2 - coreEpsilon eta / 2) := by congr 1 <;> ring
+      _ = d ^ (2 - coreEpsilon eta / 2) := by congr 1 ; ring
   have hsq : degreeTrajectoryScale Gamma eta d N ^ 2 ≤
       degreeSourceJumpScale d (coreEpsilon eta) ^ 2 := by
     unfold degreeTrajectoryScale
@@ -16102,7 +16098,7 @@ theorem rpow_mul_rpow_sub
 
 theorem commonTail_of_freedman_ratio
     {eta d t denominator : ℝ}
-    (hden : 0 < denominator)
+    (_ : 0 < denominator)
     (hratio : 5 * d ^ tailPower eta ≤ t ^ 2 / (4 * denominator)) :
     exp (-(t ^ 2) / (4 * denominator)) ≤ commonTail eta d := by
   unfold commonTail
@@ -16113,7 +16109,7 @@ theorem commonTail_of_freedman_ratio
 
 theorem degree_denominator_upper
     {d epsilon N T : ℝ} (hd : 1 ≤ d) (hN : 0 < N)
-    (hepsilon : 0 ≤ epsilon) (hT0 : 0 ≤ T) (hT : T ≤ N) :
+    (hepsilon : 0 ≤ epsilon) (_ : 0 ≤ T) (hT : T ≤ N) :
     T * degreeFreedmanVarianceScale d epsilon N +
         (2 * degreeSourceJumpScale d epsilon) * degreeDeviation d epsilon ≤
       5 * d ^ (2 - 3 * epsilon / 16) := by
@@ -16204,9 +16200,9 @@ theorem degree_freedman_ratio
 
 theorem test_denominator_upper
     {Gamma P d epsilon N T : ℝ}
-    (hGamma : 1 ≤ Gamma) (hP : 0 ≤ P) (hd : 1 ≤ d)
+    (hGamma : 1 ≤ Gamma) (_ : 0 ≤ P) (hd : 1 ≤ d)
     (hN : 0 < N) (hepsilon : 0 ≤ epsilon)
-    (hT0 : 0 ≤ T) (hT : T ≤ N) :
+    (_ : 0 ≤ T) (hT : T ≤ N) :
     T * testFreedmanVarianceScale P d epsilon N +
         testSourceJumpScale P d epsilon * testDeviation Gamma P d epsilon ≤
       5 * (P ^ 2 * d ^ (-3 * epsilon / 16)) := by
@@ -16478,7 +16474,7 @@ structure PositivePairedFirstFailureSourceBudgets
   scale_pos : 0 < P
 
 theorem degreePairFirstFailure_le_common
-    {iota : Type*} [Fintype iota]
+    {iota : Type*}
     (H : Hypergraph V) (C : ConflictSystem V)
     (Pgood : iota → ℕ → Hypergraph V → Prop)
     (iUpper iLower : iota) (v : V)
@@ -16564,7 +16560,7 @@ theorem degreePairFirstFailure_le_common
   · exact htail.2.trans (by simpa only [T, t, Wvar, R, Vvar, J] using hcommon)
 
 theorem externalPairFirstFailure_le_common
-    {iota : Type*} [Fintype iota]
+    {iota : Type*}
     (w : TestWeight V) (H : Hypergraph V) (C : ConflictSystem V)
     (Pgood : iota → ℕ → Hypergraph V → Prop)
     (iUpper iLower : iota)
@@ -16637,7 +16633,7 @@ theorem externalPairFirstFailure_le_common
   · exact htail.2.trans (by simpa only [T, t, Wvar, Vvar, J] using hcommon)
 
 theorem internalPairFirstFailure_le_common
-    {iota : Type*} [Fintype iota]
+    {iota : Type*}
     (H : Hypergraph V) (C : ConflictSystem V) (hC : IsConflictSystem H C)
     (Pgood : iota → ℕ → Hypergraph V → Prop)
     (iUpper iLower : iota) (f : Finset V)
@@ -16744,7 +16740,7 @@ theorem card_externalTestCoordinate_le
       have hi' := hj i
       omega
     _ = 4 * Fintype.card iota := by
-      simp [nsmul_eq_mul, mul_comm]
+      simp [mul_comm]
 
 @[simp] theorem card_internalLinkCoordinate (H : Hypergraph V) :
     Fintype.card (InternalLinkCoordinate H) = 6 * H.card := by
@@ -16754,7 +16750,7 @@ theorem card_externalTestCoordinate_le
   have hinner : Fintype.card ((q : Fin 3) ×' Fin (q.1 + 1)) = 6 := by
     rw [Fintype.card_congr (Equiv.psigmaEquivSigma _), Fintype.card_sigma]
     norm_num [Fin.sum_univ_succ]
-  simp [hinner, Fintype.card_coe, nsmul_eq_mul, mul_comm]
+  simp [hinner, mul_comm]
 
 theorem four_mul_exp_le_exp_nine
     {a : ℝ} (ha : 32 ≤ a) :
@@ -16840,7 +16836,7 @@ theorem internalLinkCoordinate_card_le_entropy
         6 * (H.card : ℝ) := by simp
     _ ≤ 6 * exp (8 * d ^ (eta ^ 3)) := by gcongr
     _ ≤ 9 * exp (8 * d ^ (eta ^ 3)) := by
-      gcongr <;> norm_num
+      gcongr ; norm_num
     _ ≤ exp (9 * d ^ (eta ^ 3)) :=
       nine_mul_exp_eight_le_exp_nine S.stopExponentFloor
 
@@ -16903,7 +16899,7 @@ theorem regularizedGreedyCorridorCommonTail_sum_lt_one
     (externalTestCoordinate_card_le_entropy S j hj htests)
     (internalLinkCoordinate_card_le_entropy S H hH hvertex)
   simp [RegularizedGreedyCorridorIndex, regularizedGreedyCorridorTail,
-    Fintype.sum_sum_type, Fintype.sum_prod_type] at hsum ⊢
+    Fintype.sum_sum_type] at hsum ⊢
   nlinarith
 
 theorem regularizedGreedyCorridorCommonTail_sum_lt_one_of_specialized
@@ -16924,7 +16920,7 @@ theorem regularizedGreedyCorridorCommonTail_sum_lt_one_of_specialized
     (fun i ↦ (htrack i).2.1) hvertex htests
 
 theorem exists_regularizedGreedyCore_of_commonFirstFailureBounds
-    {iota : Type*} [Fintype V] [Fintype iota]
+    {iota : Type*} [Fintype iota]
     {eta Gamma d : ℝ} (S : CoreCutoffSpec eta Gamma d)
     (H : Hypergraph V) (C : ConflictSystem V) (T : ℕ)
     (D₂ D₃ D₄ epsilon err : ℝ)
@@ -17127,7 +17123,7 @@ theorem zeta_zero_eq_indicator_plus_correction
           (Nat.choose j s : ℝ) * d ^ s / (4 * Gamma * d ^ j)) := by
   unfold CFMTrajectories.zeta CFMTrajectories.xi CFMTrajectories.dHat
   rw [zHat_zero_eq_indicator D₂ D₃ D₄ d N hsj]
-  simp [CFMTrajectories.pV, CFMTrajectories.q,
+  simp [CFMTrajectories.pV,
     CFMTrajectories.GammaHat, CFMTrajectories.pM]
 
 theorem zeta_zero_correction_le
@@ -17783,7 +17779,7 @@ local-spread coordinates.  The old degree corridors still certify
 nonfreezing, and only the old external zero-coordinates are read at the
 terminal state. -/
 theorem exists_regularizedGreedyCore_of_enhancedFirstFailureBounds
-    {iota L : Type*} [Fintype iota] [Fintype L] [Fintype V]
+    {iota L : Type*} [Fintype iota] [Fintype L]
     (H : Hypergraph V) (C : ConflictSystem V) (T : ℕ)
     (D₂ D₃ D₄ Gamma epsilon d err : ℝ)
     (j : iota → ℕ) (w : iota → TestWeight V)
@@ -17874,7 +17870,7 @@ theorem exists_regularizedGreedyCore_of_enhancedFirstFailureBounds
 probability budget.  This sharper form leaves room for the one-sided local
 spread families in the enhanced index. -/
 theorem regularizedGreedyCorridorCommonTail_sum_le_half
-    {iota : Type*} [Fintype iota] [Fintype V]
+    {iota : Type*} [Fintype iota]
     {eta Gamma d : ℝ} (S : CFMNumeric.CoreCutoffSpec eta Gamma d)
     (H : Hypergraph V) (hH : IsUniform H 8)
     (j : iota → ℕ) (hj : ∀ i, j i ≤ 3)
@@ -18359,7 +18355,7 @@ theorem card_conflictLinkLayer_le_Gamma_mul_rpow
 the corresponding conflict-layer codegree. -/
 theorem codegree_conflictLinkLayer_le_insert_root
     (C : ConflictSystem V) (f : Finset V) (q : ℕ)
-    (root : Hypergraph V) (hfroot : f ∉ root) :
+    (root : Hypergraph V) (_ : f ∉ root) :
     codegree (conflictLinkLayer C f q) root ≤
       codegree (conflictLayer C (q + 1)) (insert f root) := by
   let S := (conflictLinkLayer C f q).filter (root ⊆ ·)
@@ -19011,7 +19007,7 @@ theorem card_duplicateConflictLinkOrderedPairFirstRooted_le_rpow
     (hd : 0 < d) (hd1 : 1 ≤ d) (heta : 0 ≤ eta)
     (f : Finset V) (a b r : ℕ) (root : Hypergraph V)
     (ha2 : 2 ≤ a) (ha3 : a ≤ 3) (hb2 : 2 ≤ b) (hb3 : b ≤ 3)
-    (hr5 : r ≤ 5) (hrootPos : 1 ≤ root.card)
+    (hr5 : r ≤ 5) (_ : 1 ≤ root.card)
     (hrootLt : root.card < r) :
     ((duplicateConflictLinkOrderedPairFirstRooted
         C f a b r root).card : ℝ) ≤
@@ -19040,7 +19036,7 @@ theorem card_duplicateConflictLinkOrderedPairFirstRooted_le_rpow
     have hEpos : 1 ≤ E.card := Finset.card_pos.mpr hEdata.2
     by_cases hQempty : QF E = ∅
     · rw [hQempty]
-      simp only [Finset.sum_empty, zero_le]
+      simp only [Finset.sum_empty]
       exact mul_nonneg (by norm_num) (Real.rpow_nonneg hd.le _)
     · obtain ⟨Q₀, hQ₀⟩ := Finset.nonempty_iff_ne_empty.mpr hQempty
       have hQ₀data := Finset.mem_filter.mp
@@ -19331,7 +19327,7 @@ theorem duplicateConflictLinkOrderedPairSlice_eq_empty_of_rank_one_right
       by simpa [Finset.union_comm] using hp'.2.2.2.2.1,
       by simpa [Finset.union_comm] using hp'.2.2.2.2.2⟩
   rw [hleft] at hswap
-  simpa using hswap
+  simp at hswap
 
 theorem card_duplicateConflictLinkOrderedPairSlice_le_256_rpow
     {H : Hypergraph V} {C : ConflictSystem V} {d Gamma eta : ℝ}
@@ -19367,7 +19363,7 @@ theorem card_duplicateConflictLinkOrderedPairSlice_le_256_rpow
         _ = ((duplicateConflictLinkOrderedPairFirstRooted
               C f a b r root).card : ℝ) +
               ((duplicateConflictLinkOrderedPairFirstRooted
-                C f b a r root).card : ℝ) := by push_cast; rfl
+                C f b a r root).card : ℝ) := by rfl
         _ ≤ 128 * Real.rpow d ((r : ℝ) - (root.card : ℝ) - eta) +
               128 * Real.rpow d ((r : ℝ) - (root.card : ℝ) - eta) :=
           add_le_add hfirst hsecond
@@ -19510,7 +19506,7 @@ theorem card_duplicateConflictLinkOrderedPairSlice_empty_le_rpow
     {H : Hypergraph V} {C : ConflictSystem V} {d Gamma eta : ℝ}
     (hB : CFMRegularization.IsRegularizedBounded H C d Gamma eta)
     (hanti : ∀ c ∈ C, ∀ c' ∈ C, c ≠ c' → ¬c ⊆ c')
-    (hd : 0 < d) (hd1 : 1 ≤ d) (heta : 0 ≤ eta)
+    (hd : 0 < d) (_ : 1 ≤ d) (_ : 0 ≤ eta)
     (f : Finset V) (hf : f ∈ H) (a b r : ℕ)
     (ha : a ∈ Finset.Icc 1 3) (hb : b ∈ Finset.Icc 1 3) :
     ((duplicateConflictLinkOrderedPairSlice C f a b r ∅).card : ℝ) ≤
@@ -19690,7 +19686,7 @@ theorem duplicateConflictLinkUnionLayer_isRealSpread
     (hanti : ∀ c ∈ C, ∀ c' ∈ C, c ≠ c' → ¬c ⊆ c')
     (hd : 0 < d) (hd1 : 1 ≤ d) (heta : 0 ≤ eta)
     (f : Finset V) (hf : f ∈ H) (r : ℕ)
-    (hr3 : 3 ≤ r) (hr5 : r ≤ 5) :
+    (_ : 3 ≤ r) (hr5 : r ≤ 5) :
     IsRealSpread (duplicateConflictLinkUnionLayer C f r) r
       (2304 * (Gamma + 1) * Real.rpow d ((r : ℝ) - eta)) d⁻¹ := by
   refine ⟨duplicateConflictLinkUnionLayer_uniform C f r, ?_⟩
@@ -20678,7 +20674,7 @@ theorem IsRealSpread.shadowWeight_le
   exact hZ.2 S hS
 
 theorem sum_shadow_singletons_eq
-    [Fintype V] (Z : ConflictSystem V) (H : Hypergraph V) (q : ℕ)
+    (Z : ConflictSystem V) (H : Hypergraph V) (q : ℕ)
     (hZ : IsUniform Z q) (hZH : ∀ Q ∈ Z, Q ⊆ H) :
     (∑ x ∈ H, conflictFamilyShadowWeight Z {x}) =
       (q : ℝ) * (Z.card : ℝ) := by
@@ -20839,7 +20835,6 @@ def vertexLocalThroughSpreadDerivativeWeight
 /-- Incidence bound for a uniform static family.  Once `y` is outside
 `A`, a `q`-set containing `y` has at most `q-1` members in `A`. -/
 theorem sum_shadow_pair_le
-    [Fintype V]
     (Z : ConflictSystem V) (A : Hypergraph V)
     (q : ℕ) (hZ : IsUniform Z q) (y : Finset V) (hyA : y ∉ A) :
     (∑ x ∈ A, conflictFamilyShadowWeight Z (insert x {y})) ≤
@@ -20888,7 +20883,6 @@ theorem sum_shadow_pair_le
       rw [hright]
 
 theorem sum_derivative_singletons_le
-    [Fintype V]
     (Z : ConflictSystem V) (H : Hypergraph V)
     (q : ℕ) (hZ : IsUniform Z q) (x : Finset V) (hxH : x ∈ H) :
     (∑ y ∈ H,
@@ -21023,7 +21017,6 @@ theorem localSpreadRawStep_vertexLocal_rank_two_insert
 not replace the average by the maximum derivative, so it retains the
 essential inverse-availability factor. -/
 theorem greedyStepExpectation_localSpreadRawStep_rank_two_le_shadow
-    [Fintype V]
     (Z : ConflictSystem V) (q : ℕ) (hZ : IsUniform Z q)
     (H : Hypergraph V) (C : ConflictSystem V) (M : Hypergraph V)
     (hA : (availableEdges H C M).Nonempty) :
@@ -21225,7 +21218,6 @@ theorem localSpreadUpperSourceBudgets_rank_one
 /-- Rank-one chosen-set budgets obtained directly from a static real-spread
 family and an availability floor. -/
 theorem localSpreadUpperSourceBudgets_rank_one_of_realSpread
-    [Fintype V]
     (Z : ConflictSystem V) (q : ℕ) {d₀ delta : ℝ}
     (hZ : IsRealSpread Z q d₀ delta)
     (H : Hypergraph V) (hZH : ∀ Q ∈ Z, Q ⊆ H)
@@ -21266,7 +21258,6 @@ theorem localSpreadUpperSourceBudgets_rank_one_of_realSpread
 spread family.  The derivative is zero on the self-singleton, so every
 remaining jump is genuinely a two-root codegree. -/
 theorem localSpreadUpperSourceBudgets_derivative_of_realSpread
-    [Fintype V]
     (Z : ConflictSystem V) (q : ℕ) {d₀ delta : ℝ}
     (hZ : IsRealSpread Z q d₀ delta)
     (H : Hypergraph V) (x : Finset V) (hxH : x ∈ H)
@@ -21313,7 +21304,7 @@ theorem localSpreadUpperSourceBudgets_derivative_of_realSpread
   · intro k hk y hyH
     unfold chosenSetDerivativeWeight
     by_cases hxy : x ∈ ({y} : Hypergraph V)
-    · simp only [mem_singleton, conflictFamilyShadowWeight_eq_codegree]
+    · rw [if_pos hxy]
       exact mul_nonneg hd₀ (sq_nonneg delta)
     · rw [if_neg hxy]
       have hpairCard : (insert x ({y} : Hypergraph V)).card = 2 := by
@@ -21328,7 +21319,6 @@ aggregate rank-one shadow, while the choicewise jump is charged to the
 fixed-choice derivative corridor.  These are the two auxiliary q=3
 families required to avoid losing the inverse-availability factor. -/
 theorem localSpreadUpperSourceBudgets_rank_two_shadow
-    [Fintype V]
     (Z : ConflictSystem V) (q : ℕ) (hZ : IsUniform Z q)
     (H : Hypergraph V) (C : ConflictSystem V)
     (Good : ℕ → Hypergraph V → Prop) (T : ℕ)
@@ -21479,7 +21469,7 @@ theorem localSpreadVarianceBudget_nonneg_of_sourceBudgets
     (mul_nonneg (by norm_num) (sq_nonneg _))
 
 theorem localSpreadUpperFirstFailureEvent_subset_tail
-    {ι : Type*} [Fintype ι]
+    {ι : Type*}
     (w : TestWeight V) (H : Hypergraph V) (C : ConflictSystem V)
     (M : Hypergraph V) (T : ℕ)
     (P : ι → ℕ → Hypergraph V → Prop) (i : ι)
@@ -21514,7 +21504,7 @@ theorem localSpreadUpperFirstFailureEvent_subset_tail
 chosen-set mean and jump fields bundled in `B`; all filtration, moment and
 first-failure bookkeeping is discharged here. -/
 theorem localSpreadUpperFirstFailureMass_le_of_sourceBudgets
-    {ι : Type*} [Fintype ι]
+    {ι : Type*}
     (w : TestWeight V) (H : Hypergraph V) (C : ConflictSystem V)
     (M : Hypergraph V) (T : ℕ)
     (P : ι → ℕ → Hypergraph V → Prop) (i : ι)
@@ -21622,7 +21612,7 @@ noncomputable def vertexLocalThroughSpreadTailWeight
     (a : VertexLocalThroughSpreadTailCoordinate H) : TestWeight V :=
   fun S ↦ vertexLocalThroughSpreadTailBaseWeight H C a S / scale a
 
-theorem card_vertexLocalThroughSpreadTailCoordinate [Fintype V]
+theorem card_vertexLocalThroughSpreadTailCoordinate
     (H : Hypergraph V) :
     Fintype.card (VertexLocalThroughSpreadTailCoordinate H) =
       H.card * (vertexFinset H).card * (3 + H.card) := by
@@ -21637,7 +21627,7 @@ theorem card_vertexLocalThroughSpreadTailCoordinate [Fintype V]
 /-- The primary/aggregate/fixed-choice derivative family has entropy
 exponent eighteen.  This is the degree-through-vertex family only. -/
 theorem vertexLocalThroughSpreadTailCoordinate_card_le_entropy
-    [Fintype V] {eta Gamma d : ℝ}
+    {eta Gamma d : ℝ}
     (S : CFMNumeric.CoreCutoffSpec eta Gamma d)
     (H : Hypergraph V) (hH : IsUniform H 8)
     (hvertex : ((vertexFinset H).card : ℝ) ≤
@@ -21743,7 +21733,7 @@ theorem localSpreadStrongTailFamilySum_le_sixth
 coordinate family.  A later finite union bound only needs its exact card,
 proved above. -/
 theorem vertexLocalThroughSpreadTailFamily_firstFailureMass_le
-    [Fintype V] {ι : Type*} [Fintype ι]
+    {ι : Type*}
     (H : Hypergraph V) (C : ConflictSystem V) (M : Hypergraph V) (T : ℕ)
     (P : ι → ℕ → Hypergraph V → Prop)
     (coordinate : VertexLocalThroughSpreadTailCoordinate H → ι)
@@ -22076,7 +22066,7 @@ theorem localSpreadSmallDrift_time_le_margin
     {eta Gamma d N T : ℝ}
     (E : CFMNumeric.CoreExponentSpec eta Gamma)
     (S : CFMNumeric.CoreCutoffSpec eta Gamma d)
-    (hN : 0 < N) (hT0 : 0 ≤ T) (hT : T ≤ N) :
+    (hN : 0 < N) (_ : 0 ≤ T) (hT : T ≤ N) :
     T * localSpreadSmallDrift eta d N ≤
       localSpreadDerivativeMargin eta d := by
   have hd : 0 < d := lt_of_lt_of_le (by norm_num) S.degreeAtLeastTwo
@@ -22102,7 +22092,7 @@ theorem localSpreadSmallDrift_time_le_margin
               Real.rpow d
                 (1 - CFMNumeric.coreEpsilon eta / 32 - eta ^ 3)) := by
         field_simp [ne_of_gt hN, ne_of_gt (Real.rpow_pos_of_pos hd _)]
-        <;> ring
+        ; ring
       _ = 1536 * Real.rpow d
           ((2 - 5 * CFMNumeric.coreEpsilon eta / 4) -
             (1 - CFMNumeric.coreEpsilon eta / 32 - eta ^ 3)) := by
@@ -22129,7 +22119,7 @@ theorem localSpreadAggregateDrift_time_le_margin
     {eta Gamma d N T : ℝ}
     (E : CFMNumeric.CoreExponentSpec eta Gamma)
     (S : CFMNumeric.CoreCutoffSpec eta Gamma d)
-    (hN : 0 < N) (hT0 : 0 ≤ T) (hT : T ≤ N) :
+    (hN : 0 < N) (_ : 0 ≤ T) (hT : T ≤ N) :
     T * localSpreadAggregateDrift eta d N ≤
       localSpreadAggregateMargin eta d := by
   have hd : 0 < d := lt_of_lt_of_le (by norm_num) S.degreeAtLeastTwo
@@ -22155,7 +22145,7 @@ theorem localSpreadAggregateDrift_time_le_margin
               Real.rpow d
                 (1 - CFMNumeric.coreEpsilon eta / 32 - eta ^ 3)) := by
         field_simp [ne_of_gt hN, ne_of_gt (Real.rpow_pos_of_pos hd _)]
-        <;> ring
+        ; ring
       _ = 1536 * Real.rpow d
           ((3 - 5 * CFMNumeric.coreEpsilon eta / 4) -
             (1 - CFMNumeric.coreEpsilon eta / 32 - eta ^ 3)) := by
@@ -22511,7 +22501,7 @@ theorem localSpreadQ3PrimaryDrift_time_le_margin
                 (1 - CFMNumeric.coreEpsilon eta / 32 - eta ^ 3)) := by
         field_simp [ne_of_gt hNpos,
           ne_of_gt (Real.rpow_pos_of_pos hd _)]
-        <;> ring
+        ; ring
       _ = 128 * Real.rpow d
           ((2 - 3 * CFMNumeric.coreEpsilon eta / 4) -
             (1 - CFMNumeric.coreEpsilon eta / 32 - eta ^ 3)) := by
@@ -22907,7 +22897,6 @@ budgets.  The matching/cardinality invariant is supplied by the distinguished
 local reachable coordinate, while `hdegree` comes from the old paired degree
 corridors in the enhanced Good predicate. -/
 theorem availableEdges_card_lower_hHat_of_reachableDegreeWithin
-    [Fintype V]
     (H : Hypergraph V) (C : ConflictSystem V) (hH : IsUniform H 8)
     (M : Hypergraph V) (hM : IsConflictFreeMatching H C M)
     (N₀ k : ℕ) (hN : (vertexFinset H).card = N₀)
@@ -22954,7 +22943,6 @@ theorem availableEdges_card_lower_hHat_of_reachableDegreeWithin
 /-- The old degree corridors plus the exact reachable invariant imply the
 constant availability floor used by every concrete local source budget. -/
 theorem localSpreadAvailableFloor_le_availableEdges_card
-    [Fintype V]
     {eta Gamma d : ℝ}
     (S : CFMNumeric.CoreCutoffSpec eta Gamma d)
     (H : Hypergraph V) (C : ConflictSystem V) (hH : IsUniform H 8)
@@ -23073,7 +23061,7 @@ theorem localSpread_rpow_mul_inv_sq
     _ = Real.rpow d (a - 1) * d⁻¹ := by
       rw [localSpread_rpow_mul_inv hd]
     _ = Real.rpow d ((a - 1) - 1) := localSpread_rpow_mul_inv hd
-    _ = Real.rpow d (a - 2) := by congr 1 <;> ring
+    _ = Real.rpow d (a - 2) := by congr 1 ; ring
 
 theorem localSpread_q2_spread_jump_eq
     {eta d : ℝ} (hd : 0 < d) :
@@ -23180,9 +23168,9 @@ theorem sourceConflictLinkInteractionAtVertex_subset_host_certificate
 coordinate, assuming only the common availability floor and projection of
 the ambient Good predicate to the local coordinate family. -/
 theorem vertexLocalThroughSpreadConcreteSourceBudgets_of_available
-    [Fintype V] {iota ι : Type*} [Fintype iota] [Fintype ι]
+    {iota ι : Type*} [Fintype iota]
     {eta GammaCore GammaCert d N : ℝ} {T ell : ℕ}
-    (E : CFMNumeric.CoreExponentSpec eta GammaCore)
+    (_ : CFMNumeric.CoreExponentSpec eta GammaCore)
     (S : CFMNumeric.CoreCutoffSpec eta GammaCore d)
     (H : Hypergraph V) (C : ConflictSystem V)
     (j : iota → ℕ) (w : iota → TestWeight V)
@@ -23458,7 +23446,7 @@ Availability is derived from the old paired degree corridors, the distinguished
 reachable invariant, and the same numeric delta registry already used by the
 old degree process. -/
 theorem vertexLocalThroughSpreadEnhancedConcreteSourceBudgets
-    [Fintype V] {iota : Type*} [Fintype iota]
+    {iota : Type*} [Fintype iota]
     {eta GammaCore GammaCert d : ℝ} {T ell : ℕ}
     (E : CFMNumeric.CoreExponentSpec eta GammaCore)
     (S : CFMNumeric.CoreCutoffSpec eta GammaCore d)
@@ -23852,7 +23840,7 @@ theorem greedyStepExpectation_localSpreadRawStep_rootShadow_succ_le
               · apply le_of_eq
                 congr 1
                 ext y
-                simp [and_or_left, or_assoc, or_left_comm]
+                simp []
               · rw [Finset.disjoint_left]
                 intro y hyr hyins
                 rcases Finset.mem_insert.mp hyins with rfl | hyS
@@ -24401,7 +24389,7 @@ theorem duplicateConflictLinkUnionLayer_eq_empty_of_not_rank_three_five
       hanti hdata.1
     exact Finset.mem_Icc.mpr (by simpa only [hdata.2] using hrange)
   · intro hUempty
-    simpa using hUempty
+    simp at hUempty
 
 theorem sum_duplicatePartial_zero_six_eq_three_five
     {C : ConflictSystem V} {A M : Hypergraph V} {f : Finset V}
@@ -24707,7 +24695,7 @@ theorem vertexDuplicateLayer_isWeightedRealSpread
     (hanti : ∀ c ∈ C, ∀ c' ∈ C, c ≠ c' → ¬c ⊆ c')
     (hd : 0 < d) (hd1 : 1 ≤ d) (heta : 0 ≤ eta)
     (hdegree : ∀ x, (degree H x : ℝ) ≤ d)
-    (v : V) (r : ℕ) (hr3 : 3 ≤ r) (hr5 : r ≤ 5) :
+    (v : V) (r : ℕ) (_ : 3 ≤ r) (hr5 : r ≤ 5) :
     IsWeightedRealSpread
       (vertexDuplicateLayerFamily H C v r)
       (vertexDuplicateLayerRepresentationWeight H C v r) r
@@ -25080,10 +25068,10 @@ theorem gainConflictRepresentation_mem_partial
     {e f : Finset V} {j s : ℕ}
     (hS : S ∈ H.powersetCard j)
     (hcoord : partialTestCondition (availableEdges H C M) M j (s + 1) S)
-    (heS : e ∈ S) (hfS : f ∈ S)
+    (_ : e ∈ S) (hfS : f ∈ S)
     (heA : e ∈ availableEdges H C M)
     (hfA : f ∈ availableEdges H C M)
-    (hef : e ≠ f) (hefDisjoint : Disjoint e f)
+    (hef : e ≠ f) (_ : Disjoint e f)
     (hbad : ¬ConflictFree C (insert f (insert e M))) :
     ∃ Q r,
       Q ∈ conflictLink C e ∧ f ∈ Q ∧
@@ -25127,7 +25115,7 @@ theorem gainConflictRepresentation_mem_partial
       have hge : g ≠ e := (Finset.mem_erase.mp hgQ).1
       have hgc : g ∈ c := (Finset.mem_erase.mp hgQ).2
       rcases Finset.mem_insert.mp (hcsub hgc) with hgf | hgrest
-      · simpa [hgf]
+      · simp [hgf]
       · rcases Finset.mem_insert.mp hgrest with hge' | hgM
         · exact False.elim (hge hge')
         · exact False.elim ((mem_availableEdges.mp hgA).2.1 hgM)
@@ -25649,7 +25637,7 @@ theorem weightedTestGainCollisionAtChoice_le_choicePartialMass
                   (choiceTestConflictUnionLayer (H.powersetCard j) C e r)
                     (availableEdges H C M) M (s + 1)
             then w S else 0)
-          (fun Q' _ ↦ by split; exact hw0 S; norm_num) hQ
+          (fun Q' _ ↦ by split <;> simp [hw0 S]) hQ
         calc
           w S = if ¬Disjoint S Q ∧
                     S ∪ Q ∈ partialFamily
@@ -25666,7 +25654,7 @@ theorem weightedTestGainCollisionAtChoice_le_choicePartialMass
                   (availableEdges H C M) M (s + 1)
           then w S else 0)
         (fun r' _ ↦ Finset.sum_nonneg fun Q' _ ↦ by
-          split; exact hw0 S; norm_num) hr
+          split <;> simp [hw0 S]) hr
       have hcharged : w S ≤
           ∑ r' ∈ Finset.Icc 1 5,
             ∑ Q' ∈ conflictLink C e,
@@ -25682,7 +25670,7 @@ theorem weightedTestGainCollisionAtChoice_le_choicePartialMass
         Finset.sum_nonneg fun Q _ ↦ by split <;> norm_num
   · rw [if_neg hsource]
     exact Finset.sum_nonneg fun r _ ↦
-      Finset.sum_nonneg fun Q _ ↦ by split; exact hw0 S; norm_num
+      Finset.sum_nonneg fun Q _ ↦ by split <;> simp [hw0 S]
 
 /-- Full fixed-choice deterministic collision charge. -/
 theorem weightedTestGainCollisionMass_le_choicePartialMass
@@ -25734,8 +25722,6 @@ def weightedFixedChoiceTestConflictUnionRootMass
 
 /-- The unweighted conflict-link choices represented by one source test in
 one rooted rank coordinate. -/
-
-
 def fixedChoiceLinkRootCandidates
     (C : ConflictSystem V) (e : Finset V) (S : Hypergraph V)
     (r : ℕ) (root : Hypergraph V) : ConflictSystem V :=
@@ -25748,7 +25734,7 @@ def fixedChoiceLinkRootCandidates
     Q ∈ fixedChoiceLinkRootCandidates C e S r root ↔
       Q ∈ conflictLink C e ∧ ¬Disjoint S Q ∧
         (S ∪ Q).card = r ∧ root ⊆ S ∪ Q := by
-  simp [fixedChoiceLinkRootCandidates, and_assoc]
+  simp [fixedChoiceLinkRootCandidates]
 
 /-- Before estimating anything, the rooted representation mass is a
 weighted sum of the exact number of link choices over each source test. -/
@@ -25867,7 +25853,7 @@ scratch file so the proof does not depend on the production `.olean` being
 newer than the checked source. -/
 theorem fixedChoice_codegree_conflictLinkLayer_le_insert
     (C : ConflictSystem V) (e : Finset V) (q : ℕ)
-    (root : Hypergraph V) (heroot : e ∉ root) :
+    (root : Hypergraph V) (_ : e ∉ root) :
     codegree (conflictLinkLayer C e q) root ≤
       codegree (conflictLayer C (q + 1)) (insert e root) := by
   let S := (conflictLinkLayer C e q).filter (root ⊆ ·)
@@ -26354,7 +26340,7 @@ theorem sum_fixedChoiceSourceRootFiber_weight_le
   let T : Hypergraph V := insert e A
   by_cases hF : F = ∅
   · rw [show fixedChoiceSourceRootFiber H j e root A = ∅ from hF]
-    simp only [Finset.sum_empty, zero_le]
+    simp only [Finset.sum_empty]
     exact mul_nonneg (Nat.cast_nonneg ell)
       (div_nonneg
         (testTotal_nonneg hw.isTestFunction.nonneg H j)
@@ -26724,7 +26710,7 @@ theorem mem_partialFamily_one_of_subset_insert
       have hxU := Finset.inter_subset_left hx
       have hxA := Finset.inter_subset_right hx
       rcases Finset.mem_insert.mp (hUsub hxU) with hxh | hxM
-      · simpa [hxh]
+      · simp [hxh]
       · exact False.elim (Finset.disjoint_left.mp hAM hxA hxM)
     · intro hx
       have hxh : x = h := Finset.mem_singleton.mp hx
@@ -27054,7 +27040,7 @@ theorem card_crossPairFirstRooted_le_128_rpow
     (hd : 0 < d) (hd1 : 1 ≤ d) (heta : 0 ≤ eta)
     (f g : Finset V) (a b r : ℕ) (root : Hypergraph V)
     (ha : a ∈ Finset.Icc 1 3) (hb : b ∈ Finset.Icc 1 3)
-    (hr5 : r ≤ 5) (hrootPos : 1 ≤ root.card)
+    (hr5 : r ≤ 5) (_ : 1 ≤ root.card)
     (hrootLt : root.card < r) :
     ((crossConflictLinkOrderedPairFirstRooted
       C f g a b r root).card : ℝ) ≤
@@ -27186,7 +27172,7 @@ theorem card_crossPairFirstRooted_le_128_rpow
       exact_mod_cast (by simpa only [EF, QF, IF] using hcover)
     _ = ∑ E ∈ EF, ∑ Q ∈ QF E, ∑ I ∈ IF Q,
         (codegree (conflictLinkLayer C g b)
-          (I ∪ (root \ E)) : ℝ) := by push_cast; rfl
+          (I ∪ (root \ E)) : ℝ) := by simp only [Nat.cast_sum]
     _ ≤ ∑ _E ∈ EF, 8 * target := by
       apply Finset.sum_le_sum
       intro E hE
@@ -27367,7 +27353,7 @@ theorem card_crossPairSlice_empty_le_overlapSum
 theorem card_crossPairSlice_empty_le_8Gamma_rpow_of_proper
     {H : Hypergraph V} {C : ConflictSystem V} {d Gamma eta : ℝ}
     (hB : CFMRegularization.IsRegularizedBounded H C d Gamma eta)
-    (hd : 0 < d) (hd1 : 1 ≤ d) (f g : Finset V) (hf : f ∈ H)
+    (hd : 0 < d) (_ : 1 ≤ d) (f g : Finset V) (hf : f ∈ H)
     (a b r : ℕ) (ha : a ∈ Finset.Icc 1 3) (hb : b ∈ Finset.Icc 1 3)
     (hkPos : 1 ≤ a + b - r) (hkProper : a + b - r < b) :
     ((crossConflictLinkOrderedPairSlice C f g a b r ∅).card : ℝ) ≤
@@ -27871,7 +27857,7 @@ theorem weightedPartialTestGainChoices_le_succ_mul_observable
   by_cases hsource : partialTestCondition
       (availableEdges H C M) M j (s + 1) S
   · simp only [partialTestCondition] at hsource
-    simp only [Nat.cast_add, Nat.cast_one, ge_iff_le] at hc ⊢
+    simp only [partialTestCondition, hsource, Nat.cast_add, Nat.cast_one] at hc ⊢
     have hcr : ((partialTestGainChoiceSet H C M j s S).card : ℝ) ≤
         (s + 1 : ℕ) := by exact_mod_cast hc
     calc
@@ -27894,7 +27880,7 @@ theorem weightedPartialTestGainChoices_le_succ_mul_observable
 
 theorem partialTestLossChoice_mem_has_blocked_member
     (H : Hypergraph V) (C : ConflictSystem V) (M : Hypergraph V)
-    (j s : ℕ) (S : Hypergraph V) (hS : S ∈ H.powersetCard j)
+    (j s : ℕ) (S : Hypergraph V) (_ : S ∈ H.powersetCard j)
     {e : Finset V} (he : e ∈ partialTestLossChoiceSet H C M j s S) :
     ∃ f ∈ S ∩ availableEdges H C M,
       e ∈ availableBlockerChoices H C M f := by
@@ -27906,7 +27892,7 @@ theorem partialTestLossChoice_mem_has_blocked_member
   have hnotnew := hedata.2.2
   have hblock : ∃ f ∈ S ∩ A, f ∉ A' := by
     by_contra hnone
-    push_neg at hnone
+    push Not at hnone
     have hSAeq : S ∩ A' = S ∩ A := by
       apply Finset.Subset.antisymm
       · intro f hf
@@ -28538,7 +28524,7 @@ theorem succ_mul_observable_le_weightedGain_add_collision
   by_cases hsource : partialTestCondition
       (availableEdges H C M) M j (s + 1) S
   · simp only [partialTestCondition] at hsource
-    simp only [Nat.cast_add, Nat.cast_one]
+    simp only [partialTestCondition, hsource, Nat.cast_add, Nat.cast_one]
     have hc := partialTestGainChoiceSet_card_add_collision_ge_source
       H C M j s S hS hsource
     have hcR : (s : ℝ) + 1 ≤
@@ -28554,7 +28540,7 @@ theorem succ_mul_observable_le_weightedGain_add_collision
           w S * ((partialTestGainCollisionChoiceSet H C M S).card : ℝ) := by
         ring
   · simp only [partialTestCondition] at hsource
-    simp only [Nat.cast_add, Nat.cast_one]
+    simp only [partialTestCondition, hsource, if_false, add_zero]
     exact mul_nonneg (hw S) (Nat.cast_nonneg _)
 
 /-- The exact overcount in replacing the union of the `s` blocker
@@ -28651,7 +28637,7 @@ theorem weightedBlockerIncidence_bounds_of_statusWindow
     by_cases hold : partialTestCondition
         (availableEdges H C M) M j s S
     · simp only [partialTestCondition] at hold
-      simp only [Nat.cast_sum]
+      simp only [partialTestCondition, hold, and_self, if_true, Nat.cast_sum]
       have hsum : (s : ℝ) * lo ≤
           ∑ f ∈ S ∩ availableEdges H C M,
             ((availableBlockerChoices H C M f).card : ℝ) := by
@@ -28672,7 +28658,7 @@ theorem weightedBlockerIncidence_bounds_of_statusWindow
     by_cases hold : partialTestCondition
         (availableEdges H C M) M j s S
     · simp only [partialTestCondition] at hold
-      simp only [Nat.cast_sum]
+      simp only [partialTestCondition, hold, and_self, if_true, Nat.cast_sum]
       have hsum :
           (∑ f ∈ S ∩ availableEdges H C M,
             ((availableBlockerChoices H C M f).card : ℝ)) ≤
@@ -28746,6 +28732,7 @@ theorem exactPairOverlapMass_insert
     have hErase := congrArg (fun T : Finset ι ↦ T.erase a) hpq
     simpa [hax, hay] using hErase
 
+omit [DecidableEq ι] in
 /-- Exact second Bonferroni inequality, retaining the individual
 intersection cardinality of every unordered pair. -/
 theorem sum_card_le_card_biUnion_add_exactPairOverlapMass
@@ -30334,7 +30321,7 @@ theorem vertexLocalThroughSpreadConcreteParameters
         (mul_pos (mul_pos (by norm_num) hsmall) hderivative)⟩
 
 theorem vertexLocalThroughSpreadEnhancedTailFirstFailureMass_le
-    [Fintype V] {iota : Type*} [Fintype iota]
+    {iota : Type*} [Fintype iota]
     {eta GammaCore GammaCert d : ℝ} {T ell : ℕ}
     (E : CFMNumeric.CoreExponentSpec eta GammaCore)
     (S : CFMNumeric.CoreCutoffSpec eta GammaCore d)
@@ -30414,7 +30401,7 @@ noncomputable def vertexLocalThroughSpreadEnhancedLocalTail
   | Sum.inr _ => localSpreadStrongTail eta d
 
 theorem vertexLocalThroughSpreadEnhancedLocalTail_sum_le_twelfth
-    [Fintype V] {eta Gamma d : ℝ}
+    {eta Gamma d : ℝ}
     (S : CFMNumeric.CoreCutoffSpec eta Gamma d)
     (H : Hypergraph V) (hH : IsUniform H 8)
     (hvertex : ((vertexFinset H).card : ℝ) ≤
@@ -30478,7 +30465,7 @@ theorem greedyTransitionMass_pos_of_greedyPathMassFrom_pos
           exact hrec
 
 theorem vertexLocalThroughSpreadEnhancedGood_available_nonempty
-    [Fintype V] {iota : Type*} [Fintype iota]
+    {iota : Type*} [Fintype iota]
     {eta GammaCore GammaCert d : ℝ} {T ell k : ℕ}
     (S : CFMNumeric.CoreCutoffSpec eta GammaCore d)
     (H : Hypergraph V) (C : ConflictSystem V) (hH : IsUniform H 8)
@@ -30531,7 +30518,7 @@ theorem vertexLocalThroughSpreadEnhancedGood_available_nonempty
   exact_mod_cast hfloorPos.trans_le hcardFloor
 
 theorem vertexLocalThroughSpreadEnhancedReachableFirstFailureMass_eq_zero
-    [Fintype V] {iota : Type*} [Fintype iota]
+    {iota : Type*} [Fintype iota]
     {eta GammaCore GammaCert d : ℝ} {T ell : ℕ}
     (S : CFMNumeric.CoreCutoffSpec eta GammaCore d)
     (H : Hypergraph V) (C : ConflictSystem V) (hH : IsUniform H 8)
@@ -30599,7 +30586,7 @@ theorem vertexLocalThroughSpreadEnhancedReachableFirstFailureMass_eq_zero
     _ = k + 1 := by rw [hreach.2]
 
 theorem vertexLocalThroughSpreadEnhancedLocalFirstFailureMass_le
-    [Fintype V] {iota : Type*} [Fintype iota]
+    {iota : Type*} [Fintype iota]
     {eta GammaCore GammaCert d : ℝ} {T ell : ℕ}
     (E : CFMNumeric.CoreExponentSpec eta GammaCore)
     (S : CFMNumeric.CoreCutoffSpec eta GammaCore d)
@@ -30694,7 +30681,7 @@ theorem weighted_orientedPairCategoryMass_le
   by_cases hcoord : partialTestCondition
       (availableEdges H C M) M j s S
   · simp only [partialTestCondition] at hcoord
-    simp only [Nat.cast_mul, Nat.cast_ofNat]
+    simp only [partialTestCondition, hcoord, and_self, if_true, Nat.cast_mul, Nat.cast_ofNat]
     by_cases hwzero : w S = 0
     · simp [hwzero]
     · have hwpos : 0 < w S := lt_of_le_of_ne (hw S) (Ne.symm hwzero)
@@ -30935,7 +30922,7 @@ root/rank-sensitive power, so the weighted successor hierarchy can later
 prove the corresponding one-sided tails without changing this index. -/
 noncomputable def vertexDuplicateRootShadowCap
     {H : Hypergraph V}
-    (eta d : ℝ) (a : VertexDuplicateRootShadowCoordinate H) (k : ℕ) : ℝ :=
+    (eta d : ℝ) (a : VertexDuplicateRootShadowCoordinate H) (_ : ℕ) : ℝ :=
   if a.root = ∅ ∧ a.rank.1 + 1 = a.layer.1 then
     vertexDuplicatePrimaryMargin eta d
   else
@@ -30972,6 +30959,7 @@ noncomputable def degreeEnhancedGreedyPredicate
       H C D₂ D₃ D₄ Gamma eta d N T j w a
   | Sum.inr a => vertexDuplicateRootShadowPredicate H C eta d a
 
+omit [Fintype V] in
 theorem indexedDegreeEnhancedGood_localThrough
     {iota : Type*}
     (H : Hypergraph V) (C : ConflictSystem V)
@@ -30987,6 +30975,7 @@ theorem indexedDegreeEnhancedGood_localThrough
   intro a
   exact hgood (Sum.inl a)
 
+omit [Fintype V] in
 theorem indexedDegreeEnhancedGood_old
     {iota : Type*}
     (H : Hypergraph V) (C : ConflictSystem V)
@@ -31004,6 +30993,7 @@ theorem indexedDegreeEnhancedGood_old
       (indexedDegreeEnhancedGood_localThrough
         H C D₂ D₃ D₄ Gamma eta d N T j w hgood)
 
+omit [Fintype V] in
 theorem indexedDegreeEnhancedGood_local
     {iota : Type*}
     (H : Hypergraph V) (C : ConflictSystem V)
@@ -31020,6 +31010,7 @@ theorem indexedDegreeEnhancedGood_local
       (indexedDegreeEnhancedGood_localThrough
         H C D₂ D₃ D₄ Gamma eta d N T j w hgood)
 
+omit [Fintype V] in
 theorem indexedDegreeEnhancedGood_duplicate
     {iota : Type*}
     (H : Hypergraph V) (C : ConflictSystem V)
@@ -31044,13 +31035,14 @@ def vertexDuplicatePrimaryCoordinate
   root := ∅
   rank := ⟨r - 1, by omega⟩
   rank_pos := by
-    show 1 ≤ r - 1
+    change 1 ≤ r - 1
     exact Nat.le_sub_of_add_le (by omega)
   legal := by
     change (∅ : Hypergraph V).card + (r - 1) < r
     simp only [Finset.card_empty, zero_add]
     exact Nat.sub_lt (by omega) (by omega)
 
+omit [Fintype V] in
 @[simp] theorem vertexDuplicatePrimaryCoordinate_weight
     (H : Hypergraph V) (C : ConflictSystem V)
     (v : ActualHostVertex H) (r : ℕ) (hr3 : 3 ≤ r) (hr5 : r ≤ 5) :
@@ -31061,6 +31053,7 @@ def vertexDuplicatePrimaryCoordinate
         (vertexDuplicateLayerRepresentationWeight H C v.1 r) ∅ := by
   rfl
 
+omit [Fintype V] in
 @[simp] theorem vertexDuplicatePrimaryCoordinate_rank
     {H : Hypergraph V}
     (v : ActualHostVertex H) (r : ℕ) (hr3 : 3 ≤ r) (hr5 : r ≤ 5) :
@@ -31068,6 +31061,7 @@ def vertexDuplicatePrimaryCoordinate
         (vertexDuplicatePrimaryCoordinate (H := H) v r hr3 hr5) = r - 1 := by
   rfl
 
+omit [Fintype V] in
 @[simp] theorem vertexDuplicatePrimaryCoordinate_cap
     {H : Hypergraph V}
     (eta d : ℝ) (v : ActualHostVertex H)
@@ -31079,6 +31073,7 @@ def vertexDuplicatePrimaryCoordinate
   simp
   omega
 
+omit [Fintype V] in
 /-- Extract the three primary collision caps from the duplicate-root part
 of the enhanced Good predicate. -/
 theorem vertexDuplicatePrimaryCaps_of_degreeEnhancedGood
@@ -31116,6 +31111,7 @@ theorem vertexDuplicatePrimaryCaps_of_degreeEnhancedGood
       vertexDuplicatePrimaryCoordinate_cap] using hcorr
   exact hlt.le
 
+omit [Fintype V] in
 /-- The coefficient in `vertexDuplicatePrimaryMargin` makes the summed
 duplicate correction collapse to one clean power. -/
 theorem vertexInternalOpenLinkDefect_le_primaryMarginPower
@@ -31238,6 +31234,7 @@ theorem degreeLocalJump_absorption_of_cutoff
   dsimp only [J] at hgeom hC4 hlocal ⊢
   linarith
 
+omit [Fintype V] in
 /-- The enhanced local-through component gives the canonical miss-only
 degree jump directly.  In particular this proof never bounds a full
 one-open conflict-link centre. -/
@@ -31335,6 +31332,7 @@ theorem availableDegreeLoss_miss_le_of_degreeEnhancedGood
 
 /-! ## Time-zero degree gaps -/
 
+omit [Fintype V] in
 /-- Both literal degree envelopes start at least one canonical deviation
 inside the host-degree interval. -/
 theorem specializedDegree_initial_gaps
@@ -31371,9 +31369,9 @@ theorem specializedDegree_initial_gaps
       CFMTrajectories.dHat CFMTrajectories.pV
       CFMTrajectories.GammaHat CFMTrajectories.pM
     have hd1 : Real.rpow d (1 : ℝ) = d := by
-      simpa using Real.rpow_one d
-    simp only [zero_div, mul_zero, zero_mul, sub_zero, one_pow, pow_zero,
-      Real.exp_zero, mul_one, one_mul, Real.one_rpow, hd1]
+      simp
+    simp only [zero_div, mul_zero, sub_zero, one_pow,
+      mul_one, one_mul, Real.one_rpow]
     norm_num [hd1]
     calc
       Real.rpow d (-CFMNumeric.coreEpsilon eta / 32) * d =
@@ -31438,11 +31436,11 @@ theorem specializedDegree_initial_gaps
           rw [show Real.rpow d (1 - eta) = d * Real.rpow d (-eta) by
             calc
               Real.rpow d (1 - eta) =
-                  Real.rpow d ((1 : ℝ) + (-eta)) := by congr 1 <;> ring
+                  Real.rpow d ((1 : ℝ) + (-eta)) := by congr 1
               _ = Real.rpow d 1 * Real.rpow d (-eta) :=
                 Real.rpow_add hdpos _ _
               _ = d * Real.rpow d (-eta) := by
-                rw [show Real.rpow d 1 = d by simpa using Real.rpow_one d]]
+                rw [show Real.rpow d 1 = d by simp]]
           ring
         _ ≤ (degree H v.1 : ℝ) := hvdeg.1
     calc
@@ -31456,6 +31454,7 @@ theorem specializedDegree_initial_gaps
       _ = -(Real.rpow d (1 - CFMNumeric.coreEpsilon eta / 32) / 2) := by
         ring
 
+omit [Fintype V] in
 theorem certificateBaseLayerMaxDegree_le_GammaCert
     {ι : Type*} [Fintype V] [Fintype ι]
     (H : Hypergraph V) (C : ConflictSystem V)
@@ -31540,6 +31539,7 @@ theorem certificateBaseLayerMaxDegree_le_GammaCert
     exact hbase.trans
       (mul_le_mul_of_nonneg_right hcoef hp0)
 
+omit [Fintype V] in
 /-- The completion factor costs at most two.  The canonical core conflict
 parameter `6 * GammaCert` therefore absorbs every literal certificate
 center, uniformly in layers two through four. -/
@@ -31626,6 +31626,7 @@ theorem certificateInternalLayerScale_le_sixGammaCert
                 Real.rpow d ((r : ℝ) - 1) :=
             mul_le_mul_of_nonneg_right hcoef hp0
 
+omit [Fintype V] in
 /-- Nonnegativity and the exact source-registry bounds for the three
 literal certificate centers at `GammaCore = 6 * GammaCert`. -/
 theorem certificateLiteralDegreeCenters_bounds
@@ -31671,6 +31672,7 @@ theorem certificateLiteralDegreeCenters_bounds
 /- The complete delta registry for the literal certificate centers and
 the exact rounded horizon.  It is state-independent once the specialized
 instance, exponent hierarchy, cutoff, and host lower bound are fixed. -/
+omit [Fintype V] in
 theorem certificateLiteralDeltaStepRegistry
     {ι : Type*} [Fintype V] [Fintype ι]
     (H : Hypergraph V) (C : ConflictSystem V)
@@ -32054,7 +32056,7 @@ theorem degreeMean_coarse_deviations_of_handshake
     (hratio : |r - z| ≤ 20 * delta / (u * D))
     (hC0 : 0 ≤ C) (hC : C ≤ 13 * Gamma * D)
     (hE0 : 0 ≤ E) (hE : E ≤ 64 * Gamma * delta)
-    (hdefect0 : 0 ≤ defectOverA)
+    (_ : 0 ≤ defectOverA)
     (hdefect : defectOverA ≤ 10 * Gamma * delta / u)
     (hhost : 5000 * Gamma * D ≤ u * delta) :
     (1 - r) * (C * z) - (r * (C - E) - defectOverA) ≤
@@ -32194,7 +32196,7 @@ theorem natCast_sub_ge_sub_cast (a b : ℕ) :
 retaining the correct lower-sign duplicate defect. -/
 theorem degreeRoundedEndpoints_within_error
     {b a D delta c err K defect : ℝ}
-    (ha : 0 < a) (hb : 0 ≤ b) (hlo : 0 ≤ D - delta)
+    (ha : 0 < a) (hb : 0 ≤ b) (_ : 0 ≤ D - delta)
     (hhi : 0 ≤ D + delta) (hK : 0 ≤ K) :
     (b / a) *
           ((c + 7 * D) - (7 * delta + 28 * K + 35 + err)) -
@@ -32207,7 +32209,6 @@ theorem degreeRoundedEndpoints_within_error
         ((c + 7 * D) + (7 * delta + 28 * K + 35 + err)) := by
   have hfloor : D - delta - 1 ≤ ((Nat.floor (D - delta) : ℕ) : ℝ) := by
     have h := Nat.lt_floor_add_one (D - delta)
-    norm_num only [Nat.cast_add, Nat.cast_one] at h
     linarith
   have hceilK : ((Nat.ceil K : ℕ) : ℝ) ≤ K + 1 := by
     exact (Nat.ceil_lt_add_one hK).le
@@ -32273,7 +32274,7 @@ is absorbed only in the subsequent scalar theorem. -/
 theorem meanMissAvailableDegreeLoss_bounds_of_degreeEnhancedGood
     {iota : Type*} [Fintype iota]
     {eta Gamma d : ℝ} {T ell k : ℕ}
-    (E : CFMNumeric.CoreExponentSpec eta Gamma)
+    (_ : CFMNumeric.CoreExponentSpec eta Gamma)
     (S : CFMNumeric.CoreCutoffSpec eta Gamma d)
     (H : Hypergraph V) (C : ConflictSystem V)
     (j : iota → ℕ) (w : iota → TestWeight V)
@@ -32412,6 +32413,7 @@ theorem meanMissAvailableDegreeLoss_bounds_of_degreeEnhancedGood
 
 /-! ## Scalar closure of the exact enhanced degree window -/
 
+omit [Fintype V] in
 /-- The exact rounded combinatorial endpoints are absorbed by the degree
 envelope whenever the eight-uniform handshake, duplicate correction, and
 logarithmic envelope margin satisfy their canonical scalar bounds. -/
@@ -32665,7 +32667,6 @@ theorem degreeEnhancedComb_numeric_of_degreeEnhancedGood
     dsimp only [u]
     unfold CFMTrajectories.pV
     field_simp [ne_of_gt hNpos]
-    <;> ring
   have hhand := availableEdges_card_bounds_of_degreeWithin hH8 hdegree
   have haLo : u * (D - delta) / 8 ≤ (A.card : ℝ) := by
     rw [← huncard]
@@ -32815,7 +32816,6 @@ theorem degreeEnhancedComb_numeric_of_degreeEnhancedGood
           Gamma * delta * D := hdefectCap.trans hdefectProduct
       _ = (10 * Gamma * delta / u) * (u * D / 10) := by
         field_simp [ne_of_gt hu]
-        <;> ring
       _ ≤ (10 * Gamma * delta / u) * (A.card : ℝ) := had
       _ = 10 * Gamma * delta / u * (A.card : ℝ) := rfl
   have hcoef : 320000 * Gamma ≤
@@ -32900,7 +32900,6 @@ theorem degreeEnhancedComb_numeric_of_degreeEnhancedGood
       dsimp only [u]
       unfold CFMTrajectories.pV
       field_simp [ne_of_gt hNpos]
-      <;> ring
     rw [huEq]
     have hk8 : (k : ℝ) * 8 <
         (1 - CFMNumeric.stoppingMargin eta d) * N :=
@@ -33010,7 +33009,7 @@ theorem degreeEnhancedComb_numeric_of_degreeEnhancedGood
   · simpa only [delta] using hrem
 theorem degreeMeanRateCoefficient_absorption
     {eta Gamma d N : ℝ}
-    (E : CFMNumeric.CoreExponentSpec eta Gamma)
+    (_ : CFMNumeric.CoreExponentSpec eta Gamma)
     (S : CFMNumeric.CoreCutoffSpec eta Gamma d)
     (hGamma54 : 54 ≤ Gamma) (hN : 0 < N) :
     77008 * Gamma * d /
@@ -33117,10 +33116,11 @@ theorem degreeMeanRateCoefficient_absorption
       mul_le_mul_of_nonneg_right hbase hN.le
     _ = Real.rpow d (1 + CFMNumeric.coreEpsilon eta / 16) *
         (N * CFMNumeric.trajectoryFloor eta d) := by ring
+omit [Fintype V] in
 theorem survivingVertexProbability_quarter_of_degreeEnhancedGood
     {iota : Type*} [Fintype iota]
     {eta Gamma d : ℝ} {ell k : ℕ}
-    (E : CFMNumeric.CoreExponentSpec eta Gamma)
+    (_ : CFMNumeric.CoreExponentSpec eta Gamma)
     (S : CFMNumeric.CoreCutoffSpec eta Gamma d)
     (H : Hypergraph V) (C : ConflictSystem V)
     (hH8 : IsUniform H 8)
@@ -33195,7 +33195,6 @@ theorem survivingVertexProbability_quarter_of_degreeEnhancedGood
     dsimp only [u]
     unfold CFMTrajectories.pV
     field_simp [ne_of_gt hNpos]
-    <;> ring
   have hhand := availableEdges_card_bounds_of_degreeWithin hH8 hdegree
   have haLo : u * (D - delta) / 8 ≤ (A.card : ℝ) := by
     rw [← huncard]
@@ -33218,7 +33217,6 @@ theorem survivingVertexProbability_quarter_of_degreeEnhancedGood
       dsimp only [u]
       unfold CFMTrajectories.pV
       field_simp [ne_of_gt hNpos]
-      <;> ring
     rw [huEq]
     have hk8 : (k : ℝ) * 8 <
         (1 - CFMNumeric.stoppingMargin eta d) * N :=
@@ -33594,6 +33592,7 @@ noncomputable def certificateMixedLossCapNat
   Nat.ceil (Real.rpow d (1 - epsRaw / 4) +
     4 * localSpreadPrimaryMargin eta d)
 
+omit [Fintype V] in
 theorem certificate_mixedLossCap_of_localGood
     {ι : Type*} [Fintype ι]
     {eta GammaCore d N epsRaw GammaCert : ℝ} {T k ellCert : ℕ}
@@ -33665,6 +33664,7 @@ theorem certificate_mixedLossCap_of_localGood
     (Real.rpow d (1 - epsRaw / 4) +
       4 * localSpreadPrimaryMargin eta d))
 
+omit [Fintype V] in
 /-- The local-through certificate cap in the exact pair-supported form
 needed by the MC/CM loss terms.  The distinguished vertex lies on the
 opposite positive-weight test edge, so disjointness supplies the off-root
@@ -33703,11 +33703,12 @@ theorem certificate_pairMixedLossCap_of_localGood
   exact certificate_mixedLossCap_of_localGood
     E S H C j w R hNpos hT hkT hgood v' hf hvf
 
+omit [Fintype V] in
 /-- Pair-supported MC/CM cap projected from the canonical degree-enhanced
 Good predicate.  This is the form consumed by the final test package, whose
 index may append further `Sum` components outside the degree family. -/
 theorem certificate_pairMixedLossCap_of_degreeEnhancedGood
-    [Fintype V] {iota : Type*} [Fintype iota]
+    {iota : Type*} [Fintype iota]
     {eta GammaCore d epsRaw GammaCert D₂ D₃ D₄ : ℝ}
     {N T k ellCert : ℕ}
     (E : CFMNumeric.CoreExponentSpec eta GammaCore)
@@ -33740,6 +33741,7 @@ theorem certificate_pairMixedLossCap_of_degreeEnhancedGood
   · exact hg
   · exact hfg
 
+omit [Fintype V] in
 theorem available_codegree_le_ceil
     {H : Hypergraph V} {C : ConflictSystem V} {M : Hypergraph V}
     {root : Finset V}
@@ -33759,6 +33761,7 @@ and source-faithful statement only off the root edge.  In the MC/CM terms
 the vertex is on the other positive-weight test edge, so matching support
 supplies exactly that missing disjointness. -/
 
+omit [Fintype V] in
 theorem weightedTestLossMCMass_le_pairMixedCap
     (w : TestWeight V) (H : Hypergraph V) (C : ConflictSystem V)
     (M : Hypergraph V) (j s mixedHi : ℕ)
@@ -33803,6 +33806,7 @@ theorem weightedTestLossMCMass_le_pairMixedCap
     _ = 8 * mixedHi := by
       simp [hH8 f (availableEdges_subset H C M hfA)]
 
+omit [Fintype V] in
 theorem weightedTestLossCMMass_le_pairMixedCap
     (w : TestWeight V) (H : Hypergraph V) (C : ConflictSystem V)
     (M : Hypergraph V) (j s mixedHi : ℕ)
@@ -33847,6 +33851,7 @@ theorem weightedTestLossCMMass_le_pairMixedCap
     _ = 8 * mixedHi := by
       simp [hH8 g (availableEdges_subset H C M hgA)]
 
+omit [Fintype V] in
 theorem weightedPartialTestLossCollision_le_pairAggregateCaps
     (w : TestWeight V) (H : Hypergraph V) (C : ConflictSystem V)
     (M : Hypergraph V) (j s codegreeHi mixedHi ccHi : ℕ)
@@ -33913,12 +33918,14 @@ def originalTestRootShadowWeight
     (f : Finset V) : TestWeight V :=
   weightedConflictFamilyRootShadowWeight (H.powersetCard j) w {f}
 
+omit [Fintype V] in
 theorem originalTestRootShadowWeight_nonneg
     {w : TestWeight V} (hw : ∀ S, 0 ≤ w S)
     (H : Hypergraph V) (j : ℕ) (f : Finset V) (S : Hypergraph V) :
     0 ≤ originalTestRootShadowWeight w H j f S := by
   exact weightedConflictFamilyRootShadowWeight_nonneg hw {f} S
 
+omit [Fintype V] in
 /-- Tests containing a fixed unselected edge and having exactly `n`
 selected members inject into the rank-`n` root-shadow mass. -/
 theorem sum_tests_containing_with_selectedCard_le_rootShadow
@@ -34022,6 +34029,7 @@ def selectedTestIncidenceCharge
   ∑ S ∈ H.powersetCard j,
     if (S ∩ M).card = n then w S * (S ∩ D).card else 0
 
+omit [Fintype V] in
 theorem selectedTestIncidenceCharge_eq_sum_roots
     (w : TestWeight V) (H M : Hypergraph V)
     (j n : ℕ) (D : Hypergraph V) :
@@ -34051,6 +34059,7 @@ theorem selectedTestIncidenceCharge_eq_sum_roots
   · rw [if_neg hselected]
     simp [hselected]
 
+omit [Fintype V] in
 theorem selectedTestIncidenceCharge_le_sum_rootShadows
     (w : TestWeight V) (H M : Hypergraph V)
     (j n : ℕ) (D : Hypergraph V)
@@ -34063,6 +34072,7 @@ theorem selectedTestIncidenceCharge_le_sum_rootShadows
   apply sum_tests_containing_with_selectedCard_le_rootShadow w H M j n f hw
   exact Finset.disjoint_left.mp hDM hfD
 
+omit [Fintype V] in
 /-- Pointwise gain is a single original-test root-shadow coordinate. -/
 theorem partialTestStepGain_le_originalTestRootShadow
     (w : TestWeight V) (H : Hypergraph V) (C : ConflictSystem V)
@@ -34090,6 +34100,7 @@ theorem partialTestStepGain_le_originalTestRootShadow
     · exact hw S
     · rfl
 
+omit [Fintype V] in
 /-- Pointwise loss is charged to the original-test root shadows of the
 available members actually deleted by the chosen edge. -/
 theorem partialTestStepLoss_le_sum_deletedRootShadows
@@ -34147,6 +34158,7 @@ theorem partialTestStepLoss_le_sum_deletedRootShadows
         selectedTestIncidenceCharge_le_sum_rootShadows
           w H M j (j - s) D hw hDM)
 
+omit [Fintype V] in
 /-- Corridor-ready pointwise cap: one source-root bound controls gain, and
 one deleted-member root bound times the sharp status cap controls loss. -/
 theorem partialTestStepGain_loss_le_originalTestRootCaps
@@ -34186,6 +34198,7 @@ theorem partialTestStepGain_loss_le_originalTestRootCaps
       _ ≤ statusHi * lossRootCap :=
         mul_le_mul_of_nonneg_right hstatus hlossRootCap0
 
+omit [Fintype V] in
 /-- The form used by the certificate status window, whose upper endpoint
 is stated directly for `availableBlockerChoices`. -/
 theorem partialTestStepGain_loss_le_originalTestRootCaps_of_blockers
@@ -34219,7 +34232,7 @@ namespace CFMTrajectories
 /-- Exact source normalization of the parenthesized test envelope. -/
 theorem testInside_eq_normalized
     {D₂ D₃ D₄ Gamma d N x : ℝ} {j s : ℕ}
-    (hd : 0 < d) (hGamma : 0 < Gamma) (hsj : s ≤ j) (hj : j ≤ 4) :
+    (hd : 0 < d) (_ : 0 < Gamma) (hsj : s ≤ j) (_ : j ≤ 4) :
     testInside D₂ D₃ D₄ Gamma d N j s x =
       (j.choose s : ℝ) * dHat D₂ D₃ D₄ d N x ^ s / d ^ j *
         (pV N x ^ s * (1 - pV N x) ^ (j - s) + 1 / (4 * Gamma)) := by
@@ -34280,7 +34293,7 @@ theorem testInside_successor_le
     {D₂ D₃ D₄ Gamma d N x : ℝ} {j s : ℕ}
     (hd : 0 < d) (hN : 0 < N) (hGamma : 1 ≤ Gamma)
     (hx0 : 0 ≤ x) (hx1 : 8 * x < N)
-    (hD₂0 : 0 ≤ D₂) (hD₃0 : 0 ≤ D₃) (hD₄0 : 0 ≤ D₄)
+    (_ : 0 ≤ D₂) (_ : 0 ≤ D₃) (_ : 0 ≤ D₄)
     (hsj : s ≤ j) (hj : j ≤ 4) :
     ((s + 1 : ℕ) : ℝ) * testInside D₂ D₃ D₄ Gamma d N j (s + 1) x ≤
       160 * Gamma * dHat D₂ D₃ D₄ d N x *
@@ -34305,7 +34318,7 @@ theorem testInside_successor_le
       rw [hcur]
       positivity
     have hzero : testInside D₂ D₃ D₄ Gamma d N j (j + 1) x = 0 := by
-      simp [testInside, zHat, hz]
+      simp [testInside, zHat]
     rw [hzero, mul_zero]
     exact mul_nonneg
       (mul_nonneg (mul_nonneg (by norm_num) hG.le) hD.le) hcur0
@@ -34741,7 +34754,7 @@ theorem meanWindow_numeric_of_source_errors
     {h a W Z Zp E Ep b eHi eLo gain loss zRate eRate rem scale : ℝ}
     {s : ℕ}
     (hW : 0 ≤ W) (hh : 0 < h) (ha : 0 ≤ a) (hscale : 0 ≤ scale)
-    (hZ : 0 ≤ Z) (hE : 0 ≤ E) (heHi : 0 ≤ eHi) (heLo : 0 ≤ eLo)
+    (_ : 0 ≤ Z) (_ : 0 ≤ E) (_ : 0 ≤ eHi) (_ : 0 ≤ eLo)
     (haLower : (4 / 5 : ℝ) * h ≤ a)
     (hrate : h * zRate = ((s + 1 : ℕ) : ℝ) * Zp - (s : ℝ) * b * Z)
     (hmismatch : |(a - h) * zRate| ≤ 2000 * h * scale)
@@ -34821,6 +34834,7 @@ theorem meanWindow_numeric_of_source_errors
 
 end CFMSharpTestNumeric
 
+omit [Fintype V] in
 theorem partialTest_meanWindow_of_gainCollision_and_lossOverlap
     (w : TestWeight V) (H : Hypergraph V) (C : ConflictSystem V)
     (M : Hypergraph V) (j s : ℕ)
@@ -34901,6 +34915,7 @@ theorem partialTest_meanWindow_of_gainCollision_and_lossOverlap
         (mul_le_mul_of_nonneg_left hplus.2 (by positivity))
     exact (sub_le_sub hgainUpper' hlossLower).trans hnumericUpper
 
+omit [Fintype V] in
 /-- Upper multiplicities used by the sharp averaged second moment.  The
 gain/loss defect coordinates are unnecessary here: the source incidence
 and the status upper window already give the exact one-sided bounds. -/
@@ -34923,6 +34938,7 @@ theorem partialTest_aggregateMultiplicity_upper_of_status
         (by intro f hf; exact Nat.cast_nonneg _)
         hstatusHi).2
 
+omit [Fintype V] in
 /-- The statewise sharp second moment after substituting only the upper
 trajectory corridors.  This is the exact input to the final cutoff
 absorption; in particular the available-edge denominator is retained. -/
@@ -34956,6 +34972,7 @@ theorem meanSqPartialTestIncrement_le_of_pointwise_status_observableCaps
     (mul_le_mul_of_nonneg_left hcurrent
       (mul_nonneg (Nat.cast_nonneg _) hstatusHi0))
 
+omit [Fintype V] in
 /-- Direct source-budget constructor for the sharp root-shadow route.  It
 does not pass through `PartialTestSourceBudgets` (whose trackable singleton
 cap loses the coordinate factor): raw pointwise gain/loss and the averaged
@@ -35335,7 +35352,7 @@ theorem corridorProduct_le_commonScale
     (S : CFMNumeric.CoreCutoffSpec eta Gamma d)
     (R : CFMTrajectories.TestStepRegistry D₂ D₃ D₄ Gamma
       (CFMNumeric.coreEpsilon eta) d N (k : ℝ) P j s)
-    (he0 : 0 ≤ e)
+    (_ : 0 ≤ e)
     (he : e ≤ 500 * Gamma *
       CFMTrajectories.delta D₂ D₃ D₄ Gamma
         (CFMNumeric.coreEpsilon eta) d N (k : ℝ)) :
@@ -35799,7 +35816,7 @@ theorem literalMeanWindow_numeric_of_registry_residualSixteenth
     have h76000 : 76000 * scale ≤
         CFMTrajectories.zetaRate D₂ D₃ D₄ Gamma eps d N j s x := by
       dsimp only [scale]
-      convert henvelopeRaw using 1 <;> ring
+      convert henvelopeRaw using 1 ; ring
     exact (mul_le_mul_of_nonneg_right
       (by norm_num : (40000 : ℝ) ≤ 76000) hscale0).trans h76000
   have hwindows := CFMSharpTestNumeric.meanWindow_numeric_of_source_errors
@@ -35812,8 +35829,8 @@ theorem literalMeanWindow_numeric_of_registry_residualSixteenth
 
 end CFMSharpTestCutoff
 
+omit [Fintype V] in
 theorem availableEdges_card_bounds_of_reachableDegreeWithin
-    [Fintype V]
     (H : Hypergraph V) (C : ConflictSystem V) (hH : IsUniform H 8)
     (M : Hypergraph V) (hM : IsConflictFreeMatching H C M)
     (N₀ k : ℕ) (hN : (vertexFinset H).card = N₀)
@@ -35873,6 +35890,7 @@ theorem availableEdges_card_bounds_of_reachableDegreeWithin
   · rw [hhiIdentity] at hraw
     nlinarith [hraw.2]
 
+omit [Fintype V] in
 theorem restrictedExternalObservable_bounds_of_certificateGoodWithCore
     {io : Type*} [Fintype io]
     (H : Hypergraph V) (C : ConflictSystem V)
@@ -35903,6 +35921,7 @@ theorem restrictedExternalObservable_bounds_of_certificateGoodWithCore
     H R.regularized D₂ D₃ D₄ GammaCore epsilonCore d N
       j R.restrictedWeight hgood a s
 
+omit [Fintype V] in
 theorem restrictedExternalNextObservable_bounds_of_certificateGoodWithCore
     {io : Type*} [Fintype io]
     (H : Hypergraph V) (C : ConflictSystem V)
@@ -35942,6 +35961,7 @@ theorem restrictedExternalNextObservable_bounds_of_certificateGoodWithCore
         d N (k : ℝ) (j a) (s.1 + 1) hjs]
     norm_num
 
+omit [Fintype V] in
 theorem internalConflictLinkObservable_bounds_of_certificateGoodWithCore
     {io : Type*} [Fintype io]
     (H : Hypergraph V) (C : ConflictSystem V)
@@ -35978,6 +35998,7 @@ theorem internalConflictLinkObservable_bounds_of_certificateGoodWithCore
       D₂ D₃ D₄ GammaCore epsilonCore d N j R.restrictedWeight
       hgood f q u)
 
+omit [Fintype V] in
 theorem internalConflictLinkNextObservable_bounds_of_certificateGoodWithCore
     {io : Type*} [Fintype io]
     (H : Hypergraph V) (C : ConflictSystem V)
@@ -36021,6 +36042,7 @@ theorem internalConflictLinkNextObservable_bounds_of_certificateGoodWithCore
         d N (k : ℝ) (q.1 + 1) (u.1 + 2) hjs]
     norm_num
 
+omit [Fintype V] in
 theorem externalTestNaturalScale_pos_of_trackable
     {w : TestWeight V} {H : Hypergraph V} {C : ConflictSystem V}
     {j ell : ℕ} {d eta : ℝ}
@@ -36031,6 +36053,7 @@ theorem externalTestNaturalScale_pos_of_trackable
     ((Real.rpow_pos_of_pos hd ((j : ℝ) + eta)).trans_le hw.total_lower)
     (Real.rpow_pos_of_pos hd ((s : ℝ) - (j : ℝ)))
 
+omit [Fintype V] in
 theorem externalTest_initial_errors_le_naturalDeviation
     (w : TestWeight V) (H : Hypergraph V) (C : ConflictSystem V)
     (D₂ D₃ D₄ Gamma epsilon d N : ℝ) (j s : ℕ)
@@ -36076,6 +36099,7 @@ theorem externalTest_initial_errors_le_naturalDeviation
   · rw [herr.2]
     linarith
 
+omit [Fintype V] in
 /-- Package any already-closed natural-scale external source budgets with
 the exact deterministic time-zero gaps and scale positivity.  The final
 certificate constructor supplies `B`; no initial-error hypothesis remains. -/
@@ -36085,7 +36109,7 @@ theorem positivePairedFirstFailureSourceBudgets_of_externalNaturalScale
     (D₂ D₃ D₄ Gamma epsilon d N Pfloor : ℝ) (j s ell : ℕ)
     (jump variance : ℕ → ℝ)
     (hw : IsTrackable H C j ell d epsilon w)
-    (hj1 : 1 ≤ j) (hj3 : j ≤ 3) (hsj : s ≤ j)
+    (_ : 1 ≤ j) (_ : j ≤ 3) (hsj : s ≤ j)
     (hCcard : ∀ c ∈ C, 2 ≤ c.card)
     (hd : 0 < d) (hGamma : 0 < Gamma)
     (B : ExternalTestSourceBudgets w H C Good T
@@ -36111,6 +36135,7 @@ theorem positivePairedFirstFailureSourceBudgets_of_externalNaturalScale
       lowerGap := hgaps.2
       scale_pos := externalTestNaturalScale_pos_of_trackable hw hd s }
 
+omit [Fintype V] in
 /-- Internal-link analogue.  The literal certificate layer center supplies
 both strict positivity and the exact initial discrepancy, so an active-link
 source package can be promoted without any extra gap premise. -/
@@ -36522,7 +36547,7 @@ theorem literalMeanWindow_numeric_of_registry
     have h76000 : 76000 * scale ≤
         CFMTrajectories.zetaRate D₂ D₃ D₄ Gamma eps d N j s x := by
       dsimp only [scale]
-      convert henvelopeRaw using 1 <;> ring
+      convert henvelopeRaw using 1 ; ring
     exact (mul_le_mul_of_nonneg_right
       (by norm_num : (40000 : ℝ) ≤ 76000) hscale0).trans h76000
   have hwindows := CFMSharpTestNumeric.meanWindow_numeric_of_source_errors
@@ -36650,6 +36675,7 @@ theorem certificateTestStatusLo_nonneg_of_registry
 
 end CFMSharpTestCutoff
 
+omit [Fintype V] in
 theorem greedyTransitionMass_pos_of_pathMassFrom_pos
     (H : Hypergraph V) (C : ConflictSystem V) (M : Hypergraph V)
     {T : ℕ} (omega : GreedyOutcome H T)
@@ -36689,6 +36715,7 @@ theorem greedyTransitionMass_pos_of_pathMassFrom_pos
           simpa only [greedyStateFromAt_cons_succ,
             greedyChoiceAt_cons_succ] using h
 
+omit [Fintype V] in
 /-- A positive-mass prefix which has not frozen has selected exactly one
 new edge at every preceding step. -/
 theorem card_greedyStateFromAt_eq_add_of_pos_mass_prefix_nonfreeze
@@ -36718,6 +36745,7 @@ theorem card_greedyStateFromAt_eq_add_of_pos_mass_prefix_nonfreeze
       rw [ih (Nat.le_of_lt hk) hprefix]
       omega
 
+omit [Fintype V] in
 /-- Conditional moments for a stopped process whose local drift and square
 bounds are valid only on states reached by positive-mass prefix-good tapes.
 Zero-mass tapes vanish from every conditional expectation. -/
@@ -36888,6 +36916,7 @@ square fields only over genuine greedy states.  Pointwise jumps remain
 unconditional on reachability, as required by Freedman's bounded-increment
 hypothesis. -/
 
+omit [Fintype V] in
 /-- Statewise form of the usual degree-corridor nonfreezing lemma.  The
 matching invariant and exact time-cardinality are supplied by reachability
 instead of being reconstructed from a concrete tape. -/
@@ -36923,6 +36952,7 @@ theorem availableEdges_nonempty_of_degreeLowerCorridors_reachable
     sub_zero] at herr
   linarith
 
+omit [Fintype V] in
 /-- If every good reachable state before the horizon has a legal next
 choice, then a positive-mass good prefix starting from the empty matching
 has selected exactly `k` edges at time `k`. -/
@@ -37000,6 +37030,7 @@ structure ReachableExternalTestSourceBudgets
       (externalTestLowerStep w H C D₂ D₃ D₄ Gamma epsilon d N W
         (k : ℝ) j s S S') ^ 2) ≤ variance k
 
+omit [Fintype V] in
 theorem externalTestStoppedMomentBounds_of_reachableSourceBudgets
     (w : TestWeight V) (H : Hypergraph V) (C : ConflictSystem V)
     (hCempty : ∅ ∉ C) (Good : ℕ → Hypergraph V → Prop) (T : ℕ)
@@ -37104,6 +37135,7 @@ structure ReachableInternalConflictLinkSourceBudgets
         D₂ D₃ D₄ Gamma epsilon d N scale (k : ℝ) j s S S') ^ 2) ≤
       variance k
 
+omit [Fintype V] in
 theorem activeInternalConflictLinkStoppedMomentBounds_of_reachableSourceBudgets
     (H : Hypergraph V) (C : ConflictSystem V) (hC : IsConflictSystem H C)
     (hCempty : ∅ ∉ C) (f : Finset V)
@@ -37172,6 +37204,7 @@ theorem activeInternalConflictLinkStoppedMomentBounds_of_reachableSourceBudgets
         H C f D₂ D₃ D₄ Gamma epsilon d N scale (k : ℝ) j s S hf).2]
       exact hvariance k
 
+omit [Fintype V] in
 theorem externalTestStoppedIncrements_abs_le_of_reachableSourceBudgets
     (w : TestWeight V) (H : Hypergraph V) (C : ConflictSystem V)
     (Good : ℕ → Hypergraph V → Prop) (T : ℕ)
@@ -37197,6 +37230,7 @@ theorem externalTestStoppedIncrements_abs_le_of_reachableSourceBudgets
   · intro k hk S hgood o
     exact (B.lowerJump k hk S hgood o).trans (hR k hk)
 
+omit [Fintype V] in
 theorem externalTestFreedman_of_reachableSourceBudgets
     (w : TestWeight V) (H : Hypergraph V) (C : ConflictSystem V)
     (hCempty : ∅ ∉ C) (Good : ℕ → Hypergraph V → Prop) (T : ℕ)
@@ -37252,8 +37286,9 @@ theorem externalTestFreedman_of_reachableSourceBudgets
           D₂ D₃ D₄ Gamma epsilon d N Wscale (i : ℝ) j s S S') k)
       hm.2 hR0 ht hW0 hden hinc.2 hW
 
+omit [Fintype V] in
 theorem externalTestFirstFailureMass_le_of_reachableSourceBudgets
-    {ι : Type*} [Fintype ι]
+    {ι : Type*}
     (w : TestWeight V) (H : Hypergraph V) (C : ConflictSystem V)
     (hCempty : ∅ ∉ C) (T : ℕ)
     (Pgood : ι → ℕ → Hypergraph V → Prop)
@@ -37303,6 +37338,7 @@ theorem externalTestFirstFailureMass_le_of_reachableSourceBudgets
         Pgood iLower D₂ D₃ D₄ Gamma epsilon d N Wscale t j s
         hLowerComponent hLowerInitial)).trans htail.2
 
+omit [Fintype V] in
 theorem activeInternalConflictLinkStoppedIncrements_abs_le_of_reachableSourceBudgets
     (H : Hypergraph V) (C : ConflictSystem V) (f : Finset V)
     (Good : ℕ → Hypergraph V → Prop) (T : ℕ)
@@ -37332,6 +37368,7 @@ theorem activeInternalConflictLinkStoppedIncrements_abs_le_of_reachableSourceBud
     · exact (B.lowerJump k hk S hgood hf o).trans (hR k hk)
     · simp [activeInternalConflictLinkLowerStep, hf, hR0]
 
+omit [Fintype V] in
 theorem activeInternalConflictLinkFreedman_of_reachableSourceBudgets
     (H : Hypergraph V) (C : ConflictSystem V) (hC : IsConflictSystem H C)
     (hCempty : ∅ ∉ C) (f : Finset V)
@@ -37389,8 +37426,9 @@ theorem activeInternalConflictLinkFreedman_of_reachableSourceBudgets
           D₂ D₃ D₄ Gamma epsilon d N scale (i : ℝ) j s S S') k)
       hm.2 hR0 ht hW0 hden hinc.2 hW
 
+omit [Fintype V] in
 theorem internalConflictLinkFirstFailureMass_le_of_reachableSourceBudgets
-    {ι : Type*} [Fintype ι]
+    {ι : Type*}
     (H : Hypergraph V) (C : ConflictSystem V) (hC : IsConflictSystem H C)
     (hCempty : ∅ ∉ C) (T : ℕ)
     (Pgood : ι → ℕ → Hypergraph V → Prop)
@@ -38039,6 +38077,7 @@ def gainCollisionResidualLayer
     (j r : ℕ) : ConflictSystem V :=
   (gainCollisionResidualRawLayer H C j r).filter (fun U ↦ U ⊆ H)
 
+omit [Fintype V] in
 @[simp] theorem mem_gainCollisionResidualLayer
     {H : Hypergraph V} {C : ConflictSystem V}
     {j r : ℕ} {U : Hypergraph V} :
@@ -38054,6 +38093,7 @@ def gainCollisionResidualLayer
   simp [gainCollisionResidualLayer, gainCollisionResidualRawLayer,
     and_assoc, and_left_comm, and_comm]
 
+omit [Fintype V] in
 theorem gainCollisionResidualLayer_uniform
     (H : Hypergraph V) (C : ConflictSystem V)
     (j r : ℕ) :
@@ -38090,6 +38130,7 @@ def gainCollisionResidualRepresentationWeight
           gainCollisionResidualUnion S c e f = U
       then w S else 0
 
+omit [Fintype V] in
 theorem gainCollisionResidualRepresentationWeight_nonneg
     {w : TestWeight V} (hw : ∀ S, 0 ≤ w S)
     (H : Hypergraph V) (C : ConflictSystem V)
@@ -38128,6 +38169,7 @@ def weightedGainCollisionResidualPartialMass
     (gainCollisionResidualLayer H C j r)
     (gainCollisionResidualRepresentationWeight w H C j r) A M t
 
+omit [Fintype V] in
 /-- Exact Fubini expansion of the supported residual partial mass. -/
 theorem weightedGainCollisionResidualPartialMass_eq_representationSum
     (w : TestWeight V) (H : Hypergraph V) (C : ConflictSystem V)
@@ -38167,7 +38209,7 @@ theorem weightedGainCollisionResidualPartialMass_eq_representationSum
       rw [Finset.sum_eq_single U₀]
       · simp [U₀, hsupport, hrep]
       · intro U hU hUne
-        simp [U₀, hsupport, hrep, hUne.symm]
+        simp [U₀, hrep, hUne.symm]
       · exact fun hnot ↦ (hnot hpartial).elim
     · rw [if_neg (fun h ↦ hpartial h.2.2.2)]
       apply Finset.sum_eq_zero
@@ -38188,6 +38230,7 @@ theorem weightedGainCollisionResidualPartialMass_eq_representationSum
     · intro h
       exact hrep ⟨h.1, h.2.1, h.2.2.1⟩
 
+omit [Fintype V] in
 @[simp] theorem weightedGainCollisionResidualRootMass_empty
     (w : TestWeight V) (H : Hypergraph V) (C : ConflictSystem V)
     (j r : ℕ) :
@@ -38196,6 +38239,7 @@ theorem weightedGainCollisionResidualPartialMass_eq_representationSum
   simp [weightedGainCollisionResidualRootMass,
     weightedGainCollisionResidualTotalMass, weightedCodegree]
 
+omit [Fintype V] in
 /-- Generic adapter from the rooted residual estimate to weighted spread.
 The analytic theorem below will instantiate `B` with the original test
 total and `sigma = epsRaw/10`. -/
@@ -38238,6 +38282,7 @@ theorem gainCollisionResidualLayer_isWeightedRealSpread_of_rootMass
     _ = (B * Real.rpow d ((r : ℝ) - (j : ℝ) - sigma)) *
         Real.rpow d (-(root.card : ℝ)) := by ring
 
+omit [Fintype V] in
 theorem gainCollisionResidualUnion_subset_erase_union
     (S c M : Hypergraph V) (e f : Finset V)
     (hcsub : c ⊆ insert f (insert e M)) :
@@ -38262,6 +38307,7 @@ theorem gainCollisionResidualUnion_subset_erase_union
           ((Finset.mem_erase.mp (Finset.mem_erase.mp hg).2).1 hge)
       · exact Finset.mem_union.mpr (Or.inr hgM)
 
+omit [Fintype V] in
 theorem erase_two_subset_gainCollisionResidualUnion
     (S c : Hypergraph V) (e f : Finset V) :
     (S.erase e).erase f ⊆ gainCollisionResidualUnion S c e f := by
@@ -38273,6 +38319,7 @@ theorem erase_two_subset_gainCollisionResidualUnion
   exact Finset.mem_union.mpr
     (Or.inl (Finset.mem_erase.mp (Finset.mem_erase.mp hg).2).2)
 
+omit [Fintype V] in
 /-- A concrete conflict certificate behind one ordered available source
 pair, with its dynamic residual already shown to lie in the chosen set. -/
 theorem gainCollisionResidualCertificate_exists
@@ -38280,7 +38327,7 @@ theorem gainCollisionResidualCertificate_exists
     {e f : Finset V}
     (heA : e ∈ availableEdges H C M)
     (hfA : f ∈ availableEdges H C M)
-    (hef : e ≠ f)
+    (_ : e ≠ f)
     (hbad : ¬ConflictFree C (insert f (insert e M))) :
     ∃ c ∈ C,
       e ∈ c ∧ f ∈ c ∧
@@ -38311,6 +38358,7 @@ theorem gainCollisionResidualCertificate_exists
   exact ⟨c, hcC, hec, hfc, hcsub,
     gainCollisionResidualUnion_subset_erase_union S c M e f hcsub⟩
 
+omit [Fintype V] in
 /-- Removing the two currently available certificate choices sends the
 source `(s+1)` coordinate to the residual `(s-1)` coordinate. -/
 theorem gainCollisionResidualUnion_mem_partial
@@ -38432,6 +38480,7 @@ theorem gainCollisionResidualUnion_mem_partial
       (availableEdges_subset H C M) hMH)
   · exact Finset.mem_erase.mpr ⟨Ne.symm hef, hfS⟩
 
+omit [Fintype V] in
 /-- A positive dynamic gain collision supplies a representation in one of
 the four static residual ranks `r = 2,…,5`. -/
 theorem gainCollisionResidualRepresentation_exists_of_matchingSupport
@@ -38529,6 +38578,7 @@ theorem gainCollisionResidualRepresentation_exists_of_matchingSupport
   · exact Finset.mem_erase.mpr ⟨hfe, hfS⟩
   · simpa only [r] using hpartial.2
 
+omit [Fintype V] in
 theorem weightedTestGainCollisionMass_zero_of_source_zero
     (w : TestWeight V) (H : Hypergraph V) (C : ConflictSystem V)
     (M : Hypergraph V) (j : ℕ) :
@@ -38562,6 +38612,7 @@ theorem weightedTestGainCollisionMass_zero_of_source_zero
     simp
   · rw [if_neg hcoord]
 
+omit [Fintype V] in
 theorem weightedPartialTestGainCollision_zero_of_source_zero
     (w : TestWeight V) (H : Hypergraph V) (C : ConflictSystem V)
     (M : Hypergraph V) (j : ℕ) :
@@ -38575,6 +38626,8 @@ It is retained only as a source audit; the default-heartbeat proof below
 factors each finite insertion into a small helper. -/
 /- Deterministic aggregate charge of the gain-collision defect into the
 four static supported residual ranks. -/
+omit [Fintype V] in
+omit [Fintype V] in
 theorem weightedTestGainCollisionMass_le_residualPartialMass_of_matchingSupport
     {H : Hypergraph V} {C : ConflictSystem V} {M : Hypergraph V}
     {j s : ℕ} {w : TestWeight V}
@@ -38789,6 +38842,7 @@ def gainCollisionResidualPairCharge
   ∑ f ∈ S.erase e,
     gainCollisionResidualConflictCharge w H C j A M t S e f
 
+omit [Fintype V] in
 theorem gainCollisionResidualRepresentationCharge_nonneg
     {w : TestWeight V} (hw0 : ∀ S, 0 ≤ w S)
     (H : Hypergraph V) (C : ConflictSystem V)
@@ -38801,6 +38855,7 @@ theorem gainCollisionResidualRepresentationCharge_nonneg
   · exact hw0 S
   · norm_num
 
+omit [Fintype V] in
 theorem gainCollisionResidualRankCharge_nonneg
     {w : TestWeight V} (hw0 : ∀ S, 0 ≤ w S)
     (H : Hypergraph V) (C : ConflictSystem V)
@@ -38812,6 +38867,7 @@ theorem gainCollisionResidualRankCharge_nonneg
     gainCollisionResidualRepresentationCharge_nonneg
       hw0 H C j r A M t S e f c
 
+omit [Fintype V] in
 theorem gainCollisionResidualConflictCharge_nonneg
     {w : TestWeight V} (hw0 : ∀ S, 0 ≤ w S)
     (H : Hypergraph V) (C : ConflictSystem V)
@@ -38822,6 +38878,7 @@ theorem gainCollisionResidualConflictCharge_nonneg
   exact Finset.sum_nonneg fun c _ ↦
     gainCollisionResidualRankCharge_nonneg hw0 H C j A M t S e f c
 
+omit [Fintype V] in
 theorem gainCollisionResidualPairCharge_nonneg
     {w : TestWeight V} (hw0 : ∀ S, 0 ≤ w S)
     (H : Hypergraph V) (C : ConflictSystem V)
@@ -38832,6 +38889,7 @@ theorem gainCollisionResidualPairCharge_nonneg
   exact Finset.sum_nonneg fun f _ ↦
     gainCollisionResidualConflictCharge_nonneg hw0 H C j A M t S e f
 
+omit [Fintype V] in
 theorem testWeight_le_gainCollisionResidualRankCharge
     {w : TestWeight V} (hw0 : ∀ S, 0 ≤ w S)
     (H : Hypergraph V) (C : ConflictSystem V)
@@ -38854,6 +38912,7 @@ theorem testWeight_le_gainCollisionResidualRankCharge
         (fun r' _ ↦ gainCollisionResidualRepresentationCharge_nonneg
           hw0 H C j r' A M t S e f c) hr
 
+omit [Fintype V] in
 theorem testWeight_le_gainCollisionResidualConflictCharge
     {w : TestWeight V} (hw0 : ∀ S, 0 ≤ w S)
     (H : Hypergraph V) (C : ConflictSystem V)
@@ -38874,6 +38933,7 @@ theorem testWeight_le_gainCollisionResidualConflictCharge
         (fun c' _ ↦ gainCollisionResidualRankCharge_nonneg
           hw0 H C j A M t S e f c') hcC
 
+omit [Fintype V] in
 theorem testWeight_le_gainCollisionResidualPairCharge
     {w : TestWeight V} (hw0 : ∀ S, 0 ≤ w S)
     (H : Hypergraph V) (C : ConflictSystem V)
@@ -38894,6 +38954,7 @@ theorem testWeight_le_gainCollisionResidualPairCharge
         (fun f' _ ↦ gainCollisionResidualConflictCharge_nonneg
           hw0 H C j A M t S e f') hfS
 
+omit [Fintype V] in
 theorem collisionChoice_weight_le_gainCollisionResidualPairCharge
     {H : Hypergraph V} {C : ConflictSystem V} {M S : Hypergraph V}
     {j s : ℕ} {w : TestWeight V} {e : Finset V}
@@ -38916,6 +38977,7 @@ theorem collisionChoice_weight_le_gainCollisionResidualPairCharge
     hw0 H C j (availableEdges H C M) M (s - 1)
       S e f c r hfS hcC hr ⟨hec, hfc, hrank, hpartial⟩
 
+omit [Fintype V] in
 theorem weightedTestGainCollisionTerm_le_residualCharges
     {H : Hypergraph V} {C : ConflictSystem V} {M S : Hypergraph V}
     {j s : ℕ} {w : TestWeight V}
@@ -38962,6 +39024,7 @@ theorem weightedTestGainCollisionTerm_le_residualCharges
       gainCollisionResidualPairCharge_nonneg
         hw0 H C j (availableEdges H C M) M (s - 1) S e
 
+omit [Fintype V] in
 theorem sum_gainCollisionResidualPairCharges_eq_partialMass
     (w : TestWeight V) (H : Hypergraph V) (C : ConflictSystem V)
     (M : Hypergraph V) (j s : ℕ) :
@@ -39011,6 +39074,7 @@ theorem sum_gainCollisionResidualPairCharges_eq_partialMass
               then w S else 0 := by
       rw [Finset.sum_comm]
 
+omit [Fintype V] in
 /-- Deterministic aggregate charge of the gain-collision defect into the
 four static supported residual ranks, factored for the default heartbeat
 limit. -/
@@ -39041,6 +39105,7 @@ theorem weightedTestGainCollisionMass_le_residualPartialMass_of_matchingSupport
           (availableEdges H C M) M (s - 1) :=
       sum_gainCollisionResidualPairCharges_eq_partialMass w H C M j s
 
+omit [Fintype V] in
 /-- The exact sharp gain-collision observable used by the mean endpoint is
 definitionally the collision mass charged above. -/
 theorem weightedPartialTestGainCollision_le_residualPartialMass_of_matchingSupport
@@ -39059,6 +39124,7 @@ theorem weightedPartialTestGainCollision_le_residualPartialMass_of_matchingSuppo
   exact weightedTestGainCollisionMass_le_residualPartialMass_of_matchingSupport
     hw0 hmatchingPos hCcard hj3 hMH
 
+omit [Fintype V] in
 theorem weightedPartialTestGainCollision_le_residualPartialMass_of_trackable
     {H : Hypergraph V} {C : ConflictSystem V} {M : Hypergraph V}
     {j ell s : ℕ} {d etaW etaC Gamma : ℝ} {w : TestWeight V}
@@ -39080,7 +39146,10 @@ theorem weightedPartialTestGainCollision_le_residualPartialMass_of_trackable
   · exact hj3
   · exact hMH
 
-theorem CFMRegularization.RegularizationCertificate.weightedPartialInternalTestGainCollision_le_residualPartialMass
+namespace CFMRegularization.RegularizationCertificate
+
+omit [Fintype V] in
+theorem weightedPartialInternalTestGainCollision_le_residualPartialMass
     {io : Type*} [Fintype io]
     {H : Hypergraph V} {C : ConflictSystem V}
     {d epsRaw Gamma : ℝ} {ellCert : ℕ}
@@ -39108,6 +39177,8 @@ theorem CFMRegularization.RegularizationCertificate.weightedPartialInternalTestG
   · exact hq3
   · exact hMH
 
+end CFMRegularization.RegularizationCertificate
+
 def gainCollisionResidualSource
     (S : Hypergraph V) (e f : Finset V) : Hypergraph V :=
   (S.erase e).erase f
@@ -39116,6 +39187,7 @@ def gainCollisionResidualConflict
     (c : Hypergraph V) (e f : Finset V) : Hypergraph V :=
   (c.erase e).erase f
 
+omit [Fintype V] in
 theorem gainCollisionResidualUnion_eq_source_union_conflict
     (S c : Hypergraph V) (e f : Finset V) :
     gainCollisionResidualUnion S c e f =
@@ -39126,6 +39198,7 @@ theorem gainCollisionResidualUnion_eq_source_union_conflict
     gainCollisionResidualConflict]
   tauto
 
+omit [Fintype V] in
 theorem gainCollisionResidualConflict_sdiff_source
     {S c : Hypergraph V} {e f : Finset V}
     (heS : e ∈ S) (hfS : f ∈ S) :
@@ -39156,6 +39229,7 @@ theorem gainCollisionResidualConflict_sdiff_source
     exact hgS ((Finset.mem_erase.mp
       (Finset.mem_erase.mp hgSource).2).2)
 
+omit [Fintype V] in
 theorem card_gainCollisionResidualSource
     {S : Hypergraph V} {e f : Finset V}
     (heS : e ∈ S) (hfS : f ∈ S) (hef : e ≠ f) :
@@ -39166,6 +39240,7 @@ theorem card_gainCollisionResidualSource
   rw [Finset.card_erase_of_mem hfErase, Finset.card_erase_of_mem heS]
   omega
 
+omit [Fintype V] in
 theorem card_gainCollisionResidualConflict
     {c : Hypergraph V} {e f : Finset V}
     (hec : e ∈ c) (hfc : f ∈ c) (hef : e ≠ f) :
@@ -39176,6 +39251,7 @@ theorem card_gainCollisionResidualConflict
   rw [Finset.card_erase_of_mem hfErase, Finset.card_erase_of_mem hec]
   omega
 
+omit [Fintype V] in
 theorem card_residualConflict_sdiff_source_eq_union_sub
     {S c : Hypergraph V} {e f : Finset V}
     (heS : e ∈ S) (hfS : f ∈ S) :
@@ -39188,12 +39264,13 @@ theorem card_residualConflict_sdiff_source_eq_union_sub
   rw [Finset.inter_comm S c] at hcard
   omega
 
+omit [Fintype V] in
 theorem residual_root_source_card_le_one
-    {S c root : Hypergraph V} {e f : Finset V} {j r : ℕ}
+    {S c root : Hypergraph V} {e f : Finset V} {j _ : ℕ}
     (hS : S ∈ (S ∪ c).powersetCard j)
     (heS : e ∈ S) (hfS : f ∈ S) (hef : e ≠ f)
     (hj3 : j ≤ 3)
-    (hroot : root ⊆ gainCollisionResidualUnion S c e f) :
+    (_ : root ⊆ gainCollisionResidualUnion S c e f) :
     (root ∩ gainCollisionResidualSource S e f).card ≤ 1 := by
   have hScard : S.card = j :=
     (Finset.mem_powersetCard.mp hS).2
@@ -39203,6 +39280,7 @@ theorem residual_root_source_card_le_one
   rw [card_gainCollisionResidualSource heS hfS hef, hScard] at hle
   omega
 
+omit [Fintype V] in
 /-- Exact representation expansion of the supported residual root mass. -/
 theorem weightedGainCollisionResidualRootMass_eq_representationSum
     (w : TestWeight V) (H : Hypergraph V) (C : ConflictSystem V)
@@ -39299,6 +39377,7 @@ def weightedGainCollisionResidualFullRootMass
             gainCollisionResidualSource S e f ⊆ root
     then w S else 0
 
+omit [Fintype V] in
 theorem weightedGainCollisionResidualRootMass_eq_nonFull_add_full
     (w : TestWeight V) (H : Hypergraph V) (C : ConflictSystem V)
     (j r : ℕ) (root : Hypergraph V) :
@@ -39339,14 +39418,15 @@ theorem weightedGainCollisionResidualRootMass_eq_nonFull_add_full
       hb ⟨h.1, h.2.1, h.2.2.1, h.2.2.2.1, h.2.2.2.2.1⟩
     rw [if_neg hb, if_neg hn, if_neg hy, zero_add]
 
+omit [Fintype V] in
 theorem positive_residual_representation_external_nonempty
     {H : Hypergraph V} {C : ConflictSystem V}
-    {j ell r : ℕ} {d epsRaw : ℝ} {w : TestWeight V}
+    {j ell : ℕ} {d epsRaw : ℝ} {w : TestWeight V}
     (hw : IsTrackable H C j ell d (epsRaw / 5) w)
     {S c : Hypergraph V} {e f : Finset V}
     (hS : S ∈ H.powersetCard j) (hwS : 0 < w S)
     (hcC : c ∈ C) (heS : e ∈ S) (hfS : f ∈ S)
-    (hec : e ∈ c) (hfc : f ∈ c) (hef : e ≠ f) :
+    (_ : e ∈ c) (_ : f ∈ c) (_ : e ≠ f) :
     (gainCollisionResidualConflict c e f \
       gainCollisionResidualSource S e f).Nonempty := by
   rw [gainCollisionResidualConflict_sdiff_source heS hfS]
@@ -39358,6 +39438,7 @@ theorem positive_residual_representation_external_nonempty
   have hz := hw.eq_zero_of_contains_conflict hS ⟨c, hcC, hcS⟩
   linarith
 
+omit [Fintype V] in
 theorem positive_residual_representation_rank_sub_pos
     {H : Hypergraph V} {C : ConflictSystem V}
     {j ell r : ℕ} {d epsRaw : ℝ} {w : TestWeight V}
@@ -39368,8 +39449,7 @@ theorem positive_residual_representation_rank_sub_pos
     (hec : e ∈ c) (hfc : f ∈ c) (hef : e ≠ f)
     (hrank : (S ∪ c).card = r) :
     1 ≤ r - j := by
-  have hne := positive_residual_representation_external_nonempty
-    (r := r) hw hS hwS hcC heS hfS hec hfc hef
+  have hne := positive_residual_representation_external_nonempty hw hS hwS hcC heS hfS hec hfc hef
   have hcardpos : 0 <
       (gainCollisionResidualConflict c e f \
         gainCollisionResidualSource S e f).card :=
@@ -39380,11 +39460,12 @@ theorem positive_residual_representation_rank_sub_pos
     hrank, hScard] at hcardpos
   omega
 
+omit [Fintype V] in
 /-- In the present `j ≤ 3`, `|c| ≤ 4` application the residual has at
 most two genuinely external edges. -/
 theorem positive_residual_representation_rank_sub_le_two
     {H : Hypergraph V} {C : ConflictSystem V}
-    {j ell r : ℕ} {d epsRaw Gamma : ℝ} {w : TestWeight V}
+    {j _ r : ℕ} {d epsRaw Gamma : ℝ} {_ : TestWeight V}
     (hB : CFMRegularization.IsRegularizedBounded
       H C d Gamma (epsRaw / 4))
     {S c : Hypergraph V} {e f : Finset V}
@@ -39412,6 +39493,7 @@ theorem positive_residual_representation_rank_sub_le_two
   rw [hrank, hScard] at hunion
   omega
 
+omit [Fintype V] in
 /-- There are only five positive cardinality patterns.  This finite audit is
 useful in the final proof because `T.card = j-2` and hence every nonempty
 source part of a residual root is a singleton. -/
@@ -39449,8 +39531,7 @@ theorem positive_residual_representation_rank_cases
   have hinterC : (S ∩ c).card ≤ c.card :=
     Finset.card_le_card Finset.inter_subset_right
   have hproper : (S ∩ c).card < c.card := by
-    have hne := positive_residual_representation_external_nonempty
-      (r := r) hw hS hwS hcC heS hfS hec hfc hef
+    have hne := positive_residual_representation_external_nonempty hw hS hwS hcC heS hfS hec hfc hef
     rw [gainCollisionResidualConflict_sdiff_source heS hfS] at hne
     have hdiffPos : 0 < (c \ S).card := Finset.card_pos.mpr hne
     have hdiff := Finset.card_sdiff_add_card_inter c S
@@ -39500,11 +39581,12 @@ def HasGainCollisionResidualFullCardCharge
         testExtension w H j (c \ root)) ≤
       K * W * Real.rpow d (-eta)
 
+omit [Fintype V] in
 theorem trackable_hasGainCollisionResidualProperSourceBounds
     {H : Hypergraph V} {C : ConflictSystem V}
     {j ell : ℕ} {d epsRaw : ℝ} {w : TestWeight V}
     (hw : IsTrackable H C j ell d (epsRaw / 5) w)
-    (hd : 0 < d) :
+    (_ : 0 < d) :
     HasGainCollisionResidualProperSourceBounds
       w H C j d (epsRaw / 5) (testTotal w H j) 1 ell := by
   refine ⟨hw.isTestFunction.nonneg, le_rfl, ?_, ?_, ?_⟩
@@ -39516,6 +39598,7 @@ theorem trackable_hasGainCollisionResidualProperSourceBounds
   · intro S
     exact hw.isTestFunction.le S
 
+omit [Fintype V] in
 /-- Geometry of the only C3 boundary.  If the source part of the requested
 root is empty and all external conflict edges are already rooted, then the
 root is exactly `c \ S`; consequently `c \ root` is a nonempty source root
@@ -39523,7 +39606,7 @@ containing the ordered pair. -/
 theorem full_emptySourceRoot_geometry
     {H : Hypergraph V} {S c root : Hypergraph V} {e f : Finset V}
     (hsupport : gainCollisionResidualUnion S c e f ⊆ H)
-    (heS : e ∈ S) (hfS : f ∈ S) (hef : e ≠ f)
+    (heS : e ∈ S) (hfS : f ∈ S) (_ : e ≠ f)
     (hec : e ∈ c) (hfc : f ∈ c)
     (hroot : root ⊆ gainCollisionResidualUnion S c e f)
     (hfull : gainCollisionResidualConflict c e f \
@@ -39564,6 +39647,7 @@ theorem full_emptySourceRoot_geometry
   · exact Finset.mem_sdiff.mpr ⟨hfc, fun hfroot ↦
       (Finset.mem_sdiff.mp (hrootCS ▸ hfroot)).2 hfS⟩
 
+omit [Fintype V] in
 theorem full_emptySourceRoot_sourceRoot_card_bounds
     {H : Hypergraph V} {S c root : Hypergraph V} {e f : Finset V}
     {j : ℕ}
@@ -39593,6 +39677,7 @@ theorem full_emptySourceRoot_sourceRoot_card_bounds
     (Finset.mem_powersetCard.mp hS).1⟩
   simpa [hef] using htwo
 
+omit [Fintype V] in
 /-- Supported one-edge roots can use (C2), while roots of cardinality at
 least two use (C3).  This is the conflict-count half of the full/empty
 boundary reindexing. -/
@@ -39677,6 +39762,7 @@ def weightedGainCollisionResidualFullNonemptySourceRootMass
         ¬Disjoint root (gainCollisionResidualSource S e f)
     then w S else 0
 
+omit [Fintype V] in
 theorem weightedGainCollisionResidualFullRootMass_eq_empty_add_nonempty
     (w : TestWeight V) (H : Hypergraph V) (C : ConflictSystem V)
     (j r : ℕ) (root : Hypergraph V) :
@@ -39725,12 +39811,13 @@ theorem weightedGainCollisionResidualFullRootMass_eq_empty_add_nonempty
         h.2.2.2.2.1, h.2.2.2.2.2.1⟩
     rw [if_neg hb, if_neg he, if_neg hn, zero_add]
 
+omit [Fintype V] in
 /-- For fixed `S,c`, all full/empty-root ordered pairs charge to the single
 source extension rooted at `c \ root`.  The constant twelve is deliberately
 coarse (`j≤3` gives at most six ordered source pairs). -/
 theorem fullEmptySourceRoot_pairSum_le_twelve_extension
     {w : TestWeight V} (hw0 : ∀ S, 0 ≤ w S)
-    {H : Hypergraph V} {C : ConflictSystem V}
+    {H : Hypergraph V}
     {j r : ℕ} (hj3 : j ≤ 3)
     (root S c : Hypergraph V) (hS : S ∈ H.powersetCard j) :
     (∑ e ∈ S,
@@ -39808,6 +39895,7 @@ theorem fullEmptySourceRoot_pairSum_le_twelve_extension
     exact hcover ⟨by rw [hgeom.1]; exact Finset.sdiff_subset,
       hgeom.2.2.1, by simpa [Ne.symm hfe] using htwo⟩
 
+omit [Fintype V] in
 /-- First Fubini reduction of the hard boundary.  After this theorem the
 source pair no longer appears: every conflict is weighted by one ordinary
 test extension at `c \ root`. -/
@@ -39850,8 +39938,8 @@ theorem weightedGainCollisionResidualFullEmptySourceRootMass_le_extensionSum
             (∑ e ∈ S, ∑ f ∈ S.erase e, ∑ c ∈ C, _) =
                 ∑ e ∈ S, ∑ c ∈ C, ∑ f ∈ S.erase e, _ := by
               apply Finset.sum_congr rfl
-              intro e he
-              rw [Finset.sum_comm]
+              · intro e he
+                rw [Finset.sum_comm]
             _ = ∑ c ∈ C, ∑ e ∈ S, ∑ f ∈ S.erase e, _ := by
               rw [Finset.sum_comm]
     _ ≤ ∑ S ∈ H.powersetCard j,
@@ -39862,8 +39950,7 @@ theorem weightedGainCollisionResidualFullEmptySourceRootMass_le_extensionSum
       intro S hS
       apply Finset.sum_le_sum
       intro c hc
-      exact fullEmptySourceRoot_pairSum_le_twelve_extension
-        (C := C) hw0 hj3 root S c hS
+      exact fullEmptySourceRoot_pairSum_le_twelve_extension hw0 hj3 root S c hS
     _ = ∑ c ∈ C,
         if root ⊆ c ∧ 2 ≤ (c \ root).card then
           12 * testExtension w H j (c \ root) else 0 := by
@@ -39872,7 +39959,7 @@ theorem weightedGainCollisionResidualFullEmptySourceRootMass_le_extensionSum
       intro c hc
       by_cases hrootc : root ⊆ c ∧ 2 ≤ (c \ root).card
       · rw [if_pos hrootc]
-        simp only [hrootc.1, hrootc.2, true_and, and_true, if_pos]
+        simp only [hrootc.1, hrootc.2, true_and, and_true]
         unfold testExtension
         rw [Finset.mul_sum, ← Finset.sum_filter]
       · rw [if_neg hrootc]
@@ -39890,6 +39977,7 @@ theorem weightedGainCollisionResidualFullEmptySourceRootMass_le_extensionSum
         testExtension w H j (c \ root) := by
       rw [Finset.mul_sum]
 
+omit [Fintype V] in
 theorem sum_conflictLayers_eq_sum_of_card_between_two_four
     {C : ConflictSystem V}
     (hcard : ∀ c ∈ C, 2 ≤ c.card ∧ c.card ≤ 4)
@@ -39926,6 +40014,7 @@ theorem sum_conflictLayers_eq_sum_of_card_between_two_four
     _ = ∑ c ∈ C.filter P, F c := by
       rw [← Finset.sum_filter]
 
+omit [Fintype V] in
 theorem trackable_extension_supported_root_lt_le
     {H : Hypergraph V} {C : ConflictSystem V}
     {j ell stage : ℕ} {d epsRaw : ℝ} {w : TestWeight V}
@@ -39947,6 +40036,7 @@ theorem trackable_extension_supported_root_lt_le
   have hellReal : (1 : ℝ) ≤ (ell : ℝ) := by exact_mod_cast hell
   exact hbase.trans (by nlinarith)
 
+omit [Fintype V] in
 theorem trackable_extension_supported_root_eq_le
     {H : Hypergraph V} {C : ConflictSystem V}
     {j ell stage : ℕ} {d epsRaw : ℝ} {w : TestWeight V}
@@ -39987,6 +40077,7 @@ theorem trackable_extension_supported_root_eq_le
       (by positivity : (0 : ℝ) ≤ ell)]
   exact hext.le.trans (by simpa only [heq] using hscalar)
 
+omit [Fintype V] in
 theorem trackable_extension_supported_root_gt_le
     {H : Hypergraph V} {C : ConflictSystem V}
     {j ell stage : ℕ} {d epsRaw : ℝ} {w : TestWeight V}
@@ -40011,6 +40102,7 @@ theorem trackable_extension_supported_root_gt_le
     (div_nonneg (testTotal_nonneg hw.isTestFunction.nonneg H j)
       (Real.rpow_nonneg (by linarith : 0 ≤ d) _))
 
+omit [Fintype V] in
 theorem trackable_extension_sdiff_supported_root_le
     {H : Hypergraph V} {C : ConflictSystem V}
     {j ell q : ℕ} {d epsRaw : ℝ} {w : TestWeight V}
@@ -40049,6 +40141,7 @@ theorem trackable_extension_sdiff_supported_root_le
         (testTotal_nonneg hw.isTestFunction.nonneg H j))
       (Real.rpow_nonneg (by linarith : 0 ≤ d) _)
 
+omit [Fintype V] in
 theorem sum_trackable_extensions_over_supported_conflict_root_le
     {H : Hypergraph V} {C : ConflictSystem V}
     {j ell q : ℕ} {d epsRaw Gamma : ℝ} {w : TestWeight V}
@@ -40140,6 +40233,7 @@ theorem sum_trackable_extensions_over_supported_conflict_root_le
               ((q : ℝ) - (root.card : ℝ) + epsRaw / 5)) by ring]
       rw [hratio]
 
+omit [Fintype V] in
 theorem weightedGainCollisionResidualFullEmptySourceRootMass_le_raw
     {H : Hypergraph V} {C : ConflictSystem V}
     {j ell r : ℕ} {d epsRaw Gamma : ℝ} {w : TestWeight V}
@@ -40174,7 +40268,7 @@ theorem weightedGainCollisionResidualFullEmptySourceRootMass_le_raw
     by_cases hF : F = ∅
     · rw [show (conflictLayer C q).filter
           (fun c ↦ root ⊆ c ∧ 2 ≤ (c \ root).card) = ∅ from hF]
-      simp only [Finset.sum_empty, zero_le]
+      simp only [Finset.sum_empty]
       exact mul_nonneg
         (mul_nonneg
           (mul_nonneg (by
@@ -40214,6 +40308,7 @@ theorem weightedGainCollisionResidualFullEmptySourceRootMass_le_raw
       norm_num [Finset.sum_Icc_succ_top]
       ring
 
+omit [Fintype V] in
 theorem weightedGainCollisionResidualFullEmptySourceRootMass_le
     {H : Hypergraph V} {C : ConflictSystem V}
     {j ell r : ℕ} {d epsRaw Gamma : ℝ} {w : TestWeight V}
@@ -40277,6 +40372,7 @@ def gainCollisionResidualFullConflictCandidates
     gainCollisionResidualConflict c e f \
       gainCollisionResidualSource S e f ⊆ root
 
+omit [Fintype V] in
 @[simp] theorem mem_gainCollisionResidualFullConflictCandidates
     {H : Hypergraph V} {C : ConflictSystem V}
     {S : Hypergraph V} {e f : Finset V} {r : ℕ}
@@ -40287,8 +40383,9 @@ def gainCollisionResidualFullConflictCandidates
       root ⊆ gainCollisionResidualUnion S c e f ∧
       gainCollisionResidualConflict c e f \
         gainCollisionResidualSource S e f ⊆ root := by
-  simp [gainCollisionResidualFullConflictCandidates, and_assoc]
+  simp [gainCollisionResidualFullConflictCandidates]
 
+omit [Fintype V] in
 theorem residualConflict_sdiff_source_eq_root_sdiff_source_of_full
     {S c root : Hypergraph V} {e f : Finset V}
     (hroot : root ⊆ gainCollisionResidualUnion S c e f)
@@ -40309,6 +40406,7 @@ theorem residualConflict_sdiff_source_eq_root_sdiff_source_of_full
     exact Finset.mem_sdiff.mpr
       ⟨(Finset.mem_union.mp hgU).resolve_left hgT, hgT⟩
 
+omit [Fintype V] in
 theorem gainCollisionResidualFullConflictCandidates_card_le_two
     {H : Hypergraph V} {C : ConflictSystem V}
     {S root : Hypergraph V} {e f : Finset V} {j r : ℕ}
@@ -40400,6 +40498,7 @@ theorem gainCollisionResidualFullConflictCandidates_card_le_two
       rw [hTcard]
       interval_cases j <;> norm_num at hj3 ⊢
 
+omit [Fintype V] in
 theorem weightedGainCollisionResidualFullNonemptySourceRootMass_eq_sum
     (w : TestWeight V) (H : Hypergraph V) (C : ConflictSystem V)
     (j r : ℕ) (root : Hypergraph V) :
@@ -40422,7 +40521,7 @@ theorem weightedGainCollisionResidualFullNonemptySourceRootMass_eq_sum
   · rw [if_pos hmeet]
     rw [← Finset.sum_filter]
     simp [gainCollisionResidualFullConflictCandidates, hmeet,
-      Finset.filter_filter, Finset.sum_const, nsmul_eq_mul, mul_comm]
+      Finset.sum_const, nsmul_eq_mul, mul_comm]
   · rw [if_neg hmeet]
     apply Finset.sum_eq_zero
     intro c hc
@@ -40430,6 +40529,7 @@ theorem weightedGainCollisionResidualFullNonemptySourceRootMass_eq_sum
     intro h
     exact hmeet h.2.2.2.2.2.2
 
+omit [Fintype V] in
 theorem sourcePair_meetingRoot_weight_le_rootExtensionSum
     {w : TestWeight V} (hw0 : ∀ S, 0 ≤ w S)
     {H : Hypergraph V} {j : ℕ} (hj3 : j ≤ 3)
@@ -40472,10 +40572,10 @@ theorem sourcePair_meetingRoot_weight_le_rootExtensionSum
               (s := root)
               (f := fun g' ↦
                 if g' ∈ gainCollisionResidualSource S e f then w S else 0)
-              (fun g' _ ↦ by split; exact hw0 S; norm_num) hgroot
+              (fun g' _ ↦ by split <;> simp [hw0 S]) hgroot
           simpa only [if_pos hgT] using hsingle
         · rw [if_neg hmeet]
-          exact Finset.sum_nonneg fun g _ ↦ by split; exact hw0 S; norm_num
+          exact Finset.sum_nonneg fun g _ ↦ by split <;> simp [hw0 S]
       _ ≤ ∑ e ∈ S,
           ∑ f ∈ S.erase e,
           ∑ g ∈ root, if g ∈ S then w S else 0 := by
@@ -40554,6 +40654,7 @@ theorem sourcePair_meetingRoot_weight_le_rootExtensionSum
     _ = 6 * ∑ g ∈ root, testExtension w H j {g} := by
       rw [Finset.mul_sum]
 
+omit [Fintype V] in
 theorem sum_singleton_testExtension_root_le
     {H : Hypergraph V} {C : ConflictSystem V}
     {j ell : ℕ} {d epsRaw : ℝ} {w : TestWeight V}
@@ -40576,6 +40677,7 @@ theorem sum_singleton_testExtension_root_le
     _ = (root.card : ℝ) *
         (testTotal w H j / Real.rpow d (1 + epsRaw / 5)) := by simp
 
+omit [Fintype V] in
 theorem weightedGainCollisionResidualFullNonemptySourceRootMass_le_raw
     {H : Hypergraph V} {C : ConflictSystem V}
     {j ell r : ℕ} {d epsRaw : ℝ} {w : TestWeight V}
@@ -40686,6 +40788,7 @@ def gainCollisionResidualNonFullConflictCandidates
     ¬gainCollisionResidualConflict c e f \
       gainCollisionResidualSource S e f ⊆ root
 
+omit [Fintype V] in
 @[simp] theorem mem_gainCollisionResidualNonFullConflictCandidates
     {H : Hypergraph V} {C : ConflictSystem V}
     {S : Hypergraph V} {e f : Finset V} {r : ℕ}
@@ -40696,7 +40799,7 @@ def gainCollisionResidualNonFullConflictCandidates
       root ⊆ gainCollisionResidualUnion S c e f ∧
       ¬gainCollisionResidualConflict c e f \
         gainCollisionResidualSource S e f ⊆ root := by
-  simp [gainCollisionResidualNonFullConflictCandidates, and_assoc]
+  simp [gainCollisionResidualNonFullConflictCandidates]
 
 def gainCollisionResidualNonFullConflictFiber
     (H : Hypergraph V) (C : ConflictSystem V)
@@ -40707,6 +40810,7 @@ def gainCollisionResidualNonFullConflictFiber
       gainCollisionResidualSource S e f ∩
         gainCollisionResidualConflict c e f = I
 
+omit [Fintype V] in
 @[simp] theorem mem_gainCollisionResidualNonFullConflictFiber
     {H : Hypergraph V} {C : ConflictSystem V}
     {S : Hypergraph V} {e f : Finset V} {r : ℕ}
@@ -40719,6 +40823,7 @@ def gainCollisionResidualNonFullConflictFiber
         gainCollisionResidualConflict c e f = I := by
   simp [gainCollisionResidualNonFullConflictFiber]
 
+omit [Fintype V] in
 theorem gainCollisionResidualNonFullCandidates_eq_biUnion_fibers
     (H : Hypergraph V) (C : ConflictSystem V)
     (S : Hypergraph V) (e f : Finset V) (r : ℕ)
@@ -40743,12 +40848,13 @@ def gainCollisionResidualConflictRoot
     (e f : Finset V) (I B : Hypergraph V) : Hypergraph V :=
   insert e (insert f (I ∪ B))
 
+omit [Fintype V] in
 theorem gainCollisionResidualNonFullConflictFiber_card_le
     {H : Hypergraph V} {C : ConflictSystem V}
     {j r : ℕ} {d epsRaw Gamma : ℝ}
     (hB : CFMRegularization.IsRegularizedBounded
       H C d Gamma (epsRaw / 4))
-    (hd : 1 ≤ d) (heps : 0 ≤ epsRaw)
+    (_ : 1 ≤ d) (_ : 0 ≤ epsRaw)
     {S root I : Hypergraph V} {e f : Finset V}
     (hS : S ∈ H.powersetCard j) (heS : e ∈ S)
     (hfS : f ∈ S.erase e)
@@ -40828,20 +40934,20 @@ theorem gainCollisionResidualNonFullConflictFiber_card_le
     · have heT : e ∈ T := by
         rw [← hIeq] at heI
         exact Finset.inter_subset_left heI
-      exact (by simpa [T, gainCollisionResidualSource] using heT)
+      exact (by simp [T, gainCollisionResidualSource] at heT)
     · have heRoot := (Finset.mem_sdiff.mp heB).1
       have heU := hc₀.2.2.2.2.2.1 heRoot
-      simpa [gainCollisionResidualUnion] using heU
+      simp [gainCollisionResidualUnion] at heU
   have hfIB : f ∉ I ∪ B := by
     intro hfIB
     rcases Finset.mem_union.mp hfIB with hfI | hfB
     · have hfT : f ∈ T := by
         rw [← hIeq] at hfI
         exact Finset.inter_subset_left hfI
-      exact (by simpa [T, gainCollisionResidualSource] using hfT)
+      exact (by simp [T, gainCollisionResidualSource] at hfT)
     · have hfRoot := (Finset.mem_sdiff.mp hfB).1
       have hfU := hc₀.2.2.2.2.2.1 hfRoot
-      simpa [gainCollisionResidualUnion] using hfU
+      simp [gainCollisionResidualUnion] at hfU
   have hDcard : D.card = I.card + B.card + 2 := by
     dsimp only [D, gainCollisionResidualConflictRoot]
     have heInsert : e ∉ insert f (I ∪ B) := by
@@ -40913,6 +41019,7 @@ theorem gainCollisionResidualNonFullConflictFiber_card_le
       push_cast
       ring
 
+omit [Fintype V] in
 theorem gainCollisionResidualNonFullConflictCandidates_card_le_two_mul
     {H : Hypergraph V} {C : ConflictSystem V}
     {j r : ℕ} {d epsRaw Gamma : ℝ}
@@ -40964,6 +41071,7 @@ theorem gainCollisionResidualNonFullConflictCandidates_card_le_two_mul
         interval_cases j <;> norm_num at hj3 ⊢
       · exact Real.rpow_nonneg (by linarith : 0 ≤ d) E
 
+omit [Fintype V] in
 theorem weightedGainCollisionResidualNonFullRootMass_eq_sum
     (w : TestWeight V) (H : Hypergraph V) (C : ConflictSystem V)
     (j r : ℕ) (root : Hypergraph V) :
@@ -40985,6 +41093,7 @@ theorem weightedGainCollisionResidualNonFullRootMass_eq_sum
   simp only [Finset.sum_const, nsmul_eq_mul]
   ring
 
+omit [Fintype V] in
 theorem sum_orderedSourcePair_weight_le_six_total
     {w : TestWeight V} (hw0 : ∀ S, 0 ≤ w S)
     (H : Hypergraph V) (j : ℕ) (hj3 : j ≤ 3) :
@@ -41041,6 +41150,7 @@ def weightedGainCollisionResidualNonFullNonemptySourceRootMass
       w S * (gainCollisionResidualNonFullConflictCandidates
         H C S e f r root).card else 0
 
+omit [Fintype V] in
 theorem weightedGainCollisionResidualNonFullRootMass_eq_empty_add_nonempty
     (w : TestWeight V) (H : Hypergraph V) (C : ConflictSystem V)
     (j r : ℕ) (root : Hypergraph V) :
@@ -41065,12 +41175,14 @@ theorem weightedGainCollisionResidualNonFullRootMass_eq_empty_add_nonempty
   · simp [hdisj]
   · simp [hdisj]
 
+omit [Fintype V] in
 theorem card_root_sdiff_residualSource_eq_of_disjoint
     (root S : Hypergraph V) (e f : Finset V)
     (hdisj : Disjoint root (gainCollisionResidualSource S e f)) :
     (root \ gainCollisionResidualSource S e f).card = root.card := by
   rw [Finset.sdiff_eq_self_of_disjoint hdisj]
 
+omit [Fintype V] in
 theorem card_root_sdiff_residualSource_eq_sub_one_of_meets
     {root S : Hypergraph V} {e f : Finset V} {j : ℕ}
     (hSCard : S.card = j) (heS : e ∈ S) (hfS : f ∈ S)
@@ -41097,6 +41209,7 @@ theorem card_root_sdiff_residualSource_eq_sub_one_of_meets
     simpa only [hInterCard] using hsplit
   exact Nat.eq_sub_of_add_eq hsplit'
 
+omit [Fintype V] in
 theorem weightedGainCollisionResidualNonFullEmptySourceRootMass_le_raw
     {H : Hypergraph V} {C : ConflictSystem V}
     {j r : ℕ} {d epsRaw Gamma : ℝ} {w : TestWeight V}
@@ -41154,6 +41267,7 @@ theorem weightedGainCollisionResidualNonFullEmptySourceRootMass_le_raw
         (mul_nonneg (by norm_num) hrpow0)
     _ = 12 * testTotal w H j * Real.rpow d E := by ring
 
+omit [Fintype V] in
 theorem weightedGainCollisionResidualNonFullNonemptySourceRootMass_le_raw
     {H : Hypergraph V} {C : ConflictSystem V}
     {j ell r : ℕ} {d epsRaw Gamma : ℝ} {w : TestWeight V}
@@ -41302,6 +41416,7 @@ theorem weightedGainCollisionResidualNonFullNonemptySourceRootMass_le_raw
           (testTotal_nonneg hw.isTestFunction.nonneg H j))
         (Real.rpow_nonneg (by linarith : 0 ≤ d) _)
 
+omit [Fintype V] in
 theorem weightedGainCollisionResidualNonFullRootMass_le_raw
     {H : Hypergraph V} {C : ConflictSystem V}
     {j ell r : ℕ} {d epsRaw Gamma : ℝ} {w : TestWeight V}
@@ -41340,6 +41455,7 @@ theorem weightedGainCollisionResidualNonFullRootMass_le_raw
           (mul_nonneg (by norm_num) htotal0))
     _ = 36 * testTotal w H j * Real.rpow d E := by ring
 
+omit [Fintype V] in
 theorem weightedGainCollisionResidualNonFullRootMass_le
     {H : Hypergraph V} {C : ConflictSystem V}
     {j ell r : ℕ} {d epsRaw Gamma : ℝ} {w : TestWeight V}
@@ -41397,11 +41513,12 @@ theorem weightedGainCollisionResidualNonFullRootMass_le
       apply Real.rpow_le_rpow_of_exponent_le hd
       linarith
 
+omit [Fintype V] in
 theorem weightedGainCollisionResidualFullNonemptySourceRootMass_le
     {H : Hypergraph V} {C : ConflictSystem V}
     {j ell r : ℕ} {d epsRaw : ℝ} {w : TestWeight V}
     (hw : IsTrackable H C j ell d (epsRaw / 5) w)
-    (hd : 1 ≤ d) (heps : 0 ≤ epsRaw) (hj3 : j ≤ 3)
+    (hd : 1 ≤ d) (_ : 0 ≤ epsRaw) (hj3 : j ≤ 3)
     (hcutoff : 24 ≤ Real.rpow d (epsRaw / 10))
     (hjr : j ≤ r)
     (root : Hypergraph V) (hrootH : root ⊆ H) (hroot2 : root.card ≤ 2)
@@ -41445,6 +41562,7 @@ theorem weightedGainCollisionResidualFullNonemptySourceRootMass_le
       push_cast
       ring_nf
 
+omit [Fintype V] in
 theorem weightedGainCollisionResidualRootMass_eq_zero_of_not_subset_host
     (w : TestWeight V) (H : Hypergraph V) (C : ConflictSystem V)
     (j r : ℕ) (root : Hypergraph V) (hrootH : ¬root ⊆ H) :
@@ -41456,6 +41574,7 @@ theorem weightedGainCollisionResidualRootMass_eq_zero_of_not_subset_host
   have hUH := (mem_gainCollisionResidualLayer.mp hUf.1).1
   exact False.elim (hrootH (hUf.2.trans hUH))
 
+omit [Fintype V] in
 theorem weightedGainCollisionResidualRootMass_eq_zero_of_rank_lt_source
     (w : TestWeight V) (H : Hypergraph V) (C : ConflictSystem V)
     (j r : ℕ) (root : Hypergraph V) (hrj : r < j) :
@@ -41477,6 +41596,7 @@ theorem weightedGainCollisionResidualRootMass_eq_zero_of_rank_lt_source
   rw [hScard, h.2.2.2.1] at hle
   omega
 
+omit [Fintype V] in
 theorem weightedGainCollisionResidualFullEmptySourceRootMass_eq_zero_of_card_ne
     (w : TestWeight V) (H : Hypergraph V) (C : ConflictSystem V)
     (j r : ℕ) (root : Hypergraph V)
@@ -41507,6 +41627,7 @@ theorem weightedGainCollisionResidualFullEmptySourceRootMass_eq_zero_of_card_ne
   rw [h.2.2.2.1, (Finset.mem_powersetCard.mp hS).2] at hcard
   exact hcard
 
+omit [Fintype V] in
 theorem weightedGainCollisionResidualFullNonemptySourceRootMass_eq_zero_of_card_ne
     (w : TestWeight V) (H : Hypergraph V) (C : ConflictSystem V)
     (j r : ℕ) (hj3 : j ≤ 3) (root : Hypergraph V)
@@ -41555,6 +41676,7 @@ theorem weightedGainCollisionResidualFullNonemptySourceRootMass_eq_zero_of_card_
   rw [← hdiffEq, hExtCard, hInterCard] at hrootSplit
   exact hne (by omega)
 
+omit [Fintype V] in
 theorem weightedGainCollisionResidualFullRootMass_empty_eq_zero
     {H : Hypergraph V} {C : ConflictSystem V}
     {j ell r : ℕ} {d epsRaw : ℝ} {w : TestWeight V}
@@ -41579,7 +41701,7 @@ theorem weightedGainCollisionResidualFullRootMass_empty_eq_zero
         gainCollisionResidualSource S e f = ∅ :=
       Finset.eq_empty_iff_forall_notMem.mpr (fun g hg ↦ by
         have hgEmpty : g ∈ (∅ : Hypergraph V) := hrep.2.2.2.2.2 hg
-        simpa using hgEmpty)
+        simp at hgEmpty)
     have hfS' := (Finset.mem_erase.mp hfS).2
     have hcS : c ⊆ S := by
       intro g hgc
@@ -41589,10 +41711,11 @@ theorem weightedGainCollisionResidualFullRootMass_empty_eq_zero
         rw [gainCollisionResidualConflict_sdiff_source heS hfS']
         exact Finset.mem_sdiff.mpr ⟨hgc, hgS⟩
       rw [hextEmpty] at hgext
-      simpa using hgext
+      simp at hgext
     exact hw.eq_zero_of_contains_conflict hS ⟨c, hc, hcS⟩
   · rw [if_neg hrep]
 
+omit [Fintype V] in
 theorem weightedGainCollisionResidualRootMass_le_raw
     {H : Hypergraph V} {C : ConflictSystem V}
     {j ell r : ℕ} {d epsRaw Gamma : ℝ} {w : TestWeight V}
@@ -41600,7 +41723,7 @@ theorem weightedGainCollisionResidualRootMass_le_raw
     (hB : CFMRegularization.IsRegularizedBounded
       H C d Gamma (epsRaw / 4))
     (hd : 1 ≤ d) (heps : 0 ≤ epsRaw) (hell : 1 ≤ ell)
-    (hj3 : j ≤ 3) (hjr : j ≤ r)
+    (hj3 : j ≤ 3) (_ : j ≤ r)
     (root : Hypergraph V) (hrootH : root ⊆ H) (hroot2 : root.card ≤ 2) :
     weightedGainCollisionResidualRootMass w H C j r root ≤
       72 * (Gamma + 1) * (ell : ℝ) * testTotal w H j *
@@ -41721,6 +41844,7 @@ theorem weightedGainCollisionResidualRootMass_le_raw
           · exact mul_le_mul_of_nonneg_right hcoefNon hW0
           · exact hE0)
 
+omit [Fintype V] in
 theorem weightedGainCollisionResidualRootMass_le
     {H : Hypergraph V} {C : ConflictSystem V}
     {j ell r : ℕ} {d epsRaw Gamma : ℝ} {w : TestWeight V}
@@ -41791,6 +41915,7 @@ theorem weightedGainCollisionResidualRootMass_le
       (testTotal_nonneg hw.isTestFunction.nonneg H j)
       (Real.rpow_nonneg (by linarith : 0 ≤ d) _)
 
+omit [Fintype V] in
 /-- External static spread theorem for every supported gain-collision
 residual rank `r-2`, `2≤r≤5`. -/
 theorem gainCollisionResidualLayer_isWeightedRealSpread_of_trackable
@@ -41800,7 +41925,7 @@ theorem gainCollisionResidualLayer_isWeightedRealSpread_of_trackable
     (hB : CFMRegularization.IsRegularizedBounded
       H C d Gamma (epsRaw / 4))
     (hd : 1 ≤ d) (heps : 0 ≤ epsRaw) (hell : 1 ≤ ell)
-    (hj3 : j ≤ 3) (hr2 : 2 ≤ r) (hr5 : r ≤ 5)
+    (hj3 : j ≤ 3) (_ : 2 ≤ r) (hr5 : r ≤ 5)
     (hcutoff : 72 * (Gamma + 1) * (ell : ℝ) ≤
       Real.rpow d (epsRaw / 10)) :
     IsWeightedRealSpread
@@ -41817,6 +41942,7 @@ theorem gainCollisionResidualLayer_isWeightedRealSpread_of_trackable
     hw hB hd heps hell hj3 hr5 hcutoff root hroot
 
 
+omit [Fintype V] in
 theorem weightedGainCollisionResidualRootMass_eq_zero_of_source_card_lt_two
     (w : TestWeight V) (H : Hypergraph V) (C : ConflictSystem V)
     (j r : ℕ) (root : Hypergraph V) (hj : j < 2) :
@@ -41846,6 +41972,7 @@ theorem weightedGainCollisionResidualRootMass_eq_zero_of_source_card_lt_two
   have : 2 ≤ j := by simpa [Ne.symm hfe] using htwo
   omega
 
+omit [Fintype V] in
 /-- At the full residual rank, every rooted representation already contains
 all of its conflict residual outside the source residual. -/
 theorem weightedGainCollisionResidualNonFullRootMass_eq_zero_of_fullRank
@@ -41884,6 +42011,7 @@ theorem weightedGainCollisionResidualNonFullRootMass_eq_zero_of_fullRank
   intro g hg
   exact Finset.mem_union_right _ (Finset.mem_sdiff.mp hg).1
 
+omit [Fintype V] in
 /-- The full/nonempty-source estimate with the endpoint root cap three.
 Only the final finite-cardinality arithmetic differs from the existing
 `...le_raw` theorem. -/
@@ -41986,6 +42114,7 @@ theorem weightedGainCollisionResidualFullNonemptySourceRootMass_le_raw_three
           (testTotal_nonneg hw.isTestFunction.nonneg H j))
         (Real.rpow_nonneg (by linarith : 0 ≤ d) _)
 
+omit [Fintype V] in
 /-- Exact full-root endpoint at the natural spread scale. -/
 theorem weightedGainCollisionResidualRootMass_le_of_fullRank
     {H : Hypergraph V} {C : ConflictSystem V}
@@ -42128,6 +42257,7 @@ theorem weightedGainCollisionResidualRootMass_le_of_fullRank
     exact mul_nonneg hW0
       (Real.rpow_nonneg (by linarith : 0 ≤ d) _)
 
+omit [Fintype V] in
 /-- The same endpoint in the literal `d₀ * delta^|root|` form consumed by
 the weighted shadow hierarchy. -/
 theorem weightedGainCollisionResidualRootMass_le_of_fullRank_spreadForm
@@ -42179,6 +42309,7 @@ theorem weightedGainCollisionResidualRootMass_le_of_fullRank_spreadForm
         ((r : ℝ) - (j : ℝ) - epsRaw / 10)) *
           Real.rpow d (-(root.card : ℝ)) := by ring
 
+omit [Fintype V] in
 /-- Closed-root form used by the custom tail: it includes the full residual
 root, unlike `IsWeightedRealSpread`. -/
 theorem weightedGainCollisionResidualRootMass_le_closed
@@ -42231,6 +42362,7 @@ def f0TruncatedGainCollisionResidualRepresentationWeight
             (gainCollisionResidualConflict c e f)
       then w S else 0
 
+omit [Fintype V] in
 theorem f0TruncatedGainCollisionResidualRepresentationWeight_nonneg
     {w : TestWeight V} (hw : ∀ S, 0 ≤ w S)
     (H : Hypergraph V) (C : ConflictSystem V) (f₀ : Finset V)
@@ -42267,6 +42399,7 @@ def weightedF0TruncatedGainCollisionResidualPartialMass
     (f0TruncatedGainCollisionResidualRepresentationWeight
       w H C f₀ j r) A M t
 
+omit [Fintype V] in
 /-- Exact representation expansion of the truncated partial mass. -/
 theorem weightedF0TruncatedGainCollisionResidualPartialMass_eq_representationSum
     (w : TestWeight V) (H : Hypergraph V) (C : ConflictSystem V)
@@ -42313,7 +42446,7 @@ theorem weightedF0TruncatedGainCollisionResidualPartialMass_eq_representationSum
         rw [Finset.sum_eq_single U₀]
         · simp [U₀, htrunc, hsupport, hrep, ht]
         · intro U hU hUne
-          simp [U₀, htrunc, hsupport, hrep, ht, hUne.symm]
+          simp [U₀, htrunc, hrep, ht, hUne.symm]
         · exact fun hnot ↦ (hnot hpartial).elim
       · rw [if_neg (fun h ↦ hpartial h.2.2.2.2)]
         apply Finset.sum_eq_zero
@@ -42340,6 +42473,7 @@ theorem weightedF0TruncatedGainCollisionResidualPartialMass_eq_representationSum
     · intro h
       exact hrep ⟨h.1, h.2.1, h.2.2.1⟩
 
+omit [Fintype V] in
 /-- The conflict residual contains none of the two erased choices. -/
 theorem gainCollisionResidualConflict_subset_selected
     {M c : Hypergraph V} {e f : Finset V}
@@ -42354,6 +42488,7 @@ theorem gainCollisionResidualConflict_subset_selected
     · exact False.elim (hgInner.1 hge)
     · exact hgM
 
+omit [Fintype V] in
 /-- Availability of `f₀` proves both truncation clauses for every
 certificate conflict lying in `insert f (insert e M)`. -/
 theorem isF0TruncatedGainCollisionResidual_of_available
@@ -42389,6 +42524,7 @@ theorem isF0TruncatedGainCollisionResidual_of_available
     · exact Finset.mem_insert_self _ M
     · exact Finset.mem_insert_of_mem hgM
 
+omit [Fintype V] in
 /-- A dynamically generated residual representation therefore satisfies
 the static internal filter. -/
 theorem gainCollisionResidualUnion_mem_partial_and_f0Truncated
@@ -42416,6 +42552,7 @@ theorem gainCollisionResidualUnion_mem_partial_and_f0Truncated
   exact ⟨hpartial.1, hpartial.2,
     isF0TruncatedGainCollisionResidual_of_available hf₀A hcsub⟩
 
+omit [Fintype V] in
 /-- A member of a truncated conflict residual is disjoint from `f₀` and
 cannot form a two-conflict with it.  These are exactly the two hypotheses
 needed by the certificate common-link estimate. -/
@@ -42431,12 +42568,13 @@ theorem f0Truncated_member_commonLinks_conditions
     intro hgf₀
     subst g
     have hcard := (mem_conflictLayer.mp hpair).2
-    simpa using hcard
+    simp at hcard
   have hgNeighbor :
       g ∈ CFMRegularization.twoConflictNeighbors H C f₀ := by
     exact Finset.mem_filter.mpr ⟨hgH, hne, hpair⟩
   exact Finset.disjoint_left.mp htrunc.2 hgR hgNeighbor
 
+omit [Fintype V] in
 /-- In the full/empty-source boundary geometry, a singleton requested root
 is a member of the residual conflict part.  Hence every contributing
 truncated representation supplies the two certificate common-link
@@ -42499,6 +42637,7 @@ def weightedF0TruncatedGainCollisionResidualFullCardRootMass
         (c \ root).card = j
     then w S else 0
 
+omit [Fintype V] in
 theorem f0TruncatedFullCard_pairSum_le_twelve_extension
     {w : TestWeight V} (hw0 : ∀ S, 0 ≤ w S)
     {H : Hypergraph V} {C : ConflictSystem V} {f₀ : Finset V}
@@ -42580,6 +42719,7 @@ theorem f0TruncatedFullCard_pairSum_le_twelve_extension
     exact hcover ⟨by rw [hgeom.1]; exact Finset.sdiff_subset,
       hgeom.2.2.1, hrep.2.2.2.2.2.2.2.2⟩
 
+omit [Fintype V] in
 /-- Fubini reduction of the truncated full-card boundary.  The source pair
 disappears, leaving precisely the certificate-local extension charge. -/
 theorem weightedF0TruncatedGainCollisionResidualFullCardRootMass_le_extensionSum
@@ -42602,15 +42742,15 @@ theorem weightedF0TruncatedGainCollisionResidualFullCardRootMass_le_extensionSum
       ∑ e ∈ S,
       ∑ f ∈ S.erase e, _ := by
         apply Finset.sum_congr rfl
-        intro S hS
-        calc
-          (∑ e ∈ S, ∑ f ∈ S.erase e, ∑ c ∈ C, _) =
-              ∑ e ∈ S, ∑ c ∈ C, ∑ f ∈ S.erase e, _ := by
-                apply Finset.sum_congr rfl
-                intro e he
-                rw [Finset.sum_comm]
-          _ = ∑ c ∈ C, ∑ e ∈ S, ∑ f ∈ S.erase e, _ := by
-                rw [Finset.sum_comm]
+        · intro S hS
+          calc
+            (∑ e ∈ S, ∑ f ∈ S.erase e, ∑ c ∈ C, _) =
+                ∑ e ∈ S, ∑ c ∈ C, ∑ f ∈ S.erase e, _ := by
+                  apply Finset.sum_congr rfl
+                  · intro e he
+                    rw [Finset.sum_comm]
+            _ = ∑ c ∈ C, ∑ e ∈ S, ∑ f ∈ S.erase e, _ := by
+                  rw [Finset.sum_comm]
     _ ≤ ∑ S ∈ H.powersetCard j,
         ∑ c ∈ C,
           if root ⊆ c ∧ c \ root ⊆ S ∧ (c \ root).card = j
@@ -42629,7 +42769,7 @@ theorem weightedF0TruncatedGainCollisionResidualFullCardRootMass_le_extensionSum
       intro c hc
       by_cases hrootc : root ⊆ c ∧ (c \ root).card = j
       · rw [if_pos hrootc]
-        simp only [hrootc.1, hrootc.2, true_and, and_true, if_pos]
+        simp only [hrootc.1, hrootc.2, true_and, and_true]
         unfold testExtension
         rw [Finset.mul_sum, ← Finset.sum_filter]
       · rw [if_neg hrootc]
@@ -42647,6 +42787,7 @@ theorem weightedF0TruncatedGainCollisionResidualFullCardRootMass_le_extensionSum
         testExtension w H j (c \ root) := by
       rw [Finset.mul_sum]
 
+omit [Fintype V] in
 /-- Certificate wrapper for the ordinary singleton full-root branch after
 the static truncation has supplied both exceptional-pair exclusions. -/
 theorem RegularizationCertificate.commonLinks_natRank_of_f0Truncated
@@ -42670,6 +42811,7 @@ theorem RegularizationCertificate.commonLinks_natRank_of_f0Truncated
   exact Erdos136.RegularizationCertificate.commonLinks_natRank
     Rcert hf₀H hgH hconditions.1 hconditions.2 a ha
 
+omit [Fintype V] in
 /-- The explicit floor built into every certificate internal layer scale. -/
 theorem certificateInternalLayerScale_floor_le
     {ι : Type*} [Fintype ι]
@@ -42695,6 +42837,7 @@ theorem certificateInternalLayerScale_floor_le
   change p ≤ (1 + x) * m
   nlinarith [mul_nonneg hx0 hm0]
 
+omit [Fintype V] in
 /-- The common-link/C3 saving `eps/4`, together with the scale floor at
 `eps/600`, absorbs the requested relative `eps/10` loss. -/
 theorem twelve_rpow_quarter_le_certificateScale_mul_rpow_tenth
@@ -42717,7 +42860,7 @@ theorem twelve_rpow_quarter_le_certificateScale_mul_rpow_tenth
   have hfloor : Real.rpow d ((j : ℝ) - eps / 600) ≤
       certificateInternalLayerScale
         H C d eps Gamma ell testJ testW Rcert (j + 1) := by
-    convert hfloorRaw using 1 <;> push_cast <;> ring_nf
+    convert hfloorRaw using 1 ; push_cast ; ring_nf
   have hquarter0 : 0 ≤ Real.rpow d ((j : ℝ) - eps / 4) :=
     Real.rpow_nonneg (by linarith : 0 ≤ d) _
   have htenth0 : 0 ≤ Real.rpow d (-eps / 10) :=
@@ -42752,6 +42895,7 @@ theorem twelve_rpow_quarter_le_certificateScale_mul_rpow_tenth
         Real.rpow d (-eps / 10) :=
       mul_le_mul_of_nonneg_right hfloor htenth0
 
+omit [Fintype V] in
 /-- An extension of the unweighted certificate link test is exactly the
 corresponding link-layer codegree. -/
 theorem testExtension_conflictLinkTestWeight_eq_codegree
@@ -42787,6 +42931,7 @@ theorem testExtension_conflictLinkTestWeight_eq_codegree
           exact (Finset.erase_subset f₀ c).trans (hC c hcC)
         exact ⟨⟨⟨hQH, hQcard⟩, hrootQ⟩, hQlink⟩
 
+omit [Fintype V] in
 /-- Proper nonempty roots of the internal link test receive C3's saving,
 which is stronger than the requested relative `eps/5` bound against the
 certificate scale floor. -/
@@ -42817,7 +42962,7 @@ theorem RegularizationCertificate.internalLinkTestExtension_proper_le_scale
   have hfloor : Real.rpow d ((j : ℝ) - eps / 600) ≤
       certificateInternalLayerScale
         H C d eps Gamma ell testJ testW Rcert (j + 1) := by
-    convert hfloorRaw using 1 <;> push_cast <;> ring_nf
+    convert hfloorRaw using 1 ; push_cast ; ring_nf
   have htail0 : 0 ≤
       Real.rpow d (-((root.card : ℝ) + eps / 5)) :=
     Real.rpow_nonneg (by linarith : 0 ≤ d) _
@@ -42846,6 +42991,7 @@ theorem RegularizationCertificate.internalLinkTestExtension_proper_le_scale
         Real.rpow d (-((root.card : ℝ) + eps / 5)) :=
       mul_le_mul_of_nonneg_right hfloor htail0
 
+omit [Fintype V] in
 /-- The total mass of an internal link test is at most twice its literal
 certificate center. -/
 theorem RegularizationCertificate.internalLinkTestTotal_le_two_scale
@@ -42880,6 +43026,7 @@ theorem RegularizationCertificate.internalLinkTestTotal_le_two_scale
           H C d eps Gamma ell testJ testW Rcert (j + 1) := by
       exact mul_le_mul_of_nonneg_right (by linarith) hscale0
 
+omit [Fintype V] in
 /-- Antichainness gives the W4-style support property for the certificate
 link test: a positive link cannot itself contain a regularized conflict. -/
 theorem RegularizationCertificate.conflictLinkTestWeight_eq_zero_of_contains_conflict
@@ -42908,6 +43055,7 @@ theorem RegularizationCertificate.conflictLinkTestWeight_eq_zero_of_contains_con
         (hc'S.trans (by rw [← hcErase]; exact Finset.erase_subset f₀ c)))
   · simp [conflictLinkTestWeight, hSlink]
 
+omit [Fintype V] in
 theorem conflictLinkTestWeight_le_one
     (C : ConflictSystem V) (f₀ : Finset V) (j : ℕ)
     (S : Hypergraph V) :
@@ -42915,6 +43063,7 @@ theorem conflictLinkTestWeight_le_one
   by_cases hS : S ∈ conflictLinkLayer C f₀ j <;>
     simp [conflictLinkTestWeight, hS]
 
+omit [Fintype V] in
 /-- Complete proper-source package for the internal certificate link test.
 The factor two only records the upper side of the certificate's relative
 degree interval. -/
@@ -42979,6 +43128,7 @@ theorem RegularizationCertificate.internalLink_hasGainCollisionResidualProperSou
   · intro S
     exact conflictLinkTestWeight_le_one Rcert.regularized f₀ j S
 
+omit [Fintype V] in
 /-- At a singleton root, the full-card internal extension charge injects
 into the common `j`-link of `f₀` and the root edge.  This is the exact
 Fubini endpoint needed after the ordered source pair has been summed out. -/
@@ -43091,6 +43241,7 @@ theorem sum_conflictLinkTestExtensions_singleton_le_commonLinksCard
         conflictLinkLayer C g j).card : ℝ) := by
       exact_mod_cast hcard
 
+omit [Fintype V] in
 /-- Certificate-specialized singleton full-card charge.  The truncation
 supplies both the disjoint host-pair hypothesis and exclusion from the
 two-conflict layer, so the ordinary certificate common-link field applies. -/
@@ -43128,6 +43279,7 @@ theorem RegularizationCertificate.singleton_fullCardCharge_le_of_f0Truncated
     (Erdos136.RegularizationCertificate.commonLinks_natRank_of_f0Truncated
       Rcert hf₀H hgH htrunc hgR j hj)
 
+omit [Fintype V] in
 /-- The actual truncated singleton full-card submass.  If the root pair is
 ordinary, Fubini and `commonLinks` bound it.  If it is not ordinary, every
 putative summand contradicts its own truncation predicate, so the mass is
@@ -43215,6 +43367,7 @@ theorem RegularizationCertificate.weightedF0TruncatedFullCardRootMass_singleton_
     rw [hzero]
     exact mul_nonneg (by norm_num) (Real.rpow_nonneg hd _)
 
+omit [Fintype V] in
 /-- A two-edge full root needs no common-link input: every full-card link
 weight is at most one, and the represented conflicts form a subfamily of
 the `(j+2)`-layer codegree at the root. -/
@@ -43271,6 +43424,7 @@ theorem sum_conflictLinkTestExtensions_cardTwo_le_layerCodegree
     _ ≤ (codegree (conflictLayer C (j + 2)) root : ℝ) := by
       exact_mod_cast Finset.card_le_card hFsub
 
+omit [Fintype V] in
 /-- Certificate C3 bound for a two-edge full-card root. -/
 theorem RegularizationCertificate.cardTwo_fullCardCharge_le
     {ι : Type*} [Fintype ι]
@@ -43304,6 +43458,7 @@ theorem RegularizationCertificate.cardTwo_fullCardCharge_le
       (by omega) (by omega) root hrootCard
   simpa [hrootCard, Nat.cast_add] using hC3
 
+omit [Fintype V] in
 /-- The actual truncated two-edge full-card submass, obtained by composing
 the ordered-pair Fubini reduction with certificate C3. -/
 theorem RegularizationCertificate.weightedF0TruncatedFullCardRootMass_cardTwo_le
@@ -43350,6 +43505,7 @@ theorem RegularizationCertificate.weightedF0TruncatedFullCardRootMass_cardTwo_le
       apply mul_le_mul_of_nonneg_left _ (by norm_num)
       simpa [hrootCard, Nat.cast_add] using hC3
 
+omit [Fintype V] in
 /-- A two-edge root and a full three-edge source would force a conflict of
 cardinality five, so this boundary submass is empty in the four-conflict
 certificate. -/
@@ -43391,6 +43547,7 @@ theorem RegularizationCertificate.weightedF0TruncatedFullCardRootMass_cardTwo_jT
     hrep.2.2.2.2.2.2.2.2
   omega
 
+omit [Fintype V] in
 /-- Unified relative full-card boundary estimate for the internal truncated
 representation.  These are the only possible positive root sizes. -/
 theorem RegularizationCertificate.weightedF0TruncatedFullCardRootMass_le_scale
@@ -43464,6 +43621,7 @@ def finiteWeightedRootShadowEmptyCoordinate
   selected_pos := hnpos
   legal := by simpa using hnlegal
 
+omit [Fintype V] in
 @[simp] theorem finiteWeightedRootShadowEmptyCoordinate_profile
     {Profile : Type*} {H : Hypergraph V}
     {activeRank : Profile → ℕ} {seed : Profile → Hypergraph V}
@@ -43472,6 +43630,7 @@ def finiteWeightedRootShadowEmptyCoordinate
     (finiteWeightedRootShadowEmptyCoordinate (H := H)
       b n hnpos hnlt hnlegal hseed).profile = b := rfl
 
+omit [Fintype V] in
 @[simp] theorem finiteWeightedRootShadowEmptyCoordinate_root
     {Profile : Type*} {H : Hypergraph V}
     {activeRank : Profile → ℕ} {seed : Profile → Hypergraph V}
@@ -43480,6 +43639,7 @@ def finiteWeightedRootShadowEmptyCoordinate
     (finiteWeightedRootShadowEmptyCoordinate (H := H)
       b n hnpos hnlt hnlegal hseed).root = ∅ := rfl
 
+omit [Fintype V] in
 @[simp] theorem finiteWeightedRootShadowEmptyCoordinate_selected
     {Profile : Type*} {H : Hypergraph V}
     {activeRank : Profile → ℕ} {seed : Profile → Hypergraph V}
@@ -43508,6 +43668,7 @@ def finiteWeightedRootShadowCoordinateCode
       ⟨c.root, Finset.mem_powersetCard.mpr ⟨c.root_subset_host, rfl⟩⟩⟩,
     c.selected))
 
+omit [Fintype V] in
 theorem finiteWeightedRootShadowCoordinateCode_injective
     {Profile : Type*} {H : Hypergraph V}
     {activeRank : Profile → ℕ} {seed : Profile → Hypergraph V}
@@ -43527,6 +43688,7 @@ theorem finiteWeightedRootShadowCoordinateCode_injective
   cases hselected
   rfl
 
+omit [Fintype V] in
 theorem card_finiteWeightedRootShadowCoordinate_le
     [Fintype V] {Profile : Type*} [Fintype Profile]
     (H : Hypergraph V) (activeRank : Profile → ℕ)
@@ -43628,6 +43790,7 @@ noncomputable def finiteWeightedRootShadowPredicate
     (finiteWeightedRootShadowCap eta d N (d₀ c.profile)
       (familyRank c.profile) c.root.card c.selected.1) k M
 
+omit [Fintype V] in
 theorem finiteWeightedRootShadowCap_of_predicate
     {Profile : Type*} {H : Hypergraph V}
     {familyRank activeRank : Profile → ℕ} {seed : Profile → Hypergraph V}
@@ -43650,6 +43813,7 @@ theorem finiteWeightedRootShadowZeroScale_nonneg
   unfold finiteWeightedRootShadowZeroScale
   exact mul_nonneg hd₀ (pow_nonneg (inv_nonneg.mpr hd) _)
 
+omit [Fintype V] in
 theorem weightedCodegree_le_zeroScale_of_spread_or_full
     {X : ConflictSystem V} {a : TestWeight V} {q : ℕ}
     {d d₀ : ℝ}
@@ -43797,6 +43961,7 @@ def FiniteWeightedRootShadowCoordinate.insertParent
 root bound only when the newly selected edge is not already in the root.
 The derivative is identically zero in the omitted case. -/
 
+omit [Fintype V] in
 theorem localSpreadUpperSourceBudgets_rootShadow_succ_of_notMem
     (X : ConflictSystem V) (a : TestWeight V) (q : ℕ)
     (hX : IsUniform X q) (ha : ∀ U, 0 ≤ a U)
@@ -43941,8 +44106,9 @@ theorem finiteWeightedRootShadowDrift_mul_reserve_le_margin_of_contract
     _ ≤ finiteWeightedRootShadowMargin eta d d₀ rootCard selected := by
       simpa [mul_assoc] using hcontract
 
+omit [Fintype V] in
 theorem finiteWeightedRootShadowConcreteSourceBudgets
-    [Fintype V] {Profile : Type*} [Fintype Profile]
+    {Profile : Type*}
     (H : Hypergraph V) (C : ConflictSystem V)
     (familyRank activeRank : Profile → ℕ) (seed : Profile → Hypergraph V)
     (X : Profile → ConflictSystem V) (a : Profile → TestWeight V)
@@ -44232,7 +44398,7 @@ theorem finiteWeightedRootShadowVariance_sum_le
 
 theorem finiteWeightedRootShadowFreedmanRatio
     {tau reserve margin jump drift : ℝ}
-    (htau : 0 ≤ tau) (hreserve : 0 < reserve)
+    (_ : 0 ≤ tau) (_ : 0 < reserve)
     (hmargin : 0 < margin) (hjump : 0 ≤ jump) (hdrift : 0 ≤ drift)
     (hRpos : 0 < jump + drift)
     (hjumpReserve : jump * reserve ≤ 2 * margin)
@@ -44447,6 +44613,7 @@ theorem finiteWeightedRootShadow_reserve_one
       Real.rpow_le_rpow_of_exponent_le hd heps
     _ = finiteWeightedRootShadowTailReserve eta d := rfl
 
+omit [Fintype V] in
 theorem finiteWeightedRootShadowInitialGap
     {Profile : Type*} {familyRank activeRank : Profile → ℕ}
     {seed : Profile → Hypergraph V}
@@ -44486,8 +44653,9 @@ theorem finiteWeightedRootShadowStrongTail_of_ratio
     -(t ^ 2 / (4 * denominator)) by ring]
   exact neg_le_neg hratio
 
+omit [Fintype V] in
 theorem finiteWeightedRootShadowFirstFailureMass_le
-    [Fintype V] {Profile I : Type*} [Fintype Profile] [Fintype I]
+    {Profile I : Type*}
     {eta Gamma d N : ℝ} {T : ℕ}
     (E : CFMNumeric.CoreExponentSpec eta Gamma)
     (S : CFMNumeric.CoreCutoffSpec eta Gamma d)
@@ -44702,12 +44870,13 @@ theorem finiteWeightedRootShadowStrongTailFamilySum_le_twelfth
       congr 1
     _ ≤ 1 / 12 := hexp
 
+omit [Fintype V] in
 /-- A component whose corridor is implied by another component cannot fail
 without the stronger component failing at the same first-failure time.  This
 is the adapter needed when an older endpoint coordinate is retained in the
 outer `Sum` but is dominated by a new weighted root-shadow profile. -/
 theorem greedyFirstFailureEvent_subset_of_component_implication
-    {I : Type*} [Fintype I]
+    {I : Type*}
     (H : Hypergraph V) (C : ConflictSystem V) (M : Hypergraph V) (T : ℕ)
     (P : I → ℕ → Hypergraph V → Prop) (weak strong : I)
     (himp : ∀ k S, P strong k S → P weak k S) :
@@ -44719,6 +44888,7 @@ theorem greedyFirstFailureEvent_subset_of_component_implication
   exact ⟨homegaUniv, k, hk, hprefix, fun hstrong ↦
     hfail (himp (k + 1) (greedyStateFromAt H C M omega (k + 1)) hstrong)⟩
 
+omit [Fintype V] in
 theorem localSpreadUpperCorridor_mono_cap
     (w : TestWeight V) (n : ℕ) (capStrong capWeak : ℕ → ℝ)
     {k : ℕ} {M : Hypergraph V}
@@ -44728,8 +44898,9 @@ theorem localSpreadUpperCorridor_mono_cap
   unfold localSpreadUpperCorridor localSpreadUpperError at hstrong ⊢
   linarith
 
+omit [Fintype V] in
 theorem firstFailureMass_le_of_component_implication
-    {I : Type*} [Fintype I]
+    {I : Type*}
     (H : Hypergraph V) (C : ConflictSystem V) (M : Hypergraph V) (T : ℕ)
     (P : I → ℕ → Hypergraph V → Prop) (weak strong : I)
     (himp : ∀ k S, P strong k S → P weak k S) :
@@ -44770,6 +44941,7 @@ noncomputable def finiteWeightedRootShadowEnhancedPredicate
   | Sum.inr c, k, M => finiteWeightedRootShadowPredicate
       H familyRank activeRank seed X a eta d (N : ℝ) d₀ c k M
 
+omit [Fintype V] in
 theorem indexedFiniteWeightedRootShadowEnhancedGood_degree
     {iota Profile : Type*}
     (H : Hypergraph V) (C : ConflictSystem V)
@@ -44787,6 +44959,7 @@ theorem indexedFiniteWeightedRootShadowEnhancedGood_degree
   intro z
   exact hgood (Sum.inl z)
 
+omit [Fintype V] in
 theorem indexedFiniteWeightedRootShadowEnhancedGood_shadow
     {iota Profile : Type*}
     (H : Hypergraph V) (C : ConflictSystem V)
@@ -44803,6 +44976,7 @@ theorem indexedFiniteWeightedRootShadowEnhancedGood_shadow
       H familyRank activeRank seed X a eta d (N : ℝ) d₀ c k M := by
   exact hgood (Sum.inr c)
 
+omit [Fintype V] in
 theorem finiteWeightedRootShadowCap_of_enhancedGood
     {iota Profile : Type*}
     (H : Hypergraph V) (C : ConflictSystem V)
@@ -44822,6 +44996,7 @@ theorem finiteWeightedRootShadowCap_of_enhancedGood
     (indexedFiniteWeightedRootShadowEnhancedGood_shadow
       H C D₂ D₃ D₄ Gamma eta d N T j w familyRank activeRank seed X a d₀ hgood c)
 
+omit [Fintype V] in
 /-- Empty-root partial mass extraction.  This is the common projection used
 by the duplicate, conflict-conflict reroot, and gain-residual profiles. -/
 theorem weightedPartialFamilyMass_le_cap_of_enhancedGood
@@ -44860,8 +45035,9 @@ theorem weightedPartialFamilyMass_le_cap_of_enhancedGood
       weightedConflictFamilyRootShadowWeight_empty] using hcap
   exact hpartial.trans hcap'
 
+omit [Fintype V] in
 theorem indexedFiniteWeightedRootShadowEnhancedGood_old
-    [Fintype V] {iota Profile : Type*}
+    {iota Profile : Type*}
     (H : Hypergraph V) (C : ConflictSystem V)
     (D₂ D₃ D₄ Gamma eta d : ℝ) (N T : ℕ)
     (j : iota → ℕ) (w : iota → TestWeight V)
@@ -44878,8 +45054,9 @@ theorem indexedFiniteWeightedRootShadowEnhancedGood_old
     (indexedFiniteWeightedRootShadowEnhancedGood_degree
       H C D₂ D₃ D₄ Gamma eta d N T j w familyRank activeRank seed X a d₀ hgood)
 
+omit [Fintype V] in
 theorem indexedFiniteWeightedRootShadowEnhancedGood_vertexLocal
-    [Fintype V] {iota Profile : Type*}
+    {iota Profile : Type*}
     (H : Hypergraph V) (C : ConflictSystem V)
     (D₂ D₃ D₄ Gamma eta d : ℝ) (N T : ℕ)
     (j : iota → ℕ) (w : iota → TestWeight V)
@@ -44895,8 +45072,9 @@ theorem indexedFiniteWeightedRootShadowEnhancedGood_vertexLocal
     (indexedFiniteWeightedRootShadowEnhancedGood_degree
       H C D₂ D₃ D₄ Gamma eta d N T j w familyRank activeRank seed X a d₀ hgood)
 
+omit [Fintype V] in
 theorem indexedFiniteWeightedRootShadowEnhancedGood_degreeDuplicate
-    [Fintype V] {iota Profile : Type*}
+    {iota Profile : Type*}
     (H : Hypergraph V) (C : ConflictSystem V)
     (D₂ D₃ D₄ Gamma eta d : ℝ) (N T : ℕ)
     (j : iota → ℕ) (w : iota → TestWeight V)
@@ -44911,8 +45089,9 @@ theorem indexedFiniteWeightedRootShadowEnhancedGood_degreeDuplicate
     (indexedFiniteWeightedRootShadowEnhancedGood_degree
       H C D₂ D₃ D₄ Gamma eta d N T j w familyRank activeRank seed X a d₀ hgood)
 
+omit [Fintype V] in
 theorem indexedFiniteWeightedRootShadowEnhancedGood_certificateWithCore
-    [Fintype V] {iota Profile : Type*} [Fintype iota]
+    {iota Profile : Type*} [Fintype iota]
     (H : Hypergraph V) (C : ConflictSystem V)
     (d epsRaw GammaCert : ℝ) (ellCert : ℕ)
     (j : iota → ℕ) (w : iota → TestWeight V)
@@ -44935,8 +45114,9 @@ theorem indexedFiniteWeightedRootShadowEnhancedGood_certificateWithCore
 /-! The availability input used above is automatic whenever the outer Good
 predicate projects to the already-closed degree-enhanced Good family. -/
 
+omit [Fintype V] in
 theorem localSpreadAvailableFloor_of_degreeEnhancedProjection
-    [Fintype V] {iota I : Type*} [Fintype iota] [Fintype I]
+    {iota I : Type*} [Fintype iota]
     {eta GammaCore GammaCert d : ℝ} {T ell k : ℕ}
     (S : CFMNumeric.CoreCutoffSpec eta GammaCore d)
     (H : Hypergraph V) (C : ConflictSystem V) (hH : IsUniform H 8)
@@ -44982,12 +45162,13 @@ theorem localSpreadAvailableFloor_of_degreeEnhancedProjection
     H R.regularized hH M hreach.1 (vertexFinset H).card k rfl
       hreach.2 hcovered hstep.degree.N_pos D₂ D₃ D₄ hstep hdegree
 
+omit [Fintype V] in
 /-- Closed first-failure tail for one root-shadow component of the final
 degree-plus-test Good family.  Availability, mean, and jump inputs are all
 derived internally; the remaining hypotheses are precisely the static
 weighted-spread profile and the already-standard delta registry. -/
 theorem finiteWeightedRootShadowEnhancedFirstFailureMass_le
-    [Fintype V] {iota Profile : Type*} [Fintype iota] [Fintype Profile]
+    {iota Profile : Type*} [Fintype iota]
     {eta GammaCore GammaCert d : ℝ} {T ell : ℕ}
     (E : CFMNumeric.CoreExponentSpec eta GammaCore)
     (S : CFMNumeric.CoreCutoffSpec eta GammaCore d)
@@ -45045,12 +45226,13 @@ theorem finiteWeightedRootShadowEnhancedFirstFailureMass_le
   · intro c k M
     rfl
 
+omit [Fintype V] in
 /-- Literal-certificate specialization of the previous theorem.  The
 registry, horizon bound, and availability floor are reconstructed from the
 specialized instance, so the public inputs are only the concrete static
 profile proofs. -/
 theorem literalCertificateFiniteWeightedRootShadowFirstFailureMass_le
-    [Fintype V] {iota Profile : Type*} [Fintype iota] [Fintype Profile]
+    [Fintype V] {iota Profile : Type*} [Fintype iota]
     {eta d : ℝ} {ell : ℕ}
     (E : CFMNumeric.CoreExponentSpec eta (6 * (2 * (ell : ℝ) + 1)))
     (S : CFMNumeric.CoreCutoffSpec eta (6 * (2 * (ell : ℝ) + 1)) d)
@@ -45111,15 +45293,16 @@ theorem literalCertificateFiniteWeightedRootShadowFirstFailureMass_le
       (vertexFinset H).card E S hN k hk
 
 noncomputable def finiteWeightedRootShadowEnhancedLocalTail
-    {iota Profile : Type*} {H : Hypergraph V} {j : iota → ℕ}
+    {Profile : Type*} {H : Hypergraph V}
     {activeRank : Profile → ℕ} {seed : Profile → Hypergraph V}
     (eta d : ℝ) :
     FiniteWeightedRootShadowCoordinate H Profile activeRank seed → ℝ :=
   fun _ ↦ finiteWeightedRootShadowStrongTail eta d
 
+omit [Fintype V] in
 theorem finiteWeightedRootShadowEnhancedLocalTail_sum_le_twelfth
-    [Fintype V] {iota Profile : Type*} [Fintype iota] [Fintype Profile]
-    {H : Hypergraph V} {j : iota → ℕ}
+    [Fintype V] {Profile : Type*} [Fintype Profile]
+    {H : Hypergraph V}
     {activeRank : Profile → ℕ} {seed : Profile → Hypergraph V}
     {eta Gamma d K : ℝ}
     (S : CFMNumeric.CoreCutoffSpec eta Gamma d)
@@ -45128,21 +45311,23 @@ theorem finiteWeightedRootShadowEnhancedLocalTail_sum_le_twelfth
       (FiniteWeightedRootShadowCoordinate H Profile activeRank seed) : ℝ) ≤
         Real.exp (K * Real.rpow d (eta ^ 3))) :
     (∑ c, finiteWeightedRootShadowEnhancedLocalTail
-      (H := H) (j := j) (activeRank := activeRank) (seed := seed) eta d c) ≤
+      (H := H) (activeRank := activeRank) (seed := seed) eta d c) ≤
         1 / 12 := by
   exact finiteWeightedRootShadowStrongTailFamilySum_le_twelfth
     S (finiteWeightedRootShadowEnhancedLocalTail
-      (H := H) (j := j) (activeRank := activeRank) (seed := seed) eta d)
+      (H := H) (activeRank := activeRank) (seed := seed) eta d)
       hK hcard (fun _ ↦ le_rfl)
 
 def unitTestWeight : TestWeight V := fun _ ↦ 1
 
+omit [Fintype V] in
 @[simp] theorem weightedCodegree_unitTestWeight
     (X : ConflictSystem V) (root : Hypergraph V) :
     weightedCodegree X (unitTestWeight (V := V)) root =
       (codegree X root : ℝ) := by
   simp [weightedCodegree, codegree, unitTestWeight]
 
+omit [Fintype V] in
 theorem IsRealSpread.isWeightedRealSpread_unitTestWeight
     {X : ConflictSystem V} {q : ℕ} {d₀ delta : ℝ}
     (hX : IsRealSpread X q d₀ delta) :
@@ -45168,18 +45353,21 @@ def originalTestChoiceRemainderWeight
     (w : TestWeight V) (e : Finset V) : TestWeight V :=
   fun R ↦ w (insert e R)
 
+omit [Fintype V] in
 theorem originalTestChoiceRemainderFamily_uniform
     (H : Hypergraph V) (j : ℕ) (e : Finset V) :
     IsUniform (originalTestChoiceRemainderFamily H j e) (j - 1) := by
   intro R hR
   exact (Finset.mem_powersetCard.mp hR).2
 
+omit [Fintype V] in
 theorem originalTestChoiceRemainderWeight_nonneg
     {w : TestWeight V} (hw : ∀ S, 0 ≤ w S) (e : Finset V) :
     ∀ R, 0 ≤ originalTestChoiceRemainderWeight w e R := by
   intro R
   exact hw (insert e R)
 
+omit [Fintype V] in
 theorem weightedCodegree_originalTestChoiceRemainder_eq
     (w : TestWeight V) (H : Hypergraph V) (j : ℕ)
     (e : Finset V) (heH : e ∈ H) (hj : 1 ≤ j)
@@ -45238,6 +45426,7 @@ theorem weightedCodegree_originalTestChoiceRemainder_eq
       (Finset.mem_filter.mp hS).2 (Finset.mem_insert_self e root)
     rw [Finset.insert_erase heS]
 
+omit [Fintype V] in
 theorem weightedCodegree_originalTestChoiceRemainder_eq_zero_of_mem
     (w : TestWeight V) (H : Hypergraph V) (j : ℕ)
     (e : Finset V) (root : Hypergraph V) (heroot : e ∈ root) :
@@ -45251,6 +45440,7 @@ theorem weightedCodegree_originalTestChoiceRemainder_eq_zero_of_mem
   exact (Finset.notMem_erase e H)
     ((Finset.mem_powersetCard.mp hdata.1).1 (hdata.2 heroot))
 
+omit [Fintype V] in
 theorem originalTestChoice_emptyRootShadow_eq
     (w : TestWeight V) (H : Hypergraph V) (j : ℕ)
     (e : Finset V) (heH : e ∈ H) (hj : 1 ≤ j) :
@@ -45268,6 +45458,7 @@ theorem originalTestChoice_emptyRootShadow_eq
       weightedCodegree_originalTestChoiceRemainder_eq
         w H j e heH hj root heroot]
 
+omit [Fintype V] in
 theorem testTotal_originalTestChoice_emptyRootShadow_eq
     (w : TestWeight V) (H M : Hypergraph V) (j n : ℕ)
     (e : Finset V) (heH : e ∈ H) (hj : 1 ≤ j) :
@@ -45306,6 +45497,7 @@ theorem originalTestChoice_extension_scale_identity
       rw [hinvPow]
       ring
 
+omit [Fintype V] in
 /-- Strict-root spread for a fixed original-test choice.  The scale includes
 the test-weight bound `ell`, because the generic hierarchy also uses the
 same scale at its selected-rank-zero full-root children. -/
@@ -45313,7 +45505,7 @@ theorem originalTestChoiceRemainder_isWeightedRealSpread_of_trackable
     {H : Hypergraph V} {C : ConflictSystem V}
     {j ell : ℕ} {d eta : ℝ} {w : TestWeight V}
     (hw : IsTrackable H C j ell d eta w)
-    (hd : 1 ≤ d) (heta : 0 ≤ eta) (hell : 1 ≤ ell)
+    (hd : 1 ≤ d) (_ : 0 ≤ eta) (hell : 1 ≤ ell)
     (e : Finset V) (heH : e ∈ H) (hj : 1 ≤ j) :
     IsWeightedRealSpread
       (originalTestChoiceRemainderFamily H j e)
@@ -45375,6 +45567,7 @@ theorem originalTestChoiceRemainder_isWeightedRealSpread_of_trackable
         (Real.rpow_nonneg (by linarith) _))
       (pow_nonneg (inv_nonneg.mpr (by linarith)) _)
 
+omit [Fintype V] in
 theorem originalTestChoiceRemainder_fullRoot_le_ell
     {H : Hypergraph V} {j ell : ℕ} {w : TestWeight V}
     (hw : IsTestFunction H j ell w)
@@ -45401,6 +45594,7 @@ theorem originalTestChoiceRemainder_fullRoot_le_ell
       · positivity
     _ = (ell : ℝ) := one_mul _
 
+omit [Fintype V] in
 theorem originalTestChoiceRemainder_fullRoot_le_scale
     {H : Hypergraph V} {C : ConflictSystem V}
     {j ell : ℕ} {d eta : ℝ} {w : TestWeight V}
@@ -45435,6 +45629,7 @@ theorem originalTestChoiceRemainder_fullRoot_le_scale
     _ = ((ell : ℝ) * testTotal w H j * Real.rpow d (-1 - eta)) *
         (d⁻¹) ^ (j - 1) := by ring
 
+omit [Fintype V] in
 /-- The exact all-root endpoint consumed by the finite root-shadow
 hierarchy.  Strict roots use trackability, and the unique full-root branch
 uses the pointwise test-weight bound. -/
@@ -45579,6 +45774,7 @@ theorem residualSpreadCoefficient_le_rawTenth
 
 end CFMSharpTestCutoff
 
+omit [Fintype V] in
 theorem weightedTestLossCCMass_le_legalRerootedCap
     (w : TestWeight V) (H : Hypergraph V) (C : ConflictSystem V)
     (M : Hypergraph V) (j s ccHi : ℕ)
@@ -45621,6 +45817,7 @@ theorem weightedTestLossCCMass_le_legalRerootedCap
   exact (blockerPairCC_le_rerootedPartialMass hCcard hfA hgA).trans
     (hreroot f hfA g hgA hgf hfg hpair)
 
+omit [Fintype V] in
 theorem weightedPartialTestLossCollision_le_legalPairAggregateCaps
     (w : TestWeight V) (H : Hypergraph V) (C : ConflictSystem V)
     (M : Hypergraph V) (j s codegreeHi mixedHi ccHi : ℕ)
@@ -45684,6 +45881,7 @@ theorem weightedPartialTestLossCollision_le_legalPairAggregateCaps
       push_cast
       ring
 
+omit [Fintype V] in
 theorem gainCollisionResidualRepresentation_exists_f0Truncated
     {H : Hypergraph V} {C : ConflictSystem V} {M S : Hypergraph V}
     {e f₀ : Finset V} {j s : ℕ} {w : TestWeight V}
@@ -45817,6 +46015,7 @@ def f0TruncatedGainCollisionResidualPairCharge
     f0TruncatedGainCollisionResidualConflictCharge
       w H C f₀ j A M t S e f
 
+omit [Fintype V] in
 theorem f0TruncatedGainCollisionResidualRepresentationCharge_nonneg
     {w : TestWeight V} (hw0 : ∀ S, 0 ≤ w S)
     (H : Hypergraph V) (C : ConflictSystem V) (f₀ : Finset V)
@@ -45829,6 +46028,7 @@ theorem f0TruncatedGainCollisionResidualRepresentationCharge_nonneg
   · exact hw0 S
   · norm_num
 
+omit [Fintype V] in
 theorem f0TruncatedGainCollisionResidualRankCharge_nonneg
     {w : TestWeight V} (hw0 : ∀ S, 0 ≤ w S)
     (H : Hypergraph V) (C : ConflictSystem V) (f₀ : Finset V)
@@ -45841,6 +46041,7 @@ theorem f0TruncatedGainCollisionResidualRankCharge_nonneg
     f0TruncatedGainCollisionResidualRepresentationCharge_nonneg
       hw0 H C f₀ j r A M t S e f c
 
+omit [Fintype V] in
 theorem f0TruncatedGainCollisionResidualConflictCharge_nonneg
     {w : TestWeight V} (hw0 : ∀ S, 0 ≤ w S)
     (H : Hypergraph V) (C : ConflictSystem V) (f₀ : Finset V)
@@ -45853,6 +46054,7 @@ theorem f0TruncatedGainCollisionResidualConflictCharge_nonneg
     f0TruncatedGainCollisionResidualRankCharge_nonneg
       hw0 H C f₀ j A M t S e f c
 
+omit [Fintype V] in
 theorem f0TruncatedGainCollisionResidualPairCharge_nonneg
     {w : TestWeight V} (hw0 : ∀ S, 0 ≤ w S)
     (H : Hypergraph V) (C : ConflictSystem V) (f₀ : Finset V)
@@ -45865,6 +46067,7 @@ theorem f0TruncatedGainCollisionResidualPairCharge_nonneg
     f0TruncatedGainCollisionResidualConflictCharge_nonneg
       hw0 H C f₀ j A M t S e f
 
+omit [Fintype V] in
 theorem testWeight_le_f0TruncatedGainCollisionResidualPairCharge
     {w : TestWeight V} (hw0 : ∀ S, 0 ≤ w S)
     (H : Hypergraph V) (C : ConflictSystem V) (f₀ : Finset V)
@@ -45907,6 +46110,7 @@ theorem testWeight_le_f0TruncatedGainCollisionResidualPairCharge
     (fun f' _ ↦ f0TruncatedGainCollisionResidualConflictCharge_nonneg
       hw0 H C f₀ j A M t S e f') hfS
 
+omit [Fintype V] in
 theorem collisionChoice_weight_le_f0TruncatedGainCollisionResidualPairCharge
     {H : Hypergraph V} {C : ConflictSystem V} {M S : Hypergraph V}
     {j s : ℕ} {w : TestWeight V} {e f₀ : Finset V}
@@ -45931,6 +46135,7 @@ theorem collisionChoice_weight_le_f0TruncatedGainCollisionResidualPairCharge
       S e f c r hfS hcC hr
       ⟨hec, hfc, hrank, htrunc, hpartial⟩
 
+omit [Fintype V] in
 theorem weightedTestGainCollisionTerm_le_f0TruncatedResidualCharges
     {H : Hypergraph V} {C : ConflictSystem V} {M S : Hypergraph V}
     {j s : ℕ} {w : TestWeight V} {f₀ : Finset V}
@@ -45978,6 +46183,7 @@ theorem weightedTestGainCollisionTerm_le_f0TruncatedResidualCharges
       f0TruncatedGainCollisionResidualPairCharge_nonneg
         hw0 H C f₀ j (availableEdges H C M) M (s - 1) S e
 
+omit [Fintype V] in
 theorem sum_f0TruncatedGainCollisionResidualPairCharges_eq_partialMass
     (w : TestWeight V) (H : Hypergraph V) (C : ConflictSystem V)
     (f₀ : Finset V) (M : Hypergraph V) (j s : ℕ) :
@@ -46026,13 +46232,14 @@ theorem sum_f0TruncatedGainCollisionResidualPairCharges_eq_partialMass
         ∑ r ∈ Finset.Icc 2 5,
           ∑ c ∈ C, _ := by
       apply Finset.sum_congr rfl
-      intro f hf
-      rw [Finset.sum_comm]
+      · intro f hf
+        rw [Finset.sum_comm]
     _ = ∑ r ∈ Finset.Icc 2 5,
         ∑ f ∈ S.erase e,
           ∑ c ∈ C, _ := by
       rw [Finset.sum_comm]
 
+omit [Fintype V] in
 /-- Generic deterministic filtered charge.  The only extra state input is
 the availability fact which itself proves the representation filter. -/
 theorem weightedPartialTestGainCollision_le_f0TruncatedResidualPartialMass
@@ -46065,9 +46272,12 @@ theorem weightedPartialTestGainCollision_le_f0TruncatedResidualPartialMass
       sum_f0TruncatedGainCollisionResidualPairCharges_eq_partialMass
         w H C f₀ M j s
 
+namespace CFMRegularization.RegularizationCertificate
+
+omit [Fintype V] in
 /-- Certificate-local public endpoint.  Its filter premise is discharged
 solely from the live availability of the internal source edge. -/
-theorem CFMRegularization.RegularizationCertificate.weightedPartialInternalTestGainCollision_le_f0TruncatedResidualPartialMass
+theorem weightedPartialInternalTestGainCollision_le_f0TruncatedResidualPartialMass
     {io : Type*} [Fintype io]
     {H : Hypergraph V} {C : ConflictSystem V}
     {d epsRaw Gamma : ℝ} {ellCert : ℕ}
@@ -46098,7 +46308,11 @@ theorem CFMRegularization.RegularizationCertificate.weightedPartialInternalTestG
   · exact hMH
   · exact hf₀A
 
-theorem CFMRegularization.RegularizationCertificate.rerootedTestConflictUnionLayer_isWeightedRealSpread
+end CFMRegularization.RegularizationCertificate
+
+omit [Fintype V] in
+theorem
+  CFMRegularization.RegularizationCertificate.rerootedTestConflictUnionLayer_isWeightedRealSpread
     {ι : Type*} [Fintype ι]
     {H : Hypergraph V} {C : ConflictSystem V}
     {d epsRaw GammaCert : ℝ} {ellCert : ℕ}
@@ -46139,6 +46353,7 @@ theorem testConflictUnionLayer_conflictLinkLayer_zero_eq_empty
   have hUpos : 1 ≤ U.card := Finset.card_pos.mpr ⟨x, hxU⟩
   omega
 
+omit [Fintype V] in
 /-- Closed-root endpoint consumed by `SharpExternalProfiles`.  The active
 rank is `r-1`; the impossible `r=0` boundary is discharged structurally. -/
 theorem CFMRegularization.RegularizationCertificate.rerootedTestConflictUnionLayer_root_le_scale
@@ -46301,7 +46516,7 @@ theorem residualRootMarginSum_le_rawSixteenth
         Finset.sum_le_sum fun r hr ↦ hpoint r hr
     _ = 8 * W * d ^ ((s : ℝ) + 1 - j -
         CFMRegularization.rawRegularizationEps eta / 16) := by
-      norm_num [Finset.sum_Icc_succ_top] <;> ring
+      norm_num [Finset.sum_Icc_succ_top] ; ring
 
 end CFMSharpTestCutoff
 
@@ -46313,7 +46528,7 @@ private theorem rerootMargin_le_localSpreadPrimary_of_coefficient
       (6 * (2 * (ell : ℝ) + 1)))
     (S : CFMNumeric.CoreCutoffSpec eta
       (6 * (2 * (ell : ℝ) + 1)) d)
-    (hC0 : 0 ≤ C) (hC : C ≤ 2304)
+    (_ : 0 ≤ C) (hC : C ≤ 2304)
     (hr1 : 1 ≤ r) (hr5 : r ≤ 5) :
     finiteWeightedRootShadowMargin eta d
         (C * (3 * (2 * (ell : ℝ) + 1) + 1) *
@@ -46473,6 +46688,7 @@ variable {epsRaw GammaCert : ℝ} {ellCert : ℕ}
 
 variable {io : Type*} [Fintype io]
 
+omit [Fintype V] in
 theorem weightedF0TruncatedGainCollisionResidualRootMass_eq_representationSum
     (w : TestWeight V) (H : Hypergraph V) (C : ConflictSystem V)
     (f₀ : Finset V) (j r : ℕ) (root : Hypergraph V) :
@@ -46566,6 +46782,7 @@ def weightedF0TruncatedGainCollisionResidualFullEmptyProperSourceRootMass
         (c \ root).card < j
     then w S else 0
 
+omit [Fintype V] in
 /-- The only place where truncation must be retained.  All other branches
 are dominated by their unfiltered analogues; the full/empty boundary is
 partitioned according to whether `c \ root` is a proper or full source
@@ -46620,18 +46837,18 @@ theorem weightedF0TruncatedGainCollisionResidualRootMass_le_fourParts
               hb.2.2.2.2 hfull hempty
           by_cases hcard : (c \ root).card = j
           · simp [base, full, emptySource, trunc, hb, ht, hfull,
-              hempty, hcard, hw0 S]
+              hempty, hcard]
           · have hlt : (c \ root).card < j := by omega
             simp [base, full, emptySource, trunc, hb, ht, hfull,
-              hempty, hcard, hlt, hw0 S]
+              hempty, hcard, hlt]
         · simp [base, full, emptySource, trunc, hb, ht, hfull,
-            hempty, hw0 S]
-      · simp [base, full, emptySource, trunc, hb, ht, hfull,
-          hw0 S]
-    · simp only [sdiff_le_iff, sup_eq_union', ge_iff_le]
-      exact add_nonneg
-        (by split <;> simp [hw0 S])
-        (by split <;> simp [hw0 S])
+            hempty]
+      · simp [base, full, trunc, hb, ht, hfull]
+    · simp only [trunc] at ht
+      simp only [ht, and_false, false_and, if_false, add_zero]
+      apply add_nonneg
+      · split <;> simp [hw0 S]
+      · split <;> simp [hw0 S]
   · have hleft : ¬(gainCollisionResidualUnion S c e f ⊆ H ∧
         e ∈ c ∧ f ∈ c ∧ (S ∪ c).card = r ∧
         root ⊆ gainCollisionResidualUnion S c e f ∧
@@ -46649,6 +46866,7 @@ theorem weightedF0TruncatedGainCollisionResidualRootMass_le_fourParts
       · split <;> simp [hw0 S]
     · split <;> simp [hw0 S]
 
+omit [Fintype V] in
 /-- Per-source-pair Fubini bound for the proper part of the truncated
 full/empty-source boundary. -/
 theorem f0TruncatedFullEmptyProper_pairSum_le_twelve_extension
@@ -46741,6 +46959,7 @@ theorem f0TruncatedFullEmptyProper_pairSum_le_twelve_extension
       hgeom.2.2.1, by simpa [Ne.symm hfe] using htwo,
       hrep.2.2.2.2.2.2.2.2⟩
 
+omit [Fintype V] in
 /-- Fubini reduction of the proper-source truncated boundary. -/
 theorem weightedF0TruncatedGainCollisionResidualFullEmptyProperSourceRootMass_le_extensionSum
     {w : TestWeight V} (hw0 : ∀ S, 0 ≤ w S)
@@ -46762,15 +46981,15 @@ theorem weightedF0TruncatedGainCollisionResidualFullEmptyProperSourceRootMass_le
       ∑ e ∈ S,
       ∑ f ∈ S.erase e, _ := by
         apply Finset.sum_congr rfl
-        intro S hS
-        calc
-          (∑ e ∈ S, ∑ f ∈ S.erase e, ∑ c ∈ C, _) =
-              ∑ e ∈ S, ∑ c ∈ C, ∑ f ∈ S.erase e, _ := by
-                apply Finset.sum_congr rfl
-                intro e he
-                rw [Finset.sum_comm]
-          _ = ∑ c ∈ C, ∑ e ∈ S, ∑ f ∈ S.erase e, _ := by
-                rw [Finset.sum_comm]
+        · intro S hS
+          calc
+            (∑ e ∈ S, ∑ f ∈ S.erase e, ∑ c ∈ C, _) =
+                ∑ e ∈ S, ∑ c ∈ C, ∑ f ∈ S.erase e, _ := by
+                  apply Finset.sum_congr rfl
+                  · intro e he
+                    rw [Finset.sum_comm]
+            _ = ∑ c ∈ C, ∑ e ∈ S, ∑ f ∈ S.erase e, _ := by
+                  rw [Finset.sum_comm]
     _ ≤ ∑ S ∈ H.powersetCard j,
         ∑ c ∈ C,
           if root ⊆ c ∧ c \ root ⊆ S ∧
@@ -46792,7 +47011,7 @@ theorem weightedF0TruncatedGainCollisionResidualFullEmptyProperSourceRootMass_le
           (c \ root).card < j
       · rw [if_pos hrootc]
         simp only [hrootc.1, hrootc.2.1, hrootc.2.2,
-          true_and, and_true, if_pos]
+          true_and, and_true]
         unfold testExtension
         rw [Finset.mul_sum, ← Finset.sum_filter]
       · rw [if_neg hrootc]
@@ -46810,6 +47029,7 @@ theorem weightedF0TruncatedGainCollisionResidualFullEmptyProperSourceRootMass_le
         testExtension w H j (c \ root) := by
       rw [Finset.mul_sum]
 
+omit [Fintype V] in
 /-- Singleton extensions summed over a supported root, using only the
 proper-source package. -/
 theorem sum_singleton_testExtension_root_le_of_properSourceBounds
@@ -46833,6 +47053,7 @@ theorem sum_singleton_testExtension_root_le_of_properSourceBounds
     _ = (root.card : ℝ) *
         (K * W / Real.rpow d (1 + eta)) := by simp
 
+omit [Fintype V] in
 /-- Full/source-meeting mass under the abstract proper-source package. -/
 theorem weightedGainCollisionResidualFullNonemptySourceRootMass_le_raw_of_properSourceBounds
     {H : Hypergraph V} {C : ConflictSystem V}
@@ -46927,6 +47148,7 @@ theorem weightedGainCollisionResidualFullNonemptySourceRootMass_le_raw_of_proper
         (mul_nonneg (mul_nonneg (by norm_num) hK0) hW0)
         (Real.rpow_nonneg (by linarith : 0 ≤ d) _)
 
+omit [Fintype V] in
 /-- Endpoint version of the source-meeting estimate for a root of
 cardinality at most three. -/
 theorem weightedGainCollisionResidualFullNonemptySourceRootMass_le_raw_three_of_properSourceBounds
@@ -47021,6 +47243,7 @@ theorem weightedGainCollisionResidualFullNonemptySourceRootMass_le_raw_three_of_
         (mul_nonneg (mul_nonneg (by norm_num) hK0) hW0)
         (Real.rpow_nonneg (by linarith : 0 ≤ d) _)
 
+omit [Fintype V] in
 /-- Nonfull/source-meeting mass under the abstract proper-source package. -/
 theorem weightedGainCollisionResidualNonFullNonemptySourceRootMass_le_raw_of_properSourceBounds
     {H : Hypergraph V} {C : ConflictSystem V}
@@ -47161,6 +47384,7 @@ theorem weightedGainCollisionResidualNonFullNonemptySourceRootMass_le_raw_of_pro
         (mul_nonneg (mul_nonneg (by norm_num) hK0) hW0)
         (Real.rpow_nonneg (by linarith : 0 ≤ d) _)
 
+omit [Fintype V] in
 /-- Unified nonfull estimate under the proper-source package. -/
 theorem weightedGainCollisionResidualNonFullRootMass_le_raw_of_properSourceBounds
     {H : Hypergraph V} {C : ConflictSystem V}
@@ -47212,6 +47436,7 @@ theorem weightedGainCollisionResidualNonFullRootMass_le_raw_of_properSourceBound
           (mul_nonneg (mul_nonneg (by norm_num) hK0) hW0))
     _ = (12 + 24 * K) * W * Real.rpow d E := by ring
 
+omit [Fintype V] in
 /-- One conflict layer in the proper full/empty-source charge.  Conflict
 codegree and source extension have complementary powers of `d`. -/
 theorem sum_properSource_extensions_over_supported_conflict_root_le
@@ -47329,6 +47554,7 @@ theorem sum_properSource_extensions_over_supported_conflict_root_le
                 ((q : ℝ) - (root.card : ℝ) + eta)) by ring]
         rw [hratio]
 
+omit [Fintype V] in
 /-- Raw proper-source full/empty boundary estimate. -/
 theorem weightedF0TruncatedGainCollisionResidualFullEmptyProperSourceRootMass_le_raw
     {H : Hypergraph V} {C : ConflictSystem V}
@@ -47380,6 +47606,7 @@ theorem weightedF0TruncatedGainCollisionResidualFullEmptyProperSourceRootMass_le
       norm_num [Finset.sum_Icc_succ_top]
       ring
 
+omit [Fintype V] in
 /-- Forgetting the availability filter can only increase rooted mass. -/
 theorem weightedF0TruncatedGainCollisionResidualRootMass_le_unfiltered
     {w : TestWeight V} (hw0 : ∀ S, 0 ≤ w S)
@@ -47411,6 +47638,7 @@ theorem weightedF0TruncatedGainCollisionResidualRootMass_le_unfiltered
     · exact hw0 S
     · norm_num
 
+omit [Fintype V] in
 theorem weightedF0TruncatedFullEmptyProperSourceRootMass_le_unfiltered
     {w : TestWeight V} (hw0 : ∀ S, 0 ≤ w S)
     (H : Hypergraph V) (C : ConflictSystem V)
@@ -47447,6 +47675,7 @@ theorem weightedF0TruncatedFullEmptyProperSourceRootMass_le_unfiltered
     · exact hw0 S
     · norm_num
 
+omit [Fintype V] in
 theorem weightedF0TruncatedFullCardRootMass_le_unfilteredFullEmpty
     {w : TestWeight V} (hw0 : ∀ S, 0 ≤ w S)
     (H : Hypergraph V) (C : ConflictSystem V)
@@ -47483,6 +47712,7 @@ theorem weightedF0TruncatedFullCardRootMass_le_unfilteredFullEmpty
     · exact hw0 S
     · norm_num
 
+omit [Fintype V] in
 /-- W4 from the abstract source package kills the full branch at the
 empty root. -/
 theorem weightedGainCollisionResidualFullRootMass_empty_eq_zero_of_properSourceBounds
@@ -47510,7 +47740,7 @@ theorem weightedGainCollisionResidualFullRootMass_empty_eq_zero_of_properSourceB
         gainCollisionResidualSource S e f = ∅ :=
       Finset.eq_empty_iff_forall_notMem.mpr (fun g hg ↦ by
         have hgEmpty : g ∈ (∅ : Hypergraph V) := hrep.2.2.2.2.2 hg
-        simpa using hgEmpty)
+        simp at hgEmpty)
     have hfS' := (Finset.mem_erase.mp hfS).2
     have hcS : c ⊆ S := by
       intro g hgc
@@ -47520,13 +47750,14 @@ theorem weightedGainCollisionResidualFullRootMass_empty_eq_zero_of_properSourceB
         rw [gainCollisionResidualConflict_sdiff_source heS hfS']
         exact Finset.mem_sdiff.mpr ⟨hgc, hgS⟩
       rw [hextEmpty] at hgext
-      simpa using hgext
+      simp at hgext
     by_cases hwS : 0 < w S
     · exact False.elim ((hP.2.2.1 S hS hwS c hcC) hcS)
     · have hwS0 : w S = 0 := le_antisymm (not_lt.mp hwS) (hP.1 S)
       exact hwS0
   · rw [if_neg hrep]
 
+omit [Fintype V] in
 /-- No proper re-rooted source exists for a source of cardinality at most
 two, because the ordered pair already lies in `c \ root`. -/
 theorem weightedF0TruncatedFullEmptyProperSourceRootMass_eq_zero_of_j_le_two
@@ -47553,6 +47784,7 @@ theorem weightedF0TruncatedFullEmptyProperSourceRootMass_eq_zero_of_j_le_two
       hrep.2.2.2.2.2.2.1
   omega
 
+omit [Fintype V] in
 /-- In the four-conflict certificate a full-card source together with a
 three-edge root is impossible. -/
 theorem RegularizationCertificate.weightedF0TruncatedFullCardRootMass_eq_zero_of_root_card_three
@@ -47593,6 +47825,7 @@ theorem RegularizationCertificate.weightedF0TruncatedFullCardRootMass_eq_zero_of
   have hc4 := (Rcert.bounded.conflict_card hcC).2
   omega
 
+omit [Fintype V] in
 /-- The internal nonfull contribution consumes one unit at the final
 `eps/10` scale. -/
 theorem RegularizationCertificate.internalGainCollisionResidualNonFullRootMass_le_scale
@@ -47644,7 +47877,7 @@ theorem RegularizationCertificate.internalGainCollisionResidualNonFullRootMass_l
   have hraw' : weightedGainCollisionResidualNonFullRootMass
       w H Rcert.regularized j r root ≤
       72 * scale * Real.rpow d (A - eps / 4) := by
-    convert hraw using 1 <;> dsimp only [w, scale, A] <;> ring
+    convert hraw using 1 ; dsimp only [w, scale, A] ; ring
   apply hraw'.trans
   calc
     72 * scale * Real.rpow d (A - eps / 4) ≤
@@ -47668,6 +47901,7 @@ theorem RegularizationCertificate.internalGainCollisionResidualNonFullRootMass_l
       apply Real.rpow_le_rpow_of_exponent_le hd
       linarith
 
+omit [Fintype V] in
 /-- A proper full/empty-source boundary consumes one unit at the final
 scale. -/
 theorem RegularizationCertificate.internalF0TruncatedFullEmptyProperSourceRootMass_le_scale
@@ -47713,7 +47947,7 @@ theorem RegularizationCertificate.internalF0TruncatedFullEmptyProperSourceRootMa
           w H Rcert.regularized f₀ j r root ≤
         (72 * (3 * Gamma + 1)) * scale *
           Real.rpow d (-eps / 5) := by
-    convert hraw using 1 <;> dsimp only [w, scale] <;> ring_nf
+    convert hraw using 1 ; dsimp only [w, scale] ; ring_nf
   apply hraw'.trans
   calc
     (72 * (3 * Gamma + 1)) * scale * Real.rpow d (-eps / 5) ≤
@@ -47732,6 +47966,7 @@ theorem RegularizationCertificate.internalF0TruncatedFullEmptyProperSourceRootMa
           congr 2
           ring
 
+omit [Fintype V] in
 /-- A source-meeting full contribution with a root of cardinality at most
 two consumes one final-scale unit. -/
 theorem RegularizationCertificate.internalGainCollisionResidualFullNonemptySourceRootMass_le_scale
@@ -47781,7 +48016,7 @@ theorem RegularizationCertificate.internalGainCollisionResidualFullNonemptySourc
   have hraw' : weightedGainCollisionResidualFullNonemptySourceRootMass
       w H Rcert.regularized j r root ≤
       48 * scale * Real.rpow d (-(1 + eps / 5)) := by
-    convert hraw using 1 <;> dsimp only [w, scale] <;> ring
+    convert hraw using 1 ; dsimp only [w, scale] ; ring
   apply hraw'.trans
   calc
     48 * scale * Real.rpow d (-(1 + eps / 5)) ≤
@@ -47802,8 +48037,10 @@ theorem RegularizationCertificate.internalGainCollisionResidualFullNonemptySourc
           congr 2
           ring
 
+omit [Fintype V] in
 /-- Endpoint source-meeting estimate for a three-edge requested root. -/
-theorem RegularizationCertificate.internalGainCollisionResidualFullNonemptySourceRootMass_le_scale_three
+theorem
+  RegularizationCertificate.internalGainCollisionResidualFullNonemptySourceRootMass_le_scale_three
     {ι : Type*} [Fintype ι]
     {H : Hypergraph V} {C : ConflictSystem V}
     {d eps Gamma : ℝ} {ell : ℕ}
@@ -47850,7 +48087,7 @@ theorem RegularizationCertificate.internalGainCollisionResidualFullNonemptySourc
   have hraw' : weightedGainCollisionResidualFullNonemptySourceRootMass
       w H Rcert.regularized j r root ≤
       72 * scale * Real.rpow d (-(1 + eps / 5)) := by
-    convert hraw using 1 <;> dsimp only [w, scale] <;> ring
+    convert hraw using 1 ; dsimp only [w, scale] ; ring
   apply hraw'.trans
   calc
     72 * scale * Real.rpow d (-(1 + eps / 5)) ≤
@@ -47871,6 +48108,8 @@ theorem RegularizationCertificate.internalGainCollisionResidualFullNonemptySourc
           congr 2
           ring
 
+open Erdos136.RegularizationCertificate in
+omit [Fintype V] in
 /-- Whole truncated rooted estimate for proper roots.  The coefficient
 three is one nonfull unit plus at most two units from the full boundary. -/
 theorem RegularizationCertificate.weightedF0TruncatedGainCollisionResidualRootMass_le
@@ -47896,7 +48135,7 @@ theorem RegularizationCertificate.weightedF0TruncatedGainCollisionResidualRootMa
     H C d eps Gamma ell testJ testW Rcert (j + 1)
   let w := conflictLinkTestWeight Rcert.regularized f₀ j
   have hP :=
-    Erdos136.RegularizationCertificate.internalLink_hasGainCollisionResidualProperSourceBounds
+    internalLink_hasGainCollisionResidualProperSourceBounds
       Rcert hd heps f₀ hf₀H j hj1 hj3
   have hscale0 : 0 ≤ scale :=
     (certificateInternalLayerScale_pos
@@ -47914,7 +48153,7 @@ theorem RegularizationCertificate.weightedF0TruncatedGainCollisionResidualRootMa
         weightedF0TruncatedGainCollisionResidualRootMass_le_fourParts
           hweight0 H Rcert.regularized f₀ j r root
       have hnonNat :=
-        Erdos136.RegularizationCertificate.internalGainCollisionResidualNonFullRootMass_le_scale
+        internalGainCollisionResidualNonFullRootMass_le_scale
           Rcert (r := r) hd heps hcutoff hf₀H hj1 hj3 root hrootH hroot2
       have hnon : weightedGainCollisionResidualNonFullRootMass
           w H Rcert.regularized j r root ≤ scale * Real.rpow d E := by
@@ -47960,7 +48199,7 @@ theorem RegularizationCertificate.weightedF0TruncatedGainCollisionResidualRootMa
               w H Rcert.regularized j r hj3 root
             omega
           have hproperRaw :=
-            Erdos136.RegularizationCertificate.internalF0TruncatedFullEmptyProperSourceRootMass_le_scale
+            internalF0TruncatedFullEmptyProperSourceRootMass_le_scale
               Rcert (r := r) hd heps hcutoff hf₀H hj1 hj3 root hrootH hroot1
           have hproper :
               weightedF0TruncatedGainCollisionResidualFullEmptyProperSourceRootMass
@@ -47977,7 +48216,7 @@ theorem RegularizationCertificate.weightedF0TruncatedGainCollisionResidualRootMa
                 (by linarith : 0 < d)
             exact (by nlinarith : 12 ≤ 72 * (3 * Gamma + 1)).trans hcutoff
           have hcardRaw :=
-            Erdos136.RegularizationCertificate.weightedF0TruncatedFullCardRootMass_le_scale
+            weightedF0TruncatedFullCardRootMass_le_scale
               Rcert (r := r) hd heps hcutoff12 hf₀H
                 (Finset.mem_Icc.mpr ⟨hj1, hj3⟩)
                 root hrootH hroot1 hroot2
@@ -48007,7 +48246,7 @@ theorem RegularizationCertificate.weightedF0TruncatedGainCollisionResidualRootMa
               (weightedF0TruncatedFullCardRootMass_le_unfilteredFullEmpty
                 hweight0 H Rcert.regularized f₀ j r root).trans_eq hemptyZero
             have hfullRaw :=
-              Erdos136.RegularizationCertificate.internalGainCollisionResidualFullNonemptySourceRootMass_le_scale
+              internalGainCollisionResidualFullNonemptySourceRootMass_le_scale
                 Rcert (r := r) hd heps hcutoff hf₀H hj1 hj3 root hrootH hroot2
             have hfull :
                 weightedGainCollisionResidualFullNonemptySourceRootMass
@@ -48060,6 +48299,8 @@ theorem RegularizationCertificate.weightedF0TruncatedGainCollisionResidualRootMa
       3 * scale * Real.rpow d E
     exact hmono.trans (by nlinarith)
 
+open Erdos136.RegularizationCertificate in
+omit [Fintype V] in
 /-- Exact constant-one endpoint at the full active residual rank. -/
 theorem RegularizationCertificate.weightedF0TruncatedGainCollisionResidualRootMass_le_of_fullRank
     {ι : Type*} [Fintype ι]
@@ -48084,7 +48325,7 @@ theorem RegularizationCertificate.weightedF0TruncatedGainCollisionResidualRootMa
     H C d eps Gamma ell testJ testW Rcert (j + 1)
   let w := conflictLinkTestWeight Rcert.regularized f₀ j
   have hP :=
-    Erdos136.RegularizationCertificate.internalLink_hasGainCollisionResidualProperSourceBounds
+    internalLink_hasGainCollisionResidualProperSourceBounds
       Rcert hd heps f₀ hf₀H j hj1 hj3
   have hscale0 : 0 ≤ scale :=
     (certificateInternalLayerScale_pos
@@ -48155,12 +48396,12 @@ theorem RegularizationCertificate.weightedF0TruncatedGainCollisionResidualRootMa
                     (by linarith : 0 < d)
                 exact (by nlinarith : 12 ≤ 72 * (3 * Gamma + 1)).trans
                   hcutoff
-              exact Erdos136.RegularizationCertificate.weightedF0TruncatedFullCardRootMass_le_scale
+              exact weightedF0TruncatedFullCardRootMass_le_scale
                 Rcert hd heps hcutoff12 hf₀H
                   (show 2 ∈ Finset.Icc 1 3 by simp)
                   root hrootH hroot1 hroot2
             · have hroot3 : 3 ≤ root.card := by omega
-              rw [Erdos136.RegularizationCertificate.weightedF0TruncatedFullCardRootMass_eq_zero_of_root_card_three
+              rw [weightedF0TruncatedFullCardRootMass_eq_zero_of_root_card_three
                 Rcert (f₀ := f₀) (j := 2) (r := r) (by omega) root hroot3]
               exact mul_nonneg hscale0
                 (Real.rpow_nonneg (by linarith : 0 ≤ d) _)
@@ -48190,7 +48431,7 @@ theorem RegularizationCertificate.weightedF0TruncatedGainCollisionResidualRootMa
             hweight0 H Rcert.regularized f₀ 3 r root).trans_eq hemptyZero
         have hroot3 : root.card ≤ 3 := by rw [hrootCard]; omega
         have hfull :=
-          Erdos136.RegularizationCertificate.internalGainCollisionResidualFullNonemptySourceRootMass_le_scale_three
+          internalGainCollisionResidualFullNonemptySourceRootMass_le_scale_three
             Rcert (r := r) hd heps hcutoff hf₀H (by omega) (by omega)
               root hrootH hroot3
         have hfullTarget :
@@ -48218,8 +48459,11 @@ theorem RegularizationCertificate.weightedF0TruncatedGainCollisionResidualRootMa
       w H Rcert.regularized j r root hrootH] at hmono
     exact hmono.trans htarget0
 
+namespace RegularizationCertificate
+
+omit [Fintype V] in
 /-- The endpoint in the literal `d₀ * delta^|root|` form. -/
-theorem RegularizationCertificate.weightedF0TruncatedGainCollisionResidualRootMass_le_of_fullRank_spreadForm
+theorem weightedF0TruncatedGainCollisionResidualRootMass_le_of_fullRank_spreadForm
     {ι : Type*} [Fintype ι]
     {H : Hypergraph V} {C : ConflictSystem V}
     {d eps Gamma : ℝ} {ell : ℕ}
@@ -48240,7 +48484,7 @@ theorem RegularizationCertificate.weightedF0TruncatedGainCollisionResidualRootMa
         Real.rpow d ((r : ℝ) - (j : ℝ) - eps / 10)) *
           d⁻¹ ^ root.card := by
   have hendpoint :=
-    Erdos136.RegularizationCertificate.weightedF0TruncatedGainCollisionResidualRootMass_le_of_fullRank
+    weightedF0TruncatedGainCollisionResidualRootMass_le_of_fullRank
       Rcert hd heps hcutoff hf₀H hj1 hj3 hr2 hr5 root hrootCard
   apply hendpoint.trans_eq
   have hinv : d⁻¹ ^ root.card =
@@ -48279,6 +48523,9 @@ theorem RegularizationCertificate.weightedF0TruncatedGainCollisionResidualRootMa
         Real.rpow d ((r : ℝ) - (j : ℝ) - eps / 10)) *
           Real.rpow d (-(root.card : ℝ)) := by ring
 
+end RegularizationCertificate
+
+omit [Fintype V] in
 /-- Static weighted spread for the availability-truncated internal
 residual coordinate. -/
 theorem RegularizationCertificate.f0TruncatedGainCollisionResidualLayer_isWeightedRealSpread
@@ -48292,7 +48539,7 @@ theorem RegularizationCertificate.f0TruncatedGainCollisionResidualLayer_isWeight
     (hcutoff : 72 * (3 * Gamma + 1) ≤ Real.rpow d (eps / 10))
     {f₀ : Finset V} (hf₀H : f₀ ∈ H)
     {j r : ℕ} (hj1 : 1 ≤ j) (hj3 : j ≤ 3)
-    (hr2 : 2 ≤ r) (hr5 : r ≤ 5) :
+    (_ : 2 ≤ r) (hr5 : r ≤ 5) :
     IsWeightedRealSpread
       (gainCollisionResidualLayer H Rcert.regularized j r)
       (f0TruncatedGainCollisionResidualRepresentationWeight
@@ -48464,7 +48711,7 @@ def externalTestLocalProfileActiveRank
 
 def externalTestLocalProfileSeed
     {H : Hypergraph V} {C : ConflictSystem V}
-    (b : ExternalTestLocalProfileIndex H C io) : Hypergraph V := ∅
+    (_ : ExternalTestLocalProfileIndex H C io) : Hypergraph V := ∅
 
 def externalTestLocalProfileScale
     (H : Hypergraph V) (C : ConflictSystem V)
@@ -48490,6 +48737,7 @@ def externalTestLocalProfileScale
       2304 * (3 * GammaCert + 1) *
         Real.rpow d ((b.layer.1 : ℝ) - epsRaw / 4)
 
+omit [Fintype V] in
 @[simp] theorem externalTestLocalProfileFamily_original
     (H : Hypergraph V) (C : ConflictSystem V) (j : io → ℕ)
     (R : CFMRegularization.RegularizationCertificate
@@ -48498,6 +48746,7 @@ def externalTestLocalProfileScale
     externalTestLocalProfileFamily H C j R (Sum.inr (Sum.inl b)) =
       originalTestChoiceRemainderFamily H (j b.source) b.choice.1 := rfl
 
+omit [Fintype V] in
 @[simp] theorem externalTestLocalProfileWeight_original
     (H : Hypergraph V) (C : ConflictSystem V) (j : io → ℕ)
     (R : CFMRegularization.RegularizationCertificate
@@ -48507,6 +48756,7 @@ def externalTestLocalProfileScale
       originalTestChoiceRemainderWeight
         (R.restrictedWeight b.source) b.choice.1 := rfl
 
+omit [Fintype V] [Fintype io] in
 @[simp] theorem externalTestLocalProfileFamilyRank_original
     (H : Hypergraph V) (C : ConflictSystem V)
     (j : io → ℕ) (b : ExternalOriginalProfile H io) :
@@ -48514,6 +48764,7 @@ def externalTestLocalProfileScale
       (H := H) (C := C) (io := io) j (Sum.inr (Sum.inl b)) =
       j b.source - 1 := rfl
 
+omit [Fintype V] [Fintype io] in
 @[simp] theorem externalTestLocalProfileActiveRank_original
     (H : Hypergraph V) (C : ConflictSystem V)
     (j : io → ℕ) (b : ExternalOriginalProfile H io) :
@@ -48521,12 +48772,14 @@ def externalTestLocalProfileScale
       (H := H) (C := C) (io := io) j (Sum.inr (Sum.inl b)) =
       j b.source - 1 := rfl
 
+omit [Fintype V] [Fintype io] in
 @[simp] theorem externalTestLocalProfileSeed_eq_empty
     (H : Hypergraph V) (C : ConflictSystem V)
     (b : ExternalTestLocalProfileIndex H C io) :
     externalTestLocalProfileSeed
       (H := H) (C := C) (io := io) b = ∅ := rfl
 
+omit [Fintype V] [Fintype io] in
 theorem externalTestLocalProfileFamilyRank_le_five
     (H : Hypergraph V) (C : ConflictSystem V)
     (j : io → ℕ) (hj3 : ∀ a, j a ≤ 3)
@@ -48549,6 +48802,7 @@ theorem externalTestLocalProfileFamilyRank_le_five
         · simp only [externalTestLocalProfileFamilyRank]
           omega
 
+omit [Fintype V] [Fintype io] in
 theorem externalTestLocalProfileActiveRank_le_familyRank
     (H : Hypergraph V) (C : ConflictSystem V)
     (j : io → ℕ) (b : ExternalTestLocalProfileIndex H C io) :
@@ -48572,6 +48826,7 @@ theorem externalTestLocalProfileActiveRank_le_familyRank
             externalTestLocalProfileFamilyRank]
           omega
 
+omit [Fintype V] in
 /-- Every concrete external/degree profile is a weighted real-spread
 family at its literal certificate scale.  The only non-structural
 hypothesis is the certificate-level residual cutoff; the final specialized
@@ -48658,6 +48913,7 @@ theorem externalTestLocalProfile_isWeightedRealSpread
               b.edge.1 b.edge.2 b.layer.1 b.layer_lower
                 (by omega)).isWeightedRealSpread_unitTestWeight
 
+omit [Fintype V] in
 theorem externalTestLocalProfileScale_pos
     (H : Hypergraph V) (C : ConflictSystem V)
     (d epsRaw GammaCert : ℝ) (ellCert : ℕ) (j : io → ℕ)
@@ -48697,6 +48953,7 @@ theorem externalTestLocalProfileScale_pos
           exact mul_pos (mul_pos (by positivity) hcoef)
             (Real.rpow_pos_of_pos hdpos _)
 
+omit [Fintype V] in
 /-- Closed-root endpoint for every profile.  `activeRank` deliberately
 omits the false full-rank diagonal for the one-open duplicate and reroot
 families.  The residual branch uses the separate full-rank endpoint. -/
@@ -48854,6 +49111,7 @@ def vertexDuplicateLocalProfile
     ExternalTestLocalProfileIndex H C io :=
   Sum.inl ⟨v, ⟨r, by omega⟩, hr3⟩
 
+omit [Fintype V] in
 theorem externalTestLocalCap_of_enhancedGood
     (H : Hypergraph V) (C : ConflictSystem V)
     (d epsRaw GammaCert : ℝ) (ellCert : ℕ)
@@ -49107,7 +49365,7 @@ theorem vertexDuplicateGenericMargin_le_nonprimaryCap
     {eta G d : ℝ} {r rootCard selected : ℕ}
     (E : CFMNumeric.CoreExponentSpec eta (6 * G))
     (S : CFMNumeric.CoreCutoffSpec eta (6 * G) d)
-    (hG : 2 ≤ G) (hr5 : r ≤ 5) (hs : 1 ≤ selected) :
+    (hG : 2 ≤ G) (_ : r ≤ 5) (hs : 1 ≤ selected) :
     2 * finiteWeightedRootShadowMargin eta d
         (2304 * (3 * G + 1) * d *
           Real.rpow d
@@ -49210,6 +49468,7 @@ theorem vertexDuplicateGenericMargin_le_primaryCap
       rw [hraw]
       nlinarith
 
+omit [Fintype V] in
 theorem finiteVertexDuplicateGenericCap_le_existing
     {eta G d : ℝ} {N T k : ℕ}
     (E : CFMNumeric.CoreExponentSpec eta (6 * G))
@@ -49270,6 +49529,7 @@ def vertexDuplicateToExternalRootCoordinate
     have hlegal := z.legal
     omega
 
+omit [Fintype V] in
 @[simp] theorem vertexDuplicateToExternalRootCoordinate_weight
     (H : Hypergraph V) (C : ConflictSystem V) (j : io → ℕ)
     (R : CFMRegularization.RegularizationCertificate
@@ -49283,6 +49543,7 @@ def vertexDuplicateToExternalRootCoordinate
       vertexDuplicateRootShadowWeight H R.regularized z := by
   rfl
 
+omit [Fintype V] in
 /-- Every represented duplicate union is supported on the host whenever
 the ambient conflict family is a conflict system on that host. -/
 theorem duplicateConflictLinkUnionLayer_subset_host
@@ -49298,6 +49559,7 @@ theorem duplicateConflictLinkUnionLayer_subset_host
   obtain ⟨q, _hq, hQlink⟩ := mem_allNonemptyConflictLinks.mp hQall
   exact conflictLinkLayer_subset_host hC f q Q hQlink hxQ
 
+omit [Fintype V] in
 theorem vertexDuplicateLayerFamily_subset_host
     {H : Hypergraph V} {C : ConflictSystem V}
     (hC : IsConflictSystem H C) (v : V) (r : ℕ) :
@@ -49306,6 +49568,7 @@ theorem vertexDuplicateLayerFamily_subset_host
   obtain ⟨f, _hf, hUf⟩ := Finset.mem_biUnion.mp hU
   exact duplicateConflictLinkUnionLayer_subset_host hC f r U hUf
 
+omit [Fintype V] in
 theorem vertexDuplicateRootShadowWeight_eq_zero_of_not_subset_host
     (H : Hypergraph V) (C : ConflictSystem V)
     (hC : IsConflictSystem H C)
@@ -49330,6 +49593,7 @@ theorem vertexDuplicateRootShadowWeight_eq_zero_of_not_subset_host
     simp
   · rfl
 
+omit [Fintype V] in
 theorem vertexDuplicateRootShadowCap_pos
     {H : Hypergraph V} {eta d : ℝ} (hd : 0 < d)
     (z : VertexDuplicateRootShadowCoordinate H) (k : ℕ) :
@@ -49340,6 +49604,7 @@ theorem vertexDuplicateRootShadowCap_pos
     exact div_pos (Real.rpow_pos_of_pos hd _) (by norm_num)
   · exact Real.rpow_pos_of_pos hd _
 
+omit [Fintype V] in
 theorem vertexDuplicateRootShadowPredicate_of_not_subset_host
     (H : Hypergraph V) (C : ConflictSystem V)
     (hC : IsConflictSystem H C) {eta d : ℝ} (hd : 0 < d)
@@ -49352,6 +49617,7 @@ theorem vertexDuplicateRootShadowPredicate_of_not_subset_host
     H C hC z hroot]
   simpa [testTotal] using vertexDuplicateRootShadowCap_pos hd z k
 
+omit [Fintype V] in
 theorem externalVertexDuplicatePredicate_implies_existing
     {eta G d : ℝ} {N T k : ℕ} {M : Hypergraph V}
     (E : CFMNumeric.CoreExponentSpec eta (6 * G))
@@ -49395,10 +49661,11 @@ theorem externalVertexDuplicatePredicate_implies_existing
     externalTestLocalProfileFamilyRank,
     vertexDuplicateLocalProfile] using hstrong
 
+omit [Fintype V] in
 /-- Bounded-time form of component domination.  The cap comparison used by
 the duplicate adapter is valid precisely through the greedy horizon. -/
 theorem greedyFirstFailureEvent_subset_of_component_implication_upto
-    {I : Type*} [Fintype I]
+    {I : Type*}
     (H : Hypergraph V) (C : ConflictSystem V) (M : Hypergraph V) (T : ℕ)
     (P : I → ℕ → Hypergraph V → Prop) (weak strong : I)
     (himp : ∀ k, k ≤ T → ∀ S, P strong k S → P weak k S) :
@@ -49411,8 +49678,9 @@ theorem greedyFirstFailureEvent_subset_of_component_implication_upto
     hfail (himp (k + 1) (Nat.succ_le_of_lt hk)
       (greedyStateFromAt H C M omega (k + 1)) hstrong)⟩
 
+omit [Fintype V] in
 theorem greedyFirstFailureEvent_eq_empty_of_component_always
-    {I : Type*} [Fintype I]
+    {I : Type*}
     (H : Hypergraph V) (C : ConflictSystem V) (M : Hypergraph V) (T : ℕ)
     (P : I → ℕ → Hypergraph V → Prop) (i : I)
     (hall : ∀ k S, P i k S) :
@@ -49423,6 +49691,7 @@ theorem greedyFirstFailureEvent_eq_empty_of_component_always
   obtain ⟨_homegaUniv, k, _hk, _hprefix, hfail⟩ := homega
   exact hfail (hall (k + 1) (greedyStateFromAt H C M omega (k + 1)))
 
+omit [Fintype V] in
 /-- A concrete weighted duplicate profile implies the older duplicate
 corridor throughout the finite horizon.  This is the exact bridge used to
 charge the retained degree-enhanced coordinate to the new shadow tail. -/
@@ -49467,6 +49736,7 @@ theorem externalVertexDuplicateFirstFailureEvent_subset
   exact externalVertexDuplicatePredicate_implies_existing
     E S hG hN hT hk H C j w R z hroot hstrong
 
+omit [Fintype V] in
 theorem externalVertexDuplicateFirstFailureEvent_eq_empty_of_not_subset_host
     {eta d : ℝ} (hd : 0 < d) {N T : ℕ}
     (H : Hypergraph V) (C : ConflictSystem V) (j : io → ℕ)
@@ -49485,6 +49755,7 @@ theorem externalVertexDuplicateFirstFailureEvent_eq_empty_of_not_subset_host
   exact vertexDuplicateRootShadowPredicate_of_not_subset_host
     H R.regularized R.isConflictSystem hd z hroot k M
 
+omit [Fintype V] in
 theorem externalVertexDuplicateFirstFailureMass_le_profile
     {eta G d : ℝ} {N T : ℕ}
     (E : CFMNumeric.CoreExponentSpec eta (6 * G))
@@ -49515,6 +49786,7 @@ theorem externalVertexDuplicateFirstFailureMass_le_profile
     (externalVertexDuplicateFirstFailureEvent_subset E S hG hN hT
       H C j w R D₂ D₃ D₄ z hroot)
 
+omit [Fintype V] in
 /-- Every retained duplicate coordinate is charged to one concrete profile
 tail.  Unsupported roots contribute zero, so no additional family or
 availability premise appears in the final union bound. -/
@@ -49556,6 +49828,7 @@ theorem externalVertexDuplicateFirstFailureMass_le_of_profileTail
         D₂ D₃ D₄ (6 * G) z hroot]
     exact (Real.exp_pos _).le
 
+omit [Fintype V] in
 /-- No-premise projection of the concrete profile component back to the
 retained degree duplicate corridor, including roots outside the host. -/
 theorem externalTestLocalEnhancedGood_vertexDuplicateMapped
@@ -49585,6 +49858,7 @@ theorem externalTestLocalEnhancedGood_vertexDuplicateMapped
         (by linarith [S.degreeAtLeastTwo]) z hroot k M
 
 
+omit [Fintype V] [Fintype io] in
 /-- Uniform extraction for a concrete profile partial mass.  The dynamic
 corridor handles positive selected rank, while selected rank zero is
 closed directly from the profile's static empty-root endpoint. -/
@@ -49639,6 +49913,7 @@ theorem weightedProfilePartialMass_le_two_margin_of_enhancedGood
     exact hcap.trans (externalTestLocalCap_le_two_margin
       E S hN hT hk hrank hd₀0 hnpos)
 
+omit [Fintype V] in
 /-- The concrete original-test shadow bound needed by both pointwise gain
 and pointwise loss.  Rank zero is discharged by the static all-root
 endpoint; positive ranks are projected from the enhanced Good predicate.
@@ -49756,6 +50031,7 @@ theorem externalOriginalRootShadow_le_two_margin
     exact hcap'.trans (externalTestLocalCap_le_two_margin E S hN hT hk
       (by omega) hd₀0 hnpos)
 
+omit [Fintype V] in
 /-- One dynamic residual layer is bounded by its concrete root-shadow
 margin.  If the requested partial rank exceeds the residual's uniform
 rank, the partial family is empty; this is needed for the small `r`
@@ -49883,6 +50159,7 @@ theorem externalResidualPartialMass_le_profileMargin
         (pow_nonneg (Real.rpow_nonneg (by linarith) _) _)
     exact mul_nonneg (by norm_num) hmargin0
 
+omit [Fintype V] in
 /-- The legal conflict-conflict reroot coordinate projected from enhanced
 Good.  Its active diagonal is `r-1`, exactly matching the one-open partial
 family consumed by the loss-overlap decomposition. -/
@@ -49961,8 +50238,9 @@ theorem externalLegalCCRerootPartialCard_le_profileMargin
         simp only [b, externalLegalCCRerootLocalProfile,
           externalTestLocalProfileFamilyRank]
         omega)
-      (by simp [b, externalLegalCCRerootLocalProfile,
-        externalTestLocalProfileFamilyRank]; exact hr5)
+      (by
+        simp only [externalTestLocalProfileFamilyRank, externalLegalCCRerootLocalProfile, b]
+        exact hr5)
       (by simp [b, externalLegalCCRerootLocalProfile,
         externalTestLocalProfileFamilyRank,
         externalTestLocalProfileActiveRank])
@@ -49993,6 +50271,7 @@ theorem externalLegalCCRerootPartialCard_le_profileMargin
     externalTestLocalProfileFamily, externalTestLocalProfileWeight,
     externalTestLocalProfileFamilyRank] using hbound
 
+omit [Fintype V] in
 /-- One-open duplicate-family cap for the pointwise blocker-status defect. -/
 theorem externalPointDuplicatePartialCard_le_profileMargin
     (H : Hypergraph V) (C : ConflictSystem V)
@@ -50063,8 +50342,7 @@ theorem externalPointDuplicatePartialCard_le_profileMargin
         simp only [b, pointDuplicateLocalProfile,
           externalTestLocalProfileFamilyRank]
         omega)
-      (by simp [b, pointDuplicateLocalProfile,
-        externalTestLocalProfileFamilyRank]; exact hr5)
+      (by simp only [externalTestLocalProfileFamilyRank, pointDuplicateLocalProfile, b]; exact hr5)
       (by simp [b, pointDuplicateLocalProfile,
         externalTestLocalProfileFamilyRank,
         externalTestLocalProfileActiveRank])
@@ -50472,7 +50750,7 @@ theorem literalMeanWindow_numeric_of_registry_internalResidualSixteenth
     have h76000 : 76000 * scale ≤
         CFMTrajectories.zetaRate D₂ D₃ D₄ Gamma eps d N j s x := by
       dsimp only [scale]
-      convert henvelopeRaw using 1 <;> ring
+      convert henvelopeRaw using 1 ; ring
     exact (mul_le_mul_of_nonneg_right
       (by norm_num : (40000 : ℝ) ≤ 76000) hscale0).trans h76000
   have hwindows := CFMSharpTestNumeric.meanWindow_numeric_of_source_errors
@@ -50832,6 +51110,7 @@ def oneOpenConflictLinkFamilyOnChoices
     ConflictSystem V :=
   (oneOpenConflictLinkFamily C A M f).filter fun Q ↦ (Q ∩ D).Nonempty
 
+omit [Fintype V] in
 @[simp] theorem mem_oneOpenConflictLinkFamilyOnChoices
     {C : ConflictSystem V} {A M D : Hypergraph V} {f : Finset V}
     {Q : Hypergraph V} :
@@ -50839,6 +51118,7 @@ def oneOpenConflictLinkFamilyOnChoices
       Q ∈ oneOpenConflictLinkFamily C A M f ∧ (Q ∩ D).Nonempty := by
   simp [oneOpenConflictLinkFamilyOnChoices]
 
+omit [Fintype V] in
 /-- Outside the colliding subfamily, the unique available-member map is
 injective.  Restricting its image to `D` therefore costs at most `|D|`,
 with all multiplicity charged to `collidingOneOpenConflictLinks`. -/
@@ -50931,6 +51211,7 @@ theorem card_oneOpenConflictLinkFamilyOnChoices_le_status_add_colliding
   change G.card ≤ D.card + K.card
   omega
 
+omit [Fintype V] in
 /-- Pointwise loss is bounded by the incidence of tests with the available
 members deleted by the chosen edge.  This is the reusable intermediate
 form hidden inside the original-root-shadow bound. -/
@@ -50979,6 +51260,7 @@ theorem partialTestStepLoss_le_selectedTestIncidenceCharge
     · exact mul_nonneg (hw S) (Nat.cast_nonneg _)
     · rfl
 
+omit [Fintype V] in
 /-- For the unit conflict-link weight at status `s = 1`, the incidence
 charge is exactly supported on one-open links whose available member lies
 in `D`. -/
@@ -51066,6 +51348,7 @@ theorem selectedTestIncidenceCharge_conflictLink_one_le_restricted
       omega
     · simpa [hQcard] using hQM)
 
+omit [Fintype V] in
 /-- Source-faithful pointwise `s = 1` loss cap.  The first link over each
 deleted available member costs one status change; every further link is
 charged to the point-duplicate family. -/
@@ -51124,6 +51407,7 @@ theorem partialTestStepLoss_conflictLink_one_le_status_add_pointDuplicate
           ((partialFamily (duplicateConflictLinkUnionLayer C f r)
             (availableEdges H C M) M 1).card : ℝ) := by rfl
 
+omit [Fintype V] in
 /-- Corridor-facing form: the ordinary status cap and the already tracked
 point-duplicate cap close the internal `s = 1` loss, with no full-root
 first-appearance coordinate. -/
@@ -51170,9 +51454,9 @@ def SpecializedRegularizedCoreProvider (ell : ℕ) : Prop :=
     ∀ (H : Hypergraph V) (C : ConflictSystem V)
       (j : ι → ℕ) (w : ι → TestWeight V),
       IsSpecializedCFMInstance H C d eta ell j w → H.Nonempty →
-      ∀ (E : CFMNumeric.CoreExponentSpec eta
+      ∀ (_ : CFMNumeric.CoreExponentSpec eta
           (6 * (2 * (ell : ℝ) + 1)))
-        (S : CFMNumeric.CoreCutoffSpec eta
+        (_ : CFMNumeric.CoreCutoffSpec eta
           (6 * (2 * (ell : ℝ) + 1)) d)
         (R : CFMRegularization.RegularizationCertificate H C d
           (CFMRegularization.rawRegularizationEps eta)
@@ -51327,6 +51611,7 @@ def internalOriginalLocalProfile
     InternalOriginalProfile H :=
   ⟨⟨f₀, hf₀H⟩, ⟨e, heH⟩, ⟨q, by omega⟩, hq1⟩
 
+omit [Fintype V] in
 theorem internalOriginalProfileFamily_uniform
     (H : Hypergraph V) (b : InternalOriginalProfile H) :
     IsUniform (internalOriginalProfileFamily H b)
@@ -51334,6 +51619,7 @@ theorem internalOriginalProfileFamily_uniform
   exact originalTestChoiceRemainderFamily_uniform
     H b.linkRank.1 b.choice.1
 
+omit [Fintype V] in
 theorem internalOriginalProfileWeight_nonneg
     {H : Hypergraph V} {C : ConflictSystem V}
     {d epsRaw GammaCert : ℝ} {ellCert : ℕ}
@@ -51346,6 +51632,7 @@ theorem internalOriginalProfileWeight_nonneg
     (conflictLinkTestWeight_nonneg_sharp
       R.regularized b.base.1 b.linkRank.1) b.choice.1
 
+omit [Fintype V] in
 /-- Proper-root spread for the internal original-choice remainder.  This
 is the sharp part of the source: inserting the fixed choice turns a root
 of size `t < q-1` into a proper nonempty link-test extension of size
@@ -51445,6 +51732,7 @@ theorem RegularizationCertificate.internalOriginalProfile_isWeightedRealSpread
         (Real.rpow_nonneg (by linarith : 0 ≤ d) _))
       (pow_nonneg (inv_nonneg.mpr (by linarith : 0 ≤ d)) _)
 
+omit [Fintype V] in
 /-- The deliberately separate full-active-root endpoint.  It is exactly
 one, rather than the false `d₀ * d^{-(q-1)}` demanded by the generic
 all-root closure. -/
@@ -51477,6 +51765,7 @@ theorem RegularizationCertificate.internalOriginalProfile_fullRoot_le_one
     _ = (F.card : ℝ) := by simp
     _ ≤ 1 := by exact_mod_cast hFcard
 
+omit [Fintype V] in
 /-- The empty-root shadow is definitionally the original fixed-choice
 root observable used by the pointwise gain/loss adapter. -/
 theorem internalOriginalProfile_emptyRootShadow_eq
@@ -51701,6 +51990,7 @@ def externalRootCoordinateToCombined
   selected_pos := c.selected_pos
   legal := c.legal
 
+omit [Fintype V] in
 /-- The final combined Good predicate projects to the already-green external
 five-profile Good family, without exposing a new premise to any consumer. -/
 theorem combinedGood_external
@@ -51735,6 +52025,7 @@ theorem combinedGood_external
       combinedTestLocalProfileWeight,
       combinedTestLocalProfileScale] using hc
 
+omit [Fintype V] in
 /-- The combined local family retains the canonical degree-enhanced
 projection.  This is the only projection needed by the mixed-loss adapter
 and by the reachable availability argument. -/
@@ -51764,6 +52055,7 @@ theorem combinedGood_degree
       (combinedTestLocalProfileScale
         H C d epsRaw GammaCert ellCert j w R) hgood
 
+omit [Fintype V] in
 /-- The Gamma-separated certificate corridor projection used by every
 external and internal observable consumer. -/
 theorem combinedGood_certificateWithCore
@@ -51790,6 +52082,7 @@ theorem combinedGood_certificateWithCore
       (combinedTestLocalProfileScale
         H C d epsRaw GammaCert ellCert j w R) hgood
 
+omit [Fintype V] [Fintype io] in
 theorem combinedTestLocalProfileFamilyRank_le_five
     (H : Hypergraph V) (C : ConflictSystem V)
     (j : io → ℕ) (hj3 : ∀ a, j a ≤ 3)
@@ -51806,6 +52099,7 @@ theorem combinedTestLocalProfileFamilyRank_le_five
       · simp only [combinedTestLocalProfileFamilyRank]
         omega
 
+omit [Fintype V] [Fintype io] in
 theorem combinedTestLocalProfileActiveRank_le_familyRank
     (H : Hypergraph V) (C : ConflictSystem V)
     (j : io → ℕ) (b : CombinedTestLocalProfileIndex H C io) :
@@ -51823,6 +52117,8 @@ theorem combinedTestLocalProfileActiveRank_le_familyRank
           combinedTestLocalProfileFamilyRank]
         omega
 
+open Erdos136.RegularizationCertificate in
+omit [Fintype V] in
 theorem combinedTestLocalProfile_isWeightedRealSpread
     (H : Hypergraph V) (C : ConflictSystem V)
     (d epsRaw GammaCert : ℝ) (ellCert : ℕ) (j : io → ℕ)
@@ -51870,7 +52166,7 @@ theorem combinedTestLocalProfile_isWeightedRealSpread
           Real.rpow d ((b.unionRank.1 : ℝ) -
             (b.linkRank.1 : ℝ) - epsRaw / 10)) d⁻¹
       exact
-        Erdos136.RegularizationCertificate.f0TruncatedGainCollisionResidualLayer_isWeightedRealSpread
+        f0TruncatedGainCollisionResidualLayer_isWeightedRealSpread
           R hd heps hcutoff b.edge.2 b.linkRank_pos (by omega)
           b.unionRank_two (by omega)
     · rcases b with b | b
@@ -51881,7 +52177,7 @@ theorem combinedTestLocalProfile_isWeightedRealSpread
           (internalOriginalProfileScale
             H C d epsRaw GammaCert ellCert j w R b.toOriginal) d⁻¹
         exact
-          Erdos136.RegularizationCertificate.internalOriginalProfile_isWeightedRealSpread
+          internalOriginalProfile_isWeightedRealSpread
             R hd heps b.toOriginal
       · change IsWeightedRealSpread
           (commonImmediateEvictorLinkLayer R.regularized
@@ -51896,6 +52192,7 @@ theorem combinedTestLocalProfile_isWeightedRealSpread
               b.first.1 b.first.2 b.second.1 b.layer.1
               b.layer_two (by omega)).isWeightedRealSpread_unitTestWeight
 
+omit [Fintype V] in
 theorem combinedTestLocalProfileScale_pos
     (H : Hypergraph V) (C : ConflictSystem V)
     (d epsRaw GammaCert : ℝ) (ellCert : ℕ) (j : io → ℕ)
@@ -51936,6 +52233,8 @@ theorem combinedTestLocalProfileScale_pos
         exact mul_pos (by linarith)
           (Real.rpow_pos_of_pos (lt_of_lt_of_le zero_lt_one hd) _)
 
+open Erdos136.RegularizationCertificate in
+omit [Fintype V] in
 theorem combinedTestLocalProfile_root_le_scale
     (H : Hypergraph V) (C : ConflictSystem V)
     (d epsRaw GammaCert : ℝ) (ellCert : ℕ) (j : io → ℕ)
@@ -51973,7 +52272,7 @@ theorem combinedTestLocalProfile_root_le_scale
           nlinarith
         exact hmul.trans hresidualCutoff
       have hspread :=
-        Erdos136.RegularizationCertificate.f0TruncatedGainCollisionResidualLayer_isWeightedRealSpread
+        f0TruncatedGainCollisionResidualLayer_isWeightedRealSpread
           R hd heps hcutoff b.edge.2 b.linkRank_pos (by omega)
           b.unionRank_two (by omega)
       change weightedF0TruncatedGainCollisionResidualRootMass
@@ -51985,7 +52284,7 @@ theorem combinedTestLocalProfile_root_le_scale
             (b.linkRank.1 : ℝ) - epsRaw / 10)) * d⁻¹ ^ root.card
       by_cases hfull : root.card = b.unionRank.1 - 2
       · have hendpoint :=
-          Erdos136.RegularizationCertificate.weightedF0TruncatedGainCollisionResidualRootMass_le_of_fullRank_spreadForm
+          weightedF0TruncatedGainCollisionResidualRootMass_le_of_fullRank_spreadForm
             R hd heps hcutoff b.edge.2 b.linkRank_pos (by omega)
               b.unionRank_two (by omega) root hfull
         have hscale0 : 0 ≤ certificateInternalLayerScale
@@ -52007,12 +52306,11 @@ theorem combinedTestLocalProfile_root_le_scale
           mul_nonneg (mul_nonneg hscale0 hrpow0) hinv0
         exact hendpoint.trans (by nlinarith)
       · apply hspread.weightedShadow_le root
-        change root.card < b.unionRank.1 - 2
         change root.card ≤ b.unionRank.1 - 2 at hroot
         omega
     · rcases b with b | b
       · have hspread :=
-          Erdos136.RegularizationCertificate.internalOriginalProfile_isWeightedRealSpread
+          internalOriginalProfile_isWeightedRealSpread
             R hd heps b.toOriginal
         change weightedCodegree
             (internalOriginalProfileFamily H b.toOriginal)
@@ -52039,7 +52337,6 @@ theorem combinedTestLocalProfile_root_le_scale
             Real.rpow d ((b.layer.1 : ℝ) - epsRaw / 4)) *
               d⁻¹ ^ root.card
         apply hspread.weightedShadow_le root
-        change root.card < b.layer.1
         change root.card ≤ b.layer.1 - 1 at hroot
         have hr2 := b.layer_two
         omega
@@ -52070,6 +52367,7 @@ def internalCommonImmediateEvictorProfileCode
     InternalCommonImmediateEvictorProfileCode H :=
   ((b.first, b.second), ⟨b.layer.1 - 2, by omega⟩)
 
+omit [Fintype V] in
 theorem internalCommonImmediateEvictorProfileCode_injective
     (H : Hypergraph V) :
     Function.Injective
@@ -52079,7 +52377,7 @@ theorem internalCommonImmediateEvictorProfileCode_injective
   rcases a with ⟨aFirst, aSecond, aLayer, haTwo⟩
   rcases b with ⟨bFirst, bSecond, bLayer, hbTwo⟩
   simp only [internalCommonImmediateEvictorProfileCode,
-    Prod.mk.injEq, Subtype.mk.injEq, Fin.mk.injEq] at hab
+    Prod.mk.injEq, Fin.mk.injEq] at hab
   rcases hab with ⟨⟨hFirst, hSecond⟩, hLayerSub⟩
   have hLayerVal : aLayer.1 = bLayer.1 := by omega
   cases hFirst
@@ -52123,6 +52421,7 @@ def vertexDuplicateToCombinedRootCoordinate
   externalRootCoordinateToCombined
     (vertexDuplicateToExternalRootCoordinate H C j z hroot)
 
+omit [Fintype V] in
 @[simp] theorem vertexDuplicateToCombinedRootCoordinate_weight
     (H : Hypergraph V) (C : ConflictSystem V) (j : io → ℕ)
     (R : CFMRegularization.RegularizationCertificate
@@ -52136,6 +52435,7 @@ def vertexDuplicateToCombinedRootCoordinate
       vertexDuplicateRootShadowWeight H R.regularized z := by
   rfl
 
+omit [Fintype V] in
 theorem combinedVertexDuplicatePredicate_implies_existing
     {eta G d : ℝ} {N T k : ℕ} {M : Hypergraph V}
     (E : CFMNumeric.CoreExponentSpec eta (6 * G))
@@ -52175,6 +52475,7 @@ theorem combinedVertexDuplicatePredicate_implies_existing
     combinedTestLocalProfileWeight,
     combinedTestLocalProfileScale] using hstrong
 
+omit [Fintype V] in
 theorem combinedVertexDuplicateFirstFailureEvent_subset
     {eta G d : ℝ} {N T : ℕ}
     (E : CFMNumeric.CoreExponentSpec eta (6 * G))
@@ -52216,6 +52517,7 @@ theorem combinedVertexDuplicateFirstFailureEvent_subset
   exact combinedVertexDuplicatePredicate_implies_existing
     E S hG hN hT hk H C j w R z hroot hstrong
 
+omit [Fintype V] in
 theorem combinedVertexDuplicateFirstFailureEvent_eq_empty_of_not_subset_host
     {eta d : ℝ} (hd : 0 < d) {N T : ℕ}
     (H : Hypergraph V) (C : ConflictSystem V) (j : io → ℕ)
@@ -52234,6 +52536,7 @@ theorem combinedVertexDuplicateFirstFailureEvent_eq_empty_of_not_subset_host
   exact vertexDuplicateRootShadowPredicate_of_not_subset_host
     H R.regularized R.isConflictSystem hd z hroot k M
 
+omit [Fintype V] in
 theorem combinedTestLocalEnhancedGood_vertexDuplicateMapped
     {eta G d : ℝ} {N T k : ℕ} {M : Hypergraph V}
     (E : CFMNumeric.CoreExponentSpec eta (6 * G))
@@ -52314,6 +52617,7 @@ noncomputable def finalReachableTestEnhancedPredicate
       IsConflictFreeMatching H R.regularized M
   | Sum.inr TestReachabilityInvariantIndex.timeCard, k, M => M.card = k
 
+omit [Fintype V] in
 theorem finalReachableGood_combined
     (H : Hypergraph V) (C : ConflictSystem V)
     (d epsRaw GammaCert : ℝ) (ellCert : ℕ)
@@ -52331,6 +52635,7 @@ theorem finalReachableGood_combined
   intro z
   exact hgood (Sum.inl z)
 
+omit [Fintype V] in
 theorem finalReachableGood_matching
     (H : Hypergraph V) (C : ConflictSystem V)
     (d epsRaw GammaCert : ℝ) (ellCert : ℕ)
@@ -52345,6 +52650,7 @@ theorem finalReachableGood_matching
     IsConflictFreeMatching H R.regularized M := by
   exact hgood (Sum.inr TestReachabilityInvariantIndex.matching)
 
+omit [Fintype V] in
 theorem finalReachableGood_card
     (H : Hypergraph V) (C : ConflictSystem V)
     (d epsRaw GammaCert : ℝ) (ellCert : ℕ)
@@ -52359,6 +52665,7 @@ theorem finalReachableGood_card
     M.card = k := by
   exact hgood (Sum.inr TestReachabilityInvariantIndex.timeCard)
 
+omit [Fintype V] in
 theorem finalReachableGood_external
     (H : Hypergraph V) (C : ConflictSystem V)
     (d epsRaw GammaCert : ℝ) (ellCert : ℕ)
@@ -52378,6 +52685,7 @@ theorem finalReachableGood_external
       (finalReachableGood_combined H C d epsRaw GammaCert ellCert
         D₂ D₃ D₄ GammaCore eta N T j w R hgood)
 
+omit [Fintype V] in
 theorem finalReachableGood_degree
     (H : Hypergraph V) (C : ConflictSystem V)
     (d epsRaw GammaCert : ℝ) (ellCert : ℕ)
@@ -52397,6 +52705,7 @@ theorem finalReachableGood_degree
       (finalReachableGood_combined H C d epsRaw GammaCert ellCert
         D₂ D₃ D₄ GammaCore eta N T j w R hgood)
 
+omit [Fintype V] in
 theorem finalReachableGood_certificateWithCore
     (H : Hypergraph V) (C : ConflictSystem V)
     (d epsRaw GammaCert : ℝ) (ellCert : ℕ)
@@ -52437,6 +52746,7 @@ def vertexDuplicateProfileCode
     {H : Hypergraph V} (b : VertexDuplicateProfile H) :
     ActualHostVertex H × Fin 6 := (b.vertex, b.layer)
 
+omit [Fintype V] in
 theorem vertexDuplicateProfileCode_injective (H : Hypergraph V) :
     Function.Injective (vertexDuplicateProfileCode (H := H)) := by
   intro a b h
@@ -52451,6 +52761,7 @@ def externalOriginalProfileCode
     {H : Hypergraph V} (b : ExternalOriginalProfile H io) :
     io × HostEdgeCode H := (b.source, b.choice)
 
+omit [Fintype V] [Fintype io] in
 theorem externalOriginalProfileCode_injective (H : Hypergraph V) :
     Function.Injective (externalOriginalProfileCode (H := H) (io := io)) := by
   intro a b h
@@ -52464,6 +52775,7 @@ theorem externalOriginalProfileCode_injective (H : Hypergraph V) :
 def externalResidualProfileCode (b : ExternalResidualProfile io) :
     io × Fin 6 := (b.source, b.unionRank)
 
+omit [Fintype io] in
 theorem externalResidualProfileCode_injective :
     Function.Injective (externalResidualProfileCode (io := io)) := by
   intro a b h
@@ -52480,6 +52792,7 @@ def legalCCRerootProfileCode
     (HostEdgeCode H × HostEdgeCode H) × (Fin 4 × Fin 6) :=
   ((b.first, b.second), (b.linkRank, b.unionRank))
 
+omit [Fintype V] in
 theorem legalCCRerootProfileCode_injective
     (H : Hypergraph V) (C : ConflictSystem V) :
     Function.Injective (legalCCRerootProfileCode (H := H) (C := C)) := by
@@ -52497,6 +52810,7 @@ def pointDuplicateProfileCode
     {H : Hypergraph V} (b : PointDuplicateProfile H) :
     HostEdgeCode H × Fin 6 := (b.edge, b.layer)
 
+omit [Fintype V] in
 theorem pointDuplicateProfileCode_injective (H : Hypergraph V) :
     Function.Injective (pointDuplicateProfileCode (H := H)) := by
   intro a b h
@@ -52512,6 +52826,7 @@ def internalResidualProfileCode
     HostEdgeCode H × (Fin 4 × Fin 6) :=
   (b.edge, (b.linkRank, b.unionRank))
 
+omit [Fintype V] in
 theorem internalResidualProfileCode_injective (H : Hypergraph V) :
     Function.Injective (internalResidualProfileCode (H := H)) := by
   intro a b h
@@ -52528,6 +52843,7 @@ def internalOriginalGainProfileCode
     HostEdgeCode H × (HostEdgeCode H × Fin 4) :=
   (b.base, (b.choice, b.linkRank))
 
+omit [Fintype V] in
 theorem internalOriginalGainProfileCode_injective (H : Hypergraph V) :
     Function.Injective (internalOriginalGainProfileCode (H := H)) := by
   intro a b h
@@ -52568,6 +52884,7 @@ theorem card_externalResidualProfile_le :
         (externalResidualProfileCode_injective (io := io))
     _ = Fintype.card io * 6 := by simp
 
+omit [Fintype V] in
 theorem card_legalCCRerootProfile_le
     (H : Hypergraph V) (C : ConflictSystem V) :
     Fintype.card (LegalCCRerootProfile H C) ≤
@@ -52628,8 +52945,9 @@ theorem card_combinedTestLocalProfileIndex_le
 
 /-! ## Exponential cardinality of all combined root coordinates -/
 
+omit [Fintype V] in
 theorem host_card_real_le_exp_eight
-    {eta Gamma d : ℝ} (S : CFMNumeric.CoreCutoffSpec eta Gamma d)
+    {eta Gamma d : ℝ} (_ : CFMNumeric.CoreCutoffSpec eta Gamma d)
     (H : Hypergraph V) (hH : IsUniform H 8)
     (hvertex : ((vertexFinset H).card : ℝ) ≤
       Real.exp (Real.rpow d (eta ^ 3))) :
@@ -52667,13 +52985,13 @@ theorem combinedTestLocalProfileIndex_card_le_exp_twenty_four
     calc
       (H.card : ℝ) * H.card ≤ Real.exp (8 * x) * Real.exp (8 * x) := by
         gcongr
-      _ = Real.exp (16 * x) := by rw [← Real.exp_add]; congr 1 <;> ring
+      _ = Real.exp (16 * x) := by rw [← Real.exp_add]; congr 1 ; ring
   have htestHost : (Fintype.card io : ℝ) * H.card ≤
       Real.exp (16 * x) := by
     calc
       (Fintype.card io : ℝ) * H.card ≤
           Real.exp x * Real.exp (8 * x) := by gcongr
-      _ = Real.exp (9 * x) := by rw [← Real.exp_add]; congr 1 <;> ring
+      _ = Real.exp (9 * x) := by rw [← Real.exp_add]; congr 1 ; ring
       _ ≤ Real.exp (16 * x) := Real.exp_le_exp.mpr (by nlinarith)
   have hraw : (Fintype.card (CombinedTestLocalProfileIndex H C io) : ℝ) ≤
       ((vertexFinset H).card : ℝ) * 6 +
@@ -52703,9 +53021,10 @@ theorem combinedTestLocalProfileIndex_card_le_exp_twenty_four
     (Fintype.card (CombinedTestLocalProfileIndex H C io) : ℝ) ≤
         73 * Real.exp (16 * x) := hprofile
     _ ≤ Real.exp (8 * x) * Real.exp (16 * x) := by gcongr
-    _ = Real.exp (24 * x) := by rw [← Real.exp_add]; congr 1 <;> ring
+    _ = Real.exp (24 * x) := by rw [← Real.exp_add]; congr 1 ; ring
     _ = Real.exp (24 * Real.rpow d (eta ^ 3)) := by rfl
 
+omit [Fintype V] in
 theorem combinedRootChoiceCode_card_le_exp_forty
     {eta Gamma d : ℝ} (S : CFMNumeric.CoreCutoffSpec eta Gamma d)
     (H : Hypergraph V) (hH : IsUniform H 8)
@@ -52752,7 +53071,7 @@ theorem combinedRootChoiceCode_card_le_exp_forty
     _ ≤ (5 * Real.exp (32 * x)) * 6 := by gcongr
     _ = 30 * Real.exp (32 * x) := by ring
     _ ≤ Real.exp (8 * x) * Real.exp (32 * x) := by gcongr
-    _ = Real.exp (40 * x) := by rw [← Real.exp_add]; congr 1 <;> ring
+    _ = Real.exp (40 * x) := by rw [← Real.exp_add]; congr 1 ; ring
     _ = Real.exp (40 * Real.rpow d (eta ^ 3)) := by rfl
 
 theorem combinedTestLocalRootCoordinate_card_le_exp_sixty_four
@@ -52804,10 +53123,10 @@ theorem combinedTestLocalRootTail_sum_le_twelfth
       Real.exp (Real.rpow d (eta ^ 3)))
     (htests : (Fintype.card io : ℝ) ≤
       Real.exp (Real.rpow d (eta ^ 3))) :
-    (∑ c : CombinedTestLocalRootCoordinate H C io j,
+    (∑ _ : CombinedTestLocalRootCoordinate H C io j,
       finiteWeightedRootShadowStrongTail eta d) ≤ 1 / 12 := by
   exact finiteWeightedRootShadowEnhancedLocalTail_sum_le_twelfth
-    (iota := io) (j := j) (H := H)
+    (H := H)
     (Profile := CombinedTestLocalProfileIndex H C io)
     (activeRank := combinedTestLocalProfileActiveRank j)
     (seed := combinedTestLocalProfileSeed
@@ -52827,6 +53146,7 @@ def supportedVertexDuplicateToCombinedRootCoordinate
     CombinedTestLocalRootCoordinate H C io j :=
   vertexDuplicateToCombinedRootCoordinate H C j z.1 z.2
 
+omit [Fintype V] [Fintype io] in
 theorem supportedVertexDuplicateToCombinedRootCoordinate_injective
     (H : Hypergraph V) (C : ConflictSystem V) (j : io → ℕ) :
     Function.Injective
@@ -52979,6 +53299,7 @@ theorem finalCombinedLocalTail_sum_le_quarter
 
 /-! ## The two explicit reachability coordinates have zero mass -/
 
+omit [Fintype V] in
 theorem finalReachableMatchingFirstFailureEvent_eq_empty
     (H : Hypergraph V) (C : ConflictSystem V)
     (d epsRaw GammaCert : ℝ) (ellCert : ℕ)
@@ -53001,12 +53322,13 @@ theorem finalReachableMatchingFirstFailureEvent_eq_empty
   have hCempty : ∅ ∉ R.regularized := by
     intro hempty
     have hmin := (R.bounded.1 ∅ hempty).1
-    simpa using hmin
+    simp at hmin
   exact greedyStateAt_isConflictFreeMatching
     H R.regularized hCempty omega (k + 1)
 
+omit [Fintype V] in
 theorem timeCardFirstFailureMass_eq_zero_of_available
-    {I : Type*} [Fintype I]
+    {I : Type*}
     (H : Hypergraph V) (C : ConflictSystem V) (hCempty : ∅ ∉ C) (T : ℕ)
     (P : I → ℕ → Hypergraph V → Prop) (i : I)
     (hcomponent : ∀ k M, P i k M ↔ M.card = k)
@@ -53154,7 +53476,7 @@ theorem finalReachableTimeCardFirstFailureMass_eq_zero
   have hCempty : ∅ ∉ R.regularized := by
     intro hempty
     have hmin := (R.bounded.1 ∅ hempty).1
-    simpa using hmin
+    simp at hmin
   apply timeCardFirstFailureMass_eq_zero_of_available
     H R.regularized hCempty
     (CFMNumericAggregation.targetTime eta d (vertexFinset H).card)
@@ -53224,6 +53546,7 @@ def killedInternalConflictLinkChoices
   (availableEdges H C M).filter fun e ↦
     f ∉ availableEdges H C (insert e M)
 
+omit [Fintype V] in
 theorem persistentInternalConflictLinkChoices_eq_sdiff_blockers
     (H : Hypergraph V) (C : ConflictSystem V) (M : Hypergraph V)
     {f : Finset V} (hf : f ∈ availableEdges H C M) :
@@ -53244,6 +53567,7 @@ theorem persistentInternalConflictLinkChoices_eq_sdiff_blockers
     exact Finset.mem_sdiff.mpr ⟨hf, fun hfe ↦ hef
       ((mem_availableBlockerChoices_comm H C M he hf).mp hfe)⟩
 
+omit [Fintype V] in
 theorem killedInternalConflictLinkChoices_eq_blockers
     (H : Hypergraph V) (C : ConflictSystem V) (M : Hypergraph V)
     {f : Finset V} (hf : f ∈ availableEdges H C M) :
@@ -53266,6 +53590,7 @@ theorem killedInternalConflictLinkChoices_eq_blockers
     exact (Finset.mem_sdiff.mp hfnext).2
       ((mem_availableBlockerChoices_comm H C M he hf).mpr hef)
 
+omit [Fintype V] in
 /-- Exact status formula: survival is one minus the blocker proportion. -/
 theorem persistentInternalConflictLinkProbability_eq_one_sub_blockers
     (H : Hypergraph V) (C : ConflictSystem V) (M : Hypergraph V)
@@ -53303,6 +53628,7 @@ theorem persistentInternalConflictLinkProbability_eq_one_sub_blockers
   field_simp
   ring
 
+omit [Fintype V] in
 theorem persistentInternalConflictLinkProbability_nonneg
     (H : Hypergraph V) (C : ConflictSystem V) (f : Finset V)
     (M : Hypergraph V) :
@@ -53312,6 +53638,7 @@ theorem persistentInternalConflictLinkProbability_nonneg
   by_cases hf : f ∈ availableEdges H C M' <;>
     simp [persistentInternalConflictLinkIndicator, hf]
 
+omit [Fintype V] in
 /-- Any ordinary blocker-status corridor immediately becomes the exact
 survival-probability window. -/
 theorem persistentInternalConflictLinkProbability_bounds_of_blockers
@@ -53379,6 +53706,7 @@ noncomputable def persistentInternalConflictLinkIncrement
         (availableEdges H C M) M s).card : ℝ)
   else 0
 
+omit [Fintype V] in
 theorem greedyStepExpectation_persistentInternalConflictLinkIncrement
     {H : Hypergraph V} {C : ConflictSystem V} (hC : IsConflictSystem H C)
     (M : Hypergraph V) {f : Finset V}
@@ -53407,6 +53735,7 @@ theorem greedyStepExpectation_persistentInternalConflictLinkIncrement
       partialTestObservable_insert_sub_eq_gain_sub_loss]
   · simp [persistentInternalConflictLinkIncrement, hfnext]
 
+omit [Fintype V] in
 theorem meanPersistent_add_killed_gain
     (w : TestWeight V) (H : Hypergraph V) (C : ConflictSystem V)
     (M : Hypergraph V) {f : Finset V}
@@ -53426,6 +53755,7 @@ theorem meanPersistent_add_killed_gain
   · exact Finset.disjoint_left.mpr fun e hep hek ↦
       (Finset.mem_filter.mp hek).2 (Finset.mem_filter.mp hep).2
 
+omit [Fintype V] in
 theorem meanPersistent_add_killed_loss
     (w : TestWeight V) (H : Hypergraph V) (C : ConflictSystem V)
     (M : Hypergraph V) {f : Finset V}
@@ -53445,6 +53775,7 @@ theorem meanPersistent_add_killed_loss
   · exact Finset.disjoint_left.mpr fun e hep hek ↦
       (Finset.mem_filter.mp hek).2 (Finset.mem_filter.mp hep).2
 
+omit [Fintype V] in
 theorem meanKilledPartialTestGain_nonneg
     (w : TestWeight V) (H : Hypergraph V) (C : ConflictSystem V)
     (f : Finset V) (j s : ℕ) (M : Hypergraph V)
@@ -53459,6 +53790,7 @@ theorem meanKilledPartialTestGain_nonneg
         partialTestStepGain_nonneg w H C M j s e hw)
       (Nat.cast_nonneg _)
 
+omit [Fintype V] in
 theorem meanKilledPartialTestLoss_nonneg
     (w : TestWeight V) (H : Hypergraph V) (C : ConflictSystem V)
     (f : Finset V) (j s : ℕ) (M : Hypergraph V)
@@ -53473,13 +53805,14 @@ theorem meanKilledPartialTestLoss_nonneg
         partialTestStepLoss_nonneg w H C M j s e hw)
       (Nat.cast_nonneg _)
 
+omit [Fintype V] in
 /-- A pointwise cap on choices which delete `f` converts exactly into the
 blocker-probability correction used by the persistent mean window. -/
 theorem meanKilledPartialTestGain_le_blockerRatio_mul
     (w : TestWeight V) (H : Hypergraph V) (C : ConflictSystem V)
     (M : Hypergraph V) {f : Finset V}
     (hf : f ∈ availableEdges H C M) (j s : ℕ) {cap : ℝ}
-    (hcap0 : 0 ≤ cap)
+    (_ : 0 ≤ cap)
     (hcap : ∀ e ∈ availableBlockerChoices H C M f,
       partialTestStepGain w H C j s M e ≤ cap) :
     meanKilledPartialTestGain w H C f j s M ≤
@@ -53503,11 +53836,12 @@ theorem meanKilledPartialTestGain_le_blockerRatio_mul
       div_le_div_of_nonneg_right hsum hden
     _ = _ := by ring
 
+omit [Fintype V] in
 theorem meanKilledPartialTestLoss_le_blockerRatio_mul
     (w : TestWeight V) (H : Hypergraph V) (C : ConflictSystem V)
     (M : Hypergraph V) {f : Finset V}
     (hf : f ∈ availableEdges H C M) (j s : ℕ) {cap : ℝ}
-    (hcap0 : 0 ≤ cap)
+    (_ : 0 ≤ cap)
     (hcap : ∀ e ∈ availableBlockerChoices H C M f,
       partialTestStepLoss w H C j s M e ≤ cap) :
     meanKilledPartialTestLoss w H C f j s M ≤
@@ -53531,6 +53865,7 @@ theorem meanKilledPartialTestLoss_le_blockerRatio_mul
       div_le_div_of_nonneg_right hsum hden
     _ = _ := by ring
 
+omit [Fintype V] in
 /-- Transfer a full mean window to its next-active restriction.  Only
 killed gains hurt the lower endpoint and only killed losses hurt the upper
 endpoint. -/
@@ -53589,6 +53924,7 @@ noncomputable def persistentInternalConflictLinkLowerStep
           (availableEdges H C M) M s).card : ℝ))
   else 0
 
+omit [Fintype V] in
 /-- Exact conditional expectations of the two persistent envelopes.  Both
 the raw increment and the deterministic trajectory increment carry the
 same next-active probability. -/
@@ -53651,7 +53987,7 @@ theorem greedyStepExpectation_persistentInternalConflictLinkSteps
     by_cases hf' : f ∈ availableEdges H C M' <;>
       simp [persistentInternalConflictLinkUpperStep,
         persistentInternalConflictLinkIncrement,
-        persistentInternalConflictLinkIndicator, Y, I, du, hf'] <;> ring
+        persistentInternalConflictLinkIndicator, Y, I, du, hf'] ; ring
   have hlower :
       persistentInternalConflictLinkLowerStep H C f
           D₂ D₃ D₄ Gamma epsilon d N scale x j s M =
@@ -53660,7 +53996,7 @@ theorem greedyStepExpectation_persistentInternalConflictLinkSteps
     by_cases hf' : f ∈ availableEdges H C M' <;>
       simp [persistentInternalConflictLinkLowerStep,
         persistentInternalConflictLinkIncrement,
-        persistentInternalConflictLinkIndicator, Y, I, dl, hf'] <;> ring
+        persistentInternalConflictLinkIndicator, Y, I, dl, hf'] ; ring
   constructor
   · rw [hupper, greedyStepExpectation_add,
       greedyStepExpectation_const_mul, hY, hI]
@@ -53671,6 +54007,7 @@ theorem greedyStepExpectation_persistentInternalConflictLinkSteps
     dsimp only [p, dl]
     ring
 
+omit [Fintype V] in
 /-- Survival-weighted mean windows imply nonpositive drift for the frozen
 internal-link envelopes.  This is the exact algebraic consumer required by
 the paper's event `E_Z`; all combinatorial work is isolated in the two mean
@@ -53744,6 +54081,7 @@ the distinguished edge is absent from the *next* available set, and its
 mean hypotheses are the survival-weighted windows consumed by the exact
 persistent drift identity. -/
 
+omit [Fintype V] in
 theorem persistentInternalConflictLinkUpperStep_eq_timeStep_of_nextActive
     (H : Hypergraph V) (C : ConflictSystem V) (f : Finset V)
     (D₂ D₃ D₄ Gamma epsilon d N scale : ℝ) (j s k : ℕ)
@@ -53757,6 +54095,7 @@ theorem persistentInternalConflictLinkUpperStep_eq_timeStep_of_nextActive
     greedyTimeStep, internalConflictLinkUpperError,
     Nat.cast_add, Nat.cast_one]
 
+omit [Fintype V] in
 theorem persistentInternalConflictLinkLowerStep_eq_timeStep_of_nextActive
     (H : Hypergraph V) (C : ConflictSystem V) (f : Finset V)
     (D₂ D₃ D₄ Gamma epsilon d N scale : ℝ) (j s k : ℕ)
@@ -53770,6 +54109,7 @@ theorem persistentInternalConflictLinkLowerStep_eq_timeStep_of_nextActive
     greedyTimeStep, internalConflictLinkLowerError,
     Nat.cast_add, Nat.cast_one]
 
+omit [Fintype V] in
 theorem persistentInternalConflictLinkSteps_eq_zero_of_nextInactive
     (H : Hypergraph V) (C : ConflictSystem V) (f : Finset V)
     (D₂ D₃ D₄ Gamma epsilon d N scale x : ℝ) (j s : ℕ)
@@ -53781,6 +54121,7 @@ theorem persistentInternalConflictLinkSteps_eq_zero_of_nextInactive
   simp [persistentInternalConflictLinkUpperStep,
     persistentInternalConflictLinkLowerStep, hf']
 
+omit [Fintype V] in
 /-- Once `f` is inactive, antitonicity makes every legal or frozen next
 state inactive as well, so both persistent increments vanish. -/
 theorem persistentInternalConflictLinkSteps_eq_zero_of_inactive
@@ -53807,6 +54148,7 @@ theorem persistentInternalConflictLinkSteps_eq_zero_of_inactive
         persistentInternalConflictLinkUpperStep,
         persistentInternalConflictLinkLowerStep, hf]
 
+omit [Fintype V] in
 theorem greedyStepExpectation_persistentInternalConflictLinkSteps_eq_zero_of_inactive
     (H : Hypergraph V) (C : ConflictSystem V) (f : Finset V)
     (D₂ D₃ D₄ Gamma epsilon d N scale x : ℝ) (j s : ℕ)
@@ -53826,6 +54168,7 @@ theorem greedyStepExpectation_persistentInternalConflictLinkSteps_eq_zero_of_ina
       H C f D₂ D₃ D₄ Gamma epsilon d N scale x j s M hf o).2,
       mul_zero]
 
+omit [Fintype V] in
 theorem greedyStepExpectation_persistentInternalConflictLinkSteps_sq_eq_zero_of_inactive
     (H : Hypergraph V) (C : ConflictSystem V) (f : Finset V)
     (D₂ D₃ D₄ Gamma epsilon d N scale x : ℝ) (j s : ℕ)
@@ -53906,6 +54249,7 @@ structure ReachablePersistentInternalConflictLinkSourceBudgets
         D₂ D₃ D₄ Gamma epsilon d N scale (k : ℝ) j s S S') ^ 2) ≤
       variance k
 
+omit [Fintype V] in
 theorem persistentInternalConflictLinkStoppedMomentBounds_of_reachableSourceBudgets
     (H : Hypergraph V) (C : ConflictSystem V) (hC : IsConflictSystem H C)
     (hCempty : ∅ ∉ C) (f : Finset V)
@@ -53974,6 +54318,7 @@ theorem persistentInternalConflictLinkStoppedMomentBounds_of_reachableSourceBudg
         H C f D₂ D₃ D₄ Gamma epsilon d N scale (k : ℝ) j s S hf).2]
       exact hvariance k
 
+omit [Fintype V] in
 theorem persistentInternalConflictLinkStoppedIncrements_abs_le_of_reachableSourceBudgets
     (H : Hypergraph V) (C : ConflictSystem V) (f : Finset V)
     (Good : ℕ → Hypergraph V → Prop) (T : ℕ)
@@ -54009,8 +54354,9 @@ theorem persistentInternalConflictLinkStoppedIncrements_abs_le_of_reachableSourc
         abs_zero]
       exact hR0
 
+omit [Fintype V] in
 theorem persistentInternalConflictLinkUpperFirstFailureEvent_subset_tail
-    {iota : Type*} [Fintype iota]
+    {iota : Type*}
     (H : Hypergraph V) (C : ConflictSystem V) (T : ℕ)
     (Pgood : iota → ℕ → Hypergraph V → Prop) (i : iota)
     (f : Finset V)
@@ -54056,8 +54402,9 @@ theorem persistentInternalConflictLinkUpperFirstFailureEvent_subset_tail
             (Nat.succ_le_succ hq) hbad.1))
       hinitial hbad.2⟩
 
+omit [Fintype V] in
 theorem persistentInternalConflictLinkLowerFirstFailureEvent_subset_tail
-    {iota : Type*} [Fintype iota]
+    {iota : Type*}
     (H : Hypergraph V) (C : ConflictSystem V) (T : ℕ)
     (Pgood : iota → ℕ → Hypergraph V → Prop) (i : iota)
     (f : Finset V)
@@ -54103,6 +54450,7 @@ theorem persistentInternalConflictLinkLowerFirstFailureEvent_subset_tail
             (Nat.succ_le_succ hq) hbad.1))
       hinitial hbad.2⟩
 
+omit [Fintype V] in
 theorem persistentInternalConflictLinkFreedman_of_reachableSourceBudgets
     (H : Hypergraph V) (C : ConflictSystem V) (hC : IsConflictSystem H C)
     (hCempty : ∅ ∉ C) (f : Finset V)
@@ -54160,8 +54508,9 @@ theorem persistentInternalConflictLinkFreedman_of_reachableSourceBudgets
           D₂ D₃ D₄ Gamma epsilon d N scale (i : ℝ) j s S S') k)
       hm.2 hR0 ht hW0 hden hinc.2 hW
 
+omit [Fintype V] in
 theorem persistentInternalConflictLinkFirstFailureMass_le_of_reachableSourceBudgets
-    {iota : Type*} [Fintype iota]
+    {iota : Type*}
     (H : Hypergraph V) (C : ConflictSystem V) (hC : IsConflictSystem H C)
     (hCempty : ∅ ∉ C) (T : ℕ)
     (Pgood : iota → ℕ → Hypergraph V → Prop)
@@ -54234,7 +54583,7 @@ selected `P`-component forces first failure of the selected `Q`-component.
 This is deliberately a cross-predicate statement: the existing component
 implication lemma only compares two coordinates of one indexed predicate. -/
 theorem greedyFirstFailureEvent_subset_of_crossPredicateProjection
-    {I J : Type*} [Fintype I] [Fintype J]
+    {I J : Type*}
     (H : Hypergraph V) (C : ConflictSystem V) (M : Hypergraph V) (T : ℕ)
     (P : I → ℕ → Hypergraph V → Prop)
     (Q : J → ℕ → Hypergraph V → Prop) (i : I) (j : J)
@@ -54255,7 +54604,7 @@ theorem greedyFirstFailureEvent_subset_of_crossPredicateProjection
 /-- Event-mass form of
 `greedyFirstFailureEvent_subset_of_crossPredicateProjection`. -/
 theorem firstFailureMass_le_of_crossPredicateProjection
-    {I J : Type*} [Fintype I] [Fintype J]
+    {I J : Type*}
     (H : Hypergraph V) (C : ConflictSystem V) (M : Hypergraph V) (T : ℕ)
     (P : I → ℕ → Hypergraph V → Prop)
     (Q : J → ℕ → Hypergraph V → Prop) (i : I) (j : J)
@@ -54276,10 +54625,11 @@ variable [Fintype V]
 
 /-! ## Reachable source packages imply the common test tail -/
 
+omit [Fintype V] in
 /-- The reachable external source package has exactly the same scalar
 Freedman parameters as the older state-uniform source package. -/
 theorem reachableExternalPairFirstFailure_le_common
-    {iota : Type*} [Fintype iota]
+    {iota : Type*}
     (w : TestWeight V) (H : Hypergraph V) (C : ConflictSystem V)
     (hCempty : ∅ ∉ C)
     (Pgood : iota → ℕ → Hypergraph V → Prop)
@@ -54357,11 +54707,12 @@ theorem reachableExternalPairFirstFailure_le_common
   · exact htail.1.trans (by simpa only [T, t, Wvar, Vvar, J] using hcommon)
   · exact htail.2.trans (by simpa only [T, t, Wvar, Vvar, J] using hcommon)
 
+omit [Fintype V] in
 /-- Persistent internal-link sources use the same test-family scalar tail.
 The concrete persistent mean construction remains entirely outside this
 adapter and is represented only by the generic source package `B`. -/
 theorem persistentInternalPairFirstFailure_le_common
-    {iota : Type*} [Fintype iota]
+    {iota : Type*}
     (H : Hypergraph V) (C : ConflictSystem V) (hC : IsConflictSystem H C)
     (hCempty : ∅ ∉ C)
     (Pgood : iota → ℕ → Hypergraph V → Prop)
@@ -54461,7 +54812,7 @@ integer ceiling needed by the four-part loss multiplicity bound. -/
 theorem sum_rerootedPartialCard_le_ceil
     (H : Hypergraph V) (C : ConflictSystem V) (M : Hypergraph V)
     (f g : Finset V) (ccCap : ℕ → ℕ → ℝ)
-    (hcap0 : ∀ q r, 0 ≤ ccCap q r)
+    (_ : ∀ q r, 0 ≤ ccCap q r)
     (hcap : ∀ q ∈ Finset.Icc 1 3, ∀ r ∈ Finset.Icc 1 5,
       ((partialFamily
         (testConflictUnionLayer (conflictLinkLayer C f q) C g r)
@@ -54501,6 +54852,7 @@ certificate/core corridors are literal projections of the finite local
 Good family: the duplicate, reroot, mixed, and gain-residual caps.  No
 numeric mean-window premise is exposed. -/
 
+omit [Fintype V] in
 theorem restrictedExternal_meanWindow_of_literalSharpCaps
     {io : Type*} [Fintype io]
     (H : Hypergraph V) (C : ConflictSystem V)
@@ -54515,7 +54867,7 @@ theorem restrictedExternal_meanWindow_of_literalSharpCaps
     (hH8 : IsUniform H 8)
     (hcodegree : ∀ root, root.card = 2 →
       (codegree H root : ℝ) ≤ d ^ (1 - eta))
-    (a : io) (s : Fin (j a + 1)) (hj3 : j a ≤ 3)
+    (a : io) (s : Fin (j a + 1)) (_ : j a ≤ 3)
     (M : Hypergraph V)
     (hM : IsConflictFreeMatching H R.regularized M)
     (hNcard : (vertexFinset H).card = N₀) (hcard : M.card = k)
@@ -54671,7 +55023,7 @@ theorem restrictedExternal_meanWindow_of_literalSharpCaps
         (∑ q ∈ Finset.Icc (1 : ℕ) 3, ∑ r ∈ Finset.Icc (1 : ℕ) 5,
           (2 : ℝ) * localSpreadPrimaryMargin eta d) =
           30 * localSpreadPrimaryMargin eta d := by
-      simp only [Finset.sum_const_zero, Finset.sum_const, hqcard, hrcard,
+      simp only [Finset.sum_const, hqcard, hrcard,
         nsmul_eq_mul]
       ring
     rw [hmass] at hsum
@@ -54850,7 +55202,7 @@ theorem externalSharpCaps_of_combinedGood
             2 * localSpreadPrimaryMargin eta d :=
           Finset.sum_le_sum fun r hr ↦ hpoint r hr
         _ = 6 * localSpreadPrimaryMargin eta d := by
-          norm_num [Finset.sum_Icc_succ_top] <;> ring
+          norm_num [Finset.sum_Icc_succ_top] ; ring
     calc
       256 * (∑ r ∈ Finset.Icc (3 : ℕ) 5,
           ((partialFamily (duplicateConflictLinkUnionLayer R.regularized f r)
@@ -55413,7 +55765,7 @@ theorem originalTestRawVariance_le_source
     (R : CFMTrajectories.TestStepRegistry D₂ D₃ D₄ Gamma
       (CFMNumeric.coreEpsilon eta) d N (k : ℝ)
         (CFMNumeric.trajectoryFloor eta d) j s)
-    (hW : 0 ≤ W) (hraw0 : 0 ≤ rawCap)
+    (hW : 0 ≤ W) (_ : 0 ≤ rawCap)
     (haLo : CFMTrajectories.hHat D₂ D₃ D₄ d N (k : ℝ) *
         (1 - CFMTrajectories.xi Gamma (CFMNumeric.coreEpsilon eta)
           d N (k : ℝ)) ≤ a)
@@ -55603,6 +55955,7 @@ boundary.  Pointwise jumps remain valid on every `Good` state, while the
 mean and conditional square are required only on genuine time-`k`
 conflict-free matchings. -/
 
+omit [Fintype V] in
 theorem reachableExternalTestSourceBudgets_of_sharpRaw
     (w : TestWeight V) (H : Hypergraph V) (C : ConflictSystem V)
     (Good : ℕ → Hypergraph V → Prop) (T : ℕ)
@@ -55698,13 +56051,14 @@ theorem reachableExternalTestSourceBudgets_of_sharpRaw
 reuse the exact deterministic empty-state identities without converting
 back to the legacy all-state source structures. -/
 
+omit [Fintype V] in
 theorem positivePairedFirstFailureSourceBudgets_of_reachableExternalNaturalScale
     (w : TestWeight V) (H : Hypergraph V) (C : ConflictSystem V)
     (Good : ℕ → Hypergraph V → Prop) (T : ℕ)
     (D₂ D₃ D₄ Gamma epsilon d N Pfloor : ℝ) (j s ell : ℕ)
     (jump variance : ℕ → ℝ)
     (hw : IsTrackable H C j ell d epsilon w)
-    (hj1 : 1 ≤ j) (hj3 : j ≤ 3) (hsj : s ≤ j)
+    (_ : 1 ≤ j) (_ : j ≤ 3) (hsj : s ≤ j)
     (hCcard : ∀ c ∈ C, 2 ≤ c.card)
     (hd : 0 < d) (hGamma : 0 < Gamma)
     (B : ReachableExternalTestSourceBudgets w H C Good T
@@ -55730,6 +56084,7 @@ theorem positivePairedFirstFailureSourceBudgets_of_reachableExternalNaturalScale
       lowerGap := hgaps.2
       scale_pos := externalTestNaturalScale_pos_of_trackable hw hd s }
 
+omit [Fintype V] in
 theorem positivePairedFirstFailureSourceBudgets_of_reachableInternalNaturalScale
     {io : Type*} [Fintype io]
     (H : Hypergraph V) (C : ConflictSystem V)
@@ -55799,6 +56154,7 @@ noncomputable section
 
 variable {V io : Type*} [DecidableEq V] [Fintype V] [Fintype io]
 
+omit [Fintype V] in
 /-- The zero-available coordinate cannot be lost by selecting another host
 edge.  This is the top-boundary replacement for the nonexistent rank-`j`
 original-test remainder profile. -/
@@ -56483,6 +56839,7 @@ noncomputable section
 
 variable {V io : Type*} [DecidableEq V] [Fintype V] [Fintype io]
 
+omit [Fintype V] in
 theorem combinedTestLocalCap_of_enhancedGood
     (H : Hypergraph V) (C : ConflictSystem V)
     (d epsRaw GammaCert : ℝ) (ellCert : ℕ)
@@ -56518,6 +56875,7 @@ theorem combinedTestLocalCap_of_enhancedGood
         H C d epsRaw GammaCert ellCert j w R)
       hgood c
 
+omit [Fintype V] in
 /-- The dynamic one-open `C*` cap used by the killed part of the exact
 persistent internal mean.  It is a genuine combined-Good coordinate; no
 statewise static-spread premise is exposed to the source constructor. -/
@@ -56617,6 +56975,7 @@ theorem internalCommonImmediateEvictorPartialCard_le_two_margin
     combinedTestLocalProfileFamily, combinedTestLocalProfileWeight,
     combinedTestLocalProfileFamilyRank] using hbound
 
+omit [Fintype V] in
 /-- Arbitrary positive selected-rank PointDuplicate cap.  The earlier
 external convenience theorem fixes selected rank one; persistent killed
 gain needs the same tracked family at rank `s+1`. -/
@@ -56693,9 +57052,8 @@ theorem internalPointDuplicatePartialCard_le_two_margin
       (by simp [b, be, pointDuplicateLocalProfile,
         combinedTestLocalProfileFamilyRank,
         externalTestLocalProfileFamilyRank]; omega)
-      (by simp [b, be, pointDuplicateLocalProfile,
-        combinedTestLocalProfileFamilyRank,
-        externalTestLocalProfileFamilyRank]; exact hr5)
+      (by simp only [combinedTestLocalProfileFamilyRank, externalTestLocalProfileFamilyRank,
+        pointDuplicateLocalProfile, be, b]; exact hr5)
       (by simp [b, be, pointDuplicateLocalProfile,
         combinedTestLocalProfileFamilyRank,
         combinedTestLocalProfileActiveRank,
@@ -56731,6 +57089,7 @@ theorem internalPointDuplicatePartialCard_le_two_margin
     externalTestLocalProfileWeight,
     externalTestLocalProfileFamilyRank] using hbound
 
+omit [Fintype V] in
 /-- The exact availability-filtered internal residual source cap projected
 from the final combined Good family. -/
 theorem internalResidualPartialMass_le_profileMargin
@@ -56850,6 +57209,7 @@ theorem internalResidualPartialMass_le_profileMargin
         (pow_nonneg (Real.rpow_nonneg hdpos.le _) _)
     exact mul_nonneg (by norm_num) hmargin0
 
+omit [Fintype V] in
 /-- The proper-root internal original-choice gain observable is bounded by
 the combined profile corridor.  Only `q = 2,3` occurs: rank two has the
 static selected-rank-zero endpoint, while rank three has one genuine
@@ -56940,7 +57300,7 @@ theorem internalOriginalGainRootShadow_le_two_margin
     let c : CombinedTestLocalRootCoordinate H R.regularized io j :=
       finiteWeightedRootShadowEmptyCoordinate (H := H)
         b n hnpos hnlt hbActive (by
-          simp [b, bg,
+          simp [b,
             combinedTestLocalProfileSeed])
     have hcap := combinedTestLocalCap_of_enhancedGood
       H C d epsRaw GammaCert ellCert D₂ D₃ D₄ GammaCore eta N T
@@ -57599,6 +57959,7 @@ noncomputable def weightedPersistentPartialTestLossChoices
   ∑ S ∈ H.powersetCard j,
     w S * (persistentPartialTestLossChoiceSet H C M f j s S).card
 
+omit [Fintype V] in
 theorem sum_persistentPartialTestStepGain_eq_weightedChoiceCount
     (w : TestWeight V) (H : Hypergraph V) (C : ConflictSystem V)
     (M : Hypergraph V) (f : Finset V) (j s : ℕ) :
@@ -57654,6 +58015,7 @@ theorem sum_persistentPartialTestStepGain_eq_weightedChoiceCount
         tauto]
       simp [mul_comm]
 
+omit [Fintype V] in
 theorem sum_persistentPartialTestStepLoss_eq_weightedChoiceCount
     (w : TestWeight V) (H : Hypergraph V) (C : ConflictSystem V)
     (M : Hypergraph V) (f : Finset V) (j s : ℕ) :
@@ -57709,6 +58071,7 @@ theorem sum_persistentPartialTestStepLoss_eq_weightedChoiceCount
         tauto]
       simp [mul_comm]
 
+omit [Fintype V] in
 theorem meanPersistentPartialTestGain_eq_weightedChoiceCount_div
     (w : TestWeight V) (H : Hypergraph V) (C : ConflictSystem V)
     (M : Hypergraph V) {f : Finset V}
@@ -57721,6 +58084,7 @@ theorem meanPersistentPartialTestGain_eq_weightedChoiceCount_div
   simp only [meanPersistentPartialTestGain, hAne, if_false]
   rw [sum_persistentPartialTestStepGain_eq_weightedChoiceCount]
 
+omit [Fintype V] in
 theorem meanPersistentPartialTestLoss_eq_weightedChoiceCount_div
     (w : TestWeight V) (H : Hypergraph V) (C : ConflictSystem V)
     (M : Hypergraph V) {f : Finset V}
@@ -57733,6 +58097,7 @@ theorem meanPersistentPartialTestLoss_eq_weightedChoiceCount_div
   simp only [meanPersistentPartialTestLoss, hAne, if_false]
   rw [sum_persistentPartialTestStepLoss_eq_weightedChoiceCount]
 
+omit [Fintype V] in
 /-- The exact finite identity behind the survival factor: `p` times the
 number of current choices is the number of next-active choices. -/
 theorem persistentInternalConflictLinkProbability_mul_card
@@ -57763,6 +58128,7 @@ indicator.  These retain gain collision and loss overlap as separate
 finite errors, so the later Lemma 7.20 correction can be applied to the
 loss component without first collapsing to a net window. -/
 
+omit [Fintype V] in
 theorem meanPartialTestGain_component_bounds
     (w : TestWeight V) (H : Hypergraph V) (C : ConflictSystem V)
     (M : Hypergraph V) (j s : ℕ) (hw : ∀ S, 0 ≤ w S)
@@ -57789,6 +58155,7 @@ theorem meanPartialTestGain_component_bounds
     linarith
   · exact div_le_div_of_nonneg_right hupper hden0
 
+omit [Fintype V] in
 theorem meanPartialTestLoss_eq_incidence_sub_collision_div
     (w : TestWeight V) (H : Hypergraph V) (C : ConflictSystem V)
     (M : Hypergraph V) (j s : ℕ)
@@ -57803,6 +58170,7 @@ theorem meanPartialTestLoss_eq_incidence_sub_collision_div
   rw [← weightedLoss_add_collision_eq_blockerIncidence]
   ring
 
+omit [Fintype V] in
 theorem meanPartialTestLoss_component_bounds
     (w : TestWeight V) (H : Hypergraph V) (C : ConflictSystem V)
     (M : Hypergraph V) (j s : ℕ)
@@ -57851,6 +58219,7 @@ def HasPersistentPartialTestComponentAbsorption
     weightedPersistentPartialTestLossChoices w H C M f j s ≤
       lossHi * ((persistentInternalConflictLinkChoices H C M f).card : ℝ)
 
+omit [Fintype V] in
 theorem persistentPartialTest_componentMeanWindow_of_absorption
     (w : TestWeight V) (H : Hypergraph V) (C : ConflictSystem V)
     (M : Hypergraph V) {f : Finset V}
@@ -57961,6 +58330,7 @@ theorem persistentInternalConflictLink_componentWindows_to_net
         p * ((gainCenter - lossCenter) + componentError / 2) := by
   constructor <;> nlinarith [hgain.1, hgain.2, hloss.1, hloss.2]
 
+omit [Fintype V] in
 /-- Componentwise gain transfer with all centering arithmetic explicit.
 The source proof supplies the killed-gain cap and the two displayed scalar
 inequalities; merely having a one-sided cap without those inequalities is
@@ -57996,6 +58366,7 @@ theorem persistentPartialTestGain_componentWindow_of_full_killed
   have hsplit := meanPersistent_add_killed_gain w H C M hf j s
   constructor <;> nlinarith
 
+omit [Fintype V] in
 /-- Componentwise loss transfer.  `hkilled` is precisely the joint
 freeze-and-loss term of Lemma 7.20.  For internal link rank one its proof
 uses C5/common-links and the frozen-source/chosen-blocker C* partial-family cap. -/
@@ -58030,6 +58401,7 @@ theorem persistentPartialTestLoss_componentWindow_of_full_killed
   have hsplit := meanPersistent_add_killed_loss w H C M hf j s
   constructor <;> nlinarith
 
+omit [Fintype V] in
 /-- Source-faithful Lemma 7.22 interface.  The two hypotheses are exactly
 the restricted `E+` and `E-` estimates.  Their conclusion is centered at
 `p * scale * zHatRate`; no unrestricted mean or one-sided killed bound is
@@ -58092,6 +58464,7 @@ theorem persistentInternalConflictLink_componentMeanWindow
             hnet.2
       _ = _ := by ring
 
+omit [Fintype V] in
 /-- Finite source endpoint: it is enough to prove the four survivor-choice
 numerator inequalities at the two trajectory component centres. -/
 theorem persistentInternalConflictLink_componentMeanWindow_of_absorption
@@ -58151,6 +58524,7 @@ variable {V : Type*} [DecidableEq V] [Fintype V]
 the exact algebra: the killed net mean is compared with the missing
 trajectory mass `(1-p) * center`. -/
 
+omit [Fintype V] in
 /-- Exact full/persistent/killed net decomposition. -/
 theorem meanPartialTestNet_eq_persistent_add_killed
     (w : TestWeight V) (H : Hypergraph V) (C : ConflictSystem V)
@@ -58166,6 +58540,7 @@ theorem meanPartialTestNet_eq_persistent_add_killed
   have hloss := meanPersistent_add_killed_loss w H C M hf j s
   linarith
 
+omit [Fintype V] in
 /-- A small survival deficit together with one-sided killed gain/loss caps
 gives the precise two-sided killed-net window around the missing trajectory
 mass.  In the source proof the gain cap is `C_{f,2}` and the loss cap is the
@@ -58219,6 +58594,7 @@ theorem killedPartialTestNet_window_of_caps
   dsimp only [p] at hmissingUpper hmissingLower ⊢
   constructor <;> linarith
 
+omit [Fintype V] in
 /-- Source-shaped Lemma 7.22 transfer.  A full mean window and a
 two-sided killed-net window yield the persistent window centred at exactly
 `p * center`, rather than at the unconditional centre. -/
@@ -58474,6 +58850,7 @@ theorem certificateTestStatusHi_le_availableEdges_fifth
   have hfloor := ninetyGamma_mul_d_le_localSpreadAvailableFloor E S hN
   nlinarith
 
+omit [Fintype V] in
 /-- Registry-derived `p ≥ 4/5` for a fixed available internal link.  No
 mean estimate is used here. -/
 theorem persistentInternalConflictLinkProbability_ge_four_fifths
@@ -58692,6 +59069,7 @@ killed gain and killed loss errors, while the cutoff supplies the remaining
 centered reserve.  In particular, neither killed component is treated as a
 survivor mean estimate by itself. -/
 
+omit [Fintype V] in
 theorem persistentInternalConflictLink_meanWindow_of_full_killed_caps
     (w : TestWeight V) (H : Hypergraph V) (C : ConflictSystem V)
     (M : Hypergraph V) {f : Finset V}
@@ -58811,6 +59189,7 @@ noncomputable def weightedKilledPartialTestGainChoices
   ∑ Q ∈ H.powersetCard j,
     w Q * (killedPartialTestGainChoiceSet H C M f₀ j s Q).card
 
+omit [Fintype V] in
 theorem sum_killedPartialTestStepGain_eq_weightedChoiceCount
     (w : TestWeight V) (H : Hypergraph V) (C : ConflictSystem V)
     (M : Hypergraph V) (f₀ : Finset V) (j s : ℕ) :
@@ -58851,6 +59230,7 @@ theorem sum_killedPartialTestStepGain_eq_weightedChoiceCount
           f₀ ∉ availableEdges H C (insert e M))).card := by
       simp [mul_comm]
 
+omit [Fintype V] in
 theorem meanKilledPartialTestGain_eq_weightedChoiceCount_div
     (w : TestWeight V) (H : Hypergraph V) (C : ConflictSystem V)
     (M : Hypergraph V) {f₀ : Finset V}
@@ -58874,6 +59254,7 @@ def killedGainConflictLinkSources
     ∃ e ∈ Q ∩ availableEdges H C M,
       e ∈ availableBlockerChoices H C M f₀
 
+omit [Fintype V] in
 theorem weightedKilledConflictLinkGainChoices_le_sourceCard
     {H : Hypergraph V} {C : ConflictSystem V} {M : Hypergraph V}
     {f₀ : Finset V} (hC : IsConflictSystem H C)
@@ -58925,14 +59306,18 @@ theorem weightedKilledConflictLinkGainChoices_le_sourceCard
                 s + 1 := by
             apply (Finset.card_le_card hsub).trans
             simpa [hsource.1] using hcard
-          simp only [conflictLinkTestWeight_apply, ite_mul, one_mul, zero_mul, Nat.cast_add, Nat.cast_one, ge_iff_le]
-          exact_mod_cast hle
+          have hleR :
+              ((killedPartialTestGainChoiceSet H C M f₀ q s Q).card : ℝ) ≤
+                (s + 1 : ℕ) := by exact_mod_cast hle
+          simpa only [conflictLinkTestWeight_apply, if_pos hlink, if_pos hQK, one_mul]
+            using hleR
         · have hempty :
               killedPartialTestGainChoiceSet H C M f₀ q s Q = ∅ :=
             Finset.not_nonempty_iff_eq_empty.mp hchoices
-          simp only [conflictLinkTestWeight_apply, ite_mul, one_mul, zero_mul, Nat.cast_add, Nat.cast_one, ge_iff_le]
+          simp only [conflictLinkTestWeight_apply, if_pos hlink, one_mul, hempty,
+            Finset.card_empty, Nat.cast_zero]
           split <;> positivity
-      · simp only [conflictLinkTestWeight_apply, ite_mul, one_mul, zero_mul, Nat.cast_add, Nat.cast_one]
+      · simp only [conflictLinkTestWeight_apply, if_neg hlink, zero_mul]
         split <;> positivity
     _ = ((s + 1 : ℕ) : ℝ) * K.card := by
       rw [← Finset.sum_filter]
@@ -58952,6 +59337,7 @@ theorem weightedKilledConflictLinkGainChoices_le_sourceCard
       ring
     _ = _ := by push_cast; ring
 
+omit [Fintype V] in
 /-- Any partial member is covered by its available and selected sections.
 This all-rank variant is used below for the `s+1` duplicate coordinate. -/
 theorem partialFamily_subset_available_union_selected
@@ -58981,6 +59367,7 @@ theorem partialFamily_subset_available_union_selected
   · exact Finset.mem_union.mpr
       (Or.inr (Finset.inter_subset_right heM))
 
+omit [Fintype V] in
 /-- Every killed-gain source link is a subset of a point-duplicate member
 in the same `s+1` partial coordinate. -/
 theorem killedGainConflictLinkSources_subset_duplicatePartialPowersets
@@ -59074,7 +59461,7 @@ theorem killedGainConflictLinkSources_subset_duplicatePartialPowersets
       have hxQ' := Finset.inter_subset_left hx
       have hxA := Finset.inter_subset_right hx
       rcases Finset.mem_insert.mp (hQ'sub hxQ') with hxe | hxM
-      · simpa [hxe]
+      · simp [hxe]
       · exact False.elim (Finset.disjoint_left.mp hAM hxA hxM)
     · intro hx
       have hxe : x = e := Finset.mem_singleton.mp hx
@@ -59160,6 +59547,7 @@ theorem killedGainConflictLinkSources_subset_duplicatePartialPowersets
   apply Finset.mem_biUnion.mpr
   exact ⟨U, hUpartial, Finset.mem_powerset.mpr Finset.subset_union_left⟩
 
+omit [Fintype V] in
 /-- Powerset encoding of the preceding charge.  The factor is at most
 `4 · 2⁶ = 256`: at most four source choices and at most 64 subsets of a
 rank-six duplicate union. -/
@@ -59237,6 +59625,7 @@ theorem weightedKilledConflictLinkGainChoices_le_duplicatePartial
       push_cast
       rfl
 
+omit [Fintype V] in
 theorem meanKilledConflictLinkGain_le_duplicatePartial
     {H : Hypergraph V} {C : ConflictSystem V} {M : Hypergraph V}
     {f₀ : Finset V} (hC : IsConflictSystem H C)
@@ -59259,6 +59648,7 @@ theorem meanKilledConflictLinkGain_le_duplicatePartial
     hC hf₀ q s hs1 hq3 hsq hf₀ne hmatching hCcard hanti
   simpa only [Nat.cast_sum] using hbound
 
+omit [Fintype V] in
 theorem meanKilledConflictLinkGain_le_pointDuplicateMargins_of_combinedGood
     (H : Hypergraph V) (C : ConflictSystem V)
     (d epsRaw GammaCert : ℝ) (ellCert : ℕ)
@@ -59376,6 +59766,7 @@ noncomputable def weightedKilledPartialTestLossChoices
     w S * (((partialTestLossChoiceSet H C M j s S) ∩
       availableBlockerChoices H C M f).card : ℝ)
 
+omit [Fintype V] in
 theorem sum_blockingRoot_partialTestStepLoss_eq_weightedKilledChoices
     (w : TestWeight V) (H : Hypergraph V) (C : ConflictSystem V)
     (M : Hypergraph V) (f : Finset V) (j s : ℕ) :
@@ -59413,6 +59804,7 @@ theorem sum_blockingRoot_partialTestStepLoss_eq_weightedKilledChoices
           exact ⟨he.2, (Finset.mem_filter.mp he.1).2⟩
       rw [hset]
 
+omit [Fintype V] in
 theorem meanKilledPartialTestLoss_eq_weightedKilledChoices_div
     (w : TestWeight V) (H : Hypergraph V) (C : ConflictSystem V)
     (M : Hypergraph V) {f : Finset V}
@@ -59426,6 +59818,7 @@ theorem meanKilledPartialTestLoss_eq_weightedKilledChoices_div
     killedInternalConflictLinkChoices_eq_blockers H C M hf]
   rw [sum_blockingRoot_partialTestStepLoss_eq_weightedKilledChoices]
 
+omit [Fintype V] in
 /-- The joint-deactivation multiplicity of one current test is bounded by
 the sum of common-blocker multiplicities between the root and each current
 available member. -/
@@ -59467,6 +59860,7 @@ theorem card_lossChoices_inter_rootBlockers_le_sum_commonBlockers
     rw [hempty]
     simp
 
+omit [Fintype V] in
 theorem weightedKilledPartialTestLossChoices_le_commonCap
     (w : TestWeight V) (H : Hypergraph V) (C : ConflictSystem V)
     (M : Hypergraph V) (f : Finset V) (j s : ℕ) (commonHi : ℕ)
@@ -59486,7 +59880,7 @@ theorem weightedKilledPartialTestLossChoices_le_commonCap
   intro S hS
   by_cases hold : partialTestCondition (availableEdges H C M) M j s S
   · simp only [partialTestCondition] at hold
-    simp only [hold, if_true]
+    simp only [hold]
     by_cases hpos : 0 < w S
     · have hcard := card_lossChoices_inter_rootBlockers_le_sum_commonBlockers
         H C M f j s S hS
@@ -59520,6 +59914,7 @@ theorem weightedKilledPartialTestLossChoices_le_commonCap
       exact hold (Finset.mem_filter.mp he).2.1
     simp [hold, hempty]
 
+omit [Fintype V] in
 theorem meanKilledPartialTestLoss_le_commonCap
     (w : TestWeight V) (H : Hypergraph V) (C : ConflictSystem V)
     (M : Hypergraph V) {f : Finset V}
@@ -59549,6 +59944,7 @@ and disjoint, and antichainness excludes a two-conflict between them.  This
 is exactly the source split in Lemma 7.20 before the exceptional rank-one
 case. -/
 
+omit [Fintype V] in
 theorem conflictLink_member_legalPair_of_rank_ge_two
     {H : Hypergraph V} {C : ConflictSystem V}
     (hmatching : ∀ c ∈ C, IsMatching H c)
@@ -59591,6 +59987,7 @@ theorem conflictLink_member_legalPair_of_rank_ge_two
       exact hgc
   exact ⟨hgf, hfg, hpair⟩
 
+omit [Fintype V] in
 /-- The four blocker geometries for one legal pair, with the constants
 specialised to the 8-uniform host. -/
 theorem card_inter_availableBlockerChoices_le_legalPairCaps
@@ -59669,6 +60066,7 @@ theorem card_inter_availableBlockerChoices_le_legalPairCaps
       (hreroot f hf g hg hgf hfg hpair)
   omega
 
+omit [Fintype V] in
 /-- Lemma 7.19/7.20 killed-loss aggregate for conflict-link ranks at least
 two.  The only dynamic inputs are the already registered legal-pair caps. -/
 theorem meanKilledPartialTestLoss_conflictLink_rank_ge_two_le_legalPairCap
@@ -59746,6 +60144,7 @@ def rankOneKilledConflictVictims
     f ∈ availableEdges H C M ∧
       g ∈ conflictBlockerChoices C M (availableEdges H C M) f)
 
+omit [Fintype V] in
 /-- Every rank-one CC victim is either an immediate common link of the
 source and the chosen blocker, or the unique open member of a rank-two or
 rank-three `C*` link rooted at the chosen blocker. -/
@@ -59833,6 +60232,7 @@ theorem rankOneKilledConflictVictims_subset_immediate_union_CStar
     apply Finset.mem_filter.mpr
     exact ⟨Finset.mem_biUnion.mpr ⟨R, hRpartial, hfR⟩, hfA⟩
 
+omit [Fintype V] in
 /-- Cardinal form of the preceding classifier.  Filtering the union of a
 one-open partial family back to available edges removes representation
 multiplicity without paying the link rank. -/
@@ -59893,6 +60293,7 @@ theorem card_rankOneKilledConflictVictims_le_immediate_add_CStar
           (availableEdges H C M) M 1).card := Nat.add_le_add hF₀ hG
     _ = _ := rfl
 
+omit [Fintype V] in
 /-- The immediate branch is C5 when the source and chosen blocker form a
 two-conflict, and is the certificate `commonLinks` coordinate otherwise.
 Both branches have the same sharp exponent. -/
@@ -59923,6 +60324,7 @@ def rankOneKilledCCVictimMass
   ∑ g ∈ conflictBlockerChoices C M (availableEdges H C M) e,
     (rankOneKilledConflictVictims H C M e g).card
 
+omit [Fintype V] in
 theorem rankOneKilledCCVictimMass_le
     (H : Hypergraph V) (C : ConflictSystem V) (M : Hypergraph V)
     (hCcard : ∀ c ∈ C, 2 ≤ c.card ∧ c.card ≤ 4)
@@ -59970,6 +60372,7 @@ def rankOneOpenConflictLinkMembers
     Hypergraph V :=
   A.filter fun f ↦ ({f} : Hypergraph V) ∈ conflictLinkLayer C e 1
 
+omit [Fintype V] in
 theorem partialFamily_conflictLink_one_eq_singletonImage
     (C : ConflictSystem V) (A M : Hypergraph V) (e : Finset V)
     (hAM : Disjoint A M) :
@@ -59994,6 +60397,7 @@ theorem partialFamily_conflictLink_one_eq_singletonImage
     apply mem_partialFamily.mpr
     refine ⟨hf'.2, ?_, ?_⟩ <;> simp [hf'.1, hfM]
 
+omit [Fintype V] in
 theorem card_rankOneOpenConflictLinkMembers_eq_observable
     {H : Hypergraph V} {C : ConflictSystem V}
     (hC : IsConflictSystem H C) (M : Hypergraph V) (e : Finset V) :
@@ -60009,6 +60413,7 @@ theorem card_rankOneOpenConflictLinkMembers_eq_observable
     (fun _ _ h ↦ Finset.singleton_injective h)] at himage
   exact_mod_cast himage.symm
 
+omit [Fintype V] in
 /-- At rank one and status one, the killed-loss numerator is exactly the
 sum of common blocker multiplicities over the currently open one-link
 members. -/
@@ -60095,6 +60500,7 @@ theorem weightedKilledPartialTestLossChoices_conflictLink_one_eq_sum_common
       · intro f hf g hg hfg
         exact Finset.singleton_injective hfg
 
+omit [Fintype V] in
 /-- Fubini in the chosen-blocker orientation.  Each CC pair on the left
 is counted by the victim set attached to its chosen common blocker on the
 right. -/
@@ -60146,12 +60552,13 @@ theorem sum_rankOne_blockerPairCC_le_victimMass
           Finset.card_le_card hsub
     _ = _ := by rfl
 
+omit [Fintype V] in
 /-- MM+MC+CM for the exceptional rank-one source.  The CC term is kept
 unbounded so it can be routed through the chosen-blocker victim mass. -/
 theorem card_inter_availableBlockers_rankOne_le_nonCC_add_CC
     (H : Hypergraph V) (C : ConflictSystem V) (M : Hypergraph V)
     {e f : Finset V} (he : e ∈ availableEdges H C M)
-    (hf : f ∈ availableEdges H C M) (hef : e ≠ f)
+    (hf : f ∈ availableEdges H C M) (_ : e ≠ f)
     (hdisj : Disjoint e f) (codegreeHi mixedHi : ℕ)
     (hH8 : IsUniform H 8)
     (hcodegree : ∀ root, root.card = 2 →
@@ -60211,6 +60618,7 @@ theorem card_inter_availableBlockers_rankOne_le_nonCC_add_CC
       _ = 8 * mixedHi := by simp [hH8 f hfH]
   omega
 
+omit [Fintype V] in
 /-- Complete q=1 killed-loss numerator: ordinary pair geometry pays the
 observable-scaled MM/MC/CM cap, while CC pays the chosen-oriented C5 /
 commonLinks / C* victim mass exactly once. -/
@@ -60297,6 +60705,7 @@ theorem weightedKilledPartialTestLossChoices_conflictLink_one_le
       rw [hF]
       ring
 
+omit [Fintype V] in
 theorem meanKilledPartialTestLoss_conflictLink_one_le
     {H : Hypergraph V} {C : ConflictSystem V}
     (hC : IsConflictSystem H C) (M : Hypergraph V) {e : Finset V}
@@ -60350,7 +60759,7 @@ theorem literalSharpCenteredWindow_numeric_of_registry_internalResidualSixteenth
     (S : CFMNumeric.CoreCutoffSpec eta Gamma d)
     (R : CFMTrajectories.TestStepRegistry D₂ D₃ D₄ Gamma
       (CFMNumeric.coreEpsilon eta) d N (k : ℝ) P j s)
-    (hW : 0 ≤ W) (ha0 : 0 ≤ a)
+    (hW : 0 ≤ W) (_ : 0 ≤ a)
     (haLo : CFMTrajectories.hHat D₂ D₃ D₄ d N (k : ℝ) *
         (1 - CFMTrajectories.xi Gamma (CFMNumeric.coreEpsilon eta)
           d N (k : ℝ)) ≤ a)
@@ -60700,7 +61109,7 @@ private theorem two_pointDuplicateMargin_le_rawSixteenth
       (6 * (2 * (ell : ℝ) + 1)))
     (S : CFMNumeric.CoreCutoffSpec eta
       (6 * (2 * (ell : ℝ) + 1)) d)
-    (hs1 : 1 ≤ s) (hs3 : s ≤ 3) (hr3 : 3 ≤ r) (hr5 : r ≤ 5) :
+    (hs1 : 1 ≤ s) (_ : s ≤ 3) (_ : 3 ≤ r) (hr5 : r ≤ 5) :
     2 * finiteWeightedRootShadowMargin eta d
         (2304 * (3 * (2 * (ell : ℝ) + 1) + 1) *
           d ^ ((r : ℝ) -
@@ -60787,6 +61196,7 @@ private theorem two_pointDuplicateMargin_le_rawSixteenth
             17 * CFMNumeric.coreEpsilon eta / 16) :=
       mul_le_mul_of_nonneg_left hpow hcoefficient
 
+omit [Fintype V] in
 /-- Exact numeric absorption of the GREEN killed-gain source cap.  The
 selected coordinate is `r-(s+1)`; no replacement by the unrelated
 selected-`r-1` primary margin is made. -/
@@ -60878,7 +61288,7 @@ theorem pointDuplicateKilledGainError_le_thousand_commonScale
           4608 * (3 * (2 * (ell : ℝ) + 1) + 1) *
             d ^ ((s : ℝ) + 1 - 17 * eps / 16) :=
         Finset.sum_le_sum fun r hr ↦ hpoint r hr
-      _ = _ := by norm_num [Finset.sum_Icc_succ_top] <;> ring
+      _ = _ := by norm_num [Finset.sum_Icc_succ_top]
   have hell0 : (0 : ℝ) ≤ ell := Nat.cast_nonneg ell
   have hcoef :
       3538944 * (3 * (2 * (ell : ℝ) + 1) + 1) ≤
@@ -60890,7 +61300,7 @@ theorem pointDuplicateKilledGainError_le_thousand_commonScale
       Real.rpow d (7 * eps / 64) := by
     have h := S.envelopeFifth_pow 7
     dsimp only [eps] at h ⊢
-    convert h using 1 <;> norm_num
+    convert h using 1 ; norm_num
   have hpow0 : 0 ≤ Real.rpow d ((s : ℝ) + 1 - 17 * eps / 16) :=
     Real.rpow_nonneg hd.le _
   have hnumerator :
@@ -61785,7 +62195,7 @@ private theorem rankOneCStarBound_le_base
           intro r hr
           exact mul_le_mul_of_nonneg_left (hpoint r hr) (by norm_num)
     _ = 4 * localSpreadPrimaryMargin eta d := by
-      norm_num [Finset.sum_Icc_succ_top] <;> ring
+      norm_num [Finset.sum_Icc_succ_top] ; ring
     _ = B / 4 := by
       dsimp only [B, localSpreadPrimaryMargin]
       ring
@@ -61866,6 +62276,7 @@ private theorem rankOneImmediate_add_cstar_ceils_le_four_base
   dsimp only [cstarR] at hcstarCeil ⊢
   linarith
 
+omit [Fintype V] in
 private theorem rankOneBase_le_scale_mul_zeta
     (H : Hypergraph V) (C : ConflictSystem V)
     {d eta : ℝ} {ell : ℕ}
@@ -61876,7 +62287,7 @@ private theorem rankOneBase_le_scale_mul_zeta
     {D₂ D₃ D₄ N : ℝ} {k : ℕ}
     (E : CFMNumeric.CoreExponentSpec eta
       (6 * (2 * (ell : ℝ) + 1)))
-    (S : CFMNumeric.CoreCutoffSpec eta
+    (_ : CFMNumeric.CoreCutoffSpec eta
       (6 * (2 * (ell : ℝ) + 1)) d)
     (R : CFMTrajectories.TestStepRegistry D₂ D₃ D₄
       (6 * (2 * (ell : ℝ) + 1)) (CFMNumeric.coreEpsilon eta)
@@ -61901,7 +62312,7 @@ private theorem rankOneBase_le_scale_mul_zeta
   have hscaleFloor : Real.rpow d
       (1 - CFMRegularization.rawRegularizationEps eta / 600) ≤ scale := by
     dsimp only [scale]
-    convert hscaleFloorRaw using 1 <;> norm_num
+    convert hscaleFloorRaw using 1 ; norm_num
   have hscale0 : 0 ≤ scale := by
     dsimp only [scale]
     exact (certificateInternalLayerScale_pos H C d
@@ -61934,6 +62345,7 @@ private theorem rankOneBase_le_scale_mul_zeta
       mul_le_mul hscaleFloor hEnvFloor (Real.rpow_nonneg hd.le _) hscale0
     _ = _ := by dsimp only [scale, Env, eps]
 
+omit [Fintype V] in
 private theorem rankOneVictimError_le_oneThousand_common
     (H : Hypergraph V) (C : ConflictSystem V)
     {d eta : ℝ} {ell : ℕ}
@@ -62044,6 +62456,7 @@ private theorem rankOneVictimError_le_oneThousand_common
       exact mul_le_mul_of_nonneg_right (by norm_num) hcommon0
     _ = _ := by dsimp only [G, scale, Env]
 
+omit [Fintype V] in
 /-- Exact rank-one killed-loss plus survival-center reserve used by the
 closed persistent component mean.  The C-star term remains the literal
 two-rank root-shadow sum before taking its ceiling. -/
@@ -62358,6 +62771,7 @@ theorem certificateTestStatusHi_le_availableEdges_fifth_of_handshake
   rw [hid] at haLower
   nlinarith
 
+omit [Fintype V] in
 /-- Handshake-only `p ≥ 4/5` for a persistent internal link.  This avoids
 threading a separate available-set floor through the final state source. -/
 theorem persistentInternalConflictLinkProbability_ge_four_fifths_of_handshake
@@ -62438,7 +62852,7 @@ noncomputable def persistentInternalMeanSurvivalError
     ((availableEdges H C M).card : ℝ)
 
 noncomputable def persistentInternalRankOneCStarBound
-    (C : ConflictSystem V) (d epsRaw GammaCert eta : ℝ) : ℝ :=
+    (_ : ConflictSystem V) (d epsRaw GammaCert eta : ℝ) : ℝ :=
   ∑ r ∈ Finset.Icc (2 : ℕ) 3,
     2 * finiteWeightedRootShadowMargin eta d
       ((3 * GammaCert + 1) * Real.rpow d ((r : ℝ) - epsRaw / 4))
@@ -62610,6 +63024,8 @@ theorem persistentInternalMeanCenter_abs_le
   dsimp only [persistentInternalMeanCenterAbs, Z, Zp, status, h, x]
   exact mul_le_mul_of_nonneg_left hdiv hscale
 
+open CFMSharpPersistentKilledNetNumeric in
+omit [Fintype V] in
 /-- The sharp unrestricted mean window, before subtracting killed choices,
 is already a consequence of the reusable state-cap record. -/
 theorem persistentInternalConflictLink_fullCenteredWindow_of_stateCaps
@@ -62681,7 +63097,7 @@ theorem persistentInternalConflictLink_fullCenteredWindow_of_stateCaps
       (2 * (ell : ℝ) + 1) ell j w R (q.1 + 2)
         (lt_of_lt_of_le zero_lt_one Caps.registry.delta.degree.d_one)).le
   have hnumeric :=
-    CFMSharpPersistentKilledNetNumeric.literalSharpCenteredWindow_numeric_of_registry_internalResidualSixteenth
+    literalSharpCenteredWindow_numeric_of_registry_internalResidualSixteenth
         E S Caps.registry hscale0 (Nat.cast_nonneg _) Caps.availableBounds.1
           Caps.availableBounds.2
   let common := GammaCore *
@@ -62895,6 +63311,7 @@ theorem persistentInternalConflictLink_killedLoss_le_error_of_stateCaps
       epsRaw, GammaCert, GammaCore, scale, codegreeHi, mixedHi, rerootHi]
       using hbase.trans hnum
 
+open CFMSharpPersistentKilledNetNumeric in
 /-- The closed positive-status persistent component window.  All source
 geometry is obtained from final reachable Good through `Caps`; the only
 remaining inputs are the structural cutoff and time bounds already carried
@@ -63081,7 +63498,7 @@ theorem persistentInternalConflictLink_meanWindow_of_stateCaps
           (CFMNumeric.trajectoryFloor eta d) f q u M hf Caps
   have hkilledGainNumeric : killedGainError ≤ 1000 * common := by
     have h :=
-      CFMSharpPersistentKilledNetNumeric.pointDuplicateKilledGainError_le_thousand_commonScale
+      pointDuplicateKilledGainError_le_thousand_commonScale
         H C R E S Caps.registry (by omega) (by omega) Caps.availableBounds.1
     simpa only [killedGainError, persistentInternalKilledGainError,
       common, scale, persistentInternalSourceScale, epsRaw, GammaCert,
@@ -63099,7 +63516,7 @@ theorem persistentInternalConflictLink_meanWindow_of_stateCaps
         rw [persistentInternalKilledLossError, if_pos hqzero]
       rw [hlossEq]
       have h :=
-        CFMSharpPersistentKilledNetNumeric.persistentRankOneKilledLoss_add_survivalCenter_le_reserve
+        persistentRankOneKilledLoss_add_survivalCenter_le_reserve
           H C R E S hN (by
             simpa only [hqzero, hu, GammaCore] using Caps.registry)
             Caps.availableBounds.1
@@ -63110,7 +63527,7 @@ theorem persistentInternalConflictLink_meanWindow_of_stateCaps
         persistentInternalSourceScale, epsRaw, GammaCert, GammaCore,
         qActual, sActual, hqzero, hu, Nat.add_assoc] using h
     · have h :=
-        CFMSharpPersistentKilledNetNumeric.persistentHigherKilledLoss_add_survivalCenter_le_reserve
+        persistentHigherKilledLoss_add_survivalCenter_le_reserve
           E S hN Caps.registry hscale0 (by omega) Caps.availableBounds.1
       have hlossEq : killedLossError =
           persistentInternalHigherKilledLossError H R.regularized d
@@ -63154,7 +63571,7 @@ theorem persistentInternalConflictLink_meanWindow_of_stateCaps
   have hpLower : (4 / 5 : ℝ) ≤ p := by
     dsimp only [p]
     exact
-      CFMSharpPersistentKilledNetNumeric.persistentInternalConflictLinkProbability_ge_four_fifths_of_handshake
+      persistentInternalConflictLinkProbability_ge_four_fifths_of_handshake
         H R.regularized M hf E S hN Caps.registry.delta Caps.availableBounds.1
           (by simpa only [GammaCore, persistentInternalStatusHi]
             using (Caps.status f.1 hf).2)
@@ -63189,7 +63606,7 @@ theorem persistentInternalConflictLink_meanWindow_of_stateCaps
     nlinarith [hkilledLossReserveRaw]
   have hremainder : remainder ≤ common := by
     have h :=
-      CFMSharpPersistentKilledNetNumeric.testRemainder_le_commonScale_of_registry
+      testRemainder_le_commonScale_of_registry
         E Caps.registry
     have hm := mul_le_mul_of_nonneg_left h hscale0
     simpa only [remainder, common, GammaCore, qActual, sActual,
@@ -63203,8 +63620,8 @@ theorem persistentInternalConflictLink_meanWindow_of_stateCaps
   dsimp only [p, center, envelope, remainder, scale, qActual, sActual,
     GammaCore, GammaCert, epsRaw] at hresult ⊢
   constructor
-  · convert hresult.1 using 1 <;> ring
-  · convert hresult.2 using 1 <;> ring
+  · convert hresult.1 using 1 ; ring
+  · convert hresult.2 using 1 ; ring
 
 end
 
@@ -63219,6 +63636,7 @@ noncomputable section
 
 variable {V : Type*} [DecidableEq V] [Fintype V]
 
+omit [Fintype V] in
 theorem persistentInternalConflictLinkUpperStep_eq_externalTestUpperStep_of_nextActive
     {H : Hypergraph V} {C : ConflictSystem V} (hC : IsConflictSystem H C)
     (f : Finset V) (D₂ D₃ D₄ Gamma epsilon d N scale x : ℝ)
@@ -63234,6 +63652,7 @@ theorem persistentInternalConflictLinkUpperStep_eq_externalTestUpperStep_of_next
     partialTestObservable_conflictLinkTestWeight hC f j s M']
   rfl
 
+omit [Fintype V] in
 theorem persistentInternalConflictLinkLowerStep_eq_externalTestLowerStep_of_nextActive
     {H : Hypergraph V} {C : ConflictSystem V} (hC : IsConflictSystem H C)
     (f : Finset V) (D₂ D₃ D₄ Gamma epsilon d N scale x : ℝ)
@@ -63249,10 +63668,12 @@ theorem persistentInternalConflictLinkLowerStep_eq_externalTestLowerStep_of_next
     partialTestObservable_conflictLinkTestWeight hC f j s M']
   rfl
 
+omit [Fintype V] in
 /-- The survivor-restricted raw square has the same sharp cap-times-mean
 bound as the ordinary test increment.  Killed choices contribute zero,
 while the right side may harmlessly retain the full gain/loss means. -/
-theorem greedyStepExpectation_persistentInternalConflictLinkIncrement_sq_le_cap_mul_meanGain_add_meanLoss
+theorem
+  greedyStepExpectation_persistentInternalConflictLinkIncrement_sq_le_cap_mul_meanGain_add_meanLoss
     {H : Hypergraph V} {C : ConflictSystem V} (hC : IsConflictSystem H C)
     (M : Hypergraph V) {f : Finset V}
     (hf : f ∈ availableEdges H C M) (j s : ℕ) {cap : ℝ}
@@ -63332,6 +63753,7 @@ theorem greedyStepExpectation_persistentInternalConflictLinkIncrement_sq_le_cap_
       simp_rw [mul_add]
       rw [Finset.sum_add_distrib, ← Finset.mul_sum, ← Finset.mul_sum]
 
+omit [Fintype V] in
 /-- Persistent envelope squares use only the survivor-restricted raw
 second moment; killed choices contribute zero to both raw and trajectory
 increments. -/
@@ -63464,6 +63886,7 @@ theorem persistentInternalConflictLinkEnvelopeStep_squareExpectation_le_sharpVar
 required only when `f` survives the choice; the killed branch is exactly
 zero by definition. -/
 
+omit [Fintype V] in
 theorem reachablePersistentInternalConflictLinkSourceBudgets_of_sharpRaw
     (H : Hypergraph V) (C : ConflictSystem V) (hC : IsConflictSystem H C)
     (f : Finset V) (Good : ℕ → Hypergraph V → Prop) (T : ℕ)
@@ -63700,6 +64123,7 @@ def oneOpenConflictLinkLayerChoicesOnChoices
   (oneOpenConflictLinkLayerOnChoices C A M D f q).biUnion
     fun Q ↦ Q ∩ A
 
+omit [Fintype V] in
 @[simp] theorem mem_oneOpenConflictLinkLayerOnChoices
     {C : ConflictSystem V} {A M D : Hypergraph V}
     {f : Finset V} {q : ℕ} {Q : Hypergraph V} :
@@ -63708,6 +64132,7 @@ def oneOpenConflictLinkLayerChoicesOnChoices
         (Q ∩ D).Nonempty := by
   simp [oneOpenConflictLinkLayerOnChoices]
 
+omit [Fintype V] in
 /-- The selected incidence charge for a fixed conflict-link layer is exactly
 supported on its restricted one-open family. -/
 theorem selectedTestIncidenceCharge_conflictLink_one_le_layerRestricted
@@ -63790,6 +64215,7 @@ theorem selectedTestIncidenceCharge_conflictLink_one_le_layerRestricted
       omega
     · simpa [hQcard] using hQM)
 
+omit [Fintype V] in
 /-- Outside the global duplicate family, the available-member sections of
 the restricted fixed-rank family are disjoint.  Hence only their actual
 union, rather than all deleted host edges, is charged. -/
@@ -63871,6 +64297,7 @@ theorem card_oneOpenConflictLinkLayerOnChoices_le_choices_add_colliding
     _ ≤ (oneOpenConflictLinkLayerChoicesOnChoices C A M D f q).card +
           K.card := Nat.add_le_add hScardLe hinterLe
 
+omit [Fintype V] in
 /-- A choice represented by a restricted one-open link is itself in the
 deleted set.  This uses the singleton available section. -/
 theorem mem_deleted_of_mem_oneOpenConflictLinkLayerChoicesOnChoices
@@ -63890,6 +64317,7 @@ theorem mem_deleted_of_mem_oneOpenConflictLinkLayerChoicesOnChoices
   have hda : d = a := Finset.mem_singleton.mp (ha ▸ hdQA)
   exact hga.symm ▸ hda ▸ Finset.inter_subset_right hdQD
 
+omit [Fintype V] in
 /-- The actual restricted available members split sharply into a
 vertex-local meeting part and a conflict-conflict common-blocker part. -/
 theorem card_oneOpenConflictLinkLayerChoicesOnChoices_le_local_add_CC
@@ -64000,6 +64428,7 @@ theorem card_oneOpenConflictLinkLayerChoicesOnChoices_le_local_add_CC
       Nat.add_le_add hconfCard hmeetCard
     _ = _ := Nat.add_comm _ _
 
+omit [Fintype V] in
 /-- A surviving distinguished edge and the chosen edge form exactly a
 legal reroot pair. -/
 theorem nextAvailable_legalReroot_pair
@@ -64011,7 +64440,7 @@ theorem nextAvailable_legalReroot_pair
   have hef : e ≠ f := by
     intro hef
     apply hfData.2.1
-    simpa [hef]
+    simp [hef]
   have hfe : f ≠ e := Ne.symm hef
   have hdisj : Disjoint f e := by
     exact hfData.2.2.1.2
@@ -64029,6 +64458,7 @@ theorem nextAvailable_legalReroot_pair
       exact Finset.mem_insert_of_mem (Finset.mem_insert_self e M)
   exact ⟨hef, hdisj, hpair⟩
 
+omit [Fintype V] in
 /-- Source-faithful pointwise one-open loss for a surviving internal edge.
 Meeting deletions are vertex-local, conflict deletions are legal reroots,
 and only duplicate representations pay the point-duplicate correction. -/
@@ -64164,6 +64594,7 @@ noncomputable section
 
 variable {V io : Type*} [DecidableEq V] [Fintype V] [Fintype io]
 
+omit [Fintype V] in
 /-- A one-edge conflict link through a vertex is already a `(C4)`
 neighbour.  The map sends the singleton residual link to its unique host
 edge; keeping this statement separate lets the surviving one-open bound
@@ -64238,7 +64669,7 @@ theorem internalConflictLink_one_surviving_loss_le_fifty_base_of_finalGood
     (hT : (T : ℝ) ≤ (N : ℝ)) (hk : k ≤ T)
     (f : Finset V) (hfH : f ∈ H) (q : ℕ)
     (hq1 : 1 ≤ q) (hq3 : q ≤ 3)
-    (M : Hypergraph V) (hM : IsConflictFreeMatching H R.regularized M)
+    (M : Hypergraph V) (_ : IsConflictFreeMatching H R.regularized M)
     (hfA : f ∈ availableEdges H R.regularized M)
     (hgood : indexedGreedyGood
       (finalReachableTestEnhancedPredicate H C d
@@ -64337,7 +64768,7 @@ theorem internalConflictLink_one_surviving_loss_le_fifty_base_of_finalGood
           2 * localSpreadPrimaryMargin eta d :=
         Finset.sum_le_sum fun r hr ↦ hpoint r hr
       _ = 6 * localSpreadPrimaryMargin eta d := by
-        norm_num [Finset.sum_Icc_succ_top] <;> ring
+        norm_num [Finset.sum_Icc_succ_top] ; ring
   have hmixed : ((mixed : ℕ) : ℝ) ≤ 3 * B := by
     simpa only [mixed, B, Real.rpow_eq_pow] using
       CFMSharpTestCutoff.mixedCeil_le_three_base E S
@@ -64426,7 +64857,7 @@ theorem internalConflictLink_one_surviving_loss_le_fifty_base_of_finalGood
         intro q' hq'
         exact Finset.sum_le_sum fun r hr ↦ hrerootPoint q' hq' r hr
       _ = 30 * localSpreadPrimaryMargin eta d := by
-        norm_num [Finset.sum_Icc_succ_top] <;> ring
+        norm_num [Finset.sum_Icc_succ_top] ; ring
   have hparts :
       (∑ v ∈ e,
         ((localConflictLinkPartialAtVertex R.regularized
@@ -64452,6 +64883,7 @@ theorem internalConflictLink_one_surviving_loss_le_fifty_base_of_finalGood
         nlinarith
   exact hbase.trans (by simpa only [B] using hparts)
 
+omit [Fintype V] in
 /-- The explicit floor in the certificate layer scale absorbs the full
 surviving one-open geometry into one half of the natural source jump. -/
 theorem fifty_base_le_internalConflictLink_naturalHalf
@@ -64492,7 +64924,7 @@ theorem fifty_base_le_internalConflictLink_naturalHalf
     change Real.rpow d
       ((((q + 1 : ℕ) : ℝ) - 1) - epsRaw / 600) ≤ _ at hfloorRaw
     rw [hepsRaw] at hfloorRaw
-    convert hfloorRaw using 1 <;> push_cast <;> ring_nf
+    convert hfloorRaw using 1 ; push_cast ; ring_nf
   have hconst : (100 : ℝ) ≤ Real.rpow d (3 * eps / 64) := by
     calc
       (100 : ℝ) ≤ 5 ^ (3 : ℕ) := by norm_num
@@ -64511,7 +64943,7 @@ theorem fifty_base_le_internalConflictLink_naturalHalf
         mul_le_mul_of_nonneg_right hconst (Real.rpow_nonneg hdpos.le _)
       _ = Real.rpow d (3 * eps / 64 + (1 - eps / 3)) :=
         (Real.rpow_add hdpos _ _).symm
-      _ = Real.rpow d (1 - 55 * eps / 192) := by congr 1 <;> ring
+      _ = Real.rpow d (1 - 55 * eps / 192) := by congr 1 ; ring
   have hexp : 1 - 55 * eps / 192 ≤ 1 - 31 * eps / 120 := by
     linarith
   have hpow : Real.rpow d (1 - 55 * eps / 192) ≤
@@ -65084,7 +65516,7 @@ theorem persistentInternalConflictLink_survivingPointwiseAndRawVariance_of_state
           using Caps.current.2)
         (mul_nonneg (Nat.cast_nonneg _) Caps.statusHi_nonneg))
   have hsqRaw :=
-    greedyStepExpectation_persistentInternalConflictLinkIncrement_sq_le_cap_mul_meanGain_add_meanLoss
+   greedyStepExpectation_persistentInternalConflictLinkIncrement_sq_le_cap_mul_meanGain_add_meanLoss
       R.isConflictSystem M hf qActual sActual hweight hraw0
         (fun e he hnext ↦ (hpoint e he hnext).1)
         (fun e he hnext ↦ (hpoint e he hnext).2)
@@ -65116,6 +65548,7 @@ the ordinary internal-link envelope.  Consequently the existing initial
 gap calculation promotes any closed persistent reachable source package
 without changing its jump, variance, or deviation scales. -/
 
+omit [Fintype V] in
 theorem positivePairedFirstFailureSourceBudgets_of_reachablePersistentInternalNaturalScale
     {io : Type*} [Fintype io]
     (H : Hypergraph V) (C : ConflictSystem V)
@@ -65517,6 +65950,7 @@ def finalCoordinateToProviderEnhanced
   | Sum.inl (Sum.inr c) => Sum.inr (Sum.inr (Sum.inr (Sum.inl c)))
   | Sum.inr a => Sum.inr (Sum.inr (Sum.inr (Sum.inr a)))
 
+omit [Fintype V] [Fintype io] in
 @[simp] theorem finalCoordinateToProviderEnhanced_toFinal
     (H : Hypergraph V) (C : ConflictSystem V) (j : io → ℕ)
     (a : EnhancedRegularizedGreedyIndex H j
@@ -65525,6 +65959,7 @@ def finalCoordinateToProviderEnhanced
         (finalProviderEnhancedCoordinateToFinal H C j a) = a := by
   rcases a with a | (a | (z | (c | t))) <;> rfl
 
+omit [Fintype V] [Fintype io] in
 @[simp] theorem finalProviderEnhancedCoordinateToFinal_toEnhanced
     (H : Hypergraph V) (C : ConflictSystem V) (j : io → ℕ)
     (a : FinalReachableTestEnhancedIndex H C io j) :
@@ -65546,6 +65981,7 @@ noncomputable def finalProviderLocalPredicate
       D₂ D₃ D₄ GammaCore eta N T j w R
         (finalCombinedLocalCoordinateToFinal H R.regularized j a) k M
 
+omit [Fintype V] in
 theorem finalProviderEnhancedPredicate_component_iff
     (H : Hypergraph V) (C : ConflictSystem V)
     (d epsRaw GammaCert : ℝ) (ellCert : ℕ)
@@ -65564,6 +66000,7 @@ theorem finalProviderEnhancedPredicate_component_iff
           (finalProviderEnhancedCoordinateToFinal H R.regularized j a) k M := by
   rcases a with a | (a | (z | (c | t))) <;> rfl
 
+omit [Fintype V] in
 theorem indexedFinalProviderEnhancedGood_iff_finalReachableGood
     (H : Hypergraph V) (C : ConflictSystem V)
     (d epsRaw GammaCert : ℝ) (ellCert : ℕ)
@@ -65667,7 +66104,7 @@ theorem finalReachableOldFirstFailureMass_le_common
   have hCempty : ∅ ∉ R.regularized := by
     intro hempty
     have hmin := (R.bounded.1 ∅ hempty).1
-    simpa using hmin
+    simp at hmin
   have havailable := finalReachableLiteral_availableEdges_nonempty
     H C d eta ell j w hinst R E S hN
   rcases a with ⟨lower, v⟩ | a
@@ -66291,7 +66728,7 @@ theorem finalProviderLocalPredicate_initial
   have hCempty : ∅ ∉ R.regularized := by
     intro he
     have hmin := (R.bounded.1 ∅ he).1
-    simpa using hmin
+    simp at hmin
   have hdpos : 0 < d := lt_of_lt_of_le zero_lt_one hinst.2.2.2.2.2.2.1
   rcases a with a | (z | (c | t))
   · rcases a with u | a
@@ -66543,7 +66980,7 @@ theorem specializedRegularizedCoreProvider_closed (ell : ℕ) :
   have hCempty : ∅ ∉ R.regularized := by
     intro he
     have hmin := (R.bounded.1 ∅ he).1
-    simpa using hmin
+    simp at hmin
   have hsize : 8 * T < N := by
     have hTreal := CFMNumericAggregation.targetTime_lt_host_eighth
       E.eta_pos S hN
