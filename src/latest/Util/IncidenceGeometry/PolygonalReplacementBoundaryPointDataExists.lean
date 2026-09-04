@@ -1,6 +1,5 @@
 import Util.IncidenceGeometry.PolygonalReplacementBoundaryPointData
 
-open Classical
 noncomputable section
 
 universe u

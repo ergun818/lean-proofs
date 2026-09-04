@@ -2,13 +2,13 @@ import Mathlib.Data.ZMod.Basic
 import Mathlib.Algebra.BigOperators.Ring.Nat
 import Util.IncidenceGeometry.Basic
 
-open Classical
 noncomputable section
 
 lemma CyclicToggleWeightSumEven {α : Type*} [Fintype α]
     (σ : Equiv.Perm α) (inside : α → Bool) (w : α → ℕ)
     (hw : ∀ p : α, Odd (w p) ↔ inside p ≠ inside (σ p)) :
     Even (∑ p : α, w p) := by
+  classical
   let f : α → ZMod 2 := fun p => if inside p then 1 else 0
   have hterm : ∀ p : α,
       ((if inside p = inside (σ p) then 0 else 1 : ℕ) : ZMod 2) = f p + f (σ p) := by

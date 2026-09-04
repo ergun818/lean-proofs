@@ -1,7 +1,6 @@
 import Util.IncidenceGeometry.FinitePolygonalSetCyclicGlobalElementaryPieceSkeleton
 import Mathlib.Data.List.ProdSigma
 
-open Classical
 noncomputable section
 
 lemma FinitePolygonalSetCyclicGlobalPieceStreamEnumeration

@@ -11,7 +11,6 @@ import Util.IncidenceGeometry.ComplementComponentAbsorbsConnectedSubset
 import Util.IncidenceGeometry.PolygonalPathCarrierConnected
 import Mathlib.Combinatorics.SimpleGraph.Acyclic
 
-open Classical
 noncomputable section
 
 lemma DeleteNonbridgeSideFacesDistinct {V : Type*} [Fintype V] (G : SimpleGraph V)

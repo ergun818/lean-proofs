@@ -2,7 +2,6 @@ import Mathlib.Tactic
 import Util.IncidenceGeometry.PlaneDrawingDartArcData
 import Util.IncidenceGeometry.PolygonalArcSourceEndpointRayCover
 
-open Classical
 noncomputable section
 
 lemma PlaneDrawingDartSourceEndpointRayCovers {V : Type*} [Fintype V]

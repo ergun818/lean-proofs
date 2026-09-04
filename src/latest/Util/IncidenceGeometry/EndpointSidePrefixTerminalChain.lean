@@ -3,7 +3,6 @@ import Util.IncidenceGeometry.PolygonalArcEndpointGluedSegmentTransfer
 import Util.IncidenceGeometry.PolygonalArcFromEndpointGluedPieces
 import Util.IncidenceGeometry.StraightSegmentPolygonalArc
 
-open Classical
 noncomputable section
 
 lemma EndpointSidePrefixTerminalChain
@@ -68,6 +67,7 @@ lemma EndpointSidePrefixTerminalChain
                                                                   c •
                                                                     (piece.vertices[m + 1] -
                                                                       piece.vertices[m]) := by
+  classical
   intro hpredecessor_target happ_source hpredecessor_approach
     happ_target happ_segment hpredecessor_segment hne
   rcases StraightSegmentPolygonalArc h terminalGate hne with
@@ -257,7 +257,8 @@ lemma EndpointSidePrefixTerminalChain
         rfl)
       (last_target := by
         intro Q hQ
-        simp [pieces] at hQ
+        simp only [List.getLast?_cons_cons, List.getLast?_singleton, Option.some.injEq, pieces]
+          at hQ
         subst Q
         exact hterminal_target)
       (successive_attach := hsuccessive)

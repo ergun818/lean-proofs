@@ -1,6 +1,5 @@
 import Util.IncidenceGeometry.OrdinaryLabeledCrossingDiskData
 
-open Classical
 noncomputable section
 
 structure OrdinaryLabeledCrossingDiskFamily {V : Type*} [Fintype V]

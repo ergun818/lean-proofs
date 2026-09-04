@@ -1,6 +1,5 @@
 import Util.IncidenceGeometry.PolygonalArc
 
-open Classical
 noncomputable section
 
 lemma TwoSegmentPolygonalArc
@@ -14,6 +13,7 @@ lemma TwoSegmentPolygonalArc
             Γ.relativeInterior =
               (segment ℝ a z ∪ segment ℝ z b) \
                 ({a, b} : Set (EuclideanSpace ℝ (Fin 2))) := by
+  classical
   let E := EuclideanSpace ℝ (Fin 2)
   have hLI_az_ab : LinearIndependent ℝ ![z - a, b - a] := by
     rw [LinearIndependent.pair_iff' (sub_ne_zero.mpr haz.symm)]

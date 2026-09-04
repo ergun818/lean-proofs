@@ -3,7 +3,6 @@ import Util.IncidenceGeometry.PolygonalArcFirstBallCutDataExists
 import Util.IncidenceGeometry.PolygonalArcVertexMemCarrier
 import Mathlib.Tactic
 
-open Classical
 noncomputable section
 
 lemma PolygonalArcOrderedBallCutDataExists
@@ -13,6 +12,7 @@ lemma PolygonalArcOrderedBallCutDataExists
       Q.target ∉ Metric.closedBall p radius →
       (Q.carrier ∩ Metric.ball p radius).Nonempty →
       Nonempty (PolygonalArcOrderedBallCutData Q p radius) := by
+  classical
   intro hsource htarget hhit
   have hhitRel : (Q.relativeInterior ∩ Metric.ball p radius).Nonempty := by
     rcases hhit with ⟨z, hzQ, hzBall⟩

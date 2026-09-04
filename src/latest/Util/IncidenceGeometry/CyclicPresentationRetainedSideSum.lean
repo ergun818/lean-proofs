@@ -1,6 +1,5 @@
 import Util.IncidenceGeometry.CyclicCurvePresentationIntersectionMultiplicity
 
-open Classical
 noncomputable section
 
 lemma CyclicPresentationRetainedSideSum
@@ -18,6 +17,7 @@ lemma CyclicPresentationRetainedSideSum
                   openSegment ℝ p.1 (R.successor p).1)
             else
               0) := by
+  classical
   rw [CyclicCurvePresentationIntersectionMultiplicity]
   rw [Finset.sum_filter]
   apply Finset.sum_congr rfl

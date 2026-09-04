@@ -2,7 +2,6 @@ import Util.IncidenceGeometry.CircleLineNoThreePoints
 import Mathlib.Data.List.FinRange
 import Mathlib.Topology.Order.IntermediateValue
 
-open Classical
 noncomputable section
 
 lemma CircularOrderedSamplesNonadjacentChordInteriors
@@ -129,7 +128,8 @@ lemma CircularOrderedSamplesNonadjacentChordInteriors
         intro k
         fin_cases k
         · dsimp [t]
-          simp [AffineMap.lineMap_apply_module]
+          simp only [Fin.isValue, AffineMap.lineMap_apply_module, PiLp.add_apply, PiLp.smul_apply,
+            smul_eq_mul]
           have hside' : -(B 1 - A 1) * (z 0 - A 0) = 0 := by
             have h := hz
             rw [hdx] at h
@@ -155,7 +155,8 @@ lemma CircularOrderedSamplesNonadjacentChordInteriors
           field_simp [hdx]
           ring
         · dsimp [t]
-          simp [AffineMap.lineMap_apply_module]
+          simp only [Fin.isValue, AffineMap.lineMap_apply_module, PiLp.add_apply, PiLp.smul_apply,
+            smul_eq_mul]
           have hz1 :
               z 1 - A 1 = (B 1 - A 1) * ((z 0 - A 0) / (B 0 - A 0)) := by
             field_simp [hdx]

@@ -1,6 +1,5 @@
 import Util.IncidenceGeometry.PolygonalReplacementControlDiskData
 
-open Classical
 noncomputable section
 
 lemma PolygonalReplacementOutsideControlDisksDistinctEdgesDisjoint {V : Type*} [Fintype V]

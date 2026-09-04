@@ -1,11 +1,11 @@
 import Util.IncidenceGeometry.PolygonalArcCollarMiddleSegmentData
 
-open Classical
 noncomputable section
 
 lemma PolygonalArcCollarMiddleSegmentDataExists (γ : PolygonalArc) {η : ℝ}
     (controlRadii : PolygonalArcCollarControlRadii γ η) :
     Nonempty (PolygonalArcCollarMiddleSegmentData γ controlRadii) := by
+  classical
   let middle : (j : ℕ) → j + 1 < γ.vertices.length →
       Set (EuclideanSpace ℝ (Fin 2)) := fun j hj =>
     (AffineMap.lineMap γ.vertices[j] γ.vertices[j + 1]) ''

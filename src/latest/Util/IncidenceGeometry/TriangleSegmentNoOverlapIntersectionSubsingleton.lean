@@ -1,6 +1,5 @@
 import Util.IncidenceGeometry.Basic
 
-open Classical
 noncomputable section
 
 lemma TriangleSegmentNoOverlapIntersectionSubsingleton
@@ -11,6 +10,7 @@ lemma TriangleSegmentNoOverlapIntersectionSubsingleton
     (segment ℝ x y ∩ segment ℝ u v : Set (EuclideanSpace ℝ (Fin 2))).Subsingleton ∧
       Set.Finite (openSegment ℝ x y ∩ openSegment ℝ u v :
         Set (EuclideanSpace ℝ (Fin 2))) := by
+  classical
   have hclosed :
       (segment ℝ x y ∩ segment ℝ u v :
         Set (EuclideanSpace ℝ (Fin 2))).Subsingleton := by

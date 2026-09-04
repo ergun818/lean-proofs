@@ -15,7 +15,6 @@ import Util.IncidenceGeometry.SimpleClosedPolygonalCurveComplementOpen
 import Util.IncidenceGeometry.SimpleClosedCurveAsFinitePolygonalSet
 import Util.IncidenceGeometry.ConnectedSubsetContainedInUniqueComplementComponent
 
-open Classical
 noncomputable section
 
 lemma JordanLocalSideDistinctComponents
@@ -121,7 +120,7 @@ lemma JordanLocalSideDistinctComponents
           omega
         have hnext :
             (β'.vertices ++ [b])[β'.vertices.length - 1 + 1] = b := by
-          simpa [hidx]
+          simp [hidx]
         have hlastAppend :
             (β'.vertices ++ [b])[β'.vertices.length - 1] = a := by
           rw [List.getElem_append_left (bs := [b])
@@ -164,7 +163,7 @@ lemma JordanLocalSideDistinctComponents
           omega
         have hnext :
             (β'.vertices ++ [b])[β'.vertices.length - 1 + 1] = b := by
-          simpa [hidx]
+          simp [hidx]
         have hlastAppend :
             (β'.vertices ++ [b])[β'.vertices.length - 1] = a := by
           rw [List.getElem_append_left (bs := [b])
@@ -192,7 +191,7 @@ lemma JordanLocalSideDistinctComponents
           omega
         have hnext :
             (β'.vertices ++ [b])[β'.vertices.length - 1 + 1] = b := by
-          simpa [hidx]
+          simp [hidx]
         have hlastAppend :
             (β'.vertices ++ [b])[β'.vertices.length - 1] = a := by
           rw [List.getElem_append_left (bs := [b])
@@ -259,14 +258,14 @@ lemma JordanLocalSideDistinctComponents
         simp
       have hnextAppendLt :
           β'.vertices.length - 1 + 1 < (β'.vertices ++ [b]).length := by
-        simpa [hlastSucc]
+        simp [hlastSucc]
       have hlastAppend :
           (β'.vertices ++ [b])[β'.vertices.length - 1]'hlastAppendLt = a := by
         rw [List.getElem_append_left (bs := [b]) hlastLt]
         exact hβ'last
       have hnextAppend :
           (β'.vertices ++ [b])[β'.vertices.length - 1 + 1]'hnextAppendLt = b := by
-        simpa [hlastSucc]
+        simp [hlastSucc]
       rw [dif_pos (by omega)]
       rw [hlastAppend, hnextAppend]
       simp only [hab, ↓reduceIte]

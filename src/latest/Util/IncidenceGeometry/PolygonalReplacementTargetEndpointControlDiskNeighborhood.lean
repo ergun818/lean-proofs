@@ -1,7 +1,6 @@
 import Util.IncidenceGeometry.PolygonalReplacementControlDiskData
 import Util.IncidenceGeometry.PolygonalReplacementResidualPieceData
 
-open Classical
 noncomputable section
 
 universe u

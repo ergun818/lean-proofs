@@ -1,7 +1,6 @@
 import Util.IncidenceGeometry.FinitePolygonalSetCyclicTraversalCuts
 import Util.IncidenceGeometry.SegmentFiniteSetComplementDense
 
-open Classical
 noncomputable section
 
 lemma FinitePolygonalSetCyclicPieceFiniteDeletionDense
@@ -10,6 +9,7 @@ lemma FinitePolygonalSetCyclicPieceFiniteDeletionDense
     (i : D.pieceIndex) :
     D.pieceCarrier i ⊆
       closure (D.pieceCarrier i \ (K.points : Set (EuclideanSpace ℝ (Fin 2)))) := by
+  classical
   let γ : PolygonalArc := (D.pieceArc i).1
   let n : ℕ := (D.pieceSegmentIndex i).1
   have hn : n + 1 < γ.vertices.length := (D.pieceSegmentIndex i).2

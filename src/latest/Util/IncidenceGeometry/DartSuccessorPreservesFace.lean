@@ -1,6 +1,5 @@
 import Util.IncidenceGeometry.PlaneFaceData
 
-open Classical
 noncomputable section
 
 lemma DartSuccessorPreservesFace {V : Type*} [Fintype V] (G : SimpleGraph V)
@@ -10,6 +9,7 @@ lemma DartSuccessorPreservesFace {V : Type*} [Fintype V] (G : SimpleGraph V)
       ∀ F : A.Face, ∀ d : G.Dart, A.leftFace d = F →
         (∀ n : ℕ, A.leftFace ((A.successor^[n]) d) = F) ∧
           ∀ n : ℕ, A.leftFace (((A.successor.symm)^[n]) d) = F := by
+  classical
   have _hD : D.crossingSet.card = 0 := hD
   have successorFace : ∀ d : G.Dart, A.leftFace (A.successor d) = A.leftFace d := by
     intro d

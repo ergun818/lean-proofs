@@ -2,7 +2,6 @@ import Util.IncidenceGeometry.BigonRerouteCrossingCountBound
 import Util.IncidenceGeometry.BigonRerouteOrderedBetaTailData
 import Util.IncidenceGeometry.OrdinaryPolygonalDrawing
 
-open Classical
 noncomputable section
 
 lemma BigonRerouteSpliceCount {V : Type*} [Fintype V]
@@ -116,6 +115,7 @@ lemma BigonRerouteSpliceCount {V : Type*} [Fintype V]
                                                     XB.card + 1 ≤
                                                   D.crossingSet.card +
                                                     XA.card := by
+  classical
   intro _huBeta hxold hxnotXB hXBsub hXnewCard hnewSubset _hPrefixSource
     _hPrefixTarget _hPrefixTailMeet hbetaEdge hotherEdges _hbetaSource
     _hbetaTarget _hbetaCarrier hBprefixSubset hEndpoints hNoVertex hNoThree

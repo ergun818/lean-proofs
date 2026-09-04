@@ -9,7 +9,6 @@ import Util.IncidenceGeometry.BigonRerouteLocalSegmentDirection
 import Util.IncidenceGeometry.PolygonalArcCompactAvoidanceScale
 import Mathlib.Tactic
 
-open Classical
 noncomputable section
 
 private lemma simultaneousBigonOpenNotVertices (Q : PolygonalArc)
@@ -17,6 +16,7 @@ private lemma simultaneousBigonOpenNotVertices (Q : PolygonalArc)
     (hk : k + 1 < Q.vertices.length)
     (hp : p ∈ openSegment ℝ Q.vertices[k] Q.vertices[k + 1]) :
     p ∉ Q.vertices := by
+  classical
   intro hpv
   rcases List.getElem_of_mem hpv with ⟨m, hm, hmp⟩
   by_cases hmk : m = k
@@ -42,6 +42,7 @@ private lemma simultaneousBigonOpenIndexUnique (Q : PolygonalArc) :
       (hb : b + 1 < Q.vertices.length),
       z ∈ openSegment ℝ Q.vertices[a] Q.vertices[a + 1] →
       z ∈ openSegment ℝ Q.vertices[b] Q.vertices[b + 1] → a = b := by
+  classical
   intro z a b ha hb hza hzb
   rcases lt_trichotomy a b with hab' | rfl | hba
   · have hzInter : z ∈ segment ℝ Q.vertices[a] Q.vertices[a + 1] ∩
@@ -59,7 +60,7 @@ private lemma simultaneousBigonOpenIndexUnique (Q : PolygonalArc) :
           omega
         exact hne ((left_mem_openSegment_iff (𝕜 := ℝ)).1 (h ▸ hzb))
       exact False.elim (hzbLeft (by simpa [hadj] using hzInter))
-    · simpa [hadj] using hzInter
+    · simp [hadj] at hzInter
   · rfl
   · have hzInter : z ∈ segment ℝ Q.vertices[b] Q.vertices[b + 1] ∩
         segment ℝ Q.vertices[a] Q.vertices[a + 1] :=
@@ -76,7 +77,7 @@ private lemma simultaneousBigonOpenIndexUnique (Q : PolygonalArc) :
           omega
         exact hne ((left_mem_openSegment_iff (𝕜 := ℝ)).1 (h ▸ hza))
       exact False.elim (hzaLeft (by simpa [hadj] using hzInter))
-    · simpa [hadj] using hzInter
+    · simp [hadj] at hzInter
 
 private lemma simultaneousBigonPrefixEventMemOldRelative
     {V : Type*} [Fintype V]
@@ -91,6 +92,7 @@ private lemma simultaneousBigonPrefixEventMemOldRelative
     (hpPrefixRelative : p ∈ FirstCut.prefixArc.relativeInterior)
     (hpx : p ≠ x) :
     p ∈ (D.edgeArc firstEdge).relativeInterior := by
+  classical
   rw [hfirstRelative.symm, firstArc.relativeInterior_eq]
   refine ⟨FirstCut.prefix_carrier_subset hpPrefix, ?_⟩
   intro hpEnds
@@ -152,6 +154,7 @@ private lemma simultaneousBigonBplusSecondSegment
             (D.edgeArc secondEdge).vertices[j + 1]) :
     Bplus ⊆ segment ℝ (D.edgeArc secondEdge).vertices[j]
       (D.edgeArc secondEdge).vertices[j + 1] := by
+  classical
   rw [hBplus]
   have hxSeg : x ∈ segment ℝ (D.edgeArc secondEdge).vertices[j]
       (D.edgeArc secondEdge).vertices[j + 1] :=
@@ -186,6 +189,7 @@ private lemma simultaneousBigonEventNotBplus
     (hpFirst : p ∈ (D.edgeArc firstEdge).relativeInterior)
     (hpx : p ≠ x) :
     p ∉ Bplus := by
+  classical
   intro hpBplus
   have hpSecondCarrier := hBplusSecondCarrier hpBplus
   have hpSecond : p ∈ (D.edgeArc secondEdge).relativeInterior := by
@@ -234,6 +238,7 @@ private lemma simultaneousBigonSecondDiskLocal
       Metric.closedBall x Disk.radius ∩
         segment ℝ (D.edgeArc secondEdge).vertices[j]
           (D.edgeArc secondEdge).vertices[j + 1] := by
+  classical
   have branch_local (Br : OrdinaryCrossingLocalBranchData
       (D.edgeArc secondEdge) x Disk.radius) :
       Metric.closedBall x Disk.radius ∩ (D.edgeArc secondEdge).carrier =
@@ -269,6 +274,7 @@ private lemma simultaneousBigonLastDirectionScale
     (hlocal : Metric.ball x r ∩ segment ℝ previous target ⊆
       segment ℝ storedLeft storedRight) :
     ∃ scale : ℝ, scale ≠ 0 ∧ d = scale • (storedRight - storedLeft) := by
+  classical
   have hpreviousTarget : previous ≠ target := by
     intro h
     apply hdne
@@ -314,6 +320,7 @@ private lemma simultaneousBigonSecondDirectionScale
     (hxOpen : x ∈ openSegment ℝ storedLeft storedRight)
     (hlocal : segment ℝ x y ⊆ segment ℝ storedLeft storedRight) :
     ∃ scale : ℝ, scale ≠ 0 ∧ y - x = scale • (storedRight - storedLeft) := by
+  classical
   apply BigonRerouteLocalSegmentDirection x y storedLeft storedRight x hyx.symm
     (left_mem_segment ℝ x y)
     (openSegment_subset_segment ℝ _ _ hxOpen) 1 (by norm_num)
@@ -329,6 +336,7 @@ private lemma simultaneousBigonDirectionLinearIndependent
       v = scaleB • secondDirection)
     (hnonparallel : ¬ ∃ c : ℝ, secondDirection = c • firstDirection) :
     LinearIndependent ℝ ![d, v] := by
+  classical
   rw [LinearIndependent.pair_iff' hd]
   intro c hcol
   obtain ⟨scaleA, hscaleA, hdscale⟩ := hfirstScale
@@ -377,6 +385,7 @@ private lemma simultaneousBigonStoredDirectionsLinearIndependent
 private lemma simultaneousBigonSourceAtZero (Q : PolygonalArc)
     (h0 : 0 < Q.vertices.length) :
     Q.vertices[0]'h0 = Q.source := by
+  classical
   have hget := Q.source_eq_head
   rw [List.head?_eq_getElem?, List.getElem?_eq_getElem h0] at hget
   exact Option.some.inj hget
@@ -384,6 +393,7 @@ private lemma simultaneousBigonSourceAtZero (Q : PolygonalArc)
 private lemma simultaneousBigonInitialDirectionNeZero (Q : PolygonalArc)
     (hfirst : 1 < Q.vertices.length) :
     Q.vertices[1]'hfirst - Q.source ≠ 0 := by
+  classical
   have h0 : 0 < Q.vertices.length := by omega
   intro hzero
   have hsource0 := simultaneousBigonSourceAtZero Q h0
@@ -399,6 +409,7 @@ private lemma simultaneousBigonSourceCarrierTransfer
     (hfirst : 0 + 1 < Q.vertices.length)
     (hsource : Q.source = p) (hsubset : Q.carrier ⊆ stored.carrier) :
     p ∈ stored.carrier := by
+  classical
   have h0 : 0 < Q.vertices.length := by omega
   have hsource0 := simultaneousBigonSourceAtZero Q h0
   apply hsubset
@@ -414,6 +425,7 @@ private lemma simultaneousBigonStoredEndpoint
     (hmem : D.vertexPlacement u ∈ (D.edgeArc edge).carrier) :
     D.vertexPlacement u = (D.edgeArc edge).source ∨
       D.vertexPlacement u = (D.edgeArc edge).target := by
+  classical
   by_contra hnot
   have hnotSource : D.vertexPlacement u ≠ (D.edgeArc edge).source :=
     fun h => hnot (Or.inl h)
@@ -435,6 +447,7 @@ private lemma simultaneousBigonPositiveDirectionScale
     (hray : Metric.ball p storedRadius ∩ stored.carrier ⊆
       {q | ∃ c : ℝ, 0 ≤ c ∧ q = p + c • storedDir}) :
     ∃ a : ℝ, 0 < a ∧ d0 = a • storedDir := by
+  classical
   have hnormd0 : 0 < ‖d0‖ := norm_pos_iff.mpr hd0
   let s : ℝ := min (1 / 2) (storedRadius / (2 * ‖d0‖))
   have hs : 0 < s := by
@@ -503,6 +516,7 @@ private lemma simultaneousBigonPositiveDirectionScale
 private lemma simultaneousBigonMidpointBounds (a b : ℝ)
     (ha : 0 < a) (hab : a < b) :
     a < (a + b) / 2 ∧ (a + b) / 2 < b ∧ 0 < (a + b) / 2 := by
+  classical
   constructor
   · linarith
   constructor
@@ -524,6 +538,7 @@ private lemma simultaneousBigonTargetCapFacts (Q : PolygonalArc)
     0 < simultaneousBigonTargetCap Q radius targetIndex jlast hjlast ∧
       simultaneousBigonTargetCap Q radius targetIndex jlast hjlast * ‖d‖ =
         radius targetIndex := by
+  classical
   have hdist : dist Q.vertices[targetIndex.1] (Q.vertices[jlast]'hjlast) = ‖d‖ := by
     simp [htarget, hddef, dist_eq_norm, norm_sub_rev]
   constructor
@@ -538,6 +553,7 @@ private lemma simultaneousBigonTargetCapFacts (Q : PolygonalArc)
 private lemma simultaneousBigonKappaSmall (actualK mu nu : ℝ)
     (hactual : actualK < nu / (8 * (|mu| + 1))) (hnu : 0 < nu) :
     actualK * (|mu| + 1) < nu / 4 := by
+  classical
   have hnonneg : 0 < |mu| + 1 := by positivity
   calc
     actualK * (|mu| + 1) < (nu / (8 * (|mu| + 1))) * (|mu| + 1) :=
@@ -557,6 +573,7 @@ private lemma simultaneousBigonLambdaFacts (cap mu nu rho normSum : ℝ)
       4 * simultaneousBigonLambda cap mu nu rho normSum *
           (1 + |mu| + nu) < cap ∧
       simultaneousBigonLambda cap mu nu rho normSum * normSum < rho := by
+  classical
   have hsumPos : 0 < 1 + |mu| + nu := by positivity
   have hlambda : 0 < simultaneousBigonLambda cap mu nu rho normSum := by
     dsimp [simultaneousBigonLambda]
@@ -605,6 +622,7 @@ private lemma simultaneousBigonSegmentPointOnScaledLine
     (hbase : base ∈ segment ℝ a b) (hz : z ∈ segment ℝ a b)
     (hscale : v = scale • (b - a)) (hscale0 : scale ≠ 0) :
     ∃ c : ℝ, z = base + c • v := by
+  classical
   rw [segment_eq_image_lineMap] at hbase hz
   rcases hbase with ⟨s, _hs, rfl⟩
   rcases hz with ⟨t, _ht, rfl⟩
@@ -627,6 +645,7 @@ private lemma simultaneousBigonPointsOnDirectionOfDiskLocal
       d = scale • (Q.vertices[i + 1] - Q.vertices[i])) :
     ∀ z, z ∈ Metric.closedBall x r → z ∈ Q.carrier →
       ∃ c : ℝ, z = x + c • d := by
+  classical
   intro z hzClosed hzCarrier
   have hzSeg : z ∈ segment ℝ Q.vertices[i] Q.vertices[i + 1] := by
     have hzBoth : z ∈ Metric.closedBall x r ∩ Q.carrier := ⟨hzClosed, hzCarrier⟩
@@ -653,6 +672,7 @@ private lemma simultaneousBigonFirstDiskLocal
       Metric.closedBall x Disk.radius ∩
         segment ℝ (D.edgeArc firstEdge).vertices[i]
           (D.edgeArc firstEdge).vertices[i + 1] := by
+  classical
   have branchLocal (Br : OrdinaryCrossingLocalBranchData
       (D.edgeArc firstEdge) x Disk.radius) :
       Metric.closedBall x Disk.radius ∩ (D.edgeArc firstEdge).carrier =
@@ -695,6 +715,7 @@ private lemma simultaneousBigonFirstBranchWithIndices
     ∃ Br : OrdinaryCrossingLocalBranchData
         (D.edgeArc firstEdge) x Disk.radius,
       Br.beforeIndex = i ∧ Br.afterIndex = i := by
+  classical
   have hNonempty : Nonempty (OrdinaryCrossingLocalBranchData
       (D.edgeArc firstEdge) x Disk.radius) := by
     rcases hDiskEdges with hlabels | hlabels
@@ -715,6 +736,7 @@ private lemma simultaneousBigonFirstBranchWithIndices
     exact (simultaneousBigonOpenNotVertices (D.edgeArc firstEdge) x i hi hxOpen)
       (by rw [hvert.2]; exact List.getElem_mem hafterValid)
 
+open Classical in
 private lemma simultaneousBigonHPointEdgeOrVertex
     {V : Type*} [Fintype V]
     (G : SimpleGraph V) [Fintype G.edgeSet]
@@ -737,17 +759,18 @@ private lemma simultaneousBigonHPointEdgeOrVertex
     ∀ z, z ∈ H →
       (∃ e : G.edgeFinset, z ∈ (D.edgeArc e).carrier) ∨
         ∃ v : V, z = D.vertexPlacement v := by
+  classical
   intro z hzH
   rw [hH] at hzH
   rcases hzH with hzEdges | hzVertex
   · rcases Set.mem_iUnion.mp hzEdges with ⟨e, he⟩
     by_cases heFirst : e = firstEdge
     · subst e
-      simp only [if_pos rfl] at he
+      simp only at he
       exact Or.inl ⟨firstEdge, he.1⟩
     · by_cases heSecond : e = secondEdge
       · subst e
-        simp only [if_neg (Ne.symm hedges), if_pos rfl] at he
+        simp only [if_neg (Ne.symm hedges)] at he
         exact Or.inl ⟨secondEdge, he.1⟩
       · simp only [if_neg heFirst, if_neg heSecond] at he
         exact Or.inl ⟨e, he⟩
@@ -770,6 +793,7 @@ private lemma simultaneousBigonOldPointEdgeOrVertex
     ∀ z, z ∈ A ∪ B ∪ Bplus ∪ Rbeta ∪ H →
       (∃ e : G.edgeFinset, z ∈ (D.edgeArc e).carrier) ∨
         ∃ v : V, z = D.vertexPlacement v := by
+  classical
   intro z hz
   rcases hz with (((hzA | hzB) | hzBplus) | hzRbeta) | hzH
   · exact Or.inl ⟨firstEdge, hA hzA⟩
@@ -804,6 +828,7 @@ private lemma simultaneousBigonOldLocal
     Metric.closedBall x rhoTerm ∩ Old ⊆
       {z | ∃ c : ℝ, z = x + c • d} ∪
         {z | ∃ c : ℝ, z = x + c • v} := by
+  classical
   intro z hz
   have hzDisk : z ∈ Metric.closedBall x Disk.radius :=
     Metric.closedBall_subset_closedBall hrhoTermDisk.le hz.1
@@ -835,6 +860,7 @@ private lemma simultaneousBigonOtherSegmentsCompact
     (eventIndex : EuclideanSpace ℝ (Fin 2) → ℕ)
     (p : EuclideanSpace ℝ (Fin 2)) :
     IsCompact (simultaneousBigonOtherSegments Q eventIndex p) := by
+  classical
   dsimp [simultaneousBigonOtherSegments]
   apply isCompact_iUnion
   intro k
@@ -849,6 +875,7 @@ private lemma simultaneousBigonEventNotOther
     (hpOpen : p ∈ openSegment ℝ Q.vertices[eventIndex]
       Q.vertices[eventIndex + 1]) :
     p ∉ simultaneousBigonOtherSegments Q (fun _ => eventIndex) p := by
+  classical
   intro hpOther
   simp only [simultaneousBigonOtherSegments, Set.mem_iUnion] at hpOther
   rcases hpOther with ⟨k, hpOther⟩
@@ -902,6 +929,7 @@ private lemma simultaneousBigonInitialLeftChartEq
         {z | 0 < z 0 ∧
           z 0 ^ 2 + z 1 ^ 2 < (r / dist Q.vertices[0] Q.vertices[1]) ^ 2 ∧
           0 < z 1 ∧ z 1 < k * z 0} := by
+  classical
   dsimp only
   rw [simultaneousBigonSourceAtZero Q (by omega), hp]
   simp only [dist_eq_norm, norm_sub_rev]
@@ -921,6 +949,7 @@ private lemma simultaneousBigonInitialRightChartEq
         {z | 0 < z 0 ∧
           z 0 ^ 2 + z 1 ^ 2 < (r / dist Q.vertices[0] Q.vertices[1]) ^ 2 ∧
           -k * z 0 < z 1 ∧ z 1 < 0} := by
+  classical
   dsimp only
   rw [simultaneousBigonSourceAtZero Q (by omega), hp]
   simp only [dist_eq_norm, norm_sub_rev]
@@ -935,6 +964,7 @@ private lemma simultaneousBigonReflectLeftCone
         x + z 0 • d + z 1 • (-PlanarRot90 d)) ''
         {z | 0 < z 0 ∧ z 0 ^ 2 + z 1 ^ 2 < cap ^ 2 ∧
           0 < z 1 ∧ z 1 < k * z 0} := by
+  classical
   ext q
   constructor
   · rintro ⟨z, hz, rfl⟩
@@ -947,7 +977,7 @@ private lemma simultaneousBigonReflectLeftCone
       · nlinarith [hz.2.1]
       constructor <;> linarith [hz.2.2.1, hz.2.2.2]
     · simp only [w, Matrix.cons_val_zero, Matrix.cons_val_one,
-          Matrix.head_cons, one_smul, neg_smul]
+          neg_smul]
       module
   · rintro ⟨z, hz, rfl⟩
     let w : EuclideanSpace ℝ (Fin 2) := WithLp.toLp 2 ![z 0, -z 1]
@@ -959,9 +989,10 @@ private lemma simultaneousBigonReflectLeftCone
       · nlinarith [hz.2.1]
       constructor <;> linarith [hz.2.2.1, hz.2.2.2]
     · simp only [w, Matrix.cons_val_zero, Matrix.cons_val_one,
-          Matrix.head_cons, one_smul, neg_smul]
+          neg_smul]
       module
 
+open Classical in
 private lemma simultaneousBigonTargetSideNear
     (Q : PolygonalArc) (eta : ℝ)
     (controlRadii : PolygonalArcCollarControlRadii Q eta)
@@ -998,6 +1029,7 @@ private lemma simultaneousBigonTargetSideNear
     let Vin := if positiveSide then localSideData.rightSidePiece targetIndex
       else localSideData.leftSidePiece targetIndex
     ∃ eps : ℝ, 0 < eps ∧ SelectedSide ∩ Metric.ball x eps ⊆ Vin := by
+  classical
   dsimp only
   let sep := compatibleTubes.orientedTubes.toPolygonalArcCollarSeparatedTubeData
   refine ⟨controlRadii.radius targetIndex, controlRadii.radius_pos targetIndex, ?_⟩
@@ -1081,6 +1113,7 @@ private lemma simultaneousBigonLeftHalfConvex
       forbiddenMargins)
     (m : ℕ) (hm : m + 1 < Q.vertices.length) :
     Convex ℝ (sep.leftHalf m hm) := by
+  classical
   rw [sep.leftHalf_eq]
   intro z₁ hz₁ z₂ hz₂ a b ha hb hab
   rcases hz₁ with ⟨t₁, ht₁, s₁, hs₁, rfl⟩
@@ -1105,6 +1138,7 @@ private lemma simultaneousBigonRightHalfConvex
       forbiddenMargins)
     (m : ℕ) (hm : m + 1 < Q.vertices.length) :
     Convex ℝ (sep.rightHalf m hm) := by
+  classical
   rw [sep.rightHalf_eq]
   intro z₁ hz₁ z₂ hz₂ a b ha hb hab
   rcases hz₁ with ⟨t₁, ht₁, s₁, hs₁, rfl⟩
@@ -1119,6 +1153,7 @@ private lemma simultaneousBigonRightHalfConvex
   subst b
   module
 
+open Classical in
 private lemma simultaneousBigonOneEventSelectedSlice
     (Q : PolygonalArc) (eta : ℝ)
     (controlRadii : PolygonalArcCollarControlRadii Q eta)
@@ -1165,6 +1200,7 @@ private lemma simultaneousBigonOneEventSelectedSlice
         else
           compatibleTubes.orientedTubes.toPolygonalArcCollarSeparatedTubeData.leftHalf
             owner hOwner) ∩ Metric.ball p eventRadius := by
+  classical
   let sep := compatibleTubes.orientedTubes.toPolygonalArcCollarSeparatedTubeData
   apply Set.Subset.antisymm
   · rintro q ⟨hqSelected, hqBall⟩
@@ -1295,6 +1331,7 @@ private lemma simultaneousBigonEventClean
             s ∈ segments ∧ p ∈ openSegment ℝ s.1 s.2 ∧
               ¬ ∃ c : ℝ, s.2 - s.1 =
                 c • (Q.vertices[m + 1] - Q.vertices[m]) := by
+  classical
   intro p hp
   obtain ⟨hm, hpOpen, s, hs, hps, hnonparallel, hunique⟩ := hspec p hp
   refine ⟨hnot p hp, eventIndex p, hm, hpOpen, s,
@@ -1306,6 +1343,7 @@ private lemma simultaneousBigonIteIntersectionEmpty
     {α : Type*} (P : Prop) [Decidable P] {L R T : Set α}
     (hL : L ∩ T = ∅) (hR : R ∩ T = ∅) :
     (if P then R else L) ∩ T = ∅ := by
+  classical
   by_cases hP : P
   · simpa [hP] using hR
   · simpa [hP] using hL
@@ -1314,6 +1352,7 @@ private lemma simultaneousBigonIteIsOpen
     {α : Type*} [TopologicalSpace α] (P : Prop) [Decidable P]
     {L R : Set α} (hL : IsOpen L) (hR : IsOpen R) :
     IsOpen (if P then R else L) := by
+  classical
   by_cases hP : P
   · simpa [hP] using hR
   · simpa [hP] using hL
@@ -1323,6 +1362,7 @@ private lemma simultaneousBigonIteConvex
     {L R : Set (EuclideanSpace ℝ (Fin 2))}
     (hL : Convex ℝ L) (hR : Convex ℝ R) :
     Convex ℝ (if P then R else L) := by
+  classical
   by_cases hP : P
   · simpa [hP] using hR
   · simpa [hP] using hL
@@ -1330,6 +1370,7 @@ private lemma simultaneousBigonIteConvex
 private lemma simultaneousBigonIteSubset
     {α : Type*} (P : Prop) [Decidable P] {L R T : Set α}
     (hL : L ⊆ T) (hR : R ⊆ T) : (if P then R else L) ⊆ T := by
+  classical
   by_cases hP : P
   · simpa [hP] using hR
   · simpa [hP] using hL
@@ -1337,6 +1378,7 @@ private lemma simultaneousBigonIteSubset
 private lemma simultaneousBigonIteEqLeftOrRight
     {α : Type*} (P : Prop) [Decidable P] (L R : Set α) :
     (if P then R else L) = L ∨ (if P then R else L) = R := by
+  classical
   by_cases hP : P
   · exact Or.inr (by simp [hP])
   · exact Or.inl (by simp [hP])
@@ -1346,6 +1388,7 @@ private lemma simultaneousBigonClosureSubsetClosedBall
     (S : Set α) (p : α) (r R : ℝ)
     (hS : S ⊆ Metric.ball p r) (hr : r ≤ R) :
     closure S ⊆ Metric.closedBall p R := by
+  classical
   apply closure_minimal
   · exact hS.trans (Metric.ball_subset_closedBall.trans
       (Metric.closedBall_subset_closedBall hr))
@@ -1355,6 +1398,7 @@ private lemma simultaneousBigonMemClosureIte
     {α : Type*} [TopologicalSpace α] (P : Prop) [Decidable P]
     {p : α} {L R : Set α} (hL : p ∈ closure L) (hR : p ∈ closure R) :
     p ∈ closure (if P then R else L) := by
+  classical
   by_cases hP : P
   · simpa [hP] using hR
   · simpa [hP] using hL
@@ -1362,10 +1406,12 @@ private lemma simultaneousBigonMemClosureIte
 private lemma simultaneousBigonNotMemIte
     {α : Type*} (P : Prop) [Decidable P] {p : α} {L R : Set α}
     (hL : p ∉ L) (hR : p ∉ R) : p ∉ (if P then R else L) := by
+  classical
   by_cases hP : P
   · simpa [hP] using hR
   · simpa [hP] using hL
 
+open Classical in
 private lemma simultaneousBigonStartAvoidAxis
     (p d : EuclideanSpace ℝ (Fin 2)) (hd : d ≠ 0)
     (positiveSide : Prop) (leftSector rightSector : Set (EuclideanSpace ℝ (Fin 2)))
@@ -1377,6 +1423,7 @@ private lemma simultaneousBigonStartAvoidAxis
         q = p + z 0 • d + z 1 • PlanarRot90 d) :
     (if positiveSide then rightSector else leftSector) ∩
       {q | ∃ c : ℝ, 0 ≤ c ∧ q = p + c • d} = ∅ := by
+  classical
   apply Set.eq_empty_iff_forall_notMem.mpr
   intro q hq
   rcases hq.2 with ⟨c, _hc, hqAxis⟩
@@ -1413,6 +1460,7 @@ private lemma simultaneousBigonStartAvoidOld
     (hFirst : Start ∩ (D.edgeArc firstEdge).carrier = ∅)
     (hWithout : Start ∩ OrdinaryDrawingImageWithoutEdge G D firstEdge = ∅) :
     Start ∩ (Old ∪ Bad) = ∅ := by
+  classical
   apply Set.eq_empty_iff_forall_notMem.mpr
   intro q hq
   have hqOld : q ∈ Old := hq.2.elim id (fun h => hBadOld h)
@@ -1432,6 +1480,7 @@ private lemma simultaneousBigonIntersectionEmptyOfLocalCover
     (hSmallWide : Small ⊆ Wide) (hSmallLocal : Small ⊆ Local)
     (hCover : Local ∩ Image ⊆ Cover) (hWideCover : Wide ∩ Cover = ∅) :
     Small ∩ Image = ∅ := by
+  classical
   apply Set.eq_empty_iff_forall_notMem.mpr
   intro q hq
   exact Set.eq_empty_iff_forall_notMem.mp hWideCover q
@@ -1448,6 +1497,7 @@ private lemma simultaneousBigonAvoidOld
     (hFirst : Start ∩ (D.edgeArc firstEdge).carrier = ∅)
     (hWithout : Start ∩ OrdinaryDrawingImageWithoutEdge G D firstEdge = ∅) :
     Start ∩ Old = ∅ := by
+  classical
   simpa using simultaneousBigonStartAvoidOld G D firstEdge Start Old ∅
     (by simp) hOld hFirst hWithout
 
@@ -1456,6 +1506,7 @@ private lemma simultaneousBigonEndpointOutsideClosedBall
     (ha : a ≠ x) (hgOpen : g ∈ openSegment ℝ a x)
     (hgSphere : g ∈ Metric.sphere x r) :
     a ∉ Metric.closedBall x r := by
+  classical
   rw [openSegment_eq_image_lineMap] at hgOpen
   rcases hgOpen with ⟨t, ht, rfl⟩
   intro haBall
@@ -1470,7 +1521,7 @@ private lemma simultaneousBigonEndpointOutsideClosedBall
       module
     rw [hdiff, norm_smul, Real.norm_eq_abs, abs_of_pos (sub_pos.mpr ht.2)]
     rw [dist_eq_norm]
-    simpa [norm_sub_rev] using rfl
+    simp [norm_sub_rev]
   have hsphere : dist (AffineMap.lineMap a x t) x = r := by
     simpa [Metric.mem_sphere, dist_eq_norm] using hgSphere
   rw [hlineDist] at hsphere
@@ -1490,6 +1541,7 @@ private lemma simultaneousBigonSegmentEndpointsOutsideClosedBall
     (hIndices : Br.beforeIndex = i ∧ Br.afterIndex = i) :
     Q.vertices[i] ∉ Metric.closedBall x r ∧
       Q.vertices[i + 1] ∉ Metric.closedBall x r := by
+  classical
   constructor
   · apply simultaneousBigonEndpointOutsideClosedBall
     · intro heq
@@ -1523,6 +1575,7 @@ private lemma simultaneousBigonSegmentEndpointsOutsideClosedBall
 private lemma simultaneousBigonVertexMemCarrier
     (Q : PolygonalArc) (idx : Fin Q.vertices.length) :
     Q.vertices[idx.1] ∈ Q.carrier := by
+  classical
   rw [Q.carrier_eq]
   have hlen := Q.length_ge_two
   by_cases hlast : idx.1 + 1 = Q.vertices.length
@@ -1549,6 +1602,7 @@ private lemma simultaneousBigonNonterminalVertexOutsideDisk
           p ∈ openSegment ℝ Q.vertices[m] Q.vertices[m + 1]) :
     ∀ idx : Fin Q.vertices.length, idx ≠ targetIndex →
       Q.vertices[idx.1] ∉ Metric.closedBall x r := by
+  classical
   intro idx hne hzBall
   have hzQ := simultaneousBigonVertexMemCarrier Q idx
   have hzStored := hCarrierSubset hzQ
@@ -1653,6 +1707,7 @@ private lemma simultaneousBigonTerminalTubeOnly
     ∀ q, q ∈ Metric.closedBall x rho →
       ∀ m, ∀ hm : m + 1 < Q.vertices.length,
         q ∈ sep.tube m hm → m = jlast := by
+  classical
   intro q hqBall m hm hqTube
   rw [sep.tube_eq] at hqTube
   rcases hqTube with ⟨t, ht, s, hs, hqFormula⟩
@@ -1913,6 +1968,7 @@ private lemma simultaneousBigonTerminalRightHalfCoordinates
         jlast hjlast →
       ∃ a b : ℝ, 0 < a ∧ 0 < b ∧ b < K * a ∧
         q = x + a • d + b • n := by
+  classical
   intro q hqHalf
   let sep := compatibleTubes.orientedTubes.toPolygonalArcCollarSeparatedTubeData
   rw [sep.rightHalf_eq] at hqHalf
@@ -1972,6 +2028,7 @@ private lemma simultaneousBigonTerminalLeftHalfCoordinates
         jlast hjlast →
       ∃ a b : ℝ, 0 < a ∧ 0 < b ∧ b < K * a ∧
         q = x + a • d + b • n := by
+  classical
   intro q hqHalf
   let sep := compatibleTubes.orientedTubes.toPolygonalArcCollarSeparatedTubeData
   rw [sep.leftHalf_eq] at hqHalf
@@ -2021,7 +2078,7 @@ private lemma simultaneousBigonSourceTubeOnly
       forbiddenMargins)
     (source : EuclideanSpace ℝ (Fin 2)) (sourceLocalRadius r0 : ℝ)
     (hfirst : 0 + 1 < Q.vertices.length)
-    (hsource0 : Q.vertices[0] = source)
+    (_hsource0 : Q.vertices[0] = source)
     (hsourceHalf : sourceLocalRadius ≤ r0 / 2)
     (hetaSource : eta < sourceLocalRadius)
     (hIso : Metric.closedBall source r0 ∩ Q.carrier ⊆
@@ -2029,6 +2086,7 @@ private lemma simultaneousBigonSourceTubeOnly
     ∀ q, q ∈ Metric.ball source sourceLocalRadius →
       ∀ m, ∀ hm : m + 1 < Q.vertices.length,
         q ∈ sep.tube m hm → m = 0 := by
+  classical
   intro q hqBall m hm hqTube
   rw [sep.tube_eq] at hqTube
   rcases hqTube with ⟨t, ht, s, hs, hqFormula⟩
@@ -2096,6 +2154,7 @@ private lemma simultaneousBigonSourceCoordsInsideCap
       q = source + a • d + b • PlanarRot90 d →
       q ∈ Metric.ball source radius →
       a ^ 2 + b ^ 2 < (radius / ‖d‖) ^ 2 := by
+  classical
   intro q a b hqFormula hqBall
   have hqdist : dist source q < radius := by
     simpa [Metric.mem_ball, dist_comm] using hqBall
@@ -2131,6 +2190,7 @@ private lemma simultaneousBigonNonSourceVertexOutside
     (hNextOutside : Q.vertices[1] ∉ Metric.closedBall source r) :
     ∀ idx : Fin Q.vertices.length, idx.1 ≠ 0 →
       Q.vertices[idx.1] ∉ Metric.closedBall source r := by
+  classical
   intro idx hne hzBall
   have hzQ := simultaneousBigonVertexMemCarrier Q idx
   have hzInitial : Q.vertices[idx.1] ∈
@@ -2174,6 +2234,7 @@ private lemma simultaneousBigonSelectedTerminalAvoidOld
       {q | ∃ c : ℝ, q = x + c • d} ∪
         {q | ∃ c : ℝ, q = x + c • v}) :
     (Selected ∩ Metric.closedBall x rho) ∩ Old = ∅ := by
+  classical
   apply Set.eq_empty_iff_forall_notMem.mpr
   intro q hq
   obtain ⟨a, b, ha, hb, hbka, hqCone⟩ := hCone q hq.1
@@ -2263,6 +2324,7 @@ private lemma simultaneousBigonVertexIndexTarget
       Q.vertices[idx.1] ∉ Metric.closedBall x diskRadius) :
     ∀ q, q ∈ Metric.closedBall x rho →
       ∀ idx, q ∈ localSideData.vertexCollar idx → idx = targetIndex := by
+  classical
   intro q hqBall idx hqPiece
   by_contra hne
   have hqDisk := localSideData.vertexCollar_subset_vertexDisk idx hqPiece
@@ -2291,6 +2353,7 @@ private lemma simultaneousBigonSelectedAvoidFar
     (hAvoid : ∀ z, (∃ p ∈ Q.carrier, dist z p < etaSep) →
       z ∈ Far → False) :
     Disjoint Selected Far := by
+  classical
   rw [Set.disjoint_left]
   intro z hzSelected hzFar
   obtain ⟨p, hpQ, hzp⟩ := hNear z (hSelected hzSelected)
@@ -2315,6 +2378,7 @@ private lemma simultaneousBigonSidePieceControlBall
     (htarget : Q.vertices[targetIndex.1] = x)
     (hVin : Vin ⊆ localSideData.vertexCollar targetIndex) :
     Vin ⊆ Metric.ball x (controlRadii.radius targetIndex) := by
+  classical
   intro z hz
   have hzCollar := hVin hz
   have hzDisk := localSideData.vertexCollar_subset_vertexDisk targetIndex hzCollar
@@ -2333,6 +2397,7 @@ private lemma simultaneousBigonConePositive
         q = x + a • d + b • n) :
     ∀ q ∈ Selected ∩ Metric.closedBall x rho,
       0 < K * inner ℝ (q - x) d - inner ℝ (q - x) n := by
+  classical
   intro q hq
   obtain ⟨a, b, _ha, _hb, hbka, hqFormula⟩ := hCone q hq
   have hsub : x + a • d + b • n - x = a • d + b • n := by abel
@@ -2354,6 +2419,7 @@ private lemma simultaneousBigonConeAvoidSupporting
     (hSupporting : ∀ q ∈ Supporting,
       K * inner ℝ (q - x) d - inner ℝ (q - x) n ≤ 0) :
     (Selected ∩ Metric.closedBall x rho) ∩ Supporting = ∅ := by
+  classical
   apply Set.eq_empty_iff_forall_notMem.mpr
   intro q hq
   exact (not_lt_of_ge (hSupporting q hq.2))
@@ -2368,6 +2434,7 @@ private lemma simultaneousBigonAvoidTerminalClosures
     (hAvoid : (Selected ∩ Metric.closedBall x rho) ∩
       (closure Side ∪ closure Bridge ∪ closure Q) = ∅) :
     Selected ∩ (closure Side ∪ closure Bridge ∪ closure Q) = ∅ := by
+  classical
   apply Set.eq_empty_iff_forall_notMem.mpr
   intro q hq
   have hqBall : q ∈ Metric.closedBall x rho := by
@@ -2401,6 +2468,7 @@ private lemma simultaneousBigonSourceRightHalfWide
         (0 < z 0 ∧ z 0 ^ 2 + z 1 ^ 2 < (radius / ‖d‖) ^ 2 ∧
           -K * z 0 < z 1 ∧ z 1 < 0) ∧
         source + z 0 • d + z 1 • PlanarRot90 d = q := by
+  classical
   intro q hqBall hqHalf
   let sep := compatibleTubes.orientedTubes.toPolygonalArcCollarSeparatedTubeData
   rw [sep.rightHalf_eq] at hqHalf
@@ -2454,6 +2522,7 @@ private lemma simultaneousBigonSourceLeftHalfWide
         (0 < z 0 ∧ z 0 ^ 2 + z 1 ^ 2 < (radius / ‖d‖) ^ 2 ∧
           0 < z 1 ∧ z 1 < K * z 0) ∧
         source + z 0 • d + z 1 • PlanarRot90 d = q := by
+  classical
   intro q hqBall hqHalf
   let sep := compatibleTubes.orientedTubes.toPolygonalArcCollarSeparatedTubeData
   rw [sep.leftHalf_eq] at hqHalf
@@ -2494,6 +2563,7 @@ private lemma simultaneousBigonWideSourceAvoidAxis
         0 < z 1 ∧ z 1 < K * z 0) ∧
       source + z 0 • d + z 1 • PlanarRot90 d = q}) :
     Wide ∩ {q | ∃ c : ℝ, 0 ≤ c ∧ q = source + c • d} = ∅ := by
+  classical
   apply Set.eq_empty_iff_forall_notMem.mpr
   intro q hq
   rcases hq.2 with ⟨c, _hc, hqAxis⟩
@@ -2575,6 +2645,7 @@ private lemma simultaneousBigonSelectedSourceWideFromPieces
     (hLeftPiece : ∀ q, q ∈ Ball →
       q ∈ localSideData.leftSidePiece ⟨0, by omega⟩ → q ∈ wideLeft) :
     Selected ∩ Ball ⊆ Wide := by
+  classical
   intro q hq
   let sep := compatibleTubes.orientedTubes.toPolygonalArcCollarSeparatedTubeData
   by_cases hpos : positiveSide
@@ -2618,6 +2689,7 @@ private lemma simultaneousBigonSelectedSourceWideFromPieces
 private lemma simultaneousBigonOldCoreSubsetOld
     {X : Type*} (A B Bplus Rbeta H : Set X) :
     B ∪ Bplus ∪ Rbeta ∪ H ⊆ A ∪ B ∪ Bplus ∪ Rbeta ∪ H := by
+  classical
   intro q hq
   rcases hq with ((hqB | hqBplus) | hqRbeta) | hqH
   · exact Or.inl (Or.inl (Or.inl (Or.inr hqB)))
@@ -2638,6 +2710,7 @@ private lemma simultaneousBigonSelectedOldCoreLocalization
     (hTerminalAvoid : (Selected ∩ TerminalClosed) ∩ Old = ∅)
     (hFarAvoid : Disjoint Selected FarOld) :
     Selected ∩ OldCore ⊆ Events := by
+  classical
   intro q hq
   by_cases hqOpen : q ∈ EndpointOpen
   · rw [hEndpointOpen] at hqOpen
@@ -2661,6 +2734,7 @@ private lemma simultaneousBigonSelectedMeetsSubset
     (hHCore : H ⊆ OldCore)
     (hLocalization : Selected ∩ OldCore ⊆ Events) :
     Selected ∩ H ⊆ Events := by
+  classical
   intro q hq
   exact hLocalization ⟨hq.1, hHCore hq.2⟩
 
@@ -2681,6 +2755,7 @@ private lemma simultaneousBigonSelectedAvoidsEventForbidden
     (hRbetaAvoid : ∀ p, p ∈ XA →
       Metric.ball p (eventRadius p) ∩ Rbeta = ∅) :
     Selected ∩ (B ∪ Bplus ∪ Rbeta ∪ Bad) = ∅ := by
+  classical
   apply Set.eq_empty_iff_forall_notMem.mpr
   intro q hq
   have hqCore : q ∈ OldCore := by
@@ -2704,6 +2779,7 @@ private lemma simultaneousBigonSelectedAvoidsEventForbidden
     exact hqEmpty
   · exact Set.disjoint_left.mp (hEventAvoid p hp)
       (Metric.ball_subset_closedBall hqBall) (hBadForbidden p hqBad)
+open Classical in
 private structure SimultaneousBigonGeometryHypotheses
     {V : Type*} [Fintype V]
     (G : SimpleGraph V) [Fintype G.edgeSet]
@@ -2805,7 +2881,7 @@ private structure SimultaneousBigonGeometryHypotheses
         c • ((D.edgeArc firstEdge).vertices.get ⟨i + 1, by omega⟩ -
           (D.edgeArc firstEdge).vertices.get ⟨i, by omega⟩)
 
-private noncomputable def ordinaryAdjacentEdgesSimultaneousBigonGeometryPrepareFromContext
+private theorem ordinaryAdjacentEdgesSimultaneousBigonGeometryPrepareFromContext
     {V : Type*} [Fintype V]
     (G : SimpleGraph V) [Fintype G.edgeSet]
     (D : OrdinaryPolygonalDrawing G)
@@ -3235,8 +3311,7 @@ private noncomputable def ordinaryAdjacentEdgesSimultaneousBigonGeometryPrepareF
         positive_direction_scale storedDir rayRadius hrayRadius hray'
       refine ⟨min rhoInitial rayRadius, initialDirections,
         lt_min hrhoInitial hrayRadius, ?_, ?_, ?_⟩
-      · intro v hv
-        intro hvd0
+      · intro v hv hvd0
         rcases hvd0 with ⟨b, hb, hvb⟩
         exact hnoInitial v hv ⟨b * a, mul_pos hb ha, by
           rw [hvb, hd0scale, smul_smul]⟩
@@ -3275,8 +3350,7 @@ private noncomputable def ordinaryAdjacentEdgesSimultaneousBigonGeometryPrepareF
         positive_direction_scale storedDir rayRadius hrayRadius hray'
       refine ⟨min rhoTerminal rayRadius, terminalDirections,
         lt_min hrhoTerminal hrayRadius, ?_, ?_, ?_⟩
-      · intro v hv
-        intro hvd0
+      · intro v hv hvd0
         rcases hvd0 with ⟨b, hb, hvb⟩
         exact hnoTerminal v hv ⟨b * a, mul_pos hb ha, by
           rw [hvb, hd0scale, smul_smul]⟩
@@ -3830,7 +3904,7 @@ private noncomputable def ordinaryAdjacentEdgesSimultaneousBigonGeometryPrepareF
       (fun idx => by
         dsimp only [eventForbidden]
         exact Or.inl (Or.inl (Or.inl (Or.inl (Or.inr
-          (by simpa using List.getElem_mem idx.2))))))
+          (by simp))))))
       (fun m hm hne z hz => by
         dsimp only [eventForbidden]
         exact Or.inr (by
@@ -4511,7 +4585,8 @@ private noncomputable def ordinaryAdjacentEdgesSimultaneousBigonGeometryPrepareF
     event_balls_avoid_vin := hEventAvoidVin
   }⟩
 
-noncomputable def OrdinaryAdjacentEdgesSimultaneousBigonGeometryExists
+open Classical in
+theorem OrdinaryAdjacentEdgesSimultaneousBigonGeometryExists
     {V : Type*} [Fintype V]
     (G : SimpleGraph V) [Fintype G.edgeSet]
     (D : OrdinaryPolygonalDrawing G)

@@ -6,7 +6,6 @@ import Util.IncidenceGeometry.PolygonalPath
 import Util.IncidenceGeometry.PolygonallyPathConnected
 import Util.IncidenceGeometry.PolygonalPathCarrierConnected
 
-open Classical
 noncomputable section
 
 lemma PlaneFaceDataOneFaceOfPolygonallyPathConnectedComplement {V : Type*}
@@ -16,6 +15,7 @@ lemma PlaneFaceDataOneFaceOfPolygonallyPathConnectedComplement {V : Type*}
     PolygonallyPathConnected ((OrdinaryDrawingImage G D)ᶜ) →
       ((OrdinaryDrawingImage G D)ᶜ).Nonempty →
         @Fintype.card A.Face A.faceFintype = 1 := by
+  classical
   intro hPathConnected hNonempty
   have hPreconnected : IsPreconnected ((OrdinaryDrawingImage G D)ᶜ) := by
     intro U W hUopen hWopen hcover hUmeet hWmeet

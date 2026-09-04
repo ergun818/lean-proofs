@@ -1,6 +1,5 @@
 import Util.IncidenceGeometry.PolygonalPath
 
-open Classical
 noncomputable section
 
 lemma PolygonalPathExtendSegment
@@ -12,6 +11,7 @@ lemma PolygonalPathExtendSegment
           η.source = γ.source ∧
             η.target = z ∧
               η.carrier ⊆ S := by
+  classical
   intro hγ hseg
   have source_mem : γ.source ∈ γ.carrier := by
     rw [γ.carrier_eq]
@@ -101,5 +101,5 @@ lemma PolygonalPathExtendSegment
               [z][γ.vertices.length - γ.vertices.length] := by
           exact List.getElem_append_right (as := γ.vertices) (bs := [z])
             (i := γ.vertices.length) (Nat.le_refl γ.vertices.length)
-        simpa [Nat.sub_add_cancel hone_le] using hright
+        simp [Nat.sub_add_cancel hone_le]
       simpa [hlast_get, hnext_get] using hpi

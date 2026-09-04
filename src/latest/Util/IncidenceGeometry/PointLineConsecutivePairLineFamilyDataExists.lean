@@ -1,7 +1,6 @@
 import Util.IncidenceGeometry.PointLineConsecutivePairLineFamilyData
 import Util.IncidenceGeometry.FiniteRealAdjacentPairsExists
 
-open Classical
 noncomputable section
 
 lemma PointLineConsecutivePairLineFamilyDataExists
@@ -9,20 +8,21 @@ lemma PointLineConsecutivePairLineFamilyDataExists
     (L : Finset {ell : AffineSubspace ℝ (EuclideanSpace ℝ (Fin 2)) //
       IsAffineLine ell}) :
     Nonempty (PointLineConsecutivePairLineFamilyData P L) := by
+  classical
   let retained := L.filter fun ell ↦
     ∃ p : P, (p.1 : EuclideanSpace ℝ (Fin 2)) ∈ ell.1
   let coordEquiv (ell : retained) : ℝ ≃ₗ[ℝ] ell.1.1.direction :=
     (Module.nonempty_linearEquiv_of_finrank_eq_one ell.1.2.2).some
   let coord (ell : retained) : EuclideanSpace ℝ (Fin 2) → ℝ :=
-    fun x ↦ (coordEquiv ell).symm (ell.1.1.direction.orthogonalProjection x)
+    fun x ↦ (coordEquiv ell).symm (ell.1.1.direction.orthogonalProjectionOnto x)
   have coord_inj : ∀ (ell : retained) {x y},
       x ∈ ell.1.1 → y ∈ ell.1.1 → coord ell x = coord ell y → x = y := by
     intro ell x y hx hy hxy
     have hsub : x - y ∈ ell.1.1.direction :=
       AffineSubspace.vsub_mem_direction hx hy
-    have hproj : ell.1.1.direction.orthogonalProjection (x - y) =
+    have hproj : ell.1.1.direction.orthogonalProjectionOnto (x - y) =
         (⟨x - y, hsub⟩ : ell.1.1.direction) := by
-      simpa using ell.1.1.direction.orthogonalProjection_mem_subspace_eq_self
+      simpa using ell.1.1.direction.orthogonalProjectionOnto_mem_subspace_eq_self
         (⟨x - y, hsub⟩ : ell.1.1.direction)
     have hcsub : coord ell (x - y) = 0 := by
       dsimp [coord] at hxy ⊢
@@ -180,7 +180,7 @@ lemma PointLineConsecutivePairLineFamilyDataExists
     rcases Finset.mem_map.mp he1 with ⟨f1, hf1, rfl⟩
     rcases Finset.mem_map.mp he2 with ⟨f2, hf2, rfl⟩
     have hfne : f1 ≠ f2 := fun h ↦ hne (congrArg (edgeEmb ell) h)
-    convert (rawSpec ell).2.2.1 f1 f2 hf1 hf2 hfne using 1 <;> rfl
+    convert (rawSpec ell).2.2.1 f1 f2 hf1 hf2 hfne using 1 ; rfl
   refine ⟨{
     retainedLines := retained
     retainedLines_mem_iff := by

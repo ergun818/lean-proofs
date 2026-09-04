@@ -3,7 +3,6 @@ import Util.IncidenceGeometry.SimpleClosedCurveAsFinitePolygonalSet
 import Util.IncidenceGeometry.FiniteStraightLineComplexCarrierCompact
 import Util.IncidenceGeometry.EuclideanPlaneClosedBallExteriorConnected
 
-open Classical
 noncomputable section
 
 lemma JordanUnboundedComplementComponentUnique
@@ -14,6 +13,7 @@ lemma JordanUnboundedComplementComponentUnique
         ¬ Bornology.IsBounded F →
           ¬ Bornology.IsBounded G →
             F = G := by
+  classical
   rintro ⟨hFne, hFsub, hFconn, hFmax⟩
     ⟨hGne, hGsub, hGconn, hGmax⟩ hFunbounded hGunbounded
   obtain ⟨K, hK⟩ := SimpleClosedCurveAsFinitePolygonalSet J
@@ -35,7 +35,7 @@ lemma JordanUnboundedComplementComponentUnique
   have hFE : (F ∩ E).Nonempty := by
     by_contra hFE
     apply hFunbounded
-    apply Metric.isBounded_closedBall.subset
+    apply (Metric.isBounded_closedBall (x := 0) (r := R)).subset
     intro x hxF
     by_contra hxR
     apply hFE
@@ -44,7 +44,7 @@ lemma JordanUnboundedComplementComponentUnique
   have hGE : (G ∩ E).Nonempty := by
     by_contra hGE
     apply hGunbounded
-    apply Metric.isBounded_closedBall.subset
+    apply (Metric.isBounded_closedBall (x := 0) (r := R)).subset
     intro x hxG
     by_contra hxR
     apply hGE

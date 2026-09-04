@@ -1,7 +1,6 @@
 import Util.IncidenceGeometry.PolygonalReplacementResidualPieceData
 import Util.IncidenceGeometry.PositiveSeparation
 
-open Classical
 noncomputable section
 
 universe u

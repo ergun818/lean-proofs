@@ -1,7 +1,6 @@
 import Mathlib.Dynamics.PeriodicPts.Lemmas
 import Util.IncidenceGeometry.SimpleClosedPolygonalCurve
 
-open Classical
 noncomputable section
 
 lemma SimpleClosedPolygonalCurveEdgeArcTraversalList
@@ -14,6 +13,7 @@ lemma SimpleClosedPolygonalCurveEdgeArcTraversalList
               J.successor (E[n]) = E[n + 1]) ∧
               (∀ (hLast : E.length - 1 < E.length) (hFirst : 0 < E.length),
                 J.successor (E[E.length - 1]'hLast) = E[0]'hFirst) := by
+  classical
   let α := {γ : PolygonalArc // γ ∈ J.edgeArcs}
   rcases J.edgeArcs_nonempty with ⟨γ0, hγ0⟩
   let a0 : α := ⟨γ0, hγ0⟩
@@ -50,7 +50,8 @@ lemma SimpleClosedPolygonalCurveEdgeArcTraversalList
         (List.range (Function.minimalPeriod σ a0))[E.length - 1]'hlast_range =
           Function.minimalPeriod σ a0 - 1 := by
       simp [hlen]
-    simp [E]
+    simp only [List.range_map_iterate, List.length_iterate, List.getElem_iterate,
+      Function.iterate_zero, id_eq, E]
     change σ (σ^[Function.minimalPeriod σ a0 - 1] a0) = a0
     have hsucc :
         σ (σ^[Function.minimalPeriod σ a0 - 1] a0) =

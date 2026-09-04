@@ -1,11 +1,9 @@
 import Util.IncidenceGeometry.EndpointUnitDiskLocalTransportArc
 import Util.IncidenceGeometry.OrdinaryCleanLocalCrossingAffineTransport
 
-open Classical
 noncomputable section
 
-
-lemma EndpointDiskAffineReduction {ι : Type*} [Fintype ι]
+lemma EndpointDiskAffineReduction {ι : Type*} [Finite ι]
     (c : EuclideanSpace ℝ (Fin 2)) (ρ : ℝ)
     (a b : ι → EuclideanSpace ℝ (Fin 2))
     (hρ : 0 < ρ)
@@ -110,6 +108,8 @@ lemma EndpointDiskAffineReduction {ι : Type*} [Fintype ι]
           p ∈ (Γ i).relativeInterior →
             p ∈ (Γ j).relativeInterior →
               Nonempty (OrdinaryCleanLocalCrossing Γ i j p)) := by
+  classical
+  let := Fintype.ofFinite ι
   let Φ : EuclideanSpace ℝ (Fin 2) → EuclideanSpace ℝ (Fin 2) :=
     fun x => (1 / ρ) • (x - c)
   let Ψ : EuclideanSpace ℝ (Fin 2) → EuclideanSpace ℝ (Fin 2) :=

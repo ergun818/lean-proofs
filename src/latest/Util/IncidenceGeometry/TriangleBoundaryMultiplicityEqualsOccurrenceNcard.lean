@@ -3,7 +3,6 @@ import Util.IncidenceGeometry.CyclicPresentationTriangleGeneralPosition
 import Util.IncidenceGeometry.TriangleBoundaryCyclicIntersectionMultiplicity
 import Util.IncidenceGeometry.TriangleBoundaryCyclicIntersectionOccurrenceSet
 
-open Classical
 noncomputable section
 
 lemma TriangleBoundaryMultiplicityEqualsOccurrenceNcard
@@ -13,6 +12,7 @@ lemma TriangleBoundaryMultiplicityEqualsOccurrenceNcard
     (hgp : CyclicPresentationTriangleGeneralPosition R z a b) :
     TriangleBoundaryCyclicIntersectionMultiplicity R z a b =
       Set.ncard (TriangleBoundaryCyclicIntersectionOccurrenceSet R z a b) := by
+  classical
   let V := {p : EuclideanSpace ℝ (Fin 2) // p ∈ R.vertices}
   let A0 : V → Set (EuclideanSpace ℝ (Fin 2)) :=
     fun p => openSegment ℝ p.1 (R.successor p).1 ∩ openSegment ℝ z a

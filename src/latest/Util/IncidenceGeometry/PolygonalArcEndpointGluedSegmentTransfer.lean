@@ -1,6 +1,5 @@
 import Util.IncidenceGeometry.PolygonalArcEndpointGluedTailSegmentLift
 
-open Classical
 noncomputable section
 
 lemma PolygonalArcEndpointGluedSegmentTransfer
@@ -32,6 +31,7 @@ lemma PolygonalArcEndpointGluedSegmentTransfer
                 Γ.vertices[m + 1] ∧
               (PolygonalArcEndpointGluedVertices pieces)[i + 1] =
                 Γ.vertices[m]))) := by
+  classical
   have endpointGluedVertices_tail_eq :
       ∀ (Γ : PolygonalArc) (rest : List PolygonalArc),
         (PolygonalArcEndpointGluedVertices (Γ :: rest)).tail =
@@ -286,7 +286,8 @@ lemma PolygonalArcEndpointGluedSegmentTransfer
                       | nil => exact False.elim (htail_ne h)
                       | cons a as => simp
                     rw [hibound]
-                    simp only [List.length_append, List.length_tail, lt_add_iff_pos_right, tsub_pos_iff_lt, gt_iff_lt]
+                    simp only [List.length_append, List.length_tail, lt_add_iff_pos_right,
+                      tsub_pos_iff_lt, gt_iff_lt]
                     exact hWseg
                   have hbig_tail :
                       (PolygonalArcEndpointGluedVertices (Δ :: E :: rs))[i + 1] =
@@ -343,7 +344,7 @@ lemma PolygonalArcEndpointGluedSegmentTransfer
                   using hiWbig
               have htail_idx :
                   W.tail[q]'hq_tail = W[r] := by
-                simpa [r] using (List.getElem_tail (l := W) (i := q) hq_tail)
+                simp [r]
               have happget :
                   Wbig[i] = W.tail[q]'hq_tail := by
                 simpa [Wbig, W, endpointGluedVertices_cons_eq_append_tail,
@@ -364,8 +365,7 @@ lemma PolygonalArcEndpointGluedSegmentTransfer
                   using hiWbig
               have htail_idx :
                   W.tail[q + 1]'hq1_tail = W[r + 1] := by
-                simpa [r] using
-                  (List.getElem_tail (l := W) (i := q + 1) hq1_tail)
+                simp [r]
               have happget :
                   Wbig[i + 1] = W.tail[q + 1]'hq1_tail := by
                 simpa [Wbig, W, endpointGluedVertices_cons_eq_append_tail,

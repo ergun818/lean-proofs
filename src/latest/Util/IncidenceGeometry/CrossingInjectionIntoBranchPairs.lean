@@ -1,8 +1,8 @@
 import Util.IncidenceGeometry.GeometricArcDrawing
 
-open Classical
 noncomputable section
 
+open Classical in
 lemma CrossingInjectionIntoBranchPairs {V : Type*} [Fintype V]
     (G : SimpleGraph V) [Fintype G.edgeSet] (D : GeometricArcDrawing G)
     (x : {p // p ∈ D.intersectionPoints})

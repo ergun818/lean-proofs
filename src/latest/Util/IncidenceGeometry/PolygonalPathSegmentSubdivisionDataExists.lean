@@ -3,7 +3,6 @@ import Util.IncidenceGeometry.FiniteSortedRealCutListCoversUnitInterval
 import Util.IncidenceGeometry.PolygonalPath
 import Mathlib.Tactic
 
-open Classical
 noncomputable section
 
 lemma PolygonalPathSegmentSubdivisionDataExists

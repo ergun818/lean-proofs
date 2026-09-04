@@ -1,6 +1,5 @@
 import Util.IncidenceGeometry.PolygonalArc
 
-open Classical
 noncomputable section
 
 lemma StraightSegmentPolygonalArc
@@ -10,6 +9,7 @@ lemma StraightSegmentPolygonalArc
         Γ.target = b ∧
           Γ.carrier = segment ℝ a b ∧
             Γ.relativeInterior = openSegment ℝ a b := by
+  classical
   refine ⟨
     { vertices := [a, b]
       length_ge_two := by norm_num

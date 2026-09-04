@@ -1,7 +1,6 @@
 import Util.IncidenceGeometry.FinitePolygonalSetCyclicOrderedPieceContainedInListedSegment
 import Util.IncidenceGeometry.FinitePolygonalSetCyclicAdjacentPiecesSameListedSegment
 
-open Classical
 noncomputable section
 
 lemma FinitePolygonalSetCyclicArcCarrierContainedInListedSegment
@@ -11,11 +10,12 @@ lemma FinitePolygonalSetCyclicArcCarrierContainedInListedSegment
     (p : {p : EuclideanSpace ℝ (Fin 2) // p ∈ K.points}) :
     ∃ s : EuclideanSpace ℝ (Fin 2) × EuclideanSpace ℝ (Fin 2),
       s ∈ K.segments ∧ D.arcCarrier p ⊆ segment ℝ s.1 s.2 := by
+  classical
   let L : List D.pieceIndex := D.arcPieceOrder p
   have hlen_pos : 0 < L.length := Nat.pos_of_ne_zero (D.arcPieceOrder_nonempty p)
   let i0 : D.pieceIndex := L[0]'hlen_pos
   have hi0 : i0 ∈ D.arcPieceOrder p := by
-    simpa [L, i0] using List.getElem_mem (l := L) hlen_pos
+    simp [L, i0]
   rcases
     FinitePolygonalSetCyclicOrderedPieceContainedInListedSegment
       J K hKJ D p i0 hi0 with
@@ -32,7 +32,7 @@ lemma FinitePolygonalSetCyclicArcCarrierContainedInListedSegment
         have hprev : D.pieceCarrier (L[n]'hn_prev) ⊆ segment ℝ s.1 s.2 :=
           ih hn_prev
         have hmem_next : L[n + 1]'hn ∈ D.arcPieceOrder p := by
-          simpa [L] using List.getElem_mem (l := L) hn
+          simp [L]
         rcases
           FinitePolygonalSetCyclicOrderedPieceContainedInListedSegment
             J K hKJ D p (L[n + 1]'hn) hmem_next with

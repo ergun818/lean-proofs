@@ -1,6 +1,5 @@
 import Util.IncidenceGeometry.PolygonalArcEndpointGluedVertices
 
-open Classical
 noncomputable section
 
 lemma PolygonalArcEndpointGluedTailSegmentLift
@@ -15,6 +14,7 @@ lemma PolygonalArcEndpointGluedTailSegmentLift
               (PolygonalArcEndpointGluedVertices rest)[i] ∧
             (PolygonalArcEndpointGluedVertices (Δ :: rest))[j + 1] =
               (PolygonalArcEndpointGluedVertices rest)[i + 1] := by
+  classical
   have endpointGluedVertices_tail_eq :
       ∀ (Γ : PolygonalArc) (rest : List PolygonalArc),
         (PolygonalArcEndpointGluedVertices (Γ :: rest)).tail =
@@ -193,7 +193,7 @@ lemma PolygonalArcEndpointGluedTailSegmentLift
         have hq_lt : q < W.tail.length := by omega
         have hiW : i + 1 < W.length := by simpa [W] using hi
         have hi_lt : i < W.length := by omega
-        simpa [hq_succ] using (List.getElem_tail (l := W) (i := q) hq_lt)
+        simp [hq_succ]
       rw [hbigj, htailq]
     · have hle : Δ.vertices.length ≤ j + 1 := by
         dsimp [j]
@@ -209,6 +209,5 @@ lemma PolygonalArcEndpointGluedTailSegmentLift
       have htailq :
           W.tail[q + 1] = W[i + 1] := by
         have hi1_lt : i + 1 < W.length := by simpa [W] using hi
-        simpa [hq_succ] using
-          (List.getElem_tail (l := W) (i := q + 1) hq_tail)
+        simp [hq_succ]
       rw [hbigj, htailq]

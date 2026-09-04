@@ -1,8 +1,6 @@
 import Util.IncidenceGeometry.PolygonalArc
 
-open Classical
 noncomputable section
-
 
 lemma EndpointUnitDiskLocalSpliceCrossingsOpen {κ : Type*}
     (A L M R B u v : κ → EuclideanSpace ℝ (Fin 2))
@@ -42,6 +40,7 @@ lemma EndpointUnitDiskLocalSpliceCrossingsOpen {κ : Type*}
               (hn : n + 1 < (Ξ j).vertices.length),
               p ∈ openSegment ℝ (Ξ i).vertices[m] (Ξ i).vertices[m + 1] ∧
                 p ∈ openSegment ℝ (Ξ j).vertices[n] (Ξ j).vertices[n + 1] := by
+  classical
   let leftConn : κ → Set (EuclideanSpace ℝ (Fin 2)) :=
     fun i => segment ℝ (A i) (L i)
   let rightConn : κ → Set (EuclideanSpace ℝ (Fin 2)) :=
@@ -139,7 +138,7 @@ lemma EndpointUnitDiskLocalSpliceCrossingsOpen {κ : Type*}
       rcases hcarrier_cases i hpci with hpl | hplm | hpmr | hpr
       · exact False.elim (hleft_no_other hij hpl hpcj)
       · rw [(Ω i).relativeInterior_eq, (Ω i).carrier_eq]
-        refine ⟨⟨0, by simpa [hΩ_vertices i], by simpa [hΩ_vertices i] using hplm⟩, ?_⟩
+        refine ⟨⟨0, by simp [hΩ_vertices i], by simpa [hΩ_vertices i] using hplm⟩, ?_⟩
         intro hpends
         rcases (by simpa [hΩ_source i, hΩ_target i] using hpends) with hpL | hpR
         · exact hleft_no_other hij
@@ -147,7 +146,7 @@ lemma EndpointUnitDiskLocalSpliceCrossingsOpen {κ : Type*}
         · exact hright_no_other hij
             (by simpa [rightConn, hpR] using left_mem_segment ℝ (R i) (B i)) hpcj
       · rw [(Ω i).relativeInterior_eq, (Ω i).carrier_eq]
-        refine ⟨⟨1, by simpa [hΩ_vertices i], by simpa [hΩ_vertices i] using hpmr⟩, ?_⟩
+        refine ⟨⟨1, by simp [hΩ_vertices i], by simpa [hΩ_vertices i] using hpmr⟩, ?_⟩
         intro hpends
         rcases (by simpa [hΩ_source i, hΩ_target i] using hpends) with hpL | hpR
         · exact hleft_no_other hij
@@ -167,9 +166,9 @@ lemma EndpointUnitDiskLocalSpliceCrossingsOpen {κ : Type*}
     intro k p hp
     rcases hΞ_orient k with hfor | hrev
     · rcases hfor with ⟨hverts, _hu, _hv⟩
-      exact ⟨2, by simpa [hverts], by simpa [hverts] using hp⟩
+      exact ⟨2, by simp [hverts], by simpa [hverts] using hp⟩
     · rcases hrev with ⟨hverts, _hu, _hv⟩
-      exact ⟨1, by simpa [hverts], by simpa [hverts, openSegment_symm] using hp⟩
+      exact ⟨1, by simp [hverts], by simpa [hverts, openSegment_symm] using hp⟩
   rcases lift_open i hopen.1 with ⟨mi, hmi, hpmi⟩
   rcases lift_open j hopen.2 with ⟨mj, hmj, hpmj⟩
   exact ⟨mi, mj, hmi, hmj, hpmi, hpmj⟩

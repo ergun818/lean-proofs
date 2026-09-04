@@ -1,7 +1,6 @@
 import Util.IncidenceGeometry.PlanarRot90
 import Util.IncidenceGeometry.PolygonalArc
 
-open Classical
 noncomputable section
 
 def PolygonalArcInitialEndpointCone (γ : PolygonalArc) (r K : ℝ) :

@@ -5,7 +5,6 @@ import Util.IncidenceGeometry.JordanGenericRayReachesLocalSide
 import Util.IncidenceGeometry.JordanExteriorLocalSideUnbounded
 import Util.IncidenceGeometry.JordanUnboundedComplementComponentUnique
 
-open Classical
 noncomputable section
 
 lemma JordanRayComponentClassification
@@ -26,6 +25,7 @@ lemma JordanRayComponentClassification
                     p ∈ boundedComponent ∨ p ∈ unboundedComponent) ∧
                   Bornology.IsBounded boundedComponent ∧
                     ¬ Bornology.IsBounded unboundedComponent := by
+  classical
   obtain ⟨C_L, C_R, hC_L, hC_R, hC_ne, hleft, hright⟩ :=
     JordanLocalSideDistinctComponents J S
   have point_classification :

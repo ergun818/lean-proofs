@@ -2,7 +2,6 @@ import Util.IncidenceGeometry.GeometricArcDrawing
 import Util.IncidenceGeometry.UnitCircle
 import Util.IncidenceGeometry.UnitCirclesIntersectionsAtMostTwo
 
-open Classical
 open scoped BigOperators
 open scoped Real
 noncomputable section
@@ -14,10 +13,10 @@ lemma UnitCircleRetainedArcDrawingAssembly
     (carrier arcInterior : ι → Set (EuclideanSpace ℝ (Fin 2)))
     (γ : ι → Set.Icc (0 : ℝ) 1 → EuclideanSpace ℝ (Fin 2))
     (h_endpoint_eq : ∀ i ∈ A, endpoint i = Sym2.mk (arcStart i) (arcEnd i))
-    (h_endpoints_distinct : ∀ i ∈ A,
+    (_h_endpoints_distinct : ∀ i ∈ A,
       (arcStart i : EuclideanSpace ℝ (Fin 2)) ≠
         (arcEnd i : EuclideanSpace ℝ (Fin 2)))
-    (h_endpoints_on_circle : ∀ i ∈ A,
+    (_h_endpoints_on_circle : ∀ i ∈ A,
       (arcStart i : EuclideanSpace ℝ (Fin 2)) ∈
           UnitCircle (center i : EuclideanSpace ℝ (Fin 2)) ∧
         (arcEnd i : EuclideanSpace ℝ (Fin 2)) ∈
@@ -413,7 +412,7 @@ lemma UnitCircleRetainedArcDrawingAssembly
       (rep e₂) (rep_mem e₂) hc (rep_ne_of_edge_ne he)
     have hpBoth : p ∈ arcInterior (rep e₁) ∩ arcInterior (rep e₂) :=
       ⟨hp₁, hp₂⟩
-    simpa [hdisj] using hpBoth
+    simp [hdisj] at hpBoth
   have centers_distinct_of_local_pair :
       ∀ {e₁ e₂ : G.edgeFinset} {p : EuclideanSpace ℝ (Fin 2)},
         e₁ ≠ e₂ →

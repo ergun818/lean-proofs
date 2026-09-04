@@ -1,6 +1,5 @@
 import Util.IncidenceGeometry.Basic
 
-open Classical
 noncomputable section
 
 lemma CircleLineNoThreePoints
@@ -16,6 +15,7 @@ lemma CircleLineNoThreePoints
     (huw : u ≠ w)
     (hvw : v ≠ w) :
     False := by
+  classical
   have circle_sq :
       ∀ {z : EuclideanSpace ℝ (Fin 2)},
         dist z c = r →

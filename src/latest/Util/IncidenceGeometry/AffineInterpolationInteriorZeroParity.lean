@@ -2,7 +2,6 @@ import Mathlib.Data.Set.Card.Arithmetic
 import Mathlib.Tactic
 import Util.IncidenceGeometry.Basic
 
-open Classical
 noncomputable section
 
 lemma AffineInterpolationInteriorZeroParity
@@ -11,6 +10,7 @@ lemma AffineInterpolationInteriorZeroParity
         (Set.ncard
           {t : ℝ | t ∈ Set.Ioo (0 : ℝ) 1 ∧ (1 - t) * u + t * v = 0}) ↔
       decide (0 < u) ≠ decide (0 < v) := by
+  classical
   by_cases huv_eq : u = v
   · subst v
     have hset :
@@ -79,12 +79,12 @@ lemma AffineInterpolationInteriorZeroParity
             ∅ := by
       ext t
       by_cases hsign : (u < 0 ∧ 0 < v) ∨ (0 < u ∧ v < 0)
-      · simp only [hsign, if_true, Set.mem_setOf_eq, Set.mem_singleton_iff]
+      · simp only [hsign, if_true, Set.mem_ofPred_eq, Set.mem_singleton_iff]
         constructor
         · exact fun ht => (hzero_iff t).1 ht.2
         · intro ht
           exact ⟨by simpa [ht] using hroot_mem.2 hsign, (hzero_iff t).2 ht⟩
-      · simp only [hsign, if_false, Set.mem_setOf_eq, Set.mem_empty_iff_false]
+      · simp only [hsign, if_false, Set.mem_ofPred_eq, Set.mem_empty_iff_false]
         constructor
         · rintro ⟨htI, htzero⟩
           exact hsign (hroot_mem.1 (by simpa [(hzero_iff t).1 htzero] using htI))

@@ -1,6 +1,5 @@
 import Util.IncidenceGeometry.CyclicCurvePresentation
 
-open Classical
 noncomputable section
 
 def TriangleBoundaryCyclicIntersectionMultiplicity

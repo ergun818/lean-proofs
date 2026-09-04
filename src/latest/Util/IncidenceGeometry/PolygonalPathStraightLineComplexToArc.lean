@@ -1,7 +1,6 @@
 import Util.IncidenceGeometry.PolygonalArc
 import Util.IncidenceGeometry.PolygonalPathStraightLineComplex
 
-open Classical
 noncomputable section
 
 lemma PolygonalPathStraightLineComplexToArc
@@ -14,6 +13,7 @@ lemma PolygonalPathStraightLineComplexToArc
               ∃ j : ℕ, ∃ hj : j + 1 < γ.vertices.length,
                 segment ℝ Γ.vertices[i] Γ.vertices[i + 1] ⊆
                   segment ℝ γ.vertices[j] γ.vertices[j + 1] := by
+  classical
   let P := EuclideanSpace ℝ (Fin 2)
   let edgeSet : Set P :=
     {p | ∃ i : ℕ, ∃ hi : i + 1 < C.walk.length,

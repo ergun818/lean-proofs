@@ -11,7 +11,6 @@ import Util.IncidenceGeometry.EndpointRectangularWireCrossingsOpen
 import Util.IncidenceGeometry.EndpointUnitDiskLocalSpliceCrossingsOpen
 import Util.IncidenceGeometry.OrdinaryCleanLocalCrossingOfOpenSegments
 
-open Classical
 noncomputable section
 
 private def endpointUnitDiskPoint (x y : ℝ) : EuclideanSpace ℝ (Fin 2) :=
@@ -32,6 +31,7 @@ private lemma endpointUnitDiskPointOnSlopeOpen
       openSegment ℝ
         (endpointUnitDiskPoint (-α) (m * (-α)))
         (endpointUnitDiskPoint β (m * β)) := by
+  classical
   rw [openSegment_eq_image_lineMap]
   refine ⟨(τ + α) / (α + β), ?_, ?_⟩
   · have hden : 0 < α + β := by linarith
@@ -54,6 +54,7 @@ private lemma endpointUnitDiskSegmentIndexUnique
     (hs : s + 1 < Q.vertices.length) (ht : t + 1 < Q.vertices.length)
     (hqopen : q ∈ openSegment ℝ Q.vertices[s] Q.vertices[s + 1])
     (hqseg : q ∈ segment ℝ Q.vertices[t] Q.vertices[t + 1]) : s = t := by
+  classical
   have hq_not_vertex : q ∉ Q.vertices := by
     intro hqmem
     obtain ⟨k, hk, hkeq⟩ := List.mem_iff_getElem.mp hqmem
@@ -179,7 +180,8 @@ private def endpointUnitDiskFivePointArc
     (hsimple : [p₀, p₁, p₂, p₃, p₄].Nodup)
     (hintersections : endpointUnitDiskFivePointIntersections p₀ p₁ p₂ p₃ p₄)
     (havoid : endpointUnitDiskFivePointAvoid p₀ p₁ p₂ p₃ p₄) :
-    p ∈ (endpointUnitDiskFivePointArc p₀ p₁ p₂ p₃ p₄ hsimple hintersections havoid).relativeInterior ↔
+    p ∈ (endpointUnitDiskFivePointArc p₀ p₁ p₂ p₃ p₄ hsimple hintersections
+      havoid).relativeInterior ↔
       (∃ n : ℕ, ∃ hn : n + 1 < [p₀, p₁, p₂, p₃, p₄].length,
         p ∈ segment ℝ [p₀, p₁, p₂, p₃, p₄][n] [p₀, p₁, p₂, p₃, p₄][n + 1]) ∧
           p ∉ ({p₀, p₄} : Set (EuclideanSpace ℝ (Fin 2))) :=
@@ -189,6 +191,7 @@ private lemma endpointUnitDiskSegmentLeftSubsegmentOpen
     {A B C p : EuclideanSpace ℝ (Fin 2)}
     (hC : C ∈ openSegment ℝ A B) (hp : p ∈ segment ℝ A C) (hp_ne : p ≠ A) :
     p ∈ openSegment ℝ A B := by
+  classical
   rw [openSegment_eq_image_lineMap] at hC
   rcases hC with ⟨t, ht, htC⟩
   rw [segment_eq_image_lineMap] at hp
@@ -213,6 +216,7 @@ private lemma endpointUnitDiskSegmentRightSubsegmentOpen
     {A B C p : EuclideanSpace ℝ (Fin 2)}
     (hC : C ∈ openSegment ℝ A B) (hp : p ∈ segment ℝ C B) (hp_ne : p ≠ B) :
     p ∈ openSegment ℝ A B := by
+  classical
   rw [openSegment_eq_image_lineMap] at hC
   rcases hC with ⟨t, ht, htC⟩
   rw [segment_eq_image_lineMap] at hp
@@ -235,7 +239,7 @@ private lemma endpointUnitDiskSegmentRightSubsegmentOpen
     nlinarith
 
 private lemma endpointUnitDiskSlopeRectangularSideData
-    {κ : Type*} [Fintype κ] (r : ℝ) (hr : 0 < r)
+    {κ : Type*} [Finite κ] (r : ℝ) (hr : 0 < r)
     (m : κ → ℝ) (δ : ℝ) (hm : Function.Injective m) (hδ : 0 < δ) :
     ∃ ε H : ℝ,
       ∃ L R : κ → EuclideanSpace ℝ (Fin 2),
@@ -255,6 +259,8 @@ private lemma endpointUnitDiskSlopeRectangularSideData
                                 ({p : EuclideanSpace ℝ (Fin 2) |
                                   -ε ≤ p 0 ∧ p 0 ≤ ε ∧ -H ≤ p 1 ∧ p 1 ≤ H} ⊆
                                     Metric.ball (0 : EuclideanSpace ℝ (Fin 2)) r) := by
+  classical
+  let := Fintype.ofFinite κ
   let C : ℝ := (∑ i : κ, |m i|) + 1
   have hCpos : 0 < C := by
     have hsum_nonneg : 0 ≤ ∑ i : κ, |m i| := by
@@ -383,6 +389,7 @@ private lemma endpointUnitDiskChordDiameterOriented
               z ∈ openSegment ℝ u v ∧
                 Metric.closedBall z ρ ∩ segment ℝ A B = segment ℝ u v ∧
                   openSegment ℝ u v ⊆ Metric.ball z ρ := by
+  classical
   rw [openSegment_eq_image_lineMap] at hzopen
   rcases hzopen with ⟨t, ht, hzt⟩
   subst z
@@ -476,7 +483,7 @@ private lemma endpointUnitDiskChordDiameterOriented
         exact hε_lt_one_sub
     · apply PiLp.ext
       intro k
-      simp only [AffineMap.lineMap_lineMap_left, AffineMap.lineMap_apply_one_sub]
+      simp only [v, AffineMap.lineMap_apply_module, PiLp.smul_apply, PiLp.add_apply, smul_eq_mul]
       have hden : 1 - t ≠ 0 := by linarith
       apply (mul_left_cancel₀ hden)
       field_simp [hden]
@@ -567,14 +574,13 @@ private lemma endpointUnitDiskChordDiameterOriented
   exact ⟨u, v, hu_sphere, hv_sphere, hu_open, hv_open, hz_open_uv, hinter,
     hopen_uv_ball⟩
 
-
-lemma EndpointUnitDiskLocalReplacement {ι : Type*} [Fintype ι]
+lemma EndpointUnitDiskLocalReplacement {ι : Type*} [Finite ι]
     (a b : ι → EuclideanSpace ℝ (Fin 2))
     (ha : ∀ i, dist (a i) (0 : EuclideanSpace ℝ (Fin 2)) = 1)
     (hb : ∀ i, dist (b i) (0 : EuclideanSpace ℝ (Fin 2)) = 1)
     (hdistinct : Function.Injective (fun x : ι ⊕ ι => Sum.elim a b x))
     (z : EuclideanSpace ℝ (Fin 2)) (r : ℝ)
-    (hz : z ∈ Metric.ball (0 : EuclideanSpace ℝ (Fin 2)) 1)
+    (_hz : z ∈ Metric.ball (0 : EuclideanSpace ℝ (Fin 2)) 1)
     (hr : 0 < r)
     (hclosed :
       Metric.closedBall z r ⊆ Metric.ball (0 : EuclideanSpace ℝ (Fin 2)) 1) :
@@ -632,6 +638,8 @@ lemma EndpointUnitDiskLocalReplacement {ι : Type*} [Fintype ι]
                       p ∈ (Ξ i).relativeInterior →
                         p ∈ (Ξ j).relativeInterior →
                           Nonempty (OrdinaryCleanLocalCrossing Ξ i j p)) := by
+  classical
+  let := Fintype.ofFinite ι
   have hindexUnique := endpointUnitDiskSegmentIndexUnique
   let κ := {i : ι // z ∈ openSegment ℝ (a i) (b i)}
   change
@@ -824,8 +832,7 @@ lemma EndpointUnitDiskLocalReplacement {ι : Type*} [Fintype ι]
       exact (hij (Subsingleton.elim i j)).elim
     · intro i j p hij _ _
       exact (hij (Subsingleton.elim i j)).elim
-  ·
-    -- Non-small families require the paper's geometric rectangle: choose a
+  · -- Non-small families require the paper's geometric rectangle: choose a
     -- coordinate frame whose vertical axis avoids all incident chord directions,
     -- put the rectangle side points on the actual segments `u i -- v i`, apply
     -- `EndpointRectangularWireReplacement`, and splice the resulting wire with
@@ -1725,7 +1732,9 @@ lemma EndpointUnitDiskLocalReplacement {ι : Type*} [Fintype ι]
             v i = toWorld (point (β i) (m i * β i))
       · refine ⟨by simp [Ξ, hforward], by simp [Ξ, hforward], ?_, ?_⟩
         · intro p hp
-          simp only [Metric.mem_closedBall] at hp
+          simp only [hforward, and_self, ↓reduceDIte, endpointUnitDiskFivePointArc_mem_carrier,
+            List.getElem_cons_succ, List.length_cons, List.length_nil, zero_add, Nat.reduceAdd, Ξ]
+            at hp
           rcases hp with ⟨n, hn, hpseg⟩
           have hn_cases : n = 0 ∨ n = 1 ∨ n = 2 ∨ n = 3 := by
             omega
@@ -1748,7 +1757,10 @@ lemma EndpointUnitDiskLocalReplacement {ι : Type*} [Fintype ι]
           · exact (convex_closedBall z r).segment_subset hR_closed (hv_closed i)
               (by simpa [hforward.2] using hpseg)
         · intro p hp
-          simp only [Metric.mem_ball] at hp
+          simp only [hforward, and_self, ↓reduceDIte,
+            endpointUnitDiskFivePointArc_mem_relativeInterior, List.getElem_cons_succ,
+            List.length_cons, List.length_nil, zero_add, Nat.reduceAdd, Set.mem_insert_iff,
+            Set.mem_singleton_iff, not_or, Ξ] at hp
           rcases hp with ⟨⟨n, hn, hpseg⟩, hpnot⟩
           have hn_cases : n = 0 ∨ n = 1 ∨ n = 2 ∨ n = 3 := by
             omega
@@ -1762,13 +1774,13 @@ lemma EndpointUnitDiskLocalReplacement {ι : Type*} [Fintype ι]
           · have hpΩ : p ∈ (Ω i).carrier := by
               rw [(Ω i).carrier_eq]
               refine ⟨0, ?_, ?_⟩
-              · simpa [hΩ_vertices i]
+              · simp [hΩ_vertices i]
               · simpa [hΩ_vertices i] using hpseg
             exact hΩ_carrier_ball i hpΩ
           · have hpΩ : p ∈ (Ω i).carrier := by
               rw [(Ω i).carrier_eq]
               refine ⟨1, ?_, ?_⟩
-              · simpa [hΩ_vertices i]
+              · simp [hΩ_vertices i]
               · simpa [hΩ_vertices i] using hpseg
             exact hΩ_carrier_ball i hpΩ
           · have hpopen :
@@ -1779,7 +1791,9 @@ lemma EndpointUnitDiskLocalReplacement {ι : Type*} [Fintype ι]
             exact huv_open_ball i hpopen
       · refine ⟨by simp [Ξ, hforward], by simp [Ξ, hforward], ?_, ?_⟩
         · intro p hp
-          simp only [Metric.mem_closedBall] at hp
+          simp only [hforward, ↓reduceDIte, endpointUnitDiskFivePointArc_mem_carrier,
+            List.getElem_cons_succ, List.length_cons, List.length_nil, zero_add, Nat.reduceAdd, Ξ]
+            at hp
           rcases hp with ⟨n, hn, hpseg⟩
           have hn_cases : n = 0 ∨ n = 1 ∨ n = 2 ∨ n = 3 := by
             omega
@@ -1802,7 +1816,9 @@ lemma EndpointUnitDiskLocalReplacement {ι : Type*} [Fintype ι]
           · exact (convex_closedBall z r).segment_subset hL_closed (hv_closed i)
               (by simpa using hpseg)
         · intro p hp
-          simp only [Metric.mem_ball] at hp
+          simp only [hforward, ↓reduceDIte, endpointUnitDiskFivePointArc_mem_relativeInterior,
+            List.getElem_cons_succ, List.length_cons, List.length_nil, zero_add, Nat.reduceAdd,
+            Set.mem_insert_iff, Set.mem_singleton_iff, not_or, Ξ] at hp
           rcases hp with ⟨⟨n, hn, hpseg⟩, hpnot⟩
           have hn_cases : n = 0 ∨ n = 1 ∨ n = 2 ∨ n = 3 := by
             omega
@@ -1816,14 +1832,14 @@ lemma EndpointUnitDiskLocalReplacement {ι : Type*} [Fintype ι]
           · have hpΩ : p ∈ (Ω i).carrier := by
               rw [(Ω i).carrier_eq]
               refine ⟨1, ?_, ?_⟩
-              · simpa [hΩ_vertices i]
+              · simp [hΩ_vertices i]
               · rw [segment_symm]
                 simpa [hΩ_vertices i] using hpseg
             exact hΩ_carrier_ball i hpΩ
           · have hpΩ : p ∈ (Ω i).carrier := by
               rw [(Ω i).carrier_eq]
               refine ⟨0, ?_, ?_⟩
-              · simpa [hΩ_vertices i]
+              · simp [hΩ_vertices i]
               · rw [segment_symm]
                 simpa [hΩ_vertices i] using hpseg
             exact hΩ_carrier_ball i hpΩ

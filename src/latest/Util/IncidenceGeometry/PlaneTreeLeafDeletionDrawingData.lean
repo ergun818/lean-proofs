@@ -4,9 +4,9 @@ import Util.IncidenceGeometry.PolygonalArcVertexMemCarrier
 import Mathlib.Combinatorics.SimpleGraph.Acyclic
 import Mathlib.Combinatorics.SimpleGraph.Copy
 
-open Classical
 noncomputable section
 
+open Classical in
 lemma PlaneTreeLeafDeletionDrawingData {V : Type*} [Fintype V]
     (G : SimpleGraph V) [Fintype G.edgeSet] [DecidableRel G.Adj]
     (D : OrdinaryPolygonalDrawing G) (hD : D.crossingSet.card = 0)
@@ -64,7 +64,7 @@ lemma PlaneTreeLeafDeletionDrawingData {V : Type*} [Fintype V]
       rw [hdel, he]
       simp [Sym2.mem_iff]
     have hvS : v ∈ S := oldEdge_endpoint_mem ed hv_old
-    exact hvS (by simp [S])
+    exact hvS (by simp)
   have oldEdge_injective : Function.Injective oldEdge := by
     intro ed₁ ed₂ h
     apply Subtype.ext
@@ -109,14 +109,14 @@ lemma PlaneTreeLeafDeletionDrawingData {V : Type*} [Fintype V]
         intro p
         constructor
         · intro hp
-          simpa using hp
+          simp at hp
         · rintro ⟨ed₁, ed₂, h₁₂, hp₁, hp₂⟩
           have hpOld : p ∈ D.crossingSet :=
             (D.crossingSet_spec p).2
               ⟨oldEdge ed₁, oldEdge ed₂, oldEdge_injective.ne h₁₂, hp₁, hp₂⟩
           have hDempty : D.crossingSet = ∅ := Finset.card_eq_zero.mp hD
           exfalso
-          simpa [hDempty] using hpOld
+          simp [hDempty] at hpOld
       adjacentEdgeCrossingCount := 0
       adjacentEdgeCrossingCount_eq := by
         simp }
@@ -164,7 +164,7 @@ lemma PlaneTreeLeafDeletionDrawingData {V : Type*} [Fintype V]
         ⟨edSym, SimpleGraph.mem_edgeFinset.mpr hedSym_mem⟩
       refine ⟨ed, ?_⟩
       apply Subtype.ext
-      simpa [ed, oldEdge_val, hedSym_map]
+      simp [ed, oldEdge_val, hedSym_map]
   have hArcSourceMem :
       ∀ γ : PolygonalArc, γ.source ∈ γ.carrier := by
     intro γ
@@ -276,7 +276,7 @@ lemma PlaneTreeLeafDeletionDrawingData {V : Type*} [Fintype V]
       have huv' : D.vertexPlacement u.1 = D.vertexPlacement v := by
         simpa using huv
       have hu_eq_v : u.1 = v := D.vertexPlacement_injective huv'
-      exact u.2 (by simpa [S, hu_eq_v])
+      exact u.2 (by simp [S, hu_eq_v])
     · rcases Set.mem_iUnion.mp hvEdge with ⟨ed, hvCarrier⟩
       by_cases hvRel : D.vertexPlacement v ∈ (D.edgeArc (oldEdge ed)).relativeInterior
       · exact D.no_vertex_in_edge_interior v (oldEdge ed) hvRel

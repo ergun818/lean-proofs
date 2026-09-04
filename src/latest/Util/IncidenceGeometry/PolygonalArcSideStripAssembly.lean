@@ -6,7 +6,6 @@ import Util.IncidenceGeometry.PolygonalArcSideStripRelativeInteriorCoverage
 import Util.IncidenceGeometry.PolygonalArcSideStripSetAlgebra
 import Util.IncidenceGeometry.PolygonalSideStrips
 
-open Classical
 open Filter
 noncomputable section
 
@@ -38,6 +37,7 @@ lemma PolygonalArcSideStripAssembly (γ : PolygonalArc) {η : ℝ}
               orientedTubes.toPolygonalArcCollarSeparatedTubeData.rightHalf j hj) ∪
             (⋃ i : Fin γ.vertices.length, localSideData.rightSidePiece i)) ∧
         ∀ z ∈ S.collar, ∃ p ∈ γ.carrier, dist z p < η := by
+  classical
   let sep := orientedTubes.toPolygonalArcCollarSeparatedTubeData
   let C : Set (EuclideanSpace ℝ (Fin 2)) :=
     ((⋃ (j : ℕ), ⋃ (hj : j + 1 < γ.vertices.length), sep.tube j hj) ∪

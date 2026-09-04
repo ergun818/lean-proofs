@@ -13,15 +13,15 @@ import Util.IncidenceGeometry.OrdinaryDrawingImageCompact
 import Util.IncidenceGeometry.OpenConnectedComponentPolygonallyConnected
 import Mathlib.Combinatorics.SimpleGraph.Acyclic
 
-open Classical
 noncomputable section
 
+open Classical in
 lemma DeleteEdgeInheritedFaceData {V : Type*} [Fintype V] (G : SimpleGraph V)
     [Fintype G.edgeSet] [DecidableRel G.Adj] (D : OrdinaryPolygonalDrawing G)
     (hD : D.crossingSet.card = 0) (A : PlaneFaceData G D) (e : G.edgeFinset) :
     let Gdel : SimpleGraph V := G.deleteEdges {e.1}
     ∃ Ddel : OrdinaryPolygonalDrawing Gdel,
-      ∃ Adel : PlaneFaceData Gdel Ddel,
+      ∃ _Adel : PlaneFaceData Gdel Ddel,
         Ddel.crossingSet.card = 0 ∧
           Ddel.vertexPlacement = D.vertexPlacement ∧
             ∀ ed : Gdel.edgeFinset,
@@ -31,7 +31,7 @@ lemma DeleteEdgeInheritedFaceData {V : Type*} [Fintype V] (G : SimpleGraph V)
   let Gdel : SimpleGraph V := G.deleteEdges {e.1}
   change
     ∃ Ddel : OrdinaryPolygonalDrawing Gdel,
-      ∃ Adel : PlaneFaceData Gdel Ddel,
+      ∃ _Adel : PlaneFaceData Gdel Ddel,
         Ddel.crossingSet.card = 0 ∧
           Ddel.vertexPlacement = D.vertexPlacement ∧
             ∀ ed : Gdel.edgeFinset,
@@ -89,14 +89,14 @@ lemma DeleteEdgeInheritedFaceData {V : Type*} [Fintype V] (G : SimpleGraph V)
         intro p
         constructor
         · intro hp
-          simpa using hp
+          simp at hp
         · rintro ⟨ed₁, ed₂, h₁₂, hp₁, hp₂⟩
           have hpOld : p ∈ D.crossingSet :=
             (D.crossingSet_spec p).2
               ⟨oldEdge ed₁, oldEdge ed₂, oldEdge_injective.ne h₁₂, hp₁, hp₂⟩
           have hDempty : D.crossingSet = ∅ := Finset.card_eq_zero.mp hD
           exfalso
-          simpa [hDempty] using hpOld
+          simp [hDempty] at hpOld
       adjacentEdgeCrossingCount := 0
       adjacentEdgeCrossingCount_eq := by
         simp }

@@ -43,13 +43,13 @@ import Util.IncidenceGeometry.CircularOrderedSamplesNonadjacentChordInteriors
 import Util.IncidenceGeometry.PolygonalArcFromCircularOrderedSamples
 import Mathlib.Data.Fintype.EquivFin
 
-open Classical
 noncomputable section
 
 lemma PolygonalReplacementTubeChains {V : Type*} [Fintype V]
     (G : SimpleGraph V) [Fintype G.edgeSet] (D : GeometricArcDrawing G)
     (controlDisks : PolygonalReplacementControlDiskData G D) :
     Nonempty (PolygonalReplacementTubeChainData G D controlDisks) := by
+  classical
   obtain ⟨boundaryPoints⟩ :=
     PolygonalReplacementBoundaryPointDataExists G D controlDisks
   obtain ⟨edgeParam, edgeParam_spec, boundaryPoint_parameter_unique⟩ :=

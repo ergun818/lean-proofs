@@ -1,8 +1,8 @@
 import Util.IncidenceGeometry.IsAffineLine
 
-open Classical
 noncomputable section
 
+open Classical in
 noncomputable def LineIncidences
     (P : Finset (EuclideanSpace ℝ (Fin 2)))
     (L : Finset {ℓ : AffineSubspace ℝ (EuclideanSpace ℝ (Fin 2)) // IsAffineLine ℓ}) : ℕ :=

@@ -1,8 +1,6 @@
 import Util.IncidenceGeometry.OrdinaryCleanLocalCrossing
 
-open Classical
 noncomputable section
-
 
 lemma OrdinaryCleanLocalCrossingAffineTransport {ι : Type*}
     (Γ₀ Γ : ι → PolygonalArc)
@@ -24,6 +22,7 @@ lemma OrdinaryCleanLocalCrossingAffineTransport {ι : Type*}
     {i j : ι} {p : EuclideanSpace ℝ (Fin 2)}
     (C : OrdinaryCleanLocalCrossing Γ₀ i j p) :
     Nonempty (OrdinaryCleanLocalCrossing Γ i j (Ψ p)) := by
+  classical
   have hfirst0 : C.firstIndex < (Γ₀ i).vertices.length :=
     Nat.lt_trans (Nat.lt_succ_self _) C.firstIndex_valid
   have hsecond0 : C.secondIndex < (Γ₀ j).vertices.length :=
@@ -84,7 +83,7 @@ lemma OrdinaryCleanLocalCrossingAffineTransport {ι : Type*}
     have hqij : qi = qj := hΨ_inj (hqi_eq.trans hqj_eq.symm)
     subst qj
     have hqip : qi = p := C.pair_unique hqi hqj
-    simpa [← hqi_eq, hqip]
+    simp [← hqi_eq, hqip]
   let ε : ℝ := ρ * C.radius
   have hεpos : 0 < ε := mul_pos hρ C.radius_pos
   have hneighborhood :

@@ -15,13 +15,13 @@ import Util.IncidenceGeometry.DrawingFaceComponent
 import Util.IncidenceGeometry.ComplementComponent
 import Mathlib.Combinatorics.SimpleGraph.Acyclic
 
-open Classical
 noncomputable section
 
 lemma PlaneTreeOneFace {V : Type*} [Fintype V] (G : SimpleGraph V)
     [Fintype G.edgeSet] [DecidableRel G.Adj] (D : OrdinaryPolygonalDrawing G)
     (hD : D.crossingSet.card = 0) (A : PlaneFaceData G D) :
     G.IsTree → @Fintype.card A.Face A.faceFintype = 1 := by
+  classical
   intro hTree
   exact PlaneFaceDataOneFaceOfPolygonallyPathConnectedComplement G D A
     (PlaneTreeDrawingComplementConnected G D hD hTree)

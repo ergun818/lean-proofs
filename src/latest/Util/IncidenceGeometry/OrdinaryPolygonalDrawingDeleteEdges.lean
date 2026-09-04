@@ -1,9 +1,9 @@
 import Util.IncidenceGeometry.OrdinaryPolygonalDrawing
 import Mathlib.Combinatorics.SimpleGraph.Copy
 
-open Classical
 noncomputable section
 
+open Classical in
 lemma OrdinaryPolygonalDrawingDeleteEdges {V : Type*} [Fintype V] (G : SimpleGraph V)
     [Fintype G.edgeSet] (D : OrdinaryPolygonalDrawing G)
     (S : Finset (Sym2 V)) :

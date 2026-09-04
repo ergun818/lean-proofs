@@ -6,7 +6,6 @@ import Util.IncidenceGeometry.FinitePolygonalSet
 import Util.IncidenceGeometry.PositiveSeparation
 import Util.IncidenceGeometry.JordanCurveSimultaneousCollarDataExists
 
-open Classical
 noncomputable section
 
 lemma JordanLocalSideConstruction (J : SimpleClosedPolygonalCurve) :
@@ -230,9 +229,7 @@ lemma JordanLocalSideConstruction (J : SimpleClosedPolygonalCurve) :
         (r : ℝ) (hr : 0 < r) :
         center + (r / 2) • u ∈ Metric.ball center r := by
       rw [Metric.mem_ball, dist_eq_norm]
-      simp only [add_sub_cancel_left]
-      rw [abs_of_pos hr]
-      linarith
+      simpa [u, norm_smul, Real.norm_eq_abs, abs_div, abs_of_pos hr] using half_lt_self hr
     by_cases hiSource : i.1 = 0
     · have hsourceIdx : 0 < gamma.1.vertices.length := by
         have hlen := gamma.1.length_ge_two

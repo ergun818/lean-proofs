@@ -1,9 +1,9 @@
 import Util.IncidenceGeometry.SimpleClosedPolygonalCurve
 import Mathlib.GroupTheory.Perm.Cycle.Concrete
 
-open Classical
 noncomputable section
 
+open Classical in
 lemma SimpleClosedPolygonalCurveOfCyclicArcList
     (arcs : List PolygonalArc)
     (h_nodup : arcs.Nodup)

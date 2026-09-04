@@ -4,7 +4,6 @@ import Util.IncidenceGeometry.FinitePlanarClockwiseSuccessorSectors
 import Util.IncidenceGeometry.OneEdgeEndpointGermPositiveRayDistinct
 import Util.IncidenceGeometry.PlanarRot90CoefficientUniqueness
 
-open Classical
 noncomputable section
 
 lemma OneEdgeEndpointSectorComplementPackage

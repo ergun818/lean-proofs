@@ -9,7 +9,6 @@ import Util.IncidenceGeometry.JordanComponentFrontiers
 import Util.IncidenceGeometry.SimpleClosedPolygonalCurveComplementOpen
 import Util.IncidenceGeometry.OpenConnectedComponentPolygonallyConnected
 
-open Classical
 noncomputable section
 
 lemma PolygonalJordanSeparation (J : SimpleClosedPolygonalCurve) :
@@ -28,6 +27,7 @@ lemma PolygonalJordanSeparation (J : SimpleClosedPolygonalCurve) :
                         frontier inside = J.carrier ∧
                           frontier outside = J.carrier ∧
                             CurveLocalSideSeparation J inside outside := by
+  classical
   obtain ⟨S⟩ := JordanLocalSideConstruction J
   obtain ⟨inside, outside, hinside, houtside, hne, horient,
     hcomponents, hcover, hbounded, hunbounded⟩ :=

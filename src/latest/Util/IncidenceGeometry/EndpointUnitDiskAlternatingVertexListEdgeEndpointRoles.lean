@@ -1,6 +1,5 @@
 import Util.IncidenceGeometry.EndpointUnitDiskAlternatingVertexList
 
-open Classical
 noncomputable section
 
 lemma EndpointUnitDiskAlternatingVertexListEdgeEndpointRoles

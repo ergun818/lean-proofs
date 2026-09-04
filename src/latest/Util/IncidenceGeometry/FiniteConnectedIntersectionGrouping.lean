@@ -1,6 +1,5 @@
 import Util.IncidenceGeometry.Basic
 
-open Classical
 noncomputable section
 
 lemma FiniteConnectedIntersectionGrouping
@@ -52,7 +51,7 @@ lemma FiniteConnectedIntersectionGrouping
         ∀ j, j ∈ reachableFrom i → IsConnected (piece j) := by
       intro j hj
       exact hpiece_connected j hj.1
-    have hadj_symm : Symmetric adj := by
+    have hadj_symm : ∀ ⦃u v⦄, adj u v → adj v u := by
       intro u v huv
       exact ⟨huv.2.1, huv.1, by simpa [Set.inter_comm] using huv.2.2⟩
     have hreachable_symm :

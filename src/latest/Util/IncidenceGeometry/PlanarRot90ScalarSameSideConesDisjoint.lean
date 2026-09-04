@@ -1,6 +1,5 @@
 import Util.IncidenceGeometry.Basic
 
-open Classical
 noncomputable section
 
 lemma PlanarRot90ScalarSameSideConesDisjoint (A B : ℝ)
@@ -9,6 +8,7 @@ lemma PlanarRot90ScalarSameSideConesDisjoint (A B : ℝ)
       ∀ a c b r : ℝ, 0 < a → 0 < c → 0 < b * r →
         |b| < κ * a → |r| < κ * c →
         ¬ (a = c * A - r * B ∧ b = c * B + r * A) := by
+  classical
   by_cases hB : B = 0
   · refine ⟨1, by norm_num, ?_⟩
     intro a c b r ha hc hbr hb hr hEq

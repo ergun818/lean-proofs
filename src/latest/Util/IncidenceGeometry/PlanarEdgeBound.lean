@@ -3,7 +3,6 @@ import Util.IncidenceGeometry.InducedSubdrawingBridge
 import Util.IncidenceGeometry.OrdinaryPolygonalDrawing
 import Util.IncidenceGeometry.SimpleGraphComponentEdgeSumBound
 
-open Classical
 noncomputable section
 
 lemma PlanarEdgeBound {V : Type*} [Fintype V] (G : SimpleGraph V) [Fintype G.edgeSet] :

@@ -3,7 +3,6 @@ import Mathlib.Analysis.Normed.Affine.AddTorsorBases
 import Mathlib.Tactic
 import Util.IncidenceGeometry.Basic
 
-open Classical
 noncomputable section
 
 lemma TriangleSegmentBarycentricEndpointClosedSideExclusions
@@ -16,6 +15,7 @@ lemma TriangleSegmentBarycentricEndpointClosedSideExclusions
     ¬ (β.coord 2 p = 0 ∧ 0 ≤ β.coord 0 p ∧ 0 ≤ β.coord 1 p) ∧
       ¬ (β.coord 0 p = 0 ∧ 0 ≤ β.coord 1 p ∧ 0 ≤ β.coord 2 p) ∧
         ¬ (β.coord 1 p = 0 ∧ 0 ≤ β.coord 0 p ∧ 0 ≤ β.coord 2 p) := by
+  classical
   have hseg01 :
       p ∈ segment ℝ (β 0) (β 1) ↔
         0 ≤ β.coord 0 p ∧ 0 ≤ β.coord 1 p ∧ β.coord 2 p = 0 := by

@@ -17,14 +17,13 @@ import Util.IncidenceGeometry.PolygonalArcAdjacentOutwardDirectionsNotSameRay
 import Util.IncidenceGeometry.PolygonalArcCollarLocalTopologyData
 
 open Set
-open Classical
 noncomputable section
-
 
 private abbrev E := EuclideanSpace ℝ (Fin 2)
 
 private lemma chart_image_open (p d : E) (hd : d ≠ 0) (S : Set E) (hS : IsOpen S) :
     IsOpen ((fun z : E => p + z 0 • d + z 1 • PlanarRot90 d) '' S) := by
+  classical
   let chart : E → E := fun z => p + z 0 • d + z 1 • PlanarRot90 d
   let invCoord : E → E :=
     fun q => WithLp.toLp 2 (fun i : Fin 2 =>
@@ -38,9 +37,9 @@ private lemma chart_image_open (p d : E) (hd : d ≠ 0) (S : Set E) (hS : IsOpen
       apply continuous_pi
       intro i
       by_cases hi : i = 0
-      · simp [hi]
+      · simp only [hi, Fin.isValue, ↓reduceIte]
         fun_prop
-      · simp [hi]
+      · simp only [Fin.isValue, hi, ↓reduceIte]
         fun_prop
     exact (PiLp.continuous_toLp (p := (2 : ENNReal))
       (β := fun _ : Fin 2 => ℝ)).comp hplain
@@ -84,6 +83,7 @@ private lemma chart_image_open (p d : E) (hd : d ≠ 0) (S : Set E) (hS : IsOpen
 private lemma chart_injective (p d : E) (hd : d ≠ 0) :
     Function.Injective
       (fun z : E => p + z 0 • d + z 1 • PlanarRot90 d) := by
+  classical
   let chart : E → E := fun z => p + z 0 • d + z 1 • PlanarRot90 d
   change Function.Injective chart
   intro z w hzw
@@ -111,6 +111,7 @@ private lemma chart_injective (p d : E) (hd : d ≠ 0) :
   · exact hz1
 private lemma chart_continuous (p d : E) :
     Continuous (fun z : E => p + z 0 • d + z 1 • PlanarRot90 d) := by
+  classical
   have h0 : Continuous fun z : E => z 0 :=
     PiLp.continuous_apply (p := (2 : ENNReal)) (β := fun _ : Fin 2 => ℝ) 0
   have h1 : Continuous fun z : E => z 1 :=
@@ -123,6 +124,7 @@ private lemma chart_mem_closure_image (p d : E) {S : Set E} {z : E}
     (hz : z ∈ closure S) :
     p + z 0 • d + z 1 • PlanarRot90 d ∈
       closure ((fun z : E => p + z 0 • d + z 1 • PlanarRot90 d) '' S) := by
+  classical
   exact
     (image_closure_subset_closure_image
       (f := fun z : E => p + z 0 • d + z 1 • PlanarRot90 d)
@@ -133,6 +135,7 @@ private lemma ray_mem_closure (a : ℝ) {S : Set E} {x w : E}
       ∀ δ : ℝ, 0 < δ → δ < μ → x + δ • w ∈ Metric.ball (0 : E) a →
         x + δ • w ∈ S) :
     x ∈ closure S := by
+  classical
   rw [Metric.mem_closure_iff]
   intro ε hε
   rcases hS with ⟨μ, hμ, hSμ⟩
@@ -207,6 +210,7 @@ private lemma endpoint_germ_subset_closure_left (a K : ℝ) (ha : 0 < a) (hK : 0
     let G : Set E :=
       {z | 0 < z 0 ∧ z 0 < a ∧ z 1 = 0}
     G ⊆ closure L := by
+  classical
   intro L G z hzG
   rw [Metric.mem_closure_iff]
   intro ε hε
@@ -247,9 +251,7 @@ private lemma endpoint_germ_subset_closure_left (a K : ℝ) (ha : 0 < a) (hK : 0
     · simp [hδ_K]
   · rw [EuclideanSpace.dist_eq]
     rw [Fin.sum_univ_two]
-    simp only [Fin.isValue]
-    rw [Real.sqrt_sq_eq_abs, abs_of_pos hδ_pos]
-    exact hδ_eps
+    simpa [y, hz1, Real.dist_eq, Real.sqrt_sq_eq_abs, abs_of_pos hδ_pos] using hδ_eps
 private lemma endpoint_germ_subset_closure_right (a K : ℝ) (ha : 0 < a) (hK : 0 < K) :
     let R : Set E :=
       {z | 0 < z 0 ∧ z 0 ^ 2 + z 1 ^ 2 < a ^ 2 ∧ -K * z 0 < z 1 ∧
@@ -257,6 +259,7 @@ private lemma endpoint_germ_subset_closure_right (a K : ℝ) (ha : 0 < a) (hK : 
     let G : Set E :=
       {z | 0 < z 0 ∧ z 0 < a ∧ z 1 = 0}
     G ⊆ closure R := by
+  classical
   intro R G z hzG
   rw [Metric.mem_closure_iff]
   intro ε hε
@@ -298,15 +301,14 @@ private lemma endpoint_germ_subset_closure_right (a K : ℝ) (ha : 0 < a) (hK : 
     · simp [hδ_pos]
   · rw [EuclideanSpace.dist_eq]
     rw [Fin.sum_univ_two]
-    simp only [Fin.isValue]
-    rw [Real.sqrt_sq_eq_abs, abs_of_pos hδ_pos]
-    exact hδ_eps
+    simpa [y, hz1, Real.dist_eq, Real.sqrt_sq_eq_abs, abs_of_pos hδ_pos] using hδ_eps
 private lemma twoRay_base_subset_closure_left (a c s : ℝ)
     (hpos : 0 < s ∨ s = 0 ∧ c < 0) :
     let C : Set E := Metric.ball (0 : E) a
     let Gbase : Set E := {z | z ∈ C ∧ z 1 = 0 ∧ 0 < z 0}
     let L : Set E := {z | z ∈ C ∧ 0 < z 1 ∧ c * z 1 - s * z 0 < 0}
     Gbase ⊆ closure L := by
+  classical
   intro C Gbase L z hzG
   have hzC : z ∈ Metric.ball (0 : E) a := by simpa [C, Gbase] using hzG.1
   have hz1 : z 1 = 0 := by simpa [Gbase] using hzG.2.1
@@ -355,6 +357,7 @@ private lemma twoRay_base_subset_closure_right (a c s : ℝ) :
     let Gbase : Set E := {z | z ∈ C ∧ z 1 = 0 ∧ 0 < z 0}
     let R : Set E := {z | z ∈ C ∧ (z 1 < 0 ∨ 0 < c * z 1 - s * z 0)}
     Gbase ⊆ closure R := by
+  classical
   intro C Gbase R z hzG
   have hzC : z ∈ Metric.ball (0 : E) a := by simpa [C, Gbase] using hzG.1
   have hz1 : z 1 = 0 := by simpa [Gbase] using hzG.2.1
@@ -372,6 +375,7 @@ private lemma twoRay_origin_mem_closure_left (a c s : ℝ) (ha : 0 < a)
     let C : Set E := Metric.ball (0 : E) a
     let L : Set E := {z | z ∈ C ∧ 0 < z 1 ∧ c * z 1 - s * z 0 < 0}
     (0 : E) ∈ closure L := by
+  classical
   intro C L
   let w : E :=
     if 0 < s then
@@ -409,6 +413,7 @@ private lemma twoRay_origin_mem_closure_right (a c s : ℝ) (ha : 0 < a) :
     let C : Set E := Metric.ball (0 : E) a
     let R : Set E := {z | z ∈ C ∧ (z 1 < 0 ∨ 0 < c * z 1 - s * z 0)}
     (0 : E) ∈ closure R := by
+  classical
   intro C R
   let w : E := WithLp.toLp 2 (fun i : Fin 2 => if i = 0 then 0 else -1)
   have h0C : (0 : E) ∈ Metric.ball (0 : E) a := by
@@ -428,6 +433,7 @@ private lemma twoRay_other_subset_closure_left (a c s : ℝ)
       {z | z ∈ C ∧ ∃ t : ℝ, 0 < t ∧ z 0 = t * c ∧ z 1 = t * s}
     let L : Set E := {z | z ∈ C ∧ 0 < z 1 ∧ c * z 1 - s * z 0 < 0}
     Gother ⊆ closure L := by
+  classical
   intro C Gother L z hzG
   have hzC : z ∈ Metric.ball (0 : E) a := by simpa [C, Gother] using hzG.1
   rcases hzG.2 with ⟨t, ht, hz0, hz1⟩
@@ -478,6 +484,7 @@ private lemma twoRay_other_subset_closure_right (a c s : ℝ)
       {z | z ∈ C ∧ ∃ t : ℝ, 0 < t ∧ z 0 = t * c ∧ z 1 = t * s}
     let R : Set E := {z | z ∈ C ∧ (z 1 < 0 ∨ 0 < c * z 1 - s * z 0)}
     Gother ⊆ closure R := by
+  classical
   intro C Gother R z hzG
   have hzC : z ∈ Metric.ball (0 : E) a := by simpa [C, Gother] using hzG.1
   rcases hzG.2 with ⟨t, ht, hz0, hz1⟩
@@ -500,6 +507,7 @@ private lemma twoRay_other_subset_closure_right (a c s : ℝ)
 private lemma image_disjoint_of_injective {f : E → E} (hf : Function.Injective f)
     {A B : Set E} (hAB : Disjoint A B) :
     Disjoint (f '' A) (f '' B) := by
+  classical
   rw [Set.disjoint_left]
   rintro q ⟨x, hxA, rfl⟩ ⟨y, hyB, hyx⟩
   have hy_eq : y = x := hf hyx
@@ -509,6 +517,7 @@ private lemma chart_axis_eq_lineMap
     (p0 p1 z : EuclideanSpace ℝ (Fin 2)) (hz : z 1 = 0) :
     p0 + z 0 • (p1 - p0) + z 1 • PlanarRot90 (p1 - p0) =
       AffineMap.lineMap p0 p1 (z 0) := by
+  classical
   apply PiLp.ext
   intro k
   fin_cases k <;>
@@ -518,6 +527,7 @@ private lemma chart_axis_param_eq_lineMap
     (p0 p1 : EuclideanSpace ℝ (Fin 2)) (t : ℝ) :
     p0 + t • (p1 - p0) =
       AffineMap.lineMap p0 p1 t := by
+  classical
   apply PiLp.ext
   intro k
   fin_cases k <;>
@@ -540,6 +550,7 @@ private lemma leftHalf_inter_subset_of_nonincident
     (j : ℕ) (hj : j + 1 < γ.vertices.length)
     (hne_left : i.1 ≠ j) (hne_right : i.1 ≠ j + 1) :
     sep.leftHalf j hj ∩ C ⊆ L := by
+  classical
   intro x hx
   exfalso
   have hdisj :=
@@ -565,6 +576,7 @@ private lemma rightHalf_inter_subset_of_nonincident
     (j : ℕ) (hj : j + 1 < γ.vertices.length)
     (hne_left : i.1 ≠ j) (hne_right : i.1 ≠ j + 1) :
     sep.rightHalf j hj ∩ C ⊆ R := by
+  classical
   intro x hx
   exfalso
   have hdisj :=
@@ -676,6 +688,7 @@ private lemma localTopologyGoodInitial
     ∃ C L R : Set E,
       localTopologyGood γ controlRadii middleSegments forbiddenMargins
         compatibleTubes vertexLocalPieces ⟨0, hlen_pos⟩ C L R := by
+  classical
   let sep :=
     compatibleTubes.orientedTubes.toPolygonalArcCollarSeparatedTubeData
   let d0 : E := γ.vertices[0 + 1] - γ.vertices[0]
@@ -824,7 +837,7 @@ private lemma localTopologyGoodInitial
       rcases hincident with hleft_inc | hright_inc
       · have : (0 : ℕ) = j := by simpa using hleft_inc
         exact this.symm
-      · have : (0 : ℕ) = j + 1 := by simpa using hright_inc
+      · have : (0 : ℕ) = j + 1 := by simp at hright_inc
         omega
     subst j
     rw [segment_eq_image_lineMap] at hxseg
@@ -851,7 +864,7 @@ private lemma localTopologyGoodInitial
     refine ⟨zt, ?_, ?_⟩
     · dsimp [G0, zt]
       exact ⟨by simpa [zt] using ht_pos, by simpa [zt] using ht_lt_a0,
-        by simp [zt]⟩
+        by simp⟩
     · rw [hline_chart, htx]
   have hrel_subset_carrier : γ.relativeInterior ⊆ γ.carrier := by
     intro x hx
@@ -877,7 +890,7 @@ private lemma localTopologyGoodInitial
   · exact chart_image_open γ.vertices[0] d0 hd0 L0 hL0open
   · exact chart_image_open γ.vertices[0] d0 hd0 R0 hR0open
   · intro hpos _
-    have : (0 : ℕ) < 0 := by simpa using hpos
+    have : (0 : ℕ) < 0 := by simp at hpos
     omega
   · intro _
     exact hvertex0_not_chartC
@@ -923,7 +936,7 @@ private lemma localTopologyGoodInitial
     exact Set.image_mono hG0subC (hgerm0 hx)
   · intro j hj hij
     have hval := congrArg Fin.val hij
-    have : (0 : ℕ) = j + 1 := by simpa using hval
+    have : (0 : ℕ) = j + 1 := by simp at hval
     omega
   · intro j hj hij
     have hj_eq : j = 0 := by
@@ -947,11 +960,11 @@ private lemma localTopologyGoodInitial
       simpa using hx.1⟩
   · intro j hj hij
     have hval := congrArg Fin.val hij
-    have : (0 : ℕ) = j + 1 := by simpa using hval
+    have : (0 : ℕ) = j + 1 := by simp at hval
     omega
   · intro j hj hij
     have hval := congrArg Fin.val hij
-    have : (0 : ℕ) = j + 1 := by simpa using hval
+    have : (0 : ℕ) = j + 1 := by simp at hval
     omega
   · intro j hj hij x hx
     have hj_eq : j = 0 := by
@@ -971,17 +984,17 @@ private lemma localTopologyGoodInitial
       ((endpoint_germ_subset_closure_right a0 K0 ha0 hK0) hzG)
   · intro j hj hij
     have hval := congrArg Fin.val hij
-    have : (0 : ℕ) = j + 1 := by simpa using hval
+    have : (0 : ℕ) = j + 1 := by simp at hval
     omega
   · intro j hj hij
     have hval := congrArg Fin.val hij
-    have : (0 : ℕ) = j + 1 := by simpa using hval
+    have : (0 : ℕ) = j + 1 := by simp at hval
     omega
   · intro hpos _
-    have : (0 : ℕ) < 0 := by simpa using hpos
+    have : (0 : ℕ) < 0 := by simp at hpos
     omega
   · intro hpos _
-    have : (0 : ℕ) < 0 := by simpa using hpos
+    have : (0 : ℕ) < 0 := by simp at hpos
     omega
 
 private lemma localTopologyGoodTerminal
@@ -1002,6 +1015,7 @@ private lemma localTopologyGoodTerminal
     ∃ C L R : Set E,
       localTopologyGood γ controlRadii middleSegments forbiddenMargins
         compatibleTubes vertexLocalPieces ⟨lastJ + 1, hlastJ⟩ C L R := by
+  classical
   let sep :=
     compatibleTubes.orientedTubes.toPolygonalArcCollarSeparatedTubeData
   let dT : E := γ.vertices[lastJ] - γ.vertices[lastJ + 1]
@@ -1216,7 +1230,7 @@ private lemma localTopologyGoodTerminal
     refine ⟨zt, ?_, ?_⟩
     · dsimp [GT, zt]
       exact ⟨by simpa [zt] using ht_back_pos,
-        by simpa [zt] using ht_back_lt_aT, by simp [zt]⟩
+        by simpa [zt] using ht_back_lt_aT, by simp⟩
     · rw [hline_chart, htx]
   have hrel_subset_carrier : γ.relativeInterior ⊆ γ.carrier := by
     intro x hx
@@ -1397,6 +1411,7 @@ private lemma outgoingFrameStraightHalfTubeRouting
       sep.leftHalf (j + 1) hnext ∩ Metric.ball p rho ⊆ chart '' Lmodel ∧
       sep.rightHalf j hj ∩ Metric.ball p rho ⊆ chart '' Rmodel ∧
       sep.rightHalf (j + 1) hnext ∩ Metric.ball p rho ⊆ chart '' Rmodel := by
+  classical
   let sep :=
     compatibleTubes.orientedTubes.toPolygonalArcCollarSeparatedTubeData
   change
@@ -1578,6 +1593,7 @@ private lemma outgoingRaySubsetRelativeInterior
     (hS : S =
       {q | q ∈ Metric.ball p rho ∧ ∃ t : ℝ, 0 < t ∧ q = p + t • v}) :
     S ⊆ γ.relativeInterior := by
+  classical
   rw [hS]
   rintro q ⟨hqBall, t, ht, hq⟩
   have ht_lt_one : t < 1 := by
@@ -1608,6 +1624,7 @@ private lemma incomingRaySubsetRelativeInterior
     (hS : S =
       {q | q ∈ Metric.ball p rho ∧ ∃ t : ℝ, 0 < t ∧ q = p + t • u}) :
     S ⊆ γ.relativeInterior := by
+  classical
   rw [hS]
   rintro q ⟨hqBall, t, ht, hq⟩
   have ht_lt_one : t < 1 := by
@@ -1649,7 +1666,7 @@ private lemma outgoingGermSubsetChartRay
     (i : Fin γ.vertices.length) (j : ℕ)
     (hj : j + 1 < γ.vertices.length)
     (hnext : (j + 1) + 1 < γ.vertices.length)
-    (hi_eq : i = ⟨j + 1, hj⟩)
+    (_hi_eq : i = ⟨j + 1, hj⟩)
     (p v : E) (rho : ℝ)
     (hp : p = γ.vertices[j + 1])
     (hvDef : v = γ.vertices[j + 2] - γ.vertices[j + 1])
@@ -1661,13 +1678,14 @@ private lemma outgoingGermSubsetChartRay
         Set.Ioo (0 : ℝ)
           (controlRadii.radius ⟨j + 1, Nat.lt_of_succ_lt hnext⟩ /
             dist γ.vertices[j + 1] γ.vertices[j + 2]) ⊆ S := by
+  classical
   intro x hx
   have hxEP :=
     vertexLocalPieces.outgoing_germ_subset_endpointPiece (j + 1) hnext hx
   rw [vertexLocalPieces.endpointPiece_eq] at hxEP
   have hxBall : x ∈ Metric.ball p rho := by
     rw [vertexLocalPieces.vertexDisk_eq] at hxEP
-    simpa [hp, hrhoDef, hi_eq] using hxEP.1
+    simpa [hp, hrhoDef] using hxEP.1
   rcases hx with ⟨t, ht, htx⟩
   rw [hS]
   refine ⟨hxBall, t, ht.1, ?_⟩
@@ -1694,7 +1712,7 @@ private lemma incomingGermSubsetChartRay
         compatibleTubes.orientedTubes.toPolygonalArcCollarSeparatedTubeData)
     (i : Fin γ.vertices.length) (j : ℕ)
     (hj : j + 1 < γ.vertices.length)
-    (hi_eq : i = ⟨j + 1, hj⟩)
+    (_hi_eq : i = ⟨j + 1, hj⟩)
     (p u : E) (rho : ℝ)
     (hp : p = γ.vertices[j + 1])
     (huDef : u = γ.vertices[j] - γ.vertices[j + 1])
@@ -1706,12 +1724,13 @@ private lemma incomingGermSubsetChartRay
         Set.Ioo
           (1 - controlRadii.radius ⟨j + 1, hj⟩ /
             dist γ.vertices[j] γ.vertices[j + 1]) (1 : ℝ) ⊆ S := by
+  classical
   intro x hx
   have hxEP := vertexLocalPieces.incoming_germ_subset_endpointPiece j hj hx
   rw [vertexLocalPieces.endpointPiece_eq] at hxEP
   have hxBall : x ∈ Metric.ball p rho := by
     rw [vertexLocalPieces.vertexDisk_eq] at hxEP
-    simpa [hp, hrhoDef, hi_eq] using hxEP.1
+    simpa [hp, hrhoDef] using hxEP.1
   rcases hx with ⟨t, ht, htx⟩
   rw [hS]
   refine ⟨hxBall, 1 - t, by linarith [ht.2], ?_⟩
@@ -1745,6 +1764,7 @@ private lemma localTopologyGoodInterior
     ∃ C L R : Set E,
       localTopologyGood γ controlRadii middleSegments forbiddenMargins
         compatibleTubes vertexLocalPieces i C L R := by
+  classical
   let sep :=
     compatibleTubes.orientedTubes.toPolygonalArcCollarSeparatedTubeData
   let Good :=
@@ -1756,7 +1776,7 @@ private lemma localTopologyGoodInterior
       dsimp [j]
       omega
     have hj : j + 1 < γ.vertices.length := by
-      simpa [hji] using i.2
+      simp [hji]
     have hnext : (j + 1) + 1 < γ.vertices.length := by
       simpa [hji] using hi_next
     have hi_eq : i = ⟨j + 1, hj⟩ := by
@@ -2051,10 +2071,8 @@ private lemma localTopologyGoodInterior
               (vertexLocalPieces.vertexDisk i) (chart '' Rmodel) (by intro x hx; exact hx)
               k hk
               (by
-                change i.1 ≠ k
                 omega)
               (by
-                change i.1 ≠ k + 1
                 omega)
       · intro k hk
         by_cases hk_prev : k = j
@@ -2069,10 +2087,8 @@ private lemma localTopologyGoodInterior
               (vertexLocalPieces.vertexDisk i) (chart '' Lmodel) (by intro x hx; exact hx)
               k hk
               (by
-                change i.1 ≠ k
                 omega)
               (by
-                change i.1 ≠ k + 1
                 omega)
       · intro k hk hik
         have hk_eq : k = j + 1 := by
@@ -2410,10 +2426,8 @@ private lemma localTopologyGoodInterior
               (vertexLocalPieces.vertexDisk i) (chart '' Lmodel) (by intro x hx; exact hx)
               k hk
               (by
-                change i.1 ≠ k
                 omega)
               (by
-                change i.1 ≠ k + 1
                 omega)
       · intro k hk
         by_cases hk_prev : k = j
@@ -2428,10 +2442,8 @@ private lemma localTopologyGoodInterior
               (vertexLocalPieces.vertexDisk i) (chart '' Rmodel) (by intro x hx; exact hx)
               k hk
               (by
-                change i.1 ≠ k
                 omega)
               (by
-                change i.1 ≠ k + 1
                 omega)
       · intro k hk hik
         have hk_eq : k = j + 1 := by
@@ -2555,6 +2567,7 @@ lemma PolygonalArcCollarLocalTopologyDataExists (γ : PolygonalArc) {η : ℝ}
     Nonempty
       (PolygonalArcCollarLocalTopologyData γ controlRadii middleSegments
         forbiddenMargins compatibleTubes vertexLocalPieces) := by
+  classical
   let E := EuclideanSpace ℝ (Fin 2)
   let Good :=
     localTopologyGood γ controlRadii middleSegments forbiddenMargins

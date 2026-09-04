@@ -2,14 +2,14 @@ import Util.IncidenceGeometry.UnitCircle
 import Util.IncidenceGeometry.UnitCircleCyclicSuccessorArcs
 import Util.IncidenceGeometry.UnitCirclesIntersectionsAtMostTwo
 
-open Classical
 open scoped BigOperators
 open scoped Real
 noncomputable section
 
+open Classical in
 lemma UnitCircleRetainedArcEndpointQuotient
     (P : Finset (EuclideanSpace ℝ (Fin 2))) :
-    ∃ (ι : Type) (instF : Fintype ι) (instD : DecidableEq ι)
+    ∃ (ι : Type) (_instF : Fintype ι) (_instD : DecidableEq ι)
       (A : Finset ι) (endpoint : ι → Sym2 P)
       (center arcStart arcEnd : ι → P)
       (carrier arcInterior : ι → Set (EuclideanSpace ℝ (Fin 2)))
@@ -71,7 +71,7 @@ lemma UnitCircleRetainedArcEndpointQuotient
     intro p
     have hp : (p : EuclideanSpace ℝ (Fin 2)) ∈
         P.filter (fun p => 3 ≤ (P.filter (fun q => q ∈ UnitCircle p)).card) := by
-      simpa [retainedCenters] using p.2
+      simp [retainedCenters]
     exact (Finset.mem_filter.mp hp).1
   have hS_subset : ∀ p : Retained,
       (↑(S p) : Set (EuclideanSpace ℝ (Fin 2))) ⊆
@@ -83,7 +83,7 @@ lemma UnitCircleRetainedArcEndpointQuotient
     dsimp [S]
     have hp : (p : EuclideanSpace ℝ (Fin 2)) ∈
         P.filter (fun p => 3 ≤ (P.filter (fun q => q ∈ UnitCircle p)).card) := by
-      simpa [retainedCenters] using p.2
+      simp [retainedCenters]
     exact (Finset.mem_filter.mp hp).2
   have hcircle : ∀ p : Retained,
       ∃ (succ :
@@ -175,7 +175,7 @@ lemma UnitCircleRetainedArcEndpointQuotient
                 (p := fun p : EuclideanSpace ℝ (Fin 2) => p ∈ retainedCenters)
                 (f := fun p => (P.filter (fun q => q ∈ UnitCircle p)).card)]
               intro p
-              simpa [retainedCenters]
+              simp [retainedCenters]
     exact_mod_cast hnat
   have h_endpoints_distinct : ∀ i ∈ A,
       (arcStart i : EuclideanSpace ℝ (Fin 2)) ≠

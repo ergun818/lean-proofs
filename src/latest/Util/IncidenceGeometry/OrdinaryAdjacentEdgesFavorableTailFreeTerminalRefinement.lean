@@ -8,11 +8,11 @@ import Util.IncidenceGeometry.StraightSegmentPolygonalArc
 import Mathlib.Analysis.Convex.StrictConvexSpace
 import Mathlib.Tactic
 
-open Classical
 noncomputable section
 
 private lemma favorableTailFreeArcSourceNeTarget (Q : PolygonalArc) :
     Q.source ≠ Q.target := by
+  classical
   intro h
   have hlen := Q.length_ge_two
   have hzero : Q.vertices[0] = Q.source := by
@@ -30,6 +30,7 @@ private lemma favorableTailFreeArcSourceNeTarget (Q : PolygonalArc) :
 
 private lemma favorableTailFreeArcSourceMem (Q : PolygonalArc) :
     Q.source ∈ Q.carrier := by
+  classical
   have hlen := Q.length_ge_two
   rw [Q.carrier_eq]
   have hzero : Q.vertices[0] = Q.source := by
@@ -41,6 +42,7 @@ private lemma favorableTailFreeArcSourceMem (Q : PolygonalArc) :
 
 private lemma favorableTailFreeArcTargetMem (Q : PolygonalArc) :
     Q.target ∈ Q.carrier := by
+  classical
   have hlen := Q.length_ge_two
   rw [Q.carrier_eq]
   let k := Q.vertices.length - 2
@@ -65,6 +67,7 @@ private lemma favorableTailFreePrefixInterior
     (hp : p ∈ Cut.prefixArc.carrier)
     (hpu : p ≠ D.vertexPlacement u) (hpx : p ≠ x) :
     p ∈ (D.edgeArc e).relativeInterior := by
+  classical
   have hpTarget : p ≠ Q.target := by
     intro hpT
     have htargetSuffix : Q.target ∈ Cut.suffixArc.carrier := by
@@ -92,6 +95,7 @@ private lemma favorableTailFreeCarrierRelativeOfNotVertex
     (hpNotVertex : ∀ v : V, p ≠ D.vertexPlacement v)
     (e : G.edgeFinset) (hp : p ∈ (D.edgeArc e).carrier) :
     p ∈ (D.edgeArc e).relativeInterior := by
+  classical
   rw [(D.edgeArc e).relativeInterior_eq]
   refine ⟨hp, ?_⟩
   rcases D.edgeArc_endpoints e with ⟨a, b, _hab, _he, hends⟩
@@ -108,6 +112,7 @@ private lemma favorableTailFreeOpenIndexUnique (Q : PolygonalArc) :
       (hb : b + 1 < Q.vertices.length),
       z ∈ openSegment ℝ Q.vertices[a] Q.vertices[a + 1] →
       z ∈ segment ℝ Q.vertices[b] Q.vertices[b + 1] → a = b := by
+  classical
   intro z a b ha hb hza hzb
   have habne : Q.vertices[a] ≠ Q.vertices[a + 1] := by
     intro heq
@@ -166,6 +171,7 @@ private lemma favorableTailFreeGlueResidualTail
       TailArc.relativeInterior =
         (segment ℝ y' y ∪ TailOld.tailArc.carrier) \
           ({y', D.vertexPlacement TailOld.farEndpoint} : Set _) := by
+  classical
   let pieces : List PolygonalArc := [Residual, TailOld.tailArc]
   have hsuccessive :
       ∀ n (hn : n + 1 < pieces.length),
@@ -319,6 +325,7 @@ private lemma favorableTailFreeDisjointNewTail
     (hFirstTail : Disjoint FirstCut.prefixArc.carrier OutCut.suffixArc.carrier)
     (hA : A = FirstCut.prefixArc.carrier) :
     Disjoint A TailArc.carrier := by
+  classical
   rw [Set.disjoint_left]
   intro p hpA hpTail
   rw [hTailCarrier] at hpTail
@@ -332,9 +339,9 @@ private lemma favorableTailFreeDisjointNewTail
       rw [← hOldTailOut]
       exact hpOldTail
     exact (Set.disjoint_left.mp
-      (hFirstTail.mono_left (by simpa [hA]))) hpA hpOut
+      (hFirstTail.mono_left (by simp [hA]))) hpA hpOut
 
-
+open Classical in
 private lemma favorableTailFreeCandidateWithTransfer
     {V : Type*} [Fintype V]
     (G : SimpleGraph V) [Fintype G.edgeSet]
@@ -441,7 +448,7 @@ private lemma favorableTailFreeCandidateWithTransfer
                                 else (D.edgeArc edge).carrier) ∪
                               {p | exists v : V,
                                 v ≠ u ∧ p = D.vertexPlacement v} ∧
-                            (exists Tail : BigonRerouteOrderedBetaTailData
+                            (exists _Tail : BigonRerouteOrderedBetaTailData
                                 G D secondEdge u y B Bplus Rbeta H,
                               (forall p, p ∈ Bplus →
                                 p ∈ D.crossingSet → p = x) ∧
@@ -459,6 +466,7 @@ private lemma favorableTailFreeCandidateWithTransfer
                                     ({D.vertexPlacement u, x} : Set _) ∧
                                   p ∈ H) ∧
                                 XAexact.card ≤ XBexact.card))) := by
+    classical
     have endpoint_at (e : G.edgeFinset) (hu : u ∈ e.1) :
         (D.edgeArc e).source = D.vertexPlacement u ∨
           (D.edgeArc e).target = D.vertexPlacement u := by
@@ -944,7 +952,7 @@ private lemma favorableTailFreeCandidateWithTransfer
           ext z
           simp [hOutIndex]
         rw [hEarlier, Set.empty_union]
-        simpa only [hOutIndex, hS0]
+        simp only [hOutIndex, hS0]
       have hOutCross : ∀ p, p ∈ OutCut.prefixArc.carrier →
           p ∈ D.crossingSet → p = x := by
         intro p hp hpCross
@@ -1347,9 +1355,9 @@ private lemma favorableTailFreeCandidateWithTransfer
           exact hxNotTail (hpx ▸ ((OutCut.suffixArc.relativeInterior_eq ▸ hp).1))
         by_cases hs : (D.edgeArc secondEdge).source = D.vertexPlacement u
         · simp only [orient, if_pos hs] at hpOrientSource hpOrientTarget
-          simpa [hpOrientSource, hpOrientTarget]
+          simp [hpOrientSource, hpOrientTarget]
         · simp only [orient, if_neg hs, PolygonalArcReverse] at hpOrientSource hpOrientTarget
-          simpa [hpOrientSource, hpOrientTarget, and_comm]
+          simp [hpOrientSource, hpOrientTarget]
       have hTailRemoved : OutCut.suffixArc.carrier ∩ (B ∪ Bplus) =
           ({y} : Set _) := by
         ext p
@@ -1399,18 +1407,18 @@ private lemma favorableTailFreeCandidateWithTransfer
           rcases hends with hends | hends
           · refine ⟨b, ?_, hends.2⟩
             rw [he]
-            simp [Sym2.mem_iff']
+            simp
           · refine ⟨a, ?_, hends.2⟩
             rw [he]
-            simp [Sym2.mem_iff']
+            simp
         · simp only [if_neg hs, PolygonalArcReverse]
           rcases hends with hends | hends
           · refine ⟨a, ?_, hends.1⟩
             rw [he]
-            simp [Sym2.mem_iff']
+            simp
           · refine ⟨b, ?_, hends.1⟩
             rw [he]
-            simp [Sym2.mem_iff']
+            simp
       obtain ⟨far, hfarMem, hOrientTarget⟩ := orient_target_data secondEdge
       have hfarNe : far ≠ u := by
         intro h
@@ -1695,7 +1703,7 @@ private lemma favorableTailFreeCandidateWithTransfer
             exact (hAlphaAtBetaSpec p).2 ⟨hpPrefix, f, hfA, hfB, hpf⟩
         · exact hFavorableBeta
 
-
+open Classical in
 lemma OrdinaryAdjacentEdgesFavorableTailFreeTerminalRefinement
     {V : Type*} [Fintype V]
     (G : SimpleGraph V) [Fintype G.edgeSet]
@@ -1885,6 +1893,7 @@ lemma OrdinaryAdjacentEdgesFavorableTailFreeTerminalRefinement
                                                   scale •
                                                     ((D.edgeArc firstEdge).vertices[i + 1] -
                                                       (D.edgeArc firstEdge).vertices[i]) := by
+  classical
   intro hab huAlpha huBeta hcross
   have hcandidate :=
     favorableTailFreeCandidateWithTransfer G D alpha beta u hopen hab huAlpha
@@ -2226,7 +2235,7 @@ lemma OrdinaryAdjacentEdgesFavorableTailFreeTerminalRefinement
             have : p ∈ ({y'} : Set _) := hAdjacent ▸
               ⟨hpNew, hpResidual⟩
             simpa using this
-          simpa [hpAtCut]
+          simp [hpAtCut]
         · have hpAtY : p = y := by
             have : p ∈ ({y} : Set _) := hOldTailInter ▸
               ⟨hpOldTail, Or.inr (hnewSubsetOld hpNew)⟩
@@ -2312,7 +2321,7 @@ lemma OrdinaryAdjacentEdgesFavorableTailFreeTerminalRefinement
         (D.crossingSet_spec p).2
           ⟨firstEdge, secondEdge, hedges, hpFirstRel, hpSecondRel⟩
       have hpx := hBplusOldCross p hpOld hpCross
-      simpa [hpx]
+      simp [hpx]
     · intro hp
       have hpx : p = x := by simpa using hp
       subst p

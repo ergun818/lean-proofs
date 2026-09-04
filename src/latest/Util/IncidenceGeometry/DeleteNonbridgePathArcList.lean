@@ -4,9 +4,9 @@ import Mathlib.Combinatorics.SimpleGraph.Paths
 import Mathlib.GroupTheory.Perm.Cycle.Concrete
 import Mathlib.Tactic
 
-open Classical
 noncomputable section
 
+open Classical in
 lemma DeleteNonbridgePathArcList {V : Type*} [Fintype V] (G : SimpleGraph V)
     [Fintype G.edgeSet] [DecidableRel G.Adj] (D : OrdinaryPolygonalDrawing G)
     (A : PlaneFaceData G D) (d : G.Dart)
@@ -145,7 +145,8 @@ lemma DeleteNonbridgePathArcList {V : Type*} [Fintype V] (G : SimpleGraph V)
       simpa [hnext_eq] using hchain_get
     · have hi_last : i = arcs.length - 1 := by omega
       have hnext_eq :
-          arcs.next arcs[i] (List.getElem_mem hi) = arcs.head (List.ne_nil_of_mem (List.getElem_mem hi)) := by
+          arcs.next arcs[i] (List.getElem_mem hi) = arcs.head (List.ne_nil_of_mem (List.getElem_mem
+            hi)) := by
         rw [List.next_getElem arcs harcs_nodup i hi]
         have hmod : (i + 1) % arcs.length = 0 := by
           rw [hi_last]
@@ -176,7 +177,7 @@ lemma DeleteNonbridgePathArcList {V : Type*} [Fintype V] (G : SimpleGraph V)
     hchain_arcs_local, ?_, hlast_attach_local, harcs_nodup, hq_darts_length_two,
     harcs_length_three, hd_not_mem_path_arcs, hform_endpoint⟩
   · intro γ hγ x hx
-    simp [arcs] at hγ
+    simp only [List.mem_cons, List.mem_map, arcs] at hγ
     rcases hγ with hγ | ⟨d', _hd', hγ⟩
     · subst γ
       rw [A.dartArc_carrier d] at hx

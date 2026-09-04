@@ -15,7 +15,6 @@ import Util.IncidenceGeometry.PolygonalSideStripsReverseOfSameCarrier
 import Util.IncidenceGeometry.PositiveSeparation
 import Mathlib.Combinatorics.SimpleGraph.DegreeSum
 
-open Classical
 noncomputable section
 
 lemma PlaneDrawingDartCoherentSideStripsExist {V : Type*} [Fintype V]
@@ -45,6 +44,7 @@ lemma PlaneDrawingDartCoherentSideStripsExist {V : Type*} [Fintype V]
                     (sideStrips (C.star.successor d)).leftStrip ∩
                       Metric.ball (D.vertexPlacement d.toProd.2)
                         (C.star.localDiskRadius d.toProd.2)).Nonempty) := by
+  classical
   let dartEdge : G.Dart → G.edgeSet := fun d => ⟨d.edge, SimpleGraph.Dart.edge_mem d⟩
   have dartEdge_symm : ∀ d : G.Dart, dartEdge d.symm = dartEdge d := by
     intro d

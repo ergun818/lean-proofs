@@ -3,7 +3,6 @@ import Util.IncidenceGeometry.UnitCircleCyclicAngleBasicOrder
 import Util.IncidenceGeometry.UnitCircleCyclicAngleData
 import Util.IncidenceGeometry.UnitCircleFundamentalAngles
 
-open Classical
 noncomputable section
 
 lemma UnitCircleCyclicAngleOrder
@@ -12,6 +11,7 @@ lemma UnitCircleCyclicAngleOrder
     (hS : (↑S : Set (EuclideanSpace ℝ (Fin 2))) ⊆ UnitCircle p)
     (hcard : 3 ≤ S.card) :
     Nonempty (UnitCircleCyclicAngleData p S) := by
+  classical
   rcases UnitCircleFundamentalAngles p S hS with ⟨θ, hθ_mem, hθ_point, hθ_inj⟩
   rcases UnitCircleCyclicAngleBasicOrder p S θ hθ_mem hθ_point hθ_inj hcard with
     ⟨succ, startAngle, endAngle, hsucc_bijective, hsucc_ne, hendpoint_unique,

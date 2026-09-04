@@ -2,7 +2,6 @@ import Mathlib.Tactic
 import Util.IncidenceGeometry.OrdinaryCrossingLocalBranchData
 import Util.IncidenceGeometry.PolygonalArcEndpointGluedVertices
 
-open Classical
 noncomputable section
 
 lemma OrdinaryCrossingLocalBranchDataThreePieceSuffixLift
@@ -19,6 +18,7 @@ lemma OrdinaryCrossingLocalBranchDataThreePieceSuffixLift
     ∃ branch' : OrdinaryCrossingLocalBranchData R p radius,
       branch'.beforeGate = branch.beforeGate ∧
         branch'.afterGate = branch.afterGate := by
+  classical
   let offset := P.vertices.length + bridge.vertices.length - 2
   have hPlen := P.length_ge_two
   have hBlen := bridge.length_ge_two

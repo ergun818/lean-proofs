@@ -1,6 +1,5 @@
 import Util.IncidenceGeometry.FinitePolygonalSet
 
-open Classical
 noncomputable section
 
 lemma FinitePolygonalSetSegmentIntersectionOfEndpointOffLines
@@ -12,6 +11,7 @@ lemma FinitePolygonalSetSegmentIntersectionOfEndpointOffLines
           Set (EuclideanSpace ℝ (Fin 2))) :
             AffineSubspace ℝ (EuclideanSpace ℝ (Fin 2)))) :
     Set.Finite (segment ℝ u v ∩ K.carrier) := by
+  classical
   let E := EuclideanSpace ℝ (Fin 2)
   have segment_subset_line :
       ∀ (a b : E),

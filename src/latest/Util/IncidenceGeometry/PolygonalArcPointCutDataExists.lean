@@ -2,13 +2,13 @@ import Util.IncidenceGeometry.PolygonalArcInteriorPointCutDataExists
 import Util.IncidenceGeometry.PolygonalArcVertexPointCutDataExists
 import Mathlib.Tactic
 
-open Classical
 noncomputable section
 
 lemma PolygonalArcPointCutDataExists
     (Q : PolygonalArc) (c : EuclideanSpace ℝ (Fin 2))
     (hc : c ∈ Q.relativeInterior) :
     Nonempty (PolygonalArcPointCutData Q c) := by
+  classical
   rw [Q.relativeInterior_eq] at hc
   rcases hc with ⟨hcCarrier, hcEndpoints⟩
   have hcBoth : c ≠ Q.source ∧ c ≠ Q.target := by

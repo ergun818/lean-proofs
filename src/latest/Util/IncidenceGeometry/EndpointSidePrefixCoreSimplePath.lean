@@ -10,14 +10,13 @@ import Util.IncidenceGeometry.FinitePolygonalSetSegmentIntersectionOfEndpointOff
 import Util.IncidenceGeometry.FinitePolygonalPerturbation
 import Util.IncidenceGeometry.PolygonalPathToPolygonalArc
 
-
-open Classical
 noncomputable section
 
 private lemma appended_middle_left {X : Type*} (a b : X) (xs : List X)
     (i : ℕ) (hiPos : 0 < i) (hiMiddle : i < xs.length) :
     (([a] ++ xs) ++ [b])[i]'(by simp; omega) =
       xs[i - 1]'(by omega) := by
+  classical
   have hiPrefix : i < ([a] ++ xs).length := by
     simp
     omega
@@ -33,6 +32,7 @@ private lemma appended_middle_left {X : Type*} (a b : X) (xs : List X)
 private lemma appended_middle_right {X : Type*} (a b : X) (xs : List X)
     (i : ℕ) (hiMiddle : i < xs.length) :
     (([a] ++ xs) ++ [b])[i + 1]'(by simp; omega) = xs[i]'hiMiddle := by
+  classical
   have hiPrefix : i + 1 < ([a] ++ xs).length := by
     simp
     omega
@@ -51,6 +51,7 @@ private lemma appended_middle_last {X : Type*} (a b : X) (xs : List X)
     (([a] ++ xs) ++ [b])[xs.length]'(by simp) =
       xs[xs.length - 1]'(by
         exact Nat.sub_lt (List.length_pos_of_ne_nil hxs) (by omega)) := by
+  classical
   have hlastAppend : xs.length < ([a] ++ xs).length := by simp
   calc
     (([a] ++ xs) ++ [b])[xs.length]'(by simp) =
@@ -67,13 +68,12 @@ private lemma appended_middle_last {X : Type*} (a b : X) (xs : List X)
 
 private lemma appended_middle_successor {X : Type*} (a b : X) (xs : List X) :
     (([a] ++ xs) ++ [b])[xs.length + 1]'(by simp) = b := by
-  simpa using
-    (List.getElem_append_right
-      (as := [a] ++ xs) (bs := [b])
-      (i := ([a] ++ xs).length))
+  classical
+  simp
 
 private lemma polygonalArc_source_mem_carrier (A : PolygonalArc) :
     A.source ∈ A.carrier := by
+  classical
   rw [A.carrier_eq]
   have hseg : 0 + 1 < A.vertices.length := A.length_ge_two
   refine ⟨0, hseg, ?_⟩
@@ -90,6 +90,7 @@ private lemma polygonalArc_source_mem_carrier (A : PolygonalArc) :
 private lemma first_vertices_ne_of_nodup {X : Type*} (xs : List X)
     (hnodup : xs.Nodup) (hlen : 1 < xs.length) :
     xs[0]'(by omega) ≠ xs[1]'hlen := by
+  classical
   intro heq
   have hidx : (0 : ℕ) = 1 :=
     (hnodup.getElem_inj_iff
@@ -100,6 +101,7 @@ private lemma openSegment_subset_of_segment_subset_union_left
     (a b : EuclideanSpace ℝ (Fin 2)) (S : Set (EuclideanSpace ℝ (Fin 2)))
     (hne : a ≠ b) (hsegment : segment ℝ a b ⊆ S ∪ ({a} : Set _)) :
     openSegment ℝ a b ⊆ S := by
+  classical
   intro p hp
   rcases hsegment (openSegment_subset_segment ℝ a b hp) with hpS | hpa
   · exact hpS
@@ -116,6 +118,7 @@ private lemma polygonalArc_first_open_subset
     (hsegment :
       segment ℝ P.vertices[0] P.vertices[1] ⊆ S ∪ ({a} : Set _)) :
     openSegment ℝ P.vertices[0] P.vertices[1] ⊆ S := by
+  classical
   rw [← hzero] at hsegment
   exact openSegment_subset_of_segment_subset_union_left
     P.vertices[0] P.vertices[1] S hne hsegment
@@ -156,6 +159,7 @@ private lemma build_prefix_whole_path
                     (hj : j + 1 < whole.vertices.length) → j ≠ 0 →
                       segment ℝ whole.vertices[j] whole.vertices[j + 1] ⊆
                         SelectedSide := by
+  classical
   let vertices : List (EuclideanSpace ℝ (Fin 2)) :=
     ([Aarc.source] ++ middle.vertices) ++ [predecessor.source]
   let edgeSet : Set (EuclideanSpace ℝ (Fin 2)) :=
@@ -421,6 +425,7 @@ private lemma finish_prefix_core_simple_path
                                 Set (EuclideanSpace ℝ (Fin 2))) ∧
                           openSegment ℝ Q.vertices[0] Q.vertices[1] ⊆
                             StartSector := by
+  classical
   have hPsource : P.source = Aarc.source :=
     hPsourceWhole.trans hwholeSource
   have hPtarget : P.target = predecessor.source :=
@@ -551,6 +556,7 @@ lemma EndpointSidePrefixCoreSimplePath
                                   Set (EuclideanSpace ℝ (Fin 2))) ∧
                             openSegment ℝ P.vertices[0] P.vertices[1] ⊆
                               StartSector := by
+  classical
   intro hSelected hStartOpen hStartConvex hStartSubset hSourceClosure
     hSourceNotStart hPredecessorSide hApproachSide hPredecessorTarget
     hApproachSource hPredecessorApproach hApproachTarget hApproachIncoming
@@ -673,7 +679,7 @@ lemma EndpointSidePrefixCoreSimplePath
         StartSector ∪ ({Aarc.source} : Set E) := by
     intro p hp
     by_cases hpSource : p = Aarc.source
-    · exact Or.inr (by simpa [hpSource])
+    · exact Or.inr (by simp [hpSource])
     by_cases hpa0 : p = a0
     · exact Or.inl (by simpa [hpa0] using ha0Start)
     · exact Or.inl

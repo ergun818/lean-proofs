@@ -2,11 +2,9 @@ import Util.IncidenceGeometry.PolygonalReplacementCircleOutsideNearSupportingCoo
 import Util.IncidenceGeometry.PolygonalReplacementCircularTargetEndpointCenterOrder
 import Util.IncidenceGeometry.PolygonalReplacementCircularTargetRetainedPoint
 
-open Classical
 noncomputable section
 
 universe u
-
 
 lemma PolygonalReplacementCircularTargetRetainedHalfspacePoint {V : Type u}
     [Fintype V] (G : SimpleGraph V) [Fintype G.edgeSet]
@@ -179,7 +177,7 @@ lemma PolygonalReplacementCircularTargetRetainedHalfspacePoint {V : Type u}
             simpa using (B.repr.norm_map (sourceVec - centerVec))
           _ = ‖centerVec‖ := hnorm_eq
           _ = ‖B.repr centerVec‖ := by
-            simpa using (B.repr.norm_map centerVec).symm
+            simp
       have hsq : ‖B.repr (sourceVec - centerVec)‖ ^ 2 =
           ‖B.repr centerVec‖ ^ 2 := by rw [hnorm_repr]
       rw [norm_sq_two, norm_sq_two] at hsq
@@ -226,7 +224,7 @@ lemma PolygonalReplacementCircularTargetRetainedHalfspacePoint {V : Type u}
               simpa using (B.repr.norm_map (sourceVec + d - centerVec))
             _ = ‖centerVec‖ := hnorm_eq
             _ = ‖B.repr centerVec‖ := by
-              simpa using (B.repr.norm_map centerVec).symm
+              simp
         have hsq : ‖B.repr (sourceVec + d - centerVec)‖ ^ 2 =
             ‖B.repr centerVec‖ ^ 2 := by rw [hnorm_repr]
         rw [norm_sq_two, norm_sq_two] at hsq

@@ -4,12 +4,12 @@ import Util.IncidenceGeometry.PlanarRot90ConeAvoidsRay
 import Util.IncidenceGeometry.PlanarRot90SameSideConesDisjoint
 import Util.IncidenceGeometry.PositiveSeparation
 
-open Classical
 noncomputable section
 
 private lemma collar_segmentEndpoints_ne (γ : PolygonalArc) {η : ℝ}
     (controlRadii : PolygonalArcCollarControlRadii γ η) (j : ℕ)
     (hj : j + 1 < γ.vertices.length) : γ.vertices[j] ≠ γ.vertices[j + 1] := by
+  classical
   have hsum := controlRadii.adjacent_radii_sum_lt (j := j) hj
   have hleft := controlRadii.radius_pos ⟨j, Nat.lt_of_succ_lt hj⟩
   have hright := controlRadii.radius_pos ⟨j + 1, hj⟩
@@ -24,6 +24,7 @@ private lemma collar_initialConeAvoidsPreviousRay (γ : PolygonalArc) {η : ℝ}
         c • (γ.vertices[j - 1] - γ.vertices[j]) ≠
           t • (γ.vertices[j + 1] - γ.vertices[j]) +
             s • PlanarRot90 (γ.vertices[j + 1] - γ.vertices[j]) := by
+  classical
   apply PlanarRot90ConeAvoidsRay
   · exact sub_ne_zero.mpr (collar_segmentEndpoints_ne γ controlRadii j hj).symm
   · exact (PolygonalArcAdjacentOutwardDirectionsNotSameRay γ hprev hj).1
@@ -37,6 +38,7 @@ private lemma collar_terminalConeAvoidsNextRay (γ : PolygonalArc) {η : ℝ}
         c • (γ.vertices[j + 2] - γ.vertices[j + 1]) ≠
           t • (γ.vertices[j] - γ.vertices[j + 1]) +
             s • PlanarRot90 (γ.vertices[j] - γ.vertices[j + 1]) := by
+  classical
   have hnot :
       ¬ ∃ a : ℝ, 0 < a ∧
         γ.vertices[j + 2] - γ.vertices[j + 1] =
@@ -59,6 +61,7 @@ private lemma collar_successiveOutwardConesDisjoint (γ : PolygonalArc) {η : �
               b • PlanarRot90 (γ.vertices[j] - γ.vertices[j + 1]) ≠
             c • (γ.vertices[j + 2] - γ.vertices[j + 1]) +
               r • PlanarRot90 (γ.vertices[j + 2] - γ.vertices[j + 1]) := by
+  classical
   have hnot :
       ¬ ∃ A : ℝ, 0 < A ∧
         γ.vertices[j + 2] - γ.vertices[j + 1] =
@@ -78,6 +81,7 @@ private lemma collar_initialCenterline_disjoint_previous (γ : PolygonalArc) {η
     Disjoint
       ((AffineMap.lineMap γ.vertices[j] γ.vertices[j + 1]) '' Set.Icc L (1 : ℝ))
       (segment ℝ γ.vertices[j - 1] γ.vertices[j]) := by
+  classical
   rw [Set.disjoint_left]
   intro x hxA hxPrev
   rcases hxA with ⟨t, ht, rfl⟩
@@ -115,6 +119,7 @@ private lemma collar_terminalCenterline_disjoint_next (γ : PolygonalArc) {η : 
     Disjoint
       ((AffineMap.lineMap γ.vertices[j] γ.vertices[j + 1]) '' Set.Icc (0 : ℝ) R)
       (segment ℝ γ.vertices[j + 1] γ.vertices[j + 2]) := by
+  classical
   rw [Set.disjoint_left]
   intro x hxA hxNext
   rcases hxA with ⟨t, ht, rfl⟩
@@ -150,6 +155,7 @@ private lemma collar_successiveCenterlines_disjoint (γ : PolygonalArc) {η : �
     Disjoint
       ((AffineMap.lineMap γ.vertices[j] γ.vertices[j + 1]) '' Set.Icc (0 : ℝ) R)
       ((AffineMap.lineMap γ.vertices[j + 1] γ.vertices[j + 2]) '' Set.Icc L (1 : ℝ)) := by
+  classical
   rw [Set.disjoint_left]
   intro x hxA hxB
   rcases hxA with ⟨t, ht, rfl⟩
@@ -187,6 +193,7 @@ private lemma collar_dist_lineMap_lineMap
     (A B : EuclideanSpace ℝ (Fin 2)) (c₁ c₂ : ℝ) :
     dist (AffineMap.lineMap A B c₁) (AffineMap.lineMap A B c₂) =
       dist c₁ c₂ * dist A B := by
+  classical
   rw [dist_eq_norm, Real.dist_eq, dist_eq_norm]
   have hvec :
       AffineMap.lineMap A B c₁ - AffineMap.lineMap A B c₂ =
@@ -204,6 +211,7 @@ private lemma collar_real_dist_to_Icc_of_mem_Ioo_expansion
     {L R ε t : ℝ} (hε : 0 < ε) (hLR : L < R)
     (ht : t ∈ Set.Ioo (L - ε) (R + ε)) :
     ∃ u : ℝ, u ∈ Set.Icc L R ∧ dist t u < ε := by
+  classical
   by_cases htL : t < L
   · refine ⟨L, ⟨le_rfl, le_of_lt hLR⟩, ?_⟩
     rw [Real.dist_eq, abs_of_neg (sub_neg.mpr htL)]
@@ -219,6 +227,7 @@ private lemma collar_real_dist_to_Icc_of_mem_Ioo_expansion
 private lemma collar_lineMap_sub_left
     (A B : EuclideanSpace ℝ (Fin 2)) (t : ℝ) :
     AffineMap.lineMap A B t - A = t • (B - A) := by
+  classical
   apply PiLp.ext
   intro k
   simp [AffineMap.lineMap_apply_module]
@@ -227,6 +236,7 @@ private lemma collar_lineMap_sub_left
 private lemma collar_lineMap_sub_right
     (A B : EuclideanSpace ℝ (Fin 2)) (t : ℝ) :
     AffineMap.lineMap A B t - B = (1 - t) • (A - B) := by
+  classical
   apply PiLp.ext
   intro k
   simp [AffineMap.lineMap_apply_module]
@@ -235,6 +245,7 @@ private lemma collar_lineMap_sub_right
 private lemma collar_lineMap_add_sub_left
     (A B n : EuclideanSpace ℝ (Fin 2)) (t s : ℝ) :
     AffineMap.lineMap A B t + s • n - A = t • (B - A) + s • n := by
+  classical
   apply PiLp.ext
   intro k
   simp [AffineMap.lineMap_apply_module, sub_eq_add_neg]
@@ -243,6 +254,7 @@ private lemma collar_lineMap_add_sub_left
 private lemma collar_lineMap_add_sub_right
     (A B n : EuclideanSpace ℝ (Fin 2)) (t s : ℝ) :
     AffineMap.lineMap A B t + s • n - B = (1 - t) • (A - B) + s • n := by
+  classical
   apply PiLp.ext
   intro k
   simp [AffineMap.lineMap_apply_module, sub_eq_add_neg]
@@ -250,6 +262,7 @@ private lemma collar_lineMap_add_sub_right
 
 private lemma collar_PlanarRot90_neg (v : EuclideanSpace ℝ (Fin 2)) :
     PlanarRot90 (-v) = -PlanarRot90 v := by
+  classical
   apply PiLp.ext
   intro k
   fin_cases k <;> simp [PlanarRot90]
@@ -257,6 +270,7 @@ private lemma collar_PlanarRot90_neg (v : EuclideanSpace ℝ (Fin 2)) :
 private lemma collar_scaled_eighth_mul_lt_quarter {D μ w : ℝ}
     (hD : 0 < D) (hμ : 0 < μ) (hw : w ≤ μ / (8 * (D + 1))) :
     w * D < μ / 4 := by
+  classical
   have hDnonneg : 0 ≤ D := le_of_lt hD
   have hdenpos : 0 < 8 * (D + 1) := by positivity
   have hscaled : μ / (8 * (D + 1)) * D < μ / 4 := by
@@ -268,6 +282,7 @@ private lemma collar_scaled_eighth_mul_lt_quarter {D μ w : ℝ}
 private lemma collar_scaled_sixteenth_mul_lt_eighth {D μ w : ℝ}
     (hD : 0 < D) (hμ : 0 < μ) (hw : w ≤ μ / (16 * (D + 1))) :
     w * D < μ / 8 := by
+  classical
   have hDnonneg : 0 ≤ D := le_of_lt hD
   have hdenpos : 0 < 16 * (D + 1) := by positivity
   have hscaled : μ / (16 * (D + 1)) * D < μ / 8 := by
@@ -279,6 +294,7 @@ private lemma collar_scaled_sixteenth_mul_lt_eighth {D μ w : ℝ}
 private lemma collar_scaled_quarter_mul_lt {D η w : ℝ}
     (hD : 0 < D) (hη : 0 < η) (hw : w ≤ η / (4 * (D + 1))) :
     w * D < η := by
+  classical
   have hDnonneg : 0 ≤ D := le_of_lt hD
   have hdenpos : 0 < 4 * (D + 1) := by positivity
   have hscaled : η / (4 * (D + 1)) * D < η := by
@@ -292,6 +308,7 @@ private lemma collar_coneBound_mono
     (hlarge : ∀ c t s : ℝ, 0 ≤ c → 0 < t → s ≠ 0 →
       |s| < large * t → P c t s) :
     ∀ c t s : ℝ, 0 ≤ c → 0 < t → s ≠ 0 → |s| < small * t → P c t s := by
+  classical
   intro c t s hc ht hs hlt
   exact hlarge c t s hc ht hs
     (hlt.trans_le (mul_le_mul_of_nonneg_right hsmall (le_of_lt ht)))
@@ -303,6 +320,7 @@ private lemma collar_twoConeBounds_mono
       |b| < large * a → |r| < large * c → P a c b r) :
     ∀ a c b r : ℝ, 0 < a → 0 < c → 0 < b * r →
       |b| < small₁ * a → |r| < small₂ * c → P a c b r := by
+  classical
   intro a c b r ha hc hbr hb hr
   exact hlarge a c b r ha hc hbr
     (hb.trans_le (mul_le_mul_of_nonneg_right hsmall₁ (le_of_lt ha)))
@@ -314,6 +332,7 @@ private lemma collar_normal_orthogonal (A B : EuclideanSpace ℝ (Fin 2)) :
 
 private lemma collar_normal_norm_eq_segment_length
     (A B : EuclideanSpace ℝ (Fin 2)) : ‖PlanarRot90 (B - A)‖ = dist A B := by
+  classical
   calc
     ‖PlanarRot90 (B - A)‖ = ‖B - A‖ := PlanarRot90Norm (B - A)
     _ = ‖A - B‖ := by rw [show B - A = -(A - B) by abel, norm_neg]
@@ -327,6 +346,7 @@ private lemma collar_initialAwayExists (γ : PolygonalArc) {η : ℝ}
       ∀ t : ℝ, t ∈ Set.Icc L (1 : ℝ) →
         ∀ q, q ∈ segment ℝ γ.vertices[j - 1] γ.vertices[j] →
           δ ≤ dist (AffineMap.lineMap γ.vertices[j] γ.vertices[j + 1] t) q := by
+  classical
   let A := (AffineMap.lineMap γ.vertices[j] γ.vertices[j + 1]) '' Set.Icc L (1 : ℝ)
   let B := segment ℝ γ.vertices[j - 1] γ.vertices[j]
   have hAne : A.Nonempty :=
@@ -357,6 +377,7 @@ private lemma collar_terminalAwayExists (γ : PolygonalArc) {η : ℝ}
       ∀ t : ℝ, t ∈ Set.Icc (0 : ℝ) R →
         ∀ q, q ∈ segment ℝ γ.vertices[j + 1] γ.vertices[j + 2] →
           δ ≤ dist (AffineMap.lineMap γ.vertices[j] γ.vertices[j + 1] t) q := by
+  classical
   let A := (AffineMap.lineMap γ.vertices[j] γ.vertices[j + 1]) '' Set.Icc (0 : ℝ) R
   let B := segment ℝ γ.vertices[j + 1] γ.vertices[j + 2]
   have hAne : A.Nonempty :=
@@ -388,6 +409,7 @@ private lemma collar_successiveAwayExists (γ : PolygonalArc) {η : ℝ}
         ∀ u : ℝ, u ∈ Set.Icc L (1 : ℝ) →
           δ ≤ dist (AffineMap.lineMap γ.vertices[j] γ.vertices[j + 1] t)
             (AffineMap.lineMap γ.vertices[j + 1] γ.vertices[j + 2] u) := by
+  classical
   let A := (AffineMap.lineMap γ.vertices[j] γ.vertices[j + 1]) '' Set.Icc (0 : ℝ) R
   let B := (AffineMap.lineMap γ.vertices[j + 1] γ.vertices[j + 2]) '' Set.Icc L (1 : ℝ)
   have hAne : A.Nonempty :=
@@ -423,6 +445,7 @@ private lemma collar_initialSignedConeDisjointPrevious
           z = AffineMap.lineMap γ.vertices[j] γ.vertices[j + 1] t +
             s • PlanarRot90 (γ.vertices[j + 1] - γ.vertices[j])}
       (segment ℝ γ.vertices[j - 1] γ.vertices[j]) := by
+  classical
   rw [Set.disjoint_left]
   intro z hzCone hzSeg
   rcases hzCone with ⟨t, ht, s, hs_ne, hs_lt, hz⟩
@@ -460,6 +483,7 @@ private lemma collar_terminalSignedConeDisjointNext
           z = AffineMap.lineMap γ.vertices[j] γ.vertices[j + 1] t +
             s • PlanarRot90 (γ.vertices[j + 1] - γ.vertices[j])}
       (segment ℝ γ.vertices[j + 1] γ.vertices[j + 2]) := by
+  classical
   rw [Set.disjoint_left]
   intro z hzCone hzSeg
   rcases hzCone with ⟨t, ht, s, hs_ne, hs_lt, hz⟩
@@ -516,6 +540,7 @@ private lemma collar_successivePositiveNegativeConesDisjoint
         ∃ s : ℝ, s < 0 ∧ |s| < initialBound * t ∧
           z = AffineMap.lineMap γ.vertices[j + 1] γ.vertices[j + 2] t +
             s • PlanarRot90 (γ.vertices[j + 2] - γ.vertices[j + 1])} := by
+  classical
   rw [Set.disjoint_left]
   intro z hzL hzR
   rcases hzL with ⟨t, ht, s, hs_pos, hs_lt, hzL⟩
@@ -575,6 +600,7 @@ private lemma collar_successiveNegativePositiveConesDisjoint
         ∃ s : ℝ, 0 < s ∧ s < initialBound * t ∧
           z = AffineMap.lineMap γ.vertices[j + 1] γ.vertices[j + 2] t +
             s • PlanarRot90 (γ.vertices[j + 2] - γ.vertices[j + 1])} := by
+  classical
   rw [Set.disjoint_left]
   intro z hzL hzR
   rcases hzL with ⟨t, ht, s, hs_neg, hs_lt, hzL⟩
@@ -632,6 +658,7 @@ private lemma collar_tubesDisjointOfCloseToSeparatedMiddle
     (k : ℕ) (hk : k + 1 < γ.vertices.length)
     (hgap : j + 1 < k ∨ k + 1 < j) :
     Disjoint (tube j hj) (tube k hk) := by
+  classical
   rw [Set.disjoint_left]
   intro z hzj hzk
   obtain ⟨p, hpM, hpClose⟩ := tube_point_close_to_middle j hj z hzj
@@ -672,6 +699,7 @@ private lemma collar_tubeDisjointNonadjacentSegmentOfCloseToMiddle
     (k : ℕ) (hk : k + 1 < γ.vertices.length)
     (hgap : j + 1 < k ∨ k + 1 < j) :
     Disjoint (tube j hj) (segment ℝ γ.vertices[k] γ.vertices[k + 1]) := by
+  classical
   rw [Set.disjoint_left]
   intro z hzTube hzSeg
   obtain ⟨p, hpM, hpClose⟩ := tube_point_close_to_middle j hj z hzTube
@@ -697,6 +725,7 @@ private lemma collar_tubeDisjointNonincidentControlDiskOfCloseToMiddle
     (i : Fin γ.vertices.length) (hij : i.1 ≠ j) (hijs : i.1 ≠ j + 1) :
     Disjoint (tube j hj)
       (Metric.closedBall γ.vertices[i.1] (controlRadii.radius i)) := by
+  classical
   rw [Set.disjoint_left]
   intro z hzTube hzDisk
   obtain ⟨p, hpM, hpClose⟩ := tube_point_close_to_middle j hj z hzTube
@@ -738,6 +767,7 @@ private lemma collar_tubePointCloseToMiddle
           s • PlanarRot90 (γ.vertices[j + 1] - γ.vertices[j])},
       ∃ p ∈ middleSegments.middle j hj,
         dist z p < forbiddenMargins.margin j hj / 2 := by
+  classical
   intro z hz
   rcases hz with ⟨t, ht, s, hs, rfl⟩
   obtain ⟨u, huIcc, htu⟩ :=
@@ -805,6 +835,7 @@ private lemma collar_tubeSubsetEtaNeighborhood
       ∃ s : ℝ, s ∈ Set.Ioo (-halfWidth) halfWidth ∧
         z = AffineMap.lineMap γ.vertices[j] γ.vertices[j + 1] t + s • normal},
       ∃ p ∈ γ.carrier, dist z p < η := by
+  classical
   intro z hz
   rcases hz with ⟨t, ht, s, hs, rfl⟩
   let p : EuclideanSpace ℝ (Fin 2) :=
@@ -937,6 +968,7 @@ private lemma collar_tubeFacts
         paramSlack j hj * dist γ.vertices[j] γ.vertices[j + 1] <
           forbiddenMargins.margin j hj / 4) :
     CollarTubeFacts γ controlRadii middleSegments forbiddenMargins tube leftHalf rightHalf := by
+  classical
   have hmiddle : ∀ (j : ℕ) (hj : j + 1 < γ.vertices.length),
       middleSegments.middle j hj ⊆ tube j hj := by
     intro j hj z hz
@@ -1082,6 +1114,7 @@ private lemma collar_coneFacts
       (hnext : (j + 1) + 1 < γ.vertices.length),
       initialConeBound (j + 1) hnext ≤ Classical.choose (successiveSource j hj hnext)) :
     CollarConeFacts γ initialConeBound terminalConeBound normal := by
+  classical
   have hiBound : ∀ (j : ℕ) (hj : j + 1 < γ.vertices.length) (hprev : 0 < j),
       ∀ c t s : ℝ, 0 ≤ c → 0 < t → s ≠ 0 → |s| < initialConeBound j hj * t →
         c • (γ.vertices[j - 1] - γ.vertices[j]) ≠
@@ -1227,6 +1260,7 @@ private lemma collar_centerlineAwayFacts
             Classical.choose (successiveAwayExists j hj hnext)) :
     CollarCenterlineAwayFacts γ controlRadii initialAwaySeparation
       terminalAwaySeparation successiveAwaySeparation := by
+  classical
   refine ⟨?_, ?_, ?_⟩
   · intro j hj hprev t ht q hq
     rw [initialAwaySeparation_eq j hj hprev]
@@ -1314,6 +1348,7 @@ private lemma collar_awayWidthFacts
             (16 * (segmentLength (j + 1) hnext + 1))) :
     CollarAwayWidthFacts γ halfWidth normal initialAwaySeparation
       terminalAwaySeparation successiveAwaySeparation := by
+  classical
   refine ⟨?_, ?_, ?_⟩
   · intro j hj hprev
     rw [normal_norm_eq_segmentLength j hj]
@@ -1334,7 +1369,6 @@ private lemma collar_awayWidthFacts
       (successive_right_le j hj hnext)
     nlinarith
 
-
 lemma PolygonalArcCollarCompatibleOrientedTubeDataExists (γ : PolygonalArc) {η : ℝ}
     (controlRadii : PolygonalArcCollarControlRadii γ η)
     (middleSegments : PolygonalArcCollarMiddleSegmentData γ controlRadii)
@@ -1343,6 +1377,7 @@ lemma PolygonalArcCollarCompatibleOrientedTubeDataExists (γ : PolygonalArc) {η
     Nonempty
       (PolygonalArcCollarCompatibleOrientedTubeData γ controlRadii middleSegments
         forbiddenMargins) := by
+  classical
   have initialConeAvoidsPreviousRay :
       ∀ (j : ℕ) (hj : j + 1 < γ.vertices.length) (hprev : 0 < j),
         ∃ κ : ℝ, 0 < κ ∧

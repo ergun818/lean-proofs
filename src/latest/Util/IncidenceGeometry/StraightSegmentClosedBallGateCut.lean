@@ -2,7 +2,6 @@ import Mathlib.Analysis.Normed.Affine.AddTorsor
 import Mathlib.Tactic
 import Util.IncidenceGeometry.Basic
 
-open Classical
 noncomputable section
 
 lemma StraightSegmentClosedBallGateCut
@@ -11,6 +10,7 @@ lemma StraightSegmentClosedBallGateCut
     (hgOpen : g ∈ openSegment ℝ p v)
     (hgSphere : g ∈ Metric.sphere p radius) :
     Metric.closedBall p radius ∩ segment ℝ p v = segment ℝ p g := by
+  classical
   have hgOpenOriginal := hgOpen
   rw [openSegment_eq_image_lineMap] at hgOpen
   rcases hgOpen with ⟨t, ht, htg⟩

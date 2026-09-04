@@ -1,11 +1,11 @@
 import Util.IncidenceGeometry.FinitePolygonalSet
 import Util.IncidenceGeometry.PolygonalArc
 
-open Classical
 noncomputable section
 
 lemma PolygonalArcFinitePolygonalSet (Γ : PolygonalArc) :
     ∃ K : FinitePolygonalSet, K.carrier = Γ.carrier := by
+  classical
   let pts : Finset (EuclideanSpace ℝ (Fin 2)) := Γ.vertices.toFinset
   let segs : Finset (EuclideanSpace ℝ (Fin 2) × EuclideanSpace ℝ (Fin 2)) :=
     (Finset.univ : Finset (Fin (Γ.vertices.length - 1))).image

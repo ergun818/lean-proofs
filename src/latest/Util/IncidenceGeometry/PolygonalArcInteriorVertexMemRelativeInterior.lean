@@ -1,12 +1,12 @@
 import Util.IncidenceGeometry.PolygonalArc
 
-open Classical
 noncomputable section
 
 lemma PolygonalArcInteriorVertexMemRelativeInterior (γ : PolygonalArc)
     (i : Fin γ.vertices.length) (hpos : 0 < i.1)
     (hnext : i.1 + 1 < γ.vertices.length) :
     γ.vertices[i.1] ∈ γ.relativeInterior := by
+  classical
   have hcarrier : γ.vertices[i.1] ∈ γ.carrier := by
     rw [γ.carrier_eq]
     exact ⟨i.1, hnext, left_mem_segment ℝ γ.vertices[i.1] γ.vertices[i.1 + 1]⟩

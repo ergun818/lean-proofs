@@ -2,9 +2,7 @@ import Util.IncidenceGeometry.OrdinaryLabeledCrossingDiskFamilyExists
 import Util.IncidenceGeometry.OrdinaryLabeledCrossingDiskFillingFamilyExists
 import Util.IncidenceGeometry.OrdinaryLabeledCrossingDiskCleanification
 
-open Classical
 noncomputable section
-
 
 lemma OrdinaryAdjacentEdgesCleanificationConsequences
     {V : Type*} [Fintype V]
@@ -39,6 +37,7 @@ lemma OrdinaryAdjacentEdgesCleanificationConsequences
             p ∈ Dclean.crossingSet ∧
               p ∈ (Dclean.edgeArc alpha).relativeInterior ∧
               p ∈ (Dclean.edgeArc beta).relativeInterior) := by
+  classical
   rcases OrdinaryLabeledCrossingDiskFamilyExists G D with ⟨F⟩
   rcases OrdinaryLabeledCrossingDiskFillingFamilyExists G D F with ⟨L⟩
   rcases OrdinaryLabeledCrossingDiskCleanification G D F L with
@@ -74,7 +73,7 @@ lemma OrdinaryAdjacentEdgesCleanificationConsequences
       have hc0 : c ≠ 0 := by
         intro hc0
         subst c
-        simp at hc
+        simp only [zero_smul] at hc
         exact hv hc
       apply h
       refine ⟨c⁻¹, ?_⟩

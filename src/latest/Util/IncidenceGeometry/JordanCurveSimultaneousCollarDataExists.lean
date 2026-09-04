@@ -13,12 +13,12 @@ import Util.IncidenceGeometry.PolygonalArcInteriorTwoRaySectorChartTransport
 import Util.IncidenceGeometry.PolygonalArcSideStripAssembly
 import Util.IncidenceGeometry.PositiveSeparation
 
-open Classical
 noncomputable section
 
 private lemma twoRay_coefficient_sq_sum_pos {c s : ℝ}
     (hpos : 0 < s ∨ s = 0 ∧ c < 0) :
     0 < c ^ 2 + s ^ 2 := by
+  classical
   rcases hpos with hs | ⟨hs, hc⟩
   · exact add_pos_of_nonneg_of_pos (sq_nonneg c) (sq_pos_of_pos hs)
   · simpa [hs] using sq_pos_of_neg hc
@@ -26,6 +26,7 @@ private lemma twoRay_coefficient_sq_sum_pos {c s : ℝ}
 private lemma rotated_cross_pos (c s x y : ℝ)
     (hcoeff : 0 < c ^ 2 + s ^ 2) (hy : 0 < y) :
     0 < c * (x * s + y * c) - s * (x * c - y * s) := by
+  classical
   calc
     0 < (c ^ 2 + s ^ 2) * y := mul_pos hcoeff hy
     _ = c * (x * s + y * c) - s * (x * c - y * s) := by ring
@@ -33,6 +34,7 @@ private lemma rotated_cross_pos (c s x y : ℝ)
 private lemma rotated_cross_neg (c s x y : ℝ)
     (hcoeff : 0 < c ^ 2 + s ^ 2) (hy : y < 0) :
     c * (x * s + y * c) - s * (x * c - y * s) < 0 := by
+  classical
   calc
     c * (x * s + y * c) - s * (x * c - y * s) =
         (c ^ 2 + s ^ 2) * y := by ring
@@ -47,6 +49,7 @@ private lemma polygonalArc_terminal_dist_eq_norm_direction
       ‖(Q.vertices[Q.vertices.length - 2]'(by
           have hlen := Q.length_ge_two
           omega)) - Q.target‖ := by
+  classical
   rw [dist_eq_norm]
   have hneg : Q.target - (Q.vertices[Q.vertices.length - 2]'(by
         have hlen := Q.length_ge_two
@@ -62,6 +65,7 @@ private lemma polygonalArc_initial_dist_eq_norm_direction
     dist Q.source
         (Q.vertices[1]'(Nat.lt_of_succ_le Q.length_ge_two)) =
       ‖(Q.vertices[1]'(Nat.lt_of_succ_le Q.length_ge_two)) - Q.source‖ := by
+  classical
   rw [dist_eq_norm]
   have hneg : Q.source -
       (Q.vertices[1]'(Nat.lt_of_succ_le Q.length_ge_two)) =
@@ -77,6 +81,7 @@ private lemma planarChart_rotated_coordinates
       if i = 0 then z 0 * c - z 1 * s else z 0 * s + z 1 * c)
     p + w 0 • base + w 1 • PlanarRot90 base =
       p + z 0 • other + z 1 • PlanarRot90 other := by
+  classical
   dsimp
   rw [hrot, hrep]
   apply PiLp.ext
@@ -85,8 +90,9 @@ private lemma planarChart_rotated_coordinates
 
 private lemma set_diff_eq_diff_inter_self {X : Type*} (A B : Set X) :
     A \ B = A \ (A ∩ B) := by
+  classical
   ext x
-  simp only [Set.mem_diff, Set.mem_inter_iff]
+  simp only [Set.mem_sdiff, Set.mem_inter_iff]
   tauto
 
 private lemma planarChart_origin_mem_closure
@@ -95,6 +101,7 @@ private lemma planarChart_origin_mem_closure
     (hzero : (0 : EuclideanSpace ℝ (Fin 2)) ∈ closure S) :
     p ∈ closure ((fun z : EuclideanSpace ℝ (Fin 2) =>
       p + z 0 • d + z 1 • PlanarRot90 d) '' S) := by
+  classical
   have hcont : Continuous (fun z : EuclideanSpace ℝ (Fin 2) =>
       p + z 0 • d + z 1 • PlanarRot90 d) := by fun_prop
   apply image_closure_subset_closure_image hcont
@@ -102,12 +109,14 @@ private lemma planarChart_origin_mem_closure
 
 private lemma twoRay_directK_pos (c s : ℝ) :
     0 < (if 0 < s then s / (2 * (|c| + 1)) else 1) := by
+  classical
   split_ifs with hs
   · positivity
   · norm_num
 
 private lemma twoRay_abs_mul_directK_lt (c s : ℝ) (hs : 0 < s) :
     |c| * (if 0 < s then s / (2 * (|c| + 1)) else 1) < s := by
+  classical
   have hden : 0 < 2 * (|c| + 1) := by positivity
   have hnum_lt : |c| < 2 * (|c| + 1) := by
     nlinarith [abs_nonneg c]
@@ -121,9 +130,10 @@ private lemma twoRay_abs_mul_directK_lt (c s : ℝ) (hs : 0 < s) :
 private lemma twoRay_base_upper_cross_neg
     (c s directK K x y : ℝ)
     (hpos : 0 < s ∨ s = 0 ∧ c < 0) (hKle : K ≤ directK)
-    (hdirect : ∀ hs : 0 < s, |c| * directK < s)
+    (hdirect : ∀ _hs : 0 < s, |c| * directK < s)
     (hx : 0 < x) (hy : 0 < y) (hyK : y < K * x) :
     c * y - s * x < 0 := by
+  classical
   rcases hpos with hs | ⟨hs0, hc⟩
   · have hy' : y < directK * x :=
       lt_of_lt_of_le hyK (mul_le_mul_of_nonneg_right hKle hx.le)
@@ -142,9 +152,10 @@ private lemma twoRay_base_upper_cross_neg
 private lemma twoRay_other_lower_first_pos
     (c s directK K x y : ℝ)
     (hpos : 0 < s ∨ s = 0 ∧ c < 0) (hKle : K ≤ directK)
-    (hdirect : ∀ hs : 0 < s, |c| * directK < s)
+    (hdirect : ∀ _hs : 0 < s, |c| * directK < s)
     (hx : 0 < x) (hy : y < 0) (hKy : -K * x < y) :
     0 < x * s + y * c := by
+  classical
   rcases hpos with hs | ⟨hs0, hc⟩
   · have hlow : -directK * x < y := by
       have hle : -directK * x ≤ -K * x := by
@@ -161,6 +172,7 @@ private lemma twoRay_other_lower_first_pos
     simpa [mul_comm] using mul_pos_of_neg_of_neg hy hc
 
 private lemma quarter_lt_half {x : ℝ} (hx : 0 < x) : x / 4 < x / 2 := by
+  classical
   linarith
 
 private lemma swept_twoRay_cone_parameter_exists
@@ -169,6 +181,7 @@ private lemma swept_twoRay_cone_parameter_exists
     (hnot_pos_ray : s ≠ 0 ∨ c < 0)
     (hother_eq : other = c • base - s • PlanarRot90 base) :
     ∃ K : ℝ, 0 < K := by
+  classical
   have hswept := PlanarClockwiseSweptTwoRayEndpointConesInSector
     p base other rho c s hrho hbase hother hnot_pos_ray hother_eq
   dsimp only at hswept
@@ -188,6 +201,7 @@ private lemma polygonalArcReverse_terminal_chart_eq_initial_chart
         z 0 • ((Q.vertices[1]'(Nat.lt_of_succ_le Q.length_ge_two)) - Q.source) +
       z 1 • PlanarRot90
         ((Q.vertices[1]'(Nat.lt_of_succ_le Q.length_ge_two)) - Q.source) = q := by
+  classical
   dsimp only at hq
   have hidx : Q.vertices.length - 1 - (Q.vertices.length - 2) = 1 := by
     have hlen := Q.length_ge_two
@@ -198,6 +212,7 @@ private lemma fin2_mem_ball_zero_of_sq_sum_lt
     (z : EuclideanSpace ℝ (Fin 2)) (a : ℝ) (ha : 0 ≤ a)
     (h : z 0 ^ 2 + z 1 ^ 2 < a ^ 2) :
     z ∈ Metric.ball 0 a := by
+  classical
   rw [EuclideanSpace.ball_zero_eq (n := Fin 2) a ha]
   change (∑ i : Fin 2, z i ^ 2) < a ^ 2
   simpa only [Fin.sum_univ_two] using h
@@ -213,6 +228,7 @@ private lemma polygonalArcReverse_terminal_cone_normalize
         -K * z 0 < z 1 ∧ z 1 < 0) ∧
       Q.source + z 0 • ((Q.vertices[1]'hnext) - Q.source) +
         z 1 • PlanarRot90 ((Q.vertices[1]'hnext) - Q.source) = q := by
+  classical
   rw [PolygonalArcTerminalEndpointLeftCone] at hq
   rcases hq with ⟨z, hz, hqeq⟩
   refine ⟨z, ?_, ?_⟩
@@ -229,6 +245,7 @@ private lemma jordan_bufferedCore_disjoint_other
         (Metric.ball gamma.1.source (r / 2) ∪
           Metric.ball gamma.1.target (r / 2)))
       delta.1.carrier := by
+  classical
   rw [Set.disjoint_left]
   intro x hxcore hxdelta
   have hxgamma : x ∈ gamma.1.carrier := hxcore.1
@@ -380,6 +397,7 @@ private lemma jordan_vertex_sector_exists
             vertexR K ⊆ R ∧
         PolygonalArcTerminalEndpointLeftCone
             (PolygonalArcReverse (J.successor gamma).1) vertexR K ⊆ R := by
+  classical
   let p := gamma.1.target
   let u := terminalDirection gamma
   let v := initialDirection (J.successor gamma)
@@ -532,7 +550,6 @@ private lemma jordan_vertex_sector_exists
       have hlen := gamma.1.length_ge_two
       refine ⟨z, ?_, rfl⟩
       refine ⟨?_, Or.inl hz.2.2.2⟩
-      change z ∈ C
       have hdist : dist gamma.1.target
           gamma.1.vertices[gamma.1.vertices.length - 2] = ‖u‖ := by
         exact terminal_dist
@@ -823,7 +840,7 @@ private lemma jordan_vertex_sector_exists
             (congrArg (fun x : ℝ => (vertexR / x) ^ 2) hdist)).mp hz.2.1
         apply fin2_mem_ball_zero_of_sq_sum_lt z a ha.le
         simpa only [a] using hrad'
-      · simpa [chart, sigma, p, v, initialDirection, hsource]
+      · simp [chart, sigma, p, v, initialDirection, hsource]
     · intro q hq
       rw [PolygonalArcInitialEndpointLeftCone] at hq
       rcases hq with ⟨z, hz, hqeq⟩
@@ -1087,7 +1104,7 @@ private def jordanVertexSectorPreparation
       vertexR + vertexR < dist gamma.1.target delta.1.target := by
     have h := vertexR_lt (gamma, delta)
     dsimp [allBound] at h
-    simp only [gt_iff_lt] at h
+    simp only [hne, if_false, lt_min_iff] at h
     have hthird : vertexR < dist gamma.1.target delta.1.target / 3 :=
       h.2.2.2
     have hd : 0 < dist gamma.1.target delta.1.target :=
@@ -1401,7 +1418,7 @@ private def jordanVertexSectorPreparation
       · have ht := Set.ext_iff.mp (terminal_ball_carrier_eq gamma) q |>.mp
           ⟨hqball, hqgamma⟩
         rcases ht.2 with hqp | ht
-        · exact Or.inr (by simpa [hqp])
+        · exact Or.inr (by simp [hqp])
         · exact Or.inl (Or.inl ⟨hqball, ht⟩)
       · have hs := Set.ext_iff.mp (initial_ball_carrier_eq (J.successor gamma)) q |>.mp
           ⟨by simpa [hsuccSource] using hqball, hqsucc⟩
@@ -1825,13 +1842,13 @@ private lemma jordanCurveSimultaneousCollarDataExists_of_preparation
             targetAperture gamma ∧
           (∀ (j : ℕ) (hj : j + 1 < gamma.1.vertices.length), j ≠ 0 →
             Disjoint
-              ((compatibleTubes gamma).orientedTubes.toPolygonalArcCollarSeparatedTubeData.tube
+              ((compatibleTubes gamma).orientedTubes.tube
                 j hj)
               (Metric.ball gamma.1.source
                 (vertexRadius (J.successor.symm gamma)))) ∧
             (∀ (j : ℕ) (hj : j + 1 < gamma.1.vertices.length), j ≠ jlast →
               Disjoint
-                ((compatibleTubes gamma).orientedTubes.toPolygonalArcCollarSeparatedTubeData.tube
+                ((compatibleTubes gamma).orientedTubes.tube
                   j hj)
                 (Metric.ball gamma.1.target (vertexRadius gamma))) := by
     dsimp [compatibleTubes, tubeExists]
@@ -1924,19 +1941,19 @@ private lemma jordanCurveSimultaneousCollarDataExists_of_preparation
   have stripSpec (gamma : Edge) :
       (sideStrips gamma).collar =
           ((⋃ (j : ℕ), ⋃ (hj : j + 1 < gamma.1.vertices.length),
-              (compatibleTubes gamma).orientedTubes.toPolygonalArcCollarSeparatedTubeData.tube
+              (compatibleTubes gamma).orientedTubes.tube
                 j hj) ∪
             (⋃ i : Fin gamma.1.vertices.length,
               (localSideData gamma).vertexCollar i)) ∧
         (sideStrips gamma).leftStrip =
           ((⋃ (j : ℕ), ⋃ (hj : j + 1 < gamma.1.vertices.length),
-              (compatibleTubes gamma).orientedTubes.toPolygonalArcCollarSeparatedTubeData.leftHalf
+              (compatibleTubes gamma).orientedTubes.leftHalf
                 j hj) ∪
             (⋃ i : Fin gamma.1.vertices.length,
               (localSideData gamma).leftSidePiece i)) ∧
         (sideStrips gamma).rightStrip =
           ((⋃ (j : ℕ), ⋃ (hj : j + 1 < gamma.1.vertices.length),
-              (compatibleTubes gamma).orientedTubes.toPolygonalArcCollarSeparatedTubeData.rightHalf
+              (compatibleTubes gamma).orientedTubes.rightHalf
                 j hj) ∪
             (⋃ i : Fin gamma.1.vertices.length,
               (localSideData gamma).rightSidePiece i)) ∧
@@ -1990,23 +2007,23 @@ private lemma jordanCurveSimultaneousCollarDataExists_of_preparation
   have endpointHalfSpec (gamma : Edge)
       (hfirst : 0 + 1 < gamma.1.vertices.length)
       (hlast : (gamma.1.vertices.length - 2) + 1 < gamma.1.vertices.length) :
-      ((compatibleTubes gamma).orientedTubes.toPolygonalArcCollarSeparatedTubeData.leftHalf
+      ((compatibleTubes gamma).orientedTubes.leftHalf
           0 hfirst ∩
             Metric.ball gamma.1.source (vertexRadius (J.successor.symm gamma)) ⊆
         PolygonalArcInitialEndpointLeftCone gamma.1
           (vertexRadius (J.successor.symm gamma)) (sourceAperture gamma)) ∧
-        ((compatibleTubes gamma).orientedTubes.toPolygonalArcCollarSeparatedTubeData.leftHalf
+        ((compatibleTubes gamma).orientedTubes.leftHalf
             (gamma.1.vertices.length - 2) hlast ∩
               Metric.ball gamma.1.target (vertexRadius gamma) ⊆
           PolygonalArcTerminalEndpointLeftCone gamma.1
             (vertexRadius gamma) (targetAperture gamma)) ∧
-          ((compatibleTubes gamma).orientedTubes.toPolygonalArcCollarSeparatedTubeData.rightHalf
+          ((compatibleTubes gamma).orientedTubes.rightHalf
               0 hfirst ∩
                 Metric.ball gamma.1.source
                   (vertexRadius (J.successor.symm gamma)) ⊆
             PolygonalArcTerminalEndpointLeftCone (PolygonalArcReverse gamma.1)
               (vertexRadius (J.successor.symm gamma)) (sourceAperture gamma)) ∧
-            ((compatibleTubes gamma).orientedTubes.toPolygonalArcCollarSeparatedTubeData.rightHalf
+            ((compatibleTubes gamma).orientedTubes.rightHalf
                 (gamma.1.vertices.length - 2) hlast ∩
                   Metric.ball gamma.1.target (vertexRadius gamma) ⊆
               PolygonalArcInitialEndpointLeftCone (PolygonalArcReverse gamma.1)
@@ -2032,7 +2049,7 @@ private lemma jordanCurveSimultaneousCollarDataExists_of_preparation
     · let pred := J.successor.symm gamma
       have hzUnion : z ∈
           ((⋃ (j : ℕ), ⋃ (hj : j + 1 < gamma.1.vertices.length),
-              (compatibleTubes gamma).orientedTubes.toPolygonalArcCollarSeparatedTubeData.tube
+              (compatibleTubes gamma).orientedTubes.tube
                 j hj) ∪
             (⋃ i : Fin gamma.1.vertices.length,
               (localSideData gamma).vertexCollar i)) := by
@@ -2047,9 +2064,9 @@ private lemma jordanCurveSimultaneousCollarDataExists_of_preparation
           · exact Set.disjoint_left.mp
               (relativeInterior_disjoint_other gamma delta hne) hzRel hzdelta
           · have hhalf : z ∈
-                (compatibleTubes gamma).orientedTubes.toPolygonalArcCollarSeparatedTubeData.leftHalf
+                (compatibleTubes gamma).orientedTubes.leftHalf
                     0 hj ∪
-                  (compatibleTubes gamma).orientedTubes.toPolygonalArcCollarSeparatedTubeData.rightHalf
+                  (compatibleTubes gamma).orientedTubes.rightHalf
                     0 hj := by
               rw [← PolygonalArcMiddleTubeWithoutRelativeInterior gamma.1
                 (controlRadii gamma) (middleSegments gamma) (forbiddenMargins gamma)
@@ -2105,7 +2122,7 @@ private lemma jordanCurveSimultaneousCollarDataExists_of_preparation
     · by_cases hzTarget : z ∈ Metric.ball gamma.1.target (vertexRadius gamma)
       · have hzUnion : z ∈
             ((⋃ (j : ℕ), ⋃ (hj : j + 1 < gamma.1.vertices.length),
-                (compatibleTubes gamma).orientedTubes.toPolygonalArcCollarSeparatedTubeData.tube
+                (compatibleTubes gamma).orientedTubes.tube
                   j hj) ∪
               (⋃ i : Fin gamma.1.vertices.length,
                 (localSideData gamma).vertexCollar i)) := by
@@ -2125,9 +2142,9 @@ private lemma jordanCurveSimultaneousCollarDataExists_of_preparation
             · exact Set.disjoint_left.mp
                 (relativeInterior_disjoint_other gamma delta hne) hzRel hzdelta
             · have hhalf : z ∈
-                  (compatibleTubes gamma).orientedTubes.toPolygonalArcCollarSeparatedTubeData.leftHalf
+                  (compatibleTubes gamma).orientedTubes.leftHalf
                       jlast hlast ∪
-                    (compatibleTubes gamma).orientedTubes.toPolygonalArcCollarSeparatedTubeData.rightHalf
+                    (compatibleTubes gamma).orientedTubes.rightHalf
                       jlast hlast := by
                 rw [← PolygonalArcMiddleTubeWithoutRelativeInterior gamma.1
                   (controlRadii gamma) (middleSegments gamma)

@@ -4,7 +4,6 @@ import Mathlib.Analysis.Convex.Topology
 import Mathlib.Analysis.Normed.Affine.AddTorsor
 import Mathlib.Tactic
 
-open Classical
 noncomputable section
 
 lemma ArcCrossingSegmentParameterGapPiece
@@ -25,6 +24,7 @@ lemma ArcCrossingSegmentParameterGapPiece
                       η.target =
                         (AffineMap.lineMap α.vertices[i] α.vertices[i + 1]) t ∧
                         η.carrier ⊆ (K ∪ γ.carrier)ᶜ := by
+  classical
   intro hαK hleft_s hst ht_right hleft_pos hright_lt_one hno
   let A := α.vertices[i]
   let B := α.vertices[i + 1]

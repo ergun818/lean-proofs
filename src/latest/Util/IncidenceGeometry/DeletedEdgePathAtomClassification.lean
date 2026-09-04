@@ -8,9 +8,9 @@ import Util.IncidenceGeometry.FinitePolygonalPerturbation
 import Util.IncidenceGeometry.OrdinaryDrawingImageCompact
 import Util.IncidenceGeometry.PolygonalPathCarrierConnected
 
-open Classical
 noncomputable section
 
+open Classical in
 lemma DeletedEdgePathAtomClassification {V : Type*} [Fintype V]
     (G : SimpleGraph V) [Fintype G.edgeSet] [DecidableRel G.Adj]
     (D : OrdinaryPolygonalDrawing G) (hD : D.crossingSet.card = 0)

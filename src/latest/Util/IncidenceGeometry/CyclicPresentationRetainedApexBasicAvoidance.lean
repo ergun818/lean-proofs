@@ -5,10 +5,9 @@ import Util.IncidenceGeometry.PolygonalPathInGeneralPosition
 import Util.IncidenceGeometry.TriangleSegmentNoOverlapIntersectionSubsingleton
 import Mathlib.Data.Set.Finite.Lattice
 
-open Classical
 noncomputable section
 
-
+open Classical in
 lemma CyclicPresentationRetainedApexBasicAvoidance
     (γ : PolygonalPath) {J : SimpleClosedPolygonalCurve} {K : FinitePolygonalSet}
     (hgp : PolygonalPathInGeneralPosition γ K)
@@ -22,12 +21,12 @@ lemma CyclicPresentationRetainedApexBasicAvoidance
     let start : retained → EuclideanSpace ℝ (Fin 2) := fun i =>
       γ.vertices[i.1]'(by
         have h := i.2
-        simp only [gt_iff_lt] at h
+        simp only [ne_eq, dite_else_false, Finset.mem_filter, Finset.mem_range, retained] at h
         exact h.1)
     let stop : retained → EuclideanSpace ℝ (Fin 2) := fun i =>
       γ.vertices[i.1 + 1]'(by
         have h := i.2
-        simp only [gt_iff_lt] at h
+        simp only [ne_eq, dite_else_false, Finset.mem_filter, Finset.mem_range, retained] at h
         exact h.2.choose)
     ∀ (σ : Equiv.Perm retained),
       (∀ i : retained, start (σ i) = stop i) →
@@ -40,6 +39,7 @@ lemma CyclicPresentationRetainedApexBasicAvoidance
                     ¬ ∃ c : ℝ, start (σ i) - start i = c • (z - start i)) ∧
                     (∀ i : retained,
                       CyclicPresentationTriangleGeneralPosition R z (start i) (start (σ i))) := by
+  classical
   intro retained start stop σ hσ
   let E := EuclideanSpace ℝ (Fin 2)
   rcases hgp with ⟨hγ_vertices, hKpoints_off, hγ_noOverlap, hγ_transverse, _hγ_finite⟩
@@ -117,7 +117,7 @@ lemma CyclicPresentationRetainedApexBasicAvoidance
   have hside : ∀ i : retained, start i ≠ start (σ i) := by
     intro i hbad
     have hi := i.2
-    simp [retained] at hi
+    simp only [ne_eq, dite_else_false, Finset.mem_filter, Finset.mem_range, retained] at hi
     rcases hi.2 with ⟨_hi_succ, hne⟩
     have hstart_stop : start i ≠ stop i := by
       simpa [start, stop] using hne
@@ -243,7 +243,7 @@ lemma CyclicPresentationRetainedApexBasicAvoidance
   have retained_succ : ∀ i : retained, i.1 + 1 < γ.vertices.length := by
     intro i
     have hi := i.2
-    simp only [gt_iff_lt] at hi
+    simp only [ne_eq, dite_else_false, Finset.mem_filter, Finset.mem_range, retained] at hi
     exact hi.2.choose
   have start_mem_vertices : ∀ i : retained, start i ∈ γ.vertices := by
     intro i

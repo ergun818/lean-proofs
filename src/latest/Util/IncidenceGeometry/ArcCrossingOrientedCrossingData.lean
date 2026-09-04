@@ -1,7 +1,6 @@
 import Util.IncidenceGeometry.PolygonalArcReverse
 import Util.IncidenceGeometry.PolygonalPathInGeneralPosition
 
-open Classical
 noncomputable section
 
 lemma ArcCrossingOrientedCrossingData
@@ -31,6 +30,7 @@ lemma ArcCrossingOrientedCrossingData
                                 δ.carrier ∩ K =
                                   ({δ.source} : Set (EuclideanSpace ℝ (Fin 2))) ∧
                                   δ.target ∉ K := by
+  classical
   intro hΓcarrier hγvertices hγsourceα hγtargetα hgp hattach
   have hfiniteΓ : Set.Finite (α.carrier ∩ Γ.carrier) := hgp.2.2.2.2
   have hpointsAvoid :

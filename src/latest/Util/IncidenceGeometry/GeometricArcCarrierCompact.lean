@@ -1,12 +1,12 @@
 import Util.IncidenceGeometry.GeometricArcDrawing
 
-open Classical
 noncomputable section
 
 lemma GeometricArcCarrierCompact {V : Type*} [Fintype V]
     {G : SimpleGraph V} [Fintype G.edgeSet] (D : GeometricArcDrawing G)
     (e : G.edgeFinset) :
     IsCompact (D.edgeCarrier e) ∧ (D.edgeCarrier e).Nonempty := by
+  classical
   constructor
   · rcases D.edge_is_simple_lineSegment_or_circularArc e with hline | harc
     · rcases hline with ⟨_hne, hcarrier, _hrel⟩

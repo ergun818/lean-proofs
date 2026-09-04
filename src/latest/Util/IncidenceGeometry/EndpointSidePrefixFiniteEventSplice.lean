@@ -1,6 +1,5 @@
 import Util.IncidenceGeometry.EndpointSidePrefixOneEventSplice
 
-open Classical
 noncomputable section
 
 lemma EndpointSidePrefixFiniteEventSplice
@@ -97,6 +96,7 @@ lemma EndpointSidePrefixFiniteEventSplice
             P.carrier \
               (⋃ p ∈ (XA : Set (EuclideanSpace ℝ (Fin 2))),
                 Metric.ball p (eventRadius p)) := by
+  classical
   intro hSelectedOpen hPcarrier hPinterior hPForbidden
     hSelectedForbidden hKcarrier hTerminalFinite hPsourceControl
     hPtargetControl hfirst hTerminalControl hKpoints hSelectedBad

@@ -1,6 +1,5 @@
 import Util.IncidenceGeometry.GeometricArcDrawing
 
-open Classical
 noncomputable section
 
 universe u

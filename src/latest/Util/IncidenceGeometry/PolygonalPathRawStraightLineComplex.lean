@@ -1,6 +1,5 @@
 import Util.IncidenceGeometry.PolygonalPath
 
-open Classical
 noncomputable section
 
 structure PolygonalPathRawStraightLineComplex (γ : PolygonalPath) where

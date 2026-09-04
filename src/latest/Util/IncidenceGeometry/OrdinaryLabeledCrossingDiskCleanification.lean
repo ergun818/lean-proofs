@@ -1,9 +1,7 @@
 import Util.IncidenceGeometry.FiniteLocalizedPolygonalEdgeAssignmentCertification
 import Util.IncidenceGeometry.OrdinaryLabeledCrossingDiskWholeEdgeAssignmentLocalization
 
-open Classical
 noncomputable section
-
 
 lemma OrdinaryLabeledCrossingDiskCleanification {V : Type*} [Fintype V]
     (G : SimpleGraph V) [Fintype G.edgeSet]

@@ -1,7 +1,6 @@
 import Util.IncidenceGeometry.FiniteSortedRealCutListEndpointEntries
 import Mathlib.Tactic
 
-open Classical
 noncomputable section
 
 lemma FiniteSortedRealCutListCoversUnitInterval

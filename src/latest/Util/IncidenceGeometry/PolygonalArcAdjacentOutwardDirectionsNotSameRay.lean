@@ -1,6 +1,5 @@
 import Util.IncidenceGeometry.PolygonalArc
 
-open Classical
 noncomputable section
 
 lemma PolygonalArcAdjacentOutwardDirectionsNotSameRay (γ : PolygonalArc)
@@ -11,6 +10,7 @@ lemma PolygonalArcAdjacentOutwardDirectionsNotSameRay (γ : PolygonalArc)
       ¬ ∃ a : ℝ, 0 < a ∧
         γ.vertices[i + 1] - γ.vertices[i] =
           a • (γ.vertices[i - 1] - γ.vertices[i]) := by
+  classical
   have no_next_pos_prev :
       ¬ ∃ a : ℝ, 0 < a ∧
         γ.vertices[i + 1] - γ.vertices[i] =

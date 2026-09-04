@@ -1,7 +1,6 @@
 import Util.IncidenceGeometry.PointLineConsecutivePairGraphData
 import Util.IncidenceGeometry.PointLineConsecutivePairLineFamilyDataExists
 
-open Classical
 noncomputable section
 
 lemma PointLineConsecutivePairGraphDataExists
@@ -9,6 +8,7 @@ lemma PointLineConsecutivePairGraphDataExists
     (L : Finset {ell : AffineSubspace ℝ (EuclideanSpace ℝ (Fin 2)) //
       IsAffineLine ell}) :
     Nonempty (PointLineConsecutivePairGraphData P L) := by
+  classical
   obtain ⟨A⟩ := PointLineConsecutivePairLineFamilyDataExists P L
   let indexedEdges : Finset (Σ _ell : A.retainedLines, P × P) :=
     (Finset.univ : Finset A.retainedLines).sigma A.localEdges

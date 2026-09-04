@@ -3,7 +3,6 @@ import Util.IncidenceGeometry.PlanarRot90Decomposition
 import Util.IncidenceGeometry.PlanarRot90LinearCombination
 import Util.IncidenceGeometry.PlanarRot90ScalarSameSideConesDisjoint
 
-open Classical
 noncomputable section
 
 lemma PlanarRot90SameSideConesDisjoint {u d : EuclideanSpace ℝ (Fin 2)}
@@ -13,6 +12,7 @@ lemma PlanarRot90SameSideConesDisjoint {u d : EuclideanSpace ℝ (Fin 2)}
       ∀ a c b r : ℝ, 0 < a → 0 < c → 0 < b * r →
         |b| < κ * a → |r| < κ * c →
           a • u + b • PlanarRot90 u ≠ c • d + r • PlanarRot90 d := by
+  classical
   let A : ℝ := inner ℝ d u / (‖u‖ ^ 2)
   let B : ℝ := inner ℝ d (PlanarRot90 u) / (‖u‖ ^ 2)
   have hd_decomp : d = A • u + B • PlanarRot90 u := by

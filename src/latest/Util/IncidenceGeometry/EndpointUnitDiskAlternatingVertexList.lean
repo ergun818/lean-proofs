@@ -1,6 +1,5 @@
 import Util.IncidenceGeometry.Basic
 
-open Classical
 noncomputable section
 
 def EndpointUnitDiskAlternatingVertexList

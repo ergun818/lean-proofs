@@ -1,12 +1,11 @@
 import Util.IncidenceGeometry.ComplementComponentAbsorbsConnectedSubset
 
-open Classical
 noncomputable section
 
 lemma OneEdgeRawLocalFiniteCover
     (A Csigma : Set (EuclideanSpace ℝ (Fin 2)))
     (a b : EuclideanSpace ℝ (Fin 2)) (ra rb : ℝ)
-    {ιA ιB : Type} [Fintype ιA] [Fintype ιB]
+    {ιA ιB : Type} [Finite ιA] [Finite ιB]
     (sectorA : ιA → Set (EuclideanSpace ℝ (Fin 2)))
     (sectorB : ιB → Set (EuclideanSpace ℝ (Fin 2)))
     (middleRect middleLeft middleRight : Set (EuclideanSpace ℝ (Fin 2)))
@@ -62,6 +61,8 @@ lemma OneEdgeRawLocalFiniteCover
                 (∃ i, (Sum.inl (Sum.inr i) : ((ιA ⊕ ιB) ⊕ Bool)) ∈ rawPieces ∧
                   (middleRight ∩ sectorB i).Nonempty)))) := by
   classical
+  let := Fintype.ofFinite ιA
+  let := Fintype.ofFinite ιB
   let piece : ((ιA ⊕ ιB) ⊕ Bool) → Set (EuclideanSpace ℝ (Fin 2)) := fun k =>
     match k with
     | Sum.inl (Sum.inl i) => sectorA i

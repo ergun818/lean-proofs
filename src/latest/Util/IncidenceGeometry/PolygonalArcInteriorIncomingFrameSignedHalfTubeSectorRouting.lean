@@ -2,9 +2,7 @@ import Util.IncidenceGeometry.PolygonalArcInteriorIncomingFramePositiveHalfTubeS
 import Util.IncidenceGeometry.PolygonalArcInteriorTwoRaySectorChartTransport
 
 open Set
-open Classical
 noncomputable section
-
 
 lemma PolygonalArcInteriorIncomingFrameSignedHalfTubeSectorRouting
     (γ : PolygonalArc) {η : ℝ}
@@ -48,6 +46,7 @@ lemma PolygonalArcInteriorIncomingFrameSignedHalfTubeSectorRouting
       sep.leftHalf (j + 1) hnext ∩ Metric.ball p rho ⊆ chart '' R ∧
       sep.rightHalf j hj ∩ Metric.ball p rho ⊆ chart '' L ∧
       sep.rightHalf (j + 1) hnext ∩ Metric.ball p rho ⊆ chart '' L := by
+  classical
   intro sep p u rho chart C L R
   change chart '' C = Metric.ball p rho at hCeq
   have hpositive :

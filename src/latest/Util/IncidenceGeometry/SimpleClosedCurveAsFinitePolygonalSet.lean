@@ -3,7 +3,6 @@ import Util.IncidenceGeometry.PolygonalArc
 import Util.IncidenceGeometry.FinitePolygonalSet
 import Util.IncidenceGeometry.PolygonalArcFinitePolygonalSet
 
-open Classical
 noncomputable section
 
 lemma SimpleClosedCurveAsFinitePolygonalSet

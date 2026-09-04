@@ -1,9 +1,7 @@
 import Util.IncidenceGeometry.FinitePolygonalSetCyclicGlobalPieceStreamTransitionStep
 import Mathlib.Data.List.Chain
 
-open Classical
 noncomputable section
-
 
 lemma FinitePolygonalSetCyclicActualStreamAdjacencyBridge
     (J : SimpleClosedPolygonalCurve) (_K : FinitePolygonalSet)
@@ -276,7 +274,7 @@ lemma FinitePolygonalSetCyclicActualStreamAdjacencyBridge
       have hlen_eq :
           (E[(pieceAt ⟨e, ⟨n, k⟩⟩).1.1]'(pieceAt ⟨e, ⟨n, k⟩⟩).1.2).1.vertices.length =
             (E[e.1]'e.2).1.vertices.length := by
-        simpa [pieceAt_edge ⟨e, ⟨n, k⟩⟩]
+        simp [pieceAt_edge ⟨e, ⟨n, k⟩⟩]
       calc
         (pieceAt ⟨e, ⟨n, k⟩⟩).2.1.1 + 2 = n.1 + 2 := by
           rw [hs]
@@ -376,7 +374,7 @@ lemma FinitePolygonalSetCyclicActualStreamAdjacencyBridge
     refine ⟨nFirst, ?_, ?_⟩
     · dsimp [edgeSegmentBlock, nFirst]
       rw [List.head_eq_getElem_zero]
-      simp only [List.length_map, List.length_finRange, List.getElem_map]
+      simp only [List.getElem_map]
     · dsimp [nFirst]
       simp only [List.getElem_finRange, Fin.val_cast]
   have edgeSegmentBlock_last :
@@ -411,8 +409,7 @@ lemma FinitePolygonalSetCyclicActualStreamAdjacencyBridge
     dsimp [segmentBlocks]
     rw [List.isChain_map]
     rw [List.isChain_iff_getElem]
-    intro m hm
-    intro x hx y hy
+    intro m hm x hx y hy
     have hnext :
         ((List.finRange E.length)[m + 1]).1 =
           ((List.finRange E.length)[m]).1 + 1 := by
@@ -459,7 +456,7 @@ lemma FinitePolygonalSetCyclicActualStreamAdjacencyBridge
     refine ⟨kFirst, ?_, ?_⟩
     · dsimp [localBlock, kFirst]
       rw [List.head_eq_getElem_zero]
-      simp only [List.length_map, List.length_finRange, List.getElem_map]
+      simp only [List.getElem_map]
     · dsimp [kFirst]
       simp only [List.getElem_finRange, Fin.val_cast]
   have localBlock_last :
@@ -492,8 +489,7 @@ lemma FinitePolygonalSetCyclicActualStreamAdjacencyBridge
     dsimp [pieceBlocks]
     rw [List.isChain_map]
     exact segmentIndexList_chain.imp (by
-      intro s t hst
-      intro x hx y hy
+      intro s t hst x hx y hy
       rcases localBlock_last s x hx with ⟨kLast, rfl, hkLast⟩
       rcases localBlock_head t y hy with ⟨kFirst, rfl, hkFirst⟩
       rcases hst with hsame | hedge

@@ -1,6 +1,5 @@
 import Util.IncidenceGeometry.PolygonalReplacementLocalDiskFillingData
 
-open Classical
 noncomputable section
 
 lemma PolygonalReplacementLocalPieceLists {V : Type*} [Fintype V]

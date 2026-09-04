@@ -1,10 +1,8 @@
 import Util.IncidenceGeometry.PolygonalReplacementEdgeBoundaryEndpointData
 
-open Classical
 noncomputable section
 
 universe u
-
 
 lemma PolygonalReplacementIntersectionDiskCutOrder {V : Type u} [Fintype V]
     (G : SimpleGraph V) [Fintype G.edgeSet] (D : GeometricArcDrawing G)

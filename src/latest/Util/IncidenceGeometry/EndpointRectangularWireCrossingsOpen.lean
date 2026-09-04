@@ -1,8 +1,6 @@
 import Util.IncidenceGeometry.PolygonalArc
 
-open Classical
 noncomputable section
-
 
 lemma EndpointRectangularWireCrossingsOpen {ι : Type*}
     (ε : ℝ) (L M R : ι → EuclideanSpace ℝ (Fin 2))
@@ -22,6 +20,7 @@ lemma EndpointRectangularWireCrossingsOpen {ι : Type*}
           p ∈ (Γ j).relativeInterior →
             p ∈ openSegment ℝ (M i) (R i) ∧
               p ∈ openSegment ℝ (M j) (R j) := by
+  classical
   have hleft_x_zero :
       ∀ ⦃i : ι⦄ ⦃p : EuclideanSpace ℝ (Fin 2)⦄,
         p ∈ segment ℝ (L i) (M i) → p 0 = 0 → p = M i := by
@@ -175,7 +174,7 @@ lemma EndpointRectangularWireCrossingsOpen {ι : Type*}
       intro hRip
       apply hpne_i
       right
-      simpa [hΓtarget i, hRip]
+      simp [hΓtarget i, hRip]
     have hMj_ne_p : M j ≠ p := by
       intro hMjp
       have hp0 : p 0 = 0 := by simpa [← hMjp] using hMx j
@@ -185,7 +184,7 @@ lemma EndpointRectangularWireCrossingsOpen {ι : Type*}
       intro hRjp
       apply hpne_j
       right
-      simpa [hΓtarget j, hRjp]
+      simp [hΓtarget j, hRjp]
     exact
       ⟨mem_openSegment_of_ne_left_right hMi_ne_p hRi_ne_p hp_i_right,
         mem_openSegment_of_ne_left_right hMj_ne_p hRj_ne_p hp_j_right⟩

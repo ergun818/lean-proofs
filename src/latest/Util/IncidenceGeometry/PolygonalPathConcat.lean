@@ -1,6 +1,5 @@
 import Util.IncidenceGeometry.PolygonalPath
 
-open Classical
 noncomputable section
 
 lemma PolygonalPathConcat
@@ -12,6 +11,7 @@ lemma PolygonalPathConcat
             ζ.source = γ.source ∧
               ζ.target = η.target ∧
                 ζ.carrier ⊆ S := by
+  classical
   intro hmatch hγS hηS
   have hγsource : γ.source ∈ γ.carrier := by
     rw [γ.carrier_eq]

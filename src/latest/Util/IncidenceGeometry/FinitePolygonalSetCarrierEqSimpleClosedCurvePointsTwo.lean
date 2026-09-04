@@ -1,13 +1,13 @@
 import Util.IncidenceGeometry.SimpleClosedPolygonalCurve
 import Util.IncidenceGeometry.FinitePolygonalSet
 
-open Classical
 noncomputable section
 
 lemma FinitePolygonalSetCarrierEqSimpleClosedCurvePointsTwo
     (J : SimpleClosedPolygonalCurve) (K : FinitePolygonalSet)
     (hKJ : K.carrier = J.carrier) :
     2 ≤ K.points.card := by
+  classical
   have arc_source_mem_carrier :
       ∀ γ : PolygonalArc, γ.source ∈ γ.carrier := by
     intro γ
@@ -73,7 +73,7 @@ lemma FinitePolygonalSetCarrierEqSimpleClosedCurvePointsTwo
         have hpair :
             ({s.1, s.2} : Finset (EuclideanSpace ℝ (Fin 2))) ⊆ K.points := by
           intro x hx
-          simp at hx
+          simp only [Finset.mem_insert, Finset.mem_singleton] at hx
           rcases hx with rfl | rfl
           · exact hs1
           · exact hs2
@@ -98,7 +98,7 @@ lemma FinitePolygonalSetCarrierEqSimpleClosedCurvePointsTwo
   have hpair :
       ({p, q} : Finset (EuclideanSpace ℝ (Fin 2))) ⊆ K.points := by
     intro x hx
-    simp at hx
+    simp only [Finset.mem_insert, Finset.mem_singleton] at hx
     rcases hx with rfl | rfl
     · exact hpK
     · exact hqK

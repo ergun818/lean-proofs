@@ -1,6 +1,5 @@
 import Util.IncidenceGeometry.PolygonalArcCollarLocalSideData
 
-open Classical
 noncomputable section
 
 lemma PolygonalArcSideStripRelativeInteriorCoverage
@@ -22,6 +21,7 @@ lemma PolygonalArcSideStripRelativeInteriorCoverage
       ((⋃ (j : ℕ), ⋃ (hj : j + 1 < γ.vertices.length),
           orientedTubes.toPolygonalArcCollarSeparatedTubeData.tube j hj) ∪
         (⋃ i : Fin γ.vertices.length, localSideData.vertexCollar i)) := by
+  classical
   let sep := orientedTubes.toPolygonalArcCollarSeparatedTubeData
   intro z hzRel
   have hzRel' : z ∈ γ.carrier \ ({γ.source, γ.target} : Set (EuclideanSpace ℝ (Fin 2))) := by

@@ -13,7 +13,8 @@ structure PolygonalArc where
     carrier =
       {p | ∃ i : ℕ, ∃ hi : i + 1 < vertices.length,
         p ∈ segment ℝ vertices[i] vertices[i + 1]}
-  relativeInterior_eq : relativeInterior = carrier \ ({source, target} : Set (EuclideanSpace ℝ (Fin 2)))
+  relativeInterior_eq : relativeInterior = carrier \ ({source, target} : Set (EuclideanSpace ℝ (Fin
+    2)))
   simple_vertices : vertices.Nodup
   segment_intersections :
     ∀ ⦃i j : ℕ⦄,

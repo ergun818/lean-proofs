@@ -3,7 +3,6 @@ import Util.IncidenceGeometry.PolygonalArcEndpointGluedSegmentCertificates
 import Util.IncidenceGeometry.PolygonalArcEndpointGluedSegmentTransfer
 import Util.IncidenceGeometry.PolygonalArcFromEndpointGluedPieces
 
-open Classical
 noncomputable section
 
 lemma BigonReroutePrefixAssembly
@@ -81,6 +80,7 @@ lemma BigonReroutePrefixAssembly
                                              (Bprefix.vertices[j] = piece.vertices[m + 1] ∧
                                               Bprefix.vertices[j + 1] =
                                                 piece.vertices[m])) := by
+  classical
   let pieces : List PolygonalArc :=
     (List.range (E.r + 1)).map E.prefixPiece ++
       [E.terminalSide, E.terminalConnector]
@@ -94,7 +94,7 @@ lemma BigonReroutePrefixAssembly
     rw [List.getElem_append_left (by rw [hprefix_length]; omega)]
     rw [List.getElem_map, List.getElem_range]
   have hpiece_side : pieces[E.r + 1] = E.terminalSide := by
-    rw [List.getElem_append_right (by simpa [hprefix_length])]
+    rw [List.getElem_append_right (by simp [hprefix_length])]
     simp
   have hpiece_connector : pieces[E.r + 2] = E.terminalConnector := by
     rw [List.getElem_append_right (by rw [hprefix_length]; omega)]
@@ -126,7 +126,7 @@ lemma BigonReroutePrefixAssembly
     · subst n
       rw [hpiece_prefix E.r le_rfl, hpiece_side,
         E.predecessor_meets_terminal]
-      simpa [E.prefix_target]
+      simp [E.prefix_target]
     · have heq : n = E.r + 1 := by omega
       subst n
       rw [hpiece_side, hpiece_connector]
@@ -221,7 +221,7 @@ lemma BigonReroutePrefixAssembly
         piece = E.terminalSide ∨ piece = E.terminalConnector) := by
     intro piece hpiece
     simp only [pieces, List.mem_append, List.mem_map, List.mem_range,
-      List.mem_cons, List.mem_singleton, List.not_mem_nil, or_false] at hpiece
+      List.mem_cons, List.not_mem_nil, or_false] at hpiece
     rcases hpiece with ⟨i, hi, rfl⟩ | hpiece | hpiece
     · exact Or.inl ⟨i, by omega, rfl⟩
     · exact Or.inr (Or.inl hpiece)
@@ -320,8 +320,8 @@ lemma BigonReroutePrefixAssembly
         E.terminalSide.carrier) ∪ E.terminalConnector.carrier := by
     rw [hBcarrier]
     ext z
-    simp only [Set.mem_setOf_eq, Set.mem_union, pieces, List.mem_append,
-      List.mem_map, List.mem_range, List.mem_cons, List.mem_singleton,
+    simp only [Set.mem_ofPred_eq, Set.mem_union, pieces, List.mem_append,
+      List.mem_map, List.mem_range, List.mem_cons,
       List.not_mem_nil, or_false]
     constructor
     · rintro ⟨piece, (⟨i, hi, rfl⟩ | rfl | rfl), hz⟩
@@ -371,7 +371,7 @@ lemma BigonReroutePrefixAssembly
           rw [hbad] at this
           exact this.elim
         · by_cases hi0 : i = 0
-          · simpa [hzsrc, hi0, E.prefix_source]
+          · simp [hzsrc, hi0, E.prefix_source]
           · exact (hprefix_source_old_avoid i hi hi0
               (Or.inl (Or.inl (Or.inl (Or.inl (Or.inl (hzsrc ▸ hzA))))))).elim
         · exact (hprefix_target_old_avoid i hi
@@ -538,7 +538,7 @@ lemma BigonReroutePrefixAssembly
         · exact (E.omega_avoid
             (E.terminal_connector_source ▸ hzsrc ▸
               Or.inl (Or.inl (Or.inr hzR)))).elim
-        · simpa [hztgt, E.terminal_connector_target]
+        · simp [hztgt, E.terminal_connector_target]
     · intro hz
       have hzEq : z = BplusArc.target := by simpa using hz
       subst z
@@ -597,7 +597,7 @@ lemma BigonReroutePrefixAssembly
       rcases hspec.1 with ⟨i, hi, hzri⟩
       refine ⟨hpieceInterior (E.prefixPiece i) ?_ hzri, hspec.2⟩
       simp only [pieces, List.mem_append, List.mem_map, List.mem_range,
-        List.mem_cons, List.mem_singleton]
+        List.mem_cons]
       exact Or.inl ⟨i, by omega, rfl⟩
   refine ⟨Bprefix, hBsource, hBtarget, hcarrier, ?_, hcarrier_A,
     hcarrier_B, hcarrier_Rbeta, hinterH, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
@@ -606,7 +606,7 @@ lemma BigonReroutePrefixAssembly
   · intro i hi
     apply hpieceInterior (E.prefixPiece i)
     simp only [pieces, List.mem_append, List.mem_map, List.mem_range,
-      List.mem_cons, List.mem_singleton]
+      List.mem_cons]
     exact Or.inl ⟨i, by omega, rfl⟩
   · apply hpieceInterior E.terminalSide
     simp [pieces]
@@ -615,7 +615,7 @@ lemma BigonReroutePrefixAssembly
   · intro i hi m hm
     apply hpieceSegment (E.prefixPiece i)
     simp only [pieces, List.mem_append, List.mem_map, List.mem_range,
-      List.mem_cons, List.mem_singleton]
+      List.mem_cons]
     exact Or.inl ⟨i, by omega, rfl⟩
   · intro m hm
     exact hpieceSegment E.terminalSide (by simp [pieces]) m hm

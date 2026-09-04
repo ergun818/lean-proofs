@@ -5,25 +5,25 @@ import Util.IncidenceGeometry.PolygonalPath
 import Util.IncidenceGeometry.PolygonalPathIntersectionMultiplicity
 import Util.IncidenceGeometry.PolygonalPathInGeneralPosition
 
-open Classical
 noncomputable section
 
 lemma PolygonalPathMultiplicityCyclicPresentation
     (J : SimpleClosedPolygonalCurve) (Γ : PolygonalPath)
     (K : FinitePolygonalSet)
-    (hKJ : K.carrier = J.carrier)
+    (_hKJ : K.carrier = J.carrier)
     (hgp : PolygonalPathInGeneralPosition Γ K)
     (R : CyclicCurvePresentation J K) :
     PolygonalPathIntersectionMultiplicity Γ K =
       CyclicCurvePresentationIntersectionMultiplicity Γ R := by
+  classical
   unfold PolygonalPathIntersectionMultiplicity CyclicCurvePresentationIntersectionMultiplicity
   refine Finset.sum_congr rfl ?_
   intro i hi_mem
   by_cases hi : i + 1 < Γ.vertices.length
-  · simp [hi]
+  · simp only [hi, ↓reduceDIte]
     by_cases hsame : Γ.vertices[i] = Γ.vertices[i + 1]
     · simp [hsame]
-    · simp [hsame]
+    · simp only [hsame, ↓reduceIte]
       exact R.open_intersection_cardinality_partition Γ.vertices[i] Γ.vertices[i + 1] (by
         intro v hv hvin
         exact hgp.2.1 v hv (by

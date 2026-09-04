@@ -1,9 +1,9 @@
 import Util.IncidenceGeometry.Basic
 import Mathlib.Algebra.BigOperators.Ring.Finset
 
-open Classical
 noncomputable section
 
+open Classical in
 lemma FinitePowersetBernoulliFamilyMoment {α ι : Type*}
     (S : Finset α) (I : Finset ι) (support : ι → Finset α)
     (hsupport : ∀ i ∈ I, support i ⊆ S) (p : ℝ) :

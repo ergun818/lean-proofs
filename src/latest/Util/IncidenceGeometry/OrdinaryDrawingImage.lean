@@ -1,6 +1,5 @@
 import Util.IncidenceGeometry.OrdinaryPolygonalDrawing
 
-open Classical
 noncomputable section
 
 def OrdinaryDrawingImage {V : Type*} [Fintype V] (G : SimpleGraph V)

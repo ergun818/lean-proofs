@@ -9,7 +9,6 @@ import Util.IncidenceGeometry.PolygonalArcSideStripsAvoidCompact
 import Util.IncidenceGeometry.PlaneDrawingEdgeArcSideStripsAvoidImage
 import Util.IncidenceGeometry.ConnectedSubsetContainedInUniqueComplementComponent
 
-open Classical
 noncomputable section
 
 lemma PolygonalArcCollar (γ : PolygonalArc)
@@ -19,7 +18,7 @@ lemma PolygonalArcCollar (γ : PolygonalArc)
         (∃ S : PolygonalSideStrips γ, Disjoint S.collar F) ∧
           ∀ {V : Type*} [Fintype V] (G : SimpleGraph V)
             [Fintype G.edgeSet] [DecidableRel G.Adj]
-            (D : OrdinaryPolygonalDrawing G) (hD : D.crossingSet.card = 0)
+            (D : OrdinaryPolygonalDrawing G) (_hD : D.crossingSet.card = 0)
             (e : G.edgeFinset),
             D.edgeArc e = γ →
               ∃ S : PolygonalSideStrips γ,
@@ -28,6 +27,7 @@ lemma PolygonalArcCollar (γ : PolygonalArc)
                     DrawingFaceComponent G D L ∧ S.leftStrip ⊆ L) ∧
                   (∃! R : Set (EuclideanSpace ℝ (Fin 2)),
                     DrawingFaceComponent G D R ∧ S.rightStrip ⊆ R) := by
+  classical
   intro hF hFγ
   constructor
   · exact PolygonalArcSideStripsAvoidCompact γ F hF hFγ

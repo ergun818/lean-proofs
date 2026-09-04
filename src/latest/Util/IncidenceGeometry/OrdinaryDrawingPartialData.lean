@@ -1,6 +1,5 @@
 import Util.IncidenceGeometry.OrdinaryPolygonalDrawing
 
-open Classical
 noncomputable section
 
 structure OrdinaryDrawingPartialData {V : Type*} [Fintype V] (G : SimpleGraph V)

@@ -1,7 +1,6 @@
 import Util.IncidenceGeometry.PolygonalReplacementCircularTargetEndpointChordControlFromHalfspace
 import Util.IncidenceGeometry.PolygonalReplacementCircularTargetRetainedHalfspacePoint
 
-open Classical
 noncomputable section
 
 universe u

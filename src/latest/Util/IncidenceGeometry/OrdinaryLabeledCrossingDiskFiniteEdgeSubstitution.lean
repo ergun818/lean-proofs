@@ -2,10 +2,9 @@ import Util.IncidenceGeometry.OrdinaryCrossingLocalBranchSubstitutionDisjointDis
 import Util.IncidenceGeometry.OrdinaryLabeledCrossingDiskFillingFamily
 import Mathlib.Tactic
 
-open Classical
 noncomputable section
 
-
+open Classical in
 lemma OrdinaryLabeledCrossingDiskFiniteEdgeSubstitution {V : Type*} [Fintype V]
     (G : SimpleGraph V) [Fintype G.edgeSet]
     (D : OrdinaryPolygonalDrawing G)
@@ -291,7 +290,7 @@ lemma OrdinaryLabeledCrossingDiskFiniteEdgeSubstitution {V : Type*} [Fintype V]
               fillingCarrier (insert x S) := by
           rw [hcarrierOne, hQcarrier, hopenInsert, hfillInsert]
           ext z
-          simp only [Set.mem_union, Set.mem_diff]
+          simp only [Set.mem_union, Set.mem_sdiff]
           have hfillOutside : z ∈ fillingCarrier S →
               z ∉ Metric.ball x.1 (F.disk x).radius := fun hzFill hzBall =>
             hfillSOutsideClosed z hzFill (Metric.ball_subset_closedBall hzBall)
@@ -300,7 +299,7 @@ lemma OrdinaryLabeledCrossingDiskFiniteEdgeSubstitution {V : Type*} [Fintype V]
             (D.edgeArc e).carrier \ openBalls (insert x S) := by
           ext z
           rw [hopenInsert]
-          simp only [Set.mem_diff, Set.mem_union]
+          simp only [Set.mem_sdiff, Set.mem_union]
           have hone := Set.ext_iff.mp houtsideOne z
           have hprev := Set.ext_iff.mp hQoutside z
           constructor

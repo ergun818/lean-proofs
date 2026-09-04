@@ -7,7 +7,6 @@ import Util.IncidenceGeometry.PolygonalArcCollarMiddleForbiddenMarginsExists
 import Util.IncidenceGeometry.PolygonalArcCollarMiddleSegmentDataExists
 import Util.IncidenceGeometry.PolygonalArcSideStripAssembly
 
-open Classical
 noncomputable section
 
 lemma OrdinaryAdjacentEdgesConcreteCollarGeometry (Aarc : PolygonalArc)
@@ -36,12 +35,12 @@ lemma OrdinaryAdjacentEdgesConcreteCollarGeometry (Aarc : PolygonalArc)
                       omega
                    let itarget : ℕ := Aarc.vertices.length - 1
                    let htarget : itarget < Aarc.vertices.length := by
-                      have hlen := Aarc.length_ge_two
+                      have _hlen := Aarc.length_ge_two
                       dsimp [itarget]
                       omega
                    let jlast : ℕ := Aarc.vertices.length - 2
                    let hlast : jlast + 1 < Aarc.vertices.length := by
-                      have hlen := Aarc.length_ge_two
+                      have _hlen := Aarc.length_ge_two
                       dsimp [jlast]
                       omega
                    controlRadii.radius ⟨0, hsource⟩ < r0 ∧
@@ -67,19 +66,19 @@ lemma OrdinaryAdjacentEdgesConcreteCollarGeometry (Aarc : PolygonalArc)
                        PolygonalArcTerminalEndpointCone Aarc r1 K1) ∧
                      S.collar =
                        ((⋃ (j : ℕ), ⋃ (hj : j + 1 < Aarc.vertices.length),
-                           compatibleTubes.orientedTubes.toPolygonalArcCollarSeparatedTubeData.tube
+                           compatibleTubes.orientedTubes.tube
                              j hj) ∪
                          (⋃ i : Fin Aarc.vertices.length,
                            localSideData.vertexCollar i)) ∧
                      S.leftStrip =
                        ((⋃ (j : ℕ), ⋃ (hj : j + 1 < Aarc.vertices.length),
-                           compatibleTubes.orientedTubes.toPolygonalArcCollarSeparatedTubeData.leftHalf
+                           compatibleTubes.orientedTubes.leftHalf
                              j hj) ∪
                          (⋃ i : Fin Aarc.vertices.length,
                            localSideData.leftSidePiece i)) ∧
                      S.rightStrip =
                        ((⋃ (j : ℕ), ⋃ (hj : j + 1 < Aarc.vertices.length),
-                           compatibleTubes.orientedTubes.toPolygonalArcCollarSeparatedTubeData.rightHalf
+                           compatibleTubes.orientedTubes.rightHalf
                              j hj) ∪
                          (⋃ i : Fin Aarc.vertices.length,
                            localSideData.rightSidePiece i)) ∧
@@ -130,6 +129,7 @@ lemma OrdinaryAdjacentEdgesConcreteCollarGeometry (Aarc : PolygonalArc)
                           chartT '' RT ∧
                         localSideData.rightSidePiece ⟨itarget, htarget⟩ =
                           chartT '' LT)) := by
+  classical
   obtain ⟨controlRadii, hr0, hr1, hsourceBalls, htargetBalls⟩ :=
     PolygonalArcCollarControlRadiiExistsBelow Aarc eta r0 r1 heta
       hIso.source_pos hIso.target_pos hIso

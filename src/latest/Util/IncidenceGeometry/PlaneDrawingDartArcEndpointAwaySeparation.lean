@@ -7,7 +7,6 @@ import Util.IncidenceGeometry.PolygonalArcVertexMemCarrier
 import Util.IncidenceGeometry.PositiveSeparation
 import Mathlib.Combinatorics.SimpleGraph.DegreeSum
 
-open Classical
 noncomputable section
 
 lemma PlaneDrawingDartArcEndpointAwaySeparation {V : Type*} [Fintype V]
@@ -24,6 +23,7 @@ lemma PlaneDrawingDartArcEndpointAwaySeparation {V : Type*} [Fintype V]
                 ∀ p : EuclideanSpace ℝ (Fin 2),
                   p ∈ (A.dartArc d).carrier →
                     δ ≤ dist x p := by
+  classical
   intro hr₀ hr₁
   let e : G.edgeFinset := A.dartEdge d
   let γ : PolygonalArc := A.dartArc d

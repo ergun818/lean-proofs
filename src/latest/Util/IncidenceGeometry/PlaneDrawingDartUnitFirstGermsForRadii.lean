@@ -1,7 +1,6 @@
 import Mathlib.Tactic
 import Util.IncidenceGeometry.PlaneDrawingDartArcData
 
-open Classical
 noncomputable section
 
 lemma PlaneDrawingDartUnitFirstGermsForRadii {V : Type*} [Fintype V]
@@ -173,7 +172,7 @@ lemma PlaneDrawingDartUnitFirstGermsForRadii {V : Type*} [Fintype V]
             R v • ((‖firstDirection v d‖)⁻¹ • firstDirection v d) := by
         module
       rw [hsub, norm_smul, hunit_norm, Real.norm_eq_abs, abs_of_pos (hR v)]
-      simpa using (le_rfl : R v ≤ R v)
+      simp
     have hend_ne :
         D.vertexPlacement v ≠
           D.vertexPlacement v + R v • ((‖firstDirection v d‖)⁻¹ • firstDirection v d) := by

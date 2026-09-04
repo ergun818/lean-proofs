@@ -10,7 +10,6 @@ import Util.IncidenceGeometry.PolygonalArcReverse
 import Util.IncidenceGeometry.PolygonalArcTerminalEndpointLeftCone
 import Util.IncidenceGeometry.PolygonalArcTerminalEndpointSegmentLength
 
-open Classical
 noncomputable section
 
 lemma PolygonalArcEndpointLeftHalfTubeSubsetLeftCones (γ : PolygonalArc)
@@ -46,6 +45,7 @@ lemma PolygonalArcEndpointLeftHalfTubeSubsetLeftCones (γ : PolygonalArc)
                             Metric.ball γ.target r₁ ⊆
                         PolygonalArcInitialEndpointLeftCone
                           (PolygonalArcReverse γ) r₁ K₁) := by
+  classical
   intro hIso hK₀ hK₁ hfirst hlast hKinit_lt hKterm_lt
   let sep := compatibleTubes.orientedTubes.toPolygonalArcCollarSeparatedTubeData
   have hsourceIdx : 0 < γ.vertices.length := by

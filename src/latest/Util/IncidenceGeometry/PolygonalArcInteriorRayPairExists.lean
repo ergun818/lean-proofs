@@ -1,13 +1,13 @@
 import Util.IncidenceGeometry.PolygonalArcAdjacentOutwardDirectionsNotSameRay
 import Util.IncidenceGeometry.PolygonalArcInteriorRayPair
 
-open Classical
 noncomputable section
 
 lemma PolygonalArcInteriorRayPairExists
     (gamma : PolygonalArc) (p : EuclideanSpace ℝ (Fin 2))
     (hp : p ∈ gamma.relativeInterior) :
     Nonempty (PolygonalArcInteriorRayPair gamma p) := by
+  classical
   rw [gamma.relativeInterior_eq] at hp
   rcases hp with ⟨hpCarrier, hpEnds⟩
   have hpBoth : p ≠ gamma.source ∧ p ≠ gamma.target := by

@@ -1,7 +1,6 @@
 import Util.IncidenceGeometry.BigonRerouteOrderedBetaTailData
 import Util.IncidenceGeometry.OrdinaryPolygonalDrawing
 
-open Classical
 noncomputable section
 
 lemma BigonRerouteNewEdgeClassification
@@ -13,7 +12,7 @@ lemma BigonRerouteNewEdgeClassification
     (Bprefix betaArcNew : PolygonalArc)
     (edgeArcNew : G.edgeFinset → PolygonalArc)
     (Tail : BigonRerouteOrderedBetaTailData G D beta u y B Bplus Rbeta H)
-    (hxCross : x ∈ D.crossingSet)
+    (_hxCross : x ∈ D.crossingSet)
     (hxBeta : x ∈ (D.edgeArc beta).relativeInterior)
     (hyBeta : y ∈ (D.edgeArc beta).relativeInterior)
     (hyx : y ≠ x)
@@ -38,9 +37,9 @@ lemma BigonRerouteNewEdgeClassification
     (hbetaEdge : edgeArcNew beta = betaArcNew)
     (hotherEdges : ∀ e : G.edgeFinset, e ≠ beta →
       edgeArcNew e = D.edgeArc e)
-    (hbetaSource : betaArcNew.source = D.vertexPlacement u)
-    (hbetaTarget : betaArcNew.target = D.vertexPlacement Tail.farEndpoint)
-    (hbetaCarrier : betaArcNew.carrier =
+    (_hbetaSource : betaArcNew.source = D.vertexPlacement u)
+    (_hbetaTarget : betaArcNew.target = D.vertexPlacement Tail.farEndpoint)
+    (_hbetaCarrier : betaArcNew.carrier =
       Bprefix.carrier ∪ Tail.tailArc.carrier)
     (hbetaRelative : betaArcNew.relativeInterior =
       (Bprefix.carrier ∪ Tail.tailArc.carrier) \
@@ -59,6 +58,7 @@ lemma BigonRerouteNewEdgeClassification
               p ∈ (edgeArcNew e₁).relativeInterior ∧
                 p ∈ (edgeArcNew e₂).relativeInterior) →
             p ∈ (D.crossingSet.erase x \ XB) ∪ Xnew := by
+  classical
   have hyNoOther : ∀ (e : G.edgeFinset), e ≠ beta →
       y ∉ (D.edgeArc e).relativeInterior := by
     intro e he hye

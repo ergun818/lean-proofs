@@ -1,8 +1,8 @@
 import Util.IncidenceGeometry.Basic
 
-open Classical
 noncomputable section
 
+open Classical in
 structure GeometricArcDrawing {V : Type*} [Fintype V] (G : SimpleGraph V)
     [Fintype G.edgeSet] where
   vertexPlacement : V → EuclideanSpace ℝ (Fin 2)

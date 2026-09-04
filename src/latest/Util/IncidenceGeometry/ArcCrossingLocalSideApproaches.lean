@@ -11,7 +11,6 @@ import Util.IncidenceGeometry.PolygonalPathFiniteChainConcat
 import Util.IncidenceGeometry.PolygonalPath
 import Util.IncidenceGeometry.PolygonallyPathConnected
 
-open Classical
 noncomputable section
 
 lemma ArcCrossingLocalSideApproaches
@@ -60,6 +59,7 @@ lemma ArcCrossingLocalSideApproaches
                         α'.source = α.source ∧
                           α'.target = α.target ∧
                             α'.carrier ⊆ (K ∪ γ.carrier)ᶜ := by
+  classical
   intro hfinite hαK hαsource hαtarget hWsub hWpath hαverticesAvoidγ hcut hordered hcover
   let Safe : Set (EuclideanSpace ℝ (Fin 2)) := (K ∪ γ.carrier)ᶜ
   by_cases hXempty :
@@ -324,7 +324,7 @@ lemma ArcCrossingLocalSideApproaches
             intro hABeq
             have hx_eq : AffineMap.lineMap α.vertices[i] α.vertices[i + 1] params[n] =
                 α.vertices[i] := by
-              simpa [hABeq] using hx_occ.1
+              simp [hABeq]
             exact hA_notγ (by simpa [hx_eq] using hx_occ.2)
           intro hsame
           have hparam_same :

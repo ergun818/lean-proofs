@@ -17,14 +17,16 @@ theorem SzemerediTrotter :
   intro P L
   by_cases hP0 : P.card = 0
   · have hPempty : P = ∅ := Finset.card_eq_zero.mp hP0
-    simp only [one_div, ge_iff_le]
-    exact mul_nonneg
-      (add_nonneg (by norm_num) (Real.rpow_nonneg (by norm_num) _)) (by positivity)
+    simp only [hPempty, LineIncidences, Finset.product_eq_sprod, Finset.empty_product,
+      Finset.filter_empty,
+      Finset.card_empty, Nat.cast_zero]
+    positivity
   by_cases hL0 : L.card = 0
   · have hLempty : L = ∅ := Finset.card_eq_zero.mp hL0
-    simp only [one_div, ge_iff_le]
-    exact mul_nonneg
-      (add_nonneg (by norm_num) (Real.rpow_nonneg (by norm_num) _)) (by positivity)
+    simp only [hLempty, LineIncidences, Finset.product_eq_sprod, Finset.product_empty,
+      Finset.filter_empty,
+      Finset.card_empty, Nat.cast_zero]
+    positivity
   have hn_nat : 1 ≤ P.card := Nat.succ_le_of_lt (Nat.pos_of_ne_zero hP0)
   have hl_nat : 1 ≤ L.card := Nat.succ_le_of_lt (Nat.pos_of_ne_zero hL0)
   have hn_nonneg : 0 ≤ (P.card : ℝ) := by positivity

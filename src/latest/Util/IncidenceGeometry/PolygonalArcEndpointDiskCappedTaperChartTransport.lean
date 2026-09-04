@@ -2,7 +2,6 @@ import Util.IncidenceGeometry.PolygonalArcEndpointDiskCappedTaperModel
 import Util.IncidenceGeometry.PlanarRot90CoefficientUniqueness
 
 open Set
-open Classical
 noncomputable section
 
 lemma PolygonalArcEndpointDiskCappedTaperChartTransport
@@ -37,6 +36,7 @@ lemma PolygonalArcEndpointDiskCappedTaperChartTransport
         chart (WithLp.toLp 2 (fun i : Fin 2 => if i = 0 then t else 0)) ≠ p0) ∧
       ((AffineMap.lineMap p0 p1) '' Set.Ioo (0 : ℝ) a ⊆ chart '' G) ∧
       chart '' C \ chart '' G = chart '' L ∪ chart '' R := by
+  classical
   intro d chart a C L R G
   have hd : d ≠ 0 := by
     intro h

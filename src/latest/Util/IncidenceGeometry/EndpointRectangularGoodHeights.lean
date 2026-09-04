@@ -1,12 +1,11 @@
 import Util.IncidenceGeometry.PolygonalArc
 import Mathlib.Order.Interval.Set.Infinite
 
-open Classical
 noncomputable section
 
 set_option linter.unusedVariables false
 
-lemma EndpointRectangularGoodHeights {ι : Type*} [Fintype ι]
+lemma EndpointRectangularGoodHeights {ι : Type*} [Finite ι]
     (ε H : ℝ) (L R : ι → EuclideanSpace ℝ (Fin 2))
     (hε : 0 < ε) (hH : 0 < H)
     (hLx : ∀ i, (L i) 0 = -ε)
@@ -39,6 +38,8 @@ lemma EndpointRectangularGoodHeights {ι : Type*} [Fintype ι]
                   p ∈ openSegment ℝ (middleFromHeights η i) (R i) →
                     p ∈ openSegment ℝ (middleFromHeights η j) (R j) →
                       p ∈ openSegment ℝ (middleFromHeights η k) (R k) → False) := by
+  classical
+  let := Fintype.ofFinite ι
   let lam : ι → ℝ := fun i => (L i) 1
   let ρ : ι → ℝ := fun i => (R i) 1
   let φ : ι → ℝ := fun i => H ^ 2 - (lam i) ^ 2
@@ -113,13 +114,13 @@ lemma EndpointRectangularGoodHeights {ι : Type*} [Fintype ι]
     · exact h3 h3zero
   let δ : ℝ := 1 / (4 * H)
   have hδpos : 0 < δ := by
-    simp [δ]
+    simp only [one_div, mul_inv_rev, inv_pos, Nat.ofNat_pos, mul_pos_iff_of_pos_right, δ]
     positivity
   have hδord : -δ < δ := by linarith
   have hinterval_inf : (Set.Ioo (-δ) δ : Set ℝ).Infinite :=
     Set.Ioo_infinite hδord
   have hbad_fin : (bad : Set ℝ).Finite := bad.finite_toSet
-  obtain ⟨c, hc⟩ := (hinterval_inf.diff hbad_fin).nonempty
+  obtain ⟨c, hc⟩ := (hinterval_inf.sdiff hbad_fin).nonempty
   have hc_interval : c ∈ Set.Ioo (-δ) δ := hc.1
   have hc_not_bad : c ∉ (bad : Set ℝ) := hc.2
   have hc_abs : |c| < δ := by
@@ -265,7 +266,7 @@ lemma EndpointRectangularGoodHeights {ι : Type*} [Fintype ι]
         simpa [M, middle, lam, ρ, AffineMap.lineMap_apply_module] using hy'
       have hc_eq : c = (ρ j - lam i) / (2 * φ i) := by
         rw [ht2] at hy
-        simp [η, ηOf] at hy
+        simp only [η, ηOf] at hy
         have hlin : 2 * c * φ i = ρ j - lam i := by nlinarith
         have hφne : 2 * φ i ≠ 0 := by nlinarith [hφpos i]
         rw [eq_div_iff hφne]
@@ -285,7 +286,7 @@ lemma EndpointRectangularGoodHeights {ι : Type*} [Fintype ι]
         simpa [M, middle, lam, ρ, AffineMap.lineMap_apply_module] using hy'
       have hc_eq : c = (ρ i - lam j) / (2 * φ j) := by
         rw [ht2] at hy
-        simp [η, ηOf] at hy
+        simp only [η, ηOf] at hy
         have hlin : 2 * c * φ j = ρ i - lam j := by nlinarith
         have hφne : 2 * φ j ≠ 0 := by nlinarith [hφpos j]
         rw [eq_div_iff hφne]

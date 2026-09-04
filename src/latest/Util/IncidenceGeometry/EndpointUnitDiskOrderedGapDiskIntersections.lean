@@ -1,6 +1,5 @@
 import Util.IncidenceGeometry.Basic
 
-open Classical
 noncomputable section
 
 lemma EndpointUnitDiskOrderedGapDiskIntersections
@@ -23,6 +22,7 @@ lemma EndpointUnitDiskOrderedGapDiskIntersections
         p ∈ segment ℝ v1 u2 →
           p ∈ Metric.closedBall z2 rho2 →
             p = u2) := by
+  classical
   have adjacent_lineMap_segments_inter_singleton :
       ∀ {α β γ : ℝ}, α < β → β < γ →
         segment ℝ (AffineMap.lineMap A B α) (AffineMap.lineMap A B β) ∩

@@ -7,7 +7,6 @@ import Util.IncidenceGeometry.PolygonalArcPointCutDataExists
 import Util.IncidenceGeometry.PolygonalArcReverse
 import Mathlib.Tactic
 
-open Classical
 noncomputable section
 
 lemma ordinaryAdjacentEdgesChooseShort
@@ -16,11 +15,12 @@ lemma ordinaryAdjacentEdgesChooseShort
     (x : EuclideanSpace ℝ (Fin 2))
     (hS01 : 0 + 1 < S.vertices.length)
     (hS0 : S.vertices[0] = x)
-    (hS01ne : S.vertices[0] ≠ S.vertices[1]) :
+    (_hS01ne : S.vertices[0] ≠ S.vertices[1]) :
     ∃ y : EuclideanSpace ℝ (Fin 2),
       y ∈ openSegment ℝ S.vertices[0] S.vertices[1] ∧
         ∀ p, p ∈ segment ℝ S.vertices[0] y →
           p ∈ D.crossingSet → p = x := by
+  classical
   let Y := (D.crossingSet.erase x).filter
     (fun p => p ∈ segment ℝ S.vertices[0] S.vertices[1])
   by_cases hY : Y.Nonempty
@@ -53,8 +53,7 @@ lemma ordinaryAdjacentEdgesChooseShort
             (by simp [Metric.mem_closedBall, dist_comm]) hzSeg
         simpa [Metric.mem_closedBall, dist_comm] using hball
       have hmid : dist S.vertices[0] y = (1 / 2 : ℝ) * dist S.vertices[0] z := by
-        simpa [y, invOf_eq_inv, Real.norm_ofNat, one_div] using
-          (dist_left_midpoint (𝕜 := ℝ) S.vertices[0] z)
+        simp [y, one_div]
       have hzpos : (0 : ℝ) < dist S.vertices[0] z := dist_pos.2 hz0.symm
       rw [h] at hmid
       nlinarith
@@ -73,8 +72,7 @@ lemma ordinaryAdjacentEdgesChooseShort
           (by simp [Metric.mem_closedBall, dist_comm]) hpSeg
       simpa [Metric.mem_closedBall, dist_comm] using hball
     have hmid : dist S.vertices[0] y = (1 / 2 : ℝ) * dist S.vertices[0] z := by
-      simpa [y, invOf_eq_inv, Real.norm_ofNat, one_div] using
-        (dist_left_midpoint (𝕜 := ℝ) S.vertices[0] z)
+      simp [y, one_div]
     have hzpos : (0 : ℝ) < dist S.vertices[0] z := dist_pos.2 hz0.symm
     nlinarith
   · let y := midpoint ℝ S.vertices[0] S.vertices[1]
@@ -91,7 +89,7 @@ lemma ordinaryAdjacentEdgesChooseShort
           (openSegment_subset_segment ℝ _ _ hyOpen) hpSeg⟩
     exact hY ⟨p, hpY⟩
 
-
+open Classical in
 lemma OrdinaryAdjacentEdgesFavorableTailFreeCandidate {V : Type*} [Fintype V]
     (G : SimpleGraph V) [Fintype G.edgeSet]
     (D : OrdinaryPolygonalDrawing G)
@@ -178,7 +176,7 @@ lemma OrdinaryAdjacentEdgesFavorableTailFreeCandidate {V : Type*} [Fintype V]
                                 else (D.edgeArc edge).carrier) ∪
                               {p | exists v : V,
                                 v ≠ u ∧ p = D.vertexPlacement v} ∧
-                            (exists Tail : BigonRerouteOrderedBetaTailData
+                            (exists _Tail : BigonRerouteOrderedBetaTailData
                                 G D secondEdge u y B Bplus Rbeta H,
                               (forall p, p ∈ Bplus →
                                 p ∈ D.crossingSet → p = x) ∧
@@ -196,6 +194,7 @@ lemma OrdinaryAdjacentEdgesFavorableTailFreeCandidate {V : Type*} [Fintype V]
                                     ({D.vertexPlacement u, x} : Set _) ∧
                                   p ∈ H) ∧
                                 XAexact.card ≤ XBexact.card))) := by
+  classical
   intro hab huAlpha huBeta hcross
   have endpoint_at (e : G.edgeFinset) (hu : u ∈ e.1) :
       (D.edgeArc e).source = D.vertexPlacement u ∨
@@ -677,7 +676,7 @@ lemma OrdinaryAdjacentEdgesFavorableTailFreeCandidate {V : Type*} [Fintype V]
         ext z
         simp [hOutIndex]
       rw [hEarlier, Set.empty_union]
-      simpa only [hOutIndex, hS0]
+      simp only [hOutIndex, hS0]
     have hOutCross : ∀ p, p ∈ OutCut.prefixArc.carrier →
         p ∈ D.crossingSet → p = x := by
       intro p hp hpCross
@@ -1128,9 +1127,9 @@ lemma OrdinaryAdjacentEdgesFavorableTailFreeCandidate {V : Type*} [Fintype V]
         exact hxNotTail (hpx ▸ ((OutCut.suffixArc.relativeInterior_eq ▸ hp).1))
       by_cases hs : (D.edgeArc secondEdge).source = D.vertexPlacement u
       · simp only [orient, if_pos hs] at hpOrientSource hpOrientTarget
-        simpa [hpOrientSource, hpOrientTarget]
+        simp [hpOrientSource, hpOrientTarget]
       · simp only [orient, if_neg hs, PolygonalArcReverse] at hpOrientSource hpOrientTarget
-        simpa [hpOrientSource, hpOrientTarget, and_comm]
+        simp [hpOrientSource, hpOrientTarget]
     have hTailRemoved : OutCut.suffixArc.carrier ∩ (B ∪ Bplus) =
         ({y} : Set _) := by
       ext p
@@ -1180,18 +1179,18 @@ lemma OrdinaryAdjacentEdgesFavorableTailFreeCandidate {V : Type*} [Fintype V]
         rcases hends with hends | hends
         · refine ⟨b, ?_, hends.2⟩
           rw [he]
-          simp [Sym2.mem_iff']
+          simp
         · refine ⟨a, ?_, hends.2⟩
           rw [he]
-          simp [Sym2.mem_iff']
+          simp
       · simp only [if_neg hs, PolygonalArcReverse]
         rcases hends with hends | hends
         · refine ⟨a, ?_, hends.1⟩
           rw [he]
-          simp [Sym2.mem_iff']
+          simp
         · refine ⟨b, ?_, hends.1⟩
           rw [he]
-          simp [Sym2.mem_iff']
+          simp
     obtain ⟨far, hfarMem, hOrientTarget⟩ := orient_target_data secondEdge
     have hfarNe : far ≠ u := by
       intro h

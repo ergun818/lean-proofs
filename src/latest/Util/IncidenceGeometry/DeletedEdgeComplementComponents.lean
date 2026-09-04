@@ -18,9 +18,9 @@ import Util.IncidenceGeometry.DeletedEdgeCandidateFacesComplete
 import Util.IncidenceGeometry.DeletedEdgeCandidatePointUnique
 import Mathlib.Combinatorics.SimpleGraph.Acyclic
 
-open Classical
 noncomputable section
 
+open Classical in
 lemma DeletedEdgeComplementComponents {V : Type*} [Fintype V] (G : SimpleGraph V)
     [Fintype G.edgeSet] [DecidableRel G.Adj] (D : OrdinaryPolygonalDrawing G)
     (hD : D.crossingSet.card = 0) (A : PlaneFaceData G D) (e : G.edgeFinset)
@@ -53,6 +53,7 @@ lemma DeletedEdgeComplementComponents {V : Type*} [Fintype V] (G : SimpleGraph V
                   ∀ p : EuclideanSpace ℝ (Fin 2),
                     p ∈ (OrdinaryDrawingImage (G.deleteEdges {e.1}) Ddel)ᶜ →
                       ∃! Q : FaceDel, p ∈ faceSetDel Q := by
+  classical
   let : Fintype A.Face := A.faceFintype
   rcases FiniteAuxiliaryFaceQuotient A.Face (A.leftFace d) (A.leftFace d.symm) with
     ⟨FaceDel, faceDelFintype, componentOf, hcomponent_surj, hcomponent_eq⟩

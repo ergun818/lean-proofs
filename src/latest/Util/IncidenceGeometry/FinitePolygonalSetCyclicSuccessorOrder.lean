@@ -30,7 +30,6 @@ import Util.IncidenceGeometry.FinitePolygonalSetCyclicSameArcSeparatedActualPiec
 import Util.IncidenceGeometry.FinitePolygonalSetCyclicNonadjacentActualPiecesDisjoint
 import Util.IncidenceGeometry.FinitePolygonalSetCyclicResidualEndpointTouch
 
-open Classical
 noncomputable section
 
 lemma FinitePolygonalSetCyclicSuccessorOrder
@@ -129,8 +128,7 @@ lemma FinitePolygonalSetCyclicSuccessorOrder
       · exact
           hsame_elementary_intersections_listed i j hij hsame_elementary.1
             hsame_elementary.2 x hxi hxj
-      ·
-        -- Remaining residual geometric cases: adjacent elementary segments on
+      · -- Remaining residual geometric cases: adjacent elementary segments on
         -- one edge arc, and the two oriented adjacent-edge-arc endpoint cases.
         have hlisted_of_known_forward_touch :
             (((∃ (n : ℕ) (hn : n + 1 < pieceStream.length),

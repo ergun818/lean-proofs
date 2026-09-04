@@ -1,7 +1,6 @@
 import Util.IncidenceGeometry.PolygonalArc
 import Mathlib.Tactic
 
-open Classical
 noncomputable section
 
 lemma PolygonalArcContiguousVertexSubarc
@@ -23,6 +22,7 @@ lemma PolygonalArcContiguousVertexSubarc
           z ∈ openSegment ℝ R.vertices[j] R.vertices[j + 1] ∧
             R.vertices[j + 1] - R.vertices[j] =
               Q.vertices[i + 1] - Q.vertices[i] := by
+  classical
   let V := (Q.vertices.drop a).take (b - a + 1)
   let C : Set (EuclideanSpace ℝ (Fin 2)) :=
     {z | ∃ i : ℕ, ∃ hi : i + 1 < V.length,

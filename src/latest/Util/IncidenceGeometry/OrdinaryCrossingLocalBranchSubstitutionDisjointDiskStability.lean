@@ -8,9 +8,7 @@ import Util.IncidenceGeometry.OrdinaryCrossingLocalBranchSubstitution
 import Util.IncidenceGeometry.PolygonalArcCarrierCompact
 import Util.IncidenceGeometry.PolygonalArcRetainedOpenSubsegmentSingleLift
 
-open Classical
 noncomputable section
-
 
 lemma OrdinaryCrossingLocalBranchSubstitutionDisjointDiskStability {ι : Type*}
     (Q bridge : PolygonalArc)
@@ -87,6 +85,7 @@ lemma OrdinaryCrossingLocalBranchSubstitutionDisjointDiskStability {ι : Type*}
                           (center a) (otherRadius a),
                         branch'.beforeGate = (otherBranch a).beforeGate ∧
                           branch'.afterGate = (otherBranch a).afterGate := by
+  classical
   intro hsource htarget hbridgeSource hbridgeTarget hbridgeClosed hbridgeOpen hdisjoint
   rcases OrdinaryCrossingLocalBranchSubstitution Q bridge p radius branch
       hsource htarget hbridgeSource hbridgeTarget hbridgeClosed hbridgeOpen with

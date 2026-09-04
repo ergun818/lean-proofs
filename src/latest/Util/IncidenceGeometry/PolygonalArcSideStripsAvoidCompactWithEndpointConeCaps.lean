@@ -7,7 +7,6 @@ import Util.IncidenceGeometry.PolygonalArcInitialEndpointSegmentLength
 import Util.IncidenceGeometry.PolygonalArcTerminalEndpointCone
 import Util.IncidenceGeometry.PolygonalArcTerminalEndpointSegmentLength
 
-open Classical
 noncomputable section
 
 lemma PolygonalArcSideStripsAvoidCompactWithEndpointConeCaps (γ : PolygonalArc)
@@ -30,6 +29,7 @@ lemma PolygonalArcSideStripsAvoidCompactWithEndpointConeCaps (γ : PolygonalArc)
                                 ((S.collar ∩ Metric.ball γ.target r₁) \
                                     γ.relativeInterior ⊆
                                   PolygonalArcTerminalEndpointCone γ r₁ K₁) := by
+  classical
   intro hF hFγ hA hAγ hIso hK₀ hK₁
   have hFAcompact : IsCompact (F ∪ A) := hF.union hA
   have hFAγ : Disjoint (F ∪ A) γ.carrier := by

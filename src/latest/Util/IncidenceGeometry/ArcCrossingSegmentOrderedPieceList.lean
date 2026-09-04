@@ -2,7 +2,6 @@ import Util.IncidenceGeometry.PolygonalArc
 import Util.IncidenceGeometry.PolygonalPath
 import Mathlib.Tactic
 
-open Classical
 noncomputable section
 
 lemma ArcCrossingSegmentOrderedPieceList
@@ -73,6 +72,7 @@ lemma ArcCrossingSegmentOrderedPieceList
                                 (∀ η : PolygonalPath, η ∈ pieces → η.carrier ⊆ Safe) ∧
                                   (∀ (j : ℕ) (hj : j + 1 < pieces.length),
                                     (pieces[j]).target = (pieces[j + 1]).source) := by
+  classical
   intro hwindowBounds hwindowOrder hnoBetween hnoBeforeFirst hnoAfterLast hnoEmpty
     closedGapPiece parameterGapPiece detourPiece
   have assemble :
@@ -193,7 +193,7 @@ lemma ArcCrossingSegmentOrderedPieceList
                 hpref_source, htailLastTarget, ?_, ?_⟩
             · simpa using htailLast
             · intro η hη
-              simp at hη
+              simp only [List.mem_cons] at hη
               rcases hη with rfl | rfl | hη
               · exact hpref_safe
               · exact hdet_safe

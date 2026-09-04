@@ -1,10 +1,9 @@
 import Util.IncidenceGeometry.Basic
 
-open Classical
 open scoped Real
 noncomputable section
 
-lemma EndpointPairMultiplicitySimpleGraph {ι V : Type*} [DecidableEq ι] [DecidableEq V]
+lemma EndpointPairMultiplicitySimpleGraph {ι V : Type*} [DecidableEq V]
     (A : Finset ι) (endpoint : ι → Sym2 V)
     (h_nondiag : ∀ i ∈ A, ¬ (endpoint i).IsDiag)
     (h_multiplicity : ∀ e ∈ A.image endpoint,

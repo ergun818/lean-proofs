@@ -1,6 +1,5 @@
 import Util.IncidenceGeometry.PolygonalPathSegment
 
-open Classical
 noncomputable section
 
 lemma PolygonalPathOriginalSegmentGap
@@ -14,6 +13,7 @@ lemma PolygonalPathOriginalSegmentGap
             η.source = p ∧
               η.target = q ∧
                 η.carrier ⊆ (K ∪ F)ᶜ := by
+  classical
   intro hαK hpq_subset hdisj
   have hpq_safe : segment ℝ p q ⊆ (K ∪ F)ᶜ := by
     intro z hz

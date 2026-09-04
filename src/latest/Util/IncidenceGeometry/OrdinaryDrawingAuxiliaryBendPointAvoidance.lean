@@ -1,6 +1,5 @@
 import Util.IncidenceGeometry.FinitePointLineAvoidance
 
-open Classical
 noncomputable section
 
 lemma OrdinaryDrawingAuxiliaryBendPointAvoidance
@@ -27,6 +26,7 @@ lemma OrdinaryDrawingAuxiliaryBendPointAvoidance
                   Set (EuclideanSpace ℝ (Fin 2))) : Set (EuclideanSpace ℝ (Fin 2)))) ∧
                 a ≠ z ∧
                   ¬ ∃ c : ℝ, b - a = c • (z - a) := by
+  classical
   let E := EuclideanSpace ℝ (Fin 2)
   have line_dim_test :
       ∀ (u v : E), u ≠ v →

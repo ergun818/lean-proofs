@@ -6,15 +6,15 @@ import Util.IncidenceGeometry.PlaneTreeLeafPendantAttachment
 import Util.IncidenceGeometry.PlaneTreeNoEdgeComplementConnected
 import Util.IncidenceGeometry.PolygonallyPathConnected
 
-open Classical
 noncomputable section
 
 universe u
 
 lemma PlaneTreeDrawingComplementConnected {V : Type u} [Fintype V]
-    (G : SimpleGraph V) [Fintype G.edgeSet] [DecidableRel G.Adj]
+    (G : SimpleGraph V) [Fintype G.edgeSet]
     (D : OrdinaryPolygonalDrawing G) (hD : D.crossingSet.card = 0) :
     G.IsTree → PolygonallyPathConnected ((OrdinaryDrawingImage G D)ᶜ) := by
+  classical
   intro hTree
   have hTreeComplementConnected :
       ∀ n : ℕ,

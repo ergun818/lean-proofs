@@ -2,7 +2,6 @@ import Mathlib.Tactic
 import Util.IncidenceGeometry.OrdinaryPolygonalDrawing
 import Util.IncidenceGeometry.SegmentSameRayInitialSubsegment
 
-open Classical
 noncomputable section
 
 lemma OrdinaryDrawingSegmentDirectionsNotSamePositiveRay {V : Type*} [Fintype V]
@@ -21,6 +20,7 @@ lemma OrdinaryDrawingSegmentDirectionsNotSamePositiveRay {V : Type*} [Fintype V]
       segment ℝ x (x + v) =
         segment ℝ (D.edgeArc f).vertices[j] (D.edgeArc f).vertices[j + 1]) :
     ¬ ∃ a : ℝ, 0 < a ∧ v = a • d := by
+  classical
   rintro ⟨a, ha, hv⟩
   obtain ⟨q, hxq, hsub⟩ := SegmentSameRayInitialSubsegment x d a hd ha
   have hbad := D.no_shared_nondegenerate_subarc (e₁ := e) (e₂ := f) hef

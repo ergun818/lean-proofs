@@ -1,11 +1,10 @@
 import Util.IncidenceGeometry.OrdinaryPolygonalDrawing
 import Util.IncidenceGeometry.PolygonalArcNoSharedSubarcTransverse
 
-open Classical
 noncomputable section
 
 lemma FiniteLocalizedPolygonalEdgeAssignmentCertification
-    {V : Type*} [Fintype V] (G : SimpleGraph V) [Fintype G.edgeSet]
+    {V : Type*} [Finite V] (G : SimpleGraph V) [Fintype G.edgeSet]
     (edgeArc : G.edgeFinset → PolygonalArc)
     (candidate : Finset (EuclideanSpace ℝ (Fin 2)))
     (hlocalized :
@@ -52,6 +51,8 @@ lemma FiniteLocalizedPolygonalEdgeAssignmentCertification
                               (edgeArc e₁).vertices[i + 1] ∩
                             segment ℝ (edgeArc e₂).vertices[j]
                               (edgeArc e₂).vertices[j + 1] := by
+  classical
+  let := Fintype.ofFinite V
   let crossingSet := candidate.filter (fun p =>
     ∃ e₁ e₂ : G.edgeFinset,
       e₁ ≠ e₂ ∧
@@ -93,7 +94,7 @@ lemma FiniteLocalizedPolygonalEdgeAssignmentCertification
     have hbadFinite : bad.Finite :=
       forbidden.finite_toSet.preimage (fun a _ b _ hab => hf hab)
     have hgood : (Set.Ioo (0 : ℝ) 1 \ bad).Infinite :=
-      (Set.Ioo_infinite zero_lt_one).diff hbadFinite
+      (Set.Ioo_infinite zero_lt_one).sdiff hbadFinite
     rcases hgood.nonempty with ⟨t, htIoo, htbad⟩
     let z := f t
     have hzopen : z ∈ openSegment ℝ p q :=

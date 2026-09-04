@@ -1,7 +1,6 @@
 import Util.IncidenceGeometry.PolygonalReplacementCircularMiddleSubarcFiniteSafeConvexCover
 import Util.IncidenceGeometry.PolygonalReplacementCompactIntervalOpenCoverStrictSample
 
-open Classical
 noncomputable section
 
 universe u

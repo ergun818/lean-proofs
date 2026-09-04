@@ -3,7 +3,6 @@ import Util.IncidenceGeometry.FinitePolygonalSet
 import Util.IncidenceGeometry.PolygonalPathInGeneralPosition
 import Mathlib.Data.Set.Finite.Lattice
 
-open Classical
 noncomputable section
 
 lemma ScreenedVertexListPolygonalPath (K : FinitePolygonalSet)
@@ -38,6 +37,7 @@ lemma ScreenedVertexListPolygonalPath (K : FinitePolygonalSet)
                 {p | ∃ i : ℕ, ∃ hi : i + 1 < xs.length,
                   p ∈ segment ℝ xs[i] xs[i + 1]} ∧
               PolygonalPathInGeneralPosition γ K := by
+  classical
   let E := EuclideanSpace ℝ (Fin 2)
   let carrier : Set E :=
     ({source, target} : Set E) ∪

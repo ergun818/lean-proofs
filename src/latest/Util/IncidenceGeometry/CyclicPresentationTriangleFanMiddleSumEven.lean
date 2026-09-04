@@ -4,7 +4,6 @@ import Util.IncidenceGeometry.CyclicPresentationTriangleGeneralPosition
 import Util.IncidenceGeometry.TriangleBoundaryCyclicIntersectionMultiplicity
 import Util.IncidenceGeometry.TriangleBoundaryEvenIntersections
 
-open Classical
 noncomputable section
 
 lemma CyclicPresentationTriangleFanMiddleSumEven
@@ -21,6 +20,7 @@ lemma CyclicPresentationTriangleFanMiddleSumEven
     Even (∑ i : α, R.vertices.attach.sum fun p =>
       Set.ncard (openSegment ℝ (a i) (a (σ i)) ∩
         openSegment ℝ p.1 (R.successor p).1)) := by
+  classical
   let incoming : α → ℕ := fun i =>
     R.vertices.attach.sum fun p =>
       Set.ncard (openSegment ℝ p.1 (R.successor p).1 ∩ openSegment ℝ z (a i))

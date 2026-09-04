@@ -3,7 +3,6 @@ import Util.IncidenceGeometry.PolygonalPathRetainedElementaryEdges
 import Mathlib.Data.List.Chain
 import Mathlib.Tactic
 
-open Classical
 noncomputable section
 
 lemma PolygonalPathRetainedElementaryRawWalkExists

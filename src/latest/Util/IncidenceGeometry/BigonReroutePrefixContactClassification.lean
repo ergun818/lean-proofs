@@ -3,9 +3,9 @@ import Util.IncidenceGeometry.BigonRerouteFinitePresentationLocalBranch
 import Util.IncidenceGeometry.EndpointSidePrefixAttachment
 import Util.IncidenceGeometry.PolygonalArcCarrierCompact
 
-open Classical
 noncomputable section
 
+open Classical in
 lemma BigonReroutePrefixContactClassification
     {V : Type*} [Fintype V] (G : SimpleGraph V) [Fintype G.edgeSet]
     (D : OrdinaryPolygonalDrawing G) (alpha beta : G.edgeFinset) (u : V)
@@ -40,13 +40,14 @@ lemma BigonReroutePrefixContactClassification
       Bprefix.relativeInterior ∩ (A ∪ B ∪ Bplus ∪ Rbeta) =
         (∅ : Set (EuclideanSpace ℝ (Fin 2)))) :
     (∀ (v : V), D.vertexPlacement v ∉ Bprefix.relativeInterior) ∧
-      ∀ (e : G.edgeFinset) (he : e ≠ beta)
+      ∀ (e : G.edgeFinset) (_he : e ≠ beta)
         (p : EuclideanSpace ℝ (Fin 2)),
         p ∈ Bprefix.relativeInterior →
           p ∈ (D.edgeArc e).relativeInterior →
             p ∈ E.xPrefix ∧
               ∀ f : G.edgeFinset,
                 p ∈ (D.edgeArc f).relativeInterior → f = e := by
+  classical
   have hprefixAvoidPoint : ∀ p, p ∈ Bprefix.relativeInterior →
       p ∉ A ∪ B ∪ Bplus ∪ Rbeta := by
     intro p hp hbad

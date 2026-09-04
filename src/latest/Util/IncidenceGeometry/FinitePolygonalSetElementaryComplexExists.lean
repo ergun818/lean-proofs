@@ -3,9 +3,7 @@ import Util.IncidenceGeometry.FiniteElementarySegmentCutParameterList
 import Util.IncidenceGeometry.FiniteSortedRealCutListCoversUnitInterval
 import Util.IncidenceGeometry.CollinearAdjacentSubsegmentsMeetAtEndpoint
 
-open Classical
 noncomputable section
-
 
 lemma FinitePolygonalSetElementaryComplexExists (K : FinitePolygonalSet) :
     Nonempty (FinitePolygonalSetElementaryComplex K) := by

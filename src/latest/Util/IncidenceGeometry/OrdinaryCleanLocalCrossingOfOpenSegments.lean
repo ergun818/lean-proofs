@@ -1,10 +1,8 @@
 import Util.IncidenceGeometry.OrdinaryCleanLocalCrossing
 
-open Classical
 noncomputable section
 
-
-lemma OrdinaryCleanLocalCrossingOfOpenSegments {ι : Type*} [Fintype ι]
+lemma OrdinaryCleanLocalCrossingOfOpenSegments {ι : Type*} [Finite ι]
     (Γ : ι → PolygonalArc) (i j : ι) (p : EuclideanSpace ℝ (Fin 2))
     (hij : i ≠ j)
     (hpi : p ∈ (Γ i).relativeInterior)
@@ -31,6 +29,8 @@ lemma OrdinaryCleanLocalCrossingOfOpenSegments {ι : Type*} [Fintype ι]
           t • ((Γ i).vertices[m + 1] - (Γ i).vertices[m])) :
     ∃ C : OrdinaryCleanLocalCrossing Γ i j p,
       C.firstIndex = m ∧ C.secondIndex = n := by
+  classical
+  let := Fintype.ofFinite ι
   have hnot_vertex :
       ∀ (k : ι) (s : ℕ) (hs : s + 1 < (Γ k).vertices.length),
         p ∈ openSegment ℝ (Γ k).vertices[s] (Γ k).vertices[s + 1] →
@@ -85,11 +85,11 @@ lemma OrdinaryCleanLocalCrossingOfOpenSegments {ι : Type*} [Fintype ι]
     have he_ne_i : e ≠ ei := by
       intro heq
       subst e
-      simpa [other] using he_other
+      simp [other] at he_other
     have he_ne_j : e ≠ ej := by
       intro heq
       subst e
-      simpa [other] using he_other
+      simp [other] at he_other
     rcases e with ⟨k, eidx⟩
     have he_bound : eidx.1 + 1 < (Γ k).vertices.length := by
       have := eidx.2

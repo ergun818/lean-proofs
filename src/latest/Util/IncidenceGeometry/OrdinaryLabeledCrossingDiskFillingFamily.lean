@@ -1,7 +1,6 @@
 import Util.IncidenceGeometry.OrdinaryCleanLocalCrossing
 import Util.IncidenceGeometry.OrdinaryLabeledCrossingDiskFamily
 
-open Classical
 noncomputable section
 
 structure OrdinaryLabeledCrossingDiskFillingFamily {V : Type*} [Fintype V]

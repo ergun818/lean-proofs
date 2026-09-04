@@ -26,9 +26,7 @@ import Util.IncidenceGeometry.PlanarRot90SameSideConesDisjoint
 import Util.IncidenceGeometry.PolygonalSideStrips
 import Util.IncidenceGeometry.PositiveSeparation
 
-open Classical
 noncomputable section
-
 
 lemma PolygonalArcCappedCollarAssemblyExists (γ : PolygonalArc)
     (η r₀ r₁ K₀ K₁ : ℝ) :
@@ -46,6 +44,7 @@ lemma PolygonalArcCappedCollarAssemblyExists (γ : PolygonalArc)
                           γ.relativeInterior ⊆
                         PolygonalArcTerminalEndpointCone γ r₁ K₁) ∧
                         ∀ z ∈ S.collar, ∃ p ∈ γ.carrier, dist z p < η := by
+  classical
   intro hη hIso hK₀ hK₁
   have hsourceIdx : 0 < γ.vertices.length := by
     have hlen := γ.length_ge_two

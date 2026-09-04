@@ -4,7 +4,6 @@ import Util.IncidenceGeometry.PlanarRot90Decomposition
 import Util.IncidenceGeometry.PlanarRot90Norm
 import Util.IncidenceGeometry.PlanarRot90Orthogonal
 
-open Classical
 noncomputable section
 
 lemma PlanarClockwiseTwoRayEndpointConesInSector
@@ -28,6 +27,7 @@ lemma PlanarClockwiseTwoRayEndpointConesInSector
           otherChart ''
             {z | 0 < z 0 ∧ z 0 ^ 2 + z 1 ^ 2 < (r / ‖other‖) ^ 2 ∧
               0 < z 1 ∧ z 1 < K * z 0} ⊆ sector := by
+  classical
   dsimp only
   let baseChart : EuclideanSpace ℝ (Fin 2) → EuclideanSpace ℝ (Fin 2) :=
     fun z => p + z 0 • base + z 1 • PlanarRot90 base
@@ -47,7 +47,7 @@ lemma PlanarClockwiseTwoRayEndpointConesInSector
       {z : EuclideanSpace ℝ (Fin 2) | z 0 ^ 2 + z 1 ^ 2 < (rho / ‖base‖) ^ 2} =
         Metric.ball (0 : EuclideanSpace ℝ (Fin 2)) (rho / ‖base‖) := by
     ext z
-    rw [Set.mem_setOf_eq, Metric.mem_ball]
+    rw [Set.mem_ofPred_eq, Metric.mem_ball]
     simp [hnormsq_coord z, (sq_lt_sq₀ (norm_nonneg z) (le_of_lt hR_pos))]
   have hcoord_open : IsOpen coordSet := by
     have hdisk :
@@ -78,9 +78,9 @@ lemma PlanarClockwiseTwoRayEndpointConesInSector
         apply continuous_pi
         intro i
         by_cases hi : i = 0
-        · simp [hi]
+        · simp only [hi, Fin.isValue, ↓reduceIte]
           fun_prop
-        · simp [hi]
+        · simp only [Fin.isValue, hi, ↓reduceIte]
           fun_prop
       exact (PiLp.continuous_toLp (p := (2 : ENNReal))
         (β := fun _ : Fin 2 => ℝ)).comp hplain
@@ -141,7 +141,7 @@ lemma PlanarClockwiseTwoRayEndpointConesInSector
       have hsx_pos : 0 < s * x := mul_pos hs hx
       nlinarith
     · have hcpos : 0 < c := lt_of_not_ge hc
-      simp only [gt_iff_lt] at hlow
+      simp only [hc, if_false] at hlow
       have hmul := mul_lt_mul_of_pos_left hlow hcpos
       have hcK : c * (s / (2 * c)) = s / 2 := by
         field_simp [ne_of_gt hcpos]
@@ -155,7 +155,7 @@ lemma PlanarClockwiseTwoRayEndpointConesInSector
       have hus_pos : 0 < u * s := mul_pos hu hs
       nlinarith
     · have hcpos : 0 < c := lt_of_not_ge hc
-      simp only [neg_mul, neg_add_lt_iff_lt_add, add_zero, gt_iff_lt] at hupper
+      simp only [hc, if_false] at hupper
       have hmul := mul_lt_mul_of_pos_left hupper hcpos
       have hcK : c * (s / (2 * c)) = s / 2 := by
         field_simp [ne_of_gt hcpos]
@@ -208,7 +208,7 @@ lemma PlanarClockwiseTwoRayEndpointConesInSector
     · simpa [z] using hrad
     · simp [z]
       nlinarith [hm_pos, heps_pos]
-    · simp only [Fin.isValue]
+    · change 0 < c * (-m * eps) + s * eps
       have hprod : 0 < eps * (s - c * m) := mul_pos heps_pos hslope
       nlinarith
   have hchart_cont : Continuous baseChart := by
@@ -289,7 +289,7 @@ lemma PlanarClockwiseTwoRayEndpointConesInSector
         · simp [w]
           have hneg := haperture_other hzu hzvpos hzvupper
           nlinarith
-        · simp [w]
+        · simp only [Fin.isValue, one_ne_zero, ↓reduceIte, neg_mul, w]
           have hprod : 0 < z 1 * (c ^ 2 + s ^ 2) := mul_pos hzvpos hcs_pos
           nlinarith
       · apply PiLp.ext

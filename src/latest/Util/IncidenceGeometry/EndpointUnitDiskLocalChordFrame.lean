@@ -1,9 +1,8 @@
 import Util.IncidenceGeometry.Basic
 
-open Classical
 noncomputable section
 
-lemma EndpointUnitDiskLocalChordFrame {κ : Type*} [Fintype κ]
+lemma EndpointUnitDiskLocalChordFrame {κ : Type*} [Finite κ]
     (z : EuclideanSpace ℝ (Fin 2)) (r : ℝ) (_hr : 0 < r)
     (u v : κ → EuclideanSpace ℝ (Fin 2))
     (huv_center_open : ∀ i : κ, z ∈ openSegment ℝ (u i) (v i))
@@ -41,6 +40,8 @@ lemma EndpointUnitDiskLocalChordFrame {κ : Type*} [Fintype κ]
                                     v i = toWorld (point β (m i * β))) ∨
                                   (u i = toWorld (point β (m i * β)) ∧
                                     v i = toWorld (point (-α) (-(m i * α)))))) := by
+  classical
+  let := Fintype.ofFinite κ
   intro point
   let direction : κ → EuclideanSpace ℝ (Fin 2) := fun i => v i - z
   have hv_ne_z : ∀ i : κ, v i ≠ z := by
@@ -422,6 +423,6 @@ lemma EndpointUnitDiskLocalChordFrame {κ : Type*} [Fintype κ]
     rw [hdist]
     exact le_trans (hframe_nonexpansive p) hp_norm
   · intro x y
-    simpa [toWorld] using image_segment ℝ frame x y
+    simp [toWorld]
   · intro x y
-    simpa [toWorld] using image_openSegment ℝ frame x y
+    simp [toWorld]

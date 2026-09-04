@@ -1,9 +1,9 @@
 import Util.IncidenceGeometry.IsAffineLine
 import Util.IncidenceGeometry.LineIncidences
 
-open Classical
 noncomputable section
 
+open Classical in
 structure PointLineConsecutivePairGraphData
     (P : Finset (EuclideanSpace ℝ (Fin 2)))
     (L : Finset {ell : AffineSubspace ℝ (EuclideanSpace ℝ (Fin 2)) //

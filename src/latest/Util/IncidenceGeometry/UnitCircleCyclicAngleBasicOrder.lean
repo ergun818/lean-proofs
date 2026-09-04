@@ -2,7 +2,6 @@ import Util.IncidenceGeometry.UnitCircleCyclicAngleData
 import Mathlib.Algebra.Group.Fin.Basic
 import Mathlib.Data.Finset.Sort
 
-open Classical
 open scoped Fin.NatCast
 noncomputable section
 
@@ -70,6 +69,7 @@ lemma UnitCircleCyclicAngleBasicOrder
                   Real.cos ((1 - t) * startAngle y + t * endAngle y)
                 else
                   Real.sin ((1 - t) * startAngle y + t * endAngle y))) := by
+  classical
   let A := {x : EuclideanSpace ℝ (Fin 2) // x ∈ S}
   let n := Fintype.card A
   have hnS : n = S.card := by

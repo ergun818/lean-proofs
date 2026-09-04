@@ -1,7 +1,6 @@
 import Util.IncidenceGeometry.Basic
 import Mathlib.Analysis.InnerProductSpace.Convex
 
-open Classical
 noncomputable section
 
 lemma EndpointUnitDiskChordSubsegmentUnitContainment
@@ -15,6 +14,7 @@ lemma EndpointUnitDiskChordSubsegmentUnitContainment
       ∀ ⦃p : EuclideanSpace ℝ (Fin 2)⦄,
         p ∈ segment ℝ X Y → p ≠ A → p ≠ B →
           p ∈ Metric.ball (0 : EuclideanSpace ℝ (Fin 2)) 1 := by
+  classical
   have hA_closed : A ∈ Metric.closedBall (0 : EuclideanSpace ℝ (Fin 2)) 1 := by
     simp [Metric.mem_closedBall, hA]
   have hB_closed : B ∈ Metric.closedBall (0 : EuclideanSpace ℝ (Fin 2)) 1 := by

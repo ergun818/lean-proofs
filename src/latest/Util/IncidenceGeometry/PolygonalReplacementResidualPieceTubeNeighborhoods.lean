@@ -3,7 +3,6 @@ import Util.IncidenceGeometry.PositiveSeparation
 import Mathlib.Topology.MetricSpace.Thickening
 import Mathlib.Data.Finset.Max
 
-open Classical
 noncomputable section
 
 universe u

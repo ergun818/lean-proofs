@@ -2,11 +2,10 @@ import Mathlib.Tactic
 import Util.IncidenceGeometry.PlaneDrawingEndpointLocalGermCover
 import Util.IncidenceGeometry.PlanarFiniteRayCappedSideSectors
 
-open Classical
 noncomputable section
 
 lemma PlaneDrawingSelectedEdgeSourceCappedSectors {V : Type*} [Fintype V]
-    (G : SimpleGraph V) [Fintype G.edgeSet] [DecidableRel G.Adj]
+    (G : SimpleGraph V) [Fintype G.edgeSet]
     (D : OrdinaryPolygonalDrawing G) (e : G.edgeFinset) (γ : PolygonalArc) :
     D.edgeArc e = γ →
       let hfirst : 1 < γ.vertices.length := Nat.lt_of_succ_le γ.length_ge_two
@@ -36,6 +35,7 @@ lemma PlaneDrawingSelectedEdgeSourceCappedSectors {V : Type*} [Fintype V]
             γ.source ∉ leftSector ∧ γ.source ∉ rightSector ∧
             Disjoint leftSector (OrdinaryDrawingImageWithoutEdge G D e) ∧
             Disjoint rightSector (OrdinaryDrawingImageWithoutEdge G D e) := by
+  classical
   intro hγ
   obtain ⟨r₀, _r₁, hr₀, _hr₁, initialDirections, _terminalDirections,
       hinitialNotParallel, _hterminalNotParallel, hinitialCover, _hterminalCover⟩ :=
@@ -86,7 +86,7 @@ lemma PlaneDrawingSelectedEdgeSourceCappedSectors {V : Type*} [Fintype V]
     have : q ∈ (∅ : Set (EuclideanSpace ℝ (Fin 2))) := by
       rw [← hleftAvoid]
       exact ⟨hqLeft, hqRay⟩
-    simpa using this
+    simp at this
   · rw [Set.disjoint_left]
     intro q hqRight hqDrawing
     have hqRay := hinitialCover
@@ -94,4 +94,4 @@ lemma PlaneDrawingSelectedEdgeSourceCappedSectors {V : Type*} [Fintype V]
     have : q ∈ (∅ : Set (EuclideanSpace ℝ (Fin 2))) := by
       rw [← hrightAvoid]
       exact ⟨hqRight, hqRay⟩
-    simpa using this
+    simp at this

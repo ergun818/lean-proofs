@@ -1,7 +1,6 @@
 import Util.IncidenceGeometry.Basic
 import Mathlib.Data.Finset.Sort
 
-open Classical
 noncomputable section
 
 lemma FiniteElementarySegmentCutParameterList
@@ -21,6 +20,7 @@ lemma FiniteElementarySegmentCutParameterList
                       0 ≤ t → t ≤ 1 →
                         AffineMap.lineMap A B t ∈ T →
                           ¬ (L[n] < t ∧ t < L[n + 1])) := by
+  classical
   let f : ℝ → EuclideanSpace ℝ (Fin 2) := fun t => AffineMap.lineMap A B t
   let pulled : Finset ℝ := T.preimage f (AffineMap.lineMap_injective ℝ hAB).injOn
   let cuts : Finset ℝ := insert 0 (insert 1 (pulled.filter fun t => 0 ≤ t ∧ t ≤ 1))

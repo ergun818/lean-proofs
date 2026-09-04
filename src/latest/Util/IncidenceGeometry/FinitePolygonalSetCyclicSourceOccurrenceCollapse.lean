@@ -1,6 +1,5 @@
 import Util.IncidenceGeometry.FinitePolygonalSet
 
-open Classical
 noncomputable section
 
 lemma FinitePolygonalSetCyclicSourceOccurrenceCollapse
@@ -67,7 +66,7 @@ lemma FinitePolygonalSetCyclicSourceOccurrenceCollapse
     rw [List.mem_append] at hxinner
     rcases hxinner with hxsource | hxtarget
     · by_cases hs : pieceSource i ∈ K.points
-      · simp [hs] at hxsource
+      · simp only [hs, ↓reduceIte, List.mem_cons, List.not_mem_nil, or_false] at hxsource
         subst x
         dsimp [sourceOccurrenceList]
         rw [List.mem_flatMap]
@@ -75,7 +74,7 @@ lemma FinitePolygonalSetCyclicSourceOccurrenceCollapse
         simp [hs]
       · simp [hs] at hxsource
     · by_cases ht : pieceTarget i ∈ K.points
-      · simp [ht] at hxtarget
+      · simp only [ht, ↓reduceIte, List.mem_cons, List.not_mem_nil, or_false] at hxtarget
         subst x
         rcases List.getElem_of_mem hi with ⟨n, hn, hi_eq⟩
         subst i
@@ -113,7 +112,7 @@ lemma FinitePolygonalSetCyclicSourceOccurrenceCollapse
     rw [List.mem_flatMap] at hq
     rcases hq with ⟨i, hi, hqi⟩
     by_cases hs : pieceSource i ∈ K.points
-    · simp [hs] at hqi
+    · simp only [hs, ↓reduceDIte, List.mem_cons, List.not_mem_nil, or_false] at hqi
       subst q
       exact ⟨i, hi, rfl⟩
     · simp [hs] at hqi
@@ -122,7 +121,7 @@ lemma FinitePolygonalSetCyclicSourceOccurrenceCollapse
     rw [List.mem_flatMap] at hq
     rcases hq with ⟨i, hi, hqi⟩
     by_cases hs : pieceSource i ∈ K.points
-    · simp [hs] at hqi
+    · simp only [hs, ↓reduceDIte, List.mem_cons, List.not_mem_nil, or_false] at hqi
       subst q
       rcases List.getElem_of_mem hi with ⟨n, hn, hi_eq⟩
       subst i

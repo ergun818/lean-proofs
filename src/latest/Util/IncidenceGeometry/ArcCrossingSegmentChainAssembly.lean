@@ -1,6 +1,5 @@
 import Util.IncidenceGeometry.PolygonalPath
 
-open Classical
 noncomputable section
 
 lemma ArcCrossingSegmentChainAssembly
@@ -23,6 +22,7 @@ lemma ArcCrossingSegmentChainAssembly
                       (∀ η : PolygonalPath, η ∈ pieces → η.carrier ⊆ S) ∧
                         (∀ (i : ℕ) (hi : i + 1 < pieces.length),
                           (pieces[i]).target = (pieces[i + 1]).source) := by
+  classical
   intro hhead hlast hlen hsegment
   let n : ℕ := V.length - 1
   have hn_pos : 0 < n := by

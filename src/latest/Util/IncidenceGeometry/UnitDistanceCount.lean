@@ -1,6 +1,5 @@
 import Util.IncidenceGeometry.Basic
 
-open Classical
 noncomputable section
 
 noncomputable def IncidenceGeometry.unitDistanceCount (P : Finset (EuclideanSpace ℝ (Fin 2))) : ℕ :=

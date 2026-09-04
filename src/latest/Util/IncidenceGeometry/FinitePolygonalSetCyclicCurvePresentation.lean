@@ -8,13 +8,13 @@ import Util.IncidenceGeometry.FinitePolygonalSetCyclicSuccessorPiecesContained
 import Util.IncidenceGeometry.FinitePolygonalSetListedSegmentsCoveredByCyclicPieces
 import Util.IncidenceGeometry.FinitePolygonalSetOpenIntersectionPartition
 
-open Classical
 noncomputable section
 
 lemma FinitePolygonalSetCyclicCurvePresentation
     (J : SimpleClosedPolygonalCurve) (K : FinitePolygonalSet)
     (hKJ : K.carrier = J.carrier) :
     Nonempty (CyclicCurvePresentation J K) := by
+  classical
   have points_card_two_le : 2 ≤ K.points.card :=
     FinitePolygonalSetCarrierEqSimpleClosedCurvePointsTwo J K hKJ
   have hpoints_nonempty : K.points.Nonempty := by

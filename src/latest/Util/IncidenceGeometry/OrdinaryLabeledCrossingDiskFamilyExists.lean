@@ -2,13 +2,13 @@ import Util.IncidenceGeometry.OrdinaryLabeledCrossingDiskFamily
 import Util.IncidenceGeometry.OrdinaryCrossingLocalBranchDataExistsBelow
 import Util.IncidenceGeometry.OrdinaryLabeledCrossingDiskDataExistsBelow
 
-open Classical
 noncomputable section
 
 lemma OrdinaryLabeledCrossingDiskFamilyExists {V : Type*} [Fintype V]
     (G : SimpleGraph V) [Fintype G.edgeSet]
     (D : OrdinaryPolygonalDrawing G) :
     Nonempty (OrdinaryLabeledCrossingDiskFamily G D) := by
+  classical
   let Index := {p // p ∈ D.crossingSet}
   let upper : Index → ℝ := fun x =>
     letI : Nonempty Index := ⟨x⟩

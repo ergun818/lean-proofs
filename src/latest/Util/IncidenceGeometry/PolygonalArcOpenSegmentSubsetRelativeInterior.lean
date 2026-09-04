@@ -1,11 +1,11 @@
 import Util.IncidenceGeometry.PolygonalArc
 
-open Classical
 noncomputable section
 
 lemma PolygonalArcOpenSegmentSubsetRelativeInterior (γ : PolygonalArc) (j : ℕ)
     (hj : j + 1 < γ.vertices.length) :
     openSegment ℝ γ.vertices[j] γ.vertices[j + 1] ⊆ γ.relativeInterior := by
+  classical
   intro z hzOpen
   have hseg : z ∈ segment ℝ γ.vertices[j] γ.vertices[j + 1] :=
     openSegment_subset_segment ℝ γ.vertices[j] γ.vertices[j + 1] hzOpen

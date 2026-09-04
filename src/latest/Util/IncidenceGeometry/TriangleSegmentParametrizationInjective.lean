@@ -1,6 +1,5 @@
 import Util.IncidenceGeometry.Basic
 
-open Classical
 noncomputable section
 
 lemma TriangleSegmentParametrizationInjective
@@ -11,6 +10,7 @@ lemma TriangleSegmentParametrizationInjective
       Set.BijOn
         (fun t : ℝ => AffineMap.lineMap x y t)
         (Set.Ioo (0 : ℝ) 1) (openSegment ℝ x y) := by
+  classical
   constructor
   · intro s t hst
     apply Subtype.ext

@@ -2,7 +2,6 @@ import Util.IncidenceGeometry.PolygonalReplacementSourceEndpointControlDiskNeigh
 import Util.IncidenceGeometry.PolygonalReplacementCircularEndpointSupportingHalfspace
 import Mathlib.Analysis.InnerProductSpace.Convex
 
-open Classical
 noncomputable section
 
 universe u

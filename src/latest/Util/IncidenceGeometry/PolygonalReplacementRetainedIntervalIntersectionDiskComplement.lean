@@ -4,7 +4,6 @@ import Util.IncidenceGeometry.PolygonalReplacementResidualPieceSkeletonParameter
 import Util.IncidenceGeometry.PolygonalReplacementRetainedIntervalCutAvoidance
 import Util.IncidenceGeometry.PolygonalReplacementRetainedIntervalCutCoverage
 
-open Classical
 noncomputable section
 
 universe u

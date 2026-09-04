@@ -6,9 +6,9 @@ import Util.IncidenceGeometry.DrawingFaceComponent
 import Util.IncidenceGeometry.OrdinaryDrawingImageCompact
 import Util.IncidenceGeometry.OpenConnectedComponentPolygonallyConnected
 
-open Classical
 noncomputable section
 
+open Classical in
 lemma DeletedEdgeCandidateFacesComplete {V : Type*} [Fintype V]
     (G : SimpleGraph V) [Fintype G.edgeSet] [DecidableRel G.Adj]
     (D : OrdinaryPolygonalDrawing G) (hD : D.crossingSet.card = 0)

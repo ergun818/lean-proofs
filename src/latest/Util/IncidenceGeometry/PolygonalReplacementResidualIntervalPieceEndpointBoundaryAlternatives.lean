@@ -1,6 +1,5 @@
 import Util.IncidenceGeometry.PolygonalReplacementResidualIntervalPieceBasicData
 
-open Classical
 noncomputable section
 
 universe u
@@ -92,10 +91,7 @@ lemma PolygonalReplacementResidualIntervalPieceEndpointBoundaryAlternatives {V :
       refine ⟨edgeEndpoints.edgeSourceVertex e, ?_, ?_, ?_⟩
       · change edgeEndpoints.edgeSourceVertex e ∈ e.1
         exact edgeEndpoints.edgeSourceVertex_mem e
-      · change B.source i ∈
-          Metric.sphere (D.vertexPlacement (edgeEndpoints.edgeSourceVertex e))
-            (controlDisks.vertexRadius (edgeEndpoints.edgeSourceVertex e))
-        exact hfirst.2.1
+      · exact hfirst.2.1
       · change B.source i ∈ D.edgeCarrier e
         exact hfirst.2.2
     · rcases Nat.exists_eq_succ_of_ne_zero hn0 with ⟨k, rfl⟩
@@ -112,8 +108,7 @@ lemma PolygonalReplacementResidualIntervalPieceEndpointBoundaryAlternatives {V :
       refine ⟨x, ?_, ?_, ?_⟩
       · change x.1 ∈ D.edgeRelativeInterior e
         exact hx
-      · change B.source i ∈ Metric.sphere x.1 (controlDisks.intersectionRadius x)
-        simpa [hget_succ] using hsource_sphere
+      · simpa [hget_succ] using hsource_sphere
       · change B.source i ∈ D.edgeCarrier e
         simpa [hget_succ] using hsource_carrier
   have target_on_control_boundary :
@@ -147,10 +142,7 @@ lemma PolygonalReplacementResidualIntervalPieceEndpointBoundaryAlternatives {V :
       refine ⟨edgeEndpoints.edgeTargetVertex e, ?_, ?_, ?_⟩
       · change edgeEndpoints.edgeTargetVertex e ∈ e.1
         exact edgeEndpoints.edgeTargetVertex_mem e
-      · change B.target i ∈
-          Metric.sphere (D.vertexPlacement (edgeEndpoints.edgeTargetVertex e))
-            (controlDisks.vertexRadius (edgeEndpoints.edgeTargetVertex e))
-        exact hlast_data.2.1
+      · exact hlast_data.2.1
       · change B.target i ∈ D.edgeCarrier e
         exact hlast_data.2.2
     · have hsucc : n + 1 < (B.edgePieceOrder e).length := by
@@ -166,8 +158,7 @@ lemma PolygonalReplacementResidualIntervalPieceEndpointBoundaryAlternatives {V :
       refine ⟨x, ?_, ?_, ?_⟩
       · change x.1 ∈ D.edgeRelativeInterior e
         exact hx
-      · change B.target i ∈ Metric.sphere x.1 (controlDisks.intersectionRadius x)
-        simpa [hget_self] using htarget_sphere
+      · simpa [hget_self] using htarget_sphere
       · change B.target i ∈ D.edgeCarrier e
         simpa [hget_self] using htarget_carrier
   exact ⟨source_on_control_boundary, target_on_control_boundary⟩

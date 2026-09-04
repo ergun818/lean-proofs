@@ -2,7 +2,6 @@ import Util.IncidenceGeometry.PolygonalPath
 import Util.IncidenceGeometry.FinitePolygonalSet
 import Util.IncidenceGeometry.PolygonalPathInGeneralPosition
 
-open Classical
 noncomputable section
 
 lemma SingletonPathInGeneralPosition (K : FinitePolygonalSet)
@@ -11,6 +10,7 @@ lemma SingletonPathInGeneralPosition (K : FinitePolygonalSet)
       γ.source = q ∧ γ.target = q ∧
         γ.carrier = ({q} : Set (EuclideanSpace ℝ (Fin 2))) ∧
           PolygonalPathInGeneralPosition γ K := by
+  classical
   let γ : PolygonalPath :=
     { vertices := [q]
       vertices_nonempty := by simp

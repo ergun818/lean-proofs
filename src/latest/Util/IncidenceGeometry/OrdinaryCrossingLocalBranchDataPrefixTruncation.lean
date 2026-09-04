@@ -2,9 +2,7 @@ import Mathlib.Tactic
 import Util.IncidenceGeometry.OrdinaryCrossingLocalBranchGateCarrier
 import Util.IncidenceGeometry.StraightSegmentRetainedOrder
 
-open Classical
 noncomputable section
-
 
 lemma OrdinaryCrossingLocalBranchDataPrefixTruncation
     (Q P : PolygonalArc)
@@ -23,6 +21,7 @@ lemma OrdinaryCrossingLocalBranchDataPrefixTruncation
     ∃ branchP : OrdinaryCrossingLocalBranchData P p radius,
       branchP.beforeGate = branch.beforeGate ∧
         branchP.afterGate = branch.afterGate := by
+  classical
   have hPlen : P.vertices.length = cutIndex + 2 := by
     rw [hvertices]
     simp [List.length_take]
@@ -58,9 +57,7 @@ lemma OrdinaryCrossingLocalBranchDataPrefixTruncation
       P.vertices[cutIndex + 1] =
           (Q.vertices.take (cutIndex + 1) ++ [c])[cutIndex + 1] := hval
       _ = c := by
-        simpa [htakeLen] using List.getElem_append_right
-          (as := Q.vertices.take (cutIndex + 1)) (bs := [c])
-          (i := cutIndex + 1)
+        simp [htakeLen]
   have open_right_trans :
       ∀ {a b d x : EuclideanSpace ℝ (Fin 2)},
         b ∈ openSegment ℝ a d → x ∈ openSegment ℝ b d →
@@ -148,7 +145,7 @@ lemma OrdinaryCrossingLocalBranchDataPrefixTruncation
         (i := branch.afterIndex) (j := branch.afterIndex + 1)
         (hi := hafter0) (hj := branch.afterIndex_valid)).1 hleft
       omega
-    · simpa using hboth
+    · simp at hboth
   have last_segment_of_open : ∀ z,
       z ∈ P.carrier →
         z ∈ openSegment ℝ Q.vertices[cutIndex] Q.vertices[cutIndex + 1] →
@@ -175,7 +172,7 @@ lemma OrdinaryCrossingLocalBranchDataPrefixTruncation
           (i := cutIndex) (j := cutIndex + 1)
           (hi := by omega) (hj := hcutValid)).1 hleft
         omega
-      · simpa using hboth
+      · simp at hboth
     · have hjeq : j = cutIndex := by omega
       subst j
       simpa [hPold cutIndex (by omega), hPcut] using hjmem
@@ -393,7 +390,7 @@ lemma OrdinaryCrossingLocalBranchDataPrefixTruncation
         beforeIndex_valid := by rw [hPlen]; omega
         afterIndex_valid := by rw [hPlen]; omega
         center_case := Or.inr ⟨by omega,
-          by simpa only [hPold cutIndex (by omega), hpEq]⟩
+          by simp only [hPold cutIndex (by omega), hpEq]⟩
         beforeGate := branch.beforeGate
         afterGate := branch.afterGate
         beforeGate_open := hbeforeNew

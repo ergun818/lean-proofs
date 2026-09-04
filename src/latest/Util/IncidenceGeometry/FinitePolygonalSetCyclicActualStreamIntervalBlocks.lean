@@ -3,7 +3,6 @@ import Util.IncidenceGeometry.FinitePolygonalSetCyclicNormalizedSourceSuccessorO
 import Util.IncidenceGeometry.FinitePolygonalSetCarrierEqSimpleClosedCurvePointsTwo
 import Mathlib.Tactic
 
-open Classical
 noncomputable section
 
 lemma FinitePolygonalSetCyclicActualStreamIntervalBlocks
@@ -118,7 +117,7 @@ lemma FinitePolygonalSetCyclicActualStreamIntervalBlocks
     intro i q hsome
     dsimp [sourceOption] at hsome
     by_cases h : pieceSource i ∈ K.points
-    · simp [h] at hsome
+    · simp only [h, ↓reduceDIte, Option.some.injEq] at hsome
       exact congrArg Subtype.val hsome
     · simp [h] at hsome
   have sourceOption_none :

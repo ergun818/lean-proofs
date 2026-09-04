@@ -1,6 +1,5 @@
 import Util.IncidenceGeometry.PolygonalPath
 
-open Classical
 noncomputable section
 
 lemma ArcCrossingSegmentOrderedWindowParameters
@@ -38,6 +37,7 @@ lemma ArcCrossingSegmentOrderedWindowParameters
                         (AffineMap.lineMap α.vertices[i] α.vertices[i + 1] params[n])) ∧
               (∀ n (hn : n + 1 < params.length),
                 right n (Nat.lt_of_succ_lt hn) < left (n + 1) hn) := by
+  classical
   intro hwindow hparam_order hdisjoint
   let left : (n : ℕ) → n < params.length → ℝ :=
     fun n hn => Classical.choose (hwindow n hn)

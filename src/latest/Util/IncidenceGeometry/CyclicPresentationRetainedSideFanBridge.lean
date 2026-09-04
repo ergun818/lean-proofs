@@ -1,7 +1,6 @@
 import Mathlib.GroupTheory.Perm.List
 import Util.IncidenceGeometry.CyclicPresentationRetainedSideSum
 
-open Classical
 noncomputable section
 
 lemma CyclicPresentationRetainedSideFanBridge
@@ -50,6 +49,7 @@ lemma CyclicPresentationRetainedSideFanBridge
           ∑ i : retained, R.vertices.attach.sum fun p =>
             Set.ncard (openSegment ℝ (start i) (start (σ i)) ∩
               openSegment ℝ p.1 (R.successor p).1) := by
+  classical
   intro retained start stop
   have hretained :
       retained =
@@ -98,7 +98,8 @@ lemma CyclicPresentationRetainedSideFanBridge
         have hkeq : γ.vertices[k] = γ.vertices[k + 1] := by
           rw [hretained] at hknot
           have hklt : k < γ.vertices.length := Nat.lt_of_succ_lt hklen
-          simp [hklt, hklen] at hknot
+          simp only [ne_eq, dite_else_false, Finset.mem_filter, Finset.mem_range, hklt, hklen,
+            exists_true_left, true_and, Decidable.not_not] at hknot
           exact hknot
         trans γ.vertices[k]
         · exact ih (Nat.lt_of_succ_lt hn)

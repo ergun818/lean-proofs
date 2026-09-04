@@ -6,7 +6,6 @@ import Util.IncidenceGeometry.PolygonalArcCarrierCompact
 import Util.IncidenceGeometry.PolygonalArcEndpointIsolationExists
 import Util.IncidenceGeometry.PositiveSeparation
 
-open Classical
 noncomputable section
 
 lemma ArcCrossingTailSourcePrefixData
@@ -32,6 +31,7 @@ lemma ArcCrossingTailSourcePrefixData
                       ∀ a, a ∈
                           (K ∪ (ArcCrossingEarlierPrefix δ j hj ∪ segment ℝ δ.vertices[j] d)) →
                         ∀ b, b ∈ τ.carrier → η ≤ dist a b := by
+  classical
   have segment_compact :
       ∀ a b : EuclideanSpace ℝ (Fin 2), IsCompact (segment ℝ a b) := by
     intro a b

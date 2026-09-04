@@ -1,7 +1,6 @@
 import Util.IncidenceGeometry.FinitePolygonalSet
 import Util.IncidenceGeometry.PolygonalArc
 
-open Classical
 noncomputable section
 
 structure EndpointSidePrefixAttachment

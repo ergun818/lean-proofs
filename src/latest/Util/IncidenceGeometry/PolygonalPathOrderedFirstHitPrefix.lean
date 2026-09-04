@@ -1,7 +1,6 @@
 import Util.IncidenceGeometry.PolygonalPath
 import Util.IncidenceGeometry.StraightSegmentFirstHitPrefix
 
-open Classical
 noncomputable section
 
 lemma PolygonalPathOrderedFirstHitPrefix
@@ -16,6 +15,7 @@ lemma PolygonalPathOrderedFirstHitPrefix
       y ∈ γ.carrier ∧ y ∈ U ∧ y ∉ segment ℝ a b ∧
         IsConnected P ∧ γ.source ∈ P ∧ y ∈ P ∧
           P ⊆ γ.carrier ∩ (segment ℝ a b)ᶜ := by
+  classical
   let S : Set (EuclideanSpace ℝ (Fin 2)) := segment ℝ a b
   let Carrier :=
     fun (xs : List (EuclideanSpace ℝ (Fin 2)))

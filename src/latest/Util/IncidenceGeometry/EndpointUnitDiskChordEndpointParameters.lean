@@ -1,6 +1,5 @@
 import Util.IncidenceGeometry.Basic
 
-open Classical
 noncomputable section
 
 lemma EndpointUnitDiskChordEndpointParameters
@@ -9,6 +8,7 @@ lemma EndpointUnitDiskChordEndpointParameters
     (hu : u ∈ openSegment ℝ A z) (hv : v ∈ openSegment ℝ z B) :
     (∃ s : ℝ, 0 < s ∧ s < t ∧ u = AffineMap.lineMap A B s) ∧
       (∃ s : ℝ, t < s ∧ s < 1 ∧ v = AffineMap.lineMap A B s) := by
+  classical
   constructor
   · rw [openSegment_eq_image_lineMap] at hu
     rcases hu with ⟨θ, hθ, hθu⟩

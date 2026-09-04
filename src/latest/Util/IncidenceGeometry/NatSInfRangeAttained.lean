@@ -1,6 +1,5 @@
 import Util.IncidenceGeometry.Basic
 
-open Classical
 noncomputable section
 
 lemma NatSInfRangeAttained {α : Type*} (f : α → ℕ) (hα : Nonempty α) :

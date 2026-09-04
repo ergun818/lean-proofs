@@ -2,7 +2,6 @@ import Mathlib.Tactic
 import Mathlib.Analysis.SpecialFunctions.Complex.Arg
 import Util.IncidenceGeometry.Basic
 
-open Classical
 noncomputable section
 
 lemma PlanarNormalizedAngleRepresentation (v : EuclideanSpace ℝ (Fin 2)) (hv : v ≠ 0) :
@@ -13,6 +12,7 @@ lemma PlanarNormalizedAngleRepresentation (v : EuclideanSpace ℝ (Fin 2)) (hv :
       ∃ r : ℝ, 0 < r ∧
         v = r • WithLp.toLp 2
           (fun k : Fin 2 => if k = 0 then Real.cos α else Real.sin α) := by
+  classical
   dsimp only
   let z : ℂ := (v 0 : ℂ) + (v 1 : ℂ) * Complex.I
   let a : ℝ := Complex.arg z
@@ -58,8 +58,8 @@ lemma PlanarNormalizedAngleRepresentation (v : EuclideanSpace ℝ (Fin 2)) (hv :
   · change v 0 = ‖z‖ * Real.cos α
     rw [hcosα]
     dsimp [a]
-    simpa [z] using (Complex.norm_mul_cos_arg z).symm
+    simp [z]
   · change v 1 = ‖z‖ * Real.sin α
     rw [hsinα]
     dsimp [a]
-    simpa [z] using (Complex.norm_mul_sin_arg z).symm
+    simp [z]

@@ -1,7 +1,6 @@
 import Util.IncidenceGeometry.EndpointSidePrefixEventInjectiveCharge
 import Util.IncidenceGeometry.EndpointSidePrefixFiniteEventSplice
 
-open Classical
 noncomputable section
 
 lemma EndpointSidePrefixEventBallSurgery
@@ -137,6 +136,7 @@ lemma EndpointSidePrefixEventBallSurgery
                     P.carrier \
                       (⋃ p ∈ (XA : Set (EuclideanSpace ℝ (Fin 2))),
                         Metric.ball p (eventRadius p)) := by
+  classical
   intro hSideOpen hPCarrier hPInterior hPForbidden hSideForbidden hK
     _hGateNe hFiniteTerminal hSourceControl hTargetControl hFirst
     hTerminalControl _hStartH hKpoints hSideRbetaBad hSideH hEvent

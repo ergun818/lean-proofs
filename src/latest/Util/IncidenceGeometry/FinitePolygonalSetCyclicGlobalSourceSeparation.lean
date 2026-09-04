@@ -1,7 +1,6 @@
 import Util.IncidenceGeometry.FinitePolygonalSetCyclicSameEdgeArcSourceSeparation
 import Util.IncidenceGeometry.FinitePolygonalSetCyclicPieceSourceNotArcTarget
 
-open Classical
 noncomputable section
 
 lemma FinitePolygonalSetCyclicGlobalSourceSeparation
@@ -80,6 +79,7 @@ lemma FinitePolygonalSetCyclicGlobalSourceSeparation
         Sigma (fun n : Fin ((E[e.1]'e.2).1.vertices.length - 1) =>
           localPieceIndex e n))
     ∀ i j : PieceIndex, pieceSource i = pieceSource j → i = j := by
+  classical
   intro PieceIndex i j hsource
   have source_mem_arc :
       ∀ q : PieceIndex, pieceSource q ∈ (E[q.1.1]'q.1.2).1.carrier := by

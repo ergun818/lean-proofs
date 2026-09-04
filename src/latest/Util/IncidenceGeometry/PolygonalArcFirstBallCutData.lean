@@ -1,6 +1,5 @@
 import Util.IncidenceGeometry.PolygonalArcPointCutData
 
-open Classical
 noncomputable section
 
 structure PolygonalArcFirstBallCutData

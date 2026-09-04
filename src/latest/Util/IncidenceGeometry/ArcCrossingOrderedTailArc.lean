@@ -4,9 +4,7 @@ import Util.IncidenceGeometry.PolygonalArc
 import Util.IncidenceGeometry.PolygonalArcOpenSegmentSubsetRelativeInterior
 import Util.IncidenceGeometry.PolygonalPath
 
-open Classical
 noncomputable section
-
 
 private lemma arcCrossingOrderedTailArc_construct
     (δ : PolygonalArc) (j : ℕ) (c : EuclideanSpace ℝ (Fin 2))
@@ -17,6 +15,7 @@ private lemma arcCrossingOrderedTailArc_construct
         τ.source = c ∧
           τ.target = δ.target ∧
             τ.carrier ⊆ δ.carrier := by
+  classical
   let V : List (EuclideanSpace ℝ (Fin 2)) := c :: δ.vertices.drop (j + 1)
   let C : Set (EuclideanSpace ℝ (Fin 2)) :=
     {p | ∃ i : ℕ, ∃ hi : i + 1 < V.length,
@@ -45,8 +44,7 @@ private lemma arcCrossingOrderedTailArc_construct
       dsimp [V] at hn
       simpa using hn
     dsimp [V]
-    simpa using (List.getElem_drop (xs := δ.vertices) (i := j + 1)
-      (j := n) (h := hdrop))
+    simp
   have hV_get_pos :
       ∀ n (hnpos : 0 < n) (hn : n < V.length),
         V[n] = δ.vertices[j + n]'(by
@@ -132,7 +130,7 @@ private lemma arcCrossingOrderedTailArc_construct
     intro n hn hnpos
     have hVn := hV_get_pos n hnpos (Nat.lt_of_succ_lt hn)
     have hVn1 := hV_get_pos (n + 1) (by omega) hn
-    simpa [Nat.add_assoc, hVn, hVn1]
+    simp [Nat.add_assoc, hVn, hVn1]
   have hV_first_subset :
       segment ℝ V[0] V[1] ⊆
         segment ℝ δ.vertices[j] δ.vertices[j + 1] := by
@@ -289,7 +287,7 @@ private lemma arcCrossingOrderedTailArc_construct
               W[k] ∈ segment ℝ W[k] W[k + 1] ∩
                   segment ℝ W[m] W[m + 1] := ⟨hk_left, hseg_m⟩
           rw [hinter] at hp_inter
-          simpa [hm_adj] using hp_inter
+          simp [hm_adj] at hp_inter
         exact hmem_empty
     · have hk_pos : 0 < k := by omega
       let n := k - 1
@@ -318,7 +316,7 @@ private lemma arcCrossingOrderedTailArc_construct
               W[k] ∈ segment ℝ W[m] W[m + 1] ∩
                   segment ℝ W[n] W[n + 1] := ⟨hseg_m, hk_right⟩
           rw [hinter] at hp_inter
-          simpa [hn_adj] using hp_inter
+          simp [hn_adj] at hp_inter
         exact hmem_empty
   have hV_vertices_avoid :
       ∀ ⦃i k : ℕ⦄,
@@ -408,6 +406,7 @@ lemma ArcCrossingOrderedTailArc
             τ.carrier ⊆ δ.carrier ∧
               α.carrier ∩ δ.carrier ⊆ τ.relativeInterior ∧
                 Disjoint τ.carrier K := by
+  classical
   rcases arcCrossingOrderedTailArc_construct δ j c hj hcOpen with
     ⟨τ, hτvertices, hτsource, hτtarget, hτcarrier_subset⟩
   let V : List (EuclideanSpace ℝ (Fin 2)) :=
@@ -427,8 +426,7 @@ lemma ArcCrossingOrderedTailArc
         dsimp [V] at hn
         simpa using hn
       dsimp [V]
-      simpa using (List.getElem_drop (xs := δ.vertices) (i := j + 1)
-        (j := n) (h := hdrop))
+      simp
   have hV_get_pos :
         ∀ n (hnpos : 0 < n) (hn : n < V.length),
           V[n] = δ.vertices[j + n]'(by
@@ -476,7 +474,7 @@ lemma ArcCrossingOrderedTailArc
       intro n hn hnpos
       have hVn := hV_get_pos n hnpos (Nat.lt_of_succ_lt hn)
       have hVn1 := hV_get_pos (n + 1) (by omega) hn
-      simpa [Nat.add_assoc, hVn, hVn1]
+      simp [Nat.add_assoc, hVn, hVn1]
   have hV_len : 2 ≤ V.length := by
       dsimp [V]
       simp [List.length_drop]
@@ -668,7 +666,7 @@ lemma ArcCrossingOrderedTailArc
         have hdist2 := dist_add_dist_of_mem_segment hsrc_cseg
         have hsource_ne_c : δ.source ≠ c := by
           intro hsc
-          exact hc_ne_left (by simpa [hj0, hsource0, hsc])
+          exact hc_ne_left (by simp [hj0, hsource0, hsc])
         have hpos : 0 < dist δ.source c := dist_pos.2 hsource_ne_c
         have hcomm : dist c δ.source = dist δ.source c := dist_comm c δ.source
         nlinarith

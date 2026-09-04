@@ -3,8 +3,6 @@ import Mathlib.Order.Interval.Set.Infinite
 import Mathlib.Tactic
 import Util.IncidenceGeometry.Basic
 
-
-open Classical
 noncomputable section
 
 lemma ThreeCoordinateInsideToOutsideSideCountOdd
@@ -35,6 +33,7 @@ lemma ThreeCoordinateInsideToOutsideSideCountOdd
             {t : ℝ | t ∈ Set.Ioo (0 : ℝ) 1 ∧
               (1 - t) * u 1 + t * v 1 = 0 ∧
                 ∀ j : Fin 3, j ≠ 1 → 0 < (1 - t) * u j + t * v j}) := by
+  classical
   let L (u v : Fin 3 → ℝ) (i : Fin 3) (t : ℝ) : ℝ :=
     (1 - t) * u i + t * v i
 

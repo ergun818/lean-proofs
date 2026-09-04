@@ -3,7 +3,6 @@ import Util.IncidenceGeometry.PlanarRot90LinearCombination
 import Util.IncidenceGeometry.PlanarRot90Norm
 import Util.IncidenceGeometry.PlanarRot90Orthogonal
 
-open Classical
 noncomputable section
 
 private lemma swept_chart_image_open
@@ -11,6 +10,7 @@ private lemma swept_chart_image_open
     (S : Set (EuclideanSpace ℝ (Fin 2))) (hS : IsOpen S) :
     IsOpen ((fun z : EuclideanSpace ℝ (Fin 2) =>
       p + z 0 • d + z 1 • PlanarRot90 d) '' S) := by
+  classical
   let chart : EuclideanSpace ℝ (Fin 2) → EuclideanSpace ℝ (Fin 2) :=
     fun z => p + z 0 • d + z 1 • PlanarRot90 d
   let invCoord : EuclideanSpace ℝ (Fin 2) → EuclideanSpace ℝ (Fin 2) :=
@@ -25,9 +25,9 @@ private lemma swept_chart_image_open
       apply continuous_pi
       intro i
       by_cases hi : i = 0
-      · simp [hi]
+      · simp only [hi, Fin.isValue, ↓reduceIte]
         fun_prop
-      · simp [hi]
+      · simp only [Fin.isValue, hi, ↓reduceIte]
         fun_prop
     exact (PiLp.continuous_toLp (p := (2 : ENNReal))
       (β := fun _ : Fin 2 => ℝ)).comp hplain
@@ -72,6 +72,7 @@ private lemma swept_chart_image_connected
     (S : Set (EuclideanSpace ℝ (Fin 2))) (hS : IsConnected S) :
     IsConnected ((fun z : EuclideanSpace ℝ (Fin 2) =>
       p + z 0 • d + z 1 • PlanarRot90 d) '' S) := by
+  classical
   have hchart_cont : Continuous fun z : EuclideanSpace ℝ (Fin 2) =>
       p + z 0 • d + z 1 • PlanarRot90 d := by
     fun_prop
@@ -81,6 +82,7 @@ private lemma swept_norm_combo
     (base : EuclideanSpace ℝ (Fin 2)) (x y : ℝ) :
     ‖x • base + y • PlanarRot90 base‖ ^ 2 =
       (x ^ 2 + y ^ 2) * ‖base‖ ^ 2 := by
+  classical
   have horth : inner ℝ (x • base) (y • PlanarRot90 base) = 0 := by
     rw [inner_smul_left, inner_smul_right, PlanarRot90Orthogonal]
     ring
@@ -97,6 +99,7 @@ private lemma swept_other_norm_sq
     (base other : EuclideanSpace ℝ (Fin 2)) (c s : ℝ)
     (hother_eq : other = c • base - s • PlanarRot90 base) :
     ‖other‖ ^ 2 = (c ^ 2 + s ^ 2) * ‖base‖ ^ 2 := by
+  classical
   calc
     ‖other‖ ^ 2 = ‖c • base + (-s) • PlanarRot90 base‖ ^ 2 := by
       rw [hother_eq]
@@ -107,6 +110,7 @@ private lemma swept_other_norm_sq
 private lemma swept_disk_eq_ball (R : ℝ) (hR : 0 < R) :
     {z : EuclideanSpace ℝ (Fin 2) | z 0 ^ 2 + z 1 ^ 2 < R ^ 2} =
       Metric.ball (0 : EuclideanSpace ℝ (Fin 2)) R := by
+  classical
   have hnormsq_coord (z : EuclideanSpace ℝ (Fin 2)) :
       z 0 ^ 2 + z 1 ^ 2 = ‖z‖ ^ 2 := by
     rw [← real_inner_self_eq_norm_sq, PiLp.inner_apply]
@@ -118,6 +122,7 @@ private lemma swept_disk_eq_ball (R : ℝ) (hR : 0 < R) :
 private lemma swept_small_radius
     (rho bnorm : ℝ) (hrho : 0 < rho) (hbnorm : 0 < bnorm) :
     (rho / 2 / bnorm) ^ 2 < (rho / bnorm) ^ 2 := by
+  classical
   have hhalf_pos : 0 < rho / 2 := by linarith
   have hhalf_lt : rho / 2 < rho := by linarith
   have hdiv_lt : rho / 2 / bnorm < rho / bnorm :=
@@ -132,12 +137,14 @@ private def swept_coordinates (c s : ℝ) (z : EuclideanSpace ℝ (Fin 2)) :
 private lemma swept_coordinates_sq (c s : ℝ) (z : EuclideanSpace ℝ (Fin 2)) :
     (swept_coordinates c s z) 0 ^ 2 + (swept_coordinates c s z) 1 ^ 2 =
       (z 0 ^ 2 + z 1 ^ 2) * (c ^ 2 + s ^ 2) := by
+  classical
   simp [swept_coordinates]
   ring
 
 private lemma swept_coordinates_linear (c s : ℝ) (z : EuclideanSpace ℝ (Fin 2)) :
     c * (swept_coordinates c s z) 1 + s * (swept_coordinates c s z) 0 =
       z 1 * (c ^ 2 + s ^ 2) := by
+  classical
   simp [swept_coordinates]
   ring
 
@@ -148,6 +155,7 @@ private lemma swept_coordinates_chart
     p + (swept_coordinates c s z) 0 • base +
           (swept_coordinates c s z) 1 • PlanarRot90 base =
       p + z 0 • other + z 1 • PlanarRot90 other := by
+  classical
   apply PiLp.ext
   intro k
   fin_cases k <;>
@@ -163,6 +171,7 @@ private lemma swept_coordinates_radius
     (hz : z 0 ^ 2 + z 1 ^ 2 < (rho / 2 / onorm) ^ 2) :
     (swept_coordinates c s z) 0 ^ 2 + (swept_coordinates c s z) 1 ^ 2 <
       (rho / 2 / bnorm) ^ 2 := by
+  classical
   have hscale_eq :
       (rho / 2 / onorm) ^ 2 * (c ^ 2 + s ^ 2) =
         (rho / 2 / bnorm) ^ 2 := by
@@ -180,6 +189,7 @@ private lemma swept_negative_coord_open
     IsOpen {z : EuclideanSpace ℝ (Fin 2) |
       z 0 ^ 2 + z 1 ^ 2 < R ^ 2 ∧
         (z 1 < 0 ∨ 0 < c * z 1 + s * z 0)} := by
+  classical
   have hdisk_open :
       IsOpen {z : EuclideanSpace ℝ (Fin 2) | z 0 ^ 2 + z 1 ^ 2 < R ^ 2} :=
     isOpen_lt (by fun_prop) continuous_const
@@ -195,7 +205,7 @@ private lemma swept_negative_coord_open
         {z | z 0 ^ 2 + z 1 ^ 2 < R ^ 2} ∩
           ({z | z 1 < 0} ∪ {z | 0 < c * z 1 + s * z 0}) := by
     ext z
-    simp only [Set.mem_setOf_eq, Set.mem_inter_iff, Set.mem_union]
+    simp only [Set.mem_ofPred_eq, Set.mem_inter_iff, Set.mem_union]
   rw [heq]
   exact hdisk_open.inter (hyneg_open.union hboundary_open)
 
@@ -204,6 +214,7 @@ private lemma swept_negative_coord_connected
     IsConnected {z : EuclideanSpace ℝ (Fin 2) |
       z 0 ^ 2 + z 1 ^ 2 < R ^ 2 ∧
         (z 1 < 0 ∨ 0 < c * z 1 + s * z 0)} := by
+  classical
   let disk : Set (EuclideanSpace ℝ (Fin 2)) :=
     {z | z 0 ^ 2 + z 1 ^ 2 < R ^ 2}
   let lower : Set (EuclideanSpace ℝ (Fin 2)) := {z | z ∈ disk ∧ z 1 < 0}
@@ -279,7 +290,7 @@ private lemma swept_negative_coord_connected
         z 0 ^ 2 + z 1 ^ 2 < R ^ 2 ∧
           (z 1 < 0 ∨ 0 < c * z 1 + s * z 0)} = lower ∪ cap := by
     ext z
-    simp only [lower, cap, disk, Set.mem_setOf_eq, Set.mem_union]
+    simp only [lower, cap, disk, Set.mem_ofPred_eq, Set.mem_union]
     tauto
   rw [heq]
   exact hunion
@@ -302,6 +313,7 @@ private lemma swept_negative_branch
           -K * z 0 < z 1 ∧ z 1 < 0} ⊆ sector ∧
         otherChart '' {z | 0 < z 0 ∧ z 0 ^ 2 + z 1 ^ 2 < (r / ‖other‖) ^ 2 ∧
           0 < z 1 ∧ z 1 < K * z 0} ⊆ sector := by
+  classical
   let baseChart : EuclideanSpace ℝ (Fin 2) → EuclideanSpace ℝ (Fin 2) :=
     fun z => p + z 0 • base + z 1 • PlanarRot90 base
   let otherChart : EuclideanSpace ℝ (Fin 2) → EuclideanSpace ℝ (Fin 2) :=
@@ -347,6 +359,7 @@ private lemma swept_zero_coord_open_connected
     IsOpen {z : EuclideanSpace ℝ (Fin 2) | z 0 ^ 2 + z 1 ^ 2 < R ^ 2 ∧ z 1 < 0} ∧
     IsConnected {z : EuclideanSpace ℝ (Fin 2) |
       z 0 ^ 2 + z 1 ^ 2 < R ^ 2 ∧ z 1 < 0} := by
+  classical
   let disk : Set (EuclideanSpace ℝ (Fin 2)) := {z | z 0 ^ 2 + z 1 ^ 2 < R ^ 2}
   let lower : Set (EuclideanSpace ℝ (Fin 2)) := {z | z ∈ disk ∧ z 1 < 0}
   have hdisk_open : IsOpen disk := by
@@ -394,6 +407,7 @@ private lemma swept_zero_branch
           -K * z 0 < z 1 ∧ z 1 < 0} ⊆ sector ∧
         otherChart '' {z | 0 < z 0 ∧ z 0 ^ 2 + z 1 ^ 2 < (r / ‖other‖) ^ 2 ∧
           0 < z 1 ∧ z 1 < K * z 0} ⊆ sector := by
+  classical
   let baseChart : EuclideanSpace ℝ (Fin 2) → EuclideanSpace ℝ (Fin 2) :=
     fun z => p + z 0 • base + z 1 • PlanarRot90 base
   let otherChart : EuclideanSpace ℝ (Fin 2) → EuclideanSpace ℝ (Fin 2) :=
@@ -424,8 +438,7 @@ private lemma swept_zero_branch
         (swept_coordinates_radius rho ‖base‖ ‖other‖ c s hbpos hopos hcs hnorm z hzrad)
         hsmall
     · have hwneg : w 1 < 0 := by
-        simp only [Fin.isValue]
-        exact mul_neg_of_pos_of_neg hzvpos hcneg
+        simpa [w, swept_coordinates, hszero] using mul_neg_of_pos_of_neg hzvpos hcneg
       exact hwneg
     · simpa [w, baseChart, otherChart] using
         swept_coordinates_chart p base other c s hother_eq z
@@ -454,6 +467,7 @@ lemma PlanarClockwiseSweptTwoRayEndpointConesInSector
           -K * z 0 < z 1 ∧ z 1 < 0} ⊆ sector ∧
         otherChart '' {z | 0 < z 0 ∧ z 0 ^ 2 + z 1 ^ 2 < (r / ‖other‖) ^ 2 ∧
           0 < z 1 ∧ z 1 < K * z 0} ⊆ sector := by
+  classical
   by_cases hspos : 0 < s
   · simpa [hspos] using
       PlanarClockwiseTwoRayEndpointConesInSector p base other rho c s

@@ -1,6 +1,5 @@
 import Util.IncidenceGeometry.PolygonalReplacementTubeChainData
 
-open Classical
 noncomputable section
 
 structure PolygonalReplacementLocalDiskFillingData {V : Type*} [Fintype V]

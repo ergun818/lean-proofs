@@ -2,13 +2,13 @@ import Util.IncidenceGeometry.PolygonalArcContiguousVertexSubarc
 import Util.IncidenceGeometry.PolygonalArcPointCutData
 import Mathlib.Tactic
 
-open Classical
 noncomputable section
 
 lemma PolygonalArcVertexPointCutDataExists
     (Q : PolygonalArc) (k : ℕ)
     (hkpos : 0 < k) (hk : k + 1 < Q.vertices.length) :
     Nonempty (PolygonalArcPointCutData Q Q.vertices[k]) := by
+  classical
   let last := Q.vertices.length - 1
   have hlast : last < Q.vertices.length := by
     dsimp [last]
@@ -193,7 +193,7 @@ lemma PolygonalArcVertexPointCutDataExists
         (right_mem_segment ℝ Q.vertices[0] Q.vertices[1])
     have hPlen : 0 + 1 < P.vertices.length := by
       rw [hPvertices]
-      simp [List.length_take, List.length_drop]
+      simp [List.length_take]
       omega
     refine ⟨hPlen, ?_, ?_⟩
     · have hopt := congrArg (fun xs => xs[0]?) hPvertices

@@ -3,9 +3,9 @@ import Util.IncidenceGeometry.OrdinaryDrawingImage
 import Util.IncidenceGeometry.OrdinaryPolygonalDrawing
 import Util.IncidenceGeometry.PolygonalArcVertexMemCarrier
 
-open Classical
 noncomputable section
 
+open Classical in
 lemma PlaneTreeLeafPendantAttachment {V : Type*} [Fintype V]
     (G : SimpleGraph V) [Fintype G.edgeSet] [DecidableRel G.Adj]
     (D : OrdinaryPolygonalDrawing G) (hD : D.crossingSet.card = 0)
@@ -30,6 +30,7 @@ lemma PlaneTreeLeafPendantAttachment {V : Type*} [Fintype V]
                   ((D.edgeArc e).carrier ∩ OrdinaryDrawingImage (G.induce S) D' =
                     ({(D.edgeArc e).target} : Set (EuclideanSpace ℝ (Fin 2))) ∧
                     (D.edgeArc e).source ∉ OrdinaryDrawingImage (G.induce S) D')) := by
+  classical
   intro S D' hD'_vertex hD'_edges hAttach_mem hLeafEndpoint_notMem
     hEndpointOrientation
   let γ : PolygonalArc := D.edgeArc e
@@ -80,9 +81,9 @@ lemma PlaneTreeLeafPendantAttachment {V : Type*} [Fintype V]
     · rcases hEndpointOrientation with hdir | hrev
       · exact False.elim (hLeafEndpoint_notMem (by
           simpa [K, γ, hxsrc, hdir.1] using hxK))
-      · simpa [γ, hxsrc, hrev.1]
+      · simp [γ, hxsrc, hrev.1]
     · rcases hEndpointOrientation with hdir | hrev
-      · simpa [γ, hxtgt, hdir.2]
+      · simp [γ, hxtgt, hdir.2]
       · exact False.elim (hLeafEndpoint_notMem (by
           simpa [K, γ, hxtgt, hrev.2] using hxK))
   have common_point_is_attachment :
@@ -110,7 +111,7 @@ lemma PlaneTreeLeafPendantAttachment {V : Type*} [Fintype V]
       · by_cases hxOldRel : x ∈ (D.edgeArc eG).relativeInterior
         · have he_ne_eG : e ≠ eG := by
             intro heq
-            exact heG_ne (by simpa [heq])
+            exact heG_ne (by simp [heq])
           exact False.elim
             (CrossingFreeEdgeInteriorDisjoint G D hD he_ne_eG
               (by simpa [γ] using hxγrel) hxOldRel)

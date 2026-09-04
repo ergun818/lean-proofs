@@ -2,7 +2,6 @@ import Mathlib.Tactic
 import Util.IncidenceGeometry.OrdinaryCrossingLocalBranchData
 import Util.IncidenceGeometry.StraightSegmentClosedBallGateCut
 
-open Classical
 noncomputable section
 
 lemma OrdinaryCrossingLocalBranchGateCarrier
@@ -10,6 +9,7 @@ lemma OrdinaryCrossingLocalBranchGateCarrier
     (branch : OrdinaryCrossingLocalBranchData Q p radius) :
     Metric.closedBall p radius ∩ Q.carrier =
       segment ℝ branch.beforeGate p ∪ segment ℝ p branch.afterGate := by
+  classical
   have hbefore0 : branch.beforeIndex < Q.vertices.length :=
     Nat.lt_of_succ_lt branch.beforeIndex_valid
   have hafter0 : branch.afterIndex < Q.vertices.length :=

@@ -3,7 +3,6 @@ import Util.IncidenceGeometry.PlanarRot90Decomposition
 import Util.IncidenceGeometry.PlanarRot90Norm
 import Util.IncidenceGeometry.PlanarRot90Orthogonal
 
-open Classical
 noncomputable section
 
 lemma PlanarSlitDiskEndpointConesAvoidRay
@@ -23,6 +22,7 @@ lemma PlanarSlitDiskEndpointConesAvoidRay
           chart ''
             {z | 0 < z 0 ∧ z 0 ^ 2 + z 1 ^ 2 < (r / ‖base‖) ^ 2 ∧
               0 < z 1 ∧ z 1 < K * z 0} ⊆ slit := by
+  classical
   dsimp only
   let ray : Set (EuclideanSpace ℝ (Fin 2)) :=
     {q | ∃ t : ℝ, 0 < t ∧ q = p + t • base}
@@ -55,9 +55,9 @@ lemma PlanarSlitDiskEndpointConesAvoidRay
       apply continuous_pi
       intro i
       by_cases hi : i = 0
-      · simp [hi]
+      · simp only [hi, Fin.isValue, ↓reduceIte]
         fun_prop
-      · simp [hi]
+      · simp only [Fin.isValue, hi, ↓reduceIte]
         fun_prop
     exact (PiLp.continuous_toLp (p := (2 : ENNReal))
       (β := fun _ : Fin 2 => ℝ)).comp hplain
@@ -97,7 +97,7 @@ lemma PlanarSlitDiskEndpointConesAvoidRay
       {z : EuclideanSpace ℝ (Fin 2) | z 0 ^ 2 + z 1 ^ 2 < R ^ 2} =
         Metric.ball (0 : EuclideanSpace ℝ (Fin 2)) R := by
     ext z
-    rw [Set.mem_setOf_eq, Metric.mem_ball]
+    rw [Set.mem_ofPred_eq, Metric.mem_ball]
     simp [hcoord_norm_sq z, (sq_lt_sq₀ (norm_nonneg z) (le_of_lt hR_pos))]
   have hnorm_combo (x y : ℝ) :
       ‖x • base + y • PlanarRot90 base‖ ^ 2 =

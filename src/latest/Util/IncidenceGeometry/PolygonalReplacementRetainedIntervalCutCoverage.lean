@@ -1,6 +1,5 @@
 import Util.IncidenceGeometry.Basic
 
-open Classical
 noncomputable section
 
 lemma PolygonalReplacementRetainedIntervalCutCoverage
@@ -27,7 +26,7 @@ lemma PolygonalReplacementRetainedIntervalCutCoverage
       have hsome' : intervals[k]? = some intervals[k] := by
         rw [List.getElem?_eq_some_iff]
         exact ⟨hk_interval, rfl⟩
-      exact ⟨(intervals[k]).1, (intervals[k]).2, by simpa using hsome'⟩
+      exact ⟨(intervals[k]).1, (intervals[k]).2, by simp⟩
     refine ⟨k, a, b, hsome, ?_, ?_⟩
     · by_cases hk0 : k = 0
       · have hhead_some : intervals.head? = some (a, b) := by
@@ -77,11 +76,11 @@ lemma PolygonalReplacementRetainedIntervalCutCoverage
         have hsome' : intervals[0]? = some intervals[0] := by
           rw [List.getElem?_eq_some_iff]
           exact ⟨h0, rfl⟩
-        exact ⟨(intervals[0]).1, (intervals[0]).2, by simpa using hsome'⟩
+        exact ⟨(intervals[0]).1, (intervals[0]).2, by simp⟩
       refine ⟨0, a, b, hsome, ?_, ?_⟩
       · have hhead_some : intervals.head? = some (a, b) := by
           rw [List.head?_eq_getElem?]
-          simpa [hsome]
+          simp [hsome]
         rw [hhead_some] at intervals_head
         have ha : a = source := by simpa using intervals_head
         rw [ha]
@@ -90,7 +89,7 @@ lemma PolygonalReplacementRetainedIntervalCutCoverage
           rw [List.getLast?_eq_getElem?]
           have hidx : intervals.length - 1 = 0 := by omega
           rw [hidx]
-          simpa [hsome]
+          simp [hsome]
         rw [hlast_some] at intervals_last
         have hb : b = target := by simpa using intervals_last
         rw [hb]
@@ -114,7 +113,7 @@ lemma PolygonalReplacementRetainedIntervalCutCoverage
           rw [List.getElem?_eq_some_iff]
           exact ⟨hidx_interval, rfl⟩
         exact ⟨(intervals[cuts.length]).1, (intervals[cuts.length]).2,
-          by simpa using hsome'⟩
+          by simp⟩
       refine ⟨cuts.length, a, b, hsome, ?_, ?_⟩
       · have hmap := (interval_gap k hk).2
         have hsome' : intervals[k + 1]? = some (a, b) := by
@@ -127,7 +126,7 @@ lemma PolygonalReplacementRetainedIntervalCutCoverage
           rw [List.getLast?_eq_getElem?]
           have hidx : intervals.length - 1 = cuts.length := by omega
           rw [hidx]
-          simpa [hsome]
+          simp [hsome]
         rw [hlast_some] at intervals_last
         have hb : b = target := by simpa using intervals_last
         rw [hb]

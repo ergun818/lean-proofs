@@ -1,7 +1,6 @@
 import Mathlib.Tactic
 import Util.IncidenceGeometry.PolygonalArcEndpointIsolationExists
 
-open Classical
 noncomputable section
 
 lemma PolygonalArcTargetEndpointRayCover (γ : PolygonalArc) :
@@ -13,6 +12,7 @@ lemma PolygonalArcTargetEndpointRayCover (γ : PolygonalArc) :
         {x | ∃ c : ℝ, 0 ≤ c ∧
           x = γ.target +
             c • (γ.vertices[γ.vertices.length - 2]'hprev - γ.target)}) := by
+  classical
   obtain ⟨r₀, r₁, hIso⟩ := PolygonalArcEndpointIsolationExists γ
   refine ⟨r₁, hIso.target_pos, ?_⟩
   dsimp

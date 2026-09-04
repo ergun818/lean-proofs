@@ -1,6 +1,5 @@
 import Util.IncidenceGeometry.Basic
 
-open Classical
 noncomputable section
 
 lemma EndpointUnitDiskChordGapCutDiskIntersections
@@ -28,6 +27,7 @@ lemma EndpointUnitDiskChordGapCutDiskIntersections
             p ∈ segment ℝ (AffineMap.lineMap A B α) (AffineMap.lineMap A B β) →
               p ∈ Metric.closedBall z rho →
                 x = α → p = v) := by
+  classical
   let f : ℝ →ᵃ[ℝ] EuclideanSpace ℝ (Fin 2) := AffineMap.lineMap A B
   have hf : Function.Injective f := AffineMap.lineMap_injective (k := ℝ) hAB
   have gap_param :

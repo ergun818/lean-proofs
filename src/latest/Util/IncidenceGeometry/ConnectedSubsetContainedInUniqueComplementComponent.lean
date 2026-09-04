@@ -1,12 +1,12 @@
 import Util.IncidenceGeometry.ComplementComponent
 
-open Classical
 noncomputable section
 
 lemma ConnectedSubsetContainedInUniqueComplementComponent
     (K T : Set (EuclideanSpace ℝ (Fin 2)))
     (hTne : T.Nonempty) (hTK : T ⊆ Kᶜ) (hTconn : IsConnected T) :
     ∃! C : Set (EuclideanSpace ℝ (Fin 2)), ComplementComponent K C ∧ T ⊆ C := by
+  classical
   rcases hTne with ⟨x, hxT⟩
   have hxK : x ∈ Kᶜ := hTK hxT
   let C₀ : Set (EuclideanSpace ℝ (Fin 2)) := connectedComponentIn Kᶜ x

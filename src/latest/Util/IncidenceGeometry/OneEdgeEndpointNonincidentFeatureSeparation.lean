@@ -1,7 +1,6 @@
 import Mathlib.Tactic
 import Util.IncidenceGeometry.PositiveSeparation
 
-open Classical
 noncomputable section
 
 lemma OneEdgeEndpointNonincidentFeatureSeparation

@@ -2,7 +2,6 @@ import Util.IncidenceGeometry.OrdinaryLabeledCrossingDiskData
 import Util.IncidenceGeometry.OrdinaryCrossingLocalBranchDataExistsBelow
 import Mathlib.Tactic
 
-open Classical
 noncomputable section
 
 lemma OrdinaryLabeledCrossingDiskDataExistsBelow
@@ -13,6 +12,7 @@ lemma OrdinaryLabeledCrossingDiskDataExistsBelow
     (upper : ℝ) (hupper : 0 < upper) :
     ∃ data : OrdinaryLabeledCrossingDiskData G D x,
       data.radius < upper := by
+  classical
   let E := EuclideanSpace ℝ (Fin 2)
   rcases (D.crossingSet_spec x.1).mp x.2 with
     ⟨firstEdge, secondEdge, hedges_ne, hx_first, hx_second⟩

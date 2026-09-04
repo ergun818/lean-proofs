@@ -28,7 +28,6 @@ import Util.IncidenceGeometry.PolygonalSideStripsReverseOfSameCarrier
 import Util.IncidenceGeometry.PositiveSeparation
 import Mathlib.Combinatorics.SimpleGraph.DegreeSum
 
-open Classical
 noncomputable section
 
 lemma PlaneDrawingDartCollarChoiceDataExists {V : Type*} [Fintype V]
@@ -37,6 +36,7 @@ lemma PlaneDrawingDartCollarChoiceDataExists {V : Type*} [Fintype V]
     (A : PlaneDrawingDartArcData G D)
     (C : PlaneDrawingDartVertexSectorGeometry G D A) :
     Nonempty (PlaneDrawingDartCollarChoiceData G D A C) := by
+  classical
   let terminalSectorRadius : G.Dart → ℝ := fun d =>
     Classical.choose (C.terminal_left_endpoint_sector_access d)
   let terminalSectorAperture : G.Dart → ℝ := fun d =>

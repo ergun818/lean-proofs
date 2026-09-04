@@ -6,11 +6,11 @@ import Util.IncidenceGeometry.PolygonalArcOpenSegmentSubsetRelativeInterior
 import Util.IncidenceGeometry.PolygonalArcPointCutData
 import Mathlib.Tactic
 
-open Classical
 noncomputable section
 
 private lemma polygonalArc_source_mem_carrier (Q : PolygonalArc) :
     Q.source ∈ Q.carrier := by
+  classical
   rw [Q.carrier_eq]
   have hseg : 0 + 1 < Q.vertices.length := Q.length_ge_two
   refine ⟨0, hseg, ?_⟩
@@ -25,6 +25,7 @@ private lemma polygonalArc_source_mem_carrier (Q : PolygonalArc) :
 
 private lemma polygonalArc_target_mem_carrier (Q : PolygonalArc) :
     Q.target ∈ Q.carrier := by
+  classical
   rw [Q.carrier_eq]
   let k := Q.vertices.length - 2
   have hk : k + 1 < Q.vertices.length := by
@@ -48,6 +49,7 @@ private lemma polygonalArc_target_mem_carrier (Q : PolygonalArc) :
 private lemma polygonalArc_vertex_mem_carrier (Q : PolygonalArc)
     {p : EuclideanSpace ℝ (Fin 2)} (hp : p ∈ Q.vertices) :
     p ∈ Q.carrier := by
+  classical
   rw [Q.carrier_eq]
   rcases List.getElem_of_mem hp with ⟨k, hk, rfl⟩
   have hlen := Q.length_ge_two
@@ -67,6 +69,7 @@ private lemma polygonalArc_open_not_vertices (Q : PolygonalArc)
     (hk : k + 1 < Q.vertices.length)
     (hp : p ∈ openSegment ℝ Q.vertices[k] Q.vertices[k + 1]) :
     p ∉ Q.vertices := by
+  classical
   intro hpv
   rcases List.getElem_of_mem hpv with ⟨m, hm, hmp⟩
   by_cases hmk : m = k
@@ -94,6 +97,7 @@ private lemma ordinary_old_relative_of_carrier
     (hpNotVertex : ∀ v : V, p ≠ D.vertexPlacement v)
     (e : G.edgeFinset) (hp : p ∈ (D.edgeArc e).carrier) :
     p ∈ (D.edgeArc e).relativeInterior := by
+  classical
   rw [(D.edgeArc e).relativeInterior_eq]
   refine ⟨hp, ?_⟩
   rcases D.edgeArc_endpoints e with ⟨a, b, _hab, _he, hends⟩
@@ -119,6 +123,7 @@ private lemma polygonalArc_same_piece_intersection_vertex
     (hst : s ≠ t) (p : EuclideanSpace ℝ (Fin 2))
     (hps : p ∈ segment ℝ s.1 s.2)
     (hpt : p ∈ segment ℝ t.1 t.2) : p ∈ Q.vertices := by
+  classical
   rcases Finset.mem_image.mp hs with ⟨i, _hiMem, hsi⟩
   rcases Finset.mem_image.mp ht with ⟨j, _hjMem, htj⟩
   subst s
@@ -134,7 +139,7 @@ private lemma polygonalArc_same_piece_intersection_vertex
     · have hpeq : p = Q.vertices[j.1] := by
         simpa [hadj] using hpInter
       simp [hpeq]
-    · simpa [hadj] using hpInter
+    · simp [hadj] at hpInter
   · have hijFin : i = j := Fin.ext hijeq
     subst j
     exact (hst rfl).elim
@@ -146,9 +151,9 @@ private lemma polygonalArc_same_piece_intersection_vertex
     · have hpeq : p = Q.vertices[i.1] := by
         simpa [hadj] using hpInter
       simp [hpeq]
-    · simpa [hadj] using hpInter
+    · simp [hadj] at hpInter
 
-
+open Classical in
 lemma OrdinaryAdjacentEdgesProtectedTrimmedPresentation
     {V : Type*} [Fintype V]
     (G : SimpleGraph V) [Fintype G.edgeSet]
@@ -390,9 +395,9 @@ lemma OrdinaryAdjacentEdgesProtectedTrimmedPresentation
         rcases hpFirstArc with hpPrefix | hpSuffix
         · by_cases hpDu : p = D.vertexPlacement u
           · left
-            simpa [vertexPts, hpDu]
+            simp [vertexPts, hpDu]
           · by_cases hpx : p = x
-            · exact Or.inl (Or.inr (by simpa [hpx]))
+            · exact Or.inl (Or.inr (by simp [hpx]))
             · exfalso
               exact hpRetained.2 ⟨hA ▸ hpPrefix, by simp [hpDu, hpx]⟩
         · exact Or.inr
@@ -416,19 +421,19 @@ lemma OrdinaryAdjacentEdgesProtectedTrimmedPresentation
                 exact hpRetained.2 (Or.inl ⟨hpB, hnot⟩)
               rcases hpEnds with hpDu | hpx
               · left
-                simpa [vertexPts, hpDu]
-              · exact Or.inl (Or.inr (by simpa [hpx]))
+                simp [vertexPts, hpDu]
+              · exact Or.inl (Or.inr (by simp [hpx]))
             · have hpEnds : p ∈ ({x, y'} : Set _) := by
                 by_contra hnot
                 exact hpRetained.2 (Or.inr ⟨hpBplus, hnot⟩)
               rcases hpEnds with hpx | hpy'
-              · exact Or.inl (Or.inr (by simpa [hpx]))
+              · exact Or.inl (Or.inr (by simp [hpx]))
               · exfalso
                 apply hpTail
                 rw [hRbeta]
                 refine ⟨hpRetained.1, ?_⟩
                 rintro ⟨_hp, hpNe⟩
-                exact hpNe (by simpa [hpy'])
+                exact hpNe (by simp [hpy'])
         · exact Or.inr (Set.mem_iUnion.mpr
             ⟨e, by simpa [hretained, heFirst, heSecond] using hpRetained⟩)
     · rcases hpVertex with ⟨v, _hv, rfl⟩
@@ -507,7 +512,7 @@ lemma OrdinaryAdjacentEdgesProtectedTrimmedPresentation
           rw [hRbeta]
           refine ⟨hp.1, ?_⟩
           rintro ⟨_hp, hpNe⟩
-          exact hpNe (by simpa [hpy'])
+          exact hpNe (by simp [hpy'])
   have old_relative_of_carrier
       (p : EuclideanSpace ℝ (Fin 2))
       (hpNotVertex : forall v : V, p ≠ D.vertexPlacement v)
@@ -542,7 +547,7 @@ lemma OrdinaryAdjacentEdgesProtectedTrimmedPresentation
             omega
           exact hne ((left_mem_openSegment_iff (𝕜 := ℝ)).1 (h ▸ hzb))
         exact False.elim (hzbLeft (by simpa [hadj] using hzInter))
-      · simpa [hadj] using hzInter
+      · simp [hadj] at hzInter
     · rfl
     · have hzInter : z ∈ segment ℝ Q.vertices[b] Q.vertices[b + 1] ∩
           segment ℝ Q.vertices[a] Q.vertices[a + 1] :=
@@ -559,7 +564,7 @@ lemma OrdinaryAdjacentEdgesProtectedTrimmedPresentation
             omega
           exact hne ((left_mem_openSegment_iff (𝕜 := ℝ)).1 (h ▸ hza))
         exact False.elim (hzaLeft (by simpa [hadj] using hzInter))
-      · simpa [hadj] using hzInter
+      · simp [hadj] at hzInter
   have same_piece_intersection_arc_point
       (e : G.edgeFinset)
       (s t : EuclideanSpace ℝ (Fin 2) × EuclideanSpace ℝ (Fin 2))
@@ -650,7 +655,7 @@ lemma OrdinaryAdjacentEdgesProtectedTrimmedPresentation
             simpa [hadj] using hpInter
           apply arc_point_mem_pts (e := e)
           simp [hpeq]
-        · simpa [hadj] using hpInter
+        · simp [hadj] at hpInter
       · have hijFin : i = j := Fin.ext hijeq
         subst j
         exact (hst rfl).elim
@@ -665,7 +670,7 @@ lemma OrdinaryAdjacentEdgesProtectedTrimmedPresentation
             simpa [hadj] using hpInter
           apply arc_point_mem_pts (e := e)
           simp [hpeq]
-        · simpa [hadj] using hpInter
+        · simp [hadj] at hpInter
     · have endpoint_point (g : G.edgeFinset)
           (q : EuclideanSpace ℝ (Fin 2) × EuclideanSpace ℝ (Fin 2))
           (hq : q ∈ arcSegments (retainedArc g)) :
@@ -766,7 +771,7 @@ lemma OrdinaryAdjacentEdgesProtectedTrimmedPresentation
     · rintro ⟨e, i, hi, rfl⟩
       change ((retainedArc e).vertices[i],
         (retainedArc e).vertices[i + 1]) ∈ segs
-      apply segment_mem_segs
+      apply segment_mem_segs (e := e)
       dsimp [arcSegments]
       let k : Fin ((retainedArc e).vertices.length - 1) := ⟨i, by omega⟩
       exact Finset.mem_image.mpr ⟨k, by simp, by simp [k]⟩
@@ -823,8 +828,7 @@ lemma OrdinaryAdjacentEdgesProtectedTrimmedPresentation
     intro v _hv
     exact vertex_mem_pts v
   refine ⟨Kclean, hKcarrier, hsegmentsSpec, hpointsSpec, hvertices, ?_⟩
-  ·
-    intro p hpXA
+  · intro p hpXA
     have hpSpec := (hXASpec p).1 hpXA
     have hpA : p ∈ A := hpSpec.1.1
     have hpNotEnds : p ∉ ({D.vertexPlacement u, x} : Set _) := hpSpec.1.2
@@ -1160,4 +1164,4 @@ lemma OrdinaryAdjacentEdgesProtectedTrimmedPresentation
           simpa [Tail.carrier_eq] using hqRbeta)
         exact hfalse.elim
       · intro hq
-        simpa using hq
+        simp at hq

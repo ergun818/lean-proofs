@@ -1,6 +1,5 @@
 import Util.IncidenceGeometry.Basic
 
-open Classical
 noncomputable section
 
 lemma FiniteSortedRealCutListEndpointEntries
@@ -11,6 +10,7 @@ lemma FiniteSortedRealCutListEndpointEntries
     2 ≤ L.length ∧
       (∀ h : 0 < L.length, L[0]'h = 0) ∧
         (∀ h : L.length - 1 < L.length, L[L.length - 1]'h = 1) := by
+  classical
   have hlen_two : 2 ≤ L.length := by
     rcases List.mem_iff_get.mp hzero with ⟨z, hz⟩
     rcases List.mem_iff_get.mp hone with ⟨o, ho⟩

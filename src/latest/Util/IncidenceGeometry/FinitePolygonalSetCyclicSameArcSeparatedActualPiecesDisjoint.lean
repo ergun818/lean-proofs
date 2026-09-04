@@ -1,6 +1,5 @@
 import Util.IncidenceGeometry.SimpleClosedPolygonalCurve
 
-open Classical
 noncomputable section
 
 lemma FinitePolygonalSetCyclicSameArcSeparatedActualPiecesDisjoint
@@ -15,19 +14,17 @@ lemma FinitePolygonalSetCyclicSameArcSeparatedActualPiecesDisjoint
       ∀ i,
         pieceSource i =
           AffineMap.lineMap
-            ((pieceArc i).1.vertices[(pieceSegmentIndex i).1]'
-              (Nat.lt_of_succ_lt (pieceSegmentIndex i).2))
-            ((pieceArc i).1.vertices[(pieceSegmentIndex i).1 + 1]'
-              (pieceSegmentIndex i).2)
+            ((pieceArc i).1.vertices[(pieceSegmentIndex i).1]'(Nat.lt_of_succ_lt (pieceSegmentIndex
+              i).2))
+            ((pieceArc i).1.vertices[(pieceSegmentIndex i).1 + 1]'(pieceSegmentIndex i).2)
             (pieceSourceParam i).1)
     (pieceTarget_eq :
       ∀ i,
         pieceTarget i =
           AffineMap.lineMap
-            ((pieceArc i).1.vertices[(pieceSegmentIndex i).1]'
-              (Nat.lt_of_succ_lt (pieceSegmentIndex i).2))
-            ((pieceArc i).1.vertices[(pieceSegmentIndex i).1 + 1]'
-              (pieceSegmentIndex i).2)
+            ((pieceArc i).1.vertices[(pieceSegmentIndex i).1]'(Nat.lt_of_succ_lt (pieceSegmentIndex
+              i).2))
+            ((pieceArc i).1.vertices[(pieceSegmentIndex i).1 + 1]'(pieceSegmentIndex i).2)
             (pieceTargetParam i).1)
     (pieceCarrier : PieceIndex → Set (EuclideanSpace ℝ (Fin 2)))
     (pieceCarrier_eq :
@@ -36,6 +33,7 @@ lemma FinitePolygonalSetCyclicSameArcSeparatedActualPiecesDisjoint
     (hsame : pieceArc i = pieceArc j)
     (hgap : (pieceSegmentIndex i).1 + 1 < (pieceSegmentIndex j).1) :
     Disjoint (pieceCarrier i) (pieceCarrier j) := by
+  classical
   let γ : PolygonalArc := (pieceArc i).1
   let a : ℕ := (pieceSegmentIndex i).1
   let b : ℕ := (pieceSegmentIndex j).1

@@ -1,7 +1,6 @@
 import Util.IncidenceGeometry.FinitePolygonalSetCyclicTraversalCuts
 import Util.IncidenceGeometry.CollinearAdjacentSubsegmentsMeetAtEndpoint
 
-open Classical
 noncomputable section
 
 lemma FinitePolygonalSetCyclicAdjacentPieceCarriersMeetAtJunction
@@ -13,6 +12,7 @@ lemma FinitePolygonalSetCyclicAdjacentPieceCarriersMeetAtJunction
         D.pieceCarrier ((D.arcPieceOrder p)[n + 1]) =
       ({D.pieceTarget ((D.arcPieceOrder p)[n])} :
         Set (EuclideanSpace ℝ (Fin 2))) := by
+  classical
   let i : D.pieceIndex := (D.arcPieceOrder p)[n]
   let j : D.pieceIndex := (D.arcPieceOrder p)[n + 1]
   have hconsec := D.arcPieceOrder_consecutive p n hn

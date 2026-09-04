@@ -1,7 +1,6 @@
 import Mathlib.Combinatorics.SimpleGraph.Acyclic
 import Util.IncidenceGeometry.Basic
 
-open Classical
 noncomputable section
 
 lemma PlaneTreeLeafDeletionGraphData {V : Type*} [Fintype V] (G : SimpleGraph V)
@@ -11,6 +10,7 @@ lemma PlaneTreeLeafDeletionGraphData {V : Type*} [Fintype V] (G : SimpleGraph V)
       (∀ u : V, G.Adj v u → u = w) ∧
         (G.induce ({v}ᶜ : Set V)).IsTree ∧
           ∃ e : G.edgeFinset, e.1 = Sym2.mk v w := by
+  classical
   have hNontrivial : Nontrivial V := by
     have hEdgeNonempty : G.edgeSet.Nonempty := Set.nonempty_iff_ne_empty.mpr hEdges
     rcases hEdgeNonempty with ⟨e, he⟩

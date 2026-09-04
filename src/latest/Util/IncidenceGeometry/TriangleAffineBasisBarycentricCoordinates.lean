@@ -3,7 +3,6 @@ import Mathlib.LinearAlgebra.AffineSpace.FiniteDimensional
 import Mathlib.Analysis.Convex.Between
 import Util.IncidenceGeometry.Basic
 
-open Classical
 open Set
 noncomputable section
 
@@ -25,6 +24,7 @@ lemma TriangleAffineBasisBarycentricCoordinates
       (∀ p : EuclideanSpace ℝ (Fin 2),
         p ∈ openSegment ℝ (β 2) (β 0) ↔
           0 < β.coord 0 p ∧ β.coord 1 p = 0 ∧ 0 < β.coord 2 p) := by
+  classical
   have hrange :
       Set.range β =
         ({β 0, β 1, β 2} : Set (EuclideanSpace ℝ (Fin 2))) := by

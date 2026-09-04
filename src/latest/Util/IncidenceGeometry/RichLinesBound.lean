@@ -2,10 +2,10 @@ import Util.IncidenceGeometry.IsAffineLine
 import Util.IncidenceGeometry.LineIncidences
 import Util.IncidenceGeometry.SzemerediTrotter
 
-open Classical
 open scoped Real
 noncomputable section
 
+open Classical in
 theorem RichLinesBound :
     ∃ C : ℝ, 0 < C ∧
       ∀ (P : Finset (EuclideanSpace ℝ (Fin 2))) (k : ℕ),
@@ -15,6 +15,7 @@ theorem RichLinesBound :
               k ≤ (P.filter (fun p =>
                 p ∈ (ℓ : AffineSubspace ℝ (EuclideanSpace ℝ (Fin 2))))).card) ∧
             (L.card : ℝ) ≤ C * (P.card : ℝ) ^ 2 / (k : ℝ) ^ 3 := by
+  classical
   obtain ⟨C0, hC0, hST⟩ := SzemerediTrotter
   let A : ℝ := 3 * C0
   let C : ℝ := max (max 1 A) (A ^ 3)

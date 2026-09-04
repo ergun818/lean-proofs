@@ -3,8 +3,6 @@ import Mathlib.Order.Interval.Set.Infinite
 import Mathlib.Tactic
 import Util.IncidenceGeometry.Basic
 
-
-open Classical
 noncomputable section
 
 lemma ThreeCoordinateOutsideToOutsideSideCountEven
@@ -41,6 +39,7 @@ lemma ThreeCoordinateOutsideToOutsideSideCountEven
             {t : ℝ | t ∈ Set.Ioo (0 : ℝ) 1 ∧
               (1 - t) * u 1 + t * v 1 = 0 ∧
                 ∀ j : Fin 3, j ≠ 1 → 0 < (1 - t) * u j + t * v j}) := by
+  classical
 
   let L (u v : Fin 3 → ℝ) (i : Fin 3) (t : ℝ) : ℝ :=
     (1 - t) * u i + t * v i
@@ -353,46 +352,46 @@ lemma ThreeCoordinateOutsideToOutsideSideCountEven
       intro h
       have hpos := hr0.2.2 1 (by decide)
       have hzero := hr1.2.1
-      simpa [h, hzero] using hpos
+      simp [h, hzero] at hpos
     have h02 : r0 ≠ r2 := by
       intro h
       have hpos := hr0.2.2 2 (by decide)
       have hzero := hr2.2.1
-      simpa [h, hzero] using hpos
+      simp [h, hzero] at hpos
     have h12 : r1 ≠ r2 := by
       intro h
       have hpos := hr1.2.2 2 (by decide)
       have hzero := hr2.2.1
-      simpa [h, hzero] using hpos
+      simp [h, hzero] at hpos
     rcases lt_or_gt_of_ne h01 with h01lt | h10lt
     · rcases lt_or_gt_of_ne h02 with h02lt | h20lt
       · rcases lt_or_gt_of_ne h12 with h12lt | h21lt
         · have hpos0 := hr0.2.2 1 (by decide)
           have hpos2 := hr2.2.2 1 (by decide)
           have hpos1 := L_pos_of_between_pos u v 1 h01lt h12lt hpos0 hpos2
-          simpa [hr1.2.1] using hpos1
+          simp [hr1.2.1] at hpos1
         · have hpos0 := hr0.2.2 2 (by decide)
           have hpos1 := hr1.2.2 2 (by decide)
           have hpos2 := L_pos_of_between_pos u v 2 h02lt h21lt hpos0 hpos1
-          simpa [hr2.2.1] using hpos2
+          simp [hr2.2.1] at hpos2
       · have hpos2 := hr2.2.2 0 (by decide)
         have hpos1 := hr1.2.2 0 (by decide)
         have hpos0 := L_pos_of_between_pos u v 0 h20lt h01lt hpos2 hpos1
-        simpa [hr0.2.1] using hpos0
+        simp [hr0.2.1] at hpos0
     · rcases lt_or_gt_of_ne h02 with h02lt | h20lt
       · have hpos1 := hr1.2.2 0 (by decide)
         have hpos2 := hr2.2.2 0 (by decide)
         have hpos0 := L_pos_of_between_pos u v 0 h10lt h02lt hpos1 hpos2
-        simpa [hr0.2.1] using hpos0
+        simp [hr0.2.1] at hpos0
       · rcases lt_or_gt_of_ne h12 with h12lt | h21lt
         · have hpos1 := hr1.2.2 2 (by decide)
           have hpos0 := hr0.2.2 2 (by decide)
           have hpos2 := L_pos_of_between_pos u v 2 h12lt h20lt hpos1 hpos0
-          simpa [hr2.2.1] using hpos2
+          simp [hr2.2.1] at hpos2
         · have hpos2 := hr2.2.2 1 (by decide)
           have hpos0 := hr0.2.2 1 (by decide)
           have hpos1 := L_pos_of_between_pos u v 1 h21lt h10lt hpos2 hpos0
-          simpa [hr1.2.1] using hpos1
+          simp [hr1.2.1] at hpos1
 
   have side_root_sign_cases
       {u v : Fin 3 → ℝ} {i : Fin 3} {r : ℝ}
@@ -400,7 +399,7 @@ lemma ThreeCoordinateOutsideToOutsideSideCountEven
       (hNonconstant : u i ≠ v i) :
       (u i < 0 ∧ 0 < v i) ∨ (0 < u i ∧ v i < 0) := by
     unfold Side at hr
-    simp only [Set.mem_setOf_eq] at hr
+    simp only [Set.mem_ofPred_eq] at hr
     rcases hr with ⟨hrI, hzero, _hpos⟩
     unfold L at hzero
     by_cases hui_neg : u i < 0

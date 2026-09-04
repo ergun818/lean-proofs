@@ -4,13 +4,12 @@ import Util.IncidenceGeometry.PolygonalArcEndpointGluedSegmentOccurrence
 import Util.IncidenceGeometry.PolygonalArcOpenSegmentSubsetRelativeInterior
 import Mathlib.Tactic
 
-
-open Classical
 noncomputable section
 
 private lemma endpointSideArcLastVertex (Q : PolygonalArc)
     (hi : Q.vertices.length - 1 < Q.vertices.length) :
     Q.vertices[Q.vertices.length - 1]'hi = Q.target := by
+  classical
   have htarget := Q.target_eq_last
   rw [List.getLast?_eq_getElem?] at htarget
   rw [List.getElem?_eq_getElem (by omega)] at htarget
@@ -24,6 +23,7 @@ private lemma endpointSideCutSuffixPenultimateBefore
     (hQidx : Q.vertices.length - 2 < Q.vertices.length),
     D.suffixArc.vertices[D.suffixArc.vertices.length - 2]'hsidx =
       Q.vertices[Q.vertices.length - 2]'hQidx := by
+  classical
   intro hsidx hQidx
   have hQlen := Q.length_ge_two
   rcases D.suffix_drop_index_spec with hr | hr
@@ -127,6 +127,7 @@ private lemma endpointSideCutSuffixPenultimateAtLast
     (hcut : D.cutIndex = Q.vertices.length - 2) : ∀
     (hsidx : D.suffixArc.vertices.length - 2 < D.suffixArc.vertices.length),
     D.suffixArc.vertices[D.suffixArc.vertices.length - 2]'hsidx = c := by
+  classical
   intro hsidx
   have hQlen := Q.length_ge_two
   have hrightQ : Q.vertices[Q.vertices.length - 1] = Q.target :=
@@ -173,102 +174,103 @@ lemma EndpointSidePrefixOrderedTerminalSuffix
         terminalSegment.source = h →
           terminalSegment.target = terminalGate →
             terminalSegment.carrier = segment ℝ h terminalGate →
-              chain.vertices =
-                PolygonalArcEndpointGluedVertices
-                  [predecessor, approach, terminalSegment] →
-                chain.carrier =
-                  predecessor.carrier ∪ approach.carrier ∪
-                    terminalSegment.carrier →
-                  predecessor.carrier ∩ approach.carrier =
-                    ({lastGate} : Set (EuclideanSpace ℝ (Fin 2))) →
-                    approach.carrier ∩ terminalSegment.carrier =
-                      ({h} : Set (EuclideanSpace ℝ (Fin 2))) →
-                      Disjoint predecessor.carrier terminalSegment.carrier →
-                        Pq.target = q →
+            chain.vertices =
+            PolygonalArcEndpointGluedVertices
+            [predecessor, approach, terminalSegment] →
+            chain.carrier =
+            predecessor.carrier ∪ approach.carrier ∪
+            terminalSegment.carrier →
+            predecessor.carrier ∩ approach.carrier =
+            ({lastGate} : Set (EuclideanSpace ℝ (Fin 2))) →
+            approach.carrier ∩ terminalSegment.carrier =
+            ({h} : Set (EuclideanSpace ℝ (Fin 2))) →
+            Disjoint predecessor.carrier terminalSegment.carrier →
+            Pq.target = q →
             q ∈ chain.carrier →
-              q ≠ terminalGate →
-                Pq.carrier ∩ chain.carrier =
-                  ({q} : Set (EuclideanSpace ℝ (Fin 2))) →
-                  predecessor.carrier ⊆ SelectedSide ∩ Vin →
-                    approach.carrier ⊆ SelectedSide ∩ Vin →
-                      predecessor.target = lastGate →
-                        approach.source = lastGate →
-                          approach.target = h →
-                            segment ℝ h terminalGate ⊆
-                              Vin ∪
-                                ({terminalGate} :
-                                  Set (EuclideanSpace ℝ (Fin 2))) →
-                              openSegment ℝ h terminalGate ⊆ Vin →
-                                Vin ⊆ SelectedSide →
-                                  terminalGate ∉ SelectedSide →
-                                    ∃ lastGate' h' :
-                                        EuclideanSpace ℝ (Fin 2),
-                                      ∃ suffix Cprev' approach' final' : PolygonalArc,
-                                        lastGate' ∉ xClean ∧
-                                          h' ∉ xClean ∧
-                                            suffix.source = q ∧
-                                              suffix.target = terminalGate ∧
-                                                suffix.carrier =
-                                                  Cprev'.carrier ∪
-                                                    approach'.carrier ∪
-                                                      final'.carrier ∧
-                                                  ((q = chain.source ∧
-                                                      suffix = chain) ∨
-                                                    ∃ D :
-                                                        PolygonalArcPointCutData chain q,
-                                                      suffix = D.suffixArc) ∧
-                                                    Cprev'.source = q ∧
-                                                      Cprev'.target = lastGate' ∧
-                                                        approach'.source = lastGate' ∧
-                                                          approach'.target = h' ∧
-                                                            final'.source = h' ∧
-                                                              final'.target = terminalGate ∧
-                                                                Cprev'.carrier ⊆
-                                                                  SelectedSide ∩ Vin ∧
-                                                                  approach'.carrier ⊆
-                                                                    SelectedSide ∩ Vin ∧
-                                                                    final'.carrier =
-                                                                      segment ℝ h' terminalGate ∧
-                                                                      final'.carrier ⊆
-                                                                        Vin ∪
-                                                                          ({terminalGate} :
-                                                                            Set (EuclideanSpace ℝ (Fin 2))) ∧
-                                                                        final'.relativeInterior ⊆ Vin ∧
-                                                                          Cprev'.carrier ⊆ chain.carrier ∧
-                                                                            approach'.carrier ⊆ chain.carrier ∧
-                                                                              final'.carrier ⊆ chain.carrier ∧
-                                                                        Pq.carrier ∩ Cprev'.carrier =
-                                                                          ({q} : Set (EuclideanSpace ℝ (Fin 2))) ∧
-                                                                          Disjoint Pq.carrier approach'.carrier ∧
-                                                                            Disjoint Pq.carrier final'.carrier ∧
-                                                                              Cprev'.carrier ∩ approach'.carrier =
-                                                                                ({lastGate'} : Set (EuclideanSpace ℝ (Fin 2))) ∧
-                                                                                approach'.carrier ∩ final'.carrier =
-                                                                                  ({h'} : Set (EuclideanSpace ℝ (Fin 2))) ∧
-                                                                                  Disjoint Cprev'.carrier final'.carrier ∧
-                                                                                    ∀ piece : PolygonalArc,
-                                                                                      piece ∈ [Cprev', approach', final'] →
-                                                                                        ∀ z i
-                                                                                          (hi : i + 1 < chain.vertices.length),
-                                                                                          z ∈ openSegment ℝ
-                                                                                              chain.vertices[i]
-                                                                                              chain.vertices[i + 1] →
-                                                                                            z ∈ piece.carrier →
-                                                                                              z ∉
-                                                                                                ({q, lastGate', h', terminalGate} :
-                                                                                                  Set (EuclideanSpace ℝ (Fin 2))) →
-                                                                                                ∃ j : ℕ,
-                                                                                                  ∃ hj : j + 1 <
-                                                                                                      piece.vertices.length,
-                                                                                                    z ∈ openSegment ℝ
-                                                                                                        piece.vertices[j]
-                                                                                                        piece.vertices[j + 1] ∧
-                                                                                                      ∃ c : ℝ, c ≠ 0 ∧
-                                                                                                        piece.vertices[j + 1] -
-                                                                                                            piece.vertices[j] =
-                                                                                                          c •
-                                                                                                            (chain.vertices[i + 1] -
-                                                                                                              chain.vertices[i]) := by
+            q ≠ terminalGate →
+            Pq.carrier ∩ chain.carrier =
+            ({q} : Set (EuclideanSpace ℝ (Fin 2))) →
+            predecessor.carrier ⊆ SelectedSide ∩ Vin →
+            approach.carrier ⊆ SelectedSide ∩ Vin →
+            predecessor.target = lastGate →
+            approach.source = lastGate →
+            approach.target = h →
+            segment ℝ h terminalGate ⊆
+            Vin ∪
+            ({terminalGate} :
+            Set (EuclideanSpace ℝ (Fin 2))) →
+            openSegment ℝ h terminalGate ⊆ Vin →
+            Vin ⊆ SelectedSide →
+            terminalGate ∉ SelectedSide →
+            ∃ lastGate' h' :
+            EuclideanSpace ℝ (Fin 2),
+            ∃ suffix Cprev' approach' final' : PolygonalArc,
+            lastGate' ∉ xClean ∧
+            h' ∉ xClean ∧
+            suffix.source = q ∧
+            suffix.target = terminalGate ∧
+            suffix.carrier =
+            Cprev'.carrier ∪
+            approach'.carrier ∪
+            final'.carrier ∧
+            ((q = chain.source ∧
+            suffix = chain) ∨
+            ∃ D :
+            PolygonalArcPointCutData chain q,
+            suffix = D.suffixArc) ∧
+            Cprev'.source = q ∧
+            Cprev'.target = lastGate' ∧
+            approach'.source = lastGate' ∧
+            approach'.target = h' ∧
+            final'.source = h' ∧
+            final'.target = terminalGate ∧
+            Cprev'.carrier ⊆
+            SelectedSide ∩ Vin ∧
+            approach'.carrier ⊆
+            SelectedSide ∩ Vin ∧
+            final'.carrier =
+            segment ℝ h' terminalGate ∧
+            final'.carrier ⊆
+            Vin ∪
+            ({terminalGate} :
+            Set (EuclideanSpace ℝ (Fin 2))) ∧
+            final'.relativeInterior ⊆ Vin ∧
+            Cprev'.carrier ⊆ chain.carrier ∧
+            approach'.carrier ⊆ chain.carrier ∧
+            final'.carrier ⊆ chain.carrier ∧
+            Pq.carrier ∩ Cprev'.carrier =
+            ({q} : Set (EuclideanSpace ℝ (Fin 2))) ∧
+            Disjoint Pq.carrier approach'.carrier ∧
+            Disjoint Pq.carrier final'.carrier ∧
+            Cprev'.carrier ∩ approach'.carrier =
+            ({lastGate'} : Set (EuclideanSpace ℝ (Fin 2))) ∧
+            approach'.carrier ∩ final'.carrier =
+            ({h'} : Set (EuclideanSpace ℝ (Fin 2))) ∧
+            Disjoint Cprev'.carrier final'.carrier ∧
+            ∀ piece : PolygonalArc,
+            piece ∈ [Cprev', approach', final'] →
+            ∀ z i
+            (hi : i + 1 < chain.vertices.length),
+            z ∈ openSegment ℝ
+            chain.vertices[i]
+            chain.vertices[i + 1] →
+            z ∈ piece.carrier →
+            z ∉
+            ({q, lastGate', h', terminalGate} :
+            Set (EuclideanSpace ℝ (Fin 2))) →
+            ∃ j : ℕ,
+            ∃ hj : j + 1 <
+            piece.vertices.length,
+            z ∈ openSegment ℝ
+            piece.vertices[j]
+            piece.vertices[j + 1] ∧
+            ∃ c : ℝ, c ≠ 0 ∧
+            piece.vertices[j + 1] -
+            piece.vertices[j] =
+            c •
+            (chain.vertices[i + 1] -
+            chain.vertices[i]) := by
+  classical
   intro hchain_source hchain_target hterminal_source hterminal_target
     hterminal_carrier hchain_vertices hchain_carrier
     hpredecessor_approach happ_terminal hpredecessor_terminal
@@ -436,7 +438,9 @@ lemma EndpointSidePrefixOrderedTerminalSuffix
     · simp at hm hindex
       dsimp [n] at hindex
       omega
-    · simp at hm hindex hleft hright
+    · simp only [List.getElem_cons_succ, List.getElem_cons_zero, List.take_succ_cons,
+        List.take_zero, List.map_cons, List.map_nil, List.sum_cons, List.sum_nil, add_zero]
+        at hm hindex hleft hright
       have hmEq : m = terminalSegment.vertices.length - 2 := by
         dsimp [n] at hindex
         omega

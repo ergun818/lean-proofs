@@ -1,10 +1,8 @@
 import Util.IncidenceGeometry.EndpointUnitDiskLocalTransportArc
 
-open Classical
 noncomputable section
 
-
-lemma EndpointUnitDiskLocalTransportWireFamily {ι : Type*} [Fintype ι]
+lemma EndpointUnitDiskLocalTransportWireFamily {ι : Type*} [Finite ι]
     (toWorld : EuclideanSpace ℝ (Fin 2) → EuclideanSpace ℝ (Fin 2))
     (z : EuclideanSpace ℝ (Fin 2)) (r : ℝ)
     (L R : ι → EuclideanSpace ℝ (Fin 2)) (Γ : ι → PolygonalArc)
@@ -109,6 +107,8 @@ lemma EndpointUnitDiskLocalTransportWireFamily {ι : Type*} [Fintype ι]
                       q ∈ (Ω i).relativeInterior →
                         q ∈ (Ω j).relativeInterior →
                           p = q) := by
+  classical
+  let := Fintype.ofFinite ι
   have htransport_one :
       ∀ i : ι,
         ∃ Ω : PolygonalArc,

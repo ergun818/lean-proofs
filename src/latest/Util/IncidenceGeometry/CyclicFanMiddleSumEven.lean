@@ -2,7 +2,6 @@ import Mathlib.Data.ZMod.Basic
 import Mathlib.Algebra.BigOperators.Ring.Nat
 import Util.IncidenceGeometry.Basic
 
-open Classical
 noncomputable section
 
 lemma CyclicFanMiddleSumEven {α : Type*} [Fintype α]
@@ -10,6 +9,7 @@ lemma CyclicFanMiddleSumEven {α : Type*} [Fintype α]
     (htriangle : ∀ i : α, Even (incoming i + middle i + outgoing i))
     (hcancel : ∀ i : α, outgoing i = incoming (σ i)) :
     Even (∑ i : α, middle i) := by
+  classical
   let f : α → ZMod 2 := fun i => incoming i
   let m : α → ZMod 2 := fun i => middle i
   have hterm : ∀ i : α, (m i : ZMod 2) = f i + f (σ i) := by

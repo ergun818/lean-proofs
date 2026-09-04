@@ -4,11 +4,11 @@ import Util.IncidenceGeometry.PolygonalPathRetainedElementaryEdgesExists
 import Util.IncidenceGeometry.PolygonalPathRetainedElementaryEdgesDistinctMeetAtCommonEndpoints
 import Util.IncidenceGeometry.PolygonalPathRetainedElementaryRawWalkExists
 
-open Classical
 noncomputable section
 
 lemma PolygonalPathRawStraightLineComplexExists (γ : PolygonalPath) :
     Nonempty (PolygonalPathRawStraightLineComplex γ) := by
+  classical
   rcases PolygonalPathPairwiseCutVertexSetExists γ with
     ⟨cutVertices, hcut_original, hcut_finite_pair, hcut_infinite_pair⟩
   rcases PolygonalPathRetainedElementaryEdgesExists γ cutVertices hcut_original with

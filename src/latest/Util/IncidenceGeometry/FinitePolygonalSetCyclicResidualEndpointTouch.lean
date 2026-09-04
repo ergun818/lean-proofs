@@ -1,7 +1,6 @@
 import Util.IncidenceGeometry.SimpleClosedPolygonalCurve
 import Mathlib.Tactic
 
-open Classical
 noncomputable section
 
 lemma FinitePolygonalSetCyclicResidualEndpointTouch
@@ -17,19 +16,17 @@ lemma FinitePolygonalSetCyclicResidualEndpointTouch
       ∀ i,
         pieceSource i =
           AffineMap.lineMap
-            ((pieceArc i).1.vertices[(pieceSegmentIndex i).1]'
-              (Nat.lt_of_succ_lt (pieceSegmentIndex i).2))
-            ((pieceArc i).1.vertices[(pieceSegmentIndex i).1 + 1]'
-              (pieceSegmentIndex i).2)
+            ((pieceArc i).1.vertices[(pieceSegmentIndex i).1]'(Nat.lt_of_succ_lt (pieceSegmentIndex
+              i).2))
+            ((pieceArc i).1.vertices[(pieceSegmentIndex i).1 + 1]'(pieceSegmentIndex i).2)
             (pieceSourceParam i).1)
     (pieceTarget_eq :
       ∀ i,
         pieceTarget i =
           AffineMap.lineMap
-            ((pieceArc i).1.vertices[(pieceSegmentIndex i).1]'
-              (Nat.lt_of_succ_lt (pieceSegmentIndex i).2))
-            ((pieceArc i).1.vertices[(pieceSegmentIndex i).1 + 1]'
-              (pieceSegmentIndex i).2)
+            ((pieceArc i).1.vertices[(pieceSegmentIndex i).1]'(Nat.lt_of_succ_lt (pieceSegmentIndex
+              i).2))
+            ((pieceArc i).1.vertices[(pieceSegmentIndex i).1 + 1]'(pieceSegmentIndex i).2)
             (pieceTargetParam i).1)
     (pieceCarrier : PieceIndex → Set (EuclideanSpace ℝ (Fin 2)))
     (pieceCarrier_eq :
@@ -159,7 +156,7 @@ lemma FinitePolygonalSetCyclicResidualEndpointTouch
       exact le_antisymm htarget_le_one hone_le_target
     have htarget_right : pieceTarget q = B := by
       rw [pieceTarget_eq q, htarget_param]
-      simp [A, B]
+      simp [B]
     exact hy_right.trans (by simpa [B] using htarget_right.symm)
   have hsource_of_left_endpoint :
       ∀ (q : PieceIndex) {y : EuclideanSpace ℝ (Fin 2)},
@@ -195,7 +192,7 @@ lemma FinitePolygonalSetCyclicResidualEndpointTouch
       exact le_antisymm hsource_le_zero hsource_nonneg
     have hsource_left : pieceSource q = A := by
       rw [pieceSource_eq q, hsource_param]
-      simp [A, B]
+      simp [A]
     exact hy_left.trans (by simpa [A] using hsource_left.symm)
   have htarget_of_arc_target :
       ∀ (q : PieceIndex) {y : EuclideanSpace ℝ (Fin 2)},
@@ -274,7 +271,7 @@ lemma FinitePolygonalSetCyclicResidualEndpointTouch
         omega
       · have : γ.target ∈ (∅ : Set (EuclideanSpace ℝ (Fin 2))) := by
           rw [hinter] at htarget_inter
-          simpa [hadj] using htarget_inter
+          simp [hadj] at htarget_inter
         exact False.elim this
   have hsource_of_arc_source :
       ∀ (q : PieceIndex) {y : EuclideanSpace ℝ (Fin 2)},
@@ -349,7 +346,7 @@ lemma FinitePolygonalSetCyclicResidualEndpointTouch
         omega
       · have : γ.source ∈ (∅ : Set (EuclideanSpace ℝ (Fin 2))) := by
           rw [hinter] at hsource_inter
-          simpa [hadj] using hsource_inter
+          simp [hadj] at hsource_inter
         exact False.elim this
   by_cases hsame_arc : pieceArc i = pieceArc j
   · let γ : PolygonalArc := (pieceArc i).1

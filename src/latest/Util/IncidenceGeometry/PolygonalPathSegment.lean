@@ -1,6 +1,5 @@
 import Util.IncidenceGeometry.PolygonalPath
 
-open Classical
 noncomputable section
 
 lemma PolygonalPathSegment
@@ -9,6 +8,7 @@ lemma PolygonalPathSegment
       γ.source = p ∧
         γ.target = q ∧
           γ.carrier = segment ℝ p q := by
+  classical
   let γ : PolygonalPath :=
     { vertices := [p, q]
       vertices_nonempty := by simp

@@ -1,7 +1,6 @@
 import Util.IncidenceGeometry.Basic
 import Mathlib.Topology.UnitInterval
 
-open Classical
 noncomputable section
 
 lemma PolygonalReplacementCompactIntervalOpenCoverStrictSample

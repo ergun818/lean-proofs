@@ -1,9 +1,7 @@
 import Util.IncidenceGeometry.PolygonalPathRetainedElementaryEdges
 import Mathlib.Tactic
 
-open Classical
 noncomputable section
-
 
 lemma PolygonalPathRetainedElementaryEdgesDistinctMeetAtCommonEndpoints
     (γ : PolygonalPath)

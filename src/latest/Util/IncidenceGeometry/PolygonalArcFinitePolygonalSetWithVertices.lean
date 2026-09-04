@@ -2,13 +2,13 @@ import Util.IncidenceGeometry.FinitePolygonalSet
 import Util.IncidenceGeometry.PolygonalArcFinitePolygonalSet
 import Util.IncidenceGeometry.PolygonalArcVertexMemCarrier
 
-open Classical
 noncomputable section
 
 lemma PolygonalArcFinitePolygonalSetWithVertices (Γ : PolygonalArc) :
     ∃ K : FinitePolygonalSet,
       K.carrier = Γ.carrier ∧
         ∀ v : EuclideanSpace ℝ (Fin 2), v ∈ Γ.vertices → v ∈ K.points := by
+  classical
   obtain ⟨K₀, hK₀carrier⟩ := PolygonalArcFinitePolygonalSet Γ
   let pts : Finset (EuclideanSpace ℝ (Fin 2)) := K₀.points ∪ Γ.vertices.toFinset
   refine

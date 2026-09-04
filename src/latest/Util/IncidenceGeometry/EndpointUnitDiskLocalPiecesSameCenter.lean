@@ -1,6 +1,5 @@
 import Util.IncidenceGeometry.PolygonalArc
 
-open Classical
 noncomputable section
 
 lemma EndpointUnitDiskLocalPiecesSameCenter
@@ -18,6 +17,7 @@ lemma EndpointUnitDiskLocalPiecesSameCenter
     (hpz : p ∈ Ξz.relativeInterior)
     (hpw : p ∈ Ξw.relativeInterior) :
     z = w := by
+  classical
   by_contra hne
   have hpzCarrier : p ∈ Ξz.carrier := by
     have hp' := hpz

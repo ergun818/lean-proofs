@@ -1,7 +1,6 @@
 import Util.IncidenceGeometry.FinitePolygonalSetCyclicActualPieceStreamCases
 import Mathlib.Tactic
 
-open Classical
 noncomputable section
 
 lemma FinitePolygonalSetCyclicActualPieceStreamBlockUnique

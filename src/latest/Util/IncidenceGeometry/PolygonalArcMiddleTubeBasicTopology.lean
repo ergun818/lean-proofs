@@ -2,7 +2,6 @@ import Util.IncidenceGeometry.PolygonalArcCollarOrientedSeparatedTubeData
 import Mathlib.LinearAlgebra.FiniteDimensional.Lemmas
 import Mathlib.Topology.Algebra.Module.FiniteDimension
 
-open Classical
 noncomputable section
 
 lemma PolygonalArcMiddleTubeBasicTopology
@@ -24,6 +23,7 @@ lemma PolygonalArcMiddleTubeBasicTopology
       IsConnected (orientedTubes.toPolygonalArcCollarSeparatedTubeData.leftHalf j hj)) ∧
     (∀ (j : ℕ) (hj : j + 1 < γ.vertices.length),
       IsConnected (orientedTubes.toPolygonalArcCollarSeparatedTubeData.rightHalf j hj)) := by
+  classical
   let sep := orientedTubes.toPolygonalArcCollarSeparatedTubeData
   have lower_lt_upper :
       ∀ (j : ℕ) (hj : j + 1 < γ.vertices.length),

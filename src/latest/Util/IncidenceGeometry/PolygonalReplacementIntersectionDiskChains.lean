@@ -1,7 +1,6 @@
 import Util.IncidenceGeometry.EndpointFixedPolygonalDiskFillingClean
 import Util.IncidenceGeometry.PolygonalReplacementTubeChainData
 
-open Classical
 noncomputable section
 
 lemma PolygonalReplacementIntersectionDiskChains {V : Type*} [Fintype V]

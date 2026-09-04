@@ -1,7 +1,6 @@
 import Util.IncidenceGeometry.EndpointUnitDiskAlternatingVertexList
 import Util.IncidenceGeometry.PolygonalArc
 
-open Classical
 noncomputable section
 
 lemma EndpointUnitDiskAlternatingVertexListArc
@@ -38,6 +37,7 @@ lemma EndpointUnitDiskAlternatingVertexListArc
                 Γ.relativeInterior = edgeSet \ ({A, B} : Set (EuclideanSpace ℝ (Fin 2))) ∧
                   Γ.carrier ⊆ C ∧
                     Γ.relativeInterior ⊆ U := by
+  classical
   dsimp only
   intro hnodup hsegments havoid hcarrier hrelative
   let V := EndpointUnitDiskAlternatingVertexList A B blocks

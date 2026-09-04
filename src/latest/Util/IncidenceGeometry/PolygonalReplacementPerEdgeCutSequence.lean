@@ -1,6 +1,5 @@
 import Util.IncidenceGeometry.PolygonalReplacementIntersectionDiskCutOrder
 
-open Classical
 noncomputable section
 
 universe u
@@ -99,14 +98,12 @@ lemma PolygonalReplacementPerEdgeCutSequence {V : Type u} [Fintype V]
   have : Std.Total r := ⟨by intro a b; exact le_total (center a) (center b)⟩
   let cuts : List Cut := (Finset.univ : Finset Cut).sort r
   have cuts_nodup : cuts.Nodup := by
-    simpa [cuts] using Finset.sort_nodup (Finset.univ : Finset Cut) r
+    simp [cuts]
   have cuts_mem : ∀ x : Cut, x ∈ cuts := by
     intro x
-    simpa [cuts] using
-      (Finset.mem_sort (s := (Finset.univ : Finset Cut)) r (a := x)).2
-        (Finset.mem_univ x)
+    simp [cuts]
   have cuts_pairwise : cuts.Pairwise r := by
-    simpa [cuts] using Finset.pairwise_sort (Finset.univ : Finset Cut) r
+    simp [cuts]
   have center_strict :
       ∀ i j (hi : i < cuts.length) (hj : j < cuts.length), i < j →
         intersectionCenterParam (cuts[i].2) <

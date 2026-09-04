@@ -4,7 +4,6 @@ import Util.IncidenceGeometry.TriangleBoundaryCyclicIntersectionMultiplicity
 import Util.IncidenceGeometry.TriangleBoundaryMultiplicityEqualsOccurrenceNcard
 import Util.IncidenceGeometry.TriangleBoundaryOccurrenceSetEvenByIntervals
 
-open Classical
 noncomputable section
 
 lemma TriangleBoundaryEvenIntersections
@@ -15,5 +14,6 @@ lemma TriangleBoundaryEvenIntersections
     (hncol : ¬ ∃ c : ℝ, b - a = c • (z - a))
     (hgp : CyclicPresentationTriangleGeneralPosition R z a b) :
     Even (TriangleBoundaryCyclicIntersectionMultiplicity R z a b) := by
+  classical
   rw [TriangleBoundaryMultiplicityEqualsOccurrenceNcard R z a b hgp]
   exact TriangleBoundaryOccurrenceSetEvenByIntervals R z a b hza hab hbz hncol hgp

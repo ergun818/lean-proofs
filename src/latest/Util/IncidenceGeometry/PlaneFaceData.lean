@@ -4,9 +4,9 @@ import Util.IncidenceGeometry.DrawingFaceComponent
 import Util.IncidenceGeometry.PolygonalSideStrips
 import Mathlib.Combinatorics.SimpleGraph.DegreeSum
 
-open Classical
 noncomputable section
 
+open Classical in
 structure PlaneFaceData {V : Type*} [Fintype V] (G : SimpleGraph V)
     [Fintype G.edgeSet] [DecidableRel G.Adj] (D : OrdinaryPolygonalDrawing G) where
   isPlane : D.crossingSet.card = 0

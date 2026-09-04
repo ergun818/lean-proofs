@@ -2,7 +2,6 @@ import Util.IncidenceGeometry.PolygonalArcFromEndpointGluedPieces
 import Util.IncidenceGeometry.PolygonalArcEndpointGluedSegmentCertificates
 import Util.IncidenceGeometry.PolygonalArcOrderedBallCutData
 
-open Classical
 noncomputable section
 
 lemma PolygonalArcOrderedThreePieceSplice
@@ -44,6 +43,7 @@ lemma PolygonalArcOrderedThreePieceSplice
                 ∃ c : ℝ, c ≠ 0 ∧
                   Q'.vertices[j + 1] - Q'.vertices[j] =
                     c • (Q.vertices[i + 1] - Q.vertices[i]) := by
+  classical
   intro hbridge_source hbridge_target hbridge_ball
     hprefix_bridge hbridge_suffix
   let pieces : List PolygonalArc := [D.prefixArc, bridge, D.suffixArc]
@@ -173,12 +173,13 @@ lemma PolygonalArcOrderedThreePieceSplice
       (hpieces := by simp [pieces])
       (first_source := by
         intro Γ hΓ
-        simp [pieces] at hΓ
+        simp only [List.head?_cons, Option.some.injEq, pieces] at hΓ
         subst Γ
         exact D.prefix_source)
       (last_target := by
         intro Γ hΓ
-        simp [pieces] at hΓ
+        simp only [List.getLast?_cons_cons, List.getLast?_singleton, Option.some.injEq, pieces]
+          at hΓ
         subst Γ
         exact D.suffix_target)
       (successive_attach := hsuccessive)
@@ -255,7 +256,7 @@ lemma PolygonalArcOrderedThreePieceSplice
     have hzpiece : z ∈ D.prefixArc.carrier ∨ z ∈ D.suffixArc.carrier := by
       rw [hcarrier] at hzcarrier
       rcases hzcarrier with ⟨piece, hpiece, hzpiece⟩
-      simp [pieces] at hpiece
+      simp only [List.mem_cons, List.not_mem_nil, or_false, pieces] at hpiece
       rcases hpiece with rfl | rfl | rfl
       · exact Or.inl hzpiece
       · exact False.elim (hz_not_bridge hzpiece)

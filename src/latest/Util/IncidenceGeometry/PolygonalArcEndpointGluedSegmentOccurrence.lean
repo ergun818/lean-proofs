@@ -1,6 +1,5 @@
 import Util.IncidenceGeometry.PolygonalArcEndpointGluedVertices
 
-open Classical
 noncomputable section
 
 lemma PolygonalArcEndpointGluedSegmentOccurrence
@@ -19,6 +18,7 @@ lemma PolygonalArcEndpointGluedSegmentOccurrence
               (pieces[k]).vertices[m] ∧
             (PolygonalArcEndpointGluedVertices pieces)[i + 1] =
               (pieces[k]).vertices[m + 1] := by
+  classical
   have endpointGluedVertices_tail_eq :
       ∀ (Γ : PolygonalArc) (rest : List PolygonalArc),
         (PolygonalArcEndpointGluedVertices (Γ :: rest)).tail =
@@ -253,7 +253,7 @@ lemma PolygonalArcEndpointGluedSegmentOccurrence
             omega
           rcases ih hsucc_rest r hrseg with
             ⟨k, hk, m, hm, hidx, hleft_eq, hright_eq⟩
-          refine ⟨k + 1, by simpa [hk], m, ?_, ?_, ?_, ?_⟩
+          refine ⟨k + 1, by simp [hk], m, ?_, ?_, ?_, ?_⟩
           · simpa using hm
           · have hr_eq : r =
                 ((rest.take k).map
@@ -278,7 +278,7 @@ lemma PolygonalArcEndpointGluedSegmentOccurrence
                   using hiWbig
               have htail_idx :
                   W.tail[q]'hq_tail = W[r] := by
-                simpa [r] using (List.getElem_tail (l := W) (i := q) hq_tail)
+                simp [r]
               have happget :
                   Wbig[i] = W.tail[q]'hq_tail := by
                 simpa [Wbig, W, endpointGluedVertices_cons_eq_append_tail,
@@ -305,8 +305,7 @@ lemma PolygonalArcEndpointGluedSegmentOccurrence
                   using hiWbig
               have htail_idx :
                   W.tail[q + 1]'hq1_tail = W[r + 1] := by
-                simpa [r] using
-                  (List.getElem_tail (l := W) (i := q + 1) hq1_tail)
+                simp [r]
               have happget :
                   Wbig[i + 1] = W.tail[q + 1]'hq1_tail := by
                 simpa [Wbig, W, endpointGluedVertices_cons_eq_append_tail,

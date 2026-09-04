@@ -3,7 +3,6 @@ import Util.IncidenceGeometry.PlanarRot90CoefficientUniqueness
 import Util.IncidenceGeometry.PlanarRot90Decomposition
 import Util.IncidenceGeometry.PlanarRot90Norm
 
-open Classical
 noncomputable section
 
 lemma OneEdgeMiddleRectangleSidePieces

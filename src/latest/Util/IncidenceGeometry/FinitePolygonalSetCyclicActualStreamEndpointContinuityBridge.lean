@@ -1,6 +1,5 @@
 import Util.IncidenceGeometry.FinitePolygonalSetCyclicActualStreamAdjacencyBridge
 
-open Classical
 noncomputable section
 
 lemma FinitePolygonalSetCyclicActualStreamEndpointContinuityBridge

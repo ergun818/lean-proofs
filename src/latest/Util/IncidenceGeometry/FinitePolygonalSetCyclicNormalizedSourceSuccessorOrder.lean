@@ -1,7 +1,6 @@
 import Util.IncidenceGeometry.FinitePolygonalSetCarrierEqSimpleClosedCurvePointsTwo
 import Mathlib.GroupTheory.Perm.Cycle.Concrete
 
-open Classical
 noncomputable section
 
 lemma FinitePolygonalSetCyclicNormalizedSourceSuccessorOrder

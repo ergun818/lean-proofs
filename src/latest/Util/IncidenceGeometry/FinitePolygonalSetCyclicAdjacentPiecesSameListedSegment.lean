@@ -1,6 +1,5 @@
 import Util.IncidenceGeometry.FinitePolygonalSetCyclicTraversalCuts
 
-open Classical
 noncomputable section
 
 lemma FinitePolygonalSetCyclicAdjacentPiecesSameListedSegment
@@ -15,6 +14,7 @@ lemma FinitePolygonalSetCyclicAdjacentPiecesSameListedSegment
     (hright :
       D.pieceCarrier ((D.arcPieceOrder p)[n + 1]) ⊆ segment ℝ t.1 t.2) :
     s = t := by
+  classical
   by_contra hst
   let a : D.pieceIndex := (D.arcPieceOrder p)[n]
   let b : D.pieceIndex := (D.arcPieceOrder p)[n + 1]

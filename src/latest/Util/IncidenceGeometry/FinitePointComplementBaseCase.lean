@@ -6,7 +6,6 @@ import Util.IncidenceGeometry.PolygonalPathExtendSegment
 import Util.IncidenceGeometry.PolygonalPathSegment
 import Util.IncidenceGeometry.PolygonallyPathConnected
 
-open Classical
 noncomputable section
 
 lemma FinitePointComplementBaseCase
@@ -17,6 +16,7 @@ lemma FinitePointComplementBaseCase
         ∀ C : Set (EuclideanSpace ℝ (Fin 2)),
           ComplementComponent (V : Set (EuclideanSpace ℝ (Fin 2))) C →
             C = ((V : Set (EuclideanSpace ℝ (Fin 2)))ᶜ) := by
+  classical
   let E := EuclideanSpace ℝ (Fin 2)
   have polygonally_connected : PolygonallyPathConnected ((V : Set E)ᶜ) := by
     intro p q hp hq

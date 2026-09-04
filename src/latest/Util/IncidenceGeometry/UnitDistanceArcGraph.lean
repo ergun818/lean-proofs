@@ -7,7 +7,6 @@ import Util.IncidenceGeometry.UnitCirclesIntersectionsAtMostTwo
 import Util.IncidenceGeometry.UnitDistanceArcSelectionDrawing
 import Util.IncidenceGeometry.UnitDistanceCount
 
-open Classical
 open scoped Real
 noncomputable section
 
@@ -15,6 +14,7 @@ lemma UnitDistanceArcGraph (P : Finset (EuclideanSpace ℝ (Fin 2))) :
     ∃ G : SimpleGraph P, ∃ (_ : Fintype G.edgeSet),
       (IncidenceGeometry.unitDistanceCount P : ℝ) - (P.card : ℝ) ≤ (G.edgeFinset.card : ℝ) ∧
         (CrossingNumber G : ℝ) ≤ 2 * (P.card : ℝ) ^ 2 := by
+  classical
   rcases UnitDistanceArcSelectionDrawing P with ⟨G, hGfin, D, hedge, hlocal⟩
   let := hGfin
   rcases PolygonalReplacementForGeometricArcs G D with ⟨_D', _hcard, hcross⟩

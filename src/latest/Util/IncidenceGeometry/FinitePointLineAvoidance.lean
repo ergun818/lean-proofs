@@ -3,7 +3,6 @@ import Mathlib.Analysis.Normed.Affine.AddTorsorBases
 import Mathlib.LinearAlgebra.FiniteDimensional.Lemmas
 import Mathlib.Topology.Baire.Lemmas
 
-open Classical
 noncomputable section
 
 lemma FinitePointLineAvoidance
@@ -16,6 +15,7 @@ lemma FinitePointLineAvoidance
         Module.finrank ℝ ℓ.direction = 1) :
     ∃ x ∈ W, x ∉ (points : Set (EuclideanSpace ℝ (Fin 2))) ∧
       ∀ ℓ ∈ lines, x ∉ (ℓ : Set (EuclideanSpace ℝ (Fin 2))) := by
+  classical
   let E := EuclideanSpace ℝ (Fin 2)
   have affineLine_compl_open_dense :
       ∀ ℓ : AffineSubspace ℝ E,

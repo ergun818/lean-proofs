@@ -1,6 +1,5 @@
 import Util.IncidenceGeometry.PolygonalArcEndpointGluedVertices
 
-open Classical
 noncomputable section
 
 lemma PolygonalArcEndpointGluedVerticesBasic
@@ -10,6 +9,7 @@ lemma PolygonalArcEndpointGluedVerticesBasic
         (PolygonalArcEndpointGluedVertices pieces).head? = some Γ.source) ∧
       (∀ Γ, pieces.getLast? = some Γ →
         (PolygonalArcEndpointGluedVertices pieces).getLast? = some Γ.target) := by
+  classical
   have hlength :
       2 ≤ (PolygonalArcEndpointGluedVertices pieces).length := by
     cases pieces with
@@ -25,7 +25,7 @@ lemma PolygonalArcEndpointGluedVerticesBasic
     cases pieces with
     | nil => contradiction
     | cons Δ rest =>
-        simp at hΓ
+        simp only [List.head?_cons, Option.some.injEq] at hΓ
         subst Γ
         rw [PolygonalArcEndpointGluedVertices]
         rw [List.head?_append_of_ne_nil Δ.vertices]
@@ -44,7 +44,8 @@ lemma PolygonalArcEndpointGluedVerticesBasic
     | cons Γ rest ih =>
         cases rest with
         | nil =>
-            simp only [List.map_cons, List.map_nil, List.flatten_cons, List.flatten_nil, List.append_nil,
+            simp only [List.map_cons, List.map_nil, List.flatten_cons, List.flatten_nil,
+              List.append_nil,
     List.getLast?_singleton, Option.map_some]
             rw [List.getLast?_tail]
             have hne : Γ.vertices.length ≠ 1 := by
@@ -72,7 +73,9 @@ lemma PolygonalArcEndpointGluedVerticesBasic
     | cons Δ rest =>
         cases rest with
         | nil =>
-            simp [PolygonalArcEndpointGluedVertices] at hΓ ⊢
+            simp only [List.getLast?_singleton, Option.some.injEq,
+              PolygonalArcEndpointGluedVertices, List.map_nil, List.flatten_nil, List.append_nil]
+              at hΓ ⊢
             subst Γ
             exact Δ.target_eq_last
         | cons E rest =>

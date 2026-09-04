@@ -1,6 +1,5 @@
 import Util.IncidenceGeometry.Basic
 
-open Classical
 noncomputable section
 
 lemma CollinearAdjacentSubsegmentsMeetAtEndpoint
@@ -10,6 +9,7 @@ lemma CollinearAdjacentSubsegmentsMeetAtEndpoint
     segment ℝ (AffineMap.lineMap a b u.1) (AffineMap.lineMap a b v.1) ∩
         segment ℝ (AffineMap.lineMap a b v.1) (AffineMap.lineMap a b w.1) =
       ({AffineMap.lineMap a b v.1} : Set (EuclideanSpace ℝ (Fin 2))) := by
+  classical
   let f : ℝ →ᵃ[ℝ] EuclideanSpace ℝ (Fin 2) := AffineMap.lineMap a b
   have hf : Function.Injective f := AffineMap.lineMap_injective (k := ℝ) hab
   have hleft :

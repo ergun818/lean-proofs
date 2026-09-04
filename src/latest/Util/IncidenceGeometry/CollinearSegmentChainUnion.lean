@@ -1,7 +1,5 @@
 import Util.IncidenceGeometry.RealSegmentChainUnion
 
-
-open Classical
 noncomputable section
 
 open Set
@@ -22,6 +20,7 @@ lemma CollinearSegmentChainUnion
     (⋃ k : Fin L.length, segment ℝ (L[k.1]).1 (L[k.1]).2) =
       segment ℝ (L[0]).1
         (L[L.length - 1]'(Nat.sub_one_lt_of_lt hpos)).2 := by
+  classical
   let coordOf (x : EuclideanSpace ℝ (Fin 2)) (hx : x ∈ segment ℝ A B) : ℝ :=
     Classical.choose (by
       rw [segment_eq_image_lineMap] at hx

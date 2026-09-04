@@ -1,7 +1,6 @@
 import Util.IncidenceGeometry.FinitePolygonalSetCyclicListedPointOnElementarySegment
 import Util.IncidenceGeometry.FiniteSortedRealCutListEndpointEntries
 
-open Classical
 noncomputable section
 
 lemma FinitePolygonalSetCyclicUnnormalizedListedPointOccurrences

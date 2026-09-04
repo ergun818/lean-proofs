@@ -1,6 +1,5 @@
 import Util.IncidenceGeometry.SimpleClosedPolygonalCurve
 
-open Classical
 noncomputable section
 
 lemma FinitePolygonalSetCyclicSameElementarySegmentSourceSeparation
@@ -67,6 +66,7 @@ lemma FinitePolygonalSetCyclicSameElementarySegmentSourceSeparation
       pieceSource (⟨e, ⟨n, a⟩⟩ : PieceIndex) =
         pieceSource (⟨e, ⟨n, b⟩⟩ : PieceIndex) →
         a = b := by
+  classical
   intro PieceIndex e n a b hsource
   apply pieceNumber_injective e n a b
   have hv_ne :

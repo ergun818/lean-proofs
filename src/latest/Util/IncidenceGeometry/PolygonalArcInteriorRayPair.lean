@@ -1,6 +1,5 @@
 import Util.IncidenceGeometry.PolygonalArc
 
-open Classical
 noncomputable section
 
 structure PolygonalArcInteriorRayPair

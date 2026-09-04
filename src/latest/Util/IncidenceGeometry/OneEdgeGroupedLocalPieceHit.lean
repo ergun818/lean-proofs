@@ -2,7 +2,6 @@ import Util.IncidenceGeometry.ComplementComponentAbsorbsConnectedSubset
 import Util.IncidenceGeometry.PolygonalPathOrderedFirstHitPrefix
 import Util.IncidenceGeometry.PolygonallyPathConnected
 
-open Classical
 noncomputable section
 
 lemma OneEdgeGroupedLocalPieceHit

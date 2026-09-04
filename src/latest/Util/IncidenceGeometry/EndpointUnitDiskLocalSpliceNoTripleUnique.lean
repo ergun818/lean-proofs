@@ -1,6 +1,5 @@
 import Util.IncidenceGeometry.PolygonalArc
 
-open Classical
 noncomputable section
 
 lemma EndpointUnitDiskLocalSpliceNoTripleUnique {κ : Type*}
@@ -58,6 +57,7 @@ lemma EndpointUnitDiskLocalSpliceNoTripleUnique {κ : Type*}
               q ∈ (Ξ i).relativeInterior →
                 q ∈ (Ξ j).relativeInterior →
                   p = q) := by
+  classical
   let leftConn : κ → Set (EuclideanSpace ℝ (Fin 2)) :=
     fun i => segment ℝ (A i) (L i)
   let rightConn : κ → Set (EuclideanSpace ℝ (Fin 2)) :=
@@ -83,13 +83,13 @@ lemma EndpointUnitDiskLocalSpliceNoTripleUnique {κ : Type*}
       · right
         right
         refine ⟨0, ?_, ?_⟩
-        · simpa [hΩ_vertices i]
+        · simp [hΩ_vertices i]
         · ext p
           simp [hverts, hΩ_vertices i]
       · right
         right
         refine ⟨1, ?_, ?_⟩
-        · simpa [hΩ_vertices i]
+        · simp [hΩ_vertices i]
         · ext p
           simp [hverts, hΩ_vertices i]
       · right
@@ -109,13 +109,13 @@ lemma EndpointUnitDiskLocalSpliceNoTripleUnique {κ : Type*}
       · right
         right
         refine ⟨1, ?_, ?_⟩
-        · simpa [hΩ_vertices i]
+        · simp [hΩ_vertices i]
         · ext p
           simp [hverts, hΩ_vertices i, segment_symm]
       · right
         right
         refine ⟨0, ?_, ?_⟩
-        · simpa [hΩ_vertices i]
+        · simp [hΩ_vertices i]
         · ext p
           simp [hverts, hΩ_vertices i, segment_symm]
       · left
@@ -172,7 +172,7 @@ lemma EndpointUnitDiskLocalSpliceNoTripleUnique {κ : Type*}
     · rcases hcjRmid with hcjR | hcjMid
       · have hpempty : p ∈ (∅ : Set (EuclideanSpace ℝ (Fin 2))) := by
           have hpinter : p ∈ leftConn i ∩ rightConn j := ⟨hpleft, hcjR hpseg⟩
-          simpa [leftConn, rightConn, hsep_LR i j] using hpinter
+          simp [leftConn, rightConn, hsep_LR i j] at hpinter
         exact hpempty
       · rcases hcjMid with ⟨k, hk, hkeq⟩
         have hempty := hleft_middle_empty (i := i) (j := j) k hk hij
@@ -190,7 +190,7 @@ lemma EndpointUnitDiskLocalSpliceNoTripleUnique {κ : Type*}
     rcases hcj with hcjL | hcjRmid
     · have hpempty : p ∈ (∅ : Set (EuclideanSpace ℝ (Fin 2))) := by
         have hpinter : p ∈ rightConn i ∩ leftConn j := ⟨hpright, hcjL hpseg⟩
-        simpa [leftConn, rightConn, Set.inter_comm, hsep_LR j i] using hpinter
+        simp [leftConn, rightConn, Set.inter_comm, hsep_LR j i] at hpinter
       exact hpempty
     · rcases hcjRmid with hcjR | hcjMid
       · have hpempty : p ∈ (∅ : Set (EuclideanSpace ℝ (Fin 2))) := by
@@ -243,7 +243,8 @@ lemma EndpointUnitDiskLocalSpliceNoTripleUnique {κ : Type*}
             rcases hpend' with hpL | hpR
             · exact hleft_no_Xi hij (by simpa [leftConn, hpL] using right_mem_segment ℝ (A i) (L i))
                 hp_car_j
-            · exact hright_no_Xi hij (by simpa [rightConn, hpR] using left_mem_segment ℝ (R i) (B i))
+            · exact hright_no_Xi hij (by simpa [rightConn, hpR] using left_mem_segment ℝ (R i) (B
+                i))
                 hp_car_j
     exact ⟨one_side hij hp_i hp_car_j, one_side (Ne.symm hij) hp_j hp_car_i⟩
   constructor

@@ -3,18 +3,18 @@ import Util.IncidenceGeometry.OrdinaryDrawingImage
 import Util.IncidenceGeometry.OrdinaryPolygonalDrawing
 import Util.IncidenceGeometry.PolygonalArc
 
-open Classical
 noncomputable section
 
 lemma DeletedEdgeLocalIncidentFaces {V : Type*} [Fintype V] (G : SimpleGraph V)
     [Fintype G.edgeSet] [DecidableRel G.Adj] (D : OrdinaryPolygonalDrawing G)
-    (hD : D.crossingSet.card = 0) (A : PlaneFaceData G D) (e : G.edgeFinset)
+    (_hD : D.crossingSet.card = 0) (A : PlaneFaceData G D) (e : G.edgeFinset)
     (d : G.Dart) (hd : d.edge = e.1) :
     ∀ x ∈ (D.edgeArc e).relativeInterior,
       ∃ U : Set (EuclideanSpace ℝ (Fin 2)),
         IsOpen U ∧ x ∈ U ∧
           U ∩ (OrdinaryDrawingImage G D)ᶜ ⊆
             A.faceSet (A.leftFace d) ∪ A.faceSet (A.leftFace d.symm) := by
+  classical
   intro x hx
   have hdartRelEq :
       (A.dartArc d).relativeInterior = (D.edgeArc e).relativeInterior := by

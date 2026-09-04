@@ -1,9 +1,8 @@
 import Util.IncidenceGeometry.Basic
 
-open Classical
 noncomputable section
 
-lemma EndpointUnitDiskTriplePointInChosenDisk {ι : Type*} [Fintype ι]
+lemma EndpointUnitDiskTriplePointInChosenDisk {ι : Type*} [Finite ι]
     (a b : ι → EuclideanSpace ℝ (Fin 2))
     (T : Finset (EuclideanSpace ℝ (Fin 2)))
     (r : EuclideanSpace ℝ (Fin 2) → ℝ)
@@ -23,6 +22,8 @@ lemma EndpointUnitDiskTriplePointInChosenDisk {ι : Type*} [Fintype ι]
     (hpj : p ∈ openSegment ℝ (a j) (b j))
     (hpk : p ∈ openSegment ℝ (a k) (b k)) :
     ∃ z, z ∈ T ∧ p ∈ Metric.closedBall z (r z) := by
+  classical
+  let := Fintype.ofFinite ι
   have hpT : p ∈ T :=
     (hT p).2 ⟨hpball, ⟨i, j, k, hij, hik, hjk, hpi, hpj, hpk⟩⟩
   refine ⟨p, hpT, ?_⟩

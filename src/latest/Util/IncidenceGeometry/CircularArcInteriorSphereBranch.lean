@@ -1,7 +1,6 @@
 import Util.IncidenceGeometry.TwoCirclesIntersectionsAtMostTwo
 import Mathlib.Topology.Order.IntermediateValue
 
-open Classical
 noncomputable section
 
 lemma CircularArcInteriorSphereBranch
@@ -22,6 +21,7 @@ lemma CircularArcInteriorSphereBranch
                 ∀ q,
                   q ∈ Metric.sphere (γ τ) ρ →
                     q ∈ Set.range γ → q = q₁ ∨ q = q₂ := by
+  classical
   let zeroI : Set.Icc (0 : ℝ) 1 := ⟨0, by simp⟩
   let oneI : Set.Icc (0 : ℝ) 1 := ⟨1, by simp⟩
   let x0 : EuclideanSpace ℝ (Fin 2) := γ τ

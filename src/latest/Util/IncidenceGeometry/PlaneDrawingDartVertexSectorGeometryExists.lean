@@ -16,7 +16,6 @@ import Util.IncidenceGeometry.PolygonalArcCarrierCompact
 import Util.IncidenceGeometry.PolygonalArcReverse
 import Util.IncidenceGeometry.PositiveSeparation
 
-open Classical
 noncomputable section
 
 lemma PlaneDrawingDartVertexSectorGeometryExists {V : Type*} [Fintype V]
@@ -24,5 +23,6 @@ lemma PlaneDrawingDartVertexSectorGeometryExists {V : Type*} [Fintype V]
     (D : OrdinaryPolygonalDrawing G) (hD : D.crossingSet.card = 0)
     (A : PlaneDrawingDartArcData G D) :
     Nonempty (PlaneDrawingDartVertexSectorGeometry G D A) := by
+  classical
   rcases PlaneDrawingDartGeometricClockwiseSectors G D hD A with ⟨C, _hmodel⟩
   exact ⟨C⟩

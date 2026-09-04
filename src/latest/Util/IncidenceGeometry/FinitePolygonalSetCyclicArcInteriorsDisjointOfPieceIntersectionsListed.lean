@@ -1,6 +1,5 @@
 import Util.IncidenceGeometry.FinitePolygonalSet
 
-open Classical
 noncomputable section
 
 lemma FinitePolygonalSetCyclicArcInteriorsDisjointOfPieceIntersectionsListed
@@ -34,6 +33,7 @@ lemma FinitePolygonalSetCyclicArcInteriorsDisjointOfPieceIntersectionsListed
               x ∈ pieceCarrier i → x ∈ pieceCarrier j → x ∈ K.points) :
     ∀ p q : {p : EuclideanSpace ℝ (Fin 2) // p ∈ K.points},
       p ≠ q → Disjoint (arcInterior p) (arcInterior q) := by
+  classical
   intro p q hpq
   rw [Set.disjoint_left]
   intro x hxP hxQ

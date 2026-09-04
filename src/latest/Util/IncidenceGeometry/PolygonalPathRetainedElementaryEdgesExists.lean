@@ -1,9 +1,7 @@
 import Util.IncidenceGeometry.PolygonalPathRetainedElementaryEdges
 import Util.IncidenceGeometry.PolygonalPathSegmentSubdivisionDataExists
 
-open Classical
 noncomputable section
-
 
 lemma PolygonalPathRetainedElementaryEdgesExists
     (γ : PolygonalPath)

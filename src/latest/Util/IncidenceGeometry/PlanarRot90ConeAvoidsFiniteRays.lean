@@ -1,6 +1,5 @@
 import Util.IncidenceGeometry.PlanarRot90ConeAvoidsRay
 
-open Classical
 noncomputable section
 
 lemma PlanarRot90ConeAvoidsFiniteRays
@@ -12,6 +11,7 @@ lemma PlanarRot90ConeAvoidsFiniteRays
           ∀ v ∈ directions, ∀ c t s : ℝ,
             0 ≤ c → 0 < t → |s| < κ * t →
               c • v ≠ t • d + s • PlanarRot90 d := by
+  classical
   intro hd
   induction directions using Finset.induction_on with
   | empty =>

@@ -3,7 +3,6 @@ import Util.IncidenceGeometry.ComplementComponentAbsorbsConnectedSubset
 import Util.IncidenceGeometry.ComplementComponentDisjointUnionRight
 import Util.IncidenceGeometry.ConnectedSubsetContainedInUniqueComplementComponent
 
-open Classical
 noncomputable section
 
 lemma OneEdgeOldComponentBookkeeping
@@ -21,6 +20,7 @@ lemma OneEdgeOldComponentBookkeeping
           ComplementComponent A C → C ≠ Csigma →
             Disjoint C (segment ℝ a b) ∧
               ComplementComponent (A ∪ segment ℝ a b) C := by
+  classical
   have hsigma_ne : (openSegment ℝ a b).Nonempty :=
     ⟨midpoint ℝ a b, midpoint_mem_openSegment (𝕜 := ℝ) a b⟩
   have hsigma_subset_old_compl : openSegment ℝ a b ⊆ Aᶜ := by

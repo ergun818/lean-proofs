@@ -8,7 +8,6 @@ import Util.IncidenceGeometry.PlaneDrawingDartSectorCompatibility
 import Util.IncidenceGeometry.PlaneDrawingDartSectorData
 import Util.IncidenceGeometry.PlaneFaceData
 
-open Classical
 noncomputable section
 
 lemma PlaneFaceDataExists {V : Type*} [Fintype V] (G : SimpleGraph V)

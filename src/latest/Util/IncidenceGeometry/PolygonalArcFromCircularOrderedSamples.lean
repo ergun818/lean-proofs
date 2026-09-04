@@ -1,7 +1,6 @@
 import Util.IncidenceGeometry.CircularOrderedSamplesBasicChordControls
 import Util.IncidenceGeometry.CircularOrderedSamplesNonadjacentChordInteriors
 
-open Classical
 noncomputable section
 
 noncomputable def PolygonalArcFromCircularOrderedSamples

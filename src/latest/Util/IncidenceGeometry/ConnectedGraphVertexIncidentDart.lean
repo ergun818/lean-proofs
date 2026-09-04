@@ -1,13 +1,14 @@
 import Util.IncidenceGeometry.Basic
 import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected
 
-open Classical
 noncomputable section
 
-lemma ConnectedGraphVertexIncidentDart {V : Type*} [Fintype V] (G : SimpleGraph V)
-    [Fintype G.edgeSet] [DecidableRel G.Adj] :
+lemma ConnectedGraphVertexIncidentDart {V : Type*} [Finite V] (G : SimpleGraph V)
+    [Fintype G.edgeSet] :
     G.Connected → 0 < G.edgeFinset.card →
       ∀ v : V, ∃ d : G.Dart, d.toProd.2 = v := by
+  classical
+  let := Fintype.ofFinite V
   intro hconn hedge v
   have hEdgeNonempty : G.edgeFinset.Nonempty := Finset.card_pos.mp hedge
   rcases hEdgeNonempty with ⟨e, he⟩

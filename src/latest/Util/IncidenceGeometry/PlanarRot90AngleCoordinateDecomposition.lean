@@ -1,7 +1,6 @@
 import Mathlib.Tactic
 import Util.IncidenceGeometry.PlanarRot90CoefficientUniqueness
 
-open Classical
 noncomputable section
 
 lemma PlanarRot90AngleCoordinateDecomposition (β α rb ra : ℝ) (hrb : rb ≠ 0) :
@@ -15,6 +14,7 @@ lemma PlanarRot90AngleCoordinateDecomposition (β α rb ra : ℝ) (hrb : rb ≠ 
       ∀ {x' y' : ℝ},
         ra • e α = x' • base + y' • PlanarRot90 base →
           x' = x ∧ y' = y := by
+  classical
   dsimp only
   let e : ℝ → EuclideanSpace ℝ (Fin 2) :=
     fun t => WithLp.toLp 2
@@ -52,7 +52,7 @@ lemma PlanarRot90AngleCoordinateDecomposition (β α rb ra : ℝ) (hrb : rb ≠ 
     have hcoord0 := congrArg (fun v : EuclideanSpace ℝ (Fin 2) => v 0) hz
     have hcoord1 := congrArg (fun v : EuclideanSpace ℝ (Fin 2) => v 1) hz
     dsimp [base, e] at hcoord0 hcoord1
-    simp at hcoord0 hcoord1
+    simp only [mul_eq_zero] at hcoord0 hcoord1
     rcases hcoord0 with hrb0 | hcos0
     · exact hrb hrb0
     · rcases hcoord1 with hrb0 | hsin0

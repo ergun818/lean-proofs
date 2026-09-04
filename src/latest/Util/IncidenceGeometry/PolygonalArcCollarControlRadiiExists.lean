@@ -1,12 +1,12 @@
 import Util.IncidenceGeometry.PolygonalArcCollarControlRadii
 import Util.IncidenceGeometry.PolygonalArcVertexNonincidentSegmentSeparation
 
-open Classical
 noncomputable section
 
 lemma PolygonalArcCollarControlRadiiExists (γ : PolygonalArc) {η : ℝ}
     (hη : 0 < η) :
     Nonempty (PolygonalArcCollarControlRadii γ η) := by
+  classical
   let n := γ.vertices.length
   have hlen_pos : 0 < n := by
     have hlen : 2 ≤ γ.vertices.length := γ.length_ge_two
@@ -46,7 +46,7 @@ lemma PolygonalArcCollarControlRadiiExists (γ : PolygonalArc) {η : ℝ}
         p.1.1 ≠ p.2.1 + 1 then
       (Classical.choose
         (PolygonalArcVertexNonincidentSegmentSeparation γ
-          (by simpa [n] using p.1.2) h.1 h.2.1 h.2.2)) / 2
+          (by simp [n]) h.1 h.2.1 h.2.2)) / 2
     else (1 : ℝ)
   let segmentBound : ℝ :=
     Finset.univ.inf' (show (Finset.univ : Finset (Fin n × Fin n)).Nonempty from
@@ -59,7 +59,7 @@ lemma PolygonalArcCollarControlRadiiExists (γ : PolygonalArc) {η : ℝ}
     · have hsep :=
         Classical.choose_spec
           (PolygonalArcVertexNonincidentSegmentSeparation γ
-            (by simpa [n] using p.1.2) h.1 h.2.1 h.2.2)
+            (by simp [n]) h.1 h.2.1 h.2.2)
       simpa [h] using half_pos hsep.1
     · simp [h]
   have segmentBound_pos : 0 < segmentBound := by
@@ -105,7 +105,7 @@ lemma PolygonalArcCollarControlRadiiExists (γ : PolygonalArc) {η : ℝ}
           ρ <
             Classical.choose
               (PolygonalArcVertexNonincidentSegmentSeparation γ
-                (by simpa [n] using i.2) hj hij hijs) := by
+                (by simp [n]) hj hij hijs) := by
     intro i j hj hij hijs
     let jf : Fin n := ⟨j, by
       dsimp [n]
@@ -117,7 +117,7 @@ lemma PolygonalArcCollarControlRadiiExists (γ : PolygonalArc) {η : ℝ}
         segmentBound ≤
           (Classical.choose
             (PolygonalArcVertexNonincidentSegmentSeparation γ
-              (by simpa [n] using i.2) hj hij hijs)) / 2 := by
+              (by simp [n]) hj hij hijs)) / 2 := by
       have hentry : segmentBound ≤ segmentTerm (i, jf) := by
         dsimp [segmentBound]
         exact Finset.inf'_le segmentTerm (Finset.mem_univ (i, jf))
@@ -126,10 +126,10 @@ lemma PolygonalArcCollarControlRadiiExists (γ : PolygonalArc) {η : ℝ}
         0 <
           Classical.choose
             (PolygonalArcVertexNonincidentSegmentSeparation γ
-              (by simpa [n] using i.2) hj hij hijs) := by
+              (by simp [n]) hj hij hijs) := by
       exact (Classical.choose_spec
         (PolygonalArcVertexNonincidentSegmentSeparation γ
-          (by simpa [n] using i.2) hj hij hijs)).1
+          (by simp [n]) hj hij hijs)).1
     nlinarith [hρ_lt_segmentBound, hle]
   refine ⟨
     { radius := fun _ => ρ
@@ -140,26 +140,26 @@ lemma PolygonalArcCollarControlRadiiExists (γ : PolygonalArc) {η : ℝ}
       nonincident_segment_disjoint := ?_ }⟩
   · intro i j hij
     apply Metric.closedBall_disjoint_closedBall
-    have hdist_pos : 0 < dist (center ⟨i.1, by simpa [n] using i.2⟩)
-        (center ⟨j.1, by simpa [n] using j.2⟩) := by
+    have hdist_pos : 0 < dist (center i)
+        (center j) := by
       exact dist_pos.mpr (by
         intro h
         exact hij (Fin.ext (by
           have hc :
-              center ⟨i.1, by simpa [n] using i.2⟩ =
-                center ⟨j.1, by simpa [n] using j.2⟩ := h
+              center i =
+                center j := h
           exact congrArg Fin.val (hcenter hc))))
     have hlt :
         ρ <
-          dist (center ⟨i.1, by simpa [n] using i.2⟩)
-            (center ⟨j.1, by simpa [n] using j.2⟩) / 3 := by
+          dist (center i)
+            (center j) / 3 := by
       exact hρ_lt_vertex_dist (by
         intro h
         exact hij (Fin.ext (by simpa using congrArg Fin.val h)))
     simpa [center, n] using (by
       nlinarith : ρ + ρ <
-        dist (center ⟨i.1, by simpa [n] using i.2⟩)
-          (center ⟨j.1, by simpa [n] using j.2⟩))
+        dist (center i)
+          (center j))
   · intro j hj
     let jf : Fin n := ⟨j, by
       dsimp [n]
@@ -180,17 +180,17 @@ lemma PolygonalArcCollarControlRadiiExists (γ : PolygonalArc) {η : ℝ}
     rw [Set.disjoint_left]
     intro x hxball hxseg
     have hρδ :=
-      hρ_lt_segmentBound_entry (i := ⟨i.1, by simpa [n] using i.2⟩)
+      hρ_lt_segmentBound_entry (i := ⟨i.1, by simp [n]⟩)
         (j := j) hj hij hijs
     have hsep :=
       Classical.choose_spec
         (PolygonalArcVertexNonincidentSegmentSeparation γ
-          (by simpa [n] using i.2) hj hij hijs)
+          (by simp) hj hij hijs)
     have hxle : dist γ.vertices[i.1] x ≤ ρ := by
       simpa [Metric.mem_closedBall, dist_comm] using hxball
     have hδle :
         Classical.choose
             (PolygonalArcVertexNonincidentSegmentSeparation γ
-              (by simpa [n] using i.2) hj hij hijs) ≤
+              (by simp) hj hij hijs) ≤
           dist γ.vertices[i.1] x := hsep.2 x hxseg
     nlinarith

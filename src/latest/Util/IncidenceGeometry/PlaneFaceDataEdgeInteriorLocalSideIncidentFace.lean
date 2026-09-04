@@ -1,6 +1,5 @@
 import Util.IncidenceGeometry.PlaneFaceData
 
-open Classical
 noncomputable section
 
 lemma PlaneFaceDataEdgeInteriorLocalSideIncidentFace {V : Type*} [Fintype V]
@@ -15,6 +14,7 @@ lemma PlaneFaceDataEdgeInteriorLocalSideIncidentFace {V : Type*} [Fintype V]
                 y ∈ U →
                   y ∈ (OrdinaryDrawingImage G D)ᶜ →
                     ∃ a : G.Dart, A.leftFace a = F := by
+  classical
   intro F d x hx
   rcases A.localComplement_subset_sideStrips d x hx with
     ⟨U, hUopen, hxU, hUsubset⟩

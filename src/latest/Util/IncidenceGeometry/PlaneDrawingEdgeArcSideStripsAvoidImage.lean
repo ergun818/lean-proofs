@@ -7,11 +7,10 @@ import Util.IncidenceGeometry.OrdinaryDrawingImageWithoutEdge
 import Util.IncidenceGeometry.PlaneDrawingSelectedEdgeAwayFromEndpointCompact
 import Util.IncidenceGeometry.PlaneDrawingSelectedEdgeEndpointGermApertures
 
-open Classical
 noncomputable section
 
 lemma PlaneDrawingEdgeArcSideStripsAvoidImage {V : Type*} [Fintype V]
-    (G : SimpleGraph V) [Fintype G.edgeSet] [DecidableRel G.Adj]
+    (G : SimpleGraph V) [Fintype G.edgeSet]
     (D : OrdinaryPolygonalDrawing G) (hD : D.crossingSet.card = 0)
     (e : G.edgeFinset) (γ : PolygonalArc)
     (F : Set (EuclideanSpace ℝ (Fin 2))) :
@@ -23,6 +22,7 @@ lemma PlaneDrawingEdgeArcSideStripsAvoidImage {V : Type*} [Fintype V]
               S.collar ⊆ (OrdinaryDrawingImage G D)ᶜ ∪ γ.relativeInterior ∧
                 S.leftStrip ⊆ (OrdinaryDrawingImage G D)ᶜ ∧
                   S.rightStrip ⊆ (OrdinaryDrawingImage G D)ᶜ := by
+  classical
   intro hF hFγ hγ
   obtain ⟨r₀, r₁, K₀, K₁, hIso, hK₀, hK₁, hinitAvoid, htermAvoid⟩ :=
     PlaneDrawingSelectedEdgeEndpointGermApertures G D hD e γ hγ

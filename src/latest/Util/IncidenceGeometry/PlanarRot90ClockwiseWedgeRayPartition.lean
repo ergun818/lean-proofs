@@ -8,10 +8,9 @@ import Util.IncidenceGeometry.PlanarRot90Norm
 import Util.IncidenceGeometry.PlanarRot90Orthogonal
 import Util.IncidenceGeometry.PlanarSlitDiskEndpointConesAvoidRay
 
-open Classical
 noncomputable section
 
-lemma PlanarRot90ClockwiseWedgeRayPartition {ι : Type*} [Fintype ι] [Nonempty ι]
+lemma PlanarRot90ClockwiseWedgeRayPartition {ι : Type*} [Finite ι] [Nonempty ι]
     [DecidableEq ι]
     (p : EuclideanSpace ℝ (Fin 2)) (ρ : ℝ)
     (u : ι → EuclideanSpace ℝ (Fin 2))
@@ -64,7 +63,7 @@ lemma PlanarRot90ClockwiseWedgeRayPartition {ι : Type*} [Fintype ι] [Nonempty 
                 clockwiseTurn i (clockwiseNext i)) :
     ∃ sector : ι → Set (EuclideanSpace ℝ (Fin 2)),
       (∀ i : ι,
-        if h : clockwiseNext i = i then
+        if _h : clockwiseNext i = i then
           sector i =
             Metric.ball p ρ \
               ({q | ∃ t : ℝ, 0 < t ∧ q = p + t • u i} ∪
@@ -105,6 +104,7 @@ lemma PlanarRot90ClockwiseWedgeRayPartition {ι : Type*} [Fintype ι] [Nonempty 
               q ∉ {x | ∃ t : ℝ, 0 < t ∧ x = p + t • u i}) →
               ∃ i : ι, q ∈ sector i) := by
   classical
+  let := Fintype.ofFinite ι
   let e : ℝ → EuclideanSpace ℝ (Fin 2) :=
     fun a => WithLp.toLp 2
       (fun k : Fin 2 => if k = 0 then Real.cos a else Real.sin a)
@@ -141,7 +141,7 @@ lemma PlanarRot90ClockwiseWedgeRayPartition {ι : Type*} [Fintype ι] [Nonempty 
   let sCoeff : ι → ℝ := fun i =>
     - inner ℝ (u (clockwiseNext i)) (PlanarRot90 (u i)) / (‖u i‖ ^ 2)
   let sector : ι → Set (EuclideanSpace ℝ (Fin 2)) := fun i =>
-    if h : clockwiseNext i = i then
+    if _h : clockwiseNext i = i then
       Metric.ball p ρ \
         ({q | ∃ t : ℝ, 0 < t ∧ q = p + t • u i} ∪
           ({p} : Set (EuclideanSpace ℝ (Fin 2))))
@@ -262,7 +262,7 @@ lemma PlanarRot90ClockwiseWedgeRayPartition {ι : Type*} [Fintype ι] [Nonempty 
   · intro i
     by_cases hnext : clockwiseNext i = i
     · simp [sector, hnext]
-    · simp only [Set.union_singleton, ne_eq, Fin.isValue, dite_eq_ite]
+    · rw [dif_neg hnext]
       refine ⟨cCoeff i, sCoeff i, hnot_posray i hnext, hdecomp_coeff i, ?_⟩
       simp [sector, hnext]
   · intro i
@@ -287,16 +287,16 @@ lemma PlanarRot90ClockwiseWedgeRayPartition {ι : Type*} [Fintype ι] [Nonempty 
               ({p} : Set (EuclideanSpace ℝ (Fin 2)))) := by
         simpa [sector, hnext] using hq
       exact hq'.1
-    · simp only [Metric.mem_ball] at hq
+    · simp only [Set.union_singleton, Fin.isValue, dite_eq_ite, hnext, ↓reduceIte, sector] at hq
       by_cases hspos : 0 < sCoeff i
-      · simp [hspos] at hq
+      · simp only [hspos, ↓reduceIte, Fin.isValue, Set.mem_image, Set.mem_ofPred_eq] at hq
         rcases hq with ⟨z, hz, rfl⟩
         exact hchart_mem_ball (hu i) hz.1
       · by_cases hsneg : sCoeff i < 0
-        · simp [hspos, hsneg] at hq
+        · simp only [hspos, ↓reduceIte, hsneg, Fin.isValue, Set.mem_image, Set.mem_ofPred_eq] at hq
           rcases hq with ⟨z, hz, rfl⟩
           exact hchart_mem_ball (hu i) hz.1
-        · simp [hspos, hsneg] at hq
+        · simp only [hspos, ↓reduceIte, hsneg, Fin.isValue, Set.mem_image, Set.mem_ofPred_eq] at hq
           rcases hq with ⟨z, hz, rfl⟩
           exact hchart_mem_ball (hu i) hz.1
   · intro i j
@@ -314,7 +314,8 @@ lemma PlanarRot90ClockwiseWedgeRayPartition {ι : Type*} [Fintype ι] [Nonempty 
     · rw [Set.disjoint_left]
       intro q hqsector hqray
       rcases hqray with ⟨t, ht, hqray⟩
-      simp [sector, hnext] at hqsector
+      simp only [Set.union_singleton, Fin.isValue, dite_eq_ite, hnext, ↓reduceIte, sector]
+        at hqsector
       have hθnext_ne : θ (clockwiseNext i) ≠ θ i := by
         intro hθ
         exact hnext (hθ_inj hθ)
@@ -417,7 +418,7 @@ lemma PlanarRot90ClockwiseWedgeRayPartition {ι : Type*} [Fintype ι] [Nonempty 
               (by simpa [turnTo] using hlt_turn)
           exact (hgap j) rfl
       by_cases hspos : 0 < sCoeff i
-      · simp [hspos] at hqsector
+      · simp only [hspos, ↓reduceIte, Fin.isValue, Set.mem_image, Set.mem_ofPred_eq] at hqsector
         rcases hqsector with ⟨z, hz, hqeq⟩
         have hvec : t • u j = z 0 • u i + z 1 • PlanarRot90 (u i) := by
           have htmp := congrArg (fun x => x - p) hqray
@@ -430,7 +431,8 @@ lemma PlanarRot90ClockwiseWedgeRayPartition {ι : Type*} [Fintype ι] [Nonempty 
           exact htmp.symm
         exact hcontradict_z z hvec (by simpa [hspos] using hz.2)
       · by_cases hsneg : sCoeff i < 0
-        · simp [hspos, hsneg] at hqsector
+        · simp only [hspos, ↓reduceIte, hsneg, Fin.isValue, Set.mem_image, Set.mem_ofPred_eq]
+            at hqsector
           rcases hqsector with ⟨z, hz, hqeq⟩
           have hvec : t • u j = z 0 • u i + z 1 • PlanarRot90 (u i) := by
             have htmp := congrArg (fun x => x - p) hqray
@@ -442,7 +444,8 @@ lemma PlanarRot90ClockwiseWedgeRayPartition {ι : Type*} [Fintype ι] [Nonempty 
             rw [hleft, hright] at htmp
             exact htmp.symm
           exact hcontradict_z z hvec (by simpa [hspos, hsneg] using hz.2)
-        · simp [hspos, hsneg] at hqsector
+        · simp only [hspos, ↓reduceIte, hsneg, Fin.isValue, Set.mem_image, Set.mem_ofPred_eq]
+            at hqsector
           rcases hqsector with ⟨z, hz, hqeq⟩
           have hvec : t • u j = z 0 • u i + z 1 • PlanarRot90 (u i) := by
             have htmp := congrArg (fun x => x - p) hqray
@@ -576,15 +579,15 @@ lemma PlanarRot90ClockwiseWedgeRayPartition {ι : Type*} [Fintype ι] [Nonempty 
           z 0 ^ 2 + z 1 ^ 2 < (ρ / ‖u i‖) ^ 2 := by
         apply hcoord_of_ball (hu i)
         simpa [← hvec_chart] using hqball
-      simp [sector, hnext]
+      simp only [Set.union_singleton, Fin.isValue, dite_eq_ite, hnext, ↓reduceIte, sector]
       by_cases hspos : 0 < sCoeff i
-      · simp [hspos]
+      · simp only [hspos, ↓reduceIte, Fin.isValue, Set.mem_image, Set.mem_ofPred_eq]
         refine ⟨z, ?_, hvec_chart.symm⟩
         exact ⟨hzdisk, by simpa [hspos] using hsign⟩
       · by_cases hsneg : sCoeff i < 0
-        · simp [hspos, hsneg]
+        · simp only [hspos, ↓reduceIte, hsneg, Fin.isValue, Set.mem_image, Set.mem_ofPred_eq]
           refine ⟨z, ?_, hvec_chart.symm⟩
           exact ⟨hzdisk, by simpa [hspos, hsneg] using hsign⟩
-        · simp [hspos, hsneg]
+        · simp only [hspos, ↓reduceIte, hsneg, Fin.isValue, Set.mem_image, Set.mem_ofPred_eq]
           refine ⟨z, ?_, hvec_chart.symm⟩
           exact ⟨hzdisk, by simpa [hspos, hsneg] using hsign⟩

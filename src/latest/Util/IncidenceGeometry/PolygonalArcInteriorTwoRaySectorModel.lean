@@ -106,7 +106,7 @@ lemma PolygonalArcInteriorTwoRaySectorModel (r c s : ℝ) (hr : 0 < r)
       constructor
       · exact hδ.2
       constructor
-      · simp [w]
+      · simp only [Fin.isValue, one_ne_zero, ↓reduceIte, w]
         positivity
       · have hcross : cross (δ • w) = -δ * s := by
           dsimp [cross]
@@ -125,7 +125,7 @@ lemma PolygonalArcInteriorTwoRaySectorModel (r c s : ℝ) (hr : 0 < r)
       constructor
       · simpa [w] using hδ.1
       · have hcross : cross (δ • w) = c * δ := by
-          simpa [cross, w, hs0, mul_comm]
+          simp [cross, w, hs0, mul_comm]
         rw [hcross]
         nlinarith [hδ.1, hc]
   have hRneg_nonempty : Rneg.Nonempty := by
@@ -150,7 +150,7 @@ lemma PolygonalArcInteriorTwoRaySectorModel (r c s : ℝ) (hr : 0 < r)
       constructor
       · exact hδ.2
       · have hcross : cross (δ • w) = s * δ := by
-          simpa [cross, w, mul_comm]
+          simp [cross, w, mul_comm]
         rw [hcross]
         positivity
     · let w : Fin 2 → ℝ := Pi.single 1 (-1 : ℝ)
@@ -162,7 +162,7 @@ lemma PolygonalArcInteriorTwoRaySectorModel (r c s : ℝ) (hr : 0 < r)
       constructor
       · exact hδ.2
       · have hcross : cross (δ • w) = -c * δ := by
-          simpa [cross, w, hs0, mul_comm]
+          simp [cross, w, hs0, mul_comm]
         rw [hcross]
         nlinarith [hδ.1, hc]
   have hR_inter_nonempty : (Rneg ∩ Rcross).Nonempty := by
@@ -200,7 +200,7 @@ lemma PolygonalArcInteriorTwoRaySectorModel (r c s : ℝ) (hr : 0 < r)
         constructor
         · exact hδ.2
         · have hcross : cross (δ • w) = -c * δ := by
-            simpa [cross, w, hs0, mul_comm]
+            simp [cross, w, hs0, mul_comm]
           rw [hcross]
           nlinarith [hδ.1, hc]
   have hL_connected : IsConnected L :=
@@ -301,7 +301,7 @@ lemma PolygonalArcInteriorTwoRaySectorModel (r c s : ℝ) (hr : 0 < r)
         intro hzero
         exact hznotBad (by
           dsimp [Bad]
-          exact Or.inr (by simpa [hzero]))
+          exact Or.inr (by simp [hzero]))
       rcases lt_trichotomy (z 1) 0 with hyneg | hyeq | hypos
       · right
         dsimp [R]

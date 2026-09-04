@@ -5,7 +5,6 @@ import Util.IncidenceGeometry.ArcCrossingEliminationInCollar
 import Util.IncidenceGeometry.FinitePolygonalPerturbation
 import Util.IncidenceGeometry.FinitePolygonalSet
 
-open Classical
 noncomputable section
 
 lemma PendantArcComplementConnected (K : Set (EuclideanSpace ℝ (Fin 2)))
@@ -17,6 +16,7 @@ lemma PendantArcComplementConnected (K : Set (EuclideanSpace ℝ (Fin 2)))
           (γ.carrier ∩ K = ({γ.target} : Set (EuclideanSpace ℝ (Fin 2))) ∧
             γ.source ∉ K)) →
           PolygonallyPathConnected (K ∪ γ.carrier)ᶜ := by
+  classical
   intro hK hKconn hpendant p q hp hq
   have hpKc : p ∈ Kᶜ := by
     intro hpK

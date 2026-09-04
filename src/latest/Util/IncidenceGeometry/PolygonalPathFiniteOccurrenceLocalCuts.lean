@@ -3,13 +3,13 @@ import Mathlib.Analysis.Convex.Topology
 import Mathlib.Analysis.Normed.Affine.AddTorsor
 import Util.IncidenceGeometry.PolygonalPath
 
-open Classical
 noncomputable section
 
 private lemma lineMap_lineMap_parameters
     (A B : EuclideanSpace ℝ (Fin 2)) (a b θ : ℝ) :
     AffineMap.lineMap (AffineMap.lineMap A B a) (AffineMap.lineMap A B b) θ =
       AffineMap.lineMap A B ((1 - θ) * a + θ * b) := by
+  classical
   simp [AffineMap.lineMap_apply_module]
   module
 
@@ -18,6 +18,7 @@ private lemma lineMap_symmetric_midpoint
     AffineMap.lineMap (AffineMap.lineMap A B (t - ε))
         (AffineMap.lineMap A B (t + ε)) ((1 : ℝ) / 2) =
       AffineMap.lineMap A B t := by
+  classical
   rw [lineMap_lineMap_parameters]
   congr 1
   ring
@@ -25,10 +26,12 @@ private lemma lineMap_symmetric_midpoint
 private lemma weighted_average_mem_Icc
     {a b θ : ℝ} (hθ : θ ∈ Set.Icc (0 : ℝ) 1) (hab : a ≤ b) :
     (1 - θ) * a + θ * b ∈ Set.Icc a b := by
+  classical
   constructor <;> nlinarith [hθ.1, hθ.2]
 
 private lemma half_ratio_mul_lt (c d : ℝ) (hc : 0 < c) (hd : 0 ≤ d) :
     (c / (d + 1) / 2) * d < c := by
+  classical
   have hden : 0 < d + 1 := by linarith
   have hquot : 0 < c / (d + 1) := div_pos hc hden
   have hdhalf : d / 2 < d + 1 := by linarith
@@ -38,7 +41,6 @@ private lemma half_ratio_mul_lt (c d : ℝ) (hc : 0 < c) (hd : 0 ≤ d) :
       _ < c / (d + 1) * (d + 1) := mul_lt_mul_of_pos_left hdhalf hquot
   rw [div_mul_cancel₀ c (ne_of_gt hden)] at hhalf
   exact hhalf
-
 
 lemma PolygonalPathFiniteOccurrenceLocalCuts
     (α : PolygonalPath) (F U : Set (EuclideanSpace ℝ (Fin 2))) :
@@ -82,6 +84,7 @@ lemma PolygonalPathFiniteOccurrenceLocalCuts
                             x ∈ F ∧
                               y ∈ segment ℝ (cutBefore i hi x)
                                 (cutAfter i hi x)) := by
+  classical
   intro hfinite hUopen hoccU hverticesAvoid
   let E := EuclideanSpace ℝ (Fin 2)
   have segment_subset_carrier :

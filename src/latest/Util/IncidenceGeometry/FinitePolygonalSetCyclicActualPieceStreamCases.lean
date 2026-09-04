@@ -7,7 +7,6 @@ import Util.IncidenceGeometry.FiniteSortedRealCutListCoversUnitInterval
 import Util.IncidenceGeometry.FinitePolygonalSetCyclicActualPieceCoverage
 import Mathlib.Tactic
 
-open Classical
 noncomputable section
 
 lemma FinitePolygonalSetCyclicActualEveryPieceInOrder
@@ -143,7 +142,7 @@ lemma FinitePolygonalSetCyclicActualEveryPieceInOrder
         have hhead_ret :
             sourceOption head = some p := by
           have hhead_listed : pieceSource head ∈ K.points := by
-            simp [hhead_source, hi_source]
+            simp [hhead_source]
           have hp_eq :
               (⟨pieceSource head, hhead_listed⟩ :
                 {p : EuclideanSpace ℝ (Fin 2) // p ∈ K.points}) = p := by
@@ -167,7 +166,7 @@ lemma FinitePolygonalSetCyclicActualEveryPieceInOrder
         have hhead_ret :
             sourceOption head = some p := by
           have hhead_listed : pieceSource head ∈ K.points := by
-            simp [hhead_source, hi_source]
+            simp [hhead_source]
           have hp_eq :
               (⟨pieceSource head, hhead_listed⟩ :
                 {p : EuclideanSpace ℝ (Fin 2) // p ∈ K.points}) = p := by
@@ -181,8 +180,7 @@ lemma FinitePolygonalSetCyclicActualEveryPieceInOrder
           hsource_unique hhead_mem_stream hi_mem_stream hhead_ret hi_ret
         subst i
         simp [horder]
-    ·
-      have hi_none : sourceOption i = none := by
+    · have hi_none : sourceOption i = none := by
         simp [hsourceOption, hi_source]
       rcases List.getElem_of_mem (hstream_mem i) with ⟨n, hn, hget_i⟩
       let preI : List PieceIndex := pieceStream.take n
@@ -245,7 +243,7 @@ lemma FinitePolygonalSetCyclicActualEveryPieceInOrder
             have hhead_ret :
                 sourceOption head = some p := by
               have hhead_listed : pieceSource head ∈ K.points := by
-                simpa [hhead_source] using p.2
+                simp [hhead_source]
               have hp_eq :
                   (⟨pieceSource head, hhead_listed⟩ :
                     {p : EuclideanSpace ℝ (Fin 2) // p ∈ K.points}) = p := by
@@ -255,7 +253,7 @@ lemma FinitePolygonalSetCyclicActualEveryPieceInOrder
                 sourceOption next = some q := by
               have hnext_listed : pieceSource next ∈ K.points := by
                 have hqmem : (successor p).1 ∈ K.points := (successor p).2
-                simpa [hnext_source] using hqmem
+                simp [hnext_source]
               have hq_eq :
                   (⟨pieceSource next, hnext_listed⟩ :
                     {p : EuclideanSpace ℝ (Fin 2) // p ∈ K.points}) = q := by
@@ -364,7 +362,7 @@ lemma FinitePolygonalSetCyclicActualEveryPieceInOrder
                 sourceOption next = some q := by
               have hnext_listed : pieceSource next ∈ K.points := by
                 have hqmem : (successor p).1 ∈ K.points := (successor p).2
-                simpa [hnext_source] using hqmem
+                simp [hnext_source]
               have hq_eq :
                   (⟨pieceSource next, hnext_listed⟩ :
                     {p : EuclideanSpace ℝ (Fin 2) // p ∈ K.points}) = q := by
@@ -493,7 +491,7 @@ lemma FinitePolygonalSetCyclicActualEveryPieceInOrder
                 have hhead_ret :
                     sourceOption head = some p := by
                   have hhead_listed : pieceSource head ∈ K.points := by
-                    simpa [hhead_source] using p.2
+                    simp [hhead_source]
                   have hp_eq :
                       (⟨pieceSource head, hhead_listed⟩ :
                         {p : EuclideanSpace ℝ (Fin 2) // p ∈ K.points}) = p := by
@@ -503,7 +501,7 @@ lemma FinitePolygonalSetCyclicActualEveryPieceInOrder
                     sourceOption next = some q := by
                   have hnext_listed : pieceSource next ∈ K.points := by
                     have hqmem : (successor p).1 ∈ K.points := (successor p).2
-                    simpa [hnext_source] using hqmem
+                    simp [hnext_source]
                   have hq_eq :
                       (⟨pieceSource next, hnext_listed⟩ :
                         {p : EuclideanSpace ℝ (Fin 2) // p ∈ K.points}) = q := by
@@ -558,7 +556,7 @@ lemma FinitePolygonalSetCyclicActualEveryPieceInOrder
                 have hhead_ret :
                     sourceOption head = some p := by
                   have hhead_listed : pieceSource head ∈ K.points := by
-                    simpa [hhead_source] using p.2
+                    simp [hhead_source]
                   have hp_eq :
                       (⟨pieceSource head, hhead_listed⟩ :
                         {p : EuclideanSpace ℝ (Fin 2) // p ∈ K.points}) = p := by
@@ -568,7 +566,7 @@ lemma FinitePolygonalSetCyclicActualEveryPieceInOrder
                     sourceOption next = some q := by
                   have hnext_listed : pieceSource next ∈ K.points := by
                     have hqmem : (successor p).1 ∈ K.points := (successor p).2
-                    simpa [hnext_source] using hqmem
+                    simp [hnext_source]
                   have hq_eq :
                       (⟨pieceSource next, hnext_listed⟩ :
                         {p : EuclideanSpace ℝ (Fin 2) // p ∈ K.points}) = q := by
@@ -1004,7 +1002,7 @@ lemma FinitePolygonalSetCyclicActualPieceStreamCases
               have hnodup_l : (l.filterMap retain).Nodup := hnodup_cons.of_cons
               rcases hx with hx_eq | hx_l
               · subst x
-                simp [hreta] at hxret
+                simp only [hreta, Option.some.injEq] at hxret
                 subst q
                 rcases hy with hy_eq | hy_l
                 · subst y
@@ -1014,7 +1012,7 @@ lemma FinitePolygonalSetCyclicActualPieceStreamCases
                   exact False.elim (hq_notin hp_mem)
               · rcases hy with hy_eq | hy_l
                 · subst y
-                  simp [hreta] at hyret
+                  simp only [hreta, Option.some.injEq] at hyret
                   subst q
                   have hp_mem : p ∈ l.filterMap retain := by
                     exact List.mem_filterMap.2 ⟨x, hx_l, hxret⟩
@@ -1192,7 +1190,7 @@ lemma FinitePolygonalSetCyclicActualPieceStreamCases
         (L[r]'hr = 0 ∨ L[r]'hr = 1 ∨
           (0 ≤ L[r]'hr ∧ L[r]'hr ≤ 1 ∧
             AffineMap.lineMap A B (L[r]'hr) ∈ K.points)) := by
-      simpa [L, A, B] using (cutList_mem e n (L[r]'hr)).1 (by simpa [L] using hmem)
+      simpa [L, A, B] using (cutList_mem e n (L[r]'hr)).1 (by simp [L])
     rcases hcut_mem with hzero | hone | hmid
     · have hfirst : L[0]'(by omega) = 0 := hendpoint.2.1 (by omega)
       have hget :

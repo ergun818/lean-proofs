@@ -7,8 +7,6 @@ import Util.IncidenceGeometry.PolygonalArcEndpointGluedSegmentCertificates
 import Util.IncidenceGeometry.PolygonalArcFromEndpointGluedPieces
 import Util.IncidenceGeometry.PolygonalReplacementLocalPieceLists
 
-
-open Classical
 noncomputable section
 
 lemma polygonalArcReverse_segment_to_original
@@ -17,6 +15,7 @@ lemma polygonalArcReverse_segment_to_original
     ∃ k : ℕ, ∃ hk : k + 1 < Γ.vertices.length,
       (PolygonalArcReverse Γ).vertices[m] = Γ.vertices[k + 1] ∧
         (PolygonalArcReverse Γ).vertices[m + 1] = Γ.vertices[k] := by
+  classical
   let k := Γ.vertices.length - 2 - m
   have hm_orig : m + 1 < Γ.vertices.length := by
     simpa only [PolygonalArcReverse, List.length_reverse] using hm
@@ -58,6 +57,7 @@ lemma polygonalArc_original_segment_to_reverse
     ∃ r : ℕ, ∃ hr : r + 1 < (PolygonalArcReverse Γ).vertices.length,
       (PolygonalArcReverse Γ).vertices[r] = Γ.vertices[m + 1] ∧
         (PolygonalArcReverse Γ).vertices[r + 1] = Γ.vertices[m] := by
+  classical
   let r := Γ.vertices.length - 2 - m
   have hr : r + 1 < (PolygonalArcReverse Γ).vertices.length := by
     simp [PolygonalArcReverse, r, List.length_reverse]
@@ -104,6 +104,7 @@ lemma polygonalArcReverse_segment_match_to_original
     ∃ k : ℕ, ∃ hk : k + 1 < Γ.vertices.length,
       ((a = Γ.vertices[k] ∧ b = Γ.vertices[k + 1]) ∨
         (a = Γ.vertices[k + 1] ∧ b = Γ.vertices[k])) := by
+  classical
   rcases polygonalArcReverse_segment_to_original Γ m hm with
     ⟨k, hk, hrev_left, hrev_right⟩
   refine ⟨k, hk, ?_⟩
@@ -125,6 +126,7 @@ private lemma vertexSpokeBoundaryPointEqTarget
       p ∈ (localDiskFillings.vertex_spoke v e).carrier →
         p ∈ Metric.sphere (D.vertexPlacement v) (controlDisks.vertexRadius v) →
           p = (localDiskFillings.vertex_spoke v e).target := by
+  classical
   intro v e p hpCarrier hpSphere
   by_cases hpTarget : p = (localDiskFillings.vertex_spoke v e).target
   · exact hpTarget
@@ -169,6 +171,7 @@ private lemma intersectionChainBoundaryPointEqEndpoint
         p ∈ Metric.sphere x.1 (controlDisks.intersectionRadius x) →
           p = (localDiskFillings.intersection_chain x e).source ∨
             p = (localDiskFillings.intersection_chain x e).target := by
+  classical
   intro x e p hpCarrier hpSphere
   by_cases hpSource : p = (localDiskFillings.intersection_chain x e).source
   · exact Or.inl hpSource
@@ -201,6 +204,7 @@ private lemma vertexSpokeCarrierDisjointVertexSpokeOfNe
       v ≠ w →
         Disjoint (localDiskFillings.vertex_spoke v e).carrier
           (localDiskFillings.vertex_spoke w f).carrier := by
+  classical
   intro v w e f hvw
   rw [Set.disjoint_left]
   intro p hpv hpw
@@ -228,6 +232,7 @@ private lemma vertexSpokeCarrierDisjointIntersectionChain
       (f : {f : G.edgeFinset // x.1 ∈ D.edgeRelativeInterior f}),
       Disjoint (localDiskFillings.vertex_spoke v e).carrier
         (localDiskFillings.intersection_chain x f).carrier := by
+  classical
   intro v e x f
   rw [Set.disjoint_left]
   intro p hpv hpx
@@ -255,6 +260,7 @@ private lemma intersectionChainCarrierDisjointIntersectionChainOfNe
       x ≠ y →
         Disjoint (localDiskFillings.intersection_chain x e).carrier
           (localDiskFillings.intersection_chain y f).carrier := by
+  classical
   intro x y e f hxy
   rw [Set.disjoint_left]
   intro p hpx hpy
@@ -276,6 +282,7 @@ private lemma edgeMemSourceOrTarget
     ∀ e v, v ∈ e.1 →
       v = tubeChains.edgeSourceVertex e ∨
         v = tubeChains.edgeTargetVertex e := by
+  classical
   intro e v hve
   rcases D.edgeArc_endpoints e with ⟨a, b, _hadj, heq, hend⟩
   have hvab : v = a ∨ v = b := by
@@ -318,6 +325,7 @@ private lemma edgeSourceNeTarget
     {V : Type*} [Fintype V]
     (G : SimpleGraph V) [Fintype G.edgeSet] (D : GeometricArcDrawing G) :
     ∀ e, D.edgeSource e ≠ D.edgeTarget e := by
+  classical
   intro e
   rcases D.edge_is_simple_lineSegment_or_circularArc e with hline | harc
   · exact hline.1
@@ -340,6 +348,7 @@ private lemma edgeSourceVertexNeTargetVertex
     (controlDisks : PolygonalReplacementControlDiskData G D)
     (tubeChains : PolygonalReplacementTubeChainData G D controlDisks) :
     ∀ e, tubeChains.edgeSourceVertex e ≠ tubeChains.edgeTargetVertex e := by
+  classical
   intro e hvertices
   exact edgeSourceNeTarget G D e (by
     rw [tubeChains.edgeSource_eq_vertexPlacement e,
@@ -354,6 +363,7 @@ private lemma edgeSourceMemSourceBall
       D.edgeSource e ∈
         Metric.ball (D.vertexPlacement (tubeChains.edgeSourceVertex e))
           (controlDisks.vertexRadius (tubeChains.edgeSourceVertex e)) := by
+  classical
   intro e
   rw [tubeChains.edgeSource_eq_vertexPlacement e]
   simp [Metric.mem_ball, controlDisks.vertexRadius_pos]
@@ -367,6 +377,7 @@ private lemma edgeTargetMemTargetBall
       D.edgeTarget e ∈
         Metric.ball (D.vertexPlacement (tubeChains.edgeTargetVertex e))
           (controlDisks.vertexRadius (tubeChains.edgeTargetVertex e)) := by
+  classical
   intro e
   rw [tubeChains.edgeTarget_eq_vertexPlacement e]
   simp [Metric.mem_ball, controlDisks.vertexRadius_pos]
@@ -397,6 +408,7 @@ private lemma sourceSpokeCarrierDisjointTubeChainOfNotHead
             (localDiskFillings.vertex_spoke (tubeChains.edgeSourceVertex e)
               ⟨e, tubeChains.edgeSourceVertex_mem e⟩).carrier
             (tubeChains.chain i).carrier := by
+  classical
   intro e i hi_mem hnot_head
   rw [Set.disjoint_left]
   intro p hpSpoke hpTube
@@ -508,6 +520,7 @@ private lemma targetSpokeReverseCarrierDisjointTubeChainOfNotLast
               (localDiskFillings.vertex_spoke (tubeChains.edgeTargetVertex e)
                 ⟨e, tubeChains.edgeTargetVertex_mem e⟩)).carrier
             (tubeChains.chain i).carrier := by
+  classical
   intro e i hi_mem hnot_last
   rw [Set.disjoint_left]
   intro p hpSpoke hpTube
@@ -621,6 +634,7 @@ private lemma tubeChainCarrierDisjointGapConnectorOfNotBoundary
           i ≠ (tubeChains.edgePieceOrder e)[q.1 + 1] →
             Disjoint (tubeChains.chain i).carrier
               (gapConnector e q).carrier := by
+  classical
   intro e q i hi_mem hne_left hne_right
   rw [Set.disjoint_left]
   intro p hpTube hpGap
@@ -745,6 +759,7 @@ private lemma gapConnectorCarrierDisjointGapConnectorOfNe
             ⟨e, gapCenterEdge e q⟩)) :
     ∀ e (q r : Fin ((tubeChains.edgePieceOrder e).length - 1)),
       q ≠ r → Disjoint (gapConnector e q).carrier (gapConnector e r).carrier := by
+  classical
   intro e q r hqr
   have hcenter_ne : gapCenter e q ≠ gapCenter e r := by
     intro hcenter
@@ -786,13 +801,14 @@ private lemma gapCenterInjective
                     ((tubeChains.edgePieceOrder e)[n.1 + 1])) :
     ∀ e (q r : Fin ((tubeChains.edgePieceOrder e).length - 1)),
       gapCenter e q = gapCenter e r → q = r := by
+  classical
   intro e q r hcenter
   let L := tubeChains.edgePieceOrder e
   have hq : q.1 + 1 < L.length := by
-    have hq' : q.1 < L.length - 1 := by simpa [L] using q.2
+    have hq' : q.1 < L.length - 1 := by simp [L]
     omega
   have hr : r.1 + 1 < L.length := by
-    have hr' : r.1 < L.length - 1 := by simpa [L] using r.2
+    have hr' : r.1 < L.length - 1 := by simp [L]
     omega
   have hq0 : q.1 < L.length := by omega
   have hr0 : r.1 < L.length := by omega
@@ -976,6 +992,7 @@ private lemma gapConnectorEqOrReverseGapCenter
         gapConnector e q = PolygonalArcReverse
           (localDiskFillings.intersection_chain (gapCenter e q)
             ⟨e, gapCenterEdge e q⟩) := by
+  classical
   intro e q
   rw [gapConnector_def e q]
   by_cases hsrc :
@@ -995,6 +1012,7 @@ private lemma finiteAlternatingBlockIsChain
         (((List.finRange K).map
           (fun n => [chain (Fin.castSucc n), gap n])).flatten ++
           [chain (Fin.last K)]) := by
+  classical
   intro K chain gap hchain_gap hgap_chain
   induction K with
   | zero =>
@@ -1055,6 +1073,7 @@ private lemma finiteAlternatingBlockLength :
       ((((List.finRange K).map
           (fun q => [chain q.castSucc, gap q])).flatten ++
         [chain (Fin.last K)]).length = 2 * K + 1) := by
+  classical
   intro K chain gap
   have hmap :
       List.map (List.length ∘ fun q => [chain q.castSucc, gap q])
@@ -1070,6 +1089,7 @@ private lemma finiteAlternatingBlockGetChain :
           (fun q => [chain q.castSucc, gap q])).flatten ++
         [chain (Fin.last K)])[2 * q.1]? =
         some (chain q.castSucc)) := by
+  classical
   intro K
   induction K with
   | zero =>
@@ -1100,6 +1120,7 @@ private lemma finiteAlternatingBlockGetGap :
           (fun q => [chain q.castSucc, gap q])).flatten ++
         [chain (Fin.last K)])[2 * q.1 + 1]? =
         some (gap q)) := by
+  classical
   intro K
   induction K with
   | zero =>
@@ -1130,6 +1151,7 @@ private lemma finiteAlternatingBlockGetLast :
           (fun q => [chain q.castSucc, gap q])).flatten ++
         [chain (Fin.last K)])[2 * K]? =
         some (chain (Fin.last K))) := by
+  classical
   intro K
   induction K with
   | zero =>
@@ -1141,7 +1163,7 @@ private lemma finiteAlternatingBlockGetLast :
         (fun r : Fin K => gap r.succ)
       rw [List.finRange_succ]
       simp only [List.map_cons, List.flatten_cons, List.cons_append]
-      simp [Fin.last, Fin.succ, Nat.mul_add]
+      simp [Fin.last, Nat.mul_add]
       simpa [List.finRange_succ, List.map_map, Function.comp_def,
         Fin.last, Fin.succ, Nat.mul_add] using ih'
 
@@ -1191,6 +1213,7 @@ private lemma orderedPiecesForAttachLength
       (orderedPiecesForAttach G D controlDisks tubeChains sourceSpoke
         targetSpokeReverse terminalTubeIndex gapConnector e).length =
         2 * (tubeChains.edgePieceOrder e).length + 1 := by
+  classical
   intro e
   have hlen_pos : 0 < (tubeChains.edgePieceOrder e).length :=
     Nat.pos_of_ne_zero (tubeChains.edgePieceOrder_nonempty e)
@@ -1219,6 +1242,7 @@ private lemma orderedPiecesForAttachGetSource
       (orderedPiecesForAttach G D controlDisks tubeChains sourceSpoke
         targetSpokeReverse terminalTubeIndex gapConnector e)[0]? =
         some (sourceSpoke e) := by
+  classical
   intro e
   simp [orderedPiecesForAttach]
 
@@ -1237,6 +1261,7 @@ private lemma orderedPiecesForAttachGetTarget
         targetSpokeReverse terminalTubeIndex gapConnector e)[
           2 * (tubeChains.edgePieceOrder e).length]? =
         some (targetSpokeReverse e) := by
+  classical
   intro e
   have hlast :
       (orderedPiecesForAttach G D controlDisks tubeChains sourceSpoke
@@ -1278,6 +1303,7 @@ private lemma orderedPiecesForAttachGetOfBlock
         [tubeChains.chain (terminalTubeIndex e)])[n]? = some Γ →
       (orderedPiecesForAttach G D controlDisks tubeChains sourceSpoke
         targetSpokeReverse terminalTubeIndex gapConnector e)[1 + n]? = some Γ := by
+  classical
   intro e n Γ h
   let block : List PolygonalArc :=
     ((List.finRange ((tubeChains.edgePieceOrder e).length - 1)).map
@@ -1314,6 +1340,7 @@ private lemma orderedPiecesForAttachGetTube
       (orderedPiecesForAttach G D controlDisks tubeChains sourceSpoke
         targetSpokeReverse terminalTubeIndex gapConnector e)[1 + 2 * q]? =
         some (tubeChains.chain ((tubeChains.edgePieceOrder e)[q])) := by
+  classical
   intro e q hq
   let L := tubeChains.edgePieceOrder e
   let K := L.length - 1
@@ -1422,6 +1449,7 @@ private lemma orderedPiecesForAttachGetGap
       (orderedPiecesForAttach G D controlDisks tubeChains sourceSpoke
         targetSpokeReverse terminalTubeIndex gapConnector e)[2 + 2 * q]? =
         some (gapConnector e ⟨q, by omega⟩) := by
+  classical
   intro e q hq
   let L := tubeChains.edgePieceOrder e
   let K := L.length - 1
@@ -1512,6 +1540,7 @@ private lemma orderedPiecesForAttachGetTerminal
         targetSpokeReverse terminalTubeIndex gapConnector e)[
           2 * (tubeChains.edgePieceOrder e).length - 1]? =
         some (tubeChains.chain (terminalTubeIndex e)) := by
+  classical
   intro e
   let L := tubeChains.edgePieceOrder e
   have hL_nonzero : L.length ≠ 0 := by
@@ -1556,7 +1585,7 @@ private lemma orderedPiecesForAttachGetClassify
     (terminalTubeIndex_getLast : ∀ e,
       (tubeChains.edgePieceOrder e).getLast? = some (terminalTubeIndex e)) :
     ∀ e m
-      (hm : m <
+      (_hm : m <
         (orderedPiecesForAttach G D controlDisks tubeChains sourceSpoke
           targetSpokeReverse terminalTubeIndex gapConnector e).length),
       (m = 0 ∧
@@ -1581,6 +1610,7 @@ private lemma orderedPiecesForAttachGetClassify
           (orderedPiecesForAttach G D controlDisks tubeChains sourceSpoke
             targetSpokeReverse terminalTubeIndex gapConnector e)[m]? =
             some (targetSpokeReverse e)) := by
+  classical
   intro e m hm
   let len := (tubeChains.edgePieceOrder e).length
   have hlen_pos : 0 < len := by
@@ -1685,7 +1715,7 @@ private lemma orderedPiecesForAttachNonSuccessiveDisjoint
       ∀ e (q r : Fin ((tubeChains.edgePieceOrder e).length - 1)),
         q ≠ r → Disjoint (gapConnector e q).carrier (gapConnector e r).carrier)
     (orderedPieces_get?_classify :
-      ∀ e m (hm : m < (orderedPieces e).length),
+      ∀ e m (_hm : m < (orderedPieces e).length),
         (m = 0 ∧ (orderedPieces e)[m]? = some (sourceSpoke e)) ∨
           (∃ q, ∃ hq : q + 1 < (tubeChains.edgePieceOrder e).length,
             m = 1 + 2 * q ∧
@@ -1705,6 +1735,7 @@ private lemma orderedPiecesForAttachNonSuccessiveDisjoint
       m + 1 < n ∨ n + 1 < m →
         Disjoint ((orderedPieces e)[m]).carrier
           ((orderedPieces e)[n]).carrier := by
+  classical
   intro e m n hm hn hmn
   have prove_forward :
       ∀ m n (hm : m < (orderedPieces e).length)
@@ -1988,6 +2019,7 @@ private lemma orderedPiecesForAttachNonSuccessiveDisjoint
 
 private lemma polygonalArcSourceMemCarrier (Γ : PolygonalArc) :
     Γ.source ∈ Γ.carrier := by
+  classical
   rw [Γ.carrier_eq]
   refine ⟨0, ?_, ?_⟩
   · have hlen := Γ.length_ge_two
@@ -2013,11 +2045,13 @@ private lemma polygonalArcSourceMemCarrier (Γ : PolygonalArc) :
 private lemma getElemEqOfGetElem?
     {α : Type*} {L : List α} {k : ℕ} {Γ : α}
     (hk : k < L.length) (hget : L[k]? = some Γ) : L[k] = Γ := by
+  classical
   rw [List.getElem?_eq_getElem hk] at hget
   exact Option.some.inj hget
 
 private lemma polygonalArcTargetMemCarrier (Γ : PolygonalArc) :
     Γ.target ∈ Γ.carrier := by
+  classical
   let k := Γ.vertices.length - 2
   have hk : k + 1 < Γ.vertices.length := by
     dsimp [k]
@@ -2076,6 +2110,7 @@ private lemma sourceSpokeTubeInterSubset
     ∀ i,
       (sourceSpoke e).carrier ∩ (tubeChains.chain i).carrier ⊆
         ({(sourceSpoke e).target} : Set (EuclideanSpace ℝ (Fin 2))) := by
+  classical
   intro i p hp
   have hpClosed :
       p ∈ Metric.closedBall
@@ -2126,6 +2161,7 @@ private lemma tubeTargetSpokeInterSubset
     ∀ i,
       (tubeChains.chain i).carrier ∩ (targetSpokeReverse e).carrier ⊆
         ({(targetSpokeReverse e).source} : Set (EuclideanSpace ℝ (Fin 2))) := by
+  classical
   intro i p hp
   have hpTargetSpoke : p ∈ (targetSpoke e).carrier := by
     simpa [targetSpokeReverse_def e, targetSpoke_def e,
@@ -2191,6 +2227,7 @@ private lemma gapConnectorCarrierSubsetClosedBall
       (gapConnector e q).carrier ⊆
         Metric.closedBall (gapCenter e q).1
           (controlDisks.intersectionRadius (gapCenter e q)) := by
+  classical
   intro q p hp
   rcases gapConnector_eq_or_reverse_gapCenter e q with hgap | hgap
   · have hpOrig :
@@ -2253,6 +2290,7 @@ private lemma tubeGapInterSubsetLeft
           (gapConnector e q).carrier ⊆
         ({(tubeChains.chain ((tubeChains.edgePieceOrder e)[q.1])).target} :
           Set (EuclideanSpace ℝ (Fin 2))) := by
+  classical
   intro q p hp
   have hclosed := gapConnector_carrier_subset_closedBall q hp.2
   have hmeet :=
@@ -2379,6 +2417,7 @@ private lemma gapTubeInterSubsetRight
       (gapConnector e q).carrier ∩
           (tubeChains.chain ((tubeChains.edgePieceOrder e)[q.1 + 1])).carrier ⊆
         ({(gapConnector e q).target} : Set (EuclideanSpace ℝ (Fin 2))) := by
+  classical
   intro q p hp
   have hclosed := gapConnector_carrier_subset_closedBall q hp.1
   have hmeet :=
@@ -2496,7 +2535,7 @@ private lemma orderedPiecesSuccessiveCarrierIntersectionsSubset
     (orderedPieces_length : ∀ e, (orderedPieces e).length =
       2 * (tubeChains.edgePieceOrder e).length + 1)
     (orderedPieces_get?_classify :
-      ∀ e m (hm : m < (orderedPieces e).length),
+      ∀ e m (_hm : m < (orderedPieces e).length),
         (m = 0 ∧ (orderedPieces e)[m]? = some (sourceSpoke e)) ∨
           (∃ q, ∃ hq : q + 1 < (tubeChains.edgePieceOrder e).length,
             m = 1 + 2 * q ∧
@@ -2530,6 +2569,7 @@ private lemma orderedPiecesSuccessiveCarrierIntersectionsSubset
     ∀ n (hn : n + 1 < (orderedPieces e).length),
       (orderedPieces e)[n].carrier ∩ (orderedPieces e)[n + 1].carrier ⊆
         ({(orderedPieces e)[n].target} : Set (EuclideanSpace ℝ (Fin 2))) := by
+  classical
   intro n hn p hp
   simp only [Set.mem_singleton_iff]
   let L := tubeChains.edgePieceOrder e
@@ -2756,8 +2796,8 @@ private lemma orderedPieceRelativeInteriorAvoidsEdgeEndpoints
       Disjoint piece.relativeInterior
         ({D.edgeSource e, D.edgeTarget e} :
           Set (EuclideanSpace ℝ (Fin 2))) := by
-  intro e
-  intro piece hpiece
+  classical
+  intro e piece hpiece
   rw [Set.disjoint_left]
   intro p hp hpEndpoint
   simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at hpEndpoint
@@ -2945,6 +2985,7 @@ private lemma endpointGluedVerticesAdjacentDistinct
     ∀ i (hi : i + 1 < (PolygonalArcEndpointGluedVertices pieces).length),
       (PolygonalArcEndpointGluedVertices pieces)[i] ≠
         (PolygonalArcEndpointGluedVertices pieces)[i + 1] := by
+  classical
   intro i hi
   have htransfer :=
     PolygonalArcEndpointGluedSegmentTransfer pieces successive_attach
@@ -3041,6 +3082,7 @@ private lemma assembleEndpointGluedPieces
                             Γ.vertices[i + 1] = piece.vertices[m + 1]) ∨
                           (Γ.vertices[i] = piece.vertices[m + 1] ∧
                             Γ.vertices[i + 1] = piece.vertices[m]))) := by
+  classical
   rcases PolygonalArcFromEndpointGluedPieces
       (pieces := pieces) (source := source) (target := target)
       hpieces first_source last_target successive_attach
@@ -3157,7 +3199,7 @@ private structure OrderedPiecesAssemblyFacts
     (orderedPieces e)[2 + 2 * q]? =
       some (gapConnector e ⟨q, by omega⟩)
   orderedPieces_get?_classify :
-    ∀ e m (hm : m < (orderedPieces e).length),
+    ∀ e m (_hm : m < (orderedPieces e).length),
       (m = 0 ∧ (orderedPieces e)[m]? = some (sourceSpoke e)) ∨
         (∃ q, ∃ hq : q + 1 < (tubeChains.edgePieceOrder e).length,
           m = 1 + 2 * q ∧
@@ -3181,7 +3223,7 @@ private structure OrderedPiecesAssemblyFacts
         Disjoint ((orderedPieces e)[m]).carrier
           ((orderedPieces e)[n]).carrier
 
-private def mkOrderedPiecesAssemblyFacts
+private theorem mkOrderedPiecesAssemblyFacts
     {V : Type*} [Fintype V]
     (G : SimpleGraph V) [Fintype G.edgeSet] (D : GeometricArcDrawing G)
     (controlDisks : PolygonalReplacementControlDiskData G D)
@@ -3279,7 +3321,7 @@ private def mkOrderedPiecesAssemblyFacts
       (orderedPieces e)[2 + 2 * q]? =
         some (gapConnector e ⟨q, by omega⟩))
     (orderedPieces_get?_classify :
-      ∀ e m (hm : m < (orderedPieces e).length),
+      ∀ e m (_hm : m < (orderedPieces e).length),
         (m = 0 ∧ (orderedPieces e)[m]? = some
           (localDiskFillings.vertex_spoke (tubeChains.edgeSourceVertex e)
             ⟨e, tubeChains.edgeSourceVertex_mem e⟩)) ∨
@@ -3388,6 +3430,7 @@ private lemma assembleOrderedPieces
                             Γ.vertices[i + 1] = piece.vertices[m + 1]) ∨
                           (Γ.vertices[i] = piece.vertices[m + 1] ∧
                             Γ.vertices[i + 1] = piece.vertices[m]))) := by
+    classical
     have sourceSpoke_def := facts.sourceSpoke_def
     have targetSpoke_def := facts.targetSpoke_def
     have targetSpokeReverse_def := facts.targetSpokeReverse_def
@@ -3526,7 +3569,6 @@ private lemma assembleOrderedPieces
           edge_mem_source_or_target edgeSourceVertex_ne_targetVertex
           edgeSource_mem_source_ball edgeTarget_mem_target_ball e)
 
-
 private lemma orderedPiecesSuccessiveAttachLocal
     {V : Type*} [Fintype V]
     (G : SimpleGraph V) [Fintype G.edgeSet] (D : GeometricArcDrawing G)
@@ -3559,6 +3601,7 @@ private lemma orderedPiecesSuccessiveAttachLocal
         targetSpokeReverse terminalTubeIndex gapConnector e)[n]).target =
       ((orderedPiecesForAttach G D controlDisks tubeChains sourceSpoke
         targetSpokeReverse terminalTubeIndex gapConnector e)[n + 1]).source := by
+  classical
   intro e n hn
   let R : PolygonalArc → PolygonalArc → Prop :=
     fun Γ Δ => Γ.target = Δ.source
@@ -3788,6 +3831,7 @@ private lemma chooseFamilyWitness_spec
     {ι α : Type*} {P : ι → α → Prop}
     (exists_witness : ∀ i, ∃ x, P i x) :
     ∀ i, P i (chooseFamilyWitness exists_witness i) := by
+  classical
   intro i
   exact Classical.choose_spec (exists_witness i)
 
@@ -3859,6 +3903,7 @@ private lemma selectedEdgeArcRelativeInteriorLocalized
         (∃ (x : {q // q ∈ D.intersectionPoints})
             (hxe : x.1 ∈ D.edgeRelativeInterior e),
           p ∈ (localDiskFillings.intersection_chain x ⟨e, hxe⟩).carrier) := by
+  classical
   intro e p hp
   rw [(edgeArc_spec e).2.2.2.1] at hp
   rcases hp.1 with ⟨piece, hpiece, hp_piece⟩
@@ -3886,6 +3931,7 @@ private lemma selectedEdgeArcRelativeInteriorNotEndpoints
     ∀ ⦃e : G.edgeFinset⦄ ⦃p : EuclideanSpace ℝ (Fin 2)⦄,
       p ∈ (edgeArc e).relativeInterior →
         p ≠ D.edgeSource e ∧ p ≠ D.edgeTarget e := by
+  classical
   intro e p hp
   have hp' := hp
   rw [(edgeArc_spec e).2.2.2.1] at hp'
@@ -4190,7 +4236,7 @@ private noncomputable def polygonalReplacementEdgeAssemblies_prepareCore
           simp [hnil]
         exact False.elim (tubeChains.edgePieceOrder_nonempty e hlen)
       · refine ⟨i, ?_⟩
-        simpa [hconcat] using (List.getLast?_concat init i))
+        simp [hconcat])
   have terminalTubeIndex_getLast :
       ∀ e, (tubeChains.edgePieceOrder e).getLast? =
         some (terminalTubeIndex e) := by
@@ -4205,7 +4251,7 @@ private noncomputable def polygonalReplacementEdgeAssemblies_prepareCore
           simp [hnil]
         exact False.elim (tubeChains.edgePieceOrder_nonempty e hlen)
       · refine ⟨i, ?_⟩
-        simpa [hconcat] using (List.getLast?_concat init i))
+        simp [hconcat])
   have terminalTubeIndex_mem :
       ∀ e, terminalTubeIndex e ∈ tubeChains.edgePieceOrder e := by
     intro e
@@ -4342,7 +4388,7 @@ private noncomputable def polygonalReplacementEdgeAssemblies_prepareCore
         tubeChains.edgeSourceVertex_mem e, rfl, rfl⟩
     · rcases hΓ with ⟨l, ⟨n, _hnmem, hl⟩, hΓl⟩
       subst l
-      simp only [tubeGapBlock, List.mem_cons, List.mem_singleton] at hΓl
+      simp only [tubeGapBlock, List.mem_cons] at hΓl
       rcases hΓl with hΓchain | hΓgap
       · subst Γ
         right
@@ -4371,14 +4417,14 @@ private noncomputable def polygonalReplacementEdgeAssemblies_prepareCore
             by_cases hsrc :
                 (localDiskFillings.intersection_chain x ⟨e, hx_edge⟩).source =
                   tubeChains.target ((tubeChains.edgePieceOrder e)[n.1])
-            · simp [gapData, x, hx_edge, hsrc]
-            · simp [gapData, x, hx_edge, hsrc, PolygonalArcReverse]
+            · simp [x, hsrc]
+            · simp [x, hsrc, PolygonalArcReverse]
           · dsimp [gapConnector]
             by_cases hsrc :
                 (localDiskFillings.intersection_chain x ⟨e, hx_edge⟩).source =
                   tubeChains.target ((tubeChains.edgePieceOrder e)[n.1])
-            · simp [gapData, x, hx_edge, hsrc]
-            · simp [gapData, x, hx_edge, hsrc, PolygonalArcReverse]
+            · simp [x, hsrc]
+            · simp [x, hsrc, PolygonalArcReverse]
         · cases hΓnil
     · subst Γ
       right
@@ -4595,13 +4641,13 @@ private noncomputable def polygonalReplacementEdgeAssemblies_prepareCore
             (localDiskFillings.intersection_chain x ⟨e0, hxe⟩).source =
               tubeChains.target ((tubeChains.edgePieceOrder e0)[nFin.1]) := by
           simpa [hchain_eq] using hsrc
-        simp [gapData, xgap, hxgap_edge, hsrc, hsrc_x, hchain_eq]
+        simp [xgap, hsrc_x, hchain_eq]
       · have hsrc_x :
             (localDiskFillings.intersection_chain x ⟨e0, hxe⟩).source ≠
               tubeChains.target ((tubeChains.edgePieceOrder e0)[nFin.1]) := by
           intro h
           exact hsrc (by simpa [hchain_eq] using h)
-        simp [gapData, xgap, hxgap_edge, hsrc, hsrc_x, hchain_eq,
+        simp [xgap, hsrc_x, hchain_eq,
           PolygonalArcReverse]
     · dsimp [gapConnector]
       by_cases hsrc :
@@ -4611,13 +4657,13 @@ private noncomputable def polygonalReplacementEdgeAssemblies_prepareCore
             (localDiskFillings.intersection_chain x ⟨e0, hxe⟩).source =
               tubeChains.target ((tubeChains.edgePieceOrder e0)[nFin.1]) := by
           simpa [hchain_eq] using hsrc
-        simp [gapData, xgap, hxgap_edge, hsrc, hsrc_x, hchain_eq]
+        simp [xgap, hsrc_x, hchain_eq]
       · have hsrc_x :
             (localDiskFillings.intersection_chain x ⟨e0, hxe⟩).source ≠
               tubeChains.target ((tubeChains.edgePieceOrder e0)[nFin.1]) := by
           intro h
           exact hsrc (by simpa [hchain_eq] using h)
-        simp [gapData, xgap, hxgap_edge, hsrc, hsrc_x, hchain_eq,
+        simp [xgap, hsrc_x, hchain_eq,
           PolygonalArcReverse]
   have intersection_chain_or_reverse_in_orderedPieces :
       ∀ x (e : {e : G.edgeFinset // x.1 ∈ D.edgeRelativeInterior e}),
@@ -4690,14 +4736,14 @@ private noncomputable def polygonalReplacementEdgeAssemblies_prepareCore
           (localDiskFillings.intersection_chain x ⟨e0, hxe⟩).source =
             tubeChains.target ((tubeChains.edgePieceOrder e0)[nFin.1]) := by
         simpa [hchain_eq] using hsrc
-      simp [gapData, xgap, hxgap_edge, hsrc, hsrc_x, hchain_eq]
+      simp [xgap, hsrc_x, hchain_eq]
     · right
       have hsrc_x :
           (localDiskFillings.intersection_chain x ⟨e0, hxe⟩).source ≠
             tubeChains.target ((tubeChains.edgePieceOrder e0)[nFin.1]) := by
         intro h
         exact hsrc (by simpa [hchain_eq] using h)
-      simp [gapData, xgap, hxgap_edge, hsrc, hsrc_x, hchain_eq,
+      simp [xgap, hsrc_x, hchain_eq,
         PolygonalArcReverse]
   have gapConnector_eq_or_reverse :
       ∀ e n,
@@ -4722,9 +4768,9 @@ private noncomputable def polygonalReplacementEdgeAssemblies_prepareCore
         (localDiskFillings.intersection_chain x ⟨e, hx_edge⟩).source =
           tubeChains.target ((tubeChains.edgePieceOrder e)[n.1])
     · left
-      simp [gapData, x, hx_edge, hsrc]
+      simp [x, hsrc]
     · right
-      simp [gapData, x, hx_edge, hsrc, PolygonalArcReverse]
+      simp [x, hsrc, PolygonalArcReverse]
   have gapConnector_source_core :
       ∀ e n,
         (gapConnector e n).source =
@@ -4746,10 +4792,10 @@ private noncomputable def polygonalReplacementEdgeAssemblies_prepareCore
         htarget_edge
     dsimp [gapConnector]
     by_cases hsrc : connector.source = boundaryTarget
-    · simp [gapData, x, connector, boundaryTarget, hx_edge, hsrc]
+    · simp [x, connector, boundaryTarget, hsrc]
     · rcases hcovered with hcovered | hcovered
       · exact False.elim (hsrc hcovered)
-      · simp [gapData, x, connector, boundaryTarget, hx_edge, hsrc, hcovered,
+      · simp [x, connector, boundaryTarget, hsrc, hcovered,
           PolygonalArcReverse]
   have gapConnector_target_core :
       ∀ e n,
@@ -5477,8 +5523,7 @@ private noncomputable def polygonalReplacementEdgeAssemblies_finish
           · simpa [sourceSpoke, assemblyFacts.sourceSpoke_def e] using hmatch
         · rcases hpiece with ⟨l, ⟨n, _hnmem, hl⟩, hpiece_l⟩
           subst l
-          simp only [tubeGapBlockForAttach, List.mem_cons,
-            List.mem_singleton] at hpiece_l
+          simp only [List.mem_cons] at hpiece_l
           rcases hpiece_l with hpiece_chain | hpiece_gap
           · subst piece
             right
@@ -5778,6 +5823,7 @@ lemma PolygonalReplacementEdgeAssemblies {V : Type*} [Fintype V]
     Nonempty
       (PolygonalReplacementEdgeAssemblyData G D controlDisks tubeChains
         localDiskFillings) := by
+  classical
   let core :=
     polygonalReplacementEdgeAssemblies_prepareCore G D controlDisks tubeChains
       localDiskFillings

@@ -1,9 +1,7 @@
 import Util.IncidenceGeometry.PolygonalArcInitialEndpointDiskCappedTaperSideLabelling
 
 open Set
-open Classical
 noncomputable section
-
 
 lemma PolygonalArcInitialEndpointDiskCappedTaperAttachmentStrengthening
     (γ : PolygonalArc) {η : ℝ}
@@ -37,6 +35,7 @@ lemma PolygonalArcInitialEndpointDiskCappedTaperAttachmentStrengthening
         Metric.ball γ.vertices[j]
           (controlRadii.radius ⟨j, Nat.lt_of_succ_lt hj⟩) ⊆
       chart '' R := by
+  classical
   intro sep d K chart a L R
   have hdist_pos : 0 < dist γ.vertices[j] γ.vertices[j + 1] := by
     have hsum := controlRadii.adjacent_radii_sum_lt (j := j) hj

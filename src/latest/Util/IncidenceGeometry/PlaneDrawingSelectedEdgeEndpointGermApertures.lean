@@ -11,12 +11,11 @@ import Util.IncidenceGeometry.PolygonalArcInitialEndpointSegmentLength
 import Util.IncidenceGeometry.PolygonalArcTerminalEndpointCone
 import Util.IncidenceGeometry.PolygonalArcTerminalEndpointSegmentLength
 
-open Classical
 noncomputable section
 
 lemma PlaneDrawingSelectedEdgeEndpointGermApertures {V : Type*} [Fintype V]
-    (G : SimpleGraph V) [Fintype G.edgeSet] [DecidableRel G.Adj]
-    (D : OrdinaryPolygonalDrawing G) (hD : D.crossingSet.card = 0)
+    (G : SimpleGraph V) [Fintype G.edgeSet]
+    (D : OrdinaryPolygonalDrawing G) (_hD : D.crossingSet.card = 0)
     (e : G.edgeFinset) (γ : PolygonalArc) :
     D.edgeArc e = γ →
       ∃ r₀ r₁ K₀ K₁ : ℝ,
@@ -26,6 +25,7 @@ lemma PlaneDrawingSelectedEdgeEndpointGermApertures {V : Type*} [Fintype V]
               (OrdinaryDrawingImageWithoutEdge G D e) ∧
               Disjoint (PolygonalArcTerminalEndpointCone γ r₁ K₁)
                 (OrdinaryDrawingImageWithoutEdge G D e) := by
+  classical
   intro hγ
   classical
   obtain ⟨ρ₀, ρ₁, hρ₀_pos, hρ₁_pos, initialDirections, terminalDirections,

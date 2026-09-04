@@ -1,11 +1,10 @@
 import Util.IncidenceGeometry.Basic
 
-open Classical
 noncomputable section
 
 universe u v
 
-lemma FiniteAuxiliaryFaceQuotient (Face : Type u) [Fintype Face] (FL FR : Face) :
+lemma FiniteAuxiliaryFaceQuotient (Face : Type u) [Finite Face] (FL FR : Face) :
     let sideAtom : Option Face → Prop :=
       fun x => x = none ∨ x = some FL ∨ x = some FR
     ∃ (FaceDel : Type v) (_faceDelFintype : Fintype FaceDel)
@@ -15,6 +14,7 @@ lemma FiniteAuxiliaryFaceQuotient (Face : Type u) [Fintype Face] (FL FR : Face) 
           componentOf x = componentOf y ↔
             x = y ∨ (sideAtom x ∧ sideAtom y) := by
   classical
+  let := Fintype.ofFinite Face
   let sideAtom : Option Face → Prop :=
     fun x => x = none ∨ x = some FL ∨ x = some FR
   let RawFaceDel : Type u :=
@@ -55,7 +55,7 @@ lemma FiniteAuxiliaryFaceQuotient (Face : Type u) [Fintype Face] (FL FR : Face) 
           exact hfalse.elim
         · left
           have hxy' := hxy
-          simp [rawComponentOf, hx, hy] at hxy'
+          simp only [hx, ↓reduceDIte, hy, rawComponentOf] at hxy'
           exact congrArg Subtype.val (Sum.inl.inj hxy')
     · intro hxy
       rcases hxy with rfl | ⟨hx, hy⟩

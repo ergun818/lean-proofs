@@ -2,7 +2,6 @@ import Util.IncidenceGeometry.PolygonalReplacementResidualPieceData
 import Mathlib.Topology.Order.Compact
 import Mathlib.Topology.Order.IntermediateValue
 
-open Classical
 noncomputable section
 
 universe u

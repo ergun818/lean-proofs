@@ -1,8 +1,8 @@
 import Util.IncidenceGeometry.IsAffineLine
 
-open Classical
 noncomputable section
 
+open Classical in
 structure PointLineConsecutivePairLineFamilyData
     (P : Finset (EuclideanSpace ℝ (Fin 2)))
     (L : Finset {ell : AffineSubspace ℝ (EuclideanSpace ℝ (Fin 2)) //

@@ -4,7 +4,6 @@ import Mathlib.Tactic
 import Util.IncidenceGeometry.ArcCrossingEarlierPrefix
 import Util.IncidenceGeometry.PolygonalArc
 
-open Classical
 noncomputable section
 
 lemma PolygonalArcFiniteInteriorFirstPoint
@@ -23,6 +22,7 @@ lemma PolygonalArcFiniteInteriorFirstPoint
                         ArcCrossingEarlierPrefix delta j hj ∪
                           segment ℝ delta.vertices[j] x →
                       z = x := by
+  classical
   intro hX hrelative
   let P : ℕ → Prop := fun j =>
     ∃ hj : j + 1 < delta.vertices.length,

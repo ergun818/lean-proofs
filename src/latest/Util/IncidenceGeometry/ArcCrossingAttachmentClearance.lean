@@ -2,7 +2,6 @@ import Mathlib.Tactic
 import Util.IncidenceGeometry.PolygonalArcCarrierCompact
 import Util.IncidenceGeometry.PolygonalPath
 
-open Classical
 noncomputable section
 
 lemma ArcCrossingAttachmentClearance
@@ -17,6 +16,7 @@ lemma ArcCrossingAttachmentClearance
                 (∀ x, x ∈ α.carrier ∩ γ.carrier → ε ≤ dist x a) ∧
                   IsCompact (γ.carrier ∩ {x | ε ≤ dist x a}) ∧
                     Disjoint (γ.carrier ∩ {x | ε ≤ dist x a}) K := by
+  classical
   intro ha hXfinite hXnonempty hγK
   let X : Set (EuclideanSpace ℝ (Fin 2)) := α.carrier ∩ γ.carrier
   have hXfinite' : Set.Finite X := hXfinite

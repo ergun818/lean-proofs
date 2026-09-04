@@ -1,7 +1,6 @@
 import Util.IncidenceGeometry.PolygonalReplacementStraightResidualPieceSegment
 import Util.IncidenceGeometry.StraightSegmentPolygonalArc
 
-open Classical
 noncomputable section
 
 universe u

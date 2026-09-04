@@ -3,13 +3,13 @@ import Util.IncidenceGeometry.CrossingNumber
 import Util.IncidenceGeometry.NatSInfRangeAttained
 import Util.IncidenceGeometry.OrdinaryPolygonalDrawingNonempty
 
-open Classical
 noncomputable section
 
 lemma NoAdjacentMinimalDrawing {V : Type*} [Fintype V] (G : SimpleGraph V)
     [Fintype G.edgeSet] :
     ∃ D : OrdinaryPolygonalDrawing G,
       D.crossingSet.card = CrossingNumber G ∧ D.adjacentEdgeCrossingCount = 0 := by
+  classical
   have hnonempty : Nonempty (OrdinaryPolygonalDrawing G) :=
     OrdinaryPolygonalDrawingNonempty G
   have hattainment :

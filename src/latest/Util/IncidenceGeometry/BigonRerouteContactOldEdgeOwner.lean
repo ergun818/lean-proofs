@@ -3,9 +3,9 @@ import Util.IncidenceGeometry.FinitePolygonalSet
 import Util.IncidenceGeometry.OrdinaryPolygonalDrawing
 import Util.IncidenceGeometry.PolygonalArc
 
-open Classical
 noncomputable section
 
+open Classical in
 lemma BigonRerouteContactOldEdgeOwner
     {V : Type*} [Fintype V] (G : SimpleGraph V) [Fintype G.edgeSet]
     (D : OrdinaryPolygonalDrawing G) (alpha beta : G.edgeFinset) (u : V)
@@ -56,6 +56,7 @@ lemma BigonRerouteContactOldEdgeOwner
                 (D.edgeArc edge).vertices[i + 1] -
                     (D.edgeArc edge).vertices[i] =
                   c • (s.2 - s.1) := by
+  classical
   have hz_not_u : z ≠ D.vertexPlacement u := by
     intro hzu
     apply hzavoid

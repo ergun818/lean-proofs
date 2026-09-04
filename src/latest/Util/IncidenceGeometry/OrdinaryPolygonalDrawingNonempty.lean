@@ -4,7 +4,6 @@ import Util.IncidenceGeometry.OrdinaryDrawingPartialDataComplete
 import Util.IncidenceGeometry.OrdinaryDrawingPartialDataOneEdgeExtension
 import Util.IncidenceGeometry.TwoSegmentPolygonalArc
 
-open Classical
 noncomputable section
 
 lemma OrdinaryPolygonalDrawingNonempty {V : Type*} [Fintype V] (G : SimpleGraph V)

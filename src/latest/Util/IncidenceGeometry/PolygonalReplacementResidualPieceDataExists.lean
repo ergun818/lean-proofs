@@ -3,7 +3,6 @@ import Util.IncidenceGeometry.PolygonalReplacementResidualIntervalPieceVertexAtt
 import Util.IncidenceGeometry.PolygonalReplacementResidualIntervalPieceIntersectionAttachment
 import Util.IncidenceGeometry.PolygonalReplacementResidualIntervalPiecesPairwiseDisjoint
 
-open Classical
 noncomputable section
 
 universe u
@@ -374,7 +373,7 @@ lemma PolygonalReplacementResidualPieceDataExists {V : Type u} [Fintype V]
       have hlastS :
           (S.edgePieceOrder e).getLast? = some (pieceEquiv i) := by
         rw [← B_edgePieceOrder_eq_skeleton e]
-        simpa [hlast]
+        simp [hlast]
       have hparam : B.targetParam i = targetBoundaryParam e := by
         calc
           B.targetParam i = S.targetParam (pieceEquiv i) :=

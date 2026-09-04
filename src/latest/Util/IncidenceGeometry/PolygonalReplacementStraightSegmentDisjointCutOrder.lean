@@ -1,6 +1,5 @@
 import Util.IncidenceGeometry.Basic
 
-open Classical
 noncomputable section
 
 lemma PolygonalReplacementStraightSegmentDisjointCutOrder
@@ -17,6 +16,7 @@ lemma PolygonalReplacementStraightSegmentDisjointCutOrder
     (hcenter_order : center1 < center2)
     (hleft2_center2 : left2 < center2) (hcenter2_right2 : center2 < right2) :
     right1 < left2 := by
+  classical
   have lineMap_mem_segment_of_between :
       ∀ {alpha beta s : ℝ}, alpha < beta → alpha ≤ s → s ≤ beta →
         AffineMap.lineMap A B s ∈

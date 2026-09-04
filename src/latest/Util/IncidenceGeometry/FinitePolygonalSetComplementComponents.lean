@@ -11,7 +11,6 @@ import Util.IncidenceGeometry.FiniteStraightLineComplexOneEdgeComplementComponen
 import Util.IncidenceGeometry.OpenConnectedComponentPolygonallyConnected
 import Util.IncidenceGeometry.PositiveSeparation
 
-open Classical
 noncomputable section
 
 lemma FinitePolygonalSetComplementComponents (K : FinitePolygonalSet) :
@@ -22,6 +21,7 @@ lemma FinitePolygonalSetComplementComponents (K : FinitePolygonalSet) :
             ComplementComponent K.carrier C → ∃! F : Face, faceSet F = C) ∧
           (∀ p : EuclideanSpace ℝ (Fin 2),
             p ∈ K.carrierᶜ → ∃! F : Face, p ∈ faceSet F) := by
+  classical
   have point_component_unique :
       ∀ p : EuclideanSpace ℝ (Fin 2), p ∈ K.carrierᶜ →
         ∃! C : Set (EuclideanSpace ℝ (Fin 2)),

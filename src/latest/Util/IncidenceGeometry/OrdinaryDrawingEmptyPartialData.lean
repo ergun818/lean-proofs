@@ -1,7 +1,6 @@
 import Util.IncidenceGeometry.OrdinaryDrawingPartialData
 import Util.IncidenceGeometry.OrdinaryDrawingVertexPlacementExists
 
-open Classical
 noncomputable section
 
 lemma OrdinaryDrawingEmptyPartialData {V : Type*} [Fintype V] (G : SimpleGraph V)

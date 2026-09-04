@@ -3,7 +3,6 @@ import Util.IncidenceGeometry.PolygonalArc
 import Util.IncidenceGeometry.PolygonalArcInitialEndpointSegmentLength
 import Util.IncidenceGeometry.PolygonalArcTerminalEndpointSegmentLength
 
-open Classical
 noncomputable section
 
 structure PolygonalArcEndpointIsolation (γ : PolygonalArc) (r₀ r₁ : ℝ) : Prop where

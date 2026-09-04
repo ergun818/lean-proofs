@@ -1,7 +1,7 @@
 import Util.IncidenceGeometry.OrdinaryLabeledCrossingDiskFiniteEdgeSubstitution
-open Classical
 noncomputable section
 
+open Classical in
 private lemma wholeEdgeFillingTransfer
     {V : Type*} [Fintype V]
     (G : SimpleGraph V) [Fintype G.edgeSet]
@@ -40,6 +40,7 @@ private lemma wholeEdgeFillingTransfer
                   (edgeArc' (L.ownerEdge x i)).vertices[j] =
                 c • ((L.fillingArc x i).vertices[m + 1] -
                   (L.fillingArc x i).vertices[m]) := by
+  classical
   intro x i z m hm hz
   fin_cases i
   · change m + 1 < (L.fillingArc x 0).vertices.length at hm
@@ -67,6 +68,7 @@ private lemma wholeEdgeFillingTransfer
     simp [(F.disk x).edges_ne] at htrans
     simpa [howner] using htrans hm hz
 
+open Classical in
 lemma OrdinaryLabeledCrossingDiskWholeEdgeAssignmentLocalization {V : Type*} [Fintype V]
     (G : SimpleGraph V) [Fintype G.edgeSet]
     (D : OrdinaryPolygonalDrawing G)

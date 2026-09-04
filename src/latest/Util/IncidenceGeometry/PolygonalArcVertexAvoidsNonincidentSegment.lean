@@ -1,12 +1,12 @@
 import Util.IncidenceGeometry.PolygonalArc
 
-open Classical
 noncomputable section
 
 lemma PolygonalArcVertexAvoidsNonincidentSegment (γ : PolygonalArc)
     {i j : ℕ} (hi : i < γ.vertices.length)
     (hj : j + 1 < γ.vertices.length) (hij : i ≠ j) (hijs : i ≠ j + 1) :
     γ.vertices[i] ∉ segment ℝ γ.vertices[j] γ.vertices[j + 1] := by
+  classical
   intro hseg
   rw [segment_eq_image_lineMap] at hseg
   rcases hseg with ⟨t, ht, htline⟩

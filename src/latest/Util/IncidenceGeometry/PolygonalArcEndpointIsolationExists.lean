@@ -3,11 +3,11 @@ import Util.IncidenceGeometry.PolygonalArcCarrierCompact
 import Util.IncidenceGeometry.PolygonalArcCollarControlRadiiExists
 import Util.IncidenceGeometry.PositiveSeparation
 
-open Classical
 noncomputable section
 
 lemma PolygonalArcEndpointIsolationExists (γ : PolygonalArc) :
     ∃ r₀ r₁ : ℝ, PolygonalArcEndpointIsolation γ r₀ r₁ := by
+  classical
   have hsourceIdx : 0 < γ.vertices.length := by
     have hlen := γ.length_ge_two
     omega
@@ -108,7 +108,7 @@ lemma PolygonalArcEndpointIsolationExists (γ : PolygonalArc) :
         (by
           intro h
           have h0 : (0 : ℕ) = j + 1 := by
-            simpa [sourceIdx] using h
+            simp [sourceIdx] at h
           omega)
       have hzball' : z ∈ Metric.closedBall γ.vertices[sourceIdx.1]
           (controlRadii.radius sourceIdx) := by

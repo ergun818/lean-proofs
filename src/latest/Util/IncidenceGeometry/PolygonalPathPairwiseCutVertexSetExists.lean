@@ -1,6 +1,5 @@
 import Util.IncidenceGeometry.PolygonalPath
 
-open Classical
 noncomputable section
 
 lemma PolygonalPathPairwiseCutVertexSetExists (γ : PolygonalPath) :

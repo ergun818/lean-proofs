@@ -1,7 +1,6 @@
 import Mathlib.Tactic
 import Util.IncidenceGeometry.PlaneDrawingDartArcData
 
-open Classical
 noncomputable section
 
 lemma PlaneDrawingDartFirstGermsForRadii {V : Type*} [Fintype V]

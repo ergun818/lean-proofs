@@ -1,7 +1,6 @@
 import Util.IncidenceGeometry.FinitePolygonalSet
 import Mathlib.Data.Finset.Sort
 
-open Classical
 noncomputable section
 
 structure FinitePolygonalSetElementaryComplex (K : FinitePolygonalSet) where

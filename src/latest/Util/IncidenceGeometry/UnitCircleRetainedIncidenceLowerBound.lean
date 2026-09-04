@@ -3,17 +3,18 @@ import Util.IncidenceGeometry.UnitCircleIncidenceCount
 import Util.IncidenceGeometry.UnitCircleIncidenceDoubleCount
 import Util.IncidenceGeometry.UnitDistanceCount
 
-open Classical
 open scoped BigOperators
 open scoped Real
 noncomputable section
 
+open Classical in
 lemma UnitCircleRetainedIncidenceLowerBound
     (P : Finset (EuclideanSpace ℝ (Fin 2))) :
     2 * (IncidenceGeometry.unitDistanceCount P : ℝ) - 2 * (P.card : ℝ) ≤
       ∑ p ∈ P.filter
           (fun p => 3 ≤ (P.filter (fun q => q ∈ UnitCircle p)).card),
         ((P.filter (fun q => q ∈ UnitCircle p)).card : ℝ) := by
+  classical
   let r : EuclideanSpace ℝ (Fin 2) → ℕ :=
     fun p => (P.filter (fun q => q ∈ UnitCircle p)).card
   let good : EuclideanSpace ℝ (Fin 2) → Prop := fun p => 3 ≤ r p

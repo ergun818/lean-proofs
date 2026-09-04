@@ -1,6 +1,5 @@
 import Util.IncidenceGeometry.Basic
 
-open Classical
 noncomputable section
 
 lemma EndpointUnitDiskLocalFivePointVerticesAvoid
@@ -28,6 +27,7 @@ lemma EndpointUnitDiskLocalFivePointVerticesAvoid
         openSegment ℝ
           [toWorld P0, toWorld P1, toWorld P2, toWorld P3, toWorld P4][i]
           [toWorld P0, toWorld P1, toWorld P2, toWorld P3, toWorld P4][i + 1] := by
+  classical
   rcases hstrict with ⟨h01, h12, h23, h34⟩
   intro i k hi hk hki hks hmem
   have hi4 : i < 4 := by
@@ -36,7 +36,10 @@ lemma EndpointUnitDiskLocalFivePointVerticesAvoid
   have hk5 : k < 5 := by
     simpa using hk
   interval_cases i <;> interval_cases k <;>
-    simp at hki hks hmem ⊢
+    simp only [ne_eq, not_true_eq_false, one_ne_zero, not_false_eq_true, zero_add,
+      OfNat.ofNat_ne_zero, OfNat.ofNat_ne_one, List.getElem_cons_zero, List.getElem_cons_succ,
+      zero_ne_one, Nat.reduceAdd, OfNat.zero_ne_ofNat, Nat.succ_ne_self, Nat.reduceEqDiff,
+      OfNat.one_ne_ofNat] at hki hks hmem ⊢
   all_goals
     first
     | contradiction

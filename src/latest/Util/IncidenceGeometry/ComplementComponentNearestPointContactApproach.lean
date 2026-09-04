@@ -4,7 +4,6 @@ import Mathlib.Analysis.Normed.Module.Connected
 import Mathlib.Analysis.Convex.Segment
 import Mathlib.Analysis.Normed.Affine.AddTorsor
 
-open Classical
 noncomputable section
 
 lemma ComplementComponentNearestPointContactApproach
@@ -17,6 +16,7 @@ lemma ComplementComponentNearestPointContactApproach
             ∀ U : Set (EuclideanSpace ℝ (Fin 2)),
               IsOpen U → x ∈ U →
                 ∃ y, y ∈ C ∧ y ∈ U ∧ y ∈ Kᶜ ∧ y ≠ x := by
+  classical
   intro hC hpC hxK hnearest U hUopen hxU
   rcases hC with ⟨_hCne, hCcompl, hCconn, hCmax⟩
   have hpCompl : p ∈ Kᶜ := hCcompl hpC
@@ -46,7 +46,7 @@ lemma ComplementComponentNearestPointContactApproach
     have hdist_yx : dist y x = δ * dist p x := by
       calc
         dist y x = ‖1 - t‖ * dist p x := by
-          simpa [y] using dist_lineMap_right p x t
+          simp [y]
         _ = δ * dist p x := by
           have hnonneg : 0 ≤ δ := hδpos.le
           simp [t, abs_of_nonneg hnonneg]
@@ -57,7 +57,7 @@ lemma ComplementComponentNearestPointContactApproach
   have hydist_lt : dist p y < dist p x := by
     calc
       dist p y = ‖t‖ * dist p x := by
-        simpa [y] using dist_left_lineMap p x t
+        simp [y]
       _ = t * dist p x := by
         simp [Real.norm_eq_abs, abs_of_nonneg htpos.le]
       _ < 1 * dist p x := by
@@ -72,7 +72,7 @@ lemma ComplementComponentNearestPointContactApproach
     have hdist_yx : dist y x = δ * dist p x := by
       calc
         dist y x = ‖1 - t‖ * dist p x := by
-          simpa [y] using dist_lineMap_right p x t
+          simp [y]
         _ = δ * dist p x := by
           have hnonneg : 0 ≤ δ := hδpos.le
           simp [t, abs_of_nonneg hnonneg]

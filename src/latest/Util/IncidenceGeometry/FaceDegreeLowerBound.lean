@@ -3,7 +3,6 @@ import Util.IncidenceGeometry.EveryFaceIncidentDart
 import Util.IncidenceGeometry.PlaneFaceData
 import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected
 
-open Classical
 noncomputable section
 
 lemma FaceDegreeLowerBound {V : Type*} [Fintype V] (G : SimpleGraph V)

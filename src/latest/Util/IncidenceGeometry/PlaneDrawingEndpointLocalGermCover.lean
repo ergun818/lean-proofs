@@ -8,17 +8,16 @@ import Util.IncidenceGeometry.PolygonalArcCarrierCompact
 import Util.IncidenceGeometry.PolygonalArcSourceEndpointRayCover
 import Util.IncidenceGeometry.PolygonalArcTargetEndpointRayCover
 
-open Classical
 noncomputable section
 
 lemma PlaneDrawingEndpointLocalGermCover {V : Type*} [Fintype V]
-    (G : SimpleGraph V) [Fintype G.edgeSet] [DecidableRel G.Adj]
+    (G : SimpleGraph V) [Fintype G.edgeSet]
     (D : OrdinaryPolygonalDrawing G) (e : G.edgeFinset) (γ : PolygonalArc) :
     D.edgeArc e = γ →
       let hfirst : 1 < γ.vertices.length := Nat.lt_of_succ_le γ.length_ge_two
       let d₀ : EuclideanSpace ℝ (Fin 2) := γ.vertices[1]'hfirst - γ.source
       let hprev : γ.vertices.length - 2 < γ.vertices.length := by
-        have hlen := γ.length_ge_two
+        have _hlen := γ.length_ge_two
         omega
       let d₁ : EuclideanSpace ℝ (Fin 2) :=
         γ.vertices[γ.vertices.length - 2]'hprev - γ.target
@@ -34,6 +33,7 @@ lemma PlaneDrawingEndpointLocalGermCover {V : Type*} [Fintype V]
                   ({γ.target} : Set (EuclideanSpace ℝ (Fin 2))) ∪
                     ⋃ v : {v : EuclideanSpace ℝ (Fin 2) // v ∈ terminalDirections},
                       {x | ∃ c : ℝ, 0 ≤ c ∧ x = γ.target + c • v.1}) := by
+  classical
   intro hγ
   classical
   dsimp
@@ -327,7 +327,7 @@ lemma PlaneDrawingEndpointLocalGermCover {V : Type*} [Fintype V]
                 have hlen := (D.edgeArc f).length_ge_two
                 omega) := by
             abel
-          simpa [edgeDir, hs, hsource0f, hadd]
+          simp [edgeDir, hs, hsource0f]
         exact OrdinaryDrawingSegmentDirectionsNotSamePositiveRay
           G D (e := e) (f := f) hfe.symm hiSel hfirstf hd hsegSel hsegf
       · have hxendpoint := carrier_vertex_endpoint f hxcar
@@ -378,7 +378,7 @@ lemma PlaneDrawingEndpointLocalGermCover {V : Type*} [Fintype V]
                 dsimp [jlast]
                 omega) := by
             abel
-          simpa [edgeDir, hxtarget, htarget_ne_source, htarget_last, hadd, jlast,
+          simp [edgeDir, hxtarget, htarget_ne_source, htarget_last, jlast,
             segment_symm]
         exact OrdinaryDrawingSegmentDirectionsNotSamePositiveRay
           G D (e := e) (f := f) hfe.symm hiSel hjlast hd hsegSel hsegf
@@ -389,7 +389,7 @@ lemma PlaneDrawingEndpointLocalGermCover {V : Type*} [Fintype V]
     rcases hyimg with hyvertex | hyedge
     · rcases hyvertex with ⟨v, rfl⟩
       by_cases hvx : D.vertexPlacement v = x
-      · exact Or.inl (by simpa [hvx])
+      · exact Or.inl (by simp [hvx])
       · exfalso
         have hyle : r ≤ vertexRadius v := by
           exact le_trans (min_le_left vertexInf edgeInf) (vertexInf_le v)
@@ -448,7 +448,7 @@ lemma PlaneDrawingEndpointLocalGermCover {V : Type*} [Fintype V]
     have hadd : γ.source + d₀ = γ.vertices[1]'hfirstγ := by
       dsimp [d₀]
       abel
-    simpa [hγ, hsource0γ, hadd]
+    simp [hγ, hsource0γ, hadd]
   obtain ⟨r₀, hr₀, initialDirections, hinit_no_pos, hinit_cover⟩ :=
     endpointCover γ.source d₀ hd₀ hsource_vertex 0 hiSel₀ hsegSel₀
   let jlast : ℕ := γ.vertices.length - 2
@@ -505,7 +505,7 @@ lemma PlaneDrawingEndpointLocalGermCover {V : Type*} [Fintype V]
           omega) := by
       dsimp [d₁]
       abel
-    simpa [hγ, htarget_lastγ, hadd, segment_symm]
+    simp [hγ, htarget_lastγ, hadd, segment_symm]
   obtain ⟨r₁, hr₁, terminalDirections, hterm_no_pos, hterm_cover⟩ :=
     endpointCover γ.target d₁ hd₁ htarget_vertex jlast hiSel₁ hsegSel₁
   refine ⟨r₀, r₁, hr₀, hr₁, initialDirections, terminalDirections, ?_, ?_, ?_, ?_⟩

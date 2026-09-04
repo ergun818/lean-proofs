@@ -30,7 +30,6 @@ import Util.IncidenceGeometry.PolygonalArcTerminalEndpointLeftCone
 import Util.IncidenceGeometry.PolygonalSideStrips
 import Util.IncidenceGeometry.PositiveSeparation
 
-open Classical
 noncomputable section
 
 lemma PlaneDrawingDartSideStripsWithSectorWitnessesExist {V : Type*} [Fintype V]
@@ -40,6 +39,7 @@ lemma PlaneDrawingDartSideStripsWithSectorWitnessesExist {V : Type*} [Fintype V]
     (C : PlaneDrawingDartVertexSectorGeometry G D A) :
     ∃ S : PlaneDrawingDartSideStripData G D A C.star,
       Nonempty (PlaneDrawingDartSectorWitnessData G D A C.star S) := by
+  classical
   obtain ⟨P⟩ := PlaneDrawingDartCollarChoiceDataExists G D hD A C
   obtain ⟨S, hleft, _hright⟩ :=
     PlaneDrawingDartSideStripDataFromCollarChoices G D A C P

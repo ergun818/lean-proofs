@@ -1,13 +1,13 @@
 import Util.IncidenceGeometry.Basic
 import Mathlib.Data.Set.Card
 
-open Classical
 noncomputable section
 
 lemma TwoCirclesIntersectionsAtMostTwo
     (c x : EuclideanSpace ℝ (Fin 2)) (hcx : c ≠ x) (r ρ : ℝ) :
     {p : EuclideanSpace ℝ (Fin 2) | dist p c = r ∧ dist p x = ρ}.Finite ∧
       ({p : EuclideanSpace ℝ (Fin 2) | dist p c = r ∧ dist p x = ρ}.ncard) ≤ 2 := by
+  classical
   let S : Set (EuclideanSpace ℝ (Fin 2)) :=
     {p : EuclideanSpace ℝ (Fin 2) | dist p c = r ∧ dist p x = ρ}
   change S.Finite ∧ S.ncard ≤ 2

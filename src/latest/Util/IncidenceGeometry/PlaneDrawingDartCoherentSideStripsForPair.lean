@@ -25,9 +25,7 @@ import Util.IncidenceGeometry.PolygonalSideStrips
 import Util.IncidenceGeometry.PolygonalSideStripsReverseOfSameCarrier
 import Mathlib.Combinatorics.SimpleGraph.DegreeSum
 
-open Classical
 noncomputable section
-
 
 lemma PlaneDrawingDartCoherentSideStripsForPair {V : Type*} [Fintype V]
     (G : SimpleGraph V) [Fintype G.edgeSet] [DecidableRel G.Adj]
@@ -68,6 +66,7 @@ lemma PlaneDrawingDartCoherentSideStripsForPair {V : Type*} [Fintype V]
                                 (C.successorSector p ∩ T.leftStrip ∩
                                   Metric.ball (D.vertexPlacement p.toProd.2)
                                     (C.star.localDiskRadius p.toProd.2)).Nonempty) := by
+  classical
   let γ : PolygonalArc := A.dartArc d
   obtain ⟨rT, KT, hrT, hKT, hterm⟩ :=
     C.terminal_left_endpoint_sector_access d

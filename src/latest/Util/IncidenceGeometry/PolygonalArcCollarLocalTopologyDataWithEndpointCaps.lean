@@ -8,13 +8,13 @@ import Util.IncidenceGeometry.PolygonalArcTerminalEndpointCone
 import Util.IncidenceGeometry.PolygonalArcTerminalEndpointLeftCone
 
 open Set
-open Classical
 noncomputable section
 
-
 private abbrev EndpointCapsE := EuclideanSpace ℝ (Fin 2)
-private lemma chart_image_open (p d : EndpointCapsE) (hd : d ≠ 0) (S : Set EndpointCapsE) (hS : IsOpen S) :
+private lemma chart_image_open (p d : EndpointCapsE) (hd : d ≠ 0) (S : Set EndpointCapsE) (hS :
+  IsOpen S) :
     IsOpen ((fun z : EndpointCapsE => p + z 0 • d + z 1 • PlanarRot90 d) '' S) := by
+  classical
   let chart : EndpointCapsE → EndpointCapsE := fun z => p + z 0 • d + z 1 • PlanarRot90 d
   let invCoord : EndpointCapsE → EndpointCapsE :=
     fun q => WithLp.toLp 2 (fun i : Fin 2 =>
@@ -28,9 +28,9 @@ private lemma chart_image_open (p d : EndpointCapsE) (hd : d ≠ 0) (S : Set End
       apply continuous_pi
       intro i
       by_cases hi : i = 0
-      · simp [hi]
+      · simp only [hi, Fin.isValue, ↓reduceIte]
         fun_prop
-      · simp [hi]
+      · simp only [Fin.isValue, hi, ↓reduceIte]
         fun_prop
     exact (PiLp.continuous_toLp (p := (2 : ENNReal))
       (β := fun _ : Fin 2 => ℝ)).comp hplain
@@ -74,6 +74,7 @@ private lemma chart_image_open (p d : EndpointCapsE) (hd : d ≠ 0) (S : Set End
 private lemma chart_injective (p d : EndpointCapsE) (hd : d ≠ 0) :
     Function.Injective
       (fun z : EndpointCapsE => p + z 0 • d + z 1 • PlanarRot90 d) := by
+  classical
   let chart : EndpointCapsE → EndpointCapsE := fun z => p + z 0 • d + z 1 • PlanarRot90 d
   change Function.Injective chart
   intro z w hzw
@@ -101,6 +102,7 @@ private lemma chart_injective (p d : EndpointCapsE) (hd : d ≠ 0) :
   · exact hz1
 private lemma chart_continuous (p d : EndpointCapsE) :
     Continuous (fun z : EndpointCapsE => p + z 0 • d + z 1 • PlanarRot90 d) := by
+  classical
   have h0 : Continuous fun z : EndpointCapsE => z 0 :=
     PiLp.continuous_apply (p := (2 : ENNReal)) (β := fun _ : Fin 2 => ℝ) 0
   have h1 : Continuous fun z : EndpointCapsE => z 1 :=
@@ -108,19 +110,24 @@ private lemma chart_continuous (p d : EndpointCapsE) :
   have hp : Continuous fun _ : EndpointCapsE => p := continuous_const
   have hd : Continuous fun _ : EndpointCapsE => d := continuous_const
   have hrot : Continuous fun _ : EndpointCapsE => PlanarRot90 d := continuous_const
-  convert hp.add ((h0.smul hd).add (h1.smul hrot)) using 1 <;>
-    ext z k <;> simp [add_assoc]
-private lemma chart_mem_closure_image (p d : EndpointCapsE) {S : Set EndpointCapsE} {z : EndpointCapsE}
+  convert hp.add ((h0.smul hd).add (h1.smul hrot)) using 1
+  ext z k
+  simp [add_assoc]
+private lemma chart_mem_closure_image (p d : EndpointCapsE) {S : Set EndpointCapsE} {z :
+  EndpointCapsE}
     (hz : z ∈ closure S) :
     p + z 0 • d + z 1 • PlanarRot90 d ∈
       closure ((fun z : EndpointCapsE => p + z 0 • d + z 1 • PlanarRot90 d) '' S) := by
+  classical
   exact
     (image_closure_subset_closure_image
       (f := fun z : EndpointCapsE => p + z 0 • d + z 1 • PlanarRot90 d)
       (s := S) (chart_continuous p d)) ⟨z, hz, rfl⟩
-private lemma image_disjoint_of_injective {f : EndpointCapsE → EndpointCapsE} (hf : Function.Injective f)
+private lemma image_disjoint_of_injective {f : EndpointCapsE → EndpointCapsE} (hf :
+  Function.Injective f)
     {A B : Set EndpointCapsE} (hAB : Disjoint A B) :
     Disjoint (f '' A) (f '' B) := by
+  classical
   rw [Set.disjoint_left]
   rintro q ⟨x, hxA, rfl⟩ ⟨y, hyB, hyx⟩
   have hy_eq : y = x := hf hyx
@@ -130,6 +137,7 @@ private lemma chart_axis_eq_lineMap
     (p0 p1 z : EuclideanSpace ℝ (Fin 2)) (hz : z 1 = 0) :
     p0 + z 0 • (p1 - p0) + z 1 • PlanarRot90 (p1 - p0) =
       AffineMap.lineMap p0 p1 (z 0) := by
+  classical
   apply PiLp.ext
   intro k
   fin_cases k <;>
@@ -139,6 +147,7 @@ private lemma chart_axis_param_eq_lineMap
     (p0 p1 : EuclideanSpace ℝ (Fin 2)) (t : ℝ) :
     p0 + t • (p1 - p0) =
       AffineMap.lineMap p0 p1 t := by
+  classical
   apply PiLp.ext
   intro k
   fin_cases k <;>
@@ -148,6 +157,7 @@ private lemma chart_axis_param_eq_lineMap
 private lemma lineMap_reverse_parameter
     (p0 p1 : EndpointCapsE) (t : ℝ) :
     AffineMap.lineMap p1 p0 (1 - t) = AffineMap.lineMap p0 p1 t := by
+  classical
   apply PiLp.ext
   intro k
   fin_cases k <;>
@@ -157,6 +167,7 @@ private lemma lineMap_reverse_parameter
 private lemma lineMap_reverse_parameter_direct
     (p0 p1 : EndpointCapsE) (t : ℝ) :
     AffineMap.lineMap p1 p0 t = AffineMap.lineMap p0 p1 (1 - t) := by
+  classical
   apply PiLp.ext
   intro k
   fin_cases k <;>
@@ -169,6 +180,7 @@ private lemma endpoint_germ_subset_closure_left (a K : ℝ) (ha : 0 < a) (hK : 0
     let G : Set EndpointCapsE :=
       {z | 0 < z 0 ∧ z 0 < a ∧ z 1 = 0}
     G ⊆ closure L := by
+  classical
   intro L G z hzG
   rw [Metric.mem_closure_iff]
   intro ε hε
@@ -209,9 +221,7 @@ private lemma endpoint_germ_subset_closure_left (a K : ℝ) (ha : 0 < a) (hK : 0
     · simp [hδ_K]
   · rw [EuclideanSpace.dist_eq]
     rw [Fin.sum_univ_two]
-    simp only [Fin.isValue]
-    rw [Real.sqrt_sq_eq_abs, abs_of_pos hδ_pos]
-    exact hδ_eps
+    simpa [y, hz1, Real.dist_eq, Real.sqrt_sq_eq_abs, abs_of_pos hδ_pos] using hδ_eps
 private lemma endpoint_germ_subset_closure_right (a K : ℝ) (ha : 0 < a) (hK : 0 < K) :
     let R : Set EndpointCapsE :=
       {z | 0 < z 0 ∧ z 0 ^ 2 + z 1 ^ 2 < a ^ 2 ∧ -K * z 0 < z 1 ∧
@@ -219,6 +229,7 @@ private lemma endpoint_germ_subset_closure_right (a K : ℝ) (ha : 0 < a) (hK : 
     let G : Set EndpointCapsE :=
       {z | 0 < z 0 ∧ z 0 < a ∧ z 1 = 0}
     G ⊆ closure R := by
+  classical
   intro R G z hzG
   rw [Metric.mem_closure_iff]
   intro ε hε
@@ -260,10 +271,7 @@ private lemma endpoint_germ_subset_closure_right (a K : ℝ) (ha : 0 < a) (hK : 
     · simp [hδ_pos]
   · rw [EuclideanSpace.dist_eq]
     rw [Fin.sum_univ_two]
-    simp only [Fin.isValue]
-    rw [Real.sqrt_sq_eq_abs, abs_of_pos hδ_pos]
-    exact hδ_eps
-
+    simpa [y, hz1, Real.dist_eq, Real.sqrt_sq_eq_abs, abs_of_pos hδ_pos] using hδ_eps
 
 private lemma initial_chart_germ_subset_relativeInterior
     (γ : PolygonalArc) (a : ℝ) (hj0 : 0 + 1 < γ.vertices.length)
@@ -273,6 +281,7 @@ private lemma initial_chart_germ_subset_relativeInterior
           z 1 • PlanarRot90 (γ.vertices[0 + 1] - γ.vertices[0])) ''
       {z : EndpointCapsE | 0 < z 0 ∧ z 0 < a ∧ z 1 = 0} ⊆
         γ.relativeInterior := by
+  classical
   rintro x ⟨z, hzG, rfl⟩
   have hz01 : z 0 ∈ Set.Ioo (0 : ℝ) (1 : ℝ) :=
     ⟨hzG.1, lt_trans hzG.2.1 ha_lt_one⟩
@@ -291,6 +300,7 @@ private lemma initial_chart_germ_subset_relativeInterior
 
 private lemma relativeInterior_subset_carrier (γ : PolygonalArc) :
     γ.relativeInterior ⊆ γ.carrier := by
+  classical
   intro x hx
   rw [γ.relativeInterior_eq] at hx
   exact hx.1
@@ -328,6 +338,7 @@ private lemma initial_carrier_inter_chart_subset_axis_germ
         γ.vertices[0] + z 0 • (γ.vertices[0 + 1] - γ.vertices[0]) +
           z 1 • PlanarRot90 (γ.vertices[0 + 1] - γ.vertices[0])) ''
         {z : EndpointCapsE | 0 < z 0 ∧ z 0 < a ∧ z 1 = 0} := by
+  classical
   let chart : EndpointCapsE → EndpointCapsE := fun z =>
     γ.vertices[0] + z 0 • (γ.vertices[0 + 1] - γ.vertices[0]) +
       z 1 • PlanarRot90 (γ.vertices[0 + 1] - γ.vertices[0])
@@ -342,7 +353,7 @@ private lemma initial_carrier_inter_chart_subset_axis_germ
   have hj_eq : j = 0 := by
     rcases hincident with hleft_inc | hright_inc
     · exact hleft_inc.symm
-    · have : (0 : ℕ) = j + 1 := by simpa using hright_inc
+    · have : (0 : ℕ) = j + 1 := by simp at hright_inc
       omega
   subst j
   rw [segment_eq_image_lineMap] at hxseg
@@ -377,6 +388,7 @@ private lemma terminal_chart_germ_subset_relativeInterior
           z 1 • PlanarRot90 (γ.vertices[j] - γ.vertices[j + 1])) ''
       {z : EndpointCapsE | 0 < z 0 ∧ z 0 < a ∧ z 1 = 0} ⊆
         γ.relativeInterior := by
+  classical
   rintro x ⟨z, hzG, rfl⟩
   have hz01 : (1 - z 0) ∈ Set.Ioo (0 : ℝ) (1 : ℝ) :=
     ⟨by linarith [lt_trans hzG.2.1 ha_lt_one], by linarith [hzG.1]⟩
@@ -426,6 +438,7 @@ private lemma terminal_carrier_inter_chart_subset_axis_germ
         γ.vertices[j + 1] + z 0 • (γ.vertices[j] - γ.vertices[j + 1]) +
           z 1 • PlanarRot90 (γ.vertices[j] - γ.vertices[j + 1])) ''
         {z : EndpointCapsE | 0 < z 0 ∧ z 0 < a ∧ z 1 = 0} := by
+  classical
   let chart : EndpointCapsE → EndpointCapsE := fun z =>
     γ.vertices[j + 1] + z 0 • (γ.vertices[j] - γ.vertices[j + 1]) +
       z 1 • PlanarRot90 (γ.vertices[j] - γ.vertices[j + 1])
@@ -626,6 +639,7 @@ private lemma leftHalf_inter_subset_of_nonincident
     (j : ℕ) (hj : j + 1 < γ.vertices.length)
     (hne_left : i.1 ≠ j) (hne_right : i.1 ≠ j + 1) :
     separatedTubes.leftHalf j hj ∩ C ⊆ L := by
+  classical
   intro x hx
   exfalso
   have hdisj :=
@@ -653,6 +667,7 @@ private lemma rightHalf_inter_subset_of_nonincident
     (j : ℕ) (hj : j + 1 < γ.vertices.length)
     (hne_left : i.1 ≠ j) (hne_right : i.1 ≠ j + 1) :
     separatedTubes.rightHalf j hj ∩ C ⊆ R := by
+  classical
   intro x hx
   exfalso
   have hdisj :=
@@ -690,9 +705,10 @@ private lemma terminalEndpointCore_subset_terminalCone
     (r K a κ : ℝ) (ha_pos : 0 < a)
     (hratio : 0 < r / dist γ.target γ.vertices[j])
     (ha : a < r / dist γ.target γ.vertices[j])
-    (hK : κ < K) (hKpos : 0 < K) :
+    (hK : κ < K) (_hKpos : 0 < K) :
     terminalEndpointChart γ j hj '' endpointCapCore a κ ⊆
       PolygonalArcTerminalEndpointCone γ r K := by
+  classical
   have hidx : γ.vertices.length - 2 = j := by omega
   rintro x ⟨z, hz, rfl⟩
   rw [PolygonalArcTerminalEndpointCone]
@@ -701,7 +717,7 @@ private lemma terminalEndpointCore_subset_terminalCone
   · rcases hz with ⟨hz0, hzdisk, hzlow, hzhigh⟩
     refine ⟨hz0, ?_, ?_, ?_⟩
     · nlinarith
-    · nlinarith [hK, hKpos, hz0, hzlow]
+    · nlinarith [hK, hz0, hzlow]
     · nlinarith [hK, hz0, hzhigh]
   · simp [terminalEndpointChart, htarget]
 
@@ -714,6 +730,7 @@ private lemma terminalEndpointRight_subset_terminalLeftCone
     (ha : a < r / dist γ.target γ.vertices[j]) (hK : κ < K) :
     terminalEndpointChart γ j hj '' endpointCapRight a κ ⊆
       PolygonalArcTerminalEndpointLeftCone γ r K := by
+  classical
   have hidx : γ.vertices.length - 2 = j := by omega
   rintro x ⟨z, hz, rfl⟩
   rw [PolygonalArcTerminalEndpointLeftCone]
@@ -734,6 +751,7 @@ private lemma terminalEndpointLeft_subset_reverseInitialLeftCone
     (ha : a < r / dist γ.target γ.vertices[j]) (hK : κ < K) :
     terminalEndpointChart γ j hj '' endpointCapLeft a κ ⊆
       PolygonalArcInitialEndpointLeftCone (PolygonalArcReverse γ) r K := by
+  classical
   rintro x ⟨z, hz, rfl⟩
   rw [PolygonalArcInitialEndpointLeftCone]
   refine ⟨z, ?_, ?_⟩
@@ -747,14 +765,13 @@ private lemma terminalEndpointLeft_subset_reverseInitialLeftCone
           dist (PolygonalArcReverse γ).source
               (PolygonalArcReverse γ).vertices[1] =
             dist γ.target γ.vertices[j] := by
-        simpa [PolygonalArcReverse, List.length_reverse, hidx]
+        simp [PolygonalArcReverse, hidx]
       rw [hdist_eq]
       nlinarith
     · nlinarith [hK, hz0, hzhigh]
   · have hidx : γ.vertices.length - 1 - 1 = j := by omega
-    simp [terminalEndpointChart, PolygonalArcReverse, List.length_reverse, hidx,
+    simp [terminalEndpointChart, PolygonalArcReverse, hidx,
       htarget]
-
 
 private lemma terminal_endpoint_caps_geometry
     {η : ℝ} (γ : PolygonalArc)
@@ -769,22 +786,22 @@ private lemma terminal_endpoint_caps_geometry
       PolygonalArcCollarVertexLocalPieceData γ controlRadii middleSegments
         forbiddenMargins
         compatibleTubes.orientedTubes.toPolygonalArcCollarSeparatedTubeData)
-    (r₀ r₁ K₀ K₁ : ℝ) (hr₁ : 0 < r₁) (hK₁pos : 0 < K₁)
-    (hρT_lt :
+    (_r₀ r₁ _K₀ K₁ : ℝ) (_hr₁ : 0 < r₁) (_hK₁pos : 0 < K₁)
+    (_hρT_lt :
       controlRadii.radius
           ⟨γ.vertices.length - 1, by
             have hlen := γ.length_ge_two
             omega⟩ < r₁)
-    (hKterm_lt :
+    (_hKterm_lt :
       compatibleTubes.terminalConeBound (γ.vertices.length - 2)
           (by
             have hlen := γ.length_ge_two
             omega) < K₁)
-    (chart0 : EndpointCapsE → EndpointCapsE)
-    (C0 L0 R0 : Set EndpointCapsE) :
+    (_chart0 : EndpointCapsE → EndpointCapsE)
+    (_C0 _L0 _R0 : Set EndpointCapsE) :
     let sep :=
       compatibleTubes.orientedTubes.toPolygonalArcCollarSeparatedTubeData
-    let hlen_pos : 0 < γ.vertices.length :=
+    let _hlen_pos : 0 < γ.vertices.length :=
       Nat.lt_trans Nat.zero_lt_one γ.length_ge_two
     let lastJ : ℕ := γ.vertices.length - 2
     let hlastJ : lastJ + 1 < γ.vertices.length := by
@@ -812,6 +829,7 @@ private lemma terminal_endpoint_caps_geometry
     ∃ C L R : Set EndpointCapsE,
       terminalCapsGeometry γ controlRadii middleSegments forbiddenMargins sep
         vertexLocalPieces ⟨lastJ + 1, hlastJ⟩ chartT CT LT RT C L R := by
+  classical
   let sep :=
     compatibleTubes.orientedTubes.toPolygonalArcCollarSeparatedTubeData
   have hlen_two : 2 ≤ γ.vertices.length := γ.length_ge_two
@@ -1145,8 +1163,6 @@ private lemma terminal_endpoint_caps_geometry
         simpa [Nat.add_assoc] using hnext
       omega
 
-
-
 private lemma terminal_endpoint_caps_good
     {η : ℝ} (γ : PolygonalArc)
     (controlRadii : PolygonalArcCollarControlRadii γ η)
@@ -1175,7 +1191,7 @@ private lemma terminal_endpoint_caps_good
     (C0 L0 R0 : Set EndpointCapsE) :
     let sep :=
       compatibleTubes.orientedTubes.toPolygonalArcCollarSeparatedTubeData
-    let hlen_pos : 0 < γ.vertices.length :=
+    let _hlen_pos : 0 < γ.vertices.length :=
       Nat.lt_trans Nat.zero_lt_one γ.length_ge_two
     let lastJ : ℕ := γ.vertices.length - 2
     let hlastJ : lastJ + 1 < γ.vertices.length := by
@@ -1204,6 +1220,7 @@ private lemma terminal_endpoint_caps_good
       endpointCapsGood γ controlRadii middleSegments forbiddenMargins sep
         vertexLocalPieces r₀ r₁ K₀ K₁ chart0 chartT C0 L0 R0 CT LT RT
         ⟨lastJ + 1, hlastJ⟩ C L R := by
+  classical
   let sep :=
     compatibleTubes.orientedTubes.toPolygonalArcCollarSeparatedTubeData
   have hlen_two : 2 ≤ γ.vertices.length := γ.length_ge_two
@@ -1341,7 +1358,6 @@ private lemma terminal_endpoint_caps_good
     exact hLeq
   · intro _
     exact hReq
-
 
 private def endpointCapsLocalTopologyOfGoodCore
     {η : ℝ} (γ : PolygonalArc)
@@ -1556,8 +1572,6 @@ private def endpointCapsFinalConclusion
     localTopology.leftSidePiece ⟨lastJ + 1, hlastJ⟩ = chartT '' RT ∧
     localTopology.rightSidePiece ⟨lastJ + 1, hlastJ⟩ = chartT '' LT
 
-
-
 private lemma endpoint_caps_final_assembly
     {η : ℝ} (γ : PolygonalArc)
     (controlRadii : PolygonalArcCollarControlRadii γ η)
@@ -1592,6 +1606,7 @@ private lemma endpoint_caps_final_assembly
       endpointCapsFinalConclusion γ controlRadii middleSegments forbiddenMargins
         compatibleTubes vertexLocalPieces r₀ r₁ K₀ K₁ hlen_pos lastJ hlastJ
         chart0 chartT C0 L0 R0 CT LT RT localTopology := by
+  classical
   let E := EndpointCapsE
   let sep :=
     compatibleTubes.orientedTubes.toPolygonalArcCollarSeparatedTubeData
@@ -1704,7 +1719,6 @@ private lemma endpoint_caps_final_assembly
     rw [hlocal_rightSidePiece]
     exact htargetRight hterminal
 
-
 lemma PolygonalArcCollarLocalTopologyDataWithEndpointCaps (γ : PolygonalArc) {η : ℝ}
     (controlRadii : PolygonalArcCollarControlRadii γ η)
     (middleSegments : PolygonalArcCollarMiddleSegmentData γ controlRadii)
@@ -1724,12 +1738,12 @@ lemma PolygonalArcCollarLocalTopologyDataWithEndpointCaps (γ : PolygonalArc) {�
               exact γ.length_ge_two
             let itarget : ℕ := γ.vertices.length - 1
             let htarget : itarget < γ.vertices.length := by
-              have hlen := γ.length_ge_two
+              have _hlen := γ.length_ge_two
               dsimp [itarget]
               omega
             let jlast : ℕ := γ.vertices.length - 2
             let hlast : jlast + 1 < γ.vertices.length := by
-              have hlen := γ.length_ge_two
+              have _hlen := γ.length_ge_two
               dsimp [jlast]
               omega
             controlRadii.radius ⟨0, hsource⟩ < r₀ →
@@ -1819,6 +1833,7 @@ lemma PolygonalArcCollarLocalTopologyDataWithEndpointCaps (γ : PolygonalArc) {�
                                                ⟨itarget, htarget⟩ = chartT '' RT ∧
                                            localTopology.rightSidePiece
                                                ⟨itarget, htarget⟩ = chartT '' LT) := by
+  classical
   intro hr₀ hr₁ hK₀pos hK₁pos
   dsimp
   intro hρ0_lt hρT_lt hKinit_lt hKterm_lt
@@ -2110,7 +2125,7 @@ lemma PolygonalArcCollarLocalTopologyDataWithEndpointCaps (γ : PolygonalArc) {�
             change γ.vertices.reverse[(PolygonalArcReverse γ).vertices.length - 2] =
               γ.vertices[1]
             rw [List.getElem_reverse hvalid]
-            simpa [hidx]
+            simp [hidx]
           have hdist_eq :
               dist (PolygonalArcReverse γ).target
                   (PolygonalArcReverse γ).vertices[(PolygonalArcReverse γ).vertices.length - 2] =
@@ -2118,7 +2133,7 @@ lemma PolygonalArcCollarLocalTopologyDataWithEndpointCaps (γ : PolygonalArc) {�
             have hidx :
                 γ.vertices.length - 1 - (γ.vertices.length - 2) = 1 := by
               omega
-            simpa [PolygonalArcReverse, List.length_reverse, hidx]
+            simp [PolygonalArcReverse, hidx]
           rw [hdist_eq]
           nlinarith
         · have hK_lt : K0 < K₀ := by
@@ -2129,16 +2144,15 @@ lemma PolygonalArcCollarLocalTopologyDataWithEndpointCaps (γ : PolygonalArc) {�
           omega
         simp [PolygonalArcReverse, List.length_reverse, hidx, hsource_vertex]
     refine ⟨chart0 '' C0, chart0 '' L0, chart0 '' R0,
-      ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
-    refine ⟨?_, ?_, ?_, hCsub_disk, ?_, ?_, hLsubC, hRsubC,
+      ⟨?_, ?_, ?_, hCsub_disk, ?_, ?_, hLsubC, hRsubC,
       hchartL0conn, hchartR0conn, ?_, ?_, hchartLR0disj, ?_, ?_, ?_,
       ?_, ?_, ?_, ?_, ?_, ?_,
-      ?_, ?_, ?_, ?_, ?_, ?_⟩
+      ?_, ?_, ?_, ?_, ?_, ?_⟩, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
     · exact chart_image_open γ.vertices[0] d0 hd0 C0 hC0open
     · exact chart_image_open γ.vertices[0] d0 hd0 L0 hL0open
     · exact chart_image_open γ.vertices[0] d0 hd0 R0 hR0open
     · intro hpos _
-      have : (0 : ℕ) < 0 := by simpa using hpos
+      have : (0 : ℕ) < 0 := by simp at hpos
       omega
     · intro _
       exact hvertex0_not_chartC
@@ -2190,7 +2204,7 @@ lemma PolygonalArcCollarLocalTopologyDataWithEndpointCaps (γ : PolygonalArc) {�
       exact Set.image_mono hG0subC (hgerm0 hx)
     · intro j hj hij
       have hval := congrArg Fin.val hij
-      have : (0 : ℕ) = j + 1 := by simpa using hval
+      have : (0 : ℕ) = j + 1 := by simp at hval
       omega
     · intro j hj hij
       have hj_eq : j = 0 := by
@@ -2214,11 +2228,11 @@ lemma PolygonalArcCollarLocalTopologyDataWithEndpointCaps (γ : PolygonalArc) {�
         simpa using hx.1⟩
     · intro j hj hij
       have hval := congrArg Fin.val hij
-      have : (0 : ℕ) = j + 1 := by simpa using hval
+      have : (0 : ℕ) = j + 1 := by simp at hval
       omega
     · intro j hj hij
       have hval := congrArg Fin.val hij
-      have : (0 : ℕ) = j + 1 := by simpa using hval
+      have : (0 : ℕ) = j + 1 := by simp at hval
       omega
     · intro j hj hij x hx
       have hj_eq : j = 0 := by
@@ -2238,17 +2252,17 @@ lemma PolygonalArcCollarLocalTopologyDataWithEndpointCaps (γ : PolygonalArc) {�
         ((endpoint_germ_subset_closure_right a0 K0 ha0 hK0) hzG)
     · intro j hj hij
       have hval := congrArg Fin.val hij
-      have : (0 : ℕ) = j + 1 := by simpa using hval
+      have : (0 : ℕ) = j + 1 := by simp at hval
       omega
     · intro j hj hij
       have hval := congrArg Fin.val hij
-      have : (0 : ℕ) = j + 1 := by simpa using hval
+      have : (0 : ℕ) = j + 1 := by simp at hval
       omega
     · intro hpos _
-      have : (0 : ℕ) < 0 := by simpa using hpos
+      have : (0 : ℕ) < 0 := by simp at hpos
       omega
     · intro hpos _
-      have : (0 : ℕ) < 0 := by simpa using hpos
+      have : (0 : ℕ) < 0 := by simp at hpos
       omega
     · intro _ x hx
       exact hchartC0_subset_initialCone hx.1
@@ -3065,7 +3079,8 @@ lemma PolygonalArcCollarLocalTopologyDataWithEndpointCaps (γ : PolygonalArc) {�
       apply Fin.ext
       dsimp [lastJ]
       omega
-    have h := localTopology.endpoint_vertexCollar_omits_vertex ⟨lastJ + 1, hlastJ⟩ (Or.inr (by dsimp [lastJ]; omega))
+    have h := localTopology.endpoint_vertexCollar_omits_vertex ⟨lastJ + 1, hlastJ⟩ (Or.inr (by
+      dsimp [lastJ]; omega))
     simpa [htarget_eq_fin, htarget_chart] using h
   · simpa using (hGoodSpec ⟨0, hlen_pos⟩).2.1 rfl
   · have htargetIdx : γ.vertices.length - 1 < γ.vertices.length := by omega

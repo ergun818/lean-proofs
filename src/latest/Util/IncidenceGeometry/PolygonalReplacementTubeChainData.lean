@@ -1,7 +1,6 @@
 import Util.IncidenceGeometry.PolygonalReplacementControlDiskData
 import Util.IncidenceGeometry.PolygonalArc
 
-open Classical
 noncomputable section
 
 structure PolygonalReplacementTubeChainData {V : Type*} [Fintype V]

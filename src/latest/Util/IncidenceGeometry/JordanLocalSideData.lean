@@ -2,7 +2,6 @@ import Util.IncidenceGeometry.SimpleClosedPolygonalCurve
 import Util.IncidenceGeometry.PolygonalSideStrips
 import Util.IncidenceGeometry.FinitePolygonalSet
 
-open Classical
 noncomputable section
 
 structure JordanLocalSideData (J : SimpleClosedPolygonalCurve) where

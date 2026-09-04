@@ -1,6 +1,5 @@
 import Util.IncidenceGeometry.GeometricArcDrawing
 
-open Classical
 noncomputable section
 
 lemma GeometricArcDrawingEdgeParametrization {V : Type*} [Fintype V]
@@ -14,6 +13,7 @@ lemma GeometricArcDrawingEdgeParametrization {V : Type*} [Fintype V]
               D.edgeRelativeInterior e =
                 Set.range (fun t : {t : ℝ // 0 < t ∧ t < 1} =>
                   γ ⟨t.1, ⟨le_of_lt t.2.1, le_of_lt t.2.2⟩⟩) := by
+  classical
   rcases D.edge_is_simple_lineSegment_or_circularArc e with hline | harc
   · rcases hline with ⟨hne, hcarrier, hrel⟩
     let γ : Set.Icc (0 : ℝ) 1 → EuclideanSpace ℝ (Fin 2) := fun t =>

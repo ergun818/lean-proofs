@@ -3,9 +3,7 @@ import Util.IncidenceGeometry.PlanarRot90CoefficientUniqueness
 import Util.IncidenceGeometry.PlanarRot90LinearCombination
 
 open Set
-open Classical
 noncomputable section
-
 
 lemma PolygonalArcInteriorIncomingFramePositiveHalfTubeSectorRouting
     (γ : PolygonalArc) {η : ℝ}
@@ -36,6 +34,7 @@ lemma PolygonalArcInteriorIncomingFramePositiveHalfTubeSectorRouting
       {z | z ∈ C ∧ (z 1 < 0 ∨ 0 < c * z 1 - s * z 0)}
     sep.leftHalf j hj ∩ chart '' C ⊆ chart '' R ∧
       sep.leftHalf (j + 1) hnext ∩ chart '' C ⊆ chart '' R := by
+  classical
   intro sep p u rho chart C R
   have hdist_prev : 0 < dist γ.vertices[j] γ.vertices[j + 1] := by
     have hsum := controlRadii.adjacent_radii_sum_lt (j := j) hj

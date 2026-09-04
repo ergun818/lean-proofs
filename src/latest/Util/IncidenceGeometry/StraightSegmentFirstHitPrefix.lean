@@ -3,7 +3,6 @@ import Mathlib.Analysis.Convex.Between
 import Mathlib.Topology.MetricSpace.Thickening
 import Mathlib.Topology.Order.IntermediateValue
 
-open Classical
 noncomputable section
 
 lemma StraightSegmentFirstHitPrefix
@@ -20,6 +19,7 @@ lemma StraightSegmentFirstHitPrefix
           u ∈ segment ℝ u y ∧ y ∈ segment ℝ u y ∧
             segment ℝ u y ⊆
               segment ℝ u v ∩ (segment ℝ a b)ᶜ := by
+  classical
   let S : Set (EuclideanSpace ℝ (Fin 2)) := segment ℝ a b
   have hScompact : IsCompact S := by
     dsimp [S]

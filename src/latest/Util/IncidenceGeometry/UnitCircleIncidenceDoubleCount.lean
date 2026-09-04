@@ -2,11 +2,11 @@ import Util.IncidenceGeometry.UnitCircleIncidenceCount
 import Util.IncidenceGeometry.UnitCircle
 import Util.IncidenceGeometry.UnitDistanceCount
 
-open Classical
 noncomputable section
 
 lemma UnitCircleIncidenceDoubleCount (P : Finset (EuclideanSpace ℝ (Fin 2))) :
     UnitCircleIncidenceCount P = 2 * IncidenceGeometry.unitDistanceCount P := by
+  classical
   let E : Finset (EuclideanSpace ℝ (Fin 2) × EuclideanSpace ℝ (Fin 2)) :=
     P.offDiag.filter (fun pq => dist pq.1 pq.2 = 1)
   have hsets :

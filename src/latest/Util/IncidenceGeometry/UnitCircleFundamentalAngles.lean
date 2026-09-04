@@ -1,7 +1,6 @@
 import Util.IncidenceGeometry.UnitCircle
 import Mathlib.Analysis.SpecialFunctions.Complex.Arg
 
-open Classical
 noncomputable section
 
 lemma UnitCircleFundamentalAngles
@@ -16,6 +15,7 @@ lemma UnitCircleFundamentalAngles
             (fun i : Fin 2 =>
               if i = 0 then Real.cos (θ x) else Real.sin (θ x))) ∧
       Function.Injective θ := by
+  classical
   let coordComplex : EuclideanSpace ℝ (Fin 2) → ℂ :=
     fun v => ⟨v (0 : Fin 2), v (1 : Fin 2)⟩
   have hcoord_norm :

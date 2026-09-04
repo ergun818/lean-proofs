@@ -2,13 +2,13 @@ import Util.IncidenceGeometry.FiniteWalkCycleErasure
 import Util.IncidenceGeometry.PolygonalPathRawStraightLineComplex
 import Util.IncidenceGeometry.PolygonalPathStraightLineComplex
 
-open Classical
 noncomputable section
 
 lemma PolygonalPathStraightLineComplexOfRaw
     (γ : PolygonalPath) (R : PolygonalPathRawStraightLineComplex γ) :
     γ.source ≠ γ.target →
       Nonempty (PolygonalPathStraightLineComplex γ) := by
+  classical
   intro hst
   let P := EuclideanSpace ℝ (Fin 2)
   let G : SimpleGraph P :=

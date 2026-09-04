@@ -2,13 +2,13 @@ import Util.IncidenceGeometry.PolygonalArcCollarMiddleForbiddenMargins
 import Util.IncidenceGeometry.PositiveSeparation
 import Mathlib.Analysis.Normed.Module.Convex
 
-open Classical
 noncomputable section
 
 lemma PolygonalArcCollarMiddleForbiddenMarginsExists (γ : PolygonalArc) {η : ℝ}
     (controlRadii : PolygonalArcCollarControlRadii γ η)
     (middleSegments : PolygonalArcCollarMiddleSegmentData γ controlRadii) :
     Nonempty (PolygonalArcCollarMiddleForbiddenMargins γ controlRadii middleSegments) := by
+  classical
   let E := EuclideanSpace ℝ (Fin 2)
   let n := γ.vertices.length
   have hlen_pos : 0 < n := by
@@ -62,7 +62,7 @@ lemma PolygonalArcCollarMiddleForbiddenMarginsExists (γ : PolygonalArc) {η : �
               x ∈ (if k = j + 1 then {γ.vertices[k]} else
                     (∅ : Set E)) by
                 simpa [hinter, E] using hxInter
-          simpa using hxEmpty
+          simp at hxEmpty
       | inr hlt =>
           have hkj : k < j := by omega
           have hnot : j ≠ k + 1 := by omega
@@ -77,7 +77,7 @@ lemma PolygonalArcCollarMiddleForbiddenMarginsExists (γ : PolygonalArc) {η : �
               x ∈ (if j = k + 1 then {γ.vertices[j]} else
                     (∅ : Set E)) by
                 simpa [hinter, E] using hxInter
-          simpa using hxEmpty
+          simp at hxEmpty
     obtain ⟨δ, hδpos, hδ⟩ :=
       PositiveSeparation (middleSegments.middle_nonempty j hj)
         (segment_nonempty k hk) (middleSegments.middle_compact j hj)
@@ -149,7 +149,7 @@ lemma PolygonalArcCollarMiddleForbiddenMarginsExists (γ : PolygonalArc) {η : �
     fun j hj i =>
       if h : i.1 ≠ j ∧ i.1 ≠ j + 1 then
         Classical.choose
-          (middle_disk_pair_separation j hj ⟨i.1, by simpa [n] using i.2⟩
+          (middle_disk_pair_separation j hj ⟨i.1, by simp [n]⟩
             h.1 h.2)
       else
         (1 : ℝ)
@@ -166,7 +166,7 @@ lemma PolygonalArcCollarMiddleForbiddenMarginsExists (γ : PolygonalArc) {η : �
     · simpa [h] using
         (Classical.choose_spec
           (middle_disk_pair_separation j hj
-            ⟨i.1, by simpa [n] using i.2⟩ h.1 h.2)).1
+            ⟨i.1, by simp [n]⟩ h.1 h.2)).1
     · simp [h]
   have diskBound_pos :
       ∀ (j : ℕ) (hj : j + 1 < γ.vertices.length),

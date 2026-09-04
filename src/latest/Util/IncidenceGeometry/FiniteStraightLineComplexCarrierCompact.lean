@@ -1,7 +1,6 @@
 import Mathlib.Tactic
 import Util.IncidenceGeometry.Basic
 
-open Classical
 noncomputable section
 
 lemma FiniteStraightLineComplexCarrierCompact
@@ -13,6 +12,7 @@ lemma FiniteStraightLineComplexCarrierCompact
         (V : Set (EuclideanSpace ℝ (Fin 2))) ∪
           ⋃ e : {e // e ∈ E}, segment ℝ e.1.1 e.1.2) :
     IsCompact A := by
+  classical
   rw [hA]
   refine (V.finite_toSet.isCompact).union ?_
   apply isCompact_iUnion

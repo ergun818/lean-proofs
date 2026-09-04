@@ -7,12 +7,12 @@ import Util.IncidenceGeometry.StraightSegmentInteriorSphereBranch
 import Util.IncidenceGeometry.CircularArcInteriorSphereBranch
 import Util.IncidenceGeometry.CircularArcEndpointSphereBranch
 
-open Classical
 noncomputable section
 
 lemma PolygonalReplacementControlDisks {V : Type*} [Fintype V]
     (G : SimpleGraph V) [Fintype G.edgeSet] (D : GeometricArcDrawing G) :
     Nonempty (PolygonalReplacementControlDiskData G D) := by
+  classical
   obtain ⟨centerVertexRadius, centerIntersectionRadius, hcenterVertex_pos,
       hcenterIntersection_pos, hcenter_vertex_vertex, hcenter_vertex_intersection,
       hcenter_intersection_intersection⟩ :=
@@ -30,12 +30,12 @@ lemma PolygonalReplacementControlDisks {V : Type*} [Fintype V]
           apply D.vertexPlacement_injective
           exact hsrc.trans hend.1
         have : a ∈ (Sym2.mk a b : Sym2 V) := by simp
-        simpa [heq, hva] using this
+        simp [heq, hva]
       · have hvb : v = b := by
           apply D.vertexPlacement_injective
           exact hsrc.trans hend.1
         have : b ∈ (Sym2.mk a b : Sym2 V) := by simp
-        simpa [heq, hvb] using this
+        simp [heq, hvb]
     have htarget_mem :
         D.vertexPlacement v = D.edgeTarget e → v ∈ e.1 := by
       intro htgt
@@ -45,12 +45,12 @@ lemma PolygonalReplacementControlDisks {V : Type*} [Fintype V]
           apply D.vertexPlacement_injective
           exact htgt.trans hend.2
         have : b ∈ (Sym2.mk a b : Sym2 V) := by simp
-        simpa [heq, hvb] using this
+        simp [heq, hvb]
       · have hva : v = a := by
           apply D.vertexPlacement_injective
           exact htgt.trans hend.2
         have : a ∈ (Sym2.mk a b : Sym2 V) := by simp
-        simpa [heq, hva] using this
+        simp [heq, hva]
     rcases GeometricArcCarrierEndpointOrInterior D e hp with hsrc | htgt | hint
     · exact hsource_mem hsrc
     · exact htarget_mem htgt
@@ -332,15 +332,15 @@ lemma PolygonalReplacementControlDisks {V : Type*} [Fintype V]
     intro e
     rcases D.edgeArc_endpoints e with ⟨a, b, _hadj, heq, hend⟩
     rcases hend with hend | hend
-    · exact ⟨a, by simpa [heq], hend.1⟩
-    · exact ⟨b, by simpa [heq], hend.1⟩
+    · exact ⟨a, by simp [heq], hend.1⟩
+    · exact ⟨b, by simp [heq], hend.1⟩
   have edgeTarget_vertex :
       ∀ e : G.edgeFinset, ∃ v : V, v ∈ e.1 ∧ D.edgeTarget e = D.vertexPlacement v := by
     intro e
     rcases D.edgeArc_endpoints e with ⟨a, b, _hadj, heq, hend⟩
     rcases hend with hend | hend
-    · exact ⟨b, by simpa [heq], hend.2⟩
-    · exact ⟨a, by simpa [heq], hend.2⟩
+    · exact ⟨b, by simp [heq], hend.2⟩
+    · exact ⟨a, by simp [heq], hend.2⟩
   have final_vertex_vertex_disjoint :
       ∀ ⦃v w⦄, v ≠ w →
         Disjoint (Metric.closedBall (D.vertexPlacement v) (vertexRadius v))

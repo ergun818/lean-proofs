@@ -1,7 +1,6 @@
 import Util.IncidenceGeometry.OrdinaryDrawingImage
 import Util.IncidenceGeometry.ComplementComponent
 
-open Classical
 noncomputable section
 
 def DrawingFaceComponent {V : Type*} [Fintype V] (G : SimpleGraph V)

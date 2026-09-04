@@ -1,7 +1,6 @@
 import Util.IncidenceGeometry.OrdinaryDrawingPartialData
 import Util.IncidenceGeometry.OrdinaryDrawingAuxiliaryBendPointAvoidance
 
-open Classical
 noncomputable section
 
 lemma OrdinaryDrawingPartialDataOneEdgeAvoidance {V : Type*} [Fintype V]

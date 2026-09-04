@@ -3,7 +3,6 @@ import Mathlib.Data.List.ReduceOption
 import Mathlib.Data.List.Cycle
 import Mathlib.Tactic
 
-open Classical
 noncomputable section
 
 lemma FinitePolygonalSetCyclicFilteredStreamIntervals
@@ -26,6 +25,7 @@ lemma FinitePolygonalSetCyclicFilteredStreamIntervals
             retain head = some p ∧
             retain next = some (retained.formPerm p) ∧
             ∀ x ∈ suffix ++ pre, retain x = none)) := by
+  classical
   intro p hp
   have hfilter : stream.filterMap retain = retained := hretained.symm
   obtain ⟨k, hk, hkp⟩ := List.getElem_of_mem hp

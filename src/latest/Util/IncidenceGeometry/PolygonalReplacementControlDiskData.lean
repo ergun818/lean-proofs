@@ -1,6 +1,5 @@
 import Util.IncidenceGeometry.GeometricArcDrawing
 
-open Classical
 noncomputable section
 
 structure PolygonalReplacementControlDiskData {V : Type*} [Fintype V]

@@ -2,7 +2,6 @@ import Mathlib.Tactic
 import Util.IncidenceGeometry.PlanarRot90
 import Util.IncidenceGeometry.PolygonalArc
 
-open Classical
 noncomputable section
 
 def PolygonalArcTerminalEndpointCone (γ : PolygonalArc) (r K : ℝ) :

@@ -1,6 +1,5 @@
 import Util.IncidenceGeometry.FinitePolygonalSetCyclicPieceFiniteDeletionDense
 
-open Classical
 noncomputable section
 
 lemma FinitePolygonalSetCyclicOrderedPieceCoveredByListedSegments
@@ -11,6 +10,7 @@ lemma FinitePolygonalSetCyclicOrderedPieceCoveredByListedSegments
     (i : D.pieceIndex) (hi : i ∈ D.arcPieceOrder p) :
     D.pieceCarrier i ⊆
       ⋃ s : {s // s ∈ K.segments}, segment ℝ s.1.1 s.1.2 := by
+  classical
   let U : Set (EuclideanSpace ℝ (Fin 2)) :=
     ⋃ s : {s // s ∈ K.segments}, segment ℝ s.1.1 s.1.2
   have hU_def :

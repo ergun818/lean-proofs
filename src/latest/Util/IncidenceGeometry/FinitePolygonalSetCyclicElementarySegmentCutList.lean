@@ -2,7 +2,6 @@ import Util.IncidenceGeometry.FiniteElementarySegmentCutParameterList
 import Util.IncidenceGeometry.SimpleClosedPolygonalCurve
 import Util.IncidenceGeometry.FinitePolygonalSet
 
-open Classical
 noncomputable section
 
 lemma FinitePolygonalSetCyclicElementarySegmentCutList
@@ -37,6 +36,7 @@ lemma FinitePolygonalSetCyclicElementarySegmentCutList
                             (AffineMap.lineMap
                               (γ.1.vertices[n]'(Nat.lt_of_succ_lt hn))
                               (γ.1.vertices[n + 1]'hn) L[k + 1])) := by
+  classical
   let A : EuclideanSpace ℝ (Fin 2) := γ.1.vertices[n]'(Nat.lt_of_succ_lt hn)
   let B : EuclideanSpace ℝ (Fin 2) := γ.1.vertices[n + 1]'hn
   have hAB : A ≠ B := by

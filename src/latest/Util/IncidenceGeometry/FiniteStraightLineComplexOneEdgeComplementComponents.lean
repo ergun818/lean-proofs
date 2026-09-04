@@ -19,7 +19,6 @@ import Util.IncidenceGeometry.OpenConnectedComponentPolygonallyConnected
 import Util.IncidenceGeometry.PolygonalPathOrderedFirstHitPrefix
 import Util.IncidenceGeometry.PositiveSeparation
 
-open Classical
 noncomputable section
 
 lemma FiniteStraightLineComplexOneEdgeComplementComponents
@@ -62,6 +61,7 @@ lemma FiniteStraightLineComplexOneEdgeComplementComponents
       (∀ C ∈ comps, ComplementComponent (A ∪ segment ℝ a b) C) ∧
         ∀ C : Set (EuclideanSpace ℝ (Fin 2)),
           ComplementComponent (A ∪ segment ℝ a b) C → C ∈ comps := by
+  classical
   have haA : a ∈ A := by
     rw [hA]
     exact Or.inl haV

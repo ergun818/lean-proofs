@@ -1,7 +1,6 @@
 import Util.IncidenceGeometry.UnitCircle
 import Util.IncidenceGeometry.UnitCircleCyclicAngleData
 
-open Classical
 noncomputable section
 
 lemma UnitCircleCyclicAngleArcRealization
@@ -29,6 +28,7 @@ lemma UnitCircleCyclicAngleArcRealization
           y.1 ∉ arcInterior x) ∧
           (∀ x y,
             x ≠ y → arcInterior x ∩ arcInterior y = ∅) := by
+  classical
   let angle :
       {x : EuclideanSpace ℝ (Fin 2) // x ∈ S} →
         Set.Icc (0 : ℝ) 1 → ℝ :=

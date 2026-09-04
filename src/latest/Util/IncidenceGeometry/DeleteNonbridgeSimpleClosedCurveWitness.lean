@@ -8,13 +8,12 @@ import Util.IncidenceGeometry.PlaneDartArcLocalGeometry
 import Mathlib.Combinatorics.SimpleGraph.Acyclic
 import Mathlib.Tactic
 
-open Classical
 noncomputable section
 
 lemma DeleteNonbridgeSimpleClosedCurveWitness {V : Type*} [Fintype V] (G : SimpleGraph V)
     [Fintype G.edgeSet] [DecidableRel G.Adj] (D : OrdinaryPolygonalDrawing G)
     (hD : D.crossingSet.card = 0) (A : PlaneFaceData G D) (e : G.edgeFinset)
-    (hconn : G.Connected) (he : ¬ G.IsBridge e.1) :
+    (_hconn : G.Connected) (he : ¬ G.IsBridge e.1) :
     ∃ d : G.Dart, d.edge = e.1 ∧
       ∃ J : SimpleClosedPolygonalCurve,
         J.carrier ⊆ OrdinaryDrawingImage G D ∧
@@ -68,12 +67,12 @@ lemma DeleteNonbridgeSimpleClosedCurveWitness {V : Type*} [Fintype V] (G : Simpl
         apply Nat.mod_eq_of_lt
         omega
       have hcur : arcs[0] = A.dartArc d := by
-        simpa [harcs]
+        simp [harcs]
       have hnext : arcs[(0 + 1) % arcs.length] = A.dartArc q.darts[0] := by
         have hmod' : 1 % (q.length + 1) = 1 := by
           apply Nat.mod_eq_of_lt
           omega
-        simpa [harcs, hmod', hq_darts_length_eq]
+        simp [harcs, hmod', hq_darts_length_eq]
       have hshare : d.toProd.2 = q.darts[0].toProd.1 := by
         have hdart := SimpleGraph.Walk.darts_getElem_eq_getVert (p := q) 0 hq_darts_pos
         rw [hdart]
@@ -105,14 +104,14 @@ lemma DeleteNonbridgeSimpleClosedCurveWitness {V : Type*} [Fintype V] (G : Simpl
         have hcur : arcs[i] = A.dartArc q.darts[j] := by
           have hj_lt_len : j < q.length := by
             simpa [hq_darts_length_eq] using hj_lt
-          simpa [harcs, hij, List.getElem_map, hj_lt_len]
+          simp [harcs, hij, List.getElem_map]
         have hnext : arcs[(i + 1) % arcs.length] = A.dartArc q.darts[j + 1] := by
           have hj_next_lt_len : j + 1 < q.length := by
             simpa [hq_darts_length_eq] using hj_next_lt
           have hmod' : (j + 1 + 1) % (q.length + 1) = j + 1 + 1 := by
             apply Nat.mod_eq_of_lt
             omega
-          simpa [harcs, hmod', hij, List.getElem_map, hj_next_lt_len]
+          simp [harcs, hmod', hij, List.getElem_map]
         have hshare : q.darts[j].toProd.2 = q.darts[j + 1].toProd.1 := by
           have hdart_j := SimpleGraph.Walk.darts_getElem_eq_getVert (p := q) j hj_lt
           have hdart_next := SimpleGraph.Walk.darts_getElem_eq_getVert (p := q) (j + 1) hj_next_lt
@@ -147,7 +146,7 @@ lemma DeleteNonbridgeSimpleClosedCurveWitness {V : Type*} [Fintype V] (G : Simpl
             rw [List.getLast_eq_getElem]
           have harcs_last :
               arcs.getLast (List.ne_nil_of_mem hγ) = A.dartArc q.darts[j] := by
-            simpa [harcs, List.getLast_cons, hmap_ne, hlast_dart, j]
+            simp [harcs, List.getLast_cons, hmap_ne, hlast_dart, j]
           have hidx_last :
               arcs[i] = arcs.getLast (List.ne_nil_of_mem hγ) := by
             rw [List.getLast_eq_getElem]
@@ -157,13 +156,12 @@ lemma DeleteNonbridgeSimpleClosedCurveWitness {V : Type*} [Fintype V] (G : Simpl
           have hmod' : (i + 1) % (q.length + 1) = 0 := by
             rw [hi_last, harcs_length_eq, hq_darts_length_eq]
             simp
-          simpa [harcs, hmod']
+          simp [harcs, hmod']
         have hshare : q.darts[j].toProd.2 = d.toProd.1 := by
           have hdart := SimpleGraph.Walk.darts_getElem_eq_getVert (p := q) j hj_lt
           rw [hdart]
           have hq_length_pos : 0 < q.length := by omega
-          simpa [j, hq_darts_length_eq, Nat.sub_add_cancel hq_length_pos] using
-            (SimpleGraph.Walk.getVert_length (p := q))
+          simp [j, hq_darts_length_eq, Nat.sub_add_cancel hq_length_pos]
         have hedge_ne : q.darts[j].edge ≠ d.edge := by
           intro hedge
           have hmem_edge : q.darts[j].edge ∈ q.edges := by
@@ -201,7 +199,7 @@ lemma DeleteNonbridgeSimpleClosedCurveWitness {V : Type*} [Fintype V] (G : Simpl
       intro hki
       apply hsuccδ_ne
       rw [hform_get k hk]
-      simpa [hki]
+      simp [hki]
     have dart_fst_get :
         ∀ r (hr : r < q.darts.length), q.darts[r].toProd.1 = q.getVert r := by
       intro r hr
@@ -335,9 +333,9 @@ lemma DeleteNonbridgeSimpleClosedCurveWitness {V : Type*} [Fintype V] (G : Simpl
           simp
         rcases selected_path_endpoint_ne sidx hsidx_lt hsidx_ne_zero hsidx_succ_ne_len with
           ⟨hff, hfs, hsf, hss⟩
-        have hcur : arcs[0] = A.dartArc d := by simpa [harcs]
+        have hcur : arcs[0] = A.dartArc d := by simp [harcs]
         have hdel : arcs[k] = A.dartArc q.darts[sidx] := by
-          simpa [harcs, hk_eq, List.getElem_map]
+          simp [harcs, hk_eq, List.getElem_map]
         have hdisj := hlocal_geom.2 d q.darts[sidx] hff hfs hsf hss
         simpa [hcur, hdel] using hdisj
     · by_cases hk_zero : k = 0
@@ -365,8 +363,8 @@ lemma DeleteNonbridgeSimpleClosedCurveWitness {V : Type*} [Fintype V] (G : Simpl
         rcases selected_path_endpoint_ne ridx hridx_lt hridx_ne_zero hridx_succ_ne_len with
           ⟨hff, hfs, hsf, hss⟩
         have hcur : arcs[i] = A.dartArc q.darts[ridx] := by
-          simpa [harcs, hi_eq, List.getElem_map]
-        have hdel : arcs[0] = A.dartArc d := by simpa [harcs]
+          simp [harcs, hi_eq, List.getElem_map]
+        have hdel : arcs[0] = A.dartArc d := by simp [harcs]
         have hdisj := (hlocal_geom.2 d q.darts[ridx] hff hfs hsf hss).symm
         simpa [hcur, hdel] using hdisj
       · let ridx := i - 1
@@ -407,9 +405,9 @@ lemma DeleteNonbridgeSimpleClosedCurveWitness {V : Type*} [Fintype V] (G : Simpl
             hssucc_ne_r with
           ⟨hff, hfs, hsf, hss⟩
         have hcur : arcs[i] = A.dartArc q.darts[ridx] := by
-          simpa [harcs, hi_eq, List.getElem_map]
+          simp [harcs, hi_eq, List.getElem_map]
         have hdel : arcs[k] = A.dartArc q.darts[sidx] := by
-          simpa [harcs, hk_eq, List.getElem_map]
+          simp [harcs, hk_eq, List.getElem_map]
         have hdisj := hlocal_geom.2 q.darts[ridx] q.darts[sidx] hff hfs hsf hss
         simpa [hcur, hdel] using hdisj
   rcases SimpleClosedPolygonalCurveOfCyclicArcList arcs harcs_nodup harcs_length_two

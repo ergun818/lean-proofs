@@ -1,7 +1,6 @@
 import Util.IncidenceGeometry.ComplementComponentAbsorbsConnectedSubset
 import Util.IncidenceGeometry.PlaneFaceData
 
-open Classical
 noncomputable section
 
 lemma PlaneFaceDataVertexSectorIncidentFace {V : Type*} [Fintype V]
@@ -14,6 +13,7 @@ lemma PlaneFaceDataVertexSectorIncidentFace {V : Type*} [Fintype V]
             y ≠ D.vertexPlacement v →
               y ∈ (OrdinaryDrawingImage G D)ᶜ →
                 ∃ d : G.Dart, A.leftFace d = F := by
+  classical
   intro F v y hyF hvIncident hyBall hyNe hyCompl
   rcases A.vertex_sector_coverage v y hvIncident hyBall hyNe hyCompl with
     ⟨d, _hdHead, sector, hySector, _hsectorOpen, hsectorConnected,

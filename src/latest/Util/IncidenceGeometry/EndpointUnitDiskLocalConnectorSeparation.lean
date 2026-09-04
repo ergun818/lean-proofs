@@ -1,6 +1,5 @@
 import Util.IncidenceGeometry.Basic
 
-open Classical
 noncomputable section
 
 lemma EndpointUnitDiskLocalConnectorSeparation {κ : Type*}
@@ -60,6 +59,7 @@ lemma EndpointUnitDiskLocalConnectorSeparation {κ : Type*}
                     segment ℝ (toWorld (R i)) (toWorld (point (β i) (m i * β i))) ∩
                       segment ℝ (toWorld (M j)) (toWorld (R j)) =
                     ∅) := by
+  classical
   intro point
   let A : κ → EuclideanSpace ℝ (Fin 2) :=
     fun i => point (-(α i)) (-(m i * α i))

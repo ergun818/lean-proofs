@@ -9,7 +9,6 @@ import Util.IncidenceGeometry.PolygonalJordanSeparation
 import Util.IncidenceGeometry.PolygonalSideStrips
 import Util.IncidenceGeometry.SimpleClosedPolygonalCurve
 
-open Classical
 noncomputable section
 
 lemma PlaneFaceDataJordanCurveSideStripsSeparated {V : Type*} [Fintype V]

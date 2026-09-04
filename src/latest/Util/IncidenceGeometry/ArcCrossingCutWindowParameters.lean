@@ -3,7 +3,6 @@ import Mathlib.Analysis.Convex.Topology
 import Mathlib.Analysis.Normed.Affine.AddTorsor
 import Mathlib.Tactic
 
-open Classical
 noncomputable section
 
 lemma ArcCrossingCutWindowParameters
@@ -18,6 +17,7 @@ lemma ArcCrossingCutWindowParameters
                 0 < b ∧ b < p ∧ p < a ∧ a < 1 ∧
                   AffineMap.lineMap α.vertices[i] α.vertices[i + 1] b = before ∧
                     AffineMap.lineMap α.vertices[i] α.vertices[i + 1] a = after := by
+  classical
   intro hp0 hp1 hx hbefore hafter
   let A := α.vertices[i]
   let B := α.vertices[i + 1]

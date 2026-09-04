@@ -4,13 +4,13 @@ import Util.IncidenceGeometry.PlanarRot90
 import Util.IncidenceGeometry.PlanarSphereGateInwardPointAvoidance
 import Util.IncidenceGeometry.PolygonalArcOrderedBallCutData
 
-open Classical
 noncomputable section
 
 private lemma endpointSide_signed_values_ne
     (sm sp a b : ℝ)
     (hsm : sm = 1 ∨ sm = -1) (hsp : sp = 1 ∨ sp = -1)
     (hsign : sm ≠ sp) (ha : 0 < sm * a) (hb : 0 < sp * b) : a ≠ b := by
+  classical
   rcases hsm with rfl | rfl <;> rcases hsp with rfl | rfl
   · exact False.elim (hsign rfl)
   · norm_num at ha hb
@@ -30,6 +30,7 @@ private lemma endpointSide_contact_subsingleton
     (hcontact : ∀ z, z ∈ bridge.relativeInterior → z ∈ H →
       z ∈ openSegment ℝ rminus rplus ∧ sm ≠ sp ∧ side (z - p) = 0) :
     (bridge.relativeInterior ∩ H).Subsingleton := by
+  classical
   intro z hz w hw
   rcases hcontact z hz.1 hz.2 with ⟨hzMiddle, hsign, hzZero⟩
   rcases hcontact w hw.1 hw.2 with ⟨hwMiddle, _hsign, hwZero⟩
@@ -90,6 +91,7 @@ private lemma endpointSide_contact_certificate
           z ∈ openSegment ℝ s.1 s.2 ∧
             ¬ ∃ c : ℝ,
               s.2 - s.1 = c • (bridge.vertices[j + 1] - bridge.vertices[j]) := by
+  classical
   intro z hzInterior hzH
   rcases hcontact z hzInterior hzH with ⟨hzMiddle, hzListed, hsign⟩
   have hvalues_ne : side (rminus - p) ≠ side (rplus - p) :=
@@ -102,7 +104,7 @@ private lemma endpointSide_contact_certificate
     rw [hmap]
     exact sub_ne_zero.mpr hvalues_ne.symm
   refine ⟨1, ?_, ?_, hzListed, ?_⟩
-  · simpa [hbridgeVertices]
+  · simp [hbridgeVertices]
   · simpa [hbridgeVertices] using hzMiddle
   · rintro ⟨c, hc⟩
     have hc' : s.2 - s.1 = c • (rplus - rminus) := by
@@ -114,7 +116,6 @@ private lemma endpointSide_contact_certificate
     have hparallelMap := congrArg side hc'
     rw [hsideDirection, map_smul] at hparallelMap
     exact (mul_ne_zero hc_ne hmiddleDirection) hparallelMap.symm
-
 
 lemma EndpointSidePrefixEventBridge
     (Q : PolygonalArc)
@@ -156,6 +157,7 @@ lemma EndpointSidePrefixEventBridge
                 ¬ ∃ c : ℝ,
                   s.2 - s.1 =
                     c • (bridge.vertices[j + 1] - bridge.vertices[j]) := by
+  classical
   intro hSelectedOpen hqminusSelected hqplusSelected hSelectedConvex
     hKcarrier hKpoints hSelectedBad hsK hpOpen hlocal
   let E := EuclideanSpace ℝ (Fin 2)
@@ -255,7 +257,7 @@ lemma EndpointSidePrefixEventBridge
       0 < ((signCoeff q) • side) ((signCoeff q) • normal) := by
     intro q
     rw [map_smul]
-    simp only [ContinuousLinearMap.coe_smul', Pi.smul_apply, smul_eq_mul]
+    simp only [FunLike.coe_smul, Pi.smul_apply, smul_eq_mul]
     rw [← mul_assoc, signCoeff_sq, one_mul]
     simpa using hside_normal
   obtain ⟨epsMinus, hepsMinus, hballMinusSelected⟩ :=
@@ -304,7 +306,7 @@ lemma EndpointSidePrefixEventBridge
       K.points firstLines hradius D.qminus_mem_sphere Metric.isOpen_ball
       (Metric.mem_ball_self hgateRadius)
       (by
-        simp only [ContinuousLinearMap.coe_smul', Pi.smul_apply, smul_eq_mul]
+        simp only [FunLike.coe_smul, Pi.smul_apply, smul_eq_mul]
         exact signCoeff_gate_nonneg D.qminus)
       (signed_normal_pos D.qminus) hfirstLines
   have hrminusSelected : rminus ∈ SelectedSide :=
@@ -342,7 +344,7 @@ lemma EndpointSidePrefixEventBridge
       K.points secondLines hradius D.qplus_mem_sphere Metric.isOpen_ball
       (Metric.mem_ball_self hgateRadius)
       (by
-        simp only [ContinuousLinearMap.coe_smul', Pi.smul_apply, smul_eq_mul]
+        simp only [FunLike.coe_smul, Pi.smul_apply, smul_eq_mul]
         exact signCoeff_gate_nonneg D.qplus)
       (signed_normal_pos D.qplus) hsecondLines
   have hrplusSelected : rplus ∈ SelectedSide :=
@@ -686,14 +688,14 @@ lemma EndpointSidePrefixEventBridge
     apply Set.Subset.antisymm
     · intro z hz
       by_cases hzqm : z = D.qminus
-      · simpa [hzqm]
+      · simp [hzqm]
       by_cases hzqp : z = D.qplus
       · exfalso
         exact (Set.disjoint_left.mp D.prefix_suffix_disjoint hz.1)
           (by simpa [hzqp] using hqplusSuffix)
       have hzInterior : z ∈ bridge.relativeInterior := by
         rw [bridge.relativeInterior_eq]
-        exact ⟨hz.2, by simpa [hbridgeSource, hbridgeTarget, hzqm, hzqp]⟩
+        exact ⟨hz.2, by simp [hbridgeSource, hbridgeTarget, hzqm, hzqp]⟩
       exact False.elim
         (Set.disjoint_left.mp D.prefix_avoids_ball hz.1
           (hbridgeInterior hzInterior).2)
@@ -704,14 +706,14 @@ lemma EndpointSidePrefixEventBridge
     apply Set.Subset.antisymm
     · intro z hz
       by_cases hzqp : z = D.qplus
-      · simpa [hzqp]
+      · simp [hzqp]
       by_cases hzqm : z = D.qminus
       · exfalso
         exact (Set.disjoint_left.mp D.prefix_suffix_disjoint hqminusPrefix)
           (by simpa [hzqm] using hz.2)
       have hzInterior : z ∈ bridge.relativeInterior := by
         rw [bridge.relativeInterior_eq]
-        exact ⟨hz.1, by simpa [hbridgeSource, hbridgeTarget, hzqm, hzqp]⟩
+        exact ⟨hz.1, by simp [hbridgeSource, hbridgeTarget, hzqm, hzqp]⟩
       exact False.elim
         (Set.disjoint_left.mp D.suffix_avoids_ball hz.2
           (hbridgeInterior hzInterior).2)

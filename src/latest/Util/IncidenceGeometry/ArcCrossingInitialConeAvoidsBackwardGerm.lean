@@ -3,7 +3,6 @@ import Mathlib.Analysis.Normed.Affine.AddTorsor
 import Util.IncidenceGeometry.PlanarRot90CoefficientUniqueness
 import Util.IncidenceGeometry.PolygonalArcInitialEndpointCone
 
-open Classical
 noncomputable section
 
 lemma ArcCrossingInitialConeAvoidsBackwardGerm
@@ -24,10 +23,8 @@ lemma ArcCrossingInitialConeAvoidsBackwardGerm
       omega
     have hget :
         (δ.vertices.drop (j + 1))[0] = δ.vertices[j + 1] := by
-      simpa using
-        (List.getElem_drop (xs := δ.vertices) (i := j + 1) (j := 0)
-          (h := hdrop))
-    simpa [hτvertices] using hget
+      simp
+    simp [hτvertices]
   have hδneq : δ.vertices[j] ≠ δ.vertices[j + 1] := by
     intro hEq
     have hidx : j = j + 1 :=
@@ -80,7 +77,7 @@ lemma ArcCrossingInitialConeAvoidsBackwardGerm
           (-(u * (a / (1 - a)))) • dvec + (0 : ℝ) • PlanarRot90 dvec := by
     calc
       z - c = AffineMap.lineMap c δ.vertices[j] u - c := by
-        simpa [hzBackEq]
+        simp [hzBackEq]
       _ = u • (δ.vertices[j] - c) := by
         ext k
         simp [AffineMap.lineMap_apply_module]

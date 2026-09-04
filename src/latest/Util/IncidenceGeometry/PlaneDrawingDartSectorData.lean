@@ -4,7 +4,6 @@ import Util.IncidenceGeometry.OrdinaryPolygonalDrawing
 import Util.IncidenceGeometry.PolygonalSideStrips
 import Mathlib.Combinatorics.SimpleGraph.DegreeSum
 
-open Classical
 noncomputable section
 
 structure PlaneDrawingDartSectorData {V : Type*} [Fintype V] (G : SimpleGraph V)

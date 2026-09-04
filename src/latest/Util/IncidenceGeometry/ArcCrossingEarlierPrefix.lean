@@ -1,7 +1,6 @@
 import Mathlib.Tactic
 import Util.IncidenceGeometry.PolygonalArc
 
-open Classical
 noncomputable section
 
 def ArcCrossingEarlierPrefix (δ : PolygonalArc) (j : ℕ)

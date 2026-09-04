@@ -2,9 +2,7 @@ import Util.IncidenceGeometry.PolygonalArcEndpointDiskCappedTaperChartTransport
 import Util.IncidenceGeometry.PolygonalArcCollarCompatibleOrientedTubeData
 
 open Set
-open Classical
 noncomputable section
-
 
 lemma PolygonalArcInitialEndpointDiskCappedTaperSideLabelling
     (γ : PolygonalArc) {η : ℝ}
@@ -56,6 +54,7 @@ lemma PolygonalArcInitialEndpointDiskCappedTaperSideLabelling
       chart '' C \ chart '' G = chart '' L ∪ chart '' R ∧
       sep.leftHalf j hj ∩ chart '' C ⊆ chart '' L ∧
       sep.rightHalf j hj ∩ chart '' C ⊆ chart '' R := by
+  classical
   intro sep d K chart a C L R G
   have hdist_pos : 0 < dist γ.vertices[j] γ.vertices[j + 1] := by
     have hsum := controlRadii.adjacent_radii_sum_lt (j := j) hj

@@ -1,7 +1,6 @@
 import Util.IncidenceGeometry.SimpleClosedPolygonalCurve
 import Util.IncidenceGeometry.FinitePolygonalSet
 
-open Classical
 noncomputable section
 
 lemma FinitePolygonalSetCyclicListedPointOnElementarySegment
@@ -13,6 +12,7 @@ lemma FinitePolygonalSetCyclicListedPointOnElementarySegment
         p.1 ∈ segment ℝ
           (γ.1.vertices[n]'(Nat.lt_of_succ_lt hn))
           (γ.1.vertices[n + 1]'hn) := by
+  classical
   have hpK : p.1 ∈ K.carrier := by
     rw [K.carrier_eq]
     exact Or.inl p.2

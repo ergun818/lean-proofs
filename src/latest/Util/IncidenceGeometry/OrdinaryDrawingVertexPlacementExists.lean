@@ -1,11 +1,11 @@
 import Util.IncidenceGeometry.Basic
 
-open Classical
 noncomputable section
 
-lemma OrdinaryDrawingVertexPlacementExists (V : Type*) [Fintype V] :
+lemma OrdinaryDrawingVertexPlacementExists (V : Type*) [Finite V] :
     ∃ placement : V → EuclideanSpace ℝ (Fin 2), Function.Injective placement := by
   classical
+  let := Fintype.ofFinite V
   let e : V ≃ Fin (Fintype.card V) := Fintype.equivFin V
   let placement : V → EuclideanSpace ℝ (Fin 2) :=
     fun v => (WithLp.equiv 2 (Fin 2 → ℝ)).symm
@@ -16,5 +16,6 @@ lemma OrdinaryDrawingVertexPlacementExists (V : Type*) [Fintype V] :
   apply Fin.ext
   have h0 := congrArg
     (fun p : EuclideanSpace ℝ (Fin 2) => (WithLp.equiv 2 (Fin 2 → ℝ) p) 0) hvw
-  simp [placement] at h0
+  simp only [Fin.isValue, WithLp.equiv_symm_apply, WithLp.equiv_apply, ↓reduceIte, Nat.cast_inj,
+    placement] at h0
   exact_mod_cast h0

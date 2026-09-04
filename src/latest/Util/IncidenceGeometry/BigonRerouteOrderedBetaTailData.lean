@@ -1,6 +1,5 @@
 import Util.IncidenceGeometry.OrdinaryPolygonalDrawing
 
-open Classical
 noncomputable section
 
 structure BigonRerouteOrderedBetaTailData {V : Type*} [Fintype V]

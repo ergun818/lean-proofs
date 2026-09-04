@@ -1,7 +1,6 @@
 import Util.IncidenceGeometry.FinitePointLineAvoidance
 import Util.IncidenceGeometry.FinitePolygonalSet
 
-open Classical
 noncomputable section
 
 lemma FinalVertexPolygonalScreening
@@ -26,6 +25,7 @@ lemma FinalVertexPolygonalScreening
         ∀ p : EuclideanSpace ℝ (Fin 2),
           p ∈ openSegment ℝ x b → p ∈ openSegment ℝ s.1 s.2 →
             ¬ ∃ c : ℝ, s.2 - s.1 = c • (b - x)) := by
+  classical
   let E := EuclideanSpace ℝ (Fin 2)
   have line_dim_test :
       ∀ (u v : E), u ≠ v →

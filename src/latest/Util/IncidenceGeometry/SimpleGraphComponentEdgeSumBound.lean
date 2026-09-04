@@ -3,7 +3,6 @@ import Mathlib.Algebra.Order.BigOperators.Group.Finset
 import Mathlib.Combinatorics.SimpleGraph.Connectivity.Finite
 import Util.IncidenceGeometry.Basic
 
-open Classical
 noncomputable section
 
 lemma SimpleGraphComponentEdgeSumBound {V : Type*} [Fintype V] [DecidableEq V]

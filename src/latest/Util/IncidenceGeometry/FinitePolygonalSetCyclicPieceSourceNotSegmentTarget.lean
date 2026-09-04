@@ -1,6 +1,5 @@
 import Util.IncidenceGeometry.SimpleClosedPolygonalCurve
 
-open Classical
 noncomputable section
 
 lemma FinitePolygonalSetCyclicPieceSourceNotSegmentTarget
@@ -68,6 +67,7 @@ lemma FinitePolygonalSetCyclicPieceSourceNotSegmentTarget
       pieceSource i ≠
         (E[i.1.1]'i.1.2).1.vertices[i.2.1.1 + 1]'
           (segmentIndex_lt i.1 i.2.1) := by
+  classical
   intro PieceIndex i hsource_terminal
   have hv_ne :
       (E[i.1.1]'i.1.2).1.vertices[i.2.1.1]'(Nat.lt_of_succ_lt

@@ -6,7 +6,6 @@ import Util.IncidenceGeometry.InducedSubdrawingBridge
 import Util.IncidenceGeometry.NoAdjacentMinimalDrawing
 import Util.IncidenceGeometry.FinitePowersetBernoulliFamilyMoment
 
-open Classical
 open scoped Real
 noncomputable section
 
@@ -177,7 +176,7 @@ theorem CrossingLemma {V : Type*} [Fintype V] (G : SimpleGraph V)
           rw [hInduceVal]
           simpa [ed, Sym2.attachWith_map_subtypeVal] using
             (SimpleGraph.mem_edgeFinset.mp heG)
-        · simpa [ed, Sym2.attachWith_map_subtypeVal]
+        · simp [ed, Sym2.attachWith_map_subtypeVal]
 
     let oldPoint : DX.crossingSet → CrossingPoint := fun z =>
       ⟨z.1, by

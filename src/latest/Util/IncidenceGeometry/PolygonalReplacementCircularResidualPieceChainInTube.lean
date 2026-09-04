@@ -3,11 +3,9 @@ import Util.IncidenceGeometry.PolygonalReplacementCircularMiddleSubarcSampledByS
 import Util.IncidenceGeometry.PolygonalReplacementCircularResidualPieceCircleData
 import Util.IncidenceGeometry.PolygonalArcFromCircularOrderedSamples
 
-open Classical
 noncomputable section
 
 universe u
-
 
 lemma PolygonalReplacementCircularResidualPieceChainInTube {V : Type u}
     [Fintype V] (G : SimpleGraph V) [Fintype G.edgeSet]
@@ -144,11 +142,11 @@ lemma PolygonalReplacementCircularResidualPieceChainInTube {V : Type u}
             ext
             rfl
           rw [hidx]
-          show @Fin.snoc (m + 2) (fun _ => Set.Icc (0 : ℝ) 1) baseParams
+          change @Fin.snoc (m + 2) (fun _ => Set.Icc (0 : ℝ) 1) baseParams
               (residualPieceData.targetParam i)
               (Fin.castSucc (1 : Fin (m + 2))) = params 0
           rw [Fin.snoc_castSucc]
-          show @Fin.cons (m + 1) (fun _ => Set.Icc (0 : ℝ) 1)
+          change @Fin.cons (m + 1) (fun _ => Set.Icc (0 : ℝ) 1)
               (residualPieceData.sourceParam i) params (1 : Fin (m + 2)) =
             params 0
           rw [Fin.cons_one]
@@ -156,22 +154,22 @@ lemma PolygonalReplacementCircularResidualPieceChainInTube {V : Type u}
       · intro n
         have hleft :
             fullParams n.castSucc.castSucc.succ = params (Fin.castSucc n) := by
-          show @Fin.snoc (m + 2) (fun _ => Set.Icc (0 : ℝ) 1) baseParams
+          change @Fin.snoc (m + 2) (fun _ => Set.Icc (0 : ℝ) 1) baseParams
               (residualPieceData.targetParam i)
               (n.castSucc.castSucc.succ) = params (Fin.castSucc n)
           rw [Fin.succ_castSucc (i := n.castSucc), Fin.snoc_castSucc]
-          show @Fin.cons (m + 1) (fun _ => Set.Icc (0 : ℝ) 1)
+          change @Fin.cons (m + 1) (fun _ => Set.Icc (0 : ℝ) 1)
               (residualPieceData.sourceParam i) params
               (n.castSucc.succ) = params (Fin.castSucc n)
           rw [Fin.cons_succ]
         have hright :
             fullParams n.castSucc.succ.succ = params (Fin.succ n) := by
-          show @Fin.snoc (m + 2) (fun _ => Set.Icc (0 : ℝ) 1) baseParams
+          change @Fin.snoc (m + 2) (fun _ => Set.Icc (0 : ℝ) 1) baseParams
               (residualPieceData.targetParam i)
               (n.castSucc.succ.succ) = params (Fin.succ n)
           rw [Fin.succ_castSucc (i := n), Fin.succ_castSucc (i := n.succ),
             Fin.snoc_castSucc]
-          show @Fin.cons (m + 1) (fun _ => Set.Icc (0 : ℝ) 1)
+          change @Fin.cons (m + 1) (fun _ => Set.Icc (0 : ℝ) 1)
               (residualPieceData.sourceParam i) params
               (n.succ.succ) = params (Fin.succ n)
           rw [Fin.cons_succ]
@@ -191,11 +189,11 @@ lemma PolygonalReplacementCircularResidualPieceChainInTube {V : Type u}
         ext
         rfl
       rw [hidx]
-      show @Fin.snoc (m + 2) (fun _ => Set.Icc (0 : ℝ) 1) baseParams
+      change @Fin.snoc (m + 2) (fun _ => Set.Icc (0 : ℝ) 1) baseParams
           (residualPieceData.targetParam i)
           (Fin.castSucc (1 : Fin (m + 2))) = params 0
       rw [Fin.snoc_castSucc]
-      show @Fin.cons (m + 1) (fun _ => Set.Icc (0 : ℝ) 1)
+      change @Fin.cons (m + 1) (fun _ => Set.Icc (0 : ℝ) 1)
           (residualPieceData.sourceParam i) params (1 : Fin (m + 2)) =
         params 0
       rw [Fin.cons_one]
@@ -227,11 +225,11 @@ lemma PolygonalReplacementCircularResidualPieceChainInTube {V : Type u}
     intro k
     have h :
         fullParams k.castSucc.castSucc.succ = params (Fin.castSucc k) := by
-      show @Fin.snoc (m + 2) (fun _ => Set.Icc (0 : ℝ) 1) baseParams
+      change @Fin.snoc (m + 2) (fun _ => Set.Icc (0 : ℝ) 1) baseParams
           (residualPieceData.targetParam i)
           (k.castSucc.castSucc.succ) = params (Fin.castSucc k)
       rw [Fin.succ_castSucc (i := k.castSucc), Fin.snoc_castSucc]
-      show @Fin.cons (m + 1) (fun _ => Set.Icc (0 : ℝ) 1)
+      change @Fin.cons (m + 1) (fun _ => Set.Icc (0 : ℝ) 1)
           (residualPieceData.sourceParam i) params
           (k.castSucc.succ) = params (Fin.castSucc k)
       rw [Fin.cons_succ]
@@ -247,12 +245,12 @@ lemma PolygonalReplacementCircularResidualPieceChainInTube {V : Type u}
     intro k
     have h :
         fullParams k.castSucc.succ.succ = params (Fin.succ k) := by
-      show @Fin.snoc (m + 2) (fun _ => Set.Icc (0 : ℝ) 1) baseParams
+      change @Fin.snoc (m + 2) (fun _ => Set.Icc (0 : ℝ) 1) baseParams
           (residualPieceData.targetParam i)
           (k.castSucc.succ.succ) = params (Fin.succ k)
       rw [Fin.succ_castSucc (i := k), Fin.succ_castSucc (i := k.succ),
         Fin.snoc_castSucc]
-      show @Fin.cons (m + 1) (fun _ => Set.Icc (0 : ℝ) 1)
+      change @Fin.cons (m + 1) (fun _ => Set.Icc (0 : ℝ) 1)
           (residualPieceData.sourceParam i) params
           (k.succ.succ) = params (Fin.succ k)
       rw [Fin.cons_succ]

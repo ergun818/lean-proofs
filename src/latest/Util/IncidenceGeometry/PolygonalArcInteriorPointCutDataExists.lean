@@ -6,7 +6,6 @@ import Util.IncidenceGeometry.PolygonalArcVertexMemCarrier
 import Util.IncidenceGeometry.PolygonalPathConstant
 import Mathlib.Tactic
 
-open Classical
 noncomputable section
 
 private lemma polygonalArc_suffix_carrier_region
@@ -16,11 +15,12 @@ private lemma polygonalArc_suffix_carrier_region
     (hSzero : S.vertices[0] = c)
     (hSsucc : ∀ n (hn : n + 1 < S.vertices.length),
       S.vertices[n + 1] = Q.vertices[i + 1 + n])
-    (hSpos : ∀ n (hnpos : 0 < n) (hn : n < S.vertices.length),
+    (hSpos : ∀ n (_hnpos : 0 < n) (hn : n < S.vertices.length),
       S.vertices[n] = Q.vertices[i + n]) :
     S.carrier = segment ℝ c Q.vertices[i + 1] ∪
       {z | ∃ m : ℕ, ∃ hm : m + 1 < Q.vertices.length,
         i < m ∧ z ∈ segment ℝ Q.vertices[m] Q.vertices[m + 1]} := by
+  classical
   rw [S.carrier_eq]
   ext z
   constructor
@@ -65,6 +65,7 @@ private lemma polygonalArc_prefix_carrier_region
       {z | ∃ m : ℕ, ∃ hm : m + 1 < Q.vertices.length,
           m < i ∧ z ∈ segment ℝ Q.vertices[m] Q.vertices[m + 1]} ∪
         segment ℝ Q.vertices[i] c := by
+  classical
   rw [P.carrier_eq]
   ext z
   constructor
@@ -107,6 +108,7 @@ private lemma polygonalArc_carrier_decomposition_of_cut_regions
       z ∈ segment ℝ Q.vertices[i] c ∨
         z ∈ segment ℝ c Q.vertices[i + 1]) :
     Q.carrier = P.carrier ∪ S.carrier := by
+  classical
   ext z
   constructor
   · intro hz
@@ -148,6 +150,7 @@ private lemma polygonalArc_cut_regions_intersection
     (hleft_not_right : Q.vertices[i] ∉ segment ℝ c Q.vertices[i + 1])
     (hright_not_left : Q.vertices[i + 1] ∉ segment ℝ Q.vertices[i] c) :
     P.carrier ∩ S.carrier = {c} := by
+  classical
   ext z
   constructor
   · rintro ⟨hzP, hzS⟩
@@ -204,6 +207,7 @@ private lemma polygonalArc_openSegment_index_unique
     (ha : a + 1 < Q.vertices.length) (hb : b + 1 < Q.vertices.length)
     (hza : z ∈ openSegment ℝ Q.vertices[a] Q.vertices[a + 1])
     (hzb : z ∈ segment ℝ Q.vertices[b] Q.vertices[b + 1]) : a = b := by
+  classical
   have habne : Q.vertices[a] ≠ Q.vertices[a + 1] := by
     intro heq
     have hidx := (Q.simple_vertices.getElem_inj_iff
@@ -242,6 +246,7 @@ private lemma polygonalArc_getElem_eq_of_index_eq
     {α : Type*} (xs : List α) (a b : ℕ)
     (ha : a < xs.length) (hb : b < xs.length) (hab : a = b) :
     xs[a]'ha = xs[b]'hb := by
+  classical
   subst b
   rfl
 
@@ -255,6 +260,7 @@ private lemma polygonalArc_segment_cut_geometry
       q ∉ segment ℝ p c ∧
       ∀ z ∈ segment ℝ p q,
         z ∈ segment ℝ p c ∨ z ∈ segment ℝ c q := by
+  classical
   let E := EuclideanSpace ℝ (Fin 2)
   have hcParam := hc
   rw [openSegment_eq_image_lineMap] at hcParam
@@ -339,6 +345,7 @@ private lemma polygonalArc_prefix_segment_transfer
           ∃ scale : ℝ, scale ≠ 0 ∧
             P.vertices[j + 1] - P.vertices[j] =
               scale • (Q.vertices[a + 1] - Q.vertices[a]) := by
+  classical
   intro z a ha hza hzP hzc
   rw [hPregion] at hzP
   rcases hzP with ⟨m, hm, hmi, hzm⟩ | hzpartial
@@ -392,7 +399,7 @@ private lemma polygonalArc_suffix_segment_transfer
     (hSzero : S.vertices[0] = c)
     (hSsucc : ∀ n (hn : n + 1 < S.vertices.length),
       S.vertices[n + 1] = Q.vertices[i + 1 + n])
-    (hSpos : ∀ n (hnpos : 0 < n) (hn : n < S.vertices.length),
+    (hSpos : ∀ n (_hnpos : 0 < n) (hn : n < S.vertices.length),
       S.vertices[n] = Q.vertices[i + n])
     (t : ℝ) (ht : t ∈ Set.Ioo (0 : ℝ) 1)
     (htc : (AffineMap.lineMap Q.vertices[i] Q.vertices[i + 1]) t = c)
@@ -405,6 +412,7 @@ private lemma polygonalArc_suffix_segment_transfer
           ∃ scale : ℝ, scale ≠ 0 ∧
             S.vertices[j + 1] - S.vertices[j] =
               scale • (Q.vertices[a + 1] - Q.vertices[a]) := by
+  classical
   intro z a ha hza hzS hzc
   rw [hSregion] at hzS
   rcases hzS with hzpartial | ⟨m, hm, him, hzm⟩
@@ -472,6 +480,7 @@ private lemma polygonalArc_protected_first_vertices
       c ∉ segment ℝ Q.vertices[0] Q.vertices[1] →
       ∃ hprefix : 0 + 1 < P.vertices.length,
         P.vertices[0] = Q.vertices[0] ∧ P.vertices[1] = Q.vertices[1] := by
+  classical
   intro _hfirst hcut
   have hiPos : 0 < i := by
     by_contra hnot
@@ -483,12 +492,12 @@ private lemma polygonalArc_protected_first_vertices
     omega
   exact ⟨hPfirst, hPbefore 0 (by omega), hPbefore 1 (by omega)⟩
 
-
 lemma PolygonalArcInteriorPointCutDataExists
     (Q : PolygonalArc) (i : ℕ) (hi : i + 1 < Q.vertices.length)
     (c : EuclideanSpace ℝ (Fin 2))
     (hc : c ∈ openSegment ℝ Q.vertices[i] Q.vertices[i + 1]) :
     Nonempty (PolygonalArcPointCutData Q c) := by
+  classical
   let E := EuclideanSpace ℝ (Fin 2)
   have hcarrier_ne : Q.carrier ≠ Set.univ :=
     (PolygonalArcCarrierCompact Q).ne_univ
@@ -717,9 +726,7 @@ lemma PolygonalArcInteriorPointCutDataExists
     calc
       P.vertices[i + 1] = (Q.vertices.take (i + 1) ++ [c])[i + 1] := hval
       _ = c := by
-        simpa using List.getElem_append_right
-          (as := Q.vertices.take (i + 1)) (bs := [c])
-          (i := i + 1)
+        simp
   have hSregion : S.carrier =
       segment ℝ c Q.vertices[i + 1] ∪
         {z | ∃ m : ℕ, ∃ hm : m + 1 < Q.vertices.length,

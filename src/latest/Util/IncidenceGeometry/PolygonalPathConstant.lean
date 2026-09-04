@@ -1,6 +1,5 @@
 import Util.IncidenceGeometry.PolygonalPath
 
-open Classical
 noncomputable section
 
 lemma PolygonalPathConstant (p : EuclideanSpace ℝ (Fin 2)) :
@@ -8,6 +7,7 @@ lemma PolygonalPathConstant (p : EuclideanSpace ℝ (Fin 2)) :
       γ.source = p ∧
         γ.target = p ∧
           γ.carrier = ({p} : Set (EuclideanSpace ℝ (Fin 2))) := by
+  classical
   let γ : PolygonalPath :=
     { vertices := [p]
       vertices_nonempty := by simp

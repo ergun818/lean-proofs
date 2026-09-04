@@ -17,7 +17,6 @@ import Util.IncidenceGeometry.PolygonalArcTerminalEndpointLeftCone
 import Util.IncidenceGeometry.PolygonalSideStrips
 import Mathlib.Combinatorics.SimpleGraph.DegreeSum
 
-open Classical
 noncomputable section
 
 lemma PlaneDrawingDartSideStripDataFromCollarChoices {V : Type*} [Fintype V]
@@ -28,6 +27,7 @@ lemma PlaneDrawingDartSideStripDataFromCollarChoices {V : Type*} [Fintype V]
     ∃ S : PlaneDrawingDartSideStripData G D A C.star,
       (∀ d : G.Dart, S.leftSideStrip d = (P.sideStrips d).leftStrip) ∧
         (∀ d : G.Dart, S.rightSideStrip d = (P.sideStrips d).rightStrip) := by
+  classical
   refine ⟨?_, ?_, ?_⟩
   · refine
       { leftSideStrip := fun d => (P.sideStrips d).leftStrip

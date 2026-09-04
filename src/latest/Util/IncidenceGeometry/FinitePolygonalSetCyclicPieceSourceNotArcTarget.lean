@@ -1,6 +1,5 @@
 import Util.IncidenceGeometry.FinitePolygonalSetCyclicPieceSourceNotSegmentTarget
 
-open Classical
 noncomputable section
 
 lemma FinitePolygonalSetCyclicPieceSourceNotArcTarget
@@ -66,6 +65,7 @@ lemma FinitePolygonalSetCyclicPieceSourceNotArcTarget
           localPieceIndex e n))
     ∀ i : PieceIndex,
       pieceSource i ≠ (E[i.1.1]'i.1.2).1.target := by
+  classical
   intro PieceIndex i hsource_target
   let γ : PolygonalArc := (E[i.1.1]'i.1.2).1
   let n : Fin (γ.vertices.length - 1) := i.2.1

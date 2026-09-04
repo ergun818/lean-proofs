@@ -4,14 +4,12 @@ import Util.IncidenceGeometry.PlanarRot90ConeAvoidsFiniteRays
 import Util.IncidenceGeometry.PlanarRot90Decomposition
 import Util.IncidenceGeometry.PolygonalArcEndpointDiskCappedTaperChartTransport
 
-open Classical
 noncomputable section
-
 
 lemma PlanarFiniteRayCappedSideSectors
     (directions : Finset (EuclideanSpace ℝ (Fin 2)))
     (p d : EuclideanSpace ℝ (Fin 2)) (radius : ℝ)
-    (hd : d ≠ 0) (hradius : 0 < radius)
+    (hd : d ≠ 0) (_hradius : 0 < radius)
     (hnotParallel : ∀ v ∈ directions,
       ¬ ∃ c : ℝ, 0 < c ∧ v = c • d) :
     ∃ kappaMax : ℝ, 0 < kappaMax ∧
@@ -42,6 +40,7 @@ lemma PlanarFiniteRayCappedSideSectors
           p ∉ leftSector ∧ p ∉ rightSector ∧
           leftSector ∩ raySet = (∅ : Set (EuclideanSpace ℝ (Fin 2))) ∧
           rightSector ∩ raySet = (∅ : Set (EuclideanSpace ℝ (Fin 2))) := by
+  classical
   obtain ⟨kappaMax, hkappaMax, havoid⟩ :=
     PlanarRot90ConeAvoidsFiniteRays directions d hd hnotParallel
   refine ⟨kappaMax, hkappaMax, ?_⟩
@@ -95,9 +94,9 @@ lemma PlanarFiniteRayCappedSideSectors
         apply continuous_pi
         intro i
         by_cases hi : i = 0
-        · simp [hi]
+        · simp only [hi, Fin.isValue, ↓reduceIte]
           fun_prop
-        · simp [hi]
+        · simp only [Fin.isValue, hi, ↓reduceIte]
           fun_prop
       exact (PiLp.continuous_toLp (p := (2 : ENNReal))
         (β := fun _ : Fin 2 => ℝ)).comp hplain
@@ -263,8 +262,7 @@ lemma PlanarFiniteRayCappedSideSectors
     · exact ⟨by simpa [w] using hz0, by simp [w]; nlinarith [hdeltaSq],
         by simp [w, hdelta], by simp [w, hdeltaK]⟩
     · rw [EuclideanSpace.dist_eq, Fin.sum_univ_two]
-      simp only [Fin.isValue]
-      exact hdeltaEps
+      simpa [w, hz1, Real.dist_eq, Real.sqrt_sq_eq_abs, abs_of_pos hdelta] using hdeltaEps
   have hGclosureRight : germModel ⊆ closure rightModel := by
     intro z hzG
     rw [Metric.mem_closure_iff]
@@ -296,8 +294,7 @@ lemma PlanarFiniteRayCappedSideSectors
     · exact ⟨by simpa [w] using hz0, by simp [w]; nlinarith [hdeltaSq],
         by simp [w]; nlinarith, by simp [w, hdelta]⟩
     · rw [EuclideanSpace.dist_eq, Fin.sum_univ_two]
-      simp only [Fin.isValue]
-      exact hdeltaEps
+      simpa [w, hz1, Real.dist_eq, Real.sqrt_sq_eq_abs, abs_of_pos hdelta] using hdeltaEps
   have hzeroClosureGerm :
       (0 : EuclideanSpace ℝ (Fin 2)) ∈ closure germModel := by
     rw [Metric.mem_closure_iff]
@@ -319,8 +316,7 @@ lemma PlanarFiniteRayCappedSideSectors
       · simpa [z] using hta
       · simp [z]
     · rw [EuclideanSpace.dist_eq, Fin.sum_univ_two]
-      simp only [Fin.isValue, PiLp.zero_apply, dist_zero, Real.norm_eq_abs, sq_abs]
-      exact htepsilon
+      simpa [z, Real.sqrt_sq_eq_abs, abs_of_pos ht] using htepsilon
   have hchartContinuous : Continuous chart := by
     dsimp [chart]
     fun_prop

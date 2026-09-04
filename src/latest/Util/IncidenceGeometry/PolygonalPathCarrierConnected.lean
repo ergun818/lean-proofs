@@ -1,9 +1,9 @@
 import Util.IncidenceGeometry.PolygonalPath
 
-open Classical
 noncomputable section
 
 lemma PolygonalPathCarrierConnected (γ : PolygonalPath) : IsConnected γ.carrier := by
+  classical
   let E := EuclideanSpace ℝ (Fin 2)
   have listChain_connected :
       ∀ (xs : List E) (source target : E),

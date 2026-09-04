@@ -1,7 +1,6 @@
 import Util.IncidenceGeometry.PlaneDrawingDartSideStripsWithSectorWitnessesExist
 import Util.IncidenceGeometry.PlaneDrawingDartVertexSectorGeometryExists
 
-open Classical
 noncomputable section
 
 lemma PlaneDrawingDartLocalGeometryDataExists {V : Type*} [Fintype V]

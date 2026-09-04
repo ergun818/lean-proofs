@@ -1,6 +1,5 @@
 import Util.IncidenceGeometry.PolygonalReplacementCircularResidualPieceCircleData
 
-open Classical
 noncomputable section
 
 universe u

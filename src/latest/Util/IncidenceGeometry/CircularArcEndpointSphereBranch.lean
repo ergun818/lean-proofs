@@ -1,9 +1,7 @@
 import Util.IncidenceGeometry.Basic
 import Mathlib.Topology.Order.IntermediateValue
 
-open Classical
 noncomputable section
-
 
 lemma CircularArcEndpointSphereBranch
     {c : EuclideanSpace ℝ (Fin 2)} {r : ℝ}
@@ -17,6 +15,7 @@ lemma CircularArcEndpointSphereBranch
       (∀ {ρ : ℝ}, 0 < ρ → ρ < ε₁ →
         ∃! p : EuclideanSpace ℝ (Fin 2),
           p ∈ Metric.sphere (γ ⟨1, by simp⟩) ρ ∧ p ∈ Set.range γ) := by
+  classical
   have start_branch :
       ∀ {η : Set.Icc (0 : ℝ) 1 → EuclideanSpace ℝ (Fin 2)},
         Continuous η → Function.Injective η → (∀ t, dist (η t) c = r) →

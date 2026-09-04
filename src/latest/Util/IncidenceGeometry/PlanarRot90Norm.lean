@@ -1,10 +1,10 @@
 import Util.IncidenceGeometry.PlanarRot90
 
-open Classical
 noncomputable section
 
 lemma PlanarRot90Norm (d : EuclideanSpace ℝ (Fin 2)) :
     ‖PlanarRot90 d‖ = ‖d‖ := by
+  classical
   dsimp [PlanarRot90]
   apply (sq_eq_sq₀ (norm_nonneg _) (norm_nonneg _)).mp
   rw [← real_inner_self_eq_norm_sq, ← real_inner_self_eq_norm_sq]

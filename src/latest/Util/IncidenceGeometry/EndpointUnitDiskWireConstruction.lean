@@ -3,10 +3,9 @@ import Util.IncidenceGeometry.EndpointUnitDiskLocalReplacement
 import Util.IncidenceGeometry.EndpointRectangularWireReplacement
 import Util.IncidenceGeometry.EndpointUnitMultiplePointDisks
 
-open Classical
 noncomputable section
 
-lemma EndpointUnitDiskWireConstruction {ι : Type*} [Fintype ι]
+lemma EndpointUnitDiskWireConstruction {ι : Type*} [Finite ι]
     (a b : ι → EuclideanSpace ℝ (Fin 2))
     (ha : ∀ i, dist (a i) (0 : EuclideanSpace ℝ (Fin 2)) = 1)
     (hb : ∀ i, dist (b i) (0 : EuclideanSpace ℝ (Fin 2)) = 1)
@@ -56,6 +55,8 @@ lemma EndpointUnitDiskWireConstruction {ι : Type*} [Fintype ι]
           p ∈ (Γ i).relativeInterior →
             p ∈ (Γ j).relativeInterior →
               Nonempty (OrdinaryCleanLocalCrossing Γ i j p)) := by
+  classical
+  let := Fintype.ofFinite ι
   have hChord := EndpointUnitChordMultiplePointControl a b ha hb hdistinct
   have hDisks := EndpointUnitMultiplePointDisks a b ha hb hdistinct
   rcases hDisks with

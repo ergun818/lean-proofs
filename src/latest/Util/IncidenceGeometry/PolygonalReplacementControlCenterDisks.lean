@@ -1,6 +1,5 @@
 import Util.IncidenceGeometry.GeometricArcDrawing
 
-open Classical
 noncomputable section
 
 lemma PolygonalReplacementControlCenterDisks {V : Type*} [Fintype V]
@@ -18,6 +17,7 @@ lemma PolygonalReplacementControlCenterDisks {V : Type*} [Fintype V]
                 (∀ ⦃x y⦄, x ≠ y →
                   Disjoint (Metric.closedBall x.1 (intersectionRadius x))
                     (Metric.closedBall y.1 (intersectionRadius y))) := by
+  classical
   let Index := V ⊕ {p // p ∈ D.intersectionPoints}
   let center : Index → EuclideanSpace ℝ (Fin 2) :=
     fun i => Sum.elim D.vertexPlacement (fun x => x.1) i

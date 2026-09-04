@@ -2,7 +2,6 @@ import Util.IncidenceGeometry.Basic
 import Mathlib.Analysis.Convex.Topology
 import Mathlib.Analysis.Normed.Affine.AddTorsor
 
-open Classical
 noncomputable section
 
 lemma SegmentFiniteSetComplementDense
@@ -10,6 +9,7 @@ lemma SegmentFiniteSetComplementDense
     (F : Finset (EuclideanSpace ℝ (Fin 2))) (hxy : x ≠ y) :
     segment ℝ x y ⊆
       closure (segment ℝ x y \ (F : Set (EuclideanSpace ℝ (Fin 2)))) := by
+  classical
   intro z hz
   rw [segment_eq_image_lineMap] at hz
   rcases hz with ⟨t, htIcc, rfl⟩

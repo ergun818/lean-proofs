@@ -2,7 +2,6 @@ import Util.IncidenceGeometry.PolygonalArc
 import Util.IncidenceGeometry.CircleLineNoThreePoints
 import Mathlib.Data.List.FinRange
 
-open Classical
 noncomputable section
 
 lemma CircularOrderedSamplesBasicChordControls

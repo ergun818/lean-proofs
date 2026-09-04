@@ -1,7 +1,6 @@
 import Util.IncidenceGeometry.PlaneFaceData
 import Util.IncidenceGeometry.OrdinaryDrawingImage
 
-open Classical
 noncomputable section
 
 lemma OrdinaryDrawingImageContactDichotomy {V : Type*} [Fintype V]
@@ -11,6 +10,7 @@ lemma OrdinaryDrawingImageContactDichotomy {V : Type*} [Fintype V]
       x ∈ OrdinaryDrawingImage G D →
         (∃ v : V, x = D.vertexPlacement v) ∨
           ∃ d : G.Dart, x ∈ (A.dartArc d).relativeInterior := by
+  classical
   intro x hx
   rw [OrdinaryDrawingImage] at hx
   rcases hx with hxVertex | hxEdge

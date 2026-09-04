@@ -4,7 +4,6 @@ import Util.IncidenceGeometry.FinitePolygonalSetCyclicActualStreamIntervalBlocks
 import Util.IncidenceGeometry.FiniteSortedRealCutListCoversUnitInterval
 import Mathlib.Tactic
 
-open Classical
 noncomputable section
 
 lemma FinitePolygonalSetCyclicActualSourceEqStart
@@ -24,6 +23,7 @@ lemma FinitePolygonalSetCyclicActualSourceEqStart
     ∀ (p : {p : EuclideanSpace ℝ (Fin 2) // p ∈ K.points}) i,
       i ∈ arcPieceOrder p → pieceSource i ∈ K.points →
         pieceSource i = p.1 := by
+  classical
   intro p i hi hlisted
   cases hL : arcPieceOrder p with
   | nil =>
@@ -61,6 +61,7 @@ lemma FinitePolygonalSetCyclicActualTargetEqSuccessor
     ∀ (p : {p : EuclideanSpace ℝ (Fin 2) // p ∈ K.points}) i,
       i ∈ arcPieceOrder p → pieceTarget i ∈ K.points →
         pieceTarget i = (successor p).1 := by
+  classical
   intro p i hi hlisted
   rcases List.getElem_of_mem hi with ⟨n, hn, hget⟩
   by_cases hlast_index : n + 1 = (arcPieceOrder p).length
@@ -156,6 +157,7 @@ lemma FinitePolygonalSetCyclicActualCarrierCoverage
       ∀ e n a, pieceCarrier (pieceOf e n a) =
         segment ℝ (pieceSource (pieceOf e n a)) (pieceTarget (pieceOf e n a))) :
     J.carrier ⊆ ⋃ i : PieceIndex, pieceCarrier i := by
+  classical
   intro x hxJ
   rw [J.carrier_eq] at hxJ
   rcases Set.mem_iUnion.mp hxJ with ⟨γ, hxγ⟩
@@ -198,7 +200,6 @@ lemma FinitePolygonalSetCyclicActualCarrierCoverage
   rw [← image_segment ℝ (AffineMap.lineMap A B)
     ((cutList e n)[k]'(Nat.lt_of_succ_lt hk)) ((cutList e n)[k + 1]'hk)]
   exact ⟨t, htk, htx⟩
-
 
 lemma FinitePolygonalSetCyclicActualPieceCoverage
     (J : SimpleClosedPolygonalCurve) (K : FinitePolygonalSet)

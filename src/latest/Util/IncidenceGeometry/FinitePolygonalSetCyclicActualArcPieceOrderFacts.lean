@@ -3,9 +3,7 @@ import Util.IncidenceGeometry.FinitePolygonalSetCyclicActualNormalizedSourceCycl
 import Util.IncidenceGeometry.FinitePolygonalSetCyclicActualStreamIntervalBlocks
 import Mathlib.Tactic
 
-open Classical
 noncomputable section
-
 
 lemma FinitePolygonalSetCyclicActualArcPieceOrderFacts
     (J : SimpleClosedPolygonalCurve) (K : FinitePolygonalSet)
@@ -82,6 +80,7 @@ lemma FinitePolygonalSetCyclicActualArcPieceOrderFacts
             ∃ n : ℕ, (successor^[n]) p = q) ∧
           (∀ p : {p : EuclideanSpace ℝ (Fin 2) // p ∈ K.points},
             p.1 ≠ (successor p).1) := by
+  classical
   rcases FinitePolygonalSetCyclicActualPieceCoverage J K hKJ with
     ⟨PieceIndex, pieceIndexFintype, successor, pieceArc, pieceSegmentIndex,
       pieceSource, pieceTarget, pieceSourceParam, pieceTargetParam,

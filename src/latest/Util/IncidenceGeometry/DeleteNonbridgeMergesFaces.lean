@@ -11,9 +11,9 @@ import Util.IncidenceGeometry.OpenConnectedComponentPolygonallyConnected
 import Util.IncidenceGeometry.OrdinaryDrawingImageCompact
 import Mathlib.Combinatorics.SimpleGraph.Acyclic
 
-open Classical
 noncomputable section
 
+open Classical in
 lemma DeleteNonbridgeMergesFaces {V : Type*} [Fintype V] (G : SimpleGraph V)
     [Fintype G.edgeSet] [DecidableRel G.Adj] (D : OrdinaryPolygonalDrawing G)
     (hD : D.crossingSet.card = 0) (A : PlaneFaceData G D) (e : G.edgeFinset)

@@ -1,10 +1,9 @@
 import Mathlib.Combinatorics.SimpleGraph.Paths
 import Util.IncidenceGeometry.Basic
 
-open Classical
 noncomputable section
 
-lemma FiniteWalkCycleErasure {V : Type*} [DecidableEq V]
+lemma FiniteWalkCycleErasure {V : Type*}
     (G : SimpleGraph V) {u v : V} (p : G.Walk u v) (huv : u ≠ v) :
     ∃ q : G.Walk u v,
       q.IsPath ∧
@@ -14,6 +13,7 @@ lemma FiniteWalkCycleErasure {V : Type*} [DecidableEq V]
               2 ≤ q.support.length ∧
                 q.support ⊆ p.support ∧
                   q.edges ⊆ p.edges := by
+  classical
   let q : G.Walk u v := p.bypass
   refine ⟨q, p.bypass_isPath, p.bypass_isPath.support_nodup, ?_, ?_, ?_, ?_, ?_⟩
   · rw [List.head?_eq_some_head q.support_ne_nil]
@@ -24,6 +24,6 @@ lemma FiniteWalkCycleErasure {V : Type*} [DecidableEq V]
     have hpos : 0 < q.length := SimpleGraph.Walk.not_nil_iff_lt_length.mp hnon
     rw [SimpleGraph.Walk.length_support]
     omega
-  · exact p.support_bypass_subset
-  · exact p.edges_bypass_subset
+  · exact p.support_bypass_subset_support
+  · exact p.edges_bypass_subset_edges
 

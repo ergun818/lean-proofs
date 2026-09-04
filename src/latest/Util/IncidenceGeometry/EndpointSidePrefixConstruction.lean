@@ -6,7 +6,6 @@ import Util.IncidenceGeometry.FinitePolygonalSet
 import Util.IncidenceGeometry.PolygonalArc
 import Util.IncidenceGeometry.PolygonalSideStrips
 
-open Classical
 noncomputable section
 
 lemma EndpointSidePrefixConstruction
@@ -30,341 +29,342 @@ lemma EndpointSidePrefixConstruction
         Aarc.target = Barc.target →
           BplusArc.source = Aarc.target →
             Aarc.source ≠ Aarc.target →
-              Aarc.target ≠ BplusArc.target →
-                Aarc.source ≠ BplusArc.target →
-                  Aarc.carrier ∩ Barc.carrier =
-                      ({Aarc.source, Aarc.target} :
-                        Set (EuclideanSpace ℝ (Fin 2))) →
-                    Aarc.carrier ∩ BplusArc.carrier =
-                        ({Aarc.target} : Set (EuclideanSpace ℝ (Fin 2))) →
-                      Barc.carrier ∩ BplusArc.carrier =
-                          ({Aarc.target} : Set (EuclideanSpace ℝ (Fin 2))) →
-                        BplusArc.carrier ∩ H =
-                            ({Aarc.target, BplusArc.target} :
-                              Set (EuclideanSpace ℝ (Fin 2))) →
-                          Rbeta ⊆ H →
-                            Disjoint Aarc.carrier Rbeta →
-                            BplusArc.target ∈ Rbeta →
-                              Rbeta ∩ (Barc.carrier ∪ BplusArc.carrier) =
-                                  ({BplusArc.target} :
-                                    Set (EuclideanSpace ℝ (Fin 2))) →
-                                BplusArc.target ∉ Aarc.carrier →
-                                  (∀ p : EuclideanSpace ℝ (Fin 2),
-                                    p ∈ XA ↔
-                                      p ∈ Aarc.carrier \
-                                          ({Aarc.source, Aarc.target} :
-                                            Set (EuclideanSpace ℝ (Fin 2))) ∧
-                                        p ∈ H) →
-                                    (∀ p q : EuclideanSpace ℝ (Fin 2),
-                                      p ≠ q →
-                                        segment ℝ p q ⊆ Aarc.carrier ∩ H →
-                                          False) →
-                                      (∀ p : EuclideanSpace ℝ (Fin 2),
-                                        p ∈ XA →
-                                          p ∉
-                                              (K.points :
-                                                Set (EuclideanSpace ℝ (Fin 2))) ∧
-                                            ∃ j : ℕ,
-                                              ∃ hj : j + 1 < Aarc.vertices.length,
-                                                p ∈
-                                                    openSegment ℝ
-                                                      Aarc.vertices[j]
-                                                      Aarc.vertices[j + 1] ∧
-                                              ∃! s :
-                                                EuclideanSpace ℝ (Fin 2) ×
-                                                  EuclideanSpace ℝ (Fin 2),
-                                                s ∈ K.segments ∧
-                                                  p ∈ openSegment ℝ s.1 s.2 ∧
-                                                    ¬ ∃ c : ℝ,
-                                                      s.2 - s.1 =
-                                                        c •
-                                                          (Aarc.vertices[j + 1] -
-                                                            Aarc.vertices[j])) →
-                                        (∀ p : EuclideanSpace ℝ (Fin 2),
-                                          p ∈ XA →
-                                            0 < eventRadius p ∧
-                                            Convex ℝ
-                                              (SelectedSide ∩
-                                                Metric.ball p (eventRadius p)) ∧
-                                            ∃ s :
-                                              EuclideanSpace ℝ (Fin 2) ×
-                                                EuclideanSpace ℝ (Fin 2),
-                                                s ∈ K.segments ∧
-                                                    p ∈ openSegment ℝ s.1 s.2 ∧
-                                                      Metric.ball p (eventRadius p) ∩ H =
-                                                        Metric.ball p (eventRadius p) ∩
-                                                          segment ℝ s.1 s.2 ∧
-                                                        Metric.ball p (eventRadius p) ∩ Rbeta =
-                                                          (∅ :
-                                                            Set
-                                                              (EuclideanSpace ℝ
-                                                                (Fin 2)))) →
-                                          (∀ p : EuclideanSpace ℝ (Fin 2),
-                                            p ∈ XA →
-                                              Disjoint
-                                                (Metric.closedBall p (eventRadius p))
-                                                (closure StartSector)) →
-                                          (∀ p q : EuclideanSpace ℝ (Fin 2),
-                                            p ∈ XA → q ∈ XA → p ≠ q →
-                                              Disjoint
-                                                (Metric.closedBall p (eventRadius p))
-                                                (Metric.closedBall q (eventRadius q))) →
-                                            SelectedSide ∩
-                                                (Barc.carrier ∪ BplusArc.carrier ∪
-                                                  Rbeta ∪ Bad) =
-                                              (∅ : Set (EuclideanSpace ℝ (Fin 2))) →
-                                              SelectedSide ∩
-                                                  (closure TerminalSideRegion ∪
-                                                    closure TerminalBridgeRegion ∪ closure Qx) =
-                                                (∅ : Set (EuclideanSpace ℝ (Fin 2))) →
-                                              SelectedSide ∩ H ⊆
-                                                ⋃ p ∈ (XA : Set (EuclideanSpace ℝ (Fin 2))),
-                                                  Metric.ball p (eventRadius p) →
-                                          IsOpen StartSector →
-                                            Convex ℝ StartSector →
-                                              StartSector ⊆ SelectedSide →
-                                              Aarc.source ∈ closure StartSector →
-                                                Aarc.source ∉ StartSector →
-                                                  StartSector ∩
-                                                  (Aarc.carrier ∪ Barc.carrier ∪
-                                                    BplusArc.carrier ∪ Rbeta ∪
-                                                      H ∪ Bad) =
-                                                (∅ :
-                                                  Set (EuclideanSpace ℝ (Fin 2))) →
-                                              Aarc.target ∈ DeltaX →
-                                                BplusArc.target ∈ DeltaX →
-                                                  BplusArc.carrier ⊆ DeltaX →
-                                                    Qx ⊆ DeltaX →
-                                                      Convex ℝ Qx →
-                                                        IsCompact (closure Qx) →
-                                                        Aarc.target ∈ closure Qx →
-                                                          (∃ q : EuclideanSpace ℝ (Fin 2),
-                                                            q ∈ Qx ∧
-                                                              q ≠ BplusArc.target) →
-                                                            BplusArc.target ∈ Qx →
-                                                              Aarc.target ∉ Qx →
-                                                              Qx ∩
-                                                                (Aarc.carrier ∪
-                                                                  Barc.carrier ∪
-                                                                    BplusArc.carrier ∪
-                                                                      Rbeta ∪ H) =
-                                                              ({BplusArc.target} :
-                                                                Set
-                                                                  (EuclideanSpace ℝ
-                                                                    (Fin 2))) →
-                                                                IsOpen TerminalSideRegion →
-                                                                  Convex ℝ TerminalSideRegion →
-                                                                    IsCompact (closure TerminalSideRegion) →
-                                                                      TerminalSideRegion ⊆ DeltaX →
-                                                                        (TerminalSideRegion ∪
-                                                                            ({terminalGate, terminalSideSource} :
-                                                                              Set (EuclideanSpace ℝ (Fin 2)))) ∩
-                                                                            ((Aarc.carrier ∪ Barc.carrier ∪
-                                                                                BplusArc.carrier ∪ Rbeta ∪ H) ∪ Bad) =
-                                                                          (∅ : Set (EuclideanSpace ℝ (Fin 2))) →
-                                                                          terminalGate ∈ DeltaX →
-                                                                            terminalGate ∈ closure TerminalSideRegion →
-                                                                              terminalGate ∉ TerminalSideRegion →
-                                                                                terminalGate ∉ Qx →
-                                                                                  terminalSideSource ∈ closure TerminalSideRegion →
-                                                                                    terminalSideSource ∈ DeltaX →
-                                                                                      terminalSideSource ∉ TerminalSideRegion →
-                                                                                      terminalGate ≠ terminalSideSource →
-                                                                                      segment ℝ terminalGate terminalSideSource ⊆
-                                                                                        TerminalSideRegion ∪
-                                                                                          ({terminalGate, terminalSideSource} :
-                                                                                            Set (EuclideanSpace ℝ (Fin 2))) →
-                                                                                        openSegment ℝ terminalGate terminalSideSource ⊆
-                                                                                          TerminalSideRegion →
-                                                                                          IsOpen TerminalBridgeRegion →
-                                                                                            Convex ℝ TerminalBridgeRegion →
-                                                                                              IsCompact (closure TerminalBridgeRegion) →
-                                                                                                TerminalBridgeRegion ⊆ DeltaX →
-                                                                                                  (TerminalBridgeRegion ∪
-                                                                                                      ({terminalSideSource, quadrantGate} :
-                                                                                                        Set (EuclideanSpace ℝ (Fin 2)))) ∩
-                                                                                                      ((Aarc.carrier ∪ Barc.carrier ∪
-                                                                                                          BplusArc.carrier ∪ Rbeta ∪ H) ∪ Bad) =
-                                                                                                    (∅ : Set (EuclideanSpace ℝ (Fin 2))) →
-                                                                                                    terminalSideSource ∈ closure TerminalBridgeRegion →
-                                                                                                      terminalSideSource ∉ TerminalBridgeRegion →
-                                                                                                        quadrantGate ∈ closure TerminalBridgeRegion →
-                                                                                                          quadrantGate ∉ TerminalBridgeRegion →
-                                                                                                            terminalSideSource ≠ quadrantGate →
-                                                                                                              segment ℝ terminalSideSource quadrantGate ⊆
-                                                                                                                TerminalBridgeRegion ∪
-                                                                                                                  ({terminalSideSource, quadrantGate} :
-                                                                                                                    Set (EuclideanSpace ℝ (Fin 2))) →
-                                                                                                                openSegment ℝ terminalSideSource quadrantGate ⊆
-                                                                                                                  TerminalBridgeRegion →
-                                                                                                                  quadrantGate ∈ Qx →
-                                                                                                                    quadrantGate ≠ BplusArc.target →
-                                                                                                                      segment ℝ terminalSideSource quadrantGate ∩ Qx =
-                                                                                                                        ({quadrantGate} :
-                                                                                                                          Set (EuclideanSpace ℝ (Fin 2))) →
-                                                                                                                        closure TerminalSideRegion ∩
-                                                                                                                            closure TerminalBridgeRegion =
-                                                                                                                          ({terminalSideSource} :
-                                                                                                                            Set (EuclideanSpace ℝ (Fin 2))) →
-                                                                                                                          closure TerminalSideRegion ∩ closure Qx =
-                                                                                                                            (∅ : Set (EuclideanSpace ℝ (Fin 2))) →
-                                                                                                                            closure TerminalBridgeRegion ∩ closure Qx =
-                                                                                                                              ({quadrantGate} :
-                                                                                                                                Set (EuclideanSpace ℝ (Fin 2))) →
-                                                                                                                              segment ℝ quadrantGate BplusArc.target ⊆ Qx →
-                                                                                                                                openSegment ℝ quadrantGate BplusArc.target ∩
-                                                                                                                                    ((Aarc.carrier ∪ Barc.carrier ∪
-                                                                                                                                        BplusArc.carrier ∪ Rbeta ∪ H) ∪ Bad) =
-                                                                                                                                  (∅ : Set (EuclideanSpace ℝ (Fin 2))) →
-                                                                  (∃ h : EuclideanSpace ℝ (Fin 2),
-                                                                      ∃ Vin : Set (EuclideanSpace ℝ (Fin 2)),
-                                                                          ∃ predecessor : PolygonalArc,
-                                                                            ∃ approach : PolygonalArc,
-                                                                              ∃ lastGate : EuclideanSpace ℝ (Fin 2),
-                                                                          predecessor.carrier ⊆ SelectedSide ∩ Vin ∧
-                                                                            approach.carrier ⊆ SelectedSide ∩ Vin ∧
-                                                                              predecessor.target = lastGate ∧
-                                                                                approach.source = lastGate ∧
-                                                                                  predecessor.carrier ∩ approach.carrier =
-                                                                                    ({lastGate} :
-                                                                                      Set (EuclideanSpace ℝ (Fin 2))) ∧
-                                                                                    approach.target = h ∧
-                                                                                      approach.carrier ∩
-                                                                                          segment ℝ h terminalGate =
-                                                                                        ({h} :
-                                                                                          Set (EuclideanSpace ℝ (Fin 2))) ∧
-                                                                                        Disjoint predecessor.carrier
-                                                                                          (segment ℝ h
-                                                                                            terminalGate) ∧
-                                                                          IsOpen Vin ∧
-                                                                            Convex ℝ Vin ∧
-                                                                              h ∈ Vin ∧
-                                                                                h ≠ terminalGate ∧
-                                                                                  h ∉
-                                                                                      (Aarc.carrier ∪
-                                                                                        Barc.carrier ∪
-                                                                                          BplusArc.carrier ∪
-                                                                                            Rbeta ∪ H ∪ Bad) ∧
-                                                                                    Vin ⊆ SelectedSide ∧
-                                                                                      Aarc.target ∈ closure Vin ∧
-                                                                                        (∃ ε : ℝ, 0 < ε ∧
-                                                                                          SelectedSide ∩ Metric.ball Aarc.target ε ⊆ Vin) ∧
-                                                                                    Vin ⊆ DeltaX ∧
-                                                                                      Vin ∩ Qx =
-                                                                                        (∅ : Set (EuclideanSpace ℝ (Fin 2))) ∧
-                                                                                        Vin ∩
-                                                                                            ((Aarc.carrier ∪
-                                                                                                  Barc.carrier ∪
-                                                                                                    BplusArc.carrier ∪
-                                                                                                      Rbeta ∪ H) ∪
-                                                                                              Bad) =
-                                                                                          (∅ :
-                                                                                            Set
-                                                                                              (EuclideanSpace ℝ
-                                                                                                (Fin 2))) ∧
-                                                                                          terminalGate ∈ closure Vin ∧
-                                                                                            terminalGate ∉ Vin ∧
-                                                                                              segment ℝ h terminalGate ⊆
-                                                                                                Vin ∪
-                                                                                                  ({terminalGate} :
-                                                                                                    Set
-                                                                                                      (EuclideanSpace ℝ
-                                                                                                        (Fin 2))) ∧
-                                                                                                openSegment ℝ h terminalGate ⊆
-                                                                                                  Vin ∧
-                                                                                                  segment ℝ h terminalGate ∩
-                                                                                                      (TerminalSideRegion ∪
-                                                                                                        ({terminalGate} :
-                                                                                                          Set
-                                                                                                            (EuclideanSpace ℝ
-                                                                                                              (Fin 2)))) =
-                                                                                                    ({terminalGate} :
-                                                                                                      Set
-                                                                                                        (EuclideanSpace ℝ
-                                                                                                          (Fin 2))) ∧
-                                                                                                    closure Vin ∩
-                                                                                                        closure TerminalSideRegion =
-                                                                                                      ({terminalGate} :
-                                                                                                        Set
-                                                                                                          (EuclideanSpace ℝ
-                                                                                                            (Fin 2))) ∧
-                                                                                                      closure Vin ∩
-                                                                                                          closure TerminalBridgeRegion =
-                                                                                                        (∅ :
-                                                                                                          Set
-                                                                                                            (EuclideanSpace ℝ
-                                                                                                              (Fin 2))) ∧
-                                                                                                      Vin ∩ TerminalSideRegion =
-                                                                                                        (∅ :
-                                                                                                          Set
-                                                                                                            (EuclideanSpace ℝ
-                                                                                                              (Fin 2))) ∧
-                                                                                                        (∀ p : EuclideanSpace ℝ (Fin 2),
-                                                                                                          p ∈ XA →
-                                                                                                            Disjoint
-                                                                                                              (Metric.closedBall p
-                                                                                                                (eventRadius p))
-                                                                                                              (closure Vin))) →
-                                                                ∃ E :
-                                                                  EndpointSidePrefixAttachment
-                                                                    Aarc Barc BplusArc
-                                                                    Rbeta H Bad DeltaX Qx
-                                                                    K XA,
-                                                                  (E.prefixPiece 0).source =
-                                                                      Aarc.source ∧
-                                                                    (E.prefixPiece 0).carrier ⊆
-                                                                        StartSector ∪
-                                                                          ({Aarc.source} :
-                                                                            Set
-                                                                              (EuclideanSpace ℝ
-                                                                                (Fin 2))) ∧
-                                                                      (E.prefixPiece 0).relativeInterior ⊆
-                                                                        StartSector ∧
-                                                                        3 ≤ E.r ∧
-                                                                          ∃ h lastGate :
-                                                                              EuclideanSpace ℝ (Fin 2),
-                                                                            ∃ Vin : Set (EuclideanSpace ℝ (Fin 2)),
-                                                                              (E.prefixPiece (E.r - 3)).carrier ⊆
-                                                                                  SelectedSide ∩ Vin ∧
-                                                                                (E.prefixPiece (E.r - 2)).carrier ⊆
-                                                                                    SelectedSide ∩ Vin ∧
-                                                                                  (E.prefixPiece (E.r - 3)).target =
-                                                                                      lastGate ∧
-                                                                                    (E.prefixPiece (E.r - 2)).source =
-                                                                                        lastGate ∧
-                                                                                      (E.prefixPiece (E.r - 3)).carrier ∩
-                                                                                          (E.prefixPiece (E.r - 2)).carrier =
-                                                                                        ({lastGate} :
-                                                                                          Set
-                                                                                            (EuclideanSpace ℝ (Fin 2))) ∧
-                                                                                        (E.prefixPiece (E.r - 2)).target = h ∧
-                                                                                          (E.prefixPiece (E.r - 1)).source = h ∧
-                                                                                            (E.prefixPiece (E.r - 1)).target =
-                                                                                                terminalGate ∧
-                                                                                              (E.prefixPiece (E.r - 2)).carrier ∩
-                                                                                                  (E.prefixPiece (E.r - 1)).carrier =
-                                                                                                ({h} :
-                                                                                                  Set
-                                                                                                    (EuclideanSpace ℝ (Fin 2))) ∧
-                                                                                                (E.prefixPiece (E.r - 1)).carrier =
-                                                                                                  segment ℝ h
-                                                                                                    terminalGate ∧
-                                                                                                  Disjoint
-                                                                                                    (E.prefixPiece (E.r - 3)).carrier
-                                                                                                    (E.prefixPiece (E.r - 1)).carrier ∧
-                                                                                                  (E.prefixPiece E.r).source =
-                                                                                                      terminalGate ∧
-                                                                                                    (E.prefixPiece (E.r - 1)).carrier ∩
-                                                                                                        (E.prefixPiece E.r).carrier =
-                                                                                                      ({terminalGate} :
-                                                                                                        Set
-                                                                                                          (EuclideanSpace ℝ (Fin 2))) ∧
-                                                                                                      (E.prefixPiece E.r).carrier =
-                                                                                                        segment ℝ terminalGate terminalSideSource ∧
-                                                                                                        E.terminalSide.carrier =
-                                                                                                          segment ℝ terminalSideSource quadrantGate ∧
-                                                                                                          E.terminalConnector.carrier =
-                                                                                                            segment ℝ quadrantGate BplusArc.target := by
+            Aarc.target ≠ BplusArc.target →
+            Aarc.source ≠ BplusArc.target →
+            Aarc.carrier ∩ Barc.carrier =
+            ({Aarc.source, Aarc.target} :
+            Set (EuclideanSpace ℝ (Fin 2))) →
+            Aarc.carrier ∩ BplusArc.carrier =
+            ({Aarc.target} : Set (EuclideanSpace ℝ (Fin 2))) →
+            Barc.carrier ∩ BplusArc.carrier =
+            ({Aarc.target} : Set (EuclideanSpace ℝ (Fin 2))) →
+            BplusArc.carrier ∩ H =
+            ({Aarc.target, BplusArc.target} :
+            Set (EuclideanSpace ℝ (Fin 2))) →
+            Rbeta ⊆ H →
+            Disjoint Aarc.carrier Rbeta →
+            BplusArc.target ∈ Rbeta →
+            Rbeta ∩ (Barc.carrier ∪ BplusArc.carrier) =
+            ({BplusArc.target} :
+            Set (EuclideanSpace ℝ (Fin 2))) →
+            BplusArc.target ∉ Aarc.carrier →
+            (∀ p : EuclideanSpace ℝ (Fin 2),
+            p ∈ XA ↔
+            p ∈ Aarc.carrier \
+            ({Aarc.source, Aarc.target} :
+            Set (EuclideanSpace ℝ (Fin 2))) ∧
+            p ∈ H) →
+            (∀ p q : EuclideanSpace ℝ (Fin 2),
+            p ≠ q →
+            segment ℝ p q ⊆ Aarc.carrier ∩ H →
+            False) →
+            (∀ p : EuclideanSpace ℝ (Fin 2),
+            p ∈ XA →
+            p ∉
+            (K.points :
+            Set (EuclideanSpace ℝ (Fin 2))) ∧
+            ∃ j : ℕ,
+            ∃ hj : j + 1 < Aarc.vertices.length,
+            p ∈
+            openSegment ℝ
+            Aarc.vertices[j]
+            Aarc.vertices[j + 1] ∧
+            ∃! s :
+            EuclideanSpace ℝ (Fin 2) ×
+            EuclideanSpace ℝ (Fin 2),
+            s ∈ K.segments ∧
+            p ∈ openSegment ℝ s.1 s.2 ∧
+            ¬ ∃ c : ℝ,
+            s.2 - s.1 =
+            c •
+            (Aarc.vertices[j + 1] -
+            Aarc.vertices[j])) →
+            (∀ p : EuclideanSpace ℝ (Fin 2),
+            p ∈ XA →
+            0 < eventRadius p ∧
+            Convex ℝ
+            (SelectedSide ∩
+            Metric.ball p (eventRadius p)) ∧
+            ∃ s :
+            EuclideanSpace ℝ (Fin 2) ×
+            EuclideanSpace ℝ (Fin 2),
+            s ∈ K.segments ∧
+            p ∈ openSegment ℝ s.1 s.2 ∧
+            Metric.ball p (eventRadius p) ∩ H =
+            Metric.ball p (eventRadius p) ∩
+            segment ℝ s.1 s.2 ∧
+            Metric.ball p (eventRadius p) ∩ Rbeta =
+            (∅ :
+            Set
+            (EuclideanSpace ℝ
+            (Fin 2)))) →
+            (∀ p : EuclideanSpace ℝ (Fin 2),
+            p ∈ XA →
+            Disjoint
+            (Metric.closedBall p (eventRadius p))
+            (closure StartSector)) →
+            (∀ p q : EuclideanSpace ℝ (Fin 2),
+            p ∈ XA → q ∈ XA → p ≠ q →
+            Disjoint
+            (Metric.closedBall p (eventRadius p))
+            (Metric.closedBall q (eventRadius q))) →
+            SelectedSide ∩
+            (Barc.carrier ∪ BplusArc.carrier ∪
+            Rbeta ∪ Bad) =
+            (∅ : Set (EuclideanSpace ℝ (Fin 2))) →
+            SelectedSide ∩
+            (closure TerminalSideRegion ∪
+            closure TerminalBridgeRegion ∪ closure Qx) =
+            (∅ : Set (EuclideanSpace ℝ (Fin 2))) →
+            SelectedSide ∩ H ⊆
+            ⋃ p ∈ (XA : Set (EuclideanSpace ℝ (Fin 2))),
+            Metric.ball p (eventRadius p) →
+            IsOpen StartSector →
+            Convex ℝ StartSector →
+            StartSector ⊆ SelectedSide →
+            Aarc.source ∈ closure StartSector →
+            Aarc.source ∉ StartSector →
+            StartSector ∩
+            (Aarc.carrier ∪ Barc.carrier ∪
+            BplusArc.carrier ∪ Rbeta ∪
+            H ∪ Bad) =
+            (∅ :
+            Set (EuclideanSpace ℝ (Fin 2))) →
+            Aarc.target ∈ DeltaX →
+            BplusArc.target ∈ DeltaX →
+            BplusArc.carrier ⊆ DeltaX →
+            Qx ⊆ DeltaX →
+            Convex ℝ Qx →
+            IsCompact (closure Qx) →
+            Aarc.target ∈ closure Qx →
+            (∃ q : EuclideanSpace ℝ (Fin 2),
+            q ∈ Qx ∧
+            q ≠ BplusArc.target) →
+            BplusArc.target ∈ Qx →
+            Aarc.target ∉ Qx →
+            Qx ∩
+            (Aarc.carrier ∪
+            Barc.carrier ∪
+            BplusArc.carrier ∪
+            Rbeta ∪ H) =
+            ({BplusArc.target} :
+            Set
+            (EuclideanSpace ℝ
+            (Fin 2))) →
+            IsOpen TerminalSideRegion →
+            Convex ℝ TerminalSideRegion →
+            IsCompact (closure TerminalSideRegion) →
+            TerminalSideRegion ⊆ DeltaX →
+            (TerminalSideRegion ∪
+            ({terminalGate, terminalSideSource} :
+            Set (EuclideanSpace ℝ (Fin 2)))) ∩
+            ((Aarc.carrier ∪ Barc.carrier ∪
+            BplusArc.carrier ∪ Rbeta ∪ H) ∪ Bad) =
+            (∅ : Set (EuclideanSpace ℝ (Fin 2))) →
+            terminalGate ∈ DeltaX →
+            terminalGate ∈ closure TerminalSideRegion →
+            terminalGate ∉ TerminalSideRegion →
+            terminalGate ∉ Qx →
+            terminalSideSource ∈ closure TerminalSideRegion →
+            terminalSideSource ∈ DeltaX →
+            terminalSideSource ∉ TerminalSideRegion →
+            terminalGate ≠ terminalSideSource →
+            segment ℝ terminalGate terminalSideSource ⊆
+            TerminalSideRegion ∪
+            ({terminalGate, terminalSideSource} :
+            Set (EuclideanSpace ℝ (Fin 2))) →
+            openSegment ℝ terminalGate terminalSideSource ⊆
+            TerminalSideRegion →
+            IsOpen TerminalBridgeRegion →
+            Convex ℝ TerminalBridgeRegion →
+            IsCompact (closure TerminalBridgeRegion) →
+            TerminalBridgeRegion ⊆ DeltaX →
+            (TerminalBridgeRegion ∪
+            ({terminalSideSource, quadrantGate} :
+            Set (EuclideanSpace ℝ (Fin 2)))) ∩
+            ((Aarc.carrier ∪ Barc.carrier ∪
+            BplusArc.carrier ∪ Rbeta ∪ H) ∪ Bad) =
+            (∅ : Set (EuclideanSpace ℝ (Fin 2))) →
+            terminalSideSource ∈ closure TerminalBridgeRegion →
+            terminalSideSource ∉ TerminalBridgeRegion →
+            quadrantGate ∈ closure TerminalBridgeRegion →
+            quadrantGate ∉ TerminalBridgeRegion →
+            terminalSideSource ≠ quadrantGate →
+            segment ℝ terminalSideSource quadrantGate ⊆
+            TerminalBridgeRegion ∪
+            ({terminalSideSource, quadrantGate} :
+            Set (EuclideanSpace ℝ (Fin 2))) →
+            openSegment ℝ terminalSideSource quadrantGate ⊆
+            TerminalBridgeRegion →
+            quadrantGate ∈ Qx →
+            quadrantGate ≠ BplusArc.target →
+            segment ℝ terminalSideSource quadrantGate ∩ Qx =
+            ({quadrantGate} :
+            Set (EuclideanSpace ℝ (Fin 2))) →
+            closure TerminalSideRegion ∩
+            closure TerminalBridgeRegion =
+            ({terminalSideSource} :
+            Set (EuclideanSpace ℝ (Fin 2))) →
+            closure TerminalSideRegion ∩ closure Qx =
+            (∅ : Set (EuclideanSpace ℝ (Fin 2))) →
+            closure TerminalBridgeRegion ∩ closure Qx =
+            ({quadrantGate} :
+            Set (EuclideanSpace ℝ (Fin 2))) →
+            segment ℝ quadrantGate BplusArc.target ⊆ Qx →
+            openSegment ℝ quadrantGate BplusArc.target ∩
+            ((Aarc.carrier ∪ Barc.carrier ∪
+            BplusArc.carrier ∪ Rbeta ∪ H) ∪ Bad) =
+            (∅ : Set (EuclideanSpace ℝ (Fin 2))) →
+            (∃ h : EuclideanSpace ℝ (Fin 2),
+            ∃ Vin : Set (EuclideanSpace ℝ (Fin 2)),
+            ∃ predecessor : PolygonalArc,
+            ∃ approach : PolygonalArc,
+            ∃ lastGate : EuclideanSpace ℝ (Fin 2),
+            predecessor.carrier ⊆ SelectedSide ∩ Vin ∧
+            approach.carrier ⊆ SelectedSide ∩ Vin ∧
+            predecessor.target = lastGate ∧
+            approach.source = lastGate ∧
+            predecessor.carrier ∩ approach.carrier =
+            ({lastGate} :
+            Set (EuclideanSpace ℝ (Fin 2))) ∧
+            approach.target = h ∧
+            approach.carrier ∩
+            segment ℝ h terminalGate =
+            ({h} :
+            Set (EuclideanSpace ℝ (Fin 2))) ∧
+            Disjoint predecessor.carrier
+            (segment ℝ h
+            terminalGate) ∧
+            IsOpen Vin ∧
+            Convex ℝ Vin ∧
+            h ∈ Vin ∧
+            h ≠ terminalGate ∧
+            h ∉
+            (Aarc.carrier ∪
+            Barc.carrier ∪
+            BplusArc.carrier ∪
+            Rbeta ∪ H ∪ Bad) ∧
+            Vin ⊆ SelectedSide ∧
+            Aarc.target ∈ closure Vin ∧
+            (∃ ε : ℝ, 0 < ε ∧
+            SelectedSide ∩ Metric.ball Aarc.target ε ⊆ Vin) ∧
+            Vin ⊆ DeltaX ∧
+            Vin ∩ Qx =
+            (∅ : Set (EuclideanSpace ℝ (Fin 2))) ∧
+            Vin ∩
+            ((Aarc.carrier ∪
+            Barc.carrier ∪
+            BplusArc.carrier ∪
+            Rbeta ∪ H) ∪
+            Bad) =
+            (∅ :
+            Set
+            (EuclideanSpace ℝ
+            (Fin 2))) ∧
+            terminalGate ∈ closure Vin ∧
+            terminalGate ∉ Vin ∧
+            segment ℝ h terminalGate ⊆
+            Vin ∪
+            ({terminalGate} :
+            Set
+            (EuclideanSpace ℝ
+            (Fin 2))) ∧
+            openSegment ℝ h terminalGate ⊆
+            Vin ∧
+            segment ℝ h terminalGate ∩
+            (TerminalSideRegion ∪
+            ({terminalGate} :
+            Set
+            (EuclideanSpace ℝ
+            (Fin 2)))) =
+            ({terminalGate} :
+            Set
+            (EuclideanSpace ℝ
+            (Fin 2))) ∧
+            closure Vin ∩
+            closure TerminalSideRegion =
+            ({terminalGate} :
+            Set
+            (EuclideanSpace ℝ
+            (Fin 2))) ∧
+            closure Vin ∩
+            closure TerminalBridgeRegion =
+            (∅ :
+            Set
+            (EuclideanSpace ℝ
+            (Fin 2))) ∧
+            Vin ∩ TerminalSideRegion =
+            (∅ :
+            Set
+            (EuclideanSpace ℝ
+            (Fin 2))) ∧
+            (∀ p : EuclideanSpace ℝ (Fin 2),
+            p ∈ XA →
+            Disjoint
+            (Metric.closedBall p
+            (eventRadius p))
+            (closure Vin))) →
+            ∃ E :
+            EndpointSidePrefixAttachment
+            Aarc Barc BplusArc
+            Rbeta H Bad DeltaX Qx
+            K XA,
+            (E.prefixPiece 0).source =
+            Aarc.source ∧
+            (E.prefixPiece 0).carrier ⊆
+            StartSector ∪
+            ({Aarc.source} :
+            Set
+            (EuclideanSpace ℝ
+            (Fin 2))) ∧
+            (E.prefixPiece 0).relativeInterior ⊆
+            StartSector ∧
+            3 ≤ E.r ∧
+            ∃ h lastGate :
+            EuclideanSpace ℝ (Fin 2),
+            ∃ Vin : Set (EuclideanSpace ℝ (Fin 2)),
+            (E.prefixPiece (E.r - 3)).carrier ⊆
+            SelectedSide ∩ Vin ∧
+            (E.prefixPiece (E.r - 2)).carrier ⊆
+            SelectedSide ∩ Vin ∧
+            (E.prefixPiece (E.r - 3)).target =
+            lastGate ∧
+            (E.prefixPiece (E.r - 2)).source =
+            lastGate ∧
+            (E.prefixPiece (E.r - 3)).carrier ∩
+            (E.prefixPiece (E.r - 2)).carrier =
+            ({lastGate} :
+            Set
+            (EuclideanSpace ℝ (Fin 2))) ∧
+            (E.prefixPiece (E.r - 2)).target = h ∧
+            (E.prefixPiece (E.r - 1)).source = h ∧
+            (E.prefixPiece (E.r - 1)).target =
+            terminalGate ∧
+            (E.prefixPiece (E.r - 2)).carrier ∩
+            (E.prefixPiece (E.r - 1)).carrier =
+            ({h} :
+            Set
+            (EuclideanSpace ℝ (Fin 2))) ∧
+            (E.prefixPiece (E.r - 1)).carrier =
+            segment ℝ h
+            terminalGate ∧
+            Disjoint
+            (E.prefixPiece (E.r - 3)).carrier
+            (E.prefixPiece (E.r - 1)).carrier ∧
+            (E.prefixPiece E.r).source =
+            terminalGate ∧
+            (E.prefixPiece (E.r - 1)).carrier ∩
+            (E.prefixPiece E.r).carrier =
+            ({terminalGate} :
+            Set
+            (EuclideanSpace ℝ (Fin 2))) ∧
+            (E.prefixPiece E.r).carrier =
+            segment ℝ terminalGate terminalSideSource ∧
+            E.terminalSide.carrier =
+            segment ℝ terminalSideSource quadrantGate ∧
+            E.terminalConnector.carrier =
+            segment ℝ quadrantGate BplusArc.target := by
+  classical
   intro hK hBadFinite hKpoints hSelectedSide hSourceClosure
     hSourceEq hTargetEq hBplusSource hSourceNeTarget hTargetNeBplusTarget
     hSourceNeBplusTarget hAB hABplus hBBplus hBplusH hRbetaH hATail

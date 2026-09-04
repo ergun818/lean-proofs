@@ -1,9 +1,9 @@
 import Util.IncidenceGeometry.GeometricArcDrawing
 import Util.IncidenceGeometry.PointLineConsecutivePairGraphData
 
-open Classical
 noncomputable section
 
+open Classical in
 lemma PointLineConsecutivePairStraightDrawing
     {P : Finset (EuclideanSpace ℝ (Fin 2))}
     {L : Finset {ell : AffineSubspace ℝ (EuclideanSpace ℝ (Fin 2)) //
@@ -11,6 +11,7 @@ lemma PointLineConsecutivePairStraightDrawing
     (A : PointLineConsecutivePairGraphData P L) :
     ∃ D : GeometricArcDrawing A.graph,
       D.localPairCount ≤ A.retainedLines.card ^ 2 := by
+  classical
   let source (e : A.graph.edgeFinset) : EuclideanSpace ℝ (Fin 2) :=
     (A.edgeSourceVertex e).1
   let target (e : A.graph.edgeFinset) : EuclideanSpace ℝ (Fin 2) :=
@@ -110,7 +111,7 @@ lemma PointLineConsecutivePairStraightDrawing
   have points_spec (p : EuclideanSpace ℝ (Fin 2)) :
       p ∈ points ↔ ∃ e₁ e₂ : A.graph.edgeFinset,
         e₁ ≠ e₂ ∧ p ∈ interior e₁ ∧ p ∈ interior e₂ := by
-    simpa [points, crossingSet] using crossingSet_finite.mem_toFinset
+    simp [points, crossingSet]
   let incident (p : EuclideanSpace ℝ (Fin 2)) : Finset A.graph.edgeFinset :=
     Finset.univ.filter (fun e => p ∈ interior e)
   have mem_incident (p : EuclideanSpace ℝ (Fin 2)) (e : A.graph.edgeFinset) :

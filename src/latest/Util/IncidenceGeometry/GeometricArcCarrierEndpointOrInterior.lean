@@ -1,6 +1,5 @@
 import Util.IncidenceGeometry.GeometricArcDrawing
 
-open Classical
 noncomputable section
 
 lemma GeometricArcCarrierEndpointOrInterior {V : Type*} [Fintype V]
@@ -8,6 +7,7 @@ lemma GeometricArcCarrierEndpointOrInterior {V : Type*} [Fintype V]
     (e : G.edgeFinset) {p : EuclideanSpace ℝ (Fin 2)}
     (hp : p ∈ D.edgeCarrier e) :
     p = D.edgeSource e ∨ p = D.edgeTarget e ∨ p ∈ D.edgeRelativeInterior e := by
+  classical
   rcases D.edge_is_simple_lineSegment_or_circularArc e with hline | harc
   · rcases hline with ⟨_hne, hcarrier, hrel⟩
     by_cases hs : p = D.edgeSource e

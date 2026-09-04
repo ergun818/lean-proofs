@@ -5,9 +5,7 @@ import Util.IncidenceGeometry.FinitePolygonalSetCyclicSourceOccurrenceCollapse
 import Util.IncidenceGeometry.FinitePolygonalSetCyclicGlobalSourceSeparation
 import Mathlib.Data.List.Nodup
 
-open Classical
 noncomputable section
-
 
 lemma FinitePolygonalSetCyclicActualNormalizedSourceCycle
     (J : SimpleClosedPolygonalCurve) (K : FinitePolygonalSet)

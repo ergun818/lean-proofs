@@ -1,7 +1,6 @@
 import Util.IncidenceGeometry.SimpleClosedPolygonalCurve
 import Util.IncidenceGeometry.PolygonalSideStrips
 
-open Classical
 noncomputable section
 
 def CurveLocalSideSeparation (J : SimpleClosedPolygonalCurve)

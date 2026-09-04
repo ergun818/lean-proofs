@@ -1,7 +1,6 @@
 import Util.IncidenceGeometry.PolygonalArcCollarLocalSideData
 import Util.IncidenceGeometry.PolygonalArcOpenSegmentSubsetRelativeInterior
 
-open Classical
 noncomputable section
 
 lemma PolygonalArcMiddleTubeWithoutRelativeInterior
@@ -23,6 +22,7 @@ lemma PolygonalArcMiddleTubeWithoutRelativeInterior
     orientedTubes.toPolygonalArcCollarSeparatedTubeData.tube j hj \ γ.relativeInterior =
       orientedTubes.toPolygonalArcCollarSeparatedTubeData.leftHalf j hj ∪
         orientedTubes.toPolygonalArcCollarSeparatedTubeData.rightHalf j hj := by
+  classical
   let sep := orientedTubes.toPolygonalArcCollarSeparatedTubeData
   change sep.tube j hj \ γ.relativeInterior = sep.leftHalf j hj ∪ sep.rightHalf j hj
   ext z

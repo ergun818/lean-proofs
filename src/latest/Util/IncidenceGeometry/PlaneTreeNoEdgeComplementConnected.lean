@@ -6,13 +6,13 @@ import Util.IncidenceGeometry.PolygonalPathSegment
 import Util.IncidenceGeometry.PolygonallyPathConnected
 import Mathlib.Combinatorics.SimpleGraph.Acyclic
 
-open Classical
 noncomputable section
 
 lemma PlaneTreeNoEdgeComplementConnected {V : Type*} [Fintype V]
     (G : SimpleGraph V) [Fintype G.edgeSet] (D : OrdinaryPolygonalDrawing G)
     (hTree : G.IsTree) (hNoEdges : G.edgeSet = ∅) :
     PolygonallyPathConnected ((OrdinaryDrawingImage G D)ᶜ) := by
+  classical
   let E := EuclideanSpace ℝ (Fin 2)
   have hEdgeFinsetEmpty : G.edgeFinset = ∅ := by
     ext e

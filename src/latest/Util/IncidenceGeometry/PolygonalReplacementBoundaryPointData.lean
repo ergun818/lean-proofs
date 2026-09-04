@@ -1,6 +1,5 @@
 import Util.IncidenceGeometry.PolygonalReplacementControlDiskData
 
-open Classical
 noncomputable section
 
 structure PolygonalReplacementBoundaryPointData {V : Type*} [Fintype V]

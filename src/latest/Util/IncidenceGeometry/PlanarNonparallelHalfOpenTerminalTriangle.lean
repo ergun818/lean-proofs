@@ -1,7 +1,6 @@
 import Util.IncidenceGeometry.Basic
 import Mathlib.Tactic
 
-open Classical
 noncomputable section
 
 lemma PlanarNonparallelHalfOpenTerminalTriangle
@@ -26,6 +25,7 @@ lemma PlanarNonparallelHalfOpenTerminalTriangle
           ({q | ∃ s : ℝ, q = x + s • dA} ∪
             {q | ∃ r : ℝ, q = x + r • dB}) =
         ({x + t • dB} : Set (EuclideanSpace ℝ (Fin 2))) := by
+  classical
   let E := EuclideanSpace ℝ (Fin 2)
   let C := Fin 2 → ℝ
   let basis : Fin 2 → E := ![dA, dB]
@@ -184,7 +184,7 @@ lemma PlanarNonparallelHalfOpenTerminalTriangle
     · have hzy : z = y0 := by simpa using hz
       subst z
       simp only [y0, Matrix.cons_val_zero, Matrix.cons_val_one,
-        Matrix.head_cons, zero_smul, zero_add]
+        zero_smul, zero_add]
       rw [norm_smul, Real.norm_eq_abs, abs_of_pos ht]
       have hnonneg := norm_nonneg dA
       nlinarith [mul_nonneg (le_of_lt ht) hnonneg]
@@ -317,7 +317,7 @@ lemma PlanarNonparallelHalfOpenTerminalTriangle
       simp [chart, hL_apply, add_assoc]
     · have hzy : z = y0 := by simpa using hz
       have hqy : q = x + t • dB := hzq ▸ hzy ▸ hychart
-      exact False.elim (hqne (by simpa [hqy]))
+      exact False.elim (hqne (by simp [hqy]))
   have hbranch :
       Q ∩
           ({q | ∃ s : ℝ, q = x + s • dA} ∪
@@ -343,7 +343,7 @@ lemma PlanarNonparallelHalfOpenTerminalTriangle
           linarith
       · have hzy : z = y0 := by simpa using hz
         have hqy : q = x + t • dB := hzq ▸ hzy ▸ hychart
-        simpa [hqy]
+        simp [hqy]
     · intro hq
       have hqy : q = x + t • dB := by simpa using hq
       subst q

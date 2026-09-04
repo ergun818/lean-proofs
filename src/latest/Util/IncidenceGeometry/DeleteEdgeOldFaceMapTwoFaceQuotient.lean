@@ -8,9 +8,9 @@ import Util.IncidenceGeometry.OrdinaryDrawingImageCompact
 import Util.IncidenceGeometry.PlaneFaceData
 import Util.IncidenceGeometry.TwoPointFiberSurjectiveCard
 
-open Classical
 noncomputable section
 
+open Classical in
 lemma DeleteEdgeOldFaceMapTwoFaceQuotient {V : Type*} [Fintype V]
     (G : SimpleGraph V) [Fintype G.edgeSet] [DecidableRel G.Adj]
     (D : OrdinaryPolygonalDrawing G) (hD : D.crossingSet.card = 0)

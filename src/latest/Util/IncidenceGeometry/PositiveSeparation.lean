@@ -1,13 +1,13 @@
 import Util.IncidenceGeometry.Basic
 import Mathlib.Topology.Order.Compact
 
-open Classical
 noncomputable section
 
 lemma PositiveSeparation {A B : Set (EuclideanSpace ℝ (Fin 2))}
     (hA : A.Nonempty) (hB : B.Nonempty) (hAc : IsCompact A) (hBc : IsCompact B)
     (hdisj : Disjoint A B) :
     ∃ δ : ℝ, 0 < δ ∧ ∀ a, a ∈ A → ∀ b, b ∈ B → δ ≤ dist a b := by
+  classical
   let s : Set (EuclideanSpace ℝ (Fin 2) × EuclideanSpace ℝ (Fin 2)) := A ×ˢ B
   have hs_nonempty : s.Nonempty := by
     rcases hA with ⟨a, ha⟩

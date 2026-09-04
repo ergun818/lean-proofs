@@ -2,7 +2,6 @@ import Util.IncidenceGeometry.PolygonalPath
 import Mathlib.Topology.MetricSpace.Thickening
 import Mathlib.Analysis.Normed.Module.Convex
 
-open Classical
 noncomputable section
 
 lemma LocalSubdivisionWindowControl
@@ -27,6 +26,7 @@ lemma LocalSubdivisionWindowControl
                               p ∈ segment ℝ xs[i] xs[i + 1]}) ⊆
                         {p : EuclideanSpace ℝ (Fin 2) |
                           ∃ q : EuclideanSpace ℝ (Fin 2), q ∈ γ.carrier ∧ dist p q < δ} := by
+  classical
   intro hU hγU hδ
   let E := EuclideanSpace ℝ (Fin 2)
   have compact_segment : ∀ x y : E, IsCompact (segment ℝ x y) := by
@@ -112,7 +112,7 @@ lemma LocalSubdivisionWindowControl
   intro anchors xs hlen hanchors hclose
   constructor
   · intro p hp
-    simp only [Set.mem_union, Set.mem_insert_iff, Set.mem_singleton_iff, Set.mem_setOf_eq] at hp
+    simp only [Set.mem_union, Set.mem_insert_iff, Set.mem_singleton_iff, Set.mem_ofPred_eq] at hp
     rcases hp with hp_end | hp_seg
     · rcases hp_end with rfl | rfl
       · exact hγU hsource_carrier
@@ -130,7 +130,7 @@ lemma LocalSubdivisionWindowControl
       rw [Metric.mem_thickening_iff]
       exact ⟨q, hqγ, lt_trans hpq hρη⟩
   · intro p hp
-    simp only [Set.mem_union, Set.mem_insert_iff, Set.mem_singleton_iff, Set.mem_setOf_eq] at hp
+    simp only [Set.mem_union, Set.mem_insert_iff, Set.mem_singleton_iff, Set.mem_ofPred_eq] at hp
     rcases hp with hp_end | hp_seg
     · rcases hp_end with rfl | rfl
       · exact ⟨γ.source, hsource_carrier, by simpa using hδ⟩

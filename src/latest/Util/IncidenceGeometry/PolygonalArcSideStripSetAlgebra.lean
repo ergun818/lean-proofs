@@ -1,6 +1,5 @@
 import Util.IncidenceGeometry.PolygonalArcMiddleTubeWithoutRelativeInterior
 
-open Classical
 noncomputable section
 
 lemma PolygonalArcSideStripSetAlgebra
@@ -30,6 +29,7 @@ lemma PolygonalArcSideStripSetAlgebra
         (⋃ i : Fin γ.vertices.length, localSideData.rightSidePiece i))
     Disjoint L γ.carrier ∧ Disjoint R γ.carrier ∧ Disjoint L R ∧
       C \ γ.relativeInterior = L ∪ R := by
+  classical
   let sep := orientedTubes.toPolygonalArcCollarSeparatedTubeData
   let C : Set (EuclideanSpace ℝ (Fin 2)) :=
     ((⋃ (j : ℕ), ⋃ (hj : j + 1 < γ.vertices.length), sep.tube j hj) ∪

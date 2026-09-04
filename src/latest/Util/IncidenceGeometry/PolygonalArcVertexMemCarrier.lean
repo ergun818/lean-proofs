@@ -1,10 +1,10 @@
 import Util.IncidenceGeometry.PolygonalArc
 
-open Classical
 noncomputable section
 
 lemma PolygonalArcVertexMemCarrier (Γ : PolygonalArc)
     {p : EuclideanSpace ℝ (Fin 2)} (hp : p ∈ Γ.vertices) : p ∈ Γ.carrier := by
+  classical
   rw [Γ.carrier_eq]
   rcases List.get_of_mem hp with ⟨k, hk⟩
   by_cases hnext : k.1 + 1 < Γ.vertices.length

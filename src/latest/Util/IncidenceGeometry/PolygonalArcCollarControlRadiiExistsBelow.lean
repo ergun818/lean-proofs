@@ -3,7 +3,6 @@ import Util.IncidenceGeometry.PolygonalArcCollarControlRadiiExists
 import Util.IncidenceGeometry.PolygonalArcEndpointIsolation
 import Util.IncidenceGeometry.PolygonalArcVertexMemCarrier
 
-open Classical
 noncomputable section
 
 lemma PolygonalArcCollarControlRadiiExistsBelow (γ : PolygonalArc)
@@ -30,6 +29,7 @@ lemma PolygonalArcCollarControlRadiiExistsBelow (γ : PolygonalArc)
                         Disjoint
                           (Metric.ball γ.vertices[i.1] (controlRadii.radius i))
                           (Metric.ball γ.target r₁)) := by
+  classical
   intro hη hr₀ hr₁ hIso
   have hsourceIdx : 0 < γ.vertices.length := by
     have hlen := γ.length_ge_two

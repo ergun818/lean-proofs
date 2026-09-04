@@ -8,7 +8,6 @@ import Util.IncidenceGeometry.PolygonalArcReverse
 import Util.IncidenceGeometry.PolygonalArcTerminalEndpointCone
 import Util.IncidenceGeometry.PolygonalArcTerminalEndpointLeftCone
 
-open Classical
 noncomputable section
 
 lemma PolygonalArcCollarLocalSideDataExistsWithEndpointLeftCones (γ : PolygonalArc)
@@ -32,12 +31,12 @@ lemma PolygonalArcCollarLocalSideDataExistsWithEndpointLeftCones (γ : Polygonal
               omega
             let itarget : ℕ := γ.vertices.length - 1
             let htarget : itarget < γ.vertices.length := by
-              have hlen := γ.length_ge_two
+              have _hlen := γ.length_ge_two
               dsimp [itarget]
               omega
             let jlast : ℕ := γ.vertices.length - 2
             let hlast : jlast + 1 < γ.vertices.length := by
-              have hlen := γ.length_ge_two
+              have _hlen := γ.length_ge_two
               dsimp [jlast]
               omega
             controlRadii.radius ⟨0, hsource⟩ < r₀ →
@@ -89,6 +88,7 @@ lemma PolygonalArcCollarLocalSideDataExistsWithEndpointLeftCones (γ : Polygonal
                                                   ⟨itarget, htarget⟩ ⊆
                                                 PolygonalArcInitialEndpointLeftCone
                                                   (PolygonalArcReverse γ) r₁ K₁ := by
+  classical
   intro hr₀ hr₁ hK₀ hK₁
   dsimp
   intro hρ0_lt hρT_lt hKinit_lt hKterm_lt hsourceBalls htargetBalls

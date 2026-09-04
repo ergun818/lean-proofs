@@ -9,7 +9,6 @@ import Util.IncidenceGeometry.FinitePointLineAvoidance
 import Util.IncidenceGeometry.FiniteStraightLineComplexCarrierCompact
 import Util.IncidenceGeometry.EuclideanPlaneClosedBallExteriorConnected
 
-open Classical
 noncomputable section
 
 lemma JordanGenericRayReachesLocalSide
@@ -309,7 +308,7 @@ lemma JordanGenericRayReachesLocalSide
     have hRayX : (Rray ∩ X).Nonempty := by
       by_contra hempty
       apply hRayUnbounded
-      apply Metric.isBounded_closedBall.subset
+      apply (Metric.isBounded_closedBall (x := 0) (r := R)).subset
       intro z hz
       by_contra hzX
       apply hempty
@@ -317,7 +316,7 @@ lemma JordanGenericRayReachesLocalSide
     have hTX : (T ∩ X).Nonempty := by
       by_contra hempty
       apply hTunbounded
-      apply Metric.isBounded_closedBall.subset
+      apply (Metric.isBounded_closedBall (x := 0) (r := R)).subset
       intro z hz
       by_contra hzX
       apply hempty

@@ -1,6 +1,5 @@
 import Util.IncidenceGeometry.OrdinaryPolygonalDrawing
 
-open Classical
 noncomputable section
 
 noncomputable def CrossingNumber {V : Type*} [Fintype V] (G : SimpleGraph V)

@@ -4,7 +4,6 @@ import Util.IncidenceGeometry.StraightSegmentPolygonalArc
 import Util.IncidenceGeometry.CollinearAdjacentSubsegmentsMeetAtEndpoint
 import Mathlib.Tactic
 
-open Classical
 noncomputable section
 
 private lemma ordinaryAdjacentEdgesTerminalArcPackage :
@@ -22,6 +21,7 @@ private lemma ordinaryAdjacentEdgesTerminalArcPackage :
           approach.target = h ∧
           approach.carrier ∩ segment ℝ h terminalGate = ({h} : Set _) ∧
           Disjoint predecessor.carrier (segment ℝ h terminalGate) := by
+  classical
   intro SelectedSide Vin h terminalGate dA dB q hVinOpen hVinConvex
     hVinSelected hhVin hdBne hq hhFormula hliScaled
   obtain ⟨epsH, hepsH, hballHVin⟩ :=
@@ -205,7 +205,6 @@ private lemma ordinaryAdjacentEdgesTerminalArcPackage :
     hpredTarget, happSource, hPredApproach, happTarget,
     hApproachTerminal, hPredTerminalDisjoint⟩
 
-
 lemma OrdinaryAdjacentEdgesTerminalCollarCompatibility
     (x y d n : EuclideanSpace ℝ (Fin 2))
     (lambda mu nu kappa cap rho : ℝ)
@@ -296,6 +295,7 @@ lemma OrdinaryAdjacentEdgesTerminalCollarCompatibility
               ∃ gateA gateB : ℝ, 0 < gateA ∧ 0 < gateB ∧
                 gateB = kappa * gateA ∧
                 terminalGate = x + gateA • d + gateB • n := by
+  classical
   let dA := lambda • d
   let dB := y - x
   let denom := 24 * (nu - kappa * mu) - kappa * lambda
@@ -995,7 +995,7 @@ lemma OrdinaryAdjacentEdgesTerminalCollarCompatibility
     rcases hp with ⟨t, ht, rfl⟩
     by_cases ht1 : t = 1
     · right
-      simpa [ht1]
+      simp [ht1]
     · left
       have htlt : t < 1 := lt_of_le_of_ne ht.2 ht1
       let wC : EuclideanSpace ℝ (Fin 2) :=
@@ -1032,7 +1032,7 @@ lemma OrdinaryAdjacentEdgesTerminalCollarCompatibility
       dsimp [h]
       rw [hhC0, hhC1, hterminalChart]
       simp only [AffineMap.lineMap_apply]
-      simp [gateC, z0, z1]
+      simp [z0, z1]
       module
   have hopenTerminal : openSegment ℝ h terminalGate ⊆ Vin := by
     intro p hp
@@ -1127,7 +1127,7 @@ lemma OrdinaryAdjacentEdgesTerminalCollarCompatibility
         exact (sub_eq_zero.mp ((mul_eq_zero.mp hfac).resolve_left hgateApos.ne')).symm
       have hpEq : p = terminalGate := by
         rw [hpform, hterminalActual, haeq, hbeq]
-      simpa [hpEq]
+      simp [hpEq]
     · intro hp
       have hpEq : p = terminalGate := by simpa using hp
       subst p

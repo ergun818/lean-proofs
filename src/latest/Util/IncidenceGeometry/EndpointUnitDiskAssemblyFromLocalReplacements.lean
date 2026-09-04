@@ -16,8 +16,6 @@ import Util.IncidenceGeometry.EndpointUnitDiskOrderedGapDiskIntersections
 import Util.IncidenceGeometry.EndpointUnitDiskChordGapCutDiskIntersections
 import Util.IncidenceGeometry.OrdinaryCleanLocalCrossingOfOpenSegments
 
-
-open Classical
 noncomputable section
 
 private lemma endpointUnitDiskAssembly_indexUnique
@@ -27,6 +25,7 @@ private lemma endpointUnitDiskAssembly_indexUnique
     (hqopen : q ∈ openSegment ℝ Q.vertices[s] Q.vertices[s + 1])
     (hqseg : q ∈ segment ℝ Q.vertices[t] Q.vertices[t + 1]) :
     s = t := by
+  classical
   have hq_not_vertex : q ∉ Q.vertices := by
     intro hqmem
     obtain ⟨k, hk, hkeq⟩ := List.mem_iff_getElem.mp hqmem
@@ -81,6 +80,7 @@ private lemma endpointUnitDiskAssembly_localEdgeAvoid
     {p : EuclideanSpace ℝ (Fin 2)}
     (hp_def : L[k] = p)
     (hpopen : p ∈ openSegment ℝ L[m] L[m + 1]) : False := by
+  classical
   have hpopen_original :
       L[k] ∈ openSegment ℝ L[m] L[m + 1] := by
     rw [hp_def]
@@ -96,7 +96,7 @@ private lemma endpointUnitDiskAssembly_initialGapAvoidsLaterCarrier
     (laterArc : PolygonalArc)
     (e t e' sExit sEntry : ℝ)
     (hAB : A ≠ B)
-    (he_pos : 0 < e)
+    (_he_pos : 0 < e)
     (he_lt_t : e < t)
     (ht_sExit : t < sExit)
     (hsExitEntry : sExit < sEntry)
@@ -110,6 +110,7 @@ private lemma endpointUnitDiskAssembly_initialGapAvoidsLaterCarrier
         q ∈ segment ℝ (AffineMap.lineMap A B (0 : ℝ))
             (AffineMap.lineMap A B e) →
           q ∈ laterArc.carrier → e < e' → False) : False := by
+  classical
   have hf : Function.Injective (AffineMap.lineMap A B) :=
     AffineMap.lineMap_injective (k := ℝ) hAB
   have he'_eq : e' = sEntry := by
@@ -123,7 +124,7 @@ private lemma endpointUnitDiskAssembly_initialGapAvoidsLaterCarrier
   exact hposition hpseg_param hp_carrier he_lt_e'
 
 private lemma endpointUnitDiskAssembly_assembledVerticesAvoid
-    {ι : Type*} [Fintype ι]
+    {ι : Type*} [Finite ι]
     (a b : ι → EuclideanSpace ℝ (Fin 2))
     (centerParams : ι → List ℝ)
     (localArcAtParam :
@@ -201,7 +202,7 @@ private lemma endpointUnitDiskAssembly_assembledVerticesAvoid
             (∀ ⦃p : EuclideanSpace ℝ (Fin 2)⦄,
               p ∈ segment ℝ (exitPoint i t1) (entryPoint i t2) →
                 p ∈ (localArcAtParam i t2).carrier → p = entryPoint i t2))
-    (hassembledVertices_nodup : ∀ i, (assembledVertices i).Nodup)
+    (_hassembledVertices_nodup : ∀ i, (assembledVertices i).Nodup)
     (hlocalEdgeAvoidsAssembledVertices :
       ∀ i (t : {t : ℝ // t ∈ centerParams i}) ⦃q : ℕ⦄,
         (hq : q + 1 < (localArcAtParam i t).vertices.length) →
@@ -252,6 +253,8 @@ private lemma endpointUnitDiskAssembly_assembledVerticesAvoid
             (assembledVertices i)[k] ∉
               openSegment ℝ (assembledVertices i)[m]
                 (assembledVertices i)[m + 1] := by
+  classical
+  let := Fintype.ofFinite ι
   intro i m k hm hk hkm hkm1 hpopen
   let f : ℝ →ᵃ[ℝ] EuclideanSpace ℝ (Fin 2) :=
     AffineMap.lineMap (a i) (b i)
@@ -328,7 +331,8 @@ private lemma endpointUnitDiskAssembly_assembledVerticesAvoid
   rcases hassembledEdgeEndpointRoles i hm with hnodisks | hroles
   · rcases hnodisks with ⟨hitems, hleft, hright⟩
     have hp_cases := hp_mem
-    simp [hassembledVertices i, hitems] at hp_cases
+    simp only [hassembledVertices i, hitems, List.map_nil, List.flatten_nil, List.nil_append,
+      List.cons_append, List.mem_cons, List.not_mem_nil, or_false] at hp_cases
     have hpopenAB : p ∈ openSegment ℝ (a i) (b i) := by
       simpa [hleft, hright] using hpopen
     rcases hp_cases with hpA | hpB
@@ -357,7 +361,9 @@ private lemma endpointUnitDiskAssembly_assembledVerticesAvoid
       ⟨⟨e, he_pos, he_lt_t, hentry⟩,
         ⟨x, ht_lt_x, hx_lt_one, hexit⟩⟩
     have hp_cases := hp_mem
-    simp [hassembledVertices i] at hp_cases
+    simp only [hassembledVertices i, List.cons_append, List.nil_append, List.mem_cons,
+      List.mem_append, List.mem_flatten, List.mem_map, List.mem_attach, true_and, Subtype.exists,
+      ↓existsAndEq, List.not_mem_nil, or_false] at hp_cases
     rcases hp_cases with hpA | hp_cases
     · rw [hpA] at hpopen_gap
       exact hentry_ne_left t
@@ -476,7 +482,9 @@ private lemma endpointUnitDiskAssembly_assembledVerticesAvoid
         exact hf (by simpa [f, hexit1, hentry2] using hsame)
       linarith
     have hp_cases := hp_mem
-    simp [hassembledVertices i] at hp_cases
+    simp only [hassembledVertices i, List.cons_append, List.nil_append, List.mem_cons,
+      List.mem_append, List.mem_flatten, List.mem_map, List.mem_attach, true_and, Subtype.exists,
+      ↓existsAndEq, List.not_mem_nil, or_false] at hp_cases
     rcases hp_cases with hpA | hp_cases
     · rw [hpA] at hpseg_gap
       have hseg_param :
@@ -598,7 +606,9 @@ private lemma endpointUnitDiskAssembly_assembledVerticesAvoid
       ⟨⟨e, he_pos, he_lt_t, hentry⟩,
         ⟨x, ht_lt_x, hx_lt_one, hexit⟩⟩
     have hp_cases := hp_mem
-    simp [hassembledVertices i] at hp_cases
+    simp only [hassembledVertices i, List.cons_append, List.nil_append, List.mem_cons,
+      List.mem_append, List.mem_flatten, List.mem_map, List.mem_attach, true_and, Subtype.exists,
+      ↓existsAndEq, List.not_mem_nil, or_false] at hp_cases
     rcases hp_cases with hpA | hp_cases
     · rw [hpA] at hpseg_gap
       have haseg :
@@ -665,7 +675,6 @@ private lemma endpointUnitDiskAssembly_assembledVerticesAvoid
       exact hexit_ne_right t
         ((right_mem_openSegment_iff (𝕜 := ℝ)
           (x := exitPoint i t) (y := b i)).1 hpopen_gap)
-
 
 private abbrev endpointUnitDiskAssembly_initialRole
     {ι : Type*} (a : ι → EuclideanSpace ℝ (Fin 2))
@@ -753,14 +762,14 @@ private abbrev endpointUnitDiskAssembly_nonemptyRole
       assembledVertices i m hm
 
 private lemma endpointUnitDiskAssembly_segments_initial
-    {ι : Type*} [Fintype ι]
+    {ι : Type*} [Finite ι]
     (a b : ι → EuclideanSpace ℝ (Fin 2))
     (T : Finset (EuclideanSpace ℝ (Fin 2)))
     (r : EuclideanSpace ℝ (Fin 2) → ℝ)
     (centerParams : ι → List ℝ)
     (centerOfParam :
       ∀ i, {t : ℝ // t ∈ centerParams i} → EuclideanSpace ℝ (Fin 2))
-    (hcenterOfParam_def :
+    (_hcenterOfParam_def :
       ∀ i (t : {t : ℝ // t ∈ centerParams i}),
         centerOfParam i t = AffineMap.lineMap (a i) (b i) t.1)
     (localArcAtParam :
@@ -768,19 +777,19 @@ private lemma endpointUnitDiskAssembly_segments_initial
     (entryPoint exitPoint :
       ∀ i, {t : ℝ // t ∈ centerParams i} → EuclideanSpace ℝ (Fin 2))
     (orderedLocalVertexBlocks :
-      ∀ i, List (List (EuclideanSpace ℝ (Fin 2))))
+      ∀ _i, List (List (EuclideanSpace ℝ (Fin 2))))
     (assembledVertices : ι → List (EuclideanSpace ℝ (Fin 2)))
-    (horderedLocalVertexBlocks_def : ∀ i,
+    (_horderedLocalVertexBlocks_def : ∀ i,
       orderedLocalVertexBlocks i =
         (centerParams i).attach.map
           (fun t => (localArcAtParam i t).vertices))
-    (hassembledVertices_def : ∀ i,
+    (_hassembledVertices_def : ∀ i,
       assembledVertices i =
         EndpointUnitDiskAlternatingVertexList
           (a i) (b i) (orderedLocalVertexBlocks i))
     (hendpoint_ne : ∀ i, a i ≠ b i)
-    (hcenterParams_sorted : ∀ i, (centerParams i).SortedLT)
-    (hcenterOfParam_T :
+    (_hcenterParams_sorted : ∀ i, (centerParams i).SortedLT)
+    (_hcenterOfParam_T :
       ∀ i (t : {t : ℝ // t ∈ centerParams i}), centerOfParam i t ∈ T)
     (hlocalArcAtParam_props :
       ∀ i (t : {t : ℝ // t ∈ centerParams i}),
@@ -835,12 +844,12 @@ private lemma endpointUnitDiskAssembly_segments_initial
         ⦃p : EuclideanSpace ℝ (Fin 2)⦄,
         p ∈ segment ℝ (a i) (entryPoint i t) →
           p ∈ (localArcAtParam i t).carrier → p = entryPoint i t)
-    (hterminalGapMeetsLocalCarrierOnly :
+    (_hterminalGapMeetsLocalCarrierOnly :
       ∀ i (t : {t : ℝ // t ∈ centerParams i})
         ⦃p : EuclideanSpace ℝ (Fin 2)⦄,
         p ∈ segment ℝ (exitPoint i t) (b i) →
           p ∈ (localArcAtParam i t).carrier → p = exitPoint i t)
-    (horderedOutsideGapMeetsNeighboringLocalCarriersOnly :
+    (_horderedOutsideGapMeetsNeighboringLocalCarriersOnly :
       ∀ i (t1 t2 : {t : ℝ // t ∈ centerParams i}),
         t1.1 < t2.1 →
           (∀ ⦃p : EuclideanSpace ℝ (Fin 2)⦄,
@@ -849,11 +858,11 @@ private lemma endpointUnitDiskAssembly_segments_initial
             (∀ ⦃p : EuclideanSpace ℝ (Fin 2)⦄,
               p ∈ segment ℝ (exitPoint i t1) (entryPoint i t2) →
                 p ∈ (localArcAtParam i t2).carrier → p = entryPoint i t2))
-    (hdisjoint : ∀ ⦃z w : EuclideanSpace ℝ (Fin 2)⦄,
+    (_hdisjoint : ∀ ⦃z w : EuclideanSpace ℝ (Fin 2)⦄,
       z ∈ T → w ∈ T → z ≠ w →
         Disjoint (Metric.closedBall z (r z)) (Metric.closedBall w (r w)))
     (hassembledVertices_nodup : ∀ i, (assembledVertices i).Nodup)
-    (hassembledVertices_avoid :
+    (_hassembledVertices_avoid :
       ∀ i ⦃m k : ℕ⦄,
         (hm : m + 1 < (assembledVertices i).length) →
           (hk : k < (assembledVertices i).length) →
@@ -861,7 +870,7 @@ private lemma endpointUnitDiskAssembly_segments_initial
               (assembledVertices i)[k] ∉
                 openSegment ℝ
                   (assembledVertices i)[m] (assembledVertices i)[m + 1])
-    (hassembledEdgeEndpointRoles :
+    (_hassembledEdgeEndpointRoles :
       ∀ i ⦃m : ℕ⦄,
         (hm : m + 1 < (assembledVertices i).length) →
           ((centerParams i).attach = [] ∧
@@ -909,13 +918,13 @@ private lemma endpointUnitDiskAssembly_segments_initial
     (hm : m + 1 < (assembledVertices i).length)
     (hn : n + 1 < (assembledVertices i).length)
     (hmn : m < n)
-    (hinitialIndexZero :
+    (_hinitialIndexZero :
       ∀ ⦃k : ℕ⦄,
         (hk : k + 1 < (assembledVertices i).length) →
           endpointUnitDiskAssembly_initialRole a centerParams localArcAtParam
               assembledVertices i k hk →
             k = 0)
-    (hterminalNoLater :
+    (_hterminalNoLater :
       ∀ ⦃k l : ℕ⦄,
         (hk : k + 1 < (assembledVertices i).length) →
         (hl : l + 1 < (assembledVertices i).length) →
@@ -943,6 +952,8 @@ private lemma endpointUnitDiskAssembly_segments_initial
     (segment ℝ (assembledVertices i)[m] (assembledVertices i)[m + 1] ∩
         segment ℝ (assembledVertices i)[n] (assembledVertices i)[n + 1]) =
       if n = m + 1 then {(assembledVertices i)[n]} else ∅ := by
+  classical
+  let := Fintype.ofFinite ι
   rcases hroles_n with hinitial_n | hroles_n
   · rcases hinitial_m with
       ⟨t_m, ts_m, X_m, _hitems_m, _hhead_m, hleft_m, _hright_m⟩
@@ -1171,14 +1182,14 @@ private lemma endpointUnitDiskAssembly_segments_initial
           exact False.elim hp_empty)
 
 private lemma endpointUnitDiskAssembly_segments_local_initial
-    {ι : Type*} [Fintype ι]
+    {ι : Type*} [Finite ι]
     (a b : ι → EuclideanSpace ℝ (Fin 2))
     (T : Finset (EuclideanSpace ℝ (Fin 2)))
     (r : EuclideanSpace ℝ (Fin 2) → ℝ)
     (centerParams : ι → List ℝ)
     (centerOfParam :
       ∀ i, {t : ℝ // t ∈ centerParams i} → EuclideanSpace ℝ (Fin 2))
-    (hcenterOfParam_def :
+    (_hcenterOfParam_def :
       ∀ i (t : {t : ℝ // t ∈ centerParams i}),
         centerOfParam i t = AffineMap.lineMap (a i) (b i) t.1)
     (localArcAtParam :
@@ -1186,21 +1197,21 @@ private lemma endpointUnitDiskAssembly_segments_local_initial
     (entryPoint exitPoint :
       ∀ i, {t : ℝ // t ∈ centerParams i} → EuclideanSpace ℝ (Fin 2))
     (orderedLocalVertexBlocks :
-      ∀ i, List (List (EuclideanSpace ℝ (Fin 2))))
+      ∀ _i, List (List (EuclideanSpace ℝ (Fin 2))))
     (assembledVertices : ι → List (EuclideanSpace ℝ (Fin 2)))
-    (horderedLocalVertexBlocks_def : ∀ i,
+    (_horderedLocalVertexBlocks_def : ∀ i,
       orderedLocalVertexBlocks i =
         (centerParams i).attach.map
           (fun t => (localArcAtParam i t).vertices))
-    (hassembledVertices_def : ∀ i,
+    (_hassembledVertices_def : ∀ i,
       assembledVertices i =
         EndpointUnitDiskAlternatingVertexList
           (a i) (b i) (orderedLocalVertexBlocks i))
-    (hendpoint_ne : ∀ i, a i ≠ b i)
-    (hcenterParams_sorted : ∀ i, (centerParams i).SortedLT)
-    (hcenterOfParam_T :
+    (_hendpoint_ne : ∀ i, a i ≠ b i)
+    (_hcenterParams_sorted : ∀ i, (centerParams i).SortedLT)
+    (_hcenterOfParam_T :
       ∀ i (t : {t : ℝ // t ∈ centerParams i}), centerOfParam i t ∈ T)
-    (hlocalArcAtParam_props :
+    (_hlocalArcAtParam_props :
       ∀ i (t : {t : ℝ // t ∈ centerParams i}),
         (localArcAtParam i t).source = entryPoint i t ∧
           (localArcAtParam i t).target = exitPoint i t ∧
@@ -1208,13 +1219,13 @@ private lemma endpointUnitDiskAssembly_segments_local_initial
               Metric.closedBall (centerOfParam i t) (r (centerOfParam i t)) ∧
               (localArcAtParam i t).relativeInterior ⊆
                 Metric.ball (centerOfParam i t) (r (centerOfParam i t)))
-    (hentryExitParameters :
+    (_hentryExitParameters :
       ∀ i (t : {t : ℝ // t ∈ centerParams i}),
         (∃ s : ℝ, 0 < s ∧ s < t.1 ∧
           entryPoint i t = AffineMap.lineMap (a i) (b i) s) ∧
           (∃ s : ℝ, t.1 < s ∧ s < 1 ∧
             exitPoint i t = AffineMap.lineMap (a i) (b i) s))
-    (horderedCutSeparation :
+    (_horderedCutSeparation :
       ∀ i (t1 t2 : {t : ℝ // t ∈ centerParams i}),
         t1.1 < t2.1 →
           ∃ sExit sEntry : ℝ,
@@ -1223,7 +1234,7 @@ private lemma endpointUnitDiskAssembly_segments_local_initial
                 sEntry < t2.1 ∧
                   exitPoint i t1 = AffineMap.lineMap (a i) (b i) sExit ∧
                     entryPoint i t2 = AffineMap.lineMap (a i) (b i) sEntry)
-    (hchordGapLocalCarrierPosition :
+    (_hchordGapLocalCarrierPosition :
       ∀ i (t : {t : ℝ // t ∈ centerParams i}) {α β e x : ℝ},
         entryPoint i t = AffineMap.lineMap (a i) (b i) e →
           exitPoint i t = AffineMap.lineMap (a i) (b i) x →
@@ -1248,17 +1259,17 @@ private lemma endpointUnitDiskAssembly_segments_local_initial
                           (AffineMap.lineMap (a i) (b i) β) →
                         p ∈ (localArcAtParam i t).carrier →
                           x = α → p = exitPoint i t))
-    (hinitialGapMeetsLocalCarrierOnly :
+    (_hinitialGapMeetsLocalCarrierOnly :
       ∀ i (t : {t : ℝ // t ∈ centerParams i})
         ⦃p : EuclideanSpace ℝ (Fin 2)⦄,
         p ∈ segment ℝ (a i) (entryPoint i t) →
           p ∈ (localArcAtParam i t).carrier → p = entryPoint i t)
-    (hterminalGapMeetsLocalCarrierOnly :
+    (_hterminalGapMeetsLocalCarrierOnly :
       ∀ i (t : {t : ℝ // t ∈ centerParams i})
         ⦃p : EuclideanSpace ℝ (Fin 2)⦄,
         p ∈ segment ℝ (exitPoint i t) (b i) →
           p ∈ (localArcAtParam i t).carrier → p = exitPoint i t)
-    (horderedOutsideGapMeetsNeighboringLocalCarriersOnly :
+    (_horderedOutsideGapMeetsNeighboringLocalCarriersOnly :
       ∀ i (t1 t2 : {t : ℝ // t ∈ centerParams i}),
         t1.1 < t2.1 →
           (∀ ⦃p : EuclideanSpace ℝ (Fin 2)⦄,
@@ -1267,11 +1278,11 @@ private lemma endpointUnitDiskAssembly_segments_local_initial
             (∀ ⦃p : EuclideanSpace ℝ (Fin 2)⦄,
               p ∈ segment ℝ (exitPoint i t1) (entryPoint i t2) →
                 p ∈ (localArcAtParam i t2).carrier → p = entryPoint i t2))
-    (hdisjoint : ∀ ⦃z w : EuclideanSpace ℝ (Fin 2)⦄,
+    (_hdisjoint : ∀ ⦃z w : EuclideanSpace ℝ (Fin 2)⦄,
       z ∈ T → w ∈ T → z ≠ w →
         Disjoint (Metric.closedBall z (r z)) (Metric.closedBall w (r w)))
-    (hassembledVertices_nodup : ∀ i, (assembledVertices i).Nodup)
-    (hassembledVertices_avoid :
+    (_hassembledVertices_nodup : ∀ i, (assembledVertices i).Nodup)
+    (_hassembledVertices_avoid :
       ∀ i ⦃m k : ℕ⦄,
         (hm : m + 1 < (assembledVertices i).length) →
           (hk : k < (assembledVertices i).length) →
@@ -1279,7 +1290,7 @@ private lemma endpointUnitDiskAssembly_segments_local_initial
               (assembledVertices i)[k] ∉
                 openSegment ℝ
                   (assembledVertices i)[m] (assembledVertices i)[m + 1])
-    (hassembledEdgeEndpointRoles :
+    (_hassembledEdgeEndpointRoles :
       ∀ i ⦃m : ℕ⦄,
         (hm : m + 1 < (assembledVertices i).length) →
           ((centerParams i).attach = [] ∧
@@ -1316,7 +1327,7 @@ private lemma endpointUnitDiskAssembly_segments_local_initial
                 (localArcAtParam i t).vertices.getLast? = some X ∧
                   (assembledVertices i)[m] = X ∧
                     (assembledVertices i)[m + 1] = b i))
-    (hlineSegmentInterSeparated :
+    (_hlineSegmentInterSeparated :
       ∀ i {α β γ δ : ℝ}, α ≤ β → γ ≤ δ → β < γ →
         segment ℝ (AffineMap.lineMap (a i) (b i) α)
             (AffineMap.lineMap (a i) (b i) β) ∩
@@ -1333,7 +1344,7 @@ private lemma endpointUnitDiskAssembly_segments_local_initial
           endpointUnitDiskAssembly_initialRole a centerParams localArcAtParam
               assembledVertices i k hk →
             k = 0)
-    (hterminalNoLater :
+    (_hterminalNoLater :
       ∀ ⦃k l : ℕ⦄,
         (hk : k + 1 < (assembledVertices i).length) →
         (hl : l + 1 < (assembledVertices i).length) →
@@ -1341,7 +1352,7 @@ private lemma endpointUnitDiskAssembly_segments_local_initial
           endpointUnitDiskAssembly_terminalRole b centerParams localArcAtParam
               assembledVertices i k hk →
             False)
-    (hinter_of_forall_eq_right :
+    (_hinter_of_forall_eq_right :
       (∀ ⦃p : EuclideanSpace ℝ (Fin 2)⦄,
         p ∈ segment ℝ (assembledVertices i)[m] (assembledVertices i)[m + 1] →
         p ∈ segment ℝ (assembledVertices i)[n] (assembledVertices i)[n + 1] →
@@ -1349,10 +1360,10 @@ private lemma endpointUnitDiskAssembly_segments_local_initial
       (segment ℝ (assembledVertices i)[m] (assembledVertices i)[m + 1] ∩
           segment ℝ (assembledVertices i)[n] (assembledVertices i)[n + 1]) =
         if n = m + 1 then {(assembledVertices i)[n]} else ∅)
-    (hattach_pairwise_lt :
+    (_hattach_pairwise_lt :
       (centerParams i).attach.Pairwise
         (fun t1 t2 : {t : ℝ // t ∈ centerParams i} => t1.1 < t2.1))
-    (hlocal_m :
+    (_hlocal_m :
       endpointUnitDiskAssembly_localRole centerParams localArcAtParam
         assembledVertices i m hm)
     (hinitial_n :
@@ -1361,12 +1372,14 @@ private lemma endpointUnitDiskAssembly_segments_local_initial
     (segment ℝ (assembledVertices i)[m] (assembledVertices i)[m + 1] ∩
         segment ℝ (assembledVertices i)[n] (assembledVertices i)[n + 1]) =
       if n = m + 1 then {(assembledVertices i)[n]} else ∅ := by
+  classical
+  let := Fintype.ofFinite ι
   exact False.elim (by
     have hn0 : n = 0 := hinitialIndexZero hn hinitial_n
     omega)
 
 private lemma endpointUnitDiskAssembly_segments_local_local
-    {ι : Type*} [Fintype ι]
+    {ι : Type*} [Finite ι]
     (a b : ι → EuclideanSpace ℝ (Fin 2))
     (T : Finset (EuclideanSpace ℝ (Fin 2)))
     (r : EuclideanSpace ℝ (Fin 2) → ℝ)
@@ -1381,18 +1394,18 @@ private lemma endpointUnitDiskAssembly_segments_local_local
     (entryPoint exitPoint :
       ∀ i, {t : ℝ // t ∈ centerParams i} → EuclideanSpace ℝ (Fin 2))
     (orderedLocalVertexBlocks :
-      ∀ i, List (List (EuclideanSpace ℝ (Fin 2))))
+      ∀ _i, List (List (EuclideanSpace ℝ (Fin 2))))
     (assembledVertices : ι → List (EuclideanSpace ℝ (Fin 2)))
-    (horderedLocalVertexBlocks_def : ∀ i,
+    (_horderedLocalVertexBlocks_def : ∀ i,
       orderedLocalVertexBlocks i =
         (centerParams i).attach.map
           (fun t => (localArcAtParam i t).vertices))
-    (hassembledVertices_def : ∀ i,
+    (_hassembledVertices_def : ∀ i,
       assembledVertices i =
         EndpointUnitDiskAlternatingVertexList
           (a i) (b i) (orderedLocalVertexBlocks i))
     (hendpoint_ne : ∀ i, a i ≠ b i)
-    (hcenterParams_sorted : ∀ i, (centerParams i).SortedLT)
+    (_hcenterParams_sorted : ∀ i, (centerParams i).SortedLT)
     (hcenterOfParam_T :
       ∀ i (t : {t : ℝ // t ∈ centerParams i}), centerOfParam i t ∈ T)
     (hlocalArcAtParam_props :
@@ -1403,13 +1416,13 @@ private lemma endpointUnitDiskAssembly_segments_local_local
               Metric.closedBall (centerOfParam i t) (r (centerOfParam i t)) ∧
               (localArcAtParam i t).relativeInterior ⊆
                 Metric.ball (centerOfParam i t) (r (centerOfParam i t)))
-    (hentryExitParameters :
+    (_hentryExitParameters :
       ∀ i (t : {t : ℝ // t ∈ centerParams i}),
         (∃ s : ℝ, 0 < s ∧ s < t.1 ∧
           entryPoint i t = AffineMap.lineMap (a i) (b i) s) ∧
           (∃ s : ℝ, t.1 < s ∧ s < 1 ∧
             exitPoint i t = AffineMap.lineMap (a i) (b i) s))
-    (horderedCutSeparation :
+    (_horderedCutSeparation :
       ∀ i (t1 t2 : {t : ℝ // t ∈ centerParams i}),
         t1.1 < t2.1 →
           ∃ sExit sEntry : ℝ,
@@ -1418,7 +1431,7 @@ private lemma endpointUnitDiskAssembly_segments_local_local
                 sEntry < t2.1 ∧
                   exitPoint i t1 = AffineMap.lineMap (a i) (b i) sExit ∧
                     entryPoint i t2 = AffineMap.lineMap (a i) (b i) sEntry)
-    (hchordGapLocalCarrierPosition :
+    (_hchordGapLocalCarrierPosition :
       ∀ i (t : {t : ℝ // t ∈ centerParams i}) {α β e x : ℝ},
         entryPoint i t = AffineMap.lineMap (a i) (b i) e →
           exitPoint i t = AffineMap.lineMap (a i) (b i) x →
@@ -1443,17 +1456,17 @@ private lemma endpointUnitDiskAssembly_segments_local_local
                           (AffineMap.lineMap (a i) (b i) β) →
                         p ∈ (localArcAtParam i t).carrier →
                           x = α → p = exitPoint i t))
-    (hinitialGapMeetsLocalCarrierOnly :
+    (_hinitialGapMeetsLocalCarrierOnly :
       ∀ i (t : {t : ℝ // t ∈ centerParams i})
         ⦃p : EuclideanSpace ℝ (Fin 2)⦄,
         p ∈ segment ℝ (a i) (entryPoint i t) →
           p ∈ (localArcAtParam i t).carrier → p = entryPoint i t)
-    (hterminalGapMeetsLocalCarrierOnly :
+    (_hterminalGapMeetsLocalCarrierOnly :
       ∀ i (t : {t : ℝ // t ∈ centerParams i})
         ⦃p : EuclideanSpace ℝ (Fin 2)⦄,
         p ∈ segment ℝ (exitPoint i t) (b i) →
           p ∈ (localArcAtParam i t).carrier → p = exitPoint i t)
-    (horderedOutsideGapMeetsNeighboringLocalCarriersOnly :
+    (_horderedOutsideGapMeetsNeighboringLocalCarriersOnly :
       ∀ i (t1 t2 : {t : ℝ // t ∈ centerParams i}),
         t1.1 < t2.1 →
           (∀ ⦃p : EuclideanSpace ℝ (Fin 2)⦄,
@@ -1474,7 +1487,7 @@ private lemma endpointUnitDiskAssembly_segments_local_local
               (assembledVertices i)[k] ∉
                 openSegment ℝ
                   (assembledVertices i)[m] (assembledVertices i)[m + 1])
-    (hassembledEdgeEndpointRoles :
+    (_hassembledEdgeEndpointRoles :
       ∀ i ⦃m : ℕ⦄,
         (hm : m + 1 < (assembledVertices i).length) →
           ((centerParams i).attach = [] ∧
@@ -1511,7 +1524,7 @@ private lemma endpointUnitDiskAssembly_segments_local_local
                 (localArcAtParam i t).vertices.getLast? = some X ∧
                   (assembledVertices i)[m] = X ∧
                     (assembledVertices i)[m + 1] = b i))
-    (hlineSegmentInterSeparated :
+    (_hlineSegmentInterSeparated :
       ∀ i {α β γ δ : ℝ}, α ≤ β → γ ≤ δ → β < γ →
         segment ℝ (AffineMap.lineMap (a i) (b i) α)
             (AffineMap.lineMap (a i) (b i) β) ∩
@@ -1522,13 +1535,13 @@ private lemma endpointUnitDiskAssembly_segments_local_local
     (hm : m + 1 < (assembledVertices i).length)
     (hn : n + 1 < (assembledVertices i).length)
     (hmn : m < n)
-    (hinitialIndexZero :
+    (_hinitialIndexZero :
       ∀ ⦃k : ℕ⦄,
         (hk : k + 1 < (assembledVertices i).length) →
           endpointUnitDiskAssembly_initialRole a centerParams localArcAtParam
               assembledVertices i k hk →
             k = 0)
-    (hterminalNoLater :
+    (_hterminalNoLater :
       ∀ ⦃k l : ℕ⦄,
         (hk : k + 1 < (assembledVertices i).length) →
         (hl : l + 1 < (assembledVertices i).length) →
@@ -1544,7 +1557,7 @@ private lemma endpointUnitDiskAssembly_segments_local_local
       (segment ℝ (assembledVertices i)[m] (assembledVertices i)[m + 1] ∩
           segment ℝ (assembledVertices i)[n] (assembledVertices i)[n + 1]) =
         if n = m + 1 then {(assembledVertices i)[n]} else ∅)
-    (hattach_pairwise_lt :
+    (_hattach_pairwise_lt :
       (centerParams i).attach.Pairwise
         (fun t1 t2 : {t : ℝ // t ∈ centerParams i} => t1.1 < t2.1))
     (hlocal_m :
@@ -1556,6 +1569,8 @@ private lemma endpointUnitDiskAssembly_segments_local_local
     (segment ℝ (assembledVertices i)[m] (assembledVertices i)[m + 1] ∩
         segment ℝ (assembledVertices i)[n] (assembledVertices i)[n + 1]) =
       if n = m + 1 then {(assembledVertices i)[n]} else ∅ := by
+  classical
+  let := Fintype.ofFinite ι
   rcases hlocal_m with
     ⟨pre_m, t_m, post_m, q_m, hq_m, hitems_m,
       hleft_m, hright_m⟩
@@ -1610,7 +1625,7 @@ private lemma endpointUnitDiskAssembly_segments_local_local
               p ∈ (∅ : Set (EuclideanSpace ℝ (Fin 2))) := by
             have hp_inter' := hp_inter
             rw [hinter] at hp_inter'
-            simpa [hAdj] using hp_inter'
+            simp [hAdj] at hp_inter'
           exact False.elim hp_empty
       · subst q_n
         have hm_lt : m < (assembledVertices i).length :=
@@ -1678,7 +1693,7 @@ private lemma endpointUnitDiskAssembly_segments_local_local
               p ∈ (∅ : Set (EuclideanSpace ℝ (Fin 2))) := by
             have hp_inter' := hp_inter
             rw [hinter] at hp_inter'
-            simpa [hAdj] using hp_inter'
+            simp [hAdj] at hp_inter'
           exact False.elim hp_empty
     · have hcenter_ne :
         centerOfParam i t_m ≠ centerOfParam i t_n := by
@@ -1706,14 +1721,14 @@ private lemma endpointUnitDiskAssembly_segments_local_local
           hp_closed_m hp_closed_n))
 
 private lemma endpointUnitDiskAssembly_segments_local_bridge
-    {ι : Type*} [Fintype ι]
+    {ι : Type*} [Finite ι]
     (a b : ι → EuclideanSpace ℝ (Fin 2))
     (T : Finset (EuclideanSpace ℝ (Fin 2)))
     (r : EuclideanSpace ℝ (Fin 2) → ℝ)
     (centerParams : ι → List ℝ)
     (centerOfParam :
       ∀ i, {t : ℝ // t ∈ centerParams i} → EuclideanSpace ℝ (Fin 2))
-    (hcenterOfParam_def :
+    (_hcenterOfParam_def :
       ∀ i (t : {t : ℝ // t ∈ centerParams i}),
         centerOfParam i t = AffineMap.lineMap (a i) (b i) t.1)
     (localArcAtParam :
@@ -1721,19 +1736,19 @@ private lemma endpointUnitDiskAssembly_segments_local_bridge
     (entryPoint exitPoint :
       ∀ i, {t : ℝ // t ∈ centerParams i} → EuclideanSpace ℝ (Fin 2))
     (orderedLocalVertexBlocks :
-      ∀ i, List (List (EuclideanSpace ℝ (Fin 2))))
+      ∀ _i, List (List (EuclideanSpace ℝ (Fin 2))))
     (assembledVertices : ι → List (EuclideanSpace ℝ (Fin 2)))
-    (horderedLocalVertexBlocks_def : ∀ i,
+    (_horderedLocalVertexBlocks_def : ∀ i,
       orderedLocalVertexBlocks i =
         (centerParams i).attach.map
           (fun t => (localArcAtParam i t).vertices))
-    (hassembledVertices_def : ∀ i,
+    (_hassembledVertices_def : ∀ i,
       assembledVertices i =
         EndpointUnitDiskAlternatingVertexList
           (a i) (b i) (orderedLocalVertexBlocks i))
     (hendpoint_ne : ∀ i, a i ≠ b i)
-    (hcenterParams_sorted : ∀ i, (centerParams i).SortedLT)
-    (hcenterOfParam_T :
+    (_hcenterParams_sorted : ∀ i, (centerParams i).SortedLT)
+    (_hcenterOfParam_T :
       ∀ i (t : {t : ℝ // t ∈ centerParams i}), centerOfParam i t ∈ T)
     (hlocalArcAtParam_props :
       ∀ i (t : {t : ℝ // t ∈ centerParams i}),
@@ -1783,12 +1798,12 @@ private lemma endpointUnitDiskAssembly_segments_local_bridge
                           (AffineMap.lineMap (a i) (b i) β) →
                         p ∈ (localArcAtParam i t).carrier →
                           x = α → p = exitPoint i t))
-    (hinitialGapMeetsLocalCarrierOnly :
+    (_hinitialGapMeetsLocalCarrierOnly :
       ∀ i (t : {t : ℝ // t ∈ centerParams i})
         ⦃p : EuclideanSpace ℝ (Fin 2)⦄,
         p ∈ segment ℝ (a i) (entryPoint i t) →
           p ∈ (localArcAtParam i t).carrier → p = entryPoint i t)
-    (hterminalGapMeetsLocalCarrierOnly :
+    (_hterminalGapMeetsLocalCarrierOnly :
       ∀ i (t : {t : ℝ // t ∈ centerParams i})
         ⦃p : EuclideanSpace ℝ (Fin 2)⦄,
         p ∈ segment ℝ (exitPoint i t) (b i) →
@@ -1802,11 +1817,11 @@ private lemma endpointUnitDiskAssembly_segments_local_bridge
             (∀ ⦃p : EuclideanSpace ℝ (Fin 2)⦄,
               p ∈ segment ℝ (exitPoint i t1) (entryPoint i t2) →
                 p ∈ (localArcAtParam i t2).carrier → p = entryPoint i t2))
-    (hdisjoint : ∀ ⦃z w : EuclideanSpace ℝ (Fin 2)⦄,
+    (_hdisjoint : ∀ ⦃z w : EuclideanSpace ℝ (Fin 2)⦄,
       z ∈ T → w ∈ T → z ≠ w →
         Disjoint (Metric.closedBall z (r z)) (Metric.closedBall w (r w)))
     (hassembledVertices_nodup : ∀ i, (assembledVertices i).Nodup)
-    (hassembledVertices_avoid :
+    (_hassembledVertices_avoid :
       ∀ i ⦃m k : ℕ⦄,
         (hm : m + 1 < (assembledVertices i).length) →
           (hk : k < (assembledVertices i).length) →
@@ -1814,7 +1829,7 @@ private lemma endpointUnitDiskAssembly_segments_local_bridge
               (assembledVertices i)[k] ∉
                 openSegment ℝ
                   (assembledVertices i)[m] (assembledVertices i)[m + 1])
-    (hassembledEdgeEndpointRoles :
+    (_hassembledEdgeEndpointRoles :
       ∀ i ⦃m : ℕ⦄,
         (hm : m + 1 < (assembledVertices i).length) →
           ((centerParams i).attach = [] ∧
@@ -1851,7 +1866,7 @@ private lemma endpointUnitDiskAssembly_segments_local_bridge
                 (localArcAtParam i t).vertices.getLast? = some X ∧
                   (assembledVertices i)[m] = X ∧
                     (assembledVertices i)[m + 1] = b i))
-    (hlineSegmentInterSeparated :
+    (_hlineSegmentInterSeparated :
       ∀ i {α β γ δ : ℝ}, α ≤ β → γ ≤ δ → β < γ →
         segment ℝ (AffineMap.lineMap (a i) (b i) α)
             (AffineMap.lineMap (a i) (b i) β) ∩
@@ -1862,13 +1877,13 @@ private lemma endpointUnitDiskAssembly_segments_local_bridge
     (hm : m + 1 < (assembledVertices i).length)
     (hn : n + 1 < (assembledVertices i).length)
     (hmn : m < n)
-    (hinitialIndexZero :
+    (_hinitialIndexZero :
       ∀ ⦃k : ℕ⦄,
         (hk : k + 1 < (assembledVertices i).length) →
           endpointUnitDiskAssembly_initialRole a centerParams localArcAtParam
               assembledVertices i k hk →
             k = 0)
-    (hterminalNoLater :
+    (_hterminalNoLater :
       ∀ ⦃k l : ℕ⦄,
         (hk : k + 1 < (assembledVertices i).length) →
         (hl : l + 1 < (assembledVertices i).length) →
@@ -1896,6 +1911,8 @@ private lemma endpointUnitDiskAssembly_segments_local_bridge
     (segment ℝ (assembledVertices i)[m] (assembledVertices i)[m + 1] ∩
         segment ℝ (assembledVertices i)[n] (assembledVertices i)[n + 1]) =
       if n = m + 1 then {(assembledVertices i)[n]} else ∅ := by
+  classical
+  let := Fintype.ofFinite ι
   rcases hlocal_m with
     ⟨pre_m, t_m, post_m, q_m, hq_m, hitems_m,
       hleft_m, hright_m⟩
@@ -2113,7 +2130,7 @@ private lemma endpointUnitDiskAssembly_segments_local_bridge
             (assembledVertices i)[m] =
               (assembledVertices i)[n + 1] := by
           rw [hleft_m, hright_n, hY_n]
-          simpa [hq_zero, hfirst_value]
+          simp [hq_zero, hfirst_value]
         have hm_lt : m < (assembledVertices i).length :=
           Nat.lt_trans (Nat.lt_succ_self m) hm
         have hidx :=
@@ -2192,14 +2209,14 @@ private lemma endpointUnitDiskAssembly_segments_local_bridge
             hpseg_param hp_carrier he2_lt_e_m))
 
 private lemma endpointUnitDiskAssembly_segments_local_terminal
-    {ι : Type*} [Fintype ι]
+    {ι : Type*} [Finite ι]
     (a b : ι → EuclideanSpace ℝ (Fin 2))
     (T : Finset (EuclideanSpace ℝ (Fin 2)))
     (r : EuclideanSpace ℝ (Fin 2) → ℝ)
     (centerParams : ι → List ℝ)
     (centerOfParam :
       ∀ i, {t : ℝ // t ∈ centerParams i} → EuclideanSpace ℝ (Fin 2))
-    (hcenterOfParam_def :
+    (_hcenterOfParam_def :
       ∀ i (t : {t : ℝ // t ∈ centerParams i}),
         centerOfParam i t = AffineMap.lineMap (a i) (b i) t.1)
     (localArcAtParam :
@@ -2207,19 +2224,19 @@ private lemma endpointUnitDiskAssembly_segments_local_terminal
     (entryPoint exitPoint :
       ∀ i, {t : ℝ // t ∈ centerParams i} → EuclideanSpace ℝ (Fin 2))
     (orderedLocalVertexBlocks :
-      ∀ i, List (List (EuclideanSpace ℝ (Fin 2))))
+      ∀ _i, List (List (EuclideanSpace ℝ (Fin 2))))
     (assembledVertices : ι → List (EuclideanSpace ℝ (Fin 2)))
-    (horderedLocalVertexBlocks_def : ∀ i,
+    (_horderedLocalVertexBlocks_def : ∀ i,
       orderedLocalVertexBlocks i =
         (centerParams i).attach.map
           (fun t => (localArcAtParam i t).vertices))
-    (hassembledVertices_def : ∀ i,
+    (_hassembledVertices_def : ∀ i,
       assembledVertices i =
         EndpointUnitDiskAlternatingVertexList
           (a i) (b i) (orderedLocalVertexBlocks i))
     (hendpoint_ne : ∀ i, a i ≠ b i)
-    (hcenterParams_sorted : ∀ i, (centerParams i).SortedLT)
-    (hcenterOfParam_T :
+    (_hcenterParams_sorted : ∀ i, (centerParams i).SortedLT)
+    (_hcenterOfParam_T :
       ∀ i (t : {t : ℝ // t ∈ centerParams i}), centerOfParam i t ∈ T)
     (hlocalArcAtParam_props :
       ∀ i (t : {t : ℝ // t ∈ centerParams i}),
@@ -2269,7 +2286,7 @@ private lemma endpointUnitDiskAssembly_segments_local_terminal
                           (AffineMap.lineMap (a i) (b i) β) →
                         p ∈ (localArcAtParam i t).carrier →
                           x = α → p = exitPoint i t))
-    (hinitialGapMeetsLocalCarrierOnly :
+    (_hinitialGapMeetsLocalCarrierOnly :
       ∀ i (t : {t : ℝ // t ∈ centerParams i})
         ⦃p : EuclideanSpace ℝ (Fin 2)⦄,
         p ∈ segment ℝ (a i) (entryPoint i t) →
@@ -2279,7 +2296,7 @@ private lemma endpointUnitDiskAssembly_segments_local_terminal
         ⦃p : EuclideanSpace ℝ (Fin 2)⦄,
         p ∈ segment ℝ (exitPoint i t) (b i) →
           p ∈ (localArcAtParam i t).carrier → p = exitPoint i t)
-    (horderedOutsideGapMeetsNeighboringLocalCarriersOnly :
+    (_horderedOutsideGapMeetsNeighboringLocalCarriersOnly :
       ∀ i (t1 t2 : {t : ℝ // t ∈ centerParams i}),
         t1.1 < t2.1 →
           (∀ ⦃p : EuclideanSpace ℝ (Fin 2)⦄,
@@ -2288,11 +2305,11 @@ private lemma endpointUnitDiskAssembly_segments_local_terminal
             (∀ ⦃p : EuclideanSpace ℝ (Fin 2)⦄,
               p ∈ segment ℝ (exitPoint i t1) (entryPoint i t2) →
                 p ∈ (localArcAtParam i t2).carrier → p = entryPoint i t2))
-    (hdisjoint : ∀ ⦃z w : EuclideanSpace ℝ (Fin 2)⦄,
+    (_hdisjoint : ∀ ⦃z w : EuclideanSpace ℝ (Fin 2)⦄,
       z ∈ T → w ∈ T → z ≠ w →
         Disjoint (Metric.closedBall z (r z)) (Metric.closedBall w (r w)))
-    (hassembledVertices_nodup : ∀ i, (assembledVertices i).Nodup)
-    (hassembledVertices_avoid :
+    (_hassembledVertices_nodup : ∀ i, (assembledVertices i).Nodup)
+    (_hassembledVertices_avoid :
       ∀ i ⦃m k : ℕ⦄,
         (hm : m + 1 < (assembledVertices i).length) →
           (hk : k < (assembledVertices i).length) →
@@ -2300,7 +2317,7 @@ private lemma endpointUnitDiskAssembly_segments_local_terminal
               (assembledVertices i)[k] ∉
                 openSegment ℝ
                   (assembledVertices i)[m] (assembledVertices i)[m + 1])
-    (hassembledEdgeEndpointRoles :
+    (_hassembledEdgeEndpointRoles :
       ∀ i ⦃m : ℕ⦄,
         (hm : m + 1 < (assembledVertices i).length) →
           ((centerParams i).attach = [] ∧
@@ -2337,7 +2354,7 @@ private lemma endpointUnitDiskAssembly_segments_local_terminal
                 (localArcAtParam i t).vertices.getLast? = some X ∧
                   (assembledVertices i)[m] = X ∧
                     (assembledVertices i)[m + 1] = b i))
-    (hlineSegmentInterSeparated :
+    (_hlineSegmentInterSeparated :
       ∀ i {α β γ δ : ℝ}, α ≤ β → γ ≤ δ → β < γ →
         segment ℝ (AffineMap.lineMap (a i) (b i) α)
             (AffineMap.lineMap (a i) (b i) β) ∩
@@ -2347,14 +2364,14 @@ private lemma endpointUnitDiskAssembly_segments_local_terminal
     (i : ι) {m n : ℕ}
     (hm : m + 1 < (assembledVertices i).length)
     (hn : n + 1 < (assembledVertices i).length)
-    (hmn : m < n)
-    (hinitialIndexZero :
+    (_hmn : m < n)
+    (_hinitialIndexZero :
       ∀ ⦃k : ℕ⦄,
         (hk : k + 1 < (assembledVertices i).length) →
           endpointUnitDiskAssembly_initialRole a centerParams localArcAtParam
               assembledVertices i k hk →
             k = 0)
-    (hterminalNoLater :
+    (_hterminalNoLater :
       ∀ ⦃k l : ℕ⦄,
         (hk : k + 1 < (assembledVertices i).length) →
         (hl : l + 1 < (assembledVertices i).length) →
@@ -2382,6 +2399,8 @@ private lemma endpointUnitDiskAssembly_segments_local_terminal
     (segment ℝ (assembledVertices i)[m] (assembledVertices i)[m + 1] ∩
         segment ℝ (assembledVertices i)[n] (assembledVertices i)[n + 1]) =
       if n = m + 1 then {(assembledVertices i)[n]} else ∅ := by
+  classical
+  let := Fintype.ofFinite ι
   rcases hlocal_m with
     ⟨pre_m, t_m, post_m, q_m, hq_m, hitems_m,
       hleft_m, hright_m⟩
@@ -2546,7 +2565,7 @@ private lemma endpointUnitDiskAssembly_segments_local_terminal
             hq_m hlast_index (by omega) (by omega) hpopen_last))
 
 private lemma endpointUnitDiskAssembly_segments_local
-    {ι : Type*} [Fintype ι]
+    {ι : Type*} [Finite ι]
     (a b : ι → EuclideanSpace ℝ (Fin 2))
     (T : Finset (EuclideanSpace ℝ (Fin 2)))
     (r : EuclideanSpace ℝ (Fin 2) → ℝ)
@@ -2561,7 +2580,7 @@ private lemma endpointUnitDiskAssembly_segments_local
     (entryPoint exitPoint :
       ∀ i, {t : ℝ // t ∈ centerParams i} → EuclideanSpace ℝ (Fin 2))
     (orderedLocalVertexBlocks :
-      ∀ i, List (List (EuclideanSpace ℝ (Fin 2))))
+      ∀ _i, List (List (EuclideanSpace ℝ (Fin 2))))
     (assembledVertices : ι → List (EuclideanSpace ℝ (Fin 2)))
     (horderedLocalVertexBlocks_def : ∀ i,
       orderedLocalVertexBlocks i =
@@ -2736,6 +2755,8 @@ private lemma endpointUnitDiskAssembly_segments_local
     (segment ℝ (assembledVertices i)[m] (assembledVertices i)[m + 1] ∩
         segment ℝ (assembledVertices i)[n] (assembledVertices i)[n + 1]) =
       if n = m + 1 then {(assembledVertices i)[n]} else ∅ := by
+  classical
+  let := Fintype.ofFinite ι
   rcases hroles_n with hinitial_n | hroles_n
   · exact endpointUnitDiskAssembly_segments_local_initial
       a b T r centerParams centerOfParam hcenterOfParam_def
@@ -2793,14 +2814,14 @@ private lemma endpointUnitDiskAssembly_segments_local
           hattach_pairwise_lt hlocal_m hterminal_n
 
 private lemma endpointUnitDiskAssembly_segments_bridge_initial
-    {ι : Type*} [Fintype ι]
+    {ι : Type*} [Finite ι]
     (a b : ι → EuclideanSpace ℝ (Fin 2))
     (T : Finset (EuclideanSpace ℝ (Fin 2)))
     (r : EuclideanSpace ℝ (Fin 2) → ℝ)
     (centerParams : ι → List ℝ)
     (centerOfParam :
       ∀ i, {t : ℝ // t ∈ centerParams i} → EuclideanSpace ℝ (Fin 2))
-    (hcenterOfParam_def :
+    (_hcenterOfParam_def :
       ∀ i (t : {t : ℝ // t ∈ centerParams i}),
         centerOfParam i t = AffineMap.lineMap (a i) (b i) t.1)
     (localArcAtParam :
@@ -2808,137 +2829,137 @@ private lemma endpointUnitDiskAssembly_segments_bridge_initial
     (entryPoint exitPoint :
       ∀ i, {t : ℝ // t ∈ centerParams i} → EuclideanSpace ℝ (Fin 2))
     (orderedLocalVertexBlocks :
-      ∀ i, List (List (EuclideanSpace ℝ (Fin 2))))
+      ∀ _i, List (List (EuclideanSpace ℝ (Fin 2))))
     (assembledVertices : ι → List (EuclideanSpace ℝ (Fin 2)))
-    (horderedLocalVertexBlocks_def : ∀ i,
+    (_horderedLocalVertexBlocks_def : ∀ i,
       orderedLocalVertexBlocks i =
         (centerParams i).attach.map
           (fun t => (localArcAtParam i t).vertices))
-    (hassembledVertices_def : ∀ i,
+    (_hassembledVertices_def : ∀ i,
       assembledVertices i =
         EndpointUnitDiskAlternatingVertexList
           (a i) (b i) (orderedLocalVertexBlocks i))
-    (hendpoint_ne : ∀ i, a i ≠ b i)
-    (hcenterParams_sorted : ∀ i, (centerParams i).SortedLT)
-    (hcenterOfParam_T :
+    (_hendpoint_ne : ∀ i, a i ≠ b i)
+    (_hcenterParams_sorted : ∀ i, (centerParams i).SortedLT)
+    (_hcenterOfParam_T :
       ∀ i (t : {t : ℝ // t ∈ centerParams i}), centerOfParam i t ∈ T)
-    (hlocalArcAtParam_props :
+    (_hlocalArcAtParam_props :
       ∀ i (t : {t : ℝ // t ∈ centerParams i}),
         (localArcAtParam i t).source = entryPoint i t ∧
           (localArcAtParam i t).target = exitPoint i t ∧
             (localArcAtParam i t).carrier ⊆
-              Metric.closedBall (centerOfParam i t) (r (centerOfParam i t)) ∧
-              (localArcAtParam i t).relativeInterior ⊆
-                Metric.ball (centerOfParam i t) (r (centerOfParam i t)))
-    (hentryExitParameters :
+            Metric.closedBall (centerOfParam i t) (r (centerOfParam i t)) ∧
+            (localArcAtParam i t).relativeInterior ⊆
+            Metric.ball (centerOfParam i t) (r (centerOfParam i t)))
+    (_hentryExitParameters :
       ∀ i (t : {t : ℝ // t ∈ centerParams i}),
         (∃ s : ℝ, 0 < s ∧ s < t.1 ∧
           entryPoint i t = AffineMap.lineMap (a i) (b i) s) ∧
           (∃ s : ℝ, t.1 < s ∧ s < 1 ∧
             exitPoint i t = AffineMap.lineMap (a i) (b i) s))
-    (horderedCutSeparation :
+    (_horderedCutSeparation :
       ∀ i (t1 t2 : {t : ℝ // t ∈ centerParams i}),
         t1.1 < t2.1 →
           ∃ sExit sEntry : ℝ,
             t1.1 < sExit ∧
-              sExit < sEntry ∧
-                sEntry < t2.1 ∧
-                  exitPoint i t1 = AffineMap.lineMap (a i) (b i) sExit ∧
-                    entryPoint i t2 = AffineMap.lineMap (a i) (b i) sEntry)
-    (hchordGapLocalCarrierPosition :
+            sExit < sEntry ∧
+            sEntry < t2.1 ∧
+            exitPoint i t1 = AffineMap.lineMap (a i) (b i) sExit ∧
+            entryPoint i t2 = AffineMap.lineMap (a i) (b i) sEntry)
+    (_hchordGapLocalCarrierPosition :
       ∀ i (t : {t : ℝ // t ∈ centerParams i}) {α β e x : ℝ},
         entryPoint i t = AffineMap.lineMap (a i) (b i) e →
           exitPoint i t = AffineMap.lineMap (a i) (b i) x →
             0 ≤ α → α ≤ β → β ≤ 1 → e < x →
-              (∀ ⦃p : EuclideanSpace ℝ (Fin 2)⦄,
-                p ∈ segment ℝ (AffineMap.lineMap (a i) (b i) α)
-                    (AffineMap.lineMap (a i) (b i) β) →
-                  p ∈ (localArcAtParam i t).carrier →
-                    β < e → False) ∧
-                (∀ ⦃p : EuclideanSpace ℝ (Fin 2)⦄,
-                  p ∈ segment ℝ (AffineMap.lineMap (a i) (b i) α)
-                      (AffineMap.lineMap (a i) (b i) β) →
-                    p ∈ (localArcAtParam i t).carrier →
-                      β = e → p = entryPoint i t) ∧
-                  (∀ ⦃p : EuclideanSpace ℝ (Fin 2)⦄,
-                    p ∈ segment ℝ (AffineMap.lineMap (a i) (b i) α)
-                        (AffineMap.lineMap (a i) (b i) β) →
-                      p ∈ (localArcAtParam i t).carrier →
-                        x < α → False) ∧
-                    (∀ ⦃p : EuclideanSpace ℝ (Fin 2)⦄,
-                      p ∈ segment ℝ (AffineMap.lineMap (a i) (b i) α)
-                          (AffineMap.lineMap (a i) (b i) β) →
-                        p ∈ (localArcAtParam i t).carrier →
-                          x = α → p = exitPoint i t))
-    (hinitialGapMeetsLocalCarrierOnly :
+            (∀ ⦃p : EuclideanSpace ℝ (Fin 2)⦄,
+            p ∈ segment ℝ (AffineMap.lineMap (a i) (b i) α)
+            (AffineMap.lineMap (a i) (b i) β) →
+            p ∈ (localArcAtParam i t).carrier →
+            β < e → False) ∧
+            (∀ ⦃p : EuclideanSpace ℝ (Fin 2)⦄,
+            p ∈ segment ℝ (AffineMap.lineMap (a i) (b i) α)
+            (AffineMap.lineMap (a i) (b i) β) →
+            p ∈ (localArcAtParam i t).carrier →
+            β = e → p = entryPoint i t) ∧
+            (∀ ⦃p : EuclideanSpace ℝ (Fin 2)⦄,
+            p ∈ segment ℝ (AffineMap.lineMap (a i) (b i) α)
+            (AffineMap.lineMap (a i) (b i) β) →
+            p ∈ (localArcAtParam i t).carrier →
+            x < α → False) ∧
+            (∀ ⦃p : EuclideanSpace ℝ (Fin 2)⦄,
+            p ∈ segment ℝ (AffineMap.lineMap (a i) (b i) α)
+            (AffineMap.lineMap (a i) (b i) β) →
+            p ∈ (localArcAtParam i t).carrier →
+            x = α → p = exitPoint i t))
+    (_hinitialGapMeetsLocalCarrierOnly :
       ∀ i (t : {t : ℝ // t ∈ centerParams i})
         ⦃p : EuclideanSpace ℝ (Fin 2)⦄,
         p ∈ segment ℝ (a i) (entryPoint i t) →
           p ∈ (localArcAtParam i t).carrier → p = entryPoint i t)
-    (hterminalGapMeetsLocalCarrierOnly :
+    (_hterminalGapMeetsLocalCarrierOnly :
       ∀ i (t : {t : ℝ // t ∈ centerParams i})
         ⦃p : EuclideanSpace ℝ (Fin 2)⦄,
         p ∈ segment ℝ (exitPoint i t) (b i) →
           p ∈ (localArcAtParam i t).carrier → p = exitPoint i t)
-    (horderedOutsideGapMeetsNeighboringLocalCarriersOnly :
+    (_horderedOutsideGapMeetsNeighboringLocalCarriersOnly :
       ∀ i (t1 t2 : {t : ℝ // t ∈ centerParams i}),
         t1.1 < t2.1 →
           (∀ ⦃p : EuclideanSpace ℝ (Fin 2)⦄,
             p ∈ segment ℝ (exitPoint i t1) (entryPoint i t2) →
-              p ∈ (localArcAtParam i t1).carrier → p = exitPoint i t1) ∧
+            p ∈ (localArcAtParam i t1).carrier → p = exitPoint i t1) ∧
             (∀ ⦃p : EuclideanSpace ℝ (Fin 2)⦄,
-              p ∈ segment ℝ (exitPoint i t1) (entryPoint i t2) →
-                p ∈ (localArcAtParam i t2).carrier → p = entryPoint i t2))
-    (hdisjoint : ∀ ⦃z w : EuclideanSpace ℝ (Fin 2)⦄,
+            p ∈ segment ℝ (exitPoint i t1) (entryPoint i t2) →
+            p ∈ (localArcAtParam i t2).carrier → p = entryPoint i t2))
+    (_hdisjoint : ∀ ⦃z w : EuclideanSpace ℝ (Fin 2)⦄,
       z ∈ T → w ∈ T → z ≠ w →
         Disjoint (Metric.closedBall z (r z)) (Metric.closedBall w (r w)))
-    (hassembledVertices_nodup : ∀ i, (assembledVertices i).Nodup)
-    (hassembledVertices_avoid :
+    (_hassembledVertices_nodup : ∀ i, (assembledVertices i).Nodup)
+    (_hassembledVertices_avoid :
       ∀ i ⦃m k : ℕ⦄,
         (hm : m + 1 < (assembledVertices i).length) →
           (hk : k < (assembledVertices i).length) →
             k ≠ m → k ≠ m + 1 →
-              (assembledVertices i)[k] ∉
-                openSegment ℝ
-                  (assembledVertices i)[m] (assembledVertices i)[m + 1])
-    (hassembledEdgeEndpointRoles :
+            (assembledVertices i)[k] ∉
+            openSegment ℝ
+            (assembledVertices i)[m] (assembledVertices i)[m + 1])
+    (_hassembledEdgeEndpointRoles :
       ∀ i ⦃m : ℕ⦄,
         (hm : m + 1 < (assembledVertices i).length) →
           ((centerParams i).attach = [] ∧
-              (assembledVertices i)[m] = a i ∧
-                (assembledVertices i)[m + 1] = b i) ∨
+            (assembledVertices i)[m] = a i ∧
+            (assembledVertices i)[m + 1] = b i) ∨
             (∃ t ts X,
-              (centerParams i).attach = t :: ts ∧
-                (localArcAtParam i t).vertices.head? = some X ∧
-                  (assembledVertices i)[m] = a i ∧
-                    (assembledVertices i)[m + 1] = X) ∨
+            (centerParams i).attach = t :: ts ∧
+            (localArcAtParam i t).vertices.head? = some X ∧
+            (assembledVertices i)[m] = a i ∧
+            (assembledVertices i)[m + 1] = X) ∨
             (∃ (pre : List {t : ℝ // t ∈ centerParams i})
-                (t : {t : ℝ // t ∈ centerParams i})
-                (post : List {t : ℝ // t ∈ centerParams i}) (q : ℕ),
-              ∃ hq : q + 1 < (localArcAtParam i t).vertices.length,
-                (centerParams i).attach = pre ++ t :: post ∧
-                  (assembledVertices i)[m] =
-                    (localArcAtParam i t).vertices[q] ∧
-                    (assembledVertices i)[m + 1] =
-                      (localArcAtParam i t).vertices[q + 1]) ∨
+            (t : {t : ℝ // t ∈ centerParams i})
+            (post : List {t : ℝ // t ∈ centerParams i}) (q : ℕ),
+            ∃ hq : q + 1 < (localArcAtParam i t).vertices.length,
+            (centerParams i).attach = pre ++ t :: post ∧
+            (assembledVertices i)[m] =
+            (localArcAtParam i t).vertices[q] ∧
+            (assembledVertices i)[m + 1] =
+            (localArcAtParam i t).vertices[q + 1]) ∨
             (∃ (pre : List {t : ℝ // t ∈ centerParams i})
-                (t1 : {t : ℝ // t ∈ centerParams i})
-                (t2 : {t : ℝ // t ∈ centerParams i})
-                (post : List {t : ℝ // t ∈ centerParams i})
-                (X Y : EuclideanSpace ℝ (Fin 2)),
-              (centerParams i).attach = pre ++ t1 :: t2 :: post ∧
-                (localArcAtParam i t1).vertices.getLast? = some X ∧
-                  (localArcAtParam i t2).vertices.head? = some Y ∧
-                    (assembledVertices i)[m] = X ∧
-                      (assembledVertices i)[m + 1] = Y) ∨
+            (t1 : {t : ℝ // t ∈ centerParams i})
+            (t2 : {t : ℝ // t ∈ centerParams i})
+            (post : List {t : ℝ // t ∈ centerParams i})
+            (X Y : EuclideanSpace ℝ (Fin 2)),
+            (centerParams i).attach = pre ++ t1 :: t2 :: post ∧
+            (localArcAtParam i t1).vertices.getLast? = some X ∧
+            (localArcAtParam i t2).vertices.head? = some Y ∧
+            (assembledVertices i)[m] = X ∧
+            (assembledVertices i)[m + 1] = Y) ∨
             (∃ (pre : List {t : ℝ // t ∈ centerParams i})
-                (t : {t : ℝ // t ∈ centerParams i})
-                (X : EuclideanSpace ℝ (Fin 2)),
-              (centerParams i).attach = pre ++ [t] ∧
-                (localArcAtParam i t).vertices.getLast? = some X ∧
-                  (assembledVertices i)[m] = X ∧
-                    (assembledVertices i)[m + 1] = b i))
-    (hlineSegmentInterSeparated :
+            (t : {t : ℝ // t ∈ centerParams i})
+            (X : EuclideanSpace ℝ (Fin 2)),
+            (centerParams i).attach = pre ++ [t] ∧
+            (localArcAtParam i t).vertices.getLast? = some X ∧
+            (assembledVertices i)[m] = X ∧
+            (assembledVertices i)[m + 1] = b i))
+    (_hlineSegmentInterSeparated :
       ∀ i {α β γ δ : ℝ}, α ≤ β → γ ≤ δ → β < γ →
         segment ℝ (AffineMap.lineMap (a i) (b i) α)
             (AffineMap.lineMap (a i) (b i) β) ∩
@@ -2953,17 +2974,17 @@ private lemma endpointUnitDiskAssembly_segments_bridge_initial
       ∀ ⦃k : ℕ⦄,
         (hk : k + 1 < (assembledVertices i).length) →
           endpointUnitDiskAssembly_initialRole a centerParams localArcAtParam
-              assembledVertices i k hk →
+            assembledVertices i k hk →
             k = 0)
-    (hterminalNoLater :
+    (_hterminalNoLater :
       ∀ ⦃k l : ℕ⦄,
         (hk : k + 1 < (assembledVertices i).length) →
         (hl : l + 1 < (assembledVertices i).length) →
         k < l →
           endpointUnitDiskAssembly_terminalRole b centerParams localArcAtParam
-              assembledVertices i k hk →
+            assembledVertices i k hk →
             False)
-    (hinter_of_forall_eq_right :
+    (_hinter_of_forall_eq_right :
       (∀ ⦃p : EuclideanSpace ℝ (Fin 2)⦄,
         p ∈ segment ℝ (assembledVertices i)[m] (assembledVertices i)[m + 1] →
         p ∈ segment ℝ (assembledVertices i)[n] (assembledVertices i)[n + 1] →
@@ -2971,10 +2992,10 @@ private lemma endpointUnitDiskAssembly_segments_bridge_initial
       (segment ℝ (assembledVertices i)[m] (assembledVertices i)[m + 1] ∩
           segment ℝ (assembledVertices i)[n] (assembledVertices i)[n + 1]) =
         if n = m + 1 then {(assembledVertices i)[n]} else ∅)
-    (hattach_pairwise_lt :
+    (_hattach_pairwise_lt :
       (centerParams i).attach.Pairwise
         (fun t1 t2 : {t : ℝ // t ∈ centerParams i} => t1.1 < t2.1))
-    (hbridge_m :
+    (_hbridge_m :
       endpointUnitDiskAssembly_bridgeRole centerParams localArcAtParam
         assembledVertices i m hm)
     (hinitial_n :
@@ -2983,19 +3004,21 @@ private lemma endpointUnitDiskAssembly_segments_bridge_initial
     (segment ℝ (assembledVertices i)[m] (assembledVertices i)[m + 1] ∩
         segment ℝ (assembledVertices i)[n] (assembledVertices i)[n + 1]) =
       if n = m + 1 then {(assembledVertices i)[n]} else ∅ := by
+  classical
+  let := Fintype.ofFinite ι
   exact False.elim (by
     have hn0 : n = 0 := hinitialIndexZero hn hinitial_n
     omega)
 
 private lemma endpointUnitDiskAssembly_segments_bridge_local
-    {ι : Type*} [Fintype ι]
+    {ι : Type*} [Finite ι]
     (a b : ι → EuclideanSpace ℝ (Fin 2))
     (T : Finset (EuclideanSpace ℝ (Fin 2)))
     (r : EuclideanSpace ℝ (Fin 2) → ℝ)
     (centerParams : ι → List ℝ)
     (centerOfParam :
       ∀ i, {t : ℝ // t ∈ centerParams i} → EuclideanSpace ℝ (Fin 2))
-    (hcenterOfParam_def :
+    (_hcenterOfParam_def :
       ∀ i (t : {t : ℝ // t ∈ centerParams i}),
         centerOfParam i t = AffineMap.lineMap (a i) (b i) t.1)
     (localArcAtParam :
@@ -3003,19 +3026,19 @@ private lemma endpointUnitDiskAssembly_segments_bridge_local
     (entryPoint exitPoint :
       ∀ i, {t : ℝ // t ∈ centerParams i} → EuclideanSpace ℝ (Fin 2))
     (orderedLocalVertexBlocks :
-      ∀ i, List (List (EuclideanSpace ℝ (Fin 2))))
+      ∀ _i, List (List (EuclideanSpace ℝ (Fin 2))))
     (assembledVertices : ι → List (EuclideanSpace ℝ (Fin 2)))
-    (horderedLocalVertexBlocks_def : ∀ i,
+    (_horderedLocalVertexBlocks_def : ∀ i,
       orderedLocalVertexBlocks i =
         (centerParams i).attach.map
           (fun t => (localArcAtParam i t).vertices))
-    (hassembledVertices_def : ∀ i,
+    (_hassembledVertices_def : ∀ i,
       assembledVertices i =
         EndpointUnitDiskAlternatingVertexList
           (a i) (b i) (orderedLocalVertexBlocks i))
     (hendpoint_ne : ∀ i, a i ≠ b i)
-    (hcenterParams_sorted : ∀ i, (centerParams i).SortedLT)
-    (hcenterOfParam_T :
+    (_hcenterParams_sorted : ∀ i, (centerParams i).SortedLT)
+    (_hcenterOfParam_T :
       ∀ i (t : {t : ℝ // t ∈ centerParams i}), centerOfParam i t ∈ T)
     (hlocalArcAtParam_props :
       ∀ i (t : {t : ℝ // t ∈ centerParams i}),
@@ -3065,12 +3088,12 @@ private lemma endpointUnitDiskAssembly_segments_bridge_local
                           (AffineMap.lineMap (a i) (b i) β) →
                         p ∈ (localArcAtParam i t).carrier →
                           x = α → p = exitPoint i t))
-    (hinitialGapMeetsLocalCarrierOnly :
+    (_hinitialGapMeetsLocalCarrierOnly :
       ∀ i (t : {t : ℝ // t ∈ centerParams i})
         ⦃p : EuclideanSpace ℝ (Fin 2)⦄,
         p ∈ segment ℝ (a i) (entryPoint i t) →
           p ∈ (localArcAtParam i t).carrier → p = entryPoint i t)
-    (hterminalGapMeetsLocalCarrierOnly :
+    (_hterminalGapMeetsLocalCarrierOnly :
       ∀ i (t : {t : ℝ // t ∈ centerParams i})
         ⦃p : EuclideanSpace ℝ (Fin 2)⦄,
         p ∈ segment ℝ (exitPoint i t) (b i) →
@@ -3084,11 +3107,11 @@ private lemma endpointUnitDiskAssembly_segments_bridge_local
             (∀ ⦃p : EuclideanSpace ℝ (Fin 2)⦄,
               p ∈ segment ℝ (exitPoint i t1) (entryPoint i t2) →
                 p ∈ (localArcAtParam i t2).carrier → p = entryPoint i t2))
-    (hdisjoint : ∀ ⦃z w : EuclideanSpace ℝ (Fin 2)⦄,
+    (_hdisjoint : ∀ ⦃z w : EuclideanSpace ℝ (Fin 2)⦄,
       z ∈ T → w ∈ T → z ≠ w →
         Disjoint (Metric.closedBall z (r z)) (Metric.closedBall w (r w)))
     (hassembledVertices_nodup : ∀ i, (assembledVertices i).Nodup)
-    (hassembledVertices_avoid :
+    (_hassembledVertices_avoid :
       ∀ i ⦃m k : ℕ⦄,
         (hm : m + 1 < (assembledVertices i).length) →
           (hk : k < (assembledVertices i).length) →
@@ -3096,7 +3119,7 @@ private lemma endpointUnitDiskAssembly_segments_bridge_local
               (assembledVertices i)[k] ∉
                 openSegment ℝ
                   (assembledVertices i)[m] (assembledVertices i)[m + 1])
-    (hassembledEdgeEndpointRoles :
+    (_hassembledEdgeEndpointRoles :
       ∀ i ⦃m : ℕ⦄,
         (hm : m + 1 < (assembledVertices i).length) →
           ((centerParams i).attach = [] ∧
@@ -3133,7 +3156,7 @@ private lemma endpointUnitDiskAssembly_segments_bridge_local
                 (localArcAtParam i t).vertices.getLast? = some X ∧
                   (assembledVertices i)[m] = X ∧
                     (assembledVertices i)[m + 1] = b i))
-    (hlineSegmentInterSeparated :
+    (_hlineSegmentInterSeparated :
       ∀ i {α β γ δ : ℝ}, α ≤ β → γ ≤ δ → β < γ →
         segment ℝ (AffineMap.lineMap (a i) (b i) α)
             (AffineMap.lineMap (a i) (b i) β) ∩
@@ -3144,13 +3167,13 @@ private lemma endpointUnitDiskAssembly_segments_bridge_local
     (hm : m + 1 < (assembledVertices i).length)
     (hn : n + 1 < (assembledVertices i).length)
     (hmn : m < n)
-    (hinitialIndexZero :
+    (_hinitialIndexZero :
       ∀ ⦃k : ℕ⦄,
         (hk : k + 1 < (assembledVertices i).length) →
           endpointUnitDiskAssembly_initialRole a centerParams localArcAtParam
               assembledVertices i k hk →
             k = 0)
-    (hterminalNoLater :
+    (_hterminalNoLater :
       ∀ ⦃k l : ℕ⦄,
         (hk : k + 1 < (assembledVertices i).length) →
         (hl : l + 1 < (assembledVertices i).length) →
@@ -3178,6 +3201,8 @@ private lemma endpointUnitDiskAssembly_segments_bridge_local
     (segment ℝ (assembledVertices i)[m] (assembledVertices i)[m + 1] ∩
         segment ℝ (assembledVertices i)[n] (assembledVertices i)[n + 1]) =
       if n = m + 1 then {(assembledVertices i)[n]} else ∅ := by
+  classical
+  let := Fintype.ofFinite ι
   rcases hbridge_m with
     ⟨pre_m, t1_m, t2_m, post_m, X_m, Y_m, hitems_m,
       hlast_m, hhead_m, hleft_m, hright_m⟩
@@ -3406,14 +3431,14 @@ private lemma endpointUnitDiskAssembly_segments_bridge_local
             hpseg_param hp_carrier he2_lt_e_n))
 
 private lemma endpointUnitDiskAssembly_segments_bridge_bridge
-    {ι : Type*} [Fintype ι]
+    {ι : Type*} [Finite ι]
     (a b : ι → EuclideanSpace ℝ (Fin 2))
     (T : Finset (EuclideanSpace ℝ (Fin 2)))
     (r : EuclideanSpace ℝ (Fin 2) → ℝ)
     (centerParams : ι → List ℝ)
     (centerOfParam :
       ∀ i, {t : ℝ // t ∈ centerParams i} → EuclideanSpace ℝ (Fin 2))
-    (hcenterOfParam_def :
+    (_hcenterOfParam_def :
       ∀ i (t : {t : ℝ // t ∈ centerParams i}),
         centerOfParam i t = AffineMap.lineMap (a i) (b i) t.1)
     (localArcAtParam :
@@ -3421,19 +3446,19 @@ private lemma endpointUnitDiskAssembly_segments_bridge_bridge
     (entryPoint exitPoint :
       ∀ i, {t : ℝ // t ∈ centerParams i} → EuclideanSpace ℝ (Fin 2))
     (orderedLocalVertexBlocks :
-      ∀ i, List (List (EuclideanSpace ℝ (Fin 2))))
+      ∀ _i, List (List (EuclideanSpace ℝ (Fin 2))))
     (assembledVertices : ι → List (EuclideanSpace ℝ (Fin 2)))
-    (horderedLocalVertexBlocks_def : ∀ i,
+    (_horderedLocalVertexBlocks_def : ∀ i,
       orderedLocalVertexBlocks i =
         (centerParams i).attach.map
           (fun t => (localArcAtParam i t).vertices))
-    (hassembledVertices_def : ∀ i,
+    (_hassembledVertices_def : ∀ i,
       assembledVertices i =
         EndpointUnitDiskAlternatingVertexList
           (a i) (b i) (orderedLocalVertexBlocks i))
     (hendpoint_ne : ∀ i, a i ≠ b i)
-    (hcenterParams_sorted : ∀ i, (centerParams i).SortedLT)
-    (hcenterOfParam_T :
+    (_hcenterParams_sorted : ∀ i, (centerParams i).SortedLT)
+    (_hcenterOfParam_T :
       ∀ i (t : {t : ℝ // t ∈ centerParams i}), centerOfParam i t ∈ T)
     (hlocalArcAtParam_props :
       ∀ i (t : {t : ℝ // t ∈ centerParams i}),
@@ -3458,7 +3483,7 @@ private lemma endpointUnitDiskAssembly_segments_bridge_bridge
                 sEntry < t2.1 ∧
                   exitPoint i t1 = AffineMap.lineMap (a i) (b i) sExit ∧
                     entryPoint i t2 = AffineMap.lineMap (a i) (b i) sEntry)
-    (hchordGapLocalCarrierPosition :
+    (_hchordGapLocalCarrierPosition :
       ∀ i (t : {t : ℝ // t ∈ centerParams i}) {α β e x : ℝ},
         entryPoint i t = AffineMap.lineMap (a i) (b i) e →
           exitPoint i t = AffineMap.lineMap (a i) (b i) x →
@@ -3483,17 +3508,17 @@ private lemma endpointUnitDiskAssembly_segments_bridge_bridge
                           (AffineMap.lineMap (a i) (b i) β) →
                         p ∈ (localArcAtParam i t).carrier →
                           x = α → p = exitPoint i t))
-    (hinitialGapMeetsLocalCarrierOnly :
+    (_hinitialGapMeetsLocalCarrierOnly :
       ∀ i (t : {t : ℝ // t ∈ centerParams i})
         ⦃p : EuclideanSpace ℝ (Fin 2)⦄,
         p ∈ segment ℝ (a i) (entryPoint i t) →
           p ∈ (localArcAtParam i t).carrier → p = entryPoint i t)
-    (hterminalGapMeetsLocalCarrierOnly :
+    (_hterminalGapMeetsLocalCarrierOnly :
       ∀ i (t : {t : ℝ // t ∈ centerParams i})
         ⦃p : EuclideanSpace ℝ (Fin 2)⦄,
         p ∈ segment ℝ (exitPoint i t) (b i) →
           p ∈ (localArcAtParam i t).carrier → p = exitPoint i t)
-    (horderedOutsideGapMeetsNeighboringLocalCarriersOnly :
+    (_horderedOutsideGapMeetsNeighboringLocalCarriersOnly :
       ∀ i (t1 t2 : {t : ℝ // t ∈ centerParams i}),
         t1.1 < t2.1 →
           (∀ ⦃p : EuclideanSpace ℝ (Fin 2)⦄,
@@ -3502,11 +3527,11 @@ private lemma endpointUnitDiskAssembly_segments_bridge_bridge
             (∀ ⦃p : EuclideanSpace ℝ (Fin 2)⦄,
               p ∈ segment ℝ (exitPoint i t1) (entryPoint i t2) →
                 p ∈ (localArcAtParam i t2).carrier → p = entryPoint i t2))
-    (hdisjoint : ∀ ⦃z w : EuclideanSpace ℝ (Fin 2)⦄,
+    (_hdisjoint : ∀ ⦃z w : EuclideanSpace ℝ (Fin 2)⦄,
       z ∈ T → w ∈ T → z ≠ w →
         Disjoint (Metric.closedBall z (r z)) (Metric.closedBall w (r w)))
     (hassembledVertices_nodup : ∀ i, (assembledVertices i).Nodup)
-    (hassembledVertices_avoid :
+    (_hassembledVertices_avoid :
       ∀ i ⦃m k : ℕ⦄,
         (hm : m + 1 < (assembledVertices i).length) →
           (hk : k < (assembledVertices i).length) →
@@ -3514,7 +3539,7 @@ private lemma endpointUnitDiskAssembly_segments_bridge_bridge
               (assembledVertices i)[k] ∉
                 openSegment ℝ
                   (assembledVertices i)[m] (assembledVertices i)[m + 1])
-    (hassembledEdgeEndpointRoles :
+    (_hassembledEdgeEndpointRoles :
       ∀ i ⦃m : ℕ⦄,
         (hm : m + 1 < (assembledVertices i).length) →
           ((centerParams i).attach = [] ∧
@@ -3562,13 +3587,13 @@ private lemma endpointUnitDiskAssembly_segments_bridge_bridge
     (hm : m + 1 < (assembledVertices i).length)
     (hn : n + 1 < (assembledVertices i).length)
     (hmn : m < n)
-    (hinitialIndexZero :
+    (_hinitialIndexZero :
       ∀ ⦃k : ℕ⦄,
         (hk : k + 1 < (assembledVertices i).length) →
           endpointUnitDiskAssembly_initialRole a centerParams localArcAtParam
               assembledVertices i k hk →
             k = 0)
-    (hterminalNoLater :
+    (_hterminalNoLater :
       ∀ ⦃k l : ℕ⦄,
         (hk : k + 1 < (assembledVertices i).length) →
         (hl : l + 1 < (assembledVertices i).length) →
@@ -3596,6 +3621,8 @@ private lemma endpointUnitDiskAssembly_segments_bridge_bridge
     (segment ℝ (assembledVertices i)[m] (assembledVertices i)[m + 1] ∩
         segment ℝ (assembledVertices i)[n] (assembledVertices i)[n + 1]) =
       if n = m + 1 then {(assembledVertices i)[n]} else ∅ := by
+  classical
+  let := Fintype.ofFinite ι
   rcases hbridge_m with
     ⟨pre_m, t1_m, t2_m, post_m, X_m, Y_m, hitems_m,
       hlast_m, hhead_m, hleft_m, hright_m⟩
@@ -3721,7 +3748,7 @@ private lemma endpointUnitDiskAssembly_segments_bridge_bridge
         exact False.elim (by linarith)
       rcases ht1_m_cases with ht1_m_eq_t1_n | ht1_m_cases
       · have hvals : t1_m.1 = t1_n.1 := by
-          simpa [ht1_m_eq_t1_n]
+          simp [ht1_m_eq_t1_n]
         exact False.elim (by linarith)
       rcases ht1_m_cases with ht1_m_eq_t2_n | ht1_m_post_n
       · subst t2_n
@@ -3841,14 +3868,14 @@ private lemma endpointUnitDiskAssembly_segments_bridge_bridge
       exact False.elim hp_empty)
 
 private lemma endpointUnitDiskAssembly_segments_bridge_terminal
-    {ι : Type*} [Fintype ι]
+    {ι : Type*} [Finite ι]
     (a b : ι → EuclideanSpace ℝ (Fin 2))
     (T : Finset (EuclideanSpace ℝ (Fin 2)))
     (r : EuclideanSpace ℝ (Fin 2) → ℝ)
     (centerParams : ι → List ℝ)
     (centerOfParam :
       ∀ i, {t : ℝ // t ∈ centerParams i} → EuclideanSpace ℝ (Fin 2))
-    (hcenterOfParam_def :
+    (_hcenterOfParam_def :
       ∀ i (t : {t : ℝ // t ∈ centerParams i}),
         centerOfParam i t = AffineMap.lineMap (a i) (b i) t.1)
     (localArcAtParam :
@@ -3856,19 +3883,19 @@ private lemma endpointUnitDiskAssembly_segments_bridge_terminal
     (entryPoint exitPoint :
       ∀ i, {t : ℝ // t ∈ centerParams i} → EuclideanSpace ℝ (Fin 2))
     (orderedLocalVertexBlocks :
-      ∀ i, List (List (EuclideanSpace ℝ (Fin 2))))
+      ∀ _i, List (List (EuclideanSpace ℝ (Fin 2))))
     (assembledVertices : ι → List (EuclideanSpace ℝ (Fin 2)))
-    (horderedLocalVertexBlocks_def : ∀ i,
+    (_horderedLocalVertexBlocks_def : ∀ i,
       orderedLocalVertexBlocks i =
         (centerParams i).attach.map
           (fun t => (localArcAtParam i t).vertices))
-    (hassembledVertices_def : ∀ i,
+    (_hassembledVertices_def : ∀ i,
       assembledVertices i =
         EndpointUnitDiskAlternatingVertexList
           (a i) (b i) (orderedLocalVertexBlocks i))
     (hendpoint_ne : ∀ i, a i ≠ b i)
-    (hcenterParams_sorted : ∀ i, (centerParams i).SortedLT)
-    (hcenterOfParam_T :
+    (_hcenterParams_sorted : ∀ i, (centerParams i).SortedLT)
+    (_hcenterOfParam_T :
       ∀ i (t : {t : ℝ // t ∈ centerParams i}), centerOfParam i t ∈ T)
     (hlocalArcAtParam_props :
       ∀ i (t : {t : ℝ // t ∈ centerParams i}),
@@ -3893,7 +3920,7 @@ private lemma endpointUnitDiskAssembly_segments_bridge_terminal
                 sEntry < t2.1 ∧
                   exitPoint i t1 = AffineMap.lineMap (a i) (b i) sExit ∧
                     entryPoint i t2 = AffineMap.lineMap (a i) (b i) sEntry)
-    (hchordGapLocalCarrierPosition :
+    (_hchordGapLocalCarrierPosition :
       ∀ i (t : {t : ℝ // t ∈ centerParams i}) {α β e x : ℝ},
         entryPoint i t = AffineMap.lineMap (a i) (b i) e →
           exitPoint i t = AffineMap.lineMap (a i) (b i) x →
@@ -3918,17 +3945,17 @@ private lemma endpointUnitDiskAssembly_segments_bridge_terminal
                           (AffineMap.lineMap (a i) (b i) β) →
                         p ∈ (localArcAtParam i t).carrier →
                           x = α → p = exitPoint i t))
-    (hinitialGapMeetsLocalCarrierOnly :
+    (_hinitialGapMeetsLocalCarrierOnly :
       ∀ i (t : {t : ℝ // t ∈ centerParams i})
         ⦃p : EuclideanSpace ℝ (Fin 2)⦄,
         p ∈ segment ℝ (a i) (entryPoint i t) →
           p ∈ (localArcAtParam i t).carrier → p = entryPoint i t)
-    (hterminalGapMeetsLocalCarrierOnly :
+    (_hterminalGapMeetsLocalCarrierOnly :
       ∀ i (t : {t : ℝ // t ∈ centerParams i})
         ⦃p : EuclideanSpace ℝ (Fin 2)⦄,
         p ∈ segment ℝ (exitPoint i t) (b i) →
           p ∈ (localArcAtParam i t).carrier → p = exitPoint i t)
-    (horderedOutsideGapMeetsNeighboringLocalCarriersOnly :
+    (_horderedOutsideGapMeetsNeighboringLocalCarriersOnly :
       ∀ i (t1 t2 : {t : ℝ // t ∈ centerParams i}),
         t1.1 < t2.1 →
           (∀ ⦃p : EuclideanSpace ℝ (Fin 2)⦄,
@@ -3937,11 +3964,11 @@ private lemma endpointUnitDiskAssembly_segments_bridge_terminal
             (∀ ⦃p : EuclideanSpace ℝ (Fin 2)⦄,
               p ∈ segment ℝ (exitPoint i t1) (entryPoint i t2) →
                 p ∈ (localArcAtParam i t2).carrier → p = entryPoint i t2))
-    (hdisjoint : ∀ ⦃z w : EuclideanSpace ℝ (Fin 2)⦄,
+    (_hdisjoint : ∀ ⦃z w : EuclideanSpace ℝ (Fin 2)⦄,
       z ∈ T → w ∈ T → z ≠ w →
         Disjoint (Metric.closedBall z (r z)) (Metric.closedBall w (r w)))
-    (hassembledVertices_nodup : ∀ i, (assembledVertices i).Nodup)
-    (hassembledVertices_avoid :
+    (_hassembledVertices_nodup : ∀ i, (assembledVertices i).Nodup)
+    (_hassembledVertices_avoid :
       ∀ i ⦃m k : ℕ⦄,
         (hm : m + 1 < (assembledVertices i).length) →
           (hk : k < (assembledVertices i).length) →
@@ -3949,7 +3976,7 @@ private lemma endpointUnitDiskAssembly_segments_bridge_terminal
               (assembledVertices i)[k] ∉
                 openSegment ℝ
                   (assembledVertices i)[m] (assembledVertices i)[m + 1])
-    (hassembledEdgeEndpointRoles :
+    (_hassembledEdgeEndpointRoles :
       ∀ i ⦃m : ℕ⦄,
         (hm : m + 1 < (assembledVertices i).length) →
           ((centerParams i).attach = [] ∧
@@ -3996,14 +4023,14 @@ private lemma endpointUnitDiskAssembly_segments_bridge_terminal
     (i : ι) {m n : ℕ}
     (hm : m + 1 < (assembledVertices i).length)
     (hn : n + 1 < (assembledVertices i).length)
-    (hmn : m < n)
-    (hinitialIndexZero :
+    (_hmn : m < n)
+    (_hinitialIndexZero :
       ∀ ⦃k : ℕ⦄,
         (hk : k + 1 < (assembledVertices i).length) →
           endpointUnitDiskAssembly_initialRole a centerParams localArcAtParam
               assembledVertices i k hk →
             k = 0)
-    (hterminalNoLater :
+    (_hterminalNoLater :
       ∀ ⦃k l : ℕ⦄,
         (hk : k + 1 < (assembledVertices i).length) →
         (hl : l + 1 < (assembledVertices i).length) →
@@ -4031,6 +4058,8 @@ private lemma endpointUnitDiskAssembly_segments_bridge_terminal
     (segment ℝ (assembledVertices i)[m] (assembledVertices i)[m + 1] ∩
         segment ℝ (assembledVertices i)[n] (assembledVertices i)[n + 1]) =
       if n = m + 1 then {(assembledVertices i)[n]} else ∅ := by
+  classical
+  let := Fintype.ofFinite ι
   rcases hbridge_m with
     ⟨pre_m, t1_m, t2_m, post_m, X_m, Y_m, hitems_m,
       hlast_m, hhead_m, hleft_m, hright_m⟩
@@ -4135,7 +4164,7 @@ private lemma endpointUnitDiskAssembly_segments_bridge_terminal
     exact False.elim hp_empty)
 
 private lemma endpointUnitDiskAssembly_segments_bridge
-    {ι : Type*} [Fintype ι]
+    {ι : Type*} [Finite ι]
     (a b : ι → EuclideanSpace ℝ (Fin 2))
     (T : Finset (EuclideanSpace ℝ (Fin 2)))
     (r : EuclideanSpace ℝ (Fin 2) → ℝ)
@@ -4150,7 +4179,7 @@ private lemma endpointUnitDiskAssembly_segments_bridge
     (entryPoint exitPoint :
       ∀ i, {t : ℝ // t ∈ centerParams i} → EuclideanSpace ℝ (Fin 2))
     (orderedLocalVertexBlocks :
-      ∀ i, List (List (EuclideanSpace ℝ (Fin 2))))
+      ∀ _i, List (List (EuclideanSpace ℝ (Fin 2))))
     (assembledVertices : ι → List (EuclideanSpace ℝ (Fin 2)))
     (horderedLocalVertexBlocks_def : ∀ i,
       orderedLocalVertexBlocks i =
@@ -4325,6 +4354,8 @@ private lemma endpointUnitDiskAssembly_segments_bridge
     (segment ℝ (assembledVertices i)[m] (assembledVertices i)[m + 1] ∩
         segment ℝ (assembledVertices i)[n] (assembledVertices i)[n + 1]) =
       if n = m + 1 then {(assembledVertices i)[n]} else ∅ := by
+  classical
+  let := Fintype.ofFinite ι
   rcases hroles_n with hinitial_n | hroles_n
   · exact endpointUnitDiskAssembly_segments_bridge_initial
       a b T r centerParams centerOfParam hcenterOfParam_def
@@ -4382,14 +4413,14 @@ private lemma endpointUnitDiskAssembly_segments_bridge
           hattach_pairwise_lt hbridge_m hterminal_n
 
 private lemma endpointUnitDiskAssembly_segments_terminal
-    {ι : Type*} [Fintype ι]
+    {ι : Type*} [Finite ι]
     (a b : ι → EuclideanSpace ℝ (Fin 2))
     (T : Finset (EuclideanSpace ℝ (Fin 2)))
     (r : EuclideanSpace ℝ (Fin 2) → ℝ)
     (centerParams : ι → List ℝ)
     (centerOfParam :
       ∀ i, {t : ℝ // t ∈ centerParams i} → EuclideanSpace ℝ (Fin 2))
-    (hcenterOfParam_def :
+    (_hcenterOfParam_def :
       ∀ i (t : {t : ℝ // t ∈ centerParams i}),
         centerOfParam i t = AffineMap.lineMap (a i) (b i) t.1)
     (localArcAtParam :
@@ -4397,21 +4428,21 @@ private lemma endpointUnitDiskAssembly_segments_terminal
     (entryPoint exitPoint :
       ∀ i, {t : ℝ // t ∈ centerParams i} → EuclideanSpace ℝ (Fin 2))
     (orderedLocalVertexBlocks :
-      ∀ i, List (List (EuclideanSpace ℝ (Fin 2))))
+      ∀ _i, List (List (EuclideanSpace ℝ (Fin 2))))
     (assembledVertices : ι → List (EuclideanSpace ℝ (Fin 2)))
-    (horderedLocalVertexBlocks_def : ∀ i,
+    (_horderedLocalVertexBlocks_def : ∀ i,
       orderedLocalVertexBlocks i =
         (centerParams i).attach.map
           (fun t => (localArcAtParam i t).vertices))
-    (hassembledVertices_def : ∀ i,
+    (_hassembledVertices_def : ∀ i,
       assembledVertices i =
         EndpointUnitDiskAlternatingVertexList
           (a i) (b i) (orderedLocalVertexBlocks i))
-    (hendpoint_ne : ∀ i, a i ≠ b i)
-    (hcenterParams_sorted : ∀ i, (centerParams i).SortedLT)
-    (hcenterOfParam_T :
+    (_hendpoint_ne : ∀ i, a i ≠ b i)
+    (_hcenterParams_sorted : ∀ i, (centerParams i).SortedLT)
+    (_hcenterOfParam_T :
       ∀ i (t : {t : ℝ // t ∈ centerParams i}), centerOfParam i t ∈ T)
-    (hlocalArcAtParam_props :
+    (_hlocalArcAtParam_props :
       ∀ i (t : {t : ℝ // t ∈ centerParams i}),
         (localArcAtParam i t).source = entryPoint i t ∧
           (localArcAtParam i t).target = exitPoint i t ∧
@@ -4419,13 +4450,13 @@ private lemma endpointUnitDiskAssembly_segments_terminal
               Metric.closedBall (centerOfParam i t) (r (centerOfParam i t)) ∧
               (localArcAtParam i t).relativeInterior ⊆
                 Metric.ball (centerOfParam i t) (r (centerOfParam i t)))
-    (hentryExitParameters :
+    (_hentryExitParameters :
       ∀ i (t : {t : ℝ // t ∈ centerParams i}),
         (∃ s : ℝ, 0 < s ∧ s < t.1 ∧
           entryPoint i t = AffineMap.lineMap (a i) (b i) s) ∧
           (∃ s : ℝ, t.1 < s ∧ s < 1 ∧
             exitPoint i t = AffineMap.lineMap (a i) (b i) s))
-    (horderedCutSeparation :
+    (_horderedCutSeparation :
       ∀ i (t1 t2 : {t : ℝ // t ∈ centerParams i}),
         t1.1 < t2.1 →
           ∃ sExit sEntry : ℝ,
@@ -4434,7 +4465,7 @@ private lemma endpointUnitDiskAssembly_segments_terminal
                 sEntry < t2.1 ∧
                   exitPoint i t1 = AffineMap.lineMap (a i) (b i) sExit ∧
                     entryPoint i t2 = AffineMap.lineMap (a i) (b i) sEntry)
-    (hchordGapLocalCarrierPosition :
+    (_hchordGapLocalCarrierPosition :
       ∀ i (t : {t : ℝ // t ∈ centerParams i}) {α β e x : ℝ},
         entryPoint i t = AffineMap.lineMap (a i) (b i) e →
           exitPoint i t = AffineMap.lineMap (a i) (b i) x →
@@ -4459,17 +4490,17 @@ private lemma endpointUnitDiskAssembly_segments_terminal
                           (AffineMap.lineMap (a i) (b i) β) →
                         p ∈ (localArcAtParam i t).carrier →
                           x = α → p = exitPoint i t))
-    (hinitialGapMeetsLocalCarrierOnly :
+    (_hinitialGapMeetsLocalCarrierOnly :
       ∀ i (t : {t : ℝ // t ∈ centerParams i})
         ⦃p : EuclideanSpace ℝ (Fin 2)⦄,
         p ∈ segment ℝ (a i) (entryPoint i t) →
           p ∈ (localArcAtParam i t).carrier → p = entryPoint i t)
-    (hterminalGapMeetsLocalCarrierOnly :
+    (_hterminalGapMeetsLocalCarrierOnly :
       ∀ i (t : {t : ℝ // t ∈ centerParams i})
         ⦃p : EuclideanSpace ℝ (Fin 2)⦄,
         p ∈ segment ℝ (exitPoint i t) (b i) →
           p ∈ (localArcAtParam i t).carrier → p = exitPoint i t)
-    (horderedOutsideGapMeetsNeighboringLocalCarriersOnly :
+    (_horderedOutsideGapMeetsNeighboringLocalCarriersOnly :
       ∀ i (t1 t2 : {t : ℝ // t ∈ centerParams i}),
         t1.1 < t2.1 →
           (∀ ⦃p : EuclideanSpace ℝ (Fin 2)⦄,
@@ -4478,11 +4509,11 @@ private lemma endpointUnitDiskAssembly_segments_terminal
             (∀ ⦃p : EuclideanSpace ℝ (Fin 2)⦄,
               p ∈ segment ℝ (exitPoint i t1) (entryPoint i t2) →
                 p ∈ (localArcAtParam i t2).carrier → p = entryPoint i t2))
-    (hdisjoint : ∀ ⦃z w : EuclideanSpace ℝ (Fin 2)⦄,
+    (_hdisjoint : ∀ ⦃z w : EuclideanSpace ℝ (Fin 2)⦄,
       z ∈ T → w ∈ T → z ≠ w →
         Disjoint (Metric.closedBall z (r z)) (Metric.closedBall w (r w)))
-    (hassembledVertices_nodup : ∀ i, (assembledVertices i).Nodup)
-    (hassembledVertices_avoid :
+    (_hassembledVertices_nodup : ∀ i, (assembledVertices i).Nodup)
+    (_hassembledVertices_avoid :
       ∀ i ⦃m k : ℕ⦄,
         (hm : m + 1 < (assembledVertices i).length) →
           (hk : k < (assembledVertices i).length) →
@@ -4490,7 +4521,7 @@ private lemma endpointUnitDiskAssembly_segments_terminal
               (assembledVertices i)[k] ∉
                 openSegment ℝ
                   (assembledVertices i)[m] (assembledVertices i)[m + 1])
-    (hassembledEdgeEndpointRoles :
+    (_hassembledEdgeEndpointRoles :
       ∀ i ⦃m : ℕ⦄,
         (hm : m + 1 < (assembledVertices i).length) →
           ((centerParams i).attach = [] ∧
@@ -4527,7 +4558,7 @@ private lemma endpointUnitDiskAssembly_segments_terminal
                 (localArcAtParam i t).vertices.getLast? = some X ∧
                   (assembledVertices i)[m] = X ∧
                     (assembledVertices i)[m + 1] = b i))
-    (hlineSegmentInterSeparated :
+    (_hlineSegmentInterSeparated :
       ∀ i {α β γ δ : ℝ}, α ≤ β → γ ≤ δ → β < γ →
         segment ℝ (AffineMap.lineMap (a i) (b i) α)
             (AffineMap.lineMap (a i) (b i) β) ∩
@@ -4538,7 +4569,7 @@ private lemma endpointUnitDiskAssembly_segments_terminal
     (hm : m + 1 < (assembledVertices i).length)
     (hn : n + 1 < (assembledVertices i).length)
     (hmn : m < n)
-    (hinitialIndexZero :
+    (_hinitialIndexZero :
       ∀ ⦃k : ℕ⦄,
         (hk : k + 1 < (assembledVertices i).length) →
           endpointUnitDiskAssembly_initialRole a centerParams localArcAtParam
@@ -4552,7 +4583,7 @@ private lemma endpointUnitDiskAssembly_segments_terminal
           endpointUnitDiskAssembly_terminalRole b centerParams localArcAtParam
               assembledVertices i k hk →
             False)
-    (hinter_of_forall_eq_right :
+    (_hinter_of_forall_eq_right :
       (∀ ⦃p : EuclideanSpace ℝ (Fin 2)⦄,
         p ∈ segment ℝ (assembledVertices i)[m] (assembledVertices i)[m + 1] →
         p ∈ segment ℝ (assembledVertices i)[n] (assembledVertices i)[n + 1] →
@@ -4560,7 +4591,7 @@ private lemma endpointUnitDiskAssembly_segments_terminal
       (segment ℝ (assembledVertices i)[m] (assembledVertices i)[m + 1] ∩
           segment ℝ (assembledVertices i)[n] (assembledVertices i)[n + 1]) =
         if n = m + 1 then {(assembledVertices i)[n]} else ∅)
-    (hattach_pairwise_lt :
+    (_hattach_pairwise_lt :
       (centerParams i).attach.Pairwise
         (fun t1 t2 : {t : ℝ // t ∈ centerParams i} => t1.1 < t2.1))
     (hterminal_m :
@@ -4569,10 +4600,12 @@ private lemma endpointUnitDiskAssembly_segments_terminal
     (segment ℝ (assembledVertices i)[m] (assembledVertices i)[m + 1] ∩
         segment ℝ (assembledVertices i)[n] (assembledVertices i)[n + 1]) =
       if n = m + 1 then {(assembledVertices i)[n]} else ∅ := by
+  classical
+  let := Fintype.ofFinite ι
   exact False.elim (hterminalNoLater hm hn hmn hterminal_m)
 
 private lemma endpointUnitDiskAssembly_segments
-    {ι : Type*} [Fintype ι]
+    {ι : Type*} [Finite ι]
     (a b : ι → EuclideanSpace ℝ (Fin 2))
     (T : Finset (EuclideanSpace ℝ (Fin 2)))
     (r : EuclideanSpace ℝ (Fin 2) → ℝ)
@@ -4587,7 +4620,7 @@ private lemma endpointUnitDiskAssembly_segments
     (entryPoint exitPoint :
       ∀ i, {t : ℝ // t ∈ centerParams i} → EuclideanSpace ℝ (Fin 2))
     (orderedLocalVertexBlocks :
-      ∀ i, List (List (EuclideanSpace ℝ (Fin 2))))
+      ∀ _i, List (List (EuclideanSpace ℝ (Fin 2))))
     (assembledVertices : ι → List (EuclideanSpace ℝ (Fin 2)))
     (horderedLocalVertexBlocks_def : ∀ i,
       orderedLocalVertexBlocks i =
@@ -4731,6 +4764,8 @@ private lemma endpointUnitDiskAssembly_segments
       (segment ℝ (assembledVertices i)[m] (assembledVertices i)[m + 1] ∩
           segment ℝ (assembledVertices i)[n] (assembledVertices i)[n + 1]) =
         if n = m + 1 then {(assembledVertices i)[n]} else ∅ := by
+  classical
+  let := Fintype.ofFinite ι
   intro i m n hm hn hmn
   have hinitialIndexZero :
       ∀ ⦃k : ℕ⦄,
@@ -4977,7 +5012,7 @@ private abbrev endpointUnitDiskAssembly_pointRole
               p ∈ openSegment ℝ (a i) (b i)))
 
 private lemma endpointUnitDiskAssembly_splicePoint_not_other
-    {ι : Type*} [Fintype ι]
+    {ι : Type*} [Finite ι]
     (a b : ι → EuclideanSpace ℝ (Fin 2))
     (T : Finset (EuclideanSpace ℝ (Fin 2)))
     (r : EuclideanSpace ℝ (Fin 2) → ℝ)
@@ -5022,6 +5057,8 @@ private lemma endpointUnitDiskAssembly_splicePoint_not_other
             p ∈ Metric.sphere (centerOfParam i t) (r (centerOfParam i t)) ∧
               p ∈ openSegment ℝ (a i) (b i))) →
           p ∉ (Gamma j).relativeInterior := by
+  classical
+  let := Fintype.ofFinite ι
   intro i j p t hij hsplice hpj
   have hp_sphere_i :
       p ∈ Metric.sphere (centerOfParam i t) (r (centerOfParam i t)) := by
@@ -5089,7 +5126,7 @@ private lemma endpointUnitDiskAssembly_splicePoint_not_other
       exact (Set.disjoint_left.mp hdis) hp_closed_i hpseg_j
 
 private lemma endpointUnitDiskAssembly_sharedPointTransverseRoles
-    {ι : Type*} [Fintype ι]
+    {ι : Type*} [Finite ι]
     (a b : ι → EuclideanSpace ℝ (Fin 2))
     (T : Finset (EuclideanSpace ℝ (Fin 2)))
     (r : EuclideanSpace ℝ (Fin 2) → ℝ)
@@ -5149,7 +5186,8 @@ private lemma endpointUnitDiskAssembly_sharedPointTransverseRoles
                   ∀ z : EuclideanSpace ℝ (Fin 2),
                     z ∈ T → p ∉ Metric.closedBall z (r z)) ∧
                   ¬ ∃ t : ℝ, b j - a j = t • (b i - a i)) ∨
-              (∃ (z : endpointUnitDiskAssembly_center T) (ii jj : endpointUnitDiskAssembly_incident a b z.1),
+            (∃ (z : endpointUnitDiskAssembly_center T) (ii jj : endpointUnitDiskAssembly_incident a
+              b z.1),
                 ii.1 = i ∧ jj.1 = j ∧
                   p ∈ (localXi z ii).relativeInterior ∧
                     p ∈ (localXi z jj).relativeInterior ∧
@@ -5165,6 +5203,8 @@ private lemma endpointUnitDiskAssembly_sharedPointTransverseRoles
                                     (localXi z jj).vertices[n] =
                                   t • ((localXi z ii).vertices[m + 1] -
                                     (localXi z ii).vertices[m])) := by
+  classical
+  let := Fintype.ofFinite ι
   intro i j p hij hpi hpj
   rcases hsharedPointRoles hij hpi hpj with houtside | hlocal
   · exact Or.inl ⟨houtside.1, houtside.2,
@@ -5194,6 +5234,7 @@ private lemma endpointUnitDiskAssembly_blockEdgeInAlternating :
                 (EndpointUnitDiskAlternatingVertexList A B
                     (items.map block))[m + 1] =
                   (block x)[q + 1]'hq := by
+  classical
   intro β A B items pre post block x q hitems hq
   subst items
   let l := (pre.map block).flatten.length
@@ -5203,7 +5244,7 @@ private lemma endpointUnitDiskAssembly_blockEdgeInAlternating :
     omega
   · simp only [EndpointUnitDiskAlternatingVertexList, List.map_append,
       List.map_cons, List.flatten_append, List.flatten_cons, List.append_assoc,
-      List.singleton_append, List.cons_append, List.getElem_cons_succ]
+      List.getElem_cons_succ]
     have hidx :
         l + q <
           ((pre.map block).flatten ++ (block x ++ ((post.map block).flatten ++ [B]))).length := by
@@ -5230,7 +5271,7 @@ private lemma endpointUnitDiskAssembly_blockEdgeInAlternating :
     simpa [hsub_sum] using hget
   · simp only [EndpointUnitDiskAlternatingVertexList, List.map_append,
       List.map_cons, List.flatten_append, List.flatten_cons, List.append_assoc,
-      List.singleton_append, List.cons_append, List.getElem_cons_succ]
+      List.getElem_cons_succ]
     have hidx :
         l + (q + 1) <
           ((pre.map block).flatten ++ (block x ++ ((post.map block).flatten ++ [B]))).length := by
@@ -5261,7 +5302,7 @@ private lemma endpointUnitDiskAssembly_localEdgeInAssembled
     (localArcAtParam :
       ∀ i, {t : ℝ // t ∈ centerParams i} → PolygonalArc)
     (orderedLocalVertexBlocks :
-      ∀ i, List (List (EuclideanSpace ℝ (Fin 2))))
+      ∀ _i, List (List (EuclideanSpace ℝ (Fin 2))))
     (assembledVertices : ι → List (EuclideanSpace ℝ (Fin 2)))
     (horderedLocalVertexBlocks_def : ∀ i,
       orderedLocalVertexBlocks i =
@@ -5282,6 +5323,7 @@ private lemma endpointUnitDiskAssembly_localEdgeInAssembled
                   (localArcAtParam i t).vertices[q]'(Nat.lt_trans (Nat.lt_succ_self q) hq) ∧
                 (assembledVertices i)[m + 1] =
                   (localArcAtParam i t).vertices[q + 1]'hq := by
+  classical
   intro i pre t post q hitems hq
   simpa [hassembledVertices_def i, horderedLocalVertexBlocks_def i] using
     endpointUnitDiskAssembly_blockEdgeInAlternating (A := a i) (B := b i)
@@ -5291,7 +5333,7 @@ private lemma endpointUnitDiskAssembly_localEdgeInAssembled
       (x := t) (q := q) hitems hq
 
 private lemma endpointUnitDiskAssembly_outsideEdgeDirection
-    {ι : Type*} [Fintype ι]
+    {ι : Type*} [Finite ι]
     (a b : ι → EuclideanSpace ℝ (Fin 2))
     (T : Finset (EuclideanSpace ℝ (Fin 2)))
     (r : EuclideanSpace ℝ (Fin 2) → ℝ)
@@ -5361,11 +5403,13 @@ private lemma endpointUnitDiskAssembly_outsideEdgeDirection
               c ≠ 0 ∧
                 (assembledVertices i)[m + 1] - (assembledVertices i)[m] =
                   c • (b i - a i) := by
+  classical
+  let := Fintype.ofFinite ι
   intro i p m hm hpseg hpoutside
   rcases hassembledEdgeEndpointRoles i hm with hnodisks | hroles
   · rcases hnodisks with ⟨_hitems, hleft, hright⟩
     refine ⟨1, by norm_num, ?_⟩
-    simpa [hleft, hright]
+    simp [hleft, hright]
   rcases hroles with hinitial | hroles
   · rcases hinitial with ⟨t, _ts, X, _hitems, hhead, hleft, hright⟩
     have hsource_entry :
@@ -5518,6 +5562,7 @@ private lemma endpointUnitDiskAssembly_interiorEdgeWitness
         ∃ m : ℕ, ∃ hm : m + 1 < (assembledVertices i).length,
           p ∈ segment ℝ (assembledVertices i)[m]
             (assembledVertices i)[m + 1] := by
+  classical
   intro i p hp
   rw [hGamma_relativeInterior i] at hp
   exact (hassembledEdgeSet_mem i p).1 hp.1
@@ -5530,7 +5575,7 @@ private lemma endpointUnitDiskAssembly_localArcRealize
     (centerOfParam :
       ∀ i, {t : ℝ // t ∈ centerParams i} → EuclideanSpace ℝ (Fin 2))
     (centerAtParam :
-      ∀ i (t : {t : ℝ // t ∈ centerParams i}),
+      ∀ i (_t : {t : ℝ // t ∈ centerParams i}),
         endpointUnitDiskAssembly_center T)
     (incidentAtParam :
       ∀ i (t : {t : ℝ // t ∈ centerParams i}),
@@ -5560,6 +5605,7 @@ private lemma endpointUnitDiskAssembly_localArcRealize
       ii.1 = i →
         ∃ t : {t : ℝ // t ∈ centerParams i},
           localArcAtParam i t = localXi z ii := by
+  classical
   intro i z ii hii
   have hz_i_open : z.1 ∈ openSegment ℝ (a i) (b i) := by
     simpa [hii] using ii.2
@@ -5577,7 +5623,7 @@ private lemma endpointUnitDiskAssembly_localArcRealize
   rw [hlocalArcAtParam_def i ti, hii_eq]
 
 private lemma endpointUnitDiskAssembly_sharedPointTransverse
-    {ι : Type*} [Fintype ι]
+    {ι : Type*} [Finite ι]
     (a b : ι → EuclideanSpace ℝ (Fin 2))
     (T : Finset (EuclideanSpace ℝ (Fin 2)))
     (r : EuclideanSpace ℝ (Fin 2) → ℝ)
@@ -5654,6 +5700,8 @@ private lemma endpointUnitDiskAssembly_sharedPointTransverse
         p ∈ (Gamma i).relativeInterior →
           p ∈ (Gamma j).relativeInterior →
             endpointUnitDiskAssembly_transverseWitness Gamma i j p := by
+  classical
+  let := Fintype.ofFinite ι
   intro i j p hij hpi hpj
   rcases hsharedPointTransverseRoles hij hpi hpj with houtside | hlocal
   · rcases hGammaInteriorEdges i hpi with ⟨m, hm, hpm⟩
@@ -5729,7 +5777,7 @@ private lemma endpointUnitDiskAssembly_assembledVertexCases
     (localArcAtParam :
       ∀ i, {t : ℝ // t ∈ centerParams i} → PolygonalArc)
     (orderedLocalVertexBlocks :
-      ∀ i, List (List (EuclideanSpace ℝ (Fin 2))))
+      ∀ _i, List (List (EuclideanSpace ℝ (Fin 2))))
     (assembledVertices : ι → List (EuclideanSpace ℝ (Fin 2)))
     (horderedLocalVertexBlocks_def : ∀ i,
       orderedLocalVertexBlocks i =
@@ -5745,9 +5793,12 @@ private lemma endpointUnitDiskAssembly_assembledVertexCases
           (∃ t : {t : ℝ // t ∈ centerParams i},
             p ∈ (localArcAtParam i t).vertices) ∨
           p = b i := by
+  classical
   intro i p hp
   rw [hassembledVertices_def i, horderedLocalVertexBlocks_def i] at hp
-  simp [EndpointUnitDiskAlternatingVertexList] at hp
+  simp only [EndpointUnitDiskAlternatingVertexList, List.mem_cons, List.mem_append,
+    List.mem_flatten, List.mem_map, List.mem_attach, true_and, Subtype.exists, ↓existsAndEq,
+    List.not_mem_nil, or_false] at hp
   rcases hp with hpA | hpflat | hpB
   · exact Or.inl hpA
   · rcases hpflat with ⟨t, ht, hpV⟩
@@ -5755,7 +5806,7 @@ private lemma endpointUnitDiskAssembly_assembledVertexCases
   · exact Or.inr (Or.inr hpB)
 
 private lemma endpointUnitDiskAssembly_sharedPointOpen
-    {ι : Type*} [Fintype ι]
+    {ι : Type*} [Finite ι]
     (a b : ι → EuclideanSpace ℝ (Fin 2))
     (T : Finset (EuclideanSpace ℝ (Fin 2)))
     (r : EuclideanSpace ℝ (Fin 2) → ℝ)
@@ -5844,6 +5895,8 @@ private lemma endpointUnitDiskAssembly_sharedPointOpen
                     (Gamma i).vertices[m + 1] ∧
                   p ∈ openSegment ℝ (Gamma j).vertices[n]
                     (Gamma j).vertices[n + 1] := by
+  classical
+  let := Fintype.ofFinite ι
   intro i j p hij hpi hpj
   rcases hsharedPointRoles hij hpi hpj with houtside | hlocal
   · have outside_open_index :
@@ -5932,7 +5985,7 @@ private lemma endpointUnitDiskAssembly_sharedPointOpen
       simpa [hGamma_vertices j] using hopen
 
 private lemma endpointUnitDiskAssembly_noTriple
-    {ι : Type*} [Fintype ι]
+    {ι : Type*} [Finite ι]
     (a b : ι → EuclideanSpace ℝ (Fin 2))
     (T : Finset (EuclideanSpace ℝ (Fin 2)))
     (r : EuclideanSpace ℝ (Fin 2) → ℝ)
@@ -5991,6 +6044,8 @@ private lemma endpointUnitDiskAssembly_noTriple
         p ∈ (Gamma i).relativeInterior →
           p ∈ (Gamma j).relativeInterior →
             p ∈ (Gamma k).relativeInterior → False := by
+  classical
+  let := Fintype.ofFinite ι
   intro i j k p hij hik hjk hpi hpj hpk
   rcases hsharedPointRoles hij hpi hpj with hij_outside | hij_local
   · rcases hsharedPointRoles hik hpi hpk with hik_outside | hik_local
@@ -6039,7 +6094,7 @@ private lemma endpointUnitDiskAssembly_noTriple
       exact hlocalNoTriple z hii_ne_jj hii_ne_kk hjj_ne_kk hpii hpjj hpkk
 
 private lemma endpointUnitDiskAssembly_clean
-    {ι : Type*} [Fintype ι]
+    {ι : Type*} [Finite ι]
     (a b : ι → EuclideanSpace ℝ (Fin 2))
     (ha : ∀ i, dist (a i) (0 : EuclideanSpace ℝ (Fin 2)) = 1)
     (hb : ∀ i, dist (b i) (0 : EuclideanSpace ℝ (Fin 2)) = 1)
@@ -6086,6 +6141,8 @@ private lemma endpointUnitDiskAssembly_clean
         p ∈ (Gamma i).relativeInterior →
           p ∈ (Gamma j).relativeInterior →
             Nonempty (OrdinaryCleanLocalCrossing Gamma i j p) := by
+  classical
+  let := Fintype.ofFinite ι
   intro i j p hij hpi hpj
   rcases hsharedPointOpen hij hpi hpj with ⟨mi, mj, hmi, hmj, hpmi, hpmj⟩
   rcases hsharedPointTransverse hij hpi hpj with
@@ -6127,6 +6184,7 @@ private lemma endpointUnitDiskAssembly_twoPointsAvoidFinset
       x ∈ openSegment ℝ p q ∧
         y ∈ openSegment ℝ p q ∧
           x ∉ F ∧ y ∉ F ∧ x ≠ y := by
+  classical
   let f : ℝ → EuclideanSpace ℝ (Fin 2) := AffineMap.lineMap p q
   have hf : Function.Injective f :=
     AffineMap.lineMap_injective (k := ℝ) hpq
@@ -6136,12 +6194,12 @@ private lemma endpointUnitDiskAssembly_twoPointsAvoidFinset
   have hIinf : (Set.Ioo (0 : ℝ) 1).Infinite :=
     Set.Ioo_infinite zero_lt_one
   have hgood1 : (Set.Ioo (0 : ℝ) 1 \ bad).Infinite :=
-    hIinf.diff hbad_finite
+    hIinf.sdiff hbad_finite
   rcases hgood1.nonempty with ⟨t1, ht1⟩
   have hbad2_finite : (bad ∪ ({t1} : Set ℝ)).Finite :=
     hbad_finite.union (Set.finite_singleton t1)
   have hgood2 : (Set.Ioo (0 : ℝ) 1 \ (bad ∪ ({t1} : Set ℝ))).Infinite :=
-    hIinf.diff hbad2_finite
+    hIinf.sdiff hbad2_finite
   rcases hgood2.nonempty with ⟨t2, ht2⟩
   refine ⟨f t1, f t2, ?_, ?_, ?_, ?_, ?_⟩
   · exact lineMap_mem_openSegment ℝ p q ht1.1
@@ -6155,7 +6213,7 @@ private lemma endpointUnitDiskAssembly_twoPointsAvoidFinset
     exact ht2.2 (Or.inr (by simp [ht12]))
 
 private lemma endpointUnitDiskAssembly_noCommonSegment
-    {ι : Type*} [Fintype ι]
+    {ι : Type*} [Finite ι]
     (Gamma : ι → PolygonalArc)
     (hsharedPointUnique :
       ∀ ⦃i j : ι⦄ ⦃p q : EuclideanSpace ℝ (Fin 2)⦄,
@@ -6175,6 +6233,8 @@ private lemma endpointUnitDiskAssembly_noCommonSegment
                 segment ℝ p q ⊆
                   segment ℝ (Gamma i).vertices[m] (Gamma i).vertices[m + 1] ∩
                     segment ℝ (Gamma j).vertices[n] (Gamma j).vertices[n + 1] := by
+  classical
+  let := Fintype.ofFinite ι
   intro i j hij hcommon
   rcases hcommon with ⟨m, n, hm, hn, p, q, hpq, hseg_subset⟩
   let forbidden : Finset (EuclideanSpace ℝ (Fin 2)) :=
@@ -6192,7 +6252,7 @@ private lemma endpointUnitDiskAssembly_noCommonSegment
         Set (EuclideanSpace ℝ (Fin 2))) := by
     intro hxend
     apply hx_not_forbidden
-    simp at hxend
+    simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at hxend
     rcases hxend with hxsource | hxtarget
     · simp [forbidden, hxsource]
     · simp [forbidden, hxtarget]
@@ -6201,7 +6261,7 @@ private lemma endpointUnitDiskAssembly_noCommonSegment
         Set (EuclideanSpace ℝ (Fin 2))) := by
     intro hxend
     apply hx_not_forbidden
-    simp at hxend
+    simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at hxend
     rcases hxend with hxsource | hxtarget
     · simp [forbidden, hxsource]
     · simp [forbidden, hxtarget]
@@ -6210,7 +6270,7 @@ private lemma endpointUnitDiskAssembly_noCommonSegment
         Set (EuclideanSpace ℝ (Fin 2))) := by
     intro hyend
     apply hy_not_forbidden
-    simp at hyend
+    simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at hyend
     rcases hyend with hysource | hytarget
     · simp [forbidden, hysource]
     · simp [forbidden, hytarget]
@@ -6219,7 +6279,7 @@ private lemma endpointUnitDiskAssembly_noCommonSegment
         Set (EuclideanSpace ℝ (Fin 2))) := by
     intro hyend
     apply hy_not_forbidden
-    simp at hyend
+    simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at hyend
     rcases hyend with hysource | hytarget
     · simp [forbidden, hysource]
     · simp [forbidden, hytarget]
@@ -6250,7 +6310,7 @@ private lemma endpointUnitDiskAssembly_noCommonSegment
   exact hxy (hsharedPointUnique hij hx_rel_i hx_rel_j hy_rel_i hy_rel_j)
 
 private lemma endpointUnitDiskAssembly_finish
-    {ι : Type*} [Fintype ι]
+    {ι : Type*} [Finite ι]
     (a b : ι → EuclideanSpace ℝ (Fin 2))
     (Gamma : ι → PolygonalArc)
     (hGammaProperties :
@@ -6333,11 +6393,13 @@ private lemma endpointUnitDiskAssembly_finish
             p ∈ (Gamma i).relativeInterior →
               p ∈ (Gamma j).relativeInterior →
                 Nonempty (OrdinaryCleanLocalCrossing Gamma i j p)) := by
+  classical
+  let := Fintype.ofFinite ι
   exact ⟨hGammaProperties, hnoCommonSegment, hnoTriple,
     hsharedPointTransverse, hsharedPointUnique, hclean⟩
 
 private lemma endpointUnitDiskAssembly_finalPointRoles
-    {ι : Type*} [Fintype ι]
+    {ι : Type*} [Finite ι]
     (a b : ι → EuclideanSpace ℝ (Fin 2))
     (ha : ∀ i, dist (a i) (0 : EuclideanSpace ℝ (Fin 2)) = 1)
     (hb : ∀ i, dist (b i) (0 : EuclideanSpace ℝ (Fin 2)) = 1)
@@ -6473,6 +6535,8 @@ private lemma endpointUnitDiskAssembly_finalPointRoles
                 (p = exitPoint i t ∧
                   p ∈ Metric.sphere (centerOfParam i t) (r (centerOfParam i t)) ∧
                     p ∈ openSegment ℝ (a i) (b i))) := by
+  classical
+  let := Fintype.ofFinite ι
   intro i p hp
   have hp_rel := hp
   rw [hGamma_relativeInterior i] at hp_rel
@@ -6518,7 +6582,7 @@ private lemma endpointUnitDiskAssembly_finalPointRoles
       have hs_attach : (⟨s, hs_mem⟩ : {t : ℝ // t ∈ centerParams i}) ∈
           (centerParams i).attach := by
         simp
-      simpa [hitems] using hs_attach
+      simp [hitems] at hs_attach
     · have hdis :
           Disjoint (Metric.closedBall z (r z)) (segment ℝ (a i) (b i)) :=
         hmiss hzT i hzseg
@@ -7433,7 +7497,8 @@ private noncomputable def endpointUnitDiskAssembly_prepare
         p ∈ assembledVertices i →
           p ∈ Metric.closedBall (0 : EuclideanSpace ℝ (Fin 2)) 1 := by
     intro i p hp
-    simp [assembledVertices, EndpointUnitDiskAlternatingVertexList] at hp
+    simp only [EndpointUnitDiskAlternatingVertexList, List.mem_cons, List.mem_append,
+      List.mem_flatten, List.not_mem_nil, or_false, assembledVertices] at hp
     rcases hp with hpA | hp
     · rw [hpA]
       simp [Metric.mem_closedBall, ha i]
@@ -7702,7 +7767,8 @@ private noncomputable def endpointUnitDiskAssembly_prepare
       rw [← hp_def]
       exact List.getElem_mem hk
     clear hp_def
-    simp [assembledVertices, EndpointUnitDiskAlternatingVertexList] at hvertex_mem
+    simp only [EndpointUnitDiskAlternatingVertexList, List.mem_cons, List.mem_append,
+      List.mem_flatten, List.not_mem_nil, or_false, assembledVertices] at hvertex_mem
     rcases hvertex_mem with hA | hvertex_mem
     · have hA_ball :
           a i ∈ Metric.ball (0 : EuclideanSpace ℝ (Fin 2)) 1 := by
@@ -8314,7 +8380,7 @@ private noncomputable def endpointUnitDiskAssembly_prepare
       unique := hsharedPointUnique
       clean := hclean }
 
-lemma EndpointUnitDiskAssemblyFromLocalReplacements {ι : Type*} [Fintype ι]
+lemma EndpointUnitDiskAssemblyFromLocalReplacements {ι : Type*} [Finite ι]
     (a b : ι → EuclideanSpace ℝ (Fin 2))
     (ha : ∀ i, dist (a i) (0 : EuclideanSpace ℝ (Fin 2)) = 1)
     (hb : ∀ i, dist (b i) (0 : EuclideanSpace ℝ (Fin 2)) = 1)
@@ -8448,6 +8514,8 @@ lemma EndpointUnitDiskAssemblyFromLocalReplacements {ι : Type*} [Fintype ι]
           p ∈ (Γ i).relativeInterior →
             p ∈ (Γ j).relativeInterior →
               Nonempty (OrdinaryCleanLocalCrossing Γ i j p)) := by
+  classical
+  let := Fintype.ofFinite ι
   let P :=
     endpointUnitDiskAssembly_prepare
       a b ha hb hdistinct T r hT hrpos hclosed hdisjoint hmiss hpairOnly hlocal

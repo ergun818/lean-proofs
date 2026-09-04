@@ -2,11 +2,9 @@ import Util.IncidenceGeometry.EndpointRectangularGoodHeights
 import Util.IncidenceGeometry.PolygonalArc
 import Util.IncidenceGeometry.StraightSegmentPolygonalArc
 
-open Classical
 noncomputable section
 
-
-lemma EndpointRectangularWireReplacement {ι : Type*} [Fintype ι]
+lemma EndpointRectangularWireReplacement {ι : Type*} [Finite ι]
     (ε H : ℝ) (L R : ι → EuclideanSpace ℝ (Fin 2))
     (hε : 0 < ε) (hH : 0 < H)
     (hLx : ∀ i, (L i) 0 = -ε)
@@ -66,6 +64,8 @@ lemma EndpointRectangularWireReplacement {ι : Type*} [Fintype ι]
                               q ∈ (Γ i).relativeInterior →
                                 q ∈ (Γ j).relativeInterior →
                                   p = q) := by
+  classical
+  let := Fintype.ofFinite ι
   let pointOnMidline : ℝ → EuclideanSpace ℝ (Fin 2) :=
     fun y => WithLp.toLp 2 (fun k : Fin 2 => if k = 0 then 0 else y)
   let middleFromHeights : (ι → ℝ) → ι → EuclideanSpace ℝ (Fin 2) :=
@@ -244,7 +244,7 @@ lemma EndpointRectangularWireReplacement {ι : Type*} [Fintype ι]
         ((convex_Icc (𝕜 := ℝ) (-H) H).linear_preimage
           (EuclideanSpace.projₗ (𝕜 := ℝ) (ι := Fin 2) 1))
       using 1
-    rfl
+    · rfl
     apply Set.ext
     intro p
     change
@@ -274,7 +274,7 @@ lemma EndpointRectangularWireReplacement {ι : Type*} [Fintype ι]
             {p : EuclideanSpace ℝ (Fin 2) |
               -ε ≤ p 0 ∧ p 0 ≤ ε ∧ -H ≤ p 1 ∧ p 1 ≤ H} := by
         have hy := abs_lt.mp (hLy i)
-        simp only [Set.mem_setOf_eq]
+        simp only [Set.mem_ofPred_eq]
         constructor
         · linarith [hLx i]
         constructor
@@ -285,7 +285,7 @@ lemma EndpointRectangularWireReplacement {ι : Type*} [Fintype ι]
             {p : EuclideanSpace ℝ (Fin 2) |
               -ε ≤ p 0 ∧ p 0 ≤ ε ∧ -H ≤ p 1 ∧ p 1 ≤ H} := by
         have hy := abs_lt.mp (hη_bound i)
-        simp only [Set.mem_setOf_eq]
+        simp only [Set.mem_ofPred_eq]
         constructor
         · simp [M, middleFromHeights, pointOnMidline]
           linarith [hε]
@@ -302,7 +302,7 @@ lemma EndpointRectangularWireReplacement {ι : Type*} [Fintype ι]
             {p : EuclideanSpace ℝ (Fin 2) |
               -ε ≤ p 0 ∧ p 0 ≤ ε ∧ -H ≤ p 1 ∧ p 1 ≤ H} := by
         have hy := abs_lt.mp (hRy i)
-        simp only [Set.mem_setOf_eq]
+        simp only [Set.mem_ofPred_eq]
         constructor
         · linarith [hRx i, hε]
         constructor
@@ -669,7 +669,9 @@ lemma EndpointRectangularWireReplacement {ι : Type*} [Fintype ι]
               p ∈ openSegment ℝ (M i) (R i) ∧
                 p ∈ openSegment ℝ (M j) (R j) := by
     intro i j p hij hpi hpj
-    simp [Γ] at hpi hpj
+    simp only [List.getElem_cons_succ, List.length_cons, List.length_nil, zero_add, Nat.reduceAdd,
+      Set.mem_sdiff, Set.mem_ofPred_eq, Set.mem_insert_iff, Set.mem_singleton_iff, not_or, Γ]
+      at hpi hpj
     rcases hpi with ⟨hpi_carrier, hpneLi, hpneRi⟩
     rcases hpj with ⟨hpj_carrier, hpneLj, hpneRj⟩
     rcases hpi_carrier with ⟨m, hm, hp_i_seg⟩

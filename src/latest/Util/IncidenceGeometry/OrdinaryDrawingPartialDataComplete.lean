@@ -1,6 +1,5 @@
 import Util.IncidenceGeometry.OrdinaryDrawingPartialData
 
-open Classical
 noncomputable section
 
 noncomputable def OrdinaryDrawingPartialDataComplete {V : Type*} [Fintype V] (G : SimpleGraph V)

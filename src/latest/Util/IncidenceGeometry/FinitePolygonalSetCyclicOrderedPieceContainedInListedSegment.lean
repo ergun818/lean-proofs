@@ -1,7 +1,6 @@
 import Util.IncidenceGeometry.FinitePolygonalSetCyclicOrderedPieceCoveredByListedSegments
 import Mathlib.Topology.Connected.Clopen
 
-open Classical
 noncomputable section
 
 lemma FinitePolygonalSetCyclicOrderedPieceContainedInListedSegment
@@ -12,6 +11,7 @@ lemma FinitePolygonalSetCyclicOrderedPieceContainedInListedSegment
     (i : D.pieceIndex) (hi : i ∈ D.arcPieceOrder p) :
     ∃ s : EuclideanSpace ℝ (Fin 2) × EuclideanSpace ℝ (Fin 2),
       s ∈ K.segments ∧ D.pieceCarrier i ⊆ segment ℝ s.1 s.2 := by
+  classical
   let a : EuclideanSpace ℝ (Fin 2) := D.pieceSource i
   let b : EuclideanSpace ℝ (Fin 2) := D.pieceTarget i
   have hPieceCovered :
@@ -55,7 +55,7 @@ lemma FinitePolygonalSetCyclicOrderedPieceContainedInListedSegment
     intro hmV
     rcases Set.mem_iUnion.mp hmV with ⟨t, hmt⟩
     by_cases hts : t.1 = s.1
-    · simpa [V, hts] using hmt
+    · simp [hts] at hmt
     have hne : s.1 ≠ t.1 := by
       intro hst
       exact hts hst.symm
@@ -80,7 +80,7 @@ lemma FinitePolygonalSetCyclicOrderedPieceContainedInListedSegment
     rcases hx with ⟨hxopen, hxs, hxV⟩
     rcases Set.mem_iUnion.mp hxV with ⟨t, hxt⟩
     by_cases hts : t.1 = s.1
-    · simpa [V, hts] using hxt
+    · simp [hts] at hxt
     have hne : s.1 ≠ t.1 := by
       intro hst
       exact hts hst.symm

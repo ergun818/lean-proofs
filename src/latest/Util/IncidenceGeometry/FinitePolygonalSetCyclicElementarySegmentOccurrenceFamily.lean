@@ -1,6 +1,5 @@
 import Util.IncidenceGeometry.FinitePolygonalSetCyclicElementarySegmentCutList
 
-open Classical
 noncomputable section
 
 lemma FinitePolygonalSetCyclicElementarySegmentOccurrenceFamily
@@ -68,6 +67,7 @@ lemma FinitePolygonalSetCyclicElementarySegmentOccurrenceFamily
                                       p ∈ K.points →
                                         p ∉ openSegment ℝ
                                           (pieceSource i) (pieceTarget i)) := by
+  classical
   let A : EuclideanSpace ℝ (Fin 2) :=
     γ.1.vertices[n]'(Nat.lt_of_succ_lt hn)
   let B : EuclideanSpace ℝ (Fin 2) := γ.1.vertices[n + 1]'hn

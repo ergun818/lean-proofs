@@ -1,7 +1,6 @@
 import Util.IncidenceGeometry.PolygonalPath
 import Util.IncidenceGeometry.FinitePolygonalSet
 
-open Classical
 noncomputable section
 
 def PolygonalPathIntersectionMultiplicity (γ : PolygonalPath) (K : FinitePolygonalSet) : ℕ :=

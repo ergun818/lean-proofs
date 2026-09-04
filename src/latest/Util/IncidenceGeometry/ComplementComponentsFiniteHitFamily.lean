@@ -1,10 +1,9 @@
 import Util.IncidenceGeometry.ComplementComponentAbsorbsConnectedSubset
 
-open Classical
 noncomputable section
 
 lemma ComplementComponentsFiniteHitFamily
-    (K : Set (EuclideanSpace ℝ (Fin 2))) {ι : Type} [Fintype ι]
+    (K : Set (EuclideanSpace ℝ (Fin 2))) {ι : Type} [Finite ι]
     (P : ι → Set (EuclideanSpace ℝ (Fin 2)))
     (hPne : ∀ i, (P i).Nonempty)
     (hPsub : ∀ i, P i ⊆ Kᶜ)
@@ -16,6 +15,7 @@ lemma ComplementComponentsFiniteHitFamily
         ∀ C : Set (EuclideanSpace ℝ (Fin 2)),
           ComplementComponent K C → C ∈ comps := by
   classical
+  let := Fintype.ofFinite ι
   let candidate : ι → Set (EuclideanSpace ℝ (Fin 2)) := fun i =>
     if h : ∃ C : Set (EuclideanSpace ℝ (Fin 2)),
         ComplementComponent K C ∧ (C ∩ P i).Nonempty then

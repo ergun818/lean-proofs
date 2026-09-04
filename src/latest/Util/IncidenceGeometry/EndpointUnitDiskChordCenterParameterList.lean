@@ -1,7 +1,6 @@
 import Util.IncidenceGeometry.Basic
 import Mathlib.Data.Finset.Sort
 
-open Classical
 noncomputable section
 
 lemma EndpointUnitDiskChordCenterParameterList
@@ -15,6 +14,7 @@ lemma EndpointUnitDiskChordCenterParameterList
               0 < t ∧ t < 1 ∧ AffineMap.lineMap A B t ∈ T) ∧
             (∀ t ∈ L,
               AffineMap.lineMap A B t ∈ openSegment ℝ A B) := by
+  classical
   let τ : EuclideanSpace ℝ (Fin 2) → ℝ := fun z =>
     if hz : z ∈ openSegment ℝ A B then
       Classical.choose (by

@@ -2,7 +2,6 @@ import Util.IncidenceGeometry.PlanarRot90Decomposition
 import Util.IncidenceGeometry.PlanarRot90LinearCombination
 import Util.IncidenceGeometry.PlanarRot90Orthogonal
 
-open Classical
 noncomputable section
 
 lemma PolygonalArcInteriorTwoRaySectorOrientationChoice {u v : EuclideanSpace ℝ (Fin 2)}
@@ -14,6 +13,7 @@ lemma PolygonalArcInteriorTwoRaySectorOrientationChoice {u v : EuclideanSpace �
     (let c : ℝ := inner ℝ u v / (‖v‖ ^ 2)
      let s : ℝ := inner ℝ u (PlanarRot90 v) / (‖v‖ ^ 2)
      u = c • v + s • PlanarRot90 v ∧ 0 < s) := by
+  classical
   let c : ℝ := inner ℝ v u / (‖u‖ ^ 2)
   let s : ℝ := inner ℝ v (PlanarRot90 u) / (‖u‖ ^ 2)
   have hv_rep : v = c • u + s • PlanarRot90 u := by
@@ -34,7 +34,8 @@ lemma PolygonalArcInteriorTwoRaySectorOrientationChoice {u v : EuclideanSpace �
       nlinarith
     rw [hrot_v, inner_add_right, inner_smul_right, inner_smul_right,
       PlanarRot90Orthogonal]
-    simp only [inner_self_eq_norm_sq_to_K, RCLike.ofReal_real_eq_id, id_eq, neg_mul, mul_zero, add_zero,
+    simp only [inner_self_eq_norm_sq_to_K, RCLike.ofReal_real_eq_id, id_eq, neg_mul, mul_zero,
+      add_zero,
     gt_iff_lt]
     exact div_pos hnum_pos hv_norm_sq_pos
   · left

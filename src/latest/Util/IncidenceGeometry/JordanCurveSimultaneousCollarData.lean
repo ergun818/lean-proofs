@@ -8,7 +8,6 @@ import Util.IncidenceGeometry.PolygonalArcReverse
 import Util.IncidenceGeometry.PolygonalArcTerminalEndpointLeftCone
 import Util.IncidenceGeometry.PolygonalSideStrips
 
-open Classical
 noncomputable section
 
 structure JordanCurveSimultaneousCollarData (J : SimpleClosedPolygonalCurve) where

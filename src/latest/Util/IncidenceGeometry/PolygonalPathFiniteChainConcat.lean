@@ -1,6 +1,5 @@
 import Util.IncidenceGeometry.PolygonalPathConcat
 
-open Classical
 noncomputable section
 
 lemma PolygonalPathFiniteChainConcat
@@ -15,6 +14,7 @@ lemma PolygonalPathFiniteChainConcat
                 ζ.source = first.source ∧
                   ζ.target = last.target ∧
                     ζ.carrier ⊆ S := by
+  classical
   intro pieces
   induction pieces with
   | nil =>
@@ -24,12 +24,12 @@ lemma PolygonalPathFiniteChainConcat
       intro first last hhead hlast hsub hchain
       cases ps with
       | nil =>
-          simp at hhead hlast
+          simp only [List.head?_cons, Option.some.injEq, List.getLast?_singleton] at hhead hlast
           subst first
           subst last
           exact ⟨p, rfl, rfl, hsub p (by simp)⟩
       | cons q qs =>
-          simp at hhead
+          simp only [List.head?_cons, Option.some.injEq] at hhead
           subst first
           have htail_last : (q :: qs).getLast? = some last := by
             simpa using hlast

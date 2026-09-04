@@ -4,9 +4,7 @@ import Util.IncidenceGeometry.PlanarRot90CoefficientUniqueness
 import Util.IncidenceGeometry.PlanarRot90LinearCombination
 
 open Set
-open Classical
 noncomputable section
-
 
 lemma PolygonalArcInteriorOutgoingFrameSignedHalfTubeSectorRouting
     (γ : PolygonalArc) {η : ℝ}
@@ -50,6 +48,7 @@ lemma PolygonalArcInteriorOutgoingFrameSignedHalfTubeSectorRouting
       sep.leftHalf (j + 1) hnext ∩ Metric.ball p rho ⊆ chart '' L ∧
       sep.rightHalf j hj ∩ Metric.ball p rho ⊆ chart '' R ∧
       sep.rightHalf (j + 1) hnext ∩ Metric.ball p rho ⊆ chart '' R := by
+  classical
   intro sep p v rho chart C L R
   change chart '' C = Metric.ball p rho at hCeq
   let u : EuclideanSpace ℝ (Fin 2) := γ.vertices[j] - γ.vertices[j + 1]

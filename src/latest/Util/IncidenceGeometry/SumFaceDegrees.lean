@@ -1,6 +1,5 @@
 import Util.IncidenceGeometry.PlaneFaceData
 
-open Classical
 noncomputable section
 
 lemma SumFaceDegrees {V : Type*} [Fintype V] (G : SimpleGraph V)

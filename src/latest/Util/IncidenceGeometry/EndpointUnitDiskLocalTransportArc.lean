@@ -1,8 +1,6 @@
 import Util.IncidenceGeometry.PolygonalArc
 
-open Classical
 noncomputable section
-
 
 lemma EndpointUnitDiskLocalTransportArc
     (toWorld : EuclideanSpace ℝ (Fin 2) → EuclideanSpace ℝ (Fin 2))
@@ -18,6 +16,7 @@ lemma EndpointUnitDiskLocalTransportArc
           Ω.target = toWorld γ.target ∧
             Ω.carrier = toWorld '' γ.carrier ∧
               Ω.relativeInterior = toWorld '' γ.relativeInterior := by
+  classical
   let Ω : PolygonalArc :=
     { vertices := γ.vertices.map toWorld
       length_ge_two := by simpa using γ.length_ge_two

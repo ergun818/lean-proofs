@@ -1,6 +1,5 @@
 import Util.IncidenceGeometry.ComplementComponent
 
-open Classical
 noncomputable section
 
 lemma ComponentSegmentInOpenBall
@@ -11,6 +10,7 @@ lemma ComponentSegmentInOpenBall
         z ∈ Metric.ball y r →
           Metric.ball y r ⊆ U →
             segment ℝ y z ⊆ C := by
+  classical
   intro hcomp hy hz hball
   rcases hcomp with ⟨_hCne, hCU, hCconn, hmax⟩
   have hrpos : 0 < r := lt_of_le_of_lt dist_nonneg hz

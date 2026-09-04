@@ -14,7 +14,6 @@ import Util.IncidenceGeometry.PolygonalArcOpenSegmentSubsetRelativeInterior
 import Util.IncidenceGeometry.PolygonalArcTerminalEndpointDiskCappedTaperSideLabelling
 import Util.IncidenceGeometry.PolygonalArcTerminalEndpointCone
 
-open Classical
 noncomputable section
 
 lemma PolygonalArcCollarLocalSideDataExistsWithEndpointCaps (γ : PolygonalArc)
@@ -38,12 +37,12 @@ lemma PolygonalArcCollarLocalSideDataExistsWithEndpointCaps (γ : PolygonalArc)
               omega
             let itarget : ℕ := γ.vertices.length - 1
             let htarget : itarget < γ.vertices.length := by
-              have hlen := γ.length_ge_two
+              have _hlen := γ.length_ge_two
               dsimp [itarget]
               omega
             let jlast : ℕ := γ.vertices.length - 2
             let hlast : jlast + 1 < γ.vertices.length := by
-              have hlen := γ.length_ge_two
+              have _hlen := γ.length_ge_two
               dsimp [jlast]
               omega
             controlRadii.radius ⟨0, hsource⟩ < r₀ →
@@ -81,6 +80,7 @@ lemma PolygonalArcCollarLocalSideDataExistsWithEndpointCaps (γ : PolygonalArc)
                                     i.1 + 1 ≠ γ.vertices.length →
                                       Disjoint (localSideData.vertexCollar i)
                                         (Metric.ball γ.target r₁)) := by
+  classical
   intro hr₀ hr₁ hK₀ hK₁
   dsimp
   intro hρ0_lt hρT_lt hKinit_lt hKterm_lt hsourceBalls htargetBalls

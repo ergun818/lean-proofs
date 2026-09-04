@@ -1,8 +1,8 @@
 import Util.IncidenceGeometry.PolygonalArc
 
-open Classical
 noncomputable section
 
+open Classical in
 structure OrdinaryPolygonalDrawing {V : Type*} [Fintype V] (G : SimpleGraph V)
     [Fintype G.edgeSet] where
   vertexPlacement : V → EuclideanSpace ℝ (Fin 2)

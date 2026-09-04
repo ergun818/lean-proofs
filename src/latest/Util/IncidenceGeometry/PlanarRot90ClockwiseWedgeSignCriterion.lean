@@ -1,7 +1,6 @@
 import Mathlib.Tactic
 import Util.IncidenceGeometry.Basic
 
-open Classical
 noncomputable section
 
 lemma PlanarRot90ClockwiseWedgeSignCriterion (A N : ℝ)
@@ -13,6 +12,7 @@ lemma PlanarRot90ClockwiseWedgeSignCriterion (A N : ℝ)
       A < Real.pi ∨ 0 < Real.sin (N - A)
      else
       A < Real.pi) ↔ A < N := by
+  classical
   have hsin_pos_iff {x : ℝ} (hx0 : 0 < x) (hx2 : x < 2 * Real.pi) :
       0 < Real.sin x ↔ x < Real.pi := by
     constructor
@@ -60,7 +60,7 @@ lemma PlanarRot90ClockwiseWedgeSignCriterion (A N : ℝ)
       exact Real.sin_pos_of_pos_of_lt_pi hx0 hxpi
   by_cases hNpi_lt : N < Real.pi
   · have hsinN : 0 < Real.sin N := (hsin_pos_iff hN0 hN2).2 hNpi_lt
-    simp [hsinN]
+    simp only [hsinN, ↓reduceIte]
     constructor
     · rintro ⟨_hApi, hsin⟩
       have hdiff_negpi : -Real.pi < N - A := by linarith
@@ -85,7 +85,7 @@ lemma PlanarRot90ClockwiseWedgeSignCriterion (A N : ℝ)
       simp [hsinN_not_pos, hsinN_not_neg, hNpi_eq]
     · have hsinN_neg : Real.sin N < 0 := (hsin_neg_iff hN0 hN2).2 hpiN
       have hsinN_not_pos : ¬ 0 < Real.sin N := by linarith
-      simp [hsinN_not_pos, hsinN_neg]
+      simp only [hsinN_not_pos, ↓reduceIte, hsinN_neg]
       constructor
       · intro h
         rcases h with hApi | hsin

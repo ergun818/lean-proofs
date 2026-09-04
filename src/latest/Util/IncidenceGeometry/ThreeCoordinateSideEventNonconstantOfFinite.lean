@@ -3,7 +3,6 @@ import Mathlib.Order.Interval.Set.Infinite
 import Mathlib.Tactic
 import Util.IncidenceGeometry.Basic
 
-open Classical
 open Filter
 noncomputable section
 
@@ -21,6 +20,7 @@ lemma ThreeCoordinateSideEventNonconstantOfFinite
           ∀ j : Fin 3, j ≠ i → 0 < (1 - t) * u j + t * v j} :
         Set ℝ).Nonempty →
         u i ≠ v i := by
+  classical
   let L (u v : Fin 3 → ℝ) (i : Fin 3) (t : ℝ) : ℝ :=
     (1 - t) * u i + t * v i
 

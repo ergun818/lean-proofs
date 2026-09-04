@@ -1,13 +1,12 @@
 import Util.IncidenceGeometry.PolygonalArcCollarMiddleTubeData
 
-open Classical
 noncomputable section
-
 
 lemma PolygonalArcCollarMiddleTubeDataExists (γ : PolygonalArc) {η : ℝ}
     (controlRadii : PolygonalArcCollarControlRadii γ η)
     (middleSegments : PolygonalArcCollarMiddleSegmentData γ controlRadii) :
     Nonempty (PolygonalArcCollarMiddleTubeData γ controlRadii middleSegments) := by
+  classical
   let leftParam : (j : ℕ) → j + 1 < γ.vertices.length → ℝ := fun j hj =>
     controlRadii.radius ⟨j, Nat.lt_of_succ_lt hj⟩ /
       dist γ.vertices[j] γ.vertices[j + 1]

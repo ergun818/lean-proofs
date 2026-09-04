@@ -1,6 +1,5 @@
 import Util.IncidenceGeometry.PolygonalArc
 
-open Classical
 noncomputable section
 
 def PolygonalArcReverse (Γ : PolygonalArc) : PolygonalArc :=
@@ -34,16 +33,14 @@ def PolygonalArcReverse (Γ : PolygonalArc) : PolygonalArc :=
           have hidx : Γ.vertices.length - 1 - i = k + 1 := by
             dsimp [i]
             omega
-          simpa [hidx] using
-            (List.getElem_reverse (l := Γ.vertices) (i := i) (h := hi_lt))
+          simp [hidx]
         have hright :
             Γ.vertices.reverse[i + 1] =
               Γ.vertices[k] := by
           have hidx : Γ.vertices.length - 1 - (i + 1) = k := by
             dsimp [i]
             omega
-          simpa [hidx] using
-            (List.getElem_reverse (l := Γ.vertices) (i := i + 1) (h := hi))
+          simp [hidx]
         simpa [hleft, hright, segment_symm] using hpseg
       · intro hp
         rcases hp with ⟨i, hi, hpseg⟩
@@ -62,21 +59,19 @@ def PolygonalArcReverse (Γ : PolygonalArc) : PolygonalArc :=
           have hidx : Γ.vertices.length - 1 - i = k + 1 := by
             dsimp [k]
             omega
-          simpa [hidx] using
-            (List.getElem_reverse (l := Γ.vertices) (i := i) (h := hi_lt))
+          simp [hidx]
         have hright :
             Γ.vertices.reverse[i + 1] =
               Γ.vertices[k] := by
           have hidx : Γ.vertices.length - 1 - (i + 1) = k := by
             dsimp [k]
             omega
-          simpa [hidx] using
-            (List.getElem_reverse (l := Γ.vertices) (i := i + 1) (h := hi))
+          simp [hidx]
         simpa [hleft, hright, segment_symm] using hpseg
     relativeInterior_eq := by
       rw [Γ.relativeInterior_eq]
       ext p
-      simp [Set.mem_diff, and_assoc, and_comm]
+      simp [and_assoc, and_comm]
     simple_vertices := by
       exact List.nodup_reverse.2 Γ.simple_vertices
     segment_intersections := by
@@ -112,16 +107,14 @@ def PolygonalArcReverse (Γ : PolygonalArc) : PolygonalArc :=
           have hidx : Γ.vertices.length - 1 - a = r + 1 := by
             dsimp [r]
             omega
-          simpa [hidx] using
-            (List.getElem_reverse (l := Γ.vertices) (i := a) (h := ha_lt))
+          simp [hidx]
         have hright :
             Γ.vertices.reverse[a + 1] = Γ.vertices[r] := by
           have hidx : Γ.vertices.length - 1 - (a + 1) = r := by
             dsimp [r]
             omega
-          simpa [hidx] using
-            (List.getElem_reverse (l := Γ.vertices) (i := a + 1) (h := ha))
-        simpa [r, hleft, hright, segment_symm]
+          simp [hidx]
+        simp [r, hleft, hright, segment_symm]
       calc
         segment ℝ Γ.vertices.reverse[i] Γ.vertices.reverse[i + 1] ∩
             segment ℝ Γ.vertices.reverse[j] Γ.vertices.reverse[j + 1]
@@ -147,9 +140,7 @@ def PolygonalArcReverse (Γ : PolygonalArc) : PolygonalArc :=
                   dsimp [ri]
                   omega
                 symm
-                simpa [hidx] using
-                  (List.getElem_reverse (l := Γ.vertices) (i := j)
-                    (h := hj_lt))
+                simp [hidx]
               have hcommon' :
                   Γ.vertices[rj + 1] = Γ.vertices.reverse[j] := by
                 simpa [hAdjOrig] using hcommon
@@ -176,8 +167,7 @@ def PolygonalArcReverse (Γ : PolygonalArc) : PolygonalArc :=
         omega
       have hvertex :
           Γ.vertices.reverse[k] = Γ.vertices[s] := by
-        simpa [s] using
-          (List.getElem_reverse (l := Γ.vertices) (i := k) (h := hk))
+        simp [s]
       have hseg :
           openSegment ℝ Γ.vertices.reverse[i] Γ.vertices.reverse[i + 1] =
             openSegment ℝ Γ.vertices[r] Γ.vertices[r + 1] := by
@@ -188,16 +178,14 @@ def PolygonalArcReverse (Γ : PolygonalArc) : PolygonalArc :=
           have hidx : Γ.vertices.length - 1 - i = r + 1 := by
             dsimp [r]
             omega
-          simpa [hidx] using
-            (List.getElem_reverse (l := Γ.vertices) (i := i) (h := hi_lt))
+          simp [hidx]
         have hright :
             Γ.vertices.reverse[i + 1] = Γ.vertices[r] := by
           have hidx : Γ.vertices.length - 1 - (i + 1) = r := by
             dsimp [r]
             omega
-          simpa [hidx] using
-            (List.getElem_reverse (l := Γ.vertices) (i := i + 1) (h := hi))
-        simpa [hleft, hright, openSegment_symm]
+          simp [hidx]
+        simp [hleft, hright, openSegment_symm]
       have hs_ne_r : s ≠ r := by
         intro h
         apply hkine

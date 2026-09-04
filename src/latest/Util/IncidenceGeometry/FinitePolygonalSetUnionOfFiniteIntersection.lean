@@ -1,6 +1,5 @@
 import Util.IncidenceGeometry.FinitePolygonalSet
 
-open Classical
 noncomputable section
 
 lemma FinitePolygonalSetUnionOfFiniteIntersection
@@ -8,6 +7,7 @@ lemma FinitePolygonalSetUnionOfFiniteIntersection
     (hfinite : Set.Finite (K.carrier ∩ L.carrier)) :
     ∃ M : FinitePolygonalSet,
       M.carrier = K.carrier ∪ L.carrier := by
+  classical
   let E := EuclideanSpace ℝ (Fin 2)
   let crossPoints : Finset E := hfinite.toFinset
   let points : Finset E := K.points ∪ L.points ∪ crossPoints

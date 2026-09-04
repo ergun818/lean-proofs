@@ -1,7 +1,6 @@
 import Util.IncidenceGeometry.PolygonalPath
 import Util.IncidenceGeometry.FinitePolygonalSet
 
-open Classical
 noncomputable section
 
 def PolygonalPathInGeneralPosition (γ : PolygonalPath) (K : FinitePolygonalSet) : Prop :=

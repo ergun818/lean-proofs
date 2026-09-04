@@ -3,7 +3,6 @@ import Util.IncidenceGeometry.PolygonalArcEndpointGluedSegmentCertificates
 import Util.IncidenceGeometry.PolygonalArcEndpointGluedSegmentTransfer
 import Util.IncidenceGeometry.PolygonalArcFromEndpointGluedPieces
 
-open Classical
 noncomputable section
 
 lemma BigonRerouteBetaSpliceAssembly
@@ -63,6 +62,7 @@ lemma BigonRerouteBetaSpliceAssembly
                                              (betaArcNew.vertices[j] = piece.vertices[m + 1] ∧
                                               betaArcNew.vertices[j + 1] =
                                                 piece.vertices[m])) := by
+  classical
   let pieces : List PolygonalArc := [Bprefix, Tail.tailArc]
   have hsuccessive :
       ∀ n (hn : n + 1 < pieces.length),

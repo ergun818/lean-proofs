@@ -2,7 +2,6 @@ import Util.IncidenceGeometry.PolygonalArcVertexAvoidsNonincidentSegment
 import Util.IncidenceGeometry.PositiveSeparation
 import Mathlib.Analysis.Normed.Module.Convex
 
-open Classical
 noncomputable section
 
 lemma PolygonalArcVertexNonincidentSegmentSeparation (γ : PolygonalArc)
@@ -11,6 +10,7 @@ lemma PolygonalArcVertexNonincidentSegmentSeparation (γ : PolygonalArc)
     ∃ δ : ℝ, 0 < δ ∧
       ∀ q, q ∈ segment ℝ γ.vertices[j] γ.vertices[j + 1] →
         δ ≤ dist γ.vertices[i] q := by
+  classical
   let E := EuclideanSpace ℝ (Fin 2)
   let A : Set E := {γ.vertices[i]}
   let B : Set E := segment ℝ γ.vertices[j] γ.vertices[j + 1]

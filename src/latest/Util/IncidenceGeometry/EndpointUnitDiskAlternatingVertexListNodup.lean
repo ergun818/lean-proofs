@@ -1,6 +1,5 @@
 import Util.IncidenceGeometry.EndpointUnitDiskAlternatingVertexList
 
-open Classical
 noncomputable section
 
 lemma EndpointUnitDiskAlternatingVertexListNodup
@@ -14,6 +13,7 @@ lemma EndpointUnitDiskAlternatingVertexListNodup
     (hA_blocks : ∀ x ∈ items, A ∉ block x)
     (hB_blocks : ∀ x ∈ items, B ∉ block x) :
     (EndpointUnitDiskAlternatingVertexList A B (items.map block)).Nodup := by
+  classical
   have hflatten_nodup : ((items.map block).flatten).Nodup := by
     rw [List.nodup_flatten]
     constructor
@@ -35,13 +35,13 @@ lemma EndpointUnitDiskAlternatingVertexListNodup
     exact hflatten_nodup.append (List.nodup_singleton B) (by
       rw [List.disjoint_left]
       intro x hx hxB
-      simp at hxB
+      simp only [List.mem_cons, List.not_mem_nil, or_false] at hxB
       subst x
       exact hB_not hx)
   have hA_not_tail : A ∉ (items.map block).flatten ++ [B] := by
     intro h
     rcases List.mem_append.mp h with h | h
     · exact hA_not h
-    · simp at h
+    · simp only [List.mem_cons, List.not_mem_nil, or_false] at h
       exact hAB h
   simpa [EndpointUnitDiskAlternatingVertexList] using htail.cons hA_not_tail

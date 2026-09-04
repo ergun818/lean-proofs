@@ -1,6 +1,5 @@
 import Util.IncidenceGeometry.PolygonalReplacementResidualOriginalPieceClosedBallContactOnlyEndpoint
 
-open Classical
 noncomputable section
 
 universe u
@@ -104,13 +103,13 @@ lemma PolygonalReplacementCircularMiddleSubarcSafeInTube {V : Type u}
       have hsource_lt_u : residualPieceData.sourceParam i < u :=
         lt_of_lt_of_le hsource_us hu.1
       exact (lt_irrefl (residualPieceData.sourceParam i))
-        (by simpa [hu_source] using hsource_lt_u)
+        (by simp [hu_source] at hsource_lt_u)
     · have hu_target : u = residualPieceData.targetParam i :=
         hedge_inj (h_eq_target.trans (residualPieceData.target_eq_edgeParam i))
       have hu_lt_target : u < residualPieceData.targetParam i :=
         lt_of_le_of_lt hu.2 hut_target
       exact (lt_irrefl (residualPieceData.targetParam i))
-        (by simpa [hu_target] using hu_lt_target)
+        (by simp [hu_target] at hu_lt_target)
   have hintersection_disjoint :
       ∀ x : {p // p ∈ D.intersectionPoints},
         Disjoint middleImage
@@ -133,12 +132,12 @@ lemma PolygonalReplacementCircularMiddleSubarcSafeInTube {V : Type u}
       have hsource_lt_u : residualPieceData.sourceParam i < u :=
         lt_of_lt_of_le hsource_us hu.1
       exact (lt_irrefl (residualPieceData.sourceParam i))
-        (by simpa [hu_source] using hsource_lt_u)
+        (by simp [hu_source] at hsource_lt_u)
     · have hu_target : u = residualPieceData.targetParam i :=
         hedge_inj (h_eq_target.trans (residualPieceData.target_eq_edgeParam i))
       have hu_lt_target : u < residualPieceData.targetParam i :=
         lt_of_le_of_lt hu.2 hut_target
       exact (lt_irrefl (residualPieceData.targetParam i))
-        (by simpa [hu_target] using hu_lt_target)
+        (by simp [hu_target] at hu_lt_target)
   exact ⟨hcompact, hsubset_tube, hsource_mem, htarget_mem,
     hvertex_disjoint, hintersection_disjoint⟩

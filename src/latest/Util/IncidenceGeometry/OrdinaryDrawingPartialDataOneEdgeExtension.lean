@@ -1,9 +1,8 @@
 import Util.IncidenceGeometry.OrdinaryDrawingPartialDataOneEdgeAvoidance
 
-open Classical
 noncomputable section
 
-
+open Classical in
 lemma OrdinaryDrawingPartialDataOneEdgeExtension {V : Type*} [Fintype V]
     (G : SimpleGraph V) [Fintype G.edgeSet]
     {drawn : Finset G.edgeFinset}
@@ -167,8 +166,7 @@ lemma OrdinaryDrawingPartialDataOneEdgeExtension {V : Type*} [Fintype V]
     rcases edge_cases e₁ with rfl | ⟨old₁, rfl⟩
     · rcases edge_cases e₂ with hnew₂ | ⟨old₂, rfl⟩
       · exact False.elim (h₁₂ hnew₂.symm)
-      ·
-        have hpΓ : p ∈ Γ.relativeInterior := by simpa [edgeArc_new] using hp₁
+      · have hpΓ : p ∈ Γ.relativeInterior := by simpa [edgeArc_new] using hp₁
         have hpOld : p ∈ (P.edgeArc old₂).relativeInterior := by
           simpa [edgeArc_old] using hp₂
         have hpNewUnion : p ∈ segment ℝ a z ∪ segment ℝ z b := by
@@ -200,8 +198,7 @@ lemma OrdinaryDrawingPartialDataOneEdgeExtension {V : Type*} [Fintype V]
             simp [newCrossings, hright]
           simp [hmem]
     · rcases edge_cases e₂ with rfl | ⟨old₂, rfl⟩
-      ·
-        have hpOld : p ∈ (P.edgeArc old₁).relativeInterior := by
+      · have hpOld : p ∈ (P.edgeArc old₁).relativeInterior := by
           simpa [edgeArc_old] using hp₁
         have hpΓ : p ∈ Γ.relativeInterior := by simpa [edgeArc_new] using hp₂
         have hpNewUnion : p ∈ segment ℝ a z ∪ segment ℝ z b := by
@@ -232,8 +229,7 @@ lemma OrdinaryDrawingPartialDataOneEdgeExtension {V : Type*} [Fintype V]
               simpa [oldStart, oldEnd, jf] using hpOldSeg
             simp [newCrossings, hright]
           simp [hmem]
-      ·
-        have h₁₂old : old₁ ≠ old₂ := by
+      · have h₁₂old : old₁ ≠ old₂ := by
           intro h
           apply h₁₂
           rw [h]

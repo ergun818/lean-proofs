@@ -4,9 +4,7 @@ import Util.IncidenceGeometry.PolygonalArcInteriorTwoRaySectorOrientationChoice
 import Util.IncidenceGeometry.PlanarRot90CoefficientUniqueness
 
 open Set
-open Classical
 noncomputable section
-
 
 lemma PolygonalArcInteriorTwoRaySectorChartTransport
     (p u v : EuclideanSpace ℝ (Fin 2)) (rho : ℝ)
@@ -48,6 +46,7 @@ lemma PolygonalArcInteriorTwoRaySectorChartTransport
               ((chart '' Gbase) ∪ (chart '' Gother) ∪
                 ({p} : Set (EuclideanSpace ℝ (Fin 2)))) =
             chart '' L ∪ chart '' R := by
+  classical
   have transport
       (base other : EuclideanSpace ℝ (Fin 2)) (c s : ℝ) (hbase : base ≠ 0)
       (hrep : other = c • base + s • PlanarRot90 base)
@@ -204,7 +203,7 @@ lemma PolygonalArcInteriorTwoRaySectorChartTransport
         constructor
         · exact hδ.2
         constructor
-        · simp [w]
+        · simp only [Fin.isValue, one_ne_zero, ↓reduceIte, w]
           positivity
         · have hcross : cross (δ • w) = -δ * s := by
             dsimp [cross]
@@ -225,7 +224,7 @@ lemma PolygonalArcInteriorTwoRaySectorChartTransport
         constructor
         · simpa [w] using hδ.1
         · have hcross : cross (δ • w) = c * δ := by
-            simpa [cross, w, hs0, mul_comm]
+            simp [cross, w, hs0, mul_comm]
           change cross (δ • w) < 0
           rw [hcross]
           nlinarith [hδ.1, hc]
@@ -253,7 +252,7 @@ lemma PolygonalArcInteriorTwoRaySectorChartTransport
         constructor
         · exact hδ.2
         · have hcross : cross (δ • w) = s * δ := by
-            simpa [cross, w, mul_comm]
+            simp [cross, w, mul_comm]
           change 0 < cross (δ • w)
           rw [hcross]
           positivity
@@ -267,7 +266,7 @@ lemma PolygonalArcInteriorTwoRaySectorChartTransport
         constructor
         · exact hδ.2
         · have hcross : cross (δ • w) = -c * δ := by
-            simpa [cross, w, hs0, mul_comm]
+            simp [cross, w, hs0, mul_comm]
           change 0 < cross (δ • w)
           rw [hcross]
           nlinarith [hδ.1, hc]
@@ -309,7 +308,7 @@ lemma PolygonalArcInteriorTwoRaySectorChartTransport
           constructor
           · exact hδ.2
           · have hcross : cross (δ • w) = -c * δ := by
-              simpa [cross, w, hs0, mul_comm]
+              simp [cross, w, hs0, mul_comm]
             change 0 < cross (δ • w)
             rw [hcross]
             nlinarith [hδ.1, hc]
@@ -397,7 +396,7 @@ lemma PolygonalArcInteriorTwoRaySectorChartTransport
           linarith
         · rw [Set.mem_singleton_iff] at hzZero
           subst z
-          simp [cross] at hqpos
+          simp at hqpos
     have hcover : C \ Bad = L ∪ R := by
       ext z
       constructor
@@ -413,7 +412,7 @@ lemma PolygonalArcInteriorTwoRaySectorChartTransport
           intro hzero
           exact hznotBad (by
             dsimp [Bad]
-            exact Or.inr (by simpa [hzero]))
+            exact Or.inr (by simp [hzero]))
         rcases lt_trichotomy (z 1) 0 with hyneg | hyeq | hypos
         · right
           dsimp [R, cross]
@@ -522,9 +521,9 @@ lemma PolygonalArcInteriorTwoRaySectorChartTransport
         apply continuous_pi
         intro i
         by_cases hi : i = 0
-        · simp [hi]
+        · simp only [hi, Fin.isValue, ↓reduceIte]
           fun_prop
-        · simp [hi]
+        · simp only [Fin.isValue, hi, ↓reduceIte]
           fun_prop
       exact (PiLp.continuous_toLp (p := (2 : ENNReal))
         (β := fun _ : Fin 2 => ℝ)).comp hplain

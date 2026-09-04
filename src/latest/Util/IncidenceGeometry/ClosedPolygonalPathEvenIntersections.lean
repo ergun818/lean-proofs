@@ -11,7 +11,6 @@ import Util.IncidenceGeometry.CyclicPresentationClosedPathEvenIntersections
 import Util.IncidenceGeometry.TriangleBoundaryCyclicIntersectionMultiplicity
 import Util.IncidenceGeometry.TriangleBoundaryEvenIntersections
 
-open Classical
 noncomputable section
 
 lemma ClosedPolygonalPathEvenIntersections
@@ -21,6 +20,7 @@ lemma ClosedPolygonalPathEvenIntersections
     (hΓ : Γ.source = Γ.target)
     (hgp : PolygonalPathInGeneralPosition Γ K) :
     Even (PolygonalPathIntersectionMultiplicity Γ K) := by
+  classical
   obtain ⟨R⟩ := FinitePolygonalSetCyclicCurvePresentation J K hKJ
   rw [PolygonalPathMultiplicityCyclicPresentation J Γ K hKJ hgp R]
   exact CyclicPresentationClosedPathEvenIntersections J Γ K hΓ hgp R

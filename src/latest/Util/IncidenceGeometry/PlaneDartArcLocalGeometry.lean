@@ -3,7 +3,6 @@ import Util.IncidenceGeometry.CrossingFreeEdgeInteriorDisjoint
 import Util.IncidenceGeometry.PolygonalArcVertexMemCarrier
 import Mathlib.Tactic
 
-open Classical
 noncomputable section
 
 lemma PlaneDartArcLocalGeometry {V : Type*} [Fintype V] (G : SimpleGraph V)
@@ -148,9 +147,9 @@ lemma PlaneDartArcLocalGeometry {V : Type*} [Fintype V] (G : SimpleGraph V)
                 apply D.vertexPlacement_injective
                 calc
                   D.vertexPlacement d₁.toProd.1 = x := by
-                    simpa [hxsrc, A.dartArc_source d₁]
+                    simp [hxsrc, A.dartArc_source d₁]
                   _ = D.vertexPlacement d₂.toProd.1 := by
-                    simpa [hysrc, A.dartArc_source d₂]
+                    simp [hysrc, A.dartArc_source d₂]
               exact False.elim (d₁.fst_ne_snd (by
                 calc
                   d₁.toProd.1 = d₂.toProd.1 := hv
@@ -159,9 +158,9 @@ lemma PlaneDartArcLocalGeometry {V : Type*} [Fintype V] (G : SimpleGraph V)
                 apply D.vertexPlacement_injective
                 calc
                   D.vertexPlacement d₁.toProd.1 = x := by
-                    simpa [hxsrc, A.dartArc_source d₁]
+                    simp [hxsrc, A.dartArc_source d₁]
                   _ = D.vertexPlacement d₂.toProd.2 := by
-                    simpa [hytgt, A.dartArc_target d₂]
+                    simp [hytgt, A.dartArc_target d₂]
               have hedge_eq : d₁.edge = d₂.edge := by
                 rw [SimpleGraph.Dart.edge, SimpleGraph.Dart.edge]
                 calc
@@ -177,15 +176,15 @@ lemma PlaneDartArcLocalGeometry {V : Type*} [Fintype V] (G : SimpleGraph V)
               (D.no_vertex_in_edge_interior d₁.toProd.2 (A.dartEdge d₂) hvertex_rel)
           · rcases endpoint_of_not_rel (A.dartArc d₂) hx₂ hx₂rel with hysrc | hytgt
             · have hx_eq : x = D.vertexPlacement d₁.toProd.2 := by
-                simpa [hxtgt, A.dartArc_target d₁]
-              simpa [hx_eq]
+                simp [hxtgt, A.dartArc_target d₁]
+              simp [hx_eq]
             · have hv : d₁.toProd.2 = d₂.toProd.2 := by
                 apply D.vertexPlacement_injective
                 calc
                   D.vertexPlacement d₁.toProd.2 = x := by
-                    simpa [hxtgt, A.dartArc_target d₁]
+                    simp [hxtgt, A.dartArc_target d₁]
                   _ = D.vertexPlacement d₂.toProd.2 := by
-                    simpa [hytgt, A.dartArc_target d₂]
+                    simp [hytgt, A.dartArc_target d₂]
               exact False.elim (d₂.fst_ne_snd (by
                 calc
                   d₂.toProd.1 = d₁.toProd.2 := hshare.symm
@@ -207,7 +206,7 @@ lemma PlaneDartArcLocalGeometry {V : Type*} [Fintype V] (G : SimpleGraph V)
           _ = (A.dartEdge d₂).1 := congrArg Subtype.val h
           _ = d₂.edge := A.dartEdge_eq d₂
       rcases (SimpleGraph.dart_edge_eq_iff d₁ d₂).mp hedges with hd | hd
-      · exact hff (by simpa [hd])
+      · exact hff (by simp [hd])
       · exact hfs (by
           calc
             d₁.toProd.1 = d₁.fst := rfl
@@ -239,17 +238,17 @@ lemma PlaneDartArcLocalGeometry {V : Type*} [Fintype V] (G : SimpleGraph V)
               apply D.vertexPlacement_injective
               calc
                 D.vertexPlacement d₁.toProd.1 = x := by
-                  simpa [hxsrc, A.dartArc_source d₁]
+                  simp [hxsrc, A.dartArc_source d₁]
                 _ = D.vertexPlacement d₂.toProd.1 := by
-                  simpa [hysrc, A.dartArc_source d₂]
+                  simp [hysrc, A.dartArc_source d₂]
             exact hff hv
           · have hv : d₁.toProd.1 = d₂.toProd.2 := by
               apply D.vertexPlacement_injective
               calc
                 D.vertexPlacement d₁.toProd.1 = x := by
-                  simpa [hxsrc, A.dartArc_source d₁]
+                  simp [hxsrc, A.dartArc_source d₁]
                 _ = D.vertexPlacement d₂.toProd.2 := by
-                  simpa [hytgt, A.dartArc_target d₂]
+                  simp [hytgt, A.dartArc_target d₂]
             exact hfs hv
       · by_cases hx₂rel : x ∈ (A.dartArc d₂).relativeInterior
         · have hvertex_rel : D.vertexPlacement d₁.toProd.2 ∈
@@ -261,15 +260,15 @@ lemma PlaneDartArcLocalGeometry {V : Type*} [Fintype V] (G : SimpleGraph V)
               apply D.vertexPlacement_injective
               calc
                 D.vertexPlacement d₁.toProd.2 = x := by
-                  simpa [hxtgt, A.dartArc_target d₁]
+                  simp [hxtgt, A.dartArc_target d₁]
                 _ = D.vertexPlacement d₂.toProd.1 := by
-                  simpa [hysrc, A.dartArc_source d₂]
+                  simp [hysrc, A.dartArc_source d₂]
             exact hsf hv
           · have hv : d₁.toProd.2 = d₂.toProd.2 := by
               apply D.vertexPlacement_injective
               calc
                 D.vertexPlacement d₁.toProd.2 = x := by
-                  simpa [hxtgt, A.dartArc_target d₁]
+                  simp [hxtgt, A.dartArc_target d₁]
                 _ = D.vertexPlacement d₂.toProd.2 := by
-                  simpa [hytgt, A.dartArc_target d₂]
+                  simp [hytgt, A.dartArc_target d₂]
             exact hss hv

@@ -1,13 +1,13 @@
 import Util.IncidenceGeometry.Basic
 import Mathlib.Analysis.Normed.Module.Connected
 
-open Classical
 noncomputable section
 
 lemma EuclideanPlaneClosedBallExteriorConnected
     (R : ℝ) (hR : 0 ≤ R) :
     IsConnected
       (Metric.closedBall (0 : EuclideanSpace ℝ (Fin 2)) R)ᶜ := by
+  classical
   let r : ℝ := R + 1
   have hr : 0 < r := by dsimp [r]; linarith
   have hRr : R < r := by dsimp [r]; linarith

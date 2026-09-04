@@ -1,7 +1,6 @@
 import Util.IncidenceGeometry.FinitePolygonalSetCyclicTraversalCuts
 import Mathlib.Tactic
 
-open Classical
 noncomputable section
 
 lemma FinitePolygonalSetCyclicArcCarrierInteriorBasics
@@ -17,19 +16,17 @@ lemma FinitePolygonalSetCyclicArcCarrierInteriorBasics
       ∀ i,
         pieceSource i =
           AffineMap.lineMap
-            ((pieceArc i).1.vertices[(pieceSegmentIndex i).1]'
-              (Nat.lt_of_succ_lt (pieceSegmentIndex i).2))
-            ((pieceArc i).1.vertices[(pieceSegmentIndex i).1 + 1]'
-              (pieceSegmentIndex i).2)
+            ((pieceArc i).1.vertices[(pieceSegmentIndex i).1]'(Nat.lt_of_succ_lt (pieceSegmentIndex
+              i).2))
+            ((pieceArc i).1.vertices[(pieceSegmentIndex i).1 + 1]'(pieceSegmentIndex i).2)
             (pieceSourceParam i).1)
     (pieceTarget_eq :
       ∀ i,
         pieceTarget i =
           AffineMap.lineMap
-            ((pieceArc i).1.vertices[(pieceSegmentIndex i).1]'
-              (Nat.lt_of_succ_lt (pieceSegmentIndex i).2))
-            ((pieceArc i).1.vertices[(pieceSegmentIndex i).1 + 1]'
-              (pieceSegmentIndex i).2)
+            ((pieceArc i).1.vertices[(pieceSegmentIndex i).1]'(Nat.lt_of_succ_lt (pieceSegmentIndex
+              i).2))
+            ((pieceArc i).1.vertices[(pieceSegmentIndex i).1 + 1]'(pieceSegmentIndex i).2)
             (pieceTargetParam i).1)
     (pieceCarrier : PieceIndex → Set (EuclideanSpace ℝ (Fin 2)))
     (pieceCarrier_eq :
@@ -181,20 +178,20 @@ lemma FinitePolygonalSetCyclicArcCarrierInteriorBasics
       constructor
       · intro hstart
         have hsrcj : pieceSource j = p.1 := hjoin.symm.trans hstart
-        exact (arcPieceOrder_tail_no_source p j hj_tail) (by simpa [hsrcj] using p.2)
+        exact (arcPieceOrder_tail_no_source p j hj_tail) (by simp [hsrcj])
       · intro hend
         have hsrcj : pieceSource j = (successor p).1 := hjoin.symm.trans hend
         exact (arcPieceOrder_tail_no_source p j hj_tail)
-          (by simpa [hsrcj] using (successor p).2)
+          (by simp [hsrcj])
   · intro p
     let L := arcPieceOrder p
     have hLne : L ≠ [] := by
       intro hnil
-      have hlen : (arcPieceOrder p).length = 0 := by simpa [L, hnil]
+      have hlen : (arcPieceOrder p).length = 0 := by simp [L, hnil]
       exact arcPieceOrder_nonempty p hlen
     let i : PieceIndex := L.head hLne
     have hi_mem : i ∈ arcPieceOrder p := by
-      simpa [L, i] using List.head_mem hLne
+      simp [L, i]
     have hhead : (arcPieceOrder p).head? = some i := by
       simpa [L, i] using List.head?_eq_some_head hLne
     have hsource : pieceSource i = p.1 := arcPieceOrder_head_source p i hhead
@@ -206,11 +203,11 @@ lemma FinitePolygonalSetCyclicArcCarrierInteriorBasics
     let L := arcPieceOrder p
     have hLne : L ≠ [] := by
       intro hnil
-      have hlen : (arcPieceOrder p).length = 0 := by simpa [L, hnil]
+      have hlen : (arcPieceOrder p).length = 0 := by simp [L, hnil]
       exact arcPieceOrder_nonempty p hlen
     let i : PieceIndex := L.getLast hLne
     have hi_mem : i ∈ arcPieceOrder p := by
-      simpa [L, i] using List.getLast_mem hLne
+      simp [L, i]
     have hlast : (arcPieceOrder p).getLast? = some i := by
       simpa [L, i] using List.getLast?_eq_some_getLast hLne
     have htarget : pieceTarget i = (successor p).1 :=

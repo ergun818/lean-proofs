@@ -1,12 +1,12 @@
 import Util.IncidenceGeometry.Basic
 
-open Classical
 noncomputable section
 
 lemma StraightSegmentEndpointSphereBranch {a b : EuclideanSpace ℝ (Fin 2)}
     (hab : a ≠ b) {ρ : ℝ} (hρpos : 0 < ρ) (hρlt : ρ < dist a b) :
     ∃! p : EuclideanSpace ℝ (Fin 2),
       p ∈ Metric.sphere a ρ ∧ p ∈ segment ℝ a b := by
+  classical
   have dist_left_lineMap :
       ∀ {t : ℝ}, 0 ≤ t →
         dist a (AffineMap.lineMap a b t) = t * dist a b := by

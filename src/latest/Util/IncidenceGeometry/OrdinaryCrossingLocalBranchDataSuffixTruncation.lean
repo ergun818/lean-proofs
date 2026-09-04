@@ -2,9 +2,7 @@ import Mathlib.Tactic
 import Util.IncidenceGeometry.OrdinaryCrossingLocalBranchGateCarrier
 import Util.IncidenceGeometry.StraightSegmentRetainedOrder
 
-open Classical
 noncomputable section
-
 
 lemma OrdinaryCrossingLocalBranchDataSuffixTruncation
     (Q S : PolygonalArc)
@@ -23,6 +21,7 @@ lemma OrdinaryCrossingLocalBranchDataSuffixTruncation
     ∃ branchS : OrdinaryCrossingLocalBranchData S p radius,
       branchS.beforeGate = branch.beforeGate ∧
         branchS.afterGate = branch.afterGate := by
+  classical
   have hSlen : S.vertices.length = Q.vertices.length - cutIndex := by
     rw [hvertices]
     simp [List.length_drop]
@@ -141,7 +140,7 @@ lemma OrdinaryCrossingLocalBranchDataSuffixTruncation
         (i := branch.beforeIndex) (j := branch.beforeIndex + 1)
         (hi := hbefore0) (hj := branch.beforeIndex_valid)).1 hright
       omega
-    · simpa using hboth
+    · simp at hboth
   have first_segment_of_open : ∀ z,
       z ∈ S.carrier →
         z ∈ openSegment ℝ Q.vertices[cutIndex] Q.vertices[cutIndex + 1] →
@@ -183,7 +182,7 @@ lemma OrdinaryCrossingLocalBranchDataSuffixTruncation
           (i := cutIndex) (j := cutIndex + 1)
           (hi := by omega) (hj := hcutValid)).1 hright
         omega
-      · simpa using hboth
+      · simp at hboth
   have shifted_segment : ∀ i (hiCut : cutIndex < i)
       (hi : i + 1 < Q.vertices.length),
       let n := i - cutIndex
@@ -415,7 +414,7 @@ lemma OrdinaryCrossingLocalBranchDataSuffixTruncation
         afterIndex := 1
         beforeIndex_valid := by rw [hSlen]; omega
         afterIndex_valid := hS2
-        center_case := Or.inr ⟨rfl, by simpa only [hSone, hpEq]⟩
+        center_case := Or.inr ⟨rfl, by simp only [hSone, hpEq]⟩
         beforeGate := branch.beforeGate
         afterGate := branch.afterGate
         beforeGate_open := hbeforeNew

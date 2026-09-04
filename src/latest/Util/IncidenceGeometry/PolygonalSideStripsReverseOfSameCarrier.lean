@@ -1,7 +1,6 @@
 import Util.IncidenceGeometry.PolygonalArc
 import Util.IncidenceGeometry.PolygonalSideStrips
 
-open Classical
 noncomputable section
 
 lemma PolygonalSideStripsReverseOfSameCarrier (γ δ : PolygonalArc)
@@ -11,11 +10,12 @@ lemma PolygonalSideStripsReverseOfSameCarrier (γ δ : PolygonalArc)
         δ.target = γ.source →
           ∃ T : PolygonalSideStrips δ,
             T.leftStrip = S.rightStrip ∧ T.rightStrip = S.leftStrip := by
+  classical
   intro hcarrier hsource htarget
   have hrel : δ.relativeInterior = γ.relativeInterior := by
     rw [δ.relativeInterior_eq, γ.relativeInterior_eq, hcarrier, hsource, htarget]
     ext p
-    simp [Set.mem_diff, and_assoc, and_comm]
+    simp [and_assoc, and_comm]
   refine
     ⟨{ collar := S.collar
        leftStrip := S.rightStrip

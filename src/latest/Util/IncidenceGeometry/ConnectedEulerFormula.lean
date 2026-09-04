@@ -2,7 +2,6 @@ import Util.IncidenceGeometry.PlaneTreeOneFace
 import Util.IncidenceGeometry.DeleteNonbridgeMergesFaces
 import Util.IncidenceGeometry.PlaneFaceData
 
-open Classical
 noncomputable section
 
 lemma ConnectedEulerFormula {V : Type*} [Fintype V] (G : SimpleGraph V)
@@ -11,6 +10,7 @@ lemma ConnectedEulerFormula {V : Type*} [Fintype V] (G : SimpleGraph V)
     G.Connected →
       (Fintype.card V : ℤ) - (G.edgeFinset.card : ℤ) +
         (@Fintype.card A.Face A.faceFintype : ℤ) = 2 := by
+  classical
   intro hconn
   classical
   have delete_card :
@@ -69,7 +69,7 @@ lemma ConnectedEulerFormula {V : Type*} [Fintype V] (G : SimpleGraph V)
         · have hnacyc : ¬ G'.IsAcyclic := by
             intro hacyc
             exact htree ⟨hconn', hacyc⟩
-          rw [SimpleGraph.isAcyclic_iff_forall_edge_isBridge] at hnacyc
+          rw [SimpleGraph.isAcyclic_iff_forall_isBridge] at hnacyc
           push Not at hnacyc
           rcases hnacyc with ⟨eSym, he_mem, he_nonbridge⟩
           let eFin : G'.edgeFinset :=

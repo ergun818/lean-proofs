@@ -3,7 +3,6 @@ import Mathlib.Analysis.Normed.Affine.AddTorsor
 import Util.IncidenceGeometry.PolygonalArc
 import Util.IncidenceGeometry.PolygonalPath
 
-open Classical
 noncomputable section
 
 lemma ArcCrossingFirstSegmentPrefixPoint
@@ -20,6 +19,7 @@ lemma ArcCrossingFirstSegmentPrefixPoint
                     c ∉ α.carrier ∧
                       segment ℝ δ.vertices[j] c ⊆
                         segment ℝ δ.vertices[j] δ.vertices[j + 1] ∩ α.carrierᶜ := by
+  classical
   intro hXfiniteδ hhit hu_not hv_not
   let u : EuclideanSpace ℝ (Fin 2) := δ.vertices[j]
   let v : EuclideanSpace ℝ (Fin 2) := δ.vertices[j + 1]
@@ -57,8 +57,7 @@ lemma ArcCrossingFirstSegmentPrefixPoint
   have hdist_x0_pos : 0 < dist u x0 := by
     exact dist_pos.2 (by simpa [ne_eq, eq_comm] using hx0_ne_u)
   have hdist_c_eq : dist u c = (1 / 2 : ℝ) * dist u x0 := by
-    simpa [c, invOf_eq_inv, Real.norm_ofNat, one_div] using
-      (dist_left_midpoint (𝕜 := ℝ) u x0)
+    simp [c, one_div]
   have hdist_c_lt_x0 : dist u c < dist u x0 := by
     rw [hdist_c_eq]
     nlinarith [hdist_x0_pos]

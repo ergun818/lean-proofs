@@ -10,7 +10,6 @@ import Util.IncidenceGeometry.PolygonalPathInGeneralPosition
 import Util.IncidenceGeometry.TriangleBoundaryCyclicIntersectionMultiplicity
 import Util.IncidenceGeometry.TriangleBoundaryEvenIntersections
 
-open Classical
 noncomputable section
 
 lemma CyclicPresentationClosedPathEvenIntersections
@@ -20,6 +19,7 @@ lemma CyclicPresentationClosedPathEvenIntersections
     (hgp : PolygonalPathInGeneralPosition Γ K)
     (R : CyclicCurvePresentation J K) :
     Even (CyclicCurvePresentationIntersectionMultiplicity Γ R) := by
+  classical
   let retained : Finset ℕ :=
     ((Finset.range Γ.vertices.length).filter fun i =>
       if hi : i + 1 < Γ.vertices.length then
@@ -29,12 +29,12 @@ lemma CyclicPresentationClosedPathEvenIntersections
   let start : retained → EuclideanSpace ℝ (Fin 2) := fun i =>
     Γ.vertices[i.1]'(by
       have h := i.2
-      simp only [gt_iff_lt] at h
+      simp only [ne_eq, dite_else_false, Finset.mem_filter, Finset.mem_range, retained] at h
       exact h.1)
   let stop : retained → EuclideanSpace ℝ (Fin 2) := fun i =>
     Γ.vertices[i.1 + 1]'(by
       have h := i.2
-      simp only [gt_iff_lt] at h
+      simp only [ne_eq, dite_else_false, Finset.mem_filter, Finset.mem_range, retained] at h
       exact h.2.choose)
   rw [CyclicPresentationRetainedSideSum Γ R]
   obtain ⟨σ, hσ, hsum⟩ := CyclicPresentationRetainedSideFanBridge Γ hΓ R

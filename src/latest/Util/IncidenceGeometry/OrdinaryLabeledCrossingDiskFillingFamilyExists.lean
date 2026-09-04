@@ -1,7 +1,6 @@
 import Util.IncidenceGeometry.EndpointFixedPolygonalDiskFillingClean
 import Util.IncidenceGeometry.OrdinaryLabeledCrossingDiskFillingFamily
 
-open Classical
 noncomputable section
 
 lemma OrdinaryLabeledCrossingDiskFillingFamilyExists
@@ -10,6 +9,7 @@ lemma OrdinaryLabeledCrossingDiskFillingFamilyExists
     (D : OrdinaryPolygonalDrawing G)
     (F : OrdinaryLabeledCrossingDiskFamily G D) :
     Nonempty (OrdinaryLabeledCrossingDiskFillingFamily G D F) := by
+  classical
   let before :
       (x : {p // p ∈ D.crossingSet}) → Fin 2 → EuclideanSpace ℝ (Fin 2) :=
     fun x i => Fin.cases (F.disk x).firstBranch.beforeGate

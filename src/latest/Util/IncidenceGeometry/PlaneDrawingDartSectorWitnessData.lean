@@ -4,7 +4,6 @@ import Util.IncidenceGeometry.PlaneDrawingDartSideStripData
 import Util.IncidenceGeometry.PlaneDrawingDartVertexStarData
 import Mathlib.Combinatorics.SimpleGraph.DegreeSum
 
-open Classical
 noncomputable section
 
 structure PlaneDrawingDartSectorWitnessData {V : Type*} [Fintype V] (G : SimpleGraph V)

@@ -1,9 +1,8 @@
 import Util.IncidenceGeometry.StraightSegmentPolygonalArc
 
-open Classical
 noncomputable section
 
-lemma EndpointUnitChordMultiplePointControl {ι : Type*} [Fintype ι]
+lemma EndpointUnitChordMultiplePointControl {ι : Type*} [Finite ι]
     (a b : ι → EuclideanSpace ℝ (Fin 2))
     (ha : ∀ i, dist (a i) (0 : EuclideanSpace ℝ (Fin 2)) = 1)
     (hb : ∀ i, dist (b i) (0 : EuclideanSpace ℝ (Fin 2)) = 1)
@@ -35,6 +34,8 @@ lemma EndpointUnitChordMultiplePointControl {ι : Type*} [Fintype ι]
                 p ∈ openSegment ℝ (a i) (b i) →
                   p ∈ openSegment ℝ (a j) (b j) →
                     ¬ ∃ t : ℝ, b j - a j = t • (b i - a i)) := by
+  classical
+  let := Fintype.ofFinite ι
   let triplePoints : Set (EuclideanSpace ℝ (Fin 2)) :=
     {p | p ∈ Metric.ball (0 : EuclideanSpace ℝ (Fin 2)) 1 ∧
       ∃ i j k : ι,
@@ -276,8 +277,9 @@ lemma EndpointUnitChordMultiplePointControl {ι : Type*} [Fintype ι]
       have hrk := congrArg (fun z : EuclideanSpace ℝ (Fin 2) => z k) hr
       have hsk := congrArg (fun z : EuclideanSpace ℝ (Fin 2) => z k) hs
       have hdirk := congrArg (fun z : EuclideanSpace ℝ (Fin 2) => z k) hdir
-      simp [AffineMap.lineMap_apply_module] at hrk hsk ⊢
-      simp at hdirk
+      simp only [AffineMap.lineMap_apply_module, PiLp.add_apply, PiLp.smul_apply, smul_eq_mul]
+        at hrk hsk ⊢
+      simp only [PiLp.sub_apply, PiLp.smul_apply, smul_eq_mul] at hdirk
       have hpcoord :
           (1 - r) * (a i) k + r * (b i) k =
             (1 - s) * (a j) k + s * (b j) k := by

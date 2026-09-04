@@ -3,9 +3,9 @@ import Util.IncidenceGeometry.OrdinaryPolygonalDrawing
 import Util.IncidenceGeometry.PolygonalArc
 import Mathlib.Combinatorics.SimpleGraph.Acyclic
 
-open Classical
 noncomputable section
 
+open Classical in
 lemma DeletedEdgeDrawingImageComplementIdentity {V : Type*} [Fintype V]
     (G : SimpleGraph V) [Fintype G.edgeSet] [DecidableRel G.Adj]
     (D : OrdinaryPolygonalDrawing G) (hD : D.crossingSet.card = 0)
@@ -17,6 +17,7 @@ lemma DeletedEdgeDrawingImageComplementIdentity {V : Type*} [Fintype V]
           Ddel.edgeArc ed = D.edgeArc eG) :
     (OrdinaryDrawingImage (G.deleteEdges {e.1}) Ddel)ᶜ =
       (OrdinaryDrawingImage G D)ᶜ ∪ (D.edgeArc e).relativeInterior := by
+  classical
   have hImageSubset :
       OrdinaryDrawingImage (G.deleteEdges {e.1}) Ddel ⊆ OrdinaryDrawingImage G D := by
     intro x hx
@@ -76,7 +77,7 @@ lemma DeletedEdgeDrawingImageComplementIdentity {V : Type*} [Fintype V]
         have hxCross : x ∈ D.crossingSet := by
           exact (D.crossingSet_spec x).2 ⟨e, eG, he_ne, hxInterior, hxOldInterior⟩
         have hCrossEmpty : D.crossingSet = ∅ := Finset.card_eq_zero.mp hD
-        simpa [hCrossEmpty] using hxCross
+        simp [hCrossEmpty] at hxCross
       · rcases hOldCarrierEndpointVertex eG hxOldCarrier hxOldInterior with ⟨v, hvx⟩
         exact D.no_vertex_in_edge_interior v e (by simpa [hvx] using hxInterior)
   have hOldOutsideInteriorSubsetNew :

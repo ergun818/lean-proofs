@@ -9,7 +9,6 @@ import Util.IncidenceGeometry.FiniteAnchorListPolygonalScreening
 import Util.IncidenceGeometry.ScreenedVertexListPolygonalPath
 import Util.IncidenceGeometry.LocalSubdivisionWindowControl
 
-open Classical
 noncomputable section
 
 lemma FinitePolygonalPerturbation (K : FinitePolygonalSet)
@@ -31,6 +30,7 @@ lemma FinitePolygonalPerturbation (K : FinitePolygonalSet)
                               ∃ q : EuclideanSpace ℝ (Fin 2), q ∈ γ.carrier ∧ dist p q < δ} ∧
                             PolygonalPathInGeneralPosition γ' K ∧
                               Disjoint γ'.carrier A := by
+  classical
   intro hU hγU hsource htarget hδ hA hAU
   by_cases hsame : γ.source = γ.target
   · obtain ⟨γ', hγ'source, hγ'target, hγ'carrier, hγ'gp⟩ :=
@@ -112,7 +112,8 @@ lemma FinitePolygonalPerturbation (K : FinitePolygonalSet)
                 have hhead := γ.source_eq_head
                 have hlast := γ.target_eq_last
                 rw [hverts, hvs] at hhead hlast
-                simp at hhead hlast
+                simp only [List.head?_cons, Option.some.injEq, List.getLast?_singleton]
+                  at hhead hlast
                 exact False.elim (hsame (hhead.symm.trans hlast))
             | cons w ws =>
                 cases hws : ws with
@@ -130,12 +131,13 @@ lemma FinitePolygonalPerturbation (K : FinitePolygonalSet)
                       · have hsource_v : v = γ.source := by
                           have hhead := γ.source_eq_head
                           rw [hverts, hvs] at hhead
-                          simp at hhead
+                          simp only [List.head?_cons, Option.some.injEq] at hhead
                           exact hhead
                         have htarget_w : w = γ.target := by
                           have hlast := γ.target_eq_last
                           rw [hverts, hvs, hws] at hlast
-                          simp at hlast
+                          simp only [List.getLast?_cons_cons, List.getLast?_singleton,
+                            Option.some.injEq] at hlast
                           exact hlast
                         have hseg_st : segment ℝ γ.source γ.target ⊆ γ.carrier := by
                           intro q hq
@@ -154,12 +156,13 @@ lemma FinitePolygonalPerturbation (K : FinitePolygonalSet)
                       · have hsource_v : v = γ.source := by
                           have hhead := γ.source_eq_head
                           rw [hverts, hvs] at hhead
-                          simp at hhead
+                          simp only [List.head?_cons, Option.some.injEq] at hhead
                           exact hhead
                         have htarget_w : w = γ.target := by
                           have hlast := γ.target_eq_last
                           rw [hverts, hvs, hws] at hlast
-                          simp at hlast
+                          simp only [List.getLast?_cons_cons, List.getLast?_singleton,
+                            Option.some.injEq] at hlast
                           exact hlast
                         have hseg_st : segment ℝ γ.source γ.target ⊆ γ.carrier := by
                           intro q hq

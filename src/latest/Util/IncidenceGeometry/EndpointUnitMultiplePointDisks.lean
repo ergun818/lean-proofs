@@ -1,9 +1,8 @@
 import Util.IncidenceGeometry.EndpointUnitChordMultiplePointControl
 
-open Classical
 noncomputable section
 
-lemma EndpointUnitMultiplePointDisks {ι : Type*} [Fintype ι]
+lemma EndpointUnitMultiplePointDisks {ι : Type*} [Finite ι]
     (a b : ι → EuclideanSpace ℝ (Fin 2))
     (ha : ∀ i, dist (a i) (0 : EuclideanSpace ℝ (Fin 2)) = 1)
     (hb : ∀ i, dist (b i) (0 : EuclideanSpace ℝ (Fin 2)) = 1)
@@ -48,6 +47,8 @@ lemma EndpointUnitMultiplePointDisks {ι : Type*} [Fintype ι]
                                       Metric.closedBall z (r z) ∩
                                           segment ℝ (a i) (b i) =
                                         segment ℝ u v) := by
+  classical
+  let := Fintype.ofFinite ι
   let triplePoints : Set (EuclideanSpace ℝ (Fin 2)) :=
     {p | p ∈ Metric.ball (0 : EuclideanSpace ℝ (Fin 2)) 1 ∧
       ∃ i j k : ι,

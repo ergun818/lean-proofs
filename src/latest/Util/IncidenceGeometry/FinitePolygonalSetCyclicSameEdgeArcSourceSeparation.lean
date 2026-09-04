@@ -1,7 +1,6 @@
 import Util.IncidenceGeometry.FinitePolygonalSetCyclicSameElementarySegmentSourceSeparation
 import Util.IncidenceGeometry.FinitePolygonalSetCyclicPieceSourceNotSegmentTarget
 
-open Classical
 noncomputable section
 
 lemma FinitePolygonalSetCyclicSameEdgeArcSourceSeparation
@@ -84,6 +83,7 @@ lemma FinitePolygonalSetCyclicSameEdgeArcSourceSeparation
       pieceSource (⟨e, ⟨n, a⟩⟩ : PieceIndex) =
         pieceSource (⟨e, ⟨m, b⟩⟩ : PieceIndex) →
       (⟨e, ⟨n, a⟩⟩ : PieceIndex) = ⟨e, ⟨m, b⟩⟩ := by
+  classical
   intro PieceIndex e n m a b hsource
   by_cases hnm_val : n.1 = m.1
   · have hnm : n = m := Fin.ext hnm_val

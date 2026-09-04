@@ -3,11 +3,11 @@ import Util.IncidenceGeometry.PolygonalArc
 import Util.IncidenceGeometry.FinitePolygonalSet
 import Util.IncidenceGeometry.SimpleClosedCurveAsFinitePolygonalSet
 
-open Classical
 noncomputable section
 
 lemma SimpleClosedPolygonalCurveComplementOpen
     (J : SimpleClosedPolygonalCurve) : IsOpen J.carrierᶜ := by
+  classical
   rcases SimpleClosedCurveAsFinitePolygonalSet J with ⟨K, hKJ⟩
   have hpoints_closed : IsClosed (K.points : Set (EuclideanSpace ℝ (Fin 2))) := by
     exact K.points.finite_toSet.isClosed

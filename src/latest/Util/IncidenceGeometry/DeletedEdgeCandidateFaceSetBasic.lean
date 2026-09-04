@@ -7,9 +7,9 @@ import Util.IncidenceGeometry.PolygonalSideStrips
 import Util.IncidenceGeometry.DeletedEdgeDrawingImageComplementIdentity
 import Util.IncidenceGeometry.DeletedEdgeLocalIncidentFaces
 
-open Classical
 noncomputable section
 
+open Classical in
 lemma DeletedEdgeCandidateFaceSetBasic {V : Type*} [Fintype V]
     (G : SimpleGraph V) [Fintype G.edgeSet] [DecidableRel G.Adj]
     (D : OrdinaryPolygonalDrawing G) (hD : D.crossingSet.card = 0)
@@ -21,7 +21,7 @@ lemma DeletedEdgeCandidateFaceSetBasic {V : Type*} [Fintype V]
         ∃ eG : G.edgeFinset, eG.1 = ed.1 ∧ eG.1 ≠ e.1 ∧
           Ddel.edgeArc ed = D.edgeArc eG)
     (d : G.Dart) (hd : d.edge = e.1) (FaceDel : Type*)
-    (faceDelFintype : Fintype FaceDel)
+    (_faceDelFintype : Fintype FaceDel)
     (componentOf : Option A.Face → FaceDel)
     (hcomponent_surj : Function.Surjective componentOf)
     (hcomponent_eq :

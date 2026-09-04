@@ -1,10 +1,9 @@
 import Util.IncidenceGeometry.EndpointDiskAffineReduction
 import Util.IncidenceGeometry.EndpointUnitDiskWireConstruction
 
-open Classical
 noncomputable section
 
-lemma EndpointFixedPolygonalDiskFillingClean {ι : Type*} [Fintype ι]
+lemma EndpointFixedPolygonalDiskFillingClean {ι : Type*} [Finite ι]
     (c : EuclideanSpace ℝ (Fin 2)) (ρ : ℝ)
     (a b : ι → EuclideanSpace ℝ (Fin 2))
     (hρ : 0 < ρ)
@@ -56,6 +55,8 @@ lemma EndpointFixedPolygonalDiskFillingClean {ι : Type*} [Fintype ι]
           p ∈ (Γ i).relativeInterior →
             p ∈ (Γ j).relativeInterior →
               Nonempty (OrdinaryCleanLocalCrossing Γ i j p)) := by
+  classical
+  let := Fintype.ofFinite ι
   exact EndpointDiskAffineReduction c ρ a b hρ ha hb hdistinct
     (fun a₀ b₀ ha₀ hb₀ hdistinct₀ =>
       EndpointUnitDiskWireConstruction a₀ b₀ ha₀ hb₀ hdistinct₀)

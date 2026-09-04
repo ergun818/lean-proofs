@@ -1,10 +1,8 @@
 import Util.IncidenceGeometry.PolygonalReplacementResidualIntervalPieceBoundaryFields
 
-open Classical
 noncomputable section
 
 universe u
-
 
 lemma PolygonalReplacementResidualIntervalPieceExactIntersectionGaps {V : Type u}
     [Fintype V] (G : SimpleGraph V) [Fintype G.edgeSet]

@@ -1,6 +1,5 @@
 import Util.IncidenceGeometry.PolygonalReplacementLocalDiskFillingData
 
-open Classical
 noncomputable section
 
 structure PolygonalReplacementEdgeAssemblyData {V : Type*} [Fintype V]

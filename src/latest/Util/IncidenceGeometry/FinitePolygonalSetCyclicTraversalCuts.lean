@@ -1,7 +1,6 @@
 import Util.IncidenceGeometry.SimpleClosedPolygonalCurve
 import Util.IncidenceGeometry.FinitePolygonalSet
 
-open Classical
 noncomputable section
 
 structure FinitePolygonalSetCyclicTraversalCuts

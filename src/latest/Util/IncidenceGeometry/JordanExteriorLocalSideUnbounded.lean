@@ -1,6 +1,5 @@
 import Util.IncidenceGeometry.JordanLocalSideData
 
-open Classical
 noncomputable section
 
 lemma JordanExteriorLocalSideUnbounded
@@ -9,6 +8,7 @@ lemma JordanExteriorLocalSideUnbounded
       T.Nonempty ∧ T ⊆ J.carrierᶜ ∧ IsConnected T ∧
         ¬ Bornology.IsBounded T ∧
           ((T ∩ S.leftRegion).Nonempty ∨ (T ∩ S.rightRegion).Nonempty) := by
+  classical
   rcases S.exterior_ray_access with ⟨w, u, hu, hw_side, hray⟩
   let f : ℝ → EuclideanSpace ℝ (Fin 2) := fun t => w + t • u
   let T : Set (EuclideanSpace ℝ (Fin 2)) := f '' Set.Ici 0

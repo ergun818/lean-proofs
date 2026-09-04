@@ -1,7 +1,6 @@
 import Util.IncidenceGeometry.FinitePointLineAvoidance
 import Mathlib.Analysis.InnerProductSpace.Convex
 
-open Classical
 noncomputable section
 
 lemma PlanarSphereGateInwardPointAvoidance
@@ -22,10 +21,11 @@ lemma PlanarSphereGateInwardPointAvoidance
       0 < f (x - p) ∧
         x ∉ (points : Set (EuclideanSpace ℝ (Fin 2))) ∧
           ∀ ℓ ∈ lines, x ∉ (ℓ : Set (EuclideanSpace ℝ (Fin 2))) := by
+  classical
   let E := EuclideanSpace ℝ (Fin 2)
   have hn_ne : n ≠ 0 := by
     intro hn
-    simpa [hn] using hnside
+    simp [hn] at hnside
   have hnorm_n : 0 < ‖n‖ := norm_pos_iff.mpr hn_ne
   let delta : ℝ := radius / (2 * ‖n‖)
   have hdelta : 0 < delta :=

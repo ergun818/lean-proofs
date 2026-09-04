@@ -5,13 +5,13 @@ import Util.IncidenceGeometry.PolygonalArcOrderedThreePieceSplice
 import Mathlib.Analysis.Convex.StrictConvexSpace
 import Mathlib.Tactic
 
-open Classical
 noncomputable section
 
 private lemma ocOpenLeftTrans
     {a b c x : EuclideanSpace ℝ (Fin 2)}
     (hb : b ∈ openSegment ℝ a c) (hx : x ∈ openSegment ℝ a b) :
     x ∈ openSegment ℝ a c := by
+  classical
   rw [openSegment_eq_image_lineMap] at hb hx ⊢
   rcases hb with ⟨t, ht, hbt⟩
   rcases hx with ⟨s, hs, hxs⟩
@@ -26,6 +26,7 @@ private lemma ocOpenRightTrans
     {a b c x : EuclideanSpace ℝ (Fin 2)}
     (hb : b ∈ openSegment ℝ a c) (hx : x ∈ openSegment ℝ b c) :
     x ∈ openSegment ℝ a c := by
+  classical
   rw [openSegment_eq_image_lineMap] at hb hx ⊢
   rcases hb with ⟨t, ht, hbt⟩
   rcases hx with ⟨s, hs, hxs⟩
@@ -41,6 +42,7 @@ private lemma ocOpenBeforeLater
     {a b c d : EuclideanSpace ℝ (Fin 2)}
     (hb : b ∈ openSegment ℝ a c) (hd : d ∈ openSegment ℝ b c) :
     b ∈ openSegment ℝ a d := by
+  classical
   rw [openSegment_eq_image_lineMap] at hb hd ⊢
   rcases hb with ⟨t, ht, hbt⟩
   rcases hd with ⟨s, hs, hds⟩
@@ -66,6 +68,7 @@ private lemma ocOpenAfterEarlier
     {a b c d : EuclideanSpace ℝ (Fin 2)}
     (hb : b ∈ openSegment ℝ a c) (hc : c ∈ openSegment ℝ a d) :
     c ∈ openSegment ℝ b d := by
+  classical
   rw [openSegment_symm ℝ a c] at hb
   rw [openSegment_symm ℝ a d] at hc
   have h := ocOpenBeforeLater hc hb
@@ -76,6 +79,7 @@ private lemma ocOpenIndexUnique
     (hs : s + 1 < R.vertices.length) (ht : t + 1 < R.vertices.length)
     (hqopen : q ∈ openSegment ℝ R.vertices[s] R.vertices[s + 1])
     (hqseg : q ∈ segment ℝ R.vertices[t] R.vertices[t + 1]) : s = t := by
+  classical
   have hq_not_vertex : q ∉ R.vertices := by
     intro hqmem
     obtain ⟨k, hk, hkeq⟩ := List.mem_iff_getElem.mp hqmem
@@ -125,6 +129,7 @@ private lemma ocOutwardSegment
     {p g v : EuclideanSpace ℝ (Fin 2)} {radius : ℝ}
     (hgopen : g ∈ openSegment ℝ p v) (hgsphere : g ∈ Metric.sphere p radius) :
     Disjoint (segment ℝ g v) (Metric.ball p radius) := by
+  classical
   rw [Set.disjoint_left]
   intro z hzseg hzball
   rw [openSegment_eq_image_lineMap] at hgopen
@@ -150,6 +155,7 @@ private lemma ocOutwardSegment
   nlinarith
 
 private lemma ocArcSourceMemCarrier (R : PolygonalArc) : R.source ∈ R.carrier := by
+  classical
   rw [R.carrier_eq]
   have hlen := R.length_ge_two
   refine ⟨0, by omega, ?_⟩
@@ -161,6 +167,7 @@ private lemma ocArcSourceMemCarrier (R : PolygonalArc) : R.source ∈ R.carrier 
   exact left_mem_segment ℝ R.source R.vertices[1]
 
 private lemma ocArcTargetMemCarrier (R : PolygonalArc) : R.target ∈ R.carrier := by
+  classical
   rw [R.carrier_eq]
   let m := R.vertices.length - 2
   have hm : m + 1 < R.vertices.length := by
@@ -190,6 +197,7 @@ private lemma ocGateMemRelativeInterior
     (hsource : Q.source ∉ Metric.closedBall p radius)
     (htarget : Q.target ∉ Metric.closedBall p radius) :
     q ∈ Q.relativeInterior := by
+  classical
   rw [Q.relativeInterior_eq]
   refine ⟨?_, ?_⟩
   · rw [Q.carrier_eq]
@@ -208,6 +216,7 @@ private lemma ocAfterGateMemClosure
     (Q : PolygonalArc) (p : EuclideanSpace ℝ (Fin 2)) (radius : ℝ)
     (branch : OrdinaryCrossingLocalBranchData Q p radius) :
     branch.afterGate ∈ closure (Q.carrier ∩ Metric.ball p radius) := by
+  classical
   have hpClosed : p ∈ Metric.closedBall p radius := by
     rw [Metric.mem_closedBall, dist_self]
     exact branch.radius_pos.le
@@ -255,6 +264,7 @@ private lemma ocSphereOfClosedNotBall
     {p z : EuclideanSpace ℝ (Fin 2)} {radius : ℝ}
     (hzClosed : z ∈ Metric.closedBall p radius)
     (hzBall : z ∉ Metric.ball p radius) : z ∈ Metric.sphere p radius := by
+  classical
   rw [Metric.mem_closedBall] at hzClosed
   rw [Metric.mem_sphere]
   apply le_antisymm hzClosed
@@ -320,6 +330,7 @@ lemma OrdinaryCrossingLocalBranchSubstitution
                                   prefixArc.carrier ∪ suffixArc.carrier =
                                     Q.carrier \ Metric.ball p radius ∧
                                   Disjoint prefixArc.carrier suffixArc.carrier := by
+  classical
   intro hsource htarget hbridgeSource hbridgeTarget hbridgeClosed hbridgeOpen
   have hbeforeLt : branch.beforeIndex < Q.vertices.length :=
     Nat.lt_of_succ_lt branch.beforeIndex_valid
@@ -546,7 +557,7 @@ lemma OrdinaryCrossingLocalBranchSubstitution
         calc
           T.vertices[1] = Q.vertices[branch.beforeIndex + 1] :=
             hTget 0 (by omega)
-          _ = Q.vertices[branch.afterIndex] := by simpa only [hvertex.1]
+          _ = Q.vertices[branch.afterIndex] := by simp only [hvertex.1]
           _ = p := (center_vertex_of_indices hvertex.1).symm
       rcases hz with hzEarly | hzLast
       · rcases hzEarly with ⟨m, hm, hmk, hzm⟩
@@ -652,7 +663,7 @@ lemma OrdinaryCrossingLocalBranchSubstitution
       have hTone : T.vertices[1] = p := by
         calc
           T.vertices[1] = Q.vertices[branch.beforeIndex + 1] := hTget 0 (by omega)
-          _ = Q.vertices[branch.afterIndex] := by simpa only [hvertex.1]
+          _ = Q.vertices[branch.afterIndex] := by simp only [hvertex.1]
           _ = p := (center_vertex_of_indices hvertex.1).symm
       have hTtwo : T.vertices[2] = Q.vertices[branch.beforeIndex + 2] := by
         simpa [Nat.add_assoc] using hTget 1 (by
@@ -911,7 +922,7 @@ lemma OrdinaryCrossingLocalBranchSubstitution
       by_cases hends : z ∈ ({bridge.source, bridge.target} : Set _)
       · simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at hends
         rcases hends with hsrc | htgt
-        · simpa only [Set.mem_singleton_iff, hsrc, hbridgeSource]
+        · simp only [Set.mem_singleton_iff, hsrc, hbridgeSource]
         · have hzAfter : z = branch.afterGate := htgt.trans hbridgeTarget
           have hzSuffix : z ∈ B.suffixArc.carrier := by
             have hmem := ocArcSourceMemCarrier B.suffixArc
@@ -946,7 +957,7 @@ lemma OrdinaryCrossingLocalBranchSubstitution
                 ocArcTargetMemCarrier A.cut.prefixArc
             simpa only [hzBefore, hAgate] using hmem
           exact False.elim ((Set.disjoint_left.mp hprefixSuffix hzPrefix) hz.2)
-        · simpa only [Set.mem_singleton_iff, htgt, hbridgeTarget]
+        · simp only [Set.mem_singleton_iff, htgt, hbridgeTarget]
       · have hzri : z ∈ bridge.relativeInterior := by
           rw [bridge.relativeInterior_eq]
           exact ⟨hz.1, hends⟩
@@ -1037,7 +1048,7 @@ lemma OrdinaryCrossingLocalBranchSubstitution
         A.cut.prefixArc.carrier ∪ bridge.carrier ∪ B.suffixArc.carrier := by
       simpa only [D] using hQcarrier
     rw [hcarrierPieces, holdOutsidePieces]
-    simpa only [Set.union_assoc, Set.union_left_comm, Set.union_comm]
+    simp only [Set.union_left_comm, Set.union_comm]
   have houtsideExact :
       Q'.carrier \ Metric.ball p radius =
         Q.carrier \ Metric.ball p radius := by

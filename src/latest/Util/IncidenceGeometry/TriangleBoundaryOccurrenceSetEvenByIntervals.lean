@@ -4,7 +4,6 @@ import Util.IncidenceGeometry.TriangleSegmentBoundaryParityToggle
 import Util.IncidenceGeometry.TriangleBoundaryCyclicIntersectionOccurrenceSet
 import Util.IncidenceGeometry.TriangleBoundaryMultiplicityEqualsOccurrenceNcard
 
-open Classical
 noncomputable section
 
 lemma TriangleBoundaryOccurrenceSetEvenByIntervals
@@ -15,6 +14,7 @@ lemma TriangleBoundaryOccurrenceSetEvenByIntervals
     (hncol : ¬ ∃ c : ℝ, b - a = c • (z - a))
     (hgp : CyclicPresentationTriangleGeneralPosition R z a b) :
     Even (Set.ncard (TriangleBoundaryCyclicIntersectionOccurrenceSet R z a b)) := by
+  classical
   let V := {p : EuclideanSpace ℝ (Fin 2) // p ∈ R.vertices}
   let triangleInterior : Set (EuclideanSpace ℝ (Fin 2)) :=
     convexHull ℝ ({z, a, b} : Set (EuclideanSpace ℝ (Fin 2))) \

@@ -3,7 +3,6 @@ import Util.IncidenceGeometry.PolygonalArcFiniteInteriorFirstPoint
 import Util.IncidenceGeometry.PolygonalArcOpenSegmentSubsetRelativeInterior
 import Mathlib.Tactic
 
-open Classical
 noncomputable section
 
 lemma PolygonalArcFiniteFirstContactPrefix
@@ -13,122 +12,123 @@ lemma PolygonalArcFiniteFirstContactPrefix
       P.target ∈ T.carrier →
         P.source ∉ T.carrier →
           ∃ q : EuclideanSpace ℝ (Fin 2),
-              ∃ Pq : PolygonalArc,
-                q ∈ P.carrier ∩ T.carrier ∧
-                  q ≠ P.source ∧
-                    Pq.source = P.source ∧
-                      Pq.target = q ∧
-                        Pq.carrier ⊆ P.carrier ∧
-                          Pq.relativeInterior ⊆ P.relativeInterior ∧
-                            Pq.carrier ∩ T.carrier =
-                              ({q} : Set (EuclideanSpace ℝ (Fin 2))) ∧
-                              Pq.relativeInterior ∩ T.carrier =
-                                (∅ : Set (EuclideanSpace ℝ (Fin 2))) ∧
-                                ((q = P.target ∧ Pq = P) ∨
-                                  ∃ D : PolygonalArcPointCutData P q,
-                                    Pq = D.prefixArc) ∧
-                                  ∃ hfirstq : 0 + 1 < Pq.vertices.length,
-                                    segment ℝ (Pq.vertices[0]'(by omega))
-                                        (Pq.vertices[1]'(by omega)) ⊆
-                                      segment ℝ
-                                          (P.vertices[0]'(by
-                                            have := P.length_ge_two
-                                            omega))
-                                          (P.vertices[1]'(by
-                                            have := P.length_ge_two
-                                            omega)) ∧
-                                      openSegment ℝ (Pq.vertices[0]'(by omega))
-                                          (Pq.vertices[1]'(by omega)) ⊆
-                                        openSegment ℝ
-                                          (P.vertices[0]'(by
-                                            have := P.length_ge_two
-                                            omega))
-                                          (P.vertices[1]'(by
-                                            have := P.length_ge_two
-                                            omega)) ∧
-                                      (∀ z i (hi : i + 1 < P.vertices.length),
-                                        z ∈ openSegment ℝ
-                                            P.vertices[i] P.vertices[i + 1] →
-                                          z ∈ Pq.carrier →
-                                            z ≠ q →
-                                              ∃ j : ℕ,
-                                                ∃ hj : j + 1 <
-                                                    Pq.vertices.length,
-                                                  z ∈ openSegment ℝ
-                                                      Pq.vertices[j]
-                                                      Pq.vertices[j + 1] ∧
-                                                    ∃ c : ℝ, c ≠ 0 ∧
-                                                      Pq.vertices[j + 1] -
-                                                          Pq.vertices[j] =
-                                                        c •
-                                                          (P.vertices[i + 1] -
-                                                            P.vertices[i])) ∧
-                                        ∃ cut : EuclideanSpace ℝ (Fin 2),
-                                          ∃ firstPiece remainder : PolygonalArc,
-                                            cut ∉ X ∧
-                                              cut ∈ Pq.relativeInterior ∧
-                                              firstPiece.source = P.source ∧
-                                                firstPiece.target = cut ∧
-                                                  remainder.source = cut ∧
-                                                    remainder.target = q ∧
-                                                      Pq.carrier =
-                                                        firstPiece.carrier ∪
-                                                          remainder.carrier ∧
-                                                        firstPiece.carrier ∩
-                                                            remainder.carrier =
-                                                          ({cut} :
-                                                            Set (EuclideanSpace ℝ (Fin 2))) ∧
-                                                          Disjoint firstPiece.carrier
-                                                            T.carrier ∧
-                                                            remainder.carrier ∩
-                                                                T.carrier =
-                                                              ({q} :
-                                                                Set (EuclideanSpace ℝ (Fin 2))) ∧
-                                                              firstPiece.carrier ⊆
-                                                                segment ℝ
-                                                                  (P.vertices[0]'(by
-                                                                    have := P.length_ge_two
-                                                                    omega))
-                                                                  (P.vertices[1]'(by
-                                                                    have := P.length_ge_two
-                                                                    omega)) ∧
-                                                              firstPiece.relativeInterior ⊆
-                                                                  openSegment ℝ
-                                                                    (P.vertices[0]'(by
-                                                                      have := P.length_ge_two
-                                                                      omega))
-                                                                    (P.vertices[1]'(by
-                                                                      have := P.length_ge_two
-                                                                      omega)) ∧
-                                                                  firstPiece.relativeInterior ⊆
-                                                                    Pq.relativeInterior ∧
-                                                                    remainder.relativeInterior ⊆
-                                                                      Pq.relativeInterior ∧
-                                                                  ∀ piece : PolygonalArc,
-                                                                    piece ∈
-                                                                        [firstPiece,
-                                                                          remainder] →
-                                                                      ∀ z i
-                                                                        (hi : i + 1 <
-                                                                          P.vertices.length),
-                                                                        z ∈ openSegment ℝ
-                                                                            P.vertices[i]
-                                                                            P.vertices[i + 1] →
-                                                                          z ∈ piece.carrier →
-                                                                            z ≠ cut →
-                                                                              z ≠ q →
-                                                                              ∃ j : ℕ,
-                                                                                ∃ hj : j + 1 <
-                                                                                    piece.vertices.length,
-                                                                                  z ∈ openSegment ℝ
-                                                                                      piece.vertices[j]
-                                                                                      piece.vertices[j + 1] ∧
-                                                                                    ∃ c : ℝ, c ≠ 0 ∧
-                                                                                      piece.vertices[j + 1] -
-                                                                                          piece.vertices[j] =
-                                                                                        c •
-                                                                                          (P.vertices[i + 1] -
-                                                                                            P.vertices[i]) := by
+            ∃ Pq : PolygonalArc,
+            q ∈ P.carrier ∩ T.carrier ∧
+            q ≠ P.source ∧
+            Pq.source = P.source ∧
+            Pq.target = q ∧
+            Pq.carrier ⊆ P.carrier ∧
+            Pq.relativeInterior ⊆ P.relativeInterior ∧
+            Pq.carrier ∩ T.carrier =
+            ({q} : Set (EuclideanSpace ℝ (Fin 2))) ∧
+            Pq.relativeInterior ∩ T.carrier =
+            (∅ : Set (EuclideanSpace ℝ (Fin 2))) ∧
+            ((q = P.target ∧ Pq = P) ∨
+            ∃ D : PolygonalArcPointCutData P q,
+            Pq = D.prefixArc) ∧
+            ∃ hfirstq : 0 + 1 < Pq.vertices.length,
+            segment ℝ (Pq.vertices[0]'(by omega))
+            (Pq.vertices[1]'(by omega)) ⊆
+            segment ℝ
+            (P.vertices[0]'(by
+            have := P.length_ge_two
+            omega))
+            (P.vertices[1]'(by
+            have := P.length_ge_two
+            omega)) ∧
+            openSegment ℝ (Pq.vertices[0]'(by omega))
+            (Pq.vertices[1]'(by omega)) ⊆
+            openSegment ℝ
+            (P.vertices[0]'(by
+            have := P.length_ge_two
+            omega))
+            (P.vertices[1]'(by
+            have := P.length_ge_two
+            omega)) ∧
+            (∀ z i (hi : i + 1 < P.vertices.length),
+            z ∈ openSegment ℝ
+            P.vertices[i] P.vertices[i + 1] →
+            z ∈ Pq.carrier →
+            z ≠ q →
+            ∃ j : ℕ,
+            ∃ hj : j + 1 <
+            Pq.vertices.length,
+            z ∈ openSegment ℝ
+            Pq.vertices[j]
+            Pq.vertices[j + 1] ∧
+            ∃ c : ℝ, c ≠ 0 ∧
+            Pq.vertices[j + 1] -
+            Pq.vertices[j] =
+            c •
+            (P.vertices[i + 1] -
+            P.vertices[i])) ∧
+            ∃ cut : EuclideanSpace ℝ (Fin 2),
+            ∃ firstPiece remainder : PolygonalArc,
+            cut ∉ X ∧
+            cut ∈ Pq.relativeInterior ∧
+            firstPiece.source = P.source ∧
+            firstPiece.target = cut ∧
+            remainder.source = cut ∧
+            remainder.target = q ∧
+            Pq.carrier =
+            firstPiece.carrier ∪
+            remainder.carrier ∧
+            firstPiece.carrier ∩
+            remainder.carrier =
+            ({cut} :
+            Set (EuclideanSpace ℝ (Fin 2))) ∧
+            Disjoint firstPiece.carrier
+            T.carrier ∧
+            remainder.carrier ∩
+            T.carrier =
+            ({q} :
+            Set (EuclideanSpace ℝ (Fin 2))) ∧
+            firstPiece.carrier ⊆
+            segment ℝ
+            (P.vertices[0]'(by
+            have := P.length_ge_two
+            omega))
+            (P.vertices[1]'(by
+            have := P.length_ge_two
+            omega)) ∧
+            firstPiece.relativeInterior ⊆
+            openSegment ℝ
+            (P.vertices[0]'(by
+            have := P.length_ge_two
+            omega))
+            (P.vertices[1]'(by
+            have := P.length_ge_two
+            omega)) ∧
+            firstPiece.relativeInterior ⊆
+            Pq.relativeInterior ∧
+            remainder.relativeInterior ⊆
+            Pq.relativeInterior ∧
+            ∀ piece : PolygonalArc,
+            piece ∈
+            [firstPiece,
+            remainder] →
+            ∀ z i
+            (hi : i + 1 <
+            P.vertices.length),
+            z ∈ openSegment ℝ
+            P.vertices[i]
+            P.vertices[i + 1] →
+            z ∈ piece.carrier →
+            z ≠ cut →
+            z ≠ q →
+            ∃ j : ℕ,
+            ∃ hj : j + 1 <
+            piece.vertices.length,
+            z ∈ openSegment ℝ
+            piece.vertices[j]
+            piece.vertices[j + 1] ∧
+            ∃ c : ℝ, c ≠ 0 ∧
+            piece.vertices[j + 1] -
+            piece.vertices[j] =
+            c •
+            (P.vertices[i + 1] -
+            P.vertices[i]) := by
+  classical
   intro hfinite htargetT hsourceT
   let E := EuclideanSpace ℝ (Fin 2)
   have arc_source_mem (Q : PolygonalArc) : Q.source ∈ Q.carrier := by
@@ -270,7 +270,7 @@ lemma PolygonalArcFiniteFirstContactPrefix
         · intro hz
           by_contra hztarget
           have hzcontacts : z ∈ contacts := (hcontact_mem z).2 ⟨hz, hztarget⟩
-          simpa [hempty] using hzcontacts
+          simp [hempty] at hzcontacts
         · intro hz
           have hzEq : z = P.target := by simpa using hz
           subst z
@@ -419,7 +419,7 @@ lemma PolygonalArcFiniteFirstContactPrefix
             have hnotOwn := hzInterior.2
             simp only [Set.mem_insert_iff, Set.mem_singleton_iff, not_or] at hnotOwn
             exact hnotOwn.2
-          exact False.elim (hzNotTarget (by simpa [D.prefix_target, hzEq]))
+          exact False.elim (hzNotTarget (by simp [D.prefix_target, hzEq]))
         · exact False.elim
       have hfirst : 0 + 1 < D.prefixArc.vertices.length := by
         rw [D.prefix_vertices_exact]
@@ -465,7 +465,7 @@ lemma PolygonalArcFiniteFirstContactPrefix
             (convex_segment P.vertices[0] P.vertices[1]).segment_subset
               (left_mem_segment ℝ _ _) hqFirst
         · obtain ⟨_, hzero, hone⟩ := D.protected_first_vertices (by omega) hqFirst
-          simpa [hzero, hone]
+          simp [hzero, hone]
       have hfirstOpen :
           openSegment ℝ D.prefixArc.vertices[0] D.prefixArc.vertices[1] ⊆
             openSegment ℝ P.vertices[0] P.vertices[1] := by

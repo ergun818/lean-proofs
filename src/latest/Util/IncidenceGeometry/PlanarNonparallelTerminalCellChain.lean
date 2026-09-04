@@ -1,8 +1,6 @@
 import Util.IncidenceGeometry.Basic
 import Mathlib.Tactic
 
-
-open Classical
 noncomputable section
 
 lemma PlanarNonparallelTerminalCellChain
@@ -55,6 +53,7 @@ lemma PlanarNonparallelTerminalCellChain
             (r - 2 * delta) • dB ∧
           terminalGate = x + (s + 4 * delta) • dA +
             (r - 4 * delta) • dB := by
+  classical
   let E := EuclideanSpace ℝ (Fin 2)
   let C := Fin 2 → ℝ
   let basis : Fin 2 → E := ![dA, dB]
@@ -359,7 +358,7 @@ lemma PlanarNonparallelTerminalCellChain
       rw [hkr] at hS1
       nlinarith [mul_le_mul_of_nonneg_left hS0.1 (le_of_lt hk)]
     · intro hz
-      exact False.elim (by simpa using hz)
+      exact False.elim (by simp at hz)
   have hBridgeQIntersection :
       closure Bridge ∩ closure Q = ({quadrantGate} : Set E) := by
     ext z

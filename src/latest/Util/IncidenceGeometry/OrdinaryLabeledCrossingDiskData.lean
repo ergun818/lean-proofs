@@ -1,7 +1,6 @@
 import Util.IncidenceGeometry.OrdinaryCrossingLocalBranchData
 import Util.IncidenceGeometry.OrdinaryPolygonalDrawing
 
-open Classical
 noncomputable section
 
 structure OrdinaryLabeledCrossingDiskData {V : Type*} [Fintype V]

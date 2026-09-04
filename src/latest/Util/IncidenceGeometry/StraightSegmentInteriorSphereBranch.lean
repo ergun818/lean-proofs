@@ -1,7 +1,6 @@
 import Util.IncidenceGeometry.Basic
 import Mathlib.Analysis.Normed.Affine.AddTorsor
 
-open Classical
 noncomputable section
 
 lemma StraightSegmentInteriorSphereBranch {a b x : EuclideanSpace ℝ (Fin 2)}
@@ -16,6 +15,7 @@ lemma StraightSegmentInteriorSphereBranch {a b x : EuclideanSpace ℝ (Fin 2)}
                 ∀ q,
                   q ∈ Metric.sphere x ρ →
                     q ∈ segment ℝ a b → q = q₁ ∨ q = q₂ := by
+  classical
   rw [openSegment_eq_image_lineMap] at hx
   rcases hx with ⟨t, ht, rfl⟩
   let d : ℝ := dist a b

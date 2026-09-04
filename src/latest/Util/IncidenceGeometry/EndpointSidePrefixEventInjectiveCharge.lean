@@ -1,6 +1,5 @@
 import Util.IncidenceGeometry.Basic
 
-open Classical
 noncomputable section
 
 lemma EndpointSidePrefixEventInjectiveCharge
@@ -19,6 +18,7 @@ lemma EndpointSidePrefixEventInjectiveCharge
               z ∈ Metric.ball (charge z) (radius (charge z))) ∧
           ∀ z w, z ∈ X → w ∈ X →
             charge z = charge w → z = w := by
+  classical
   intro hcover hone
   let charge :
       EuclideanSpace ℝ (Fin 2) → EuclideanSpace ℝ (Fin 2) :=
@@ -39,7 +39,7 @@ lemma EndpointSidePrefixEventInjectiveCharge
     · exact ⟨hw, by simpa [heq] using hwdata.2⟩
   have hfinite : X.Finite := by
     apply Set.Finite.of_finite_image
-    · apply XA.finite_toSet.subset
+    · refine XA.finite_toSet.subset ?_
       rintro y ⟨z, hz, rfl⟩
       exact (hcharge z hz).1
     · exact hinjective

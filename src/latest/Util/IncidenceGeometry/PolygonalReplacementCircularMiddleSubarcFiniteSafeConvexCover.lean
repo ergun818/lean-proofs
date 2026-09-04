@@ -1,7 +1,6 @@
 import Util.IncidenceGeometry.PolygonalReplacementCircularMiddleSubarcSafeInTube
 import Mathlib.Analysis.Normed.Module.Convex
 
-open Classical
 noncomputable section
 
 universe u

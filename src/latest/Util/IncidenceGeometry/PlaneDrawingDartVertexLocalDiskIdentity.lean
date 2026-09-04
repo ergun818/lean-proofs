@@ -9,7 +9,6 @@ import Util.IncidenceGeometry.PolygonalArc
 import Util.IncidenceGeometry.PolygonalArcCarrierCompact
 import Util.IncidenceGeometry.PositiveSeparation
 
-open Classical
 noncomputable section
 
 lemma PlaneDrawingDartVertexLocalDiskIdentity {V : Type*} [Fintype V]

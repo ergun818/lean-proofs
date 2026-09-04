@@ -2,7 +2,6 @@ import Mathlib.Data.Set.Card
 import Util.IncidenceGeometry.TriangleAffineBasisBarycentricCoordinates
 import Util.IncidenceGeometry.TriangleSegmentParametrizationInjective
 
-open Classical
 noncomputable section
 
 lemma TriangleSegmentBarycentricSideParameterCounts
@@ -26,6 +25,7 @@ lemma TriangleSegmentBarycentricSideParameterCounts
             0 < β.coord 0 (AffineMap.lineMap x y t) ∧
             β.coord 1 (AffineMap.lineMap x y t) = 0 ∧
             0 < β.coord 2 (AffineMap.lineMap x y t)} := by
+  classical
   have hparam := (TriangleSegmentParametrizationInjective x y hxy).2
   have hbary := TriangleAffineBasisBarycentricCoordinates β
   have hcount

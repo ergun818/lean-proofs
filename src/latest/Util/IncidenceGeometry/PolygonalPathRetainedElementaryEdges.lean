@@ -1,7 +1,6 @@
 import Util.IncidenceGeometry.PolygonalPath
 import Mathlib.Tactic
 
-open Classical
 noncomputable section
 
 set_option linter.unusedVariables false

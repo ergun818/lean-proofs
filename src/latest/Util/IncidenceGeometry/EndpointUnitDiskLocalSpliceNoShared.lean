@@ -1,6 +1,5 @@
 import Util.IncidenceGeometry.PolygonalArc
 
-open Classical
 noncomputable section
 
 lemma EndpointUnitDiskLocalSpliceNoShared {κ : Type*}
@@ -51,6 +50,7 @@ lemma EndpointUnitDiskLocalSpliceNoShared {κ : Type*}
                 segment ℝ p q ⊆
                   segment ℝ (Ξ i).vertices[m] (Ξ i).vertices[m + 1] ∩
                     segment ℝ (Ξ j).vertices[n] (Ξ j).vertices[n + 1] := by
+  classical
   let leftConn : κ → Set (EuclideanSpace ℝ (Fin 2)) :=
     fun i => segment ℝ (A i) (L i)
   let rightConn : κ → Set (EuclideanSpace ℝ (Fin 2)) :=
@@ -76,13 +76,13 @@ lemma EndpointUnitDiskLocalSpliceNoShared {κ : Type*}
       · right
         right
         refine ⟨0, ?_, ?_⟩
-        · simpa [hΩ_vertices i]
+        · simp [hΩ_vertices i]
         · ext p
           simp [hverts, hΩ_vertices i]
       · right
         right
         refine ⟨1, ?_, ?_⟩
-        · simpa [hΩ_vertices i]
+        · simp [hΩ_vertices i]
         · ext p
           simp [hverts, hΩ_vertices i]
       · right
@@ -102,13 +102,13 @@ lemma EndpointUnitDiskLocalSpliceNoShared {κ : Type*}
       · right
         right
         refine ⟨1, ?_, ?_⟩
-        · simpa [hΩ_vertices i]
+        · simp [hΩ_vertices i]
         · ext p
           simp [hverts, hΩ_vertices i, segment_symm]
       · right
         right
         refine ⟨0, ?_, ?_⟩
-        · simpa [hΩ_vertices i]
+        · simp [hΩ_vertices i]
         · ext p
           simp [hverts, hΩ_vertices i, segment_symm]
       · left

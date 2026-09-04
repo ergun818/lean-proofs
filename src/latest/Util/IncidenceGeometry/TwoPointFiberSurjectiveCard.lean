@@ -1,6 +1,5 @@
 import Util.IncidenceGeometry.Basic
 
-open Classical
 noncomputable section
 
 lemma TwoPointFiberSurjectiveCard {α β : Type*} [Fintype α] [Fintype β]

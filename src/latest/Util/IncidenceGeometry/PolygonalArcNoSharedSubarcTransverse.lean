@@ -1,7 +1,6 @@
 import Util.IncidenceGeometry.PolygonalArcInteriorRayPairExists
 import Util.IncidenceGeometry.SegmentSameRayInitialSubsegment
 
-open Classical
 noncomputable section
 
 lemma PolygonalArcNoSharedSubarcTransverse
@@ -25,6 +24,7 @@ lemma PolygonalArcNoSharedSubarcTransverse
             ¬ ∃ c : ℝ,
               R.vertices[j + 1] - R.vertices[j] =
                 c • (Q.vertices[i + 1] - Q.vertices[i]) := by
+  classical
   obtain ⟨qRays⟩ := PolygonalArcInteriorRayPairExists Q p hpQ
   obtain ⟨rRays⟩ := PolygonalArcInteriorRayPairExists R p hpR
   have hqIndexNext : qRays.firstIndex + 1 < Q.vertices.length :=
@@ -88,12 +88,12 @@ lemma PolygonalArcNoSharedSubarcTransverse
   have hc1ne : c1 ≠ 0 := by
     intro hzero
     subst c1
-    simp at hc1
+    simp only [zero_smul] at hc1
     exact hrdir1 hc1
   have hc2ne : c2 ≠ 0 := by
     intro hzero
     subst c2
-    simp at hc2
+    simp only [zero_smul] at hc2
     exact hrdir2 hc2
   let k1 : ℝ := rRays.firstScale * c1 * qRays.firstScale⁻¹
   let k2 : ℝ := rRays.secondScale * c2 * qRays.firstScale⁻¹

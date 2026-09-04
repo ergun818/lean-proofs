@@ -2,7 +2,6 @@ import Mathlib.Tactic
 import Util.IncidenceGeometry.PolygonalArcCollarCompatibleOrientedTubeDataEndpointRefinement
 import Util.IncidenceGeometry.PolygonalArcCollarCompatibleOrientedTubeDataExists
 
-open Classical
 noncomputable section
 
 lemma PolygonalArcCollarCompatibleOrientedTubeDataExistsBelow (γ : PolygonalArc)
@@ -19,7 +18,7 @@ lemma PolygonalArcCollarCompatibleOrientedTubeDataExistsBelow (γ : PolygonalArc
           omega
         let jlast : ℕ := γ.vertices.length - 2
         let hlast : jlast + 1 < γ.vertices.length := by
-          have hlen := γ.length_ge_two
+          have _hlen := γ.length_ge_two
           dsimp [jlast]
           omega
         ∃ compatibleTubes :
@@ -37,6 +36,7 @@ lemma PolygonalArcCollarCompatibleOrientedTubeDataExistsBelow (γ : PolygonalArc
                     (compatibleTubes.orientedTubes.toPolygonalArcCollarSeparatedTubeData.tube
                       j hj)
                     (Metric.ball γ.target r₁)) := by
+  classical
   intro hIso hK₀ hK₁
   obtain ⟨base⟩ :=
     PolygonalArcCollarCompatibleOrientedTubeDataExists γ controlRadii middleSegments

@@ -2,7 +2,6 @@ import Util.IncidenceGeometry.PolygonalArcEndpointGluedVerticesBasic
 import Util.IncidenceGeometry.PolygonalArcEndpointGluedSegmentTransfer
 import Util.IncidenceGeometry.PolygonalArcFromConcatenatedPieces
 
-open Classical
 noncomputable section
 
 lemma PolygonalArcFromEndpointGluedPieces
@@ -68,6 +67,7 @@ lemma PolygonalArcFromEndpointGluedPieces
                               Γ.vertices[i + 1] = piece.vertices[m + 1]) ∨
                             (Γ.vertices[i] = piece.vertices[m + 1] ∧
                               Γ.vertices[i + 1] = piece.vertices[m]))) := by
+  classical
   have hbasic := PolygonalArcEndpointGluedVerticesBasic pieces hpieces
   have hsource :
       (PolygonalArcEndpointGluedVertices pieces).head? = some source := by
@@ -285,7 +285,7 @@ lemma PolygonalArcFromEndpointGluedPieces
               V[k] ∈ segment ℝ V[k] V[k + 1] ∩
                   segment ℝ V[m] V[m + 1] := ⟨hk_left, hseg_m⟩
           rw [hinter] at hp_inter
-          simpa [hm_adj] using hp_inter
+          simp [hm_adj] at hp_inter
         exact hmem_empty
     · have hk_pos : 0 < k := by omega
       let j := k - 1
@@ -314,7 +314,7 @@ lemma PolygonalArcFromEndpointGluedPieces
               V[k] ∈ segment ℝ V[m] V[m + 1] ∩
                   segment ℝ V[j] V[j + 1] := ⟨hseg_m, hk_right⟩
           rw [hinter] at hp_inter
-          simpa [hj_adj] using hp_inter
+          simp [hj_adj] at hp_inter
         exact hmem_empty
   have hvertices_avoid_nonincident_interiors :
       ∀ ⦃i k : ℕ⦄,

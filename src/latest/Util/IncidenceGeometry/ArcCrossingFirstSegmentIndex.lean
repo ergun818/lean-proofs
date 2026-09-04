@@ -1,7 +1,6 @@
 import Util.IncidenceGeometry.PolygonalArc
 import Util.IncidenceGeometry.PolygonalPath
 
-open Classical
 noncomputable section
 
 lemma ArcCrossingFirstSegmentIndex
@@ -14,6 +13,7 @@ lemma ArcCrossingFirstSegmentIndex
               j ≤ i) ∧
             (∀ (i : ℕ) (hi : i + 1 < δ.vertices.length),
               i < j → Disjoint α.carrier (segment ℝ δ.vertices[i] δ.vertices[i + 1])) := by
+  classical
   intro hXnonempty
   let P : ℕ → Prop := fun i =>
     ∃ hi : i + 1 < δ.vertices.length,

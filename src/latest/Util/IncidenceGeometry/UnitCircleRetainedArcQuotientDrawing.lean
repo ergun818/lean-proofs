@@ -4,14 +4,14 @@ import Util.IncidenceGeometry.UnitCircleRetainedArcDrawingAssembly
 import Util.IncidenceGeometry.UnitCircleRetainedArcEndpointQuotient
 import Util.IncidenceGeometry.UnitCirclesIntersectionsAtMostTwo
 
-open Classical
 open scoped BigOperators
 open scoped Real
 noncomputable section
 
+open Classical in
 lemma UnitCircleRetainedArcQuotientDrawing
     (P : Finset (EuclideanSpace ℝ (Fin 2))) :
-    ∃ (ι : Type) (instF : Fintype ι) (instD : DecidableEq ι)
+    ∃ (ι : Type) (_instF : Fintype ι) (_instD : DecidableEq ι)
       (A : Finset ι) (endpoint : ι → Sym2 P),
       (A.card : ℝ) =
           ∑ p ∈ P.filter
@@ -24,6 +24,7 @@ lemma UnitCircleRetainedArcQuotientDrawing
               G.edgeFinset = A.image endpoint →
                 ∃ D : GeometricArcDrawing G,
                   (D.localPairCount : ℝ) ≤ 2 * (P.card : ℝ) ^ 2) := by
+  classical
   rcases UnitCircleRetainedArcEndpointQuotient P with
     ⟨ι, instF, instD, A, endpoint, center, arcStart, arcEnd, carrier,
       arcInterior, γ, h_card, h_nondiag, h_multiplicity, h_retained,

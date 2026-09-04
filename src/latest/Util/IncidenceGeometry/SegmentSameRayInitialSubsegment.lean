@@ -1,7 +1,6 @@
 import Mathlib.Tactic
 import Util.IncidenceGeometry.Basic
 
-open Classical
 noncomputable section
 
 lemma SegmentSameRayInitialSubsegment
@@ -11,6 +10,7 @@ lemma SegmentSameRayInitialSubsegment
       x ≠ q ∧
         segment ℝ x q ⊆
           segment ℝ x (x + d) ∩ segment ℝ x (x + a • d) := by
+  classical
   let c : ℝ := min 1 a / 2
   have hc_pos : 0 < c := by
     dsimp [c]

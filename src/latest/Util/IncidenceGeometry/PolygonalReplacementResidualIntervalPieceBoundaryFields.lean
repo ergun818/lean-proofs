@@ -1,6 +1,5 @@
 import Util.IncidenceGeometry.PolygonalReplacementResidualIntervalPieceControlComplement
 
-open Classical
 noncomputable section
 
 universe u
@@ -128,7 +127,7 @@ lemma PolygonalReplacementResidualIntervalPieceBoundaryFields {V : Type u}
               B.source i ∈ D.edgeCarrier e := by
     intro e i hhead
     have hmemOpt : i ∈ (B.edgePieceOrder e).head? := by
-      simpa [hhead]
+      simp [hhead]
     have hmem : i ∈ B.edgePieceOrder e := List.mem_of_mem_head? hmemOpt
     have hownerB : B.owner i = e := (B.edgePieceOrder_owner_iff e i).1 hmem
     have hownerS : S.owner (pieceEquiv i) = e := by
@@ -162,14 +161,14 @@ lemma PolygonalReplacementResidualIntervalPieceBoundaryFields {V : Type u}
               B.target i ∈ D.edgeCarrier e := by
     intro e i hlast
     have hmemOpt : i ∈ (B.edgePieceOrder e).getLast? := by
-      simpa [hlast]
+      simp [hlast]
     have hmem : i ∈ B.edgePieceOrder e := List.mem_of_mem_getLast? hmemOpt
     have hownerB : B.owner i = e := (B.edgePieceOrder_owner_iff e i).1 hmem
     have hownerS : S.owner (pieceEquiv i) = e := by
       rwa [B_owner_eq_skeleton i] at hownerB
     have hlastS : (S.edgePieceOrder e).getLast? = some (pieceEquiv i) := by
       rw [← B_edgePieceOrder_eq_skeleton e]
-      simpa [hlast]
+      simp [hlast]
     have htargetParamS :
         S.targetParam (pieceEquiv i) = targetBoundaryParam e :=
       S.edgePieceOrder_last_targetParam e (pieceEquiv i) hlastS

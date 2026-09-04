@@ -10,7 +10,6 @@ import Util.IncidenceGeometry.PolygonalArcTerminalEndpointLeftCone
 import Util.IncidenceGeometry.PolygonalSideStrips
 import Mathlib.Combinatorics.SimpleGraph.DegreeSum
 
-open Classical
 noncomputable section
 
 structure PlaneDrawingDartCollarChoiceData {V : Type*} [Fintype V]

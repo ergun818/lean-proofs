@@ -3,7 +3,6 @@ import Util.IncidenceGeometry.EndpointFixedPolygonalDiskFillingClean
 import Util.IncidenceGeometry.PolygonalReplacementIntersectionDiskChains
 import Util.IncidenceGeometry.PolygonalReplacementVertexDiskSpokes
 
-open Classical
 noncomputable section
 
 lemma PolygonalReplacementLocalDiskFillings {V : Type*} [Fintype V]
@@ -46,7 +45,8 @@ lemma PolygonalReplacementLocalDiskFillings {V : Type*} [Fintype V]
     intersection_chain_target_attached_to_tube := intersection_chain_target_attached_to_tube
     intersection_boundary_covered := intersection_boundary_covered
     intersection_chain_carrier_subset_closedBall := intersection_chain_carrier_subset_closedBall
-    intersection_chain_relativeInterior_subset_ball := intersection_chain_relativeInterior_subset_ball
+    intersection_chain_relativeInterior_subset_ball :=
+      intersection_chain_relativeInterior_subset_ball
     intersection_chains_no_shared_nondegenerate_subarc :=
       intersection_chains_no_shared_nondegenerate_subarc
     intersection_chains_no_triple_intersections :=

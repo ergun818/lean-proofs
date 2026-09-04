@@ -2,12 +2,12 @@ import Util.IncidenceGeometry.OrdinaryDrawingImage
 import Util.IncidenceGeometry.OrdinaryPolygonalDrawing
 import Util.IncidenceGeometry.PolygonalArc
 
-open Classical
 noncomputable section
 
 lemma OrdinaryDrawingImageCompact {V : Type*} [Fintype V] (G : SimpleGraph V)
     [Fintype G.edgeSet] (D : OrdinaryPolygonalDrawing G) :
     IsCompact (OrdinaryDrawingImage G D) := by
+  classical
   have hArc : ∀ γ : PolygonalArc, IsCompact γ.carrier := by
     intro γ
     rw [γ.carrier_eq]
@@ -35,7 +35,7 @@ lemma OrdinaryDrawingImageCompact {V : Type*} [Fintype V] (G : SimpleGraph V)
     rw [h_eq]
     exact Finset.isCompact_biUnion (Finset.range γ.vertices.length) (fun i _ => by
       by_cases hi : i + 1 < γ.vertices.length
-      · simp [segSet, hi]
+      · simp only [hi, ↓reduceDIte, segSet]
         rw [segment_eq_image]
         exact isCompact_Icc.image (by fun_prop)
       · simp [segSet, hi])

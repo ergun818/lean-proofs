@@ -1,9 +1,8 @@
 import Util.IncidenceGeometry.PolygonalArc
 
-open Classical
 noncomputable section
 
-lemma EndpointUnitDiskLocalPieceMeetsOnlyIncidentChord {ι : Type*} [Fintype ι]
+lemma EndpointUnitDiskLocalPieceMeetsOnlyIncidentChord {ι : Type*} [Finite ι]
     (a b : ι → EuclideanSpace ℝ (Fin 2))
     (T : Finset (EuclideanSpace ℝ (Fin 2)))
     (r : EuclideanSpace ℝ (Fin 2) → ℝ)
@@ -21,6 +20,8 @@ lemma EndpointUnitDiskLocalPieceMeetsOnlyIncidentChord {ι : Type*} [Fintype ι]
     (hpΞ : p ∈ Ξ.relativeInterior)
     (hpseg : p ∈ segment ℝ (a i) (b i)) :
     False := by
+  classical
+  let := Fintype.ofFinite ι
   have hpCarrier : p ∈ Ξ.carrier := by
     have hp' := hpΞ
     rw [Ξ.relativeInterior_eq] at hp'

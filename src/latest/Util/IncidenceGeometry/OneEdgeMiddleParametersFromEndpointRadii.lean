@@ -2,7 +2,6 @@ import Mathlib.Tactic
 import Mathlib.Analysis.Normed.Affine.AddTorsor
 import Util.IncidenceGeometry.Basic
 
-open Classical
 noncomputable section
 
 lemma OneEdgeMiddleParametersFromEndpointRadii

@@ -1,8 +1,6 @@
 import Util.IncidenceGeometry.OrdinaryPolygonalDrawing
 import Util.IncidenceGeometry.PolygonalReplacementEdgeAssemblyData
 
-
-open Classical
 noncomputable section
 
 private lemma nonparallel_of_endpoint_orientations
@@ -12,6 +10,7 @@ private lemma nonparallel_of_endpoint_orientations
     (hb : (b₀ = B₀ ∧ b₁ = B₁) ∨ (b₀ = B₁ ∧ b₁ = B₀))
     (hAB : ¬ ∃ c : ℝ, B₁ - B₀ = c • (A₁ - A₀)) :
     ¬ ∃ c : ℝ, b₁ - b₀ = c • (a₁ - a₀) := by
+  classical
   rintro ⟨c, hc⟩
   rcases ha with ⟨ha₀, ha₁⟩ | ⟨ha₀, ha₁⟩ <;>
     rcases hb with ⟨hb₀, hb₁⟩ | ⟨hb₀, hb₁⟩
@@ -328,7 +327,7 @@ lemma PolygonalReplacementOrdinaryDrawingFromAssemblies {V : Type*} [Fintype V]
       have hIinf : (Set.Ioo (0 : ℝ) 1).Infinite :=
         Set.Ioo_infinite zero_lt_one
       have hgood : (Set.Ioo (0 : ℝ) 1 \ bad).Infinite :=
-        hIinf.diff hbad_finite
+        hIinf.sdiff hbad_finite
       rcases hgood.nonempty with ⟨t, ht⟩
       refine ⟨f t, ?_, ?_⟩
       · exact lineMap_mem_openSegment ℝ p q ht.1

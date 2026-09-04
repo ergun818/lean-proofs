@@ -8,7 +8,6 @@ import Util.IncidenceGeometry.FinitePolygonalSetCyclicNonadjacentActualPiecesDis
 import Util.IncidenceGeometry.FinitePolygonalSetCyclicSameArcSeparatedActualPiecesDisjoint
 import Util.IncidenceGeometry.CollinearSegmentChainUnion
 
-open Classical
 noncomputable section
 
 lemma FinitePolygonalSetCyclicSuccessorPiecesContained
@@ -33,6 +32,7 @@ lemma FinitePolygonalSetCyclicSuccessorPiecesContained
         p ≠ q →
           Disjoint (openSegment ℝ p.1 (D.successor p).1)
             (openSegment ℝ q.1 (D.successor q).1)) := by
+  classical
   have hArcCarrier :
       ∀ p : {p : EuclideanSpace ℝ (Fin 2) // p ∈ K.points},
         D.arcCarrier p = segment ℝ p.1 (D.successor p).1 := by
@@ -51,7 +51,7 @@ lemma FinitePolygonalSetCyclicSuccessorPiecesContained
     have hPiece_mem :
         ∀ n (hn : n < Lidx.length), Lidx[n]'hn ∈ D.arcPieceOrder p := by
       intro n hn
-      simpa [Lidx] using List.getElem_mem (l := Lidx) hn
+      simp [Lidx]
     have hPiece_subset_arc :
         ∀ n (hn : n < Lidx.length),
           D.pieceCarrier (Lidx[n]'hn) ⊆ D.arcCarrier p := by

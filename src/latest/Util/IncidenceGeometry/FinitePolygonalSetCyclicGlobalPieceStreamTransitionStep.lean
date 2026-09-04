@@ -1,7 +1,6 @@
 import Util.IncidenceGeometry.FiniteSortedRealCutListEndpointEntries
 import Util.IncidenceGeometry.FinitePolygonalSetCyclicGlobalPieceStreamEnumeration
 
-open Classical
 noncomputable section
 
 lemma FinitePolygonalSetCyclicGlobalPieceStreamTransitionStep

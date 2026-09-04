@@ -2,7 +2,6 @@ import Util.IncidenceGeometry.OrdinaryPolygonalDrawing
 import Util.IncidenceGeometry.PolygonalArcReverse
 import Mathlib.Combinatorics.SimpleGraph.DegreeSum
 
-open Classical
 noncomputable section
 
 structure PlaneDrawingDartArcData {V : Type*} [Fintype V] (G : SimpleGraph V)

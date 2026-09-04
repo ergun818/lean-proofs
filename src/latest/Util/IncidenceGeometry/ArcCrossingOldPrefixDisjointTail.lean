@@ -4,7 +4,6 @@ import Mathlib.Analysis.Normed.Affine.AddTorsor
 import Util.IncidenceGeometry.ArcCrossingEarlierPrefix
 import Util.IncidenceGeometry.PolygonalArc
 
-open Classical
 noncomputable section
 
 lemma ArcCrossingOldPrefixDisjointTail
@@ -16,6 +15,7 @@ lemma ArcCrossingOldPrefixDisjointTail
     Disjoint
       (ArcCrossingEarlierPrefix δ j hj ∪ segment ℝ δ.vertices[j] d)
       τ.carrier := by
+  classical
   have left_piece_disjoint_right_piece :
       ∀ (u c v d : EuclideanSpace ℝ (Fin 2)),
         u ≠ v →
@@ -139,8 +139,7 @@ lemma ArcCrossingOldPrefixDisjointTail
       have hn' : n + 1 < (c :: δ.vertices.drop (j + 1)).length := by
         simpa [hτvertices] using hn
       simpa using hn'
-    simpa [hτvertices] using (List.getElem_drop (xs := δ.vertices) (i := j + 1)
-      (j := n) (h := hdrop))
+    simp [hτvertices]
   have hτ_get_pos :
       ∀ n (hnpos : 0 < n) (hn : n < τ.vertices.length),
         τ.vertices[n] = δ.vertices[j + n]'(by
@@ -172,7 +171,7 @@ lemma ArcCrossingOldPrefixDisjointTail
     by_cases hn0 : n = 0
     · subst n
       have hτ0 : τ.vertices[0] = c := by
-        simpa [hτvertices]
+        simp [hτvertices]
       have hτ1 : τ.vertices[0 + 1] = δ.vertices[j + 1] := by
         simpa using hτ_get_succ 0 hn
       have hzj_tail : z ∈ segment ℝ c δ.vertices[j + 1] := by
@@ -198,7 +197,7 @@ lemma ArcCrossingOldPrefixDisjointTail
         exact left_endpoint_not_right_piece
           δ.vertices[j] c δ.vertices[j + 1] huv hcOpen hzj_tail_u
       · have hzempty : z ∈ (∅ : Set (EuclideanSpace ℝ (Fin 2))) := by
-          simpa [hadj] using hzint'
+          simp [hadj] at hzint'
         exact hzempty
     · have hnpos : 0 < n := Nat.pos_of_ne_zero hn0
       have hτn := hτ_get_pos n hnpos (Nat.lt_of_succ_lt hn)
@@ -222,12 +221,12 @@ lemma ArcCrossingOldPrefixDisjointTail
       rw [hinter] at hzint'
       have hnot_adj : j + n ≠ i.1 + 1 := by omega
       have hzempty : z ∈ (∅ : Set (EuclideanSpace ℝ (Fin 2))) := by
-        simpa [hnot_adj] using hzint'
+        simp [hnot_adj] at hzint'
       exact hzempty
   · by_cases hn0 : n = 0
     · subst n
       have hτ0 : τ.vertices[0] = c := by
-        simpa [hτvertices]
+        simp [hτvertices]
       have hτ1 : τ.vertices[0 + 1] = δ.vertices[j + 1] := by
         simpa using hτ_get_succ 0 hn
       have hz_tail : z ∈ segment ℝ c δ.vertices[j + 1] := by
@@ -273,6 +272,6 @@ lemma ArcCrossingOldPrefixDisjointTail
           δ.vertices[j] c δ.vertices[j + 1] d huv hcOpen hdOpen hlast_v
       · have hzempty : z ∈ (∅ : Set (EuclideanSpace ℝ (Fin 2))) := by
           have hn_ne_one : n ≠ 1 := by omega
-          simpa [hn_ne_one] using hzint'
+          simp [hn_ne_one] at hzint'
         exact hzempty
 

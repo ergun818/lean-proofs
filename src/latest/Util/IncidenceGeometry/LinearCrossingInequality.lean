@@ -3,7 +3,6 @@ import Util.IncidenceGeometry.NoAdjacentMinimalDrawing
 import Util.IncidenceGeometry.OrdinaryPolygonalDrawingDeleteEdges
 import Util.IncidenceGeometry.PlanarEdgeBound
 
-open Classical
 noncomputable section
 
 lemma LinearCrossingInequality {V : Type*} [Fintype V] (G : SimpleGraph V)

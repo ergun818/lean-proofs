@@ -1,7 +1,6 @@
 import Mathlib.Data.Set.Card.Arithmetic
 import Util.IncidenceGeometry.FinitePolygonalSetListedSegmentsCoveredByCyclicPieces
 
-open Classical
 noncomputable section
 
 lemma FinitePolygonalSetOpenIntersectionPartition
@@ -19,6 +18,7 @@ lemma FinitePolygonalSetOpenIntersectionPartition
           Set.ncard (openSegment ℝ a b ∩ openSegment ℝ s.1 s.2)) =
           K.points.attach.sum fun p =>
             Set.ncard (openSegment ℝ a b ∩ openSegment ℝ p.1 (D.successor p).1) := by
+  classical
   intro a b havoid hoverlap
   rcases FinitePolygonalSetCyclicSuccessorPiecesContained J K hKJ D with
     ⟨_hcarrier, hrefine, _harcCarrier, _hopen_subset, _hno_listed_open,

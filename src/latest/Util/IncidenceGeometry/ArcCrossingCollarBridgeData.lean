@@ -19,9 +19,7 @@ import Util.IncidenceGeometry.PolygonalArcSideStripAssembly
 import Util.IncidenceGeometry.PolygonalArcTerminalEndpointLeftCone
 import Util.IncidenceGeometry.PolygonallyPathConnected
 
-open Classical
 noncomputable section
-
 
 lemma ArcCrossingCollarBridgeData
     (K Dstar : Set (EuclideanSpace ℝ (Fin 2))) (δ τ : PolygonalArc)
@@ -352,8 +350,7 @@ lemma ArcCrossingCollarBridgeData
     refine ⟨hWnonempty, ?_, hWconnected, ?_⟩
     · intro z hz
       simpa using hz
-    · intro C hCnon hCsub _hCconn _hWsub
-      intro z hzC
+    · intro C hCnon hCsub _hCconn _hWsub z hzC
       simpa using hCsub hzC
   have hWpath : PolygonallyPathConnected W :=
     OpenConnectedComponentPolygonallyConnected W W hWopen hWcomponent

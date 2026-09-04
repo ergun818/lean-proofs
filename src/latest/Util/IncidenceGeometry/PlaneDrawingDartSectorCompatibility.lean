@@ -10,13 +10,13 @@ import Util.IncidenceGeometry.PolygonalArcSideStripAssembly
 import Util.IncidenceGeometry.PolygonalSideStrips
 import Util.IncidenceGeometry.PositiveSeparation
 
-open Classical
 noncomputable section
 
 lemma PlaneDrawingDartSectorCompatibility {V : Type*} [Fintype V]
     (G : SimpleGraph V) [Fintype G.edgeSet] [DecidableRel G.Adj]
     (D : OrdinaryPolygonalDrawing G) (hD : D.crossingSet.card = 0) :
     Nonempty (PlaneDrawingDartSectorData G D) := by
+  classical
   rcases PlaneDrawingDartArcDataExists G D hD with ⟨A⟩
   rcases PlaneDrawingDartLocalGeometryDataExists G D hD A with ⟨B, S, ⟨W⟩⟩
   exact ⟨{

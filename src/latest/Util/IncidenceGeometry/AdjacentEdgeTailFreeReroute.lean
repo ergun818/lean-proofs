@@ -5,7 +5,6 @@ import Util.IncidenceGeometry.PlaneDrawingSelectedEdgeSourceCappedSectors
 import Util.IncidenceGeometry.OrdinaryAdjacentEdgesSimultaneousBigonGeometryExists
 import Util.IncidenceGeometry.OrdinaryAdjacentEdgesCleanificationConsequences
 
-open Classical
 noncomputable section
 
 lemma AdjacentEdgeTailFreeReroute {V : Type*} [Fintype V]
@@ -21,6 +20,7 @@ lemma AdjacentEdgeTailFreeReroute {V : Type*} [Fintype V]
                 x ∈ (D.edgeArc beta).relativeInterior) →
             ∃ D' : OrdinaryPolygonalDrawing G,
               D'.crossingSet.card < D.crossingSet.card := by
+  classical
   intro hab huAlpha huBeta hcross
   rcases hcross with ⟨xOld, hxOld, hxOldAlpha, hxOldBeta⟩
   obtain ⟨Dclean, hvertex, hcard, hclean, hsurvive⟩ :=

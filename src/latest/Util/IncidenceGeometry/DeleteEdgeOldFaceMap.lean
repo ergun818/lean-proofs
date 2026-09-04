@@ -4,9 +4,9 @@ import Util.IncidenceGeometry.ComplementComponent
 import Util.IncidenceGeometry.OrdinaryDrawingImage
 import Mathlib.Combinatorics.SimpleGraph.Acyclic
 
-open Classical
 noncomputable section
 
+open Classical in
 lemma DeleteEdgeOldFaceMap {V : Type*} [Fintype V] (G : SimpleGraph V)
     [Fintype G.edgeSet] [DecidableRel G.Adj] (D : OrdinaryPolygonalDrawing G)
     (A : PlaneFaceData G D) (e : G.edgeFinset) :
@@ -18,6 +18,7 @@ lemma DeleteEdgeOldFaceMap {V : Type*} [Fintype V] (G : SimpleGraph V)
             Ddel.edgeArc ed = D.edgeArc eG) →
           ∃ oldToNew : A.Face → Adel.Face,
             ∀ F : A.Face, A.faceSet F ⊆ Adel.faceSet (oldToNew F) := by
+  classical
   dsimp
   intro Ddel Adel hvertex hedge
   have hImageSubset :

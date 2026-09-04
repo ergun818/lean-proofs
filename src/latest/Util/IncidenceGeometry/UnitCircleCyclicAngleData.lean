@@ -1,6 +1,5 @@
 import Util.IncidenceGeometry.UnitCircle
 
-open Classical
 noncomputable section
 
 structure UnitCircleCyclicAngleData

@@ -3,9 +3,9 @@ import Util.IncidenceGeometry.DeletedEdgePathAtomClassification
 import Util.IncidenceGeometry.OpenConnectedComponentPolygonallyConnected
 import Util.IncidenceGeometry.OrdinaryDrawingImageCompact
 
-open Classical
 noncomputable section
 
+open Classical in
 lemma DeletedEdgeCandidateFaceSetMaximal {V : Type*} [Fintype V]
     (G : SimpleGraph V) [Fintype G.edgeSet] [DecidableRel G.Adj]
     (D : OrdinaryPolygonalDrawing G) (hD : D.crossingSet.card = 0)

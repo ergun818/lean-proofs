@@ -1,7 +1,6 @@
 import Util.IncidenceGeometry.CyclicCurvePresentation
 import Util.IncidenceGeometry.PolygonalPath
 
-open Classical
 noncomputable section
 
 def CyclicCurvePresentationIntersectionMultiplicity

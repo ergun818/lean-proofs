@@ -1,6 +1,5 @@
 import Util.IncidenceGeometry.PolygonalArc
 
-open Classical
 noncomputable section
 
 def PolygonalArcInitialEndpointSegmentLength (γ : PolygonalArc) : ℝ :=

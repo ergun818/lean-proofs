@@ -3,7 +3,6 @@ import Util.IncidenceGeometry.PlanarRot90AngleCoordinateDecomposition
 import Util.IncidenceGeometry.PlanarRot90ClockwiseWedgeSignCriterion
 import Util.IncidenceGeometry.PlanarRot90ClockwiseWedgeTauTrig
 
-open Classical
 noncomputable section
 
 lemma PlanarRot90ClockwiseWedgeAngleCriterion
@@ -35,6 +34,7 @@ lemma PlanarRot90ClockwiseWedgeAngleCriterion
         y < 0 ∨ 0 < c * y + s * x
       else
         y < 0) ↔ τ α < τ ν := by
+  classical
   dsimp only at hpoint hother
   dsimp only
   let e : ℝ → EuclideanSpace ℝ (Fin 2) :=

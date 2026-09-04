@@ -1,6 +1,5 @@
 import Util.IncidenceGeometry.TriangleAffineBasisBarycentricCoordinates
 
-open Classical
 noncomputable section
 
 lemma TriangleSegmentBarycentricBoundaryExclusions
@@ -30,6 +29,7 @@ lemma TriangleSegmentBarycentricBoundaryExclusions
               β.coord 2 (AffineMap.lineMap x y t) = 0) ∧
             ¬ (β.coord 0 (AffineMap.lineMap x y t) = 0 ∧
                 β.coord 1 (AffineMap.lineMap x y t) = 0)) := by
+  classical
   have hbary := TriangleAffineBasisBarycentricCoordinates β
   have endpointExclusions
       (p : EuclideanSpace ℝ (Fin 2))

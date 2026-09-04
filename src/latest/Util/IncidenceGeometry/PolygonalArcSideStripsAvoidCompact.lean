@@ -6,7 +6,6 @@ import Util.IncidenceGeometry.PolygonalArcCollarMiddleTubeDataExists
 import Util.IncidenceGeometry.PolygonalArcCollarMiddleSegmentDataExists
 import Util.IncidenceGeometry.PolygonalArcCollarControlRadiiExists
 
-open Classical
 noncomputable section
 
 lemma PolygonalArcSideStripsAvoidCompact (γ : PolygonalArc)
@@ -14,6 +13,7 @@ lemma PolygonalArcSideStripsAvoidCompact (γ : PolygonalArc)
     IsCompact F →
       Disjoint F γ.carrier →
         ∃ S : PolygonalSideStrips γ, Disjoint S.collar F := by
+  classical
   intro hF hFγ
   obtain ⟨η, hηpos, hηavoid⟩ := PolygonalArcCompactAvoidanceScale γ F hF hFγ
   obtain ⟨controlRadii⟩ := PolygonalArcCollarControlRadiiExists γ hηpos

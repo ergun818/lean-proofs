@@ -11,7 +11,6 @@ import Util.IncidenceGeometry.PolygonalArcTerminalEndpointDiskCappedTaperAttachm
 import Util.IncidenceGeometry.PolygonalArcTerminalEndpointLeftCone
 import Mathlib.Combinatorics.SimpleGraph.DegreeSum
 
-open Classical
 noncomputable section
 
 lemma PlaneDrawingDartSectorWitnessDataFromCollarChoices {V : Type*} [Fintype V]
@@ -22,6 +21,7 @@ lemma PlaneDrawingDartSectorWitnessDataFromCollarChoices {V : Type*} [Fintype V]
     (S : PlaneDrawingDartSideStripData G D A C.star)
     (hleft : ∀ d : G.Dart, S.leftSideStrip d = (P.sideStrips d).leftStrip) :
     Nonempty (PlaneDrawingDartSectorWitnessData G D A C.star S) := by
+  classical
   refine ⟨?_⟩
   refine
     { successor_clockwise_sector := ?_

@@ -1,7 +1,6 @@
 import Mathlib.Tactic
 import Util.IncidenceGeometry.Basic
 
-open Classical
 noncomputable section
 
 lemma StraightSegmentRetainedOrder
@@ -14,6 +13,7 @@ lemma StraightSegmentRetainedOrder
     (hgC : g ∈ segment ℝ A c)
     (hpc : p ≠ c) (hgc : g ≠ c) :
     p ∈ openSegment ℝ A c ∧ g ∈ openSegment ℝ p c := by
+  classical
   rw [openSegment_eq_image_lineMap] at hp hg hc
   rw [segment_eq_image_lineMap] at hpC hgC
   rcases hp with ⟨t, ht, htp⟩

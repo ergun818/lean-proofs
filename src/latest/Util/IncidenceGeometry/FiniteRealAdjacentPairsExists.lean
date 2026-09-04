@@ -1,10 +1,9 @@
 import Util.IncidenceGeometry.Basic
 
-open Classical
 noncomputable section
 
 lemma FiniteRealAdjacentPairsExists
-    {alpha : Type*} [DecidableEq alpha]
+    {alpha : Type*}
     (S : Finset alpha) (key : alpha → ℝ)
     (hinj : Function.Injective key) (hne : S.Nonempty) :
     ∃ E : Finset (alpha × alpha),
@@ -18,6 +17,7 @@ lemma FiniteRealAdjacentPairsExists
         (Set.Icc (key e1.1) (key e1.2) ∩
           Set.Icc (key e2.1) (key e2.2)).Subsingleton) ∧
       E.card + 1 = S.card := by
+  classical
   have list_char : ∀ (u : List alpha),
       u.Pairwise (fun a b ↦ key a < key b) → ∀ x y,
         (x, y) ∈ u.consecutivePairs ↔

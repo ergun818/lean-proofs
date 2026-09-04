@@ -3,7 +3,6 @@ import Util.IncidenceGeometry.PolygonalArcCollarCompatibleOrientedTubeData
 import Util.IncidenceGeometry.PolygonalArcEndpointIsolation
 import Util.IncidenceGeometry.PositiveSeparation
 
-open Classical
 noncomputable section
 
 private lemma endpointRefinement_successive_positive_negative_cones_disjoint
@@ -35,6 +34,7 @@ private lemma endpointRefinement_successive_positive_negative_cones_disjoint
           z = AffineMap.lineMap γ.vertices[j + 1] γ.vertices[j + 2] t +
             s • base.orientedTubes.toPolygonalArcCollarSeparatedTubeData.normal
               (j + 1) hnext} := by
+  classical
   rw [Set.disjoint_left]
   intro z hzL hzR
   rcases hzL with ⟨t, ht, s, hs_pos, hs_lt, hzL⟩
@@ -81,6 +81,7 @@ private lemma endpointRefinement_successive_negative_positive_cones_disjoint
           z = AffineMap.lineMap γ.vertices[j + 1] γ.vertices[j + 2] t +
             s • base.orientedTubes.toPolygonalArcCollarSeparatedTubeData.normal
               (j + 1) hnext} := by
+  classical
   rw [Set.disjoint_left]
   intro z hzL hzR
   rcases hzL with ⟨t, ht, s, hs_neg, hs_lt, hzL⟩
@@ -118,6 +119,7 @@ private lemma endpointRefinement_initial_signed_cone_disjoint_previous_segment
           z = AffineMap.lineMap γ.vertices[j] γ.vertices[j + 1] t +
             s • base.orientedTubes.toPolygonalArcCollarSeparatedTubeData.normal j hj}
       (segment ℝ γ.vertices[j - 1] γ.vertices[j]) := by
+  classical
   rw [Set.disjoint_left]
   intro z hzCone hzSeg
   rcases hzCone with ⟨t, ht, s, hs_ne, hs_lt, hz⟩
@@ -151,6 +153,7 @@ private lemma endpointRefinement_terminal_signed_cone_disjoint_next_segment
           z = AffineMap.lineMap γ.vertices[j] γ.vertices[j + 1] t +
             s • base.orientedTubes.toPolygonalArcCollarSeparatedTubeData.normal j hj}
       (segment ℝ γ.vertices[j + 1] γ.vertices[j + 2]) := by
+  classical
   rw [Set.disjoint_left]
   intro z hzCone hzSeg
   rcases hzCone with ⟨t, ht, s, hs_ne, hs_lt, hz⟩
@@ -178,6 +181,7 @@ private lemma endpointRefinement_tube_disjoint_ball
         ∃ s : ℝ, s ∈ Set.Ioo (-halfWidth) halfWidth ∧
           z = AffineMap.lineMap a b t + s • normal}
       (Metric.ball p radius) := by
+  classical
   rw [Set.disjoint_left]
   intro z hzTube hzBall
   rcases hzTube with ⟨t, ht, s, hs, hz⟩
@@ -208,6 +212,7 @@ private lemma endpointRefinement_width_mul_norm_lt_half
     (normalNorm_nonneg : 0 ≤ normalNorm) (separation_pos : 0 < separation)
     (width_le : width ≤ separation / (4 * (normalNorm + 1))) :
     width * normalNorm < separation / 2 := by
+  classical
   have hden : 0 < 4 * (normalNorm + 1) := by positivity
   have hden_ne : 4 * (normalNorm + 1) ≠ 0 := ne_of_gt hden
   have hscaled :
@@ -230,6 +235,7 @@ private lemma endpointRefinement_source_centerline_disjoint_closedBall
       ((AffineMap.lineMap γ.vertices[j] γ.vertices[j + 1]) ''
         Set.Icc (old.lowerParam j hj) (old.upperParam j hj))
       (Metric.closedBall γ.source r₀) := by
+  classical
   have hfirst : 0 + 1 < γ.vertices.length := by
     have hlen := γ.length_ge_two
     omega
@@ -321,6 +327,7 @@ private lemma endpointRefinement_target_centerline_disjoint_closedBall
       ((AffineMap.lineMap γ.vertices[j] γ.vertices[j + 1]) ''
         Set.Icc (old.lowerParam j hj) (old.upperParam j hj))
       (Metric.closedBall γ.target r₁) := by
+  classical
   let jlast : ℕ := γ.vertices.length - 2
   have hlast : jlast + 1 < γ.vertices.length := by
     have hlen := γ.length_ge_two
@@ -411,7 +418,6 @@ private lemma endpointRefinement_target_centerline_disjoint_closedBall
     rw [hinter] at hxInter
     exact hxInter
 
-
 lemma PolygonalArcCollarCompatibleOrientedTubeDataEndpointRefinement (γ : PolygonalArc)
     {η : ℝ} (controlRadii : PolygonalArcCollarControlRadii γ η)
     (middleSegments : PolygonalArcCollarMiddleSegmentData γ controlRadii)
@@ -447,6 +453,7 @@ lemma PolygonalArcCollarCompatibleOrientedTubeDataEndpointRefinement (γ : Polyg
                     (compatibleTubes.orientedTubes.toPolygonalArcCollarSeparatedTubeData.tube
                       j hj)
                     (Metric.ball γ.target r₁)) := by
+  classical
   intro hIso hK₀ hK₁
   let old := base.orientedTubes.toPolygonalArcCollarSeparatedTubeData
   let hfirst : 0 + 1 < γ.vertices.length := by

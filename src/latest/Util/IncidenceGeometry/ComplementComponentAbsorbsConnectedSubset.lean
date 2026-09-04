@@ -1,6 +1,5 @@
 import Util.IncidenceGeometry.ComplementComponent
 
-open Classical
 noncomputable section
 
 lemma ComplementComponentAbsorbsConnectedSubset
@@ -8,6 +7,7 @@ lemma ComplementComponentAbsorbsConnectedSubset
     ComplementComponent K C →
       T.Nonempty → T ⊆ Kᶜ → IsConnected T →
         (C ∩ T).Nonempty → T ⊆ C := by
+  classical
   intro hC hTne hTK hTconn hmeet
   rcases hC with ⟨_hCne, hCK, hCconn, hCmax⟩
   have hUnionNonempty : (C ∪ T).Nonempty := hTne.mono (by

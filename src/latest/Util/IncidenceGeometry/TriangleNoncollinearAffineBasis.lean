@@ -3,7 +3,6 @@ import Mathlib.LinearAlgebra.AffineSpace.FiniteDimensional
 import Mathlib.Analysis.Convex.Between
 import Util.IncidenceGeometry.Basic
 
-open Classical
 open Set
 noncomputable section
 
@@ -13,6 +12,7 @@ lemma TriangleNoncollinearAffineBasis
     (hncol : ¬ ∃ c : ℝ, b - a = c • (z - a)) :
     ∃ β : AffineBasis (Fin 3) ℝ (EuclideanSpace ℝ (Fin 2)),
       β 0 = z ∧ β 1 = a ∧ β 2 = b := by
+  classical
   have hnotcol :
       ¬ Collinear ℝ
         ({z, a, b} : Set (EuclideanSpace ℝ (Fin 2))) := by

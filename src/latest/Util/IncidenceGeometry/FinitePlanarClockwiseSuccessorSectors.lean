@@ -9,10 +9,9 @@ import Util.IncidenceGeometry.PlanarRot90Norm
 import Util.IncidenceGeometry.PlanarRot90Orthogonal
 import Util.IncidenceGeometry.PlanarSlitDiskEndpointConesAvoidRay
 
-open Classical
 noncomputable section
 
-lemma FinitePlanarClockwiseSuccessorSectors {ι : Type*} [Fintype ι] [Nonempty ι]
+lemma FinitePlanarClockwiseSuccessorSectors {ι : Type*} [Finite ι] [Nonempty ι]
     [DecidableEq ι]
     (p : EuclideanSpace ℝ (Fin 2)) (ρ : ℝ)
     (u : ι → EuclideanSpace ℝ (Fin 2))
@@ -33,7 +32,7 @@ lemma FinitePlanarClockwiseSuccessorSectors {ι : Type*} [Fintype ι] [Nonempty 
           clockwiseTurn i (clockwiseNext i) ≤ clockwiseTurn i j) ∧
         (∀ i : ι, clockwiseNext i = i ↔ ∀ j : ι, j = i) ∧
         (∀ i : ι,
-          if h : clockwiseNext i = i then
+          if _h : clockwiseNext i = i then
             sector i =
               Metric.ball p ρ \
                 ({q | ∃ t : ℝ, 0 < t ∧ q = p + t • u i} ∪
@@ -74,6 +73,7 @@ lemma FinitePlanarClockwiseSuccessorSectors {ι : Type*} [Fintype ι] [Nonempty 
                 q ∉ {x | ∃ t : ℝ, 0 < t ∧ x = p + t • u i}) →
                 ∃ i : ι, q ∈ sector i) := by
   classical
+  let := Fintype.ofFinite ι
   let θ : ι → ℝ := fun i =>
     let z : ℂ := ((u i) 0 : ℂ) + ((u i) 1 : ℂ) * Complex.I
     let a : ℝ := Complex.arg z

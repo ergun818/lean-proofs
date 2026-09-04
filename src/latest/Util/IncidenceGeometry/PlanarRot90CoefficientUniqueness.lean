@@ -1,7 +1,6 @@
 import Util.IncidenceGeometry.PlanarRot90Norm
 import Util.IncidenceGeometry.PlanarRot90Orthogonal
 
-open Classical
 noncomputable section
 
 lemma PlanarRot90CoefficientUniqueness {d v : EuclideanSpace ℝ (Fin 2)}
@@ -9,6 +8,7 @@ lemma PlanarRot90CoefficientUniqueness {d v : EuclideanSpace ℝ (Fin 2)}
     (h : v = a • d + b • PlanarRot90 d) :
     a = inner ℝ v d / (‖d‖ ^ 2) ∧
       b = inner ℝ v (PlanarRot90 d) / (‖d‖ ^ 2) := by
+  classical
   have horth := PlanarRot90Orthogonal d
   have horth' : inner ℝ (PlanarRot90 d) d = 0 := by
     simpa [real_inner_comm] using horth

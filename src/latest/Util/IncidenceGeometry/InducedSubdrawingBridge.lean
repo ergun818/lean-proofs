@@ -1,8 +1,6 @@
 import Util.IncidenceGeometry.OrdinaryPolygonalDrawing
 import Mathlib.Combinatorics.SimpleGraph.Copy
 
-
-open Classical
 noncomputable section
 
 lemma InducedSubdrawingBridge {V : Type*} [Fintype V] (G : SimpleGraph V)
@@ -35,7 +33,7 @@ lemma InducedSubdrawingBridge {V : Type*} [Fintype V] (G : SimpleGraph V)
       exact SimpleGraph.mem_edgeFinset.mpr (by
         convert
           (SimpleGraph.Embedding.induce (G := G) S).toHom.map_mem_edgeSet
-            (SimpleGraph.mem_edgeFinset.mp ed.2) using 1 <;> rfl)⟩
+            (SimpleGraph.mem_edgeFinset.mp ed.2) using 1 ; rfl)⟩
   have oldEdge_val :
       ∀ ed : (G.induce S).edgeFinset,
         (oldEdge ed).1 = Sym2.map (Subtype.val : S → V) ed.1 := by

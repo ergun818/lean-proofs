@@ -8,7 +8,6 @@ import Util.IncidenceGeometry.UnitCircleRetainedArcQuotientDrawing
 import Util.IncidenceGeometry.UnitCirclesIntersectionsAtMostTwo
 import Util.IncidenceGeometry.UnitDistanceCount
 
-open Classical
 open scoped BigOperators
 open scoped Real
 noncomputable section

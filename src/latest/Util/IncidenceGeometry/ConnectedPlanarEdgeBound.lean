@@ -4,7 +4,6 @@ import Util.IncidenceGeometry.ConnectedEulerFormula
 import Util.IncidenceGeometry.PlaneFaceData
 import Util.IncidenceGeometry.PlaneFaceDataExists
 
-open Classical
 noncomputable section
 
 lemma ConnectedPlanarEdgeBound {V : Type*} [Fintype V] (G : SimpleGraph V)

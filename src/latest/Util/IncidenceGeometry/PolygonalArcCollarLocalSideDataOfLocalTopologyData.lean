@@ -2,9 +2,7 @@ import Mathlib.Tactic
 import Util.IncidenceGeometry.PolygonalArcCollarLocalSideData
 import Util.IncidenceGeometry.PolygonalArcCollarLocalTopologyData
 
-open Classical
 noncomputable section
-
 
 lemma PolygonalArcCollarLocalSideDataOfLocalTopologyData (γ : PolygonalArc) {η : ℝ}
     (controlRadii : PolygonalArcCollarControlRadii γ η)
@@ -30,6 +28,7 @@ lemma PolygonalArcCollarLocalSideDataOfLocalTopologyData (γ : PolygonalArc) {η
           localSideData.leftSidePiece i = localTopology.leftSidePiece i) ∧
           (∀ i : Fin γ.vertices.length,
             localSideData.rightSidePiece i = localTopology.rightSidePiece i) := by
+  classical
   let sep :=
     compatibleTubes.orientedTubes.toPolygonalArcCollarSeparatedTubeData
   have signed_point_not_mem_own_segment :

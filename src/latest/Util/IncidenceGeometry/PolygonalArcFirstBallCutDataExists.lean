@@ -2,9 +2,7 @@ import Util.IncidenceGeometry.PolygonalArcFirstBallCutData
 import Util.IncidenceGeometry.PolygonalArcPointCutDataExists
 import Mathlib.Tactic
 
-open Classical
 noncomputable section
-
 
 lemma PolygonalArcFirstBallCutDataExists
     (Q : PolygonalArc)
@@ -13,6 +11,7 @@ lemma PolygonalArcFirstBallCutDataExists
     (htarget : Q.target ∉ Metric.ball p radius)
     (hhit : (Q.relativeInterior ∩ Metric.ball p radius).Nonempty) :
     Nonempty (PolygonalArcFirstBallCutData Q p radius) := by
+  classical
   let J : Set ℕ := {i | ∃ hi : i + 1 < Q.vertices.length,
     ∃ t ∈ Set.Icc (0 : ℝ) 1,
       AffineMap.lineMap Q.vertices[i] Q.vertices[i + 1] t ∈
@@ -77,7 +76,7 @@ lemma PolygonalArcFirstBallCutDataExists
         let G : ℝ →ᵃ[ℝ] EuclideanSpace ℝ (Fin 2) :=
           AffineMap.lineMap Q.vertices[i₀ - 1] Q.vertices[i₀]
         have hG1 : G 1 = F a := by
-          simp [G, F, ha0, Nat.sub_add_cancel hi₀pos]
+          simp [G, F, ha0]
         have hGpre : G ⁻¹' Metric.ball p radius ∈ nhds (1 : ℝ) :=
           AffineMap.lineMap_continuous.continuousAt
             (Metric.isOpen_ball.mem_nhds (hG1 ▸ hFaBall))
@@ -208,7 +207,7 @@ lemma PolygonalArcFirstBallCutDataExists
         (i := i₀) (j := i₀ + 1) (hi := by omega) (hj := hi₀)).1 hv
       omega
     have ha1 : a = 1 := (AffineMap.lineMap_injective ℝ hsegNe)
-      (by simpa [q, hEq, hF1] using rfl : F a = F 1)
+      (by rw [← hF1] at hEq; exact hEq : F a = F 1)
     linarith
   have hqRel : q ∈ Q.relativeInterior := by
     rw [Q.relativeInterior_eq]

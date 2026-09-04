@@ -1,6 +1,5 @@
 import Util.IncidenceGeometry.Basic
 
-open Classical
 noncomputable section
 
 open Set
@@ -17,6 +16,7 @@ lemma RealSegmentChainUnion
     (⋃ k : Fin L.length, segment ℝ (L[k.1]).1 (L[k.1]).2) =
       segment ℝ (L[0]).1
         (L[L.length - 1]'(Nat.sub_one_lt_of_lt hpos)).2 := by
+  classical
   have real_segment_union_inc :
       ∀ {a b c : ℝ}, a ≤ b → b ≤ c →
         segment ℝ a b ∪ segment ℝ b c = segment ℝ a c := by

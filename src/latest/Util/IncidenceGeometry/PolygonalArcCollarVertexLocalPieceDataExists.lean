@@ -1,9 +1,7 @@
 import Util.IncidenceGeometry.PolygonalArcCollarVertexLocalPieceData
 import Util.IncidenceGeometry.PolygonalArcVertexMemCarrier
 
-open Classical
 noncomputable section
-
 
 lemma PolygonalArcCollarVertexLocalPieceDataExists (γ : PolygonalArc) {η : ℝ}
     (controlRadii : PolygonalArcCollarControlRadii γ η)
@@ -16,6 +14,7 @@ lemma PolygonalArcCollarVertexLocalPieceDataExists (γ : PolygonalArc) {η : ℝ
     Nonempty
       (PolygonalArcCollarVertexLocalPieceData γ controlRadii middleSegments
         forbiddenMargins separatedTubes) := by
+  classical
   let vertexDisk : Fin γ.vertices.length → Set (EuclideanSpace ℝ (Fin 2)) :=
     fun i => Metric.ball γ.vertices[i.1] (controlRadii.radius i)
   let endpointPiece : Fin γ.vertices.length → Set (EuclideanSpace ℝ (Fin 2)) :=

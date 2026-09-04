@@ -1,6 +1,5 @@
 import Util.IncidenceGeometry.PolygonalArcEndpointGluedSegmentOccurrence
 
-open Classical
 noncomputable section
 
 lemma PolygonalArcEndpointGluedSegmentCertificates

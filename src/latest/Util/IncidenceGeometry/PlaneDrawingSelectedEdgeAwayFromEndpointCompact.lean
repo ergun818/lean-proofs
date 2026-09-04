@@ -4,11 +4,10 @@ import Util.IncidenceGeometry.OrdinaryDrawingImageWithoutEdge
 import Util.IncidenceGeometry.OrdinaryPolygonalDrawing
 import Util.IncidenceGeometry.PolygonalArcCarrierCompact
 
-open Classical
 noncomputable section
 
 lemma PlaneDrawingSelectedEdgeAwayFromEndpointCompact {V : Type*} [Fintype V]
-    (G : SimpleGraph V) [Fintype G.edgeSet] [DecidableRel G.Adj]
+    (G : SimpleGraph V) [Fintype G.edgeSet]
     (D : OrdinaryPolygonalDrawing G) (hD : D.crossingSet.card = 0)
     (e : G.edgeFinset) (γ : PolygonalArc) :
     D.edgeArc e = γ →
@@ -17,6 +16,7 @@ lemma PlaneDrawingSelectedEdgeAwayFromEndpointCompact {V : Type*} [Fintype V]
           OrdinaryDrawingImageWithoutEdge G D e \
             (Metric.ball γ.source r₀ ∪ Metric.ball γ.target r₁)
         IsCompact A ∧ Disjoint A γ.carrier := by
+  classical
   intro hγ r₀ r₁ hr₀ hr₁
   have hWithoutCompact : IsCompact (OrdinaryDrawingImageWithoutEdge G D e) := by
     rw [OrdinaryDrawingImageWithoutEdge]

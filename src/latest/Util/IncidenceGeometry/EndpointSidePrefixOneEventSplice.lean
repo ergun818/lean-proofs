@@ -3,7 +3,6 @@ import Util.IncidenceGeometry.FinitePolygonalSet
 import Util.IncidenceGeometry.PolygonalArcOrderedBallCutDataExists
 import Util.IncidenceGeometry.PolygonalArcOrderedThreePieceSplice
 
-open Classical
 noncomputable section
 
 lemma EndpointSidePrefixOneEventSplice
@@ -111,6 +110,7 @@ lemma EndpointSidePrefixOneEventSplice
                         s.2 - s.1 =
                           c • (bridge.vertices[j + 1] -
                             bridge.vertices[j])) := by
+  classical
   intro hSelectedOpen hQcarrier hQinterior hQForbidden
     hSelectedForbidden hKcarrier hKpoints hSelectedBad hQsourceControl
     hQtargetControl hfirst hTerminalControl hTerminalFinite hBallControl

@@ -2,7 +2,6 @@ import Util.IncidenceGeometry.JordanLocalSideData
 import Util.IncidenceGeometry.ComplementComponent
 import Util.IncidenceGeometry.SimpleClosedPolygonalCurveComplementOpen
 
-open Classical
 noncomputable section
 
 lemma JordanComponentFrontiers
@@ -16,6 +15,7 @@ lemma JordanComponentFrontiers
             (∀ p : EuclideanSpace ℝ (Fin 2),
               p ∈ J.carrierᶜ → p ∈ inside ∨ p ∈ outside) →
               frontier inside = J.carrier ∧ frontier outside = J.carrier := by
+  classical
   rintro ⟨hinside_ne, hinside_sub, hinside_conn, hinside_max⟩
     ⟨houtside_ne, houtside_sub, houtside_conn, houtside_max⟩
     hne horient hcover

@@ -1,9 +1,9 @@
 import Util.IncidenceGeometry.GeometricArcDrawing
 import Util.IncidenceGeometry.CrossingNumber
 
-open Classical
 noncomputable section
 
+open Classical in
 lemma PolygonalReplacementCrossingNumberFromLocalSum {V : Type*} [Fintype V]
     (G : SimpleGraph V) [Fintype G.edgeSet] (D : GeometricArcDrawing G)
     (D' : OrdinaryPolygonalDrawing G)
@@ -14,6 +14,7 @@ lemma PolygonalReplacementCrossingNumberFromLocalSum {V : Type*} [Fintype V]
             (fun e => p ∈ D.edgeRelativeInterior e)).card) 2)) :
     D'.crossingSet.card ≤ D.localPairCount ∧
       CrossingNumber G ≤ D.localPairCount := by
+  classical
   have hcard : D'.crossingSet.card ≤ D.localPairCount := by
     simpa [D.localPairCount_eq] using hsum
   refine ⟨hcard, ?_⟩

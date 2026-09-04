@@ -1,9 +1,9 @@
 import Util.IncidenceGeometry.PolygonalArc
 
-open Classical
 noncomputable section
 
 lemma PolygonalArcCarrierCompact (γ : PolygonalArc) : IsCompact γ.carrier := by
+  classical
   rw [γ.carrier_eq]
   let segSet : ℕ → Set (EuclideanSpace ℝ (Fin 2)) := fun i =>
     if h : i + 1 < γ.vertices.length then
@@ -29,7 +29,7 @@ lemma PolygonalArcCarrierCompact (γ : PolygonalArc) : IsCompact γ.carrier := b
   rw [h_eq]
   exact Finset.isCompact_biUnion (Finset.range γ.vertices.length) (fun i _ => by
     by_cases hi : i + 1 < γ.vertices.length
-    · simp [segSet, hi]
+    · simp only [hi, ↓reduceDIte, segSet]
       rw [segment_eq_image]
       exact isCompact_Icc.image (by fun_prop)
     · simp [segSet, hi])

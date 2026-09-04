@@ -1,11 +1,10 @@
 import Mathlib.Combinatorics.SimpleGraph.DegreeSum
 import Util.IncidenceGeometry.Basic
 
-open Classical
 noncomputable section
 
-lemma DartSuccessorFromLocalClockwiseNext {V : Type*} [Fintype V]
-    (G : SimpleGraph V) [DecidableRel G.Adj]
+lemma DartSuccessorFromLocalClockwiseNext {V : Type*} [Finite V]
+    (G : SimpleGraph V)
     (clockwiseNext : ∀ v : V, Equiv.Perm {d : G.Dart // d.toProd.1 = v})
     (clockwiseNext_eq_self_iff_isolated :
       ∀ (v : V) (d : {d : G.Dart // d.toProd.1 = v}),
@@ -20,6 +19,7 @@ lemma DartSuccessorFromLocalClockwiseNext {V : Type*} [Fintype V]
           (∀ e : {e : G.Dart // e.toProd.1 = d.toProd.2}, e.1 = d.symm) →
             successor d = d.symm) := by
   classical
+  let := Fintype.ofFinite V
   let symmEquiv : Equiv.Perm G.Dart :=
     { toFun := fun d => d.symm
       invFun := fun d => d.symm

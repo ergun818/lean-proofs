@@ -1,7 +1,6 @@
 import Mathlib.Tactic
 import Util.IncidenceGeometry.Basic
 
-open Classical
 noncomputable section
 
 lemma BigonRerouteCrossingCountBound
@@ -15,6 +14,7 @@ lemma BigonRerouteCrossingCountBound
             newCross ⊆ (oldCross.erase x \ deletedCross) ∪ createdCross →
               newCross.card + deletedCross.card + 1 ≤
                 oldCross.card + chargeCross.card := by
+  classical
   intro hxold hxdel hdel_sub hcreated hnew_sub
   have hnew_card :
       newCross.card ≤ ((oldCross.erase x \ deletedCross) ∪ createdCross).card :=

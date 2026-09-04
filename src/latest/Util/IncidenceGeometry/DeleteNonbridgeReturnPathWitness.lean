@@ -1,15 +1,15 @@
 import Util.IncidenceGeometry.Basic
 import Mathlib.Combinatorics.SimpleGraph.Acyclic
 
-open Classical
 noncomputable section
 
-lemma DeleteNonbridgeReturnPathWitness {V : Type*} [Fintype V] (G : SimpleGraph V)
-    [Fintype G.edgeSet] [DecidableRel G.Adj] (e : G.edgeFinset)
+lemma DeleteNonbridgeReturnPathWitness {V : Type*} [Finite V] (G : SimpleGraph V)
+    [Fintype G.edgeSet] (e : G.edgeFinset)
     (he : ¬ G.IsBridge e.1) :
     ∃ d : G.Dart, d.edge = e.1 ∧
       ∃ p : (G.deleteEdges {s(d.snd, d.fst)}).Walk d.snd d.fst, p.IsPath := by
   classical
+  let := Fintype.ofFinite V
   rcases e with ⟨edge, hedge⟩
   revert hedge he
   refine Sym2.inductionOn edge ?_

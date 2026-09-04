@@ -1,7 +1,6 @@
 import Util.IncidenceGeometry.SingleVertexPolygonalScreening
 import Util.IncidenceGeometry.FinalVertexPolygonalScreening
 
-open Classical
 noncomputable section
 
 lemma FiniteAnchorListPolygonalScreening
@@ -37,6 +36,7 @@ lemma FiniteAnchorListPolygonalScreening
                                       p ∈ openSegment ℝ s.1 s.2 →
                                         ¬ ∃ c : ℝ,
                                           s.2 - s.1 = c • (xs[i + 1] - xs[i])) := by
+  classical
   revert a target ρ
   induction anchors with
   | nil =>

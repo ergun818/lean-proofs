@@ -1,9 +1,7 @@
 import Mathlib.Tactic
 import Util.IncidenceGeometry.PolygonalArc
 
-open Classical
 noncomputable section
-
 
 lemma PolygonalArcRetainedOpenSubsegmentSingleLift
     (Q R : PolygonalArc)
@@ -25,6 +23,7 @@ lemma PolygonalArcRetainedOpenSubsegmentSingleLift
         ∃ c : ℝ, c ≠ 0 ∧
           R.vertices[j + 1] - R.vertices[j] =
             c • (Q.vertices[i + 1] - Q.vertices[i]) := by
+  classical
   have retained_avoids_vertices :
       ∀ z, z ∈ openSegment ℝ a b → z ∉ R.vertices := by
     intro z hzOld hzVertex

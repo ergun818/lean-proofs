@@ -2,11 +2,10 @@ import Mathlib.Tactic
 import Mathlib.Algebra.Group.Fin.Basic
 import Util.IncidenceGeometry.Basic
 
-open Classical
 open scoped Fin.NatCast
 noncomputable section
 
-lemma FiniteCyclicAngleSuccessor {ι : Type*} [Fintype ι] [Nonempty ι]
+lemma FiniteCyclicAngleSuccessor {ι : Type*} [Finite ι] [Nonempty ι]
     [DecidableEq ι]
     (θ : ι → ℝ)
     (hθ_mem : ∀ i : ι, 0 ≤ θ i ∧ θ i < 2 * Real.pi)
@@ -49,6 +48,8 @@ lemma FiniteCyclicAngleSuccessor {ι : Type*} [Fintype ι] [Nonempty ι]
                  else if α < θ i then θ i - α
                  else θ i - α + 2 * Real.pi) <
                   clockwiseTurn i (clockwiseNext i)) := by
+  classical
+  let := Fintype.ofFinite ι
   let n := Fintype.card ι
   have hnpos : 0 < n := Fintype.card_pos_iff.mpr inferInstance
   have : NeZero n := ⟨Nat.ne_of_gt hnpos⟩

@@ -13,13 +13,13 @@ import Util.IncidenceGeometry.ThreeCoordinateInsideToOutsideSideCountOdd
 import Util.IncidenceGeometry.ThreeCoordinateOutsideToOutsideSideCountEven
 import Util.IncidenceGeometry.ThreeCoordinateSideEventNonconstantOfFinite
 
-open Classical
 noncomputable section
 
+open Classical in
 lemma TriangleSegmentBoundaryParityToggle
     (x y z a b : EuclideanSpace ℝ (Fin 2))
     (hxy : x ≠ y)
-    (hza : z ≠ a) (hab : a ≠ b) (hbz : b ≠ z)
+    (hza : z ≠ a) (_hab : a ≠ b) (_hbz : b ≠ z)
     (hncol : ¬ ∃ c : ℝ, b - a = c • (z - a))
     (hxOff : x ∉ segment ℝ z a ∧ x ∉ segment ℝ a b ∧ x ∉ segment ℝ b z)
     (hyOff : y ∉ segment ℝ z a ∧ y ∉ segment ℝ a b ∧ y ∉ segment ℝ b z)
@@ -35,17 +35,17 @@ lemma TriangleSegmentBoundaryParityToggle
     (hNoOverlapBZ :
       ¬ ∃ u v : EuclideanSpace ℝ (Fin 2),
         u ≠ v ∧ segment ℝ u v ⊆ segment ℝ x y ∩ segment ℝ b z)
-    (hTransZA :
+    (_hTransZA :
       ∀ w : EuclideanSpace ℝ (Fin 2),
         w ∈ openSegment ℝ x y →
           w ∈ openSegment ℝ z a →
             ¬ ∃ c : ℝ, a - z = c • (y - x))
-    (hTransAB :
+    (_hTransAB :
       ∀ w : EuclideanSpace ℝ (Fin 2),
         w ∈ openSegment ℝ x y →
           w ∈ openSegment ℝ a b →
             ¬ ∃ c : ℝ, b - a = c • (y - x))
-    (hTransBZ :
+    (_hTransBZ :
       ∀ w : EuclideanSpace ℝ (Fin 2),
         w ∈ openSegment ℝ x y →
           w ∈ openSegment ℝ b z →
@@ -62,6 +62,7 @@ lemma TriangleSegmentBoundaryParityToggle
           (y ∈
             convexHull ℝ ({z, a, b} : Set (EuclideanSpace ℝ (Fin 2))) \
               (segment ℝ z a ∪ segment ℝ a b ∪ segment ℝ b z)) := by
+  classical
   have hparam := TriangleSegmentParametrizationInjective x y hxy
   have hZA := TriangleSegmentNoOverlapIntersectionSubsingleton x y z a hNoOverlapZA
   have hAB := TriangleSegmentNoOverlapIntersectionSubsingleton x y a b hNoOverlapAB
@@ -416,7 +417,7 @@ lemma TriangleSegmentBoundaryParityToggle
         have hux := hxIn i
         have hvy := hyIn i
         nlinarith
-      exact False.elim (lt_irrefl (0 : ℝ) (by simpa [ht.2.1] using hpos))
+      exact False.elim (lt_irrefl (0 : ℝ) (by simp [ht.2.1] at hpos))
     · intro ht
       cases ht
   have hNoDouble_rev :
@@ -428,9 +429,9 @@ lemma TriangleSegmentBoundaryParityToggle
     have ht' : 1 - t ∈ Set.Ioo (0 : ℝ) 1 := by
       exact ⟨by linarith [ht.2], by linarith [ht.1]⟩
     have hz_i : (1 - (1 - t)) * u i + (1 - t) * v i = 0 := by
-      convert hzero.1 using 1 <;> ring
+      convert hzero.1 using 1 ; ring
     have hz_j : (1 - (1 - t)) * u j + (1 - t) * v j = 0 := by
-      convert hzero.2 using 1 <;> ring
+      convert hzero.2 using 1 ; ring
     exact hNoDouble (1 - t) ht' i j hij ⟨hz_i, hz_j⟩
   have hSide_reverse_image :
       ∀ i : Fin 3, Side v u i = (fun t : ℝ => 1 - t) '' Side u v i := by
@@ -441,15 +442,15 @@ lemma TriangleSegmentBoundaryParityToggle
       refine ⟨1 - s, ?_, by ring⟩
       dsimp [Side] at hs ⊢
       refine ⟨⟨by linarith [hs.1.1, hs.1.2], by linarith [hs.1.1, hs.1.2]⟩, ?_, ?_⟩
-      · convert hs.2.1 using 1 <;> ring
+      · convert hs.2.1 using 1 ; ring
       · intro j hji
-        convert hs.2.2 j hji using 1 <;> ring
+        convert hs.2.2 j hji using 1 ; ring
     · rintro ⟨t, ht, rfl⟩
       dsimp [Side] at ht ⊢
       refine ⟨⟨by linarith [ht.1.1, ht.1.2], by linarith [ht.1.1, ht.1.2]⟩, ?_, ?_⟩
-      · convert ht.2.1 using 1 <;> ring
+      · convert ht.2.1 using 1 ; ring
       · intro j hji
-        convert ht.2.2 j hji using 1 <;> ring
+        convert ht.2.2 j hji using 1 ; ring
   have hfiniteSide_rev : ∀ i : Fin 3, (Side v u i).Finite := by
     intro i
     rw [hSide_reverse_image i]
@@ -468,18 +469,18 @@ lemma TriangleSegmentBoundaryParityToggle
     · intro t ht
       dsimp [Side] at ht ⊢
       refine ⟨⟨by linarith [ht.1.1, ht.1.2], by linarith [ht.1.1, ht.1.2]⟩, ?_, ?_⟩
-      · convert ht.2.1 using 1 <;> ring
+      · convert ht.2.1 using 1 ; ring
       · intro j hji
-        convert ht.2.2 j hji using 1 <;> ring
+        convert ht.2.2 j hji using 1 ; ring
     · intro a b ha hb hab
       linarith
     · intro b hb
       refine ⟨1 - b, ?_, ?_⟩
       · dsimp [Side] at hb ⊢
         refine ⟨⟨by linarith [hb.1.1, hb.1.2], by linarith [hb.1.1, hb.1.2]⟩, ?_, ?_⟩
-        · convert hb.2.1 using 1 <;> ring
+        · convert hb.2.1 using 1 ; ring
         · intro j hji
-          convert hb.2.2 j hji using 1 <;> ring
+          convert hb.2.2 j hji using 1 ; ring
       · ring
   have hmain :
       Odd (Set.ncard (Side u v 2) + Set.ncard (Side u v 0) +

@@ -3,7 +3,6 @@ import Util.IncidenceGeometry.ArcCrossingLocalSideApproaches
 import Util.IncidenceGeometry.FinitePolygonalSet
 import Util.IncidenceGeometry.PolygonalPathInGeneralPosition
 
-open Classical
 noncomputable section
 
 lemma ArcCrossingEliminationInCollar
@@ -28,6 +27,7 @@ lemma ArcCrossingEliminationInCollar
                           α'.source = α.source ∧
                             α'.target = α.target ∧
                               α'.carrier ⊆ (K ∪ γ.carrier)ᶜ := by
+  classical
   intro hK hΓ hvertices hαK hαsource hαtarget hγsource hγtarget hgp hpendant
   have hXfinite : Set.Finite (α.carrier ∩ γ.carrier) := by
     simpa [hΓ] using hgp.2.2.2.2

@@ -4,7 +4,6 @@ import Util.IncidenceGeometry.GeometricArcDrawing
 import Util.IncidenceGeometry.PointLineConsecutivePairGraphDataExists
 import Util.IncidenceGeometry.PointLineConsecutivePairStraightDrawing
 
-open Classical
 noncomputable section
 
 lemma PointLineConsecutivePairDrawing
@@ -15,6 +14,7 @@ lemma PointLineConsecutivePairDrawing
         ell ≤ L.card ∧
           LineIncidences P L = G.edgeFinset.card + ell ∧
             D.localPairCount ≤ ell ^ 2 := by
+  classical
   obtain ⟨A⟩ := PointLineConsecutivePairGraphDataExists P L
   obtain ⟨D, hD⟩ := PointLineConsecutivePairStraightDrawing A
   exact ⟨A.graph, inferInstance, D, A.retainedLines.card,

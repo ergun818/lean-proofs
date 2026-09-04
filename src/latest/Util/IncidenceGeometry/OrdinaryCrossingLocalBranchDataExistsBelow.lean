@@ -4,7 +4,6 @@ import Util.IncidenceGeometry.StraightSegmentEndpointSphereBranch
 import Util.IncidenceGeometry.StraightSegmentInteriorSphereBranch
 import Mathlib.Tactic
 
-open Classical
 noncomputable section
 
 lemma OrdinaryCrossingLocalBranchDataExistsBelow
@@ -13,6 +12,7 @@ lemma OrdinaryCrossingLocalBranchDataExistsBelow
     ∃ epsilon : ℝ, 0 < epsilon ∧
       ∀ radius : ℝ, 0 < radius → radius < epsilon →
         Nonempty (OrdinaryCrossingLocalBranchData gamma p radius) := by
+  classical
   let E := EuclideanSpace ℝ (Fin 2)
   have local_carrier :
       ∀ (beforeIndex afterIndex : ℕ)
@@ -39,7 +39,8 @@ lemma OrdinaryCrossingLocalBranchDataExistsBelow
         split_ifs
         · exact isClosed_empty
         · rw [← convexHull_pair]
-          exact (by simp : ({gamma.vertices[j.1], gamma.vertices[j.1 + 1]} : Set E).Finite).isClosed_convexHull ℝ
+          exact (by simp : ({gamma.vertices[j.1], gamma.vertices[j.1 + 1]} : Set
+            E).Finite).isClosed_convexHull ℝ
     have hp_not_forbidden : p ∉ forbidden := by
       intro hp_forbidden
       rcases Set.mem_iUnion.mp hp_forbidden with ⟨j, hpj⟩

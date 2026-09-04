@@ -4,7 +4,6 @@ import Mathlib.Analysis.Normed.Affine.AddTorsor
 import Util.IncidenceGeometry.StraightSegmentPolygonalArc
 import Util.IncidenceGeometry.PolygonalReplacementTubeChainData
 
-open Classical
 noncomputable section
 
 lemma PolygonalReplacementVertexDiskSpokes {V : Type*} [Fintype V]

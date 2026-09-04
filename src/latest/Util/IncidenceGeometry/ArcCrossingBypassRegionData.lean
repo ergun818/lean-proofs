@@ -34,7 +34,6 @@ import Util.IncidenceGeometry.PolygonallyPathConnected
 import Util.IncidenceGeometry.PolygonalSideStrips
 import Util.IncidenceGeometry.PositiveSeparation
 
-open Classical
 noncomputable section
 
 lemma ArcCrossingBypassRegionData
@@ -103,6 +102,7 @@ lemma ArcCrossingBypassRegionData
                                                 x ∈ γ.carrier ∧
                                                   y ∈ segment ℝ (cutBefore i hi x)
                                                     (cutAfter i hi x)) := by
+  classical
   intro hK hΓcarrier hγvertices hαK hαsource hαtarget hγsourceα hγtargetα
     hgp hattach hXnonempty
   obtain ⟨δ, hδcarrier, hδrelativeInterior, hδvertices, hδverticesAvoid,
@@ -189,14 +189,14 @@ lemma ArcCrossingBypassRegionData
         omega
       refine ⟨0, hfirst, ?_⟩
       have hτ0 : τ.vertices[0] = c := by
-        simpa [hτvertices]
+        simp [hτvertices]
       have hτ1 : τ.vertices[1] = v := by
         have hgetτ : τ.vertices[1]? = some τ.vertices[1] :=
           List.getElem?_eq_getElem (by simpa using hfirst)
         have hget : τ.vertices[1]? = some v := by
           rw [hτvertices]
           dsimp [v]
-          simp [List.getElem?_cons_succ, List.getElem?_drop]
+          simp [List.getElem?_drop]
         exact Option.some.inj (hgetτ.symm.trans hget)
       simpa [hτ0, hτ1] using hz
     rw [δ.carrier_eq] at hpδ
@@ -289,8 +289,7 @@ lemma ArcCrossingBypassRegionData
             have hidx_lt : j₀ + 1 + q < δ.vertices.length := by
               omega
             rw [List.getElem?_drop]
-            simpa [hidx] using
-              (List.getElem?_eq_getElem (l := δ.vertices) hidx_lt)
+            simp [hidx]
           have hcons :
               (c :: δ.vertices.drop (j₀ + 1))[q + 1]? =
                 (δ.vertices.drop (j₀ + 1))[q]? := by
@@ -309,8 +308,7 @@ lemma ArcCrossingBypassRegionData
             have hidx_lt : j₀ + 1 + n < δ.vertices.length := by
               omega
             rw [List.getElem?_drop]
-            simpa [hidx] using
-              (List.getElem?_eq_getElem (l := δ.vertices) hidx_lt)
+            simp [hidx]
           have hcons :
               (c :: δ.vertices.drop (j₀ + 1))[n + 1]? =
                 (δ.vertices.drop (j₀ + 1))[n]? := by

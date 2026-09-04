@@ -1,7 +1,6 @@
 import Util.IncidenceGeometry.PlanarRot90CoefficientUniqueness
 import Util.IncidenceGeometry.PlanarRot90Decomposition
 
-open Classical
 noncomputable section
 
 lemma PlanarRot90ConeAvoidsRay {d v : EuclideanSpace ℝ (Fin 2)}
@@ -9,6 +8,7 @@ lemma PlanarRot90ConeAvoidsRay {d v : EuclideanSpace ℝ (Fin 2)}
     ∃ κ : ℝ, 0 < κ ∧
       ∀ c t s : ℝ, 0 ≤ c → 0 < t → s ≠ 0 → |s| < κ * t →
         c • v ≠ t • d + s • PlanarRot90 d := by
+  classical
   let A : ℝ := inner ℝ v d / (‖d‖ ^ 2)
   let B : ℝ := inner ℝ v (PlanarRot90 d) / (‖d‖ ^ 2)
   by_cases hB : B = 0

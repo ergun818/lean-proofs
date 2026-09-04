@@ -1,6 +1,5 @@
 import Util.IncidenceGeometry.FinitePolygonalSet
 
-open Classical
 noncomputable section
 
 lemma BigonRerouteFinitePresentationLocalBranch
@@ -13,6 +12,7 @@ lemma BigonRerouteFinitePresentationLocalBranch
     ∃ r : ℝ, 0 < r ∧
       Metric.ball z r ∩ K.carrier =
         Metric.ball z r ∩ segment ℝ s.1 s.2 := by
+  classical
   let E := EuclideanSpace ℝ (Fin 2)
   let forbidden : Set E :=
     (K.points : Set E) ∪

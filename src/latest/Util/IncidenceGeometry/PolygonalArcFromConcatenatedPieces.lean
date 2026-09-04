@@ -1,6 +1,5 @@
 import Util.IncidenceGeometry.PolygonalArc
 
-open Classical
 noncomputable section
 
 lemma PolygonalArcFromConcatenatedPieces
@@ -77,6 +76,7 @@ lemma PolygonalArcFromConcatenatedPieces
                               Γ.vertices[i + 1] = piece.vertices[m + 1]) ∨
                             (Γ.vertices[i] = piece.vertices[m + 1] ∧
                               Γ.vertices[i + 1] = piece.vertices[m]))) := by
+  classical
   let Γ : PolygonalArc :=
     { vertices := vertices
       length_ge_two := length_ge_two

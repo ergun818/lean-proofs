@@ -1,11 +1,10 @@
 import Util.IncidenceGeometry.Basic
 import Mathlib.Tactic
 
-open Classical
 noncomputable section
 
 lemma FinitePolygonalSetCyclicStreamPredecessorUnlistedInBlock
-    {Point PieceIndex : Type} [DecidableEq PieceIndex]
+    {Point PieceIndex : Type}
     (points : Set Point)
     (successor : Equiv.Perm {p : Point // p ∈ points})
     (pieceSource : PieceIndex → Point)
@@ -140,7 +139,7 @@ lemma FinitePolygonalSetCyclicStreamPredecessorUnlistedInBlock
     | cons a l =>
         simp [hs] at hhead
         subst a
-        simp [hs]
+        simp
   have predecessor_mem_cons_block :
       ∀ {pre tail suffix : List PieceIndex} {head i j : PieceIndex},
         pieceStream = pre ++ (head :: tail) ++ suffix →
@@ -208,7 +207,7 @@ lemma FinitePolygonalSetCyclicStreamPredecessorUnlistedInBlock
       have hj' : j = head ∨ j ∈ middle := by
         simpa [horder] using hj
       rcases hj' with rfl | hjmid
-      · exact False.elim (hsource_unlisted (by simpa [hhead_source] using q.2))
+      · exact False.elim (hsource_unlisted (by simp [hhead_source]))
       · exact hjmid
     have hi_block :
         i ∈ head :: middle :=
@@ -225,7 +224,7 @@ lemma FinitePolygonalSetCyclicStreamPredecessorUnlistedInBlock
       have hj' : j = head ∨ j ∈ suffix ++ pre := by
         simpa [horder] using hj
       rcases hj' with rfl | hjtail
-      · exact False.elim (hsource_unlisted (by simpa [hhead_source] using q.2))
+      · exact False.elim (hsource_unlisted (by simp [hhead_source]))
       · exact hjtail
     rcases (List.mem_append.mp hj_tail) with hj_suffix | hj_pre
     · have hi_block :
@@ -240,11 +239,9 @@ lemma FinitePolygonalSetCyclicStreamPredecessorUnlistedInBlock
       have hi_block_or : i = head ∨ i ∈ suffix := by
         simpa using hi_block
       rcases hi_block_or with hi_eq | hi_suffix
-      ·
-          rw [← hi_eq] at horder
-          simpa [horder]
-      ·
-          simp [horder, hi_suffix]
+      · rw [← hi_eq] at horder
+        simp [horder]
+      · simp [horder, hi_suffix]
     · rcases hadj with hstep | hcyclic
       · rcases hstep with ⟨n, hn, hi_get, hj_get⟩
         have hi_mem_stream : i ∈ pieceStream :=
@@ -279,7 +276,7 @@ lemma FinitePolygonalSetCyclicStreamPredecessorUnlistedInBlock
           · exact hi_mem_stream
           · simp
           · omega
-        simpa [horder, hi_in_pre]
+        simp [horder, hi_in_pre]
       · have hlast_mem : i ∈ head :: suffix := by
           have hstream_last :
               pieceStream =
@@ -293,15 +290,13 @@ lemma FinitePolygonalSetCyclicStreamPredecessorUnlistedInBlock
               simp
             simpa [hlast_piece] using hcyclic.1
           have hi_mem_option : i ∈ (head :: suffix).getLast? := by
-            simpa [hlast_some]
+            simp [hlast_some]
           rcases List.mem_getLast?_eq_getLast hi_mem_option with ⟨h, hi_eq⟩
           rw [hi_eq]
           exact List.getLast_mem h
         have hlast_or : i = head ∨ i ∈ suffix := by
           simpa using hlast_mem
         rcases hlast_or with hi_eq | hi_suffix
-        ·
-            rw [← hi_eq] at horder
-            simpa [horder]
-        ·
-            simp [horder, hi_suffix]
+        · rw [← hi_eq] at horder
+          simp [horder]
+        · simp [horder, hi_suffix]

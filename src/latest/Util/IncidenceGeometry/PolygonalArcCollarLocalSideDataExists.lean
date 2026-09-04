@@ -4,9 +4,7 @@ import Util.IncidenceGeometry.PolygonalArcCollarLocalTopologyDataExists
 import Util.IncidenceGeometry.PolygonalArcCollarSeparatedTubeDataExists
 import Util.IncidenceGeometry.PolygonalArcCollarVertexLocalPieceDataExists
 
-open Classical
 noncomputable section
-
 
 lemma PolygonalArcCollarLocalSideDataExists (γ : PolygonalArc) {η : ℝ}
     (controlRadii : PolygonalArcCollarControlRadii γ η)
@@ -22,6 +20,7 @@ lemma PolygonalArcCollarLocalSideDataExists (γ : PolygonalArc) {η : ℝ}
         Nonempty
           (PolygonalArcCollarLocalSideData γ controlRadii middleSegments
             forbiddenMargins orientedTubes vertexLocalPieces) := by
+  classical
   rcases PolygonalArcCollarCompatibleOrientedTubeDataExists γ controlRadii
       middleSegments forbiddenMargins with
     ⟨compatibleTubes⟩

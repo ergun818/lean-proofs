@@ -8,15 +8,14 @@ import Util.IncidenceGeometry.PolygonalReplacementOrdinaryDrawingFromAssemblies
 import Util.IncidenceGeometry.CrossingInjectionIntoBranchPairs
 import Util.IncidenceGeometry.PolygonalReplacementCrossingNumberFromLocalSum
 
-open Classical
 noncomputable section
-
 
 lemma PolygonalReplacementForGeometricArcs {V : Type*} [Fintype V]
     (G : SimpleGraph V) [Fintype G.edgeSet] (D : GeometricArcDrawing G) :
     ∃ D' : OrdinaryPolygonalDrawing G,
       D'.crossingSet.card ≤ D.localPairCount ∧
         CrossingNumber G ≤ D.localPairCount := by
+  classical
   obtain ⟨D', hsum⟩ :
       ∃ D' : OrdinaryPolygonalDrawing G,
         D'.crossingSet.card ≤

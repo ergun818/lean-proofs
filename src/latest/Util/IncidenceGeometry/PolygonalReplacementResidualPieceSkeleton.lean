@@ -2,8 +2,6 @@ import Util.IncidenceGeometry.PolygonalReplacementResidualPieceSkeletonData
 import Util.IncidenceGeometry.GeometricArcDrawing
 import Util.IncidenceGeometry.PolygonalReplacementRetainedParameterIntervals
 
-
-open Classical
 noncomputable section
 
 universe u

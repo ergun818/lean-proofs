@@ -6,11 +6,9 @@ import Util.IncidenceGeometry.PolygonalReplacementCircularTargetRetainedHalfspac
 import Util.IncidenceGeometry.PolygonalReplacementCircularEndpointSupportingHalfspace
 import Mathlib.Analysis.InnerProductSpace.Convex
 
-open Classical
 noncomputable section
 
 universe u
-
 
 lemma PolygonalReplacementCircularEndpointChordPair {V : Type u}
     [Fintype V] (G : SimpleGraph V) [Fintype G.edgeSet]

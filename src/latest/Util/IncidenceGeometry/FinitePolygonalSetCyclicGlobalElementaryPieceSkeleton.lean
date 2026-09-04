@@ -1,7 +1,6 @@
 import Util.IncidenceGeometry.FinitePolygonalSetCyclicElementarySegmentOccurrenceFamily
 import Util.IncidenceGeometry.SimpleClosedPolygonalCurveEdgeArcTraversalList
 
-open Classical
 noncomputable section
 
 lemma FinitePolygonalSetCyclicGlobalElementaryPieceSkeleton
@@ -11,146 +10,146 @@ lemma FinitePolygonalSetCyclicGlobalElementaryPieceSkeleton
         (∀ γ : {γ : PolygonalArc // γ ∈ J.edgeArcs}, γ ∈ E) ∧
           0 < E.length ∧
             (∀ n (hn : n + 1 < E.length),
-              J.successor (E[n]) = E[n + 1]) ∧
-              (∀ (hLast : E.length - 1 < E.length) (hFirst : 0 < E.length),
-                J.successor (E[E.length - 1]'hLast) = E[0]'hFirst) ∧
-                ∃ (segmentIndex_lt :
-                  (e : Fin E.length) →
-                    (n : Fin ((E[e.1]'e.2).1.vertices.length - 1)) →
-                      n.1 + 1 < (E[e.1]'e.2).1.vertices.length)
-                  (cutList :
-                    (e : Fin E.length) →
-                      Fin ((E[e.1]'e.2).1.vertices.length - 1) → List ℝ),
-                    (∀ e n, (cutList e n).Nodup) ∧
-                      (∀ e n, (cutList e n).SortedLT) ∧
-                        (∀ e n (t : ℝ), t ∈ cutList e n ↔
-                          t = 0 ∨ t = 1 ∨
-                            (0 ≤ t ∧ t ≤ 1 ∧
-                              AffineMap.lineMap
-                                ((E[e.1]'e.2).1.vertices[n.1]'
-                                  (Nat.lt_of_succ_lt
-                                    (segmentIndex_lt e n)))
-                                ((E[e.1]'e.2).1.vertices[n.1 + 1]'
-                                  (segmentIndex_lt e n)) t ∈ K.points)) ∧
-                          (∀ e n, (0 : ℝ) ∈ cutList e n) ∧
-                            (∀ e n, (1 : ℝ) ∈ cutList e n) ∧
-                              (∀ e n t, t ∈ cutList e n →
-                                0 ≤ t ∧ t ≤ 1) ∧
-                                (∀ e n k
-                                  (hk : k + 1 < (cutList e n).length),
-                                  (cutList e n)[k] <
-                                    (cutList e n)[k + 1]) ∧
-                                  ∃ (localPieceIndex :
-                                    (e : Fin E.length) →
-                                      Fin
-                                        ((E[e.1]'e.2).1.vertices.length - 1) →
-                                        Type)
-                                    (_localPieceFintype :
-                                      (e : Fin E.length) →
-                                        (n : Fin
-                                          ((E[e.1]'e.2).1.vertices.length - 1)) →
-                                          Fintype (localPieceIndex e n)),
-                                    let PieceIndex : Type :=
-                                      Sigma (fun e : Fin E.length =>
-                                        Sigma (fun n :
-                                          Fin
-                                            ((E[e.1]'e.2).1.vertices.length -
-                                              1) =>
-                                            localPieceIndex e n))
-                                    ∃ (_pieceIndexFintype : Fintype PieceIndex)
-                                      (pieceNumber : PieceIndex → ℕ)
-                                      (pieceNumber_lt :
-                                        ∀ i,
-                                          pieceNumber i + 1 <
-                                            (cutList i.1 i.2.1).length)
-                                      (pieceEdgePosition :
-                                        PieceIndex → Fin E.length)
-                                      (pieceArc :
-                                        PieceIndex →
-                                          {γ : PolygonalArc // γ ∈ J.edgeArcs})
-                                      (pieceSegmentIndex :
-                                        (i : PieceIndex) →
-                                          {n : ℕ // n + 1 <
-                                            (E[i.1.1]'i.1.2).1.vertices.length})
-                                      (pieceSourceParam :
-                                        PieceIndex → Set.Icc (0 : ℝ) 1)
-                                      (pieceTargetParam :
-                                        PieceIndex → Set.Icc (0 : ℝ) 1)
-                                      (pieceSource :
-                                        PieceIndex → EuclideanSpace ℝ (Fin 2))
-                                      (pieceTarget :
-                                        PieceIndex → EuclideanSpace ℝ (Fin 2))
-                                      (pieceCarrier :
-                                        PieceIndex →
-                                          Set (EuclideanSpace ℝ (Fin 2))),
-                                        (∀ i, pieceEdgePosition i = i.1) ∧
-                                          (∀ i,
-                                            pieceArc i =
-                                              E[(pieceEdgePosition i).1]'
-                                                (pieceEdgePosition i).2) ∧
-                                            (∀ i,
-                                              (pieceSegmentIndex i).1 =
-                                                i.2.1.1) ∧
-                                              (∀ e n k
-                                                  (_hk : k + 1 <
-                                                    (cutList e n).length),
-                                                  ∃ a : localPieceIndex e n,
-                                                    pieceNumber
-                                                      ⟨e, ⟨n, a⟩⟩ = k) ∧
-                                                  (∀ e n
-                                                    (a b : localPieceIndex e n),
-                                                    pieceNumber
-                                                        ⟨e, ⟨n, a⟩⟩ =
-                                                      pieceNumber
-                                                        ⟨e, ⟨n, b⟩⟩ →
-                                                      a = b) ∧
-                                                    (∀ i,
-                                                      pieceSourceParam i <
-                                                        pieceTargetParam i) ∧
-                                                      (∀ i,
-                                                          (pieceSourceParam i).1 =
-                                                          (cutList i.1 i.2.1)[pieceNumber i]'
-                                                            (Nat.lt_of_succ_lt
-                                                              (pieceNumber_lt i))) ∧
-                                                        (∀ i,
-                                                          (pieceTargetParam i).1 =
-                                                            (cutList i.1 i.2.1)[pieceNumber i + 1]'
-                                                              (pieceNumber_lt i)) ∧
-                                                          (∀ i,
-                                                            pieceSource i =
-                                                              AffineMap.lineMap
-                                                                ((E[i.1.1]'i.1.2).1.vertices[i.2.1.1]'
-                                                                  (Nat.lt_of_succ_lt
-                                                                    (segmentIndex_lt
-                                                                      i.1 i.2.1)))
-                                                                ((E[i.1.1]'i.1.2).1.vertices[i.2.1.1 + 1]'
-                                                                  (segmentIndex_lt
-                                                                    i.1 i.2.1))
-                                                                (pieceSourceParam i).1) ∧
-                                                            (∀ i,
-                                                              pieceTarget i =
-                                                                AffineMap.lineMap
-                                                                  ((E[i.1.1]'i.1.2).1.vertices[i.2.1.1]'
-                                                                    (Nat.lt_of_succ_lt
-                                                                      (segmentIndex_lt
-                                                                        i.1 i.2.1)))
-                                                                  ((E[i.1.1]'i.1.2).1.vertices[i.2.1.1 + 1]'
-                                                                    (segmentIndex_lt
-                                                                      i.1 i.2.1))
-                                                                  (pieceTargetParam i).1) ∧
-                                                              (∀ i,
-                                                                pieceCarrier i =
-                                                                  segment ℝ
-                                                                    (pieceSource i)
-                                                                    (pieceTarget i)) ∧
-                                                                (∀ i
-                                                                  (p :
-                                                                    EuclideanSpace
-                                                                      ℝ (Fin 2)),
-                                                                  p ∈ K.points →
-                                                                    p ∉ openSegment ℝ
-                                                                      (pieceSource i)
-                                                                      (pieceTarget i)) := by
+            J.successor (E[n]) = E[n + 1]) ∧
+            (∀ (hLast : E.length - 1 < E.length) (hFirst : 0 < E.length),
+            J.successor (E[E.length - 1]'hLast) = E[0]'hFirst) ∧
+            ∃ (segmentIndex_lt :
+            (e : Fin E.length) →
+            (n : Fin ((E[e.1]'e.2).1.vertices.length - 1)) →
+            n.1 + 1 < (E[e.1]'e.2).1.vertices.length)
+            (cutList :
+            (e : Fin E.length) →
+            Fin ((E[e.1]'e.2).1.vertices.length - 1) → List ℝ),
+            (∀ e n, (cutList e n).Nodup) ∧
+            (∀ e n, (cutList e n).SortedLT) ∧
+            (∀ e n (t : ℝ), t ∈ cutList e n ↔
+            t = 0 ∨ t = 1 ∨
+            (0 ≤ t ∧ t ≤ 1 ∧
+            AffineMap.lineMap
+            ((E[e.1]'e.2).1.vertices[n.1]'
+            (Nat.lt_of_succ_lt
+            (segmentIndex_lt e n)))
+            ((E[e.1]'e.2).1.vertices[n.1 + 1]'
+            (segmentIndex_lt e n)) t ∈ K.points)) ∧
+            (∀ e n, (0 : ℝ) ∈ cutList e n) ∧
+            (∀ e n, (1 : ℝ) ∈ cutList e n) ∧
+            (∀ e n t, t ∈ cutList e n →
+            0 ≤ t ∧ t ≤ 1) ∧
+            (∀ e n k
+            (hk : k + 1 < (cutList e n).length),
+            (cutList e n)[k] <
+            (cutList e n)[k + 1]) ∧
+            ∃ (localPieceIndex :
+            (e : Fin E.length) →
+            Fin
+            ((E[e.1]'e.2).1.vertices.length - 1) →
+            Type)
+            (_localPieceFintype :
+            (e : Fin E.length) →
+            (n : Fin
+            ((E[e.1]'e.2).1.vertices.length - 1)) →
+            Fintype (localPieceIndex e n)),
+            let PieceIndex : Type :=
+            Sigma (fun e : Fin E.length =>
+            Sigma (fun n :
+            Fin
+            ((E[e.1]'e.2).1.vertices.length -
+            1) =>
+            localPieceIndex e n))
+            ∃ (_pieceIndexFintype : Fintype PieceIndex)
+            (pieceNumber : PieceIndex → ℕ)
+            (pieceNumber_lt :
+            ∀ i,
+            pieceNumber i + 1 <
+            (cutList i.1 i.2.1).length)
+            (pieceEdgePosition :
+            PieceIndex → Fin E.length)
+            (pieceArc :
+            PieceIndex →
+            {γ : PolygonalArc // γ ∈ J.edgeArcs})
+            (pieceSegmentIndex :
+            (i : PieceIndex) →
+            {n : ℕ // n + 1 <
+            (E[i.1.1]'i.1.2).1.vertices.length})
+            (pieceSourceParam :
+            PieceIndex → Set.Icc (0 : ℝ) 1)
+            (pieceTargetParam :
+            PieceIndex → Set.Icc (0 : ℝ) 1)
+            (pieceSource :
+            PieceIndex → EuclideanSpace ℝ (Fin 2))
+            (pieceTarget :
+            PieceIndex → EuclideanSpace ℝ (Fin 2))
+            (pieceCarrier :
+            PieceIndex →
+            Set (EuclideanSpace ℝ (Fin 2))),
+            (∀ i, pieceEdgePosition i = i.1) ∧
+            (∀ i,
+            pieceArc i =
+            E[(pieceEdgePosition i).1]'
+            (pieceEdgePosition i).2) ∧
+            (∀ i,
+            (pieceSegmentIndex i).1 =
+            i.2.1.1) ∧
+            (∀ e n k
+            (_hk : k + 1 <
+            (cutList e n).length),
+            ∃ a : localPieceIndex e n,
+            pieceNumber
+            ⟨e, ⟨n, a⟩⟩ = k) ∧
+            (∀ e n
+            (a b : localPieceIndex e n),
+            pieceNumber
+            ⟨e, ⟨n, a⟩⟩ =
+            pieceNumber
+            ⟨e, ⟨n, b⟩⟩ →
+            a = b) ∧
+            (∀ i,
+            pieceSourceParam i <
+            pieceTargetParam i) ∧
+            (∀ i,
+            (pieceSourceParam i).1 =
+            (cutList i.1 i.2.1)[pieceNumber i]'
+            (Nat.lt_of_succ_lt
+            (pieceNumber_lt i))) ∧
+            (∀ i,
+            (pieceTargetParam i).1 =
+            (cutList i.1 i.2.1)[pieceNumber i + 1]'
+            (pieceNumber_lt i)) ∧
+            (∀ i,
+            pieceSource i =
+            AffineMap.lineMap
+            ((E[i.1.1]'i.1.2).1.vertices[i.2.1.1]'
+            (Nat.lt_of_succ_lt
+            (segmentIndex_lt
+            i.1 i.2.1)))
+            ((E[i.1.1]'i.1.2).1.vertices[i.2.1.1 + 1]'
+            (segmentIndex_lt
+            i.1 i.2.1))
+            (pieceSourceParam i).1) ∧
+            (∀ i,
+            pieceTarget i =
+            AffineMap.lineMap
+            ((E[i.1.1]'i.1.2).1.vertices[i.2.1.1]'
+            (Nat.lt_of_succ_lt
+            (segmentIndex_lt
+            i.1 i.2.1)))
+            ((E[i.1.1]'i.1.2).1.vertices[i.2.1.1 + 1]'
+            (segmentIndex_lt
+            i.1 i.2.1))
+            (pieceTargetParam i).1) ∧
+            (∀ i,
+            pieceCarrier i =
+            segment ℝ
+            (pieceSource i)
+            (pieceTarget i)) ∧
+            (∀ i
+            (p :
+            EuclideanSpace
+            ℝ (Fin 2)),
+            p ∈ K.points →
+            p ∉ openSegment ℝ
+            (pieceSource i)
+            (pieceTarget i)) := by
   classical
   rcases SimpleClosedPolygonalCurveEdgeArcTraversalList J with
     ⟨E, hEnodup, hEall, hEpos, hEsucc, hEwrap⟩

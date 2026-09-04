@@ -1,6 +1,5 @@
 import Util.IncidenceGeometry.FinitePointComplementBaseCase
 
-open Classical
 noncomputable section
 
 lemma FiniteStraightLineComplexComplementComponents

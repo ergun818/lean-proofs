@@ -3,7 +3,6 @@ import Util.IncidenceGeometry.PolygonalReplacementResidualPieceSkeletonParameter
 import Util.IncidenceGeometry.PolygonalReplacementRetainedIntervalVertexDiskAvoidance
 import Util.IncidenceGeometry.PolygonalReplacementRetainedIntervalIntersectionDiskComplement
 
-open Classical
 noncomputable section
 
 universe u

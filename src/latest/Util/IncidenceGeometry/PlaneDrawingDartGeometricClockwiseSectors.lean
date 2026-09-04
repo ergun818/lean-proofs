@@ -15,7 +15,6 @@ import Util.IncidenceGeometry.PolygonalArcInitialEndpointLeftCone
 import Util.IncidenceGeometry.PolygonalArcReverse
 import Util.IncidenceGeometry.PolygonalArcTerminalEndpointLeftCone
 
-open Classical
 noncomputable section
 
 lemma PlaneDrawingDartGeometricClockwiseSectors {V : Type*} [Fintype V]
@@ -172,10 +171,7 @@ lemma PlaneDrawingDartGeometricClockwiseSectors {V : Type*} [Fintype V]
             dsimp [firstDirection, Γ] at *
             rw [hdart]
             abel
-          simpa [Γ, hsource0, hsource_v, hadd] using
-            (rfl :
-              segment ℝ Γ.vertices[0] Γ.vertices[0 + 1] =
-                segment ℝ Γ.vertices[0] Γ.vertices[0 + 1])
+          simp [Γ, hsource0, hsource_v, hadd]
         · rcases horient with ⟨hdart, htarget⟩
           let k : ℕ := Γ.vertices.length - 2
           have hk : k + 1 < Γ.vertices.length := by
@@ -209,8 +205,7 @@ lemma PlaneDrawingDartGeometricClockwiseSectors {V : Type*} [Fintype V]
               have hlen := Γ.length_ge_two
               dsimp [k]
               omega
-            simpa [PolygonalArcReverse, List.length_reverse, hrev_index] using
-              (List.getElem_reverse (l := Γ.vertices) (i := 1))
+            simp [PolygonalArcReverse, hrev_index]
           refine ⟨k, hk, ?_⟩
           have hadd :
               D.vertexPlacement v + firstDirection d = Γ.vertices[k]'hk_lt := by
@@ -221,7 +216,7 @@ lemma PlaneDrawingDartGeometricClockwiseSectors {V : Type*} [Fintype V]
           calc
             segment ℝ (D.vertexPlacement v) (D.vertexPlacement v + firstDirection d)
                 = segment ℝ Γ.vertices[k + 1] Γ.vertices[k] := by
-                    simpa [Γ, htarget_v, htarget_last, hadd]
+                    simp [Γ, htarget_v, htarget_last, hadd]
             _ = segment ℝ Γ.vertices[k] Γ.vertices[k + 1] := by
                     rw [segment_symm]
       rcases segment_of_dart i with ⟨ki, hki, hsegi⟩
@@ -513,8 +508,7 @@ lemma PlaneDrawingDartGeometricClockwiseSectors {V : Type*} [Fintype V]
       exact hgermDirection_ne_zero v e hgd_zero
     have hnorm_pos : 0 < ‖firstDirection‖ := norm_pos_iff.mpr hfirst_ne
     rw [hgermDirection_eq_normalized_first v e]
-    simp [firstDirection, norm_smul, Real.norm_eq_abs, abs_of_pos
-      (inv_pos.mpr hnorm_pos), inv_mul_cancel₀ (ne_of_gt hnorm_pos)]
+    simp [firstDirection, norm_smul, inv_mul_cancel₀ (ne_of_gt hnorm_pos)]
   have initial_left_endpoint_subset_chart :
       ∀ (v : V) (e : {e : G.Dart // e.toProd.1 = v}) (r K : ℝ), 0 < r →
         PolygonalArcInitialEndpointLeftCone (A.dartArc e.1) r K ⊆
@@ -649,8 +643,7 @@ lemma PlaneDrawingDartGeometricClockwiseSectors {V : Type*} [Fintype V]
           (A.dartArc d).vertices.length - 2 := by
         have hlen := (A.dartArc d).length_ge_two
         omega
-      simpa [PolygonalArcReverse, List.length_reverse, hidx] using
-        (List.getElem_reverse (l := (A.dartArc d).vertices) (i := 1))
+      simp [PolygonalArcReverse, hidx]
     have hfirst_rev :
         (A.dartArc d.symm).vertices[1]'(Nat.lt_of_succ_le
             (A.dartArc d.symm).length_ge_two) - D.vertexPlacement d.toProd.2 =
@@ -814,11 +807,11 @@ lemma PlaneDrawingDartGeometricClockwiseSectors {V : Type*} [Fintype V]
     rw [sector_eq_of_nonempty d.toProd.2 hv]
     by_cases hfix : (localClockwiseNext d.toProd.2 hv) rev = rev
     · have hdef := hsector_def rev
-      simp [hfix] at hdef
+      simp only [hfix, ↓reduceDIte, Set.union_singleton] at hdef
       rw [hdef]
       simp
     · have hdef := hsector_def rev
-      simp [hfix] at hdef
+      simp only [hfix, ↓reduceDIte, ne_eq, Fin.isValue] at hdef
       rcases hdef with ⟨c, s, _hnot_pos, _hother_eq, hsector_eq⟩
       rw [hsector_eq]
       let base : EuclideanSpace ℝ (Fin 2) := germDirection d.toProd.2 rev
@@ -855,19 +848,22 @@ lemma PlaneDrawingDartGeometricClockwiseSectors {V : Type*} [Fintype V]
         · rw [hzcoeff.1, h0coeff.1]
         · rw [hzcoeff.2, h0coeff.2]
       by_cases hspos : 0 < s
-      · simp [hspos]
+      · simp only [hspos, ↓reduceIte, Fin.isValue, Set.mem_image, Set.mem_ofPred_eq, not_exists,
+          not_and, and_imp]
         rintro z _hdisk hyneg _hlin hz_eq
         have hcoords := hcenter_coords z hz_eq
         linarith [hyneg, hcoords.2]
       · by_cases hsneg : s < 0
-        · simp [base, baseChart, hspos, hsneg]
+        · simp only [hspos, ↓reduceIte, hsneg, Fin.isValue, Set.mem_image, Set.mem_ofPred_eq,
+            not_exists, not_and, and_imp]
           rintro z _hdisk hside hz_eq
           have hcoords := hcenter_coords z hz_eq
           rcases hside with hyneg | hlin
           · linarith [hyneg, hcoords.2]
           · rw [hcoords.1, hcoords.2] at hlin
             norm_num at hlin
-        · simp [base, baseChart, hspos, hsneg]
+        · simp only [hspos, ↓reduceIte, hsneg, Fin.isValue, Set.mem_image, Set.mem_ofPred_eq,
+            not_exists, not_and, and_imp]
           rintro z _hdisk hyneg hz_eq
           have hcoords := hcenter_coords z hz_eq
           linarith [hyneg, hcoords.2]
@@ -917,7 +913,7 @@ lemma PlaneDrawingDartGeometricClockwiseSectors {V : Type*} [Fintype V]
           _hdisjoint, _hcover⟩
       by_cases hfix : (localClockwiseNext d.toProd.2 hv) rev = rev
       · have hdef := hsector_def rev
-        simp only [exists_and_left] at hdef
+        rw [dif_pos hfix] at hdef
         rcases
           PlanarSlitDiskEndpointConesAvoidRay
             (p := D.vertexPlacement d.toProd.2)
@@ -952,7 +948,7 @@ lemma PlaneDrawingDartGeometricClockwiseSectors {V : Type*} [Fintype V]
         rw [sector_eq_of_nonempty d.toProd.2 hv, hdef]
         simpa using hlower
       · have hdef := hsector_def rev
-        simp only [exists_and_left] at hdef
+        rw [dif_neg hfix] at hdef
         rcases hdef with ⟨c, s, hnot_pos, hother_eq, hsector_eq⟩
         rcases
           PlanarClockwiseSweptTwoRayEndpointConesInSector
@@ -1005,7 +1001,7 @@ lemma PlaneDrawingDartGeometricClockwiseSectors {V : Type*} [Fintype V]
           _hdisjoint, _hcover⟩
       by_cases hfix : (localClockwiseNext d.toProd.2 hv) rev = rev
       · have hdef := hsector_def rev
-        simp only [exists_and_left] at hdef
+        rw [dif_pos hfix] at hdef
         rcases
           PlanarSlitDiskEndpointConesAvoidRay
             (p := D.vertexPlacement d.toProd.2)
@@ -1052,7 +1048,7 @@ lemma PlaneDrawingDartGeometricClockwiseSectors {V : Type*} [Fintype V]
         rw [sector_eq_of_nonempty d.toProd.2 hv, hdef]
         simpa using hupper
       · have hdef := hsector_def rev
-        simp only [exists_and_left] at hdef
+        rw [dif_neg hfix] at hdef
         rcases hdef with ⟨c, s, hnot_pos, hother_eq, hsector_eq⟩
         rcases
           PlanarClockwiseSweptTwoRayEndpointConesInSector
@@ -1116,7 +1112,7 @@ lemma PlaneDrawingDartGeometricClockwiseSectors {V : Type*} [Fintype V]
       intro v y hdhead hyball hyne hycompl
       rcases hdhead with ⟨d0, hd0_head⟩
       let out0 : {e : G.Dart // e.toProd.1 = v} :=
-        ⟨d0.symm, by simpa [SimpleGraph.Dart.symm, hd0_head]⟩
+        ⟨d0.symm, by simp [SimpleGraph.Dart.symm, hd0_head]⟩
       have hv : Nonempty {e : G.Dart // e.toProd.1 = v} := ⟨out0⟩
       rcases localSector_spec v hv with
         ⟨_hfull_eq, _hfull_pos, _hturn_pos, _hturn_le, _hturn_full,
@@ -1188,7 +1184,7 @@ lemma PlaneDrawingDartGeometricClockwiseSectors {V : Type*} [Fintype V]
       simpa using hdef
   · right
     have hdef := hsector_def rev
-    simp only [ne_eq, Fin.isValue] at hdef
+    rw [dif_neg hfix] at hdef
     rcases hdef with ⟨c, s, hnot_pos, hother_eq, hsector_eq⟩
     refine ⟨c, s, hnot_pos, ?_, ?_⟩
     · change germDirection d.toProd.2 nxt =

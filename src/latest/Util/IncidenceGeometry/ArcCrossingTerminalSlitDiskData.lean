@@ -7,7 +7,6 @@ import Util.IncidenceGeometry.PolygonalArcReverse
 import Util.IncidenceGeometry.PolygonalArcTargetEndpointRayCover
 import Util.IncidenceGeometry.PolygonalArcTerminalEndpointLeftCone
 
-open Classical
 noncomputable section
 
 lemma ArcCrossingTerminalSlitDiskData
@@ -82,6 +81,7 @@ lemma ArcCrossingTerminalSlitDiskData
                         (ray ∪ ({τ.target} : Set (EuclideanSpace ℝ (Fin 2))))
                    PolygonalArcInitialEndpointLeftCone (PolygonalArcReverse τ) rT K₁ ⊆
                     Dstar) := by
+  classical
   obtain ⟨Rδ, hRδpos, hδray⟩ := PolygonalArcTargetEndpointRayCover δ
   let ρ : ℝ := min (Rδ / 2) (η / 2)
   have hρpos : 0 < ρ := by
@@ -194,7 +194,7 @@ lemma ArcCrossingTerminalSlitDiskData
     · have hδprev_eq_j :
           δ.vertices[δ.vertices.length - 2] = δ.vertices[j] := by
         have hidx : δ.vertices.length - 2 = j := by omega
-        simpa [hidx]
+        simp [hidx]
       have hδtarget_last : δ.vertices[j + 1] = δ.target := by
         have hidx : j + 1 = δ.vertices.length - 1 := by omega
         have hget : δ.vertices.getLast? = some δ.vertices[δ.vertices.length - 1] := by
@@ -211,7 +211,7 @@ lemma ArcCrossingTerminalSlitDiskData
           omega
         have hidx : τ.vertices.length - 2 = 0 := by omega
         have hget0 : τ.vertices[0] = c := by
-          simpa [hτvertices]
+          simp [hτvertices]
         simpa [hidx] using hget0
       have hcParam := hcOpen
       rw [openSegment_eq_image_lineMap] at hcParam
@@ -230,7 +230,7 @@ lemma ArcCrossingTerminalSlitDiskData
         x = δ.target +
             s • (δ.vertices[δ.vertices.length - 2] - δ.target) := hx
         _ = δ.target + s • (δ.vertices[j] - δ.target) := by
-          simpa [hδprev_eq_j]
+          simp [hδprev_eq_j]
         _ = τ.target + (s / (1 - t)) • base := by
           rw [hτtarget, hbase_final, smul_smul]
           congr 1
@@ -250,24 +250,22 @@ lemma ArcCrossingTerminalSlitDiskData
           omega
         have htail_get :
             τ.vertices[k + 1] = (δ.vertices.drop (j + 1))[k] := by
-          simpa [hτvertices]
+          simp [hτvertices]
         have hdrop_get :
             (δ.vertices.drop (j + 1))[k] =
               δ.vertices[j + 1 + k] := by
-          simpa using
-            (List.getElem_drop (xs := δ.vertices) (i := j + 1) (j := k)
-              (h := hkdrop))
+          simp
         have hsum : j + 1 + k = δ.vertices.length - 2 := by
           dsimp [k]
           rw [hτlen]
           omega
         calc
           τ.vertices[τ.vertices.length - 2] = τ.vertices[k + 1] := by
-            simpa [hidxτ]
+            simp [hidxτ]
           _ = (δ.vertices.drop (j + 1))[k] := htail_get
           _ = δ.vertices[j + 1 + k] := hdrop_get
           _ = δ.vertices[δ.vertices.length - 2] := by
-            simpa [hsum]
+            simp [hsum]
       have hbase_eq :
           base = δ.vertices[δ.vertices.length - 2] - δ.target := by
         dsimp [base]

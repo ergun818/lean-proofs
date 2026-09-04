@@ -2,7 +2,6 @@ import Util.IncidenceGeometry.FinitePolygonalSet
 import Util.IncidenceGeometry.OrdinaryLabeledCrossingDiskData
 import Util.IncidenceGeometry.PolygonalSideStrips
 
-open Classical
 noncomputable section
 
 structure OrdinaryAdjacentEdgesSimultaneousBigonGeometryData

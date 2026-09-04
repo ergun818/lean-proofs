@@ -1,6 +1,5 @@
 import Util.IncidenceGeometry.Basic
 
-open Classical
 noncomputable section
 
 lemma BigonRerouteLocalSegmentDirection
@@ -11,6 +10,7 @@ lemma BigonRerouteLocalSegmentDirection
     (r : ℝ) (hr : 0 < r)
     (hlocal : Metric.ball z r ∩ segment ℝ a b ⊆ segment ℝ c d) :
     ∃ t : ℝ, t ≠ 0 ∧ b - a = t • (d - c) := by
+  classical
   rw [segment_eq_image_lineMap] at hzab
   rcases hzab with ⟨u, hu, hzu⟩
   have hpre : (AffineMap.lineMap a b) ⁻¹' Metric.ball z r ∈ nhds u := by

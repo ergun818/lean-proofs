@@ -1,11 +1,11 @@
 import Util.IncidenceGeometry.UnitCircle
 
-open Classical
 noncomputable section
 
 lemma UnitCirclesIntersectionsAtMostTwo (a b : EuclideanSpace ℝ (Fin 2)) (hab : a ≠ b) :
     {x : EuclideanSpace ℝ (Fin 2) | x ∈ UnitCircle a ∧ x ∈ UnitCircle b}.Finite ∧
       ({x : EuclideanSpace ℝ (Fin 2) | x ∈ UnitCircle a ∧ x ∈ UnitCircle b}.ncard) ≤ 2 := by
+  classical
   let S : Set (EuclideanSpace ℝ (Fin 2)) :=
     {x : EuclideanSpace ℝ (Fin 2) | x ∈ UnitCircle a ∧ x ∈ UnitCircle b}
   change S.Finite ∧ S.ncard ≤ 2

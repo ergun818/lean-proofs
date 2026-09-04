@@ -3,13 +3,13 @@ import Util.IncidenceGeometry.OrdinaryPolygonalDrawing
 import Util.IncidenceGeometry.PolygonalArc
 import Util.IncidenceGeometry.PolygonalArcReverse
 
-open Classical
 noncomputable section
 
 lemma PlaneDrawingDartArcDataExists {V : Type*} [Fintype V]
     (G : SimpleGraph V) [Fintype G.edgeSet] [DecidableRel G.Adj]
     (D : OrdinaryPolygonalDrawing G) (hD : D.crossingSet.card = 0) :
     Nonempty (PlaneDrawingDartArcData G D) := by
+  classical
   have _hD := hD
   let edgeOfDart : G.Dart → G.edgeFinset := fun d =>
     ⟨d.edge, by

@@ -1,6 +1,5 @@
 import Util.IncidenceGeometry.OrdinaryPolygonalDrawing
 
-open Classical
 noncomputable section
 
 lemma CrossingFreeEdgeInteriorDisjoint {V : Type*} [Fintype V]
@@ -10,6 +9,7 @@ lemma CrossingFreeEdgeInteriorDisjoint {V : Type*} [Fintype V]
       e₁ ≠ e₂ →
         p ∈ (D.edgeArc e₁).relativeInterior →
           p ∈ (D.edgeArc e₂).relativeInterior → False := by
+  classical
   intro e₁ e₂ p hne hp₁ hp₂
   have hp_cross : p ∈ D.crossingSet := by
     rw [D.crossingSet_spec]

@@ -4,7 +4,6 @@ import Util.IncidenceGeometry.PolygonalArcInitialEndpointLeftCone
 import Util.IncidenceGeometry.PolygonalArcTerminalEndpointLeftCone
 import Mathlib.Combinatorics.SimpleGraph.DegreeSum
 
-open Classical
 noncomputable section
 
 structure PlaneDrawingDartVertexSectorGeometry {V : Type*} [Fintype V]

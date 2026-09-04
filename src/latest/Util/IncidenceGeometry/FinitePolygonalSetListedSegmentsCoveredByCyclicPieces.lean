@@ -1,7 +1,6 @@
 import Util.IncidenceGeometry.FinitePolygonalSetCyclicSuccessorPiecesContained
 import Util.IncidenceGeometry.SegmentFiniteSetComplementDense
 
-open Classical
 noncomputable section
 
 lemma FinitePolygonalSetListedSegmentsCoveredByCyclicPieces
@@ -14,6 +13,7 @@ lemma FinitePolygonalSetListedSegmentsCoveredByCyclicPieces
           ⋃ q : {q : {p : EuclideanSpace ℝ (Fin 2) // p ∈ K.points} //
               segment ℝ q.1 (D.successor q).1 ⊆ segment ℝ s.1 s.2},
             segment ℝ q.1.1 (D.successor q.1).1 := by
+  classical
   intro s hs
   rcases FinitePolygonalSetCyclicSuccessorPiecesContained J K hKJ D with
     ⟨hcarrier, hrefine, _harcCarrier, _hopen_subset, _hno_listed_open,

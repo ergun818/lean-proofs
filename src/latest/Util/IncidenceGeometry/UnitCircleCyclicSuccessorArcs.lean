@@ -2,7 +2,6 @@ import Util.IncidenceGeometry.UnitCircle
 import Util.IncidenceGeometry.UnitCircleCyclicAngleArcRealization
 import Util.IncidenceGeometry.UnitCircleCyclicAngleOrder
 
-open Classical
 noncomputable section
 
 lemma UnitCircleCyclicSuccessorArcs
@@ -41,6 +40,7 @@ lemma UnitCircleCyclicSuccessorArcs
                       Sym2 (EuclideanSpace ℝ (Fin 2))) =
                     Sym2.mk y.1 (succ y).1 →
                     x = y) := by
+  classical
   rcases UnitCircleCyclicAngleOrder p S hS hcard with ⟨D⟩
   rcases UnitCircleCyclicAngleArcRealization p S D with
     ⟨carrier, arcInterior, γ, hArc, hNoS, hDisjoint⟩

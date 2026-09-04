@@ -1,6 +1,5 @@
 import Util.IncidenceGeometry.PolygonalReplacementIntersectionDiskCutOrder
 
-open Classical
 noncomputable section
 
 universe u

@@ -1,7 +1,6 @@
 import Util.IncidenceGeometry.PolygonalArcCarrierCompact
 import Util.IncidenceGeometry.PositiveSeparation
 
-open Classical
 noncomputable section
 
 lemma PolygonalArcCompactAvoidanceScale (γ : PolygonalArc)
@@ -11,6 +10,7 @@ lemma PolygonalArcCompactAvoidanceScale (γ : PolygonalArc)
         ∃ η : ℝ, 0 < η ∧
           ∀ z : EuclideanSpace ℝ (Fin 2),
             (∃ p ∈ γ.carrier, dist z p < η) → z ∉ F := by
+  classical
   intro hF hFγ
   by_cases hFnonempty : F.Nonempty
   · have hγcompact : IsCompact γ.carrier := PolygonalArcCarrierCompact γ

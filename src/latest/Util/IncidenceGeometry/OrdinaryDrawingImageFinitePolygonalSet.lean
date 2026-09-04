@@ -4,7 +4,6 @@ import Util.IncidenceGeometry.OrdinaryPolygonalDrawing
 import Util.IncidenceGeometry.PolygonalArc
 import Util.IncidenceGeometry.PolygonalArcFinitePolygonalSet
 
-open Classical
 noncomputable section
 
 lemma OrdinaryDrawingImageFinitePolygonalSet {V : Type*} [Fintype V]

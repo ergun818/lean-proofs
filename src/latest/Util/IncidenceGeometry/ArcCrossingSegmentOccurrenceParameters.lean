@@ -4,7 +4,6 @@ import Mathlib.Data.Finset.Sort
 import Mathlib.Analysis.Convex.Topology
 import Mathlib.Analysis.Normed.Affine.AddTorsor
 
-open Classical
 noncomputable section
 
 lemma ArcCrossingSegmentOccurrenceParameters
@@ -31,6 +30,7 @@ lemma ArcCrossingSegmentOccurrenceParameters
                           AffineMap.lineMap α.vertices[i] α.vertices[i + 1] t ∈
                             γ.carrier →
                             ¬ (params[n] < t ∧ t < params[n + 1])) := by
+  classical
   intro hfinite hverticesAvoid
   let E := EuclideanSpace ℝ (Fin 2)
   let A : E := α.vertices[i]

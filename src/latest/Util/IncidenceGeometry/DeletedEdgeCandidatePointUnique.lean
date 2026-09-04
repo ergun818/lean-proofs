@@ -1,9 +1,9 @@
 import Util.IncidenceGeometry.DeletedEdgeDrawingImageComplementIdentity
 import Util.IncidenceGeometry.PlaneFaceData
 
-open Classical
 noncomputable section
 
+open Classical in
 lemma DeletedEdgeCandidatePointUnique {V : Type*} [Fintype V]
     (G : SimpleGraph V) [Fintype G.edgeSet] [DecidableRel G.Adj]
     (D : OrdinaryPolygonalDrawing G) (hD : D.crossingSet.card = 0)
@@ -14,11 +14,11 @@ lemma DeletedEdgeCandidatePointUnique {V : Type*} [Fintype V]
       ∀ ed : (G.deleteEdges {e.1}).edgeFinset,
         ∃ eG : G.edgeFinset, eG.1 = ed.1 ∧ eG.1 ≠ e.1 ∧
           Ddel.edgeArc ed = D.edgeArc eG)
-    (d : G.Dart) (hd : d.edge = e.1) (FaceDel : Type*)
-    (faceDelFintype : Fintype FaceDel)
+    (d : G.Dart) (_hd : d.edge = e.1) (FaceDel : Type*)
+    (_faceDelFintype : Fintype FaceDel)
     (componentOf : Option A.Face → FaceDel)
-    (hcomponent_surj : Function.Surjective componentOf)
-    (hcomponent_eq :
+    (_hcomponent_surj : Function.Surjective componentOf)
+    (_hcomponent_eq :
       ∀ x y : Option A.Face,
         componentOf x = componentOf y ↔
           x = y ∨
