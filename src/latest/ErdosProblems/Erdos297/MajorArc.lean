@@ -209,8 +209,9 @@ lemma expectationPhase_reciprocalAngle
   rw [(ZMod.stdAddChar (N := Q)).map_zero_eq_one]
   rw [hsum]
   symm
-  convert Complex.exp_int_mul_two_pi_mul_I h.valMinAbs using 1 <;>
-    push_cast <;> ring_nf
+  convert Complex.exp_int_mul_two_pi_mul_I h.valMinAbs using 1
+  push_cast
+  ring_nf
 
 /-- Contribution of a finite block of Fourier frequencies, before the
 normalizing factor `1 / Q`. -/
@@ -303,7 +304,7 @@ theorem expectationCenteredTerm_eq_centeredProduct
 /-- A standard product perturbation estimate, specialized to the numerical
 budget used on the central arc. -/
 lemma norm_prod_one_add_sub_one_le_one_sixth
-    {ι : Type*} [DecidableEq ι] (I : Finset ι) (u : ι → ℂ)
+    {ι : Type*} (I : Finset ι) (u : ι → ℂ)
     (hbudget : ∑ i ∈ I, ‖u i‖ ≤ (1 / 7 : ℝ)) :
     ‖(∏ i ∈ I, (1 + u i)) - 1‖ ≤ (1 / 6 : ℝ) := by
   calc
@@ -511,7 +512,7 @@ theorem centeredProduct_norm_le_exp_of_abs_le_pi
 
 /-- Sum form of intermediate decay. -/
 theorem intermediate_sum_norm_le
-    {κ ι : Type*} [DecidableEq κ] [DecidableEq ι]
+    {κ ι : Type*} [DecidableEq ι]
     (H : Finset κ) (I : Finset ι) (p : ι → ℝ) (t : κ → ι → ℝ)
     (hp0 : ∀ i ∈ I, 0 ≤ p i) (hp1 : ∀ i ∈ I, p i ≤ 1) :
     ∑ h ∈ H, ‖centeredProduct I p (t h)‖ ≤

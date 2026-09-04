@@ -33,14 +33,13 @@ def nearbyUpper (h : ℤ) (K : ℕ) : ℤ :=
 lemma nearbyInterval_width (h : ℤ) (K : ℕ) :
     nearbyUpper h K - nearbyLower h K = (K : ℤ) := by
   dsimp [nearbyUpper, nearbyLower]
-  push_cast
   omega
 
 lemma self_mem_nearbyInterval {h : ℤ} {K : ℕ} (hK : 0 < K) :
     InHalfOpenInterval (nearbyLower h K) (nearbyUpper h K) h := by
   rw [InHalfOpenInterval]
   dsimp [nearbyLower, nearbyUpper]
-  constructor <;> push_cast <;> omega
+  constructor <;> omega
 
 lemma sub_mem_nearbyInterval_of_abs_cast_lt {h r : ℤ} {K : ℕ}
     (hr : |(r : ℝ)| < (K : ℝ) / 2) :
@@ -74,11 +73,10 @@ lemma sub_mem_nearbyInterval_of_abs_cast_lt {h r : ℤ} {K : ℕ}
       linarith
     · rw [hKodd] at hrBounds
       push_cast at hrBounds hleR
-      norm_num at hrBounds hleR
       linarith
   rw [InHalfOpenInterval]
   dsimp [nearbyLower, nearbyUpper]
-  constructor <;> push_cast <;> omega
+  constructor <;> omega
 
 lemma centeredResidue_complement_dvd (h : ℤ) (n : ℕ) :
     (n : ℤ) ∣ h - centeredResidue h n := by
@@ -98,7 +96,7 @@ lemma abs_sub_center_le_of_mem_nearbyInterval {h z : ℤ} {K : ℕ}
   rw [InHalfOpenInterval] at hz
   dsimp [nearbyLower, nearbyUpper] at hz
   rw [abs_le]
-  constructor <;> push_cast at hz ⊢ <;> omega
+  constructor <;> omega
 
 /-- The repaired auxiliary-prime construction, specialized to the exact
 active prime powers, ceiling threshold, and safe factorization scale used in

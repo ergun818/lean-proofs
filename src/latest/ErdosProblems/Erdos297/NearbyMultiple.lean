@@ -71,10 +71,11 @@ lemma four_mul_card_le_five_mul_card_inter
 /-- If each modulus in a finite family divides an integer, then the natural
 LCM of the family (viewed in `ℤ`) divides that integer. -/
 lemma int_coe_lcm_dvd_of_forall
-    {ι : Type*} [DecidableEq ι] (indices : Finset ι)
+    {ι : Type*} (indices : Finset ι)
     (modulus : ι → ℕ) (z : ℤ)
     (hdiv : ∀ i ∈ indices, (modulus i : ℤ) ∣ z) :
     ((indices.lcm modulus : ℕ) : ℤ) ∣ z := by
+  classical
   induction indices using Finset.induction with
   | empty => simp
   | @insert i indices hi ih =>
@@ -101,7 +102,7 @@ individual modulus divides the common integer, and therefore their LCM does.
 The explicit interval witness handles the vacuous case `indices = ∅`.
 -/
 theorem common_nearby_multiple
-    {ι : Type*} [DecidableEq ι]
+    {ι : Type*}
     (indices : Finset ι) (modulus : ι → ℕ)
     (lower upper : ℤ) (N : ℕ)
     (chosen : ι → ℤ)
@@ -121,6 +122,7 @@ theorem common_nearby_multiple
       InHalfOpenInterval lower upper z ∧
       (∀ q ∈ indices, (modulus q : ℤ) ∣ z) ∧
       ((indices.lcm modulus : ℕ) : ℤ) ∣ z := by
+  classical
   by_cases hempty : indices = ∅
   · obtain ⟨z, hz⟩ := hintervalExists
     refine ⟨z, hz, ?_, ?_⟩

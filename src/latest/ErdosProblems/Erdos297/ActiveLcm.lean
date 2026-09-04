@@ -127,7 +127,7 @@ lemma activePrimePower_le_N {N M S : ℕ} {A : Finset ℕ}
 /-- The exponent of every active prime power respects the pointwise exponent
 bound imposed on the selected good denominators. -/
 lemma activePrimePower_exponent_le {N M S : ℕ} {A : Finset ℕ}
-    (hM : 1 ≤ M) (hA : A ⊆ goodDenominators N M S)
+    (_hM : 1 ≤ M) (hA : A ⊆ goodDenominators N M S)
     {q : ℕ} (hq : q ∈ activePrimePowers A) :
     ∃ p k : ℕ, p.Prime ∧ 1 ≤ k ∧ q = p ^ k ∧ k ≤ exponentBound N := by
   obtain ⟨hqpp, n, hnA, hqn, hcop⟩ := mem_activePrimePowers.mp hq

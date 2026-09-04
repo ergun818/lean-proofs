@@ -113,8 +113,6 @@ lemma deletedSourceDenominators_subset_exceptions (N : ℕ) :
       exact Or.inl (Or.inl (Or.inr (by
         simp only [SmoothDensity.nonsmoothNumbersUpTo, mem_filter]
         refine ⟨hnIcc, ?_⟩
-        change ¬ Erdos285.PrimePowers.PrimePowerSmooth
-          (SmoothDensity.liuPrimePowerCutoff N) n
         rw [primePowerCutoff_eq_S]
         exact hsmooth)))
     · rcases not_and_or.mp hrest with hexp | hfactor
@@ -146,7 +144,8 @@ theorem deletedSourceDenominators_card_isLittleO :
   have hfactor := (Asymptotics.isLittleO_iff.mp
     FactorDensity.factorExceptional_isLittleO) hε4
   filter_upwards [hM, hsmooth, hexp, hfactor] with N hMN hsmoothN hexpN hfactorN
-  rw [norm_of_nonneg (Nat.cast_nonneg _), norm_of_nonneg (Nat.cast_nonneg _)] at hMN hsmoothN hexpN hfactorN ⊢
+  rw [norm_of_nonneg (Nat.cast_nonneg _), norm_of_nonneg (Nat.cast_nonneg _)]
+    at hMN hsmoothN hexpN hfactorN ⊢
   have hcardNat : (deletedSourceDenominators N).card ≤
       (Ico 1 (M N)).card +
         (SmoothDensity.nonsmoothNumbersUpTo N).card +
@@ -165,10 +164,7 @@ theorem deletedSourceDenominators_card_isLittleO :
     omega
   have hinitial : ((Ico 1 (M N)).card : ℝ) ≤ (M N : ℝ) := by
     have hinitialNat : (Ico 1 (M N)).card ≤ M N := by
-      simpa using Finset.card_le_card
-        (show Ico 1 (M N) ⊆ range (M N) by
-          intro n hn
-          exact mem_range.mpr (mem_Ico.mp hn).2)
+      simp
     exact_mod_cast hinitialNat
   have hcard : ((deletedSourceDenominators N).card : ℝ) ≤
       (M N : ℝ) +

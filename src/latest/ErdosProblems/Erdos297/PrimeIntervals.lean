@@ -493,12 +493,14 @@ theorem eventually_product_auxiliaryPrimes_dense :
     have hP' :
         5 * (Real.log (N : ℝ) / Real.log (Real.log (N : ℝ))) ≤
           ((auxiliaryPrimes N).card : ℝ) := by
-      convert hP using 1 <;> ring
+      convert hP using 1
+      ring
     have hnormalized :
         4 * (Real.log (N : ℝ) / Real.log (Real.log (N : ℝ))) ≤
           (block.card : ℝ) := by
       nlinarith
-    convert hnormalized using 1 <;> ring
+    convert hnormalized using 1
+    ring
   have hlogProd :
       Real.log (block.prod id : ℕ) = ∑ p ∈ block, Real.log (p : ℝ) := by
     push_cast
@@ -551,15 +553,16 @@ theorem eventually_product_auxiliaryPrimes_dense :
       have hblockNonempty : block.Nonempty := by
         by_contra hempty
         rw [Finset.not_nonempty_iff_eq_empty.mp hempty] at hcard
-        simp at hcard
+        simp only [Finset.card_empty, Nat.cast_zero] at hcard
         have hratio : 0 <
             Real.log (N : ℝ) / Real.log (Real.log (N : ℝ)) := by
           exact div_pos (by linarith) hloglogN
         have hcard' :
             4 * (Real.log (N : ℝ) / Real.log (Real.log (N : ℝ))) ≤ 0 := by
-          convert hcard using 1 <;> ring
+          convert hcard using 1
+          ring
         nlinarith
-      show (0 : ℝ) < block.prod id
+      change (0 : ℝ) < block.prod id
       exact_mod_cast Finset.prod_pos fun p hp ↦
         (mem_auxiliaryPrimes.mp (hblock hp)).2.2.pos)] at hlogLt
   exact_mod_cast hlogLt

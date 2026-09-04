@@ -294,7 +294,8 @@ theorem phaseProduct_decay
       have hprod : delta * ((1 : ℝ) / 2) ≤ p n * (1 - p n) :=
         mul_le_mul hlower hhalf (by norm_num) (hp0 n hn)
       have hcoeff : 4 * delta ≤ 8 * p n * (1 - p n) := by nlinarith [hprod]
-      convert mul_le_mul_of_nonneg_right hcoeff hd using 1 <;> ring
+      convert mul_le_mul_of_nonneg_right hcoeff hd using 1
+      ring
     _ ≤ -(4 * delta / F *
         ((moduli \ goodModuliOn moduli A h K T).card * T : ℕ) *
           ((K : ℝ) / (2 * N)) ^ 2) := by
@@ -726,7 +727,7 @@ theorem card_active_fixedKey_fiber_le
     (hM : 1 ≤ M) (hA : A ⊆ goodDenominators N M S)
     {H : Finset (ZMod (Erdos297.ActiveLcm.activeLcm A))}
     {key : ZMod (Erdos297.ActiveLcm.activeLcm A) → Finset ℕ}
-    (hkey : ∀ h ∈ H, key h ⊆ Erdos297.ActiveLcm.activePrimePowers A)
+    (_hkey : ∀ h ∈ H, key h ⊆ Erdos297.ActiveLcm.activePrimePowers A)
     (hnear : ∀ h ∈ H,
       nearbyMultiplePair K ((key h).lcm id) h.valMinAbs)
     (D : Finset ℕ) (hD : D ⊆ Erdos297.ActiveLcm.activePrimePowers A) :
@@ -866,7 +867,7 @@ lemma scalarMinorTerm_le {N K s : ℕ} (hN : 3 ≤ N) (hK : K ≤ N) :
       field_simp
 
 lemma scalarMinorClass_le {N K s c : ℕ} (hN : 3 ≤ N) (hK : K ≤ N)
-    (hs : 1 ≤ s) (hc : c ≤ N ^ s) :
+    (_hs : 1 ≤ s) (hc : c ≤ N ^ s) :
     (c : ℝ) * ((((2 * K + 1) * (N ^ s + 1) : ℕ) : ℝ) *
         (1 / (N : ℝ) ^ (10 * s))) ≤
       6 * (N : ℝ) / (N : ℝ) ^ (8 * s) := by

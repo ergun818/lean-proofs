@@ -122,7 +122,7 @@ lemma subsetWeight_eq_bernoulliWeight {ι : Type*} [DecidableEq ι]
     simp [and_iff_right_of_imp (fun hi ↦ hB hi)]
   have hfilterNot : I.filter (fun i ↦ i ∉ B) = I \ B := by
     ext i
-    simp [and_comm]
+    simp
   rw [hfilter, hfilterNot]
 
 /-- `exactBernoulliMass` may equivalently be written with the Bernoulli weight
@@ -171,7 +171,7 @@ theorem residueMass_le_exact_add_offLattice
       rw [← heq]
       norm_cast
     have hQne : Q ≠ 0 := NeZero.ne Q
-    simp [heq, hmod, hQne, hw]
+    simp [heq, hmod, hQne]
   · have hcastSum : B.sum (fun i ↦ (step i : ZMod Q)) =
         ((B.sum step : ℕ) : ZMod Q) := by
       norm_cast
@@ -185,7 +185,7 @@ theorem residueMass_le_exact_add_offLattice
       have hfar' : Q ≤
           Int.natAbs ((∑ i ∈ B, (step i : ℤ)) - (target : ℤ)) := by
         simpa only [Nat.cast_sum] using hfar
-      simp [heq, hmod, hfar', hw]
+      simp [heq, hmod, hfar']
     · simp only [Nat.cast_sum, ge_iff_le]
       split_ifs <;> positivity
 
@@ -378,7 +378,8 @@ theorem liuSawhney_local_limit
       residueMass Q I (fun i ↦ (step i : ZMod Q)) p target := by
     have h := residueMass_lower_bound_of_error_norm
       I (fun i ↦ (step i : ZMod Q)) p (target : ZMod Q) hfourier
-    convert h using 1 <;> ring
+    convert h using 1
+    ring
   have hpartition := residueMass_le_exact_add_offLattice
     (Q := Q) I step p target hp0 hp1
   have hscale : 1 / (2 * (Q : ℝ)) =
@@ -726,7 +727,7 @@ theorem eventually_local_limit_normalizedLogistic_of_minorArc
   let p := Erdos297.LogisticNormalization.normalizedLogisticProbability lam N
   let : NeZero (activeLcm I) := ⟨activeLcm_ne_zero I⟩
   have hI : I ⊆ goodDenominators N (M N) (S N) := by
-    simpa [I, Erdos297.LogisticNormalization.goodSet]
+    simp [I, Erdos297.LogisticNormalization.goodSet]
   have hIcc : I ⊆ Icc (M N) N := by
     simpa [I, Erdos297.LogisticNormalization.goodSet] using
       goodDenominators_subset_Icc N (M N) (S N)

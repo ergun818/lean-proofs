@@ -129,7 +129,7 @@ lemma bernoulliFactor_norm_sq_le_exp_of_mem_interval
 
 /-- Product form of the global Bernoulli characteristic-function estimate. -/
 lemma bernoulliFactor_prod_norm_sq_le_exp
-    {ι : Type*} [DecidableEq ι] (s : Finset ι) (p x : ι → ℝ)
+    {ι : Type*} (s : Finset ι) (p x : ι → ℝ)
     (hp0 : ∀ i ∈ s, 0 ≤ p i) (hp1 : ∀ i ∈ s, p i ≤ 1) :
     ‖∏ i ∈ s, bernoulliFactor (p i) (x i)‖ ^ 2 ≤
       Real.exp (-(16 * ∑ i ∈ s,
@@ -155,7 +155,7 @@ lemma bernoulliFactor_prod_norm_sq_le_exp
       ring
 
 lemma bernoulliFactor_prod_norm_le_exp
-    {ι : Type*} [DecidableEq ι] (s : Finset ι) (p x : ι → ℝ)
+    {ι : Type*} (s : Finset ι) (p x : ι → ℝ)
     (hp0 : ∀ i ∈ s, 0 ≤ p i) (hp1 : ∀ i ∈ s, p i ≤ 1) :
     ‖∏ i ∈ s, bernoulliFactor (p i) (x i)‖ ≤
       Real.exp (-(8 * ∑ i ∈ s,
@@ -386,11 +386,12 @@ lemma bernoulliGaussian_norm_le_one
   exact neg_nonpos.mpr (by positivity)
 
 /-- Telescoping estimate for products of factors in the closed unit ball. -/
-lemma norm_prod_sub_prod_le_sum {ι : Type*} [DecidableEq ι]
+lemma norm_prod_sub_prod_le_sum {ι : Type*}
     (s : Finset ι) (u v : ι → ℂ)
     (hu : ∀ i ∈ s, ‖u i‖ ≤ 1) (hv : ∀ i ∈ s, ‖v i‖ ≤ 1) :
     ‖(∏ i ∈ s, u i) - ∏ i ∈ s, v i‖ ≤
       ∑ i ∈ s, ‖u i - v i‖ := by
+  classical
   induction s using Finset.induction_on with
   | empty => simp
   | @insert a s ha ih =>
@@ -420,7 +421,7 @@ lemma norm_prod_sub_prod_le_sum {ι : Type*} [DecidableEq ι]
 
 /-- Product-level major-arc comparison with an explicit sum of cubic errors. -/
 lemma centeredBernoulliFactor_prod_sub_gaussian_le
-    {ι : Type*} [DecidableEq ι] (s : Finset ι) (p t : ι → ℝ)
+    {ι : Type*} (s : Finset ι) (p t : ι → ℝ)
     (hp0 : ∀ i ∈ s, 0 ≤ p i) (hp1 : ∀ i ∈ s, p i ≤ 1)
     (ht : ∀ i ∈ s, |t i| ≤ 1) :
     ‖(∏ i ∈ s, centeredBernoulliFactor (p i) (t i)) -

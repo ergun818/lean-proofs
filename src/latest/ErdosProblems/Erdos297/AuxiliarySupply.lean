@@ -105,7 +105,7 @@ lemma five_le_card_primesOneFifty {a : ℕ} (ha : 1 ≤ a) :
 
 lemma five_le_card_extensionPrimes {K d : ℕ} :
     5 ≤ (extensionPrimes K d).card := by
-  exact five_le_card_primesOneFifty (by simp [extensionPrimes])
+  exact five_le_card_primesOneFifty (by simp)
 
 lemma eventually_five_le_card_primesHalfFull :
     ∀ᶠ S : ℕ in atTop, 5 ≤ (primesHalfFull S).card := by
@@ -488,7 +488,7 @@ lemma exists_smallPrimeCandidate_badFiber_le {A Uq : Finset ℕ}
     ∃ p ∈ smallPrimeCandidates X q,
       (badPrimeFiber A Uq q p).card ≤ B := by
   by_contra h
-  push_neg at h
+  push Not at h
   have hlower : (smallPrimeCandidates X q).card * (B + 1) ≤
       ∑ p ∈ smallPrimeCandidates X q,
         (badPrimeFiber A Uq q p).card := by

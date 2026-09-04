@@ -33,7 +33,7 @@ private lemma central_cubic_power_bound
     {x m h a : ℝ} (hx : 1 ≤ x)
     (hm : x ^ ((19 : ℝ) / 20) ≤ m)
     (hh : 0 ≤ h) (hH : h ≤ x ^ ((3 : ℝ) / 5))
-    (ha0 : 0 ≤ a) (ha : a ≤ x) :
+    (_ha0 : 0 ≤ a) (ha : a ≤ x) :
     2 * a * (2 * Real.pi * h / m) ^ 3 ≤
       16 * Real.pi ^ 3 * x ^ (-((1 : ℝ) / 20)) := by
   have hx0 : 0 ≤ x := zero_le_one.trans hx

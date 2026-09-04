@@ -61,7 +61,7 @@ lemma eventually_minorDecayRate :
               ((KSafe N : ℝ) / (2 * N)) ^ 2 := by
       rw [show Real.log (N : ℝ) = logScale N by rfl]
       field_simp
-      <;> ring
+      ring
     _ ≤ (4 * (1 / logLogScale N) / factorBound N) *
           (minorThreshold N : ℝ) *
             ((KSafe N : ℝ) / (2 * N)) ^ 2 := by
@@ -120,7 +120,6 @@ lemma eventually_two_mul_KSafe_lt_M :
           _ ≤ ((10 : ℝ) ^ 7 * logScale N) * (N : ℝ) /
                 ((10 : ℝ) ^ 7 * logScale N) := by gcongr
           _ = (N : ℝ) := by field_simp
-
   have hKfloor : (KSafe N : ℝ) ≤ KSafeReal N :=
     Nat.floor_le (by dsimp [KSafeReal, KReal]; positivity)
   have hKpos : 0 < KSafe N := by
@@ -145,7 +144,7 @@ lemma nearbyInterval_window {h z : ℤ} {K : ℕ}
     |z - h| ≤ (K : ℤ) := by
   rw [InHalfOpenInterval] at hz
   dsimp [nearbyLower, nearbyUpper] at hz
-  rcases abs_cases (z - h) <;> push_cast at * <;> omega
+  rcases abs_cases (z - h) <;> omega
 
 /-- The complete minor-frequency block has norm at most one quarter for the
 normalized critical logistic measure, eventually in `N`. -/
@@ -229,11 +228,7 @@ theorem eventually_normalized_minorArc_bound {lam : ℝ}
             decay (activePrimePowers A \ D).card := by
     exact active_minor_sum_le_powerset hM.1 hAsub key f decay
       (fun s ↦ by positivity)
-      (fun h hh ↦ by
-        simpa [key, goodModuliOn] using
-          (Finset.filter_subset (activePrimePowers A)
-            (fun q ↦ (farSet A h.valMinAbs (KSafe N) q).card <
-              minorThreshold N)))
+      (fun h hh ↦ by simp [key, goodModuliOn])
       hproper hnear hpoint
   have hscalar :
       ∑ D ∈ (activePrimePowers A).powerset.erase (activePrimePowers A),

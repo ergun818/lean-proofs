@@ -238,7 +238,7 @@ theorem sum_bernoulliWeight_mul_centered_sq (I : Finset ι) (p x : ι → ℝ) :
       ring
 
 /-- Chebyshev's inequality for an explicitly weighted finite sample space. -/
-theorem finite_weighted_chebyshev {α : Type*} [DecidableEq α]
+theorem finite_weighted_chebyshev {α : Type*}
     (Ω : Finset α) (w X : α → ℝ) (μ V t : ℝ)
     (hw : ∀ z ∈ Ω, 0 ≤ w z)
     (hsecond : (∑ z ∈ Ω, w z * (X z - μ) ^ 2) ≤ V)
@@ -304,6 +304,7 @@ theorem bernoulliInformation_eq (I : Finset ι) (p : ι → ℝ) (A : Finset ι)
   intro i hi
   split_ifs <;> ring
 
+omit [DecidableEq ι] in
 theorem bernoulliEntropy_eq_informationMean (I : Finset ι) (p : ι → ℝ) :
     bernoulliEntropy I p =
       (∑ i ∈ I, -Real.log (1 - p i)) +
@@ -327,6 +328,7 @@ theorem bernoulliInformation_tail_le (I : Finset ι) (p : ι → ℝ)
     using bernoulli_subsetLinear_tail_le I p
       (fun i ↦ Real.log (1 - p i) - Real.log (p i)) hp0 hp1 ht
 
+omit [DecidableEq ι] in
 /-- A coarse but convenient information-variance bound.  For logistic weights
 the log-odds on the right are explicit (equal, up to sign, to the logistic
 parameter divided by the coordinate), so this estimate is immediately
@@ -397,7 +399,7 @@ theorem bernoulliWeight_le_exp_of_information_ge (I : Finset ι) (p : ι → ℝ
 
 /-- Finite mass-to-cardinality conversion: if each atom has mass at most `B`,
 an event carrying mass at least `m` has at least `m / B` atoms. -/
-theorem event_card_ge_mass_div_atomBound {α : Type*} [DecidableEq α]
+theorem event_card_ge_mass_div_atomBound {α : Type*}
     (E : Finset α) (w : α → ℝ) {m B : ℝ}
     (hmass : m ≤ ∑ z ∈ E, w z) (hbound : ∀ z ∈ E, w z ≤ B)
     (hB : 0 < B) :

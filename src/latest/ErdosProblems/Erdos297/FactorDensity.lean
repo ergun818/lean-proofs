@@ -144,7 +144,7 @@ lemma exists_card_divisiblePart_le_of_mul_lt {P E : Finset ℕ} {F B : ℕ}
     (hbudget : E.card * F < P.card * (B + 1)) :
     ∃ p ∈ P, (divisiblePart E p).card ≤ B := by
   by_contra h
-  push_neg at h
+  push Not at h
   have hlower : P.card * (B + 1) ≤
       ∑ p ∈ P, (divisiblePart E p).card := by
     calc
@@ -576,7 +576,8 @@ theorem fiveFactorExceptional_card_div_M_tendsto_zero :
         2 * C * (Real.sqrt (logLogLogScale N) / logLogScale N))
       atTop (nhds 0) := by
     convert (tendsto_const_nhds.div_atTop tendsto_nat_M_atTop).add
-      (tendsto_sqrt_logLogLog_div_logLog.const_mul (2 * C)) using 1 <;> ring_nf
+      (tendsto_sqrt_logLogLog_div_logLog.const_mul (2 * C)) using 1
+    ring_nf
   apply squeeze_zero'
   · exact Filter.Eventually.of_forall fun N ↦
       div_nonneg (Nat.cast_nonneg _) (Nat.cast_nonneg _)
