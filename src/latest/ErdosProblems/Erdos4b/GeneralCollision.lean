@@ -377,7 +377,7 @@ whose denominator is the totient of the period. -/
 theorem largeGapCoordinateCrtModulus_eq_lcm_products
     {H : Finset ℕ} {d e d' e' : H → ℕ}
     (hDpos : ∀ h : H, 0 < Nat.lcm (d h) (d' h))
-    (hEpos : ∀ h : H, 0 < Nat.lcm (e h) (e' h))
+    (_ : ∀ h : H, 0 < Nat.lcm (e h) (e' h))
     (hDD : ∀ {a b : H}, a ≠ b →
       (Nat.lcm (d a) (d' a)).Coprime (Nat.lcm (d b) (d' b)))
     (hEE : ∀ {a b : H}, a ≠ b →
@@ -392,9 +392,7 @@ theorem largeGapCoordinateCrtModulus_eq_lcm_products
   apply mul_right_cancel₀ hcrossPos.ne'
   rw [largeGapCoordinateCrtModulus_mul_cross_eq_products hDD hEE]
   rw [← gcd_firstLcmProduct_companionLcmProduct_eq_cross hDD hEE]
-  simpa [mul_comm] using
-    (Nat.gcd_mul_lcm (firstLcmProduct H d d')
-      (companionLcmProduct H e e')).symm
+  simp [mul_comm]
 
 /-- The real-valued product of the divisor-totient sums over all cross
 coordinates.  Expanding each factor turns this into the finite family of
@@ -462,7 +460,7 @@ theorem crossAuxiliaryAffineCompatible_of_coordinateCompatible
 noncomputable def maximalCrossAuxiliaryDivisors
     {H : Finset ℕ} {d e d' e' : H → ℕ}
     (hDpos : ∀ h : H, 0 < Nat.lcm (d h) (d' h))
-    (hEpos : ∀ h : H, 0 < Nat.lcm (e h) (e' h)) :
+    (_ : ∀ h : H, 0 < Nat.lcm (e h) (e' h)) :
     CrossAuxiliaryDivisors H d e d' e' := fun ba ↦
   ⟨Nat.gcd (Nat.lcm (d ba.2) (d' ba.2))
       (Nat.lcm (e ba.1) (e' ba.1)), by

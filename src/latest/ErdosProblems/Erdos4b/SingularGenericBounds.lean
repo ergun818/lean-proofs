@@ -171,7 +171,7 @@ lemma sum_roughPrimeSupport_one_div_sq_le
       intro p hp
       have hpIcc := Finset.mem_Icc.mp hp
       omega
-    simp only [one_div, ge_iff_le]
+    rw [hempty, Finset.sum_empty]
     positivity
 
 lemma genericRoughSingularProduct_lower

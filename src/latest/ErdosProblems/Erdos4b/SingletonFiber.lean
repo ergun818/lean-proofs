@@ -159,8 +159,9 @@ theorem singleton_maynardCoefficient_one_eq_mean
   simp only [Finset.sum_filter]
   simp only [divisorTupleProduct_singletonTuple, singletonTuple_apply]
   simp only [Finset.univ_eq_attach, isUnit_iff_eq_one, IsUnit.squarefree,
-    ArithmeticFunction.moebius_apply_of_squarefree, Int.reduceNeg, ArithmeticFunction.cardFactors_one, pow_zero,
-    Int.cast_one, Nat.cast_one, mul_one, Finset.prod_const_one, IsUnit.dvd, implies_true, true_and, Finset.prod_const,
+    ArithmeticFunction.moebius_apply_of_squarefree, Int.reduceNeg,
+    ArithmeticFunction.cardFactors_one, pow_zero, Int.cast_one, Nat.cast_one, mul_one,
+    Finset.prod_const_one, IsUnit.dvd, implies_true, true_and, Finset.prod_const,
     Finset.card_attach, one_mul, one_div]
   apply Finset.sum_congr rfl
   intro n hn
@@ -170,7 +171,7 @@ theorem singleton_maynardCoefficient_one_eq_mean
   · have hneg : ((-1 : ℝ) ^ ArithmeticFunction.cardFactors n) ^ 2 = 1 := by
       rcases neg_one_pow_eq_or ℝ (ArithmeticFunction.cardFactors n) with h | h <;>
         rw [h] <;> norm_num
-    by_cases hcop : Nat.Coprime n W <;> simp [hnlt, hsq, hcop, hneg]
+    by_cases hcop : Nat.Coprime n W <;> simp [hcard, hnlt, hsq, hcop, hneg]
   · have hmu := ArithmeticFunction.moebius_eq_zero_of_not_squarefree hsq
     by_cases hcop : Nat.Coprime n W <;> simp [hnlt, hsq, hcop, hmu]
 

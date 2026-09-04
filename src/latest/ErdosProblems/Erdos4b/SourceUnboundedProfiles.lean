@@ -20,7 +20,8 @@ theorem exists_sourceProfile_ratio_gt (L : ℝ) :
     ∃ K : ℕ, ∃ I : Type, ∃ S : Finset I, ∃ F : I → Fin K → ℝ → ℝ,
       SourceProfileConditions S F sourceCompanionProfile ∧
         L < sourceProfileRatio S F sourceCompanionProfile := by
-  obtain ⟨K, A, n, hK, hA, hI, hJ, hL⟩ := exists_sourceGrid_ratio_gt (10 * sourceCompanionEnergy * L)
+  obtain ⟨K, A, n, hK, hA, hI, hJ, hL⟩ :=
+    exists_sourceGrid_ratio_gt (10 * sourceCompanionEnergy * L)
   let S := sourceSimplexGrid K n
   let a := fun (j : Fin K → Fin (n + 1)) (i : Fin K) ↦ sourceGridLower n (j i)
   let b := fun (j : Fin K → Fin (n + 1)) (i : Fin K) ↦ sourceGridUpper n (j i)

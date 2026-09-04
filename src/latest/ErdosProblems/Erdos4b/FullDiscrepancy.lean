@@ -184,7 +184,7 @@ theorem divisorTupleLcm_combineDivisorTuples
         (BoundedGaps.Maynard.divisorTupleLcm H e e')
         (doubledIndexEquiv H j) := by
   unfold BoundedGaps.Maynard.divisorTupleLcm combineDivisorTuples
-  cases h : doubledIndexEquiv H j <;> simp [h]
+  cases doubledIndexEquiv H j <;> simp
 
 theorem divisorPairModulus_combine_eq_fullPinnedOffModulus
     {H : Finset ℕ} {h : H} {d e d' e' : H → ℕ}

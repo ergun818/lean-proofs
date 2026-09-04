@@ -91,7 +91,8 @@ theorem exists_dimensionFace_energy_relative_error :
     (dimensionFaceEnergy_bounds hk0 hlog hj).1
     (by positivity : 0 ≤ 2 * Cq * (j : ℝ) * ε₀)
     (show _ ≤ dimensionProfileFirstMass k ^ 2 * (2 * Cq * (j : ℝ) * ε₀) from by
-      convert h using 1 <;> dsimp only [P, L, dimensionProfileMass, ε₀] <;> ring)
+      convert h using 1 <;> dsimp only [P, L, dimensionProfileMass, ε₀]
+      ring)
   calc
     _ ≤ 4 * (2 * Cq * (j : ℝ) * ε₀) := hrelative
     _ ≤ (j : ℝ) * ε := by

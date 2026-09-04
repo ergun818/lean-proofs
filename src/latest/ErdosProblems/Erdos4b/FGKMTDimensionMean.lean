@@ -74,7 +74,8 @@ theorem exists_dimensionProfile_energy_relative_error :
     (dimensionProfileEnergy_bounds hk0 hlog hj).1
     (mul_nonneg (Nat.cast_nonneg j) hε₀) h
   dsimp only [ε₀, L, P, dimensionProfileFactor] at hrelative ⊢
-  convert hrelative using 1 <;> ring
+  convert hrelative using 1
+  ring
 
 end
 

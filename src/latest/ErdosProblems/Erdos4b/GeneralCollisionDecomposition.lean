@@ -204,7 +204,7 @@ theorem doubledSelbergTensorBaseKernel_tensor
   <;> by_cases hE : BoundedGaps.Maynard.IsCrossCoordinateCoprime H e e'
   <;> simp [hD, hE, firstLcmProduct, companionLcmProduct,
     BoundedGaps.Maynard.divisorTupleLcm]
-  <;> ring
+  ring
 
 /-- Tensor-coefficient form of the complete normalization-kernel
 decomposition.  The leading term is exactly the product of the two ordinary

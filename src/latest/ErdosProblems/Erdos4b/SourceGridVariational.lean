@@ -20,7 +20,8 @@ open scoped BigOperators
 theorem sourceGridFactors_integrable (K : ℕ) (A : ℝ) (n : ℕ)
     (j : Fin K → Fin (n + 1)) (i : Fin K) :
     IntegrableOn (sourceGridFactors K A n j i) (Set.Icc 0 1) :=
-  ((sourceIntervalIndicator_integrable (sourceGridLower n (j i)) (sourceGridUpper n (j i))).const_mul
+  ((sourceIntervalIndicator_integrable
+      (sourceGridLower n (j i)) (sourceGridUpper n (j i))).const_mul
     (VariableMaynard.factor A ((K : ℝ) * sourceGridUpper n (j i)))).integrableOn
 
 theorem sourceGridFactors_upper (K : ℕ) (A : ℝ) (n : ℕ)
@@ -35,17 +36,18 @@ theorem sourceGridFactors_upper (K : ℕ) (A : ℝ) (n : ℕ)
 theorem sourceGridEnergy_eq (K : ℕ) (A : ℝ) (n : ℕ) :
     sourceTensorEnergy (sourceSimplexGrid K n) (sourceGridFactors K A n) =
       maynardI K (sourceGridValue K A n) :=
-  sourceTensorEnergy_eq_maynardI _ _ (fun j _ i t ht ↦ sourceGridFactors_upper K A n j i ht)
+  sourceTensorEnergy_eq_maynardI _ _ (fun j _ i _ ht ↦ sourceGridFactors_upper K A n j i ht)
 
 theorem sourceGridFaceEnergy_eq (K : ℕ) (A : ℝ) (n : ℕ) (h : Fin K) :
     sourceTensorFaceEnergy (sourceSimplexGrid K n) (sourceGridFactors K A n) h =
       maynardJ K h (sourceGridValue K A n) :=
   sourceTensorFaceEnergy_eq_maynardJ _ _ (fun j _ i ↦ sourceGridFactors_integrable K A n j i)
-    (fun j _ i t ht ↦ sourceGridFactors_upper K A n j i ht) h
+    (fun j _ i _ ht ↦ sourceGridFactors_upper K A n j i ht) h
 
 theorem parameter_candidate_face_pos {r : ℕ} (hr : 8 ≤ r) (h : Fin (VariableMaynard.parameterK r)) :
     0 < maynardJ (VariableMaynard.parameterK r) h
-      (VariableMaynard.candidate (VariableMaynard.parameterK r) (VariableMaynard.parameterA r)) := by
+      (VariableMaynard.candidate (VariableMaynard.parameterK r)
+        (VariableMaynard.parameterA r)) := by
   have hrpos : 0 < r := by omega
   have hK := VariableMaynard.parameterK_pos r
   have hA := VariableMaynard.parameterA_pos hrpos
@@ -53,7 +55,8 @@ theorem parameter_candidate_face_pos {r : ℕ} (hr : 8 ≤ r) (h : Fin (Variable
     change 2 ≤ 2 ^ r
     simpa using Nat.pow_le_pow_right (by norm_num : 1 ≤ (2 : ℕ)) (show 1 ≤ r by omega)
   have hm := VariableMaynard.firstMoment_lt_quarter_of_log_lt hK hA
-    (VariableMaynard.one_lt_parameterA_mul_parameterK hrpos) (VariableMaynard.parameter_log_upper hr)
+    (VariableMaynard.one_lt_parameterA_mul_parameterK hrpos)
+    (VariableMaynard.parameter_log_upper hr)
   have hlower : 0 < (1 / 2 : ℝ) *
       VariableMaynard.shortMass (VariableMaynard.parameterK r) (VariableMaynard.parameterA r) ^ 2 *
       VariableMaynard.baseMass (VariableMaynard.parameterK r) (VariableMaynard.parameterA r) ^
@@ -65,9 +68,11 @@ theorem parameter_candidate_face_pos {r : ℕ} (hr : 8 ≤ r) (h : Fin (Variable
 theorem exists_sourceGrid_ratio_gt (L : ℝ) :
     ∃ K : ℕ, ∃ A : ℝ, ∃ n : ℕ, 0 < K ∧ 0 < A ∧
       0 < sourceTensorEnergy (sourceSimplexGrid K n) (sourceGridFactors K A n) ∧
-      (∀ h : Fin K, 0 < sourceTensorFaceEnergy (sourceSimplexGrid K n) (sourceGridFactors K A n) h) ∧
-      L < (∑ h : Fin K, sourceTensorFaceEnergy (sourceSimplexGrid K n) (sourceGridFactors K A n) h) /
-        sourceTensorEnergy (sourceSimplexGrid K n) (sourceGridFactors K A n) := by
+      (∀ h : Fin K,
+        0 < sourceTensorFaceEnergy (sourceSimplexGrid K n) (sourceGridFactors K A n) h) ∧
+      L <
+        (∑ h : Fin K, sourceTensorFaceEnergy (sourceSimplexGrid K n) (sourceGridFactors K A n) h) /
+          sourceTensorEnergy (sourceSimplexGrid K n) (sourceGridFactors K A n) := by
   obtain ⟨r, hr⟩ := exists_nat_gt (max (8 : ℝ) (72 * L))
   have hr8 : 8 ≤ r := by exact_mod_cast ((le_max_left (8 : ℝ) (72 * L)).trans_lt hr).le
   have hLr : L < (r : ℝ) / 72 := by

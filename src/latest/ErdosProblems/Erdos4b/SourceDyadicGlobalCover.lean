@@ -66,9 +66,11 @@ theorem exists_dyadicRay_profileCovers :
   have hnormal := uniform_dyadicSourceResidueNormalization_pos_and_upper hP.dimension_pos S F G
     hP.first_compact hP.first_smooth hP.companion_compact hP.companion_smooth
     hP.first_simplex hP.first_ceiling hP.companion_support a D hP.main_pos
-  have hfresh := (tendsto_dyadicPrimaryFrontier_atTop a).eventually eventually_sourceFreshPrimeCount_ge
+  have hfresh := (tendsto_dyadicPrimaryFrontier_atTop a).eventually
+    eventually_sourceFreshPrimeCount_ge
   filter_upwards [hsmooth D hD (1 / 128) (by norm_num), htotal a D hD,
-    eventually_sum_dyadicBoundaryPrimeCount_le hP.dimension_pos hD a (by norm_num : (0 : ℝ) < 1 / 128),
+    eventually_sum_dyadicBoundaryPrimeCount_le hP.dimension_pos hD a
+      (by norm_num : (0 : ℝ) < 1 / 128),
     eventually_sum_dyadicLargeCofactorPrimeCount_le hD a (by norm_num : (0 : ℝ) < 1 / 128),
     hcoverage, hnormal, eventually_dyadicAllocated_intervals a hD,
     eventually_sum_dyadicAllocatedLength_le_quarter a hD, hfresh,
@@ -89,11 +91,13 @@ theorem exists_dyadicRay_profileCovers :
   let Q := fun m ↦ auxiliaryPrimeInterval (A m) (Z m)
   let total := ∑ m ∈ E, length m
   let R := auxiliaryPrimeInterval (base + total) X
-  let N := max (jointSourceCommonPrimeBound S F G (dyadicAmbientScale a r) (dyadicCompanionScale r)) y
+  let N :=
+    max (jointSourceCommonPrimeBound S F G (dyadicAmbientScale a r) (dyadicCompanionScale r)) y
   let μ := fun m q b ↦ dyadicSourceResidueMass S F G a D r m q N b
   let t := dyadicProfileCoverLevel D S F G
   let g : ℝ := (X : ℝ) / dyadicAmbientScale a r
-  have hN : jointSourceCommonPrimeBound S F G (dyadicAmbientScale a r) (dyadicCompanionScale r) ≤ N :=
+  have hN :
+      jointSourceCommonPrimeBound S F G (dyadicAmbientScale a r) (dyadicCompanionScale r) ≤ N :=
     le_max_left _ _
   have hYN : smoothFrontier r ≤ N := le_max_right _ _
   have hEsmall : ∀ m ∈ E, 0 < m ∧ Even m ∧ m ≤ M := by

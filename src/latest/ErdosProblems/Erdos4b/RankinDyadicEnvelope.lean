@@ -47,7 +47,7 @@ theorem dyadic_rankin_envelope_le {a r : ℕ} (hr : 4 ≤ r) (ha : a + 1 ≤ r) 
     _ = (288 * (2 : ℝ) ^ a * primaryFrontier a r * core r * r) * Real.log 2 := by
       rw [dyadicAmbientScale_expand, hpow]
       field_simp
-      <;> ring
+      ring
     _ ≤ 288 * (2 : ℝ) ^ a * primaryFrontier a r * core r * r := by
       exact mul_le_of_le_one_right (by positivity) rankin_log_two_le_one
     _ = _ := by

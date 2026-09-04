@@ -94,7 +94,8 @@ theorem sourceSmoothInterval_norm_le_indicator (a b : ℝ) (n : ℕ) (t : ℝ) :
       sourceSmoothInterval_eq_zero_of_not_mem n (fun hh ↦ ht ⟨hh.1.le, hh.2.le⟩)]
 
 theorem tendsto_sourceSmoothInterval (a b t : ℝ) :
-    Tendsto (fun n : ℕ ↦ sourceSmoothInterval a b n t) atTop (𝓝 (sourceIntervalIndicator a b t)) := by
+    Tendsto (fun n : ℕ ↦ sourceSmoothInterval a b n t) atTop
+      (𝓝 (sourceIntervalIndicator a b t)) := by
   by_cases ht : t ∈ Set.Ioo a b
   · have hn : Tendsto (fun n : ℕ ↦ (n + 1 : ℝ)) atTop atTop := by
       exact tendsto_atTop_mono (fun n ↦ by linarith : (fun n : ℕ ↦ (n : ℝ)) ≤

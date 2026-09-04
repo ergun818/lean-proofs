@@ -587,7 +587,7 @@ theorem sum_varyingSingularPrime_localPenalty_le_primeLevelWitness
         (add_le_add (mul_le_mul_of_nonneg_left hmain (by positivity)) hDB)
         hDA
     _ = _ := by
-      simp only [S, Q, P, a, N, QB, DB, DA]
+      simp only [Q, P, a, N, QB]
 
 /-- The inverse varying part of the truncated singular factor. -/
 noncomputable def varyingSingularInverseProduct
@@ -662,12 +662,12 @@ theorem sum_varyingSingularInverseProduct_primeInterval_lower
           largeGapLocalPenalty (preSievedShifts K w) m q p) := by
       simp only [E]
       rw [Finset.sum_sub_distrib]
-      simp only [Finset.sum_const, nsmul_eq_mul, one_mul]
+      simp only [Finset.sum_const, nsmul_eq_mul]
       rw [Finset.sum_comm]
       ring
     _ ≤ ∑ q ∈ Q, varyingSingularInverseProduct K w y m q := by
       exact Finset.sum_le_sum hbon
-    _ = _ := by simp only [Q, L, E]
+    _ = _ := by simp only [Q]
 
 /-- Rough singular primes dividing the fixed cofactor.  Unlike the varying
 support, these contribute a factor independent of the auxiliary prime. -/

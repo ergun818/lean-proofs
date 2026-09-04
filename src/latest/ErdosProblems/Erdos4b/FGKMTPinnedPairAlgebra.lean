@@ -8,7 +8,7 @@ import Mathlib.Tactic
 namespace Erdos4b.FGKMT
 
 theorem perturbed_profile_pair_bound {y z f g U A ε D : ℝ}
-    (hA : 0 ≤ A) (hU : 0 ≤ U) (hε : 0 ≤ ε) (hε1 : ε ≤ 1)
+    (hA : 0 ≤ A) (hU : 0 ≤ U) (_ : 0 ≤ ε) (hε1 : ε ≤ 1)
     (hf : 0 ≤ f) (hfU : f ≤ U)
     (hy : |y - A * f| ≤ ε * A * U) (hz : |z - A * g| ≤ ε * A * U)
     (hvar : |g - f| ≤ D * U) :

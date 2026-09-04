@@ -186,7 +186,7 @@ theorem roughPrimeLogDivisorMass_mono_of_dvd
 noncomputable def oneCrossAuxiliaryDivisors
     {H : Finset ℕ} {d e d' e' : H → ℕ}
     (hDpos : ∀ h : H, 0 < Nat.lcm (d h) (d' h))
-    (hEpos : ∀ h : H, 0 < Nat.lcm (e h) (e' h)) :
+    (_ : ∀ h : H, 0 < Nat.lcm (e h) (e' h)) :
     CrossAuxiliaryDivisors H d e d' e' := fun ba ↦
   ⟨1, Nat.mem_divisors.mpr ⟨one_dvd _,
     (Nat.gcd_pos_of_pos_left _ (hDpos ba.2)).ne'⟩⟩
@@ -586,7 +586,7 @@ theorem exists_rough_prime_dvd_crossAffineDifference_of_ne_one
     simpa [hDpos, hEpos] using ha
   have hentry : ∃ ba : H × H, (a ba).1 ≠ 1 := by
     by_contra hall
-    push_neg at hall
+    push Not at hall
     exact ha' ((crossAuxiliaryDivisors_eq_one_iff hDpos hEpos a).mpr hall)
   obtain ⟨ba, hba⟩ := hentry
   obtain ⟨p, hpPrime, hpEntry⟩ := Nat.exists_prime_and_dvd hba
@@ -664,7 +664,6 @@ theorem roughPrimeLogDivisorMass_crossExceptionalModulus_le_envelope
       exact div_le_div_of_nonneg_right hlogLe (by exact_mod_cast hw.le)
     _ = (Fintype.card (H × H) : ℝ) *
         Real.log (crossAffineEnvelope H m q) / w := by
-      push_cast
       rw [Real.log_pow]
 
 /-- The actual cross-gcd factor of a compatible standard summand has the

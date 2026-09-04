@@ -166,7 +166,6 @@ theorem crossAuxiliaryS2GWeight_eq_offDiagonal
   classical
   unfold crossAuxiliaryS2GWeight
     BoundedGaps.Maynard.crossS2GProduct
-  push_cast
   let f : H × H → ℝ := fun ba ↦
     (BoundedGaps.Maynard.maynardS2G (a ba).1 : ℝ)
   have hoff :
@@ -491,7 +490,7 @@ theorem sum_crossAuxiliaryTotientWeight_eq_one_add_tail
     (f := crossAuxiliaryTotientWeight)
     hmem
   rw [crossAuxiliaryTotientWeight_one] at hsplit
-  simpa [crossAuxiliaryTotientTail, add_comm] using hsplit.symm
+  exact hsplit.symm.trans (add_comm _ _)
 
 /-- The full pinned auxiliary sum is its unit matrix plus the nontrivial
 tail. -/
@@ -511,7 +510,7 @@ theorem sum_crossAuxiliaryS2GWeight_eq_one_add_tail
     (f := crossAuxiliaryS2GWeight)
     hmem
   rw [crossAuxiliaryS2GWeight_one] at hsplit
-  simpa [crossAuxiliaryS2GTail, add_comm] using hsplit.symm
+  exact hsplit.symm.trans (add_comm _ _)
 
 /-- Every unpinned auxiliary weight is nonnegative. -/
 theorem crossAuxiliaryTotientWeight_nonneg

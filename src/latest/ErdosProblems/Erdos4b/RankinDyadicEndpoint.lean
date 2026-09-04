@@ -36,7 +36,8 @@ theorem eventually_log_index_lt_three_primary (a B : ℕ) (hB : 0 < B) :
       Real.log n < 3 * (primaryFrontier a r : ℝ) := by
   have hX : Tendsto (fun r : ℕ ↦ (primaryFrontier a r : ℝ)) atTop atTop :=
     tendsto_natCast_atTop_atTop.comp (tendsto_dyadicPrimaryFrontier_atTop a)
-  have hpnt := (tendsto_dyadicPrimaryFrontier_atTop a).eventually eventually_log_primorial_lt_two_mul
+  have hpnt :=
+    (tendsto_dyadicPrimaryFrontier_atTop a).eventually eventually_log_primorial_lt_two_mul
   filter_upwards [hpnt, hX.eventually (eventually_ge_atTop (Real.log B))] with r hp hBsmall
   intro n hn hnupper
   have hnreal : (0 : ℝ) < n := by exact_mod_cast hn

@@ -607,9 +607,10 @@ theorem largeGapLocalPenalty_eq_zero_iff
 form is convenient for lower-bounding a truncated inverse singular
 series after the local inverse factors have been written as `1 - loss`. -/
 theorem one_sub_sum_le_prod_one_sub
-    {I : Type*} [DecidableEq I] (S : Finset I) (f : I → ℝ)
+    {I : Type*} (S : Finset I) (f : I → ℝ)
     (hf0 : ∀ i ∈ S, 0 ≤ f i) (hf1 : ∀ i ∈ S, f i ≤ 1) :
     1 - ∑ i ∈ S, f i ≤ ∏ i ∈ S, (1 - f i) := by
+  classical
   induction S using Finset.induction_on with
   | empty => simp
   | @insert a S ha ih =>
