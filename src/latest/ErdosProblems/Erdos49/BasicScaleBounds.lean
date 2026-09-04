@@ -295,7 +295,7 @@ theorem eventually_basicExceptional_bounds :
             Real.exp (-2 * scaleT N) *
               Real.exp (2 * scaleT N - scaleT N ^ 3 / 42) := by
           rw [← Real.exp_add]
-          congr 1 <;> ring
+          congr 1; ring
         rw [hexp]
         have hh := scale_exp_t hs
         unfold taoErrorScale

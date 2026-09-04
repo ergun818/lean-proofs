@@ -32,7 +32,7 @@ def secondaryBand (N L : ℕ) (A : Finset ℕ) (d i j : ℕ) : Finset ℕ :=
     n ∈ secondaryBand N L A d i j ↔
       n ∈ A ∧ secondaryD N L n = d ∧
         (secondaryP N L n).log2 = i ∧ n.log2 = j := by
-  simp [secondaryBand, and_assoc]
+  simp [secondaryBand]
 
 lemma dyadic_bounds {n : ℕ} (hn : n ≠ 0) :
     2 ^ n.log2 ≤ n ∧ n < 2 * 2 ^ n.log2 := by
@@ -52,7 +52,7 @@ lemma secondaryBand_mono {N L : ℕ} {A : Finset ℕ} {d i j : ℕ}
 /-- A member of one dyadic secondary band satisfies all the hypotheses of the
 local structured packing theorem. -/
 lemma secondaryBand_data
-    {N L H : ℕ} {A : Finset ℕ} (hAsec : A ⊆ secondarySet N L)
+    {N L : ℕ} {A : Finset ℕ} (hAsec : A ⊆ secondarySet N L)
     {d i j : ℕ} :
     let B := secondaryBand N L A d i j
     let P := 2 ^ i
@@ -132,7 +132,7 @@ lemma secondary_bucket_scales
   let T := secondaryT H
   let U := secondaryU H P X
   let V := secondaryV H P
-  have hT : 0 < T := by simp [T, secondaryT]; positivity
+  have hT : 0 < T := by dsimp only [T, secondaryT]; positivity
   have hP : 0 < P := hT.trans_le (by omega)
   have hV : 0 < V := by
     dsimp only [V, secondaryV]
@@ -189,7 +189,7 @@ theorem secondaryBand_raw_bound
   let B := secondaryBand N L A d i j
   by_cases hB : B.Nonempty
   · obtain ⟨n, hn⟩ := hB
-    have hdata := secondaryBand_data (H := H) hAsec (d := d) (i := i) (j := j)
+    have hdata := secondaryBand_data hAsec (d := d) (i := i) (j := j)
     have hd : 0 < d := by
       have hr := secondaryWitness_spec (hAsec (secondaryBand_subset hn))
       have hdeq := (mem_secondaryBand.mp hn).2.1
@@ -227,7 +227,7 @@ lemma secondary_bucket_count_bounds
     (L := 32 * T + 1) (by simp [T])
   have hU : 0 < U := hs.1
   have hV : 0 < V := hs.2.1
-  have hT : 0 < T := by simp [T, secondaryT]; positivity
+  have hT : 0 < T := by dsimp only [T, secondaryT]; positivity
   have hP : 0 < P := hT.trans_le (by omega)
   have hUb := quotientBucket_bounds (W := 64 * P * T) (n := X) (by positivity)
   change X / (64 * P * T) * (64 * P * T) ≤ X ∧
@@ -291,7 +291,7 @@ theorem secondaryBand_bound
       have hdeq := (mem_secondaryBand.mp hn).2.1
       rw [← hdeq]
       exact Nat.zero_lt_one.trans_le hr.1
-    have hT : 0 < T := by simp [T, secondaryT]; positivity
+    have hT : 0 < T := by dsimp only [T, secondaryT]; positivity
     have hP : 0 < P := by positivity
     have hX : 0 < X := by positivity
     have hraw := secondaryBand_raw_bound hAsec hmono hH hLscale
@@ -377,7 +377,7 @@ theorem secondaryBand_bound
               7710 * ((2 ^ j : ℕ) : ℝ) / (d * secondaryT H : ℕ) =
                 7714 * (((2 ^ j : ℕ) : ℝ) / (d * secondaryT H : ℕ)) := by ring
           _ ≤ 8000 * (((2 ^ j : ℕ) : ℝ) / (d * secondaryT H : ℕ)) := by
-            gcongr <;> norm_num
+            gcongr; norm_num
           _ = 8000 * ((2 ^ j : ℕ) : ℝ) / (d * secondaryT H : ℕ) := by ring
   · change (B.card : ℝ) ≤ _
     rw [Finset.not_nonempty_iff_eq_empty.mp hB]
@@ -595,7 +595,7 @@ theorem secondary_global_bound
         ring
   apply hsum.trans
   rw [hsumEq]
-  have hTnat : 0 < secondaryT H := by simp [secondaryT]; positivity
+  have hTnat : 0 < secondaryT H := by dsimp only [secondaryT]; positivity
   have hT : (0 : ℝ) < secondaryT H := by exact_mod_cast hTnat
   have hnonneg : 0 ≤ 8000 / (secondaryT H : ℝ) := by positivity
   calc

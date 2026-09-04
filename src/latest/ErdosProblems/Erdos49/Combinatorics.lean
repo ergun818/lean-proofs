@@ -110,7 +110,7 @@ lemma monotoneCapacity_union_le (S T : Finset ℕ) :
     (card_le_monotoneCapacity hASsub hASmono)
     (card_le_monotoneCapacity hATsub hATmono)
 
-lemma monotoneCapacity_biUnion_le {ι : Type*} [DecidableEq ι]
+lemma monotoneCapacity_biUnion_le {ι : Type*}
     (I : Finset ι) (S : ι → Finset ℕ) :
     monotoneCapacity (I.biUnion S) ≤
       ∑ i ∈ I, monotoneCapacity (S i) := by
@@ -127,7 +127,7 @@ lemma monotoneCapacity_biUnion_le {ι : Type*} [DecidableEq ι]
 /-- Pairwise-disjoint finite pieces contained in `S` have total cardinality
 at most `S.card`.  This is the exact finite form of the packing step used for
 the primary hulls in Tao's proof. -/
-lemma sum_card_le_card_of_pairwiseDisjoint {ι : Type*} [DecidableEq ι]
+lemma sum_card_le_card_of_pairwiseDisjoint {ι : Type*}
     (I : Finset ι) (F : ι → Finset ℕ) (S : Finset ℕ)
     (hF : ∀ i ∈ I, F i ⊆ S)
     (hdisj : (I : Set ι).PairwiseDisjoint F) :
@@ -137,7 +137,7 @@ lemma sum_card_le_card_of_pairwiseDisjoint {ι : Type*} [DecidableEq ι]
 
 /-- Bounded-overlap packing: if each point of `S` occurs in at most `r`
 pieces, the sum of their cardinalities is at most `r * S.card`. -/
-lemma sum_card_le_mul_card_of_boundedOverlap {ι : Type*} [DecidableEq ι]
+lemma sum_card_le_mul_card_of_boundedOverlap {ι : Type*}
     (I : Finset ι) (F : ι → Finset ℕ) (S : Finset ℕ) (r : ℕ)
     (hF : ∀ i ∈ I, F i ⊆ S)
     (hoverlap : ∀ x ∈ S, (I.filter fun i ↦ x ∈ F i).card ≤ r) :
@@ -145,7 +145,7 @@ lemma sum_card_le_mul_card_of_boundedOverlap {ι : Type*} [DecidableEq ι]
   have hrow (i : ι) (hi : i ∈ I) :
       (F i).card = ∑ x ∈ S, if x ∈ F i then 1 else 0 := by
     rw [← Finset.sum_filter]
-    simp only [ite_self, Finset.sum_const, nsmul_eq_mul, mul_one]
+    simp only [Finset.sum_const, nsmul_eq_mul, mul_one]
     congr 1
     ext x
     simp only [Finset.mem_filter]
@@ -171,16 +171,16 @@ lemma sum_card_le_mul_card_of_boundedOverlap {ι : Type*} [DecidableEq ι]
 
 /-- The ambient interval `[1,N]` has exactly `N` elements. -/
 @[simp] lemma card_Icc_one (N : ℕ) : (Finset.Icc 1 N).card = N := by
-  simp [Nat.add_one_sub_one]
+  simp
 
-lemma sum_card_Icc_le_of_pairwiseDisjoint {ι : Type*} [DecidableEq ι]
+lemma sum_card_Icc_le_of_pairwiseDisjoint {ι : Type*}
     (I : Finset ι) (F : ι → Finset ℕ) (N : ℕ)
     (hF : ∀ i ∈ I, F i ⊆ Finset.Icc 1 N)
     (hdisj : (I : Set ι).PairwiseDisjoint F) :
     ∑ i ∈ I, (F i).card ≤ N := by
   simpa using sum_card_le_card_of_pairwiseDisjoint I F (Finset.Icc 1 N) hF hdisj
 
-lemma sum_card_Icc_le_of_boundedOverlap {ι : Type*} [DecidableEq ι]
+lemma sum_card_Icc_le_of_boundedOverlap {ι : Type*}
     (I : Finset ι) (F : ι → Finset ℕ) (N r : ℕ)
     (hF : ∀ i ∈ I, F i ⊆ Finset.Icc 1 N)
     (hoverlap : ∀ x ∈ Finset.Icc 1 N,

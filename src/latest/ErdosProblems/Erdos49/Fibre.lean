@@ -189,7 +189,8 @@ private lemma sum_inv_pow_succ_le_one (p D : ℕ) (hp : 2 ≤ p) :
     _ = 1 - x ^ D := by simpa [mul_comm] using hgeom
     _ ≤ 1 := sub_le_self _ (pow_nonneg hx0 D)
 
-/-- A finite set of positive integers with one fixed prime support has reciprocal sum at most one. -/
+/-- A finite set of positive integers with one fixed prime support has reciprocal sum at most one.
+-/
 theorem sum_reciprocal_primeFactors_fibre_le_one (P : Finset ℕ) (D : ℕ)
     (hPprime : ∀ p ∈ P, p.Prime) :
     ∑ d ∈ (Finset.Icc 1 D).filter (fun d ↦ d.primeFactors = P), (1 : ℚ) / d ≤ 1 := by
@@ -306,7 +307,8 @@ theorem sum_totientRatio_fibre_reciprocal_le_one (q : ℚ) (D : ℕ) :
         have hd0 := Nat.ne_of_gt hd.1
         have ha0 := Nat.ne_of_gt ha_data.1
         rw [Nat.totient_eq_mul_prod_factors, Nat.totient_eq_mul_prod_factors,
-          mul_div_cancel_left₀ _ (by exact_mod_cast hd0), mul_div_cancel_left₀ _ (by exact_mod_cast ha0),
+          mul_div_cancel_left₀ _ (by exact_mod_cast hd0), mul_div_cancel_left₀ _ (by exact_mod_cast
+            ha0),
           hsupport]
     rw [show (Finset.Icc 1 D).filter
         (fun d : ℕ ↦ (d.totient : ℚ) / (d : ℚ) = q) = F from rfl,

@@ -129,7 +129,7 @@ def smoothUpTo (x y : ℕ) : Finset ℕ :=
 
 @[simp] lemma mem_smoothUpTo {x y n : ℕ} :
     n ∈ smoothUpTo x y ↔ n ≤ x ∧ Smooth y n := by
-  simp [smoothUpTo, Nat.lt_succ_iff, and_comm]
+  simp [smoothUpTo, and_comm]
 
 lemma smoothUpTo_eq_nat_smoothNumbersUpTo (x y : ℕ) :
     smoothUpTo x y = Nat.smoothNumbersUpTo x (y + 1) := by

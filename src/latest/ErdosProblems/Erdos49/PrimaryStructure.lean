@@ -390,7 +390,7 @@ lemma primaryCell_intervalHull_card_le
 /-- Dividing the endpoints of an integer hull by a positive denominator
 enlarges its inclusive length by at most two beyond the expected scaled
 length. -/
-lemma div_hull_width_le {a b d H : ℕ} (hab : a ≤ b) (hd : 0 < d)
+lemma div_hull_width_le {a b d H : ℕ} (hab : a ≤ b) (_hd : 0 < d)
     (hH : b + 1 - a ≤ H) :
     b / d - (a / d - 1) ≤ H / d + 2 := by
   have hab' : b = a + (b - a) := by omega

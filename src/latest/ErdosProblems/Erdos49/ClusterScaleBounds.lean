@@ -38,13 +38,13 @@ lemma scale_pair_log_sub_one_lower {N : ℕ} (hs : ScaleFacts N) :
     Real.log (N : ℝ) / (4000 * scaleT N) ≤
       Real.log ((scalePairY N - 1 : ℕ) : ℝ) := by
   have h := log_sub_one_lower_of_three hs.pairY_three hs.pair_log_lower
-  convert h using 1 <;> ring
+  convert h using 1; ring
 
 lemma scale_triple_log_sub_one_lower {N : ℕ} (hs : ScaleFacts N) :
     Real.log (N : ℝ) / (4000 * scaleT N) ≤
       Real.log ((scaleTripleY N - 1 : ℕ) : ℝ) := by
   have h := log_sub_one_lower_of_three hs.tripleY_three hs.triple_log_lower
-  convert h using 1 <;> ring
+  convert h using 1; ring
 
 lemma scale_log_two_L_upper {N : ℕ} (hs : ScaleFacts N) :
     Real.log ((2 * scaleL N : ℕ) : ℝ) ≤ 22 * scaleT N := by
@@ -53,7 +53,6 @@ lemma scale_log_two_L_upper {N : ℕ} (hs : ScaleFacts N) :
   have hlog2 := Real.log_le_sub_one_of_pos (by norm_num : (0 : ℝ) < 2)
   norm_num at hlog2
   have hlogL := scale_logL_upper hs
-  norm_num only [Nat.cast_ofNat]
   nlinarith [hs.t_ge]
 
 lemma scale_log_two_L_sq_upper {N : ℕ} (hs : ScaleFacts N) :

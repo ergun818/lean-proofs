@@ -199,7 +199,6 @@ lemma deriv.comp_ofReal' {e : ℂ → ℂ} (hf : Differentiable ℂ e) :
 
 
 /-- *Need differentiability, and decay at `0` and `∞`* -/
-
 lemma PartialIntegration (f g : ℝ → ℂ)
     (fDiff : DifferentiableOn ℝ f (Ioi 0))
     (gDiff : DifferentiableOn ℝ g (Ioi 0))
@@ -869,7 +868,6 @@ lemma MellinOfSmooth1a {ν : ℝ → ℝ} (diffν : ContDiff ℝ 1 ν)
      (fun _ ↦ 0)
   let Tx := Ioc 0 ((2 : ℝ) ^ ε)
   let Ty := Icc ((2 : ℝ) ^ (-ε)) ((2 : ℝ) ^ ε)
-
   have Seq : S = (Tx ×ˢ Ty) ∩ {(x, y) : ℝ × ℝ | x ≤ y} := by
     ext ⟨x, y⟩; constructor
     · exact fun h ↦ ⟨⟨⟨h.1, le_trans h.2.1 h.2.2.2⟩, ⟨h.2.2.1, h.2.2.2⟩⟩, h.2.1⟩
@@ -880,13 +878,12 @@ lemma MellinOfSmooth1a {ν : ℝ → ℝ} (diffν : ContDiff ℝ 1 ν)
   have Smeas : MeasurableSet S := by
     rw [Seq]; apply MeasurableSet.inter ?_ <| measurableSet_le measurable_fst measurable_snd
     simp [measurableSet_prod, Tx, Ty]
-
   have int_F: IntegrableOn F (Ioi 0 ×ˢ Ioi 0) := by
     apply IntegrableOn.congr_fun (f := F') ?_ ?_ (by simp [measurableSet_prod]); swap
     · simp only [F, F', f, g, mul_ite, mul_one, mul_zero]
       intro ⟨x, y⟩ hz
       by_cases hS : ⟨x, y⟩ ∈ S <;> simp only [hS, piecewise]
-      <;> simp only [mem_prod, mem_Ioi, mem_setOf_eq, not_and, not_le, S] at hz hS
+      <;> simp only [mem_prod, mem_Ioi, mem_ofPred_eq, not_and, not_le, S] at hz hS
       · simp [div_pos hz.1 hz.2, (div_le_one hz.2).mpr hS.2.1]
       · by_cases hxy : x / y ≤ 1
         swap
@@ -913,13 +910,11 @@ lemma MellinOfSmooth1a {ν : ℝ → ℝ} (diffν : ContDiff ℝ 1 ν)
         · exact continuous_ofReal.continuousOn
         · intro x hx; simp only [mem_Icc] at hx; simp only [ofReal_ne_zero]
           linarith [(by apply rpow_pos_of_pos (by norm_num) : (0 : ℝ) < 2 ^ (-ε))]
-
   have : 𝓜 (MellinConvolution g f') s = 𝓜 g s * 𝓜 f' s := by
     rw [mul_comm, ← MellinConvolutionTransform f' g s
       (by convert int_F using 1; simp only [f', F, f]; field_simp)]
     dsimp [mellin]; rw [setIntegral_congr_fun (by simp)]
     intro x hx; simp_rw [MellinConvolutionSymmetric _ _ <| mem_Ioi.mp hx]
-
   convert! this using 1
   · congr; funext x; convert! integral_ofReal.symm
     simp only [MellinConvolution, RCLike.ofReal_div, ite_mul, one_mul, zero_mul, @apply_ite ℝ ℂ,

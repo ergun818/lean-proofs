@@ -50,7 +50,8 @@ using `+`/`-`/`*`/`/` on equations and values.
   which is a proof of `2 • a = 2 • b`.
 * `.const c` means that the input expression is not an equation but a value.
 -/
-partial def expandAdditiveCombo (ty : Expr) (stx : Syntax.Term) : TermElabM Expanded := withRef stx do
+partial def expandAdditiveCombo (ty : Expr) (stx : Syntax.Term) : TermElabM Expanded := withRef stx
+    do
   match stx with
   | `(($e)) => expandLinearCombo ty e
   | `($e₁ + $e₂) => do
@@ -102,7 +103,8 @@ def elabAdditiveCombination (tk : Syntax)
     match ← expandAdditiveCombo ty e with
     | .const c => `(Eq.refl $c)
     | .proof p => pure p
-  let norm := norm?.getD (Unhygienic.run <| withRef tk `(tactic| ((try simp only [smul_add, smul_sub]); abel)))
+  let norm := norm?.getD (Unhygienic.run <| withRef tk
+    `(tactic| ((try simp only [smul_add, smul_sub]); abel)))
   Term.withoutErrToSorry <| Tactic.evalTactic <| ← withFreshMacroScope <|
   if twoGoals then
     `(tactic| (

@@ -270,13 +270,13 @@ lemma primaryCorrection_le_errorScale {N : ℕ} {c C : ℝ}
             Real.exp (4 * t ^ 4 + 20 * t -
               c * Real.exp (t / 20)) by
           rw [← Real.exp_add]
-          congr 1 <;> ring]
+          congr 1; ring]
         rw [show Real.exp (4 * t ^ 4 + 21 * t -
               c * Real.exp (t / 20)) =
             Real.exp (4 * t ^ 4 + 20 * t -
               c * Real.exp (t / 20)) * Real.exp t by
           rw [← Real.exp_add]
-          congr 1 <;> ring, heh]
+          congr 1; ring, heh]
         field_simp
       _ ≤ (N : ℝ) / h ^ 2 := by
         simpa only [mul_one] using mul_le_mul_of_nonneg_left

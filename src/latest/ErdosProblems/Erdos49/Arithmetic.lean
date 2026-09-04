@@ -173,7 +173,7 @@ lemma primary_totient_lt_of_ratio_lt
           rd * ((d * p : ℕ) : ℝ) := by
         have := mul_le_mul_of_nonneg_left hfactor hrd0
         exact mul_le_mul_of_nonneg_right (by simpa only [mul_one] using this)
-          (Nat.cast_nonneg _)
+          (hB.le.trans hnlow)
       _ ≤ rd * (B + H) := mul_le_mul_of_nonneg_left hnhigh hrd0
       _ = rd * B + rd * H := by ring
       _ ≤ rd * B + H := add_le_add le_rfl

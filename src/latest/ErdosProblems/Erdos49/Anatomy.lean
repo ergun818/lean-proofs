@@ -213,7 +213,7 @@ lemma exists_largeFactor_gt_of_not_smooth {L R n : ℕ}
     ∃ q ∈ largeFactors L n, R < q := by
   rw [smooth_iff_prime_divisors] at hnot
   simp only [hn, ne_eq, not_false_eq_true, true_and] at hnot
-  push_neg at hnot
+  push Not at hnot
   obtain ⟨q, hqPrime, hqDvd, hRq⟩ := hnot
   refine ⟨q, ?_, hRq⟩
   apply List.mem_filter.mpr
@@ -234,8 +234,8 @@ theorem regular_mem_primary_or_secondary
     (htriple : ¬TripleCluster L R n) :
     n ∈ primarySet N L D ∨ n ∈ secondarySet N L := by
   have hn0 : n ≠ 0 := by
-    have hn1 := (Finset.mem_Icc.mp hn).1
-    omega
+    intro hn0
+    simp [hn0] at hnsmall
   obtain ⟨q₀, hq₀Large, hRq₀⟩ :=
     exists_largeFactor_gt_of_not_smooth hn0 hLR hnonsmooth
   generalize hg : (largeFactors L n).reverse = g
@@ -250,12 +250,12 @@ theorem regular_mem_primary_or_secondary
     exact (largeFactors_sortedLT hnodup).reverse
   have hprimeg : ∀ q ∈ g, q.Prime := by
     intro q hq
-    apply prime_of_mem_largeFactors
+    apply prime_of_mem_largeFactors (L := L) (n := n)
     have : q ∈ (largeFactors L n).reverse := by rwa [hg]
     simpa using this
   have hlargeg : ∀ q ∈ g, L < q := by
     intro q hq
-    apply lt_of_mem_largeFactors
+    apply lt_of_mem_largeFactors (n := n)
     have : q ∈ (largeFactors L n).reverse := by rwa [hg]
     simpa using this
   cases g with
