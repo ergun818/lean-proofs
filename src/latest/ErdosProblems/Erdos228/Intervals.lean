@@ -325,8 +325,9 @@ theorem exists_runStart_le {N i : ℕ} {bad : ℕ → Prop} [DecidablePred bad]
 
 /-- Every bad grid point belongs to one of the maximal bad runs. -/
 theorem exists_maximalBadRun_containing {N i : ℕ} {bad : ℕ → Prop}
-    [DecidablePred bad] (hiN : i < N) (hi : bad i) :
+    (hiN : i < N) (hi : bad i) :
     ∃ a b, IsMaximalBadRun N bad a b ∧ a ≤ i ∧ i ≤ b := by
+  classical
   obtain ⟨a, hai, hastart, harun⟩ := exists_runStart_le hiN hi
   let P : ℕ → Prop := fun b ↦
     b < N ∧ ∀ j ∈ Finset.range N, a ≤ j → j ≤ b → bad j

@@ -207,7 +207,7 @@ lemma coeff_cosineBlockPolynomial_first (t j : ℕ) (hj : j < 2 ^ t) :
   rw [if_pos (Nat.le_add_right _ _), if_neg hnot]
   simp
 
-lemma coeff_cosineBlockPolynomial_second (t j : ℕ) (hj : j < 2 ^ t) :
+lemma coeff_cosineBlockPolynomial_second (t j : ℕ) (_ : j < 2 ^ t) :
     (cosineBlockPolynomial t).coeff (2 * evenT t + j) =
       (rudinShapiroQ t).coeff j := by
   rw [cosineBlockPolynomial, Polynomial.coeff_add,
@@ -280,7 +280,7 @@ lemma coeff_deletedEvenBlockPolynomial_first (t j : ℕ) (hj : j < 2 ^ t) :
   rw [if_pos (Nat.le_add_right _ _), if_neg hnot]
   simp
 
-lemma coeff_deletedEvenBlockPolynomial_second (t j : ℕ) (hj : j < 2 ^ t) :
+lemma coeff_deletedEvenBlockPolynomial_second (t j : ℕ) (_ : j < 2 ^ t) :
     (deletedEvenBlockPolynomial t).coeff (2 * evenT t + j) =
       (rudinShapiroP t).coeff j := by
   rw [deletedEvenBlockPolynomial, Polynomial.coeff_add,
@@ -513,7 +513,7 @@ theorem abs_evenCosine_le_sqrt (n t : ℕ)
     _ ≤ ‖z ^ evenT t * (rudinShapiroP t).eval z‖ +
         ‖z ^ (2 * evenT t) * (rudinShapiroQ t).eval z‖ := norm_add_le _ _
     _ = ‖(rudinShapiroP t).eval z‖ + ‖(rudinShapiroQ t).eval z‖ := by
-      simp [norm_mul, norm_pow, hz]
+      simp [norm_pow, hz]
     _ ≤ 2 * Real.sqrt (2 ^ (t + 1) : ℝ) := by linarith
     _ ≤ Real.sqrt n := two_mul_sqrt_pow_le_sqrt_nat hscale
 
@@ -587,7 +587,7 @@ theorem abs_evenSine_le_six_sqrt (n t u : ℕ)
           exact norm_sub_le _ _
     _ = ‖(polynomialPrefix (rudinShapiroP u) (n + 1)).eval z‖ +
           2 * ‖(rudinShapiroP t).eval z‖ := by
-      simp [norm_mul, norm_pow, hz]
+      simp [norm_pow, hz]
       ring
     _ ≤ 5 * Real.sqrt ((n + 1 : ℕ) : ℝ) +
           2 * Real.sqrt (2 ^ (t + 1) : ℝ) := by

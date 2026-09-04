@@ -8,11 +8,11 @@ noncomputable section
 
 /-- Distinct maximal bad runs are linearly ordered and disjoint. -/
 private theorem maximalBadRuns_oriented {N a b c d : ℕ} {bad : ℕ → Prop}
-    [DecidablePred bad]
     (h₁ : Erdos228.Intervals.IsMaximalBadRun N bad a b)
     (h₂ : Erdos228.Intervals.IsMaximalBadRun N bad c d)
     (hne : (a, b) ≠ (c, d)) :
     b < c ∨ d < a := by
+  classical
   rcases lt_trichotomy a c with hac | hac | hca
   · left
     by_contra hbc
@@ -474,8 +474,7 @@ theorem firstQuadrantIntervals_away_from_axes_of_badCell_exclusion
     exact Erdos228.Intervals.gridPoint_mono hn ha100
   · have hnR : (0 : ℝ) < n := by exact_mod_cast hn
     have hb100R : (2 : ℝ) * (b + 1 + 100) ≤ n := by exact_mod_cast hb100
-    simp only [Erdos228.Intervals.gridPoint, Nat.cast_add, Nat.cast_one,
-      Nat.cast_ofNat]
+    simp only [Erdos228.Intervals.gridPoint, Nat.cast_add, Nat.cast_one]
     apply (div_le_iff₀ hnR).2
     field_simp [hnR.ne']
     nlinarith [Real.pi_pos]

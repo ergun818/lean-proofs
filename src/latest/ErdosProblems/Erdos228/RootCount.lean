@@ -95,7 +95,7 @@ theorem card_laurent_level_le_twice_frequency (m : ℕ)
 level sets: `u` is the parametrization of the unit circle and injectivity is
 needed only on the finite set of contacts being counted. -/
 theorem card_parameter_laurent_level_le_twice_frequency
-    {α : Type*} [DecidableEq α] (m : ℕ)
+    {α : Type*} (m : ℕ)
     (a : Fin (2 * m + 1) → ℂ) (w : ℂ) (u : α → ℂ) (s : Finset α)
     (hp : shiftedLevelPolynomial m a w ≠ 0)
     (hu0 : ∀ x ∈ s, u x ≠ 0)

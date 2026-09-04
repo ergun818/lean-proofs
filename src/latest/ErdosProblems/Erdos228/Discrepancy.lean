@@ -186,6 +186,7 @@ def glue [DecidableEq I] (F : Finset I) (xF : F → ℝ)
     (xOutside : ↥(Fᶜ : Finset I) → ℝ) : I → ℝ :=
   fun i ↦ if hi : i ∈ F then xF ⟨i, hi⟩ else xOutside ⟨i, by simp [hi]⟩
 
+omit [Fintype I] in
 theorem IsSign.inCube {x : I → ℝ} (hx : IsSign x) : InCube x := by
   intro i
   rcases hx i with hi | hi <;> simp [hi]
@@ -223,6 +224,7 @@ variable [DecidableEq I] (F : Finset I)
   funext i
   by_cases hi : i ∈ F <;> simp [glue, restrict, restrictOutside, hi]
 
+omit [Fintype I] [DecidableEq I] in
 theorem isSign_restrict {x : I → ℝ} (hx : IsSign x) :
     IsSign (restrict F x) := fun i ↦ hx i
 
@@ -237,6 +239,7 @@ theorem isSign_glue {xF : F → ℝ} {xOutside : ↥(Fᶜ : Finset I) → ℝ}
   · simpa [glue, hi] using hF ⟨i, hi⟩
   · simpa [glue, hi] using hOutside ⟨i, Finset.mem_compl.mpr hi⟩
 
+omit [Fintype I] [DecidableEq I] in
 theorem inCube_restrict {x : I → ℝ} (hx : InCube x) :
     InCube (restrict F x) := fun i ↦ hx i
 
@@ -262,6 +265,7 @@ theorem dot_eq_dotOn_add_dotOn_compl (F : Finset I) (x v : I → ℝ) :
   simpa only [dot, dotOn] using
     (F.sum_add_sum_compl (fun i ↦ x i * v i)).symm
 
+omit [Fintype I] [DecidableEq I] in
 theorem dotOn_eq_dot_restrict (F : Finset I) (x v : I → ℝ) :
     dotOn F x v = dot (restrict F x) (restrict F v) := by
   rw [dotOn, dot, ← Finset.sum_attach]
@@ -304,6 +308,7 @@ theorem dot_glue_sub_reference (F : Finset I) (x₁ x₀ : I → ℝ)
     dot_restrict_add_outside F x₁ v]
   ring
 
+omit [DecidableEq I] in
 theorem norm_restrict_le (F : Finset I) (v : I → ℝ) :
     ‖restrict F v‖ ≤ ‖v‖ := by
   rw [pi_norm_le_iff_of_nonneg (norm_nonneg v)]
@@ -326,6 +331,7 @@ def HasPartialColoring [DecidableEq I]
       Fintype.card I ≤ 2 * (fixedCoordinates x).card ∧
       ∀ j, |dot (x - x₀) (v j)| ≤ c j * l2Norm (v j)
 
+omit [Fintype J] in
 /-- Convert the normalized-row conclusion naturally produced by the edge
 walk into the exact unnormalized partial-colouring interface. -/
 theorem hasPartialColoring_of_normalizedRows [DecidableEq I]
@@ -367,6 +373,7 @@ def HasFullColoring
       |dot (x - x₀) (v j)| ≤
         (c j + 30) * Real.sqrt (Fintype.card I) * ‖v j‖
 
+omit [Fintype J] in
 /-- Freeze coordinates in `F` which have reached a face, recursively colour
 the complement, and combine the two discrepancy estimates. -/
 theorem exists_fullColoring_glue [DecidableEq I]
@@ -418,9 +425,11 @@ which began with `d` coordinates. -/
 def recursiveParameter (d e : ℕ) (c : J → ℝ) : J → ℝ :=
   fun j ↦ Real.sqrt (c j ^ 2 + 196 * Real.log ((d : ℝ) / e))
 
+omit [Fintype J] in
 theorem recursiveParameter_nonneg (d e : ℕ) (c : J → ℝ) :
     ∀ j, 0 ≤ recursiveParameter d e c j := fun _ ↦ Real.sqrt_nonneg _
 
+omit [Fintype J] in
 theorem recursiveParameter_sq {d e : ℕ} (c : J → ℝ)
     (he : 0 < e) (hed : e ≤ d) (j : J) :
     (recursiveParameter d e c j) ^ 2 =
@@ -432,6 +441,7 @@ theorem recursiveParameter_sq {d e : ℕ} (c : J → ℝ)
     simpa using (show (e : ℝ) ≤ d by exact_mod_cast hed)
   exact add_nonneg (sq_nonneg _) (mul_nonneg (by norm_num) (Real.log_nonneg hratio))
 
+omit [Fintype J] in
 theorem recursiveParameter_exponent {d e : ℕ} (c : J → ℝ)
     (he : 0 < e) (hed : e ≤ d) (j : J) :
     Real.exp (-((recursiveParameter d e c j) ^ 2) / 196) =
@@ -470,12 +480,14 @@ theorem recursiveParameter_budget {d e : ℕ} (c : J → ℝ)
       have hd_real : (d : ℝ) ≠ 0 := by exact_mod_cast hd.ne'
       field_simp
 
+omit [Fintype J] in
 theorem partialParameter_nonneg {c : J → ℝ} (hc : ∀ j, 0 ≤ c j) :
     ∀ j, 0 ≤ partialParameter c j := by
   intro j
   simp only [partialParameter]
   exact div_nonneg (mul_nonneg (by norm_num) (hc j)) (by norm_num)
 
+omit [Fintype J] in
 theorem partialParameter_exponent (c : J → ℝ) (j : J) :
     -((partialParameter c j) ^ 2) / 16 = -(c j) ^ 2 / 196 := by
   simp only [partialParameter]
@@ -631,11 +643,13 @@ zero). -/
 def nearestSign (x : I → ℝ) : I → ℝ :=
   fun i ↦ if 0 ≤ x i then 1 else -1
 
+omit [Fintype I] in
 theorem nearestSign_isSign (x : I → ℝ) : IsSign (nearestSign x) := by
   intro i
   simp only [nearestSign]
   split_ifs <;> simp
 
+omit [Fintype I] in
 theorem abs_nearestSign_sub_le_one {x : I → ℝ} (hx : InCube x) (i : I) :
     |nearestSign x i - x i| ≤ 1 := by
   have hxi := hx i
@@ -664,10 +678,11 @@ theorem fixedCoordinates_nearestSign [DecidableEq I] (x : I → ℝ) :
   simp only [nearestSign]
   split_ifs <;> norm_num
 
+omit [Fintype J] in
 /-- Lovett--Meka is elementary when all constraint vectors vanish.  This is
 also the reduction used to discard zero rows before normalizing vectors. -/
 theorem hasPartialColoring_zero_vectors [DecidableEq I]
-    (x₀ : I → ℝ) (c : J → ℝ) (hx₀ : InCube x₀) (hc : ∀ j, 0 ≤ c j) :
+    (x₀ : I → ℝ) (c : J → ℝ) (_ : InCube x₀) (_ : ∀ j, 0 ≤ c j) :
     HasPartialColoring (fun _ ↦ (0 : I → ℝ)) x₀ c := by
   refine ⟨nearestSign x₀, ?_, ?_, ?_⟩
   · intro i
@@ -678,10 +693,11 @@ theorem hasPartialColoring_zero_vectors [DecidableEq I]
   · intro j
     simp [dot, l2Norm]
 
+omit [Fintype J] in
 /-- With no constraints, coordinatewise rounding is an exact partial
 colouring. -/
 theorem hasPartialColoring_of_isEmpty [DecidableEq I] [IsEmpty J]
-    (v : J → I → ℝ) (x₀ : I → ℝ) (c : J → ℝ) (hx₀ : InCube x₀) :
+    (v : J → I → ℝ) (x₀ : I → ℝ) (c : J → ℝ) (_ : InCube x₀) :
     HasPartialColoring v x₀ c := by
   refine ⟨nearestSign x₀, ?_, ?_, ?_⟩
   · intro i
@@ -703,6 +719,7 @@ theorem card_le_900_le_thirty_mul_sqrt_card
       exact_mod_cast hcard
   nlinarith [Real.sq_sqrt h0, Real.sqrt_nonneg (Fintype.card I)]
 
+omit [Fintype J] in
 /-- The terminal (`d ≤ 900`) case of BBMST's full-colouring induction. -/
 theorem hasFullColoring_of_card_le_900
     (v : J → I → ℝ) (x₀ : I → ℝ) (c : J → ℝ)

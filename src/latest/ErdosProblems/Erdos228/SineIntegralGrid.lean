@@ -84,7 +84,7 @@ private lemma geometricLower_nonneg {x : ℝ} (hx0 : 0 ≤ x)
   nlinarith [sq_nonneg (x / Real.pi)]
 
 private lemma geometricLower_le_weight {x : ℝ} (hx0 : 0 ≤ x)
-    (hxpi : x ≤ Real.pi) :
+    (_ : x ≤ Real.pi) :
     geometricLower x ≤ Real.pi / (x + Real.pi) := by
   have hpi : 0 < Real.pi := Real.pi_pos
   have hxpi_pos : 0 < x + Real.pi := add_pos_of_nonneg_of_pos hx0 hpi
@@ -194,7 +194,8 @@ theorem four_thirds_lt_sineIntegral_two_pi :
       have hadd := intervalIntegral.integral_add_adjacent_intervals hsinc
         (Real.continuous_sinc.intervalIntegrable Real.pi (2 * Real.pi))
       unfold Erdos228.Kernel.sineIntegral
-      convert hadd using 1 <;> ring_nf
+      convert hadd using 1
+      ring_nf
 
 private def evenPoint (k : ℕ) : ℝ := (k : ℝ) * (2 * Real.pi)
 
@@ -525,7 +526,8 @@ theorem sineIntegral_mem_zero_two {x : ℝ} (hx0 : 0 ≤ x)
     Erdos228.Kernel.sineIntegral x ∈ Icc (0 : ℝ) 2 := by
   have hxEven : x ≤ evenPoint 7 := by
     dsimp [evenPoint]
-    convert hx14 using 1 <;> ring
+    convert hx14 using 1
+    ring
   constructor
   · by_cases hxpi : x ≤ Real.pi
     · apply intervalIntegral.integral_nonneg hx0
@@ -580,7 +582,8 @@ theorem four_thirds_le_sineIntegral_of_two_pi_le {x : ℝ}
   have hlo : evenPoint 1 ≤ x := by simpa [evenPoint] using hx2
   have hhi : x ≤ evenPoint 7 := by
     dsimp [evenPoint]
-    convert hx14 using 1 <;> ring
+    convert hx14 using 1
+    ring
   have htail := even_tail_nonneg_of_le_fourteen_pi hlo hhi
   have hadd := intervalIntegral.integral_add_adjacent_intervals (μ := volume)
     (Real.continuous_sinc.intervalIntegrable (0 : ℝ) (evenPoint 1))

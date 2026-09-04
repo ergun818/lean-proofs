@@ -126,7 +126,7 @@ theorem exists_large_of_real_error {A B : ℂ} (D : Fin 4 → ℝ)
     (herror : ∀ k : Fin 4, |D k - leadingReal k A B| ≤ 1 / 8) :
     ∃ k : Fin 4, 1 / 4 ≤ |D k| := by
   by_contra hlarge
-  push_neg at hlarge
+  push Not at hlarge
   have hleading : ∀ k : Fin 4, |leadingReal k A B| ≤ 3 / 8 := by
     intro k
     calc

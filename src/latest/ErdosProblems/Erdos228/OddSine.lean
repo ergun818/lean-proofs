@@ -411,7 +411,7 @@ theorem exists_firstQuadrant_abs_oddSineSum_eq
 /-- The second full colouring rounds all target coefficients to signs and
 costs at most `72*sqrt n` uniformly. -/
 theorem exists_rounding {n : ℕ} (hn : 0 < n) {G : Type} [Fintype G]
-    [DecidableEq G] (setup : RoundingSetup n G) (hat : ℕ → ℝ)
+    (setup : RoundingSetup n G) (hat : ℕ → ℝ)
     (hhat : ∀ j < n, |hat j| ≤ 1)
     (hLM : ∀ (I : Type) [Fintype I] [DecidableEq I],
       Erdos228.Discrepancy.PartialColoringPrinciple I (G × Fin n)) :
@@ -513,7 +513,7 @@ theorem exists_oddSine {n : ℕ} (hn : 0 < n)
       Erdos228.Discrepancy.PartialColoringPrinciple I (Fin n))
     (hkernel : ∀ alpha : (↑F.base : Type) → ℝ,
       Erdos228.Discrepancy.IsSign alpha → KernelCertificate F alpha)
-    {G : Type} [Fintype G] [DecidableEq G] (setup : RoundingSetup n G)
+    {G : Type} [Fintype G] (setup : RoundingSetup n G)
     (hLM₂ : ∀ (I : Type) [Fintype I] [DecidableEq I],
       Erdos228.Discrepancy.PartialColoringPrinciple I (G × Fin n)) :
     ∃ eps : ℕ → ℝ, (∀ j, eps j = 1 ∨ eps j = -1) ∧

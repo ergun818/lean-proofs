@@ -86,6 +86,7 @@ theorem edgeWalk_score_step (delta gamma : ℝ) (v : J → I → ℝ)
 
 /-! ## Cube and discrepancy invariants -/
 
+omit [DecidableEq I] in
 theorem abs_apply_le_norm_walkSpace (x : WalkSpace I) (i : I) :
     |x i| ≤ ‖x‖ := by
   have hi : x i ^ 2 ≤ ‖x‖ ^ 2 := by
@@ -281,7 +282,7 @@ quadratic time.  The small-`a` case uses both signs of the potential; the
 large-`a` case uses the sign agreeing with `y`. -/
 theorem one_le_rowPotential_of_near_boundary
     (gamma delta : ℝ) (t : ℕ) (a y : ℝ)
-    (ha : 0 ≤ a) (hdelta : 0 ≤ delta) (hdeltaSmall : delta ≤ 1 / 4)
+    (ha : 0 ≤ a) (_ : 0 ≤ delta) (hdeltaSmall : delta ≤ 1 / 4)
     (htime : gamma ^ 2 * (t : ℝ) ≤ 5)
     (hnear : a - delta ≤ |y|) :
     1 ≤ rowPotential gamma t a y := by
@@ -404,6 +405,7 @@ theorem card_le_finrank_add_active
     Module.finrank ℝ (edgeSubspace delta v x₀ c x) at h
   omega
 
+omit [DecidableEq I] in
 theorem card_activeDiscrepancies_le_potential
     (gamma delta : ℝ) (t : ℕ)
     (v : J → I → ℝ) (x₀ : I → ℝ) (c : J → ℝ) (x : WalkSpace I)
@@ -429,6 +431,7 @@ theorem card_activeDiscrepancies_le_potential
           (normalizedDiscrepancy (v j) x₀ x))
     _ = discrepancyPotential gamma t v x₀ c x := rfl
 
+omit [DecidableEq I] in
 theorem norm_sq_le_card_of_inCube (x : WalkSpace I) (hx : InCube x) :
     ‖x‖ ^ 2 ≤ Fintype.card I := by
   rw [norm_walkSpace_sq]
@@ -540,6 +543,7 @@ theorem edgeWalk_terminal_half
 
 /-! ## Arbitrary accuracy and compactness -/
 
+omit [DecidableEq I] in
 theorem exists_walk_parameters (epsilon : ℝ) (hepsilon : 0 < epsilon) :
     ∃ q : ℕ, 0 < q ∧
       let gamma : ℝ := 1 / (q : ℝ)
@@ -579,6 +583,7 @@ theorem exists_walk_parameters (epsilon : ℝ) (hepsilon : 0 < epsilon) :
   push_cast
   field_simp
 
+omit [DecidableEq J] in
 /-- The finite edge walk produces an approximate partial colouring at every
 positive accuracy. -/
 theorem exists_approximate_partialColoring
@@ -591,6 +596,7 @@ theorem exists_approximate_partialColoring
       InCube x ∧
         Fintype.card I ≤ 2 * (approximateFixedCoordinates epsilon x).card ∧
         ∀ j, |dot (x - x₀) (v j)| ≤ c j * l2Norm (v j) := by
+  classical
   obtain ⟨q, hq, hgamma, hdelta, hdeltaSmall, hdeltaEpsilon, htime⟩ :=
     exists_walk_parameters (I := I) epsilon hepsilon
   let gamma : ℝ := 1 / (q : ℝ)

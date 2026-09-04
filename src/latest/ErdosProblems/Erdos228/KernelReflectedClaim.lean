@@ -220,9 +220,7 @@ private lemma endpoint_variation_le_of_monotone
       (∑ I ∈ s, (f I.2 - f I.1)) =
           ∑ J ∈ t, (f (ofLex J).2 - f (ofLex J).1) := by
             symm
-            simpa [t] using (Finset.sum_image (s := s)
-              (f := fun J : Lex Interval ↦ f (ofLex J).2 - f (ofLex J).1)
-              toLex.injective.injOn)
+            simp [t]
       _ = ∑ J : ↥t, (f (ofLex (J.1 : Lex Interval)).2 -
           f (ofLex (J.1 : Lex Interval)).1) := by
             symm
@@ -427,7 +425,7 @@ private lemma local_right_bound {n : ℕ} (hn : 4096 ≤ n)
 
 private lemma amplitude_antitone_left {n : ℕ} (hn : 4096 ≤ n)
     {theta : ℝ} (htheta : theta ∈ Icc (0 : ℝ) (Real.pi / 2))
-    (hbranch : eta n ≤ turningPoint theta) :
+    (_ : eta n ≤ turningPoint theta) :
     AntitoneOn (amplitude theta) (Icc (eta n) (turningPoint theta)) := by
   intro x hx y hy hxy
   have hn0 : 0 < n := lt_of_lt_of_le (by norm_num) hn
@@ -446,7 +444,7 @@ private lemma amplitude_antitone_left {n : ℕ} (hn : 4096 ≤ n)
 
 private lemma amplitude_monotone_right {n : ℕ} (hn : 4096 ≤ n)
     {theta : ℝ} (htheta : theta ∈ Icc (0 : ℝ) (Real.pi / 2))
-    (hbranch : turningPoint theta ≤ Real.pi / 2 - eta n) :
+    (_ : turningPoint theta ≤ Real.pi / 2 - eta n) :
     MonotoneOn (amplitude theta)
       (Icc (turningPoint theta) (Real.pi / 2 - eta n)) := by
   intro x hx y hy hxy
@@ -602,7 +600,7 @@ private lemma sum_right_le {n : ℕ} (hn : 4096 ≤ n)
 
 private lemma crossing_pointwise_bound {n : ℕ} (hn : 4096 ≤ n)
     (F : SuitableIntervalFamily n) {theta : ℝ}
-    (htheta : theta ∈ Icc (0 : ℝ) (Real.pi / 2))
+    (_ : theta ∈ Icc (0 : ℝ) (Real.pi / 2))
     {I : RealInterval} (hI : I ∈ crossingIntervals F theta) :
     |reflectedIntegral n I theta| ≤ 12 * Real.pi / n := by
   have hn0 : 0 < n := lt_of_lt_of_le (by norm_num) hn

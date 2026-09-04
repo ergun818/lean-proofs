@@ -214,7 +214,7 @@ private theorem left_endpoint_ge {n t : ℕ} {gamma : ℝ}
   rw [mem_dangerousRuns] at hI
   have hn : 0 < n := by
     have hb : I.1.2 < 2 * n := hI.2.1
-    exact Nat.pos_of_ne_zero (fun hn0 ↦ by simpa [hn0] using hb)
+    exact Nat.pos_of_ne_zero (fun hn0 ↦ by simp [hn0] at hb)
   by_cases ha : I.1.1 = 0
   · simpa [ha, Erdos228.Intervals.gridPoint_zero] using hzero
   · have hgood : ¬BadCell n t gamma (I.1.1 - 1) :=
@@ -257,7 +257,7 @@ private theorem right_endpoint_ge {n t : ℕ} {gamma : ℝ}
     exact ⟨le_rfl, (Erdos228.Intervals.gridPoint_mono hn) (by omega)⟩
 
 private theorem exists_left_contact {n t : ℕ} {gamma : ℝ}
-    (hn : 0 < n)
+    (_ : 0 < n)
     (hzero : cosineThreshold n gamma ≤ |evenCosine t 0|)
     (I : FirstQuadrantRun n t gamma) :
     ∃ x ∈ Icc (Erdos228.Intervals.gridPoint n I.1.1) (runBadWitness I),
@@ -614,7 +614,8 @@ theorem card_firstQuadrantRuns_le_polynomial_degree
     card_polynomialAbsoluteLevelRoots_le q (cosineThreshold n gamma)
   have htwice : 2 * (firstQuadrantRuns n t gamma).card ≤ 2 * q.natDegree := by
     calc
-      2 * (firstQuadrantRuns n t gamma).card = Fintype.card (FirstQuadrantRun n t gamma × Fin 2) := by
+      2 * (firstQuadrantRuns n t gamma).card =
+          Fintype.card (FirstQuadrantRun n t gamma × Fin 2) := by
         simp [Fintype.card_prod, mul_comm]
       _ ≤ Fintype.card ↑roots := hcard
       _ = roots.card := Fintype.card_coe _
@@ -678,7 +679,6 @@ private theorem rudinShapiro_eval_one_oddIndex (k : ℕ) :
             eval_rudinShapiroP_succ _ _
           _ = (2 ^ (k + 1 + 1) : ℂ) := by
             rw [hPnext, hQnext]
-            push_cast
             simp [pow_succ]
             ring
       · calc
@@ -728,7 +728,6 @@ private theorem rudinShapiro_eval_neg_one_oddIndex (k : ℕ) :
             eval_rudinShapiroQ_succ _ _
           _ = (2 ^ (k + 1 + 1) : ℂ) := by
             rw [heven₂.neg_one_pow, hPnext, hQnext]
-            push_cast
             simp [pow_succ]
             ring
 

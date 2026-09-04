@@ -44,12 +44,11 @@ theorem norm_walkSpace_sq (v : WalkSpace I) :
 
 theorem l2Norm_eq_norm (v : I → ℝ) : l2Norm v = ‖toWalk v‖ := by
   rw [l2Norm, EuclideanSpace.norm_eq]
-  simp only [PiLp.toLp_apply, Real.norm_eq_abs, sq_abs]
+  simp only [Real.norm_eq_abs, sq_abs]
 
 theorem dot_eq_inner (x v : I → ℝ) :
     dot x v = inner ℝ (toWalk v) (toWalk x) := by
-  simp [dot, toWalk, EuclideanSpace.inner_eq_star_dotProduct,
-    RCLike.star_def, dotProduct, mul_comm]
+  simp [dot, toWalk, EuclideanSpace.inner_eq_star_dotProduct, dotProduct]
 
 /-! ## Normalized constraints and active faces -/
 
@@ -165,7 +164,7 @@ theorem integrable_exp_inner_starProjection_sample
 theorem sum_projectedCoefficients_sq
     (K : Submodule ℝ (WalkSpace I)) (v : WalkSpace I) :
     ∑ i, projectedCoefficients K v i ^ 2 = ‖K.starProjection v‖ ^ 2 := by
-  simpa [projectedCoefficients, EuclideanSpace.norm_sq_eq]
+  simp [projectedCoefficients, EuclideanSpace.norm_sq_eq]
 
 theorem sum_projectedCoefficients_sq_le
     (K : Submodule ℝ (WalkSpace I)) (v : WalkSpace I) :
@@ -198,7 +197,7 @@ theorem integral_exp_inner_starProjection_sample_le
     calc
       (variance : ℝ) = ↑(∑ i, q i) := rfl
       _ = ∑ i, (q i : ℝ) := by
-        simpa using NNReal.coe_sum Finset.univ q
+        simp
       _ = ∑ i, projectedCoefficients K v i ^ 2 := by
         apply Finset.sum_congr rfl
         intro i hi
@@ -224,7 +223,7 @@ theorem memLp_weighted_rademacher_coord (a : I → ℝ) (i : I) :
 
 theorem integral_weighted_rademacher_sum (a : I → ℝ) :
     ∫ omega, (∑ i, a i * omega i) ∂rademacherProduct I = 0 := by
-  rw [integral_finset_sum]
+  rw [integral_finsetSum]
   · apply Finset.sum_eq_zero
     intro i hi
     rw [integral_const_mul]
@@ -269,7 +268,7 @@ theorem integral_sq_weighted_rademacher_sum (a : I → ℝ) :
       rw [variance_const_mul]
       have hid : Var[id; rademacherMeasure] = 1 := by
         rw [variance_eq_sub memLp_id_rademacherMeasure]
-        simp only [Pi.pow_apply, id_eq, integral_id_rademacherMeasure, sub_zero]
+        simp only [Pi.pow_apply, id_eq, integral_id_rademacherMeasure]
         have hsq : (fun x : ℝ ↦ x ^ 2) =ᵐ[rademacherMeasure] fun _ ↦ 1 := by
           filter_upwards [ae_abs_eq_one_rademacherMeasure] with x hx
           rw [← sq_abs, hx]
@@ -397,6 +396,7 @@ theorem norm_edgeIncrement_le (delta : ℝ) (v : J → I → ℝ)
     ‖edgeIncrement delta v x₀ c x omega‖ ≤ ‖sampleVector omega‖ := by
   exact (edgeSubspace delta v x₀ c x).norm_starProjection_apply_le _
 
+omit [DecidableEq I] in
 /-- Every point in the support of the Rademacher product has squared
 Euclidean norm equal to the ambient dimension. -/
 theorem norm_sampleVector_sq_of_signs {omega : I → ℝ}
@@ -411,6 +411,7 @@ theorem norm_sampleVector_sq_of_signs {omega : I → ℝ}
       nlinarith [sq_abs (omega i), homega i]
     _ = Fintype.card I := by simp
 
+omit [DecidableEq I] in
 theorem norm_sampleVector_le_sqrt_card {omega : I → ℝ}
     (homega : ∀ i, |omega i| = 1) :
     ‖sampleVector omega‖ ≤ sqrt (Fintype.card I) := by
@@ -455,6 +456,7 @@ def edgeScore (gamma : ℝ) (t : ℕ)
     (x : WalkSpace I) : ℝ :=
   ‖x‖ ^ 2 - 5 * discrepancyPotential gamma t v x₀ c x
 
+omit [DecidableEq I] [DecidableEq J] in
 theorem discrepancyPotential_zero (gamma : ℝ) (v : J → I → ℝ)
     (x₀ : I → ℝ) (c : J → ℝ) :
     discrepancyPotential gamma 0 v x₀ c (toWalk x₀) =
@@ -471,6 +473,7 @@ theorem rowPotential_nonneg (gamma : ℝ) (t : ℕ) (a y : ℝ) :
   add_nonneg (signedRowPotential_nonneg _ _ _ _ _)
     (signedRowPotential_nonneg _ _ _ _ _)
 
+omit [DecidableEq I] [DecidableEq J] in
 theorem discrepancyPotential_nonneg (gamma : ℝ) (t : ℕ)
     (v : J → I → ℝ) (x₀ : I → ℝ) (c : J → ℝ)
     (x : WalkSpace I) : 0 ≤ discrepancyPotential gamma t v x₀ c x := by
@@ -537,7 +540,6 @@ theorem integral_signedRowPotential_step_le
       unfold signedRowPotential
       rw [mul_assoc, ← exp_add]
       congr 2
-      push_cast
       nlinarith
 
 theorem integrable_signedRowPotential_step
@@ -610,7 +612,7 @@ theorem integrable_discrepancyPotential_step
     Integrable (fun omega ↦ discrepancyPotential gamma (t + 1) v x₀ c
       (edgeStep delta gamma v x₀ c x omega)) (rademacherProduct I) := by
   unfold discrepancyPotential
-  exact integrable_finset_sum Finset.univ fun j hj ↦
+  exact integrable_finsetSum Finset.univ fun j hj ↦
     integrable_signedRowPotential_step 1 gamma delta t v x₀ c x j |>.add
       (integrable_signedRowPotential_step (-1) gamma delta t v x₀ c x j)
 
@@ -623,12 +625,13 @@ theorem integral_discrepancyPotential_step_le
       ∂rademacherProduct I ≤ discrepancyPotential gamma t v x₀ c x := by
   unfold discrepancyPotential
   rw [integral_finsetSum]
-  exact Finset.sum_le_sum fun j hj ↦
-    integral_rowPotential_step_le gamma delta t v x₀ c x j
-  intro j hj
-  exact (integrable_signedRowPotential_step 1 gamma delta t v x₀ c x j).add
-    (integrable_signedRowPotential_step (-1) gamma delta t v x₀ c x j)
+  · exact Finset.sum_le_sum fun j _ ↦
+      integral_rowPotential_step_le gamma delta t v x₀ c x j
+  · intro j _
+    exact (integrable_signedRowPotential_step 1 gamma delta t v x₀ c x j).add
+      (integrable_signedRowPotential_step (-1) gamma delta t v x₀ c x j)
 
+omit [DecidableEq I] in
 theorem integrable_inner_starProjection_sample
     (K : Submodule ℝ (WalkSpace I)) (v : WalkSpace I) :
     Integrable (fun omega ↦ inner ℝ v (K.starProjection (sampleVector omega)))
@@ -637,16 +640,16 @@ theorem integrable_inner_starProjection_sample
   exact (memLp_weighted_rademacher_sum (projectedCoefficients K v)).integrable
     (by norm_num)
 
+omit [DecidableEq I] in
 theorem integrable_norm_sq_starProjection
     (K : Submodule ℝ (WalkSpace I)) :
     Integrable (fun omega ↦ ‖K.starProjection (sampleVector omega)‖ ^ 2)
       (rademacherProduct I) := by
   simp_rw [norm_sq_starProjection_eq_sum_inner_sq K]
-  exact integrable_finset_sum Finset.univ fun k hk ↦
+  exact integrable_finsetSum Finset.univ fun k hk ↦
     ((memLp_weighted_rademacher_sum
       (fun i ↦ (((stdOrthonormalBasis ℝ K k : K) : WalkSpace I) i))).integrable_sq.congr
         (Filter.Eventually.of_forall fun omega ↦ by
-          congr 1
           simp [PiLp.inner_apply, sampleVector, toWalk, mul_comm]))
 
 theorem norm_edgeStep_sq
@@ -656,8 +659,7 @@ theorem norm_edgeStep_sq
       2 * gamma * inner ℝ x (edgeIncrement delta v x₀ c x omega) +
       gamma ^ 2 * ‖edgeIncrement delta v x₀ c x omega‖ ^ 2 := by
   rw [edgeStep, norm_add_sq_real]
-  simp only [norm_smul, Real.norm_eq_abs, inner_smul_right,
-    starRingEnd_apply, star_trivial]
+  simp only [norm_smul, Real.norm_eq_abs, inner_smul_right]
   rw [mul_pow, sq_abs]
   ring
 
@@ -697,7 +699,7 @@ theorem integral_norm_edgeStep_sq
     · rw [integral_const, integral_const_mul,
     hzero, mul_zero, integral_const_mul, hsquare]
       rw [hmeasure]
-      simp only [mul_one, add_zero]
+      simp only [add_zero]
       ring
     · exact hconst
     · exact hlinear
@@ -742,10 +744,11 @@ theorem integral_edgeScore_step_ge
   · exact integrable_norm_edgeStep_sq gamma delta v x₀ c x
   · exact (integrable_discrepancyPotential_step gamma delta t v x₀ c x).const_mul 5
 
+omit [DecidableEq I] in
 theorem measure_not_signs_eq_zero :
     rademacherProduct I {omega | ¬ ∀ i, |omega i| = 1} = 0 := by
   rw [← ae_iff]
-  simpa only [Set.mem_setOf_eq, not_not] using
+  simpa only [Set.mem_ofPred_eq, not_not] using
     (ae_forall_abs_eq_one_rademacherProduct I)
 
 /-- At each state an actual sign vector realizes at least the average
@@ -768,6 +771,6 @@ theorem exists_sign_edgeScore_step
       (integrable_edgeScore_step gamma delta t v x₀ c x)
       (show rademacherProduct I N = 0 by exact measure_not_signs_eq_zero)
   refine ⟨omega, ?_, (integral_edgeScore_step_ge gamma delta t v x₀ c x).trans homega⟩
-  simpa only [N, Set.mem_setOf_eq, not_not] using homegaN
+  simpa only [N, Set.mem_ofPred_eq, not_not] using homegaN
 
 end Erdos228.EdgeWalk

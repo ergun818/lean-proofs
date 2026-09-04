@@ -268,7 +268,7 @@ theorem normalized_energy (t : ℕ) (x : ℝ) :
   have hEpos : (0 : ℝ) < (2 ^ (t + 1) : ℝ) := by positivity
   have hspos : 0 < Real.sqrt (2 ^ (t + 1) : ℝ) := Real.sqrt_pos.2 hEpos
   have hsquare := Real.sq_sqrt hEpos.le
-  simp only [normalizedPDerivative, normalizedQDerivative, pow_zero, one_mul,
+  simp only [normalizedPDerivative, normalizedQDerivative, pow_zero,
     Function.iterate_zero_apply, norm_one, norm_mul, Complex.norm_real, Real.norm_eq_abs,
     abs_of_pos (rsNormalization_pos t)]
   rw [show
@@ -363,7 +363,7 @@ theorem evenCosine_eq_normalizedH (t : ℕ) (theta : ℝ) :
     ring
   rw [evenCosine_eq]
   simp only [normalizedH, normalizedPDerivative, normalizedQDerivative, pow_zero,
-    one_mul, mul_one, Function.iterate_zero_apply, hdiv, hphase₁, hphase₂, rsNormalization]
+    mul_one, Function.iterate_zero_apply, hdiv, hphase₁, hphase₂, rsNormalization]
   rw [show
     unitPoint (2 * theta) ^ evenT t *
           ((((Real.sqrt (2 ^ (t + 1) : ℝ))⁻¹ : ℝ) : ℂ) *
@@ -376,8 +376,7 @@ theorem evenCosine_eq_normalizedH (t : ℕ) (theta : ℝ) :
             (rudinShapiroP t).eval (unitPoint (2 * theta)) +
           unitPoint (2 * theta) ^ (2 * evenT t) *
             (rudinShapiroQ t).eval (unitPoint (2 * theta))) by ring]
-  simp only [Complex.mul_re, Complex.inv_re, Complex.ofReal_re, Complex.ofReal_im,
-    Complex.normSq_ofReal, zero_mul, sub_zero]
+  simp only [Complex.mul_re, Complex.ofReal_re, Complex.ofReal_im, zero_mul, sub_zero]
   field_simp
 
 /-! ## Symmetries of the cosine block -/
@@ -462,7 +461,7 @@ theorem hasGoodCellInEverySeven_of_derivative_bounds
     HasGoodCellInEverySeven f eta := by
   intro a
   by_contra hnone
-  push_neg at hnone
+  push Not at hnone
   have hsample (j : Fin 7) :
       ∃ x ∈ Icc (a + (j : ℕ) * eta) (a + ((j : ℕ) + 1) * eta),
         |f x| < eta ^ 3 / 128 := by
@@ -686,10 +685,10 @@ theorem sevenCellProperty_of_normalized_good
   have hx : x ∈ Icc (a * eta + (j : ℝ) * eta)
       (a * eta + ((j : ℝ) + 1) * eta) := by
     rcases htheta with ⟨hthetaL, hthetaR⟩
-    simp only [Erdos228.Intervals.gridCell, Erdos228.Intervals.gridPoint] at hthetaL hthetaR
+    simp only [Erdos228.Intervals.gridPoint] at hthetaL hthetaR
     dsimp [x, eta]
     constructor <;> push_cast at * <;>
-      (field_simp [ne_of_gt hnR] at hthetaL hthetaR ⊢ <;> nlinarith [Real.pi_pos])
+      (field_simp [ne_of_gt hnR] at hthetaL hthetaR ⊢; nlinarith [Real.pi_pos])
   have hnorm : eta ^ 3 / 128 ≤ |(normalizedH t x).re| := by
     simpa [eta] using hcell x hx
   have hsqrt : 0 ≤ Real.sqrt (2 ^ (t + 1) : ℝ) := Real.sqrt_nonneg _
@@ -823,7 +822,6 @@ def suitableIntervalFamilyOfDangerousRuns
       norm_num [Nat.cast_add]
       apply (div_le_iff₀ hnR).2
       have hmul := mul_le_mul_of_nonneg_right hidx Real.pi_pos.le
-      norm_num [Nat.cast_add] at hmul
       nlinarith
   grid_endpoints := by
     intro I hI

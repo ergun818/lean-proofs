@@ -239,9 +239,7 @@ private lemma endpoint_variation_le_of_monotone
       (∑ I ∈ s, (f I.2 - f I.1)) =
           ∑ J ∈ t, (f (ofLex J).2 - f (ofLex J).1) := by
             symm
-            simpa [t] using (Finset.sum_image (s := s)
-              (f := fun J : Lex RealInterval ↦
-                f (ofLex J).2 - f (ofLex J).1) toLex.injective.injOn)
+            simp [t]
       _ = ∑ J : ↑t, (f (ofLex (J.1 : Lex RealInterval)).2 -
           f (ofLex (J.1 : Lex RealInterval)).1) := by
             symm

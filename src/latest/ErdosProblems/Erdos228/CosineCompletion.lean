@@ -45,13 +45,13 @@ theorem endpoint_threshold_bounds
   · rw [evenCosine_eq_normalizedH]
     simp only [mul_zero]
     rw [normalizedH_re_zero_of_odd hparam.t_odd]
-    simp only [abs_mul, abs_one, mul_one, abs_of_pos hscale]
+    simp only [mul_one, abs_of_pos hscale]
     linarith
   · rw [evenCosine_eq_normalizedH]
     have harg : 2 * (evenT t : ℝ) * (Real.pi / 2) =
         (evenT t : ℝ) * Real.pi := by ring
     rw [harg, normalizedH_re_evenT_mul_pi_of_odd hparam.t_odd]
-    simp only [abs_mul, abs_one, mul_one, abs_of_pos hscale]
+    simp only [mul_one, abs_of_pos hscale]
     linarith
 
 theorem suitableFamily_base_card_le
