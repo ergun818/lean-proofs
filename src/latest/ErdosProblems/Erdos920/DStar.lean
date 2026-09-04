@@ -104,17 +104,14 @@ theorem transitiveTournament_impossible
   classical
   let x : Fin (t + 1) → Vec K t := fun i ↦ (v i).left
   let y : Fin (t + 1) → Vec K t := fun i ↦ (v i).right
-
   have hy_last : y (Fin.last t) ≠ 0 := (v (Fin.last t)).right_ne_zero
   have hnot_all : ¬ ∀ w : Vec K t, y (Fin.last t) ⬝ᵥ w = 0 := by
     intro h
     exact hy_last (dotProduct_eq_zero _ h)
   obtain ⟨w, hw⟩ := not_forall.mp hnot_all
-
   let z : Fin (t + 1) → Vec K t :=
     Fin.lastCases w (fun i : Fin t ↦ x i.succ)
   let f : Fin (t + 1) → Vec K t →ₗ[K] K := fun i ↦ dotLeft (z i)
-
   have hzero : ∀ ⦃i j : Fin (t + 1)⦄, i < j → f i (y j) = 0 := by
     intro i j hij
     have hi_last : i ≠ Fin.last t := by
@@ -126,27 +123,23 @@ theorem transitiveTournament_impossible
     · subst j
       simpa [f, z, x, y] using (v k.succ).orthogonal
     · simpa [f, z, x, y] using (harc hlt).1
-
   have hdiag : ∀ i : Fin (t + 1), f i (y i) ≠ 0 := by
     intro i
     refine Fin.lastCases ?_ (fun k : Fin t ↦ ?_) i
     · simpa [f, z, y, dotProduct_comm] using hw
     · simpa [f, z, x, y] using
         (harc (Fin.castSucc_lt_succ (i := k))).2
-
   have hy_independent : LinearIndependent K y :=
     linearIndependent_of_upperTriangular_pairing y f hzero hdiag
   have hy_span : Submodule.span K (Set.range y) = ⊤ := by
     apply hy_independent.span_eq_top_of_card_eq_finrank
     simp
-
   have hx_zero_on_generators : ∀ j : Fin (t + 1), x 0 ⬝ᵥ y j = 0 := by
     intro j
     by_cases hj : j = 0
     · subst j
       exact (v 0).orthogonal
     · exact (harc (Fin.pos_iff_ne_zero.mpr hj)).1
-
   have hx_zero_on_all : ∀ u : Vec K t, x 0 ⬝ᵥ u = 0 := by
     have hspan_le : Submodule.span K (Set.range y) ≤ (dotLeft (x 0)).ker := by
       rw [Submodule.span_le]
@@ -157,7 +150,6 @@ theorem transitiveTournament_impossible
       rw [hy_span]
       trivial
     exact LinearMap.mem_ker.mp (hspan_le hu)
-
   have hx0 : x 0 = 0 := dotProduct_eq_zero _ hx_zero_on_all
   exact (v 0).left_ne_zero hx0
 

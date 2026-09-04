@@ -20,7 +20,7 @@ open Erdos920.Container
 
 noncomputable section
 
-variable {P : Type*} [Fintype P] [DecidableEq P]
+variable {P : Type*} [DecidableEq P]
 
 section Strata
 
@@ -204,7 +204,7 @@ exception applies, then the good remainder has at least `cut` elements.
 This theorem is independent of the meanings of `A` and `B`, so it can be
 reused both for abstract containers and the projective specialization. -/
 theorem pivotCut_le_filter_and_not_of_not_poor_not_popular
-    {q z : ℕ} {S : Type*} [Fintype S] [DecidableEq S]
+    {q z : ℕ} {S : Type*}
     (s : Finset S) (A B : S → Prop) [DecidablePred A] [DecidablePred B]
     (hnotPoor : ¬ (s.filter A).card < 2 * pivotCut q z)
     (hnotPopular : ¬ pivotCut q z ≤ (s.filter B).card) :

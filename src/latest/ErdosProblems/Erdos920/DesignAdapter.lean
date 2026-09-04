@@ -277,7 +277,7 @@ theorem poor_edges_le_real
       _ = 1024 * (q : ℝ) ^ t := by
         rw [pow_succ]
         field_simp
-        <;> ring
+        ring
   have hvariance :
       ((d : ℝ) - c) * X ≤ 1024 * (q : ℝ) ^ (2 * t) := by
     calc

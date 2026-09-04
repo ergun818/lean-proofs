@@ -40,7 +40,7 @@ def pointSpan (S : Finset (Point F d)) : Submodule F (Fin d → F) :=
     pointSpan (insert x S) = x.submodule ⊔ pointSpan S := by
   exact Finset.sup_insert
 
-theorem submodule_le_pointSpan_of_mem [DecidableEq (Point F d)]
+theorem submodule_le_pointSpan_of_mem
     {x : Point F d} {S : Finset (Point F d)} (hx : x ∈ S) :
     x.submodule ≤ pointSpan S := by
   unfold pointSpan
@@ -200,7 +200,7 @@ theorem canExtend_vertexPair_of_not_arc
 /-- Pairwise newest-to-oldest compatibility, together with incidence of each
 pair, is exactly enough for a consistent reverse history. -/
 theorem consistent_of_pairwise
-    {Q : Type*} [Fintype Q] [DecidableEq Q]
+    {Q : Type*}
     {R : Q → Q → Prop} (l : List (Q × Q))
     (hinc : ∀ p ∈ l, R p.1 p.2)
     (hpair : l.Pairwise fun new old ↦
@@ -211,7 +211,7 @@ theorem consistent_of_pairwise
   | cons p l ih =>
       rw [Container.consistent_cons_iff]
       have hp := List.pairwise_cons.mp hpair
-      refine ⟨ih (λ x hx ↦ hinc x (List.mem_cons_of_mem p hx)) hp.2, ?_⟩
+      refine ⟨ih (fun x hx ↦ hinc x (List.mem_cons_of_mem p hx)) hp.2, ?_⟩
       refine ⟨hinc p (by simp), ?_⟩
       intro old hold
       exact hp.1 old hold

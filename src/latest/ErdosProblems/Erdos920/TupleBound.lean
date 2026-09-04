@@ -44,11 +44,11 @@ theorem tupleHistory_injective {alpha : Type*} {m : ℕ} :
 
 /-! ## The generic marked-tree bridge -/
 
-variable {alpha : Type*} [DecidableEq alpha]
+variable {alpha : Type*}
 
 /-- Any finite collection of tuples which maps into the bounded-path finset
 has cardinality at most the cardinality of that finset. -/
-theorem card_tuples_le_boundedPaths
+theorem card_tuples_le_boundedPaths [DecidableEq alpha]
     {m w : ℕ}
     (tuples : Finset (Fin m → alpha))
     (children : List alpha → Finset alpha)
@@ -82,12 +82,13 @@ theorem card_tuples_le_of_markedTree
       ((children σ).filter fun x ↦ marked σ x = true).card ≤ h)
     (hhDelta : h ≤ Delta) (hwm : w ≤ m) :
     tuples.card ≤ 2 ^ m * Delta ^ w * h ^ (m - w) := by
+  classical
   exact (card_tuples_le_boundedPaths tuples children marked hpath hunmarked).trans
     (MarkedTree.card_boundedPaths_le children marked hchildren hmarked hhDelta hwm)
 
 /-! ## Specialization to container consistency -/
 
-variable {P : Type*} [Fintype P] [DecidableEq P]
+variable {P : Type*}
 
 /-- All available extensions of a reverse history by a vertex from `vertices`.
 The incidence of the new pair, as well as every forward-independence

@@ -21,7 +21,7 @@ open Erdos202.ParkPham
 
 noncomputable section
 
-variable {V : Type*} [Fintype V] [DecidableEq V]
+variable {V : Type*}
 
 /-- A finite weighted average cannot be smaller than every value in its
 support when the nonnegative weights have total mass one. -/
@@ -30,7 +30,7 @@ lemma exists_ge_of_bernoulli_average_ge (X : Finset V) {p a : ℝ}
     (havg : a ≤ ∑ W ∈ X.powerset, bernoulliMass X W p * F W) :
     ∃ W ∈ X.powerset, a ≤ F W := by
   by_contra hnone
-  push_neg at hnone
+  push Not at hnone
   have hsum_lt :
       (∑ W ∈ X.powerset, bernoulliMass X W p * F W) <
         ∑ W ∈ X.powerset, bernoulliMass X W p * a := by
@@ -43,7 +43,7 @@ lemma exists_ge_of_bernoulli_average_ge (X : Finset V) {p a : ℝ}
         exact sum_bernoulliMass_eq_one X (by ring)
       have hposmass : ∃ W ∈ X.powerset, 0 < bernoulliMass X W p := by
         by_contra hz
-        push_neg at hz
+        push Not at hz
         have hallzero : ∀ W ∈ X.powerset, bernoulliMass X W p = 0 := by
           intro W hW
           exact le_antisymm (hz W hW) (bernoulliMass_nonneg hp0 hp1)
@@ -62,6 +62,8 @@ lemma exists_ge_of_bernoulli_average_ge (X : Finset V) {p a : ℝ}
       (∑ W ∈ X.powerset, bernoulliMass X W p * a) = a := by
     rw [← Finset.sum_mul, sum_bernoulliMass_eq_one X (by ring), one_mul]
   linarith
+
+variable [Fintype V] [DecidableEq V]
 
 /-- Independent sets in an induced graph inject into the independent sets of
 the original graph which are contained in the inducing set. -/

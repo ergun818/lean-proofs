@@ -25,7 +25,7 @@ attribute [local instance] Classical.propDecidable Classical.decEq
 
 section ClearedDoubleCount
 
-variable {P : Type*} [Fintype P] [DecidableEq P]
+variable {P : Type*} [DecidableEq P]
 
 /-- A double-counting estimate for the cleared popularity predicate.
 If the pivot stratum is nonempty and every span occurring over it contains

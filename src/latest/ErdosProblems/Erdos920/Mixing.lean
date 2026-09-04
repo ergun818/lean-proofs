@@ -375,6 +375,7 @@ theorem abs_orderedEdges_sub_expected_le [Nonempty V]
   exact orderedEdges_normalized_deviation_sq_le
     R d a hsymm hdegree hcommon ha A B
 
+omit [Fintype V] in
 /-- Summing a pointwise upper bound on restricted degrees. -/
 lemma mul_orderedEdges_le_card_mul_of_pointwise
     (R : V → V → Prop) [DecidableRel R] (c : ℕ) (A B : Finset V)

@@ -27,7 +27,7 @@ namespace Erdos920
 
 section OrderedDigraph
 
-variable {V : Type*} [Fintype V] [LinearOrder V]
+variable {V : Type*}
 
 /-- A tuple is forward independent in `D` if none of its earlier entries has
 an arc to a later entry.  Repeated entries are allowed, as in Bradač's count. -/
@@ -35,13 +35,13 @@ def ForwardIndependent (D : V → V → Prop) {k : ℕ} (x : Fin k → V) : Prop
   ∀ ⦃i j : Fin k⦄, i < j → ¬ D (x i) (x j)
 
 /-- The finite set of forward-independent `k`-tuples. -/
-noncomputable def forwardIndependentFinset (D : V → V → Prop) (k : ℕ) :
+noncomputable def forwardIndependentFinset [Fintype V] (D : V → V → Prop) (k : ℕ) :
     Finset (Fin k → V) := by
   classical
   exact Finset.univ.filter (ForwardIndependent D)
 
 @[simp]
-lemma mem_forwardIndependentFinset {D : V → V → Prop} {k : ℕ} {x : Fin k → V} :
+lemma mem_forwardIndependentFinset [Fintype V] {D : V → V → Prop} {k : ℕ} {x : Fin k → V} :
     x ∈ forwardIndependentFinset D k ↔ ForwardIndependent D x := by
   classical
   simp [forwardIndependentFinset]
@@ -51,15 +51,16 @@ def TransitiveTournamentFree (D : V → V → Prop) (s : ℕ) : Prop :=
   ∀ x : Fin s → V, Function.Injective x →
     ¬ ∀ ⦃i j : Fin s⦄, i < j → D (x i) (x j)
 
+variable [LinearOrder V]
+
 /-- Keep precisely the arcs that point forwards after applying the permutation
 `π`, and forget their orientation. -/
 def forwardGraph (D : V → V → Prop) (π : Equiv.Perm V) :
     SimpleGraph V :=
   SimpleGraph.fromRel fun u v => π u < π v ∧ D u v
 
-/-- The forward graph is finite, hence its adjacency relation is decidable.
-This noncomputable instance lets counting statements use arbitrary
-proposition-valued digraph relations. -/
+/-- Classical decidable adjacency for the forward graph. This lets counting
+statements use arbitrary proposition-valued digraph relations. -/
 noncomputable instance instDecidableRelForwardGraph (D : V → V → Prop)
     (π : Equiv.Perm V) : DecidableRel (forwardGraph D π).Adj :=
   Classical.decRel _
@@ -141,7 +142,7 @@ lemma orderedTuple_forwardIndependent {D : V → V → Prop} (π : Equiv.Perm V)
 /-- For one fixed ordering, independent `k`-sets inject into the
 forward-independent `k`-tuples.  The sharper factorial saving is obtained by
 averaging this construction over all permutations. -/
-lemma indepSetFinset_card_forwardGraph_le {D : V → V → Prop}
+lemma indepSetFinset_card_forwardGraph_le [Fintype V] {D : V → V → Prop}
     (π : Equiv.Perm V)
     (k : ℕ) :
     ((forwardGraph D π).indepSetFinset k).card ≤
@@ -330,13 +331,13 @@ end Deletion
 
 section Sampling
 
-variable {V : Type*} [Fintype V] [DecidableEq V]
+variable {V : Type*}
 
 open Erdos202.ParkPham
 
 /-- In the finite Bernoulli distribution on subsets of `X`, the total weight
 of samples containing a fixed `T ⊆ X` is `p ^ |T|`. -/
-lemma sum_bernoulliMass_indicator_superset (X T : Finset V) (hTX : T ⊆ X)
+lemma sum_bernoulliMass_indicator_superset [DecidableEq V] (X T : Finset V) (hTX : T ⊆ X)
     {p : ℝ} (hp0 : 0 ≤ p) (hp1 : p ≤ 1) :
     (∑ W ∈ X.powerset,
         bernoulliMass X W p * (if T ⊆ W then (1 : ℝ) else 0)) = p ^ T.card := by
@@ -355,7 +356,7 @@ lemma sum_bernoulliMass_indicator_superset (X T : Finset V) (hTX : T ⊆ X)
 /-- Expected number of members of a uniform-cardinality family `A` which are
 contained in a Bernoulli sample.  This is the finite-sum form of
 `E Y = p^k |A|`. -/
-lemma sum_bernoulliMass_contained_count (X : Finset V) (A : Finset (Finset V))
+lemma sum_bernoulliMass_contained_count [DecidableEq V] (X : Finset V) (A : Finset (Finset V))
     {k : ℕ} (hAX : ∀ T ∈ A, T ⊆ X) (hcard : ∀ T ∈ A, T.card = k)
     {p : ℝ} (hp0 : 0 ≤ p) (hp1 : p ≤ 1) :
     (∑ W ∈ X.powerset,
@@ -386,6 +387,7 @@ lemma sum_bernoulliMass_card (X : Finset V) {p : ℝ}
     (hp0 : 0 ≤ p) (hp1 : p ≤ 1) :
     (∑ W ∈ X.powerset, bernoulliMass X W p * (W.card : ℝ)) =
       p * X.card := by
+  classical
   calc
     (∑ W ∈ X.powerset, bernoulliMass X W p * (W.card : ℝ)) =
         ∑ W ∈ X.powerset,

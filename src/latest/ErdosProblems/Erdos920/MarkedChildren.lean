@@ -24,7 +24,7 @@ open Erdos920.Pivot
 
 section Pivot
 
-variable {P : Type*} [Fintype P] [DecidableEq P]
+variable {P : Type*} [DecidableEq P]
 
 theorem mem_Z_rank (points : Finset P) (C : RankClosure P)
     (R : P → P → Prop) [DecidableRel R]
@@ -46,7 +46,7 @@ end Pivot
 
 section ClearedThresholds
 
-variable {P : Type*} [Fintype P] [DecidableEq P]
+variable {P : Type*} [DecidableEq P]
 
 /-- Cleared-denominator version of the paper's poor-point predicate. -/
 def PoorQ (points : Finset P) (C : RankClosure P) (R : P → P → Prop)
@@ -169,7 +169,7 @@ end ClearedThresholds
 
 section Marking
 
-variable {P : Type*} [Fintype P] [DecidableEq P]
+variable {P : Type*} [DecidableEq P]
 
 /-- The pivot selected for the rank of a prospective second coordinate. -/
 def chosenPivot (points : Finset P) (C : RankClosure P)
@@ -204,7 +204,7 @@ theorem marked_eq_false_iff (points : Finset P) (C : RankClosure P)
       ¬ PoorQ points C R q sigma (chosenPivot points C R sigma p) p.1 ∧
       ¬ PopularQ points C R q sigma (chosenPivot points C R sigma p) p.2 := by
   classical
-  simp [marked, not_or]
+  simp [marked]
 
 /-- The selected pivot, clipped only to package it in the fixed finite type
 of all ambient rank levels.  Under the natural rank cap the clipping is

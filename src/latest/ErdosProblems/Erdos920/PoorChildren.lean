@@ -30,7 +30,7 @@ attribute [local instance] Classical.propDecidable Classical.decEq
 
 /-! ## A finite edge-pair cover -/
 
-variable {X : Type*} [Fintype X] [DecidableEq X]
+variable {X : Type*} [DecidableEq X]
 
 /-- Ordered relation pairs with first coordinate in `A` and second coordinate
 in `B`.  This is deliberately a `Finset (X x X)`, so subsets of container

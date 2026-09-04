@@ -18,7 +18,7 @@ namespace Erdos920.Container
 
 open scoped BigOperators
 
-variable {P : Type*} [Fintype P] [DecidableEq P]
+variable {P : Type*} [DecidableEq P]
 
 /-- The small interface with the linear-algebraic span used by the container
 argument.  In the projective application `rank S` is the finrank of the span
@@ -103,8 +103,10 @@ def Consistent (R : P → P → Prop) : List (P × P) → Prop
   | [] => True
   | p :: σ => Consistent R σ ∧ CanExtend R p σ
 
+omit [DecidableEq P] in
 @[simp] lemma consistent_nil (R : P → P → Prop) : Consistent R [] := trivial
 
+omit [DecidableEq P] in
 @[simp] lemma consistent_cons_iff (R : P → P → Prop) (p : P × P)
     (σ : List (P × P)) :
     Consistent R (p :: σ) ↔ Consistent R σ ∧ CanExtend R p σ := Iff.rfl
@@ -143,8 +145,7 @@ lemma extensionChildren_subset_relationPairs
     (σ : List (P × P)) : extensionChildren points R σ ⊆ relationPairs points R :=
   by
     classical
-    simpa [extensionChildren] using
-      (Finset.filter_subset (fun p => CanExtend R p σ) (relationPairs points R))
+    simp [extensionChildren]
 
 /-- Regularity, or merely a uniform degree upper bound, gives the required
 total branching bound. -/
@@ -246,7 +247,7 @@ theorem markedByPoorOrPopular_eq_false_iff {L : Type*}
       ¬ Poor points C R σ (levelNat (level σ p)) (cut σ p) p.1 ∧
       ¬ Popular points C R σ (levelNat (level σ p)) (cut σ p) p.2 := by
   classical
-  simp [markedByPoorOrPopular, not_or]
+  simp [markedByPoorOrPopular]
 
 /-- Poor and popular child estimates add to a marked-child estimate. -/
 theorem markedChildren_card_le {L : Type*}
@@ -285,11 +286,13 @@ theorem markedChildren_card_le {L : Type*}
       Finset.card_union_le poorChildren popularChildren
     _ ≤ hp + hq := Nat.add_le_add hpoor hpopular
 
+omit [DecidableEq P] in
 /-- The elementary subtraction behind the poor/popular dichotomy. -/
 lemma card_filter_and_not_ge {s : Finset P} {A B : P → Prop}
     [DecidablePred A] [DecidablePred B] {cut : ℕ}
     (hA : 2 * cut ≤ (s.filter A).card) (hB : (s.filter B).card ≤ cut) :
     cut ≤ (s.filter fun x => A x ∧ ¬ B x).card := by
+  classical
   let a := s.filter A
   let b := s.filter B
   have hdiff : a \ b = s.filter fun x => A x ∧ ¬ B x := by
@@ -384,6 +387,7 @@ theorem U_card_multiplicative_shrink
 
 /-! ## Incidence bounds for popular points -/
 
+omit [DecidableEq P] in
 /-- Double-count the incidences `I x y` between two finite sets. -/
 lemma sum_card_filter_eq_sum_card_filter (s t : Finset P) (I : P → P → Prop)
     [DecidableRel I] :
@@ -399,6 +403,7 @@ lemma sum_card_filter_eq_sum_card_filter (s t : Finset P) (I : P → P → Prop)
           congr 1 with y
           exact (Finset.card_filter _ _).symm
 
+omit [DecidableEq P] in
 /-- If every right fibre has size at most `cap`, then there are at most
 `|t|*cap/cut` left points incident with `cut` or more right points.  The
 division-free form is what is used in the projective calculation. -/
@@ -473,11 +478,10 @@ theorem pow_count_mul_last_le
       rw [← hlast]
       cases h0 : contract 0 with
       | false =>
-          simp only [h0, Bool.false_eq_true, ↓reduceIte, Nat.add_zero, pow_zero,
-            List.count_cons]
+          simp only [List.count_cons]
           exact hi.trans (Nat.mul_le_mul_left _ (hmono 0))
       | true =>
-          simp only [h0, List.count_cons, beq_self_eq_true, if_true, pow_succ]
+          simp only [List.count_cons, beq_self_eq_true, if_true, pow_succ]
           calc
             (K ^ (List.ofFn contract').count true * K) * V' (Fin.last m) =
                 K * (K ^ (List.ofFn contract').count true * V' (Fin.last m)) := by
@@ -555,7 +559,7 @@ theorem count_contract_le_of_potential
   omega
 
 /-- Sum the fibre cardinalities of a map to a finite type. -/
-lemma card_eq_sum_card_fibers {I L : Type*} [DecidableEq I] [Fintype L]
+lemma card_eq_sum_card_fibers {I L : Type*} [Fintype L]
     [DecidableEq L] (s : Finset I) (label : I → L) :
     s.card = ∑ ℓ : L, (s.filter fun i => label i = ℓ).card := by
   classical
@@ -570,7 +574,7 @@ lemma card_eq_sum_card_fibers {I L : Type*} [DecidableEq I] [Fintype L]
 
 /-- Pigeonhole packaging used after applying the potential estimate once
 for each of the `levels` possible ranks. -/
-theorem card_le_levels_mul_of_fibers_le {I L : Type*} [DecidableEq I]
+theorem card_le_levels_mul_of_fibers_le {I L : Type*}
     [Fintype L] [DecidableEq L] (s : Finset I) (label : I → L) (r : ℕ)
     (hfibre : ∀ ℓ : L, (s.filter fun i => label i = ℓ).card ≤ r) :
     s.card ≤ Fintype.card L * r := by
@@ -602,7 +606,7 @@ def selectedCount {A L : Type*} [DecidableEq L]
   | nil => rfl
   | cons x xs ih =>
       simp only [unmarkedCount, Erdos920.MarkedTree.pathSignature, List.count_cons, ih]
-      cases h : marked xs x <;> simp [h]
+      cases marked xs x <;> simp
 
 lemma unmarkedCount_eq_sum_selectedCount {A L : Type*} [Fintype L] [DecidableEq L]
     (marked : List A → A → Bool) (level : List A → A → L) (xs : List A) :
@@ -613,11 +617,7 @@ lemma unmarkedCount_eq_sum_selectedCount {A L : Type*} [Fintype L] [DecidableEq 
   | cons x xs ih =>
       rw [unmarkedCount, ih]
       simp only [selectedCount, Finset.sum_add_distrib]
-      by_cases hm : marked xs x = false
-      · simp [hm]
-      · have ht : marked xs x = true := by
-          cases h : marked xs x <;> simp_all
-        simp [hm, ht]
+      by_cases hm : marked xs x = false <;> simp [hm]
 
 /-- Abstract data needed to prove that a root path has few unmarked steps.
 The level assigned to a child chooses which monotone potential contracts. -/
@@ -684,7 +684,7 @@ theorem pow_selectedCount_mul_potential_le
           cert.positive xs x hx hs.1
         have hcontract := shifted_contraction hK hpos (cert.contract xs x hx hs.1)
         rw [hs.2] at hcontract
-        simp only [selectedCount, hs, if_true, pow_succ]
+        simp only [selectedCount, hs]
         calc
           ((2 * K) ^ selectedCount marked cert.level ℓ xs * (2 * K)) *
                 (cert.potential ℓ (x :: xs) + 1) =
@@ -730,13 +730,14 @@ theorem selectedCount_le_of_certificate
 /-- A path has at most `card L * w` unmarked steps: apply the potential bound
 to every level and sum the disjoint level classes. -/
 theorem unmarkedCount_le_of_certificate
-    {A L : Type*} [DecidableEq A] [Fintype L] [DecidableEq L]
+    {A L : Type*} [DecidableEq A] [Fintype L]
     {children : List A → Finset A} {marked : List A → A → Bool}
     {K N w : ℕ} (cert : PathShrinkCertificate (L := L) children marked K N)
     (hK : 1 ≤ K)
     (hpow : ∀ c : ℕ, w < c → (2 * K - 1) ^ c * (N + 1) < (2 * K) ^ c)
     (xs : List A) (hpath : Erdos920.MarkedTree.IsPath children xs) :
     (Erdos920.MarkedTree.pathSignature marked xs).count false ≤ Fintype.card L * w := by
+  classical
   rw [← unmarkedCount_eq_count_false,
     unmarkedCount_eq_sum_selectedCount (L := L)]
   calc
@@ -796,7 +797,7 @@ theorem card_allPaths_le {A : Type*} [DecidableEq A]
 The projective instantiation supplies regularity (`hdegree`), the two mixing
 and incidence estimates (`hpoor`, `hpopular`), and the maximizing-pivot
 facts (`hpivot`, `hcut`).  The rest of the conclusion is proved here. -/
-theorem rankContainer_count {L : Type*} [Fintype L] [DecidableEq L]
+theorem rankContainer_count {L : Type*} [Fintype L]
     (points : Finset P) (C : RankClosure P) (R : P → P → Prop)
     [DecidableRel R] (level : List (P × P) → (P × P) → L)
     (levelNat : L → ℕ) (cut : List (P × P) → (P × P) → ℕ)

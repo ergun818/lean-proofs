@@ -17,19 +17,19 @@ namespace Erdos920
 
 section
 
-variable {V : Type*} [Fintype V] [LinearOrder V]
+variable {V : Type*} [LinearOrder V]
 
 /-- Forward-independent tuples which are increasing in the order induced by
 `π`.  These are in bijection with the independent sets of `forwardGraph D π`.
 -/
-noncomputable def increasingForwardFinset (D : V → V → Prop)
+noncomputable def increasingForwardFinset [Fintype V] (D : V → V → Prop)
     (π : Equiv.Perm V) (k : ℕ) : Finset (Fin k → V) := by
   classical
   exact (forwardIndependentFinset D k).filter
     (fun x ↦ StrictMono (fun i ↦ π (x i)))
 
 @[simp]
-lemma mem_increasingForwardFinset {D : V → V → Prop}
+lemma mem_increasingForwardFinset [Fintype V] {D : V → V → Prop}
     {π : Equiv.Perm V} {k : ℕ} {x : Fin k → V} :
     x ∈ increasingForwardFinset D π k ↔
       ForwardIndependent D x ∧ StrictMono (fun i ↦ π (x i)) := by
@@ -92,13 +92,15 @@ private lemma increasing_tuple_eq_of_image_eq {k : ℕ} {π : Equiv.Perm V}
       rw [← hxy]
       simp
     obtain ⟨j, hj, hji⟩ := Finset.mem_image.mp hi
-    exact ⟨j, by simpa [hji]⟩
+    exact ⟨j, by simp [hji]⟩
   · rintro ⟨i, rfl⟩
     have hi : y i ∈ Finset.univ.image x := by
       rw [hxy]
       simp
     obtain ⟨j, hj, hji⟩ := Finset.mem_image.mp hi
-    exact ⟨j, by simpa [hji]⟩
+    exact ⟨j, by simp [hji]⟩
+
+variable [Fintype V]
 
 /-- Independent `k`-sets of a forward graph are exactly its increasing
 forward-independent `k`-tuples. -/
