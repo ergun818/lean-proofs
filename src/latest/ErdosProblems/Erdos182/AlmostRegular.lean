@@ -48,28 +48,37 @@ def deleteHeavyLeft (G : BipartiteGraph A B) (M : ℕ) :
     BipartiteGraph A B :=
   ⟨fun a b => G.Adj a b ∧ G.leftDegree a < M⟩
 
+omit [Fintype A] in
 @[simp]
 theorem deleteHeavyLeft_adj (G : BipartiteGraph A B) (M : ℕ)
     (a : A) (b : B) :
     (G.deleteHeavyLeft M).Adj a b ↔
-      G.Adj a b ∧ G.leftDegree a < M :=
+      G.Adj a b ∧ G.leftDegree a < M := by
+  classical
+  exact
   Iff.rfl
 
+omit [Fintype A] in
 theorem deleteHeavyLeft_le (G : BipartiteGraph A B) (M : ℕ) :
     G.deleteHeavyLeft M ≤ G := by
+  classical
   intro a b hab
   exact hab.1
 
+omit [Fintype A] [Fintype B] in
 theorem restrictRight_supportedOn {G : BipartiteGraph A B}
     {A₀ : Finset A} {B₀ S : Finset B} (hG : G.SupportedOn A₀ B₀)
     (_hS : S ⊆ B₀) : (G.restrictRight S).SupportedOn A₀ S := by
+  classical
   intro a b hab
   exact ⟨(hG hab.1).1, hab.2⟩
 
+omit [Fintype A] in
 theorem deleteHeavyLeft_supportedOn {G : BipartiteGraph A B}
     {A₀ : Finset A} {B₀ : Finset B} {M : ℕ}
     (hG : G.SupportedOn A₀ B₀) :
     (G.deleteHeavyLeft M).SupportedOn A₀ B₀ := by
+  classical
   intro a b hab
   exact hG hab.1
 
@@ -77,20 +86,24 @@ theorem deleteHeavyLeft_supportedOn {G : BipartiteGraph A B}
 noncomputable def leftDegreeOn (G : BipartiteGraph A B) (S : Finset B) (a : A) : ℕ :=
   by classical exact ((G.rightNeighbors a).filter fun b => b ∈ S).card
 
-theorem leftDegree_restrictRight (G : BipartiteGraph A B)
+omit [Fintype A] in
+theorem leftDegree_restrictRight [Finite A] (G : BipartiteGraph A B)
     (S : Finset B) (a : A) :
     (G.restrictRight S).leftDegree a = G.leftDegreeOn S a := by
   classical
+  let := Fintype.ofFinite A
   simp only [leftDegree, rightNeighbors, restrictRight_adj, leftDegreeOn]
   congr 1
   ext b
   simp [and_comm]
 
-theorem leftDegree_deleteHeavyLeft (G : BipartiteGraph A B)
+omit [Fintype A] in
+theorem leftDegree_deleteHeavyLeft [Finite A] (G : BipartiteGraph A B)
     (M : ℕ) (a : A) :
     (G.deleteHeavyLeft M).leftDegree a =
       if G.leftDegree a < M then G.leftDegree a else 0 := by
   classical
+  let := Fintype.ofFinite A
   by_cases h : G.leftDegree a < M
   · have h' : (Finset.univ.filter fun b => G.Adj a b).card < M := by
       simpa [leftDegree, rightNeighbors] using h
@@ -101,18 +114,23 @@ theorem leftDegree_deleteHeavyLeft (G : BipartiteGraph A B)
     simp only [leftDegree, rightNeighbors, deleteHeavyLeft_adj]
     simp [h']
 
-theorem leftDegree_deleteHeavyLeft_le (G : BipartiteGraph A B)
+omit [Fintype A] in
+theorem leftDegree_deleteHeavyLeft_le [Finite A] (G : BipartiteGraph A B)
     (M : ℕ) (a : A) :
     (G.deleteHeavyLeft M).leftDegree a ≤ M := by
+  classical
+  let := Fintype.ofFinite A
   rw [leftDegree_deleteHeavyLeft]
   split_ifs with h
   · omega
   · exact Nat.zero_le _
 
-theorem rightDegree_restrictRight_le (G : BipartiteGraph A B)
+omit [Fintype B] in
+theorem rightDegree_restrictRight_le [Finite B] (G : BipartiteGraph A B)
     (S : Finset B) (b : B) :
     (G.restrictRight S).rightDegree b ≤ G.rightDegree b := by
   classical
+  let := Fintype.ofFinite B
   apply Finset.card_le_card
   intro a ha
   apply (mem_leftNeighbors G a b).mpr
@@ -187,6 +205,7 @@ def removedEdgeCount (M : ℕ) (S : Finset ↑B₀) : ℕ :=
 def sampledEdgeCount (S : Finset ↑B₀) : ℕ :=
   ∑ a : A, sampledLeftDegree G B₀ a S
 
+omit [Fintype B] in
 theorem sampledEdgeCount_eq_altered_add_removed (M : ℕ) (S : Finset ↑B₀) :
     sampledEdgeCount G B₀ S =
       alteredEdgeCount G B₀ M S + removedEdgeCount G B₀ M S := by
@@ -203,29 +222,35 @@ theorem sampledEdgeCount_eq_altered_add_removed (M : ℕ) (S : Finset ↑B₀) :
 def alteredGraph (M : ℕ) (S : Finset ↑B₀) : BipartiteGraph A B :=
   (G.restrictRight (selectedRightVertices B₀ S)).deleteHeavyLeft M
 
+omit [Fintype B] in
 @[simp]
 theorem mem_selectedRightVertices (S : Finset ↑B₀) (b : B) :
     b ∈ selectedRightVertices B₀ S ↔ ∃ hb : b ∈ B₀, (⟨b, hb⟩ : ↑B₀) ∈ S := by
   classical
   simp [selectedRightVertices]
 
-theorem selectedRightVertices_subset (S : Finset ↑B₀) :
+omit [Fintype B] in
+theorem selectedRightVertices_subset [Finite B] (S : Finset ↑B₀) :
     selectedRightVertices B₀ S ⊆ B₀ := by
   classical
+  let := Fintype.ofFinite B
   intro b hb
   obtain ⟨hb₀, _⟩ := (mem_selectedRightVertices B₀ S b).mp hb
   exact hb₀
 
+omit [Fintype B] in
 theorem card_selectedRightVertices (S : Finset ↑B₀) :
     (selectedRightVertices B₀ S).card = S.card := by
   classical
   exact Finset.card_map _
 
-theorem sampledLeftDegree_eq_restrictRight_leftDegree
+omit [Fintype A] in
+theorem sampledLeftDegree_eq_restrictRight_leftDegree [Finite A]
     (a : A) (S : Finset ↑B₀) :
     sampledLeftDegree G B₀ a S =
       (G.restrictRight (selectedRightVertices B₀ S)).leftDegree a := by
   classical
+  let := Fintype.ofFinite A
   rw [leftDegree_restrictRight]
   unfold leftDegreeOn
   unfold sampledLeftDegree
@@ -243,19 +268,28 @@ theorem edgeCount_alteredGraph (M : ℕ) (S : Finset ↑B₀) :
   rw [alteredGraph, leftDegree_deleteHeavyLeft,
     ← sampledLeftDegree_eq_restrictRight_leftDegree]
 
+omit [Fintype A] in
 theorem alteredGraph_le (M : ℕ) (S : Finset ↑B₀) :
     G.alteredGraph B₀ M S ≤ G := by
+  classical
   intro a b hab
   exact hab.1.1
 
-theorem alteredGraph_supportedOn {A₀ : Finset A}
+omit [Fintype A] in
+theorem alteredGraph_supportedOn [Finite A] {A₀ : Finset A}
     (hG : G.SupportedOn A₀ B₀) (M : ℕ) (S : Finset ↑B₀) :
     (G.alteredGraph B₀ M S).SupportedOn A₀ (selectedRightVertices B₀ S) := by
+  classical
+  let := Fintype.ofFinite A
   apply deleteHeavyLeft_supportedOn
   exact restrictRight_supportedOn hG (selectedRightVertices_subset B₀ S)
 
-theorem alteredGraph_leftDegree_le (M : ℕ) (S : Finset ↑B₀) (a : A) :
-    (G.alteredGraph B₀ M S).leftDegree a ≤ M :=
+omit [Fintype A] in
+theorem alteredGraph_leftDegree_le [Finite A] (M : ℕ) (S : Finset ↑B₀) (a : A) :
+    (G.alteredGraph B₀ M S).leftDegree a ≤ M := by
+  classical
+  let := Fintype.ofFinite A
+  exact
   leftDegree_deleteHeavyLeft_le _ _ _
 
 theorem alteredGraph_rightDegree_le (M : ℕ) (S : Finset ↑B₀) (b : B) :
@@ -263,10 +297,12 @@ theorem alteredGraph_rightDegree_le (M : ℕ) (S : Finset ↑B₀) (b : B) :
   (rightDegree_deleteHeavyLeft_le _ _ _).trans
     (rightDegree_restrictRight_le _ _ _)
 
-theorem sampledLeftDegree_univ {A₀ : Finset A}
+omit [Fintype A] in
+theorem sampledLeftDegree_univ [Finite A] {A₀ : Finset A}
     (hG : G.SupportedOn A₀ B₀) (a : A) :
     sampledLeftDegree G B₀ a Finset.univ = G.leftDegree a := by
   classical
+  let := Fintype.ofFinite A
   unfold sampledLeftDegree
   rw [← Finset.card_map ⟨Subtype.val, Subtype.val_injective⟩]
   congr 1
@@ -284,19 +320,23 @@ def activeRightNeighbors (a : A) : Finset ↑B₀ := by
   classical
   exact Finset.univ.filter fun b => G.Adj a b.1
 
-theorem card_activeRightNeighbors {A₀ : Finset A}
+omit [Fintype A] in
+theorem card_activeRightNeighbors [Finite A] {A₀ : Finset A}
     (hG : G.SupportedOn A₀ B₀) (a : A) :
     (activeRightNeighbors G B₀ a).card = G.leftDegree a := by
   classical
+  let := Fintype.ofFinite A
   simpa [activeRightNeighbors, sampledLeftDegree] using
     sampledLeftDegree_univ G B₀ hG a
 
-theorem bernoulli_expect_sampledLeftDegree {A₀ : Finset A}
+omit [Fintype A] in
+theorem bernoulli_expect_sampledLeftDegree [Finite A] {A₀ : Finset A}
     (hG : G.SupportedOn A₀ B₀) (p : ℝ≥0) (hp : p ≤ 1) (a : A) :
     weightedExpectation (bernoulliWeight p)
         (fun S : Finset ↑B₀ => (sampledLeftDegree G B₀ a S : ℝ≥0)) =
       p * G.leftDegree a := by
   classical
+  let := Fintype.ofFinite A
   have hfun : (fun S : Finset ↑B₀ => (sampledLeftDegree G B₀ a S : ℝ≥0)) =
       fun S => (((activeRightNeighbors G B₀ a).filter fun b => b ∈ S).card : ℝ≥0) := by
     funext S
@@ -308,12 +348,14 @@ theorem bernoulli_expect_sampledLeftDegree {A₀ : Finset A}
   rw [hfun]
   rw [bernoulli_expect_inter_card p hp, card_activeRightNeighbors G B₀ hG]
 
-theorem bernoulli_expect_sampledLeftDegree_sq {A₀ : Finset A}
+omit [Fintype A] in
+theorem bernoulli_expect_sampledLeftDegree_sq [Finite A] {A₀ : Finset A}
     (hG : G.SupportedOn A₀ B₀) (p : ℝ≥0) (hp : p ≤ 1) (a : A) :
     weightedExpectation (bernoulliWeight p)
         (fun S : Finset ↑B₀ => (sampledLeftDegree G B₀ a S : ℝ≥0) ^ 2) =
       p * G.leftDegree a + p ^ 2 * G.leftDegree a * (G.leftDegree a - 1) := by
   classical
+  let := Fintype.ofFinite A
   have hfun : (fun S : Finset ↑B₀ => (sampledLeftDegree G B₀ a S : ℝ≥0) ^ 2) =
       fun S => (((activeRightNeighbors G B₀ a).filter fun b => b ∈ S).card : ℝ≥0) ^ 2 := by
     funext S
@@ -352,6 +394,7 @@ theorem bernoulli_expect_sampledEdgeCount {A₀ : Finset A}
       norm_cast
       exact (edgeCount_eq_sum_leftDegree G).symm
 
+omit [Fintype B] in
 theorem threshold_mul_expect_removed_le_expect_sq_sum
     (p : ℝ≥0) (M : ℕ) :
     (M : ℝ≥0) * weightedExpectation (bernoulliWeight p)

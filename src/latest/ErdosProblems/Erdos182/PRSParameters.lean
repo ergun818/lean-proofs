@@ -106,7 +106,6 @@ theorem exists_of_pos (k : ℕ) {η : ℝ} (hη : 0 < η) :
     have hlarge : 4 / η < (l : ℝ) := by linarith
     have := (div_lt_iff₀ hη).1 hlarge
     nlinarith
-
   obtain ⟨a, ha⟩ := exists_nat_gt
     (max (2 : ℝ) (1 + 16 / η))
   have ha2 : (2 : ℝ) < a := (le_max_left _ _).trans_lt ha
@@ -132,7 +131,6 @@ theorem exists_of_pos (k : ℕ) {η : ℝ} (hη : 0 < η) :
     linarith
   have haratio_pos : 0 < ((a : ℝ) + 1) / ((a : ℝ) - 1) := by
     positivity
-
   let b : ℝ :=
     (1 + 3 * η / 16) / (((a : ℝ) + 1) / ((a : ℝ) - 1))
   have hratio_mid :

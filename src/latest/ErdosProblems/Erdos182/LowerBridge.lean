@@ -26,7 +26,7 @@ open Finset Fintype
 
 namespace Erdos182
 
-open scoped BigOperators Classical
+open scoped BigOperators
 
 noncomputable section
 
@@ -148,6 +148,7 @@ lemma layerDemandEdge_injective {L : ℕ} {b : Option (Fin L) → ℕ} :
   · have := congrArg Sigma.fst h.1
     simp [baseVertex, laterVertex] at this
 
+open Classical in
 lemma layerDemandEdge_mem_layeredGraph_iff
     {L : ℕ} {b : Option (Fin L) → ℕ}
     (choice : (v : Fin (b none)) → (j : Fin L) → Fin (b (some j)))
@@ -281,9 +282,12 @@ lemma mem_coordinateDemand_outcomes_of_subset_realized
 the same cardinality as the edge finset of the induced graph on `S`. -/
 def internalLayerEdges {L : ℕ} {b : Option (Fin L) → ℕ}
     (G : SimpleGraph (LayerVertex b)) (S : Finset (LayerVertex b)) :
-    Finset (Sym2 (LayerVertex b)) :=
+    Finset (Sym2 (LayerVertex b)) := by
+  classical
+  exact
   G.edgeFinset.filter fun e ↦ e.toFinset ⊆ S
 
+open Classical in
 lemma card_internalLayerEdges {L : ℕ} {b : Option (Fin L) → ℕ}
     (G : SimpleGraph (LayerVertex b)) (S : Finset (LayerVertex b)) :
     (internalLayerEdges G S).card =
@@ -341,6 +345,7 @@ lemma image_realizedCandidateLayerDemands
       · exact (laterVertex_layeredChoiceOfOutcome ω hω v j).symm
     · simp [d, layerDemandEdge, layerEdge]
 
+open Classical in
 lemma card_realizedCandidateLayerDemands
     {L : ℕ} {b : Option (Fin L) → ℕ}
     (ω : FiniteChoiceOutcome (LayerCoordinate b) (LaterLayerVertex b))
@@ -360,7 +365,9 @@ noncomputable def candidateCoordinateDemands
     {L : ℕ} {b : Option (Fin L) → ℕ}
     (default : FiniteChoiceOutcome (LayerCoordinate b) (LaterLayerVertex b))
     (S : Finset (LayerVertex b)) (r : ℕ) :
-    Finset (CoordinateDemand (LayerCoordinate b) (LaterLayerVertex b)) :=
+    Finset (CoordinateDemand (LayerCoordinate b) (LaterLayerVertex b)) := by
+  classical
+  exact
   (((candidateLayerDemands S).powersetCard r).filter CompatibleLayerDemands).image
     (coordinateDemandOfLayerDemands default)
 
@@ -385,7 +392,7 @@ noncomputable def candidateDemandEdgeIn
   let v : (S : Set (LayerVertex b)) :=
     ⟨laterVertex d.1.1.2 d.1.2, (mem_candidateLayerDemands.mp d.2).2⟩
   refine ⟨s(u, v), ?_⟩
-  simp only [SimpleGraph.mem_edgeFinset, SimpleGraph.top_adj, ne_eq]
+  simp only [SimpleGraph.mem_edgeFinset]
   intro huv
   have hbad := congrArg (fun z : (S : Set (LayerVertex b)) ↦
     (z.1 : LayerVertex b).1) huv
@@ -497,6 +504,7 @@ lemma mem_prsDemandUnion_of_sparseEarlierSetBadAt
 
 /-! ## Passing regular factors back to the ambient graph -/
 
+open Classical in
 /-- A regular subgraph found inside the coefficient graph of an ambient
 subgraph is also a regular subgraph of the ambient graph. -/
 lemma containsRegularSubgraph_of_subgraph_coe

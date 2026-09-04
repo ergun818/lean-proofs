@@ -15,7 +15,6 @@ Kőnig's line-colouring theorem, use Chevalley--Warning to find a divisible
 edge set, and finally split a regular bipartite graph into perfect matchings.
 -/
 
-open scoped Classical
 
 namespace Erdos182
 
@@ -96,6 +95,7 @@ private def incidenceNeighborEquivInr (G : BipartiteGraph A B) (b : B) :
     | inr b' => simp at hx
   right_inv a := by ext; rfl
 
+open Classical in
 theorem incidenceGraph_degree_inl (G : BipartiteGraph A B) (a : A) :
     G.incidenceGraph.degree (.inl a) = G.leftDegree a := by
   classical
@@ -103,6 +103,7 @@ theorem incidenceGraph_degree_inl (G : BipartiteGraph A B) (a : A) :
     Fintype.card_congr (incidenceNeighborEquivInl G a)]
   exact Fintype.card_coe _
 
+open Classical in
 theorem incidenceGraph_degree_inr (G : BipartiteGraph A B) (b : B) :
     G.incidenceGraph.degree (.inr b) = G.rightDegree b := by
   classical
@@ -110,6 +111,7 @@ theorem incidenceGraph_degree_inr (G : BipartiteGraph A B) (b : B) :
     Fintype.card_congr (incidenceNeighborEquivInr G b)]
   exact Fintype.card_coe _
 
+open Classical in
 theorem incidenceGraph_edgeFinset_card (G : BipartiteGraph A B) :
     G.incidenceGraph.edgeFinset.card = G.edgeCount := by
   classical
@@ -122,6 +124,7 @@ theorem incidenceGraph_edgeFinset_card (G : BipartiteGraph A B) :
   rw [← Nat.mul_left_cancel_iff (by omega : 0 < 2)]
   simpa [two_mul] using h'.symm
 
+open Classical in
 theorem exists_incidenceGraph_thinning (G : BipartiteGraph A B) {D T : ℕ}
     (hleft : ∀ a, G.leftDegree a ≤ D)
     (hright : ∀ b, G.rightDegree b ≤ D) (hT : T ≤ D) :
@@ -137,9 +140,11 @@ theorem exists_incidenceGraph_thinning (G : BipartiteGraph A B) {D T : ℕ}
     | inr b => simpa only [incidenceGraph_degree_inr] using hHr b
   · simpa only [incidenceGraph_edgeFinset_card] using hHE
 
+omit [Fintype A] [Fintype B] in
 theorem incidenceGraph_isBipartiteWith (G : BipartiteGraph A B) :
     G.incidenceGraph.IsBipartiteWith
       (Set.range Sum.inl) (Set.range Sum.inr) := by
+  classical
   refine ⟨?_, ?_⟩
   · rw [Set.disjoint_left]
     rintro x ⟨a, rfl⟩ ⟨b, h⟩
@@ -159,12 +164,17 @@ theorem incidenceGraph_isBipartiteWith (G : BipartiteGraph A B) :
 def ofSumGraph (H : SimpleGraph (Sum A B)) : BipartiteGraph A B :=
   ⟨fun a b ↦ H.Adj (.inl a) (.inr b)⟩
 
+omit [Fintype A] [Fintype B] in
 @[simp] theorem ofSumGraph_adj (H : SimpleGraph (Sum A B)) (a : A) (b : B) :
-    (ofSumGraph H).Adj a b ↔ H.Adj (.inl a) (.inr b) := Iff.rfl
+    (ofSumGraph H).Adj a b ↔ H.Adj (.inl a) (.inr b) := by
+  classical
+  exact Iff.rfl
 
+omit [Fintype A] [Fintype B] in
 theorem incidenceGraph_ofSumGraph_eq {G : BipartiteGraph A B}
     {H : SimpleGraph (Sum A B)} (hHG : H ≤ G.incidenceGraph) :
     (ofSumGraph H).incidenceGraph = H := by
+  classical
   ext x y
   cases x with
   | inl a =>
@@ -182,11 +192,13 @@ theorem incidenceGraph_ofSumGraph_eq {G : BipartiteGraph A B}
           · simp
           · intro h; simpa using hHG h
 
+open Classical in
 theorem ofSumGraph_leftDegree {G : BipartiteGraph A B}
     {H : SimpleGraph (Sum A B)} (hHG : H ≤ G.incidenceGraph) (a : A) :
     (ofSumGraph H).leftDegree a = H.degree (.inl a) := by
   rw [← incidenceGraph_degree_inl, incidenceGraph_ofSumGraph_eq hHG]
 
+open Classical in
 theorem ofSumGraph_rightDegree {G : BipartiteGraph A B}
     {H : SimpleGraph (Sum A B)} (hHG : H ≤ G.incidenceGraph) (b : B) :
     (ofSumGraph H).rightDegree b = H.degree (.inr b) := by
@@ -211,6 +223,7 @@ def IsBalancedRightRegular (G : BipartiteGraph A B) (d : ℕ) : Prop :=
 def MaxDegreeLE (G : BipartiteGraph A B) (D : ℕ) : Prop :=
   (∀ a, G.leftDegree a ≤ D) ∧ ∀ b, G.rightDegree b ≤ D
 
+open Classical in
 theorem incidenceGraph_degree_le_iff (G : BipartiteGraph A B) (D : ℕ) :
     (∀ v, G.incidenceGraph.degree v ≤ D) ↔ G.MaxDegreeLE D := by
   constructor
@@ -230,11 +243,14 @@ theorem twice_edgeCount_eq_degree_mul_card_of_balancedRightRegular
   simp
   ring
 
+omit [Fintype A] [Fintype B] in
 theorem ofSumGraph_le {G : BipartiteGraph A B} {H : SimpleGraph (Sum A B)}
     (hHG : H ≤ G.incidenceGraph) : ofSumGraph H ≤ G := by
+  classical
   intro a b hab
   exact hHG hab
 
+open Classical in
 theorem ofSumGraph_supportedOn_support
     (H : SimpleGraph (Sum A B)) :
     (ofSumGraph H).SupportedOn
@@ -246,6 +262,7 @@ theorem ofSumGraph_supportedOn_support
   · exact (H.degree_pos_iff_exists_adj _).2 ⟨_, hab⟩
   · exact (H.degree_pos_iff_exists_adj _).2 ⟨_, hab.symm⟩
 
+open Classical in
 theorem containsRegularBipartiteSubgraph_of_degree_zero_or
     {G : BipartiteGraph A B} {H : SimpleGraph (Sum A B)} {k : ℕ}
     (hHG : H ≤ G.incidenceGraph) (hH : H ≠ ⊥)
@@ -282,6 +299,7 @@ theorem containsRegularBipartiteSubgraph_of_degree_zero_or
     rw [ofSumGraph_rightDegree hHG]
     exact (hdeg (.inr y)).resolve_left (Nat.ne_of_gt (by simpa [B₁] using hy))
 
+open Classical in
 /-- Chevalley--Warning after a `2p-1`-colour thinning.  This formulation
 separates the algebraic endpoint from the Kőnig line-colouring lemma which
 produces `J`. -/
@@ -329,6 +347,7 @@ theorem exists_degree_zero_or_prime_of_bipartite_thinning
   intro v
   convert hHdeg v
 
+open Classical in
 theorem containsPrimeRegularBipartiteSubgraph_of_thinning
     {G : BipartiteGraph A B} {p D : ℕ} (hp : p.Prime) (hD : 0 < D)
     (hdense : (2 * p - 2) * D * Fintype.card (Sum A B) <
@@ -344,6 +363,7 @@ theorem containsPrimeRegularBipartiteSubgraph_of_thinning
       J hJG hJdeg hJedges
   exact containsRegularBipartiteSubgraph_of_degree_zero_or hHG hHne hHdeg
 
+open Classical in
 theorem degree_map_embedding {V W : Type*} [Fintype V] [Fintype W]
     (K : SimpleGraph V) (f : V ↪ W) (v : V) :
     (K.map f).degree (f v) = K.degree v := by
@@ -355,6 +375,7 @@ theorem degree_map_embedding {V W : Type*} [Fintype V] [Fintype W]
     ← SimpleGraph.card_neighborSet_eq_degree]
   exact (Fintype.card_congr (e₁.trans e₂)).symm
 
+open Classical in
 /-- Support-relative form of the regular-factor theorem.  Isolated ambient
 vertices are retained as isolated vertices; on the nonempty support, the
 output is exactly `k`-regular. -/
@@ -375,7 +396,7 @@ theorem exists_degree_zero_or_regular_factor
     intro v
     calc
       HS.degree v = H.degree v := by
-        simpa [HS, S] using H.degree_induce_support v
+        simp [HS, S]
       _ = p := (hdeg v).resolve_left <| Nat.ne_of_gt <|
         (H.degree_pos_iff_exists_adj v).mpr v.property
   let sS : Set S := {v | (v : V) ∈ s}
@@ -404,7 +425,6 @@ theorem exists_degree_zero_or_regular_factor
     obtain ⟨w, hvw⟩ := (K₀.degree_pos_iff_exists_adj vS).mp hpos
     rw [SimpleGraph.ne_bot_iff_exists_adj]
     refine ⟨f vS, f w, ?_⟩
-    change (K₀.map f).Adj (f vS) (f w)
     exact SimpleGraph.map_adj_apply.mpr hvw
   refine ⟨K₀.map f, hKH, hKne, fun v ↦ ?_⟩
   by_cases hv : v ∈ Set.range f
@@ -424,6 +444,7 @@ theorem exists_degree_zero_or_regular_factor
     obtain ⟨v', _w', _, hv', _⟩ := hvw
     exact ⟨v', hv'⟩
 
+open Classical in
 /-- Prime AFK endpoint followed by König factorization down to `k`. -/
 theorem containsRegularBipartiteSubgraph_of_prime_thinning
     {G : BipartiteGraph A B} {p k D : ℕ} (hp : p.Prime)
@@ -464,6 +485,7 @@ private theorem ratio_step {a b d D : ℕ} (hab : a ≤ b) (hdD : d ≤ D)
     _ < a * d + d := Nat.add_lt_add_left hasub _
     _ = (a + 1) * d := by rw [Nat.add_mul, one_mul]
 
+open Classical in
 /-- The complete Bertrand and constant calculation, parameterized only by
 the exact Kőnig thinning conclusion. -/
 theorem finalFactor_of_thinning_le
@@ -516,6 +538,7 @@ theorem finalFactor_of_thinning_le
   exact containsRegularBipartiteSubgraph_of_prime_thinning hp hr
     (hrq.trans hqp.le) (by omega) hdense J hJG hJdeg hJedges
 
+open Classical in
 theorem finalFactor_of_thinning
     {G : BipartiteGraph A B} {k d D : ℕ}
     (hk : 3 ≤ k) (hbal : G.IsBalancedRightRegular d)
@@ -528,6 +551,7 @@ theorem finalFactor_of_thinning
     G.ContainsRegularBipartiteSubgraph k :=
   finalFactor_of_thinning_le (by omega) le_rfl hk hbal hmax hD hclose hthin
 
+open Classical in
 theorem finalFactorPositive_of_thinning
     {G : BipartiteGraph A B} {k d D : ℕ}
     (hk : 0 < k) (hbal : G.IsBalancedRightRegular d)
@@ -569,9 +593,12 @@ def restrictToFinsets (G : BipartiteGraph A B) (A₀ : Finset A) (B₀ : Finset 
     BipartiteGraph {a // a ∈ A₀} {b // b ∈ B₀} where
   Adj a b := G.Adj a b
 
+omit [Fintype A] [Fintype B] in
 @[simp] theorem restrictToFinsets_adj (G : BipartiteGraph A B)
     (A₀ : Finset A) (B₀ : Finset B) (a) (b) :
-    (G.restrictToFinsets A₀ B₀).Adj a b ↔ G.Adj a b := Iff.rfl
+    (G.restrictToFinsets A₀ B₀).Adj a b ↔ G.Adj a b := by
+  classical
+  exact Iff.rfl
 
 private noncomputable def restrictRightNeighborEquiv
     (G : BipartiteGraph A B) (A₀ : Finset A) (B₀ : Finset B)
@@ -615,17 +642,23 @@ private noncomputable def restrictLeftNeighborEquiv
     apply Subtype.ext
     rfl
 
-theorem restrictToFinsets_leftDegree (G : BipartiteGraph A B)
+omit [Fintype A] in
+theorem restrictToFinsets_leftDegree [Finite A] (G : BipartiteGraph A B)
     (A₀ : Finset A) (B₀ : Finset B) (hs : G.SupportedOn A₀ B₀)
     (a : {a // a ∈ A₀}) :
     (G.restrictToFinsets A₀ B₀).leftDegree a = G.leftDegree a := by
+  classical
+  let := Fintype.ofFinite A
   simpa only [leftDegree, Fintype.card_coe] using
     Fintype.card_congr (restrictRightNeighborEquiv G A₀ B₀ hs a)
 
-theorem restrictToFinsets_rightDegree (G : BipartiteGraph A B)
+omit [Fintype B] in
+theorem restrictToFinsets_rightDegree [Finite B] (G : BipartiteGraph A B)
     (A₀ : Finset A) (B₀ : Finset B) (hs : G.SupportedOn A₀ B₀)
     (b : {b // b ∈ B₀}) :
     (G.restrictToFinsets A₀ B₀).rightDegree b = G.rightDegree b := by
+  classical
+  let := Fintype.ofFinite B
   simpa only [rightDegree, Fintype.card_coe] using
     Fintype.card_congr (restrictLeftNeighborEquiv G A₀ B₀ hs b)
 
@@ -635,10 +668,13 @@ def extendFromFinsets {A₀ : Finset A} {B₀ : Finset B}
     (H : BipartiteGraph {a // a ∈ A₀} {b // b ∈ B₀}) : BipartiteGraph A B where
   Adj a b := ∃ a' b', H.Adj a' b' ∧ (a' : A) = a ∧ (b' : B) = b
 
+omit [Fintype A] [Fintype B] in
 @[simp] theorem extendFromFinsets_adj {A₀ : Finset A} {B₀ : Finset B}
     (H : BipartiteGraph {a // a ∈ A₀} {b // b ∈ B₀}) (a : A) (b : B) :
     H.extendFromFinsets.Adj a b ↔
-      ∃ a' b', H.Adj a' b' ∧ (a' : A) = a ∧ (b' : B) = b := Iff.rfl
+      ∃ a' b', H.Adj a' b' ∧ (a' : A) = a ∧ (b' : B) = b := by
+  classical
+  exact Iff.rfl
 
 private noncomputable def extendRightNeighborEquiv
     {A₀ : Finset A} {B₀ : Finset B}
@@ -686,15 +722,21 @@ private noncomputable def extendLeftNeighborEquiv
     apply Subtype.ext
     exact ha
 
-theorem extendFromFinsets_leftDegree {A₀ : Finset A} {B₀ : Finset B}
+omit [Fintype A] in
+theorem extendFromFinsets_leftDegree [Finite A] {A₀ : Finset A} {B₀ : Finset B}
     (H : BipartiteGraph {a // a ∈ A₀} {b // b ∈ B₀}) (a : {a // a ∈ A₀}) :
     H.extendFromFinsets.leftDegree (a : A) = H.leftDegree a := by
+  classical
+  let := Fintype.ofFinite A
   simpa only [leftDegree, Fintype.card_coe] using
     (Fintype.card_congr (extendRightNeighborEquiv H a)).symm
 
-theorem extendFromFinsets_rightDegree {A₀ : Finset A} {B₀ : Finset B}
+omit [Fintype B] in
+theorem extendFromFinsets_rightDegree [Finite B] {A₀ : Finset A} {B₀ : Finset B}
     (H : BipartiteGraph {a // a ∈ A₀} {b // b ∈ B₀}) (b : {b // b ∈ B₀}) :
     H.extendFromFinsets.rightDegree (b : B) = H.rightDegree b := by
+  classical
+  let := Fintype.ofFinite B
   simpa only [rightDegree, Fintype.card_coe] using
     (Fintype.card_congr (extendLeftNeighborEquiv H b)).symm
 
@@ -830,12 +872,13 @@ theorem containsRegularSubgraph_of_containsRegularBipartiteSubgraph
   change PRSEntry.degreeNumber S.coe v = k
   exact (PRSEntry.degreeNumber_eq_degree S.coe v).trans hdeg
 
+open Classical in
 /-- Active-set form of the final factor lemma, still parameterized by the
 precise thinning conclusion. -/
 theorem finalFactorOnPositive_of_thinning
     (G : BipartiteGraph A B) (A₀ : Finset A) (B₀ : Finset B) {k d D : ℕ}
     (hk : 0 < k) (hs : G.SupportedOn A₀ B₀)
-    (hA₀ : A₀.Nonempty) (hB₀ : B₀.Nonempty) (hcard : A₀.card = B₀.card)
+    (_hA₀ : A₀.Nonempty) (hB₀ : B₀.Nonempty) (hcard : A₀.card = B₀.card)
     (hright : G.IsRightRegularOn B₀ d)
     (hleft : ∀ a ∈ A₀, G.leftDegree a ≤ D) (hdD : d ≤ D)
     (hD : 4 * max 3 k - 3 ≤ D)

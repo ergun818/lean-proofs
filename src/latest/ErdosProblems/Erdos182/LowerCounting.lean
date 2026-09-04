@@ -20,7 +20,7 @@ measure-theoretic infrastructure.
 
 namespace Erdos182
 
-open scoped BigOperators Classical
+open scoped BigOperators
 
 noncomputable section
 
@@ -141,6 +141,7 @@ def CoordinateDemand.outcomes (allowed : C → Finset V)
     (d : CoordinateDemand C V) : Finset (FiniteChoiceOutcome C V) :=
   fixedChoiceSpace allowed d.coords d.value
 
+open Classical in
 /-- Union-bound estimate for a family of `r`-coordinate prescriptions.  This
 is the exact counting statement behind the factor
 `binomial(number-of-candidate-edges, r) / b^r`. -/
@@ -166,6 +167,7 @@ theorem card_biUnion_coordinateDemand_mul_pow_le
         (hlower d hd)
     _ = family.card * (finiteChoiceSpace allowed).card := by simp
 
+open Classical in
 /-- If the prescription family itself is bounded by a binomial coefficient,
 the usual choose factor follows immediately. -/
 theorem card_biUnion_coordinateDemand_mul_pow_le_choose
@@ -179,6 +181,7 @@ theorem card_biUnion_coordinateDemand_mul_pow_le_choose
   exact (card_biUnion_coordinateDemand_mul_pow_le allowed family r b hcard hlower).trans
     (Nat.mul_le_mul_right _ hfamily)
 
+open Classical in
 /-- A semantic bad event inherits the demand-family bound as soon as every
 bad outcome supplies one of the coordinate prescriptions. -/
 theorem card_bad_mul_pow_le_choose
@@ -205,6 +208,7 @@ section CandidateVertexSets
 
 variable {U C V : Type*} [Fintype U] [Fintype C]
 
+open Classical in
 /-- Union the bad outcomes first over at most `choose(x,2).choose r` demanded
 edge sets for each `x`-vertex candidate, and then over the `n.choose x`
 candidate vertex sets.  This is the precise division-free version of
@@ -245,6 +249,7 @@ theorem card_bad_candidate_sets_mul_pow_le
         (finiteChoiceSpace allowed).card := by
       simp [Nat.mul_assoc]
 
+open Classical in
 /-- Semantic version of `card_bad_candidate_sets_mul_pow_le`.  For each
 candidate vertex set `S`, `bad S` may be defined directly in graph-theoretic
 terms; `hcover` extracts the `r` selected edges that witness its density. -/
@@ -277,6 +282,7 @@ theorem card_semantic_bad_candidate_sets_mul_pow_le
       card_bad_candidate_sets_mul_pow_le
         allowed x r b family hfamily hcard hlower
 
+open Classical in
 /-- If the numerical union-bound coefficient is strictly smaller than
 `b^r`, an admissible layered choice avoids every demanded edge set attached
 to every `x`-vertex candidate.  The nonemptiness assumption is normally

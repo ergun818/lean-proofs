@@ -34,7 +34,6 @@ open Finset Fintype
 
 namespace Erdos182
 
-open scoped Classical
 
 /-- Vertices in a family consisting of a base layer (`none`) and `L` later
 layers (`some j`). -/
@@ -99,6 +98,7 @@ lemma edgeSet_layeredGraph {L : ℕ} {b : Option (Fin L) → ℕ}
     obtain ⟨p, rfl⟩ := he
     exact layerEdge_not_isDiag choice p
 
+open Classical in
 /-- There is exactly one edge for each pair consisting of a base vertex and a
 later layer. -/
 lemma card_edgeFinset_layeredGraph {L : ℕ} {b : Option (Fin L) → ℕ}
@@ -151,6 +151,7 @@ noncomputable def paddedLayeredGraph {L n : ℕ} {b : Option (Fin L) → ℕ}
   (layeredGraph choice).map
     ((Fintype.equivFin (LayerVertex b)).toEmbedding.trans (Fin.castLEEmb hcard))
 
+open Classical in
 lemma card_edgeFinset_paddedLayeredGraph {L n : ℕ} {b : Option (Fin L) → ℕ}
     (choice : (v : Fin (b none)) → (j : Fin L) → Fin (b (some j)))
     (hcard : Fintype.card (LayerVertex b) ≤ n) :
@@ -262,7 +263,9 @@ layered graph exposed before layer `i` spans at least `11/10` edges per
 vertex.  The cutoff `1000 * b (some i)` is the one used in the lower-bound
 construction. -/
 def SparseEarlierSetBadAt {L : ℕ} (b : Option (Fin L) → ℕ)
-    (G : SimpleGraph (LayerVertex b)) (i : Fin L) : Prop :=
+    (G : SimpleGraph (LayerVertex b)) (i : Fin L) : Prop := by
+  classical
+  exact
   ∃ S : Finset (LayerVertex b), S.Nonempty ∧
     S ⊆ layerPrefix b i ∧ S.card ≤ 1000 * b (some i) ∧
       11 * S.card ≤ 10 * (G.induce (S : Set (LayerVertex b))).edgeFinset.card
@@ -276,7 +279,7 @@ def SparseEarlierSetBad {L : ℕ} (b : Option (Fin L) → ℕ)
 from a `3`-regular graph leaves a set spanning at least `11/10` edges per
 retained vertex. -/
 lemma dense_induce_of_three_regular
-    {V : Type*} [Fintype V] [DecidableEq V]
+    {V : Type*} [Fintype V]
     (H : SimpleGraph V) [DecidableRel H.Adj]
     (hreg : ∀ v, H.degree v = 3) (S : Finset V)
     (hlarge : 15 * (Fintype.card V - S.card) ≤ 4 * S.card) :
@@ -334,7 +337,9 @@ and `A` its part in the base layer.  The last inequality records that tail
 vertices cost at most three edges each and cutoff-layer edges cost at most
 `min (3|Y|) |A|`. -/
 def HasLayerLocalizationData {L : ℕ} {b : Option (Fin L) → ℕ}
-    (G : SimpleGraph (LayerVertex b)) : Prop :=
+    (G : SimpleGraph (LayerVertex b)) : Prop := by
+  classical
+  exact
   ∀ H : G.Subgraph, H.verts.Nonempty →
     (∀ v : H.verts, (H.coe.neighborSet v).ncard = 3) →
     ∃ i : Fin L,
@@ -475,8 +480,7 @@ lemma layeredGraph_hasLayerLocalizationData
       (v.1 : LayerVertex b) ∈ A).card = A.card
     exact hcardLift A Finset.inter_subset_left
   have hXcard : X.card = Fintype.card H.verts := by
-    simpa [X, Set.ncard_eq_toFinset_card'] using
-      (Set.ncard_eq_toFinset_card' H.verts).symm
+    simp [X]
   have hpartsAB : AH.card + BH.card = Fintype.card H.verts := by
     have hdis : Disjoint AH BH := by
       rw [Finset.disjoint_left]
@@ -516,7 +520,6 @@ lemma layeredGraph_hasLayerLocalizationData
     intro v hv
     change v ∈ A at hv
     rcases Finset.mem_inter.mp hv with ⟨hvX, hvA⟩
-    change v ∈ S
     apply Finset.mem_inter.mpr
     refine ⟨hvX, ?_⟩
     apply mem_layerPrefix.mpr
@@ -533,7 +536,7 @@ lemma layeredGraph_hasLayerLocalizationData
     simp only [layerAt, Finset.mem_filter, Finset.mem_univ, true_and] at hy
     rcases (mem_layerPrefix.mp hp) with hb | ⟨j, hj, hji⟩
     · simp [hb] at hy
-    · simp [hy] at hj
+    · have : i = j := Option.some.inj (hy.symm.trans hj)
       subst j
       exact (lt_irrefl i hji).elim
   have hST : Disjoint S T := by
@@ -585,7 +588,6 @@ lemma layeredGraph_hasLayerLocalizationData
         rw [Finset.card_union_of_disjoint hSY]
       _ = (S ∪ Y ∪ T).card := (Finset.card_union_of_disjoint hSYT).symm
       _ = X.card := congrArg Finset.card hunionSYT
-
   let I : Finset (Sym2 H.verts) :=
     H.coe.edgeFinset.filter fun e ↦ e.toFinset ⊆ SH
   let OT : Finset (Sym2 H.verts) :=
@@ -912,6 +914,7 @@ lemma sparseEarlierSetBad_of_containsThreeRegular_layered
 lemma denseVertexSetBad_of_sparseEarlierSetBad {L : ℕ}
     {b : Option (Fin L) → ℕ} {G : SimpleGraph (LayerVertex b)}
     (h : SparseEarlierSetBad b G) : DenseVertexSetBad G := by
+  classical
   rcases h with ⟨i, S, hSne, _hprefix, _hsmall, hdense⟩
   refine ⟨S, ?_, ?_⟩
   · simpa using hSne

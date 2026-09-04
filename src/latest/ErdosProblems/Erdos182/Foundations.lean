@@ -29,7 +29,6 @@ to be induced or spanning, but it is required to have at least one vertex.
 -/
 
 open Finset Fintype
-open scoped Classical
 
 namespace Erdos182
 
@@ -93,6 +92,7 @@ lemma regularSubgraphFreeGraphs_nonempty {n k : ℕ} (hk : 0 < k) :
   classical
   exact ⟨⊥, mem_regularSubgraphFreeGraphs.mpr (bot_isRegularSubgraphFree hk)⟩
 
+open Classical in
 /-- Every admissible labelled graph has at most the extremal number of edges. -/
 lemma card_edgeFinset_le_regularExtremalNumber {n k : ℕ}
     (G : SimpleGraph (Fin n)) (hG : IsRegularSubgraphFree G k) :
@@ -110,6 +110,7 @@ lemma regularExtremalNumber_le_choose (n k : ℕ) :
   intro G _
   simpa using G.card_edgeFinset_le_card_choose_two
 
+open Classical in
 /-- The extremal number is at most `m` exactly when every admissible labelled
 graph has at most `m` edges. -/
 lemma regularExtremalNumber_le_iff {n k m : ℕ} :
@@ -123,6 +124,7 @@ lemma regularExtremalNumber_le_iff {n k m : ℕ} :
   · intro h G hG
     exact h G (mem_regularSubgraphFreeGraphs.mp hG)
 
+open Classical in
 /-- A strict lower bound for the extremal number is witnessed by an admissible
 labelled graph.  The positivity assumption is precisely what guarantees that
 the admissible family is nonempty. -/
@@ -144,11 +146,14 @@ lemma lt_regularExtremalNumber_iff {n k m : ℕ} (hk : 0 < k) :
 /-- A graph realizes the extremal number for avoiding nonempty `k`-regular
 subgraphs. -/
 noncomputable def IsRegularExtremal {V : Type*} [Fintype V]
-    (G : SimpleGraph V) (k : ℕ) : Prop :=
-  IsRegularSubgraphFree G k ∧
+    (G : SimpleGraph V) (k : ℕ) : Prop := by
+  classical
+  exact
+    IsRegularSubgraphFree G k ∧
     ∀ H : SimpleGraph V, IsRegularSubgraphFree H k →
       H.edgeFinset.card ≤ G.edgeFinset.card
 
+open Classical in
 /-- For every positive target degree, the finite maximum is attained. -/
 lemma exists_regularExtremalGraph (n k : ℕ) (hk : 0 < k) :
     ∃ G : SimpleGraph (Fin n),
@@ -170,6 +175,7 @@ lemma regularExtremalGraph_isRegularSubgraphFree (n k : ℕ) (hk : 0 < k) :
     IsRegularSubgraphFree (regularExtremalGraph n k hk) k :=
   (Classical.choose_spec (exists_regularExtremalGraph n k hk)).1
 
+open Classical in
 lemma regularExtremalGraph_card_edgeFinset (n k : ℕ) (hk : 0 < k) :
     (regularExtremalGraph n k hk).edgeFinset.card = regularExtremalNumber n k :=
   (Classical.choose_spec (exists_regularExtremalGraph n k hk)).2
@@ -181,6 +187,7 @@ lemma regularExtremalGraph_isRegularExtremal (n k : ℕ) (hk : 0 < k) :
   rw [regularExtremalGraph_card_edgeFinset n k hk]
   exact card_edgeFinset_le_regularExtremalNumber H hH
 
+open Classical in
 /-- Characterization of extremizers on the canonical labelled vertex set. -/
 lemma isRegularExtremal_iff {n k : ℕ} {G : SimpleGraph (Fin n)}
     (hk : 0 < k) :
@@ -199,6 +206,7 @@ lemma isRegularExtremal_iff {n k : ℕ} {G : SimpleGraph (Fin n)}
     rw [hGcard]
     exact card_edgeFinset_le_regularExtremalNumber H hH
 
+open Classical in
 /-- The exact specification of the finite maximum: it is attained and bounds
 every admissible graph. -/
 lemma regularExtremalNumber_spec (n k : ℕ) (hk : 0 < k) :
@@ -209,6 +217,7 @@ lemma regularExtremalNumber_spec (n k : ℕ) (hk : 0 < k) :
   exact ⟨exists_regularExtremalGraph n k hk,
     fun G hG ↦ card_edgeFinset_le_regularExtremalNumber G hG⟩
 
+open Classical in
 /-- Crossing the extremal number forces a regular subgraph. -/
 lemma containsRegularSubgraph_of_regularExtremalNumber_lt {n k : ℕ}
     (G : SimpleGraph (Fin n))
@@ -218,6 +227,7 @@ lemma containsRegularSubgraph_of_regularExtremalNumber_lt {n k : ℕ}
   exact (Nat.not_lt_of_ge
     (card_edgeFinset_le_regularExtremalNumber G hfree)) hG
 
+open Classical in
 /-- Exact threshold formulation: for positive `k`, every labelled graph with
 at least `m` edges contains a nonempty `k`-regular subgraph exactly when `m`
 is strictly larger than the extremal number. -/

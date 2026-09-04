@@ -82,14 +82,17 @@ theorem two_mul_dyadicConditionalScale (gamma r t : ℕ) :
   rw [pow_succ]
   ring
 
+omit [Fintype A] [DecidableEq A] in
 theorem dyadicProbability_mem_unitInterval (alpha : A → ℕ) (t : ℕ)
     (halpha : ∀ x, alpha x ≤ t) (x : A) :
     0 ≤ dyadicProbability alpha t x ∧ dyadicProbability alpha t x ≤ 1 := by
+  classical
   constructor
   · exact div_nonneg (by positivity) (by positivity)
   · exact (div_le_one (by positivity)).2
       (pow_le_pow_right₀ (by norm_num : (1 : ℝ) ≤ 2) (halpha x))
 
+omit [Fintype A] [DecidableEq A] in
 /-- Product of the dyadic probabilities over a finite vertex set. -/
 theorem prod_dyadicProbability (alpha : A → ℕ) (t : ℕ) (S : Finset A) :
     ∏ x ∈ S, dyadicProbability alpha t x =
@@ -147,12 +150,15 @@ theorem dyadic_codegree_term_le (r s t gamma : ℕ)
   rw [le_div_iff₀ (by positivity : (0 : ℝ) < 2 ^ ((r - 1) * t))]
   exact_mod_cast hnat
 
+omit [Fintype B] [DecidableEq B] in
 @[simp] theorem mem_collidingRight {R : A → B → Prop} [DecidableRel R]
     {B₀ : Finset B} {u : A} {v w : B} :
     w ∈ collidingRight R B₀ u v ↔
       w ∈ B₀ ∧ R u w ∧ ∃ x, x ≠ u ∧ R x v ∧ R x w := by
+  classical
   simp [collidingRight, and_assoc]
 
+omit [DecidableEq B] in
 /-- The codegree hypothesis bounds the number of right vertices which share
 a second neighbour with a fixed incidence.  The harmless factor `r`, rather
 than `r - 1`, is the form used in JS Lemma 4.1. -/
@@ -196,6 +202,7 @@ theorem card_collidingRight_le_mul_codegree
       rw [← hdeg]
       exact Finset.card_erase_le
 
+omit [Fintype A] [DecidableEq A] in
 /-- Products of numbers in `[0,1]` are at most one. -/
 theorem prod_probability_le_one (p : A → ℝ)
     (hp : ∀ x, 0 ≤ p x ∧ p x ≤ 1) (s : Finset A) :
@@ -203,6 +210,7 @@ theorem prod_probability_le_one (p : A → ℝ)
   classical
   exact Finset.prod_le_one (fun x _ ↦ (hp x).1) (fun x _ ↦ (hp x).2)
 
+omit [DecidableEq B] in
 /-- Pure finite-product form of the conditional estimate.
 
 `hsingle` is the estimate for right vertices whose neighbourhood meets
@@ -215,7 +223,7 @@ theorem conditionalDegreeFactor_le_two_mul
     (p : A → ℝ) (B₀ : Finset B) (u : A) (v : B)
     (r Q : ℕ) (M : ℝ)
     (hp : ∀ x, 0 ≤ p x ∧ p x ≤ 1)
-    (hM : 0 ≤ M)
+    (_hM : 0 ≤ M)
     (hdeg : (bipNeighborsB R v).card = r)
     (hcodeg : ∀ x, x ≠ u → bipCodegree R u x ≤ Q)
     (hcollision : (r * Q : ℝ) ≤ M)
@@ -263,6 +271,7 @@ theorem conditionalDegreeFactor_le_two_mul
       _ ≤ M := hcollision
   linarith
 
+omit [Fintype B] [DecidableEq B] in
 /-- Unnormalised form: multiplying by the probability `q(v)` gives the
 weighted product bound which is used before conditional Markov. -/
 theorem survival_mul_conditionalDegreeFactor_le
@@ -273,8 +282,10 @@ theorem survival_mul_conditionalDegreeFactor_le
     (hcond : conditionalDegreeFactor R p B₀ u v ≤ 2 * M) :
     rightSurvivalProbability R p v * conditionalDegreeFactor R p B₀ u v ≤
       rightSurvivalProbability R p v * (2 * M) := by
+  classical
   exact mul_le_mul_of_nonneg_left hcond hq
 
+omit [DecidableEq B] in
 /-- **JS Lemma 4.1, conditional product estimate.**
 
 The hypotheses are the exact dyadic data used in the paper.  In particular,
@@ -349,7 +360,7 @@ theorem js_conditional_product_bound
           have hxw : R x w := by simpa using hxmem.1
           have hxv : R x v := by simpa using hxmem.2
           by_cases hxu : x = u
-          · simpa [hxu]
+          · simp [hxu]
           · exact False.elim (hno ⟨x, hxu, hxv, hxw⟩)
         · intro hx
           have hxu : x = u := by simpa using hx

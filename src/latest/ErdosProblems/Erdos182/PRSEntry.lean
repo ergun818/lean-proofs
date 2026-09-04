@@ -35,19 +35,27 @@ noncomputable instance vertexRestriction.instDecidableRel (G : SimpleGraph V)
     (S : Finset V) : DecidableRel (vertexRestriction G S).Adj :=
   Classical.decRel _
 
+omit [Fintype V] [DecidableEq V] in
 @[simp]
 theorem vertexRestriction_adj (G : SimpleGraph V) (S : Finset V) (v w : V) :
-    (vertexRestriction G S).Adj v w ↔ G.Adj v w ∧ v ∈ S ∧ w ∈ S :=
+    (vertexRestriction G S).Adj v w ↔ G.Adj v w ∧ v ∈ S ∧ w ∈ S := by
+  classical
+  exact
   Iff.rfl
 
+omit [Fintype V] [DecidableEq V] in
 theorem vertexRestriction_le (G : SimpleGraph V) (S : Finset V) :
     vertexRestriction G S ≤ G := by
+  classical
   intro v w h
   exact h.1
 
-theorem vertexRestriction_erase (G : SimpleGraph V) (S : Finset V) (v : V) :
+omit [Fintype V] in
+theorem vertexRestriction_erase [Finite V] (G : SimpleGraph V) (S : Finset V) (v : V) :
     vertexRestriction G (S.erase v) =
       (vertexRestriction G S).deleteIncidenceSet v := by
+  classical
+  let := Fintype.ofFinite V
   ext x y
   simp only [vertexRestriction_adj, SimpleGraph.deleteIncidenceSet_adj,
     Finset.mem_erase]
@@ -60,8 +68,10 @@ theorem vertexRestriction_erase (G : SimpleGraph V) (S : Finset V) (v : V) :
 /-- Edge count without a choice of a decidable adjacency relation. -/
 noncomputable def edgeNumber (G : SimpleGraph V) : ℕ := G.edgeSet.ncard
 
+omit [DecidableEq V] in
 theorem edgeNumber_eq_card_edgeFinset (G : SimpleGraph V) [DecidableRel G.Adj] :
     edgeNumber G = G.edgeFinset.card := by
+  classical
   calc
     edgeNumber G = Fintype.card G.edgeSet := by
       exact (Set.fintypeCard_eq_ncard G.edgeSet).symm
@@ -71,21 +81,29 @@ theorem edgeNumber_eq_card_edgeFinset (G : SimpleGraph V) [DecidableRel G.Adj] :
 noncomputable def degreeNumber (G : SimpleGraph V) (v : V) : ℕ :=
   (G.neighborSet v).ncard
 
-theorem edgeNumber_deleteIncidenceSet (G : SimpleGraph V) (v : V) :
+omit [DecidableEq V] [Fintype V] in
+theorem edgeNumber_deleteIncidenceSet [Finite V] (G : SimpleGraph V) (v : V) :
     edgeNumber (G.deleteIncidenceSet v) = edgeNumber G - degreeNumber G v := by
+  classical
+  let := Fintype.ofFinite V
   rw [edgeNumber, degreeNumber, SimpleGraph.edgeSet_deleteIncidenceSet,
     Set.ncard_sdiff' (SimpleGraph.incidenceSet_subset G v)]
   exact congrArg (fun n ↦ edgeNumber G - n)
     (Set.ncard_congr' (G.incidenceSetEquivNeighborSet v))
 
-theorem degreeNumber_le_edgeNumber (G : SimpleGraph V) (v : V) :
+omit [DecidableEq V] [Fintype V] in
+theorem degreeNumber_le_edgeNumber [Finite V] (G : SimpleGraph V) (v : V) :
     degreeNumber G v ≤ edgeNumber G := by
+  classical
+  let := Fintype.ofFinite V
   rw [degreeNumber, edgeNumber,
     ← Set.ncard_congr' (G.incidenceSetEquivNeighborSet v)]
   exact Set.ncard_le_ncard (SimpleGraph.incidenceSet_subset G v)
 
+omit [Fintype V] [DecidableEq V] in
 theorem degreeNumber_eq_degree (G : SimpleGraph V) (v : V)
     [Fintype (G.neighborSet v)] : degreeNumber G v = G.degree v := by
+  classical
   rw [degreeNumber, ← Set.fintypeCard_eq_ncard,
     SimpleGraph.card_neighborSet_eq_degree]
 
@@ -96,6 +114,7 @@ noncomputable def coreScore (G : SimpleGraph V) (d : ℕ) (S : Finset V) : ℕ :
   (2 * edgeNumber (vertexRestriction G S) +
       d * (Fintype.card V - S.card)) * (Fintype.card V + 1) + S.card
 
+omit [DecidableEq V] in
 /-- The usual deletion lemma, in a rounding-safe form: average degree at
 least `d` yields a nonempty induced subgraph in which every active vertex has
 degree at least `d/2` (expressed as `d ≤ 2 degree`). -/
@@ -118,7 +137,7 @@ theorem exists_nonempty_vertexRestriction_forall_degree
     have hcompare := hSmax (Finset.univ : Finset V) (by simp)
     simp only [coreScore, hSempty,
       Finset.card_empty, Nat.sub_zero, Finset.card_univ, Nat.sub_self,
-      Nat.mul_zero, Nat.add_zero, zero_add] at hcompare
+      Nat.mul_zero, Nat.add_zero] at hcompare
     have hrestrict_univ : vertexRestriction G (Finset.univ : Finset V) = G := by
       ext v w
       simp
@@ -177,12 +196,17 @@ noncomputable instance cutGraph.instDecidableRel (G : SimpleGraph V)
     (c : V → Bool) : DecidableRel (cutGraph G c).Adj :=
   Classical.decRel _
 
+omit [Fintype V] [DecidableEq V] in
 @[simp]
 theorem cutGraph_adj (G : SimpleGraph V) (c : V → Bool) (v w : V) :
-    (cutGraph G c).Adj v w ↔ G.Adj v w ∧ c v ≠ c w :=
+    (cutGraph G c).Adj v w ↔ G.Adj v w ∧ c v ≠ c w := by
+  classical
+  exact
   Iff.rfl
 
+omit [Fintype V] [DecidableEq V] in
 theorem cutGraph_le (G : SimpleGraph V) (c : V → Bool) : cutGraph G c ≤ G := by
+  classical
   intro v w h
   exact h.1
 
@@ -190,17 +214,24 @@ theorem cutGraph_le (G : SimpleGraph V) (c : V → Bool) : cutGraph G c ≤ G :=
 def flipColor (c : V → Bool) (v : V) : V → Bool :=
   Function.update c v (!c v)
 
+omit [Fintype V] in
 @[simp]
 theorem flipColor_self (c : V → Bool) (v : V) : flipColor c v v = !c v := by
+  classical
   simp [flipColor]
 
+omit [Fintype V] in
 theorem flipColor_of_ne (c : V → Bool) {v w : V} (h : w ≠ v) :
     flipColor c v w = c w := by
+  classical
   simp [flipColor, h]
 
-theorem deleteIncidenceSet_cutGraph_flip (G : SimpleGraph V) (c : V → Bool) (v : V) :
+omit [Fintype V] in
+theorem deleteIncidenceSet_cutGraph_flip [Finite V] (G : SimpleGraph V) (c : V → Bool) (v : V) :
     (cutGraph G (flipColor c v)).deleteIncidenceSet v =
       (cutGraph G c).deleteIncidenceSet v := by
+  classical
+  let := Fintype.ofFinite V
   ext x y
   simp only [SimpleGraph.deleteIncidenceSet_adj, cutGraph_adj]
   constructor
@@ -211,11 +242,13 @@ theorem deleteIncidenceSet_cutGraph_flip (G : SimpleGraph V) (c : V → Bool) (v
     rw [flipColor_of_ne c hxv, flipColor_of_ne c hyv]
     exact ⟨⟨hxy, hc⟩, hxv, hyv⟩
 
-theorem degree_cutGraph_flip (G : SimpleGraph V)
+omit [Fintype V] in
+theorem degree_cutGraph_flip [Finite V] (G : SimpleGraph V)
     (c : V → Bool) (v : V) :
     degreeNumber (cutGraph G (flipColor c v)) v =
       degreeNumber G v - degreeNumber (cutGraph G c) v := by
   classical
+  let := Fintype.ofFinite V
   have hEq : (cutGraph G (flipColor c v)).neighborSet v =
       G.neighborSet v \ (cutGraph G c).neighborSet v := by
     ext w
@@ -223,20 +256,22 @@ theorem degree_cutGraph_flip (G : SimpleGraph V)
     · subst w
       simp
     · simp only [SimpleGraph.mem_neighborSet, cutGraph_adj,
-        flipColor_self, flipColor_of_ne c hw, Set.mem_diff]
-      cases hcv : c v <;> cases hcw : c w <;> simp [hcv, hcw]
+        flipColor_self, flipColor_of_ne c hw, Set.mem_sdiff]
+      cases hcv : c v <;> cases hcw : c w <;> simp
   have hsub : (cutGraph G c).neighborSet v ⊆ G.neighborSet v := by
     intro w hw
     exact hw.1
   simp only [degreeNumber, hEq, Set.ncard_sdiff' hsub]
 
+omit [DecidableEq V] [Fintype V] in
 /-- A maximum Boolean cut has at least half of the degree of every vertex.
 This local form is stronger than the usual statement that some cut contains
 at least half of all edges. -/
-theorem exists_cutGraph_forall_degree (G : SimpleGraph V) :
+theorem exists_cutGraph_forall_degree [Finite V] (G : SimpleGraph V) :
     ∃ c : V → Bool, ∀ v,
       degreeNumber G v ≤ 2 * degreeNumber (cutGraph G c) v := by
   classical
+  let := Fintype.ofFinite V
   obtain ⟨c, -, hcmax⟩ := Finset.exists_max_image
     (Finset.univ : Finset (V → Bool))
     (fun c ↦ edgeNumber (cutGraph G c)) Finset.univ_nonempty
@@ -261,15 +296,18 @@ theorem exists_cutGraph_forall_degree (G : SimpleGraph V) :
   dsimp only [C, C'] at hmax hdegC hdegC' hdelC hdelC' hdelEq hflip ⊢
   omega
 
+omit [Fintype V] [DecidableEq V] in
 /-- The cut graph is bipartite in its two Boolean color classes. -/
 theorem cutGraph_isBipartiteWith (G : SimpleGraph V) (c : V → Bool) :
     (cutGraph G c).IsBipartiteWith {v | c v = false} {v | c v = true} := by
+  classical
   refine ⟨?_, ?_⟩
   · exact Set.disjoint_left.2 (by simp)
   · intro v w hvw
     rcases hvw with ⟨_, hne⟩
     cases hcv : c v <;> cases hcw : c w <;> simp_all
 
+omit [DecidableEq V] in
 /-- Combining the deletion lemma with a maximum cut: an average-degree
 threshold `d` produces a bipartite subgraph whose active vertices all have
 degree at least `d/4`, with no rounding hidden in division. -/
@@ -281,6 +319,7 @@ theorem exists_bipartite_core (G : SimpleGraph V) (d : ℕ) [Nonempty V]
       (cutGraph (vertexRestriction G S) c).IsBipartiteWith
         {v | c v = false} {v | c v = true} ∧
       ∀ v ∈ S, d ≤ 4 * degreeNumber (cutGraph (vertexRestriction G S) c) v := by
+  classical
   obtain ⟨S, hSne, hSdeg⟩ :=
     exists_nonempty_vertexRestriction_forall_degree G d havg
   obtain ⟨c, hcdeg⟩ := exists_cutGraph_forall_degree (vertexRestriction G S)
@@ -294,21 +333,28 @@ two-sorted bipartite graph. -/
 def fromSimpleGraph (G : SimpleGraph V) (A B : Finset V) : BipartiteGraph A B where
   Adj a b := G.Adj a.1 b.1
 
+omit [Fintype V] [DecidableEq V] in
 @[simp]
 theorem fromSimpleGraph_adj (G : SimpleGraph V) (A B : Finset V) (a : A) (b : B) :
-    (fromSimpleGraph G A B).Adj a b ↔ G.Adj a.1 b.1 := Iff.rfl
+    (fromSimpleGraph G A B).Adj a b ↔ G.Adj a.1 b.1 := by
+  classical
+  exact Iff.rfl
 
+omit [Fintype V] [DecidableEq V] in
 theorem fromSimpleGraph_mono {G K : SimpleGraph V} (hKG : K ≤ G)
     (A B : Finset V) : fromSimpleGraph K A B ≤ fromSimpleGraph G A B := by
+  classical
   intro a b hab
   exact hKG hab
 
+omit [DecidableEq V] [Fintype V] in
 /-- If every neighbor of a right vertex lies in the displayed left part,
 its two-sorted right degree is its degree in the ambient simple graph. -/
-theorem rightDegree_fromSimpleGraph_eq (G : SimpleGraph V) (A B : Finset V) (b : B)
+theorem rightDegree_fromSimpleGraph_eq [Finite V] (G : SimpleGraph V) (A B : Finset V) (b : B)
     (hA : ∀ w, G.Adj b.1 w → w ∈ A) :
     (fromSimpleGraph G A B).rightDegree b = degreeNumber G b.1 := by
   classical
+  let := Fintype.ofFinite V
   let e : {a : A // G.Adj a.1 b.1} ≃ G.neighborSet b.1 :=
     { toFun := fun a ↦ ⟨a.1.1, G.symm.symm _ _ a.2⟩
       invFun := fun w ↦
@@ -354,16 +400,21 @@ theorem exists_rightRegular_trim {A B : Type*} [Fintype A] [Fintype B]
 noncomputable def maximumDegreeNumber (G : SimpleGraph V) : ℕ :=
   Finset.univ.sup (degreeNumber G)
 
+omit [DecidableEq V] in
 theorem degreeNumber_le_maximumDegreeNumber (G : SimpleGraph V) (v : V) :
     degreeNumber G v ≤ maximumDegreeNumber G := by
   classical
   exact Finset.le_sup (f := degreeNumber G) (Finset.mem_univ v)
 
-theorem degreeNumber_mono {G K : SimpleGraph V} (hKG : K ≤ G) (v : V) :
+omit [DecidableEq V] [Fintype V] in
+theorem degreeNumber_mono [Finite V] {G K : SimpleGraph V} (hKG : K ≤ G) (v : V) :
     degreeNumber K v ≤ degreeNumber G v := by
+  classical
+  let := Fintype.ofFinite V
   rw [degreeNumber, degreeNumber]
   exact Set.ncard_le_ncard (fun w hw ↦ hKG hw)
 
+omit [DecidableEq V] in
 /-- **PRS entry reduction.**  An average-degree lower bound `d` yields a
 right-half-regular two-sorted bipartite subgraph of degree
 `δ = ⌈d/4⌉`.  The two parts contain exactly the active vertices, the
@@ -391,7 +442,7 @@ theorem exists_halfRegular_bipartite_entry_strong (G : SimpleGraph V) (d : ℕ)
     · rfl
     · ext v w
       simp only [cutGraph_adj]
-      cases hv : c₀ v <;> cases hw : c₀ w <;> simp [hv, hw]
+      cases hv : c₀ v <;> cases hw : c₀ w <;> simp
   have hCG : cutGraph (vertexRestriction G S) c ≤ G := by
     rw [hcut]
     exact hCG₀
@@ -488,6 +539,7 @@ theorem exists_halfRegular_bipartite_entry_strong (G : SimpleGraph V) (d : ℕ)
     ⟨hHG, hsupport, by simpa using hparts.2, hHreg⟩,
     rfl, hdelta, hdeltaSelf, hdeltaMax⟩
 
+omit [DecidableEq V] in
 /-- Compatibility form of the PRS entry reduction.  The stronger companion
 `exists_halfRegular_bipartite_entry_strong` additionally records that the
 two parts are disjoint and that the extracted degree is at most `d`. -/
@@ -499,17 +551,20 @@ theorem exists_halfRegular_bipartite_entry (G : SimpleGraph V) (d : ℕ)
         H.IsHalfRegularSubgraphOf (fromSimpleGraph G A B)
             (Finset.univ : Finset A) (Finset.univ : Finset B) δ ∧
           d ≤ 4 * δ ∧ δ ≤ maximumDegreeNumber G := by
+  classical
   obtain ⟨A, B, hA, hB, hcard, _, H, δ, hH, _, hdδ, _, hδmax⟩ :=
     exists_halfRegular_bipartite_entry_strong G d hd havg
   exact ⟨A, B, hA, hB, hcard, H, δ, hH, hdδ, hδmax⟩
 
+omit [DecidableEq V] [Fintype V] in
 /-- A two-sorted subgraph of an ambient simple graph inherits the ambient
 degree bound on every left vertex. -/
-theorem leftDegree_le_degreeNumber_of_le {G : SimpleGraph V}
+theorem leftDegree_le_degreeNumber_of_le [Finite V] {G : SimpleGraph V}
     {A B : Finset V} {H : BipartiteGraph A B}
     (hHG : H ≤ fromSimpleGraph G A B) (a : A) :
     H.leftDegree a ≤ degreeNumber G a.1 := by
   classical
+  let := Fintype.ofFinite V
   let f : {b : B // b ∈ H.rightNeighbors a} → G.neighborSet a.1 := fun b ↦
     ⟨b.1.1, hHG ((BipartiteGraph.mem_rightNeighbors H a b.1).mp b.2)⟩
   have hf : Function.Injective f := by
@@ -526,6 +581,7 @@ theorem leftDegree_le_degreeNumber_of_le {G : SimpleGraph V}
       simpa only [degreeNumber] using
         (Set.fintypeCard_eq_ncard (G.neighborSet a.1))
 
+omit [DecidableEq V] in
 /-- The PRS entry reduction, packaged with every numerical fact needed by
 the later Janzer--Sudakov degree-bucket split. -/
 theorem exists_initial_halfRegular_core
@@ -560,6 +616,7 @@ theorem exists_initial_halfRegular_core
   exact ⟨A, B, hA, hB, hABcard, hAB, H, δ, hH, hδeq, hdδ, hδd, hδΔ, hδpos,
     hleft, hedge, hdensity⟩
 
+omit [DecidableEq V] in
 /-- Version of `exists_initial_halfRegular_core` using Mathlib's ordinary
 maximum degree. -/
 theorem exists_initial_halfRegular_core_of_maxDegree
@@ -576,6 +633,7 @@ theorem exists_initial_halfRegular_core_of_maxDegree
         (∀ a : A, H.leftDegree a ≤ Δ) ∧
         H.edgeCount = B.card * δ ∧
         δ * A.card ≤ H.edgeCount := by
+  classical
   have havg' : d * Fintype.card V ≤ 2 * edgeNumber G := by
     rw [edgeNumber_eq_card_edgeFinset]
     exact havg
@@ -705,6 +763,7 @@ def bipartiteCopy (G : SimpleGraph V) (A B : Finset V)
             | inr b' => exact False.elim hxy }
   injective' := (sumPartsEmbedding A B hAB).injective
 
+omit [DecidableEq V] in
 /-- A regular two-sorted bipartite subgraph on disjoint ambient parts lifts
 to a nonempty regular subgraph in the literal sense of `ContainsRegularSubgraph`.
 This is the bridge used after the PRS extraction theorem. -/
@@ -738,6 +797,7 @@ theorem containsRegularSubgraph_of_bipartite {G : SimpleGraph V}
   change degreeNumber H.coe v = k
   exact (degreeNumber_eq_degree H.coe v).trans hdeg
 
+omit [DecidableEq V] in
 /-- Subgraph form of `containsRegularSubgraph_of_bipartite`, convenient when
 the regular graph is obtained by extraction inside a larger two-sorted
 graph. -/
@@ -749,6 +809,7 @@ theorem containsRegularSubgraph_of_bipartite_subgraph {G : SimpleGraph V}
     (hleft : ∀ a, L.leftDegree a = k)
     (hright : ∀ b, L.rightDegree b = k) :
     ContainsRegularSubgraph G k := by
+  classical
   apply containsRegularSubgraph_of_bipartite hA hAB L _ k hleft hright
   intro a b hab
   exact hKG (hLK hab)

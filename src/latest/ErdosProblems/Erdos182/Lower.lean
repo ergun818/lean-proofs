@@ -22,7 +22,7 @@ open Finset Fintype Filter
 
 namespace Erdos182
 
-open scoped BigOperators Classical
+open scoped BigOperators
 
 noncomputable section
 
@@ -91,7 +91,7 @@ lemma card_laterLayerVertices {L : ℕ} (b : Option (Fin L) → ℕ) :
         exact ⟨⟨j, v⟩, by simp [source], rfl⟩
       · simp [baseLayer]
   rw [heq, Finset.card_map, Finset.card_sigma]
-  simp [source]
+  simp
 
 lemma card_layerStrictTail_eq_sum {L : ℕ} (b : Option (Fin L) → ℕ)
     (i : Fin L) :
@@ -120,7 +120,7 @@ lemma card_layerStrictTail_eq_sum {L : ℕ} (b : Option (Fin L) → ℕ)
         subst k
         simpa [layerStrictTail] using (by simpa [source] using hk : i < j)
   rw [heq, Finset.card_map, Finset.card_sigma]
-  simp [source]
+  simp
 
 lemma card_prsLayerStrictTail (n : ℕ) (hcount : 2 ≤ prsLayerCount n)
     (i : Fin (prsLayerCount n - 1)) :
@@ -299,6 +299,7 @@ lemma exists_layerScale_of_tail
         · simp
       simp [htailEmpty, hs]
 
+open Classical in
 /-- Exact-order PRS witnesses, simultaneously avoiding every regular degree
 at least three. -/
 theorem prs_allDegreeWitness :
@@ -414,8 +415,7 @@ theorem prs_allDegreeWitness :
       _ = (G.edgeFinset.card : ℕ) := by
         rw [card_edgeFinset_paddedLayeredGraph]
         rfl
-  · intro q hq
-    intro hqcontains
+  · intro q hq hqcontains
     have hunpadded : ContainsRegularSubgraph (layeredGraph choice) q :=
       containsRegularSubgraph_of_contains_paddedLayeredGraph choice hcard
         (by omega) hqcontains

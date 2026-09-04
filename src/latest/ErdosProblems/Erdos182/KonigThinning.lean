@@ -12,7 +12,6 @@ the `T / D` fraction of all edges.  This file packages that consequence for
 the two-sorted bipartite graphs used in the proof of Erdős Problem 182.
 -/
 
-open scoped Classical
 
 namespace Erdos182
 namespace BipartiteGraph
@@ -22,7 +21,8 @@ variable {A B : Type*} [Fintype A] [Fintype B]
 /-- The labelled edge type of a simple two-sorted bipartite graph. -/
 def EdgeType (G : BipartiteGraph A B) := {p : A × B // G.Adj p.1 p.2}
 
-instance (G : BipartiteGraph A B) : Finite G.EdgeType :=
+omit [Fintype A] [Fintype B] in
+instance [Finite A] [Finite B] (G : BipartiteGraph A B) : Finite G.EdgeType :=
   Finite.of_injective Subtype.val Subtype.val_injective
 
 noncomputable instance (G : BipartiteGraph A B) : Fintype G.EdgeType :=
@@ -43,6 +43,7 @@ private def edgeTypeEquivSigmaLeftNeighbors (G : BipartiteGraph A B) :
 
 theorem edgeCount_eq_card_edgeType (G : BipartiteGraph A B) :
     G.edgeCount = Fintype.card G.EdgeType := by
+  classical
   rw [Fintype.card_congr G.edgeTypeEquivSigmaLeftNeighbors,
     Fintype.card_sigma]
   apply Finset.sum_congr rfl
@@ -79,12 +80,14 @@ private def edgeMultigraphRightFiberEquiv (G : BipartiteGraph A B) (b : B) :
     rfl
   right_inv _ := rfl
 
+open Classical in
 private theorem edgeMultigraph_left_card (G : BipartiteGraph A B) (a : A) :
     Fintype.card {e : G.EdgeType // G.edgeMultigraph.left e = a} =
       G.leftDegree a := by
   rw [Fintype.card_congr (G.edgeMultigraphLeftFiberEquiv a), leftDegree,
     Fintype.card_coe]
 
+open Classical in
 private theorem edgeMultigraph_right_card (G : BipartiteGraph A B) (b : B) :
     Fintype.card {e : G.EdgeType // G.edgeMultigraph.right e = b} =
       G.rightDegree b := by
@@ -97,9 +100,11 @@ noncomputable def colorSubgraph (G : BipartiteGraph A B) {D : ℕ}
     BipartiteGraph A B where
   Adj a b := ∃ h : G.Adj a b, C.color ⟨(a, b), h⟩ ∈ S
 
+omit [Fintype A] [Fintype B] in
 private theorem colorSubgraph_le (G : BipartiteGraph A B) {D : ℕ}
     (C : G.edgeMultigraph.ProperColoring D) (S : Finset (Fin D)) :
     G.colorSubgraph C S ≤ G := by
+  classical
   intro a b h
   exact h.choose
 
@@ -128,10 +133,12 @@ private theorem colorSubgraph_edgeCount (G : BipartiteGraph A B) {D : ℕ}
     (p := fun e : G.EdgeType ↦ C.color e ∈ S)
     (Finset.univ.filter fun e : G.EdgeType ↦ C.color e ∈ S) (by simp)
 
-private theorem colorSubgraph_leftDegree_le (G : BipartiteGraph A B) {D : ℕ}
+omit [Fintype A] in
+private theorem colorSubgraph_leftDegree_le [Finite A] (G : BipartiteGraph A B) {D : ℕ}
     (C : G.edgeMultigraph.ProperColoring D) (S : Finset (Fin D)) (a : A) :
     (G.colorSubgraph C S).leftDegree a ≤ S.card := by
   classical
+  let := Fintype.ofFinite A
   let H := G.colorSubgraph C S
   let f : {b // b ∈ H.rightNeighbors a} → {i // i ∈ S} := fun b ↦ by
     have hH : H.Adj a b.1 := H.mem_rightNeighbors a b.1 |>.mp b.2
@@ -150,10 +157,12 @@ private theorem colorSubgraph_leftDegree_le (G : BipartiteGraph A B) {D : ℕ}
   simpa only [H, leftDegree, Fintype.card_coe] using
     Fintype.card_le_of_injective f hf
 
-private theorem colorSubgraph_rightDegree_le (G : BipartiteGraph A B) {D : ℕ}
+omit [Fintype B] in
+private theorem colorSubgraph_rightDegree_le [Finite B] (G : BipartiteGraph A B) {D : ℕ}
     (C : G.edgeMultigraph.ProperColoring D) (S : Finset (Fin D)) (b : B) :
     (G.colorSubgraph C S).rightDegree b ≤ S.card := by
   classical
+  let := Fintype.ofFinite B
   let H := G.colorSubgraph C S
   let f : {a // a ∈ H.leftNeighbors b} → {i // i ∈ S} := fun a ↦ by
     have hH : H.Adj a.1 b := H.mem_leftNeighbors a.1 b |>.mp a.2

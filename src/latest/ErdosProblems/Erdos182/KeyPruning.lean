@@ -62,16 +62,22 @@ def pruningBadEdgeCount (R : A → B → Prop) [DecidableRel R]
     (S : Finset A) (T : Finset B) (cutoff : ℕ) : ℕ :=
   bipRestrictedEdgeCount R (pruningBadA R S T cutoff) T
 
+omit [Fintype A] [Fintype B] [DecidableEq A] [DecidableEq B] in
 @[simp] theorem mem_pruningBadA {R : A → B → Prop} [DecidableRel R]
     {S : Finset A} {T : Finset B} {cutoff : ℕ} {u : A} :
     u ∈ pruningBadA R S T cutoff ↔
       u ∈ S ∧ cutoff < bipRestrictedDegreeA R T u := by
+  classical
   simp [pruningBadA]
 
-@[simp] theorem mem_pruningSurvivingA {R : A → B → Prop} [DecidableRel R]
+omit [DecidableEq B] [Fintype A] [Fintype B] in
+@[simp] theorem mem_pruningSurvivingA [Finite A] [Finite B] {R : A → B → Prop} [DecidableRel R]
     {S : Finset A} {T : Finset B} {cutoff : ℕ} {u : A} :
     u ∈ pruningSurvivingA R S T cutoff ↔
       u ∈ S ∧ bipRestrictedDegreeA R T u ≤ cutoff := by
+  classical
+  let := Fintype.ofFinite A
+  let := Fintype.ofFinite B
   simp only [pruningSurvivingA, mem_sdiff, mem_pruningBadA]
   constructor
   · rintro ⟨huS, hubad⟩
@@ -79,38 +85,55 @@ def pruningBadEdgeCount (R : A → B → Prop) [DecidableRel R]
   · rintro ⟨huS, hdegree⟩
     exact ⟨huS, fun hubad ↦ Nat.not_lt_of_ge hdegree hubad.2⟩
 
-@[simp] theorem mem_pruningSurvivingB {R : A → B → Prop} [DecidableRel R]
+omit [DecidableEq B] [Fintype B] in
+@[simp] theorem mem_pruningSurvivingB [Finite B] {R : A → B → Prop} [DecidableRel R]
     {S : Finset A} {T : Finset B} {cutoff : ℕ} {v : B} :
     v ∈ pruningSurvivingB R S T cutoff ↔
       v ∈ T ∧ ∀ u ∈ pruningBadA R S T cutoff, ¬ R u v := by
+  classical
+  let := Fintype.ofFinite B
   simp [pruningSurvivingB]
 
-theorem pruningBadA_subset (R : A → B → Prop) [DecidableRel R]
+omit [DecidableEq A] [DecidableEq B] [Fintype A] [Fintype B] in
+theorem pruningBadA_subset [Finite A] [Finite B] (R : A → B → Prop) [DecidableRel R]
     (S : Finset A) (T : Finset B) (cutoff : ℕ) :
     pruningBadA R S T cutoff ⊆ S := by
+  classical
+  let := Fintype.ofFinite A
+  let := Fintype.ofFinite B
   intro u hu
   exact (mem_pruningBadA.mp hu).1
 
-theorem pruningSurvivingA_subset (R : A → B → Prop) [DecidableRel R]
+omit [DecidableEq B] [Fintype A] [Fintype B] in
+theorem pruningSurvivingA_subset [Finite A] [Finite B] (R : A → B → Prop) [DecidableRel R]
     (S : Finset A) (T : Finset B) (cutoff : ℕ) :
     pruningSurvivingA R S T cutoff ⊆ S := by
+  classical
+  let := Fintype.ofFinite A
+  let := Fintype.ofFinite B
   intro u hu
   exact (mem_pruningSurvivingA.mp hu).1
 
-theorem pruningSurvivingB_subset (R : A → B → Prop) [DecidableRel R]
+omit [DecidableEq B] [Fintype B] in
+theorem pruningSurvivingB_subset [Finite B] (R : A → B → Prop) [DecidableRel R]
     (S : Finset A) (T : Finset B) (cutoff : ℕ) :
     pruningSurvivingB R S T cutoff ⊆ T := by
+  classical
+  let := Fintype.ofFinite B
   intro v hv
   exact (mem_pruningSurvivingB.mp hv).1
 
+omit [DecidableEq B] [Fintype B] in
 /-- Every surviving right vertex has all its neighbours in the surviving
 left set, provided the unpruned right set was already closed inside `S`. -/
-theorem pruning_closed
+theorem pruning_closed [Finite B]
     (R : A → B → Prop) [DecidableRel R]
     (S : Finset A) (T : Finset B) (cutoff : ℕ)
     (hclosed : ∀ v ∈ T, ∀ u, R u v → u ∈ S) :
     ∀ v : ↑(pruningSurvivingB R S T cutoff), ∀ u,
       R u v → u ∈ pruningSurvivingA R S T cutoff := by
+  classical
+  let := Fintype.ofFinite B
   rintro ⟨v, hv⟩ u huv
   have hv' := mem_pruningSurvivingB.mp hv
   refine mem_pruningSurvivingA.mpr ⟨hclosed v hv'.1 u huv, ?_⟩
@@ -119,12 +142,15 @@ theorem pruning_closed
     mem_pruningBadA.mpr ⟨hclosed v hv'.1 u huv, Nat.lt_of_not_ge hdegree⟩
   exact hv'.2 u hubad huv
 
+omit [DecidableEq B] [Fintype B] in
 /-- Pruning enforces the cutoff on every surviving left vertex. -/
-theorem pruning_max_degree
+theorem pruning_max_degree [Finite B]
     (R : A → B → Prop) [DecidableRel R]
     (S : Finset A) (T : Finset B) (cutoff : ℕ) :
     ∀ u ∈ pruningSurvivingA R S T cutoff,
       bipRestrictedDegreeA R (pruningSurvivingB R S T cutoff) u ≤ cutoff := by
+  classical
+  let := Fintype.ofFinite B
   intro u hu
   have hdegreeT : bipRestrictedDegreeA R T u ≤ cutoff :=
     (mem_pruningSurvivingA.mp hu).2
@@ -133,6 +159,7 @@ theorem pruning_max_degree
     have hvT : v ∈ T := (mem_pruningSurvivingB.mp (mem_filter.mp hv).1).1
     exact mem_filter.mpr ⟨hvT, (mem_filter.mp hv).2⟩)).trans hdegreeT
 
+omit [Fintype A] [Fintype B] [DecidableEq A] [DecidableEq B] in
 /-- Double-count a restricted relation by its right part. -/
 theorem bipRestrictedEdgeCount_eq_sum_right
     (R : A → B → Prop) [DecidableRel R]
@@ -143,28 +170,35 @@ theorem bipRestrictedEdgeCount_eq_sum_right
   simp only [bipRestrictedEdgeCount, Finset.card_filter]
   rw [Finset.sum_comm]
 
+omit [DecidableEq A] [DecidableEq B] [Fintype A] [Fintype B] in
 /-- If all selected right vertices have restricted degree `r`, the selected
 edge count is `r * |T|`. -/
-theorem bipRestrictedEdgeCount_eq_mul_card
+theorem bipRestrictedEdgeCount_eq_mul_card [Finite A] [Finite B]
     (R : A → B → Prop) [DecidableRel R]
     (S : Finset A) (T : Finset B) (r : ℕ)
     (hregular : ∀ v ∈ T, (S.filter fun u ↦ R u v).card = r) :
     bipRestrictedEdgeCount R S T = r * T.card := by
+  classical
+  let := Fintype.ofFinite A
+  let := Fintype.ofFinite B
   rw [bipRestrictedEdgeCount_eq_sum_right]
   calc
     ∑ v ∈ T, (S.filter fun u ↦ R u v).card = ∑ _v ∈ T, r :=
       sum_congr rfl fun v hv ↦ hregular v hv
     _ = r * T.card := by simp [mul_comm]
 
+omit [DecidableEq B] [Fintype B] in
 /-- A surviving right vertex retains exactly the same neighbours as before
 pruning: it has no bad neighbour, while every old neighbour lies in `S`. -/
-theorem filter_survivingA_eq_filter_of_mem_survivingB
+theorem filter_survivingA_eq_filter_of_mem_survivingB [Finite B]
     (R : A → B → Prop) [DecidableRel R]
     (S : Finset A) (T : Finset B) (cutoff : ℕ)
-    (hclosed : ∀ v ∈ T, ∀ u, R u v → u ∈ S)
+    (_hclosed : ∀ v ∈ T, ∀ u, R u v → u ∈ S)
     {v : B} (hv : v ∈ pruningSurvivingB R S T cutoff) :
     (pruningSurvivingA R S T cutoff).filter (fun u ↦ R u v) =
       S.filter fun u ↦ R u v := by
+  classical
+  let := Fintype.ofFinite B
   ext u
   constructor
   · intro hu
@@ -178,15 +212,17 @@ theorem filter_survivingA_eq_filter_of_mem_survivingB
       exact hv'.2 u hubad hu'.2
     exact mem_filter.mpr ⟨mem_sdiff.mpr ⟨hu'.1, hunotbad⟩, hu'.2⟩
 
+omit [Fintype B] in
 /-- The number of deleted right vertices is at most the number of incidences
 at bad left vertices.  Each deleted right vertex chooses at least one such
 incidence; overlaps only improve the bound. -/
-theorem card_removedB_le_badEdgeCount
+theorem card_removedB_le_badEdgeCount [Finite B]
     (R : A → B → Prop) [DecidableRel R]
     (S : Finset A) (T : Finset B) (cutoff : ℕ) :
     (T \ pruningSurvivingB R S T cutoff).card ≤
       pruningBadEdgeCount R S T cutoff := by
   classical
+  let := Fintype.ofFinite B
   let bad := pruningBadA R S T cutoff
   let U : Finset B := bad.biUnion fun u ↦ T.filter (R u)
   have hsubset : T \ pruningSurvivingB R S T cutoff ⊆ U := by
@@ -195,7 +231,7 @@ theorem card_removedB_le_badEdgeCount
     have hvnot : v ∉ pruningSurvivingB R S T cutoff := (mem_sdiff.mp hv).2
     have hex : ∃ u ∈ bad, R u v := by
       by_contra h
-      push_neg at h
+      push Not at h
       apply hvnot
       exact mem_pruningSurvivingB.mpr ⟨hvT, h⟩
     obtain ⟨u, hubad, huv⟩ := hex
@@ -206,8 +242,9 @@ theorem card_removedB_le_badEdgeCount
     _ = pruningBadEdgeCount R S T cutoff := by
       simp [bad, pruningBadEdgeCount, bipRestrictedEdgeCount]
 
+omit [DecidableEq B] [Fintype B] in
 /-- The exact deterministic `X - rY` estimate from JS Lemma 4.1. -/
-theorem pruning_edgeCount_sub_le
+theorem pruning_edgeCount_sub_le [Finite B]
     (R : A → B → Prop) [DecidableRel R]
     (S : Finset A) (T : Finset B) (cutoff r : ℕ)
     (hclosed : ∀ v ∈ T, ∀ u, R u v → u ∈ S)
@@ -215,6 +252,8 @@ theorem pruning_edgeCount_sub_le
     bipRestrictedEdgeCount R S T - r * pruningBadEdgeCount R S T cutoff ≤
       bipRestrictedEdgeCount R (pruningSurvivingA R S T cutoff)
         (pruningSurvivingB R S T cutoff) := by
+  classical
+  let := Fintype.ofFinite B
   let A' := pruningSurvivingA R S T cutoff
   let B' := pruningSurvivingB R S T cutoff
   have hBsub : B' ⊆ T := pruningSurvivingB_subset R S T cutoff
@@ -240,9 +279,10 @@ theorem pruning_edgeCount_sub_le
       rw [← hcard, Nat.mul_add]
       omega
 
+omit [DecidableEq B] [Fintype B] in
 /-- Additive form of `pruning_edgeCount_sub_le`, often more convenient for
 natural-number algebra. -/
-theorem pruning_edgeCount_le_add
+theorem pruning_edgeCount_le_add [Finite B]
     (R : A → B → Prop) [DecidableRel R]
     (S : Finset A) (T : Finset B) (cutoff r : ℕ)
     (hclosed : ∀ v ∈ T, ∀ u, R u v → u ∈ S)
@@ -251,6 +291,8 @@ theorem pruning_edgeCount_le_add
       bipRestrictedEdgeCount R (pruningSurvivingA R S T cutoff)
           (pruningSurvivingB R S T cutoff) +
         r * pruningBadEdgeCount R S T cutoff := by
+  classical
+  let := Fintype.ofFinite B
   have h := pruning_edgeCount_sub_le R S T cutoff r hclosed hregular
   omega
 
@@ -260,6 +302,7 @@ section Score
 
 variable {A B : Type*} [Fintype A] [Fintype B] [DecidableEq A] [DecidableEq B]
 
+omit [Fintype A] [Fintype B] [DecidableEq A] [DecidableEq B] in
 /-- A positive score `e - c|A'|` with
 `c = Q / (10 x r)` gives the first, density, inequality in
 `IsKeyRestriction`. -/
@@ -270,6 +313,7 @@ theorem keyRestriction_density_of_positive_score
     (hc : c = (Q : ℝ) / (10 * (x : ℝ) * (r : ℝ)))
     (hscore : 0 < (bipRestrictedEdgeCount R A' B' : ℝ) - c * A'.card) :
     Q * A'.card ≤ 10 * x * r * bipRestrictedEdgeCount R A' B' := by
+  classical
   have hden : 0 < 10 * (x : ℝ) * (r : ℝ) := by positivity
   have hc_mul : (10 * (x : ℝ) * (r : ℝ)) * c = Q := by
     rw [hc]
@@ -290,6 +334,7 @@ theorem keyRestriction_density_of_positive_score
         mul_lt_mul_of_pos_left hscore' hden
   exact_mod_cast hlt.le
 
+omit [Fintype A] [Fintype B] [DecidableEq A] [DecidableEq B] in
 /-- The same positive score converts a pointwise real degree estimate into
 the second, maximum-degree, inequality in `IsKeyRestriction`. -/
 theorem keyRestriction_maxDegree_of_positive_score
@@ -303,6 +348,7 @@ theorem keyRestriction_maxDegree_of_positive_score
     ∀ u ∈ A',
       bipRestrictedDegreeA R B' u * A'.card ≤
         40 * x * r ^ 2 * bipRestrictedEdgeCount R A' B' := by
+  classical
   intro u hu
   have hcoeff : 0 < 40 * (x : ℝ) * (r : ℝ) ^ 2 := by positivity
   have hscore' : c * (A'.card : ℝ) < bipRestrictedEdgeCount R A' B' := by
@@ -321,9 +367,10 @@ theorem keyRestriction_maxDegree_of_positive_score
         mul_lt_mul_of_pos_left hscore' hcoeff
   exact_mod_cast hlt.le
 
+omit [DecidableEq A] [DecidableEq B] [Fintype A] [Fintype B] in
 /-- Package the two score conversions, closure, and nonemptiness into the
 exact conclusion expected by the key-restriction interface. -/
-theorem isKeyRestriction_of_positive_score
+theorem isKeyRestriction_of_positive_score [Finite A] [Finite B]
     {R : A → B → Prop} [DecidableRel R]
     {x r Q : ℕ} {A' : Finset A} {B' : Finset B} {c : ℝ}
     (hx : 0 < x) (hr : 0 < r)
@@ -334,19 +381,23 @@ theorem isKeyRestriction_of_positive_score
       (bipRestrictedDegreeA R B' u : ℝ) ≤
         40 * (x : ℝ) * (r : ℝ) ^ 2 * c) :
     IsKeyRestriction R r x Q A' B' := by
+  classical
+  let := Fintype.ofFinite A
+  let := Fintype.ofFinite B
   have hnonempty : A'.Nonempty := by
     rw [Finset.nonempty_iff_ne_empty]
     intro hA
     subst A'
-    simpa [bipRestrictedEdgeCount] using hscore
+    simp [bipRestrictedEdgeCount] at hscore
   exact ⟨hnonempty, hclosed,
     keyRestriction_density_of_positive_score hx hr hc hscore,
     keyRestriction_maxDegree_of_positive_score hx hr hscore hdegree⟩
 
+omit [DecidableEq B] [Fintype B] in
 /-- End-to-end deterministic pruning interface.  A positive score for the
 actual surviving edge count, together with a cutoff dominated by
 `40 x r² c`, yields `IsKeyRestriction`. -/
-theorem isKeyRestriction_pruning_of_positive_score
+theorem isKeyRestriction_pruning_of_positive_score [Finite B]
     {R : A → B → Prop} [DecidableRel R]
     {x r Q cutoff : ℕ} {S : Finset A} {T : Finset B} {c : ℝ}
     (hx : 0 < x) (hr : 0 < r)
@@ -360,6 +411,8 @@ theorem isKeyRestriction_pruning_of_positive_score
       40 * (x : ℝ) * (r : ℝ) ^ 2 * c) :
     IsKeyRestriction R r x Q (pruningSurvivingA R S T cutoff)
       (pruningSurvivingB R S T cutoff) := by
+  classical
+  let := Fintype.ofFinite B
   apply isKeyRestriction_of_positive_score hx hr hc hscore
   · exact pruning_closed R S T cutoff hclosed
   · intro u hu
@@ -369,12 +422,13 @@ theorem isKeyRestriction_pruning_of_positive_score
       exact_mod_cast pruning_max_degree R S T cutoff u hu
     exact hdegreeR.trans hcutoff
 
+omit [DecidableEq B] [Fintype B] in
 /-- Version matching the probabilistic score verbatim.  The expectation
 calculation subtracts `c * |S|`, where `S` is the sampled set before bad
 vertices are removed.  Since the surviving left set is a subset of `S` and
 `c > 0`, this is stronger than the score required by
 `isKeyRestriction_pruning_of_positive_score`. -/
-theorem isKeyRestriction_pruning_of_sampled_score
+theorem isKeyRestriction_pruning_of_sampled_score [Finite B]
     {R : A → B → Prop} [DecidableRel R]
     {x r Q cutoff : ℕ} {S : Finset A} {T : Finset B} {c : ℝ}
     (hx : 0 < x) (hr : 0 < r)
@@ -388,6 +442,8 @@ theorem isKeyRestriction_pruning_of_sampled_score
       40 * (x : ℝ) * (r : ℝ) ^ 2 * c) :
     IsKeyRestriction R r x Q (pruningSurvivingA R S T cutoff)
       (pruningSurvivingB R S T cutoff) := by
+  classical
+  let := Fintype.ofFinite B
   have hcard : (pruningSurvivingA R S T cutoff).card ≤ S.card :=
     card_le_card (pruningSurvivingA_subset R S T cutoff)
   have hcardR :

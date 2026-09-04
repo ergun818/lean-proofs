@@ -7,7 +7,7 @@ import ErdosProblems.Erdos182.LowerAsymptotic
 
 namespace Erdos182
 
-open scoped BigOperators Classical
+open scoped BigOperators
 
 noncomputable section
 
@@ -145,7 +145,9 @@ def prsDemandUnion
     {U C V : Type*} [Fintype U] [Fintype C]
     (allowed : C → Finset V) (x : ℕ)
     (family : Finset U → Finset (CoordinateDemand C V)) :
-    Finset (FiniteChoiceOutcome C V) :=
+    Finset (FiniteChoiceOutcome C V) := by
+  classical
+  exact
   ((Finset.univ : Finset U).powersetCard x).biUnion fun S ↦
     (family S).biUnion (CoordinateDemand.outcomes allowed)
 

@@ -33,7 +33,6 @@ a perfect matching; deleting it lowers every degree by one.  Induction then
 extracts the required factor.
 -/
 
-open scoped Classical
 
 namespace Erdos182
 
@@ -44,12 +43,14 @@ independent of the particular `Fintype` structures on neighbor sets. -/
 private def IsRegularNcard {V : Type*} (G : SimpleGraph V) (q : ℕ) : Prop :=
   ∀ v, (G.neighborSet v).ncard = q
 
+open Classical in
 private theorem isRegularNcard_of_isRegularOfDegree {V : Type*} [Fintype V]
     {G : SimpleGraph V} {q : ℕ} (hG : G.IsRegularOfDegree q) : IsRegularNcard G q := by
   intro v
   rw [← Set.fintypeCard_eq_ncard, SimpleGraph.card_neighborSet_eq_degree]
   exact hG v
 
+open Classical in
 private theorem isRegularOfDegree_of_isRegularNcard {V : Type*} [Fintype V]
     {G : SimpleGraph V} {q : ℕ} (hG : IsRegularNcard G q) : G.IsRegularOfDegree q := by
   intro v
@@ -60,10 +61,11 @@ private theorem isRegularOfDegree_of_isRegularNcard {V : Type*} [Fintype V]
 condition.  Count incidences between `s` and its union of neighbor sets: the
 left side is `q * |s|`, while each vertex on the right is counted at most
 `q` times. -/
-private theorem hall_ncard_of_pos_regular {V : Type*} [Fintype V]
+private theorem hall_ncard_of_pos_regular {V : Type*} [Finite V]
     (G : SimpleGraph V) {q : ℕ} (hq : 0 < q) (hreg : IsRegularNcard G q) (s : Set V) :
     s.ncard ≤ (⋃ x ∈ s, G.neighborSet x).ncard := by
   classical
+  let := Fintype.ofFinite V
   let sf := s.toFinset
   let nf := sf.biUnion (fun v ↦ G.neighborFinset v)
   have hdouble := Finset.sum_card_eq_sum_biUnion_card (fun v ↦ G.neighborFinset v) sf
@@ -92,6 +94,7 @@ private theorem hall_ncard_of_pos_regular {V : Type*} [Fintype V]
   rw [← hnf]
   simpa only [sf] using hcard
 
+open Classical in
 /-- Every finite positive regular bipartite graph has a perfect matching. -/
 theorem exists_isPerfectMatching_of_pos_regular {V : Type*} [Fintype V]
     (G : SimpleGraph V) {q : ℕ} (hq : 0 < q) (hreg : G.IsRegularOfDegree q)
@@ -109,11 +112,12 @@ private theorem isBipartite_mono {V : Type*} {G H : SimpleGraph V}
   intro v w hadj
   exact hst.mem_of_adj (hle hadj)
 
-private theorem regularNcard_sdiff_perfectMatching {V : Type*} [Fintype V]
+private theorem regularNcard_sdiff_perfectMatching {V : Type*} [Finite V]
     (G : SimpleGraph V) {q : ℕ} (hreg : IsRegularNcard G (q + 1))
     {M : G.Subgraph} (hM : M.IsPerfectMatching) :
     IsRegularNcard (G \ M.spanningCoe) q := by
   classical
+  let := Fintype.ofFinite V
   have hMreg : IsRegularNcard M.spanningCoe 1 := by
     intro v
     rw [Set.ncard_eq_one, Set.singleton_iff_unique_mem]
@@ -125,10 +129,11 @@ private theorem regularNcard_sdiff_perfectMatching {V : Type*} [Fintype V]
   simp [hreg v, hMreg v]
 
 private theorem exists_regularNcard_spanning_subgraph_of_bipartite
-    {V : Type*} [Fintype V] (G : SimpleGraph V) {q r : ℕ} (hbip : G.IsBipartite)
+    {V : Type*} [Finite V] (G : SimpleGraph V) {q r : ℕ} (hbip : G.IsBipartite)
     (hreg : IsRegularNcard G q) (hr : r ≤ q) :
     ∃ H : SimpleGraph V, H ≤ G ∧ IsRegularNcard H r := by
   classical
+  let := Fintype.ofFinite V
   induction q generalizing G r with
   | zero =>
       have hr0 : r = 0 := Nat.eq_zero_of_le_zero hr
@@ -154,6 +159,7 @@ private theorem exists_regularNcard_spanning_subgraph_of_bipartite
         have hG'le : G' ≤ G := fun _ _ h ↦ h.1
         exact ⟨H, hHle.trans hG'le, hHreg⟩
 
+open Classical in
 /-- The simple-graph form of the bipartite factor theorem. -/
 theorem exists_regular_spanning_subgraph_of_bipartite {V : Type*} [Fintype V]
     (G : SimpleGraph V) {q r : ℕ} (hbip : G.IsBipartite)
@@ -164,6 +170,7 @@ theorem exists_regular_spanning_subgraph_of_bipartite {V : Type*} [Fintype V]
       (isRegularNcard_of_isRegularOfDegree hreg) hr
   exact ⟨H, hHle, isRegularOfDegree_of_isRegularNcard hHreg⟩
 
+open Classical in
 /-- The subgraph form of the bipartite factor theorem.  The returned subgraph
 contains every ambient vertex. -/
 theorem exists_spanning_regular_subgraph_of_bipartite {V : Type*} [Fintype V]
@@ -174,6 +181,7 @@ theorem exists_spanning_regular_subgraph_of_bipartite {V : Type*} [Fintype V]
     exists_regular_spanning_subgraph_of_bipartite G hbip hreg hr
   exact ⟨G.toSubgraph H hHle, SimpleGraph.toSubgraph.isSpanning (G := G) H hHle, hHreg⟩
 
+open Classical in
 /-- A nonempty finite bipartite `q`-regular graph contains a nonempty
 `r`-regular subgraph for every `r ≤ q`, in the literal support semantics of
 `ContainsRegularSubgraph`. -/

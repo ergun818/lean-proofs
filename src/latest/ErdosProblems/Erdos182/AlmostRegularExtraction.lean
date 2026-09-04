@@ -28,36 +28,51 @@ def eraseLeft (G : BipartiteGraph A B) (a : A) : BipartiteGraph A B :=
 def eraseRight (G : BipartiteGraph A B) (b : B) : BipartiteGraph A B :=
   ⟨fun a b' ↦ G.Adj a b' ∧ b' ≠ b⟩
 
+omit [Fintype A] [Fintype B] [DecidableEq A] [DecidableEq B] in
 @[simp] theorem eraseLeft_adj (G : BipartiteGraph A B) (a a' : A) (b : B) :
-    (G.eraseLeft a).Adj a' b ↔ G.Adj a' b ∧ a' ≠ a := Iff.rfl
+    (G.eraseLeft a).Adj a' b ↔ G.Adj a' b ∧ a' ≠ a := by
+  classical
+  exact Iff.rfl
 
+omit [Fintype A] [Fintype B] [DecidableEq A] [DecidableEq B] in
 @[simp] theorem eraseRight_adj (G : BipartiteGraph A B) (b b' : B) (a : A) :
-    (G.eraseRight b).Adj a b' ↔ G.Adj a b' ∧ b' ≠ b := Iff.rfl
+    (G.eraseRight b).Adj a b' ↔ G.Adj a b' ∧ b' ≠ b := by
+  classical
+  exact Iff.rfl
 
+omit [Fintype A] [Fintype B] [DecidableEq A] [DecidableEq B] in
 theorem eraseLeft_le (G : BipartiteGraph A B) (a : A) : G.eraseLeft a ≤ G := by
+  classical
   intro a' b h
   exact h.1
 
+omit [Fintype A] [Fintype B] [DecidableEq A] [DecidableEq B] in
 theorem eraseRight_le (G : BipartiteGraph A B) (b : B) : G.eraseRight b ≤ G := by
+  classical
   intro a b' h
   exact h.1
 
-@[simp] theorem leftDegree_eraseLeft (G : BipartiteGraph A B) (a a' : A) :
+omit [DecidableEq B] [Fintype A] in
+@[simp] theorem leftDegree_eraseLeft [Finite A] (G : BipartiteGraph A B) (a a' : A) :
     (G.eraseLeft a).leftDegree a' = if a' = a then 0 else G.leftDegree a' := by
   classical
+  let := Fintype.ofFinite A
   by_cases h : a' = a
   · subst a'
     simp [leftDegree, rightNeighbors]
   · simp [leftDegree, rightNeighbors, h]
 
-@[simp] theorem rightDegree_eraseRight (G : BipartiteGraph A B) (b b' : B) :
+omit [DecidableEq A] [Fintype B] in
+@[simp] theorem rightDegree_eraseRight [Finite B] (G : BipartiteGraph A B) (b b' : B) :
     (G.eraseRight b).rightDegree b' = if b' = b then 0 else G.rightDegree b' := by
   classical
+  let := Fintype.ofFinite B
   by_cases h : b' = b
   · subst b'
     simp [rightDegree, leftNeighbors]
   · simp [rightDegree, leftNeighbors, h]
 
+omit [DecidableEq A] [DecidableEq B] in
 theorem edgeCount_eraseLeft (G : BipartiteGraph A B) (a : A) :
     (G.eraseLeft a).edgeCount = G.edgeCount - G.leftDegree a := by
   classical
@@ -70,12 +85,13 @@ theorem edgeCount_eraseLeft (G : BipartiteGraph A B) (a : A) :
         ∑ x ∈ (Finset.univ.erase a), G.leftDegree x := by
       rw [← Finset.sum_erase_add Finset.univ
         (fun x ↦ if x = a then 0 else G.leftDegree x) (Finset.mem_univ a)]
-      simp only [ite_self, add_zero]
+      simp only []
       apply Finset.sum_congr rfl
       intro x hx
       simp [(Finset.mem_erase.mp hx).1]
     _ = (∑ x, G.leftDegree x) - G.leftDegree a := by omega
 
+omit [DecidableEq A] [DecidableEq B] in
 theorem edgeCount_eraseRight (G : BipartiteGraph A B) (b : B) :
     (G.eraseRight b).edgeCount = G.edgeCount - G.rightDegree b := by
   classical
@@ -88,16 +104,19 @@ theorem edgeCount_eraseRight (G : BipartiteGraph A B) (b : B) :
         ∑ x ∈ (Finset.univ.erase b), G.rightDegree x := by
       rw [← Finset.sum_erase_add Finset.univ
         (fun x ↦ if x = b then 0 else G.rightDegree x) (Finset.mem_univ b)]
-      simp only [ite_self, add_zero]
+      simp only []
       apply Finset.sum_congr rfl
       intro x hx
       simp [(Finset.mem_erase.mp hx).1]
     _ = (∑ x, G.rightDegree x) - G.rightDegree b := by omega
 
+omit [DecidableEq A] [DecidableEq B] in
 theorem supportCard_eq_support (G : BipartiteGraph A B) :
     G.supportCard = G.supportLeft.card + G.supportRight.card := by
+  classical
   rfl
 
+omit [DecidableEq B] in
 @[simp] theorem supportLeft_eraseLeft (G : BipartiteGraph A B) (a : A) :
     (G.eraseLeft a).supportLeft = G.supportLeft.erase a := by
   classical
@@ -107,6 +126,7 @@ theorem supportCard_eq_support (G : BipartiteGraph A B) :
     simp [mem_supportLeft]
   · simp [mem_supportLeft, h]
 
+omit [DecidableEq A] in
 @[simp] theorem supportRight_eraseRight (G : BipartiteGraph A B) (b : B) :
     (G.eraseRight b).supportRight = G.supportRight.erase b := by
   classical
@@ -116,18 +136,23 @@ theorem supportCard_eq_support (G : BipartiteGraph A B) :
     simp [mem_supportRight]
   · simp [mem_supportRight, h]
 
+omit [DecidableEq A] [DecidableEq B] in
 theorem supportRight_eraseLeft_subset (G : BipartiteGraph A B) (a : A) :
     (G.eraseLeft a).supportRight ⊆ G.supportRight := by
+  classical
   intro b hb
   rw [mem_supportRight] at hb ⊢
   exact hb.trans_le (rightDegree_mono (eraseLeft_le G a) b)
 
+omit [DecidableEq A] [DecidableEq B] in
 theorem supportLeft_eraseRight_subset (G : BipartiteGraph A B) (b : B) :
     (G.eraseRight b).supportLeft ⊆ G.supportLeft := by
+  classical
   intro a ha
   rw [mem_supportLeft] at ha ⊢
   exact ha.trans_le (leftDegree_mono (eraseRight_le G b) a)
 
+omit [DecidableEq A] [DecidableEq B] in
 theorem supportCard_eraseLeft_le_sub_one (G : BipartiteGraph A B) (a : A)
     (ha : 0 < G.leftDegree a) :
     (G.eraseLeft a).supportCard ≤ G.supportCard - 1 := by
@@ -144,6 +169,7 @@ theorem supportCard_eraseLeft_le_sub_one (G : BipartiteGraph A B) (a : A)
       rw [Finset.card_erase_of_mem hamem]
     _ = G.supportLeft.card + G.supportRight.card - 1 := by omega
 
+omit [DecidableEq A] [DecidableEq B] in
 theorem supportCard_eraseRight_le_sub_one (G : BipartiteGraph A B) (b : B)
     (hb : 0 < G.rightDegree b) :
     (G.eraseRight b).supportCard ≤ G.supportCard - 1 := by
@@ -160,8 +186,10 @@ theorem supportCard_eraseRight_le_sub_one (G : BipartiteGraph A B) (b : B)
       rw [Finset.card_erase_of_mem hbmem]
     _ = G.supportLeft.card + G.supportRight.card - 1 := by omega
 
+omit [DecidableEq A] [DecidableEq B] in
 theorem one_le_supportCard_of_vertexDegree_pos (G : BipartiteGraph A B)
     {v : A ⊕ B} (hv : 0 < G.vertexDegree v) : 1 ≤ G.supportCard := by
+  classical
   cases v with
   | inl a =>
       rw [supportCard_eq_support]
@@ -178,12 +206,15 @@ theorem one_le_supportCard_of_vertexDegree_pos (G : BipartiteGraph A B)
 def singletonEdge (a : A) (b : B) : BipartiteGraph A B :=
   ⟨fun a' b' ↦ a' = a ∧ b' = b⟩
 
+omit [Fintype A] [Fintype B] [DecidableEq A] [DecidableEq B] in
 theorem singletonEdge_le {G : BipartiteGraph A B} {a : A} {b : B}
     (hab : G.Adj a b) : singletonEdge a b ≤ G := by
+  classical
   intro a' b' h
   rcases h with ⟨rfl, rfl⟩
   exact hab
 
+omit [Fintype A] [DecidableEq B] in
 @[simp] theorem leftDegree_singletonEdge (a a' : A) (b : B) :
     (singletonEdge a b).leftDegree a' = if a' = a then 1 else 0 := by
   classical
@@ -197,6 +228,7 @@ theorem singletonEdge_le {G : BipartiteGraph A B} {a : A} {b : B}
     simp
   · simp [singletonEdge, leftDegree, rightNeighbors, h]
 
+omit [Fintype B] [DecidableEq A] in
 @[simp] theorem rightDegree_singletonEdge (a : A) (b b' : B) :
     (singletonEdge a b).rightDegree b' = if b' = b then 1 else 0 := by
   classical
@@ -210,12 +242,14 @@ theorem singletonEdge_le {G : BipartiteGraph A B} {a : A} {b : B}
     simp
   · simp [singletonEdge, rightDegree, leftNeighbors, h]
 
+omit [DecidableEq A] [DecidableEq B] in
 @[simp] theorem edgeCount_singletonEdge (a : A) (b : B) :
     (singletonEdge a b).edgeCount = 1 := by
   classical
   unfold edgeCount
   simp
 
+omit [DecidableEq A] [DecidableEq B] in
 @[simp] theorem supportCard_singletonEdge (a : A) (b : B) :
     (singletonEdge a b).supportCard = 2 := by
   classical
@@ -231,17 +265,22 @@ theorem singletonEdge_le {G : BipartiteGraph A B} {a : A} {b : B}
   rw [hleft, hright]
   simp
 
+omit [DecidableEq A] [DecidableEq B] in
 theorem singletonEdge_vertexDegree_le_one (a : A) (b : B) (v : A ⊕ B) :
     (singletonEdge a b).vertexDegree v ≤ 1 := by
+  classical
   cases v <;> simp [vertexDegree] <;> split <;> omega
 
+omit [DecidableEq A] [DecidableEq B] in
 theorem singletonEdge_isAlmostRegular (a : A) (b : B) :
     (singletonEdge a b).IsAlmostRegular 64 := by
+  classical
   refine ⟨by simp, ?_⟩
   intro u v hv
   have hu := singletonEdge_vertexDegree_le_one a b u
   omega
 
+omit [DecidableEq A] [DecidableEq B] in
 /-- From average degree at least `d/2`, retain a nonempty subgraph of the
 same average-degree quality whose every non-isolated vertex has degree at
 least `d/4`.  The proof chooses an admissible subgraph with minimum support;
@@ -317,7 +356,6 @@ theorem exists_minDegree_subgraph
         exact ⟨(eraseLeft_le H a).trans hH.1, hKedge, hKavg⟩
       have := hminimal K hKmem
       omega
-
   | inr b =>
       let K := H.eraseRight b
       have hKedge : 0 < K.edgeCount := by
@@ -364,6 +402,7 @@ theorem exists_minDegree_subgraph
       have := hminimal K hKmem
       omega
 
+omit [DecidableEq A] [DecidableEq B] in
 /-- The graph-theoretic core of JS Lemma 3.5.  Once the roof extraction
 produces a four-almost-biregular graph of right degree `d`, alteration and
 minimum-degree pruning give a `64`-almost-regular graph. -/
@@ -403,6 +442,7 @@ theorem exists_almostRegular_subgraph_of_scale
       Nat.mul_le_mul_left (8 * ℓ) hHavg
     _ = 32 * ℓ * H.edgeCount := by ring
 
+omit [DecidableEq A] [DecidableEq B] in
 /-- Janzer--Sudakov Lemma 3.5, in the integer form used by the iteration.
 
 The logarithmic loss is written with `Nat.log2 L + 1`, so the statement is
@@ -461,7 +501,7 @@ theorem exists_almostRegular_subgraph
       calc
         L * δ ≤ (2 ^ ℓ) * (2 ^ ℓ) := Nat.mul_le_mul hLpow hδpow
         _ = 2 ^ (ℓ + ℓ) := (pow_add 2 ℓ ℓ).symm
-        _ = 2 ^ (2 * ℓ) := by congr 1 <;> omega
+        _ = 2 ^ (2 * ℓ) := by congr 1 ; omega
     have hdsub : 0 < d - 1 := by omega
     have hexp : 2 * ℓ ≤ δ / (d - 1) := by
       apply (Nat.le_div_iff_mul_le hdsub).2

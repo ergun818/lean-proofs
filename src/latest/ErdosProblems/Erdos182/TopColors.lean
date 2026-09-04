@@ -8,7 +8,6 @@ maximal, their total weight is at least the corresponding `T / D` fraction
 of the weight of all colours.  The formulation over `Nat` avoids division.
 -/
 
-open scoped Classical
 
 namespace Erdos182
 

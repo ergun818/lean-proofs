@@ -68,12 +68,16 @@ def bipRestrictedDegreeA (R : A → B → Prop) [DecidableRel R]
     (B' : Finset B) (u : A) : ℕ :=
   (B'.filter (R u)).card
 
+omit [Fintype A] in
 @[simp] theorem mem_bipNeighborsA {R : A → B → Prop} [DecidableRel R]
     {u : A} {v : B} : v ∈ bipNeighborsA R u ↔ R u v := by
+  classical
   simp [bipNeighborsA]
 
+omit [Fintype B] in
 @[simp] theorem mem_bipNeighborsB {R : A → B → Prop} [DecidableRel R]
     {u : A} {v : B} : u ∈ bipNeighborsB R v ↔ R u v := by
+  classical
   simp [bipNeighborsB]
 
 /-- Double-counting the incidences by the two vertex parts. -/

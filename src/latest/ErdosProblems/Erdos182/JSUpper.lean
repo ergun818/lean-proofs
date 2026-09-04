@@ -239,8 +239,8 @@ theorem bernoulli_inter_card_lower_tail_third (T : Finset α) (D : ℕ)
 bound and the ambient set is not too large, some subset is no larger than
 the number of family members in which it retains at least D points. -/
 theorem exists_subset_card_le_good_of_third
-    {α β : Type*} [Fintype α] [Fintype β]
-    [DecidableEq α] [DecidableEq β]
+    {α β : Type*} [Finite α] [Finite β]
+    [DecidableEq α]
     (X : Finset α) (Bgood : Finset β) (T : β → Finset α) (D : ℕ)
     (hsub : ∀ b ∈ Bgood, T b ⊆ X)
     (hlarge : ∀ b ∈ Bgood, 96 ≤ (T b).card)
@@ -250,6 +250,8 @@ theorem exists_subset_card_le_good_of_third
     ∃ S ⊆ X,
       S.card < (Bgood.filter fun b ↦ D ≤ (T b ∩ S).card).card := by
   classical
+  let := Fintype.ofFinite α
+  let := Fintype.ofFinite β
   let w : Finset α → ℝ≥0 := bernoulliWeight (1 / 3)
   let failures : Finset α → Finset β := fun R ↦
     Bgood.filter fun b ↦ (T b ∩ R).card < D
@@ -396,20 +398,24 @@ def goodRightJS (G : BipartiteGraph A B) (X : Finset A)
     (B₀ : Finset B) (r : ℕ) : Finset B :=
   B₀.filter fun b ↦ r ≤ (G.leftNeighbors b ∩ X).card
 
+omit [Fintype B] [DecidableEq B] in
 @[simp]
 theorem mem_goodRightJS (G : BipartiteGraph A B) (X : Finset A)
     (B₀ : Finset B) (r : ℕ) (b : B) :
     b ∈ G.goodRightJS X B₀ r ↔
       b ∈ B₀ ∧ r ≤ (G.leftNeighbors b ∩ X).card := by
+  classical
   simp [goodRightJS]
 
+omit [DecidableEq B] [Fintype B] in
 /-- Independently trim the star at every good right vertex. -/
-theorem exists_halfRegularSubgraphOf_goodRightJS
+theorem exists_halfRegularSubgraphOf_goodRightJS [Finite B]
     (G : BipartiteGraph A B) (X : Finset A) (B₀ : Finset B) (r : ℕ)
     (hne : (G.goodRightJS X B₀ r).Nonempty) :
     ∃ H : BipartiteGraph A B,
       H.IsHalfRegularSubgraphOf G X (G.goodRightJS X B₀ r) r := by
   classical
+  let := Fintype.ofFinite B
   let B₁ := G.goodRightJS X B₀ r
   have hdeg : ∀ b ∈ B₁, r ≤ (G.leftNeighbors b ∩ X).card := by
     intro b hb
@@ -442,13 +448,16 @@ def lowRight (G : BipartiteGraph A B) (X : Finset A)
     (B₀ : Finset B) (d : ℕ) : Finset B :=
   B₀.filter fun b ↦ (G.leftNeighbors b ∩ X).card < d
 
+omit [Fintype B] [DecidableEq B] in
 @[simp]
 theorem mem_lowRight (G : BipartiteGraph A B) (X : Finset A)
     (B₀ : Finset B) (d : ℕ) (b : B) :
     b ∈ G.lowRight X B₀ d ↔
       b ∈ B₀ ∧ (G.leftNeighbors b ∩ X).card < d := by
+  classical
   simp [lowRight]
 
+omit [Fintype B] [DecidableEq B] in
 theorem goodRightJS_card_add_lowRight_card (G : BipartiteGraph A B)
     (X : Finset A) (B₀ : Finset B) (d : ℕ) :
     (G.goodRightJS X B₀ d).card + (G.lowRight X B₀ d).card = B₀.card := by
@@ -457,21 +466,25 @@ theorem goodRightJS_card_add_lowRight_card (G : BipartiteGraph A B)
     (Finset.card_filter_add_card_filter_not (s := B₀)
       (fun b ↦ d ≤ (G.leftNeighbors b ∩ X).card))
 
+omit [DecidableEq B] [Fintype B] in
 /-- If the low route contains fewer than half of `B₀`, its literal
 complement contains at least half.  This cross-multiplied form is immune to
 all floor/ceiling choices. -/
-theorem card_le_twice_lowRight_of_not_card_le_twice_goodRightJS
+theorem card_le_twice_lowRight_of_not_card_le_twice_goodRightJS [Finite B]
     (G : BipartiteGraph A B) (X : Finset A) (B₀ : Finset B) (d : ℕ)
     (h : ¬ B₀.card ≤ 2 * (G.goodRightJS X B₀ d).card) :
     B₀.card ≤ 2 * (G.lowRight X B₀ d).card := by
+  classical
+  let := Fintype.ofFinite B
   have hpartition := goodRightJS_card_add_lowRight_card G X B₀ d
   omega
 
+omit [DecidableEq B] [Fintype B] in
 /-- A finite pigeonhole lemma in exactly the form used for the degree
 buckets.  Every vertex of `B₁` chooses a bucket in which it is good.
 Consequently one bucket contains at least `|B₁| / |J|` such vertices;
 the prefactor `c` is carried without division. -/
-theorem exists_index_large_goodRightJS [DecidableEq I]
+theorem exists_index_large_goodRightJS [Finite B]
     (G : BipartiteGraph A B) (J : Finset I) (hJ : J.Nonempty)
     (bucket : I → Finset A) (B₀ B₁ : Finset B) (r c : ℕ)
     (hB₁ : B₁ ⊆ B₀) (hcard : B₀.card ≤ c * B₁.card)
@@ -480,6 +493,7 @@ theorem exists_index_large_goodRightJS [DecidableEq I]
     ∃ i ∈ J,
       B₀.card ≤ c * J.card * (G.goodRightJS (bucket i) B₀ r).card := by
   classical
+  let := Fintype.ofFinite B
   obtain ⟨i, hiJ, himax⟩ := Finset.exists_max_image J
     (fun j ↦ (G.goodRightJS (bucket j) B₀ r).card) hJ
   refine ⟨i, hiJ, ?_⟩
@@ -505,6 +519,7 @@ theorem exists_index_large_goodRightJS [DecidableEq I]
     _ = c * J.card * (G.goodRightJS (bucket i) B₀ r).card := by
       simp [mul_assoc]
 
+omit [Fintype B] [DecidableEq B] in
 /-- If the neighbours of `b` are covered by the low class and the high
 buckets, a low-class degree below `dLow` forces degree at least `r` in some
 high bucket as soon as `dLow + |J| r` is at most the total degree.
@@ -512,7 +527,7 @@ high bucket as soon as `dLow + |J| r` is at most the total degree.
 The proof is a literal finite union bound.  In particular it remains valid
 when buckets overlap, which makes the result convenient for later changes
 of endpoint conventions. -/
-theorem exists_good_bucket_of_lowDegree_lt [DecidableEq I]
+theorem exists_good_bucket_of_lowDegree_lt
     (G : BipartiteGraph A B) (J : Finset I) (hJ : J.Nonempty)
     (low : Finset A) (bucket : I → Finset A) (b : B)
     (d dLow r : ℕ)
@@ -523,7 +538,7 @@ theorem exists_good_bucket_of_lowDegree_lt [DecidableEq I]
     ∃ i ∈ J, r ≤ (G.leftNeighbors b ∩ bucket i).card := by
   classical
   by_contra hnone
-  push_neg at hnone
+  push Not at hnone
   let N := G.leftNeighbors b
   have hNsubset : N ⊆ (N ∩ low) ∪
       J.biUnion (fun i ↦ N ∩ bucket i) := by
@@ -568,6 +583,7 @@ theorem exists_good_bucket_of_lowDegree_lt [DecidableEq I]
     simpa [N, rightDegree] using hdegree
   omega
 
+omit [DecidableEq B] [Fintype B] in
 /-- **The degree-bucket dichotomy (JS Theorem 5.3, finite core).**
 
 `low` and `bucket i` cover every neighbour of every active right vertex.
@@ -575,7 +591,7 @@ All such vertices have degree `d`, and `dLow + |J| r ≤ d`.  Then either
 the low class works for at least half the right vertices, or one high class
 works for at least a `1 / (2|J|)` fraction.  Every denominator from the
 paper has been cleared. -/
-theorem degreeBucket_dichotomy [DecidableEq I]
+theorem degreeBucket_dichotomy [Finite B]
     (G : BipartiteGraph A B) (J : Finset I) (hJ : J.Nonempty)
     (low : Finset A) (bucket : I → Finset A) (B₀ : Finset B)
     (d dLow r : ℕ)
@@ -587,6 +603,7 @@ theorem degreeBucket_dichotomy [DecidableEq I]
       ∃ i ∈ J,
         B₀.card ≤ 2 * J.card * (G.goodRightJS (bucket i) B₀ r).card := by
   classical
+  let := Fintype.ofFinite B
   by_cases hlow : B₀.card ≤ 2 * (G.goodRightJS low B₀ dLow).card
   · exact Or.inl hlow
   · right
@@ -613,6 +630,7 @@ def globalDegreeBucket (G : BipartiteGraph A B) (r Delta : ℕ)
     2 ^ JSGlobalParameters.lowerExponent r Delta z.1 z.2 < G.leftDegree a ∧
       G.leftDegree a ≤ 2 ^ JSGlobalParameters.upperExponent r Delta z.1 z.2
 
+omit [DecidableEq B] in
 /-- The global, rounding-safe specialization of `degreeBucket_dichotomy`.
 
 The only numerical input is that the trimmed right degree dominates
@@ -661,11 +679,12 @@ theorem global_degreeBucket_dichotomy
       (JSGlobalParameters.lowDegree r Delta) r
       (fun b _ ↦ hregular b) hcover hparameters)
 
+omit [DecidableEq B] [Fintype B] in
 /-- Route-elimination form of `degreeBucket_dichotomy`.  This is the exact
 assembly interface for JS Theorem 5.3: the probabilistic low route and the
 iterative high route can be proved in separate modules, while this theorem
 performs the exhaustive case split. -/
-theorem of_degreeBucket_routes [DecidableEq I]
+theorem of_degreeBucket_routes [Finite B]
     (G : BipartiteGraph A B) (J : Finset I) (hJ : J.Nonempty)
     (low : Finset A) (bucket : I → Finset A) (B₀ : Finset B)
     (d dLow r : ℕ)
@@ -678,20 +697,25 @@ theorem of_degreeBucket_routes [DecidableEq I]
     (highRoute : ∀ i ∈ J,
       B₀.card ≤ 2 * J.card * (G.goodRightJS (bucket i) B₀ r).card → P) :
     P := by
+  classical
+  let := Fintype.ofFinite B
   rcases degreeBucket_dichotomy G J hJ low bucket B₀ d dLow r
       hregular hcover hparameters with hlow | ⟨i, hi, hhigh⟩
   · exact lowRoute hlow
   · exact highRoute i hi hhigh
 
+omit [DecidableEq A] [DecidableEq B] [Fintype A] in
 /-- Left degrees are monotone under passage to a bipartite subgraph. -/
-theorem leftDegree_mono_of_le {G H : BipartiteGraph A B} (hHG : H ≤ G)
+theorem leftDegree_mono_of_le [Finite A] {G H : BipartiteGraph A B} (hHG : H ≤ G)
     (a : A) : H.leftDegree a ≤ G.leftDegree a := by
   classical
+  let := Fintype.ofFinite A
   apply Finset.card_le_card
   intro b hb
   exact G.mem_rightNeighbors a b |>.2
     (hHG (H.mem_rightNeighbors a b |>.1 hb))
 
+omit [DecidableEq A] [DecidableEq B] in
 /-- A half-regular graph with an explicit density lower bound and explicit
 left maximum-degree bound satisfies the normalized almost-biregular
 predicate used by JS Lemmas 3.5 and 5.2. -/
@@ -702,10 +726,12 @@ theorem IsHalfRegularSubgraphOf.isAlmostBiregularOn
     (hleft : ∀ a ∈ A₀,
       H.leftDegree a * A₀.card ≤ L * H.edgeCount) :
     H.IsAlmostBiregularOn A₀ B₀ L d := by
+  classical
   refine ⟨hH.2.1, hA₀, hH.2.2.1, hH.2.2.2, ?_, ?_⟩
   · exact hdensity
   · exact hleft
 
+omit [DecidableEq B] in
 /-- The exact trimming-and-density package for a large high-degree bucket.
 
 The hypotheses `hlarge` and `hscale` are the two double-counting estimates
@@ -750,9 +776,10 @@ theorem exists_almostBiregular_of_large_goodRightJS
         _ ≤ L * (B₀.card * r) := hleft a ha
         _ ≤ L * ((c * (G.goodRightJS X B₀ r).card) * r) := by
           gcongr
-        _ = c * (L * H.edgeCount) := by rw [hedge]; simp [mul_assoc, mul_comm, mul_left_comm]
+        _ = c * (L * H.edgeCount) := by rw [hedge]; simp [mul_comm, mul_left_comm]
     exact Nat.le_of_mul_le_mul_left hscaled hc
 
+omit [DecidableEq B] in
 /-- The one-third sampling/alteration step in the low-degree branch of
 Janzer--Sudakov Theorem 5.3.  A positive-score Bernoulli outcome leaves a
 left set strictly smaller than the surviving right set.  Independent star
@@ -833,6 +860,7 @@ theorem exists_lowRoute_almostBiregular
     exact (G.mem_goodRightJS A₁ Bstar D b).1 (by simpa [B₁] using hb) |>.1
   · exact hH.isAlmostBiregularOn hA₁ hdensity hleftH
 
+omit [DecidableEq B] in
 /-- The low branch specialized to the exact global bucket schedule.  All
 sampling cutoffs and rounding inequalities are discharged here. -/
 theorem exists_globalLowRoute_almostBiregular
@@ -882,6 +910,7 @@ theorem exists_globalLowRoute_almostBiregular
       (2 ^ (JSGlobalParameters.slots r * JSGlobalParameters.ell Delta))
       hBne hXB hlarge hdLow hscale hD hleft)
 
+omit [DecidableEq B] in
 /-- The complete low branch, composed with JS Lemma 3.5.  Besides the
 `64`-almost-regular conclusion, the last conjunct records the exact
 cross-multiplied average-degree loss used by the global edge count. -/
@@ -897,6 +926,7 @@ theorem exists_lowRoute_almostRegular
     ∃ H : BipartiteGraph A B,
       H ≤ G ∧ H.IsAlmostRegular 64 ∧
         D * H.supportCard ≤ 32 * (Nat.log2 L + 1) * H.edgeCount := by
+  classical
   obtain ⟨A₁, B₁, F, _hA₁, _hB₁, hFG, hF⟩ :=
     G.exists_lowRoute_almostBiregular X B₀ dLow D L
       hB₀ hXB hlarge hdLow hDscale hD hleft
@@ -904,6 +934,7 @@ theorem exists_lowRoute_almostRegular
     exists_almostRegular_subgraph hF hDtwo hDL
   exact ⟨H, hHF.trans hFG.1, hHregular, hHaverage⟩
 
+omit [DecidableEq B] in
 /-- The completed global low branch.  The logarithm of its almost-
 biregularity parameter is exactly `10 * r * ell`; after cancelling the
 positive factor `r * ell`, JS Lemma 3.5 loses only the absolute constant
@@ -988,7 +1019,6 @@ theorem exists_globalLowRoute_almostRegular
 
 section HighBucketRoute
 
-open scoped Classical
 
 variable {A B : Type*} [Fintype A] [Fintype B]
   [DecidableEq A] [DecidableEq B]
@@ -997,7 +1027,9 @@ variable {A B : Type*} [Fintype A] [Fintype B]
 at every nonterminal dyadic state.  Keeping this as a named predicate makes
 the rounding obligations of JS Lemma 4.2 visible at the high-bucket call
 site. -/
-def HasExactActiveIterationData (G : BipartiteGraph A B) (r cutoff : ℕ) : Prop :=
+def HasExactActiveIterationData (G : BipartiteGraph A B) (r cutoff : ℕ) : Prop := by
+  classical
+  exact
   ∀ (K : BipartiteGraph A B) (A₁ : Finset A) (B₁ : Finset B)
     (y : DyadicState), K ≤ G → IsDyadicallyBiregularOn K A₁ B₁ r y →
       cutoff < y.gap →
@@ -1012,6 +1044,7 @@ def HasExactActiveIterationData (G : BipartiteGraph A B) (r cutoff : ℕ) : Prop
             (Nat.clog 2 (40 * y.gap * r ^ 2) + 1 : ℕ) ≤
         (r * y.s - (r - 1) * y.t : ℕ)
 
+omit [DecidableEq A] [DecidableEq B] in
 /-- The exact active restriction hypotheses produce the graph-valued step
 expected by `js_lemma_5_1_to_almostBiregular`. -/
 theorem activeIterationStep_of_exactData
@@ -1024,6 +1057,7 @@ theorem activeIterationStep_of_exactData
         (z : DyadicState),
         L ≤ K ∧ IsDyadicallyBiregularOn L A₂ B₂ r z ∧
           IsDyadicImprovement r y z := by
+  classical
   intro K A₁ B₁ y hKG hy hgap
   obtain ⟨hys, hyst, hcodeg, hQD, hgapSlack, hinvariantSlack⟩ :=
     hdata K A₁ B₁ y hKG hy hgap
@@ -1214,15 +1248,19 @@ theorem exactIterationArithmetic_of_largeCutoff
     rw [hkey]
     linarith
 
+omit [Fintype A] [DecidableEq A] [DecidableEq B] in
+open Classical in
 /-- Codegrees decrease when edges are deleted. -/
 theorem bipCodegree_adj_mono {G K : BipartiteGraph A B} (hKG : K ≤ G)
     (u w : A) : bipCodegree K.Adj u w ≤ bipCodegree G.Adj u w := by
   classical
   apply Finset.card_le_card
   intro b hb
-  simp only [bipCodegree, Finset.mem_filter, Finset.mem_univ, true_and] at hb ⊢
+  simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hb ⊢
   exact ⟨hKG hb.1, hKG hb.2⟩
 
+omit [DecidableEq A] [DecidableEq B] in
+open Classical in
 /-- JS Lemma 5.1 driven by one uniform codegree bound on the initial graph.
 The well-founded predicate retains the cumulative invariant inequality, so
 the active key-restriction hypotheses are reconstructed at every step. -/
@@ -1238,6 +1276,7 @@ theorem js_lemma_5_1_uniformCodegree
       (y : DyadicState),
       H ≤ G ∧ H.IsAlmostBiregularOn A₁ B₁ (2 ^ y.gap) r ∧
         y.gap ≤ cutoff ∧ r ≤ y.s := by
+  classical
   let P : DyadicState → Prop := fun y ↦
     ∃ (H : BipartiteGraph A B) (A₁ : Finset A) (B₁ : Finset B),
       H ≤ G ∧ IsDyadicallyBiregularOn H A₁ B₁ r y ∧
@@ -1279,6 +1318,8 @@ theorem js_lemma_5_1_uniformCodegree
   exact ⟨H, A₁, B₁, y, hHG,
     hyH.isAlmostBiregularOn hr hry, hygap, hry⟩
 
+omit [DecidableEq B] in
+open Classical in
 /-- High-bucket assembly with every finite and integer step exposed.
 
 The bucket is independently trimmed to right degree `r`.  It is then used as
@@ -1351,6 +1392,8 @@ theorem exists_almostRegular_highBucket_of_exactData
   refine ⟨Q, hQF.trans (hFH.trans hhalf.1), hQalmost, ?_⟩
   simpa [Nat.log2_eq_log_two, Nat.log_pow (by omega : 1 < 2)] using hQavg
 
+omit [DecidableEq B] in
+open Classical in
 /-- The denominator conversion used by JS Lemma 5.2.  With cutoff
 `5 * clog₂(r')`, the high-bucket output has exactly the hypothesis needed
 by `js_lemma_5_2_average_transfer`. -/
@@ -1377,6 +1420,7 @@ theorem exists_almostRegular_highBucket_averageTransfer
     ∃ Q : BipartiteGraph A B, Q ≤ G ∧ Q.IsAlmostRegular 64 ∧
       r₀ * Q.supportCard ≤
         384 * (k + 1) * Nat.clog 2 r₀ * Q.edgeCount := by
+  classical
   obtain ⟨Q, hQG, hQalmost, hQavg⟩ :=
     exists_almostRegular_highBucket_of_exactData G X B₀ r' c L s t
       (5 * Nat.clog 2 r') E hc hr'pos hX hB₀ hlarge hscale hleft hdensity
@@ -1408,6 +1452,7 @@ theorem exists_almostRegular_highBucket_averageTransfer
       exact Nat.mul_le_mul_right Q.edgeCount hfactor
     _ = 384 * (k + 1) * Nat.clog 2 r₀ * Q.edgeCount := by ring
 
+omit [DecidableEq B] in
 /-- Cleaning retains enough edges that many right vertices still have the
 JS 5.2 trimmed degree. -/
 theorem card_le_twice_mul_goodRight_after_cleaning
@@ -1491,6 +1536,8 @@ theorem card_le_twice_mul_goodRight_after_cleaning
     Nat.le_of_mul_le_mul_right hmul hr
   simpa [Good, d] using hcard
 
+omit [DecidableEq B] in
+open Classical in
 /-- The complete high-bucket route after KST cleaning.  All numerical
 inputs are exact natural-number inequalities; the density hypothesis includes
 the `2*(k+1)` cleaning and low-right-degree loss. -/
@@ -1631,6 +1678,8 @@ theorem exists_almostRegular_highBucket_cleaned
     _ ≤ (k + 1) * (4160 * (Nat.clog 2 r + 1)) * Q.edgeCount := by gcongr
     _ = 4160 * (k + 1) * (Nat.clog 2 r + 1) * Q.edgeCount := by ring
 
+omit [DecidableEq B] in
+open Classical in
 /-- Global-parameter specialization of the cleaned high-bucket route. -/
 theorem exists_globalHighRoute_almostRegular
     (G : BipartiteGraph A B) (k r Delta i q : ℕ)
@@ -1828,7 +1877,7 @@ theorem exists_globalCore_degreeBucket_dichotomy
     hregular hleft (by rw [hdeltaCore])
   exact ⟨A, B, hA, hB, hcard, hAB, H, delta, hH, hdeltaCore, hleft, hdich⟩
 
-open scoped Classical in
+open Classical in
 /-- A maximum-degree version of the Janzer--Sudakov forcing statement,
 expressed entirely in natural-number arithmetic. -/
 def MaxDegreeLogLogForcing (k C : ℕ) : Prop :=
@@ -1838,7 +1887,7 @@ def MaxDegreeLogLogForcing (k C : ℕ) : Prop :=
         2 * G.edgeFinset.card →
       ContainsRegularSubgraph G k
 
-open scoped Classical in
+open Classical in
 /-- A convenient per-maximum-degree form of the complete global extraction. -/
 def GlobalScaleForcing (k r Delta : ℕ) : Prop :=
   ∀ {V : Type} [Fintype V] [Nonempty V] (G : SimpleGraph V),
@@ -1916,7 +1965,7 @@ theorem globalScaleForcing_of_exact_parameters
       exact Nat.le_of_mul_le_mul_left hscaled ha
   · exact hdone
 
-open scoped Classical in
+open Classical in
 /-- An eventual proof at the exact global scale gives the uniform
 maximum-degree statement, including the finitely many smaller values of the
 degree parameter. -/
@@ -2046,7 +2095,7 @@ theorem janzer_sudakov_maxDegree_logLog_forcing
     hrLarge (by simpa [M] using hMlow) (by simpa [M] using hMhigh)
     hloss hclean hcomplete
 
-open scoped Classical in
+open Classical in
 /-- A maximum-degree forcing theorem implies its usual `n`-vertex form.
 The coefficient is increased by one only to rule out graphs of maximum
 degree at most two; no asymptotic or real-number rounding is used. -/
@@ -2107,7 +2156,7 @@ theorem nVertex_forcing_of_maxDegree_forcing {k C : ℕ} (hC : 0 < C)
       exact this.trans_le (Nat.mul_le_mul_left 2 hEdges)
     omega
 
-open scoped Classical in
+open Classical in
 /-- Existentially quantified interface matching the usual statement of the
 maximum-degree theorem. -/
 theorem exists_nVertex_forcing_of_exists_maxDegree_forcing {k : ℕ}
@@ -2119,7 +2168,7 @@ theorem exists_nVertex_forcing_of_exists_maxDegree_forcing {k : ℕ}
   obtain ⟨C, hC, hforce⟩ := hforce
   exact nVertex_forcing_of_maxDegree_forcing hC hforce
 
-open scoped Classical in
+open Classical in
 /-- Once the graph-level Janzer--Sudakov forcing statement has been proved,
 the same constant bounds the literal finite extremal number.  Keeping this
 short bridge next to the global extraction prevents a later integration

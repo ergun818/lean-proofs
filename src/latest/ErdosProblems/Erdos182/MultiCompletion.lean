@@ -9,7 +9,6 @@ they may be paired to form new labelled edges.  Original edges embed and keep
 both endpoints.
 -/
 
-open scoped Classical
 
 namespace Erdos182
 namespace BipartiteMultigraph
@@ -41,25 +40,33 @@ private abbrev LeftStub (G : BipartiteMultigraph L R E) (D : ℕ) :=
 private abbrev RightStub (G : BipartiteMultigraph L R E) (D : ℕ) :=
   Σ x : R ⊕ L, Fin (D - paddedRightDegree G x)
 
-private lemma sum_leftDegree (G : BipartiteMultigraph L R E) :
+omit [Fintype R] [Fintype E] in
+private lemma sum_leftDegree [Finite E] (G : BipartiteMultigraph L R E) :
     ∑ l, leftDegree G l = Nat.card E := by
   classical
+  let := Fintype.ofFinite E
   simp only [leftDegree]
   rw [← Nat.card_sigma]
   exact Nat.card_congr (Equiv.sigmaFiberEquiv G.left)
 
-private lemma sum_rightDegree (G : BipartiteMultigraph L R E) :
+omit [Fintype L] [Fintype E] in
+private lemma sum_rightDegree [Finite E] (G : BipartiteMultigraph L R E) :
     ∑ r, rightDegree G r = Nat.card E := by
   classical
+  let := Fintype.ofFinite E
   simp only [rightDegree]
   rw [← Nat.card_sigma]
   exact Nat.card_congr (Equiv.sigmaFiberEquiv G.right)
 
-private lemma card_leftStub (G : BipartiteMultigraph L R E) (D : ℕ)
+omit [Fintype L] [Fintype R] [Fintype E] in
+private lemma card_leftStub [Finite L] [Finite R] [Finite E] (G : BipartiteMultigraph L R E) (D : ℕ)
     (hleft : ∀ l, leftDegree G l ≤ D) :
     Nat.card (LeftStub G D) =
       (Nat.card L + Nat.card R) * D - Nat.card E := by
   classical
+  let := Fintype.ofFinite L
+  let := Fintype.ofFinite R
+  let := Fintype.ofFinite E
   rw [Nat.card_sigma]
   simp only [Nat.card_fin]
   rw [Fintype.sum_sum_type]
@@ -80,11 +87,16 @@ private lemma card_leftStub (G : BipartiteMultigraph L R E) (D : ℕ)
   simp only [← Nat.card_eq_fintype_card, Nat.sub_zero, Nat.add_mul]
   exact (Nat.sub_add_comm hedges).symm
 
-private lemma card_rightStub (G : BipartiteMultigraph L R E) (D : ℕ)
+omit [Fintype L] [Fintype R] [Fintype E] in
+private lemma card_rightStub [Finite L] [Finite R] [Finite E]
+    (G : BipartiteMultigraph L R E) (D : ℕ)
     (hright : ∀ r, rightDegree G r ≤ D) :
     Nat.card (RightStub G D) =
       (Nat.card L + Nat.card R) * D - Nat.card E := by
   classical
+  let := Fintype.ofFinite L
+  let := Fintype.ofFinite R
+  let := Fintype.ofFinite E
   rw [Nat.card_sigma]
   simp only [Nat.card_fin]
   rw [Fintype.sum_sum_type]
@@ -219,8 +231,6 @@ private lemma card_sum_fiber_left (G : BipartiteMultigraph L R E) (D : ℕ)
     Nat.card_congr (completionLeftStubFiberEquiv G D hleft hright x)]
   cases x with
   | inl l =>
-      change Nat.card {e : E // Sum.inl (G.left e) = Sum.inl l} +
-        Nat.card {s : LeftStub G D // s.1 = Sum.inl l} = D
       rw [show Nat.card {e : E // Sum.inl (G.left e) = Sum.inl l} =
           leftDegree G l by simp [leftDegree],
         Nat.card_congr
@@ -229,8 +239,6 @@ private lemma card_sum_fiber_left (G : BipartiteMultigraph L R E) (D : ℕ)
       simp only [Nat.card_fin, paddedLeftDegree]
       exact Nat.add_sub_of_le (hleft l)
   | inr r =>
-      change Nat.card {e : E // Sum.inl (G.left e) = Sum.inr r} +
-        Nat.card {s : LeftStub G D // s.1 = Sum.inr r} = D
       rw [Nat.card_congr
           (sigmaFstFiberEquiv
             (fun x ↦ Fin (D - paddedLeftDegree G x)) (Sum.inr r))]
@@ -261,9 +269,6 @@ private lemma card_sum_fiber_right (G : BipartiteMultigraph L R E) (D : ℕ)
       simp only [Nat.card_fin, paddedRightDegree]
       exact Nat.add_sub_of_le (hright r)
   | inr l =>
-      change Nat.card {e : E // Sum.inl (G.right e) = Sum.inr l} +
-        Nat.card {s : LeftStub G D //
-          (stubEquiv G D hleft hright s).1 = Sum.inr l} = D
       rw [Nat.card_congr
           (equivFiberEquiv (stubEquiv G D hleft hright) Sigma.fst (Sum.inr l)),
         Nat.card_congr
@@ -272,12 +277,17 @@ private lemma card_sum_fiber_right (G : BipartiteMultigraph L R E) (D : ℕ)
       rw [Nat.card_fin]
       simp [paddedRightDegree]
 
+omit [Fintype L] [Fintype R] in
+open Classical in
 /-- Every finite bipartite multigraph of maximum degree at most `D` embeds in
 a finite `D`-regular bipartite multigraph. -/
-theorem exists_regularCompletion (G : BipartiteMultigraph L R E) (D : ℕ)
+theorem exists_regularCompletion [Finite L] [Finite R] (G : BipartiteMultigraph L R E) (D : ℕ)
     (hleft : ∀ l, Fintype.card {e : E // G.left e = l} ≤ D)
     (hright : ∀ r, Fintype.card {e : E // G.right e = r} ≤ D) :
     Nonempty (RegularCompletion G D) := by
+  classical
+  let := Fintype.ofFinite L
+  let := Fintype.ofFinite R
   have hleft' : ∀ l, leftDegree G l ≤ D := by
     intro l
     simpa only [leftDegree, Nat.card_eq_fintype_card] using hleft l
@@ -316,12 +326,17 @@ theorem exists_regularCompletion (G : BipartiteMultigraph L R E) (D : ℕ)
   · intro e
     rfl
 
+omit [Fintype L] [Fintype R] in
+open Classical in
 /-- The bounded-degree form of Kőnig's line-colouring theorem. -/
-theorem exists_properColoring_of_degree_le
+theorem exists_properColoring_of_degree_le [Finite L] [Finite R]
     (G : BipartiteMultigraph L R E) (D : ℕ)
     (hleft : ∀ l, Fintype.card {e : E // G.left e = l} ≤ D)
     (hright : ∀ r, Fintype.card {e : E // G.right e = r} ≤ D) :
     Nonempty (G.ProperColoring D) := by
+  classical
+  let := Fintype.ofFinite L
+  let := Fintype.ofFinite R
   obtain ⟨K⟩ := exists_regularCompletion G D hleft hright
   obtain ⟨C⟩ := exists_properColoring K.graph K.regular
   refine ⟨{

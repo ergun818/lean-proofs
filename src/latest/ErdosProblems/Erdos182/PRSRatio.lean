@@ -21,6 +21,7 @@ section FiniteProbability
 
 variable {A B : Type*} [Fintype A] [Fintype B] [DecidableEq A] [DecidableEq B]
 
+omit [DecidableEq A] in
 /-- Finite linearity of expectation for a sum indexed by a finset. -/
 theorem weightedExpectation_finset_sum {I : Type*} (weight : Finset A → ℝ≥0)
     (S : Finset I) (Z : I → Finset A → ℝ≥0) :
@@ -30,22 +31,25 @@ theorem weightedExpectation_finset_sum {I : Type*} (weight : Finset A → ℝ≥
   simp only [weightedExpectation, Finset.mul_sum]
   rw [Finset.sum_comm]
 
+omit [DecidableEq A] in
 /-- The expectation of an indicator is its event probability. -/
 theorem weightedExpectation_indicator (weight : Finset A → ℝ≥0)
     (P : Finset A → Prop) [DecidablePred P] :
     weightedExpectation weight (fun X ↦ if P X then 1 else 0) =
       weightedProbability weight P := by
+  classical
   unfold weightedExpectation weightedProbability
   apply Finset.sum_congr rfl
   intro X _
   by_cases hX : P X <;> simp [hX]
 
+omit [Fintype B] [DecidableEq B] [DecidableEq A] in
 /-- The expectation of the cardinality of a filtered finite set is the sum of
 the probabilities of its membership events.  This is the finite form of
 linearity of expectation used in the alteration argument below. -/
 theorem weightedExpectation_card_filter (weight : Finset A → ℝ≥0)
     (B₀ : Finset B) (P : B → Finset A → Prop)
-    [∀ X, DecidablePred fun b ↦ P b X] [∀ b, DecidablePred (P b)] :
+    [∀ b, DecidablePred (P b)] :
     weightedExpectation weight
         (fun X ↦ ((B₀.filter fun b ↦ P b X).card : ℝ≥0)) =
       ∑ b ∈ B₀, weightedProbability weight (P b) := by
@@ -67,17 +71,20 @@ theorem weightedExpectation_card_filter (weight : Finset A → ℝ≥0)
       intro b _
       exact weightedExpectation_indicator weight (P b)
 
+omit [DecidableEq A] in
 /-- Pulling a constant through a finite nonnegative expectation. -/
 theorem weightedExpectation_const_mul (weight : Finset A → ℝ≥0)
     (c : ℝ≥0) (Z : Finset A → ℝ≥0) :
     weightedExpectation weight (fun X ↦ c * Z X) =
       c * weightedExpectation weight Z := by
+  classical
   unfold weightedExpectation
   rw [Finset.mul_sum]
   apply Finset.sum_congr rfl
   intro X _
   ring
 
+omit [DecidableEq A] in
 /-- Some outcome has cost at most the expectation in a normalized finite
 weighted space. -/
 theorem exists_le_weightedExpectation (weight : Finset A → ℝ≥0)
@@ -153,7 +160,7 @@ private theorem bernoulli_inter_card_centered_sq (p : ℝ≥0) (hp : p ≤ 1)
       (fun X : Finset alpha ↦ ((D ∩ X).card : ℝ≥0) ^ 2) = _ at hsecondNN
   have hsubNN : (D.card : ℝ≥0) - 1 = ((D.card - 1 : ℕ) : ℝ≥0) := by
     apply NNReal.eq
-    simp [Nat.cast_sub (Finset.one_le_card.mpr hD)]
+    simp
   rw [hsubNN] at hsecondNN
   have hsecond :
       realWeightedExpectation (bernoulliWeight p) (fun X ↦ (Y X) ^ 2) =
@@ -227,13 +234,14 @@ theorem bernoulli_inter_card_lower_tail (D : Finset alpha) (s : ℕ)
       nlinarith
     dsimp [mu]
     rw [hpcoe]
-    convert hfrac using 1 <;> field_simp <;> ring
+    convert hfrac using 1
+    field_simp
   have hmupos : 0 < mu := lt_of_lt_of_le (by norm_num) hmu16
   have hthreshold : (D.card : ℝ) / (4 * (s : ℝ)) = mu / 2 := by
     dsimp [mu]
     rw [hpcoe]
     field_simp
-    <;> ring
+    ring
   have hmarkov :
       (weightedProbability (bernoulliWeight p)
           (fun X : Finset alpha ↦ (D ∩ X).card < D.card / (4 * s)) : ℝ) *
@@ -297,20 +305,29 @@ variable {A B : Type*} [Fintype A] [Fintype B] [DecidableEq A] [DecidableEq B]
 def restrictLeft (G : BipartiteGraph A B) (X : Finset A) : BipartiteGraph A B :=
   ⟨fun a b ↦ a ∈ X ∧ G.Adj a b⟩
 
+omit [Fintype A] [Fintype B] [DecidableEq A] [DecidableEq B] in
 @[simp]
 theorem restrictLeft_adj (G : BipartiteGraph A B) (X : Finset A) (a : A) (b : B) :
-    (G.restrictLeft X).Adj a b ↔ a ∈ X ∧ G.Adj a b :=
+    (G.restrictLeft X).Adj a b ↔ a ∈ X ∧ G.Adj a b := by
+  classical
+  exact
   Iff.rfl
 
+omit [DecidableEq B] [Fintype B] in
 @[simp]
-theorem leftNeighbors_restrictLeft (G : BipartiteGraph A B) (X : Finset A) (b : B) :
+theorem leftNeighbors_restrictLeft [Finite B] (G : BipartiteGraph A B) (X : Finset A) (b : B) :
     (G.restrictLeft X).leftNeighbors b = G.leftNeighbors b ∩ X := by
+  classical
+  let := Fintype.ofFinite B
   ext a
   simp [and_comm]
 
+omit [DecidableEq B] [Fintype B] in
 @[simp]
-theorem rightDegree_restrictLeft (G : BipartiteGraph A B) (X : Finset A) (b : B) :
+theorem rightDegree_restrictLeft [Finite B] (G : BipartiteGraph A B) (X : Finset A) (b : B) :
     (G.restrictLeft X).rightDegree b = (G.leftNeighbors b ∩ X).card := by
+  classical
+  let := Fintype.ofFinite B
   simp [rightDegree]
 
 /-- Right vertices which retain at least `r` neighbours after a left thinning. -/
@@ -321,30 +338,37 @@ def goodRight (G : BipartiteGraph A B) (X : Finset A) (B₀ : Finset B) (r : ℕ
 def badRight (G : BipartiteGraph A B) (X : Finset A) (B₀ : Finset B) (r : ℕ) : Finset B :=
   B₀.filter fun b ↦ (G.leftNeighbors b ∩ X).card < r
 
+omit [Fintype B] [DecidableEq B] in
 @[simp]
 theorem mem_goodRight (G : BipartiteGraph A B) (X : Finset A) (B₀ : Finset B)
     (r : ℕ) (b : B) :
     b ∈ G.goodRight X B₀ r ↔ b ∈ B₀ ∧ r ≤ (G.leftNeighbors b ∩ X).card := by
+  classical
   simp [goodRight]
 
+omit [Fintype B] [DecidableEq B] in
 @[simp]
 theorem mem_badRight (G : BipartiteGraph A B) (X : Finset A) (B₀ : Finset B)
     (r : ℕ) (b : B) :
     b ∈ G.badRight X B₀ r ↔ b ∈ B₀ ∧ (G.leftNeighbors b ∩ X).card < r := by
+  classical
   simp [badRight]
 
+omit [Fintype B] [DecidableEq B] in
 theorem card_goodRight_add_card_badRight (G : BipartiteGraph A B)
     (X : Finset A) (B₀ : Finset B) (r : ℕ) :
     (G.goodRight X B₀ r).card + (G.badRight X B₀ r).card = B₀.card := by
+  classical
   simpa [goodRight, badRight, not_le] using
     (B₀.card_filter_add_card_filter_not
       (p := fun b ↦ r ≤ (G.leftNeighbors b ∩ X).card))
 
+omit [DecidableEq B] [Fintype B] in
 /-- Abstract alteration step.  If the expected cost of the selected left
 vertices is at most half the right side and each right vertex is bad with
 probability at most one quarter, some outcome has strictly more good right
 vertices than `s` times selected left vertices. -/
-theorem exists_leftSet_ratio_of_probability_bounds
+theorem exists_leftSet_ratio_of_probability_bounds [Finite B]
     (G : BipartiteGraph A B) (A₀ : Finset A) (B₀ : Finset B) (r s : ℕ)
     (weight : Finset A → ℝ≥0) (hsum : ∑ X, weight X = 1)
     (hne : B₀.Nonempty)
@@ -357,6 +381,7 @@ theorem exists_leftSet_ratio_of_probability_bounds
           (fun X ↦ (G.leftNeighbors b ∩ (A₀ ∩ X)).card < r) ≤ 1 / 4) :
     ∃ X : Finset A, X ⊆ A₀ ∧ s * X.card < (G.goodRight X B₀ r).card := by
   classical
+  let := Fintype.ofFinite B
   let badCost : Finset A → ℝ≥0 := fun X ↦
     ((G.badRight (A₀ ∩ X) B₀ r).card : ℝ≥0)
   have hbad_expect :
@@ -373,7 +398,7 @@ theorem exists_leftSet_ratio_of_probability_bounds
           ∑ _b ∈ B₀, (1 / 4 : ℝ≥0) := by
         exact Finset.sum_le_sum fun b hb ↦ hbad b hb
       _ = (B₀.card : ℝ≥0) / 4 := by
-        simp [div_eq_mul_inv, mul_comm]
+        simp [div_eq_mul_inv]
   let vertexCost : Finset A → ℝ≥0 := fun X ↦
     ((s * (A₀ ∩ X).card : ℕ) : ℝ≥0)
   let totalCost : Finset A → ℝ≥0 := fun X ↦ vertexCost X + badCost X
@@ -405,15 +430,17 @@ theorem exists_leftSet_ratio_of_probability_bounds
   refine ⟨X, inter_subset_left, ?_⟩
   omega
 
+omit [DecidableEq B] [Fintype B] in
 /-- Once a thinning leaves `r` neighbours at every surviving right vertex,
 trim independently at those vertices to obtain an exactly half-regular
 subgraph. -/
-theorem exists_halfRegularSubgraphOf_goodRight (G : BipartiteGraph A B)
+theorem exists_halfRegularSubgraphOf_goodRight [Finite B] (G : BipartiteGraph A B)
     (X : Finset A) (B₀ : Finset B) (r : ℕ)
     (hne : (G.goodRight X B₀ r).Nonempty) :
     ∃ H : BipartiteGraph A B,
       H.IsHalfRegularSubgraphOf G X (G.goodRight X B₀ r) r := by
   classical
+  let := Fintype.ofFinite B
   let B₁ := G.goodRight X B₀ r
   have hdeg : ∀ b ∈ B₁, r ≤ (G.leftNeighbors b ∩ X).card := by
     intro b hb
@@ -444,20 +471,24 @@ theorem exists_halfRegularSubgraphOf_goodRight (G : BipartiteGraph A B)
       exact and_iff_right hb
     rw [rightDegree, hleft, hNcard b hb]
 
+omit [DecidableEq B] [Fintype B] in
 /-- Deterministic endpoint of ratio amplification.  The probabilistic part of
 the argument only has to find a left set for which the displayed strict
 cardinality inequality holds. -/
-theorem exists_halfRegularSubgraphOf_goodRight_with_ratio
+theorem exists_halfRegularSubgraphOf_goodRight_with_ratio [Finite B]
     (G : BipartiteGraph A B) (X : Finset A) (B₀ : Finset B) (r s : ℕ)
     (hratio : s * X.card < (G.goodRight X B₀ r).card) :
     ∃ H : BipartiteGraph A B,
       H.IsHalfRegularSubgraphOf G X (G.goodRight X B₀ r) r ∧
         s * X.card ≤ (G.goodRight X B₀ r).card := by
+  classical
+  let := Fintype.ofFinite B
   have hne : (G.goodRight X B₀ r).Nonempty :=
     Finset.card_pos.mp (lt_of_le_of_lt (Nat.zero_le _) hratio)
   obtain ⟨H, hH⟩ := G.exists_halfRegularSubgraphOf_goodRight X B₀ r hne
   exact ⟨H, hH, hratio.le⟩
 
+omit [DecidableEq A] [DecidableEq B] [Fintype B] in
 /-- **PRS ratio amplification (finite, rounded form).**
 
 Suppose the active right side is `d`-regular into the active left side, the
@@ -468,7 +499,7 @@ ratio is at least `s` and whose half-degree is `d / (4s)`.
 The constant `32` is inessential.  It is the convenient finite threshold at
 which the second-moment lower-tail estimate has failure probability at most
 one quarter. -/
-theorem exists_ratioAmplified_halfRegularSubgraph
+theorem exists_ratioAmplified_halfRegularSubgraph [Finite B]
     (G : BipartiteGraph A B) (A₀ : Finset A) (B₀ : Finset B) (d s : ℕ)
     (hsupp : G.SupportedOn A₀ B₀) (hne : B₀.Nonempty)
     (hreg : G.IsRightRegularOn B₀ d) (hcard : A₀.card ≤ B₀.card)
@@ -478,6 +509,7 @@ theorem exists_ratioAmplified_halfRegularSubgraph
         H.IsHalfRegularSubgraphOf G A₁ B₁ (d / (4 * s)) ∧
         s * A₁.card ≤ B₁.card := by
   classical
+  let := Fintype.ofFinite B
   let p : ℝ≥0 := 1 / (2 * (s : ℝ≥0))
   have hp : p ≤ 1 := by
     dsimp [p]
@@ -507,7 +539,7 @@ theorem exists_ratioAmplified_halfRegularSubgraph
         apply NNReal.eq
         simp only [NNReal.coe_mul, NNReal.coe_natCast, NNReal.coe_div, NNReal.coe_ofNat]
         dsimp [p]
-        simp only [NNReal.coe_div, NNReal.coe_one, NNReal.coe_mul, NNReal.coe_ofNat,
+        simp only [
           NNReal.coe_natCast]
         have hs0 : (s : ℝ) ≠ 0 := by exact_mod_cast (Nat.ne_of_gt hs)
         field_simp

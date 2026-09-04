@@ -48,7 +48,7 @@ theorem natCast_choose_le_three_mul_div_pow (n k : ℕ) :
     _ = (Real.exp 1 * (n : ℝ) / (k : ℝ)) ^ k := by
       simp only [div_pow]
       field_simp
-      <;> ring
+      ring
     _ ≤ (3 * (n : ℝ) / (k : ℝ)) ^ k := by
       gcongr
 

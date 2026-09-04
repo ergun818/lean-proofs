@@ -29,7 +29,7 @@ then transports the result across `Fintype.equivFin`, producing an ambient
 
 namespace Erdos182
 
-open scoped BigOperators Classical
+open scoped BigOperators
 
 namespace CodegreeCleaning
 
@@ -41,6 +41,8 @@ private def IsBadLater (F : EdgeSet n B) (D : ℕ) (u v : Fin n) : Prop :=
 private def IsPivotNeighbor (F : EdgeSet n B) (u : Fin n) (b : B) : Prop :=
   (u, b) ∈ F
 
+open Classical in
+omit [DecidableEq B] in
 private theorem card_pivotNeighbor (F : EdgeSet n B) (u : Fin n) :
     Fintype.card {b : B // IsPivotNeighbor F u b} = rowCard F u.val := by
   classical
@@ -61,6 +63,7 @@ private theorem card_pivotNeighbor (F : EdgeSet n B) (u : Fin n) :
     _ = S.card := Fintype.card_coe S
     _ = (rightNeighbors (edgeRel F) u).card := rfl
 
+open Classical in
 private theorem restricted_rightNeighbors_card
     (F : EdgeSet n B) (D : ℕ) (u : Fin n)
     (v : {v : Fin n // IsBadLater F D u v}) :
@@ -94,6 +97,7 @@ private theorem restricted_rightNeighbors_card
   change L.card = R.card
   simpa only [Fintype.card_coe] using Fintype.card_congr (Equiv.ofBijective f hf)
 
+open Classical in
 private theorem card_deleted_eq_restricted_edgeCount
     (F : EdgeSet n B) (D : ℕ) (u : Fin n) :
     (F \ eraseBadAt F D u).card =
@@ -191,7 +195,7 @@ the root-free KST power inequality at every pivot stage. -/
 theorem sequential_codegree_cleaning_of_isBipartiteKFree
     (E : EdgeSet n B) (D k : ℕ) (hk : 0 < k)
     (hfree : IsBipartiteKFree (edgeRel E) k)
-    (hpow : ∀ i (hi : i < n),
+    (hpow : ∀ i (_hi : i < n),
       k ^ (k + 1) * (rowCard (cleanSeq E D i) i) ^ (k - 1) ≤ (D + 1) ^ k) :
     ∃ E' : EdgeSet n B,
       E' ⊆ E ∧ E.card ≤ (k + 1) * E'.card ∧
@@ -251,9 +255,12 @@ def ofReindexedEdgeSet
     (E : CodegreeCleaning.EdgeSet (Fintype.card A) B) : BipartiteGraph A B where
   Adj a b := ((Fintype.equivFin A) a, b) ∈ E
 
+omit [Fintype B] in
 @[simp] theorem ofReindexedEdgeSet_adj
     (E : CodegreeCleaning.EdgeSet (Fintype.card A) B) (a : A) (b : B) :
-    (ofReindexedEdgeSet E).Adj a b ↔ ((Fintype.equivFin A) a, b) ∈ E := Iff.rfl
+    (ofReindexedEdgeSet E).Adj a b ↔ ((Fintype.equivFin A) a, b) ∈ E := by
+  classical
+  exact Iff.rfl
 
 theorem reindexedEdgeSet_ofReindexedEdgeSet
     (E : CodegreeCleaning.EdgeSet (Fintype.card A) B) :
@@ -272,6 +279,7 @@ theorem reindexedEdgeSet_ofReindexedEdgeSet
     change ((Fintype.equivFin A) ((Fintype.equivFin A).symm e.1), e.2) ∈ E
     simpa only [Equiv.apply_symm_apply] using he
 
+open Classical in
 private theorem card_reindexedEdgeSet_eq_bipartiteEdgeCount
     (G : BipartiteGraph A B) :
     G.reindexedEdgeSet.card = bipartiteEdgeCount G.Adj := by
@@ -308,6 +316,7 @@ private theorem card_reindexedEdgeSet_eq_bipartiteEdgeCount
     _ = bipartiteEdgeCount G.Adj :=
       (CodegreeCleaning.bipartiteEdgeCount_eq_card_filter G.Adj).symm
 
+open Classical in
 private theorem edgeCount_eq_bipartiteEdgeCount (G : BipartiteGraph A B) :
     G.edgeCount = bipartiteEdgeCount G.Adj := by
   rw [bipartiteEdgeCount_eq_sum_left]
@@ -323,6 +332,7 @@ theorem edgeCount_ofReindexedEdgeSet
   rw [← card_reindexedEdgeSet_eq_edgeCount (ofReindexedEdgeSet E),
     reindexedEdgeSet_ofReindexedEdgeSet]
 
+open Classical in
 private theorem reindexed_isBipartiteKFree {G : BipartiteGraph A B} {k : ℕ}
     (hfree : IsBipartiteKFree G.Adj k) :
     IsBipartiteKFree
@@ -360,6 +370,7 @@ private theorem rowCard_reindexedEdgeSet
     Finset.mem_filter, Finset.mem_univ, true_and, CodegreeCleaning.edgeRel,
     mem_reindexedEdgeSet]
 
+open Classical in
 /-- **Janzer--Sudakov Lemma 3.2 on active vertex sets.**
 
 For a `K_{k,k}`-free bipartite graph supported on `A₀ × B₀` and of

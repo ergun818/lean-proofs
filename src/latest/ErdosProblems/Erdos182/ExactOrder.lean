@@ -27,7 +27,6 @@ changing the number of edges or creating a positive-degree regular subgraph.
 -/
 
 open Finset Fintype
-open scoped Classical
 
 namespace Erdos182
 
@@ -53,6 +52,7 @@ lemma padGraph_adj_castLE_iff {m n : ℕ} (G : SimpleGraph (Fin m)) (h : m ≤ n
   change (G.map (Fin.castLEEmb h)).Adj (Fin.castLEEmb h u) (Fin.castLEEmb h v) ↔ _
   exact SimpleGraph.map_adj_apply
 
+open Classical in
 /-- Padding adds only isolated vertices, so it preserves the number of edges. -/
 @[simp]
 lemma card_edgeFinset_padGraph {m n : ℕ} (G : SimpleGraph (Fin m)) (h : m ≤ n) :
@@ -73,12 +73,14 @@ lemma mem_range_of_mem_support_padGraph {m n : ℕ} (G : SimpleGraph (Fin m))
   exact ⟨u, rfl⟩
 
 private lemma subgraph_verts_subset_range_of_pos_regular
-    {V W : Type*} [Fintype V] [Fintype W]
+    {V W : Type*} [Finite V] [Finite W]
     (G : SimpleGraph V) (f : V ↪ W) (k : ℕ) (hk : 0 < k)
     (H : (G.map f).Subgraph)
     (hHreg : ∀ v : H.verts, (H.coe.neighborSet v).ncard = k) :
     H.verts ⊆ Set.range f := by
   classical
+  let := Fintype.ofFinite V
+  let := Fintype.ofFinite W
   intro w hw
   let wH : H.verts := ⟨w, hw⟩
   have hpos : 0 < (H.coe.neighborSet wH).ncard := by
@@ -153,6 +155,7 @@ lemma isRegularSubgraphFree_padGraph {m n k : ℕ} (G : SimpleGraph (Fin m))
   intro hcontains
   exact hG (containsRegularSubgraph_of_contains_map G (Fin.castLEEmb h) k hk hcontains)
 
+open Classical in
 /-- Exact-order padding transfers every lower-bound witness from `m ≤ n`
 vertices to exactly `n` vertices. -/
 lemma exists_exactOrder_regularSubgraphFree_of_le {m n k e : ℕ} (h : m ≤ n)
@@ -169,6 +172,7 @@ lemma exists_exactOrder_regularSubgraphFree_of_le {m n k e : ℕ} (h : m ≤ n)
 number of vertices (for positive target degree). -/
 lemma regularExtremalNumber_mono_vertices {m n k : ℕ} (h : m ≤ n) (hk : 0 < k) :
     regularExtremalNumber m k ≤ regularExtremalNumber n k := by
+  classical
   obtain ⟨G, hGfree, hGcard⟩ := exists_regularExtremalGraph m k hk
   have hpadfree : IsRegularSubgraphFree (padGraph G h) k :=
     isRegularSubgraphFree_padGraph G h hk hGfree

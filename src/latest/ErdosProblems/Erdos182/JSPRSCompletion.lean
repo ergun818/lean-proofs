@@ -521,17 +521,18 @@ def ambientCopy (G : SimpleGraph V) (A B : Finset V)
         | inr b =>
             exfalso
             change a.1 = b.1 at hxy
-            have haB : a.1 ∈ B := by simpa [hxy] using b.2
+            have haB : a.1 ∈ B := hxy.symm ▸ b.2
             exact Set.disjoint_left.mp hAB a.2 haB
     | inr b =>
         cases y with
         | inl a =>
             exfalso
             change b.1 = a.1 at hxy
-            have haB : a.1 ∈ B := by simpa [hxy] using b.2
+            have haB : a.1 ∈ B := hxy ▸ b.2
             exact Set.disjoint_left.mp hAB a.2 haB
         | inr b' => exact congrArg Sum.inr (Subtype.ext hxy)
 
+omit [DecidableEq V] in
 /-- Final ambient form of the PRS application.  `H` is an actual bipartite
 subgraph of `G` between disjoint parts; a regular graph found after deleting
 the isolates of `H` is transported first to `H` and then to `G`. -/
@@ -549,6 +550,7 @@ theorem containsRegularSubgraph_of_almostRegular_subgraph
           2 * J.edgeFinset.card → ContainsRegularSubgraph J k)
     (havg : 2 ^ (4 * (K * C) + 2) * H.supportCard ≤ 2 * H.edgeCount) :
     ContainsRegularSubgraph G k := by
+  classical
   apply containsRegularSubgraph_of_copy (ambientCopy G A B hAB H hHG)
   exact containsRegularSubgraph_of_almostRegular hC hK H hreg hforce havg
 
@@ -560,7 +562,7 @@ theorem exists_prsConstant_sixtyFourAlmostRegular_subgraph
     ∃ C : ℕ, 0 < C ∧
       ∀ {W : Type*} [Fintype W] [DecidableEq W]
         (G : SimpleGraph W) (A B : Finset W)
-        (hAB : Disjoint (A : Set W) (B : Set W))
+        (_hAB : Disjoint (A : Set W) (B : Set W))
         (H : BipartiteGraph A B),
         (∀ {a : A} {b : B}, H.Adj a b → G.Adj a.1 b.1) →
         H.IsAlmostRegular 64 →

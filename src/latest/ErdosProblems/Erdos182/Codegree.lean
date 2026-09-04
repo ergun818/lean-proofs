@@ -45,12 +45,14 @@ def commonRight (r : A → B → Prop) [DecidableRel r] (s : Finset A) : Finset 
 def IsBipartiteKFree (r : A → B → Prop) [DecidableRel r] (k : ℕ) : Prop :=
   ∀ s : Finset A, s.card = k → (commonRight r s).card < k
 
+omit [Fintype A] in
 /-- `K_{k,k}`-freeness is inherited by restricting either vertex class. -/
-theorem IsBipartiteKFree.restrict (r : A → B → Prop) [DecidableRel r] {k : ℕ}
+theorem IsBipartiteKFree.restrict [Finite A] (r : A → B → Prop) [DecidableRel r] {k : ℕ}
     (hfree : IsBipartiteKFree r k) (p : A → Prop) (q : B → Prop)
-    [DecidablePred p] [DecidablePred q] :
+     [DecidablePred q] :
     IsBipartiteKFree (fun a : {a // p a} ↦ fun b : {b // q b} ↦ r a b) k := by
   classical
+  let := Fintype.ofFinite A
   intro s hs
   let ea : {a // p a} ↪ A := ⟨Subtype.val, Subtype.val_injective⟩
   let eb : {b // q b} ↪ B := ⟨Subtype.val, Subtype.val_injective⟩

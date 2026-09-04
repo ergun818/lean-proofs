@@ -4,8 +4,8 @@ import ErdosProblems.Erdos182.Foundations
 namespace Erdos182
 
 open Filter Asymptotics
-open scoped Classical
 
+open Classical in
 /-- Package eventual dense regular-subgraph-free witnesses into the lower bound
 for the regular extremal number, expressed using `logLog2`. -/
 theorem prs_extremal_lower_of_allDegreeWitness

@@ -102,14 +102,18 @@ noncomputable def rightDegree (G : BipartiteGraph A B) (b : B) : ℕ :=
 noncomputable def edgeCount (G : BipartiteGraph A B) : ℕ :=
   ∑ b, G.rightDegree b
 
+omit [Fintype B] in
 @[simp]
 theorem mem_leftNeighbors (G : BipartiteGraph A B) (a : A) (b : B) :
     a ∈ G.leftNeighbors b ↔ G.Adj a b := by
+  classical
   simp [leftNeighbors]
 
+omit [Fintype A] in
 @[simp]
 theorem mem_rightNeighbors (G : BipartiteGraph A B) (a : A) (b : B) :
     b ∈ G.rightNeighbors a ↔ G.Adj a b := by
+  classical
   simp [rightNeighbors]
 
 theorem edgeCount_eq_sum_leftDegree (G : BipartiteGraph A B) :
@@ -221,46 +225,64 @@ theorem supportRight_eq_of_supportedOn_isRightRegularOn {G : BipartiteGraph A B}
 noncomputable def neighborhood (G : BipartiteGraph A B) (X : Finset B) : Finset A :=
   by classical exact X.biUnion G.leftNeighbors
 
+omit [Fintype B] in
 @[simp]
-theorem mem_neighborhood (G : BipartiteGraph A B) (X : Finset B) (a : A) :
+theorem mem_neighborhood [Finite B] (G : BipartiteGraph A B) (X : Finset B) (a : A) :
     a ∈ G.neighborhood X ↔ ∃ b ∈ X, G.Adj a b := by
+  classical
+  let := Fintype.ofFinite B
   simp [neighborhood]
 
 /-- Delete all edges at right vertices outside `X`. -/
 def restrictRight (G : BipartiteGraph A B) (X : Finset B) : BipartiteGraph A B where
   Adj a b := G.Adj a b ∧ b ∈ X
 
+omit [Fintype A] [Fintype B] in
 @[simp] theorem restrictRight_adj (G : BipartiteGraph A B) (X : Finset B) (a : A) (b : B) :
-    (G.restrictRight X).Adj a b ↔ G.Adj a b ∧ b ∈ X := Iff.rfl
+    (G.restrictRight X).Adj a b ↔ G.Adj a b ∧ b ∈ X := by
+  classical
+  exact Iff.rfl
 
+omit [Fintype A] [Fintype B] in
 theorem restrictRight_le (G : BipartiteGraph A B) (X : Finset B) :
     G.restrictRight X ≤ G := by
+  classical
   intro a b h
   exact h.1
 
-theorem leftNeighbors_restrictRight_of_mem (G : BipartiteGraph A B)
+omit [Fintype B] in
+theorem leftNeighbors_restrictRight_of_mem [Finite B] (G : BipartiteGraph A B)
     {X : Finset B} {b : B} (hb : b ∈ X) :
     (G.restrictRight X).leftNeighbors b = G.leftNeighbors b := by
   classical
+  let := Fintype.ofFinite B
   ext a
   simp [hb]
 
-theorem leftNeighbors_restrictRight_of_not_mem (G : BipartiteGraph A B)
+omit [Fintype B] in
+theorem leftNeighbors_restrictRight_of_not_mem [Finite B] (G : BipartiteGraph A B)
     {X : Finset B} {b : B} (hb : b ∉ X) :
     (G.restrictRight X).leftNeighbors b = ∅ := by
   classical
+  let := Fintype.ofFinite B
   ext a
   simp [hb]
 
-theorem rightDegree_restrictRight_of_mem (G : BipartiteGraph A B)
+omit [Fintype B] in
+theorem rightDegree_restrictRight_of_mem [Finite B] (G : BipartiteGraph A B)
     {X : Finset B} {b : B} (hb : b ∈ X) :
     (G.restrictRight X).rightDegree b = G.rightDegree b := by
+  classical
+  let := Fintype.ofFinite B
   unfold rightDegree
   rw [leftNeighbors_restrictRight_of_mem G hb]
 
-theorem rightDegree_restrictRight_of_not_mem (G : BipartiteGraph A B)
+omit [Fintype B] in
+theorem rightDegree_restrictRight_of_not_mem [Finite B] (G : BipartiteGraph A B)
     {X : Finset B} {b : B} (hb : b ∉ X) :
     (G.restrictRight X).rightDegree b = 0 := by
+  classical
+  let := Fintype.ofFinite B
   rw [rightDegree, leftNeighbors_restrictRight_of_not_mem G hb]
   simp
 
@@ -317,6 +339,7 @@ noncomputable def selectedNeighbors (G : BipartiteGraph A B) (B₀ : Finset B) (
   · exact Classical.choose (Finset.exists_subset_card_eq (h b hb))
   · exact ∅
 
+omit [Fintype B] in
 theorem selectedNeighbors_subset (G : BipartiteGraph A B) (B₀ : Finset B) (r : ℕ)
     (h : ∀ b ∈ B₀, r ≤ G.rightDegree b) (b : B) :
     G.selectedNeighbors B₀ r h b ⊆ G.leftNeighbors b := by
@@ -326,6 +349,7 @@ theorem selectedNeighbors_subset (G : BipartiteGraph A B) (B₀ : Finset B) (r :
   · exact (Classical.choose_spec (Finset.exists_subset_card_eq (h b ‹b ∈ B₀›))).1
   · exact Finset.empty_subset _
 
+omit [Fintype B] in
 theorem card_selectedNeighbors_of_mem (G : BipartiteGraph A B) (B₀ : Finset B) (r : ℕ)
     (h : ∀ b ∈ B₀, r ≤ G.rightDegree b) {b : B} (hb : b ∈ B₀) :
     (G.selectedNeighbors B₀ r h b).card = r := by
@@ -335,6 +359,7 @@ theorem card_selectedNeighbors_of_mem (G : BipartiteGraph A B) (B₀ : Finset B)
   · exact (Classical.choose_spec (Finset.exists_subset_card_eq (h b hb))).2
   · contradiction
 
+omit [Fintype B] in
 theorem selectedNeighbors_eq_empty_of_not_mem (G : BipartiteGraph A B)
     (B₀ : Finset B) (r : ℕ) (h : ∀ b ∈ B₀, r ≤ G.rightDegree b)
     {b : B} (hb : b ∉ B₀) : G.selectedNeighbors B₀ r h b = ∅ := by
@@ -348,20 +373,29 @@ noncomputable def trimRightDegree (G : BipartiteGraph A B) (B₀ : Finset B) (r 
     (h : ∀ b ∈ B₀, r ≤ G.rightDegree b) : BipartiteGraph A B where
   Adj a b := a ∈ G.selectedNeighbors B₀ r h b
 
+omit [Fintype B] in
 @[simp] theorem trimRightDegree_adj (G : BipartiteGraph A B) (B₀ : Finset B) (r : ℕ)
     (h : ∀ b ∈ B₀, r ≤ G.rightDegree b) (a : A) (b : B) :
-    (G.trimRightDegree B₀ r h).Adj a b ↔ a ∈ G.selectedNeighbors B₀ r h b := Iff.rfl
+    (G.trimRightDegree B₀ r h).Adj a b ↔ a ∈ G.selectedNeighbors B₀ r h b := by
+  classical
+  exact Iff.rfl
 
-theorem trimRightDegree_le (G : BipartiteGraph A B) (B₀ : Finset B) (r : ℕ)
+omit [Fintype B] in
+theorem trimRightDegree_le [Finite B] (G : BipartiteGraph A B) (B₀ : Finset B) (r : ℕ)
     (h : ∀ b ∈ B₀, r ≤ G.rightDegree b) : G.trimRightDegree B₀ r h ≤ G := by
+  classical
+  let := Fintype.ofFinite B
   intro a b hab
   rw [← G.mem_leftNeighbors a b]
   exact G.selectedNeighbors_subset B₀ r h b hab
 
-theorem rightDegree_trimRightDegree_of_mem (G : BipartiteGraph A B) (B₀ : Finset B) (r : ℕ)
+omit [Fintype B] in
+theorem rightDegree_trimRightDegree_of_mem [Finite B]
+    (G : BipartiteGraph A B) (B₀ : Finset B) (r : ℕ)
     (h : ∀ b ∈ B₀, r ≤ G.rightDegree b) {b : B} (hb : b ∈ B₀) :
     (G.trimRightDegree B₀ r h).rightDegree b = r := by
   classical
+  let := Fintype.ofFinite B
   rw [rightDegree]
   have heq : (G.trimRightDegree B₀ r h).leftNeighbors b =
       G.selectedNeighbors B₀ r h b := by
@@ -369,10 +403,12 @@ theorem rightDegree_trimRightDegree_of_mem (G : BipartiteGraph A B) (B₀ : Fins
     simp
   rw [heq, G.card_selectedNeighbors_of_mem B₀ r h hb]
 
-theorem rightDegree_trimRightDegree_of_not_mem (G : BipartiteGraph A B)
+omit [Fintype B] in
+theorem rightDegree_trimRightDegree_of_not_mem [Finite B] (G : BipartiteGraph A B)
     (B₀ : Finset B) (r : ℕ) (h : ∀ b ∈ B₀, r ≤ G.rightDegree b)
     {b : B} (hb : b ∉ B₀) : (G.trimRightDegree B₀ r h).rightDegree b = 0 := by
   classical
+  let := Fintype.ofFinite B
   rw [rightDegree]
   have heq : (G.trimRightDegree B₀ r h).leftNeighbors b = ∅ := by
     ext a
@@ -463,15 +499,21 @@ theorem supportRight_mono {G H : BipartiteGraph A B} (h : H ≤ G) :
   obtain ⟨a, ha⟩ := hb
   exact ⟨a, G.mem_leftNeighbors a b |>.mpr (h (H.mem_leftNeighbors a b |>.mp ha))⟩
 
-theorem leftDegree_mono {G H : BipartiteGraph A B} (h : H ≤ G) (a : A) :
+omit [Fintype A] in
+theorem leftDegree_mono [Finite A] {G H : BipartiteGraph A B} (h : H ≤ G) (a : A) :
     H.leftDegree a ≤ G.leftDegree a := by
+  classical
+  let := Fintype.ofFinite A
   apply Finset.card_le_card
   intro b hb
   rw [mem_rightNeighbors] at hb ⊢
   exact h hb
 
-theorem rightDegree_mono {G H : BipartiteGraph A B} (h : H ≤ G) (b : B) :
+omit [Fintype B] in
+theorem rightDegree_mono [Finite B] {G H : BipartiteGraph A B} (h : H ≤ G) (b : B) :
     H.rightDegree b ≤ G.rightDegree b := by
+  classical
+  let := Fintype.ofFinite B
   apply Finset.card_le_card
   intro a ha
   rw [mem_leftNeighbors] at ha ⊢
@@ -656,7 +698,7 @@ theorem card_le_mul_card_neighborhood_of_roof {G : BipartiteGraph A B} {q : ℕ}
         · rintro ⟨a, _, hb, _⟩
           exact hb
       · intro a _ a' _ haa'
-        show Disjoint (X.filter fun b ↦ R.choice b = a)
+        change Disjoint (X.filter fun b ↦ R.choice b = a)
           (X.filter fun b ↦ R.choice b = a')
         rw [Finset.disjoint_left]
         intro b hb hb'

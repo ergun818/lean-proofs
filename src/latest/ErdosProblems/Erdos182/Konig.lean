@@ -12,7 +12,6 @@ The proof of the perfect-matching lemma verifies Hall's condition by counting
 the edges between a set `u` on one side and its neighbourhood.
 -/
 
-open scoped Classical
 
 namespace Erdos182
 
@@ -24,10 +23,12 @@ variable {V : Type*} [Fintype V] [DecidableEq V]
   {G : SimpleGraph V} [instG : DecidableRel G.Adj]
   {s t u : Set V} {q k : ℕ}
 
+omit [DecidableEq V] in
 /-- Hall's inequality on one side of a positive regular bipartite graph. -/
 private lemma hall_side (hq : 0 < q) (hreg : G.IsRegularOfDegree q)
     (hbip : G.IsBipartiteWith s t) (hu : u ⊆ s) :
     u.ncard ≤ (⋃ v ∈ u, G.neighborSet v).ncard := by
+  classical
   let N : Set V := ⋃ v ∈ u, G.neighborSet v
   let B : SimpleGraph V := G.between u N
   have hN : N ⊆ t := by
@@ -80,10 +81,12 @@ private lemma hall_side (hq : 0 < q) (hreg : G.IsRegularOfDegree q)
         simp [Nat.mul_comm]
   exact Nat.le_of_mul_le_mul_left hcount hq
 
+omit [DecidableEq V] in
 /-- A finite positive regular bipartite graph has a perfect matching. -/
 theorem exists_isPerfectMatching_of_isRegularOfDegree (hq : 0 < q)
     (hreg : G.IsRegularOfDegree q) (hbip : G.IsBipartiteWith s t) :
     ∃ M : G.Subgraph, M.IsPerfectMatching := by
+  classical
   apply G.exists_isPerfectMatching_of_forall_ncard_le hbip
   intro u
   let us : Set V := u ∩ s
@@ -146,12 +149,15 @@ theorem exists_isPerfectMatching_of_isRegularOfDegree (hq : 0 < q)
     _ ≤ (⋃ v ∈ u, G.neighborSet v).ncard :=
       Set.ncard_le_ncard h_union_subset (Set.toFinite _)
 
+omit [DecidableEq V] in
+open Classical in
 /-- Removing a perfect matching from a `(q+1)`-regular graph leaves a
 `q`-regular graph. -/
 private lemma isRegularOfDegree_sdiff_perfectMatching
     (hreg : G.IsRegularOfDegree (q + 1)) {M : G.Subgraph}
     (hM : M.IsPerfectMatching) :
     (G \ M.spanningCoe).IsRegularOfDegree q := by
+  classical
   intro v
   have hsub : M.spanningCoe.neighborFinset v ⊆ G.neighborFinset v := by
     intro w hw
@@ -166,6 +172,8 @@ private lemma isRegularOfDegree_sdiff_perfectMatching
   rw [hreg.degree_eq v, hMdeg]
   omega
 
+omit [DecidableEq V] in
+open Classical in
 /-- The regular-factor consequence of König's line-colouring theorem: a
 finite `q`-regular bipartite graph has a spanning `k`-regular subgraph for
 every `k ≤ q`.
@@ -176,13 +184,14 @@ the vertex-set field of `SimpleGraph.Subgraph`.
 theorem exists_regular_subgraph_of_le (hreg : G.IsRegularOfDegree q)
     (hbip : G.IsBipartiteWith s t) (hk : k ≤ q) :
     ∃ H : SimpleGraph V, H ≤ G ∧ H.IsRegularOfDegree k := by
+  classical
   induction q generalizing G s t instG with
   | zero =>
       let : DecidableRel G.Adj := instG
       have hk0 : k = 0 := Nat.eq_zero_of_le_zero hk
       refine ⟨(⊥ : SimpleGraph V), bot_le, ?_⟩
       intro v
-      simpa [hk0] using SimpleGraph.bot_degree (G := (⊥ : SimpleGraph V)) v
+      simp [hk0]
   | succ q ih =>
       let : DecidableRel G.Adj := instG
       by_cases hkq : k = q + 1

@@ -62,7 +62,7 @@ lemma natCast_log2_log2_le_logLog2 (n : ℕ) (hn : 4 ≤ n) :
       exact Real.log_le_log (Nat.cast_pos.2 hlog2pos) hinner
     _ = logLog2 n := rfl
 
-open scoped Classical in
+open Classical in
 /-- An eventual natural-number forcing threshold implies the corresponding
 real-valued upper bound for `regularExtremalNumber`. -/
 theorem regularExtremalNumber_upper_of_nVertex_forcing

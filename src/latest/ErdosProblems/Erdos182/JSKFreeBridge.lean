@@ -74,7 +74,7 @@ theorem containsRegularSubgraph_of_regular_support_mono
       refine ⟨z, ?_, rfl⟩
       change P.Adj (v : X) (z : X)
       exact hw
-  exact hcard.trans (hPreg v (by simpa [H] using v.property))
+  exact hcard.trans (hPreg v (by simp [H]))
 
 /-- Failure of bipartite `K_{k,k}`-freeness explicitly supplies a complete
 `k` by `k` subgraph, hence a regular bipartite subgraph. -/

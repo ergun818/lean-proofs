@@ -66,24 +66,31 @@ def Admissible (C : BalancedChoice A B) (G : BipartiteGraph A B)
     ∀ b ∈ C.active, C.picked b ⊆ G.leftNeighbors b ∧
       C.picked b ⊆ A₀ ∧ (C.picked b).card = ell
 
-theorem graph_le_of_admissible {C : BalancedChoice A B} {G : BipartiteGraph A B}
+omit [Fintype B] in
+theorem graph_le_of_admissible [Finite B] {C : BalancedChoice A B} {G : BipartiteGraph A B}
     {A₀ : Finset A} {B₀ : Finset B} {ell : ℕ} (hC : C.Admissible G A₀ B₀ ell) :
     C.graph ≤ G := by
+  classical
+  let := Fintype.ofFinite B
   intro a b hab
   exact (G.mem_leftNeighbors a b).mp ((hC.2.2 b hab.1).1 hab.2)
 
+omit [Fintype B] in
 theorem graph_supportedOn_of_admissible {C : BalancedChoice A B}
     {G : BipartiteGraph A B} {A₀ : Finset A} {B₀ : Finset B} {ell : ℕ}
     (hC : C.Admissible G A₀ B₀ ell) : C.graph.SupportedOn A₀ C.active := by
+  classical
   intro a b hab
   exact ⟨(hC.2.2 b hab.1).2.1 hab.2, hab.1⟩
 
+omit [Fintype B] in
 @[simp]
 theorem rightDegree_graph_of_mem {C : BalancedChoice A B} {b : B}
     (hb : b ∈ C.active) : C.graph.rightDegree b = (C.picked b).card := by
   classical
   simp [rightDegree, leftNeighbors, graph, hb]
 
+omit [Fintype A] in
 @[simp]
 theorem leftDegree_graph (C : BalancedChoice A B) (a : A) :
     C.graph.leftDegree a = C.load a := by
@@ -92,22 +99,28 @@ theorem leftDegree_graph (C : BalancedChoice A B) (a : A) :
   congr 1
   ext b
   simp only [mem_filter, mem_univ, true_and]
-  change (C.graph.Adj a b ↔ b ∈ C.active ∧ a ∈ C.picked b)
   rfl
 
-theorem isRightRegularOn_graph_of_admissible {C : BalancedChoice A B}
+omit [Fintype B] in
+theorem isRightRegularOn_graph_of_admissible [Finite B] {C : BalancedChoice A B}
     {G : BipartiteGraph A B} {A₀ : Finset A} {B₀ : Finset B} {ell : ℕ}
     (hC : C.Admissible G A₀ B₀ ell) : C.graph.IsRightRegularOn C.active ell := by
+  classical
+  let := Fintype.ofFinite B
   intro b hb
   rw [rightDegree_graph_of_mem hb]
   exact (hC.2.2 b hb).2.2
 
+omit [Fintype A] [Fintype B] in
 theorem load_le_maxLoad (C : BalancedChoice A B) {A₀ : Finset A} {a : A}
     (ha : a ∈ A₀) : C.load a ≤ C.maxLoad A₀ := by
+  classical
   exact Finset.le_sup ha
 
+omit [Fintype A] [Fintype B] in
 theorem topCount_le_card (C : BalancedChoice A B) (A₀ : Finset A) :
     C.topCount A₀ ≤ A₀.card := by
+  classical
   exact card_filter_le _ _
 
 section
@@ -115,10 +128,12 @@ section
 noncomputable local instance : DecidableEq A := Classical.decEq A
 noncomputable local instance : DecidableEq B := Classical.decEq B
 
+omit [Fintype A] [Fintype B] in
 theorem load_switch (C : BalancedChoice A B) {old new : B} (T : Finset A)
     (hold : old ∈ C.active) (hnew : new ∉ C.active) (a : A) :
     (C.switch old new T).load a =
       C.load a - (if a ∈ C.picked old then 1 else 0) + (if a ∈ T then 1 else 0) := by
+  classical
   have hset :
       (C.switch old new T).active.filter
           (fun b ↦ a ∈ (C.switch old new T).picked b) =
@@ -154,16 +169,18 @@ def IsSwitchingStable (C : BalancedChoice A B) (G : BipartiteGraph A B)
   exact ∀ b ∈ B₀, b ∉ C.active →
     γ - ell + 1 ≤ (G.leftNeighbors b ∩ highLoadSet C A₀).card
 
+omit [Fintype B] in
 /-- There is at least one admissible balanced choice whenever the original
 right degrees are at least `ell` and the right part has at least as many
 vertices as the left part. -/
-theorem exists_admissibleBalancedChoice (G : BipartiteGraph A B)
+theorem exists_admissibleBalancedChoice [Finite B] (G : BipartiteGraph A B)
     (A₀ : Finset A) (B₀ : Finset B) (γ ell : ℕ)
     (hcard : A₀.card ≤ B₀.card)
     (hsupp : G.SupportedOn A₀ B₀)
     (hreg : G.IsRightRegularOn B₀ γ) (hell : ell ≤ γ) :
     ∃ C : BalancedChoice A B, C.Admissible G A₀ B₀ ell := by
   classical
+  let := Fintype.ofFinite B
   obtain ⟨S, hSB, hScard⟩ := B₀.exists_subset_card_eq hcard
   have hpick : ∀ b ∈ S, ∃ T ⊆ G.leftNeighbors b, T ⊆ A₀ ∧ T.card = ell := by
     intro b hb
@@ -183,6 +200,7 @@ theorem exists_admissibleBalancedChoice (G : BipartiteGraph A B)
   exact ⟨(Classical.choose_spec (hpick b hb)).1,
     (Classical.choose_spec (hpick b hb)).2⟩
 
+omit [Fintype B] in
 theorem sum_load_eq_of_admissible {C : BalancedChoice A B}
     {G : BipartiteGraph A B} {A₀ : Finset A} {B₀ : Finset B} {ell : ℕ}
     (hC : C.Admissible G A₀ B₀ ell) :
@@ -210,10 +228,13 @@ theorem sum_load_eq_of_admissible {C : BalancedChoice A B}
           simp
     _ = ell * A₀.card := by simp [hC.2.1, Nat.mul_comm]
 
-theorem regularDegree_le_maxLoad_of_admissible {C : BalancedChoice A B}
+omit [Fintype B] in
+theorem regularDegree_le_maxLoad_of_admissible [Finite B] {C : BalancedChoice A B}
     {G : BipartiteGraph A B} {A₀ : Finset A} {B₀ : Finset B} {ell : ℕ}
     (hA : A₀.Nonempty) (hC : C.Admissible G A₀ B₀ ell) :
     ell ≤ C.maxLoad A₀ := by
+  classical
+  let := Fintype.ofFinite B
   have hsum : (∑ a ∈ A₀, C.load a) ≤
       ∑ _a ∈ A₀, C.maxLoad A₀ := by
     exact sum_le_sum fun a ha ↦ C.load_le_maxLoad ha
@@ -223,9 +244,10 @@ theorem regularDegree_le_maxLoad_of_admissible {C : BalancedChoice A B}
     simpa [Nat.mul_comm] using hsum
   exact Nat.le_of_mul_le_mul_left hsum' hA.card_pos
 
+omit [Fintype B] in
 /-- A minimum-cost admissible choice is stable under all one-vertex
 switches.  This is the finite switching argument in Shirazi Lemma 5.3.6. -/
-theorem exists_admissible_isSwitchingStable (G : BipartiteGraph A B)
+theorem exists_admissible_isSwitchingStable [Finite B] (G : BipartiteGraph A B)
     (A₀ : Finset A) (B₀ : Finset B) (γ ell : ℕ)
     (hA : A₀.Nonempty) (hcard : A₀.card < B₀.card)
     (hsupp : G.SupportedOn A₀ B₀)
@@ -233,6 +255,7 @@ theorem exists_admissible_isSwitchingStable (G : BipartiteGraph A B)
     ∃ C : BalancedChoice A B,
       C.Admissible G A₀ B₀ ell ∧ IsSwitchingStable C G A₀ B₀ γ ell := by
   classical
+  let := Fintype.ofFinite B
   have hex : ∃ n : ℕ, ∃ C : BalancedChoice A B,
       C.Admissible G A₀ B₀ ell ∧ C.cost A₀ = n := by
     obtain ⟨C, hC⟩ := exists_admissibleBalancedChoice G A₀ B₀ γ ell

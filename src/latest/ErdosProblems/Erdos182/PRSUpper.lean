@@ -79,7 +79,7 @@ lemma target_le_ratioDegree {k ℓ d δ₁ : ℕ} {η : ℝ}
     have h4 :
         4 * (4 * P.alpha * ((P.gamma - 1) * (M * (ℓ + 1)) + 1)) ≤
           4 * δ₁ := by
-      convert h16 using 1 <;> ring
+      convert h16 using 1 ; ring
     exact Nat.le_of_mul_le_mul_left h4 (by norm_num)
   simpa [Nat.mul_comm, Nat.mul_left_comm, Nat.mul_assoc] using hscaled
 

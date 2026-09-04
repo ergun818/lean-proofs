@@ -45,6 +45,7 @@ noncomputable def edgeSubsetDegree (G : SimpleGraph V) (F : Finset G.edgeFinset)
 noncomputable def edgeSubsetGraph (G : SimpleGraph V) (F : Finset G.edgeFinset) : SimpleGraph V :=
   SimpleGraph.fromEdgeSet (((F.map (edgeEmbedding G) : Finset (Sym2 V)) : Set (Sym2 V)))
 
+omit [DecidableEq V] in
 @[simp]
 theorem edgeFinset_edgeSubsetGraph (G : SimpleGraph V) (F : Finset G.edgeFinset) :
     (edgeSubsetGraph G F).edgeFinset =
@@ -55,7 +56,7 @@ theorem edgeFinset_edgeSubsetGraph (G : SimpleGraph V) (F : Finset G.edgeFinset)
   change e ∈ (SimpleGraph.fromEdgeSet
     (((F.map (edgeEmbedding G) : Finset (Sym2 V)) : Set (Sym2 V)))).edgeSet ↔ _
   rw [SimpleGraph.edgeSet_fromEdgeSet]
-  simp only [Set.mem_diff, Finset.mem_coe]
+  simp only [Set.mem_sdiff, Finset.mem_coe]
   constructor
   · exact And.left
   · intro he
@@ -64,6 +65,7 @@ theorem edgeFinset_edgeSubsetGraph (G : SimpleGraph V) (F : Finset G.edgeFinset)
     obtain ⟨e', _, rfl⟩ := he
     exact G.not_isDiag_of_mem_edgeFinset e'.property
 
+omit [DecidableEq V] in
 theorem edgeSubsetGraph_le (G : SimpleGraph V) (F : Finset G.edgeFinset) :
     edgeSubsetGraph G F ≤ G := by
   classical
@@ -74,6 +76,7 @@ theorem edgeSubsetGraph_le (G : SimpleGraph V) (F : Finset G.edgeFinset) :
   obtain ⟨e', _, rfl⟩ := he
   exact e'.property
 
+omit [DecidableEq V] in
 @[simp]
 theorem edgeSubsetGraph_eq_bot_iff (G : SimpleGraph V) (F : Finset G.edgeFinset) :
     edgeSubsetGraph G F = ⊥ ↔ F = ∅ := by
@@ -169,7 +172,7 @@ theorem exists_nonempty_edgeSubset_degree_dvd_prime
     have he : x.1 e = 0 := by
       by_contra hne
       have : e ∈ F := by simp [F, hne]
-      simpa [hF] using this
+      simp [hF] at this
     simp [zeroSolution, he]
   refine ⟨F, hF_nonempty, fun v ↦ ?_⟩
   rw [← CharP.cast_eq_zero_iff (ZMod p)]
@@ -220,6 +223,7 @@ theorem exists_nonempty_edgeSubset_degree_zero_or_prime
   · exact Or.inr <| eq_prime_of_pos_of_dvd_of_lt_two_mul
       (Nat.pos_of_ne_zero hz) (hdiv v) ((edgeSubsetDegree_le_degree G F v).trans_lt (hwindow v))
 
+omit [DecidableEq V] in
 /-- Graph-level degree-window form of the Chevalley--Warning lemma.
 
 The graph `H` is a nonempty spanning subgraph of `G`.  Its only possible degrees are `0`
@@ -251,6 +255,7 @@ theorem exists_nonempty_subgraph_degree_zero_or_prime
     exact ⟨v, w, hvw⟩
   exact ⟨H, edgeSubsetGraph_le G F, hH_ne, hHdegrees, hsupport⟩
 
+omit [DecidableEq V] in
 /-- Exact regular-subgraph packaging of the degree-window lemma.  The vertex set of the
 returned subgraph is the support of the spanning zero-or-`p` graph, so it has no isolated
 vertices and is `p`-regular. -/

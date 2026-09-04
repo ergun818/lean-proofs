@@ -61,7 +61,7 @@ private theorem prs_natCast_choose_le_three_mul_div_pow (n k : ℕ) :
     _ = (Real.exp 1 * (n : ℝ) / (k : ℝ)) ^ k := by
       simp only [div_pow]
       field_simp
-      <;> ring
+      ring
     _ ≤ (3 * (n : ℝ) / (k : ℝ)) ^ k := by
       gcongr
       exact Real.exp_one_lt_three.le
@@ -654,7 +654,7 @@ lemma eventually_prs_edge_count_lower :
   have hzero : 0 < prsLayerCount n := by omega
   have hb0 : (n : ℝ) / 4 ≤ prsLayerSize n 0 := by
     have := (hb 0 hzero).2.1
-    convert this using 1 <;> simp [prsRealLayerSize_zero] <;> ring
+    convert this using 1 ; simp [prsRealLayerSize_zero] ; ring
   have hfloor : T / 10 - 1 < (prsLayerCount n : ℝ) := by
     simpa only [prsLayerCount, T] using
       (Nat.sub_one_lt_floor (Real.log (Real.log (n : ℝ)) / 10))
@@ -710,8 +710,8 @@ lemma eventually_prs_error_lt_one :
         (tendsto_rpow_mul_exp_neg_mul_atTop_nhds_zero 1 (1 / 2) (by norm_num))
   have hcomp : Tendsto
       (fun n : ℕ ↦ 2 * prsY n * Real.exp (-(prsY n / 2))) atTop (nhds 0) := by
-    convert hdecay.comp tendsto_prsY_atTop using 1 <;>
-      ext n <;> simp [div_eq_mul_inv] <;> ring_nf
+    convert hdecay.comp tendsto_prsY_atTop using 1 ;
+      ext n ; simp [div_eq_mul_inv] ; ring_nf
   have hevent : ∀ᶠ n : ℕ in atTop,
       2 * prsY n * Real.exp (-(prsY n / 2)) < 1 :=
     hcomp.eventually (Iio_mem_nhds zero_lt_one)
@@ -764,10 +764,10 @@ lemma eventually_prs_badEvent_bracket_le :
   have hbiR : (0 : ℝ) < prsLayerSize n i := by exact_mod_cast hbi
   have hbim1R : (0 : ℝ) < prsLayerSize n (i - 1) := by exact_mod_cast hbim1
   have hai : 0 < prsRealLayerSize n i := by
-    simp [prsRealLayerSize]
+    simp only [prsRealLayerSize]
     positivity
   have haim1 : 0 < prsRealLayerSize n (i - 1) := by
-    simp [prsRealLayerSize]
+    simp only [prsRealLayerSize]
     positivity
   have hlogbi : Real.log (prsLayerSize n i : ℝ) ≤
       Real.log (prsRealLayerSize n i) :=
@@ -856,7 +856,6 @@ lemma eventually_prs_badEvent_choose_bound :
     _ = Real.exp (-(x : ℝ) * prsY n / 2) := by
       rw [← Real.exp_nat_mul]
       congr 1
-      push_cast
       ring
 
 end Erdos182

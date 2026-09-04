@@ -41,15 +41,20 @@ private abbrev activeRelation (R : A → B → Prop)
 private def activeEmbedding (S : Finset A) : (↑S) ↪ A :=
   ⟨Subtype.val, Subtype.val_injective⟩
 
+omit [Fintype A] in
 @[simp] private theorem activeEmbedding_apply (S : Finset A) (u : ↑S) :
-    activeEmbedding S u = u.1 := rfl
+    activeEmbedding S u = u.1 := by
+  classical
+  exact rfl
 
-private theorem active_degreeA_eq
+omit [Fintype A] in
+private theorem active_degreeA_eq [Finite A]
     (R : A → B → Prop) [DecidableRel R]
     (A₀ : Finset A) (B₀ : Finset B)
     (hsupport : ∀ u v, R u v → u ∈ A₀ ∧ v ∈ B₀) (u : ↑A₀) :
     bipDegreeA (activeRelation R A₀ B₀) u = bipDegreeA R u.1 := by
   classical
+  let := Fintype.ofFinite A
   let eB : (↑B₀) ↪ B := activeEmbedding B₀
   have hmap :
       (bipNeighborsA (activeRelation R A₀ B₀) u).map eB =
@@ -74,12 +79,14 @@ private theorem active_degreeA_eq
     _ = (bipNeighborsA R u.1).card := congrArg Finset.card hmap
     _ = bipDegreeA R u.1 := rfl
 
-private theorem active_degreeB_eq
+omit [Fintype B] in
+private theorem active_degreeB_eq [Finite B]
     (R : A → B → Prop) [DecidableRel R]
     (A₀ : Finset A) (B₀ : Finset B)
     (hsupport : ∀ u v, R u v → u ∈ A₀ ∧ v ∈ B₀) (v : ↑B₀) :
     bipDegreeB (activeRelation R A₀ B₀) v = bipDegreeB R v.1 := by
   classical
+  let := Fintype.ofFinite B
   let eA : (↑A₀) ↪ A := activeEmbedding A₀
   have hmap :
       (bipNeighborsB (activeRelation R A₀ B₀) v).map eA =
@@ -104,6 +111,7 @@ private theorem active_degreeB_eq
     _ = (bipNeighborsB R v.1).card := congrArg Finset.card hmap
     _ = bipDegreeB R v.1 := rfl
 
+omit [Fintype A] in
 private theorem active_codegree_eq
     (R : A → B → Prop) [DecidableRel R]
     (A₀ : Finset A) (B₀ : Finset B)
@@ -175,10 +183,11 @@ private theorem active_edgeCount_eq
       intro v hvuniv hvnot
       exact houtside v hvnot
 
+omit [Fintype A] [Fintype B] in
 private theorem active_restrictedDegree_map
     (R : A → B → Prop) [DecidableRel R]
     (A₀ : Finset A) (B₀ : Finset B)
-    (S : Finset (↑A₀)) (T : Finset (↑B₀)) (u : ↑A₀) :
+    (_S : Finset (↑A₀)) (T : Finset (↑B₀)) (u : ↑A₀) :
     bipRestrictedDegreeA R (T.map (activeEmbedding B₀)) u.1 =
       bipRestrictedDegreeA (activeRelation R A₀ B₀) T u := by
   classical
@@ -192,7 +201,8 @@ private theorem active_restrictedDegree_map
     (T.filter fun v ↦ activeRelation R A₀ B₀ u v).card
   rw [← hmap, Finset.card_map]
 
-private theorem active_restrictedEdgeCount_map
+omit [Fintype A] [Fintype B] in
+private theorem active_restrictedEdgeCount_map [Finite A] [Finite B]
     (R : A → B → Prop) [DecidableRel R]
     (A₀ : Finset A) (B₀ : Finset B)
     (S : Finset (↑A₀)) (T : Finset (↑B₀)) :
@@ -200,6 +210,8 @@ private theorem active_restrictedEdgeCount_map
         (T.map (activeEmbedding B₀)) =
       bipRestrictedEdgeCount (activeRelation R A₀ B₀) S T := by
   classical
+  let := Fintype.ofFinite A
+  let := Fintype.ofFinite B
   let eA : (↑A₀) ↪ A := activeEmbedding A₀
   let eB : (↑B₀) ↪ B := activeEmbedding B₀
   change (∑ u ∈ S.map eA, bipRestrictedDegreeA R (T.map eB) u) =

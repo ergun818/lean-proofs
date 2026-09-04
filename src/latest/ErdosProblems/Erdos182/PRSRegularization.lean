@@ -22,7 +22,7 @@ result between explicitly displayed ambient finite parts.
 namespace Erdos182
 
 open Finset
-open scoped Classical BigOperators
+open scoped BigOperators
 
 namespace BipartiteGraph
 
@@ -36,7 +36,7 @@ theorem exists_multiplicative_block (a : ℕ → ℝ) (t : ℕ) (ht : 0 < t)
     (β : ℝ) (hβ : 1 ≤ β) (ha0 : 1 ≤ a 0) (hat : a t ≤ β ^ t) :
     ∃ j < t, a (j + 1) ≤ β * a j := by
   by_contra h
-  push_neg at h
+  push Not at h
   have hβpos : 0 < β := zero_lt_one.trans_le hβ
   have hiter : ∀ j, 0 < j → j ≤ t → β ^ j * a 0 < a j := by
     intro j hj hle
@@ -65,9 +65,12 @@ def onParts (G : BipartiteGraph A B) (A₀ : Finset A) (B₀ : Finset B) :
     BipartiteGraph A₀ B₀ where
   Adj a b := G.Adj a.1 b.1
 
+omit [Fintype A] [Fintype B] in
 @[simp]
 theorem onParts_adj (G : BipartiteGraph A B) (A₀ : Finset A) (B₀ : Finset B)
-    (a : A₀) (b : B₀) : (G.onParts A₀ B₀).Adj a b ↔ G.Adj a.1 b.1 :=
+    (a : A₀) (b : B₀) : (G.onParts A₀ B₀).Adj a b ↔ G.Adj a.1 b.1 := by
+  classical
+  exact
   Iff.rfl
 
 /-- A pair of active parts supports a right-minimum-degree-`s` subgraph of
@@ -80,7 +83,9 @@ def IsFeasiblePair (G : BipartiteGraph A B) (s : ℕ)
 
 /-- The finite set of all feasible pairs of active parts. -/
 noncomputable def feasiblePairs (G : BipartiteGraph A B) (s : ℕ) :
-    Finset (Finset A × Finset B) :=
+    Finset (Finset A × Finset B) := by
+  classical
+  exact
   (((Finset.univ : Finset A).powerset).product
     ((Finset.univ : Finset B).powerset)).filter (G.IsFeasiblePair s)
 
@@ -126,9 +131,12 @@ theorem exists_partRatio_eq_maxFeasibleRatio {G : BipartiteGraph A B} {s : ℕ}
   rw [maxFeasibleRatio, dif_pos hrat_ne]
   exact hqeq
 
+omit [Fintype A] [Fintype B] in
 theorem IsFeasiblePair.mono_degree {G : BipartiteGraph A B} {s s' : ℕ}
     {p : Finset A × Finset B} (hp : G.IsFeasiblePair s p) (hss : s' ≤ s) :
-    G.IsFeasiblePair s' p :=
+    G.IsFeasiblePair s' p := by
+  classical
+  exact
   ⟨hp.1, hp.2.1, fun b ↦ hss.trans (hp.2.2 b)⟩
 
 theorem maxFeasibleRatio_mono_degree {G : BipartiteGraph A B} {s s' : ℕ}
@@ -138,10 +146,12 @@ theorem maxFeasibleRatio_mono_degree {G : BipartiteGraph A B} {s s' : ℕ}
   rw [← heq]
   exact partRatio_le_maxFeasibleRatio (hp.mono_degree hss)
 
-theorem leftDegree_onParts_le (G : BipartiteGraph A B)
+omit [Fintype A] in
+theorem leftDegree_onParts_le [Finite A] (G : BipartiteGraph A B)
     (A₀ : Finset A) (B₀ : Finset B) (a : A₀) :
     (G.onParts A₀ B₀).leftDegree a ≤ G.leftDegree a.1 := by
   classical
+  let := Fintype.ofFinite A
   let P := G.onParts A₀ B₀
   let e : (P.rightNeighbors a) → (G.rightNeighbors a.1) := fun b ↦
     ⟨b.1.1, (mem_rightNeighbors G a.1 b.1.1).mpr
@@ -154,13 +164,15 @@ theorem leftDegree_onParts_le (G : BipartiteGraph A B)
   change (P.rightNeighbors a).card ≤ (G.rightNeighbors a.1).card
   simpa only [Fintype.card_coe] using Fintype.card_le_of_injective e heinj
 
+omit [Fintype A] in
 /-- Every positive-degree feasible pair has ratio at most the maximum left
 degree.  This is the endpoint estimate in the multiplicative-block proof. -/
-theorem partRatio_le_of_maxLeftDegree {G : BipartiteGraph A B} {s D : ℕ}
+theorem partRatio_le_of_maxLeftDegree [Finite A] {G : BipartiteGraph A B} {s D : ℕ}
     {p : Finset A × Finset B} (hs : 0 < s) (hp : G.IsFeasiblePair s p)
     (hmax : ∀ a, G.leftDegree a ≤ D) :
     partRatio p ≤ (D : ℝ) := by
   classical
+  let := Fintype.ofFinite A
   let P := G.onParts p.1 p.2
   have hlower : s * p.2.card ≤ P.edgeCount := by
     rw [edgeCount]
@@ -202,14 +214,18 @@ noncomputable def trimmedFeasiblePairGraph (G : BipartiteGraph A B) (s : ℕ)
   let P := G.onParts p.1 p.2
   P.trimRightDegree Finset.univ s (fun b _ ↦ hp.2.2 b)
 
+omit [Fintype A] [Fintype B] in
 theorem trimmedFeasiblePairGraph_le (G : BipartiteGraph A B) (s : ℕ)
     (p : Finset A × Finset B) (hp : G.IsFeasiblePair s p) :
     G.trimmedFeasiblePairGraph s p hp ≤ G.onParts p.1 p.2 := by
+  classical
   exact (G.onParts p.1 p.2).trimRightDegree_le Finset.univ s (fun b _ ↦ hp.2.2 b)
 
+omit [Fintype A] [Fintype B] in
 theorem rightDegree_trimmedFeasiblePairGraph (G : BipartiteGraph A B) (s : ℕ)
     (p : Finset A × Finset B) (hp : G.IsFeasiblePair s p) (b : p.2) :
     (G.trimmedFeasiblePairGraph s p hp).rightDegree b = s := by
+  classical
   exact (G.onParts p.1 p.2).rightDegree_trimRightDegree_of_mem
     Finset.univ s (fun b _ ↦ hp.2.2 b) (Finset.mem_univ b)
 
@@ -218,30 +234,39 @@ def extendParts (A₀ : Finset A) (B₀ : Finset B)
     (K : BipartiteGraph A₀ B₀) : BipartiteGraph A B where
   Adj a b := ∃ (ha : a ∈ A₀) (hb : b ∈ B₀), K.Adj ⟨a, ha⟩ ⟨b, hb⟩
 
+omit [Fintype A] [Fintype B] in
 @[simp]
 theorem extendParts_adj (A₀ : Finset A) (B₀ : Finset B)
     (K : BipartiteGraph A₀ B₀) (a : A) (b : B) :
     (extendParts A₀ B₀ K).Adj a b ↔
-      ∃ (ha : a ∈ A₀) (hb : b ∈ B₀), K.Adj ⟨a, ha⟩ ⟨b, hb⟩ :=
+      ∃ (ha : a ∈ A₀) (hb : b ∈ B₀), K.Adj ⟨a, ha⟩ ⟨b, hb⟩ := by
+  classical
+  exact
   Iff.rfl
 
+omit [Fintype A] [Fintype B] in
 theorem extendParts_le {G : BipartiteGraph A B} {A₀ : Finset A} {B₀ : Finset B}
     {K : BipartiteGraph A₀ B₀} (hK : K ≤ G.onParts A₀ B₀) :
     extendParts A₀ B₀ K ≤ G := by
+  classical
   intro a b hab
   obtain ⟨ha, hb, hab⟩ := hab
   exact hK hab
 
+omit [Fintype A] [Fintype B] in
 theorem extendParts_supportedOn (A₀ : Finset A) (B₀ : Finset B)
     (K : BipartiteGraph A₀ B₀) :
     (extendParts A₀ B₀ K).SupportedOn A₀ B₀ := by
+  classical
   rintro a b ⟨ha, hb, _⟩
   exact ⟨ha, hb⟩
 
-theorem rightDegree_extendParts_of_mem (A₀ : Finset A) (B₀ : Finset B)
+omit [Fintype B] in
+theorem rightDegree_extendParts_of_mem [Finite B] (A₀ : Finset A) (B₀ : Finset B)
     (K : BipartiteGraph A₀ B₀) {b : B} (hb : b ∈ B₀) :
     (extendParts A₀ B₀ K).rightDegree b = K.rightDegree ⟨b, hb⟩ := by
   classical
+  let := Fintype.ofFinite B
   let e : A₀ ↪ A := ⟨Subtype.val, Subtype.val_injective⟩
   have heq : (extendParts A₀ B₀ K).leftNeighbors b =
       (K.leftNeighbors ⟨b, hb⟩).map e := by
@@ -258,19 +283,23 @@ theorem rightDegree_extendParts_of_mem (A₀ : Finset A) (B₀ : Finset B)
         ⟨a'.2, hb, (K.mem_leftNeighbors a' ⟨b, hb⟩).mp ha'⟩
   rw [rightDegree, rightDegree, heq, Finset.card_map]
 
-theorem rightDegree_extendParts_of_not_mem (A₀ : Finset A) (B₀ : Finset B)
+omit [Fintype B] in
+theorem rightDegree_extendParts_of_not_mem [Finite B] (A₀ : Finset A) (B₀ : Finset B)
     (K : BipartiteGraph A₀ B₀) {b : B} (hb : b ∉ B₀) :
     (extendParts A₀ B₀ K).rightDegree b = 0 := by
   classical
+  let := Fintype.ofFinite B
   rw [rightDegree, Finset.card_eq_zero]
   apply Finset.not_nonempty_iff_eq_empty.mp
   rintro ⟨a, ha⟩
   exact hb (((extendParts A₀ B₀ K).mem_leftNeighbors a b).mp ha).choose_spec.choose
 
-theorem leftDegree_extendParts_of_mem (A₀ : Finset A) (B₀ : Finset B)
+omit [Fintype A] in
+theorem leftDegree_extendParts_of_mem [Finite A] (A₀ : Finset A) (B₀ : Finset B)
     (K : BipartiteGraph A₀ B₀) {a : A} (ha : a ∈ A₀) :
     (extendParts A₀ B₀ K).leftDegree a = K.leftDegree ⟨a, ha⟩ := by
   classical
+  let := Fintype.ofFinite A
   let e : B₀ ↪ B := ⟨Subtype.val, Subtype.val_injective⟩
   have heq : (extendParts A₀ B₀ K).rightNeighbors a =
       (K.rightNeighbors ⟨a, ha⟩).map e := by
@@ -287,10 +316,12 @@ theorem leftDegree_extendParts_of_mem (A₀ : Finset A) (B₀ : Finset B)
         ⟨ha, b'.2, (K.mem_rightNeighbors ⟨a, ha⟩ b').mp hb'⟩
   rw [leftDegree, leftDegree, heq, Finset.card_map]
 
-theorem leftDegree_extendParts_of_not_mem (A₀ : Finset A) (B₀ : Finset B)
+omit [Fintype A] in
+theorem leftDegree_extendParts_of_not_mem [Finite A] (A₀ : Finset A) (B₀ : Finset B)
     (K : BipartiteGraph A₀ B₀) {a : A} (ha : a ∉ A₀) :
     (extendParts A₀ B₀ K).leftDegree a = 0 := by
   classical
+  let := Fintype.ofFinite A
   rw [leftDegree, Finset.card_eq_zero]
   apply Finset.not_nonempty_iff_eq_empty.mp
   rintro ⟨b, hb⟩
@@ -439,9 +470,9 @@ theorem hasRoofLoadAtMost_ceil_maxFeasibleRatio
       isFeasiblePair_supports_of_le hLG hL
     have hratio := partRatio_le_maxFeasibleRatio hfeas
     have hcardR : L.supportRight.card = X.card := by
-      simpa [L, hsuppR] using card_supportRight_extendParts A₀ B₀ Kr
+      simp [L, hsuppR]
     have hcardL : L.supportLeft.card = (K.neighborhood X).card := by
-      simpa [L, hsuppL] using card_supportLeft_extendParts A₀ B₀ Kr
+      simp [L, hsuppL]
     have hNpos : (0 : ℝ) < (K.neighborhood X).card := by
       have hLnon : L.supportLeft.Nonempty :=
         supportLeft_nonempty_of_isHalfRegular hL hs
@@ -468,20 +499,28 @@ theorem hasRoofLoadAtMost_ceil_maxFeasibleRatio
 def union (G H : BipartiteGraph A B) : BipartiteGraph A B where
   Adj a b := G.Adj a b ∨ H.Adj a b
 
+omit [Fintype A] [Fintype B] in
 @[simp]
 theorem union_adj (G H : BipartiteGraph A B) (a : A) (b : B) :
-    (G.union H).Adj a b ↔ G.Adj a b ∨ H.Adj a b :=
+    (G.union H).Adj a b ↔ G.Adj a b ∨ H.Adj a b := by
+  classical
+  exact
   Iff.rfl
 
 /-- Delete all edges of `H` from `G`. -/
 def edgeSdiff (G H : BipartiteGraph A B) : BipartiteGraph A B where
   Adj a b := G.Adj a b ∧ ¬ H.Adj a b
 
+omit [Fintype A] [Fintype B] in
 @[simp]
 theorem edgeSdiff_adj (G H : BipartiteGraph A B) (a : A) (b : B) :
-    (G.edgeSdiff H).Adj a b ↔ G.Adj a b ∧ ¬ H.Adj a b :=
+    (G.edgeSdiff H).Adj a b ↔ G.Adj a b ∧ ¬ H.Adj a b := by
+  classical
+  exact
   Iff.rfl
 
+open Classical in
+omit [Fintype B] in
 @[simp]
 theorem rightDegree_restrictRight (G : BipartiteGraph A B) (X : Finset B) (b : B) :
     (G.restrictRight X).rightDegree b = if b ∈ X then G.rightDegree b else 0 := by
@@ -490,13 +529,19 @@ theorem rightDegree_restrictRight (G : BipartiteGraph A B) (X : Finset B) (b : B
   · simp [rightDegree, leftNeighbors, restrictRight, hb]
   · simp [rightDegree, leftNeighbors, restrictRight, hb]
 
-theorem leftNeighbors_mono {G H : BipartiteGraph A B} (hHG : H ≤ G) (b : B) :
+omit [Fintype B] in
+theorem leftNeighbors_mono [Finite B] {G H : BipartiteGraph A B} (hHG : H ≤ G) (b : B) :
     H.leftNeighbors b ⊆ G.leftNeighbors b := by
+  classical
+  let := Fintype.ofFinite B
   intro a ha
   exact (mem_leftNeighbors G a b).mpr (hHG ((mem_leftNeighbors H a b).mp ha))
 
-theorem rightNeighbors_mono {G H : BipartiteGraph A B} (hHG : H ≤ G) (a : A) :
+omit [Fintype A] in
+theorem rightNeighbors_mono [Finite A] {G H : BipartiteGraph A B} (hHG : H ≤ G) (a : A) :
     H.rightNeighbors a ⊆ G.rightNeighbors a := by
+  classical
+  let := Fintype.ofFinite A
   intro b hb
   exact (mem_rightNeighbors G a b).mpr (hHG ((mem_rightNeighbors H a b).mp hb))
 
@@ -504,16 +549,22 @@ theorem rightNeighbors_mono {G H : BipartiteGraph A B} (hHG : H ≤ G) (a : A) :
 def Roof.graph {G : BipartiteGraph A B} (R : G.Roof) : BipartiteGraph A B where
   Adj a b := R.choice b = a
 
+omit [Fintype A] [Fintype B] in
 @[simp]
 theorem Roof.graph_adj {G : BipartiteGraph A B} (R : G.Roof) (a : A) (b : B) :
-    R.graph.Adj a b ↔ R.choice b = a :=
+    R.graph.Adj a b ↔ R.choice b = a := by
+  classical
+  exact
   Iff.rfl
 
+omit [Fintype A] [Fintype B] in
 theorem Roof.graph_le {G : BipartiteGraph A B} (R : G.Roof) : R.graph ≤ G := by
+  classical
   intro a b hab
   rw [← hab]
   exact R.adj_choice b
 
+omit [Fintype B] in
 @[simp]
 theorem Roof.rightDegree_graph {G : BipartiteGraph A B} (R : G.Roof) (b : B) :
     R.graph.rightDegree b = 1 := by
@@ -527,16 +578,19 @@ theorem Roof.rightDegree_graph {G : BipartiteGraph A B} (R : G.Roof) (b : B) :
   rw [heq]
   simp
 
+omit [Fintype A] in
 @[simp]
 theorem Roof.leftDegree_graph {G : BipartiteGraph A B} (R : G.Roof) (a : A) :
     R.graph.leftDegree a = R.load a := by
   classical
   simp [leftDegree, rightNeighbors, Roof.load, Roof.graph, eq_comm]
 
+omit [Fintype B] in
 @[simp]
-theorem rightDegree_sdiff_roof {G : BipartiteGraph A B} (R : G.Roof) (b : B) :
+theorem rightDegree_sdiff_roof [Finite B] {G : BipartiteGraph A B} (R : G.Roof) (b : B) :
     (G.edgeSdiff R.graph).rightDegree b = G.rightDegree b - 1 := by
   classical
+  let := Fintype.ofFinite B
   have heq :
       (G.edgeSdiff R.graph).leftNeighbors b =
         (G.leftNeighbors b).erase (R.choice b) := by
@@ -547,8 +601,10 @@ theorem rightDegree_sdiff_roof {G : BipartiteGraph A B} (R : G.Roof) (b : B) :
   rw [rightDegree, heq, card_erase_of_mem hmem]
   rfl
 
+omit [Fintype A] [Fintype B] in
 theorem sdiff_roof_le {G : BipartiteGraph A B} (R : G.Roof) :
     G.edgeSdiff R.graph ≤ G := by
+  classical
   intro a b hab
   exact hab.1
 
@@ -572,7 +628,7 @@ theorem hasRoofLoadAtMost_ceilDiv_of_minDegree {G : BipartiteGraph A B}
       have hab := (mem_rightNeighbors K a b).mp hb
       exact (ha ((mem_neighborhood G X a).mpr ⟨b, hab.2, hab.1⟩)).elim
     · intro hb
-      have : False := by simpa using hb
+      have : False := by simp at hb
       exact this.elim
   have hcount_upper : K.edgeCount ≤ D * (G.neighborhood X).card := by
     have hout : ∀ a ∈ (Finset.univ : Finset A), a ∉ G.neighborhood X →
@@ -609,10 +665,12 @@ theorem hasRoofLoadAtMost_ceilDiv_of_minDegree {G : BipartiteGraph A B}
         simp [Nat.mul_assoc]
   exact Nat.le_of_mul_le_mul_left hmul hm
 
-private theorem rightDegree_sup_roof_of_le_sdiff {G H : BipartiteGraph A B}
+omit [Fintype B] in
+private theorem rightDegree_sup_roof_of_le_sdiff [Finite B] {G H : BipartiteGraph A B}
     (R : G.Roof) (hH : H ≤ G.edgeSdiff R.graph) (b : B) :
     (R.graph.union H).rightDegree b = H.rightDegree b + 1 := by
   classical
+  let := Fintype.ofFinite B
   have hnot : R.choice b ∉ H.leftNeighbors b := by
     intro hb
     have := hH ((mem_leftNeighbors H (R.choice b) b).mp hb)
@@ -626,10 +684,12 @@ private theorem rightDegree_sup_roof_of_le_sdiff {G H : BipartiteGraph A B}
   rw [heq, card_insert_of_notMem hnot]
   rfl
 
-private theorem leftDegree_sup_roof_le {G H : BipartiteGraph A B}
+omit [Fintype A] in
+private theorem leftDegree_sup_roof_le [Finite A] {G H : BipartiteGraph A B}
     (R : G.Roof) (a : A) :
     (R.graph.union H).leftDegree a ≤ R.load a + H.leftDegree a := by
   classical
+  let := Fintype.ofFinite A
   simp only [leftDegree, rightNeighbors]
   have hsub :
       Finset.univ.filter (fun b ↦ (R.graph.union H).Adj a b) ⊆
@@ -805,9 +865,11 @@ theorem rightDegree_onParts_univ (G : BipartiteGraph A B)
     refine ⟨by simp, ?_⟩
     exact (Finset.mem_filter.mp ha).2
 
+omit [Fintype A] in
 theorem HasRoofLoadAtMost.mono {G : BipartiteGraph A B} {q q' : ℕ}
     (hG : G.HasRoofLoadAtMost q) (hqq : q ≤ q') :
     G.HasRoofLoadAtMost q' := by
+  classical
   obtain ⟨R, hR⟩ := hG
   exact ⟨R, fun a ↦ (hR a).trans hqq⟩
 
@@ -992,7 +1054,7 @@ theorem exists_multiplicativeBlock_regularization
     hp₀.mono_degree (Nat.sub_le δ ((j + 1) * (γ - 1)))
   have hnext_nonneg : 0 ≤ G.maxFeasibleRatio (level (j + 1)) := by
     have hratio_nonneg : (0 : ℝ) ≤ partRatio p₀ := by
-      simp [partRatio, p₀]
+      simp only [partRatio, p₀]
       positivity
     exact hratio_nonneg.trans (partRatio_le_maxFeasibleRatio hpnext)
   have hqR : (q : ℝ) ≤ G.maxFeasibleRatio (level (j + 1)) + 1 := by
@@ -1024,7 +1086,6 @@ theorem exists_multiplicativeBlock_regularization
       _ = β * p.2.card + p.1.card := by
         rw [partRatio]
         field_simp
-        <;> ring
   calc
     (H.leftDegree a * p.1.card : ℝ)
         ≤ ((γ : ℝ) * q) * p.1.card :=
@@ -1039,11 +1100,12 @@ theorem exists_multiplicativeBlock_regularization
         (by positivity)
     _ = (β * (1 + 1 / (α : ℝ))) * γ * p.2.card := by
       field_simp
-      <;> ring
 
+omit [Fintype A] [Fintype B] in
 theorem extendParts_onParts_eq_of_supportedOn (G : BipartiteGraph A B)
     {A₀ : Finset A} {B₀ : Finset B} (hG : G.SupportedOn A₀ B₀) :
     extendParts A₀ B₀ (G.onParts A₀ B₀) = G := by
+  classical
   ext a b
   constructor
   · rintro ⟨_ha, _hb, hab⟩
@@ -1051,10 +1113,13 @@ theorem extendParts_onParts_eq_of_supportedOn (G : BipartiteGraph A B)
   · intro hab
     exact ⟨(hG hab).1, (hG hab).2, hab⟩
 
-theorem rightDegree_onParts_eq_of_supportedOn (G : BipartiteGraph A B)
+omit [Fintype B] in
+theorem rightDegree_onParts_eq_of_supportedOn [Finite B] (G : BipartiteGraph A B)
     {A₀ : Finset A} {B₀ : Finset B} (hG : G.SupportedOn A₀ B₀)
     (b : B₀) :
     (G.onParts A₀ B₀).rightDegree b = G.rightDegree b.1 := by
+  classical
+  let := Fintype.ofFinite B
   rw [← rightDegree_extendParts_of_mem A₀ B₀ (G.onParts A₀ B₀) b.2,
     extendParts_onParts_eq_of_supportedOn G hG]
 

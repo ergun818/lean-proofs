@@ -3,7 +3,7 @@ import ErdosProblems.Erdos182.RoofCore
 namespace Erdos182
 
 open Finset Function
-open scoped BigOperators Classical
+open scoped BigOperators
 
 namespace BipartiteGraph
 
@@ -44,24 +44,31 @@ private def extendRightType {S : Finset B} (H : BipartiteGraph A S) :
 private def subtypeEmbedding (S : Finset B) : S ↪ B :=
   ⟨Subtype.val, Subtype.val_injective⟩
 
+omit [Fintype B] in
 @[simp] private theorem rightDegree_restrictRightType
     (G : BipartiteGraph A B) (S : Finset B) (b : S) :
     (restrictRightType G S).rightDegree b = G.rightDegree b.1 := by
+  classical
   simp [rightDegree, leftNeighbors, restrictRightType]
   rfl
 
+omit [Fintype A] [Fintype B] in
 private theorem extendRightType_le {G : BipartiteGraph A B} {S : Finset B}
     {H : BipartiteGraph A S} (hH : H ≤ restrictRightType G S) :
     extendRightType H ≤ G := by
+  classical
   intro a b hab
   obtain ⟨hb, hab⟩ := hab
   exact hH hab
 
-private theorem leftNeighbors_extendRightType {S : Finset B}
+open Classical in
+omit [Fintype B] in
+private theorem leftNeighbors_extendRightType [Finite B] {S : Finset B}
     (H : BipartiteGraph A S) (b : B) :
     (extendRightType H).leftNeighbors b =
       if hb : b ∈ S then H.leftNeighbors ⟨b, hb⟩ else ∅ := by
   classical
+  let := Fintype.ofFinite B
   ext a
   by_cases hb : b ∈ S
   · rw [dif_pos hb]
@@ -72,25 +79,31 @@ private theorem leftNeighbors_extendRightType {S : Finset B}
     · intro ha
       exact ⟨hb, ha⟩
   · rw [dif_neg hb]
-    simp only [mem_leftNeighbors, extendRightType, not_false_eq_true, Finset.notMem_empty]
+    simp only [mem_leftNeighbors, extendRightType, Finset.notMem_empty]
     constructor
     · rintro ⟨hb', _⟩
       exact (hb hb').elim
     · intro h
       exact h.elim
 
-private theorem rightDegree_extendRightType {S : Finset B}
+open Classical in
+omit [Fintype B] in
+private theorem rightDegree_extendRightType [Finite B] {S : Finset B}
     (H : BipartiteGraph A S) (b : B) :
     (extendRightType H).rightDegree b =
       if hb : b ∈ S then H.rightDegree ⟨b, hb⟩ else 0 := by
+  classical
+  let := Fintype.ofFinite B
   rw [rightDegree, leftNeighbors_extendRightType]
   split <;> simp [rightDegree]
 
-private theorem rightNeighbors_extendRightType {S : Finset B}
+omit [Fintype A] in
+private theorem rightNeighbors_extendRightType [Finite A] {S : Finset B}
     (H : BipartiteGraph A S) (a : A) :
     (extendRightType H).rightNeighbors a =
       (H.rightNeighbors a).map (subtypeEmbedding S) := by
   classical
+  let := Fintype.ofFinite A
   ext b
   simp only [mem_rightNeighbors, extendRightType, Finset.mem_map]
   constructor
@@ -99,9 +112,12 @@ private theorem rightNeighbors_extendRightType {S : Finset B}
   · rintro ⟨⟨b', hbmem⟩, hb', rfl⟩
     exact ⟨hbmem, hb'⟩
 
-@[simp] private theorem leftDegree_extendRightType {S : Finset B}
+omit [Fintype A] in
+@[simp] private theorem leftDegree_extendRightType [Finite A] {S : Finset B}
     (H : BipartiteGraph A S) (a : A) :
     (extendRightType H).leftDegree a = H.leftDegree a := by
+  classical
+  let := Fintype.ofFinite A
   rw [leftDegree, rightNeighbors_extendRightType, Finset.card_map]
   rfl
 
@@ -140,8 +156,10 @@ private theorem supportRatioNN_extendRightType {S : Finset B}
   rw [supportRatioNN, supportRatioNN, supportLeft_extendRightType,
     supportRight_extendRightType, Finset.card_map]
 
+omit [Fintype A] [Fintype B] in
 private theorem restrictRightType_le {G K : BipartiteGraph A B} {S : Finset B}
     (hKG : K ≤ G) : restrictRightType K S ≤ restrictRightType G S := by
+  classical
   intro a b hab
   exact hKG hab
 
@@ -154,9 +172,11 @@ private theorem extend_restrict_supportRight (G : BipartiteGraph A B) :
   · intro hab
     exact ⟨G.adj_mem_supportRight hab, hab⟩
 
+omit [Fintype A] [Fintype B] in
 private theorem extendRightType_mono {S : Finset B}
     {H K : BipartiteGraph A S} (hHK : H ≤ K) :
     extendRightType H ≤ extendRightType K := by
+  classical
   intro a b hab
   obtain ⟨hb, hab⟩ := hab
   exact ⟨hb, hHK hab⟩
@@ -186,33 +206,43 @@ private def Roof.graph {G : BipartiteGraph A B} (R : G.Roof) :
     BipartiteGraph A B where
   Adj a b := R.choice b = a
 
+omit [Fintype A] [Fintype B] in
 @[simp] private theorem Roof.graph_adj {G : BipartiteGraph A B}
     (R : G.Roof) (a : A) (b : B) :
-    R.graph.Adj a b ↔ R.choice b = a := Iff.rfl
+    R.graph.Adj a b ↔ R.choice b = a := by
+  classical
+  exact Iff.rfl
 
+omit [Fintype A] [Fintype B] in
 private theorem Roof.graph_le {G : BipartiteGraph A B} (R : G.Roof) :
     R.graph ≤ G := by
+  classical
   intro a b hab
   rw [← hab]
   exact R.adj_choice b
 
-@[simp] private theorem Roof.rightDegree_graph {G : BipartiteGraph A B}
+omit [Fintype B] in
+@[simp] private theorem Roof.rightDegree_graph [Finite B] {G : BipartiteGraph A B}
     (R : G.Roof) (b : B) : R.graph.rightDegree b = 1 := by
   classical
+  let := Fintype.ofFinite B
   rw [rightDegree]
   have heq : R.graph.leftNeighbors b = {R.choice b} := by
     ext a
     simp [leftNeighbors, eq_comm]
   simp [heq]
 
+omit [Fintype A] in
 @[simp] private theorem Roof.leftDegree_graph {G : BipartiteGraph A B}
     (R : G.Roof) (a : A) : R.graph.leftDegree a = R.load a := by
   classical
   simp [leftDegree, rightNeighbors, Roof.load, Roof.graph, eq_comm]
 
-@[simp] private theorem rightDegree_sdiff_roof {G : BipartiteGraph A B}
+omit [Fintype B] in
+@[simp] private theorem rightDegree_sdiff_roof [Finite B] {G : BipartiteGraph A B}
     (R : G.Roof) (b : B) : (G \ R.graph).rightDegree b = G.rightDegree b - 1 := by
   classical
+  let := Fintype.ofFinite B
   have heq :
       Finset.univ.filter (fun a => G.Adj a b ∧ ¬R.choice b = a) =
         (G.leftNeighbors b).erase (R.choice b) := by
@@ -223,15 +253,19 @@ private theorem Roof.graph_le {G : BipartiteGraph A B} (R : G.Roof) :
     ((mem_leftNeighbors G (R.choice b) b).mpr (R.adj_choice b))]
   congr 2
 
+omit [Fintype A] [Fintype B] in
 private theorem sdiff_roof_le {G : BipartiteGraph A B} (R : G.Roof) :
     G \ R.graph ≤ G := by
+  classical
   intro a b hab
   exact hab.1
 
-private theorem rightDegree_sup_roof_of_le_sdiff {G H : BipartiteGraph A B}
+omit [Fintype B] in
+private theorem rightDegree_sup_roof_of_le_sdiff [Finite B] {G H : BipartiteGraph A B}
     (R : G.Roof) (hH : H ≤ G \ R.graph) (b : B) :
     (R.graph ⊔ H).rightDegree b = H.rightDegree b + 1 := by
   classical
+  let := Fintype.ofFinite B
   have hnot : R.choice b ∉ H.leftNeighbors b := by
     intro hb
     have hh := hH ((mem_leftNeighbors H (R.choice b) b).mp hb)
@@ -244,10 +278,12 @@ private theorem rightDegree_sup_roof_of_le_sdiff {G H : BipartiteGraph A B}
   rw [heq, card_insert_of_notMem hnot]
   rfl
 
-private theorem leftDegree_sup_roof_le {G H : BipartiteGraph A B}
+omit [Fintype A] in
+private theorem leftDegree_sup_roof_le [Finite A] {G H : BipartiteGraph A B}
     (R : G.Roof) (a : A) :
     (R.graph ⊔ H).leftDegree a ≤ R.load a + H.leftDegree a := by
   classical
+  let := Fintype.ofFinite A
   rw [leftDegree]
   have hsub : (R.graph ⊔ H).rightNeighbors a ⊆
       R.graph.rightNeighbors a ∪ H.rightNeighbors a := by

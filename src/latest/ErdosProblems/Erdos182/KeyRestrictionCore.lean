@@ -44,22 +44,30 @@ def sampledRight (R : A → B → Prop) [DecidableRel R]
     (B₀ : Finset B) (S : Finset A) : Finset B :=
   B₀.filter fun v ↦ bipNeighborsB R v ⊆ S
 
+omit [Fintype B] [DecidableEq B] in
 @[simp] theorem mem_sampledRight {R : A → B → Prop} [DecidableRel R]
     {B₀ : Finset B} {S : Finset A} {v : B} :
     v ∈ sampledRight R B₀ S ↔ v ∈ B₀ ∧ bipNeighborsB R v ⊆ S := by
+  classical
   simp [sampledRight]
 
-theorem sampledRight_closed (R : A → B → Prop) [DecidableRel R]
+omit [DecidableEq B] [Fintype B] in
+theorem sampledRight_closed [Finite B] (R : A → B → Prop) [DecidableRel R]
     (B₀ : Finset B) (S : Finset A) :
     ∀ v ∈ sampledRight R B₀ S, ∀ u, R u v → u ∈ S := by
+  classical
+  let := Fintype.ofFinite B
   intro v hv u huv
   exact (mem_sampledRight.mp hv).2 (mem_bipNeighborsB.mpr huv)
 
-theorem sampledRight_restricted_degree
+omit [DecidableEq B] [Fintype B] in
+theorem sampledRight_restricted_degree [Finite B]
     (R : A → B → Prop) [DecidableRel R]
     (B₀ : Finset B) (S : Finset A) {v : B}
     (hv : v ∈ sampledRight R B₀ S) :
     (S.filter fun u ↦ R u v).card = bipDegreeB R v := by
+  classical
+  let := Fintype.ofFinite B
   unfold bipDegreeB
   congr 1
   ext u
@@ -69,9 +77,11 @@ theorem sampledRight_restricted_degree
   · intro huv
     exact ⟨(mem_sampledRight.mp hv).2 (mem_bipNeighborsB.mpr huv), huv⟩
 
+omit [Fintype A] in
 private theorem prod_union_eq_prod_mul_prod_sdiff (p : A → ℝ)
     (s t : Finset A) :
     (∏ x ∈ s ∪ t, p x) = (∏ x ∈ s, p x) * ∏ x ∈ (t \ s), p x := by
+  classical
   have hdis : Disjoint s (t \ s) := by
     exact Finset.disjoint_left.mpr fun a ha hat ↦ (Finset.mem_sdiff.mp hat).2 ha
   rw [← Finset.prod_union hdis]
@@ -80,6 +90,7 @@ private theorem prod_union_eq_prod_mul_prod_sdiff (p : A → ℝ)
   simp only [Finset.mem_union, Finset.mem_sdiff]
   tauto
 
+omit [Fintype B] [DecidableEq B] in
 /-- The unnormalised conditional first moment.  The event that `v` survives
 is left as an indicator; expanding the restricted degree and using
 independence gives exactly `q(v)` times the conditional product sum. -/
@@ -154,12 +165,15 @@ theorem subsetExpectation_card (p : A → ℝ) :
     subsetExpectation p (fun S ↦ (S.card : ℝ)) = ∑ u, p u := by
   simpa using subsetExpectation_sum_mem p (fun _ ↦ (1 : ℝ))
 
+omit [DecidableEq B] [Fintype B] in
 /-- Pointwise right-side double counting for the sampled relation. -/
-theorem bipRestrictedEdgeCount_sampledRight
+theorem bipRestrictedEdgeCount_sampledRight [Finite B]
     (R : A → B → Prop) [DecidableRel R]
     (B₀ : Finset B) (S : Finset A) :
     bipRestrictedEdgeCount R S (sampledRight R B₀ S) =
       ∑ v ∈ B₀, if bipNeighborsB R v ⊆ S then bipDegreeB R v else 0 := by
+  classical
+  let := Fintype.ofFinite B
   rw [bipRestrictedEdgeCount_eq_sum_right, sampledRight, Finset.sum_filter]
   apply Finset.sum_congr rfl
   intro v hv
@@ -168,14 +182,17 @@ theorem bipRestrictedEdgeCount_sampledRight
     exact sampledRight_restricted_degree R B₀ S (mem_sampledRight.mpr ⟨hv, hvs⟩)
   · simp [hvs]
 
+omit [DecidableEq B] [Fintype B] in
 /-- First moment of the number of sampled incidences. -/
-theorem subsetExpectation_sampled_edgeCount
+theorem subsetExpectation_sampled_edgeCount [Finite B]
     (R : A → B → Prop) [DecidableRel R]
     (p : A → ℝ) (B₀ : Finset B) :
     subsetExpectation p (fun S ↦
         (bipRestrictedEdgeCount R S (sampledRight R B₀ S) : ℝ)) =
       ∑ v ∈ B₀, (bipDegreeB R v : ℝ) *
         rightSurvivalProbability R p v := by
+  classical
+  let := Fintype.ofFinite B
   calc
     subsetExpectation p (fun S ↦
         (bipRestrictedEdgeCount R S (sampledRight R B₀ S) : ℝ)) =
@@ -221,17 +238,19 @@ noncomputable def subsetEventMass (p : A → ℝ) (E : Finset A → Prop)
     [DecidablePred E] : ℝ :=
   subsetExpectation p fun S ↦ if E S then 1 else 0
 
+omit [DecidableEq B] [Fintype B] in
 /-- Unnormalised Markov inequality for the bad-incidence event. -/
-theorem scale_mul_badIncidenceMass_le
+theorem scale_mul_badIncidenceMass_le [Finite B]
     (R : A → B → Prop) [DecidableRel R]
     (p : A → ℝ) (hp : ∀ u, 0 ≤ p u ∧ p u ≤ 1)
     (B₀ : Finset B) (u : A) (v : B) (z : ℝ) (cutoff : ℕ)
-    (hz : 0 ≤ z) (hcutoff : cutoff = ⌊z⌋₊) :
+    (_hz : 0 ≤ z) (hcutoff : cutoff = ⌊z⌋₊) :
     z * subsetEventMass p (fun S ↦ bipNeighborsB R v ⊆ S ∧
         cutoff < bipRestrictedDegreeA R (sampledRight R B₀ S) u) ≤
       rightSurvivalProbability R p v *
         conditionalDegreeFactor R p B₀ u v := by
   classical
+  let := Fintype.ofFinite B
   rw [subsetEventMass, ← subsetExpectation_const_mul]
   calc
     subsetExpectation p (fun S ↦ z *
@@ -253,12 +272,13 @@ theorem scale_mul_badIncidenceMass_le
             apply Nat.lt_of_floor_lt
             simpa [hcutoff] using hbad
           exact hzlt.le
-        · simp [hsurv, hbad, hz]
-      · simp [hsurv, hz]
+        · simp [hsurv, hbad]
+      · simp [hsurv]
     _ = _ := subsetExpectation_survival_mul_degree R p B₀ u v
 
+omit [DecidableEq B] [Fintype B] in
 /-- Pointwise expansion of the bad-edge count into bad incidences. -/
-theorem pruningBadEdgeCount_sampledRight
+theorem pruningBadEdgeCount_sampledRight [Finite B]
     (R : A → B → Prop) [DecidableRel R]
     (B₀ : Finset B) (S : Finset A) (cutoff : ℕ) :
     pruningBadEdgeCount R S (sampledRight R B₀ S) cutoff =
@@ -266,6 +286,8 @@ theorem pruningBadEdgeCount_sampledRight
         if bipNeighborsB R v ⊆ S ∧
             cutoff < bipRestrictedDegreeA R (sampledRight R B₀ S) u
           then 1 else 0 := by
+  classical
+  let := Fintype.ofFinite B
   unfold pruningBadEdgeCount
   rw [bipRestrictedEdgeCount_eq_sum_right, sampledRight, Finset.sum_filter]
   apply Finset.sum_congr rfl
@@ -297,8 +319,9 @@ theorem pruningBadEdgeCount_sampledRight
   · simp only [hv, false_and, if_false]
     simp
 
+omit [DecidableEq B] [Fintype B] in
 /-- First moment of the bad-edge count, expanded as event masses. -/
-theorem subsetExpectation_pruningBadEdgeCount
+theorem subsetExpectation_pruningBadEdgeCount [Finite B]
     (R : A → B → Prop) [DecidableRel R]
     (p : A → ℝ) (B₀ : Finset B) (cutoff : ℕ) :
     subsetExpectation p (fun S ↦
@@ -306,6 +329,8 @@ theorem subsetExpectation_pruningBadEdgeCount
       ∑ v ∈ B₀, ∑ u ∈ bipNeighborsB R v,
         subsetEventMass p (fun S ↦ bipNeighborsB R v ⊆ S ∧
           cutoff < bipRestrictedDegreeA R (sampledRight R B₀ S) u) := by
+  classical
+  let := Fintype.ofFinite B
   calc
     subsetExpectation p (fun S ↦
         (pruningBadEdgeCount R S (sampledRight R B₀ S) cutoff : ℝ)) =
@@ -333,10 +358,11 @@ section ScaleScore
 
 variable {A B : Type*} [Fintype A] [Fintype B] [DecidableEq A] [DecidableEq B]
 
+omit [DecidableEq B] [Fintype B] in
 /-- The score used in the paper is written with the (possibly larger)
 dyadic scale `M`, while the public density conclusion is written with the
 codegree bound `Q`. -/
-theorem isKeyRestriction_pruning_of_scale_score
+theorem isKeyRestriction_pruning_of_scale_score [Finite B]
     {R : A → B → Prop} [DecidableRel R]
     {x r Q cutoff : ℕ} {S : Finset A} {T : Finset B} {M : ℝ}
     (hx : 0 < x) (hr : 0 < r) (hM : (Q : ℝ) ≤ M)
@@ -349,6 +375,8 @@ theorem isKeyRestriction_pruning_of_scale_score
     (hcutoff : (cutoff : ℝ) ≤ 4 * (r : ℝ) * M) :
     IsKeyRestriction R r x Q (pruningSurvivingA R S T cutoff)
       (pruningSurvivingB R S T cutoff) := by
+  classical
+  let := Fintype.ofFinite B
   let A' := pruningSurvivingA R S T cutoff
   let B' := pruningSurvivingB R S T cutoff
   have hdenom : 0 < 10 * (x : ℝ) * (r : ℝ) := by positivity
@@ -374,7 +402,7 @@ theorem isKeyRestriction_pruning_of_scale_score
       simp [bipRestrictedEdgeCount]
     have : ¬ (0 : ℝ) < 0 := lt_irrefl 0
     apply this
-    simpa [A', B', he, hcardzero] using hscore
+    simp [A', B', he, hcardzero] at hscore
   refine ⟨hnonempty, pruning_closed R S T cutoff hclosed, ?_, ?_⟩
   · have hlt :
         (Q : ℝ) * (A'.card : ℝ) <
@@ -412,15 +440,17 @@ section SingletonRestriction
 
 variable {A B : Type*} [Fintype A] [Fintype B] [DecidableEq A] [DecidableEq B]
 
+omit [DecidableEq A] [DecidableEq B] [Fintype B] in
 /-- A single positive-degree right vertex already gives a key restriction
 when the requested density numerator is at most `10 x r`. -/
-theorem exists_keyRestriction_singleton
+theorem exists_keyRestriction_singleton [Finite B]
     (R : A → B → Prop) [DecidableRel R]
     (x r Q : ℕ) (hx : 0 < x) (hr : 0 < r)
     (hregular : ∀ v, bipDegreeB R v = r)
     (hB : Nonempty B) (hQ : Q ≤ 10 * x * r) :
     ∃ A' B', IsKeyRestriction R r x Q A' B' := by
   classical
+  let := Fintype.ofFinite B
   let v : B := Classical.choice hB
   let A' : Finset A := bipNeighborsB R v
   let B' : Finset B := {v}
@@ -468,7 +498,7 @@ variable {A B : Type*} [Fintype A] [Fintype B]
 /-- **Janzer--Sudakov Lemma 4.1, relation form.** -/
 theorem exists_keyRestriction_core
     (R : A → B → Prop) [DecidableRel R]
-    (r s t : ℕ) (hr : 0 < r) (hs : 0 < s) (hst : s < t)
+    (r s t : ℕ) (hr : 0 < r) (_hs : 0 < s) (hst : s < t)
     (hA : Nonempty A)
     (hregular : ∀ v, bipDegreeB R v = r)
     (hmax : ∀ u, bipDegreeA R u ≤ 2 ^ t)
@@ -480,7 +510,7 @@ theorem exists_keyRestriction_core
   classical
   let x := t - s
   let Q := 2 ^ (r * s - (r - 1) * t)
-  have hx : 0 < x := by simp [x, Nat.sub_pos_iff_lt, hst]
+  have hx : 0 < x := by simp [x, hst]
   have hAcard : 0 < Fintype.card A := Fintype.card_pos_iff.mpr hA
   have hedgepos : 0 < bipEdgeCount R := by
     exact (Nat.mul_pos (by positivity) hAcard).trans_le hdensity
@@ -648,7 +678,7 @@ theorem exists_keyRestriction_core
         (∑ u : A, p u) = (∑ u : A, (2 ^ alpha u : ℕ) : ℝ) /
             (2 : ℝ) ^ t := by
           simp only [p, dyadicProbability, Finset.sum_div, Nat.cast_pow,
-            Nat.cast_ofNat, Nat.cast_sum]
+            Nat.cast_ofNat]
         _ ≤ (4 * (bipEdgeCount R : ℝ)) / (2 : ℝ) ^ t := by
           exact div_le_div_of_nonneg_right (by exact_mod_cast hsumPow) hden.le
     have hMq : M / (2 : ℝ) ^ t = q := by

@@ -85,7 +85,7 @@ theorem weightedProbability_or_le (weight : Ω → ℝ≥0) (P Q : Ω → Prop) 
   by_cases hP : P ω <;> by_cases hQ : Q ω <;> simp [hP, hQ]
 
 /-- Union bound over a finite family of events. -/
-theorem weightedProbability_exists_le {I : Type*} [DecidableEq I]
+theorem weightedProbability_exists_le {I : Type*}
     (weight : Ω → ℝ≥0) (S : Finset I) (P : I → Ω → Prop) :
     weightedProbability weight (fun ω ↦ ∃ i ∈ S, P i ω) ≤
       ∑ i ∈ S, weightedProbability weight (P i) := by

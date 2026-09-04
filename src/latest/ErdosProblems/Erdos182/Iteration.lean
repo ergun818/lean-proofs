@@ -286,6 +286,7 @@ variable {A B : Type*} [Fintype A] [Fintype B]
 noncomputable local instance graphAdjDecidable (G : BipartiteGraph A B) : DecidableRel G.Adj :=
   fun _ _ ↦ Classical.propDecidable _
 
+omit [Fintype A] in
 /-- The relation-level and graph-level left degrees agree literally. -/
 @[simp] theorem bipDegreeA_adj (G : BipartiteGraph A B) (a : A) :
     bipDegreeA G.Adj a = G.leftDegree a := by
@@ -293,6 +294,7 @@ noncomputable local instance graphAdjDecidable (G : BipartiteGraph A B) : Decida
   simp only [bipDegreeA, bipNeighborsA, BipartiteGraph.leftDegree,
     BipartiteGraph.rightNeighbors]
 
+omit [Fintype B] in
 /-- The relation-level and graph-level right degrees agree literally. -/
 @[simp] theorem bipDegreeB_adj (G : BipartiteGraph A B) (b : B) :
     bipDegreeB G.Adj b = G.rightDegree b := by
@@ -312,18 +314,24 @@ def bipartiteRestriction (R : A → B → Prop) (A' : Finset A) (B' : Finset B) 
     BipartiteGraph A B :=
   ⟨fun a b ↦ R a b ∧ a ∈ A' ∧ b ∈ B'⟩
 
+omit [Fintype A] [Fintype B] in
 @[simp] theorem bipartiteRestriction_adj (R : A → B → Prop)
     (A' : Finset A) (B' : Finset B) (a : A) (b : B) :
     (bipartiteRestriction R A' B').Adj a b ↔
-      R a b ∧ a ∈ A' ∧ b ∈ B' :=
+      R a b ∧ a ∈ A' ∧ b ∈ B' := by
+  classical
+  exact
   Iff.rfl
 
+omit [Fintype A] [Fintype B] in
 theorem bipartiteRestriction_supportedOn (R : A → B → Prop)
     (A' : Finset A) (B' : Finset B) :
     (bipartiteRestriction R A' B').SupportedOn A' B' := by
+  classical
   intro a b hab
   exact ⟨hab.2.1, hab.2.2⟩
 
+omit [Fintype A] in
 theorem bipartiteRestriction_leftDegree (R : A → B → Prop) [DecidableRel R]
     (A' : Finset A) (B' : Finset B) (a : A) (ha : a ∈ A') :
     (bipartiteRestriction R A' B').leftDegree a =
@@ -335,8 +343,9 @@ theorem bipartiteRestriction_leftDegree (R : A → B → Prop) [DecidableRel R]
   ext b
   simp [bipartiteRestriction, ha, and_comm]
 
+omit [Fintype A] in
 theorem bipartiteRestriction_leftDegree_of_not_mem
-    (R : A → B → Prop) [DecidableRel R]
+    (R : A → B → Prop)
     (A' : Finset A) (B' : Finset B) (a : A) (ha : a ∉ A') :
     (bipartiteRestriction R A' B').leftDegree a = 0 := by
   classical
@@ -357,6 +366,7 @@ theorem bipartiteRestriction_edgeCount (R : A → B → Prop) [DecidableRel R]
   · intro a _ ha
     exact bipartiteRestriction_leftDegree_of_not_mem R A' B' a ha
 
+omit [Fintype B] in
 /-- If restriction does not remove any neighbor of a displayed right
 vertex, its right degree is unchanged. -/
 theorem bipartiteRestriction_rightDegree
@@ -439,7 +449,7 @@ def keyRestrictionNextState (r gap e a : ℕ) : DyadicState where
 /-- The rounded maximum level is at most the rounded density level plus the
 binary logarithm of the loss factor and one rounding bit. -/
 theorem keyRestrictionNextState_gap_le {r gap e a : ℕ}
-    (hr : 0 < r) (hgap : 0 < gap) (hd : 0 < e / a) :
+    (hr : 0 < r) (hgap : 0 < gap) (_hd : 0 < e / a) :
     (keyRestrictionNextState r gap e a).gap ≤
       Nat.clog 2 (40 * gap * r ^ 2) + 1 := by
   let d := e / a
@@ -1051,7 +1061,7 @@ theorem js_lemma_5_2_active_almostRegular
     norm_num only [Nat.cast_ofNat, Nat.cast_one] at hexp
     exact hexp
   have hshift : 0 ≤ x.invariant r' - (r' : ℤ) :=
-    (Int.ofNat_zero_le _).trans hshiftBound
+    (Int.natCast_nonneg _).trans hshiftBound
   obtain ⟨H, hHG, hHalmost, hHavg⟩ :=
     js_lemma_5_1_active_almostRegular G A₀ B₀ r' cutoff x hr' hx hshift hb
       (by simpa [r'] using hlog)

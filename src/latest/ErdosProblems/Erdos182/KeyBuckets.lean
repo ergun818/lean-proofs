@@ -79,22 +79,30 @@ variable {A B : Type*} [Fintype A] [Fintype B]
 def bucketIndex (R : A → B → Prop) [DecidableRel R] (s : ℕ) (u : A) : ℕ :=
   dyadicBucket s (bipDegreeA R u)
 
+omit [Fintype A] in
 theorem bucketIndex_lower (R : A → B → Prop) [DecidableRel R] (s : ℕ) (u : A) :
     s + 1 ≤ bucketIndex R s u := by
+  classical
   exact le_dyadicBucket _ _
 
+omit [Fintype A] in
 theorem bucketIndex_upper (R : A → B → Prop) [DecidableRel R]
     {s t : ℕ} (hst : s < t) (hdegree : ∀ u, bipDegreeA R u ≤ 2 ^ t) (u : A) :
     bucketIndex R s u ≤ t := by
+  classical
   exact dyadicBucket_le hst (hdegree u)
 
+omit [Fintype A] in
 theorem degree_le_two_pow_bucketIndex (R : A → B → Prop) [DecidableRel R]
     (s : ℕ) (u : A) : bipDegreeA R u ≤ 2 ^ bucketIndex R s u := by
+  classical
   exact le_two_pow_dyadicBucket _ _
 
+omit [Fintype A] in
 theorem two_pow_bucketIndex_le (R : A → B → Prop) [DecidableRel R]
     (s : ℕ) (u : A) :
     2 ^ bucketIndex R s u ≤ 2 ^ (s + 1) + 2 * bipDegreeA R u := by
+  classical
   exact two_pow_dyadicBucket_le _ _
 
 /-- Sum of bucket indices over the neighbors of a `B`-vertex. -/
@@ -133,10 +141,12 @@ def bucketFiber (R : A → B → Prop) [DecidableRel R] (s γ : ℕ) : Finset B 
   simp [bucketFiber]
 
 private theorem exists_large_fiber
-    {X Y : Type*} [Fintype X] [DecidableEq X] [DecidableEq Y]
+    {X Y : Type*} [Finite X] [DecidableEq Y]
     (S : Finset X) (T : Finset Y) (f : X → Y)
     (hT : T.Nonempty) (hmaps : ∀ x ∈ S, f x ∈ T) :
     ∃ y ∈ T, S.card ≤ T.card * (S.filter fun x ↦ f x = y).card := by
+  classical
+  let := Fintype.ofFinite X
   by_contra! h
   have hs :
       ∑ y ∈ T, T.card * (S.filter fun x ↦ f x = y).card <

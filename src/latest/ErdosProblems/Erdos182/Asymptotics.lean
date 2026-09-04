@@ -36,7 +36,6 @@ open Filter Asymptotics Topology
 
 namespace Erdos182
 
-open scoped Classical
 
 /-- The natural twice-iterated logarithm of a natural number. -/
 noncomputable def logLog (n : ℕ) : ℝ :=
@@ -141,6 +140,7 @@ lemma regularExtremalNumber_isTheta_logLog_of_bounds (k : ℕ) {c C : ℝ}
   exact (regularExtremalNumber_isTheta_of_bounds k hc hC hbounds).trans
     ((isTheta_refl (fun n : ℕ ↦ (n : ℝ)) atTop).mul logLog2_isTheta_logLog)
 
+open Classical in
 /-- Translate graph-level construction and forcing inputs into bounds for the
 finite maximum. -/
 lemma regularExtremalNumber_bounds_of_forcing_and_construction
@@ -164,6 +164,7 @@ lemma regularExtremalNumber_bounds_of_forcing_and_construction
     exact le_of_not_ge fun hthreshold ↦
       regularExtremalGraph_isRegularSubgraphFree n k hk (hforce _ hthreshold)
 
+open Classical in
 /-- Graph-level forcing and construction theorems immediately give the
 fixed-degree Theta statement. -/
 lemma regularExtremalNumber_isTheta_of_forcing_and_construction
@@ -318,7 +319,7 @@ lemma regularExtremalNumber_eventually_le_rpow_one_add_of_bounds
     ∀ᶠ n : ℕ in atTop,
       (regularExtremalNumber n k : ℝ) ≤ (n : ℝ) ^ (1 + ε) := by
   apply regularExtremalNumber_le_rpow_eventually_of_bounds k hC
-  exact hbounds.mono fun n hn ↦ hn.2
-  exact hε
+  · exact hbounds.mono fun n hn ↦ hn.2
+  · exact hε
 
 end Erdos182

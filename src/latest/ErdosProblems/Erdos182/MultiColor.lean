@@ -10,7 +10,6 @@ of Kőnig's line-colouring theorem: a finite `D`-regular bipartite multigraph
 decomposes into `D` perfect matchings.
 -/
 
-open scoped Classical
 
 namespace Erdos182
 
@@ -25,8 +24,10 @@ namespace BipartiteMultigraph
 variable {L R E : Type*} [Fintype L] [Fintype R] [Fintype E]
 
 /-- Every vertex on either side has exactly `D` incident labelled edges. -/
-def IsRegular (G : BipartiteMultigraph L R E) (D : ℕ) : Prop :=
-  (∀ l, Fintype.card {e : E // G.left e = l} = D) ∧
+def IsRegular (G : BipartiteMultigraph L R E) (D : ℕ) : Prop := by
+  classical
+  exact
+    (∀ l, Fintype.card {e : E // G.left e = l} = D) ∧
     ∀ r, Fintype.card {e : E // G.right e = r} = D
 
 /-- A proper `D`-edge-colouring, stated in the form needed by its consumers:
@@ -38,6 +39,7 @@ structure ProperColoring (G : BipartiteMultigraph L R E) (D : ℕ) where
   right_injective : ∀ r, Function.Injective
     (fun e : {e : E // G.right e = r} ↦ color e.1)
 
+omit [Fintype R] in
 private lemma card_edges_eq_card_left_mul (G : BipartiteMultigraph L R E)
     {D : ℕ} (hreg : G.IsRegular D) : Fintype.card E = Fintype.card L * D := by
   classical
@@ -55,6 +57,7 @@ private lemma card_edges_eq_card_left_mul (G : BipartiteMultigraph L R E)
       exact hreg.1 l
     _ = Fintype.card L * D := by simp
 
+omit [Fintype L] in
 private lemma card_edges_eq_card_right_mul (G : BipartiteMultigraph L R E)
     {D : ℕ} (hreg : G.IsRegular D) : Fintype.card E = Fintype.card R * D := by
   classical
@@ -87,15 +90,19 @@ structure LeftPerfectMatching (G : BipartiteMultigraph L R E) where
   left_edge : ∀ l, G.left (edge l) = l
   right_injective : Function.Injective (G.right ∘ edge)
 
+omit [Fintype L] [Fintype R] [Fintype E] in
 theorem LeftPerfectMatching.edge_injective {G : BipartiteMultigraph L R E}
     (M : G.LeftPerfectMatching) : Function.Injective M.edge := by
+  classical
   intro l₁ l₂ h
   rw [← M.left_edge l₁, ← M.left_edge l₂, h]
 
-private theorem exists_leftPerfectMatching (G : BipartiteMultigraph L R E)
+omit [Fintype L] [Fintype R] in
+private theorem exists_leftPerfectMatching [Finite R] (G : BipartiteMultigraph L R E)
     {D : ℕ} (hD : 0 < D) (hreg : G.IsRegular D) :
     Nonempty G.LeftPerfectMatching := by
   classical
+  let := Fintype.ofFinite R
   let rel : L → R → Prop := fun l r ↦ ∃ e, G.left e = l ∧ G.right e = r
   have hhall : ∀ A : Finset L,
       A.card ≤ ({r | ∃ l ∈ A, rel l r} : Finset R).card := by
@@ -158,7 +165,7 @@ private theorem exists_leftPerfectMatching (G : BipartiteMultigraph L R E)
     exact h
 
 private def remainingFiberEquiv {X Y : Type*} (f : E → X) (m : Y → E)
-    (x : X) (y₀ : Y) (he₀ : f (m y₀) = x)
+    (x : X) (y₀ : Y) (_he₀ : f (m y₀) = x)
     (hunique : ∀ y, f (m y) = x → m y = m y₀) :
     {e : {e : E // e ∉ Set.range m} // f e.1 = x} ≃
       {e : {e : E // f e = x} // e.1 ≠ m y₀} where
@@ -170,6 +177,7 @@ private def remainingFiberEquiv {X Y : Type*} (f : E → X) (m : Y → E)
   left_inv e := by rfl
   right_inv e := by rfl
 
+open Classical in
 private theorem card_remaining_fiber {X Y : Type*} [Fintype Y]
     (f : E → X) (m : Y → E) (x : X) (y₀ : Y) (he₀ : f (m y₀) = x)
     (hunique : ∀ y, f (m y) = x → m y = m y₀) {D : ℕ}
@@ -198,10 +206,13 @@ private def remaining (G : BipartiteMultigraph L R E)
   left e := G.left e.1
   right e := G.right e.1
 
-private theorem remaining_isRegular (G : BipartiteMultigraph L R E) {D : ℕ}
+open Classical in
+omit [Fintype R] in
+private theorem remaining_isRegular [Finite R] (G : BipartiteMultigraph L R E) {D : ℕ}
     (hreg : G.IsRegular (D + 1)) (M : G.LeftPerfectMatching) :
     (remaining G M).IsRegular D := by
   classical
+  let := Fintype.ofFinite R
   constructor
   · intro l
     change Fintype.card
@@ -225,11 +236,15 @@ private theorem remaining_isRegular (G : BipartiteMultigraph L R E) {D : ℕ}
     rw [← Nat.card_eq_fintype_card] at hrem ⊢
     exact hrem
 
+omit [Fintype L] [Fintype R] in
 /-- Kőnig's line-colouring theorem for finite regular bipartite
 multigraphs: the labelled edges of a `D`-regular graph receive `D` colours,
 with no repeated colour at either endpoint. -/
-theorem exists_properColoring (G : BipartiteMultigraph L R E) {D : ℕ}
+theorem exists_properColoring [Finite L] [Finite R] (G : BipartiteMultigraph L R E) {D : ℕ}
     (hreg : G.IsRegular D) : Nonempty (G.ProperColoring D) := by
+  classical
+  let := Fintype.ofFinite L
+  let := Fintype.ofFinite R
   induction D generalizing E with
   | zero =>
       have hE : Fintype.card E = 0 := by
