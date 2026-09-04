@@ -105,7 +105,7 @@ lemma exp_neg_log_div_four_half {q : ℝ} (hq : 0 < q) :
       rw [Real.exp_log (by norm_num), Real.rpow_def_of_pos hq]
       ring_nf
 
-lemma weighted_exp_log_integral_le {ι : Type*} [DecidableEq ι]
+lemma weighted_exp_log_integral_le {ι : Type*}
     (s : Finset ι) (x m : ι → ℝ)
     (hx : ∀ i ∈ s, |x i| < 5 / 2) (hm : ∀ i ∈ s, 0 ≤ m i)
     (hW : 0 < ∑ i ∈ s, m i) :
@@ -188,7 +188,7 @@ lemma weighted_exp_log_integral_le {ι : Type*} [DecidableEq ι]
     exact hα
   have hHint : (∫ α in (-(1 / 2))..(1 / 2), H α) ≤ 16 := by
     dsimp [H]
-    rw [intervalIntegral.integral_finset_sum]
+    rw [intervalIntegral.integral_finsetSum]
     · calc
         (∑ i ∈ s, ∫ α in (-(1 / 2))..(1 / 2),
             p i * (2 * |α - x i| ^ (-(1 / 2 : ℝ)))) =
@@ -210,7 +210,7 @@ lemma weighted_exp_log_integral_le {ι : Type*} [DecidableEq ι]
         (p i)
   refine ⟨hGInt, (intervalIntegral.integral_mono_ae (by norm_num) hGInt hHInt hJensen).trans hHint⟩
 
-lemma measure_bad_weighted_log_le {ι : Type*} [DecidableEq ι]
+lemma measure_bad_weighted_log_le {ι : Type*}
     (s : Finset ι) (x m : ι → ℝ)
     (hx : ∀ i ∈ s, |x i| < 5 / 2) (hm : ∀ i ∈ s, 0 ≤ m i)
     (hW : 0 < ∑ i ∈ s, m i) (β : ℝ) :
@@ -258,7 +258,7 @@ lemma measure_bad_weighted_log_le {ι : Type*} [DecidableEq ι]
   exact (le_div_iff₀ hthreshold).2 (by simpa [mul_comm] using hbadMeasure)
 
 lemma exists_simultaneous_log_shift {κ ι : Type*}
-    [DecidableEq κ] [DecidableEq ι] (J : Finset κ) (s : κ → Finset ι)
+    (J : Finset κ) (s : κ → Finset ι)
     (x m : κ → ι → ℝ)
     (hx : ∀ j ∈ J, ∀ i ∈ s j, |x j i| < 5 / 2)
     (hm : ∀ j ∈ J, ∀ i ∈ s j, 0 ≤ m j i)
@@ -312,7 +312,7 @@ lemma exists_simultaneous_log_shift {κ ι : Type*}
       _ < 1 := hcardBound
   have hexists : ∃ α : ℝ, α ∈ I ∧ α ∉ forbidden := by
     by_contra h
-    push_neg at h
+    push Not at h
     have hsub : I ⊆ forbidden := fun α hα => h α hα
     have hmeasure := measureReal_mono (μ := μ) hsub
     have hI : μ.real I = 1 := by

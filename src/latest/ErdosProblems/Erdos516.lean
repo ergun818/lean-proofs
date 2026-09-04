@@ -121,7 +121,8 @@ private lemma minModulus_le_maxModulus {f : ℂ → ℂ} {r c : ℝ} {a : ℕ} (
   let := circle_nonempty hr
   let z : {z : ℂ // ‖z‖ = r} := ⟨(r : ℂ), by simp [Real.norm_eq_abs, abs_of_nonneg hr]⟩
   calc
-    minModulus r f ≤ ‖f z‖ := ciInf_le (by exact ⟨0, by rintro _ ⟨w, rfl⟩; exact norm_nonneg (f w)⟩) z
+    minModulus r f ≤ ‖f z‖ :=
+      ciInf_le (by exact ⟨0, by rintro _ ⟨w, rfl⟩; exact norm_nonneg (f w)⟩) z
     _ ≤ maxModulus r f := le_ciSup (maxModulus_bddAbove hbound) z
 
 private lemma ratio_le_one_of_one_lt_maxModulus {f : ℂ → ℂ} {r c : ℝ} {a : ℕ} (hr : 0 ≤ r)
@@ -768,7 +769,7 @@ private lemma finiteGapPolynomial_eval {n : ℕ → ℕ} {c : ℕ → ℂ}
     {s : Finset ℕ} (z : ℂ) :
     (finiteGapPolynomial n c s).eval z = ∑ k ∈ s, c k * z ^ n k := by
   classical
-  simp [finiteGapPolynomial, Polynomial.eval_finset_sum, Polynomial.eval_monomial]
+  simp [finiteGapPolynomial, Polynomial.eval_finsetSum, Polynomial.eval_monomial]
 
 /-- Some point of the unit circle evaluates a complex polynomial at least as
 large as any prescribed coefficient.  This is Cauchy's coefficient estimate,
@@ -804,7 +805,7 @@ private lemma exists_unit_norm_eval_ge_coeff (P : ℂ[X]) (d : ℕ) :
     rw [tsum_eq_sum (s := P.support) (fun k hk ↦ by
       have hcoeff : P.coeff k = 0 := by simpa [Polynomial.mem_support_iff] using hk
       rw [hcoeff, zero_mul])]
-    simpa [F, Polynomial.eval_eq_sum, Polynomial.sum_def]
+    simp [F, Polynomial.eval_eq_sum, Polynomial.sum_def]
   have hcoeff := gapCoefficient_eq_iteratedDeriv_div_factorial
     (n := fun k : ℕ ↦ k) (a := fun k ↦ P.coeff k) strictMono_id hsum hdiff d
   refine ⟨w, hwnorm, ?_⟩
@@ -831,8 +832,7 @@ private lemma turanRootPolynomial_monic {K : ℕ} (w : Fin K → ℂ) :
 private lemma turanRootPolynomial_natDegree {K : ℕ} (w : Fin K → ℂ) :
     (turanRootPolynomial w).natDegree = K := by
   rw [turanRootPolynomial]
-  simpa using Polynomial.natDegree_finsetProd_X_sub_C_eq_card
-    (s := Finset.univ) w
+  simp
 
 private lemma turanRootPolynomial_eval_root {K : ℕ} (w : Fin K → ℂ) (j : Fin K) :
     (turanRootPolynomial w).eval (w j) = 0 := by
@@ -1485,7 +1485,8 @@ private lemma log_turanFactor_le {K M : ℕ} (hK : 0 < K) {d : ℝ} (hd : 0 < d)
     have h := Real.log_le_sub_one_of_pos htwo
     linarith
   have hM' : (M : ℝ) ≤ (64 * Real.pi / d) * (K : ℝ) + 1 := by
-    convert hM using 1 <;> ring
+    convert hM using 1
+    ring
   have hlogEq : Real.log (turanFactor K M) =
       Real.log (K : ℝ) + Real.log 2 +
         ((M + K : ℕ) : ℝ) * Real.log 2 +
@@ -1962,7 +1963,9 @@ private lemma exists_local_minimum_estimate {p : ℂ → ℂ} {M : ℝ}
   have hbzero : (∑ᶠ i : ℂ, ((0 : Function.locallyFinsuppWithin
       (Metric.sphere (0 : ℂ) R) ℤ) i : ℝ) * Real.log ‖z - i‖) = 0 := by simp
   rw [hbzero, sub_zero,
-    (hpR z (by rw [Metric.mem_closedBall, dist_zero_right]; linarith)).meromorphicTrailingCoeffAt_of_ne_zero hpz]
+    (hpR z (by
+      rw [Metric.mem_closedBall, dist_zero_right]
+      linarith)).meromorphicTrailingCoeffAt_of_ne_zero hpz]
     at heq
   have hsum_eq : (∑ᶠ u, (MeromorphicOn.divisor p (Metric.ball 0 R) u : ℝ) *
       Real.log ‖Complex.canonicalFactor R u z‖) =
@@ -1990,7 +1993,9 @@ private lemma exists_local_minimum_estimate {p : ℂ → ℂ} {M : ℝ}
       subst u
       have horder : meromorphicOrderAt p z = 0 :=
         (MeromorphicNFAt.meromorphicOrderAt_eq_zero_iff
-          (hpR z (by rw [Metric.mem_closedBall, dist_zero_right]; linarith)).meromorphicNFAt).mpr hpz
+          (hpR z (by
+            rw [Metric.mem_closedBall, dist_zero_right]
+            linarith)).meromorphicNFAt).mpr hpz
       apply hdu
       rw [(hmR.mono_set Metric.ball_subset_closedBall).divisor_apply huball, horder]
       rfl
@@ -2113,7 +2118,7 @@ private lemma local_zero_count_le {p : ℂ → ℂ} {M R : ℝ} {t : Finset ℂ}
 select one horizontal shift that works for every disk. -/
 private lemma exists_common_scaled_disk_shift {κ : Type*} [Fintype κ]
     (F : ℂ → ℂ) (hF : Differentiable ℂ F) (center : κ → ℂ)
-    {d M C β : ℝ} (hd : 0 < d) (hM : 1 ≤ M) (hC : 0 < C) (hβ : 0 ≤ β)
+    {d M C β : ℝ} (_hd : 0 < d) (hM : 1 ≤ M) (hC : 0 < C) (hβ : 0 ≤ β)
     (hboundary : ∀ q : κ, ∀ z : ℂ, ‖z‖ = 3 → ‖F (center q + d * z)‖ ≤ M)
     (hcenter : ∀ q : κ, C ≤ Real.log ‖F (center q)‖)
     (hcard : 16 * (Fintype.card κ : ℝ) < Real.exp (β / 2)) :
@@ -2375,9 +2380,7 @@ private lemma integral_log_abs_sub_lower {x : ℝ} (hx : |x| < 5 / 2) :
             intro α hα
             exact Real.log_abs (α - x)
       _ = ∫ y in a..b, Real.log y := by
-        simpa [a, b] using
-          (intervalIntegral.integral_comp_sub_right (fun y : ℝ ↦ Real.log y) x
-            (a := -(1 / 2 : ℝ)) (b := (1 / 2 : ℝ)))
+        simp [a, b]
       _ = b * Real.log b - a * Real.log a - b + a := by
         exact integral_log
   rw [heq]
@@ -2389,7 +2392,7 @@ private lemma integral_log_abs_sub_lower {x : ℝ} (hx : |x| < 5 / 2) :
 /-- Logarithmic averaging for a finite weighted family of real points.  The
 selected point lies in the unit interval, avoids every point with positive
 weight, and loses at most a fixed constant times total weight. -/
-private lemma exists_common_log_shift { ι : Type* } [DecidableEq ι]
+private lemma exists_common_log_shift {ι : Type*}
     (s : Finset ι) (x m : ι → ℝ)
     (hx : ∀ i ∈ s, |x i| < 5 / 2) (hm : ∀ i ∈ s, 0 ≤ m i) :
     ∃ α : ℝ, -(1 / 2 : ℝ) < α ∧ α ≤ 1 / 2 ∧
@@ -2478,7 +2481,7 @@ private lemma exists_common_log_shift { ι : Type* } [DecidableEq ι]
   have hsumIntegral : (∫ β in left..right, G β) =
       ∑ i ∈ s, m i * (∫ β in left..right, Real.log |β - x i|) := by
     dsimp [G]
-    rw [intervalIntegral.integral_finset_sum]
+    rw [intervalIntegral.integral_finsetSum]
     · apply Finset.sum_congr rfl
       intro i hi
       rw [intervalIntegral.integral_const_mul]
@@ -2507,8 +2510,9 @@ private lemma exists_common_log_shift { ι : Type* } [DecidableEq ι]
     exact ⟨i, Finset.mem_filter.2 ⟨hi, hmi⟩, hEq.symm⟩
   have hGalpha : -(14 : ℝ) * ∑ i ∈ s, m i ≤ G α := by
     linarith [hIntegralLower, hαavg]
-  have hlog4 : Real.log 4 ≤ 3 :=
-    by convert Real.log_le_sub_one_of_pos (x := (4 : ℝ)) (by norm_num) using 1 <;> norm_num
+  have hlog4 : Real.log 4 ≤ 3 := by
+    convert Real.log_le_sub_one_of_pos (x := (4 : ℝ)) (by norm_num) using 1
+    norm_num
   have hrewrite : (∑ i ∈ s, m i * Real.log (|α - x i| / 4)) =
       G α - Real.log 4 * ∑ i ∈ s, m i := by
     dsimp [G]
@@ -2567,7 +2571,7 @@ private lemma frequently_increment_le_of_eventually_le_affine (u : ℝ → ℝ)
               (u T + (q : ℝ) * c) + c := by push_cast; ring
           _ ≤ u (T + (q : ℝ) * h) + c := by linarith
           _ ≤ u ((T + (q : ℝ) * h) + h) := hstep.le
-          _ = u (T + ((q + 1 : ℕ) : ℝ) * h) := by push_cast; congr 1 <;> ring
+          _ = u (T + ((q + 1 : ℕ) : ℝ) * h) := by push_cast; congr 1; ring
   have hgap : 0 < c - A * h := sub_pos.mpr hc
   obtain ⟨q : ℕ, hq⟩ := exists_nat_gt ((A * T + B - u T) / (c - A * h))
   have hx : T ≤ T + (q : ℝ) * h := by
@@ -2684,7 +2688,7 @@ private lemma exponentCanonicalProduct_eq_factor_mul_away {n : ℕ → ℕ}
       (fun k : ℕ ↦ 1 - ζ ^ 2 / (n (k + 1) : ℂ) ^ 2) j 1) := by
     convert exponentCanonicalProductAway_multipliable hn j ζ using 1
     funext k
-    by_cases hkj : k = j <;> simp [Function.update, hkj] <;> ring
+    by_cases hkj : k = j <;> simp [Function.update, hkj, sub_eq_add_neg]
   calc
     ∏' k : ℕ, (1 - ζ ^ 2 / (n (k + 1) : ℂ) ^ 2) =
         (1 - ζ ^ 2 / (n (j + 1) : ℂ) ^ 2) *
@@ -2697,7 +2701,7 @@ private lemma exponentCanonicalProduct_eq_factor_mul_away {n : ℕ → ℕ}
       rw [exponentCanonicalProductAway]
       apply tprod_congr
       intro k
-      by_cases hkj : k = j <;> simp [hkj] <;> ring
+      by_cases hkj : k = j <;> simp [hkj, sub_eq_add_neg]
 
 private lemma exponentCanonicalProductAway_hasProdLocallyUniformly {n : ℕ → ℕ}
     (hn : StrictMono n) (j : ℕ) : HasProdLocallyUniformlyOn
@@ -2722,9 +2726,9 @@ private lemma exponentCanonicalProductAway_hasProdLocallyUniformly {n : ℕ → 
       gcongr
   exact hu.hasProdUniformlyOn_nat_one_add hK hmajor (fun k ↦ by
     by_cases hkj : k = j
-    · simp [hkj]
+    · simp only [if_pos hkj]
       fun_prop
-    · simp [hkj]
+    · simp only [if_neg hkj]
       fun_prop)
 
 private lemma exponentCanonicalProductAway_differentiable {n : ℕ → ℕ}
@@ -2773,8 +2777,7 @@ private lemma deriv_exponentCanonicalProduct_at_exponent {n : ℕ → ℕ}
     calc
       deriv (fun ζ : ℂ ↦ 1 - ζ ^ 2 / m ^ 2) m =
           0 - (2 * m) / m ^ 2 := by
-        simpa using ((hasDerivAt_const (x := m) (c := (1 : ℂ))).sub
-          ((hasDerivAt_pow 2 m).div_const (m ^ 2))).deriv
+        simp
       _ = -2 / m := by
         field_simp
         ring
@@ -2843,7 +2846,7 @@ private lemma integerTailProduct_multipliable (m : ℕ) :
       ‖-((m : ℝ) ^ 2 / (m + d + 1 : ℝ) ^ 2)‖) := by
     have hmul := hshift.mul_left ‖(m : ℝ) ^ 2‖
     refine hmul.congr fun d ↦ ?_
-    simp [abs_of_nonneg, div_eq_mul_inv]
+    simp [div_eq_mul_inv]
   simpa only [sub_eq_add_neg] using multipliable_one_add_of_summable hnorm
 
 /-- The finite integer-tail product telescopes to a quotient of factorials. -/
@@ -2856,7 +2859,7 @@ private lemma integerTailPartial_formula (m N : ℕ) :
   induction N with
   | zero =>
       simp only [Finset.range_zero, Finset.prod_empty, Nat.factorial_zero, Nat.cast_one,
-        Nat.zero_add, one_mul]
+        one_mul]
       field_simp
       ring_nf
   | succ N ih =>
@@ -3004,7 +3007,8 @@ private lemma canonicalFactor_norm_lower_of_gap {m q d : ℕ} (hq : 0 < q)
       (d : ℝ) / (m : ℝ) ≤ ((m - q : ℕ) : ℝ) / (m : ℝ) := by
         gcongr
       _ ≤ ((m - q : ℕ) : ℝ) / (q : ℝ) := by
-        exact div_le_div_of_nonneg_left (by positivity) (by exact_mod_cast hq) (by exact_mod_cast hqm)
+        exact div_le_div_of_nonneg_left (by positivity)
+          (by exact_mod_cast hq) (by exact_mod_cast hqm)
       _ = (m : ℝ) / (q : ℝ) - 1 := by
         rw [Nat.cast_sub hqm]
         field_simp
@@ -3016,7 +3020,7 @@ private lemma canonicalFactor_norm_lower_of_gap {m q d : ℕ} (hq : 0 < q)
   calc
     (d : ℝ) / (m : ℝ) ≤ (m : ℝ) ^ 2 / (q : ℝ) ^ 2 - 1 := hreal
     _ = ‖(m : ℂ) ^ 2 / (q : ℂ) ^ 2‖ - ‖(1 : ℂ)‖ := by
-      simp [norm_div, norm_pow]
+      simp [norm_pow]
     _ ≤ ‖(m : ℂ) ^ 2 / (q : ℂ) ^ 2 - 1‖ := hnorm
     _ = ‖1 - (m : ℂ) ^ 2 / (q : ℂ) ^ 2‖ := by
       rw [← norm_neg]
@@ -3060,7 +3064,7 @@ private lemma exponentCanonicalProduct_head_lower_bound {n : ℕ → ℕ}
       (j.factorial : ℝ) / (m : ℝ) ^ j =
           ∏ k ∈ Finset.range j, (((j - k : ℕ) : ℝ) / (m : ℝ)) := by
         rw [Finset.prod_div_distrib]
-        simp only [Finset.card_range, Finset.prod_const, nsmul_eq_mul]
+        simp only [Finset.card_range, Finset.prod_const]
         congr 1
         exact_mod_cast hnumNat.symm
       _ ≤ ∏ k ∈ Finset.range j,
@@ -3305,7 +3309,7 @@ private lemma deriv_exponentCanonicalProduct_at_exponent_lower {n : ℕ → ℕ}
   rw [deriv_exponentCanonicalProduct_at_exponent hn j, norm_mul]
   have hfactor : ‖(-2 : ℂ) / (n (j + 1) : ℂ)‖ =
       2 / (n (j + 1) : ℝ) := by
-    simp [norm_div, Real.norm_of_nonneg]
+    simp
   rw [hfactor]
   exact mul_le_mul_of_nonneg_left haway (by positivity)
 
@@ -3384,7 +3388,7 @@ private lemma standardSquareProduct_multipliable (x : ℝ) :
         (summable_nat_add_iff 1).2 (Real.summable_one_div_nat_pow.2 one_lt_two)
     have hmul := hbase.mul_left ‖x ^ 2‖
     refine hmul.congr fun k ↦ ?_
-    simp [abs_of_nonneg, div_eq_mul_inv]
+    simp [div_eq_mul_inv]
   exact multipliable_one_add_of_summable hs
 
 private lemma standardSquareProduct_formula (x : ℝ) :
@@ -3493,15 +3497,15 @@ private lemma gapHead_card_div_tendsto_zero {n : ℕ → ℕ} (hn : HasFabryGaps
       (K₀ : ℝ) + (ε / 4) * (N : ℝ) + 1 := hhead
   nlinarith
 
-private lemma canonicalFactor_norm_le {ζ : ℂ} {m : ℕ} (hm : 0 < m) :
+private lemma canonicalFactor_norm_le {ζ : ℂ} {m : ℕ} (_hm : 0 < m) :
     ‖1 - ζ ^ 2 / (m : ℂ) ^ 2‖ ≤ 1 + ‖ζ‖ ^ 2 / (m : ℝ) ^ 2 := by
   calc
     ‖1 - ζ ^ 2 / (m : ℂ) ^ 2‖ ≤ ‖(1 : ℂ)‖ + ‖ζ ^ 2 / (m : ℂ) ^ 2‖ := norm_sub_le _ _
     _ = 1 + ‖ζ‖ ^ 2 / (m : ℝ) ^ 2 := by
-      simp [norm_div, norm_pow, Real.norm_of_nonneg]
+      simp [norm_pow]
 
 private lemma canonicalFactor_majorized_by_standard {R C : ℝ} {m k : ℕ}
-    (hR : 0 ≤ R) (hC : 0 < C) (hk : 0 < k) (hm : 0 < m)
+    (_hR : 0 ≤ R) (hC : 0 < C) (hk : 0 < k) (_hm : 0 < m)
     (hlinear : C * (k : ℝ) ≤ (m : ℝ)) :
     1 + R ^ 2 / (m : ℝ) ^ 2 ≤ 1 + (R / C) ^ 2 / (k : ℝ) ^ 2 := by
   have hden : C ^ 2 * (k : ℝ) ^ 2 ≤ (m : ℝ) ^ 2 := by
@@ -3510,7 +3514,8 @@ private lemma canonicalFactor_majorized_by_standard {R C : ℝ} {m k : ℕ}
     have hprod : 0 ≤ ((m : ℝ) - C * (k : ℝ)) * ((m : ℝ) + C * (k : ℝ)) :=
       mul_nonneg (sub_nonneg.2 hlinear) (add_nonneg hy hx)
     nlinarith
-  have hdenpos : 0 < C ^ 2 * (k : ℝ) ^ 2 := mul_pos (sq_pos_of_pos hC) (sq_pos_of_pos (by exact_mod_cast hk))
+  have hdenpos : 0 < C ^ 2 * (k : ℝ) ^ 2 :=
+    mul_pos (sq_pos_of_pos hC) (sq_pos_of_pos (by exact_mod_cast hk))
   have hdiv : R ^ 2 / (m : ℝ) ^ 2 ≤ R ^ 2 / (C ^ 2 * (k : ℝ) ^ 2) :=
     div_le_div_of_nonneg_left (sq_nonneg R) hdenpos hden
   calc
@@ -3674,7 +3679,7 @@ private lemma eventually_one_lt_maxModulus {f : ℂ → ℂ} (hf : Differentiabl
     ∀ᶠ r : ℝ in atTop, 1 < maxModulus r f := by
   obtain ⟨z₀, hz₀⟩ : ∃ z, 1 < ‖f z‖ := by
     by_contra h
-    push_neg at h
+    push Not at h
     have hb : Bornology.IsBounded (Set.range f) := by
       rw [isBounded_iff_forall_norm_le]
       exact ⟨1, by rintro _ ⟨z, rfl⟩; exact h z⟩
@@ -4317,7 +4322,7 @@ private lemma exists_admissible_scale (A : ℕ) {y₀ : ℝ} (hy₀one : y₀ < 
         32 * Real.pi * Real.exp (x / 4) := by
       rw [show -x / 4 = -(x / 4) by ring, Real.exp_neg]
       field_simp
-      <;> ring
+      ring
     have hformNonneg : 0 ≤ 4 * Real.pi / (Real.exp (-x / 4) / 8) := by positivity
     have hceil := Nat.ceil_lt_add_one hformNonneg
     have hceilBound :
@@ -4357,7 +4362,7 @@ private lemma frequently_verticalRatio_gt_of_scale {f : ℂ → ℂ} {n : ℕ �
     {y y₀ r h d β : ℝ} (hyy₀ : y < y₀) (hy₀ : 0 < y₀)
     (hr : 0 < r) (hr1 : r < 1) (hh : 0 < h) (hd : 0 < d)
     (hdh : 4 * d < h) (hβ : 0 ≤ β)
-    (hq2 : Real.exp (2 * (A : ℝ) * h) < 2)
+    (_hq2 : Real.exp (2 * (A : ℝ) * h) < 2)
     (hgrid : 16 * ((Nat.ceil (4 * Real.pi / d) + 1 : ℕ) : ℝ) <
       Real.exp (β / 2))
     (hcoeff : y₀ * Real.exp (2 * (A : ℝ) * h) <
@@ -4602,7 +4607,7 @@ private lemma frequently_verticalRatio_gt_of_scale {f : ℂ → ℂ} {n : ℕ �
     have hzre : z.re ≤ 3 :=
       (le_abs_self z.re).trans (Complex.abs_re_le_norm z) |>.trans_eq hz
     dsimp [center]
-    simp only [Complex.add_re, Complex.ofReal_re, Complex.mul_re,
+    simp only [Complex.ofReal_re, Complex.mul_re,
       Complex.I_re, Complex.I_im, Complex.ofReal_im, mul_zero, zero_mul, sub_zero,
       add_zero]
     nlinarith
