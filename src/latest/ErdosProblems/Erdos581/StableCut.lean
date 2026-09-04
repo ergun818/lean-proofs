@@ -16,7 +16,7 @@ namespace Erdos581
 
 section LocalProbabilities
 
-variable {α : Type*} [Fintype α] [DecidableEq α]
+variable {α : Type*} [Fintype α]
 
 private def stableSame (A : Finset α) : Prop :=
   Fintype.card α + 1 < 2 * A.card
@@ -48,6 +48,7 @@ private lemma expect_indicator (P : Finset α → Prop) [DecidablePred P] :
 private lemma expect_card_eq (r : ℕ) :
     (𝔼 A : Finset α, if A.card = r then (1 : ℝ) else 0) =
       ((Fintype.card α).choose r : ℝ) / (2 : ℝ) ^ Fintype.card α := by
+  classical
   rw [expect_indicator]
   rw [univ_filter_card_eq, card_powersetCard, card_univ, Fintype.card_finset]
   norm_cast
@@ -130,6 +131,7 @@ private lemma differentStableProb_le_one :
 
 private lemma differentStableProb_ge_half :
     (1 : ℝ) / 2 ≤ differentStableProb (α := α) := by
+  classical
   let e : Finset α ≃ Finset α :=
     { toFun := (·ᶜ)
       invFun := (·ᶜ)
@@ -165,7 +167,7 @@ private lemma differentStableProb_ge_half :
       𝔼 A : Finset α, I A by linarith)
 
 /-- The local product gain used at the two ends of an edge. -/
-private lemma local_product_gain {β : Type*} [Fintype β] [DecidableEq β] :
+private lemma local_product_gain {β : Type*} [Fintype β] :
     (1 : ℝ) / 4 *
         (differentStableProb (α := α) * differentStableProb (α := β) -
           sameStableProb (α := α) * sameStableProb (α := β)) ≥
@@ -181,7 +183,7 @@ private lemma local_product_gain {β : Type*} [Fintype β] [DecidableEq β] :
   · let : IsEmpty α := hα
     have hcardα : Fintype.card α = 0 := Fintype.card_eq_zero
     have hca_one : ca = 1 := by
-      simp [ca, hcardα, degreeInfluence, centralProb]
+      simp [ca, degreeInfluence, centralProb]
     have hsameα := sameStableProb_nonneg (α := α)
     have hdiffα := differentStableProb_le_one (α := α)
     have hsameβ := sameStableProb_nonneg (α := β)
@@ -196,7 +198,7 @@ private lemma local_product_gain {β : Type*} [Fintype β] [DecidableEq β] :
     · let : IsEmpty β := hβ
       have hcardβ : Fintype.card β = 0 := Fintype.card_eq_zero
       have hcb_one : cb = 1 := by
-        simp [cb, hcardβ, degreeInfluence, centralProb]
+        simp [cb, degreeInfluence, centralProb]
       have hsameα := sameStableProb_nonneg (α := α)
       have hdiffα := differentStableProb_le_one (α := α)
       have hsameβ := sameStableProb_nonneg (α := β)
@@ -373,7 +375,7 @@ private lemma card_edgeBlock {u v : V} (huv : G.Adj u v) :
       rw [Finset.card_singleton, SimpleGraph.card_neighborFinset_eq_degree]
       omega
     · simpa [SimpleGraph.mem_neighborFinset] using huv
-  · simp [SimpleGraph.mem_neighborFinset, G.loopless]
+  · simp [SimpleGraph.mem_neighborFinset]
 
 private lemma card_other_edgeBlock {u v : V} (huv : G.Adj u v) :
     Fintype.card {x : edgeBlock G u v // x ≠ edgePoint G u v} + 1 =
@@ -409,7 +411,7 @@ private lemma edgeBlock_disjoint {u v : V} (huv : G.Adj u v)
     · exact htri {u, v, x} (SimpleGraph.is3Clique_triple_iff.mpr
         ⟨huv, hux, hvx⟩)
 
-private lemma card_relative_edgeBlock {u v : V} (huv : G.Adj u v)
+private lemma card_relative_edgeBlock {u v : V} (_huv : G.Adj u v)
     (σ : V → Bool) :
     #((relativeColoringEquiv (edgePoint G u v)
         (fun x : edgeBlock G u v ↦ σ x)).2) =
@@ -556,7 +558,7 @@ private lemma expect_both_stable_same {u v : V} (huv : G.Adj u v)
       by_cases hu' : blockStableSame G u v (fun x : U ↦ σ x) <;>
       by_cases hv' : blockStableSame G v u (fun x : W ↦ σ x) <;>
       cases hcu : σ u <;> cases hcv : σ v <;> simp_all <;> aesop
-    · cases hcu : σ u <;> cases hcv : σ v <;> simp_all <;> aesop
+    · cases hcu : σ u <;> cases hcv : σ v <;> simp_all
   rw [show (𝔼 σ : V → Bool,
       if vertexStable G σ u ∧ vertexStable G σ v ∧ σ u = σ v
         then (1 : ℝ) else 0) =
@@ -599,7 +601,8 @@ private lemma expect_both_stable_same {u v : V} (huv : G.Adj u v)
             then (1 : ℝ) else 0)
         (fun b : W → Bool ↦
           if b (edgePoint G v u) = c ∧ blockStableSame G v u b
-            then (1 : ℝ) else 0)) using 1 <;> rfl
+            then (1 : ℝ) else 0)) using 1
+    rfl
   simp_rw [hind]
   dsimp only [U, W]
   simp_rw [block_fixed_same_expect]
@@ -634,7 +637,7 @@ private lemma expect_both_stable_different {u v : V} (huv : G.Adj u v)
       by_cases hu' : blockStableDifferent G u v (fun x : U ↦ σ x) <;>
       by_cases hv' : blockStableDifferent G v u (fun x : W ↦ σ x) <;>
       cases hcu : σ u <;> cases hcv : σ v <;> simp_all <;> aesop
-    · cases hcu : σ u <;> cases hcv : σ v <;> simp_all <;> aesop
+    · cases hcu : σ u <;> cases hcv : σ v <;> simp_all
   rw [show (𝔼 σ : V → Bool,
       if vertexStable G σ u ∧ vertexStable G σ v ∧ σ u ≠ σ v
         then (1 : ℝ) else 0) =
@@ -677,7 +680,8 @@ private lemma expect_both_stable_different {u v : V} (huv : G.Adj u v)
             then (1 : ℝ) else 0)
         (fun b : W → Bool ↦
           if b (edgePoint G v u) = !c ∧ blockStableDifferent G v u b
-            then (1 : ℝ) else 0)) using 1 <;> rfl
+            then (1 : ℝ) else 0)) using 1
+    rfl
   simp_rw [hind]
   dsimp only [U, W]
   simp_rw [block_fixed_different_expect]
@@ -731,7 +735,7 @@ private lemma expect_coloring_pair_ne {u v : V} (hne : u ≠ v) :
       (𝔼 b : W → Bool, if b ⟨v, by simp [W]⟩ = !c then (1 : ℝ) else 0) := by
     convert (expect_restrictions_mul U W hdisj
       (fun a : U → Bool ↦ if a ⟨u, by simp [U]⟩ = c then (1 : ℝ) else 0)
-      (fun b : W → Bool ↦ if b ⟨v, by simp [W]⟩ = !c then (1 : ℝ) else 0)) using 1 <;> rfl
+      (fun b : W → Bool ↦ if b ⟨v, by simp [W]⟩ = !c then (1 : ℝ) else 0)) using 1
   simp_rw [hind]
   have hU (c : Bool) :
       (𝔼 a : U → Bool, if a ⟨u, by simp [U]⟩ = c then (1 : ℝ) else 0) =
@@ -826,7 +830,7 @@ private def colorSet (c : V → Bool) : Set V :=
   {v | c v = true}
 
 private def crosses (c : V → Bool) : Sym2 V → Prop :=
-  Sym2.lift ⟨fun u v ↦ c u ≠ c v, fun u v ↦ propext ne_comm⟩
+  Sym2.lift ⟨fun u v ↦ c u ≠ c v, fun _ _ ↦ propext ne_comm⟩
 
 private noncomputable instance (c : V → Bool) (e : Sym2 V) :
     Decidable (crosses c e) := Classical.propDecidable _
@@ -834,12 +838,14 @@ private noncomputable instance (c : V → Bool) (e : Sym2 V) :
 private noncomputable def cutSize (c : V → Bool) : ℝ :=
   ((cutGraph G (colorSet c)).edgeSet.ncard : ℝ)
 
+omit [Fintype V] [DecidableEq V] [DecidableRel G.Adj] in
 private lemma cutGraph_adj_color (c : V → Bool) (u v : V) :
     (cutGraph G (colorSet c)).Adj u v ↔ G.Adj u v ∧ c u ≠ c v := by
   rw [cutGraph_adj]
   unfold colorSet
   cases hu : c u <;> cases hv : c v <;> simp_all
 
+omit [DecidableEq V] in
 private lemma cutSize_eq_sum (c : V → Bool) :
     cutSize G c =
       ∑ e ∈ G.edgeFinset, if crosses c e then (1 : ℝ) else 0 := by
@@ -884,8 +890,10 @@ private lemma sum_dart_fst_fiber (a : V → ℝ) (v : V) :
       change #{d : G.Dart | d.fst = v} = G.degree v
       exact G.dart_fst_fiber_card_eq_degree v
 
+omit [DecidableEq V] in
 private lemma sum_darts_eq_vertex (a : V → ℝ) :
     (∑ d : G.Dart, a d.fst) = ∑ v, (G.degree v : ℝ) * a v := by
+  classical
   rw [← Fintype.sum_fiberwise (fun d : G.Dart ↦ d.fst) (fun d ↦ a d.fst)]
   apply Finset.sum_congr rfl
   intro v _hv
@@ -907,9 +915,11 @@ private lemma sum_dart_edge_fiber (a : V → ℝ) (e : Sym2 V)
     rw [Finset.sum_insert (by simpa using d.symm_ne.symm), Finset.sum_singleton]
     simp [d, edgeWeight]
 
+omit [DecidableEq V] in
 private lemma weighted_handshake (a : V → ℝ) :
     (∑ e ∈ G.edgeFinset, edgeWeight a e) =
       ∑ v, (G.degree v : ℝ) * a v := by
+  classical
   calc
     (∑ e ∈ G.edgeFinset, edgeWeight a e) =
         ∑ e ∈ G.edgeFinset,
@@ -930,7 +940,7 @@ private lemma weighted_handshake (a : V → ℝ) :
 private lemma exists_ge_expect {Ω : Type*} [Fintype Ω] [Nonempty Ω]
     (f : Ω → ℝ) : ∃ ω, (𝔼 x : Ω, f x) ≤ f ω := by
   by_contra h
-  push_neg at h
+  push Not at h
   have hsum : (∑ ω : Ω, f ω) < ∑ _ω : Ω, (𝔼 x : Ω, f x) := by
     apply Finset.sum_lt_sum
     · intro ω _hω
@@ -982,6 +992,7 @@ private lemma expected_cut_ge (htri : G.CliqueFree 3) :
       exact (Finset.expect_sum_comm (univ : Finset (V → Bool)) G.edgeFinset
         (fun τ e ↦ if crosses (recolor G σ τ) e then (1 : ℝ) else 0)).symm
 
+omit [DecidableEq V] in
 private lemma sum_edge_gain_eq :
     (∑ e ∈ G.edgeFinset,
         ((1 : ℝ) / 2 + edgeWeight (fun v ↦ degreeInfluence (G.degree v)) e / 16)) =
@@ -1001,11 +1012,13 @@ private lemma sum_edge_gain_eq :
       simp [nsmul_eq_mul]
       ring
 
+omit [DecidableEq V] in
 private lemma exists_recolored_cut_ge (htri : G.CliqueFree 3) :
     ∃ σ τ : V → Bool,
       (∑ e ∈ G.edgeFinset,
           ((1 : ℝ) / 2 + edgeWeight (fun v ↦ degreeInfluence (G.degree v)) e / 16)) ≤
         cutSize G (recolor G σ τ) := by
+  classical
   have havg := expected_cut_ge G htri
   obtain ⟨σ, hσ⟩ := exists_ge_expect
     (fun σ : V → Bool ↦ 𝔼 τ : V → Bool, cutSize G (recolor G σ τ))
@@ -1013,6 +1026,7 @@ private lemma exists_recolored_cut_ge (htri : G.CliqueFree 3) :
     (fun τ : V → Bool ↦ cutSize G (recolor G σ τ))
   exact ⟨σ, τ, havg.trans (hσ.trans hτ)⟩
 
+omit [DecidableEq V] in
 /-- A triangle-free graph has a cut whose surplus is bounded below by the
 sum of the stable-vertex influences. -/
 theorem exists_cut_degreeInfluence (htri : G.CliqueFree 3) :
@@ -1025,6 +1039,7 @@ theorem exists_cut_degreeInfluence (htri : G.CliqueFree 3) :
   rw [← sum_edge_gain_eq G]
   simpa only [cutSize] using hcut
 
+omit [DecidableEq V] in
 /-- The degree-sum form of Alon's stable-vertex cut lemma. -/
 theorem exists_cut_sqrtDegree (htri : G.CliqueFree 3) :
     ∃ s : Set V,
@@ -1176,10 +1191,7 @@ private lemma expect_extended_cut (T A : Finset V) :
       (∑ e ∈ G.edgeFinset,
         if e.toFinset ⊆ T ∧ crosses (fun v ↦ decide (v ∈ A)) e
           then (1 : ℝ) else 0) = (partialCutEdges G T A).card := by
-    simpa [partialCutEdges] using
-      (Finset.sum_boole
-        (R := ℝ) (fun e ↦ e.toFinset ⊆ T ∧
-          crosses (fun v ↦ decide (v ∈ A)) e) G.edgeFinset)
+    simp [partialCutEdges]
   rw [hpartial]
   have hinternal :
       #{e ∈ G.edgeFinset | e.toFinset ⊆ T} =
@@ -1304,10 +1316,11 @@ private lemma card_inducedCutEdges_eq_partial (T : Finset V) (A : Finset T) :
         simpa [liftInducedFinset] using
           (hua.trans ((Iff.of_eq hab).trans hvb.symm))
       refine ⟨s(a, b), ?_, ?_⟩
-      · simpa [inducedCutEdges, cutGraph_adj, SimpleGraph.mem_edgeSet,
+      · simp [inducedCutEdges, cutGraph_adj, SimpleGraph.mem_edgeSet,
           a, b, h'.1, hneAB]
       · simp [emb, a, b]
 
+omit [DecidableEq V] in
 /-- Graph-valued form of `exists_cut_extending_finset`: a cut of the graph
 induced by `T` extends to the ambient graph with the same surplus over half
 of the induced edge count. -/
@@ -1317,6 +1330,7 @@ theorem exists_cut_extending_induced (T : Finset V) (A : Finset T) :
           ((inducedCutEdges G T A).card : ℝ) -
           ((G.induce (T : Set V)).edgeFinset.card : ℝ) / 2 ≤
         ((cutGraph G s).edgeSet.ncard : ℝ) := by
+  classical
   obtain ⟨s, hs⟩ := exists_cut_extending_finset G T (liftInducedFinset T A)
   refine ⟨s, ?_⟩
   rw [card_inducedCutEdges_eq_partial G T A]

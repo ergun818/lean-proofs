@@ -12,7 +12,7 @@ and records the equivalence between bipartite subgraphs and cuts.
 -/
 
 open Finset Set
-open scoped Classical ENNReal
+open scoped ENNReal
 
 namespace Erdos581
 

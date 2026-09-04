@@ -66,7 +66,6 @@ private lemma centralProb_sq_lower : ∀ r : ℕ, 1 ≤ r →
       have hrpos : (0 : ℝ) < r := by positivity
       have hden : (0 : ℝ) < 2 * r + 2 := by positivity
       have hpoly : 4 * (r : ℝ) * (r + 1) ≤ (2 * r + 1) ^ 2 := by
-        push_cast
         nlinarith
       have hratio : 1 ≤ ((r + 1 : ℕ) : ℝ) / r *
           ((2 * (r : ℝ) + 1) / (2 * (r : ℝ) + 2)) ^ 2 := by
@@ -83,7 +82,7 @@ private lemma centralProb_sq_lower : ∀ r : ℕ, 1 ≤ r →
             (4 * (r : ℝ) * centralProb r ^ 2) *
               ((((r + 1 : ℕ) : ℝ) / r) *
                 ((2 * (r : ℝ) + 1) / (2 * (r : ℝ) + 2)) ^ 2) := by
-        field_simp <;> ring
+        field_simp
       rw [hid]
       exact one_le_mul_of_one_le_of_one_le ih' hratio
 
@@ -112,7 +111,7 @@ theorem one_div_two_sqrt_le_centralProb {r : ℕ} (hr : 1 ≤ r) :
 noncomputable def degreeInfluence (d : ℕ) : ℝ :=
   centralProb (d / 2)
 
-lemma degreeInfluence_pos {d : ℕ} (hd : 1 ≤ d) : 0 < degreeInfluence d := by
+lemma degreeInfluence_pos {d : ℕ} (_hd : 1 ≤ d) : 0 < degreeInfluence d := by
   exact centralProb_pos _
 
 lemma degreeInfluence_le_half {d : ℕ} (hd : 2 ≤ d) : degreeInfluence d ≤ 1 / 2 := by

@@ -80,7 +80,7 @@ private lemma floor_sq_bonus {m : ℕ} (hm : 0 < m) :
     nlinarith [sq_nonneg (x / 2 - (D : ℝ))]
 
 private theorem exists_cut_extending_induced_set
-    {V : Type*} [Fintype V] [DecidableEq V]
+    {V : Type*} [Fintype V]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (T : Finset V) (A : Set T) :
     ∃ s : Set V,
@@ -111,7 +111,7 @@ private theorem exists_cut_extending_induced_set
 
 /-- Uniform graph-level lower bound, with an explicit absolute constant. -/
 theorem exists_cut_lower
-    {V : Type*} [Fintype V] [DecidableEq V]
+    {V : Type*} [Fintype V]
     (G : SimpleGraph V) [DecidableRel G.Adj] (htri : G.CliqueFree 3) :
     ∃ s : Set V,
       (G.edgeFinset.card : ℝ) / 2 +

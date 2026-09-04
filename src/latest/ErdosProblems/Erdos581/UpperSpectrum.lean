@@ -55,7 +55,7 @@ private lemma fieldChar_ne_one {t : ℕ} {z : F t} (hz : z ≠ 0) :
   have hpoint := DFunLike.congr_fun h x
   have htrace : tr t (x * z) = 1 :=
     (zmod_two_eq_zero_or_one _).resolve_left hx
-  simp only [fieldChar_apply, htrace, stdAddChar_two_one, Pi.one_apply] at hpoint
+  simp only [fieldChar_apply, htrace, stdAddChar_two_one] at hpoint
   norm_num at hpoint
 
 lemma sum_fieldChar (t : ℕ) (z : F t) :
@@ -92,7 +92,7 @@ private lemma fieldChar_add_one (t : ℕ) (z x : F t) :
     simp [mul_add]
   rw [fieldChar_apply, harg, ZMod.stdAddChar.map_add_eq_mul]
   rcases zmod_two_eq_zero_or_one (tr t x) with hx | hx
-  · simp [hx, stdAddChar_two_zero]
+  · simp [hx]
   · simp [hx, stdAddChar_two_one]
     ring
 
@@ -236,7 +236,7 @@ lemma chi_generator {t : ℕ} (a : V t) (p : traceOne t × (F t)ˣ) :
     chi t a (generator p) = fieldChar t (cubicValue a p.2.1) p.1.1 := by
   simp only [chi_apply, fieldChar_apply, generator, cubicValue]
   congr 2
-  simp [Fin.sum_univ_succ, generator]
+  simp [Fin.sum_univ_succ]
   ring
 
 def eigenvalue (t : ℕ) (ψ : AddChar (V t) ℂ) : ℝ :=
@@ -272,7 +272,7 @@ lemma eigenvalue_lower (t : ℕ) (ψ : AddChar (V t) ℂ) :
     by_cases h0 : cubicValue a y.1 = 0
     · simp [h0]
     · by_cases h1 : cubicValue a y.1 = 1
-      · simp [h0, h1]
+      · simp [h1]
       · simp [h0, h1]
   have hsum := Finset.sum_le_sum fun y (_hy : y ∈ (Finset.univ : Finset (F t)ˣ)) ↦ hterm y
   have hindicator :
@@ -356,7 +356,7 @@ lemma adjacencyOperator_chi_eigen (t : ℕ) (ψ : AddChar (V t) ℂ) :
     exact add_left_cancel hxy
 
 lemma card_V (t : ℕ) : Fintype.card (V t) = q t ^ 3 := by
-  simp [V, Fintype.card_fun, card_F]
+  simp [V, card_F]
 
 lemma degree_graph (t : ℕ) (v : V t) :
     (graph t).degree v = Fintype.card (traceOne t) * (q t - 1) := by

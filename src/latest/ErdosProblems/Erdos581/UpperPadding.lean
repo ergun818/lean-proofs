@@ -78,7 +78,6 @@ lemma HasUpperWitness.add {m n : ℕ} {B C : ℝ}
     have hL := hcutG {v | Sum.inl v ∈ s}
     have hR := hcutH {w | Sum.inr w ∈ s}
     push_cast
-    norm_num at hL hR ⊢
     linarith
 
 lemma HasUpperWitness.nsmul {m : ℕ} {B : ℝ}

@@ -35,7 +35,7 @@ private def allowedFunctionsEquiv {alpha : Type u} {beta : alpha → Type v}
   right_inv _ := rfl
 
 private lemma card_filter_pointwise_mem {alpha : Type u} {beta : alpha → Type v}
-    [Fintype alpha] [∀ x, Fintype (beta x)] [Fintype (∀ x, beta x)]
+    [Fintype alpha] [Fintype (∀ x, beta x)]
     [∀ x, DecidableEq (beta x)]
     (allowed : ∀ x, Finset (beta x)) :
     ((Finset.univ : Finset (∀ x, beta x)).filter
@@ -101,9 +101,11 @@ noncomputable def coveredEdges {r : ℕ} (omega : Fin r → W) :
     Finset (Sym2 W) :=
   K.edgeFinset.filter fun e ↦ e.toFinset ⊆ coveredVertices K omega
 
+omit [DecidableEq W] in
 private lemma card_not_neighbor (v : W) :
     ((Finset.univ : Finset W).filter fun z ↦ ¬K.Adj z v).card =
       Fintype.card W - K.degree v := by
+  classical
   have heq : ((Finset.univ : Finset W).filter fun z ↦ ¬K.Adj z v) =
       Finset.univ \ K.neighborFinset v := by
     ext z
@@ -111,6 +113,7 @@ private lemma card_not_neighbor (v : W) :
   rw [heq, Finset.card_sdiff_of_subset (Finset.subset_univ _),
     Finset.card_univ, SimpleGraph.card_neighborFinset_eq_degree]
 
+omit [DecidableEq W] in
 private lemma card_avoiding_samples (v : W) (r : ℕ) :
     ((Finset.univ : Finset (Fin r → W)).filter
       (fun omega ↦ ∀ i, ¬K.Adj (omega i) v)).card =
@@ -131,6 +134,7 @@ private lemma card_avoiding_samples (v : W) (r : ℕ) :
     _ = (Fintype.card W - K.degree v) ^ r := by
       simp [allowed, card_not_neighbor K v]
 
+omit [DecidableEq W] in
 private lemma card_uncovered_samples_le
     {D : ℕ} (hD : 0 < D) (hW : Nonempty W)
     (hmin : ∀ v, D ≤ K.degree v) (v : W) :
@@ -269,6 +273,7 @@ theorem exists_many_covered_edges
     Finset.exists_le_of_sum_le hΩ hsum
   exact ⟨omega, homega⟩
 
+omit [DecidableEq W] in
 lemma sampleCount_mul_le (D : ℕ) (hD : 0 < D)
     (hDM : D ≤ Fintype.card W) :
     sampleCount (W := W) D * D ≤ 5 * Fintype.card W := by
@@ -277,6 +282,7 @@ lemma sampleCount_mul_le (D : ℕ) (hD : 0 < D)
     (4 * Fintype.card W + D - 1) D
   omega
 
+omit [DecidableEq W] in
 lemma minDegree_mul_card_le_twice_edges (D : ℕ)
     (hmin : ∀ v, D ≤ K.degree v) :
     D * Fintype.card W ≤ 2 * K.edgeFinset.card := by
@@ -293,6 +299,7 @@ private noncomputable def coveredIndex {r : ℕ} (omega : Fin r → W)
       simpa [coveredVertices] using v.2
     exact hv)
 
+omit [DecidableEq W] [DecidableRel K.Adj] in
 private lemma coveredIndex_adj {r : ℕ} (omega : Fin r → W)
     (v : ↑(coveredVertices K omega)) :
     K.Adj (omega (coveredIndex K omega v)) v.1 := by
@@ -316,7 +323,7 @@ noncomputable def coveredColoring {r : ℕ} (omega : Fin r → W)
       intro huvEq
       have huvEq' : u = v := Subtype.ext huvEq
       subst v
-      exact K.loopless.irrefl u.1 (by simpa using huv)) (by simpa using huv))
+      simp at huv) (by simpa using huv))
 
 lemma card_coveredEdges {r : ℕ} (omega : Fin r → W) :
     (coveredEdges K omega).card =
@@ -374,6 +381,7 @@ private theorem exists_balanced_cut_compressed
   obtain ⟨A, hA⟩ := SimpleGraph.exists_cutEdgeFinset_mul_bound hq c' hc'
   exact ⟨q, A, hq, hqle, hA⟩
 
+omit [DecidableEq W] in
 /-- A triangle-free graph of minimum degree at least `D` has a cut whose
 surplus over half the edges is at least `D^2 / 200`. -/
 theorem exists_cut_denseCore {D : ℕ} (hD : 0 < D) (hW : Nonempty W)

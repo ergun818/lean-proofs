@@ -175,7 +175,7 @@ theorem core_or_sum_sqrt_degree
   · right
     have hdeg : IsDegenerateAtMost G (D - 1) := by
       intro S hS
-      push_neg at hcore
+      push Not at hcore
       obtain ⟨v, hvS, hv⟩ := hcore S hS
       exact ⟨v, hvS, by omega⟩
     have h := induced_edges_div_sqrt_le_sum_sqrt_degree G D hD hdeg Finset.univ

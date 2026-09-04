@@ -155,7 +155,7 @@ private lemma adjacency_quadratic_eq
           intro p hp
           rw [signFunction_mul]
           by_cases hcross : (p.1 ∈ s) ≠ (p.2 ∈ s) <;>
-            simp [hcross] <;> norm_num
+            norm_num [hcross]
     _ = (P.card : ℂ) - 2 * (C.card : ℂ) := by
           rw [Finset.sum_sub_distrib]
           have hone : (∑ _p ∈ P, (1 : ℂ)) = P.card := by simp
@@ -219,8 +219,7 @@ theorem cut_le_of_character_eigenvalues
                 refine Finset.sum_congr rfl ?_
                 intro x _
                 by_cases hx : x ∈ s <;>
-                  simp [A, z, signFunction, hx, mul_add, mul_comm, mul_left_comm,
-                    mul_assoc]
+                  simp [A, z, signFunction, hx, mul_add, mul_comm]
       _ = (((2 * X.edgeFinset.card : ℤ) -
           4 * (cutGraph X s).edgeSet.ncard : ℤ) : ℂ) +
             (L : ℂ) * Fintype.card G := by
@@ -235,9 +234,9 @@ theorem cut_le_of_character_eigenvalues
     simp only [RCLike.inner_apply]
     rw [hsum]
     simp only [div_eq_inv_mul, Complex.mul_re, Complex.inv_re,
-      Complex.natCast_re, Complex.natCast_im, Complex.add_re, Complex.intCast_re,
-      Complex.ofReal_re, Complex.ofReal_im, zero_mul, mul_zero, sub_zero,
-      Int.cast_sub, Int.cast_mul, Int.cast_ofNat, Nat.cast_ofNat]
+      Complex.natCast_re, Complex.natCast_im, Complex.add_re,
+      Complex.ofReal_re, Complex.ofReal_im, mul_zero, sub_zero,
+      Int.cast_sub, Int.cast_mul, Int.cast_ofNat]
     norm_num
   rw [hinner] at hpos
   have hn : 0 < (Fintype.card G : ℝ) := by positivity
