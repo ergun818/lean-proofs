@@ -14,7 +14,6 @@ and the application of the geometric core: an `n`-point planar set with
 the three counting estimates feeding the final assembly.
 -/
 
-open scoped Classical
 open NumberField IsCMField
 
 namespace Erdos
@@ -25,7 +24,7 @@ This is the "Minkowski map" whose image of the ideal `b` is the lattice `Λ`
 fed to the geometric core. -/
 noncomputable def mink (g : ℕ) :
     𝓞 (Kf g) →+* (NumberField.InfinitePlace (Kf g) → ℂ) :=
-  Pi.ringHom fun w => w.embedding.comp (algebraMap (𝓞 (Kf g)) (Kf g))
+  RingHom.pi fun w => w.embedding.comp (algebraMap (𝓞 (Kf g)) (Kf g))
 
 /-- General degree bound: a field obtained by adjoining a finite set of elements, each
 integral of degree at most `2`, has degree at most `2 ^ (number of generators)`. -/
@@ -57,41 +56,7 @@ theorem finrank_adjoin_finset_le (s : Finset ℂ)
 /-- Upper bound on the degree of the multiquadratic field: it is generated over `ℚ`
 by the `g+1` elements `i, √q3 0, …, √q3 (g-1)`, each of degree at most `2`. -/
 theorem Kf_finrank_le (g : ℕ) : Module.finrank ℚ (Kf g) ≤ 2 ^ (g + 1) := by
-  have h_deg : ∀ x ∈ ({Complex.I} ∪ ((fun j => ((Real.sqrt (q3 j):ℝ):ℂ)) '' (Finset.range g) : Set ℂ)), IsIntegral ℚ x ∧ (minpoly ℚ x).natDegree ≤ 2 := by
-    intro x hx; cases' hx with hx hx <;> simp_all +decide [ IsIntegral ] ;
-    · refine' ⟨ _, _ ⟩;
-      · exact ⟨ Polynomial.X ^ 2 + 1, by exact Polynomial.monic_X_pow_add_C _ two_ne_zero, by norm_num ⟩;
-      · refine' le_trans ( Polynomial.natDegree_le_of_dvd _ _ ) _;
-        exacts [ Polynomial.X ^ 2 + 1, minpoly.dvd ℚ Complex.I <| by norm_num [ Complex.ext_iff, sq ], by exact ne_of_apply_ne ( Polynomial.eval 0 ) <| by norm_num, by erw [ Polynomial.natDegree_X_pow_add_C ] ];
-    · obtain ⟨ j, hj, rfl ⟩ := hx;
-      -- The minimal polynomial of $\sqrt{q3 j}$ over $\mathbb{Q}$ is $x^2 - q3 j$.
-      have h_minpoly : minpoly ℚ (Real.sqrt (q3 j) : ℂ) ∣ Polynomial.X ^ 2 - Polynomial.C (q3 j : ℚ) := by
-        refine' minpoly.dvd ℚ _ _;
-        norm_num [ ← Complex.ofReal_pow, Real.sq_sqrt ( Nat.cast_nonneg _ ) ];
-      refine' ⟨ _, _ ⟩;
-      · refine' ⟨ Polynomial.X ^ 2 - Polynomial.C ( q3 j : ℚ ), _, _ ⟩;
-        · erw [ Polynomial.Monic, Polynomial.leadingCoeff_X_pow_sub_C ] ; norm_num;
-        · norm_num [ ← Complex.ofReal_pow ];
-      · exact le_trans ( Polynomial.natDegree_le_of_dvd h_minpoly ( Polynomial.X_pow_sub_C_ne_zero ( by norm_num ) _ ) ) ( by erw [ Polynomial.natDegree_X_pow_sub_C ] );
-  set F : Finset ℂ :=
-    insert Complex.I ((Finset.range g).image fun j => ((Real.sqrt (q3 j) : ℝ) : ℂ)) with hF
-  have hset : (F : Set ℂ)
-      = insert Complex.I ((fun j => ((Real.sqrt (q3 j) : ℝ) : ℂ)) '' Set.Iio g) := by
-    simp [hF]
-  have hKf : Module.finrank ℚ (Kf g)
-      = Module.finrank ℚ (IntermediateField.adjoin ℚ (F : Set ℂ)) := by
-    rw [Kf, ← hset]
-  have hcard : F.card ≤ g + 1 :=
-    (Finset.card_insert_le _ _).trans
-      (Nat.succ_le_succ (Finset.card_image_le.trans (by simp)))
-  rw [hKf]
-  refine (finrank_adjoin_finset_le F ?_).trans (Nat.pow_le_pow_right (by norm_num) hcard)
-  intro a ha
-  refine h_deg a ?_
-  simp only [hF, Finset.mem_insert, Finset.mem_image, Finset.mem_range] at ha
-  rcases ha with rfl | ⟨j, hj, rfl⟩
-  · exact Set.mem_union_left _ rfl
-  · exact Set.mem_union_right _ ⟨j, Finset.mem_coe.mpr (Finset.mem_range.mpr hj), rfl⟩
+  exact (Kf_finrank g).le
 
 /-- Upper bound on the number of infinite places: `K_g` is totally complex, so the
 number of places is `finrank/2 ≤ 2^g`. -/
@@ -128,70 +93,132 @@ theorem mink_injective (g : ℕ) : Function.Injective (mink g) := by
 
 /-- The product of the squares of the place-values of a nonzero element of an ideal `b`
 is at least `absNorm b` (since the principal ideal it generates is contained in `b`). -/
-theorem absNorm_le_prod_places (g : ℕ) (b : Ideal (𝓞 (Kf g))) (y : 𝓞 (Kf g))
-    (hy : y ∈ b) (hy0 : y ≠ 0) :
+theorem absNorm_le_prod_places (g : ℕ) (b : Ideal (𝓞 (Kf g))) (y : 𝓞 (Kf g)) (hy : y ∈ b)
+    (hy0 : y ≠ 0) :
     (Ideal.absNorm b : ℝ) ≤
-      ∏ w : NumberField.InfinitePlace (Kf g),
-        (w (algebraMap (𝓞 (Kf g)) (Kf g) y)) ^ 2 := by
-  -- Step 1: Rewrite the product as the absolute norm.
-  have h1 : ∏ w : NumberField.InfinitePlace (Kf g), (w (algebraMap (𝓞 (Kf g)) (Kf g) y)) ^ 2 = (Ideal.absNorm (Ideal.span {y}) : ℝ) := by
-    convert NumberField.InfinitePlace.prod_eq_abs_norm ( algebraMap ( 𝓞 ( Kf g ) ) ( Kf g ) y ) using 1;
-    · refine' Finset.prod_congr rfl fun w hw => _;
-      have h_complex : w.IsComplex := NumberField.IsTotallyComplex.isComplex w
-      rw [ NumberField.InfinitePlace.mult ] ; aesop;
-    · have := Algebra.coe_norm_int y; norm_cast at *; aesop;
-  refine' h1 ▸ mod_cast Nat.le_of_dvd ( Nat.pos_of_ne_zero _ ) _;
-  · simp +decide [ hy0 ];
-  · exact Ideal.absNorm_dvd_absNorm_of_le ( Ideal.span_le.mpr ( Set.singleton_subset_iff.mpr hy ) )
+      ∏ w : NumberField.InfinitePlace (Kf g), (w (algebraMap (𝓞 (Kf g)) (Kf g) y)) ^ 2 :=
+  by
+    -- Step 1: Rewrite the product as the absolute norm.
+    have h1 :
+      ∏ w : NumberField.InfinitePlace (Kf g), (w (algebraMap (𝓞 (Kf g)) (Kf g) y)) ^ 2 =
+        (Ideal.absNorm (Ideal.span { y }) : ℝ) :=
+      by
+        convert
+          NumberField.InfinitePlace.prod_eq_abs_norm (algebraMap (𝓞 (Kf g)) (Kf g) y) using 1;
+        · refine Finset.prod_congr rfl fun w hw => ?_;
+          have h_complex : w.IsComplex := NumberField.IsTotallyComplex.isComplex w
+          rw [NumberField.InfinitePlace.mult]; aesop;
+        · have := Algebra.coe_norm_int y; norm_cast at *; aesop;
+    refine h1 ▸ mod_cast Nat.le_of_dvd (Nat.pos_of_ne_zero ?_) ?_; · simp +decide [hy0];
+    · exact
+        Ideal.absNorm_dvd_absNorm_of_le (Ideal.span_le.mpr (Set.singleton_subset_iff.mpr hy))
 
 /-- **Separation.**  A nonzero element of the ideal `b`, under the Minkowski map, cannot
 have all of its coordinates small relative to `ρ √(w μ)` once
 `ρ^(2·#places)·(m t)^(2^g) < 1`. -/
-theorem mink_sep_aux (g t : ℕ) (b : Ideal (𝓞 (Kf g))) (μ : Kf g) (y : 𝓞 (Kf g))
-    (hy : y ∈ b) (hy0 : y ≠ 0)
-    (hprod : (∏ w : NumberField.InfinitePlace (Kf g), w μ)
-        = (m t : ℝ) ^ 2 ^ g * (Ideal.absNorm b : ℝ))
+theorem mink_sep_aux (g t : ℕ) (b : Ideal (𝓞 (Kf g))) (μ : Kf g) (y : 𝓞 (Kf g)) (hy : y ∈ b)
+    (hy0 : y ≠ 0)
+    (hprod :
+      (∏ w : NumberField.InfinitePlace (Kf g), w μ) =
+        (m t : ℝ) ^ 2 ^ g * (Ideal.absNorm b : ℝ))
     (ρ : ℝ)
-    (hkey : ρ ^ (2 * Fintype.card (NumberField.InfinitePlace (Kf g)))
-        * (m t : ℝ) ^ 2 ^ g < 1) :
-    ∃ w : NumberField.InfinitePlace (Kf g),
-      ρ * Real.sqrt (w μ) < ‖mink g y w‖ := by
-  contrapose! hkey; simp_all +decide;
-  -- By combining the results from the contrapositive assumption and the properties of the Minkowski map, we derive a contradiction.
-  have h_contradiction : (Ideal.absNorm b : ℝ) ≤ ρ ^ (2 * Fintype.card (InfinitePlace (Kf g))) * (∏ w : InfinitePlace (Kf g), (w μ)) := by
-    have h_contradiction : (∏ w : InfinitePlace (Kf g), (w (algebraMap (𝓞 (Kf g)) (Kf g) y)) ^ 2) ≤ (ρ ^ 2) ^ (Fintype.card (InfinitePlace (Kf g))) * (∏ w : InfinitePlace (Kf g), (w μ)) := by
-      have h_prod_le : ∀ w : InfinitePlace (Kf g), (w (algebraMap (𝓞 (Kf g)) (Kf g) y)) ^ 2 ≤ (ρ * Real.sqrt (w μ)) ^ 2 := by
-        exact fun w => by simpa only [ ← norm_mink_apply ] using pow_le_pow_left₀ ( by positivity ) ( hkey w ) 2;
-      convert! Finset.prod_le_prod ( fun _ _ => sq_nonneg _ ) fun w _ => h_prod_le w using 1 ; norm_num [ mul_pow, Finset.prod_mul_distrib ];
-    convert! le_trans ( absNorm_le_prod_places g b y hy hy0 ) h_contradiction using 1 ; ring;
-  by_cases hb : Ideal.absNorm b = 0 <;> simp_all +decide;
-  · rw [ Ideal.absNorm_eq_zero_iff ] at hb ; aesop;
-  · nlinarith [ show 0 < ( Ideal.absNorm b : ℝ ) by positivity ]
+    (hkey :
+      ρ ^ (2 * Fintype.card (NumberField.InfinitePlace (Kf g))) * (m t : ℝ) ^ 2 ^ g < 1) :
+    ∃ w : NumberField.InfinitePlace (Kf g), ρ * Real.sqrt (w μ) < ‖mink g y w‖ :=
+  by
+    contrapose! hkey; simp_all +decide only [ne_eq];
+    -- By combining the results from the contrapositive assumption and the properties of the
+    -- Minkowski map, we derive a contradiction.
+    have h_contradiction :
+      (Ideal.absNorm b : ℝ) ≤
+        ρ ^ (2 * Fintype.card (InfinitePlace (Kf g))) * (∏ w : InfinitePlace (Kf g), (w μ)) :=
+      by
+        have h_contradiction :
+          (∏ w : InfinitePlace (Kf g), (w (algebraMap (𝓞 (Kf g)) (Kf g) y)) ^ 2) ≤
+            (ρ ^ 2) ^ (Fintype.card (InfinitePlace (Kf g))) *
+              (∏ w : InfinitePlace (Kf g), (w μ)) :=
+          by
+            have h_prod_le :
+              ∀ w : InfinitePlace (Kf g),
+                (w (algebraMap (𝓞 (Kf g)) (Kf g) y)) ^ 2 ≤ (ρ * Real.sqrt (w μ)) ^ 2 :=
+              by
+                exact fun w =>
+                  by
+                    simpa only [← norm_mink_apply] using
+                      pow_le_pow_left₀
+                        (by
+                          positivity)
+                        (hkey w) 2;
+            convert! Finset.prod_le_prod (fun _ _ => sq_nonneg _) fun w _ => h_prod_le w using
+              1;
+            norm_num [mul_pow, Finset.prod_mul_distrib];
+        convert! le_trans (absNorm_le_prod_places g b y hy hy0) h_contradiction using 1; ring;
+    by_cases hb : Ideal.absNorm b = 0 <;> simp_all +decide;
+    · rw [Ideal.absNorm_eq_zero_iff] at hb; aesop;
+    · nlinarith [show 0 < (Ideal.absNorm b : ℝ) by positivity]
 
 /-- Real-analysis balancing identity (strict): the chosen radius factor makes the
 separation product strictly less than one. -/
 theorem rpow_balance_lt {B0 : ℝ} (hB0 : 1 ≤ B0) {d : ℕ} (hd : 1 ≤ d) :
-    ((1 / 2 : ℝ) * B0 ^ (-(1 : ℝ) / (2 * (d : ℝ)))) ^ (2 * d) * B0 < 1 := by
-  rw [ mul_pow ];
-  rw [ ← Real.rpow_natCast _ ( 2 * d ), ← Real.rpow_natCast _ ( 2 * d ), ← Real.rpow_mul ( by positivity ), mul_comm ] ; ring_nf ; norm_num [ show d ≠ 0 by positivity ];
-  norm_cast ; norm_num [ mul_comm, Real.rpow_mul ];
-  rw [ ← mul_assoc, inv_mul_cancel₀ ( by positivity ), one_mul ] ; exact pow_lt_one₀ ( by positivity ) ( by norm_num ) ( by positivity )
+    ((1 / 2 : ℝ) * B0 ^ (-(1 : ℝ) / (2 * (d : ℝ)))) ^ (2 * d) * B0 < 1 :=
+  by
+    rw [mul_pow];
+    rw [← Real.rpow_natCast _ (2 * d), ← Real.rpow_natCast _ (2 * d), ←
+      Real.rpow_mul
+        (by
+          positivity),
+      mul_comm];
+    ring_nf; norm_num [show d ≠ 0 by positivity]; norm_cast;
+    norm_num [mul_comm, Real.rpow_mul];
+    rw [← mul_assoc,
+      inv_mul_cancel₀
+        (by
+          positivity),
+      one_mul];
+    exact
+      pow_lt_one₀
+        (by
+          positivity)
+        (by
+          norm_num)
+        (by
+          positivity)
 
 /-- Real-analysis balancing identity (equality) for the box-count upper bound. -/
 theorem rpow_balance_le {B0 : ℝ} (hB0 : 1 ≤ B0) {d : ℕ} (hd : 1 ≤ d) :
-    (8 / ((1 / 2 : ℝ) * B0 ^ (-(1 : ℝ) / (2 * (d : ℝ))))) ^ (2 * d)
-      = (256 : ℝ) ^ d * B0 := by
-  ring_nf at *;
-  norm_num [ pow_mul', ← Real.rpow_natCast, ← Real.rpow_mul ( by positivity : 0 ≤ B0 ), mul_assoc, mul_comm, mul_left_comm ];
-  norm_num [ show d ≠ 0 by linarith ];
-  norm_num [ Real.rpow_neg_one ]
+    (8 / ((1 / 2 : ℝ) * B0 ^ (-(1 : ℝ) / (2 * (d : ℝ))))) ^ (2 * d) = (256 : ℝ) ^ d * B0 :=
+  by
+    ring_nf at *;
+    norm_num [pow_mul', ← Real.rpow_natCast,
+      ←
+        Real.rpow_mul
+          (by
+              positivity :
+            0 ≤ B0),
+      mul_assoc, mul_comm, mul_left_comm];
+    norm_num [show d ≠ 0 by linarith]; norm_num [Real.rpow_neg_one]
 
 /-- Box-count upper bound: with `d ≤ 2^g` places, `256^d · M^(2^g) ≤ (32 √M)^(2·2^g)`. -/
 theorem box_count_bound {M : ℝ} (hM : 0 ≤ M) {d g : ℕ} (hd : d ≤ 2 ^ g) :
-    (256 : ℝ) ^ d * M ^ 2 ^ g ≤ (32 * Real.sqrt M) ^ (2 * 2 ^ g) := by
-  rw [ mul_pow, pow_mul ] ; norm_num [ Real.sq_sqrt hM ] ; ring_nf ;
-  rw [ pow_mul', Real.sq_sqrt hM ];
-  exact mul_le_mul_of_nonneg_left ( le_trans ( pow_le_pow_left₀ ( by norm_num ) ( by norm_num ) _ ) ( pow_le_pow_right₀ ( by norm_num ) hd ) ) ( by positivity )
+    (256 : ℝ) ^ d * M ^ 2 ^ g ≤ (32 * Real.sqrt M) ^ (2 * 2 ^ g) :=
+  by
+    rw [mul_pow, pow_mul]; norm_num [Real.sq_sqrt hM]; ring_nf;
+    rw [pow_mul', Real.sq_sqrt hM];
+    exact
+      mul_le_mul_of_nonneg_left
+        (le_trans
+          (pow_le_pow_left₀
+            (by
+              norm_num)
+            (by
+              norm_num)
+            _)
+          (pow_le_pow_right₀
+            (by
+              norm_num)
+            hd))
+        (by
+          positivity)
 
 /-- [medium given everything above; pure glue]  **Summary of the
 construction.**  For all `g t ≥ 1` there is a planar set `Q` with `#Q = n`
@@ -293,7 +320,7 @@ theorem exists_good_pointset (g t : ℕ) (hg : 1 ≤ g) (ht : 1 ≤ t) :
     have h2 := hZplace y hy i
     have hnn : 0 ≤ i (algebraMap (𝓞 (Kf g)) (Kf g) y) := apply_nonneg i _
     rw [norm_mink_apply]
-    show i (algebraMap (𝓞 (Kf g)) (Kf g) y) = Real.sqrt (i μ)
+    change i (algebraMap (𝓞 (Kf g)) (Kf g) y) = Real.sqrt (i μ)
     rw [← h2, Real.sqrt_sq hnn]
   -- run the geometric core
   obtain ⟨n, Q, hQcard, hZn, hnbound, hpairs⟩ :=

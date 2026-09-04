@@ -15,7 +15,6 @@ import ErdosProblems.Erdos90b.External.TauCeti.FieldTheory.IntermediateField.Qua
 Galois group; hence `K_g` is a CM field.
 -/
 
-open scoped Classical
 
 namespace Erdos
 
@@ -33,19 +32,20 @@ noncomputable def Kf (g : ℕ) : IntermediateField ℚ ℂ :=
 numbers (`i` and the `√q3 j`, `j < g`).
 Sketch: `IntermediateField.finiteDimensional_adjoin`; each generator is
 integral over ℚ (root of `X² + 1` resp. `X² - q3 j`). -/
-theorem Kf_finiteDimensional (g : ℕ) : FiniteDimensional ℚ (Kf g) := by
-  refine' IntermediateField.finiteDimensional_adjoin _
-  simp +zetaDelta only [Set.mem_insert_iff, Set.mem_image, Set.mem_Iio, forall_eq_or_imp, forall_exists_index,
-    and_imp, forall_apply_eq_imp_iff₂] at *
-  refine ⟨?_, ?_⟩
-  · exact Complex.isIntegral_rat_I
-  · intro a ha
-    refine ⟨Polynomial.X ^ 2 - Polynomial.C (q3 a : ℚ), ?_, ?_⟩
-    · exact Polynomial.monic_X_pow_sub_C _ two_ne_zero
-    · norm_num [← Polynomial.C_pow]
-      norm_cast
-      rw [Real.sq_sqrt <| Nat.cast_nonneg _]
-      ring
+theorem Kf_finiteDimensional (g : ℕ) : FiniteDimensional ℚ (Kf g) :=
+  by
+    refine IntermediateField.finiteDimensional_adjoin ?_
+    simp +zetaDelta only [Set.mem_insert_iff, Set.mem_image, Set.mem_Iio, forall_eq_or_imp,
+      forall_exists_index, and_imp, forall_apply_eq_imp_iff₂] at *
+    refine ⟨?_, ?_⟩
+    · exact Complex.isIntegral_rat_I
+    · intro a ha
+      refine ⟨Polynomial.X ^ 2 - Polynomial.C (q3 a : ℚ), ?_, ?_⟩
+      · exact Polynomial.monic_X_pow_sub_C _ two_ne_zero
+      · norm_num [← Polynomial.C_pow]
+        norm_cast
+        rw [Real.sq_sqrt <| Nat.cast_nonneg _]
+        ring
 
 noncomputable instance (g : ℕ) : NumberField (Kf g) :=
   { to_charZero := inferInstance
@@ -167,7 +167,7 @@ private theorem finrank_sup_adjoin_simple_eq_mul_two
       Module.finrank ℚ K * 2 := by
   let : IsScalarTower ℚ K E := by
     refine IsScalarTower.of_algebraMap_eq fun q => ?_
-    simpa using (map_ratCast (algebraMap K E) q).symm
+    simp
   let L : IntermediateField K E := IntermediateField.adjoin K {x}
   have hL :
       L.restrictScalars ℚ = K ⊔ IntermediateField.adjoin ℚ ({x} : Set E) := by
@@ -346,74 +346,177 @@ theorem Kf_isTotallyComplex (g : ℕ) : NumberField.IsTotallyComplex (Kf g) := b
 noncomputable instance (g : ℕ) : NumberField.IsTotallyComplex (Kf g) :=
   Kf_isTotallyComplex g
 
-theorem Kf_isGalois (g : ℕ) : IsGalois ℚ (Kf g) := by
-  apply_rules [ IsGalois.mk ];
-  apply_rules [ normal_iff.mpr ];
-  intro x
-  have h_integral : IsIntegral ℚ x := Algebra.IsIntegral.isIntegral x
-  have h_splits : (Polynomial.map (algebraMap ℚ (Kf g)) (minpoly ℚ x)).Splits := by
-    have h_minpoly : ∀ s ∈ (IntermediateField.adjoin ℚ (insert Complex.I ((fun j => ((Real.sqrt (q3 j) : ℝ) : ℂ)) '' Set.Iio g))).toSubalgebra, (Polynomial.map (algebraMap ℚ (Kf g)) (minpoly ℚ s)).Splits := by
-      apply IntermediateField.splits_of_mem_adjoin;
-      intro x hx
-      have h_minpoly : (Polynomial.map (algebraMap ℚ (Kf g)) (minpoly ℚ x)).Splits := by
-        rcases hx with ( rfl | ⟨ j, hj, rfl ⟩ );
-        · rw [ show minpoly ℚ Complex.I = Polynomial.X ^ 2 + 1 from ?_ ];
-          · rw [ Polynomial.splits_iff_exists_multiset ];
-            use {⟨Complex.I, by
-              exact IntermediateField.subset_adjoin ℚ _ ( Set.mem_insert _ _ )⟩, ⟨-Complex.I, by
-              exact Subalgebra.neg_mem _ ( IntermediateField.subset_adjoin ℚ _ <| Set.mem_insert _ _ )⟩}
-            generalize_proofs at *;
-            refine' Polynomial.funext fun x => _;
-            ext ; norm_num ; ring_nf;
-            norm_num [ sub_eq_add_neg ];
-            ring;
-          · refine' Eq.symm ( minpoly.eq_of_irreducible_of_monic _ _ _ );
-            · -- We'll use that $X^2 + 1$ is the cyclotomic polynomial $\Phi_4(X)$.
-              have h_cyclotomic : Polynomial.X ^ 2 + 1 = Polynomial.cyclotomic 4 ℚ := by
-                rw [ show ( 4 : ℕ ) = 2 ^ 2 by norm_num, Polynomial.cyclotomic_prime_pow_eq_geom_sum ] ; norm_num;
-                norm_num;
-              exact h_cyclotomic ▸ Polynomial.cyclotomic.irreducible_rat ( by decide );
-            · norm_num;
-            · erw [ Polynomial.Monic, Polynomial.leadingCoeff_X_pow_add_C ] ; norm_num;
-        · have h_minpoly : minpoly ℚ ((Real.sqrt (q3 j) : ℝ) : ℂ) = Polynomial.X ^ 2 - Polynomial.C (q3 j : ℚ) := by
-            refine' Eq.symm ( minpoly.eq_of_irreducible_of_monic _ _ _ );
-            · -- The polynomial $X^2 - q3 j$ is irreducible over $\mathbb{Q}$ because $q3 j$ is not a perfect square.
-              have h_irred : ¬∃ (r : ℚ), r^2 = q3 j := by
-                have h_not_square : ¬∃ (r : ℤ), r^2 = q3 j := by
-                  have := q3_spec j;
-                  exact fun ⟨ r, hr ⟩ => by have := congr_arg ( · % 4 ) hr; norm_num [ sq, Int.add_emod, Int.mul_emod ] at this; have := Int.emod_nonneg r four_pos.ne'; have := Int.emod_lt_of_pos r four_pos; interval_cases r % 4 <;> norm_cast at * <;> simp_all +decide ;
-                exact fun ⟨ r, hr ⟩ => h_not_square ⟨ r.num, by simpa only [ sq, Rat.mul_self_num, Rat.num_natCast ] using congr_arg Rat.num hr ⟩;
-              -- Since $q3 j$ is not a perfect square, the polynomial $X^2 - q3 j$ is irreducible over $\mathbb{Q}$.
-              have h_irred : ∀ p q : Polynomial ℚ, p.degree > 0 → q.degree > 0 → p * q = Polynomial.X ^ 2 - Polynomial.C (q3 j : ℚ) → False := by
-                intros p q hp hq h_eq
-                have h_deg : p.degree = 1 ∧ q.degree = 1 := by
-                  have h_deg : p.degree + q.degree = 2 := by
-                    rw [ ← Polynomial.degree_mul, h_eq, Polynomial.degree_sub_C ] <;> norm_num;
-                  rw [ Polynomial.degree_eq_natDegree ( Polynomial.ne_zero_of_degree_gt hp ), Polynomial.degree_eq_natDegree ( Polynomial.ne_zero_of_degree_gt hq ) ] at * ; norm_cast at * ; exact ⟨ by linarith, by linarith ⟩;
-                obtain ⟨r, hr⟩ : ∃ r : ℚ, p.eval r = 0 := by
-                  exact Polynomial.exists_root_of_degree_eq_one h_deg.1;
-                exact h_irred ⟨ r, by replace h_eq := congr_arg ( Polynomial.eval r ) h_eq; norm_num [ hr ] at h_eq; linarith ⟩;
-              constructor <;> contrapose! h_irred;
-              · exact absurd ( Polynomial.degree_eq_zero_of_isUnit h_irred ) ( by erw [ Polynomial.degree_X_pow_sub_C ] <;> norm_num );
-              · obtain ⟨ a, b, h₁, h₂, h₃ ⟩ := h_irred; exact ⟨ a, b, not_le.mp fun h => h₂ <| Polynomial.isUnit_iff_degree_eq_zero.mpr <| le_antisymm h <| le_of_not_gt fun h' => by { apply_fun Polynomial.eval 0 at h₁; aesop }, not_le.mp fun h => h₃ <| Polynomial.isUnit_iff_degree_eq_zero.mpr <| le_antisymm h <| le_of_not_gt fun h' => by { apply_fun Polynomial.eval 0 at h₁; aesop }, h₁.symm, trivial ⟩ ;
-            · norm_num [ ← Complex.ofReal_pow ];
-            · erw [ Polynomial.Monic, Polynomial.leadingCoeff_X_pow_sub_C ] ; norm_num;
-          rw [ h_minpoly, Polynomial.splits_iff_exists_multiset ];
-          refine' ⟨ { ⟨ ( Real.sqrt ( q3 j ) : ℝ ) , _ ⟩, ⟨ - ( Real.sqrt ( q3 j ) : ℝ ), _ ⟩ }, _ ⟩ <;> norm_num;
-          any_goals exact IntermediateField.subset_adjoin ℚ _ ( Set.mem_insert_of_mem _ <| Set.mem_image_of_mem _ hj );
-          refine' Polynomial.funext fun x => _;
-          erw [ Polynomial.leadingCoeff_X_pow_sub_C ] <;> norm_num ; ring_nf;
-          ext ; norm_num ; ring_nf;
-          norm_num [ ← Complex.ofReal_pow ]
-      exact ⟨by
-      cases hx <;> simp_all +decide [ Complex.ext_iff ];
-      · rw [ show x = Complex.I by simpa [ Complex.ext_iff ] using ‹x.re = 0 ∧ x.im = 1› ] ; exact ⟨ Polynomial.X ^ 2 + 1, by exact Polynomial.monic_X_pow_add_C _ two_ne_zero, by norm_num ⟩ ;
-      · obtain ⟨ j, hj, hx₁, hx₂ ⟩ := ‹_›; use Polynomial.X ^ 2 - Polynomial.C ( q3 j : ℚ ) ; norm_num [ hx₁, hx₂ ] ; ring_nf;
-        exact ⟨ Polynomial.monic_X_pow_sub_C _ two_ne_zero, by rw [ show x = Real.sqrt ( q3 j ) by simp [ Complex.ext_iff, hx₁.symm, hx₂.symm ] ] ; norm_num [ ← Complex.ofReal_pow, Real.sq_sqrt ( Nat.cast_nonneg _ ) ] ⟩, h_minpoly⟩;
-    have hx2 := h_minpoly x x.2
-    rwa [show minpoly ℚ (x : ℂ) = minpoly ℚ x from
-      minpoly.algHom_eq (Kf g).val (Kf g).val.injective x] at hx2
-  exact ⟨h_integral, h_splits⟩
+theorem Kf_isGalois (g : ℕ) : IsGalois ℚ (Kf g) :=
+  by
+    apply_rules [IsGalois.mk]; apply_rules [normal_iff.mpr]; intro x
+    have h_integral : IsIntegral ℚ x := Algebra.IsIntegral.isIntegral x
+    have h_splits : (Polynomial.map (algebraMap ℚ (Kf g)) (minpoly ℚ x)).Splits :=
+      by
+        have h_minpoly :
+          ∀
+            s ∈
+              (IntermediateField.adjoin ℚ
+                  (insert Complex.I
+                    ((fun j => ((Real.sqrt (q3 j) : ℝ) : ℂ)) '' Set.Iio g))).toSubalgebra,
+            (Polynomial.map (algebraMap ℚ (Kf g)) (minpoly ℚ s)).Splits :=
+          by
+            apply IntermediateField.splits_of_mem_adjoin; intro x hx
+            have h_minpoly : (Polynomial.map (algebraMap ℚ (Kf g)) (minpoly ℚ x)).Splits :=
+              by
+                rcases hx with (rfl | ⟨j, hj, rfl⟩);
+                · rw [show minpoly ℚ Complex.I = Polynomial.X ^ 2 + 1 from ?_];
+                  · rw [Polynomial.splits_iff_exists_multiset];
+                    use
+                      {⟨Complex.I,
+                          by
+                            exact IntermediateField.subset_adjoin ℚ _ (Set.mem_insert _ _)⟩,
+                        ⟨-Complex.I,
+                          by
+                            exact
+                              Subalgebra.neg_mem _
+                                (IntermediateField.subset_adjoin ℚ _ <| Set.mem_insert _ _)⟩}
+                    generalize_proofs at *; refine Polynomial.funext fun x => ?_; ext;
+                    norm_num; ring_nf; norm_num [sub_eq_add_neg]; ring;
+                  · refine Eq.symm (minpoly.eq_of_irreducible_of_monic ?_ ?_ ?_);
+                    · -- We'll use that $X^2 + 1$ is the cyclotomic polynomial $\Phi_4(X)$.
+                      have h_cyclotomic : Polynomial.X ^ 2 + 1 = Polynomial.cyclotomic 4 ℚ :=
+                        by
+                          rw [show (4 : ℕ) = 2 ^ 2 by norm_num,
+                            Polynomial.cyclotomic_prime_pow_eq_geom_sum];
+                          · norm_num
+                          · norm_num
+                      exact
+                        h_cyclotomic ▸
+                          Polynomial.cyclotomic.irreducible_rat
+                            (by
+                              decide);
+                    · norm_num;
+                    · erw [Polynomial.Monic, Polynomial.leadingCoeff_X_pow_add_C]; norm_num;
+                · have h_minpoly :
+                    minpoly ℚ ((Real.sqrt (q3 j) : ℝ) : ℂ) =
+                      Polynomial.X ^ 2 - Polynomial.C (q3 j : ℚ) :=
+                    by
+                      refine Eq.symm (minpoly.eq_of_irreducible_of_monic ?_ ?_ ?_);
+                      · -- The polynomial $X^2 - q3 j$ is irreducible over $\mathbb{Q}$ because $q3
+                        -- j$ is not a perfect square.
+                        have h_irred : ¬∃ (r : ℚ), r ^ 2 = q3 j :=
+                          by
+                            have h_not_square : ¬∃ (r : ℤ), r ^ 2 = q3 j :=
+                              by
+                                have := q3_spec j;
+                                exact fun ⟨r, hr⟩ =>
+                                  by
+                                    have := congr_arg (· % 4) hr;
+                                    norm_num [sq, Int.add_emod, Int.mul_emod] at this;
+                                    have := Int.emod_nonneg r four_pos.ne';
+                                    have := Int.emod_lt_of_pos r four_pos;
+                                    interval_cases r % 4 <;> norm_cast at * <;>
+                                      simp_all +decide;
+                            exact fun ⟨r, hr⟩ =>
+                              h_not_square
+                                ⟨r.num,
+                                  by
+                                    simpa only [sq, Rat.mul_self_num, Rat.num_natCast] using
+                                      congr_arg Rat.num hr⟩;
+                        -- Since $q3 j$ is not a perfect square, the polynomial $X^2 - q3 j$ is
+                        -- irreducible over $\mathbb{Q}$.
+                        have h_irred :
+                          ∀ p q : Polynomial ℚ,
+                            p.degree > 0 →
+                              q.degree > 0 →
+                                p * q = Polynomial.X ^ 2 - Polynomial.C (q3 j : ℚ) → False :=
+                          by
+                            intros p q hp hq h_eq
+                            have h_deg : p.degree = 1 ∧ q.degree = 1 :=
+                              by
+                                have h_deg : p.degree + q.degree = 2 :=
+                                  by
+                                    rw [← Polynomial.degree_mul, h_eq,
+                                        Polynomial.degree_sub_C] <;>
+                                      norm_num;
+                                rw [Polynomial.degree_eq_natDegree
+                                    (Polynomial.ne_zero_of_degree_gt hp),
+                                  Polynomial.degree_eq_natDegree
+                                    (Polynomial.ne_zero_of_degree_gt hq)] at *;
+                                norm_cast at *;
+                                exact
+                                  ⟨by
+                                      linarith,
+                                    by
+                                      linarith⟩;
+                            obtain ⟨r, hr⟩ : ∃ r : ℚ, p.eval r = 0 :=
+                              by
+                                exact Polynomial.exists_root_of_degree_eq_one h_deg.1;
+                            exact
+                              h_irred
+                                ⟨r,
+                                  by
+                                    replace h_eq := congr_arg (Polynomial.eval r) h_eq;
+                                    norm_num [hr] at h_eq; linarith⟩;
+                        constructor <;> contrapose! h_irred;
+                        · exact
+                            absurd (Polynomial.degree_eq_zero_of_isUnit h_irred)
+                              (by
+                                erw [Polynomial.degree_X_pow_sub_C] <;> norm_num);
+                        · obtain ⟨a, b, h₁, h₂, h₃⟩ := h_irred;
+                          exact
+                            ⟨a, b,
+                              not_le.mp fun h =>
+                                h₂ <|
+                                  Polynomial.isUnit_iff_degree_eq_zero.mpr <|
+                                    le_antisymm h <|
+                                      le_of_not_gt fun h' =>
+                                        by
+                                          { apply_fun Polynomial.eval 0 at h₁; aesop
+                                        },
+                              not_le.mp fun h =>
+                                h₃ <|
+                                  Polynomial.isUnit_iff_degree_eq_zero.mpr <|
+                                    le_antisymm h <|
+                                      le_of_not_gt fun h' =>
+                                        by
+                                          { apply_fun Polynomial.eval 0 at h₁; aesop
+                                        },
+                              h₁.symm, trivial⟩;
+                      · norm_num [← Complex.ofReal_pow];
+                      · erw [Polynomial.Monic, Polynomial.leadingCoeff_X_pow_sub_C]; norm_num;
+                  rw [h_minpoly, Polynomial.splits_iff_exists_multiset];
+                  refine
+                      ⟨{⟨(Real.sqrt (q3 j) : ℝ), ?_⟩, ⟨-(Real.sqrt (q3 j) : ℝ), ?_⟩}, ?_⟩ <;>
+                    norm_num;
+                  any_goals
+                    exact
+                      IntermediateField.subset_adjoin ℚ _
+                        (Set.mem_insert_of_mem _ <| Set.mem_image_of_mem _ hj);
+                  refine Polynomial.funext fun x => ?_;
+                  erw [Polynomial.leadingCoeff_X_pow_sub_C] <;> norm_num; ring_nf; ext;
+                  norm_num; ring_nf; norm_num [← Complex.ofReal_pow]
+            exact
+              ⟨by
+                  cases hx <;> simp_all +decide only [Complex.ext_iff, Complex.I_re, Complex.I_im,
+                    Set.mem_image, Set.mem_Iio, Complex.ofReal_re, Complex.ofReal_im];
+                  · rw [show x = Complex.I by
+                        simpa [Complex.ext_iff] using ‹x.re = 0 ∧ x.im = 1›];
+                    exact
+                      ⟨Polynomial.X ^ 2 + 1,
+                        by
+                          exact Polynomial.monic_X_pow_add_C _ two_ne_zero,
+                        by
+                          norm_num⟩;
+                  · obtain ⟨j, hj, hx₁, hx₂⟩ := ‹_›;
+                    use Polynomial.X ^ 2 - Polynomial.C (q3 j : ℚ); norm_num [hx₁, hx₂];
+                    ring_nf;
+                    exact
+                      ⟨Polynomial.monic_X_pow_sub_C _ two_ne_zero,
+                        by
+                          rw [show x = Real.sqrt (q3 j) by
+                              simp [Complex.ext_iff, hx₁.symm, hx₂.symm]];
+                          norm_num [← Complex.ofReal_pow, Real.sq_sqrt (Nat.cast_nonneg _)]⟩,
+                h_minpoly⟩;
+        have hx2 := h_minpoly x x.2
+        rwa [show minpoly ℚ (x : ℂ) = minpoly ℚ x from
+            minpoly.algHom_eq (Kf g).val (Kf g).val.injective x] at hx2
+    exact ⟨h_integral, h_splits⟩
 
 /-
 [helper] Every ℚ-automorphism of `K_g` is an involution.  Each
@@ -443,11 +546,11 @@ theorem Kf_aut_involutive (g : ℕ) (σ : Kf g ≃ₐ[ℚ] Kf g) : σ * σ = 1 :
     have h1 : (σ y) ^ 2 = y ^ 2 := by
       rw [← map_pow, hc, AlgEquiv.commutes]
     have h2 : σ y = y ∨ σ y = -y := sq_eq_sq_iff_eq_or_eq_neg.mp h1
-    show σ (σ y) = y
+    change σ (σ y) = y
     rcases h2 with h | h
     · rw [h, h]
     · rw [h, map_neg, h, neg_neg]
-  exact AlgEquiv.coe_algHom_injective hext
+  exact AlgEquiv.coe_toAlgHom_injective hext
 
 /-- [medium] `K_g/ℚ` is an abelian Galois extension.  Sketch: it is the
 splitting field of `(X² + 1) ∏_j (X² - q3 j)` (each quadratic generator

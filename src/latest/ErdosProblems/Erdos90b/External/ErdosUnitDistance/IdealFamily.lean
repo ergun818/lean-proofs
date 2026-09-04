@@ -15,7 +15,6 @@ above it; choosing one prime per conjugate orbit yields
 `2^(t·2^(g-1))` ideals `𝔄` with `𝔄𝔄∗ = (m t)`.
 -/
 
-open scoped Classical
 open NumberField IsCMField
 
 namespace Erdos
@@ -26,121 +25,175 @@ namespace Erdos
 `ℚ(√q : q ∈ s)`. Proven by strong induction on `s`.
 -/
 
-theorem Kf_aut_sq (g : ℕ) (σ : Kf g ≃ₐ[ℚ] Kf g) : σ ^ 2 = 1 := by
-  have h2 : ∀ x : Kf g, σ (σ x) = x := by
-    have h_fixed_subfield : ∀ t : Kf g, (t : ℂ)^2 ∈ Set.range (algebraMap ℚ ℂ) → σ (σ t) = t := by
-      intro t ht
-      obtain ⟨q, hq⟩ := ht
-      have h_sigma_sq_t : (σ t)^2 = t^2 := by
-        convert congr_arg ( σ : Kf g → Kf g ) ( show t ^ 2 = ( algebraMap ℚ ( Kf g ) ) q from ?_ ) using 1;
-        · simp +decide [ map_pow ];
-        · simp_all +decide [ ← Subtype.coe_inj ];
-        · exact Subtype.ext <| hq.symm;
-      have h_sigma_t_cases : σ t = t ∨ σ t = -t := by
-        exact eq_or_eq_neg_of_sq_eq_sq _ _ h_sigma_sq_t;
-      cases h_sigma_t_cases <;> simp_all +decide [ sq ];
-    have h_adjoin : IntermediateField.adjoin ℚ (insert Complex.I ((fun j => ((Real.sqrt (q3 j) : ℝ) : ℂ)) '' Set.Iio g)) = Kf g := by
-      rfl;
-    intro x;
-    have h_gen : ∀ t ∈ insert Complex.I ((fun j => ((Real.sqrt (q3 j) : ℝ) : ℂ)) '' Set.Iio g), ∃ t' : Kf g, (t' : ℂ) = t ∧ σ (σ t') = t' := by
-      intro t ht
-      refine ⟨⟨ t, h_adjoin ▸ IntermediateField.subset_adjoin ℚ _ ht ⟩, rfl, ?_⟩
-      rcases ht with rfl | ⟨ j, hj, rfl ⟩
-      · exact h_fixed_subfield _ ⟨ -1, by norm_num [ Complex.ext_iff ] ⟩
-      · refine h_fixed_subfield _ ⟨ (q3 j : ℚ), ?_ ⟩
-        rw [← Complex.ofReal_pow, Real.sq_sqrt (Nat.cast_nonneg (q3 j))]
-        push_cast
-        ring
-    have h_gen : ∀ t ∈ IntermediateField.adjoin ℚ (insert Complex.I ((fun j => ((Real.sqrt (q3 j) : ℝ) : ℂ)) '' Set.Iio g)), ∃ t' : Kf g, (t' : ℂ) = t ∧ σ (σ t') = t' := by
-      intro t ht;
-      induction ht using IntermediateField.adjoin_induction;
-      · exact h_gen _ ‹_›;
-      · exact ⟨ algebraMap ℚ ( Kf g ) ‹_›, by simp +decide, by simp +decide ⟩;
-      · rename_i hx hy;
-        obtain ⟨ t₁, ht₁, ht₁' ⟩ := hx; obtain ⟨ t₂, ht₂, ht₂' ⟩ := hy; use t₁ + t₂; aesop;
-      · rename_i t ht ih;
-        obtain ⟨ t', ht', ht'' ⟩ := ih;
-        use t'⁻¹;
-        aesop;
-      · rename_i hx hy;
-        obtain ⟨ t₁, ht₁, ht₁' ⟩ := hx; obtain ⟨ t₂, ht₂, ht₂' ⟩ := hy; use t₁ * t₂; aesop;
-    obtain ⟨ t', ht₁, ht₂ ⟩ := h_gen x ( h_adjoin.symm ▸ x.2 )
-    have : t' = x := Subtype.ext ht₁
-    rwa [this] at ht₂
-  refine AlgEquiv.ext fun x => ?_
-  rw [pow_two, AlgEquiv.mul_apply, AlgEquiv.one_apply, h2 x]
+theorem Kf_aut_sq (g : ℕ) (σ : Kf g ≃ₐ[ℚ] Kf g) : σ ^ 2 = 1 :=
+  by
+    have h2 : ∀ x : Kf g, σ (σ x) = x :=
+      by
+        have h_fixed_subfield :
+          ∀ t : Kf g, (t : ℂ) ^ 2 ∈ Set.range (algebraMap ℚ ℂ) → σ (σ t) = t :=
+          by
+            intro t ht
+            obtain ⟨q, hq⟩ := ht
+            have h_sigma_sq_t : (σ t) ^ 2 = t ^ 2 :=
+              by
+                convert
+                  congr_arg (σ : Kf g → Kf g)
+                    (show t ^ 2 = (algebraMap ℚ (Kf g)) q from ?_) using
+                  1; · simp +decide [map_pow];
+                · simp_all +decide [← Subtype.coe_inj];
+                · exact Subtype.ext <| hq.symm;
+            have h_sigma_t_cases : σ t = t ∨ σ t = -t :=
+              by
+                exact eq_or_eq_neg_of_sq_eq_sq _ _ h_sigma_sq_t;
+            cases h_sigma_t_cases <;> simp_all +decide [sq];
+        have h_adjoin :
+          IntermediateField.adjoin ℚ
+              (insert Complex.I ((fun j => ((Real.sqrt (q3 j) : ℝ) : ℂ)) '' Set.Iio g)) =
+            Kf g :=
+          by
+            rfl;
+        intro x;
+        have h_gen :
+          ∀ t ∈ insert Complex.I ((fun j => ((Real.sqrt (q3 j) : ℝ) : ℂ)) '' Set.Iio g),
+            ∃ t' : Kf g, (t' : ℂ) = t ∧ σ (σ t') = t' :=
+          by
+            intro t ht
+            refine ⟨⟨t, h_adjoin ▸ IntermediateField.subset_adjoin ℚ _ ht⟩, rfl, ?_⟩
+            rcases ht with rfl | ⟨j, hj, rfl⟩
+            · exact
+                h_fixed_subfield _
+                  ⟨-1,
+                    by
+                      norm_num [Complex.ext_iff]⟩
+            · refine h_fixed_subfield _ ⟨(q3 j : ℚ), ?_⟩
+              rw [← Complex.ofReal_pow, Real.sq_sqrt (Nat.cast_nonneg (q3 j))]
+              push_cast
+              ring
+        have h_gen :
+          ∀
+            t ∈
+              IntermediateField.adjoin ℚ
+                (insert Complex.I ((fun j => ((Real.sqrt (q3 j) : ℝ) : ℂ)) '' Set.Iio g)),
+            ∃ t' : Kf g, (t' : ℂ) = t ∧ σ (σ t') = t' :=
+          by
+            intro t ht; induction ht using IntermediateField.adjoin_induction;
+            · exact h_gen _ ‹_›;
+            · exact
+                ⟨algebraMap ℚ (Kf g) ‹_›,
+                  by
+                    simp +decide,
+                  by
+                    simp +decide⟩;
+            · rename_i hx hy; obtain ⟨t₁, ht₁, ht₁'⟩ := hx; obtain ⟨t₂, ht₂, ht₂'⟩ := hy;
+              use t₁ + t₂; aesop;
+            · rename_i t ht ih; obtain ⟨t', ht', ht''⟩ := ih; use t'⁻¹; aesop;
+            · rename_i hx hy; obtain ⟨t₁, ht₁, ht₁'⟩ := hx; obtain ⟨t₂, ht₂, ht₂'⟩ := hy;
+              use t₁ * t₂; aesop;
+        obtain ⟨t', ht₁, ht₂⟩ := h_gen x (h_adjoin.symm ▸ x.2)
+        have : t' = x := Subtype.ext ht₁
+        rwa [this] at ht₂
+    refine AlgEquiv.ext fun x => ?_
+    rw [pow_two, AlgEquiv.mul_apply, AlgEquiv.one_apply, h2 x]
 
 /-
 An automorphism of `Kf g` fixing each generator `i, √q3 j` is the identity.
 -/
 
 theorem Kf_eq_one_of_fixes_gens (g : ℕ) (σ : Kf g ≃ₐ[ℚ] Kf g)
-    (h : ∀ t : Kf g, (↑t ∈ insert Complex.I ((fun j => ((Real.sqrt (q3 j) : ℝ) : ℂ)) '' Set.Iio g))
-      → σ t = t) : σ = 1 := by
-  -- Let $t \in Kf g$. Since $Kf g$ is generated by $\{i, \sqrt{q3 j} \mid j < g\}$, we can write $t$ as a combination of these generators.
-  have h_gen : ∀ t : Kf g, ∃ t' : Kf g, (t' : ℂ) = t ∧ σ t' = t' := by
-    have h_ind : ∀ t ∈ IntermediateField.adjoin ℚ (insert Complex.I ((fun j => ((Real.sqrt (q3 j) : ℝ) : ℂ)) '' Set.Iio g)), ∃ t' : Kf g, (t' : ℂ) = t ∧ σ t' = t' := by
-      intro t ht;
-      induction ht using IntermediateField.adjoin_induction;
-      · refine' ⟨ ⟨ _, _ ⟩, rfl, h _ _ ⟩;
-        exact IntermediateField.subset_adjoin ℚ _ ‹_›;
-        assumption;
-      · exact ⟨ ⟨ _, Subalgebra.algebraMap_mem _ _ ⟩, rfl, σ.commutes _ ⟩;
-      · rename_i hx hy ihx ihy; obtain ⟨ t₁, rfl, ht₁ ⟩ := ihx; obtain ⟨ t₂, rfl, ht₂ ⟩ := ihy; use t₁ + t₂; simp +decide [ ht₁, ht₂ ] ;
-      · rename_i x hx ih; obtain ⟨ t', rfl, ht' ⟩ := ih; use t'⁻¹; aesop;
-      · rename_i hx hy;
-        obtain ⟨ t₁, ht₁, ht₁' ⟩ := hx; obtain ⟨ t₂, ht₂, ht₂' ⟩ := hy; use t₁ * t₂; aesop;
-    exact fun t => h_ind t t.2;
-  ext t; specialize h_gen t; aesop;
+    (h :
+      ∀ t : Kf g,
+        (↑t ∈ insert Complex.I ((fun j => ((Real.sqrt (q3 j) : ℝ) : ℂ)) '' Set.Iio g)) →
+          σ t = t) :
+    σ = 1 :=
+  by
+    -- Let $t \in Kf g$. Since $Kf g$ is generated by $\{i, \sqrt{q3 j} \mid j < g\}$, we can write
+    -- $t$ as a combination of these generators.
+    have h_gen : ∀ t : Kf g, ∃ t' : Kf g, (t' : ℂ) = t ∧ σ t' = t' :=
+      by
+        have h_ind :
+          ∀
+            t ∈
+              IntermediateField.adjoin ℚ
+                (insert Complex.I ((fun j => ((Real.sqrt (q3 j) : ℝ) : ℂ)) '' Set.Iio g)),
+            ∃ t' : Kf g, (t' : ℂ) = t ∧ σ t' = t' :=
+          by
+            intro t ht; induction ht using IntermediateField.adjoin_induction;
+            · rename_i x hx
+              exact ⟨⟨x, IntermediateField.subset_adjoin ℚ _ hx⟩, rfl, h _ hx⟩
+            · exact ⟨⟨_, Subalgebra.algebraMap_mem _ _⟩, rfl, σ.commutes _⟩;
+            · rename_i hx hy ihx ihy; obtain ⟨t₁, rfl, ht₁⟩ := ihx;
+              obtain ⟨t₂, rfl, ht₂⟩ := ihy; use t₁ + t₂; simp +decide [ht₁, ht₂];
+            · rename_i x hx ih; obtain ⟨t', rfl, ht'⟩ := ih; use t'⁻¹; aesop;
+            · rename_i hx hy; obtain ⟨t₁, ht₁, ht₁'⟩ := hx; obtain ⟨t₂, ht₂, ht₂'⟩ := hy;
+              use t₁ * t₂; aesop;
+        exact fun t => h_ind t t.2;
+    ext t; specialize h_gen t; aesop;
 
 open scoped NumberField
 
 open NumberField IsCMField in
-/-- The key step for unramifiedness: an inertia element `σ` (i.e. `σ • x ≡ x mod P` for all `x`)
+/--
+The key step for unramifiedness: an inertia element `σ` (i.e. `σ • x ≡ x mod P` for all `x`)
 fixes any `t` with `t^2 = c ∈ ℤ` provided `p ∤ 4c`.  The alternative `σ t = -t` would give
 `2 t ∈ P`, hence `4c ∈ P ∩ ℤ = pℤ`, i.e. `p ∣ 4c`. -/
-
-theorem inertia_fixes_gen (g : ℕ) (p : ℕ)
-    (P : Ideal (𝓞 (Kf g))) [P.LiesOver (Ideal.span {(p : ℤ)})]
-    (σ : Kf g ≃ₐ[ℚ] Kf g) (hσ : ∀ x : 𝓞 (Kf g), σ • x - x ∈ P)
-    (t : Kf g) (c : ℤ) (hc : (t : ℂ) ^ 2 = (c : ℂ)) (hpc : ¬ (p : ℤ) ∣ 4 * c) :
-    σ t = t := by
-  -- Since $t^2 = c$, we have $t = \sqrt{c}$ or $t = -\sqrt{c}$. In either case, $\sigma(t) = \pm t$.
-  have h_sigma_t : σ t = t ∨ σ t = -t := by
-    have h_sigma_t : σ t ^ 2 = t ^ 2 := by
-      have h_sigma_sq : σ (t^2) = t^2 := by
-        erw [ show t ^ 2 = algebraMap ℤ ( Kf g ) c from Subtype.ext hc ] ; simp +decide [ AlgEquiv.commutes ] ;
-      simpa using h_sigma_sq;
-    exact eq_or_eq_neg_of_sq_eq_sq _ _ h_sigma_t;
-  -- Suppose for contradiction that $\sigma(t) = -t$.
-  by_contra h_contra
-  have h_neg : σ t = -t := by
-    exact h_sigma_t.resolve_left h_contra;
-  -- Since $t$ is integral over $\mathbb{Z}$, there exists $xt \in \mathcal{O}_{Kf g}$ such that $xt = t$.
-  obtain ⟨xt, hxt⟩ : ∃ xt : 𝓞 (Kf g), (xt : Kf g) = t := by
-    refine' ⟨ ⟨ t, _ ⟩, rfl ⟩;
-    refine' ⟨ Polynomial.X ^ 2 - Polynomial.C c, _, _ ⟩ <;> norm_num;
-    · erw [ Polynomial.Monic, Polynomial.leadingCoeff_X_pow_sub_C ] ; norm_num;
-    · erw [ Polynomial.eval₂_C ] ; aesop;
-  -- Since $σ • xt = -xt$, we have $σ • xt - xt = -2 * xt$.
-  have h_diff : σ • xt - xt = -2 * xt := by
-    ext; simp only [map_sub, AddSubgroupClass.coe_sub, neg_mul, map_neg, map_mul, NegMemClass.coe_neg,
-    IntermediateField.coe_mul];
-    erw [ show ( algebraMap ( 𝓞 ( Kf g ) ) ( Kf g ) ) ( σ • xt ) = σ ( algebraMap ( 𝓞 ( Kf g ) ) ( Kf g ) xt ) from rfl ] ; norm_num [ h_neg, hxt ] ; ring_nf;
-    norm_cast;
-  -- Since $-2 * xt \in P$, we have $4 * xt^2 \in P$.
-  have h_four_xt_sq : 4 * xt^2 ∈ P := by
-    have h_four_xt_sq : (-2 * xt) * (-2 * xt) ∈ P := by
-      exact P.mul_mem_left _ ( h_diff ▸ hσ xt );
-    convert h_four_xt_sq using 1 ; ring;
-  -- Since $xt^2 = c$, we have $4 * xt^2 = 4 * c$.
-  have h_four_c : 4 * xt^2 = algebraMap ℤ (𝓞 (Kf g)) (4 * c) := by
-    ext; simp [hxt, hc];
-  have := ‹P.LiesOver ( Ideal.span { ( p : ℤ ) } ) ›.over; simp_all +decide [ Ideal.mem_span_singleton ] ;
-  replace this := SetLike.ext_iff.mp this ( 4 * c ) ; simp_all +decide [ Ideal.mem_span_singleton ] ;
+theorem inertia_fixes_gen (g : ℕ) (p : ℕ) (P : Ideal (𝓞 (Kf g)))
+    [P.LiesOver (Ideal.span {(p : ℤ)})] (σ : Kf g ≃ₐ[ℚ] Kf g)
+    (hσ : ∀ x : 𝓞 (Kf g), σ • x - x ∈ P) (t : Kf g) (c : ℤ) (hc : (t : ℂ) ^ 2 = (c : ℂ))
+    (hpc : ¬(p : ℤ) ∣ 4 * c) : σ t = t :=
+  by
+    -- Since $t^2 = c$, we have $t = \sqrt{c}$ or $t = -\sqrt{c}$. In either case, $\sigma(t) = \pm
+    -- t$.
+    have h_sigma_t : σ t = t ∨ σ t = -t :=
+      by
+        have h_sigma_t : σ t ^ 2 = t ^ 2 :=
+          by
+            have h_sigma_sq : σ (t ^ 2) = t ^ 2 :=
+              by
+                erw [show t ^ 2 = algebraMap ℤ (Kf g) c from Subtype.ext hc];
+                simp +decide;
+            simpa using h_sigma_sq;
+        exact eq_or_eq_neg_of_sq_eq_sq _ _ h_sigma_t;
+    -- Suppose for contradiction that $\sigma(t) = -t$.
+    by_contra h_contra
+    have h_neg : σ t = -t :=
+      by
+        exact h_sigma_t.resolve_left h_contra;
+    -- Since $t$ is integral over $\mathbb{Z}$, there exists $xt \in \mathcal{O}_{Kf g}$ such
+    -- that $xt = t$.
+    obtain ⟨xt, hxt⟩ : ∃ xt : 𝓞 (Kf g), (xt : Kf g) = t :=
+      by
+        refine ⟨⟨t, ?_⟩, rfl⟩;
+        refine ⟨Polynomial.X ^ 2 - Polynomial.C c, ?_, ?_⟩ <;> norm_num;
+        · erw [Polynomial.Monic, Polynomial.leadingCoeff_X_pow_sub_C]; norm_num;
+        · erw [Polynomial.eval₂_C]; aesop;
+    -- Since $σ • xt = -xt$, we have $σ • xt - xt = -2 * xt$.
+    have h_diff : σ • xt - xt = -2 * xt :=
+      by
+        ext;
+        simp only [map_sub, AddSubgroupClass.coe_sub, neg_mul, map_neg, map_mul,
+          NegMemClass.coe_neg, IntermediateField.coe_mul];
+        erw [show
+            (algebraMap (𝓞 (Kf g)) (Kf g)) (σ • xt) = σ (algebraMap (𝓞 (Kf g)) (Kf g) xt) from
+            rfl];
+        norm_num [h_neg, hxt]; ring_nf; norm_cast;
+    -- Since $-2 * xt \in P$, we have $4 * xt^2 \in P$.
+    have h_four_xt_sq : 4 * xt ^ 2 ∈ P :=
+      by
+        have h_four_xt_sq : (-2 * xt) * (-2 * xt) ∈ P :=
+          by
+            exact P.mul_mem_left _ (h_diff ▸ hσ xt);
+        convert h_four_xt_sq using 1; ring;
+    -- Since $xt^2 = c$, we have $4 * xt^2 = 4 * c$.
+    have h_four_c : 4 * xt ^ 2 = algebraMap ℤ (𝓞 (Kf g)) (4 * c) :=
+      by
+        ext; simp [hxt, hc];
+    have := ‹P.LiesOver (Ideal.span {(p : ℤ)})›.over;
+    simp_all +decide only [or_true, ne_eq, neg_mul, algebraMap_int_eq, eq_intCast, Int.cast_mul,
+      Int.cast_ofNat, mul_eq_mul_left_iff, OfNat.ofNat_ne_zero, or_false];
+    replace this := SetLike.ext_iff.mp this (4 * c);
+    simp_all +decide [Ideal.mem_span_singleton];
 
 /-- Helper bundle of arithmetic facts about `p ≡ 1 mod 4`. -/
-
 theorem p_prime_facts {p : ℕ} (hp : p.Prime) (hp4 : p % 4 = 1) :
     (p : ℤ) ≠ 0 ∧ (Ideal.span {(p : ℤ)}) ≠ ⊥ ∧ (Ideal.span {(p : ℤ)}).IsPrime
       ∧ (Ideal.span {(p : ℤ)}).IsMaximal ∧ ¬ (p : ℤ) ∣ 4 := by
@@ -157,7 +210,6 @@ theorem p_prime_facts {p : ℕ} (hp : p.Prime) (hp4 : p % 4 = 1) :
   exact ⟨hpz, hp0, hpprime, hpprime.isMaximal hp0, hp4dvd⟩
 
 /-- The inertia subgroup of any prime over `p ≡ 1 mod 4` is trivial. -/
-
 theorem Kf_inertia_eq_bot (g : ℕ) (p : ℕ) (hp : p.Prime) (hp4 : p % 4 = 1)
     (P : Ideal (𝓞 (Kf g))) [P.LiesOver (Ideal.span {(p : ℤ)})] :
     Ideal.inertia (Kf g ≃ₐ[ℚ] Kf g) P = ⊥ := by
@@ -177,7 +229,7 @@ theorem Kf_inertia_eq_bot (g : ℕ) (p : ℕ) (hp : p.Prime) (hp4 : p % 4 = 1)
     · rw [← ht, ← Complex.ofReal_pow, Real.sq_sqrt (Nat.cast_nonneg (q3 j))]; push_cast; ring
     · rw [show (4 * (q3 j : ℤ)) = ((4 * q3 j : ℕ) : ℤ) by push_cast; ring, Int.natCast_dvd_natCast,
         Nat.Prime.dvd_mul hp]
-      push_neg
+      push Not
       refine ⟨by simpa using (by exact_mod_cast hp4dvd : ¬ p ∣ (4:ℕ)), ?_⟩
       intro h
       have := (Nat.prime_dvd_prime_iff_eq hp (q3_spec j).1).mp h
@@ -438,50 +490,66 @@ lying over the `p1 i`, `i < t`: each `(p1 i)` factors as
 `∏_{P ∈ primesOverP1 g i} P` with all exponents one
 (`Kf_ramificationIdxIn_eq_one`), and `m t = ∏_{i<t} p1 i`. -/
 theorem span_p1_eq_prod (g i : ℕ) :
-    Ideal.span {((p1 i : ℕ) : 𝓞 (Kf g))} = ∏ P ∈ primesOverP1 g i, P := by
-  classical
-  have : Fact (p1 i).Prime := ⟨(p1_spec i).1⟩
-  have : IsGalois ℚ (Kf g) := Kf_isGalois g
-  obtain ⟨hpz, hp0, hpprime, hpmax, hp4dvd⟩ :=
-    p_prime_facts (p1_spec i).1 (p1_spec i).2
-  have : (Ideal.span {((p1 i : ℤ))}).IsMaximal := hpmax
-  set I : Ideal (𝓞 (Kf g)) :=
-    Ideal.map (algebraMap ℤ (𝓞 (Kf g))) (Ideal.span {(p1 i : ℤ)}) with hI
-  have hIspan : I = Ideal.span {((p1 i : ℕ) : 𝓞 (Kf g))} := by
-    rw [hI, Ideal.map_span, Set.image_singleton]
-    norm_num [algebraMap_int_eq]
-  have hIne : I ≠ ⊥ := by
-    rw [hIspan, Ne, Ideal.span_singleton_eq_bot]
-    exact_mod_cast (p1_spec i).1.ne_zero
-  have hmemiff : ∀ {P : Ideal (𝓞 (Kf g))},
-      P ∈ primesOverP1 g i ↔ P ∈ Ideal.primesOver (Ideal.span {(p1 i : ℤ)}) (𝓞 (Kf g)) :=
-    fun {P} => IsDedekindDomain.mem_primesOverFinset_iff hp0 (𝓞 (Kf g))
-  have hcount : ∀ P ∈ primesOverP1 g i, (UniqueFactorizationMonoid.normalizedFactors I).count P = 1 := by
-    intro P hP
-    obtain ⟨hPp, hPlies⟩ := hmemiff.mp hP
-    have := hPp
-    have := hPlies
-    have hPne : P ≠ ⊥ := Ideal.ne_bot_of_liesOver_of_ne_bot hp0 P
-    rw [← Ideal.IsDedekindDomain.ramificationIdx_eq_normalizedFactors_count
-      (Ideal.span {(p1 i : ℤ)}) P (by simpa [hI] using hIne)]
-    rw [← Ideal.ramificationIdxIn_eq_ramificationIdx (Ideal.span {(p1 i : ℤ)}) P
-      (Kf g ≃ₐ[ℚ] Kf g)]
-    exact Kf_ramificationIdxIn_eq_one g (p1 i) (p1_spec i).1 (p1_spec i).2
-  have htofin : (UniqueFactorizationMonoid.normalizedFactors I).toFinset = primesOverP1 g i := by
-    rw [show primesOverP1 g i
-        = IsDedekindDomain.primesOverFinset (Ideal.span {(p1 i : ℤ)}) (𝓞 (Kf g)) from rfl]
-    rw [IsDedekindDomain.primesOverFinset, UniqueFactorizationMonoid.factors_eq_normalizedFactors]
-  have hnodup : (UniqueFactorizationMonoid.normalizedFactors I).Nodup := by
-    rw [Multiset.nodup_iff_count_le_one]
-    intro P
-    by_cases hP : P ∈ UniqueFactorizationMonoid.normalizedFactors I
-    · exact le_of_eq (hcount P (htofin ▸ Multiset.mem_toFinset.mpr hP))
-    · simp [Multiset.count_eq_zero_of_notMem hP]
-  have hval : (primesOverP1 g i).val = UniqueFactorizationMonoid.normalizedFactors I := by
-    rw [← htofin, Multiset.toFinset_val, Multiset.dedup_eq_self.mpr hnodup]
-  rw [← hIspan, Finset.prod_eq_multiset_prod]
-  rw [hval, Multiset.map_id']
-  exact (Ideal.prod_normalizedFactors_eq_self hIne).symm
+    Ideal.span {((p1 i : ℕ) : 𝓞 (Kf g))} = ∏ P ∈ primesOverP1 g i, P :=
+  by
+    classical
+    have : Fact (p1 i).Prime := ⟨(p1_spec i).1⟩
+    have : IsGalois ℚ (Kf g) := Kf_isGalois g
+    obtain ⟨hpz, hp0, hpprime, hpmax, hp4dvd⟩ := p_prime_facts (p1_spec i).1 (p1_spec i).2
+    have : (Ideal.span {((p1 i : ℤ))}).IsMaximal := hpmax
+    set I : Ideal (𝓞 (Kf g)) :=
+      Ideal.map (algebraMap ℤ (𝓞 (Kf g))) (Ideal.span {(p1 i : ℤ)}) with hI
+    have hIspan : I = Ideal.span {((p1 i : ℕ) : 𝓞 (Kf g))} :=
+      by
+        rw [hI, Ideal.map_span, Set.image_singleton]
+        norm_num [algebraMap_int_eq]
+    have hIne : I ≠ ⊥ :=
+      by
+        rw [hIspan, Ne, Ideal.span_singleton_eq_bot]
+        exact_mod_cast (p1_spec i).1.ne_zero
+    have hmemiff :
+      ∀ {P : Ideal (𝓞 (Kf g))},
+        P ∈ primesOverP1 g i ↔ P ∈ Ideal.primesOver (Ideal.span {(p1 i : ℤ)}) (𝓞 (Kf g)) :=
+      fun {P} => IsDedekindDomain.mem_primesOverFinset_iff hp0 (𝓞 (Kf g))
+    have hcount :
+      ∀ P ∈ primesOverP1 g i, (UniqueFactorizationMonoid.normalizedFactors I).count P = 1 :=
+      by
+        intro P hP
+        obtain ⟨hPp, hPlies⟩ := hmemiff.mp hP
+        have := hPp
+        have := hPlies
+        have hPne : P ≠ ⊥ := Ideal.ne_bot_of_liesOver_of_ne_bot hp0 P
+        rw [←
+          Ideal.IsDedekindDomain.ramificationIdx_eq_normalizedFactors_count
+            (Ideal.span {(p1 i : ℤ)}) P
+            (by
+              simpa [hI] using hIne)]
+        rw [←
+          Ideal.ramificationIdxIn_eq_ramificationIdx (Ideal.span {(p1 i : ℤ)}) P
+            (Kf g ≃ₐ[ℚ] Kf g)]
+        exact Kf_ramificationIdxIn_eq_one g (p1 i) (p1_spec i).1 (p1_spec i).2
+    have htofin :
+      (UniqueFactorizationMonoid.normalizedFactors I).toFinset = primesOverP1 g i :=
+      by
+        rw [show
+            primesOverP1 g i =
+              IsDedekindDomain.primesOverFinset (Ideal.span {(p1 i : ℤ)}) (𝓞 (Kf g))
+            from rfl]
+        rw [IsDedekindDomain.primesOverFinset,
+          UniqueFactorizationMonoid.factors_eq_normalizedFactors]
+    have hnodup : (UniqueFactorizationMonoid.normalizedFactors I).Nodup :=
+      by
+        rw [Multiset.nodup_iff_count_le_one]
+        intro P
+        by_cases hP : P ∈ UniqueFactorizationMonoid.normalizedFactors I
+        · exact le_of_eq (hcount P (htofin ▸ Multiset.mem_toFinset.mpr hP))
+        · simp [Multiset.count_eq_zero_of_notMem hP]
+    have hval : (primesOverP1 g i).val = UniqueFactorizationMonoid.normalizedFactors I :=
+      by
+        rw [← htofin, Multiset.toFinset_val, Multiset.dedup_eq_self.mpr hnodup]
+    rw [← hIspan, Finset.prod_eq_multiset_prod]
+    rw [hval, Multiset.map_id']
+    exact (Ideal.prod_normalizedFactors_eq_self hIne).symm
 
 theorem Kf_span_m_eq_prod (g t : ℕ) :
     Ideal.span {((m t : ℕ) : 𝓞 (Kf g))} =
@@ -502,7 +570,7 @@ from complex conjugation `τ`, so `τ` (not in the decomposition group) acts
 freely on the `≥ 2^g` primes above `p`, in `≥ 2^(g-1)` orbits `{𝔭, τ𝔭}`.
 Choosing one prime from each orbit for each of the `t` rational primes
 gives `≥ (2^(2^(g-1)))^t` distinct ideals with `𝔄 𝔄∗ = (m t)` (unique
-factorization).  -/
+factorization). -/
 theorem exists_ideal_family (g t : ℕ) (hg : 1 ≤ g) :
     ∃ F : Finset (Ideal (𝓞 (Kf g))),
       (2 : ℝ) ^ (t * 2 ^ (g - 1)) ≤ F.card ∧
