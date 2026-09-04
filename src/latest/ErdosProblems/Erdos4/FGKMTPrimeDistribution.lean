@@ -46,7 +46,8 @@ theorem primeDiscrepancyUpTo_le {x q : ℕ} (hx : 2 ≤ x) (hq : 1 ≤ q) :
   have hyy := Finset.mem_Icc.mp hy
   exact (maxProgressionDiscrepancy_le_inv_log_two_mul_maxCenteredThetaUpTo hyy.1 hq).trans
     (mul_le_mul_of_nonneg_left
-      ((thetaMaximum_mono hyy.1 hyy.2).trans (maxCenteredThetaProgressionDiscrepancyUpTo_le hq)) hlog)
+      ((thetaMaximum_mono hyy.1 hyy.2).trans (maxCenteredThetaProgressionDiscrepancyUpTo_le
+        hq)) hlog)
 
 theorem excisedPrimeSum_le {x Q B : ℕ} (hx : 2 ≤ x) :
     excisedPrimeSum x Q B ≤ (Real.log 2)⁻¹ *
@@ -112,7 +113,8 @@ theorem exists_exponential_prime_distribution :
   have hrem' : (powerDistributionLevel x : ℝ) *
       (Chebyshev.psi (x : ℝ) - Chebyshev.theta (x : ℝ)) ≤
       2 * ((x : ℝ) * Real.exp (-(a / 2) * Real.sqrt (Real.log (x : ℝ)))) := by
-    exact hprime.trans (by simpa only [Real.rpow_one] using mul_le_mul_of_nonneg_left hrem (by norm_num : (0 : ℝ) ≤ 2))
+    exact hprime.trans (by simpa only [Real.rpow_one] using mul_le_mul_of_nonneg_left hrem (by
+      norm_num : (0 : ℝ) ≤ 2))
   calc
     _ ≤ (Real.log 2)⁻¹ * (excisedCenteredSum x (powerDistributionLevel x) B +
         (powerDistributionLevel x : ℝ) * (Chebyshev.psi (x : ℝ) - Chebyshev.theta (x : ℝ))) :=

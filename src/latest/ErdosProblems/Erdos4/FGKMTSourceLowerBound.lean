@@ -7,7 +7,7 @@ open scoped BigOperators
 
 namespace Erdos4.FGKMT
 
-open Classical FiniteCharacterSupport ProductCharacterEncoding AnchoredFourierAverage
+open FiniteCharacterSupport ProductCharacterEncoding AnchoredFourierAverage
 
 variable {P Q : Type*} [Fintype P] [DecidableEq P] [Fintype Q] [DecidableEq Q] {k : ℕ}
     (ell₀ : P → ℕ) (ell₁ : Q → ℕ)
@@ -18,6 +18,7 @@ noncomputable def aggregatePrincipalMass (b : ℝ) (R : ℕ)
   smallProductDensity ell₀ h₀ / sieveWindowDensity ell₀ *
     (∑ j : Fin k, rationalTrueForm b R ell₁ j) / sieveWindowDensity ell₁
 
+omit [DecidableEq P] in
 theorem aggregateUnitFourier_eq_principalMass (b : ℝ) (R : ℕ)
     (h₀ : ∀ p, Fin k → ZMod (ell₀ p)) (h₁ : ∀ q, Fin k → ZMod (ell₁ q))
     (hshift : ∀ q, Function.Injective (h₁ q)) :
@@ -25,6 +26,7 @@ theorem aggregateUnitFourier_eq_principalMass (b : ℝ) (R : ℕ)
       (aggregatePrincipalMass ell₀ ell₁ b R h₀ : ℂ) :=
   aggregateUnitFourier_principal ell₀ ell₁ b R h₀ h₁ hshift
 
+omit [DecidableEq P] in
 theorem aggregatePrincipalMass_gain (b : ℝ) (R : ℕ)
     (h₀ : ∀ p, Fin k → ZMod (ell₀ p)) {g : ℝ}
     (hgain : g * RestrictedProductNorm.energy (rationalCoefficient (k := k) b R ell₁) ≤
@@ -65,6 +67,7 @@ theorem aggregate_real_source_average_lower (b : ℝ) (R M : ℕ)
   have hl := (abs_le.mp ((Complex.abs_re_le_norm _).trans hlow)).1
   linarith
 
+omit [DecidableEq P] in
 theorem aggregate_real_source_average_nonneg (b : ℝ) (R : ℕ)
     (h₀ : ∀ p, Fin k → ZMod (ell₀ p)) (h₁ : ∀ q, Fin k → ZMod (ell₁ q))
     (sources : Finset ℕ) (hs : ∀ p ∈ sources, p.Coprime (modulus (Sum.elim ell₀ ell₁)))

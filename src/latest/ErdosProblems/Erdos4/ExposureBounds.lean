@@ -30,7 +30,7 @@ theorem sum_errors_mean_square (f : I → Q → ℝ) {B : ℝ}
       mul_le_mul_of_nonneg_left (Finset.sum_le_sum (fun i _hi => hf i)) (Nat.cast_nonneg _)
     _ = _ := by simp [pow_two, mul_assoc]
 
-theorem large_values_card_le {T : Type*} [DecidableEq T] (s : Finset T)
+theorem large_values_card_le {T : Type*} (s : Finset T)
     (f : T → ℝ) {θ B : ℝ} (hθ : 0 < θ) (hf : (∑ q ∈ s, f q ^ 2) ≤ B) :
     ((s.filter (fun q => θ < |f q|)).card : ℝ) ≤ B / θ ^ 2 := by
   classical
@@ -107,7 +107,8 @@ theorem raw_total_lower (m : ℝ) (R Y W : ℕ) (h : Fin k → ℕ)
   have hsplit : (sources.card : ℝ) * ((A + 1) * energy (coefficient (k := k) m R ell)) /
       UnitFourier.unitDensity ell =
       A * sources.card * energy (coefficient (k := k) m R ell) / UnitFourier.unitDensity ell +
-        sources.card * energy (coefficient (k := k) m R ell) / UnitFourier.unitDensity ell := by ring
+        sources.card * energy (coefficient (k := k) m R ell) / UnitFourier.unitDensity ell :=
+          by ring
   rw [hsplit] at hmain
   linarith
 

@@ -20,8 +20,6 @@ theorem exp_neg_le_one_sub_two_thirds {s : ℝ} (hs0 : 0 ≤ s) (hs1 : s ≤ 1 /
 
 namespace FiniteLaw
 
-open Classical
-
 theorem mean_exp_ite {Ω : Type*} [Fintype Ω] (μ : FiniteLaw Ω) (E : Ω → Prop)
     [DecidablePred E] (t : ℝ) :
     μ.mean (fun o => Real.exp (if E o then t else 0)) =

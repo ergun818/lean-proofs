@@ -80,12 +80,18 @@ theorem abs_mean_le (f : Ω → ℝ) : |μ.mean f| ≤ μ.mean (fun o => |f o|) 
 
 theorem prob_nonneg (E : Ω → Prop) : 0 ≤ μ.prob E := by
   classical
-  exact Finset.sum_nonneg (fun o _ho => by split_ifs; exact μ.nonneg o; rfl)
+  exact Finset.sum_nonneg (fun o _ho => by
+    split_ifs
+    · exact μ.nonneg o
+    · rfl)
 
 theorem prob_le_one (E : Ω → Prop) : μ.prob E ≤ 1 := by
   classical
   calc
-    _ ≤ ∑ o, μ.weight o := Finset.sum_le_sum (fun o _ho => by split_ifs; rfl; exact μ.nonneg o)
+    _ ≤ ∑ o, μ.weight o := Finset.sum_le_sum (fun o _ho => by
+      split_ifs
+      · rfl
+      · exact μ.nonneg o)
     _ = _ := μ.total
 
 theorem prob_eq_mean (E : Ω → Prop) [DecidablePred E] :

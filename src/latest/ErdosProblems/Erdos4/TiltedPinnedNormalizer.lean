@@ -128,10 +128,12 @@ theorem pinned_subsetNormalizer_variance (ν μ : FiniteLaw (Finset V)) {σ ε �
         rw [pinned_mean_subsetWeight_mul ν T E F hTpos.ne']
         by_cases hbad : ¬Disjoint T E ∨ ¬Disjoint T F ∨ ¬Disjoint E F
         · rw [if_pos hbad, mul_one]
-          apply (survival_triple_ratio_upper ν hσ hσ1 hε hacc T E F hT (hsize E hE) (hsize F hF)).trans
+          apply (survival_triple_ratio_upper ν hσ hσ1 hε hacc T E F hT (hsize E hE) (hsize F
+            hF)).trans
           linarith
         · rw [if_neg hbad, mul_zero, add_zero]
-          have hd : Disjoint T E ∧ Disjoint T F ∧ Disjoint E F := by simpa only [not_or, not_not] using hbad
+          have hd : Disjoint T E ∧ Disjoint T F ∧ Disjoint E F := by simpa only [not_or,
+            not_not] using hbad
           exact survival_triple_ratio_upper_disjoint ν hσ hε0 hε hacc T E F
             (by have he := hsize E hE; have hf := hsize F hF; omega) hd.1 hd.2.1 hd.2.2
       _ = 1 + 16 * ε + (4 / σ ^ (3 * r)) * μ.mean (fun E => μ.mean (fun F =>

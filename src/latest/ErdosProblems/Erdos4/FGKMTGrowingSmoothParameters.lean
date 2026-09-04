@@ -47,7 +47,8 @@ theorem eventually_growing_rankin_parameters :
     change (20 * l / L) * L = 20 * l
     exact div_mul_cancel₀ _ hLpos.ne'
   have hz2 : 2 ≤ growingRandomEnd x := hcut.1.trans hcut.2.1
-  have hzpos : (0 : ℝ) < growingRandomEnd x := by exact_mod_cast (show 0 < growingRandomEnd x by omega)
+  have hzpos : (0 : ℝ) < growingRandomEnd x := by
+    exact_mod_cast (show 0 < growingRandomEnd x by omega)
   have hlogz : 0 < Real.log (growingRandomEnd x : ℝ) := Real.log_pos (by exact_mod_cast hz2)
   have hlogup : Real.log (growingRandomEnd x : ℝ) ≤ L := by
     have hscale : growingOuterScale x ≤ L := hlogs.2.2.2.2
@@ -62,7 +63,7 @@ theorem eventually_growing_rankin_parameters :
     _ = Real.exp (Real.log l / 5) := by
       congr 1
       change ((L * Real.log l / l) / 100) * (20 * l / L) = Real.log l / 5
-      field_simp [hLpos.ne', hlpos.ne'] <;> ring
+      field_simp [hLpos.ne', hlpos.ne']; ring
     _ = l ^ (1 / 5 : ℝ) := by
       rw [Real.rpow_def_of_pos hlpos]
       congr 1

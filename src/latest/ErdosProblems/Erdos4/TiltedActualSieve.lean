@@ -56,13 +56,15 @@ theorem eventually_coordinate_size_margin {c : ℝ} (hc : 0 < c) :
     change L ^ (98 : ℕ) ≤ (smallCutoff x : ℝ) at hh
     change (blockSize x (compositeTargets c x) : ℝ) ≤ L at hK
     nlinarith
-  have hnat : 2 * (blockSize x (compositeTargets c x) + 1) + 1 ≤ smallCutoff x := by exact_mod_cast hwR
+  have hnat : 2 * (blockSize x (compositeTargets c x) + 1) + 1 ≤ smallCutoff x := by
+    exact_mod_cast hwR
   exact hnat.trans (mem_coordinatePrimes.mp p.property).2.1.le
 
 theorem eventually_actual_composite_survival {c : ℝ} (hc : 0 < c) :
     ∀ᶠ x : ℕ in atTop, ∀ hτ : 0 ≤ tiltExponent x, ∀ n ∈ compositeTargets c x,
       0 < (actualSieveLaw x hτ).prob (fun a => Survives (sievePrimeValue x) a {n}) ∧
-      (actualSieveLaw x hτ).prob (fun a => Survives (sievePrimeValue x) a {n}) ≤ compositeSurvivalBound x := by
+      (actualSieveLaw x hτ).prob (fun a => Survives (sievePrimeValue x) a {n}) ≤
+        compositeSurvivalBound x := by
   filter_upwards [eventually_composite_width hc, eventually_ge_atTop 1] with x hwidth hx
   intro hτ n hn
   refine ⟨sieveLaw_singleton_pos (sievePrimeValue x) (tiltExponent x) hτ n, ?_⟩
@@ -73,10 +75,12 @@ theorem eventually_actual_composite_survival {c : ℝ} (hc : 0 < c) :
 
 theorem eventually_actual_block_weight_bounds {c a : ℝ} (hc : 0 < c) (ha : 0 < a) :
     ∀ᶠ x : ℕ in atTop, ∀ hτ : 0 ≤ tiltExponent x,
-      (((gapTarget c x ^ blockSize x (compositeTargets c x) : ℕ) : ℝ)) ^ tiltExponent x ≤ (x : ℝ) ^ a ∧
+      (((gapTarget c x ^ blockSize x (compositeTargets c x) : ℕ) : ℝ)) ^ tiltExponent x ≤ (x :
+        ℝ) ^ a ∧
       ∀ T : Finset ℕ, T ⊆ compositeTargets c x → T.card ≤ blockSize x (compositeTargets c x) →
         Squarefree (∏ n ∈ T, n) →
-        1 / (actualSieveLaw x hτ).prob (fun r => Survives (sievePrimeValue x) r T) ≤ (x : ℝ) ^ a := by
+        1 / (actualSieveLaw x hτ).prob (fun r => Survives (sievePrimeValue x) r T) ≤ (x : ℝ) ^
+          a := by
   obtain ⟨C, hC, hreciprocal⟩ := exists_indexed_prime_reciprocal_bound.{0}
   have hA : 0 < 2 * c + 2 := by linarith
   filter_upwards [hreciprocal, eventually_block_exponent_budget hA hC ha,

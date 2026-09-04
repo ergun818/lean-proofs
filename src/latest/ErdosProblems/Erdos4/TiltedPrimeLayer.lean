@@ -3,7 +3,8 @@ import ErdosProblems.Erdos4.TiltedPrimeCoverFinite
 import ErdosProblems.Erdos4.TiltedPrimeCoverBudget
 import ErdosProblems.Erdos4.TiltedPrimePartitionBudget
 
-/-! The prime covering has a small expected cost on the same tilted sieve space as the composites. -/
+/-! The prime covering has a small expected cost on the same tilted sieve space as the
+  composites. -/
 
 namespace Erdos4.Tilted
 
@@ -80,7 +81,8 @@ theorem exists_prime_cover_cost {ε : ℝ} (hε : 0 < ε) :
   refine ⟨cost, fun a => primeCoverCost_nonneg ν D.law D.bad hκ _, ?_, fun a => hcover D hτ _⟩
   calc
     _ = ν.mean (primeCoverCost ν D.law D.bad κ) :=
-      (FiniteLaw.mean_map (actualSieveLaw x hτ) (primeSurvivors c x) (primeCoverCost ν D.law D.bad κ)).symm
+      (FiniteLaw.mean_map (actualSieveLaw x hτ) (primeSurvivors c x) (primeCoverCost ν D.law
+        D.bad κ)).symm
     _ ≤ primeDensity x * ((D.bad.card : ℝ) +
         (1 / Real.log (x : ℝ) ^ (40 : ℕ)) * (primeTargets c x).card) +
         2 * κ * (primeDensity x * (primeTargets c x).card) := by

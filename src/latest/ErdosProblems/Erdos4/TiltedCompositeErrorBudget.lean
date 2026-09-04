@@ -1,7 +1,8 @@
 import ErdosProblems.Erdos4.TiltedActualSieve
 import ErdosProblems.Erdos4.TiltedGeometricBudget
 
-/-! Uniform error budgets at the actual composite parameters, before choosing the fiber partitions. -/
+/-! Uniform error budgets at the actual composite parameters, before choosing the fiber
+  partitions. -/
 
 namespace Erdos4.Tilted
 

@@ -100,7 +100,8 @@ theorem primeSurvival_truncated_bound {w Z B : ℕ} (hZ : 1 ≤ Z) (hZB : Z ≤ 
     exact hh
   have hsum : (∑ p ∈ coordinatePrimes w Z, Real.log (p : ℝ) / p) ≤ 2 * Real.log Z :=
     (Finset.sum_le_sum_of_subset_of_nonneg (Finset.filter_subset _ _)
-      (fun p _ _ => div_nonneg (Real.log_natCast_nonneg p) (Nat.cast_nonneg p))).trans (sum_prime_log_div_le Z hZ)
+      (fun p _ _ => div_nonneg (Real.log_natCast_nonneg p) (Nat.cast_nonneg p))).trans
+        (sum_prime_log_div_le Z hZ)
   have hbudget : 2 * τ * (∑ p ∈ coordinatePrimes w Z, Real.log (p : ℝ) / p) ≤ 4 := by
     have hh := mul_le_mul_of_nonneg_left hsum (show 0 ≤ 2 * τ by positivity)
     nlinarith
@@ -154,7 +155,8 @@ theorem exists_tilted_density_bounds :
   · have hh := primeSurvival_truncated_bound (w := w) (show 1 ≤ Z by omega) hZB τ hτ hcut
     rw [coordinate_uniform_product] at hh
     calc
-      _ ≤ UnitFourier.unitDensity (fun p : ArithmeticFibers.primeWindow w Z => (p : ℕ)) * Real.exp 4 := hh
+      _ ≤ UnitFourier.unitDensity (fun p : ArithmeticFibers.primeWindow w Z => (p : ℕ)) *
+        Real.exp 4 := hh
       _ ≤ (C * Real.log w / Real.log Z) * Real.exp 4 :=
         mul_le_mul_of_nonneg_right (hbound w Z hw hwZ).2 (Real.exp_pos _).le
       _ = _ := by ring

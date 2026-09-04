@@ -90,7 +90,8 @@ theorem localLaw_prob_avoid_lower (s : ℕ) [NeZero s] (hs : 2 ≤ s)
     _ ≤ (if (0 : ZMod s) ∈ E then u else 1) *
         (baseline s u * (1 - (K : ℝ) / ((s : ℝ) - 1))) :=
       mul_le_mul_of_nonneg_left
-        (mul_le_mul (baseline_lower_exp hs hu0.le hu1) hdec (Real.exp_pos _).le (baseline_pos hs hu0.le).le) htilt0
+        (mul_le_mul (baseline_lower_exp hs hu0.le hu1) hdec (Real.exp_pos _).le (baseline_pos
+          hs hu0.le).le) htilt0
     _ = _ := by ring
     _ ≤ _ := hpre
 

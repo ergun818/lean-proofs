@@ -35,7 +35,7 @@ theorem high_error_budget_cancel {x Y L F S j c d : ℝ}
   calc
     _ = (2560000 * Y * x / (L ^ 2 * c ^ 2 * j ^ 2)) / S := by
       field_simp
-      <;> ring
+     ; ring
     _ ≤ (2560000 * Y * x / (L ^ 2 * c ^ 2 * j ^ 2)) / (d * x / L) :=
       div_le_div_of_nonneg_left (by positivity) (by positivity) hS
     _ = _ := by field_simp
@@ -65,7 +65,7 @@ theorem incidence_gain_budget {x Y L r α E S j P η d : ℝ}
       exact mul_le_mul hS hr (by positivity) hS0
     _ = (S * (α * E * r * j / 24576) / 2) / (3 * (α * Y * E)) := by
       field_simp
-      <;> ring
+     ; ring
     _ ≤ (S * P / 2) / (3 * (α * Y * E)) :=
       div_le_div_of_nonneg_right
         (div_le_div_of_nonneg_right (mul_le_mul_of_nonneg_left hP hS0) (by norm_num))

@@ -7,7 +7,7 @@ open scoped BigOperators
 
 namespace Erdos4.FGKMT
 
-open Classical ProductCharacterEncoding
+open ProductCharacterEncoding
 
 section Local
 
@@ -28,6 +28,7 @@ theorem translatedLocalGood_iff (h : Fin k → ZMod ell) (Y p x : ZMod ell) (hp 
 theorem sum_translatedLocalGood (h : Fin k → ZMod ell) (Y p : ZMod ell) (hp : p ≠ 0) :
     (∑ x : ZMod ell, if (∀ i, x - Y + h i * p ≠ 0) then (1 : ℝ) else 0) =
       (smallPrimeGoodStates h).card := by
+  classical
   let e : ZMod ell ≃ ZMod ell :=
     { toFun := fun x => (x - Y) / p
       invFun := fun x => x * p + Y
@@ -50,7 +51,7 @@ theorem sum_translatedLocalGood (h : Fin k → ZMod ell) (Y p : ZMod ell) (hp : 
 
 end Local
 
-theorem sum_range_natCast_zmod {M : ℕ} [NeZero M] (hM : 0 < M) (f : ZMod M → ℝ) :
+theorem sum_range_natCast_zmod {M : ℕ} [NeZero M] (_hM : 0 < M) (f : ZMod M → ℝ) :
     (∑ n ∈ Finset.range M, f (n : ZMod M)) = ∑ x : ZMod M, f x := by
   apply Finset.sum_bij (fun (n : ℕ) _ => (n : ZMod M))
   · intro n _
@@ -66,11 +67,13 @@ theorem sum_range_natCast_zmod {M : ℕ} [NeZero M] (hM : 0 < M) (f : ZMod M →
 variable {P : Type*} [Fintype P] [DecidableEq P] {k : ℕ}
     (ell : P → ℕ) [∀ l, Fact (ell l).Prime]
 
+omit [DecidableEq P] in
 theorem product_residue_sum
     (hcop : Pairwise (fun l r => (ell l).Coprime (ell r)))
     (g : ∀ l, ZMod (ell l) → ℝ) :
     (∑ n ∈ Finset.range (modulus ell), ∏ l, g l (n : ZMod (ell l))) =
       ∏ l, ∑ x : ZMod (ell l), g l x := by
+  classical
   let f : ZMod (modulus ell) → ℝ := fun x =>
     ∏ l, g l (ZMod.castHom (local_dvd_modulus ell l) (ZMod (ell l)) x)
   have hM : 0 < modulus ell := Finset.prod_pos (fun l _ => (Fact.out : (ell l).Prime).pos)
@@ -90,20 +93,24 @@ theorem product_residue_sum
       simp only [ZMod.prodEquivPi_apply]
     _ = _ := (Fintype.prod_sum g).symm
 
+omit [DecidableEq P] in
 theorem smallProductDensity_mul_modulus (h : ∀ l, Fin k → ZMod (ell l)) :
     smallProductDensity ell h * (modulus ell : ℝ) =
       ∏ l, ((smallPrimeGoodStates (h l)).card : ℝ) := by
+  classical
   unfold smallProductDensity smallPresieveDensity modulus
   rw [Nat.cast_prod, ← Finset.prod_mul_distrib]
   apply Finset.prod_congr rfl
   intro l _
   exact div_mul_cancel₀ _ (by exact_mod_cast (Fact.out : (ell l).Prime).ne_zero)
 
+omit [DecidableEq P] in
 theorem translatedSmallMask_sum
     (hcop : Pairwise (fun l r => (ell l).Coprime (ell r)))
     (h : Fin k → ℕ) (Y p : ℕ) (hp : ∀ l, (p : ZMod (ell l)) ≠ 0) :
     (∑ n ∈ Finset.range (modulus ell), translatedSmallMask ell h Y p n) =
       smallProductDensity ell (fun l i => (h i : ZMod (ell l))) * (modulus ell : ℝ) := by
+  classical
   calc
     _ = ∏ l, ∑ x : ZMod (ell l),
         if (∀ i, x - Y + (h i : ZMod (ell l)) * p ≠ 0) then (1 : ℝ) else 0 := by

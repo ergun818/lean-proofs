@@ -7,8 +7,6 @@ open scoped BigOperators
 
 namespace Erdos4.FGKMT
 
-open Classical
-
 variable {Ω V : Type*} [Fintype Ω] [Fintype V] [DecidableEq V]
 
 noncomputable def initialCenterNormalizer (μ : FiniteLaw Ω) (E : Ω → Prop) (σ : ℝ) (k : ℕ) : ℝ :=
@@ -19,10 +17,12 @@ noncomputable def initialPinnedIncidence (μ : FiniteLaw Ω) (E : Ω → Prop)
   μ.prob (fun o => E o ∧ v ∈ edge o) / σ ^ (k - 1)
 
 noncomputable def initialEdgeLaw (μ : FiniteLaw Ω) (E : Ω → Prop)
-    (edge : Ω → Finset V) (σ : ℝ) (k : ℕ) (o₀ : Ω) : FiniteLaw (Finset V) :=
-  if |initialCenterNormalizer μ E σ k - 1| ≤ 1 / 2 then
+    (edge : Ω → Finset V) (σ : ℝ) (k : ℕ) (o₀ : Ω) : FiniteLaw (Finset V) := by
+  classical
+  exact if |initialCenterNormalizer μ E σ k - 1| ≤ 1 / 2 then
     (μ.condition E o₀).map edge else FiniteLaw.dirac ∅
 
+omit [DecidableEq V] [Fintype V] in
 theorem initialPinnedIncidence_nonneg (μ : FiniteLaw Ω) (E : Ω → Prop)
     (edge : Ω → Finset V) {σ : ℝ} (hσ : 0 < σ) (k : ℕ) (v : V) :
     0 ≤ initialPinnedIncidence μ E edge σ k v :=
@@ -41,12 +41,14 @@ theorem initial_good_mass_bounds (μ : FiniteLaw Ω) (E : Ω → Prop) {σ : ℝ
   have hlow : σ ^ k / 2 ≤ μ.prob E := by linarith
   exact ⟨(by positivity : 0 < σ ^ k / 2).trans_le hlow, hlow, by linarith⟩
 
+omit [DecidableEq V] in
 theorem initialEdgeLaw_event (μ : FiniteLaw Ω) (E : Ω → Prop)
     (edge : Ω → Finset V) {σ : ℝ} (hσ : 0 < σ) (k : ℕ) (o₀ : Ω)
     (F : Finset V → Prop) (hF : ¬F ∅) :
     (initialEdgeLaw μ E edge σ k o₀).prob F =
       if |initialCenterNormalizer μ E σ k - 1| ≤ 1 / 2 then
         μ.prob (fun o => E o ∧ F (edge o)) / μ.prob E else 0 := by
+  classical
   unfold initialEdgeLaw
   by_cases hgood : |initialCenterNormalizer μ E σ k - 1| ≤ 1 / 2
   · rw [if_pos hgood, if_pos hgood, FiniteLaw.prob_map,
@@ -54,10 +56,12 @@ theorem initialEdgeLaw_event (μ : FiniteLaw Ω) (E : Ω → Prop)
   · rw [if_neg hgood, if_neg hgood, FiniteLaw.prob_eq_mean, FiniteLaw.mean_dirac]
     simp only [if_neg hF]
 
+omit [DecidableEq V] in
 theorem initialEdgeLaw_event_le (μ : FiniteLaw Ω) (E : Ω → Prop)
     (edge : Ω → Finset V) {σ : ℝ} (hσ : 0 < σ) (k : ℕ) (o₀ : Ω)
     (F : Finset V → Prop) (hF : ¬F ∅) :
     (initialEdgeLaw μ E edge σ k o₀).prob F ≤ 2 * μ.prob (fun o => F (edge o)) / σ ^ k := by
+  classical
   rw [initialEdgeLaw_event μ E edge hσ k o₀ F hF]
   by_cases hgood : |initialCenterNormalizer μ E σ k - 1| ≤ 1 / 2
   · rw [if_pos hgood]
@@ -71,11 +75,13 @@ theorem initialEdgeLaw_event_le (μ : FiniteLaw Ω) (E : Ω → Prop)
   · rw [if_neg hgood]
     exact div_nonneg (mul_nonneg (by norm_num) (μ.prob_nonneg _)) (pow_nonneg hσ.le _)
 
+omit [DecidableEq V] in
 theorem initialEdgeLaw_vertex_lower (μ : FiniteLaw Ω) (E : Ω → Prop)
     (edge : Ω → Finset V) {σ : ℝ} (hσ : 0 < σ) {k : ℕ} (hk : 1 ≤ k) (o₀ : Ω) (v : V) :
     (if |initialCenterNormalizer μ E σ k - 1| ≤ 1 / 2 then
       (2 / (3 * σ)) * initialPinnedIncidence μ E edge σ k v else 0) ≤
         (initialEdgeLaw μ E edge σ k o₀).prob (fun e => v ∈ e) := by
+  classical
   rw [initialEdgeLaw_event μ E edge hσ k o₀ (fun e => v ∈ e) (by simp)]
   by_cases hgood : |initialCenterNormalizer μ E σ k - 1| ≤ 1 / 2
   · rw [if_pos hgood, if_pos hgood]
@@ -89,10 +95,12 @@ theorem initialEdgeLaw_vertex_lower (μ : FiniteLaw Ω) (E : Ω → Prop)
       _ ≤ _ := div_le_div_of_nonneg_left (μ.prob_nonneg _) hb.1 hb.2.2
   · simp only [if_neg hgood, le_refl]
 
+omit [DecidableEq V] in
 theorem initialEdgeLaw_support (μ : FiniteLaw Ω) (E : Ω → Prop)
     (edge : Ω → Finset V) {σ : ℝ} (hσ : 0 < σ) (k : ℕ) (o₀ : Ω)
     (e : Finset V) (he : 0 < (initialEdgeLaw μ E edge σ k o₀).weight e) :
     e = ∅ ∨ ∃ o, E o ∧ 0 < μ.weight o ∧ edge o = e := by
+  classical
   by_cases hgood : |initialCenterNormalizer μ E σ k - 1| ≤ 1 / 2
   · right
     rw [initialEdgeLaw, if_pos hgood] at he

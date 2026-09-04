@@ -19,8 +19,10 @@ theorem eventually_growing_true_gain :
       let W := harmonicModulus (growingPrecutoff x) B
       (sieveWindowDensity (sievePrimeValue W R) * coprimeHarmonicDensity W *
         Real.log (R : ℝ) * (j : ℝ) / 12288) *
-          energy (rationalCoefficient (k := sieveDimension j) (sieveSlope j R) R (sievePrimeValue W R)) ≤
-        ∑ i : Fin (sieveDimension j), rationalTrueForm (sieveSlope j R) R (sievePrimeValue W R) i := by
+          energy (rationalCoefficient (k := sieveDimension j) (sieveSlope j R) R
+            (sievePrimeValue W R)) ≤
+        ∑ i : Fin (sieveDimension j), rationalTrueForm (sieveSlope j R) R (sievePrimeValue W
+          R) i := by
   obtain ⟨c, hc, hdensity⟩ := exists_window_density_uniform_lower
   have hdim : Tendsto (fun x => (sieveDimension (growingIndex x) : ℝ)) atTop atTop :=
     tendsto_natCast_atTop_atTop.comp growingDimension_tendsto
@@ -33,9 +35,11 @@ theorem eventually_growing_true_gain :
   let j := growingIndex x
   let R := growingRadius x
   let W := harmonicModulus (growingPrecutoff x) B
-  let E := energy (rationalCoefficient (k := sieveDimension j) (sieveSlope j R) R (sievePrimeValue W R))
+  let E := energy (rationalCoefficient (k := sieveDimension j) (sieveSlope j R) R
+    (sievePrimeValue W R))
   let A := sieveWindowDensity (sievePrimeValue W R) * coprimeHarmonicDensity W * Real.log (R : ℝ)
-  let I := ∑ i : Fin (sieveDimension j), rationalIdealForm (sieveSlope j R) R (sievePrimeValue W R) i
+  let I := ∑ i : Fin (sieveDimension j), rationalIdealForm (sieveSlope j R) R (sievePrimeValue
+    W R) i
   let T := ∑ i : Fin (sieveDimension j), rationalTrueForm (sieveSlope j R) R (sievePrimeValue W R) i
   let e := 10 * (sieveDimension j : ℝ) ^ 3 / growingPrecutoff x
   change (A * (j : ℝ) / 12288) * E ≤ T

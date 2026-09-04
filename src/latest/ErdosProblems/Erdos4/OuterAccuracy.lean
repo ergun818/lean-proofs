@@ -43,7 +43,7 @@ def extent (a D H r : ℕ) : ℕ := length a D r + H * frontier a r
 
 theorem tendsto_extent (a H : ℕ) {D : ℕ} (hD : 1 ≤ D) :
     Tendsto (extent a D H) atTop atTop :=
-  tendsto_atTop_mono (fun r => Nat.le_add_right _ _) (tendsto_length a hD)
+  tendsto_atTop_mono (fun _r => Nat.le_add_right _ _) (tendsto_length a hD)
 
 theorem extent_le (a D H r : ℕ) :
     extent a D H r ≤ (256 * (D + H)) * primaryFrontier a r ^ 50 * core r ^ 2 := by

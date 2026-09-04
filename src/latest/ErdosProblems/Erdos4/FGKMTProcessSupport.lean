@@ -9,26 +9,34 @@ variable {V I : Type*} [Fintype V] [DecidableEq V] [Fintype I] [DecidableEq I]
 def coveredThrough (choice : ℕ → I → Finset V) (n : ℕ) : Finset V :=
   (Finset.range n).biUnion (fun j => Finset.univ.biUnion (choice j))
 
+omit [DecidableEq I] [Fintype V] in
 theorem coveredThrough_congr (choice choice' : ℕ → I → Finset V) (n : ℕ)
     (h : ∀ j < n, choice j = choice' j) : coveredThrough choice n = coveredThrough choice' n := by
+  classical
   apply Finset.biUnion_congr rfl
   intro j hj
   rw [h j (Finset.mem_range.mp hj)]
 
+omit [DecidableEq I] [Fintype V] in
 theorem coveredThrough_succ (choice : ℕ → I → Finset V) (n : ℕ) :
     coveredThrough choice (n + 1) = Finset.univ.biUnion (choice n) ∪ coveredThrough choice n := by
+  classical
   unfold coveredThrough
   rw [Finset.range_add_one, Finset.biUnion_insert]
 
+omit [DecidableEq I] [Fintype V] in
 theorem coveredThrough_update (choice : ℕ → I → Finset V) (n : ℕ) (new : I → Finset V) :
     coveredThrough (Function.update choice n new) n = coveredThrough choice n := by
+  classical
   apply coveredThrough_congr
   intro j hj
   exact Function.update_of_ne (Nat.ne_of_lt hj) new choice
 
+omit [DecidableEq I] in
 theorem complement_covered_update (choice : ℕ → I → Finset V) (n : ℕ) (new : I → Finset V) :
     (Finset.univ : Finset V) \ coveredThrough (Function.update choice n new) (n + 1) =
       afterRound (Finset.univ \ coveredThrough choice n) new := by
+  classical
   rw [coveredThrough_succ, coveredThrough_update, Function.update_self]
   ext v
   simp only [Finset.mem_sdiff, Finset.mem_univ, Finset.mem_union, true_and, afterRound]

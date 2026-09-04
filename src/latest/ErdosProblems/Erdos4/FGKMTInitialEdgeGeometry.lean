@@ -6,7 +6,7 @@ open scoped BigOperators
 
 namespace Erdos4.FGKMT
 
-open Classical RandomResidueSieve
+open RandomResidueSieve
 
 namespace FiniteLaw
 
@@ -40,6 +40,7 @@ theorem sum_le_of_unique_positive {I : Type*} [Fintype I] (f : I → ℝ)
 variable {P : Type*} [Fintype P] [DecidableEq P]
     (ell : P → ℕ) [∀ l, Fact (ell l).Prime] {k Y : ℕ}
 
+omit [DecidableEq P] in
 theorem translatedInitialEdgeLaw_support (h : Fin k → ℕ) (hY : 1 ≤ Y)
     (targets : Finset ℕ) (μ : FiniteLaw (TranslatedCenter Y)) (p : ℕ)
     (a : ∀ l, ZMod (ell l)) (e : Finset targets)
@@ -50,36 +51,43 @@ theorem translatedInitialEdgeLaw_support (h : Fin k → ℕ) (hY : 1 ≤ Y)
   initialEdgeLaw_support μ _ _ (UnitFourier.unitDensity_pos ell) k
     (firstTranslatedCenter hY) e he
 
+omit [DecidableEq P] in
 theorem translatedInitialEdgeLaw_card_le (h : Fin k → ℕ) (hY : 1 ≤ Y)
     (targets : Finset ℕ) (μ : FiniteLaw (TranslatedCenter Y)) (p : ℕ)
     (a : ∀ l, ZMod (ell l)) (e : Finset targets)
     (he : 0 < (translatedInitialEdgeLaw ell h hY targets μ p a).weight e) : e.card ≤ k := by
+  classical
   rcases translatedInitialEdgeLaw_support ell h hY targets μ p a e he with hempty | ⟨n, _, _, hn⟩
   · simp only [hempty, Finset.card_empty, Nat.zero_le]
   · rw [← hn]
     exact initialTargetEdge_card_le h p Y targets n.val
 
+omit [DecidableEq P] in
 theorem translatedInitialEdgeLaw_residue (h : Fin k → ℕ) (hY : 1 ≤ Y)
     (targets : Finset ℕ) (μ : FiniteLaw (TranslatedCenter Y)) (p : ℕ)
     (a : ∀ l, ZMod (ell l)) (e : Finset targets)
     (he : 0 < (translatedInitialEdgeLaw ell h hY targets μ p a).weight e) :
     ∃ b : ZMod p, ∀ q ∈ e, (q.val : ZMod p) = b := by
+  classical
   rcases translatedInitialEdgeLaw_support ell h hY targets μ p a e he with hempty | ⟨n, _, _, hn⟩
   · exact ⟨0, by simp [hempty]⟩
   · refine ⟨(n.val : ZMod p) - (Y : ZMod p), ?_⟩
     intro q hq
     exact initialTargetEdge_residue h p Y targets n.val q (hn ▸ hq)
 
+omit [DecidableEq P] in
 theorem translatedInitialEdgeLaw_survives (h : Fin k → ℕ) (hY : 1 ≤ Y)
     (targets : Finset ℕ) (μ : FiniteLaw (TranslatedCenter Y)) (p : ℕ)
     (a : ∀ l, ZMod (ell l)) (e : Finset targets)
     (he : 0 < (translatedInitialEdgeLaw ell h hY targets μ p a).weight e)
     (q : targets) (hq : q ∈ e) : Survives ell a {q.val + Y} := by
+  classical
   rcases translatedInitialEdgeLaw_support ell h hY targets μ p a e he with hempty | ⟨n, hS, _, hn⟩
   · exfalso
-    simpa [hempty] using hq
+    simp [hempty] at hq
   · exact initialTargetEdge_survives ell h p Y targets n.val a hS q (hn ▸ hq)
 
+omit [DecidableEq P] in
 theorem translatedInitialEdgeLaw_marginal_le (h : Fin k → ℕ) (hh : Function.Injective h)
     (hY : 1 ≤ Y) (targets : Finset ℕ) (μ : FiniteLaw (TranslatedCenter Y))
     {p : ℕ} (hp : 0 < p) (hshift : ∀ i, h i * p ≤ Y)
@@ -87,6 +95,7 @@ theorem translatedInitialEdgeLaw_marginal_le (h : Fin k → ℕ) (hh : Function.
     {α : ℝ} (hatom : ∀ n, μ.weight n ≤ α) :
     (translatedInitialEdgeLaw ell h hY targets μ p a).prob (fun e => q ∈ e) ≤
       2 * (k : ℝ) * α / UnitFourier.unitDensity ell ^ k := by
+  classical
   have hpinned : μ.prob (fun n => q ∈ initialTargetEdge h p Y targets n.val) ≤ (k : ℝ) * α := by
     have heq := μ.prob_congr_iff
       (fun n => q ∈ initialTargetEdge h p Y targets n.val)
@@ -103,6 +112,7 @@ theorem translatedInitialEdgeLaw_marginal_le (h : Fin k → ℕ) (hh : Function.
       ((mul_le_mul_of_nonneg_left hpinned (by norm_num)).trans_eq (by ring))
       (pow_nonneg (UnitFourier.unitDensity_pos ell).le k)
 
+omit [DecidableEq P] in
 theorem translatedInitialEdgeLaw_pair_source_unique (h : Fin k → ℕ) (hh : Function.Injective h)
     (hY : 1 ≤ Y) (targets : Finset ℕ) (μ μ' : FiniteLaw (TranslatedCenter Y))
     {p p' : ℕ} (hp : p.Prime) (hp' : p'.Prime) (hbound : ∀ i, h i < p)
@@ -111,13 +121,15 @@ theorem translatedInitialEdgeLaw_pair_source_unique (h : Fin k → ℕ) (hh : Fu
       (fun e => q ∈ e ∧ r ∈ e))
     (hpair' : 0 < (translatedInitialEdgeLaw ell h hY targets μ' p' a).prob
       (fun e => q ∈ e ∧ r ∈ e)) : p = p' := by
+  classical
   by_contra hne
   obtain ⟨e, he, hepos⟩ := FiniteLaw.exists_pos_of_prob_pos _ _ hpair
   obtain ⟨e', he', hepos'⟩ := FiniteLaw.exists_pos_of_prob_pos _ _ hpair'
   rcases translatedInitialEdgeLaw_support ell h hY targets μ p a e hepos with hempty | ⟨n, _, _, hn⟩
-  · simpa [hempty] using he
-  rcases translatedInitialEdgeLaw_support ell h hY targets μ' p' a e' hepos' with hempty | ⟨n', _, _, hn'⟩
-  · simpa [hempty] using he'
+  · simp [hempty] at he
+  rcases translatedInitialEdgeLaw_support ell h hY targets μ' p' a e' hepos' with hempty |
+    ⟨n', _, _, hn'⟩
+  · simp [hempty] at he'
   let : Fact p.Prime := ⟨hp⟩
   have hsame := translatedSites_common_point_unique h hp hp' (Ne.symm hne)
     (natCast_shifts_injective h hh hbound)
@@ -127,6 +139,7 @@ theorem translatedInitialEdgeLaw_pair_source_unique (h : Fin k → ℕ) (hh : Fu
     ((mem_initialTargetEdge h p' Y targets n'.val r).mp (hn' ▸ he'.2))
   exact hqr (Subtype.ext (Nat.add_right_cancel hsame))
 
+omit [DecidableEq P] in
 theorem translatedInitialEdgeLaw_pair_sum_le (h : Fin k → ℕ) (hh : Function.Injective h)
     (hY : 1 ≤ Y) (sources targets : Finset ℕ) (μ : ℕ → FiniteLaw (TranslatedCenter Y))
     (hs : ∀ p ∈ sources, p.Prime ∧ ∀ i, h i < p)
@@ -136,6 +149,7 @@ theorem translatedInitialEdgeLaw_pair_sum_le (h : Fin k → ℕ) (hh : Function.
       (translatedInitialEdgeLaw ell h hY targets (μ p) p a).prob (fun e => q ∈ e) ≤ δ) :
     (∑ p : sources, (translatedInitialEdgeLaw ell h hY targets (μ p) p a).prob
       (fun e => q ∈ e ∧ r ∈ e)) ≤ δ := by
+  classical
   apply sum_le_of_unique_positive _ hδ
   · intro p
     exact FiniteLaw.prob_nonneg _ _

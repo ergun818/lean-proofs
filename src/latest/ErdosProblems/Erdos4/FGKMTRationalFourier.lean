@@ -7,12 +7,14 @@ open scoped BigOperators
 
 namespace Erdos4.FGKMT
 
-open DivisorCoefficients LocalOrthogonality AnchorRoots Classical
+open DivisorCoefficients LocalOrthogonality AnchorRoots
 
 variable {P : Type*} [Fintype P] [DecidableEq P] {k : ℕ}
 
+omit [DecidableEq P] in
 theorem rationalCoefficient_ne_zero_cutoff (b : ℝ) (R : ℕ) (ell : P → ℕ)
     (a : P → Option (Fin k)) (ha : rationalCoefficient b R ell a ≠ 0) : totalDivisor ell a ≤ R := by
+  classical
   by_contra hh
   simp only [rationalCoefficient, if_neg hh, ne_eq, not_true_eq_false] at ha
 
@@ -108,7 +110,7 @@ theorem rationalRawFourier_eq_zero_of_large_conductor (b : ℝ) (R : ℕ)
     (fun p => (Fact.out : (ell p).Prime).one_le) J hlarge
   intro p hp
   unfold LocalCharacterMatrix.characterMatrix
-  simp only [extendedBasis, Complex.ofReal_one, one_mul, mul_one]
+  simp only [extendedBasis, Complex.ofReal_one, mul_one]
   rw [LocalCharacterMatrix.sum_star_units_eq_zero (χ p) (hχ p hp), mul_zero]
 
 end Erdos4.FGKMT

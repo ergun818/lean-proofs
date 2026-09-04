@@ -45,12 +45,14 @@ theorem exists_partition_offsets {C : Finset ℕ} (P : Finpartition C) (x p Y U 
   choose anchor hanchor using fun E : P.parts => P.nonempty_of_mem_parts E.property
   let representative := fun E : P.parts => fiberRepresentative x p (anchor E)
   let offset := fun (E : P.parts) (n : E.val) =>
-    (⟨fiberOffset x p n.val, fiberOffset_lt hp (hC n.val (P.subset E.property n.property)).2 hYU⟩ : Fin U)
+    (⟨fiberOffset x p n.val, fiberOffset_lt hp (hC n.val (P.subset E.property n.property)).2
+      hYU⟩ : Fin U)
   refine ⟨representative, offset, fun E => fiberRepresentative_bounds x p (anchor E) hp, ?_⟩
   intro E n
   have hnC := hC n.val (P.subset E.property n.property)
   have haC := hC (anchor E) (P.subset E.property (hanchor E))
-  have heq := fiberRepresentative_eq hnC.1 haC.1 (hfiber E.val E.property n.val n.property (anchor E) (hanchor E))
+  have heq := fiberRepresentative_eq hnC.1 haC.1 (hfiber E.val E.property n.val n.property
+    (anchor E) (hanchor E))
   change n.val = fiberRepresentative x p (anchor E) + p * fiberOffset x p n.val
   rw [← heq]
   exact fiber_reconstruct hnC.1

@@ -8,7 +8,7 @@ open scoped BigOperators
 
 namespace Erdos4.FGKMT
 
-open Classical TupleSurvivalBounds
+open TupleSurvivalBounds
 
 variable {S P Q : Type*} [Fintype S] [DecidableEq S]
     [Fintype P] [DecidableEq P] [Fintype Q] [DecidableEq Q]
@@ -16,6 +16,7 @@ variable {S P Q : Type*} [Fintype S] [DecidableEq S]
     [∀ l, Fact (ell l).Prime] [∀ l, Fact (ell₀ l).Prime] [∀ l, Fact (ell₁ l).Prime]
     {k Y : ℕ}
 
+omit [DecidableEq P] in
 theorem exists_rational_initial_configuration (b : ℝ) (R : ℕ) (hk : 1 ≤ k)
     (h : Fin k → ℕ) (hh : Function.Injective h) (hY : 1 ≤ Y)
     (sources targets : Finset ℕ) (bad : Finset targets)
@@ -47,6 +48,7 @@ theorem exists_rational_initial_configuration (b : ℝ) (R : ℕ) (hk : 1 ≤ k)
         2 * (k : ℝ) * α / UnitFourier.unitDensity ell ^ k) ∧
       (∀ p e, 0 < (ν p).weight e → e.card ≤ k ∧
         ∃ r : ZMod p.val, ∀ q ∈ e, (q.val.val : ZMod p.val) = r) := by
+  classical
   let σ := UnitFourier.unitDensity ell
   let β := fun q : targets => rationalSourceIncidence ell₀ ell₁ b R h hY sources (fun _ => 1) q.val
   let laws := fun (a : ∀ l, ZMod (ell l)) (p : sources) =>

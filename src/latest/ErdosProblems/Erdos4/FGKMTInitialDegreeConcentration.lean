@@ -50,7 +50,7 @@ theorem retained_degree_lower_tail (Z D : Ω → ℝ) (hD : ∀ o, 0 ≤ D o)
       apply ν.prob_mono
       intro o ho
       by_contra hh
-      push_neg at hh
+      push Not at hh
       linarith
     _ ≤ ν.prob (fun o => Z o < β / 2) + ν.prob (fun o => β / 4 < D o) := ν.prob_or_le _ _
     _ ≤ _ := add_le_add (ν.lower_half_tail Z hβ hvariance) (ν.upper_quarter_tail D hD hβ hloss)

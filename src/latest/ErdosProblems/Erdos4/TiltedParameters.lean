@@ -59,7 +59,8 @@ theorem eventually_outerScale_bounds :
   have hLpos : 0 < L := by change 16 ≤ L at hL; linarith
   have htpos : 0 < tiltScale x := by linarith
   have hts : tiltScale x ≤ Real.sqrt L := by
-    have hlog := Real.log_le_sub_one_of_pos (show 0 < Real.log L by change 1 ≤ Real.log L at hl; linarith)
+    have hlog := Real.log_le_sub_one_of_pos (show 0 < Real.log L by
+      change 1 ≤ Real.log L at hl; linarith)
     have htlog : tiltScale x ≤ 4 * Real.log L := by dsimp [tiltScale, L]; linarith
     apply htlog.trans
     simpa only [pow_one, Real.sqrt_eq_rpow] using htbound

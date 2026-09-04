@@ -37,7 +37,8 @@ theorem sieveDivisorLaw_good_probability {j R D B : ℕ} (hj : 16 ≤ j) (hR : 2
   apply rationalProduct_good_probability_half (Fin (sieveDimension j)) (harmonicModulus D B)
     hb (by omega) hD (fun p hp hpD => small_prime_dvd_harmonicModulus D B hp hpD) (by positivity)
   · simp only [Fintype.card_fin]
-    apply rationalMass_moment_budget (harmonicModulus_pos D hB) (harmonicModulus_squarefree D hB) hR hb
+    apply rationalMass_moment_budget (harmonicModulus_pos D hB) (harmonicModulus_squarefree D
+      hB) hR hb
     · rw [sieveSlope_mul_log hR]
       exact sieveProfileScale_ge_one (by omega)
     · simpa only [sieveSlope_mul_log hR] using herror

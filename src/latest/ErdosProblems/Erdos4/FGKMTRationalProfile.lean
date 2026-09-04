@@ -55,7 +55,8 @@ theorem deriv_logarithmicReciprocal_nonpos {b x : ℝ} (hb : 0 ≤ b) (hx : 1 �
     deriv (logarithmicReciprocal b) x ≤ 0 := by
   rw [(hasDerivAt_logarithmicReciprocal hb hx).deriv]
   unfold logarithmicReciprocalDerivative
-  exact div_nonpos_of_nonpos_of_nonneg (neg_nonpos.mpr (mul_nonneg hb (by positivity))) (sq_nonneg _)
+  exact div_nonpos_of_nonpos_of_nonneg (neg_nonpos.mpr (mul_nonneg hb (by
+    positivity))) (sq_nonneg _)
 
 theorem logarithmicReciprocal_variation {b T : ℝ} (hb : 0 ≤ b) (hT : 1 ≤ T) :
     (∫ x in (1 : ℝ)..T, |deriv (logarithmicReciprocal b) x|) ≤ 1 := by
@@ -85,7 +86,8 @@ theorem deriv_logarithmicReciprocal_sq_nonpos {b x : ℝ} (hb : 0 ≤ b) (hx : 1
   have hd : logarithmicReciprocalDerivative b x ≤ 0 := by
     rw [← (hasDerivAt_logarithmicReciprocal hb hx).deriv]
     exact deriv_logarithmicReciprocal_nonpos hb hx
-  exact mul_nonpos_of_nonneg_of_nonpos (mul_nonneg (by norm_num) (logarithmicReciprocal_nonneg hb hx)) hd
+  exact mul_nonpos_of_nonneg_of_nonpos (mul_nonneg (by
+    norm_num) (logarithmicReciprocal_nonneg hb hx)) hd
 
 theorem logarithmicReciprocal_sq_variation {b T : ℝ} (hb : 0 ≤ b) (hT : 1 ≤ T) :
     (∫ x in (1 : ℝ)..T, |deriv (fun t => logarithmicReciprocal b t ^ 2) x|) ≤ 1 := by

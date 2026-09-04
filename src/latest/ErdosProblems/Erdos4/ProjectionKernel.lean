@@ -102,6 +102,7 @@ noncomputable def tensor (u : P → A → ℝ) (a b : P → A) : ℝ :=
   ∏ p, kernel (u p) (a p) (b p)
 
 omit [DecidableEq P] in
+omit [Fintype A] in
 theorem tensor_symm (u : P → A → ℝ) (a b : P → A) : tensor u a b = tensor u b a := by
   exact Finset.prod_congr rfl (fun p _hp => kernel_symm (u p) (a p) (b p))
 

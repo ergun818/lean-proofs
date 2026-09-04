@@ -54,7 +54,7 @@ theorem bounded_partition_lower {α : Type*} [DecidableEq α]
 
 /-- Retaining all fibers costs at most one additional block per fiber. -/
 theorem exists_all_fiber_partition {α β : Type*} [DecidableEq α]
-    [Fintype β] [DecidableEq β] (C : Finset α) (f : α → β) {K : ℕ} (hK : 0 < K) :
+    [Fintype β] (C : Finset α) (f : α → β) {K : ℕ} (hK : 0 < K) :
     ∃ P : Finpartition C, (∀ E ∈ P.parts, E.card ≤ K) ∧
       (∀ E ∈ P.parts, ∀ n ∈ E, ∀ m ∈ E, f n = f m) ∧
       C.card ≤ P.parts.card * K ∧

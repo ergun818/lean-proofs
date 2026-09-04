@@ -6,23 +6,28 @@ open scoped BigOperators
 
 namespace Erdos4.FGKMT
 
-open Classical FiniteCharacterSupport ProductCharacterEncoding
+open FiniteCharacterSupport ProductCharacterEncoding
 
 variable {P Q : Type*} [Fintype P] [DecidableEq P] [Fintype Q] [DecidableEq Q]
     (ell₀ : P → ℕ) (ell₁ : Q → ℕ)
     [∀ p, Fact (ell₀ p).Prime] [∀ q, Fact (ell₁ q).Prime]
 
-noncomputable def lowMaskedIndices (M : ℕ) : Finset (smallCharacters (Sum.elim ell₀ ell₁) M) :=
-  Finset.univ.filter (fun chi => (fun q => chi.val (.inr q)) = (fun _ => 1))
+noncomputable def lowMaskedIndices (M : ℕ) : Finset (smallCharacters (Sum.elim ell₀ ell₁) M) := by
+  classical
+  exact Finset.univ.filter (fun chi => (fun q => chi.val (.inr q)) = (fun _ => 1))
 
+omit [∀ (p : P), Fact (Nat.Prime (ell₀ p))] [∀ (q : Q), Fact (Nat.Prime (ell₁ q))] in
 theorem mem_lowMaskedIndices (M : ℕ) (chi : smallCharacters (Sum.elim ell₀ ell₁) M) :
     chi ∈ lowMaskedIndices ell₀ ell₁ M ↔ (fun q => chi.val (.inr q)) = (fun _ => 1) := by
   simp only [lowMaskedIndices, Finset.mem_filter, Finset.mem_univ, true_and]
 
+omit [DecidableEq P] [DecidableEq Q] in
+omit [∀ q, Fact (ell₁ q).Prime] in
 theorem low_product_conductor_le
     (chi : ∀ s, DirichletCharacter ℂ (Sum.elim ell₀ ell₁ s))
     (hhigh : (fun q => chi (.inr q)) = (fun _ => 1)) :
     localConductorProduct (Sum.elim ell₀ ell₁) chi ≤ ∏ p, ell₀ p := by
+  classical
   rw [localConductorProduct_sum]
   have hh : localConductorProduct ell₁ (fun q => chi (.inr q)) = 1 := by
     rw [hhigh]
@@ -33,6 +38,7 @@ theorem low_product_conductor_le
   rw [hh, mul_one]
   exact localConductorProduct_le_full ell₀ (fun p => chi (.inl p))
 
+omit [DecidableEq P] [DecidableEq Q] in
 theorem low_primitive_conductor_le
     (chi : ∀ s, DirichletCharacter ℂ (Sum.elim ell₀ ell₁ s))
     (hhigh : (fun q => chi (.inr q)) = (fun _ => 1)) :
@@ -58,9 +64,11 @@ theorem card_lowMaskedIndices_le (M : ℕ) (hinj : Function.Injective (Sum.elim 
   have hh := PrimitiveCharacterFamily.card_family_le_square family hvalid hfamily hbound
   simpa only [Fintype.card_coe] using hh
 
+omit [DecidableEq P] [DecidableEq Q] in
 theorem primeProductValue_norm_le_one
     (chi : ∀ s, DirichletCharacter ℂ (Sum.elim ell₀ ell₁ s)) (n : ℕ) :
     ‖ProductPrimeMeanSquare.value (Sum.elim ell₀ ell₁) chi n‖ ≤ 1 := by
+  classical
   unfold ProductPrimeMeanSquare.value
   rw [norm_prod]
   exact Finset.prod_le_one (fun s _ => norm_nonneg _)

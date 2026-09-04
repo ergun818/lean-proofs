@@ -100,7 +100,8 @@ theorem exists_harmonicModulus_density_lower :
   refine ⟨1 / (2 * C), by positivity, ?_⟩
   intro D B hD hB
   have hlog : 0 < Real.log (D : ℝ) := Real.log_pos (by exact_mod_cast hD)
-  have heuler : 0 < partial_euler_product D := zero_lt_one.trans_le partial_euler_trivial_lower_bound
+  have heuler : 0 < partial_euler_product D := zero_lt_one.trans_le
+    partial_euler_trivial_lower_bound
   have hh : partial_euler_product D ≤ C * Real.log (D : ℝ) := by
     simpa only [Nat.floor_natCast, Real.norm_eq_abs, abs_of_pos heuler, abs_of_pos hlog] using
       hupper (D : ℝ) (by exact_mod_cast hD)
@@ -109,7 +110,8 @@ theorem exists_harmonicModulus_density_lower :
   calc
     _ = (1 / (C * Real.log (D : ℝ))) / 2 := by ring
     _ ≤ (1 / partial_euler_product D) / 2 := hhalf
-    _ = coprimeHarmonicDensity (primorial D) / 2 := by rw [primorial_density_eq_euler_inverse, one_div]
+    _ = coprimeHarmonicDensity (primorial D) / 2 := by
+      rw [primorial_density_eq_euler_inverse, one_div]
     _ ≤ _ := harmonicModulus_density_lower D hB
 
 end Erdos4.FGKMT

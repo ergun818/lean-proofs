@@ -7,7 +7,7 @@ open scoped BigOperators
 
 namespace Erdos4.FGKMT
 
-open Classical AffineTuples TupleCollisionMass ConditionalTupleMoments TupleSurvivalBounds
+open AffineTuples TupleCollisionMass ConditionalTupleMoments TupleSurvivalBounds
 
 variable {P : Type*} [Fintype P] [DecidableEq P]
     (ell : P → ℕ) [∀ l, Fact (ell l).Prime] {k : ℕ}
@@ -85,6 +85,6 @@ theorem full_tuple_retained_lower_tail (hk : 1 ≤ k)
         80 * (k : ℝ) ^ 2 * α / σ ^ (3 * k - 1)
       have hβ' : β ≠ 0 := hβ.ne'
       field_simp [hσ.ne', hβ']
-      <;> ring
+     ; ring
 
 end Erdos4.FGKMT

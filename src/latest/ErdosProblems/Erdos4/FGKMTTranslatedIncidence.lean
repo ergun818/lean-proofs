@@ -7,20 +7,18 @@ open scoped BigOperators
 
 namespace Erdos4.FGKMT
 
-open Classical ProductCharacterEncoding AnchoredFourierAverage
+open ProductCharacterEncoding AnchoredFourierAverage
 
 namespace FiniteLaw
 
 theorem prob_congr_iff {Ω : Type*} [Fintype Ω] (μ : FiniteLaw Ω)
     (E F : Ω → Prop) (h : ∀ o, E o ↔ F o) : μ.prob E = μ.prob F := by
-  unfold prob
-  apply Finset.sum_congr rfl
-  intro o _
-  simp only [h o]
+  exact congrArg μ.prob (funext fun o => propext (h o))
 
 theorem prob_range_injective {Ω I : Type*} [Fintype Ω] [Fintype I]
     (μ : FiniteLaw Ω) (f : I → Ω) (hf : Function.Injective f) :
     μ.prob (fun o => ∃ i, f i = o) = ∑ i, μ.weight (f i) := by
+  classical
   rw [prob_eq_mean]
   simp only [mean, mul_ite, mul_one, mul_zero]
   rw [← Finset.sum_filter]
@@ -92,11 +90,13 @@ noncomputable def rationalBaseIncidence (b : ℝ) (R : ℕ) (h : Fin k → ℕ)
   (rationalCenterLaw ell₀ ell₁ b R h hY p).prob
     (fun n => q ∈ translatedEdge h p Y n.val)
 
+omit [DecidableEq P] in
 theorem rationalBaseIncidence_nonneg (b : ℝ) (R : ℕ) (h : Fin k → ℕ)
     {Y : ℕ} (hY : 1 ≤ Y) (p q : ℕ) :
     0 ≤ rationalBaseIncidence ell₀ ell₁ b R h hY p q :=
   (rationalCenterLaw ell₀ ell₁ b R h hY p).prob_nonneg _
 
+omit [DecidableEq P] in
 theorem rationalBaseIncidence_eq_full (b : ℝ) (R : ℕ) (h : Fin k → ℕ)
     {Y : ℕ} (hY : 1 ≤ Y) (p q : ℕ) (hq0 : 1 ≤ q) (hqY : q ≤ Y) :
     rationalBaseIncidence ell₀ ell₁ b R h hY p q =
@@ -105,6 +105,7 @@ theorem rationalBaseIncidence_eq_full (b : ℝ) (R : ℕ) (h : Fin k → ℕ)
   (rationalCenterLaw ell₀ ell₁ b R h hY p).prob_congr_iff _ _
     (fun n => mem_translatedEdge_iff_sites h p Y n.val hq0 hqY)
 
+omit [DecidableEq P] in
 theorem rationalBaseIncidence_eq_unitWeight (b : ℝ) (R : ℕ) (h : Fin k → ℕ)
     (hinj : Function.Injective h)
     (hlarge : ∀ l, Function.Injective (fun i => (h i : ZMod (ell₁ l))))
@@ -118,6 +119,7 @@ theorem rationalBaseIncidence_eq_unitWeight (b : ℝ) (R : ℕ) (h : Fin k → �
         (fun l i => (h i : ZMod (ell₀ l))) (fun l i => (h i : ZMod (ell₁ l)))
         (unitPoint (Sum.elim ell₀ ell₁) p hp / unitPoint (Sum.elim ell₀ ell₁) q hq) /
           maskedTranslatedNormalizer ell₀ ell₁ b R h Y p := by
+  classical
   unfold rationalBaseIncidence
   rw [translatedCenter_incidence_eq h hinj hp0 hq0 hqY hshift]
   simp_rw [rationalCenterLaw_weight ell₀ ell₁ b R h hY p hZ]

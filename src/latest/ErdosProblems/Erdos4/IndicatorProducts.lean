@@ -37,8 +37,8 @@ theorem indicator_mul (s a b : Option (Fin k)) :
         by_cases hs : s = some i <;> simp [Compatible, join, indicator, hs]
       · by_cases hsi : s = some i
         · subst s
-          simp [Compatible, join, indicator, hij]
-        · simp [Compatible, join, indicator, hsi, hij]
+          simp [Compatible, indicator, hij]
+        · simp [Compatible, indicator, hsi, hij]
 
 noncomputable def localDensity (ell : ℝ) (a b : Option (Fin k)) : ℝ := by
   classical
@@ -52,7 +52,8 @@ theorem mean_indicator {ell : ℝ} (hell : (k : ℝ) < ell) (b : Option (Fin k))
   | some i => simp [LocalOrthogonality.mean, indicator]
 
 theorem mean_indicator_mul {ell : ℝ} (hell : (k : ℝ) < ell) (a b : Option (Fin k)) :
-    LocalOrthogonality.mean ell (fun s => indicator s a * indicator s b) = localDensity ell a b := by
+    LocalOrthogonality.mean ell (fun s => indicator s a * indicator s b) = localDensity ell a
+      b := by
   classical
   simp_rw [indicator_mul]
   by_cases hab : Compatible a b
@@ -70,9 +71,11 @@ noncomputable def jointDensity (ell : P → ℕ) (a b : P → Option (Fin k)) : 
   ∏ p, localDensity (ell p : ℝ) (a p) (b p)
 
 open Classical in
+omit [DecidableEq P] in
 theorem evaluation_mul (s a b : P → Option (Fin k)) :
     evaluation s a * evaluation s b =
       if CompatibleLabels a b then evaluation s (joinLabels a b) else 0 := by
+  classical
   unfold evaluation
   rw [← Finset.prod_mul_distrib]
   simp_rw [indicator_mul]
@@ -87,9 +90,11 @@ theorem evaluation_mul (s a b : P → Option (Fin k)) :
     exact Finset.prod_eq_zero (Finset.mem_univ p) (if_neg hp)
 
 open Classical in
+omit [DecidableEq P] in
 theorem jointDensity_eq (ell : P → ℕ) (a b : P → Option (Fin k)) :
     jointDensity ell a b =
       if CompatibleLabels a b then (totalDivisor ell (joinLabels a b) : ℝ)⁻¹ else 0 := by
+  classical
   unfold jointDensity
   by_cases hab : CompatibleLabels a b
   · rw [if_pos hab]
@@ -109,7 +114,8 @@ theorem mean_evaluation_mul (ell : P → ℕ) (hell : ∀ p, (k : ℝ) < ell p)
       (fun s => evaluation s a * evaluation s b) = jointDensity ell a b := by
   classical
   have hfactor : ∀ s : P → Option (Fin k),
-      ProductOrthogonality.stateWeight (fun p => (ell p : ℝ)) s * (evaluation s a * evaluation s b) =
+      ProductOrthogonality.stateWeight (fun p => (ell p : ℝ)) s * (evaluation s a * evaluation
+        s b) =
         ∏ p, LocalOrthogonality.stateWeight (ell p : ℝ) k (s p) *
           (indicator (s p) (a p) * indicator (s p) (b p)) := by
     intro s

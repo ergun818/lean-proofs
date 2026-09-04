@@ -73,7 +73,8 @@ theorem baseTargetEdgeLaw_pair_source_unique (h : Fin k → ℕ) (hh : Function.
 theorem baseTargetEdgeLaw_pair_sum_le (h : Fin k → ℕ) (hh : Function.Injective h)
     (sources targets : Finset ℕ) (μ : ℕ → FiniteLaw (TranslatedCenter Y))
     (hs : ∀ p ∈ sources, p.Prime ∧ ∀ i, h i < p) {δ : ℝ} (hδ : 0 ≤ δ)
-    (hmarg : ∀ p ∈ sources, ∀ q : targets, (baseTargetEdgeLaw h p targets (μ p)).prob (fun E => q ∈ E) ≤ δ)
+    (hmarg : ∀ p ∈ sources, ∀ q : targets, (baseTargetEdgeLaw h p targets (μ p)).prob (fun E
+      => q ∈ E) ≤ δ)
     (q r : targets) (hqr : q ≠ r) :
     pairDegree (fun p : sources => baseTargetEdgeLaw h p.val targets (μ p.val)) q r ≤ δ := by
   apply sum_le_of_unique_positive _ hδ
@@ -89,6 +90,7 @@ theorem baseTargetEdgeLaw_pair_sum_le (h : Fin k → ℕ) (hh : Function.Injecti
 variable {P Q : Type*} [Fintype P] [DecidableEq P] [Fintype Q] [DecidableEq Q]
     (ell₀ : P → ℕ) (ell₁ : Q → ℕ) [∀ l, Fact (ell₀ l).Prime] [∀ l, Fact (ell₁ l).Prime]
 
+omit [DecidableEq P] in
 theorem rational_baseTarget_degree (b : ℝ) (R : ℕ) (h : Fin k → ℕ) (hY : 1 ≤ Y)
     (sources targets : Finset ℕ) (q : targets) (hq0 : 1 ≤ q.val) (hqY : q.val ≤ Y) :
     vertexDegree (fun p : sources => baseTargetEdgeLaw h p.val targets
@@ -98,7 +100,8 @@ theorem rational_baseTarget_degree (b : ℝ) (R : ℕ) (h : Fin k → ℕ) (hY :
   simp only [one_mul]
   apply Finset.sum_congr rfl
   intro p _
-  rw [baseTargetEdgeLaw, FiniteLaw.prob_map, rationalBaseIncidence_eq_full ell₀ ell₁ b R h hY p q.val hq0 hqY]
+  rw [baseTargetEdgeLaw, FiniteLaw.prob_map, rationalBaseIncidence_eq_full ell₀ ell₁ b R h hY
+    p q.val hq0 hqY]
   exact FiniteLaw.prob_congr_iff _ _ _ (fun n => mem_initialTargetEdge h p Y targets n.val q)
 
 end Erdos4.Tilted

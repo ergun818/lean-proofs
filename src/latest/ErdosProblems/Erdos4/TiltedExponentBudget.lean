@@ -19,7 +19,8 @@ theorem block_exponent_budget {L l t A C K v H δ : ℝ}
       _ ≤ (t / L) * (A * L / (t * l)) * (2 * L) +
           (4 * (A * L / (t * l)) + 2) * (C * l) := by
         apply add_le_add
-        · exact mul_le_mul (mul_le_mul_of_nonneg_left hK (div_nonneg ht.le hL.le)) hv hv0 (by positivity)
+        · exact mul_le_mul (mul_le_mul_of_nonneg_left hK (div_nonneg ht.le hL.le)) hv hv0 (by
+            positivity)
         · exact mul_le_mul (by linarith) hH hH0 (by positivity)
       _ = _ := by field_simp; ring
   have hfirst : 2 * A * L / l ≤ δ * L / 4 := by

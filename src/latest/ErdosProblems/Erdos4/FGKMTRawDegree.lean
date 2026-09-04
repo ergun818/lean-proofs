@@ -39,7 +39,7 @@ theorem rawDegree_nonneg (μ : I → FiniteLaw (Finset V)) (p : V → ℝ)
   Finset.sum_nonneg (fun i _hi => eventNumerator_nonneg (μ i) p hp W _)
 
 theorem rawDegree_eq_incidence (μ : I → FiniteLaw (Finset V)) (p : V → ℝ)
-    (hp : ∀ v, 0 < p v) (W : Finset V) (v : V) (hvW : v ∈ W)
+    (_hp : ∀ v, 0 < p v) (W : Finset V) (v : V) (hvW : v ∈ W)
     (hd : vertexDegree μ v ≠ 0) :
     rawDegree μ p W v =
       (vertexDegree μ v / p v) * normalizer (erasedIncidence μ v) p W := by
@@ -54,7 +54,8 @@ theorem rawDegree_eq_incidence (μ : I → FiniteLaw (Finset V)) (p : V → ℝ)
   have hmean : (μ i).mean (fun e =>
       if v ∈ e then (if e.erase v ⊆ W then 1 / setProduct p (e.erase v) else 0) else 0) / p v =
       (μ i).mean (fun e =>
-        (if v ∈ e then (if e.erase v ⊆ W then 1 / setProduct p (e.erase v) else 0) else 0) / p v) := by
+        (if v ∈ e then (if e.erase v ⊆ W then 1 / setProduct p (e.erase v) else 0) else 0) / p
+          v) := by
     simp only [div_eq_mul_inv, FiniteLaw.mean_mul_const]
   rw [hmean]
   apply (μ i).mean_congr

@@ -42,7 +42,7 @@ theorem propagationCoefficient_ge_one (r A : ℕ) {κ D : ℝ} (hκ : 0 < κ) (h
   linarith
 
 theorem normalizationError_fourth (r : ℕ) {κ δ ε q : ℝ}
-    (hκ : 0 < κ) (hδ : 0 ≤ δ) (hε : 0 ≤ ε) (hq0 : 0 < q) (hq1 : q ≤ 1 / 2)
+    (hκ : 0 < κ) (hδ : 0 ≤ δ) (_hε : 0 ≤ ε) (hq0 : 0 < q) (hq1 : q ≤ 1 / 2)
     (hεq : ε ≤ q ^ 4) (hδq : δ ≤ q ^ 4) :
     normalizationError r κ δ ε q ≤ normalizerCoefficient r κ * q := by
   have hq : q ≤ 1 := by linarith

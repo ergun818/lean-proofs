@@ -34,8 +34,10 @@ namespace Erdos4.FGKMT
 
 variable {V I : Type*} [Fintype V] [DecidableEq V] [Fintype I] [DecidableEq I]
 
+omit [DecidableEq V] in
 theorem survivor_mean_card (ν : FiniteLaw (Finset V)) :
     ν.mean (fun W => (W.card : ℝ)) = ∑ v, survival ν {v} := by
+  classical
   have hcard (W : Finset V) : (W.card : ℝ) = ∑ v : V, if v ∈ W then (1 : ℝ) else 0 := by
     simp
   calc
@@ -50,10 +52,12 @@ theorem survivor_mean_card (ν : FiniteLaw (Finset V)) :
       intro W
       simp only [Finset.singleton_subset_iff]
 
+omit [DecidableEq V] in
 theorem survivor_mean_card_le (ν : FiniteLaw (Finset V)) (p : V → ℝ)
     (hp : ∀ v, 0 < p v) {A : ℕ} {ε : ℝ} (hA : 1 ≤ A)
     (hacc : SurvivalAccurate ν p A ε) :
     ν.mean (fun W => (W.card : ℝ)) ≤ (1 + ε) * ∑ v, p v := by
+  classical
   rw [survivor_mean_card, Finset.mul_sum]
   apply Finset.sum_le_sum
   intro v _hv

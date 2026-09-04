@@ -9,7 +9,7 @@ open scoped BigOperators
 
 namespace Erdos4.FGKMT
 
-open Classical DivisorCoefficients DivisibilityExpansion IndicatorProducts ProductCharacterEncoding
+open DivisorCoefficients DivisibilityExpansion IndicatorProducts ProductCharacterEncoding
 
 variable {P Q : Type*} [Fintype P] [DecidableEq P] [Fintype Q] [DecidableEq Q] {k : ℕ}
     (ell₀ : P → ℕ) (ell₁ : Q → ℕ)
@@ -20,6 +20,7 @@ noncomputable def maskedTranslatedLabelCount (h : Fin k → ℕ) (Y p : ℕ)
   ∑ n ∈ Finset.Icc 1 (2 * Y), translatedSmallMask ell₀ h Y p n *
     evaluation (translatedResidueState ell₁ h Y n p) a
 
+omit [DecidableEq P] [DecidableEq Q] in
 theorem maskedTranslatedLabelCount_error
     (hcop₀ : Pairwise (fun l r => (ell₀ l).Coprime (ell₀ r)))
     (hcop₁ : Pairwise (fun l r => (ell₁ l).Coprime (ell₁ r)))
@@ -31,6 +32,7 @@ theorem maskedTranslatedLabelCount_error
       smallProductDensity ell₀ (fun l i => (h i : ZMod (ell₀ l))) * (2 * Y : ℕ) /
         totalDivisor ell₁ a| ≤
       smallProductDensity ell₀ (fun l i => (h i : ZMod (ell₀ l))) * (modulus ell₀ : ℝ) := by
+  classical
   obtain ⟨r, hr⟩ := translated_evaluation_is_residue ell₁ hcop₁ h hinj Y p hp₁ a
   let S := translatedAllowedResidues ell₀ h Y p
   have heq : maskedTranslatedLabelCount ell₀ ell₁ h Y p a =
@@ -58,6 +60,7 @@ theorem maskedTranslatedLabelCount_error
   rw [← heq, hSden, hScard] at hh
   exact hh
 
+omit [DecidableEq P] [DecidableEq Q] in
 theorem maskedTranslatedPairCount_error
     (hcop₀ : Pairwise (fun l r => (ell₀ l).Coprime (ell₀ r)))
     (hcop₁ : Pairwise (fun l r => (ell₁ l).Coprime (ell₁ r)))
@@ -69,6 +72,7 @@ theorem maskedTranslatedPairCount_error
       smallProductDensity ell₀ (fun l i => (h i : ZMod (ell₀ l))) * (2 * Y : ℕ) *
         jointDensity ell₁ a c| ≤
       smallProductDensity ell₀ (fun l i => (h i : ZMod (ell₀ l))) * (modulus ell₀ : ℝ) := by
+  classical
   unfold maskedTranslatedPairCount
   simp_rw [evaluation_mul, jointDensity_eq]
   by_cases hac : CompatibleLabels a c
@@ -79,6 +83,7 @@ theorem maskedTranslatedPairCount_error
   · simp only [if_neg hac, mul_zero, Finset.sum_const_zero, sub_zero, abs_zero]
     exact mul_nonneg (smallProductDensity_nonneg ell₀ _) (Nat.cast_nonneg _)
 
+omit [DecidableEq P] in
 theorem maskedTranslatedNormalizer_crt_error (b : ℝ) (R : ℕ)
     (hell : ∀ l, (k : ℝ) < ell₁ l)
     (hcop₀ : Pairwise (fun l r => (ell₀ l).Coprime (ell₀ r)))
@@ -94,6 +99,7 @@ theorem maskedTranslatedNormalizer_crt_error (b : ℝ) (R : ℕ)
   maskedTranslatedNormalizer_error_le ell₀ ell₁ b R hell h Y p
     (maskedTranslatedPairCount_error ell₀ ell₁ hcop₀ hcop₁ hcross h hinj Y p hp₀ hp₁)
 
+omit [DecidableEq P] in
 theorem maskedTranslatedNormalizer_tail_error {b : ℝ} (hb : 0 ≤ b) (R : ℕ)
     (hell : ∀ l, k + 2 ≤ ell₁ l)
     (htail : (k : ℝ) * LocalIndicatorExpansion.rowCost k * ∑ l, 1 / (ell₁ l : ℝ) ^ 2 ≤ 1)
@@ -119,6 +125,7 @@ theorem maskedTranslatedNormalizer_tail_error {b : ℝ} (hb : 0 ≤ b) (R : ℕ)
       (mul_le_mul_of_nonneg_left hsq
         (mul_nonneg (smallProductDensity_nonneg ell₀ _) (Nat.cast_nonneg _)))
 
+omit [DecidableEq P] in
 theorem maskedTranslatedNormalizer_bounds {b : ℝ} (hb : 0 ≤ b) {R : ℕ} (hR : 1 ≤ R)
     (hell : ∀ l, k + 2 ≤ ell₁ l)
     (htail : (k : ℝ) * LocalIndicatorExpansion.rowCost k * ∑ l, 1 / (ell₁ l : ℝ) ^ 2 ≤ 1)
@@ -160,6 +167,7 @@ theorem maskedTranslatedNormalizer_bounds {b : ℝ} (hb : 0 ≤ b) {R : ℕ} (hR
   change α * Y * E ≤ _ ∧ _ ≤ 3 * (α * Y * E)
   constructor <;> linarith [hh.1, hh.2]
 
+omit [DecidableEq P] in
 theorem maskedTranslatedNormalizer_pos_of_lower (b : ℝ) {R : ℕ} (hR : 1 ≤ R)
     (h : Fin k → ℕ)
     (hadm : ∀ l, ∃ x, SmallPrimeGood (fun i => (h i : ZMod (ell₀ l))) x)

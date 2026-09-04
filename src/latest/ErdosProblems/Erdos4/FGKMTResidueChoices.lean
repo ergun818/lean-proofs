@@ -4,7 +4,7 @@ import ErdosProblems.Erdos4.FGKMTGrowingPrimeCovering
 
 namespace Erdos4.FGKMT
 
-open Classical RandomResidueSieve
+open RandomResidueSieve
 
 variable (sieve sources targets : Finset ℕ) [∀ l : sieve, Fact (l.val).Prime]
 
@@ -25,6 +25,7 @@ theorem mem_remainingPrimeTargets (Y q : ℕ) (hq : q ∈ targets)
     q ∈ remainingPrimeTargets sieve sources targets Y a b ↔
       Survives (fun l : sieve => l.val) a {q + Y} ∧
         ∀ p : sources, (q : ZMod p.val) ≠ b p := by
+  classical
   constructor
   · intro hh
     obtain ⟨t, ht, heq⟩ := Finset.mem_image.mp hh
@@ -85,7 +86,8 @@ theorem exists_cover_of_residue_choices_with_reserve (Y : ℕ)
     (hcard : (remainingPrimeTargets sieve sources targets Y a b ∪ extra).card ≤ reserve.card) :
     ∃ cover : Erdos4.PartialResidueCover (targets ∪ extra),
       cover.primes = (sieve ∪ sources) ∪ reserve := by
-  obtain ⟨left, hleft⟩ := exists_cover_of_residue_choices sieve sources targets Y a b hsource hdisjoint
+  obtain ⟨left, hleft⟩ := exists_cover_of_residue_choices sieve sources targets Y a b hsource
+    hdisjoint
   obtain ⟨right, hright⟩ := Erdos4.PartialResidueCover.exists_of_card_le hreserve hcard
   have hd : Disjoint left.primes right.primes := by simpa only [hleft, hright] using hfresh
   have hsub := remainingPrimeTargets_subset sieve sources targets Y a b
@@ -93,6 +95,7 @@ theorem exists_cover_of_residue_choices_with_reserve (Y : ℕ)
       (remainingPrimeTargets sieve sources targets Y a b ∪ extra) = targets ∪ extra := by
     rw [← Finset.union_assoc, Finset.sdiff_union_of_subset hsub]
   refine ⟨(left.union right hd).reindex hset, ?_⟩
-  simp only [Erdos4.PartialResidueCover.reindex_primes, Erdos4.PartialResidueCover.union, hleft, hright]
+  simp only [Erdos4.PartialResidueCover.reindex_primes, Erdos4.PartialResidueCover.union,
+    hleft, hright]
 
 end Erdos4.FGKMT

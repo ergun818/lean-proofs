@@ -33,7 +33,8 @@ theorem squarefree_modEq_of_prime_factors {d a b : ℕ} (hd : Squarefree d)
   · exact (hordered hba (fun p hp => (hmod p hp).symm)).symm
 
 theorem card_signature_congruence_le {I A : Type*} [Fintype I] [Fintype A]
-    (signature : I → A) (value : I → ℕ) (hinj : Function.Injective (fun i => (signature i, value i)))
+    (signature : I → A) (value : I → ℕ) (hinj : Function.Injective (fun i => (signature i,
+      value i)))
     {M d : ℕ} (hd : 0 < d) (hvalue : ∀ i, 1 ≤ value i ∧ value i ≤ M)
     (hcongr : ∀ i j, signature i = signature j → value i ≡ value j [MOD d]) :
     (Fintype.card I : ℝ) ≤ (Fintype.card A : ℝ) * ((M : ℝ) / d + 1) := by

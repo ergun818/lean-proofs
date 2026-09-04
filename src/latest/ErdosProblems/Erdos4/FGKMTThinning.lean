@@ -28,13 +28,12 @@ end Erdos4.FGKMT.FiniteLaw
 
 namespace Erdos4.FGKMT
 
-open Classical
-
 variable {V I : Type*} [Fintype V] [DecidableEq V] [Fintype I]
 
 def thinnedEdge (choice : V → Bool) (e : Finset V) : Finset V :=
   e.filter (fun v => choice v = true)
 
+omit [DecidableEq V] [Fintype V] in
 theorem thinnedEdge_subset (choice : V → Bool) (e : Finset V) : thinnedEdge choice e ⊆ e :=
   Finset.filter_subset _ _
 
@@ -75,6 +74,7 @@ theorem thinningLaw_prob_le (μ : FiniteLaw (Finset V))
     (p : V → ℝ) (hp0 : ∀ v, 0 ≤ p v) (hp1 : ∀ v, p v ≤ 1)
     (E : Finset V → Prop) (hE : ∀ e f, e ⊆ f → E e → E f) :
     (thinningLaw μ p hp0 hp1).prob E ≤ μ.prob E := by
+  classical
   rw [thinningLaw, FiniteLaw.prob_bind, μ.prob_eq_mean]
   apply μ.mean_mono
   intro e

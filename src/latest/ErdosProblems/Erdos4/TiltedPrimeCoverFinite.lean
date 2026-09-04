@@ -42,7 +42,8 @@ theorem mean_primeBadSet_le (ν : FiniteLaw (Finset V)) (μ : I → FiniteLaw (F
       exact propext (by simp only [Finset.singleton_subset_iff])
     rw [heq]
     field_simp
-  have hper (v : V) : (conditionSurvival ν {v}).prob (E v) ≤ (if v ∈ bad then (1 : ℝ) else 0) + η := by
+  have hper (v : V) : (conditionSurvival ν {v}).prob (E v) ≤ (if v ∈ bad then (1 : ℝ) else 0)
+    + η := by
     by_cases hv : v ∈ bad
     · rw [if_pos hv]
       exact ((conditionSurvival ν {v}).prob_le_one _).trans (by linarith)
@@ -65,6 +66,7 @@ theorem mean_primeBadSet_le (ν : FiniteLaw (Finset V)) (μ : I → FiniteLaw (F
       rw [heq]
       simp only [Finset.sum_const, Finset.card_univ, nsmul_eq_mul, mul_comm η]
 
+omit [DecidableEq V] in
 theorem mean_survivor_card (ν : FiniteLaw (Finset V)) {σ : ℝ}
     (hsingle : ∀ v, survival ν {v} = σ) :
     ν.mean (fun W => (W.card : ℝ)) = σ * Fintype.card V := by
@@ -120,7 +122,8 @@ theorem source_cover_with_bad_vertices (sources targets : Finset ℕ)
   let laws : sources → FiniteLaw (Finset G) := fun i => (μ i).restrictVertices G
   have hGcard : (Fintype.card G : ℝ) ≤ targets.card := by
     simp only [Fintype.card_coe]
-    exact_mod_cast (show G.card ≤ targets.card by simpa only [Fintype.card_coe] using Finset.card_le_univ G)
+    exact_mod_cast (show G.card ≤ targets.card by
+      simpa only [Fintype.card_coe] using Finset.card_le_univ G)
   have hpart : (m : ℝ) * Fintype.card G * Real.exp (-((1 / 2 : ℝ) ^ m) / (6 * ε)) < 1 :=
     (mul_le_mul_of_nonneg_right (mul_le_mul_of_nonneg_left hGcard (Nat.cast_nonneg m))
       (Real.exp_nonneg _)).trans_lt hpartition

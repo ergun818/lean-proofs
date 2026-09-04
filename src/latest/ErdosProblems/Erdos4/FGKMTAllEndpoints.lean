@@ -37,7 +37,7 @@ theorem exists_all_endpoint_gaps :
   obtain ⟨n, hn, hgap⟩ := hgap
   refine ⟨n, hn.trans (endpointParameter_exp_le hD hX), ?_⟩
   calc
-    _ = (c / 2) * (gapScale X / (16 * (D : ℝ))) := by field_simp [hDpos.ne'] <;> ring
+    _ = (c / 2) * (gapScale X / (16 * (D : ℝ))) := by field_simp [hDpos.ne']; ring
     _ ≤ (c / 2) * ((x : ℝ) * growingOuterScale x) :=
       mul_le_mul_of_nonneg_left hcompare (by positivity)
     _ = (c / 2) * (x : ℝ) * growingOuterScale x := by ring

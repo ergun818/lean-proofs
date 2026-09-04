@@ -31,9 +31,11 @@ namespace RoundBounds
 
 variable {μ : I → FiniteLaw (Finset V)} {p : V → ℝ} {r : ℕ} {κ δ D : ℝ}
 
+omit [DecidableEq V] in
 theorem model_pos (h : RoundBounds μ p r κ δ D) : ∀ v, 0 < p v :=
   fun v => h.kappa_pos.trans_le (h.model_lower v)
 
+omit [DecidableEq V] in
 theorem sparse (h : RoundBounds μ p r κ δ D) :
     ∀ i v, (μ i).prob (fun e => v ∈ e) ≤ δ :=
   fun i v => (h.source_marginal i v).trans (h.source_scale_le i)

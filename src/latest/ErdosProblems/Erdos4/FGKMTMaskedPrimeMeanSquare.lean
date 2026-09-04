@@ -6,7 +6,7 @@ open scoped BigOperators
 
 namespace Erdos4.FGKMT
 
-open Classical FiniteCharacterSupport ProductCharacterEncoding ProductPrimeMeanSquare
+open FiniteCharacterSupport ProductCharacterEncoding ProductPrimeMeanSquare
 
 variable {P Q : Type*} [Fintype P] [DecidableEq P] [Fintype Q] [DecidableEq Q] {k : ℕ}
     (ell₀ : P → ℕ) (ell₁ : Q → ℕ)

@@ -33,7 +33,8 @@ theorem finite_three_halves_tail {W : ℕ} (hW : 0 < W) (S : Finset ℕ)
     linarith [h.1]
   calc
     _ ≤ ∑ n ∈ Finset.Ioc W N, (n : ℝ) ^ (-(3 / 2 : ℝ)) :=
-      Finset.sum_le_sum_of_subset_of_nonneg hsub (fun n _ _ => Real.rpow_nonneg (Nat.cast_nonneg n) _)
+      Finset.sum_le_sum_of_subset_of_nonneg hsub (fun n _ _ => Real.rpow_nonneg
+        (Nat.cast_nonneg n) _)
     _ ≤ ∫ x in (W : ℝ)..(N : ℝ), x ^ (-(3 / 2 : ℝ)) := by
       rw [hsum]
       exact hanti.sum_le_integral_Ico hWN

@@ -8,8 +8,8 @@ namespace Erdos4.Tilted
 open Filter FGKMT
 
 theorem prime_cover_numeric_budget {σ x Y L j G K C η N M κ ε : ℝ}
-    (hσ : 0 ≤ σ) (hx : 0 ≤ x) (hY : 0 ≤ Y) (hL : 0 < L) (hj : 0 < j)
-    (hG : 0 ≤ G) (hK : 0 ≤ K) (hC : 0 ≤ C) (hN : 0 ≤ N) (_hκ : 0 ≤ κ)
+    (hσ : 0 ≤ σ) (hx : 0 ≤ x) (_hY : 0 ≤ Y) (hL : 0 < L) (hj : 0 < j)
+    (_hG : 0 ≤ G) (hK : 0 ≤ K) (hC : 0 ≤ C) (hN : 0 ≤ N) (_hκ : 0 ≤ κ)
     (hη : η ≤ 1 / j ^ 2) (hcount : N ≤ K * Y / L) (hbad : M ≤ C * Y / (L * j ^ 2))
     (hproduct : σ * Y ≤ G * x * j) (hκupper : κ ≤ 2 / j)
     (hcoeff : (C + K) * G / j ≤ ε) :
@@ -32,13 +32,15 @@ theorem prime_cover_numeric_budget {σ x Y L j G K C η N M κ ε : ℝ}
       _ ≤ σ * ((C + K) * Y / (L * j ^ 2)) := mul_le_mul_of_nonneg_left hcombined hσ
       _ = (C + K) * (σ * Y) / (L * j ^ 2) := by ring
       _ ≤ (C + K) * (G * x * j) / (L * j ^ 2) :=
-        div_le_div_of_nonneg_right (mul_le_mul_of_nonneg_left hproduct (by positivity)) (by positivity)
+        div_le_div_of_nonneg_right (mul_le_mul_of_nonneg_left hproduct (by positivity)) (by
+          positivity)
       _ = ((C + K) * G / j) * x / L := by field_simp
       _ ≤ _ := div_le_div_of_nonneg_right (mul_le_mul_of_nonneg_right hcoeff hx) hL.le
   have hcover : 2 * κ * (σ * N) ≤ 4 * K * G * x / L := by
     calc
       _ ≤ 2 * (2 / j) * (K * G * (x * j / L)) :=
-        mul_le_mul (mul_le_mul_of_nonneg_left hκupper (by norm_num)) hn (mul_nonneg hσ hN) (by positivity)
+        mul_le_mul (mul_le_mul_of_nonneg_left hκupper (by norm_num)) hn (mul_nonneg hσ hN) (by
+          positivity)
       _ = _ := by field_simp; ring
   exact (add_le_add hmiss hcover).trans_eq (by ring)
 

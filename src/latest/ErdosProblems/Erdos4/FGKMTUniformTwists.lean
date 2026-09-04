@@ -1,4 +1,5 @@
 import ErdosProblems.Erdos4.FGKMTExceptionalDecay
+import ErdosProblems.Erdos4.NonexceptionalKernelBound
 import BoundedGaps.BombieriVinogradov.Analytic.DirichletExplicitFormula
 
 /-!
@@ -22,8 +23,8 @@ theorem exists_uniform_twisted_sum :
               C * ((x : ℝ) * Real.exp (-c * Real.sqrt (Real.log (x : ℝ)))) := by
   obtain ⟨K, _hK, hformula⟩ :=
     exists_nat_norm_twistedChebyshevSum_sub_dirichletExplicitFormulaMainZeroTerms_le
-  obtain ⟨M, A, hM, _hA, _hcard, hnonexceptional⟩ :=
-    exists_nat_card_dirichletExceptionalLFunctionZerosFinset_le_one_and_norm_dirichletNonexceptionalZeroKernelSum_le
+  obtain ⟨M, A, hM, _hA, hnonexceptional⟩ :=
+    exists_nonexceptional_kernel_bound
   obtain ⟨U, hU, hexc⟩ := exists_uniform_prime_excision
   let cE : ℝ := 1 / (4 * (U : ℝ) ^ 2)
   let cN : ℝ := 1 / (8 * (M : ℝ) ^ 2)

@@ -20,6 +20,7 @@ variable {P : Type*} [Fintype P] [DecidableEq P]
 noncomputable def value (chi : ∀ p, DirichletCharacter ℂ (ell p))
     (u : ∀ p, (ZMod (ell p))ˣ) : ℂ := ∏ p, chi p (u p : ZMod (ell p))
 
+omit [DecidableEq P] [Fintype P] in
 theorem local_orthogonality (p : P) (u v : (ZMod (ell p))ˣ) :
     (∑ chi : DirichletCharacter ℂ (ell p),
       star (chi (u : ZMod (ell p))) * chi (v : ZMod (ell p))) =
@@ -96,11 +97,13 @@ theorem actual_coefficient_inversion {k : ℕ} (m : ℝ) (R : ℕ)
       UnitFourier.coefficient ell m R h j chi * value ell chi u) =
       TensorMoments.amplitude (fun a => (DivisorCoefficients.coefficient m R ell a : ℂ))
         (fun p a t => (LocalOrthogonality.extendedBasis (ell p : ℝ) a
-          (RootStates.rootState (Finset.univ.erase j) (AnchorRoots.anchorRoot (h p) j) t) : ℂ)) u ^ 2 := by
+          (RootStates.rootState (Finset.univ.erase j) (AnchorRoots.anchorRoot (h p) j) t) :
+            ℂ)) u ^ 2 := by
   simpa only [transform, value, star_prod, UnitFourier.coefficient] using
     inversion ell (fun u =>
       TensorMoments.amplitude (fun a => (DivisorCoefficients.coefficient m R ell a : ℂ))
         (fun p a t => (LocalOrthogonality.extendedBasis (ell p : ℝ) a
-          (RootStates.rootState (Finset.univ.erase j) (AnchorRoots.anchorRoot (h p) j) t) : ℂ)) u ^ 2) u
+          (RootStates.rootState (Finset.univ.erase j) (AnchorRoots.anchorRoot (h p) j) t) :
+            ℂ)) u ^ 2) u
 
 end Erdos4.ProductFourierInversion

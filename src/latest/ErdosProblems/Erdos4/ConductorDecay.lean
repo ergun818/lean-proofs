@@ -26,7 +26,8 @@ omit [Fintype P] in
 theorem weighted_productMatrix_eq (ell : P → ℕ) (J : Finset P) (j : Fin k)
     (phase : J → Fin k → ℂ) :
     weightedMatrixNorm (sliceFactor ell J) (productMatrix ell J j phase) =
-      ∏ p : J, weightedMatrixNorm (localWeight (ell p)) (twistedMatrix (ell p : ℝ) j (phase p)) := by
+      ∏ p : J, weightedMatrixNorm (localWeight (ell p)) (twistedMatrix (ell p : ℝ) j (phase
+        p)) := by
   unfold weightedMatrixNorm productMatrix sliceFactor
   simp_rw [norm_prod, ← Finset.prod_mul_distrib]
   exact SliceBounds.sum_sum_product (fun (p : J) a b =>
@@ -71,12 +72,14 @@ theorem norm_contractedTwist_le {m : ℝ} (hm : 1 ≤ m) {R : ℕ} (hR : 2 ≤ R
     (energy_nonneg _))
 
 omit [Fintype P] in
+omit [DecidableEq P] in
 /-- One conductor prime supplies any prescribed fixed small factor; every
 other conductor prime contributes at most one. No fractional-power bound is needed. -/
 theorem product_decay_le {δ : ℝ} (hδ1 : δ ≤ 1)
     (ell : P → ℕ) (hell : ∀ p, 0 < ell p) (J : Finset P) (hJ : J.Nonempty)
     (hlocal : ∀ p ∈ J, 20 * (k : ℝ) ^ 3 ≤ δ * ell p) :
     (∏ p : J, 20 * (k : ℝ) ^ 3 / ell p) ≤ δ := by
+  classical
   obtain ⟨p, hp⟩ := hJ
   have hfactor0 : ∀ q : J, 0 ≤ 20 * (k : ℝ) ^ 3 / ell q := by
     intro q

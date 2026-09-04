@@ -32,8 +32,10 @@ instance combinedSievePrime_fact (D R B : ℕ) (p : CombinedSievePrime D R B) :
   | inl p => exact ⟨smallSievePrime_prime D B p⟩
   | inr p => exact ⟨sievePrimeValue_prime (harmonicModulus D B) R p⟩
 
-theorem combinedSievePrime_injective (D R B : ℕ) : Function.Injective (combinedSievePrimeValue D R B) := by
-  have hlarge (p : SievePrime (harmonicModulus D B) R) : D < sievePrimeValue (harmonicModulus D B) R p :=
+theorem combinedSievePrime_injective (D R B : ℕ) : Function.Injective (combinedSievePrimeValue
+    D R B) := by
+  have hlarge (p : SievePrime (harmonicModulus D B) R) : D < sievePrimeValue (harmonicModulus
+    D B) R p :=
     sievePrimeValue_above_precut (fun q hq hqD => small_prime_dvd_harmonicModulus D B hq hqD) p
   intro p q hpq
   cases p with
@@ -83,6 +85,7 @@ theorem sievePrimeShifts_injective {W R D k : ℕ} (h : Fin k → ℕ)
     (hinj : Function.Injective h) (hbound : ∀ i, h i ≤ D)
     (hpre : ∀ p : ℕ, p.Prime → p ≤ D → p ∣ W) (p : SievePrime W R) :
     Function.Injective (sievePrimeShifts W R h p) :=
-  natCast_shifts_injective h hinj (fun i => (hbound i).trans_lt (sievePrimeValue_above_precut hpre p))
+  natCast_shifts_injective h hinj (fun i => (hbound i).trans_lt (sievePrimeValue_above_precut
+    hpre p))
 
 end Erdos4.FGKMT

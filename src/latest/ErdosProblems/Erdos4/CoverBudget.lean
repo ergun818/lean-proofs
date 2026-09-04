@@ -17,19 +17,23 @@ open AffineTuples ConditionalTupleMoments ConditionalCovering
 variable {P : Type*} [Fintype P] [DecidableEq P] {k : ℕ}
     (ell : P → ℕ) [∀ l, Fact (ell l).Prime]
 
+omit [DecidableEq P] [Fintype P] in
 theorem hitting_ratio_le_one (h : Fin k → ℕ) (p Y : ℕ) (μ : ℕ → ℝ) (q : ℕ)
     (hμ : ∀ n ∈ Finset.Icc 1 Y, 0 ≤ μ n) (a : ∀ l, ZMod (ell l)) :
     hittingMass ell h p Y μ q a / tupleMass ell h p Y μ a ≤ 1 := by
+  classical
   by_cases hX : tupleMass ell h p Y μ a = 0
   · rw [hX, div_zero]
     exact zero_le_one
   · apply (div_le_one (lt_of_le_of_ne (tupleMass_nonneg ell h p Y μ hμ a) (Ne.symm hX))).mpr
     exact hittingMass_le_tupleMass ell h p Y μ q hμ a
 
+omit [DecidableEq P] [Fintype P] in
 theorem miss_le_one (h : Fin k → ℕ) (sources : Finset ℕ) (Y : ℕ)
     (μ : ℕ → ℕ → ℝ) (q : ℕ)
     (hμ : ∀ p ∈ sources, ∀ n ∈ Finset.Icc 1 Y, 0 ≤ μ p n) (a : ∀ l, ZMod (ell l)) :
     miss ell h sources Y μ q a ≤ 1 := by
+  classical
   apply Finset.prod_le_one
   · intro p _hp
     exact sub_nonneg.mpr (hitting_ratio_le_one ell h p Y (μ p) q (hμ p p.property) a)

@@ -8,8 +8,6 @@ open scoped BigOperators
 
 namespace Erdos4.FGKMT
 
-open Classical
-
 variable {P Q : Type*} [Fintype P] [DecidableEq P] [Fintype Q] [DecidableEq Q] {k : ℕ}
     (ell₀ : P → ℕ) (ell₁ : Q → ℕ)
     [∀ l, Fact (ell₀ l).Prime] [∀ l, Fact (ell₁ l).Prime]
@@ -17,20 +15,24 @@ variable {P Q : Type*} [Fintype P] [DecidableEq P] [Fintype Q] [DecidableEq Q] {
 noncomputable def rationalCenterMass (b : ℝ) (R : ℕ) (h : Fin k → ℕ) (Y p n : ℕ) : ℝ :=
   maskedTranslatedWeight ell₀ ell₁ b R h Y p n / maskedTranslatedNormalizer ell₀ ell₁ b R h Y p
 
+omit [DecidableEq P] in
 theorem rationalCenterMass_nonneg (b : ℝ) (R : ℕ) (h : Fin k → ℕ) (Y p n : ℕ)
     (hZ : 0 < maskedTranslatedNormalizer ell₀ ell₁ b R h Y p) :
     0 ≤ rationalCenterMass ell₀ ell₁ b R h Y p n :=
   div_nonneg (maskedTranslatedWeight_nonneg ell₀ ell₁ b R h Y p n) hZ.le
 
+omit [DecidableEq P] in
 theorem rationalCenterMass_sum (b : ℝ) (R : ℕ) (h : Fin k → ℕ) (Y p : ℕ)
     (hZ : 0 < maskedTranslatedNormalizer ell₀ ell₁ b R h Y p) :
     (∑ n ∈ Finset.Icc 1 (2 * Y), rationalCenterMass ell₀ ell₁ b R h Y p n) = 1 := by
+  classical
   unfold rationalCenterMass
   rw [← Finset.sum_div]
   change maskedTranslatedNormalizer ell₀ ell₁ b R h Y p /
     maskedTranslatedNormalizer ell₀ ell₁ b R h Y p = 1
   exact div_self hZ.ne'
 
+omit [DecidableEq P] in
 theorem rationalCenterMass_eq_weight (b : ℝ) (R : ℕ) (h : Fin k → ℕ)
     {Y : ℕ} (hY : 1 ≤ Y) (p : ℕ)
     (hZ : 0 < maskedTranslatedNormalizer ell₀ ell₁ b R h Y p) (n : TranslatedCenter Y) :
@@ -38,6 +40,7 @@ theorem rationalCenterMass_eq_weight (b : ℝ) (R : ℕ) (h : Fin k → ℕ)
       (rationalCenterLaw ell₀ ell₁ b R h hY p).weight n :=
   (rationalCenterLaw_weight ell₀ ell₁ b R h hY p hZ n).symm
 
+omit [DecidableEq P] in
 theorem rationalCenterMass_hitMass (b : ℝ) (R : ℕ) (h : Fin k → ℕ)
     {Y : ℕ} (hY : 1 ≤ Y) (p q : ℕ) (hq0 : 1 ≤ q) (hqY : q ≤ Y)
     (hZ : 0 < maskedTranslatedNormalizer ell₀ ell₁ b R h Y p) :

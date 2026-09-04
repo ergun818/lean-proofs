@@ -96,7 +96,8 @@ theorem eventually_small_composite_survivors {ε : ℝ} (hε : 0 < ε) :
     _ ≤ (x : ℝ) * (1 / (Real.log (x : ℝ) * Real.log (Real.log (x : ℝ)) ^ (2 : ℕ))) :=
       mul_le_mul_of_nonneg_left hQ (Nat.cast_nonneg x)
     _ = (1 / Real.log (Real.log (x : ℝ)) ^ (2 : ℕ)) * (x : ℝ) / Real.log (x : ℝ) := by ring
-    _ ≤ _ := div_le_div_of_nonneg_right (mul_le_mul_of_nonneg_right hcoeff (Nat.cast_nonneg x)) hL.le
+    _ ≤ _ := div_le_div_of_nonneg_right (mul_le_mul_of_nonneg_right hcoeff (Nat.cast_nonneg
+      x)) hL.le
 
 theorem exists_composite_cover_cost {c ε : ℝ} (hc : 0 < c) (hε : 0 < ε) :
     ∀ᶠ x : ℕ in atTop, ∀ hτ : 0 ≤ tiltExponent x,

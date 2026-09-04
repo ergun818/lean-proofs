@@ -6,8 +6,6 @@ open scoped BigOperators
 
 namespace Erdos4.FGKMT
 
-open Classical
-
 theorem neg_log_half_le_one : -Real.log (1 / 2 : ℝ) ≤ 1 := by
   rw [one_div, Real.log_inv, neg_neg]
   have hh := Real.log_le_sub_one_of_pos (by norm_num : (0 : ℝ) < 2)
@@ -16,6 +14,7 @@ theorem neg_log_half_le_one : -Real.log (1 / 2 : ℝ) ≤ 1 := by
 
 variable {I V : Type*} [Fintype I] [DecidableEq I] [Fintype V] [DecidableEq V]
 
+omit [DecidableEq I] in
 theorem source_covering (μ : I → FiniteLaw (Finset V)) {m r : ℕ}
     (hr : 1 ≤ r) {ε δ : ℝ} (hε : 0 < ε) (hδ : 0 ≤ δ) (hεδ : ε ≤ δ)
     (hdegree : ∀ v, 4 ≤ vertexDegree μ v)
@@ -31,6 +30,7 @@ theorem source_covering (μ : I → FiniteLaw (Finset V)) {m r : ℕ}
       (∀ i, choice i = ∅ ∨ ∃ e, 0 < (μ i).weight e ∧ choice i ⊆ e) ∧
       ((Finset.univ \ Finset.univ.biUnion choice).card : ℝ) ≤
         2 * (Fintype.card V : ℝ) * (1 / 2 : ℝ) ^ m := by
+  classical
   let ν := equalizedFamily μ 4 (by norm_num) hdegree
   have hνdegree : ∀ v, vertexDegree ν v = 4 :=
     equalizedFamily_degree μ 4 (by norm_num) hdegree

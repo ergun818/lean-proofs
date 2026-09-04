@@ -7,7 +7,7 @@ open scoped BigOperators
 
 namespace Erdos4.FGKMT
 
-open DivisorCoefficients RestrictedProductNorm Classical
+open DivisorCoefficients RestrictedProductNorm
 
 def sievePrimeSet (W R : ℕ) : Finset ℕ := (Nat.primesLE R).filter (fun p => p.Coprime W)
 
@@ -25,7 +25,8 @@ theorem sievePrimeValue_injective (W R : ℕ) : Function.Injective (sievePrimeVa
   Subtype.val_injective
 
 theorem sievePrimeValue_covers (W R : ℕ) (u : ℕ) (huR : u ≤ R) (_hu : Squarefree u)
-    (huW : u.Coprime W) : ∀ q ∈ u.primeFactors, ∃ p : SievePrime W R, sievePrimeValue W R p = q := by
+    (huW : u.Coprime W) : ∀ q ∈ u.primeFactors, ∃ p : SievePrime W R, sievePrimeValue W R p =
+      q := by
   intro q hq
   have hprime := Nat.prime_of_mem_primeFactors hq
   have hqR := (Nat.le_of_mem_primeFactors hq).trans huR
@@ -46,6 +47,7 @@ theorem rationalSieve_sum_ideal_gain {W R T K k : ℕ} {b : ℝ}
     (fun j _ => rationalIdealForm_energy_gain hb (sievePrimeValue W R)
       (sievePrimeValue_prime W R) (sievePrimeValue_injective W R) hR hT hTR hK
       (sievePrimeValue_coprime W R) (sievePrimeValue_covers W R) hpre j hmean hcollision)
-  simpa only [Finset.sum_const, Finset.card_univ, Fintype.card_fin, nsmul_eq_mul, mul_assoc] using hh
+  simpa only [Finset.sum_const, Finset.card_univ, Fintype.card_fin, nsmul_eq_mul, mul_assoc]
+    using hh
 
 end Erdos4.FGKMT

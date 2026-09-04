@@ -36,7 +36,8 @@ theorem rooted_local_pair_ratio_exp_le (s : ℕ) [NeZero s] (hs : 2 ≤ s)
   have hspos : (0 : ℝ) < s := by linarith
   have hD : (0 : ℝ) < s - 1 := by linarith
   have hc : ((E.erase 0 ∩ F.erase 0).card : ℝ) ≤ K := by
-    exact_mod_cast ((Finset.card_le_card Finset.inter_subset_left).trans Finset.card_erase_le).trans hE
+    exact_mod_cast ((Finset.card_le_card Finset.inter_subset_left).trans
+      Finset.card_erase_le).trans hE
   have hnum : ((E.erase 0 ∩ F.erase 0).card : ℝ) +
       (if (0 : ZMod s) ∈ E ∧ (0 : ZMod s) ∈ F then 1 else 0) ≤ (K : ℝ) + 1 := by
     split_ifs <;> linarith
@@ -61,7 +62,8 @@ theorem rooted_local_pair_ratio_le_one_of_disjoint (s : ℕ) [NeZero s] (hs : 2 
   have hz : ¬((0 : ZMod s) ∈ E ∧ (0 : ZMod s) ∈ F) :=
     fun h => (Finset.disjoint_left.mp hdis h.1) h.2
   have hinter : E.erase 0 ∩ F.erase 0 = ∅ :=
-    Finset.disjoint_iff_inter_eq_empty.mp (hdis.mono (Finset.erase_subset _ _) (Finset.erase_subset _ _))
+    Finset.disjoint_iff_inter_eq_empty.mp (hdis.mono (Finset.erase_subset _ _)
+      (Finset.erase_subset _ _))
   have hh := rootedLocalLaw_pair_ratio_le s hs _ (rpow_tilt_pos hs τ) (rpow_tilt_le_one hs hτ)
     (v : ZMod s) E F hvE hvF hE hF
   simpa only [rootedResidueLaw, if_neg hz, hinter, Finset.card_empty, Nat.cast_zero, zero_add,
@@ -110,7 +112,8 @@ theorem rootedSieveLaw_pair_ratio_le (τ : ℝ) (hτ : 0 ≤ τ) (v : ℕ) (T U 
       (if ell l ∣ blockGcd T U then (ell l : ℝ) ^ τ else 1) * Real.exp (error l) := by
     have hcardT : (residues ell T l).card ≤ K := Finset.card_image_le.trans hT
     have hcardU : (residues ell U l).card ≤ K := Finset.card_image_le.trans hU
-    have hres : residues ell (T ∪ U) l = residues ell T l ∪ residues ell U l := Finset.image_union _ _
+    have hres : residues ell (T ∪ U) l = residues ell T l ∪ residues ell U l :=
+      Finset.image_union _ _
     rw [hres]
     by_cases hc : l ∈ collisionPrimes ell (T ∪ U)
     · have hh := rooted_local_pair_ratio_exp_le (ell l) (Fact.out : (ell l).Prime).two_le τ hτ v
@@ -124,17 +127,20 @@ theorem rootedSieveLaw_pair_ratio_le (τ : ℝ) (hτ : 0 ≤ τ) (v : ℕ) (T U 
         intro h
         obtain ⟨hzT, hzU⟩ := (shared_zero_iff ell T U l).mpr h
         exact (Finset.disjoint_left.mp hd hzT) hzU
-      have hh := rooted_local_pair_ratio_le_one_of_disjoint (ell l) (Fact.out : (ell l).Prime).two_le
+      have hh := rooted_local_pair_ratio_le_one_of_disjoint (ell l) (Fact.out : (ell
+        l).Prime).two_le
         τ hτ v (residues ell T l) (residues ell U l) (hvT l) (hvU l) hd
         (by have := hsmall l; omega) (by have := hsmall l; omega)
       simpa only [error, if_neg hc, if_neg hnot, Real.exp_zero, mul_one] using hh
-  rw [rootedSieveLaw_survival_product, rootedSieveLaw_survival_product, rootedSieveLaw_survival_product,
+  rw [rootedSieveLaw_survival_product, rootedSieveLaw_survival_product,
+    rootedSieveLaw_survival_product,
     ← Finset.prod_mul_distrib, ← Finset.prod_div_distrib]
   calc
     _ ≤ ∏ l, ((if ell l ∣ blockGcd T U then (ell l : ℝ) ^ τ else 1) * Real.exp (error l)) := by
       apply Finset.prod_le_prod
       · intro l _
-        exact div_nonneg (FiniteLaw.prob_nonneg _ _) (mul_nonneg (FiniteLaw.prob_nonneg _ _) (FiniteLaw.prob_nonneg _ _))
+        exact div_nonneg (FiniteLaw.prob_nonneg _ _) (mul_nonneg (FiniteLaw.prob_nonneg _ _)
+          (FiniteLaw.prob_nonneg _ _))
       · intro l _
         exact hlocal l
     _ = _ := by

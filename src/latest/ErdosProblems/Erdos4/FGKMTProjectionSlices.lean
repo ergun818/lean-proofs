@@ -18,7 +18,8 @@ noncomputable def rationalSlice (b : ℝ) (R : ℕ) (ell : P → ℕ) (J : Finse
 theorem abs_rationalSlice_le {b : ℝ} (hb : 0 ≤ b) (R : ℕ)
     (ell : P → ℕ) (hell : ∀ p, 1 ≤ ell p) (J : Finset P)
     (a : J → Option (Fin k)) (x : {p : P // p ∉ J} → Option (Fin k)) :
-    |rationalSlice b R ell J a x| ≤ sliceFactor ell J a * |rationalSlice b R ell J (fun _ => none) x| := by
+    |rationalSlice b R ell J a x| ≤ sliceFactor ell J a * |rationalSlice b R ell J (fun _ =>
+      none) x| := by
   unfold rationalSlice
   rw [abs_of_nonneg (rationalCoefficient_nonneg hb R ell _),
     abs_of_nonneg (rationalCoefficient_nonneg hb R ell _)]

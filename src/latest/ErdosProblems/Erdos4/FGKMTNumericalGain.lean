@@ -68,20 +68,24 @@ theorem rationalSieve_dimension_gain {W R K j : ℕ}
       Real.log (R : ℝ) * (j : ℝ) / 6144) *
         RestrictedProductNorm.energy
           (rationalCoefficient (k := sieveDimension j) (sieveSlope j R) R (sievePrimeValue W R)) ≤
-      ∑ i : Fin (sieveDimension j), rationalIdealForm (sieveSlope j R) R (sievePrimeValue W R) i := by
+      ∑ i : Fin (sieveDimension j), rationalIdealForm (sieveSlope j R) R (sievePrimeValue W R)
+        i := by
   have hR2 : 2 ≤ R := by omega
   have hb := sieveSlope_pos (by omega : 1 ≤ j) hR2
   have hT : 1 ≤ sieveFaceRadius R := (by norm_num : 1 ≤ 4).trans (sieveFaceRadius_ge_four hR)
   have hmean : (sieveDimension j : ℝ) * rationalMass W (sieveSlope j R) R ≤
-      (1 / 4) * (sieveSlope j R * rationalSquareMass W (sieveSlope j R) R * (Real.log (R : ℝ) / 2)) := by
+      (1 / 4) * (sieveSlope j R * rationalSquareMass W (sieveSlope j R) R * (Real.log (R : ℝ)
+        / 2)) := by
     apply rationalMass_moment_budget hW hSq hR2 hb
     · rw [sieveSlope_mul_log hR2]
       exact sieveProfileScale_ge_one (by omega)
     · simpa only [sieveSlope_mul_log hR2] using hE
     · simpa only [sieveSlope_mul_log hR2] using sieveProfileScale_moment_budget hj
-  have hsum := rationalSieve_sum_ideal_gain hb hR2 hT (sieveFaceRadius_sq_le R) hK hpre hmean hcollision
+  have hsum := rationalSieve_sum_ideal_gain hb hR2 hT (sieveFaceRadius_sq_le R) hK hpre hmean
+    hcollision
   have hratio := rationalMass_sieve_ratio_lower hW hSq hR hj hE
-  have hδ := sieveWindowDensity_nonneg (sievePrimeValue W R) (fun p => (sievePrimeValue_prime W R p).one_le)
+  have hδ := sieveWindowDensity_nonneg (sievePrimeValue W R) (fun p => (sievePrimeValue_prime
+    W R p).one_le)
   have henergy := RestrictedProductNorm.energy_nonneg
     (rationalCoefficient (k := sieveDimension j) (sieveSlope j R) R (sievePrimeValue W R))
   have hh := mul_le_mul_of_nonneg_right (mul_le_mul_of_nonneg_left hratio hδ) henergy

@@ -8,7 +8,7 @@ open scoped BigOperators
 
 namespace Erdos4.FGKMT
 
-open Classical LocalOrthogonality DivisibilityExpansion IndicatorProducts
+open LocalOrthogonality DivisibilityExpansion IndicatorProducts
 
 section MainTerm
 
@@ -18,7 +18,8 @@ theorem rational_coefficient_joint_sum_eq_energy (b : ℝ) (R : ℕ) (ell : P �
     (hell : ∀ p, (k : ℝ) < ell p) :
     (∑ a : P → Option (Fin k), ∑ c : P → Option (Fin k),
       (rationalDivisorCoefficient b R ell a * rationalDivisorCoefficient b R ell c) *
-        jointDensity ell a c) = RestrictedProductNorm.energy (rationalCoefficient (k := k) b R ell) := by
+        jointDensity ell a c) = RestrictedProductNorm.energy (rationalCoefficient (k := k) b R
+          ell) := by
   have hbase := ProductOrthogonality.mean_expansion_sq (fun p => (ell p : ℝ)) hell
     (rationalCoefficient (k := k) b R ell)
   have hexpand : ∀ s : P → Option (Fin k),
@@ -55,10 +56,12 @@ noncomputable def maskedTranslatedNormalizer (b : ℝ) (R : ℕ)
     (h : Fin k → ℕ) (Y p : ℕ) : ℝ :=
   ∑ n ∈ Finset.Icc 1 (2 * Y), maskedTranslatedWeight ell₀ ell₁ b R h Y p n
 
+omit [DecidableEq P] in
 theorem maskedTranslatedNormalizer_nonneg (b : ℝ) (R : ℕ)
     (h : Fin k → ℕ) (Y p : ℕ) : 0 ≤ maskedTranslatedNormalizer ell₀ ell₁ b R h Y p :=
   Finset.sum_nonneg (fun n _ => maskedTranslatedWeight_nonneg ell₀ ell₁ b R h Y p n)
 
+omit [DecidableEq P] in
 theorem maskedTranslatedWeight_expansion (b : ℝ) (R : ℕ)
     (h : Fin k → ℕ) (Y p n : ℕ) :
     maskedTranslatedWeight ell₀ ell₁ b R h Y p n =
@@ -67,6 +70,7 @@ theorem maskedTranslatedWeight_expansion (b : ℝ) (R : ℕ)
           (translatedSmallMask ell₀ h Y p n *
             (evaluation (translatedResidueState ell₁ h Y n p) a *
               evaluation (translatedResidueState ell₁ h Y n p) c)) := by
+  classical
   have hsq : rationalTranslatedAmplitude ell₁ b R h Y p n ^ 2 =
       ∑ a : Q → Option (Fin k), ∑ c : Q → Option (Fin k),
         (rationalDivisorCoefficient b R ell₁ a * rationalDivisorCoefficient b R ell₁ c) *
@@ -84,12 +88,14 @@ theorem maskedTranslatedWeight_expansion (b : ℝ) (R : ℕ)
   rw [Finset.mul_sum]
   exact Finset.sum_congr rfl (fun c _ => by ring)
 
+omit [DecidableEq P] in
 theorem maskedTranslatedNormalizer_eq_pairs (b : ℝ) (R : ℕ)
     (h : Fin k → ℕ) (Y p : ℕ) :
     maskedTranslatedNormalizer ell₀ ell₁ b R h Y p =
       ∑ a : Q → Option (Fin k), ∑ c : Q → Option (Fin k),
         (rationalDivisorCoefficient b R ell₁ a * rationalDivisorCoefficient b R ell₁ c) *
           maskedTranslatedPairCount ell₀ ell₁ h Y p a c := by
+  classical
   unfold maskedTranslatedNormalizer
   simp_rw [maskedTranslatedWeight_expansion]
   rw [Finset.sum_comm]
@@ -100,10 +106,12 @@ theorem maskedTranslatedNormalizer_eq_pairs (b : ℝ) (R : ℕ)
   intro c _
   exact (Finset.mul_sum _ _ _).symm
 
+omit [DecidableEq P] in
 theorem maskedTranslatedNormalizer_error_le (b : ℝ) (R : ℕ)
     (hell : ∀ l, (k : ℝ) < ell₁ l) (h : Fin k → ℕ) (Y p : ℕ) {α B : ℝ}
     (hcount : ∀ a c : Q → Option (Fin k),
-      |maskedTranslatedPairCount ell₀ ell₁ h Y p a c - α * (2 * Y : ℕ) * jointDensity ell₁ a c| ≤ B) :
+      |maskedTranslatedPairCount ell₀ ell₁ h Y p a c - α * (2 * Y : ℕ) * jointDensity ell₁ a
+        c| ≤ B) :
     |maskedTranslatedNormalizer ell₀ ell₁ b R h Y p -
       α * (2 * Y : ℕ) * RestrictedProductNorm.energy (rationalCoefficient (k := k) b R ell₁)| ≤
         B * (∑ a : Q → Option (Fin k), |rationalDivisorCoefficient b R ell₁ a|) ^ 2 := by
@@ -113,7 +121,8 @@ theorem maskedTranslatedNormalizer_error_le (b : ℝ) (R : ℕ)
           (rationalDivisorCoefficient b R ell₁ a * rationalDivisorCoefficient b R ell₁ c) *
             (maskedTranslatedPairCount ell₀ ell₁ h Y p a c -
               α * (2 * Y : ℕ) * jointDensity ell₁ a c) := by
-    rw [maskedTranslatedNormalizer_eq_pairs, ← rational_coefficient_joint_sum_eq_energy b R ell₁ hell]
+    rw [maskedTranslatedNormalizer_eq_pairs, ← rational_coefficient_joint_sum_eq_energy b R
+      ell₁ hell]
     simp only [mul_sub, Finset.sum_sub_distrib, Finset.mul_sum]
     congr 1
     apply Finset.sum_congr rfl

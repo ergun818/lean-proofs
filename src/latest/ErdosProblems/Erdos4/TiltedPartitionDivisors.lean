@@ -63,7 +63,8 @@ theorem partition_divisor_count_of_interval {C : Finset ℕ} (P : Finpartition C
     (hfiber : ∀ E ∈ P.parts, ∀ n ∈ E, ∀ m ∈ E, (n : ZMod p) = (m : ZMod p)) :
     (((P.parts.filter (fun E => d ∣ ∏ n ∈ E, n)).card : ℝ)) ≤
       (U : ℝ) ^ d.primeFactors.card * (((x + p : ℕ) : ℝ) / d + 1) := by
-  obtain ⟨representative, offset, hrep, hformula⟩ := exists_partition_offsets P x p Y U hp hC hYU hfiber
+  obtain ⟨representative, offset, hrep, hformula⟩ := exists_partition_offsets P x p Y U hp hC
+    hYU hfiber
   exact partition_divisor_count P p U (x + p) d hd hd1 representative offset hrep hformula
 
 /-- The two block witnesses may be counted separately, then paired. -/

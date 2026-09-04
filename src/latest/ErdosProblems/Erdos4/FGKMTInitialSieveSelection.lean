@@ -6,22 +6,25 @@ open scoped BigOperators
 
 namespace Erdos4.FGKMT
 
-open Classical RandomResidueSieve
+open RandomResidueSieve
 
 variable {P : Type*} [Fintype P] [DecidableEq P]
     (ell : P → ℕ) [∀ l, Fact (ell l).Prime]
 
 noncomputable def initialSurvivors (Y : ℕ) (targets : Finset ℕ)
-    (a : ∀ l, ZMod (ell l)) : Finset targets :=
-  Finset.univ.filter (fun q : targets => Survives ell a {q.val + Y})
+    (a : ∀ l, ZMod (ell l)) : Finset targets := by
+  classical
+  exact Finset.univ.filter (fun q : targets => Survives ell a {q.val + Y})
 
 noncomputable def initialBadSurvivors (Y : ℕ) (targets : Finset ℕ) (bad : Finset targets)
-    (E : (∀ l, ZMod (ell l)) → targets → Prop) (a : ∀ l, ZMod (ell l)) : Finset targets :=
-  Finset.univ.filter (fun q : targets => Survives ell a {q.val + Y} ∧ (q ∈ bad ∨ E a q))
+    (E : (∀ l, ZMod (ell l)) → targets → Prop) (a : ∀ l, ZMod (ell l)) : Finset targets := by
+  classical
+  exact Finset.univ.filter (fun q : targets => Survives ell a {q.val + Y} ∧ (q ∈ bad ∨ E a q))
 
 theorem mean_initialSurvivors (Y : ℕ) (targets : Finset ℕ) :
     (uniformResidueLaw ell).mean (fun a => ((initialSurvivors ell Y targets a).card : ℝ)) =
       UnitFourier.unitDensity ell * targets.card := by
+  classical
   unfold initialSurvivors
   rw [FiniteLaw.mean_filter_card]
   simp only [uniformResidueLaw_singleton, Finset.sum_const, Finset.card_univ,
@@ -33,6 +36,7 @@ theorem mean_initialBadSurvivors_le (Y : ℕ) (targets : Finset ℕ) (bad : Fins
       (conditionalResidueLaw ell (q.val + Y)).prob (fun a => E a q) ≤ ε) :
     (uniformResidueLaw ell).mean (fun a => ((initialBadSurvivors ell Y targets bad E a).card : ℝ)) ≤
       UnitFourier.unitDensity ell * ((bad.card : ℝ) + ε * targets.card) := by
+  classical
   unfold initialBadSurvivors
   rw [(uniformResidueLaw ell).mean_filter_card
     (fun a (q : targets) => Survives ell a {q.val + Y} ∧ (q ∈ bad ∨ E a q))]
@@ -66,6 +70,7 @@ theorem exists_initial_sieve_good_vertices (Y : ℕ) (targets : Finset ℕ) (bad
       (V.card : ℝ) ≤ 2 * (UnitFourier.unitDensity ell * targets.card + 1) ∧
       ((initialSurvivors ell Y targets a \ V).card : ℝ) ≤
         2 * (UnitFourier.unitDensity ell * ((bad.card : ℝ) + ε * targets.card) + 1) := by
+  classical
   let σ := UnitFourier.unitDensity ell
   have hσ : 0 < σ := UnitFourier.unitDensity_pos ell
   let f := fun a => ((initialSurvivors ell Y targets a).card : ℝ)
@@ -75,7 +80,8 @@ theorem exists_initial_sieve_good_vertices (Y : ℕ) (targets : Finset ℕ) (bad
   have hA : 0 < σ * targets.card + 1 := by positivity
   have hB : 0 < σ * ((bad.card : ℝ) + ε * targets.card) + 1 := by positivity
   have hf : (uniformResidueLaw ell).mean f ≤ σ * targets.card + 1 := by
-    rw [show (uniformResidueLaw ell).mean f = σ * targets.card from mean_initialSurvivors ell Y targets]
+    rw [show (uniformResidueLaw ell).mean f = σ * targets.card from mean_initialSurvivors ell
+      Y targets]
     linarith
   have hg : (uniformResidueLaw ell).mean g ≤ σ * ((bad.card : ℝ) + ε * targets.card) + 1 := by
     have hh := mean_initialBadSurvivors_le ell Y targets bad E hε hbad

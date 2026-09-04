@@ -47,7 +47,8 @@ theorem reciprocal_divisors_le_one_add_log (W : ℕ) :
       apply Finset.sum_le_sum_of_subset_of_nonneg
       · intro d hd
         exact Finset.mem_Icc.mpr ⟨Nat.pos_of_mem_divisors hd,
-          Nat.le_of_dvd (Nat.pos_of_ne_zero (Nat.mem_divisors.mp hd).2) (Nat.dvd_of_mem_divisors hd)⟩
+          Nat.le_of_dvd (Nat.pos_of_ne_zero (Nat.mem_divisors.mp hd).2)
+            (Nat.dvd_of_mem_divisors hd)⟩
       · intro d _ _
         positivity
     _ = (harmonic W : ℝ) := by

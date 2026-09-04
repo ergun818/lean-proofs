@@ -100,7 +100,8 @@ theorem mean_miss_le_three_moments (K : ℕ) (sources : Finset ℕ) (Y B : ℕ)
     mean ell q (miss ell h sources Y μ q) ≤
       1 - ((1 - ε) * UnitFourier.unitDensity ell ^ (k - 1) * τ) ^ 2 /
         (((1 + ε) * UnitFourier.unitDensity ell ^ (2 * k - 2)) * τ ^ 2 +
-          ((1 + ε) * UnitFourier.unitDensity ell ^ (2 * k - 1) + ((k : ℝ) + (k : ℝ) ^ 2) * α) * τ) := by
+          ((1 + ε) * UnitFourier.unitDensity ell ^ (2 * k - 1) + ((k : ℝ) + (k : ℝ) ^ 2) * α)
+            * τ) := by
   dsimp only
   have hV := UnitFourier.unitDensity_pos ell
   have hmom := three_moments ell K sources Y B μ q hε0 hα hacc hs hpoints hμ0 hμ hμsum

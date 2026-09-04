@@ -5,7 +5,7 @@ import ErdosProblems.Erdos4.ChebyshevIntervals
 
 namespace Erdos4.FGKMT
 
-open Filter Classical ChebyshevIntervals
+open Filter ChebyshevIntervals
 
 noncomputable def targetBadSubset (targets bad : Finset ℕ) : Finset targets :=
   Finset.univ.filter (fun q : targets => q.val ∈ bad)
@@ -60,7 +60,8 @@ theorem eventually_growing_count_budgets :
   have hxpos : (0 : ℝ) < x := by exact_mod_cast hx
   have hjdim : growingIndex x ≤ sieveDimension (growingIndex x) := (Nat.lt_two_pow_self).le
   have hjL : (growingIndex x : ℝ) ≤ Real.log (x : ℝ) := by
-    apply (show (growingIndex x : ℝ) ≤ sieveDimension (growingIndex x) by exact_mod_cast hjdim).trans
+    apply (show (growingIndex x : ℝ) ≤ sieveDimension (growingIndex x) by
+      exact_mod_cast hjdim).trans
     apply hdim.2.trans
     simpa only [Real.rpow_one] using
       Real.rpow_le_rpow_of_exponent_le hL (by norm_num : (1 / 100 : ℝ) ≤ 1)

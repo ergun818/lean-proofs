@@ -22,14 +22,19 @@ noncomputable def indicator (a : ∀ l, ZMod (ell l)) (T : Finset ℕ) : ℝ := 
   classical
   exact if Survives ell a T then 1 else 0
 
+omit [DecidableEq P] [Fintype P] in
 theorem indicator_nonneg (a : ∀ l, ZMod (ell l)) (T : Finset ℕ) : 0 ≤ indicator ell a T := by
+  classical
   unfold indicator
   split_ifs <;> norm_num
 
+omit [DecidableEq P] [Fintype P] in
 theorem indicator_le_one (a : ∀ l, ZMod (ell l)) (T : Finset ℕ) : indicator ell a T ≤ 1 := by
+  classical
   unfold indicator
   split_ifs <;> norm_num
 
+omit [DecidableEq P] [Fintype P] in
 theorem indicator_mul (a : ∀ l, ZMod (ell l)) (T U : Finset ℕ) :
     indicator ell a T * indicator ell a U = indicator ell a (T ∪ U) := by
   classical
@@ -104,14 +109,17 @@ noncomputable def hittingMass (h : Fin k → ℕ) (p Y : ℕ) (μ : ℕ → ℝ)
     (a : ∀ l, ZMod (ell l)) : ℝ :=
   ∑ n ∈ Finset.Icc 1 Y, (if q ∈ tuple h p n then μ n else 0) * indicator ell a (tuple h p n)
 
+omit [DecidableEq P] [Fintype P] in
 theorem tupleMass_nonneg (h : Fin k → ℕ) (p Y : ℕ) (μ : ℕ → ℝ)
     (hμ : ∀ n ∈ Finset.Icc 1 Y, 0 ≤ μ n) (a : ∀ l, ZMod (ell l)) :
     0 ≤ tupleMass ell h p Y μ a := Finset.sum_nonneg (fun n hn =>
       mul_nonneg (hμ n hn) (indicator_nonneg ell a (tuple h p n)))
 
+omit [DecidableEq P] [Fintype P] in
 theorem hittingMass_nonneg (h : Fin k → ℕ) (p Y : ℕ) (μ : ℕ → ℝ) (q : ℕ)
     (hμ : ∀ n ∈ Finset.Icc 1 Y, 0 ≤ μ n) (a : ∀ l, ZMod (ell l)) :
     0 ≤ hittingMass ell h p Y μ q a := by
+  classical
   apply Finset.sum_nonneg
   intro n hn
   apply mul_nonneg _ (indicator_nonneg ell a (tuple h p n))
@@ -119,9 +127,11 @@ theorem hittingMass_nonneg (h : Fin k → ℕ) (p Y : ℕ) (μ : ℕ → ℝ) (q
   · exact hμ n hn
   · exact le_rfl
 
+omit [DecidableEq P] [Fintype P] in
 theorem hittingMass_le_tupleMass (h : Fin k → ℕ) (p Y : ℕ) (μ : ℕ → ℝ) (q : ℕ)
     (hμ : ∀ n ∈ Finset.Icc 1 Y, 0 ≤ μ n) (a : ∀ l, ZMod (ell l)) :
     hittingMass ell h p Y μ q a ≤ tupleMass ell h p Y μ a := by
+  classical
   apply Finset.sum_le_sum
   intro n hn
   apply mul_le_mul_of_nonneg_right _ (indicator_nonneg ell a (tuple h p n))
@@ -129,9 +139,11 @@ theorem hittingMass_le_tupleMass (h : Fin k → ℕ) (p Y : ℕ) (μ : ℕ → �
   · exact le_rfl
   · exact hμ n hn
 
+omit [DecidableEq P] [Fintype P] in
 theorem hittingMass_le_hitMass (h : Fin k → ℕ) (p Y : ℕ) (μ : ℕ → ℝ) (q : ℕ)
     (hμ : ∀ n ∈ Finset.Icc 1 Y, 0 ≤ μ n) (a : ∀ l, ZMod (ell l)) :
     hittingMass ell h p Y μ q a ≤ hitMass h p Y μ q := by
+  classical
   apply Finset.sum_le_sum
   intro n hn
   apply mul_le_of_le_one_right _ (indicator_le_one ell a (tuple h p n))

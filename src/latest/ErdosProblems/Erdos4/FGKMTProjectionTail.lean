@@ -9,7 +9,7 @@ open scoped BigOperators
 
 namespace Erdos4.FGKMT
 
-open RestrictedProductNorm Classical
+open RestrictedProductNorm
 
 theorem sievePrimeValue_above_precut {W R K : ℕ}
     (hpre : ∀ p : ℕ, p.Prime → p ≤ K → p ∣ W) (p : SievePrime W R) :

@@ -7,7 +7,7 @@ open scoped BigOperators
 
 namespace Erdos4.FGKMT
 
-open Classical TupleSurvivalBounds
+open TupleSurvivalBounds
 
 theorem exp_sub_one_le_of_half_budget {t ε : ℝ}
     (hε0 : 0 ≤ ε) (hε1 : ε ≤ 1) (ht : t ≤ ε / 2) : Real.exp t - 1 ≤ ε := by
@@ -23,9 +23,11 @@ theorem exp_sub_one_le_of_half_budget {t ε : ℝ}
 variable {P : Type*} [Fintype P] [DecidableEq P]
     (ell : P → ℕ) [∀ l, Fact (ell l).Prime]
 
+omit [DecidableEq P] [∀ (l : P), Fact (Nat.Prime (ell l))] in
 theorem indexed_reciprocal_square_cutoff {K : ℕ} (hK : 0 < K)
     (hinj : Function.Injective ell) (hlarge : ∀ l, K < ell l) :
     (∑ l, 1 / (ell l : ℝ) ^ 2) ≤ 1 / (K : ℝ) := by
+  classical
   have hh := finite_reciprocal_square_tail hK (Finset.univ.image ell) (by
     intro n hn
     obtain ⟨l, _, rfl⟩ := Finset.mem_image.mp hn

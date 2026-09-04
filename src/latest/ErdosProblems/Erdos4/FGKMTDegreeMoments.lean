@@ -43,7 +43,6 @@ theorem scaled_incidence_variance (ν : FiniteLaw (Finset V))
       3 * (vertexDegree μ v / p v) ^ 2 * ε +
         (1 + ε) * (r : ℝ) * δ * (vertexDegree μ v / p v) / (p v * κ ^ r) := by
     field_simp
-    <;> ring
   have hfirst : 3 * (vertexDegree μ v / p v) ^ 2 * ε ≤ 3 * D ^ 2 * ε := by
     have hh := pow_le_pow_left₀ hm0 hD 2
     nlinarith
@@ -71,7 +70,7 @@ theorem scaled_incidence_variance (ν : FiniteLaw (Finset V))
 theorem conditioned_degree_error (ν : FiniteLaw (Finset V))
     (μ : I → FiniteLaw (Finset V)) (p : V → ℝ)
     {r A : ℕ} {κ δ ε D : ℝ} (hκ0 : 0 < κ) (hκ1 : κ ≤ 1)
-    (hδ : 0 ≤ δ) (hε0 : 0 ≤ ε) (hε1 : ε ≤ 1 / 2) (hD0 : 0 ≤ D)
+    (hδ : 0 ≤ δ) (hε0 : 0 ≤ ε) (hε1 : ε ≤ 1 / 2) (_hD0 : 0 ≤ D)
     (hp : ∀ v, κ ≤ p v) (hsize : ∀ i e, 0 < (μ i).weight e → e.card ≤ r)
     (hacc : SurvivalAccurate ν p A ε) (hrA : 2 * r ≤ A)
     (T : Finset V) (hT : T.card ≤ A) (v : V) (hvT : v ∈ T)

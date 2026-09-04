@@ -27,32 +27,40 @@ noncomputable def scaledCost (ell : P → ℕ) (B : ℝ) (a : P → Option (Fin 
 noncomputable def mass (R : ℕ) (ell : P → ℕ) (B : ℝ) : ℝ :=
   ∑ a : P → Option (Fin k), if totalDivisor ell a ≤ R then labelCost B a else 0
 
+omit [DecidableEq P] in
 theorem labelCost_nonneg {B : ℝ} (hB : 0 ≤ B) (a : P → Option (Fin k)) :
     0 ≤ labelCost B a := by
+  classical
   apply Finset.prod_nonneg
   intro p _hp
   split_ifs <;> first | exact zero_le_one | exact hB
 
+omit [DecidableEq P] in
 theorem scaledCost_nonneg (ell : P → ℕ) {B : ℝ} (hB : 0 ≤ B) (a : P → Option (Fin k)) :
     0 ≤ scaledCost ell B a := by
+  classical
   apply Finset.prod_nonneg
   intro p _hp
   split_ifs
   · exact zero_le_one
   · exact div_nonneg hB (sq_nonneg _)
 
+omit [DecidableEq P] in
 theorem scaledCost_eq (ell : P → ℕ) (B : ℝ) (a : P → Option (Fin k)) :
     scaledCost ell B a = labelCost B a / (totalDivisor ell a : ℝ) ^ 2 := by
+  classical
   unfold scaledCost labelCost totalDivisor
   rw [Nat.cast_prod, ← Finset.prod_pow, ← Finset.prod_div_distrib]
   apply Finset.prod_congr rfl
   intro p _hp
   by_cases ha : a p = none <;> simp [ha]
 
+omit [DecidableEq P] in
 theorem pointwise_bound (R : ℕ) (ell : P → ℕ) (hell : ∀ p, 0 < ell p)
     {B : ℝ} (hB : 0 ≤ B) (a : P → Option (Fin k)) :
     (if totalDivisor ell a ≤ R then labelCost B a else 0) ≤
       (R : ℝ) ^ 2 * scaledCost ell B a := by
+  classical
   by_cases ha : totalDivisor ell a ≤ R
   · rw [if_pos ha, scaledCost_eq]
     have hd : (0 : ℝ) < totalDivisor ell a := by exact_mod_cast totalDivisor_pos ell hell a
@@ -90,9 +98,11 @@ theorem mass_le_euler (R : ℕ) (ell : P → ℕ) (hell : ∀ p, 0 < ell p)
       Finset.sum_le_sum (fun a _ha => pointwise_bound R ell hell hB a)
     _ = _ := by rw [← Finset.mul_sum, sum_scaledCost]
 
+omit [DecidableEq P] in
 theorem euler_le_exp (ell : P → ℕ) {B : ℝ} (hB : 0 ≤ B) :
     (∏ p, (1 + (k : ℝ) * B / (ell p : ℝ) ^ 2)) ≤
       Real.exp ((k : ℝ) * B * ∑ p, 1 / (ell p : ℝ) ^ 2) := by
+  classical
   calc
     _ ≤ ∏ p, Real.exp ((k : ℝ) * B / (ell p : ℝ) ^ 2) := by
       apply Finset.prod_le_prod

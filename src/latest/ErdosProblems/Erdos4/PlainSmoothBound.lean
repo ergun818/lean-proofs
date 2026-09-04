@@ -25,7 +25,7 @@ theorem exp_eight_decay (r : ℕ) :
     ring
   rw [heq, Real.exp_neg, Real.exp_log (pow_pos hcore 8)]
 
-theorem smooth_count_le_decay {B : ℝ} {a r U : ℕ} (hr : 1 ≤ r)
+theorem smooth_count_le_decay {B : ℝ} {a r U : ℕ} (_hr : 1 ≤ r)
     (hB : B + 8 * Real.log 2 ≤ (2 : ℝ) ^ a * Real.log 2)
     (hEuler : Erdos469.smoothRankinEulerProduct (delta r) (smoothFrontier r) ≤
       Real.exp (B * (2 : ℝ) ^ r))
@@ -42,10 +42,12 @@ theorem smooth_count_le_decay {B : ℝ} {a r U : ℕ} (hr : 1 ≤ r)
   rw [pow_add] at hsave
   have hexponent : B * (2 : ℝ) ^ r - delta r * Real.log U ≤
       -8 * Real.log 2 * (2 : ℝ) ^ r := by nlinarith
-  have hRankin := Erdos469.card_smoothNumbersUpTo_rankin_le (y := smoothFrontier r) hUpos (delta_pos r)
+  have hRankin := Erdos469.card_smoothNumbersUpTo_rankin_le (y := smoothFrontier r) hUpos
+    (delta_pos r)
     ((delta_le_half r).trans_lt (by norm_num : (1 / 2 : ℝ) < 1))
   calc
-    _ ≤ (U : ℝ) ^ (1 - delta r) * Erdos469.smoothRankinEulerProduct (delta r) (smoothFrontier r) := hRankin
+    _ ≤ (U : ℝ) ^ (1 - delta r) * Erdos469.smoothRankinEulerProduct (delta r) (smoothFrontier
+      r) := hRankin
     _ ≤ (U : ℝ) ^ (1 - delta r) * Real.exp (B * (2 : ℝ) ^ r) :=
       mul_le_mul_of_nonneg_left hEuler (Real.rpow_nonneg (Nat.cast_nonneg U) _)
     _ = (U : ℝ) * Real.exp (B * (2 : ℝ) ^ r - delta r * Real.log U) := by

@@ -74,19 +74,22 @@ theorem partitionMissCost_mean_le (ν : FiniteLaw Ω) {C : Finset ℕ}
       (mul_le_mul_of_nonneg_right hsumq (by positivity))
       (mul_le_mul_of_nonneg_left hloss (by norm_num))
     _ = _ := by
-      have heq : -((Fintype.card I : ℝ) / (8 * B * Q)) = -(Fintype.card I : ℝ) / (8 * B * Q) := by ring
+      have heq : -((Fintype.card I : ℝ) / (8 * B * Q)) = -(Fintype.card I : ℝ) / (8 * B * Q)
+        := by ring
       dsimp [d]
       rw [heq]
       ring
 
 omit [Nonempty I] in
 open Classical in
-theorem exists_partition_cover [DecidableEq I] (ν : FiniteLaw Ω) {C : Finset ℕ}
+theorem exists_partition_cover (ν : FiniteLaw Ω) {C : Finset ℕ}
     (P : I → Finpartition C) (hC : C.Nonempty) (R : ℕ → Ω → Prop) (o : Ω) :
     ∃ choice : ∀ p, Option (P p).parts,
       (∀ p, 0 < (partitionChoiceLaw ν (P p) hC R o).weight (choice p)) ∧
       ((((C.filter (fun v => R v o)).filter
-        (fun v => ∀ p, v ∉ selectedPart (P p) (choice p))).card : ℝ)) ≤ partitionMissCost ν P hC R o := by
+        (fun v => ∀ p, v ∉ selectedPart (P p) (choice p))).card : ℝ)) ≤ partitionMissCost ν P
+          hC R o := by
+  classical
   obtain ⟨choice, hpos, hcount⟩ := exists_independent_cover
     (fun p => partitionChoiceLaw ν (P p) hC R o) (fun p => selectedPart (P p))
     (C.filter (fun v => R v o))

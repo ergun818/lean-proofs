@@ -7,7 +7,7 @@ open scoped BigOperators
 
 namespace Erdos4.FGKMT
 
-open DivisorCoefficients Classical
+open DivisorCoefficients
 
 variable {P : Type*} [Fintype P] [DecidableEq P] {k : ℕ}
 
@@ -92,20 +92,24 @@ theorem coordinateDivisor_coprime (ell : P → ℕ) {W : ℕ}
   · exact hcop p
   · exact Nat.coprime_one_left W
 
+omit [DecidableEq P] in
 theorem totient_coordinateDivisor (ell : P → ℕ)
     (hprime : ∀ p, (ell p).Prime) (hinj : Function.Injective ell)
     (a : P → Option (Fin k)) (i : Fin k) :
     (coordinateDivisor ell a i).totient = ∏ p, if a p = some i then ell p - 1 else 1 := by
+  classical
   rw [label_totient_primeFactors (coordinateDivisor_squarefree ell hprime hinj a i)]
   rw [← label_product_over_primeFactors ell hprime hinj
     (coordinateDivisor_pos ell (fun p => (hprime p).pos) a i).ne'
     (coordinateDivisor_primeFactors_covered ell hprime a i) (fun q => q - 1)]
   simp_rw [prime_dvd_coordinateDivisor_iff ell hprime hinj]
 
+omit [DecidableEq P] in
 theorem normalization_sq_eq_totient_product (ell : P → ℕ)
     (hprime : ∀ p, (ell p).Prime) (hinj : Function.Injective ell)
     (a : P → Option (Fin k)) :
     normalization ell a ^ 2 = ∏ i : Fin k, ((coordinateDivisor ell a i).totient : ℝ)⁻¹ := by
+  classical
   simp_rw [totient_coordinateDivisor ell hprime hinj, Nat.cast_prod, ← Finset.prod_inv_distrib]
   rw [Finset.prod_comm]
   unfold normalization
@@ -123,10 +127,13 @@ theorem normalization_sq_eq_totient_product (ell : P → ℕ)
     rw [Finset.prod_ite_eq]
     simp only [Finset.mem_univ, if_true, Nat.cast_sub (hprime p).one_le, Nat.cast_one]
 
+omit [DecidableEq P] in
 theorem normalization_sq_eq_harmonic_product (ell : P → ℕ)
     (hprime : ∀ p, (ell p).Prime) (hinj : Function.Injective ell) {W : ℕ}
     (hcop : ∀ p, (ell p).Coprime W) (a : P → Option (Fin k)) :
-    normalization ell a ^ 2 = ∏ i : Fin k, squarefreeHarmonicWeight W (coordinateDivisor ell a i) := by
+    normalization ell a ^ 2 = ∏ i : Fin k, squarefreeHarmonicWeight W (coordinateDivisor ell a
+      i) := by
+  classical
   rw [normalization_sq_eq_totient_product ell hprime hinj]
   apply Finset.prod_congr rfl
   intro i _
@@ -175,12 +182,14 @@ theorem labelOfTuple_eq_some_iff (ell : P → ℕ) (hprime : ∀ p, (ell p).Prim
     · intro hi
       exact (h ⟨i, hi⟩).elim
 
+omit [DecidableEq P] in
 theorem coordinateDivisor_labelOfTuple (ell : P → ℕ)
     (hprime : ∀ p, (ell p).Prime) (hinj : Function.Injective ell)
     (d : Fin k → ℕ) (hcop : Pairwise (fun i j => (d i).Coprime (d j)))
     (hsq : ∀ i, Squarefree (d i))
     (hcover : ∀ i q, q ∈ (d i).primeFactors → ∃ p, ell p = q) (i : Fin k) :
     coordinateDivisor ell (labelOfTuple ell d) i = d i := by
+  classical
   unfold coordinateDivisor
   simp_rw [labelOfTuple_eq_some_iff ell hprime d hcop]
   calc

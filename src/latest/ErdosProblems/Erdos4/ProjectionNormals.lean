@@ -91,14 +91,16 @@ theorem normal_difference_some_le {ell : ℝ} (hell : (k : ℝ) < ell)
   have hc1 := coupling_le_inv_sqrt hell
   have hsmall0 : 0 ≤ if i = j then Real.sqrt ell - Real.sqrt (ell - 1) else 0 := by
     split_ifs <;> positivity
-  have hsmall1 : (if i = j then Real.sqrt ell - Real.sqrt (ell - 1) else 0) ≤ 1 / Real.sqrt ell := by
+  have hsmall1 : (if i = j then Real.sqrt ell - Real.sqrt (ell - 1) else 0) ≤ 1 / Real.sqrt
+    ell := by
     split_ifs
     · exact hdelta1
     · positivity
   have hnum : |coupling ell k - (if i = j then Real.sqrt ell - Real.sqrt (ell - 1) else 0)| ≤
       1 / Real.sqrt ell := abs_le.mpr ⟨by linarith, by linarith⟩
   have heq : trueNormal ell j (some i) - IdealProjection.normal ell j (some i) =
-      (coupling ell k - (if i = j then Real.sqrt ell - Real.sqrt (ell - 1) else 0)) / Real.sqrt ell := by
+      (coupling ell k - (if i = j then Real.sqrt ell - Real.sqrt (ell - 1) else 0)) /
+        Real.sqrt ell := by
     by_cases hij : i = j
     · subst i
       simp only [trueNormal, extendedBasis, basis, IdealProjection.normal, ↓reduceIte]

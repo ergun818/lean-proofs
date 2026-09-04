@@ -32,7 +32,8 @@ theorem rationalMass_nonneg {b : ℝ} (hb : 0 ≤ b) (W R : ℕ) : 0 ≤ rationa
     (squarefreeHarmonicWeight_nonneg W n)
 
 theorem rationalSquareMass_nonneg (W : ℕ) (b : ℝ) (R : ℕ) : 0 ≤ rationalSquareMass W b R := by
-  exact Finset.sum_nonneg (fun n _ => mul_nonneg (sq_nonneg _) (squarefreeHarmonicWeight_nonneg W n))
+  exact Finset.sum_nonneg (fun n _ => mul_nonneg (sq_nonneg _)
+    (squarefreeHarmonicWeight_nonneg W n))
 
 theorem rationalLogMoment_nonneg (W : ℕ) (b : ℝ) (R : ℕ) : 0 ≤ rationalLogMoment W b R := by
   exact Finset.sum_nonneg (fun n _ => mul_nonneg
@@ -43,7 +44,8 @@ theorem one_le_rationalMass {b : ℝ} (hb : 0 ≤ b) (W : ℕ) {R : ℕ} (hR : 1
   unfold rationalMass
   have hh := Finset.single_le_sum (s := Finset.Icc 1 R)
     (f := fun n : ℕ => logarithmicReciprocal b n * squarefreeHarmonicWeight W n)
-    (fun n hn => mul_nonneg (logarithmicReciprocal_nonneg hb (by exact_mod_cast (Finset.mem_Icc.mp hn).1))
+    (fun n hn => mul_nonneg (logarithmicReciprocal_nonneg hb (by
+      exact_mod_cast (Finset.mem_Icc.mp hn).1))
       (squarefreeHarmonicWeight_nonneg W n)) (Finset.mem_Icc.mpr ⟨le_rfl, hR⟩)
   simpa only [Nat.cast_one, logarithmicReciprocal, Real.log_one, mul_zero, add_zero, inv_one,
     squarefreeHarmonicWeight_one, mul_one] using hh
@@ -74,7 +76,8 @@ theorem rationalLogMoment_mul_le {b : ℝ} (hb : 0 ≤ b) (W R : ℕ) :
   apply Finset.sum_le_sum
   intro n hn
   have hh := mul_le_mul_of_nonneg_right
-    (logarithmicReciprocal_moment_pointwise (x := (n : ℝ)) hb (by exact_mod_cast (Finset.mem_Icc.mp hn).1))
+    (logarithmicReciprocal_moment_pointwise (x := (n : ℝ)) hb (by
+      exact_mod_cast (Finset.mem_Icc.mp hn).1))
     (squarefreeHarmonicWeight_nonneg W n)
   simpa only [mul_assoc] using hh
 

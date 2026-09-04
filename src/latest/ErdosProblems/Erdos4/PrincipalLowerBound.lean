@@ -33,8 +33,10 @@ theorem fiberSum_nonneg {m : ℝ} (hm : 0 ≤ m) (R : ℕ) (ell : P → ℕ)
     · exact Finset.prod_nonneg (fun p _hp => by split_ifs <;> positivity)
   · exact le_rfl
 
+omit [DecidableEq P] in
 theorem unitDensity_nonneg (ell : P → ℕ) (hell : ∀ p, 1 ≤ ell p) :
     0 ≤ UnitFourier.unitDensity ell := by
+  classical
   apply Finset.prod_nonneg
   intro p _hp
   have hh : (1 : ℝ) ≤ ell p := by exact_mod_cast hell p

@@ -23,11 +23,13 @@ noncomputable def chosenResidue (sources : Finset ℕ) (Y : ℕ)
   if hp : p ∈ sieve then (a ⟨p, hp⟩).val else
     if hp : p ∈ sources then (choice ⟨p, hp⟩ : ℕ) else 0
 
+omit [∀ (l : ↥sieve), Fact (Nat.Prime ↑l)] in
 theorem chosenResidue_at_sieve (sources : Finset ℕ) (Y : ℕ)
     (a : ∀ l : sieve, ZMod (l : ℕ)) (choice : sources → ↥(Finset.Icc 1 Y)) (l : sieve) :
     chosenResidue sieve sources Y a choice l = (a l).val := by
   simp [chosenResidue, l.property]
 
+omit [∀ (l : ↥sieve), Fact (Nat.Prime ↑l)] in
 theorem chosenResidue_at_source (sources : Finset ℕ) (Y : ℕ)
     (a : ∀ l : sieve, ZMod (l : ℕ)) (choice : sources → ↥(Finset.Icc 1 Y)) (p : sources)
     (hp : (p : ℕ) ∉ sieve) : chosenResidue sieve sources Y a choice p = (choice p : ℕ) := by
@@ -83,18 +85,21 @@ theorem exists_cover_with_reserve (h : Fin k → ℕ) (sources targets reserve :
         (ConditionalCovering.miss (fun l : sieve => (l : ℕ)) h sources Y μ q)) < reserve.card + 1) :
     ∃ cover : Erdos4.PartialResidueCover targets, cover.primes = (sieve ∪ sources) ∪ reserve := by
   classical
-  obtain ⟨a, choice, hcount⟩ := exists_choices (fun l : sieve => (l : ℕ)) h sources targets Y μ hY hμ
+  obtain ⟨a, choice, hcount⟩ := exists_choices (fun l : sieve => (l : ℕ)) h sources targets Y
+    μ hY hμ
   let missed := uncovered (fun l : sieve => (l : ℕ)) h sources targets Y (a, choice)
   have hcard : missed.card ≤ reserve.card := by
     have hh : (missed.card : ℝ) < (reserve.card : ℝ) + 1 := hcount.trans_lt hbudget
     have hn : missed.card < reserve.card + 1 := by exact_mod_cast hh
     omega
-  obtain ⟨left, hleft⟩ := exists_cover_of_choices sieve h sources targets Y hprime hdisjoint a choice
+  obtain ⟨left, hleft⟩ := exists_cover_of_choices sieve h sources targets Y hprime hdisjoint a
+    choice
   obtain ⟨right, hright⟩ := Erdos4.PartialResidueCover.exists_of_card_le hreserve hcard
   have hd : Disjoint left.primes right.primes := by simpa only [hleft, hright] using hfresh
   have hsub : missed ⊆ targets := Finset.filter_subset _ _
   have hset : (targets \ missed) ∪ missed = targets := Finset.sdiff_union_of_subset hsub
   refine ⟨(left.union right hd).reindex hset, ?_⟩
-  simp only [Erdos4.PartialResidueCover.reindex_primes, Erdos4.PartialResidueCover.union, hleft, hright]
+  simp only [Erdos4.PartialResidueCover.reindex_primes, Erdos4.PartialResidueCover.union,
+    hleft, hright]
 
 end Erdos4.SelectedResidueCover

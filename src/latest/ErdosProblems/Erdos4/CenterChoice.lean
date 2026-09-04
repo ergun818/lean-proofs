@@ -25,33 +25,40 @@ noncomputable def raw (h : Fin k → ℕ) (p Y : ℕ) (μ : ℕ → ℝ)
     (a : ∀ l, ZMod (ell l)) (n : ↥(Finset.Icc 1 Y)) : ℝ :=
   μ n * indicator ell a (tuple h p n)
 
+omit [DecidableEq P] [Fintype P] in
 theorem raw_nonneg (h : Fin k → ℕ) (p Y : ℕ) (μ : ℕ → ℝ)
     (hμ : ∀ n ∈ Finset.Icc 1 Y, 0 ≤ μ n)
     (a : ∀ l, ZMod (ell l)) (n : ↥(Finset.Icc 1 Y)) : 0 ≤ raw ell h p Y μ a n :=
   mul_nonneg (hμ n n.property) (indicator_nonneg ell a _)
 
+omit [DecidableEq P] [Fintype P] in
 theorem sum_raw (h : Fin k → ℕ) (p Y : ℕ) (μ : ℕ → ℝ) (a : ∀ l, ZMod (ell l)) :
     (∑ n : ↥(Finset.Icc 1 Y), raw ell h p Y μ a n) = tupleMass ell h p Y μ a := by
+  classical
   exact Finset.sum_coe_sort (Finset.Icc 1 Y) (fun n : ℕ => μ n * indicator ell a (tuple h p n))
 
 noncomputable def probability (h : Fin k → ℕ) (p Y : ℕ) (μ : ℕ → ℝ) (hY : 1 ≤ Y)
     (a : ∀ l, ZMod (ell l)) (n : ↥(Finset.Icc 1 Y)) : ℝ :=
   ProbabilityFallback.probability (raw ell h p Y μ a) (fallback Y hY) n
 
+omit [DecidableEq P] [Fintype P] in
 theorem probability_nonneg (h : Fin k → ℕ) (p Y : ℕ) (μ : ℕ → ℝ) (hY : 1 ≤ Y)
     (hμ : ∀ n ∈ Finset.Icc 1 Y, 0 ≤ μ n)
     (a : ∀ l, ZMod (ell l)) (n : ↥(Finset.Icc 1 Y)) : 0 ≤ probability ell h p Y μ hY a n :=
   ProbabilityFallback.probability_nonneg _ (raw_nonneg ell h p Y μ hμ a) _ _
 
+omit [DecidableEq P] [Fintype P] in
 theorem sum_probability (h : Fin k → ℕ) (p Y : ℕ) (μ : ℕ → ℝ) (hY : 1 ≤ Y)
     (a : ∀ l, ZMod (ell l)) :
     (∑ n : ↥(Finset.Icc 1 Y), probability ell h p Y μ hY a n) = 1 :=
   ProbabilityFallback.sum_probability _ _
 
+omit [DecidableEq P] [Fintype P] in
 theorem miss_mass_le (h : Fin k → ℕ) (p Y : ℕ) (μ : ℕ → ℝ) (hY : 1 ≤ Y)
     (hμ : ∀ n ∈ Finset.Icc 1 Y, 0 ≤ μ n) (q : ℕ) (a : ∀ l, ZMod (ell l)) :
     (∑ n : ↥(Finset.Icc 1 Y), if q ∉ tuple h p n then probability ell h p Y μ hY a n else 0) ≤
       1 - hittingMass ell h p Y μ q a / tupleMass ell h p Y μ a := by
+  classical
   have hh := ProbabilityFallback.miss_mass_le (raw ell h p Y μ a)
     (raw_nonneg ell h p Y μ hμ a) (fallback Y hY) (fun n => q ∈ tuple h p n)
   have hhit : (∑ n : ↥(Finset.Icc 1 Y), if q ∈ tuple h p n then raw ell h p Y μ a n else 0) =
@@ -70,6 +77,7 @@ noncomputable def assignmentWeight (h : Fin k → ℕ) (sources : Finset ℕ) (Y
     (choice : sources → ↥(Finset.Icc 1 Y)) : ℝ :=
   ∏ p : sources, probability ell h p Y (μ p) hY a (choice p)
 
+omit [DecidableEq P] [Fintype P] in
 theorem assignmentWeight_nonneg (h : Fin k → ℕ) (sources : Finset ℕ) (Y : ℕ)
     (μ : ℕ → ℕ → ℝ) (hY : 1 ≤ Y)
     (hμ : ∀ p ∈ sources, ∀ n ∈ Finset.Icc 1 Y, 0 ≤ μ p n)
@@ -77,6 +85,7 @@ theorem assignmentWeight_nonneg (h : Fin k → ℕ) (sources : Finset ℕ) (Y : 
     0 ≤ assignmentWeight ell h sources Y μ hY a choice :=
   Finset.prod_nonneg (fun p _hp => probability_nonneg ell h p Y (μ p) hY (hμ p p.property) a _)
 
+omit [DecidableEq P] [Fintype P] in
 theorem sum_assignmentWeight (h : Fin k → ℕ) (sources : Finset ℕ) (Y : ℕ)
     (μ : ℕ → ℕ → ℝ) (hY : 1 ≤ Y) (a : ∀ l, ZMod (ell l)) :
     (∑ choice : sources → ↥(Finset.Icc 1 Y), assignmentWeight ell h sources Y μ hY a choice) = 1 :=
@@ -84,19 +93,22 @@ theorem sum_assignmentWeight (h : Fin k → ℕ) (sources : Finset ℕ) (Y : ℕ
     (fun p => sum_probability ell h p Y (μ p) hY a)
 
 open Classical in
+omit [DecidableEq P] [Fintype P] in
 theorem assignment_miss_mass_le (h : Fin k → ℕ) (sources : Finset ℕ) (Y : ℕ)
     (μ : ℕ → ℕ → ℝ) (hY : 1 ≤ Y)
     (hμ : ∀ p ∈ sources, ∀ n ∈ Finset.Icc 1 Y, 0 ≤ μ p n)
     (q : ℕ) (a : ∀ l, ZMod (ell l)) :
     (∑ choice : sources → ↥(Finset.Icc 1 Y),
-      if ∀ p : sources, q ∉ tuple h p (choice p) then assignmentWeight ell h sources Y μ hY a choice else 0) ≤
+      if ∀ p : sources, q ∉ tuple h p (choice p) then assignmentWeight ell h sources Y μ hY a
+        choice else 0) ≤
         ConditionalCovering.miss ell h sources Y μ q a := by
   classical
   have hi := Erdos4.independent_assignment_miss_mass
     (fun p : sources => probability ell h p Y (μ p) hY a)
     (fun (p : sources) (n : ↥(Finset.Icc 1 Y)) => q ∉ tuple h p n)
   have heq : (∑ choice : sources → ↥(Finset.Icc 1 Y),
-      if ∀ p : sources, q ∉ tuple h p (choice p) then assignmentWeight ell h sources Y μ hY a choice else 0) =
+      if ∀ p : sources, q ∉ tuple h p (choice p) then assignmentWeight ell h sources Y μ hY a
+        choice else 0) =
       ∏ p : sources, ∑ n : ↥(Finset.Icc 1 Y),
         if q ∉ tuple h p n then probability ell h p Y (μ p) hY a n else 0 := by
     convert hi using 1

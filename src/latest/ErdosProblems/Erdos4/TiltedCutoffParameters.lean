@@ -80,7 +80,8 @@ theorem sieve_width_of_cutoff {x Y w : ℕ} (hL : 0 < Real.log (x : ℝ))
 theorem color_offset_width {x Y p : ℕ} (hx : 0 < x) (hxp : x ≤ p)
     (hY : (Y : ℝ) ≤ (x : ℝ) * Real.log (x : ℝ)) : Y < p * offsetLimit x := by
   have hU : Real.log (x : ℝ) < (offsetLimit x : ℝ) := by
-    simpa only [offsetLimit, Nat.cast_add, Nat.cast_one] using Nat.lt_floor_add_one (Real.log (x : ℝ))
+    simpa only [offsetLimit, Nat.cast_add, Nat.cast_one] using Nat.lt_floor_add_one (Real.log
+      (x : ℝ))
   have hh : (Y : ℝ) < ((p * offsetLimit x : ℕ) : ℝ) := by
     calc
       _ ≤ (x : ℝ) * Real.log (x : ℝ) := hY

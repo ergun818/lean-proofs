@@ -8,7 +8,7 @@ open scoped BigOperators
 
 namespace Erdos4.FGKMT
 
-open Classical LocalOrthogonality AnchoredFourierAverage ProductCharacterEncoding
+open LocalOrthogonality AnchoredFourierAverage ProductCharacterEncoding
 
 section OneFamily
 
@@ -27,12 +27,15 @@ noncomputable def rationalTranslatedAmplitude (b : ℝ) (R : ℕ)
 noncomputable def translatedSmallMask (h : Fin k → ℕ) (Y p n : ℕ) : ℝ :=
   ∏ l, if (∀ i, (n : ZMod (ell l)) - Y + (h i : ZMod (ell l)) * p ≠ 0) then 1 else 0
 
+omit [DecidableEq P] in
 theorem translatedSmallMask_nonneg (h : Fin k → ℕ) (Y p n : ℕ) :
     0 ≤ translatedSmallMask ell h Y p n := by
+  classical
   apply Finset.prod_nonneg
   intro l _
   split_ifs <;> norm_num
 
+omit [DecidableEq P] [Fintype P] in
 theorem translatedResidueState_anchor (h : Fin k → ℕ)
     (hinj : ∀ l, Function.Injective (fun i => (h i : ZMod (ell l))))
     (Y p q : ℕ) (hshift : ∀ i, h i * p ≤ Y)
@@ -42,6 +45,7 @@ theorem translatedResidueState_anchor (h : Fin k → ℕ)
     translatedResidueState ell h Y (q + Y - h j * p) p l =
       RootStates.rootState (Finset.univ.erase j)
         (AnchorRoots.anchorRoot (fun i => (h i : ZMod (ell l))) j) (u l) := by
+  classical
   have hle : h j * p ≤ q + Y := by have hh := hshift j; omega
   have hc : ((q + Y - h j * p : ℕ) : ZMod (ell l)) - Y =
       (q : ZMod (ell l)) - (h j : ZMod (ell l)) * p := by
@@ -67,12 +71,14 @@ theorem rationalTranslatedAmplitude_anchor (b : ℝ) (R : ℕ) (h : Fin k → �
   intro l _
   rw [translatedResidueState_anchor ell h hinj Y p q hshift hp hq j u hu l]
 
+omit [DecidableEq P] in
 theorem translatedSmallMask_anchor (h : Fin k → ℕ) (Y p q : ℕ)
     (hshift : ∀ i, h i * p ≤ Y) (hq : ∀ l, (q : ZMod (ell l)) ≠ 0)
     (j : Fin k) (u : ∀ l, (ZMod (ell l))ˣ)
     (hu : ∀ l, (u l : ZMod (ell l)) = (p : ZMod (ell l)) / q) :
     translatedSmallMask ell h Y p (q + Y - h j * p) =
       smallProductRealMask ell (fun l i => (h i : ZMod (ell l))) j u := by
+  classical
   unfold translatedSmallMask smallProductRealMask
   apply Finset.prod_congr rfl
   intro l _
@@ -92,15 +98,19 @@ theorem translatedSmallMask_anchor (h : Fin k → ℕ) (Y p q : ℕ)
     exact ⟨And.right, fun hh => ⟨hq l, hh⟩⟩
   simp only [hpred]
 
+omit [DecidableEq P] in
 theorem unitPoint_natCast_ne_zero (n : ℕ) (hn : n.Coprime (modulus ell)) (l : P) :
     (n : ZMod (ell l)) ≠ 0 := by
+  classical
   rw [← AffineWeights.unitPoint_coe ell n hn l]
   exact Units.ne_zero _
 
+omit [DecidableEq P] in
 theorem unitPoint_ratio_coe (p q : ℕ) (hp : p.Coprime (modulus ell))
     (hq : q.Coprime (modulus ell)) (l : P) :
     ((unitPoint ell p hp / unitPoint ell q hq) l : ZMod (ell l)) =
       (p : ZMod (ell l)) / q := by
+  classical
   simp only [Pi.div_apply, Units.val_div_eq_div_val, AffineWeights.unitPoint_coe]
 
 end OneFamily
@@ -113,10 +123,12 @@ noncomputable def maskedTranslatedWeight (b : ℝ) (R : ℕ)
     (h : Fin k → ℕ) (Y p n : ℕ) : ℝ :=
   translatedSmallMask ell₀ h Y p n * rationalTranslatedAmplitude ell₁ b R h Y p n ^ 2
 
+omit [DecidableEq P] in
 theorem maskedTranslatedWeight_nonneg (b : ℝ) (R : ℕ)
     (h : Fin k → ℕ) (Y p n : ℕ) : 0 ≤ maskedTranslatedWeight ell₀ ell₁ b R h Y p n :=
   mul_nonneg (translatedSmallMask_nonneg ell₀ h Y p n) (sq_nonneg _)
 
+omit [DecidableEq P] in
 theorem maskedTranslatedWeight_anchor (b : ℝ) (R : ℕ) (h : Fin k → ℕ)
     (hinj : ∀ l, Function.Injective (fun i => (h i : ZMod (ell₁ l))))
     (Y p q : ℕ) (hshift : ∀ i, h i * p ≤ Y)
@@ -126,6 +138,7 @@ theorem maskedTranslatedWeight_anchor (b : ℝ) (R : ℕ) (h : Fin k → ℕ)
       maskedUnitWeight ell₀ ell₁ b R
         (fun l i => (h i : ZMod (ell₀ l))) (fun l i => (h i : ZMod (ell₁ l))) j
         (unitPoint (Sum.elim ell₀ ell₁) p hp / unitPoint (Sum.elim ell₀ ell₁) q hq) := by
+  classical
   let u := unitPoint (Sum.elim ell₀ ell₁) p hp / unitPoint (Sum.elim ell₀ ell₁) q hq
   have hsmall := translatedSmallMask_anchor ell₀ h Y p q hshift
     (fun l => unitPoint_natCast_ne_zero (Sum.elim ell₀ ell₁) q hq (.inl l)) j

@@ -7,7 +7,7 @@ open scoped BigOperators
 
 namespace Erdos4.FGKMT
 
-open Classical RestrictedProductNorm FiniteCharacterSupport
+open RestrictedProductNorm FiniteCharacterSupport
 
 section SingleFamily
 
@@ -59,12 +59,14 @@ noncomputable def maskedFourierScale (b : ℝ) (R : ℕ)
   (smallProductDensity ell₀ h₀ / sieveWindowDensity ell₀) *
     (energy (rationalCoefficient (k := k) b R ell₁) / sieveWindowDensity ell₁)
 
+omit [DecidableEq P] in
 theorem maskedFourierScale_nonneg (b : ℝ) (R : ℕ)
     (h₀ : ∀ p, Fin k → ZMod (ell₀ p)) : 0 ≤ maskedFourierScale ell₀ ell₁ b R h₀ :=
   mul_nonneg
     (div_nonneg (smallProductDensity_nonneg ell₀ h₀) (UnitFourier.unitDensity_pos ell₀).le)
     (div_nonneg (energy_nonneg _) (UnitFourier.unitDensity_pos ell₁).le)
 
+omit [DecidableEq P] in
 theorem maskedUnitFourier_norm_le_high {b : ℝ} (hb : 0 ≤ b) (R : ℕ)
     (hell : ∀ q, k + 2 ≤ ell₁ q) {δ : ℝ} (hδ : δ ≤ 1)
     (hlocal : ∀ q, 20 * (k : ℝ) ^ 3 ≤ δ * ell₁ q)
@@ -74,6 +76,7 @@ theorem maskedUnitFourier_norm_le_high {b : ℝ} (hb : 0 ≤ b) (R : ℕ)
     (hhigh : (fun q => χ (.inr q)) ≠ fun _ => 1) :
     ‖maskedUnitFourier ell₀ ell₁ b R h₀ h₁ j χ‖ ≤
       maskedFourierScale ell₀ ell₁ b R h₀ * δ := by
+  classical
   have hsmall := smallProductFourier_norm_le ell₀ h₀ j (fun p => χ (.inl p))
   have hlarge := rationalUnitFourier_norm_nonprincipal_le ell₁ hb R hell hδ hlocal
     h₁ hinj j (fun q => χ (.inr q)) hhigh
@@ -86,6 +89,7 @@ theorem maskedUnitFourier_norm_le_high {b : ℝ} (hb : 0 ≤ b) (R : ℕ)
         (div_nonneg (smallProductDensity_nonneg ell₀ h₀) (UnitFourier.unitDensity_pos ell₀).le)
     _ = _ := by unfold maskedFourierScale; ring
 
+omit [DecidableEq P] in
 theorem maskedUnitFourier_norm_le {b : ℝ} (hb : 0 ≤ b) (R : ℕ)
     (hell : ∀ q, k + 2 ≤ ell₁ q) {δ : ℝ} (hδ : δ ≤ 1)
     (hlocal : ∀ q, 20 * (k : ℝ) ^ 3 ≤ δ * ell₁ q)
@@ -94,6 +98,7 @@ theorem maskedUnitFourier_norm_le {b : ℝ} (hb : 0 ≤ b) (R : ℕ)
     (χ : ∀ s, DirichletCharacter ℂ (Sum.elim ell₀ ell₁ s)) :
     ‖maskedUnitFourier ell₀ ell₁ b R h₀ h₁ j χ‖ ≤
       maskedFourierScale ell₀ ell₁ b R h₀ := by
+  classical
   have hsmall := smallProductFourier_norm_le ell₀ h₀ j (fun p => χ (.inl p))
   have hlarge := rationalUnitFourier_norm_uniform_le ell₁ hb R hell hδ hlocal
     h₁ hinj j (fun q => χ (.inr q))
@@ -103,6 +108,7 @@ theorem maskedUnitFourier_norm_le {b : ℝ} (hb : 0 ≤ b) (R : ℕ)
     _ ≤ _ := mul_le_mul hsmall hlarge (norm_nonneg _)
       (div_nonneg (smallProductDensity_nonneg ell₀ h₀) (UnitFourier.unitDensity_pos ell₀).le)
 
+omit [DecidableEq P] in
 theorem aggregateUnitFourier_norm_le_high {b : ℝ} (hb : 0 ≤ b) (R : ℕ)
     (hell : ∀ q, k + 2 ≤ ell₁ q) {δ : ℝ} (hδ : δ ≤ 1)
     (hlocal : ∀ q, 20 * (k : ℝ) ^ 3 ≤ δ * ell₁ q)
@@ -112,6 +118,7 @@ theorem aggregateUnitFourier_norm_le_high {b : ℝ} (hb : 0 ≤ b) (R : ℕ)
     (hhigh : (fun q => χ (.inr q)) ≠ fun _ => 1) :
     ‖aggregateUnitFourier ell₀ ell₁ b R h₀ h₁ χ‖ ≤
       (k : ℝ) * maskedFourierScale ell₀ ell₁ b R h₀ * δ := by
+  classical
   calc
     _ ≤ ∑ j : Fin k, ‖maskedUnitFourier ell₀ ell₁ b R h₀ h₁ j χ‖ := norm_sum_le _ _
     _ ≤ ∑ _j : Fin k, maskedFourierScale ell₀ ell₁ b R h₀ * δ :=
@@ -119,6 +126,7 @@ theorem aggregateUnitFourier_norm_le_high {b : ℝ} (hb : 0 ≤ b) (R : ℕ)
         h₀ h₁ hinj j χ hhigh)
     _ = _ := by simp only [Finset.sum_const, Finset.card_univ, Fintype.card_fin, nsmul_eq_mul]; ring
 
+omit [DecidableEq P] in
 theorem aggregateUnitFourier_norm_le {b : ℝ} (hb : 0 ≤ b) (R : ℕ)
     (hell : ∀ q, k + 2 ≤ ell₁ q) {δ : ℝ} (hδ : δ ≤ 1)
     (hlocal : ∀ q, 20 * (k : ℝ) ^ 3 ≤ δ * ell₁ q)
@@ -127,6 +135,7 @@ theorem aggregateUnitFourier_norm_le {b : ℝ} (hb : 0 ≤ b) (R : ℕ)
     (χ : ∀ s, DirichletCharacter ℂ (Sum.elim ell₀ ell₁ s)) :
     ‖aggregateUnitFourier ell₀ ell₁ b R h₀ h₁ χ‖ ≤
       (k : ℝ) * maskedFourierScale ell₀ ell₁ b R h₀ := by
+  classical
   calc
     _ ≤ ∑ j : Fin k, ‖maskedUnitFourier ell₀ ell₁ b R h₀ h₁ j χ‖ := norm_sum_le _ _
     _ ≤ ∑ _j : Fin k, maskedFourierScale ell₀ ell₁ b R h₀ :=

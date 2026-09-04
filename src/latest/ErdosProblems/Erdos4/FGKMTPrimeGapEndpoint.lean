@@ -5,7 +5,7 @@ import Mathlib.NumberTheory.Bertrand
 
 namespace Erdos4.FGKMT
 
-open Filter Classical
+open Filter
 
 theorem nth_prime_succ_le_twice (n : ℕ) :
     Nat.nth Nat.Prime (n + 1) ≤ 2 * Nat.nth Nat.Prime n := by

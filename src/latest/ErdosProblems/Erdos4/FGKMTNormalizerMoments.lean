@@ -15,9 +15,11 @@ namespace Erdos4.FGKMT
 
 variable {V : Type*} [Fintype V] [DecidableEq V]
 
+omit [DecidableEq V] in
 theorem meeting_prob_le (μ : FiniteLaw (Finset V)) (e : Finset V) {δ : ℝ}
     (hsparse : ∀ v : V, μ.prob (fun f => v ∈ f) ≤ δ) :
     μ.prob (fun f => ¬Disjoint e f) ≤ (e.card : ℝ) * δ := by
+  classical
   calc
     _ ≤ μ.prob (fun f => ∃ v ∈ e, v ∈ f) := μ.prob_mono (fun f hf => by
       obtain ⟨v, hv, hvf⟩ := Finset.not_disjoint_iff.mp hf
@@ -27,6 +29,7 @@ theorem meeting_prob_le (μ : FiniteLaw (Finset V)) (e : Finset V) {δ : ℝ}
     _ = _ := by simp only [Finset.sum_const, nsmul_eq_mul]
 
 open Classical in
+omit [Fintype V] in
 theorem inverse_intersection_le (p : V → ℝ) {κ : ℝ} (hκ0 : 0 < κ) (hκ1 : κ ≤ 1)
     (hp : ∀ v, κ ≤ p v) {e f : Finset V} {r : ℕ} (he : e.card ≤ r) :
     1 / setProduct p (e ∩ f) ≤

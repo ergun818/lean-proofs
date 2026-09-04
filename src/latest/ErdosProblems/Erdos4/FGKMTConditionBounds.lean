@@ -27,10 +27,12 @@ theorem conditionSurvival_support (ν : FiniteLaw (Finset V)) (T W : Finset V)
     (hT : survival ν T ≠ 0) (hW : 0 < (conditionSurvival ν T).weight W) : T ⊆ W :=
   ν.condition_support (fun W => T ⊆ W) ∅ W hT hW
 
+omit [DecidableEq V] in
 theorem survival_lower (ν : FiniteLaw (Finset V)) (p : V → ℝ)
     {A : ℕ} {κ ε : ℝ} (hκ0 : 0 < κ) (hκ1 : κ ≤ 1) (hε : ε ≤ 1 / 2)
     (hp : ∀ v, κ ≤ p v) (hacc : SurvivalAccurate ν p A ε)
     {T : Finset V} (hT : T.card ≤ A) : κ ^ A / 2 ≤ survival ν T := by
+  classical
   have hp0 : ∀ v, 0 < p v := fun v => hκ0.trans_le (hp v)
   have hh := (abs_le.mp (hacc T hT)).1
   have hratio : 1 / 2 ≤ survival ν T / setProduct p T := by linarith

@@ -94,7 +94,8 @@ theorem exists_growing_low_mode_bound :
     apply hMle.trans
     apply (show harmonicModulus (growingPrecutoff x) B ≤
         harmonicModulus (growingPrecutoff x) B * growingRadius x ^ 8 from by
-      simpa only [mul_one] using Nat.mul_le_mul_left (harmonicModulus (growingPrecutoff x) B) hR8).trans
+      simpa only [mul_one] using Nat.mul_le_mul_left (harmonicModulus (growingPrecutoff x) B)
+        hR8).trans
     exact hlevel a ha1 B hB hBR
   have hs : ∀ p ∈ ChebyshevIntervals.primeInterval A Z,
       p.Coprime (modulus (Sum.elim ell₀ ell₁)) := by
@@ -135,6 +136,6 @@ theorem exists_growing_low_mode_bound :
         mul_le_mul_of_nonneg_right hkL (mul_nonneg hF (Nat.cast_nonneg x))
       _ = _ := by ring
   exact hlow.trans ((div_le_div_of_nonneg_right hKx (pow_nonneg hlogpos.le 3)).trans_eq (by
-    field_simp <;> ring))
+    field_simp; ring))
 
 end Erdos4.FGKMT

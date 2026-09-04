@@ -45,7 +45,8 @@ theorem subset_primeSurvivors (c : ℝ) (x : ℕ) (a : SieveState x) (T : Finset
 theorem primeSurvivorLaw_survival (c : ℝ) (x : ℕ) (hτ : 0 ≤ tiltExponent x)
     (T : Finset (primeTargets c x)) :
     survival (primeSurvivorLaw c x hτ) T =
-      (actualSieveLaw x hτ).prob (fun a => Survives (sievePrimeValue x) a (T.image Subtype.val)) := by
+      (actualSieveLaw x hτ).prob (fun a => Survives (sievePrimeValue x) a (T.image
+        Subtype.val)) := by
   rw [survival, primeSurvivorLaw, FiniteLaw.prob_map]
   congr 1
   funext a
@@ -80,7 +81,8 @@ theorem eventually_primeSurvivorLaw_accurate {c : ℝ} (hc : 0 < c) :
   have hk : (sieveDimension (growingIndex x) : ℝ) ≤ Real.log (x : ℝ) :=
     hdim.2.trans (by simpa only [Real.rpow_one] using
       Real.rpow_le_rpow_of_exponent_le hL (by norm_num : (1 / 100 : ℝ) ≤ 1))
-  have hcard : (T.image Subtype.val).card = T.card := Finset.card_image_of_injective _ Subtype.val_injective
+  have hcard : (T.image Subtype.val).card = T.card := Finset.card_image_of_injective _
+    Subtype.val_injective
   have hnonzero : ∀ n ∈ T.image Subtype.val, ∀ p : sievePrimes x, ¬sievePrimeValue x p ∣ n := by
     intro n hn p hd
     obtain ⟨q, _, rfl⟩ := Finset.mem_image.mp hn
@@ -93,7 +95,8 @@ theorem eventually_primeSurvivorLaw_accurate {c : ℝ} (hc : 0 < c) :
     (by push_cast; linarith) (sievePrimeValue_injective x)
     (fun p => (mem_coordinatePrimes.mp p.property).2.1) (T.image Subtype.val)
     (hcard.le.trans hT)
-    (fun n hn => by obtain ⟨q, _, rfl⟩ := Finset.mem_image.mp hn; exact (primeTargets_properties q.property).2.2)
+    (fun n hn => by
+      obtain ⟨q, _, rfl⟩ := Finset.mem_image.mp hn; exact (primeTargets_properties q.property).2.2)
     hnonzero
   simpa only [primeSurvivorLaw_survival, setProduct, Finset.prod_const, hcard,
     primeDensity, sievePrimeValue, actualSieveLaw] using hh

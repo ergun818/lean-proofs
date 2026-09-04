@@ -7,7 +7,7 @@ open scoped BigOperators
 
 namespace Erdos4.FGKMT
 
-open Classical ProductCharacterEncoding AnchoredFourierAverage
+open ProductCharacterEncoding AnchoredFourierAverage
 
 variable {P Q : Type*} [Fintype P] [DecidableEq P] [Fintype Q] [DecidableEq Q] {k : ℕ}
     (ell₀ : P → ℕ) (ell₁ : Q → ℕ)
@@ -17,6 +17,7 @@ noncomputable def rationalSourceIncidence (b : ℝ) (R : ℕ) (h : Fin k → ℕ
     {Y : ℕ} (hY : 1 ≤ Y) (sources : Finset ℕ) (a : sources → ℝ) (q : ℕ) : ℝ :=
   ∑ p : sources, a p * rationalBaseIncidence ell₀ ell₁ b R h hY p.val q
 
+omit [DecidableEq P] in
 theorem rationalSourceIncidence_nonneg (b : ℝ) (R : ℕ) (h : Fin k → ℕ)
     {Y : ℕ} (hY : 1 ≤ Y) (sources : Finset ℕ) (a : sources → ℝ)
     (ha : ∀ p, 0 ≤ a p) (q : ℕ) :
@@ -24,6 +25,7 @@ theorem rationalSourceIncidence_nonneg (b : ℝ) (R : ℕ) (h : Fin k → ℕ)
   Finset.sum_nonneg (fun p _ => mul_nonneg (ha p)
     (rationalBaseIncidence_nonneg ell₀ ell₁ b R h hY p.val q))
 
+omit [DecidableEq P] in
 theorem rationalBaseIncidence_lower_of_normalizer_le (b : ℝ) (R : ℕ) (h : Fin k → ℕ)
     (hinj : Function.Injective h)
     (hlarge : ∀ l, Function.Injective (fun i => (h i : ZMod (ell₁ l))))
@@ -41,6 +43,7 @@ theorem rationalBaseIncidence_lower_of_normalizer_le (b : ℝ) (R : ℕ) (h : Fi
     hshift hp hq hZ]
   exact div_le_div_of_nonneg_left (aggregateUnitWeight_nonneg ell₀ ell₁ b R _ _ _) hZ hupper
 
+omit [DecidableEq P] in
 theorem rationalSourceIncidence_lower_of_average (b : ℝ) (R : ℕ) (h : Fin k → ℕ)
     (hinj : Function.Injective h)
     (hlarge : ∀ l, Function.Injective (fun i => (h i : ZMod (ell₁ l))))
@@ -57,6 +60,7 @@ theorem rationalSourceIncidence_lower_of_average (b : ℝ) (R : ℕ) (h : Fin k 
       (unitPoint (Sum.elim ell₀ ell₁) p (hs p p.property) /
         unitPoint (Sum.elim ell₀ ell₁) q hq)) :
     H / K ≤ rationalSourceIncidence ell₀ ell₁ b R h hY sources a q := by
+  classical
   calc
     _ ≤ (∑ p : sources, a p * aggregateUnitWeight ell₀ ell₁ b R
         (fun l i => (h i : ZMod (ell₀ l))) (fun l i => (h i : ZMod (ell₁ l)))

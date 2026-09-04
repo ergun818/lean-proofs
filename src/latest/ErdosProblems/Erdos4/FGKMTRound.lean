@@ -17,8 +17,10 @@ variable {V I : Type*} [Fintype V] [DecidableEq V] [Fintype I] [DecidableEq I]
 def afterRound (W : Finset V) (choice : I → Finset V) : Finset V :=
   W \ Finset.univ.biUnion choice
 
+omit [DecidableEq I] [Fintype V] in
 theorem subset_afterRound (W T : Finset V) (choice : I → Finset V) :
     T ⊆ afterRound W choice ↔ T ⊆ W ∧ ∀ i, Disjoint T (choice i) := by
+  classical
   simp only [afterRound, Finset.subset_sdiff, Finset.disjoint_biUnion_right,
     Finset.mem_univ, forall_const]
 

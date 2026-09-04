@@ -24,7 +24,8 @@ theorem exists_compositeFiberFamily {c : ℝ} {x : ℕ} (hx : 0 < x)
     (hC : x ≤ (compositeTargets c x).card) : Nonempty (CompositeFiberFamily c x) := by
   classical
   choose P hsize hfiber hlo hhi using fun p : compositeColors x =>
-    exists_balanced_fiber_partition hx (mem_compositeColors.mp p.property).1 (compositeTargets c x) hC
+    exists_balanced_fiber_partition hx (mem_compositeColors.mp p.property).1 (compositeTargets
+      c x) hC
   exact ⟨⟨hC, P, hsize, hfiber, hlo, hhi⟩⟩
 
 namespace CompositeFiberFamily
@@ -51,11 +52,14 @@ theorem part_squarefree
     (compositeTargets_properties (hEC hn)).2.2.2.2
   have hsmall : ∀ n ∈ E, ∀ s, s.Prime → s ∣ n → s < p.val := by
     intro n hn s hs hsn
-    have hnpos : 0 < n := Nat.lt_of_le_of_lt (Nat.zero_le x) (compositeTargets_properties (hEC hn)).1
-    have hsf := composite_factors_supported (hEC hn) hwidth (Nat.mem_primeFactors.mpr ⟨hs, hsn, hnpos.ne'⟩)
+    have hnpos : 0 < n := Nat.lt_of_le_of_lt (Nat.zero_le x) (compositeTargets_properties (hEC
+      hn)).1
+    have hsf := composite_factors_supported (hEC hn) hwidth (Nat.mem_primeFactors.mpr ⟨hs,
+      hsn, hnpos.ne'⟩)
     exact ((mem_coordinatePrimes.mp hsf).2.2.trans (Nat.div_le_self x 64)).trans_lt hp.2.1
   have hpwidth : gapTarget c x < p.val * smallCutoff x := by
-    have hBp : sieveCutoff x + 1 ≤ p.val := by have hh := Nat.div_le_self x 64; unfold sieveCutoff; omega
+    have hBp : sieveCutoff x + 1 ≤ p.val := by
+      have hh := Nat.div_le_self x 64; unfold sieveCutoff; omega
     exact hwidth.trans_le (Nat.mul_le_mul_right _ hBp)
   have hcop := fiber_pairwise_coprime hp.1 hpwidth hbound hrough hsmall (F.fiber p E hE)
   exact fiber_product_squarefree hcop (fun n hn => (compositeTargets_properties (hEC hn)).2.2.2.1)
@@ -96,19 +100,22 @@ theorem companion_squarefree
 theorem companion_avoid_root
     (hwidth : gapTarget c x < (sieveCutoff x + 1) * smallCutoff x)
     (v : compositeTargets c x) (p : compositeColors x) (l : sievePrimes x) :
-    (v.val : ZMod (sievePrimeValue x l)) ∉ residues (sievePrimeValue x) (F.companion v p.val) l := by
+    (v.val : ZMod (sievePrimeValue x l)) ∉ residues (sievePrimeValue x) (F.companion v p.val)
+      l := by
   rw [companion_apply]
   have hp := mem_compositeColors.mp p.property
   have hl := mem_coordinatePrimes.mp l.property
   have hpl : p.val ≠ sievePrimeValue x l := ne_of_gt ((sievePrimeValue_le x l).trans_lt hp.2.1)
   have hwidth' : gapTarget c x < p.val * sievePrimeValue x l := by
-    have hBp : sieveCutoff x + 1 ≤ p.val := by have hh := Nat.div_le_self x 64; unfold sieveCutoff; omega
+    have hBp : sieveCutoff x + 1 ≤ p.val := by
+      have hh := Nat.div_le_self x 64; unfold sieveCutoff; omega
     exact hwidth.trans_le (Nat.mul_le_mul hBp hl.2.1.le)
   exact rootCompanions_avoid_root (F.partition p) v.property hp.1 hl.1 hpl hwidth'
     (fun n hn => (compositeTargets_properties hn).2.1) (F.fiber p)
 
 theorem companions_disjoint (hY : gapTarget c x ≤ x ^ 2) (v : compositeTargets c x)
-    (p q : compositeColors x) (hpq : p ≠ q) : Disjoint (F.companion v p.val) (F.companion v q.val) := by
+    (p q : compositeColors x) (hpq : p ≠ q) : Disjoint (F.companion v p.val) (F.companion v
+      q.val) := by
   rw [companion_apply, companion_apply]
   have hp := mem_compositeColors.mp p.property
   have hq := mem_compositeColors.mp q.property
@@ -121,9 +128,10 @@ theorem companions_disjoint (hY : gapTarget c x ≤ x ^ 2) (v : compositeTargets
 
 end CompositeFiberFamily
 
-theorem blockEvent_survives {P : Type*} [Fintype P] [DecidableEq P] (ell : P → ℕ)
+theorem blockEvent_survives {P : Type*} (ell : P → ℕ)
     [∀ p, Fact (ell p).Prime] (T : Finset ℕ) (a : ∀ p, ZMod (ell p)) :
     blockEvent (fun v a => Survives ell a {v}) T a ↔ Survives ell a T := by
+  classical
   constructor
   · intro h l ha
     obtain ⟨n, hn, hna⟩ := Finset.mem_image.mp ha

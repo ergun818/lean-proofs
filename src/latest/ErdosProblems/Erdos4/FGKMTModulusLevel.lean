@@ -30,7 +30,8 @@ theorem eventually_harmonicModulus_log_small :
   have hDmul := mul_le_mul_of_nonneg_left hDu hlog4
   have hamul := mul_le_mul_of_nonneg_right ha hu
   have hlargeMul := mul_le_mul_of_nonneg_right hlarge hu
-  change Real.log (harmonicModulus (growingPrecutoff x) B : ℝ) ≤ Real.log 4 * (growingPrecutoff x : ℝ) + a * u at hh
+  change Real.log (harmonicModulus (growingPrecutoff x) B : ℝ) ≤ Real.log 4 *
+    (growingPrecutoff x : ℝ) + a * u at hh
   rw [← husq]
   nlinarith
 
@@ -50,15 +51,18 @@ theorem eventually_growing_modulus_level :
     simpa only [Real.log_rpow hxpos] using hh
   have hlogx := Real.log_natCast_nonneg x
   have hWlog := hW a ha B hB hBx
-  have hlogProd : Real.log ((harmonicModulus (growingPrecutoff x) B * growingRadius x ^ 8 : ℕ) : ℝ) ≤
+  have hlogProd : Real.log ((harmonicModulus (growingPrecutoff x) B * growingRadius x ^ 8 : ℕ)
+    : ℝ) ≤
       Real.log (x : ℝ) * (1 / 3 : ℝ) := by
     rw [Nat.cast_mul, Nat.cast_pow, Real.log_mul hWpos.ne' (pow_ne_zero 8 hRpos.ne'), Real.log_pow]
     norm_num only [Nat.cast_ofNat]
     linarith
   apply Nat.le_floor
-  change ((harmonicModulus (growingPrecutoff x) B * growingRadius x ^ 8 : ℕ) : ℝ) ≤ vaughanCubeRoot x
+  change ((harmonicModulus (growingPrecutoff x) B * growingRadius x ^ 8 : ℕ) : ℝ) ≤
+    vaughanCubeRoot x
   calc
-    _ = Real.exp (Real.log ((harmonicModulus (growingPrecutoff x) B * growingRadius x ^ 8 : ℕ) : ℝ)) := by
+    _ = Real.exp (Real.log ((harmonicModulus (growingPrecutoff x) B * growingRadius x ^ 8 : ℕ)
+      : ℝ)) := by
       symm
       apply Real.exp_log
       rw [Nat.cast_mul, Nat.cast_pow]

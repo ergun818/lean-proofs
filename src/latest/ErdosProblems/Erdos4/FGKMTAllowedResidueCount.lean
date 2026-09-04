@@ -6,7 +6,7 @@ open scoped BigOperators
 
 namespace Erdos4.FGKMT
 
-open Classical CoprimeResidueCount
+open CoprimeResidueCount
 
 noncomputable def allowedResidueCount (Y W d a : ℕ) (S : Finset ℕ) : ℝ :=
   ∑ n ∈ Finset.Icc 1 Y, if n % W ∈ S ∧ n ≡ a [MOD d] then 1 else 0

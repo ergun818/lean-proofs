@@ -111,16 +111,19 @@ theorem exists_primeExposureData {G : ℝ} (hG : 0 < G) :
   refine ⟨⟨laws, bad, ?_, ?_, (fun p => hmarg p p.property), ?_, ?_, ?_⟩⟩
   · exact (Nat.cast_le.mpr (targetBadSubset_card_le targets bad₀)).trans hbadcard
   · intro q hq
-    rw [rational_baseTarget_degree ell₀ ell₁ b (growingRadius x) h hY.1 sources targets q (htarget q).1 (htarget q).2]
+    rw [rational_baseTarget_degree ell₀ ell₁ b (growingRadius x) h hY.1 sources targets q
+      (htarget q).1 (htarget q).2]
     have hqbad : q.val ∉ bad₀ := fun hh => hq ((mem_targetBadSubset targets bad₀ q).mpr hh)
     calc
       _ ≤ 48 * primeDensity x := by nlinarith [primeDensity_pos x]
       _ ≤ d₀ * j * (x : ℝ) / Y := h48
       _ ≤ d * j * (x : ℝ) / Y := div_le_div_of_nonneg_right
-        (mul_le_mul_of_nonneg_right (mul_le_mul_of_nonneg_right (min_le_left d (48 * G)) (Nat.cast_nonneg _)) hxpos.le)
+        (mul_le_mul_of_nonneg_right (mul_le_mul_of_nonneg_right (min_le_left d (48 * G))
+          (Nat.cast_nonneg _)) hxpos.le)
         hYpos.le
       _ ≤ _ := hgood q.val q.property hqbad
-  · exact baseTargetEdgeLaw_pair_sum_le h hinj sources targets centers hsources (by positivity) hmarg
+  · exact baseTargetEdgeLaw_pair_sum_le h hinj sources targets centers hsources (by
+      positivity) hmarg
   · intro p E hE
     exact ⟨baseTargetEdgeLaw_card_le h p.val targets (centers p.val) E hE,
       baseTargetEdgeLaw_residue h p.val targets (centers p.val) E hE⟩

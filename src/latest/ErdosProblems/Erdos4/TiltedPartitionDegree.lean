@@ -31,7 +31,8 @@ noncomputable def partitionCoverDegree (ν : FiniteLaw Ω) {C : Finset ℕ}
 omit [Nonempty I] in
 theorem partitionCoverDegree_nonneg (ν : FiniteLaw Ω) {C : Finset ℕ}
     (P : I → Finpartition C) (hC : C.Nonempty) (R : ℕ → Ω → Prop) (v : ℕ) (o : Ω) :
-    0 ≤ partitionCoverDegree ν P hC R v o := Finset.sum_nonneg (fun _p _ => FiniteLaw.prob_nonneg _ _)
+    0 ≤ partitionCoverDegree ν P hC R v o := Finset.sum_nonneg (fun _p _ =>
+      FiniteLaw.prob_nonneg _ _)
 
 theorem partitionRootNormalizer_sub_loss (ν : FiniteLaw Ω) {C : Finset ℕ}
     (P : I → Finpartition C) (hC : C.Nonempty) (R : ℕ → Ω → Prop) (v : C) (o : Ω) :
@@ -41,7 +42,8 @@ theorem partitionRootNormalizer_sub_loss (ν : FiniteLaw Ω) {C : Finset ℕ}
   unfold partitionRootNormalizer partitionRootCapLoss
   rw [← mul_sub, ← FiniteLaw.mean_sub]
   have heq : (uniformLabelLaw I).mean (fun p =>
-      eventWeight ν (blockEvent R (partitionRoot (P p) v).val) o - partitionLostWeight ν (P p) hC R v o) =
+      eventWeight ν (blockEvent R (partitionRoot (P p) v).val) o - partitionLostWeight ν (P p)
+        hC R v o) =
       (uniformLabelLaw I).mean (fun p => partitionRetainedWeight ν (P p) hC R v o) := by
     apply (uniformLabelLaw I).mean_congr
     intro p
@@ -77,7 +79,8 @@ theorem partitionCoverDegree_lower (ν : FiniteLaw Ω) {C : Finset ℕ}
   let S := ∑ p, partitionRetainedWeight ν (P p) hC R v o
   have hS : 0 ≤ S := Finset.sum_nonneg (fun p _ => partitionRetainedWeight_nonneg ν (P p) hC R v o)
   have hmpos : (0 : ℝ) < Fintype.card I := Nat.cast_pos.mpr Fintype.card_pos
-  have hmargin : 1 / 4 ≤ partitionRootNormalizer ν P R v o - partitionRootCapLoss ν P hC R v o := by linarith
+  have hmargin : 1 / 4 ≤ partitionRootNormalizer ν P R v o - partitionRootCapLoss ν P hC R v o
+    := by linarith
   rw [partitionRootNormalizer_sub_loss] at hmargin
   have hsum := (le_div_iff₀ hmpos).mp hmargin
   change (1 / 4) * (Fintype.card I : ℝ) ≤ ν.prob (R v.val) * S at hsum

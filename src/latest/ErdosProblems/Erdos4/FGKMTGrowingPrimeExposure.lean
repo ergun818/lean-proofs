@@ -13,7 +13,7 @@ open scoped BigOperators
 
 namespace Erdos4.FGKMT
 
-open Filter Classical ProductCharacterEncoding ProductPrimeMeanSquare RestrictedProductNorm
+open Filter ProductCharacterEncoding ProductPrimeMeanSquare RestrictedProductNorm
 
 theorem exists_growing_prime_exposure :
     ∃ a C d : ℝ, 0 < a ∧ a ≤ 1 / 4 ∧ 0 < C ∧ 0 < d ∧
@@ -53,7 +53,8 @@ theorem exists_growing_prime_exposure :
   let sources := growingSourcePrimes x
   let targets := ChebyshevIntervals.primeInterval x Y
   let α := smallProductDensity ell₀ (fun l i => (h i : ZMod (ell₀ l)))
-  let E := energy (rationalCoefficient (k := sieveDimension (growingIndex x)) β (growingRadius x) ell₁)
+  let E := energy (rationalCoefficient (k := sieveDimension (growingIndex x)) β (growingRadius
+    x) ell₁)
   let F := maskedFourierScale ell₀ ell₁ β (growingRadius x)
     (fun l i => (h i : ZMod (ell₀ l)))
   let P := aggregatePrincipalMass ell₀ ell₁ β (growingRadius x)

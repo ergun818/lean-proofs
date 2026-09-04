@@ -18,49 +18,65 @@ open ProductFourierInversion FiniteCharacterSupport ProductCharacterEncoding
 variable {P : Type*} [Fintype P] [DecidableEq P]
     (ell : P → ℕ) [∀ p, Fact (ell p).Prime]
 
+omit [DecidableEq P] in
 theorem value_mul (chi : ∀ p, DirichletCharacter ℂ (ell p))
     (u v : ∀ p, (ZMod (ell p))ˣ) :
     value ell chi (u * v) = value ell chi u * value ell chi v := by
+  classical
   simp only [value, Pi.mul_apply, Units.val_mul, map_mul, Finset.prod_mul_distrib]
 
+omit [DecidableEq P] in
 theorem value_one (chi : ∀ p, DirichletCharacter ℂ (ell p)) :
-    value ell chi 1 = 1 := by simp [value]
+    value ell chi 1 = 1 := by
+  classical
+  simp [value]
 
+omit [DecidableEq P] in
 theorem value_norm (chi : ∀ p, DirichletCharacter ℂ (ell p))
     (u : ∀ p, (ZMod (ell p))ˣ) : ‖value ell chi u‖ = 1 := by
+  classical
   unfold value
   rw [norm_prod]
   exact Finset.prod_eq_one (fun p _hp => (chi p).unit_norm_eq_one (u p))
 
+omit [DecidableEq P] in
 theorem value_inv (chi : ∀ p, DirichletCharacter ℂ (ell p))
     (u : ∀ p, (ZMod (ell p))ˣ) : value ell chi u⁻¹ = star (value ell chi u) := by
+  classical
   have hh : value ell chi u⁻¹ * value ell chi u = 1 := by
     rw [← value_mul, inv_mul_cancel, value_one]
   have hi : (value ell chi u)⁻¹ = value ell chi u⁻¹ := inv_eq_of_mul_eq_one_left hh
   rw [← hi]
   simpa only [starRingEnd_apply] using Complex.inv_eq_conj (value_norm ell chi u)
 
+omit [DecidableEq P] in
 theorem value_div (chi : ∀ p, DirichletCharacter ℂ (ell p))
     (u v : ∀ p, (ZMod (ell p))ˣ) :
     value ell chi (u / v) = value ell chi u * star (value ell chi v) := by
+  classical
   rw [div_eq_mul_inv, value_mul, value_inv]
 
 noncomputable def unitPoint (n : ℕ) (hn : n.Coprime (modulus ell)) : ∀ p, (ZMod (ell p))ˣ :=
   fun p => ZMod.unitsMap (local_dvd_modulus ell p) (ZMod.unitOfCoprime n hn)
 
+omit [DecidableEq P] in
 theorem value_unitPoint (chi : ∀ p, DirichletCharacter ℂ (ell p))
     (n : ℕ) (hn : n.Coprime (modulus ell)) :
     value ell chi (unitPoint ell n hn) = ProductPrimeMeanSquare.value ell chi n := by
+  classical
   unfold value ProductPrimeMeanSquare.value
   apply Finset.prod_congr rfl
   intro p _hp
-  change chi p ((ZMod.unitsMap (local_dvd_modulus ell p) (ZMod.unitOfCoprime n hn)) : ZMod (ell p)) = _
+  change chi p ((ZMod.unitsMap (local_dvd_modulus ell p) (ZMod.unitOfCoprime n hn)) : ZMod
+    (ell p)) = _
   rw [ZMod.unitsMap_val, ZMod.coe_unitOfCoprime, ZMod.cast_natCast (local_dvd_modulus ell p)]
 
+omit [DecidableEq P] in
 theorem value_ratio (chi : ∀ p, DirichletCharacter ℂ (ell p))
     (p q : ℕ) (hp : p.Coprime (modulus ell)) (hq : q.Coprime (modulus ell)) :
     value ell chi (unitPoint ell p hp / unitPoint ell q hq) =
       ProductPrimeMeanSquare.value ell chi p * star (ProductPrimeMeanSquare.value ell chi q) := by
+  classical
   rw [value_div, value_unitPoint, value_unitPoint]
 
 variable {k : ℕ}
@@ -89,7 +105,8 @@ theorem square_eq_realSquare (m : ℝ) (R : ℕ) (h : ∀ p, Fin k → ZMod (ell
 theorem truncated_inversion (m : ℝ) (R : ℕ) (h : ∀ p, Fin k → ZMod (ell p))
     (hh : ∀ p, Function.Injective (h p)) (j : Fin k) (u : ∀ p, (ZMod (ell p))ˣ) :
     square ell m R h j u = UnitFourier.coefficient ell m R h j (fun _ => 1) +
-      ∑ chi : smallCharacters ell R, UnitFourier.coefficient ell m R h j chi.val * value ell chi.val u := by
+      ∑ chi : smallCharacters ell R, UnitFourier.coefficient ell m R h j chi.val * value ell
+        chi.val u := by
   classical
   let f : (∀ p, DirichletCharacter ℂ (ell p)) → ℂ :=
     fun chi => UnitFourier.coefficient ell m R h j chi * value ell chi u
@@ -97,7 +114,8 @@ theorem truncated_inversion (m : ℝ) (R : ℕ) (h : ∀ p, Fin k → ZMod (ell 
   have hs : smallCharacters ell R ⊆ Finset.univ.erase oneChar := by
     intro chi hchi
     exact Finset.mem_erase.mpr ⟨((mem_smallCharacters ell R chi).mp hchi).1, Finset.mem_univ _⟩
-  have hsub : (∑ chi ∈ smallCharacters ell R, f chi) = ∑ chi ∈ Finset.univ.erase oneChar, f chi := by
+  have hsub : (∑ chi ∈ smallCharacters ell R, f chi) = ∑ chi ∈ Finset.univ.erase oneChar, f
+    chi := by
     apply Finset.sum_subset hs
     intro chi hchi hnot
     have hne : chi ≠ fun _ => 1 := (Finset.mem_erase.mp hchi).1
@@ -108,7 +126,8 @@ theorem truncated_inversion (m : ℝ) (R : ℕ) (h : ∀ p, Fin k → ZMod (ell 
     square ell m R h j u = ∑ chi, f chi := (actual_coefficient_inversion ell m R h j u).symm
     _ = (∑ chi ∈ Finset.univ.erase oneChar, f chi) + f oneChar :=
       (Finset.sum_erase_add _ _ (Finset.mem_univ oneChar)).symm
-    _ = UnitFourier.coefficient ell m R h j (fun _ => 1) + ∑ chi ∈ smallCharacters ell R, f chi := by
+    _ = UnitFourier.coefficient ell m R h j (fun _ => 1) + ∑ chi ∈ smallCharacters ell R, f
+      chi := by
       rw [← hsub, hone]
       ring
     _ = _ := by rw [Finset.sum_coe_sort (smallCharacters ell R) f]

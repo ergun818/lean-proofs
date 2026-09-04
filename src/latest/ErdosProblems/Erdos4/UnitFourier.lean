@@ -65,7 +65,8 @@ noncomputable def coefficient (m : ℝ) (R : ℕ)
       (∏ p, star (chi p (u p : ZMod (ell p)))) *
         TensorMoments.amplitude (fun a => (DivisorCoefficients.coefficient m R ell a : ℂ))
           (fun p a t => (extendedBasis (ell p : ℝ) a
-            (RootStates.rootState (Finset.univ.erase j) (AnchorRoots.anchorRoot (h p) j) t) : ℂ)) u ^ 2
+            (RootStates.rootState (Finset.univ.erase j) (AnchorRoots.anchorRoot (h p) j) t) :
+              ℂ)) u ^ 2
 
 theorem raw_eq_density_mul_coefficient (m : ℝ) (R : ℕ)
     (h : ∀ p, Fin k → ZMod (ell p)) (j : Fin k)
@@ -127,7 +128,8 @@ theorem coefficient_eq_zero_of_large_conductor (m : ℝ) (R : ℕ)
     (hchi : ∀ p ∈ J, chi p ≠ 1) (hlarge : R ^ 2 < ∏ p ∈ J, ell p) :
     coefficient ell m R h j chi = 0 := by
   rw [coefficient_eq_raw_div_density,
-    ProductCharacterMatrix.fourierCoefficient_eq_zero_of_large_conductor ell m R h hh j chi J hchi hlarge,
+    ProductCharacterMatrix.fourierCoefficient_eq_zero_of_large_conductor ell m R h hh j chi J
+      hchi hlarge,
     zero_div]
 
 end Erdos4.UnitFourier

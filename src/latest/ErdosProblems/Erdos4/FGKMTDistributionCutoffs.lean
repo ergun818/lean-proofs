@@ -56,7 +56,8 @@ theorem eventually_distribution_cutoffs {a : ℝ} (ha0 : 0 < a) (ha1 : a ≤ 1 /
         change Real.exp (Real.log (x : ℝ) * (1 / 3 : ℝ)) = (x : ℝ) ^ (1 / 3 : ℝ)
         exact (Real.rpow_def_of_pos hxpos (1 / 3 : ℝ)).symm
   have hRQ : exponentialConductorCutoff a x ≤ powerDistributionLevel x := Nat.floor_mono hexpCube
-  have hQhi : (powerDistributionLevel x : ℝ) ≤ vaughanCubeRoot x := Nat.floor_le (vaughanCubeRoot_nonneg x)
+  have hQhi : (powerDistributionLevel x : ℝ) ≤ vaughanCubeRoot x := Nat.floor_le
+    (vaughanCubeRoot_nonneg x)
   have hCubeSqrt : vaughanCubeRoot x ≤ Real.sqrt (x : ℝ) := by
     rw [Real.sqrt_eq_rpow]
     change (x : ℝ) ^ (1 / 3 : ℝ) ≤ (x : ℝ) ^ (1 / 2 : ℝ)

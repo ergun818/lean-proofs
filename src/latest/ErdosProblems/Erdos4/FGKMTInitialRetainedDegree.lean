@@ -6,10 +6,9 @@ open scoped BigOperators
 
 namespace Erdos4.FGKMT
 
-open Classical
-
 variable {I Ω V : Type*} [Fintype I] [Fintype Ω] [Fintype V] [DecidableEq V]
 
+omit [DecidableEq V] in
 theorem initial_retained_degree_lower (μ : I → FiniteLaw Ω) (E : I → Ω → Prop)
     (edge : I → Ω → Finset V) {σ : ℝ} (hσ : 0 < σ) {k : ℕ} (hk : 1 ≤ k)
     (o₀ : I → Ω) (v : V) :
@@ -18,6 +17,7 @@ theorem initial_retained_degree_lower (μ : I → FiniteLaw Ω) (E : I → Ω �
         ∑ i, if (1 / 2 : ℝ) < |initialCenterNormalizer (μ i) (E i) σ k - 1| then
           initialPinnedIncidence (μ i) (E i) (edge i) σ k v else 0) ≤
       ∑ i, (initialEdgeLaw (μ i) (E i) (edge i) σ k (o₀ i)).prob (fun e => v ∈ e) := by
+  classical
   rw [← Finset.sum_sub_distrib, Finset.mul_sum]
   apply Finset.sum_le_sum
   intro i _
@@ -26,6 +26,7 @@ theorem initial_retained_degree_lower (μ : I → FiniteLaw Ω) (E : I → Ω �
   · simpa only [if_pos hgood, if_neg (not_lt_of_ge hgood), sub_zero] using hh
   · simpa only [if_neg hgood, if_pos (lt_of_not_ge hgood), sub_self, mul_zero] using hh
 
+omit [DecidableEq V] in
 theorem initial_degree_lower_of_retained (μ : I → FiniteLaw Ω) (E : I → Ω → Prop)
     (edge : I → Ω → Finset V) {σ : ℝ} (hσ : 0 < σ) {k : ℕ} (hk : 1 ≤ k)
     (o₀ : I → Ω) (v : V) {β : ℝ}
@@ -35,6 +36,7 @@ theorem initial_degree_lower_of_retained (μ : I → FiniteLaw Ω) (E : I → Ω
           initialPinnedIncidence (μ i) (E i) (edge i) σ k v else 0) :
     β / (6 * σ) ≤
       ∑ i, (initialEdgeLaw (μ i) (E i) (edge i) σ k (o₀ i)).prob (fun e => v ∈ e) := by
+  classical
   calc
     _ = (2 / (3 * σ)) * (β / 4) := by field_simp; ring
     _ ≤ _ := mul_le_mul_of_nonneg_left hretained (by positivity)

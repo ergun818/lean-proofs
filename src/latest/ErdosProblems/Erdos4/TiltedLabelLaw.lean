@@ -42,7 +42,7 @@ theorem prob_le_weight_mul_card {Ω : Type*} [Fintype Ω] (μ : FiniteLaw Ω)
     _ ≤ ∑ _o ∈ Finset.univ.filter E, b := Finset.sum_le_sum (fun o _ => hb o)
     _ = _ := by simp only [Finset.sum_const, nsmul_eq_mul, mul_comm]
 
-theorem prob_le_weight_mul_card_of_injection {Ω α : Type*} [Fintype Ω] [DecidableEq α]
+theorem prob_le_weight_mul_card_of_injection {Ω α : Type*} [Fintype Ω]
     (μ : FiniteLaw Ω) (E : Ω → Prop) (S : Finset α) (value : Ω → α)
     (hinj : Function.Injective value) (hvalue : ∀ o, E o → value o ∈ S)
     {b : ℝ} (hb : 0 ≤ b) (hweight : ∀ o, μ.weight o ≤ b) :
@@ -57,7 +57,7 @@ theorem prob_le_weight_mul_card_of_injection {Ω α : Type*} [Fintype Ω] [Decid
   exact (prob_le_weight_mul_card μ E hweight).trans
     (mul_le_mul_of_nonneg_left (Nat.cast_le.mpr hc) hb)
 
-theorem pairLaw_prob_le_count {α : Type*} [DecidableEq α] (S : Finset α)
+theorem pairLaw_prob_le_count {α : Type*} (S : Finset α)
     (σ : FiniteLaw S) (E : α → α → Prop) [DecidablePred (fun ij : α × α => E ij.1 ij.2)]
     {b : ℝ} (hb : 0 ≤ b) (hσ : ∀ i, σ.weight i ≤ b) :
     (pairLaw σ σ).prob (fun ij => E ij.1.val ij.2.val) ≤

@@ -62,7 +62,7 @@ theorem eventually_growing_smooth_bound {c : ℝ} (hc : 0 < c) :
       exact Real.exp_le_exp.mpr (by linarith)
     _ = (Y : ℝ) / L ^ 10 := by rw [hexp, div_eq_mul_inv]
     _ ≤ ((x : ℝ) * L ^ 2) / L ^ 10 := div_le_div_of_nonneg_right hYbound (pow_nonneg hLpos.le _)
-    _ = (x : ℝ) / L ^ 8 := by field_simp [hLpos.ne'] <;> ring
+    _ = (x : ℝ) / L ^ 8 := by field_simp [hLpos.ne']
     _ ≤ (x : ℝ) / L ^ 2 := div_le_div_of_nonneg_left hxpos.le (pow_pos hLpos 2)
       (pow_le_pow_right₀ hL1 (by norm_num : 2 ≤ 8))
 

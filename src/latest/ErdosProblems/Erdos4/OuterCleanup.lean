@@ -30,7 +30,8 @@ theorem eventually_target_count (a : ℕ) {D : ℕ} (hD : 1 ≤ D) :
         (3 * Real.log 2) * length a D r / Real.log (primaryFrontier a r : ℝ) := by
   filter_upwards [eventually_ge_atTop 1,
     (tendsto_length a hD).eventually eventually_primeCounting_upper] with r hr hπ
-  have hcard : (primeInterval (base a r) (length a D r)).card ≤ Nat.primeCounting (length a D r) := by
+  have hcard : (primeInterval (base a r) (length a D r)).card ≤ Nat.primeCounting (length a D
+    r) := by
     simpa only [primeInterval, Nat.primesLE_card_eq_primeCounting] using
       Finset.card_le_card (Finset.sdiff_subset :
         primeInterval (base a r) (length a D r) ⊆ (length a D r).primesLE)
@@ -140,7 +141,8 @@ theorem exists_negligible_smooth :
   rw [hfront] at hs
   apply hs.trans
   apply (div_le_div_iff₀ (pow_pos hV 6) hlog).mpr
-  have hh := mul_le_mul_of_nonneg_right hmain (Nat.cast_nonneg (frontier a r) : (0 : ℝ) ≤ frontier a r)
+  have hh := mul_le_mul_of_nonneg_right hmain (Nat.cast_nonneg (frontier a r) : (0 : ℝ) ≤
+    frontier a r)
   nlinarith only [hh]
 
 end Erdos4.OuterCleanup

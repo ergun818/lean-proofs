@@ -55,7 +55,7 @@ theorem growing_sievePrime_normalization_tail (x B R : ℕ) :
         ∑ p : SievePrime (harmonicModulus (growingPrecutoff x) B) R,
           1 / (sievePrimeValue (harmonicModulus (growingPrecutoff x) B) R p : ℝ) ^ 2 ≤ 1 :=
   sievePrime_normalization_tail (sieveDimension_pos (growingIndex x))
-    (fun p hp hpD => small_prime_dvd_harmonicModulus (growingPrecutoff x) B hp hpD)
+    (fun _p hp hpD => small_prime_dvd_harmonicModulus (growingPrecutoff x) B hp hpD)
 
 theorem eventually_growing_weight_numerator :
     ∀ᶠ x : ℕ in atTop, ∀ a : ℝ, a ≤ 1 / 4 → ∀ B : ℕ,

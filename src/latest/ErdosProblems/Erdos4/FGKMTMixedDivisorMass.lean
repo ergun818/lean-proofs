@@ -7,8 +7,6 @@ open scoped BigOperators
 
 namespace Erdos4.FGKMT
 
-open Classical
-
 theorem FiniteLaw.map_weight_apply {Ω Λ : Type*} [Fintype Ω] [Fintype Λ]
     (μ : FiniteLaw Ω) (f : Ω → Λ) (hf : Function.Injective f) (o : Ω) :
     (μ.map f).weight (f o) = μ.weight o := by
@@ -38,7 +36,8 @@ variable (I : Type*) [Fintype I] [DecidableEq I]
 
 noncomputable def mixedDivisorNumerator (W : ℕ) (b : ℝ) (T : ℕ) {R : ℕ}
     (a : (I ⊕ Fin 2) → Fin (R + 1)) : ℝ :=
-  (∏ i : I, logarithmicReciprocal b (a (Sum.inl i)) ^ 2 * squarefreeHarmonicWeight W (a (Sum.inl i))) *
+  (∏ i : I, logarithmicReciprocal b (a (Sum.inl i)) ^ 2 * squarefreeHarmonicWeight W (a
+    (Sum.inl i))) *
     ∏ j : Fin 2, if (a (Sum.inr j) : ℕ) ≤ T then
       logarithmicReciprocal b (a (Sum.inr j)) * squarefreeHarmonicWeight W (a (Sum.inr j)) else 0
 
@@ -69,7 +68,8 @@ theorem mixedDivisorLaw_prob_eq (W : ℕ) {b : ℝ} (hb : 0 ≤ b)
     {R T : ℕ} (hR : 1 ≤ R) (hT : 1 ≤ T) (hTR : T ≤ R)
     (E : ((I ⊕ Fin 2) → Fin (R + 1)) → Prop) :
     (mixedDivisorLaw I W hb hR hT hTR).prob E =
-      (∑ a ∈ Finset.univ.filter E, mixedDivisorNumerator I W b T a) /
+      (open scoped Classical in
+        ∑ a ∈ Finset.univ.filter E, mixedDivisorNumerator I W b T a) /
         mixedDivisorMass I W b R T := by
   classical
   unfold FiniteLaw.prob
@@ -107,7 +107,9 @@ theorem mixedDivisor_good_mass_half (W : ℕ) {b : ℝ} (hb : 0 < b)
       (1 / 4) * (b * rationalSquareMass W b R * L))
     (hcollision : 4 * (Fintype.card I + 2) ^ 2 ≤ K - 1) :
     mixedDivisorMass I W b R T / 2 ≤
-      ∑ a ∈ Finset.univ.filter (MixedDivisorGood I W T L (R := R)), mixedDivisorNumerator I W b T a := by
+      (open scoped Classical in
+        ∑ a ∈ Finset.univ.filter (MixedDivisorGood I W T L (R := R)),
+          mixedDivisorNumerator I W b T a) := by
   classical
   have hprob := mixedDivisorLaw_good_probability_half I W hb hR hT hTR hK hpre hL hmean hcollision
   have hmono := (mixedDivisorLaw I W hb.le hR hT hTR).prob_mono_support

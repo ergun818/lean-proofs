@@ -30,7 +30,8 @@ theorem logarithmicAbelMain_reciprocal {b : ℝ} (hb : 0 < b)
     rw [Set.uIcc_of_le hTreal] at hx
     have hxpos := zero_lt_one.trans_le hx.1
     have hbase := logarithmicReciprocal_base_pos hb.le hx.1
-    have hd := (((((Real.hasDerivAt_log hxpos.ne').const_mul b).const_add 1).log hbase.ne').div_const b).const_mul ρ
+    have hd := (((((Real.hasDerivAt_log hxpos.ne').const_mul b).const_add 1).log
+      hbase.ne').div_const b).const_mul ρ
     have heq : ρ * ((b * x⁻¹ / (1 + b * Real.log x)) / b) =
         logarithmicReciprocal b x * (ρ / x) := by
       unfold logarithmicReciprocal
@@ -57,7 +58,8 @@ theorem logarithmicAbelMain_reciprocal_sq {b : ℝ} (hb : 0 ≤ b)
         (deriv (fun t => logarithmicReciprocal b t ^ 2) x) x := by
     intro x hx
     exact ((hasDerivAt_logarithmicReciprocal hb hx.1).differentiableAt.pow 2).hasDerivAt
-  have hderivint : IntervalIntegrable (deriv (fun x => logarithmicReciprocal b x ^ 2)) volume 1 T := by
+  have hderivint : IntervalIntegrable (deriv (fun x => logarithmicReciprocal b x ^ 2)) volume
+    1 T := by
     apply ContinuousOn.intervalIntegrable
     rw [Set.uIcc_of_le hTreal]
     exact continuousOn_deriv_logarithmicReciprocal_sq hb
@@ -114,7 +116,8 @@ theorem reciprocal_harmonic_mass_error {W T : ℕ} (hW : 0 < W) (hSq : Squarefre
   have hnonneg : 0 ≤ (uniformHarmonicConstant + 1) * (1 + Real.log (W : ℝ)) := by
     have hc := uniformHarmonicConstant_pos
     positivity
-  exact (mul_le_mul_of_nonneg_left (by linarith : |logarithmicReciprocal b T| + 1 ≤ 2) hnonneg).trans_eq (by ring)
+  exact (mul_le_mul_of_nonneg_left (by
+    linarith : |logarithmicReciprocal b T| + 1 ≤ 2) hnonneg).trans_eq (by ring)
 
 theorem reciprocal_sq_harmonic_mass_error {W T : ℕ} (hW : 0 < W) (hSq : Squarefree W) (hT : 1 ≤ T)
     {b : ℝ} (hb : 0 ≤ b) :
@@ -138,6 +141,7 @@ theorem reciprocal_sq_harmonic_mass_error {W T : ℕ} (hW : 0 < W) (hSq : Square
   have hnonneg : 0 ≤ (uniformHarmonicConstant + 1) * (1 + Real.log (W : ℝ)) := by
     have hc := uniformHarmonicConstant_pos
     positivity
-  exact (mul_le_mul_of_nonneg_left (by linarith : |logarithmicReciprocal b T ^ 2| + 1 ≤ 2) hnonneg).trans_eq (by ring)
+  exact (mul_le_mul_of_nonneg_left (by
+    linarith : |logarithmicReciprocal b T ^ 2| + 1 ≤ 2) hnonneg).trans_eq (by ring)
 
 end Erdos4.FGKMT

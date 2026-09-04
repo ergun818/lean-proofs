@@ -24,6 +24,7 @@ noncomputable def jointWeight (h : Fin k → ℕ) (sources : Finset ℕ) (Y : �
     (o : (∀ l, ZMod (ell l)) × (sources → ↥(Finset.Icc 1 Y))) : ℝ :=
   RandomResidueSieve.weight ell o.1 * CenterChoice.assignmentWeight ell h sources Y μ hY o.1 o.2
 
+omit [DecidableEq P] in
 theorem jointWeight_nonneg (h : Fin k → ℕ) (sources : Finset ℕ) (Y : ℕ)
     (μ : ℕ → ℕ → ℝ) (hY : 1 ≤ Y)
     (hμ : ∀ p ∈ sources, ∀ n ∈ Finset.Icc 1 Y, 0 ≤ μ p n)
@@ -64,6 +65,7 @@ noncomputable def uncovered (h : Fin k → ℕ) (sources targets : Finset ℕ) (
     ∀ p : sources, q ∉ tuple h p (o.2 p))
 
 open Classical in
+omit [DecidableEq P] in
 theorem source_choice_bound (h : Fin k → ℕ) (sources : Finset ℕ) (Y : ℕ)
     (μ : ℕ → ℕ → ℝ) (hY : 1 ≤ Y)
     (hμ : ∀ p ∈ sources, ∀ n ∈ Finset.Icc 1 Y, 0 ≤ μ p n)
@@ -72,7 +74,8 @@ theorem source_choice_bound (h : Fin k → ℕ) (sources : Finset ℕ) (Y : ℕ)
       if RandomResidueSieve.Survives ell a {q} ∧ ∀ p : sources, q ∉ tuple h p (choice p)
       then jointWeight ell h sources Y μ hY (a, choice) else 0) ≤
       if RandomResidueSieve.Survives ell a {q} then
-        RandomResidueSieve.weight ell a * ConditionalCovering.miss ell h sources Y μ q a else 0 := by
+        RandomResidueSieve.weight ell a * ConditionalCovering.miss ell h sources Y μ q a else
+          0 := by
   classical
   by_cases hs : RandomResidueSieve.Survives ell a {q}
   · rw [if_pos hs]
@@ -95,7 +98,8 @@ theorem average_uncovered_le (h : Fin k → ℕ) (sources targets : Finset ℕ) 
     (hμ : ∀ p ∈ sources, ∀ n ∈ Finset.Icc 1 Y, 0 ≤ μ p n) :
     (∑ o : (∀ l, ZMod (ell l)) × (sources → ↥(Finset.Icc 1 Y)),
       jointWeight ell h sources Y μ hY o * (uncovered ell h sources targets Y o).card) ≤
-      UnitFourier.unitDensity ell * ∑ q ∈ targets, mean ell q (ConditionalCovering.miss ell h sources Y μ q) := by
+      UnitFourier.unitDensity ell * ∑ q ∈ targets, mean ell q (ConditionalCovering.miss ell h
+        sources Y μ q) := by
   classical
   have hcard (o : (∀ l, ZMod (ell l)) × (sources → ↥(Finset.Icc 1 Y))) :
       jointWeight ell h sources Y μ hY o * (uncovered ell h sources targets Y o).card =
@@ -115,7 +119,8 @@ theorem average_uncovered_le (h : Fin k → ℕ) (sources targets : Finset ℕ) 
       exact Finset.sum_congr rfl (fun q _hq => Fintype.sum_prod_type _)
     _ ≤ ∑ q ∈ targets, ∑ a : ∀ l, ZMod (ell l),
         if RandomResidueSieve.Survives ell a {q} then
-          RandomResidueSieve.weight ell a * ConditionalCovering.miss ell h sources Y μ q a else 0 := by
+          RandomResidueSieve.weight ell a * ConditionalCovering.miss ell h sources Y μ q a
+            else 0 := by
       apply Finset.sum_le_sum
       intro q _hq
       exact Finset.sum_le_sum (fun a _ha => source_choice_bound ell h sources Y μ hY hμ q a)
@@ -128,7 +133,8 @@ theorem exists_choices (h : Fin k → ℕ) (sources targets : Finset ℕ) (Y : �
     (hμ : ∀ p ∈ sources, ∀ n ∈ Finset.Icc 1 Y, 0 ≤ μ p n) :
     ∃ (a : ∀ l, ZMod (ell l)) (choice : sources → ↥(Finset.Icc 1 Y)),
       ((uncovered ell h sources targets Y (a, choice)).card : ℝ) ≤
-        UnitFourier.unitDensity ell * ∑ q ∈ targets, mean ell q (ConditionalCovering.miss ell h sources Y μ q) := by
+        UnitFourier.unitDensity ell * ∑ q ∈ targets, mean ell q (ConditionalCovering.miss ell
+          h sources Y μ q) := by
   let : Nonempty (↥(Finset.Icc 1 Y)) := ⟨CenterChoice.fallback Y hY⟩
   obtain ⟨o, ho⟩ := Erdos4.expectation_to_deterministic_cover
     (jointWeight ell h sources Y μ hY) (uncovered ell h sources targets Y)

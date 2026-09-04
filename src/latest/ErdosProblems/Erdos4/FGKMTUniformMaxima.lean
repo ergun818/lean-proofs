@@ -122,7 +122,8 @@ theorem exists_uniform_primitive_maximum :
       _ ≤ C₀ * ((y : ℝ) * Real.exp (-c₀ * Real.sqrt (Real.log (y : ℝ)))) := hpointY
       _ ≤ C₀ * ((x : ℝ) * Real.exp (-c * Real.sqrt (Real.log (x : ℝ)))) :=
         mul_le_mul_of_nonneg_left
-          (mul_le_mul (by exact_mod_cast hyb.2) hdecay (Real.exp_pos _).le (Nat.cast_nonneg x)) hC₀.le
+          (mul_le_mul (by
+            exact_mod_cast hyb.2) hdecay (Real.exp_pos _).le (Nat.cast_nonneg x)) hC₀.le
       _ ≤ C * ((x : ℝ) * Real.exp (-c * Real.sqrt (Real.log (x : ℝ)))) :=
         mul_le_mul_of_nonneg_right (by unfold C; linarith) (by positivity)
 

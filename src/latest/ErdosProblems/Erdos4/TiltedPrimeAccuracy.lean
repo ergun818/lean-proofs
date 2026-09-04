@@ -20,7 +20,8 @@ theorem tilted_accurate_of_prime_cutoff (τ : ℝ) (hτ : 0 ≤ τ)
       2 * (r : ℝ) ^ 3 * Real.log (Y : ℝ) / ((K : ℝ) * Real.log 2) ≤ ε / 2)
     (T : Finset ℕ) (hTr : T.card ≤ r) (hT : ∀ n ∈ T, n ≤ Y)
     (hnonzero : ∀ n ∈ T, ∀ l, ¬ell l ∣ n) :
-    |(sieveLaw ell τ hτ).prob (fun a => Survives ell a T) / primeSurvival ell τ ^ T.card - 1| ≤ ε := by
+    |(sieveLaw ell τ hτ).prob (fun a => Survives ell a T) / primeSurvival ell τ ^ T.card - 1|
+      ≤ ε := by
   have hKpos : (0 : ℝ) < K := by exact_mod_cast hK
   have hlog2 : 0 < Real.log (2 : ℝ) := Real.log_pos (by norm_num)
   have hlogY : 0 ≤ Real.log (Y : ℝ) := Real.log_natCast_nonneg Y

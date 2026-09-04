@@ -30,8 +30,10 @@ theorem eventually_tilted_prime_error_budget :
   have hL1 : 1 ≤ L := by change 448 ≤ L at hL; linarith
   have hLpos : 0 < L := lt_of_lt_of_le zero_lt_one hL1
   have hkL : (k : ℝ) ≤ L := hdim.2.trans (by
-    simpa only [Real.rpow_one] using Real.rpow_le_rpow_of_exponent_le hL1 (by norm_num : (1 / 100 : ℝ) ≤ 1))
-  have hkx : (k : ℝ) ≤ (x : ℝ) ^ (1 / 20 : ℝ) := hkL.trans (by simpa only [one_mul, pow_one] using hxL)
+    simpa only [Real.rpow_one] using Real.rpow_le_rpow_of_exponent_le hL1 (by
+      norm_num : (1 / 100 : ℝ) ≤ 1))
+  have hkx : (k : ℝ) ≤ (x : ℝ) ^ (1 / 20 : ℝ) := hkL.trans (by
+    simpa only [one_mul, pow_one] using hxL)
   have hα0 : 0 ≤ α := Real.rpow_nonneg hxpos.le _
   have hσpos : 0 < σ := primeDensity_pos x
   have hσ1 : σ ≤ 1 := primeDensity_le_one x
@@ -52,14 +54,17 @@ theorem eventually_tilted_prime_error_budget :
       _ = _ := by ring
   have hsmall : (x : ℝ) ^ (-4 / 5 : ℝ) ≤ 1 / (128 * L ^ (42 : ℕ)) := by
     rw [show (-4 / 5 : ℝ) = -(4 / 5 : ℝ) by ring, Real.rpow_neg hxpos.le]
-    simpa only [one_div] using one_div_le_one_div_of_le (by positivity : 0 < 128 * L ^ (42 : ℕ)) hdom
+    simpa only [one_div] using one_div_le_one_div_of_le (by
+      positivity : 0 < 128 * L ^ (42 : ℕ)) hdom
   have hsecond : 64 * (k : ℝ) * ((k : ℝ) * α) / σ ^ (3 * k) ≤ 1 / (2 * L ^ (40 : ℕ)) := by
     calc
       _ = 64 * (k : ℝ) ^ 2 * (α * (1 / σ ^ (3 * k))) := by ring
       _ ≤ 64 * L ^ 2 * (x : ℝ) ^ (-4 / 5 : ℝ) :=
-        mul_le_mul (mul_le_mul_of_nonneg_left (pow_le_pow_left₀ (Nat.cast_nonneg _) hkL 2) (by norm_num))
+        mul_le_mul (mul_le_mul_of_nonneg_left (pow_le_pow_left₀ (Nat.cast_nonneg _) hkL 2) (by
+          norm_num))
           hαinv (by positivity) (by positivity)
-      _ ≤ 64 * L ^ 2 * (1 / (128 * L ^ (42 : ℕ))) := mul_le_mul_of_nonneg_left hsmall (by positivity)
+      _ ≤ 64 * L ^ 2 * (1 / (128 * L ^ (42 : ℕ))) := mul_le_mul_of_nonneg_left hsmall (by
+        positivity)
       _ = _ := by field_simp; norm_num
   refine ⟨?_, ?_, ?_⟩
   · apply (div_le_iff₀ (pow_pos hLpos 80)).mpr
@@ -71,7 +76,8 @@ theorem eventually_tilted_prime_error_budget :
   · calc
       _ = (k : ℝ) * α * (1 / σ ^ k) := by ring
       _ ≤ (x : ℝ) ^ (1 / 20 : ℝ) * α * (x : ℝ) ^ (1 / 20 : ℝ) :=
-        mul_le_mul (mul_le_mul_of_nonneg_right hkx hα0) (hσinv.trans hinv) (by positivity) (by positivity)
+        mul_le_mul (mul_le_mul_of_nonneg_right hkx hα0) (hσinv.trans hinv) (by positivity) (by
+          positivity)
       _ = _ := by
         dsimp [α]
         rw [← Real.rpow_add hxpos, ← Real.rpow_add hxpos]

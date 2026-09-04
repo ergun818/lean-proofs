@@ -57,7 +57,8 @@ theorem rooted_avoidance_ratio_le {a b c r : ℝ}
     (ha : r + a ≤ 1 / 2) (hb : r + b ≤ 1 / 2) (hc : 0 ≤ c) :
     ((1 - r) * (1 - r - a - b + c)) / ((1 - r - a) * (1 - r - b)) ≤
       1 + 4 * c := by
-  apply quotient_le_one_add_four (by simpa only [sub_add_eq_sub_sub] using avoidance_denominator_ge ha hb) hc
+  apply quotient_le_one_add_four (by
+    simpa only [sub_add_eq_sub_sub] using avoidance_denominator_ge ha hb) hc
   nlinarith [mul_nonneg ha0 hb0, mul_nonneg hr0 hc]
 
 theorem rooted_mixed_avoidance_ratio_le {a b c d β : ℝ}

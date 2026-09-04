@@ -7,7 +7,7 @@ open scoped BigOperators
 
 namespace Erdos4.FGKMT
 
-open DivisorCoefficients IdealAction Classical
+open DivisorCoefficients IdealAction
 
 variable {P : Type*} [Fintype P] [DecidableEq P] {k R : ℕ}
 
@@ -15,6 +15,7 @@ noncomputable def faceLabel (ell : P → ℕ) (j : Fin k) (s : Fin 2)
     (a : (SieveCore j ⊕ Fin 2) → Fin (R + 1)) : P → Option (Fin k) :=
   labelOfTuple ell (faceTuple j s a)
 
+omit [DecidableEq P] in
 theorem faceLabel_coordinate (ell : P → ℕ)
     (hprime : ∀ p, (ell p).Prime) (hinj : Function.Injective ell)
     {W T : ℕ} (L : ℝ)
@@ -23,6 +24,7 @@ theorem faceLabel_coordinate (ell : P → ℕ)
     (j : Fin k) (s : Fin 2) (a : (SieveCore j ⊕ Fin 2) → Fin (R + 1))
     (ha : MixedDivisorGood (SieveCore j) W T L a) (i : Fin k) :
     coordinateDivisor ell (faceLabel ell j s a) i = faceTuple j s a i := by
+  classical
   apply coordinateDivisor_labelOfTuple ell hprime hinj (faceTuple j s a)
     (faceTuple_pairwise j s a ha.2.2.2)
   · intro l
@@ -31,7 +33,8 @@ theorem faceLabel_coordinate (ell : P → ℕ)
     exact hcover _ (Nat.le_of_lt_succ (a (faceIndex j s l)).isLt)
       (ha.1 (faceIndex j s l)).1 (ha.1 (faceIndex j s l)).2 q hq
 
-theorem faceLabel_compatible (ell : P → ℕ)
+omit [DecidableEq P] [Fintype P] in
+theorem faceLabel_compatible [Finite P] (ell : P → ℕ)
     (hprime : ∀ p, (ell p).Prime) (hinj : Function.Injective ell)
     {W T : ℕ} (L : ℝ)
     (hcover : ∀ u : ℕ, u ≤ R → Squarefree u → u.Coprime W →
@@ -39,6 +42,8 @@ theorem faceLabel_compatible (ell : P → ℕ)
     (j : Fin k) (a : (SieveCore j ⊕ Fin 2) → Fin (R + 1))
     (ha : MixedDivisorGood (SieveCore j) W T L a) :
     Compatible j (faceLabel ell j 0 a) (faceLabel ell j 1 a) := by
+  classical
+  let : Fintype P := Fintype.ofFinite P
   intro p
   apply Option.ext
   intro i
@@ -58,6 +63,7 @@ theorem faceLabel_compatible (ell : P → ℕ)
       faceLabel_coordinate ell hprime hinj L hcover j 1 a ha i]
     simp [faceTuple, faceIndex, hij]
 
+omit [DecidableEq P] in
 theorem faceLabel_cutoff (ell : P → ℕ)
     (hprime : ∀ p, (ell p).Prime) (hinj : Function.Injective ell)
     {W T : ℕ} (hR : 1 ≤ R) (hT : 1 ≤ T) (hTR : T ^ 2 ≤ R)
@@ -66,6 +72,7 @@ theorem faceLabel_cutoff (ell : P → ℕ)
     (j : Fin k) (s : Fin 2) (a : (SieveCore j ⊕ Fin 2) → Fin (R + 1))
     (ha : MixedDivisorGood (SieveCore j) W T (Real.log (R : ℝ) / 2) a) :
     totalDivisor ell (faceLabel ell j s a) ≤ R := by
+  classical
   rw [CutoffSimplex.totalDivisor_eq_prod_coordinates]
   simp_rw [faceLabel_coordinate ell hprime hinj (Real.log (R : ℝ) / 2) hcover j s a ha]
   exact faceTuple_product_le j s hR hT hTR a ha
@@ -75,14 +82,18 @@ noncomputable def faceLabelPair (ell : P → ℕ) (j : Fin k)
     (P → Option (Fin k)) × (P → Option (Fin k)) :=
   (faceLabel ell j 0 a, faceLabel ell j 1 a)
 
-theorem faceLabelPair_injOn (ell : P → ℕ)
+omit [DecidableEq P] [Fintype P] in
+theorem faceLabelPair_injOn [Finite P] (ell : P → ℕ)
     (hprime : ∀ p, (ell p).Prime) (hinj : Function.Injective ell)
     {W T : ℕ} (L : ℝ)
     (hcover : ∀ u : ℕ, u ≤ R → Squarefree u → u.Coprime W →
       ∀ q ∈ u.primeFactors, ∃ p, ell p = q) (j : Fin k) :
     Set.InjOn (faceLabelPair (R := R) ell j)
-      ((Finset.univ : Finset ((SieveCore j ⊕ Fin 2) → Fin (R + 1))).filter
-        (MixedDivisorGood (SieveCore j) W T L)) := by
+      (open scoped Classical in
+        (Finset.univ : Finset ((SieveCore j ⊕ Fin 2) → Fin (R + 1))).filter
+          (MixedDivisorGood (SieveCore j) W T L)) := by
+  classical
+  let : Fintype P := Fintype.ofFinite P
   intro a ha c hc hac
   have hga := (Finset.mem_filter.mp ha).2
   have hgc := (Finset.mem_filter.mp hc).2

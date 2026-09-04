@@ -7,11 +7,12 @@ open scoped BigOperators
 
 namespace Erdos4.FGKMT
 
-open BoundedGaps.Maynard Classical
+open BoundedGaps.Maynard
 
-theorem sieveWindowDensity_eq_product_density {P : Type*} [Fintype P] [DecidableEq P]
+theorem sieveWindowDensity_eq_product_density {P : Type*} [Fintype P]
     (ell : P → ℕ) (hprime : ∀ p, (ell p).Prime) (hinj : Function.Injective ell) :
     sieveWindowDensity ell = coprimeHarmonicDensity (∏ p, ell p) := by
+  classical
   have hphi : (∏ p, ell p).totient = ∏ p, (ell p - 1) := by
     simpa only [DivisorCoefficients.coordinateDivisor, if_true] using
       totient_coordinateDivisor ell hprime hinj (fun _ => some (0 : Fin 1)) 0
@@ -39,7 +40,8 @@ theorem smallSievePrime_coprime_exception (D : ℕ) {B : ℕ} (hB : B = 1 ∨ B.
     (p : SmallSievePrime D B) : (smallSievePrimeValue D B p).Coprime B := by
   rcases hB with rfl | hB
   · exact Nat.coprime_one_right _
-  · exact (Nat.coprime_primes (smallSievePrime_prime D B p) hB).mpr (smallSievePrime_ne_exception D B p)
+  · exact (Nat.coprime_primes (smallSievePrime_prime D B p) hB).mpr
+      (smallSievePrime_ne_exception D B p)
 
 theorem smallSievePrime_injective (D B : ℕ) : Function.Injective (smallSievePrimeValue D B) :=
   Subtype.val_injective
@@ -49,7 +51,8 @@ theorem smallSievePrime_product (D B : ℕ) :
   Finset.prod_coe_sort (smallPresievePrimeSet D B) id
 
 theorem smallSievePrime_density (D B : ℕ) :
-    sieveWindowDensity (smallSievePrimeValue D B) = coprimeHarmonicDensity (smallPresieveModulus D B) := by
+    sieveWindowDensity (smallSievePrimeValue D B) = coprimeHarmonicDensity
+      (smallPresieveModulus D B) := by
   rw [sieveWindowDensity_eq_product_density (smallSievePrimeValue D B)
     (smallSievePrime_prime D B) (smallSievePrime_injective D B), smallSievePrime_product]
 

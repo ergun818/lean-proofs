@@ -18,7 +18,8 @@ theorem compositeSurvivalBound_pos {x : ℕ} (hx : 0 < x) : 0 < compositeSurviva
 
 theorem eventually_tiltScale_mul_le_log_two (C : ℝ) :
     ∀ᶠ x : ℕ in atTop, C * tiltScale x ≤ Real.log (Real.log (x : ℝ)) := by
-  have hh := ((Real.isLittleO_log_id_atTop.const_mul_left (4 * C)).comp_tendsto log_two_tendsto).eventuallyLE
+  have hh := ((Real.isLittleO_log_id_atTop.const_mul_left (4 * C)).comp_tendsto
+    log_two_tendsto).eventuallyLE
   filter_upwards [hh, log_two_tendsto.eventually (eventually_ge_atTop 0)] with x hh hl
   have he : |4 * C * Real.log (Real.log (Real.log (x : ℝ)))| ≤ Real.log (Real.log (x : ℝ)) := by
     simpa only [Function.comp_apply, id_eq, Real.norm_eq_abs, abs_of_nonneg hl] using hh

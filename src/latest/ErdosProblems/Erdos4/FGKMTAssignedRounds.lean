@@ -7,8 +7,6 @@ open scoped BigOperators
 
 namespace Erdos4.FGKMT
 
-open Classical
-
 variable {I V : Type*} [Fintype I] [DecidableEq I] [Fintype V] [DecidableEq V]
     {m : ℕ}
 
@@ -30,10 +28,12 @@ theorem assignedRounds_at (μ : I → FiniteLaw (Finset V))
     · have hval : t.val ≠ j.val := fun hh => ht (Fin.ext hh)
       simp [assignedRounds, ha, ht, hval]
 
+omit [DecidableEq I] [DecidableEq V] [Fintype I] in
 theorem assignedRounds_prob_le (μ : I → FiniteLaw (Finset V))
     (a : I → Option (Fin m)) (j : ℕ) (i : I)
     (E : Finset V → Prop) (hE : ¬ E ∅) :
     (assignedRounds μ a j i).prob E ≤ (μ i).prob E := by
+  classical
   by_cases ha : (a i).map Fin.val = some j
   · simp only [assignedRounds, if_pos ha, le_refl]
   · have hzero : (FiniteLaw.dirac (∅ : Finset V)).prob E = 0 := by
@@ -41,10 +41,12 @@ theorem assignedRounds_prob_le (μ : I → FiniteLaw (Finset V))
     rw [assignedRounds, if_neg ha, hzero]
     exact (μ i).prob_nonneg E
 
+omit [DecidableEq I] [DecidableEq V] in
 theorem assignedRounds_degree (μ : I → FiniteLaw (Finset V))
     (a : I → Option (Fin m)) (j : Fin m) (v : V) :
     vertexDegree (assignedRounds μ a j.val) v =
       ∑ i, if a i = some j then (μ i).prob (fun e => v ∈ e) else 0 := by
+  classical
   unfold vertexDegree
   apply Finset.sum_congr rfl
   intro i _
@@ -55,18 +57,22 @@ theorem assignedRounds_degree (μ : I → FiniteLaw (Finset V))
     rw [FiniteLaw.prob_eq_mean, FiniteLaw.mean_dirac]
     simp
 
+omit [DecidableEq I] [DecidableEq V] in
 theorem assignedRounds_pair_le (μ : I → FiniteLaw (Finset V))
     (a : I → Option (Fin m)) (j : ℕ) (v w : V) :
     pairDegree (assignedRounds μ a j) v w ≤ pairDegree μ v w := by
+  classical
   apply Finset.sum_le_sum
   intro i _
   exact assignedRounds_prob_le μ a j i _ (by simp)
 
 omit [Fintype I] [DecidableEq I] in
+omit [DecidableEq V] in
 theorem assignedRounds_support (μ : I → FiniteLaw (Finset V))
     (a : I → Option (Fin m)) (j : ℕ) (i : I) (e : Finset V)
     (he : 0 < (assignedRounds μ a j i).weight e) :
     e = ∅ ∨ (a i).map Fin.val = some j ∧ 0 < (μ i).weight e := by
+  classical
   by_cases ha : (a i).map Fin.val = some j
   · exact Or.inr ⟨ha, by simpa only [assignedRounds, if_pos ha] using he⟩
   · left
@@ -79,11 +85,13 @@ def assignedChoice (a : I → Option (Fin m))
   | none => ∅
   | some j => choice j.val i
 
+omit [DecidableEq I] [DecidableEq V] [Fintype I] in
 theorem assignedChoice_legal (μ : I → FiniteLaw (Finset V))
     (a : I → Option (Fin m)) (choice : ℕ → I → Finset V)
     (hlegal : ∀ j < m, ∀ i, choice j i = ∅ ∨
       0 < (assignedRounds μ a j i).weight (choice j i)) (i : I) :
     assignedChoice a choice i = ∅ ∨ 0 < (μ i).weight (assignedChoice a choice i) := by
+  classical
   cases ha : a i with
   | none => exact Or.inl (by simp [assignedChoice, ha])
   | some j =>
@@ -91,12 +99,14 @@ theorem assignedChoice_legal (μ : I → FiniteLaw (Finset V))
     rw [assignedRounds_at, if_pos ha] at hh
     simpa only [assignedChoice, ha] using hh
 
+omit [DecidableEq I] [DecidableEq V] [Fintype I] in
 theorem assignedChoice_contains (μ : I → FiniteLaw (Finset V))
     (a : I → Option (Fin m)) (choice : ℕ → I → Finset V)
     (hlegal : ∀ j < m, ∀ i, choice j i = ∅ ∨
       0 < (assignedRounds μ a j i).weight (choice j i))
     (j : ℕ) (hj : j < m) (i : I) :
     choice j i ⊆ assignedChoice a choice i := by
+  classical
   rcases hlegal j hj i with he | he
   · rw [he]
     exact Finset.empty_subset _
@@ -110,11 +120,13 @@ theorem assignedChoice_contains (μ : I → FiniteLaw (Finset V))
         simp only [assignedChoice, ht, hval]
         exact Finset.Subset.refl _
 
+omit [DecidableEq I] in
 theorem assignedChoice_covers (μ : I → FiniteLaw (Finset V))
     (a : I → Option (Fin m)) (choice : ℕ → I → Finset V)
     (hlegal : ∀ j < m, ∀ i, choice j i = ∅ ∨
       0 < (assignedRounds μ a j i).weight (choice j i)) :
     coveredThrough choice m ⊆ Finset.univ.biUnion (assignedChoice a choice) := by
+  classical
   intro v hv
   obtain ⟨j, hj, hvj⟩ := Finset.mem_biUnion.mp hv
   obtain ⟨i, _, hvi⟩ := Finset.mem_biUnion.mp hvj

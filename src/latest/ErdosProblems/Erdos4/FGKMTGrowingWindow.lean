@@ -26,7 +26,8 @@ theorem eventually_growing_pre_le_radius :
   have hLleR : L ≤ (growingRadius x : ℝ) :=
     (Real.log_le_log_iff hLpos hRpos).mp (hsmall'.trans hR.2)
   have hDtoL : (growingPrecutoff x : ℝ) ≤ L := hD.2.2.trans
-    ((Real.rpow_le_rpow_of_exponent_le hL1 (by norm_num : (1 / 4 : ℝ) ≤ 1)).trans_eq (Real.rpow_one L))
+    ((Real.rpow_le_rpow_of_exponent_le hL1 (by
+      norm_num : (1 / 4 : ℝ) ≤ 1)).trans_eq (Real.rpow_one L))
   exact_mod_cast hDtoL.trans hLleR
 
 end Erdos4.FGKMT

@@ -56,7 +56,8 @@ theorem smallPresieveModulus_mul_exception (D : ℕ) {B : ℕ} (hB : B = 1 ∨ B
         intro h
         exact hdiv (hB.dvd_primorial_iff.mpr (Nat.mem_primesLE.mp h).1)
       unfold smallPresieveModulus smallPresievePrimeSet
-      rw [Finset.erase_eq_of_notMem hnone, ← primorial_eq_prod_primesLE, harmonicModulus, if_neg hdiv]
+      rw [Finset.erase_eq_of_notMem hnone, ← primorial_eq_prod_primesLE, harmonicModulus,
+        if_neg hdiv]
 
 theorem harmonicDensity_smallPresieve_factor (D : ℕ) {B : ℕ} (hB : B = 1 ∨ B.Prime) :
     coprimeHarmonicDensity (harmonicModulus D B) =

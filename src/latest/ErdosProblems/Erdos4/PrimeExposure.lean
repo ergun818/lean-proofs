@@ -13,7 +13,8 @@ open scoped BigOperators
 
 namespace Erdos4.PrimeExposure
 
-open AffineSourceAverage AffineNormalization DivisorCoefficients RestrictedProductNorm ExposureBounds
+open AffineSourceAverage AffineNormalization DivisorCoefficients RestrictedProductNorm
+  ExposureBounds
 
 variable {P : Type*} [Fintype P] [DecidableEq P] {k : ℕ}
     (ell : P → ℕ) [∀ l, Fact (ell l).Prime]
@@ -35,7 +36,8 @@ theorem exists_exceptional_targets {t R : ℕ} {m : ℝ} (hm : 1 ≤ m)
     (hcenterW : ∀ j : Fin k, ∀ q ∈ targets, ∀ p ∈ sources, (q - h j * p).Coprime W)
     (hZ : ∀ p ∈ sources, 0 < normalizer ell m R Y W h p ∧
       normalizer ell m R Y W h p ≤
-        2 * BoundedGaps.Maynard.coprimeHarmonicDensity W * Y * energy (coefficient (k := k) m R ell))
+        2 * BoundedGaps.Maynard.coprimeHarmonicDensity W * Y * energy (coefficient (k := k) m
+          R ell))
     (A : ℝ) (hgain : (A + 1) * energy (coefficient (k := k) m R ell) ≤
       ∑ j : Fin k, principalForm ell m R j) :
     ∃ bad : Finset ℕ, bad ⊆ targets ∧
@@ -67,7 +69,7 @@ theorem exists_exceptional_targets {t R : ℕ} {m : ℝ} (hm : 1 ≤ m)
         4 * (k : ℝ) ^ 2 * δ ^ 2 * X * Y / (Real.log t ^ 2 * sources.card) := by
       dsimp [B, θ]
       field_simp
-      <;> ring
+     ; ring
     exact hb.trans_eq heq
   · intro q hq hgood
     have hYpos : 0 < Y := (pow_pos (by omega : 0 < t) 50).trans_le hY

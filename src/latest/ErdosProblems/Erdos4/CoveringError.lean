@@ -58,7 +58,7 @@ theorem moment_ratio_bound {k : ℕ} (hk : 1 ≤ k) {σ τ ε α : ℝ}
     rw [mul_pow, mul_pow, hpow1, hpow2]
     dsimp [r, e] at hden ⊢
     field_simp
-    <;> ring
+   ; ring
   rw [heq]
   exact (elementary_ratio_bound hε0 hε1 hr he).trans_eq (by dsimp [r, e]; ring)
 

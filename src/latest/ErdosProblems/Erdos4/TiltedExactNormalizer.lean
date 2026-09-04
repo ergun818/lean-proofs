@@ -42,6 +42,7 @@ theorem exactNormalizer_le_model (ν μ : FiniteLaw (Finset V)) (p : V → ℝ)
         exact le_rfl
     _ = _ := by rw [FiniteLaw.mean_const_mul, ← normalizer_eq_mean]
 
+omit [DecidableEq V] in
 theorem exactNormalizer_variance (ν μ : FiniteLaw (Finset V)) (p : V → ℝ)
     {r : ℕ} {κ δ ε : ℝ} (hκ : 0 < κ) (hκ1 : κ ≤ 1) (hδ : 0 ≤ δ)
     (hε0 : 0 ≤ ε) (hε : ε ≤ 1 / 4) (hp : ∀ v, κ ≤ p v)
@@ -50,6 +51,7 @@ theorem exactNormalizer_variance (ν μ : FiniteLaw (Finset V)) (p : V → ℝ)
     (hacc : SurvivalAccurate ν p (2 * r) ε) :
     ν.mean (fun W => (eventNormalizer ν μ (fun E W => E ⊆ W) W - 1) ^ 2) ≤
       8 * ε + 4 * r * δ / κ ^ r := by
+  classical
   have hp0 : ∀ v, 0 < p v := fun v => hκ.trans_le (hp v)
   have hepos : 0 < 1 - ε := by linarith
   have hfirst : ν.mean (eventNormalizer ν μ (fun E W => E ⊆ W)) = 1 := by
@@ -97,11 +99,13 @@ theorem rooted_incidence_variance {I : Type*} [Fintype I]
     (hsize : ∀ i E, 0 < (μ i).weight E → E.card ≤ r)
     (hd : 0 < vertexDegree μ v) (hpair : ∀ w, w ≠ v → pairDegree μ v w ≤ δ) :
     (conditionSurvival ν {v}).mean (fun W =>
-      (eventNormalizer (conditionSurvival ν {v}) (erasedIncidence μ v) (fun E W => E ⊆ W) W - 1) ^ 2) ≤
+      (eventNormalizer (conditionSurvival ν {v}) (erasedIncidence μ v) (fun E W => E ⊆ W) W -
+        1) ^ 2) ≤
         32 * ε + 4 * r * δ / (vertexDegree μ v * σ ^ r) := by
   have hac := conditional_accuracy ν (fun _ => σ) (fun _ => hσ) (by linarith : ε < 1)
     hacc ({v} : Finset V) (B := 2 * r) (by simp only [Finset.card_singleton]; omega)
-  have hac' : SurvivalAccurate (conditionSurvival ν {v}) (pinnedModel (fun _ => σ) {v}) (2 * r) (4 * ε) := by
+  have hac' : SurvivalAccurate (conditionSurvival ν {v}) (pinnedModel (fun _ => σ) {v}) (2 *
+    r) (4 * ε) := by
     intro E hE
     apply (hac E hE).trans
     apply (div_le_iff₀ (by linarith : 0 < 1 - ε)).mpr

@@ -14,7 +14,8 @@ theorem sum_fin_succ_eq_Icc {f : ℕ → ℝ} (hf : f 0 = 0) (R : ℕ) :
 
 noncomputable def rationalSquareLaw (W : ℕ) (b : ℝ) (R : ℕ) (hR : 1 ≤ R) :
     FiniteLaw (Fin (R + 1)) where
-  weight n := (logarithmicReciprocal b n ^ 2 * squarefreeHarmonicWeight W n) / rationalSquareMass W b R
+  weight n := (logarithmicReciprocal b n ^ 2 * squarefreeHarmonicWeight W n) /
+    rationalSquareMass W b R
   nonneg n := div_nonneg
     (mul_nonneg (sq_nonneg _) (squarefreeHarmonicWeight_nonneg W n))
     (rationalSquareMass_nonneg W b R)
@@ -32,7 +33,8 @@ theorem rationalSquareLaw_mean_log (W : ℕ) (b : ℝ) {R : ℕ} (hR : 1 ≤ R) 
   simp only
   calc
     _ = (∑ n : Fin (R + 1), Real.log (n : ℕ) *
-        logarithmicReciprocal b n ^ 2 * squarefreeHarmonicWeight W n) / rationalSquareMass W b R := by
+        logarithmicReciprocal b n ^ 2 * squarefreeHarmonicWeight W n) / rationalSquareMass W b
+          R := by
       rw [Finset.sum_div]
       apply Finset.sum_congr rfl
       intro n _

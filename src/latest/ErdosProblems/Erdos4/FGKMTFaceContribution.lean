@@ -7,10 +7,11 @@ open scoped BigOperators
 
 namespace Erdos4.FGKMT
 
-open DivisorCoefficients Classical
+open DivisorCoefficients
 
 variable {P : Type*} [Fintype P] [DecidableEq P] {k R : ℕ}
 
+omit [DecidableEq P] in
 theorem faceLabel_profile (ell : P → ℕ)
     (hprime : ∀ p, (ell p).Prime) (hinj : Function.Injective ell)
     {W T : ℕ} (L b : ℝ)
@@ -21,10 +22,12 @@ theorem faceLabel_profile (ell : P → ℕ)
     rationalProfileProduct b ell (faceLabel ell j s a) =
       logarithmicReciprocal b (a (Sum.inr s)) *
         ∏ i : SieveCore j, logarithmicReciprocal b (a (Sum.inl i)) := by
+  classical
   unfold rationalProfileProduct
   simp_rw [faceLabel_coordinate ell hprime hinj L hcover j s a ha]
   exact prod_faceTuple (fun n => logarithmicReciprocal b n) j s a
 
+omit [DecidableEq P] in
 theorem faceLabel_normalization_sq (ell : P → ℕ)
     (hprime : ∀ p, (ell p).Prime) (hinj : Function.Injective ell)
     {W T : ℕ} (L : ℝ) (hcop : ∀ p, (ell p).Coprime W)
@@ -35,10 +38,12 @@ theorem faceLabel_normalization_sq (ell : P → ℕ)
     normalization ell (faceLabel ell j s a) ^ 2 =
       squarefreeHarmonicWeight W (a (Sum.inr s)) *
         ∏ i : SieveCore j, squarefreeHarmonicWeight W (a (Sum.inl i)) := by
+  classical
   rw [normalization_sq_eq_harmonic_product ell hprime hinj hcop]
   simp_rw [faceLabel_coordinate ell hprime hinj L hcover j s a ha]
   exact prod_faceTuple (squarefreeHarmonicWeight W) j s a
 
+omit [DecidableEq P] in
 theorem faceLabel_mixed_factor (ell : P → ℕ)
     (hprime : ∀ p, (ell p).Prime) (hinj : Function.Injective ell)
     {W T : ℕ} (L b : ℝ) (hcop : ∀ p, (ell p).Coprime W)
@@ -51,6 +56,7 @@ theorem faceLabel_mixed_factor (ell : P → ℕ)
       normalization ell (faceLabel ell j 0 a) ^ 2 *
       ((coordinateDivisor ell (faceLabel ell j 1 a) j).totient : ℝ)⁻¹ =
         mixedDivisorNumerator (SieveCore j) W b T a := by
+  classical
   rw [faceLabel_profile ell hprime hinj L b hcover j 0 a ha,
     faceLabel_profile ell hprime hinj L b hcover j 1 a ha,
     faceLabel_normalization_sq ell hprime hinj L hcop hcover j 0 a ha,
@@ -63,6 +69,7 @@ theorem faceLabel_mixed_factor (ell : P → ℕ)
     Finset.prod_pow]
   ring
 
+omit [DecidableEq P] in
 theorem faceLabel_contribution_lower {b : ℝ} (hb : 0 ≤ b) (ell : P → ℕ)
     (hprime : ∀ p, (ell p).Prime) (hinj : Function.Injective ell)
     {W T : ℕ} (hR : 1 ≤ R) (hT : 1 ≤ T) (hTR : T ^ 2 ≤ R)
@@ -73,7 +80,9 @@ theorem faceLabel_contribution_lower {b : ℝ} (hb : 0 ≤ b) (ell : P → ℕ)
     (ha : MixedDivisorGood (SieveCore j) W T (Real.log (R : ℝ) / 2) a) :
     sieveWindowDensity ell * mixedDivisorNumerator (SieveCore j) W b T a ≤
       rationalIdealPair b R ell j (faceLabel ell j 0 a) (faceLabel ell j 1 a) := by
-  have hh := rationalIdealPair_lower hb R ell hprime hinj j (faceLabel ell j 0 a) (faceLabel ell j 1 a)
+  classical
+  have hh := rationalIdealPair_lower hb R ell hprime hinj j (faceLabel ell j 0 a) (faceLabel
+    ell j 1 a)
     (faceLabel_compatible ell hprime hinj (Real.log (R : ℝ) / 2) hcover j a ha)
     (faceLabel_cutoff ell hprime hinj hR hT hTR hcover j 0 a ha)
     (faceLabel_cutoff ell hprime hinj hR hT hTR hcover j 1 a ha)

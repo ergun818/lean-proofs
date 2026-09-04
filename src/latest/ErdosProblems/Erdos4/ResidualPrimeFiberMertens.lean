@@ -64,7 +64,7 @@ noncomputable def residualCofactorInverseProduct (y m : ℕ) : ℝ :=
     (1 - residualPrimeDensity p)⁻¹
 
 theorem residualCofactorLocalProduct_pos
-    {y m : ℕ} (hmEven : Even m) :
+    {y m : ℕ} (_hmEven : Even m) :
     0 < residualCofactorLocalProduct y m := by
   unfold residualCofactorLocalProduct
   apply Finset.prod_pos
@@ -109,7 +109,7 @@ theorem residualPrimeLocalEulerProduct_eq_all_mul_cofactorInverse
       rw [residualPrimeLocalEulerProduct_mul_cofactor y m hmEven]
 
 theorem residualPrime_localFactor_le_oneShift
-    {p : ℕ} (hp : p.Prime) (hpTwo : 2 < p) :
+    {p : ℕ} (hp : p.Prime) (_hpTwo : 2 < p) :
     1 - residualPrimeDensity p ≤
       1 - Erdos851.oneShiftDensity p := by
   rw [residualPrimeDensity_eq_inv_pred hp]

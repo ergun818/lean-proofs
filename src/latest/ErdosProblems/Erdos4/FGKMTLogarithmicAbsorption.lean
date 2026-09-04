@@ -13,7 +13,8 @@ theorem sqrtLog_tendsto_atTop :
 theorem eventually_sqrtLog_pow_le_exp (m : ℕ) {a : ℝ} (ha : 0 < a) :
     ∀ᶠ x : ℕ in atTop, Real.sqrt (Real.log (x : ℝ)) ^ m ≤
       Real.exp (a * Real.sqrt (Real.log (x : ℝ))) := by
-  have hh := ((isLittleO_pow_exp_pos_mul_atTop m ha).comp_tendsto sqrtLog_tendsto_atTop).eventuallyLE
+  have hh := ((isLittleO_pow_exp_pos_mul_atTop m ha).comp_tendsto
+    sqrtLog_tendsto_atTop).eventuallyLE
   filter_upwards [hh] with x hx
   simpa only [Function.comp_apply, Real.norm_eq_abs,
     abs_of_nonneg (pow_nonneg (Real.sqrt_nonneg _) m), abs_of_pos (Real.exp_pos _)] using hx

@@ -50,7 +50,8 @@ theorem eventually_sieve_harmonic_error :
     rw [Real.sqrt_eq_rpow]
     exact Real.rpow_le_rpow_of_exponent_le hL1 (by norm_num)
   have hDL : (D : ℝ) ≤ L := hDx.trans
-    ((Real.rpow_le_rpow_of_exponent_le hL1 (by norm_num : (1 / 4 : ℝ) ≤ 1)).trans_eq (Real.rpow_one L))
+    ((Real.rpow_le_rpow_of_exponent_le hL1 (by
+      norm_num : (1 / 4 : ℝ) ≤ 1)).trans_eq (Real.rpow_one L))
   have hDpos : (0 : ℝ) < D := by exact_mod_cast (by omega : 0 < D)
   have hlogDpos : 0 < Real.log (D : ℝ) := Real.log_pos (by exact_mod_cast hD)
   have hlogD : Real.log (D : ℝ) ≤ Real.log L := Real.log_le_log hDpos hDL
@@ -70,7 +71,8 @@ theorem eventually_sieve_harmonic_error :
   have hz : 0 ≤ 1 + sieveProfileScale j := by
     have hh := sieveProfileScale_ge_one (by omega : 1 ≤ j)
     linarith
-  have hzupper : 1 + sieveProfileScale j ≤ L ^ (1 / 8 : ℝ) := (sieveProfileScale_le_square hj).trans hksq
+  have hzupper : 1 + sieveProfileScale j ≤ L ^ (1 / 8 : ℝ) := (sieveProfileScale_le_square
+    hj).trans hksq
   have hpow : L ^ (1 / 8 : ℝ) * Real.sqrt L = L ^ (5 / 8 : ℝ) := by
     rw [Real.sqrt_eq_rpow, ← Real.rpow_add hL]
     norm_num
@@ -101,7 +103,8 @@ theorem eventually_sieve_harmonic_error :
       _ ≤ (coprimeHarmonicDensity (harmonicModulus D B) * Real.log (D : ℝ)) * Real.log (R : ℝ) :=
         mul_le_mul_of_nonneg_right hcρ hRlog
       _ = _ := by ring
-  have hcombined := (mul_le_mul hleft hlogD hlogDpos.le (by positivity)).trans (hdominates.trans hright)
+  have hcombined := (mul_le_mul hleft hlogD hlogDpos.le (by
+    positivity)).trans (hdominates.trans hright)
   have hfinal := (mul_le_mul_iff_left₀ hlogDpos).mp hcombined
   apply (le_div_iff₀ (by have hh := sieveProfileScale_ge_one (by omega : 1 ≤ j); positivity)).mpr
   simpa only [mul_comm] using hfinal

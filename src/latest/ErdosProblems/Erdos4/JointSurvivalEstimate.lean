@@ -60,10 +60,12 @@ theorem sum_localError (T : Finset ℕ) :
     intro l _hl
     split_ifs <;> ring
 
+omit [DecidableEq P] in
 theorem relative_error_le (T : Finset ℕ) (hsize : ∀ l, 2 * T.card ≤ ell l) :
     |survivalMass ell T / UnitFourier.unitDensity ell ^ T.card - 1| ≤
       Real.exp (2 * (T.card : ℝ) ^ 2 * (∑ l, 1 / (ell l : ℝ) ^ 2) +
         2 * (T.card : ℝ) * ∑ l ∈ collisionPrimes ell T, 1 / (ell l : ℝ)) - 1 := by
+  classical
   have hh := product_ratio_error_le
     (fun l => 1 - (residues ell T l).card / (ell l : ℝ))
     (fun l => (1 - 1 / (ell l : ℝ)) ^ T.card) (localError ell T)
@@ -71,12 +73,14 @@ theorem relative_error_le (T : Finset ℕ) (hsize : ∀ l, 2 * T.card ≤ ell l)
   rw [Finset.prod_pow, ← UnitFourier.unitDensity_eq_product ell] at hh
   exact hh
 
+omit [DecidableEq P] in
 theorem uniform_relative_error_le (hinj : Function.Injective ell) (T : Finset ℕ)
     (hsize : ∀ l, 2 * T.card ≤ ell l) {Y : ℕ} (hY : 1 ≤ Y)
     (hT : ∀ n ∈ T, n ≤ Y) {w : ℝ} (hw : 0 < w) (hlarge : ∀ l, w ≤ ell l) :
     |survivalMass ell T / UnitFourier.unitDensity ell ^ T.card - 1| ≤
       Real.exp (2 * (T.card : ℝ) ^ 2 * (∑ l, 1 / (ell l : ℝ) ^ 2) +
         2 * (T.card : ℝ) ^ 3 * Real.log Y / (w * Real.log 2)) - 1 := by
+  classical
   have hc := collision_reciprocal_le ell hinj T hY hT hw hlarge
   apply (relative_error_le ell T hsize).trans
   apply sub_le_sub_right

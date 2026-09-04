@@ -90,6 +90,7 @@ theorem weighted_error_le {m k : ℝ} (hm : 1 ≤ m) (hk : 0 ≤ k)
     unfold scaled
     rw [abs_of_nonneg (profile_pos hmpos.le hk ht).le]
     exact profile_le_one hm hk ht
-  exact hh.trans ((mul_le_mul_of_nonneg_left (by linarith : |scaled m k R T| + 1 ≤ 2) hE).trans_eq (by ring))
+  exact hh.trans ((mul_le_mul_of_nonneg_left (by linarith : |scaled m k R T| + 1 ≤ 2)
+    hE).trans_eq (by ring))
 
 end Erdos4.ProfileAbel

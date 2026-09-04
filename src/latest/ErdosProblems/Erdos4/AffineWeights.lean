@@ -107,12 +107,15 @@ theorem weight_nonneg (m : ℝ) (R Y W : ℕ) (h : Fin k → ℕ) (p n : ℕ) :
   unfold weight
   split_ifs <;> positivity
 
+omit [DecidableEq P] in
 theorem unitPoint_coe (n : ℕ) (hn : n.Coprime (ProductCharacterEncoding.modulus ell)) (l : P) :
     (AnchoredFourierAverage.unitPoint ell n hn l : ZMod (ell l)) = n := by
+  classical
   unfold AnchoredFourierAverage.unitPoint
   rw [ZMod.unitsMap_val, ZMod.coe_unitOfCoprime,
     ZMod.cast_natCast (ProductCharacterEncoding.local_dvd_modulus ell l)]
 
+omit [DecidableEq P] in
 theorem residueState_anchor (h : Fin k → ℕ)
     (hh : ∀ l, Function.Injective (fun i => (h i : ZMod (ell l))))
     (j : Fin k) (p q : ℕ)
@@ -121,7 +124,9 @@ theorem residueState_anchor (h : Fin k → ℕ)
     residueState ell h (q - h j * p) p l =
       RootStates.rootState (Finset.univ.erase j)
         (AnchorRoots.anchorRoot (fun i => (h i : ZMod (ell l))) j)
-        ((AnchoredFourierAverage.unitPoint ell p hp / AnchoredFourierAverage.unitPoint ell q hq) l) := by
+        ((AnchoredFourierAverage.unitPoint ell p hp / AnchoredFourierAverage.unitPoint ell q
+          hq) l) := by
+  classical
   have hp0 : (p : ZMod (ell l)) ≠ 0 := by
     rw [← unitPoint_coe ell p hp l]
     exact Units.ne_zero _
@@ -140,7 +145,8 @@ theorem amplitude_sq_anchor (m : ℝ) (R : ℕ) (h : Fin k → ℕ)
     (hq : q.Coprime (ProductCharacterEncoding.modulus ell)) (hshift : h j * p ≤ q) :
     amplitude ell m R h p (q - h j * p) ^ 2 =
       AnchoredFourierAverage.realSquare ell m R (fun l i => (h i : ZMod (ell l))) j
-        (AnchoredFourierAverage.unitPoint ell p hp / AnchoredFourierAverage.unitPoint ell q hq) := by
+        (AnchoredFourierAverage.unitPoint ell p hp / AnchoredFourierAverage.unitPoint ell q
+          hq) := by
   unfold amplitude AnchoredFourierAverage.realSquare
   congr 1
   apply Finset.sum_congr rfl
@@ -158,7 +164,8 @@ theorem weight_anchor (m : ℝ) (R Y W : ℕ) (h : Fin k → ℕ)
     (hcenter : q - h j * p ∈ Finset.Icc 1 Y) (hW : (q - h j * p).Coprime W) :
     weight ell m R Y W h p (q - h j * p) =
       AnchoredFourierAverage.realSquare ell m R (fun l i => (h i : ZMod (ell l))) j
-        (AnchoredFourierAverage.unitPoint ell p hp / AnchoredFourierAverage.unitPoint ell q hq) := by
+        (AnchoredFourierAverage.unitPoint ell p hp / AnchoredFourierAverage.unitPoint ell q
+          hq) := by
   rw [weight, if_pos ⟨hcenter, hW⟩]
   exact amplitude_sq_anchor ell m R h hh j p q hp hq hshift
 

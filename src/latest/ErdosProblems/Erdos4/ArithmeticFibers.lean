@@ -39,9 +39,11 @@ def completion (ell : P → ℕ) (j : Fin k) (a : P → Option (Fin k))
 def AvoidsFrozen (ell : P → ℕ) (j : Fin k) (a : P → Option (Fin k))
     (u : ℕ) : Prop := ∀ p, ell p ∣ u → freeze j (a p) = none
 
+omit [DecidableEq P] [Fintype P] in
 theorem compatible_completion (ell : P → ℕ) (j : Fin k)
     (a : P → Option (Fin k)) {u : ℕ} (hu : AvoidsFrozen ell j a u) :
     Compatible j a (completion ell j a u) := by
+  classical
   intro p
   by_cases hp : ell p ∣ u
   · rw [hu p hp]
@@ -69,11 +71,13 @@ theorem prod_dividing_eq_primeFactors {M : Type*} [CommMonoid M]
   · intro p hp
     rfl
 
+omit [DecidableEq P] in
 theorem coordinateDivisor_completion (ell : P → ℕ)
     (hprime : ∀ p, (ell p).Prime) (hinj : Function.Injective ell)
     (j : Fin k) (a : P → Option (Fin k)) {u : ℕ} (hu : Squarefree u)
     (hcover : ∀ q ∈ u.primeFactors, ∃ p, ell p = q) :
     coordinateDivisor ell (completion ell j a u) j = u := by
+  classical
   calc
     coordinateDivisor ell (completion ell j a u) j =
         ∏ p, if ell p ∣ u then ell p else 1 := by
@@ -86,9 +90,11 @@ theorem coordinateDivisor_completion (ell : P → ℕ)
       prod_dividing_eq_primeFactors ell hprime hinj hu.ne_zero hcover id
     _ = u := Nat.prod_primeFactors_of_squarefree hu
 
+omit [DecidableEq P] in
 theorem cofactor_eq_of_compatible (ell : P → ℕ) (j : Fin k)
     (a b : P → Option (Fin k)) (hab : Compatible j a b) :
     cofactor ell j a = cofactor ell j b := by
+  classical
   unfold cofactor totalDivisor
   apply Finset.prod_congr rfl
   intro p _hp
@@ -96,12 +102,14 @@ theorem cofactor_eq_of_compatible (ell : P → ℕ) (j : Fin k)
     (if freeze j (b p) = none then 1 else ell p)
   rw [hab p]
 
+omit [DecidableEq P] in
 theorem totalDivisor_completion (ell : P → ℕ)
     (hprime : ∀ p, (ell p).Prime) (hinj : Function.Injective ell)
     (j : Fin k) (a : P → Option (Fin k)) {u : ℕ} (hu : Squarefree u)
     (hcover : ∀ q ∈ u.primeFactors, ∃ p, ell p = q)
     (havoid : AvoidsFrozen ell j a u) :
     totalDivisor ell (completion ell j a u) = cofactor ell j a * u := by
+  classical
   rw [← cofactor_mul_coordinateDivisor ell j,
     coordinateDivisor_completion ell hprime hinj j a hu hcover,
     ← cofactor_eq_of_compatible ell j a _ (compatible_completion ell j a havoid)]
@@ -111,12 +119,14 @@ theorem totient_eq_prod_of_squarefree {u : ℕ} (hu : Squarefree u) :
   rw [Nat.totient_eq_div_primeFactors_mul, Nat.prod_primeFactors_of_squarefree hu,
     Nat.div_self hu.ne_zero.bot_lt, one_mul]
 
+omit [DecidableEq P] in
 theorem fiberWeight_completion (ell : P → ℕ)
     (hprime : ∀ p, (ell p).Prime) (hinj : Function.Injective ell)
     (j : Fin k) (a : P → Option (Fin k)) {u : ℕ} (hu : Squarefree u)
     (hcover : ∀ q ∈ u.primeFactors, ∃ p, ell p = q)
     (havoid : AvoidsFrozen ell j a u) :
     fiberWeight ell j a (completion ell j a u) = 1 / (Nat.totient u : ℝ) := by
+  classical
   calc
     fiberWeight ell j a (completion ell j a u) =
         ∏ p, if ell p ∣ u then ((ell p : ℝ) - 1)⁻¹ else 1 := by

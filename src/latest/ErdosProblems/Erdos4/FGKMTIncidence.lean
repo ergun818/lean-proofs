@@ -56,7 +56,10 @@ theorem incidence_mass_total (μ : I → FiniteLaw (Finset V)) (v : V) :
 noncomputable def incidenceLaw (μ : I → FiniteLaw (Finset V)) (v : V) :
     FiniteLaw (Finset V) :=
   FiniteLaw.normalize (fun e => if v ∈ e then edgeIntensity μ e else 0)
-    (fun e => by split_ifs; exact edgeIntensity_nonneg μ e; rfl) ∅
+    (fun e => by
+      split_ifs
+      · exact edgeIntensity_nonneg μ e
+      · rfl) ∅
 
 theorem incidenceLaw_weight (μ : I → FiniteLaw (Finset V)) (v : V)
     (hd : vertexDegree μ v ≠ 0) (e : Finset V) :

@@ -7,7 +7,7 @@ open scoped BigOperators
 
 namespace Erdos4.FGKMT
 
-open Classical DivisorCoefficients DivisibilityExpansion ProductCharacterEncoding
+open DivisorCoefficients DivisibilityExpansion ProductCharacterEncoding
 
 theorem modEq_add_offset_iff (n a Y T d : ℕ) (hTY : T + Y ≡ 0 [MOD d]) :
     n + T ≡ a [MOD d] ↔ n ≡ a + Y [MOD d] := by
@@ -27,29 +27,37 @@ variable {P : Type*} [Fintype P] [DecidableEq P] {k : ℕ}
 
 def translatedNaturalOffset (Y : ℕ) : ℕ := modulus ell * (Y + 1) - Y
 
+omit [DecidableEq P] in
 theorem translatedNaturalOffset_add (Y : ℕ) :
     translatedNaturalOffset ell Y + Y = modulus ell * (Y + 1) := by
+  classical
   have hM : 1 ≤ modulus ell := Finset.prod_pos
     (fun l _ => (Fact.out : (ell l).Prime).pos)
   have hY : Y ≤ modulus ell * (Y + 1) :=
     (Nat.le_succ Y).trans (by simpa only [one_mul] using Nat.mul_le_mul_right (Y + 1) hM)
   exact Nat.sub_add_cancel hY
 
+omit [DecidableEq P] [∀ (l : P), Fact (Nat.Prime (ell l))] in
 theorem totalDivisor_dvd_modulus (a : P → Option (Fin k)) : totalDivisor ell a ∣ modulus ell := by
+  classical
   apply Finset.prod_dvd_prod_of_dvd
   intro l _
   split_ifs
   · exact one_dvd _
   · exact dvd_rfl
 
+omit [DecidableEq P] in
 theorem translatedNaturalOffset_modEq (Y d : ℕ) (hd : d ∣ modulus ell) :
     translatedNaturalOffset ell Y + Y ≡ 0 [MOD d] := by
+  classical
   rw [translatedNaturalOffset_add]
   exact Nat.modEq_zero_iff_dvd.mpr (hd.trans (dvd_mul_right _ _))
 
+omit [DecidableEq P] in
 theorem translatedResidueState_eq_shifted (h : Fin k → ℕ) (Y n p : ℕ) (l : P) :
     translatedResidueState ell h Y n p l =
       AffineWeights.residueState ell h (n + translatedNaturalOffset ell Y) p l := by
+  classical
   have hz : (translatedNaturalOffset ell Y : ZMod (ell l)) + Y = 0 := by
     rw [← Nat.cast_add, translatedNaturalOffset_add]
     exact (ZMod.natCast_eq_zero_iff _ _).mpr
@@ -61,12 +69,14 @@ theorem translatedResidueState_eq_shifted (h : Fin k → ℕ) (Y n p : ℕ) (l :
   unfold translatedResidueState AffineWeights.residueState
   rw [heq]
 
+omit [DecidableEq P] in
 theorem translated_evaluation_is_residue
     (hcop : Pairwise (fun l r => (ell l).Coprime (ell r)))
     (h : Fin k → ℕ) (hinj : ∀ l, Function.Injective (fun i => (h i : ZMod (ell l))))
     (Y p : ℕ) (hp : p.Coprime (modulus ell)) (a : P → Option (Fin k)) :
     ∃ r : ℕ, ∀ n : ℕ, evaluation (translatedResidueState ell h Y n p) a =
       if n ≡ r [MOD totalDivisor ell a] then 1 else 0 := by
+  classical
   obtain ⟨r, hr⟩ := LabelResidueClass.evaluation_is_residue ell hcop h hinj p hp a
   refine ⟨r + Y, ?_⟩
   intro n

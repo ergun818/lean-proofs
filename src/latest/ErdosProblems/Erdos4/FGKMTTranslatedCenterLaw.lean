@@ -7,7 +7,7 @@ open scoped BigOperators
 
 namespace Erdos4.FGKMT
 
-open Classical ProductCharacterEncoding
+open ProductCharacterEncoding
 
 abbrev TranslatedCenter (Y : ℕ) := ↥(Finset.Icc 1 (2 * Y))
 
@@ -18,6 +18,7 @@ variable {P Q : Type*} [Fintype P] [DecidableEq P] [Fintype Q] [DecidableEq Q] {
     (ell₀ : P → ℕ) (ell₁ : Q → ℕ)
     [∀ l, Fact (ell₀ l).Prime] [∀ l, Fact (ell₁ l).Prime]
 
+omit [DecidableEq P] in
 theorem translatedCenter_weight_sum (b : ℝ) (R : ℕ) (h : Fin k → ℕ) (Y p : ℕ) :
     (∑ n : TranslatedCenter Y, maskedTranslatedWeight ell₀ ell₁ b R h Y p n.val) =
       maskedTranslatedNormalizer ell₀ ell₁ b R h Y p :=
@@ -30,6 +31,7 @@ noncomputable def rationalCenterLaw (b : ℝ) (R : ℕ) (h : Fin k → ℕ)
     (fun n => maskedTranslatedWeight_nonneg ell₀ ell₁ b R h Y p n.val)
     (firstTranslatedCenter hY)
 
+omit [DecidableEq P] in
 theorem rationalCenterLaw_weight (b : ℝ) (R : ℕ) (h : Fin k → ℕ)
     {Y : ℕ} (hY : 1 ≤ Y) (p : ℕ)
     (hZ : 0 < maskedTranslatedNormalizer ell₀ ell₁ b R h Y p)
@@ -37,6 +39,7 @@ theorem rationalCenterLaw_weight (b : ℝ) (R : ℕ) (h : Fin k → ℕ)
     (rationalCenterLaw ell₀ ell₁ b R h hY p).weight n =
       maskedTranslatedWeight ell₀ ell₁ b R h Y p n.val /
         maskedTranslatedNormalizer ell₀ ell₁ b R h Y p := by
+  classical
   have hsum : (∑ a : TranslatedCenter Y,
       maskedTranslatedWeight ell₀ ell₁ b R h Y p a.val) ≠ 0 := by
     rw [translatedCenter_weight_sum]
@@ -44,22 +47,27 @@ theorem rationalCenterLaw_weight (b : ℝ) (R : ℕ) (h : Fin k → ℕ)
   rw [rationalCenterLaw, FiniteLaw.normalize_weight _ _ _ _ hsum,
     translatedCenter_weight_sum]
 
+omit [DecidableEq P] in
 theorem rationalCenterLaw_weight_pos_iff (b : ℝ) (R : ℕ) (h : Fin k → ℕ)
     {Y : ℕ} (hY : 1 ≤ Y) (p : ℕ)
     (hZ : 0 < maskedTranslatedNormalizer ell₀ ell₁ b R h Y p)
     (n : TranslatedCenter Y) :
     0 < (rationalCenterLaw ell₀ ell₁ b R h hY p).weight n ↔
       0 < maskedTranslatedWeight ell₀ ell₁ b R h Y p n.val := by
+  classical
   rw [rationalCenterLaw_weight ell₀ ell₁ b R h hY p hZ n]
   exact div_pos_iff_of_pos_right hZ
 
+omit [DecidableEq P] in
 theorem rationalCenterLaw_prob_eq_sum (b : ℝ) (R : ℕ) (h : Fin k → ℕ)
     {Y : ℕ} (hY : 1 ≤ Y) (p : ℕ)
     (hZ : 0 < maskedTranslatedNormalizer ell₀ ell₁ b R h Y p) (E : ℕ → Prop) :
     (rationalCenterLaw ell₀ ell₁ b R h hY p).prob (fun n => E n.val) =
-      (∑ n ∈ Finset.Icc 1 (2 * Y),
-        if E n then maskedTranslatedWeight ell₀ ell₁ b R h Y p n else 0) /
+      (open scoped Classical in
+        ∑ n ∈ Finset.Icc 1 (2 * Y),
+          if E n then maskedTranslatedWeight ell₀ ell₁ b R h Y p n else 0) /
           maskedTranslatedNormalizer ell₀ ell₁ b R h Y p := by
+  classical
   calc
     _ = ∑ n : TranslatedCenter Y,
         (if E n.val then maskedTranslatedWeight ell₀ ell₁ b R h Y p n.val else 0) /
@@ -75,6 +83,7 @@ theorem rationalCenterLaw_prob_eq_sum (b : ℝ) (R : ℕ) (h : Fin k → ℕ)
         (Finset.sum_coe_sort (Finset.Icc 1 (2 * Y))
           (fun n : ℕ => if E n then maskedTranslatedWeight ell₀ ell₁ b R h Y p n else 0))
 
+omit [DecidableEq P] in
 theorem rationalCenterLaw_weight_le_modulus {b : ℝ} (hb : 0 ≤ b) {R : ℕ} (hR : 1 ≤ R)
     (hell : ∀ l, k + 2 ≤ ell₁ l)
     (htail : (k : ℝ) * LocalIndicatorExpansion.rowCost k * ∑ l, 1 / (ell₁ l : ℝ) ^ 2 ≤ 1)
@@ -87,6 +96,7 @@ theorem rationalCenterLaw_weight_le_modulus {b : ℝ} (hb : 0 ≤ b) {R : ℕ} (
     (n : TranslatedCenter Y) :
     (rationalCenterLaw ell₀ ell₁ b R h hY p).weight n ≤
       (Real.exp 1 ^ 2 * (R : ℝ) ^ 4) * (modulus ell₀ : ℝ) / Y := by
+  classical
   have hYr : (0 : ℝ) < Y := by exact_mod_cast (show 0 < Y by omega)
   have hMr : (0 : ℝ) < modulus ell₀ := by
     exact_mod_cast (Finset.prod_pos (fun l _ => (Fact.out : (ell₀ l).Prime).pos) :

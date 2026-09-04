@@ -1,6 +1,7 @@
 import ErdosProblems.Erdos4.FGKMTGrowingGapLength
 
-/-! Scalar budgets converting the initial configuration to the required vertex and cleanup scales. -/
+/-! Scalar budgets converting the initial configuration to the required vertex and cleanup
+  scales. -/
 
 namespace Erdos4.FGKMT
 
@@ -18,7 +19,7 @@ theorem initial_scale_product {d C x s l j σ Y : ℝ}
     _ ≤ _ := mul_le_mul_of_nonneg_left hj (by positivity)
 
 theorem initial_configuration_count_budget {σ x Y L j G K B η N M : ℝ}
-    (hσ : 0 ≤ σ) (hx : 0 ≤ x) (hY : 0 ≤ Y) (hL : 0 < L) (hj : 1 ≤ j)
+    (hσ : 0 ≤ σ) (hx : 0 ≤ x) (_hY : 0 ≤ Y) (hL : 0 < L) (hj : 1 ≤ j)
     (hG : 0 ≤ G) (hK : 0 ≤ K) (hB : 0 ≤ B) (hN : 0 ≤ N)
     (hX : 1 ≤ x / L) (hη : η ≤ 1 / j ^ 2)
     (hcount : N ≤ K * Y / L) (hbad : M ≤ B * Y / (L * j ^ 2))
@@ -49,7 +50,8 @@ theorem initial_configuration_count_budget {σ x Y L j G K B η N M : ℝ}
       _ ≤ σ * ((B + K) * Y / (L * j ^ 2)) := mul_le_mul_of_nonneg_left hcombined hσ
       _ = (B + K) * (σ * Y) / (L * j ^ 2) := by ring
       _ ≤ (B + K) * (G * x * j) / (L * j ^ 2) :=
-        div_le_div_of_nonneg_right (mul_le_mul_of_nonneg_left hproduct (by positivity)) (by positivity)
+        div_le_div_of_nonneg_right (mul_le_mul_of_nonneg_left hproduct (by positivity)) (by
+          positivity)
       _ = (B + K) * G * x / (L * j) := by field_simp
       _ ≤ (B + K) * G * x / L := div_le_div_of_nonneg_left (by positivity) hL
         (by nlinarith : L ≤ L * j)

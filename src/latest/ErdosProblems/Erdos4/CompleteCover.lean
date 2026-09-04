@@ -26,11 +26,13 @@ theorem exists_cover_with_extra (sieve : Finset ℕ) [∀ l : sieve, Fact (l : �
     (hdisjoint : Disjoint sieve sources) (hfresh : Disjoint (sieve ∪ sources) reserve)
     (hbudget : UnitFourier.unitDensity (fun l : sieve => (l : ℕ)) *
       (∑ q ∈ targets, mean (fun l : sieve => (l : ℕ)) q
-        (ConditionalCovering.miss (fun l : sieve => (l : ℕ)) h sources Y μ q)) + extra.card < reserve.card + 1) :
+        (ConditionalCovering.miss (fun l : sieve => (l : ℕ)) h sources Y μ q)) + extra.card <
+          reserve.card + 1) :
     ∃ cover : Erdos4.PartialResidueCover (targets ∪ extra),
       cover.primes = (sieve ∪ sources) ∪ reserve := by
   classical
-  obtain ⟨a, choice, hcount⟩ := exists_choices (fun l : sieve => (l : ℕ)) h sources targets Y μ hY hμ
+  obtain ⟨a, choice, hcount⟩ := exists_choices (fun l : sieve => (l : ℕ)) h sources targets Y
+    μ hY hμ
   let missed := uncovered (fun l : sieve => (l : ℕ)) h sources targets Y (a, choice)
   have hcard : (missed ∪ extra).card ≤ reserve.card := by
     have hsum : ((missed ∪ extra).card : ℝ) ≤ (missed.card : ℝ) + extra.card := by
@@ -38,14 +40,16 @@ theorem exists_cover_with_extra (sieve : Finset ℕ) [∀ l : sieve, Fact (l : �
     have hh := hsum.trans (add_le_add hcount le_rfl) |>.trans_lt hbudget
     have hn : (missed ∪ extra).card < reserve.card + 1 := by exact_mod_cast hh
     omega
-  obtain ⟨left, hleft⟩ := exists_cover_of_choices sieve h sources targets Y hprime hdisjoint a choice
+  obtain ⟨left, hleft⟩ := exists_cover_of_choices sieve h sources targets Y hprime hdisjoint a
+    choice
   obtain ⟨right, hright⟩ := Erdos4.PartialResidueCover.exists_of_card_le hreserve hcard
   have hd : Disjoint left.primes right.primes := by simpa only [hleft, hright] using hfresh
   have hsub : missed ⊆ targets := Finset.filter_subset _ _
   have hset : (targets \ missed) ∪ (missed ∪ extra) = targets ∪ extra := by
     rw [← Finset.union_assoc, Finset.sdiff_union_of_subset hsub]
   refine ⟨(left.union right hd).reindex hset, ?_⟩
-  simp only [Erdos4.PartialResidueCover.reindex_primes, Erdos4.PartialResidueCover.union, hleft, hright]
+  simp only [Erdos4.PartialResidueCover.reindex_primes, Erdos4.PartialResidueCover.union,
+    hleft, hright]
 
 theorem zero_random_disjoint (w z x : ℕ) : Disjoint (zeroPrimes w z x) (primeInterval w z) := by
   apply Finset.disjoint_left.mpr
@@ -134,7 +138,8 @@ theorem exists_ray_cover_of_budget (a D r : ℕ) (hD : 1 ≤ D) (hr : 1 ≤ r)
     · exact (zero_bounded hwbase p hp).trans (base_le_frontier a r)
     · rcases Finset.mem_union.mp hp with hp | hp
       · rcases Finset.mem_union.mp hp with hp | hp
-        · exact ((mem_primeInterval.mp hp).2.2.trans (smooth_le_base a r)).trans (base_le_frontier a r)
+        · exact ((mem_primeInterval.mp hp).2.2.trans (smooth_le_base a r)).trans
+            (base_le_frontier a r)
         · exact (source_range a r hp).2.2
       · have hh := (reserve_range a r hp).2.2
         change p ≤ 256 * base a r

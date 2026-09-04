@@ -7,12 +7,14 @@ open scoped BigOperators
 
 namespace Erdos4.FGKMT
 
-open Classical AffineTuples TupleCollisionMass ConditionalTupleMoments TupleSurvivalBounds
+open AffineTuples TupleCollisionMass ConditionalTupleMoments TupleSurvivalBounds
 
 variable {P : Type*} [Fintype P] [DecidableEq P]
     (ell : P → ℕ) [∀ l, Fact (ell l).Prime] {k : ℕ}
 
+omit [DecidableEq P] in
 theorem sieve_unitDensity_le_one : UnitFourier.unitDensity ell ≤ 1 := by
+  classical
   unfold UnitFourier.unitDensity
   apply Finset.prod_le_one
   · intro l _

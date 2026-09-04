@@ -1,11 +1,13 @@
 import ErdosProblems.Erdos4.Base
 import Mathlib.Data.Nat.Find
 
-/-! The finite maxima in the manuscript: the longest prime-residue cover and the largest prime gap. -/
+/-! The finite maxima in the manuscript: the longest prime-residue cover and the largest prime
+  gap. -/
 
 namespace Erdos4.Tilted
 
-theorem residueCover_length_lt_modulus {y : ℕ} (cover : Erdos4.ResidueCover y) : y < cover.modulus := by
+theorem residueCover_length_lt_modulus {y : ℕ} (cover : Erdos4.ResidueCover y) : y <
+    cover.modulus := by
   classical
   let b : ℕ := Nat.chineseRemainderOfFinset cover.residue id cover.primes
     (fun p hp => (cover.prime p hp).ne_zero) cover.pairwise_coprime
@@ -78,7 +80,8 @@ theorem maximumCoverLength_spec (X : ℝ) : BoundedCover ⌊X⌋₊ (maximumCove
   classical
   exact Nat.findGreatest_spec (Nat.zero_le _) (boundedCover_zero ⌊X⌋₊)
 
-theorem le_maximumCoverLength {X : ℝ} {y : ℕ} (h : BoundedCover ⌊X⌋₊ y) : y ≤ maximumCoverLength X := by
+theorem le_maximumCoverLength {X : ℝ} {y : ℕ} (h : BoundedCover ⌊X⌋₊ y) : y ≤
+    maximumCoverLength X := by
   classical
   exact Nat.le_findGreatest (boundedCover_lt_primorial h).le h
 
@@ -88,7 +91,8 @@ theorem maximumCoverLength_lt_primorial (X : ℝ) : maximumCoverLength X < primo
 open Classical in
 noncomputable def maximumPrimeGap (T : ℝ) : ℕ :=
   (Finset.range (⌊T⌋₊ + 1)).sup (fun n =>
-    if (Nat.nth Nat.Prime (n + 1) : ℝ) ≤ T then Nat.nth Nat.Prime (n + 1) - Nat.nth Nat.Prime n else 0)
+    if (Nat.nth Nat.Prime (n + 1) : ℝ) ≤ T then Nat.nth Nat.Prime (n + 1) - Nat.nth Nat.Prime
+      n else 0)
 
 theorem prime_gap_le_maximum (T : ℝ) (n : ℕ) (hT : (Nat.nth Nat.Prime (n + 1) : ℝ) ≤ T) :
     (Nat.nth Nat.Prime (n + 1) : ℝ) - Nat.nth Nat.Prime n ≤ (maximumPrimeGap T : ℝ) := by
@@ -99,7 +103,8 @@ theorem prime_gap_le_maximum (T : ℝ) (n : ℕ) (hT : (Nat.nth Nat.Prime (n + 1
     have hh := Nat.le_floor hT
     exact Finset.mem_range.mpr (by omega)
   have hh := Finset.le_sup (f := fun k =>
-    if (Nat.nth Nat.Prime (k + 1) : ℝ) ≤ T then Nat.nth Nat.Prime (k + 1) - Nat.nth Nat.Prime k else 0) hindex
+    if (Nat.nth Nat.Prime (k + 1) : ℝ) ≤ T then Nat.nth Nat.Prime (k + 1) - Nat.nth Nat.Prime
+      k else 0) hindex
   simp only [if_pos hT] at hh
   have hnat : Nat.nth Nat.Prime n ≤ Nat.nth Nat.Prime (n + 1) :=
     (Nat.nth_monotone Nat.infinite_setOfPred_prime) (Nat.le_succ n)

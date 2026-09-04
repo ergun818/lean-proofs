@@ -26,7 +26,8 @@ theorem composite_not_sieve {x p : ℕ} (hp : p ∈ compositeColors x) : p ∉ s
   intro hq
   exact (not_le_of_gt (mem_compositeColors.mp hp).2.1) (sievePrimeValue_le x ⟨p, hq⟩)
 
-theorem composite_not_source {x p : ℕ} (hp : p ∈ compositeColors x) : p ∉ growingSourcePrimes x := by
+theorem composite_not_source {x p : ℕ} (hp : p ∈ compositeColors x) : p ∉ growingSourcePrimes
+    x := by
   intro hq
   exact (not_le_of_gt (mem_compositeColors.mp hp).2.1) (mem_growingSourcePrimes.mp hq).2.2
 
@@ -64,7 +65,8 @@ theorem frontierResidue_small {x : ℕ} (hw : smallCutoff x ≤ sieveCutoff x) (
 
 open Classical in
 noncomputable def frontierRemainder (c : ℝ) (x : ℕ) (a : SieveState x)
-    (b : ∀ p : growingSourcePrimes x, ZMod p.val) (d : ∀ p : compositeColors x, ZMod p.val) : Finset ℕ :=
+    (b : ∀ p : growingSourcePrimes x, ZMod p.val) (d : ∀ p : compositeColors x, ZMod p.val) :
+      Finset ℕ :=
   (Finset.Ioc x (gapTarget c x)).filter (fun n =>
     ∀ p ∈ (16 * x).primesLE, ¬n ≡ frontierResidue x a b d p [MOD p])
 
@@ -73,7 +75,8 @@ theorem frontierRemainder_subset {c : ℝ} {x : ℕ} (hw : smallCutoff x ≤ sie
     (d : ∀ p : compositeColors x, ZMod p.val) :
     frontierRemainder c x a b d ⊆
       (compositeRemainder c x a d ∪
-        (sourceSurvivors (growingSourcePrimes x) (primeTargets c x) (primeSurvivors c x a) b).image Subtype.val) ∪
+        (sourceSurvivors (growingSourcePrimes x) (primeTargets c x) (primeSurvivors c x a)
+          b).image Subtype.val) ∪
       roughNonsquarefree (gapTarget c x) (smallCutoff x) := by
   classical
   intro n hn

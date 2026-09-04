@@ -49,7 +49,8 @@ theorem window_density_eq_ratio {w z : ℕ} (hwz : w ≤ z) :
 theorem exists_window_density_bounds :
     ∃ c C : ℝ, 0 < c ∧ 0 < C ∧ ∀ w z : ℕ, 2 ≤ w → w ≤ z →
       c * Real.log w / Real.log z ≤ UnitFourier.unitDensity (fun p : primeWindow w z => (p : ℕ)) ∧
-      UnitFourier.unitDensity (fun p : primeWindow w z => (p : ℕ)) ≤ C * Real.log w / Real.log z := by
+      UnitFourier.unitDensity (fun p : primeWindow w z => (p : ℕ)) ≤ C * Real.log w / Real.log
+        z := by
   obtain ⟨c₀, hc₀, hlower⟩ := weak_mertens_third_lower_all
   obtain ⟨C₀, hC₀, hupper⟩ := weak_mertens_third_upper_all
   refine ⟨c₀ / C₀, C₀ / c₀, div_pos hc₀ hC₀, div_pos hC₀ hc₀, ?_⟩

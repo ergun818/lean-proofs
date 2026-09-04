@@ -59,7 +59,8 @@ theorem total_rootCapLoss_pointwise (ν : FiniteLaw Ω) {C : Finset ℕ}
     (hparts : ∀ p, ((P p).parts.card : ℝ) ≤ B) (o : Ω) :
     (∑ v : C, partitionRootCapLoss ν P hC R v o) ≤
       Q * K * B * (uniformLabelLaw I).mean (fun p =>
-        if 2 < partitionNormalizer ν (P p) hC R o then partitionNormalizer ν (P p) hC R o else 0) := by
+        if 2 < partitionNormalizer ν (P p) hC R o then partitionNormalizer ν (P p) hC R o else
+          0) := by
   have heq : (∑ v : C, partitionRootCapLoss ν P hC R v o) =
       (uniformLabelLaw I).mean (fun p => ∑ v : C,
         ν.prob (R v.val) * partitionLostWeight ν (P p) hC R v o) := by
@@ -94,10 +95,12 @@ theorem total_rootCapLoss_mean_le (ν : FiniteLaw Ω) {C : Finset ℕ}
   rw [← FiniteLaw.mean_finset_sum]
   calc
     _ ≤ ν.mean (fun o => Q * K * B * (uniformLabelLaw I).mean (fun p =>
-        if 2 < partitionNormalizer ν (P p) hC R o then partitionNormalizer ν (P p) hC R o else 0)) :=
+        if 2 < partitionNormalizer ν (P p) hC R o then partitionNormalizer ν (P p) hC R o else
+          0)) :=
       ν.mean_mono (total_rootCapLoss_pointwise ν P hC R hQ hB hq hsize hparts)
     _ = Q * K * B * (uniformLabelLaw I).mean (fun p => ν.mean (fun o =>
-        if 2 < partitionNormalizer ν (P p) hC R o then partitionNormalizer ν (P p) hC R o else 0)) := by
+        if 2 < partitionNormalizer ν (P p) hC R o then partitionNormalizer ν (P p) hC R o else
+          0)) := by
       rw [FiniteLaw.mean_const_mul, mean_swap]
     _ ≤ Q * K * B * (2 * δ) := by
       apply mul_le_mul_of_nonneg_left _ (by positivity)

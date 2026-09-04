@@ -46,7 +46,8 @@ theorem conductor_multiplier_mass_le (x Q d : ℕ) (hd : 0 < d) (hdQ : d ≤ Q)
     calc
       _ ≤ ∑ _ψ : primitiveCharacters d, E := Finset.sum_le_sum (fun ψ _hψ => hpoint ψ)
       _ = (Fintype.card (primitiveCharacters d) : ℝ) * E := by simp
-      _ ≤ _ := mul_le_mul_of_nonneg_right (by exact_mod_cast card_primitiveCharacters_le_totient hd) hE
+      _ ≤ _ := mul_le_mul_of_nonneg_right (by
+        exact_mod_cast card_primitiveCharacters_le_totient hd) hE
   have hprefix : (∑ k ∈ Finset.Ioc 0 (Q / d), (k.totient : ℝ)⁻¹) ≤
       4 * (1 + Real.log ((Q / d : ℕ) : ℝ)) := by
     simpa [reciprocalTotientPrefix] using reciprocalTotientPrefix_le_four_mul_one_add_log hQdiv
@@ -87,7 +88,8 @@ theorem excisedSmallMass_le_of_endpoint (x Q R B : ℕ) {E : ℝ} (hE : 0 ≤ E)
       have hc := Finset.card_filter_le (Finset.Ioc 1 (min R Q)) (fun d => d.Coprime B)
       rw [Nat.card_Ioc] at hc
       have hm := min_le_left R Q
-      exact_mod_cast (show ((Finset.Ioc 1 (min R Q)).filter (fun d => d.Coprime B)).card ≤ R by omega)
+      exact_mod_cast (show ((Finset.Ioc 1 (min R Q)).filter (fun d => d.Coprime B)).card ≤ R
+        by omega)
     _ = _ := by ring
 
 end Erdos4.FGKMT

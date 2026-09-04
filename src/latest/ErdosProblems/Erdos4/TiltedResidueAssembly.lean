@@ -26,7 +26,8 @@ theorem cover_with_fresh_primes (S P R : Finset ℕ) (a : ℕ → ℕ)
   have hd : Disjoint left.primes right.primes := by simpa only [hright] using hdis
   have heq : (S \ missed) ∪ missed = S := Finset.sdiff_union_of_subset (Finset.filter_subset _ _)
   exact ⟨(left.union right hd).reindex heq, by
-    simp only [Erdos4.PartialResidueCover.reindex_primes, Erdos4.PartialResidueCover.union, hright, left]⟩
+    simp only [Erdos4.PartialResidueCover.reindex_primes, Erdos4.PartialResidueCover.union,
+      hright, left]⟩
 
 noncomputable def shift_interval_cover {x Y : ℕ}
     (cover : Erdos4.PartialResidueCover (Finset.Ioc x Y)) : Erdos4.ResidueCover (Y - x) where
@@ -63,7 +64,8 @@ theorem eventually_roughNonsquarefree_small {c ε : ℝ} (hc : 0 < c) (hε : 0 <
     nlinarith [mul_le_mul_of_nonneg_left hpow hε.le]
   calc
     _ ≤ (gapTarget c x : ℝ) / smallCutoff x := roughNonsquarefree_card_le hwpos _
-    _ ≤ ((x : ℝ) * L) / smallCutoff x := div_le_div_of_nonneg_right hY.2.2.2.2.2.2.2.1 (Nat.cast_nonneg _)
+    _ ≤ ((x : ℝ) * L) / smallCutoff x := div_le_div_of_nonneg_right hY.2.2.2.2.2.2.2.1
+      (Nat.cast_nonneg _)
     _ ≤ ((x : ℝ) * L) / L ^ (4 : ℕ) := div_le_div_of_nonneg_left (by positivity) (by positivity) hW
     _ = (x : ℝ) / L ^ (3 : ℕ) := by field_simp
     _ ≤ (ε * L ^ (2 : ℕ)) * (x : ℝ) / L ^ (3 : ℕ) := by
@@ -90,7 +92,8 @@ theorem exists_tilted_interval_cover :
   have hLpos : 0 < Real.log (x : ℝ) := by linarith [hb.1]
   obtain ⟨primeCost, _, hprimeMean, hprimeChoice⟩ := hprime hτ
   obtain ⟨compCost, _, hcompMean, hcompChoice⟩ := hcomp hτ
-  obtain ⟨a, _, ha⟩ := (actualSieveLaw x hτ).exists_support_le_mean (fun a => compCost a + primeCost a)
+  obtain ⟨a, _, ha⟩ := (actualSieveLaw x hτ).exists_support_le_mean (fun a => compCost a +
+    primeCost a)
   rw [FiniteLaw.mean_add] at ha
   have hsum : compCost a + primeCost a ≤ 2 * ε * (x : ℝ) / Real.log (x : ℝ) :=
     ha.trans ((add_le_add hcompMean hprimeMean).trans_eq (by ring))
@@ -99,7 +102,8 @@ theorem exists_tilted_interval_cover :
   have hcard : (frontierRemainder c x a b d).card ≤ (reserveColors x).card := by
     have hh : ((frontierRemainder c x a b d).card : ℝ) ≤
         (compositeRemainder c x a d).card +
-          (sourceSurvivors (growingSourcePrimes x) (primeTargets c x) (primeSurvivors c x a) b).card +
+          (sourceSurvivors (growingSourcePrimes x) (primeTargets c x) (primeSurvivors c x a)
+            b).card +
           (roughNonsquarefree (gapTarget c x) (smallCutoff x)).card := by
       exact_mod_cast frontierRemainder_card_le hw.2.1 a b d
     have htotal : ((frontierRemainder c x a b d).card : ℝ) ≤
@@ -111,7 +115,8 @@ theorem exists_tilted_interval_cover :
           add_le_add hsum le_rfl
         _ = 3 * ε * (x : ℝ) / Real.log (x : ℝ) := by ring
         _ ≤ _ := div_le_div_of_nonneg_right
-          (mul_le_mul_of_nonneg_right (by dsimp [ε]; linarith : 3 * ε ≤ Real.log 2) (Nat.cast_nonneg x)) hLpos.le
+          (mul_le_mul_of_nonneg_right (by
+            dsimp [ε]; linarith : 3 * ε ≤ Real.log 2) (Nat.cast_nonneg x)) hLpos.le
     exact_mod_cast htotal.trans hcolors.2.2.2
   have hfresh : Disjoint ((16 * x).primesLE) (reserveColors x) := by
     apply Finset.disjoint_left.mpr

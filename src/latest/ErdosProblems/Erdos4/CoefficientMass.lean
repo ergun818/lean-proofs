@@ -119,7 +119,8 @@ theorem excessive_mass_energy_le {m : ℝ} (hm : 1 ≤ m) {R : ℕ} (hR : 2 ≤ 
   calc
     (∑ a ∈ (Finset.univ : Finset (P → Option (Fin k))).filter (fun a => η < reciprocalMass ell a),
         coefficient m R ell a ^ 2 * η) ≤
-        ∑ a ∈ (Finset.univ : Finset (P → Option (Fin k))).filter (fun a => η < reciprocalMass ell a),
+        ∑ a ∈ (Finset.univ : Finset (P → Option (Fin k))).filter (fun a => η < reciprocalMass
+          ell a),
           coefficient m R ell a ^ 2 * reciprocalMass ell a := by
       apply Finset.sum_le_sum
       intro a ha

@@ -7,7 +7,7 @@ open scoped BigOperators
 
 namespace Erdos4.FGKMT
 
-open Filter Classical
+open Filter
 
 theorem prime_summatory_nat_eq (f : ℕ → ℝ) (n : ℕ) :
     prime_summatory f 1 (n : ℝ) = ∑ p ∈ n.primesLE, f p := by

@@ -6,7 +6,7 @@ import ErdosProblems.Erdos4.FGKMTReservePrimes
 
 namespace Erdos4.FGKMT
 
-open Filter Classical ChebyshevIntervals
+open Filter ChebyshevIntervals
 
 theorem exists_growing_interval_cover :
     ∃ (c : ℝ) (K : ℕ), 0 < c ∧ 1 ≤ K ∧ ∀ᶠ x : ℕ in atTop,
@@ -31,12 +31,14 @@ theorem exists_growing_interval_cover :
   let missed := remainingPrimeTargets sieve sources targets Y a b
   have hLpos : 0 < Real.log (x : ℝ) := lt_of_lt_of_le (by norm_num) hlogs.1
   have hmissNat : missed.card ≤
-      (sourceSurvivors sources targets (initialSurvivors (growingRandomValue x) Y targets a) b).card := by
+      (sourceSurvivors sources targets (initialSurvivors (growingRandomValue x) Y targets a)
+        b).card := by
     dsimp only [missed, remainingPrimeTargets]
     exact Finset.card_image_le
   have hmiss' : (missed.card : ℝ) ≤ C * x / Real.log (x : ℝ) := by
     have hh : (missed.card : ℝ) ≤
-        ((sourceSurvivors sources targets (initialSurvivors (growingRandomValue x) Y targets a) b).card : ℝ) := by
+        ((sourceSurvivors sources targets (initialSurvivors (growingRandomValue x) Y targets
+          a) b).card : ℝ) := by
       exact_mod_cast hmissNat
     exact hh.trans hmiss
   have hsmooth' : (smooth.card : ℝ) ≤ (x : ℝ) / Real.log (x : ℝ) := by

@@ -6,7 +6,6 @@ open scoped BigOperators
 
 namespace Erdos4.FGKMT
 
-open Classical
 
 variable {V I : Type*} [Fintype V] [DecidableEq V] [Fintype I] [DecidableEq I]
 
@@ -19,49 +18,60 @@ noncomputable def equalizedRounds (μ : ℕ → I → FiniteLaw (Finset V))
       (mul_pos (neg_pos.mpr (Real.log_neg hρ0 hρ1)) (pow_pos hρ0 j)) (hdegree j hj)
     else fun _ => FiniteLaw.dirac ∅
 
+omit [DecidableEq I] in
 theorem equalizedRounds_degree (μ : ℕ → I → FiniteLaw (Finset V))
     (m : ℕ) (ρ : ℝ) (hρ0 : 0 < ρ) (hρ1 : ρ < 1)
     (hdegree : ∀ j < m, ∀ v, (-Real.log ρ) * ρ ^ j ≤ vertexDegree (μ j) v)
     (j : ℕ) (hj : j < m) (v : V) :
     vertexDegree (equalizedRounds μ m ρ hρ0 hρ1 hdegree j) v = (-Real.log ρ) * ρ ^ j := by
+  classical
   rw [equalizedRounds, dif_pos hj]
   exact equalizedFamily_degree _ _ _ _ _
 
+omit [DecidableEq I] in
 theorem equalizedRounds_marginal_le (μ : ℕ → I → FiniteLaw (Finset V))
     (m : ℕ) (ρ : ℝ) (hρ0 : 0 < ρ) (hρ1 : ρ < 1)
     (hdegree : ∀ j < m, ∀ v, (-Real.log ρ) * ρ ^ j ≤ vertexDegree (μ j) v)
     (j : ℕ) (hj : j < m) (i : I) (v : V) :
     (equalizedRounds μ m ρ hρ0 hρ1 hdegree j i).prob (fun e => v ∈ e) ≤
       (μ j i).prob (fun e => v ∈ e) := by
+  classical
   rw [equalizedRounds, dif_pos hj]
   exact equalizedFamily_marginal_le _ _ _ _ _ _
 
+omit [DecidableEq I] in
 theorem equalizedRounds_pair_le (μ : ℕ → I → FiniteLaw (Finset V))
     (m : ℕ) (ρ : ℝ) (hρ0 : 0 < ρ) (hρ1 : ρ < 1)
     (hdegree : ∀ j < m, ∀ v, (-Real.log ρ) * ρ ^ j ≤ vertexDegree (μ j) v)
     (j : ℕ) (hj : j < m) (v w : V) :
     pairDegree (equalizedRounds μ m ρ hρ0 hρ1 hdegree j) v w ≤ pairDegree (μ j) v w := by
+  classical
   rw [equalizedRounds, dif_pos hj]
   exact equalizedFamily_pairDegree_le _ _ _ _ _ _
 
+omit [DecidableEq I] in
 theorem equalizedRounds_support (μ : ℕ → I → FiniteLaw (Finset V))
     (m : ℕ) (ρ : ℝ) (hρ0 : 0 < ρ) (hρ1 : ρ < 1)
     (hdegree : ∀ j < m, ∀ v, (-Real.log ρ) * ρ ^ j ≤ vertexDegree (μ j) v)
     (j : ℕ) (hj : j < m) (i : I) (f : Finset V)
     (hf : 0 < (equalizedRounds μ m ρ hρ0 hρ1 hdegree j i).weight f) :
     ∃ e, 0 < (μ j i).weight e ∧ f ⊆ e := by
+  classical
   rw [equalizedRounds, dif_pos hj] at hf
   exact equalizedFamily_support _ _ _ _ _ _ hf
 
+omit [DecidableEq I] [Fintype V] in
 theorem coveredThrough_mono (choice choice' : ℕ → I → Finset V) (m : ℕ)
     (hsub : ∀ j < m, ∀ i, choice j i ⊆ choice' j i) :
     coveredThrough choice m ⊆ coveredThrough choice' m := by
+  classical
   intro v hv
   obtain ⟨j, hj, hi⟩ := Finset.mem_biUnion.mp hv
   obtain ⟨i, _, hvi⟩ := Finset.mem_biUnion.mp hi
   exact Finset.mem_biUnion.mpr ⟨j, hj,
     Finset.mem_biUnion.mpr ⟨i, Finset.mem_univ i, hsub j (Finset.mem_range.mp hj) i hvi⟩⟩
 
+omit [DecidableEq I] in
 theorem enlarge_legal_cover (μ ν : ℕ → I → FiniteLaw (Finset V))
     (m : ℕ) (choice : ℕ → I → Finset V)
     (hlegal : ∀ j < m, ∀ i, choice j i = ∅ ∨ 0 < (ν j i).weight (choice j i))
@@ -70,6 +80,7 @@ theorem enlarge_legal_cover (μ ν : ℕ → I → FiniteLaw (Finset V))
     ∃ choice' : ℕ → I → Finset V,
       (∀ j < m, ∀ i, choice' j i = ∅ ∨ 0 < (μ j i).weight (choice' j i)) ∧
         coveredThrough choice m ⊆ coveredThrough choice' m := by
+  classical
   have hex : ∀ j i, ∃ e : Finset V, j < m →
       choice j i ⊆ e ∧ (e = ∅ ∨ 0 < (μ j i).weight e) := by
     intro j i
@@ -83,6 +94,7 @@ theorem enlarge_legal_cover (μ ν : ℕ → I → FiniteLaw (Finset V))
   exact ⟨choice', fun j hj i => (hchoice j i hj).2,
     coveredThrough_mono choice choice' m (fun j hj i => (hchoice j i hj).1)⟩
 
+omit [DecidableEq I] in
 theorem lower_degree_covering (μ : ℕ → I → FiniteLaw (Finset V))
     {m r : ℕ} (hr : 1 ≤ r) {ρ δ : ℝ} (hρ0 : 0 < ρ) (hρ1 : ρ < 1) (hδ : 0 ≤ δ)
     (hdegree : ∀ j < m, ∀ v, (-Real.log ρ) * ρ ^ j ≤ vertexDegree (μ j) v)
@@ -97,6 +109,7 @@ theorem lower_degree_covering (μ : ℕ → I → FiniteLaw (Finset V))
       (∀ j < m, ∀ i, choice j i = ∅ ∨ 0 < (μ j i).weight (choice j i)) ∧
         ((Finset.univ \ coveredThrough choice m).card : ℝ) ≤
           2 * (Fintype.card V : ℝ) * ρ ^ m := by
+  classical
   let ν := equalizedRounds μ m ρ hρ0 hρ1 hdegree
   have hνdegree : ∀ j < m, ∀ v, vertexDegree (ν j) v = (-Real.log ρ) * ρ ^ j :=
     equalizedRounds_degree μ m ρ hρ0 hρ1 hdegree

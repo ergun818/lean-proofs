@@ -9,7 +9,7 @@ open scoped BigOperators
 
 namespace Erdos4.FGKMT
 
-open Classical FiniteCharacterSupport ProductCharacterEncoding
+open FiniteCharacterSupport ProductCharacterEncoding
 open ProductFourierInversion AnchoredFourierAverage
 
 variable {P Q : Type*} [Fintype P] [DecidableEq P] [Fintype Q] [DecidableEq Q] {k : ℕ}
@@ -25,6 +25,7 @@ theorem aggregateUnitWeight_truncated_inversion (b : ℝ) (R M : ℕ)
         ∑ chi : smallCharacters (Sum.elim ell₀ ell₁) M,
           aggregateUnitFourier ell₀ ell₁ b R h₀ h₁ chi.val *
             ProductFourierInversion.value (Sum.elim ell₀ ell₁) chi.val u := by
+  classical
   let f : (∀ s, DirichletCharacter ℂ (Sum.elim ell₀ ell₁ s)) → ℂ :=
     fun chi => aggregateUnitFourier ell₀ ell₁ b R h₀ h₁ chi *
       ProductFourierInversion.value (Sum.elim ell₀ ell₁) chi u
@@ -59,14 +60,16 @@ theorem aggregateUnitWeight_truncated_inversion (b : ℝ) (R M : ℕ)
 
 noncomputable def highMaskedCoefficient (b : ℝ) (R M : ℕ)
     (h₀ : ∀ p, Fin k → ZMod (ell₀ p)) (h₁ : ∀ q, Fin k → ZMod (ell₁ q))
-    (chi : smallCharacters (Sum.elim ell₀ ell₁) M) : ℂ :=
-  if (fun q => chi.val (.inr q)) = (fun _ => 1) then 0
+    (chi : smallCharacters (Sum.elim ell₀ ell₁) M) : ℂ := by
+  classical
+  exact if (fun q => chi.val (.inr q)) = (fun _ => 1) then 0
   else aggregateUnitFourier ell₀ ell₁ b R h₀ h₁ chi.val
 
 noncomputable def lowMaskedCoefficient (b : ℝ) (R M : ℕ)
     (h₀ : ∀ p, Fin k → ZMod (ell₀ p)) (h₁ : ∀ q, Fin k → ZMod (ell₁ q))
-    (chi : smallCharacters (Sum.elim ell₀ ell₁) M) : ℂ :=
-  if (fun q => chi.val (.inr q)) = (fun _ => 1)
+    (chi : smallCharacters (Sum.elim ell₀ ell₁) M) : ℂ := by
+  classical
+  exact if (fun q => chi.val (.inr q)) = (fun _ => 1)
   then aggregateUnitFourier ell₀ ell₁ b R h₀ h₁ chi.val else 0
 
 theorem high_add_low_coefficient (b : ℝ) (R M : ℕ)

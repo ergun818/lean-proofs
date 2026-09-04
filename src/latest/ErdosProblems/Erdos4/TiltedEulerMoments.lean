@@ -60,7 +60,8 @@ theorem mean_prod_one_add_le {Ω α : Type*} [Fintype Ω] [DecidableEq α]
       apply Finset.sum_le_sum
       intro T hT
       apply mul_le_mul_of_nonneg_left (hprob T hT)
-      exact Finset.prod_nonneg (fun p hp => hf p ((Finset.mem_powerset.mp (Finset.mem_of_mem_erase hT)) hp))
+      exact Finset.prod_nonneg (fun p hp => hf p ((Finset.mem_powerset.mp
+        (Finset.mem_of_mem_erase hT)) hp))
     _ = D * ∑ T ∈ S.powerset.erase ∅, ∏ p ∈ T, (f p * g p) := by
       rw [Finset.mul_sum]
       apply Finset.sum_congr rfl

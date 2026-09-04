@@ -54,7 +54,8 @@ theorem mean_hitting_product (h : Fin k → ℕ) (p p' Y : ℕ)
 theorem mean_mixed_product (h : Fin k → ℕ) (p Y : ℕ) (μ : ℕ → ℝ) (q : ℕ) :
     mean ell q (fun a => tupleMass ell h p Y μ a * hittingMass ell h p Y μ q a) =
       ∑ m ∈ Finset.Icc 1 Y, (if q ∈ tuple h p m then μ m else 0) *
-        ∑ n ∈ Finset.Icc 1 Y, μ n * mean ell q (fun a => indicator ell a (tuple h p n ∪ tuple h p m)) := by
+        ∑ n ∈ Finset.Icc 1 Y, μ n * mean ell q (fun a => indicator ell a (tuple h p n ∪ tuple
+          h p m)) := by
   rw [show (fun a => tupleMass ell h p Y μ a * hittingMass ell h p Y μ q a) =
       (fun a => (∑ n ∈ Finset.Icc 1 Y, μ n * indicator ell a (tuple h p n)) *
         ∑ m ∈ Finset.Icc 1 Y, (if q ∈ tuple h p m then μ m else 0) *
@@ -110,13 +111,15 @@ theorem mixed_product_le (h : Fin k → ℕ) (hh : Function.Injective h)
           L + if ¬Disjoint (tuple h p n) (tuple h p m) then 1 else 0 := by
       intro n hn
       by_cases hd : Disjoint (tuple h p n) (tuple h p m)
-      · simpa only [not_false_eq_true, not_true_eq_false, hd, if_false, add_zero] using hlocal n hn m hm hqm hd
+      · simpa only [not_false_eq_true, not_true_eq_false, hd, if_false, add_zero] using hlocal
+          n hn m hm hqm hd
       · rw [if_pos hd]
         exact (mean_indicator_le_one ell q _).trans (by linarith)
     have hcollision := meeting_mass_le h p Y (tuple h p m) μ hα hμ
     rw [card_tuple h hh hp m] at hcollision
     calc
-      _ ≤ ∑ n ∈ Finset.Icc 1 Y, μ n * (L + if ¬Disjoint (tuple h p n) (tuple h p m) then 1 else 0) :=
+      _ ≤ ∑ n ∈ Finset.Icc 1 Y, μ n * (L + if ¬Disjoint (tuple h p n) (tuple h p m) then 1
+        else 0) :=
         Finset.sum_le_sum (fun n hn => mul_le_mul_of_nonneg_left (hpoint n hn) (hμ0 n hn))
       _ = L + ∑ n ∈ Finset.Icc 1 Y, if ¬Disjoint (tuple h p n) (tuple h p m) then μ n else 0 := by
         simp only [mul_add, Finset.sum_add_distrib, ← Finset.sum_mul, hμsum, one_mul]

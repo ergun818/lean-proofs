@@ -92,7 +92,8 @@ theorem eventually_composite_block_variance {c : ℝ} (hc : 0 < c) :
     exact propext (blockEvent_survives _ _ _)
   change (actualSieveLaw x hτ).mean (fun a =>
     (eventNormalizer (actualSieveLaw x hτ) σ
-      (fun E : P.parts => blockEvent (fun n a => Survives (sievePrimeValue x) a {n}) E.val) a - 1) ^ 2) ≤ _
+      (fun E : P.parts => blockEvent (fun n a => Survives (sievePrimeValue x) a {n}) E.val) a
+        - 1) ^ 2) ≤ _
   rw [hevents]
   exact hfinal
 

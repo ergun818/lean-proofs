@@ -55,6 +55,7 @@ theorem cappedEdgeLaw_support (ν μ : FiniteLaw (Finset V)) (W E : Finset V)
     rw [← prob_eq_weight, cappedLabelLaw_some] at he
     simp only [hz, zero_mul, zero_div, ite_self, lt_self_iff_false] at he
 
+omit [DecidableEq V] in
 theorem cappedEdgeLaw_event_le (ν μ : FiniteLaw (Finset V)) (W : Finset V)
     (P : Finset V → Prop) (hP : ¬P ∅) {B : ℝ} (hB : 0 ≤ B)
     (hinv : ∀ E, 0 < μ.weight E → 1 / survival ν E ≤ B) :
@@ -129,6 +130,7 @@ theorem cappedEdgeLaw_degree (ν : FiniteLaw (Finset V)) (μ : I → FiniteLaw (
   simp only [vertexDegree, cappedEdgeLaw_vertex, exactRawDegree, exactLostDegree,
     ← Finset.sum_div, Finset.sum_sub_distrib]
 
+omit [DecidableEq V] in
 theorem cappedEdgeLaw_pairDegree_le (ν : FiniteLaw (Finset V)) (μ : I → FiniteLaw (Finset V))
     (W : Finset V) (v w : V) {B : ℝ} (hB : 0 ≤ B)
     (hinv : ∀ i E, 0 < (μ i).weight E → 1 / survival ν E ≤ B) :

@@ -26,7 +26,8 @@ theorem coveringThreshold_pos (r A : ℕ) {κ D : ℝ} (hκ : 0 < κ) (hD : 0 �
 theorem coveringThreshold_le_half (r A : ℕ) {κ D : ℝ} (hκ : 0 < κ) (hD : 0 ≤ D) :
     coveringThreshold r A κ D ≤ 1 / 2 := by
   have hH := propagationCoefficient_ge_one r A hκ hD
-  exact one_div_le_one_div_of_le (by norm_num) (by linarith : 2 ≤ 2 * propagationCoefficient r A κ D)
+  exact one_div_le_one_div_of_le (by norm_num) (by linarith : 2 ≤ 2 * propagationCoefficient r
+    A κ D)
 
 theorem coveringThreshold_budget (r A : ℕ) {κ D : ℝ} (hκ : 0 < κ) (hD : 0 ≤ D) :
     propagationCoefficient r A κ D * coveringThreshold r A κ D ≤ 1 := by
@@ -59,6 +60,7 @@ theorem finite_covering_accuracy (μ : ℕ → I → FiniteLaw (Finset V))
     (fun j hj => iterationBudget_step r A m hκ hδ hD hτ0 hτ1 hsmall hsparse hj)
   simpa only [iterationError, Nat.sub_self, pow_zero, mul_one] using hh
 
+omit [DecidableEq I] in
 /-- One legal edge (or the empty edge) is chosen from every source.
 At most twice the model's final expected number of vertices survive. -/
 theorem finite_covering (μ : ℕ → I → FiniteLaw (Finset V))
@@ -70,6 +72,7 @@ theorem finite_covering (μ : ℕ → I → FiniteLaw (Finset V))
       (∀ j < m, ∀ i, choice j i = ∅ ∨ 0 < (μ j i).weight (choice j i)) ∧
       ((Finset.univ \ coveredThrough choice m).card : ℝ) ≤
         2 * ∑ v, modelSequence μ m v := by
+  classical
   have hτ0 := coveringThreshold_pos r A hκ hD
   have hτ1 := coveringThreshold_le_half r A hκ hD
   have hacc := finite_covering_accuracy μ hκ hδ hD hrA hτ0 hτ1

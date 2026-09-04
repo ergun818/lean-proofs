@@ -9,7 +9,7 @@ open scoped BigOperators
 
 namespace Erdos4.FGKMT
 
-open Classical RandomResidueSieve
+open RandomResidueSieve
 
 namespace FiniteLaw
 

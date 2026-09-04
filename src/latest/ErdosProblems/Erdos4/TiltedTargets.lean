@@ -68,7 +68,8 @@ theorem roughComposites_primeFactors_covered {x Y w B n : ℕ}
   obtain ⟨hxn, hnY, hnp, _, hrough⟩ := mem_roughComposites.mp hn
   intro p hp
   obtain ⟨hpprime, hpdvd, _⟩ := Nat.mem_primeFactors.mp hp
-  have hpB := rough_composite_prime_factor_le (show 0 < n by omega) hnY hnp hrough hwidth hpprime hpdvd
+  have hpB := rough_composite_prime_factor_le (show 0 < n by
+    omega) hnY hnp hrough hwidth hpprime hpdvd
   exact ⟨⟨p, mem_coordinatePrimes.mpr ⟨hpprime, hrough p hpprime hpdvd, hpB⟩⟩, rfl⟩
 
 theorem roughComposites_survival {x Y w B n : ℕ}

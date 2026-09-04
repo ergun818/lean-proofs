@@ -83,7 +83,7 @@ theorem coprimeCount_split (Y W d a : ℕ) (hW : 0 < W) (hWd : W.Coprime d) :
         by_cases hvn : v = n % W
         · subst v
           by_cases hc : n.Coprime W <;> by_cases ha : n ≡ a [MOD d] <;>
-            simp [coprime_mod, hc, ha]
+            simp [hc, ha]
         · simp [hvn]
       _ = _ := by simp [Nat.mod_lt n hW]
   unfold coprimeCount

@@ -8,7 +8,7 @@ open scoped BigOperators
 
 namespace Erdos4.FGKMT
 
-open Classical AffineTuples TupleCollisionMass ConditionalTupleMoments TupleSurvivalBounds
+open AffineTuples TupleCollisionMass ConditionalTupleMoments TupleSurvivalBounds
   RandomResidueSieve
 
 variable {P : Type*} [Fintype P] [DecidableEq P]

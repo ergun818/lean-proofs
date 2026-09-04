@@ -81,9 +81,11 @@ theorem conditional_survival (ν : FiniteLaw (Finset V)) (T F : Finset V)
   by_cases hTW : T ⊆ W <;> by_cases hFW : F ⊆ W <;>
     simp [Finset.union_subset_iff, hTW, hFW]
 
+omit [DecidableEq V] in
 theorem survival_pos_of_accurate (ν : FiniteLaw (Finset V)) (p : V → ℝ)
     (hp : ∀ v, 0 < p v) {A : ℕ} {ε : ℝ} (hε : ε < 1)
     (hacc : SurvivalAccurate ν p A ε) {T : Finset V} (hT : T.card ≤ A) : 0 < survival ν T := by
+  classical
   have hh := (abs_le.mp (hacc T hT)).1
   have hratio : 0 < survival ν T / setProduct p T := by linarith
   exact ((div_pos_iff.mp hratio).resolve_right

@@ -70,7 +70,8 @@ theorem eventually_composite_root_variance {c : ℝ} (hc : 0 < c) :
   have hη0 : 0 ≤ η := gcdTiltError_nonneg _ _ _ _ (sq_nonneg _) (sq_nonneg _)
   have hqpos := sieveLaw_singleton_pos (sievePrimeValue x) (tiltExponent x) hτ v.val
   have hπ (p : compositeColors x) :
-      0 < (actualSieveLaw x hτ).prob (fun a => Survives (sievePrimeValue x) a ((F.partition p).part v.val)) := by
+      0 < (actualSieveLaw x hτ).prob (fun a => Survives (sievePrimeValue x) a ((F.partition
+        p).part v.val)) := by
     apply sieveLaw_survival_pos
     intro l
     have hsz := F.size p _ ((F.partition p).part_mem.mpr v.property)
@@ -79,7 +80,8 @@ theorem eventually_composite_root_variance {c : ℝ} (hc : 0 < c) :
   have hrootprob (p : compositeColors x) :
       (rootedSieveLaw (sievePrimeValue x) (tiltExponent x) hτ v.val).prob
         (fun a => Survives (sievePrimeValue x) a (T p)) =
-      (actualSieveLaw x hτ).prob (fun a => Survives (sievePrimeValue x) a ((F.partition p).part v.val)) /
+      (actualSieveLaw x hτ).prob (fun a => Survives (sievePrimeValue x) a ((F.partition
+        p).part v.val)) /
         (actualSieveLaw x hτ).prob (fun a => Survives (sievePrimeValue x) a {v.val}) := by
     rw [rootedSieveLaw_survival_insert]
     simp only [T, F.companion_apply, insert_rootCompanions _ v.property]
@@ -89,7 +91,8 @@ theorem eventually_composite_root_variance {c : ℝ} (hc : 0 < c) :
     rw [hrootprob]
     calc
       _ = (actualSieveLaw x hτ).prob (fun a => Survives (sievePrimeValue x) a {v.val}) /
-          (actualSieveLaw x hτ).prob (fun a => Survives (sievePrimeValue x) a ((F.partition p).part v.val)) := by
+          (actualSieveLaw x hτ).prob (fun a => Survives (sievePrimeValue x) a ((F.partition
+            p).part v.val)) := by
         rw [one_div_div]
       _ ≤ 1 / (actualSieveLaw x hτ).prob
           (fun a => Survives (sievePrimeValue x) a ((F.partition p).part v.val)) :=

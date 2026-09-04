@@ -8,7 +8,7 @@ open scoped BigOperators
 
 namespace Erdos4.FGKMT
 
-open Classical AffineTuples TupleCollisionMass ConditionalTupleMoments TupleSurvivalBounds
+open AffineTuples TupleCollisionMass ConditionalTupleMoments TupleSurvivalBounds
 open AggregatedTupleMoments
 
 theorem full_tuple_intersection_eq_singleton {k : ℕ} (h : Fin k → ℕ)

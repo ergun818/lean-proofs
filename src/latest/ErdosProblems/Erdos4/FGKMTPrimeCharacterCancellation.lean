@@ -8,13 +8,14 @@ open scoped BigOperators
 
 namespace Erdos4.FGKMT
 
-open Classical BoundedGaps.Maynard
+open BoundedGaps.Maynard
 
 noncomputable def primeCharacterSum {q : ℕ} (χ : DirichletCharacter ℂ q) (x : ℕ) : ℂ :=
   ∑ p ∈ Nat.primesLE x, χ (p : ZMod q)
 
 theorem primeCountUpTo_eq_zmod_fiber {q : ℕ} [NeZero q] (x : ℕ) (a : ZMod q) :
-    primeCountUpTo x q a.val = ((Nat.primesLE x).filter (fun (p : ℕ) => (p : ZMod q) = a)).card := by
+    primeCountUpTo x q a.val = ((Nat.primesLE x).filter (fun (p : ℕ) => (p : ZMod q) =
+      a)).card := by
   unfold primeCountUpTo
   congr 1
   ext n
@@ -57,8 +58,9 @@ theorem norm_primeCharacterSum_le {q : ℕ} [NeZero q]
         Finset.mem_filter.mpr ⟨Finset.mem_range.mpr a.val_lt, hacop⟩
       have hd := progressionDiscrepancy_le_max (x := x) (NeZero.pos q) hres
       have heq : (primeCountUpTo x q a.val : ℂ) - (primeCountTotal x : ℂ) / (q.totient : ℂ) =
-          (((primeCountUpTo x q a.val : ℝ) - (primeCountTotal x : ℝ) / (q.totient : ℝ) : ℝ) : ℂ) := by
-        push_cast <;> rfl
+          (((primeCountUpTo x q a.val : ℝ) - (primeCountTotal x : ℝ) / (q.totient : ℝ) : ℝ) :
+            ℂ) := by
+        push_cast; rfl
       have hnorm : ‖(primeCountUpTo x q a.val : ℂ) - (primeCountTotal x : ℂ) / (q.totient : ℂ)‖ ≤
           maxProgressionDiscrepancy x q := by
         rw [heq, Complex.norm_real, Real.norm_eq_abs]
@@ -100,7 +102,9 @@ theorem norm_primeCharacterInterval_le {q : ℕ} [NeZero q]
 theorem primeDiscrepancyUpTo_le_excised {x Q B q : ℕ} (hq0 : 1 ≤ q) (hqQ : q ≤ Q)
     (hqB : q.Coprime B) : primeDiscrepancyUpTo x q ≤ excisedPrimeSum x Q B := by
   have hh := excisedPrimeSum_subset (x := x) (Q := Q) (B := B) {q}
-    (by intro n hn; have heq := Finset.mem_singleton.mp hn; subst n; exact Finset.mem_Icc.mpr ⟨hq0, hqQ⟩)
+    (by
+      intro n hn; have heq := Finset.mem_singleton.mp hn; subst n; exact Finset.mem_Icc.mpr
+        ⟨hq0, hqQ⟩)
     (by intro n hn; have heq := Finset.mem_singleton.mp hn; subst n; exact hqB)
   simpa only [Finset.sum_singleton] using hh
 

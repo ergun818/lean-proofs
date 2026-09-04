@@ -31,7 +31,8 @@ theorem source_gt_radius (a r : ℕ) {p : ℕ} (hp : p ∈ sourcePrimes a r) :
 theorem source_gt_majorant (a r : ℕ) {p : ℕ} (hp : p ∈ sourcePrimes a r) :
     primaryFrontier a r ^ 2 < p := by
   have ht : 1 ≤ primaryFrontier a r := (primaryFrontier_pos a r)
-  have hpow : primaryFrontier a r ^ 2 ≤ primaryFrontier a r ^ 5 := Nat.pow_le_pow_right ht (by norm_num)
+  have hpow : primaryFrontier a r ^ 2 ≤ primaryFrontier a r ^ 5 := Nat.pow_le_pow_right ht (by
+    norm_num)
   exact hpow.trans_lt (source_gt_radius a r hp)
 
 theorem source_reserve_disjoint (a r : ℕ) : Disjoint (sourcePrimes a r) (reservePrimes a r) := by
@@ -102,7 +103,8 @@ theorem exists_prime_supply :
         ring
       _ ≤ Real.log 2 * (16 * base a r : ℕ) / Real.log (16 * base a r : ℕ) :=
         div_le_div_of_nonneg_left (by positivity)
-          (Real.log_pos (by exact_mod_cast (show 1 < 16 * base a r by have := hsrc.1; omega))) hlogsrc
+          (Real.log_pos (by exact_mod_cast (show 1 < 16 * base a r by
+            have := hsrc.1; omega))) hlogsrc
       _ ≤ _ := by simpa only [hcard] using hsrc.2
   · rw [htarget]
     calc

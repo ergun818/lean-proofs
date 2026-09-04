@@ -33,7 +33,8 @@ theorem squarefreeHarmonicWeight_divisor {W n d : ℕ} (hdn : d ∣ n)
 theorem rationalSquare_divisor_pointwise (W : ℕ) {b : ℝ} (hb : 0 ≤ b)
     {n d : ℕ} (hn : 0 < n) (hd : 0 < d) (hdn : d ∣ n) :
     logarithmicReciprocal b n ^ 2 * squarefreeHarmonicWeight W n ≤
-      (logarithmicReciprocal b ((n / d : ℕ) : ℝ) ^ 2 * squarefreeHarmonicWeight W (n / d)) / (d.totient : ℝ) := by
+      (logarithmicReciprocal b ((n / d : ℕ) : ℝ) ^ 2 * squarefreeHarmonicWeight W (n / d)) /
+        (d.totient : ℝ) := by
   by_cases hqual : Squarefree n ∧ n.Coprime W
   · have hquot : 1 ≤ n / d := Nat.div_pos (Nat.le_of_dvd hn hdn) hd
     have hn1 : (1 : ℝ) ≤ n := by exact_mod_cast hn

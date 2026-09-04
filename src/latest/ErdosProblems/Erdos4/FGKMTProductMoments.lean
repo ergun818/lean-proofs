@@ -52,7 +52,8 @@ theorem independent_prob_pair (μ : I → FiniteLaw Ω) {i j : I} (hij : i ≠ j
   classical
   rw [prob_eq_mean]
   calc
-    _ = (independent μ).mean (fun a => (if E (a i) then 1 else 0) * (if F (a j) then 1 else 0)) := by
+    _ = (independent μ).mean (fun a => (if E (a i) then 1 else 0) * (if F (a j) then 1 else
+      0)) := by
       apply mean_congr
       intro a
       by_cases hE : E (a i) <;> by_cases hF : F (a j) <;> simp [hE, hF]

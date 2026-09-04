@@ -62,7 +62,8 @@ theorem eventually_roughIntegers_card_le :
       ((roughIntegers Y w).card : ℝ) ≤ 2 * (Y : ℝ) / Real.log w + (w : ℝ) ^ 4 := by
   filter_upwards [SelbergHarmonicMass.eventually_log_div_two_le_harmonicMass] with w hw Y
   have hlog : 0 < Real.log (w : ℝ) := Real.log_pos (by exact_mod_cast hw.1)
-  have hh := div_le_div_of_nonneg_left (Nat.cast_nonneg Y) (by positivity : 0 < Real.log (w : ℝ) / 2) hw.2
+  have hh := div_le_div_of_nonneg_left (Nat.cast_nonneg Y) (by
+    positivity : 0 < Real.log (w : ℝ) / 2) hw.2
   have heq : (Y : ℝ) / (Real.log w / 2) = 2 * (Y : ℝ) / Real.log w := by ring
   exact (roughIntegers_card_le (by omega) Y).trans (add_le_add (hh.trans_eq heq) le_rfl)
 
@@ -109,7 +110,8 @@ theorem roughNonsquarefree_card_le {w : ℕ} (hw : 0 < w) (Y : ℕ) :
   calc
     _ ≤ ((S.biUnion multiples).card : ℝ) := Nat.cast_le.mpr (Finset.card_le_card hsub)
     _ ≤ ∑ p ∈ S, ((multiples p).card : ℝ) := by
-      exact_mod_cast (Finset.card_biUnion_le : (S.biUnion multiples).card ≤ ∑ p ∈ S, (multiples p).card)
+      exact_mod_cast (Finset.card_biUnion_le : (S.biUnion multiples).card ≤ ∑ p ∈ S,
+        (multiples p).card)
     _ = ∑ p ∈ S, ((Y / (p * p) : ℕ) : ℝ) := by
       apply Finset.sum_congr rfl
       intro p hp

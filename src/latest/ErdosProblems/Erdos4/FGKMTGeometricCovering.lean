@@ -9,10 +9,12 @@ namespace Erdos4.FGKMT
 
 variable {V I : Type*} [Fintype V] [DecidableEq V] [Fintype I] [DecidableEq I]
 
+omit [DecidableEq I] [DecidableEq V] in
 theorem modelSequence_eq_geometric (μ : ℕ → I → FiniteLaw (Finset V))
     {m : ℕ} {ρ : ℝ} (hρ : 0 < ρ)
     (hdegree : ∀ j < m, ∀ v, vertexDegree (μ j) v = (-Real.log ρ) * ρ ^ j)
     (j : ℕ) (hj : j ≤ m) (v : V) : modelSequence μ j v = ρ ^ j := by
+  classical
   induction j with
   | zero => simp [modelSequence]
   | succ j ih =>
@@ -44,6 +46,7 @@ noncomputable def geometric_round_bounds (μ : ℕ → I → FiniteLaw (Finset V
     rw [modelSequence_eq_geometric μ hρ0 hdegree j hj.le v, hdegree j hj v,
       mul_div_cancel_right₀ _ (pow_ne_zero j hρ0.ne')]
 
+omit [DecidableEq I] in
 theorem geometric_degree_covering (μ : ℕ → I → FiniteLaw (Finset V))
     {m r : ℕ} (hr : 1 ≤ r) {ρ δ : ℝ} (hρ0 : 0 < ρ) (hρ1 : ρ ≤ 1) (hδ : 0 ≤ δ)
     (hdegree : ∀ j < m, ∀ v, vertexDegree (μ j) v = (-Real.log ρ) * ρ ^ j)
@@ -58,6 +61,7 @@ theorem geometric_degree_covering (μ : ℕ → I → FiniteLaw (Finset V))
       (∀ j < m, ∀ i, choice j i = ∅ ∨ 0 < (μ j i).weight (choice j i)) ∧
         ((Finset.univ \ coveredThrough choice m).card : ℝ) ≤
           2 * (Fintype.card V : ℝ) * ρ ^ m := by
+  classical
   obtain ⟨choice, hlegal, hcard⟩ := finite_covering μ
     (pow_pos hρ0 m) hδ (neg_nonneg.mpr (Real.log_nonpos hρ0.le hρ1))
     (by omega : 1 ≤ 2 * r) le_rfl hsparse

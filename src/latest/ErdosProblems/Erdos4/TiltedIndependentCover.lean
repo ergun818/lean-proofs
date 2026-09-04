@@ -39,7 +39,7 @@ theorem dependentLaw_support {I : Type*} [Fintype I] [DecidableEq I]
   have hh : (dependentLaw μ).weight choice = 0 := Finset.prod_eq_zero (Finset.mem_univ i) hz
   linarith
 
-theorem exists_independent_cover {I V : Type*} [Fintype I] [DecidableEq I] [DecidableEq V]
+theorem exists_independent_cover {I V : Type*} [Fintype I] [DecidableEq V]
     {A : I → Type*} [∀ i, Fintype (A i)] (μ : ∀ i, FiniteLaw (A i))
     (edge : ∀ i, A i → Finset V) (vertices : Finset V) :
     ∃ choice : ∀ i, A i,
@@ -48,10 +48,12 @@ theorem exists_independent_cover {I V : Type*} [Fintype I] [DecidableEq I] [Deci
         ∑ v ∈ vertices, Real.exp (-(∑ i, (μ i).prob (fun a => v ∈ edge i a))) := by
   classical
   let law := dependentLaw μ
-  let cost := fun (choice : ∀ i, A i) => ((vertices.filter (fun v => ∀ i, v ∉ edge i (choice i))).card : ℝ)
+  let cost := fun (choice : ∀ i, A i) => ((vertices.filter (fun v => ∀ i, v ∉ edge i (choice
+    i))).card : ℝ)
   have hmean : law.mean cost ≤
       ∑ v ∈ vertices, Real.exp (-(∑ i, (μ i).prob (fun a => v ∈ edge i a))) := by
-    have hcost : cost = (fun choice => ∑ v ∈ vertices, if (∀ i, v ∉ edge i (choice i)) then (1 : ℝ) else 0) := by
+    have hcost : cost = (fun choice => ∑ v ∈ vertices, if (∀ i, v ∉ edge i (choice i)) then (1
+      : ℝ) else 0) := by
       funext choice
       simp only [cost, Finset.card_filter, Nat.cast_sum, Nat.cast_ite, Nat.cast_one, Nat.cast_zero]
     rw [hcost, FiniteLaw.mean_finset_sum]

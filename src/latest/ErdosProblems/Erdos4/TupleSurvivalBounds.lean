@@ -97,7 +97,8 @@ theorem three_moments (K : ℕ) (sources : Finset ℕ) (Y B : ℕ)
       ((1 + ε) * UnitFourier.unitDensity ell ^ (2 * k - 1) + (k : ℝ) ^ 2 * α) * τ := by
   dsimp only
   have hV := UnitFourier.unitDensity_pos ell
-  have hsingle : ∀ p ∈ sources, ∀ n ∈ Finset.Icc 1 Y, q ∈ tuple (AffineWeights.shift K : Fin k → ℕ) p n →
+  have hsingle : ∀ p ∈ sources, ∀ n ∈ Finset.Icc 1 Y, q ∈ tuple (AffineWeights.shift K : Fin k
+    → ℕ) p n →
       (1 - ε) * UnitFourier.unitDensity ell ^ (k - 1) ≤
         mean ell q (fun a => indicator ell a (tuple (AffineWeights.shift K : Fin k → ℕ) p n)) := by
     intro p hp n hn hq

@@ -50,7 +50,8 @@ theorem eventually_growing_random_inverse_power {a : ℝ} (ha : 0 < a) :
       1 / UnitFourier.unitDensity (growingRandomValue x) ^
         (3 * sieveDimension (growingIndex x)) ≤ (x : ℝ) ^ a := by
   have hlog := Real.tendsto_log_atTop.comp (tendsto_natCast_atTop_atTop (R := ℝ))
-  filter_upwards [eventually_growing_random_density_lower, eventually_growing_log_dimension_power ha,
+  filter_upwards [eventually_growing_random_density_lower,
+    eventually_growing_log_dimension_power ha,
     hlog.eventually (eventually_ge_atTop 1)] with x hσ hpower hL
   let L := Real.log (x : ℝ)
   let k := sieveDimension (growingIndex x)

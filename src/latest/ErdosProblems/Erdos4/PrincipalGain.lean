@@ -109,7 +109,7 @@ theorem exists_eventual_principal_lower {M : ℝ} (hM : 0 ≤ M) :
         CutoffSimplex.coordinate R ell a j) - 3 * η) ≤ IdealAction.fiberSum m R ell j a := by
     intro a ha hmass j
     have hh := hR.2 j a ha hmass
-    convert hh using 1 <;> dsimp [L, ell] <;> ring
+    convert hh using 1; dsimp [L, ell]; ring
   have hideal := sum_forms_lower hm hR.1 ell hell2 hL (by positivity : 0 ≤ 3 * η)
     (by positivity : 0 ≤ 2 * M) hη hgain hfiber
   have hideal' : UnitFourier.unitDensity ell * L * M * N ≤

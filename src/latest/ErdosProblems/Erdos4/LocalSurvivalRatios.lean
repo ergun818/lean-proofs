@@ -39,7 +39,7 @@ theorem bernoulli_remainder {x : ℝ} (hx0 : 0 ≤ x) (hx1 : x ≤ 1) (r : ℕ) 
           nlinarith [mul_nonneg (Nat.cast_nonneg r) (sq_nonneg x), sq_nonneg x]
 
 theorem local_ratio_error {x v : ℝ} (hx0 : 0 ≤ x) (hx1 : x ≤ 1)
-    (r : ℕ) (hv0 : 0 ≤ v) (hvr : v ≤ r) (hsmall : (r : ℝ) * x ≤ 1 / 2) :
+    (r : ℕ) (_hv0 : 0 ≤ v) (hvr : v ≤ r) (hsmall : (r : ℝ) * x ≤ 1 / 2) :
     |(1 - v * x) / (1 - x) ^ r - 1| ≤
       2 * (r : ℝ) ^ 2 * x ^ 2 + 2 * ((r : ℝ) - v) * x := by
   have hrem := bernoulli_remainder hx0 hx1 r

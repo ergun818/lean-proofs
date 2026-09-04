@@ -6,8 +6,6 @@ open scoped BigOperators
 
 namespace Erdos4.FGKMT
 
-open Classical
-
 variable {p k : ℕ} [Fact p.Prime]
 
 def SmallPrimeGood (h : Fin k → ZMod p) (x : ZMod p) : Prop := ∀ i, x + h i ≠ 0
@@ -54,14 +52,17 @@ theorem smallAnchorCenter_surjective_good (h : Fin k → ZMod p) (j : Fin k)
   refine ⟨u, (smallAnchorGood_iff h j u).mpr ?_, heq⟩
   rwa [heq]
 
-noncomputable def smallPrimeGoodStates (h : Fin k → ZMod p) : Finset (ZMod p) :=
-  Finset.univ.filter (SmallPrimeGood h)
+noncomputable def smallPrimeGoodStates (h : Fin k → ZMod p) : Finset (ZMod p) := by
+  classical
+  exact Finset.univ.filter (SmallPrimeGood h)
 
-noncomputable def smallAnchorGoodStates (h : Fin k → ZMod p) (j : Fin k) : Finset ((ZMod p)ˣ) :=
-  Finset.univ.filter (SmallAnchorGood h j)
+noncomputable def smallAnchorGoodStates (h : Fin k → ZMod p) (j : Fin k) : Finset ((ZMod p)ˣ) := by
+  classical
+  exact Finset.univ.filter (SmallAnchorGood h j)
 
 theorem smallAnchorGoodStates_card (h : Fin k → ZMod p) (j : Fin k) :
     (smallAnchorGoodStates h j).card = (smallPrimeGoodStates h).card := by
+  classical
   apply Finset.card_bij (fun u _ => smallAnchorCenter h j u)
   · intro u hu
     exact Finset.mem_filter.mpr ⟨Finset.mem_univ _,
@@ -84,6 +85,7 @@ theorem smallPresieveDensity_nonneg (h : Fin k → ZMod p) : 0 ≤ smallPresieve
 
 theorem smallPresieveDensity_pos (h : Fin k → ZMod p) (ha : ∃ x, SmallPrimeGood h x) :
     0 < smallPresieveDensity h := by
+  classical
   obtain ⟨x, hx⟩ := ha
   have hcard : 0 < (smallPrimeGoodStates h).card :=
     Finset.card_pos.mpr ⟨x, Finset.mem_filter.mpr ⟨Finset.mem_univ _, hx⟩⟩

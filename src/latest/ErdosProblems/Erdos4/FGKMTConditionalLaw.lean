@@ -11,7 +11,10 @@ variable {Ω : Type*} [Fintype Ω]
 noncomputable def condition (ν : FiniteLaw Ω) (E : Ω → Prop) [DecidablePred E]
     (o₀ : Ω) : FiniteLaw Ω :=
   normalize (fun o => if E o then ν.weight o else 0)
-    (fun o => by split_ifs; exact ν.nonneg o; rfl) o₀
+    (fun o => by
+      split_ifs
+      · exact ν.nonneg o
+      · rfl) o₀
 
 theorem restricted_weight_sum (ν : FiniteLaw Ω) (E : Ω → Prop) [DecidablePred E] :
     (∑ o, if E o then ν.weight o else 0) = ν.prob E := by

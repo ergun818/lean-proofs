@@ -9,8 +9,10 @@ namespace Erdos4.FGKMT
 
 variable {V I : Type*} [Fintype V] [DecidableEq V] [Fintype I]
 
+omit [DecidableEq V] in
 theorem aggregate_meeting_prob_le (μ : I → FiniteLaw (Finset V)) (T : Finset V) :
     (∑ i, (μ i).prob (fun e => ¬Disjoint T e)) ≤ ∑ v ∈ T, vertexDegree μ v := by
+  classical
   calc
     _ ≤ ∑ i, ∑ v ∈ T, (μ i).prob (fun e => v ∈ e) := by
       apply Finset.sum_le_sum
@@ -25,10 +27,12 @@ theorem aggregate_meeting_prob_le (μ : I → FiniteLaw (Finset V)) (T : Finset 
       exact hh
     _ = _ := Finset.sum_comm
 
+omit [DecidableEq V] in
 theorem aggregate_meeting_prob_le_card (μ : I → FiniteLaw (Finset V)) (p : V → ℝ)
     {D : ℝ} (hD0 : 0 ≤ D) (hp0 : ∀ v, 0 < p v) (hp1 : ∀ v, p v ≤ 1)
     (hD : ∀ v, vertexDegree μ v / p v ≤ D) (T : Finset V) :
     (∑ i, (μ i).prob (fun e => ¬Disjoint T e)) ≤ (T.card : ℝ) * D := by
+  classical
   calc
     _ ≤ ∑ v ∈ T, vertexDegree μ v := aggregate_meeting_prob_le μ T
     _ ≤ ∑ _v ∈ T, D := by

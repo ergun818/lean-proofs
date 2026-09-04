@@ -6,7 +6,7 @@ open scoped BigOperators
 
 namespace Erdos4.FGKMT
 
-open Classical RandomResidueSieve AffineTuples TupleCollisionMass
+open RandomResidueSieve AffineTuples TupleCollisionMass
 open ConditionalTupleMoments ConditionalProductMoments
 
 variable {P : Type*} [Fintype P] [DecidableEq P]
@@ -120,7 +120,8 @@ theorem mean_mixed_square_product (h : Fin k → ℕ) (p Y : ℕ) (μ : ℕ → 
       rw [← indicator_mul]
       ring
     calc
-      _ = hittingMass ell h p Y μ q a * (tupleMass ell h p Y μ a * tupleMass ell h p Y μ a) := by ring
+      _ = hittingMass ell h p Y μ q a * (tupleMass ell h p Y μ a * tupleMass ell h p Y μ a) :=
+        by ring
       _ = _ := by
         rw [hsquare, hittingMass, Finset.sum_mul]
         apply Finset.sum_congr rfl

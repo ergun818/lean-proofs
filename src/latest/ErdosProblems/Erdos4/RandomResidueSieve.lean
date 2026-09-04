@@ -23,26 +23,36 @@ noncomputable def residues (T : Finset ℕ) (l : P) : Finset (ZMod (ell l)) :=
 def Survives (a : ∀ l, ZMod (ell l)) (T : Finset ℕ) : Prop :=
   ∀ l, a l ∉ residues ell T l
 
+omit [DecidableEq P] [Fintype P] in
 theorem survives_union (a : ∀ l, ZMod (ell l)) (T U : Finset ℕ) :
     Survives ell a (T ∪ U) ↔ Survives ell a T ∧ Survives ell a U := by
+  classical
   simp only [Survives, residues, Finset.image_union, Finset.mem_union, not_or, forall_and]
 
+omit [DecidableEq P] [Fintype P] in
 theorem survives_singleton (a : ∀ l, ZMod (ell l)) (q : ℕ) :
     Survives ell a {q} ↔ ∀ l, a l ≠ (q : ZMod (ell l)) := by
+  classical
   simp [Survives, residues]
 
+omit [DecidableEq P] [Fintype P] in
 theorem survives_insert (a : ∀ l, ZMod (ell l)) (q : ℕ) (T : Finset ℕ) :
     Survives ell a (insert q T) ↔ Survives ell a {q} ∧ Survives ell a T := by
+  classical
   rw [← Finset.singleton_union, survives_union]
 
-noncomputable def weight (a : ∀ l, ZMod (ell l)) : ℝ := ∏ l, (ell l : ℝ)⁻¹
+noncomputable def weight (_a : ∀ l, ZMod (ell l)) : ℝ := ∏ l, (ell l : ℝ)⁻¹
 
+omit [DecidableEq P] [∀ (l : P), Fact (Nat.Prime (ell l))] in
 theorem weight_nonneg (a : ∀ l, ZMod (ell l)) : 0 ≤ weight ell a := by
+  classical
   unfold weight
   positivity
 
+omit [DecidableEq P] [Fintype P] in
 theorem local_uniform_sum (l : P) :
     (∑ _a : ZMod (ell l), (ell l : ℝ)⁻¹) = 1 := by
+  classical
   have hp : (ell l : ℝ) ≠ 0 := by exact_mod_cast (Fact.out : (ell l).Prime).ne_zero
   simp [hp]
 
@@ -50,6 +60,7 @@ theorem sum_weight : (∑ a : ∀ l, ZMod (ell l), weight ell a) = 1 :=
   Erdos4.assignmentWeight_sum (fun l (_a : ZMod (ell l)) => (ell l : ℝ)⁻¹)
     (local_uniform_sum ell)
 
+omit [DecidableEq P] [Fintype P] in
 theorem sum_avoid (l : P) (S : Finset (ZMod (ell l))) :
     (∑ a : ZMod (ell l), if a ∉ S then (1 : ℝ) else 0) = ell l - S.card := by
   classical
@@ -93,6 +104,7 @@ theorem survivalMass_eq (T : Finset ℕ) :
     _ = (ell l - (residues ell T l).card) * (ell l : ℝ)⁻¹ := by rw [sum_avoid]
     _ = _ := by field_simp
 
+omit [DecidableEq P] in
 theorem survivalMass_nonneg (T : Finset ℕ) : 0 ≤ survivalMass ell T := by
   classical
   rw [← survivalMass_eq]
@@ -102,7 +114,9 @@ theorem survivalMass_nonneg (T : Finset ℕ) : 0 ≤ survivalMass ell T := by
   · exact weight_nonneg ell a
   · exact le_rfl
 
+omit [DecidableEq P] in
 theorem survivalMass_singleton (q : ℕ) : survivalMass ell {q} = UnitFourier.unitDensity ell := by
+  classical
   rw [UnitFourier.unitDensity_eq_product]
   simp [survivalMass, residues]
 
@@ -110,8 +124,10 @@ noncomputable def conditionalWeight (q : ℕ) (a : ∀ l, ZMod (ell l)) : ℝ :=
   classical
   exact if Survives ell a {q} then weight ell a / UnitFourier.unitDensity ell else 0
 
+omit [DecidableEq P] in
 theorem conditionalWeight_nonneg (q : ℕ) (a : ∀ l, ZMod (ell l)) :
     0 ≤ conditionalWeight ell q a := by
+  classical
   unfold conditionalWeight
   split_ifs
   · exact div_nonneg (weight_nonneg ell a) (UnitFourier.unitDensity_pos ell).le

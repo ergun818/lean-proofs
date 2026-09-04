@@ -6,17 +6,17 @@ open scoped BigOperators
 
 namespace Erdos4.FGKMT
 
-open Classical
-
 variable {V : Type*} [Fintype V] [DecidableEq V]
 
 noncomputable def restrictedVertexEdge (W e : Finset V) : Finset W :=
   Finset.univ.filter (fun v : W => v.val ∈ e)
 
+omit [Fintype V] in
 theorem mem_restrictedVertexEdge (W e : Finset V) (v : W) :
     v ∈ restrictedVertexEdge W e ↔ v.val ∈ e := by
   simp only [restrictedVertexEdge, Finset.mem_filter, Finset.mem_univ, true_and]
 
+omit [Fintype V] in
 theorem restrictedVertexEdge_card_le (W e : Finset V) :
     (restrictedVertexEdge W e).card ≤ e.card := by
   have hsub : (restrictedVertexEdge W e).image Subtype.val ⊆ e := by

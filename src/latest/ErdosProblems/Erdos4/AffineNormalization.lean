@@ -25,6 +25,7 @@ noncomputable def pairCount (Y W : ℕ) (h : Fin k → ℕ) (p : ℕ)
     evaluation (AffineWeights.residueState ell h n p) a *
       evaluation (AffineWeights.residueState ell h n p) b else 0
 
+omit [DecidableEq P] in
 theorem pairCount_error_le (Y W : ℕ) (hW : 0 < W) (hWcop : ∀ l, W.Coprime (ell l))
     (hcop : Pairwise (fun l r => (ell l).Coprime (ell r)))
     (h : Fin k → ℕ) (hh : ∀ l, Function.Injective (fun i => (h i : ZMod (ell l))))
@@ -64,7 +65,8 @@ theorem normalizer_nonneg (m : ℝ) (R Y W : ℕ) (h : Fin k → ℕ) (p : ℕ) 
 theorem normalizer_eq_pairs (m : ℝ) (R Y W : ℕ) (h : Fin k → ℕ) (p : ℕ) :
     normalizer ell m R Y W h p =
       ∑ a : P → Option (Fin k), ∑ b : P → Option (Fin k),
-        (divisorCoefficient m R ell a * divisorCoefficient m R ell b) * pairCount ell Y W h p a b := by
+        (divisorCoefficient m R ell a * divisorCoefficient m R ell b) * pairCount ell Y W h p
+          a b := by
   classical
   have hpoint (n : ℕ) (hn : n ∈ Finset.Icc 1 Y) :
       AffineWeights.weight ell m R Y W h p n =

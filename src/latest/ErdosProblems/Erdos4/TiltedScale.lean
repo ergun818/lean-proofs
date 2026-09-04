@@ -50,7 +50,8 @@ theorem coverScale_compare {t u A : ℝ} (hA : 1 ≤ A) (ht : 1 ≤ t)
     Real.log_le_log hlupos (Real.log_le_log hLupos (Real.log_le_log hupos hupper))
   have hnum : (t / A) * (Real.log t / 2) ≤ u * Real.log u := by gcongr
   calc
-    _ = ((t / A) * (Real.log t / 2)) / Real.log (Real.log (Real.log t)) := by unfold coverScale; ring
+    _ = ((t / A) * (Real.log t / 2)) / Real.log (Real.log (Real.log t)) := by
+      unfold coverScale; ring
     _ ≤ (u * Real.log u) / Real.log (Real.log (Real.log t)) :=
       div_le_div_of_nonneg_right hnum (by linarith)
     _ ≤ coverScale u := div_le_div_of_nonneg_left (mul_pos hupos hLupos).le hllupos hllupper

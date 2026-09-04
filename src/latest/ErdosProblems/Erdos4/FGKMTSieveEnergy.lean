@@ -6,13 +6,14 @@ open scoped BigOperators
 
 namespace Erdos4.FGKMT
 
-open DivisorCoefficients RestrictedProductNorm Classical
+open DivisorCoefficients RestrictedProductNorm
 
 variable {P : Type*} [Fintype P] [DecidableEq P] {k : ℕ}
 
 def boundedLabelTuple (R : ℕ) (ell : P → ℕ) (a : P → Option (Fin k)) : Fin k → Fin (R + 1) :=
   fun i => ⟨min (coordinateDivisor ell a i) R, Nat.lt_succ_of_le (min_le_right _ _)⟩
 
+omit [DecidableEq P] in
 theorem boundedLabelTuple_val {R : ℕ} (ell : P → ℕ) (hell : ∀ p, 1 ≤ ell p)
     (a : P → Option (Fin k)) (ha : totalDivisor ell a ≤ R) (i : Fin k) :
     (boundedLabelTuple R ell a i : ℕ) = coordinateDivisor ell a i :=

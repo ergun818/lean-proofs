@@ -52,6 +52,7 @@ theorem norm_block_difference_le {m : ℝ} (hm : 1 ≤ m) {R : ℕ} (hR : 2 ≤ 
   simp only [← Finset.sum_sub_distrib, ← sub_mul]
   exact ProjectionSliceBound.norm_actual_slice_sum_le hm hR ell hell J u hu _
 
+omit [Fintype P] in
 theorem singleton_matrixNorm_eq (ell : P → ℕ) (p : P)
     (M N : Option (Fin k) → Option (Fin k) → ℂ) :
     LocalFourier.weightedMatrixNorm (sliceFactor ell {p})
@@ -66,12 +67,14 @@ theorem singleton_matrixNorm_eq (ell : P → ℕ) (p : P)
   simp only [Fintype.prod_unique]
   have hinner (a : Option (Fin k)) :
       (∑ b : ({p} : Finset P) → Option (Fin k),
-        ‖M a (b default) - N a (b default)‖ * localWeight (ell p) a * localWeight (ell p) (b default)) =
+        ‖M a (b default) - N a (b default)‖ * localWeight (ell p) a * localWeight (ell p) (b
+          default)) =
         ∑ b : Option (Fin k), ‖M a b - N a b‖ * localWeight (ell p) a * localWeight (ell p) b :=
     Equiv.sum_comp e (fun b => ‖M a b - N a b‖ * localWeight (ell p) a * localWeight (ell p) b)
   calc
     _ = ∑ a : ({p} : Finset P) → Option (Fin k), ∑ b : Option (Fin k),
-        ‖M (a default) b - N (a default) b‖ * localWeight (ell p) (a default) * localWeight (ell p) b := by
+        ‖M (a default) b - N (a default) b‖ * localWeight (ell p) (a default) * localWeight
+          (ell p) b := by
       apply Finset.sum_congr rfl
       intro a _ha
       exact hinner (a default)
@@ -87,7 +90,8 @@ theorem norm_single_replacement_le {m : ℝ} (hm : 1 ≤ m) {R : ℕ} (hR : 2 �
     ‖quadratic (coefficient m R ell) (Function.update u p t) - quadratic (coefficient m R ell) u‖ ≤
       energy (coefficient (k := k) m R ell) *
         LocalFourier.weightedMatrixNorm (localWeight (ell p))
-          (fun a b => (ProjectionKernel.kernel t a b : ℂ) - (ProjectionKernel.kernel (u p) a b : ℂ)) := by
+          (fun a b => (ProjectionKernel.kernel t a b : ℂ) - (ProjectionKernel.kernel (u p) a b
+            : ℂ)) := by
   let outside : {q : P // q ∉ ({p} : Finset P)} → Option (Fin k) → ℝ := fun q => u q
   have hnew : (fun q a b => (ProjectionKernel.kernel (Function.update u p t q) a b : ℂ)) =
       mixedMatrix {p} (fun _ a b => (ProjectionKernel.kernel t a b : ℂ))

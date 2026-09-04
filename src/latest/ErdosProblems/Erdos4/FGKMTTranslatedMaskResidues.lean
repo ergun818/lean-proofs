@@ -6,7 +6,7 @@ open scoped BigOperators
 
 namespace Erdos4.FGKMT
 
-open Classical ProductCharacterEncoding
+open ProductCharacterEncoding
 
 variable {P : Type*} [Fintype P] [DecidableEq P] {k : ℕ}
     (ell : P → ℕ) [∀ l, Fact (ell l).Prime]
@@ -15,19 +15,24 @@ noncomputable def translatedAllowedResidues (h : Fin k → ℕ) (Y p : ℕ) : Fi
   (Finset.range (modulus ell)).filter
     (fun n => ∀ l, ∀ i, (n : ZMod (ell l)) - Y + (h i : ZMod (ell l)) * p ≠ 0)
 
+omit [DecidableEq P] in
 theorem translatedAllowedResidues_subset (h : Fin k → ℕ) (Y p : ℕ) :
     translatedAllowedResidues ell h Y p ⊆ Finset.range (modulus ell) :=
   Finset.filter_subset _ _
 
+omit [DecidableEq P] in
 theorem mem_translatedAllowedResidues (h : Fin k → ℕ) (Y p n : ℕ) :
     n ∈ translatedAllowedResidues ell h Y p ↔ n < modulus ell ∧
       ∀ l, ∀ i, (n : ZMod (ell l)) - Y + (h i : ZMod (ell l)) * p ≠ 0 := by
+  classical
   simp only [translatedAllowedResidues, Finset.mem_filter, Finset.mem_range]
 
+omit [DecidableEq P] in
 theorem translatedSmallMask_indicator (h : Fin k → ℕ) (Y p n : ℕ) :
     translatedSmallMask ell h Y p n =
       if (∀ l, ∀ i, (n : ZMod (ell l)) - Y + (h i : ZMod (ell l)) * p ≠ 0)
         then 1 else 0 := by
+  classical
   unfold translatedSmallMask
   by_cases hh : ∀ l, ∀ i, (n : ZMod (ell l)) - Y + (h i : ZMod (ell l)) * p ≠ 0
   · rw [if_pos hh]
@@ -36,29 +41,36 @@ theorem translatedSmallMask_indicator (h : Fin k → ℕ) (Y p n : ℕ) :
     obtain ⟨l, hl⟩ := not_forall.mp hh
     exact Finset.prod_eq_zero (Finset.mem_univ l) (if_neg hl)
 
+omit [DecidableEq P] in
 theorem smallPrime_cast_modulus (n : ℕ) (l : P) :
     ((n % modulus ell : ℕ) : ZMod (ell l)) = (n : ZMod (ell l)) :=
   (ZMod.natCast_eq_natCast_iff _ _ _).mpr
     ((Nat.mod_modEq n (modulus ell)).of_dvd (local_dvd_modulus ell l))
 
+omit [DecidableEq P] in
 theorem mem_mod_translatedAllowedResidues (h : Fin k → ℕ) (Y p n : ℕ) :
     n % modulus ell ∈ translatedAllowedResidues ell h Y p ↔
       ∀ l, ∀ i, (n : ZMod (ell l)) - Y + (h i : ZMod (ell l)) * p ≠ 0 := by
+  classical
   have hM : 0 < modulus ell := Finset.prod_pos (fun l _ => (Fact.out : (ell l).Prime).pos)
   rw [mem_translatedAllowedResidues]
   simp only [Nat.mod_lt n hM, true_and, smallPrime_cast_modulus]
 
+omit [DecidableEq P] in
 theorem translatedSmallMask_eq_allowed (h : Fin k → ℕ) (Y p n : ℕ) :
     translatedSmallMask ell h Y p n =
       if n % modulus ell ∈ translatedAllowedResidues ell h Y p then 1 else 0 := by
+  classical
   rw [translatedSmallMask_indicator]
   simp only [mem_mod_translatedAllowedResidues]
 
+omit [DecidableEq P] in
 theorem translatedAllowedResidues_card
     (hcop : Pairwise (fun l r => (ell l).Coprime (ell r)))
     (h : Fin k → ℕ) (Y p : ℕ) (hp : ∀ l, (p : ZMod (ell l)) ≠ 0) :
     ((translatedAllowedResidues ell h Y p).card : ℝ) =
       smallProductDensity ell (fun l i => (h i : ZMod (ell l))) * (modulus ell : ℝ) := by
+  classical
   calc
     _ = ∑ n ∈ Finset.range (modulus ell),
         if (∀ l, ∀ i, (n : ZMod (ell l)) - Y + (h i : ZMod (ell l)) * p ≠ 0)
@@ -71,11 +83,13 @@ theorem translatedAllowedResidues_card
       exact (translatedSmallMask_indicator ell h Y p n).symm
     _ = _ := translatedSmallMask_sum ell hcop h Y p hp
 
+omit [DecidableEq P] in
 theorem translatedAllowedResidues_density
     (hcop : Pairwise (fun l r => (ell l).Coprime (ell r)))
     (h : Fin k → ℕ) (Y p : ℕ) (hp : ∀ l, (p : ZMod (ell l)) ≠ 0) :
     ((translatedAllowedResidues ell h Y p).card : ℝ) / modulus ell =
       smallProductDensity ell (fun l i => (h i : ZMod (ell l))) := by
+  classical
   rw [translatedAllowedResidues_card ell hcop h Y p hp]
   have hM : 0 < modulus ell := Finset.prod_pos (fun l _ => (Fact.out : (ell l).Prime).pos)
   exact mul_div_cancel_right₀ _ (by exact_mod_cast hM.ne')

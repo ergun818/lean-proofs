@@ -29,7 +29,8 @@ theorem eventually_growing_center_laws :
         let E := RestrictedProductNorm.energy
           (rationalCoefficient (k := sieveDimension (growingIndex x)) b (growingRadius x)
             (growingLargePrimeValue x B))
-        let Z := maskedTranslatedNormalizer (growingSmallPrimeValue x B) (growingLargePrimeValue x B)
+        let Z := maskedTranslatedNormalizer (growingSmallPrimeValue x B)
+          (growingLargePrimeValue x B)
           b (growingRadius x) h Y p
         (0 < Z ∧ α * Y * E ≤ Z ∧ Z ≤ 3 * (α * Y * E)) ∧
           ∀ n : TranslatedCenter Y,

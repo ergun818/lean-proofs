@@ -5,7 +5,7 @@ import ErdosProblems.Erdos4.ZeroSieveResidual
 
 namespace Erdos4.FGKMT
 
-open Classical ChebyshevIntervals ZeroSieveResidual
+open ChebyshevIntervals ZeroSieveResidual
 
 theorem exists_complete_cover_from_choices
     (sieve sources reserve : Finset ℕ) [∀ l : sieve, Fact l.val.Prime]

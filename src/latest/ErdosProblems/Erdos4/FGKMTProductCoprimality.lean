@@ -99,7 +99,8 @@ theorem rationalProduct_bad_coprime_probability (W : ℕ) {b : ℝ} (hb : 0 ≤ 
   let P := (Nat.primesLE R).filter (fun p => K < p)
   have hpoint : μ.prob (fun a => ¬Pairwise (fun i j => (a i : ℕ).Coprime (a j : ℕ))) ≤
       μ.prob (fun a => ∃ p ∈ P, ∃ i j : I, i ≠ j ∧ p ∣ (a i : ℕ) ∧ p ∣ (a j : ℕ)) :=
-    μ.prob_mono_support (fun a ha hbad => rationalProduct_bad_coprime_imp_collision I W b hR hpre a ha hbad)
+    μ.prob_mono_support (fun a ha hbad => rationalProduct_bad_coprime_imp_collision I W b hR
+      hpre a ha hbad)
   calc
     _ ≤ μ.prob (fun a => ∃ p ∈ P, ∃ i j : I, i ≠ j ∧ p ∣ (a i : ℕ) ∧ p ∣ (a j : ℕ)) := hpoint
     _ ≤ ∑ p ∈ P, μ.prob (fun a => ∃ i j : I, i ≠ j ∧ p ∣ (a i : ℕ) ∧ p ∣ (a j : ℕ)) :=

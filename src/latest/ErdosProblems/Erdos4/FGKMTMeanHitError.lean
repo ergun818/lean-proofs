@@ -11,13 +11,16 @@ variable {V I : Type*} [Fintype V] [DecidableEq V] [Fintype I]
 noncomputable def testDegree (μ : I → FiniteLaw (Finset V)) (p : V → ℝ)
     (T : Finset V) : ℝ := ∑ v ∈ T, vertexDegree μ v / p v
 
+omit [DecidableEq V] in
 theorem testDegree_nonneg (μ : I → FiniteLaw (Finset V)) (p : V → ℝ)
     (hp : ∀ v, 0 < p v) (T : Finset V) : 0 ≤ testDegree μ p T :=
   Finset.sum_nonneg (fun v _hv => div_nonneg (vertexDegree_nonneg μ v) (hp v).le)
 
+omit [DecidableEq V] in
 theorem testDegree_le {μ : I → FiniteLaw (Finset V)} {p : V → ℝ}
     {r A : ℕ} {κ δ D : ℝ} (h : RoundBounds μ p r κ δ D)
     (T : Finset V) (hT : T.card ≤ A) : testDegree μ p T ≤ (A : ℝ) * D := by
+  classical
   calc
     _ ≤ ∑ _v ∈ T, D := Finset.sum_le_sum (fun v _hv => h.vertex_degree v)
     _ = (T.card : ℝ) * D := by simp only [Finset.sum_const, nsmul_eq_mul]

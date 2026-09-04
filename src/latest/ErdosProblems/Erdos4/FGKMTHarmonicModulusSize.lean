@@ -13,7 +13,10 @@ theorem log_primorial_le (D : ℕ) : Real.log (primorial D : ℝ) ≤ Real.log 4
 
 theorem harmonicModulus_log_le (D : ℕ) {B : ℕ} (hB : B = 1 ∨ B.Prime) :
     Real.log (harmonicModulus D B : ℝ) ≤ Real.log 4 * (D : ℝ) + Real.log (B : ℝ) := by
-  have hBpos : 0 < B := by rcases hB with rfl | hp; norm_num; exact hp.pos
+  have hBpos : 0 < B := by
+    rcases hB with rfl | hp
+    · exact Nat.zero_lt_one
+    · exact hp.pos
   unfold harmonicModulus
   split_ifs
   · exact (log_primorial_le D).trans (le_add_of_nonneg_right (Real.log_natCast_nonneg B))

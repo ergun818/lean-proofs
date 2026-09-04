@@ -12,7 +12,8 @@ theorem eventually_composite_degree_exp :
       Real.exp (-((compositeColors x).card : ℝ) / (8 * (17 * (x : ℝ)) * compositeSurvivalBound x)) ≤
         1 / Real.log (x : ℝ) ^ (3 : ℕ) := by
   filter_upwards [eventually_color_supply, eventually_compositeSurvivalBound,
-    eventually_outerScale_bounds, log_two_tendsto.eventually (eventually_ge_atTop (408 / Real.log 2)),
+    eventually_outerScale_bounds, log_two_tendsto.eventually (eventually_ge_atTop (408 /
+      Real.log 2)),
     eventually_ge_atTop 1] with x hm hQ hb hl hx
   let L := Real.log (x : ℝ)
   let l := Real.log L
@@ -25,7 +26,8 @@ theorem eventually_composite_degree_exp :
   have hdegree : Real.log 2 * l ^ 2 / 136 ≤
       ((compositeColors x).card : ℝ) / (8 * (17 * (x : ℝ)) * Q) := by
     calc
-      _ = (Real.log 2 * (x : ℝ) / L) / (8 * (17 * (x : ℝ)) * (1 / (L * l ^ 2))) := by field_simp; ring
+      _ = (Real.log 2 * (x : ℝ) / L) / (8 * (17 * (x : ℝ)) * (1 / (L * l ^ 2))) := by
+        field_simp; ring
       _ ≤ ((compositeColors x).card : ℝ) / (8 * (17 * (x : ℝ)) * (1 / (L * l ^ 2))) :=
         div_le_div_of_nonneg_right hm.2.1 (by positivity)
       _ ≤ _ := div_le_div_of_nonneg_left (Nat.cast_nonneg _) (by positivity)
@@ -78,7 +80,8 @@ theorem composite_cover_numeric_budget {x L l C Q K m : ℝ}
     calc
       _ = 136 * x * (Q * K) * (1 / L ^ (30 : ℕ)) := by ring
       _ ≤ 136 * x * 1 * (1 / L ^ (3 : ℕ)) :=
-        mul_le_mul (mul_le_mul_of_nonneg_left hQK (by positivity)) htail (by positivity) (by positivity)
+        mul_le_mul (mul_le_mul_of_nonneg_left hQK (by positivity)) htail (by positivity) (by
+          positivity)
       _ = _ := by ring
   calc
     _ ≤ x * (5 / L ^ (3 : ℕ)) + 136 * x / L ^ (3 : ℕ) := add_le_add hfirst hsecond
@@ -106,7 +109,8 @@ theorem eventually_composite_cover_numeric_budget {c ε : ℝ} (hc : 0 < c) (hε
       exact Finset.mem_Icc.mpr ⟨by omega, hh.2.1⟩
     have hh := Finset.card_le_card hs
     simp only [Nat.card_Icc] at hh
-    exact (Nat.cast_le.mpr (show (compositeTargets c x).card ≤ gapTarget c x by omega)).trans hY.2.2.2.2.2.2.2.1
+    exact (Nat.cast_le.mpr (show (compositeTargets c x).card ≤ gapTarget c x by
+      omega)).trans hY.2.2.2.2.2.2.2.1
   have hmain := composite_cover_numeric_budget hxpos hL1 hb.2.1 (Nat.cast_nonneg _) hC
     (compositeSurvivalBound_nonneg x) hQ (Nat.cast_nonneg _) hK he
   have hcoeff : 141 ≤ ε * Real.log (x : ℝ) ^ (2 : ℕ) := by

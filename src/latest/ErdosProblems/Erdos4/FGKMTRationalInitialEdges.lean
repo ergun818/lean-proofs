@@ -7,7 +7,7 @@ open scoped BigOperators
 
 namespace Erdos4.FGKMT
 
-open Classical AffineTuples TupleCollisionMass TupleSurvivalBounds
+open AffineTuples TupleCollisionMass TupleSurvivalBounds
 
 variable {S P Q : Type*} [Fintype S] [DecidableEq S]
     [Fintype P] [DecidableEq P] [Fintype Q] [DecidableEq Q]
@@ -20,6 +20,7 @@ noncomputable def rationalInitialEdgeLaw (b : ℝ) (R : ℕ) (h : Fin k → ℕ)
     FiniteLaw (Finset targets) :=
   translatedInitialEdgeLaw ell h hY targets (rationalCenterLaw ell₀ ell₁ b R h hY p) p a
 
+omit [DecidableEq P] in
 theorem rational_initial_degree_lower_tail (b : ℝ) (R : ℕ) (hk : 1 ≤ k)
     (h : Fin k → ℕ) (hh : Function.Injective h) (hY : 1 ≤ Y)
     (sources targets : Finset ℕ) (q : targets) (hq0 : 1 ≤ q.val) (hqY : q.val ≤ Y)
@@ -39,6 +40,7 @@ theorem rational_initial_degree_lower_tail (b : ℝ) (R : ℕ) (hk : 1 ≤ k)
           β / (6 * σ)) ≤
       76 * ε + 4 * (k : ℝ) * α / (σ ^ (2 * k - 2) * β) +
         80 * (k : ℝ) ^ 2 * α / σ ^ (3 * k - 1) := by
+  classical
   let μ := fun p => rationalCenterLaw ell₀ ell₁ b R h hY p
   let w := rationalCenterMass ell₀ ell₁ b R h Y
   have hw : ∀ p ∈ sources, ∀ n : TranslatedCenter Y, (μ p).weight n = w p n.val := by

@@ -82,7 +82,8 @@ theorem continuousOn_scaledDerivative {m k : ℝ} (hm : 0 < m) (hk : 0 ≤ k)
   have hinner : ContinuousAt (fun x : ℝ => Real.log x / Real.log R) x :=
     (continuousAt_id.log hxpos.ne').div_const _
   have hleft : ContinuousAt (fun x : ℝ => profileDerivative m k (Real.log x / Real.log R)) x :=
-    (continuousAt_profileDerivative hm.le hk ht).comp (f := fun x : ℝ => Real.log x / Real.log R) hinner
+    (continuousAt_profileDerivative hm.le hk ht).comp (f := fun x : ℝ => Real.log x / Real.log
+      R) hinner
   have hright : ContinuousAt (fun x : ℝ => x⁻¹ / Real.log R) x :=
     (continuousAt_id.inv₀ hxpos.ne').div_const _
   exact (hleft.mul hright).continuousWithinAt

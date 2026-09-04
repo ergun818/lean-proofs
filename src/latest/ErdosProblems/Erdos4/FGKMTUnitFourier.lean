@@ -21,12 +21,14 @@ noncomputable def rationalUnitFourier (b : ℝ) (R : ℕ)
       (∏ p, star (χ p (u p : ZMod (ell p)))) *
         TensorMoments.amplitude (fun a => (rationalCoefficient b R ell a : ℂ))
           (fun p a t => (extendedBasis (ell p : ℝ) a
-            (RootStates.rootState (Finset.univ.erase j) (AnchorRoots.anchorRoot (h p) j) t) : ℂ)) u ^ 2
+            (RootStates.rootState (Finset.univ.erase j) (AnchorRoots.anchorRoot (h p) j) t) :
+              ℂ)) u ^ 2
 
 theorem rational_raw_eq_density_mul_unit (b : ℝ) (R : ℕ)
     (h : ∀ p, Fin k → ZMod (ell p)) (j : Fin k)
     (χ : ∀ p, DirichletCharacter ℂ (ell p)) :
-    rationalRawFourier ell b R h j χ = (sieveWindowDensity ell : ℂ) * rationalUnitFourier ell b R h j χ := by
+    rationalRawFourier ell b R h j χ = (sieveWindowDensity ell : ℂ) * rationalUnitFourier ell
+      b R h j χ := by
   have hd : (sieveWindowDensity ell : ℂ) / (Fintype.card (∀ p, (ZMod (ell p))ˣ) : ℂ) =
       ∏ p, (ell p : ℂ)⁻¹ := UnitFourier.density_div_card ell
   unfold rationalRawFourier rationalUnitFourier
@@ -36,7 +38,8 @@ theorem rational_raw_eq_density_mul_unit (b : ℝ) (R : ℕ)
 theorem rational_unit_eq_raw_div_density (b : ℝ) (R : ℕ)
     (h : ∀ p, Fin k → ZMod (ell p)) (j : Fin k)
     (χ : ∀ p, DirichletCharacter ℂ (ell p)) :
-    rationalUnitFourier ell b R h j χ = rationalRawFourier ell b R h j χ / sieveWindowDensity ell := by
+    rationalUnitFourier ell b R h j χ = rationalRawFourier ell b R h j χ / sieveWindowDensity
+      ell := by
   have hd : (sieveWindowDensity ell : ℂ) ≠ 0 := by
     exact_mod_cast (UnitFourier.unitDensity_pos ell).ne'
   rw [rational_raw_eq_density_mul_unit, mul_div_cancel_left₀ _ hd]
@@ -69,7 +72,8 @@ theorem norm_rationalUnitFourier_le {b : ℝ} (hb : 0 ≤ b) (R : ℕ)
       (energy (rationalCoefficient (k := k) b R ell) / sieveWindowDensity ell) *
         ∏ p : J, 20 * (k : ℝ) ^ 3 / ell p := by
   have hd : 0 < sieveWindowDensity ell := UnitFourier.unitDensity_pos ell
-  rw [rational_unit_eq_raw_div_density, norm_div, Complex.norm_real, Real.norm_eq_abs, abs_of_pos hd]
+  rw [rational_unit_eq_raw_div_density, norm_div, Complex.norm_real, Real.norm_eq_abs,
+    abs_of_pos hd]
   have hh' := div_le_div_of_nonneg_right
     (norm_rationalRawFourier_le ell hb R hell h hh j χ J hχ houtside) hd.le
   exact hh'.trans_eq (by ring)
@@ -83,7 +87,8 @@ theorem norm_rationalUnitFourier_le_small {b : ℝ} (hb : 0 ≤ b) (R : ℕ)
     ‖rationalUnitFourier ell b R h j χ‖ ≤
       (energy (rationalCoefficient (k := k) b R ell) / sieveWindowDensity ell) * δ := by
   have hd : 0 < sieveWindowDensity ell := UnitFourier.unitDensity_pos ell
-  rw [rational_unit_eq_raw_div_density, norm_div, Complex.norm_real, Real.norm_eq_abs, abs_of_pos hd]
+  rw [rational_unit_eq_raw_div_density, norm_div, Complex.norm_real, Real.norm_eq_abs,
+    abs_of_pos hd]
   have hh' := div_le_div_of_nonneg_right
     (norm_rationalRawFourier_le_small ell hb R hell hδ hlocal h hh j χ J hJ hχ houtside) hd.le
   exact hh'.trans_eq (by ring)

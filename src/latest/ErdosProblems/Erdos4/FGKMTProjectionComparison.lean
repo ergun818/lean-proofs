@@ -63,7 +63,8 @@ theorem rational_true_ideal_difference_le {b : ℝ} (hb : 0 ≤ b) (R : ℕ)
     (ell : P → ℕ) (hell : ∀ p, k + 2 ≤ ell p) (j : Fin k) :
     ‖quadratic (rationalCoefficient b R ell) (fun p => ProjectionNormals.trueNormal (ell p : ℝ) j) -
       quadratic (rationalCoefficient b R ell) (fun p => IdealProjection.normal (ell p : ℝ) j)‖ ≤
-        energy (rationalCoefficient (k := k) b R ell) * ∑ p, 10 * (k : ℝ) ^ 2 / (ell p : ℝ) ^ 2 := by
+        energy (rationalCoefficient (k := k) b R ell) * ∑ p, 10 * (k : ℝ) ^ 2 / (ell p : ℝ) ^
+          2 := by
   apply norm_rational_quadratic_difference_le hb R ell (fun p => by have := hell p; omega)
     (fun p => ProjectionNormals.trueNormal (ell p : ℝ) j)
     (fun p => IdealProjection.normal (ell p : ℝ) j)

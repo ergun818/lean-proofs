@@ -8,8 +8,6 @@ open scoped BigOperators
 
 namespace Erdos4.FGKMT
 
-open Classical
-
 variable {k R : ℕ}
 
 abbrev SieveCore (j : Fin k) := {i : Fin k // i ≠ j}

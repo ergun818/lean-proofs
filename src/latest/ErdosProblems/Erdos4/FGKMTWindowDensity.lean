@@ -6,7 +6,7 @@ open scoped BigOperators
 
 namespace Erdos4.FGKMT
 
-open BoundedGaps.Maynard Classical
+open BoundedGaps.Maynard
 
 theorem prime_density_factor_nonneg {p : ℕ} (hp : p.Prime) :
     0 ≤ ((p : ℝ) - 1) / p := by

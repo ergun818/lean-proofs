@@ -15,8 +15,10 @@ theorem eventually_prime_initialization {c G C : ℝ} (hc : 0 < c) :
         (fun W => vertexDegree (fun p => cappedEdgeLaw ν (D.law p) W) v < 4) ≤
           1 / Real.log (x : ℝ) ^ (40 : ℕ)) ∧
       (∀ W p v, (cappedEdgeLaw ν (D.law p) W).prob (fun E => v ∈ E) ≤ (x : ℝ) ^ (-4 / 5 : ℝ)) ∧
-      (∀ W v w, v ≠ w → pairDegree (fun p => cappedEdgeLaw ν (D.law p) W) v w ≤ (x : ℝ) ^ (-4 / 5 : ℝ)) ∧
-      (∀ W p E, 0 < (cappedEdgeLaw ν (D.law p) W).weight E → E.card ≤ sieveDimension (growingIndex x) ∧
+      (∀ W v w, v ≠ w → pairDegree (fun p => cappedEdgeLaw ν (D.law p) W) v w ≤ (x : ℝ) ^ (-4
+        / 5 : ℝ)) ∧
+      (∀ W p E, 0 < (cappedEdgeLaw ν (D.law p) W).weight E → E.card ≤ sieveDimension
+        (growingIndex x) ∧
         ∃ b : ZMod p.val, ∀ v ∈ E, (v.val : ZMod p.val) = b) := by
   classical
   filter_upwards [eventually_primeSurvivorLaw_accurate hc, eventually_tilted_prime_error_budget]

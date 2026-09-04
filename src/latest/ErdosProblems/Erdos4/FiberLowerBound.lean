@@ -31,7 +31,7 @@ noncomputable def admissibleSum (W : ℕ) (m : ℝ) (R T : ℕ)
   ∑ u ∈ admissible W T ell j a,
     ProfileSmooth.scaled m k R u / (Nat.totient u : ℝ)
 
-theorem admissibleSum_le_fiberSum {m : ℝ} (hm : 0 ≤ m) {R : ℕ} (hR : 2 ≤ R)
+theorem admissibleSum_le_fiberSum {m : ℝ} (hm : 0 ≤ m) {R : ℕ} (_hR : 2 ≤ R)
     (W T : ℕ) (ell : P → ℕ) (hprime : ∀ p, (ell p).Prime)
     (hinj : Function.Injective ell) (j : Fin k) (a : P → Option (Fin k))
     (hcutoff : cofactor ell j a * T ≤ R)

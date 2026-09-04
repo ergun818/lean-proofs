@@ -8,7 +8,7 @@ open scoped BigOperators
 
 namespace Erdos4.FGKMT
 
-open Filter Classical ChebyshevIntervals
+open Filter ChebyshevIntervals
 
 noncomputable def sourceSurvivors (sources targets : Finset ℕ) (U : Finset targets)
     (b : ∀ p : sources, ZMod p.val) : Finset targets :=

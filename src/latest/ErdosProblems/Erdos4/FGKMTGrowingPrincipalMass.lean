@@ -47,7 +47,8 @@ theorem exists_growing_principal_scale_gain :
       Real.log (growingRadius x : ℝ)
   have hF : 0 ≤ F := maskedFourierScale_nonneg _ _ _ _ _
   have hA : c ≤ A := hdensity (growingPrecutoff x) (growingRadius x) B hDR hR.1 hB
-  have hbase := aggregatePrincipalMass_gain (growingSmallPrimeValue x B) (growingLargePrimeValue x B)
+  have hbase := aggregatePrincipalMass_gain (growingSmallPrimeValue x B)
+    (growingLargePrimeValue x B)
     β (growingRadius x) (fun l i => (h i : ZMod (growingSmallPrimeValue x B l)))
     (hgain a ha B hB hBx)
   change (c / 12288) * (growingIndex x : ℝ) * F ≤ _
@@ -88,7 +89,8 @@ theorem eventually_growing_principal_density_gain :
   have hlog : 0 ≤ Real.log (growingRadius x : ℝ) :=
     (Real.log_pos (by exact_mod_cast hR.1)).le
   have hratio : (1 / 2 : ℝ) ≤ H / ρ := smallSievePrime_density_ratio (growingPrecutoff x) hB
-  have hbase := aggregatePrincipalMass_gain (growingSmallPrimeValue x B) (growingLargePrimeValue x B)
+  have hbase := aggregatePrincipalMass_gain (growingSmallPrimeValue x B)
+    (growingLargePrimeValue x B)
     β (growingRadius x) (fun l i => (h i : ZMod (growingSmallPrimeValue x B l)))
     (hgain a ha B hB hBx)
   change _ ≤ aggregatePrincipalMass _ _ β _ _

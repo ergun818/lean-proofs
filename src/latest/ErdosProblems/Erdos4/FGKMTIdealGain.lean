@@ -6,7 +6,7 @@ open scoped BigOperators
 
 namespace Erdos4.FGKMT
 
-open DivisorCoefficients RestrictedProductNorm Classical
+open DivisorCoefficients RestrictedProductNorm
 
 variable {P : Type*} [Fintype P] [DecidableEq P] {k R : ℕ}
 
@@ -17,9 +17,11 @@ theorem rationalIdealForm_good_mass_lower {b : ℝ} (hb : 0 ≤ b) (ell : P → 
     (hcover : ∀ u : ℕ, u ≤ R → Squarefree u → u.Coprime W →
       ∀ q ∈ u.primeFactors, ∃ p, ell p = q) (j : Fin k) :
     sieveWindowDensity ell *
-      (∑ a ∈ Finset.univ.filter (MixedDivisorGood (SieveCore j) W T
-        (Real.log (R : ℝ) / 2) (R := R)), mixedDivisorNumerator (SieveCore j) W b T a) ≤
+      (open scoped Classical in
+        ∑ a ∈ Finset.univ.filter (MixedDivisorGood (SieveCore j) W T
+          (Real.log (R : ℝ) / 2) (R := R)), mixedDivisorNumerator (SieveCore j) W b T a) ≤
       rationalIdealForm b R ell j := by
+  classical
   let S := (Finset.univ : Finset ((SieveCore j ⊕ Fin 2) → Fin (R + 1))).filter
     (MixedDivisorGood (SieveCore j) W T (Real.log (R : ℝ) / 2))
   let f : (P → Option (Fin k)) × (P → Option (Fin k)) → ℝ :=
@@ -54,7 +56,8 @@ theorem rationalIdealForm_mixed_mass_lower {b : ℝ} (hb : 0 < b) (ell : P → �
   have hTR1 : T ≤ R := by nlinarith
   have hlog : 0 < Real.log (R : ℝ) / 2 := by
     exact div_pos (Real.log_pos (by exact_mod_cast hR)) (by norm_num)
-  have hm := mixedDivisor_good_mass_half (SieveCore j) W hb hR1 hT hTR1 hK hpre hlog hmean hcollision
+  have hm := mixedDivisor_good_mass_half (SieveCore j) W hb hR1 hT hTR1 hK hpre hlog hmean
+    hcollision
   have hδ := sieveWindowDensity_nonneg ell (fun p => (hprime p).one_le)
   have hh := (mul_le_mul_of_nonneg_left hm hδ).trans
     (rationalIdealForm_good_mass_lower hb.le ell hprime hinj hR1 hT hTR hcop hcover j)

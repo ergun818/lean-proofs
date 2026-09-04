@@ -100,13 +100,14 @@ theorem weighted_mean_square_eq (w : P → ℝ) (f : I → P → ℂ) (a : I →
   simpa only [Complex.ofReal_re] using congrArg Complex.re heq
 
 /-- The weighted transform bound used after expanding a Selberg majorant. -/
-theorem weighted_mean_square_le [DecidableEq I]
+theorem weighted_mean_square_le
     (w : P → ℝ) (f : I → P → ℂ) (B epsilon : ℝ) (hepsilon : 0 ≤ epsilon)
     (hdiag : ∀ i, ‖weightedGram w f i i‖ ≤ B)
     (hoff : ∀ i j, i ≠ j → ‖weightedGram w f i j‖ ≤ epsilon)
     (a : I → ℂ) :
     (∑ p, w p * ‖∑ i, a i * f i p‖ ^ 2) ≤
       (B + (Fintype.card I : ℝ) * epsilon) * ∑ i, ‖a i‖ ^ 2 := by
+  classical
   rw [weighted_mean_square_eq]
   apply quadratic_form_le _ B epsilon hepsilon _ a
   intro i j

@@ -25,9 +25,11 @@ theorem norm_rational_block_difference_le {b : ℝ} (hb : 0 ≤ b) (R : ℕ)
   have hinner (a c : J → Option (Fin k)) :
       (∑ x : {p : P // p ∉ J} → Option (Fin k),
         ∑ y : {p : P // p ∉ J} → Option (Fin k),
-          (rationalCoefficient b R ell (join J a x) : ℂ) * (rationalCoefficient b R ell (join J c y) : ℂ) *
+          (rationalCoefficient b R ell (join J a x) : ℂ) * (rationalCoefficient b R ell (join
+            J c y) : ℂ) *
             ∏ p : {p : P // p ∉ J}, (ProjectionKernel.kernel (u p) (x p) (y p) : ℂ)) =
-        (ProjectionSliceBound.form u (rationalSlice b R ell J a) (rationalSlice b R ell J c) : ℂ) := by
+        (ProjectionSliceBound.form u (rationalSlice b R ell J a) (rationalSlice b R ell J c) :
+          ℂ) := by
     rw [ProjectionSliceBound.form_eq_sum]
     simp only [Complex.ofReal_sum, Complex.ofReal_mul, Complex.ofReal_prod, rationalSlice]
   rw [tensorForm_mixed, tensorForm_mixed]
@@ -43,7 +45,8 @@ theorem norm_rational_single_replacement_le {b : ℝ} (hb : 0 ≤ b) (R : ℕ)
       quadratic (rationalCoefficient b R ell) u‖ ≤
         energy (rationalCoefficient (k := k) b R ell) *
           LocalFourier.weightedMatrixNorm (localWeight (ell p))
-            (fun a c => (ProjectionKernel.kernel t a c : ℂ) - (ProjectionKernel.kernel (u p) a c : ℂ)) := by
+            (fun a c => (ProjectionKernel.kernel t a c : ℂ) - (ProjectionKernel.kernel (u p) a
+              c : ℂ)) := by
   let outside : {q : P // q ∉ ({p} : Finset P)} → Option (Fin k) → ℝ := fun q => u q
   have hnew : (fun q a c => (ProjectionKernel.kernel (Function.update u p t q) a c : ℂ)) =
       mixedMatrix {p} (fun _ a c => (ProjectionKernel.kernel t a c : ℂ))

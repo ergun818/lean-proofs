@@ -23,8 +23,10 @@ variable {P : Type*} [Fintype P] [DecidableEq P]
 noncomputable def value (chi : ∀ p, DirichletCharacter ℂ (ell p)) (n : ℕ) : ℂ :=
   ∏ p, chi p (n : ZMod (ell p))
 
+omit [DecidableEq P] in
 theorem coprime_modulus_of_prime_gt {n : ℕ} (hn : n.Prime) (hgt : ∀ p, ell p < n) :
     n.Coprime (modulus ell) := by
+  classical
   apply Nat.coprime_prod_right_iff.mpr
   intro p _hp
   exact (Nat.coprime_primes hn (Fact.out : (ell p).Prime)).mpr (ne_of_gt (hgt p))

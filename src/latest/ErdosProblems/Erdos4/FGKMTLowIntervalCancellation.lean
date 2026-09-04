@@ -7,15 +7,17 @@ open scoped BigOperators
 
 namespace Erdos4.FGKMT
 
-open Classical ProductCharacterEncoding FiniteCharacterSupport
+open ProductCharacterEncoding FiniteCharacterSupport
 
 section OneFamily
 
 variable {P : Type*} [Fintype P] [DecidableEq P]
     (ell : P → ℕ) [∀ l, Fact (ell l).Prime]
 
+omit [DecidableEq P] in
 theorem productEntry_nonprincipal (hinj : Function.Injective ell)
     (χ : ∀ l, DirichletCharacter ℂ (ell l)) (hχ : χ ≠ fun _ => 1) : (entry ell χ).2 ≠ 1 := by
+  classical
   intro hprim
   change (character ell χ).primitiveCharacter = 1 at hprim
   have hchar : character ell χ = 1 := by
@@ -27,16 +29,20 @@ theorem productEntry_nonprincipal (hinj : Function.Injective ell)
   exact hχ ((character_injective ell (pairwise_coprime_of_prime ell
     (fun l => (Fact.out : (ell l).Prime)) hinj)) (hchar.trans hone.symm))
 
+omit [DecidableEq P] [∀ (l : P), Fact (Nat.Prime (ell l))] in
 theorem productEntry_coprime (χ : ∀ l, DirichletCharacter ℂ (ell l)) {B : ℕ}
     (hB : ∀ l, (ell l).Coprime B) : (entry ell χ).1.Coprime B := by
+  classical
   have hfull : (modulus ell).Coprime B := Nat.Coprime.prod_left (fun l _ => hB l)
   exact hfull.of_dvd_left (character ell χ).conductor_dvd_level
 
+omit [DecidableEq P] in
 theorem product_interval_sum_eq_primitive (χ : ∀ l, DirichletCharacter ℂ (ell l))
     (a b : ℕ)
     (hs : ∀ p ∈ ChebyshevIntervals.primeInterval a b, p.Coprime (modulus ell)) :
     (∑ p : ChebyshevIntervals.primeInterval a b, ProductPrimeMeanSquare.value ell χ p.val) =
       ∑ p ∈ ChebyshevIntervals.primeInterval a b, (entry ell χ).2 (p : ZMod (entry ell χ).1) := by
+  classical
   rw [Finset.sum_coe_sort (ChebyshevIntervals.primeInterval a b)
     (fun p : ℕ => ProductPrimeMeanSquare.value ell χ p)]
   apply Finset.sum_congr rfl

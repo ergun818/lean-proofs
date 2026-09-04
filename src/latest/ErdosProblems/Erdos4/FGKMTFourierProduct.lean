@@ -6,7 +6,7 @@ open scoped BigOperators
 
 namespace Erdos4.FGKMT
 
-open Classical ProductFourierInversion
+open ProductFourierInversion
 
 variable {P Q : Type*} [Fintype P] [DecidableEq P] [Fintype Q] [DecidableEq Q]
     (ell₀ : P → ℕ) (ell₁ : Q → ℕ)
@@ -17,12 +17,14 @@ instance sumLocalPrime (s : P ⊕ Q) : Fact (Sum.elim ell₀ ell₁ s).Prime := 
   | inl p => exact inferInstanceAs (Fact (ell₀ p).Prime)
   | inr q => exact inferInstanceAs (Fact (ell₁ q).Prime)
 
+omit [DecidableEq P] [DecidableEq Q] in
 theorem fourierValue_sum
     (χ : ∀ s, DirichletCharacter ℂ (Sum.elim ell₀ ell₁ s))
     (u : ∀ s, (ZMod (Sum.elim ell₀ ell₁ s))ˣ) :
     value (Sum.elim ell₀ ell₁) χ u =
       value ell₀ (fun p => χ (.inl p)) (fun p => u (.inl p)) *
         value ell₁ (fun q => χ (.inr q)) (fun q => u (.inr q)) := by
+  classical
   exact Fintype.prod_sum_type _
 
 theorem productFourier_inversion

@@ -6,8 +6,6 @@ open scoped BigOperators
 
 namespace Erdos4.FGKMT
 
-open Classical
-
 variable {p k : ℕ} [Fact p.Prime]
 
 noncomputable def smallMaskFourier (h : Fin k → ZMod p) (j : Fin k)
@@ -37,6 +35,7 @@ theorem smallMaskFourier_norm_le_density_ratio (h : Fin k → ZMod p) (j : Fin k
 
 theorem smallPresieveDensity_ge_inv (h : Fin k → ZMod p) (ha : ∃ x, SmallPrimeGood h x) :
     (p : ℝ)⁻¹ ≤ smallPresieveDensity h := by
+  classical
   obtain ⟨x, hx⟩ := ha
   have hcard : 1 ≤ (smallPrimeGoodStates h).card :=
     Finset.card_pos.mpr ⟨x, Finset.mem_filter.mpr ⟨Finset.mem_univ _, hx⟩⟩

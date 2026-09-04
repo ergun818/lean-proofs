@@ -29,19 +29,24 @@ def localShift (h : Fin k → ℕ) (b : P → Option (Fin k)) (l : P) : ℕ :=
 def Condition (h : Fin k → ℕ) (p : ℕ) (b : P → Option (Fin k)) (n : ℕ) : Prop :=
   ∀ l, localModulus ell b l ∣ n + localShift h b l * p
 
+omit [DecidableEq P] [Fintype P] in
 theorem localModulus_pos (b : P → Option (Fin k)) (l : P) : 0 < localModulus ell b l := by
+  classical
   unfold localModulus
   split_ifs
   · exact Nat.zero_lt_one
   · exact (Fact.out : (ell l).Prime).pos
 
+omit [DecidableEq P] [Fintype P] [∀ (l : P), Fact (Nat.Prime (ell l))] in
 theorem localModulus_pairwise (hcop : Pairwise (fun l r => (ell l).Coprime (ell r)))
     (b : P → Option (Fin k)) : Pairwise (fun l r =>
       (localModulus ell b l).Coprime (localModulus ell b r)) := by
+  classical
   intro l r hlr
   unfold localModulus
   split_ifs <;> first | simp | exact hcop hlr
 
+omit [DecidableEq P] in
 theorem exists_residue (hcop : Pairwise (fun l r => (ell l).Coprime (ell r)))
     (h : Fin k → ℕ) (p : ℕ) (b : P → Option (Fin k)) :
     ∃ a : ℕ, ∀ n : ℕ, Condition ell h p b n ↔ n ≡ a [MOD totalDivisor ell b] := by
@@ -72,10 +77,12 @@ theorem exists_residue (hcop : Pairwise (fun l r => (ell l).Coprime (ell r)))
       (m l) (localShift h b l * p) n (localModulus_pos ell b l)).mp
       (hc.mp hn l (by simp [L]))
 
+omit [DecidableEq P] in
 theorem residueState_some_iff (h : Fin k → ℕ)
     (hh : ∀ l, Function.Injective (fun i => (h i : ZMod (ell l))))
     (p : ℕ) (hp : p.Coprime (ProductCharacterEncoding.modulus ell)) (n : ℕ) (l : P) (i : Fin k) :
     AffineWeights.residueState ell h n p l = some i ↔ ell l ∣ n + h i * p := by
+  classical
   have hp0 : (p : ZMod (ell l)) ≠ 0 := by
     rw [← AffineWeights.unitPoint_coe ell p hp l]
     exact Units.ne_zero _
@@ -84,12 +91,14 @@ theorem residueState_some_iff (h : Fin k → ℕ)
   simpa only [Nat.cast_add, Nat.cast_mul] using
     ZMod.natCast_eq_zero_iff (n + h i * p) (ell l)
 
+omit [DecidableEq P] in
 theorem indicator_eq (h : Fin k → ℕ)
     (hh : ∀ l, Function.Injective (fun i => (h i : ZMod (ell l))))
     (p : ℕ) (hp : p.Coprime (ProductCharacterEncoding.modulus ell))
     (b : P → Option (Fin k)) (n : ℕ) (l : P) :
     indicator (AffineWeights.residueState ell h n p l) (b l) =
       if localModulus ell b l ∣ n + localShift h b l * p then 1 else 0 := by
+  classical
   cases hb : b l with
   | none => simp [hb, indicator, localModulus, localShift]
   | some i =>
@@ -97,12 +106,14 @@ theorem indicator_eq (h : Fin k → ℕ)
     simp only [residueState_some_iff ell h hh p hp n l i]
 
 open Classical in
+omit [DecidableEq P] in
 theorem evaluation_eq (h : Fin k → ℕ)
     (hh : ∀ l, Function.Injective (fun i => (h i : ZMod (ell l))))
     (p : ℕ) (hp : p.Coprime (ProductCharacterEncoding.modulus ell))
     (b : P → Option (Fin k)) (n : ℕ) :
     evaluation (AffineWeights.residueState ell h n p) b =
       if Condition ell h p b n then 1 else 0 := by
+  classical
   unfold evaluation
   simp_rw [indicator_eq ell h hh p hp b n]
   by_cases hn : Condition ell h p b n
@@ -112,6 +123,7 @@ theorem evaluation_eq (h : Fin k → ℕ)
     obtain ⟨l, hl⟩ := not_forall.mp hn
     exact Finset.prod_eq_zero (Finset.mem_univ l) (if_neg hl)
 
+omit [DecidableEq P] in
 theorem evaluation_is_residue (hcop : Pairwise (fun l r => (ell l).Coprime (ell r)))
     (h : Fin k → ℕ) (hh : ∀ l, Function.Injective (fun i => (h i : ZMod (ell l))))
     (p : ℕ) (hp : p.Coprime (ProductCharacterEncoding.modulus ell)) (b : P → Option (Fin k)) :
@@ -123,14 +135,17 @@ theorem evaluation_is_residue (hcop : Pairwise (fun l r => (ell l).Coprime (ell 
   intro n
   simp only [evaluation_eq ell h hh p hp b n, ha n]
 
+omit [DecidableEq P] [∀ (l : P), Fact (Nat.Prime (ell l))] in
 theorem coprime_totalDivisor (W : ℕ) (hWcop : ∀ l, W.Coprime (ell l))
     (b : P → Option (Fin k)) : W.Coprime (totalDivisor ell b) := by
+  classical
   apply Nat.coprime_prod_right_iff.mpr
   intro l _hl
   split_ifs
   · exact Nat.coprime_one_right W
   · exact hWcop l
 
+omit [DecidableEq P] in
 theorem count_error_le (Y W : ℕ) (hW : 0 < W) (hWcop : ∀ l, W.Coprime (ell l))
     (hcop : Pairwise (fun l r => (ell l).Coprime (ell r)))
     (h : Fin k → ℕ) (hh : ∀ l, Function.Injective (fun i => (h i : ZMod (ell l))))

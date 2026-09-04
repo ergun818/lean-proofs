@@ -125,6 +125,7 @@ theorem eventually_prime_mean_square_dual {I : Type*} [Fintype I] :
           (2 * (N : ℝ) / Real.log t) * ∑ p : primes, ‖a p‖ ^ 2 := by
   filter_upwards [eventually_good_cutoff] with t ht
   intro family hvalid hinjective hQ N hN primes hprimes a
-  exact prime_mean_square_dual_at_good_cutoff ht.1 ht.2 family hvalid hinjective hQ N hN primes hprimes a
+  exact prime_mean_square_dual_at_good_cutoff ht.1 ht.2 family hvalid hinjective hQ N hN
+    primes hprimes a
 
 end Erdos4.PrimeMeanSquare

@@ -31,7 +31,8 @@ theorem primeInterval_eq_primeWindow (w z : ℕ) :
 
 theorem cutoff_log_ratio_bounds {a r : ℕ} (hra : a ≤ r) (hr : 8 ≤ r) :
     4 / ((r : ℝ) * core r) ≤ Real.log (smallCutoff a r : ℝ) / Real.log (smoothFrontier r : ℝ) ∧
-      Real.log (smallCutoff a r : ℝ) / Real.log (smoothFrontier r : ℝ) ≤ 8 / ((r : ℝ) * core r) := by
+      Real.log (smallCutoff a r : ℝ) / Real.log (smoothFrontier r : ℝ) ≤ 8 / ((r : ℝ) * core
+        r) := by
   have hV : (0 : ℝ) < core r := by exact_mod_cast core_pos r
   have hrR : (0 : ℝ) < r := by exact_mod_cast (show 0 < r by omega)
   have hE : primaryExponent a r ≤ core r ^ 2 :=
@@ -79,7 +80,8 @@ theorem exists_survival_density_bounds :
   have hh := hbounds (smallCutoff a r) (smoothFrontier r) (smallCutoff_two_le a r) hwz
   have hratio := cutoff_log_ratio_bounds hra hr8
   have heq : UnitFourier.unitDensity (fun p : randomPrimes a r => (p : ℕ)) =
-      UnitFourier.unitDensity (fun p : ArithmeticFibers.primeWindow (smallCutoff a r) (smoothFrontier r) => (p : ℕ)) := by
+      UnitFourier.unitDensity (fun p : ArithmeticFibers.primeWindow (smallCutoff a r)
+        (smoothFrontier r) => (p : ℕ)) := by
     unfold UnitFourier.unitDensity
     rw [Finset.prod_coe_sort (randomPrimes a r) (fun p : ℕ => ((p : ℝ) - 1) / p),
       Finset.prod_coe_sort (ArithmeticFibers.primeWindow (smallCutoff a r) (smoothFrontier r))

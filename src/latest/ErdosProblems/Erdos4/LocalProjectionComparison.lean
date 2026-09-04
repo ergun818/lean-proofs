@@ -59,7 +59,8 @@ theorem kernel_difference_weighted_le {A : Type*} [Fintype A] [DecidableEq A]
 /-- A bound with a convergent reciprocal-square prime tail. -/
 theorem local_comparison_le {k ell : ℕ} (hell : k + 2 ≤ ell) (j : Fin k) :
     weightedMatrixNorm (DivisorCoefficients.localWeight ell) (fun a b =>
-      ((ProjectionKernel.kernel (trueNormal (ell : ℝ) j) a b - IdealProjection.kernel (ell : ℝ) j a b : ℝ) : ℂ)) ≤
+      ((ProjectionKernel.kernel (trueNormal (ell : ℝ) j) a b - IdealProjection.kernel (ell :
+        ℝ) j a b : ℝ) : ℂ)) ≤
         10 * (k : ℝ) ^ 2 / (ell : ℝ) ^ 2 := by
   have hk : (1 : ℝ) ≤ k := by
     have hn : 1 ≤ k := by have := j.isLt; omega

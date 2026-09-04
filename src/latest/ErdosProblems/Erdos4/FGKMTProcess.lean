@@ -13,15 +13,19 @@ noncomputable def modelSequence (μ : ℕ → I → FiniteLaw (Finset V)) : ℕ 
   | 0 => fun _ => 1
   | n + 1 => nextModel (μ n) (modelSequence μ n)
 
+omit [DecidableEq I] [DecidableEq V] in
 theorem modelSequence_pos (μ : ℕ → I → FiniteLaw (Finset V)) :
     ∀ n v, 0 < modelSequence μ n v := by
+  classical
   intro n
   induction n with
   | zero => intro v; exact zero_lt_one
   | succ n ih => exact nextModel_pos (μ n) (modelSequence μ n) ih
 
+omit [DecidableEq I] [DecidableEq V] in
 theorem modelSequence_le_one (μ : ℕ → I → FiniteLaw (Finset V)) :
     ∀ n v, modelSequence μ n v ≤ 1 := by
+  classical
   intro n
   induction n with
   | zero => intro v; rfl
@@ -35,8 +39,10 @@ noncomputable def survivorProcess (μ : ℕ → I → FiniteLaw (Finset V)) (t :
   | n + 1 => roundLaw (survivorProcess μ t n) (μ n) (modelSequence μ n)
       (modelSequence_pos μ n) (t n)
 
+omit [DecidableEq V] in
 theorem initial_accuracy (A : ℕ) {ε : ℝ} (hε : 0 ≤ ε) :
     SurvivalAccurate (FiniteLaw.dirac (Finset.univ : Finset V)) (fun _ => 1) A ε := by
+  classical
   intro T _hT
   unfold survival
   rw [FiniteLaw.prob_eq_mean, FiniteLaw.mean_dirac]

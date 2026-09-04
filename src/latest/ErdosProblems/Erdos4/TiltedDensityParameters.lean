@@ -51,7 +51,8 @@ theorem eventually_tiltTruncation_bounds :
   have hWZ : smallCutoff x ≤ tiltTruncation x := by
     have hlogW := hw.2.2.2.2.2.2.1
     change Real.log (smallCutoff x : ℝ) ≤ 100 * l at hlogW
-    have hlogs : Real.log (smallCutoff x : ℝ) ≤ Real.log (tiltTruncation x : ℝ) := by linarith [hZ.2.1]
+    have hlogs : Real.log (smallCutoff x : ℝ) ≤ Real.log (tiltTruncation x : ℝ) := by
+      linarith [hZ.2.1]
     exact_mod_cast (Real.log_le_log_iff hWpos hZpos).mp hlogs
   have hsHalf : s ≤ L / 2 := by
     change L / tiltScale x ≤ L / 2

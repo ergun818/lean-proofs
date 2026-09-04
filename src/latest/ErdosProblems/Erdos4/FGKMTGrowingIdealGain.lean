@@ -23,7 +23,8 @@ theorem eventually_growing_ideal_gain :
         Real.log (R : ℝ) * (j : ℝ) / 6144) *
           RestrictedProductNorm.energy
             (rationalCoefficient (k := sieveDimension j) (sieveSlope j R) R (sievePrimeValue W R)) ≤
-        ∑ i : Fin (sieveDimension j), rationalIdealForm (sieveSlope j R) R (sievePrimeValue W R) i := by
+        ∑ i : Fin (sieveDimension j), rationalIdealForm (sieveSlope j R) R (sievePrimeValue W
+          R) i := by
   have hlogTop := Real.tendsto_log_atTop.comp (tendsto_natCast_atTop_atTop (R := ℝ))
   have hpow : Tendsto (fun x : ℕ => (x : ℝ) ^ (1 / 50 : ℝ)) atTop atTop :=
     (tendsto_rpow_atTop (by norm_num : (0 : ℝ) < 1 / 50)).comp tendsto_natCast_atTop_atTop

@@ -74,7 +74,8 @@ theorem local_basis_mean {ell : ℕ} [Fact ell.Prime] (hell : (k : ℝ) < ell)
         LocalOrthogonality.extendedBasis (ell : ℝ) b (AffineWeights.state h n p)) =
       if a = b then 1 else 0 := by
   rw [local_mean h hh p hp (fun s =>
-    LocalOrthogonality.extendedBasis (ell : ℝ) a s * LocalOrthogonality.extendedBasis (ell : ℝ) b s),
+    LocalOrthogonality.extendedBasis (ell : ℝ) a s * LocalOrthogonality.extendedBasis (ell :
+      ℝ) b s),
     LocalOrthogonality.mean_extendedBasis_mul hell]
 
 variable {P : Type*} [Fintype P] [DecidableEq P]
@@ -95,8 +96,10 @@ theorem mean_basis_mul (hell : ∀ l, (k : ℝ) < ell l)
   have hfactor : ∀ u : ∀ l, ZMod (ell l),
       (∏ l, (ell l : ℝ)⁻¹) * (basis ell h p a u * basis ell h p b u) =
         ∏ l, (ell l : ℝ)⁻¹ *
-          (LocalOrthogonality.extendedBasis (ell l : ℝ) (a l) (AffineWeights.state (h l) (u l) (p l)) *
-            LocalOrthogonality.extendedBasis (ell l : ℝ) (b l) (AffineWeights.state (h l) (u l) (p l))) := by
+          (LocalOrthogonality.extendedBasis (ell l : ℝ) (a l) (AffineWeights.state (h l) (u l)
+            (p l)) *
+            LocalOrthogonality.extendedBasis (ell l : ℝ) (b l) (AffineWeights.state (h l) (u
+              l) (p l))) := by
     intro u
     simp only [basis, Finset.prod_mul_distrib]
   unfold mean

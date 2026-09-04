@@ -5,7 +5,7 @@ import ErdosProblems.Erdos4.FGKMTGrowingPrimeSupply
 
 namespace Erdos4.FGKMT
 
-open Filter Classical
+open Filter
 
 theorem growingSourcePrimes_card_le (x : ℕ) : (growingSourcePrimes x).card ≤ x := by
   have hsub : growingSourcePrimes x ⊆ Finset.Icc 1 x := by

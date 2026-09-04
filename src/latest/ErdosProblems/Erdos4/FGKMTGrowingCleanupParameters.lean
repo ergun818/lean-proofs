@@ -29,7 +29,8 @@ theorem eventually_growing_zero_parameters {c : ℝ} (hc : 0 < c) :
   have hzbase : growingRandomEnd x ≤ x / 32 :=
     hzR.trans (hRself.trans (growingRadius_sq_le_source_start hR.1))
   refine ⟨hbase, hcut.2.1, hzbase, ?_⟩
-  have hwpos : (0 : ℝ) < growingRandomStart x := by exact_mod_cast (show 0 < growingRandomStart x by omega)
+  have hwpos : (0 : ℝ) < growingRandomStart x := by
+    exact_mod_cast (show 0 < growingRandomStart x by omega)
   have hpoww : L ^ 50 ≤ (growingRandomStart x : ℝ) := by
     apply (Real.log_le_log_iff (pow_pos hLpos 50) hwpos).mp
     simpa only [Real.log_pow, Nat.cast_ofNat, L] using hcut.2.2.1

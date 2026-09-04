@@ -44,7 +44,7 @@ theorem squarefreeHarmonic_uniform_real_error {W : ℕ} (hW : 0 < W) (hSq : Squa
   have hρ1 := harmonicDensity_le_one hW
   have hlogW := Real.log_natCast_nonneg W
   have hlog2 : Real.log 2 ≤ 1 := by
-    convert Real.log_le_sub_one_of_pos (by norm_num : (0 : ℝ) < 2) using 1 <;> norm_num
+    convert Real.log_le_sub_one_of_pos (by norm_num : (0 : ℝ) < 2) using 1; norm_num
   have hsecond : |coprimeHarmonicDensity W * (Real.log (⌊x⌋₊ : ℝ) - Real.log x)| ≤ 1 := by
     rw [abs_mul, abs_of_nonneg hρ0]
     exact (mul_le_mul_of_nonneg_right hρ1 (abs_nonneg _)).trans
@@ -70,7 +70,8 @@ theorem weighted_harmonic_error {W T : ℕ} (hW : 0 < W) (hSq : Squarefree W) (h
   have hlogcont : ContinuousOn (fun t : ℝ => coprimeHarmonicDensity W * Real.log t)
       (Set.Icc (1 : ℝ) T) :=
     continuousOn_const.mul (continuousOn_id.log (fun t ht => (zero_lt_one.trans_le ht.1).ne'))
-  have hh := abs_weightedSum_sub_logarithmicAbelMain_le (V := V) hT (squarefreeHarmonicWeight_zero W) hE
+  have hh := abs_weightedSum_sub_logarithmicAbelMain_le (V := V) hT
+    (squarefreeHarmonicWeight_zero W) hE
     hfDiff hfDeriv.integrableOn_Icc
     (hfDeriv.abs.integrableOn_Icc.mono_set Set.Ioc_subset_Icc_self)
     ((hfDeriv.mul hlogcont).integrableOn_Icc.mono_set Set.Ioc_subset_Icc_self)

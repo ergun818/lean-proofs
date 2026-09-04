@@ -7,7 +7,7 @@ open scoped BigOperators
 
 namespace Erdos4.FGKMT
 
-open DivisorCoefficients RestrictedProductNorm Classical
+open DivisorCoefficients RestrictedProductNorm
 
 variable {P : Type*} [Fintype P] [DecidableEq P] {k : ℕ}
 
@@ -56,7 +56,8 @@ theorem rationalProfileProduct_le_erase {b : ℝ} (hb : 0 ≤ b)
 theorem rationalCoefficient_le_removedFactor_mul_erase {b : ℝ} (hb : 0 ≤ b)
     (R : ℕ) (ell : P → ℕ) (hell : ∀ p, 1 ≤ ell p) (J : Finset P)
     (a : P → Option (Fin k)) :
-    rationalCoefficient b R ell a ≤ removedFactor ell J a * rationalCoefficient b R ell (erase J a) := by
+    rationalCoefficient b R ell a ≤ removedFactor ell J a * rationalCoefficient b R ell (erase
+      J a) := by
   by_cases ha : totalDivisor ell a ≤ R
   · have he := (totalDivisor_erase_le ell hell J a).trans ha
     rw [rationalCoefficient, if_pos ha, rationalCoefficient, if_pos he, normalization_erase ell J a]
@@ -79,17 +80,21 @@ theorem one_le_rationalCoefficient_energy (b : ℝ) {R : ℕ} (hR : 1 ≤ R) (el
     (Finset.mem_univ (fun _ : P => (none : Option (Fin k))))
   simpa only [rationalCoefficient_none b hR ell, one_pow, energy] using hh
 
+omit [DecidableEq P] in
 theorem rationalCoefficient_sq (b : ℝ) (R : ℕ) (ell : P → ℕ)
     (hprime : ∀ p, (ell p).Prime) (hinj : Function.Injective ell) {W : ℕ}
     (hcop : ∀ p, (ell p).Coprime W) (a : P → Option (Fin k)) :
     rationalCoefficient b R ell a ^ 2 =
-      if totalDivisor ell a ≤ R then rationalSieveTupleWeight W b (coordinateDivisor ell a) else 0 := by
+      if totalDivisor ell a ≤ R then rationalSieveTupleWeight W b (coordinateDivisor ell a)
+        else 0 := by
+  classical
   by_cases ha : totalDivisor ell a ≤ R
   · rw [rationalCoefficient, if_pos ha, if_pos ha, mul_pow,
       normalization_sq_eq_harmonic_product ell hprime hinj hcop a]
     unfold rationalProfileProduct rationalSieveTupleWeight
     rw [← Finset.prod_pow, Finset.prod_mul_distrib]
-  · simp only [rationalCoefficient, if_neg ha, ne_eq, OfNat.ofNat_ne_zero, not_false_eq_true, zero_pow]
+  · simp only [rationalCoefficient, if_neg ha, ne_eq, OfNat.ofNat_ne_zero, not_false_eq_true,
+    zero_pow]
 
 omit [DecidableEq P] in
 theorem coordinateDivisor_le_totalDivisor (ell : P → ℕ) (hell : ∀ p, 1 ≤ ell p)

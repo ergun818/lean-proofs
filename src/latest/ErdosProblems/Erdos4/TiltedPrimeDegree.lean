@@ -94,13 +94,16 @@ theorem exactLostDegree_root_mean_le (ν : FiniteLaw (Finset V)) (μ : I → Fin
     (v : V) (hq : survival ν {v} ≠ 0) (hd : 0 < vertexDegree μ v) {η : ℝ} (_hη : 0 ≤ η)
     (hpos : ∀ i E, 0 < (μ i).weight E → survival ν E ≠ 0)
     (hcap : ∀ i E, 0 < (μ i).weight E → v ∈ E →
-      (conditionSurvival ν E).prob (fun W => 2 < eventNormalizer ν (μ i) (fun E W => E ⊆ W) W) ≤ η) :
+      (conditionSurvival ν E).prob (fun W => 2 < eventNormalizer ν (μ i) (fun E W => E ⊆ W) W)
+        ≤ η) :
     (conditionSurvival ν {v}).mean (fun W =>
       (survival ν {v} / vertexDegree μ v) * exactLostDegree ν μ v W) ≤ η := by
   classical
-  have heach (i : I) : survival ν {v} * (conditionSurvival ν {v}).mean (edgeLostIncidence ν (μ i) v) ≤
+  have heach (i : I) : survival ν {v} * (conditionSurvival ν {v}).mean (edgeLostIncidence ν (μ
+    i) v) ≤
       η * (μ i).prob (fun E => v ∈ E) := by
-    rw [root_edge_cap_mean ν (μ i) v hq (hpos i), FiniteLaw.prob_eq_mean, ← FiniteLaw.mean_const_mul]
+    rw [root_edge_cap_mean ν (μ i) v hq (hpos i), FiniteLaw.prob_eq_mean, ←
+      FiniteLaw.mean_const_mul]
     apply (μ i).mean_mono_support
     intro E hE
     by_cases hvE : v ∈ E
@@ -116,7 +119,8 @@ theorem exactLostDegree_root_mean_le (ν : FiniteLaw (Finset V)) (μ : I → Fin
       ring
     _ ≤ (∑ i, η * (μ i).prob (fun E => v ∈ E)) / vertexDegree μ v :=
       div_le_div_of_nonneg_right (Finset.sum_le_sum (fun i _ => heach i)) hd.le
-    _ = η := by rw [← Finset.mul_sum]; change η * vertexDegree μ v / vertexDegree μ v = η; field_simp
+    _ = η := by
+      rw [← Finset.mul_sum]; change η * vertexDegree μ v / vertexDegree μ v = η; field_simp
 
 theorem pinned_normalizer_cap_probability (ν μ : FiniteLaw (Finset V)) {σ ε δ : ℝ} {r : ℕ}
     (hσ : 0 < σ) (hσ1 : σ ≤ 1) (hε0 : 0 ≤ ε) (hε : ε ≤ 1 / 4) (hδ : 0 ≤ δ)
@@ -127,7 +131,8 @@ theorem pinned_normalizer_cap_probability (ν μ : FiniteLaw (Finset V)) {σ ε 
     (conditionSurvival ν T).prob (fun W => 2 < eventNormalizer ν μ (fun E W => E ⊆ W) W) ≤
       24 * ε + 12 * r * δ / σ ^ (3 * r) := by
   have hsub : (conditionSurvival ν T).prob (fun W => 2 < eventNormalizer ν μ (fun E W => E ⊆ W) W) ≤
-      (conditionSurvival ν T).prob (fun W => 1 ≤ |eventNormalizer ν μ (fun E W => E ⊆ W) W - 1|) := by
+      (conditionSurvival ν T).prob (fun W => 1 ≤ |eventNormalizer ν μ (fun E W => E ⊆ W) W -
+        1|) := by
     apply FiniteLaw.prob_mono
     intro W hW
     have hh := le_abs_self (eventNormalizer ν μ (fun E W => E ⊆ W) W - 1)
@@ -135,7 +140,8 @@ theorem pinned_normalizer_cap_probability (ν μ : FiniteLaw (Finset V)) {σ ε 
   have htail := (conditionSurvival ν T).chebyshev
     (eventNormalizer ν μ (fun E W => E ⊆ W)) 1 (by norm_num : (0 : ℝ) < 1)
   simp only [one_pow, div_one] at htail
-  exact (hsub.trans htail).trans (pinned_subsetNormalizer_variance ν μ hσ hσ1 hε0 hε hδ hacc hsize hsparse T hT)
+  exact (hsub.trans htail).trans (pinned_subsetNormalizer_variance ν μ hσ hσ1 hε0 hε hδ hacc
+    hsize hsparse T hT)
 
 theorem capped_degree_lower_tail (ν : FiniteLaw (Finset V)) (μ : I → FiniteLaw (Finset V)) (v : V)
     (hq : 0 < survival ν {v}) (hd : 0 < vertexDegree μ v)
@@ -144,7 +150,8 @@ theorem capped_degree_lower_tail (ν : FiniteLaw (Finset V)) (μ : I → FiniteL
       ((survival ν {v} / vertexDegree μ v) * exactRawDegree ν μ v W - 1) ^ 2) ≤ A)
     (hloss : (conditionSurvival ν {v}).mean (fun W =>
       (survival ν {v} / vertexDegree μ v) * exactLostDegree ν μ v W) ≤ η) :
-    (conditionSurvival ν {v}).prob (fun W => vertexDegree (fun i => cappedEdgeLaw ν (μ i) W) v < 4) ≤
+    (conditionSurvival ν {v}).prob (fun W => vertexDegree (fun i => cappedEdgeLaw ν (μ i) W) v
+      < 4) ≤
       4 * A + 4 * η := by
   have hloss0 (W : Finset V) :
       0 ≤ (survival ν {v} / vertexDegree μ v) * exactLostDegree ν μ v W :=
@@ -174,7 +181,8 @@ theorem capped_prime_degree_error (ν : FiniteLaw (Finset V)) (μ : I → Finite
     (hsparse : ∀ i v, (μ i).prob (fun E => v ∈ E) ≤ δ)
     (hpair : ∀ w, w ≠ v → pairDegree μ v w ≤ δ)
     (hq : survival ν {v} = σ) (hdegree : 32 * σ ≤ vertexDegree μ v) :
-    (conditionSurvival ν {v}).prob (fun W => vertexDegree (fun i => cappedEdgeLaw ν (μ i) W) v < 4) ≤
+    (conditionSurvival ν {v}).prob (fun W => vertexDegree (fun i => cappedEdgeLaw ν (μ i) W) v
+      < 4) ≤
       224 * ε + 64 * r * δ / σ ^ (3 * r) := by
   have hd : 0 < vertexDegree μ v := (by positivity : 0 < 32 * σ).trans_le hdegree
   have hqpos : 0 < survival ν {v} := hq ▸ hσ

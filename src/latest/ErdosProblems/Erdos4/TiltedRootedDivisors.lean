@@ -58,7 +58,8 @@ theorem rooted_gcd_pair_count (colors : Finset ℕ) (companion : ℕ → Finset 
     (hcomp : ∀ p ∈ colors, ∀ n ∈ companion p,
       n ≤ Y ∧ n ≠ v ∧ (n : ZMod p) = (v : ZMod p))
     (hU : ∀ s ∈ d.primeFactors, U ≤ s) :
-    ((((colors ×ˢ colors).filter (fun pq => d ∣ blockGcd (companion pq.1) (companion pq.2))).card : ℝ)) ≤
+    ((((colors ×ˢ colors).filter (fun pq => d ∣ blockGcd (companion pq.1) (companion
+      pq.2))).card : ℝ)) ≤
       ((2 * (U : ℝ)) ^ d.primeFactors.card * ((M : ℝ) / d + 1)) ^ 2 := by
   classical
   let good := colors.filter (fun p => d ∣ ∏ n ∈ companion p, n)

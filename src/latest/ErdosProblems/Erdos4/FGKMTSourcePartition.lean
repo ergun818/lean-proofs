@@ -2,13 +2,12 @@ import ErdosProblems.Erdos4.FGKMTSourceChernoff
 import ErdosProblems.Erdos4.FGKMTInitialEdgeGeometry
 import ErdosProblems.Erdos4.FGKMTThinning
 
-/-! Partition source primes into disjoint dyadic covering rounds while preserving degree lower bounds. -/
+/-! Partition source primes into disjoint dyadic covering rounds while preserving degree lower
+  bounds. -/
 
 open scoped BigOperators
 
 namespace Erdos4.FGKMT
-
-open Classical
 
 theorem dyadic_round_total (m : ℕ) :
     (1 / 2 : ℝ) ^ m + ∑ j : Fin m, (1 / 2 : ℝ) ^ (j.val + 1) = 1 := by
@@ -35,6 +34,7 @@ theorem dyadicRoundLaw_prob_some (m : ℕ) (j : Fin m) :
 
 variable {I V : Type*} [Fintype I] [DecidableEq I] [Fintype V] [DecidableEq V]
 
+omit [DecidableEq I] [DecidableEq V] in
 theorem exists_dyadic_source_partition (μ : I → FiniteLaw (Finset V)) (m : ℕ)
     {δ : ℝ} (hδ : 0 < δ)
     (hdegree : ∀ v, (∑ i, (μ i).prob (fun e => v ∈ e)) = 4)
@@ -42,6 +42,7 @@ theorem exists_dyadic_source_partition (μ : I → FiniteLaw (Finset V)) (m : �
     (hbudget : (m : ℝ) * Fintype.card V * Real.exp (-((1 / 2 : ℝ) ^ m) / (6 * δ)) < 1) :
     ∃ a : I → Option (Fin m), ∀ j : Fin m, ∀ v : V,
       (1 / 2 : ℝ) ^ j.val ≤ ∑ i, if a i = some j then (μ i).prob (fun e => v ∈ e) else 0 := by
+  classical
   let ν := FiniteLaw.independent (fun _ : I => dyadicRoundLaw m)
   let F := fun (a : I → Option (Fin m)) (j : Fin m) (v : V) =>
     (∑ i, if a i = some j then (μ i).prob (fun e => v ∈ e) else 0) < (1 / 2 : ℝ) ^ j.val

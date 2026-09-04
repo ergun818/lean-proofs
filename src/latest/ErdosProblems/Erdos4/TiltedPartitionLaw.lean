@@ -13,7 +13,8 @@ open FGKMT
 noncomputable def partitionRoot {C : Finset ℕ} (P : Finpartition C) (v : C) : P.parts :=
   ⟨P.part v.val, P.part_mem.mpr v.property⟩
 
-theorem part_count_pos {C : Finset ℕ} (P : Finpartition C) (hC : C.Nonempty) : 0 < P.parts.card := by
+theorem part_count_pos {C : Finset ℕ} (P : Finpartition C) (hC : C.Nonempty) : 0 <
+    P.parts.card := by
   obtain ⟨v, hv⟩ := hC
   exact Finset.card_pos.mpr ⟨P.part v, P.part_mem.mpr hv⟩
 
@@ -31,7 +32,8 @@ noncomputable def uniformPartLaw {C : Finset ℕ} (P : Finpartition C) (hC : C.N
 theorem uniformPartLaw_weight {C : Finset ℕ} (P : Finpartition C) (hC : C.Nonempty) (E : P.parts) :
     (uniformPartLaw P hC).weight E = 1 / (P.parts.card : ℝ) := rfl
 
-theorem uniformPartLaw_mean {C : Finset ℕ} (P : Finpartition C) (hC : C.Nonempty) (f : P.parts → ℝ) :
+theorem uniformPartLaw_mean {C : Finset ℕ} (P : Finpartition C) (hC : C.Nonempty) (f : P.parts
+    → ℝ) :
     (uniformPartLaw P hC).mean f = (∑ E, f E) / (P.parts.card : ℝ) := by
   simp only [FiniteLaw.mean, uniformPartLaw_weight, one_div]
   rw [← Finset.mul_sum]
@@ -85,7 +87,8 @@ theorem partitionNormalizer_sum {Ω : Type*} [Fintype Ω] (ν : FiniteLaw Ω)
 
 noncomputable def partitionChoiceLaw {Ω : Type*} [Fintype Ω] (ν : FiniteLaw Ω)
     {C : Finset ℕ} (P : Finpartition C) (hC : C.Nonempty) (R : ℕ → Ω → Prop) (o : Ω) :
-    FiniteLaw (Option P.parts) := cappedLabelLaw ν (uniformPartLaw P hC) (fun E => blockEvent R E.val) o
+    FiniteLaw (Option P.parts) := cappedLabelLaw ν (uniformPartLaw P hC) (fun E => blockEvent
+      R E.val) o
 
 def selectedPart {C : Finset ℕ} (P : Finpartition C) (e : Option P.parts) : Finset ℕ :=
   e.elim ∅ Subtype.val
@@ -95,7 +98,8 @@ theorem partitionChoiceLaw_vertex {Ω : Type*} [Fintype Ω] (ν : FiniteLaw Ω)
     {C : Finset ℕ} (P : Finpartition C) (hC : C.Nonempty) (R : ℕ → Ω → Prop) (o : Ω) (v : C) :
     (partitionChoiceLaw ν P hC R o).prob (fun e => v.val ∈ selectedPart P e) =
       (if partitionNormalizer ν P hC R o ≤ 2
-        then eventWeight ν (blockEvent R (partitionRoot P v).val) o else 0) / (2 * (P.parts.card : ℝ)) := by
+        then eventWeight ν (blockEvent R (partitionRoot P v).val) o else 0) / (2 *
+          (P.parts.card : ℝ)) := by
   have heq : (fun e => v.val ∈ selectedPart P e) = (fun e => e = some (partitionRoot P v)) := by
     funext e
     apply propext
@@ -111,7 +115,8 @@ theorem partitionChoiceLaw_vertex {Ω : Type*} [Fintype Ω] (ν : FiniteLaw Ω)
         exact P.mem_part v.property
   rw [heq, partitionChoiceLaw, cappedLabelLaw_some, uniformPartLaw_weight]
   change (if partitionNormalizer ν P hC R o ≤ 2 then
-    (1 / (P.parts.card : ℝ)) * eventWeight ν (blockEvent R (partitionRoot P v).val) o / 2 else 0) = _
+    (1 / (P.parts.card : ℝ)) * eventWeight ν (blockEvent R (partitionRoot P v).val) o / 2 else
+      0) = _
   split_ifs <;> ring
 
 theorem selectedPart_mem_or_empty {C : Finset ℕ} (P : Finpartition C) (e : Option P.parts) :

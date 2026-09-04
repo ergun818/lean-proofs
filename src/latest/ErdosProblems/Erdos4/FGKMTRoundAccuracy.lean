@@ -35,19 +35,24 @@ variable {V I : Type*} [Fintype V] [DecidableEq V] [Fintype I] [DecidableEq I]
 noncomputable def nextModel (μ : I → FiniteLaw (Finset V)) (p : V → ℝ) (v : V) : ℝ :=
   p v * Real.exp (-(vertexDegree μ v / p v))
 
+omit [DecidableEq I] [DecidableEq V] in
 theorem nextModel_pos (μ : I → FiniteLaw (Finset V)) (p : V → ℝ)
     (hp : ∀ v, 0 < p v) : ∀ v, 0 < nextModel μ p v :=
   fun v => mul_pos (hp v) (Real.exp_pos _)
 
+omit [DecidableEq I] [DecidableEq V] in
 theorem nextModel_le (μ : I → FiniteLaw (Finset V)) (p : V → ℝ)
     (hp : ∀ v, 0 < p v) : ∀ v, nextModel μ p v ≤ p v := by
+  classical
   intro v
   apply mul_le_of_le_one_right (hp v).le
   apply Real.exp_le_one_iff.mpr
   exact neg_nonpos.mpr (div_nonneg (vertexDegree_nonneg μ v) (hp v).le)
 
+omit [DecidableEq I] [DecidableEq V] in
 theorem setProduct_nextModel (μ : I → FiniteLaw (Finset V)) (p : V → ℝ) (T : Finset V) :
     setProduct (nextModel μ p) T = setProduct p T * Real.exp (-testDegree μ p T) := by
+  classical
   unfold setProduct nextModel testDegree
   rw [Finset.prod_mul_distrib, ← Real.exp_sum, Finset.sum_neg_distrib]
 

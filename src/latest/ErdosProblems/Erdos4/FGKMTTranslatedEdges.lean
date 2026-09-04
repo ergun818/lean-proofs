@@ -25,7 +25,8 @@ theorem mem_translatedEdge (h : Fin k → ℕ) (p Y n q : ℕ) :
   classical
   simp only [translatedEdge, Finset.mem_filter, Finset.mem_Icc, and_assoc]
 
-theorem translatedEdge_subset (h : Fin k → ℕ) (p Y n : ℕ) : translatedEdge h p Y n ⊆ Finset.Icc 1 Y :=
+theorem translatedEdge_subset (h : Fin k → ℕ) (p Y n : ℕ) : translatedEdge h p Y n ⊆
+    Finset.Icc 1 Y :=
   Finset.filter_subset _ _
 
 theorem translatedEdge_card_le (h : Fin k → ℕ) (p Y n : ℕ) : (translatedEdge h p Y n).card ≤ k := by

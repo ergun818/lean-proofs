@@ -20,16 +20,22 @@ noncomputable def support (chi : ∀ p, DirichletCharacter ℂ (ell p)) : Finset
   classical
   exact Finset.univ.filter (fun p => chi p ≠ 1)
 
+omit [DecidableEq P] [∀ (p : P), Fact (Nat.Prime (ell p))] in
 theorem mem_support (chi : ∀ p, DirichletCharacter ℂ (ell p)) (p : P) :
     p ∈ support ell chi ↔ chi p ≠ 1 := by
   classical
   simp only [support, Finset.mem_filter, Finset.mem_univ, true_and]
 
+omit [DecidableEq P] in
+omit [∀ (p : P), Fact (Nat.Prime (ell p))] in
 theorem outside_support (chi : ∀ p, DirichletCharacter ℂ (ell p)) (p : P)
     (hp : p ∉ support ell chi) : chi p = 1 := by
+  classical
   by_contra h
   exact hp ((mem_support ell chi p).mpr h)
 
+omit [DecidableEq P] in
+omit [∀ (p : P), Fact (Nat.Prime (ell p))] in
 theorem support_nonempty (chi : ∀ p, DirichletCharacter ℂ (ell p))
     (hchi : chi ≠ fun _ => 1) : (support ell chi).Nonempty := by
   classical
@@ -44,6 +50,7 @@ noncomputable def smallCharacters (R : ℕ) : Finset (∀ p, DirichletCharacter 
   exact Finset.univ.filter (fun chi => chi ≠ (fun _ => 1) ∧
     (∏ p ∈ support ell chi, ell p) ≤ R ^ 2)
 
+omit [∀ (p : P), Fact (Nat.Prime (ell p))] in
 theorem mem_smallCharacters (R : ℕ) (chi : ∀ p, DirichletCharacter ℂ (ell p)) :
     chi ∈ smallCharacters ell R ↔ chi ≠ (fun _ => 1) ∧
       (∏ p ∈ support ell chi, ell p) ≤ R ^ 2 := by
@@ -56,7 +63,8 @@ theorem entry_conductor_le {R : ℕ} (chi : smallCharacters ell R) :
     (outside_support ell chi.val)).trans ((mem_smallCharacters ell R chi.val).mp chi.property).2
 
 theorem family_injective {R : ℕ} (hinj : Function.Injective ell) :
-    Function.Injective (fun chi : smallCharacters ell R => ProductCharacterEncoding.entry ell chi.val) := by
+    Function.Injective (fun chi : smallCharacters ell R => ProductCharacterEncoding.entry ell
+      chi.val) := by
   exact (ProductCharacterEncoding.entry_injective ell
     (ProductCharacterEncoding.pairwise_coprime_of_prime ell
       (fun p => (Fact.out : (ell p).Prime)) hinj)).comp Subtype.val_injective

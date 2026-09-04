@@ -73,15 +73,17 @@ noncomputable def collisionPrimes (T : Finset ℕ) : Finset P := by
   classical
   exact Finset.univ.filter (fun l => ¬Set.InjOn (fun n : ℕ => (n : ZMod (ell l))) T)
 
+omit [DecidableEq P] in
 theorem collision_dvd (T : Finset ℕ) {l : P} (hl : l ∈ collisionPrimes ell T) :
     ell l ∣ differenceProduct T := by
   classical
   have hh := (Finset.mem_filter.mp hl).2
   change ¬(∀ n ∈ T, ∀ m ∈ T, (n : ZMod (ell l)) = (m : ZMod (ell l)) → n = m) at hh
-  push_neg at hh
+  push Not at hh
   obtain ⟨n, hn, m, hm, hmod, hne⟩ := hh
   exact prime_dvd_differenceProduct T hn hm hne ((ZMod.natCast_eq_natCast_iff n m (ell l)).mp hmod)
 
+omit [DecidableEq P] in
 theorem collision_card_log_le (hinj : Function.Injective ell) (T : Finset ℕ)
     {Y : ℕ} (hY : 1 ≤ Y) (hT : ∀ n ∈ T, n ≤ Y) :
     ((collisionPrimes ell T).card : ℝ) * Real.log 2 ≤ (T.card : ℝ) ^ 2 * Real.log Y := by
@@ -105,11 +107,13 @@ theorem collision_card_log_le (hinj : Function.Injective ell) (T : Finset ℕ)
     simpa only [Real.log_pow, Nat.cast_pow] using h
   exact hcount.trans hlog
 
+omit [DecidableEq P] in
 theorem collision_reciprocal_le (hinj : Function.Injective ell) (T : Finset ℕ)
     {Y : ℕ} (hY : 1 ≤ Y) (hT : ∀ n ∈ T, n ≤ Y)
     {w : ℝ} (hw : 0 < w) (hlarge : ∀ l, w ≤ ell l) :
     (∑ l ∈ collisionPrimes ell T, 1 / (ell l : ℝ)) ≤
       (T.card : ℝ) ^ 2 * Real.log Y / (w * Real.log 2) := by
+  classical
   have hlog2 : 0 < Real.log (2 : ℝ) := Real.log_pos (by norm_num)
   have hc := (le_div_iff₀ hlog2).mpr (collision_card_log_le ell hinj T hY hT)
   calc

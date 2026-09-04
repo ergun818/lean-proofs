@@ -74,7 +74,8 @@ theorem disjoint_block_variance (hinj : Function.Injective ell) (τ : ℝ) (hτ 
       (hG i j) (hcomplete i j)
     apply hh.trans
     apply mul_le_mul_of_nonneg_left _ (Real.rpow_nonneg (Nat.cast_nonneg _) _)
-    exact Real.exp_le_exp.mpr (union_correlation_exponent_le (hcard i) (hcard j) hY hw (by positivity))
+    exact Real.exp_le_exp.mpr (union_correlation_exponent_le (hcard i) (hcard j) hY hw (by
+      positivity))
 
 theorem rooted_block_variance (hinj : Function.Injective ell) (τ : ℝ) (hτ : 0 ≤ τ)
     (v : ℕ) (σ : FiniteLaw I) (T : I → Finset ℕ) {K Y : ℕ}
@@ -107,6 +108,7 @@ theorem rooted_block_variance (hinj : Function.Injective ell) (τ : ℝ) (hτ : 
     (hG i j) (hcomplete i j)
   apply hh.trans
   apply mul_le_mul_of_nonneg_left _ (Real.rpow_nonneg (Nat.cast_nonneg _) _)
-  exact Real.exp_le_exp.mpr (union_correlation_exponent_le (hcard i) (hcard j) hY hw (by positivity))
+  exact Real.exp_le_exp.mpr (union_correlation_exponent_le (hcard i) (hcard j) hY hw (by
+    positivity))
 
 end Erdos4.Tilted

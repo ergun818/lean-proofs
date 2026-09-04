@@ -82,7 +82,8 @@ theorem rationalLinearLaw_prob_divisor_eq (W : ℕ) {b : ℝ} (hb : 0 ≤ b)
     split_ifs <;> simp
   simp_rw [hpoint]
   rw [← Finset.sum_div, sum_fin_succ_eq_Icc
-    (f := fun n : ℕ => if d ∣ n then logarithmicReciprocal b n * squarefreeHarmonicWeight W n else 0)
+    (f := fun n : ℕ => if d ∣ n then logarithmicReciprocal b n * squarefreeHarmonicWeight W n
+      else 0)
     (by simp [squarefreeHarmonicWeight_zero]), ← Finset.sum_filter]
 
 theorem rationalLinearLaw_prob_divisor_le (W : ℕ) {b : ℝ} (hb : 0 ≤ b)

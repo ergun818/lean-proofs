@@ -18,10 +18,12 @@ open DivisorCoefficients
 
 variable {P : Type*} [Fintype P] [DecidableEq P] {k : ℕ}
 
+omit [DecidableEq P] in
 theorem conductorProduct_le (ell : P → ℕ) (hell : ∀ p, 1 ≤ ell p)
     (J : Finset P) (a b : P → Option (Fin k))
     (hcover : ∀ p ∈ J, a p ≠ none ∨ b p ≠ none) :
     (∏ p ∈ J, ell p) ≤ totalDivisor ell a * totalDivisor ell b := by
+  classical
   have hfactor (c : P → Option (Fin k)) (p : P) :
       1 ≤ if c p = none then 1 else ell p := by
     split_ifs

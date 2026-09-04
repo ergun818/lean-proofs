@@ -3362,12 +3362,13 @@ theorem DoubledSelbergCrtSupport.full_modulus_pos
 /-- Four nested finite sums inherit the pointwise absolute bound with the
 expected cardinality factor. -/
 theorem abs_fourfold_sum_le_card_mul_bound
-    {A B : Type*} [DecidableEq A] [DecidableEq B]
-    (S : Finset A) (T : Finset B) (f : A → B → A → B → ℝ) (L : ℝ)
+    {A B : Type*} (S : Finset A) (T : Finset B)
+    (f : A → B → A → B → ℝ) (L : ℝ)
     (hf : ∀ a ∈ S, ∀ b ∈ T, ∀ c ∈ S, ∀ d ∈ T,
       |f a b c d| ≤ L) :
     |∑ a ∈ S, ∑ b ∈ T, ∑ c ∈ S, ∑ d ∈ T, f a b c d| ≤
       (S.card : ℝ) ^ 2 * (T.card : ℝ) ^ 2 * L := by
+  classical
   calc
     |∑ a ∈ S, ∑ b ∈ T, ∑ c ∈ S, ∑ d ∈ T, f a b c d| ≤
         ∑ a ∈ S, |∑ b ∈ T, ∑ c ∈ S, ∑ d ∈ T, f a b c d| :=
@@ -5157,12 +5158,13 @@ theorem exists_value_le_weighted_average
 /-- If the expected number of uncovered elements is at most `B`, some
 deterministic choice leaves at most `B` elements uncovered. -/
 theorem expectation_to_deterministic_cover
-    {Ω P : Type*} [Fintype Ω] [Nonempty Ω] [DecidableEq P]
+    {Ω P : Type*} [Fintype Ω] [Nonempty Ω]
     (weight : Ω → ℝ) (uncovered : Ω → Finset P)
     (hweight : ∀ ω, 0 ≤ weight ω)
     (hsum : ∑ ω, weight ω = 1) (B : ℝ)
     (haverage : ∑ ω, weight ω * (uncovered ω).card ≤ B) :
     ∃ ω, ((uncovered ω).card : ℝ) ≤ B := by
+  classical
   obtain ⟨ω, hω⟩ := exists_value_le_weighted_average weight
     (fun ξ => ((uncovered ξ).card : ℝ)) hweight hsum
   exact ⟨ω, hω.trans haverage⟩
@@ -5199,7 +5201,7 @@ theorem assignmentWeight_sum
 
 theorem assignmentWeight_nonneg
     {Q : Type*} [Fintype Q]
-    {A : Q → Type*} [∀ q, Fintype (A q)]
+    {A : Q → Type*}
     (μ : ∀ q, A q → ℝ) (hμ : ∀ q a, 0 ≤ μ q a) :
     ∀ choice : ∀ q, A q, 0 ≤ ∏ q, μ q (choice q) := by
   intro choice
@@ -5273,8 +5275,8 @@ independent coordinate measures and an arbitrary finite set of objects, it
 produces one deterministic assignment whose uncovered cardinality is bounded
 by the sum of the exponential miss bounds. -/
 theorem exists_assignment_uncovered_card_le
-    {Q P : Type*} [Fintype Q] [DecidableEq Q] [DecidableEq P]
-    {A : Q → Type*} [∀ q, Fintype (A q)] [∀ q, Nonempty (A q)]
+    {Q P : Type*} [Fintype Q] {A : Q → Type*}
+    [∀ q, Fintype (A q)] [∀ q, Nonempty (A q)]
     (μ : ∀ q, A q → ℝ) (hit : ∀ q, A q → P → Prop)
     [∀ q a p, Decidable (hit q a p)]
     (hμ0 : ∀ q a, 0 ≤ μ q a) (hμsum : ∀ q, ∑ a, μ q a = 1)
@@ -8319,7 +8321,7 @@ noncomputable def pinnedPairCrtResidue
       (BoundedGaps.Maynard.divisorTupleLcm H d e j))
     (BoundedGaps.Maynard.divisorTupleLcm H d e)
     (Finset.univ.erase h)
-    (fun j hj => (pinnedPairOffLcm_pos hd he h hj).ne')
+    (fun _j hj => (pinnedPairOffLcm_pos hd he h hj).ne')
     (pinnedPairOffLcm_pairwise hd he hcross h)
 
 theorem pinnedPairCrtResidue_mod
@@ -8398,7 +8400,7 @@ theorem modEq_pinnedPairCrtResidue_iff
         simp [hdh]
       · have hjS : j ∈ S.toList := by simp [S, hj]
         have hqCoord := (hq j hjS).trans
-          (pinnedPairCrtResidue_mod hd he hcross (by simp [S, hj]))
+          (pinnedPairCrtResidue_mod hd he hcross (by simp [hj]))
         have hlcm := (modEq_pinnedCoordinateResidue_iff hd he hcover hj
           hmargin).mp hqCoord
         exact (Nat.lcm_dvd_iff.mp hlcm).1
@@ -8408,7 +8410,7 @@ theorem modEq_pinnedPairCrtResidue_iff
         simp [heh]
       · have hjS : j ∈ S.toList := by simp [S, hj]
         have hqCoord := (hq j hjS).trans
-          (pinnedPairCrtResidue_mod hd he hcross (by simp [S, hj]))
+          (pinnedPairCrtResidue_mod hd he hcross (by simp [hj]))
         have hlcm := (modEq_pinnedCoordinateResidue_iff hd he hcover hj
           hmargin).mp hqCoord
         exact (Nat.lcm_dvd_iff.mp hlcm).2
@@ -8420,7 +8422,7 @@ theorem modEq_pinnedPairCrtResidue_iff
     have hqCoord := (modEq_pinnedCoordinateResidue_iff hd he hcover hj
       hmargin).mpr hlcm
     exact hqCoord.trans
-      (pinnedPairCrtResidue_mod hd he hcross (by simp [S, hj])).symm
+      (pinnedPairCrtResidue_mod hd he hcross (by simp [hj])).symm
 
 /-- A residue congruent to a multiple of itself times a prime can only have
 prime factors already present in the prime or the modulus. -/

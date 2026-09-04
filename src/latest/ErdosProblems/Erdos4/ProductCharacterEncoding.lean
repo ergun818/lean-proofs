@@ -21,6 +21,7 @@ variable {P : Type*} [Fintype P] [DecidableEq P]
 
 abbrev modulus : ℕ := ∏ p, ell p
 
+omit [DecidableEq P] [∀ (p : P), Fact (Nat.Prime (ell p))] in
 theorem local_dvd_modulus (p : P) : ell p ∣ modulus ell :=
   Finset.dvd_prod_of_mem ell (Finset.mem_univ p)
 
@@ -36,21 +37,26 @@ theorem prod_apply_unit {n : ℕ} {I : Type*} (S : Finset I)
   | empty => simp
   | @insert i S hi ih => rw [Finset.prod_insert hi, Finset.prod_insert hi, MulChar.mul_apply, ih]
 
+omit [DecidableEq P] in
 theorem character_apply_unit (chi : ∀ p, DirichletCharacter ℂ (ell p))
     (u : (ZMod (modulus ell))ˣ) :
     character ell chi (u : ZMod (modulus ell)) =
-      ProductFourierInversion.value ell chi (fun p => ZMod.unitsMap (local_dvd_modulus ell p) u) := by
+      ProductFourierInversion.value ell chi (fun p => ZMod.unitsMap (local_dvd_modulus ell p)
+        u) := by
+  classical
   unfold character ProductFourierInversion.value
   rw [prod_apply_unit]
   apply Finset.prod_congr rfl
   intro p _hp
   rw [DirichletCharacter.changeLevel_eq_cast_of_dvd, ZMod.unitsMap_val]
 
+omit [DecidableEq P] in
 theorem exists_unit_lift
     (hcop : Pairwise (fun p q => (ell p).Coprime (ell q)))
     (v : ∀ p, (ZMod (ell p))ˣ) :
     ∃ u : (ZMod (modulus ell))ˣ, ∀ p,
       ZMod.unitsMap (local_dvd_modulus ell p) u = v p := by
+  classical
   let e := ZMod.prodEquivPi ell hcop
   let u : (ZMod (modulus ell))ˣ :=
     Units.map e.symm.toMonoidHom (MulEquiv.piUnits.symm v)
@@ -78,15 +84,18 @@ theorem value_update (chi : ∀ p, DirichletCharacter ℂ (ell p))
     simp [Function.update_of_ne hqp]
   · simp
 
+omit [DecidableEq P] in
 theorem character_injective
     (hcop : Pairwise (fun p q => (ell p).Coprime (ell q))) :
     Function.Injective (character ell) := by
+  classical
   intro chi psi heq
   have hvalue : ∀ v : ∀ p, (ZMod (ell p))ˣ,
       ProductFourierInversion.value ell chi v = ProductFourierInversion.value ell psi v := by
     intro v
     obtain ⟨u, hu⟩ := exists_unit_lift ell hcop v
-    have hh := congrArg (fun c : DirichletCharacter ℂ (modulus ell) => c (u : ZMod (modulus ell))) heq
+    have hh := congrArg (fun c : DirichletCharacter ℂ (modulus ell) => c (u : ZMod (modulus
+      ell))) heq
     rw [character_apply_unit, character_apply_unit] at hh
     have hu' : (fun p => ZMod.unitsMap (local_dvd_modulus ell p) u) = v := funext hu
     simpa only [hu'] using hh
@@ -104,34 +113,44 @@ noncomputable def liftEntry (N : ℕ) (c : PrimitiveCharacterFamily.Entry) :
     DirichletCharacter ℂ N :=
   if h : c.1 ∣ N then DirichletCharacter.changeLevel h c.2 else 1
 
+omit [DecidableEq P] [∀ (p : P), Fact (Nat.Prime (ell p))] in
 theorem liftEntry_entry (chi : ∀ p, DirichletCharacter ℂ (ell p)) :
     liftEntry (modulus ell) (entry ell chi) = character ell chi := by
+  classical
   unfold liftEntry entry
   rw [dif_pos (character ell chi).conductor_dvd_level,
     DirichletCharacter.changeLevel_primitiveCharacter]
 
+omit [DecidableEq P] in
 theorem entry_injective (hcop : Pairwise (fun p q => (ell p).Coprime (ell q))) :
     Function.Injective (entry ell) := by
+  classical
   intro chi psi heq
   apply character_injective ell hcop
   have hh := congrArg (liftEntry (modulus ell)) heq
   simpa only [liftEntry_entry] using hh
 
+omit [DecidableEq P] [∀ (p : P), Fact (Nat.Prime (ell p))] in
 theorem entry_valid (hpos : ∀ p, 0 < ell p)
     (chi : ∀ p, DirichletCharacter ℂ (ell p)) : PrimitiveCharacterFamily.Valid (entry ell chi) := by
+  classical
   have hmod : 0 < modulus ell := Finset.prod_pos (fun p _hp => hpos p)
   let : NeZero (modulus ell) := ⟨hmod.ne'⟩
   exact ⟨(character ell chi).conductor_ne_zero.bot_lt,
     (character ell chi).primitiveCharacter_isPrimitive⟩
 
+omit [DecidableEq P] [Fintype P] [∀ (p : P), Fact (Nat.Prime (ell p))] in
 theorem pairwise_coprime_of_prime (hprime : ∀ p, (ell p).Prime)
     (hinj : Function.Injective ell) : Pairwise (fun p q => (ell p).Coprime (ell q)) := by
+  classical
   intro p q hpq
   exact (Nat.coprime_primes (hprime p) (hprime q)).mpr (fun h => hpq (hinj h))
 
+omit [DecidableEq P] in
 theorem conductor_dvd_support (chi : ∀ p, DirichletCharacter ℂ (ell p))
     (S : Finset P) (houtside : ∀ p, p ∉ S → chi p = 1) :
     (entry ell chi).1 ∣ ∏ p ∈ S, ell p := by
+  classical
   have hmod : 0 < modulus ell := Finset.prod_pos
     (fun p _hp => (Fact.out : (ell p).Prime).pos)
   let : NeZero (modulus ell) := ⟨hmod.ne'⟩
@@ -158,16 +177,19 @@ theorem conductor_dvd_support (chi : ∀ p, DirichletCharacter ℂ (ell p))
       exact MulChar.one_apply_coe _
   exact (character ell chi).conductor_dvd_of_mem_conductorSet hfactor
 
+omit [DecidableEq P] in
 theorem conductor_le_support (chi : ∀ p, DirichletCharacter ℂ (ell p))
     (S : Finset P) (houtside : ∀ p, p ∉ S → chi p = 1) :
     (entry ell chi).1 ≤ ∏ p ∈ S, ell p :=
   Nat.le_of_dvd (Finset.prod_pos (fun p _hp => (Fact.out : (ell p).Prime).pos))
     (conductor_dvd_support ell chi S houtside)
 
+omit [DecidableEq P] in
 theorem entry_value_eq_product (chi : ∀ p, DirichletCharacter ℂ (ell p))
     (n : ℕ) (hn : n.Coprime (modulus ell)) :
     PrimitiveCharacterFamily.value (entry ell chi) n =
       ∏ p, chi p (n : ZMod (ell p)) := by
+  classical
   have hprim := (character ell chi).primitiveCharacter_apply_of_isCoprime hn.isCoprime
   have hchar : character ell chi (n : ZMod (modulus ell)) =
       ∏ p, chi p (n : ZMod (ell p)) := by

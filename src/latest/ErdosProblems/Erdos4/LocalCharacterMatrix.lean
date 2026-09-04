@@ -34,8 +34,10 @@ variable {ell k : ℕ} [Fact ell.Prime]
 noncomputable def characterMatrix (chi : DirichletCharacter ℂ ell)
     (h : Fin k → ZMod ell) (j : Fin k) (a b : Option (Fin k)) : ℂ :=
   (ell : ℂ)⁻¹ * ∑ t : (ZMod ell)ˣ, star (chi (t : ZMod ell)) *
-    ((extendedBasis (ell : ℝ) a (RootStates.rootState (Finset.univ.erase j) (anchorRoot h j) t) : ℂ) *
-      (extendedBasis (ell : ℝ) b (RootStates.rootState (Finset.univ.erase j) (anchorRoot h j) t) : ℂ))
+    ((extendedBasis (ell : ℝ) a (RootStates.rootState (Finset.univ.erase j) (anchorRoot h j)
+      t) : ℂ) *
+      (extendedBasis (ell : ℝ) b (RootStates.rootState (Finset.univ.erase j) (anchorRoot h j)
+        t) : ℂ))
 
 theorem characterMatrix_eq_twisted (chi : DirichletCharacter ℂ ell) (hchi : chi ≠ 1)
     (h : Fin k → ZMod ell) (hh : Function.Injective h) (j : Fin k) :

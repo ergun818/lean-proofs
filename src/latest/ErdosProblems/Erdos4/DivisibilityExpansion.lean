@@ -23,15 +23,19 @@ noncomputable def cutoffProfile (m : ℝ) (R : ℕ) (ell : P → ℕ)
     (a : P → Option (Fin k)) : ℝ :=
   if totalDivisor ell a ≤ R then profileProduct m R ell a else 0
 
+omit [DecidableEq P] in
 theorem cutoffProfile_nonneg {m : ℝ} (hm : 0 ≤ m) {R : ℕ} (hR : 2 ≤ R)
     (ell : P → ℕ) (a : P → Option (Fin k)) : 0 ≤ cutoffProfile m R ell a := by
+  classical
   unfold cutoffProfile
   split_ifs
   · exact profileProduct_nonneg hm hR ell a
   · exact le_rfl
 
+omit [DecidableEq P] in
 theorem profileProduct_le_one {m : ℝ} (hm : 1 ≤ m) (R : ℕ)
     (ell : P → ℕ) (a : P → Option (Fin k)) : profileProduct m R ell a ≤ 1 := by
+  classical
   unfold profileProduct
   apply Finset.prod_le_one
   · intro i _hi
@@ -41,9 +45,11 @@ theorem profileProduct_le_one {m : ℝ} (hm : 1 ≤ m) (R : ℕ)
     exact PrimitiveProfile.profile_le_one hm (Nat.cast_nonneg k)
       (div_nonneg (Real.log_natCast_nonneg _) (Real.log_natCast_nonneg _))
 
+omit [DecidableEq P] in
 theorem coefficient_factor (m : ℝ) (R : ℕ) (ell : P → ℕ)
     (a : P → Option (Fin k)) :
     coefficient m R ell a = cutoffProfile m R ell a * normalization ell a := by
+  classical
   unfold coefficient cutoffProfile
   split_ifs <;> simp
 
@@ -54,9 +60,11 @@ noncomputable def divisorCoefficient (m : ℝ) (R : ℕ) (ell : P → ℕ)
 noncomputable def evaluation (s b : P → Option (Fin k)) : ℝ :=
   ∏ p, indicator (s p) (b p)
 
+omit [DecidableEq P] in
 theorem evaluation_nonneg (s b : P → Option (Fin k)) : 0 ≤ evaluation s b :=
   Finset.prod_nonneg (fun p _hp => indicator_nonneg (s p) (b p))
 
+omit [DecidableEq P] in
 theorem evaluation_le_one (s b : P → Option (Fin k)) : evaluation s b ≤ 1 :=
   Finset.prod_le_one (fun p _hp => indicator_nonneg (s p) (b p))
     (fun p _hp => indicator_le_one (s p) (b p))
@@ -110,7 +118,8 @@ theorem sum_abs_coefficient_le_mass {m : ℝ} (hm : 1 ≤ m) {R : ℕ} (hR : 2 �
     by_cases ha : totalDivisor ell a ≤ R
     · rw [cutoffProfile, if_pos ha, if_pos ha]
       have hh := mul_le_mul (profileProduct_le_one hm R ell a) hprod
-        (Finset.prod_nonneg (fun p _hp => Finset.sum_nonneg (fun b _hb => abs_nonneg _))) zero_le_one
+        (Finset.prod_nonneg (fun p _hp => Finset.sum_nonneg (fun b _hb => abs_nonneg _)))
+          zero_le_one
       simpa only [one_mul] using hh
     · simp [cutoffProfile, ha]
   calc

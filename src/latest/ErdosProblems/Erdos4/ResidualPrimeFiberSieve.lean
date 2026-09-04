@@ -433,7 +433,7 @@ theorem primeCountUpTo_one_zero (x : ℕ) :
   congr 1
   ext p
   simp only [Finset.mem_filter, Finset.mem_range, Nat.mod_one,
-    Nat.zero_mod, and_true]
+    and_true]
 
 theorem cast_card_residualPrimeCandidates
     {U z m : ℕ} (hm : 0 < m) (hzU : z ≤ U / m) :
@@ -450,7 +450,7 @@ theorem cast_card_residualPrimeCandidates
 /-- A fibre-cardinality weight on the image of `p ↦ m*p-1`; this avoids
 having to assume injectivity when defining the abstract sieve. -/
 noncomputable def residualPrimeBoundingSieve
-    (U y z m : ℕ) (hm : 0 < m) (hmEven : Even m) : BoundingSieve := by
+    (U y z m : ℕ) (_hm : 0 < m) (hmEven : Even m) : BoundingSieve := by
   classical
   let P := residualPrimeCandidates U z m
   let f := fun p : ℕ ↦ m * p - 1

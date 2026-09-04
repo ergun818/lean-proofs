@@ -9,8 +9,6 @@ open scoped BigOperators
 
 namespace Erdos4.FGKMT
 
-open Classical
-
 variable {k : ℕ}
 
 noncomputable def translatedSites (h : Fin k → ℕ) (p n : ℕ) : Finset ℕ :=

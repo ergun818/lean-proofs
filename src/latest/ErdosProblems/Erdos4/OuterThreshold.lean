@@ -98,7 +98,8 @@ theorem exists_log_start :
   have h₃ := Real.tendsto_log_atTop.comp h₂
   apply eventually_atTop.mp
   filter_upwards [eventually_ge_atTop 1, h₁.eventually (eventually_ge_atTop 1),
-    h₂.eventually (eventually_ge_atTop 1), h₃.eventually (eventually_ge_atTop 1)] with n hn hl₁ hl₂ hl₃
+    h₂.eventually (eventually_ge_atTop 1), h₃.eventually (eventually_ge_atTop 1)] with n hn
+      hl₁ hl₂ hl₃
   exact ⟨hn, hl₁, hl₂, hl₃⟩
 
 theorem log_primorial_le_two (X : ℕ) : Real.log (primorial X : ℝ) ≤ 2 * X := by
@@ -106,7 +107,8 @@ theorem log_primorial_le_two (X : ℕ) : Real.log (primorial X : ℝ) ≤ 2 * X 
   rw [Chebyshev.theta_eq_log_primorial, Nat.floor_natCast,
     show (4 : ℝ) = 2 ^ 2 by norm_num, Real.log_pow] at hh
   norm_num only [Nat.cast_ofNat] at hh
-  exact hh.trans (by nlinarith [mul_le_mul_of_nonneg_right log_two_bounds.2 (Nat.cast_nonneg X : (0 : ℝ) ≤ X)])
+  exact hh.trans (by
+    nlinarith [mul_le_mul_of_nonneg_right log_two_bounds.2 (Nat.cast_nonneg X : (0 : ℝ) ≤ X)])
 
 theorem eventually_log_endpoint (a L : ℕ) (hL : 0 < L) :
     ∀ᶠ r : ℕ in atTop, ∀ n : ℕ, 0 < n → n ≤ L * primorial (frontier a r) →

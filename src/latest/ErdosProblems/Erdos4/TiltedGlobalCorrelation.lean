@@ -29,7 +29,8 @@ theorem inv_baseline_le_exp {s : ℕ} (hs : 2 ≤ s) {u : ℝ}
     _ ≤ 1 + 2 * atom s u := by
       apply (div_le_iff₀ hB).mpr
       nlinarith [mul_nonneg ha0 (show 0 ≤ 1 - 2 * atom s u by linarith)]
-    _ ≤ 1 + 2 * (1 / (s : ℝ)) := add_le_add le_rfl (mul_le_mul_of_nonneg_left ha (show (0 : ℝ) ≤ 2 by norm_num))
+    _ ≤ 1 + 2 * (1 / (s : ℝ)) := add_le_add le_rfl (mul_le_mul_of_nonneg_left ha (show (0 : ℝ)
+      ≤ 2 by norm_num))
     _ = 1 + 2 / (s : ℝ) := by ring
     _ ≤ _ := by simpa only [add_comm] using Real.add_one_le_exp (2 / (s : ℝ))
 
@@ -57,7 +58,8 @@ theorem local_pair_ratio_exp_le (s : ℕ) [NeZero s] (hs : 2 ≤ s)
   have hspos : (0 : ℝ) < s := by linarith
   have hD : (0 : ℝ) < s - 1 := by linarith
   have hc : ((E.erase 0 ∩ F.erase 0).card : ℝ) ≤ K := by
-    exact_mod_cast ((Finset.card_le_card Finset.inter_subset_left).trans Finset.card_erase_le).trans hE
+    exact_mod_cast ((Finset.card_le_card Finset.inter_subset_left).trans
+      Finset.card_erase_le).trans hE
   have hcdiv : ((E.erase 0 ∩ F.erase 0).card : ℝ) / ((s : ℝ) - 1) ≤ 2 * (K : ℝ) / s := by
     apply (div_le_div_iff₀ hD hspos).mpr
     have hK0 : (0 : ℝ) ≤ K := Nat.cast_nonneg K
@@ -66,7 +68,8 @@ theorem local_pair_ratio_exp_le (s : ℕ) [NeZero s] (hs : 2 ≤ s)
       1 + 4 * (((E.erase 0 ∩ F.erase 0).card : ℝ) / ((s : ℝ) - 1)) ≤
         Real.exp (8 * (K : ℝ) / s) := by
     calc
-      _ ≤ 1 + 4 * (2 * (K : ℝ) / s) := add_le_add le_rfl (mul_le_mul_of_nonneg_left hcdiv (show (0 : ℝ) ≤ 4 by norm_num))
+      _ ≤ 1 + 4 * (2 * (K : ℝ) / s) := add_le_add le_rfl (mul_le_mul_of_nonneg_left hcdiv
+        (show (0 : ℝ) ≤ 4 by norm_num))
       _ = 1 + 8 * (K : ℝ) / s := by ring
       _ ≤ _ := by simpa only [add_comm] using Real.add_one_le_exp (8 * (K : ℝ) / s)
   have hfactor :
@@ -115,9 +118,11 @@ theorem local_pair_ratio_le_one_of_disjoint (s : ℕ) [NeZero s] (hs : 2 ≤ s)
   have hz : ¬((0 : ZMod s) ∈ E ∧ (0 : ZMod s) ∈ F) :=
     fun h => (Finset.disjoint_left.mp hdis h.1) h.2
   have hinter : E.erase 0 ∩ F.erase 0 = ∅ :=
-    Finset.disjoint_iff_inter_eq_empty.mp (hdis.mono (Finset.erase_subset _ _) (Finset.erase_subset _ _))
+    Finset.disjoint_iff_inter_eq_empty.mp (hdis.mono (Finset.erase_subset _ _)
+      (Finset.erase_subset _ _))
   have hh := localLaw_pair_ratio_le s hs _ (rpow_tilt_pos hs τ) (rpow_tilt_le_one hs hτ) E F hE hF
-  simpa only [residueLaw, if_neg hz, hinter, Finset.card_empty, Nat.cast_zero, zero_div, mul_zero, add_zero, one_mul]
+  simpa only [residueLaw, if_neg hz, hinter, Finset.card_empty, Nat.cast_zero, zero_div,
+    mul_zero, add_zero, one_mul]
     using hh
 
 def blockGcd (T U : Finset ℕ) : ℕ := Nat.gcd (∏ n ∈ T, n) (∏ n ∈ U, n)
@@ -169,7 +174,8 @@ theorem sieveLaw_pair_ratio_le (τ : ℝ) (hτ : 0 ≤ τ) (T U : Finset ℕ)
       (if ell l ∣ blockGcd T U then (ell l : ℝ) ^ τ else 1) * Real.exp (error l) := by
     have hcardT : (residues ell T l).card ≤ K := Finset.card_image_le.trans hT
     have hcardU : (residues ell U l).card ≤ K := Finset.card_image_le.trans hU
-    have hres : residues ell (T ∪ U) l = residues ell T l ∪ residues ell U l := Finset.image_union _ _
+    have hres : residues ell (T ∪ U) l = residues ell T l ∪ residues ell U l :=
+      Finset.image_union _ _
     rw [hres]
     by_cases hc : l ∈ collisionPrimes ell (T ∪ U)
     · have hh := local_pair_ratio_exp_le (ell l) (Fact.out : (ell l).Prime).two_le τ hτ
@@ -193,7 +199,8 @@ theorem sieveLaw_pair_ratio_le (τ : ℝ) (hτ : 0 ≤ τ) (T U : Finset ℕ)
     _ ≤ ∏ l, ((if ell l ∣ blockGcd T U then (ell l : ℝ) ^ τ else 1) * Real.exp (error l)) := by
       apply Finset.prod_le_prod
       · intro l _
-        exact div_nonneg (FiniteLaw.prob_nonneg _ _) (mul_nonneg (FiniteLaw.prob_nonneg _ _) (FiniteLaw.prob_nonneg _ _))
+        exact div_nonneg (FiniteLaw.prob_nonneg _ _) (mul_nonneg (FiniteLaw.prob_nonneg _ _)
+          (FiniteLaw.prob_nonneg _ _))
       · intro l _
         exact hlocal l
     _ = _ := by

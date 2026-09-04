@@ -50,7 +50,7 @@ theorem sieveProfileScale_log_le {j : ℕ} (hj : 16 ≤ j) :
   have hh := Real.log_le_log hz (sieveProfileScale_le_square hj)
   rw [Real.log_pow, log_sieveDimension] at hh
   have hlog2 : Real.log 2 ≤ 1 := by
-    convert Real.log_le_sub_one_of_pos (by norm_num : (0 : ℝ) < 2) using 1 <;> norm_num
+    convert Real.log_le_sub_one_of_pos (by norm_num : (0 : ℝ) < 2) using 1; norm_num
   have hj0 : (0 : ℝ) ≤ j := Nat.cast_nonneg j
   have hmul := mul_le_mul_of_nonneg_left hlog2 hj0
   norm_num only [Nat.cast_ofNat] at hh

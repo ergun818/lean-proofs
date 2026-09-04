@@ -3,13 +3,14 @@ import ErdosProblems.Erdos4.FGKMTGrowingTargetCounts
 import ErdosProblems.Erdos4.FGKMTGrowingPrimeExposure
 import ErdosProblems.Erdos4.FGKMTSmallShifts
 
-/-! Unconditional initial configurations at every sufficiently large endpoint, at full FGKMT18 scale. -/
+/-! Unconditional initial configurations at every sufficiently large endpoint, at full FGKMT18
+  scale. -/
 
 open scoped BigOperators
 
 namespace Erdos4.FGKMT
 
-open Filter Classical ChebyshevIntervals TupleSurvivalBounds
+open Filter ChebyshevIntervals TupleSurvivalBounds
 
 theorem exists_growing_initial_configuration :
     ∃ c A B : ℝ, 0 < c ∧ 0 < A ∧ 0 < B ∧ ∀ᶠ x : ℕ in atTop,
@@ -140,13 +141,15 @@ theorem exists_growing_initial_configuration :
     exact herror _ (hdegree q hq)
   obtain ⟨a, V, ν, hVS, _, hV, hmiss, hνdegree, hνmarg, hνpair, hνlegal⟩ :=
     exists_rational_initial_configuration (growingRandomValue x) ell₀ ell₁ b (growingRadius x)
-      hk h hinj hY sources targets bad htarget hε0 hε1 hη hα hacc hsources hshift hZ hatom hdegree hbudget
+      hk h hinj hY sources targets bad htarget hε0 hε1 hη hα hacc hsources hshift hZ hatom
+        hdegree hbudget
   have hbad : (bad.card : ℝ) ≤ Cbad * Y / (L * j ^ 2) := by
     have hh : (bad.card : ℝ) ≤ bad₀.card := by exact_mod_cast targetBadSubset_card_le targets bad₀
     exact hh.trans hbadcard
   have hN : (targets.card : ℝ) ≤ K * Y / L := htargets Y hXY
   have hcount := initial_configuration_count_budget hσpos.le hxpos.le (Nat.cast_nonneg Y)
-    hLpos hj hG.le hK.le hCbad.le (Nat.cast_nonneg targets.card) hcounts.2.1 hcounts.2.2 hN hbad hproduct
+    hLpos hj hG.le hK.le hCbad.le (Nat.cast_nonneg targets.card) hcounts.2.1 hcounts.2.2 hN
+      hbad hproduct
   refine ⟨a, V, ν, hVS, hV.trans hcount.1, hmiss.trans hcount.2, hνdegree, ?_, ?_, hνlegal⟩
   · intro p v
     exact (hνmarg p v).trans hloss.2

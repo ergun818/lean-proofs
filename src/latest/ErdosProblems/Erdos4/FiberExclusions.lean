@@ -125,6 +125,7 @@ theorem admissibleSum_eq (W : ℕ) (m : ℝ) (R T : ℕ)
       fun h => hsq ⟨h.1, h.2.1⟩
     simp [hh, weight, hsq]
 
+omit [DecidableEq P] in
 /-- The price of all frozen-prime exclusions is bounded by their
 reciprocal mass times the unrestricted harmonic sum at the outer cutoff. -/
 theorem weightedSum_sub_cost_le {m : ℝ} (hm : 1 ≤ m)
