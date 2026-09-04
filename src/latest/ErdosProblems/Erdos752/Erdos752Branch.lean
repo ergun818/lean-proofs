@@ -167,7 +167,7 @@ theorem exists_deepest_common_branch {G : SimpleGraph V} {root : V}
   have hnconst : ∃ x ∈ S, ∃ y ∈ S,
       (p x).getVert (j + 1) ≠ (p y).getVert (j + 1) := by
     rw [RootPathsAgreeAt] at hnotnext
-    push_neg at hnotnext
+    push Not at hnotnext
     obtain ⟨x, hx, y, hy, hxy⟩ := hnotnext
     exact ⟨x, hx, y, hy, hxy⟩
   let f : V → V := fun x ↦ (p x).getVert (j + 1)
@@ -205,7 +205,7 @@ theorem exists_bfs_branch_uniform_detours {G : SimpleGraph V}
     (hconn : G.Connected) (root : V) (S : Finset V)
     (hS : 2 ≤ S.card) (i : ℕ)
     (hlevel : ∀ x ∈ S, G.dist root x = i) :
-    ∃ j < i, ∃ z : V, ∃ A B : Finset V, ∃ a : V,
+    ∃ j < i, ∃ _z : V, ∃ A B : Finset V, ∃ a : V,
       a ∈ A ∧ A.Nonempty ∧ A ⊆ S ∧ B = S \ A ∧
       2 * A.card ≤ S.card ∧ S.card ≤ 2 * B.card ∧
       ∀ b ∈ B, ∃ q : G.Walk a b,

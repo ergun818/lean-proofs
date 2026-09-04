@@ -96,7 +96,7 @@ lemma card_rootedPath_lt_card_vertices {V : Type u} [Fintype V] [DecidableEq V]
     Fintype.card (RootedPath G root n) < Fintype.card V := by
   classical
   let f : RootedPath G root n → V := fun p ↦ p.1
-  apply Fintype.card_lt_of_injective_of_notMem f h.rootedPath_endpoint_injective
+  apply Fintype.card_lt_of_injective_of_notMem f h.rootedPath_endpoint_injective (b := root)
   rintro ⟨p, hp⟩
   rcases p with ⟨v, p, hpath, hplen⟩
   dsimp [f] at hp
@@ -108,11 +108,12 @@ lemma card_rootedPath_lt_card_vertices {V : Type u} [Fintype V] [DecidableEq V]
 /-- A path of length below the girth has no chord incident with its endpoint:
 among vertices already on the path, only the penultimate one can be adjacent
 to the endpoint. -/
-lemma eq_penultimate_of_mem_support_of_adj {V : Type u} [DecidableEq V]
+lemma eq_penultimate_of_mem_support_of_adj {V : Type u}
     {G : SimpleGraph V}
     {N : ℕ} (h : GirthGreaterThan G N) {a b w : V} {p : G.Walk a b}
-    (hp : p.IsPath) (hp0 : 0 < p.length) (hplen : p.length + 1 ≤ N)
+    (hp : p.IsPath) (_hp0 : 0 < p.length) (hplen : p.length + 1 ≤ N)
     (hw : w ∈ p.support) (hadj : G.Adj b w) : w = p.penultimate := by
+  classical
   by_cases hedge : s(b, w) ∈ p.edges
   · exact hp.eq_penultimate_of_mem_edges hedge
   have hdrop : (p.dropUntil w hw).IsPath := hp.dropUntil hw
@@ -159,7 +160,7 @@ lemma card_pathExtensions_add_one_ge_degree {root : V} {n N : ℕ}
       List.mem_toFinset] at hw
     have heq := h.eq_penultimate_of_mem_support_of_adj p.2.2.1
       (by simpa [p.2.2.2] using hn) (by simpa [p.2.2.2] using hnN) hw.2 hw.1
-    simpa [heq]
+    simp [heq]
   have hIcard : #I ≤ 1 := by
     calc
       #I ≤ #({p.2.1.penultimate} : Finset V) := Finset.card_le_card hI
@@ -204,6 +205,7 @@ def unextendRootedPath {root : V} {n : ℕ} (q : RootedPath G root (n + 1)) :
     exact (Walk.concat_isPath_iff hadj).1 hpath |>.2
   exact ⟨p, ⟨q.1, (mem_pathExtensions p q.1).2 ⟨hadj, hnot⟩⟩⟩
 
+omit [Fintype V] [DecidableEq V] [DecidableRel G.Adj] in
 /-- Copying the endpoints of a walk does not change the corresponding
 subtype element, up to heterogeneous equality.  This tiny transport lemma
 keeps the inverse calculation below independent of the proof terms generated
@@ -222,7 +224,8 @@ lemma unextend_extendRootedPath {root : V} {n : ℕ}
     (x : RootedPathExtension (G := G) root n) :
     unextendRootedPath (extendRootedPath x) = x := by
   rcases x with ⟨⟨v, p, hp, hplen⟩, ⟨w, hw⟩⟩
-  ext <;> simp [extendRootedPath, unextendRootedPath]
+  ext <;> simp only [extendRootedPath, unextendRootedPath,
+    Walk.penultimate_concat, Walk.dropLast_concat]
   exact walkSubtype_copy_heq p _ _ n _ ⟨hp, hplen⟩
 
 lemma extend_unextendRootedPath {root : V} {n : ℕ}
@@ -319,6 +322,7 @@ lemma pow_le_card_rootedPath {root : V} {d r n : ℕ}
         _ ≤ Fintype.card (RootedPath G root (n + 1)) :=
           card_rootedPath_mul_le_succ hmin hgirth hnr
 
+omit [DecidableEq V] in
 /-- The Moore lower bound in the form needed for Erdős 752: minimum degree
 at least `d+1` and girth greater than `2*r` force at least `d^r` vertices. -/
 theorem moore_bound {d r : ℕ} (hmin : d + 1 ≤ G.minDegree)
@@ -327,13 +331,13 @@ theorem moore_bound {d r : ℕ} (hmin : d + 1 ≤ G.minDegree)
   classical
   by_cases hV : IsEmpty V
   · let : IsEmpty V := hV
-    have hzero : G.minDegree = 0 := by simp [SimpleGraph.minDegree]
-    simp [hzero] at hmin
+    simp at hmin
   · let : Nonempty V := not_isEmpty_iff.mp hV
     let root : V := Classical.choice inferInstance
     exact (pow_le_card_rootedPath (G := G) (root := root) hmin hgirth le_rfl).trans
       (hgirth.card_rootedPath_le_card_vertices (root := root))
 
+omit [DecidableEq V] in
 /-- The strict Moore bound for positive radius.  The extra vertex is the root,
 which cannot be the endpoint of a positive-length simple rooted path. -/
 theorem moore_bound_strict {d r : ℕ} (hr : 0 < r)
@@ -342,8 +346,7 @@ theorem moore_bound_strict {d r : ℕ} (hr : 0 < r)
   classical
   by_cases hV : IsEmpty V
   · let : IsEmpty V := hV
-    have hzero : G.minDegree = 0 := by simp [SimpleGraph.minDegree]
-    simp [hzero] at hmin
+    simp at hmin
   · let : Nonempty V := not_isEmpty_iff.mp hV
     let root : V := Classical.choice inferInstance
     exact (pow_le_card_rootedPath (G := G) (root := root) hmin hgirth le_rfl).trans_lt
@@ -366,21 +369,25 @@ noncomputable def externalBoundary (G : SimpleGraph V) (X : Finset V) : Finset V
 noncomputable def closedNeighborhood (G : SimpleGraph V) (X : Finset V) : Finset V :=
   X ∪ externalBoundary G X
 
+omit [DecidableRel G.Adj] in
 @[simp] lemma mem_externalBoundary {X : Finset V} {w : V} :
     w ∈ externalBoundary G X ↔ w ∉ X ∧ ∃ v ∈ X, G.Adj v w := by
   simp [externalBoundary]
 
+omit [DecidableRel G.Adj] in
 @[simp] lemma mem_closedNeighborhood {X : Finset V} {w : V} :
     w ∈ closedNeighborhood G X ↔ w ∈ X ∨ ∃ v ∈ X, G.Adj v w := by
   by_cases hw : w ∈ X
   · simp [closedNeighborhood, hw]
   · simp [closedNeighborhood, hw]
 
+omit [DecidableRel G.Adj] in
 lemma neighborSet_subset_closedNeighborhood {X : Finset V} {v : V} (hv : v ∈ X) :
     G.neighborSet v ⊆ (↑(closedNeighborhood G X) : Set V) := by
   intro w hw
   exact (mem_closedNeighborhood (G := G)).2 (Or.inr ⟨v, hv, hw⟩)
 
+omit [DecidableRel G.Adj] in
 lemma card_closedNeighborhood_le {X : Finset V} :
     #(closedNeighborhood G X) ≤ #X + #(externalBoundary G X) := by
   exact Finset.card_union_le _ _
@@ -438,7 +445,6 @@ theorem small_set_expansion {d r : ℕ} (hr : 0 < r)
   have hScard : Fintype.card (↥S) ≤ 3 * #X := by
     change Fintype.card (↥(↑S : Set V)) ≤ 3 * #X
     rw [Set.fintypeCard_eq_ncard]
-    change (↑S : Set V).ncard ≤ 3 * #X
     simp only [Set.ncard_coe_finset]
     calc
       #S ≤ #X + #(externalBoundary G X) := card_closedNeighborhood_le (G := G)

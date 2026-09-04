@@ -47,6 +47,7 @@ def initial : State V where
   stack := []
   unseen := Finset.univ
 
+omit [DecidableEq V] [DecidableRel G.Adj] in
 lemma initial_valid : (initial : State V).Valid G := by
   constructor <;> simp [initial]
 
@@ -62,6 +63,7 @@ def pop (s : State V) (x : V) (tail : List V) : State V where
   stack := tail
   unseen := s.unseen
 
+omit [Fintype V] [DecidableRel G.Adj] in
 lemma push_valid {s : State V} (hs : s.Valid G) {x : V} (hx : x ∈ s.unseen)
     (hchain : (x :: s.stack).IsChain G.Adj) : (s.push x).Valid G := by
   constructor
@@ -94,6 +96,7 @@ lemma push_valid {s : State V} (hs : s.Valid G) {x : V} (hx : x ∈ s.unseen)
     apply hs.done_not_adj_unseen hy
     exact (Finset.mem_erase.mp hz).2
 
+omit [Fintype V] [DecidableRel G.Adj] in
 lemma pop_valid {s : State V} (hs : s.Valid G) {x : V} {tail : List V}
     (hstack : s.stack = x :: tail)
     (hclosed : ∀ y ∈ s.unseen, ¬G.Adj x y) : (s.pop x tail).Valid G := by
@@ -149,6 +152,7 @@ noncomputable def next (s : State V) : State V := by
       else
         exact s.pop x tail
 
+omit [Fintype V] in
 lemma next_valid {s : State V} (hs : s.Valid G) : (s.next G).Valid G := by
   classical
   unfold next
@@ -173,7 +177,8 @@ lemma next_valid {s : State V} (hs : s.Valid G) : (s.next G).Valid G := by
 /-- The number of remaining elementary DFS transitions. -/
 def potential (s : State V) : ℕ := 2 * s.unseen.card + s.stack.length
 
-lemma potential_next {s : State V} (hs : s.Valid G) (hpos : 0 < s.potential) :
+omit [Fintype V] in
+lemma potential_next {s : State V} (_hs : s.Valid G) (hpos : 0 < s.potential) :
     (s.next G).potential = s.potential - 1 := by
   classical
   simp only [potential] at hpos ⊢
@@ -184,12 +189,12 @@ lemma potential_next {s : State V} (hs : s.Valid G) (hpos : 0 < s.potential) :
     next h =>
       have hc := Finset.card_erase_of_mem h.choose_spec
       have hcardpos : 0 < s.unseen.card := Finset.card_pos.mpr ⟨h.choose, h.choose_spec⟩
-      simp only [potential, push, List.length_cons]
+      simp only [push, List.length_cons]
       rw [hc]
       omega
     next h =>
       exfalso
-      simp only [potential, hstack, List.length_nil, add_zero] at hpos
+      simp only [hstack, List.length_nil, add_zero] at hpos
       have : s.unseen = ∅ := Finset.not_nonempty_iff_eq_empty.mp h
       simp [this] at hpos
   next x tail hstack =>
@@ -198,13 +203,14 @@ lemma potential_next {s : State V} (hs : s.Valid G) (hpos : 0 < s.potential) :
       have hc := Finset.card_erase_of_mem h.choose_spec.1
       have hcardpos : 0 < s.unseen.card :=
         Finset.card_pos.mpr ⟨h.choose, h.choose_spec.1⟩
-      simp only [potential, push, List.length_cons]
+      simp only [push, List.length_cons]
       rw [hc]
       omega
     next =>
-      simp only [potential, pop, hstack, List.length_cons]
+      simp only [pop, hstack, List.length_cons]
       omega
 
+omit [Fintype V] in
 lemma done_card_next_bounds (s : State V) :
     s.done.card ≤ (s.next G).done.card ∧ (s.next G).done.card ≤ s.done.card + 1 := by
   classical
@@ -217,6 +223,7 @@ lemma done_card_next_bounds (s : State V) :
     · exact Finset.card_le_card (Finset.subset_insert _ _)
     · exact Finset.card_insert_le _ _
 
+omit [Fintype V] in
 lemma valid_iterate (s : State V) (hs : s.Valid G) (n : ℕ) :
     ((next G)^[n] s).Valid G := by
   induction n with
@@ -225,11 +232,12 @@ lemma valid_iterate (s : State V) (hs : s.Valid G) (n : ℕ) :
       rw [Function.iterate_succ_apply']
       exact next_valid G ih
 
+omit [Fintype V] in
 lemma potential_iterate_self_eq_zero (s : State V) (hs : s.Valid G) :
     (((next G)^[s.potential] s).potential) = 0 := by
   generalize hn : s.potential = n
   induction n generalizing s with
-  | zero => simpa [hn]
+  | zero => simp [hn]
   | succ n ih =>
       have hpos : 0 < s.potential := by omega
       have hp := potential_next G hs hpos
@@ -238,6 +246,7 @@ lemma potential_iterate_self_eq_zero (s : State V) (hs : s.Valid G) :
       apply ih (next G s) hs'
       omega
 
+omit [DecidableEq V] [DecidableRel G.Adj] in
 lemma card_done_of_potential_eq_zero {s : State V} (hs : s.Valid G)
     (hp : s.potential = 0) : s.done.card = Fintype.card V := by
   have hu : s.unseen = ∅ := by
@@ -253,10 +262,11 @@ lemma card_done_of_potential_eq_zero {s : State V} (hs : s.Valid G)
     intro x
     rcases hs.cover x with hx | hx | hx
     · exact hx
-    · simpa [hstack] using hx
-    · simpa [hu] using hx
+    · simp [hstack] at hx
+    · simp [hu] at hx
   simp [hdone]
 
+omit [Fintype V] in
 lemma exists_iterate_done_card_eq (s : State V) (hs : s.Valid G) (m t : ℕ)
     (hsm : s.done.card ≤ m)
     (hfinal : m ≤ (((next G)^[t] s).done.card)) :
@@ -276,8 +286,10 @@ lemma exists_iterate_done_card_eq (s : State V) (hs : s.Valid G) (m t : ℕ)
         obtain ⟨j, hjt, hj⟩ := ih (s.next G) (next_valid G hs) hsnext hfinal'
         exact ⟨j + 1, by omega, by simpa [Function.iterate_succ_apply] using hj⟩
 
+omit [DecidableEq V] [DecidableRel G.Adj] in
 lemma exists_valid_state_done_card_eq (m : ℕ) (hm : m ≤ Fintype.card V) :
     ∃ s : State V, s.Valid G ∧ s.done.card = m := by
+  classical
   let s₀ : State V := initial
   let t := s₀.potential
   have hs₀ : s₀.Valid G := initial_valid G
@@ -290,6 +302,7 @@ lemma exists_valid_state_done_card_eq (m : ℕ) (hm : m ≤ Fintype.card V) :
     (by simpa [hcard] using hm)
   exact ⟨(next G)^[j] s₀, valid_iterate G s₀ hs₀ j, hj⟩
 
+omit [DecidableRel G.Adj] in
 lemma externalBoundary_done_subset_stack {s : State V} (hs : s.Valid G) :
     externalBoundary G s.done ⊆ s.stack.toFinset := by
   intro y hy
@@ -307,7 +320,7 @@ end DFS
 /-- **DFS long-path lemma.** If every `m`-vertex set has more than `2m`
 external neighbors, then the graph contains a simple path with at least `2m`
 edges. -/
-theorem exists_long_path_of_externalBoundary (G : SimpleGraph V) [DecidableRel G.Adj]
+theorem exists_long_path_of_externalBoundary (G : SimpleGraph V)
     (m : ℕ) (hm : m ≤ Fintype.card V)
     (hexpand : ∀ X : Finset V, X.card = m → 2 * m < (externalBoundary G X).card) :
     ∃ a b, ∃ p : G.Walk a b, p.IsPath ∧ 2 * m ≤ p.length := by

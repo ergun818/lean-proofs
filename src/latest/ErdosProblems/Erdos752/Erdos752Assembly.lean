@@ -66,7 +66,7 @@ The lower bound four is sharp for this purely path-local statement: a
 length-two upper--lower--upper path may occur in a tree.  In the application
 the DFS path has length at least `2 * m` with `m ≥ 2`.
 -/
-theorem exists_cycle_lengths_of_bfsPair_path_bounded [Fintype V]
+theorem exists_cycle_lengths_of_bfsPair_path_bounded [Finite V]
     (G : SimpleGraph V) (hconn : G.Connected) (root : V) (i : ℕ)
     {x y : V} (p : (bfsPair G root i).Walk x y)
     (hp : p.IsPath) (hlen : 4 ≤ p.length) :
@@ -149,7 +149,7 @@ theorem exists_cycle_lengths_of_bfsPair_path_bounded [Fintype V]
     exact ⟨by omega, hcycle⟩
 
 /-- The assembly theorem without the additional upper bound on lengths. -/
-theorem exists_cycle_lengths_of_bfsPair_path [Fintype V]
+theorem exists_cycle_lengths_of_bfsPair_path [Finite V]
     (G : SimpleGraph V) (hconn : G.Connected) (root : V) (i : ℕ)
     {x y : V} (p : (bfsPair G root i).Walk x y)
     (hp : p.IsPath) (hlen : 4 ≤ p.length) :
@@ -161,7 +161,7 @@ theorem exists_cycle_lengths_of_bfsPair_path [Fintype V]
   exact ⟨L, hcard, fun l hl ↦ (hcycles l hl).2⟩
 
 /-- Bounded cycle lengths from a path in a subgraph of two BFS layers. -/
-theorem exists_cycle_lengths_of_path_in_subgraph_bfsPair_bounded [Fintype V]
+theorem exists_cycle_lengths_of_path_in_subgraph_bfsPair_bounded [Finite V]
     (G : SimpleGraph V) (hconn : G.Connected) (root : V) (i : ℕ)
     {K : SimpleGraph V} (hK : K ≤ bfsPair G root i)
     {x y : V} (p : K.Walk x y) (hp : p.IsPath) (hlen : 4 ≤ p.length) :
@@ -173,7 +173,7 @@ theorem exists_cycle_lengths_of_path_in_subgraph_bfsPair_bounded [Fintype V]
     (p.mapLe hK) (hp.mapLe hK) hlen'
 
 /-- Bounded cycle lengths for a path induced on the support of a slice subgraph. -/
-theorem exists_cycle_lengths_of_induce_support_path_bounded [Fintype V]
+theorem exists_cycle_lengths_of_induce_support_path_bounded [Finite V]
     (G : SimpleGraph V) (hconn : G.Connected) (root : V) (i : ℕ)
     {K : SimpleGraph V} (hK : K ≤ bfsPair G root i)
     {x y : K.support} (p : (K.induce K.support).Walk x y)
@@ -190,7 +190,7 @@ theorem exists_cycle_lengths_of_induce_support_path_bounded [Fintype V]
 
 /-- The same assembly theorem for a path lying in any subgraph of the
 two-level slice. -/
-theorem exists_cycle_lengths_of_path_in_subgraph_bfsPair [Fintype V]
+theorem exists_cycle_lengths_of_path_in_subgraph_bfsPair [Finite V]
     (G : SimpleGraph V) (hconn : G.Connected) (root : V) (i : ℕ)
     {K : SimpleGraph V} (hK : K ≤ bfsPair G root i)
     {x y : V} (p : K.Walk x y) (hp : p.IsPath) (hlen : 4 ≤ p.length) :
@@ -207,7 +207,7 @@ theorem exists_cycle_lengths_of_path_in_subgraph_bfsPair [Fintype V]
 
 /-- Version used by the minimum-degree core: the path lives in the graph
 induced by a slice subgraph on its support. -/
-theorem exists_cycle_lengths_of_induce_support_path [Fintype V]
+theorem exists_cycle_lengths_of_induce_support_path [Finite V]
     (G : SimpleGraph V) (hconn : G.Connected) (root : V) (i : ℕ)
     {K : SimpleGraph V} (hK : K ≤ bfsPair G root i)
     {x y : K.support} (p : (K.induce K.support).Walk x y)

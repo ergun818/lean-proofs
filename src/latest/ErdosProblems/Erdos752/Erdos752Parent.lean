@@ -264,7 +264,7 @@ removes precisely this permitted intersection. -/
 lemma bfsParentWalk_dropUntil_disjoint_tail (G : SimpleGraph V)
     (hconn : G.Connected) (root a b z : V) (j : ℕ)
     (hja : j < (bfsParentWalk G hconn root a).length)
-    (hjb : j < (bfsParentWalk G hconn root b).length)
+    (_hjb : j < (bfsParentWalk G hconn root b).length)
     (hza : (bfsParentWalk G hconn root a).getVert j = z)
     (hzb : (bfsParentWalk G hconn root b).getVert j = z)
     (hsplit : (bfsParentWalk G hconn root a).getVert (j + 1) ≠

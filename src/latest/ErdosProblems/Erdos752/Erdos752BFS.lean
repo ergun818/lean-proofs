@@ -99,7 +99,7 @@ lemma bfsPair_support_subset {G : SimpleGraph V} {root : V} {i : ℕ} :
   · exact Or.inr h.1
 
 /-- Cardinality bound for the support of a two-layer slice. -/
-lemma ncard_bfsPair_support_le [Fintype V] {G : SimpleGraph V}
+lemma ncard_bfsPair_support_le [Finite V] {G : SimpleGraph V}
     {root : V} {i : ℕ} :
     (bfsPair G root i).support.ncard ≤
       (bfsLayer G root i).ncard + (bfsLayer G root (i + 1)).ncard := by
@@ -249,7 +249,7 @@ lemma sum_degrees_bfsLayer_zero_eq [Fintype V] {G : SimpleGraph V}
     simpa using hpair
   have hzeroFin : (bfsLayer G root 0).toFinset = {root} := by
     ext v
-    simpa [bfsLayer_zero_eq hconn]
+    simp [bfsLayer_zero_eq hconn]
   have hsum := SimpleGraph.isBipartiteWith_sum_degrees_eq_card_edges hpair'
   calc
     ∑ v ∈ bfsLayer G root 0, G.degree v = G.degree root := by
@@ -263,12 +263,13 @@ lemma sum_degrees_bfsLayer_zero_eq [Fintype V] {G : SimpleGraph V}
 /-- A finite graph has a BFS layer of maximum cardinality.  The formulation
 quantifies over all natural indices, including the empty layers above the
 diameter. -/
-lemma exists_max_ncard_bfsLayer [Fintype V] [Nonempty V]
+lemma exists_max_ncard_bfsLayer [Finite V] [Nonempty V]
     (G : SimpleGraph V) (root : V) :
     ∃ i : ℕ, 0 < (bfsLayer G root i).ncard ∧
       ∀ j : ℕ, (bfsLayer G root j).ncard ≤
         (bfsLayer G root i).ncard := by
   classical
+  let := Fintype.ofFinite V
   obtain ⟨v, _hv, hmax⟩ := Finset.univ.exists_max_image
     (fun w : V ↦ (bfsLayer G root (G.dist root w)).ncard)
     Finset.univ_nonempty
