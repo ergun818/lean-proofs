@@ -45,7 +45,7 @@ lemma pairOwner_endpoint
   · right
     let b : ↥B.right := ⟨x, mem_sdiff.mpr ⟨hx, hxL⟩⟩
     have h := congrArg Subtype.val (B.pairEquiv.apply_symm_apply b)
-    simpa [pairOwner, hxL, b] using h.symm
+    simp [pairOwner, hxL]
 
 /-- The related endpoint of a pair having exactly one neighbor of `x`. -/
 def singleNeighborVertex
@@ -62,7 +62,7 @@ lemma relation_singleNeighborVertex
     r x (B.singleNeighborVertex r x a) := by
   have hs := (mem_filter.mp ha).2
   rcases hs with ⟨haL, _haR⟩ | ⟨haL, haR⟩
-  · simpa [singleNeighborVertex, haL] using haL
+  · simp [singleNeighborVertex, haL]
   · simpa [singleNeighborVertex, haL] using haR
 
 /-- A finite cover of all related vertices in `W`, sorted by their base-pair

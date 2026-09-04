@@ -63,8 +63,9 @@ theorem card_universeTriplesThrough_le_sq
 
 /-- Fixed-size subsets of a bank have a uniform polynomial bound. -/
 theorem card_powersetCard_le_add_one_pow
-    {α : Type*} [DecidableEq α] (B : Finset α) {k q : ℕ} (hkq : k ≤ q) :
+    {α : Type*} (B : Finset α) {k q : ℕ} (hkq : k ≤ q) :
     (B.powersetCard k).card ≤ (B.card + 1) ^ q := by
+  classical
   rw [card_powersetCard]
   calc
     Nat.choose B.card k ≤ B.card ^ k := Nat.choose_le_pow _ _
@@ -140,11 +141,12 @@ theorem localAbsorberWeightBudget_le
 /-- Closed constant bound for the local branch when an outside triangle has
 already been prescribed. -/
 theorem localAbsorberWeightBudget_nonempty_le
-    {V : Type*} [Fintype V] [DecidableEq V]
+    {V : Type*} [Finite V] [DecidableEq V]
     {q M : ℕ} {L : TripleSystemOn V} (hLM : L.card ≤ M) :
     (∑ r ∈ Icc 5 q, ∑ _K ∈ L.powerset,
       ((2 ^ (r ^ 3) * (r + 1) : ℕ) : ℝ≥0)) ≤
       (((q + 1) * 2 ^ M * (2 ^ (q ^ 3) * (q + 1)) : ℕ) : ℝ≥0) := by
+  let := Fintype.ofFinite V
   let C : ℝ≥0 := (2 ^ (q ^ 3) * (q + 1) : ℕ)
   have hpoint : ∀ r ∈ Icc 5 q,
       ((2 ^ (r ^ 3) * (r + 1) : ℕ) : ℝ≥0) ≤ C := by
@@ -304,12 +306,13 @@ theorem supportAbsorberWeightBudget_le
 /-- The common exact-class sum over configuration orders and fixed-size bank
 parts is bounded independently of the ambient vertex order. -/
 theorem bankClassWeightBudget_le
-    {V : Type*} [Fintype V] [DecidableEq V]
+    {V : Type*} [Finite V] [DecidableEq V]
     {q j : ℕ} (B : TripleSystemOn V) :
     (∑ r ∈ Icc 5 q, ∑ _K ∈ B.powersetCard (r - j),
       ((2 ^ (r ^ 3) * (r + 1) : ℕ) : ℝ≥0)) ≤
       (((q + 1) * (B.card + 1) ^ q *
         (2 ^ (q ^ 3) * (q + 1)) : ℕ) : ℝ≥0) := by
+  let := Fintype.ofFinite V
   let C : ℝ≥0 := (2 ^ (q ^ 3) * (q + 1) : ℕ)
   let Kmax : ℝ≥0 := ((B.card + 1) ^ q : ℕ)
   have hIcc : (Icc 5 q).card ≤ q + 1 := by

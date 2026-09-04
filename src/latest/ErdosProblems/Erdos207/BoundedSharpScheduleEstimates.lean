@@ -22,7 +22,6 @@ lemma realLinearFloorSchedule_le_initial
     (hrate : 0 ≤ rate) (hbuffer : 0 ≤ buffer) :
     realLinearFloorSchedule (d₀ : ℝ) rate buffer i ≤ d₀ := by
   apply realLinearFloorSchedule_le_nat
-  push_cast
   nlinarith
 
 lemma boundedSharpSurvivalTheta_mono_of_le
@@ -73,7 +72,7 @@ lemma cumulativeSurvival_boundedSharp_pos
 
 lemma transferPointWeight_boundedSharp_const_le
     {n D M d₀ K N : ℕ} {d : ℕ → ℕ} {C : ℝ≥0}
-    (hD : 0 < D) (hM : 0 < M) (hN : 0 < N)
+    (_hD : 0 < D) (hM : 0 < M) (hN : 0 < N)
     (heffective : d₀ - K < M)
     (hd : ∀ i, i < n → d i ≤ d₀)
     (hratio : (n : ℝ≥0) * (D : ℝ≥0)⁻¹ ≤

@@ -31,7 +31,7 @@ abbrev residualInternalExtensionSet
     (SimpleGraph.edge e.out.1 e.out.2) (W.U i.succ)
 
 /-- Canonical non-diagonality proof for every residual internal edge. -/
-def residualInternalEdgeNe
+theorem residualInternalEdgeNe
     {V : Type*} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) (U : Finset V) (P : TripleSystemOn V) :
     ∀ e, e ∈ (preliminaryResidualInternalEdges G U P).toList →
@@ -128,7 +128,7 @@ theorem RawResidualInternalFiberGood.supportedOn_outcome
 /-- Pointwise reserve choice on every good preliminary outcome.  No choice is
 needed on bad outcomes; they receive the all-false reserve realization. -/
 theorem exists_rawResidualInternalKernel
-    {Omega V : Type*} [Fintype Omega] [Fintype V]
+    {Omega V : Type*} [Finite Omega] [Fintype V]
     [DecidableEq V] {ell : ℕ} {W : Vortex V ell}
     {stage : Fin (ell + 1)} {F : ForbiddenFamilyOn V}
     {G : Omega → SimpleGraph V} {A P0 : Omega → TripleSystemOn V}
@@ -168,6 +168,7 @@ theorem exists_rawResidualInternalKernel
           (fun z ↦ Q ⊆ rawResidualInternalAdded P0 omega z) ≤
             ((D : ℝ≥0)⁻¹ ^ Q.card) := by
   classical
+  let := Fintype.ofFinite Omega
   have hex : ∀ omega, Good omega → ∃ bits : Sym2 V → Bool,
       let E := preliminaryResidualInternalEdges
         (G omega) (W.U i.succ) (P0 omega)

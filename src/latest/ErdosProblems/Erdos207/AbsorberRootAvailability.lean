@@ -53,11 +53,12 @@ lemma card_sphereExpansionRootCandidates_le_three
 /-- If an attached triangle contains a root, that root belongs to the base
 triple indexing the attached sphere. -/
 lemma root_mem_of_mem_attachSphereTriple
-    {V : Type*} [Fintype V] [LinearOrder V] {q : ℕ} (hq : 2 ≤ q)
+    {V : Type*} [Finite V] [LinearOrder V] {q : ℕ} (hq : 2 ≤ q)
     (R : TripleOn V) (S : TripleOn (SphereVertex q)) (a : V)
     (ha : SphereExpansionVertex.root a ∈
       (attachSphereTriple hq R S).1) :
     a ∈ R.1 := by
+  let := Fintype.ofFinite V
   obtain ⟨y, hyS, hy⟩ := Finset.mem_map.mp ha
   obtain ⟨i, _hyi, hia⟩ :=
     exists_rootIndex_of_attach_eq_root hq R hy
@@ -102,7 +103,7 @@ in the explicit union of sphere fibers touched by `R`.  This is the local
 half of absorber localization with the actual local family exposed. -/
 theorem inter_mappedSphereBank_subset_localFamily_of_outside_subset
     {V W : Type*} [Fintype V] [LinearOrder V]
-    [Fintype W] [DecidableEq W]
+    [Finite W] [DecidableEq W]
     {q r : ℕ} (hq : 2 ≤ q)
     (f : SphereExpansionVertex V q ↪ W)
     {R E : TripleSystemOn W}
@@ -110,6 +111,7 @@ theorem inter_mappedSphereBank_subset_localFamily_of_outside_subset
     (houtside : E \ mapTripleSystem f (sphereTransformBank hq) ⊆ R) :
     E ∩ mapTripleSystem f (sphereTransformBank hq) ⊆
       mappedSphereLocalFamily f hq R := by
+  let := Fintype.ofFinite W
   intro A hA
   by_contra hAnotLocal
   have hAE : A ∈ E := (mem_inter.mp hA).1
@@ -303,7 +305,7 @@ theorem exists_vertex_root_mem_mappedCandidates_of_singleton_forbidden
     constructor
     · intro hUS
       by_cases hUT : U = T
-      · simpa [hUT]
+      · simp [hUT]
       · have hUerase : U ∈ S.erase T := mem_erase.mpr ⟨hUT, hUS⟩
         have : U ∈ (∅ : TripleSystemOn W) := hSerase hUerase
         simp at this
@@ -377,7 +379,7 @@ lemma card_mappedSpherePairRootCandidates_le_six
 the root to one of the endpoint candidate sets. -/
 lemma root_mem_pairCandidates_of_thirdVertexTriple_mem_bank
     {V W : Type*} [Fintype V] [LinearOrder V]
-    [Fintype W] [DecidableEq W]
+    [Finite W] [DecidableEq W]
     {q : ℕ} (hq : 2 ≤ q)
     (f : SphereExpansionVertex V q ↪ W)
     {u v : W} (huv : u ≠ v) (w : ThirdVertex u v) (a : V)
@@ -385,6 +387,7 @@ lemma root_mem_pairCandidates_of_thirdVertexTriple_mem_bank
     (hbank : thirdVertexTriple huv w ∈
       mapTripleSystem f (sphereTransformBank hq)) :
     a ∈ mappedSpherePairRootCandidates f u v := by
+  let := Fintype.ofFinite W
   obtain ⟨U, hUbank, hUmap⟩ := Finset.mem_map.mp hbank
   have hrootU : SphereExpansionVertex.root a ∈ U.1 := by
     apply (mem_mapTriple_apply_iff f U

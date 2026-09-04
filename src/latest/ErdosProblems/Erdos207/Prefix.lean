@@ -266,8 +266,9 @@ instance {V : Type*} [DecidableEq V] : DecidableEq (GreedyStateOn V) :=
       subst T
       exact ⟨rfl, rfl⟩⟩
 
-instance {V : Type*} [Fintype V] [DecidableEq V] : Finite (GreedyStateOn V) :=
-  Finite.of_injective (fun S : GreedyStateOn V ↦ (S.chosen, S.available)) (by
+instance {V : Type*} [Finite V] [DecidableEq V] : Finite (GreedyStateOn V) := by
+  let := Fintype.ofFinite V
+  exact Finite.of_injective (fun S : GreedyStateOn V ↦ (S.chosen, S.available)) (by
     intro S T h
     cases S
     cases T

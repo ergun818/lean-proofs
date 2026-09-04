@@ -122,11 +122,12 @@ lemma processedSimultaneousLink_center_degree_le
 /-- Every edge covered after `I ∪ D` is either already covered by `R` or is
 an edge of the current stage graph. -/
 lemma coveredGraph_sdiff_historical_le_reserve_sup_stage
-    {V : Type*} [Fintype V] [DecidableEq V]
+    {V : Type*} [Finite V] [DecidableEq V]
     {G : SimpleGraph V} {A I D R P' : TripleSystemOn V}
     (htri : ConsistsOfTriangles G A)
     (hPsub : P' ⊆ (I ∪ (D ∪ R)) ∪ A) :
     coveredGraph (P' \ (I ∪ D)) ≤ coveredGraph R ⊔ G := by
+  let := Fintype.ofFinite V
   intro u v huv
   obtain ⟨T, hTnew, huT, hvT, huvne⟩ := coveredGraph_adj.mp huv
   rcases mem_union.mp (hPsub (mem_sdiff.mp hTnew).1) with hTbase | hTA

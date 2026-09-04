@@ -11,7 +11,7 @@ import ErdosProblems.Erdos207.FiniteSpanCounting
 namespace Erdos207
 
 open Finset
-open scoped Classical NNReal
+open scoped NNReal
 
 noncomputable section
 
@@ -50,34 +50,50 @@ theorem smallHall_fixedSize_card_le
       exact Nat.succ_le_of_lt s.lt_two_pow_self
     _ = _ := by simp only [mul_pow]; ring
 
-theorem smallHall_weighted_sum_le
-    {A B : Type*} [Fintype A] [Fintype B] [DecidableEq A] [DecidableEq B] (theta : ℝ≥0) :
+theorem smallHall_weighted_sum_le {A B : Type*} [Fintype A] [Fintype B] [DecidableEq A]
+    [DecidableEq B] (theta : ℝ≥0) :
     (∑ o : SmallHallObstruction A B, theta ^ o.1.1.1.card) ≤
       ∑ s ∈ Icc 1 (Fintype.card A),
-        ((2 * (Fintype.card A + 1) * (Fintype.card B + 1) : ℕ) * theta : ℝ≥0) ^ s := by
-  let size := fun o : SmallHallObstruction A B ↦ o.1.1.1.card
-  have hmap : ∀ o ∈ (univ : Finset (SmallHallObstruction A B)), size o ∈ Icc 1 (Fintype.card A) := by
-    intro o _
-    exact mem_Icc.mpr ⟨smallHall_size_pos o, o.1.1.1.card_le_univ⟩
-  calc
-    _ = ∑ s ∈ Icc 1 (Fintype.card A), ∑ o ∈ univ with size o = s, theta ^ size o :=
-      (sum_fiberwise_of_maps_to hmap (fun o ↦ theta ^ size o)).symm
-    _ ≤ ∑ s ∈ Icc 1 (Fintype.card A),
-        ((2 * (Fintype.card A + 1) * (Fintype.card B + 1) : ℕ) * theta : ℝ≥0) ^ s := by
-      apply sum_le_sum
-      intro s _
-      calc
-        _ = ((univ.filter (fun o : SmallHallObstruction A B ↦ size o = s)).card : ℝ≥0) * theta ^ s := by
+        ((2 * (Fintype.card A + 1) * (Fintype.card B + 1) : ℕ) * theta : ℝ≥0) ^ s :=
+  by
+    let size := fun o : SmallHallObstruction A B ↦ o.1.1.1.card
+    have hmap :
+      ∀ o ∈ (univ : Finset (SmallHallObstruction A B)), size o ∈ Icc 1 (Fintype.card A) :=
+      by
+        intro o _
+        exact mem_Icc.mpr ⟨smallHall_size_pos o, o.1.1.1.card_le_univ⟩
+    calc
+      _ = ∑ s ∈ Icc 1 (Fintype.card A), ∑ o ∈ univ with size o = s, theta ^ size o :=
+        (sum_fiberwise_of_maps_to hmap (fun o ↦ theta ^ size o)).symm
+      _ ≤
+          ∑ s ∈ Icc 1 (Fintype.card A),
+            ((2 * (Fintype.card A + 1) * (Fintype.card B + 1) : ℕ) * theta : ℝ≥0) ^ s :=
+        by
+          apply sum_le_sum
+          intro s _
           calc
-            _ = ∑ _o ∈ univ with size _o = s, theta ^ s := by
-              apply sum_congr rfl
-              intro o ho
-              rw [(mem_filter.mp ho).2]
-            _ = _ := by simp only [sum_const, nsmul_eq_mul]
-        _ ≤ (((2 * (Fintype.card A + 1) * (Fintype.card B + 1)) ^ s : ℕ) : ℝ≥0) * theta ^ s := by
-          apply mul_le_mul_of_nonneg_right _ zero_le
-          exact_mod_cast smallHall_fixedSize_card_le (A := A) (B := B) s
-        _ = _ := by rw [Nat.cast_pow, mul_pow]
+            _ =
+                ((univ.filter (fun o : SmallHallObstruction A B ↦ size o = s)).card : ℝ≥0) *
+                  theta ^ s :=
+              by
+                calc
+                  _ = ∑ _o ∈ univ with size _o = s, theta ^ s :=
+                    by
+                      apply sum_congr rfl
+                      intro o ho
+                      rw [(mem_filter.mp ho).2]
+                  _ = _ :=
+                    by
+                      simp only [sum_const, nsmul_eq_mul]
+            _ ≤
+                (((2 * (Fintype.card A + 1) * (Fintype.card B + 1)) ^ s : ℕ) : ℝ≥0) *
+                  theta ^ s :=
+              by
+                apply mul_le_mul_of_nonneg_right _ zero_le
+                exact_mod_cast smallHall_fixedSize_card_le (A := A) (B := B) s
+            _ = _ :=
+              by
+                rw [Nat.cast_pow, mul_pow]
 
 theorem orientedSmallHall_weighted_sum_le
     {A B : Type*} [Fintype A] [Fintype B] [DecidableEq A] [DecidableEq B]

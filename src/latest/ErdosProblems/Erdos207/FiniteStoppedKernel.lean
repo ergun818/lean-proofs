@@ -138,7 +138,7 @@ theorem timedStoppedProcessLaw_supported
 as a supermartingale with conditional second moment at most `v`. -/
 theorem probability_timedStoppedProcess_deviation_ge_le_exp
     {Ω : Type*} [Fintype Ω] [DecidableEq Ω]
-    {P : Ω → Prop} [DecidablePred P]
+    {P : Ω → Prop}
     (n : ℕ) (K : ℕ → Ω → FiniteLaw Ω)
     (active : ℕ → Ω → Prop) (F : ℕ → Ω → ℝ)
     (x₀ : Ω) (theta R a v : ℝ)
@@ -157,6 +157,7 @@ theorem probability_timedStoppedProcess_deviation_ge_le_exp
     ((timedStoppedProcessLaw n K active x₀).probability
         (fun z ↦ a ≤ F z.1.1 z.2 - F 0 x₀) : ℝ) ≤
       Real.exp (-theta * a + theta ^ 2 * (n : ℝ) * v) := by
+  classical
   let Ωt := TimedState Ω n
   let z₀ : Ωt := (⟨0, by omega⟩, x₀)
   let Kt : ℕ → Ωt → FiniteLaw Ωt :=
@@ -233,7 +234,7 @@ monotone under the base kernels, and dead terminal states contribute no mass
 to the deviation event. -/
 theorem probability_timedStoppedProcess_alive_deviation_ge_le_exp
     {Ω : Type*} [Fintype Ω] [DecidableEq Ω]
-    {P alive : Ω → Prop} [DecidablePred P] [DecidablePred alive]
+    {P alive : Ω → Prop} [DecidablePred alive]
     (n : ℕ) (K : ℕ → Ω → FiniteLaw Ω)
     (active : ℕ → Ω → Prop) (F : ℕ → Ω → ℝ)
     (x₀ : Ω) (theta R a v : ℝ)
@@ -343,7 +344,7 @@ region.  The latter paths are discarded only in the terminal exponential
 iteration. -/
 theorem probability_timedStoppedProcess_alive_deviation_ge_le_exp_fullIncrement
     {Ω : Type*} [Fintype Ω] [DecidableEq Ω]
-    {P alive : Ω → Prop} [DecidablePred P] [DecidablePred alive]
+    {P alive : Ω → Prop}
     (n : ℕ) (K : ℕ → Ω → FiniteLaw Ω)
     (active : ℕ → Ω → Prop) (F : ℕ → Ω → ℝ)
     (x₀ : Ω) (theta R a v : ℝ)

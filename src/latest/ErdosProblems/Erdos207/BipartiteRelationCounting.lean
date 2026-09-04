@@ -80,13 +80,14 @@ lemma card_relationPairsBetween_eq_sum_left
 
 /-- Counting relation-pairs by their right endpoint. -/
 lemma card_relationPairsBetween_eq_sum_right
-    {A B : Type*} [Fintype A] [Fintype B]
+    {A B : Type*} [Fintype A] [Finite B]
     [DecidableEq A] [DecidableEq B]
     (r : A → B → Prop) [DecidableRel r]
     (S : Finset A) (U : Finset B) :
     (relationPairsBetween r S U).card =
       ∑ b ∈ U, (relationPreneighborsIn r S b).card := by
   classical
+  let := Fintype.ofFinite B
   rw [card_relationPairsBetween_eq_sum_left]
   simp only [relationNeighborsIn, relationPreneighborsIn,
     card_eq_sum_ones, sum_filter]
@@ -153,7 +154,7 @@ theorem card_relationPairsLeaving_ge_of_right_degree
     (Fintype.card B - T.card) * (d - (Fintype.card A - S.card)) =
         ∑ _b ∈ (univ \ T : Finset B),
           (d - (Fintype.card A - S.card)) := by
-      simp [card_sdiff_of_subset (subset_univ T), hcardT]
+      simp [card_sdiff_of_subset (subset_univ T)]
     _ ≤ ∑ b ∈ (univ \ T : Finset B),
         (relationPreneighborsIn r S b).card := by
       apply sum_le_sum

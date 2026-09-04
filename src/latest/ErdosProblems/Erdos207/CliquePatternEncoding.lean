@@ -89,15 +89,16 @@ theorem graphPairFamily_subset_powerset_of_supported
   exact mem_powersetCard.mpr
     ⟨insert_subset hU.1 (singleton_subset_iff.mpr hU.2), card_pair hvw⟩
 
-theorem graphEdges_card_le_support_sq
-    {V : Type*} [Fintype V] [DecidableEq V] (G : SimpleGraph V) (U : Finset V)
-    (hG : GraphSupportedOn G (U : Set V)) :
-    (graphEdges G).card ≤ U.card ^ 2 := by
-  rw [← graphPairFamily_card]
-  calc
-    _ ≤ (U.powersetCard 2).card := card_le_card (graphPairFamily_subset_powerset_of_supported G U hG)
-    _ = U.card.choose 2 := card_powersetCard _ _
-    _ ≤ U.card ^ 2 := Nat.choose_le_pow _ _
+theorem graphEdges_card_le_support_sq {V : Type*} [Fintype V] [DecidableEq V]
+    (G : SimpleGraph V) (U : Finset V) (hG : GraphSupportedOn G (U : Set V)) :
+    (graphEdges G).card ≤ U.card ^ 2 :=
+  by
+    rw [← graphPairFamily_card]
+    calc
+      _ ≤ (U.powersetCard 2).card :=
+        card_le_card (graphPairFamily_subset_powerset_of_supported G U hG)
+      _ = U.card.choose 2 := (card_powersetCard _ _)
+      _ ≤ U.card ^ 2 := Nat.choose_le_pow _ _
 
 end
 

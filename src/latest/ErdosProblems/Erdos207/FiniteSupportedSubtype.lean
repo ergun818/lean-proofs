@@ -17,19 +17,25 @@ noncomputable section
 
 variable {Omega : Type*} [Fintype Omega] {Good : Omega → Prop} [DecidablePred Good]
 
-def supportedSubtype (L : FiniteLaw Omega) (hgood : L.SupportedOn Good) : FiniteLaw {x // Good x} where
+def supportedSubtype (L : FiniteLaw Omega) (hgood : L.SupportedOn Good) :
+    FiniteLaw { x // Good x } where
   mass x := L.mass x.val
-  sum_mass := by
-    classical
-    rw [← sum_subtype (univ.filter Good) (by simp) L.mass, sum_filter]
-    rw [← L.sum_mass]
-    apply sum_congr rfl
-    intro x _
-    by_cases hx : Good x
-    · simp [hx]
-    · have hzero : L.mass x = 0 := le_antisymm
-        (not_lt.mp (fun h ↦ hx (hgood x h))) zero_le
-      simp [hx, hzero]
+  sum_mass :=
+    by
+      classical
+      rw [←
+        sum_subtype (univ.filter Good)
+          (by
+            simp)
+          L.mass,
+        sum_filter]
+      rw [← L.sum_mass]
+      apply sum_congr rfl
+      intro x _
+      by_cases hx : Good x
+      · simp [hx]
+      · have hzero : L.mass x = 0 := le_antisymm (not_lt.mp (fun h ↦ hx (hgood x h))) zero_le
+        simp [hx, hzero]
 
 theorem supportedSubtype_probability (L : FiniteLaw Omega) (hgood : L.SupportedOn Good)
     (Q : Omega → Prop) :

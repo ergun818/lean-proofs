@@ -106,7 +106,7 @@ def pathCoverRootNeighborEquiv
   toFun v := by
     rcases v with ⟨v, hv⟩
     cases v with
-    | root y => simpa using hv
+    | root y => simp at hv
     | middle e i =>
         exact ⟨⟨e.1, e.2, (pathCoverGraph_adj_root_middle x e i).mp hv⟩, i⟩
   invFun p :=
@@ -116,7 +116,7 @@ def pathCoverRootNeighborEquiv
   left_inv v := by
     rcases v with ⟨v, hv⟩
     cases v with
-    | root y => simpa using hv
+    | root y => simp at hv
     | middle e i => rfl
   right_inv p := by
     rcases p with ⟨⟨e, he⟩, i⟩
@@ -213,7 +213,7 @@ lemma pathCoverGraph_card_edgeFinset
       Fintype.card X * ((Fintype.card X - 1) * k) := by
   rw [← SimpleGraph.isBipartiteWith_sum_degrees_eq_card_edges
     pathCoverGraph_isBipartiteWith]
-  simp only [pathCoverRoots, sum_map, mem_univ, sum_const_zero, implies_true]
+  simp only [pathCoverRoots, sum_map]
   change (∑ x : X, (pathCoverGraph X k).degree (.root x)) = _
   simp [pathCoverGraph_degree_root]
 

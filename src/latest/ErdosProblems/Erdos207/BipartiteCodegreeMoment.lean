@@ -51,7 +51,7 @@ theorem sum_sq_relationPreneighbors_eq_sum_commonNeighbors
   simp only [relationPreneighborsIn, relationCommonNeighbors,
     card_eq_sum_ones, sum_filter, pow_two]
   simp_rw [Finset.sum_mul_sum]
-  simp only [ite_mul, one_mul, zero_mul, ite_eq_right_iff]
+  simp only [ite_mul, one_mul, zero_mul]
   rw [sum_comm]
   apply sum_congr rfl
   intro a ha

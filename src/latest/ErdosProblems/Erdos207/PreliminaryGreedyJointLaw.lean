@@ -37,7 +37,7 @@ lemma greedyUncoveredEdges_eq_self_of_chosen_eq_empty
   unfold greedyUncoveredEdges
   rw [hchosen]
   ext e
-  simp [greedyUncoveredEdges, mem_graphEdges_iff, coveredGraph_adj]
+  simp [mem_graphEdges_iff]
 
 /-- Equation (8.7) for the concrete stopped preliminary process.  Prescribed
 edges outside the crossing graph make the target event impossible; inside

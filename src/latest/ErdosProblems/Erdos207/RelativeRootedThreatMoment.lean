@@ -74,7 +74,7 @@ lemma selectedCount_relativeRootedThreatRemainder
       (activeRootedThreatWitnesses F (P0 ∪ R) u v).card := by
   classical
   unfold selectedCount activeRootedThreatWitnesses
-  simp only [card_eq_sum_ones, Nat.cast_sum, Nat.cast_one, sum_filter]
+  simp only [card_eq_sum_ones, Nat.cast_sum, sum_filter]
   apply sum_congr rfl
   intro z _hz
   by_cases hrel : relativeRootedThreatRemainder P0 z ⊆ R
@@ -100,11 +100,12 @@ lemma rootedActive_union_count_le_relativeSelectedCount
 /-- A relative rooted remainder is no larger than the original rooted
 remainder. -/
 lemma card_relativeRootedThreatRemainder_le
-    {V : Type*} [Fintype V] [DecidableEq V]
+    {V : Type*} [Finite V] [DecidableEq V]
     {F : ForbiddenFamilyOn V} {u v : V} {P0 : TripleSystemOn V} {k : Nat}
     (hcard : ∀ C ∈ F, C.card <= k)
     (z : RootedThreatWitness V F u v) :
     (relativeRootedThreatRemainder P0 z).card <= k - 1 := by
+  let := Fintype.ofFinite V
   exact (card_le_card (sdiff_subset)).trans
     (card_rootedThreatRemainder_le hcard z)
 

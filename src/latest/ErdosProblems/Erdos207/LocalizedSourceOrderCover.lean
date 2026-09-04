@@ -14,18 +14,22 @@ open Finset
 
 noncomputable section
 
-theorem localized_union_source_cover
-    {V I : Type*} [DecidableEq V] [DecidableEq I]
-    (indices : Finset I) (F : I → ForbiddenFamilyOn V) (orders : Finset ℕ)
-    (J : ForbiddenFamilyOn V) (available old : TripleSystemOn V)
-    (hJ : J ⊆ orders.biUnion (fun j ↦ localForbiddenConfigurations (indices.biUnion F) available old j)) :
-    ∀ C ∈ J, C ⊆ available ∧ ∃ i : indices, ∃ E ∈ F i.1, C ⊆ E ∧ E \ C ⊆ old := by
-  intro C hC
-  obtain ⟨j, _hj, hlocal⟩ := mem_biUnion.mp (hJ hC)
-  obtain ⟨hCA, _hcard, E, hE, hCE, hOld⟩ :=
-    (mem_localForbiddenConfigurations_iff (indices.biUnion F) available old C j).mp hlocal
-  obtain ⟨i, hi, hEi⟩ := mem_biUnion.mp hE
-  exact ⟨hCA, ⟨i, hi⟩, E, hEi, hCE, hOld⟩
+theorem localized_union_source_cover {V I : Type*} [DecidableEq V] (indices : Finset I)
+    (F : I → ForbiddenFamilyOn V) (orders : Finset ℕ) (J : ForbiddenFamilyOn V)
+    (available old : TripleSystemOn V)
+    (hJ :
+      J ⊆
+        orders.biUnion
+          (fun j ↦ localForbiddenConfigurations (indices.biUnion F) available old j)) :
+    ∀ C ∈ J, C ⊆ available ∧ ∃ i : indices, ∃ E ∈ F i.1, C ⊆ E ∧ E \ C ⊆ old :=
+  by
+    classical
+    intro C hC
+    obtain ⟨j, _hj, hlocal⟩ := mem_biUnion.mp (hJ hC)
+    obtain ⟨hCA, _hcard, E, hE, hCE, hOld⟩ :=
+      (mem_localForbiddenConfigurations_iff (indices.biUnion F) available old C j).mp hlocal
+    obtain ⟨i, hi, hEi⟩ := mem_biUnion.mp hE
+    exact ⟨hCA, ⟨i, hi⟩, E, hEi, hCE, hOld⟩
 
 theorem source_cover_restrict_order
     {V I : Type*} [DecidableEq V] (F : I → ForbiddenFamilyOn V) (order : I → ℕ)

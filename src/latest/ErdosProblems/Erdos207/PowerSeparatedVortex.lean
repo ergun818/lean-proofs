@@ -17,7 +17,7 @@ verify its scalar inequalities.
 namespace Erdos207
 
 open Finset
-open scoped Classical NNReal
+open scoped NNReal
 
 noncomputable section
 
@@ -103,6 +103,7 @@ lemma powerFreeSize_positive_fit_sharp
   exact (Nat.add_le_add_right
     (powerFreeSize_positive_le_first ht hell i hi) _).trans hfit
 
+open scoped Classical in
 /-- The separated padded-absorber wrapper specialized to a common-base power
 schedule.  All positive level cardinalities are now explicit powers. -/
 theorem exists_paddedAbsorber_with_initial_power_typicality
@@ -169,6 +170,7 @@ theorem exists_paddedAbsorber_with_initial_power_typicality
   · exact hExtensionAmbient
   · exact hExtensionInner
 
+open scoped Classical in
 /-- Sharpened capacity form of the initial power-vortex construction.  It
 budgets the actual first positive level rather than the unused level-zero
 entry of the power schedule. -/

@@ -97,7 +97,7 @@ theorem internalOutcomeResidualLinks_spec
 
 /-- Law-level form of `internalOutcomeResidualLinks_spec`. -/
 theorem FiniteLaw.SupportedOn.internalOutcomeResidualLinks
-    {Omega V : Type*} [Fintype Omega] [DecidableEq Omega]
+    {Omega V : Type*} [Fintype Omega]
     [Fintype V] [DecidableEq V]
     {law : FiniteLaw Omega}
     {G : Omega -> SimpleGraph V} {U : Finset V}
@@ -118,6 +118,7 @@ theorem FiniteLaw.SupportedOn.internalOutcomeResidualLinks
         (∀ o, (K omega o).left ⊆ U) ∧
         (∀ o, (K omega o).right ⊆ U) ∧
         (∀ o, (K omega o).SpokesIn (reserve omega))) := by
+  classical
   dsimp only
   intro omega hmass
   exact internalOutcomeResidualLinks_spec (hready omega hmass)

@@ -26,7 +26,8 @@ def SourceLinkMarking.system
     {V : Type*} [DecidableEq V] (x : SourceLinkMarking V) : TripleSystemOn V :=
   x.initial ∪ x.later ∪ x.candidate
 
-abbrev SourceLinkTriangleCoordinate (V : Type*) [DecidableEq V] := TripleOn V ⊕ (TripleOn V ⊕ TripleOn V)
+abbrev SourceLinkTriangleCoordinate (V : Type*) [DecidableEq V] :=
+  TripleOn V ⊕ (TripleOn V ⊕ TripleOn V)
 
 abbrev SourceLinkCoordinate (V : Type*) [DecidableEq V] := SourceLinkTriangleCoordinate V ⊕ Sym2 V
 
@@ -110,37 +111,46 @@ theorem sourceLinkMarking_rooted_system_mem
       (htri'.1.trans (subset_union_right.trans subset_union_left)))
       (htri'.2.trans subset_union_right)
 
-theorem card_sourceLinkMarkings_system_fiber_le
-    {V : Type*} [Fintype V] [DecidableEq V] {ell : ℕ}
-    {W : Vortex V ell} {F : ForbiddenFamilyOn V} {e : Sym2 V} {A : TripleSystemOn V}
+theorem card_sourceLinkMarkings_system_fiber_le {V : Type*} [Fintype V] [DecidableEq V]
+    {ell : ℕ} {W : Vortex V ell} {F : ForbiddenFamilyOn V} {e : Sym2 V} {A : TripleSystemOn V}
     (hpack : ∀ E ∈ F, IsPackingOn E) (E : TripleSystemOn V) :
-    ((sourceLinkMarkings W F e A).filter (fun x ↦ x.system = E)).card ≤ 4 ^ E.card := by
-  classical
-  calc
-    _ ≤ (E.powerset ×ˢ E.powerset).card := by
-      apply card_le_card_of_injOn (f := fun x : SourceLinkMarking V ↦ (x.initial, x.later))
-      · intro x hx
-        have heq := (mem_filter.mp hx).2
-        apply mem_product.mpr
-        constructor
-        · exact mem_powerset.mpr (heq ▸ (subset_union_left.trans subset_union_left))
-        · exact mem_powerset.mpr (heq ▸ (subset_union_right.trans subset_union_left))
-      · intro x hx x' hx' hxx'
-        have hd : IsSourceLinkMarking W F e A x := (mem_filter.mp (mem_filter.mp hx).1).2
-        have hd' : IsSourceLinkMarking W F e A x' := (mem_filter.mp (mem_filter.mp hx').1).2
-        have heq : x.system = x'.system := (mem_filter.mp hx).2.trans (mem_filter.mp hx').2.symm
-        have hi : x.initial = x'.initial :=
-          congrArg (fun u : TripleSystemOn V × TripleSystemOn V ↦ u.1) hxx'
-        have hl : x.later = x'.later :=
-          congrArg (fun u : TripleSystemOn V × TripleSystemOn V ↦ u.2) hxx'
-        have hc : x.candidate = x'.candidate := by
-          rw [SourceLinkMarking.candidate_eq_sdiff hd, SourceLinkMarking.candidate_eq_sdiff hd', heq, hi, hl]
-        have hr : x.root = x'.root :=
-          (hpack x.system (sourceLinkUnderlyingFamily_data hd.1).1).eq_of_common_graph_edge
-            (SourceLinkMarking.root_mem_system hd) (heq.symm ▸ SourceLinkMarking.root_mem_system hd')
-            hd.2.2.2.2.1 hd'.2.2.2.2.1
-        exact Prod.ext hr (Prod.ext hi (Prod.ext hl hc))
-    _ = _ := by simp only [card_product, card_powerset, ← mul_pow]; norm_num
+    ((sourceLinkMarkings W F e A).filter (fun x ↦ x.system = E)).card ≤ 4 ^ E.card :=
+  by
+    classical
+      calc
+      _ ≤ (E.powerset ×ˢ E.powerset).card :=
+        by
+          apply
+            card_le_card_of_injOn (f := fun x : SourceLinkMarking V ↦ (x.initial, x.later))
+          · intro x hx
+            have heq := (mem_filter.mp hx).2
+            apply mem_product.mpr
+            constructor
+            · exact mem_powerset.mpr (heq ▸ (subset_union_left.trans subset_union_left))
+            · exact mem_powerset.mpr (heq ▸ (subset_union_right.trans subset_union_left))
+          · intro x hx x' hx' hxx'
+            have hd : IsSourceLinkMarking W F e A x := (mem_filter.mp (mem_filter.mp hx).1).2
+            have hd' : IsSourceLinkMarking W F e A x' :=
+              (mem_filter.mp (mem_filter.mp hx').1).2
+            have heq : x.system = x'.system :=
+              (mem_filter.mp hx).2.trans (mem_filter.mp hx').2.symm
+            have hi : x.initial = x'.initial :=
+              congrArg (fun u : TripleSystemOn V × TripleSystemOn V ↦ u.1) hxx'
+            have hl : x.later = x'.later :=
+              congrArg (fun u : TripleSystemOn V × TripleSystemOn V ↦ u.2) hxx'
+            have hc : x.candidate = x'.candidate :=
+              by
+                rw [SourceLinkMarking.candidate_eq_sdiff hd,
+                  SourceLinkMarking.candidate_eq_sdiff hd', heq, hi, hl]
+            have hr : x.root = x'.root :=
+              (hpack x.system
+                    (sourceLinkUnderlyingFamily_data hd.1).1).eq_of_common_graph_edge
+                (SourceLinkMarking.root_mem_system hd)
+                (heq.symm ▸ SourceLinkMarking.root_mem_system hd') hd.2.2.2.2.1 hd'.2.2.2.2.1
+            exact Prod.ext hr (Prod.ext hi (Prod.ext hl hc))
+      _ = _ :=
+        by
+          simp only [card_product, card_powerset, ← mul_pow]; norm_num
 
 end
 

@@ -72,7 +72,7 @@ theorem mem_patternExtensionLoss_iff_closedThreats
   rw [greedyStep_available_eq_sdiff_closedThreats hS hT]
   constructor
   · intro hnot
-    push_neg at hnot
+    push Not at hnot
     obtain ⟨e, he⟩ := hnot
     have hthreat : patternExtensionTriangle Q e u hu ∈ greedyClosedThreats F S T := by
       by_contra h

@@ -136,7 +136,7 @@ lemma selectedCount_pairTwoAwayThreatRemainder
       ((activePairTwoAwayThreatWitnesses F A U P).card : ℝ≥0) := by
   classical
   unfold selectedCount activePairTwoAwayThreatWitnesses
-  simp only [card_eq_sum_ones, Nat.cast_sum, Nat.cast_one, sum_filter]
+  simp only [card_eq_sum_ones, Nat.cast_sum, sum_filter]
   apply sum_congr rfl
   intro z _hz
   by_cases h : pairTwoAwayThreatRemainder z ⊆ A <;> simp [h]

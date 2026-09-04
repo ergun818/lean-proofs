@@ -16,15 +16,18 @@ open scoped NNReal
 
 noncomputable section
 
-theorem CrudeStateBounds.allLocalized
-    {I V : Type*} [Fintype V] [DecidableEq V] {q : ℕ}
-    (F : ForbiddenFamilyOn V) (hpack : ∀ E ∈ F, IsPackingOn E)
-    (sets : I → Finset V) (cutoff : I → ℝ≥0) (S : GreedyStateOn V) (K : CrudeThresholds)
+theorem CrudeStateBounds.allLocalized {I V : Type*} [Fintype V] [DecidableEq V] {q : ℕ}
+    (F : ForbiddenFamilyOn V) (hpack : ∀ E ∈ F, IsPackingOn E) (sets : I → Finset V)
+    (cutoff : I → ℝ≥0) (S : GreedyStateOn V) (K : CrudeThresholds)
     (h : CrudeStateBounds F S q K) (hK : ∀ i, K.pair ≤ cutoff i) :
-    AllLocalizedTwoAwayBounds F sets cutoff S := by
-  intro i T a b hab
-  have hp := h (.inr (.inl (T, ⟨{a, b}, card_pair hab⟩)))
-  exact ((localizedTwoAway_selectedCount_le_pair F T (sets i) S.chosen hpack hab).trans_lt hp).trans_le (hK i)
+    AllLocalizedTwoAwayBounds F sets cutoff S :=
+  by
+    intro i T a b hab
+    have hp := h (.inr (.inl (T, ⟨{ a, b }, card_pair hab⟩)))
+    exact
+      ((localizedTwoAway_selectedCount_le_pair F T (sets i) S.chosen hpack hab).trans_lt
+            hp).trans_le
+        (hK i)
 
 theorem CrudeStateBounds.allLocalized_power
     {I V : Type*} [Fintype V] [DecidableEq V] {q : ℕ}

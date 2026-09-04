@@ -73,8 +73,7 @@ theorem evolveKernels_probability_selectedUncovered_le_product
   induction t generalizing Q with
   | zero =>
       simp only [FiniteLaw.evolveKernels_zero, FiniteLaw.probability_pure,
-        cumulativeSurvival_zero, one_pow, one_mul, cumulativePointHazard,
-        range_zero, sum_empty]
+        cumulativeSurvival_zero, one_pow, one_mul]
       by_cases hQ : Q = ∅
       · subst Q
         simp [SelectedUncoveredEvent, hB0, setWeight]
@@ -84,7 +83,7 @@ theorem evolveKernels_probability_selectedUncovered_le_product
           exact disjoint_left.mp hdisjoint hxQ (hsub hxQ)
         have hcard : Q.card ≠ 0 :=
           card_ne_zero.mpr (nonempty_iff_ne_empty.mpr hQ)
-        simp [SelectedUncoveredEvent, hnot, setWeight, hcard]
+        simp [SelectedUncoveredEvent, hnot, setWeight]
   | succ t ih =>
       rw [FiniteLaw.evolveKernels_succ]
       have hrec := bind_probability_selectedUncovered_le
@@ -229,8 +228,7 @@ theorem evolveKernels_probability_selectedUncovered_le_product_of_supported
   induction t generalizing Q with
   | zero =>
       simp only [FiniteLaw.evolveKernels_zero, FiniteLaw.probability_pure,
-        cumulativeSurvival_zero, one_pow, one_mul, cumulativePointHazard,
-        range_zero, sum_empty]
+        cumulativeSurvival_zero, one_pow, one_mul]
       by_cases hQ : Q = ∅
       · subst Q
         simp [SelectedUncoveredEvent, hB0, setWeight]

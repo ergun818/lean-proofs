@@ -68,7 +68,7 @@ lemma GreedyExactAvailable.step
     {V : Type*} [Fintype V] [DecidableEq V]
     {F : ForbiddenFamilyOn V} {A : TripleSystemOn V}
     {S : GreedyStateOn V} {T : TripleOn V}
-    (hS : GreedyExactAvailable F A S) (hT : T ∈ S.available) :
+    (hS : GreedyExactAvailable F A S) (_hT : T ∈ S.available) :
     GreedyExactAvailable F A (greedyStep F S T) := by
   ext U
   simp only [greedyStep, mem_legalAvailable_iff, mem_erase]

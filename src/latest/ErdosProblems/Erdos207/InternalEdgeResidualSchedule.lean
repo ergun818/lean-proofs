@@ -47,12 +47,12 @@ theorem IsIterationTypical.exists_scheduledOuterEdge_randomGreedyLaw
     (hsmall : (E.card : ℝ) *
       Real.exp (-(((r ^ 2 : ℝ≥0) : ℝ) * m) / 4) < 1)
     (hblocked : ∀ (Q : TripleSystemOn V) (e : Sym2 V),
-      ∀ hreach : GreedyReachable F P0 Q,
+      ∀ _hreach : GreedyReachable F P0 Q,
       Q ⊆ P0 ∪ A →
       (Q \ P0).card ≤ E.card →
       NewTrianglesUseScheduledOuterEdges (W.U i.succ) E P0 Q →
       ∀ he : e ∈ E,
-      ∀ hleave : (leaveGraph Q).Adj e.out.1 e.out.2,
+      ∀ _hleave : (leaveGraph Q).Adj e.out.1 e.out.2,
       (edgeBlockedThirdVertices A Q
           (out_fst_ne_snd_of_mem_graphEdges
             (internalOuterEdges_subset_graphEdges G (W.U i.succ)

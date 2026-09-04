@@ -37,14 +37,18 @@ theorem triangleSetExtensionVertices_pair_card
       simpa only [hv, singleton_union] using sdiff_union_of_subset hm.2
     exact ⟨v, (hext v).mpr ⟨(mem_sdiff.mp hvT).2, heq.symm ▸ hm.1⟩, heq⟩
 
-theorem properPatternExtensions_pair_card
-    {V : Type*} [Fintype V] [DecidableEq V]
+theorem properPatternExtensions_pair_card {V : Type*} [Fintype V] [DecidableEq V]
     (A : TripleSystemOn V) (P : Finset V) (hP : P.card = 2) :
     (properPatternExtensions A (cliquePattern P) univ).card =
-      (A.filter (fun T ↦ P ⊆ T.1)).card := by
-  rw [← triangleSetExtensionVertices_eq_properPattern A P (by omega),
-    triangleSetExtensionVertices_pair_card (triangleVertexFamily A) P hP (triangleVertexFamily_uniform A),
-    triangleVertexFamily_incident_card]
+      (A.filter (fun T ↦ P ⊆ T.1)).card :=
+  by
+    rw [←
+      triangleSetExtensionVertices_eq_properPattern A P
+        (by
+          omega),
+      triangleSetExtensionVertices_pair_card (triangleVertexFamily A) P hP
+        (triangleVertexFamily_uniform A),
+      triangleVertexFamily_incident_card]
 
 theorem properPatternExtensions_edge_card
     {V : Type*} [Fintype V] [DecidableEq V]

@@ -11,7 +11,7 @@ import ErdosProblems.Erdos207.LinkReserveAccounting
 namespace Erdos207
 
 open Finset
-open scoped Classical NNReal
+open scoped NNReal
 
 noncomputable section
 
@@ -29,6 +29,7 @@ theorem sourceLinkCanonicalEdgeWeight_le_one
   · exact (mul_le_of_le_one_right zero_le hr).trans hp
   · simpa only [mul_one] using hp
 
+open scoped Classical in
 theorem sourceLinkCanonicalEdgeWeight_product
     {V : Type*} [DecidableEq V] (U : Finset V) (p r : ℝ≥0) (E : Finset (Sym2 V)) :
     setWeight (sourceLinkCanonicalEdgeWeight U p r) E =
@@ -50,6 +51,7 @@ theorem sourceLinkCanonicalEdgeWeight_root_triangle
     (hT : (tripleCrossingEdges U T).card = 2) {e : Sym2 V}
     (he : e ∈ tripleEdgeFinset T) (hcross : IsCrossingEdge U e) :
     setWeight (sourceLinkCanonicalEdgeWeight U p r) ((tripleEdgeFinset T).erase e) = p ^ 2 * r := by
+  classical
   rw [sourceLinkCanonicalEdgeWeight_product, card_erase_of_mem he, card_tripleEdgeFinset]
   have heq : ((tripleEdgeFinset T).erase e).filter (IsCrossingEdge U) =
       (tripleCrossingEdges U T).erase e := by

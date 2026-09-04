@@ -51,8 +51,8 @@ total family is equivalent to coverage by the selected available subfamily.
 The old `I ∪ D` family lies in the leave of `G`, and the preliminary stage
 family `R` is itself available. -/
 lemma coveredGraph_inter_available_iff
-    {V : Type*} [Fintype V] [DecidableEq V]
-    {G : SimpleGraph V} [DecidableRel G.Adj]
+    {V : Type*} [Finite V] [DecidableEq V]
+    {G : SimpleGraph V}
     {A I D R P : TripleSystemOn V}
     (hold : G ≤ leaveGraph (I ∪ D))
     (hRselected : R ⊆ A)
@@ -60,6 +60,8 @@ lemma coveredGraph_inter_available_iff
     {u v : V} (huv : G.Adj u v) :
     (coveredGraph P).Adj u v ↔
       (coveredGraph (P ∩ A)).Adj u v := by
+  classical
+  let := Fintype.ofFinite V
   constructor
   · intro hcovered
     obtain ⟨T, hTP, huT, hvT, huvT⟩ := coveredGraph_adj.mp hcovered

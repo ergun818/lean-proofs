@@ -21,7 +21,7 @@ gives the small-vortex extension bound.
 namespace Erdos207
 
 open Finset
-open scoped Classical NNReal
+open scoped NNReal
 
 noncomputable section
 
@@ -496,11 +496,12 @@ lemma card_initial_ambient_degree_loss_le
 
 lemma initial_root_degree_loss_subset
     {V : Type*} [Fintype V] [DecidableEq V]
-    (H : SimpleGraph V) [DecidableRel H.Adj]
+    (H : SimpleGraph V)
     (X : Finset V) (v : V) :
     X \ neighborsIn
         (graphDifference (SimpleGraph.completeGraph V) H) X v ⊆
       insert v (absorberRootNeighborSet H X v) := by
+  classical
   intro x hx
   have hxX := (mem_sdiff.mp hx).1
   have hxNotNeighbor := (mem_sdiff.mp hx).2
@@ -521,11 +522,12 @@ lemma initial_root_degree_loss_subset
 
 lemma card_initial_root_degree_loss_le_fifteen
     {V : Type*} [Fintype V] [DecidableEq V]
-    {H : SimpleGraph V} [DecidableRel H.Adj]
+    {H : SimpleGraph V}
     {X : Finset V} {q : ℕ} {B : TripleSystemOn V}
     (hroot : HasPaddedAbsorberRootBounds q H X B) (v : V) :
     (X \ neighborsIn
       (graphDifference (SimpleGraph.completeGraph V) H) X v).card ≤ 15 := by
+  classical
   calc
     (X \ neighborsIn
       (graphDifference (SimpleGraph.completeGraph V) H) X v).card
@@ -557,7 +559,7 @@ noncomputable def oneStageVortex
       apply hi
       apply Fin.ext
       exact Nat.eq_zero_of_le_zero hij
-    simpa [hi, hj]
+    simp [hi, hj]
 
 @[simp]
 lemma oneStageVortex_U_zero
@@ -647,6 +649,7 @@ theorem initial_oneStage_isIterationTypical
         exact_mod_cast hnat
       simpa [oneStageVortex] using hcast.trans hRootExtension
 
+open scoped Classical in
 /-- The explicit padded high-girth absorber carries the complete initial
 typicality certificate once the four elementary size inequalities hold. -/
 theorem exists_paddedAbsorber_with_initial_oneStage_typicality

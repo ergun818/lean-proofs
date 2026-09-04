@@ -82,7 +82,7 @@ theorem triangleDecomposition_graphSup_tripleUnion
       · intro T hT
         simp at hT
       · intro u v huv
-        simpa using huv
+        simp at huv
   | @insert i s his ih =>
       rw [graphSup_insert, tripleUnion_insert]
       apply (hdec i (mem_insert_self i s)).union

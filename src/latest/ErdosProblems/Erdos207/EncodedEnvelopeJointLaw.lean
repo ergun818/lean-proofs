@@ -19,6 +19,7 @@ def encodedEnvelopeJointLaw
     FiniteLaw (D × (R × Z)) :=
   P.jointBind (fun d ↦ map (fun w ↦ (w.1, encode d w.2)) (K d))
 
+omit [∀ d, DecidableEq (S d)] in
 theorem encodedEnvelopeJointLaw_data_seed
     (P : FiniteLaw D) (K : (d : D) → FiniteLaw (R × S d)) (encode : (d : D) → S d → Z)
     (Q : FiniteLaw R) (hQ : ∀ d, map Prod.fst (K d) = Q) :
@@ -43,6 +44,7 @@ theorem encodedEnvelopeJointLaw_data_state
   rw [map_id] at h
   exact h
 
+omit [∀ d, DecidableEq (S d)] in
 theorem encodedEnvelopeJointLaw_supported
     (P : FiniteLaw D) (K : (d : D) → FiniteLaw (R × S d)) (encode : (d : D) → S d → Z)
     (Good : D → R → Z → Prop)

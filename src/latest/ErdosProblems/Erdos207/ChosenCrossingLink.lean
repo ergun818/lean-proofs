@@ -54,7 +54,7 @@ theorem covers_outside_of_chosen_residualLink_covers
     {O V : Type*} [Fintype V] [DecidableEq V]
     {G : SimpleGraph V} [DecidableRel G.Adj]
     {U : Finset V} {R M : TripleSystemOn V}
-    (center : O → V) (hout : ∀ o, center o ∉ U)
+    (center : O → V) (_hout : ∀ o, center o ∉ U)
     (hcomplete : ∀ v, v ∉ U → ∃ o, center o = v)
     (K : O → BipartiteLink V)
     (hK : ∀ o, IsResidualBipartition G R (center o) (K o))

@@ -621,7 +621,7 @@ lemma pathTriangle_disjoint_pathTriangle_of_parts_disjoint
     | exact SimpleGraph.disjoint_left.mp hroot u v huv hw
     | (simp_all [pathTriangleRoots, pathTriangleMiddles,
         pathCoverRootEdgeGraph, SimpleGraph.edge_adj,
-        pathCoverMiddleBetween] <;> aesop)
+        pathCoverMiddleBetween])
 
 lemma pathTriangle_disjoint_augmentedEdgeC5_of_parts_disjoint
     {X : Type*} [DecidableEq X] {k : ℕ}
@@ -676,7 +676,7 @@ lemma augmentedEdgeC5_disjoint_augmentedEdgeC5_of_parts_disjoint
     | exact SimpleGraph.disjoint_left.mp hroot u v huv hw
     | (simp_all [augmentedEdgeC5Roots, augmentedEdgeC5Middles,
         pathCoverRootEdgeGraph, SimpleGraph.edge_adj,
-        pathCoverMiddleBetween] <;> aesop)
+        pathCoverMiddleBetween] ; aesop)
 
 lemma pairedPathC4Middles_disjoint_augmentedEdgeC5Middles_of_slot_ne
     {X : Type*} [DecidableEq X] {k : ℕ}

@@ -221,10 +221,12 @@ lemma IsTriangleDecomposition.edgeFinset_eq_biUnion
 /-- Distinct triangles in a triangle-decomposition have disjoint graph-edge
 sets. -/
 lemma IsTriangleDecomposition.pairwiseDisjoint_tripleEdgeFinset
-    {V : Type*} [Fintype V] [DecidableEq V]
-    {G : SimpleGraph V} [DecidableRel G.Adj] {C : TripleSystemOn V}
+    {V : Type*} [Finite V] [DecidableEq V]
+    {G : SimpleGraph V} {C : TripleSystemOn V}
     (hC : IsTriangleDecomposition G C) :
     (C : Set (TripleOn V)).PairwiseDisjoint tripleEdgeFinset := by
+  classical
+  let := Fintype.ofFinite V
   intro T hTC U hUC hTU
   change Disjoint (tripleEdgeFinset T) (tripleEdgeFinset U)
   rw [Finset.disjoint_left]
@@ -272,11 +274,13 @@ lemma IsTriangleDecomposition.neighborFinset_eq_biUnion_erase
 
 /-- The parts in the preceding neighbor partition are pairwise disjoint. -/
 lemma IsTriangleDecomposition.pairwiseDisjoint_erase
-    {V : Type*} [Fintype V] [DecidableEq V]
-    {G : SimpleGraph V} [DecidableRel G.Adj] {C : TripleSystemOn V}
+    {V : Type*} [Finite V] [DecidableEq V]
+    {G : SimpleGraph V} {C : TripleSystemOn V}
     (hC : IsTriangleDecomposition G C) (v : V) :
     ((triplesThrough C v : Finset (TripleOn V)) : Set (TripleOn V)).PairwiseDisjoint
       (fun T ↦ T.1.erase v) := by
+  classical
+  let := Fintype.ofFinite V
   intro T hT U hU hTU
   change Disjoint (T.1.erase v) (U.1.erase v)
   rw [Finset.disjoint_left]

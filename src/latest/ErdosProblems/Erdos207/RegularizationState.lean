@@ -44,10 +44,12 @@ def regularizationAccept
     regularizationCurrentFamily G0 (regularizationInitialState V k) = G0 := by
   simp [regularizationCurrentFamily, regularizationInitialState, regularizationAcceptedEdges]
 
-@[simp] theorem regularizationCurrentFamily_reject
-    {V : Type*} [Fintype V] [DecidableEq V] {k : ℕ}
+@[simp]
+theorem regularizationCurrentFamily_reject {V : Type*} [Fintype V] [DecidableEq V] {k : ℕ}
     (G0 : Finset (Finset V)) (S : HypergraphRegularizationState V k) :
-    regularizationCurrentFamily G0 (regularizationReject S) = regularizationCurrentFamily G0 S := rfl
+    regularizationCurrentFamily G0 (regularizationReject S) =
+      regularizationCurrentFamily G0 S :=
+  rfl
 
 theorem regularizationCurrentFamily_mono_base
     {V : Type*} [Fintype V] [DecidableEq V] {k : ℕ}
@@ -80,15 +82,19 @@ theorem regularizationAcceptedEdges_uniform
   obtain ⟨A, _hA, rfl⟩ := mem_image.mp hE
   exact (mem_powersetCard.mp A.2).2
 
-theorem regularizationAccept_preserves_disjoint
-    {V : Type*} [Fintype V] [DecidableEq V] {k : ℕ}
-    (H0 : Finset (Finset V)) (S : HypergraphRegularizationState V k)
+theorem regularizationAccept_preserves_disjoint {V : Type*} [Fintype V] [DecidableEq V]
+    {k : ℕ} (H0 : Finset (Finset V)) (S : HypergraphRegularizationState V k)
     (hdis : Disjoint (regularizationAcceptedEdges S) H0) (ω : UniformHyperedge V k → Bool) :
-    Disjoint (regularizationAcceptedEdges (regularizationAccept S (regularizationCurrentFamily H0 S) ω)) H0 := by
-  rw [regularizationAcceptedEdges_accept, disjoint_union_left]
-  refine ⟨hdis, ?_⟩
-  exact (sampledFreshUniformHypergraph_disjoint (regularizationCurrentFamily H0 S) ω).mono_right
-    subset_union_left
+    Disjoint
+      (regularizationAcceptedEdges
+        (regularizationAccept S (regularizationCurrentFamily H0 S) ω))
+      H0 :=
+  by
+    rw [regularizationAcceptedEdges_accept, disjoint_union_left]
+    refine ⟨hdis, ?_⟩
+    exact
+      (sampledFreshUniformHypergraph_disjoint (regularizationCurrentFamily H0 S) ω).mono_right
+        subset_union_left
 
 end
 

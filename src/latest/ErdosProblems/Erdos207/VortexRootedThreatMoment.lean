@@ -49,7 +49,7 @@ lemma selectedCount_indexedRootedThreatRemainder
       (activeIndexedRootedThreatWitnesses q B P u v).card := by
   classical
   unfold selectedCount activeIndexedRootedThreatWitnesses
-  simp only [card_eq_sum_ones, Nat.cast_sum, Nat.cast_one, sum_filter]
+  simp only [card_eq_sum_ones, Nat.cast_sum, sum_filter]
   apply sum_congr rfl
   intro z hz
   by_cases h : rootedThreatRemainder z.1 ⊆ P <;> simp [h]

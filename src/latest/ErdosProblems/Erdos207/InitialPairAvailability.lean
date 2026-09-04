@@ -23,7 +23,7 @@ noncomputable section
 
 noncomputable def bankSupportThirdVertices
     {V : Type*} [Fintype V] [DecidableEq V]
-    (B : TripleSystemOn V) {u v : V} (huv : u ≠ v) :
+    (B : TripleSystemOn V) {u v : V} (_huv : u ≠ v) :
     Finset (ThirdVertex u v) := by
   classical
   exact univ.filter fun w ↦ w.1 ∈ verticesOn B
@@ -57,7 +57,7 @@ lemma singleton_absorberForbidden_third_mem_bankSupport
     {B : TripleSystemOn V}
     {u v : V} (huv : u ≠ v)
     (w : ThirdVertex u v)
-    (havoid : TriangleAvoidsGraph H (thirdVertexTriple huv w))
+    (_havoid : TriangleAvoidsGraph H (thirdVertexTriple huv w))
     (hcomplete : CompletesForbidden
       (absorberErdosForbiddenConfigurationsOn q B) ∅
       (thirdVertexTriple huv w)) :
@@ -69,7 +69,7 @@ lemma singleton_absorberForbidden_third_mem_bankSupport
     constructor
     · intro hUS
       by_cases hUT : U = T
-      · simpa [hUT]
+      · simp [hUT]
       · have hUerase : U ∈ S.erase T := mem_erase.mpr ⟨hUT, hUS⟩
         have : U ∈ (∅ : TripleSystemOn V) := hSerase hUerase
         simp at this
@@ -81,7 +81,7 @@ lemma singleton_absorberForbidden_third_mem_bankSupport
   obtain ⟨_hne, r, hr4, hrq, E, hE, hEpacking, hEout⟩ :=
     mem_absorberErdosForbiddenConfigurationsOn_iff.mp hSF
   have hTdiff : T ∈ E \ B := by
-    simpa only [hEout, mem_singleton]
+    simp only [hEout, mem_singleton]
   have hTE : T ∈ E := (mem_sdiff.mp hTdiff).1
   have hTnotB : T ∉ B := (mem_sdiff.mp hTdiff).2
   by_cases hr5 : 5 ≤ r
@@ -164,7 +164,7 @@ theorem card_thirdVertex_le_initialLegal_add_supported_losses
     {V : Type*} [Fintype V] [DecidableEq V]
     {q : ℕ} {H : SimpleGraph V} [DecidableRel H.Adj]
     {X : Finset V} {B : TripleSystemOn V}
-    (hbank : BankPairsSupported H X B)
+    (_hbank : BankPairsSupported H X B)
     {u v : V} (huv : u ≠ v) (huvH : ¬H.Adj u v) :
     Fintype.card (ThirdVertex u v) ≤
       (legalThirdVertices
@@ -274,11 +274,11 @@ theorem card_sub_two_le_initialPairStar_add_three_mul
 the uniform supported-loss lower bound. -/
 theorem initialPairStar_lower_of_alive
     {V : Type*} [Fintype V] [DecidableEq V]
-    {q C : ℕ} (hq : 4 ≤ q)
+    {q C : ℕ} (_hq : 4 ≤ q)
     {H : SimpleGraph V} [DecidableRel H.Adj]
     {X : Finset V} {B : TripleSystemOn V}
-    (hA1 : HasHighGirthAbsorptionBank q H X B)
-    (hXcard : 3 ≤ X.card)
+    (_hA1 : HasHighGirthAbsorptionBank q H X B)
+    (_hXcard : 3 ≤ X.card)
     (hbank : BankPairsSupported H X B)
     (hdegree : ∀ x, H.degree x ≤ C)
     (hsupport : (verticesOn B).card ≤ C)

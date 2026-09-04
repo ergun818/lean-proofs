@@ -16,10 +16,11 @@ construction and the compressed master induction.
 namespace Erdos207
 
 open Finset
-open scoped Classical NNReal
+open scoped NNReal
 
 noncomputable section
 
+open scoped Classical in
 structure InitialPowerVortexPackage
     (q h n ell t rootPower step : ℕ) where
   base_ge_one : 1 ≤ t

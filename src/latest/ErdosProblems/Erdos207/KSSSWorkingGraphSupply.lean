@@ -15,20 +15,23 @@ open Finset
 
 noncomputable section
 
-theorem workingGraphEdge_toFinset_mem_residual
-    {V : Type*} [Fintype V] [DecidableEq V]
+theorem workingGraphEdge_toFinset_mem_residual {V : Type*} [Fintype V] [DecidableEq V]
     (H : SimpleGraph V) (S : GreedyStateOn V) (e : Sym2 V)
     (he : e ∈ graphEdges (graphDifference (SimpleGraph.completeGraph V) H))
     (huncovered : e ∉ (coveredGraph S.chosen).edgeSet) :
-    e.toFinset ∈ ksssResidualPairs (initialResidualPairs H) S := by
-  induction e using Sym2.inductionOn with
-  | hf u v =>
-    have hadj : (graphDifference (SimpleGraph.completeGraph V) H).Adj u v := mem_graphEdges_iff.mp he
-    have hinit : ({u, v} : Finset V) ∈ initialResidualPairs H :=
-      (pair_mem_initialResidualPairs_iff H u v).mpr ⟨hadj.1, hadj.2.2⟩
-    have hpair : PairUncovered {u, v} S :=
-      (pairUncovered_pair_iff_not_covered_adj S hadj.1).mpr huncovered
-    simpa only [ksssResidualPairs, mem_sdiff, Sym2.toFinset_mk_eq, PairUncovered] using And.intro hinit hpair
+    e.toFinset ∈ ksssResidualPairs (initialResidualPairs H) S :=
+  by
+    induction e using Sym2.inductionOn with
+    | hf u
+      v =>
+      have hadj : (graphDifference (SimpleGraph.completeGraph V) H).Adj u v :=
+        mem_graphEdges_iff.mp he
+      have hinit : ({ u, v } : Finset V) ∈ initialResidualPairs H :=
+        (pair_mem_initialResidualPairs_iff H u v).mpr ⟨hadj.1, hadj.2.2⟩
+      have hpair : PairUncovered { u, v } S :=
+        (pairUncovered_pair_iff_not_covered_adj S hadj.1).mpr huncovered
+      simpa only [ksssResidualPairs, mem_sdiff, Sym2.toFinset_mk_eq, PairUncovered] using
+        And.intro hinit hpair
 
 theorem initialAvailable_edges_in_workingGraph
     {V : Type*} [Fintype V] [DecidableEq V]
@@ -55,22 +58,27 @@ def ksssRoundedAvailabilityCeil (q : ℕ) (a : ℕ → ℝ) (E A scale : ℝ) (B
   ⌈E * ksssEdgeDensity E time *
     (ksssPairTrajectory (ksssOrders q) a E A time + ksssErrorEnvelope E scale B time) / 3⌉₊
 
-theorem KSSSOnTrajectories.working_graph_pair_floor
-    {V : Type*} [Fintype V] [DecidableEq V]
-    {F : ForbiddenFamilyOn V} {S : GreedyStateOn V} {q : ℕ} {H : SimpleGraph V}
-    {a : ℕ → ℝ} {E A scale time : ℝ} {B : ℕ}
-    (h : KSSSOnTrajectories F S q (ksssResidualPairs (initialResidualPairs H) S) a E A scale B time)
+theorem KSSSOnTrajectories.working_graph_pair_floor {V : Type*} [Fintype V] [DecidableEq V]
+    {F : ForbiddenFamilyOn V} {S : GreedyStateOn V} {q : ℕ} {H : SimpleGraph V} {a : ℕ → ℝ}
+    {E A scale time : ℝ} {B : ℕ}
+    (h :
+      KSSSOnTrajectories F S q (ksssResidualPairs (initialResidualPairs H) S) a E A scale B
+        time)
     (e : Sym2 V) (he : e ∈ graphEdges (graphDifference (SimpleGraph.completeGraph V) H))
     (huncovered : e ∉ (coveredGraph S.chosen).edgeSet) :
-    ksssRoundedPairFloor q a E A scale B time ≤ (greedyChoicesCoveringEdge S e).card := by
-  have hpair := h.1 e.toFinset (workingGraphEdge_toFinset_mem_residual H S e he huncovered)
-  have hlower : ksssPairTrajectory (ksssOrders q) a E A time - ksssErrorEnvelope E scale B time ≤
-      ((availableTrianglesContainingPair S e.toFinset).card : ℝ) := by
-    have hlo := (abs_le.mp hpair).1
-    linarith only [hlo]
-  rw [card_greedyChoicesCoveringEdge_eq_availablePair S e
-    ((graphDifference (SimpleGraph.completeGraph V) H).not_isDiag_of_mem_edgeSet (mem_graphEdges_iff.mp he))]
-  simpa only [ksssRoundedPairFloor, Nat.floor_natCast] using Nat.floor_mono hlower
+    ksssRoundedPairFloor q a E A scale B time ≤ (greedyChoicesCoveringEdge S e).card :=
+  by
+    have hpair := h.1 e.toFinset (workingGraphEdge_toFinset_mem_residual H S e he huncovered)
+    have hlower :
+      ksssPairTrajectory (ksssOrders q) a E A time - ksssErrorEnvelope E scale B time ≤
+        ((availableTrianglesContainingPair S e.toFinset).card : ℝ) :=
+      by
+        have hlo := (abs_le.mp hpair).1
+        linarith only [hlo]
+    rw [card_greedyChoicesCoveringEdge_eq_availablePair S e
+        ((graphDifference (SimpleGraph.completeGraph V) H).not_isDiag_of_mem_edgeSet
+          (mem_graphEdges_iff.mp he))]
+    simpa only [ksssRoundedPairFloor, Nat.floor_natCast] using Nat.floor_mono hlower
 
 theorem KSSSOnTrajectories.rounded_availability_schedule
     {V : Type*} [Fintype V] [DecidableEq V]

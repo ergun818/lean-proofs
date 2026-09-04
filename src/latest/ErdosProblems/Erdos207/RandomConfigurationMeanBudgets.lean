@@ -38,21 +38,26 @@ theorem randomConfiguration_root_exponent_budget
 noncomputable def sourceRandomConfigurationProbability (n delta : ℝ≥0) (j : ℕ) : ℝ≥0 :=
   delta / n ^ (2 * j - 6)
 
-theorem sourceRandomConfigurationProbability_le_one
-    (n delta : ℝ≥0) (j : ℕ) (hn : 1 ≤ n) (hdelta : 1 ≤ delta)
-    (hdeltaSq : delta ^ 2 ≤ n) (hj : 4 ≤ j) : sourceRandomConfigurationProbability n delta j ≤ 1 := by
-  have hnpos : 0 < n := lt_of_lt_of_le zero_lt_one hn
-  have hdeltaN : delta ≤ n := by
+theorem sourceRandomConfigurationProbability_le_one (n delta : ℝ≥0) (j : ℕ) (hn : 1 ≤ n)
+    (hdelta : 1 ≤ delta) (hdeltaSq : delta ^ 2 ≤ n) (hj : 4 ≤ j) :
+    sourceRandomConfigurationProbability n delta j ≤ 1 :=
+  by
+    have hnpos : 0 < n := lt_of_lt_of_le zero_lt_one hn
+    have hdeltaN : delta ≤ n :=
+      by
+        calc
+          delta = delta * 1 := (mul_one _).symm
+          _ ≤ delta * delta := (mul_le_mul_of_nonneg_left hdelta zero_le)
+          _ = delta ^ 2 := (pow_two _).symm
+          _ ≤ n := hdeltaSq
+    apply (div_le_one (pow_pos hnpos _)).mpr
     calc
-      delta = delta * 1 := (mul_one _).symm
-      _ ≤ delta * delta := mul_le_mul_of_nonneg_left hdelta zero_le
-      _ = delta ^ 2 := (pow_two _).symm
-      _ ≤ n := hdeltaSq
-  apply (div_le_one (pow_pos hnpos _)).mpr
-  calc
-    delta ≤ n := hdeltaN
-    _ = n ^ 1 := (pow_one _).symm
-    _ ≤ n ^ (2 * j - 6) := pow_le_pow_right₀ hn (by omega)
+      delta ≤ n := hdeltaN
+      _ = n ^ 1 := (pow_one _).symm
+      _ ≤ n ^ (2 * j - 6) :=
+        pow_le_pow_right₀ hn
+          (by
+            omega)
 
 theorem sourceRandomConfiguration_root_mean_le
     (n delta : ℝ≥0) (j r : ℕ) (hn : 1 ≤ n) (hj : 4 ≤ j) (hr : 1 ≤ r) (hrj : r ≤ j - 2) :
@@ -87,10 +92,14 @@ theorem sourceRandomConfiguration_mixed_mean_le_one
     _ = n ^ (1 + (j - 3)) := by rw [pow_add, pow_one]
     _ ≤ _ := pow_le_pow_right₀ hn (by omega)
 
-theorem sourceRandomConfiguration_order_four_mean_le
-    (n delta : ℝ≥0) (hn : 1 ≤ n) :
-    sourceRandomConfigurationProbability n delta 4 * n ≤ delta := by
-  have h := nnreal_power_ratio_mul_le_of_exponent_le n delta hn 1 2 0 (by omega)
-  simpa only [sourceRandomConfigurationProbability, show 2 * 4 - 6 = 2 by omega, pow_one, pow_zero, mul_one] using h
+theorem sourceRandomConfiguration_order_four_mean_le (n delta : ℝ≥0) (hn : 1 ≤ n) :
+    sourceRandomConfigurationProbability n delta 4 * n ≤ delta :=
+  by
+    have h :=
+      nnreal_power_ratio_mul_le_of_exponent_le n delta hn 1 2 0
+        (by
+          omega)
+    simpa only [sourceRandomConfigurationProbability, show 2 * 4 - 6 = 2 by omega, pow_one,
+      pow_zero, mul_one] using h
 
 end Erdos207

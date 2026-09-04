@@ -223,8 +223,7 @@ theorem conditioned_encodedSelection_probability_subset_le_pow
     (fun _ ↦ hsigma)
   by_cases hQempty : Q = ∅
   · subst Q
-    simpa using (L.conditionedSelectionLaw Good hGood selected).probability_le_one
-      (fun S ↦ (∅ : Finset X) ⊆ S)
+    simp
   · have hcard : 0 < Q.card := card_pos.mpr (nonempty_iff_ne_empty.mpr hQempty)
     have hprobLe : L.probability Good ≤ 1 := L.probability_le_one Good
     have hpowLe : (L.probability Good) ^ Q.card ≤ L.probability Good :=

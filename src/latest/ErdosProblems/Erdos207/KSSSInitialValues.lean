@@ -25,11 +25,11 @@ theorem ksssPoissonExponent_zero
   intro d hd
   simp only [zero_pow (show d ≠ 0 by have h := horders d hd; omega), mul_zero]
 
-theorem ksssAvailableTrajectory_zero
-    (orders : Finset ℕ) (a : ℕ → ℝ) (E₀ A₀ : ℝ) (hE : E₀ ≠ 0)
-    (horders : ∀ d ∈ orders, 1 ≤ d) :
-    ksssAvailableTrajectory orders a E₀ A₀ 0 = A₀ := by
-  simp [ksssAvailableTrajectory, ksssEdgeDensity_zero E₀ hE, ksssPoissonExponent_zero orders a horders]
+theorem ksssAvailableTrajectory_zero (orders : Finset ℕ) (a : ℕ → ℝ) (E₀ A₀ : ℝ) (hE : E₀ ≠ 0)
+    (horders : ∀ d ∈ orders, 1 ≤ d) : ksssAvailableTrajectory orders a E₀ A₀ 0 = A₀ :=
+  by
+    simp [ksssAvailableTrajectory, ksssEdgeDensity_zero E₀ hE,
+      ksssPoissonExponent_zero orders a horders]
 
 theorem ksssPairTrajectory_zero
     (orders : Finset ℕ) (a : ℕ → ℝ) (E₀ A₀ : ℝ) (hE : E₀ ≠ 0)

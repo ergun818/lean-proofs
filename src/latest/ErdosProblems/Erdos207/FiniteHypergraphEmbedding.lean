@@ -23,9 +23,10 @@ theorem finiteHypergraphDegree_image_map
   exact card_image_of_injective _ (map_injective e)
 
 theorem finiteHypergraphDegree_image_map_eq_zero
-    {I V : Type*} [DecidableEq I] [DecidableEq V]
+    {I V : Type*} [DecidableEq V]
     (e : I ↪ V) (L : Finset (Finset I)) (v : V) (hv : ∀ i, e i ≠ v) :
     finiteHypergraphDegree (L.image (Finset.map e)) v = 0 := by
+  classical
   unfold finiteHypergraphDegree
   apply card_eq_zero.mpr
   apply eq_empty_iff_forall_notMem.mpr
@@ -54,9 +55,10 @@ theorem finiteHypergraphMaxDegree_image_map
     exact finiteHypergraphDegree_le_max (L.image (Finset.map e)) (e i)
 
 theorem finiteHypergraph_image_map_uniform
-    {I V : Type*} [DecidableEq I] [DecidableEq V]
+    {I V : Type*} [DecidableEq V]
     (e : I ↪ V) (L : Finset (Finset I)) (k : ℕ) :
     (∀ E ∈ L.image (Finset.map e), E.card = k) ↔ ∀ E ∈ L, E.card = k := by
+  classical
   constructor
   · intro h E hE
     simpa only [card_map] using h (E.map e) (mem_image_of_mem _ hE)

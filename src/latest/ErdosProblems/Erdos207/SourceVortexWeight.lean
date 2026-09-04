@@ -43,7 +43,7 @@ theorem Vortex.sourceProfileScale_mul_weight
       rw [← pow_add, ← pow_add, Nat.add_sub_of_le ht]
 
 theorem Vortex.weight_sum_le_of_profile_count
-    {V α : Type*} [Fintype V] [DecidableEq V] [DecidableEq α]
+    {V α : Type*} [Fintype V] [DecidableEq V]
     {ell d f : ℕ} (W : Vortex V ell) (I : Finset α)
     (A : α → TripleSystemOn V) (w b : ℝ≥0)
     (hn : 0 < W.terminalSize) (hcard : ∀ x ∈ I, (A x).card = f)
@@ -53,6 +53,7 @@ theorem Vortex.weight_sum_le_of_profile_count
     ∑ x ∈ I, setWeight (vortexTripleWeight W w) (A x) ≤
       ((f + 1) ^ ell : ℕ) * b * w ^ f *
         (W.terminalSize : ℝ≥0) ^ d / (W.terminalSize : ℝ≥0) ^ f := by
+  classical
   let code := fun x ↦ W.outerProfile (A x)
   let target := b * w ^ f * (W.terminalSize : ℝ≥0) ^ d /
     (W.terminalSize : ℝ≥0) ^ f

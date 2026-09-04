@@ -16,35 +16,44 @@ open scoped NNReal
 
 noncomputable section
 
-def pairLocalThreatUnion
-    {V : Type*} [Fintype V] [DecidableEq V]
-    (F : ForbiddenFamilyOn V) (A : TripleSystemOn V) (root selector : TripleOn V) : TripleSystemOn V :=
-  univ.biUnion fun P : PairInsideSelector selector ↦ pairTwoAwayForbiddenTriangles F A root P.1
+def pairLocalThreatUnion {V : Type*} [Fintype V] [DecidableEq V] (F : ForbiddenFamilyOn V)
+    (A : TripleSystemOn V) (root selector : TripleOn V) : TripleSystemOn V :=
+  univ.biUnion fun P : PairInsideSelector selector ↦
+    pairTwoAwayForbiddenTriangles F A root P.1
 
-theorem mem_pairLocalThreatUnion_of_sharing_twoAway
-    {V : Type*} [Fintype V] [DecidableEq V]
+theorem mem_pairLocalThreatUnion_of_sharing_twoAway {V : Type*} [Fintype V] [DecidableEq V]
     {F : ForbiddenFamilyOn V} {A : TripleSystemOn V} {root selector U : TripleOn V}
-    (hpack : ∀ E ∈ F, IsPackingOn E)
-    (hshare : U ∈ triplesSharingPair selector)
-    (htwo : U ∈ twoAwayForbiddenTriangles F A root) : U ∈ pairLocalThreatUnion F A root selector := by
-  obtain ⟨P, hP, hUP⟩ := mem_biUnion.mp (triplesSharingPair_subset_pair_union selector hshare)
-  let p : PairInsideSelector selector := ⟨⟨P, (mem_powersetCard.mp hP).2⟩, (mem_powersetCard.mp hP).1⟩
-  have hn : U ∉ triplesSharingPair root := by
-    intro h
-    exact disjoint_left.mp (disjoint_pairSharing_twoAway_of_packing F A root hpack) h htwo
-  exact mem_biUnion.mpr ⟨p, mem_univ p, mem_inter.mpr ⟨hUP, mem_sdiff.mpr ⟨htwo, hn⟩⟩⟩
+    (hpack : ∀ E ∈ F, IsPackingOn E) (hshare : U ∈ triplesSharingPair selector)
+    (htwo : U ∈ twoAwayForbiddenTriangles F A root) :
+    U ∈ pairLocalThreatUnion F A root selector :=
+  by
+    obtain ⟨P, hP, hUP⟩ :=
+      mem_biUnion.mp (triplesSharingPair_subset_pair_union selector hshare)
+    let p : PairInsideSelector selector :=
+      ⟨⟨P, (mem_powersetCard.mp hP).2⟩, (mem_powersetCard.mp hP).1⟩
+    have hn : U ∉ triplesSharingPair root :=
+      by
+        intro h
+        exact disjoint_left.mp (disjoint_pairSharing_twoAway_of_packing F A root hpack) h htwo
+    exact mem_biUnion.mpr ⟨p, mem_univ p, mem_inter.mpr ⟨hUP, mem_sdiff.mpr ⟨htwo, hn⟩⟩⟩
 
-theorem card_pairLocalThreatUnion_le_sum
-    {V : Type*} [Fintype V] [DecidableEq V]
+theorem card_pairLocalThreatUnion_le_sum {V : Type*} [Fintype V] [DecidableEq V]
     (F : ForbiddenFamilyOn V) (A : TripleSystemOn V) (root selector : TripleOn V) :
     ((pairLocalThreatUnion F A root selector).card : ℝ≥0) ≤
-      ∑ P : PairInsideSelector selector, selectedCount
-        (fun w : PairTwoAwayThreatWitness V F root P.1 ↦ pairTwoAwayThreatRemainder w) A := by
-  have hc : ((pairLocalThreatUnion F A root selector).card : ℝ≥0) ≤
-      ∑ P : PairInsideSelector selector, ((pairTwoAwayForbiddenTriangles F A root P.1).card : ℝ≥0) := by
-    exact_mod_cast (card_biUnion_le (s := univ)
-      (t := fun P : PairInsideSelector selector ↦ pairTwoAwayForbiddenTriangles F A root P.1))
-  exact hc.trans (sum_le_sum fun P _ ↦ pairTwoAwayForbidden_count_le_selectedCount F A root P.1)
+      ∑ P : PairInsideSelector selector,
+        selectedCount
+          (fun w : PairTwoAwayThreatWitness V F root P.1 ↦ pairTwoAwayThreatRemainder w) A :=
+  by
+    have hc :
+      ((pairLocalThreatUnion F A root selector).card : ℝ≥0) ≤
+        ∑ P : PairInsideSelector selector,
+          ((pairTwoAwayForbiddenTriangles F A root P.1).card : ℝ≥0) :=
+      by
+        exact_mod_cast
+          (card_biUnion_le (s := univ) (t := fun P : PairInsideSelector selector ↦
+            pairTwoAwayForbiddenTriangles F A root P.1))
+    exact
+      hc.trans (sum_le_sum fun P _ ↦ pairTwoAwayForbidden_count_le_selectedCount F A root P.1)
 
 theorem card_pairLocalThreatUnion_le_three_mul
     {V : Type*} [Fintype V] [DecidableEq V]

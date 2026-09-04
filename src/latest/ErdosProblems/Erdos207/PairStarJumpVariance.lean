@@ -86,29 +86,41 @@ theorem restrictedGreedyKernel_secondMoment_le_negative_mean
       nlinarith only [hm]
     _ = _ := by rw [← mul_sum, sum_neg_distrib]; ring
 
-theorem restrictedGreedyKernel_pairStar_secondMoment_le_drift_error
-    {V : Type*} [Fintype V] [DecidableEq V]
-    {F : ForbiddenFamilyOn V} {S : GreedyStateOn V} {q : ℕ} {K : CrudeThresholds}
-    (h : CrudeStateBounds F S q K) (P : PairOn V)
+theorem restrictedGreedyKernel_pairStar_secondMoment_le_drift_error {V : Type*} [Fintype V]
+    [DecidableEq V] {F : ForbiddenFamilyOn V} {S : GreedyStateOn V} {q : ℕ}
+    {K : CrudeThresholds} (h : CrudeStateBounds F S q K) (P : PairOn V)
     (hS : GreedyInvariant F S) (hpack : ∀ E ∈ F, IsPackingOn E)
-    (hR : (S.available \ availableTrianglesContainingPair S P.1).Nonempty)
-    (slope epsilon : ℝ)
-    (hmean : |(restrictedGreedyKernel F S (S.available \ availableTrianglesContainingPair S P.1) hR).expectationReal
-      (fun S' ↦ ((availableTrianglesContainingPair S' P.1).card : ℝ) -
-        (availableTrianglesContainingPair S P.1).card) - slope| ≤ epsilon) :
-    (restrictedGreedyKernel F S (S.available \ availableTrianglesContainingPair S P.1) hR).expectationReal
-      (fun S' ↦ (((availableTrianglesContainingPair S' P.1).card : ℝ) -
-        (availableTrianglesContainingPair S P.1).card) ^ 2) ≤
-      (3 + (K.pair : ℝ)) * (|slope| + epsilon) := by
-  have hb := restrictedGreedyKernel_secondMoment_le_negative_mean F S _ hR
-    (fun S' ↦ ((availableTrianglesContainingPair S' P.1).card : ℝ) -
-      (availableTrianglesContainingPair S P.1).card) (3 + (K.pair : ℝ))
-    (fun T hT ↦ h.pair_increment_interval P hS hpack hT)
-  apply hb.trans
-  apply mul_le_mul_of_nonneg_left _ (by positivity)
-  have hm := (abs_le.mp hmean).1
-  have hs := neg_abs_le slope
-  linarith
+    (hR : (S.available \ availableTrianglesContainingPair S P.1).Nonempty) (slope epsilon : ℝ)
+    (hmean :
+      |(restrictedGreedyKernel F S (S.available \ availableTrianglesContainingPair S P.1)
+                  hR).expectationReal
+              (fun S' ↦
+                ((availableTrianglesContainingPair S' P.1).card : ℝ) -
+                  (availableTrianglesContainingPair S P.1).card) -
+            slope| ≤
+        epsilon) :
+    (restrictedGreedyKernel F S (S.available \ availableTrianglesContainingPair S P.1)
+            hR).expectationReal
+        (fun S' ↦
+          (((availableTrianglesContainingPair S' P.1).card : ℝ) -
+              (availableTrianglesContainingPair S P.1).card) ^
+            2) ≤
+      (3 + (K.pair : ℝ)) * (|slope| + epsilon) :=
+  by
+    have hb :=
+      restrictedGreedyKernel_secondMoment_le_negative_mean F S _ hR
+        (fun S' ↦
+          ((availableTrianglesContainingPair S' P.1).card : ℝ) -
+            (availableTrianglesContainingPair S P.1).card)
+        (3 + (K.pair : ℝ)) (fun T hT ↦ h.pair_increment_interval P hS hpack hT)
+    apply hb.trans
+    apply
+      mul_le_mul_of_nonneg_left _
+        (by
+          positivity)
+    have hm := (abs_le.mp hmean).1
+    have hs := neg_abs_le slope
+    linarith
 
 end
 

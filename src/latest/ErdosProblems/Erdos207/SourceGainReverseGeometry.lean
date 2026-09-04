@@ -17,9 +17,11 @@ noncomputable section
 variable {V : Type*} [Fintype V] [DecidableEq V]
   {F G : ForbiddenFamilyOn V} {T : TripleOn V} {a : ℕ}
 
-theorem reverse_first_omitted (u : GainDefectWitness F G T a) (H : TripleSystemOn V)
+omit [Fintype V] in
+theorem reverse_first_omitted [Finite V] (u : GainDefectWitness F G T a) (H : TripleSystemOn V)
     (hH : H ⊆ u.remainder) :
     (u.second \ u.reverseSecondRoot H) \ (u.rightRemainder \ H) = u.second ∩ u.omitted := by
+  let := Fintype.ofFinite V
   ext R
   constructor
   · intro hR
@@ -44,9 +46,11 @@ theorem reverse_first_omitted (u : GainDefectWitness F G T a) (H : TripleSystemO
     · intro hr
       exact (mem_sdiff.mp (mem_sdiff.mp hr).1).2 (mem_insert_of_mem hO)
 
-theorem reverse_second_omitted (u : GainDefectWitness F G T a) (H : TripleSystemOn V)
+omit [Fintype V] in
+theorem reverse_second_omitted [Finite V] (u : GainDefectWitness F G T a) (H : TripleSystemOn V)
     (hH : H ⊆ u.remainder) (he : u.ForwardExceptional H) :
     (u.first \ {T}) \ (u.leftRemainder \ H) = u.omitted := by
+  let := Fintype.ofFinite V
   have ho := u.forward_first_omitted H hH
   have hroot : u.firstExposureRoot H = {T} := by
     rw [firstExposureRoot, disjoint_iff_inter_eq_empty.mp he.1]
@@ -54,15 +58,18 @@ theorem reverse_second_omitted (u : GainDefectWitness F G T a) (H : TripleSystem
   rw [hroot] at ho
   exact ho
 
+omit [Fintype V] in
 theorem reverseFirstRoot_eq_source_inter (u : GainDefectWitness F G T a) :
-    u.reverseFirstRoot = u.first ∩ (u.second ∪ {T}) := by
-  ext R
-  by_cases hRT : R = T
-  · subst R
-    simp only [reverseFirstRoot, mem_insert, mem_inter, mem_union, mem_singleton,
-      u.root_mem, true_or, or_true, and_true]
-  · simp only [reverseFirstRoot, mem_insert, mem_inter, mem_union, mem_singleton, hRT, false_or, or_false]
-    tauto
+    u.reverseFirstRoot = u.first ∩ (u.second ∪ { T }) :=
+  by
+    ext R
+    by_cases hRT : R = T
+    · subst R
+      simp only [reverseFirstRoot, mem_insert, mem_inter, mem_union, mem_singleton,
+        u.root_mem, true_or, or_true, and_true]
+    · simp only [reverseFirstRoot, mem_insert, mem_inter, mem_union, mem_singleton, hRT,
+        false_or, or_false]
+      tauto
 
 def sourceReverseExposure {ell : ℕ} (W : Vortex V ell) (u : GainDefectWitness F G T a)
     (H : TripleSystemOn V) (hH : H ⊆ u.remainder) (he : u.ForwardExceptional H)

@@ -17,7 +17,7 @@ input is the already isolated bounded-bank absorption inequality.
 namespace Erdos207
 
 open Finset
-open scoped Classical NNReal
+open scoped NNReal
 
 noncomputable section
 

@@ -133,7 +133,7 @@ theorem FiniteLaw.exists_conditionedOn_residualOuterIncidence
     congr 1
     funext omega
     simp only [Good, Bad]
-    push_neg
+    push Not
     rfl
   have hlower : 1 - residualOuterIncidenceTail V G U eta r ≤
       L.probability Good := by

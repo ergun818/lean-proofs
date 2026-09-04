@@ -121,7 +121,7 @@ theorem FiniteLaw.independentBits_expectation_half_pow_card_inter
       apply Finset.prod_congr rfl
       intro i _hi
       by_cases hiS : i ∈ S
-      · simp [hiS, FiniteLaw.bernoulliBitMass, Fintype.sum_bool,
+      · simp [hiS, FiniteLaw.bernoulliBitMass,
           add_comm]
       · simpa [hiS, FiniteLaw.bernoulliBitMass, Fintype.sum_bool,
           add_comm] using FiniteLaw.sum_bernoulliBitMass hsigma

@@ -13,12 +13,12 @@ import ErdosProblems.Erdos207.BoundedPatternIndex
 namespace Erdos207
 
 open Finset
-open scoped Classical NNReal
+open scoped NNReal
 
 noncomputable section
 
 theorem IsIterationTypical.reserveEdgeLaw_internalSupplies_failure_le
-    {V J : Type*} [Fintype V] [DecidableEq V] [DecidableEq J]
+    {V J : Type*} [Fintype V] [DecidableEq V]
     {ell : ℕ} {W : Vortex V ell} {stage : Fin (ell + 1)}
     {G : SimpleGraph V} {A : TripleSystemOn V} {p eta xi : ℝ≥0} {h : ℕ}
     (htyp : IsIterationTypical W stage G A p eta xi h)
@@ -38,6 +38,7 @@ theorem IsIterationTypical.reserveEdgeLaw_internalSupplies_failure_le
     ((reserveEdgeLaw G (W.U i.succ) r hr).probability
       (fun bits ↦ ¬ AllReserveWedgeSupplies G (W.U i.succ) E u v S a bits) : ℝ) ≤
       (E.card : ℝ) * Real.exp (-(r : ℝ) ^ 2 * (p : ℝ) ^ 2 * eta * (W.U i.succ).card / 8) := by
+  classical
   dsimp only
   let S : J → Finset V := fun j ↦
     iterationExtensionVertices A (SimpleGraph.edge (u j) (v j)) (W.U i.succ)
@@ -93,30 +94,33 @@ def InternalReserveSupplyGood
     (fun e ↦ iterationExtensionVertices A (SimpleGraph.edge e.out.1 e.out.2) U)
     (fun _ ↦ a) bits
 
-theorem IsIterationTypical.internalReserveSupply_failure_probability_le
-    {V : Type*} [Fintype V] [DecidableEq V] {ell : ℕ}
-    {W : Vortex V ell} {stage : Fin (ell + 1)}
+theorem IsIterationTypical.internalReserveSupply_failure_probability_le {V : Type*}
+    [Fintype V] [DecidableEq V] {ell : ℕ} {W : Vortex V ell} {stage : Fin (ell + 1)}
     {G : SimpleGraph V} {A : TripleSystemOn V} {p eta xi : ℝ≥0} {h : ℕ}
-    (htyp : IsIterationTypical W stage G A p eta xi h)
-    (htri : ConsistsOfTriangles G A) (hxi : (xi : ℝ) ≤ 1 / 2)
-    (i : Fin ell) (hstage : stage.val ≤ i.val)
-    (hGsupp : GraphSupportedOn G (W.U i.castSucc : Set V))
-    (hh : 2 ≤ h) (r : ℝ≥0) (hr : r ≤ 1) (a : ℕ)
-    (ha : (a : ℝ) ≤ (r : ℝ) ^ 2 * (p : ℝ) ^ 2 * eta * (W.U i.succ).card / 8) :
+    (htyp : IsIterationTypical W stage G A p eta xi h) (htri : ConsistsOfTriangles G A)
+    (hxi : (xi : ℝ) ≤ 1 / 2) (i : Fin ell) (hstage : stage.val ≤ i.val)
+    (hGsupp : GraphSupportedOn G (W.U i.castSucc : Set V)) (hh : 2 ≤ h) (r : ℝ≥0) (hr : r ≤ 1)
+    (a : ℕ) (ha : (a : ℝ) ≤ (r : ℝ) ^ 2 * (p : ℝ) ^ 2 * eta * (W.U i.succ).card / 8) :
     ((reserveEdgeLaw G (W.U i.succ) r hr).probability
-      (fun bits ↦ ¬ InternalReserveSupplyGood G A (W.U i.succ) a bits) : ℝ) ≤
-      (Fintype.card V : ℝ) ^ 2 * Real.exp (-(r : ℝ) ^ 2 * (p : ℝ) ^ 2 * eta * (W.U i.succ).card / 8) := by
-  have hadj : ∀ e ∈ internalOuterEdges G (W.U i.succ), G.Adj e.out.1 e.out.2 :=
-    fun _ he ↦ graph_adj_out_of_mem_graphEdges (mem_internalOuterEdges_iff.mp he).1
-  have hb := htyp.reserveEdgeLaw_internalSupplies_failure_le htri hxi i hstage
-    (internalOuterEdges G (W.U i.succ)) (fun e ↦ e.out.1) (fun e ↦ e.out.2)
-    (fun e he ↦ (hadj e he).ne)
-    (fun e he ↦ (hGsupp (hadj e he)).1) (fun e he ↦ (hGsupp (hadj e he)).2)
-    (fun _ he ↦ (mem_internalOuterEdges_iff.mp he).2.1)
-    (fun _ he ↦ (mem_internalOuterEdges_iff.mp he).2.2) hadj hh r hr (fun _ ↦ a) (fun _ _ ↦ ha)
-  apply hb.trans
-  apply mul_le_mul_of_nonneg_right _ (Real.exp_pos _).le
-  exact_mod_cast (card_le_univ (internalOuterEdges G (W.U i.succ))).trans (card_sym2_le_square V)
+          (fun bits ↦ ¬InternalReserveSupplyGood G A (W.U i.succ) a bits) :
+        ℝ) ≤
+      (Fintype.card V : ℝ) ^ 2 *
+        Real.exp (-(r : ℝ) ^ 2 * (p : ℝ) ^ 2 * eta * (W.U i.succ).card / 8) :=
+  by
+    have hadj : ∀ e ∈ internalOuterEdges G (W.U i.succ), G.Adj e.out.1 e.out.2 := fun _ he ↦
+      graph_adj_out_of_mem_graphEdges (mem_internalOuterEdges_iff.mp he).1
+    have hb :=
+      htyp.reserveEdgeLaw_internalSupplies_failure_le htri hxi i hstage
+        (internalOuterEdges G (W.U i.succ)) (fun e ↦ e.out.1) (fun e ↦ e.out.2)
+        (fun e he ↦ (hadj e he).ne) (fun e he ↦ (hGsupp (hadj e he)).1)
+        (fun e he ↦ (hGsupp (hadj e he)).2)
+        (fun _ he ↦ (mem_internalOuterEdges_iff.mp he).2.1)
+        (fun _ he ↦ (mem_internalOuterEdges_iff.mp he).2.2) hadj hh r hr (fun _ ↦ a)
+        (fun _ _ ↦ ha)
+    apply hb.trans
+    apply mul_le_mul_of_nonneg_right _ (Real.exp_pos _).le
+    exact_mod_cast
+      (card_le_univ (internalOuterEdges G (W.U i.succ))).trans (card_sym2_le_square V)
 
 theorem InternalReserveSupplyGood.preliminary_pairSafe_supply
     {V : Type*} [Fintype V] [DecidableEq V]

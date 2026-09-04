@@ -26,15 +26,20 @@ theorem neighbor_clock_small_of_power_scale
       nlinarith only [hm]
     _ ≤ L := hL
 
-theorem KSSSPowerParameters.scalar_bounds
-    {V : Type*} [Fintype V] [DecidableEq V]
+theorem KSSSPowerParameters.scalar_bounds {V : Type*} [Fintype V] [DecidableEq V]
     {F : ForbiddenFamilyOn V} {q n b B k t Rmin : ℕ} {a coeff : ℕ → ℝ} {E A : ℝ}
-    (P : KSSSPowerParameters F q n b B k t Rmin a coeff E A)
-    (time : ℝ) (htime : 0 ≤ time) (hfloor : 1 / (t : ℝ) ^ b ≤ ksssEdgeDensity E time) :
+    (P : KSSSPowerParameters F q n b B k t Rmin a coeff E A) (time : ℝ) (htime : 0 ≤ time)
+    (hfloor : 1 / (t : ℝ) ^ b ≤ ksssEdgeDensity E time) :
     KSSSScalarPowerBounds q b B k a E A time (Fintype.card V) t :=
-  ksss_scalar_power_bounds q b B k Rmin a coeff E A time (Fintype.card V) t
-    P.edge_pos P.available_pos htime (by exact_mod_cast P.ambient_pos)
-    (by exact_mod_cast P.scale_large) (by exact_mod_cast P.power_scale)
-    P.edge_floor P.ratio_lower P.ratio_upper hfloor P.coefficient_nonneg P.coefficient_bound P.coefficient_budget
+  ksss_scalar_power_bounds q b B k Rmin a coeff E A time (Fintype.card V) t P.edge_pos
+    P.available_pos htime
+    (by
+      exact_mod_cast P.ambient_pos)
+    (by
+      exact_mod_cast P.scale_large)
+    (by
+      exact_mod_cast P.power_scale)
+    P.edge_floor P.ratio_lower P.ratio_upper hfloor P.coefficient_nonneg P.coefficient_bound
+    P.coefficient_budget
 
 end Erdos207

@@ -29,23 +29,30 @@ theorem finiteHypergraphMaxDegree_ge_iff
   · rintro ⟨v, hv⟩
     exact hv.trans (by exact_mod_cast finiteHypergraphDegree_le_max G v)
 
-theorem finiteHypergraphMaxDegree_probability_le
-    {Ω I : Type*} [Fintype Ω] [Fintype I] [DecidableEq I]
-    (L : FiniteLaw Ω) (G : Ω → Finset (Finset I)) (K epsilon : ℝ≥0) (hK : 0 < K)
-    (hpoint : ∀ v, L.probability (fun ω ↦ K ≤ (finiteHypergraphDegree (G ω) v : ℝ≥0)) ≤ epsilon) :
+theorem finiteHypergraphMaxDegree_probability_le {Ω I : Type*} [Fintype Ω] [Fintype I]
+    [DecidableEq I] (L : FiniteLaw Ω) (G : Ω → Finset (Finset I)) (K epsilon : ℝ≥0)
+    (hK : 0 < K)
+    (hpoint :
+      ∀ v, L.probability (fun ω ↦ K ≤ (finiteHypergraphDegree (G ω) v : ℝ≥0)) ≤ epsilon) :
     L.probability (fun ω ↦ K ≤ (finiteHypergraphMaxDegree (G ω) : ℝ≥0)) ≤
-      Fintype.card I * epsilon := by
-  classical
-  calc
-    _ ≤ L.probability (fun ω ↦ ∃ v ∈ (univ : Finset I), K ≤ (finiteHypergraphDegree (G ω) v : ℝ≥0)) := by
-      apply L.probability_mono
-      intro ω hω
-      obtain ⟨v, hv⟩ := (finiteHypergraphMaxDegree_ge_iff (G ω) K hK).mp hω
-      exact ⟨v, mem_univ v, hv⟩
-    _ ≤ ∑ v : I, L.probability (fun ω ↦ K ≤ (finiteHypergraphDegree (G ω) v : ℝ≥0)) :=
-      L.probability_exists_le univ (fun v ω ↦ K ≤ (finiteHypergraphDegree (G ω) v : ℝ≥0))
-    _ ≤ ∑ _v : I, epsilon := sum_le_sum (fun v _ ↦ hpoint v)
-    _ = _ := by simp
+      Fintype.card I * epsilon :=
+  by
+    classical
+      calc
+      _ ≤
+          L.probability
+            (fun ω ↦ ∃ v ∈ (univ : Finset I), K ≤ (finiteHypergraphDegree (G ω) v : ℝ≥0)) :=
+        by
+          apply L.probability_mono
+          intro ω hω
+          obtain ⟨v, hv⟩ := (finiteHypergraphMaxDegree_ge_iff (G ω) K hK).mp hω
+          exact ⟨v, mem_univ v, hv⟩
+      _ ≤ ∑ v : I, L.probability (fun ω ↦ K ≤ (finiteHypergraphDegree (G ω) v : ℝ≥0)) :=
+        (L.probability_exists_le univ (fun v ω ↦ K ≤ (finiteHypergraphDegree (G ω) v : ℝ≥0)))
+      _ ≤ ∑ _v : I, epsilon := (sum_le_sum (fun v _ ↦ hpoint v))
+      _ = _ :=
+        by
+          simp
 
 end
 

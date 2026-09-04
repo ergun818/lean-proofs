@@ -15,25 +15,28 @@ open scoped NNReal
 
 noncomputable section
 
-theorem IsIterationTypical.proper_clique_error_on_stage
-    {V : Type*} [Fintype V] [DecidableEq V] {ell h : ℕ}
-    {W : Vortex V ell} {k : Fin (ell + 1)} {G : SimpleGraph V} {A : TripleSystemOn V}
-    {p tau xi : ℝ≥0} (htyp : IsIterationTypical W k G A p tau xi h)
+theorem IsIterationTypical.proper_clique_error_on_stage {V : Type*} [Fintype V]
+    [DecidableEq V] {ell h : ℕ} {W : Vortex V ell} {k : Fin (ell + 1)} {G : SimpleGraph V}
+    {A : TripleSystemOn V} {p tau xi : ℝ≥0} (htyp : IsIterationTypical W k G A p tau xi h)
     (i : Fin ell) (hki : k.val ≤ i.val) (hh : 4 ≤ h)
     (hG : GraphSupportedOn G (W.U i.castSucc : Set V))
     (hA : ∀ T ∈ A, tripleEdgeFinset T ⊆ graphEdges G) :
     ∀ S ∈ smallCliqueFamily G (W.U i.castSucc),
       |((properPatternExtensions A (cliquePattern S) univ).card : ℝ) -
-        (p : ℝ) ^ S.card * (tau : ℝ) ^ (S.card.choose 2) * (W.U i.castSucc).card| ≤
-      (xi : ℝ) * ((p : ℝ) ^ S.card * (tau : ℝ) ^ (S.card.choose 2) * (W.U i.castSucc).card) + S.card := by
-  intro S hS
-  have hm := (mem_smallCliqueFamily_iff G (W.U i.castSucc) S).mp hS
-  have hvertices : ∀ T ∈ A, T.1 ⊆ W.U i.castSucc :=
-    fun T hT ↦ triple_supported_of_graph_edges G (W.U i.castSucc) T hG (hA T hT)
-  rw [properPatternExtensions_univ_eq_of_supported A (cliquePattern S) (W.U i.castSucc)
-    (cliquePattern_edges_nonempty S hm.2.1) hvertices]
-  exact htyp.clique_proper_extension_error i hki i.castSucc (Or.inl rfl) S hm.2.1
-    (hm.2.2.1.trans hh) hm.1 hm.2.2.2
+            (p : ℝ) ^ S.card * (tau : ℝ) ^ (S.card.choose 2) * (W.U i.castSucc).card| ≤
+        (xi : ℝ) *
+            ((p : ℝ) ^ S.card * (tau : ℝ) ^ (S.card.choose 2) * (W.U i.castSucc).card) +
+          S.card :=
+  by
+    intro S hS
+    have hm := (mem_smallCliqueFamily_iff G (W.U i.castSucc) S).mp hS
+    have hvertices : ∀ T ∈ A, T.1 ⊆ W.U i.castSucc := fun T hT ↦
+      triple_supported_of_graph_edges G (W.U i.castSucc) T hG (hA T hT)
+    rw [properPatternExtensions_univ_eq_of_supported A (cliquePattern S) (W.U i.castSucc)
+        (cliquePattern_edges_nonempty S hm.2.1) hvertices]
+    exact
+      htyp.clique_proper_extension_error i hki i.castSucc (Or.inl rfl) S hm.2.1
+        (hm.2.2.1.trans hh) hm.1 hm.2.2.2
 
 theorem IsIterationTypical.reserve_probability_no_regularized_triangles
     {V : Type*} [Fintype V] [DecidableEq V] {ell h : ℕ}

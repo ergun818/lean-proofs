@@ -150,7 +150,7 @@ theorem timedStoppedAbsorberGreedy_probability_not_pairTwoAwayCutoff_le
       apply L.probability_mono
       intro z hz
       rw [HasPairTwoAwayCutoff] at hz
-      push_neg at hz
+      push Not at hz
       obtain ⟨U, _hUavailable, P, hP, _hPU, hbad⟩ := hz
       let P' : PairOn V := ⟨P, hP⟩
       refine ⟨(U, P'), ?_⟩

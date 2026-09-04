@@ -253,13 +253,13 @@ theorem avoidsForbidden_union_of_nonparticipating
 of covering triples.  The result records precisely the surviving relation
 certificate needed by later packing and forbidden-safety lemmas. -/
 theorem exists_linkMatchingTriangles_after_deletion
-    {A B V : Type*} [Fintype A] [Fintype B] [DecidableEq B]
+    {A B V : Type*} [Fintype A] [Fintype B]
     [DecidableEq V]
     (center : V) (left : A ↪ V) (right : B ↪ V)
     (hcenterLeft : ∀ a, center ≠ left a)
     (hcenterRight : ∀ b, center ≠ right b)
     (hleftRight : ∀ a b, left a ≠ right b)
-    (r deleted : A → B → Prop) [DecidableRel r] [DecidableRel deleted]
+    (r deleted : A → B → Prop)
     (hcard : Fintype.card A = Fintype.card B)
     (hrobust : SurvivesEveryHallObstruction r deleted) :
     ∃ f : A → B, ∃ M : TripleSystemOn V,

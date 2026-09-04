@@ -25,7 +25,7 @@ theorem ksss_pair_relative_error_fine
   have hbound : ksssErrorEnvelope E (N / t ^ ksssPowerErrorExponent b B) B time / x ≤
       (16 / t ^ b) / (8 * t) := by
     apply (le_div_iff₀ (by positivity : 0 < 8 * t)).mpr
-    convert hratio using 1 <;> ring
+    convert hratio using 1 ; ring
   have heq : (16 / t ^ b) / (8 * t) = 2 / t ^ (b + 1) := by rw [pow_succ]; ring
   rw [heq] at hbound
   exact (div_le_iff₀ hxpos).mp hbound

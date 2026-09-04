@@ -54,9 +54,10 @@ theorem cliquePattern_edges_nonempty
   exact Nat.choose_pos hS
 
 theorem cliquePattern_subset_supported_graph
-    {V : Type*} [Fintype V] [DecidableEq V]
+    {V : Type*} [Finite V] [DecidableEq V]
     (G : SimpleGraph V) (S U : Finset V) (hS : 2 ≤ S.card)
     (hSG : cliquePattern S ≤ G) (hG : GraphSupportedOn G (U : Set V)) : S ⊆ U := by
+  let := Fintype.ofFinite V
   intro v hv
   have hsupport : v ∈ graphSupportFinset (cliquePattern S) := by
     simpa only [cliquePattern_support S hS] using hv
@@ -78,14 +79,15 @@ theorem triple_supported_of_graph_edges
   have he := hT (mk_mem_tripleEdgeFinset_iff.mpr ⟨hv, (mem_erase.mp hw).2, hvw⟩)
   exact (hG (mem_graphEdges_iff.mp he)).1
 
-theorem cliquePattern_edge_le
-    {V : Type*} [Fintype V] [DecidableEq V]
-    (G : SimpleGraph V) (e : Sym2 V) (he : e ∈ graphEdges G) :
-    cliquePattern e.toFinset ≤ G := by
-  apply (cliquePattern_le_iff G e.toFinset).mpr
-  have hc := Sym2.card_toFinset_of_not_isDiag e (G.not_isDiag_of_mem_edgeSet (mem_graphEdges_iff.mp he))
-  rw [← hc, powersetCard_self]
-  exact singleton_subset_iff.mpr ((mem_graphPairFamily_toFinset_iff G e).mpr he)
+theorem cliquePattern_edge_le {V : Type*} [Fintype V] [DecidableEq V] (G : SimpleGraph V)
+    (e : Sym2 V) (he : e ∈ graphEdges G) : cliquePattern e.toFinset ≤ G :=
+  by
+    apply (cliquePattern_le_iff G e.toFinset).mpr
+    have hc :=
+      Sym2.card_toFinset_of_not_isDiag e
+        (G.not_isDiag_of_mem_edgeSet (mem_graphEdges_iff.mp he))
+    rw [← hc, powersetCard_self]
+    exact singleton_subset_iff.mpr ((mem_graphPairFamily_toFinset_iff G e).mpr he)
 
 theorem IsIterationTypical.clique_proper_extension_error
     {V : Type*} [Fintype V] [DecidableEq V] {ell h : ℕ}

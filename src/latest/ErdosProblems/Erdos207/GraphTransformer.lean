@@ -41,10 +41,11 @@ lemma edgeEquiv_val (φ : EdgeBijectiveHom G H) (e : G.edgeSet) :
 
 end EdgeBijectiveHom
 
-lemma even_ncard_neighborSet {V : Type*} [Fintype V] [DecidableEq V]
+lemma even_ncard_neighborSet {V : Type*} [Fintype V]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (heven : ∀ x, Even (G.degree x)) (x : V) :
     Even (G.neighborSet x).ncard := by
+  classical
   rw [Set.ncard_eq_toFinset_card]
   have hfinset : (G.neighborSet x).toFinite.toFinset = G.neighborFinset x := by
     ext y
@@ -411,7 +412,7 @@ lemma existsUnique_incidentMatching_edge
 /-- The matching triangle at `x` which contains the spoke associated to a
 specified neighbor. -/
 lemma exists_sourceMatchingTriple_spoke
-    {V W : Type*} [Fintype V] [Fintype W] [DecidableEq V] [DecidableEq W]
+    {V W : Type*} [Fintype V] [Finite W] [DecidableEq V] [DecidableEq W]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (heven : ∀ x, Even (G.degree x)) (x : V) (y : G.neighborSet x) :
     ∃ p : (incidentMatching G heven x).edgeSet,
@@ -419,6 +420,7 @@ lemma exists_sourceMatchingTriple_spoke
         (transformerSourceMatchingTriple (W := W) G heven x p).1 ∧
       TransformerVertex.edge (edgeAtNeighbor x y) ∈
         (transformerSourceMatchingTriple (W := W) G heven x p).1 := by
+  let := Fintype.ofFinite W
   obtain ⟨p, hyp, hpunique⟩ := existsUnique_incidentMatching_edge G heven x y
   refine ⟨p, by simp [transformerSourceMatchingTriple, tripleOfThree], ?_⟩
   have hyout : y.1 = p.1.out.1 ∨ y.1 = p.1.out.2 := by
@@ -437,7 +439,7 @@ lemma exists_sourceMatchingTriple_spoke
     simp [transformerSourceMatchingTriple, tripleOfThree, heq]
 
 lemma exists_targetMatchingTriple_spoke
-    {V W : Type*} [Fintype V] [Fintype W] [DecidableEq V] [DecidableEq W]
+    {V W : Type*} [Fintype V] [Finite W] [DecidableEq V] [DecidableEq W]
     {G : SimpleGraph V} {H : SimpleGraph W} [DecidableRel G.Adj]
     (φ : EdgeBijectiveHom G H)
     (heven : ∀ x, Even (G.degree x)) (x : V) (y : G.neighborSet x) :
@@ -446,6 +448,7 @@ lemma exists_targetMatchingTriple_spoke
         (transformerTargetMatchingTriple φ heven x p).1 ∧
       TransformerVertex.edge (edgeAtNeighbor x y) ∈
         (transformerTargetMatchingTriple φ heven x p).1 := by
+  let := Fintype.ofFinite W
   obtain ⟨p, hsource, hedge⟩ :=
     exists_sourceMatchingTriple_spoke (W := W) G heven x y
   refine ⟨p, by simp [transformerTargetMatchingTriple, tripleOfThree], ?_⟩
@@ -453,7 +456,7 @@ lemma exists_targetMatchingTriple_spoke
     tripleOfThree] using hedge
 
 lemma exists_sourceMatchingTriple_spoke_edge
-    {V W : Type*} [Fintype V] [Fintype W] [DecidableEq V] [DecidableEq W]
+    {V W : Type*} [Fintype V] [Finite W] [DecidableEq V] [DecidableEq W]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (heven : ∀ x, Even (G.degree x)) (e : G.edgeSet) {x : V}
     (hx : x ∈ e.1) :
@@ -462,13 +465,14 @@ lemma exists_sourceMatchingTriple_spoke_edge
         (transformerSourceMatchingTriple (W := W) G heven x p).1 ∧
       TransformerVertex.edge e ∈
         (transformerSourceMatchingTriple (W := W) G heven x p).1 := by
+  let := Fintype.ofFinite W
   obtain ⟨y, hy⟩ := exists_edgeAtNeighbor_eq e hx
   obtain ⟨p, hsource, hedge⟩ :=
     exists_sourceMatchingTriple_spoke (W := W) G heven x y
   exact ⟨p, hsource, by simpa [hy] using hedge⟩
 
 lemma exists_targetMatchingTriple_spoke_edge
-    {V W : Type*} [Fintype V] [Fintype W] [DecidableEq V] [DecidableEq W]
+    {V W : Type*} [Fintype V] [Finite W] [DecidableEq V] [DecidableEq W]
     {G : SimpleGraph V} {H : SimpleGraph W} [DecidableRel G.Adj]
     (phi : EdgeBijectiveHom G H)
     (heven : ∀ x, Even (G.degree x)) (e : G.edgeSet) {x : V}
@@ -478,13 +482,14 @@ lemma exists_targetMatchingTriple_spoke_edge
         (transformerTargetMatchingTriple phi heven x p).1 ∧
       TransformerVertex.edge e ∈
         (transformerTargetMatchingTriple phi heven x p).1 := by
+  let := Fintype.ofFinite W
   obtain ⟨y, hy⟩ := exists_edgeAtNeighbor_eq e hx
   obtain ⟨p, htarget, hedge⟩ :=
     exists_targetMatchingTriple_spoke phi heven x y
   exact ⟨p, htarget, by simpa [hy] using hedge⟩
 
 lemma exists_targetMatchingTriple_mapped_spoke
-    {V W : Type*} [Fintype V] [Fintype W] [DecidableEq V] [DecidableEq W]
+    {V W : Type*} [Fintype V] [Finite W] [DecidableEq V] [DecidableEq W]
     {G : SimpleGraph V} {H : SimpleGraph W} [DecidableRel G.Adj]
     (phi : EdgeBijectiveHom G H)
     (heven : ∀ x, Even (G.degree x)) (e : G.edgeSet) {y : W}
@@ -495,6 +500,7 @@ lemma exists_targetMatchingTriple_mapped_spoke
         (transformerTargetMatchingTriple phi heven x p).1 ∧
       TransformerVertex.edge e ∈
         (transformerTargetMatchingTriple phi heven x p).1 := by
+  let := Fintype.ofFinite W
   rw [EdgeBijectiveHom.edgeEquiv_val, Sym2.mem_map] at hy
   obtain ⟨x, hx, hxy⟩ := hy
   obtain ⟨p, htarget, hedge⟩ :=
@@ -555,7 +561,8 @@ lemma source_mem_sourceEdgeTriple_iff
       x ∈ e.1 := by
   constructor
   · intro hx
-    simp [transformerSourceEdgeTriple, tripleOfThree] at hx
+    simp only [transformerSourceEdgeTriple, tripleOfThree, mem_insert,
+      TransformerVertex.source.injEq, mem_singleton, reduceCtorEq, or_false] at hx
     rcases hx with hx | hx
     · subst x
       exact Sym2.out_fst_mem e.1
@@ -745,7 +752,7 @@ theorem transformerSourceEdgeTriples_isPacking
       | edge l =>
           have hke := edge_mem_sourceEdgeTriple_iff e k |>.mp huT
           have hle := edge_mem_sourceEdgeTriple_iff e l |>.mp hvT
-          exact (huv (by simpa [hke, hle])).elim
+          exact (huv (by simp [hke, hle])).elim
 
 theorem transformerTargetEdgeTriples_isPacking
     {V W : Type*} [Fintype V] [Fintype W] [DecidableEq V] [DecidableEq W]
@@ -790,7 +797,7 @@ theorem transformerTargetEdgeTriples_isPacking
       | edge l =>
           have hke := edge_mem_targetEdgeTriple_iff phi e k |>.mp huT
           have hle := edge_mem_targetEdgeTriple_iff phi e l |>.mp hvT
-          exact (huv (by simpa [hke, hle])).elim
+          exact (huv (by simp [hke, hle])).elim
 
 lemma incidentMatching_edge_eq_of_neighbors
     {V : Type*} [Fintype V] [DecidableEq V]
@@ -899,7 +906,7 @@ theorem transformerSourceMatchingTriples_isPacking
       | source b =>
           have hax := source_mem_sourceMatchingTriple_iff G heven x a p |>.mp huT
           have hbx := source_mem_sourceMatchingTriple_iff G heven x b p |>.mp hvT
-          exact (huv (by simpa [hax, hbx])).elim
+          exact (huv (by simp [hax, hbx])).elim
       | target b => exact (target_not_mem_sourceMatchingTriple G heven x p b hvT).elim
       | edge e =>
           have hax := source_mem_sourceMatchingTriple_iff G heven x a p |>.mp huT
@@ -962,7 +969,7 @@ theorem transformerTargetMatchingTriples_isPacking
       | target b =>
           have hax := target_mem_targetMatchingTriple_iff phi heven x p a |>.mp huT
           have hbx := target_mem_targetMatchingTriple_iff phi heven x p b |>.mp hvT
-          exact (huv (by simpa [hax, hbx])).elim
+          exact (huv (by simp [hax, hbx])).elim
       | edge e =>
           have hax := target_mem_targetMatchingTriple_iff phi heven x p a |>.mp huT
           have haz := target_mem_targetMatchingTriple_iff phi heven z q a |>.mp huU
@@ -1054,7 +1061,7 @@ lemma sourceEdge_targetMatching_cross
       | edge l =>
           have hke := edge_mem_sourceEdgeTriple_iff e k |>.mp huE
           have hle := edge_mem_sourceEdgeTriple_iff e l |>.mp hvE
-          exact huv (by simpa [hke, hle])
+          exact huv (by simp [hke, hle])
 
 lemma targetEdge_sourceMatching_cross
     {V W : Type*} [Fintype V] [DecidableEq V] [DecidableEq W]
@@ -1077,7 +1084,7 @@ lemma targetEdge_sourceMatching_cross
       | edge l =>
           have hke := edge_mem_targetEdgeTriple_iff phi e k |>.mp huE
           have hle := edge_mem_targetEdgeTriple_iff phi e l |>.mp hvE
-          exact huv (by simpa [hke, hle])
+          exact huv (by simp [hke, hle])
 
 theorem transformerSourceSide_isPacking
     {V W : Type*} [Fintype V] [Fintype W] [DecidableEq V] [DecidableEq W]
@@ -1246,7 +1253,6 @@ lemma sourceEdgeTriple_pair_targetSide_or_sourceRoot
     mem_singleton] at hu hv
   rcases hu with rfl | rfl | rfl <;> rcases hv with rfl | rfl | rfl
   · exact (huv rfl).elim
-
   · rw [SimpleGraph.sup_adj]
     right
     exact transformerSourceRoot_adj_of_adj headj
@@ -1323,15 +1329,14 @@ lemma targetMatchingTriple_pair_targetSide_or_sourceRoot
   have hx₂ : x ∈ e₂.1 := Sym2.mem_mk_left x y₂.1
   have he₁ : TransformerVertex.edge e₁ ∈
       (transformerSourceMatchingTriple (W := W) G heven x p).1 := by
-    simp [transformerSourceMatchingTriple, tripleOfThree, e₁, e₂, y₁, y₂]
+    simp [transformerSourceMatchingTriple, tripleOfThree, e₁, y₁]
   have he₂ : TransformerVertex.edge e₂ ∈
       (transformerSourceMatchingTriple (W := W) G heven x p).1 := by
-    simp [transformerSourceMatchingTriple, tripleOfThree, e₁, e₂, y₁, y₂]
+    simp [transformerSourceMatchingTriple, tripleOfThree, e₂, y₂]
   simp only [transformerTargetMatchingTriple, tripleOfThree, mem_insert,
     mem_singleton] at hu hv
   rcases hu with rfl | rfl | rfl <;> rcases hv with rfl | rfl | rfl
   · exact (huv rfl).elim
-
   · rw [SimpleGraph.sup_adj]
     left
     refine ⟨transformerTargetEdgeTriple phi e₁, ?_, ?_,
@@ -1468,7 +1473,6 @@ lemma targetEdgeTriple_pair_sourceSide_or_targetRoot
     mem_singleton] at hu hv
   rcases hu with rfl | rfl | rfl <;> rcases hv with rfl | rfl | rfl
   · exact (huv rfl).elim
-
   · rw [SimpleGraph.sup_adj]
     right
     exact transformerTargetRoot_adj_of_adj (edge_out_adj e')
@@ -1479,7 +1483,7 @@ lemma targetEdgeTriple_pair_sourceSide_or_targetRoot
     · apply mem_union_right
       exact mem_transformerTargetMatchingTriples_iff phi heven |>.mpr
         ⟨x₁, p₁, rfl⟩
-    · simpa [e', hx₁] using ht₁
+    · simp [e', hx₁]
   · rw [SimpleGraph.sup_adj]
     right
     exact (transformerTargetRoot_adj_of_adj (edge_out_adj e')).symm
@@ -1491,7 +1495,7 @@ lemma targetEdgeTriple_pair_sourceSide_or_targetRoot
     · apply mem_union_right
       exact mem_transformerTargetMatchingTriples_iff phi heven |>.mpr
         ⟨x₂, p₂, rfl⟩
-    · simpa [e', hx₂] using ht₂
+    · simp [e', hx₂]
   · rw [SimpleGraph.sup_adj]
     left
     refine ⟨transformerTargetMatchingTriple phi heven x₁ p₁, ?_, he₁, ?_,
@@ -1499,7 +1503,7 @@ lemma targetEdgeTriple_pair_sourceSide_or_targetRoot
     · apply mem_union_right
       exact mem_transformerTargetMatchingTriples_iff phi heven |>.mpr
         ⟨x₁, p₁, rfl⟩
-    · simpa [e', hx₁] using ht₁
+    · simp [e', hx₁]
   · rw [SimpleGraph.sup_adj]
     left
     refine ⟨transformerTargetMatchingTriple phi heven x₂ p₂, ?_, he₂, ?_,
@@ -1507,7 +1511,7 @@ lemma targetEdgeTriple_pair_sourceSide_or_targetRoot
     · apply mem_union_right
       exact mem_transformerTargetMatchingTriples_iff phi heven |>.mpr
         ⟨x₂, p₂, rfl⟩
-    · simpa [e', hx₂] using ht₂
+    · simp [e', hx₂]
   · exact (huv rfl).elim
 
 lemma coveredGraph_transformerSourceSide_le
@@ -1699,7 +1703,7 @@ theorem edgeBijectiveHom_isGraphTransformer
     coveredGraph_transformerTargetSide_eq phi heven⟩
 
 theorem IsGraphTransformerOn.map
-    {X Z : Type*} [Fintype X] [Fintype Z] [DecidableEq X] [DecidableEq Z]
+    {X Z : Type*} [Finite X] [Finite Z] [DecidableEq X] [DecidableEq Z]
     {sourceRoot targetRoot auxiliary : SimpleGraph X}
     {sourceSide targetSide : TripleSystemOn X}
     (h : IsGraphTransformerOn sourceRoot targetRoot auxiliary
@@ -1707,6 +1711,8 @@ theorem IsGraphTransformerOn.map
     IsGraphTransformerOn (sourceRoot.map f) (targetRoot.map f)
       (auxiliary.map f) (mapTripleSystem f sourceSide)
       (mapTripleSystem f targetSide) := by
+  let := Fintype.ofFinite X
+  let := Fintype.ofFinite Z
   rcases h with ⟨hSource, hTarget, hAuxSource, hAuxTarget,
     hSourceCover, hTargetCover⟩
   refine ⟨hSource.map f, hTarget.map f,

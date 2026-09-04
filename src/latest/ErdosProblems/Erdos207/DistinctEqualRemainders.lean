@@ -85,12 +85,13 @@ theorem IsErdosConfig.vertices_erase_eq
   omega
 
 theorem genuine_distinctEqualRemainderPairs_span_eq
-    {V : Type*} [Fintype V] [DecidableEq V]
+    {V : Type*} [Finite V] [DecidableEq V]
     {F : ForbiddenFamilyOn V} {j : ℕ} {T T' : TripleOn V}
     {p : TripleSystemOn V × TripleSystemOn V}
     (hconfig : ∀ E ∈ F, IsErdosConfigOn j E) (hj : 5 ≤ j)
     (hp : p ∈ distinctEqualRemainderPairs F T T') :
     verticesOn p.1 = verticesOn p.2 := by
+  let := Fintype.ofFinite V
   have h := mem_distinctEqualRemainderPairs_iff.mp hp
   rw [← IsErdosConfig.vertices_erase_eq (hconfig p.1 h.1) hj h.2.2.2.1,
     h.2.2.2.2.2, IsErdosConfig.vertices_erase_eq (hconfig p.2 h.2.1) hj h.2.2.2.2.1]

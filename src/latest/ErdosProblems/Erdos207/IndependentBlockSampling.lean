@@ -50,10 +50,11 @@ def blockProbability
   ∏ i ∈ blocks j, p i
 
 lemma blockProbability_le_one
-    {I J : Type*} [DecidableEq I]
+    {I J : Type*}
     (p : I → ℝ≥0) (hp : ∀ i, p i ≤ 1)
     (blocks : J → Finset I) (j : J) :
     blockProbability p blocks j ≤ 1 := by
+  classical
   unfold blockProbability
   induction blocks j using Finset.induction_on with
   | empty => simp
@@ -189,13 +190,14 @@ theorem independentBits_probability_block_pattern
 /-- Exact probability that every block in a pairwise-disjoint family is
 active. -/
 theorem independentBits_probability_all_blocks_active
-    {I J : Type*} [Fintype I] [DecidableEq I] [DecidableEq J]
+    {I J : Type*} [Fintype I] [DecidableEq I]
     (p : I → ℝ≥0) (hp : ∀ i, p i ≤ 1)
     (blocks : J → Finset I) (S : Finset J)
     (hpair : (S : Set J).PairwiseDisjoint blocks) :
     (FiniteLaw.independentBits p hp).probability
         (fun ω ↦ ∀ j ∈ S, IsBlockActive blocks j ω) =
       ∏ j ∈ S, blockProbability p blocks j := by
+  classical
   have h := independentBits_probability_block_pattern p hp blocks S ∅
     (by simpa using hpair) (Finset.disjoint_empty_right S)
   simpa using h
@@ -203,13 +205,14 @@ theorem independentBits_probability_all_blocks_active
 /-- Exact probability that no block in a pairwise-disjoint family is
 active. -/
 theorem independentBits_probability_no_blocks_active
-    {I J : Type*} [Fintype I] [DecidableEq I] [DecidableEq J]
+    {I J : Type*} [Fintype I] [DecidableEq I]
     (p : I → ℝ≥0) (hp : ∀ i, p i ≤ 1)
     (blocks : J → Finset I) (S : Finset J)
     (hpair : (S : Set J).PairwiseDisjoint blocks) :
     (FiniteLaw.independentBits p hp).probability
         (fun ω ↦ ∀ j ∈ S, ¬ IsBlockActive blocks j ω) =
       ∏ j ∈ S, (1 - blockProbability p blocks j) := by
+  classical
   have h := independentBits_probability_block_pattern p hp blocks ∅ S
     (by simpa using hpair) (Finset.disjoint_empty_left S)
   simpa using h

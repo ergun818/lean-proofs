@@ -61,7 +61,7 @@ lemma matchedBits_eq_iff_agrees_exactMatchAssignment
         intro h
         exact hiNotMatch (mem_matchedBits_iff.mpr ⟨hiS, h⟩)
       cases hω : ω i <;> cases hσ : σ i <;>
-        simp_all [exactMatchAssignment, hiT]
+        simp_all [exactMatchAssignment]
   · intro hagree
     ext i
     by_cases hiT : i ∈ T
@@ -95,11 +95,11 @@ theorem fairBits_probability_matchedBits_eq
       FiniteLaw.bernoulliBitMass (1 / 2 : ℝ≥0) (τ i) = 1 / 2 := by
     intro i
     cases hτ : τ i
-    · simp only [FiniteLaw.bernoulliBitMass, hτ, Bool.false_eq_true,
+    · simp only [FiniteLaw.bernoulliBitMass, Bool.false_eq_true,
         if_false]
       apply NNReal.eq
       norm_num
-    · simp [FiniteLaw.bernoulliBitMass, hτ]
+    · simp [FiniteLaw.bernoulliBitMass]
   simp_rw [hmass]
   simp only [prod_const]
   have hhalf : (1 - (1 / 2 : ℝ≥0)) = 1 / 2 := by

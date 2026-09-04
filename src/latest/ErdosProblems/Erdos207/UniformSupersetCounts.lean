@@ -14,10 +14,10 @@ open Finset
 
 noncomputable section
 
-def uniformSupersets
-    {I : Type*} [Fintype I] [DecidableEq I] (k : ℕ) (F : Finset (Finset I)) : Finset (Finset I) := by
-  classical
-  exact (univ.powersetCard k).filter (fun E ↦ ∃ C ∈ F, C ⊆ E)
+def uniformSupersets {I : Type*} [Fintype I] [DecidableEq I] (k : ℕ) (F : Finset (Finset I)) :
+    Finset (Finset I) :=
+  by
+    classical exact (univ.powersetCard k).filter (fun E ↦ ∃ C ∈ F, C ⊆ E)
 
 theorem mem_uniformSupersets_iff
     {I : Type*} [Fintype I] [DecidableEq I] (k : ℕ) (F : Finset (Finset I)) (E : Finset I) :
@@ -31,19 +31,24 @@ theorem card_uniform_completions_le
   rw [card_filter_powersetCard_subset Q univ k (subset_univ Q) hQ, card_univ]
   exact (Nat.choose_le_pow _ _).trans (Nat.pow_le_pow_left (Nat.sub_le _ _) _)
 
-theorem finiteHypergraph_card_le_card_mul_max_degree
-    {I : Type*} [Fintype I] [DecidableEq I] (F : Finset (Finset I))
-    (hne : ∀ C ∈ F, C.Nonempty) : F.card ≤ Fintype.card I * finiteHypergraphMaxDegree F := by
-  classical
-  have hcover : F ⊆ univ.biUnion (fun v : I ↦ F.filter (fun C ↦ v ∈ C)) := by
-    intro C hC
-    obtain ⟨v, hv⟩ := hne C hC
-    exact mem_biUnion.mpr ⟨v, mem_univ v, mem_filter.mpr ⟨hC, hv⟩⟩
-  calc
-    _ ≤ (univ.biUnion (fun v : I ↦ F.filter (fun C ↦ v ∈ C))).card := card_le_card hcover
-    _ ≤ ∑ v : I, (F.filter (fun C ↦ v ∈ C)).card := card_biUnion_le
-    _ ≤ ∑ _v : I, finiteHypergraphMaxDegree F := sum_le_sum (fun v _ ↦ finiteHypergraphDegree_le_max F v)
-    _ = _ := by simp
+theorem finiteHypergraph_card_le_card_mul_max_degree {I : Type*} [Fintype I] [DecidableEq I]
+    (F : Finset (Finset I)) (hne : ∀ C ∈ F, C.Nonempty) :
+    F.card ≤ Fintype.card I * finiteHypergraphMaxDegree F :=
+  by
+    classical
+    have hcover : F ⊆ univ.biUnion (fun v : I ↦ F.filter (fun C ↦ v ∈ C)) :=
+      by
+        intro C hC
+        obtain ⟨v, hv⟩ := hne C hC
+        exact mem_biUnion.mpr ⟨v, mem_univ v, mem_filter.mpr ⟨hC, hv⟩⟩
+    calc
+      _ ≤ (univ.biUnion (fun v : I ↦ F.filter (fun C ↦ v ∈ C))).card := card_le_card hcover
+      _ ≤ ∑ v : I, (F.filter (fun C ↦ v ∈ C)).card := card_biUnion_le
+      _ ≤ ∑ _v : I, finiteHypergraphMaxDegree F :=
+        (sum_le_sum (fun v _ ↦ finiteHypergraphDegree_le_max F v))
+      _ = _ :=
+        by
+          simp
 
 theorem uniformSupersets_degree_le_sum
     {I : Type*} [Fintype I] [DecidableEq I] (k : ℕ) (F : Finset (Finset I)) (v : I) :
@@ -86,26 +91,34 @@ theorem uniformSupersets_degree_le
       rw [sum_add_distrib, ← sum_filter]
       simp [finiteHypergraphDegree]
 
-theorem uniformSupersets_max_degree_le
-    {I : Type*} [Fintype I] [DecidableEq I] (k s : ℕ) (F : Finset (Finset I))
-    (hs : 1 ≤ s) (hsk : s < k) (huniform : ∀ C ∈ F, C.card = s) :
+theorem uniformSupersets_max_degree_le {I : Type*} [Fintype I] [DecidableEq I] (k s : ℕ)
+    (F : Finset (Finset I)) (hs : 1 ≤ s) (hsk : s < k) (huniform : ∀ C ∈ F, C.card = s) :
     finiteHypergraphMaxDegree (uniformSupersets k F) ≤
-      2 * finiteHypergraphMaxDegree F * (Fintype.card I) ^ (k - s) := by
-  have hcard : F.card ≤ Fintype.card I * finiteHypergraphMaxDegree F :=
-    finiteHypergraph_card_le_card_mul_max_degree F (fun C hC ↦ card_pos.mp (by rw [huniform C hC]; omega))
-  apply (finiteHypergraphMaxDegree_le_iff _ _).mpr
-  intro v
-  apply (uniformSupersets_degree_le k s F v hsk huniform).trans
-  calc
-    _ ≤ finiteHypergraphMaxDegree F * (Fintype.card I) ^ (k - s) +
-        (Fintype.card I * finiteHypergraphMaxDegree F) * (Fintype.card I) ^ (k - s - 1) :=
-      Nat.add_le_add (Nat.mul_le_mul_right _ (finiteHypergraphDegree_le_max F v))
-        (Nat.mul_le_mul_right _ hcard)
-    _ = _ := by
-      have he : k - s = (k - s - 1) + 1 := by omega
-      conv_rhs => rw [he, pow_succ]
-      conv_lhs => lhs; rw [he, pow_succ]
-      ring
+      2 * finiteHypergraphMaxDegree F * (Fintype.card I) ^ (k - s) :=
+  by
+    have hcard : F.card ≤ Fintype.card I * finiteHypergraphMaxDegree F :=
+      finiteHypergraph_card_le_card_mul_max_degree F
+        (fun C hC ↦
+          card_pos.mp
+            (by
+              rw [huniform C hC]; omega))
+    apply (finiteHypergraphMaxDegree_le_iff _ _).mpr
+    intro v
+    apply (uniformSupersets_degree_le k s F v hsk huniform).trans
+    calc
+      _ ≤
+          finiteHypergraphMaxDegree F * (Fintype.card I) ^ (k - s) +
+            (Fintype.card I * finiteHypergraphMaxDegree F) * (Fintype.card I) ^ (k - s - 1) :=
+        Nat.add_le_add (Nat.mul_le_mul_right _ (finiteHypergraphDegree_le_max F v))
+          (Nat.mul_le_mul_right _ hcard)
+      _ = _ :=
+        by
+          have he : k - s = (k - s - 1) + 1 :=
+            by
+              omega
+          conv_rhs => rw [he, pow_succ]
+          conv_lhs => lhs; rw [he, pow_succ]
+          ring
 
 theorem uniformSupersets_self_eq
     {I : Type*} [Fintype I] [DecidableEq I] (s : ℕ) (F : Finset (Finset I))

@@ -137,7 +137,7 @@ theorem bind_probability_subset_le_pointWeight
         apply sum_congr rfl
         intro omega _homega
         by_cases hx : U.erase x ⊆ R omega <;>
-          simp [hx, mul_comm, mul_left_comm, mul_assoc]
+          simp [hx, mul_comm]
 
 lemma pointWeight_mul_erase
     {W : Type*} [DecidableEq W] (pi : W → ℝ≥0)
@@ -163,7 +163,7 @@ theorem iterateKernel_probability_subset_le_pointWeight
   induction t generalizing U with
   | zero =>
       simp only [FiniteLaw.iterateKernel, FiniteLaw.probability_pure,
-        Nat.cast_zero, zero_pow]
+        Nat.cast_zero]
       by_cases hU : U = ∅
       · subst U
         simp [setWeight]

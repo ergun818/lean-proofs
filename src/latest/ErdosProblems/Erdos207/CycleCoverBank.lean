@@ -210,11 +210,12 @@ lemma threeC4AttachmentEmbedding_private {Y : Type*}
 
 /-- Every edge of an out-graph remains inside one copy and has at least one
 private endpoint. -/
-lemma cycleCoverOut_edge_structure {Y : Type*} [Fintype Y] [DecidableEq Y]
+lemma cycleCoverOut_edge_structure {Y : Type*} [Finite Y] [DecidableEq Y]
     (i : CycleCoverCopy Y) {u v : CycleCoverVertex Y}
     (huv : (coveredGraph (cycleCoverOut i)).Adj u v) :
     BelongsToCycleCoverCopy i u ∧ BelongsToCycleCoverCopy i v ∧
       (IsPrivateForCycleCoverCopy i u ∨ IsPrivateForCycleCoverCopy i v) := by
+  let := Fintype.ofFinite Y
   cases i with
   | triangle f =>
       simp [cycleCoverOut, coveredGraph] at huv
@@ -254,14 +255,15 @@ lemma threeC4AttachmentEmbedding_root {Y : Type*}
   simp [threeC4AttachmentEmbedding]
 
 /-- Both endpoints of every bank root edge are original vertices in `Y`. -/
-lemma cycleCoverRoot_edge_base {Y : Type*} [Fintype Y] [DecidableEq Y]
+lemma cycleCoverRoot_edge_base {Y : Type*} [Finite Y] [DecidableEq Y]
     (i : CycleCoverCopy Y) {u v : CycleCoverVertex Y}
     (huv : (cycleCoverRoot i).Adj u v) :
     (∃ y : Y, u = Sum.inl y) ∧ ∃ z : Y, v = Sum.inl z := by
+  let := Fintype.ofFinite Y
   cases i with
   | triangle f =>
       obtain ⟨T, hT, huT, hvT, huvne⟩ := huv
-      simp only [cycleCoverRoot, mem_singleton] at hT
+      simp only [mem_singleton] at hT
       subst T
       obtain ⟨a, ha, hau⟩ := Finset.mem_map.mp huT
       obtain ⟨b, hb, hbv⟩ := Finset.mem_map.mp hvT
@@ -283,10 +285,11 @@ lemma cycleCoverRoot_edge_base {Y : Type*} [Fintype Y] [DecidableEq Y]
 
 /-- Distinct out-gadgets are edge-disjoint because each out-edge has a
 private endpoint tagged by its copy. -/
-lemma cycleCoverOut_pairwise_disjoint {Y : Type*} [Fintype Y] [DecidableEq Y]
+lemma cycleCoverOut_pairwise_disjoint {Y : Type*} [Finite Y] [DecidableEq Y]
     {i j : CycleCoverCopy Y} (hij : i ≠ j) :
     Disjoint (coveredGraph (cycleCoverOut i))
       (coveredGraph (cycleCoverOut j)) := by
+  let := Fintype.ofFinite Y
   rw [← SimpleGraph.disjoint_edgeSet, Set.disjoint_left]
   intro e hei hej
   induction e using Sym2.ind with
@@ -298,9 +301,10 @@ lemma cycleCoverOut_pairwise_disjoint {Y : Type*} [Fintype Y] [DecidableEq Y]
       · exact hij (privateFor_and_belongs_iff_eq hpriv hj.2.1)
 
 /-- Every out-gadget is edge-disjoint from every potential root graph. -/
-lemma cycleCoverOut_root_disjoint {Y : Type*} [Fintype Y] [DecidableEq Y]
+lemma cycleCoverOut_root_disjoint {Y : Type*} [Finite Y] [DecidableEq Y]
     (i j : CycleCoverCopy Y) :
     Disjoint (coveredGraph (cycleCoverOut i)) (cycleCoverRoot j) := by
+  let := Fintype.ofFinite Y
   rw [← SimpleGraph.disjoint_edgeSet, Set.disjoint_left]
   intro e hei hej
   induction e using Sym2.ind with
@@ -310,8 +314,8 @@ lemma cycleCoverOut_root_disjoint {Y : Type*} [Fintype Y] [DecidableEq Y]
       change u = Sum.inl y at huy
       change v = Sum.inl z at hvz
       rcases hi.2.2 with hpriv | hpriv
-      · simpa [huy, IsPrivateForCycleCoverCopy] using hpriv
-      · simpa [hvz, IsPrivateForCycleCoverCopy] using hpriv
+      · simp [huy, IsPrivateForCycleCoverCopy] at hpriv
+      · simp [hvz, IsPrivateForCycleCoverCopy] at hpriv
 
 /-- The vertex-disjoint-template bank absorbs every edge-disjoint selected
 family of its root graphs. -/

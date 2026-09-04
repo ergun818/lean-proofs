@@ -27,13 +27,16 @@ theorem monotoneBitMass_first_sum (p q : ℝ≥0) (hpq : p ≤ q) (a : Bool) :
   · simpa [monotoneBitMass, bernoulliBitMass] using add_tsub_cancel_of_le hpq
 
 theorem monotoneBitMass_second_sum (p q : ℝ≥0) (hpq : p ≤ q) (hq : q ≤ 1) (b : Bool) :
-    ∑ a : Bool, monotoneBitMass p q (a, b) = bernoulliBitMass p b := by
-  cases b
-  · simp only [Fintype.sum_bool, monotoneBitMass, bernoulliBitMass, Bool.false_eq_true, ite_false]
-    apply NNReal.coe_injective
-    simp only [NNReal.coe_add, NNReal.coe_sub hpq, NNReal.coe_sub hq, NNReal.coe_sub (hpq.trans hq), NNReal.coe_one]
-    ring
-  · simp [monotoneBitMass, bernoulliBitMass]
+    ∑ a : Bool, monotoneBitMass p q (a, b) = bernoulliBitMass p b :=
+  by
+    cases b
+    · simp only [Fintype.sum_bool, monotoneBitMass, bernoulliBitMass, Bool.false_eq_true,
+        ite_false]
+      apply NNReal.coe_injective
+      simp only [NNReal.coe_add, NNReal.coe_sub hpq, NNReal.coe_sub hq,
+        NNReal.coe_sub (hpq.trans hq), NNReal.coe_one]
+      ring
+    · simp [monotoneBitMass, bernoulliBitMass]
 
 def bernoulliBitLaw (p : ℝ≥0) (hp : p ≤ 1) : FiniteLaw Bool where
   mass := bernoulliBitMass p
@@ -53,7 +56,7 @@ theorem monotoneBitCoupling_first (p q : ℝ≥0) (hpq : p ≤ q) (hq : q ≤ 1)
   change (∑ x : Bool × Bool, if x.1 = a then monotoneBitMass p q x else 0) = bernoulliBitMass q a
   rw [Fintype.sum_prod_type]
   calc
-    _ = ∑ b : Bool, monotoneBitMass p q (a, b) := by cases a <;> simp [Fintype.sum_bool]
+    _ = ∑ b : Bool, monotoneBitMass p q (a, b) := by cases a <;> simp
     _ = _ := monotoneBitMass_first_sum p q hpq a
 
 theorem monotoneBitCoupling_second (p q : ℝ≥0) (hpq : p ≤ q) (hq : q ≤ 1) :
@@ -63,7 +66,7 @@ theorem monotoneBitCoupling_second (p q : ℝ≥0) (hpq : p ≤ q) (hq : q ≤ 1
   change (∑ x : Bool × Bool, if x.2 = b then monotoneBitMass p q x else 0) = bernoulliBitMass p b
   rw [Fintype.sum_prod_type, sum_comm]
   calc
-    _ = ∑ a : Bool, monotoneBitMass p q (a, b) := by cases b <;> simp [Fintype.sum_bool]
+    _ = ∑ a : Bool, monotoneBitMass p q (a, b) := by cases b <;> simp
     _ = _ := monotoneBitMass_second_sum p q hpq hq b
 
 theorem monotoneBitCoupling_supported (p q : ℝ≥0) (hpq : p ≤ q) (hq : q ≤ 1) :

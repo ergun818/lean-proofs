@@ -15,7 +15,7 @@ open Finset
 noncomputable section
 
 theorem regularizationForbiddenFamily_max_degree_le
-    {V I K : Type*} [DecidableEq V] [Fintype I] [DecidableEq I] [DecidableEq K]
+    {V I K : Type*} [DecidableEq V] [Fintype I] [DecidableEq I]
     (e : I ↪ TripleOn V) (U : Finset V) (hsupport : ∀ i, (e i).1 ⊆ U)
     (k : ℕ) (hk : 2 ≤ k) (G : Finset (Finset I))
     (orders : Finset K) (earlier : K → Finset (Finset I)) (size : K → ℕ)
@@ -25,6 +25,7 @@ theorem regularizationForbiddenFamily_max_degree_le
       6 * U.card ^ 2 * (Fintype.card I) ^ (k - 2) +
       (∑ i ∈ orders, 2 * finiteHypergraphMaxDegree (earlier i) * (Fintype.card I) ^ (k - size i)) +
       finiteHypergraphMaxDegree G := by
+  classical
   unfold regularizationForbiddenFamily
   apply (finiteHypergraphMaxDegree_union_le _ G).trans
   apply Nat.add_le_add_right

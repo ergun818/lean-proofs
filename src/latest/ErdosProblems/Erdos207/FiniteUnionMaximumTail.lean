@@ -16,7 +16,7 @@ open scoped NNReal
 noncomputable section
 
 theorem finiteHypergraphMaxDegree_biUnion_probability_le
-    {Ω V I : Type*} [Fintype Ω] [Fintype V] [DecidableEq V] [DecidableEq I]
+    {Ω V I : Type*} [Fintype Ω] [Fintype V] [DecidableEq V]
     (L : FiniteLaw Ω) (indices : Finset I) (F : I → Ω → Finset (Finset V))
     (K epsilon : I → ℝ≥0)
     (htail : ∀ i ∈ indices, L.probability

@@ -12,7 +12,7 @@ import ErdosProblems.Erdos207.SourceLeftCapsProbability
 namespace Erdos207
 
 open Finset
-open scoped Classical NNReal
+open scoped NNReal
 
 noncomputable section
 
@@ -58,62 +58,88 @@ theorem RawResidualInternalStructure.notFailed_of_leftCaps
       exact (SimpleGraph.edgeSet_subset_edgeSet.mpr hbase) heG
     exact_mod_cast hleft e heΓ
 
-theorem FiniteLaw.rawResidualInternal_failure_probability_le
-    {Ω V : Type*} [Fintype Ω] [DecidableEq Ω] [Fintype V] [DecidableEq V] {ell : ℕ}
-    (L : FiniteLaw Ω) (W : Vortex V ell) (i : Fin ell) (F : ForbiddenFamilyOn V)
-    (G : Ω → SimpleGraph V) (Γ : SimpleGraph V) (A P0 : Ω → TripleSystemOn V)
-    (bits : Ω → Sym2 V → Bool) (threshold d leftCap : ℕ) (hthreshold : 0 < threshold)
-    (initial : Ω → TripleSystemOn V) (later : Ω × InternalEdgeGreedyStateOn V → TripleSystemOn V)
-    (Good : Ω → Prop) (priorError leftError : ℝ≥0)
-    (hclass : (L.jointBind (rawResidualInternalKernel W i F G A P0 bits threshold)).SupportedOn
-      fun z ↦ z.2.chosen = initial z.1 ∪ later z)
+theorem FiniteLaw.rawResidualInternal_failure_probability_le {Ω V : Type*} [Fintype Ω]
+    [DecidableEq Ω] [Fintype V] [DecidableEq V] {ell : ℕ} (L : FiniteLaw Ω) (W : Vortex V ell)
+    (i : Fin ell) (F : ForbiddenFamilyOn V) (G : Ω → SimpleGraph V) (Γ : SimpleGraph V)
+    (A P0 : Ω → TripleSystemOn V) (bits : Ω → Sym2 V → Bool) (threshold d leftCap : ℕ)
+    (hthreshold : 0 < threshold) (initial : Ω → TripleSystemOn V)
+    (later : Ω × InternalEdgeGreedyStateOn V → TripleSystemOn V) (Good : Ω → Prop)
+    (priorError leftError : ℝ≥0)
+    (hclass :
+      (L.jointBind (rawResidualInternalKernel W i F G A P0 bits threshold)).SupportedOn
+        fun z ↦ z.2.chosen = initial z.1 ∪ later z)
     (hpacking0 : ∀ ω, Good ω → IsPackingOn (P0 ω))
-    (havoid0 : ∀ ω, Good ω → AvoidsForbidden (P0 ω) F)
-    (hbase : ∀ ω, Good ω → G ω ≤ Γ)
+    (havoid0 : ∀ ω, Good ω → AvoidsForbidden (P0 ω) F) (hbase : ∀ ω, Good ω → G ω ≤ Γ)
     (hlevel : ∀ ω, Good ω → ∀ T ∈ A ω, (W.prefix i.castSucc).level T = Fin.last i.val)
-    (hinitial : ∀ ω, Good ω → ∀ T ∈ A ω, ¬ CompletesForbidden F (initial ω) T)
+    (hinitial : ∀ ω, Good ω → ∀ T ∈ A ω, ¬CompletesForbidden F (initial ω) T)
     (hinitialPair : ∀ ω, Good ω → ∀ T ∈ A ω, TriangleAvoidsGraph (coveredGraph (P0 ω)) T)
-    (hincidence : ∀ ω, Good ω → ∀ v : V,
-      (scheduledEdgesAt (preliminaryResidualInternalEdges (G ω) (W.U i.succ) (P0 ω)) v).card ≤ d)
-    (hsupply : ∀ ω, Good ω → ∀ e ∈ preliminaryResidualInternalEdges (G ω) (W.U i.succ) (P0 ω),
-      4*d+leftCap+threshold ≤ (activeReserveWedgeVertices (G ω) (W.U i.succ)
-        (residualInternalExtensionSet W i (A ω) e) e.out.1 e.out.2 (bits ω)).card)
-    (hprior : L.probability (fun ω ↦ ¬ Good ω) ≤ priorError)
-    (hleft : (L.jointBind (rawResidualInternalKernel W i F G A P0 bits threshold)).probability
-      (fun z ↦ ¬ SourceLeftCaps (W.prefix i.castSucc) F (W.U i.succ) Γ (initial z.1) (later z)
-        (reserveEdges (G z.1) (W.U i.succ) (bits z.1)) leftCap) ≤ leftError) :
+    (hincidence :
+      ∀ ω,
+        Good ω →
+          ∀ v : V,
+            (scheduledEdgesAt (preliminaryResidualInternalEdges (G ω) (W.U i.succ) (P0 ω))
+                  v).card ≤
+              d)
+    (hsupply :
+      ∀ ω,
+        Good ω →
+          ∀ e ∈ preliminaryResidualInternalEdges (G ω) (W.U i.succ) (P0 ω),
+            4 * d + leftCap + threshold ≤
+              (activeReserveWedgeVertices (G ω) (W.U i.succ)
+                  (residualInternalExtensionSet W i (A ω) e) e.out.1 e.out.2 (bits ω)).card)
+    (hprior : L.probability (fun ω ↦ ¬Good ω) ≤ priorError)
+    (hleft :
+      (L.jointBind (rawResidualInternalKernel W i F G A P0 bits threshold)).probability
+          (fun z ↦
+            ¬SourceLeftCaps (W.prefix i.castSucc) F (W.U i.succ) Γ (initial z.1) (later z)
+                (reserveEdges (G z.1) (W.U i.succ) (bits z.1)) leftCap) ≤
+        leftError) :
     (L.jointBind (rawResidualInternalKernel W i F G A P0 bits threshold)).probability
-      (fun z ↦ z.2.failed = true) ≤ priorError+leftError := by
-  let K := rawResidualInternalKernel W i F G A P0 bits threshold
-  let joint := L.jointBind K
-  let LeftGood := fun z : Ω × InternalEdgeGreedyStateOn V ↦
-    SourceLeftCaps (W.prefix i.castSucc) F (W.U i.succ) Γ (initial z.1) (later z)
-      (reserveEdges (G z.1) (W.U i.succ) (bits z.1)) leftCap
-  have hstruct : joint.SupportedOn fun z ↦
-      RawResidualInternalStructure W i F G A P0 bits threshold z.1 z.2 ∧
-      z.2.chosen = initial z.1 ∪ later z := by
-    intro z hz
-    have hmass : 0 < (K z.1).mass z.2 := ((L.jointBind_mass_pos_iff K z.1 z.2).mp hz).2
-    exact ⟨rawResidualInternalKernel_supported_structure W i F G A P0 bits threshold hthreshold z.1 z.2 hmass,
-      hclass z hz⟩
-  calc
-    _ ≤ joint.probability (fun z ↦ ¬ Good z.1 ∨ ¬ LeftGood z) := by
-      apply joint.probability_mono_of_supported hstruct
-      intro z hz hfailed
-      by_contra hnot
-      have hg : Good z.1 := by tauto
-      have hl : LeftGood z := by tauto
-      have hfalse := hz.1.notFailed_of_leftCaps (initial z.1) (later z) hz.2
-        (hpacking0 z.1 hg) (havoid0 z.1 hg) (hbase z.1 hg) (hlevel z.1 hg)
-        (hinitial z.1 hg) (hinitialPair z.1 hg) (hincidence z.1 hg) (hsupply z.1 hg) hl
-      simp [hfailed] at hfalse
-    _ ≤ joint.probability (fun z ↦ ¬ Good z.1) + joint.probability (fun z ↦ ¬ LeftGood z) :=
-      joint.probability_or_le _ _
-    _ ≤ _ := by
-      have hprior' : joint.probability (fun z ↦ ¬ Good z.1) ≤ priorError := by
-        rw [L.probability_jointBind_fst K (fun ω ↦ ¬ Good ω)]
-        exact hprior
-      exact add_le_add hprior' hleft
+        (fun z ↦ z.2.failed = true) ≤
+      priorError + leftError :=
+  by
+    let K := rawResidualInternalKernel W i F G A P0 bits threshold
+    let joint := L.jointBind K
+    let LeftGood := fun z : Ω × InternalEdgeGreedyStateOn V ↦
+      SourceLeftCaps (W.prefix i.castSucc) F (W.U i.succ) Γ (initial z.1) (later z)
+        (reserveEdges (G z.1) (W.U i.succ) (bits z.1)) leftCap
+    have hstruct :
+      joint.SupportedOn fun z ↦
+        RawResidualInternalStructure W i F G A P0 bits threshold z.1 z.2 ∧
+          z.2.chosen = initial z.1 ∪ later z :=
+      by
+        intro z hz
+        have hmass : 0 < (K z.1).mass z.2 := ((L.jointBind_mass_pos_iff K z.1 z.2).mp hz).2
+        exact
+          ⟨rawResidualInternalKernel_supported_structure W i F G A P0 bits threshold
+              hthreshold z.1 z.2 hmass,
+            hclass z hz⟩
+    calc
+      _ ≤ joint.probability (fun z ↦ ¬Good z.1 ∨ ¬LeftGood z) :=
+        by
+          apply joint.probability_mono_of_supported hstruct
+          intro z hz hfailed
+          by_contra hnot
+          have hg : Good z.1 :=
+            by
+              tauto
+          have hl : LeftGood z :=
+            by
+              tauto
+          have hfalse :=
+            hz.1.notFailed_of_leftCaps (initial z.1) (later z) hz.2 (hpacking0 z.1 hg)
+              (havoid0 z.1 hg) (hbase z.1 hg) (hlevel z.1 hg) (hinitial z.1 hg)
+              (hinitialPair z.1 hg) (hincidence z.1 hg) (hsupply z.1 hg) hl
+          simp [hfailed] at hfalse
+      _ ≤ joint.probability (fun z ↦ ¬Good z.1) + joint.probability (fun z ↦ ¬LeftGood z) :=
+        (joint.probability_or_le _ _)
+      _ ≤ _ :=
+        by
+          have hprior' : joint.probability (fun z ↦ ¬Good z.1) ≤ priorError :=
+            by
+              rw [L.probability_jointBind_fst K (fun ω ↦ ¬Good ω)]
+              exact hprior
+          exact add_le_add hprior' hleft
 
 end
 

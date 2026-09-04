@@ -99,7 +99,7 @@ lemma selectedCount_rootedThreatRemainder
       (activeRootedThreatWitnesses F P u v).card := by
   classical
   unfold selectedCount activeRootedThreatWitnesses
-  simp only [card_eq_sum_ones, Nat.cast_sum, Nat.cast_one, sum_filter]
+  simp only [card_eq_sum_ones, Nat.cast_sum, sum_filter]
   apply Finset.sum_congr rfl
   intro z _hz
   by_cases h : rootedThreatRemainder z ⊆ P <;> simp [h]
@@ -119,11 +119,12 @@ lemma rootedActive_count_le_selectedCount
 /-- If forbidden configurations have at most `k` triangles, every rooted
 threat remainder has at most `k-1` triangles. -/
 lemma card_rootedThreatRemainder_le
-    {V : Type*} [Fintype V] [DecidableEq V]
+    {V : Type*} [Finite V] [DecidableEq V]
     {F : ForbiddenFamilyOn V} {u v : V} {k : ℕ}
     (hcard : ∀ S ∈ F, S.card ≤ k)
     (z : RootedThreatWitness V F u v) :
     (rootedThreatRemainder z).card ≤ k - 1 := by
+  let := Fintype.ofFinite V
   rw [rootedThreatRemainder, card_erase_of_mem z.2.2.1]
   have := hcard z.1.1 z.2.1
   omega

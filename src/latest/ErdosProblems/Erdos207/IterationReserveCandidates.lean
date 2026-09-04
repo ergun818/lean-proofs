@@ -51,9 +51,10 @@ lemma graphSupportFinset_edge
     · exact ⟨u, ⟨Or.inr ⟨rfl, rfl⟩, huv.symm⟩⟩
 
 lemma edge_graphSupportedOn
-    {V : Type*} [DecidableEq V] {U : Finset V} {u v : V}
+    {V : Type*} {U : Finset V} {u v : V}
     (hu : u ∈ U) (hv : v ∈ U) :
     GraphSupportedOn (SimpleGraph.edge u v) (U : Set V) := by
+  classical
   intro x y hxy
   rw [SimpleGraph.edge_adj] at hxy
   rcases hxy.1 with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩

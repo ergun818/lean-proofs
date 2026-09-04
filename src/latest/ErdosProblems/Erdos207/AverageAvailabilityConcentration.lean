@@ -317,8 +317,7 @@ theorem probability_timedAverageAvailability_deficit_ge_le_exp
       (averageAvailabilityDeficit (averageAvailabilityLossRate Δ I D))
       S₀ theta (3 * Δ + K : ℕ) a v hInv₀ htheta (by positivity)
       hthetaJump hv
-  · intro _i _hi S hS
-    intro S' hmass
+  · intro _i _hi S hS S' hmass
     rcases greedyKernel_supported_step_or_self F S S' hmass with
       rfl | ⟨T, hT, rfl⟩
     · exact hS

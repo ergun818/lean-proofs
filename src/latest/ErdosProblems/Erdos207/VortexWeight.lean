@@ -42,7 +42,7 @@ theorem setWeight_vortexTripleWeight
       congr 1
       apply congrArg Finset.card
       ext T
-      simp [Vortex.levelCount, Vortex.trianglesAtLevel]
+      simp [Vortex.trianglesAtLevel]
 
 /-- The factorization split into the outer profile and terminal level. -/
 theorem setWeight_vortexTripleWeight_outer_terminal

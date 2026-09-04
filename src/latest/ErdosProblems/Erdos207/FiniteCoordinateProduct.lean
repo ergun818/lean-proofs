@@ -15,13 +15,15 @@ open scoped NNReal
 
 noncomputable section
 
-def productCoordinates
-    {I Ω : Type*} [Fintype I] [DecidableEq I] [Fintype Ω] (K : I → FiniteLaw Ω) : FiniteLaw (I → Ω) where
+def productCoordinates {I Ω : Type*} [Fintype I] [DecidableEq I] [Fintype Ω]
+    (K : I → FiniteLaw Ω) : FiniteLaw (I → Ω)
+    where
   mass x := ∏ i, (K i).mass (x i)
-  sum_mass := by
-    classical
-    rw [← Fintype.prod_sum]
-    simp only [sum_mass, prod_const_one]
+  sum_mass :=
+    by
+      classical
+      rw [← Fintype.prod_sum]
+      simp only [sum_mass, prod_const_one]
 
 theorem map_productCoordinates
     {I Ω Ξ : Type*} [Fintype I] [DecidableEq I] [Fintype Ω] [Fintype Ξ] [DecidableEq Ξ]

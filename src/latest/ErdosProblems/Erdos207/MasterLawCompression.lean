@@ -88,7 +88,7 @@ def packMasterState
 space without changing any clause of iteration-goodness. -/
 theorem IsMasterIterationGood.map_packMasterState
     {Omega V : Type*} [Fintype Omega] [Fintype V]
-    [DecidableEq Omega] [DecidableEq V] {ell : ℕ}
+    [DecidableEq V] {ell : ℕ}
     {law : FiniteLaw Omega} {W : Vortex V ell} {k : Fin (ell + 1)}
     {F : ForbiddenFamilyOn V}
     {G : Omega → SimpleGraph V}
@@ -101,6 +101,7 @@ theorem IsMasterIterationGood.map_packMasterState
       MasterStateOn.graph MasterStateOn.available
       MasterStateOn.initial MasterStateOn.later
       p eta xi C b h := by
+  classical
   let f := packMasterState G A I D
   have heven : HasEvenStageGraphs (law.map f) MasterStateOn.graph := by
     exact hgood.1.map f (fun omega homega ↦ by
@@ -132,7 +133,7 @@ theorem IsMasterIterationGood.map_packMasterState
 compression. -/
 theorem FiniteLaw.SupportedOn.map_packMasterState_selected
     {Omega V : Type*} [Fintype Omega] [Fintype V]
-    [DecidableEq Omega] [DecidableEq V]
+    [DecidableEq V]
     {law : FiniteLaw Omega}
     {G : Omega → SimpleGraph V}
     {A I D : Omega → TripleSystemOn V}
@@ -140,6 +141,7 @@ theorem FiniteLaw.SupportedOn.map_packMasterState_selected
     (hselected : law.SupportedOn fun omega ↦ I omega ∪ D omega ⊆ ambient) :
     (law.map (packMasterState G A I D)).SupportedOn fun state ↦
       MasterStateOn.initial state ∪ MasterStateOn.later state ⊆ ambient := by
+  classical
   exact hselected.map (packMasterState G A I D)
     (fun omega homega ↦ by simpa using homega)
 
@@ -147,7 +149,7 @@ theorem FiniteLaw.SupportedOn.map_packMasterState_selected
 compression. -/
 theorem FiniteLaw.SupportedOn.map_packMasterState_coverage
     {Omega V : Type*} [Fintype Omega] [Fintype V]
-    [DecidableEq Omega] [DecidableEq V]
+    [DecidableEq V]
     {law : FiniteLaw Omega}
     {G : Omega → SimpleGraph V}
     {A I D : Omega → TripleSystemOn V}
@@ -157,6 +159,7 @@ theorem FiniteLaw.SupportedOn.map_packMasterState_coverage
     (law.map (packMasterState G A I D)).SupportedOn fun state ↦
       CoversOriginalGraph Gzero (MasterStateOn.graph state)
         (MasterStateOn.initial state) (MasterStateOn.later state) := by
+  classical
   exact hcover.map (packMasterState G A I D)
     (fun omega homega ↦ by simpa using homega)
 
@@ -164,7 +167,7 @@ theorem FiniteLaw.SupportedOn.map_packMasterState_coverage
 master-state compression. -/
 theorem FiniteLaw.SupportedOn.map_packMasterState_available_eq
     {Omega V : Type*} [Fintype Omega] [Fintype V]
-    [DecidableEq Omega] [DecidableEq V]
+    [DecidableEq V]
     {law : FiniteLaw Omega}
     {G : Omega → SimpleGraph V}
     {A I D : Omega → TripleSystemOn V}
@@ -172,8 +175,9 @@ theorem FiniteLaw.SupportedOn.map_packMasterState_available_eq
     (havailable : law.SupportedOn fun omega ↦ A omega = ambient) :
     (law.map (packMasterState G A I D)).SupportedOn fun state ↦
       MasterStateOn.available state = ambient := by
-  exact havailable.map (packMasterState G A I D)
-    (fun omega homega ↦ by simpa using homega)
+  classical
+  · exact havailable.map (packMasterState G A I D)
+      (fun omega homega ↦ by simpa using homega)
 
 /-- The fixed-state invariant carried by the finite vortex induction. -/
 def IsCompressedMasterLaw
@@ -201,7 +205,7 @@ def IsCompressedMasterLaw
 /-- Compress any law satisfying the four induction clauses. -/
 theorem IsMasterIterationGood.compress
     {Omega V : Type*} [Fintype Omega] [Fintype V]
-    [DecidableEq Omega] [DecidableEq V] {ell : ℕ}
+    [DecidableEq V] {ell : ℕ}
     {law : FiniteLaw Omega} {W : Vortex V ell} {k : Fin (ell + 1)}
     {F : ForbiddenFamilyOn V} {Gzero : SimpleGraph V}
     {ambient : TripleSystemOn V}
@@ -219,15 +223,16 @@ theorem IsMasterIterationGood.compress
       GraphSupportedOn (G omega) (W.U k : Set V)) :
     IsCompressedMasterLaw (law.map (packMasterState G A I D))
       W k F Gzero ambient p eta xi C b h := by
+  classical
   refine ⟨hgood.map_packMasterState, ?_,
     hselected.map_packMasterState_selected,
     hcover.map_packMasterState_coverage, ?_, ?_⟩
-  exact havailable.map (packMasterState G A I D)
-    (fun omega homega ↦ by simpa using homega)
-  exact hsub.map (packMasterState G A I D)
-    (fun omega homega ↦ by simpa using homega)
-  exact hsupport.map (packMasterState G A I D)
-    (fun omega homega ↦ by simpa using homega)
+  · exact havailable.map (packMasterState G A I D)
+      (fun omega homega ↦ by simpa using homega)
+  · exact hsub.map (packMasterState G A I D)
+      (fun omega homega ↦ by simpa using homega)
+  · exact hsupport.map (packMasterState G A I D)
+      (fun omega homega ↦ by simpa using homega)
 
 /-- The deterministic initial state in the fixed sample space. -/
 def initialMasterState

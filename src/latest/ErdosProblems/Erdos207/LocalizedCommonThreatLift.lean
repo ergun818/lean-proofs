@@ -84,36 +84,46 @@ theorem liftLocalized_remainder_subset
 
 end CommonThreatWitness
 
-theorem localizedCommonThreatPairs_card_le_source
-    {V : Type*} [Fintype V] [DecidableEq V] {ell : ℕ}
-    (W : Vortex V ell) (F G J J' : ForbiddenFamilyOn V) (S : GreedyStateOn V)
-    (T T' : TripleOn V) (available old : TripleSystemOn V)
-    (hdis : Disjoint available old) (hterm : ∀ U ∈ available, W.level U = Fin.last ell)
+theorem localizedCommonThreatPairs_card_le_source {V : Type*} [Fintype V] [DecidableEq V]
+    {ell : ℕ} (W : Vortex V ell) (F G J J' : ForbiddenFamilyOn V) (S : GreedyStateOn V)
+    (T T' : TripleOn V) (available old : TripleSystemOn V) (hdis : Disjoint available old)
+    (hterm : ∀ U ∈ available, W.level U = Fin.last ell)
     (hJ : ∀ C ∈ J, C ⊆ available ∧ ∃ E ∈ F, C ⊆ E ∧ E \ C ⊆ old)
     (hJ' : ∀ C ∈ J', C ⊆ available ∧ ∃ E ∈ G, C ⊆ E ∧ E \ C ⊆ old) :
     ((greedyCommonThreatPairs J J' S T T').card : ℝ≥0) ≤
-      selectedCount (fun u : sourceCommonThreats W F G T T' ↦ u.1.remainder) (old ∪ S.chosen) := by
-  classical
-  let rem := fun u : sourceCommonThreats W F G T T' ↦ u.1.remainder
-  let decode := fun u : sourceCommonThreats W F G T T' ↦ (u.1.first \ old, u.1.second \ old)
-  have hsub : greedyCommonThreatPairs J J' S T T' ⊆ selectedWitnessImage rem decode (old ∪ S.chosen) := by
-    intro p hp
-    let u := greedyCommonThreatPairWitness J J' S T T' ⟨p, hp⟩
-    obtain ⟨hCA, E, hE, hCE, hOld⟩ := hJ u.first u.first_mem
-    obtain ⟨hCA', E', hE', hCE', hOld'⟩ := hJ' u.second u.second_mem
-    let v := u.liftLocalized available old E E' hdis hCA hCA' hE hE' hCE hCE' hOld hOld'
-    have hv : v ∈ sourceCommonThreats W F G T T' :=
-      mem_filter.mpr ⟨mem_univ v, hterm _ (hCA u.bridge_first)⟩
-    apply mem_selectedWitnessImage.mpr
-    refine ⟨⟨v, hv⟩, ?_, ?_⟩
-    · exact (u.liftLocalized_remainder_subset available old E E' hdis hCA hCA' hE hE'
-        hCE hCE' hOld hOld').trans (union_subset_union_right
-          (greedyCommonThreatPairWitness_remainder_subset J J' S T T' ⟨p, hp⟩))
-    · exact Prod.ext (localization_eq_sdiff_old hdis hCA hCE hOld)
-        (localization_eq_sdiff_old hdis hCA' hCE' hOld')
-  have hc : ((greedyCommonThreatPairs J J' S T T').card : ℝ≥0) ≤
-      (selectedWitnessImage rem decode (old ∪ S.chosen)).card := by exact_mod_cast card_le_card hsub
-  exact hc.trans (card_selectedWitnessImage_le_selectedCount rem decode (old ∪ S.chosen))
+      selectedCount (fun u : sourceCommonThreats W F G T T' ↦ u.1.remainder)
+        (old ∪ S.chosen) :=
+  by
+    classical
+    let rem := fun u : sourceCommonThreats W F G T T' ↦ u.1.remainder
+    let decode := fun u : sourceCommonThreats W F G T T' ↦ (u.1.first \ old, u.1.second \ old)
+    have hsub :
+      greedyCommonThreatPairs J J' S T T' ⊆
+        selectedWitnessImage rem decode (old ∪ S.chosen) :=
+      by
+        intro p hp
+        let u := greedyCommonThreatPairWitness J J' S T T' ⟨p, hp⟩
+        obtain ⟨hCA, E, hE, hCE, hOld⟩ := hJ u.first u.first_mem
+        obtain ⟨hCA', E', hE', hCE', hOld'⟩ := hJ' u.second u.second_mem
+        let v := u.liftLocalized available old E E' hdis hCA hCA' hE hE' hCE hCE' hOld hOld'
+        have hv : v ∈ sourceCommonThreats W F G T T' :=
+          mem_filter.mpr ⟨mem_univ v, hterm _ (hCA u.bridge_first)⟩
+        apply mem_selectedWitnessImage.mpr
+        refine ⟨⟨v, hv⟩, ?_, ?_⟩
+        · exact
+            (u.liftLocalized_remainder_subset available old E E' hdis hCA hCA' hE hE' hCE hCE'
+                  hOld hOld').trans
+              (union_subset_union_right
+                (greedyCommonThreatPairWitness_remainder_subset J J' S T T' ⟨p, hp⟩))
+        · exact
+            Prod.ext (localization_eq_sdiff_old hdis hCA hCE hOld)
+              (localization_eq_sdiff_old hdis hCA' hCE' hOld')
+    have hc :
+      ((greedyCommonThreatPairs J J' S T T').card : ℝ≥0) ≤
+        (selectedWitnessImage rem decode (old ∪ S.chosen)).card :=
+      by
+        exact_mod_cast card_le_card hsub
+    exact hc.trans (card_selectedWitnessImage_le_selectedCount rem decode (old ∪ S.chosen))
 
 end
 

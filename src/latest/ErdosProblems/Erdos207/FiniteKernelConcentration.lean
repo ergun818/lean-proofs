@@ -135,7 +135,7 @@ one-step exponential-moment bound. -/
 theorem expectationReal_exp_increment_le
     (L : FiniteLaw Ω) {P : Ω → Prop} (hP : L.SupportedOn P)
     (Δ : Ω → ℝ) (theta R v : ℝ)
-    (htheta : 0 ≤ theta) (hR : 0 ≤ R) (hthetaR : theta * R ≤ 1)
+    (htheta : 0 ≤ theta) (_hR : 0 ≤ R) (hthetaR : theta * R ≤ 1)
     (hjump : ∀ ω, P ω → Δ ω ≤ R)
     (hdrift : L.expectationReal Δ ≤ 0)
     (hsecond : L.expectationReal (fun ω ↦ (Δ ω) ^ 2) ≤ v) :
@@ -206,7 +206,7 @@ theorem expectationReal_alive_exp_increment_le
           theta * (if alive ω then Δ ω else 0) +
           theta ^ 2 * (if alive ω then (Δ ω) ^ 2 else 0)) := by
     funext ω
-    by_cases hω : alive ω <;> simp [hω] <;> ring
+    by_cases hω : alive ω <;> simp [hω] ; ring
   have hprob : ((L.probability alive : ℝ)) ≤ 1 := by
     exact_mod_cast L.probability_le_one alive
   calc
@@ -316,7 +316,7 @@ theorem expectationReal_alive_exp_evolveKernels_le
 per-step assumptions are imposed only on the positive-mass invariant
 support, so stopped kernels can be used directly. -/
 theorem probability_evolveKernels_deviation_ge_le_exp
-    {P : Ω → Prop} [DecidableEq Ω] [DecidablePred P]
+    {P : Ω → Prop} [DecidableEq Ω]
     (K : ℕ → Ω → FiniteLaw Ω) (f : ℕ → Ω → ℝ)
     (x₀ : Ω) (theta R a : ℝ) (v : ℕ → ℝ) (n : ℕ)
     (hP₀ : P x₀) (htheta : 0 < theta) (hR : 0 ≤ R)
@@ -333,6 +333,7 @@ theorem probability_evolveKernels_deviation_ge_le_exp
     ((evolveKernels K n (pure x₀)).probability
         (fun x ↦ a ≤ f n x - f 0 x₀) : ℝ) ≤
       Real.exp (-theta * a + theta ^ 2 * ∑ i ∈ Finset.range n, v i) := by
+  classical
   let L := evolveKernels K n (pure x₀)
   let Y : Ω → ℝ := fun x ↦ Real.exp (theta * (f n x - f 0 x₀))
   have hmgfStep : ∀ i, i < n → ∀ x, P x →
@@ -391,7 +392,7 @@ theorem probability_evolveKernels_deviation_ge_le_exp
 alive region.  Dead paths carry zero exponential weight. -/
 theorem probability_evolveKernels_alive_deviation_ge_le_exp
     [DecidableEq Ω] (alive : Ω → Prop) [DecidablePred alive]
-    {P : Ω → Prop} [DecidablePred P]
+    {P : Ω → Prop}
     (K : ℕ → Ω → FiniteLaw Ω) (f : ℕ → Ω → ℝ)
     (x₀ : Ω) (theta R a : ℝ) (v : ℕ → ℝ) (n : ℕ)
     (hP₀ : P x₀) (halive₀ : alive x₀)
@@ -436,7 +437,7 @@ theorem probability_evolveKernels_alive_deviation_ge_le_exp
             (fun y ↦ if alive y then Real.exp
               (theta * (f (i + 1) y - f i x)) else 0) := by
           funext y
-          by_cases hy : alive y <;> simp [hy] <;> congr 1 <;> ring
+          by_cases hy : alive y <;> simp [hy]
         rw [hfun]
         exact hmgfStep i hi x hx halive)
     have hprod : ∏ i ∈ Finset.range n, Real.exp (theta ^ 2 * v i) =
@@ -470,8 +471,8 @@ the ordinary exponential one-step estimate is applied.  This variant is
 essential when crossing the alive boundary supplies part of the negative
 drift. -/
 theorem probability_evolveKernels_alive_deviation_ge_le_exp_fullIncrement
-    [DecidableEq Ω] (alive : Ω → Prop) [DecidablePred alive]
-    {P : Ω → Prop} [DecidablePred P]
+    [DecidableEq Ω] (alive : Ω → Prop)
+    {P : Ω → Prop}
     (K : ℕ → Ω → FiniteLaw Ω) (f : ℕ → Ω → ℝ)
     (x₀ : Ω) (theta R a : ℝ) (v : ℕ → ℝ) (n : ℕ)
     (hP₀ : P x₀) (halive₀ : alive x₀)
@@ -528,7 +529,7 @@ theorem probability_evolveKernels_alive_deviation_ge_le_exp_fullIncrement
             (fun y ↦ if alive y then Real.exp
               (theta * (f (i + 1) y - f i x)) else 0) := by
           funext y
-          by_cases hy : alive y <;> simp [hy] <;> congr 1 <;> ring
+          by_cases hy : alive y <;> simp [hy]
         rw [hfun]
         exact hmgfStep i hi x hx halive)
     have hprod : ∏ i ∈ Finset.range n, Real.exp (theta ^ 2 * v i) =

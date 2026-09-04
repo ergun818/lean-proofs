@@ -44,13 +44,13 @@ theorem graphSupportedOn_of_maximal_legal
       hext huv (Or.inl huX)
     have hTavailable : T ∈ legalAvailable F P A :=
       mem_legalAvailable_iff.mpr ⟨hTA, hTlegal⟩
-    simpa [hmax] using hTavailable
+    simp [hmax] at hTavailable
   · by_contra hvX
     obtain ⟨T, hTA, _huT, _hvT, hTlegal⟩ :=
       hext huv (Or.inr hvX)
     have hTavailable : T ∈ legalAvailable F P A :=
       mem_legalAvailable_iff.mpr ⟨hTA, hTlegal⟩
-    simpa [hmax] using hTavailable
+    simp [hmax] at hTavailable
 
 /-- The exact extension condition needed to upgrade the canonical maximal
 constrained packing to a KSSS outside packing. -/

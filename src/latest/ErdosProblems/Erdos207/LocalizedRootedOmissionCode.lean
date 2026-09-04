@@ -67,34 +67,46 @@ theorem localizedRooted_source_omission_code
     · exact (hm.2 (mem_union_right _ (mem_inter.mpr ⟨hTC, hs⟩))).elim
     · exact hterminal T ha
 
-theorem localizedRooted_card_le_source_selectedCount
-    {V : Type*} [Fintype V] [DecidableEq V] {ell j j' c : ℕ}
-    (W : Vortex V ell) (F J processF : ForbiddenFamilyOn V) (S : GreedyStateOn V)
-    (Q available old : TripleSystemOn V) (hj : 2 ≤ j) (hjj : j ≤ j')
-    (huniform : ∀ E ∈ F, E.card = j' - 2)
-    (hS : GreedyInvariant processF S) (hterminal : ∀ T ∈ S.available, W.level T = Fin.last ell)
-    (hdis : Disjoint available old)
+theorem localizedRooted_card_le_source_selectedCount {V : Type*} [Fintype V] [DecidableEq V]
+    {ell j j' c : ℕ} (W : Vortex V ell) (F J processF : ForbiddenFamilyOn V)
+    (S : GreedyStateOn V) (Q available old : TripleSystemOn V) (hj : 2 ≤ j) (hjj : j ≤ j')
+    (huniform : ∀ E ∈ F, E.card = j' - 2) (hS : GreedyInvariant processF S)
+    (hterminal : ∀ T ∈ S.available, W.level T = Fin.last ell) (hdis : Disjoint available old)
     (hJ : J ⊆ localForbiddenConfigurations F available old j) :
     ((greedyRootedConfigurationClass J S Q c).card : ℝ≥0) ≤
       selectedCount
-        (fun u : terminalOmissionCodes W (familyExtensions F Q) (fun E ↦ E \ Q) (j' - j + c) ↦ u.1.2)
-        (old ∪ S.chosen) := by
-  classical
-  let rem := fun u : terminalOmissionCodes W (familyExtensions F Q) (fun E ↦ E \ Q) (j' - j + c) ↦ u.1.2
-  let decode := fun u : terminalOmissionCodes W (familyExtensions F Q) (fun E ↦ E \ Q) (j' - j + c) ↦ u.1.1 \ old
-  have hsub : greedyRootedConfigurationClass J S Q c ⊆ selectedWitnessImage rem decode (old ∪ S.chosen) := by
-    intro C hC
-    obtain ⟨hCA, hCcard, E, hE, hCE, hOld⟩ :=
-      (mem_localForbiddenConfigurations_iff F available old C j).mp (hJ (mem_filter.mp hC).1)
-    have hcode := localizedRooted_source_omission_code W F J processF S Q C E hj hjj hS hterminal hC hCcard
-      hE (huniform E hE) hCE
-    apply mem_selectedWitnessImage.mpr
-    refine ⟨⟨(E, (E \ C) ∪ (C ∩ S.chosen)), hcode⟩, ?_, ?_⟩
-    · exact union_subset_union hOld inter_subset_right
-    · exact localization_eq_sdiff_old hdis hCA hCE hOld
-  have hcard : ((greedyRootedConfigurationClass J S Q c).card : ℝ≥0) ≤
-      (selectedWitnessImage rem decode (old ∪ S.chosen)).card := by exact_mod_cast card_le_card hsub
-  exact hcard.trans (card_selectedWitnessImage_le_selectedCount rem decode (old ∪ S.chosen))
+        (fun u : terminalOmissionCodes W (familyExtensions F Q) (fun E ↦ E \ Q) (j' - j + c) ↦
+          u.1.2)
+        (old ∪ S.chosen) :=
+  by
+    classical
+    let rem :=
+      fun u : terminalOmissionCodes W (familyExtensions F Q) (fun E ↦ E \ Q) (j' - j + c) ↦
+      u.1.2
+    let decode :=
+      fun u : terminalOmissionCodes W (familyExtensions F Q) (fun E ↦ E \ Q) (j' - j + c) ↦
+      u.1.1 \ old
+    have hsub :
+      greedyRootedConfigurationClass J S Q c ⊆
+        selectedWitnessImage rem decode (old ∪ S.chosen) :=
+      by
+        intro C hC
+        obtain ⟨hCA, hCcard, E, hE, hCE, hOld⟩ :=
+          (mem_localForbiddenConfigurations_iff F available old C j).mp
+            (hJ (mem_filter.mp hC).1)
+        have hcode :=
+          localizedRooted_source_omission_code W F J processF S Q C E hj hjj hS hterminal hC
+            hCcard hE (huniform E hE) hCE
+        apply mem_selectedWitnessImage.mpr
+        refine ⟨⟨(E, (E \ C) ∪ (C ∩ S.chosen)), hcode⟩, ?_, ?_⟩
+        · exact union_subset_union hOld inter_subset_right
+        · exact localization_eq_sdiff_old hdis hCA hCE hOld
+    have hcard :
+      ((greedyRootedConfigurationClass J S Q c).card : ℝ≥0) ≤
+        (selectedWitnessImage rem decode (old ∪ S.chosen)).card :=
+      by
+        exact_mod_cast card_le_card hsub
+    exact hcard.trans (card_selectedWitnessImage_le_selectedCount rem decode (old ∪ S.chosen))
 
 end
 

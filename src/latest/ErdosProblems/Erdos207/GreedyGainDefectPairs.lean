@@ -123,33 +123,39 @@ theorem greedyActiveGainDefectCount_le_selectedCount
   · simp only [greedyActiveGainDefectCount, if_neg hT, Nat.cast_zero]
     exact zero_le
 
-theorem card_greedyGainDefectPairs_eq_sum_of_noncontainment
-    {V : Type*} [Fintype V] [DecidableEq V]
-    (J G : ForbiddenFamilyOn V) (S : GreedyStateOn V) (T : TripleOn V) (c : ℕ)
-    (hnot : ∀ C ∈ greedyConfigurationClass J S T c,
-      ∀ D ∈ greedyConfigurationRedundantWitnesses G S C, ¬ D ⊆ C) :
+theorem card_greedyGainDefectPairs_eq_sum_of_noncontainment {V : Type*} [Fintype V]
+    [DecidableEq V] (J G : ForbiddenFamilyOn V) (S : GreedyStateOn V) (T : TripleOn V) (c : ℕ)
+    (hnot :
+      ∀ C ∈ greedyConfigurationClass J S T c,
+        ∀ D ∈ greedyConfigurationRedundantWitnesses G S C, ¬D ⊆ C) :
     (greedyGainDefectPairs J G S T c).card =
-      ∑ C ∈ greedyConfigurationClass J S T c, (greedyConfigurationRedundantWitnesses G S C).card := by
-  classical
-  unfold greedyGainDefectPairs
-  rw [card_eq_sum_ones, sum_filter, sum_product]
-  apply sum_congr rfl
-  intro C hC
-  calc
-    _ = ∑ D ∈ G, if D ∈ greedyConfigurationRedundantWitnesses G S C then (1 : ℕ) else 0 := by
-      apply sum_congr rfl
-      intro D _
-      by_cases hD : D ∈ greedyConfigurationRedundantWitnesses G S C
-      · simp [hD, hnot C hC D hD]
-      · simp only [hD, false_and, if_false]
-    _ = _ := by
-      rw [← sum_filter, sum_const, nsmul_eq_mul, mul_one]
-      have he : {D ∈ G | D ∈ greedyConfigurationRedundantWitnesses G S C} =
-          greedyConfigurationRedundantWitnesses G S C := by
-        ext D
-        simp only [mem_filter]
-        exact and_iff_right_of_imp (fun h ↦ (mem_filter.mp h).1)
-      simp only [he, Nat.cast_id]
+      ∑ C ∈ greedyConfigurationClass J S T c,
+        (greedyConfigurationRedundantWitnesses G S C).card :=
+  by
+    classical
+    unfold greedyGainDefectPairs
+    rw [card_eq_sum_ones, sum_filter, sum_product]
+    apply sum_congr rfl
+    intro C hC
+    calc
+      _ = ∑ D ∈ G, if D ∈ greedyConfigurationRedundantWitnesses G S C then (1 : ℕ) else 0 :=
+        by
+          apply sum_congr rfl
+          intro D _
+          by_cases hD : D ∈ greedyConfigurationRedundantWitnesses G S C
+          · simp [hD, hnot C hC D hD]
+          · simp only [hD, false_and, if_false]
+      _ = _ :=
+        by
+          rw [← sum_filter, sum_const, nsmul_eq_mul, mul_one]
+          have he :
+            {D ∈ G | D ∈ greedyConfigurationRedundantWitnesses G S C} =
+              greedyConfigurationRedundantWitnesses G S C :=
+            by
+              ext D
+              simp only [mem_filter]
+              exact and_iff_right_of_imp (fun h ↦ (mem_filter.mp h).1)
+          simp only [he, Nat.cast_id]
 
 theorem card_greedyGainDefectPairs_minimal_eq_sum
     {V : Type*} [Fintype V] [DecidableEq V]

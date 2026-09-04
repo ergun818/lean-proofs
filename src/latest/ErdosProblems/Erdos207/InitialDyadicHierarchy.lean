@@ -15,7 +15,7 @@ order, while the sharp positive-level losses are dominated by the root size.
 
 namespace Erdos207
 
-open scoped Classical NNReal
+open scoped NNReal
 
 noncomputable section
 
@@ -130,6 +130,7 @@ theorem initial_power_hierarchy_scalars
   · rw [inv_mul_cast_pow_eq_cast_pow_pred htpos (by omega)]
     exact_mod_cast fixed_le_pow_of_fixed_le_base hrootExtensionBase (by omega)
 
+open scoped Classical in
 /-- For fixed exponents satisfying the two strict gaps, the entire initial
 absorber/vortex package exists at every sufficiently large ambient order. -/
 theorem eventually_exists_paddedAbsorber_with_initial_power_typicality

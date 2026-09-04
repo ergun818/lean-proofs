@@ -14,7 +14,7 @@ vertex is recorded explicitly, and is outside the pattern vertex set.
 namespace Erdos207
 
 open Finset
-open scoped Classical NNReal
+open scoped NNReal
 
 noncomputable section
 
@@ -56,7 +56,9 @@ structure IsSourceQuasiMarking
 def sourceQuasiMarkings
     {V : Type*} [Fintype V] [DecidableEq V] {ell : ℕ}
     (W : Vortex V ell) (F : ForbiddenFamilyOn V) (e : Sym2 V) (S B : Finset V) :
-    Finset (SourceQuasiMarking V) := univ.filter (IsSourceQuasiMarking W F e S B)
+    Finset (SourceQuasiMarking V) :=
+  open scoped Classical in
+  univ.filter (IsSourceQuasiMarking W F e S B)
 
 def sourceQuasiUnderlyingRoot {V : Type*} [DecidableEq V]
     (H : Finset (SourceQuasiCoordinate V)) : TripleSystemOn V :=
@@ -118,30 +120,34 @@ theorem SourceQuasiMarking.vertex_eq_of_root_eq
     exact mem_insert_self _ _
   exact (mem_insert.mp hm).resolve_right (fun h ↦ hx.vertex_not_mem (heB h))
 
-theorem card_sourceQuasiMarkings_system_fiber_le
-    {V : Type*} [Fintype V] [DecidableEq V] {ell : ℕ}
-    {W : Vortex V ell} {F : ForbiddenFamilyOn V} {e : Sym2 V} {S B : Finset V}
+theorem card_sourceQuasiMarkings_system_fiber_le {V : Type*} [Fintype V] [DecidableEq V]
+    {ell : ℕ} {W : Vortex V ell} {F : ForbiddenFamilyOn V} {e : Sym2 V} {S B : Finset V}
     (hpack : ∀ E ∈ F, IsPackingOn E) (heB : e.toFinset ⊆ B) (E : TripleSystemOn V) :
-    ((sourceQuasiMarkings W F e S B).filter (fun x ↦ x.system = E)).card ≤ 2 ^ E.card := by
-  calc
-    _ ≤ E.powerset.card := by
-      apply card_le_card_of_injOn (f := SourceQuasiMarking.initial)
-      · intro x hx
-        have hs := (mem_filter.mp hx).2
-        exact mem_powerset.mpr (hs ▸ (subset_union_left.trans (subset_insert _ _)))
-      · intro x hx x' hx' heq
-        have hd := mem_sourceQuasiMarkings_iff.mp (mem_filter.mp hx).1
-        have hd' := mem_sourceQuasiMarkings_iff.mp (mem_filter.mp hx').1
-        have hsys : x.system = x'.system := (mem_filter.mp hx).2.trans (mem_filter.mp hx').2.symm
-        have hr : x.root = x'.root :=
-          (hpack x.system hd.mem_family).eq_of_common_graph_edge
-            (mem_insert_self _ _) (hsys.symm ▸ mem_insert_self _ _) hd.pin_mem hd'.pin_mem
-        have hv := SourceQuasiMarking.vertex_eq_of_root_eq hd hd' heB hr
-        have hi : x.initial = x'.initial := heq
-        have hl : x.later = x'.later := by
-          rw [SourceQuasiMarking.later_eq_sdiff hd, SourceQuasiMarking.later_eq_sdiff hd', hsys, hr, hi]
-        exact Prod.ext hv (Prod.ext hr (Prod.ext hi hl))
-    _ = _ := card_powerset E
+    ((sourceQuasiMarkings W F e S B).filter (fun x ↦ x.system = E)).card ≤ 2 ^ E.card :=
+  by
+    calc
+      _ ≤ E.powerset.card :=
+        by
+          apply card_le_card_of_injOn (f := SourceQuasiMarking.initial)
+          · intro x hx
+            have hs := (mem_filter.mp hx).2
+            exact mem_powerset.mpr (hs ▸ (subset_union_left.trans (subset_insert _ _)))
+          · intro x hx x' hx' heq
+            have hd := mem_sourceQuasiMarkings_iff.mp (mem_filter.mp hx).1
+            have hd' := mem_sourceQuasiMarkings_iff.mp (mem_filter.mp hx').1
+            have hsys : x.system = x'.system :=
+              (mem_filter.mp hx).2.trans (mem_filter.mp hx').2.symm
+            have hr : x.root = x'.root :=
+              (hpack x.system hd.mem_family).eq_of_common_graph_edge (mem_insert_self _ _)
+                (hsys.symm ▸ mem_insert_self _ _) hd.pin_mem hd'.pin_mem
+            have hv := SourceQuasiMarking.vertex_eq_of_root_eq hd hd' heB hr
+            have hi : x.initial = x'.initial := heq
+            have hl : x.later = x'.later :=
+              by
+                rw [SourceQuasiMarking.later_eq_sdiff hd,
+                  SourceQuasiMarking.later_eq_sdiff hd', hsys, hr, hi]
+            exact Prod.ext hv (Prod.ext hr (Prod.ext hi hl))
+      _ = _ := card_powerset E
 
 end
 

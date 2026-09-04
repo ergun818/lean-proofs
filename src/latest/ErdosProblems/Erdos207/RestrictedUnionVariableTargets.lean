@@ -12,12 +12,13 @@ namespace Erdos207
 open Finset
 
 theorem sum_card_le_card_restricted_biUnion_add_separate
-    {I A : Type*} [DecidableEq I] [DecidableEq A]
+    {I A : Type*} [DecidableEq A]
     (s : Finset I) (F : I → Finset A) (R : Finset A) (Kr Ki : ℕ)
     (hroot : ∀ i ∈ s, (F i ∩ R).card ≤ Kr)
     (hinter : ∀ i ∈ s, ∀ j ∈ s, i ≠ j → (F i ∩ F j).card ≤ Ki) :
     ∑ i ∈ s, (F i).card ≤
       (s.biUnion (fun i ↦ F i \ R)).card + s.card * Kr + s.card.choose 2 * Ki := by
+  classical
   have hbonf := sum_card_le_card_biUnion_add_choose_two_mul s
     (fun i ↦ F i \ R) Ki (by
       intro i hi j hj hij
@@ -34,7 +35,7 @@ theorem sum_card_le_card_restricted_biUnion_add_separate
   omega
 
 theorem abs_card_restricted_biUnion_sub_sum_targets
-    {I A : Type*} [DecidableEq I] [DecidableEq A]
+    {I A : Type*} [DecidableEq A]
     (s : Finset I) (F : I → Finset A) (R : Finset A) (Kr Ki : ℕ)
     (target err : I → ℝ)
     (hroot : ∀ i ∈ s, (F i ∩ R).card ≤ Kr)
@@ -42,6 +43,7 @@ theorem abs_card_restricted_biUnion_sub_sum_targets
     (htrajectory : ∀ i ∈ s, |((F i).card : ℝ) - target i| ≤ err i) :
     |((s.biUnion (fun i ↦ F i \ R)).card : ℝ) - ∑ i ∈ s, target i| ≤
       (∑ i ∈ s, err i) + (s.card * Kr + s.card.choose 2 * Ki : ℕ) := by
+  classical
   have hupper : ((s.biUnion (fun i ↦ F i \ R)).card : ℝ) ≤
       ∑ i ∈ s, ((F i).card : ℝ) := by
     exact_mod_cast card_restricted_biUnion_le_sum_card s F R

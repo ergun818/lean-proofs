@@ -271,7 +271,7 @@ theorem probability_timedStoppedGreedy_fixedPair_sharp_alive_lower_le_exp_of_pai
       PairTrajectoryInvariant F S₀ S → active i S →
         HasAvailablePairFloor δ S)
     (hqDeath : ∀ i, i < n → -(δ : ℝ) ≤ q (i + 1) - q i)
-    (hqUpper : ∀ i, i < n → q (i + 1) - q i ≤ 0)
+    (_hqUpper : ∀ i, i < n → q (i + 1) - q i ≤ 0)
     (hjumpAlive : ∀ i, i < n → ∀ S,
       PairTrajectoryInvariant F S₀ S → active i S → PairAlive P S →
       ∀ S', 0 < (greedyKernel F S).mass S' →

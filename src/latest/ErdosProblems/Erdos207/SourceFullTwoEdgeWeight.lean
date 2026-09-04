@@ -15,40 +15,48 @@ open scoped NNReal
 
 noncomputable section
 
-theorem SourceVortexWellSpread.full_existing_terminal_edge_root_weight_le
-    {V : Type*} [Fintype V] [DecidableEq V] {ell j : ℕ}
-    {W : Vortex V ell} {F : ForbiddenFamilyOn V} {y z : ℝ≥0}
-    (h : SourceVortexWellSpread W j F y z) (e : Sym2 V)
-    (G : ForbiddenFamilyOn V) (hG : G ⊆ F)
-    (hcover : ∀ E ∈ G, ∃ D ∈ sourceTerminalEdgeFan W e, D ∈ E)
-    (T : TripleOn V) (heT : e ∈ tripleEdgeFinset T) :
+theorem SourceVortexWellSpread.full_existing_terminal_edge_root_weight_le {V : Type*}
+    [Fintype V] [DecidableEq V] {ell j : ℕ} {W : Vortex V ell} {F : ForbiddenFamilyOn V}
+    {y z : ℝ≥0} (h : SourceVortexWellSpread W j F y z) (e : Sym2 V) (G : ForbiddenFamilyOn V)
+    (hG : G ⊆ F) (hcover : ∀ E ∈ G, ∃ D ∈ sourceTerminalEdgeFan W e, D ∈ E) (T : TripleOn V)
+    (heT : e ∈ tripleEdgeFinset T) :
     vortexTripleWeight W 1 T *
-      (∑ E ∈ familyExtensions G {T}, setWeight (vortexTripleWeight W 1) (E \ {T})) ≤
-      (j ^ ell : ℕ) * z / W.terminalSize := by
-  classical
-  by_cases hnonempty : (familyExtensions G {T}).Nonempty
-  · obtain ⟨E, hE⟩ := hnonempty
-    have hm := mem_familyExtensions_iff.mp hE
-    have hTE : T ∈ E := hm.2 (mem_singleton_self T)
-    obtain ⟨D, hD, hDE⟩ := hcover E hm.1
-    have hd := (mem_filter.mp hD).2
-    have heq : T = D := by
-      by_contra hne
-      have hdis := (h.uniform E (hG hm.1)).2.isTriangleDecomposition.pairwiseDisjoint_tripleEdgeFinset
-        hTE hDE hne
-      exact disjoint_left.mp hdis heT hd.1
-    have hlevel : W.level T = Fin.last ell := heq.symm ▸ hd.2
-    have hsub : familyExtensions G {T} ⊆ familyExtensions F {T} := by
-      intro C hC
-      have hh := mem_familyExtensions_iff.mp hC
-      exact mem_familyExtensions_iff.mpr ⟨hG hh.1, hh.2⟩
-    have hb := (sum_le_sum_of_subset_of_nonneg hsub (fun _ _ _ ↦ zero_le)).trans
-      (h.full_singleton_weight_le_uniform T)
-    calc
-      _ ≤ vortexTripleWeight W 1 T * ((j ^ ell : ℕ) * z) := by gcongr
-      _ = _ := by simp only [vortexTripleWeight, hlevel, Vortex.terminalSize]; ring
-  · rw [not_nonempty_iff_eq_empty.mp hnonempty, sum_empty, mul_zero]
-    exact zero_le
+        (∑ E ∈ familyExtensions G { T }, setWeight (vortexTripleWeight W 1) (E \ { T })) ≤
+      (j ^ ell : ℕ) * z / W.terminalSize :=
+  by
+    classical
+    by_cases hnonempty : (familyExtensions G { T }).Nonempty
+    · obtain ⟨E, hE⟩ := hnonempty
+      have hm := mem_familyExtensions_iff.mp hE
+      have hTE : T ∈ E := hm.2 (mem_singleton_self T)
+      obtain ⟨D, hD, hDE⟩ := hcover E hm.1
+      have hd := (mem_filter.mp hD).2
+      have heq : T = D :=
+        by
+          by_contra hne
+          have hdis :=
+            (h.uniform E
+                    (hG hm.1)).2.isTriangleDecomposition.pairwiseDisjoint_tripleEdgeFinset
+              hTE hDE hne
+          exact disjoint_left.mp hdis heT hd.1
+      have hlevel : W.level T = Fin.last ell := heq.symm ▸ hd.2
+      have hsub : familyExtensions G { T } ⊆ familyExtensions F { T } :=
+        by
+          intro C hC
+          have hh := mem_familyExtensions_iff.mp hC
+          exact mem_familyExtensions_iff.mpr ⟨hG hh.1, hh.2⟩
+      have hb :=
+        (sum_le_sum_of_subset_of_nonneg hsub (fun _ _ _ ↦ zero_le)).trans
+          (h.full_singleton_weight_le_uniform T)
+      calc
+        _ ≤ vortexTripleWeight W 1 T * ((j ^ ell : ℕ) * z) :=
+          by
+            gcongr
+        _ = _ :=
+          by
+            simp only [vortexTripleWeight, hlevel, Vortex.terminalSize]; ring
+    · rw [not_nonempty_iff_eq_empty.mp hnonempty, sum_empty, mul_zero]
+      exact zero_le
 
 theorem SourceVortexWellSpread.full_two_pinned_edges_weight_le
     {V : Type*} [Fintype V] [DecidableEq V] {ell j : ℕ}

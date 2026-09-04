@@ -34,33 +34,36 @@ structure GeometricCrudeCutoffs
       (absorberGainDefectWeightBound q B *
         (Fintype.card V + 1 : ℝ≥0) ^ (i.order - i.chosen - 4)))) ≤ K.gain i.order i.chosen
 
-theorem timedStoppedAbsorber_crudeStatistic_geometricTail
-    {V : Type*} [Fintype V] [DecidableEq V]
-    (n : ℕ) (F : ForbiddenFamilyOn V) (active : ℕ → GreedyStateOn V → Prop)
-    (D : ℕ) (S₀ : GreedyStateOn V) (B : TripleSystemOn V)
-    (q s : ℕ) (w : ℝ≥0) (K : CrudeThresholds)
-    (hF : F ⊆ absorberErdosForbiddenConfigurationsOn q B)
-    (hInv₀ : GreedyInvariant F S₀) (hchosen₀ : S₀.chosen = ∅)
-    (hD : 0 < D) (hw : 1 ≤ w)
+theorem timedStoppedAbsorber_crudeStatistic_geometricTail {V : Type*} [Fintype V]
+    [DecidableEq V] (n : ℕ) (F : ForbiddenFamilyOn V) (active : ℕ → GreedyStateOn V → Prop)
+    (D : ℕ) (S₀ : GreedyStateOn V) (B : TripleSystemOn V) (q s : ℕ) (w : ℝ≥0)
+    (K : CrudeThresholds) (hF : F ⊆ absorberErdosForbiddenConfigurationsOn q B)
+    (hInv₀ : GreedyInvariant F S₀) (hchosen₀ : S₀.chosen = ∅) (hD : 0 < D) (hw : 1 ≤ w)
     (hfloor : ∀ i S, active i S → D ≤ S.available.card)
     (hratio : (n : ℝ≥0) * (D : ℝ≥0)⁻¹ ≤ w * (Fintype.card V + 1 : ℝ≥0)⁻¹)
     (hcut : GeometricCrudeCutoffs q s B w K) (i : CrudeStatisticIndex V q) :
     (FiniteLaw.timedStoppedProcessLaw n (fun _ ↦ greedyKernel F) active S₀).probability
-      (fun z ↦ crudeThreshold K i ≤ crudeStatistic F z.2 i) ≤ (1 / 2 : ℝ≥0) ^ s := by
-  rcases i with ⟨j, roots⟩ | i
-  · exact timedStoppedAbsorber_orderRooted_geometricTail n F active D S₀ B
-      {roots.1.1, roots.1.2} q j.order j.chosen s w (K.rooted j.order j.chosen)
-      hF hInv₀ hchosen₀ (card_pair roots.2) j.budget hD hw (hcut.rooted_pos j)
-      hfloor hratio (hcut.rooted_cut j)
-  rcases i with ⟨T, P⟩ | i
-  · exact timedStoppedAbsorber_pairSelected_geometricTail n F active D S₀ B q s T P w K.pair
-      hF hInv₀ hchosen₀ hD hw hcut.pair_pos hfloor hratio hcut.pair_cut
-  rcases i with ⟨T, T'⟩ | ⟨j, T⟩
-  · exact timedStoppedAbsorber_commonThreatSelected_geometricTail n F active D S₀ B q s T T' w K.common
-      hF hInv₀ hchosen₀ hD hw hcut.common_pos hfloor hratio hcut.common_cut
-  · exact timedStoppedAbsorber_orderGainDefect_geometricTail n F active D S₀ B q j.order j.chosen s T w
-      (K.gain j.order j.chosen) hF hInv₀ hchosen₀ j.budget j.order_le hD hw (hcut.gain_pos j)
-      hfloor hratio (hcut.gain_cut j)
+        (fun z ↦ crudeThreshold K i ≤ crudeStatistic F z.2 i) ≤
+      (1 / 2 : ℝ≥0) ^ s :=
+  by
+    rcases i with ⟨j, roots⟩ | i
+    · exact
+        timedStoppedAbsorber_orderRooted_geometricTail n F active D S₀ B
+          { roots.1.1, roots.1.2 } q j.order j.chosen s w (K.rooted j.order j.chosen) hF
+          hInv₀ hchosen₀ (card_pair roots.2) j.budget hD hw (hcut.rooted_pos j) hfloor hratio
+          (hcut.rooted_cut j)
+    rcases i with ⟨T, P⟩ | i
+    · exact
+        timedStoppedAbsorber_pairSelected_geometricTail n F active D S₀ B q s T P w K.pair hF
+          hInv₀ hchosen₀ hD hw hcut.pair_pos hfloor hratio hcut.pair_cut
+    rcases i with ⟨T, T'⟩ | ⟨j, T⟩
+    · exact
+        timedStoppedAbsorber_commonThreatSelected_geometricTail n F active D S₀ B q s T T' w
+          K.common hF hInv₀ hchosen₀ hD hw hcut.common_pos hfloor hratio hcut.common_cut
+    · exact
+        timedStoppedAbsorber_orderGainDefect_geometricTail n F active D S₀ B q j.order
+          j.chosen s T w (K.gain j.order j.chosen) hF hInv₀ hchosen₀ j.budget j.order_le hD hw
+          (hcut.gain_pos j) hfloor hratio (hcut.gain_cut j)
 
 theorem timedStoppedAbsorber_crudeState_geometricTail
     {V : Type*} [Fintype V] [DecidableEq V]

@@ -41,10 +41,11 @@ theorem exists_terminal_configuration_other
     · exact ((mem_sdiff.mp hU).2 havail).elim
 
 theorem terminal_configuration_remainder_subset_chosen
-    {V : Type*} [Fintype V] [DecidableEq V]
+    {V : Type*} [Finite V] [DecidableEq V]
     {S : GreedyStateOn V} {C : TripleSystemOn V} {root U : TripleOn V}
     (hpart : C ∩ S.available = {root, U}) (hrest : C \ S.available ⊆ S.chosen) :
     (C.erase U).erase root ⊆ S.chosen := by
+  let := Fintype.ofFinite V
   intro W hW
   have hd := mem_erase.mp hW
   have hd' := mem_erase.mp hd.2

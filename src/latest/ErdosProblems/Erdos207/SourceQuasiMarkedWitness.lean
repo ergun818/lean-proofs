@@ -10,7 +10,7 @@ import ErdosProblems.Erdos207.SourceQuasiJointInclusion
 namespace Erdos207
 
 open Finset
-open scoped Classical NNReal
+open scoped NNReal
 
 noncomputable section
 
@@ -57,23 +57,23 @@ theorem sourceQuasiWitnessMarking_coordinates_realized
   · intro e he
     exact mem_filter.mpr ⟨hG he, hres e he⟩
 
-theorem exists_sourceQuasi_marked_witness
-    {V : Type*} [Fintype V] [DecidableEq V] {ell : ℕ}
-    {W : Vortex V ell} {F : ForbiddenFamilyOn V} {e : Sym2 V} {S B : Finset V}
-    {u : V} {T : TripleOn V} {I D : TripleSystemOn V}
-    (G : SimpleGraph V) (hu : u ∈ S) (huB : u ∉ B)
+theorem exists_sourceQuasi_marked_witness {V : Type*} [Fintype V] [DecidableEq V] {ell : ℕ}
+    {W : Vortex V ell} {F : ForbiddenFamilyOn V} {e : Sym2 V} {S B : Finset V} {u : V}
+    {T : TripleOn V} {I D : TripleSystemOn V} (G : SimpleGraph V) (hu : u ∈ S) (huB : u ∉ B)
     (hvertices : T.1 = insert u e.toFinset) (he : e ∈ tripleEdgeFinset T)
-    (hlevel : W.level T = Fin.last ell)
-    (hcomplete : CompletesForbidden F (I ∪ D) T) (hinitial : ¬ CompletesForbidden F I T)
-    (hG : sourceQuasiSpokes B u ⊆ graphEdges G)
+    (hlevel : W.level T = Fin.last ell) (hcomplete : CompletesForbidden F (I ∪ D) T)
+    (hinitial : ¬CompletesForbidden F I T) (hG : sourceQuasiSpokes B u ⊆ graphEdges G)
     (hres : ∀ a ∈ sourceQuasiSpokes B u, a ∉ (coveredGraph (I ∪ D)).edgeSet) :
-    ∃ x ∈ sourceQuasiMarkings W F e S B, x.vertex = u ∧
-      x.coordinates B ⊆ sourceQuasiRealizedCoordinates G I D := by
-  obtain ⟨E, hE, hTE, hcover⟩ := hcomplete
-  have hnot : ¬ E.erase T ⊆ I := fun h ↦ hinitial ⟨E, hE, hTE, h⟩
-  refine ⟨sourceQuasiWitnessMarking u T I E,
-    mem_sourceQuasiMarkings_iff.mpr (isSourceQuasiMarking_witness hu huB hvertices he hlevel hE hTE hnot),
-    rfl, sourceQuasiWitnessMarking_coordinates_realized G u T I D E B hcover hG hres⟩
+    ∃ x ∈ sourceQuasiMarkings W F e S B,
+      x.vertex = u ∧ x.coordinates B ⊆ sourceQuasiRealizedCoordinates G I D :=
+  by
+    obtain ⟨E, hE, hTE, hcover⟩ := hcomplete
+    have hnot : ¬E.erase T ⊆ I := fun h ↦ hinitial ⟨E, hE, hTE, h⟩
+    refine
+      ⟨sourceQuasiWitnessMarking u T I E,
+        mem_sourceQuasiMarkings_iff.mpr
+          (isSourceQuasiMarking_witness hu huB hvertices he hlevel hE hTE hnot),
+        rfl, sourceQuasiWitnessMarking_coordinates_realized G u T I D E B hcover hG hres⟩
 
 end
 

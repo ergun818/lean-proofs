@@ -86,63 +86,101 @@ theorem card_profiledExtensions_derived_singleton_source_le
     exact_mod_cast card_le_card (filter_subset (s := subsetsUpToCard B q) (p := fun K ↦ K.Nonempty))
   exact (hsub.trans h).trans (by gcongr)
 
-theorem card_profiledExtensions_derived_singleton_source_le_localized
-    {V : Type*} [Fintype V] [DecidableEq V] {m q M j : ℕ}
-    (W : Vortex V (m + 1)) (H : SimpleGraph V) (X : Finset V)
+theorem card_profiledExtensions_derived_singleton_source_le_localized {V : Type*} [Fintype V]
+    [DecidableEq V] {m q M j : ℕ} (W : Vortex V (m + 1)) (H : SimpleGraph V) (X : Finset V)
     (B : TripleSystemOn V) (T : TripleOn V) (t : VortexProfile (m + 1)) (z : ℝ≥0)
     (hA2 : HasAbsorberLocalization q M H X B)
-    (hsep : ∀ x ∈ graphSupportFinset H, x ∉ X → x ∉ W.U 1)
-    (hj : 4 ≤ j) (hjq : j ≤ q)
+    (hsep : ∀ x ∈ graphSupportFinset H, x ∉ X → x ∉ W.U 1) (hj : 4 ≤ j) (hjq : j ≤ q)
     (hterminal : 0 < W.terminalSize) (hroot : 0 < (W.U 0).card)
     (hbank : ((subsetsUpToCard B q).card : ℝ≥0) * W.terminalSize ≤ (W.U 0).card * z) :
-    ((W.profiledExtensions (derivedAbsorberConfigurations q j B) {T} t).card : ℝ≥0) ≤
-      ((2 : ℝ≥0) ^ M + z) * exactBankVortexOrderCoefficient q (m + 1) * W.sourceProfileScale (j - 4) t := by
-  let C : ℝ≥0 := exactBankVortexOrderCoefficient q (m + 1)
-  let s := W.sourceProfileScale (j - 4) t
-  by_cases ht0 : 0 < t 0
-  · let banks := (subsetsUpToCard B q).filter (fun K ↦ K.Nonempty)
-    have hsub : ((W.profiledExtensions (derivedAbsorberConfigurations q j B) {T} t).card : ℝ≥0) ≤
-        (bankProfiledCover W q j B {T} banks t).card := by
-      exact_mod_cast card_le_card (profiledExtensions_derived_subset_nonemptyBankCover W B {T} t)
-    have h := card_bankProfiledCover_singleton_mul_root_source_le (q := q) W B {T} banks t hj
-      (by simp) (fun K hK ↦ (mem_filter.mp hK).2) ht0 hterminal
-    have heq : W.sourceProfileScale (j - 3) t = W.terminalSize * s := by
-      dsimp only [s, Vortex.sourceProfileScale]
-      rw [show j - 3 = j - 4 + 1 by omega, pow_succ]
-      ring
-    rw [heq] at h
-    have hbanks : (banks.card : ℝ≥0) ≤ (subsetsUpToCard B q).card := by
-      exact_mod_cast card_le_card (filter_subset (s := subsetsUpToCard B q) (p := fun K ↦ K.Nonempty))
-    have hNpos : (0 : ℝ≥0) < (W.U 0).card := by exact_mod_cast hroot
-    have hsmall : ((bankProfiledCover W q j B {T} banks t).card : ℝ≥0) ≤ z * C * s := by
-      apply (mul_le_mul_iff_right₀ hNpos).mp
-      calc
-        _ ≤ banks.card * C * (W.terminalSize * s) := h
-        _ = ((banks.card : ℝ≥0) * W.terminalSize) * C * s := by ring
-        _ ≤ ((W.U 0).card * z) * C * s := by
-          exact mul_le_mul_of_nonneg_right
-            (mul_le_mul_of_nonneg_right
-              ((mul_le_mul_of_nonneg_right hbanks zero_le).trans hbank) zero_le) zero_le
-        _ = _ := by ring
-    exact (hsub.trans hsmall).trans (by change z * C * s ≤ _; gcongr; exact le_add_self)
-  · obtain ⟨L, _hLB, hLM, hsub⟩ := profiledExtensions_derived_subset_localBankCover_of_zero
-      (j := j) W H X B {T} t hA2 (by simp; omega) hsep (by omega)
-    have hsub' : ((W.profiledExtensions (derivedAbsorberConfigurations q j B) {T} t).card : ℝ≥0) ≤
-        (bankProfiledCover W q j B {T} (L.powerset.filter (fun K ↦ K.Nonempty)) t).card := by
-      exact_mod_cast card_le_card hsub
-    have h := card_bankProfiledCover_singleton_source_le (q := q) W B {T}
-      (L.powerset.filter (fun K ↦ K.Nonempty)) t hj (by simp)
-      (fun K hK ↦ (mem_filter.mp hK).2) hterminal
-    have hL : (((L.powerset.filter (fun K ↦ K.Nonempty)).card) : ℝ≥0) ≤ (2 : ℝ≥0) ^ M := by
-      have hn : (L.powerset.filter (fun K ↦ K.Nonempty)).card ≤ 2 ^ M := by
-        apply (card_filter_le _ _).trans
-        rw [card_powerset]
-        exact pow_le_pow_right₀ (by omega) hLM
-      exact_mod_cast hn
-    apply (hsub'.trans h).trans
-    change _ * C * s ≤ _
-    gcongr
-    exact hL.trans le_self_add
+    ((W.profiledExtensions (derivedAbsorberConfigurations q j B) { T } t).card : ℝ≥0) ≤
+      ((2 : ℝ≥0) ^ M + z) * exactBankVortexOrderCoefficient q (m + 1) *
+        W.sourceProfileScale (j - 4) t :=
+  by
+    let C : ℝ≥0 := exactBankVortexOrderCoefficient q (m + 1)
+    let s := W.sourceProfileScale (j - 4) t
+    by_cases ht0 : 0 < t 0
+    · let banks := (subsetsUpToCard B q).filter (fun K ↦ K.Nonempty)
+      have hsub :
+        ((W.profiledExtensions (derivedAbsorberConfigurations q j B) { T } t).card : ℝ≥0) ≤
+          (bankProfiledCover W q j B { T } banks t).card :=
+        by
+          exact_mod_cast
+            card_le_card (profiledExtensions_derived_subset_nonemptyBankCover W B { T } t)
+      have h :=
+        card_bankProfiledCover_singleton_mul_root_source_le (q := q) W B { T } banks t hj
+          (by
+            simp)
+          (fun K hK ↦ (mem_filter.mp hK).2) ht0 hterminal
+      have heq : W.sourceProfileScale (j - 3) t = W.terminalSize * s :=
+        by
+          dsimp only [s, Vortex.sourceProfileScale]
+          rw [show j - 3 = j - 4 + 1 by omega, pow_succ]
+          ring
+      rw [heq] at h
+      have hbanks : (banks.card : ℝ≥0) ≤ (subsetsUpToCard B q).card :=
+        by
+          exact_mod_cast
+            card_le_card (filter_subset (s := subsetsUpToCard B q) (p := fun K ↦ K.Nonempty))
+      have hNpos : (0 : ℝ≥0) < (W.U 0).card :=
+        by
+          exact_mod_cast hroot
+      have hsmall : ((bankProfiledCover W q j B { T } banks t).card : ℝ≥0) ≤ z * C * s :=
+        by
+          apply (mul_le_mul_iff_right₀ hNpos).mp
+          calc
+            _ ≤ banks.card * C * (W.terminalSize * s) := h
+            _ = ((banks.card : ℝ≥0) * W.terminalSize) * C * s :=
+              by
+                ring
+            _ ≤ ((W.U 0).card * z) * C * s :=
+              by
+                exact
+                  mul_le_mul_of_nonneg_right
+                    (mul_le_mul_of_nonneg_right
+                      ((mul_le_mul_of_nonneg_right hbanks zero_le).trans hbank) zero_le)
+                    zero_le
+            _ = _ :=
+              by
+                ring
+      exact
+        (hsub.trans hsmall).trans
+          (by
+            gcongr; exact le_add_self)
+    · obtain ⟨L, _hLB, hLM, hsub⟩ :=
+        profiledExtensions_derived_subset_localBankCover_of_zero (j := j) W H X B { T } t hA2
+          (by
+            simp; omega)
+          hsep
+          (by
+            omega)
+      have hsub' :
+        ((W.profiledExtensions (derivedAbsorberConfigurations q j B) { T } t).card : ℝ≥0) ≤
+          (bankProfiledCover W q j B { T } (L.powerset.filter (fun K ↦ K.Nonempty)) t).card :=
+        by
+          exact_mod_cast card_le_card hsub
+      have h :=
+        card_bankProfiledCover_singleton_source_le (q := q) W B { T }
+          (L.powerset.filter (fun K ↦ K.Nonempty)) t hj
+          (by
+            simp)
+          (fun K hK ↦ (mem_filter.mp hK).2) hterminal
+      have hL : (((L.powerset.filter (fun K ↦ K.Nonempty)).card) : ℝ≥0) ≤ (2 : ℝ≥0) ^ M :=
+        by
+          have hn : (L.powerset.filter (fun K ↦ K.Nonempty)).card ≤ 2 ^ M :=
+            by
+              apply (card_filter_le _ _).trans
+              rw [card_powerset]
+              exact
+                pow_le_pow_right₀
+                  (by
+                    omega)
+                  hLM
+          exact_mod_cast hn
+      apply (hsub'.trans h).trans
+      change _ * C * s ≤ _
+      gcongr
+      exact hL.trans le_self_add
 
 end
 

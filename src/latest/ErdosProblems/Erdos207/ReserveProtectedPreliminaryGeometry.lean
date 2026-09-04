@@ -44,10 +44,11 @@ lemma reserveProtectedAvailable_subset
   filter_subset _ _
 
 lemma ConsistsOfTriangles.reserveProtectedAvailable
-    {V : Type*} [Fintype V] [DecidableEq V]
+    {V : Type*} [Finite V] [DecidableEq V]
     {G : SimpleGraph V} {reserve : Finset (Sym2 V)}
     {A : TripleSystemOn V} (hA : ConsistsOfTriangles G A) :
     ConsistsOfTriangles G (reserveProtectedAvailable reserve A) := by
+  let := Fintype.ofFinite V
   intro T hT
   exact hA T (reserveProtectedAvailable_subset reserve A hT)
 
@@ -256,7 +257,7 @@ lemma trianglesDisjointFrom_reserveProtectedOuterAvailable_full
   intro T hT
   rw [Finset.disjoint_left]
   intro u huT huU
-  have hcard : 1 < T.1.card := by simpa [T.2]
+  have hcard : 1 < T.1.card := by simp [T.2]
   obtain ⟨v, hvT, hvu⟩ := T.1.exists_mem_ne hcard u
   have heT : s(u, v) ∈ tripleEdgeFinset T :=
     mk_mem_tripleEdgeFinset_iff.mpr ⟨huT, hvT, Ne.symm hvu⟩

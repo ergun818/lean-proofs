@@ -67,22 +67,30 @@ theorem restrictedGreedyKernel_pattern_secondMoment
       rw [restrictedGreedyKernel_properPatternExtension_drift]
       ring
 
-theorem restrictedGreedyKernel_pattern_secondMoment_le_hazard
-    {V : Type*} [Fintype V] [DecidableEq V]
-    (F : ForbiddenFamilyOn V) (Q : SimpleGraph V) (U : Finset V) (S : GreedyStateOn V)
-    (hR : (patternSurvivalSelectors Q S).Nonempty) (J H : ℝ) (hJ0 : 0 ≤ J)
+theorem restrictedGreedyKernel_pattern_secondMoment_le_hazard {V : Type*} [Fintype V]
+    [DecidableEq V] (F : ForbiddenFamilyOn V) (Q : SimpleGraph V) (U : Finset V)
+    (S : GreedyStateOn V) (hR : (patternSurvivalSelectors Q S).Nonempty) (J H : ℝ)
+    (hJ0 : 0 ≤ J)
     (hJ : ∀ T ∈ patternSurvivalSelectors Q S, ((patternExtensionLoss F Q U S T).card : ℝ) ≤ J)
-    (hH : ∀ u ∈ properPatternExtensions S.available Q U, ((patternExtensionKillers F Q U S u).card : ℝ) ≤ H) :
-    (restrictedGreedyKernel F S (patternSurvivalSelectors Q S) hR).expectationReal (fun S' ↦
-      (((properPatternExtensions S'.available Q U).card : ℝ) -
-        (properPatternExtensions S.available Q U).card) ^ 2) ≤
-      J * ((properPatternExtensions S.available Q U).card * H) / (patternSurvivalSelectors Q S).card := by
-  apply (restrictedGreedyKernel_pattern_secondMoment F Q U S hR J hJ).trans
-  apply div_le_div_of_nonneg_right _ (Nat.cast_nonneg _)
-  apply mul_le_mul_of_nonneg_left _ hJ0
-  calc
-    _ ≤ ∑ _u ∈ properPatternExtensions S.available Q U, H := sum_le_sum hH
-    _ = _ := by simp
+    (hH :
+      ∀ u ∈ properPatternExtensions S.available Q U,
+        ((patternExtensionKillers F Q U S u).card : ℝ) ≤ H) :
+    (restrictedGreedyKernel F S (patternSurvivalSelectors Q S) hR).expectationReal
+        (fun S' ↦
+          (((properPatternExtensions S'.available Q U).card : ℝ) -
+              (properPatternExtensions S.available Q U).card) ^
+            2) ≤
+      J * ((properPatternExtensions S.available Q U).card * H) /
+        (patternSurvivalSelectors Q S).card :=
+  by
+    apply (restrictedGreedyKernel_pattern_secondMoment F Q U S hR J hJ).trans
+    apply div_le_div_of_nonneg_right _ (Nat.cast_nonneg _)
+    apply mul_le_mul_of_nonneg_left _ hJ0
+    calc
+      _ ≤ ∑ _u ∈ properPatternExtensions S.available Q U, H := sum_le_sum hH
+      _ = _ :=
+        by
+          simp
 
 end
 

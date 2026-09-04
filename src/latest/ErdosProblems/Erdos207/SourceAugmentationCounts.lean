@@ -41,42 +41,49 @@ theorem SourceRandomCountsGood.augmentationCounts
   · rw [familyExtensions_sample_eq_empty_of_not_terminal_root W R omega hsub]
     simp
 
-theorem SourceAugmentationCounts.mono
-    {V : Type*} [Fintype V] [DecidableEq V] {j n : ℕ}
-    {F G G' : ForbiddenFamilyOn V} {a : ℝ≥0}
-    (h : SourceAugmentationCounts j n F G a) (hsub : G' ⊆ G) :
-    SourceAugmentationCounts j n F G' a := by
-  refine ⟨fun E hE ↦ h.uniform E (hsub hE), ?_, ?_, ?_, ?_⟩
-  · intro R hR hRcard
-    have hc : ((familyExtensions G' R).card : ℝ≥0) ≤ (familyExtensions G R).card := by
-      exact_mod_cast card_le_card (filter_subset_filter _ hsub)
-    exact hc.trans (h.roots R hR hRcard)
-  · intro T T'
-    have hc : ((distinctEqualRemainderPairs G' T T').card : ℝ≥0) ≤ (distinctEqualRemainderPairs G T T').card := by
-      apply Nat.cast_le.mpr
-      apply card_le_card
-      intro p hp
-      obtain ⟨h1, h2, hne, hT, hT', hrem⟩ := mem_distinctEqualRemainderPairs_iff.mp hp
-      exact mem_distinctEqualRemainderPairs_iff.mpr ⟨hsub h1, hsub h2, hne, hT, hT', hrem⟩
-    exact hc.trans (h.pairs T T')
-  · intro T T'
-    have hc : ((crossDistinctConfigurationPairs F G' T T').card : ℝ≥0) ≤
-        (crossDistinctConfigurationPairs F G T T').card := by
-      apply Nat.cast_le.mpr
-      apply card_le_card
-      intro p hp
-      obtain ⟨h1, h2, hne, hT, hT', hrem⟩ := mem_crossDistinctConfigurationPairs_iff.mp hp
-      exact mem_crossDistinctConfigurationPairs_iff.mpr ⟨h1, hsub h2, hne, hT, hT', hrem⟩
-    exact hc.trans (h.old_new T T')
-  · intro T T'
-    have hc : ((crossDistinctConfigurationPairs G' F T T').card : ℝ≥0) ≤
-        (crossDistinctConfigurationPairs G F T T').card := by
-      apply Nat.cast_le.mpr
-      apply card_le_card
-      intro p hp
-      obtain ⟨h1, h2, hne, hT, hT', hrem⟩ := mem_crossDistinctConfigurationPairs_iff.mp hp
-      exact mem_crossDistinctConfigurationPairs_iff.mpr ⟨hsub h1, h2, hne, hT, hT', hrem⟩
-    exact hc.trans (h.new_old T T')
+theorem SourceAugmentationCounts.mono {V : Type*} [Fintype V] [DecidableEq V] {j n : ℕ}
+    {F G G' : ForbiddenFamilyOn V} {a : ℝ≥0} (h : SourceAugmentationCounts j n F G a)
+    (hsub : G' ⊆ G) : SourceAugmentationCounts j n F G' a :=
+  by
+    refine ⟨fun E hE ↦ h.uniform E (hsub hE), ?_, ?_, ?_, ?_⟩
+    · intro R hR hRcard
+      have hc : ((familyExtensions G' R).card : ℝ≥0) ≤ (familyExtensions G R).card :=
+        by
+          exact_mod_cast card_le_card (filter_subset_filter _ hsub)
+      exact hc.trans (h.roots R hR hRcard)
+    · intro T T'
+      have hc :
+        ((distinctEqualRemainderPairs G' T T').card : ℝ≥0) ≤
+          (distinctEqualRemainderPairs G T T').card :=
+        by
+          apply Nat.cast_le.mpr
+          apply card_le_card
+          intro p hp
+          obtain ⟨h1, h2, hne, hT, hT', hrem⟩ := mem_distinctEqualRemainderPairs_iff.mp hp
+          exact mem_distinctEqualRemainderPairs_iff.mpr ⟨hsub h1, hsub h2, hne, hT, hT', hrem⟩
+      exact hc.trans (h.pairs T T')
+    · intro T T'
+      have hc :
+        ((crossDistinctConfigurationPairs F G' T T').card : ℝ≥0) ≤
+          (crossDistinctConfigurationPairs F G T T').card :=
+        by
+          apply Nat.cast_le.mpr
+          apply card_le_card
+          intro p hp
+          obtain ⟨h1, h2, hne, hT, hT', hrem⟩ := mem_crossDistinctConfigurationPairs_iff.mp hp
+          exact mem_crossDistinctConfigurationPairs_iff.mpr ⟨h1, hsub h2, hne, hT, hT', hrem⟩
+      exact hc.trans (h.old_new T T')
+    · intro T T'
+      have hc :
+        ((crossDistinctConfigurationPairs G' F T T').card : ℝ≥0) ≤
+          (crossDistinctConfigurationPairs G F T T').card :=
+        by
+          apply Nat.cast_le.mpr
+          apply card_le_card
+          intro p hp
+          obtain ⟨h1, h2, hne, hT, hT', hrem⟩ := mem_crossDistinctConfigurationPairs_iff.mp hp
+          exact mem_crossDistinctConfigurationPairs_iff.mpr ⟨hsub h1, h2, hne, hT, hT', hrem⟩
+      exact hc.trans (h.new_old T T')
 
 end
 

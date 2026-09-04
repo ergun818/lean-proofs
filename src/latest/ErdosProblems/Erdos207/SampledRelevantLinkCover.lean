@@ -31,33 +31,49 @@ theorem IsTwoSidedRobustMatchingSample.sampled_candidates
   have hm : (a, f a) ∈ sampledCandidatePairs r R := mem_filter.mpr ⟨(hmatch a).2.1, (hmatch a).1⟩
   exact ⟨hm, hm, (hmatch a).2.2⟩
 
-theorem exists_reservoirLinkCover_of_sampled_candidate_bad_degrees
-    {V : Type*} [Fintype V] [DecidableEq V]
-    (F : ForbiddenFamilyOn V) (available P : TripleSystemOn V) (K : BipartiteLink V)
-    (r : ↥K.left → ↥K.right → Prop) [DecidableRel r]
-    (Delta : ℕ) (R : Finset (↥K.left × ↥K.right))
-    (hrobust : IsTwoSidedRobustMatchingSample r Delta R)
+theorem exists_reservoirLinkCover_of_sampled_candidate_bad_degrees {V : Type*} [Finite V]
+    [DecidableEq V] (F : ForbiddenFamilyOn V) (available P : TripleSystemOn V)
+    (K : BipartiteLink V) (r : ↥K.left → ↥K.right → Prop) [DecidableRel r] (Delta : ℕ)
+    (R : Finset (↥K.left × ↥K.right)) (hrobust : IsTwoSidedRobustMatchingSample r Delta R)
     (hPpacking : IsPackingOn P) (hPavoid : AvoidsForbidden P F)
-    (havailable : ∀ a b, r a b → (a, b) ∈ R →
-      linkMatchingTriple K.center K.leftEmbedding K.rightEmbedding
-        K.center_ne_left K.center_ne_right K.left_ne_right a b ∈ available)
-    (hleftBad : ∀ a, (deletedNeighbors
-      (bipartiteLinkRelevantBadPair (fun a b ↦ (a, b) ∈ sampledCandidatePairs r R)
-        F P (sampledCandidatePairs r R)) a).card ≤ Delta)
-    (hrightBad : ∀ b, (deletedNeighbors (transposeRelation
-      (bipartiteLinkRelevantBadPair (fun a b ↦ (a, b) ∈ sampledCandidatePairs r R)
-        F P (sampledCandidatePairs r R))) b).card ≤ Delta) :
+    (havailable :
+      ∀ a b,
+        r a b →
+          (a, b) ∈ R →
+            linkMatchingTriple K.center K.leftEmbedding K.rightEmbedding K.center_ne_left
+                K.center_ne_right K.left_ne_right a b ∈
+              available)
+    (hleftBad :
+      ∀ a,
+        (deletedNeighbors
+              (bipartiteLinkRelevantBadPair (fun a b ↦ (a, b) ∈ sampledCandidatePairs r R) F P
+                (sampledCandidatePairs r R))
+              a).card ≤
+          Delta)
+    (hrightBad :
+      ∀ b,
+        (deletedNeighbors
+              (transposeRelation
+                (bipartiteLinkRelevantBadPair (fun a b ↦ (a, b) ∈ sampledCandidatePairs r R) F
+                  P (sampledCandidatePairs r R)))
+              b).card ≤
+          Delta) :
     ∃ M : TripleSystemOn V,
-      M ⊆ available ∧ M ⊆ bipartiteLinkReservoir K R ∧ Disjoint P M ∧
-        IsPackingOn (P ∪ M) ∧ AvoidsForbidden (P ∪ M) F ∧ CoversBipartiteLink K M := by
-  obtain ⟨M, hMa, hMR, hdis, hpack, havoid, hcover⟩ :=
-    exists_reservoirLinkCover_of_twoSidedRobustSample F available P K
-      (fun a b ↦ (a, b) ∈ sampledCandidatePairs r R) Delta (sampledCandidatePairs r R)
-      hrobust.sampled_candidates hPpacking hPavoid
-      (fun a b hab _ ↦ havailable a b (mem_filter.mp hab).2 (mem_filter.mp hab).1) hleftBad hrightBad
-  refine ⟨M, hMa, ?_, hdis, hpack, havoid, hcover⟩
-  apply hMR.trans
-  exact image_subset_image (filter_subset _ _)
+      M ⊆ available ∧
+        M ⊆ bipartiteLinkReservoir K R ∧
+          Disjoint P M ∧
+            IsPackingOn (P ∪ M) ∧ AvoidsForbidden (P ∪ M) F ∧ CoversBipartiteLink K M :=
+  by
+    let := Fintype.ofFinite V
+    obtain ⟨M, hMa, hMR, hdis, hpack, havoid, hcover⟩ :=
+      exists_reservoirLinkCover_of_twoSidedRobustSample F available P K
+        (fun a b ↦ (a, b) ∈ sampledCandidatePairs r R) Delta (sampledCandidatePairs r R)
+        hrobust.sampled_candidates hPpacking hPavoid
+        (fun a b hab _ ↦ havailable a b (mem_filter.mp hab).2 (mem_filter.mp hab).1) hleftBad
+        hrightBad
+    refine ⟨M, hMa, ?_, hdis, hpack, havoid, hcover⟩
+    apply hMR.trans
+    exact image_subset_image (filter_subset _ _)
 
 end
 

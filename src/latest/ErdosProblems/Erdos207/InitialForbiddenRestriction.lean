@@ -14,24 +14,26 @@ open Finset
 
 noncomputable section
 
-def restrictForbiddenFamily
-    {V : Type*} [DecidableEq V] (F : ForbiddenFamilyOn V) (ambient : TripleSystemOn V) : ForbiddenFamilyOn V :=
+def restrictForbiddenFamily {V : Type*} [DecidableEq V] (F : ForbiddenFamilyOn V)
+    (ambient : TripleSystemOn V) : ForbiddenFamilyOn V :=
   F.filter fun C ↦ C ⊆ ambient
 
-theorem avoidsForbidden_restrict_iff
-    {V : Type*} [DecidableEq V] (F : ForbiddenFamilyOn V) (ambient H : TripleSystemOn V)
-    (hH : H ⊆ ambient) : AvoidsForbidden H (restrictForbiddenFamily F ambient) ↔ AvoidsForbidden H F := by
-  constructor
-  · intro h C hC hCH
-    exact h C (mem_filter.mpr ⟨hC, hCH.trans hH⟩) hCH
-  · intro h C hC
-    exact h C (mem_filter.mp hC).1
+theorem avoidsForbidden_restrict_iff {V : Type*} [DecidableEq V] (F : ForbiddenFamilyOn V)
+    (ambient H : TripleSystemOn V) (hH : H ⊆ ambient) :
+    AvoidsForbidden H (restrictForbiddenFamily F ambient) ↔ AvoidsForbidden H F :=
+  by
+    constructor
+    · intro h C hC hCH
+      exact h C (mem_filter.mpr ⟨hC, hCH.trans hH⟩) hCH
+    · intro h C hC
+      exact h C (mem_filter.mp hC).1
 
-theorem avoidsForbidden_minimal_restrict_iff
-    {V : Type*} [DecidableEq V] (F : ForbiddenFamilyOn V) (ambient H : TripleSystemOn V)
-    (hH : H ⊆ ambient) :
-    AvoidsForbidden H (minimalForbiddenFamily (restrictForbiddenFamily F ambient)) ↔ AvoidsForbidden H F := by
-  rw [avoidsForbidden_minimal_iff, avoidsForbidden_restrict_iff F ambient H hH]
+theorem avoidsForbidden_minimal_restrict_iff {V : Type*} [DecidableEq V]
+    (F : ForbiddenFamilyOn V) (ambient H : TripleSystemOn V) (hH : H ⊆ ambient) :
+    AvoidsForbidden H (minimalForbiddenFamily (restrictForbiddenFamily F ambient)) ↔
+      AvoidsForbidden H F :=
+  by
+    rw [avoidsForbidden_minimal_iff, avoidsForbidden_restrict_iff F ambient H hH]
 
 theorem isLegalExtension_restrict_iff
     {V : Type*} [DecidableEq V] (F : ForbiddenFamilyOn V) (ambient C : TripleSystemOn V)

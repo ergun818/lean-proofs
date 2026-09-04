@@ -128,11 +128,12 @@ theorem IsMasterCoverStep.updated_even
 
 /-- Every updated graph edge is uncovered by the enlarged packing. -/
 theorem updatedStageGraph_le_leave_enlarged
-    {V : Type*} [Fintype V] [DecidableEq V]
+    {V : Type*} [Finite V] [DecidableEq V]
     {G : SimpleGraph V} {U : Finset V}
     {I D M : TripleSystemOn V}
     (hold : G ≤ leaveGraph (I ∪ D)) :
     updatedStageGraph G U M ≤ leaveGraph (I ∪ (D ∪ M)) := by
+  let := Fintype.ofFinite V
   intro u v huv
   have huvG : G.Adj u v := updatedStageGraph_le G U M huv
   have holdLeave := leaveGraph_adj.mp (hold huvG)

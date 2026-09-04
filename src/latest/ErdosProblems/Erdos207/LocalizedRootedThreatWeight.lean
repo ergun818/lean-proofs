@@ -115,7 +115,7 @@ lemma selectedCount_localizedRootedThreatRemainder
       (activeLocalizedRootedThreatWitnesses F P u v U).card := by
   classical
   unfold selectedCount activeLocalizedRootedThreatWitnesses
-  simp only [card_eq_sum_ones, Nat.cast_sum, Nat.cast_one, sum_filter]
+  simp only [card_eq_sum_ones, Nat.cast_sum, sum_filter]
   apply Finset.sum_congr rfl
   intro z _hz
   by_cases h : localizedRootedThreatRemainder z ⊆ P <;> simp [h]
@@ -137,12 +137,13 @@ lemma rootedActiveIn_count_le_selectedCount
 /-- Every localized rooted remainder inherits the usual `k-1` cardinality
 bound. -/
 lemma card_localizedRootedThreatRemainder_le
-    {V : Type*} [Fintype V] [DecidableEq V]
+    {V : Type*} [Finite V] [DecidableEq V]
     {F : ForbiddenFamilyOn V} {u v : V} {U : Finset V} {k : ℕ}
     (hcard : ∀ C ∈ F, C.card ≤ k)
     (z : LocalizedRootedThreatWitness V F u v U) :
-    (localizedRootedThreatRemainder z).card ≤ k - 1 :=
-  card_rootedThreatRemainder_le hcard z.1
+    (localizedRootedThreatRemainder z).card ≤ k - 1 := by
+  let := Fintype.ofFinite V
+  exact card_rootedThreatRemainder_le hcard z.1
 
 /-- Generic moment estimate for the localized rooted count.  The new
 combinatorial input is an extension bound for the localized witness family. -/

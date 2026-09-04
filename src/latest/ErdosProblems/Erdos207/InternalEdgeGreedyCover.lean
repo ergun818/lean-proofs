@@ -46,7 +46,7 @@ theorem exists_greedyReachable_cover_edgeList
           fun h ↦ hv e he (h ▸ hSU e he hw)⟩
       thirdVertexTriple (hne e he) w' ∈ A)
     (hsurplus : ∀ (Q : TripleSystemOn V) (e : Sym2 V),
-      ∀ hreach : GreedyReachable F P₀ Q, Q ⊆ P₀ ∪ A →
+      ∀ _hreach : GreedyReachable F P₀ Q, Q ⊆ P₀ ∪ A →
       (Q \ P₀).card ≤ edges.length →
       ∀ he : e ∈ edges,
       (leaveGraph Q).Adj e.out.1 e.out.2 →

@@ -45,31 +45,46 @@ theorem properPatternExtensions_vertical_pair_nonempty
   exact ⟨T, mem_availableTrianglesContainingPair_iff.mpr
     ⟨hT, insert_subset huT (singleton_subset_iff.mpr hxT)⟩⟩
 
-theorem KSSSOnTrajectories.terminal_sum_error
-    {V : Type*} [Fintype V] [DecidableEq V]
+theorem KSSSOnTrajectories.terminal_sum_error {V : Type*} [Fintype V] [DecidableEq V]
     {F : ForbiddenFamilyOn V} {S : GreedyStateOn V} {q : ℕ} {Q₀ : Finset (Finset V)}
     {a : ℕ → ℝ} {E A scale time : ℝ} {B : ℕ}
     (h : KSSSOnTrajectories F S q Q₀ a E A scale B time)
-    (he : 0 ≤ ksssErrorEnvelope E scale B time)
-    {T : TripleOn V} (hT : T ∈ S.available) :
-    |(∑ j ∈ Icc 4 q, ((greedyConfigurationClass (forbiddenFamilyOfOrder F j) S T (j - 4)).card : ℝ)) -
-      ∑ j ∈ Icc 4 q, ksssConfigurationTrajectory (ksssOrders q) a E A (j - 3) (j - 4) time| ≤
-        q * ksssErrorEnvelope E scale B time := by
-  have hpoint : ∀ j ∈ Icc 4 q,
-      |((greedyConfigurationClass (forbiddenFamilyOfOrder F j) S T (j - 4)).card : ℝ) -
-        ksssConfigurationTrajectory (ksssOrders q) a E A (j - 3) (j - 4) time| ≤
-          ksssErrorEnvelope E scale B time := by
-    intro j hj
-    have hj4 := (mem_Icc.mp hj).1
-    have hlocal := h.2 T hT j hj (j - 4) (by omega)
-    simpa only [Nat.sub_self, ksssConfigurationErrorEnvelope, pow_zero, mul_one] using hlocal
-  rw [← sum_sub_distrib]
-  have hsize : (Icc 4 q).card ≤ q := by rw [Nat.card_Icc]; omega
-  calc
-    _ ≤ ∑ _j ∈ Icc 4 q, ksssErrorEnvelope E scale B time :=
-      (abs_sum_le_sum_abs _ _).trans (sum_le_sum hpoint)
-    _ = (Icc 4 q).card * ksssErrorEnvelope E scale B time := by simp
-    _ ≤ _ := mul_le_mul_of_nonneg_right (by exact_mod_cast hsize) he
+    (he : 0 ≤ ksssErrorEnvelope E scale B time) {T : TripleOn V} (hT : T ∈ S.available) :
+    |(∑ j ∈ Icc 4 q,
+            ((greedyConfigurationClass (forbiddenFamilyOfOrder F j) S T (j - 4)).card : ℝ)) -
+          ∑ j ∈ Icc 4 q,
+            ksssConfigurationTrajectory (ksssOrders q) a E A (j - 3) (j - 4) time| ≤
+      q * ksssErrorEnvelope E scale B time :=
+  by
+    have hpoint :
+      ∀ j ∈ Icc 4 q,
+        |((greedyConfigurationClass (forbiddenFamilyOfOrder F j) S T (j - 4)).card : ℝ) -
+              ksssConfigurationTrajectory (ksssOrders q) a E A (j - 3) (j - 4) time| ≤
+          ksssErrorEnvelope E scale B time :=
+      by
+        intro j hj
+        have hj4 := (mem_Icc.mp hj).1
+        have hlocal :=
+          h.2 T hT j hj (j - 4)
+            (by
+              omega)
+        simpa only [Nat.sub_self, ksssConfigurationErrorEnvelope, pow_zero, mul_one] using
+          hlocal
+    rw [← sum_sub_distrib]
+    have hsize : (Icc 4 q).card ≤ q :=
+      by
+        rw [Nat.card_Icc]; omega
+    calc
+      _ ≤ ∑ _j ∈ Icc 4 q, ksssErrorEnvelope E scale B time :=
+        (abs_sum_le_sum_abs _ _).trans (sum_le_sum hpoint)
+      _ = (Icc 4 q).card * ksssErrorEnvelope E scale B time :=
+        by
+          simp
+      _ ≤ _ :=
+        mul_le_mul_of_nonneg_right
+          (by
+            exact_mod_cast hsize)
+          he
 
 theorem KSSSOnTrajectories.pattern_hazard_error
     {V : Type*} [Fintype V] [DecidableEq V]

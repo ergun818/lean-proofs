@@ -325,7 +325,7 @@ lemma fullCycleCoverRoot_edge_base
   cases i with
   | triangle f =>
       obtain ⟨T, hT, huT, hvT, huvne⟩ := huv
-      simp only [fullCycleCoverRoot, mem_singleton] at hT
+      simp only [mem_singleton] at hT
       subst T
       obtain ⟨a, ha, hau⟩ := Finset.mem_map.mp huT
       obtain ⟨b, hb, hbv⟩ := Finset.mem_map.mp hvT
@@ -379,8 +379,8 @@ lemma fullCycleCoverOut_root_disjoint
       change u = Sum.inl y at huy
       change v = Sum.inl z at hvz
       rcases hi.2.2 with hpriv | hpriv
-      · simpa [huy, IsPrivateForFullCycleCoverCopy] using hpriv
-      · simpa [hvz, IsPrivateForFullCycleCoverCopy] using hpriv
+      · simp [huy, IsPrivateForFullCycleCoverCopy] at hpriv
+      · simp [hvz, IsPrivateForFullCycleCoverCopy] at hpriv
 
 /-- The full bounded cycle-cover bank absorbs every selected edge-disjoint
 family of triangles and edge-faithful grouped cycle quotients. -/

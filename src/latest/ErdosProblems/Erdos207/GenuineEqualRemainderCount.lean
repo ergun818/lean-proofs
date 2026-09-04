@@ -13,33 +13,38 @@ open Finset
 
 noncomputable section
 
-theorem genuine_distinctEqualRemainderPairs_card_le_span
-    {V : Type*} [Fintype V] [DecidableEq V]
-    {F : ForbiddenFamilyOn V} {j : ℕ} (T T' : TripleOn V)
+theorem genuine_distinctEqualRemainderPairs_card_le_span {V : Type*} [Fintype V]
+    [DecidableEq V] {F : ForbiddenFamilyOn V} {j : ℕ} (T T' : TripleOn V)
     (hconfig : ∀ E ∈ F, IsErdosConfigOn j E) (hj : 5 ≤ j) :
     (distinctEqualRemainderPairs F T T').card ≤
-      (tripleSystemsExtendingWithSpan {T, T'} j).card := by
-  apply card_le_card_of_injOn (fun p ↦ insert T' p.1)
-  · intro p hp
-    have h := mem_distinctEqualRemainderPairs_iff.mp hp
-    have hspan := genuine_distinctEqualRemainderPairs_span_eq hconfig hj hp
-    have hT'sub : T'.1 ⊆ verticesOn p.1 := by
-      rw [hspan]
-      intro x hx
-      exact mem_biUnion.mpr ⟨T', h.2.2.2.2.1, hx⟩
-    have hspanInsert : verticesOn (insert T' p.1) = verticesOn p.1 := by
-      simp only [verticesOn, biUnion_insert]
-      exact union_eq_right.mpr hT'sub
-    apply mem_tripleSystemsExtendingWithSpan_iff.mpr
-    refine ⟨?_, ?_⟩
-    · exact insert_subset (mem_insert_of_mem h.2.2.2.1) (singleton_subset_iff.mpr (mem_insert_self _ _))
-    · rw [hspanInsert, IsErdosConfig.vertices_card_eq (hconfig p.1 h.1) hj]
-  · intro p hp q hq heq
-    have hfirst : p.1 = q.1 := by
-      have herase := congrArg (fun C : TripleSystemOn V ↦ C.erase T') heq
-      simpa [distinctEqualRemainderPairs_cross_not_mem hp |>.1,
-        distinctEqualRemainderPairs_cross_not_mem hq |>.1] using herase
-    exact distinctEqualRemainderPairs_fst_injOn F T T' hp hq hfirst
+      (tripleSystemsExtendingWithSpan { T, T' } j).card :=
+  by
+    apply card_le_card_of_injOn (fun p ↦ insert T' p.1)
+    · intro p hp
+      have h := mem_distinctEqualRemainderPairs_iff.mp hp
+      have hspan := genuine_distinctEqualRemainderPairs_span_eq hconfig hj hp
+      have hT'sub : T'.1 ⊆ verticesOn p.1 :=
+        by
+          rw [hspan]
+          intro x hx
+          exact mem_biUnion.mpr ⟨T', h.2.2.2.2.1, hx⟩
+      have hspanInsert : verticesOn (insert T' p.1) = verticesOn p.1 :=
+        by
+          simp only [verticesOn, biUnion_insert]
+          exact union_eq_right.mpr hT'sub
+      apply mem_tripleSystemsExtendingWithSpan_iff.mpr
+      refine ⟨?_, ?_⟩
+      · exact
+          insert_subset (mem_insert_of_mem h.2.2.2.1)
+            (singleton_subset_iff.mpr (mem_insert_self _ _))
+      · rw [hspanInsert, IsErdosConfig.vertices_card_eq (hconfig p.1 h.1) hj]
+    · intro p hp q hq heq
+      have hfirst : p.1 = q.1 :=
+        by
+          have herase := congrArg (fun C : TripleSystemOn V ↦ C.erase T') heq
+          simpa [distinctEqualRemainderPairs_cross_not_mem hp |>.1,
+            distinctEqualRemainderPairs_cross_not_mem hq |>.1] using herase
+      exact distinctEqualRemainderPairs_fst_injOn F T T' hp hq hfirst
 
 theorem card_tripleSystemsExtendingWithSpan_le_of_four_le_root_span
     {V : Type*} [Fintype V] [DecidableEq V]

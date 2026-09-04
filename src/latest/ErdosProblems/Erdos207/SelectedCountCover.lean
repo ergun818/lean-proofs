@@ -24,7 +24,7 @@ theorem selectedCount_eq_card_filter
   simp only [card_eq_sum_ones, Nat.cast_sum, sum_filter, Nat.cast_ite, Nat.cast_one, Nat.cast_zero]
 
 theorem selectedCount_le_of_decoded_cover
-    {I J W Y : Type*} [Fintype I] [Fintype J] [DecidableEq W] [DecidableEq Y]
+    {I J W Y : Type*} [Fintype I] [Fintype J] [DecidableEq W]
     (remI : I → Finset W) (remJ : J → Finset W) (f : I → Y) (g : J → Y)
     (R S : Finset W) (hf : Function.Injective f)
     (hcover : ∀ i, remI i ⊆ R → ∃ j, remJ j ⊆ S ∧ g j = f i) :

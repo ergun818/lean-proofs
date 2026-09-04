@@ -325,7 +325,7 @@ lemma transformerSourceRoot_disjoint_targetRoot
       obtain ⟨x, y, hxy, rfl, rfl⟩ := heSource
       rw [SimpleGraph.mem_edgeSet, transformerTargetRoot,
         SimpleGraph.map_adj] at heTarget
-      simpa [transformerSourceEmbedding, transformerTargetEmbedding] using heTarget
+      simp [transformerSourceEmbedding, transformerTargetEmbedding] at heTarget
 
 def IsTransformerNonTarget {V W : Type*} {G : SimpleGraph V} :
     TransformerVertex G W → Prop
@@ -363,16 +363,17 @@ lemma transformerSourceSide_edge_has_nonTarget
               target_mem_targetMatchingTriple_iff phi heven x p y |>.mp huT
             have hz :=
               target_mem_targetMatchingTriple_iff phi heven x p z |>.mp hvT
-            simpa [hy, hz]
+            simp [hy, hz]
 
 /-- Every absorber-out edge uses one of the six private vertices, whereas a
 graph mapped through the transformer embedding only uses transformer
 vertices. -/
 lemma c4c5LocalAbsorberOut_disjoint_leftMap
-    {Y : Type*} [Fintype Y] [DecidableEq Y]
+    {Y : Type*} [Finite Y] [DecidableEq Y]
     (G : SimpleGraph (TransformerVertex c4c5TemplateGraph Y)) :
     Disjoint (coveredGraph (c4c5LocalAbsorberOut (Y := Y)))
       (G.map c4c5LocalTransformerEmbedding) := by
+  let := Fintype.ofFinite Y
   rw [← SimpleGraph.disjoint_edgeSet, Set.disjoint_left]
   intro e heAbs heLeft
   induction e using Sym2.ind with
@@ -544,10 +545,11 @@ def threeC4LocalIn {Y : Type*} [Fintype Y] [DecidableEq Y]
   threeC4LocalAbsorberIn ∪ threeC4LocalTargetSide f
 
 lemma threeC4LocalAbsorberOut_disjoint_leftMap
-    {Y : Type*} [Fintype Y] [DecidableEq Y]
+    {Y : Type*} [Finite Y] [DecidableEq Y]
     (G : SimpleGraph (TransformerVertex threeC4TemplateGraph Y)) :
     Disjoint (coveredGraph (threeC4LocalAbsorberOut (Y := Y)))
       (G.map threeC4LocalTransformerEmbedding) := by
+  let := Fintype.ofFinite Y
   rw [← SimpleGraph.disjoint_edgeSet, Set.disjoint_left]
   intro e heAbs heLeft
   induction e using Sym2.ind with

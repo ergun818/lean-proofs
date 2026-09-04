@@ -17,10 +17,11 @@ level uses the sharp root constants.
 namespace Erdos207
 
 open Finset
-open scoped Classical NNReal
+open scoped NNReal
 
 noncomputable section
 
+open scoped Classical in
 /-- Construct the padded absorber and an explicit separated vortex, together
 with exact positive-level cardinalities and the complete initial typicality
 certificate. -/

@@ -25,7 +25,7 @@ noncomputable section
 realization leaves more than the prescribed cutoff of wedge candidates for
 every indexed edge. -/
 theorem exists_reserve_realization_with_all_wedge_supplies
-    {V J : Type*} [Fintype V] [DecidableEq V] [DecidableEq J]
+    {V J : Type*} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) (U : Finset V)
     (E : Finset J) (u v : J → V) (S : J → Finset V)
     (a : J → ℕ) (r : ℝ≥0) (hr : r ≤ 1)
@@ -41,6 +41,7 @@ theorem exists_reserve_realization_with_all_wedge_supplies
     ∃ ω : Sym2 V → Bool, ∀ j ∈ E,
       a j <
         (activeReserveWedgeVertices G U (S j) (u j) (v j) ω).card := by
+  classical
   let L := reserveEdgeLaw G U r hr
   let Bad : J → (Sym2 V → Bool) → Prop := fun j ω ↦
     (activeReserveWedgeVertices G U (S j) (u j) (v j) ω).card ≤ a j
@@ -68,7 +69,7 @@ theorem exists_reserve_realization_with_all_wedge_supplies
 /-- Specialization to the one-edge extension sets used by the master
 iteration. -/
 theorem exists_reserve_realization_with_extension_supplies
-    {V J : Type*} [Fintype V] [DecidableEq V] [DecidableEq J]
+    {V J : Type*} [Fintype V] [DecidableEq V]
     {ell : ℕ} {W : Vortex V ell}
     {G : SimpleGraph V} {A : TripleSystemOn V}
     (htri : ConsistsOfTriangles G A)
@@ -93,6 +94,7 @@ theorem exists_reserve_realization_with_extension_supplies
       a j <
         (activeReserveWedgeVertices G (W.U i.succ) S
           (u j) (v j) ω).card := by
+  classical
   let S : J → Finset V := fun j ↦
     iterationExtensionVertices A
       (SimpleGraph.edge (u j) (v j)) (W.U i.succ)
@@ -120,7 +122,7 @@ theorem exists_reserve_realization_with_extension_supplies
 /-- A common deterministic lower bound on all one-edge extension counts
 turns iteration typicality into a uniform all-edge reserve realization. -/
 theorem IsIterationTypical.exists_reserve_realization_with_internal_supplies
-    {V J : Type*} [Fintype V] [DecidableEq V] [DecidableEq J]
+    {V J : Type*} [Fintype V] [DecidableEq V]
     {ell : ℕ} {W : Vortex V ell} {stage : Fin (ell + 1)}
     {G : SimpleGraph V} {A : TripleSystemOn V}
     {p eta ξ : ℝ≥0} {h : ℕ}
@@ -149,6 +151,7 @@ theorem IsIterationTypical.exists_reserve_realization_with_internal_supplies
       a j <
         (activeReserveWedgeVertices G (W.U i.succ) S
           (u j) (v j) ω).card := by
+  classical
   let S : J → Finset V := fun j ↦
     iterationExtensionVertices A
       (SimpleGraph.edge (u j) (v j)) (W.U i.succ)

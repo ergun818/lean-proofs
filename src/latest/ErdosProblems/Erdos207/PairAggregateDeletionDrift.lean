@@ -581,7 +581,7 @@ theorem greedyKernel_expectationReal_fixedPairLowerIncrement_if_alive_le_zero
     (hinc : HasPairStarTwoAwayIncidenceCutoff F Kinc S)
     (hfloor : HasAvailablePairFloor d S) (halive : PairAlive P S)
     (hsmall : 3 + Kpair < d)
-    (dq : ℝ) (hdq : -(d : ℝ) ≤ dq) (hdqnonpos : dq ≤ 0)
+    (dq : ℝ) (_hdq : -(d : ℝ) ≤ dq) (hdqnonpos : dq ≤ 0)
     (hDrift : dq ≤ -((D - Delta : ℕ) : ℝ)⁻¹ *
       (((Delta : ℝ) * (2 * Delta : ℕ)) + Kinc)) :
     (greedyKernel F S).expectationReal (fun S' ↦
@@ -648,7 +648,7 @@ theorem greedyKernel_expectationReal_fixedPairLowerIncrement_if_alive_le_zero
             congr 1
             funext T
             by_cases hPT : P ⊆ T.1 <;> simp [hPT]]
-      simp only [sum_add_distrib, sum_const, nsmul_eq_mul, Nat.cast_sum]
+      simp only [sum_add_distrib, sum_const, nsmul_eq_mul]
     _ ≤ (S.available.card : ℝ)⁻¹ *
         (((D - Delta : ℕ) : ℝ) * dq +
           (((Delta : ℝ) * (2 * Delta : ℕ)) + Kinc)) := by

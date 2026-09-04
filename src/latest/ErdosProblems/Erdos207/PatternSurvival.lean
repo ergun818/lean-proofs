@@ -23,10 +23,11 @@ noncomputable instance patternUncoveredDecidable
     Decidable (PatternUncovered Q S) := Classical.propDecidable _
 
 theorem GreedyInvariant.available_edge_not_covered
-    {V : Type*} [Fintype V] [DecidableEq V]
+    {V : Type*} [Finite V] [DecidableEq V]
     {F : ForbiddenFamilyOn V} {S : GreedyStateOn V} (hS : GreedyInvariant F S)
     {T : TripleOn V} (hT : T ∈ S.available) {e : Sym2 V} (he : e ∈ tripleEdgeFinset T) :
     e ∉ (coveredGraph S.chosen).edgeSet := by
+  let := Fintype.ofFinite V
   induction e using Sym2.inductionOn with
   | hf u v =>
     have hdata := mk_mem_tripleEdgeFinset_iff.mp he
@@ -45,13 +46,14 @@ theorem iterationExtensionVertices_eq_empty_of_covered_pattern_edge
   obtain ⟨T, hT, _huT, heT⟩ := (mem_iterationExtensionVertices_iff.mp hu).2 e heQ
   exact hS.available_edge_not_covered hT heT heC
 
-theorem iterationExtensionVertices_nonempty_implies_patternUncovered
-    {V : Type*} [Fintype V] [DecidableEq V]
-    {F : ForbiddenFamilyOn V} {S : GreedyStateOn V} (hS : GreedyInvariant F S)
-    (Q : SimpleGraph V) (U : Finset V) (hU : (iterationExtensionVertices S.available Q U).Nonempty) :
-    PatternUncovered Q S := by
-  intro e heQ heC
-  exact hU.ne_empty (iterationExtensionVertices_eq_empty_of_covered_pattern_edge hS Q U heQ heC)
+theorem iterationExtensionVertices_nonempty_implies_patternUncovered {V : Type*} [Fintype V]
+    [DecidableEq V] {F : ForbiddenFamilyOn V} {S : GreedyStateOn V} (hS : GreedyInvariant F S)
+    (Q : SimpleGraph V) (U : Finset V)
+    (hU : (iterationExtensionVertices S.available Q U).Nonempty) : PatternUncovered Q S :=
+  by
+    intro e heQ heC
+    exact
+      hU.ne_empty (iterationExtensionVertices_eq_empty_of_covered_pattern_edge hS Q U heQ heC)
 
 theorem patternUncovered_greedyStep_iff
     {V : Type*} [Fintype V] [DecidableEq V]
@@ -77,17 +79,17 @@ theorem patternUncovered_greedyStep_iff
     · exact disjoint_left.mp hdisjoint heQ heR
     · exact h e heQ (by rw [coveredGraph_edgeSet_eq_biUnion]; exact mem_biUnion.mpr ⟨R, hR, heR⟩)
 
-def patternSurvivalSelectors
-    {V : Type*} [Fintype V] [DecidableEq V] (Q : SimpleGraph V) (S : GreedyStateOn V) : TripleSystemOn V := by
-  classical
-  exact S.available.filter fun T ↦ Disjoint (graphEdges Q) (tripleEdgeFinset T)
+def patternSurvivalSelectors {V : Type*} [Fintype V] [DecidableEq V] (Q : SimpleGraph V)
+    (S : GreedyStateOn V) : TripleSystemOn V :=
+  by
+    classical exact S.available.filter fun T ↦ Disjoint (graphEdges Q) (tripleEdgeFinset T)
 
-theorem mem_patternSurvivalSelectors_iff
-    {V : Type*} [Fintype V] [DecidableEq V]
+theorem mem_patternSurvivalSelectors_iff {V : Type*} [Fintype V] [DecidableEq V]
     (Q : SimpleGraph V) (S : GreedyStateOn V) (T : TripleOn V) :
-    T ∈ patternSurvivalSelectors Q S ↔ T ∈ S.available ∧ Disjoint (graphEdges Q) (tripleEdgeFinset T) := by
-  classical
-  simp only [patternSurvivalSelectors, mem_filter]
+    T ∈ patternSurvivalSelectors Q S ↔
+      T ∈ S.available ∧ Disjoint (graphEdges Q) (tripleEdgeFinset T) :=
+  by
+    classical simp only [patternSurvivalSelectors, mem_filter]
 
 theorem patternUncovered_greedyStep_iff_selector
     {V : Type*} [Fintype V] [DecidableEq V]

@@ -146,7 +146,7 @@ incidence.  Its probability has the stated positive lower bound, and its
 reserve-aware strong law survives with only the standard reciprocal loss in
 the multiplicative constant. -/
 theorem IsInitialProductBound.exists_conditionedOn_residualOuterIncidence
-    {Omega V : Type*} [Fintype Omega] [DecidableEq Omega]
+    {Omega V : Type*} [Fintype Omega]
     [Fintype V] [DecidableEq V] {ell : ℕ}
     {L : FiniteLaw Omega} {W : Vortex V ell} {k : Fin (ell + 1)}
     {selected : Omega → TripleSystemOn V}
@@ -183,7 +183,7 @@ theorem IsInitialProductBound.exists_conditionedOn_residualOuterIncidence
     congr 1
     funext omega
     simp only [Good, Bad]
-    push_neg
+    push Not
     rfl
   have hlower :
       1 - initialProductResidualOuterIncidenceTail V G U p C b r ≤

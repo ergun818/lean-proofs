@@ -479,7 +479,7 @@ theorem timedAggregateAveragePairBand_probability_active_newSelected_residualOut
 /-- Conditioning a pure mixed product event on its common good event absorbs
 the single normalizer into both product bases. -/
 theorem FiniteLaw.conditionOn_probability_mixedProduct_le
-    {Omega V : Type*} [Fintype Omega] [Fintype V] [DecidableEq V]
+    {Omega V : Type*} [Fintype Omega] [Finite V] [DecidableEq V]
     (L : FiniteLaw Omega) (Good : Omega → Prop)
     (selected : Omega → TripleSystemOn V)
     (residual : Omega → Finset (Sym2 V))
@@ -493,6 +493,7 @@ theorem FiniteLaw.conditionOn_probability_mixedProduct_le
         Q ⊆ selected omega ∧ E ⊆ residual omega) ≤
         (alpha / L.probability Good) ^ Q.card *
           (eta / L.probability Good) ^ E.card := by
+  let := Fintype.ofFinite V
   intro Q E
   let Event : Omega → Prop := fun omega ↦
     Q ⊆ selected omega ∧ E ⊆ residual omega
@@ -632,7 +633,7 @@ family.  This form deliberately keeps the finite witness multiplier on the
 exceptional term; later parameter choices may make that term arbitrarily
 small. -/
 theorem FiniteLaw.probability_card_inter_residualOuter_ge_le_of_mixedProduct
-    {Omega V : Type*} [Fintype Omega] [Fintype V]
+    {Omega V : Type*} [Fintype Omega] [Finite V]
     [DecidableEq V]
     (L : FiniteLaw Omega) (selected : Omega → TripleSystemOn V)
     (residual : Omega → Finset (Sym2 V))
@@ -644,6 +645,7 @@ theorem FiniteLaw.probability_card_inter_residualOuter_ge_le_of_mixedProduct
     L.probability (fun omega ↦
         r ≤ (tests ∩ residual omega).card) ≤
       (tests.powersetCard r).card * (eta ^ r + epsilon) := by
+  let := Fintype.ofFinite V
   let event : Finset (Sym2 V) → Omega → Prop :=
     fun E omega ↦ E ⊆ residual omega
   calc

@@ -20,9 +20,9 @@ def sourceNibbleCodes
     (W : Vortex V ell) (F : ForbiddenFamilyOn V) (T : TripleOn V) (j j' : ℕ) :=
   terminalOmissionCodes W (familyExtensions F {T}) (fun E ↦ E \ {T}) (j' - j)
 
-def sourceNibbleRemaining
-    {V : Type*} [DecidableEq V] (T : TripleOn V) (x : TripleSystemOn V × TripleSystemOn V) : TripleSystemOn V :=
-  (x.1 \ {T}) \ x.2
+def sourceNibbleRemaining {V : Type*} [DecidableEq V] (T : TripleOn V)
+    (x : TripleSystemOn V × TripleSystemOn V) : TripleSystemOn V :=
+  (x.1 \ { T }) \ x.2
 
 theorem sourceNibbleCode_data
     {V : Type*} [Fintype V] [DecidableEq V] {ell j j' : ℕ}

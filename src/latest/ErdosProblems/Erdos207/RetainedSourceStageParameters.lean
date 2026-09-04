@@ -18,18 +18,26 @@ theorem retained_stage_exponent_le_ambient (Rfixed step ell i : ℕ) :
   · simp only [retainedStageExponent, if_neg hi]
     exact (Nat.mul_le_mul_left step (Nat.sub_le ell i)).trans (Nat.le_add_left _ _)
 
-theorem retained_stage_exponent_ratio_gap
-    (Rfixed step ell length m rootPower K : ℕ) (hsplit : length + m = ell)
-    (hroot : rootPower ≤ step * m) (hrootGap : K * (2 * step + 1) ≤ rootPower)
+theorem retained_stage_exponent_ratio_gap (Rfixed step ell length m rootPower K : ℕ)
+    (hsplit : length + m = ell) (hroot : rootPower ≤ step * m)
+    (hrootGap : K * (2 * step + 1) ≤ rootPower)
     (hfirstGap : K * (Rfixed + step + 1) ≤ Rfixed + step * ell) (i : Fin length) :
     1 ≤ retainedRatioExponent Rfixed step i.val ∧
-      K * retainedRatioExponent Rfixed step i.val ≤ retainedStageExponent Rfixed step ell i.val := by
-  by_cases hi : i.val = 0
-  · simpa [retainedRatioExponent, retainedStageExponent, hi] using
-      And.intro (show 1 ≤ Rfixed + step + 1 by omega) hfirstGap
-  · simp only [retainedRatioExponent, retainedStageExponent, if_neg hi]
-    refine ⟨by omega, hrootGap.trans (hroot.trans ?_)⟩
-    exact Nat.mul_le_mul_left step (by have := i.isLt; omega)
+      K * retainedRatioExponent Rfixed step i.val ≤
+        retainedStageExponent Rfixed step ell i.val :=
+  by
+    by_cases hi : i.val = 0
+    · simpa [retainedRatioExponent, retainedStageExponent, hi] using
+        And.intro (show 1 ≤ Rfixed + step + 1 by omega) hfirstGap
+    · simp only [retainedRatioExponent, retainedStageExponent, if_neg hi]
+      refine
+        ⟨by
+            omega,
+          hrootGap.trans (hroot.trans ?_)⟩
+      exact
+        Nat.mul_le_mul_left step
+          (by
+            have := i.isLt; omega)
 
 theorem source_stage_multiplier_denominator_bounds
     (q b B k Rmin D d : ℕ) (hmin : 1 ≤ Rmin)

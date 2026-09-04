@@ -46,13 +46,14 @@ lemma mem_familyExtensions_iff
 
 /-- Exact uniform-weight formula for a fixed-size finite family. -/
 theorem extensionWeight_constant_eq
-    {W : Type*} [Fintype W] [DecidableEq W]
+    {W : Type*} [Finite W] [DecidableEq W]
     (F : Finset (Finset W)) (m : ℕ)
     (hcard : ∀ S ∈ F, S.card = m)
     (p : ℝ≥0) (R : Finset W) :
     extensionWeight (fun S : F ↦ S.1) (fun _ ↦ p) R =
       ((familyExtensions F R).card : ℝ≥0) * p ^ (m - R.card) := by
   classical
+  let := Fintype.ofFinite W
   unfold extensionWeight
   calc
     (∑ S : F, if R ⊆ S.1 then
@@ -79,13 +80,14 @@ theorem extensionWeight_constant_eq
 /-- Cardinal domination immediately yields a uniform-weight extension
 bound for one prescribed root. -/
 theorem extensionWeight_constant_le_of_card
-    {W : Type*} [Fintype W] [DecidableEq W]
+    {W : Type*} [Finite W] [DecidableEq W]
     (F : Finset (Finset W)) (m : ℕ)
     (hcard : ∀ S ∈ F, S.card = m)
     (p : ℝ≥0) (R : Finset W) (C : ℕ)
     (hC : (familyExtensions F R).card ≤ C) :
     extensionWeight (fun S : F ↦ S.1) (fun _ ↦ p) R ≤
       C * p ^ (m - R.card) := by
+  let := Fintype.ofFinite W
   rw [extensionWeight_constant_eq F m hcard p R]
   exact mul_le_mul_left (by exact_mod_cast hC) _
 

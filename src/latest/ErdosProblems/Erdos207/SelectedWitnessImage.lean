@@ -27,16 +27,18 @@ theorem mem_selectedWitnessImage
   classical
   simp [selectedWitnessImage]
 
-theorem card_selectedWitnessImage_le_selectedCount
-    {I W Y : Type*} [Fintype I] [DecidableEq W] [DecidableEq Y]
-    (rem : I → Finset W) (f : I → Y) (R : Finset W) :
-    ((selectedWitnessImage rem f R).card : ℝ≥0) ≤ selectedCount rem R := by
-  classical
-  have hc : ((univ.filter fun u ↦ rem u ⊆ R).card : ℝ≥0) = selectedCount rem R := by
-    unfold selectedCount
-    simp only [card_eq_sum_ones, Nat.cast_sum, sum_filter, Nat.cast_ite, Nat.cast_one, Nat.cast_zero]
-  rw [← hc]
-  exact_mod_cast (card_image_le (s := univ.filter fun u ↦ rem u ⊆ R) (f := f))
+theorem card_selectedWitnessImage_le_selectedCount {I W Y : Type*} [Fintype I] [DecidableEq W]
+    [DecidableEq Y] (rem : I → Finset W) (f : I → Y) (R : Finset W) :
+    ((selectedWitnessImage rem f R).card : ℝ≥0) ≤ selectedCount rem R :=
+  by
+    classical
+    have hc : ((univ.filter fun u ↦ rem u ⊆ R).card : ℝ≥0) = selectedCount rem R :=
+      by
+        unfold selectedCount
+        simp only [card_eq_sum_ones, Nat.cast_sum, sum_filter, Nat.cast_ite, Nat.cast_one,
+          Nat.cast_zero]
+    rw [← hc]
+    exact_mod_cast (card_image_le (s := univ.filter fun u ↦ rem u ⊆ R) (f := f))
 
 end
 

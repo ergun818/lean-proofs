@@ -69,13 +69,14 @@ lemma ConsistsOfTriangles.pairSafeAvailable
 /-- A triangle through two outer endpoints and one inner vertex avoids an
 outer-only packing as soon as its outside edge is still uncovered. -/
 lemma thirdVertexTriple_avoids_outerOnly
-    {V : Type*} [Fintype V] [DecidableEq V]
+    {V : Type*} [Finite V] [DecidableEq V]
     {U : Finset V} {M : TripleSystemOn V} {u v : V}
     (huv : u ≠ v) (hu : u ∉ U) (hv : v ∉ U)
     (hM : TrianglesDisjointFrom U M)
     (hnot : ¬ (coveredGraph M).Adj u v)
     (w : ThirdVertex u v) (hwU : w.1 ∈ U) :
     TriangleAvoidsGraph (coveredGraph M) (thirdVertexTriple huv w) := by
+  let := Fintype.ofFinite V
   intro x hx y hy hxy hcovered
   obtain ⟨S, hSM, hxS, hyS, _hxyS⟩ := coveredGraph_adj.mp hcovered
   have hdisj := hM S hSM
@@ -103,7 +104,7 @@ lemma thirdVertexTriple_avoids_outerOnly
 /-- Pair-avoidance with respect to an old packing and an outer-only new
 packing combines across their union. -/
 lemma thirdVertexTriple_avoids_old_union_outerOnly
-    {V : Type*} [Fintype V] [DecidableEq V]
+    {V : Type*} [Finite V] [DecidableEq V]
     {U : Finset V} {P M : TripleSystemOn V} {u v : V}
     (huv : u ≠ v) (hu : u ∉ U) (hv : v ∉ U)
     (hM : TrianglesDisjointFrom U M)
@@ -113,6 +114,7 @@ lemma thirdVertexTriple_avoids_old_union_outerOnly
       (thirdVertexTriple huv w)) :
     TriangleAvoidsGraph (coveredGraph (P ∪ M))
       (thirdVertexTriple huv w) := by
+  let := Fintype.ofFinite V
   have hnotM : ¬ (coveredGraph M).Adj u v := by
     intro hcovered
     apply hnot
@@ -199,7 +201,7 @@ kernel after an outer-only preliminary family.  The internal ambient family
 is the pair-safe subfamily; it is still a subfamily of the original master
 availability. -/
 theorem exists_rawResidualInternalKernel_of_outerOnly
-    {Omega V : Type*} [Fintype Omega] [Fintype V]
+    {Omega V : Type*} [Finite Omega] [Fintype V]
     [DecidableEq V] {ell : ℕ} {W : Vortex V ell}
     {stage : Fin (ell + 1)} {F : ForbiddenFamilyOn V}
     {G : Omega → SimpleGraph V}
@@ -248,6 +250,7 @@ theorem exists_rawResidualInternalKernel_of_outerOnly
         (rawResidualInternalKernel W i F G Aint P0 bits D omega).probability
           (fun z ↦ Q ⊆ rawResidualInternalAdded P0 omega z) ≤
             ((D : ℝ≥0)⁻¹ ^ Q.card) := by
+  let := Fintype.ofFinite Omega
   dsimp only
   let Aint : Omega → TripleSystemOn V := fun omega ↦
     pairSafeAvailable (A omega) (P omega ∪ M omega)

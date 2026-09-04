@@ -100,7 +100,7 @@ residual outer-edge star. -/
 lemma protectedResidualSpokeVertices_card_le_incidence
     {V : Type*} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) (U : Finset V) (sampled : Finset (Sym2 V))
-    (P : TripleSystemOn V) (center : V) (hc : center ∉ U) :
+    (P : TripleSystemOn V) (center : V) (_hc : center ∉ U) :
     (protectedResidualSpokeVertices G U sampled P center).card ≤
       (outerIncidentEdges (reserveProtectedOuterGraph G U sampled) U center ∩
         preliminaryResidualOuterEdges

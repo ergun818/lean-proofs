@@ -13,17 +13,19 @@ open scoped NNReal
 
 noncomputable section
 
-theorem timedStopped_initial_active_of_failure_lt_one
-    {Ω : Type*} [Fintype Ω] [DecidableEq Ω]
+theorem timedStopped_initial_active_of_failure_lt_one {Ω : Type*} [Fintype Ω] [DecidableEq Ω]
     (n : ℕ) (K : ℕ → Ω → FiniteLaw Ω) (active : ℕ → Ω → Prop) (x₀ : Ω)
-    (hsmall : (timedStoppedProcessLaw n K active x₀).probability (fun z ↦ ¬ active z.1.1 z.2) < 1) :
-    active 0 x₀ := by
-  by_contra hinactive
-  have hs := timedStoppedProcessLaw_supported_indexed n K active (fun i x ↦ ¬ active i x) x₀ hinactive
-    (fun _ _ _ hnot hyes ↦ (hnot hyes).elim)
-  have hone := (timedStoppedProcessLaw n K active x₀).probability_eq_one_of_supported _ hs
-  rw [hone] at hsmall
-  exact lt_irrefl _ hsmall
+    (hsmall :
+      (timedStoppedProcessLaw n K active x₀).probability (fun z ↦ ¬active z.1.1 z.2) < 1) :
+    active 0 x₀ :=
+  by
+    by_contra hinactive
+    have hs :=
+      timedStoppedProcessLaw_supported_indexed n K active (fun i x ↦ ¬active i x) x₀ hinactive
+        (fun _ _ _ hnot hyes ↦ (hnot hyes).elim)
+    have hone := (timedStoppedProcessLaw n K active x₀).probability_eq_one_of_supported _ hs
+    rw [hone] at hsmall
+    exact lt_irrefl _ hsmall
 
 end
 

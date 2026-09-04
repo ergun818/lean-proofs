@@ -13,7 +13,7 @@ import Mathlib.Data.NNReal.Basic
 namespace Erdos207
 
 open Finset
-open scoped Classical NNReal
+open scoped NNReal
 
 noncomputable section
 
@@ -50,30 +50,44 @@ theorem sharpHall_summand_le_size_power
     _ = _ := by
       simp only [inv_pow, div_eq_mul_inv, inv_inv, pow_mul, mul_pow, one_mul]
 
-theorem sharpHall_sum_le
-    {A B : Type*} [Fintype A] [Fintype B] [DecidableEq A] [DecidableEq B]
+theorem sharpHall_sum_le {A B : Type*} [Fintype A] [Fintype B] [DecidableEq A] [DecidableEq B]
     (r : A → B → Prop) [DecidableRel r] (hcard : Fintype.card A = Fintype.card B)
     (sigma : ℝ≥0) (c Delta : ℕ)
-    (hcandidate : ∀ o : OrientedSmallHallObstruction A B,
-      c * orientedSmallHallSize o ≤ (orientedSmallHallCandidates r o).card)
-    (hsmall : ((2 * (Fintype.card A + 1) * (Fintype.card B + 1) : ℕ) : ℝ≥0) *
-      ((1 - sigma / 2) ^ c * (2 : ℝ≥0) ^ Delta) ≤ 1 / 2) :
+    (hcandidate :
+      ∀ o : OrientedSmallHallObstruction A B,
+        c * orientedSmallHallSize o ≤ (orientedSmallHallCandidates r o).card)
+    (hsmall :
+      ((2 * (Fintype.card A + 1) * (Fintype.card B + 1) : ℕ) : ℝ≥0) *
+          ((1 - sigma / 2) ^ c * (2 : ℝ≥0) ^ Delta) ≤
+        1 / 2) :
     (∑ o : OrientedSmallHallObstruction A B,
-      (1 - sigma / 2) ^ (orientedSmallHallCandidates r o).card /
-        (1 / 2 : ℝ≥0) ^ (Delta * orientedSmallHallSize o)) ≤
+        (1 - sigma / 2) ^ (orientedSmallHallCandidates r o).card /
+          (1 / 2 : ℝ≥0) ^ (Delta * orientedSmallHallSize o)) ≤
       4 * ((2 * (Fintype.card A + 1) * (Fintype.card B + 1) : ℕ) : ℝ≥0) *
-        ((1 - sigma / 2) ^ c * (2 : ℝ≥0) ^ Delta) := by
-  calc
-    _ ≤ ∑ o : OrientedSmallHallObstruction A B,
-        ((1 - sigma / 2) ^ c * (2 : ℝ≥0) ^ Delta) ^ orientedSmallHallSize o :=
-      sum_le_sum (fun o _ ↦ sharpHall_summand_le_size_power r sigma c Delta o (hcandidate o))
-    _ ≤ 2 * ∑ s ∈ Icc 1 (Fintype.card A),
-        (((2 * (Fintype.card A + 1) * (Fintype.card B + 1) : ℕ) : ℝ≥0) *
-          ((1 - sigma / 2) ^ c * (2 : ℝ≥0) ^ Delta)) ^ s := orientedSmallHall_weighted_sum_le hcard _
-    _ ≤ 2 * (2 * (((2 * (Fintype.card A + 1) * (Fintype.card B + 1) : ℕ) : ℝ≥0) *
-        ((1 - sigma / 2) ^ c * (2 : ℝ≥0) ^ Delta))) :=
-      mul_le_mul_of_nonneg_left (nnreal_sum_Icc_pow_le_two_mul _ hsmall _) zero_le
-    _ = _ := by ring
+        ((1 - sigma / 2) ^ c * (2 : ℝ≥0) ^ Delta) :=
+  by
+    calc
+      _ ≤
+          ∑ o : OrientedSmallHallObstruction A B,
+            ((1 - sigma / 2) ^ c * (2 : ℝ≥0) ^ Delta) ^ orientedSmallHallSize o :=
+        sum_le_sum
+          (fun o _ ↦ sharpHall_summand_le_size_power r sigma c Delta o (hcandidate o))
+      _ ≤
+          2 *
+            ∑ s ∈ Icc 1 (Fintype.card A),
+              (((2 * (Fintype.card A + 1) * (Fintype.card B + 1) : ℕ) : ℝ≥0) *
+                  ((1 - sigma / 2) ^ c * (2 : ℝ≥0) ^ Delta)) ^
+                s :=
+        (orientedSmallHall_weighted_sum_le hcard _)
+      _ ≤
+          2 *
+            (2 *
+              (((2 * (Fintype.card A + 1) * (Fintype.card B + 1) : ℕ) : ℝ≥0) *
+                ((1 - sigma / 2) ^ c * (2 : ℝ≥0) ^ Delta))) :=
+        (mul_le_mul_of_nonneg_left (nnreal_sum_Icc_pow_le_two_mul _ hsmall _) zero_le)
+      _ = _ :=
+        by
+          ring
 
 end
 

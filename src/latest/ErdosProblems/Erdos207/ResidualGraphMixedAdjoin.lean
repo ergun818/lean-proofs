@@ -26,35 +26,43 @@ theorem IsGraphMixedProductBound.selected_inclusion_le
   simpa only [card_empty, Nat.add_zero, pow_zero, one_mul, notMem_empty,
     IsEmpty.forall_iff, implies_true, and_true, mul_add, mul_pow] using hraw
 
-theorem IsResidualGraphStronglyWellDistributed.jointBind_adjoin_graphMixed
-    {Ω Ξ V : Type*} [Fintype Ω] [Fintype Ξ] [Fintype V]
-    [DecidableEq Ω] [DecidableEq Ξ] [DecidableEq V] {ell : ℕ}
-    {L : FiniteLaw Ω} {K : Ω → FiniteLaw Ξ} {W : Vortex V ell} {k next : Fin (ell + 1)}
-    {G : SimpleGraph V} {initial later : Ω → TripleSystemOn V} {p C b : ℝ≥0}
+theorem IsResidualGraphStronglyWellDistributed.jointBind_adjoin_graphMixed {Ω Ξ V : Type*}
+    [Fintype Ω] [Fintype Ξ] [Fintype V] [DecidableEq Ω] [DecidableEq Ξ] [DecidableEq V]
+    {ell : ℕ} {L : FiniteLaw Ω} {K : Ω → FiniteLaw Ξ} {W : Vortex V ell}
+    {k next : Fin (ell + 1)} {G : SimpleGraph V} {initial later : Ω → TripleSystemOn V}
+    {p C b : ℝ≥0}
     (hstrong : IsResidualGraphStronglyWellDistributed L W k G initial later p C b)
     (added : Ω → Ξ → TripleSystemOn V) (testGraph : Ω → SimpleGraph V)
-    (survival point constant : Ω → ℝ≥0) (alpha J factor delta : ℝ≥0)
-    (hC : 1 ≤ C) (hJ : 1 ≤ J) (hfactor : 1 ≤ factor) (halpha : alpha ≤ 1)
-    (hkn : k ≤ next) (hnonempty : ∀ i, (W.U i).Nonempty)
+    (survival point constant : Ω → ℝ≥0) (alpha J factor delta : ℝ≥0) (hC : 1 ≤ C) (hJ : 1 ≤ J)
+    (hfactor : 1 ≤ factor) (halpha : alpha ≤ 1) (hkn : k ≤ next)
+    (hnonempty : ∀ i, (W.U i).Nonempty)
     (hnew : alpha * p ^ 3 ≤ factor * (p / ((W.U k).card : ℝ≥0)))
-    (hmixed : ∀ ω, 0 < L.mass ω → IsGraphMixedProductBound (K ω) (added ω)
-      (testGraph ω) (survival ω) (point ω) (constant ω) delta)
+    (hmixed :
+      ∀ ω,
+        0 < L.mass ω →
+          IsGraphMixedProductBound (K ω) (added ω) (testGraph ω) (survival ω) (point ω)
+            (constant ω) delta)
     (hpoint : ∀ ω, 0 < L.mass ω → constant ω * point ω ≤ alpha)
     (hconstant : ∀ ω, 0 < L.mass ω → constant ω ≤ J)
-    (hstruct : ∀ ω, 0 < L.mass ω → (K ω).SupportedOn fun ξ ↦
-      IsPackingOn ((initial ω ∪ later ω) ∪ added ω ξ) ∧
-      Disjoint (initial ω ∪ later ω) (added ω ξ) ∧
-      ∀ T ∈ added ω ξ, tripleEdgeFinset T ⊆ graphEdges G)
-    (hscope : ∀ ω, 0 < L.mass ω → (K ω).SupportedOn fun ξ ↦
-      ∀ T ∈ added ω ξ, T.1 ⊆ W.U k) :
-    IsResidualGraphStronglyWellDistributed (L.jointBind K) W next G
-      (jointInitial initial) (jointLater later added) p (2 * max (C ^ 3 * factor) J) (b + delta) := by
-  apply hstrong.jointBind_adjoin_numeric added alpha J factor delta
-    hC hJ hfactor halpha hkn hnonempty hnew _ hstruct hscope
-  intro ω hω Q
-  apply ((hmixed ω hω).selected_inclusion_le Q).trans
-  exact add_le_add (pow_le_pow_left' (hpoint ω hω) _)
-    (mul_le_mul_of_nonneg_right (pow_le_pow_left' (hconstant ω hω) _) zero_le)
+    (hstruct :
+      ∀ ω,
+        0 < L.mass ω →
+          (K ω).SupportedOn fun ξ ↦
+            IsPackingOn ((initial ω ∪ later ω) ∪ added ω ξ) ∧
+              Disjoint (initial ω ∪ later ω) (added ω ξ) ∧
+                ∀ T ∈ added ω ξ, tripleEdgeFinset T ⊆ graphEdges G)
+    (hscope : ∀ ω, 0 < L.mass ω → (K ω).SupportedOn fun ξ ↦ ∀ T ∈ added ω ξ, T.1 ⊆ W.U k) :
+    IsResidualGraphStronglyWellDistributed (L.jointBind K) W next G (jointInitial initial)
+      (jointLater later added) p (2 * max (C ^ 3 * factor) J) (b + delta) :=
+  by
+    apply
+      hstrong.jointBind_adjoin_numeric added alpha J factor delta hC hJ hfactor halpha hkn
+        hnonempty hnew _ hstruct hscope
+    intro ω hω Q
+    apply ((hmixed ω hω).selected_inclusion_le Q).trans
+    exact
+      add_le_add (pow_le_pow_left' (hpoint ω hω) _)
+        (mul_le_mul_of_nonneg_right (pow_le_pow_left' (hconstant ω hω) _) zero_le)
 
 theorem IsResidualGraphStronglyWellDistributed.conditionOn_adjoin_graphMixed
     {Ω Ξ V : Type*} [Fintype Ω] [Fintype Ξ] [Fintype V]

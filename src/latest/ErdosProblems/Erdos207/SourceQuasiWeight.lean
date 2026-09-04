@@ -10,7 +10,7 @@ import ErdosProblems.Erdos207.SourceQuasiMarking
 namespace Erdos207
 
 open Finset
-open scoped Classical NNReal
+open scoped NNReal
 
 noncomputable section
 
@@ -51,28 +51,36 @@ theorem SourceQuasiMarking.remainder_weight_le
         ← disjoint_colored_sdiff_union hx.disjoint hh.1 hh.2]
       exact (prod_union hd).symm
 
-theorem SourceQuasiMarking.full_weight_le_density
-    {V : Type*} [Fintype V] [DecidableEq V] {ell : ℕ}
-    {W : Vortex V ell} {F : ForbiddenFamilyOn V} {e : Sym2 V} {S B : Finset V}
+theorem SourceQuasiMarking.full_weight_le_density {V : Type*} [Fintype V] [DecidableEq V]
+    {ell : ℕ} {W : Vortex V ell} {F : ForbiddenFamilyOn V} {e : Sym2 V} {S B : Finset V}
     {x : SourceQuasiMarking V} (hx : IsSourceQuasiMarking W F e S B x)
-    (f₀ f₁ π : TripleOn V → ℝ≥0) (p : ℝ≥0) (hp : p ≤ 1)
-    (h₀ : ∀ T, f₀ T ≤ π T) (h₁ : ∀ T, f₁ T ≤ p * π T) :
+    (f₀ f₁ π : TripleOn V → ℝ≥0) (p : ℝ≥0) (hp : p ≤ 1) (h₀ : ∀ T, f₀ T ≤ π T)
+    (h₁ : ∀ T, f₁ T ≤ p * π T) :
     setWeight (sourceQuasiWeight f₀ f₁ p) (x.coordinates B) ≤
-      p ^ (B.card + 1) * setWeight π (x.system \ {x.root}) := by
-  have hpD : p ^ x.later.card ≤ p :=
-    pow_le_of_le_one zero_le hp (Nat.ne_of_gt (card_pos.mpr hx.later_nonempty))
-  rw [sourceQuasiWeight_factor]
-  simp only [coordinates, toLeft_disjSum, toRight_disjSum, sourceQuasiSpokes_card]
-  calc
-    _ ≤ setWeight π x.initial * setWeight (fun T ↦ p * π T) x.later * p ^ B.card := by
-      apply mul_le_mul_of_nonneg_right _ zero_le
-      exact mul_le_mul (prod_le_prod' (fun T _ ↦ h₀ T)) (prod_le_prod' (fun T _ ↦ h₁ T)) zero_le zero_le
-    _ = p ^ x.later.card * p ^ B.card * setWeight π (x.system \ {x.root}) := by
-      rw [SourceQuasiMarking.remainder_eq hx]
-      simp only [setWeight, prod_mul_distrib, prod_const, prod_union hx.disjoint]
-      ring
-    _ ≤ p * p ^ B.card * setWeight π (x.system \ {x.root}) := by gcongr
-    _ = _ := by rw [pow_succ]; ring
+      p ^ (B.card + 1) * setWeight π (x.system \ { x.root }) :=
+  by
+    have hpD : p ^ x.later.card ≤ p :=
+      pow_le_of_le_one zero_le hp (Nat.ne_of_gt (card_pos.mpr hx.later_nonempty))
+    rw [sourceQuasiWeight_factor]
+    simp only [coordinates, toLeft_disjSum, toRight_disjSum, sourceQuasiSpokes_card]
+    calc
+      _ ≤ setWeight π x.initial * setWeight (fun T ↦ p * π T) x.later * p ^ B.card :=
+        by
+          apply mul_le_mul_of_nonneg_right _ zero_le
+          exact
+            mul_le_mul (prod_le_prod' (fun T _ ↦ h₀ T)) (prod_le_prod' (fun T _ ↦ h₁ T))
+              zero_le zero_le
+      _ = p ^ x.later.card * p ^ B.card * setWeight π (x.system \ { x.root }) :=
+        by
+          rw [SourceQuasiMarking.remainder_eq hx]
+          simp only [setWeight, prod_mul_distrib, prod_const, prod_union hx.disjoint]
+          ring
+      _ ≤ p * p ^ B.card * setWeight π (x.system \ { x.root }) :=
+        by
+          gcongr
+      _ = _ :=
+        by
+          rw [pow_succ]; ring
 
 end
 

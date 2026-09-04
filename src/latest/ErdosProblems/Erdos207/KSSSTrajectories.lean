@@ -61,7 +61,7 @@ theorem hasDerivAt_ksssPoissonExponent
     HasDerivAt (ksssPoissonExponent orders a) (ksssPoissonRate orders a t) t := by
   apply HasDerivAt.fun_sum
   intro d hd
-  convert! (hasDerivAt_pow d t).const_mul (a d) using 1 <;> ring
+  convert! (hasDerivAt_pow d t).const_mul (a d) using 1 ; ring
 
 theorem ksssConfigurationTrajectory_last
     (orders : Finset ℕ) (a : ℕ → ℝ) (E₀ A₀ t : ℝ)
@@ -110,7 +110,7 @@ theorem ksssPairTrajectory_pos
 theorem hasDerivAt_ksssAvailableTrajectory
     (orders : Finset ℕ) (a : ℕ → ℝ) (E₀ A₀ t : ℝ)
     (horders : ∀ d ∈ orders, 1 ≤ d)
-    (hE : E₀ ≠ 0) (hp : ksssEdgeDensity E₀ t ≠ 0) :
+    (hE : E₀ ≠ 0) (_hp : ksssEdgeDensity E₀ t ≠ 0) :
     HasDerivAt (ksssAvailableTrajectory orders a E₀ A₀)
       (-ksssThreatTrajectory orders a E₀ A₀ t) t := by
   have hderiv := (((hasDerivAt_ksssEdgeDensity E₀ t).pow 3).const_mul A₀).mul
@@ -119,7 +119,7 @@ theorem hasDerivAt_ksssAvailableTrajectory
   rw [ksssThreatTrajectory_eq orders a E₀ A₀ t horders]
   dsimp only [ksssPairTrajectory, ksssAvailableTrajectory, Pi.pow_apply, Pi.neg_apply]
   field_simp
-  <;> ring
+  ; ring
 
 theorem hasDerivAt_ksssPairTrajectory
     (orders : Finset ℕ) (a : ℕ → ℝ) (E₀ A₀ t : ℝ)
@@ -135,7 +135,7 @@ theorem hasDerivAt_ksssPairTrajectory
   convert! hderiv using 1
   dsimp only [ksssPairTrajectory]
   field_simp
-  <;> ring
+  ; ring
 
 /-- Gain is absent at zero chosen triangles. -/
 theorem hasDerivAt_ksssConfigurationTrajectory_zero

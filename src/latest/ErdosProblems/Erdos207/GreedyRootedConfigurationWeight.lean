@@ -25,10 +25,11 @@ def greedyRootedConfigurationClass
     C ⊆ S.chosen ∪ S.available
 
 theorem configuration_sdiff_available_eq_inter_chosen
-    {V : Type*} [Fintype V] [DecidableEq V]
+    {V : Type*} [Finite V] [DecidableEq V]
     {F : ForbiddenFamilyOn V} {S : GreedyStateOn V} {C : TripleSystemOn V}
     (hS : GreedyInvariant F S) (hC : C ⊆ S.chosen ∪ S.available) :
     C \ S.available = C ∩ S.chosen := by
+  let := Fintype.ofFinite V
   ext T
   constructor
   · intro hT
@@ -116,7 +117,7 @@ theorem greedyRootedConfigurationClass_card_le_selectedCount
       (fun u : OmittedFamilyIndex J R (m - c - R.card) ↦ omittedFamilyRemainder u)
         S.chosen = (active.card : ℝ≥0) := by
     unfold selectedCount active
-    simp only [card_eq_sum_ones, Nat.cast_sum, Nat.cast_one, sum_filter]
+    simp only [card_eq_sum_ones, Nat.cast_sum, sum_filter]
     apply sum_congr rfl
     intro u _
     by_cases h : omittedFamilyRemainder u ⊆ S.chosen <;> simp [h]

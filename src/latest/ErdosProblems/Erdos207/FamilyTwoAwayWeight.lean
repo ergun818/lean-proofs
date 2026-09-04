@@ -35,10 +35,11 @@ structure FamilyTwoAwayWitness
   missing_ne : missing ≠ U
 
 instance instFiniteFamilyTwoAwayWitness
-    {V : Type*} [Fintype V] [DecidableEq V]
+    {V : Type*} [Finite V] [DecidableEq V]
     (G : ForbiddenFamilyOn V) (U : TripleOn V) :
-    Finite (FamilyTwoAwayWitness G U) :=
-  Finite.of_injective
+    Finite (FamilyTwoAwayWitness G U) := by
+  let := Fintype.ofFinite V
+  exact Finite.of_injective
     (fun z : FamilyTwoAwayWitness G U ↦ (z.family, z.missing)) (by
       intro z w h
       cases z
@@ -58,11 +59,12 @@ def familyTwoAwayRemainder
   (z.family.erase z.missing).erase U
 
 lemma familyTwoAwayRemainder_card
-    {V : Type*} [Fintype V] [DecidableEq V]
+    {V : Type*} [Finite V] [DecidableEq V]
     {G : ForbiddenFamilyOn V} {U : TripleOn V} {m : ℕ}
     (hcard : ∀ S ∈ G, S.card = m)
     (z : FamilyTwoAwayWitness G U) :
     (familyTwoAwayRemainder z).card = m - 2 := by
+  let := Fintype.ofFinite V
   have hUerase : U ∈ z.family.erase z.missing :=
     mem_erase.mpr ⟨z.missing_ne.symm, z.fixed_mem⟩
   rw [familyTwoAwayRemainder, card_erase_of_mem hUerase,
@@ -194,7 +196,7 @@ theorem extensionWeight_familyTwoAway_le_enlargedRoot
   by_cases hactive : IsEmpty (ActiveFamilyTwoAwayWitness G U H)
   · have hzero : Fintype.card (ActiveFamilyTwoAwayWitness G U H) = 0 :=
       Fintype.card_eq_zero
-    simp [hzero]
+    simp
   · let : Nonempty (ActiveFamilyTwoAwayWitness G U H) := not_isEmpty_iff.mp hactive
     let z : ActiveFamilyTwoAwayWitness G U H := Classical.choice inferInstance
     have hUnotH : U ∉ H := by

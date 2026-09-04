@@ -32,9 +32,10 @@ structure CommonThreatWitness
   second_cross : T ∈ second → T = T'
   different : first ≠ second
 
-instance {W : Type*} [Fintype W] [DecidableEq W]
-    (F G : Finset (Finset W)) (T T' : W) : Finite (CommonThreatWitness F G T T') :=
-  Finite.of_injective (fun w : CommonThreatWitness F G T T' ↦ (w.bridge, w.first, w.second))
+instance {W : Type*} [Finite W] [DecidableEq W]
+    (F G : Finset (Finset W)) (T T' : W) : Finite (CommonThreatWitness F G T T') := by
+  let := Fintype.ofFinite W
+  exact Finite.of_injective (fun w : CommonThreatWitness F G T T' ↦ (w.bridge, w.first, w.second))
     (by intro w z h; cases w; cases z; simp_all)
 
 noncomputable instance {W : Type*} [Fintype W] [DecidableEq W]

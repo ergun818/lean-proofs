@@ -87,7 +87,6 @@ theorem linearPairDeviation_implies_realLinearFloorSchedule
   simp only [fixedPairLowerDeviation, linearPairTarget,
     Nat.cast_zero, zero_mul, sub_zero] at hdev
   rw [hcurrent, hinitial] at hdev
-  push_cast at hdev
   linarith
 
 end

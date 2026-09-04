@@ -21,24 +21,33 @@ theorem earlier_superset_degree_term_le
     _ = 2 * n ^ ((s - 1) + 3 * (k - s)) := by rw [← pow_mul, mul_assoc, ← pow_add]
     _ ≤ _ := Nat.mul_le_mul_left 2 (Nat.pow_le_pow_right hn (by omega))
 
-theorem earlier_superset_degree_sum_le
-    {K : Type*} [DecidableEq K] (orders : Finset K) (D size : K → ℕ) (n m k : ℕ)
-    (hn : 1 ≤ n) (hm : m ≤ n ^ 3) (hk : 2 ≤ k) (horders : orders.card ≤ n)
+theorem earlier_superset_degree_sum_le {K : Type*} (orders : Finset K) (D size : K → ℕ)
+    (n m k : ℕ) (hn : 1 ≤ n) (hm : m ≤ n ^ 3) (hk : 2 ≤ k) (horders : orders.card ≤ n)
     (hsize : ∀ i ∈ orders, 2 ≤ size i ∧ size i ≤ k)
     (hD : ∀ i ∈ orders, D i ≤ n ^ (size i - 1)) :
-    (∑ i ∈ orders, 2 * D i * m ^ (k - size i)) ≤ 2 * n ^ (3 * k - 4) := by
-  calc
-    _ ≤ ∑ _i ∈ orders, 2 * n ^ (3 * k - 5) := sum_le_sum (fun i hi ↦
-      earlier_superset_degree_term_le n m (D i) k (size i) hn hm (hsize i hi).1 (hsize i hi).2 (hD i hi))
-    _ = orders.card * (2 * n ^ (3 * k - 5)) := by simp
-    _ ≤ n * (2 * n ^ (3 * k - 5)) := Nat.mul_le_mul_right _ horders
-    _ = 2 * n ^ (3 * k - 4) := by
-      have he : 3 * k - 4 = (3 * k - 5) + 1 := by omega
-      rw [he, pow_succ]
-      ring
+    (∑ i ∈ orders, 2 * D i * m ^ (k - size i)) ≤ 2 * n ^ (3 * k - 4) :=
+  by
+    classical
+      calc
+      _ ≤ ∑ _i ∈ orders, 2 * n ^ (3 * k - 5) :=
+        sum_le_sum
+          (fun i hi ↦
+            earlier_superset_degree_term_le n m (D i) k (size i) hn hm (hsize i hi).1
+              (hsize i hi).2 (hD i hi))
+      _ = orders.card * (2 * n ^ (3 * k - 5)) :=
+        by
+          simp
+      _ ≤ n * (2 * n ^ (3 * k - 5)) := (Nat.mul_le_mul_right _ horders)
+      _ = 2 * n ^ (3 * k - 4) :=
+        by
+          have he : 3 * k - 4 = (3 * k - 5) + 1 :=
+            by
+              omega
+          rw [he, pow_succ]
+          ring
 
 theorem regularizationForbiddenFamily_max_degree_le_nine_power
-    {V I K : Type*} [DecidableEq V] [Fintype I] [DecidableEq I] [DecidableEq K]
+    {V I K : Type*} [DecidableEq V] [Fintype I] [DecidableEq I]
     (e : I ↪ TripleOn V) (U : Finset V) (hsupport : ∀ i, (e i).1 ⊆ U)
     (hn : 1 ≤ U.card) (k : ℕ) (hk : 2 ≤ k) (G : Finset (Finset I))
     (orders : Finset K) (earlier : K → Finset (Finset I)) (size : K → ℕ)
@@ -48,6 +57,7 @@ theorem regularizationForbiddenFamily_max_degree_le_nine_power
     (hG : finiteHypergraphMaxDegree G ≤ U.card ^ (k - 1)) :
     finiteHypergraphMaxDegree (regularizationForbiddenFamily e k G (orders.biUnion earlier)) ≤
       9 * U.card ^ (3 * k - 4) := by
+  classical
   have hm := card_auxiliary_triangles_le e U hsupport
   have hsup := uniformSupersets_biUnion_max_degree_le orders earlier size k
     (fun i hi ↦ ⟨by have := (hsize i hi).1; omega, (hsize i hi).2⟩) huniform

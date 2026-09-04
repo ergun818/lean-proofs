@@ -118,7 +118,7 @@ theorem IsIterationTypical.exists_internalOuterEdge_greedy_cover_of_bounds
       (Q \ P₀).card ≤ (internalOuterEdges G (W.U i.succ)).card →
       e ∈ internalOuterEdges G (W.U i.succ) →
       (rootedActiveForbiddenConfigurations F Q e.out.1 e.out.2).card ≤ R) :
-    ∃ ω : Sym2 V → Bool, ∃ Q : TripleSystemOn V,
+    ∃ _ω : Sym2 V → Bool, ∃ Q : TripleSystemOn V,
       GreedyReachable F P₀ Q ∧ Q ⊆ P₀ ∪ A ∧
       ∀ e ∈ internalOuterEdges G (W.U i.succ),
         (coveredGraph Q).Adj e.out.1 e.out.2 := by
@@ -166,7 +166,7 @@ theorem IsIterationTypical.exists_internalOuterEdge_greedy_cover_of_relative_bou
       (Q \ P₀).card ≤ (internalOuterEdges G (W.U i.succ)).card →
       e ∈ internalOuterEdges G (W.U i.succ) →
       (rootedActiveForbiddenConfigurations F Q e.out.1 e.out.2).card ≤ R) :
-    ∃ ω : Sym2 V → Bool, ∃ Q : TripleSystemOn V,
+    ∃ _ω : Sym2 V → Bool, ∃ Q : TripleSystemOn V,
       GreedyReachable F P₀ Q ∧ Q ⊆ P₀ ∪ A ∧
       ∀ e ∈ internalOuterEdges G (W.U i.succ),
         (coveredGraph Q).Adj e.out.1 e.out.2 := by

@@ -46,17 +46,21 @@ theorem sourceNibble_pair_fan_ratio
   have he : j' - 5 + 1 = (j' - j) + (j - 4) := by omega
   rw [he, pow_add, mul_div_cancel_left₀ _ (pow_ne_zero _ hn.ne')]
 
-theorem SourceVortexWellSpread.nibble_singleton_omission_weight_le
-    {V : Type*} [Fintype V] [DecidableEq V] {ell j' : ℕ}
-    {W : Vortex V ell} {F : ForbiddenFamilyOn V} {y z : ℝ≥0}
-    (h : SourceVortexWellSpread W j' F y z) (T : TripleOn V)
-    (j : ℕ) (hj : 4 ≤ j) (hjj : j ≤ j') (w : ℝ≥0) :
-    sourceRootOmissionWeight W F {T} (j' - j) w ≤
+theorem SourceVortexWellSpread.nibble_singleton_omission_weight_le {V : Type*} [Fintype V]
+    [DecidableEq V] {ell j' : ℕ} {W : Vortex V ell} {F : ForbiddenFamilyOn V} {y z : ℝ≥0}
+    (h : SourceVortexWellSpread W j' F y z) (T : TripleOn V) (j : ℕ) (hj : 4 ≤ j)
+    (hjj : j ≤ j') (w : ℝ≥0) :
+    sourceRootOmissionWeight W F { T } (j' - j) w ≤
       ((j' - j + 1) ^ ell : ℕ) * ((2 : ℝ≥0) ^ (j' - 3) * y) * w ^ (j' - j) *
-        (W.terminalSize : ℝ≥0) ^ (j - 3) := by
-  have hbound := h.singleton_omission_weight_le (f := j' - j) T w
-  rw [mul_div_assoc, sourceNibble_singleton_ratio _ (by exact_mod_cast h.terminal_nonempty) j j' hj hjj] at hbound
-  exact hbound
+        (W.terminalSize : ℝ≥0) ^ (j - 3) :=
+  by
+    have hbound := h.singleton_omission_weight_le (f := j' - j) T w
+    rw [mul_div_assoc,
+      sourceNibble_singleton_ratio _
+        (by
+          exact_mod_cast h.terminal_nonempty)
+        j j' hj hjj] at hbound
+    exact hbound
 
 theorem SourceVortexWellSpread.nibble_nonempty_triangle_root_weight_le
     {V : Type*} [Fintype V] [DecidableEq V] {ell j' : ℕ}

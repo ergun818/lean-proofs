@@ -48,24 +48,27 @@ theorem reserveProtected_deletedEdges_subset_image
   · exact mem_image.mpr ⟨(x, y), mem_product.mpr ⟨hx, hD.2⟩, rfl⟩
   · exact mem_image.mpr ⟨(y, x), mem_product.mpr ⟨hy, hD.1⟩, by simp [Sym2.eq_swap]⟩
 
-theorem reserveProtected_graph_edge_loss
-    {V : Type*} [Fintype V] [DecidableEq V]
+theorem reserveProtected_graph_edge_loss {V : Type*} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) (D U : Finset V) (R : Finset (Sym2 V))
     (hG : GraphSupportedOn G (D : Set V)) (hR : R ⊆ crossingEdges G U) :
-    (graphEdges G).card ≤ (graphEdges (reserveProtectedOuterGraph G U R)).card + U.card * D.card := by
-  let E := graphEdges (reserveProtectedOuterGraph G U R)
-  have hsub : graphEdges G ⊆ E ∪ (graphEdges G \ E) := by
-    intro e he
-    by_cases h : e ∈ E
-    · exact mem_union_left _ h
-    · exact mem_union_right _ (mem_sdiff.mpr ⟨he, h⟩)
-  have hbad : (graphEdges G \ E).card ≤ U.card * D.card := by
-    calc
-      _ ≤ ((U ×ˢ D).image (fun p ↦ s(p.1, p.2))).card :=
-        card_le_card (reserveProtected_deletedEdges_subset_image G D U R hG hR)
-      _ ≤ (U ×ˢ D).card := card_image_le
-      _ = _ := card_product U D
-  exact ((card_le_card hsub).trans (card_union_le _ _)).trans (Nat.add_le_add_left hbad _)
+    (graphEdges G).card ≤
+      (graphEdges (reserveProtectedOuterGraph G U R)).card + U.card * D.card :=
+  by
+    let E := graphEdges (reserveProtectedOuterGraph G U R)
+    have hsub : graphEdges G ⊆ E ∪ (graphEdges G \ E) :=
+      by
+        intro e he
+        by_cases h : e ∈ E
+        · exact mem_union_left _ h
+        · exact mem_union_right _ (mem_sdiff.mpr ⟨he, h⟩)
+    have hbad : (graphEdges G \ E).card ≤ U.card * D.card :=
+      by
+        calc
+          _ ≤ ((U ×ˢ D).image (fun p ↦ s(p.1, p.2))).card :=
+            card_le_card (reserveProtected_deletedEdges_subset_image G D U R hG hR)
+          _ ≤ (U ×ˢ D).card := card_image_le
+          _ = _ := card_product U D
+    exact ((card_le_card hsub).trans (card_union_le _ _)).trans (Nat.add_le_add_left hbad _)
 
 theorem reserveProtected_graph_mass_of_neighbor_lower
     {V : Type*} [Fintype V] [DecidableEq V]

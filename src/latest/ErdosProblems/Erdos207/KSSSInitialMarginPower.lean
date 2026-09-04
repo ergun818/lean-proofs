@@ -24,10 +24,12 @@ theorem ksssTrajectoryDimension_le {V : Type*} [DecidableEq V] {q : ℕ}
     have hi := i.order_le
     omega
 
-theorem ksssInitialMargin_eq_dimension_power
-    {V : Type*} [DecidableEq V] {q : ℕ} (E A margin : ℝ) (i : KSSSTrajectoryIndex V q) :
-    ksssInitialMargin E A margin i = margin * (A / E) ^ ksssTrajectoryDimension i := by
-  rcases i with P | ⟨i, T⟩ <;> simp only [ksssInitialMargin, ksssTrajectoryDimension, pow_zero, mul_one]
+theorem ksssInitialMargin_eq_dimension_power {V : Type*} [DecidableEq V] {q : ℕ}
+    (E A margin : ℝ) (i : KSSSTrajectoryIndex V q) :
+    ksssInitialMargin E A margin i = margin * (A / E) ^ ksssTrajectoryDimension i :=
+  by
+    rcases i with P | ⟨i, T⟩ <;>
+      simp only [ksssInitialMargin, ksssTrajectoryDimension, pow_zero, mul_one]
 
 theorem initial_margin_power_lower
     (N t w : ℝ) (a b q z : ℕ) (hN : 0 ≤ N) (ht : 1 ≤ t) (hz : z ≤ q)

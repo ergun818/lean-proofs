@@ -11,7 +11,7 @@ import ErdosProblems.Erdos207.RawInternalLeftSuccess
 namespace Erdos207
 
 open Finset
-open scoped Classical NNReal
+open scoped NNReal
 
 noncomputable section
 

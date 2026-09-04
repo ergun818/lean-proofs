@@ -77,7 +77,7 @@ lemma Vortex.profileScale_dropFirst {V : Type*} [Fintype V] [DecidableEq V]
 /-- A singleton outside root together with a nonempty exact bank part spans
 four fixed vertices, so at most `j-4` vertices remain free. -/
 theorem exactBank_extraVertices_card_le_singleton_nonempty
-    {V : Type*} [Fintype V] [DecidableEq V]
+    {V : Type*} [Finite V] [DecidableEq V]
     {rho j : ℕ} {B R S K E : TripleSystemOn V}
     (hrho : 5 ≤ rho) (hj : 4 ≤ j) (hjrho : j ≤ rho)
     (hRcard : R.card = 1) (hK : K.Nonempty)
@@ -85,6 +85,7 @@ theorem exactBank_extraVertices_card_le_singleton_nonempty
     (hE : IsErdosConfigOn rho E)
     (hEout : E \ B = S) (hEin : E ∩ B = K) :
     (verticesOn E \ verticesOn (R ∪ K)).card ≤ j - 4 := by
+  let := Fintype.ofFinite V
   let hS : S ∈ exactBankOutsideExtensions rho j B R K :=
     mem_exactBankOutsideExtensions_iff.mpr
       ⟨hScard, hRS, E, hE, hEout, hEin⟩
@@ -288,7 +289,7 @@ most `rho - 4` vertices free.  For a singleton root this is the extra global
 strictness used by WS4; for a larger root it follows from the ordinary KSSS
 root exponent. -/
 theorem exactBank_extraVertices_card_le_four_of_bank_nonempty
-    {V : Type*} [Fintype V] [DecidableEq V]
+    {V : Type*} [Finite V] [DecidableEq V]
     {rho j : ℕ} {B R S K E : TripleSystemOn V}
     (hrho : 5 ≤ rho) (hj : 4 ≤ j) (hjrho : j ≤ rho)
     (hR : R.Nonempty) (hRcard : R.card ≤ j - 2) (hK : K.Nonempty)
@@ -296,6 +297,7 @@ theorem exactBank_extraVertices_card_le_four_of_bank_nonempty
     (hE : IsErdosConfigOn rho E)
     (hEout : E \ B = S) (hEin : E ∩ B = K) :
     (verticesOn E \ verticesOn (R ∪ K)).card ≤ rho - 4 := by
+  let := Fintype.ofFinite V
   by_cases hRone : R.card = 1
   · exact (exactBank_extraVertices_card_le_singleton_nonempty
       hrho hj hjrho hRone hK hScard hRS hE hEout hEin).trans (by omega)

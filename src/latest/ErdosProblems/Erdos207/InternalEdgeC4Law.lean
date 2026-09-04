@@ -49,8 +49,7 @@ theorem internalEdgeGreedyProcess_probability_subset_newChosen_le_pow
   by_cases hQzero : Q.card = 0
   · have hQ : Q = ∅ := card_eq_zero.mp hQzero
     subst Q
-    simpa [L, internalEdgeC4Factor] using
-      L.probability_le_one (fun z ↦ (∅ : TripleSystemOn V) ⊆ z.chosen \ P0)
+    simp [internalEdgeC4Factor]
   · have hQpos : 0 < Q.card := Nat.pos_of_ne_zero hQzero
     by_cases hQcard : Q.card ≤ horizon
     · have hraw := internalEdgeGreedyProcess_probability_subset_newChosen_le

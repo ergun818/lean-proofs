@@ -12,7 +12,7 @@ import ErdosProblems.Erdos207.ResidualCorrelatedInternalLaw
 namespace Erdos207
 
 open Finset
-open scoped Classical NNReal
+open scoped NNReal
 
 noncomputable section
 
@@ -74,38 +74,50 @@ def correlatedRawInternalAdded
     (omega : Omega) (xi : Xi) (z : InternalEdgeGreedyStateOn V) : TripleSystemOn V :=
   rawResidualInternalAdded (correlatedRawInternalStart old pre) (omega, xi) z
 
-theorem correlatedRawInternalKernel_supported_structure
-    {Omega Xi V : Type*} [Fintype Xi] [DecidableEq Xi] [Fintype V] [DecidableEq V] {ell : ℕ}
-    (W : Vortex V ell) (i : Fin ell) (F : ForbiddenFamilyOn V)
-    (G : Omega → SimpleGraph V) (A old : Omega → TripleSystemOn V)
-    (pre : Omega → Xi → TripleSystemOn V) (bits : Omega → Sym2 V → Bool)
-    (threshold : ℕ) (hthreshold : 0 < threshold) (Kpre : Omega → FiniteLaw Xi) (omega : Omega)
+theorem correlatedRawInternalKernel_supported_structure {Omega Xi V : Type*} [Fintype Xi]
+    [DecidableEq Xi] [Fintype V] [DecidableEq V] {ell : ℕ} (W : Vortex V ell) (i : Fin ell)
+    (F : ForbiddenFamilyOn V) (G : Omega → SimpleGraph V) (A old : Omega → TripleSystemOn V)
+    (pre : Omega → Xi → TripleSystemOn V) (bits : Omega → Sym2 V → Bool) (threshold : ℕ)
+    (hthreshold : 0 < threshold) (Kpre : Omega → FiniteLaw Xi) (omega : Omega)
     (hG : G omega ≤ leaveGraph (old omega))
-    (hpre : (Kpre omega).SupportedOn fun xi ↦ pre omega xi ⊆ A omega ∧
-      IsPackingOn (old omega ∪ pre omega xi) ∧ Disjoint (old omega) (pre omega xi) ∧
-      AvoidsForbidden (old omega ∪ pre omega xi) F) :
-    ((Kpre omega).jointBind (correlatedRawInternalKernel W i F G A old pre bits threshold omega)).SupportedOn
+    (hpre :
+      (Kpre omega).SupportedOn fun xi ↦
+        pre omega xi ⊆ A omega ∧
+          IsPackingOn (old omega ∪ pre omega xi) ∧
+            Disjoint (old omega) (pre omega xi) ∧
+              AvoidsForbidden (old omega ∪ pre omega xi) F) :
+    ((Kpre omega).jointBind
+          (correlatedRawInternalKernel W i F G A old pre bits threshold omega)).SupportedOn
       fun z ↦
-        let added := preliminaryInternalCombinedAdded (pre omega) (correlatedRawInternalAdded old pre omega) z
-        added ⊆ A omega ∧ IsPackingOn (old omega ∪ added) ∧ Disjoint (old omega) added ∧
-          Disjoint (pre omega z.1) (correlatedRawInternalAdded old pre omega z.1 z.2) ∧
-          AvoidsForbidden (old omega ∪ added) F ∧
-          NewTrianglesUseScheduledOuterEdges (W.U i.succ)
-            (preliminaryResidualInternalEdges (G omega) (W.U i.succ) (pre omega z.1))
-            (pre omega z.1) added := by
-  intro z hz
-  have hmasses := ((Kpre omega).jointBind_mass_pos_iff
-    (correlatedRawInternalKernel W i F G A old pre bits threshold omega) z.1 z.2).mp hz
-  have hpreData := hpre z.1 hmasses.1
-  have hraw := rawResidualInternalKernel_supported_structure W i F
-    (fun z : Omega × Xi ↦ G z.1)
-    (fun z ↦ pairSafeAvailable (A z.1) (correlatedRawInternalStart old pre z))
-    (correlatedRawInternalStart old pre) (fun z ↦ bits z.1) threshold hthreshold
-    (omega, z.1) z.2 hmasses.2
-  have hstruct := hraw.relative_added_structure (old omega) (pre omega z.1) rfl
-    hpreData.2.1 hpreData.2.2.2 hpreData.2.2.1 hG
-  refine ⟨union_subset hpreData.1 (hstruct.1.trans (pairSafeAvailable_subset_left _ _)),
-    hstruct.2⟩
+      let added :=
+        preliminaryInternalCombinedAdded (pre omega)
+          (correlatedRawInternalAdded old pre omega) z
+      added ⊆ A omega ∧
+        IsPackingOn (old omega ∪ added) ∧
+          Disjoint (old omega) added ∧
+            Disjoint (pre omega z.1) (correlatedRawInternalAdded old pre omega z.1 z.2) ∧
+              AvoidsForbidden (old omega ∪ added) F ∧
+                NewTrianglesUseScheduledOuterEdges (W.U i.succ)
+                  (preliminaryResidualInternalEdges (G omega) (W.U i.succ) (pre omega z.1))
+                  (pre omega z.1) added :=
+  by
+    intro z hz
+    have hmasses :=
+      ((Kpre omega).jointBind_mass_pos_iff
+            (correlatedRawInternalKernel W i F G A old pre bits threshold omega) z.1 z.2).mp
+        hz
+    have hpreData := hpre z.1 hmasses.1
+    have hraw :=
+      rawResidualInternalKernel_supported_structure W i F (fun z : Omega × Xi ↦ G z.1)
+        (fun z ↦ pairSafeAvailable (A z.1) (correlatedRawInternalStart old pre z))
+        (correlatedRawInternalStart old pre) (fun z ↦ bits z.1) threshold hthreshold
+        (omega, z.1) z.2 hmasses.2
+    have hstruct :=
+      hraw.relative_added_structure (old omega) (pre omega z.1) rfl hpreData.2.1
+        hpreData.2.2.2 hpreData.2.2.1 hG
+    refine
+      ⟨union_subset hpreData.1 (hstruct.1.trans (pairSafeAvailable_subset_left _ _)),
+        hstruct.2⟩
 
 theorem IsResidualReserveStronglyWellDistributed.jointBind_raw_correlatedInternal
     {Omega Xi V : Type*} [Fintype Omega] [DecidableEq Omega] [Fintype Xi] [DecidableEq Xi]

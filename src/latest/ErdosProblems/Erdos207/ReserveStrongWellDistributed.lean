@@ -162,7 +162,7 @@ theorem IsReserveStronglyWellDistributed.conditionOn
     subst Rfix
     exact ((L.conditionOn P hP).probability_le_one
       (ReserveStrongDistributionEvent initial later reserve ∅ ∅ ∅ ∅)).trans
-        (by simp [ReserveStrongDistributionEvent, StrongDistributionEvent])
+        (by simp)
   · have hzle : L.probability P ≤ 1 := L.probability_le_one P
     have hzpow : (L.probability P) ^ m ≤ L.probability P :=
       pow_le_of_le_one zero_le hzle hm

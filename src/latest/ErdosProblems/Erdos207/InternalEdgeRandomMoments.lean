@@ -80,7 +80,7 @@ weight. -/
 def internalEdgeVertexStarBudget
     {V : Type*} [Fintype V] [DecidableEq V]
     (D : Nat) (v : V) : NNReal :=
-  (∑ T : universeTriplesThrough v, (D : NNReal)⁻¹) + 1
+  (∑ _T : universeTriplesThrough v, (D : NNReal)⁻¹) + 1
 
 /-- Moment bound for the new triangles through one vertex in the terminal
 internal-edge law. -/

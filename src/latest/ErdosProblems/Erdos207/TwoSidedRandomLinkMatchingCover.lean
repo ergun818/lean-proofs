@@ -32,7 +32,7 @@ theorem exists_safe_linkMatchingTriangles_of_twoSided_sample
     (hcenterRight : ∀ b, center ≠ right b)
     (hleftRight : ∀ a b, left a ≠ right b)
     (F : ForbiddenFamilyOn V) (P available : TripleSystemOn V)
-    (r : A → B → Prop) [DecidableRel r]
+    (r : A → B → Prop)
     (Delta : ℕ) (R : Finset (A × B))
     (hmatching : ∀ (deleted : A → B → Prop) [DecidableRel deleted],
       (∀ a, (deletedNeighbors deleted a).card ≤ Delta) →
@@ -145,7 +145,7 @@ theorem exists_safe_linkMatchingTriangles_of_twoSided_candidate_bound
           hleftRight R)
         (linkMatchingTriple center left right hcenterLeft hcenterRight
           hleftRight a b)) :
-    ∃ R : Finset (A × B), ∃ M : TripleSystemOn V,
+    ∃ _R : Finset (A × B), ∃ M : TripleSystemOn V,
       M ⊆ available ∧ Disjoint P M ∧ IsPackingOn (P ∪ M) ∧
       AvoidsForbidden (P ∪ M) F ∧
       (∀ a, (coveredGraph M).Adj center (left a)) ∧

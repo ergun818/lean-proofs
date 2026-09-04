@@ -37,18 +37,23 @@ theorem source_regularized_degree_scale_bound (d : ℕ) (t p tau n C ratio : ℝ
     _ ≤ (9 * C) * (24 * ratio) ^ d := mul_le_mul_of_nonneg_left (pow_le_pow_left' hbase d) zero_le
     _ = _ := by rw [mul_pow]; ring
 
-theorem regularizedTrajectoryCoefficient_source_bound
-    {I : Type*} [Fintype I] [DecidableEq I] (Lstar : ℕ → Finset (Finset I))
-    (A E : ℝ) (d : ℕ) (t p tau n C : ℝ≥0) (hA : 0 < A) (hE : 0 < E)
-    (hd : 1 ≤ d) (ht : 1 ≤ t) (hsmall : t * p ≤ tau)
+theorem regularizedTrajectoryCoefficient_source_bound {I : Type*} [Fintype I] [DecidableEq I]
+    (Lstar : ℕ → Finset (Finset I)) (A E : ℝ) (d : ℕ) (t p tau n C : ℝ≥0) (hA : 0 < A)
+    (hE : 0 < E) (hd : 1 ≤ d) (ht : 1 ≤ t) (hsmall : t * p ≤ tau)
     (hratio : (p : ℝ) ^ 2 * tau * n / 24 ≤ A / E)
-    (hdegree : (finiteHypergraphMaxDegree (Lstar (d + 3)) : ℝ≥0) ≤ 9 * t * C * (p ^ 3 * n) ^ d) :
-    regularizedTrajectoryCoefficient Lstar A d * E ^ d ≤ (9 * (C : ℝ) * 24 ^ d) := by
-  let ratio : ℝ≥0 := ⟨A / E, (div_pos hA hE).le⟩
-  have hr : p ^ 2 * tau * n / 24 ≤ ratio := by exact_mod_cast hratio
-  have hbound := hdegree.trans (source_regularized_degree_scale_bound d t p tau n C ratio hd ht hsmall hr)
-  apply regularizedTrajectoryCoefficient_scaled_le Lstar A E (9 * (C : ℝ) * 24 ^ d) d hA hE
-  exact_mod_cast hbound
+    (hdegree :
+      (finiteHypergraphMaxDegree (Lstar (d + 3)) : ℝ≥0) ≤ 9 * t * C * (p ^ 3 * n) ^ d) :
+    regularizedTrajectoryCoefficient Lstar A d * E ^ d ≤ (9 * (C : ℝ) * 24 ^ d) :=
+  by
+    let ratio : ℝ≥0 := ⟨A / E, (div_pos hA hE).le⟩
+    have hr : p ^ 2 * tau * n / 24 ≤ ratio :=
+      by
+        exact_mod_cast hratio
+    have hbound :=
+      hdegree.trans
+        (source_regularized_degree_scale_bound d t p tau n C ratio hd ht hsmall hr)
+    apply regularizedTrajectoryCoefficient_scaled_le Lstar A E (9 * (C : ℝ) * 24 ^ d) d hA hE
+    exact_mod_cast hbound
 
 theorem regularized_density_power_floors (n t p tau : ℝ≥0) (b : ℕ) (ht : 1 ≤ t)
     (hedge : 8 ≤ p * t ^ b) (hratio : 24 ≤ p ^ 2 * tau * t ^ b) :

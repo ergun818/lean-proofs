@@ -19,10 +19,9 @@ def uncoveredNeighbors
     (Q : Finset (Finset V)) (U : Finset V) (v : V) (S : GreedyStateOn V) : Finset V :=
   U.filter fun u ↦ u ≠ v ∧ {v, u} ∈ Q ∧ PairUncovered {v, u} S
 
-def uncoveredNeighborLoss
-    {V : Type*} [Fintype V] [DecidableEq V]
-    (Q : Finset (Finset V)) (U : Finset V) (v : V) (S : GreedyStateOn V) (T : TripleOn V) : Finset V :=
-  (uncoveredNeighbors Q U v S).filter fun u ↦ {v, u} ⊆ T.1
+def uncoveredNeighborLoss {V : Type*} [Fintype V] [DecidableEq V] (Q : Finset (Finset V))
+    (U : Finset V) (v : V) (S : GreedyStateOn V) (T : TripleOn V) : Finset V :=
+  (uncoveredNeighbors Q U v S).filter fun u ↦ { v, u } ⊆ T.1
 
 theorem pairUncovered_greedyStep_iff_and
     {V : Type*} [Fintype V] [DecidableEq V]

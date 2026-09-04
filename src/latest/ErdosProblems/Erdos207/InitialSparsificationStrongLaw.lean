@@ -49,7 +49,7 @@ lemma mem_graphEdges_completeGraph_iff_not_isDiag
     {V : Type*} [Fintype V] [DecidableEq V] {e : Sym2 V} :
     e ∈ graphEdges (SimpleGraph.completeGraph V) ↔ ¬ e.IsDiag := by
   rw [mem_graphEdges_iff]
-  simpa only [SimpleGraph.edgeSet_top, Set.mem_compl_iff,
+  simp only [SimpleGraph.edgeSet_top, Set.mem_compl_iff,
     Sym2.mem_diagSet]
 
 /-- The paper's assertion that every prescribed pair is uncovered is
@@ -138,7 +138,7 @@ ambient-family, and edge-disjointness failures make the selected/uncovered
 event impossible on the structural support of the greedy law. -/
 theorem initialProductBound_of_compatible_patterns
     {Omega V : Type*} [Fintype Omega] [Fintype V]
-    [DecidableEq Omega] [DecidableEq V]
+    [DecidableEq V]
     (L : FiniteLaw Omega) (selected : Omega → TripleSystemOn V)
     (ambient : TripleSystemOn V) (survival point p C b : ℝ≥0)
     (hstruct : L.SupportedOn fun omega ↦
@@ -156,6 +156,7 @@ theorem initialProductBound_of_compatible_patterns
           (p ^ E.card *
             (Fintype.card V : ℝ≥0)⁻¹ ^ Q.card + b)) :
     IsInitialProductBound L selected p C b := by
+  classical
   intro Q E
   by_cases hQpacking : IsPackingOn Q
   · by_cases hdisjoint :
@@ -421,7 +422,7 @@ theorem timedStoppedGreedyProcess_initialProductBound
         e ∉ (coveredGraph S₀.chosen).edgeSet := by
       intro e heE hecovered
       rw [hchosen₀, coveredGraph_edgeSet_eq_biUnion] at hecovered
-      simpa using hecovered
+      simp at hecovered
     have hraw :=
       timedStoppedGreedyProcess_probability_initialEvent_le_product_add_inactive
         n F active Inv D d theta rho S₀ hInv₀ hactive₀
@@ -430,7 +431,7 @@ theorem timedStoppedGreedyProcess_initialProductBound
         (hsupply Q E hQpacking hQE hQavailable)
         (hscalar Q E hQpacking hQE hQavailable) htheta
         (hadjust Q E hQpacking hQE hQavailable)
-        (by simpa [hchosen₀]) hQavailable hE₀
+        (by simp [hchosen₀]) hQavailable hE₀
     exact hraw.trans (by gcongr)
   · exact hscale
 

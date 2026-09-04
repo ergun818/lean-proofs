@@ -11,7 +11,7 @@ import ErdosProblems.Erdos207.SampledCandidateSimultaneousCover
 namespace Erdos207
 
 open Finset
-open scoped Classical NNReal
+open scoped NNReal
 
 noncomputable section
 
@@ -25,6 +25,7 @@ def otherLinkCoordinates
     (K : O → BipartiteLink V)
     (r : ∀ o, ↥(K o).left → ↥(K o).right → Prop)
     (x : SimultaneousLinkPair O V K) : Finset (SimultaneousLinkPair O V K) :=
+  open scoped Classical in
   univ.filter fun y ↦ y.1 ≠ x.1 ∧ r y.1 y.2.1 y.2.2 ∧
     simultaneousLinkInnerEdge K y = simultaneousLinkInnerEdge K x
 
@@ -42,6 +43,7 @@ theorem otherLinkCoordinates_block_innerEdge
     {x y : SimultaneousLinkPair O V K}
     (hy : y ∈ insert x (otherLinkCoordinates K r x)) :
     simultaneousLinkInnerEdge K y = simultaneousLinkInnerEdge K x := by
+  classical
   rcases mem_insert.mp hy with rfl | hy
   · rfl
   · exact (mem_filter.mp hy).2.2.2
@@ -82,43 +84,45 @@ def sampledLinkCollisions
     (omega : SimultaneousLinkPair O V K → Bool) : Finset J :=
   pairWitnesses key (fun j ↦ otherLinkCoordinates K r (key j)) S omega
 
-theorem independentBits_sampledLinkCollisions_tail
-    {O V J : Type*} [Fintype O] [DecidableEq O] [Fintype V] [DecidableEq V] [DecidableEq J]
-    (K : O → BipartiteLink V)
-    (r : ∀ o, ↥(K o).left → ↥(K o).right → Prop)
-    (key : J → SimultaneousLinkPair O V K) (S : Finset J)
-    (hinj : Function.Injective (fun j ↦ simultaneousLinkInnerEdge K (key j)))
+theorem independentBits_sampledLinkCollisions_tail {O V J : Type*} [Fintype O] [DecidableEq O]
+    [Fintype V] [DecidableEq V] [DecidableEq J] (K : O → BipartiteLink V)
+    (r : ∀ o, ↥(K o).left → ↥(K o).right → Prop) (key : J → SimultaneousLinkPair O V K)
+    (S : Finset J) (hinj : Function.Injective (fun j ↦ simultaneousLinkInnerEdge K (key j)))
     (sigma : ℝ≥0) (hsigma : sigma ≤ 1) (M : ℕ)
-    (hM : ∀ j ∈ S, (otherLinkCoordinates K r (key j)).card ≤ M)
-    (s R : ℕ) (hR : 0 < R) (hs : 2 * s ≤ R) :
-    (FiniteLaw.independentBits (fun _ : SimultaneousLinkPair O V K ↦ sigma) (fun _ ↦ hsigma)).probability
-      (fun omega ↦ R ≤ (sampledLinkCollisions K r key S omega).card) ≤
-        (2 * (S.card : ℝ≥0) * M * sigma ^ 2 / R) ^ s := by
-  apply FiniteLaw.probability_pairWitnesses_card_ge_le _ sigma _ key
-    (fun j ↦ otherLinkCoordinates K r (key j)) S
-    (fun j _ ↦ not_mem_otherLinkCoordinates K r (key j))
-    (otherLinkCoordinates_pairwiseDisjoint K r key hinj S) M hM s R hR hs
-  intro A
-  simp only [FiniteLaw.independentBits_probability_forall_true, prod_const, le_refl]
+    (hM : ∀ j ∈ S, (otherLinkCoordinates K r (key j)).card ≤ M) (s R : ℕ) (hR : 0 < R)
+    (hs : 2 * s ≤ R) :
+    (FiniteLaw.independentBits (fun _ : SimultaneousLinkPair O V K ↦ sigma)
+            (fun _ ↦ hsigma)).probability
+        (fun omega ↦ R ≤ (sampledLinkCollisions K r key S omega).card) ≤
+      (2 * (S.card : ℝ≥0) * M * sigma ^ 2 / R) ^ s :=
+  by
+    apply
+      FiniteLaw.probability_pairWitnesses_card_ge_le _ sigma _ key
+        (fun j ↦ otherLinkCoordinates K r (key j)) S
+        (fun j _ ↦ not_mem_otherLinkCoordinates K r (key j))
+        (otherLinkCoordinates_pairwiseDisjoint K r key hinj S) M hM s R hR hs
+    intro A
+    simp only [FiniteLaw.independentBits_probability_forall_true, prod_const, le_refl]
 
-theorem independentBits_sampledLinkCollisions_tail_dyadic
-    {O V J : Type*} [Fintype O] [DecidableEq O] [Fintype V] [DecidableEq V] [DecidableEq J]
-    (K : O → BipartiteLink V)
-    (r : ∀ o, ↥(K o).left → ↥(K o).right → Prop)
-    (key : J → SimultaneousLinkPair O V K) (S : Finset J)
-    (hinj : Function.Injective (fun j ↦ simultaneousLinkInnerEdge K (key j)))
+theorem independentBits_sampledLinkCollisions_tail_dyadic {O V J : Type*} [Fintype O]
+    [DecidableEq O] [Fintype V] [DecidableEq V] [DecidableEq J] (K : O → BipartiteLink V)
+    (r : ∀ o, ↥(K o).left → ↥(K o).right → Prop) (key : J → SimultaneousLinkPair O V K)
+    (S : Finset J) (hinj : Function.Injective (fun j ↦ simultaneousLinkInnerEdge K (key j)))
     (sigma : ℝ≥0) (hsigma : sigma ≤ 1) (M : ℕ)
-    (hM : ∀ j ∈ S, (otherLinkCoordinates K r (key j)).card ≤ M)
-    (s R : ℕ) (hR : 0 < R) (hs : 2 * s ≤ R)
-    (hmean : 4 * (S.card : ℝ≥0) * M * sigma ^ 2 ≤ R) :
-    (FiniteLaw.independentBits (fun _ : SimultaneousLinkPair O V K ↦ sigma) (fun _ ↦ hsigma)).probability
-      (fun omega ↦ R ≤ (sampledLinkCollisions K r key S omega).card) ≤ ((2 : ℝ≥0) ^ s)⁻¹ := by
-  apply FiniteLaw.probability_pairWitnesses_card_ge_le_dyadic _ sigma _ key
-    (fun j ↦ otherLinkCoordinates K r (key j)) S
-    (fun j _ ↦ not_mem_otherLinkCoordinates K r (key j))
-    (otherLinkCoordinates_pairwiseDisjoint K r key hinj S) M hM s R hR hs hmean
-  intro A
-  simp only [FiniteLaw.independentBits_probability_forall_true, prod_const, le_refl]
+    (hM : ∀ j ∈ S, (otherLinkCoordinates K r (key j)).card ≤ M) (s R : ℕ) (hR : 0 < R)
+    (hs : 2 * s ≤ R) (hmean : 4 * (S.card : ℝ≥0) * M * sigma ^ 2 ≤ R) :
+    (FiniteLaw.independentBits (fun _ : SimultaneousLinkPair O V K ↦ sigma)
+            (fun _ ↦ hsigma)).probability
+        (fun omega ↦ R ≤ (sampledLinkCollisions K r key S omega).card) ≤
+      ((2 : ℝ≥0) ^ s)⁻¹ :=
+  by
+    apply
+      FiniteLaw.probability_pairWitnesses_card_ge_le_dyadic _ sigma _ key
+        (fun j ↦ otherLinkCoordinates K r (key j)) S
+        (fun j _ ↦ not_mem_otherLinkCoordinates K r (key j))
+        (otherLinkCoordinates_pairwiseDisjoint K r key hinj S) M hM s R hR hs hmean
+    intro A
+    simp only [FiniteLaw.independentBits_probability_forall_true, prod_const, le_refl]
 
 end
 

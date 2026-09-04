@@ -14,32 +14,43 @@ open Finset
 
 noncomputable section
 
-theorem restrictedGreedyKernel_pattern_drift_error
-    {V : Type*} [Fintype V] [DecidableEq V]
+theorem restrictedGreedyKernel_pattern_drift_error {V : Type*} [Fintype V] [DecidableEq V]
     (F : ForbiddenFamilyOn V) (Q : SimpleGraph V) (U : Finset V) (S : GreedyStateOn V)
-    (hR : (patternSurvivalSelectors Q S).Nonempty)
-    (H delta : ℝ)
-    (hbound : ∀ u ∈ properPatternExtensions S.available Q U,
-      |((patternExtensionKillers F Q U S u).card : ℝ) - H| ≤ delta) :
-    |(restrictedGreedyKernel F S (patternSurvivalSelectors Q S) hR).expectationReal (fun S' ↦
-        ((properPatternExtensions S'.available Q U).card : ℝ) -
-          (properPatternExtensions S.available Q U).card) +
-        (properPatternExtensions S.available Q U).card * H / (patternSurvivalSelectors Q S).card| ≤
-      (properPatternExtensions S.available Q U).card * delta / (patternSurvivalSelectors Q S).card := by
-  have hRpos : (0 : ℝ) < (patternSurvivalSelectors Q S).card := by
-    exact_mod_cast card_pos.mpr hR
-  have hsum := abs_sum_sub_card_mul_le_sum_error (properPatternExtensions S.available Q U)
-    (fun u ↦ ((patternExtensionKillers F Q U S u).card : ℝ)) (fun _ ↦ delta) H hbound
-  simp only [sum_const, nsmul_eq_mul] at hsum
-  rw [restrictedGreedyKernel_properPatternExtension_drift]
-  have heq : -(∑ u ∈ properPatternExtensions S.available Q U,
-      ((patternExtensionKillers F Q U S u).card : ℝ)) / (patternSurvivalSelectors Q S).card +
-      (properPatternExtensions S.available Q U).card * H / (patternSurvivalSelectors Q S).card =
-      -((∑ u ∈ properPatternExtensions S.available Q U,
-        ((patternExtensionKillers F Q U S u).card : ℝ)) -
-          (properPatternExtensions S.available Q U).card * H) / (patternSurvivalSelectors Q S).card := by ring
-  rw [heq, abs_div, abs_neg, abs_of_pos hRpos]
-  exact div_le_div_of_nonneg_right hsum hRpos.le
+    (hR : (patternSurvivalSelectors Q S).Nonempty) (H delta : ℝ)
+    (hbound :
+      ∀ u ∈ properPatternExtensions S.available Q U,
+        |((patternExtensionKillers F Q U S u).card : ℝ) - H| ≤ delta) :
+    |(restrictedGreedyKernel F S (patternSurvivalSelectors Q S) hR).expectationReal
+            (fun S' ↦
+              ((properPatternExtensions S'.available Q U).card : ℝ) -
+                (properPatternExtensions S.available Q U).card) +
+          (properPatternExtensions S.available Q U).card * H /
+            (patternSurvivalSelectors Q S).card| ≤
+      (properPatternExtensions S.available Q U).card * delta /
+        (patternSurvivalSelectors Q S).card :=
+  by
+    have hRpos : (0 : ℝ) < (patternSurvivalSelectors Q S).card :=
+      by
+        exact_mod_cast card_pos.mpr hR
+    have hsum :=
+      abs_sum_sub_card_mul_le_sum_error (properPatternExtensions S.available Q U)
+        (fun u ↦ ((patternExtensionKillers F Q U S u).card : ℝ)) (fun _ ↦ delta) H hbound
+    simp only [sum_const, nsmul_eq_mul] at hsum
+    rw [restrictedGreedyKernel_properPatternExtension_drift]
+    have heq :
+      -(∑ u ∈ properPatternExtensions S.available Q U,
+                ((patternExtensionKillers F Q U S u).card : ℝ)) /
+            (patternSurvivalSelectors Q S).card +
+          (properPatternExtensions S.available Q U).card * H /
+            (patternSurvivalSelectors Q S).card =
+        -((∑ u ∈ properPatternExtensions S.available Q U,
+                ((patternExtensionKillers F Q U S u).card : ℝ)) -
+              (properPatternExtensions S.available Q U).card * H) /
+          (patternSurvivalSelectors Q S).card :=
+      by
+        ring
+    rw [heq, abs_div, abs_neg, abs_of_pos hRpos]
+    exact div_le_div_of_nonneg_right hsum hRpos.le
 
 theorem restrictedGreedyKernel_pattern_target_drift_error
     {V : Type*} [Fintype V] [DecidableEq V]

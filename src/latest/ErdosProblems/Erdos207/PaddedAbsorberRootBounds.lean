@@ -18,7 +18,6 @@ the bank or to a singleton forbidden completion over one fixed pair.
 namespace Erdos207
 
 open Finset
-open scoped Classical
 
 noncomputable section
 
@@ -142,6 +141,7 @@ theorem paddedConstruction_hasRootBounds
         card_map _
       _ ≤ 6 := card_mappedHighGirthPairOriginalRootCandidates_le_six f u v
 
+open scoped Classical in
 /-- The efficient padded absorber can be chosen together with its two
 constant root-incidence bounds. -/
 theorem exists_paddedEfficientAbsorber_with_rootBounds_and_rootLocalization
@@ -177,6 +177,7 @@ theorem exists_paddedEfficientAbsorber_with_rootBounds_and_rootLocalization
   · exact paddedConstruction_hasRootBounds f i hH hX hB
   · exact paddedConstruction_hasRootLocalization f i hX hB
 
+open scoped Classical in
 /-- Backwards-compatible projection retaining the original root-bounds
 interface. -/
 theorem exists_paddedEfficientAbsorber_with_rootBounds

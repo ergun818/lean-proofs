@@ -24,7 +24,6 @@ open Finset
 
 noncomputable section
 
-open scoped Classical
 
 /-- Shrinking the bank preserves absorber localization. -/
 theorem HasAbsorberLocalization.mono_bank
@@ -400,6 +399,7 @@ theorem BankPairsSupported.mapEmbedding
   · exact Or.inr ⟨mem_map.mpr ⟨a, hX.1, rfl⟩,
       mem_map.mpr ⟨b, hX.2, rfl⟩⟩
 
+open scoped Classical in
 /-- The realizable absorber padded into `Fin n`, with all crude numerical
 bounds and the bank-pair support property retained. -/
 theorem exists_paddedRealizableAbsorber
@@ -435,7 +435,6 @@ theorem exists_paddedRealizableAbsorber
   let f : W ↪ Fin n :=
     (Fintype.equivFin W).toEmbedding.trans (Fin.castLEEmb hWcard)
   let i : Fin m ↪ V := Fin.castLEEmb (by
-    change m ≤ 2 * m
     omega)
   let Y : Finset V := (univ : Finset (Fin m)).map i
   let j : Fin m ↪ W :=

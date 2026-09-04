@@ -14,7 +14,7 @@ open Finset
 noncomputable section
 
 theorem probability_eq_mass
-    {Ω : Type*} [Fintype Ω] [DecidableEq Ω] (L : FiniteLaw Ω) (x : Ω) :
+    {Ω : Type*} [Fintype Ω] (L : FiniteLaw Ω) (x : Ω) :
     L.probability (fun y ↦ y = x) = L.mass x := by
   classical
   unfold probability
@@ -25,8 +25,9 @@ theorem probability_eq_mass
   · simp
 
 theorem ext_probability
-    {Ω : Type*} [Fintype Ω] [DecidableEq Ω] {L K : FiniteLaw Ω}
+    {Ω : Type*} [Fintype Ω] {L K : FiniteLaw Ω}
     (h : ∀ P : Ω → Prop, L.probability P = K.probability P) : L = K := by
+  classical
   apply FiniteLaw.ext
   intro x
   simpa only [probability_eq_mass] using h (fun y ↦ y = x)

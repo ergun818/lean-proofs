@@ -36,35 +36,46 @@ theorem card_pair_containing_inter_sharing_le_three
     _ ≤ ∑ _Q ∈ T.1.powersetCard 2, 1 := sum_le_sum hc
     _ = 3 := by simp [card_powersetCard, T.2]
 
-theorem card_pairStar_inter_closedThreats_le_selected
-    {V : Type*} [Fintype V] [DecidableEq V]
+theorem card_pairStar_inter_closedThreats_le_selected {V : Type*} [Fintype V] [DecidableEq V]
     (F : ForbiddenFamilyOn V) (S : GreedyStateOn V) (P : PairOn V) (T : TripleOn V)
-    (hPT : ¬ P.1 ⊆ T.1) (hpack : ∀ E ∈ F, IsPackingOn E) :
+    (hPT : ¬P.1 ⊆ T.1) (hpack : ∀ E ∈ F, IsPackingOn E) :
     ((availableTrianglesContainingPair S P.1 ∩ greedyClosedThreats F S T).card : ℝ≥0) ≤
-      3 + selectedCount (fun w : PairTwoAwayThreatWitness V F T P ↦ pairTwoAwayThreatRemainder w)
-        S.chosen := by
-  let A := universeTriplesContainingPair P.1 ∩ triplesSharingPair T
-  let B := pairTwoAwayForbiddenTriangles F S.chosen T P
-  have hsub : availableTrianglesContainingPair S P.1 ∩ greedyClosedThreats F S T ⊆ A ∪ B := by
-    intro U hU
-    have hp := mem_availableTrianglesContainingPair_iff.mp (mem_inter.mp hU).1
-    have ht := mem_inter.mp (mem_inter.mp hU).2
-    have hUP := mem_universeTriplesContainingPair_iff.mpr hp.2
-    rcases mem_union.mp ht.2 with hshare | htwo
-    · exact mem_union_left _ (mem_inter.mpr ⟨hUP, hshare⟩)
-    · apply mem_union_right
-      refine mem_inter.mpr ⟨hUP, mem_sdiff.mpr ⟨htwo, ?_⟩⟩
-      intro hshare
-      exact disjoint_left.mp (disjoint_pairSharing_twoAway_of_packing F S.chosen T hpack)
-        hshare htwo
-  have hn := (card_le_card hsub).trans (card_union_le A B)
-  have ha : (A.card : ℝ≥0) ≤ 3 := by exact_mod_cast card_pair_containing_inter_sharing_le_three P T hPT
-  have hb : (B.card : ℝ≥0) ≤ selectedCount
-      (fun w : PairTwoAwayThreatWitness V F T P ↦ pairTwoAwayThreatRemainder w) S.chosen :=
-    pairTwoAwayForbidden_count_le_selectedCount F S.chosen T P
-  calc
-    _ ≤ (A.card : ℝ≥0) + B.card := by exact_mod_cast hn
-    _ ≤ _ := add_le_add ha hb
+      3 +
+        selectedCount
+          (fun w : PairTwoAwayThreatWitness V F T P ↦ pairTwoAwayThreatRemainder w)
+          S.chosen :=
+  by
+    let A := universeTriplesContainingPair P.1 ∩ triplesSharingPair T
+    let B := pairTwoAwayForbiddenTriangles F S.chosen T P
+    have hsub : availableTrianglesContainingPair S P.1 ∩ greedyClosedThreats F S T ⊆ A ∪ B :=
+      by
+        intro U hU
+        have hp := mem_availableTrianglesContainingPair_iff.mp (mem_inter.mp hU).1
+        have ht := mem_inter.mp (mem_inter.mp hU).2
+        have hUP := mem_universeTriplesContainingPair_iff.mpr hp.2
+        rcases mem_union.mp ht.2 with hshare | htwo
+        · exact mem_union_left _ (mem_inter.mpr ⟨hUP, hshare⟩)
+        · apply mem_union_right
+          refine mem_inter.mpr ⟨hUP, mem_sdiff.mpr ⟨htwo, ?_⟩⟩
+          intro hshare
+          exact
+            disjoint_left.mp (disjoint_pairSharing_twoAway_of_packing F S.chosen T hpack)
+              hshare htwo
+    have hn := (card_le_card hsub).trans (card_union_le A B)
+    have ha : (A.card : ℝ≥0) ≤ 3 :=
+      by
+        exact_mod_cast card_pair_containing_inter_sharing_le_three P T hPT
+    have hb :
+      (B.card : ℝ≥0) ≤
+        selectedCount
+          (fun w : PairTwoAwayThreatWitness V F T P ↦ pairTwoAwayThreatRemainder w)
+          S.chosen :=
+      pairTwoAwayForbidden_count_le_selectedCount F S.chosen T P
+    calc
+      _ ≤ (A.card : ℝ≥0) + B.card :=
+        by
+          exact_mod_cast hn
+      _ ≤ _ := add_le_add ha hb
 
 end
 

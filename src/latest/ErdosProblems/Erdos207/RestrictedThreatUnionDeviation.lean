@@ -13,7 +13,7 @@ open Finset
 open scoped BigOperators
 
 theorem abs_card_restricted_biUnion_sub
-    {I A : Type*} [DecidableEq I] [DecidableEq A]
+    {I A : Type*} [DecidableEq A]
     (s : Finset I) (F : I → Finset A) (R : Finset A) (K : ℕ)
     (H epsilon : ℝ)
     (hroot : ∀ i ∈ s, (F i ∩ R).card ≤ K)
@@ -21,6 +21,7 @@ theorem abs_card_restricted_biUnion_sub
     (htrajectory : ∀ i ∈ s, |((F i).card : ℝ) - H| ≤ epsilon) :
     |((s.biUnion (fun i ↦ F i \ R)).card : ℝ) - s.card * H| ≤
       s.card * epsilon + ((s.card + s.card.choose 2) * K : ℕ) := by
+  classical
   have hupper : ((s.biUnion (fun i ↦ F i \ R)).card : ℝ) ≤
       ∑ i ∈ s, ((F i).card : ℝ) := by
     exact_mod_cast card_restricted_biUnion_le_sum_card s F R

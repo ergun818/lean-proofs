@@ -38,7 +38,7 @@ def AllReserveWedgeSupplies
 /-- The Chernoff estimates for individual wedge supplies union-bound to an
 upper bound on the probability that at least one supply fails. -/
 theorem reserveEdgeLaw_probability_not_allReserveWedgeSupplies_le
-    {V J : Type*} [Fintype V] [DecidableEq V] [DecidableEq J]
+    {V J : Type*} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) (U : Finset V)
     (E : Finset J) (u v : J → V) (S : J → Finset V)
     (a : J → ℕ) (r : ℝ≥0) (hr : r ≤ 1)
@@ -53,6 +53,7 @@ theorem reserveEdgeLaw_probability_not_allReserveWedgeSupplies_le
         (fun ω ↦ ¬ AllReserveWedgeSupplies G U E u v S a ω) : ℝ)) ≤
       ∑ j ∈ E,
         Real.exp (-(((r ^ 2 : ℝ≥0) : ℝ) * (S j).card) / 4) := by
+  classical
   let L := reserveEdgeLaw G U r hr
   let Bad : J → (Sym2 V → Bool) → Prop := fun j ω ↦
     (activeReserveWedgeVertices G U (S j) (u j) (v j) ω).card ≤ a j
@@ -87,7 +88,7 @@ theorem reserveEdgeLaw_probability_not_allReserveWedgeSupplies_le
 /-- A strict union bound makes the simultaneous good-supply event have
 positive probability under the unconditioned reserve-edge law. -/
 theorem reserveEdgeLaw_probability_allReserveWedgeSupplies_pos
-    {V J : Type*} [Fintype V] [DecidableEq V] [DecidableEq J]
+    {V J : Type*} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) (U : Finset V)
     (E : Finset J) (u v : J → V) (S : J → Finset V)
     (a : J → ℕ) (r : ℝ≥0) (hr : r ≤ 1)
@@ -103,6 +104,7 @@ theorem reserveEdgeLaw_probability_allReserveWedgeSupplies_pos
         (-(((r ^ 2 : ℝ≥0) : ℝ) * (S j).card) / 4) < 1) :
     0 < (reserveEdgeLaw G U r hr).probability
       (AllReserveWedgeSupplies G U E u v S a) := by
+  classical
   let L := reserveEdgeLaw G U r hr
   have hbadReal :
       ((L.probability
@@ -122,7 +124,7 @@ theorem reserveEdgeLaw_probability_allReserveWedgeSupplies_pos
 /-- The reserve law conditioned on simultaneous wedge supply is supported
 entirely on good reserve outcomes. -/
 theorem conditionedReserveEdgeLaw_supported_allReserveWedgeSupplies
-    {V J : Type*} [Fintype V] [DecidableEq V] [DecidableEq J]
+    {V J : Type*} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) (U : Finset V)
     (E : Finset J) (u v : J → V) (S : J → Finset V)
     (a : J → ℕ) (r : ℝ≥0) (hr : r ≤ 1)
@@ -130,14 +132,15 @@ theorem conditionedReserveEdgeLaw_supported_allReserveWedgeSupplies
       (AllReserveWedgeSupplies G U E u v S a)) :
     ((reserveEdgeLaw G U r hr).conditionOn
       (AllReserveWedgeSupplies G U E u v S a) hpos).SupportedOn
-        (AllReserveWedgeSupplies G U E u v S a) :=
-  FiniteLaw.conditionOn_supported _ _ hpos
+        (AllReserveWedgeSupplies G U E u v S a) := by
+  classical
+  exact FiniteLaw.conditionOn_supported _ _ hpos
 
 /-- Iteration typicality and a common deterministic extension-count floor
 give a positive-probability simultaneous reserve-supply event for an indexed
 family of internal edges. -/
 theorem IsIterationTypical.reserveEdgeLaw_probability_internalSupplies_pos
-    {V J : Type*} [Fintype V] [DecidableEq V] [DecidableEq J]
+    {V J : Type*} [Fintype V] [DecidableEq V]
     {ell : ℕ} {W : Vortex V ell} {stage : Fin (ell + 1)}
     {G : SimpleGraph V} {A : TripleSystemOn V}
     {p eta ξ : ℝ≥0} {h : ℕ}
@@ -165,6 +168,7 @@ theorem IsIterationTypical.reserveEdgeLaw_probability_internalSupplies_pos
         (SimpleGraph.edge (u j) (v j)) (W.U i.succ)
     0 < (reserveEdgeLaw G (W.U i.succ) r hr).probability
       (AllReserveWedgeSupplies G (W.U i.succ) E u v S a) := by
+  classical
   dsimp only
   let S : J → Finset V := fun j ↦
     iterationExtensionVertices A

@@ -494,7 +494,7 @@ theorem timedSharpScheduledOuterOnly_probability_not_residualDegree_le_inactive
       exact (mem_outerOnlyAvailable_iff.mp (hzInv.2.1.1 hT)).2
     have hdegree := scheduled_residualInternal_degree_le_outer_deficiency
       hzInv.1.1 htri hsubset houter
-    push_neg at hbad
+    push Not at hbad
     obtain ⟨v, hv⟩ := hbad
     have hle : (scheduledEdgesAt
         (preliminaryResidualInternalEdges G U z.2.chosen) v).card ≤ r := by

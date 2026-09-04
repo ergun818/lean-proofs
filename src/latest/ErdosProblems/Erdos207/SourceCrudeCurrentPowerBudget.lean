@@ -37,56 +37,91 @@ theorem source_current_power_cutoff (n e k : ℕ) (t U : ℝ≥0) (hcut : t * U 
     _ ≤ t ^ k * (n + 1 : ℝ≥0) ^ e := mul_le_mul_of_nonneg_left (pow_le_pow_left' hn e) zero_le
     _ = _ := by ring
 
-theorem sourceCrudeTailBound_sum_current_power_budget
-    {V I : Type*} [Fintype V] [DecidableEq V] [Fintype I] {ell q : ℕ}
-    (W : Vortex V ell) (order : I → ℕ) (z : I → ℝ≥0) (s R c t k : ℕ) (w Z A epsilon : ℝ≥0)
-    (horder : ∀ i, order i ≤ q) (hz : ∀ i, z i ≤ Z)
+theorem sourceCrudeTailBound_sum_current_power_budget {V I : Type*} [Fintype V]
+    [DecidableEq V] [Fintype I] {ell q : ℕ} (W : Vortex V ell) (order : I → ℕ) (z : I → ℝ≥0)
+    (s R c t k : ℕ) (w Z A epsilon : ℝ≥0) (horder : ∀ i, order i ≤ q) (hz : ∀ i, z i ≤ Z)
     (ht : 1 ≤ t) (hw : 1 ≤ w) (hN : Fintype.card V ≤ t ^ R) (hs : 6 * R + c ≤ s)
-    (hcut : (t : ℝ≥0) * sourceCrudeUniformCoefficient ell q (Fintype.card I) w Z ≤ (t : ℝ≥0) ^ k) :
+    (hcut :
+      (t : ℝ≥0) * sourceCrudeUniformCoefficient ell q (Fintype.card I) w Z ≤ (t : ℝ≥0) ^ k) :
     (∑ i : CrudeStatisticIndex V q,
-      sourceCrudeTailBound W order z s w A epsilon (dyadicCrudeThresholds (Fin W.terminalSize) t k) i) ≤
-      (256 * (q + 1 : ℝ≥0) ^ 2) * A * (boundedIntersectionMomentCoefficient (2 * q) s : ℝ≥0) ^ s / (t : ℝ≥0) ^ c +
-      (256 * (q + 1 : ℝ≥0) ^ 2) * epsilon *
-        (sourceCrudeUniformWitnessFactor q (Fintype.card I) * (2 : ℝ≥0) ^ (6 * q)) ^ s *
-          (t : ℝ≥0) ^ (6 * R + (6 * q * R) * s) := by
-  apply sourceCrudeTailBound_sum_budget W order z s R c t w Z A epsilon
-    (dyadicCrudeThresholds (Fin W.terminalSize) t k) horder hz (by exact_mod_cast ht) hw (by exact_mod_cast hN) hs
-  · exact dyadicCrudeThresholds_one_le V (Fin W.terminalSize) q t k ht
-  · intro j c
-    simpa only [dyadicCrudeThresholds, Fintype.card_fin] using
-      source_current_power_cutoff W.terminalSize (j - c - 5) k t
-        (sourceCrudeUniformCoefficient ell q (Fintype.card I) w Z) hcut
-  · exact hcut
-  · exact hcut
-  · intro j c
-    simpa only [dyadicCrudeThresholds, Fintype.card_fin] using
-      source_current_power_cutoff W.terminalSize (j - c - 4) k t
-        (sourceCrudeUniformCoefficient ell q (Fintype.card I) w Z) hcut
+        sourceCrudeTailBound W order z s w A epsilon
+          (dyadicCrudeThresholds (Fin W.terminalSize) t k) i) ≤
+      (256 * (q + 1 : ℝ≥0) ^ 2) * A *
+            (boundedIntersectionMomentCoefficient (2 * q) s : ℝ≥0) ^ s /
+          (t : ℝ≥0) ^ c +
+        (256 * (q + 1 : ℝ≥0) ^ 2) * epsilon *
+            (sourceCrudeUniformWitnessFactor q (Fintype.card I) * (2 : ℝ≥0) ^ (6 * q)) ^ s *
+          (t : ℝ≥0) ^ (6 * R + (6 * q * R) * s) :=
+  by
+    apply
+      sourceCrudeTailBound_sum_budget W order z s R c t w Z A epsilon
+        (dyadicCrudeThresholds (Fin W.terminalSize) t k) horder hz
+        (by
+          exact_mod_cast ht)
+        hw
+        (by
+          exact_mod_cast hN)
+        hs
+    · exact dyadicCrudeThresholds_one_le V (Fin W.terminalSize) q t k ht
+    · intro j c
+      simpa only [dyadicCrudeThresholds, Fintype.card_fin] using
+        source_current_power_cutoff W.terminalSize (j - c - 5) k t
+          (sourceCrudeUniformCoefficient ell q (Fintype.card I) w Z) hcut
+    · exact hcut
+    · exact hcut
+    · intro j c
+      simpa only [dyadicCrudeThresholds, Fintype.card_fin] using
+        source_current_power_cutoff W.terminalSize (j - c - 4) k t
+          (sourceCrudeUniformCoefficient ell q (Fintype.card I) w Z) hcut
 
-theorem sourceCrudeTailBound_sum_current_power_prior_error_budget
-    {V I : Type*} [Fintype V] [DecidableEq V] [Fintype I] {ell q : ℕ}
-    (W : Vortex V ell) (order : I → ℕ) (z : I → ℝ≥0) (s R c t k L : ℕ) (w Z A epsilon B : ℝ≥0)
-    (horder : ∀ i, order i ≤ q) (hz : ∀ i, z i ≤ Z)
+theorem sourceCrudeTailBound_sum_current_power_prior_error_budget {V I : Type*} [Fintype V]
+    [DecidableEq V] [Fintype I] {ell q : ℕ} (W : Vortex V ell) (order : I → ℕ) (z : I → ℝ≥0)
+    (s R c t k L : ℕ) (w Z A epsilon B : ℝ≥0) (horder : ∀ i, order i ≤ q) (hz : ∀ i, z i ≤ Z)
     (ht : 1 ≤ t) (hw : 1 ≤ w) (hN : Fintype.card V ≤ t ^ R) (hs : 6 * R + c ≤ s)
     (hL : 6 * R + (6 * q * R) * s + c ≤ L)
-    (hcut : (t : ℝ≥0) * sourceCrudeUniformCoefficient ell q (Fintype.card I) w Z ≤ (t : ℝ≥0) ^ k)
+    (hcut :
+      (t : ℝ≥0) * sourceCrudeUniformCoefficient ell q (Fintype.card I) w Z ≤ (t : ℝ≥0) ^ k)
     (hepsilon : epsilon ≤ A * B / (t : ℝ≥0) ^ L) :
     (∑ i : CrudeStatisticIndex V q,
-      sourceCrudeTailBound W order z s w A epsilon (dyadicCrudeThresholds (Fin W.terminalSize) t k) i) ≤
+        sourceCrudeTailBound W order z s w A epsilon
+          (dyadicCrudeThresholds (Fin W.terminalSize) t k) i) ≤
       (256 * (q + 1 : ℝ≥0) ^ 2) * A *
-        ((boundedIntersectionMomentCoefficient (2 * q) s : ℝ≥0) ^ s +
-          B * (sourceCrudeUniformWitnessFactor q (Fintype.card I) * (2 : ℝ≥0) ^ (6 * q)) ^ s) / (t : ℝ≥0) ^ c := by
-  let C : ℝ≥0 := 256 * (q + 1 : ℝ≥0) ^ 2
-  let Q := sourceCrudeUniformWitnessFactor q (Fintype.card I) * (2 : ℝ≥0) ^ (6 * q)
-  have herr : C * epsilon * Q ^ s * (t : ℝ≥0) ^ (6 * R + (6 * q * R) * s) ≤ C * A * B * Q ^ s / (t : ℝ≥0) ^ c := by
-    calc
-      _ ≤ C * (A * B / (t : ℝ≥0) ^ L) * Q ^ s * (t : ℝ≥0) ^ (6 * R + (6 * q * R) * s) := by gcongr
-      _ = (C * A * B * Q ^ s) * ((t : ℝ≥0) ^ (6 * R + (6 * q * R) * s) / (t : ℝ≥0) ^ L) := by ring
-      _ ≤ (C * A * B * Q ^ s) * (1 / (t : ℝ≥0) ^ c) :=
-        mul_le_mul_of_nonneg_left (moment_power_ratio_le t (6 * R + (6 * q * R) * s) L c (by exact_mod_cast ht) hL) zero_le
-      _ = _ := by ring
-  have hsum := sourceCrudeTailBound_sum_current_power_budget W order z s R c t k w Z A epsilon horder hz ht hw hN hs hcut
-  exact (hsum.trans (add_le_add le_rfl herr)).trans_eq (by dsimp [C, Q]; ring)
+          ((boundedIntersectionMomentCoefficient (2 * q) s : ℝ≥0) ^ s +
+            B *
+              (sourceCrudeUniformWitnessFactor q (Fintype.card I) * (2 : ℝ≥0) ^ (6 * q)) ^
+                s) /
+        (t : ℝ≥0) ^ c :=
+  by
+    let C : ℝ≥0 := 256 * (q + 1 : ℝ≥0) ^ 2
+    let Q := sourceCrudeUniformWitnessFactor q (Fintype.card I) * (2 : ℝ≥0) ^ (6 * q)
+    have herr :
+      C * epsilon * Q ^ s * (t : ℝ≥0) ^ (6 * R + (6 * q * R) * s) ≤
+        C * A * B * Q ^ s / (t : ℝ≥0) ^ c :=
+      by
+        calc
+          _ ≤ C * (A * B / (t : ℝ≥0) ^ L) * Q ^ s * (t : ℝ≥0) ^ (6 * R + (6 * q * R) * s) :=
+            by
+              gcongr
+          _ = (C * A * B * Q ^ s) * ((t : ℝ≥0) ^ (6 * R + (6 * q * R) * s) / (t : ℝ≥0) ^ L) :=
+            by
+              ring
+          _ ≤ (C * A * B * Q ^ s) * (1 / (t : ℝ≥0) ^ c) :=
+            (mul_le_mul_of_nonneg_left
+              (moment_power_ratio_le t (6 * R + (6 * q * R) * s) L c
+                (by
+                  exact_mod_cast ht)
+                hL)
+              zero_le)
+          _ = _ :=
+            by
+              ring
+    have hsum :=
+      sourceCrudeTailBound_sum_current_power_budget W order z s R c t k w Z A epsilon horder
+        hz ht hw hN hs hcut
+    exact
+      (hsum.trans (add_le_add le_rfl herr)).trans_eq
+        (by
+          dsimp [C, Q]; ring)
 
 end
 

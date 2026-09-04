@@ -103,24 +103,25 @@ theorem regularizedForbiddenUnion_local_decode
     obtain ⟨C, hC, rfl⟩ := mem_image.mp hS
     exact ⟨C, ⟨j, hj, hC⟩, rfl⟩
 
-theorem avoids_union_of_avoids_regularizedLocalForbidden
-    {V : Type*} [DecidableEq V] {F : ForbiddenFamilyOn V}
-    {A P M : TripleSystemOn V} {q : ℕ}
-    (Lstar : ℕ → Finset (Finset {T // T ∈ A}))
-    (horder : ∀ C ∈ F, C.card + 2 ≤ q)
-    (hP : AvoidsForbidden P F) (hsingle : ∀ T ∈ A, ¬ CompletesForbidden F P T)
-    (hMA : M ⊆ A)
-    (hcovers : ∀ j ∈ Icc 4 q,
-      ∀ E ∈ finiteHypergraphOnSubset A (localForbiddenConfigurations F A P j),
-        ∃ C ∈ (Ico 4 j).biUnion Lstar ∪ Lstar j, C ⊆ E)
-    (havoid : AvoidsForbidden M (regularizedForbiddenUnion
-      (Function.Embedding.subtype (fun T ↦ T ∈ A)) q Lstar)) :
-    AvoidsForbidden (P ∪ M) F := by
-  apply avoids_union_of_avoids_localForbiddenUnion horder hP hsingle hMA
-  have h := avoids_original_union_of_regularized
-    (Function.Embedding.subtype (fun T ↦ T ∈ A)) q
-    (fun j ↦ finiteHypergraphOnSubset A (localForbiddenConfigurations F A P j)) Lstar hcovers M havoid
-  simpa only [regularizedForbiddenUnion_local_decode] using h
+theorem avoids_union_of_avoids_regularizedLocalForbidden {V : Type*} [DecidableEq V]
+    {F : ForbiddenFamilyOn V} {A P M : TripleSystemOn V} {q : ℕ}
+    (Lstar : ℕ → Finset (Finset { T // T ∈ A })) (horder : ∀ C ∈ F, C.card + 2 ≤ q)
+    (hP : AvoidsForbidden P F) (hsingle : ∀ T ∈ A, ¬CompletesForbidden F P T) (hMA : M ⊆ A)
+    (hcovers :
+      ∀ j ∈ Icc 4 q,
+        ∀ E ∈ finiteHypergraphOnSubset A (localForbiddenConfigurations F A P j),
+          ∃ C ∈ (Ico 4 j).biUnion Lstar ∪ Lstar j, C ⊆ E)
+    (havoid :
+      AvoidsForbidden M
+        (regularizedForbiddenUnion (Function.Embedding.subtype (fun T ↦ T ∈ A)) q Lstar)) :
+    AvoidsForbidden (P ∪ M) F :=
+  by
+    apply avoids_union_of_avoids_localForbiddenUnion horder hP hsingle hMA
+    have h :=
+      avoids_original_union_of_regularized (Function.Embedding.subtype (fun T ↦ T ∈ A)) q
+        (fun j ↦ finiteHypergraphOnSubset A (localForbiddenConfigurations F A P j)) Lstar
+        hcovers M havoid
+    simpa only [regularizedForbiddenUnion_local_decode] using h
 
 end
 

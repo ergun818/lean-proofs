@@ -21,15 +21,16 @@ open Finset
 
 noncomputable section
 
-open scoped Classical
 
+open scoped Classical in
 /-- Every vertex of a graph embedded from `V` has degree at most `|V|` in
 the image graph. -/
 theorem SimpleGraph.degree_map_le_card
     {V W : Type*} [Fintype V] [Fintype W]
-    [DecidableEq V] [DecidableEq W]
+    [DecidableEq W]
     (G : SimpleGraph V) (f : V ↪ W) (w : W) :
     (G.map f).degree w ≤ Fintype.card V := by
+  classical
   have hsub : (G.map f).neighborFinset w ⊆
       (univ : Finset V).map f := by
     intro y hy
@@ -318,7 +319,7 @@ theorem mappedSphereTransformBank_hasLocalization
     · intro hxX
       obtain ⟨a, ha⟩ := hXroots x hxX
       have hsource : x₀ = SphereExpansionVertex.root a :=
-        f.injective (by simpa [x] using ha)
+        f.injective (by simp [x] at ha)
       change SphereExpansionVertex.interior T z =
         SphereExpansionVertex.root a at hsource
       cases hsource
@@ -348,6 +349,7 @@ theorem highGirthCycleCover_hasLocalization_mapEmbedding
     obtain ⟨a, _ha, rfl⟩ := Finset.mem_map.mp hy
     exact ⟨cycleCoverRootEmbedding V a, rfl⟩
 
+open scoped Classical in
 /-- A concrete absorber on exactly `n` ambient vertices.  The only numerical
 hypothesis says that the polynomial-size sphere construction fits inside
 `Fin n`; all remaining vertices are isolated in the absorber graph. -/
@@ -388,7 +390,6 @@ theorem exists_paddedEfficientAbsorber
   let f : W ↪ Fin n :=
     (Fintype.equivFin W).toEmbedding.trans (Fin.castLEEmb hWcard)
   let i : Fin m ↪ V := Fin.castLEEmb (by
-    change m ≤ 2 * m
     omega)
   let j : Fin m ↪ W :=
     i.trans (highGirthCycleCoverRootEmbedding V q')

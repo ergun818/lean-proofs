@@ -44,52 +44,85 @@ theorem boundedMoment_uniform_power_cutoff
   have hm := Nat.mul_le_mul_right (u + 1) hd
   omega
 
-theorem dyadicCrudeThresholds_geometric
-    {V : Type*} [Fintype V] [DecidableEq V]
-    (q t a u : ℕ) (bank : TripleSystemOn V) (ht : 1 ≤ t)
-    (hconst : 2 * (2 * q + 1) ^ (2 * q + 1) ≤ t)
+theorem dyadicCrudeThresholds_geometric {V : Type*} [Fintype V] [DecidableEq V] (q t a u : ℕ)
+    (bank : TripleSystemOn V) (ht : 1 ≤ t) (hconst : 2 * (2 * q + 1) ^ (2 * q + 1) ≤ t)
     (hroot : (2 : ℝ≥0) ^ q * pairExactBankExtensionCoefficient q bank ≤ (t : ℝ≥0) ^ a)
     (hpair : (pairTwoAwayThreatExtensionCoefficient q bank : ℝ≥0) ≤ (t : ℝ≥0) ^ a)
     (hcommon : absorberCommonThreatWeightBound q bank ≤ (t : ℝ≥0) ^ a)
     (hgain : absorberGainDefectWeightBound q bank ≤ (t : ℝ≥0) ^ a) :
     GeometricCrudeCutoffs q t bank ((t : ℝ≥0) ^ u)
-      (dyadicCrudeThresholds V t (dyadicCrudeExponent q a u)) := by
-  have htpos : (0 : ℝ≥0) < t := by exact_mod_cast (show 0 < t by omega)
-  have hNpos : (0 : ℝ≥0) < Fintype.card V + 1 := by positivity
-  constructor
-  · intro i
-    dsimp only [dyadicCrudeThresholds]
-    positivity
-  · dsimp only [dyadicCrudeThresholds]
-    positivity
-  · dsimp only [dyadicCrudeThresholds]
-    positivity
-  · intro i
-    dsimp only [dyadicCrudeThresholds]
-    positivity
-  · intro i
-    have hd : i.chosen ≤ 2 * q := by have hb := i.budget; have hj := i.order_le; omega
-    have hpow : (2 : ℝ≥0) ^ (i.order - 2) ≤ 2 ^ q :=
-      pow_le_pow_right₀ (by norm_num) (by have hj := i.order_le; omega)
-    have hc : (2 : ℝ≥0) ^ (i.order - 2) * pairExactBankExtensionCoefficient q bank ≤ (t : ℝ≥0) ^ a :=
-      (mul_le_mul_of_nonneg_right hpow (by positivity)).trans hroot
-    apply boundedMoment_uniform_power_cutoff q t a u i.chosen _ _ _ ht hd le_rfl ?_ hconst
-    calc
-      _ ≤ (t : ℝ≥0) ^ a * (Fintype.card V + 1 : ℝ≥0) ^ (i.order - i.chosen - 5) :=
-        mul_le_mul_of_nonneg_right hc (by positivity)
-      _ = _ := by ring
-  · have h := boundedMoment_uniform_power_cutoff q t a u q ((t : ℝ≥0) ^ u) _ 1 ht
-      (by omega) le_rfl (by simpa only [one_mul] using hpair) hconst
-    simpa only [one_mul, dyadicCrudeThresholds] using h
-  · have h := boundedMoment_uniform_power_cutoff q t a u (2 * q) ((t : ℝ≥0) ^ u) _ 1 ht
-      le_rfl le_rfl (by simpa only [one_mul] using hcommon) hconst
-    simpa only [one_mul, dyadicCrudeThresholds] using h
-  · intro i
-    apply boundedMoment_uniform_power_cutoff q t a u (2 * q) _ _ _ ht le_rfl le_rfl ?_ hconst
-    calc
-      _ ≤ (t : ℝ≥0) ^ a * (Fintype.card V + 1 : ℝ≥0) ^ (i.order - i.chosen - 4) :=
-        mul_le_mul_of_nonneg_right hgain (by positivity)
-      _ = _ := by ring
+      (dyadicCrudeThresholds V t (dyadicCrudeExponent q a u)) :=
+  by
+    have htpos : (0 : ℝ≥0) < t :=
+      by
+        exact_mod_cast (show 0 < t by omega)
+    have hNpos : (0 : ℝ≥0) < Fintype.card V + 1 :=
+      by
+        positivity
+    constructor
+    · intro i
+      dsimp only [dyadicCrudeThresholds]
+      positivity
+    · dsimp only [dyadicCrudeThresholds]
+      positivity
+    · dsimp only [dyadicCrudeThresholds]
+      positivity
+    · intro i
+      dsimp only [dyadicCrudeThresholds]
+      positivity
+    · intro i
+      have hd : i.chosen ≤ 2 * q :=
+        by
+          have hb := i.budget; have hj := i.order_le; omega
+      have hpow : (2 : ℝ≥0) ^ (i.order - 2) ≤ 2 ^ q :=
+        pow_le_pow_right₀
+          (by
+            norm_num)
+          (by
+            have hj := i.order_le; omega)
+      have hc :
+        (2 : ℝ≥0) ^ (i.order - 2) * pairExactBankExtensionCoefficient q bank ≤
+          (t : ℝ≥0) ^ a :=
+        (mul_le_mul_of_nonneg_right hpow
+              (by
+                positivity)).trans
+          hroot
+      apply boundedMoment_uniform_power_cutoff q t a u i.chosen _ _ _ ht hd le_rfl ?_ hconst
+      calc
+        _ ≤ (t : ℝ≥0) ^ a * (Fintype.card V + 1 : ℝ≥0) ^ (i.order - i.chosen - 5) :=
+          mul_le_mul_of_nonneg_right hc
+            (by
+              positivity)
+        _ = _ :=
+          by
+            ring
+    · have h :=
+        boundedMoment_uniform_power_cutoff q t a u q ((t : ℝ≥0) ^ u) _ 1 ht
+          (by
+            omega)
+          le_rfl
+          (by
+            simpa only [one_mul] using hpair)
+          hconst
+      simpa only [one_mul, dyadicCrudeThresholds] using h
+    · have h :=
+        boundedMoment_uniform_power_cutoff q t a u (2 * q) ((t : ℝ≥0) ^ u) _ 1 ht le_rfl
+          le_rfl
+          (by
+            simpa only [one_mul] using hcommon)
+          hconst
+      simpa only [one_mul, dyadicCrudeThresholds] using h
+    · intro i
+      apply
+        boundedMoment_uniform_power_cutoff q t a u (2 * q) _ _ _ ht le_rfl le_rfl ?_ hconst
+      calc
+        _ ≤ (t : ℝ≥0) ^ a * (Fintype.card V + 1 : ℝ≥0) ^ (i.order - i.chosen - 4) :=
+          mul_le_mul_of_nonneg_right hgain
+            (by
+              positivity)
+        _ = _ :=
+          by
+            ring
 
 end
 

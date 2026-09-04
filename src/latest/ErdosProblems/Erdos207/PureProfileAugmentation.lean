@@ -73,23 +73,29 @@ theorem profiledDistinctPairs_subset_old_of_not_pure
     ⟨hold p.1 T hE hT hprofile, hold p.2 T' hE' hT' (hrem ▸ hprofile),
       hne, hT, hT', hrem, hprofile⟩
 
-theorem profiledDistinctPairs_pure_subset_zero
-    {V : Type*} [Fintype V] [DecidableEq V] {ell0 ell1 j : ℕ}
-    (W0 : Vortex V ell0) (W1 : Vortex V ell1) (F : ForbiddenFamilyOn V) (i : Fin ell1)
-    (hlevel : ∀ T, W1.level T = i.castSucc → W0.level T = Fin.last ell0)
+theorem profiledDistinctPairs_pure_subset_zero {V : Type*} [Fintype V] [DecidableEq V]
+    {ell0 ell1 j : ℕ} (W0 : Vortex V ell0) (W1 : Vortex V ell1) (F : ForbiddenFamilyOn V)
+    (i : Fin ell1) (hlevel : ∀ T, W1.level T = i.castSucc → W0.level T = Fin.last ell0)
     (huniform : ∀ E ∈ F, E.card = j - 2) (T T' : TripleOn V) :
     W1.profiledDistinctEqualRemainderPairs F T T' (vortexPureProfile i (j - 3)) ⊆
-      W0.profiledDistinctEqualRemainderPairs F T T' 0 := by
-  intro p hp
-  obtain ⟨hE, hE', hne, hT, hT', hrem, hprofile⟩ :=
-    (W1.mem_profiledDistinctEqualRemainderPairs_iff F T T' _ p).mp hp
-  have hc : (p.1.erase T).card = j - 3 := by
-    rw [card_erase_of_mem hT, huniform p.1 hE]
-    omega
-  have hlevels := W1.level_eq_of_outerProfile_pure (p.1.erase T) i (by simpa only [hc] using hprofile)
-  exact (W0.mem_profiledDistinctEqualRemainderPairs_iff F T T' 0 p).mpr
-    ⟨hE, hE', hne, hT, hT', hrem,
-      W0.outerProfile_eq_zero_of_terminal (p.1.erase T) (fun Q hQ ↦ hlevel Q (hlevels Q hQ))⟩
+      W0.profiledDistinctEqualRemainderPairs F T T' 0 :=
+  by
+    intro p hp
+    obtain ⟨hE, hE', hne, hT, hT', hrem, hprofile⟩ :=
+      (W1.mem_profiledDistinctEqualRemainderPairs_iff F T T' _ p).mp hp
+    have hc : (p.1.erase T).card = j - 3 :=
+      by
+        rw [card_erase_of_mem hT, huniform p.1 hE]
+        omega
+    have hlevels :=
+      W1.level_eq_of_outerProfile_pure (p.1.erase T) i
+        (by
+          simpa only [hc] using hprofile)
+    exact
+      (W0.mem_profiledDistinctEqualRemainderPairs_iff F T T' 0 p).mpr
+        ⟨hE, hE', hne, hT, hT', hrem,
+          W0.outerProfile_eq_zero_of_terminal (p.1.erase T)
+            (fun Q hQ ↦ hlevel Q (hlevels Q hQ))⟩
 
 theorem terminalPairExtensions_subset_old_of_new_outer
     {V : Type*} [Fintype V] [DecidableEq V] {ell : ℕ}

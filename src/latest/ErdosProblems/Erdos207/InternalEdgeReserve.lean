@@ -35,7 +35,7 @@ lemma mem_internalOuterEdges_iff
     e ∈ internalOuterEdges G U ↔
       e ∈ graphEdges G ∧ e.out.1 ∉ U ∧ e.out.2 ∉ U := by
   classical
-  simp [internalOuterEdges, and_assoc]
+  simp [internalOuterEdges]
 
 lemma graph_adj_out_of_mem_graphEdges
     {V : Type*} [Fintype V] [DecidableEq V]

@@ -21,11 +21,12 @@ def localizedTwoAwayThirdVertex
     (w : LocalizedTwoAwayWitness V F T a b U) : V := Classical.choose w.2.2.2
 
 theorem localizedTwoAwayThirdVertex_eq
-    {V : Type*} [Fintype V] [DecidableEq V]
+    {V : Type*} [Finite V] [DecidableEq V]
     {F : ForbiddenFamilyOn V} {T : TripleOn V} {a b : V} {U : Finset V}
     (hab : a ≠ b) (w : LocalizedTwoAwayWitness V F T a b U)
     (u : V) (hu : u ∈ w.1.1.2.1) (hua : u ≠ a) (hub : u ≠ b) :
     localizedTwoAwayThirdVertex w = u := by
+  let := Fintype.ofFinite V
   have hx := Classical.choose_spec w.2.2.2
   have h₁ := thirdVertexTriple_eq_of_mem hab w.1.1.2 w.2.1 w.2.2.1 hx.1 hx.2.2.1 hx.2.2.2
   have h₂ := thirdVertexTriple_eq_of_mem hab w.1.1.2 w.2.1 w.2.2.1 hu hua hub

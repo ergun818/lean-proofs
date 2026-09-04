@@ -44,24 +44,36 @@ theorem offdiagPart_eq_of_subset_graphEdges
   intro e he
   exact mem_offdiagPart_iff.mpr ⟨he, G.not_isDiag_of_mem_edgeSet (mem_graphEdges_iff.mp (hE he))⟩
 
-theorem initialGraphProductScale_of_survival_point
-    {V : Type*} [Fintype V] [DecidableEq V]
+theorem initialGraphProductScale_of_survival_point {V : Type*} [Fintype V] [DecidableEq V]
     (survival point p C b : ℝ≥0) (hsurvival : survival ≤ C * p)
-    (hpoint : point ≤ C * (Fintype.card V : ℝ≥0)⁻¹) (hC : 1 ≤ C)
-    (Q : TripleSystemOn V) (E : Finset (Sym2 V)) :
+    (hpoint : point ≤ C * (Fintype.card V : ℝ≥0)⁻¹) (hC : 1 ≤ C) (Q : TripleSystemOn V)
+    (E : Finset (Sym2 V)) :
     survival ^ E.card * point ^ Q.card + b ≤
-      C ^ (Q.card + E.card) * (p ^ E.card * (Fintype.card V : ℝ≥0)⁻¹ ^ Q.card + b) := by
-  have hmain : survival ^ E.card * point ^ Q.card ≤
-      C ^ (Q.card + E.card) * (p ^ E.card * (Fintype.card V : ℝ≥0)⁻¹ ^ Q.card) := by
+      C ^ (Q.card + E.card) * (p ^ E.card * (Fintype.card V : ℝ≥0)⁻¹ ^ Q.card + b) :=
+  by
+    have hmain :
+      survival ^ E.card * point ^ Q.card ≤
+        C ^ (Q.card + E.card) * (p ^ E.card * (Fintype.card V : ℝ≥0)⁻¹ ^ Q.card) :=
+      by
+        calc
+          _ ≤ (C * p) ^ E.card * (C * (Fintype.card V : ℝ≥0)⁻¹) ^ Q.card :=
+            by
+              gcongr
+          _ = _ :=
+            by
+              rw [mul_pow, mul_pow, pow_add]; ring
+    have herror : b ≤ C ^ (Q.card + E.card) * b :=
+      by
+        simpa only [one_mul] using
+          mul_le_mul_of_nonneg_right (one_le_pow₀ hC : 1 ≤ C ^ (Q.card + E.card)) zero_le
     calc
-      _ ≤ (C * p) ^ E.card * (C * (Fintype.card V : ℝ≥0)⁻¹) ^ Q.card := by gcongr
-      _ = _ := by rw [mul_pow, mul_pow, pow_add]; ring
-  have herror : b ≤ C ^ (Q.card + E.card) * b := by
-    simpa only [one_mul] using mul_le_mul_of_nonneg_right (one_le_pow₀ hC : 1 ≤ C ^ (Q.card + E.card)) zero_le
-  calc
-    _ ≤ C ^ (Q.card + E.card) * (p ^ E.card * (Fintype.card V : ℝ≥0)⁻¹ ^ Q.card) +
-        C ^ (Q.card + E.card) * b := add_le_add hmain herror
-    _ = _ := by ring
+      _ ≤
+          C ^ (Q.card + E.card) * (p ^ E.card * (Fintype.card V : ℝ≥0)⁻¹ ^ Q.card) +
+            C ^ (Q.card + E.card) * b :=
+        add_le_add hmain herror
+      _ = _ :=
+        by
+          ring
 
 theorem initialGraphProductBound_of_compatible_patterns
     {Ω V : Type*} [Fintype Ω] [Fintype V] [DecidableEq V]

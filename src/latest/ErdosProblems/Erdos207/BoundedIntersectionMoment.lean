@@ -19,49 +19,67 @@ open scoped NNReal
 
 noncomputable section
 
-theorem sum_weight_sdiff_le_bounded_subsets_mul
-    {W I : Type*} [DecidableEq W] [Fintype I]
+theorem sum_weight_sdiff_le_bounded_subsets_mul {W I : Type*} [DecidableEq W] [Fintype I]
     (F : I → Finset W) (π : W → ℝ≥0) (U : Finset W) {κ : ℝ≥0} {d : ℕ}
     (hcard : ∀ i, (F i).card ≤ d) (hκ : HasExtensionBound F π κ) :
-    ∑ i, setWeight π (F i \ U) ≤ (((d + 1) * (U.card + 1) ^ d : ℕ) : ℝ≥0) * κ := by
-  classical
-  have hpartition : (∑ i, setWeight π (F i \ U)) =
-      ∑ H ∈ subsetsUpToCard U d, intersectionClassWeight F π U H := by
+    ∑ i, setWeight π (F i \ U) ≤ (((d + 1) * (U.card + 1) ^ d : ℕ) : ℝ≥0) * κ :=
+  by
+    classical
+    have hpartition :
+      (∑ i, setWeight π (F i \ U)) =
+        ∑ H ∈ subsetsUpToCard U d, intersectionClassWeight F π U H :=
+      by
+        calc
+          _ =
+              ∑ i,
+                ∑ H ∈ subsetsUpToCard U d, if F i ∩ U = H then setWeight π (F i \ H) else 0 :=
+            by
+              apply sum_congr rfl
+              intro i _
+              have hmem : F i ∩ U ∈ subsetsUpToCard U d :=
+                mem_subsetsUpToCard_iff.mpr
+                  ⟨inter_subset_right, (card_le_card inter_subset_left).trans (hcard i)⟩
+              rw [sum_eq_single (F i ∩ U)]
+              · simp only [if_true]
+                congr 1
+                ext x
+                simp
+              · exact fun H _ hne ↦
+                  by
+                    simp [hne.symm]
+              · exact fun hnot ↦ (hnot hmem).elim
+          _ = _ :=
+            by
+              unfold intersectionClassWeight; rw [sum_comm]
+    rw [hpartition]
     calc
-      _ = ∑ i, ∑ H ∈ subsetsUpToCard U d,
-          if F i ∩ U = H then setWeight π (F i \ H) else 0 := by
-        apply sum_congr rfl
-        intro i _
-        have hmem : F i ∩ U ∈ subsetsUpToCard U d :=
-          mem_subsetsUpToCard_iff.mpr ⟨inter_subset_right, (card_le_card inter_subset_left).trans (hcard i)⟩
-        rw [sum_eq_single (F i ∩ U)]
-        · simp only [if_true]
-          congr 1
-          ext x
+      _ ≤ ∑ _H ∈ subsetsUpToCard U d, κ :=
+        sum_le_sum fun H _ ↦ (intersectionClassWeight_le_extensionWeight F π U H).trans (hκ H)
+      _ = (subsetsUpToCard U d).card * κ :=
+        by
           simp
-        · exact fun H _ hne ↦ by simp [hne.symm]
-        · exact fun hnot ↦ (hnot hmem).elim
-      _ = _ := by unfold intersectionClassWeight; rw [sum_comm]
-  rw [hpartition]
-  calc
-    _ ≤ ∑ _H ∈ subsetsUpToCard U d, κ := sum_le_sum fun H _ ↦
-      (intersectionClassWeight_le_extensionWeight F π U H).trans (hκ H)
-    _ = (subsetsUpToCard U d).card * κ := by simp
-    _ ≤ _ := mul_le_mul_of_nonneg_right (by exact_mod_cast card_subsetsUpToCard_le U d) zero_le
+      _ ≤ _ :=
+        mul_le_mul_of_nonneg_right
+          (by
+            exact_mod_cast card_subsetsUpToCard_le U d)
+          zero_le
 
-theorem sum_weight_union_le_bounded_subsets
-    {W I : Type*} [DecidableEq W] [Fintype I]
+theorem sum_weight_union_le_bounded_subsets {W I : Type*} [DecidableEq W] [Fintype I]
     (F : I → Finset W) (π : W → ℝ≥0) (U : Finset W) {κ : ℝ≥0} {d : ℕ}
     (hcard : ∀ i, (F i).card ≤ d) (hκ : HasExtensionBound F π κ) :
     ∑ i, setWeight π (U ∪ F i) ≤
-      setWeight π U * ((((d + 1) * (U.card + 1) ^ d : ℕ) : ℝ≥0) * κ) := by
-  calc
-    _ = setWeight π U * ∑ i, setWeight π (F i \ U) := by
-      rw [mul_sum]
-      apply sum_congr rfl
-      intro i _
-      exact setWeight_union_eq_mul_sdiff π U (F i)
-    _ ≤ _ := mul_le_mul_of_nonneg_left (sum_weight_sdiff_le_bounded_subsets_mul F π U hcard hκ) zero_le
+      setWeight π U * ((((d + 1) * (U.card + 1) ^ d : ℕ) : ℝ≥0) * κ) :=
+  by
+    calc
+      _ = setWeight π U * ∑ i, setWeight π (F i \ U) :=
+        by
+          rw [mul_sum]
+          apply sum_congr rfl
+          intro i _
+          exact setWeight_union_eq_mul_sdiff π U (F i)
+      _ ≤ _ :=
+        mul_le_mul_of_nonneg_left (sum_weight_sdiff_le_bounded_subsets_mul F π U hcard hκ)
+          zero_le
 
 def boundedIntersectionMomentCoefficient (d s : ℕ) : ℕ := (d + 1) * (s * d + 1) ^ d
 
@@ -103,17 +121,19 @@ theorem sum_tupleWeight_le_bounded_intersections
           mul_le_mul_of_nonneg_right iht zero_le
         _ = _ := by rw [pow_succ]
 
-theorem configurationMomentBound_bounded_intersections
-    {Ω W I : Type*} [Fintype Ω] [DecidableEq W] [Fintype I]
-    (L : FiniteLaw Ω) (F : I → Finset W) (R : Ω → Finset W)
-    (π : W → ℝ≥0) (C κ : ℝ≥0) {d s : ℕ}
-    (hcard : ∀ i, (F i).card ≤ d) (hκ : HasExtensionBound F π κ)
-    (hjoint : ∀ T : Finset W, T.card ≤ s * d →
-      L.probability (fun ω ↦ T ⊆ R ω) ≤ C * setWeight π T) :
+theorem configurationMomentBound_bounded_intersections {Ω W I : Type*} [Fintype Ω]
+    [DecidableEq W] [Fintype I] (L : FiniteLaw Ω) (F : I → Finset W) (R : Ω → Finset W)
+    (π : W → ℝ≥0) (C κ : ℝ≥0) {d s : ℕ} (hcard : ∀ i, (F i).card ≤ d)
+    (hκ : HasExtensionBound F π κ)
+    (hjoint :
+      ∀ T : Finset W, T.card ≤ s * d → L.probability (fun ω ↦ T ⊆ R ω) ≤ C * setWeight π T) :
     L.expectation (fun ω ↦ (selectedCount F (R ω)) ^ s) ≤
-      C * (((boundedIntersectionMomentCoefficient d s : ℝ≥0) * κ) ^ s) := by
-  exact (expectation_selectedCount_pow_le L F R π C hcard hjoint).trans
-    (mul_le_mul_of_nonneg_left (sum_tupleWeight_le_bounded_intersections F π hcard hκ s le_rfl) zero_le)
+      C * (((boundedIntersectionMomentCoefficient d s : ℝ≥0) * κ) ^ s) :=
+  by
+    exact
+      (expectation_selectedCount_pow_le L F R π C hcard hjoint).trans
+        (mul_le_mul_of_nonneg_left
+          (sum_tupleWeight_le_bounded_intersections F π hcard hκ s le_rfl) zero_le)
 
 end
 

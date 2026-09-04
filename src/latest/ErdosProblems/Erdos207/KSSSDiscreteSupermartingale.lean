@@ -41,41 +41,60 @@ theorem ksss_pair_centered_step_drift_nonpos
       div_le_div_of_nonneg_right (mul_le_mul_of_nonneg_right hbudget he) (mul_nonneg hE.le hp.le)
     _ ≤ _ := ksssErrorEnvelope_unitStep_growth E₀ scale t B hE hs hclock
 
-theorem ksss_configuration_centered_step_drift_nonpos
-    {Ω : Type*} [Fintype Ω] (μ : FiniteLaw Ω) (X : Ω → ℝ)
-    (orders : Finset ℕ) (a b : ℕ → ℝ) (E₀ A₀ scale t σ D : ℝ) (B d c : ℕ)
-    (hσ : |σ| = 1) (hd : d ∈ orders) (hc : c < d) (hB : 4 * (d - c - 1) ≤ B)
-    (hE : 0 < E₀) (hA : 0 ≤ A₀) (hs : 0 ≤ scale) (ht : 0 ≤ t)
-    (hclock : 3 * (t + 1) < E₀) (hsize : A₀ ≤ scale * E₀ ^ 2)
-    (horders : ∀ k ∈ orders, 1 ≤ k) (ha : ∀ k ∈ orders, 0 ≤ a k)
+theorem ksss_configuration_centered_step_drift_nonpos {Ω : Type*} [Fintype Ω]
+    (μ : FiniteLaw Ω) (X : Ω → ℝ) (orders : Finset ℕ) (a b : ℕ → ℝ) (E₀ A₀ scale t σ D : ℝ)
+    (B d c : ℕ) (hσ : |σ| = 1) (hd : d ∈ orders) (hc : c < d) (hB : 4 * (d - c - 1) ≤ B)
+    (hE : 0 < E₀) (hA : 0 ≤ A₀) (hs : 0 ≤ scale) (ht : 0 ≤ t) (hclock : 3 * (t + 1) < E₀)
+    (hsize : A₀ ≤ scale * E₀ ^ 2) (horders : ∀ k ∈ orders, 1 ≤ k) (ha : ∀ k ∈ orders, 0 ≤ a k)
     (hab : ∀ k ∈ orders, a k * E₀ ^ k ≤ b k)
-    (hraw : |μ.expectationReal X - ksssConfigurationSlope orders a E₀ A₀ d c t| ≤
-      D * ksssConfigurationErrorEnvelope E₀ A₀ scale B (d - c - 1) t /
-        (E₀ * ksssEdgeDensity E₀ t))
+    (hraw :
+      |μ.expectationReal X - ksssConfigurationSlope orders a E₀ A₀ d c t| ≤
+        D * ksssConfigurationErrorEnvelope E₀ A₀ scale B (d - c - 1) t /
+          (E₀ * ksssEdgeDensity E₀ t))
     (hbudget : D + ksssConfigurationTaylorCoefficient orders b d c ≤ 3 * (B : ℝ) / 2) :
-    μ.expectationReal (fun ω ↦
-      σ * (X ω - (ksssConfigurationTrajectory orders a E₀ A₀ d c (t + 1) -
-        ksssConfigurationTrajectory orders a E₀ A₀ d c t)) -
-          (ksssConfigurationErrorEnvelope E₀ A₀ scale B (d - c - 1) (t + 1) -
-            ksssConfigurationErrorEnvelope E₀ A₀ scale B (d - c - 1) t)) ≤ 0 := by
-  have hp := ksssEdgeDensity_pos hE (show 3 * t < E₀ by linarith)
-  have he : 0 ≤ ksssConfigurationErrorEnvelope E₀ A₀ scale B (d - c - 1) t := by
-    unfold ksssConfigurationErrorEnvelope ksssErrorEnvelope
-    positivity
-  apply centered_step_drift_nonpos μ X σ _ _ (ksssConfigurationSlope orders a E₀ A₀ d c t)
-    (D * ksssConfigurationErrorEnvelope E₀ A₀ scale B (d - c - 1) t / (E₀ * ksssEdgeDensity E₀ t))
-    (ksssConfigurationTaylorCoefficient orders b d c *
-      ksssConfigurationErrorEnvelope E₀ A₀ scale B (d - c - 1) t / (E₀ * ksssEdgeDensity E₀ t)) hσ hraw
-    (ksssConfigurationTrajectory_unitStep_error_source_scale orders a b E₀ A₀ scale t B d c
-      hd hc (by omega) hE hA hs ht hclock hsize horders ha hab)
-  calc
-    _ = (D + ksssConfigurationTaylorCoefficient orders b d c) *
-        ksssConfigurationErrorEnvelope E₀ A₀ scale B (d - c - 1) t / (E₀ * ksssEdgeDensity E₀ t) := by ring
-    _ ≤ (3 * (B : ℝ) / 2) * ksssConfigurationErrorEnvelope E₀ A₀ scale B (d - c - 1) t /
-        (E₀ * ksssEdgeDensity E₀ t) :=
-      div_le_div_of_nonneg_right (mul_le_mul_of_nonneg_right hbudget he) (mul_nonneg hE.le hp.le)
-    _ ≤ _ := ksssConfigurationErrorEnvelope_unitStep_growth_half E₀ A₀ scale t B (d - c - 1)
-      hE hA hs hclock hB
+    μ.expectationReal
+        (fun ω ↦
+          σ *
+              (X ω -
+                (ksssConfigurationTrajectory orders a E₀ A₀ d c (t + 1) -
+                  ksssConfigurationTrajectory orders a E₀ A₀ d c t)) -
+            (ksssConfigurationErrorEnvelope E₀ A₀ scale B (d - c - 1) (t + 1) -
+              ksssConfigurationErrorEnvelope E₀ A₀ scale B (d - c - 1) t)) ≤
+      0 :=
+  by
+    have hp := ksssEdgeDensity_pos hE (show 3 * t < E₀ by linarith)
+    have he : 0 ≤ ksssConfigurationErrorEnvelope E₀ A₀ scale B (d - c - 1) t :=
+      by
+        unfold ksssConfigurationErrorEnvelope ksssErrorEnvelope
+        positivity
+    apply
+      centered_step_drift_nonpos μ X σ _ _ (ksssConfigurationSlope orders a E₀ A₀ d c t)
+        (D * ksssConfigurationErrorEnvelope E₀ A₀ scale B (d - c - 1) t /
+          (E₀ * ksssEdgeDensity E₀ t))
+        (ksssConfigurationTaylorCoefficient orders b d c *
+            ksssConfigurationErrorEnvelope E₀ A₀ scale B (d - c - 1) t /
+          (E₀ * ksssEdgeDensity E₀ t))
+        hσ hraw
+        (ksssConfigurationTrajectory_unitStep_error_source_scale orders a b E₀ A₀ scale t B d
+          c hd hc
+          (by
+            omega)
+          hE hA hs ht hclock hsize horders ha hab)
+    calc
+      _ =
+          (D + ksssConfigurationTaylorCoefficient orders b d c) *
+              ksssConfigurationErrorEnvelope E₀ A₀ scale B (d - c - 1) t /
+            (E₀ * ksssEdgeDensity E₀ t) :=
+        by
+          ring
+      _ ≤
+          (3 * (B : ℝ) / 2) * ksssConfigurationErrorEnvelope E₀ A₀ scale B (d - c - 1) t /
+            (E₀ * ksssEdgeDensity E₀ t) :=
+        (div_le_div_of_nonneg_right (mul_le_mul_of_nonneg_right hbudget he)
+          (mul_nonneg hE.le hp.le))
+      _ ≤ _ :=
+        ksssConfigurationErrorEnvelope_unitStep_growth_half E₀ A₀ scale t B (d - c - 1) hE hA
+          hs hclock hB
 
 end
 

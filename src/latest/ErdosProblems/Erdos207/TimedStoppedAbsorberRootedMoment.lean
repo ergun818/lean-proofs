@@ -46,35 +46,50 @@ theorem timedStoppedAbsorber_rootedMomentBound
     (Fintype.card V + 1 : ℝ≥0)⁻¹ w hD hw hfloor hratio S₀ T
     (by simp [hchosen₀]) hT
 
-theorem timedStoppedAbsorber_rootedTailBound
-    {V : Type*} [Fintype V] [DecidableEq V]
-    (n : ℕ) (F : ForbiddenFamilyOn V) (active : ℕ → GreedyStateOn V → Prop)
-    (D : ℕ) (S₀ : GreedyStateOn V) (B R : TripleSystemOn V)
-    (q j c s K : ℕ) (w : ℝ≥0)
-    (hInv₀ : GreedyInvariant F S₀) (hchosen₀ : S₀.chosen = ∅)
-    (hR : R.card = 2) (hc : c + 5 ≤ j) (hD : 0 < D) (hw : 1 ≤ w)
+theorem timedStoppedAbsorber_rootedTailBound {V : Type*} [Fintype V] [DecidableEq V] (n : ℕ)
+    (F : ForbiddenFamilyOn V) (active : ℕ → GreedyStateOn V → Prop) (D : ℕ)
+    (S₀ : GreedyStateOn V) (B R : TripleSystemOn V) (q j c s K : ℕ) (w : ℝ≥0)
+    (hInv₀ : GreedyInvariant F S₀) (hchosen₀ : S₀.chosen = ∅) (hR : R.card = 2)
+    (hc : c + 5 ≤ j) (hD : 0 < D) (hw : 1 ≤ w)
     (hfloor : ∀ i S, active i S → D ≤ S.available.card)
     (hratio : (n : ℝ≥0) * (D : ℝ≥0)⁻¹ ≤ w * (Fintype.card V + 1 : ℝ≥0)⁻¹) :
     (FiniteLaw.timedStoppedProcessLaw n (fun _ ↦ greedyKernel F) active S₀).probability
-      (fun z ↦ K < (greedyRootedConfigurationClass
-        (absorberInducedConfigurationsOn q j B) z.2 R c).card) ≤
-      absorberRootedMomentUpper q j c s B w / ((K + 1 : ℕ) : ℝ≥0) ^ s := by
-  let L := FiniteLaw.timedStoppedProcessLaw n (fun _ ↦ greedyKernel F) active S₀
-  let X : FiniteLaw.TimedState (GreedyStateOn V) n → ℝ≥0 := fun z ↦
-    ((greedyRootedConfigurationClass (absorberInducedConfigurationsOn q j B) z.2 R c).card : ℝ≥0) ^ s
-  have hpos : (0 : ℝ≥0) < ((K + 1 : ℕ) : ℝ≥0) ^ s := by positivity
-  have hmono : L.probability (fun z ↦ K < (greedyRootedConfigurationClass
-        (absorberInducedConfigurationsOn q j B) z.2 R c).card) ≤
-      L.probability (fun z ↦ ((K + 1 : ℕ) : ℝ≥0) ^ s ≤ X z) := by
-    apply L.probability_mono
-    intro z hz
-    apply pow_le_pow_left'
-    exact_mod_cast (show K + 1 ≤ (greedyRootedConfigurationClass
-      (absorberInducedConfigurationsOn q j B) z.2 R c).card by omega)
-  refine hmono.trans ((L.probability_le_expectation_div X hpos).trans ?_)
-  apply (div_le_div_iff_of_pos_right hpos).mpr
-  exact timedStoppedAbsorber_rootedMomentBound n F active D S₀ B R q j c s w
-    hInv₀ hchosen₀ hR hc hD hw hfloor hratio
+        (fun z ↦
+          K <
+            (greedyRootedConfigurationClass (absorberInducedConfigurationsOn q j B) z.2 R
+                c).card) ≤
+      absorberRootedMomentUpper q j c s B w / ((K + 1 : ℕ) : ℝ≥0) ^ s :=
+  by
+    let L := FiniteLaw.timedStoppedProcessLaw n (fun _ ↦ greedyKernel F) active S₀
+    let X : FiniteLaw.TimedState (GreedyStateOn V) n → ℝ≥0 := fun z ↦
+      ((greedyRootedConfigurationClass (absorberInducedConfigurationsOn q j B) z.2 R c).card :
+          ℝ≥0) ^
+        s
+    have hpos : (0 : ℝ≥0) < ((K + 1 : ℕ) : ℝ≥0) ^ s :=
+      by
+        positivity
+    have hmono :
+      L.probability
+          (fun z ↦
+            K <
+              (greedyRootedConfigurationClass (absorberInducedConfigurationsOn q j B) z.2 R
+                  c).card) ≤
+        L.probability (fun z ↦ ((K + 1 : ℕ) : ℝ≥0) ^ s ≤ X z) :=
+      by
+        apply L.probability_mono
+        intro z hz
+        apply pow_le_pow_left'
+        exact_mod_cast
+          (show
+            K + 1 ≤
+              (greedyRootedConfigurationClass (absorberInducedConfigurationsOn q j B) z.2 R
+                  c).card
+            by omega)
+    refine hmono.trans ((L.probability_le_expectation_div X hpos).trans ?_)
+    apply (div_le_div_iff_of_pos_right hpos).mpr
+    exact
+      timedStoppedAbsorber_rootedMomentBound n F active D S₀ B R q j c s w hInv₀ hchosen₀ hR
+        hc hD hw hfloor hratio
 
 end
 

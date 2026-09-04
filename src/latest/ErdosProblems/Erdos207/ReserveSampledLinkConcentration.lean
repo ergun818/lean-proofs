@@ -68,7 +68,7 @@ lemma ambientLinkCommonSpokeEdges_subset_crossingEdges
 lemma ambientLinkSpokeEdges_card
     {V : Type*} [Fintype V] [DecidableEq V]
     (center : V) (A : TripleSystemOn V) (U : Finset V) (x : V)
-    (hc : center ∉ U) :
+    (_hc : center ∉ U) :
     (ambientLinkSpokeEdges center A U x).card =
       (ambientLinkNeighborsIn center A U x).card := by
   rw [ambientLinkSpokeEdges, card_image_iff.mpr]
@@ -80,7 +80,7 @@ lemma ambientLinkSpokeEdges_card
 lemma ambientLinkCommonSpokeEdges_card
     {V : Type*} [Fintype V] [DecidableEq V]
     (center : V) (A : TripleSystemOn V) (U : Finset V) (x y : V)
-    (hc : center ∉ U) :
+    (_hc : center ∉ U) :
     (ambientLinkCommonSpokeEdges center A U x y).card =
       (ambientLinkCommonNeighborsIn center A U x y).card := by
   rw [ambientLinkCommonSpokeEdges, card_image_iff.mpr]
@@ -137,7 +137,7 @@ lemma image_sampledAmbientLinkCommonNeighbors_eq_inter
 lemma sampledAmbientLinkNeighbors_card_eq_inter
     {V : Type*} [Fintype V] [DecidableEq V]
     (center : V) (A : TripleSystemOn V) (U : Finset V)
-    (sampled : Finset (Sym2 V)) (x : V) (hc : center ∉ U) :
+    (sampled : Finset (Sym2 V)) (x : V) (_hc : center ∉ U) :
     (ambientLinkNeighborsIn center A
         (spokeVerticesIn U sampled center) x).card =
       (ambientLinkSpokeEdges center A U x ∩ sampled).card := by
@@ -149,7 +149,7 @@ lemma sampledAmbientLinkNeighbors_card_eq_inter
 lemma sampledAmbientLinkCommonNeighbors_card_eq_inter
     {V : Type*} [Fintype V] [DecidableEq V]
     (center : V) (A : TripleSystemOn V) (U : Finset V)
-    (sampled : Finset (Sym2 V)) (x y : V) (hc : center ∉ U) :
+    (sampled : Finset (Sym2 V)) (x y : V) (_hc : center ∉ U) :
     (ambientLinkCommonNeighborsIn center A
         (spokeVerticesIn U sampled center) x y).card =
       (ambientLinkCommonSpokeEdges center A U x y ∩ sampled).card := by
@@ -361,10 +361,11 @@ theorem IsIterationTypical.reserveSampledLinkBoundsGood_of_fullReserve
 
 lemma FiniteLaw.probability_or_or_le
     {Ω : Type*} [Fintype Ω] (L : FiniteLaw Ω)
-    (P Q R : Ω → Prop) [DecidablePred P] [DecidablePred Q]
-    [DecidablePred R] :
+    (P Q R : Ω → Prop)
+    :
     L.probability (fun ω ↦ P ω ∨ Q ω ∨ R ω) ≤
       L.probability P + L.probability Q + L.probability R := by
+  classical
   calc
     L.probability (fun ω ↦ P ω ∨ Q ω ∨ R ω) ≤
         L.probability P + L.probability (fun ω ↦ Q ω ∨ R ω) :=

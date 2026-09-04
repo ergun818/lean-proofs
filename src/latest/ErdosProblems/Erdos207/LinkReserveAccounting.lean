@@ -46,7 +46,7 @@ lemma isCrossingEdge_mk_iff
   aesop
 
 lemma tripleCrossingEdges_linkMatchingTriple
-    {A B V : Type*} [Fintype V] [DecidableEq V]
+    {A B V : Type*} [Finite V] [DecidableEq V]
     {U : Finset V} {center : V} {left : A ↪ V} {right : B ↪ V}
     {hcenterLeft : ∀ a, center ≠ left a}
     {hcenterRight : ∀ b, center ≠ right b}
@@ -58,6 +58,7 @@ lemma tripleCrossingEdges_linkMatchingTriple
           hleftRight a b) =
       {s(center, left a), s(center, right b)} := by
   classical
+  let := Fintype.ofFinite V
   ext e
   induction e using Sym2.ind with
   | h x y =>
@@ -68,7 +69,7 @@ lemma tripleCrossingEdges_linkMatchingTriple
       aesop
 
 lemma card_tripleCrossingEdges_linkMatchingTriple
-    {A B V : Type*} [Fintype V] [DecidableEq V]
+    {A B V : Type*} [Finite V] [DecidableEq V]
     {U : Finset V} {center : V} {left : A ↪ V} {right : B ↪ V}
     {hcenterLeft : ∀ a, center ≠ left a}
     {hcenterRight : ∀ b, center ≠ right b}
@@ -78,6 +79,7 @@ lemma card_tripleCrossingEdges_linkMatchingTriple
     (tripleCrossingEdges U
         (linkMatchingTriple center left right hcenterLeft hcenterRight
           hleftRight a b)).card = 2 := by
+  let := Fintype.ofFinite V
   rw [tripleCrossingEdges_linkMatchingTriple hout a b hleft hright]
   rw [card_insert_of_notMem]
   · simp
@@ -160,7 +162,7 @@ lemma IsSimultaneousLinkFamily.mono
   exact hM T (hQM hT)
 
 lemma IsSimultaneousLinkFamily.card_tripleCrossingEdges
-    {O V : Type*} [Fintype V] [DecidableEq V]
+    {O V : Type*} [Finite V] [DecidableEq V]
     {U : Finset V} {center : O ↪ V} {K : O → BipartiteLink V}
     (hcenter : ∀ o, (K o).center = center o)
     (hout : ∀ o, center o ∉ U)
@@ -169,6 +171,7 @@ lemma IsSimultaneousLinkFamily.card_tripleCrossingEdges
     {M : TripleSystemOn V} (hM : IsSimultaneousLinkFamily K M)
     {T : TripleOn V} (hT : T ∈ M) :
     (tripleCrossingEdges U T).card = 2 := by
+  let := Fintype.ofFinite V
   obtain ⟨⟨o, a, b⟩, rfl⟩ := hM T hT
   apply card_tripleCrossingEdges_linkMatchingTriple
     (a := a) (b := b)
@@ -177,10 +180,11 @@ lemma IsSimultaneousLinkFamily.card_tripleCrossingEdges
   · exact hright o b.2
 
 lemma IsPackingOn.pairwiseDisjoint_tripleCrossingEdges
-    {V : Type*} [Fintype V] [DecidableEq V]
+    {V : Type*} [Finite V] [DecidableEq V]
     {U : Finset V} {Q : TripleSystemOn V} (hQ : IsPackingOn Q) :
     (Q : Set (TripleOn V)).PairwiseDisjoint (tripleCrossingEdges U) := by
   classical
+  let := Fintype.ofFinite V
   intro T hT S hS hTS
   change Disjoint (tripleCrossingEdges U T) (tripleCrossingEdges U S)
   rw [Finset.disjoint_left]
@@ -214,7 +218,7 @@ lemma IsTwoCrossingPacking.card_familyCrossingEdges
 /-- A packing of link triangles contributes two distinct crossing edges per
 triangle, both within a triangle and between different triangles. -/
 lemma IsSimultaneousLinkFamily.card_familyCrossingEdges
-    {O V : Type*} [Fintype V] [DecidableEq V]
+    {O V : Type*} [Finite V] [DecidableEq V]
     {U : Finset V} {center : O ↪ V} {K : O → BipartiteLink V}
     (hcenter : ∀ o, (K o).center = center o)
     (hout : ∀ o, center o ∉ U)
@@ -223,6 +227,7 @@ lemma IsSimultaneousLinkFamily.card_familyCrossingEdges
     {Q : TripleSystemOn V} (hfamily : IsSimultaneousLinkFamily K Q)
     (hpacking : IsPackingOn Q) :
     (familyCrossingEdges U Q).card = 2 * Q.card := by
+  let := Fintype.ofFinite V
   apply IsTwoCrossingPacking.card_familyCrossingEdges
   exact ⟨hpacking, fun T hT ↦
     hfamily.card_tripleCrossingEdges hcenter hout hleft hright hT⟩
@@ -236,7 +241,7 @@ lemma IsSimultaneousLinkFamily.isTwoCrossingPacking
     (hright : ∀ o, (K o).right ⊆ U)
     {Q : TripleSystemOn V} (hfamily : IsSimultaneousLinkFamily K Q)
     (hpacking : IsPackingOn Q) : IsTwoCrossingPacking U Q :=
-  ⟨hpacking, fun T hT ↦
+  ⟨hpacking, fun _T hT ↦
     hfamily.card_tripleCrossingEdges hcenter hout hleft hright hT⟩
 
 /-- Use zero for a structurally impossible prescribed family and the C4
@@ -257,7 +262,7 @@ def BipartiteLink.SpokesIn
 /-- Every crossing edge of a link family is one of its spoke edges, hence is
 present in any reserve supporting all the links. -/
 lemma IsSimultaneousLinkFamily.familyCrossingEdges_subset
-    {O V : Type*} [Fintype V] [DecidableEq V]
+    {O V : Type*} [Finite V] [DecidableEq V]
     {U : Finset V} {center : O ↪ V} {K : O → BipartiteLink V}
     (hcenter : ∀ o, (K o).center = center o)
     (hout : ∀ o, center o ∉ U)
@@ -267,6 +272,7 @@ lemma IsSimultaneousLinkFamily.familyCrossingEdges_subset
     {reserve : Finset (Sym2 V)}
     (hspokes : ∀ o, (K o).SpokesIn reserve) :
     familyCrossingEdges U M ⊆ reserve := by
+  let := Fintype.ofFinite V
   intro e he
   obtain ⟨T, hTM, heT⟩ := mem_biUnion.mp he
   obtain ⟨⟨o, a, b⟩, rfl⟩ := hfamily T hTM

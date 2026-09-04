@@ -72,8 +72,9 @@ lemma card_Icc_five_le (q : ℕ) : (Icc 5 q).card ≤ q := by
   omega
 
 theorem card_pairOn_le_sq
-    (V : Type*) [Fintype V] [DecidableEq V] :
+    (V : Type*) [Fintype V] :
     Fintype.card (PairOn V) ≤ Fintype.card V ^ 2 := by
+  classical
   change Fintype.card {s : Finset V // s.card = 2} ≤ _
   rw [Fintype.card_finset_len]
   exact Nat.choose_le_pow _ _

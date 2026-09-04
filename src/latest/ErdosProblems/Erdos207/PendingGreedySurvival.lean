@@ -43,9 +43,10 @@ lemma not_isDiag_of_mem_tripleEdgeFinset
 
 /-- A packing has three distinct graph edges per triangle. -/
 lemma card_biUnion_tripleEdgeFinset_of_isPackingOn
-    {V : Type*} [Fintype V] [DecidableEq V]
+    {V : Type*} [Finite V] [DecidableEq V]
     {Q : TripleSystemOn V} (hQ : IsPackingOn Q) :
     (Q.biUnion tripleEdgeFinset).card = 3 * Q.card := by
+  let := Fintype.ofFinite V
   rw [card_biUnion
     hQ.isTriangleDecomposition.pairwiseDisjoint_tripleEdgeFinset]
   simp [card_tripleEdgeFinset, mul_comm]
@@ -53,19 +54,21 @@ lemma card_biUnion_tripleEdgeFinset_of_isPackingOn
 /-- The combined pending/residual edge set has the exponent used in the
 transfer envelope. -/
 lemma card_pendingSurvivalEdges
-    {V : Type*} [Fintype V] [DecidableEq V]
+    {V : Type*} [Finite V] [DecidableEq V]
     {Q : TripleSystemOn V} {B : Finset (Sym2 V)}
     (hQ : IsPackingOn Q)
     (hdisjoint : Disjoint (Q.biUnion tripleEdgeFinset) B) :
     (pendingSurvivalEdges Q B).card = 3 * Q.card + B.card := by
+  let := Fintype.ofFinite V
   rw [pendingSurvivalEdges, card_union_of_disjoint hdisjoint,
     card_biUnion_tripleEdgeFinset_of_isPackingOn hQ]
 
 lemma pendingSurvivalEdges_offdiag
-    {V : Type*} [Fintype V] [DecidableEq V]
+    {V : Type*} [Finite V] [DecidableEq V]
     (Q : TripleSystemOn V) (B : Finset (Sym2 V))
     (hB : ∀ e ∈ B, ¬ e.IsDiag) :
     ∀ e ∈ pendingSurvivalEdges Q B, ¬ e.IsDiag := by
+  let := Fintype.ofFinite V
   intro e he
   rw [pendingSurvivalEdges, mem_union] at he
   rcases he with heQ | heB

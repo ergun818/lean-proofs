@@ -32,25 +32,33 @@ theorem IsPackingOn.residual_even
     simp [updatedStageGraph, graphRestrictedTo, graphDifference]
   simpa only [heq] using hstep.updated_even heven htri
 
-theorem GreedyInvariant.masterPointwiseGood_of_residual_typical
-    {V : Type*} [Fintype V] [DecidableEq V] {ell : ℕ}
-    {W : Vortex V ell} {stage : Fin (ell + 1)} {F : ForbiddenFamilyOn V}
-    {G : SimpleGraph V} {S : GreedyStateOn V} {p eta xi : ℝ≥0} {h : ℕ}
-    (hInv : GreedyInvariant F S) (htri : ConsistsOfTriangles G S.available)
-    (htyp : IsIterationTypical W stage (graphDifference G (coveredGraph S.chosen)) S.available p eta xi h) :
+theorem GreedyInvariant.masterPointwiseGood_of_residual_typical {V : Type*} [Fintype V]
+    [DecidableEq V] {ell : ℕ} {W : Vortex V ell} {stage : Fin (ell + 1)}
+    {F : ForbiddenFamilyOn V} {G : SimpleGraph V} {S : GreedyStateOn V} {p eta xi : ℝ≥0}
+    {h : ℕ} (hInv : GreedyInvariant F S) (htri : ConsistsOfTriangles G S.available)
+    (htyp :
+      IsIterationTypical W stage (graphDifference G (coveredGraph S.chosen)) S.available p eta
+        xi h) :
     IsMasterStagePointwiseGood W stage F (graphDifference G (coveredGraph S.chosen))
-      S.available S.chosen ∅ p eta xi h := by
-  refine ⟨by simp, by simpa only [union_empty] using hInv.1,
-    by simpa only [union_empty] using hInv.2.1, htyp, ?_, ?_, ?_⟩
-  · intro u v huv
-    simpa only [union_empty, leaveGraph] using huv.2
-  · intro T hT u hu v hv huv
-    have hlegal := hInv.2.2 T hT
-    have hav := (packing_insert_iff_avoids_coveredGraph hInv.1 T hlegal.1).mp hlegal.2.1
-    exact ⟨htri T hT u hu v hv huv, huv, hav u hu v hv huv⟩
-  · intro T hT
-    simpa only [union_empty] using
-      (avoidsForbidden_insert_iff_not_completes hInv.2.1 T).mp (hInv.2.2 T hT).2.2
+      S.available S.chosen ∅ p eta xi h :=
+  by
+    refine
+      ⟨by
+          simp,
+        by
+          simpa only [union_empty] using hInv.1,
+        by
+          simpa only [union_empty] using hInv.2.1,
+        htyp, ?_, ?_, ?_⟩
+    · intro u v huv
+      simpa only [union_empty, leaveGraph] using huv.2
+    · intro T hT u hu v hv huv
+      have hlegal := hInv.2.2 T hT
+      have hav := (packing_insert_iff_avoids_coveredGraph hInv.1 T hlegal.1).mp hlegal.2.1
+      exact ⟨htri T hT u hu v hv huv, huv, hav u hu v hv huv⟩
+    · intro T hT
+      simpa only [union_empty] using
+        (avoidsForbidden_insert_iff_not_completes hInv.2.1 T).mp (hInv.2.2 T hT).2.2
 
 theorem InitialPowerVortexPackage.residual_master_of_initial_pattern_law
     {q h n ell t rootPower step b B k : ℕ}

@@ -18,19 +18,23 @@ def finiteHypergraphOnSubset
     Finset (Finset {v // v ∈ A}) :=
   L.image (fun E ↦ E.subtype (fun v ↦ v ∈ A))
 
-theorem finiteHypergraphOnSubset_decode
-    {V : Type*} [DecidableEq V] (A : Finset V) (L : Finset (Finset V))
-    (hsupport : ∀ E ∈ L, E ⊆ A) :
-    (finiteHypergraphOnSubset A L).image (Finset.map (Function.Embedding.subtype (fun v ↦ v ∈ A))) = L := by
-  ext E
-  constructor
-  · intro hE
-    obtain ⟨C, hC, rfl⟩ := mem_image.mp hE
-    obtain ⟨D, hD, rfl⟩ := mem_image.mp hC
-    simpa only [subtype_map_of_mem (hsupport D hD)] using hD
-  · intro hE
-    exact mem_image.mpr ⟨E.subtype (fun v ↦ v ∈ A), mem_image_of_mem _ hE,
-      subtype_map_of_mem (hsupport E hE)⟩
+theorem finiteHypergraphOnSubset_decode {V : Type*} [DecidableEq V] (A : Finset V)
+    (L : Finset (Finset V)) (hsupport : ∀ E ∈ L, E ⊆ A) :
+    (finiteHypergraphOnSubset A L).image
+        (Finset.map (Function.Embedding.subtype (fun v ↦ v ∈ A))) =
+      L :=
+  by
+    ext E
+    constructor
+    · intro hE
+      obtain ⟨C, hC, rfl⟩ := mem_image.mp hE
+      obtain ⟨D, hD, rfl⟩ := mem_image.mp hC
+      simpa only [subtype_map_of_mem (hsupport D hD)] using hD
+    · intro hE
+      exact
+        mem_image.mpr
+          ⟨E.subtype (fun v ↦ v ∈ A), mem_image_of_mem _ hE,
+            subtype_map_of_mem (hsupport E hE)⟩
 
 theorem mem_finiteHypergraphOnSubset_iff
     {V : Type*} [DecidableEq V] (A : Finset V) (L : Finset (Finset V))
@@ -67,14 +71,17 @@ theorem finiteHypergraphOnSubset_uniform
   rw [← finiteHypergraph_image_map_uniform (Function.Embedding.subtype (fun v ↦ v ∈ A)),
     finiteHypergraphOnSubset_decode A L hsupport]
 
-theorem finiteHypergraphOnSubset_union
-    {V : Type*} [DecidableEq V] (A : Finset V) (L M : Finset (Finset V)) :
-    finiteHypergraphOnSubset A (L ∪ M) = finiteHypergraphOnSubset A L ∪ finiteHypergraphOnSubset A M := by
-  exact image_union _ _
+theorem finiteHypergraphOnSubset_union {V : Type*} [DecidableEq V] (A : Finset V)
+    (L M : Finset (Finset V)) :
+    finiteHypergraphOnSubset A (L ∪ M) =
+      finiteHypergraphOnSubset A L ∪ finiteHypergraphOnSubset A M :=
+  by
+    exact image_union _ _
 
 theorem univ_map_subset_embedding
-    {V : Type*} [DecidableEq V] (A : Finset V) :
+    {V : Type*} (A : Finset V) :
     (univ : Finset {v // v ∈ A}).map (Function.Embedding.subtype (fun v ↦ v ∈ A)) = A := by
+  classical
   ext v
   simp
 

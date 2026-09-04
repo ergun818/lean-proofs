@@ -17,13 +17,16 @@ noncomputable section
 variable {V : Type*} [Fintype V] [DecidableEq V]
   {F G : ForbiddenFamilyOn V} {T : TripleOn V} {a : ℕ}
 
+omit [Fintype V] in
 theorem omittedRoot_disjoint_extension (u : GainDefectWitness F G T a) (H : TripleSystemOn V)
     (hH : H ⊆ u.remainder) : Disjoint u.omittedRoot H :=
   u.disjoint_omittedRoot_remainder.mono_right hH
 
-theorem forward_first_omitted (u : GainDefectWitness F G T a) (H : TripleSystemOn V)
+omit [Fintype V] in
+theorem forward_first_omitted [Finite V] (u : GainDefectWitness F G T a) (H : TripleSystemOn V)
     (hH : H ⊆ u.remainder) :
     (u.first \ u.firstExposureRoot H) \ (u.leftRemainder \ H) = u.omitted := by
+  let := Fintype.ofFinite V
   ext R
   constructor
   · intro hR
@@ -48,9 +51,11 @@ theorem forward_first_omitted (u : GainDefectWitness F G T a) (H : TripleSystemO
     · intro hl
       exact (mem_sdiff.mp (mem_sdiff.mp hl).1).2 (mem_insert_of_mem hR)
 
-theorem forward_second_omitted (u : GainDefectWitness F G T a) (H : TripleSystemOn V)
+omit [Fintype V] in
+theorem forward_second_omitted [Finite V] (u : GainDefectWitness F G T a) (H : TripleSystemOn V)
     (hH : H ⊆ u.remainder) :
     (u.second \ (u.second ∩ H)) \ (u.rightRemainder \ H) = u.second ∩ u.omittedRoot := by
+  let := Fintype.ofFinite V
   ext R
   constructor
   · intro hR
@@ -66,6 +71,7 @@ theorem forward_second_omitted (u : GainDefectWitness F G T a) (H : TripleSystem
     exact mem_sdiff.mpr ⟨mem_sdiff.mpr ⟨hsecond, fun hi ↦ hnH (mem_inter.mp hi).2⟩,
       fun hr ↦ (mem_sdiff.mp (mem_sdiff.mp hr).1).2 hroot⟩
 
+omit [Fintype V] in
 theorem secondExposureRoot_eq_source_inter (u : GainDefectWitness F G T a) (H : TripleSystemOn V) :
     u.secondExposureRoot H = u.second ∩ (u.first ∪ (u.second ∩ H)) := by
   ext R

@@ -115,8 +115,7 @@ theorem evolveKernels_probability_subset_le_pointWeights
   classical
   induction t generalizing U with
   | zero =>
-      simp only [FiniteLaw.evolveKernels_zero, FiniteLaw.probability_pure,
-        cumulativePointHazard, range_zero, sum_empty]
+      simp only [FiniteLaw.evolveKernels_zero, FiniteLaw.probability_pure]
       by_cases hU : U = ∅
       · subst U
         simp [setWeight]

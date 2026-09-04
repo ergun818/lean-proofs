@@ -15,49 +15,60 @@ open scoped NNReal
 
 noncomputable section
 
-theorem joint_union_inclusion_with_error
-    {D S I : Type*} [Fintype D] [DecidableEq D] [Fintype S] [DecidableEq S] [DecidableEq I]
-    (P : FiniteLaw D) (K : D → FiniteLaw S) (old : D → Finset I) (new : D → S → Finset I)
-    (w v : I → ℝ≥0) (A b : ℝ≥0) (U : Finset I)
+theorem joint_union_inclusion_with_error {D S I : Type*} [Fintype D] [DecidableEq D]
+    [Fintype S] [DecidableEq S] [DecidableEq I] (P : FiniteLaw D) (K : D → FiniteLaw S)
+    (old : D → Finset I) (new : D → S → Finset I) (w v : I → ℝ≥0) (A b : ℝ≥0) (U : Finset I)
     (hold : ∀ Q ⊆ U, P.probability (fun d ↦ Q ⊆ old d) ≤ A * setWeight w Q + b)
     (hnew : ∀ d Q, (K d).probability (fun s ↦ Q ⊆ new d s) ≤ setWeight v Q) :
     (P.jointBind K).probability (fun z ↦ U ⊆ old z.1 ∪ new z.1 z.2) ≤
-      A * setWeight (fun i ↦ w i + v i) U + b * setWeight (fun i ↦ 1 + v i) U := by
-  classical
-  have hcover : (P.jointBind K).probability (fun z ↦ U ⊆ old z.1 ∪ new z.1 z.2) ≤
-      (P.jointBind K).probability (fun z ↦ ∃ Q ∈ U.powerset, Q ⊆ old z.1 ∧ U \ Q ⊆ new z.1 z.2) := by
-    apply FiniteLaw.probability_mono
-    intro z hz
-    refine ⟨U ∩ old z.1, mem_powerset.mpr inter_subset_left, inter_subset_right, ?_⟩
-    intro i hi
-    have hm := mem_sdiff.mp hi
-    rcases mem_union.mp (hz hm.1) with ho | hn
-    · exact (hm.2 (mem_inter.mpr ⟨hm.1, ho⟩)).elim
-    · exact hn
-  have hterm (Q : Finset I) (hQ : Q ∈ U.powerset) :
+      A * setWeight (fun i ↦ w i + v i) U + b * setWeight (fun i ↦ 1 + v i) U :=
+  by
+    classical
+    have hcover :
+      (P.jointBind K).probability (fun z ↦ U ⊆ old z.1 ∪ new z.1 z.2) ≤
+        (P.jointBind K).probability
+          (fun z ↦ ∃ Q ∈ U.powerset, Q ⊆ old z.1 ∧ U \ Q ⊆ new z.1 z.2) :=
+      by
+        apply FiniteLaw.probability_mono
+        intro z hz
+        refine ⟨U ∩ old z.1, mem_powerset.mpr inter_subset_left, inter_subset_right, ?_⟩
+        intro i hi
+        have hm := mem_sdiff.mp hi
+        rcases mem_union.mp (hz hm.1) with ho | hn
+        · exact (hm.2 (mem_inter.mpr ⟨hm.1, ho⟩)).elim
+        · exact hn
+    have hterm (Q : Finset I) (hQ : Q ∈ U.powerset) :
       (P.jointBind K).probability (fun z ↦ Q ⊆ old z.1 ∧ U \ Q ⊆ new z.1 z.2) ≤
-        setWeight v (U \ Q) * (A * setWeight w Q + b) := by
-    exact (P.jointBind_probability_and_le K (fun d ↦ Q ⊆ old d)
-      (fun d s ↦ U \ Q ⊆ new d s) (setWeight v (U \ Q))
-      (fun d _ ↦ hnew d (U \ Q))).trans
-      (mul_le_mul_of_nonneg_left (hold Q (mem_powerset.mp hQ)) zero_le)
-  apply hcover.trans
-  apply ((P.jointBind K).probability_exists_le U.powerset _).trans
-  apply (sum_le_sum hterm).trans_eq
-  have hproduct : ∑ Q ∈ U.powerset, setWeight w Q * setWeight v (U \ Q) =
-      setWeight (fun i ↦ w i + v i) U := by
-    exact (prod_add w v U).symm
-  have herror : ∑ Q ∈ U.powerset, setWeight v (U \ Q) =
-      setWeight (fun i ↦ 1 + v i) U := by
-    simpa only [setWeight, prod_const_one, one_mul] using (prod_add (fun _ ↦ (1 : ℝ≥0)) v U).symm
-  calc
-    _ = A * (∑ Q ∈ U.powerset, setWeight w Q * setWeight v (U \ Q)) +
-        b * (∑ Q ∈ U.powerset, setWeight v (U \ Q)) := by
-      rw [mul_sum, mul_sum, ← sum_add_distrib]
-      apply sum_congr rfl
-      intro Q _
-      ring
-    _ = _ := by rw [hproduct, herror]
+        setWeight v (U \ Q) * (A * setWeight w Q + b) :=
+      by
+        exact
+          (P.jointBind_probability_and_le K (fun d ↦ Q ⊆ old d) (fun d s ↦ U \ Q ⊆ new d s)
+                (setWeight v (U \ Q)) (fun d _ ↦ hnew d (U \ Q))).trans
+            (mul_le_mul_of_nonneg_left (hold Q (mem_powerset.mp hQ)) zero_le)
+    apply hcover.trans
+    apply ((P.jointBind K).probability_exists_le U.powerset _).trans
+    apply (sum_le_sum hterm).trans_eq
+    have hproduct :
+      ∑ Q ∈ U.powerset, setWeight w Q * setWeight v (U \ Q) =
+        setWeight (fun i ↦ w i + v i) U :=
+      by
+        exact (prod_add w v U).symm
+    have herror : ∑ Q ∈ U.powerset, setWeight v (U \ Q) = setWeight (fun i ↦ 1 + v i) U :=
+      by
+        simpa only [setWeight, prod_const_one, one_mul] using
+          (prod_add (fun _ ↦ (1 : ℝ≥0)) v U).symm
+    calc
+      _ =
+          A * (∑ Q ∈ U.powerset, setWeight w Q * setWeight v (U \ Q)) +
+            b * (∑ Q ∈ U.powerset, setWeight v (U \ Q)) :=
+        by
+          rw [mul_sum, mul_sum, ← sum_add_distrib]
+          apply sum_congr rfl
+          intro Q _
+          ring
+      _ = _ :=
+        by
+          rw [hproduct, herror]
 
 theorem joint_union_inclusion_with_uniform_error
     {D S I : Type*} [Fintype D] [DecidableEq D] [Fintype S] [DecidableEq S] [DecidableEq I]

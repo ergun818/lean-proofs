@@ -12,7 +12,7 @@ import ErdosProblems.Erdos207.JointInclusionFactorialTail
 namespace Erdos207
 
 open Finset
-open scoped Classical NNReal
+open scoped NNReal
 
 noncomputable section
 
@@ -61,27 +61,32 @@ theorem FiniteLaw.reserveCommonCenters_subset_le
     _ ≤ C ^ (2 * H.card) * (r ^ (2 * H.card) + b) := by
       simpa only [hcard] using hreserve (H.biUnion (reserveWedgeBlock u v))
 
-theorem FiniteLaw.reserveCommonCenters_tail
-    {Ω V : Type*} [Fintype Ω] [DecidableEq V]
+theorem FiniteLaw.reserveCommonCenters_tail {Ω V : Type*} [Fintype Ω] [DecidableEq V]
     (L : FiniteLaw Ω) (reserve : Ω → Finset (Sym2 V)) (r C b : ℝ≥0)
-    (hreserve : ∀ E : Finset (Sym2 V),
-      L.probability (fun omega ↦ E ⊆ reserve omega) ≤ C ^ E.card * (r ^ E.card + b))
-    (S : Finset V) (u v : V) (huv : u ≠ v) (hu : u ∉ S) (hv : v ∉ S)
-    (s M : ℕ) (hM : 0 < M) (hs : 2 * s ≤ M) :
+    (hreserve :
+      ∀ E : Finset (Sym2 V),
+        L.probability (fun omega ↦ E ⊆ reserve omega) ≤ C ^ E.card * (r ^ E.card + b))
+    (S : Finset V) (u v : V) (huv : u ≠ v) (hu : u ∉ S) (hv : v ∉ S) (s M : ℕ) (hM : 0 < M)
+    (hs : 2 * s ≤ M) :
     L.probability (fun omega ↦ M ≤ (reserveCommonCenters S (reserve omega) u v).card) ≤
       (2 * (S.card : ℝ≥0) * C ^ 2 * r ^ 2 / M) ^ s +
-        (2 * (S.card : ℝ≥0) * C ^ 2 / M) ^ s * b := by
-  let selected := fun omega ↦ reserveCommonCenters S (reserve omega) u v
-  have ht := L.probability_card_inter_ge_le_powerMoment selected S s M
-    (C ^ (2*s) * (r ^ (2*s) + b)) hM hs (fun H hH ↦ by
-      have hm := mem_powersetCard.mp hH
-      simpa only [hm.2] using L.reserveCommonCenters_subset_le reserve r C b hreserve S H hm.1 u v huv hu hv)
-  have hsub (omega : Ω) : selected omega ⊆ S := filter_subset _ _
-  simp_rw [inter_eq_right.mpr (hsub _)] at ht
-  convert ht using 1
-  rw [pow_mul, pow_mul]
-  simp only [div_pow, mul_pow]
-  ring
+        (2 * (S.card : ℝ≥0) * C ^ 2 / M) ^ s * b :=
+  by
+    let selected := fun omega ↦ reserveCommonCenters S (reserve omega) u v
+    have ht :=
+      L.probability_card_inter_ge_le_powerMoment selected S s M
+        (C ^ (2 * s) * (r ^ (2 * s) + b)) hM hs
+        (fun H hH ↦
+          by
+            have hm := mem_powersetCard.mp hH
+            simpa only [hm.2] using
+              L.reserveCommonCenters_subset_le reserve r C b hreserve S H hm.1 u v huv hu hv)
+    have hsub (omega : Ω) : selected omega ⊆ S := filter_subset _ _
+    simp_rw [inter_eq_right.mpr (hsub _)] at ht
+    convert ht using 1
+    rw [pow_mul, pow_mul]
+    simp only [div_pow, mul_pow]
+    ring
 
 theorem FiniteLaw.reserveCommonCenters_tail_dyadic
     {Ω V : Type*} [Fintype Ω] [DecidableEq V]

@@ -25,7 +25,7 @@ noncomputable section
 /-- Moment bound for a fixed two-away root in a timed stopped process. -/
 theorem timedStoppedAbsorberGreedy_twoAwayMomentBound
     {V : Type*} [Fintype V] [DecidableEq V]
-    {q M K n s D : ℕ} {H : SimpleGraph V} {X : Finset V}
+    {q M _K n s D : ℕ} {H : SimpleGraph V} {X : Finset V}
     {B A : TripleSystemOn V}
     (active : ℕ → GreedyStateOn V → Prop) (U : TripleOn V)
     (hA2 : HasAbsorberLocalization q M H X B)
@@ -104,7 +104,7 @@ theorem timedStoppedAbsorberGreedy_probability_twoAway_gt_le
   apply (div_le_div_iff_of_pos_right hthreshold).2
   simpa [L, F, S₀, envelopeTwoAwayTail] using
     (timedStoppedAbsorberGreedy_twoAwayMomentBound
-      (K := K) (s := s) active U hA2 hD hfloor hratio)
+      (_K := K) (s := s) active U hA2 hD hfloor hratio)
 
 /-- Finite union bound for failure of the two-away cutoff in the terminal
 timed state. -/
@@ -139,7 +139,7 @@ theorem timedStoppedAbsorberGreedy_probability_not_twoAwayCutoff_le
       apply L.probability_mono
       intro z hz
       rw [HasTwoAwayCutoff] at hz
-      push_neg at hz
+      push Not at hz
       obtain ⟨U, _hUavailable, hU⟩ := hz
       exact ⟨U, by simpa [badAt] using hU⟩
     _ ≤ ∑ U ∈ (univ : Finset (TripleOn V)),

@@ -31,23 +31,27 @@ theorem cumulative_geometricProposalProbability_le (beta : ℝ≥0) (t : ℕ) :
     _ ≤ beta * 2 := mul_le_mul_of_nonneg_left (sum_inv_two_pow_le_two t) zero_le
     _ = _ := mul_comm _ _
 
-def regularizationSamplingProbability
-    {V : Type*} [Fintype V] [DecidableEq V] [Nonempty V] {k : ℕ}
-    (G0 H0 : Finset (Finset V)) (b t : ℕ) (S : HypergraphRegularizationState V k)
-    (E : UniformHyperedge V k) : ℝ≥0 := by
-  classical
-  exact if RegularizationActive G0 H0 b t S then
-    uniformEdgeProbability (finiteHypergraphRegularizationWeight (regularizationCurrentFamily G0 S)) k E.1
-  else 0
+def regularizationSamplingProbability {V : Type*} [Fintype V] [DecidableEq V] [Nonempty V]
+    {k : ℕ} (G0 H0 : Finset (Finset V)) (b t : ℕ) (S : HypergraphRegularizationState V k)
+    (E : UniformHyperedge V k) : ℝ≥0 :=
+  by
+    classical
+      exact
+      if RegularizationActive G0 H0 b t S then
+        uniformEdgeProbability
+          (finiteHypergraphRegularizationWeight (regularizationCurrentFamily G0 S)) k E.1
+      else 0
 
-def regularizationSamplingUpdate
-    {V : Type*} [Fintype V] [DecidableEq V] [Nonempty V] {k : ℕ}
+def regularizationSamplingUpdate {V : Type*} [Fintype V] [DecidableEq V] [Nonempty V] {k : ℕ}
     (G0 H0 : Finset (Finset V)) (b t : ℕ) (S : HypergraphRegularizationState V k)
-    (x : UniformHyperedge V k → Bool) : HypergraphRegularizationState V k := by
-  classical
-  exact if RegularizationActive G0 H0 b t S then
-    regularizationBatchOutcome (regularizationCurrentFamily G0 S) (regularizationCurrentFamily H0 S) S x
-  else S
+    (x : UniformHyperedge V k → Bool) : HypergraphRegularizationState V k :=
+  by
+    classical
+      exact
+      if RegularizationActive G0 H0 b t S then
+        regularizationBatchOutcome (regularizationCurrentFamily G0 S)
+          (regularizationCurrentFamily H0 S) S x
+      else S
 
 theorem regularizationSamplingProbability_le_proposal
     {V : Type*} [Fintype V] [DecidableEq V] [Nonempty V] {k : ℕ}
@@ -78,40 +82,53 @@ theorem regularizationSamplingUpdate_added_subset
   · exact regularizationBatchOutcome_added_subset _ _ S x
   · exact subset_union_left
 
-theorem regularizationKernel_eq_sampling_update
-    {V : Type*} [Fintype V] [DecidableEq V] [Nonempty V] {k : ℕ}
-    (G0 H0 : Finset (Finset V)) (hGH : G0 ⊆ H0) (hk : 2 ≤ k)
-    (hsize : 16 * 2 ^ (k - 1) * (k - 1) ≤ Fintype.card V)
-    (b t : ℕ) (S : HypergraphRegularizationState V k)
+theorem regularizationKernel_eq_sampling_update {V : Type*} [Fintype V] [DecidableEq V]
+    [Nonempty V] {k : ℕ} (G0 H0 : Finset (Finset V)) (hGH : G0 ⊆ H0) (hk : 2 ≤ k)
+    (hsize : 16 * 2 ^ (k - 1) * (k - 1) ≤ Fintype.card V) (b t : ℕ)
+    (S : HypergraphRegularizationState V k)
     (hp : ∀ E, regularizationSamplingProbability G0 H0 b t S E ≤ 1) :
     regularizationKernel G0 H0 hGH hk hsize b t S =
       FiniteLaw.map (regularizationSamplingUpdate G0 H0 b t S)
-        (FiniteLaw.independentBits (regularizationSamplingProbability G0 H0 b t S) hp) := by
-  classical
-  by_cases hA : RegularizationActive G0 H0 b t S
-  · rw [regularizationKernel_active G0 H0 hGH hk hsize b t S hA]
-    have hu : regularizationSamplingUpdate G0 H0 b t S =
-        regularizationBatchOutcome (regularizationCurrentFamily G0 S) (regularizationCurrentFamily H0 S) S := by
-      funext x
-      exact if_pos hA
-    rw [hu]
-    apply congrArg (FiniteLaw.map _)
-    apply FiniteLaw.ext
-    intro x
-    change (∏ E, FiniteLaw.bernoulliBitMass
-        (uniformEdgeProbability (finiteHypergraphRegularizationWeight (regularizationCurrentFamily G0 S)) k E.1) (x E)) =
-      ∏ E, FiniteLaw.bernoulliBitMass (regularizationSamplingProbability G0 H0 b t S E) (x E)
-    apply prod_congr rfl
-    intro E _
-    have hpE : regularizationSamplingProbability G0 H0 b t S E =
-        uniformEdgeProbability (finiteHypergraphRegularizationWeight (regularizationCurrentFamily G0 S)) k E.1 := if_pos hA
-    rw [hpE]
-  · rw [regularizationKernel_inactive G0 H0 hGH hk hsize b t S hA]
-    have hu : regularizationSamplingUpdate G0 H0 b t S = fun _ ↦ S := by
-      funext x
-      exact if_neg hA
-    rw [hu]
-    exact (FiniteLaw.map_const _ S).symm
+        (FiniteLaw.independentBits (regularizationSamplingProbability G0 H0 b t S) hp) :=
+  by
+    classical
+    by_cases hA : RegularizationActive G0 H0 b t S
+    · rw [regularizationKernel_active G0 H0 hGH hk hsize b t S hA]
+      have hu :
+        regularizationSamplingUpdate G0 H0 b t S =
+          regularizationBatchOutcome (regularizationCurrentFamily G0 S)
+            (regularizationCurrentFamily H0 S) S :=
+        by
+          funext x
+          exact if_pos hA
+      rw [hu]
+      apply congrArg (FiniteLaw.map _)
+      apply FiniteLaw.ext
+      intro x
+      change
+        (∏ E,
+            FiniteLaw.bernoulliBitMass
+              (uniformEdgeProbability
+                (finiteHypergraphRegularizationWeight (regularizationCurrentFamily G0 S)) k
+                E.1)
+              (x E)) =
+          ∏ E,
+            FiniteLaw.bernoulliBitMass (regularizationSamplingProbability G0 H0 b t S E) (x E)
+      apply prod_congr rfl
+      intro E _
+      have hpE :
+        regularizationSamplingProbability G0 H0 b t S E =
+          uniformEdgeProbability
+            (finiteHypergraphRegularizationWeight (regularizationCurrentFamily G0 S)) k E.1 :=
+        if_pos hA
+      rw [hpE]
+    · rw [regularizationKernel_inactive G0 H0 hGH hk hsize b t S hA]
+      have hu : regularizationSamplingUpdate G0 H0 b t S = fun _ ↦ S :=
+        by
+          funext x
+          exact if_neg hA
+      rw [hu]
+      exact (FiniteLaw.map_const _ S).symm
 
 def regularizationProposalCoupling
     {V : Type*} [Fintype V] [DecidableEq V] [Nonempty V] {k : ℕ}
@@ -126,16 +143,18 @@ def regularizationProposalCoupling
     (fun _ ↦ geometricProposalProbability_le_one beta t)
     (regularizationSamplingUpdate G0 H0 b t S)
 
-theorem regularizationProposalCoupling_proposal
-    {V : Type*} [Fintype V] [DecidableEq V] [Nonempty V] {k : ℕ}
-    (G0 H0 : Finset (Finset V)) (hGH : G0 ⊆ H0) (hk : 2 ≤ k)
-    (hsize : 16 * 2 ^ (k - 1) * (k - 1) ≤ Fintype.card V)
-    (beta : ℝ≥0) (hbeta : regularizationBaseHazard G0 k ≤ beta)
-    (b t : ℕ) (S : HypergraphRegularizationState V k) :
-    FiniteLaw.map Prod.fst (regularizationProposalCoupling G0 H0 hGH hk hsize beta hbeta b t S) =
-      FiniteLaw.independentProposalLaw (fun _ : UniformHyperedge V k ↦ geometricProposalProbability beta t)
-        (fun _ ↦ geometricProposalProbability_le_one beta t) := by
-  exact FiniteLaw.coupledBitUpdate_proposal _ _ _ _ _
+theorem regularizationProposalCoupling_proposal {V : Type*} [Fintype V] [DecidableEq V]
+    [Nonempty V] {k : ℕ} (G0 H0 : Finset (Finset V)) (hGH : G0 ⊆ H0) (hk : 2 ≤ k)
+    (hsize : 16 * 2 ^ (k - 1) * (k - 1) ≤ Fintype.card V) (beta : ℝ≥0)
+    (hbeta : regularizationBaseHazard G0 k ≤ beta) (b t : ℕ)
+    (S : HypergraphRegularizationState V k) :
+    FiniteLaw.map Prod.fst
+        (regularizationProposalCoupling G0 H0 hGH hk hsize beta hbeta b t S) =
+      FiniteLaw.independentProposalLaw
+        (fun _ : UniformHyperedge V k ↦ geometricProposalProbability beta t)
+        (fun _ ↦ geometricProposalProbability_le_one beta t) :=
+  by
+    exact FiniteLaw.coupledBitUpdate_proposal _ _ _ _ _
 
 theorem regularizationProposalCoupling_actual
     {V : Type*} [Fintype V] [DecidableEq V] [Nonempty V] {k : ℕ}

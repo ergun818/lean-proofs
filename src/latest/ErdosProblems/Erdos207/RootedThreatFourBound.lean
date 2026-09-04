@@ -213,9 +213,10 @@ lemma fourRootedThreatCode_injective
   · exact hT
 
 lemma finset_eq_singleton_choose_of_card_le_one
-    {α : Type*} [DecidableEq α] {S : Finset α}
+    {α : Type*} {S : Finset α}
     (hS : S.Nonempty) (hcard : S.card ≤ 1) :
     S = {hS.choose} := by
+  classical
   ext x
   constructor
   · intro hx
@@ -273,8 +274,7 @@ theorem fourRootedThreat_weight_le_code
         exact le_rfl
       · have hremEq : rootedThreatRemainder z.1 = ∅ :=
           not_nonempty_iff_eq_empty.mp hrem
-        simp [fourRootedThreatCodeWeight, fourRootedThreatCode,
-          hrem, hremEq, setWeight]
+        simp [fourRootedThreatCodeWeight, fourRootedThreatCode, hremEq, setWeight]
     · have hAnonempty : A.Nonempty := nonempty_iff_ne_empty.mpr hA
       have hrem : (rootedThreatRemainder z.1).Nonempty :=
         hAnonempty.mono hsub
@@ -333,7 +333,7 @@ theorem sum_fourRootedThreatCodeWeight_fiber_le
   let p : ℝ≥0 := (Fintype.card V + 1 : ℝ≥0)⁻¹
   by_cases hA : A = ∅
   · subst A
-    simp only [fourRootedThreatCodeWeight, if_pos rfl,
+    simp only [fourRootedThreatCodeWeight,
       Fintype.sum_option]
     have hnp : (Fintype.card V : ℝ≥0) * p ≤ 1 := by
       dsimp only [p]

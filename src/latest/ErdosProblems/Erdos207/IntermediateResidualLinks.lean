@@ -64,7 +64,7 @@ theorem exists_residualLinks_masterData
     {V : Type*} [Fintype V] [DecidableEq V]
     {G : SimpleGraph V}
     {U : Finset V} {reserve : Finset (Sym2 V)}
-    {F : ForbiddenFamilyOn V} {A I D R : TripleSystemOn V}
+    {_F : ForbiddenFamilyOn V} {A I D R : TripleSystemOn V}
     (heven : ∀ v, Even ((neighborsIn G univ v).card))
     (htri : ConsistsOfTriangles G R)
     (hpacking : IsPackingOn R)

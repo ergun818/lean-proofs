@@ -12,7 +12,7 @@ import ErdosProblems.Erdos207.SourceLinkFiberWeight
 namespace Erdos207
 
 open Finset
-open scoped Classical NNReal
+open scoped NNReal
 
 noncomputable section
 

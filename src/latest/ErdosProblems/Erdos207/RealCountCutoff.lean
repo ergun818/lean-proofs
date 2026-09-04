@@ -30,12 +30,13 @@ theorem natCast_gt_iff_strictCountCutoff_le (a : ℝ≥0) (n : ℕ) :
     exact_mod_cast hR
 
 theorem FiniteLaw.probability_natCast_gt_le_dyadic
-    {Ω : Type*} [Fintype Ω] [DecidableEq Ω]
+    {Ω : Type*} [Fintype Ω]
     (L : FiniteLaw Ω) (count : Ω → ℕ) (mu a : ℝ≥0) (s : ℕ)
     (htail : ∀ k : ℕ, 4 * (mu : ℝ) ≤ k → 4 * s ≤ k →
       L.probability (fun ω ↦ k ≤ count ω) ≤ ((2 : ℝ≥0) ^ s)⁻¹)
     (hmean : 4 * mu ≤ a) (hsize : (4 * s : ℕ) ≤ (a : ℝ≥0)) :
     L.probability (fun ω ↦ a < (count ω : ℝ≥0)) ≤ ((2 : ℝ≥0) ^ s)⁻¹ := by
+  classical
   have hcut := lt_strictCountCutoff a
   have hmeanR : 4 * (mu : ℝ) ≤ a := by exact_mod_cast hmean
   have hsizeR : ((4 * s : ℕ) : ℝ) ≤ a := by exact_mod_cast hsize

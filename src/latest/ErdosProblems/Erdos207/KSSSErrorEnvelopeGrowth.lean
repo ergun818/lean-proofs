@@ -37,7 +37,7 @@ theorem ksssErrorEnvelope_unitStep_growth
   have h := inverse_power_step_growth scale (ksssEdgeDensity E₀ t)
     (ksssEdgeDensity E₀ (t + 1)) B hs hq hqp
   rw [hgap] at h
-  convert h using 1 <;> dsimp only [ksssErrorEnvelope] <;> ring
+  convert h using 1 <;> dsimp only [ksssErrorEnvelope] ; ring
 
 theorem ksssConfigurationErrorEnvelope_eq_inverse
     (E₀ A₀ scale t : ℝ) (B z : ℕ) (hp : ksssEdgeDensity E₀ t ≠ 0) (hB : 2 * z ≤ B) :
@@ -62,22 +62,31 @@ theorem ksssConfigurationErrorEnvelope_unitStep_growth
   exact ksssErrorEnvelope_unitStep_growth E₀ (scale * (A₀ / E₀) ^ z) t (B - 2 * z) hE
     (mul_nonneg hs (pow_nonneg (div_nonneg hA hE.le) z)) hclock
 
-theorem ksssConfigurationErrorEnvelope_unitStep_growth_half
-    (E₀ A₀ scale t : ℝ) (B z : ℕ) (hE : 0 < E₀) (hA : 0 ≤ A₀) (hs : 0 ≤ scale)
-    (hclock : 3 * (t + 1) < E₀) (hB : 4 * z ≤ B) :
+theorem ksssConfigurationErrorEnvelope_unitStep_growth_half (E₀ A₀ scale t : ℝ) (B z : ℕ)
+    (hE : 0 < E₀) (hA : 0 ≤ A₀) (hs : 0 ≤ scale) (hclock : 3 * (t + 1) < E₀)
+    (hB : 4 * z ≤ B) :
     (3 * (B : ℝ) / 2) * ksssConfigurationErrorEnvelope E₀ A₀ scale B z t /
-      (E₀ * ksssEdgeDensity E₀ t) ≤
-        ksssConfigurationErrorEnvelope E₀ A₀ scale B z (t + 1) -
-          ksssConfigurationErrorEnvelope E₀ A₀ scale B z t := by
-  have hp := ksssEdgeDensity_pos hE (show 3 * t < E₀ by linarith)
-  have hb : (B : ℝ) ≤ 2 * ((B - 2 * z : ℕ) : ℝ) := by
-    exact_mod_cast (show B ≤ 2 * (B - 2 * z) by omega)
-  have hcoef : 3 * (B : ℝ) / 2 ≤ 3 * ((B - 2 * z : ℕ) : ℝ) := by linarith
-  have he : 0 ≤ ksssConfigurationErrorEnvelope E₀ A₀ scale B z t := by
-    unfold ksssConfigurationErrorEnvelope ksssErrorEnvelope
-    positivity
-  exact (div_le_div_of_nonneg_right (mul_le_mul_of_nonneg_right hcoef he) (mul_nonneg hE.le hp.le)).trans
-    (ksssConfigurationErrorEnvelope_unitStep_growth E₀ A₀ scale t B z hE hA hs hclock (by omega))
+        (E₀ * ksssEdgeDensity E₀ t) ≤
+      ksssConfigurationErrorEnvelope E₀ A₀ scale B z (t + 1) -
+        ksssConfigurationErrorEnvelope E₀ A₀ scale B z t :=
+  by
+    have hp := ksssEdgeDensity_pos hE (show 3 * t < E₀ by linarith)
+    have hb : (B : ℝ) ≤ 2 * ((B - 2 * z : ℕ) : ℝ) :=
+      by
+        exact_mod_cast (show B ≤ 2 * (B - 2 * z) by omega)
+    have hcoef : 3 * (B : ℝ) / 2 ≤ 3 * ((B - 2 * z : ℕ) : ℝ) :=
+      by
+        linarith
+    have he : 0 ≤ ksssConfigurationErrorEnvelope E₀ A₀ scale B z t :=
+      by
+        unfold ksssConfigurationErrorEnvelope ksssErrorEnvelope
+        positivity
+    exact
+      (div_le_div_of_nonneg_right (mul_le_mul_of_nonneg_right hcoef he)
+            (mul_nonneg hE.le hp.le)).trans
+        (ksssConfigurationErrorEnvelope_unitStep_growth E₀ A₀ scale t B z hE hA hs hclock
+          (by
+            omega))
 
 end
 

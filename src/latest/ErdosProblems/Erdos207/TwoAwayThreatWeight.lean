@@ -103,7 +103,7 @@ lemma selectedCount_twoAwayThreatRemainder
       ((activeTwoAwayThreatWitnesses F P U).card : ℝ≥0) := by
   classical
   unfold selectedCount activeTwoAwayThreatWitnesses
-  simp only [card_eq_sum_ones, Nat.cast_sum, Nat.cast_one, sum_filter]
+  simp only [card_eq_sum_ones, Nat.cast_sum, sum_filter]
   apply Finset.sum_congr rfl
   intro z _hz
   by_cases h : twoAwayThreatRemainder z ⊆ P <;> simp [h]
@@ -120,11 +120,12 @@ lemma twoAwayForbidden_count_le_selectedCount
 
 /-- Two distinct designated members reduce the remainder size by two. -/
 lemma card_twoAwayThreatRemainder_le
-    {V : Type*} [Fintype V] [DecidableEq V]
+    {V : Type*} [Finite V] [DecidableEq V]
     {F : ForbiddenFamilyOn V} {U : TripleOn V} {k : ℕ}
     (hcard : ∀ C ∈ F, C.card ≤ k)
     (z : TwoAwayThreatWitness V F U) :
     (twoAwayThreatRemainder z).card ≤ k - 2 := by
+  let := Fintype.ofFinite V
   have hUerase : U ∈ z.1.1.erase z.1.2 :=
     mem_erase.mpr ⟨z.2.2.2.2.symm, z.2.2.2.1⟩
   rw [twoAwayThreatRemainder, card_erase_of_mem hUerase,

@@ -14,14 +14,17 @@ open Finset
 
 noncomputable section
 
-def KSSSInitialRegularity
-    {V : Type*} [Fintype V] [DecidableEq V]
-    (F : ForbiddenFamilyOn V) (S₀ : GreedyStateOn V) (q : ℕ) (Q₀ : Finset (Finset V))
-    (a : ℕ → ℝ) (E₀ A₀ eta : ℝ) : Prop :=
-  (∀ P ∈ Q₀, |((availableTrianglesContainingPair S₀ P).card : ℝ) - 3 * A₀ / E₀| ≤ eta * (3 * A₀ / E₀)) ∧
-  ∀ T ∈ S₀.available, ∀ j ∈ Icc 4 q,
-    |(((forbiddenFamilyOfOrder F j).filter (fun C ↦ T ∈ C)).card : ℝ) -
-      a (j - 3) * A₀ ^ (j - 3)| ≤ eta * (A₀ / E₀) ^ (j - 3)
+def KSSSInitialRegularity {V : Type*} [Fintype V] [DecidableEq V] (F : ForbiddenFamilyOn V)
+    (S₀ : GreedyStateOn V) (q : ℕ) (Q₀ : Finset (Finset V)) (a : ℕ → ℝ) (E₀ A₀ eta : ℝ) :
+    Prop :=
+  (∀ P ∈ Q₀,
+      |((availableTrianglesContainingPair S₀ P).card : ℝ) - 3 * A₀ / E₀| ≤
+        eta * (3 * A₀ / E₀)) ∧
+    ∀ T ∈ S₀.available,
+      ∀ j ∈ Icc 4 q,
+        |(((forbiddenFamilyOfOrder F j).filter (fun C ↦ T ∈ C)).card : ℝ) -
+              a (j - 3) * A₀ ^ (j - 3)| ≤
+          eta * (A₀ / E₀) ^ (j - 3)
 
 def ksssInitialMargin
     {V : Type*} [DecidableEq V] {q : ℕ}

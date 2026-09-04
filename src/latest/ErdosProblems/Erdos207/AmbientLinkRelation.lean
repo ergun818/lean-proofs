@@ -110,7 +110,7 @@ lemma mem_ambientLinkCommonNeighborsIn_iff
     w ∈ ambientLinkCommonNeighborsIn center available U u v ↔
       w ∈ U ∧ ambientLinkRelation center available u w ∧
         ambientLinkRelation center available v w := by
-  simp [ambientLinkCommonNeighborsIn, and_assoc]
+  simp [ambientLinkCommonNeighborsIn]
 
 lemma card_relationNeighborsIn_linkAvailable_eq_ambient
     {V : Type*} [Fintype V] [DecidableEq V]

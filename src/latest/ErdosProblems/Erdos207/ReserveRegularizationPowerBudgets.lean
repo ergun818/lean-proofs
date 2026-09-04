@@ -16,7 +16,7 @@ noncomputable section
 
 theorem eventually_reserveRegularization_power_budgets
     (b c e a L R : ℕ) (tau0 : ℝ≥0) (epsilon : ℝ)
-    (hc : 1 ≤ c) (he : 1 ≤ e) (ha : 4 * b + 1 ≤ a)
+    (hc : 1 ≤ c) (_he : 1 ≤ e) (ha : 4 * b + 1 ≤ a)
     (hLreserve : 4 * b + c + 1 ≤ L) (hLsampling : 2 * b + 2 * e + 1 ≤ L)
     (htau0 : 0 < tau0) (hepsilon : 0 < epsilon) :
     ∃ T : ℕ, 1 ≤ T ∧ ∀ t : ℕ, T ≤ t → ∀ (n u : ℕ) (p tau : ℝ≥0),

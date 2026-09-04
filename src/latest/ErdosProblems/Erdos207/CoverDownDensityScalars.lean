@@ -48,7 +48,7 @@ theorem correlated_cover_point_le
   have hinternal : eta * (B / (r ^ 2 * p ^ 2 * u)) ≤ (B * D) / (p ^ 2 * n) := by
     apply (le_div_iff₀ (by positivity : 0 < p ^ 2 * n)).mpr
     calc
-      _ = B * (eta * n / (r ^ 2 * u)) := by field_simp <;> ring
+      _ = B * (eta * n / (r ^ 2 * u)) := by field_simp
       _ ≤ _ := mul_le_mul_of_nonneg_left hratio zero_le
   simpa only [add_div] using add_le_add le_rfl hinternal
 
@@ -58,7 +58,7 @@ theorem triangle_point_density_cancellation
     alpha * p ^ 3 ≤ factor * (p / n) := by
   calc
     _ ≤ (factor / (p ^ 2 * n)) * p ^ 3 := mul_le_mul_of_nonneg_right halpha zero_le
-    _ = _ := by field_simp <;> ring
+    _ = _ := by field_simp
 
 theorem link_sparsification_reserve_budget
     (t n u K : ℝ≥0) (s f v : ℕ) (ht : 1 ≤ t)
@@ -81,7 +81,7 @@ theorem link_point_density_cancellation
   calc
     _ ≤ (A * scale / (r * p ^ 2 * u)) * p ^ 3 * r ^ 2 :=
       mul_le_mul_of_nonneg_right (mul_le_mul_of_nonneg_right halpha zero_le) zero_le
-    _ = (A * (p / n)) * (scale * r * n / u) := by field_simp <;> ring
+    _ = (A * (p / n)) * (scale * r * n / u) := by field_simp
     _ ≤ (A * (p / n)) * D := mul_le_mul_of_nonneg_left hratio zero_le
     _ = _ := by ring
 

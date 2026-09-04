@@ -15,9 +15,10 @@ open scoped NNReal
 noncomputable section
 
 theorem singleton_blocks_pairwiseDisjoint_of_injOn
-    {α β : Type*} [DecidableEq α] [DecidableEq β]
+    {α β : Type*}
     (S : Finset α) (f : α → β) (hinj : Set.InjOn f (S : Set α)) :
     (S : Set α).PairwiseDisjoint (fun x ↦ ({f x} : Finset β)) := by
+  classical
   intro x hx y hy hxy
   change Disjoint ({f x} : Finset β) {f y}
   rw [Finset.disjoint_left]

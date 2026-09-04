@@ -170,9 +170,10 @@ instance {V : Type*} [DecidableEq V] :
       subst z'
       exact ⟨rfl, rfl⟩⟩
 
-instance {V : Type*} [Fintype V] [DecidableEq V] :
-    Finite (InternalEdgeGreedyStateOn V) :=
-  Finite.of_injective
+instance {V : Type*} [Finite V] [DecidableEq V] :
+    Finite (InternalEdgeGreedyStateOn V) := by
+  let := Fintype.ofFinite V
+  exact Finite.of_injective
     (fun z : InternalEdgeGreedyStateOn V ↦ (z.chosen, z.failed)) (by
       intro z z' h
       cases z
@@ -282,17 +283,16 @@ theorem internalEdgeGreedyKernel_supported_processInvariant_step
           (edges.get ⟨j, hj⟩).out.1 (edges.get ⟨j, hj⟩).out.2 :=
       hz.2.2 hzfalse
     by_cases hcovered : (coveredGraph z.chosen).Adj e.out.1 e.out.2
-    · simp only [e, he, huv, hcovered, dite_true]
+    · simp only [e, hcovered, dite_true]
       apply FiniteLaw.supportedOn_pure
       refine ⟨hz.1, hz.2.1.trans (Nat.le_succ i), ?_⟩
-      intro _hfalse
-      intro j hj hji
+      intro _hfalse j hj hji
       by_cases hjlt : j < i
       · exact hprevious j hj hjlt
       · have hji_eq : j = i := by omega
         subst j
         simpa only [e] using hcovered
-    · simp only [e, he, huv, hcovered, dite_false]
+    · simp only [e, hcovered, dite_false]
       let C := activeReserveLegalThirdVertices F G U (S e) omega
         z.chosen e.out.1 e.out.2 huv
       by_cases hlarge : D <= C.card
@@ -325,8 +325,7 @@ theorem internalEdgeGreedyKernel_supported_processInvariant_step
               (internalEdgeTriangle e huv w.1) z.chosen
             omega
           refine ⟨hreach, hcard, ?_⟩
-          intro _hfalse
-          intro j hj hji
+          intro _hfalse j hj hji
           by_cases hjlt : j < i
           · exact coveredGraph_mono (subset_insert _ _)
               (hprevious j hj hjlt)
@@ -406,9 +405,9 @@ theorem internalEdgeGreedyKernel_supported_notFailed_of_candidateFloor
   let he : e ∈ edges := List.get_mem edges ⟨i, hi⟩
   let huv : e.out.1 ≠ e.out.2 := hne e he
   by_cases hcovered : (coveredGraph z.chosen).Adj e.out.1 e.out.2
-  · simp only [e, he, huv, hcovered, dite_true]
+  · simp only [e, hcovered, dite_true]
     exact FiniteLaw.supportedOn_pure _ hzfailed
-  · simp only [e, he, huv, hcovered, dite_false]
+  · simp only [e, hcovered, dite_false]
     let C := activeReserveLegalThirdVertices F G U (S e) omega
       z.chosen e.out.1 e.out.2 huv
     have hlarge : D <= C.card := by
@@ -494,23 +493,22 @@ theorem internalEdgeGreedyKernel_monotone_singleInsertion
   · simp only [internalEdgeGreedyKernel, hfailed]
     exact FiniteLaw.supportedOn_pure _ ⟨Subset.rfl, by simp⟩
   · have hzfalse : z.failed = false := Bool.eq_false_of_not_eq_true hfailed
-    simp only [internalEdgeGreedyKernel, hzfalse, Bool.false_eq_true, if_false]
+    simp only [internalEdgeGreedyKernel, hzfalse, Bool.false_eq_true]
     by_cases hi : i < edges.length
     · simp only [hi, dite_true]
       let e := edges.get ⟨i, hi⟩
       let he : e ∈ edges := List.get_mem edges ⟨i, hi⟩
       let huv : e.out.1 ≠ e.out.2 := hne e he
       by_cases hcovered : (coveredGraph z.chosen).Adj e.out.1 e.out.2
-      · simp only [e, he, huv, hcovered, dite_true]
+      · simp only [e, hcovered, dite_true]
         exact FiniteLaw.supportedOn_pure _ ⟨Subset.rfl, by simp⟩
-      · simp only [e, he, huv, hcovered, dite_false]
+      · simp only [e, hcovered, dite_false]
         let C := activeReserveLegalThirdVertices F G U (S e) omega
           z.chosen e.out.1 e.out.2 huv
         by_cases hlarge : D <= C.card
         · rw [dif_pos (by simpa only [C, e, huv, he] using hlarge)]
           by_cases hC : C.Nonempty
-          ·
-            rw [dif_pos (by simpa only [C, e, huv, he] using hC)]
+          · rw [dif_pos (by simpa only [C, e, huv, he] using hC)]
             let : Nonempty C := ⟨⟨hC.choose, hC.choose_spec⟩⟩
             have hu : FiniteLaw.SupportedOn (fun _ : C => True)
                 (FiniteLaw.uniform : FiniteLaw C) :=
@@ -681,8 +679,7 @@ theorem internalEdgeGreedyKernel_probability_new_triangle_le
       internalEdgePointHazard U edges hne D i T := by
   classical
   by_cases hfailed : z.failed = true
-  · simp only [internalEdgeGreedyKernel, hfailed,
-      FiniteLaw.probability_pure]
+  · simp only [internalEdgeGreedyKernel, hfailed]
     simp [hTnot]
   · have hzfalse : z.failed = false := Bool.eq_false_of_not_eq_true hfailed
     simp only [internalEdgeGreedyKernel, hzfalse, Bool.false_eq_true]
@@ -692,10 +689,9 @@ theorem internalEdgeGreedyKernel_probability_new_triangle_le
       let he : e ∈ edges := List.get_mem edges ⟨i, hi⟩
       let huv : e.out.1 ≠ e.out.2 := hne e he
       by_cases hcovered : (coveredGraph z.chosen).Adj e.out.1 e.out.2
-      · simp only [e, he, huv, hcovered, dite_true,
-          FiniteLaw.probability_pure]
+      · simp only [e, hcovered, dite_true]
         simp [hTnot]
-      · simp only [e, he, huv, hcovered, dite_false]
+      · simp only [e, hcovered, dite_false]
         let C := activeReserveLegalThirdVertices F G U (S e) omega
           z.chosen e.out.1 e.out.2 huv
         by_cases hlarge : D <= C.card

@@ -23,7 +23,7 @@ open scoped NNReal
 noncomputable section
 
 theorem exists_rawResidualInternalKernel_of_directSupply
-    {Omega V : Type*} [Fintype Omega] [Fintype V]
+    {Omega V : Type*} [Finite Omega] [Fintype V]
     [DecidableEq V] {ell : ℕ} {W : Vortex V ell}
     {F : ForbiddenFamilyOn V}
     {G : Omega → SimpleGraph V} {A P0 : Omega → TripleSystemOn V}
@@ -64,6 +64,7 @@ theorem exists_rawResidualInternalKernel_of_directSupply
           (fun z ↦ Q ⊆ rawResidualInternalAdded P0 omega z) ≤
             ((D : ℝ≥0)⁻¹ ^ Q.card) := by
   classical
+  let := Fintype.ofFinite Omega
   have hex : ∀ omega, Good omega → ∃ bits : Sym2 V → Bool,
       let E := preliminaryResidualInternalEdges
         (G omega) (W.U i.succ) (P0 omega)

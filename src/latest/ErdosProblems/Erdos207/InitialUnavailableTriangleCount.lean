@@ -12,7 +12,6 @@ import ErdosProblems.Erdos207.ExclusiveAbsorbers
 namespace Erdos207
 
 open Finset
-open scoped Classical
 
 noncomputable section
 
@@ -53,8 +52,9 @@ theorem isLegalExtension_empty_of_not_bank_supported
   rw [heq] at hD
   exact hnot (singleton_absorber_forbidden_vertices_subset_bank hD)
 
+open scoped Classical in
 theorem card_graph_blocked_triangles_le
-    {V : Type*} [Fintype V] [DecidableEq V] (H : SimpleGraph V) [DecidableRel H.Adj] :
+    {V : Type*} [Fintype V] [DecidableEq V] (H : SimpleGraph V) :
     ((univ : TripleSystemOn V).filter (fun T ↦ ¬ TriangleAvoidsGraph H T)).card ≤
       (graphSupportFinset H).card ^ 2 * Fintype.card V := by
   classical
@@ -86,31 +86,42 @@ theorem card_graph_blocked_triangles_le
       sum_le_sum fun u _ ↦ sum_le_sum fun v _ ↦ hroot u v
     _ = _ := by simp [W, pow_two, Nat.mul_assoc]
 
-theorem card_initial_unavailable_triangles_le
-    {V : Type*} [Fintype V] [DecidableEq V] (q : ℕ) (H : SimpleGraph V) [DecidableRel H.Adj]
-    (bank : TripleSystemOn V) :
-    ((univ : TripleSystemOn V) \ (absorberGreedyInitialState (absorberErdosForbiddenConfigurationsOn q bank)
-      (outsideAvailableTriangles H bank)).available).card ≤
-        (graphSupportFinset H).card ^ 2 * Fintype.card V + (verticesOn bank).card ^ 3 := by
-  classical
-  have hsub : (univ : TripleSystemOn V) \ (absorberGreedyInitialState
-      (absorberErdosForbiddenConfigurationsOn q bank) (outsideAvailableTriangles H bank)).available ⊆
-      ((univ : TripleSystemOn V).filter (fun T ↦ ¬ TriangleAvoidsGraph H T)) ∪ triplesSupportedOn (verticesOn bank) := by
-    intro T hT
-    by_cases havoid : TriangleAvoidsGraph H T
-    · apply mem_union_right
-      apply mem_triplesSupportedOn_iff.mpr
-      by_contra hnot
-      have hTnotB : T ∉ bank := fun hTB ↦ hnot (fun v hv ↦ mem_biUnion.mpr ⟨T, hTB, hv⟩)
-      have hmem : T ∈ (absorberGreedyInitialState (absorberErdosForbiddenConfigurationsOn q bank)
-          (outsideAvailableTriangles H bank)).available := by
-        apply mem_legalAvailable_iff.mpr
-        exact ⟨mem_outsideAvailableTriangles_iff.mpr ⟨hTnotB, havoid⟩,
-          isLegalExtension_empty_of_not_bank_supported q bank T hnot⟩
-      exact (mem_sdiff.mp hT).2 hmem
-    · exact mem_union_left _ (mem_filter.mpr ⟨mem_univ _, havoid⟩)
-  exact ((card_le_card hsub).trans (card_union_le _ _)).trans
-    (Nat.add_le_add (card_graph_blocked_triangles_le H) (card_triplesSupportedOn_le_cube (verticesOn bank)))
+theorem card_initial_unavailable_triangles_le {V : Type*} [Fintype V] [DecidableEq V] (q : ℕ)
+    (H : SimpleGraph V) (bank : TripleSystemOn V) :
+    ((univ : TripleSystemOn V) \
+          (absorberGreedyInitialState (absorberErdosForbiddenConfigurationsOn q bank)
+              (outsideAvailableTriangles H bank)).available).card ≤
+      (graphSupportFinset H).card ^ 2 * Fintype.card V + (verticesOn bank).card ^ 3 :=
+  by
+    classical
+    have hsub :
+      (univ : TripleSystemOn V) \
+          (absorberGreedyInitialState (absorberErdosForbiddenConfigurationsOn q bank)
+              (outsideAvailableTriangles H bank)).available ⊆
+        ((univ : TripleSystemOn V).filter (fun T ↦ ¬TriangleAvoidsGraph H T)) ∪
+          triplesSupportedOn (verticesOn bank) :=
+      by
+        intro T hT
+        by_cases havoid : TriangleAvoidsGraph H T
+        · apply mem_union_right
+          apply mem_triplesSupportedOn_iff.mpr
+          by_contra hnot
+          have hTnotB : T ∉ bank := fun hTB ↦ hnot (fun v hv ↦ mem_biUnion.mpr ⟨T, hTB, hv⟩)
+          have hmem :
+            T ∈
+              (absorberGreedyInitialState (absorberErdosForbiddenConfigurationsOn q bank)
+                  (outsideAvailableTriangles H bank)).available :=
+            by
+              apply mem_legalAvailable_iff.mpr
+              exact
+                ⟨mem_outsideAvailableTriangles_iff.mpr ⟨hTnotB, havoid⟩,
+                  isLegalExtension_empty_of_not_bank_supported q bank T hnot⟩
+          exact (mem_sdiff.mp hT).2 hmem
+        · exact mem_union_left _ (mem_filter.mpr ⟨mem_univ _, havoid⟩)
+    exact
+      ((card_le_card hsub).trans (card_union_le _ _)).trans
+        (Nat.add_le_add (card_graph_blocked_triangles_le H)
+          (card_triplesSupportedOn_le_cube (verticesOn bank)))
 
 end
 

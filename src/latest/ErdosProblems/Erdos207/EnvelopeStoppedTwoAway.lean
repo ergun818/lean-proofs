@@ -142,7 +142,7 @@ theorem envelopeStoppedAbsorberGreedy_probability_not_twoAwayCutoff_le
       apply L.probability_mono
       intro S hS
       rw [HasTwoAwayCutoff] at hS
-      push_neg at hS
+      push Not at hS
       obtain ⟨U, hUavailable, hU⟩ := hS
       exact ⟨U, by simpa [badAt] using hU⟩
     _ ≤ ∑ U ∈ (univ : Finset (TripleOn V)),

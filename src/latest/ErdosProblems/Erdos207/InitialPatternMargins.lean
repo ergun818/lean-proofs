@@ -36,31 +36,44 @@ theorem properPatternExtensions_abs_initial_error_le
   rw [abs_card_sub_eq_card_sdiff_of_subset _ U (properPatternExtensions_subset A Q U)]
   exact_mod_cast (properPatternExtensions_loss_le A Q U).trans (Nat.add_le_add hD hh)
 
-theorem initial_separated_proper_pattern_error
-    {V : Type*} [Fintype V] [DecidableEq V]
+theorem initial_separated_proper_pattern_error {V : Type*} [Fintype V] [DecidableEq V]
     {q h : ℕ} {H : SimpleGraph V} {X U : Finset V} {B : TripleSystemOn V} {Q : SimpleGraph V}
     (hsep : AbsorberSeparatedLevel H X B U) (hroot : HasPaddedAbsorberRootBounds q H X B)
     (hQ : Q ≤ graphDifference (SimpleGraph.completeGraph V) H)
     (hQsupport : (graphSupportFinset Q).card ≤ h) :
-    |((properPatternExtensions (absorberGreedyInitialState
-      (absorberErdosForbiddenConfigurationsOn q B) (outsideAvailableTriangles H B)).available Q U).card : ℝ) - U.card| ≤
-      (2 * h + h ^ 2 * 36 : ℕ) := by
-  have h := properPatternExtensions_abs_initial_error_le _ Q U (h + h ^ 2 * 36) h
-    (card_initial_separated_extension_loss_le hsep hroot hQ hQsupport) hQsupport
-  convert h using 1 <;> congr 1 <;> omega
+    |((properPatternExtensions
+                (absorberGreedyInitialState (absorberErdosForbiddenConfigurationsOn q B)
+                    (outsideAvailableTriangles H B)).available
+                Q U).card :
+            ℝ) -
+          U.card| ≤
+      (2 * h + h ^ 2 * 36 : ℕ) :=
+  by
+    have h :=
+      properPatternExtensions_abs_initial_error_le _ Q U (h + h ^ 2 * 36) h
+        (card_initial_separated_extension_loss_le hsep hroot hQ hQsupport) hQsupport
+    convert h using 1; congr 1; omega
 
-theorem initial_ambient_proper_pattern_error
-    {V : Type*} [Fintype V] [DecidableEq V]
-    {q h C : ℕ} {H : SimpleGraph V} [DecidableRel H.Adj] {B : TripleSystemOn V} {Q : SimpleGraph V}
-    (hdegree : ∀ x, H.degree x ≤ C) (hbankSupport : (verticesOn B).card ≤ C)
+theorem initial_ambient_proper_pattern_error {V : Type*} [Fintype V] [DecidableEq V]
+    {q h C : ℕ} {H : SimpleGraph V} [DecidableRel H.Adj] {B : TripleSystemOn V}
+    {Q : SimpleGraph V} (hdegree : ∀ x, H.degree x ≤ C)
+    (hbankSupport : (verticesOn B).card ≤ C)
     (hQ : Q ≤ graphDifference (SimpleGraph.completeGraph V) H)
     (hQsupport : (graphSupportFinset Q).card ≤ h) :
-    |((properPatternExtensions (absorberGreedyInitialState
-      (absorberErdosForbiddenConfigurationsOn q B) (outsideAvailableTriangles H B)).available Q univ).card : ℝ) - Fintype.card V| ≤
-      (2 * h + h ^ 2 * (3 * C) : ℕ) := by
-  have hbound := properPatternExtensions_abs_initial_error_le _ Q univ (h + h ^ 2 * (3 * C)) h
-    (card_initial_ambient_extension_loss_le (q := q) hdegree hbankSupport hQ hQsupport) hQsupport
-  simpa only [card_univ, show h + h ^ 2 * (3 * C) + h = 2 * h + h ^ 2 * (3 * C) by omega] using hbound
+    |((properPatternExtensions
+                (absorberGreedyInitialState (absorberErdosForbiddenConfigurationsOn q B)
+                    (outsideAvailableTriangles H B)).available
+                Q univ).card :
+            ℝ) -
+          Fintype.card V| ≤
+      (2 * h + h ^ 2 * (3 * C) : ℕ) :=
+  by
+    have hbound :=
+      properPatternExtensions_abs_initial_error_le _ Q univ (h + h ^ 2 * (3 * C)) h
+        (card_initial_ambient_extension_loss_le (q := q) hdegree hbankSupport hQ hQsupport)
+        hQsupport
+    simpa only [card_univ,
+      show h + h ^ 2 * (3 * C) + h = 2 * h + h ^ 2 * (3 * C) by omega] using hbound
 
 theorem ksssPatternTrajectory_zero
     (q : ℕ) (a : ℕ → ℝ) (E M : ℝ) (h m : ℕ) (hE : E ≠ 0) :
@@ -83,22 +96,29 @@ theorem properPatternRelativeCount_initial_error
   apply (div_le_iff₀ hM).mpr
   simpa only [mul_comm] using herror
 
-theorem initial_relative_pattern_margin
-    {V : Type*} [Fintype V] [DecidableEq V]
-    (q : ℕ) (a : ℕ → ℝ) (E t : ℝ) (s B : ℕ) (Q : SimpleGraph V) (U : Finset V)
-    (S₀ : GreedyStateOn V) (hE : E ≠ 0) (hU : U.Nonempty)
-    (herror : |((properPatternExtensions S₀.available Q U).card : ℝ) - U.card| ≤
-      U.card * (8 * t ^ 2 / t ^ s)) :
+theorem initial_relative_pattern_margin {V : Type*} [Fintype V] [DecidableEq V] (q : ℕ)
+    (a : ℕ → ℝ) (E t : ℝ) (s B : ℕ) (Q : SimpleGraph V) (U : Finset V) (S₀ : GreedyStateOn V)
+    (hE : E ≠ 0) (hU : U.Nonempty)
+    (herror :
+      |((properPatternExtensions S₀.available Q U).card : ℝ) - U.card| ≤
+        U.card * (8 * t ^ 2 / t ^ s)) :
     |properPatternRelativeCount Q U
-        (ksssPatternTrajectory (ksssOrders q) a E U.card (graphSupportFinset Q).card (graphEdges Q).card 0) S₀ - 1| +
-      8 * t ^ 2 / t ^ s ≤ relativePatternEnvelope E t s B 0 := by
-  rw [ksssPatternTrajectory_zero q a E U.card _ _ hE]
-  have h := properPatternRelativeCount_initial_error Q U S₀ (8 * t ^ 2 / t ^ s) hU herror
-  unfold relativePatternEnvelope
-  rw [ksssErrorEnvelope_zero E _ _ hE]
-  calc
-    _ ≤ 8 * t ^ 2 / t ^ s + 8 * t ^ 2 / t ^ s := add_le_add h le_rfl
-    _ = _ := by ring
+              (ksssPatternTrajectory (ksssOrders q) a E U.card (graphSupportFinset Q).card
+                (graphEdges Q).card 0)
+              S₀ -
+            1| +
+        8 * t ^ 2 / t ^ s ≤
+      relativePatternEnvelope E t s B 0 :=
+  by
+    rw [ksssPatternTrajectory_zero q a E U.card _ _ hE]
+    have h := properPatternRelativeCount_initial_error Q U S₀ (8 * t ^ 2 / t ^ s) hU herror
+    unfold relativePatternEnvelope
+    rw [ksssErrorEnvelope_zero E _ _ hE]
+    calc
+      _ ≤ 8 * t ^ 2 / t ^ s + 8 * t ^ 2 / t ^ s := add_le_add h le_rfl
+      _ = _ :=
+        by
+          ring
 
 end
 

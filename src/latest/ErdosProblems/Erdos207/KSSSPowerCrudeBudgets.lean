@@ -84,44 +84,82 @@ theorem CrudeStateBounds.dyadic_closed_inter
       (t : ℝ) ^ (k + 1) := by linarith only [hreal, hupper]
   exact_mod_cast hbound
 
-theorem CrudeStateBounds.dyadic_redundant_gain_budget
-    {V : Type*} [Fintype V] [DecidableEq V]
-    {F : ForbiddenFamilyOn V} {S : GreedyStateOn V} {q t k R s b B : ℕ}
-    {a coeff : ℕ → ℝ} {E A time : ℝ}
+theorem CrudeStateBounds.dyadic_redundant_gain_budget {V : Type*} [Fintype V] [DecidableEq V]
+    {F : ForbiddenFamilyOn V} {S : GreedyStateOn V} {q t k R s b B : ℕ} {a coeff : ℕ → ℝ}
+    {E A time : ℝ}
     (h : CrudeStateBounds (minimalForbiddenFamily F) S q (dyadicCrudeThresholds V t k))
     (j c : ℕ) {T : TripleOn V} (hT : T ∈ S.available) (hj : j ≤ q) (hc : c + 5 ≤ j)
-    (hE : 0 < E) (hTime : 0 ≤ time) (hclock : 3 * time < E)
-    (ha : ∀ d ∈ ksssOrders q, 0 ≤ a d) (hab : ∀ d ∈ ksssOrders q, a d * E ^ d ≤ coeff d)
-    (hN : 1 ≤ Fintype.card V) (ht : 1 ≤ t) (hscale : t ^ R ≤ Fintype.card V)
-    (hconst : 2 ^ q ≤ t) (hgap : k + s + 3 * b * (j - c - 4) + 2 ≤ R)
+    (hE : 0 < E) (hTime : 0 ≤ time) (hclock : 3 * time < E) (ha : ∀ d ∈ ksssOrders q, 0 ≤ a d)
+    (hab : ∀ d ∈ ksssOrders q, a d * E ^ d ≤ coeff d) (hN : 1 ≤ Fintype.card V) (ht : 1 ≤ t)
+    (hscale : t ^ R ≤ Fintype.card V) (hconst : 2 ^ q ≤ t)
+    (hgap : k + s + 3 * b * (j - c - 4) + 2 ≤ R)
     (hfloor : 1 / (t : ℝ) ^ b ≤ ksssEdgeDensity E time)
     (hratio : (Fintype.card V : ℝ) / (t : ℝ) ^ b ≤ A / E)
     (hexp : Real.exp (∑ d ∈ ksssOrders q, coeff d) ≤ t) :
-    (∑ D ∈ greedyConfigurationClass (forbiddenFamilyOfOrder (minimalForbiddenFamily F) j) S T c,
-      ((greedyConfigurationRedundantWitnesses (minimalForbiddenFamily F) S D).card : ℝ)) ≤
+    (∑
+        D ∈
+          greedyConfigurationClass (forbiddenFamilyOfOrder (minimalForbiddenFamily F) j) S T
+            c,
+        ((greedyConfigurationRedundantWitnesses (minimalForbiddenFamily F) S D).card : ℝ)) ≤
       ksssPairTrajectory (ksssOrders q) a E A time *
-        ksssConfigurationErrorEnvelope E A ((Fintype.card V : ℝ) / (t : ℝ) ^ s)
-          B (j - 4 - (c + 1)) time := by
-  have htR : (1 : ℝ) ≤ t := by exact_mod_cast ht
-  have htpos : (0 : ℝ) < t := by linarith
-  have hN1 : (1 : ℝ) ≤ Fintype.card V := by exact_mod_cast hN
-  have hcount := sum_redundantWitnesses_le_of_crude_minimal F S q _ h j c hT hj (by omega)
-  dsimp only [dyadicCrudeThresholds] at hcount
-  have hcountR : (∑ D ∈ greedyConfigurationClass (forbiddenFamilyOfOrder (minimalForbiddenFamily F) j) S T c,
-      ((greedyConfigurationRedundantWitnesses (minimalForbiddenFamily F) S D).card : ℝ)) ≤
-      (Fintype.card V + 1 : ℝ) ^ (j - c - 4) * (t : ℝ) ^ k := by
-    exact_mod_cast hcount
-  have hx := ksssPairTrajectory_power_lower (ksssOrders q) a coeff E A time (Fintype.card V) t b
-    hE hTime hclock ha hab (by positivity) htpos hfloor hratio hexp
-  have hh := ksssConfigurationErrorEnvelope_power_lower E A time (Fintype.card V) t s b B
-    (j - c - 5) hE hTime hclock (by positivity) htpos hfloor hratio
-  have hdeg : j - c - 4 = (j - c - 5) + 1 := by omega
-  have hdeg' : j - 4 - (c + 1) = j - c - 5 := by omega
-  rw [hdeg] at hcountR
-  rw [hdeg']
-  exact hcountR.trans (power_configuration_gain_budget (Fintype.card V) t _ _ R q (j - c - 5) k s b
-    htR hN1 (by exact_mod_cast hscale) (by exact_mod_cast hconst) (by omega)
-    (by simpa only [← hdeg] using hgap) hx hh)
+        ksssConfigurationErrorEnvelope E A ((Fintype.card V : ℝ) / (t : ℝ) ^ s) B
+          (j - 4 - (c + 1)) time :=
+  by
+    have htR : (1 : ℝ) ≤ t :=
+      by
+        exact_mod_cast ht
+    have htpos : (0 : ℝ) < t :=
+      by
+        linarith
+    have hN1 : (1 : ℝ) ≤ Fintype.card V :=
+      by
+        exact_mod_cast hN
+    have hcount :=
+      sum_redundantWitnesses_le_of_crude_minimal F S q _ h j c hT hj
+        (by
+          omega)
+    dsimp only [dyadicCrudeThresholds] at hcount
+    have hcountR :
+      (∑
+          D ∈
+            greedyConfigurationClass (forbiddenFamilyOfOrder (minimalForbiddenFamily F) j) S T
+              c,
+          ((greedyConfigurationRedundantWitnesses (minimalForbiddenFamily F) S D).card : ℝ)) ≤
+        (Fintype.card V + 1 : ℝ) ^ (j - c - 4) * (t : ℝ) ^ k :=
+      by
+        exact_mod_cast hcount
+    have hx :=
+      ksssPairTrajectory_power_lower (ksssOrders q) a coeff E A time (Fintype.card V) t b hE
+        hTime hclock ha hab
+        (by
+          positivity)
+        htpos hfloor hratio hexp
+    have hh :=
+      ksssConfigurationErrorEnvelope_power_lower E A time (Fintype.card V) t s b B (j - c - 5)
+        hE hTime hclock
+        (by
+          positivity)
+        htpos hfloor hratio
+    have hdeg : j - c - 4 = (j - c - 5) + 1 :=
+      by
+        omega
+    have hdeg' : j - 4 - (c + 1) = j - c - 5 :=
+      by
+        omega
+    rw [hdeg] at hcountR
+    rw [hdeg']
+    exact
+      hcountR.trans
+        (power_configuration_gain_budget (Fintype.card V) t _ _ R q (j - c - 5) k s b htR hN1
+          (by
+            exact_mod_cast hscale)
+          (by
+            exact_mod_cast hconst)
+          (by
+            omega)
+          (by
+            simpa only [← hdeg] using hgap)
+          hx hh)
 
 end
 

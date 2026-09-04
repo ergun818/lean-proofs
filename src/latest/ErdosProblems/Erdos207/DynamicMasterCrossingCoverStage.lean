@@ -65,7 +65,7 @@ theorem exists_masterCoverStep_of_dynamic_crossingLinkExtensions
       · exact Finset.disjoint_left.mp hpreDisjoint hTI
           (mem_union_right D hTR)
       · apply Finset.disjoint_left.mp hpreLdisjoint _ hTL
-        show T ∈ P₀
+        change T ∈ P₀
         exact mem_union_left (D ∪ R) hTI
   have hfinalPacking : IsPackingOn (I ∪ (D ∪ M)) := by
     simpa only [P₀, M, union_assoc] using hpreLpacking

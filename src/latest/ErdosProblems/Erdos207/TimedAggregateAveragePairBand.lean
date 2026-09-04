@@ -64,7 +64,7 @@ theorem timedAggregateAveragePairBandProcessLaw_supported_chosen_card
       (fun z : FiniteLaw.TimedState (GreedyStateOn V) n =>
         PairTrajectoryInvariant F S0 z.2 ∧
           z.2.chosen.card = S0.chosen.card + z.1.1)
-      ⟨pairTrajectoryInvariant_initial hInv0, by simp [z0]⟩).evolveKernels
+      ⟨pairTrajectoryInvariant_initial hInv0, by simp⟩).evolveKernels
     intro _i z hz
     classical
     unfold FiniteLaw.timedStoppedKernel

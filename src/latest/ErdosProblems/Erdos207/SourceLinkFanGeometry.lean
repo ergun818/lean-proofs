@@ -10,7 +10,7 @@ import ErdosProblems.Erdos207.SourceLinkCanonicalEdgeWeight
 namespace Erdos207
 
 open Finset
-open scoped Classical NNReal
+open scoped NNReal
 
 noncomputable section
 
@@ -67,9 +67,10 @@ theorem link_third_vertex_subset_inner
   exact (mem_sdiff.mp hw).2 (hwv.symm ▸ (mem_sdiff.mp hv).1)
 
 theorem card_fixed_pair_inner_third_vertex_le
-    {V : Type*} [Fintype V] [DecidableEq V] (P U : Finset V) (hP : P.card = 2)
+    {V : Type*} [Finite V] [DecidableEq V] (P U : Finset V) (hP : P.card = 2)
     (B : TripleSystemOn V) (hpair : ∀ T ∈ B, P ⊆ T.1)
     (hthird : ∀ T ∈ B, T.1 \ P ⊆ U) : B.card ≤ U.card := by
+  let := Fintype.ofFinite V
   calc
     _ ≤ (U.powersetCard 1).card := by
       apply card_le_card_of_injOn (f := fun T : TripleOn V ↦ T.1 \ P)

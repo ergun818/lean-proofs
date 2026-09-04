@@ -77,28 +77,35 @@ theorem subset_regularizationForbiddenFamily
     (e : I ↪ TripleOn V) (k : ℕ) (G earlier : Finset (Finset I)) :
     G ⊆ regularizationForbiddenFamily e k G earlier := subset_union_right
 
-theorem regularizationForbiddenFamily_contains_nonCandidates
-    {V I : Type*} [Fintype V] [DecidableEq V] [Fintype I] [DecidableEq I] {ell j : ℕ}
-    (W : Vortex V ell) (e : I ↪ TripleOn V)
-    (hsupport : ∀ i, (e i).1 ⊆ W.U (Fin.last ell)) (G earlier : Finset (Finset I)) :
-    ∀ E : Finset I, E.card = j - 2 → E.map e ∉ terminalRandomConfigurations W j →
-      E ∈ regularizationForbiddenFamily e (j - 2) G earlier := by
-  intro E hcard hbad
-  exact mem_union_left _ (mem_union_left _ (auxiliary_nonCandidate_mem_collision W e hsupport E hcard hbad))
+theorem regularizationForbiddenFamily_contains_nonCandidates {V I : Type*} [Fintype V]
+    [DecidableEq V] [Fintype I] [DecidableEq I] {ell j : ℕ} (W : Vortex V ell)
+    (e : I ↪ TripleOn V) (hsupport : ∀ i, (e i).1 ⊆ W.U (Fin.last ell))
+    (G earlier : Finset (Finset I)) :
+    ∀ E : Finset I,
+      E.card = j - 2 →
+        E.map e ∉ terminalRandomConfigurations W j →
+          E ∈ regularizationForbiddenFamily e (j - 2) G earlier :=
+  by
+    intro E hcard hbad
+    exact
+      mem_union_left _
+        (mem_union_left _ (auxiliary_nonCandidate_mem_collision W e hsupport E hcard hbad))
 
-theorem regularizedFamily_no_earlier_subset
-    {V I : Type*} [DecidableEq V] [Fintype I] [DecidableEq I]
-    (e : I ↪ TripleOn V) (k : ℕ) (F earlier R : Finset (Finset I))
+theorem regularizedFamily_no_earlier_subset {V I : Type*} [DecidableEq V] [Fintype I]
+    [DecidableEq I] (e : I ↪ TripleOn V) (k : ℕ) (F earlier R : Finset (Finset I))
     (huniform : ∀ E ∈ R, E.card = k)
-    (havoid : Disjoint R (regularizationForbiddenFamily e k (trimForbiddenSupersets F earlier) earlier)) :
-    ∀ E ∈ trimForbiddenSupersets F earlier ∪ R, ∀ C ∈ earlier, ¬ C ⊆ E := by
-  classical
-  intro E hE C hC hCE
-  rcases mem_union.mp hE with hold | hnew
-  · exact ((mem_trimForbiddenSupersets_iff F earlier E).mp hold).2 C hC hCE
-  · have hsup : E ∈ uniformSupersets k earlier :=
-      (mem_uniformSupersets_iff k earlier E).mpr ⟨huniform E hnew, C, hC, hCE⟩
-    exact disjoint_left.mp havoid hnew (mem_union_left _ (mem_union_right _ hsup))
+    (havoid :
+      Disjoint R
+        (regularizationForbiddenFamily e k (trimForbiddenSupersets F earlier) earlier)) :
+    ∀ E ∈ trimForbiddenSupersets F earlier ∪ R, ∀ C ∈ earlier, ¬C ⊆ E :=
+  by
+    classical
+    intro E hE C hC hCE
+    rcases mem_union.mp hE with hold | hnew
+    · exact ((mem_trimForbiddenSupersets_iff F earlier E).mp hold).2 C hC hCE
+    · have hsup : E ∈ uniformSupersets k earlier :=
+        (mem_uniformSupersets_iff k earlier E).mpr ⟨huniform E hnew, C, hC, hCE⟩
+      exact disjoint_left.mp havoid hnew (mem_union_left _ (mem_union_right _ hsup))
 
 end
 

@@ -71,11 +71,11 @@ theorem internalEdgeGreedyKernel_supported_failureCertificate_step
     let he : e ∈ edges := List.get_mem edges ⟨i, hi⟩
     let huv : e.out.1 ≠ e.out.2 := hne e he
     by_cases hcovered : (coveredGraph z.chosen).Adj e.out.1 e.out.2
-    · simp only [e, he, huv, hcovered, dite_true]
+    · simp only [e, hcovered, dite_true]
       apply FiniteLaw.supportedOn_pure
       intro htrue
       simp [hzfalse] at htrue
-    · simp only [e, he, huv, hcovered, dite_false]
+    · simp only [e, hcovered, dite_false]
       let C := activeReserveLegalThirdVertices F G U (S e) bits
         z.chosen e.out.1 e.out.2 huv
       by_cases hlarge : D ≤ C.card
@@ -90,8 +90,7 @@ theorem internalEdgeGreedyKernel_supported_failureCertificate_step
           (fun w : C ↦
             ({ chosen := insert (internalEdgeTriangle e huv w.1) z.chosen
                failed := false } : InternalEdgeGreedyStateOn V)) ?_
-        intro _w _hw
-        intro htrue
+        intro _w _hw htrue
         simp at htrue
       · rw [dif_neg (by simpa only [C, e, he, huv] using hlarge)]
         apply FiniteLaw.supportedOn_pure
@@ -182,9 +181,9 @@ theorem internalEdgeGreedyProcessLaw_supported_ambient
         let he : e ∈ edges := List.get_mem edges ⟨k, by omega⟩
         let huv : e.out.1 ≠ e.out.2 := hne e he
         by_cases hcovered : (coveredGraph z.chosen).Adj e.out.1 e.out.2
-        · simp only [e, he, huv, hcovered, dite_true]
+        · simp only [e, hcovered, dite_true]
           exact FiniteLaw.supportedOn_pure _ hz
-        · simp only [e, he, huv, hcovered, dite_false]
+        · simp only [e, hcovered, dite_false]
           let C := activeReserveLegalThirdVertices F G U (S e) bits
             z.chosen e.out.1 e.out.2 huv
           by_cases hlarge : D ≤ C.card
@@ -239,7 +238,7 @@ theorem internalEdge_terminal_notFailed_of_rootedCap
       thirdVertexTriple (hne e he) w' ∈ A)
     (hscalar : 4 * d + R * k ≤ a)
     (hinv : InternalEdgeProcessInvariant F P0 E.toList E.toList.length z)
-    (hambient : z.chosen ⊆ P0 ∪ A)
+    (_hambient : z.chosen ⊆ P0 ∪ A)
     (huse : NewTrianglesUseScheduledOuterEdges U E P0 z.chosen)
     (hfailure : InternalEdgeFailureCertificate F G U bits S E.toList hne
       D E.toList.length z)

@@ -12,7 +12,7 @@ import ErdosProblems.Erdos207.SourceRootOmissionMoment
 namespace Erdos207
 
 open Finset
-open scoped Classical NNReal
+open scoped NNReal
 
 noncomputable section
 
@@ -73,23 +73,28 @@ theorem SourceQuasiMarking.coordinates_card
     card_insert_of_notMem hx.root_not_mem, card_union_of_disjoint hx.disjoint]
   omega
 
-theorem card_sourceQuasiMarkings_le_polynomial
-    {V : Type*} [Fintype V] [DecidableEq V] {ell j : ℕ}
-    {W : Vortex V ell} {F : ForbiddenFamilyOn V} {e : Sym2 V} {S B : Finset V}
+theorem card_sourceQuasiMarkings_le_polynomial {V : Type*} [Fintype V] [DecidableEq V]
+    {ell j : ℕ} {W : Vortex V ell} {F : ForbiddenFamilyOn V} {e : Sym2 V} {S B : Finset V}
     (hpack : ∀ E ∈ F, IsPackingOn E) (hcard : ∀ E ∈ F, E.card = j - 2)
     (heB : e.toFinset ⊆ B) :
-    (sourceQuasiMarkings W F e S B).card ≤ 2 ^ (j - 2) * (Fintype.card V + 1) ^ (3 * j) := by
-  have hsub : (sourceQuasiMarkings W F e S B).image SourceQuasiMarking.system ⊆ F := by
-    intro E hE
-    obtain ⟨x, hx, rfl⟩ := mem_image.mp hE
-    exact (mem_sourceQuasiMarkings_iff.mp hx).mem_family
-  have hfiber : ∀ E ∈ (sourceQuasiMarkings W F e S B).image SourceQuasiMarking.system,
-      ((sourceQuasiMarkings W F e S B).filter (fun x ↦ x.system = E)).card ≤ 2 ^ (j - 2) := by
-    intro E hE
-    simpa only [hcard E (hsub hE)] using
-      card_sourceQuasiMarkings_system_fiber_le (W := W) (S := S) hpack heB E
-  apply (card_le_mul_card_image _ (2 ^ (j - 2)) hfiber).trans
-  exact Nat.mul_le_mul_left _ ((card_le_card hsub).trans (card_uniform_source_family_le_polynomial F j hcard))
+    (sourceQuasiMarkings W F e S B).card ≤ 2 ^ (j - 2) * (Fintype.card V + 1) ^ (3 * j) :=
+  by
+    have hsub : (sourceQuasiMarkings W F e S B).image SourceQuasiMarking.system ⊆ F :=
+      by
+        intro E hE
+        obtain ⟨x, hx, rfl⟩ := mem_image.mp hE
+        exact (mem_sourceQuasiMarkings_iff.mp hx).mem_family
+    have hfiber :
+      ∀ E ∈ (sourceQuasiMarkings W F e S B).image SourceQuasiMarking.system,
+        ((sourceQuasiMarkings W F e S B).filter (fun x ↦ x.system = E)).card ≤ 2 ^ (j - 2) :=
+      by
+        intro E hE
+        simpa only [hcard E (hsub hE)] using
+          card_sourceQuasiMarkings_system_fiber_le (W := W) (S := S) hpack heB E
+    apply (card_le_mul_card_image _ (2 ^ (j - 2)) hfiber).trans
+    exact
+      Nat.mul_le_mul_left _
+        ((card_le_card hsub).trans (card_uniform_source_family_le_polynomial F j hcard))
 
 end
 

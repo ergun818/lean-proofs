@@ -58,9 +58,9 @@ lemma emptyBipartiteLink_hasBounds
   · intro b
     exact (by simpa using b.2)
   · intro a
-    exact (by simpa using a.2)
+    exact (by simp)
   · intro b
-    exact (by simpa using b.2)
+    exact (by simp)
 
 /-- Direct paired-bisection constructor from degree and codegree estimates on
 the *actual* residual-neighbor set.  Unlike the iteration-typical wrappers
@@ -230,7 +230,7 @@ theorem IsIterationTypical.exists_chosenResidualLink_of_supported_localized
       hnonempty
     refine ⟨emptyBipartiteLink center, ?_,
       emptyBipartiteLink_hasBounds center A d D codegree⟩
-    exact ⟨rfl, by simpa [hempty], by simp⟩
+    exact ⟨rfl, by simp [hempty], by simp⟩
 
 /-- Coarser supported-center form using the full covered degree. -/
 theorem IsIterationTypical.exists_chosenResidualLink_of_supported

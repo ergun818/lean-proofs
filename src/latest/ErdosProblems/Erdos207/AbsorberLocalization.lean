@@ -34,9 +34,10 @@ lemma AvoidsAbsorberInterior.mono
   exact h T (hsub hTP') v hvT hvH
 
 lemma consistsOfTriangles_completeGraph
-    {V : Type*} [Fintype V] [DecidableEq V]
+    {V : Type*} [Finite V] [DecidableEq V]
     (R : TripleSystemOn V) :
     ConsistsOfTriangles (SimpleGraph.completeGraph V) R := by
+  let := Fintype.ofFinite V
   intro T hTR u huT v hvT huv
   simpa using huv
 

@@ -51,28 +51,44 @@ theorem card_fullPackingErdos_bank_touching_le
     _ = roots.card * ((2 ^ (j ^ 3) * (j + 1)) * (Fintype.card V + 1) ^ (j - 4)) := by simp
     _ ≤ _ := Nat.mul_le_mul_right _ (card_le_card sdiff_subset)
 
-theorem card_initial_minimal_deletion_le
-    {V : Type*} [Fintype V] [DecidableEq V]
-    (q j : ℕ) (bank ambient : TripleSystemOn V) (T : TripleOn V) (hT : T ∈ ambient)
-    (hj : 5 ≤ j) (hjq : j ≤ q) (hdisjoint : Disjoint ambient bank)
-    (hlegal : ∀ U ∈ ambient, IsLegalExtension (absorberErdosForbiddenConfigurationsOn q bank) ∅ U) :
-    ((rootedFullPackingErdosFamily j T).filter (fun C ↦ C ⊆ ambient ∧
-      C ∉ minimalForbiddenFamily (restrictForbiddenFamily (absorberErdosForbiddenConfigurationsOn q bank) ambient))).card ≤
-      (verticesOn bank).card * ((2 ^ (j ^ 3) * (j + 1)) * (Fintype.card V + 1) ^ (j - 4)) := by
-  classical
-  have hTnot : T ∉ bank := fun hTB ↦ Finset.disjoint_left.mp hdisjoint hT hTB
-  apply (card_le_card (show (rootedFullPackingErdosFamily j T).filter (fun C ↦ C ⊆ ambient ∧
-      C ∉ minimalForbiddenFamily (restrictForbiddenFamily (absorberErdosForbiddenConfigurationsOn q bank) ambient)) ⊆
-    (rootedFullPackingErdosFamily j T).filter
-      (fun C ↦ ∃ v ∈ verticesOn C, v ∈ verticesOn bank ∧ v ∉ T.1) from ?_)).trans
-      (card_fullPackingErdos_bank_touching_le j bank T)
-  intro C hC
-  obtain ⟨hroot, hCA, hnot⟩ := mem_filter.mp hC
-  have hfull : C ∈ fullPackingErdosFamily V j := (mem_filter.mp hroot).1
-  obtain ⟨D, hD, hDtwo, hDC, _, _⟩ := genuine_initial_minimal_deletion_has_derived_subset q j bank ambient C
-    hj hjq hfull hCA hdisjoint hlegal hnot
-  obtain ⟨v, hvD, hvB, hvT⟩ := derivedAbsorber_bank_vertex_outside_root T hD hDtwo hTnot
-  exact mem_filter.mpr ⟨hroot, v, verticesOn_mono hDC hvD, hvB, hvT⟩
+theorem card_initial_minimal_deletion_le {V : Type*} [Fintype V] [DecidableEq V] (q j : ℕ)
+    (bank ambient : TripleSystemOn V) (T : TripleOn V) (hT : T ∈ ambient) (hj : 5 ≤ j)
+    (hjq : j ≤ q) (hdisjoint : Disjoint ambient bank)
+    (hlegal :
+      ∀ U ∈ ambient, IsLegalExtension (absorberErdosForbiddenConfigurationsOn q bank) ∅ U) :
+    ((rootedFullPackingErdosFamily j T).filter
+          (fun C ↦
+            C ⊆ ambient ∧
+              C ∉
+                minimalForbiddenFamily
+                  (restrictForbiddenFamily (absorberErdosForbiddenConfigurationsOn q bank)
+                    ambient))).card ≤
+      (verticesOn bank).card * ((2 ^ (j ^ 3) * (j + 1)) * (Fintype.card V + 1) ^ (j - 4)) :=
+  by
+    classical
+    have hTnot : T ∉ bank := fun hTB ↦ Finset.disjoint_left.mp hdisjoint hT hTB
+    apply
+      (card_le_card
+            (show
+              (rootedFullPackingErdosFamily j T).filter
+                  (fun C ↦
+                    C ⊆ ambient ∧
+                      C ∉
+                        minimalForbiddenFamily
+                          (restrictForbiddenFamily
+                            (absorberErdosForbiddenConfigurationsOn q bank) ambient)) ⊆
+                (rootedFullPackingErdosFamily j T).filter
+                  (fun C ↦ ∃ v ∈ verticesOn C, v ∈ verticesOn bank ∧ v ∉ T.1)
+              from ?_)).trans
+        (card_fullPackingErdos_bank_touching_le j bank T)
+    intro C hC
+    obtain ⟨hroot, hCA, hnot⟩ := mem_filter.mp hC
+    have hfull : C ∈ fullPackingErdosFamily V j := (mem_filter.mp hroot).1
+    obtain ⟨D, hD, hDtwo, hDC, _, _⟩ :=
+      genuine_initial_minimal_deletion_has_derived_subset q j bank ambient C hj hjq hfull hCA
+        hdisjoint hlegal hnot
+    obtain ⟨v, hvD, hvB, hvT⟩ := derivedAbsorber_bank_vertex_outside_root T hD hDtwo hTnot
+    exact mem_filter.mpr ⟨hroot, v, verticesOn_mono hDC hvD, hvB, hvT⟩
 
 end
 

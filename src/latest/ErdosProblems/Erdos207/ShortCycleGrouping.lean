@@ -108,16 +108,15 @@ lemma shortCycle_mem_groupConstituents_owner
     | inl i =>
         have hsymm : e₄.symm (.inl i) = j := by
           apply e₄.injective
-          simpa [hej]
+          simp [hej]
         simp [shortCycleGroupOwner, shortCycleGroupConstituents, hej, hsymm]
     | inr p =>
         rcases p with ⟨t, z⟩
         have hsymm : e₄.symm (.inr (t, z)) = j := by
           apply e₄.injective
-          simpa [hej]
+          simp [hej]
         fin_cases z <;>
-          simp [shortCycleGroupOwner, shortCycleGroupConstituents,
-            hej, ← hsymm]
+          simp [shortCycleGroupOwner, shortCycleGroupConstituents, ← hsymm]
   · simp [shortCycleGroupOwner, shortCycleGroupConstituents]
 
 lemma shortCycleGroupConstituents_disjoint
@@ -253,16 +252,16 @@ lemma fullCycleCoverRoot_grouped_eq
   rcases a with (i | i)
   · change fullCycleCoverRoot (.triangle (F.triangle i)) = _
     rw [fullCycleCoverRoot_triangle_eq_cycle]
-    simp [groupedFullCycleCoverCopy, groupedShortCycleGraph,
+    simp [groupedShortCycleGraph,
       shortCycleGroupConstituents, graphSup, ShortCycleFamily.graph]
   · rcases i with (i | t)
     · change fullCycleCoverRoot (.c4c5 _) = _
       rw [fullCycleCoverRoot_c4c5OfEmbedded_eq]
-      simp [groupedFullCycleCoverCopy, groupedShortCycleGraph,
+      simp [groupedShortCycleGraph,
         shortCycleGroupConstituents, graphSup, ShortCycleFamily.graph]
     · change fullCycleCoverRoot (.threeC4 _) = _
       rw [fullCycleCoverRoot_threeC4OfEmbedded_eq]
-      simp [groupedFullCycleCoverCopy, groupedShortCycleGraph,
+      simp [groupedShortCycleGraph,
         shortCycleGroupConstituents, graphSup, ShortCycleFamily.graph]
       congr 1
       ac_rfl

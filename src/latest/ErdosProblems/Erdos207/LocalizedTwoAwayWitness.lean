@@ -47,13 +47,14 @@ theorem localizedTwoAwayToRooted_injective
   apply Subtype.ext
   exact congrArg (fun v ↦ v.1.1) h
 
-theorem localizedTwoAwayToRooted_remainder
-    {V : Type*} [DecidableEq V] {F : ForbiddenFamilyOn V}
-    {T : TripleOn V} {a b : V} {U : Finset V}
+theorem localizedTwoAwayToRooted_remainder {V : Type*} [DecidableEq V]
+    {F : ForbiddenFamilyOn V} {T : TripleOn V} {a b : V} {U : Finset V}
     (w : LocalizedTwoAwayWitness V F T a b U) :
-    localizedRootedThreatRemainder (localizedTwoAwayToRooted w) = insert T (localizedTwoAwayRemainder w) := by
-  change w.1.1.1.erase w.1.1.2 = insert T ((w.1.1.1.erase w.1.1.2).erase T)
-  exact (insert_erase (mem_erase.mpr ⟨w.1.2.2.2.2.symm, w.1.2.2.2.1⟩)).symm
+    localizedRootedThreatRemainder (localizedTwoAwayToRooted w) =
+      insert T (localizedTwoAwayRemainder w) :=
+  by
+    change w.1.1.1.erase w.1.1.2 = insert T ((w.1.1.1.erase w.1.1.2).erase T)
+    exact (insert_erase (mem_erase.mpr ⟨w.1.2.2.2.2.symm, w.1.2.2.2.1⟩)).symm
 
 abbrev LocalizedTwoAwayRemainderFiber
     (V : Type*) [DecidableEq V] (F : ForbiddenFamilyOn V)
@@ -72,29 +73,35 @@ def localizedTwoAwayFiberToRooted
     LocalizedRootedThreatRemainderFiber V q B a b U (insert T R) :=
   ⟨localizedTwoAwayToRooted w.1, by rw [localizedTwoAwayToRooted_remainder, w.2]⟩
 
-theorem localizedTwoAwayFiberToRooted_injective
-    {V : Type*} [Fintype V] [DecidableEq V]
-    {q : ℕ} {B : TripleSystemOn V} {T : TripleOn V} {a b : V} {U : Finset V} {R : TripleSystemOn V} :
-    Function.Injective (localizedTwoAwayFiberToRooted :
-      LocalizedTwoAwayRemainderFiber V (absorberErdosForbiddenConfigurationsOn q B) T a b U R →
-        LocalizedRootedThreatRemainderFiber V q B a b U (insert T R)) := by
-  intro w z h
-  apply Subtype.ext
-  exact localizedTwoAwayToRooted_injective (congrArg Subtype.val h)
+theorem localizedTwoAwayFiberToRooted_injective {V : Type*} [Fintype V] [DecidableEq V]
+    {q : ℕ} {B : TripleSystemOn V} {T : TripleOn V} {a b : V} {U : Finset V}
+    {R : TripleSystemOn V} :
+    Function.Injective
+      (localizedTwoAwayFiberToRooted :
+        LocalizedTwoAwayRemainderFiber V (absorberErdosForbiddenConfigurationsOn q B) T a b U
+            R →
+          LocalizedRootedThreatRemainderFiber V q B a b U (insert T R)) :=
+  by
+    intro w z h
+    apply Subtype.ext
+    exact localizedTwoAwayToRooted_injective (congrArg Subtype.val h)
 
-theorem card_localizedTwoAwayRemainderFiber_le
-    {V : Type*} [Fintype V] [DecidableEq V]
-    {q : ℕ} {H : SimpleGraph V} {B : TripleSystemOn V} {X U : Finset V}
-    {T : TripleOn V} {a b : V} (hab : a ≠ b) (R : TripleSystemOn V)
-    (hsep : AbsorberSeparatedLevel H X B U)
+theorem card_localizedTwoAwayRemainderFiber_le {V : Type*} [Fintype V] [DecidableEq V] {q : ℕ}
+    {H : SimpleGraph V} {B : TripleSystemOn V} {X U : Finset V} {T : TripleOn V} {a b : V}
+    (hab : a ≠ b) (R : TripleSystemOn V) (hsep : AbsorberSeparatedLevel H X B U)
     (hrootLocal : HasPaddedAbsorberRootLocalization q X B) :
-    Fintype.card (LocalizedTwoAwayRemainderFiber V
-      (absorberErdosForbiddenConfigurationsOn q B) T a b U R) ≤ 45 * (R.card + 1) + 28 := by
-  calc
-    _ ≤ Fintype.card (LocalizedRootedThreatRemainderFiber V q B a b U (insert T R)) :=
-      Fintype.card_le_of_injective localizedTwoAwayFiberToRooted localizedTwoAwayFiberToRooted_injective
-    _ ≤ 45 * (insert T R).card + 28 := card_localizedRootedThreatRemainderFiber_le hab _ hsep hrootLocal
-    _ ≤ _ := Nat.add_le_add_right (Nat.mul_le_mul_left 45 (card_insert_le T R)) 28
+    Fintype.card
+        (LocalizedTwoAwayRemainderFiber V (absorberErdosForbiddenConfigurationsOn q B) T a b U
+          R) ≤
+      45 * (R.card + 1) + 28 :=
+  by
+    calc
+      _ ≤ Fintype.card (LocalizedRootedThreatRemainderFiber V q B a b U (insert T R)) :=
+        Fintype.card_le_of_injective localizedTwoAwayFiberToRooted
+          localizedTwoAwayFiberToRooted_injective
+      _ ≤ 45 * (insert T R).card + 28 :=
+        (card_localizedRootedThreatRemainderFiber_le hab _ hsep hrootLocal)
+      _ ≤ _ := Nat.add_le_add_right (Nat.mul_le_mul_left 45 (card_insert_le T R)) 28
 
 end
 

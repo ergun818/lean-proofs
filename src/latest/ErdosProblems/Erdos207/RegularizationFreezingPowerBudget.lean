@@ -38,7 +38,7 @@ theorem eventually_regularization_freezing_budget (j R : ℕ) :
 
 theorem regularization_frozen_failure_tendsToZero :
     Tendsto (fun t : ℕ ↦ Real.exp (-(t : ℝ) / 2)) atTop (𝓝 0) := by
-  convert polynomial_exp_neg_mul_tendsToZero 1 (1 / 2) 0 (by norm_num) using 1 <;>
+  convert polynomial_exp_neg_mul_tendsToZero 1 (1 / 2) 0 (by norm_num) using 1 ;
     simp [div_eq_mul_inv, mul_comm]
 
 end Erdos207

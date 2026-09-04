@@ -15,7 +15,7 @@ import ErdosProblems.Erdos207.BoundedPatternIndex
 namespace Erdos207
 
 open Finset
-open scoped Classical NNReal
+open scoped NNReal
 
 noncomputable section
 

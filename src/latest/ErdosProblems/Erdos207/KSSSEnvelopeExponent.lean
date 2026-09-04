@@ -12,10 +12,11 @@ namespace Erdos207
 open Finset
 
 theorem exists_coupled_envelope_exponent
-    {I : Type*} [Fintype I] (q : ℕ) (pairCoefficient : ℝ) (configurationCoefficient : I → ℝ) :
+    {I : Type*} [Finite I] (q : ℕ) (pairCoefficient : ℝ) (configurationCoefficient : I → ℝ) :
     ∃ B : ℕ, 4 * q ≤ B ∧ pairCoefficient ≤ 3 * (B : ℝ) ∧
       ∀ i, configurationCoefficient i ≤ 3 * (B : ℝ) / 2 := by
   classical
+  let := Fintype.ofFinite I
   let S : ℝ := ∑ i, |configurationCoefficient i|
   have hS : 0 ≤ S := sum_nonneg fun _ _ ↦ abs_nonneg _
   obtain ⟨B, hB⟩ := exists_nat_gt (4 * (q : ℝ) + 2 * |pairCoefficient| + 2 * S)

@@ -171,8 +171,7 @@ theorem supplyStoppedGreedyKernel_probability_trackedUncovered_le
       apply subset_empty.mp
       simpa [supplyStoppedTrackedUncoveredEdges, hactive] using hB
     subst B
-    simp [supplyStoppedGreedyKernel, hactive,
-      FiniteLaw.probability_true]
+    simp [supplyStoppedGreedyKernel, hactive]
 
 /-- The mixed selected/uncovered product estimate while the global and local
 supply conditions remain active. -/

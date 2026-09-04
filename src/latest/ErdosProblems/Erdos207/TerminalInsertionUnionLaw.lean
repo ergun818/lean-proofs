@@ -71,24 +71,28 @@ theorem terminal_supported_joint_inclusion
     rw [K.probability_false] at hzero
     exact hzero.trans zero_le
 
-theorem joint_union_vortex_inclusion_with_error
-    {D S V : Type*} [Fintype D] [DecidableEq D] [Fintype S] [DecidableEq S]
-    [Fintype V] [DecidableEq V] {ell : ℕ}
-    (P : FiniteLaw D) (K : D → FiniteLaw S) (old : D → TripleSystemOn V) (new : D → S → TripleSystemOn V)
+theorem joint_union_vortex_inclusion_with_error {D S V : Type*} [Fintype D] [DecidableEq D]
+    [Fintype S] [DecidableEq S] [Fintype V] [DecidableEq V] {ell : ℕ} (P : FiniteLaw D)
+    (K : D → FiniteLaw S) (old : D → TripleSystemOn V) (new : D → S → TripleSystemOn V)
     (W : Vortex V ell) (c delta A b : ℝ≥0) (hn : 0 < W.terminalSize) (hdelta : delta ≤ 1)
     (U : TripleSystemOn V)
-    (hold : ∀ Q ⊆ U, P.probability (fun d ↦ Q ⊆ old d) ≤ A * setWeight (vortexTripleWeight W c) Q + b)
+    (hold :
+      ∀ Q ⊆ U,
+        P.probability (fun d ↦ Q ⊆ old d) ≤ A * setWeight (vortexTripleWeight W c) Q + b)
     (hsupport : ∀ d, (K d).SupportedOn (fun s ↦ ∀ T ∈ new d s, T.1 ⊆ W.U (Fin.last ell)))
     (hnew : ∀ d Q, (K d).probability (fun s ↦ Q ⊆ new d s) ≤ delta ^ Q.card) :
     (P.jointBind K).probability (fun z ↦ U ⊆ old z.1 ∪ new z.1 z.2) ≤
-      A * setWeight (vortexTripleWeight W (c + delta * W.terminalSize)) U + b * 2 ^ U.card := by
-  apply (joint_union_inclusion_with_uniform_error P K old new (vortexTripleWeight W c)
-    (terminalInsertionWeight W delta) A b U hold
-    (fun d ↦ terminal_supported_joint_inclusion (K d) (new d) W delta (hsupport d) (hnew d))
-    (fun T _ ↦ terminalInsertionWeight_le_one W delta hdelta T)).trans
-  apply add_le_add _ le_rfl
-  apply mul_le_mul_of_nonneg_left _ zero_le
-  exact prod_le_prod' (fun T _ ↦ vortexTripleWeight_add_terminalInsertion W c delta hn T)
+      A * setWeight (vortexTripleWeight W (c + delta * W.terminalSize)) U + b * 2 ^ U.card :=
+  by
+    apply
+      (joint_union_inclusion_with_uniform_error P K old new (vortexTripleWeight W c)
+          (terminalInsertionWeight W delta) A b U hold
+          (fun d ↦
+            terminal_supported_joint_inclusion (K d) (new d) W delta (hsupport d) (hnew d))
+          (fun T _ ↦ terminalInsertionWeight_le_one W delta hdelta T)).trans
+    apply add_le_add _ le_rfl
+    apply mul_le_mul_of_nonneg_left _ zero_le
+    exact prod_le_prod' (fun T _ ↦ vortexTripleWeight_add_terminalInsertion W c delta hn T)
 
 end
 

@@ -15,7 +15,7 @@ open Finset
 noncomputable section
 
 theorem localForbiddenConfigurations_biUnion
-    {V I : Type*} [DecidableEq V] [DecidableEq I]
+    {V I : Type*} [DecidableEq V]
     (indices : Finset I) (F : I → ForbiddenFamilyOn V)
     (available old : TripleSystemOn V) (j : ℕ) :
     localForbiddenConfigurations (indices.biUnion F) available old j =
@@ -58,7 +58,7 @@ theorem localForbiddenConfigurations_order_union
       by_contra hn
       have hempty := localForbiddenConfigurations_empty_of_smaller_order (F j')
         available old j j' (by omega) (by omega) (hF j' (mem_Icc.mpr ⟨hj'4, hj'q⟩))
-      simpa [hempty] using hS
+      simp [hempty] at hS
     exact ⟨j', ⟨hjj', hj'q⟩, hS⟩
   · rintro ⟨j', ⟨hjj', hj'q⟩, hS⟩
     exact ⟨j', ⟨hj.trans hjj', hj'q⟩, hS⟩

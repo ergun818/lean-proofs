@@ -26,9 +26,10 @@ structure GainDefectWitness
   second_root_card : (second ∩ insert T omitted).card = 2
   not_subset : ¬ second ⊆ first
 
-instance {W : Type*} [Fintype W] [DecidableEq W]
-    (F G : Finset (Finset W)) (T : W) (z : ℕ) : Finite (GainDefectWitness F G T z) :=
-  Finite.of_injective (fun w : GainDefectWitness F G T z ↦ (w.first, w.second, w.omitted))
+instance {W : Type*} [Finite W] [DecidableEq W]
+    (F G : Finset (Finset W)) (T : W) (z : ℕ) : Finite (GainDefectWitness F G T z) := by
+  let := Fintype.ofFinite W
+  exact Finite.of_injective (fun w : GainDefectWitness F G T z ↦ (w.first, w.second, w.omitted))
     (by intro w u h; cases w; cases u; simp_all)
 
 noncomputable instance {W : Type*} [Fintype W] [DecidableEq W]

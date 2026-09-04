@@ -236,8 +236,6 @@ theorem card_tripleSystemsExtendingWithSpan_le
       have hD' := mem_tripleSystemsExtendingWithSpan_iff.mp hDfamily
       apply mem_tripleSystemsSupportedOn_iff.mpr
       rw [← verticesOn_union_extensionExtraVertices hD'.1]
-      change verticesOn R ∪ extensionExtraVertices R D ⊆
-        verticesOn R ∪ W
       dsimp only [code] at hDcode
       rw [hDcode]
     calc

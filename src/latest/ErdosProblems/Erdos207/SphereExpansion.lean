@@ -729,13 +729,14 @@ lemma attachSphereFamily_card {V : Type*} [LinearOrder V] {q : ℕ}
 
 /-- The attached copy retains the strong private-interior-leaf property. -/
 theorem attachSphereFamily_short_interior_leaf
-    {V : Type*} [Fintype V] [LinearOrder V] {q : ℕ} (hq : 2 ≤ q)
+    {V : Type*} [Finite V] [LinearOrder V] {q : ℕ} (hq : 2 ≤ q)
     (T : TripleOn V) {D : TripleSystemOn (SphereExpansionVertex V q)}
     (hDB : D ⊆ attachSphereFamily hq T (sphereBank hq))
     (hpacking : IsPackingOn D) (hDne : D.Nonempty) (hDq : D.card ≤ q) :
     ∃ x : SphereInterior q,
       SphereExpansionVertex.interior T x ∈ verticesOn D ∧
         (triplesThrough D (SphereExpansionVertex.interior T x)).card = 1 := by
+  let := Fintype.ofFinite V
   let C : TripleSystemOn (SphereVertex q) :=
     (sphereBank hq).filter fun S ↦ attachSphereTriple hq T S ∈ D
   have hmap : attachSphereFamily hq T C = D := by

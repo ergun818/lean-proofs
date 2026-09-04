@@ -21,8 +21,8 @@ def GainDefectWitness.exposureCode
   ((w.firstExposureRoot H, w.second ∩ H),
     ((w.secondExposureRoot H).card, (w.leftRemainder ∩ w.rightRemainder).card))
 
-def gainDefectExposureCodeSupport
-    {W : Type*} [DecidableEq W] (T : W) (H : Finset W) (q : ℕ) : Finset (GainDefectExposureCode W) :=
+def gainDefectExposureCodeSupport {W : Type*} [DecidableEq W] (T : W) (H : Finset W) (q : ℕ) :
+    Finset (GainDefectExposureCode W) :=
   ((H.powerset.image (insert T)) ×ˢ H.powerset) ×ˢ (range (q + 1) ×ˢ range (q + 1))
 
 theorem card_gainDefectExposureCodeSupport_le

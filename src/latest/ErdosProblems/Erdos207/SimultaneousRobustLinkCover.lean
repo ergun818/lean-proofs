@@ -81,7 +81,7 @@ noncomputable instance bipartiteLinkRelevantBadPair.instDecidableRel
 /-- A two-sided robust local sample, after deleting exactly the unsafe
 pairs, gives the state-dependent extension required by the cover iterator. -/
 theorem exists_reservoirLinkCover_of_twoSidedRobustSample
-    {V : Type*} [Fintype V] [DecidableEq V]
+    {V : Type*} [Finite V] [DecidableEq V]
     (F : ForbiddenFamilyOn V) (available P : TripleSystemOn V)
     (K : BipartiteLink V)
     (r : ↥K.left → ↥K.right → Prop) [DecidableRel r]
@@ -103,6 +103,7 @@ theorem exists_reservoirLinkCover_of_twoSidedRobustSample
       Disjoint P M ∧ IsPackingOn (P ∪ M) ∧
       AvoidsForbidden (P ∪ M) F ∧ CoversBipartiteLink K M := by
   classical
+  let := Fintype.ofFinite V
   let sampled : ↥K.left → ↥K.right → Prop :=
     fun a b ↦ r a b ∧ (a, b) ∈ R
   let : DecidableRel sampled := by
@@ -200,7 +201,7 @@ def bipartiteLinkRelevantRightPairConflictNeighbors
 /-- If every candidate avoids the historical packing, a conflict with the
 current packing is already a conflict with a newly added triangle. -/
 lemma bipartiteLinkRelevantPairConflictNeighbors_subset_sdiff
-    {V : Type*} [Fintype V] [DecidableEq V]
+    {V : Type*} [Finite V] [DecidableEq V]
     {K : BipartiteLink V}
     (r : ↥K.left → ↥K.right → Prop)
     (Pbase P : TripleSystemOn V)
@@ -212,6 +213,7 @@ lemma bipartiteLinkRelevantPairConflictNeighbors_subset_sdiff
     bipartiteLinkRelevantPairConflictNeighbors r P a ⊆
       linkPairConflictNeighbors (P \ Pbase) K a := by
   classical
+  let := Fintype.ofFinite V
   intro b hb
   have hb' := mem_filter.mp hb
   apply mem_filter.mpr
@@ -230,7 +232,7 @@ lemma bipartiteLinkRelevantPairConflictNeighbors_subset_sdiff
 /-- Right-oriented counterpart of
 `bipartiteLinkRelevantPairConflictNeighbors_subset_sdiff`. -/
 lemma bipartiteLinkRelevantRightPairConflictNeighbors_subset_sdiff
-    {V : Type*} [Fintype V] [DecidableEq V]
+    {V : Type*} [Finite V] [DecidableEq V]
     {K : BipartiteLink V}
     (r : ↥K.left → ↥K.right → Prop)
     (Pbase P : TripleSystemOn V)
@@ -242,6 +244,7 @@ lemma bipartiteLinkRelevantRightPairConflictNeighbors_subset_sdiff
     bipartiteLinkRelevantRightPairConflictNeighbors r P b ⊆
       linkRightPairConflictNeighbors (P \ Pbase) K b := by
   classical
+  let := Fintype.ofFinite V
   intro a ha
   have ha' := mem_filter.mp ha
   apply mem_filter.mpr
@@ -260,7 +263,7 @@ lemma bipartiteLinkRelevantRightPairConflictNeighbors_subset_sdiff
 /-- The relevant bad neighbors are contained in the union of relevant
 pair-conflicts and all forbidden-participation conflicts. -/
 lemma deletedNeighbors_bipartiteLinkRelevantBadPair_subset
-    {V : Type*} [Fintype V] [DecidableEq V]
+    {V : Type*} [Finite V] [DecidableEq V]
     {K : BipartiteLink V}
     (r : ↥K.left → ↥K.right → Prop) [DecidableRel r]
     (F : ForbiddenFamilyOn V) (P : TripleSystemOn V)
@@ -270,6 +273,7 @@ lemma deletedNeighbors_bipartiteLinkRelevantBadPair_subset
       bipartiteLinkRelevantPairConflictNeighbors r P a ∪
         linkForbiddenParticipantNeighbors F P K R a := by
   classical
+  let := Fintype.ofFinite V
   intro b hb
   rw [mem_deletedNeighbors_iff] at hb
   obtain ⟨hr, hconflict | hforbidden⟩ := hb
@@ -281,7 +285,7 @@ lemma deletedNeighbors_bipartiteLinkRelevantBadPair_subset
 /-- Right-oriented counterpart of
 `deletedNeighbors_bipartiteLinkRelevantBadPair_subset`. -/
 lemma deletedNeighbors_transpose_bipartiteLinkRelevantBadPair_subset
-    {V : Type*} [Fintype V] [DecidableEq V]
+    {V : Type*} [Finite V] [DecidableEq V]
     {K : BipartiteLink V}
     (r : ↥K.left → ↥K.right → Prop) [DecidableRel r]
     (F : ForbiddenFamilyOn V) (P : TripleSystemOn V)
@@ -292,6 +296,7 @@ lemma deletedNeighbors_transpose_bipartiteLinkRelevantBadPair_subset
       bipartiteLinkRelevantRightPairConflictNeighbors r P b ∪
         linkRightForbiddenParticipantNeighbors F P K R b := by
   classical
+  let := Fintype.ofFinite V
   intro a ha
   rw [mem_deletedNeighbors_iff] at ha
   obtain ⟨hr, hconflict | hforbidden⟩ := ha

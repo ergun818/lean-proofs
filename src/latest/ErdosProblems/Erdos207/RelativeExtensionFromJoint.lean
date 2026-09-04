@@ -108,7 +108,7 @@ theorem expected_setWeight_sdiff_le_of_joint
       rw [Finset.sum_mul]
       apply sum_congr rfl
       intro ω _hω
-      by_cases hSω : S ⊆ selected ω <;> simp [hSω, mul_assoc]
+      by_cases hSω : S ⊆ selected ω <;> simp [hSω]
     _ ≤ ∑ S ∈ U.powerset,
         (C * setWeight pi S) * setWeight sigma (U \ S) := by
       apply sum_le_sum

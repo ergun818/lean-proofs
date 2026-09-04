@@ -51,43 +51,56 @@ theorem distinctEqualRemainderPairs_blocks_pairwiseDisjoint
     exact hqcross.1 (h ▸ hpdata.2.2.2.2.1)
   · exact hpq (distinctEqualRemainderPairs_snd_injOn F T T' hp hq (hEp.symm.trans hEq))
 
-theorem distinctEqualRemainderPairs_blockProbability
-    {W : Type*} [DecidableEq W] {F : Finset (Finset W)} {T T' : W}
-    (p : ℝ≥0) (C : Finset W × Finset W)
+theorem distinctEqualRemainderPairs_blockProbability {W : Type*} [DecidableEq W]
+    {F : Finset (Finset W)} {T T' : W} (p : ℝ≥0) (C : Finset W × Finset W)
     (hC : C ∈ distinctEqualRemainderPairs F T T') :
-    blockProbability (fun _ : Finset W ↦ p) (fun C : Finset W × Finset W ↦ {C.1, C.2}) C = p ^ 2 := by
-  have hne := (mem_distinctEqualRemainderPairs_iff.mp hC).2.2.1
-  simp [blockProbability, hne, pow_two]
+    blockProbability (fun _ : Finset W ↦ p) (fun C : Finset W × Finset W ↦ { C.1, C.2 }) C =
+      p ^ 2 :=
+  by
+    have hne := (mem_distinctEqualRemainderPairs_iff.mp hC).2.2.1
+    simp [blockProbability, hne, pow_two]
 
-theorem independentBits_probability_configurationPairs_card_ge_le
-    {W : Type*} [Fintype W] [DecidableEq W]
-    (F : Finset (Finset W)) (T T' : W) (p : ℝ≥0) (hp : p ≤ 1) (k : ℕ) :
+theorem independentBits_probability_configurationPairs_card_ge_le {W : Type*} [Fintype W]
+    [DecidableEq W] (F : Finset (Finset W)) (T T' : W) (p : ℝ≥0) (hp : p ≤ 1) (k : ℕ) :
     (FiniteLaw.independentBits (fun _ : Finset W ↦ p) (fun _ ↦ hp)).probability
-      (fun ω ↦ k ≤ (activeBlocks (fun C : Finset W × Finset W ↦ {C.1, C.2})
-        (distinctEqualRemainderPairs F T T') ω).card) ≤
-      ((distinctEqualRemainderPairs F T T').card.choose k : ℝ≥0) * (p ^ 2) ^ k := by
-  have h := independentBits_probability_activeBlocks_card_ge_le (fun _ : Finset W ↦ p) (fun _ ↦ hp)
-    (fun C : Finset W × Finset W ↦ {C.1, C.2}) (distinctEqualRemainderPairs F T T')
-    (distinctEqualRemainderPairs_blocks_pairwiseDisjoint F T T') k
-  apply h.trans_eq
-  calc
-    _ = ∑ A ∈ (distinctEqualRemainderPairs F T T').powersetCard k, (p ^ 2) ^ k := by
-      apply sum_congr rfl
-      intro A hA
-      obtain ⟨hsub, hcard⟩ := mem_powersetCard.mp hA
-      calc
-        _ = ∏ _C ∈ A, p ^ 2 := prod_congr rfl (fun C hC ↦ distinctEqualRemainderPairs_blockProbability p C (hsub hC))
-        _ = _ := by rw [prod_const, hcard]
-    _ = _ := by simp only [sum_const, nsmul_eq_mul, card_powersetCard]
+        (fun ω ↦
+          k ≤
+            (activeBlocks (fun C : Finset W × Finset W ↦ { C.1, C.2 })
+                (distinctEqualRemainderPairs F T T') ω).card) ≤
+      ((distinctEqualRemainderPairs F T T').card.choose k : ℝ≥0) * (p ^ 2) ^ k :=
+  by
+    have h :=
+      independentBits_probability_activeBlocks_card_ge_le (fun _ : Finset W ↦ p) (fun _ ↦ hp)
+        (fun C : Finset W × Finset W ↦ { C.1, C.2 }) (distinctEqualRemainderPairs F T T')
+        (distinctEqualRemainderPairs_blocks_pairwiseDisjoint F T T') k
+    apply h.trans_eq
+    calc
+      _ = ∑ A ∈ (distinctEqualRemainderPairs F T T').powersetCard k, (p ^ 2) ^ k :=
+        by
+          apply sum_congr rfl
+          intro A hA
+          obtain ⟨hsub, hcard⟩ := mem_powersetCard.mp hA
+          calc
+            _ = ∏ _C ∈ A, p ^ 2 :=
+              prod_congr rfl
+                (fun C hC ↦ distinctEqualRemainderPairs_blockProbability p C (hsub hC))
+            _ = _ :=
+              by
+                rw [prod_const, hcard]
+      _ = _ :=
+        by
+          simp only [sum_const, nsmul_eq_mul, card_powersetCard]
 
-theorem distinctEqualRemainderPairs_sample_eq_activeBlocks
-    {W : Type*} [DecidableEq W] (F : Finset (Finset W)) (T T' : W) (ω : Finset W → Bool) :
+theorem distinctEqualRemainderPairs_sample_eq_activeBlocks {W : Type*} [DecidableEq W]
+    (F : Finset (Finset W)) (T T' : W) (ω : Finset W → Bool) :
     distinctEqualRemainderPairs (F.filter fun E ↦ ω E = true) T T' =
-      activeBlocks (fun C : Finset W × Finset W ↦ {C.1, C.2}) (distinctEqualRemainderPairs F T T') ω := by
-  ext C
-  simp only [mem_distinctEqualRemainderPairs_iff, mem_filter, mem_activeBlocks_iff,
-    IsBlockActive, forall_mem_insert, mem_singleton, forall_eq]
-  tauto
+      activeBlocks (fun C : Finset W × Finset W ↦ { C.1, C.2 })
+        (distinctEqualRemainderPairs F T T') ω :=
+  by
+    ext C
+    simp only [mem_distinctEqualRemainderPairs_iff, mem_filter, mem_activeBlocks_iff,
+      IsBlockActive, forall_mem_insert, mem_singleton, forall_eq]
+    tauto
 
 theorem independentBits_probability_sampledConfigurationPairs_card_ge_le_dyadic
     {W : Type*} [Fintype W] [DecidableEq W]

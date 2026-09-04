@@ -37,11 +37,12 @@ theorem localForbiddenAuxiliary_decode
         localForbiddenConfigurations F A old j :=
   finiteHypergraphOnSubset_decode A _ (localForbiddenConfigurations_supported F A old j)
 
-theorem localForbiddenAuxiliary_uniform
-    {V : Type*} [DecidableEq V] (F : ForbiddenFamilyOn V)
+theorem localForbiddenAuxiliary_uniform {V : Type*} [DecidableEq V] (F : ForbiddenFamilyOn V)
     (A old : TripleSystemOn V) (j : ℕ) :
-    ∀ E ∈ finiteHypergraphOnSubset A (localForbiddenConfigurations F A old j), E.card = j - 2 :=
-  (finiteHypergraphOnSubset_uniform A _ (localForbiddenConfigurations_supported F A old j) (j - 2)).mpr
+    ∀ E ∈ finiteHypergraphOnSubset A (localForbiddenConfigurations F A old j),
+      E.card = j - 2 :=
+  (finiteHypergraphOnSubset_uniform A _ (localForbiddenConfigurations_supported F A old j)
+        (j - 2)).mpr
     (localForbiddenConfigurations_uniform F A old j)
 
 theorem localForbiddenAuxiliary_degree
@@ -51,10 +52,10 @@ theorem localForbiddenAuxiliary_degree
       finiteHypergraphDegree (localForbiddenConfigurations F A old j) T.val :=
   finiteHypergraphOnSubset_degree A _ (localForbiddenConfigurations_supported F A old j) T
 
-theorem localForbiddenAuxiliary_maxDegree
-    {V : Type*} [Fintype V] [DecidableEq V] (F : ForbiddenFamilyOn V)
-    (A old : TripleSystemOn V) (j : ℕ) :
-    finiteHypergraphMaxDegree (finiteHypergraphOnSubset A (localForbiddenConfigurations F A old j)) =
+theorem localForbiddenAuxiliary_maxDegree {V : Type*} [Fintype V] [DecidableEq V]
+    (F : ForbiddenFamilyOn V) (A old : TripleSystemOn V) (j : ℕ) :
+    finiteHypergraphMaxDegree
+        (finiteHypergraphOnSubset A (localForbiddenConfigurations F A old j)) =
       finiteHypergraphMaxDegree (localForbiddenConfigurations F A old j) :=
   finiteHypergraphOnSubset_maxDegree A _ (localForbiddenConfigurations_supported F A old j)
 

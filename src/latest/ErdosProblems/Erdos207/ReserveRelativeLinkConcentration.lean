@@ -11,39 +11,54 @@ import ErdosProblems.Erdos207.ReserveSampledLinkConcentration
 namespace Erdos207
 
 open Finset
-open scoped Classical NNReal
+open scoped NNReal
 
 noncomputable section
 
-theorem reserveEdgeLaw_probability_abs_sampledLinkDegree_gt
-    {V : Type*} [Fintype V] [DecidableEq V]
-    (G : SimpleGraph V) (A : TripleSystemOn V) (U : Finset V) (htri : ConsistsOfTriangles G A)
-    (center x : V) (hc : center ∉ U) (r : ℝ≥0) (hr : r ≤ 1) (delta : ℝ)
-    (hdelta : 0 ≤ delta) (hdelta1 : delta ≤ 1) :
-    ((reserveEdgeLaw G U r hr).probability (fun bits ↦
-      delta*((r : ℝ)*(ambientLinkNeighborsIn center A U x).card) <
-        |((ambientLinkNeighborsIn center A (spokeVerticesIn U (reserveEdges G U bits) center) x).card : ℝ)-
-          (r : ℝ)*(ambientLinkNeighborsIn center A U x).card|) : ℝ) ≤
-      2*Real.exp (-delta^2*((r : ℝ)*(ambientLinkNeighborsIn center A U x).card)/4) := by
-  have hb := reserveEdgeLaw_probability_abs_inter_count_gt G U r hr (ambientLinkSpokeEdges center A U x)
-    (ambientLinkSpokeEdges_subset_crossingEdges htri hc) delta hdelta hdelta1
-  simpa only [ambientLinkSpokeEdges_card center A U x hc,
-    sampledAmbientLinkNeighbors_card_eq_inter center A U _ x hc] using hb
+theorem reserveEdgeLaw_probability_abs_sampledLinkDegree_gt {V : Type*} [Fintype V]
+    [DecidableEq V] (G : SimpleGraph V) (A : TripleSystemOn V) (U : Finset V)
+    (htri : ConsistsOfTriangles G A) (center x : V) (hc : center ∉ U) (r : ℝ≥0) (hr : r ≤ 1)
+    (delta : ℝ) (hdelta : 0 ≤ delta) (hdelta1 : delta ≤ 1) :
+    ((reserveEdgeLaw G U r hr).probability
+          (fun bits ↦
+            delta * ((r : ℝ) * (ambientLinkNeighborsIn center A U x).card) <
+              |((ambientLinkNeighborsIn center A
+                        (spokeVerticesIn U (reserveEdges G U bits) center) x).card :
+                    ℝ) -
+                  (r : ℝ) * (ambientLinkNeighborsIn center A U x).card|) :
+        ℝ) ≤
+      2 *
+        Real.exp (-delta ^ 2 * ((r : ℝ) * (ambientLinkNeighborsIn center A U x).card) / 4) :=
+  by
+    have hb :=
+      reserveEdgeLaw_probability_abs_inter_count_gt G U r hr
+        (ambientLinkSpokeEdges center A U x)
+        (ambientLinkSpokeEdges_subset_crossingEdges htri hc) delta hdelta hdelta1
+    simpa only [ambientLinkSpokeEdges_card center A U x hc,
+      sampledAmbientLinkNeighbors_card_eq_inter center A U _ x hc] using hb
 
-theorem reserveEdgeLaw_probability_abs_sampledLinkCodegree_gt
-    {V : Type*} [Fintype V] [DecidableEq V]
-    (G : SimpleGraph V) (A : TripleSystemOn V) (U : Finset V) (htri : ConsistsOfTriangles G A)
-    (center x y : V) (hc : center ∉ U) (r : ℝ≥0) (hr : r ≤ 1) (delta : ℝ)
-    (hdelta : 0 ≤ delta) (hdelta1 : delta ≤ 1) :
-    ((reserveEdgeLaw G U r hr).probability (fun bits ↦
-      delta*((r : ℝ)*(ambientLinkCommonNeighborsIn center A U x y).card) <
-        |((ambientLinkCommonNeighborsIn center A (spokeVerticesIn U (reserveEdges G U bits) center) x y).card : ℝ)-
-          (r : ℝ)*(ambientLinkCommonNeighborsIn center A U x y).card|) : ℝ) ≤
-      2*Real.exp (-delta^2*((r : ℝ)*(ambientLinkCommonNeighborsIn center A U x y).card)/4) := by
-  have hb := reserveEdgeLaw_probability_abs_inter_count_gt G U r hr (ambientLinkCommonSpokeEdges center A U x y)
-    (ambientLinkCommonSpokeEdges_subset_crossingEdges htri hc) delta hdelta hdelta1
-  simpa only [ambientLinkCommonSpokeEdges_card center A U x y hc,
-    sampledAmbientLinkCommonNeighbors_card_eq_inter center A U _ x y hc] using hb
+theorem reserveEdgeLaw_probability_abs_sampledLinkCodegree_gt {V : Type*} [Fintype V]
+    [DecidableEq V] (G : SimpleGraph V) (A : TripleSystemOn V) (U : Finset V)
+    (htri : ConsistsOfTriangles G A) (center x y : V) (hc : center ∉ U) (r : ℝ≥0) (hr : r ≤ 1)
+    (delta : ℝ) (hdelta : 0 ≤ delta) (hdelta1 : delta ≤ 1) :
+    ((reserveEdgeLaw G U r hr).probability
+          (fun bits ↦
+            delta * ((r : ℝ) * (ambientLinkCommonNeighborsIn center A U x y).card) <
+              |((ambientLinkCommonNeighborsIn center A
+                        (spokeVerticesIn U (reserveEdges G U bits) center) x y).card :
+                    ℝ) -
+                  (r : ℝ) * (ambientLinkCommonNeighborsIn center A U x y).card|) :
+        ℝ) ≤
+      2 *
+        Real.exp
+          (-delta ^ 2 * ((r : ℝ) * (ambientLinkCommonNeighborsIn center A U x y).card) / 4) :=
+  by
+    have hb :=
+      reserveEdgeLaw_probability_abs_inter_count_gt G U r hr
+        (ambientLinkCommonSpokeEdges center A U x y)
+        (ambientLinkCommonSpokeEdges_subset_crossingEdges htri hc) delta hdelta hdelta1
+    simpa only [ambientLinkCommonSpokeEdges_card center A U x y hc,
+      sampledAmbientLinkCommonNeighbors_card_eq_inter center A U _ x y hc] using hb
 
 theorem reserve_neighbor_spoke_image
     {V : Type*} [Fintype V] [DecidableEq V]

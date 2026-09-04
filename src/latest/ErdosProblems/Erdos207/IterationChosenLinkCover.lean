@@ -24,11 +24,12 @@ noncomputable section
 
 /-- The empty link is covered by the empty extension. -/
 lemma emptyBipartiteLink_hasLinkCoverExtension
-    {V : Type*} [Fintype V] [DecidableEq V]
+    {V : Type*} [Finite V] [DecidableEq V]
     (F : ForbiddenFamilyOn V) (available P : TripleSystemOn V)
     (center : V) (hpacking : IsPackingOn P)
     (havoid : AvoidsForbidden P F) :
     HasLinkCoverExtension F available P (emptyBipartiteLink center) := by
+  let := Fintype.ofFinite V
   refine ⟨∅, by simp, by simp, ?_, ?_, ?_⟩
   · simpa using hpacking
   · simpa using havoid
@@ -50,7 +51,7 @@ lemma IsResidualBipartition.right_card_pos
   have hempty : residualNeighbors G P center = ∅ := by
     rw [← hK.2.1, hL, hR]
     simp
-  simpa [hempty] using hne
+  simp [hempty] at hne
 
 /-- Iteration typicality, a paired-bisection estimate, and the scalar Hall
 and deletion estimates produce a chosen balanced residual link together with

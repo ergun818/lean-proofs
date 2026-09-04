@@ -22,14 +22,17 @@ def ksssAvailableCurvature (orders : Finset ℕ) (a : ℕ → ℝ) (E₀ A₀ t 
         ksssEdgeDensity E₀ t ^ 3 * ksssPoissonRate orders a t ^ 2 -
           ksssEdgeDensity E₀ t ^ 3 * ksssPoissonCurvature orders a t)
 
-theorem hasDerivAt_ksssAvailableTrajectory_slope
-    (orders : Finset ℕ) (a : ℕ → ℝ) (E₀ A₀ t : ℝ) :
-    HasDerivAt (ksssAvailableTrajectory orders a E₀ A₀) (ksssAvailableSlope orders a E₀ A₀ t) t := by
-  have h := (((hasDerivAt_ksssEdgeDensity E₀ t).pow 3).const_mul A₀).mul
-    ((hasDerivAt_ksssPoissonExponent orders a t).neg.exp)
-  convert! h using 1
-  dsimp only [ksssAvailableSlope, Pi.pow_apply, Pi.neg_apply]
-  ring
+theorem hasDerivAt_ksssAvailableTrajectory_slope (orders : Finset ℕ) (a : ℕ → ℝ)
+    (E₀ A₀ t : ℝ) :
+    HasDerivAt (ksssAvailableTrajectory orders a E₀ A₀) (ksssAvailableSlope orders a E₀ A₀ t)
+      t :=
+  by
+    have h :=
+      (((hasDerivAt_ksssEdgeDensity E₀ t).pow 3).const_mul A₀).mul
+        ((hasDerivAt_ksssPoissonExponent orders a t).neg.exp)
+    convert! h using 1
+    dsimp only [ksssAvailableSlope, Pi.pow_apply, Pi.neg_apply]
+    ring
 
 theorem hasDerivAt_ksssAvailableSlope
     (orders : Finset ℕ) (a : ℕ → ℝ) (E₀ A₀ t : ℝ) (hE : E₀ ≠ 0) :
@@ -41,7 +44,7 @@ theorem hasDerivAt_ksssAvailableSlope
     (((hp.pow 2).const_mul (-9 / E₀)).sub ((hp.pow 3).mul hr))
   convert! h using 1
   dsimp only [ksssAvailableCurvature, Pi.pow_apply, Pi.neg_apply, Pi.sub_apply, Pi.mul_apply]
-  field_simp <;> ring
+  field_simp ; ring
 
 theorem ksssAvailableSlope_eq_neg_threat
     (orders : Finset ℕ) (a : ℕ → ℝ) (E₀ A₀ t : ℝ)

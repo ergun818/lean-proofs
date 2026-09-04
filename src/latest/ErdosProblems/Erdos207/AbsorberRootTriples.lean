@@ -37,14 +37,14 @@ theorem sphereRootTriple_not_mem_sphereBank
     have h : SphereVertex.cycle z ∈
         (sphereTriangle hq t).1 := by
       rw [ht]
-      simp [sphereRootTriple, z, o]
+      simp [sphereRootTriple, z]
     simpa using (sphere_cycle_mem hq t z).mp h
   have hone : o = t.1.1 ∨
       o = finCycleSucc (by omega) t.1.1 := by
     have h : SphereVertex.cycle o ∈
         (sphereTriangle hq t).1 := by
       rw [ht]
-      simp [sphereRootTriple, z, o]
+      simp [sphereRootTriple, o]
     simpa using (sphere_cycle_mem hq t o).mp h
   rcases hzero with hzero | hzero <;>
     rcases hone with hone | hone

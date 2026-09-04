@@ -352,7 +352,7 @@ lemma probability_bind {Ξ : Type*} [Fintype Ξ]
         ∑ y, ∑ x, L.mass x * (if P y then (K x).mass y else 0) := by
       apply Finset.sum_congr rfl
       intro y _hy
-      by_cases hy : P y <;> simp [hy, Finset.mul_sum]
+      by_cases hy : P y <;> simp [hy]
     _ = ∑ x, ∑ y, L.mass x *
         (if P y then (K x).mass y else 0) := Finset.sum_comm
     _ = ∑ x, L.mass x *
@@ -556,7 +556,7 @@ lemma probability_mono_on_support (L : FiniteLaw Ω)
     simp [hzero]
 
 /-- Union bound over an arbitrary finite family of events. -/
-lemma probability_exists_le {I : Type*} [DecidableEq I] (L : FiniteLaw Ω)
+lemma probability_exists_le {I : Type*} (L : FiniteLaw Ω)
     (S : Finset I) (P : I → Ω → Prop) :
     L.probability (fun ω ↦ ∃ i ∈ S, P i ω) ≤
       ∑ i ∈ S, L.probability (P i) := by
@@ -574,10 +574,11 @@ lemma probability_exists_le {I : Type*} [DecidableEq I] (L : FiniteLaw Ω)
 /-- A strict union-bound estimate supplies one outcome avoiding every bad
 event in the finite family. -/
 theorem exists_avoiding_of_sum_probability_lt_one
-    {I : Type*} [DecidableEq I] (L : FiniteLaw Ω)
+    {I : Type*} (L : FiniteLaw Ω)
     (S : Finset I) (P : I → Ω → Prop)
     (hsmall : ∑ i ∈ S, L.probability (P i) < 1) :
     ∃ ω, ∀ i ∈ S, ¬ P i ω := by
+  classical
   have hbad : L.probability (fun ω ↦ ∃ i ∈ S, P i ω) < 1 :=
     (L.probability_exists_le S P).trans_lt hsmall
   by_contra hnone
@@ -592,11 +593,13 @@ theorem exists_avoiding_of_sum_probability_lt_one
 avoidance probabilities is below one, one selected set meets every member of
 the prescribed finite family. -/
 theorem exists_selected_meets_all_of_sum_avoidance_lt_one
-    {I J : Type*} [Fintype I] [DecidableEq I] [DecidableEq J]
+    {I J : Type*} [Finite I]
     (p : I → ℝ≥0) (hp : ∀ i, p i ≤ 1)
     (S : Finset J) (groups : J → Finset I)
     (hsmall : ∑ j ∈ S, ∏ i ∈ groups j, (1 - p i) < 1) :
     ∃ R : Finset I, ∀ j ∈ S, ¬ Disjoint (groups j) R := by
+  classical
+  let := Fintype.ofFinite I
   let L := independentBits p hp
   obtain ⟨ω, hω⟩ := L.exists_avoiding_of_sum_probability_lt_one S
     (fun j ω ↦ Disjoint (groups j) (selectedByBits ω)) (by

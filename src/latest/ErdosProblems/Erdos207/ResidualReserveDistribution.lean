@@ -71,40 +71,64 @@ theorem IsResidualReserveStronglyWellDistributed.map
   rw [FiniteLaw.probability_map]
   exact h Ifix Dfix Efix Rfix hdis hE
 
-theorem IsResidualReserveStronglyWellDistributed.conditionOn
-    {Ω V : Type*} [Fintype Ω] [Fintype V] [DecidableEq V] {ell : ℕ}
-    {L : FiniteLaw Ω} {W : Vortex V ell} {k : Fin (ell + 1)} {G : SimpleGraph V}
-    {initial later : Ω → TripleSystemOn V} {reserve : Ω → Finset (Sym2 V)} {p r C b : ℝ≥0}
+theorem IsResidualReserveStronglyWellDistributed.conditionOn {Ω V : Type*} [Fintype Ω]
+    [Fintype V] [DecidableEq V] {ell : ℕ} {L : FiniteLaw Ω} {W : Vortex V ell}
+    {k : Fin (ell + 1)} {G : SimpleGraph V} {initial later : Ω → TripleSystemOn V}
+    {reserve : Ω → Finset (Sym2 V)} {p r C b : ℝ≥0}
     (h : IsResidualReserveStronglyWellDistributed L W k G initial later reserve p r C b)
     (Good : Ω → Prop) (hGood : 0 < L.probability Good) :
-    IsResidualReserveStronglyWellDistributed (L.conditionOn Good hGood) W k G
-      initial later reserve p r (C / L.probability Good) b := by
-  intro Ifix Dfix Efix Rfix hdis hE
-  let m := Ifix.card + Dfix.card + Efix.card + Rfix.card
-  let X := p ^ Efix.card * r ^ Rfix.card * (Fintype.card V : ℝ≥0)⁻¹ ^ Ifix.card *
-    laterTriangleScale W k p Dfix + b
-  by_cases hm : m = 0
-  · have hI : Ifix = ∅ := card_eq_zero.mp (by dsimp only [m] at hm; omega)
-    have hD : Dfix = ∅ := card_eq_zero.mp (by dsimp only [m] at hm; omega)
-    have hE' : Efix = ∅ := card_eq_zero.mp (by dsimp only [m] at hm; omega)
-    have hR : Rfix = ∅ := card_eq_zero.mp (by dsimp only [m] at hm; omega)
-    subst Ifix
-    subst Dfix
-    subst Efix
-    subst Rfix
-    exact ((L.conditionOn Good hGood).probability_le_one _).trans (by simp)
-  · have hzpow : L.probability Good ^ m ≤ L.probability Good :=
-      pow_le_of_le_one zero_le (L.probability_le_one Good) hm
-    have hscale : C ^ m / L.probability Good ≤ (C / L.probability Good) ^ m := by
-      rw [div_pow]
-      gcongr
-    calc
-      _ ≤ L.probability (ResidualReserveDistributionEvent initial later reserve Ifix Dfix Efix Rfix) /
-          L.probability Good := L.conditionOn_probability_le Good _ hGood
-      _ ≤ (C ^ m * X) / L.probability Good :=
-          div_le_div_of_nonneg_right (h Ifix Dfix Efix Rfix hdis hE) zero_le
-      _ = (C ^ m / L.probability Good) * X := by ring
-      _ ≤ (C / L.probability Good) ^ m * X := mul_le_mul_of_nonneg_right hscale zero_le
+    IsResidualReserveStronglyWellDistributed (L.conditionOn Good hGood) W k G initial later
+      reserve p r (C / L.probability Good) b :=
+  by
+    intro Ifix Dfix Efix Rfix hdis hE
+    let m := Ifix.card + Dfix.card + Efix.card + Rfix.card
+    let X :=
+      p ^ Efix.card * r ^ Rfix.card * (Fintype.card V : ℝ≥0)⁻¹ ^ Ifix.card *
+          laterTriangleScale W k p Dfix +
+        b
+    by_cases hm : m = 0
+    · have hI : Ifix = ∅ :=
+        card_eq_zero.mp
+          (by
+            dsimp only [m] at hm; omega)
+      have hD : Dfix = ∅ :=
+        card_eq_zero.mp
+          (by
+            dsimp only [m] at hm; omega)
+      have hE' : Efix = ∅ :=
+        card_eq_zero.mp
+          (by
+            dsimp only [m] at hm; omega)
+      have hR : Rfix = ∅ :=
+        card_eq_zero.mp
+          (by
+            dsimp only [m] at hm; omega)
+      subst Ifix
+      subst Dfix
+      subst Efix
+      subst Rfix
+      exact
+        ((L.conditionOn Good hGood).probability_le_one _).trans
+          (by
+            simp)
+    · have hzpow : L.probability Good ^ m ≤ L.probability Good :=
+        pow_le_of_le_one zero_le (L.probability_le_one Good) hm
+      have hscale : C ^ m / L.probability Good ≤ (C / L.probability Good) ^ m :=
+        by
+          rw [div_pow]
+          gcongr
+      calc
+        _ ≤
+            L.probability
+                (ResidualReserveDistributionEvent initial later reserve Ifix Dfix Efix Rfix) /
+              L.probability Good :=
+          L.conditionOn_probability_le Good _ hGood
+        _ ≤ (C ^ m * X) / L.probability Good :=
+          (div_le_div_of_nonneg_right (h Ifix Dfix Efix Rfix hdis hE) zero_le)
+        _ = (C ^ m / L.probability Good) * X :=
+          by
+            ring
+        _ ≤ (C / L.probability Good) ^ m * X := mul_le_mul_of_nonneg_right hscale zero_le
 
 theorem IsResidualGraphStronglyWellDistributed.jointBind_reserveEdges
     {Omega V : Type*} [Fintype Omega] [DecidableEq Omega]

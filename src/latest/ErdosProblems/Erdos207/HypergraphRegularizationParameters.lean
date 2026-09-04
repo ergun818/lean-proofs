@@ -39,27 +39,40 @@ theorem regularization_order_bounds
   · exact (Nat.mul_pos hfactor hr).trans_le hsize
   · exact (Nat.le_mul_of_pos_left (k - 1) hfactor).trans hsize
 
-theorem uniformBlocked_budget_of_max_degree
-    {V : Type*} [Fintype V] [DecidableEq V] (H : Finset (Finset V)) {k : ℕ}
-    (hk : 1 ≤ k) (v : V)
-    (hdensity : (2 : ℝ≥0) ^ k * finiteHypergraphMaxDegree H ≤
-      (1 / 4 : ℝ≥0) * Nat.choose (Fintype.card V) (k - 1)) :
+theorem uniformBlocked_budget_of_max_degree {V : Type*} [Fintype V] [DecidableEq V]
+    (H : Finset (Finset V)) {k : ℕ} (hk : 1 ≤ k) (v : V)
+    (hdensity :
+      (2 : ℝ≥0) ^ k * finiteHypergraphMaxDegree H ≤
+        (1 / 4 : ℝ≥0) * Nat.choose (Fintype.card V) (k - 1)) :
     (2 : ℝ≥0) ^ (k - 1) * (uniformIncidentSets k v ∩ H).card ≤
-      (1 / 8 : ℝ≥0) * Nat.choose (Fintype.card V) (k - 1) := by
-  have hcard : ((uniformIncidentSets k v ∩ H).card : ℝ≥0) ≤ finiteHypergraphMaxDegree H := by
-    exact_mod_cast (uniformIncident_inter_card_le_degree H k v).trans (finiteHypergraphDegree_le_max H v)
-  apply (mul_le_mul_of_nonneg_left hcard (show (0 : ℝ≥0) ≤ 2 ^ (k - 1) from zero_le)).trans
-  have hpow : (2 : ℝ≥0) ^ k = 2 * 2 ^ (k - 1) := by
-    rw [← pow_succ']
-    congr 1
-    omega
-  apply (mul_le_mul_iff_right₀ (by norm_num : (0 : ℝ≥0) < 2)).mp
-  calc
-    _ = (2 : ℝ≥0) ^ k * finiteHypergraphMaxDegree H := by rw [hpow]; ring
-    _ ≤ _ := hdensity
-    _ = _ := by ring
+      (1 / 8 : ℝ≥0) * Nat.choose (Fintype.card V) (k - 1) :=
+  by
+    have hcard : ((uniformIncidentSets k v ∩ H).card : ℝ≥0) ≤ finiteHypergraphMaxDegree H :=
+      by
+        exact_mod_cast
+          (uniformIncident_inter_card_le_degree H k v).trans
+            (finiteHypergraphDegree_le_max H v)
+    apply (mul_le_mul_of_nonneg_left hcard (show (0 : ℝ≥0) ≤ 2 ^ (k - 1) from zero_le)).trans
+    have hpow : (2 : ℝ≥0) ^ k = 2 * 2 ^ (k - 1) :=
+      by
+        rw [← pow_succ']
+        congr 1
+        omega
+    apply
+      (mul_le_mul_iff_right₀
+          (by
+              norm_num :
+            (0 : ℝ≥0) < 2)).mp
+    calc
+      _ = (2 : ℝ≥0) ^ k * finiteHypergraphMaxDegree H :=
+        by
+          rw [hpow]; ring
+      _ ≤ _ := hdensity
+      _ = _ :=
+        by
+          ring
 
-def hypergraphRegularizationParameters
+theorem hypergraphRegularizationParameters
     {V : Type*} [Fintype V] [DecidableEq V] [Nonempty V]
     (G H : Finset (Finset V)) (hGH : G ⊆ H) {k : ℕ} (hk : 2 ≤ k)
     (hgap : 0 < finiteHypergraphDegreeGap G)

@@ -104,7 +104,7 @@ lemma localizedRootedThreat_isIndexed
 abbrev LocalizedIndexedRootedThreatCode
     (V : Type*) [Fintype V] [DecidableEq V]
     (q : ℕ) (B : TripleSystemOn V) (u v : V) (U : Finset V) :=
-  Σ T : LocalizedUniverseTriplesThroughPair V u v U,
+  Σ _T : LocalizedUniverseTriplesThroughPair V u v U,
     Σ j : IndexedThreatOrder q,
       {S : TripleSystemOn V //
         S ∈ absorberInducedConfigurationsOn q j.1 B}

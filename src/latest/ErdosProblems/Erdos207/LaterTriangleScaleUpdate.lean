@@ -184,14 +184,14 @@ lemma reserveLinkPowersetPart_le
     (laterTriangleScale W k p S) (laterTriangleScale W next p' Dfix)
     Ifix.card S.card Efix.card (Dfix \ S).card Dfix.card hcard
     hCC' hC' hpp' herrorFactor hbb' hscale
-  convert h using 1 <;> ring
+  convert h using 1 ; ring
 
 /-- Numeric endpoint for the reserve-aware simultaneous link update.  The
 entire powerset partition is discharged by three parameter comparisons and
 one uniform lower bound on the next per-triangle scale. -/
 theorem IsReserveStronglyWellDistributed.jointBind_simultaneousLink_of_numeric
     {Omega O V : Type*} [Fintype Omega] [DecidableEq Omega]
-    [Fintype O] [Fintype V] [DecidableEq V]
+    [Finite O] [Fintype V] [DecidableEq V]
     {ell : ℕ} {law : FiniteLaw Omega}
     {linkLaw : Omega → FiniteLaw (TripleSystemOn V)}
     {W : Vortex V ell} {k next : Fin (ell + 1)}
@@ -221,6 +221,7 @@ theorem IsReserveStronglyWellDistributed.jointBind_simultaneousLink_of_numeric
     IsStronglyWellDistributed (law.jointBind linkLaw) W next
       (jointInitial initial) (jointLater later (fun _omega M ↦ M))
       p' (2 * C') b' := by
+  let := Fintype.ofFinite O
   apply hstrong.jointBind_simultaneousLink_of_good_partition hcenter hout
     hleft hright hspokes hstruct hC4
   intro Ifix Dfix Efix _hdisj S hS _hpacking

@@ -59,42 +59,60 @@ theorem source_stage_density_scalars
   · exact crossScale_uniform_coefficient_small t u p C tau physical ht1 hb hut hpHi hC
   · exact div_le_div_of_nonneg_left zero_le (pow_pos ht0 _) hpower
 
-theorem exists_source_stage_scale
-    (q B z k Rmin D d : ℕ) (hmin : 1 ≤ Rmin) (hd : 1 ≤ d)
+theorem exists_source_stage_scale (q B z k Rmin D d : ℕ) (hmin : 1 ≤ Rmin) (hd : 1 ≤ d)
     (hk : 2 * z + 26 * q + 2 ≤ k)
     (hgap : ksssPowerDenominatorExponent q 2 B k Rmin * (d + 1) ≤ D) :
-    ∃ c : ℕ, 1 ≤ c ∧
-      2 * (z * c) + 2 * q * (5 * (2 * c) + 3) + 2 ≤ k * c ∧
-      ∀ t n : ℕ, 1 ≤ t → t ^ D ≤ n → n ≤ t ^ (D + 1) → 2 ^ c ≤ t →
-        let den := ksssPowerDenominatorExponent q (2 * c) B (k * c) (Rmin * c)
-        let u := dyadicPowerScale den n
-        u ^ den ≤ n ∧ 1 ≤ u ∧ u ≤ t ∧ t ^ d ≤ u ^ c ∧
-          (∀ N R : ℕ, N ≤ t ^ R → N ≤ u ^ (c * R)) ∧
-          (∀ T : ℕ, T ^ c ≤ t → T ≤ u) := by
-  obtain ⟨c, hc, hdenLower, hdenGap⟩ := exists_scaled_ksss_stage_exponents q 2 B k Rmin D d hmin hgap
-  refine ⟨c, hc, source_stage_scaled_crude_cutoff q z k c hc hk, ?_⟩
-  intro t n ht hnLower hnUpper hround
-  dsimp only
-  let den := ksssPowerDenominatorExponent q (2 * c) B (k * c) (Rmin * c)
-  let u := dyadicPowerScale den n
-  have ht0 : 0 < t := Nat.zero_lt_one.trans_le ht
-  have hn0 : n ≠ 0 := Nat.ne_of_gt ((pow_pos ht0 D).trans_le hnLower)
-  have hdenPos : 0 < den := by dsimp only [den]; omega
-  have hlow : t ^ d ≤ u ^ c := dyadicStageScale_cutoff_power_lower t n D den c d
-    ht0 hdenPos hnLower hdenGap hround
-  have htuc : t ≤ u ^ c := by
-    calc
-      t = t ^ 1 := (pow_one t).symm
-      _ ≤ t ^ d := Nat.pow_le_pow_right ht0 hd
-      _ ≤ _ := hlow
-  refine ⟨dyadicPowerScale_pow_le hn0, one_le_dyadicPowerScale _ _,
-    dyadicStageScale_le_base t n D den ht hn0 hdenLower hnUpper, hlow, ?_, ?_⟩
-  · intro N R hN
-    calc
-      N ≤ t ^ R := hN
-      _ ≤ (u ^ c) ^ R := Nat.pow_le_pow_left htuc R
-      _ = _ := (pow_mul u c R).symm
-  · intro T hT
-    exact (Nat.pow_le_pow_iff_left (by omega : c ≠ 0)).mp (hT.trans htuc)
+    ∃ c : ℕ,
+      1 ≤ c ∧
+        2 * (z * c) + 2 * q * (5 * (2 * c) + 3) + 2 ≤ k * c ∧
+          ∀ t n : ℕ,
+            1 ≤ t →
+              t ^ D ≤ n →
+                n ≤ t ^ (D + 1) →
+                  2 ^ c ≤ t →
+                    let den := ksssPowerDenominatorExponent q (2 * c) B (k * c) (Rmin * c)
+                    let u := dyadicPowerScale den n
+                    u ^ den ≤ n ∧
+                      1 ≤ u ∧
+                        u ≤ t ∧
+                          t ^ d ≤ u ^ c ∧
+                            (∀ N R : ℕ, N ≤ t ^ R → N ≤ u ^ (c * R)) ∧
+                              (∀ T : ℕ, T ^ c ≤ t → T ≤ u) :=
+  by
+    obtain ⟨c, hc, hdenLower, hdenGap⟩ :=
+      exists_scaled_ksss_stage_exponents q 2 B k Rmin D d hmin hgap
+    refine ⟨c, hc, source_stage_scaled_crude_cutoff q z k c hc hk, ?_⟩
+    intro t n ht hnLower hnUpper hround
+    dsimp only
+    let den := ksssPowerDenominatorExponent q (2 * c) B (k * c) (Rmin * c)
+    let u := dyadicPowerScale den n
+    have ht0 : 0 < t := Nat.zero_lt_one.trans_le ht
+    have hn0 : n ≠ 0 := Nat.ne_of_gt ((pow_pos ht0 D).trans_le hnLower)
+    have hdenPos : 0 < den :=
+      by
+        dsimp only [den]; omega
+    have hlow : t ^ d ≤ u ^ c :=
+      dyadicStageScale_cutoff_power_lower t n D den c d ht0 hdenPos hnLower hdenGap hround
+    have htuc : t ≤ u ^ c :=
+      by
+        calc
+          t = t ^ 1 := (pow_one t).symm
+          _ ≤ t ^ d := (Nat.pow_le_pow_right ht0 hd)
+          _ ≤ _ := hlow
+    refine
+      ⟨dyadicPowerScale_pow_le hn0, one_le_dyadicPowerScale _ _,
+        dyadicStageScale_le_base t n D den ht hn0 hdenLower hnUpper, hlow, ?_, ?_⟩
+    · intro N R hN
+      calc
+        N ≤ t ^ R := hN
+        _ ≤ (u ^ c) ^ R := (Nat.pow_le_pow_left htuc R)
+        _ = _ := (pow_mul u c R).symm
+    · intro T hT
+      exact
+        (Nat.pow_le_pow_iff_left
+              (by
+                  omega :
+                c ≠ 0)).mp
+          (hT.trans htuc)
 
 end Erdos207

@@ -22,30 +22,41 @@ theorem band_failure_centered_deviation
   · rw [abs_of_neg hy] at hbad
     exact Or.inr (by linarith)
 
-theorem probability_band_failure_le_two_tails
-    {Ω : Type*} [Fintype Ω] (L : FiniteLaw Ω) (tracked : Ω → Prop)
-    (y e : Ω → ℝ) (y₀ e₀ a epsilonPlus epsilonMinus : ℝ)
+theorem probability_band_failure_le_two_tails {Ω : Type*} [Fintype Ω] (L : FiniteLaw Ω)
+    (tracked : Ω → Prop) (y e : Ω → ℝ) (y₀ e₀ a epsilonPlus epsilonMinus : ℝ)
     (hmargin : ∀ ω, 0 < L.mass ω → tracked ω → |y₀| + a ≤ e₀)
-    (hplus : (L.probability (fun ω ↦ tracked ω ∧ a ≤ (y ω - e ω) - (y₀ - e₀)) : ℝ) ≤ epsilonPlus)
-    (hminus : (L.probability (fun ω ↦ tracked ω ∧ a ≤ (-y ω - e ω) - (-y₀ - e₀)) : ℝ) ≤ epsilonMinus) :
-    (L.probability (fun ω ↦ tracked ω ∧ e ω < |y ω|) : ℝ) ≤ epsilonPlus + epsilonMinus := by
-  classical
-  have hsub : ∀ ω, 0 < L.mass ω → tracked ω ∧ e ω < |y ω| →
-      (tracked ω ∧ a ≤ (y ω - e ω) - (y₀ - e₀)) ∨
-        (tracked ω ∧ a ≤ (-y ω - e ω) - (-y₀ - e₀)) := by
-    intro ω hmass h
-    rcases band_failure_centered_deviation (y ω) y₀ (e ω) e₀ a (hmargin ω hmass h.1) h.2 with hp | hm
-    · exact Or.inl ⟨h.1, hp⟩
-    · exact Or.inr ⟨h.1, hm⟩
-  have hm := (L.probability_mono_of_supported (R := fun ω ↦ 0 < L.mass ω)
-    (fun _ h ↦ h) hsub).trans
-    (L.probability_or_le (fun ω ↦ tracked ω ∧ a ≤ (y ω - e ω) - (y₀ - e₀))
-      (fun ω ↦ tracked ω ∧ a ≤ (-y ω - e ω) - (-y₀ - e₀)))
-  have hmr : (L.probability (fun ω ↦ tracked ω ∧ e ω < |y ω|) : ℝ) ≤
-      (L.probability (fun ω ↦ tracked ω ∧ a ≤ (y ω - e ω) - (y₀ - e₀)) : ℝ) +
-        (L.probability (fun ω ↦ tracked ω ∧ a ≤ (-y ω - e ω) - (-y₀ - e₀)) : ℝ) := by
-    exact_mod_cast hm
-  exact hmr.trans (add_le_add hplus hminus)
+    (hplus :
+      (L.probability (fun ω ↦ tracked ω ∧ a ≤ (y ω - e ω) - (y₀ - e₀)) : ℝ) ≤ epsilonPlus)
+    (hminus :
+      (L.probability (fun ω ↦ tracked ω ∧ a ≤ (-y ω - e ω) - (-y₀ - e₀)) : ℝ) ≤
+        epsilonMinus) :
+    (L.probability (fun ω ↦ tracked ω ∧ e ω < |y ω|) : ℝ) ≤ epsilonPlus + epsilonMinus :=
+  by
+    classical
+    have hsub :
+      ∀ ω,
+        0 < L.mass ω →
+          tracked ω ∧ e ω < |y ω| →
+            (tracked ω ∧ a ≤ (y ω - e ω) - (y₀ - e₀)) ∨
+              (tracked ω ∧ a ≤ (-y ω - e ω) - (-y₀ - e₀)) :=
+      by
+        intro ω hmass h
+        rcases
+          band_failure_centered_deviation (y ω) y₀ (e ω) e₀ a (hmargin ω hmass h.1) h.2 with
+          hp | hm
+        · exact Or.inl ⟨h.1, hp⟩
+        · exact Or.inr ⟨h.1, hm⟩
+    have hm :=
+      (L.probability_mono_of_supported (R := fun ω ↦ 0 < L.mass ω) (fun _ h ↦ h) hsub).trans
+        (L.probability_or_le (fun ω ↦ tracked ω ∧ a ≤ (y ω - e ω) - (y₀ - e₀))
+          (fun ω ↦ tracked ω ∧ a ≤ (-y ω - e ω) - (-y₀ - e₀)))
+    have hmr :
+      (L.probability (fun ω ↦ tracked ω ∧ e ω < |y ω|) : ℝ) ≤
+        (L.probability (fun ω ↦ tracked ω ∧ a ≤ (y ω - e ω) - (y₀ - e₀)) : ℝ) +
+          (L.probability (fun ω ↦ tracked ω ∧ a ≤ (-y ω - e ω) - (-y₀ - e₀)) : ℝ) :=
+      by
+        exact_mod_cast hm
+    exact hmr.trans (add_le_add hplus hminus)
 
 theorem probability_indexed_band_failure_le_two_tails
     {Ω I : Type*} [Fintype Ω] [Fintype I] (L : FiniteLaw Ω)

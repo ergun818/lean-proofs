@@ -133,12 +133,13 @@ def uniformLaw
 one bisection avoiding every bad event. -/
 theorem exists_avoiding_of_sum_probability_lt_one
     {I V : Type*} [Fintype I] [Fintype V]
-    [DecidableEq I] [DecidableEq V]
+    [DecidableEq V]
     (W : Finset V) (heven : Even W.card)
     (bad : I → BalancedBisection V W → Prop)
     (hsmall :
       ∑ i : I, (uniformLaw W heven).probability (bad i) < 1) :
     ∃ B : BalancedBisection V W, ∀ i, ¬ bad i B := by
+  classical
   obtain ⟨B, hB⟩ :=
     (uniformLaw W heven).exists_avoiding_of_sum_probability_lt_one
       (univ : Finset I) bad (by simpa using hsmall)
@@ -147,7 +148,7 @@ theorem exists_avoiding_of_sum_probability_lt_one
 /-- The preceding extraction stated directly as a chosen bipartite link. -/
 theorem exists_bipartiteLink_avoiding
     {I V : Type*} [Fintype I] [Fintype V]
-    [DecidableEq I] [DecidableEq V]
+    [DecidableEq V]
     (center : V) (W : Finset V) (hcenter : center ∉ W)
     (heven : Even W.card)
     (bad : I → BalancedBisection V W → Prop)
@@ -157,6 +158,7 @@ theorem exists_bipartiteLink_avoiding
       let K := B.toBipartiteLink center hcenter
       K.center = center ∧ K.left ∪ K.right = W ∧
         K.left.card = K.right.card ∧ ∀ i, ¬ bad i B := by
+  classical
   obtain ⟨B, hB⟩ := exists_avoiding_of_sum_probability_lt_one
     W heven bad hsmall
   exact ⟨B, rfl, B.toBipartiteLink_union center hcenter,

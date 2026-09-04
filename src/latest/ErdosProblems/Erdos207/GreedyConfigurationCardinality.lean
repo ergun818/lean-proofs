@@ -14,10 +14,11 @@ open Finset
 noncomputable section
 
 theorem configuration_chosen_add_available_card
-    {V : Type*} [Fintype V] [DecidableEq V]
+    {V : Type*} [Finite V] [DecidableEq V]
     {F : ForbiddenFamilyOn V} {S : GreedyStateOn V} {C : TripleSystemOn V}
     (hS : GreedyInvariant F S) (hC : C ⊆ S.chosen ∪ S.available) :
     (C ∩ S.chosen).card + (C ∩ S.available).card = C.card := by
+  let := Fintype.ofFinite V
   have hdisjoint : Disjoint (C ∩ S.chosen) (C ∩ S.available) := by
     apply disjoint_left.mpr
     intro U hchosen havailable

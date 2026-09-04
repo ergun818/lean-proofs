@@ -38,15 +38,24 @@ theorem localizedTwoAwayToPair_injective
   change (localizedTwoAwayToPair hpack hab w).1 = (localizedTwoAwayToPair hpack hab z).1
   exact congrArg (fun p : PairTwoAwayThreatWitness V F T ⟨{a, b}, by simp [hab]⟩ ↦ p.1) h
 
-theorem localizedTwoAway_selectedCount_le_pair
-    {V : Type*} [Fintype V] [DecidableEq V]
+theorem localizedTwoAway_selectedCount_le_pair {V : Type*} [Fintype V] [DecidableEq V]
     (F : ForbiddenFamilyOn V) (T : TripleOn V) {a b : V} (U : Finset V) (A : TripleSystemOn V)
     (hpack : ∀ C ∈ F, IsPackingOn C) (hab : a ≠ b) :
-    selectedCount (fun w : LocalizedTwoAwayWitness V F T a b U ↦ localizedTwoAwayRemainder w) A ≤
-      selectedCount (fun w : PairTwoAwayThreatWitness V F T ⟨{a, b}, by simp [hab]⟩ ↦ pairTwoAwayThreatRemainder w) A := by
-  unfold selectedCount
-  exact sum_le_sum_of_injective_code (localizedTwoAwayToPair hpack hab)
-    (localizedTwoAwayToPair_injective hpack hab) _ _ (fun _ ↦ le_rfl)
+    selectedCount (fun w : LocalizedTwoAwayWitness V F T a b U ↦ localizedTwoAwayRemainder w)
+        A ≤
+      selectedCount
+        (fun w :
+            PairTwoAwayThreatWitness V F T
+              ⟨{ a, b },
+                by
+                  simp [hab]⟩ ↦
+          pairTwoAwayThreatRemainder w)
+        A :=
+  by
+    unfold selectedCount
+    exact
+      sum_le_sum_of_injective_code (localizedTwoAwayToPair hpack hab)
+        (localizedTwoAwayToPair_injective hpack hab) _ _ (fun _ ↦ le_rfl)
 
 theorem CrudeStateBounds.pattern_loss_bound
     {V : Type*} [Fintype V] [DecidableEq V]

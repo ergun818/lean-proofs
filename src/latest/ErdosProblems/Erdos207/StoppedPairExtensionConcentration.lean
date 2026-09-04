@@ -54,7 +54,7 @@ theorem probability_timedStoppedGreedy_fixedPair_upperDeviation_ge_le_exp
     (hδ : 1 ≤ δ)
     (hqLower : ∀ i, i < n →
       -(J : ℝ) ≤ q (i + 1) - q i)
-    (hqUpper : ∀ i, i < n → q (i + 1) - q i ≤ 0)
+    (_hqUpper : ∀ i, i < n → q (i + 1) - q i ≤ 0)
     (hqDrift : ∀ i, i < n → ∀ S,
       PairTrajectoryInvariant F S₀ S → active i S →
         -(S.available.card : ℝ)⁻¹ *
@@ -205,7 +205,7 @@ theorem probability_timedStoppedGreedy_fixedPair_lowerDeviation_ge_le_exp
       PairTrajectoryInvariant F S₀ S → active i S →
         HasAvailablePairFloor δ S)
     (hqDeath : ∀ i, i < n → -(δ : ℝ) ≤ q (i + 1) - q i)
-    (hqUpper : ∀ i, i < n → q (i + 1) - q i ≤ 0)
+    (_hqUpper : ∀ i, i < n → q (i + 1) - q i ≤ 0)
     (hjumpAlive : ∀ i, i < n → ∀ S,
       PairTrajectoryInvariant F S₀ S → active i S → PairAlive P S →
       ∀ S', 0 < (greedyKernel F S).mass S' →

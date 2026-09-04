@@ -34,7 +34,7 @@ lemma thirdVertexTriple_injective
   have hw : w.1 ∈ (thirdVertexTriple huv z).1 := by
     rw [← hwz]
     exact third_mem_thirdVertexTriple huv w
-  simp only [ne_eq] at hw
+  simp only [thirdVertexTriple, tripleOfThree, mem_insert, mem_singleton] at hw
   rcases hw with hwu | hwv | hwz
   · exact (w.2.1 hwu).elim
   · exact (w.2.2 hwv).elim
@@ -56,7 +56,7 @@ lemma triangleAvoidsGraph_thirdVertexTriple_iff
       h v (right_mem_thirdVertexTriple huv w)
         w.1 (third_mem_thirdVertexTriple huv w) w.2.2.symm⟩
   · rintro ⟨huvG, huwG, hvwG⟩ x hx y hy hxy hxyG
-    simp [thirdVertexTriple, tripleOfThree] at hx hy
+    simp only [thirdVertexTriple, tripleOfThree, mem_insert, mem_singleton] at hx hy
     rcases hx with rfl | rfl | rfl <;>
       rcases hy with rfl | rfl | rfl
     · exact hxy rfl

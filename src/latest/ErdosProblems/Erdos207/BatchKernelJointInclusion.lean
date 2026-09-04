@@ -38,40 +38,44 @@ theorem batch_kernel_probability_subset_le
       (f := fun Q : Finset W ↦ if Q ⊆ R s then setWeight delta (U \ Q) else 0)
       (a := U ∩ R s) (fun _ _ ↦ zero_le) (mem_powerset.mpr inter_subset_left)
 
-theorem bind_batch_joint_inclusion
-    {Ω W : Type*} [Fintype Ω] [DecidableEq W]
-    (L : FiniteLaw Ω) (K : Ω → FiniteLaw Ω) (R : Ω → Finset W) (pi delta : W → ℝ≥0)
-    (hnew : ∀ s U, Disjoint U (R s) →
-      (K s).probability (fun s' ↦ U ⊆ R s') ≤ setWeight delta U)
+theorem bind_batch_joint_inclusion {Ω W : Type*} [Fintype Ω] [DecidableEq W] (L : FiniteLaw Ω)
+    (K : Ω → FiniteLaw Ω) (R : Ω → Finset W) (pi delta : W → ℝ≥0)
+    (hnew :
+      ∀ s U, Disjoint U (R s) → (K s).probability (fun s' ↦ U ⊆ R s') ≤ setWeight delta U)
     (hold : ∀ U, L.probability (fun s ↦ U ⊆ R s) ≤ setWeight pi U) (U : Finset W) :
     (FiniteLaw.bind L K).probability (fun s ↦ U ⊆ R s) ≤
-      setWeight (fun e ↦ pi e + delta e) U := by
-  classical
-  rw [FiniteLaw.probability_bind]
-  calc
-    _ ≤ ∑ s, L.mass s *
-        ∑ Q ∈ U.powerset, if Q ⊆ R s then setWeight delta (U \ Q) else 0 := by
-      apply sum_le_sum
-      intro s _hs
-      exact mul_le_mul_of_nonneg_left (batch_kernel_probability_subset_le K R delta hnew s U) zero_le
-    _ = ∑ Q ∈ U.powerset, setWeight delta (U \ Q) * L.probability (fun s ↦ Q ⊆ R s) := by
-      simp only [mul_sum]
-      rw [sum_comm]
-      apply sum_congr rfl
-      intro Q _hQ
-      unfold FiniteLaw.probability
-      rw [mul_sum]
-      apply sum_congr rfl
-      intro s _hs
-      by_cases hQ : Q ⊆ R s <;> simp [hQ, mul_comm]
-    _ ≤ ∑ Q ∈ U.powerset, setWeight delta (U \ Q) * setWeight pi Q :=
-      sum_le_sum (fun Q _hQ ↦ mul_le_mul_of_nonneg_left (hold Q) zero_le)
-    _ = _ := by
-      unfold setWeight
-      rw [prod_add]
-      apply sum_congr rfl
-      intro Q _hQ
-      ring
+      setWeight (fun e ↦ pi e + delta e) U :=
+  by
+    classical
+    rw [FiniteLaw.probability_bind]
+    calc
+      _ ≤ ∑ s, L.mass s * ∑ Q ∈ U.powerset, if Q ⊆ R s then setWeight delta (U \ Q) else 0 :=
+        by
+          apply sum_le_sum
+          intro s _hs
+          exact
+            mul_le_mul_of_nonneg_left (batch_kernel_probability_subset_le K R delta hnew s U)
+              zero_le
+      _ = ∑ Q ∈ U.powerset, setWeight delta (U \ Q) * L.probability (fun s ↦ Q ⊆ R s) :=
+        by
+          simp only [mul_sum]
+          rw [sum_comm]
+          apply sum_congr rfl
+          intro Q _hQ
+          unfold FiniteLaw.probability
+          rw [mul_sum]
+          apply sum_congr rfl
+          intro s _hs
+          by_cases hQ : Q ⊆ R s <;> simp [hQ, mul_comm]
+      _ ≤ ∑ Q ∈ U.powerset, setWeight delta (U \ Q) * setWeight pi Q :=
+        (sum_le_sum (fun Q _hQ ↦ mul_le_mul_of_nonneg_left (hold Q) zero_le))
+      _ = _ :=
+        by
+          unfold setWeight
+          rw [prod_add]
+          apply sum_congr rfl
+          intro Q _hQ
+          ring
 
 theorem evolveKernels_batch_joint_inclusion
     {Ω W : Type*} [Fintype Ω] [DecidableEq Ω] [DecidableEq W]

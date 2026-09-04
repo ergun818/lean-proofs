@@ -15,29 +15,34 @@ open Finset
 
 noncomputable section
 
-theorem rooted_extra_absorber_subset_derived
-    {V : Type*} [Fintype V] [DecidableEq V]
+theorem rooted_extra_absorber_subset_derived {V : Type*} [Fintype V] [DecidableEq V]
     {F : ForbiddenFamilyOn V} {q j : ℕ} {bank : TripleSystemOn V}
     (hF : F ⊆ absorberErdosForbiddenConfigurationsOn q bank) (hj : 4 ≤ j) (T : TripleOn V) :
     ((forbiddenFamilyOfOrder F j).filter (fun C ↦ T ∈ C)) \ rootedFullPackingErdosFamily j T ⊆
-      familyExtensions (derivedAbsorberConfigurations q j bank) {T} := by
-  classical
-  intro C hC
-  obtain ⟨hrooted, hnotFull⟩ := mem_sdiff.mp hC
-  obtain ⟨horder, hroot⟩ := mem_filter.mp hrooted
-  have hind := forbiddenFamilyOfOrder_subset_absorberInduced hF hj horder
-  have hpack := isPacking_of_mem_absorberErdosForbidden (hF (mem_forbiddenFamilyOfOrder.mp horder).1)
-  apply mem_familyExtensions_iff.mpr
-  refine ⟨?_, singleton_subset_iff.mpr hroot⟩
-  by_contra hnotDerived
-  have hgenuine := genuine_of_induced_not_derived (by omega) hind hnotDerived
-  exact hnotFull ((mem_rootedFullPackingErdosFamily j T C).mpr ⟨hgenuine.2, hpack, hroot⟩)
+      familyExtensions (derivedAbsorberConfigurations q j bank) { T } :=
+  by
+    classical
+    intro C hC
+    obtain ⟨hrooted, hnotFull⟩ := mem_sdiff.mp hC
+    obtain ⟨horder, hroot⟩ := mem_filter.mp hrooted
+    have hind := forbiddenFamilyOfOrder_subset_absorberInduced hF hj horder
+    have hpack :=
+      isPacking_of_mem_absorberErdosForbidden (hF (mem_forbiddenFamilyOfOrder.mp horder).1)
+    apply mem_familyExtensions_iff.mpr
+    refine ⟨?_, singleton_subset_iff.mpr hroot⟩
+    by_contra hnotDerived
+    have hgenuine :=
+      genuine_of_induced_not_derived
+        (by
+          omega)
+        hind hnotDerived
+    exact hnotFull ((mem_rootedFullPackingErdosFamily j T C).mpr ⟨hgenuine.2, hpack, hroot⟩)
 
-theorem card_rooted_extra_absorber_le
-    {V : Type*} [Fintype V] [DecidableEq V]
+theorem card_rooted_extra_absorber_le {V : Type*} [Fintype V] [DecidableEq V]
     {F : ForbiddenFamilyOn V} {q j : ℕ} {bank : TripleSystemOn V}
     (hF : F ⊆ absorberErdosForbiddenConfigurationsOn q bank) (hj : 4 ≤ j) (T : TripleOn V) :
-    (((forbiddenFamilyOfOrder F j).filter (fun C ↦ T ∈ C)) \ rootedFullPackingErdosFamily j T).card ≤
+    (((forbiddenFamilyOfOrder F j).filter (fun C ↦ T ∈ C)) \
+          rootedFullPackingErdosFamily j T).card ≤
       pairExactBankExtensionCoefficient q bank * (Fintype.card V + 1) ^ (j - 4) :=
   (card_le_card (rooted_extra_absorber_subset_derived hF hj T)).trans
     (card_familyExtensions_derivedAbsorber_singleton_le q j bank T hj)

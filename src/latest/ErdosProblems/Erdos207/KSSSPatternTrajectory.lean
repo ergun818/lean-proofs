@@ -56,16 +56,17 @@ theorem hasDerivAt_ksssPatternSlope
   dsimp only [ksssPatternCurvature, Pi.pow_apply, Pi.mul_apply, Pi.sub_apply]
   simp only [Nat.sub_sub, show 1 + 1 = (2 : ℕ) from rfl]
   field_simp
-  <;> ring
+  ; ring
 
-theorem ksss_terminal_trajectory_sum_eq_rate
-    (q : ℕ) (a : ℕ → ℝ) (E A time : ℝ) :
+theorem ksss_terminal_trajectory_sum_eq_rate (q : ℕ) (a : ℕ → ℝ) (E A time : ℝ) :
     (∑ j ∈ Icc 4 q, ksssConfigurationTrajectory (ksssOrders q) a E A (j - 3) (j - 4) time) =
-      ksssAvailableTrajectory (ksssOrders q) a E A time * ksssPoissonRate (ksssOrders q) a time := by
-  have hv := ksssThreatTrajectory_vertexOrders q a E A time
-  have hr := ksssThreatTrajectory_eq (ksssOrders q) a E A time
-    (fun _ hd ↦ (mem_Icc.mp hd).1)
-  linarith only [hv, hr]
+      ksssAvailableTrajectory (ksssOrders q) a E A time *
+        ksssPoissonRate (ksssOrders q) a time :=
+  by
+    have hv := ksssThreatTrajectory_vertexOrders q a E A time
+    have hr :=
+      ksssThreatTrajectory_eq (ksssOrders q) a E A time (fun _ hd ↦ (mem_Icc.mp hd).1)
+    linarith only [hv, hr]
 
 theorem ksssPatternSlope_source
     (q : ℕ) (a : ℕ → ℝ) (E A M : ℝ) (h m : ℕ) (time : ℝ)
@@ -80,13 +81,13 @@ theorem ksssPatternSlope_source
   rw [ksss_terminal_trajectory_sum_eq_rate]
   dsimp only [ksssPatternSlope, ksssPatternTrajectory, ksssPairTrajectory]
   cases h with
-  | zero => simp only [Nat.cast_zero, zero_mul, zero_div, neg_zero, zero_sub, zero_add, pow_zero, mul_one]
+  | zero => simp only [Nat.cast_zero, zero_mul, zero_add, pow_zero, mul_one]
             field_simp
-            <;> ring
+            ; ring
   | succ h =>
     simp only [Nat.add_sub_cancel, pow_succ, Nat.cast_add, Nat.cast_one]
     field_simp
-    <;> ring
+    ; ring
 
 end
 

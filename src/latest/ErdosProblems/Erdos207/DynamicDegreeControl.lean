@@ -24,11 +24,12 @@ noncomputable section
 
 /-- Degree is subadditive under a graph upper bound by a union. -/
 lemma SimpleGraph.degree_le_add_of_le_sup
-    {V : Type*} [Fintype V] [DecidableEq V]
+    {V : Type*} [Fintype V]
     {K G H : SimpleGraph V} [DecidableRel K.Adj]
     [DecidableRel G.Adj] [DecidableRel H.Adj]
     (h : K ≤ G ⊔ H) (v : V) :
     K.degree v ≤ G.degree v + H.degree v := by
+  classical
   have hneighbors : K.neighborFinset v ⊆ (G ⊔ H).neighborFinset v := by
     intro x hx
     rw [SimpleGraph.mem_neighborFinset] at hx ⊢
@@ -43,12 +44,13 @@ lemma SimpleGraph.degree_le_add_of_le_sup
 /-- Every edge covered by a dynamically reached family is covered either by
 the fixed pre-link packing or by a triangle of the current stage graph. -/
 lemma coveredGraph_dynamic_le_old_sup_stage
-    {V : Type*} [Fintype V] [DecidableEq V]
+    {V : Type*} [Finite V] [DecidableEq V]
     {G : SimpleGraph V} {F : ForbiddenFamilyOn V}
     {A I D R P : TripleSystemOn V}
     (htri : ConsistsOfTriangles G A)
     (hstate : IsDynamicLinkState F A I D R P) :
     coveredGraph P ≤ coveredGraph (I ∪ (D ∪ R)) ⊔ G := by
+  let := Fintype.ofFinite V
   intro u v huv
   obtain ⟨T, hTP, huT, hvT, huvne⟩ := coveredGraph_adj.mp huv
   rcases mem_union.mp (hstate.2.1 hTP) with hTold | hTA

@@ -62,21 +62,23 @@ theorem timedStoppedGreedy_supported_contained_counter
     refine ⟨⟨hS.1.1.step hT, hS.1.2.step hT⟩, ?_⟩
     rw [greedyStep_chosen_card F S T (hS.1.1.2.2 T hT).1, hS.2]
 
-theorem timedStoppedGreedy_supported_residualGeometry
-    {V : Type*} [Fintype V] [DecidableEq V]
+theorem timedStoppedGreedy_supported_residualGeometry {V : Type*} [Fintype V] [DecidableEq V]
     (n : ℕ) (F : ForbiddenFamilyOn V) (active : ℕ → GreedyStateOn V → Prop)
-    (S₀ : GreedyStateOn V) (Q₀ : Finset (Finset V)) (E : ℝ)
-    (hInv₀ : GreedyInvariant F S₀) (hchosen₀ : S₀.chosen = ∅)
-    (hE : 0 < E) (hEcard : (Q₀.card : ℝ) = E) (hQ : ∀ P ∈ Q₀, P.card = 2)
+    (S₀ : GreedyStateOn V) (Q₀ : Finset (Finset V)) (E : ℝ) (hInv₀ : GreedyInvariant F S₀)
+    (hchosen₀ : S₀.chosen = ∅) (hE : 0 < E) (hEcard : (Q₀.card : ℝ) = E)
+    (hQ : ∀ P ∈ Q₀, P.card = 2)
     (hcover : ∀ T ∈ S₀.available, ∀ P : Finset V, P.card = 2 → P ⊆ T.1 → P ∈ Q₀)
     (havailable : ∀ i, i < n → ∀ S, GreedyInvariant F S → active i S → S.available.Nonempty) :
     (FiniteLaw.timedStoppedProcessLaw n (fun _ ↦ greedyKernel F) active S₀).SupportedOn
-      (fun w ↦ KSSSResidualGeometry Q₀ w.2 E w.1.1) := by
-  have hsupport := timedStoppedGreedy_supported_contained_counter n F active S₀ hInv₀ hchosen₀ havailable
-  intro w hw
-  have hs := hsupport w hw
-  exact ksssResidualGeometry_of_contained S₀.available Q₀ E w.1.1 hs.1.1 hs.1.2 hs.2
-    hE hEcard hQ hcover
+      (fun w ↦ KSSSResidualGeometry Q₀ w.2 E w.1.1) :=
+  by
+    have hsupport :=
+      timedStoppedGreedy_supported_contained_counter n F active S₀ hInv₀ hchosen₀ havailable
+    intro w hw
+    have hs := hsupport w hw
+    exact
+      ksssResidualGeometry_of_contained S₀.available Q₀ E w.1.1 hs.1.1 hs.1.2 hs.2 hE hEcard
+        hQ hcover
 
 end
 

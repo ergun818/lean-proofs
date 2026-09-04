@@ -31,8 +31,7 @@ def conditionOn (L : FiniteLaw Ω) (P : Ω → Prop)
   refine {
     mass := fun ω ↦ if P ω then L.mass ω / L.probability P else 0
     sum_mass := ?_ }
-  ·
-    calc
+  · calc
       ∑ ω, (if P ω then L.mass ω / L.probability P else 0) =
           (∑ ω, if P ω then L.mass ω else 0) / L.probability P := by
             rw [div_eq_mul_inv, Finset.sum_mul]

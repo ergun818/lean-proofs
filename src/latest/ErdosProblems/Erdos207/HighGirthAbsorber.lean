@@ -65,7 +65,7 @@ lemma cycleCoverAbsorberGraph_not_adj_root_root
     ¬(cycleCoverAbsorberGraph V).Adj
       (cycleCoverRootEmbedding V a) (cycleCoverRootEmbedding V b) := by
   rw [cycleCoverAbsorberGraph, SimpleGraph.sup_adj]
-  push_neg
+  push Not
   constructor
   · exact fullCycleCoverOutGraph_not_adj_base_base
       (PathCoverVertex.root a) (PathCoverVertex.root b)
@@ -126,7 +126,7 @@ lemma highGirthCycleCoverGraph_not_adj_root_root
     (SphereExpansionVertex.root (cycleCoverRootEmbedding V a))
     (SphereExpansionVertex.root (cycleCoverRootEmbedding V b))
   rw [SimpleGraph.sup_adj]
-  push_neg
+  push Not
   exact ⟨sphereTransformOutGraph_not_adj_root_root hq _ _, by
     change ¬((cycleCoverAbsorberGraph V).map
       (sphereExpansionRootEmbedding (CycleCoverAbsorberVertex V) q)).Adj
@@ -143,10 +143,11 @@ lemma highGirthCycleCoverRoots_card
   simp [highGirthCycleCoverRoots]
 
 lemma SimpleGraph.map_comap_eq_of_supportedOn_range
-    {A W : Type*} [DecidableEq A] [DecidableEq W]
+    {A W : Type*}
     (f : A ↪ W) (G : SimpleGraph W)
     (hG : GraphSupportedOn G (Set.range f)) :
     (G.comap f).map f = G := by
+  classical
   apply le_antisymm (SimpleGraph.map_comap_le f G)
   intro x y hxy
   obtain ⟨⟨a, rfl⟩, ⟨b, rfl⟩⟩ := hG hxy
@@ -946,7 +947,7 @@ lemma mapTripleSystem_equiv_symm_apply
     mapTripleSystem e.symm.toEmbedding
       (mapTripleSystem e.toEmbedding C) = C := by
   rw [← mapTripleSystem_comp]
-  simpa using mapTripleSystem_refl C
+  simp
 
 @[simp]
 lemma mapTripleSystem_equiv_apply_symm
@@ -955,7 +956,7 @@ lemma mapTripleSystem_equiv_apply_symm
     mapTripleSystem e.toEmbedding
       (mapTripleSystem e.symm.toEmbedding C) = C := by
   rw [← mapTripleSystem_comp]
-  simpa using mapTripleSystem_refl C
+  simp
 
 lemma mapTripleSystem_mono
     {A W : Type*} [DecidableEq A] [DecidableEq W]
@@ -984,20 +985,24 @@ lemma verticesOn_mapTripleSystem
         (mem_mapTriple_apply_iff f T x).mpr hxT⟩
 
 lemma IsTriangleDecomposition.map
-    {A W : Type*} [Fintype A] [Fintype W]
+    {A W : Type*} [Finite A] [Finite W]
     [DecidableEq A] [DecidableEq W]
     {G : SimpleGraph A} {C : TripleSystemOn A}
     (hC : IsTriangleDecomposition G C) (f : A ↪ W) :
     IsTriangleDecomposition (G.map f) (mapTripleSystem f C) := by
+  let := Fintype.ofFinite A
+  let := Fintype.ofFinite W
   rw [← hC.coveredGraph_eq, ← coveredGraph_mapTripleSystem]
   exact hC.isPackingOn.map f |>.isTriangleDecomposition
 
 lemma GirthGreaterOn.map
-    {A W : Type*} [Fintype A] [Fintype W]
+    {A W : Type*} [Finite A] [Finite W]
     [DecidableEq A] [DecidableEq W]
     {q : ℕ} {C : TripleSystemOn A}
     (hC : GirthGreaterOn q C) (f : A ↪ W) :
     GirthGreaterOn q (mapTripleSystem f C) := by
+  let := Fintype.ofFinite A
+  let := Fintype.ofFinite W
   intro r hr4 hrq
   rintro ⟨D, hDmap, hDcard, hDvertices⟩
   let D₀ : TripleSystemOn A :=
@@ -1023,19 +1028,23 @@ lemma GirthGreaterOn.map
     exact hDvertices
 
 lemma IsHighGirthTriangleDecomposition.map
-    {A W : Type*} [Fintype A] [Fintype W]
+    {A W : Type*} [Finite A] [Finite W]
     [DecidableEq A] [DecidableEq W]
     {q : ℕ} {G : SimpleGraph A} {C : TripleSystemOn A}
     (hC : IsHighGirthTriangleDecomposition q G C) (f : A ↪ W) :
-    IsHighGirthTriangleDecomposition q (G.map f) (mapTripleSystem f C) :=
-  ⟨hC.1.map f, hC.2.map f⟩
+    IsHighGirthTriangleDecomposition q (G.map f) (mapTripleSystem f C) := by
+  let := Fintype.ofFinite A
+  let := Fintype.ofFinite W
+  exact ⟨hC.1.map f, hC.2.map f⟩
 
 lemma IsConfigOn.map
-    {A W : Type*} [Fintype A] [Fintype W]
+    {A W : Type*} [Finite A] [Finite W]
     [DecidableEq A] [DecidableEq W]
     {v k : ℕ} {C : TripleSystemOn A}
     (hC : IsConfigOn v k C) (f : A ↪ W) :
     IsConfigOn v k (mapTripleSystem f C) := by
+  let := Fintype.ofFinite A
+  let := Fintype.ofFinite W
   constructor
   · rw [card_mapTripleSystem]
     exact hC.1
@@ -1043,19 +1052,23 @@ lemma IsConfigOn.map
     exact hC.2
 
 lemma IsErdosConfig.map
-    {A W : Type*} [Fintype A] [Fintype W]
+    {A W : Type*} [Finite A] [Finite W]
     [DecidableEq A] [DecidableEq W]
     {r : ℕ} {C : TripleSystemOn A}
     (hC : IsErdosConfigOn r C) (f : A ↪ W) :
-    IsErdosConfigOn r (mapTripleSystem f C) :=
-  ⟨hC.1.map f, hC.2.map f⟩
+    IsErdosConfigOn r (mapTripleSystem f C) := by
+  let := Fintype.ofFinite A
+  let := Fintype.ofFinite W
+  exact ⟨hC.1.map f, hC.2.map f⟩
 
 lemma ConsistsOfTriangles.map
-    {A W : Type*} [Fintype A] [Fintype W]
+    {A W : Type*} [Finite A] [Finite W]
     [DecidableEq A] [DecidableEq W]
     {G : SimpleGraph A} {C : TripleSystemOn A}
     (hC : ConsistsOfTriangles G C) (f : A ↪ W) :
     ConsistsOfTriangles (G.map f) (mapTripleSystem f C) := by
+  let := Fintype.ofFinite A
+  let := Fintype.ofFinite W
   intro U hUC x hxU y hyU hxy
   obtain ⟨T, hTC, rfl⟩ := Finset.mem_map.mp hUC
   obtain ⟨a, haT, rfl⟩ := Finset.mem_map.mp hxU
@@ -1305,7 +1318,6 @@ theorem efficientHighGirthAbsorbers : EfficientHighGirthAbsorbers := by
   let N := Fintype.card W
   let e : W ≃ Fin N := Fintype.equivFin W
   let i : Fin m ↪ V := Fin.castLEEmb (by
-    change m ≤ 2 * m
     omega)
   let j : Fin m ↪ W :=
     i.trans (highGirthCycleCoverRootEmbedding V q')

@@ -160,7 +160,7 @@ theorem internalOuterEdge_randomGreedyKernel_of_goodReserve
     {ell : ℕ} {W : Vortex V ell}
     {F : ForbiddenFamilyOn V}
     {G : SimpleGraph V} {A P0 : TripleSystemOn V}
-    (htri : ConsistsOfTriangles G A)
+    (_htri : ConsistsOfTriangles G A)
     (i : Fin ell)
     (hpacking0 : IsPackingOn P0) (havoid0 : AvoidsForbidden P0 F)
     (bits : Sym2 V → Bool)
@@ -168,11 +168,11 @@ theorem internalOuterEdge_randomGreedyKernel_of_goodReserve
     (horizonBound : (internalOuterEdges G (W.U i.succ)).card ≤ horizon)
     (hgood : InternalOuterReserveGood W i G A (a + D) bits)
     (hblocked : ∀ (Q : TripleSystemOn V) (e : Sym2 V),
-      ∀ hreach : GreedyReachable F P0 Q,
+      ∀ _hreach : GreedyReachable F P0 Q,
       Q ⊆ P0 ∪ A →
       (Q \ P0).card ≤ (internalOuterEdges G (W.U i.succ)).card →
       ∀ he : e ∈ internalOuterEdges G (W.U i.succ),
-      ∀ hleave : (leaveGraph Q).Adj e.out.1 e.out.2,
+      ∀ _hleave : (leaveGraph Q).Adj e.out.1 e.out.2,
       (edgeBlockedThirdVertices A Q
           (out_fst_ne_snd_of_mem_graphEdges
             (internalOuterEdges_subset_graphEdges G (W.U i.succ) he)) ∪

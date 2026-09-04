@@ -186,7 +186,7 @@ theorem probability_not_localizedRootedActiveCapsGood_le
       apply L.probability_mono
       intro ω hbad
       unfold LocalizedRootedActiveCapsGood at hbad
-      push_neg at hbad
+      push Not at hbad
       obtain ⟨e, heE, hlarge⟩ := hbad
       refine ⟨e, heE, ?_⟩
       dsimp only [Bad]

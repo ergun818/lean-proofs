@@ -11,7 +11,7 @@ import ErdosProblems.Erdos207.ReserveEdgeSampling
 namespace Erdos207
 
 open Finset
-open scoped Classical NNReal
+open scoped NNReal
 
 noncomputable section
 
@@ -54,28 +54,38 @@ theorem FiniteLaw.independentBits_probability_abs_centered_gt_relative
   change (L.probability (fun ω ↦ delta*M < |centeredBernoulliSum p S ω|) : ℝ) ≤ _
   linarith only [hunion, hpos, hneg]
 
-theorem reserveEdgeLaw_probability_abs_inter_count_gt
-    {V : Type*} [Fintype V] [DecidableEq V]
-    (G : SimpleGraph V) (U : Finset V) (r : ℝ≥0) (hr : r ≤ 1)
-    (S : Finset (Sym2 V)) (hS : S ⊆ crossingEdges G U) (delta : ℝ) (hdelta : 0 ≤ delta) (hdelta1 : delta ≤ 1) :
-    ((reserveEdgeLaw G U r hr).probability (fun ω ↦ delta*((r : ℝ)*S.card) <
-      |((S ∩ reserveEdges G U ω).card : ℝ)-(r : ℝ)*S.card|) : ℝ) ≤
-        2*Real.exp (-delta^2*((r : ℝ)*S.card)/4) := by
-  have hmean : (∑ e ∈ S, (reserveEdgeProbability G U r e : ℝ)) = (r : ℝ)*S.card := by
-    calc
-      _ = ∑ _e ∈ S, (r : ℝ) := by
-        apply sum_congr rfl
-        intro e he
-        simp only [reserveEdgeProbability, if_pos (hS he)]
-      _ = _ := by simp [mul_comm]
-  have hcount (ω : Sym2 V → Bool) : (S.filter (fun e ↦ ω e = true)) = S ∩ reserveEdges G U ω := by
-    ext e
-    simp only [mem_filter, mem_inter, mem_reserveEdges_iff]
-    exact ⟨fun h ↦ ⟨h.1, hS h.1, h.2⟩, fun h ↦ ⟨h.1, h.2.2⟩⟩
-  have hb := FiniteLaw.independentBits_probability_abs_centered_gt_relative
-    (reserveEdgeProbability G U r) (reserveEdgeProbability_le_one G U hr) S
-    ((r : ℝ)*S.card) delta hmean.le hdelta hdelta1
-  simpa only [reserveEdgeLaw, centeredBernoulliSum_eq_card_sub, hmean, hcount] using hb
+theorem reserveEdgeLaw_probability_abs_inter_count_gt {V : Type*} [Fintype V] [DecidableEq V]
+    (G : SimpleGraph V) (U : Finset V) (r : ℝ≥0) (hr : r ≤ 1) (S : Finset (Sym2 V))
+    (hS : S ⊆ crossingEdges G U) (delta : ℝ) (hdelta : 0 ≤ delta) (hdelta1 : delta ≤ 1) :
+    ((reserveEdgeLaw G U r hr).probability
+          (fun ω ↦
+            delta * ((r : ℝ) * S.card) <
+              |((S ∩ reserveEdges G U ω).card : ℝ) - (r : ℝ) * S.card|) :
+        ℝ) ≤
+      2 * Real.exp (-delta ^ 2 * ((r : ℝ) * S.card) / 4) :=
+  by
+    have hmean : (∑ e ∈ S, (reserveEdgeProbability G U r e : ℝ)) = (r : ℝ) * S.card :=
+      by
+        calc
+          _ = ∑ _e ∈ S, (r : ℝ) :=
+            by
+              apply sum_congr rfl
+              intro e he
+              simp only [reserveEdgeProbability, if_pos (hS he)]
+          _ = _ :=
+            by
+              simp [mul_comm]
+    have hcount (ω : Sym2 V → Bool) :
+      (S.filter (fun e ↦ ω e = true)) = S ∩ reserveEdges G U ω :=
+      by
+        ext e
+        simp only [mem_filter, mem_inter, mem_reserveEdges_iff]
+        exact ⟨fun h ↦ ⟨h.1, hS h.1, h.2⟩, fun h ↦ ⟨h.1, h.2.2⟩⟩
+    have hb :=
+      FiniteLaw.independentBits_probability_abs_centered_gt_relative
+        (reserveEdgeProbability G U r) (reserveEdgeProbability_le_one G U hr) S
+        ((r : ℝ) * S.card) delta hmean.le hdelta hdelta1
+    simpa only [reserveEdgeLaw, centeredBernoulliSum_eq_card_sub, hmean, hcount] using hb
 
 end
 

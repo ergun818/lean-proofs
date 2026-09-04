@@ -90,40 +90,52 @@ theorem liftLocalized_remainder_subset
 
 end GainDefectWitness
 
-theorem localizedGainDefectCount_le_source
-    {V : Type*} [Fintype V] [DecidableEq V] {ell c m : ℕ}
-    (W : Vortex V ell) (F G J J' processF : ForbiddenFamilyOn V) (S : GreedyStateOn V)
-    (T : TripleOn V) (available old : TripleSystemOn V)
+theorem localizedGainDefectCount_le_source {V : Type*} [Fintype V] [DecidableEq V]
+    {ell c m : ℕ} (W : Vortex V ell) (F G J J' processF : ForbiddenFamilyOn V)
+    (S : GreedyStateOn V) (T : TripleOn V) (available old : TripleSystemOn V)
     (hS : GreedyInvariant processF S) (huniform : ∀ C ∈ J, C.card = m)
     (hdis : Disjoint available old) (hterm : ∀ U ∈ available, W.level U = Fin.last ell)
     (hJ : ∀ C ∈ J, C ⊆ available ∧ ∃ E ∈ F, C ⊆ E ∧ E \ C ⊆ old)
     (hJ' : ∀ C ∈ J', C ⊆ available ∧ ∃ E ∈ G, C ⊆ E ∧ E \ C ⊆ old) :
     (greedyActiveGainDefectCount J J' S T c : ℝ≥0) ≤
-      selectedCount (fun u : sourceGainDefects W F G T (m - c - 1) ↦ u.1.remainder) (old ∪ S.chosen) := by
-  classical
-  by_cases hT : T ∈ S.available
-  · simp only [greedyActiveGainDefectCount, if_pos hT]
-    let rem := fun u : sourceGainDefects W F G T (m - c - 1) ↦ u.1.remainder
-    let decode := fun u : sourceGainDefects W F G T (m - c - 1) ↦ (u.1.first \ old, u.1.second \ old)
-    have hsub : greedyGainDefectPairs J J' S T c ⊆ selectedWitnessImage rem decode (old ∪ S.chosen) := by
-      intro p hp
-      let u := greedyGainDefectPairWitness J J' S T c m hS hT huniform ⟨p, hp⟩
-      obtain ⟨hCA, E, hE, hCE, hOld⟩ := hJ u.first u.first_mem
-      obtain ⟨hCA', E', hE', hCE', hOld'⟩ := hJ' u.second u.second_mem
-      let v := u.liftLocalized available old E E' hdis hCA hCA' hE hE' hCE hCE' hOld hOld'
-      have hv : v ∈ sourceGainDefects W F G T (m - c - 1) :=
-        mem_filter.mpr ⟨mem_univ v, fun U hU ↦ hterm U (hCA (u.omittedRoot_subset_first hU))⟩
-      apply mem_selectedWitnessImage.mpr
-      refine ⟨⟨v, hv⟩, ?_, ?_⟩
-      · exact (u.liftLocalized_remainder_subset available old E E' hdis hCA hCA' hE hE'
-          hCE hCE' hOld hOld').trans (union_subset_union_right
-            (greedyGainDefectPairWitness_remainder_subset J J' S T c m hS hT huniform ⟨p, hp⟩))
-      · exact Prod.ext (localization_eq_sdiff_old hdis hCA hCE hOld)
-          (localization_eq_sdiff_old hdis hCA' hCE' hOld')
-    have hc : ((greedyGainDefectPairs J J' S T c).card : ℝ≥0) ≤
-        (selectedWitnessImage rem decode (old ∪ S.chosen)).card := by exact_mod_cast card_le_card hsub
-    exact hc.trans (card_selectedWitnessImage_le_selectedCount rem decode (old ∪ S.chosen))
-  · simp only [greedyActiveGainDefectCount, if_neg hT, Nat.cast_zero, zero_le]
+      selectedCount (fun u : sourceGainDefects W F G T (m - c - 1) ↦ u.1.remainder)
+        (old ∪ S.chosen) :=
+  by
+    classical
+    by_cases hT : T ∈ S.available
+    · simp only [greedyActiveGainDefectCount, if_pos hT]
+      let rem := fun u : sourceGainDefects W F G T (m - c - 1) ↦ u.1.remainder
+      let decode := fun u : sourceGainDefects W F G T (m - c - 1) ↦
+        (u.1.first \ old, u.1.second \ old)
+      have hsub :
+        greedyGainDefectPairs J J' S T c ⊆ selectedWitnessImage rem decode (old ∪ S.chosen) :=
+        by
+          intro p hp
+          let u := greedyGainDefectPairWitness J J' S T c m hS hT huniform ⟨p, hp⟩
+          obtain ⟨hCA, E, hE, hCE, hOld⟩ := hJ u.first u.first_mem
+          obtain ⟨hCA', E', hE', hCE', hOld'⟩ := hJ' u.second u.second_mem
+          let v := u.liftLocalized available old E E' hdis hCA hCA' hE hE' hCE hCE' hOld hOld'
+          have hv : v ∈ sourceGainDefects W F G T (m - c - 1) :=
+            mem_filter.mpr
+              ⟨mem_univ v, fun U hU ↦ hterm U (hCA (u.omittedRoot_subset_first hU))⟩
+          apply mem_selectedWitnessImage.mpr
+          refine ⟨⟨v, hv⟩, ?_, ?_⟩
+          · exact
+              (u.liftLocalized_remainder_subset available old E E' hdis hCA hCA' hE hE' hCE
+                    hCE' hOld hOld').trans
+                (union_subset_union_right
+                  (greedyGainDefectPairWitness_remainder_subset J J' S T c m hS hT huniform
+                    ⟨p, hp⟩))
+          · exact
+              Prod.ext (localization_eq_sdiff_old hdis hCA hCE hOld)
+                (localization_eq_sdiff_old hdis hCA' hCE' hOld')
+      have hc :
+        ((greedyGainDefectPairs J J' S T c).card : ℝ≥0) ≤
+          (selectedWitnessImage rem decode (old ∪ S.chosen)).card :=
+        by
+          exact_mod_cast card_le_card hsub
+      exact hc.trans (card_selectedWitnessImage_le_selectedCount rem decode (old ∪ S.chosen))
+    · simp only [greedyActiveGainDefectCount, if_neg hT, Nat.cast_zero, zero_le]
 
 end
 

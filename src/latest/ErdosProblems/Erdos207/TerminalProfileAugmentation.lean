@@ -74,45 +74,53 @@ theorem Vortex.profiledExtensions_union
   simp only [W.mem_profiledExtensions_iff, mem_union]
   tauto
 
-theorem Vortex.terminalPairExtensions_union
-    {V : Type*} [Fintype V] [DecidableEq V] {ell : ℕ}
+theorem Vortex.terminalPairExtensions_union {V : Type*} [Fintype V] [DecidableEq V] {ell : ℕ}
     (W : Vortex V ell) (F G : ForbiddenFamilyOn V) (T : TripleOn V) (P : VortexPairOn V) :
-    W.terminalPairExtensions (F ∪ G) T P = W.terminalPairExtensions F T P ∪ W.terminalPairExtensions G T P := by
-  ext C
-  simp only [W.mem_terminalPairExtensions_iff, mem_union]
-  constructor
-  · rintro ⟨hF | hG, hrest⟩
-    · exact Or.inl ⟨hF, hrest⟩
-    · exact Or.inr ⟨hG, hrest⟩
-  · rintro (h | h)
-    · exact ⟨Or.inl h.1, h.2⟩
-    · exact ⟨Or.inr h.1, h.2⟩
+    W.terminalPairExtensions (F ∪ G) T P =
+      W.terminalPairExtensions F T P ∪ W.terminalPairExtensions G T P :=
+  by
+    ext C
+    simp only [W.mem_terminalPairExtensions_iff, mem_union]
+    constructor
+    · rintro ⟨hF | hG, hrest⟩
+      · exact Or.inl ⟨hF, hrest⟩
+      · exact Or.inr ⟨hG, hrest⟩
+    · rintro (h | h)
+      · exact ⟨Or.inl h.1, h.2⟩
+      · exact ⟨Or.inr h.1, h.2⟩
 
-theorem profiledDistinctPairs_union_eq_of_nonzero
-    {V : Type*} [Fintype V] [DecidableEq V] {ell : ℕ}
-    (W : Vortex V ell) (F G : ForbiddenFamilyOn V) (T T' : TripleOn V)
+theorem profiledDistinctPairs_union_eq_of_nonzero {V : Type*} [Fintype V] [DecidableEq V]
+    {ell : ℕ} (W : Vortex V ell) (F G : ForbiddenFamilyOn V) (T T' : TripleOn V)
     (t : VortexProfile ell) (ht : t ≠ 0) (hG : IsTerminalConfigurationFamily W G) :
-    W.profiledDistinctEqualRemainderPairs (F ∪ G) T T' t = W.profiledDistinctEqualRemainderPairs F T T' t := by
-  ext C
-  constructor
-  · intro hC
-    obtain ⟨hC1, hC2, hne, hT, hT', hrem, hprof⟩ :=
-      (W.mem_profiledDistinctEqualRemainderPairs_iff _ _ _ _ _).mp hC
-    have hfirst : C.1 ∈ F := by
-      rcases mem_union.mp hC1 with h | h
-      · exact h
-      · exact (ht (hprof.symm.trans (hG.outerProfile_subfamily h (erase_subset _ _)))).elim
-    have hsecond : C.2 ∈ F := by
-      rcases mem_union.mp hC2 with h | h
-      · exact h
-      · have hzero := hG.outerProfile_subfamily h (erase_subset T' C.2)
-        exact (ht (hprof.symm.trans ((congrArg W.outerProfile hrem).trans hzero))).elim
-    exact (W.mem_profiledDistinctEqualRemainderPairs_iff _ _ _ _ _).mpr
-      ⟨hfirst, hsecond, hne, hT, hT', hrem, hprof⟩
-  · intro hC
-    obtain ⟨hC1, hC2, hrest⟩ := (W.mem_profiledDistinctEqualRemainderPairs_iff _ _ _ _ _).mp hC
-    exact (W.mem_profiledDistinctEqualRemainderPairs_iff _ _ _ _ _).mpr
-      ⟨mem_union_left _ hC1, mem_union_left _ hC2, hrest⟩
+    W.profiledDistinctEqualRemainderPairs (F ∪ G) T T' t =
+      W.profiledDistinctEqualRemainderPairs F T T' t :=
+  by
+    ext C
+    constructor
+    · intro hC
+      obtain ⟨hC1, hC2, hne, hT, hT', hrem, hprof⟩ :=
+        (W.mem_profiledDistinctEqualRemainderPairs_iff _ _ _ _ _).mp hC
+      have hfirst : C.1 ∈ F :=
+        by
+          rcases mem_union.mp hC1 with h | h
+          · exact h
+          · exact
+              (ht (hprof.symm.trans (hG.outerProfile_subfamily h (erase_subset _ _)))).elim
+      have hsecond : C.2 ∈ F :=
+        by
+          rcases mem_union.mp hC2 with h | h
+          · exact h
+          · have hzero := hG.outerProfile_subfamily h (erase_subset T' C.2)
+            exact (ht (hprof.symm.trans ((congrArg W.outerProfile hrem).trans hzero))).elim
+      exact
+        (W.mem_profiledDistinctEqualRemainderPairs_iff _ _ _ _ _).mpr
+          ⟨hfirst, hsecond, hne, hT, hT', hrem, hprof⟩
+    · intro hC
+      obtain ⟨hC1, hC2, hrest⟩ :=
+        (W.mem_profiledDistinctEqualRemainderPairs_iff _ _ _ _ _).mp hC
+      exact
+        (W.mem_profiledDistinctEqualRemainderPairs_iff _ _ _ _ _).mpr
+          ⟨mem_union_left _ hC1, mem_union_left _ hC2, hrest⟩
 
 end
 

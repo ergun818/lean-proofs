@@ -42,7 +42,7 @@ lemma pairedCrossDegree_eq_left_linkDegree
   simp only [pairedCrossDegree, haL, if_true]
   congr 1
   ext x
-  simp [pairedRightNeighbors, ambientLinkNeighborsIn, K]
+  simp [pairedRightNeighbors, ambientLinkNeighborsIn]
 
 lemma pairedCrossDegree_eq_right_linkDegree
     {V : Type*} [Fintype V] [DecidableEq V] {W : Finset V}

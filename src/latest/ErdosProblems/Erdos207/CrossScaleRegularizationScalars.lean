@@ -39,19 +39,30 @@ theorem crossScale_uniform_coefficient_small
     _ = (2 * C) / t := by field_simp
     _ ≤ tau := (div_le_iff₀ htpos).mpr hconstant
 
-theorem ksssDensityHorizon_survival_upper
-    (E u : ℝ) (c : ℕ) (hE : 0 < E) (hu : 1 ≤ u) (hedge : 3 * u ^ c ≤ E) :
-    ksssEdgeDensity E (ksssDensityHorizon E (1 / u ^ c)) ≤ 2 / u ^ c := by
-  have hu0 : 0 < u := zero_lt_one.trans_le hu
-  have huc : 0 < u ^ c := pow_pos hu0 _
-  have hbound := (ksssDensityHorizon_bounds E (1 / u ^ c) hE (by positivity)
-    ((div_le_one huc).mpr (one_le_pow₀ hu))).2.2
-  have hthree : 3 ≤ E / u ^ c := (le_div_iff₀ huc).mpr hedge
-  unfold ksssEdgeDensity
-  calc
-    _ ≤ (E / u ^ c + 3) / E := div_le_div_of_nonneg_right (by simpa only [mul_one_div] using hbound.le) hE.le
-    _ ≤ (E / u ^ c + E / u ^ c) / E := div_le_div_of_nonneg_right (add_le_add le_rfl hthree) hE.le
-    _ = _ := by field_simp; ring
+theorem ksssDensityHorizon_survival_upper (E u : ℝ) (c : ℕ) (hE : 0 < E) (hu : 1 ≤ u)
+    (hedge : 3 * u ^ c ≤ E) :
+    ksssEdgeDensity E (ksssDensityHorizon E (1 / u ^ c)) ≤ 2 / u ^ c :=
+  by
+    have hu0 : 0 < u := zero_lt_one.trans_le hu
+    have huc : 0 < u ^ c := pow_pos hu0 _
+    have hbound :=
+      (ksssDensityHorizon_bounds E (1 / u ^ c) hE
+            (by
+              positivity)
+            ((div_le_one huc).mpr (one_le_pow₀ hu))).2.2
+    have hthree : 3 ≤ E / u ^ c := (le_div_iff₀ huc).mpr hedge
+    unfold ksssEdgeDensity
+    calc
+      _ ≤ (E / u ^ c + 3) / E :=
+        div_le_div_of_nonneg_right
+          (by
+            simpa only [mul_one_div] using hbound.le)
+          hE.le
+      _ ≤ (E / u ^ c + E / u ^ c) / E :=
+        (div_le_div_of_nonneg_right (add_le_add le_rfl hthree) hE.le)
+      _ = _ :=
+        by
+          field_simp; ring
 
 theorem ksssDensityHorizon_survival_common_scale_upper
     (E u t : ℝ) (c d : ℕ) (hE : 0 < E) (hu : 1 ≤ u) (ht : 0 < t)

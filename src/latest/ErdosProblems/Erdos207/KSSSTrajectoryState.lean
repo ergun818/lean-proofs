@@ -28,13 +28,12 @@ def KSSSOnTrajectories
       ksssConfigurationTrajectory (ksssOrders q) a E₀ A₀ (j - 3) c t| ≤
         ksssConfigurationErrorEnvelope E₀ A₀ scale B (j - 4 - c) t
 
-theorem KSSSOnTrajectories.availability_error
-    {V : Type*} [Fintype V] [DecidableEq V]
+theorem KSSSOnTrajectories.availability_error {V : Type*} [Fintype V] [DecidableEq V]
     {F : ForbiddenFamilyOn V} {S : GreedyStateOn V} {q : ℕ} {Q : Finset (Finset V)}
-    {a : ℕ → ℝ} {E₀ A₀ scale t : ℝ} {B : ℕ}
-    (h : KSSSOnTrajectories F S q Q a E₀ A₀ scale B t)
+    {a : ℕ → ℝ} {E₀ A₀ scale t : ℝ} {B : ℕ} (h : KSSSOnTrajectories F S q Q a E₀ A₀ scale B t)
     (hQ : ∀ P ∈ Q, P.card = 2)
-    (hcover : ∀ P : Finset V, P.card = 2 → (availableTrianglesContainingPair S P).Nonempty → P ∈ Q) :
+    (hcover :
+      ∀ P : Finset V, P.card = 2 → (availableTrianglesContainingPair S P).Nonempty → P ∈ Q) :
     |(S.available.card : ℝ) - Q.card * ksssPairTrajectory (ksssOrders q) a E₀ A₀ t / 3| ≤
       Q.card * ksssErrorEnvelope E₀ scale B t / 3 :=
   abs_available_sub_pair_trajectory_le S Q _ _ hQ hcover h.1

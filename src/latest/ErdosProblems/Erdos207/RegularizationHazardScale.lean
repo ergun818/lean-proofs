@@ -47,21 +47,24 @@ theorem regularization_ratio_scale_le
   field_simp
   ring
 
-theorem regularizationBaseHazard_le_source_scale
-    {I : Type*} [Fintype I] [DecidableEq I] [Nonempty I]
-    (G0 : Finset (Finset I)) (k : ℕ)
-    (hm : 2 * (k - 1) ≤ Fintype.card I) (n sigma C B : ℝ≥0)
-    (hn : 0 < n) (hsigma : 0 < sigma) (hC : 0 < C)
+theorem regularizationBaseHazard_le_source_scale {I : Type*} [Fintype I] [DecidableEq I]
+    [Nonempty I] (G0 : Finset (Finset I)) (k : ℕ) (hm : 2 * (k - 1) ≤ Fintype.card I)
+    (n sigma C B : ℝ≥0) (hn : 0 < n) (hsigma : 0 < sigma) (hC : 0 < C)
     (hmass : sigma * n ^ 3 / C ≤ Fintype.card I)
     (hdegree : (finiteHypergraphMaxDegree G0 : ℝ≥0) ≤ B * sigma ^ (k - 1) * n ^ (k - 1)) :
     2 * regularizationBaseHazard G0 k ≤
-      (2 : ℝ≥0) ^ (k + 1) * (2 * C) ^ (k - 1) * (k - 1).factorial * B / n ^ (2 * (k - 1)) := by
-  have hgap : (finiteHypergraphDegreeGap G0 : ℝ≥0) ≤ B * sigma ^ (k - 1) * n ^ (k - 1) := by
-    apply le_trans _ hdegree
-    exact_mod_cast (Nat.sub_le (finiteHypergraphMaxDegree G0) (finiteHypergraphMinDegree G0))
-  have h := regularization_ratio_scale_le (Fintype.card I) (k - 1) hm n sigma C B
-    (finiteHypergraphDegreeGap G0) ((2 : ℝ≥0) ^ (k + 1)) hn hsigma hC hmass hgap
-  simpa only [regularizationBaseHazard, pow_succ, mul_div_assoc, mul_assoc, mul_comm, mul_left_comm] using h
+      (2 : ℝ≥0) ^ (k + 1) * (2 * C) ^ (k - 1) * (k - 1).factorial * B / n ^ (2 * (k - 1)) :=
+  by
+    have hgap : (finiteHypergraphDegreeGap G0 : ℝ≥0) ≤ B * sigma ^ (k - 1) * n ^ (k - 1) :=
+      by
+        apply le_trans _ hdegree
+        exact_mod_cast
+          (Nat.sub_le (finiteHypergraphMaxDegree G0) (finiteHypergraphMinDegree G0))
+    have h :=
+      regularization_ratio_scale_le (Fintype.card I) (k - 1) hm n sigma C B
+        (finiteHypergraphDegreeGap G0) ((2 : ℝ≥0) ^ (k + 1)) hn hsigma hC hmass hgap
+    simpa only [regularizationBaseHazard, pow_succ, mul_div_assoc, mul_assoc, mul_comm,
+      mul_left_comm] using h
 
 end
 

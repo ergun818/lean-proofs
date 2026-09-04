@@ -135,11 +135,13 @@ theorem hallExpansion_after_deletion
 /-- Robust Hall expansion supplies a system of distinct representatives in
 the surviving relation. -/
 theorem exists_injective_matching_after_deletion
-    {A B : Type*} [Finite A] [Fintype B] [DecidableEq B]
-    (r deleted : A → B → Prop) [DecidableRel r] [DecidableRel deleted]
+    {A B : Type*} [Finite A] [Finite B]
+    (r deleted : A → B → Prop)
     (hrobust : SurvivesEveryHallObstruction r deleted) :
     ∃ f : A → B, Function.Injective f ∧
       ∀ a, r a (f a) ∧ ¬ deleted a (f a) := by
+  classical
+  let := Fintype.ofFinite B
   apply (Fintype.all_card_le_filter_rel_iff_exists_injective
     (fun a b ↦ r a b ∧ ¬ deleted a b)).mp
   intro S
@@ -148,12 +150,13 @@ theorem exists_injective_matching_after_deletion
 /-- When the two sides have the same finite cardinality, the robust Hall
 matching is a bijection. -/
 theorem exists_bijective_matching_after_deletion
-    {A B : Type*} [Fintype A] [Fintype B] [DecidableEq B]
-    (r deleted : A → B → Prop) [DecidableRel r] [DecidableRel deleted]
+    {A B : Type*} [Fintype A] [Fintype B]
+    (r deleted : A → B → Prop)
     (hcard : Fintype.card A = Fintype.card B)
     (hrobust : SurvivesEveryHallObstruction r deleted) :
     ∃ f : A → B, Function.Bijective f ∧
       ∀ a, r a (f a) ∧ ¬ deleted a (f a) := by
+  classical
   obtain ⟨f, hinj, hf⟩ :=
     exists_injective_matching_after_deletion r deleted hrobust
   exact ⟨f, (Fintype.bijective_iff_injective_and_card f).mpr

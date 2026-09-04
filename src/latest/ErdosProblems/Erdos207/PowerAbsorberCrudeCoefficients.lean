@@ -78,27 +78,30 @@ theorem eventually_powerAbsorberCrudeCoefficient_le_scale (q R : ℕ) (hR : 0 < 
     ∃ N : ℕ, ∀ n : ℕ, N ≤ n → powerAbsorberCrudeCoefficient q ≤ dyadicPowerScale R n :=
   eventually_le_dyadicPowerScale hR (powerAbsorberCrudeCoefficient q)
 
-theorem timedStoppedAbsorber_power_bank_crude_tail
-    {V : Type*} [Fintype V] [DecidableEq V]
+theorem timedStoppedAbsorber_power_bank_crude_tail {V : Type*} [Fintype V] [DecidableEq V]
     (steps : ℕ) (F : ForbiddenFamilyOn V) (active : ℕ → GreedyStateOn V → Prop)
     (S₀ : GreedyStateOn V) (bank : TripleSystemOn V) (q t c b a floorPower : ℕ)
-    (hF : F ⊆ absorberErdosForbiddenConfigurationsOn q bank)
-    (hInv₀ : GreedyInvariant F S₀) (hchosen₀ : S₀.chosen = ∅)
-    (hN : 1 ≤ Fintype.card V) (ht : 32 ≤ t) (hsteps : steps ≤ Fintype.card V ^ 2)
-    (hsize : 8 * t ^ floorPower ≤ Fintype.card V ^ 3)
-    (hfloor : ∀ i S, active i S → dyadicMomentFloor (Fintype.card V) t floorPower ≤ S.available.card)
-    (hconst : 2 * (2 * q + 1) ^ (2 * q + 1) ≤ t)
-    (hbank : bank.card + 1 ≤ c * t ^ b)
-    (hcoeff : absorberCrudeBankCoefficient q * c ^ (2 * q) ≤ t)
-    (hgap : b * (2 * q) + 1 ≤ a) :
+    (hF : F ⊆ absorberErdosForbiddenConfigurationsOn q bank) (hInv₀ : GreedyInvariant F S₀)
+    (hchosen₀ : S₀.chosen = ∅) (hN : 1 ≤ Fintype.card V) (ht : 32 ≤ t)
+    (hsteps : steps ≤ Fintype.card V ^ 2) (hsize : 8 * t ^ floorPower ≤ Fintype.card V ^ 3)
+    (hfloor :
+      ∀ i S, active i S → dyadicMomentFloor (Fintype.card V) t floorPower ≤ S.available.card)
+    (hconst : 2 * (2 * q + 1) ^ (2 * q + 1) ≤ t) (hbank : bank.card + 1 ≤ c * t ^ b)
+    (hcoeff : absorberCrudeBankCoefficient q * c ^ (2 * q) ≤ t) (hgap : b * (2 * q) + 1 ≤ a) :
     (FiniteLaw.timedStoppedProcessLaw steps (fun _ ↦ greedyKernel F) active S₀).probability
-      (fun z ↦ ¬ CrudeStateBounds F z.2 q
-        (dyadicCrudeThresholds V t (dyadicCrudeExponent q a (floorPower + 1)))) ≤
-      4 * (q + 1 : ℝ≥0) ^ 2 * (Fintype.card V + 1 : ℝ≥0) ^ 6 * (1 / 2 : ℝ≥0) ^ t := by
-  obtain ⟨hr, hp, hc, hg⟩ := absorber_crude_coefficients_le_power q bank t c b a
-    (by omega) hbank hcoeff hgap
-  exact timedStoppedAbsorber_dyadic_crude_tail steps F active S₀ bank q t a floorPower
-    hF hInv₀ hchosen₀ hN ht hsteps hsize hfloor hconst hr hp hc hg
+        (fun z ↦
+          ¬CrudeStateBounds F z.2 q
+              (dyadicCrudeThresholds V t (dyadicCrudeExponent q a (floorPower + 1)))) ≤
+      4 * (q + 1 : ℝ≥0) ^ 2 * (Fintype.card V + 1 : ℝ≥0) ^ 6 * (1 / 2 : ℝ≥0) ^ t :=
+  by
+    obtain ⟨hr, hp, hc, hg⟩ :=
+      absorber_crude_coefficients_le_power q bank t c b a
+        (by
+          omega)
+        hbank hcoeff hgap
+    exact
+      timedStoppedAbsorber_dyadic_crude_tail steps F active S₀ bank q t a floorPower hF hInv₀
+        hchosen₀ hN ht hsteps hsize hfloor hconst hr hp hc hg
 
 end
 

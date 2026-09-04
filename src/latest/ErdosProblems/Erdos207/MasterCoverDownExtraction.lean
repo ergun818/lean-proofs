@@ -165,7 +165,7 @@ theorem hasKSSSOutsidePacking_of_initialMasterCoverStep
 flexible set contains a positive-mass outcome that is already the required
 outside packing. -/
 theorem exists_ksssOutsidePacking_of_finalMasterIterationGood
-    {Omega V : Type*} [Fintype Omega] [DecidableEq Omega]
+    {Omega V : Type*} [Fintype Omega]
     [Fintype V] [DecidableEq V] {ell : ℕ}
     {q : ℕ} {H : SimpleGraph V} {X : Finset V}
     {B : TripleSystemOn V}
@@ -187,6 +187,7 @@ theorem exists_ksssOutsidePacking_of_finalMasterIterationGood
     (hsupport : law.SupportedOn fun omega ↦
       GraphSupportedOn (G omega) (X : Set V)) :
     ∃ P : TripleSystemOn V, HasKSSSOutsidePacking q H X B P := by
+  classical
   let Good : Omega → Prop := fun omega ↦
     IsMasterStagePointwiseGood W k
       (absorberErdosForbiddenConfigurationsOn q B)

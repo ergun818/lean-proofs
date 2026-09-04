@@ -71,35 +71,52 @@ theorem ksssPairSlope_power
   exact (ksssPairSlope_clock_ambient_bound orders a coeff E A time N
     hE hA htime hclock horders ha hab hratio).trans (by simpa only [pow_zero] using hbound)
 
-theorem ksss_pair_slope_error_power
-    (orders : Finset ℕ) (a coeff : ℕ → ℝ) (E A scale time N t D : ℝ) (B b : ℕ)
-    (hE : 0 < E) (hA : 0 < A) (htime : 0 ≤ time) (hclock : 3 * time < E)
-    (horders : ∀ d ∈ orders, 1 ≤ d) (ha : ∀ d ∈ orders, 0 ≤ a d)
-    (hab : ∀ d ∈ orders, a d * E ^ d ≤ coeff d)
-    (hN : 0 < N) (ht : 0 < t) (hD : 0 ≤ D) (hratio : A / E ≤ N)
+theorem ksss_pair_slope_error_power (orders : Finset ℕ) (a coeff : ℕ → ℝ)
+    (E A scale time N t D : ℝ) (B b : ℕ) (hE : 0 < E) (hA : 0 < A) (htime : 0 ≤ time)
+    (hclock : 3 * time < E) (horders : ∀ d ∈ orders, 1 ≤ d) (ha : ∀ d ∈ orders, 0 ≤ a d)
+    (hab : ∀ d ∈ orders, a d * E ^ d ≤ coeff d) (hN : 0 < N) (ht : 0 < t) (hD : 0 ≤ D)
+    (hratio : A / E ≤ N)
     (hsmall : ksssErrorEnvelope E scale B time ≤ ksssPairTrajectory orders a E A time / 4)
     (hL : N ^ 2 / t ^ (2 * b) ≤ E * ksssEdgeDensity E time)
     (hcoeff : 9 * (ksssThreatCoefficient orders coeff + 1) + D ≤ t) :
-    |ksssPairSlope orders a E A time| + D * ksssErrorEnvelope E scale B time /
-        (E * ksssEdgeDensity E time) ≤ 1 / N * t ^ (2 * b + 1) := by
-  have hp := ksssEdgeDensity_pos hE hclock
-  have hb : ∀ d ∈ orders, 0 ≤ coeff d := fun d hd ↦
-    (mul_nonneg (ha d hd) (pow_nonneg hE.le d)).trans (hab d hd)
-  have hC := ksssThreatCoefficient_nonneg orders coeff hb
-  have he := ksssErrorEnvelope_le_ambient orders a E A scale time N B
-    hE hA.le htime hclock ha hN.le hratio hsmall
-  have herror := div_le_div_of_nonneg_right (mul_le_mul_of_nonneg_left he hD) (mul_nonneg hE.le hp.le)
-  have hslope := ksssPairSlope_clock_ambient_bound orders a coeff E A time N
-    hE hA htime hclock horders ha hab hratio
-  have hbound := coefficient_envelope_div_clock_power N t N
-    (9 * (ksssThreatCoefficient orders coeff + 1) + D) (E * ksssEdgeDensity E time) 0 b
-    hN ht hN.le (by positivity) (by simp) hcoeff hL
-  calc
-    _ ≤ (9 * (ksssThreatCoefficient orders coeff + 1)) * N / (E * ksssEdgeDensity E time) +
-        D * N / (E * ksssEdgeDensity E time) := add_le_add hslope herror
-    _ = (9 * (ksssThreatCoefficient orders coeff + 1) + D) * N /
-        (E * ksssEdgeDensity E time) := by ring
-    _ ≤ _ := by simpa only [pow_zero] using hbound
+    |ksssPairSlope orders a E A time| +
+        D * ksssErrorEnvelope E scale B time / (E * ksssEdgeDensity E time) ≤
+      1 / N * t ^ (2 * b + 1) :=
+  by
+    have hp := ksssEdgeDensity_pos hE hclock
+    have hb : ∀ d ∈ orders, 0 ≤ coeff d := fun d hd ↦
+      (mul_nonneg (ha d hd) (pow_nonneg hE.le d)).trans (hab d hd)
+    have hC := ksssThreatCoefficient_nonneg orders coeff hb
+    have he :=
+      ksssErrorEnvelope_le_ambient orders a E A scale time N B hE hA.le htime hclock ha hN.le
+        hratio hsmall
+    have herror :=
+      div_le_div_of_nonneg_right (mul_le_mul_of_nonneg_left he hD) (mul_nonneg hE.le hp.le)
+    have hslope :=
+      ksssPairSlope_clock_ambient_bound orders a coeff E A time N hE hA htime hclock horders
+        ha hab hratio
+    have hbound :=
+      coefficient_envelope_div_clock_power N t N
+        (9 * (ksssThreatCoefficient orders coeff + 1) + D) (E * ksssEdgeDensity E time) 0 b hN
+        ht hN.le
+        (by
+          positivity)
+        (by
+          simp)
+        hcoeff hL
+    calc
+      _ ≤
+          (9 * (ksssThreatCoefficient orders coeff + 1)) * N / (E * ksssEdgeDensity E time) +
+            D * N / (E * ksssEdgeDensity E time) :=
+        add_le_add hslope herror
+      _ =
+          (9 * (ksssThreatCoefficient orders coeff + 1) + D) * N /
+            (E * ksssEdgeDensity E time) :=
+        by
+          ring
+      _ ≤ _ :=
+        by
+          simpa only [pow_zero] using hbound
 
 end
 

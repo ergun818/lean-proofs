@@ -14,18 +14,22 @@ open scoped NNReal
 
 noncomputable section
 
-structure RegularizationInvariant
-    {V : Type*} [Fintype V] [DecidableEq V] [Nonempty V] {k : ℕ}
+structure RegularizationInvariant {V : Type*} [Fintype V] [DecidableEq V] [Nonempty V] {k : ℕ}
     (G0 H0 : Finset (Finset V)) (b t : ℕ) (S : HypergraphRegularizationState V k) : Prop where
   avoid : Disjoint (regularizationAcceptedEdges S) H0
-  graph_potential : finiteHypergraphMaxDegree (regularizationCurrentFamily G0 S) +
-    8 * finiteHypergraphDegreeGap (regularizationCurrentFamily G0 S) ≤
+  graph_potential :
+    finiteHypergraphMaxDegree (regularizationCurrentFamily G0 S) +
+        8 * finiteHypergraphDegreeGap (regularizationCurrentFamily G0 S) ≤
       finiteHypergraphMaxDegree G0 + 8 * finiteHypergraphDegreeGap G0
-  forbidden_potential : finiteHypergraphMaxDegree (regularizationCurrentFamily H0 S) +
-    8 * finiteHypergraphDegreeGap (regularizationCurrentFamily G0 S) ≤
+  forbidden_potential :
+    finiteHypergraphMaxDegree (regularizationCurrentFamily H0 S) +
+        8 * finiteHypergraphDegreeGap (regularizationCurrentFamily G0 S) ≤
       finiteHypergraphMaxDegree H0 + 8 * finiteHypergraphDegreeGap G0
-  clock : S.2 = false → b < finiteHypergraphDegreeGap (regularizationCurrentFamily G0 S) →
-    2 ^ t * finiteHypergraphDegreeGap (regularizationCurrentFamily G0 S) ≤ finiteHypergraphDegreeGap G0
+  clock :
+    S.2 = false →
+      b < finiteHypergraphDegreeGap (regularizationCurrentFamily G0 S) →
+        2 ^ t * finiteHypergraphDegreeGap (regularizationCurrentFamily G0 S) ≤
+          finiteHypergraphDegreeGap G0
 
 theorem regularizationInvariant_initial
     {V : Type*} [Fintype V] [DecidableEq V] [Nonempty V] {k : ℕ}
@@ -93,59 +97,81 @@ theorem RegularizationInvariant.inactive_advance
   intro hf hb
   exact (hA (h.active hGH hdensity hf hb)).elim
 
-theorem RegularizationInvariant.accept
-    {V : Type*} [Fintype V] [DecidableEq V] [Nonempty V] {k b t : ℕ}
-    {G0 H0 : Finset (Finset V)} {S : HypergraphRegularizationState V k}
+theorem RegularizationInvariant.accept {V : Type*} [Fintype V] [DecidableEq V] [Nonempty V]
+    {k b t : ℕ} {G0 H0 : Finset (Finset V)} {S : HypergraphRegularizationState V k}
     (h : RegularizationInvariant G0 H0 b t S) (hGH : G0 ⊆ H0)
     (hA : RegularizationActive G0 H0 b t S) (ω : UniformHyperedge V k → Bool)
-    (hgood : WeightedRegularizationStepGood
-      (fun v ↦ finiteHypergraphDegree (regularizationCurrentFamily G0 S) v)
-      (finiteHypergraphDegreeGap (regularizationCurrentFamily G0 S)) (regularizationCurrentFamily H0 S) ω) :
+    (hgood :
+      WeightedRegularizationStepGood
+        (fun v ↦ finiteHypergraphDegree (regularizationCurrentFamily G0 S) v)
+        (finiteHypergraphDegreeGap (regularizationCurrentFamily G0 S))
+        (regularizationCurrentFamily H0 S) ω) :
     RegularizationInvariant G0 H0 b (t + 1)
-      (regularizationAccept S (regularizationCurrentFamily H0 S) ω) := by
-  have hGH' := regularizationCurrentFamily_mono_base hGH S
-  constructor
-  · exact regularizationAccept_preserves_disjoint H0 S h.avoid ω
-  · simp only [regularizationCurrentFamily_accept]
-    exact (hypergraph_regularization_potential_le _ _ hGH' ω hgood).trans h.graph_potential
-  · simp only [regularizationCurrentFamily_accept]
-    exact (hypergraph_regularization_forbidden_potential_le _ _ hGH' ω hgood).trans h.forbidden_potential
-  · intro _hf _hb
-    simp only [regularizationCurrentFamily_accept]
-    have hg := hypergraph_degree_gap_lt_of_step_good _ _ hGH'
-      (finiteHypergraphDegreeGap (regularizationCurrentFamily G0 S)) ω hgood
-    have hhalf : 2 * finiteHypergraphDegreeGap
-        (regularizationCurrentFamily G0 S ∪ sampledFreshUniformHypergraph (regularizationCurrentFamily H0 S) ω) ≤
-        finiteHypergraphDegreeGap (regularizationCurrentFamily G0 S) := by
-      exact_mod_cast (show (2 : ℝ) * finiteHypergraphDegreeGap
-        (regularizationCurrentFamily G0 S ∪ sampledFreshUniformHypergraph (regularizationCurrentFamily H0 S) ω) ≤
-        finiteHypergraphDegreeGap (regularizationCurrentFamily G0 S) by linarith)
-    calc
-      _ = 2 ^ t * (2 * finiteHypergraphDegreeGap
-          (regularizationCurrentFamily G0 S ∪ sampledFreshUniformHypergraph (regularizationCurrentFamily H0 S) ω)) := by
-        rw [pow_succ]; ring
-      _ ≤ 2 ^ t * finiteHypergraphDegreeGap (regularizationCurrentFamily G0 S) := Nat.mul_le_mul_left _ hhalf
-      _ ≤ _ := hA.2.2.1
+      (regularizationAccept S (regularizationCurrentFamily H0 S) ω) :=
+  by
+    have hGH' := regularizationCurrentFamily_mono_base hGH S
+    constructor
+    · exact regularizationAccept_preserves_disjoint H0 S h.avoid ω
+    · simp only [regularizationCurrentFamily_accept]
+      exact (hypergraph_regularization_potential_le _ _ hGH' ω hgood).trans h.graph_potential
+    · simp only [regularizationCurrentFamily_accept]
+      exact
+        (hypergraph_regularization_forbidden_potential_le _ _ hGH' ω hgood).trans
+          h.forbidden_potential
+    · intro _hf _hb
+      simp only [regularizationCurrentFamily_accept]
+      have hg :=
+        hypergraph_degree_gap_lt_of_step_good _ _ hGH'
+          (finiteHypergraphDegreeGap (regularizationCurrentFamily G0 S)) ω hgood
+      have hhalf :
+        2 *
+            finiteHypergraphDegreeGap
+              (regularizationCurrentFamily G0 S ∪
+                sampledFreshUniformHypergraph (regularizationCurrentFamily H0 S) ω) ≤
+          finiteHypergraphDegreeGap (regularizationCurrentFamily G0 S) :=
+        by
+          exact_mod_cast
+            (show
+              (2 : ℝ) *
+                  finiteHypergraphDegreeGap
+                    (regularizationCurrentFamily G0 S ∪
+                      sampledFreshUniformHypergraph (regularizationCurrentFamily H0 S) ω) ≤
+                finiteHypergraphDegreeGap (regularizationCurrentFamily G0 S)
+              by linarith)
+      calc
+        _ =
+            2 ^ t *
+              (2 *
+                finiteHypergraphDegreeGap
+                  (regularizationCurrentFamily G0 S ∪
+                    sampledFreshUniformHypergraph (regularizationCurrentFamily H0 S) ω)) :=
+          by
+            rw [pow_succ]; ring
+        _ ≤ 2 ^ t * finiteHypergraphDegreeGap (regularizationCurrentFamily G0 S) :=
+          (Nat.mul_le_mul_left _ hhalf)
+        _ ≤ _ := hA.2.2.1
 
-theorem RegularizationInvariant.kernel_supported
-    {V : Type*} [Fintype V] [DecidableEq V] [Nonempty V] {k b t : ℕ}
-    {G0 H0 : Finset (Finset V)} {S : HypergraphRegularizationState V k}
-    (h : RegularizationInvariant G0 H0 b t S) (hGH : G0 ⊆ H0) (hk : 2 ≤ k)
-    (hsize : 16 * 2 ^ (k - 1) * (k - 1) ≤ Fintype.card V)
-    (hdensity : (2 : ℝ≥0) ^ k * finiteHypergraphMaxDegree H0 ≤
-      (1 / 36 : ℝ≥0) * Nat.choose (Fintype.card V) (k - 1)) :
-    (regularizationKernel G0 H0 hGH hk hsize b t S).SupportedOn (RegularizationInvariant G0 H0 b (t + 1)) := by
-  classical
-  by_cases hA : RegularizationActive G0 H0 b t S
-  · rw [regularizationKernel_active G0 H0 hGH hk hsize b t S hA]
-    refine FiniteLaw.SupportedOn.map (P := fun _ ↦ True) (fun _ _ ↦ trivial) _ ?_
-    intro ω _hω
-    unfold regularizationBatchOutcome
-    split_ifs with hgood
-    · exact h.accept hGH hA ω hgood
-    · exact h.reject
-  · rw [regularizationKernel_inactive G0 H0 hGH hk hsize b t S hA]
-    exact FiniteLaw.supportedOn_pure _ (h.inactive_advance hGH hdensity hA)
+theorem RegularizationInvariant.kernel_supported {V : Type*} [Fintype V] [DecidableEq V]
+    [Nonempty V] {k b t : ℕ} {G0 H0 : Finset (Finset V)}
+    {S : HypergraphRegularizationState V k} (h : RegularizationInvariant G0 H0 b t S)
+    (hGH : G0 ⊆ H0) (hk : 2 ≤ k) (hsize : 16 * 2 ^ (k - 1) * (k - 1) ≤ Fintype.card V)
+    (hdensity :
+      (2 : ℝ≥0) ^ k * finiteHypergraphMaxDegree H0 ≤
+        (1 / 36 : ℝ≥0) * Nat.choose (Fintype.card V) (k - 1)) :
+    (regularizationKernel G0 H0 hGH hk hsize b t S).SupportedOn
+      (RegularizationInvariant G0 H0 b (t + 1)) :=
+  by
+    classical
+    by_cases hA : RegularizationActive G0 H0 b t S
+    · rw [regularizationKernel_active G0 H0 hGH hk hsize b t S hA]
+      refine FiniteLaw.SupportedOn.map (P := fun _ ↦ True) (fun _ _ ↦ trivial) _ ?_
+      intro ω _hω
+      unfold regularizationBatchOutcome
+      split_ifs with hgood
+      · exact h.accept hGH hA ω hgood
+      · exact h.reject
+    · rw [regularizationKernel_inactive G0 H0 hGH hk hsize b t S hA]
+      exact FiniteLaw.supportedOn_pure _ (h.inactive_advance hGH hdensity hA)
 
 end
 

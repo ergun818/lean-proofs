@@ -11,12 +11,13 @@ import ErdosProblems.Erdos207.RawSampledLinkJointLaw
 namespace Erdos207
 
 open Finset
-open scoped Classical NNReal
+open scoped NNReal
 
 noncomputable section
 
-def availableLinkFamily
-    {O V : Type*} [DecidableEq V] (K : O → BipartiteLink V) (A : TripleSystemOn V) : TripleSystemOn V :=
+def availableLinkFamily {O V : Type*} [DecidableEq V] (K : O → BipartiteLink V)
+    (A : TripleSystemOn V) : TripleSystemOn V :=
+  open scoped Classical in
   A.filter fun T ↦ ∃ x : SimultaneousLinkPair O V K, T = simultaneousLinkPairTriple K x
 
 theorem mem_availableLinkFamily_iff

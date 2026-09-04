@@ -50,7 +50,7 @@ lemma card_vortexLevelAvailable
     (vortexLevelAvailable W k S).card = W.levelCount S.available k := by
   apply congrArg Finset.card
   ext T
-  simp [vortexLevelAvailable, Vortex.levelCount, Vortex.trianglesAtLevel]
+  simp [vortexLevelAvailable, Vortex.trianglesAtLevel]
 
 /-- Every listed threshold is reached, the absorber invariant is retained,
 and the final availability is contained in the initial availability. -/

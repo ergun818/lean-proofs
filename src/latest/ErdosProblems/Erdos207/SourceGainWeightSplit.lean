@@ -22,42 +22,50 @@ def sourceGainExceptionalWeight
     (H : TripleSystemOn V) (w : ℝ≥0) : ℝ≥0 :=
   ∑ u ∈ sourceGainExceptionalClass W F G T a H, setWeight (vortexTripleWeight W w) (u.remainder \ H)
 
-theorem sourceGain_extension_le_split
-    {V : Type*} [Fintype V] [DecidableEq V] {ell r s a : ℕ}
-    (W : Vortex V ell) (F G : ForbiddenFamilyOn V) (T : TripleOn V)
-    (H : TripleSystemOn V) (w : ℝ≥0) (ha : 1 ≤ a)
-    (hF : ∀ E ∈ F, E.card = r - 2) (hG : ∀ E ∈ G, E.card = s - 2) :
-    extensionWeight (fun u : sourceGainDefects W F G T a ↦ u.1.remainder) (vortexTripleWeight W w) H ≤
+theorem sourceGain_extension_le_split {V : Type*} [Fintype V] [DecidableEq V] {ell r s a : ℕ}
+    (W : Vortex V ell) (F G : ForbiddenFamilyOn V) (T : TripleOn V) (H : TripleSystemOn V)
+    (w : ℝ≥0) (ha : 1 ≤ a) (hF : ∀ E ∈ F, E.card = r - 2) (hG : ∀ E ∈ G, E.card = s - 2) :
+    extensionWeight (fun u : sourceGainDefects W F G T a ↦ u.1.remainder)
+        (vortexTripleWeight W w) H ≤
       sourceGainGoodWeight W F G T a H r s w + sourceGainReverseGoodWeight W F G T a H r s w +
-        sourceGainExceptionalWeight W F G T a H w := by
-  classical
-  unfold extensionWeight
-  rw [← Finset.sum_subtype (sourceGainDefects W F G T a)
-    (p := fun u ↦ u ∈ sourceGainDefects W F G T a) (fun _ ↦ Iff.rfl)
-    (fun u ↦ if H ⊆ u.remainder then setWeight (vortexTripleWeight W w) (u.remainder \ H) else 0)]
-  simp only [sourceGainGoodWeight, sourceGainReverseGoodWeight, sourceGainExceptionalWeight,
-    sourceGainDefects, sourceGainExceptionalClass, gainDefectExceptionalClass, filter_filter, sum_filter]
-  rw [← sum_add_distrib, ← sum_add_distrib]
-  apply sum_le_sum
-  intro u _hu
-  by_cases hterm : ∀ U ∈ u.omittedRoot, W.level U = Fin.last ell
-  · have ht : (∀ U ∈ u.omittedRoot, W.level U = Fin.last ell) ↔ True := iff_true_intro hterm
-    simp only [ht, if_true, true_and, and_true]
-    by_cases hH : H ⊆ u.remainder
-    · simp only [hH, if_true, true_and]
-      rcases u.exposure_three_way_split H hH ha r s
-        (hF u.first u.first_mem) (hG u.second u.second_mem) with h | h | h
-      · have hg : (u.exposureCode H).IsGood H r s := h
-        rw [if_pos hg]
-        exact (le_add_of_nonneg_right zero_le).trans (le_add_of_nonneg_right zero_le)
-      · rw [if_pos h]
-        exact (le_add_of_nonneg_left zero_le).trans (le_add_of_nonneg_right zero_le)
-      · have he : u.ForwardExceptional H ∧ H.card = 1 ∧ T ∉ u.second ∧ u.second \ H = u.first.erase T :=
-          ⟨h.1, h.2.1, h.2.2.2.1, h.2.2.2.2⟩
-        rw [if_pos he]
-        exact le_add_of_nonneg_left zero_le
-    · simp only [hH, if_false, false_and, zero_add, le_refl]
-  · simp only [hterm, if_false, false_and, and_false, zero_add, le_refl]
+        sourceGainExceptionalWeight W F G T a H w :=
+  by
+    classical
+    unfold extensionWeight
+    rw [←
+      Finset.sum_subtype (sourceGainDefects W F G T a) (p := fun u ↦
+        u ∈ sourceGainDefects W F G T a) (fun _ ↦ Iff.rfl)
+        (fun u ↦
+          if H ⊆ u.remainder then setWeight (vortexTripleWeight W w) (u.remainder \ H)
+          else 0)]
+    simp only [sourceGainGoodWeight, sourceGainReverseGoodWeight, sourceGainExceptionalWeight,
+      sourceGainDefects, sourceGainExceptionalClass, gainDefectExceptionalClass,
+      filter_filter, sum_filter]
+    rw [← sum_add_distrib, ← sum_add_distrib]
+    apply sum_le_sum
+    intro u _hu
+    by_cases hterm : ∀ U ∈ u.omittedRoot, W.level U = Fin.last ell
+    · have ht : (∀ U ∈ u.omittedRoot, W.level U = Fin.last ell) ↔ True := iff_true_intro hterm
+      simp only [ht, if_true, true_and, and_true]
+      by_cases hH : H ⊆ u.remainder
+      · simp only [hH, if_true, true_and]
+        rcases
+          u.exposure_three_way_split H hH ha r s (hF u.first u.first_mem)
+            (hG u.second u.second_mem) with
+          h | h | h
+        · have hg : (u.exposureCode H).IsGood H r s := h
+          rw [if_pos hg]
+          exact (le_add_of_nonneg_right zero_le).trans (le_add_of_nonneg_right zero_le)
+        · rw [if_pos h]
+          exact (le_add_of_nonneg_left zero_le).trans (le_add_of_nonneg_right zero_le)
+        · have he :
+            u.ForwardExceptional H ∧
+              H.card = 1 ∧ T ∉ u.second ∧ u.second \ H = u.first.erase T :=
+            ⟨h.1, h.2.1, h.2.2.2.1, h.2.2.2.2⟩
+          rw [if_pos he]
+          exact le_add_of_nonneg_left zero_le
+      · simp only [hH, if_false, false_and, zero_add, le_refl]
+    · simp only [hterm, if_false, false_and, and_false, zero_add, le_refl]
 
 theorem sourceGainExceptionalWeight_zero_of_orders_ne
     {V : Type*} [Fintype V] [DecidableEq V] {ell r s a : ℕ}

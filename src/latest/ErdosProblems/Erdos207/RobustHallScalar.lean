@@ -27,7 +27,7 @@ open Finset
 second-moment scalar for arbitrary finite subsets of two `M`-element types. -/
 theorem normalizedSecondMomentScalar_of_uniform
     (M d D codegree density cutoff : ℕ)
-    (hM : 0 < M) (hdensity : density ≤ d)
+    (hM : 0 < M) (_hdensity : density ≤ d)
     (huniform : ∀ s : ℕ, cutoff < s → s ≤ M →
       M * (D + codegree * s) < s * (d - density) ^ 2) :
     ∀ s u : ℕ, s ≤ M → u ≤ M → cutoff < s →
@@ -72,7 +72,7 @@ theorem normalizedSecondMomentScalar_of_uniform
 /-- The preceding scalar simultaneously supplies both oriented subset
 inequalities for a balanced bipartite link. -/
 theorem balancedLink_secondMomentScalars_of_uniform
-    {V : Type*} [Fintype V] [DecidableEq V]
+    {V : Type*} [Finite V] [DecidableEq V]
     (K : BipartiteLink V) (d D codegree density cutoff : ℕ)
     (hbalanced : K.left.card = K.right.card)
     (hpositive : 0 < K.right.card)
@@ -90,6 +90,7 @@ theorem balancedLink_secondMomentScalars_of_uniform
           (D * S.card + codegree * S.card * (S.card - 1)) <
         (K.left.card * d * S.card -
           density * S.card * U.card) ^ 2) := by
+  let := Fintype.ofFinite V
   have hbase := normalizedSecondMomentScalar_of_uniform K.right.card d D
     codegree density cutoff hpositive hdensity huniform
   constructor

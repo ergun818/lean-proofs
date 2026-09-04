@@ -67,11 +67,12 @@ theorem mapped_triangle_edge_count
   rw [hset, card_mapTripleSystem]
 
 theorem restricted_triangle_edge_count
-    {V : Type*} [Fintype V] [DecidableEq V] (D : Finset V) (A : TripleSystemOn V)
+    {V : Type*} [Finite V] [DecidableEq V] (D : Finset V) (A : TripleSystemOn V)
     (hA : ∀ T ∈ A, T.1 ⊆ D) (e : Sym2 D) :
     ((restrictTripleSystemTo D A).filter (fun T ↦ e ∈ tripleEdgeFinset T)).card =
       (A.filter (fun T ↦ (Function.Embedding.subtype (fun v ↦ v ∈ D)).sym2Map e ∈
         tripleEdgeFinset T)).card := by
+  let := Fintype.ofFinite V
   rw [← mapped_triangle_edge_count (Function.Embedding.subtype (fun v ↦ v ∈ D)),
     map_restrictTripleSystemTo D A hA]
 

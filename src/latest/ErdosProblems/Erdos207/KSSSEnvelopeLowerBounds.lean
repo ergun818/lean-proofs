@@ -49,7 +49,7 @@ theorem ksss_curvature_scale_le_configuration_error
   calc
     _ = (A₀ / E₀) ^ z * (A₀ / E₀ ^ 3) := by
       rw [pow_add, pow_succ, div_pow]
-      field_simp <;> simp only [pow_add] <;> ring
+      field_simp ; simp only [pow_add] ; ring
     _ ≤ (A₀ / E₀) ^ z * (scale / E₀) :=
       mul_le_mul_of_nonneg_left hbase (by positivity)
     _ = (scale * (A₀ / E₀) ^ z) / E₀ := by ring

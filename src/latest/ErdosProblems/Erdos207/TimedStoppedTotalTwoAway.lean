@@ -113,7 +113,7 @@ theorem timedStoppedAbsorberGreedy_totalTwoAwayExpectation_le
       intro U _hU
       simpa only [pow_one, F, S₀, L, c] using
         (timedStoppedAbsorberGreedy_twoAwayMomentBound
-          (K := 0) (s := 1) active U hA2 hD hfloor hratio)
+          (_K := 0) (s := 1) active U hA2 hD hfloor hratio)
     _ = totalTwoAwayExpectationEnvelope q M H X B := by
       simp [totalTwoAwayExpectationEnvelope, c]
 

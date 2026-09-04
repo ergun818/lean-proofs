@@ -93,20 +93,25 @@ theorem exists_source_regularization_all_orders_with_counts
         omega
   exact hbuild q le_rfl
 
-theorem exists_source_regularization_all_orders
-    {V I : Type*} [Fintype V] [DecidableEq V] [Fintype I] [DecidableEq I] [Nonempty I]
-    {ell : ℕ} (W : Vortex V ell) (e : I ↪ TripleOn V)
+theorem exists_source_regularization_all_orders {V I : Type*} [Fintype V] [DecidableEq V]
+    [Fintype I] [DecidableEq I] [Nonempty I] {ell : ℕ} (W : Vortex V ell) (e : I ↪ TripleOn V)
     (hsupport : ∀ i, (e i).1 ⊆ W.U (Fin.last ell)) (q : ℕ) (hq : q ≤ W.terminalSize)
-    (L : ℕ → Finset (Finset I)) (F : ℕ → ForbiddenFamilyOn V)
-    (b s : ℕ → ℕ) (y z a delta B : ℕ → ℝ≥0) (sigma C : ℝ≥0)
-    (hinputs : ∀ j ∈ Icc 4 q, SourceRegularizationOrderInput W j (L j) (F j)
-      (b j) (s j) (y j) (z j) (a j) (delta j) sigma C (B j)) :
-    ∃ Lstar : ℕ → Finset (Finset I), ∃ Fsup : ℕ → ForbiddenFamilyOn V,
-      ∀ j ∈ Icc 4 q, SourceRegularizationOrderResult W e j (b j) (L j)
-        ((Ico 4 j).biUnion Lstar) (F j) (y j + a j) (z j + 3 * a j) (Lstar j) (Fsup j) := by
-  obtain ⟨Lstar, Fsup, hresult⟩ := exists_source_regularization_all_orders_with_counts W e hsupport q hq
-    L F b s y z a delta B sigma C hinputs
-  exact ⟨Lstar, Fsup, fun j hj ↦ (hresult j hj).1⟩
+    (L : ℕ → Finset (Finset I)) (F : ℕ → ForbiddenFamilyOn V) (b s : ℕ → ℕ)
+    (y z a delta B : ℕ → ℝ≥0) (sigma C : ℝ≥0)
+    (hinputs :
+      ∀ j ∈ Icc 4 q,
+        SourceRegularizationOrderInput W j (L j) (F j) (b j) (s j) (y j) (z j) (a j) (delta j)
+          sigma C (B j)) :
+    ∃ Lstar : ℕ → Finset (Finset I),
+      ∃ Fsup : ℕ → ForbiddenFamilyOn V,
+        ∀ j ∈ Icc 4 q,
+          SourceRegularizationOrderResult W e j (b j) (L j) ((Ico 4 j).biUnion Lstar) (F j)
+            (y j + a j) (z j + 3 * a j) (Lstar j) (Fsup j) :=
+  by
+    obtain ⟨Lstar, Fsup, hresult⟩ :=
+      exists_source_regularization_all_orders_with_counts W e hsupport q hq L F b s y z a
+        delta B sigma C hinputs
+    exact ⟨Lstar, Fsup, fun j hj ↦ (hresult j hj).1⟩
 
 end
 

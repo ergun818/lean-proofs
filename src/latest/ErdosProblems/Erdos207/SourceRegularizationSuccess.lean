@@ -20,30 +20,39 @@ variable {V I : Type*} [Fintype V] [DecidableEq V]
   {W : Vortex V ell} {delta a : ℝ≥0}
 
 theorem regularizationProcessLaw_gap_source_failure
-    (P : SourceRandomConfigurationParameters W j delta a s)
-    (G0 H0 : Finset (Finset I)) (hGH : G0 ⊆ H0) (hk : 2 ≤ j - 2)
+    (P : SourceRandomConfigurationParameters W j delta a s) (G0 H0 : Finset (Finset I))
+    (hGH : G0 ⊆ H0) (hk : 2 ≤ j - 2)
     (hsize : 16 * 2 ^ (j - 2 - 1) * (j - 2 - 1) ≤ Fintype.card I)
-    (hdensity : (2 : ℝ≥0) ^ (j - 2) * finiteHypergraphMaxDegree H0 ≤
-      (1 / 36 : ℝ≥0) * Nat.choose (Fintype.card I) (j - 2 - 1))
+    (hdensity :
+      (2 : ℝ≥0) ^ (j - 2) * finiteHypergraphMaxDegree H0 ≤
+        (1 / 36 : ℝ≥0) * Nat.choose (Fintype.card I) (j - 2 - 1))
     (b : ℕ) (e : I ↪ TripleOn V)
-    (hbad : ∀ E : Finset I, E.card = j - 2 →
-      E.map e ∉ terminalRandomConfigurations W j → E ∈ H0)
-    (hprob : 2 * regularizationBaseHazard G0 (j - 2) ≤
-      sourceRandomConfigurationProbability W.terminalSize delta j)
+    (hbad :
+      ∀ E : Finset I, E.card = j - 2 → E.map e ∉ terminalRandomConfigurations W j → E ∈ H0)
+    (hprob :
+      2 * regularizationBaseHazard G0 (j - 2) ≤
+        sourceRandomConfigurationProbability W.terminalSize delta j)
     (F : ForbiddenFamilyOn V) (y z : ℝ≥0) (hF : SourceVortexWellSpread W j F y z)
     (hdeltaY : delta * y ≤ W.terminalSize) :
-    ((regularizationProcessLaw G0 H0 hGH hk hsize b).probability (fun S ↦ ¬
-      (finiteHypergraphDegreeGap (regularizationCurrentFamily G0 S) ≤ b ∧
-       SourceVortexWellSpread W j (F ∪ regularizationImageEdges e S) (y + a) (z + 3 * a))) : ℝ) ≤
+    ((regularizationProcessLaw G0 H0 hGH hk hsize b).probability
+          (fun S ↦
+            ¬(finiteHypergraphDegreeGap (regularizationCurrentFamily G0 S) ≤ b ∧
+                SourceVortexWellSpread W j (F ∪ regularizationImageEdges e S) (y + a)
+                  (z + 3 * a))) :
+        ℝ) ≤
       finiteHypergraphDegreeGap G0 * (2 * Fintype.card I * Real.exp (-(b : ℝ) / 8192)) +
-      (sourceRandomFailureCoefficient W j : ℝ) * ((2 : ℝ) ^ s)⁻¹ := by
-  apply finiteLaw_failure_and_le
-    (regularizationProcessLaw G0 H0 hGH hk hsize b)
-    (fun S ↦ finiteHypergraphDegreeGap (regularizationCurrentFamily G0 S) ≤ b)
-    (fun S ↦ SourceVortexWellSpread W j (F ∪ regularizationImageEdges e S) (y + a) (z + 3 * a))
-  · simpa only [not_le] using regularizationProcessLaw_gap_failure G0 H0 hGH hk hsize hdensity b
-  · exact_mod_cast regularizationProcessLaw_source_augmentation_failure P G0 H0 hGH hk hsize hdensity
-      b e hbad hprob F y z hF hdeltaY
+        (sourceRandomFailureCoefficient W j : ℝ) * ((2 : ℝ) ^ s)⁻¹ :=
+  by
+    apply
+      finiteLaw_failure_and_le (regularizationProcessLaw G0 H0 hGH hk hsize b)
+        (fun S ↦ finiteHypergraphDegreeGap (regularizationCurrentFamily G0 S) ≤ b)
+        (fun S ↦
+          SourceVortexWellSpread W j (F ∪ regularizationImageEdges e S) (y + a) (z + 3 * a))
+    · simpa only [not_le] using
+        regularizationProcessLaw_gap_failure G0 H0 hGH hk hsize hdensity b
+    · exact_mod_cast
+        regularizationProcessLaw_source_augmentation_failure P G0 H0 hGH hk hsize hdensity b e
+          hbad hprob F y z hF hdeltaY
 
 theorem exists_source_regularizing_augmentation
     (P : SourceRandomConfigurationParameters W j delta a s)

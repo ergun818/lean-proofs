@@ -32,43 +32,63 @@ theorem configuration_numerator_abs_le_power
     _ ≤ _ := configuration_move_numerator_power N t yprev ycurr alpha beta H z
       hN ht hprev0 hcurr0 halpha hbeta hH hprev hcurr ha hb hthreat
 
-theorem ksssConfigurationSlope_succ_power
-    (orders : Finset ℕ) (a : ℕ → ℝ) (E A time N t : ℝ) (d c b : ℕ)
-    (hE : 0 < E) (hA : 0 < A) (htime : 0 ≤ time) (hclock : 3 * time < E)
-    (horders : ∀ k ∈ orders, 1 ≤ k) (had : 0 ≤ a d) (hc : c + 2 ≤ d)
-    (hN : 0 < N) (ht : 6 ≤ t) (hd : (d : ℝ) ≤ t)
+theorem ksssConfigurationSlope_succ_power (orders : Finset ℕ) (a : ℕ → ℝ) (E A time N t : ℝ)
+    (d c b : ℕ) (hE : 0 < E) (hA : 0 < A) (htime : 0 ≤ time) (hclock : 3 * time < E)
+    (horders : ∀ k ∈ orders, 1 ≤ k) (had : 0 ≤ a d) (hc : c + 2 ≤ d) (hN : 0 < N) (ht : 6 ≤ t)
+    (hd : (d : ℝ) ≤ t)
     (hprev : ksssConfigurationTrajectory orders a E A d c time ≤ t * N ^ (d - c))
     (hcurr : ksssConfigurationTrajectory orders a E A d (c + 1) time ≤ t * N ^ (d - (c + 1)))
     (hH0 : 0 ≤ ksssThreatTrajectory orders a E A time)
     (hH : ksssThreatTrajectory orders a E A time ≤ t * N)
     (hden : N ^ 3 / (6 * t ^ (5 * b + 1)) ≤ ksssAvailableTrajectory orders a E A time) :
     |ksssConfigurationSlope orders a E A d (c + 1) time| ≤
-      N ^ (d - (c + 1) - 1) / N * t ^ (5 * b + 6) := by
-  let z := d - (c + 1) - 1
-  have hp := ksssEdgeDensity_pos hE hclock
-  have hAvail := ksssAvailableTrajectory_pos orders a hE hA hclock
-  have hprev0 := ksssConfigurationTrajectory_nonneg orders a E A time d c hA.le htime hp.le had
-  have hcurr0 := ksssConfigurationTrajectory_nonneg orders a E A time d (c + 1) hA.le htime hp.le had
-  have hprevExp : d - c = z + 2 := by dsimp only [z]; omega
-  have hcurrExp : d - (c + 1) = z + 1 := by dsimp only [z]; omega
-  have halpha : ((d - c : ℕ) : ℝ) ≤ t := by
-    calc
-      _ ≤ (d : ℝ) := by exact_mod_cast Nat.sub_le d c
-      _ ≤ t := hd
-  have hbeta : ((d - (c + 1) : ℕ) : ℝ) ≤ t := by
-    calc
-      _ ≤ (d : ℝ) := by exact_mod_cast Nat.sub_le d (c + 1)
-      _ ≤ t := hd
-  have hnum := configuration_numerator_abs_le_power N t
-    (ksssConfigurationTrajectory orders a E A d c time)
-    (ksssConfigurationTrajectory orders a E A d (c + 1) time)
-    (d - c : ℕ) (d - (c + 1) : ℕ) (ksssThreatTrajectory orders a E A time) z
-    hN.le (by linarith) hprev0 hcurr0 (Nat.cast_nonneg _) (Nat.cast_nonneg _) hH0
-    (by simpa only [hprevExp] using hprev) (by simpa only [hcurrExp] using hcurr)
-    halpha hbeta hH
-  rw [ksssConfigurationSlope_succ_source orders a E A time horders hE.ne' hp.ne' hAvail.ne'
-    (by omega), abs_div, abs_of_pos hAvail]
-  exact move_numerator_div_selector_power N t _ _ z b hN ht (abs_nonneg _) hnum hden
+      N ^ (d - (c + 1) - 1) / N * t ^ (5 * b + 6) :=
+  by
+    let z := d - (c + 1) - 1
+    have hp := ksssEdgeDensity_pos hE hclock
+    have hAvail := ksssAvailableTrajectory_pos orders a hE hA hclock
+    have hprev0 :=
+      ksssConfigurationTrajectory_nonneg orders a E A time d c hA.le htime hp.le had
+    have hcurr0 :=
+      ksssConfigurationTrajectory_nonneg orders a E A time d (c + 1) hA.le htime hp.le had
+    have hprevExp : d - c = z + 2 :=
+      by
+        dsimp only [z]; omega
+    have hcurrExp : d - (c + 1) = z + 1 :=
+      by
+        dsimp only [z]; omega
+    have halpha : ((d - c : ℕ) : ℝ) ≤ t :=
+      by
+        calc
+          _ ≤ (d : ℝ) :=
+            by
+              exact_mod_cast Nat.sub_le d c
+          _ ≤ t := hd
+    have hbeta : ((d - (c + 1) : ℕ) : ℝ) ≤ t :=
+      by
+        calc
+          _ ≤ (d : ℝ) :=
+            by
+              exact_mod_cast Nat.sub_le d (c + 1)
+          _ ≤ t := hd
+    have hnum :=
+      configuration_numerator_abs_le_power N t
+        (ksssConfigurationTrajectory orders a E A d c time)
+        (ksssConfigurationTrajectory orders a E A d (c + 1) time) (d - c : ℕ)
+        (d - (c + 1) : ℕ) (ksssThreatTrajectory orders a E A time) z hN.le
+        (by
+          linarith)
+        hprev0 hcurr0 (Nat.cast_nonneg _) (Nat.cast_nonneg _) hH0
+        (by
+          simpa only [hprevExp] using hprev)
+        (by
+          simpa only [hcurrExp] using hcurr)
+        halpha hbeta hH
+    rw [ksssConfigurationSlope_succ_source orders a E A time horders hE.ne' hp.ne' hAvail.ne'
+        (by
+          omega),
+      abs_div, abs_of_pos hAvail]
+    exact move_numerator_div_selector_power N t _ _ z b hN ht (abs_nonneg _) hnum hden
 
 theorem ksssConfigurationSlope_zero_power
     (orders : Finset ℕ) (a : ℕ → ℝ) (E A time N t : ℝ) (d b : ℕ)

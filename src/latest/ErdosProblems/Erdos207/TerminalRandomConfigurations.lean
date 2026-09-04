@@ -57,13 +57,14 @@ theorem Vortex.outerProfile_eq_zero_of_terminal
   simp only [hterminal T hm.1, Fin.val_last, Fin.val_castSucc] at hv
   omega
 
-theorem terminalRandomConfigurations_level
-    {V : Type*} [Fintype V] [DecidableEq V] {ell j : ℕ}
+theorem terminalRandomConfigurations_level {V : Type*} [Fintype V] [DecidableEq V] {ell j : ℕ}
     (W : Vortex V ell) {C : TripleSystemOn V} (hC : C ∈ terminalRandomConfigurations W j)
-    {T : TripleOn V} (hT : T ∈ C) : W.level T = Fin.last ell := by
-  have hsub := mem_triplesSupportedOn_iff.mp (((mem_terminalRandomConfigurations_iff W C).mp hC).1 hT)
-  apply le_antisymm (Fin.le_last _)
-  exact (W.subset_iff_le_level T (Fin.last ell)).mp hsub
+    {T : TripleOn V} (hT : T ∈ C) : W.level T = Fin.last ell :=
+  by
+    have hsub :=
+      mem_triplesSupportedOn_iff.mp (((mem_terminalRandomConfigurations_iff W C).mp hC).1 hT)
+    apply le_antisymm (Fin.le_last _)
+    exact (W.subset_iff_le_level T (Fin.last ell)).mp hsub
 
 theorem card_familyExtensions_terminalRandomConfigurations_le
     {V : Type*} [Fintype V] [DecidableEq V] {ell j : ℕ}

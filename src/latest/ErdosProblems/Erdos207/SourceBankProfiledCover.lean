@@ -74,25 +74,33 @@ theorem card_bankProfiledCover_source_le
           W t (mem_Icc.mp hr).1 hj hjrho hR hRcard hterminal
       · simp only [not_nonempty_iff_eq_empty.mp hF, card_empty, Nat.cast_zero, mul_zero, zero_le])
 
-theorem card_bankProfiledCover_singleton_source_le
-    {V : Type*} [Fintype V] [DecidableEq V] {ell q j : ℕ}
-    (W : Vortex V ell) (B R : TripleSystemOn V)
-    (banks : Finset (TripleSystemOn V)) (t : VortexProfile ell)
-    (hj : 4 ≤ j) (hRcard : R.card = 1)
-    (hbanks : ∀ K ∈ banks, K.Nonempty) (hterminal : 0 < W.terminalSize) :
+theorem card_bankProfiledCover_singleton_source_le {V : Type*} [Fintype V] [DecidableEq V]
+    {ell q j : ℕ} (W : Vortex V ell) (B R : TripleSystemOn V)
+    (banks : Finset (TripleSystemOn V)) (t : VortexProfile ell) (hj : 4 ≤ j)
+    (hRcard : R.card = 1) (hbanks : ∀ K ∈ banks, K.Nonempty)
+    (hterminal : 0 < W.terminalSize) :
     ((bankProfiledCover W q j B R banks t).card : ℝ≥0) ≤
-      banks.card * (exactBankVortexOrderCoefficient q ell : ℝ≥0) * W.sourceProfileScale (j - 4) t := by
-  simpa only [one_mul] using card_bankProfiledCover_mul_le W B R banks t 1
-    (W.sourceProfileScale (j - 4) t) (by
-      intro rho hr K hK
-      by_cases hF : (exactBankProfiledExtensions W rho j B R K t).Nonempty
-      · obtain ⟨S, hS⟩ := hF
-        have hjrho := exactBank_index_order_le (by omega : 3 ≤ j)
-          (mem_exactBankProfiledExtensions_iff.mp hS).1
-        rw [one_mul, W.le_mul_sourceProfileScale_iff _ _ _ _ hterminal]
-        exact_mod_cast card_exactBankProfiledExtensions_mul_terminal_pow_le_singleton_nonempty
-          W t (mem_Icc.mp hr).1 hj hjrho hRcard (hbanks K hK) hterminal
-      · simp only [not_nonempty_iff_eq_empty.mp hF, card_empty, Nat.cast_zero, mul_zero, zero_le])
+      banks.card * (exactBankVortexOrderCoefficient q ell : ℝ≥0) *
+        W.sourceProfileScale (j - 4) t :=
+  by
+    simpa only [one_mul] using
+      card_bankProfiledCover_mul_le W B R banks t 1 (W.sourceProfileScale (j - 4) t)
+        (by
+          intro rho hr K hK
+          by_cases hF : (exactBankProfiledExtensions W rho j B R K t).Nonempty
+          · obtain ⟨S, hS⟩ := hF
+            have hjrho :=
+              exactBank_index_order_le
+                (by
+                    omega :
+                  3 ≤ j)
+                (mem_exactBankProfiledExtensions_iff.mp hS).1
+            rw [one_mul, W.le_mul_sourceProfileScale_iff _ _ _ _ hterminal]
+            exact_mod_cast
+              card_exactBankProfiledExtensions_mul_terminal_pow_le_singleton_nonempty W t
+                (mem_Icc.mp hr).1 hj hjrho hRcard (hbanks K hK) hterminal
+          · simp only [not_nonempty_iff_eq_empty.mp hF, card_empty, Nat.cast_zero, mul_zero,
+              zero_le])
 
 theorem card_bankProfiledCover_mul_root_source_le
     {V : Type*} [Fintype V] [DecidableEq V] {m q j : ℕ}
@@ -121,24 +129,31 @@ theorem card_bankProfiledCover_mul_root_source_le
     exact_mod_cast h'
   · simp only [not_nonempty_iff_eq_empty.mp hF, card_empty, Nat.cast_zero, mul_zero, zero_le]
 
-theorem card_bankProfiledCover_singleton_mul_root_source_le
-    {V : Type*} [Fintype V] [DecidableEq V] {m q j : ℕ}
-    (W : Vortex V (m + 1)) (B R : TripleSystemOn V)
-    (banks : Finset (TripleSystemOn V)) (t : VortexProfile (m + 1))
-    (hj : 4 ≤ j) (hRcard : R.card = 1)
-    (hbanks : ∀ K ∈ banks, K.Nonempty) (ht0 : 0 < t 0) (hterminal : 0 < W.terminalSize) :
+theorem card_bankProfiledCover_singleton_mul_root_source_le {V : Type*} [Fintype V]
+    [DecidableEq V] {m q j : ℕ} (W : Vortex V (m + 1)) (B R : TripleSystemOn V)
+    (banks : Finset (TripleSystemOn V)) (t : VortexProfile (m + 1)) (hj : 4 ≤ j)
+    (hRcard : R.card = 1) (hbanks : ∀ K ∈ banks, K.Nonempty) (ht0 : 0 < t 0)
+    (hterminal : 0 < W.terminalSize) :
     ((W.U 0).card : ℝ≥0) * (bankProfiledCover W q j B R banks t).card ≤
-      banks.card * (exactBankVortexOrderCoefficient q (m + 1) : ℝ≥0) * W.sourceProfileScale (j - 3) t := by
-  apply card_bankProfiledCover_mul_le
-  intro rho hr K hK
-  by_cases hF : (exactBankProfiledExtensions W rho j B R K t).Nonempty
-  · obtain ⟨S, hS⟩ := hF
-    have hjrho := exactBank_index_order_le (by omega : 3 ≤ j)
-      (mem_exactBankProfiledExtensions_iff.mp hS).1
-    rw [W.le_mul_sourceProfileScale_iff _ _ _ _ hterminal]
-    exact_mod_cast card_exactBankProfiledExtensions_mul_root_terminal_pow_le_singleton_nonempty
-      W t (mem_Icc.mp hr).1 hj hjrho hRcard (hbanks K hK) ht0 hterminal
-  · simp only [not_nonempty_iff_eq_empty.mp hF, card_empty, Nat.cast_zero, mul_zero, zero_le]
+      banks.card * (exactBankVortexOrderCoefficient q (m + 1) : ℝ≥0) *
+        W.sourceProfileScale (j - 3) t :=
+  by
+    apply card_bankProfiledCover_mul_le
+    intro rho hr K hK
+    by_cases hF : (exactBankProfiledExtensions W rho j B R K t).Nonempty
+    · obtain ⟨S, hS⟩ := hF
+      have hjrho :=
+        exactBank_index_order_le
+          (by
+              omega :
+            3 ≤ j)
+          (mem_exactBankProfiledExtensions_iff.mp hS).1
+      rw [W.le_mul_sourceProfileScale_iff _ _ _ _ hterminal]
+      exact_mod_cast
+        card_exactBankProfiledExtensions_mul_root_terminal_pow_le_singleton_nonempty W t
+          (mem_Icc.mp hr).1 hj hjrho hRcard (hbanks K hK) ht0 hterminal
+    · simp only [not_nonempty_iff_eq_empty.mp hF, card_empty, Nat.cast_zero, mul_zero,
+        zero_le]
 
 end
 

@@ -23,7 +23,7 @@ open scoped NNReal
 satisfying any extra event whose failure probability fits in the remaining
 union-bound budget. -/
 theorem FiniteLaw.exists_selected_meets_all_and_good
-    {I J : Type*} [Fintype I] [DecidableEq I] [DecidableEq J]
+    {I J : Type*} [Fintype I] [DecidableEq I]
     (p : I → ℝ≥0) (hp : ∀ i, p i ≤ 1)
     (S : Finset J) (groups : J → Finset I)
     (Good : Finset I → Prop) (epsilon : ℝ≥0)
@@ -33,6 +33,7 @@ theorem FiniteLaw.exists_selected_meets_all_and_good
       ∑ j ∈ S, ∏ i ∈ groups j, (1 - p i) < 1) :
     ∃ R : Finset I, Good R ∧
       ∀ j ∈ S, ¬ Disjoint (groups j) R := by
+  classical
   let L := FiniteLaw.independentBits p hp
   let missing : (I → Bool) → Prop := fun omega ↦
     ∃ j ∈ S, Disjoint (groups j) (FiniteLaw.selectedByBits omega)

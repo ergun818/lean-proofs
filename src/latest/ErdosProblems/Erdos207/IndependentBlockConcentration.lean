@@ -88,10 +88,11 @@ theorem independentBits_probability_activeBlocks_eq
 /-- The binomial-product identity indexed by the powerset.  This form is
 convenient because the two factors record the active and inactive blocks. -/
 lemma sum_powerset_split_probabilities
-    {J R : Type*} [DecidableEq J] [CommSemiring R]
+    {J R : Type*} [CommSemiring R]
     (S : Finset J) (a b : R) :
     ∑ T ∈ S.powerset, a ^ T.card * b ^ (S.card - T.card) =
       (a + b) ^ S.card := by
+  classical
   rw [← prod_const, Finset.prod_add]
   apply sum_congr rfl
   intro T hT
@@ -229,7 +230,7 @@ theorem independentBits_probability_activeBlocks_card_le_le_exp
   have hbase0 : 0 ≤ 1 - (q : ℝ) / 2 := by linarith
   have hbase :
       1 - (q : ℝ) / 2 ≤ Real.exp (-(q : ℝ) / 2) := by
-    convert Real.one_sub_le_exp_neg ((q : ℝ) / 2) using 1 <;> ring_nf
+    convert Real.one_sub_le_exp_neg ((q : ℝ) / 2) using 1 ; ring_nf
   have hpow :
       (1 - (q : ℝ) / 2) ^ S.card ≤
         Real.exp (-((q : ℝ) * S.card) / 2) := by

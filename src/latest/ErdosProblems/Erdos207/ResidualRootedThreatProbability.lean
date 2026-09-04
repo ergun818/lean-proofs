@@ -17,33 +17,53 @@ open scoped NNReal
 noncomputable section
 
 theorem IsResidualGraphStronglyWellDistributed.probability_subset_union_le_product
-    {Ω V : Type*} [Fintype Ω] [Fintype V] [DecidableEq V] {ell : ℕ}
-    {L : FiniteLaw Ω} {W : Vortex V ell} {k : Fin (ell + 1)} {G : SimpleGraph V}
+    {Ω V : Type*} [Fintype Ω] [Fintype V] [DecidableEq V] {ell : ℕ} {L : FiniteLaw Ω}
+    {W : Vortex V ell} {k : Fin (ell + 1)} {G : SimpleGraph V}
     {initial later : Ω → TripleSystemOn V} {p C b : ℝ≥0}
-    (h : IsResidualGraphStronglyWellDistributed L W k G initial later p C b)
-    {d : ℕ} (hC : 1 ≤ C) (T : TripleSystemOn V) (hcard : T.card ≤ d)
+    (h : IsResidualGraphStronglyWellDistributed L W k G initial later p C b) {d : ℕ}
+    (hC : 1 ≤ C) (T : TripleSystemOn V) (hcard : T.card ≤ d)
     (hb : b ≤ setWeight (masterUnionTriangleWeight W k p) T) :
     L.probability (fun ω ↦ T ⊆ initial ω ∪ later ω) ≤
-      (2 * (2 * C) ^ d) * setWeight (masterUnionTriangleWeight W k p) T := by
-  let w := setWeight (masterUnionTriangleWeight W k p) T
-  have hbase : L.probability (fun ω ↦ T ⊆ initial ω ∪ later ω) ≤
-      C ^ T.card * (w + 2 ^ T.card * b) := by
-    simpa using h.probability_union_and_edges_le T ∅ (empty_subset _)
-  have htwo : (1 : ℝ≥0) ≤ 2 ^ T.card := one_le_pow₀ (by norm_num)
-  have hw : w + 2 ^ T.card * b ≤ 2 * (2 ^ T.card * w) := by
+      (2 * (2 * C) ^ d) * setWeight (masterUnionTriangleWeight W k p) T :=
+  by
+    let w := setWeight (masterUnionTriangleWeight W k p) T
+    have hbase :
+      L.probability (fun ω ↦ T ⊆ initial ω ∪ later ω) ≤ C ^ T.card * (w + 2 ^ T.card * b) :=
+      by
+        simpa using h.probability_union_and_edges_le T ∅ (empty_subset _)
+    have htwo : (1 : ℝ≥0) ≤ 2 ^ T.card :=
+      one_le_pow₀
+        (by
+          norm_num)
+    have hw : w + 2 ^ T.card * b ≤ 2 * (2 ^ T.card * w) :=
+      by
+        calc
+          _ ≤ 2 ^ T.card * w + 2 ^ T.card * w :=
+            add_le_add
+              (by
+                simpa only [one_mul] using
+                  mul_le_mul_of_nonneg_right htwo (show 0 ≤ w from zero_le))
+              (mul_le_mul_of_nonneg_left hb zero_le)
+          _ = _ :=
+            by
+              ring
     calc
-      _ ≤ 2 ^ T.card * w + 2 ^ T.card * w :=
-        add_le_add (by simpa only [one_mul] using mul_le_mul_of_nonneg_right htwo (show 0 ≤ w from zero_le))
-          (mul_le_mul_of_nonneg_left hb zero_le)
-      _ = _ := by ring
-  calc
-    _ ≤ C ^ T.card * (w + 2 ^ T.card * b) := hbase
-    _ ≤ C ^ T.card * (2 * (2 ^ T.card * w)) := mul_le_mul_of_nonneg_left hw zero_le
-    _ = (2 * (2 * C) ^ T.card) * w := by rw [mul_pow]; ring
-    _ ≤ _ := by
-      apply mul_le_mul_of_nonneg_right _ zero_le
-      apply mul_le_mul_of_nonneg_left _ zero_le
-      exact pow_le_pow_right₀ (one_le_mul_of_one_le_of_one_le (by norm_num) hC) hcard
+      _ ≤ C ^ T.card * (w + 2 ^ T.card * b) := hbase
+      _ ≤ C ^ T.card * (2 * (2 ^ T.card * w)) := (mul_le_mul_of_nonneg_left hw zero_le)
+      _ = (2 * (2 * C) ^ T.card) * w :=
+        by
+          rw [mul_pow]; ring
+      _ ≤ _ :=
+        by
+          apply mul_le_mul_of_nonneg_right _ zero_le
+          apply mul_le_mul_of_nonneg_left _ zero_le
+          exact
+            pow_le_pow_right₀
+              (one_le_mul_of_one_le_of_one_le
+                (by
+                  norm_num)
+                hC)
+              hcard
 
 theorem IsResidualGraphStronglyWellDistributed.probability_not_rootedActiveCapsGood_le
     {Omega V : Type*} [Fintype Omega] [Fintype V] [DecidableEq V]

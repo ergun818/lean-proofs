@@ -49,7 +49,7 @@ theorem timedStoppedGreedyKernel_supported_reachable
     (Inv : GreedyStateOn V → Prop)
     (hInv : ∀ j, j < n → ∀ S, Inv S → active j S →
       (greedyKernel F S).SupportedOn Inv)
-    (i : ℕ) (hi : i < n)
+    (i : ℕ) (_hi : i < n)
     (z : FiniteLaw.TimedState (GreedyStateOn V) n)
     (hz : TimedGreedyReachable Inv i z) :
     (FiniteLaw.timedStoppedKernel n (fun _ ↦ greedyKernel F) active z).SupportedOn
@@ -165,8 +165,7 @@ theorem timedStoppedGreedyKernel_probability_activeTrackedUncovered_le
       apply subset_empty.mp
       simpa [timedActiveTrackedUncoveredEdges, hactive] using hB
     subst B
-    simp [FiniteLaw.timedStoppedKernel, hzlt, hactive,
-      FiniteLaw.probability_true]
+    simp [FiniteLaw.timedStoppedKernel, hzlt, hactive]
 
 /-- Product mixed law for the terminal clocked stopped process. -/
 theorem timedStoppedGreedyProcess_probability_selectedTrackedUncovered_le_product

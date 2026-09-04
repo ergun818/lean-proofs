@@ -34,7 +34,7 @@ chosen afresh from the current packing state.  The conclusion deliberately
 states coverage by the enlarged total packing; the master wrapper removes the
 old non-reservoir families using its leave-graph invariant. -/
 theorem exists_dynamic_crossingLinkCover
-    {O V : Type*} [Fintype O] [DecidableEq O]
+    {O V : Type*} [Finite O]
     [Fintype V] [DecidableEq V]
     {G : SimpleGraph V} [DecidableRel G.Adj]
     (center : O → V)
@@ -52,6 +52,7 @@ theorem exists_dynamic_crossingLinkCover
       ∀ o : O, ∀ w : V, G.Adj (center o) w →
         (coveredGraph (P₀ ∪ M)).Adj (center o) w := by
   classical
+  let := Fintype.ofFinite O
   have hind : ∀ S : Finset O, ∃ P : TripleSystemOn V,
       P₀ ⊆ P ∧ P ⊆ P₀ ∪ available ∧
       IsPackingOn P ∧ AvoidsForbidden P F ∧
@@ -121,11 +122,11 @@ theorem exists_dynamic_crossingLinkCover
 /-- The dynamic iterator covers every graph edge having an endpoint outside
 `U`, provided the index type contains every such center. -/
 theorem exists_dynamic_crossingLinkCover_outside
-    {O V : Type*} [Fintype O] [DecidableEq O]
+    {O V : Type*} [Finite O]
     [Fintype V] [DecidableEq V]
     {G : SimpleGraph V} [DecidableRel G.Adj]
     {U : Finset V}
-    (center : O → V) (hout : ∀ o, center o ∉ U)
+    (center : O → V) (_hout : ∀ o, center o ∉ U)
     (hcomplete : ∀ v, v ∉ U → ∃ o, center o = v)
     (F : ForbiddenFamilyOn V) (available P₀ : TripleSystemOn V)
     (hP₀packing : IsPackingOn P₀) (hP₀avoid : AvoidsForbidden P₀ F)
@@ -140,6 +141,8 @@ theorem exists_dynamic_crossingLinkCover_outside
       IsPackingOn (P₀ ∪ M) ∧ AvoidsForbidden (P₀ ∪ M) F ∧
       ∀ u v : V, G.Adj u v → (u ∉ U ∨ v ∉ U) →
         (coveredGraph (P₀ ∪ M)).Adj u v := by
+  classical
+  let := Fintype.ofFinite O
   obtain ⟨M, hMA, hdisj, hpack, havoid, hcenters⟩ :=
     exists_dynamic_crossingLinkCover center F available P₀
       hP₀packing hP₀avoid hstep

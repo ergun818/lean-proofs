@@ -43,7 +43,7 @@ theorem ksssPairCurvature_mul_clock_cube_le
       (3 * A₀) * e * (|bracket| * E₀ ^ 2) := by
     change |(3 * A₀ / E₀) * e * bracket| * E₀ ^ 3 = _
     rw [abs_mul, abs_of_nonneg hscale]
-    field_simp <;> ring
+    field_simp
   calc
     _ = (3 * A₀) * e * (|bracket| * E₀ ^ 2) := hid
     _ ≤ (3 * A₀) * e * C := mul_le_mul_of_nonneg_left hbracket (by positivity)

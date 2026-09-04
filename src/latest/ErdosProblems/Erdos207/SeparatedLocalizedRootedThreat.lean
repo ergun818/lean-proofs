@@ -21,7 +21,7 @@ obstruction set.  This file records that injection.
 namespace Erdos207
 
 open Finset
-open scoped Classical NNReal
+open scoped NNReal
 
 noncomputable section
 
@@ -110,7 +110,7 @@ lemma localizedEmptyRootedThreatThirdVertexInLevel_injective
       · exfalso
         have hmem := z.1.1.2.2.1
         rw [hzEmpty] at hmem
-        simpa using hmem
+        simp at hmem
       · exact hzSingle
     have hz'Singleton : z'.1.1.1.1 = {z'.1.1.1.2} := by
       rcases (erase_eq_empty_iff z'.1.1.1.1 z'.1.1.1.2).mp z'.2 with
@@ -118,7 +118,7 @@ lemma localizedEmptyRootedThreatThirdVertexInLevel_injective
       · exfalso
         have hmem := z'.1.1.2.2.1
         rw [hzEmpty] at hmem
-        simpa using hmem
+        simp at hmem
       · exact hzSingle
     rw [hzSingleton, hz'Singleton, hT]
   apply Subtype.ext
@@ -228,7 +228,7 @@ lemma localizedEmptyRootedThreatThirdVertex_injective
       · exfalso
         have hmem := z.1.1.2.2.1
         rw [hzEmpty] at hmem
-        simpa using hmem
+        simp at hmem
       · exact hzSingle
     have hz'Singleton : z'.1.1.1.1 = {z'.1.1.1.2} := by
       rcases (erase_eq_empty_iff z'.1.1.1.1 z'.1.1.1.2).mp z'.2 with
@@ -236,7 +236,7 @@ lemma localizedEmptyRootedThreatThirdVertex_injective
       · exfalso
         have hmem := z'.1.1.2.2.1
         rw [hzEmpty] at hmem
-        simpa using hmem
+        simp at hmem
       · exact hzSingle
     rw [hzSingleton, hz'Singleton, hT]
   apply Subtype.ext
@@ -342,7 +342,7 @@ lemma extensionWeight_localizedRootedThreat_empty_eq_empty_add_nonempty
           setWeight p (localizedRootedThreatRemainder z.1) := by
   classical
   unfold extensionWeight
-  simp only [empty_subset, true_and, if_true, sdiff_empty]
+  simp only [empty_subset, if_true, sdiff_empty]
   symm
   simpa using Fintype.sum_subtype_add_sum_subtype
     (fun z : LocalizedRootedThreatWitness V

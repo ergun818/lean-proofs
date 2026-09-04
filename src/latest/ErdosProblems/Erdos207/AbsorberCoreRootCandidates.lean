@@ -148,7 +148,7 @@ lemma root_mem_fullCycleCoverRootCandidates_of_copy_adj
       have hbPrivate : IsC4C5LocalPrivate b := by
         rcases c4c5LocalOut_edge_has_private f hab with ha | hb
         · exact (show False by
-            simpa [IsC4C5LocalPrivate, IsTransformerNonTarget] using ha).elim
+            simp [IsC4C5LocalPrivate, IsTransformerNonTarget] at ha).elim
         · exact hb
       obtain ⟨T, hT, hyT, hbT, hyb⟩ := hab
       obtain ⟨x, hyx⟩ := target_mem_of_mem_c4c5LocalOut f hT hyT
@@ -158,16 +158,18 @@ lemma root_mem_fullCycleCoverRootCandidates_of_copy_adj
       rcases b with b | k
       · cases b with
         | source z =>
-            simp [fullCycleCoverRootCandidates,
-              c4c5FullAttachmentEmbedding, c4c5LocalSplitEquiv]
+            simp only [fullCycleCoverRootCandidates, c4c5FullAttachmentEmbedding,
+              c4c5LocalSplitEquiv, Function.Embedding.trans_apply, Function.Embedding.coeFn_mk,
+              Equiv.coe_fn_mk]
             exact hyImage
         | target z => exact hbPrivate.elim
         | edge e =>
-            simp [fullCycleCoverRootCandidates,
-              c4c5FullAttachmentEmbedding, c4c5LocalSplitEquiv]
+            simp only [fullCycleCoverRootCandidates, c4c5FullAttachmentEmbedding,
+              c4c5LocalSplitEquiv, Function.Embedding.trans_apply, Function.Embedding.coeFn_mk,
+              Equiv.coe_fn_mk]
             exact hyImage
-      · simp [fullCycleCoverRootCandidates,
-          c4c5FullAttachmentEmbedding, c4c5LocalSplitEquiv]
+      · simp only [fullCycleCoverRootCandidates, c4c5FullAttachmentEmbedding, c4c5LocalSplitEquiv,
+          Function.Embedding.trans_apply, Function.Embedding.coeFn_mk, Equiv.coe_fn_mk]
         exact hyImage
   | threeC4 f =>
       rw [fullCycleCoverOut, coveredGraph_mapTripleSystem,
@@ -180,7 +182,7 @@ lemma root_mem_fullCycleCoverRootCandidates_of_copy_adj
       have hbPrivate : IsThreeC4LocalPrivate b := by
         rcases threeC4LocalOut_edge_has_private f hab with ha | hb
         · exact (show False by
-            simpa [IsThreeC4LocalPrivate, IsTransformerNonTarget] using ha).elim
+            simp [IsThreeC4LocalPrivate, IsTransformerNonTarget] at ha).elim
         · exact hb
       obtain ⟨T, hT, hyT, hbT, hyb⟩ := hab
       obtain ⟨x, hyx⟩ := target_mem_of_mem_threeC4LocalOut f hT hyT
@@ -190,16 +192,19 @@ lemma root_mem_fullCycleCoverRootCandidates_of_copy_adj
       rcases b with b | k
       · cases b with
         | source z =>
-            simp [fullCycleCoverRootCandidates,
-              threeC4FullAttachmentEmbedding, threeC4LocalSplitEquiv]
+            simp only [fullCycleCoverRootCandidates, threeC4FullAttachmentEmbedding,
+              threeC4LocalSplitEquiv, Function.Embedding.trans_apply, Function.Embedding.coeFn_mk,
+              Equiv.coe_fn_mk]
             exact hyImage
         | target z => exact hbPrivate.elim
         | edge e =>
-            simp [fullCycleCoverRootCandidates,
-              threeC4FullAttachmentEmbedding, threeC4LocalSplitEquiv]
+            simp only [fullCycleCoverRootCandidates, threeC4FullAttachmentEmbedding,
+              threeC4LocalSplitEquiv, Function.Embedding.trans_apply, Function.Embedding.coeFn_mk,
+              Equiv.coe_fn_mk]
             exact hyImage
-      · simp [fullCycleCoverRootCandidates,
-          threeC4FullAttachmentEmbedding, threeC4LocalSplitEquiv]
+      · simp only [fullCycleCoverRootCandidates, threeC4FullAttachmentEmbedding,
+          threeC4LocalSplitEquiv, Function.Embedding.trans_apply, Function.Embedding.coeFn_mk,
+          Equiv.coe_fn_mk]
         exact hyImage
 
 lemma root_mem_fullCycleCoverRootCandidates_of_outGraph_adj
@@ -308,7 +313,6 @@ lemma root_mem_cycleCoverCoreRootCandidates_of_adj
   · rw [embeddedPathCoverGraph, SimpleGraph.map_adj] at hxv
     obtain ⟨a, b, hab, ha, hb⟩ := hxv
     have haRoot : a = PathCoverVertex.root x := by
-      change a = PathCoverVertex.root x
       apply (fullCycleCoverBaseEmbedding (CycleCoverPathVertex V)).injective
       exact ha
     subst a
@@ -444,12 +448,13 @@ lemma card_mappedHighGirthOriginalRootCandidates_le_fourteen
 
 lemma root_mem_mappedHighGirthCandidates_of_map_adj
     {V W : Type*} [Fintype V] [DecidableEq V]
-    [Fintype W] [DecidableEq W] {q : ℕ} (hq : 2 ≤ q)
+    [Finite W] [DecidableEq W] {q : ℕ} (hq : 2 ≤ q)
     (f : HighGirthCycleCoverVertex V q ↪ W)
     {x : V} {y : W}
     (hxy : ((highGirthCycleCoverGraph V hq).map f).Adj
       (f (highGirthCycleCoverRootEmbedding V q x)) y) :
     x ∈ mappedHighGirthOriginalRootCandidates f y := by
+  let := Fintype.ofFinite W
   rw [SimpleGraph.map_adj] at hxy
   obtain ⟨a, b, hab, ha, hb⟩ := hxy
   have haRoot : a = highGirthCycleCoverRootEmbedding V q x :=
@@ -494,7 +499,7 @@ lemma card_mappedHighGirthPairOriginalRootCandidates_le_six
 
 lemma root_mem_mappedHighGirthPairCandidates_of_bank
     {V W : Type*} [Fintype V] [DecidableEq V]
-    [Fintype W] [DecidableEq W] {q : ℕ} (hq : 2 ≤ q)
+    [Finite W] [DecidableEq W] {q : ℕ} (hq : 2 ≤ q)
     (f : HighGirthCycleCoverVertex V q ↪ W)
     {u v : W} (huv : u ≠ v) (w : ThirdVertex u v) (x : V)
     (hw : w.1 = f (highGirthCycleCoverRootEmbedding V q x))
@@ -502,6 +507,7 @@ lemma root_mem_mappedHighGirthPairCandidates_of_bank
       mapTripleSystem f
         (highGirthCycleCoverBank V hq)) :
     x ∈ mappedHighGirthPairOriginalRootCandidates f u v := by
+  let := Fintype.ofFinite W
   let coreDecidableEq : DecidableEq (CycleCoverAbsorberVertex V) :=
     inferInstance
   let : LinearOrder (CycleCoverAbsorberVertex V) :=

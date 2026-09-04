@@ -98,7 +98,7 @@ theorem extensionWeight_pairFamily_exactBank_le_constant
   by_cases hactive : IsEmpty (ActivePairFamilyTwoAwayWitness G U P A)
   · have hzero : Fintype.card
         (ActivePairFamilyTwoAwayWitness G U P A) = 0 := Fintype.card_eq_zero
-    simp [hzero]
+    simp
   · let : Nonempty (ActivePairFamilyTwoAwayWitness G U P A) :=
       not_isEmpty_iff.mp hactive
     let z : ActivePairFamilyTwoAwayWitness G U P A :=
@@ -221,7 +221,7 @@ theorem extensionWeight_pairFamily_exactBank_le_constant
               intro T _hT
               have hsmallT : (({T.1} ∪ insert U A) ∪ K).card ≤ r - 3 := by
                 have heq : ({T.1} ∪ insert U A) ∪ K =
-                    {T.1} ∪ (insert U A ∪ K) := by ext S; simp [or_assoc]
+                    {T.1} ∪ (insert U A ∪ K) := by ext S; simp
                 rw [heq]
                 have hc := card_union_le ({T.1} : TripleSystemOn V)
                   (insert U A ∪ K)

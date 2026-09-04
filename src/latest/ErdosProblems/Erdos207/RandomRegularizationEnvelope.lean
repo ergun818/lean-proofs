@@ -41,15 +41,21 @@ def randomRegularizationEnvelopeLaw : FiniteLaw (D × (Finset (Finset J) × Fins
     beta (hbeta d) b t)
 
 theorem randomRegularizationEnvelopeLaw_independent :
-    FiniteLaw.map (fun z ↦ (z.1, z.2.1)) (randomRegularizationEnvelopeLaw P e G H hGH hk hsize beta hbeta b t) =
-      P.jointBind (fun _ ↦ geometricConfigurationEnvelopeLaw beta t) := by
-  have h := FiniteLaw.map_jointBind_independent P
-    (fun d ↦ regularizationConfigurationEnvelope (e d) (G d) (H d) (hGH d) hk (hsize d) beta (hbeta d) b t)
-    id Prod.fst (geometricConfigurationEnvelopeLaw beta t)
-    (fun d ↦ regularizationConfigurationEnvelope_proposal (e d) (G d) (H d) (hGH d) hk (hsize d)
-      beta (hbeta d) b t)
-  rw [FiniteLaw.map_id] at h
-  exact h
+    FiniteLaw.map (fun z ↦ (z.1, z.2.1))
+        (randomRegularizationEnvelopeLaw P e G H hGH hk hsize beta hbeta b t) =
+      P.jointBind (fun _ ↦ geometricConfigurationEnvelopeLaw beta t) :=
+  by
+    have h :=
+      FiniteLaw.map_jointBind_independent P
+        (fun d ↦
+          regularizationConfigurationEnvelope (e d) (G d) (H d) (hGH d) hk (hsize d) beta
+            (hbeta d) b t)
+        id Prod.fst (geometricConfigurationEnvelopeLaw beta t)
+        (fun d ↦
+          regularizationConfigurationEnvelope_proposal (e d) (G d) (H d) (hGH d) hk (hsize d)
+            beta (hbeta d) b t)
+    rw [FiniteLaw.map_id] at h
+    exact h
 
 theorem randomRegularizationEnvelopeLaw_supported
     (ht : ∀ d, finiteHypergraphDegreeGap (G d) ≤ t)

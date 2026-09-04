@@ -176,7 +176,7 @@ theorem extensionWeight_pairFamily_absorberInduced_le
   by_cases hactive : IsEmpty (ActivePairFamilyTwoAwayWitness G U P A)
   · have hzero : Fintype.card
         (ActivePairFamilyTwoAwayWitness G U P A) = 0 := Fintype.card_eq_zero
-    simp [hzero]
+    simp
   · let : Nonempty (ActivePairFamilyTwoAwayWitness G U P A) :=
       not_isEmpty_iff.mp hactive
     let z : ActivePairFamilyTwoAwayWitness G U P A :=

@@ -55,43 +55,55 @@ theorem restrictedGreedyKernel_pairStar_drift_error
   rw [he, abs_div, abs_neg, abs_of_pos hRpos]
   exact div_le_div_of_nonneg_right hs hRpos.le
 
-theorem restrictedGreedyKernel_pairStar_drift_trajectory_error
-    {V : Type*} [Fintype V] [DecidableEq V]
-    {F : ForbiddenFamilyOn V} {S : GreedyStateOn V} {P : Finset V}
+theorem restrictedGreedyKernel_pairStar_drift_trajectory_error {V : Type*} [Fintype V]
+    [DecidableEq V] {F : ForbiddenFamilyOn V} {S : GreedyStateOn V} {P : Finset V}
     (hS : GreedyInvariant F S) (hP : P.card = 2)
     (hR : (S.available \ availableTrianglesContainingPair S P).Nonempty)
     (H epsilonH x epsilonX A epsilonA : ℝ) (hA : 0 < A)
-    (hthreat : ∀ U ∈ availableTrianglesContainingPair S P,
-      |((greedyClosedThreats F S U).card : ℝ) - H| ≤ epsilonH)
+    (hthreat :
+      ∀ U ∈ availableTrianglesContainingPair S P,
+        |((greedyClosedThreats F S U).card : ℝ) - H| ≤ epsilonH)
     (hpair : |((availableTrianglesContainingPair S P).card : ℝ) - x| ≤ epsilonX)
-    (hdenom : |((S.available \ availableTrianglesContainingPair S P).card : ℝ) - A| ≤ epsilonA) :
+    (hdenom :
+      |((S.available \ availableTrianglesContainingPair S P).card : ℝ) - A| ≤ epsilonA) :
     let Q := availableTrianglesContainingPair S P
     let R := S.available \ Q
     |(restrictedGreedyKernel F S R hR).expectationReal
-        (fun S' ↦ greedyAvailableCountReal Q S' - greedyAvailableCountReal Q S) +
-      x * (H - x) / A| ≤
-        Q.card * epsilonH / R.card +
-          epsilonX * (|H| + |(Q.card : ℝ)| + |x|) / R.card +
-            |x * (H - x)| * epsilonA / (R.card * A) := by
-  dsimp only
-  let Q := availableTrianglesContainingPair S P
-  let R := S.available \ Q
-  let μ := (restrictedGreedyKernel F S R hR).expectationReal
-    (fun S' ↦ greedyAvailableCountReal Q S' - greedyAvailableCountReal Q S)
-  have hRpos : 0 < (R.card : ℝ) := by exact_mod_cast card_pos.mpr hR
-  have hraw : |μ - (-((Q.card : ℝ) * (H - Q.card))) / R.card| ≤ Q.card * epsilonH / R.card := by
-    simpa only [neg_div, sub_neg_eq_add] using restrictedGreedyKernel_pairStar_drift_error hS hP hR H epsilonH hthreat
-  have hn : |(-((Q.card : ℝ) * (H - Q.card))) - (-(x * (H - x)))| ≤
-      epsilonX * (|H| + |(Q.card : ℝ)| + |x|) := by
-    rw [neg_sub_neg, abs_sub_comm]
-    exact pair_quadratic_numerator_error_le Q.card x H epsilonX hpair
-  have hquot := abs_div_sub_div_le_of_errors hRpos hA hn hdenom
-  change |μ + x * (H - x) / A| ≤ _
-  have he : μ + x * (H - x) / A = μ - (-(x * (H - x))) / A := by ring
-  rw [he]
-  have htri := (abs_sub_le μ (-((Q.card : ℝ) * (H - Q.card)) / R.card)
-    (-(x * (H - x)) / A)).trans (add_le_add hraw hquot)
-  simpa only [abs_neg, add_assoc] using htri
+            (fun S' ↦ greedyAvailableCountReal Q S' - greedyAvailableCountReal Q S) +
+          x * (H - x) / A| ≤
+      Q.card * epsilonH / R.card + epsilonX * (|H| + |(Q.card : ℝ)| + |x|) / R.card +
+        |x * (H - x)| * epsilonA / (R.card * A) :=
+  by
+    dsimp only
+    let Q := availableTrianglesContainingPair S P
+    let R := S.available \ Q
+    let μ :=
+      (restrictedGreedyKernel F S R hR).expectationReal
+        (fun S' ↦ greedyAvailableCountReal Q S' - greedyAvailableCountReal Q S)
+    have hRpos : 0 < (R.card : ℝ) :=
+      by
+        exact_mod_cast card_pos.mpr hR
+    have hraw :
+      |μ - (-((Q.card : ℝ) * (H - Q.card))) / R.card| ≤ Q.card * epsilonH / R.card :=
+      by
+        simpa only [neg_div, sub_neg_eq_add] using
+          restrictedGreedyKernel_pairStar_drift_error hS hP hR H epsilonH hthreat
+    have hn :
+      |(-((Q.card : ℝ) * (H - Q.card))) - (-(x * (H - x)))| ≤
+        epsilonX * (|H| + |(Q.card : ℝ)| + |x|) :=
+      by
+        rw [neg_sub_neg, abs_sub_comm]
+        exact pair_quadratic_numerator_error_le Q.card x H epsilonX hpair
+    have hquot := abs_div_sub_div_le_of_errors hRpos hA hn hdenom
+    change |μ + x * (H - x) / A| ≤ _
+    have he : μ + x * (H - x) / A = μ - (-(x * (H - x))) / A :=
+      by
+        ring
+    rw [he]
+    have htri :=
+      (abs_sub_le μ (-((Q.card : ℝ) * (H - Q.card)) / R.card) (-(x * (H - x)) / A)).trans
+        (add_le_add hraw hquot)
+    simpa only [abs_neg, add_assoc] using htri
 
 end
 

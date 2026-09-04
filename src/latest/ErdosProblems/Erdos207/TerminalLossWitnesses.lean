@@ -81,39 +81,41 @@ def terminalLossWitnessRemainder
   | Sum.inl p => pairTwoAwayThreatRemainder p.2
   | Sum.inr w => w.remainder
 
-theorem exists_terminalLossWitness_of_loss
-    {V : Type*} [Fintype V] [DecidableEq V]
+theorem exists_terminalLossWitness_of_loss {V : Type*} [Fintype V] [DecidableEq V]
     {F J : ForbiddenFamilyOn V} {S : GreedyStateOn V} {C : TripleSystemOn V}
-    {root T : TripleOn V} {c : ℕ}
-    (hS : GreedyInvariant F S) (hroot : root ∈ S.available)
-    (hT : T ∈ S.available \ greedyClosedThreats F S root)
-    (hJ : J ⊆ F) (hpack : IsPackingOn C) (hcard : C.card = c + 2)
-    (hC : C ∈ greedyConfigurationLosses F J S root c T) :
+    {root T : TripleOn V} {c : ℕ} (hS : GreedyInvariant F S) (hroot : root ∈ S.available)
+    (hT : T ∈ S.available \ greedyClosedThreats F S root) (hJ : J ⊆ F) (hpack : IsPackingOn C)
+    (hcard : C.card = c + 2) (hC : C ∈ greedyConfigurationLosses F J S root c T) :
     ∃ w : TerminalLossWitness V F root T,
-      terminalLossWitnessFirst w = C ∧ terminalLossWitnessRemainder w ⊆ S.chosen := by
-  have hclass := (mem_sdiff.mp hC).1
-  have hdata := mem_greedyConfigurationClass.mp hclass
-  have hCF := hJ hdata.1
-  obtain ⟨U, hne, hUC, hUA, hpart, hrest⟩ := exists_terminal_configuration_other hS hroot hclass hcard
-  have hthreat := terminal_loss_other_mem_closedThreats hS hUA hpart hT hC
-  rcases mem_union.mp (mem_inter.mp hthreat).2 with hshare | htwo
-  · have hge := mem_triplesSharingPair_iff.mp hshare
-    obtain ⟨P, hPsub, hPcard⟩ := exists_subset_card_eq hge
-    let P' : PairOn V := ⟨P, hPcard⟩
-    let P'' : PairInsideSelector T := ⟨P', hPsub.trans inter_subset_left⟩
-    have hnotshare : U ∉ triplesSharingPair root := by
-      intro h
-      have hle := hpack.inter_card_le_one hUC hdata.2.1 hne
-      have hge := mem_triplesSharingPair_iff.mp h
-      rw [inter_comm] at hge
-      omega
-    let w₀ : TwoAwayThreatWitness V F root := ⟨(C, U), hCF, hUC, hdata.2.1, hne⟩
-    let w₁ : PairTwoAwayThreatWitness V F root P' := ⟨w₀, hPsub.trans inter_subset_right, hnotshare⟩
-    refine ⟨Sum.inl ⟨P'', w₁⟩, rfl, ?_⟩
-    exact terminal_configuration_remainder_subset_chosen hpart hrest
-  · obtain ⟨w, hw, hrem⟩ := exists_commonThreatWitness_of_terminal_twoAway hS hCF hdata.2.1
-      hroot hUC hUA hne hpart hrest hT htwo
-    exact ⟨Sum.inr w, hw, hrem⟩
+      terminalLossWitnessFirst w = C ∧ terminalLossWitnessRemainder w ⊆ S.chosen :=
+  by
+    have hclass := (mem_sdiff.mp hC).1
+    have hdata := mem_greedyConfigurationClass.mp hclass
+    have hCF := hJ hdata.1
+    obtain ⟨U, hne, hUC, hUA, hpart, hrest⟩ :=
+      exists_terminal_configuration_other hS hroot hclass hcard
+    have hthreat := terminal_loss_other_mem_closedThreats hS hUA hpart hT hC
+    rcases mem_union.mp (mem_inter.mp hthreat).2 with hshare | htwo
+    · have hge := mem_triplesSharingPair_iff.mp hshare
+      obtain ⟨P, hPsub, hPcard⟩ := exists_subset_card_eq hge
+      let P' : PairOn V := ⟨P, hPcard⟩
+      let P'' : PairInsideSelector T := ⟨P', hPsub.trans inter_subset_left⟩
+      have hnotshare : U ∉ triplesSharingPair root :=
+        by
+          intro h
+          have hle := hpack.inter_card_le_one hUC hdata.2.1 hne
+          have hge := mem_triplesSharingPair_iff.mp h
+          rw [inter_comm] at hge
+          omega
+      let w₀ : TwoAwayThreatWitness V F root := ⟨(C, U), hCF, hUC, hdata.2.1, hne⟩
+      let w₁ : PairTwoAwayThreatWitness V F root P' :=
+        ⟨w₀, hPsub.trans inter_subset_right, hnotshare⟩
+      refine ⟨Sum.inl ⟨P'', w₁⟩, rfl, ?_⟩
+      exact terminal_configuration_remainder_subset_chosen hpart hrest
+    · obtain ⟨w, hw, hrem⟩ :=
+        exists_commonThreatWitness_of_terminal_twoAway hS hCF hdata.2.1 hroot hUC hUA hne
+          hpart hrest hT htwo
+      exact ⟨Sum.inr w, hw, hrem⟩
 
 end
 

@@ -61,51 +61,63 @@ theorem greedyKernel_expectationReal_rootAlive
     _ = _ := by
       rw [sdiff_eq_filter, sum_filter]
 
-theorem greedyKernel_expectationReal_rootAlive_eq_restricted
-    {V : Type*} [Fintype V] [DecidableEq V]
-    {F : ForbiddenFamilyOn V} {S : GreedyStateOn V} (root : TripleOn V)
+theorem greedyKernel_expectationReal_rootAlive_eq_restricted {V : Type*} [Fintype V]
+    [DecidableEq V] {F : ForbiddenFamilyOn V} {S : GreedyStateOn V} (root : TripleOn V)
     (hS : GreedyInvariant F S) (hroot : root ∈ S.available)
-    (hR : (S.available \ greedyClosedThreats F S root).Nonempty)
-    (φ : GreedyStateOn V → ℝ) :
-    (greedyKernel F S).expectationReal
-      (fun S' ↦ if root ∈ S'.available then φ S' else 0) =
+    (hR : (S.available \ greedyClosedThreats F S root).Nonempty) (φ : GreedyStateOn V → ℝ) :
+    (greedyKernel F S).expectationReal (fun S' ↦ if root ∈ S'.available then φ S' else 0) =
       ((S.available \ greedyClosedThreats F S root).card : ℝ) / S.available.card *
-        (restrictedGreedyKernel F S (S.available \ greedyClosedThreats F S root) hR).expectationReal φ := by
-  rw [greedyKernel_expectationReal_rootAlive root hS hroot,
-    restrictedGreedyKernel_expectationReal]
-  have hRpos : (0 : ℝ) < (S.available \ greedyClosedThreats F S root).card := by
-    exact_mod_cast card_pos.mpr hR
-  field_simp
+        (restrictedGreedyKernel F S (S.available \ greedyClosedThreats F S root)
+              hR).expectationReal
+          φ :=
+  by
+    rw [greedyKernel_expectationReal_rootAlive root hS hroot,
+      restrictedGreedyKernel_expectationReal]
+    have hRpos : (0 : ℝ) < (S.available \ greedyClosedThreats F S root).card :=
+      by
+        exact_mod_cast card_pos.mpr hR
+    field_simp
 
 /-- A nonnegative upper bound under the conditional law remains valid for
 the survival-weighted observable under the original law. Empty survival
 sets are handled without inventing a conditional probability. -/
-theorem greedyKernel_expectationReal_rootAlive_le_of_restricted
-    {V : Type*} [Fintype V] [DecidableEq V]
-    {F : ForbiddenFamilyOn V} {S : GreedyStateOn V} (root : TripleOn V)
-    (hS : GreedyInvariant F S) (hroot : root ∈ S.available)
-    (φ : GreedyStateOn V → ℝ) (v : ℝ) (hv : 0 ≤ v)
-    (hbound : ∀ hR : (S.available \ greedyClosedThreats F S root).Nonempty,
-      (restrictedGreedyKernel F S (S.available \ greedyClosedThreats F S root) hR).expectationReal φ ≤ v) :
-    (greedyKernel F S).expectationReal
-      (fun S' ↦ if root ∈ S'.available then φ S' else 0) ≤ v := by
-  by_cases hR : (S.available \ greedyClosedThreats F S root).Nonempty
-  · rw [greedyKernel_expectationReal_rootAlive_eq_restricted root hS hroot hR]
-    have hApos : (0 : ℝ) < S.available.card := by
-      exact_mod_cast card_pos.mpr (show S.available.Nonempty from ⟨root, hroot⟩)
-    have hratio : ((S.available \ greedyClosedThreats F S root).card : ℝ) /
-        S.available.card ≤ 1 := by
-      apply (div_le_one hApos).mpr
-      exact_mod_cast card_le_card (sdiff_subset :
-        S.available \ greedyClosedThreats F S root ⊆ S.available)
-    calc
-      _ ≤ (((S.available \ greedyClosedThreats F S root).card : ℝ) / S.available.card) * v :=
-        mul_le_mul_of_nonneg_left (hbound hR) (by positivity)
-      _ ≤ 1 * v := mul_le_mul_of_nonneg_right hratio hv
-      _ = v := one_mul v
-  · rw [greedyKernel_expectationReal_rootAlive root hS hroot,
-      not_nonempty_iff_eq_empty.mp hR, sum_empty, mul_zero]
-    exact hv
+theorem greedyKernel_expectationReal_rootAlive_le_of_restricted {V : Type*} [Fintype V]
+    [DecidableEq V] {F : ForbiddenFamilyOn V} {S : GreedyStateOn V} (root : TripleOn V)
+    (hS : GreedyInvariant F S) (hroot : root ∈ S.available) (φ : GreedyStateOn V → ℝ) (v : ℝ)
+    (hv : 0 ≤ v)
+    (hbound :
+      ∀ hR : (S.available \ greedyClosedThreats F S root).Nonempty,
+        (restrictedGreedyKernel F S (S.available \ greedyClosedThreats F S root)
+                hR).expectationReal
+            φ ≤
+          v) :
+    (greedyKernel F S).expectationReal (fun S' ↦ if root ∈ S'.available then φ S' else 0) ≤
+      v :=
+  by
+    by_cases hR : (S.available \ greedyClosedThreats F S root).Nonempty
+    · rw [greedyKernel_expectationReal_rootAlive_eq_restricted root hS hroot hR]
+      have hApos : (0 : ℝ) < S.available.card :=
+        by
+          exact_mod_cast card_pos.mpr (show S.available.Nonempty from ⟨root, hroot⟩)
+      have hratio :
+        ((S.available \ greedyClosedThreats F S root).card : ℝ) / S.available.card ≤ 1 :=
+        by
+          apply (div_le_one hApos).mpr
+          exact_mod_cast
+            card_le_card
+              (sdiff_subset : S.available \ greedyClosedThreats F S root ⊆ S.available)
+      calc
+        _ ≤
+            (((S.available \ greedyClosedThreats F S root).card : ℝ) / S.available.card) *
+              v :=
+          mul_le_mul_of_nonneg_left (hbound hR)
+            (by
+              positivity)
+        _ ≤ 1 * v := (mul_le_mul_of_nonneg_right hratio hv)
+        _ = v := one_mul v
+    · rw [greedyKernel_expectationReal_rootAlive root hS hroot,
+        not_nonempty_iff_eq_empty.mp hR, sum_empty, mul_zero]
+      exact hv
 
 end
 

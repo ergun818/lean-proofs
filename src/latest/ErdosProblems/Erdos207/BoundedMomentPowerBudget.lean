@@ -11,27 +11,36 @@ namespace Erdos207
 
 open scoped NNReal
 
-theorem boundedMoment_power_cutoff
-    (d s a b : ℕ) (t w κ A Z : ℝ≥0) (hs : 1 ≤ s) (hst : (s : ℝ≥0) ≤ t)
-    (hw : w ≤ t ^ b) (hκ : κ ≤ A * Z * t ^ a)
+theorem boundedMoment_power_cutoff (d s a b : ℕ) (t w κ A Z : ℝ≥0) (hs : 1 ≤ s)
+    (hst : (s : ℝ≥0) ≤ t) (hw : w ≤ t ^ b) (hκ : κ ≤ A * Z * t ^ a)
     (hconst : 2 * (((d + 1) ^ (d + 1) : ℕ) : ℝ≥0) * A ≤ t) :
     2 * (w ^ d * ((boundedIntersectionMomentCoefficient d s : ℝ≥0) * κ)) ≤
-      Z * t ^ (a + d * (b + 1) + 1) := by
-  let D : ℝ≥0 := ((d + 1) ^ (d + 1) : ℕ)
-  have hM : (boundedIntersectionMomentCoefficient d s : ℝ≥0) ≤ D * t ^ d := by
-    have hM' : (boundedIntersectionMomentCoefficient d s : ℝ≥0) ≤ D * (s : ℝ≥0) ^ d := by
-      dsimp only [D]
-      exact_mod_cast boundedIntersectionMomentCoefficient_le d s hs
-    exact hM'.trans (mul_le_mul_of_nonneg_left (pow_le_pow_left' hst d) zero_le)
-  have hwd : w ^ d ≤ t ^ (b * d) := (pow_le_pow_left' hw d).trans_eq (pow_mul t b d).symm
-  have he : a + d * (b + 1) = b * d + d + a := by ring
-  calc
-    _ ≤ 2 * (t ^ (b * d) * ((D * t ^ d) * (A * Z * t ^ a))) :=
-      mul_le_mul_of_nonneg_left (mul_le_mul hwd (mul_le_mul hM hκ zero_le zero_le) zero_le zero_le) zero_le
-    _ = (2 * D * A) * Z * t ^ (a + d * (b + 1)) := by rw [he, pow_add, pow_add]; ring
-    _ ≤ t * Z * t ^ (a + d * (b + 1)) :=
-      mul_le_mul_of_nonneg_right (mul_le_mul_of_nonneg_right hconst zero_le) zero_le
-    _ = _ := by rw [pow_succ]; ring
+      Z * t ^ (a + d * (b + 1) + 1) :=
+  by
+    let D : ℝ≥0 := ((d + 1) ^ (d + 1) : ℕ)
+    have hM : (boundedIntersectionMomentCoefficient d s : ℝ≥0) ≤ D * t ^ d :=
+      by
+        have hM' : (boundedIntersectionMomentCoefficient d s : ℝ≥0) ≤ D * (s : ℝ≥0) ^ d :=
+          by
+            dsimp only [D]
+            exact_mod_cast boundedIntersectionMomentCoefficient_le d s hs
+        exact hM'.trans (mul_le_mul_of_nonneg_left (pow_le_pow_left' hst d) zero_le)
+    have hwd : w ^ d ≤ t ^ (b * d) := (pow_le_pow_left' hw d).trans_eq (pow_mul t b d).symm
+    have he : a + d * (b + 1) = b * d + d + a :=
+      by
+        ring
+    calc
+      _ ≤ 2 * (t ^ (b * d) * ((D * t ^ d) * (A * Z * t ^ a))) :=
+        mul_le_mul_of_nonneg_left
+          (mul_le_mul hwd (mul_le_mul hM hκ zero_le zero_le) zero_le zero_le) zero_le
+      _ = (2 * D * A) * Z * t ^ (a + d * (b + 1)) :=
+        by
+          rw [he, pow_add, pow_add]; ring
+      _ ≤ t * Z * t ^ (a + d * (b + 1)) :=
+        (mul_le_mul_of_nonneg_right (mul_le_mul_of_nonneg_right hconst zero_le) zero_le)
+      _ = _ :=
+        by
+          rw [pow_succ]; ring
 
 theorem dominatedConfigurationTailBound_powerThreshold
     {Ω W I : Type*} [Fintype Ω] [DecidableEq W] [Fintype I]

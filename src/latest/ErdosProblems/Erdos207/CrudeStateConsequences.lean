@@ -52,7 +52,7 @@ theorem closed_inter (h : CrudeStateBounds F S q K)
   have hb := card_closedThreats_inter_le_crude_cutoffs hS hT hT' hdis hpack
     K.pair K.pair K.common (fun p ↦ (h.pair T' p.1).le) (fun p ↦ (h.pair T p.1).le)
     (h.common T T').le
-  convert hb using 1 <;> ring
+  convert hb using 1 ; ring
 
 theorem pair_inter (h : CrudeStateBounds F S q K) (P : PairOn V) (T : TripleOn V)
     (hPT : ¬ P.1 ⊆ T.1) (hpack : ∀ E ∈ F, IsPackingOn E) :
@@ -76,19 +76,24 @@ theorem terminal_loss (h : CrudeStateBounds F S q K)
   have hc := (mem_forbiddenFamilyOfOrder.mp hE).2
   omega
 
-theorem threat_trajectory (h : CrudeStateBounds F S q K)
-    (hS : GreedyInvariant F S) (hpack : ∀ E ∈ F, IsPackingOn E)
-    (hcard : ∀ E ∈ F, 2 ≤ E.card → E.card + 2 ≤ q)
-    {T : TripleOn V} (hT : T ∈ S.available)
-    (x ex : ℝ) (y ey : ℕ → ℝ)
-    (hpair : ∀ P ∈ T.1.powersetCard 2,
-      |((availableTrianglesContainingPair S P).card : ℝ) - x| ≤ ex)
-    (hterminal : ∀ j ∈ Icc 4 q,
-      |((greedyConfigurationClass (forbiddenFamilyOfOrder F j) S T (j - 4)).card : ℝ) - y j| ≤ ey j) :
+theorem threat_trajectory (h : CrudeStateBounds F S q K) (hS : GreedyInvariant F S)
+    (hpack : ∀ E ∈ F, IsPackingOn E) (hcard : ∀ E ∈ F, 2 ≤ E.card → E.card + 2 ≤ q)
+    {T : TripleOn V} (hT : T ∈ S.available) (x ex : ℝ) (y ey : ℕ → ℝ)
+    (hpair :
+      ∀ P ∈ T.1.powersetCard 2, |((availableTrianglesContainingPair S P).card : ℝ) - x| ≤ ex)
+    (hterminal :
+      ∀ j ∈ Icc 4 q,
+        |((greedyConfigurationClass (forbiddenFamilyOfOrder F j) S T (j - 4)).card : ℝ) -
+              y j| ≤
+          ey j) :
     |((greedyClosedThreats F S T).card : ℝ) - (3 * x + (∑ j ∈ Icc 4 q, y j) - 2)| ≤
-      (K.common : ℝ) + 3 * ex + ∑ j ∈ Icc 4 q, ey j := by
-  exact abs_greedyClosedThreats_sub_trajectory_le hS hT hpack hcard x ex K.common y ey hpair hterminal
-    (by exact_mod_cast (h.common T T).le)
+      (K.common : ℝ) + 3 * ex + ∑ j ∈ Icc 4 q, ey j :=
+  by
+    exact
+      abs_greedyClosedThreats_sub_trajectory_le hS hT hpack hcard x ex K.common y ey hpair
+        hterminal
+        (by
+          exact_mod_cast (h.common T T).le)
 
 end CrudeStateBounds
 

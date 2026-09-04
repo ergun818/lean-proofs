@@ -20,7 +20,7 @@ theorem sourceTriangleRegularization_correction_budget
       ((p ^ 2 * n / (12 * C ^ 5)) /
         ((p ^ 2 * n / C) * (p ^ 3 * n / C) * (p ^ 4 * n / C) / 6)) = 1 / 4 := by
   field_simp
-  <;> ring
+  ; ring
 
 theorem exists_source_triangle_regularized_finite
     {V : Type*} [Fintype V] [DecidableEq V]
@@ -52,7 +52,7 @@ theorem exists_source_triangle_regularized_finite
       (fun S hS3 hS4 hSE ↦ (hext S (by omega) hS4 hSE).2)
   · rw [sourceTriangleRegularization_correction_budget C p n hC hp hn]
     norm_num
-  · convert hfailure using 2 <;> congr 1 <;> ring
+  · convert hfailure using 2 ; congr 1 ; ring
 
 end
 

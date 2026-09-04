@@ -166,9 +166,10 @@ theorem sum_vortexTripleWeight_containingPair_le
 /-- A weighted finite union is bounded by the sum of the weights of its
 members, without any disjointness hypothesis. -/
 lemma sum_biUnion_le_sum_sum
-    {I X : Type*} [DecidableEq I] [DecidableEq X]
+    {I X : Type*} [DecidableEq X]
     (s : Finset I) (t : I → Finset X) (f : X → ℝ≥0) :
     ∑ x ∈ s.biUnion t, f x ≤ ∑ i ∈ s, ∑ x ∈ t i, f x := by
+  classical
   induction s using Finset.induction_on with
   | empty => simp
   | @insert a s ha ih =>

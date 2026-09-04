@@ -70,7 +70,7 @@ theorem timedFullyScheduledAggregatePairBandProcessLaw_supported_chosen_card
       (fun z : FiniteLaw.TimedState (GreedyStateOn V) n ↦
         PairTrajectoryInvariant F S₀ z.2 ∧
           z.2.chosen.card = S₀.chosen.card + z.1.1)
-      ⟨pairTrajectoryInvariant_initial hInv₀, by simp [z₀]⟩).evolveKernels
+      ⟨pairTrajectoryInvariant_initial hInv₀, by simp⟩).evolveKernels
     intro _i z hz
     classical
     unfold FiniteLaw.timedStoppedKernel

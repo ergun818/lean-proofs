@@ -163,7 +163,7 @@ theorem bind_probability_subset_le
         apply Finset.sum_congr rfl
         intro ω _hω
         by_cases hx : U.erase x ⊆ R ω <;>
-          simp [hx, mul_comm, mul_left_comm, mul_assoc]
+          simp [hx, mul_comm]
 
 /-- Iterating a monotone single-insertion kernel from a state disjoint from
 `U` gives a genuine joint bound.  The factorial is the harmless cost of not

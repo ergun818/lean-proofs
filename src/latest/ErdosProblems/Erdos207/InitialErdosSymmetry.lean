@@ -14,9 +14,10 @@ open Finset
 
 noncomputable section
 
-def fullPackingErdosFamily (V : Type*) [Fintype V] [DecidableEq V] (r : ℕ) : ForbiddenFamilyOn V := by
-  classical
-  exact univ.filter fun C ↦ IsErdosConfigOn r C ∧ IsPackingOn C
+def fullPackingErdosFamily (V : Type*) [Fintype V] [DecidableEq V] (r : ℕ) :
+    ForbiddenFamilyOn V :=
+  by
+    classical exact univ.filter fun C ↦ IsErdosConfigOn r C ∧ IsPackingOn C
 
 def rootedFullPackingErdosFamily
     {V : Type*} [Fintype V] [DecidableEq V] (r : ℕ) (T : TripleOn V) : ForbiddenFamilyOn V :=
@@ -34,8 +35,9 @@ theorem mem_rootedFullPackingErdosFamily
   simp only [rootedFullPackingErdosFamily, mem_filter, mem_fullPackingErdosFamily, and_assoc]
 
 theorem exists_perm_mapTriple
-    {V : Type*} [Fintype V] [DecidableEq V] (T U : TripleOn V) :
+    {V : Type*} [Finite V] [DecidableEq V] (T U : TripleOn V) :
     ∃ e : Equiv.Perm V, mapTriple e.toEmbedding T = U := by
+  let := Fintype.ofFinite V
   let e₀ : T.1 ≃ U.1 := Fintype.equivOfCardEq (by simp only [Fintype.card_coe, T.2, U.2])
   refine ⟨e₀.extendSubtype, ?_⟩
   apply Subtype.ext

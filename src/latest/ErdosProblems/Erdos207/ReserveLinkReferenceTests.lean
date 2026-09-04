@@ -11,7 +11,7 @@ import ErdosProblems.Erdos207.ReserveRelativeLinkConcentration
 namespace Erdos207
 
 open Finset
-open scoped Classical NNReal
+open scoped NNReal
 
 noncomputable section
 
@@ -73,74 +73,99 @@ theorem reserveLinkTestTarget_ge_minimum
   · exact mul_le_mul_of_nonneg_right hsquare href
   · exact le_rfl
 
-theorem reserveEdgeLaw_probability_not_reserveLinkReferenceGood
-    {V : Type*} [Fintype V] [DecidableEq V]
-    (G : SimpleGraph V) (A : TripleSystemOn V) (current U : Finset V)
-    (htri : ConsistsOfTriangles G A) (r : ℝ≥0) (hr : r ≤ 1)
-    (reference rho epsilon : ℝ) (href : 0 ≤ reference) (hrho : 0 ≤ rho) (hrho1 : rho ≤ 1)
-    (hepsilon : 0 ≤ epsilon) (hepsilon1 : epsilon ≤ 1)
-    (hmean : ∀ j : ReserveLinkTest V, reserveLinkTestRelevant G current U j →
-      (reserveLinkTestLower j = true →
-        (1-epsilon/2)*reserveLinkTestTarget reference rho j ≤
-          (r : ℝ)*(reserveLinkTestEdges G A U j).card) ∧
-        (r : ℝ)*(reserveLinkTestEdges G A U j).card ≤
-          (1+epsilon/2)*reserveLinkTestTarget reference rho j) :
-    ((reserveEdgeLaw G U r hr).probability (fun bits ↦
-      ¬ ReserveLinkReferenceGood G A current U (reserveEdges G U bits) reference rho epsilon) : ℝ) ≤
-      2*((Fintype.card V : ℝ)+(Fintype.card V : ℝ)^2+(Fintype.card V : ℝ)^3)*
-        Real.exp (-epsilon^2*(rho^2*reference)/32) := by
-  have hb := reserveEdgeLaw_probability_not_all_referenceCounts_le G U r hr
-    (reserveLinkTestEdges G A U) (reserveLinkTestRelevant G current U) reserveLinkTestLower
-    (reserveLinkTestTarget reference rho) epsilon (rho^2*reference) hepsilon hepsilon1 (by positivity)
-    (reserveLinkTestEdges_subset_crossingEdges htri)
-    (fun j _ ↦ reserveLinkTestTarget_ge_minimum reference rho href hrho hrho1 j) hmean
-  have hcard : (Fintype.card (ReserveLinkTest V) : ℝ) =
-      (Fintype.card V : ℝ)+(Fintype.card V : ℝ)^2+(Fintype.card V : ℝ)^3 := by
-    simp only [ReserveLinkTest, Fintype.card_sum, Fintype.card_prod, Nat.cast_add, Nat.cast_mul]
-    ring
-  simpa only [ReserveLinkReferenceGood, hcard] using hb
+theorem reserveEdgeLaw_probability_not_reserveLinkReferenceGood {V : Type*} [Fintype V]
+    [DecidableEq V] (G : SimpleGraph V) (A : TripleSystemOn V) (current U : Finset V)
+    (htri : ConsistsOfTriangles G A) (r : ℝ≥0) (hr : r ≤ 1) (reference rho epsilon : ℝ)
+    (href : 0 ≤ reference) (hrho : 0 ≤ rho) (hrho1 : rho ≤ 1) (hepsilon : 0 ≤ epsilon)
+    (hepsilon1 : epsilon ≤ 1)
+    (hmean :
+      ∀ j : ReserveLinkTest V,
+        reserveLinkTestRelevant G current U j →
+          (reserveLinkTestLower j = true →
+              (1 - epsilon / 2) * reserveLinkTestTarget reference rho j ≤
+                (r : ℝ) * (reserveLinkTestEdges G A U j).card) ∧
+            (r : ℝ) * (reserveLinkTestEdges G A U j).card ≤
+              (1 + epsilon / 2) * reserveLinkTestTarget reference rho j) :
+    ((reserveEdgeLaw G U r hr).probability
+          (fun bits ↦
+            ¬ReserveLinkReferenceGood G A current U (reserveEdges G U bits) reference rho
+                epsilon) :
+        ℝ) ≤
+      2 * ((Fintype.card V : ℝ) + (Fintype.card V : ℝ) ^ 2 + (Fintype.card V : ℝ) ^ 3) *
+        Real.exp (-epsilon ^ 2 * (rho ^ 2 * reference) / 32) :=
+  by
+    have hb :=
+      reserveEdgeLaw_probability_not_all_referenceCounts_le G U r hr
+        (reserveLinkTestEdges G A U) (reserveLinkTestRelevant G current U)
+        reserveLinkTestLower (reserveLinkTestTarget reference rho) epsilon
+        (rho ^ 2 * reference) hepsilon hepsilon1
+        (by
+          positivity)
+        (reserveLinkTestEdges_subset_crossingEdges htri)
+        (fun j _ ↦ reserveLinkTestTarget_ge_minimum reference rho href hrho hrho1 j) hmean
+    have hcard :
+      (Fintype.card (ReserveLinkTest V) : ℝ) =
+        (Fintype.card V : ℝ) + (Fintype.card V : ℝ) ^ 2 + (Fintype.card V : ℝ) ^ 3 :=
+      by
+        simp only [ReserveLinkTest, Fintype.card_sum, Fintype.card_prod, Nat.cast_add,
+          Nat.cast_mul]
+        ring
+    simpa only [ReserveLinkReferenceGood, hcard] using hb
 
-theorem ReserveLinkReferenceGood.sampledSize
-    {V : Type*} [Fintype V] [DecidableEq V]
-    {G : SimpleGraph V} {A : TripleSystemOn V} {current U : Finset V}
-    {bits : Sym2 V → Bool} {reference rho epsilon : ℝ}
-    (hgood : ReserveLinkReferenceGood G A current U (reserveEdges G U bits) reference rho epsilon)
+theorem ReserveLinkReferenceGood.sampledSize {V : Type*} [Fintype V] [DecidableEq V]
+    {G : SimpleGraph V} {A : TripleSystemOn V} {current U : Finset V} {bits : Sym2 V → Bool}
+    {reference rho epsilon : ℝ}
+    (hgood :
+      ReserveLinkReferenceGood G A current U (reserveEdges G U bits) reference rho epsilon)
     {center : V} (hc : center ∈ current) (hcU : center ∉ U) :
-    (1-epsilon)*reference ≤ ((spokeVerticesIn U (reserveEdges G U bits) center).card : ℝ) ∧
-      ((spokeVerticesIn U (reserveEdges G U bits) center).card : ℝ) ≤ (1+epsilon)*reference := by
-  have hb := hgood (.inl center) ⟨hc, hcU⟩
-  have hinj : Function.Injective (fun x : V ↦ s(center,x)) := fun _ _ h ↦ Sym2.congr_right.mp h
-  have hcard : (((neighborsIn G U center).image (fun x ↦ s(center,x))) ∩ reserveEdges G U bits).card =
-      (spokeVerticesIn U (reserveEdges G U bits) center).card := by
-    rw [← reserve_neighbor_spoke_image G U center hcU bits, card_image_of_injective _ hinj]
-  simpa only [ReferenceCountGood, reserveLinkTestLower, reserveLinkTestTarget, reserveLinkTestEdges,
-    hcard, true_implies] using hb
+    (1 - epsilon) * reference ≤
+        ((spokeVerticesIn U (reserveEdges G U bits) center).card : ℝ) ∧
+      ((spokeVerticesIn U (reserveEdges G U bits) center).card : ℝ) ≤
+        (1 + epsilon) * reference :=
+  by
+    have hb := hgood (.inl center) ⟨hc, hcU⟩
+    have hinj : Function.Injective (fun x : V ↦ s(center, x)) := fun _ _ h ↦
+      Sym2.congr_right.mp h
+    have hcard :
+      (((neighborsIn G U center).image (fun x ↦ s(center, x))) ∩ reserveEdges G U bits).card =
+        (spokeVerticesIn U (reserveEdges G U bits) center).card :=
+      by
+        rw [← reserve_neighbor_spoke_image G U center hcU bits,
+          card_image_of_injective _ hinj]
+    simpa only [ReferenceCountGood, reserveLinkTestLower, reserveLinkTestTarget,
+      reserveLinkTestEdges, hcard, true_implies] using hb
 
-theorem ReserveLinkReferenceGood.sampledDegree
-    {V : Type*} [Fintype V] [DecidableEq V]
+theorem ReserveLinkReferenceGood.sampledDegree {V : Type*} [Fintype V] [DecidableEq V]
     {G : SimpleGraph V} {A : TripleSystemOn V} {current U : Finset V}
     {reserve : Finset (Sym2 V)} {reference rho epsilon : ℝ}
     (hgood : ReserveLinkReferenceGood G A current U reserve reference rho epsilon)
-    {center x : V} (hc : center ∈ current) (hcU : center ∉ U) (hx : x ∈ U) (hcx : G.Adj center x) :
-    (1-epsilon)*rho*reference ≤ ((ambientLinkNeighborsIn center A (spokeVerticesIn U reserve center) x).card : ℝ) ∧
+    {center x : V} (hc : center ∈ current) (hcU : center ∉ U) (hx : x ∈ U)
+    (hcx : G.Adj center x) :
+    (1 - epsilon) * rho * reference ≤
+        ((ambientLinkNeighborsIn center A (spokeVerticesIn U reserve center) x).card : ℝ) ∧
       ((ambientLinkNeighborsIn center A (spokeVerticesIn U reserve center) x).card : ℝ) ≤
-        (1+epsilon)*rho*reference := by
-  have hb := hgood (.inr (.inl (center,x))) ⟨hc, hcU, hx, hcx⟩
-  simpa only [ReferenceCountGood, reserveLinkTestLower, reserveLinkTestTarget, reserveLinkTestEdges,
-    ← sampledAmbientLinkNeighbors_card_eq_inter center A U reserve x hcU, true_implies, mul_assoc] using hb
+        (1 + epsilon) * rho * reference :=
+  by
+    have hb := hgood (.inr (.inl (center, x))) ⟨hc, hcU, hx, hcx⟩
+    simpa only [ReferenceCountGood, reserveLinkTestLower, reserveLinkTestTarget,
+      reserveLinkTestEdges,
+      ← sampledAmbientLinkNeighbors_card_eq_inter center A U reserve x hcU, true_implies,
+      mul_assoc] using hb
 
-theorem ReserveLinkReferenceGood.sampledCodegree
-    {V : Type*} [Fintype V] [DecidableEq V]
+theorem ReserveLinkReferenceGood.sampledCodegree {V : Type*} [Fintype V] [DecidableEq V]
     {G : SimpleGraph V} {A : TripleSystemOn V} {current U : Finset V}
     {reserve : Finset (Sym2 V)} {reference rho epsilon : ℝ}
     (hgood : ReserveLinkReferenceGood G A current U reserve reference rho epsilon)
-    {center x y : V} (hc : center ∈ current) (hcU : center ∉ U)
-    (hx : x ∈ U) (hcx : G.Adj center x) (hy : y ∈ U) (hcy : G.Adj center y) (hxy : x ≠ y) :
-    ((ambientLinkCommonNeighborsIn center A (spokeVerticesIn U reserve center) x y).card : ℝ) ≤
-      (1+epsilon)*rho^2*reference := by
-  have hb := (hgood (.inr (.inr (center,x,y))) ⟨hc, hcU, hx, hcx, hy, hcy, hxy⟩).2
-  simpa only [reserveLinkTestTarget, reserveLinkTestEdges,
-    ← sampledAmbientLinkCommonNeighbors_card_eq_inter center A U reserve x y hcU, mul_assoc] using hb
+    {center x y : V} (hc : center ∈ current) (hcU : center ∉ U) (hx : x ∈ U)
+    (hcx : G.Adj center x) (hy : y ∈ U) (hcy : G.Adj center y) (hxy : x ≠ y) :
+    ((ambientLinkCommonNeighborsIn center A (spokeVerticesIn U reserve center) x y).card :
+        ℝ) ≤
+      (1 + epsilon) * rho ^ 2 * reference :=
+  by
+    have hb := (hgood (.inr (.inr (center, x, y))) ⟨hc, hcU, hx, hcx, hy, hcy, hxy⟩).2
+    simpa only [reserveLinkTestTarget, reserveLinkTestEdges,
+      ← sampledAmbientLinkCommonNeighbors_card_eq_inter center A U reserve x y hcU,
+      mul_assoc] using hb
 
 end
 

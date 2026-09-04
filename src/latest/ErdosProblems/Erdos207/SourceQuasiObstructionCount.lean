@@ -11,7 +11,7 @@ import ErdosProblems.Erdos207.SourceLinkSampledForbiddenCount
 namespace Erdos207
 
 open Finset
-open scoped Classical NNReal
+open scoped NNReal
 
 noncomputable section
 
@@ -19,6 +19,7 @@ def sourceQuasiObstructedVertices
     {V : Type*} [Fintype V] [DecidableEq V] {ell : ℕ}
     (W : Vortex V ell) (F : ForbiddenFamilyOn V) (e : Sym2 V) (S B : Finset V)
     (G : SimpleGraph V) (I D : TripleSystemOn V) : Finset V :=
+  open scoped Classical in
   S.filter fun u ↦ u ∉ B ∧ sourceQuasiSpokes B u ⊆ graphEdges G ∧
     (∀ a ∈ sourceQuasiSpokes B u, a ∉ (coveredGraph (I ∪ D)).edgeSet) ∧
     ∃ T : TripleOn V, T.1 = insert u e.toFinset ∧ e ∈ tripleEdgeFinset T ∧
@@ -31,6 +32,7 @@ theorem sourceQuasiObstructedVertices_card_le_selectedCount
     ((sourceQuasiObstructedVertices W F e S B G I D).card : ℝ≥0) ≤
       selectedCount (fun x : sourceQuasiMarkings W F e S B ↦ x.1.coordinates B)
         (sourceQuasiRealizedCoordinates G I D) := by
+  classical
   let bad := sourceQuasiObstructedVertices W F e S B G I D
   let active := (sourceQuasiMarkings W F e S B).filter
     (fun x ↦ x.coordinates B ⊆ sourceQuasiRealizedCoordinates G I D)

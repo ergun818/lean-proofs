@@ -39,11 +39,12 @@ def connectedComponentNeighborEquiv
     rfl
 
 lemma connectedComponent_degree_eq
-    {V : Type*} [Fintype V] [DecidableEq V]
+    {V : Type*} [Fintype V]
     {G : SimpleGraph V} [DecidableRel G.Adj]
     (c : G.ConnectedComponent) [Fintype c]
     [DecidableRel c.toSimpleGraph.Adj] (v : c) :
     c.toSimpleGraph.degree v = G.degree v.1 := by
+  classical
   rw [← SimpleGraph.card_neighborSet_eq_degree,
     ← SimpleGraph.card_neighborSet_eq_degree,
     Fintype.card_congr (connectedComponentNeighborEquiv c v)]
@@ -51,10 +52,11 @@ lemma connectedComponent_degree_eq
 /-- A finite graph with all degrees even cannot be an acyclic nonempty
 graph: a nontrivial tree component would have a degree-one leaf. -/
 lemma not_isAcyclic_of_even_degree_of_edge
-    {V : Type*} [Fintype V] [DecidableEq V]
+    {V : Type*} [Fintype V]
     {G : SimpleGraph V} [DecidableRel G.Adj]
     (heven : ∀ v, Even (G.degree v))
     {u v : V} (huv : G.Adj u v) : ¬G.IsAcyclic := by
+  classical
   intro hac
   let c : G.ConnectedComponent := G.connectedComponentMk u
   have hu : u ∈ c.supp := by rfl
@@ -77,20 +79,22 @@ lemma not_isAcyclic_of_even_degree_of_edge
 
 /-- Every nonempty finite even graph contains a simple cycle. -/
 theorem exists_isCycle_of_even_degree_of_edge
-    {V : Type*} [Fintype V] [DecidableEq V]
+    {V : Type*} [Fintype V]
     {G : SimpleGraph V} [DecidableRel G.Adj]
     (heven : ∀ v, Even (G.degree v))
     {u v : V} (huv : G.Adj u v) :
     ∃ w : V, ∃ p : G.Walk w w, p.IsCycle := by
+  classical
   have hnacyclic := not_isAcyclic_of_even_degree_of_edge heven huv
   simp only [SimpleGraph.IsAcyclic] at hnacyclic
-  push_neg at hnacyclic
+  push Not at hnacyclic
   exact hnacyclic
 
 lemma degree_eq_zero_or_two_of_isCycles
-    {V : Type*} [Fintype V] [DecidableEq V]
+    {V : Type*} [Fintype V]
     (H : SimpleGraph V) [DecidableRel H.Adj]
     (hH : H.IsCycles) (v : V) : H.degree v = 0 ∨ H.degree v = 2 := by
+  classical
   by_cases hv : (H.neighborSet v).Nonempty
   · right
     rw [← SimpleGraph.card_neighborSet_eq_degree, Set.fintypeCard_eq_ncard]
@@ -104,10 +108,11 @@ lemma degree_eq_zero_or_two_of_isCycles
 preserves evenness.  The subgraph hypothesis makes the degree subtraction
 literal rather than merely an inclusion-exclusion statement. -/
 lemma even_degree_sdiff_of_isCycles
-    {V : Type*} [Fintype V] [DecidableEq V]
+    {V : Type*} [Fintype V]
     (G H : SimpleGraph V) [DecidableRel G.Adj] [DecidableRel H.Adj]
     (heven : ∀ v, Even (G.degree v)) (hHG : H ≤ G) (hH : H.IsCycles) :
     ∀ v, Even ((G \ H).degree v) := by
+  classical
   intro v
   have hneighbors : H.neighborFinset v ⊆ G.neighborFinset v := by
     intro w hw
@@ -182,10 +187,11 @@ lemma cycleCount_le_edgeNcard
 strictly less than the square of the vertex count.  This is the coarse bound
 used to allocate the two path-cover slots attached to each cycle. -/
 lemma cycleCount_lt_card_sq
-    {V : Type*} [Fintype V] [DecidableEq V]
-    {G : SimpleGraph V} [DecidableRel G.Adj]
+    {V : Type*} [Fintype V]
+    {G : SimpleGraph V}
     (hV : 2 ≤ Fintype.card V) (D : CycleDecomposition G) :
     D.cycleCount < (Fintype.card V) ^ 2 := by
+  classical
   have hGtop : G ≤ SimpleGraph.completeGraph V := OrderTop.le_top G
   have hedge : G.edgeFinset.card ≤
       (SimpleGraph.completeGraph V).edgeFinset.card :=
@@ -211,9 +217,10 @@ end CycleDecomposition
 /-- The cycle-removal process is well founded because every chosen cycle has
 an edge, so deleting it strictly lowers the finite edge count. -/
 theorem exists_cycleDecomposition_of_even_degree
-    {V : Type*} [Fintype V] [DecidableEq V]
+    {V : Type*} [Fintype V]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (heven : ∀ v, Even (G.degree v)) : Nonempty (CycleDecomposition G) := by
+  classical
   by_cases hG : G = ⊥
   · subst G
     exact ⟨CycleDecomposition.empty⟩

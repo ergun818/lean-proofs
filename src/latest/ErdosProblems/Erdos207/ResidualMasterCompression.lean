@@ -40,7 +40,7 @@ def IsResidualCompressedMasterLaw
 /-- Compress a law together with all five deterministic induction clauses. -/
 theorem IsResidualMasterIterationGood.compress
     {Omega V : Type*} [Fintype Omega] [Fintype V]
-    [DecidableEq Omega] [DecidableEq V] {ell : ℕ}
+    [DecidableEq V] {ell : ℕ}
     {law : FiniteLaw Omega} {W : Vortex V ell} {k : Fin (ell + 1)}
     {F : ForbiddenFamilyOn V} {Gzero : SimpleGraph V}
     {ambient : TripleSystemOn V}
@@ -58,15 +58,16 @@ theorem IsResidualMasterIterationGood.compress
       GraphSupportedOn (G omega) (W.U k : Set V)) :
     IsResidualCompressedMasterLaw (law.map (packMasterState G A I D))
       W k F Gzero ambient p eta xi C b h := by
+  classical
   refine ⟨hgood.map_packMasterState, ?_,
     hselected.map_packMasterState_selected,
     hcover.map_packMasterState_coverage, ?_, ?_⟩
-  exact havailable.map (packMasterState G A I D)
-    (fun omega homega ↦ by simpa using homega)
-  exact hsub.map (packMasterState G A I D)
-    (fun omega homega ↦ by simpa using homega)
-  exact hsupport.map (packMasterState G A I D)
-    (fun omega homega ↦ by simpa using homega)
+  · exact havailable.map (packMasterState G A I D)
+      (fun omega homega ↦ by simpa using homega)
+  · exact hsub.map (packMasterState G A I D)
+      (fun omega homega ↦ by simpa using homega)
+  · exact hsupport.map (packMasterState G A I D)
+      (fun omega homega ↦ by simpa using homega)
 
 /-- A completed cover step preserves the five deterministic induction
 invariants; compressing its joint law therefore produces the next fixed-state
@@ -162,7 +163,7 @@ theorem compressResidualMasterUpdate
   exact hgood.compress hnewAvailable hnewSelected hnewCover hnewSub hnewSupport
 
 theorem exists_ksssOutsidePacking_of_finalResidualMasterIterationGood
-    {Omega V : Type*} [Fintype Omega] [DecidableEq Omega]
+    {Omega V : Type*} [Fintype Omega]
     [Fintype V] [DecidableEq V] {ell : ℕ}
     {q : ℕ} {H : SimpleGraph V} {X : Finset V}
     {B : TripleSystemOn V}
@@ -185,6 +186,7 @@ theorem exists_ksssOutsidePacking_of_finalResidualMasterIterationGood
     (hsupport : law.SupportedOn fun omega ↦
       GraphSupportedOn (G omega) (X : Set V)) :
     ∃ P : TripleSystemOn V, HasKSSSOutsidePacking q H X B P := by
+  classical
   let Good : Omega → Prop := fun omega ↦
     IsMasterStagePointwiseGood W k
       (absorberErdosForbiddenConfigurationsOn q B)

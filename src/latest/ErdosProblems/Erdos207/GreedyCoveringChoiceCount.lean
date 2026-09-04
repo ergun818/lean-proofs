@@ -52,9 +52,10 @@ lemma sum_card_greedyChoicesCoveringEdge_eq
   simp [Finset.filter_mem_eq_inter]
 
 lemma filtered_prescribedEdges_card_le_three
-    {V : Type*} [Fintype V] [DecidableEq V]
+    {V : Type*} [Finite V] [DecidableEq V]
     (B : Finset (Sym2 V)) (T : TripleOn V) :
     (B.filter fun e ↦ e ∈ tripleEdgeFinset T).card ≤ 3 := by
+  let := Fintype.ofFinite V
   calc
     (B.filter fun e ↦ e ∈ tripleEdgeFinset T).card ≤
         (tripleEdgeFinset T).card := by
@@ -64,10 +65,11 @@ lemma filtered_prescribedEdges_card_le_three
     _ = 3 := card_tripleEdgeFinset T
 
 lemma filtered_prescribedEdges_eq_empty_of_not_covering
-    {V : Type*} [Fintype V] [DecidableEq V]
+    {V : Type*} [Finite V] [DecidableEq V]
     (B : Finset (Sym2 V)) (T : TripleOn V)
     (hT : Disjoint B (tripleEdgeFinset T)) :
     B.filter (fun e ↦ e ∈ tripleEdgeFinset T) = ∅ := by
+  let := Fintype.ofFinite V
   apply Finset.eq_empty_iff_forall_notMem.mpr
   intro e he
   exact disjoint_left.mp hT (mem_filter.mp he).1 (mem_filter.mp he).2
@@ -102,8 +104,7 @@ theorem sum_card_greedyChoicesCoveringEdge_le
               if ¬ Disjoint B (tripleEdgeFinset T.1) then 3 else 0) =
             3 * (greedyCoveringChoices S B).card := by
         rw [← Finset.sum_filter]
-        simp [greedyCoveringChoices, Finset.sum_const,
-          nsmul_eq_mul, mul_comm]
+        simp [greedyCoveringChoices, Finset.sum_const, mul_comm]
       simpa [greedyCoveringChoices] using hsum
 
 /-- Uniform supply `d` through every prescribed edge yields at least
@@ -167,11 +168,11 @@ theorem stoppedGreedyKernel_probability_trackedUncovered_le_of_edgeSupply
       theta ^ B.card := by
   apply stoppedGreedyKernel_probability_trackedUncovered_le
     F D hD E theta
-  intro S' B' hactive hB'
-  exact greedySurvivalChoices_ratio_le_of_edgeSupply
-    F E S' B' hB' d (hsupply S' B' hactive hB') theta
-      (hscalar S' B' hactive hB')
-  exact hB
+  · intro S' B' hactive hB'
+    exact greedySurvivalChoices_ratio_le_of_edgeSupply
+      F E S' B' hB' d (hsupply S' B' hactive hB') theta
+        (hscalar S' B' hactive hB')
+  · exact hB
 
 /-- Product-form mixed estimate for a stopped greedy trajectory, expressed
 only in terms of the uniform supply through each prescribed uncovered

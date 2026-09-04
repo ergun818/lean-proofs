@@ -40,11 +40,12 @@ theorem vortexShellConfigurations_shell
   simpa only [Vortex.prefix_U, vortexPrefixEmbedding_last] using hsub
 
 theorem vortexShellConfigurations_image_geometry
-    {V I : Type*} [Fintype V] [DecidableEq V] [DecidableEq I] {ell j : ℕ}
+    {V I : Type*} [Fintype V] [DecidableEq V] {ell j : ℕ}
     (W : Vortex V ell) (k : Fin ell) (e : I ↪ TripleOn V)
     (hshell : ∀ i, ¬ (e i).1 ⊆ W.U k.succ) (E : Finset I)
     (hE : E.map e ∈ terminalRandomConfigurations (W.prefix k.castSucc) j) :
     E.map e ∈ vortexShellConfigurations W k j := by
+  classical
   apply mem_filter.mpr
   refine ⟨hE, ?_⟩
   intro T hT
@@ -63,7 +64,7 @@ theorem FixedRandomOrderResult.future_prefix_spread
     (hF : SourceVortexWellSpread (W.prefix m) j F yFuture zFuture) :
     SourceVortexWellSpread (W.prefix m) j (F ∪ R) (yFuture + a) (zFuture + 3 * a) :=
   h.counts.future_prefix_sourceWellSpread W k m hkm hF
-    (fun E hE T hT ↦ vortexShellConfigurations_shell W k (h.support hE) hT)
+    (fun _E hE _T hT ↦ vortexShellConfigurations_shell W k (h.support hE) hT)
 
 end
 

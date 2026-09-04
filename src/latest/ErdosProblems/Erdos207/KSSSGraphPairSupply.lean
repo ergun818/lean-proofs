@@ -14,18 +14,19 @@ open Finset
 
 noncomputable section
 
-theorem graphEdge_toFinset_mem_residual
-    {V : Type*} [Fintype V] [DecidableEq V]
-    (G : SimpleGraph V) (S : GreedyStateOn V) (e : Sym2 V)
-    (he : e ∈ graphEdges G) (huncovered : e ∉ (coveredGraph S.chosen).edgeSet) :
-    e.toFinset ∈ ksssResidualPairs (graphPairFamily G) S := by
-  induction e using Sym2.inductionOn with
-  | hf u v =>
-    have hadj : G.Adj u v := mem_graphEdges_iff.mp he
-    have hinit := (mem_graphPairFamily_toFinset_iff G s(u, v)).mpr he
-    have hpair : PairUncovered {u, v} S :=
-      (pairUncovered_pair_iff_not_covered_adj S hadj.ne).mpr huncovered
-    simpa only [ksssResidualPairs, mem_sdiff, Sym2.toFinset_mk_eq, PairUncovered] using And.intro hinit hpair
+theorem graphEdge_toFinset_mem_residual {V : Type*} [Fintype V] [DecidableEq V]
+    (G : SimpleGraph V) (S : GreedyStateOn V) (e : Sym2 V) (he : e ∈ graphEdges G)
+    (huncovered : e ∉ (coveredGraph S.chosen).edgeSet) :
+    e.toFinset ∈ ksssResidualPairs (graphPairFamily G) S :=
+  by
+    induction e using Sym2.inductionOn with
+    | hf u v =>
+      have hadj : G.Adj u v := mem_graphEdges_iff.mp he
+      have hinit := (mem_graphPairFamily_toFinset_iff G s(u, v)).mpr he
+      have hpair : PairUncovered { u, v } S :=
+        (pairUncovered_pair_iff_not_covered_adj S hadj.ne).mpr huncovered
+      simpa only [ksssResidualPairs, mem_sdiff, Sym2.toFinset_mk_eq, PairUncovered] using
+        And.intro hinit hpair
 
 theorem KSSSOnTrajectories.graph_pair_floor
     {V : Type*} [Fintype V] [DecidableEq V]

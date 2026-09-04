@@ -130,7 +130,7 @@ theorem probability_timedStoppedGreedy_exists_pair_sharpScheduled_deviation_le
             fixedPairAvailableCountReal S₀ P.1 S) -
               (qUpper P (i + 1) - qUpper P i) else 0) := by
       funext S'
-      split <;> simp only [upper, fixedPairUpperDeviation] <;> ring
+      split <;> simp only [upper, fixedPairUpperDeviation] ; ring
     rw [hfun]
     exact hraw
   · intro P i hi S hS hactive _halive
@@ -225,7 +225,7 @@ theorem probability_timedStoppedGreedy_exists_pair_sharpScheduled_deviation_le
             (fixedPairAvailableCountReal S₀ P.1 S' -
               fixedPairAvailableCountReal S₀ P.1 S) else 0) := by
       funext S'
-      split <;> simp only [lower, fixedPairLowerDeviation] <;> ring
+      split <;> simp only [lower, fixedPairLowerDeviation] ; ring
     rw [hfun]
     exact hraw
   · intro P i hi S hS hactive _halive

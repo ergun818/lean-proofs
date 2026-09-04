@@ -44,12 +44,13 @@ def exceptionalCommonThreatEmbedding
     cases z
     simp_all
 
-theorem commonThreat_remainder_eq_left_of_equal_remainders
-    {W : Type*} [DecidableEq W] {F G : Finset (Finset W)} {T T' : W}
-    (w : CommonThreatWitness F G T T') (h : w.first.erase T = w.second.erase T') :
-    w.remainder = w.leftRemainder := by
-  unfold CommonThreatWitness.remainder CommonThreatWitness.leftRemainder CommonThreatWitness.rightRemainder
-  rw [h, union_self]
+theorem commonThreat_remainder_eq_left_of_equal_remainders {W : Type*} [DecidableEq W]
+    {F G : Finset (Finset W)} {T T' : W} (w : CommonThreatWitness F G T T')
+    (h : w.first.erase T = w.second.erase T') : w.remainder = w.leftRemainder :=
+  by
+    unfold CommonThreatWitness.remainder CommonThreatWitness.leftRemainder
+      CommonThreatWitness.rightRemainder
+    rw [h, union_self]
 
 theorem commonThreatExceptionalWeight_le_omissionWeight
     {W : Type*} [Fintype W] [DecidableEq W]

@@ -14,30 +14,46 @@ open scoped NNReal
 
 noncomputable section
 
-theorem localizedTwoAwayWeightBound_le_relative_scale
-    {V : Type*} [Fintype V] [DecidableEq V]
+theorem localizedTwoAwayWeightBound_le_relative_scale {V : Type*} [Fintype V] [DecidableEq V]
     (q k : ℕ) (B : TripleSystemOn V) (U : Finset V) (t : ℝ≥0) (ht : 0 < t)
     (hsize : (45 * (q + 1) + 28 : ℕ) * t ^ k ≤ (U.card : ℝ≥0))
     (hbank : pairExactBankExtensionCoefficient q B * t ^ k ≤ (Fintype.card V + 1 : ℝ≥0)) :
-    localizedTwoAwayWeightBound q B U ≤
-      (2 * (q + 1 : ℕ) : ℝ≥0) * ((U.card : ℝ≥0) / t ^ k) := by
-  have hpow : 0 < t ^ k := pow_pos ht k
-  have hN : (0 : ℝ≥0) < Fintype.card V + 1 := by positivity
-  have hroot : (45 * (q + 1) + 28 : ℕ) ≤ (U.card : ℝ≥0) / t ^ k :=
-    (le_div_iff₀ hpow).mpr hsize
-  have hbankRatio : pairExactBankExtensionCoefficient q B / (Fintype.card V + 1 : ℝ≥0) ≤ 1 / t ^ k := by
-    apply (div_le_div_iff₀ hN hpow).mpr
-    simpa only [one_mul] using hbank
-  have hbankTerm : (U.card : ℝ≥0) * pairExactBankExtensionCoefficient q B /
-      (Fintype.card V + 1 : ℝ≥0) ≤ (U.card : ℝ≥0) / t ^ k := by
+    localizedTwoAwayWeightBound q B U ≤ (2 * (q + 1 : ℕ) : ℝ≥0) * ((U.card : ℝ≥0) / t ^ k) :=
+  by
+    have hpow : 0 < t ^ k := pow_pos ht k
+    have hN : (0 : ℝ≥0) < Fintype.card V + 1 :=
+      by
+        positivity
+    have hroot : (45 * (q + 1) + 28 : ℕ) ≤ (U.card : ℝ≥0) / t ^ k :=
+      (le_div_iff₀ hpow).mpr hsize
+    have hbankRatio :
+      pairExactBankExtensionCoefficient q B / (Fintype.card V + 1 : ℝ≥0) ≤ 1 / t ^ k :=
+      by
+        apply (div_le_div_iff₀ hN hpow).mpr
+        simpa only [one_mul] using hbank
+    have hbankTerm :
+      (U.card : ℝ≥0) * pairExactBankExtensionCoefficient q B / (Fintype.card V + 1 : ℝ≥0) ≤
+        (U.card : ℝ≥0) / t ^ k :=
+      by
+        calc
+          _ =
+              (U.card : ℝ≥0) *
+                (pairExactBankExtensionCoefficient q B / (Fintype.card V + 1 : ℝ≥0)) :=
+            by
+              ring
+          _ ≤ (U.card : ℝ≥0) * (1 / t ^ k) :=
+            (mul_le_mul_of_nonneg_left hbankRatio (bot_le : 0 ≤ (U.card : ℝ≥0)))
+          _ = _ :=
+            by
+              ring
     calc
-      _ = (U.card : ℝ≥0) * (pairExactBankExtensionCoefficient q B / (Fintype.card V + 1 : ℝ≥0)) := by ring
-      _ ≤ (U.card : ℝ≥0) * (1 / t ^ k) := mul_le_mul_of_nonneg_left hbankRatio (bot_le : 0 ≤ (U.card : ℝ≥0))
-      _ = _ := by ring
-  calc
-    _ ≤ (q + 1 : ℕ) * ((U.card : ℝ≥0) / t ^ k + (U.card : ℝ≥0) / t ^ k) :=
-      mul_le_mul_of_nonneg_left (add_le_add hroot hbankTerm) (by positivity)
-    _ = _ := by ring
+      _ ≤ (q + 1 : ℕ) * ((U.card : ℝ≥0) / t ^ k + (U.card : ℝ≥0) / t ^ k) :=
+        mul_le_mul_of_nonneg_left (add_le_add hroot hbankTerm)
+          (by
+            positivity)
+      _ = _ :=
+        by
+          ring
 
 theorem timedStoppedAbsorber_localizedTwoAway_relative_power_tail
     {V : Type*} [Fintype V] [DecidableEq V]

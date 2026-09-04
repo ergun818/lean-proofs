@@ -31,20 +31,26 @@ def sourceGainCardEmbedding
     cases v
     simp_all
 
-theorem card_sourceGainDefects_le
-    {V : Type*} [Fintype V] [DecidableEq V] {ell r : ℕ}
+theorem card_sourceGainDefects_le {V : Type*} [Fintype V] [DecidableEq V] {ell r : ℕ}
     (W : Vortex V ell) (F G : ForbiddenFamilyOn V) (T : TripleOn V) (a : ℕ)
     (hF : ∀ E ∈ F, E.card = r - 2) :
-    (sourceGainDefects W F G T a).card ≤ F.card * G.card * 2 ^ (r - 2) := by
-  calc
-    _ = Fintype.card (sourceGainDefects W F G T a) := (Fintype.card_coe _).symm
-    _ ≤ Fintype.card (Σ p : F ×ˢ G, p.1.1.powerset) := Fintype.card_le_of_embedding (sourceGainCardEmbedding W F G T a)
-    _ = ∑ p : F ×ˢ G, 2 ^ p.1.1.card := by simp only [Fintype.card_sigma, Fintype.card_coe, card_powerset]
-    _ = ∑ _p : F ×ˢ G, 2 ^ (r - 2) := by
-      apply sum_congr rfl
-      intro p _hp
-      rw [hF p.1.1 (mem_product.mp p.2).1]
-    _ = _ := by simp
+    (sourceGainDefects W F G T a).card ≤ F.card * G.card * 2 ^ (r - 2) :=
+  by
+    calc
+      _ = Fintype.card (sourceGainDefects W F G T a) := (Fintype.card_coe _).symm
+      _ ≤ Fintype.card (Σ p : F ×ˢ G, p.1.1.powerset) :=
+        (Fintype.card_le_of_embedding (sourceGainCardEmbedding W F G T a))
+      _ = ∑ p : F ×ˢ G, 2 ^ p.1.1.card :=
+        by
+          simp only [Fintype.card_sigma, Fintype.card_coe, card_powerset]
+      _ = ∑ _p : F ×ˢ G, 2 ^ (r - 2) :=
+        by
+          apply sum_congr rfl
+          intro p _hp
+          rw [hF p.1.1 (mem_product.mp p.2).1]
+      _ = _ :=
+        by
+          simp
 
 theorem card_sourceGainDefects_le_polynomial
     {V : Type*} [Fintype V] [DecidableEq V] {ell q r s : ℕ}

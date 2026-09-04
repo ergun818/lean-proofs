@@ -50,7 +50,7 @@ lemma pairStar_inter_pairStar_subset_singleton
   have hsubtype : T = U := by
     apply Subtype.ext
     exact hval.symm
-  simpa [hsubtype]
+  simp [hsubtype]
 
 /-- The three pair stars through an available triangle have union cardinality
 at least `3δ - 2`, written without natural-number subtraction. -/

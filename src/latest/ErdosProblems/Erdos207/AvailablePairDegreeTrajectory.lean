@@ -32,14 +32,16 @@ lemma singleton_eq_singletonElement
   Classical.choose_spec (card_eq_one.mp S.2)
 
 lemma singletonElement_mem
-    {V : Type*} [DecidableEq V] (S : SingletonOn V) :
+    {V : Type*} (S : SingletonOn V) :
     singletonElement S ∈ S.1 := by
+  classical
   rw [singleton_eq_singletonElement]
   simp
 
 lemma singletonElement_injective
-    {V : Type*} [DecidableEq V] :
+    {V : Type*} :
     Function.Injective (singletonElement : SingletonOn V → V) := by
+  classical
   intro S T h
   apply Subtype.ext
   rw [singleton_eq_singletonElement S, singleton_eq_singletonElement T, h]
@@ -141,9 +143,7 @@ theorem card_availableTrianglesContainingPair_le_leave_degree
     _ = ((leaveGraph S.chosen).neighborFinset u).card :=
       Fintype.card_coe _
     _ = (leaveGraph S.chosen).degree u :=
-      by simpa using
-        (SimpleGraph.card_neighborFinset_eq_degree
-          (leaveGraph S.chosen) u)
+      by simp
 
 /-- A maximum leave-degree bound implies the available-pair cutoff required
 by the refined deletion envelope. -/
@@ -194,7 +194,7 @@ theorem sum_card_triplesThrough
     _ = ∑ _T ∈ P, 3 := by
       apply sum_congr rfl
       intro T _hT
-      simpa [T.2]
+      simp [T.2]
     _ = 3 * P.card := by simp [Nat.mul_comm]
 
 /-- A packing has at most `|V|(|V|-1)/6` triples, in division-free form. -/

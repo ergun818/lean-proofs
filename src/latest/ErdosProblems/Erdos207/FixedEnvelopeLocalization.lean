@@ -15,21 +15,28 @@ open Finset
 
 noncomputable section
 
-theorem localForbiddenConfigurations_mono_source
-    {V : Type*} [DecidableEq V] {F H : ForbiddenFamilyOn V} (hFH : F ⊆ H)
-    (available old : TripleSystemOn V) (j : ℕ) :
-    localForbiddenConfigurations F available old j ⊆ localForbiddenConfigurations H available old j := by
-  intro S hS
-  obtain ⟨hA, hcard, E, hE, hSE, hold⟩ := (mem_localForbiddenConfigurations_iff F available old S j).mp hS
-  exact (mem_localForbiddenConfigurations_iff H available old S j).mpr
-    ⟨hA, hcard, E, hFH hE, hSE, hold⟩
+theorem localForbiddenConfigurations_mono_source {V : Type*} [DecidableEq V]
+    {F H : ForbiddenFamilyOn V} (hFH : F ⊆ H) (available old : TripleSystemOn V) (j : ℕ) :
+    localForbiddenConfigurations F available old j ⊆
+      localForbiddenConfigurations H available old j :=
+  by
+    intro S hS
+    obtain ⟨hA, hcard, E, hE, hSE, hold⟩ :=
+      (mem_localForbiddenConfigurations_iff F available old S j).mp hS
+    exact
+      (mem_localForbiddenConfigurations_iff H available old S j).mpr
+        ⟨hA, hcard, E, hFH hE, hSE, hold⟩
 
-theorem mem_localForbiddenConfigurations_of_mem
-    {V : Type*} [DecidableEq V] {F : ForbiddenFamilyOn V} {available old S : TripleSystemOn V} {j : ℕ}
-    (hS : S ∈ F) (hA : S ⊆ available) (hcard : S.card = j - 2) :
-    S ∈ localForbiddenConfigurations F available old j := by
-  apply (mem_localForbiddenConfigurations_iff F available old S j).mpr
-  exact ⟨hA, hcard, S, hS, Subset.rfl, by simp⟩
+theorem mem_localForbiddenConfigurations_of_mem {V : Type*} [DecidableEq V]
+    {F : ForbiddenFamilyOn V} {available old S : TripleSystemOn V} {j : ℕ} (hS : S ∈ F)
+    (hA : S ⊆ available) (hcard : S.card = j - 2) :
+    S ∈ localForbiddenConfigurations F available old j :=
+  by
+    apply (mem_localForbiddenConfigurations_iff F available old S j).mpr
+    exact
+      ⟨hA, hcard, S, hS, Subset.rfl,
+        by
+          simp⟩
 
 theorem decoded_regularized_localization
     {V I : Type*} [DecidableEq V] [DecidableEq I]
@@ -66,17 +73,21 @@ theorem FixedRandomOrderResult.localizes
   decoded_regularized_localization (e d) j (L d) (Lstar d) F0 H available old hF0 havailable hL
     (h.uniform d) ((h.contains_new_constraints d).trans hF)
 
-theorem regularizedForbiddenUnion_subset_localized_union
-    {V I : Type*} [Fintype V] [DecidableEq V] [DecidableEq I]
-    (e : I ↪ TripleOn V) (q : ℕ) (Lstar : ℕ → Finset (Finset I))
-    (H : ForbiddenFamilyOn V) (available old : TripleSystemOn V)
-    (h : ∀ j ∈ Icc 4 q, (Lstar j).image (Finset.map e) ⊆ localForbiddenConfigurations H available old j) :
+theorem regularizedForbiddenUnion_subset_localized_union {V I : Type*} [Finite V]
+    [DecidableEq V] [DecidableEq I] (e : I ↪ TripleOn V) (q : ℕ)
+    (Lstar : ℕ → Finset (Finset I)) (H : ForbiddenFamilyOn V)
+    (available old : TripleSystemOn V)
+    (h :
+      ∀ j ∈ Icc 4 q,
+        (Lstar j).image (Finset.map e) ⊆ localForbiddenConfigurations H available old j) :
     regularizedForbiddenUnion e q Lstar ⊆
-      (Icc 4 q).biUnion (fun j ↦ localForbiddenConfigurations H available old j) := by
-  intro S hS
-  obtain ⟨E, hE, rfl⟩ := mem_image.mp hS
-  obtain ⟨j, hj, hEj⟩ := mem_biUnion.mp hE
-  exact mem_biUnion.mpr ⟨j, hj, h j hj (mem_image.mpr ⟨E, hEj, rfl⟩)⟩
+      (Icc 4 q).biUnion (fun j ↦ localForbiddenConfigurations H available old j) :=
+  by
+    let := Fintype.ofFinite V
+    intro S hS
+    obtain ⟨E, hE, rfl⟩ := mem_image.mp hS
+    obtain ⟨j, hj, hEj⟩ := mem_biUnion.mp hE
+    exact mem_biUnion.mpr ⟨j, hj, h j hj (mem_image.mpr ⟨E, hEj, rfl⟩)⟩
 
 theorem FixedRandomOrderResult.decoded_packing
     {D V : Type*} [Fintype D] [DecidableEq D] [Fintype V] [DecidableEq V]

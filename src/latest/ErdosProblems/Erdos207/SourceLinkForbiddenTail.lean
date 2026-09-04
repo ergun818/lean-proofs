@@ -11,42 +11,61 @@ import ErdosProblems.Erdos207.SourceLinkCanonicalMomentProbability
 namespace Erdos207
 
 open Finset
-open scoped Classical NNReal
+open scoped NNReal
 
 noncomputable section
 
-theorem FiniteLaw.sourceLinkForbiddenSamples_tail
-    {Ω V : Type*} [Fintype Ω] [Fintype V] [DecidableEq V] {ell : ℕ}
-    (L : FiniteLaw Ω) (W : Vortex V ell) (F : ForbiddenFamilyOn V)
+theorem FiniteLaw.sourceLinkForbiddenSamples_tail {Ω V : Type*} [Fintype Ω] [Fintype V]
+    [DecidableEq V] {ell : ℕ} (L : FiniteLaw Ω) (W : Vortex V ell) (F : ForbiddenFamilyOn V)
     (G : SimpleGraph V) (U : Finset V) (e : Sym2 V) (A : TripleSystemOn V)
     (I D historical Q : Ω → TripleSystemOn V) (reserve : Ω → Finset (Sym2 V))
-    (hgeom : L.SupportedOn fun x ↦ Q x ⊆ A ∧
-      (∀ T ∈ Q x, W.level T = Fin.last ell) ∧
-      (∀ T ∈ Q x, ¬ CompletesForbidden F (I x ∪ historical x) T) ∧
-      (∀ T ∈ D x \ historical x, W.level T = Fin.last ell) ∧
-      (Q x).biUnion tripleEdgeFinset ⊆ sourceLinkRetainedEdges G U (I x) (D x) (reserve x))
+    (hgeom :
+      L.SupportedOn fun x ↦
+        Q x ⊆ A ∧
+          (∀ T ∈ Q x, W.level T = Fin.last ell) ∧
+            (∀ T ∈ Q x, ¬CompletesForbidden F (I x ∪ historical x) T) ∧
+              (∀ T ∈ D x \ historical x, W.level T = Fin.last ell) ∧
+                (Q x).biUnion tripleEdgeFinset ⊆
+                  sourceLinkRetainedEdges G U (I x) (D x) (reserve x))
     (s cap : ℕ) (M : ℝ≥0)
-    (hmoment : L.expectation (fun x ↦ selectedCount
-      (fun c : sourceLinkMarkings W F e A ↦ c.1.coordinates e)
-      (sourceLinkRealizedCoordinates G U (I x) (D x) (Q x) (reserve x)) ^ s) ≤ M) :
+    (hmoment :
+      L.expectation
+          (fun x ↦
+            selectedCount (fun c : sourceLinkMarkings W F e A ↦ c.1.coordinates e)
+                (sourceLinkRealizedCoordinates G U (I x) (D x) (Q x) (reserve x)) ^
+              s) ≤
+        M) :
     L.probability (fun x ↦ cap < (sourceLinkForbiddenSamples F (I x) (D x) (Q x) e).card) ≤
-      M / (cap + 1 : ℝ≥0) ^ s := by
-  let X := fun x ↦ selectedCount (fun c : sourceLinkMarkings W F e A ↦ c.1.coordinates e)
-    (sourceLinkRealizedCoordinates G U (I x) (D x) (Q x) (reserve x))
-  have hpos : (0 : ℝ≥0) < (cap + 1 : ℝ≥0) ^ s := pow_pos (by positivity) s
-  calc
-    _ ≤ L.probability (fun x ↦ (cap + 1 : ℝ≥0) ^ s ≤ X x ^ s) := by
-      apply L.probability_mono_of_supported hgeom
-      intro x hx hlarge
-      have hc := sourceLinkForbiddenSamples_card_le_selectedCount (e := e) G U (reserve x)
-        hx.1 hx.2.1 hx.2.2.1 hx.2.2.2.1 hx.2.2.2.2
-      have hnat : cap + 1 ≤ (sourceLinkForbiddenSamples F (I x) (D x) (Q x) e).card := by omega
-      have hreal : (cap + 1 : ℝ≥0) ≤ ((sourceLinkForbiddenSamples F (I x) (D x) (Q x) e).card : ℝ≥0) := by
-        exact_mod_cast hnat
-      exact pow_le_pow_left' (hreal.trans hc) s
-    _ ≤ L.expectation (fun x ↦ X x ^ s) / (cap + 1 : ℝ≥0) ^ s :=
-      L.probability_le_expectation_div _ hpos
-    _ ≤ M / (cap + 1 : ℝ≥0) ^ s := div_le_div_of_nonneg_right hmoment zero_le
+      M / (cap + 1 : ℝ≥0) ^ s :=
+  by
+    let X := fun x ↦
+      selectedCount (fun c : sourceLinkMarkings W F e A ↦ c.1.coordinates e)
+        (sourceLinkRealizedCoordinates G U (I x) (D x) (Q x) (reserve x))
+    have hpos : (0 : ℝ≥0) < (cap + 1 : ℝ≥0) ^ s :=
+      pow_pos
+        (by
+          positivity)
+        s
+    calc
+      _ ≤ L.probability (fun x ↦ (cap + 1 : ℝ≥0) ^ s ≤ X x ^ s) :=
+        by
+          apply L.probability_mono_of_supported hgeom
+          intro x hx hlarge
+          have hc :=
+            sourceLinkForbiddenSamples_card_le_selectedCount (e := e) G U (reserve x) hx.1
+              hx.2.1 hx.2.2.1 hx.2.2.2.1 hx.2.2.2.2
+          have hnat : cap + 1 ≤ (sourceLinkForbiddenSamples F (I x) (D x) (Q x) e).card :=
+            by
+              omega
+          have hreal :
+            (cap + 1 : ℝ≥0) ≤
+              ((sourceLinkForbiddenSamples F (I x) (D x) (Q x) e).card : ℝ≥0) :=
+            by
+              exact_mod_cast hnat
+          exact pow_le_pow_left' (hreal.trans hc) s
+      _ ≤ L.expectation (fun x ↦ X x ^ s) / (cap + 1 : ℝ≥0) ^ s :=
+        (L.probability_le_expectation_div _ hpos)
+      _ ≤ M / (cap + 1 : ℝ≥0) ^ s := div_le_div_of_nonneg_right hmoment zero_le
 
 theorem IsResidualReserveStronglyWellDistributed.sourceLink_canonical_forbidden_tail
     {Ω Ξ V : Type*} [Fintype Ω] [Fintype Ξ] [Fintype V]

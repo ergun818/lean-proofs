@@ -418,7 +418,7 @@ theorem stoppedVortexLevelGreedy_probability_subset_chosen_le_vortexWeight
       setWeight (fun T ↦ (fuel : ℝ≥0) * pi T) U := by
     unfold setWeight
     rw [← prod_const]
-    simp only [card_attach, prod_mul_distrib]
+    simp only [prod_mul_distrib]
   rw [mul_assoc, hweight]
   gcongr
   unfold setWeight

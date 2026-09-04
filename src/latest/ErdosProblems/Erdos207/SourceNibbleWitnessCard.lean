@@ -70,27 +70,43 @@ theorem card_sourceNibbleCodes_le_family_mul
     rw [card_sdiff_of_subset hm.2, huniform E hm.1, card_singleton]
     omega
 
-theorem card_sourceNibbleCodes_le_polynomial
-    {V : Type*} [Fintype V] [DecidableEq V] {ell : ℕ}
+theorem card_sourceNibbleCodes_le_polynomial {V : Type*} [Fintype V] [DecidableEq V] {ell : ℕ}
     (W : Vortex V ell) (F : ForbiddenFamilyOn V) (T : TripleOn V) (j j' : ℕ)
     (huniform : ∀ E ∈ F, E.card = j' - 2) :
-    (sourceNibbleCodes W F T j j').card ≤ 2 ^ j' * (Fintype.card V + 1) ^ (3 * j') := by
-  have hF : F.card ≤ (Fintype.card (TripleOn V)) ^ (j' - 2) := by
-    have hsub : F ⊆ (univ : Finset (TripleOn V)).powersetCard (j' - 2) :=
-      fun E hE ↦ mem_powersetCard.mpr ⟨subset_univ E, huniform E hE⟩
-    exact (card_le_card hsub).trans (by
-      simpa only [card_powersetCard, card_univ] using
-        (Nat.choose_le_pow (Fintype.card (TripleOn V)) (j' - 2)))
-  have htri : Fintype.card (TripleOn V) ≤ Fintype.card V ^ 3 := by
-    rw [show Fintype.card (TripleOn V) = Nat.choose (Fintype.card V) 3 from Fintype.card_finset_len 3]
-    exact Nat.choose_le_pow _ _
-  have hF' : F.card ≤ (Fintype.card V + 1) ^ (3 * j') := by
-    apply (hF.trans (Nat.pow_le_pow_left htri _)).trans
-    rw [← pow_mul]
-    apply (Nat.pow_le_pow_left (Nat.le_succ _) _).trans
-    exact Nat.pow_le_pow_right (by omega) (by omega)
-  apply (card_sourceNibbleCodes_le_family_mul W F T j j' huniform).trans
-  simpa only [mul_comm] using Nat.mul_le_mul hF' (Nat.pow_le_pow_right (by omega) (Nat.sub_le j' 3))
+    (sourceNibbleCodes W F T j j').card ≤ 2 ^ j' * (Fintype.card V + 1) ^ (3 * j') :=
+  by
+    have hF : F.card ≤ (Fintype.card (TripleOn V)) ^ (j' - 2) :=
+      by
+        have hsub : F ⊆ (univ : Finset (TripleOn V)).powersetCard (j' - 2) := fun E hE ↦
+          mem_powersetCard.mpr ⟨subset_univ E, huniform E hE⟩
+        exact
+          (card_le_card hsub).trans
+            (by
+              simpa only [card_powersetCard, card_univ] using
+                (Nat.choose_le_pow (Fintype.card (TripleOn V)) (j' - 2)))
+    have htri : Fintype.card (TripleOn V) ≤ Fintype.card V ^ 3 :=
+      by
+        rw [show Fintype.card (TripleOn V) = Nat.choose (Fintype.card V) 3 from
+            Fintype.card_finset_len 3]
+        exact Nat.choose_le_pow _ _
+    have hF' : F.card ≤ (Fintype.card V + 1) ^ (3 * j') :=
+      by
+        apply (hF.trans (Nat.pow_le_pow_left htri _)).trans
+        rw [← pow_mul]
+        apply (Nat.pow_le_pow_left (Nat.le_succ _) _).trans
+        exact
+          Nat.pow_le_pow_right
+            (by
+              omega)
+            (by
+              omega)
+    apply (card_sourceNibbleCodes_le_family_mul W F T j j' huniform).trans
+    simpa only [mul_comm] using
+      Nat.mul_le_mul hF'
+        (Nat.pow_le_pow_right
+          (by
+            omega)
+          (Nat.sub_le j' 3))
 
 end
 

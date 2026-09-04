@@ -31,7 +31,7 @@ theorem configuration_monomial_le
 
 theorem power_scaled_error_product
     (z r : ℕ) {y D w W x e : ℝ}
-    (hD : 0 ≤ D) (hw : 0 ≤ w) (hW : 0 ≤ W) (hx : 0 ≤ x) (he : 0 ≤ e)
+    (hD : 0 ≤ D) (hw : 0 ≤ w) (_hW : 0 ≤ W) (_hx : 0 ≤ x) (he : 0 ≤ e)
     (hy : y ≤ D * w ^ (z + r)) (hwx : w ≤ W * x) :
     y * e ≤ D * W ^ r * x ^ r * (e * w ^ z) := by
   calc

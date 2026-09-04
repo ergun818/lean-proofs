@@ -24,11 +24,12 @@ noncomputable section
 /-- A subset occupying all but at most an `xi` fraction of a finite set lies
 in the required multiplicative window around the full cardinality. -/
 theorem withinMultiplicativeError_one_of_subset_loss
-    {V : Type*} [Fintype V] [DecidableEq V]
+    {V : Type*} [Finite V] [DecidableEq V]
     {S U : Finset V} {xi : ℝ≥0}
     (hsub : S ⊆ U) (hxi : xi ≤ 1)
     (hloss : ((U \ S).card : ℝ≥0) ≤ xi * (U.card : ℝ≥0)) :
     WithinMultiplicativeError xi (S.card : ℝ≥0) (U.card : ℝ≥0) := by
+  let := Fintype.ofFinite V
   have hxiu : xi * (U.card : ℝ≥0) ≤ (U.card : ℝ≥0) := by
     calc
       xi * (U.card : ℝ≥0) ≤ 1 * (U.card : ℝ≥0) := by gcongr

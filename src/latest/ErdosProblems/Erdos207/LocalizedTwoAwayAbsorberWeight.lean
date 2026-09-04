@@ -16,10 +16,10 @@ open scoped NNReal
 
 noncomputable section
 
-abbrev LocalizedTwoAwayIndexedCode
-    (V : Type*) [Fintype V] [DecidableEq V] (q : ℕ) (B : TripleSystemOn V)
-    (T : TripleOn V) (a b : V) (U : Finset V) :=
-  Σ j : (Icc 4 q : Finset ℕ), LocalizedTwoAwayWitness V (absorberInducedConfigurationsOn q j.1 B) T a b U
+abbrev LocalizedTwoAwayIndexedCode (V : Type*) [Fintype V] [DecidableEq V] (q : ℕ)
+    (B : TripleSystemOn V) (T : TripleOn V) (a b : V) (U : Finset V) :=
+  Σ j : (Icc 4 q : Finset ℕ),
+    LocalizedTwoAwayWitness V (absorberInducedConfigurationsOn q j.1 B) T a b U
 
 def localizedTwoAwayIndexedCode
     {V : Type*} [Fintype V] [DecidableEq V] {q : ℕ} {B : TripleSystemOn V}
@@ -54,39 +54,69 @@ def localizedTwoAwayWeightBound
   (q + 1 : ℕ) * ((45 * (q + 1) + 28 : ℕ) +
     (U.card : ℝ≥0) * pairExactBankExtensionCoefficient q B / (Fintype.card V + 1 : ℝ≥0))
 
-theorem localizedTwoAway_absorber_hasExtensionBound
-    {V : Type*} [Fintype V] [DecidableEq V]
+theorem localizedTwoAway_absorber_hasExtensionBound {V : Type*} [Fintype V] [DecidableEq V]
     {q : ℕ} {H : SimpleGraph V} {B : TripleSystemOn V} {X U : Finset V}
     (F : ForbiddenFamilyOn V) (hF : F ⊆ absorberErdosForbiddenConfigurationsOn q B)
-    (T : TripleOn V) {a b : V} (hab : a ≠ b)
-    (hsep : AbsorberSeparatedLevel H X B U)
+    (T : TripleOn V) {a b : V} (hab : a ≠ b) (hsep : AbsorberSeparatedLevel H X B U)
     (hrootLocal : HasPaddedAbsorberRootLocalization q X B) :
-    HasExtensionBound (fun w : LocalizedTwoAwayWitness V F T a b U ↦ localizedTwoAwayRemainder w)
-      (constantTripleWeight (Fintype.card V + 1 : ℝ≥0)⁻¹) (localizedTwoAwayWeightBound q B U) := by
-  intro R
-  let p : TripleOn V → ℝ≥0 := constantTripleWeight (Fintype.card V + 1 : ℝ≥0)⁻¹
-  let K : ℝ≥0 := (45 * (q + 1) + 28 : ℕ) +
-    (U.card : ℝ≥0) * pairExactBankExtensionCoefficient q B / (Fintype.card V + 1 : ℝ≥0)
-  have hsize : (Icc 4 q).card ≤ q + 1 := by rw [Nat.card_Icc]; omega
-  calc
-    _ ≤ ∑ z : LocalizedTwoAwayIndexedCode V q B T a b U,
-        if R ⊆ localizedTwoAwayRemainder z.2 then setWeight p (localizedTwoAwayRemainder z.2 \ R) else 0 := by
-      exact sum_le_sum_of_injective_code (localizedTwoAwayIndexedCode hF)
-        (localizedTwoAwayIndexedCode_injective hF)
-        (fun w ↦ if R ⊆ localizedTwoAwayRemainder w then setWeight p (localizedTwoAwayRemainder w \ R) else 0)
-        (fun z ↦ if R ⊆ localizedTwoAwayRemainder z.2 then setWeight p (localizedTwoAwayRemainder z.2 \ R) else 0)
-        (fun _ ↦ le_rfl)
-    _ = ∑ j : (Icc 4 q : Finset ℕ), extensionWeight
-        (fun w : LocalizedTwoAwayWitness V (absorberInducedConfigurationsOn q j.1 B) T a b U ↦
-          localizedTwoAwayRemainder w) p R := by rw [Fintype.sum_sigma]; rfl
-    _ ≤ ∑ _j : (Icc 4 q : Finset ℕ), K := by
-      apply sum_le_sum
-      intro j _
-      exact localizedTwoAway_induced_hasExtensionBound T hab (mem_Icc.mp j.2).1
-        (mem_Icc.mp j.2).2 hsep hrootLocal R
-    _ = (Icc 4 q).card * K := by simp
-    _ ≤ (q + 1 : ℕ) * K := mul_le_mul_of_nonneg_right (by exact_mod_cast hsize) (bot_le : 0 ≤ K)
-    _ = _ := rfl
+    HasExtensionBound
+      (fun w : LocalizedTwoAwayWitness V F T a b U ↦ localizedTwoAwayRemainder w)
+      (constantTripleWeight (Fintype.card V + 1 : ℝ≥0)⁻¹)
+      (localizedTwoAwayWeightBound q B U) :=
+  by
+    intro R
+    let p : TripleOn V → ℝ≥0 := constantTripleWeight (Fintype.card V + 1 : ℝ≥0)⁻¹
+    let K : ℝ≥0 :=
+      (45 * (q + 1) + 28 : ℕ) +
+        (U.card : ℝ≥0) * pairExactBankExtensionCoefficient q B / (Fintype.card V + 1 : ℝ≥0)
+    have hsize : (Icc 4 q).card ≤ q + 1 :=
+      by
+        rw [Nat.card_Icc]; omega
+    calc
+      _ ≤
+          ∑ z : LocalizedTwoAwayIndexedCode V q B T a b U,
+            if R ⊆ localizedTwoAwayRemainder z.2 then
+              setWeight p (localizedTwoAwayRemainder z.2 \ R)
+            else 0 :=
+        by
+          exact
+            sum_le_sum_of_injective_code (localizedTwoAwayIndexedCode hF)
+              (localizedTwoAwayIndexedCode_injective hF)
+              (fun w ↦
+                if R ⊆ localizedTwoAwayRemainder w then
+                  setWeight p (localizedTwoAwayRemainder w \ R)
+                else 0)
+              (fun z ↦
+                if R ⊆ localizedTwoAwayRemainder z.2 then
+                  setWeight p (localizedTwoAwayRemainder z.2 \ R)
+                else 0)
+              (fun _ ↦ le_rfl)
+      _ =
+          ∑ j : (Icc 4 q : Finset ℕ),
+            extensionWeight
+              (fun w :
+                  LocalizedTwoAwayWitness V (absorberInducedConfigurationsOn q j.1 B) T a b
+                    U ↦
+                localizedTwoAwayRemainder w)
+              p R :=
+        by
+          rw [Fintype.sum_sigma]; rfl
+      _ ≤ ∑ _j : (Icc 4 q : Finset ℕ), K :=
+        by
+          apply sum_le_sum
+          intro j _
+          exact
+            localizedTwoAway_induced_hasExtensionBound T hab (mem_Icc.mp j.2).1
+              (mem_Icc.mp j.2).2 hsep hrootLocal R
+      _ = (Icc 4 q).card * K :=
+        by
+          simp
+      _ ≤ (q + 1 : ℕ) * K :=
+        (mul_le_mul_of_nonneg_right
+          (by
+            exact_mod_cast hsize)
+          (bot_le : 0 ≤ K))
+      _ = _ := rfl
 
 theorem localizedTwoAway_absorber_remainder_card_le
     {V : Type*} [Fintype V] [DecidableEq V]

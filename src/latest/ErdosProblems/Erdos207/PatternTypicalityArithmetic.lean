@@ -30,22 +30,26 @@ theorem relative_error_mul_target
   rw [heq, abs_div, abs_of_pos hf] at hband
   exact (div_le_iff₀ hf).mp hband
 
-theorem full_pattern_error_of_proper_relative_band
-    {V : Type*} [Fintype V] [DecidableEq V]
-    (A : TripleSystemOn V) (Q : SimpleGraph V) (U : Finset V)
-    (f z delta : ℝ) (hf : 0 < f)
+theorem full_pattern_error_of_proper_relative_band {V : Type*} [Fintype V] [DecidableEq V]
+    (A : TripleSystemOn V) (Q : SimpleGraph V) (U : Finset V) (f z delta : ℝ) (hf : 0 < f)
     (hband : |((properPatternExtensions A Q U).card : ℝ) / f - 1| ≤ z)
     (hendpoints : ((graphSupportFinset Q).card : ℝ) ≤ delta * f) :
-    |((iterationExtensionVertices A Q U).card : ℝ) - f| ≤ (z + delta) * f := by
-  obtain ⟨hlo, hhi⟩ := properPatternExtensions_card_comparison A Q U
-  have hloR : ((properPatternExtensions A Q U).card : ℝ) ≤ (iterationExtensionVertices A Q U).card :=
-    by exact_mod_cast hlo
-  have hhiR : ((iterationExtensionVertices A Q U).card : ℝ) ≤
-      (properPatternExtensions A Q U).card + (graphSupportFinset Q).card := by exact_mod_cast hhi
-  have hraw := abs_le.mp (relative_error_mul_target _ f z hf hband)
-  have hendpoint0 : 0 ≤ (delta * f) := (Nat.cast_nonneg _).trans hendpoints
-  rw [abs_le]
-  constructor <;> nlinarith only [hloR, hhiR, hraw.1, hraw.2, hendpoints, hendpoint0]
+    |((iterationExtensionVertices A Q U).card : ℝ) - f| ≤ (z + delta) * f :=
+  by
+    obtain ⟨hlo, hhi⟩ := properPatternExtensions_card_comparison A Q U
+    have hloR :
+      ((properPatternExtensions A Q U).card : ℝ) ≤ (iterationExtensionVertices A Q U).card :=
+      by
+        exact_mod_cast hlo
+    have hhiR :
+      ((iterationExtensionVertices A Q U).card : ℝ) ≤
+        (properPatternExtensions A Q U).card + (graphSupportFinset Q).card :=
+      by
+        exact_mod_cast hhi
+    have hraw := abs_le.mp (relative_error_mul_target _ f z hf hband)
+    have hendpoint0 : 0 ≤ (delta * f) := (Nat.cast_nonneg _).trans hendpoints
+    rw [abs_le]
+    constructor <;> nlinarith only [hloR, hhiR, hraw.1, hraw.2, hendpoints, hendpoint0]
 
 theorem pattern_endpoint_power_budget
     (M f t : ℝ) (h d : ℕ) (ht : 1 ≤ t) (hh : (h : ℝ) ≤ t)

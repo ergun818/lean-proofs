@@ -68,7 +68,7 @@ theorem greedyKernel_expectationReal_of_empty
     (hA : S.available = ∅) (φ : GreedyStateOn V → ℝ) :
     (greedyKernel F S).expectationReal φ = φ S := by
   classical
-  have hnot : ¬S.available.Nonempty := by simpa [hA]
+  have hnot : ¬S.available.Nonempty := by simp [hA]
   have hkernel : greedyKernel F S = FiniteLaw.pure S := by
     simp [greedyKernel, hnot]
   rw [hkernel, FiniteLaw.expectationReal_pure]

@@ -13,12 +13,13 @@ open Finset
 open scoped BigOperators
 
 theorem sum_card_le_card_restricted_biUnion_add
-    {I A : Type*} [DecidableEq I] [DecidableEq A]
+    {I A : Type*} [DecidableEq A]
     (s : Finset I) (F : I → Finset A) (R : Finset A) (K : ℕ)
     (hroot : ∀ i ∈ s, (F i ∩ R).card ≤ K)
     (hinter : ∀ i ∈ s, ∀ j ∈ s, i ≠ j → (F i ∩ F j).card ≤ K) :
     ∑ i ∈ s, (F i).card ≤
       (s.biUnion (fun i ↦ F i \ R)).card + (s.card + s.card.choose 2) * K := by
+  classical
   have hbonf := sum_card_le_card_biUnion_add_choose_two_mul s
     (fun i ↦ F i \ R) K (by
       intro i hi j hj hij
@@ -38,9 +39,10 @@ theorem sum_card_le_card_restricted_biUnion_add
     _ = _ := by ring
 
 theorem card_restricted_biUnion_le_sum_card
-    {I A : Type*} [DecidableEq I] [DecidableEq A]
+    {I A : Type*} [DecidableEq A]
     (s : Finset I) (F : I → Finset A) (R : Finset A) :
     (s.biUnion (fun i ↦ F i \ R)).card ≤ ∑ i ∈ s, (F i).card := by
+  classical
   exact card_biUnion_le.trans (sum_le_sum fun _ _ ↦ card_le_card sdiff_subset)
 
 end Erdos207

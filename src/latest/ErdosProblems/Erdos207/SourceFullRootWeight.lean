@@ -77,19 +77,28 @@ theorem SourceVortexWellSpread.full_middle_root_weight_le
   rw [hroot, hexp, pow_succ]
   field_simp
 
-theorem SourceVortexWellSpread.full_all_root_weight_le_one
-    {V : Type*} [Fintype V] [DecidableEq V] {ell j : ℕ}
-    {W : Vortex V ell} {F : ForbiddenFamilyOn V} {y z : ℝ≥0}
+theorem SourceVortexWellSpread.full_all_root_weight_le_one {V : Type*} [Fintype V]
+    [DecidableEq V] {ell j : ℕ} {W : Vortex V ell} {F : ForbiddenFamilyOn V} {y z : ℝ≥0}
     (h : SourceVortexWellSpread W j F y z) (Q : TripleSystemOn V) (hQcard : Q.card = j - 2) :
-    (∑ E ∈ familyExtensions F Q, setWeight (vortexTripleWeight W 1) (E \ Q)) ≤ 1 := by
-  have hsub : familyExtensions F Q ⊆ {Q} := by
-    intro E hE
-    have hm := mem_familyExtensions_iff.mp hE
-    exact mem_singleton.mpr (eq_of_subset_of_card_le hm.2 (by rw [hQcard, (h.uniform E hm.1).1])).symm
-  calc
-    _ ≤ ∑ E ∈ ({Q} : Finset (TripleSystemOn V)), setWeight (vortexTripleWeight W 1) (E \ Q) :=
-      sum_le_sum_of_subset_of_nonneg hsub (fun _ _ _ ↦ zero_le)
-    _ = 1 := by simp [setWeight]
+    (∑ E ∈ familyExtensions F Q, setWeight (vortexTripleWeight W 1) (E \ Q)) ≤ 1 :=
+  by
+    have hsub : familyExtensions F Q ⊆ { Q } :=
+      by
+        intro E hE
+        have hm := mem_familyExtensions_iff.mp hE
+        exact
+          mem_singleton.mpr
+            (eq_of_subset_of_card_le hm.2
+                (by
+                  rw [hQcard, (h.uniform E hm.1).1])).symm
+    calc
+      _ ≤
+          ∑ E ∈ ({ Q } : Finset (TripleSystemOn V)),
+            setWeight (vortexTripleWeight W 1) (E \ Q) :=
+        sum_le_sum_of_subset_of_nonneg hsub (fun _ _ _ ↦ zero_le)
+      _ = 1 :=
+        by
+          simp [setWeight]
 
 end
 

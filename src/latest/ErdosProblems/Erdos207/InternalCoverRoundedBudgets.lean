@@ -45,20 +45,38 @@ theorem internal_cover_rounded_budgets (mu : ℝ≥0) (hmu : 512 ≤ mu) :
       linarith only [hmuR,hsR,hdR,htR,hlR]
     exact_mod_cast this
 
-theorem internal_cover_rounded_left_and_point
-    (p r eta u epsilon : ℝ≥0) (hmu : 512 ≤ r ^ 2 * p ^ 2 * eta * u) (hepsilon : 128 * epsilon ≤ eta) :
+theorem internal_cover_rounded_left_and_point (p r eta u epsilon : ℝ≥0)
+    (hmu : 512 ≤ r ^ 2 * p ^ 2 * eta * u) (hepsilon : 128 * epsilon ≤ eta) :
     epsilon * p ^ 2 * r ^ 2 * u ≤ (⌈r ^ 2 * p ^ 2 * eta * u / 128⌉₊ : ℝ≥0) ∧
-      ((⌊r ^ 2 * p ^ 2 * eta * u / 32⌋₊ : ℝ≥0))⁻¹ ≤ 64 / (r ^ 2 * p ^ 2 * eta * u) := by
-  have hmu0 : 0 < r ^ 2 * p ^ 2 * eta * u := (by norm_num : (0 : ℝ≥0) < 512).trans_le hmu
-  have ht := (internal_cover_rounded_budgets (r ^ 2 * p ^ 2 * eta * u) hmu).2.1
-  constructor
-  · apply le_trans _ (Nat.le_ceil (r ^ 2 * p ^ 2 * eta * u / 128))
-    apply (le_div_iff₀ (by norm_num : (0 : ℝ≥0) < 128)).mpr
-    calc
-      _ = (128 * epsilon) * (r ^ 2 * p ^ 2 * u) := by ring
-      _ ≤ eta * (r ^ 2 * p ^ 2 * u) := mul_le_mul_of_nonneg_right hepsilon zero_le
-      _ = _ := by ring
-  · have hb := one_div_le_one_div_of_le (div_pos hmu0 (by norm_num)) ht
-    simpa only [one_div, inv_div, inv_inv] using hb
+      ((⌊r ^ 2 * p ^ 2 * eta * u / 32⌋₊ : ℝ≥0))⁻¹ ≤ 64 / (r ^ 2 * p ^ 2 * eta * u) :=
+  by
+    have hmu0 : 0 < r ^ 2 * p ^ 2 * eta * u :=
+      (by
+              norm_num :
+            (0 : ℝ≥0) < 512).trans_le
+        hmu
+    have ht := (internal_cover_rounded_budgets (r ^ 2 * p ^ 2 * eta * u) hmu).2.1
+    constructor
+    · apply le_trans _ (Nat.le_ceil (r ^ 2 * p ^ 2 * eta * u / 128))
+      apply
+        (le_div_iff₀
+            (by
+                norm_num :
+              (0 : ℝ≥0) < 128)).mpr
+      calc
+        _ = (128 * epsilon) * (r ^ 2 * p ^ 2 * u) :=
+          by
+            ring
+        _ ≤ eta * (r ^ 2 * p ^ 2 * u) := (mul_le_mul_of_nonneg_right hepsilon zero_le)
+        _ = _ :=
+          by
+            ring
+    · have hb :=
+        one_div_le_one_div_of_le
+          (div_pos hmu0
+            (by
+              norm_num))
+          ht
+      simpa only [one_div, inv_div, inv_inv] using hb
 
 end Erdos207

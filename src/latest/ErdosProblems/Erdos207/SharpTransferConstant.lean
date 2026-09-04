@@ -22,28 +22,43 @@ theorem boundedSharpSurvivalTheta_coe_eq
     NNReal.coe_inv, Nat.cast_sub hsub]
   field_simp
 
-theorem boundedSharpTransferFactor_le_two
-    (M d K : ℕ) (hM : 0 < M) (hdM : d ≤ M)
-    (hsmall : 2 * K * (d - K) ≤ M) :
-    (boundedSharpSurvivalTheta M d K ^ K)⁻¹ ≤ (2 : ℝ≥0) := by
-  let theta : ℝ := boundedSharpSurvivalTheta M d K
-  have ht0 : 0 ≤ theta := NNReal.coe_nonneg _
-  have hBernoulli := one_add_mul_sub_le_pow (by linarith only [ht0] : -1 ≤ theta) K
-  have hidentity : theta = 1 - ((d - K : ℕ) : ℝ) / M := boundedSharpSurvivalTheta_coe_eq M d K hM hdM
-  have hMr : (0 : ℝ) < M := by exact_mod_cast hM
-  have hsmallR : (2 : ℝ) * K * ((d - K : ℕ) : ℝ) ≤ M := by exact_mod_cast hsmall
-  have hratio : (K : ℝ) * (((d - K : ℕ) : ℝ) / M) ≤ 1 / 2 := by
-    rw [← mul_div_assoc, div_le_iff₀ hMr]
-    linarith only [hsmallR]
-  have hhalf : (1 / 2 : ℝ) ≤ theta ^ K := by
-    apply le_trans _ hBernoulli
-    rw [hidentity]
-    nlinarith only [hratio]
-  rw [← NNReal.coe_le_coe]
-  simp only [NNReal.coe_inv, NNReal.coe_pow, NNReal.coe_ofNat]
-  change (theta ^ K)⁻¹ ≤ 2
-  apply (inv_le_iff_one_le_mul₀ (by linarith only [hhalf] : 0 < theta ^ K)).mpr
-  linarith only [hhalf]
+theorem boundedSharpTransferFactor_le_two (M d K : ℕ) (hM : 0 < M) (hdM : d ≤ M)
+    (hsmall : 2 * K * (d - K) ≤ M) : (boundedSharpSurvivalTheta M d K ^ K)⁻¹ ≤ (2 : ℝ≥0) :=
+  by
+    let theta : ℝ := boundedSharpSurvivalTheta M d K
+    have ht0 : 0 ≤ theta := NNReal.coe_nonneg _
+    have hBernoulli :=
+      one_add_mul_sub_le_pow
+        (by
+            linarith only [ht0] :
+          -1 ≤ theta)
+        K
+    have hidentity : theta = 1 - ((d - K : ℕ) : ℝ) / M :=
+      boundedSharpSurvivalTheta_coe_eq M d K hM hdM
+    have hMr : (0 : ℝ) < M :=
+      by
+        exact_mod_cast hM
+    have hsmallR : (2 : ℝ) * K * ((d - K : ℕ) : ℝ) ≤ M :=
+      by
+        exact_mod_cast hsmall
+    have hratio : (K : ℝ) * (((d - K : ℕ) : ℝ) / M) ≤ 1 / 2 :=
+      by
+        rw [← mul_div_assoc, div_le_iff₀ hMr]
+        linarith only [hsmallR]
+    have hhalf : (1 / 2 : ℝ) ≤ theta ^ K :=
+      by
+        apply le_trans _ hBernoulli
+        rw [hidentity]
+        nlinarith only [hratio]
+    rw [← NNReal.coe_le_coe]
+    simp only [NNReal.coe_inv, NNReal.coe_pow, NNReal.coe_ofNat]
+    change (theta ^ K)⁻¹ ≤ 2
+    apply
+      (inv_le_iff_one_le_mul₀
+          (by
+              linarith only [hhalf] :
+            0 < theta ^ K)).mpr
+    linarith only [hhalf]
 
 theorem rounded_sharp_transfer_small
     (L x e : ℝ) (K : ℕ) (hL : 6 ≤ L) (hx : 0 < x) (he : 0 ≤ e)

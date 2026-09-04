@@ -37,10 +37,11 @@ def boundedSharpTransferSchedule
   else (D i : ℝ≥0)⁻¹
 
 lemma pending_edge_count_le_three_mul_patternCutoff
-    {V : Type*} [Fintype V] [DecidableEq V]
+    {V : Type*} [Finite V] [DecidableEq V]
     {Q R : TripleSystemOn V} {E B : Finset (Sym2 V)} {K : ℕ}
-    (hR : R ⊆ Q) (hB : B ⊆ E) (hcard : Q.card + E.card ≤ K) :
+    (_hR : R ⊆ Q) (hB : B ⊆ E) (hcard : Q.card + E.card ≤ K) :
     3 * (Q \ R).card + B.card ≤ 3 * K := by
+  let := Fintype.ofFinite V
   have hQR : (Q \ R).card ≤ Q.card := card_le_card sdiff_subset
   have hBE : B.card ≤ E.card := card_le_card hB
   omega
@@ -130,7 +131,7 @@ theorem timedStoppedGreedyProcess_boundedSharpInitialProductBound
         e ∉ (coveredGraph S₀.chosen).edgeSet := by
       intro e heE hecovered
       rw [hchosen₀, coveredGraph_edgeSet_eq_biUnion] at hecovered
-      simpa using hecovered
+      simp at hecovered
     have hsupply : ∀ i S R, i < n → Inv S → active i S → R ⊆ Q →
         Q \ R ⊆ S.available →
         B ⊆ greedyUncoveredEdges
@@ -193,7 +194,7 @@ theorem timedStoppedGreedyProcess_boundedSharpInitialProductBound
         n F active Inv D d theta rho S₀ hInv₀ hactive₀
         (fun i hi S hIS hactive ↦ hInv i hi S hIS hactive) hD hfloor
         Q E B hBoff hQpacking hQB hsupply hscalar htheta hadjust
-        (by simpa [hchosen₀]) hQavailable hE₀
+        (by simp [hchosen₀]) hQavailable hE₀
     exact hraw.trans (by
       simpa only [B, tracked] using
         add_le_add_right hinactive

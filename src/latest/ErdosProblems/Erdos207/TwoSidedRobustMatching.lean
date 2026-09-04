@@ -49,13 +49,13 @@ lemma transposeRelation_apply
 Hall condition. -/
 theorem survivesEveryHallObstruction_of_twoSided_small
     {A B : Type*} [Fintype A] [Fintype B]
-    [DecidableEq A] [DecidableEq B]
     (r deleted : A → B → Prop)
     (hcard : Fintype.card A = Fintype.card B)
     (hleft : SurvivesSmallHallObstructions r deleted)
     (hright : SurvivesSmallHallObstructions
       (transposeRelation r) (transposeRelation deleted)) :
     SurvivesEveryHallObstruction r deleted := by
+  classical
   intro S T hTS
   classical
   by_cases hsmall : 2 * (T.card + 1) ≤ Fintype.card A + 1
@@ -93,15 +93,14 @@ theorem survivesEveryHallObstruction_of_twoSided_small
 after deletion. -/
 theorem exists_bijective_matching_of_twoSided_small
     {A B : Type*} [Fintype A] [Fintype B]
-    [DecidableEq A] [DecidableEq B]
     (r deleted : A → B → Prop)
-    [DecidableRel r] [DecidableRel deleted]
     (hcard : Fintype.card A = Fintype.card B)
     (hleft : SurvivesSmallHallObstructions r deleted)
     (hright : SurvivesSmallHallObstructions
       (transposeRelation r) (transposeRelation deleted)) :
     ∃ f : A → B, Function.Bijective f ∧
       ∀ a, r a (f a) ∧ ¬ deleted a (f a) := by
+  classical
   exact exists_bijective_matching_after_deletion r deleted hcard
     (survivesEveryHallObstruction_of_twoSided_small r deleted hcard
       hleft hright)
@@ -193,7 +192,7 @@ theorem exists_bijective_matching_of_twoSided_many_pairs
 hypothesis says that after excluding every vertex of `T`, enough candidates
 remain to form all robust-sampling groups. -/
 theorem smallHallCandidateBound_of_left_degree
-    {A B : Type*} [Fintype A] [Fintype B]
+    {A B : Type*} [Finite A] [Fintype B]
     [DecidableEq A] [DecidableEq B]
     (r : A → B → Prop) [DecidableRel r]
     (Delta groupSize d cutoff : ℕ)
@@ -203,6 +202,7 @@ theorem smallHallCandidateBound_of_left_degree
       T.card < S.card → S.card ≤ cutoff →
       (Delta * S.card + 1) * groupSize ≤
         (relationPairsLeaving r S T).card := by
+  let := Fintype.ofFinite A
   intro S T hTS hScut
   have hnonempty : 1 ≤ S.card := by omega
   apply le_trans _ (card_relationPairsLeaving_ge_of_left_degree

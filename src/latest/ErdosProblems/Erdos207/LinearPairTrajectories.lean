@@ -116,7 +116,7 @@ theorem pairUpperLinearRate_le_current
 when the deterministic schedule stays above `Dmin`. -/
 theorem current_pairRate_le_pairLowerLinearRate
     {V : Type*} [Fintype V] [DecidableEq V]
-    {F : ForbiddenFamilyOn V} {S₀ S : GreedyStateOn V}
+    {F : ForbiddenFamilyOn V} {_S₀ S : GreedyStateOn V}
     {K Δ δ Dmin : ℕ} {D : ℕ → ℕ} {i : ℕ} {P : PairOn V}
     (hactive : timedPairBandActive F K Δ δ D i S)
     (hDminPos : 0 < Dmin)
@@ -186,7 +186,7 @@ theorem linearPairLowerTarget_drift
           (3 * Δ + K : ℕ)) := by
   rw [linearPairTarget_succ_sub]
   have h := current_pairRate_le_pairLowerLinearRate
-    (S₀ := S₀) (P := P) hactive hDminPos hDmin
+    (_S₀ := S₀) (P := P) hactive hDminPos hDmin
   calc
     -pairLowerLinearRate Δ K Dmin ≤
         -((S.available.card : ℝ)⁻¹ *
@@ -284,8 +284,8 @@ theorem probability_timedPairBand_linear_not_horizon_and_twoAway_le_exp
     (hthetaUpper : theta * (JUpper : ℝ) ≤ 1)
     (hthetaLower : theta * ((3 + K : ℕ) : ℝ) ≤ 1)
     (hv : 0 ≤ v) :
-    let qUpper := linearPairTarget S₀ (pairUpperLinearRate S₀ δ Δ)
-    let qLower := linearPairTarget S₀ (pairLowerLinearRate Δ K Dmin)
+    let _qUpper := linearPairTarget S₀ (pairUpperLinearRate S₀ δ Δ)
+    let _qLower := linearPairTarget S₀ (pairLowerLinearRate Δ K Dmin)
     let active := timedPairBandActive F K Δ δ D
     let L := FiniteLaw.timedStoppedProcessLaw n
       (fun _ ↦ greedyKernel F) active S₀
@@ -380,7 +380,7 @@ theorem current_pairRate_le_pairLowerLinearRate_twoCutoffs
     ⟨⟨hactive.1.1, hactive.1.2.1, hactive.1.2.2.2.1,
       hactive.1.2.2.2.2⟩, hactive.2⟩
   exact current_pairRate_le_pairLowerLinearRate
-    (S₀ := S₀) (P := P) hold hDminPos hDmin
+    (_S₀ := S₀) (P := P) hold hDminPos hDmin
 
 /-- Upper-target drift in the two-cutoff active region. -/
 theorem linearPairUpperTarget_drift_twoCutoffs
@@ -519,8 +519,8 @@ theorem probability_timedPairBand_linearTwoCutoffs_not_horizon_and_cutoffs_le_ex
     (hthetaUpper : theta * (JUpper : ℝ) ≤ 1)
     (hthetaLower : theta * ((3 + Kpair : ℕ) : ℝ) ≤ 1)
     (hv : 0 ≤ v) :
-    let qUpper := linearPairTarget S₀ (pairUpperLinearRate S₀ δ Δ)
-    let qLower := linearPairTarget S₀
+    let _qUpper := linearPairTarget S₀ (pairUpperLinearRate S₀ δ Δ)
+    let _qLower := linearPairTarget S₀
       (pairLowerLinearRate Δ Kglobal Dmin)
     let active := timedPairBandActiveTwoCutoffs F Kpair Kglobal Δ δ D
     let L := FiniteLaw.timedStoppedProcessLaw n

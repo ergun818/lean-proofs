@@ -25,7 +25,7 @@ lemma exactBank_decomposition
 lemma exactBank_sdiff_root_union
     {V : Type*} [DecidableEq V]
     {B R S K E : TripleSystemOn V}
-    (hRS : R ⊆ S) (hEout : E \ B = S) (hEin : E ∩ B = K) :
+    (_hRS : R ⊆ S) (hEout : E \ B = S) (hEin : E ∩ B = K) :
     E \ (R ∪ K) = S \ R := by
   have hdecomp := exactBank_decomposition hEout hEin
   have hSK : Disjoint S K := by
@@ -51,7 +51,7 @@ lemma exactBank_sdiff_root_union
 /-- For an exact bank class, minimality leaves at most the KSSS root
 exponent's complement many vertices outside the fixed root and bank. -/
 theorem exactBank_extraVertices_card_le
-    {V : Type*} [Fintype V] [DecidableEq V]
+    {V : Type*} [Finite V] [DecidableEq V]
     {rho j : ℕ} {B R S K E : TripleSystemOn V}
     (hrho : 5 ≤ rho) (hj : 3 ≤ j) (hjrho : j ≤ rho)
     (hR : R.Nonempty) (hRcard : R.card ≤ j - 2)
@@ -60,6 +60,7 @@ theorem exactBank_extraVertices_card_le
     (hEout : E \ B = S) (hEin : E ∩ B = K) :
     (verticesOn E \ verticesOn (R ∪ K)).card ≤
       j - vortexRootExponent j R.card := by
+  let := Fintype.ofFinite V
   let hS : S ∈ exactBankOutsideExtensions rho j B R K :=
     mem_exactBankOutsideExtensions_iff.mpr
       ⟨hScard, hRS, E, hE, hEout, hEin⟩

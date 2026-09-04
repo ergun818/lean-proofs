@@ -35,12 +35,13 @@ abbrev HallGroupIndex {A B : Type*} [DecidableEq A] [DecidableEq B]
 /-- A finite set of size at least `m * k` contains `m` pairwise disjoint
 `k`-element subsets. -/
 theorem exists_pairwiseDisjoint_groups_of_mul_le_card
-    {X : Type*} [Fintype X] [DecidableEq X]
+    {X : Type*} [Finite X]
     (s : Finset X) (m k : ℕ) (hsize : m * k ≤ s.card) :
     ∃ groups : Fin m → Finset X,
       (∀ i, (groups i).card = k ∧ groups i ⊆ s) ∧
       ∀ i j, i ≠ j → Disjoint (groups i) (groups j) := by
   classical
+  let := Fintype.ofFinite X
   obtain ⟨u, hus, hucard⟩ := Finset.exists_subset_card_eq hsize
   have hcard : Fintype.card u = Fintype.card (Fin m × Fin k) := by
     simp [hucard]
@@ -72,7 +73,7 @@ theorem exists_pairwiseDisjoint_groups_of_mul_le_card
 /-- Hitting every group of a disjoint group certificate gives strictly more
 than `Δ * |S|` sampled pairs leaving each Hall obstruction. -/
 theorem many_sampled_pairs_of_group_certificate
-    {A B : Type*} [Fintype A] [Fintype B] [DecidableEq A] [DecidableEq B]
+    {A B : Type*} [Finite A] [Fintype B] [DecidableEq A] [DecidableEq B]
     (r : A → B → Prop) [DecidableRel r] (Δ : ℕ)
     (groups : (o : HallObstruction A B) →
       HallGroupIndex Δ o → Finset (A × B))
@@ -85,6 +86,7 @@ theorem many_sampled_pairs_of_group_certificate
       Δ * S.card <
         (relationPairsLeaving (fun a b ↦ r a b ∧ (a, b) ∈ R) S T).card := by
   classical
+  let := Fintype.ofFinite A
   intro S T hTS
   let o : HallObstruction A B := ⟨(S, T), hTS⟩
   let witness : HallGroupIndex Δ o → A × B := fun i ↦

@@ -74,7 +74,7 @@ the scalar powerset-partition inequality with the exact `2 * |Q|` reserve
 factor encoded by `familyCrossingEdges`. -/
 theorem IsReserveStronglyWellDistributed.jointBind_simultaneousLink
     {Omega O V : Type*} [Fintype Omega] [DecidableEq Omega]
-    [Fintype O] [Fintype V] [DecidableEq V]
+    [Finite O] [Fintype V] [DecidableEq V]
     {ell : ℕ} {law : FiniteLaw Omega}
     {linkLaw : Omega → FiniteLaw (TripleSystemOn V)}
     {W : Vortex V ell} {k next : Fin (ell + 1)}
@@ -111,6 +111,7 @@ theorem IsReserveStronglyWellDistributed.jointBind_simultaneousLink
     IsStronglyWellDistributed (law.jointBind linkLaw) W next
       (jointInitial initial) (jointLater later (fun _omega M ↦ M))
       p' (2 * C') b' := by
+  let := Fintype.ofFinite O
   apply hstrong.jointBind_adjoin
     (added := fun _omega M ↦ M)
     (addedBound := twoCrossingPackingBound U alpha)
@@ -132,7 +133,7 @@ is rewritten to `2 * |Q|`, exposing the exact factor
 `alpha^|Q| * reserveDensity^(2*|Q|)`. -/
 theorem IsReserveStronglyWellDistributed.jointBind_simultaneousLink_of_good_partition
     {Omega O V : Type*} [Fintype Omega] [DecidableEq Omega]
-    [Fintype O] [Fintype V] [DecidableEq V]
+    [Finite O] [Fintype V] [DecidableEq V]
     {ell : ℕ} {law : FiniteLaw Omega}
     {linkLaw : Omega → FiniteLaw (TripleSystemOn V)}
     {W : Vortex V ell} {k next : Fin (ell + 1)}
@@ -170,6 +171,7 @@ theorem IsReserveStronglyWellDistributed.jointBind_simultaneousLink_of_good_part
     IsStronglyWellDistributed (law.jointBind linkLaw) W next
       (jointInitial initial) (jointLater later (fun _omega M ↦ M))
       p' (2 * C') b' := by
+  let := Fintype.ofFinite O
   apply hstrong.jointBind_simultaneousLink hcenter hout hleft hright hspokes
     hstruct hC4
   intro Ifix Dfix Efix hdisj S hS

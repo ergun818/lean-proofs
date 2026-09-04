@@ -49,26 +49,28 @@ theorem SourceVortexWellSpread.nibble_mixed_empty_weight_le
     (fun E hE ↦ (h.uniform E hE).2) hj hjj]
   exact mul_le_mul_of_nonneg_right (h.nibble_singleton_omission_weight_le T j hj hjj w) zero_le
 
-theorem SourceVortexWellSpread.nibble_mixed_triangle_root_weight_le
-    {V : Type*} [Fintype V] [DecidableEq V] {ell j' : ℕ}
-    {W : Vortex V ell} {F : ForbiddenFamilyOn V} {y z : ℝ≥0}
-    (h : SourceVortexWellSpread W j' F y z) (T : TripleOn V)
-    (j : ℕ) (hj : 4 ≤ j) (hjj : j ≤ j') (w p : ℝ≥0) (hp : p ≤ 1)
-    (H : Finset (SourceNibbleCoordinate V)) (hH : H.toLeft.Nonempty) :
+theorem SourceVortexWellSpread.nibble_mixed_triangle_root_weight_le {V : Type*} [Fintype V]
+    [DecidableEq V] {ell j' : ℕ} {W : Vortex V ell} {F : ForbiddenFamilyOn V} {y z : ℝ≥0}
+    (h : SourceVortexWellSpread W j' F y z) (T : TripleOn V) (j : ℕ) (hj : 4 ≤ j)
+    (hjj : j ≤ j') (w p : ℝ≥0) (hp : p ≤ 1) (H : Finset (SourceNibbleCoordinate V))
+    (hH : H.toLeft.Nonempty) :
     extensionWeight (fun x : sourceNibbleCodes W F T j j' ↦ sourceNibbleCoordinates T x.1)
-      (sourceNibbleMixedWeight W w p) H ≤
+        (sourceNibbleMixedWeight W w p) H ≤
       ((j' - j - H.toLeft.card + 1) ^ ell : ℕ) * ((2 : ℝ≥0) ^ (j' - 2) * z) *
-        w ^ (j' - j - H.toLeft.card) * (W.terminalSize : ℝ≥0) ^ (j - 4) := by
-  classical
-  by_cases hT : T ∈ H.toLeft
-  · rw [sourceNibble_extension_zero_of_bad_triangle_root W F T j j' w p H (Or.inl hT)]
-    exact zero_le
-  by_cases hcard : H.toLeft.card ≤ j' - j
-  · apply (sourceNibble_extension_le_root_omission W F T j j' w p hp H).trans
-    simpa only [singleton_union] using
-      h.nibble_nonempty_triangle_root_weight_le T H.toLeft j hj hjj hH hT hcard w
-  · rw [sourceNibble_extension_zero_of_bad_triangle_root W F T j j' w p H (Or.inr (lt_of_not_ge hcard))]
-    exact zero_le
+          w ^ (j' - j - H.toLeft.card) *
+        (W.terminalSize : ℝ≥0) ^ (j - 4) :=
+  by
+    classical
+    by_cases hT : T ∈ H.toLeft
+    · rw [sourceNibble_extension_zero_of_bad_triangle_root W F T j j' w p H (Or.inl hT)]
+      exact zero_le
+    by_cases hcard : H.toLeft.card ≤ j' - j
+    · apply (sourceNibble_extension_le_root_omission W F T j j' w p hp H).trans
+      simpa only [singleton_union] using
+        h.nibble_nonempty_triangle_root_weight_le T H.toLeft j hj hjj hH hT hcard w
+    · rw [sourceNibble_extension_zero_of_bad_triangle_root W F T j j' w p H
+          (Or.inr (lt_of_not_ge hcard))]
+      exact zero_le
 
 end
 

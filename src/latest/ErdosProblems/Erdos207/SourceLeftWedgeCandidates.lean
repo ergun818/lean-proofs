@@ -11,45 +11,57 @@ import ErdosProblems.Erdos207.InternalEdgeTerminalRootSuccess
 namespace Erdos207
 
 open Finset
-open scoped Classical NNReal
+open scoped NNReal
 
 noncomputable section
 
-theorem sourceQuasiSpokes_pair_eq_reserveWedgeBlock
-    {V : Type*} [DecidableEq V] (u v w : V) :
-    sourceQuasiSpokes (s(u,v)).toFinset w = reserveWedgeBlock u v w := by
-  simp only [sourceQuasiSpokes, Sym2.toFinset_mk_eq, image_insert, image_singleton, reserveWedgeBlock]
-  rw [show s(w,u) = s(u,w) from Sym2.eq_swap, show s(w,v) = s(v,w) from Sym2.eq_swap]
+theorem sourceQuasiSpokes_pair_eq_reserveWedgeBlock {V : Type*} [DecidableEq V] (u v w : V) :
+    sourceQuasiSpokes (s(u, v)).toFinset w = reserveWedgeBlock u v w :=
+  by
+    simp only [sourceQuasiSpokes, Sym2.toFinset_mk_eq, image_insert, image_singleton,
+      reserveWedgeBlock]
+    rw [show s(w, u) = s(u, w) from Sym2.eq_swap, show s(w, v) = s(v, w) from Sym2.eq_swap]
 
-theorem mem_sourceLeftObstructedVertices_of_pair_safe_wedge
-    {V : Type*} [Fintype V] [DecidableEq V] {ell : ℕ}
-    (W : Vortex V ell) (F : ForbiddenFamilyOn V) (Γ : SimpleGraph V)
-    (I D : TripleSystemOn V) (reserve : Finset (Sym2 V)) (S : Finset V)
-    {u v : V} (huv : u ≠ v) (w : ThirdVertex u v) (hw : w.1 ∈ S)
+theorem mem_sourceLeftObstructedVertices_of_pair_safe_wedge {V : Type*} [Fintype V]
+    [DecidableEq V] {ell : ℕ} (W : Vortex V ell) (F : ForbiddenFamilyOn V) (Γ : SimpleGraph V)
+    (I D : TripleSystemOn V) (reserve : Finset (Sym2 V)) (S : Finset V) {u v : V}
+    (huv : u ≠ v) (w : ThirdVertex u v) (hw : w.1 ∈ S)
     (hlevel : W.level (thirdVertexTriple huv w) = Fin.last ell)
     (hpair : TriangleAvoidsGraph (coveredGraph (I ∪ D)) (thirdVertexTriple huv w))
     (hcomplete : CompletesForbidden F (I ∪ D) (thirdVertexTriple huv w))
-    (hinitial : ¬ CompletesForbidden F I (thirdVertexTriple huv w))
+    (hinitial : ¬CompletesForbidden F I (thirdVertexTriple huv w))
     (hreserve : reserveWedgeBlock u v w.1 ⊆ reserve) (hRG : reserve ⊆ graphEdges Γ) :
-    w.1 ∈ sourceLeftObstructedVertices W F s(u,v) S Γ I D reserve := by
-  have hspokes : sourceQuasiSpokes (s(u,v)).toFinset w.1 ⊆ reserve := by
-    rwa [sourceQuasiSpokes_pair_eq_reserveWedgeBlock]
-  apply mem_filter.mpr
-  refine ⟨mem_filter.mpr ⟨hw, ?_, hspokes.trans hRG, ?_, thirdVertexTriple huv w, ?_, ?_, hlevel,
-    hcomplete, hinitial⟩, hspokes⟩
-  · simpa only [Sym2.toFinset_mk_eq, mem_insert, mem_singleton, not_or] using w.2
-  · intro a ha
-    rw [sourceQuasiSpokes_pair_eq_reserveWedgeBlock] at ha
-    rcases mem_insert.mp ha with rfl | ha
-    · exact hpair u (left_mem_thirdVertexTriple _ _) w.1 (third_mem_thirdVertexTriple _ _) w.2.1.symm
-    · have heq := mem_singleton.mp ha
-      rw [heq]
-      exact hpair v (right_mem_thirdVertexTriple _ _) w.1 (third_mem_thirdVertexTriple _ _) w.2.2.symm
-  · ext x
-    simp only [thirdVertexTriple, tripleOfThree, Sym2.toFinset_mk_eq, mem_insert, mem_singleton]
-    tauto
-  · exact mk_mem_tripleEdgeFinset_iff.mpr
-      ⟨left_mem_thirdVertexTriple _ _, right_mem_thirdVertexTriple _ _, huv⟩
+    w.1 ∈ sourceLeftObstructedVertices W F s(u, v) S Γ I D reserve :=
+  by
+    classical
+    have hspokes : sourceQuasiSpokes (s(u, v)).toFinset w.1 ⊆ reserve :=
+      by
+        rwa [sourceQuasiSpokes_pair_eq_reserveWedgeBlock]
+    apply mem_filter.mpr
+    refine
+      ⟨mem_filter.mpr
+          ⟨hw, ?_, hspokes.trans hRG, ?_, thirdVertexTriple huv w, ?_, ?_, hlevel, hcomplete,
+            hinitial⟩,
+        hspokes⟩
+    · simpa only [Sym2.toFinset_mk_eq, mem_insert, mem_singleton, not_or] using w.2
+    · intro a ha
+      rw [sourceQuasiSpokes_pair_eq_reserveWedgeBlock] at ha
+      rcases mem_insert.mp ha with rfl | ha
+      · exact
+          hpair u (left_mem_thirdVertexTriple _ _) w.1 (third_mem_thirdVertexTriple _ _)
+            w.2.1.symm
+      · have heq := mem_singleton.mp ha
+        rw [heq]
+        exact
+          hpair v (right_mem_thirdVertexTriple _ _) w.1 (third_mem_thirdVertexTriple _ _)
+            w.2.2.symm
+    · ext x
+      simp only [thirdVertexTriple, tripleOfThree, Sym2.toFinset_mk_eq, mem_insert,
+        mem_singleton]
+      tauto
+    · exact
+        mk_mem_tripleEdgeFinset_iff.mpr
+          ⟨left_mem_thirdVertexTriple _ _, right_mem_thirdVertexTriple _ _, huv⟩
 
 theorem card_activeReserveWedge_le_legal_add_pair_add_left
     {V : Type*} [Fintype V] [DecidableEq V] {ell : ℕ}

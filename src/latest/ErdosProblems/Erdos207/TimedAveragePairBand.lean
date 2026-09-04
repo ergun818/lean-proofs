@@ -70,7 +70,7 @@ theorem timedAveragePairBandProcessLaw_supported_chosen_card
     (fun z : FiniteLaw.TimedState (GreedyStateOn V) n ↦
       PairTrajectoryInvariant F S₀ z.2 ∧
         z.2.chosen.card = S₀.chosen.card + z.1.1)
-      ⟨pairTrajectoryInvariant_initial hInv₀, by simp [z₀]⟩).evolveKernels
+      ⟨pairTrajectoryInvariant_initial hInv₀, by simp⟩).evolveKernels
     intro _i z hz
     classical
     unfold FiniteLaw.timedStoppedKernel
@@ -122,8 +122,7 @@ theorem probability_timedAveragePairBand_availability_deficit_ge_le_exp
       (averageAvailabilityDeficit (averageAvailabilityLossRate Δ I D))
       S₀ theta (3 * Δ + Kglobal : ℕ) a v hInv₀ htheta
       (by positivity) hthetaJump hv
-  · intro _i _hi S hS
-    intro S' hmass
+  · intro _i _hi S hS S' hmass
     rcases greedyKernel_supported_step_or_self F S S' hmass with
       rfl | ⟨T, hT, rfl⟩
     · exact hS
@@ -151,7 +150,7 @@ theorem probability_timedAveragePairBand_exists_pair_deviation_ge_le_exp
     (n : ℕ) (F : ForbiddenFamilyOn V) (S₀ : GreedyStateOn V)
     (qUpper qLower : PairOn V → ℕ → ℝ)
     (Kpair Kglobal Δ δ I D JUpper : ℕ) (theta a v : ℝ)
-    (hInv₀ : GreedyInvariant F S₀) (hD : 0 < D)
+    (hInv₀ : GreedyInvariant F S₀) (_hD : 0 < D)
     (hδ : 1 ≤ δ) (hsmall : 3 + Kpair < δ)
     (hqUpperLowerBound : ∀ P : PairOn V, ∀ i, i < n →
       -(JUpper : ℝ) ≤ qUpper P (i + 1) - qUpper P i)

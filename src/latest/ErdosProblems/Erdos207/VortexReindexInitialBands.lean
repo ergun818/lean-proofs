@@ -11,7 +11,7 @@ import ErdosProblems.Erdos207.TerminalJumpChain
 namespace Erdos207
 
 open Finset
-open scoped Classical NNReal
+open scoped NNReal
 
 noncomputable section
 
@@ -58,6 +58,7 @@ theorem InitialPowerVortexPackage.initial_pattern_outcome_typical_reindex
     (hroot : b * h + h ^ 2 + 2 ≤ rootPower)
     (hexp : Real.exp (∑ d ∈ ksssOrders q, initialErdosCoefficientBound q d) ≤ t) :
     IsInitialTypicalPatternOutcome q h b B k t P.H P.B (P.W.reindex stage hmono hzero) S := by
+  classical
   let S₀ := absorberGreedyInitialState (absorberErdosForbiddenConfigurationsOn q P.B)
     (outsideAvailableTriangles P.H P.B)
   let E : ℝ := (initialResidualPairs P.H).card

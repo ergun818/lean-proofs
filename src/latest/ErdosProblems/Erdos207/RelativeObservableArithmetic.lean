@@ -13,7 +13,7 @@ theorem relative_observable_increment
     (Y X f fp : ℝ) (hf : f ≠ 0) (hfp : fp ≠ 0) :
     (Y + X) / fp - Y / f = (X - Y * (fp - f) / f) / fp := by
   field_simp
-  <;> ring
+  ; ring
 
 theorem relative_observable_expectation
     {Ω : Type*} [Fintype Ω] (L : FiniteLaw Ω) (X : Ω → ℝ)
@@ -37,7 +37,7 @@ theorem relative_observable_drift_error
   have heq : L.expectationReal X - Y * (fp - f) / f =
       (L.expectationReal X + Y * H / A) - (Y / f) * (fp - f + f * H / A) := by
     field_simp
-    <;> ring
+    ; ring
   rw [heq]
   calc
     _ ≤ |L.expectationReal X + Y * H / A| + |Y / f * (fp - f + f * H / A)| := abs_sub _ _
@@ -57,26 +57,36 @@ theorem relative_observable_jump_bound
     _ = |X| + Y * |fp - f| / f := by rw [abs_div, abs_mul, abs_of_nonneg hY, abs_of_pos hf]
     _ ≤ _ := add_le_add hJ le_rfl
 
-theorem relative_observable_secondMoment
-    {Ω : Type*} [Fintype Ω] (L : FiniteLaw Ω) (X : Ω → ℝ)
+theorem relative_observable_secondMoment {Ω : Type*} [Fintype Ω] (L : FiniteLaw Ω) (X : Ω → ℝ)
     (Y f fp v : ℝ) (hf : f ≠ 0) (hfp : fp ≠ 0)
     (hv : L.expectationReal (fun ω ↦ X ω ^ 2) ≤ v) :
     L.expectationReal (fun ω ↦ ((Y + X ω) / fp - Y / f) ^ 2) ≤
-      (2 * v + 2 * (Y * (fp - f) / f) ^ 2) / fp ^ 2 := by
-  let d := Y * (fp - f) / f
-  have hpoint : ∀ ω, (X ω - d) ^ 2 ≤ 2 * X ω ^ 2 + 2 * d ^ 2 := by
-    intro ω
-    nlinarith only [sq_nonneg (X ω + d)]
-  simp_rw [relative_observable_increment Y _ f fp hf hfp, div_pow]
-  change L.expectationReal (fun ω ↦ (X ω - d) ^ 2 / fp ^ 2) ≤ _
-  simp only [div_eq_mul_inv, FiniteLaw.expectationReal_mul_const]
-  apply mul_le_mul_of_nonneg_right _ (inv_nonneg.mpr (sq_nonneg fp))
-  calc
-    _ ≤ L.expectationReal (fun ω ↦ 2 * X ω ^ 2 + 2 * d ^ 2) := L.expectationReal_mono hpoint
-    _ = 2 * L.expectationReal (fun ω ↦ X ω ^ 2) + 2 * d ^ 2 := by
-      rw [FiniteLaw.expectationReal_add, FiniteLaw.expectationReal_const_mul, FiniteLaw.expectationReal_const]
-    _ ≤ 2 * v + 2 * d ^ 2 := add_le_add (mul_le_mul_of_nonneg_left hv (by norm_num)) le_rfl
-    _ = _ := by simp only [d, div_eq_mul_inv, mul_pow, inv_pow]
+      (2 * v + 2 * (Y * (fp - f) / f) ^ 2) / fp ^ 2 :=
+  by
+    let d := Y * (fp - f) / f
+    have hpoint : ∀ ω, (X ω - d) ^ 2 ≤ 2 * X ω ^ 2 + 2 * d ^ 2 :=
+      by
+        intro ω
+        nlinarith only [sq_nonneg (X ω + d)]
+    simp_rw [relative_observable_increment Y _ f fp hf hfp, div_pow]
+    change L.expectationReal (fun ω ↦ (X ω - d) ^ 2 / fp ^ 2) ≤ _
+    simp only [div_eq_mul_inv, FiniteLaw.expectationReal_mul_const]
+    apply mul_le_mul_of_nonneg_right _ (inv_nonneg.mpr (sq_nonneg fp))
+    calc
+      _ ≤ L.expectationReal (fun ω ↦ 2 * X ω ^ 2 + 2 * d ^ 2) := L.expectationReal_mono hpoint
+      _ = 2 * L.expectationReal (fun ω ↦ X ω ^ 2) + 2 * d ^ 2 :=
+        by
+          rw [FiniteLaw.expectationReal_add, FiniteLaw.expectationReal_const_mul,
+            FiniteLaw.expectationReal_const]
+      _ ≤ 2 * v + 2 * d ^ 2 :=
+        (add_le_add
+          (mul_le_mul_of_nonneg_left hv
+            (by
+              norm_num))
+          le_rfl)
+      _ = _ :=
+        by
+          simp only [d, div_eq_mul_inv, mul_pow, inv_pow]
 
 theorem relative_observable_hazard_drift_error
     {Ω : Type*} [Fintype Ω] (L : FiniteLaw Ω) (X : Ω → ℝ)

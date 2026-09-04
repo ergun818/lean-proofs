@@ -22,14 +22,17 @@ def RegularizationOutputWitness
     finiteHypergraphMaxDegree (G ∪ A) ≤ 9 * finiteHypergraphMaxDegree G ∧
     finiteHypergraphDegreeGap (G ∪ A) ≤ b
 
-theorem regularizationOutputWitness_of_state
-    {I J : Type*} [Fintype I] [DecidableEq I] [Nonempty I] [DecidableEq J] {k b : ℕ}
-    (e : I ↪ J) (G H : Finset (Finset I)) (S : HypergraphRegularizationState I k)
+theorem regularizationOutputWitness_of_state {I J : Type*} [Fintype I] [DecidableEq I]
+    [Nonempty I] [DecidableEq J] {k b : ℕ} (e : I ↪ J) (G H : Finset (Finset I))
+    (S : HypergraphRegularizationState I k)
     (havoid : Disjoint (regularizationAcceptedEdges S) H)
-    (hmax : finiteHypergraphMaxDegree (regularizationCurrentFamily G S) ≤ 9 * finiteHypergraphMaxDegree G)
+    (hmax :
+      finiteHypergraphMaxDegree (regularizationCurrentFamily G S) ≤
+        9 * finiteHypergraphMaxDegree G)
     (hgap : finiteHypergraphDegreeGap (regularizationCurrentFamily G S) ≤ b) :
     RegularizationOutputWitness e G H k b (regularizationImageEdges e S) :=
-  ⟨regularizationAcceptedEdges S, rfl, havoid, regularizationAcceptedEdges_uniform S, hmax, hgap⟩
+  ⟨regularizationAcceptedEdges S, rfl, havoid, regularizationAcceptedEdges_uniform S, hmax,
+    hgap⟩
 
 theorem regularizationProcessLaw_output_failure
     {I J : Type*} [Fintype I] [DecidableEq I] [Nonempty I] [DecidableEq J] {k : ℕ}

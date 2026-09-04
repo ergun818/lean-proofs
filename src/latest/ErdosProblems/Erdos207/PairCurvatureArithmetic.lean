@@ -34,7 +34,7 @@ theorem pair_curvature_bracket_mul_clock_sq_le
       18 + 12 * B₁ + B₁ ^ 2 + B₂ := by
   have heq : (18 / E ^ 2 + 12 * p * r / E + p ^ 2 * r ^ 2 - p ^ 2 * v) * E ^ 2 =
       18 + 12 * p * (r * E) + p ^ 2 * (r * E) ^ 2 - p ^ 2 * (v * E ^ 2) := by
-    field_simp <;> ring
+    field_simp
   calc
     _ = |(18 / E ^ 2 + 12 * p * r / E + p ^ 2 * r ^ 2 - p ^ 2 * v) * E ^ 2| := by
       rw [abs_mul, abs_of_nonneg (sq_nonneg E)]

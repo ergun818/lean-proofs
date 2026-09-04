@@ -43,18 +43,18 @@ theorem IsIterationTypical.exists_internalOuterEdge_greedy_cover
     (hsmall : ((internalOuterEdges G (W.U i.succ)).card : ℝ) *
       Real.exp (-(((r ^ 2 : ℝ≥0) : ℝ) * m) / 4) < 1)
     (hblocked : ∀ (Q : TripleSystemOn V) (e : Sym2 V),
-      ∀ hreach : GreedyReachable F P₀ Q,
+      ∀ _hreach : GreedyReachable F P₀ Q,
       Q ⊆ P₀ ∪ A →
       (Q \ P₀).card ≤ (internalOuterEdges G (W.U i.succ)).card →
       ∀ he : e ∈ internalOuterEdges G (W.U i.succ),
-      ∀ hleave : (leaveGraph Q).Adj e.out.1 e.out.2,
+      ∀ _hleave : (leaveGraph Q).Adj e.out.1 e.out.2,
       (edgeBlockedThirdVertices A Q
           (out_fst_ne_snd_of_mem_graphEdges
             (internalOuterEdges_subset_graphEdges G (W.U i.succ) he)) ∪
         forbiddenBlockedThirdVertices F A Q
           (out_fst_ne_snd_of_mem_graphEdges
             (internalOuterEdges_subset_graphEdges G (W.U i.succ) he))).card ≤ a) :
-    ∃ ω : Sym2 V → Bool, ∃ Q : TripleSystemOn V,
+    ∃ _ω : Sym2 V → Bool, ∃ Q : TripleSystemOn V,
       GreedyReachable F P₀ Q ∧ Q ⊆ P₀ ∪ A ∧
       ∀ e ∈ internalOuterEdges G (W.U i.succ),
         (coveredGraph Q).Adj e.out.1 e.out.2 := by

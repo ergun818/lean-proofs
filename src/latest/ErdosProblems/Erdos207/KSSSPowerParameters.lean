@@ -14,8 +14,7 @@ open Finset
 
 noncomputable section
 
-structure KSSSPowerParameters
-    {V : Type*} [Fintype V] [DecidableEq V]
+structure KSSSPowerParameters {V : Type*} [Fintype V] [DecidableEq V]
     (F : ForbiddenFamilyOn V) (q n b B k t Rmin : ℕ) (a coeff : ℕ → ℝ) (E A : ℝ) : Prop where
   minimal : minimalForbiddenFamily F = F
   packing : ∀ D ∈ F, IsPackingOn D
@@ -36,58 +35,81 @@ structure KSSSPowerParameters
   coefficient_bound : ∀ d ∈ ksssOrders q, a d * E ^ d ≤ coeff d
   coefficient_budget : KSSSPowerCoefficientBounds q coeff B t
   envelope_order : 4 * q ≤ B
-  pair_budget : ksssPairDriftCoefficient q coeff + ksssPairTaylorCoefficient (ksssOrders q) coeff ≤ 3 * (B : ℝ)
-  configuration_budget : ∀ i : CrudeOrderIndex q 4, ksssIndexedConfigurationDriftCoefficient q coeff i +
-    ksssConfigurationTaylorCoefficient (ksssOrders q) coeff (i.order - 3) i.chosen ≤ 3 * (B : ℝ) / 2
+  pair_budget :
+    ksssPairDriftCoefficient q coeff + ksssPairTaylorCoefficient (ksssOrders q) coeff ≤
+      3 * (B : ℝ)
+  configuration_budget :
+    ∀ i : CrudeOrderIndex q 4,
+      ksssIndexedConfigurationDriftCoefficient q coeff i +
+          ksssConfigurationTaylorCoefficient (ksssOrders q) coeff (i.order - 3) i.chosen ≤
+        3 * (B : ℝ) / 2
 
 variable {V : Type*} [Fintype V] [DecidableEq V]
   {F : ForbiddenFamilyOn V} {q n b B k t Rmin : ℕ} {a coeff : ℕ → ℝ} {E A : ℝ}
 
 theorem KSSSPowerParameters.kernelBounds
-    (P : KSSSPowerParameters F q n b B k t Rmin a coeff E A)
-    (Q₀ : Finset (Finset V)) (sigma : ℝ) (hsigma : |sigma| = 1) :
+    (P : KSSSPowerParameters F q n b B k t Rmin a coeff E A) (Q₀ : Finset (Finset V))
+    (sigma : ℝ) (hsigma : |sigma| = 1) :
     KSSSIndexedKernelPowerBounds q n F (KSSSPowerActive F Q₀ q b B k t a E A) Q₀ a E A
-      ((Fintype.card V : ℝ) / (t : ℝ) ^ ksssPowerErrorExponent b B) B sigma
-      (Fintype.card V) t (ksssPowerJumpExponent b k) (ksssPowerVarianceExponent b k) :=
-  ksssPowerActive_kernelBounds q n b B k t Rmin F Q₀ a coeff E A sigma P.minimal P.packing P.order_bound
-    P.edge_pos P.available_pos P.ambient_pos P.scale_large P.binomial_budget P.order_budget hsigma
-    P.power_scale P.edge_floor P.ratio_lower P.ratio_upper (fun i hi ↦ P.density_floor i hi.le)
-    P.coefficient_nonneg P.coefficient_bound P.coefficient_budget P.envelope_order P.pair_budget
-    P.configuration_budget
+      ((Fintype.card V : ℝ) / (t : ℝ) ^ ksssPowerErrorExponent b B) B sigma (Fintype.card V) t
+      (ksssPowerJumpExponent b k) (ksssPowerVarianceExponent b k) :=
+  ksssPowerActive_kernelBounds q n b B k t Rmin F Q₀ a coeff E A sigma P.minimal P.packing
+    P.order_bound P.edge_pos P.available_pos P.ambient_pos P.scale_large P.binomial_budget
+    P.order_budget hsigma P.power_scale P.edge_floor P.ratio_lower P.ratio_upper
+    (fun i hi ↦ P.density_floor i hi.le) P.coefficient_nonneg P.coefficient_bound
+    P.coefficient_budget P.envelope_order P.pair_budget P.configuration_budget
 
 theorem KSSSPowerParameters.available_floor
-    (P : KSSSPowerParameters F q n b B k t Rmin a coeff E A)
-    (Q₀ : Finset (Finset V)) (i : ℕ) (S : GreedyStateOn V)
-    (hactive : KSSSPowerActive F Q₀ q b B k t a E A i S) :
+    (P : KSSSPowerParameters F q n b B k t Rmin a coeff E A) (Q₀ : Finset (Finset V)) (i : ℕ)
+    (S : GreedyStateOn V) (hactive : KSSSPowerActive F Q₀ q b B k t a E A i S) :
     dyadicMomentFloor (Fintype.card V) t (5 * b + 1) ≤ S.available.card :=
   hactive.available_floor P.edge_pos P.available_pos P.ambient_pos P.scale_large P.power_scale
-    P.edge_floor P.ratio_lower P.ratio_upper P.coefficient_nonneg P.coefficient_bound P.coefficient_budget
+    P.edge_floor P.ratio_lower P.ratio_upper P.coefficient_nonneg P.coefficient_bound
+    P.coefficient_budget
 
 theorem KSSSPowerParameters.trajectory_failure
-    (P : KSSSPowerParameters F q n b B k t Rmin a coeff E A)
-    (Q₀ : Finset (Finset V)) (S₀ : GreedyStateOn V) (eta : ℝ)
-    (hInv₀ : GreedyInvariant F S₀) (hchosen₀ : S₀.chosen = ∅)
-    (hQ₀ : ∀ Q ∈ Q₀, Q.card = 2)
-    (hregular : KSSSInitialRegularity F S₀ q Q₀ a E A eta)
+    (P : KSSSPowerParameters F q n b B k t Rmin a coeff E A) (Q₀ : Finset (Finset V))
+    (S₀ : GreedyStateOn V) (eta : ℝ) (hInv₀ : GreedyInvariant F S₀) (hchosen₀ : S₀.chosen = ∅)
+    (hQ₀ : ∀ Q ∈ Q₀, Q.card = 2) (hregular : KSSSInitialRegularity F S₀ q Q₀ a E A eta)
     (hfamily : ∀ C ∈ F, C ⊆ S₀.available) (heta : 0 ≤ eta)
     (hetaSmall : eta ≤ 1 / (6 * (t : ℝ) ^ ksssPowerErrorExponent b B)) :
     ((FiniteLaw.timedStoppedProcessLaw n (fun _ ↦ greedyKernel F)
-      (KSSSPowerActive F Q₀ q b B k t a E A) S₀).probability
-      (fun w ↦ ¬ KSSSOnTrajectories F w.2 q (ksssResidualPairs Q₀ w.2) a E A
-        ((Fintype.card V : ℝ) / (t : ℝ) ^ ksssPowerErrorExponent b B) B w.1.1) : ℝ) ≤
-      2 * ((Fintype.card V : ℝ) ^ 2 + (q + 1 : ℝ) ^ 2 * (Fintype.card V : ℝ) ^ 3) * (1 / 2 : ℝ) ^ t := by
-  obtain ⟨_, hj, hH, hR, _⟩ := ksss_power_exponent_hierarchy q b B k Rmin
-  have hbudget := initial_regularity_power_margin_budget (Fintype.card V) t (A / E) eta
-    (ksssPowerErrorExponent b B) (Nat.cast_nonneg _) (by exact_mod_cast (show 0 < t by linarith [P.scale_large]))
-    (div_nonneg P.available_pos.le P.edge_pos.le) heta P.ratio_upper hetaSmall
-  exact probability_ksss_trajectory_failure_power q n F (KSSSPowerActive F Q₀ q b B k t a E A)
-    S₀ Q₀ a E A eta (Fintype.card V) B t (ksssPowerDenominatorExponent q b B k Rmin)
-    (ksssPowerErrorExponent b B) b (ksssPowerThetaExponent q b B k)
-    (ksssPowerJumpExponent b k) (ksssPowerVarianceExponent b k)
-    (by exact_mod_cast P.ambient_pos) (by linarith [P.scale_large]) (by exact_mod_cast P.power_scale)
-    (by exact_mod_cast P.horizon) P.ratio_lower hj hH hR hInv₀ hchosen₀ hQ₀ hregular hfamily
-    P.edge_pos P.available_pos.le heta hbudget (P.kernelBounds Q₀ 1 (by norm_num))
-    (P.kernelBounds Q₀ (-1) (by norm_num))
+              (KSSSPowerActive F Q₀ q b B k t a E A) S₀).probability
+          (fun w ↦
+            ¬KSSSOnTrajectories F w.2 q (ksssResidualPairs Q₀ w.2) a E A
+                ((Fintype.card V : ℝ) / (t : ℝ) ^ ksssPowerErrorExponent b B) B w.1.1) :
+        ℝ) ≤
+      2 * ((Fintype.card V : ℝ) ^ 2 + (q + 1 : ℝ) ^ 2 * (Fintype.card V : ℝ) ^ 3) *
+        (1 / 2 : ℝ) ^ t :=
+  by
+    obtain ⟨_, hj, hH, hR, _⟩ := ksss_power_exponent_hierarchy q b B k Rmin
+    have hbudget :=
+      initial_regularity_power_margin_budget (Fintype.card V) t (A / E) eta
+        (ksssPowerErrorExponent b B) (Nat.cast_nonneg _)
+        (by
+          exact_mod_cast (show 0 < t by linarith [P.scale_large]))
+        (div_nonneg P.available_pos.le P.edge_pos.le) heta P.ratio_upper hetaSmall
+    exact
+      probability_ksss_trajectory_failure_power q n F (KSSSPowerActive F Q₀ q b B k t a E A)
+        S₀ Q₀ a E A eta (Fintype.card V) B t (ksssPowerDenominatorExponent q b B k Rmin)
+        (ksssPowerErrorExponent b B) b (ksssPowerThetaExponent q b B k)
+        (ksssPowerJumpExponent b k) (ksssPowerVarianceExponent b k)
+        (by
+          exact_mod_cast P.ambient_pos)
+        (by
+          linarith [P.scale_large])
+        (by
+          exact_mod_cast P.power_scale)
+        (by
+          exact_mod_cast P.horizon)
+        P.ratio_lower hj hH hR hInv₀ hchosen₀ hQ₀ hregular hfamily P.edge_pos
+        P.available_pos.le heta hbudget
+        (P.kernelBounds Q₀ 1
+          (by
+            norm_num))
+        (P.kernelBounds Q₀ (-1)
+          (by
+            norm_num))
 
 end
 

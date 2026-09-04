@@ -62,12 +62,13 @@ def AbsorberSeparatedLevel
 constant-size root-neighbour set as it is on `X` itself. -/
 lemma initial_separated_degree_loss_subset
     {V : Type*} [Fintype V] [DecidableEq V]
-    (H : SimpleGraph V) [DecidableRel H.Adj]
+    (H : SimpleGraph V)
     (X U : Finset V) (B : TripleSystemOn V)
     (hsep : AbsorberSeparatedLevel H X B U) (v : V) :
     U \ neighborsIn
         (graphDifference (SimpleGraph.completeGraph V) H) U v ⊆
       insert v (absorberRootNeighborSet H X v) := by
+  classical
   intro x hx
   have hxU := (mem_sdiff.mp hx).1
   have hxNotNeighbor := (mem_sdiff.mp hx).2
@@ -91,12 +92,13 @@ lemma initial_separated_degree_loss_subset
 
 lemma card_initial_separated_degree_loss_le_fifteen
     {V : Type*} [Fintype V] [DecidableEq V]
-    {H : SimpleGraph V} [DecidableRel H.Adj]
+    {H : SimpleGraph V}
     {X U : Finset V} {q : ℕ} {B : TripleSystemOn V}
     (hsep : AbsorberSeparatedLevel H X B U)
     (hroot : HasPaddedAbsorberRootBounds q H X B) (v : V) :
     (U \ neighborsIn
       (graphDifference (SimpleGraph.completeGraph V) H) U v).card ≤ 15 := by
+  classical
   calc
     (U \ neighborsIn
       (graphDifference (SimpleGraph.completeGraph V) H) U v).card
@@ -404,7 +406,7 @@ theorem initial_gradual_vortex_isIterationTypical
     {W : Vortex V ell} {q h C : ℕ}
     {H : SimpleGraph V} [DecidableRel H.Adj]
     {X : Finset V} {B : TripleSystemOn V} {xi : ℝ≥0}
-    (hell : 0 < ell)
+    (_hell : 0 < ell)
     (hterminal : W.U (Fin.last ell) = X)
     (hroot : HasPaddedAbsorberRootBounds q H X B)
     (hdegree : ∀ x, H.degree x ≤ C)

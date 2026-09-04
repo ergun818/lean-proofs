@@ -11,7 +11,7 @@ import ErdosProblems.Erdos207.PreparedReserveLaw
 namespace Erdos207
 
 open Finset
-open scoped Classical NNReal
+open scoped NNReal
 
 noncomputable section
 
@@ -88,21 +88,28 @@ theorem available_geometry
     (data.frame.available_disjoint omega).mono_left (data.available_subset omega)⟩
 
 theorem protected_geometry
-    (data : SourcePreparedReserveData P W i F Gamma ambient G A I D B bits
-      p eta xi r C beta eta0 epsilon theta supply h) (omega : Omega) :
-    let protectedGraph := reserveProtectedOuterGraph (G omega) (W.U i.succ)
-      (reserveEdges (G omega) (W.U i.succ) (bits omega))
+    (data :
+      SourcePreparedReserveData P W i F Gamma ambient G A I D B bits p eta xi r C beta eta0
+        epsilon theta supply h)
+    (omega : Omega) :
+    let protectedGraph :=
+      reserveProtectedOuterGraph (G omega) (W.U i.succ)
+        (reserveEdges (G omega) (W.U i.succ) (bits omega))
     GraphSupportedOn protectedGraph (W.U i.castSucc : Set V) ∧
       (∀ T ∈ B omega, T.1 ⊆ W.U i.castSucc) ∧
-      (∀ T ∈ B omega, tripleEdgeFinset T ⊆ graphEdges protectedGraph) := by
-  dsimp only
-  refine ⟨fun _ _ hadj ↦ data.frame.support omega (reserveProtectedOuterGraph_le _ _ _ hadj), ?_, ?_⟩
-  · intro T hT
-    exact (data.frame.stage omega).2.2.2.2.2.1.triple_vertices_subset (data.frame.support omega)
-      (data.available_subset omega hT)
-  · intro T hT
-    rw [graphEdges_reserveProtectedOuterGraph]
-    exact (mem_reserveProtectedOuterAvailable_iff.mp (data.subset omega hT)).2
+        (∀ T ∈ B omega, tripleEdgeFinset T ⊆ graphEdges protectedGraph) :=
+  by
+    dsimp only
+    refine
+      ⟨fun _ _ hadj ↦ data.frame.support omega (reserveProtectedOuterGraph_le _ _ _ hadj), ?_,
+        ?_⟩
+    · intro T hT
+      exact
+        (data.frame.stage omega).2.2.2.2.2.1.triple_vertices_subset (data.frame.support omega)
+          (data.available_subset omega hT)
+    · intro T hT
+      rw [graphEdges_reserveProtectedOuterGraph]
+      exact (mem_reserveProtectedOuterAvailable_iff.mp (data.subset omega hT)).2
 
 theorem protected_graph_mass
     (data : SourcePreparedReserveData P W i F Gamma ambient G A I D B bits
@@ -131,6 +138,7 @@ theorem protected_graph_mass
 
 end SourcePreparedReserveData
 
+open scoped Classical in
 theorem IsResidualCompressedMasterLaw.exists_source_prepared_reserve_data
     {V : Type*} [Fintype V] [DecidableEq V] {ell : ℕ}
     {law : FiniteLaw (MasterStateOn V)} {W : Vortex V ell} (i : Fin ell)

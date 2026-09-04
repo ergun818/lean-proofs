@@ -25,7 +25,7 @@ noncomputable section
 orders. -/
 def indexedRootedThreatVortexDensityCoefficient
     {V : Type*} [Fintype V] [DecidableEq V] {ell : ℕ}
-    (W : Vortex V ell) (q : ℕ) (B : TripleSystemOn V)
+    (_W : Vortex V ell) (q : ℕ) (B : TripleSystemOn V)
     (c : ℝ≥0) : ℝ≥0 :=
   ∑ j : IndexedThreatOrder q,
     (((j.1 + 1) ^ ell * inducedVortexCoefficient q ell B : ℕ) : ℝ≥0) *

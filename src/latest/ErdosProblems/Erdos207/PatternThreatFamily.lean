@@ -79,46 +79,68 @@ theorem patternExtensionKillers_eq_restricted_family
   · rintro ⟨i, hi, hnot⟩
     exact ⟨⟨patternThreatFamily_subset_available F Q S u hu i hi, hnot⟩, i, hi⟩
 
-theorem patternThreatFamily_pairwise_inter_le
-    {V : Type*} [Fintype V] [DecidableEq V]
+theorem patternThreatFamily_pairwise_inter_le {V : Type*} [Fintype V] [DecidableEq V]
     {F : ForbiddenFamilyOn V} {S : GreedyStateOn V} (hS : GreedyInvariant F S)
-    (hpack : ∀ E ∈ F, IsPackingOn E)
-    (Q : SimpleGraph V) (u : V) (hu : u ∉ graphSupportFinset Q)
-    (halive : ∀ e : graphEdges Q, patternExtensionTriangle Q e u hu ∈ S.available)
-    (K : ℕ) (hK : 1 ≤ K)
-    (hpair : ∀ T : TripleOn V, ∀ P : PairOn V,
-      selectedCount (fun w : PairTwoAwayThreatWitness V F T P ↦ pairTwoAwayThreatRemainder w) S.chosen ≤ K)
-    (hcommon : ∀ T T' : TripleOn V,
-      selectedCount (fun w : CommonThreatWitness F F T T' ↦ w.remainder) S.chosen ≤ K)
+    (hpack : ∀ E ∈ F, IsPackingOn E) (Q : SimpleGraph V) (u : V)
+    (hu : u ∉ graphSupportFinset Q)
+    (halive : ∀ e : graphEdges Q, patternExtensionTriangle Q e u hu ∈ S.available) (K : ℕ)
+    (hK : 1 ≤ K)
+    (hpair :
+      ∀ T : TripleOn V,
+        ∀ P : PairOn V,
+          selectedCount
+              (fun w : PairTwoAwayThreatWitness V F T P ↦ pairTwoAwayThreatRemainder w)
+              S.chosen ≤
+            K)
+    (hcommon :
+      ∀ T T' : TripleOn V,
+        selectedCount (fun w : CommonThreatWitness F F T T' ↦ w.remainder) S.chosen ≤ K)
     (i j : PatternThreatIndex Q) (hne : i ≠ j) :
-    (patternThreatFamily F Q S u hu i ∩ patternThreatFamily F Q S u hu j).card ≤ K := by
-  have hux : ∀ x : graphSupportFinset Q, u ≠ x.1 := fun x h ↦ hu (h ▸ x.2)
-  cases i with
-  | inl x =>
-    cases j with
-    | inl y =>
-      apply (card_verticalPairStars_inter_le_one S (hux x) (hux y) ?_).trans hK
-      intro hxy
-      exact hne (congrArg Sum.inl (Subtype.ext hxy))
-    | inr e =>
-      let P : PairOn V := ⟨{u, x.1}, by simp [hux x]⟩
-      have h := (card_pairStar_inter_twoAway_le_selected F S P
-        (patternExtensionTriangle Q e u hu) hpack).trans (hpair _ P)
-      exact_mod_cast h
-  | inr e =>
-    cases j with
+    (patternThreatFamily F Q S u hu i ∩ patternThreatFamily F Q S u hu j).card ≤ K :=
+  by
+    have hux : ∀ x : graphSupportFinset Q, u ≠ x.1 := fun x h ↦ hu (h ▸ x.2)
+    cases i with
     | inl x =>
-      let P : PairOn V := ⟨{u, x.1}, by simp [hux x]⟩
-      have h := (card_pairStar_inter_twoAway_le_selected F S P
-        (patternExtensionTriangle Q e u hu) hpack).trans (hpair _ P)
-      rw [inter_comm]
-      exact_mod_cast h
-    | inr f =>
-      have hroots : patternExtensionTriangle Q e u hu ≠ patternExtensionTriangle Q f u hu := by
-        intro h
-        exact hne (congrArg Sum.inr (patternExtensionTriangle_injective Q u hu h))
-      have h := (card_twoAway_inter_le_selected hS (halive e) (halive f) hroots).trans (hcommon _ _)
-      exact_mod_cast h
+      cases j with
+      | inl
+        y =>
+        apply (card_verticalPairStars_inter_le_one S (hux x) (hux y) ?_).trans hK
+        intro hxy
+        exact hne (congrArg Sum.inl (Subtype.ext hxy))
+      | inr
+        e =>
+        let P : PairOn V :=
+          ⟨{ u, x.1 },
+            by
+              simp [hux x]⟩
+        have h :=
+          (card_pairStar_inter_twoAway_le_selected F S P (patternExtensionTriangle Q e u hu)
+                hpack).trans
+            (hpair _ P)
+        exact_mod_cast h
+    | inr e =>
+      cases j with
+      | inl
+        x =>
+        let P : PairOn V :=
+          ⟨{ u, x.1 },
+            by
+              simp [hux x]⟩
+        have h :=
+          (card_pairStar_inter_twoAway_le_selected F S P (patternExtensionTriangle Q e u hu)
+                hpack).trans
+            (hpair _ P)
+        rw [inter_comm]
+        exact_mod_cast h
+      | inr
+        f =>
+        have hroots : patternExtensionTriangle Q e u hu ≠ patternExtensionTriangle Q f u hu :=
+          by
+            intro h
+            exact hne (congrArg Sum.inr (patternExtensionTriangle_injective Q u hu h))
+        have h :=
+          (card_twoAway_inter_le_selected hS (halive e) (halive f) hroots).trans (hcommon _ _)
+        exact_mod_cast h
 
 end
 

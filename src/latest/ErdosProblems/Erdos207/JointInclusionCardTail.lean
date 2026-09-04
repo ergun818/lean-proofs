@@ -26,6 +26,7 @@ namespace FiniteLaw
 
 variable {Omega X : Type*} [Fintype Omega] [DecidableEq X]
 
+omit [Fintype Omega] in
 /-- If at least `r` members of `S` were selected, some `r`-element subset of
 `S` was selected in its entirety. -/
 lemma card_inter_selected_ge_imp_exists_powersetCard_subset
@@ -83,7 +84,7 @@ probability.  Conditioning on it enforces every cap throughout the support,
 and the original exponential joint-inclusion estimate survives with the
 standard reciprocal loss absorbed into its base. -/
 theorem exists_conditionOn_cardCaps_of_jointInclusion
-    {J : Type*} [DecidableEq J]
+    {J : Type*}
     (L : FiniteLaw Omega) (selected : Omega -> Finset X)
     (tests : J -> Finset X) (caps : J -> Nat) (indices : Finset J)
     (alpha : NNReal)
@@ -99,6 +100,7 @@ theorem exists_conditionOn_cardCaps_of_jointInclusion
         (L.conditionOn Good hGood).probability
             (fun omega => Q ⊆ selected omega) <=
           (alpha / L.probability Good) ^ Q.card := by
+  classical
   dsimp only
   let Good : Omega -> Prop := fun omega => ∀ j ∈ indices,
     ((tests j) ∩ selected omega).card < caps j
@@ -110,7 +112,7 @@ theorem exists_conditionOn_cardCaps_of_jointInclusion
         apply L.probability_mono
         intro omega hnot
         dsimp only [Good] at hnot
-        push_neg at hnot
+        push Not at hnot
         exact hnot
       _ <= ∑ j ∈ indices,
           L.probability (fun omega =>
@@ -137,8 +139,7 @@ theorem exists_conditionOn_cardCaps_of_jointInclusion
   intro Q
   by_cases hQ : Q = ∅
   · subst Q
-    simpa using (L.conditionOn Good hGood).probability_le_one
-      (fun omega => (∅ : Finset X) ⊆ selected omega)
+    simp
   · have hcard : 0 < Q.card := card_pos.mpr (nonempty_iff_ne_empty.mpr hQ)
     have hprob_le_one : L.probability Good <= 1 := L.probability_le_one Good
     have hpow_le : (L.probability Good) ^ Q.card <= L.probability Good :=
@@ -164,7 +165,7 @@ tail is at most `epsilon < 1`, the good event has probability at least
 `1 - epsilon`, and every conditioned joint-inclusion probability is bounded
 with base `alpha / (1 - epsilon)`. -/
 theorem exists_conditionOn_cardCaps_of_jointInclusion_of_sum_le
-    {J : Type*} [DecidableEq J]
+    {J : Type*}
     (L : FiniteLaw Omega) (selected : Omega -> Finset X)
     (tests : J -> Finset X) (caps : J -> Nat) (indices : Finset J)
     (alpha epsilon : NNReal)
@@ -182,6 +183,7 @@ theorem exists_conditionOn_cardCaps_of_jointInclusion_of_sum_le
             (fun omega => Q ⊆ selected omega) <=
           (alpha / (1 - epsilon)) ^ Q.card) ∧
       1 - epsilon <= L.probability Good := by
+  classical
   dsimp only
   let Good : Omega -> Prop := fun omega => ∀ j ∈ indices,
     ((tests j) ∩ selected omega).card < caps j

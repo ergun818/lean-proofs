@@ -37,21 +37,33 @@ theorem power_ratio_le_inverse
       div_le_div_of_nonneg_left zero_le (pow_pos ht0 _) (pow_le_pow_right₀ ht hgap)
     _ = _ := by rw [pow_succ]; field_simp
 
-theorem regularization_degree_coefficient_power_small
-    (t B sigma : ℝ≥0) (K v k : ℕ) (ht : 9 ≤ t) (hgap : K + 1 ≤ v)
-    (hk : 1 ≤ k) (hB : B ≤ t ^ K) (hsigma : sigma ≤ 1 / t ^ v) :
-    9 * B * sigma ^ k ≤ 1 := by
-  have ht1 : 1 ≤ t := (by norm_num : (1 : ℝ≥0) ≤ 9).trans ht
-  have ht0 : 0 < t := zero_lt_one.trans_le ht1
-  have hsigma1 : sigma ≤ 1 := hsigma.trans (div_le_self zero_le (one_le_pow₀ ht1))
-  have hpow : sigma ^ k ≤ sigma := by
-    simpa only [pow_one] using pow_le_pow_of_le_one (show 0 ≤ sigma from zero_le) hsigma1 hk
-  calc
-    _ ≤ 9 * t ^ K * (1 / t ^ v) := mul_le_mul (mul_le_mul_of_nonneg_left hB zero_le) (hpow.trans hsigma) zero_le zero_le
-    _ = 9 * (t ^ K / t ^ v) := by ring
-    _ ≤ 9 * (1 / t) := mul_le_mul_of_nonneg_left (power_ratio_le_inverse t K v ht1 hgap) zero_le
-    _ = 9 / t := by ring
-    _ ≤ 1 := (div_le_one ht0).mpr ht
+theorem regularization_degree_coefficient_power_small (t B sigma : ℝ≥0) (K v k : ℕ)
+    (ht : 9 ≤ t) (hgap : K + 1 ≤ v) (hk : 1 ≤ k) (hB : B ≤ t ^ K)
+    (hsigma : sigma ≤ 1 / t ^ v) : 9 * B * sigma ^ k ≤ 1 :=
+  by
+    have ht1 : 1 ≤ t :=
+      (by
+              norm_num :
+            (1 : ℝ≥0) ≤ 9).trans
+        ht
+    have ht0 : 0 < t := zero_lt_one.trans_le ht1
+    have hsigma1 : sigma ≤ 1 := hsigma.trans (div_le_self zero_le (one_le_pow₀ ht1))
+    have hpow : sigma ^ k ≤ sigma :=
+      by
+        simpa only [pow_one] using
+          pow_le_pow_of_le_one (show 0 ≤ sigma from zero_le) hsigma1 hk
+    calc
+      _ ≤ 9 * t ^ K * (1 / t ^ v) :=
+        mul_le_mul (mul_le_mul_of_nonneg_left hB zero_le) (hpow.trans hsigma) zero_le zero_le
+      _ = 9 * (t ^ K / t ^ v) :=
+        by
+          ring
+      _ ≤ 9 * (1 / t) :=
+        (mul_le_mul_of_nonneg_left (power_ratio_le_inverse t K v ht1 hgap) zero_le)
+      _ = 9 / t :=
+        by
+          ring
+      _ ≤ 1 := (div_le_one ht0).mpr ht
 
 theorem power_coefficient_absorption
     (t C B : ℝ≥0) (K D : ℕ) (ht : 1 ≤ t) (hC : C ≤ t) (hB : B ≤ t ^ K)

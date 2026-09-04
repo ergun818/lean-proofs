@@ -40,7 +40,7 @@ then the preliminary/internal family has already covered every current graph
 edge with both endpoints outside that set. -/
 lemma IsIntermediateLinkState.covers_internal_of_sides
     {V : Type*} [Fintype V] [DecidableEq V]
-    {G : SimpleGraph V} [DecidableRel G.Adj] {U : Finset V}
+    {G : SimpleGraph V} {U : Finset V}
     {A I D R : TripleSystemOn V}
     {K : {x : V // x ∉ U} → BipartiteLink V}
     (hstate : IsIntermediateLinkState G U A I D R K)
@@ -48,6 +48,7 @@ lemma IsIntermediateLinkState.covers_internal_of_sides
     (hright : ∀ o, (K o).right ⊆ U) :
     ∀ u v : V, G.Adj u v → u ∉ U → v ∉ U →
       (coveredGraph R).Adj u v := by
+  classical
   let : DecidableRel G.Adj := Classical.decRel G.Adj
   intro u v huv hu hv
   by_contra hcovered

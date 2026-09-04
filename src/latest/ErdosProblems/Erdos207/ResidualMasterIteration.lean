@@ -46,7 +46,7 @@ theorem IsResidualMasterIterationGood.conditionPointwise
   exact tsub_le_self
 
 theorem IsResidualMasterIterationGood.map_packMasterState
-    {Ω V : Type*} [Fintype Ω] [DecidableEq Ω] [Fintype V] [DecidableEq V] {ell : ℕ}
+    {Ω V : Type*} [Fintype Ω] [Fintype V] [DecidableEq V] {ell : ℕ}
     {L : FiniteLaw Ω} {W : Vortex V ell} {k : Fin (ell + 1)} {G₀ : SimpleGraph V}
     {F : ForbiddenFamilyOn V} {G : Ω → SimpleGraph V} {A I D : Ω → TripleSystemOn V}
     {p eta xi C b : ℝ≥0} {h : ℕ}
@@ -54,6 +54,7 @@ theorem IsResidualMasterIterationGood.map_packMasterState
     IsResidualMasterIterationGood (L.map (packMasterState G A I D)) W k G₀ F
       MasterStateOn.graph MasterStateOn.available MasterStateOn.initial MasterStateOn.later
       p eta xi C b h := by
+  classical
   let f := packMasterState G A I D
   refine ⟨hgood.1.map f (fun _ hω ↦ hω), ?_, ?_⟩
   · exact hgood.2.1.map f

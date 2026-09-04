@@ -158,7 +158,7 @@ theorem probability_card_inter_ge_le_powerMoment
 
 /-- One finite union bound gives simultaneous factorial-moment degree caps. -/
 theorem probability_exists_card_inter_ge_le_factorialMoment
-    {J : Type*} [DecidableEq J]
+    {J : Type*}
     (L : FiniteLaw Omega) (selected : Omega → Finset X)
     (tests : J → Finset X) (indices : Finset J)
     (s : ℕ) (R : J → ℕ) (b : ℝ≥0)
@@ -169,6 +169,7 @@ theorem probability_exists_card_inter_ge_le_factorialMoment
       R j ≤ ((tests j) ∩ selected omega).card) ≤
       ∑ j ∈ indices,
         ((tests j).card.choose s : ℝ≥0) * b / ((R j).choose s : ℝ≥0) := by
+  classical
   apply (L.probability_exists_le indices
     (fun j omega ↦ R j ≤ ((tests j) ∩ selected omega).card)).trans
   apply sum_le_sum

@@ -23,18 +23,22 @@ theorem boundedIntersectionMomentCoefficient_le
       Nat.mul_le_mul_left (d + 1) (pow_le_pow_left₀ zero_le (by nlinarith) d)
     _ = _ := by rw [mul_pow, pow_succ]; ring
 
-theorem configurationMomentBound_bounded_intersections_scaled
-    {Ω W I : Type*} [Fintype Ω] [DecidableEq W] [Fintype I]
-    (L : FiniteLaw Ω) (F : I → Finset W) (R : Ω → Finset W)
-    (π : W → ℝ≥0) (w κ : ℝ≥0) {d s : ℕ}
-    (hcard : ∀ i, (F i).card ≤ d) (hκ : HasExtensionBound F π κ)
-    (hjoint : ∀ T : Finset W, T.card ≤ s * d →
-      L.probability (fun ω ↦ T ⊆ R ω) ≤ w ^ (s * d) * setWeight π T) :
+theorem configurationMomentBound_bounded_intersections_scaled {Ω W I : Type*} [Fintype Ω]
+    [DecidableEq W] [Fintype I] (L : FiniteLaw Ω) (F : I → Finset W) (R : Ω → Finset W)
+    (π : W → ℝ≥0) (w κ : ℝ≥0) {d s : ℕ} (hcard : ∀ i, (F i).card ≤ d)
+    (hκ : HasExtensionBound F π κ)
+    (hjoint :
+      ∀ T : Finset W,
+        T.card ≤ s * d → L.probability (fun ω ↦ T ⊆ R ω) ≤ w ^ (s * d) * setWeight π T) :
     L.expectation (fun ω ↦ (selectedCount F (R ω)) ^ s) ≤
-      (w ^ d * ((boundedIntersectionMomentCoefficient d s : ℝ≥0) * κ)) ^ s := by
-  refine (configurationMomentBound_bounded_intersections L F R π (w ^ (s * d)) κ hcard hκ hjoint).trans_eq ?_
-  rw [mul_pow (w ^ d) ((boundedIntersectionMomentCoefficient d s : ℝ≥0) * κ) s,
-    ← pow_mul w d s, Nat.mul_comm d s]
+      (w ^ d * ((boundedIntersectionMomentCoefficient d s : ℝ≥0) * κ)) ^ s :=
+  by
+    refine
+      (configurationMomentBound_bounded_intersections L F R π (w ^ (s * d)) κ hcard hκ
+            hjoint).trans_eq
+        ?_
+    rw [mul_pow (w ^ d) ((boundedIntersectionMomentCoefficient d s : ℝ≥0) * κ) s, ←
+      pow_mul w d s, Nat.mul_comm d s]
 
 theorem probability_ge_le_geometric_of_moment
     {Ω : Type*} [Fintype Ω] (L : FiniteLaw Ω) (X : Ω → ℝ≥0)

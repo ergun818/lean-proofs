@@ -39,14 +39,19 @@ theorem sourceCrudeUniformWitnessFactor_gain (q h : ℕ) :
     (h : ℝ≥0) ^ 2 * (2 : ℝ≥0) ^ q ≤ sourceCrudeUniformWitnessFactor q h :=
   le_add_of_nonneg_left zero_le
 
-theorem sourceCrudeWitnessCount_le_uniform
-    {I : Type*} [Fintype I] (order : I → ℕ) (q N h : ℕ)
+theorem sourceCrudeWitnessCount_le_uniform {I : Type*} [Fintype I] (order : I → ℕ) (q N h : ℕ)
     (horder : ∀ i, order i ≤ q) (hcard : Fintype.card I ≤ h) :
-    sourceCrudeWitnessCount order N ≤ sourceCrudeUniformWitnessFactor q h * (N + 1 : ℝ≥0) ^ (6 * q) := by
-  have hcard' : (Fintype.card I : ℝ≥0) ≤ h := by exact_mod_cast hcard
-  refine (sourceCrudeWitnessCount_le order q N horder).trans ?_
-  apply mul_le_mul_of_nonneg_right _ zero_le
-  exact (mul_le_mul_of_nonneg_right hcard' zero_le).trans (sourceCrudeUniformWitnessFactor_linear q h)
+    sourceCrudeWitnessCount order N ≤
+      sourceCrudeUniformWitnessFactor q h * (N + 1 : ℝ≥0) ^ (6 * q) :=
+  by
+    have hcard' : (Fintype.card I : ℝ≥0) ≤ h :=
+      by
+        exact_mod_cast hcard
+    refine (sourceCrudeWitnessCount_le order q N horder).trans ?_
+    apply mul_le_mul_of_nonneg_right _ zero_le
+    exact
+      (mul_le_mul_of_nonneg_right hcard' zero_le).trans
+        (sourceCrudeUniformWitnessFactor_linear q h)
 
 theorem boundedIntersectionMomentCoefficient_mono_order (d q s : ℕ) (hd : d ≤ q) :
     boundedIntersectionMomentCoefficient d s ≤ boundedIntersectionMomentCoefficient q s := by

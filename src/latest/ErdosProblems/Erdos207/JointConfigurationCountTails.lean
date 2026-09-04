@@ -48,13 +48,14 @@ theorem joint_activeBlocks_card_gt_le_dyadic
     (by exact_mod_cast hR)
 
 theorem joint_injective_filter_card_gt_le_dyadic
-    {I J : Type*} [Fintype I] [DecidableEq I] [DecidableEq J]
+    {I J : Type*} [Fintype I] [DecidableEq I]
     (L : FiniteLaw (I → Bool)) (p : ℝ≥0)
     (hjoint : ∀ U, L.probability (fun ω ↦ ∀ i ∈ U, ω i = true) ≤ setWeight (fun _ ↦ p) U)
     (S : Finset J) (f : J → I) (hinj : Set.InjOn f (S : Set J)) (a : ℝ≥0) (s : ℕ)
     (hmean : 4 * (p * S.card) ≤ a) (hsize : (4 * s : ℕ) ≤ (a : ℝ≥0)) :
     L.probability (fun ω ↦ a < ((S.filter fun j ↦ ω (f j) = true).card : ℝ≥0)) ≤
       ((2 : ℝ≥0) ^ s)⁻¹ := by
+  classical
   have heq (ω : I → Bool) : S.filter (fun j ↦ ω (f j) = true) =
       activeBlocks (fun j ↦ ({f j} : Finset I)) S ω := by
     ext j

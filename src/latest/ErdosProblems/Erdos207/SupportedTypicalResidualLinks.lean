@@ -396,7 +396,7 @@ theorem supportedReserveTypicalResidualLinks_ready
 /-- Supportwise readiness gives every structural and quantitative property
 for the totalized rechosen links on the old law's support. -/
 theorem FiniteLaw.SupportedOn.supportedReserveTypicalResidualLinks
-    {Omega V : Type*} [Fintype Omega] [DecidableEq Omega]
+    {Omega V : Type*} [Fintype Omega]
     [Fintype V] [DecidableEq V]
     {law : FiniteLaw Omega}
     (G : Omega → SimpleGraph V) (U : Finset V)
@@ -419,6 +419,7 @@ theorem FiniteLaw.SupportedOn.supportedReserveTypicalResidualLinks
         (∀ o, (K omega o).SpokesIn (reserve omega)) ∧
         (∀ o, HasLinkDegreeCodegreeBounds (A omega) (K omega o)
           d degreeMax codegree) := by
+  classical
   dsimp only
   intro omega hmass
   exact supportedReserveTypicalResidualLinks_ready G U reserve A I D R
@@ -428,7 +429,7 @@ theorem FiniteLaw.SupportedOn.supportedReserveTypicalResidualLinks
 links at every positive-mass state.  This is the support-level bridge from
 the preliminary/internal stage to the totalized typical-link function. -/
 theorem FiniteLaw.SupportedOn.reserveSupportedTypicalResidualLinks_of_typical_localized
-    {Omega V : Type*} [Fintype Omega] [DecidableEq Omega]
+    {Omega V : Type*} [Fintype Omega]
     [Fintype V] [DecidableEq V] {ell : ℕ}
     {law : FiniteLaw Omega} {W : Vortex V ell}
     {k : Fin (ell + 1)}
@@ -473,6 +474,7 @@ theorem FiniteLaw.SupportedOn.reserveSupportedTypicalResidualLinks_of_typical_lo
       HasReserveSupportedTypicalResidualLinks
         (G omega) U (reserve omega) (A omega) (I omega) (D omega)
         (R omega) d degreeMax codegree := by
+  classical
   intro omega hmass
   have hs := hstate omega hmass
   obtain ⟨Knew, hKnew⟩ :=
@@ -486,7 +488,7 @@ theorem FiniteLaw.SupportedOn.reserveSupportedTypicalResidualLinks_of_typical_lo
 
 /-- Coarser support-level bridge using full covered degrees. -/
 theorem FiniteLaw.SupportedOn.reserveSupportedTypicalResidualLinks_of_typical
-    {Omega V : Type*} [Fintype Omega] [DecidableEq Omega]
+    {Omega V : Type*} [Fintype Omega]
     [Fintype V] [DecidableEq V] {ell : ℕ}
     {law : FiniteLaw Omega} {W : Vortex V ell}
     {k : Fin (ell + 1)}
@@ -531,6 +533,7 @@ theorem FiniteLaw.SupportedOn.reserveSupportedTypicalResidualLinks_of_typical
       HasReserveSupportedTypicalResidualLinks
         (G omega) U (reserve omega) (A omega) (I omega) (D omega)
         (R omega) d degreeMax codegree := by
+  classical
   apply FiniteLaw.SupportedOn.reserveSupportedTypicalResidualLinks_of_typical_localized
     i hki U hU reserve Kold htyp htri hGsupp hstate m d degreeMax codegree
       loss _ hh hlower hupper hcodegree hbisection

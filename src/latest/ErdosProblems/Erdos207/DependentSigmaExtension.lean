@@ -43,11 +43,12 @@ theorem hasExtensionBound_sigma
     _ = (Fintype.card E : ℝ≥0) * kappa := by simp
 
 theorem HasExtensionBound.sigma_component
-    {W E : Type*} [DecidableEq W] [Fintype E] [DecidableEq E]
+    {W E : Type*} [DecidableEq W] [Fintype E]
     {I : E → Type*} [∀ e, Fintype (I e)]
     (F : ∀ e, I e → Finset W) (pi : W → ℝ≥0) {kappa : ℝ≥0}
     (hF : HasExtensionBound (fun z : Σ e, I e ↦ F z.1 z.2) pi kappa)
     (e : E) : HasExtensionBound (F e) pi kappa := by
+  classical
   intro A
   have hall := hF A
   unfold extensionWeight at hall ⊢

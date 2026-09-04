@@ -15,12 +15,13 @@ open scoped NNReal
 noncomputable section
 
 theorem joint_inclusion_image_le
-    {Ω I J : Type*} [Fintype Ω] [Fintype I] [DecidableEq I] [DecidableEq J]
+    {Ω I J : Type*} [Fintype Ω] [Finite I] [DecidableEq J]
     (L : FiniteLaw Ω) (R : Ω → Finset I) (f : I → J) (hf : Function.Injective f)
     (p : ℝ≥0) (hjoint : ∀ U, L.probability (fun ω ↦ U ⊆ R ω) ≤ p ^ U.card)
     (A : Finset J) :
     L.probability (fun ω ↦ A ⊆ (R ω).image f) ≤ p ^ A.card := by
   classical
+  let := Fintype.ofFinite I
   by_cases hA : A ⊆ univ.image f
   · let U : Finset I := univ.filter (fun i ↦ f i ∈ A)
     have himage : U.image f = A := by

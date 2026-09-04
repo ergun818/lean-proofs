@@ -39,7 +39,7 @@ theorem ksssErrorEnvelope_unitStep_abs_upper
   have h := inverse_power_step_abs_upper scale (ksssEdgeDensity E₀ t)
     (ksssEdgeDensity E₀ (t + 1)) B hs hq hqp hpq
   rw [hgap] at h
-  convert h using 1 <;> dsimp only [ksssErrorEnvelope] <;> ring
+  convert h using 1 <;> dsimp only [ksssErrorEnvelope] ; ring
 
 theorem ksssConfigurationErrorEnvelope_unitStep_abs_upper
     (E₀ A₀ scale t : ℝ) (B z : ℕ) (hE : 0 < E₀) (hA : 0 ≤ A₀) (hs : 0 ≤ scale)

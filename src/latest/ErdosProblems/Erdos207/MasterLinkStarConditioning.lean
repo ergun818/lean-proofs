@@ -120,7 +120,7 @@ theorem exists_starCappedLinkLaw
 /-- Simultaneously star-condition every fiber of a state-dependent link
 kernel, preserving any property that already held throughout its support. -/
 theorem exists_starCappedLinkKernel
-    {Omega V : Type*} [Fintype Omega] [Fintype V]
+    {Omega V : Type*} [Finite Omega] [Fintype V]
     [DecidableEq V]
     (K : Omega -> FiniteLaw (TripleSystemOn V))
     (caps : Omega -> V -> Nat) (P : Omega -> TripleSystemOn V -> Prop)
@@ -143,6 +143,7 @@ theorem exists_starCappedLinkKernel
           (alpha / (1 - epsilon)) ^ Q.card) ∧
       (∀ omega, 1 - epsilon <=
         (K omega).probability (LinkStarCapsGood (caps omega))) := by
+  let := Fintype.ofFinite Omega
   have hex : ∀ omega, Exists fun hGood :
       0 < (K omega).probability (LinkStarCapsGood (caps omega)) =>
       (starCappedLinkLaw (K omega) (caps omega) hGood).SupportedOn

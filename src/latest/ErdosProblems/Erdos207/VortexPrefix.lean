@@ -73,7 +73,7 @@ lemma Vortex.finPrefixSum_vertexProfile
       · rintro ⟨⟨_hxS, hxk⟩, hxi⟩
         exact (hik (by simpa only [hxi] using hxk)).elim
       · intro hxempty
-        simpa using hxempty
+        simp at hxempty
     simp [Vortex.vertexProfile, hempty]
 
 /-- Up to a nonterminal coordinate, prefix sums of the outer triangle profile
@@ -97,7 +97,7 @@ lemma Vortex.finPrefixSum_outerProfile
         simp only [hTlast, Fin.val_last] at hTk
         omega
       · intro hTempty
-        simpa using hTempty
+        simp at hTempty
     rw [hempty, card_empty]
   have houterTotal :
       ∑ i : Fin ell,
@@ -131,7 +131,7 @@ lemma Vortex.finPrefixSum_outerProfile
       · rintro ⟨⟨_hTC, hTk⟩, hTi⟩
         exact (hik (by simpa only [hTi, Fin.val_castSucc] using hTk)).elim
       · intro hTempty
-        simpa using hTempty
+        simp at hTempty
     rw [hempty, card_empty]
 
 /-- A triangle containing a vertex at an early exact level is itself at an

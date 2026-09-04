@@ -15,24 +15,32 @@ open Finset
 
 noncomputable section
 
-theorem card_distinctEqualRemainderPairs_induced_nonderived_le
-    {V : Type*} [Fintype V] [DecidableEq V]
-    (q j : ℕ) (B : TripleSystemOn V) (T T' : TripleOn V) (hj : 4 ≤ j) :
+theorem card_distinctEqualRemainderPairs_induced_nonderived_le {V : Type*} [Fintype V]
+    [DecidableEq V] (q j : ℕ) (B : TripleSystemOn V) (T T' : TripleOn V) (hj : 4 ≤ j) :
     (distinctEqualRemainderPairs
-      (absorberInducedConfigurationsOn q j B \ derivedAbsorberConfigurations q j B) T T').card ≤
-      (2 ^ (j ^ 3) * (j + 1)) * (Fintype.card V + 1) ^ (j - 4) := by
-  have hpure : ∀ E ∈ absorberInducedConfigurationsOn q j B \ derivedAbsorberConfigurations q j B,
-      5 ≤ j ∧ IsErdosConfigOn j E := by
-    intro E hE
-    exact genuine_of_induced_not_derived (by omega) (mem_sdiff.mp hE).1 (mem_sdiff.mp hE).2
-  by_cases hj5 : 5 ≤ j
-  · exact card_genuine_distinctEqualRemainderPairs_le T T'
-      (fun E hE ↦ (hpure E hE).2) hj5
-  · have hempty : absorberInducedConfigurationsOn q j B \ derivedAbsorberConfigurations q j B = ∅ := by
-      apply eq_empty_iff_forall_notMem.mpr
-      intro E hE
-      exact hj5 (hpure E hE).1
-    simp [hempty, distinctEqualRemainderPairs]
+          (absorberInducedConfigurationsOn q j B \ derivedAbsorberConfigurations q j B) T
+          T').card ≤
+      (2 ^ (j ^ 3) * (j + 1)) * (Fintype.card V + 1) ^ (j - 4) :=
+  by
+    have hpure :
+      ∀ E ∈ absorberInducedConfigurationsOn q j B \ derivedAbsorberConfigurations q j B,
+        5 ≤ j ∧ IsErdosConfigOn j E :=
+      by
+        intro E hE
+        exact
+          genuine_of_induced_not_derived
+            (by
+              omega)
+            (mem_sdiff.mp hE).1 (mem_sdiff.mp hE).2
+    by_cases hj5 : 5 ≤ j
+    · exact card_genuine_distinctEqualRemainderPairs_le T T' (fun E hE ↦ (hpure E hE).2) hj5
+    · have hempty :
+        absorberInducedConfigurationsOn q j B \ derivedAbsorberConfigurations q j B = ∅ :=
+        by
+          apply eq_empty_iff_forall_notMem.mpr
+          intro E hE
+          exact hj5 (hpure E hE).1
+      simp [hempty, distinctEqualRemainderPairs]
 
 theorem card_distinctEqualRemainderPairs_absorberInduced_le
     {V : Type*} [Fintype V] [DecidableEq V]

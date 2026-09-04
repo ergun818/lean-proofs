@@ -53,10 +53,11 @@ lemma trianglesDisjointFrom_outerOnlyAvailable
   exact (mem_outerOnlyAvailable_iff.mp hT).2
 
 lemma ConsistsOfTriangles.outerOnlyAvailable
-    {V : Type*} [Fintype V] [DecidableEq V]
+    {V : Type*} [Finite V] [DecidableEq V]
     {G : SimpleGraph V} {U : Finset V} {A : TripleSystemOn V}
     (hA : ConsistsOfTriangles G A) :
     ConsistsOfTriangles G (outerOnlyAvailable U A) := by
+  let := Fintype.ofFinite V
   intro T hT
   exact hA T (outerOnlyAvailable_subset U A hT)
 

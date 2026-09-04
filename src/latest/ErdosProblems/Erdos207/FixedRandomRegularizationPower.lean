@@ -54,38 +54,73 @@ theorem sourceRandomFailureCoefficient_power_bound
       mul_le_mul_of_nonneg_left (pow_le_pow_left' hplus _) zero_le
     _ = _ := by rw [mul_pow, ← pow_mul]; ring
 
-theorem eventually_fixedRandomRegularization_power_budget
-    (j R decay : ℕ) (hj : 4 ≤ j) :
-    ∃ T : ℕ, 1 ≤ T ∧ ∀ t : ℕ, T ≤ t →
-      ∀ {V : Type*} [Fintype V] [DecidableEq V] {ell : ℕ}, ∀ W : Vortex V ell,
-      Fintype.card V ≤ t ^ R →
-      (sourceRandomFailureCoefficient W j : ℝ≥0) * ((2 : ℝ≥0) ^ t)⁻¹ +
-        regularizationGapPowerError j R t / (1 / (t : ℝ≥0) ^ decay) < 1 := by
-  have hfirst := polynomial_exp_neg_mul_tendsToZero 2 1 (R * j + decay) (by norm_num)
-  have hsecond := (tendsto_pow_const_mul_const_pow_of_lt_one (R * (3 * j + 6))
-    (by norm_num : (0 : ℝ) ≤ 1 / 2) (by norm_num : (1 / 2 : ℝ) < 1)).const_mul
-    ((j + 3 : ℝ) * 2 ^ (3 * j + 6))
-  have hlim : Tendsto (fun t : ℕ ↦
-      (j + 3 : ℝ) * 2 ^ (3 * j + 6) * (t : ℝ) ^ (R * (3 * j + 6)) * (1 / 2 : ℝ) ^ t +
-        2 * (t : ℝ) ^ (R * j + decay) * Real.exp (-(t : ℝ))) atTop (𝓝 0) := by
-    simpa only [one_mul, neg_one_mul, zero_add, mul_zero, mul_assoc] using hsecond.add hfirst
-  obtain ⟨T, hT⟩ := eventually_atTop.mp (hlim.eventually (gt_mem_nhds (by norm_num : (0 : ℝ) < 1)))
-  refine ⟨max 1 T, le_max_left _ _, ?_⟩
-  intro t ht V _ _ ell W hN
-  have ht1 : 1 ≤ t := (le_max_left _ _).trans ht
-  have hcoef := sourceRandomFailureCoefficient_power_bound W j R t hj ht1 hN
-  have hsmall :
+theorem eventually_fixedRandomRegularization_power_budget (j R decay : ℕ) (hj : 4 ≤ j) :
+    ∃ T : ℕ,
+      1 ≤ T ∧
+        ∀ t : ℕ,
+          T ≤ t →
+            ∀ {V : Type*} [Fintype V] [DecidableEq V] {ell : ℕ},
+              ∀ W : Vortex V ell,
+                Fintype.card V ≤ t ^ R →
+                  (sourceRandomFailureCoefficient W j : ℝ≥0) * ((2 : ℝ≥0) ^ t)⁻¹ +
+                      regularizationGapPowerError j R t / (1 / (t : ℝ≥0) ^ decay) <
+                    1 :=
+  by
+    have hfirst :=
+      polynomial_exp_neg_mul_tendsToZero 2 1 (R * j + decay)
+        (by
+          norm_num)
+    have hsecond :=
+      (tendsto_pow_const_mul_const_pow_of_lt_one (R * (3 * j + 6))
+            (by
+                norm_num :
+              (0 : ℝ) ≤ 1 / 2)
+            (by
+                norm_num :
+              (1 / 2 : ℝ) < 1)).const_mul
+        ((j + 3 : ℝ) * 2 ^ (3 * j + 6))
+    have hlim :
+      Tendsto
+        (fun t : ℕ ↦
+          (j + 3 : ℝ) * 2 ^ (3 * j + 6) * (t : ℝ) ^ (R * (3 * j + 6)) * (1 / 2 : ℝ) ^ t +
+            2 * (t : ℝ) ^ (R * j + decay) * Real.exp (-(t : ℝ)))
+        atTop (𝓝 0) :=
+      by
+        simpa only [one_mul, neg_one_mul, zero_add, mul_zero, mul_assoc] using
+          hsecond.add hfirst
+    obtain ⟨T, hT⟩ :=
+      eventually_atTop.mp
+        (hlim.eventually
+          (gt_mem_nhds
+            (by
+                norm_num :
+              (0 : ℝ) < 1)))
+    refine ⟨max 1 T, le_max_left _ _, ?_⟩
+    intro t ht V _ _ ell W hN
+    have ht1 : 1 ≤ t := (le_max_left _ _).trans ht
+    have hcoef := sourceRandomFailureCoefficient_power_bound W j R t hj ht1 hN
+    have hsmall :
       (j + 3 : ℝ≥0) * 2 ^ (3 * j + 6) * (t : ℝ≥0) ^ (R * (3 * j + 6)) * (1 / 2 : ℝ≥0) ^ t +
-        2 * (t : ℝ≥0) ^ (R * j + decay) * (Real.exp (-(t : ℝ))).toNNReal < 1 := by
-    exact_mod_cast (by
-      simpa only [Real.coe_toNNReal _ (Real.exp_pos _).le] using hT t ((le_max_right _ _).trans ht) :
-        (j + 3 : ℝ) * 2 ^ (3 * j + 6) * (t : ℝ) ^ (R * (3 * j + 6)) * (1 / 2 : ℝ) ^ t +
-          2 * (t : ℝ) ^ (R * j + decay) * ((Real.exp (-(t : ℝ))).toNNReal : ℝ) < 1)
-  apply lt_of_le_of_lt _ hsmall
-  apply add_le_add
-  · simpa only [one_div, inv_pow] using mul_le_mul_of_nonneg_right hcoef
-      (show 0 ≤ ((2 : ℝ≥0) ^ t)⁻¹ from zero_le)
-  · exact le_of_eq (by simp only [regularizationGapPowerError, div_eq_mul_inv, inv_inv, one_mul, pow_add]; ring)
+          2 * (t : ℝ≥0) ^ (R * j + decay) * (Real.exp (-(t : ℝ))).toNNReal <
+        1 :=
+      by
+        exact_mod_cast
+          (by
+              simpa only [Real.coe_toNNReal _ (Real.exp_pos _).le] using
+                hT t ((le_max_right _ _).trans ht) :
+            (j + 3 : ℝ) * 2 ^ (3 * j + 6) * (t : ℝ) ^ (R * (3 * j + 6)) * (1 / 2 : ℝ) ^ t +
+                2 * (t : ℝ) ^ (R * j + decay) * ((Real.exp (-(t : ℝ))).toNNReal : ℝ) <
+              1)
+    apply lt_of_le_of_lt _ hsmall
+    apply add_le_add
+    · simpa only [one_div, inv_pow] using
+        mul_le_mul_of_nonneg_right hcoef (show 0 ≤ ((2 : ℝ≥0) ^ t)⁻¹ from zero_le)
+    · exact
+        le_of_eq
+          (by
+            simp only [regularizationGapPowerError, div_eq_mul_inv, inv_inv, one_mul,
+              pow_add];
+            ring)
 
 end
 

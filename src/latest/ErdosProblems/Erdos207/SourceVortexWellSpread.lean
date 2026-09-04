@@ -58,14 +58,19 @@ def Vortex.profiledDistinctEqualRemainderPairs
     Finset (TripleSystemOn V × TripleSystemOn V) :=
   (distinctEqualRemainderPairs F T T').filter fun p ↦ W.outerProfile (p.1.erase T) = t
 
-@[simp] theorem Vortex.mem_profiledDistinctEqualRemainderPairs_iff
-    {V : Type*} [Fintype V] [DecidableEq V] {ell : ℕ}
-    (W : Vortex V ell) (F : ForbiddenFamilyOn V) (T T' : TripleOn V) (t : VortexProfile ell)
-    (p : TripleSystemOn V × TripleSystemOn V) :
+@[simp]
+theorem Vortex.mem_profiledDistinctEqualRemainderPairs_iff {V : Type*} [Fintype V]
+    [DecidableEq V] {ell : ℕ} (W : Vortex V ell) (F : ForbiddenFamilyOn V) (T T' : TripleOn V)
+    (t : VortexProfile ell) (p : TripleSystemOn V × TripleSystemOn V) :
     p ∈ W.profiledDistinctEqualRemainderPairs F T T' t ↔
-      p.1 ∈ F ∧ p.2 ∈ F ∧ p.1 ≠ p.2 ∧ T ∈ p.1 ∧ T' ∈ p.2 ∧ p.1.erase T = p.2.erase T' ∧
-        W.outerProfile (p.1.erase T) = t := by
-  simp only [profiledDistinctEqualRemainderPairs, mem_filter, mem_distinctEqualRemainderPairs_iff, and_assoc]
+      p.1 ∈ F ∧
+        p.2 ∈ F ∧
+          p.1 ≠ p.2 ∧
+            T ∈ p.1 ∧
+              T' ∈ p.2 ∧ p.1.erase T = p.2.erase T' ∧ W.outerProfile (p.1.erase T) = t :=
+  by
+    simp only [profiledDistinctEqualRemainderPairs, mem_filter,
+      mem_distinctEqualRemainderPairs_iff, and_assoc]
 
 @[simp] theorem Vortex.profiledDistinctEqualRemainderPairs_self
     {V : Type*} [Fintype V] [DecidableEq V] {ell : ℕ}
@@ -73,20 +78,28 @@ def Vortex.profiledDistinctEqualRemainderPairs
     W.profiledDistinctEqualRemainderPairs F T T t = ∅ := by
   simp only [profiledDistinctEqualRemainderPairs, distinctEqualRemainderPairs_self, filter_empty]
 
-structure SourceVortexWellSpread
-    {V : Type*} [Fintype V] [DecidableEq V] {ell : ℕ}
+structure SourceVortexWellSpread {V : Type*} [Fintype V] [DecidableEq V] {ell : ℕ}
     (W : Vortex V ell) (j : ℕ) (F : ForbiddenFamilyOn V) (y z : ℝ≥0) : Prop where
   order : 4 ≤ j
   terminal_nonempty : 0 < W.terminalSize
   uniform : ∀ E ∈ F, E.card = j - 2 ∧ IsPackingOn E
-  extensions : ∀ (R : TripleSystemOn V) (t : VortexProfile ell), R.Nonempty → R.card ≤ j - 2 →
-    ((W.profiledExtensions F R t).card : ℝ≥0) ≤ z * W.sourceProfileScale (j - vortexRootExponent j R.card) t
-  equal_remainders : ∀ (T T' : TripleOn V) (t : VortexProfile ell),
-    ((W.profiledDistinctEqualRemainderPairs F T T' t).card : ℝ≥0) ≤ z * W.sourceProfileScale (j - 4) t
-  order_four_pair : j = 4 → ∀ (T : TripleOn V) (P : VortexPairOn V), ¬ P.1 ⊆ T.1 →
-    ((W.terminalPairExtensions F T P).card : ℝ≥0) ≤ z
-  singleton_extensions : ∀ (T : TripleOn V) (t : VortexProfile ell),
-    ((W.profiledExtensions F {T} t).card : ℝ≥0) ≤ y * W.sourceProfileScale (j - 3) t
+  extensions :
+    ∀ (R : TripleSystemOn V) (t : VortexProfile ell),
+      R.Nonempty →
+        R.card ≤ j - 2 →
+          ((W.profiledExtensions F R t).card : ℝ≥0) ≤
+            z * W.sourceProfileScale (j - vortexRootExponent j R.card) t
+  equal_remainders :
+    ∀ (T T' : TripleOn V) (t : VortexProfile ell),
+      ((W.profiledDistinctEqualRemainderPairs F T T' t).card : ℝ≥0) ≤
+        z * W.sourceProfileScale (j - 4) t
+  order_four_pair :
+    j = 4 →
+      ∀ (T : TripleOn V) (P : VortexPairOn V),
+        ¬P.1 ⊆ T.1 → ((W.terminalPairExtensions F T P).card : ℝ≥0) ≤ z
+  singleton_extensions :
+    ∀ (T : TripleOn V) (t : VortexProfile ell),
+      ((W.profiledExtensions F { T } t).card : ℝ≥0) ≤ y * W.sourceProfileScale (j - 3) t
 
 theorem SourceVortexWellSpread.mono
     {V : Type*} [Fintype V] [DecidableEq V] {ell j : ℕ} {W : Vortex V ell}

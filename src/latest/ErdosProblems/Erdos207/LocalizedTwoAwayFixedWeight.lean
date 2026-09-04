@@ -31,10 +31,11 @@ theorem localizedTwoAwayMapFamily_injective
   exact congrArg (fun v ↦ v.1.1) hwz
 
 theorem localizedTwoAwayRemainder_card
-    {V : Type*} [Fintype V] [DecidableEq V]
+    {V : Type*} [Finite V] [DecidableEq V]
     {F : ForbiddenFamilyOn V} {T : TripleOn V} {a b : V} {U : Finset V} {c : ℕ}
     (hcard : ∀ C ∈ F, C.card = c) (w : LocalizedTwoAwayWitness V F T a b U) :
     (localizedTwoAwayRemainder w).card = c - 2 := by
+  let := Fintype.ofFinite V
   have hT : T ∈ w.1.1.1.erase w.1.1.2 :=
     mem_erase.mpr ⟨w.1.2.2.2.2.symm, w.1.2.2.2.1⟩
   rw [localizedTwoAwayRemainder, twoAwayThreatRemainder, card_erase_of_mem hT,
@@ -50,25 +51,31 @@ noncomputable instance instFintypeActiveLocalizedTwoAwayWitness
     (F : ForbiddenFamilyOn V) (T : TripleOn V) (a b : V) (U : Finset V) (R : TripleSystemOn V) :
     Fintype (ActiveLocalizedTwoAwayWitness V F T a b U R) := Fintype.ofFinite _
 
-theorem extensionWeight_localizedTwoAway_constant
-    {V : Type*} [Fintype V] [DecidableEq V]
+theorem extensionWeight_localizedTwoAway_constant {V : Type*} [Fintype V] [DecidableEq V]
     (F : ForbiddenFamilyOn V) (T : TripleOn V) (a b : V) (U : Finset V) (R : TripleSystemOn V)
     (c : ℕ) (hcard : ∀ C ∈ F, C.card = c) (p : ℝ≥0) :
-    extensionWeight (fun w : LocalizedTwoAwayWitness V F T a b U ↦ localizedTwoAwayRemainder w)
-      (constantTripleWeight p) R =
-        (Fintype.card (ActiveLocalizedTwoAwayWitness V F T a b U R) : ℝ≥0) * p ^ (c - 2 - R.card) := by
-  classical
-  unfold extensionWeight
-  calc
-    _ = ∑ w : LocalizedTwoAwayWitness V F T a b U,
-        if R ⊆ localizedTwoAwayRemainder w then p ^ (c - 2 - R.card) else 0 := by
-      apply sum_congr rfl
-      intro w _
-      by_cases hR : R ⊆ localizedTwoAwayRemainder w
-      · rw [if_pos hR, if_pos hR, setWeight_constantTripleWeight, card_sdiff_of_subset hR,
-          localizedTwoAwayRemainder_card hcard]
-      · rw [if_neg hR, if_neg hR]
-    _ = _ := by rw [Fintype.card_subtype, ← sum_filter]; simp
+    extensionWeight
+        (fun w : LocalizedTwoAwayWitness V F T a b U ↦ localizedTwoAwayRemainder w)
+        (constantTripleWeight p) R =
+      (Fintype.card (ActiveLocalizedTwoAwayWitness V F T a b U R) : ℝ≥0) *
+        p ^ (c - 2 - R.card) :=
+  by
+    classical
+    unfold extensionWeight
+    calc
+      _ =
+          ∑ w : LocalizedTwoAwayWitness V F T a b U,
+            if R ⊆ localizedTwoAwayRemainder w then p ^ (c - 2 - R.card) else 0 :=
+        by
+          apply sum_congr rfl
+          intro w _
+          by_cases hR : R ⊆ localizedTwoAwayRemainder w
+          · rw [if_pos hR, if_pos hR, setWeight_constantTripleWeight, card_sdiff_of_subset hR,
+              localizedTwoAwayRemainder_card hcard]
+          · rw [if_neg hR, if_neg hR]
+      _ = _ :=
+        by
+          rw [Fintype.card_subtype, ← sum_filter]; simp
 
 theorem card_activeLocalizedTwoAway_full_le
     {V : Type*} [Fintype V] [DecidableEq V]

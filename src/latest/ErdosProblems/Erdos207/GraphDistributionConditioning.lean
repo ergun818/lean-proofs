@@ -31,32 +31,49 @@ theorem IsInitialGraphProductBound.mono_constant
   intro Q E hE
   exact (h Q E hE).trans (mul_le_mul_of_nonneg_right (pow_le_pow_left' hC _) zero_le)
 
-theorem IsInitialGraphProductBound.conditionOn
-    {Ω V : Type*} [Fintype Ω] [Fintype V] [DecidableEq V]
-    {L : FiniteLaw Ω} {selected : Ω → TripleSystemOn V} {G : SimpleGraph V} {p C error : ℝ≥0}
-    (h : IsInitialGraphProductBound L selected G p C error)
+theorem IsInitialGraphProductBound.conditionOn {Ω V : Type*} [Fintype Ω] [Fintype V]
+    [DecidableEq V] {L : FiniteLaw Ω} {selected : Ω → TripleSystemOn V} {G : SimpleGraph V}
+    {p C error : ℝ≥0} (h : IsInitialGraphProductBound L selected G p C error)
     (Good : Ω → Prop) (hGood : 0 < L.probability Good) :
-    IsInitialGraphProductBound (L.conditionOn Good hGood) selected G p (C / L.probability Good) error := by
-  intro Q E hE
-  let m := Q.card + E.card
-  let X := p ^ E.card * (Fintype.card V : ℝ≥0)⁻¹ ^ Q.card + error
-  by_cases hm : m = 0
-  · have hQ : Q = ∅ := card_eq_zero.mp (by dsimp only [m] at hm; omega)
-    have hE' : E = ∅ := card_eq_zero.mp (by dsimp only [m] at hm; omega)
-    subst Q
-    subst E
-    exact ((L.conditionOn Good hGood).probability_le_one _).trans (by simp)
-  · have hzpow : L.probability Good ^ m ≤ L.probability Good :=
-      pow_le_of_le_one zero_le (L.probability_le_one Good) hm
-    have hscale : C ^ m / L.probability Good ≤ (C / L.probability Good) ^ m := by
-      rw [div_pow]
-      gcongr
-    calc
-      _ ≤ L.probability (fun ω ↦ Q ⊆ selected ω ∧ ∀ e ∈ E, e ∉ (coveredGraph (selected ω)).edgeSet) /
-          L.probability Good := L.conditionOn_probability_le Good _ hGood
-      _ ≤ (C ^ m * X) / L.probability Good := div_le_div_of_nonneg_right (h Q E hE) zero_le
-      _ = (C ^ m / L.probability Good) * X := by ring
-      _ ≤ (C / L.probability Good) ^ m * X := mul_le_mul_of_nonneg_right hscale zero_le
+    IsInitialGraphProductBound (L.conditionOn Good hGood) selected G p
+      (C / L.probability Good) error :=
+  by
+    intro Q E hE
+    let m := Q.card + E.card
+    let X := p ^ E.card * (Fintype.card V : ℝ≥0)⁻¹ ^ Q.card + error
+    by_cases hm : m = 0
+    · have hQ : Q = ∅ :=
+        card_eq_zero.mp
+          (by
+            dsimp only [m] at hm; omega)
+      have hE' : E = ∅ :=
+        card_eq_zero.mp
+          (by
+            dsimp only [m] at hm; omega)
+      subst Q
+      subst E
+      exact
+        ((L.conditionOn Good hGood).probability_le_one _).trans
+          (by
+            simp)
+    · have hzpow : L.probability Good ^ m ≤ L.probability Good :=
+        pow_le_of_le_one zero_le (L.probability_le_one Good) hm
+      have hscale : C ^ m / L.probability Good ≤ (C / L.probability Good) ^ m :=
+        by
+          rw [div_pow]
+          gcongr
+      calc
+        _ ≤
+            L.probability
+                (fun ω ↦ Q ⊆ selected ω ∧ ∀ e ∈ E, e ∉ (coveredGraph (selected ω)).edgeSet) /
+              L.probability Good :=
+          L.conditionOn_probability_le Good _ hGood
+        _ ≤ (C ^ m * X) / L.probability Good :=
+          (div_le_div_of_nonneg_right (h Q E hE) zero_le)
+        _ = (C ^ m / L.probability Good) * X :=
+          by
+            ring
+        _ ≤ (C / L.probability Good) ^ m * X := mul_le_mul_of_nonneg_right hscale zero_le
 
 theorem IsInitialGraphProductBound.conditionOn_half
     {Ω V : Type*} [Fintype Ω] [Fintype V] [DecidableEq V]

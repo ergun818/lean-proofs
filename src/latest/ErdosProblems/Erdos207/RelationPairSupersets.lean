@@ -56,18 +56,21 @@ theorem relationPairFamily_degree_le
       exact mem_image.mpr ⟨i, mem_filter.mpr ⟨mem_univ i, hne.symm, hsym hR⟩, pair_comm _ _⟩
   exact (card_le_card hsub).trans card_image_le
 
-theorem relationPairSupersets_max_degree_le
-    {I : Type*} [Fintype I] [DecidableEq I] (R : I → I → Prop)
-    [DecidableRel R]
-    (hsym : ∀ ⦃i j⦄, R i j → R j i) (B k : ℕ) (hk : 2 ≤ k)
+theorem relationPairSupersets_max_degree_le {I : Type*} [Fintype I] [DecidableEq I]
+    (R : I → I → Prop) [DecidableRel R] (hsym : ∀ ⦃i j⦄, R i j → R j i) (B k : ℕ) (hk : 2 ≤ k)
     (hdegree : ∀ v, (univ.filter (fun w : I ↦ v ≠ w ∧ R v w)).card ≤ B) :
     finiteHypergraphMaxDegree (uniformSupersets k (relationPairFamily R)) ≤
-      2 * B * (Fintype.card I) ^ (k - 2) := by
-  have hmax : finiteHypergraphMaxDegree (relationPairFamily R) ≤ B :=
-    (finiteHypergraphMaxDegree_le_iff _ _).mpr (fun v ↦ (relationPairFamily_degree_le R hsym v).trans (hdegree v))
-  exact (uniformSupersets_max_degree_le_of_le k 2 (relationPairFamily R) (by omega) hk
-    (relationPairFamily_uniform R)).trans
-    (Nat.mul_le_mul_right _ (Nat.mul_le_mul_left 2 hmax))
+      2 * B * (Fintype.card I) ^ (k - 2) :=
+  by
+    have hmax : finiteHypergraphMaxDegree (relationPairFamily R) ≤ B :=
+      (finiteHypergraphMaxDegree_le_iff _ _).mpr
+        (fun v ↦ (relationPairFamily_degree_le R hsym v).trans (hdegree v))
+    exact
+      (uniformSupersets_max_degree_le_of_le k 2 (relationPairFamily R)
+            (by
+              omega)
+            hk (relationPairFamily_uniform R)).trans
+        (Nat.mul_le_mul_right _ (Nat.mul_le_mul_left 2 hmax))
 
 end
 

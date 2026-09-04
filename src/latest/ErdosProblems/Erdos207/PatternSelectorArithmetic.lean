@@ -10,7 +10,7 @@ import ErdosProblems.Erdos207.DriftErrorArithmetic
 namespace Erdos207
 
 theorem pattern_selector_denominator_bounds
-    (r R excluded L x e : ℝ) (hL : 0 ≤ L) (he : 0 ≤ e)
+    (r R excluded L x e : ℝ) (hL : 0 ≤ L) (_he : 0 ≤ e)
     (hcount : r = R + excluded) (hexcluded : 0 ≤ excluded)
     (hsmallExcluded : excluded ≤ L * e / 3)
     (hglobal : |r - L * x / 3| ≤ L * e / 3) (hsmall : e ≤ x / 4) :

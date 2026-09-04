@@ -84,33 +84,42 @@ theorem rawResidualInternalKernel_probability_subset_new_le
     (fun e he ↦ (houter e he).1) (fun e he ↦ (houter e he).2)
     (fun _ _ ↦ iterationExtensionVertices_subset _ _ _) threshold hthreshold (P0 ω) Q
 
-theorem RawResidualInternalStructure.complete_internalCover
-    {Ω V : Type*} [Fintype V] [DecidableEq V] {ell : ℕ}
-    {W : Vortex V ell} {i : Fin ell} {F : ForbiddenFamilyOn V}
-    {G : Ω → SimpleGraph V} {A P0 : Ω → TripleSystemOn V}
-    {bits : Ω → Sym2 V → Bool} {threshold : ℕ} {ω : Ω} {z : InternalEdgeGreedyStateOn V}
+theorem RawResidualInternalStructure.complete_internalCover {Ω V : Type*} [Fintype V]
+    [DecidableEq V] {ell : ℕ} {W : Vortex V ell} {i : Fin ell} {F : ForbiddenFamilyOn V}
+    {G : Ω → SimpleGraph V} {A P0 : Ω → TripleSystemOn V} {bits : Ω → Sym2 V → Bool}
+    {threshold : ℕ} {ω : Ω} {z : InternalEdgeGreedyStateOn V}
     (houtcome : RawResidualInternalStructure W i F G A P0 bits threshold ω z)
     (hnotFailed : z.failed = false) :
-    GreedyReachable F (P0 ω) z.chosen ∧ z.chosen ⊆ P0 ω ∪ A ω ∧
-      (z.chosen \ P0 ω).card ≤ (internalOuterEdges (G ω) (W.U i.succ)).card ∧
-      ∀ e ∈ internalOuterEdges (G ω) (W.U i.succ), (coveredGraph z.chosen).Adj e.out.1 e.out.2 := by
-  let E := preliminaryResidualInternalEdges (G ω) (W.U i.succ) (P0 ω)
-  have hinv := houtcome.1
-  refine ⟨hinv.1, houtcome.2.1, ?_, ?_⟩
-  · calc
-      _ ≤ E.toList.length := hinv.2.1
-      _ = E.card := by simp
-      _ ≤ _ := card_le_card
-        (preliminaryResidualInternalEdges_subset_internalOuterEdges (G ω) (W.U i.succ) (P0 ω))
-  · intro e he
-    by_cases hcovered : (coveredGraph (P0 ω)).Adj e.out.1 e.out.2
-    · exact coveredGraph_mono hinv.1.initial_subset hcovered
-    · apply hinv.covers_mem hnotFailed e
-      rw [mem_toList]
-      apply mem_inter.mpr
-      refine ⟨he, mem_sdiff.mpr ⟨internalOuterEdges_subset_outerGraphEdges (G ω) (W.U i.succ) he, ?_⟩⟩
-      intro heGraph
-      exact hcovered (graph_adj_out_of_mem_graphEdges heGraph)
+    GreedyReachable F (P0 ω) z.chosen ∧
+      z.chosen ⊆ P0 ω ∪ A ω ∧
+        (z.chosen \ P0 ω).card ≤ (internalOuterEdges (G ω) (W.U i.succ)).card ∧
+          ∀ e ∈ internalOuterEdges (G ω) (W.U i.succ),
+            (coveredGraph z.chosen).Adj e.out.1 e.out.2 :=
+  by
+    let E := preliminaryResidualInternalEdges (G ω) (W.U i.succ) (P0 ω)
+    have hinv := houtcome.1
+    refine ⟨hinv.1, houtcome.2.1, ?_, ?_⟩
+    · calc
+        _ ≤ E.toList.length := hinv.2.1
+        _ = E.card :=
+          by
+            simp
+        _ ≤ _ :=
+          card_le_card
+            (preliminaryResidualInternalEdges_subset_internalOuterEdges (G ω) (W.U i.succ)
+              (P0 ω))
+    · intro e he
+      by_cases hcovered : (coveredGraph (P0 ω)).Adj e.out.1 e.out.2
+      · exact coveredGraph_mono hinv.1.initial_subset hcovered
+      · apply hinv.covers_mem hnotFailed e
+        rw [mem_toList]
+        apply mem_inter.mpr
+        refine
+          ⟨he,
+            mem_sdiff.mpr
+              ⟨internalOuterEdges_subset_outerGraphEdges (G ω) (W.U i.succ) he, ?_⟩⟩
+        intro heGraph
+        exact hcovered (graph_adj_out_of_mem_graphEdges heGraph)
 
 end
 

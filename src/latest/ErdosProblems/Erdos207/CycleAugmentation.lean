@@ -108,14 +108,14 @@ lemma cyclePathSlots_ne (m : ℕ) {c d : Fin (m ^ 2)} (hcd : c ≠ d) :
 
 def unusedPathPairCount (m r : ℕ) : ℕ := 3 * m ^ 2 - r
 
-def unusedPathPairFirst (m r : ℕ) (hr : r ≤ m ^ 2)
+def unusedPathPairFirst (m r : ℕ) (_hr : r ≤ m ^ 2)
     (t : Fin (unusedPathPairCount m r)) : Fin (6 * m ^ 2) :=
   ⟨2 * r + 2 * t.1, by
     have ht : t.1 < 3 * m ^ 2 - r := by
       simpa [unusedPathPairCount] using t.2
     omega⟩
 
-def unusedPathPairSecond (m r : ℕ) (hr : r ≤ m ^ 2)
+def unusedPathPairSecond (m r : ℕ) (_hr : r ≤ m ^ 2)
     (t : Fin (unusedPathPairCount m r)) : Fin (6 * m ^ 2) :=
   ⟨2 * r + 2 * t.1 + 1, by
     have ht : t.1 < 3 * m ^ 2 - r := by
@@ -906,13 +906,13 @@ lemma lastCycleEndpointTriangle_map_le
 
 def cycleInternalIndex
     {V : Type*} {G : SimpleGraph V} {v : V}
-    (p : G.Walk v v) (hp : p.IsCycle) (i : Fin (p.length - 2)) :
+    (p : G.Walk v v) (_hp : p.IsCycle) (i : Fin (p.length - 2)) :
     Fin p.length :=
   ⟨i.1, by omega⟩
 
 def cycleInternalSuccIndex
     {V : Type*} {G : SimpleGraph V} {v : V}
-    (p : G.Walk v v) (hp : p.IsCycle) (i : Fin (p.length - 2)) :
+    (p : G.Walk v v) (_hp : p.IsCycle) (i : Fin (p.length - 2)) :
     Fin p.length :=
   ⟨i.1 + 1, by omega⟩
 
@@ -1136,13 +1136,13 @@ def cycleLastSpoke
 
 def cycleInternalSpoke
     {V : Type*} {G : SimpleGraph V} {v : V}
-    (p : G.Walk v v) (hp : p.IsCycle) (i : Fin (p.length - 2)) :
+    (p : G.Walk v v) (_hp : p.IsCycle) (i : Fin (p.length - 2)) :
     Fin (p.length - 1) :=
   ⟨i.1, by omega⟩
 
 def cycleInternalSuccSpoke
     {V : Type*} {G : SimpleGraph V} {v : V}
-    (p : G.Walk v v) (hp : p.IsCycle) (i : Fin (p.length - 2)) :
+    (p : G.Walk v v) (_hp : p.IsCycle) (i : Fin (p.length - 2)) :
     Fin (p.length - 1) :=
   ⟨i.1 + 1, by omega⟩
 
@@ -1449,14 +1449,16 @@ lemma walkCycleGraph_map_eq_spanningCoe
         simpa [walkCycleEmbedding_eq_getVert_succ] using
           p.toSubgraph_adj_getVert (i := i.1 + 1) (by omega)
       · rcases h with ⟨rfl, rfl⟩
+        have hi0 : i.1 < p.length := lt_of_lt_of_le i.isLt (Nat.sub_le _ _)
+        have hi1 : i.1 + 1 < p.length := by omega
         exact (by
           simpa [walkCycleEmbedding_eq_getVert_succ] using
             p.toSubgraph_adj_getVert (i := i.1 + 1) (by omega) :
               p.toSubgraph.Adj
                 (walkCycleEmbedding p hp
-                  (⟨i.1, by omega⟩ : Fin p.length))
+                  (⟨i.1, hi0⟩ : Fin p.length))
                 (walkCycleEmbedding p hp
-                  (⟨i.1 + 1, by omega⟩ : Fin p.length))).symm
+                  (⟨i.1 + 1, hi1⟩ : Fin p.length))).symm
   · intro hab
     rw [p.toSubgraph_adj_iff] at hab
     obtain ⟨i, hedge, hi⟩ := hab

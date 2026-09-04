@@ -11,17 +11,28 @@ namespace Erdos207
 
 open scoped NNReal
 
-theorem reserve_inner_margin_for_graph_mass
-    (u n p tau : ℝ≥0) (hp : p ≤ 1) (htau : tau ≤ 1)
-    (hinner : u ≤ p ^ 4 * tau ^ 6 * n / 1536) : u ≤ p * n / 8 := by
-  have hp4 : p ^ 4 ≤ p := by
-    simpa only [pow_one] using pow_le_pow_of_le_one (show 0 ≤ p from zero_le) hp (show 1 ≤ 4 by decide)
-  have ht6 : tau ^ 6 ≤ 1 := pow_le_one₀ zero_le htau
-  calc
-    u ≤ p ^ 4 * tau ^ 6 * n / 1536 := hinner
-    _ ≤ p * 1 * n / 1536 := by gcongr
-    _ = p * n / 1536 := by ring
-    _ ≤ p * n / 8 := div_le_div_of_nonneg_left zero_le (by norm_num) (by norm_num)
+theorem reserve_inner_margin_for_graph_mass (u n p tau : ℝ≥0) (hp : p ≤ 1) (htau : tau ≤ 1)
+    (hinner : u ≤ p ^ 4 * tau ^ 6 * n / 1536) : u ≤ p * n / 8 :=
+  by
+    have hp4 : p ^ 4 ≤ p :=
+      by
+        simpa only [pow_one] using
+          pow_le_pow_of_le_one (show 0 ≤ p from zero_le) hp (show 1 ≤ 4 by decide)
+    have ht6 : tau ^ 6 ≤ 1 := pow_le_one₀ zero_le htau
+    calc
+      u ≤ p ^ 4 * tau ^ 6 * n / 1536 := hinner
+      _ ≤ p * 1 * n / 1536 :=
+        by
+          gcongr
+      _ = p * n / 1536 :=
+        by
+          ring
+      _ ≤ p * n / 8 :=
+        div_le_div_of_nonneg_left zero_le
+          (by
+            norm_num)
+          (by
+            norm_num)
 
 theorem regularized_auxiliary_mass_normalization
     (n m : ℕ) (p tau tau0 : ℝ≥0) (htau0 : 0 < tau0) (htau : tau0 ≤ tau)

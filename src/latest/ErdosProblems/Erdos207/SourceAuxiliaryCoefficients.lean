@@ -16,9 +16,11 @@ open scoped NNReal
 def sourceAuxiliaryCoefficient (q i : ℕ) : ℝ≥0 :=
   max 1 (sourcePrefixY q i+∑ j ∈ Icc 4 q, sourceNibbleMomentCoefficient i j 2*sourcePrefixY q i)
 
-theorem one_le_sourceAuxiliaryCoefficient (q i : ℕ) : 1 ≤ sourceAuxiliaryCoefficient q i := le_max_left _ _
+theorem one_le_sourceAuxiliaryCoefficient (q i : ℕ) : 1 ≤ sourceAuxiliaryCoefficient q i :=
+  le_max_left _ _
 
-theorem sourcePrefixY_le_auxiliaryCoefficient (q i : ℕ) : sourcePrefixY q i ≤ sourceAuxiliaryCoefficient q i :=
+theorem sourcePrefixY_le_auxiliaryCoefficient (q i : ℕ) :
+    sourcePrefixY q i ≤ sourceAuxiliaryCoefficient q i :=
   (le_add_of_nonneg_right zero_le).trans (le_max_right _ _)
 
 theorem source_auxiliary_order_sum_le (q i j : ℕ) (hj : 4 ≤ j) :

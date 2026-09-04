@@ -169,9 +169,9 @@ theorem internalEdgeGreedyKernel_supported_usesScheduledOuterEdges
       let he : e ∈ edges := List.get_mem edges ⟨i, hi⟩
       let huv : e.out.1 ≠ e.out.2 := hne e he
       by_cases hcovered : (coveredGraph z.chosen).Adj e.out.1 e.out.2
-      · simp only [e, he, huv, hcovered, dite_true]
+      · simp only [e, hcovered, dite_true]
         exact FiniteLaw.supportedOn_pure _ hz
-      · simp only [e, he, huv, hcovered, dite_false]
+      · simp only [e, hcovered, dite_false]
         let C := activeReserveLegalThirdVertices F G U (S e) omega
           z.chosen e.out.1 e.out.2 huv
         by_cases hlarge : D ≤ C.card

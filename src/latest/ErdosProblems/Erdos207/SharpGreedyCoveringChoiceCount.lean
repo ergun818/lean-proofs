@@ -118,14 +118,14 @@ lemma card_inter_greedyChoicesCoveringEdge_le_one
       apply Subtype.ext
       apply Subtype.ext
       exact hUnionU.symm.trans hUnionT
-    simpa [hUT]
+    simp [hUT]
   · rw [not_nonempty_iff_eq_empty.mp hnonempty]
     simp
 
 /-- First two Bonferroni terms for a finite family whose pairwise
 intersections have cardinality at most `c`. -/
 lemma sum_card_le_card_biUnion_add_choose_two_mul
-    {I A : Type*} [DecidableEq I] [DecidableEq A]
+    {I A : Type*} [DecidableEq A]
     (s : Finset I) (F : I -> Finset A) (c : ℕ)
     (hinter : ∀ i ∈ s, ∀ j ∈ s, i ≠ j ->
       (F i ∩ F j).card <= c) :

@@ -80,10 +80,11 @@ lemma biUnion_union_eq {A X : Type*} [DecidableEq A] [DecidableEq X]
 
 /-- Turning a loop-free finite edge list into a graph and back recovers the
 same edge set. -/
-lemma edgeSet_fromEdgeFinset {V : Type*} [DecidableEq V]
+lemma edgeSet_fromEdgeFinset {V : Type*}
     (s : Finset (Sym2 V)) (hloop : ∀ e ∈ s, ¬ e.IsDiag) :
     (SimpleGraph.fromEdgeSet (s : Set (Sym2 V))).edgeSet =
       (s : Set (Sym2 V)) := by
+  classical
   ext e
   rw [SimpleGraph.edgeSet_fromEdgeSet]
   exact ⟨fun h ↦ h.1, fun he ↦ ⟨he, hloop e he⟩⟩

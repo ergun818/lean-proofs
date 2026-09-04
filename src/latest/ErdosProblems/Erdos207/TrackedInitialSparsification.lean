@@ -178,7 +178,7 @@ prescribed edge family, while the compatible probability estimate may use a
 smaller tracked subfamily. -/
 theorem initialProductBound_of_tracked_patterns
     {Omega V : Type*} [Fintype Omega] [Fintype V]
-    [DecidableEq Omega] [DecidableEq V]
+    [DecidableEq V]
     (L : FiniteLaw Omega) (selected : Omega → TripleSystemOn V)
     (ambient : TripleSystemOn V)
     (tracked : Finset (Sym2 V) → Finset (Sym2 V))
@@ -198,6 +198,7 @@ theorem initialProductBound_of_tracked_patterns
           (p ^ E.card *
             (Fintype.card V : ℝ≥0)⁻¹ ^ Q.card + b)) :
     IsInitialProductBound L selected p C b := by
+  classical
   intro Q E
   by_cases hQpacking : IsPackingOn Q
   · by_cases hdisjoint :
@@ -255,7 +256,7 @@ the strong-law constant, may be used to dominate the trivial probability
 bound `1`. -/
 theorem initialProductBound_of_bounded_tracked_patterns
     {Omega V : Type*} [Fintype Omega] [Fintype V]
-    [DecidableEq Omega] [DecidableEq V]
+    [DecidableEq V]
     (L : FiniteLaw Omega) (selected : Omega → TripleSystemOn V)
     (ambient : TripleSystemOn V)
     (tracked : Finset (Sym2 V) → Finset (Sym2 V))
@@ -281,6 +282,7 @@ theorem initialProductBound_of_bounded_tracked_patterns
         (p ^ E.card *
           (Fintype.card V : ℝ≥0)⁻¹ ^ Q.card + b)) :
     IsInitialProductBound L selected p C b := by
+  classical
   intro Q E
   by_cases hQpacking : IsPackingOn Q
   · by_cases hdisjoint :

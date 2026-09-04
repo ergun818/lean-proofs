@@ -28,11 +28,11 @@ theorem FiniteLaw.independentBits_probability_relative_deviation
   have hpos : (L.probability P : ℝ) ≤ Real.exp (-eta ^ 2 * mu / 4) := by
     have h := independentBits_probability_scaled_centered_ge p hp S (eta / 2)
       (eta ^ 2 * mu / 2) (by rw [abs_of_pos (by positivity)]; linarith)
-    convert h using 1 <;> dsimp only [mu] <;> congr 1 <;> ring
+    convert h using 1 ; dsimp only [mu] ; congr 1 ; ring
   have hneg : (L.probability N : ℝ) ≤ Real.exp (-eta ^ 2 * mu / 4) := by
     have h := independentBits_probability_scaled_centered_ge p hp S (-eta / 2)
       (eta ^ 2 * mu / 2) (by rw [abs_of_neg (by linarith)]; linarith)
-    convert h using 1 <;> dsimp only [mu] <;> congr 1 <;> ring
+    convert h using 1 ; dsimp only [mu] ; congr 1 ; ring
   have hcover : L.probability (fun ω ↦ eta * mu < |centeredBernoulliSum p S ω|) ≤
       L.probability (fun ω ↦ P ω ∨ N ω) := by
     apply L.probability_mono

@@ -63,7 +63,7 @@ theorem singletonVertexStar_hasExtensionBound_pointWeight
             have hne : h ≠ T.1 := by
               intro heq
               apply hh
-              simpa [heq] using T.2
+              simp [heq]
             simp [hne]
           rw [hzero]
           exact zero_le_one
@@ -122,7 +122,7 @@ theorem singletonVertexStar_hasExtensionBound
             have hne : h ≠ T.1 := by
               intro heq
               apply hh
-              simpa [heq] using T.2
+              simp [heq]
             simp [hne]
           rw [hzero]
           exact zero_le_one

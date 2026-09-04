@@ -46,7 +46,7 @@ lemma edgeFinset_card_graphSup_eq_sum
           exact ha hj)
       rw [graphSup_insert, SimpleGraph.edgeSet_sup,
         Set.ncard_union_eq (SimpleGraph.disjoint_edgeSet.mpr had), ih]
-      · simp only [sum_insert, ha, not_false_eq_true, add_left_inj]
+      · simp only [sum_insert, ha, not_false_eq_true]
       · intro i hi j hj hij
         exact hF i (mem_insert_of_mem hi) j (mem_insert_of_mem hj) hij
 
@@ -60,9 +60,10 @@ lemma card_edgeFinset_cycleGraph_five :
     (SimpleGraph.cycleGraph 5).edgeFinset.card = 5 := by decide
 
 lemma edgeSet_ncard_eq_edgeFinset_card
-    {Y : Type*} [Fintype Y] [DecidableEq Y]
+    {Y : Type*} [Fintype Y]
     (G : SimpleGraph Y) [DecidableRel G.Adj] :
     G.edgeSet.ncard = G.edgeFinset.card := by
+  classical
   rw [← Set.fintypeCard_eq_ncard, SimpleGraph.edgeFinset_card]
 
 lemma edgeSet_ncard_map_embedding
@@ -72,7 +73,7 @@ lemma edgeSet_ncard_map_embedding
     Set.ncard_image_of_injective _ f.sym2Map.injective]
 
 lemma card_edgeFinset_shortCycleFamily_graph
-    {Y I₃ I₄ I₅ : Type*} [Fintype Y] [DecidableEq Y]
+    {Y I₃ I₄ I₅ : Type*} [Finite Y]
     (F : ShortCycleFamily Y I₃ I₄ I₅)
     (i : ShortCycleIndex I₃ I₄ I₅) :
     (F.graph i).edgeSet.ncard =
@@ -80,6 +81,8 @@ lemma card_edgeFinset_shortCycleFamily_graph
       | .inl _ => 3
       | .inr (.inl _) => 4
       | .inr (.inr _) => 5 := by
+  classical
+  let := Fintype.ofFinite Y
   rcases i with i | (i | i)
   · rw [edgeSet_ncard_map_embedding,
       edgeSet_ncard_eq_edgeFinset_card, card_edgeFinset_cycleGraph_three]
@@ -91,7 +94,7 @@ lemma card_edgeFinset_shortCycleFamily_graph
 /-- The weighted number of short cycles is exactly the number of edges in
 their graph supremum. -/
 lemma ShortCycleFamily.weighted_count_eq_edgeFinset_card
-    {Y I₃ I₄ I₅ : Type*} [Fintype Y] [DecidableEq Y]
+    {Y I₃ I₄ I₅ : Type*} [Finite Y]
     [Fintype I₃] [Fintype I₄] [Fintype I₅]
     [DecidableEq I₃] [DecidableEq I₄] [DecidableEq I₅]
     (F : ShortCycleFamily Y I₃ I₄ I₅)
@@ -99,6 +102,8 @@ lemma ShortCycleFamily.weighted_count_eq_edgeFinset_card
     3 * Fintype.card I₃ + 4 * Fintype.card I₄ +
         5 * Fintype.card I₅ =
       (graphSup univ F.graph).edgeSet.ncard := by
+  classical
+  let := Fintype.ofFinite Y
   rw [edgeFinset_card_graphSup_eq_sum univ F.graph (by
     intro i _ j _ hij
     exact hF i j hij)]
@@ -107,10 +112,11 @@ lemma ShortCycleFamily.weighted_count_eq_edgeFinset_card
 
 /-- Root-root edges and the universal path-cover graph are edge-disjoint. -/
 lemma rootMap_disjoint_pathCoverGraph
-    {V : Type*} [Fintype V] [DecidableEq V] {k : ℕ}
+    {V : Type*} [Finite V] [DecidableEq V] {k : ℕ}
     (G : SimpleGraph V) :
     Disjoint (G.map (pathCoverRootEmbedding (X := V) (k := k)))
       (pathCoverGraph V k) := by
+  let := Fintype.ofFinite V
   rw [SimpleGraph.disjoint_left]
   intro u v huv huv'
   rw [SimpleGraph.map_adj] at huv
@@ -118,17 +124,19 @@ lemma rootMap_disjoint_pathCoverGraph
   exact pathCoverGraph_not_adj_root_root a b huv'
 
 lemma cycleRecord_length_le_card
-    {V : Type*} [Fintype V] [DecidableEq V]
+    {V : Type*} [Fintype V]
     (R : CycleRecord V) : R.walk.length ≤ Fintype.card V := by
+  classical
   rw [← Fintype.card_fin R.walk.length]
   exact Fintype.card_le_of_injective
     (walkCycleEmbedding R.walk R.isCycle) (walkCycleEmbedding R.walk R.isCycle).injective
 
 lemma card_decompositionFiveCycleIndex_le
-    {V : Type*} [Fintype V] [DecidableEq V]
+    {V : Type*} [Fintype V]
     {G : SimpleGraph V} (D : CycleDecomposition G) :
     Fintype.card (DecompositionFiveCycleIndex D) ≤
       D.cycleCount * Fintype.card V := by
+  classical
   rw [Fintype.card_sigma]
   calc
     (∑ c : Fin D.cycleCount,

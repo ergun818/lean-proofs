@@ -20,7 +20,6 @@ needed at the small end of the vortex.
 namespace Erdos207
 
 open Finset
-open scoped Classical
 
 noncomputable section
 
@@ -105,7 +104,7 @@ lemma sphereRoot_localized_of_forbidden
         rw [mappedSphereRootCandidates_apply]
         rfl
       rw [hempty] at hay
-      simpa using hay
+      simp at hay
     refine Or.inr ⟨y, ?_, hay⟩
     by_cases hUT : U = T
     · subst U

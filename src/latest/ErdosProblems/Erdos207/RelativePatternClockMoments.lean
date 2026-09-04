@@ -10,7 +10,7 @@ import ErdosProblems.Erdos207.RelativeObservableArithmetic
 namespace Erdos207
 
 theorem relative_pattern_prefactor_bounds
-    (Y f fp : ℝ) (hY : 0 ≤ Y) (hf : 0 < f) (hYf : Y ≤ 2 * f) (hfp : f / 2 ≤ fp) :
+    (Y f fp : ℝ) (_hY : 0 ≤ Y) (hf : 0 < f) (hYf : Y ≤ 2 * f) (hfp : f / 2 ≤ fp) :
     Y / fp ≤ 4 ∧ 1 / fp ≤ 2 / f := by
   have hhalf : 0 < f / 2 := by positivity
   constructor
@@ -55,7 +55,7 @@ theorem relative_pattern_clock_jump_budget
 
 theorem relative_pattern_clock_secondMoment_budget
     (Y f fp L J D G v : ℝ) (hY : 0 ≤ Y) (hf : 0 < f) (hYf : Y ≤ 2 * f)
-    (hfp : f / 2 ≤ fp) (hfL : f ≤ L) (hJ : 1 ≤ J) (hD : 0 ≤ D) (hG : 0 ≤ G)
+    (hfp : f / 2 ≤ fp) (hfL : f ≤ L) (hJ : 1 ≤ J) (_hD : 0 ≤ D) (hG : 0 ≤ G)
     (hstep : |fp - f| / f ≤ D / L) (hv : v ≤ 6 * G * J * Y / L) :
     (2 * v + 2 * (Y * (fp - f) / f) ^ 2) / fp ^ 2 ≤
       (96 * G + 32 * D ^ 2) * J / (f * L) := by

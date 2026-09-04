@@ -15,15 +15,16 @@ open scoped NNReal
 
 noncomputable section
 
-def sourceGainExceptionalClass
-    {V : Type*} [Fintype V] [DecidableEq V] {ell : ℕ}
-    (W : Vortex V ell) (F G : ForbiddenFamilyOn V) (T : TripleOn V) (a : ℕ) (H : TripleSystemOn V) :=
-  (gainDefectExceptionalClass F G T a H).filter
-    fun u ↦ ∀ U ∈ u.omittedRoot, W.level U = Fin.last ell
+def sourceGainExceptionalClass {V : Type*} [Fintype V] [DecidableEq V] {ell : ℕ}
+    (W : Vortex V ell) (F G : ForbiddenFamilyOn V) (T : TripleOn V) (a : ℕ)
+    (H : TripleSystemOn V) :=
+  (gainDefectExceptionalClass F G T a H).filter fun u ↦
+    ∀ U ∈ u.omittedRoot, W.level U = Fin.last ell
 
 theorem GainDefectWitness.left_omission_complement
-    {V : Type*} [Fintype V] [DecidableEq V] {F G : ForbiddenFamilyOn V} {T : TripleOn V} {a : ℕ}
+    {V : Type*} [Finite V] [DecidableEq V] {F G : ForbiddenFamilyOn V} {T : TripleOn V} {a : ℕ}
     (u : GainDefectWitness F G T a) : u.first.erase T \ u.leftRemainder = u.omitted := by
+  let := Fintype.ofFinite V
   have h := u.forward_first_omitted ∅ (empty_subset _)
   simpa only [GainDefectWitness.firstExposureRoot, inter_empty, insert_empty_eq,
     sdiff_empty, sdiff_singleton_eq_erase] using h
@@ -70,59 +71,90 @@ theorem sourceGainExceptionalCode_injective
   cases v
   simp_all
 
-theorem sourceGainExceptional_weight_le_omission
-    {V : Type*} [Fintype V] [DecidableEq V] {ell j a : ℕ}
-    (W : Vortex V ell) (F : ForbiddenFamilyOn V) (T T' : TripleOn V)
+theorem sourceGainExceptional_weight_le_omission {V : Type*} [Fintype V] [DecidableEq V]
+    {ell j a : ℕ} (W : Vortex V ell) (F : ForbiddenFamilyOn V) (T T' : TripleOn V)
     (hcard : ∀ E ∈ F, E.card = j - 2) (w : ℝ≥0) :
-    ∑ u : sourceGainExceptionalClass W F F T a {T'},
-      setWeight (vortexTripleWeight W w) (u.1.remainder \ {T'}) ≤
-      sourceDistinctOmissionWeight W F T T' (j - 2 - (a + 1)) w := by
-  classical
-  rw [sourceDistinctOmissionWeight, Finset.sum_subtype
-    (terminalOmissionCodes W (distinctEqualRemainderPairs F T T') (fun E ↦ E.1.erase T) (j - 2 - (a + 1)))
-    (p := fun x ↦ x ∈ terminalOmissionCodes W (distinctEqualRemainderPairs F T T')
-      (fun E ↦ E.1.erase T) (j - 2 - (a + 1))) (fun _ ↦ Iff.rfl)]
-  apply sum_le_sum_of_injective_code (sourceGainExceptionalCode hcard) (sourceGainExceptionalCode_injective hcard)
-  intro u
-  change setWeight (vortexTripleWeight W w) (u.1.remainder \ {T'}) ≤
-    setWeight (vortexTripleWeight W w) u.1.leftRemainder
-  rw [u.1.remainder_sdiff_eq_left_of_forwardExceptional {T'}
-    (mem_filter.mp (mem_filter.mp u.2).1).2.2.1]
+    ∑ u : sourceGainExceptionalClass W F F T a { T' },
+        setWeight (vortexTripleWeight W w) (u.1.remainder \ { T' }) ≤
+      sourceDistinctOmissionWeight W F T T' (j - 2 - (a + 1)) w :=
+  by
+    classical
+    rw [sourceDistinctOmissionWeight,
+      Finset.sum_subtype
+        (terminalOmissionCodes W (distinctEqualRemainderPairs F T T') (fun E ↦ E.1.erase T)
+          (j - 2 - (a + 1)))
+        (p := fun x ↦
+        x ∈
+          terminalOmissionCodes W (distinctEqualRemainderPairs F T T') (fun E ↦ E.1.erase T)
+            (j - 2 - (a + 1)))
+        (fun _ ↦ Iff.rfl)]
+    apply
+      sum_le_sum_of_injective_code (sourceGainExceptionalCode hcard)
+        (sourceGainExceptionalCode_injective hcard)
+    intro u
+    change
+      setWeight (vortexTripleWeight W w) (u.1.remainder \ { T' }) ≤
+        setWeight (vortexTripleWeight W w) u.1.leftRemainder
+    rw [u.1.remainder_sdiff_eq_left_of_forwardExceptional { T' }
+        (mem_filter.mp (mem_filter.mp u.2).1).2.2.1]
 
-theorem SourceVortexWellSpread.exceptional_gain_weight_le
-    {V : Type*} [Fintype V] [DecidableEq V] {ell j a : ℕ}
-    {W : Vortex V ell} {F : ForbiddenFamilyOn V} {y z : ℝ≥0}
-    (hF : SourceVortexWellSpread W j F y z) (ha : 1 ≤ a)
-    (T : TripleOn V) (H : TripleSystemOn V) (w : ℝ≥0) (hw : 1 ≤ w) :
+theorem SourceVortexWellSpread.exceptional_gain_weight_le {V : Type*} [Fintype V]
+    [DecidableEq V] {ell j a : ℕ} {W : Vortex V ell} {F : ForbiddenFamilyOn V} {y z : ℝ≥0}
+    (hF : SourceVortexWellSpread W j F y z) (ha : 1 ≤ a) (T : TripleOn V)
+    (H : TripleSystemOn V) (w : ℝ≥0) (hw : 1 ≤ w) :
     ∑ u : sourceGainExceptionalClass W F F T a H,
-      setWeight (vortexTripleWeight W w) (u.1.remainder \ H) ≤
+        setWeight (vortexTripleWeight W w) (u.1.remainder \ H) ≤
       ((((j + 1) ^ ell : ℕ) : ℝ≥0) * (2 : ℝ≥0) ^ j * z * w ^ j) *
-        (W.terminalSize : ℝ≥0) ^ (a - 1) := by
-  classical
-  by_cases hH : H.card = 1
-  · obtain ⟨T', rfl⟩ := card_eq_one.mp hH
-    let f := j - 2 - (a + 1)
-    let C : ℝ≥0 := (((f + 1) ^ ell : ℕ) : ℝ≥0) * ((2 : ℝ≥0) ^ (j - 3) * z) * w ^ f
-    have hn : (1 : ℝ≥0) ≤ W.terminalSize := by exact_mod_cast hF.terminal_nonempty
-    have hj := hF.order
-    have hratio := source_weight_power_ratio_le (W.terminalSize : ℝ≥0) C (j - 4) f (a - 1)
-      hn (by dsimp only [f]; omega)
-    have hcoeff : C ≤ (((j + 1) ^ ell : ℕ) : ℝ≥0) * (2 : ℝ≥0) ^ j * z * w ^ j := by
-      have hf : f ≤ j := by dsimp only [f]; omega
-      have hp : (((f + 1) ^ ell : ℕ) : ℝ≥0) ≤ (((j + 1) ^ ell : ℕ) : ℝ≥0) := by
-        exact_mod_cast Nat.pow_le_pow_left (by omega : f + 1 ≤ j + 1) ell
-      dsimp only [C]
-      rw [← mul_assoc]
-      exact mul_le_mul' (mul_le_mul' (mul_le_mul' hp (pow_le_pow_right₀ (by norm_num) (Nat.sub_le j 3))) le_rfl)
-        (pow_le_pow_right₀ hw hf)
-    exact (sourceGainExceptional_weight_le_omission W F T T'
-      (fun E hE ↦ (hF.uniform E hE).1) w).trans
-      ((hF.distinct_omission_weight_le T T' w).trans
-        (hratio.trans (mul_le_mul_of_nonneg_right hcoeff zero_le)))
-  · have : IsEmpty (sourceGainExceptionalClass W F F T a H) := by
-      refine ⟨fun u ↦ ?_⟩
-      exact hH (mem_filter.mp (mem_filter.mp u.2).1).2.2.2.1
-    simp only [Fintype.sum_empty, zero_le]
+        (W.terminalSize : ℝ≥0) ^ (a - 1) :=
+  by
+    classical
+    by_cases hH : H.card = 1
+    · obtain ⟨T', rfl⟩ := card_eq_one.mp hH
+      let f := j - 2 - (a + 1)
+      let C : ℝ≥0 := (((f + 1) ^ ell : ℕ) : ℝ≥0) * ((2 : ℝ≥0) ^ (j - 3) * z) * w ^ f
+      have hn : (1 : ℝ≥0) ≤ W.terminalSize :=
+        by
+          exact_mod_cast hF.terminal_nonempty
+      have hj := hF.order
+      have hratio :=
+        source_weight_power_ratio_le (W.terminalSize : ℝ≥0) C (j - 4) f (a - 1) hn
+          (by
+            dsimp only [f]; omega)
+      have hcoeff : C ≤ (((j + 1) ^ ell : ℕ) : ℝ≥0) * (2 : ℝ≥0) ^ j * z * w ^ j :=
+        by
+          have hf : f ≤ j :=
+            by
+              dsimp only [f]; omega
+          have hp : (((f + 1) ^ ell : ℕ) : ℝ≥0) ≤ (((j + 1) ^ ell : ℕ) : ℝ≥0) :=
+            by
+              exact_mod_cast
+                Nat.pow_le_pow_left
+                  (by
+                      omega :
+                    f + 1 ≤ j + 1)
+                  ell
+          dsimp only [C]
+          rw [← mul_assoc]
+          exact
+            mul_le_mul'
+              (mul_le_mul'
+                (mul_le_mul' hp
+                  (pow_le_pow_right₀
+                    (by
+                      norm_num)
+                    (Nat.sub_le j 3)))
+                le_rfl)
+              (pow_le_pow_right₀ hw hf)
+      exact
+        (sourceGainExceptional_weight_le_omission W F T T' (fun E hE ↦ (hF.uniform E hE).1)
+              w).trans
+          ((hF.distinct_omission_weight_le T T' w).trans
+            (hratio.trans (mul_le_mul_of_nonneg_right hcoeff zero_le)))
+    · have : IsEmpty (sourceGainExceptionalClass W F F T a H) :=
+        by
+          refine ⟨fun u ↦ ?_⟩
+          exact hH (mem_filter.mp (mem_filter.mp u.2).1).2.2.2.1
+      simp only [Fintype.sum_empty, zero_le]
 
 end
 

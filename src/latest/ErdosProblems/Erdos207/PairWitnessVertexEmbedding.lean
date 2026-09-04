@@ -37,21 +37,26 @@ def mapPairThreatWitness (f : V ↪ W) {F : ForbiddenFamilyOn V} {T : TripleOn V
   · exact Finset.map_subset_map.mpr u.2.1
   · exact fun h ↦ u.2.2 ((mem_triplesSharingPair_map_iff f T u.1.1.2).1 h)
 
-theorem mapPairThreatWitness_injective (f : V ↪ W) (F : ForbiddenFamilyOn V) (T : TripleOn V) (P : PairOn V) :
-    Function.Injective (mapPairThreatWitness f : PairTwoAwayThreatWitness V F T P → _) := by
-  intro u v h
-  have hE := (mapTripleSystemEmbedding f).injective (congrArg (fun z ↦ z.1.1.1) h)
-  have hU := (mapTriple_injective f) (congrArg (fun z ↦ z.1.1.2) h)
-  change u.1.1.1 = v.1.1.1 at hE
-  change u.1.1.2 = v.1.1.2 at hU
-  apply Subtype.ext
-  apply Subtype.ext
-  exact Prod.ext hE hU
+theorem mapPairThreatWitness_injective (f : V ↪ W) (F : ForbiddenFamilyOn V) (T : TripleOn V)
+    (P : PairOn V) :
+    Function.Injective (mapPairThreatWitness f : PairTwoAwayThreatWitness V F T P → _) :=
+  by
+    intro u v h
+    have hE := (mapTripleSystemEmbedding f).injective (congrArg (fun z ↦ z.1.1.1) h)
+    have hU := (mapTriple_injective f) (congrArg (fun z ↦ z.1.1.2) h)
+    change u.1.1.1 = v.1.1.1 at hE
+    change u.1.1.2 = v.1.1.2 at hU
+    apply Subtype.ext
+    apply Subtype.ext
+    exact Prod.ext hE hU
 
-theorem mapPairThreatWitness_remainder (f : V ↪ W)
-    {F : ForbiddenFamilyOn V} {T : TripleOn V} {P : PairOn V} (u : PairTwoAwayThreatWitness V F T P) :
-    pairTwoAwayThreatRemainder (mapPairThreatWitness f u) = mapTripleSystem f (pairTwoAwayThreatRemainder u) := by
-  simp only [pairTwoAwayThreatRemainder, twoAwayThreatRemainder, mapPairThreatWitness, mapTripleSystem_erase]
+theorem mapPairThreatWitness_remainder (f : V ↪ W) {F : ForbiddenFamilyOn V} {T : TripleOn V}
+    {P : PairOn V} (u : PairTwoAwayThreatWitness V F T P) :
+    pairTwoAwayThreatRemainder (mapPairThreatWitness f u) =
+      mapTripleSystem f (pairTwoAwayThreatRemainder u) :=
+  by
+    simp only [pairTwoAwayThreatRemainder, twoAwayThreatRemainder, mapPairThreatWitness,
+      mapTripleSystem_erase]
 
 theorem pairThreat_selectedCount_le_map (f : V ↪ W) (F : ForbiddenFamilyOn V)
     (T : TripleOn V) (P : PairOn V) (R : TripleSystemOn V) :

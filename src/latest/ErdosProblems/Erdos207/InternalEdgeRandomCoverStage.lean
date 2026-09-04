@@ -55,9 +55,9 @@ theorem internalEdgeGreedyKernel_supported_ambient_notFailed
   let he : e ∈ edges := List.get_mem edges ⟨i, hi⟩
   let huv : e.out.1 ≠ e.out.2 := hne e he
   by_cases hcovered : (coveredGraph z.chosen).Adj e.out.1 e.out.2
-  · simp only [e, he, huv, hcovered, dite_true]
+  · simp only [e, hcovered, dite_true]
     exact FiniteLaw.supportedOn_pure _ ⟨hzsub, hzfailed⟩
-  · simp only [e, he, huv, hcovered, dite_false]
+  · simp only [e, hcovered, dite_false]
     let C := activeReserveLegalThirdVertices F G U (S e) omega
       z.chosen e.out.1 e.out.2 huv
     have hlarge : D <= C.card := by
@@ -217,11 +217,11 @@ theorem IsIterationTypical.exists_internalOuterEdge_randomGreedyLaw
     (hsmall : ((internalOuterEdges G (W.U i.succ)).card : Real) *
       Real.exp (-(((r ^ 2 : NNReal) : Real) * m) / 4) < 1)
     (hblocked : ∀ (Q : TripleSystemOn V) (e : Sym2 V),
-      ∀ hreach : GreedyReachable F P0 Q,
+      ∀ _hreach : GreedyReachable F P0 Q,
       Q ⊆ P0 ∪ A ->
       (Q \ P0).card <= (internalOuterEdges G (W.U i.succ)).card ->
       ∀ he : e ∈ internalOuterEdges G (W.U i.succ),
-      ∀ hleave : (leaveGraph Q).Adj e.out.1 e.out.2,
+      ∀ _hleave : (leaveGraph Q).Adj e.out.1 e.out.2,
       (edgeBlockedThirdVertices A Q
           (out_fst_ne_snd_of_mem_graphEdges
             (internalOuterEdges_subset_graphEdges G (W.U i.succ) he)) ∪

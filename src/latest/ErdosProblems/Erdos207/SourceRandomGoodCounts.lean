@@ -47,38 +47,51 @@ theorem familyExtensions_sample_eq_empty_of_not_terminal_root
   have hcandidate := (mem_filter.mp hm.1).1
   exact hR (hm.2.trans ((mem_terminalRandomConfigurations_iff W C).mp hcandidate).1)
 
-theorem SourceRandomCountsGood.sourceWellSpread
-    {V : Type*} [Fintype V] [DecidableEq V] {ell j : ℕ}
-    {W : Vortex V ell} {F : ForbiddenFamilyOn V} {y z a : ℝ≥0}
+theorem SourceRandomCountsGood.sourceWellSpread {V : Type*} [Fintype V] [DecidableEq V]
+    {ell j : ℕ} {W : Vortex V ell} {F : ForbiddenFamilyOn V} {y z a : ℝ≥0}
     {ω : TripleSystemOn V → Bool} (hgood : SourceRandomCountsGood W j F a ω)
     (hF : SourceVortexWellSpread W j F y z) :
-    SourceVortexWellSpread W j (F ∪ sampleTerminalConfigurations W j ω) (y + a) (z + 3 * a) := by
-  apply hF.union_terminal_of_count_bounds a
-    ((terminalRandomConfigurations_isTerminal W).mono (filter_subset _ _))
-    (fun C hC ↦ terminalRandomConfigurations_uniform W C (mem_filter.mp hC).1)
-  · intro R hR hRcard
-    by_cases hsub : R ⊆ triplesSupportedOn (W.U (Fin.last ell))
-    · exact hgood.1 R (mem_subsetsUpToCard_iff.mpr ⟨hsub, hRcard⟩) hR
-    · change ((familyExtensions (sampleTerminalConfigurations W j ω) R).card : ℝ≥0) ≤ _
-      rw [familyExtensions_sample_eq_empty_of_not_terminal_root (j := j) W R ω hsub]
-      simp
-  · intro T T'
-    have hcover : ((W.profiledDistinctEqualRemainderPairs (F ∪ sampleTerminalConfigurations W j ω) T T' 0).card : ℝ≥0) ≤
-        (W.profiledDistinctEqualRemainderPairs F T T' 0).card +
-        (distinctEqualRemainderPairs (sampleTerminalConfigurations W j ω) T T').card +
-        (crossDistinctConfigurationPairs F (sampleTerminalConfigurations W j ω) T T').card +
-        (crossDistinctConfigurationPairs (sampleTerminalConfigurations W j ω) F T T').card := by
-      exact_mod_cast card_profiledDistinctPairs_union_le_four W F (sampleTerminalConfigurations W j ω) T T'
-    obtain ⟨hpair, hleft, hright⟩ := hgood.2.1 T T'
-    apply hcover.trans
-    calc
-      _ ≤ ((W.profiledDistinctEqualRemainderPairs F T T' 0).card : ℝ≥0) +
-          a * (W.terminalSize : ℝ≥0) ^ (j - 4) + a * (W.terminalSize : ℝ≥0) ^ (j - 4) +
-          a * (W.terminalSize : ℝ≥0) ^ (j - 4) :=
-        add_le_add (add_le_add (add_le_add le_rfl hpair) hleft) hright
-      _ = _ := by ring
-  · intro hj T Q _hQ
-    exact hgood.2.2 hj T Q
+    SourceVortexWellSpread W j (F ∪ sampleTerminalConfigurations W j ω) (y + a) (z + 3 * a) :=
+  by
+    apply
+      hF.union_terminal_of_count_bounds a
+        ((terminalRandomConfigurations_isTerminal W).mono (filter_subset _ _))
+        (fun C hC ↦ terminalRandomConfigurations_uniform W C (mem_filter.mp hC).1)
+    · intro R hR hRcard
+      by_cases hsub : R ⊆ triplesSupportedOn (W.U (Fin.last ell))
+      · exact hgood.1 R (mem_subsetsUpToCard_iff.mpr ⟨hsub, hRcard⟩) hR
+      · change ((familyExtensions (sampleTerminalConfigurations W j ω) R).card : ℝ≥0) ≤ _
+        rw [familyExtensions_sample_eq_empty_of_not_terminal_root (j := j) W R ω hsub]
+        simp
+    · intro T T'
+      have hcover :
+        ((W.profiledDistinctEqualRemainderPairs (F ∪ sampleTerminalConfigurations W j ω) T T'
+                0).card :
+            ℝ≥0) ≤
+          (W.profiledDistinctEqualRemainderPairs F T T' 0).card +
+                (distinctEqualRemainderPairs (sampleTerminalConfigurations W j ω) T T').card +
+              (crossDistinctConfigurationPairs F (sampleTerminalConfigurations W j ω) T
+                  T').card +
+            (crossDistinctConfigurationPairs (sampleTerminalConfigurations W j ω) F T
+                T').card :=
+        by
+          exact_mod_cast
+            card_profiledDistinctPairs_union_le_four W F (sampleTerminalConfigurations W j ω)
+              T T'
+      obtain ⟨hpair, hleft, hright⟩ := hgood.2.1 T T'
+      apply hcover.trans
+      calc
+        _ ≤
+            ((W.profiledDistinctEqualRemainderPairs F T T' 0).card : ℝ≥0) +
+                  a * (W.terminalSize : ℝ≥0) ^ (j - 4) +
+                a * (W.terminalSize : ℝ≥0) ^ (j - 4) +
+              a * (W.terminalSize : ℝ≥0) ^ (j - 4) :=
+          add_le_add (add_le_add (add_le_add le_rfl hpair) hleft) hright
+        _ = _ :=
+          by
+            ring
+    · intro hj T Q _hQ
+      exact hgood.2.2 hj T Q
 
 end
 

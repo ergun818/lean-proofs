@@ -35,31 +35,39 @@ theorem FiniteLaw.map_uniform_equiv
   rw [Fintype.card_congr e]
   exact e.sum_comp (fun b ↦ if P b then (Fintype.card B : ℝ≥0)⁻¹ else 0)
 
-theorem greedyKernel_map
-    {V W : Type*} [Fintype V] [Fintype W] [DecidableEq V] [DecidableEq W]
+theorem greedyKernel_map {V W : Type*} [Fintype V] [Fintype W] [DecidableEq V] [DecidableEq W]
     (f : V ↪ W) (F : ForbiddenFamilyOn V) (S : GreedyStateOn V) :
     FiniteLaw.map (mapGreedyState f) (greedyKernel F S) =
-      greedyKernel (mapForbiddenFamily f F) (mapGreedyState f S) := by
-  classical
-  by_cases hA : S.available.Nonempty
-  · have hA' : (mapGreedyState f S).available.Nonempty := hA.map
-    let : Nonempty S.available := ⟨⟨hA.choose, hA.choose_spec⟩⟩
-    let : Nonempty (mapGreedyState f S).available := ⟨⟨hA'.choose, hA'.choose_spec⟩⟩
-    let e : S.available ≃ (mapGreedyState f S).available :=
-      Finset.equivMap (mapTripleEmbedding f) S.available
-    have hsrc : greedyKernel F S = FiniteLaw.map (fun T : S.available ↦ greedyStep F S T.1) FiniteLaw.uniform := by
-      simp only [greedyKernel, dif_pos hA]
-    have htgt : greedyKernel (mapForbiddenFamily f F) (mapGreedyState f S) =
-        FiniteLaw.map (fun T : (mapGreedyState f S).available ↦
-          greedyStep (mapForbiddenFamily f F) (mapGreedyState f S) T.1) FiniteLaw.uniform := by
-      simp only [greedyKernel, dif_pos hA']
-    rw [hsrc, htgt, FiniteLaw.map_comp, ← FiniteLaw.map_uniform_equiv e, FiniteLaw.map_comp]
-    congr 1
-    funext T
-    exact greedyStep_map f F S T.1
-  · have hA' : ¬ (mapGreedyState f S).available.Nonempty := by
-      simpa only [mapGreedyState, mapTripleSystem, Finset.map_nonempty] using hA
-    simp only [greedyKernel, dif_neg hA, dif_neg hA', FiniteLaw.map_pure]
+      greedyKernel (mapForbiddenFamily f F) (mapGreedyState f S) :=
+  by
+    classical
+    by_cases hA : S.available.Nonempty
+    · have hA' : (mapGreedyState f S).available.Nonempty := hA.map
+      let : Nonempty S.available := ⟨⟨hA.choose, hA.choose_spec⟩⟩
+      let : Nonempty (mapGreedyState f S).available := ⟨⟨hA'.choose, hA'.choose_spec⟩⟩
+      let e : S.available ≃ (mapGreedyState f S).available :=
+        Finset.equivMap (mapTripleEmbedding f) S.available
+      have hsrc :
+        greedyKernel F S =
+          FiniteLaw.map (fun T : S.available ↦ greedyStep F S T.1) FiniteLaw.uniform :=
+        by
+          simp only [greedyKernel, dif_pos hA]
+      have htgt :
+        greedyKernel (mapForbiddenFamily f F) (mapGreedyState f S) =
+          FiniteLaw.map
+            (fun T : (mapGreedyState f S).available ↦
+              greedyStep (mapForbiddenFamily f F) (mapGreedyState f S) T.1)
+            FiniteLaw.uniform :=
+        by
+          simp only [greedyKernel, dif_pos hA']
+      rw [hsrc, htgt, FiniteLaw.map_comp, ← FiniteLaw.map_uniform_equiv e, FiniteLaw.map_comp]
+      congr 1
+      funext T
+      exact greedyStep_map f F S T.1
+    · have hA' : ¬(mapGreedyState f S).available.Nonempty :=
+        by
+          simpa only [mapGreedyState, mapTripleSystem, Finset.map_nonempty] using hA
+      simp only [greedyKernel, dif_neg hA, dif_neg hA', FiniteLaw.map_pure]
 
 end
 

@@ -15,7 +15,7 @@ open scoped NNReal
 noncomputable section
 
 theorem exists_regular_subfamily_of_fractional_weights
-    {I J : Type*} [Fintype I] [DecidableEq I] [Fintype J]
+    {I J : Type*} [Finite I] [Fintype J]
     (A : Finset I) (incident : J → I → Prop) [∀ j, DecidablePred (incident j)]
     (w : I → ℝ) (mu eta : ℝ)
     (hw : ∀ i ∈ A, 0 ≤ w i ∧ w i ≤ 1)
@@ -24,6 +24,7 @@ theorem exists_regular_subfamily_of_fractional_weights
     (hfailure : 2 * Fintype.card J * Real.exp (-eta ^ 2 * mu / 4) < 1) :
     ∃ R ⊆ A, ∀ j, |((R.filter (incident j)).card : ℝ) - mu| ≤ eta * mu := by
   classical
+  let := Fintype.ofFinite I
   let p : I → ℝ≥0 := fun i ↦ ⟨if i ∈ A then w i else 0, by
     split_ifs with hi
     · exact (hw i hi).1

@@ -79,7 +79,7 @@ theorem mem_greedyConfigurationLosses_iff
       intro h
       exact hnot (mem_filter.mpr ⟨hclass, hTC, h⟩)
     rw [configuration_covered_after_step_iff hS hT hcover] at hnext
-    push_neg at hnext
+    push Not at hnext
     obtain ⟨U, hU, _, hthreat⟩ := hnext
     exact ⟨U, hU, (mem_greedyClosedThreats_comm F S hT (mem_inter.mp hU).2).mp hthreat⟩
   · rintro ⟨hclass, U, hU, hthreat⟩

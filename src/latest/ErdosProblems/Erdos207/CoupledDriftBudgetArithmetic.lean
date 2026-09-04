@@ -81,7 +81,7 @@ theorem pair_drift_error_coupled_scale
       _ = _ := by ring
   convert coupled_three_term_error_budget hL hx hR he
     (by positivity : 0 ≤ 2 * k) (by positivity : 0 ≤ C + 3)
-    (by positivity : 0 ≤ delta * (C + 1)) hN₀ hN₁ hN₂ using 1 <;> ring
+    (by positivity : 0 ≤ delta * (C + 1)) hN₀ hN₁ hN₂ using 1 ; ring
 
 theorem configuration_drift_error_coupled_scale
     {L x e h R v alpha beta H epsilonH J Z eprev epsilonA target

@@ -38,22 +38,25 @@ theorem regularized_order_union_eq_of_subset
     rw [huniform i hi C hCi, huniform j hj E hEj, heq]
   · exact (havoid j hj E hEj C (mem_biUnion.mpr ⟨i, mem_Ico.mpr ⟨hi4, by omega⟩, hCi⟩) hCE).elim
 
-theorem regularizedForbiddenUnion_minimal
-    {V I : Type*} [DecidableEq V] [DecidableEq I]
+theorem regularizedForbiddenUnion_minimal {V I : Type*} [DecidableEq V] [DecidableEq I]
     (e : I ↪ TripleOn V) (q : ℕ) (Lstar : ℕ → Finset (Finset I))
     (huniform : ∀ j ∈ Icc 4 q, ∀ E ∈ Lstar j, E.card = j - 2)
-    (havoid : ∀ j ∈ Icc 4 q, ∀ E ∈ Lstar j, ∀ C ∈ (Ico 4 j).biUnion Lstar, ¬ C ⊆ E) :
-    minimalForbiddenFamily (regularizedForbiddenUnion e q Lstar) = regularizedForbiddenUnion e q Lstar := by
-  classical
-  apply Subset.antisymm (minimalForbiddenFamily_subset _)
-  intro E hE
-  apply mem_filter.mpr
-  refine ⟨hE, ?_⟩
-  intro C hC hCE
-  obtain ⟨E0, hE0, rfl⟩ := mem_image.mp hE
-  obtain ⟨C0, hC0, rfl⟩ := mem_image.mp hC
-  have heq := regularized_order_union_eq_of_subset q Lstar huniform havoid hC0 hE0 (map_subset_map.mp hCE)
-  exact heq ▸ Subset.rfl
+    (havoid : ∀ j ∈ Icc 4 q, ∀ E ∈ Lstar j, ∀ C ∈ (Ico 4 j).biUnion Lstar, ¬C ⊆ E) :
+    minimalForbiddenFamily (regularizedForbiddenUnion e q Lstar) =
+      regularizedForbiddenUnion e q Lstar :=
+  by
+    classical
+    apply Subset.antisymm (minimalForbiddenFamily_subset _)
+    intro E hE
+    apply mem_filter.mpr
+    refine ⟨hE, ?_⟩
+    intro C hC hCE
+    obtain ⟨E0, hE0, rfl⟩ := mem_image.mp hE
+    obtain ⟨C0, hC0, rfl⟩ := mem_image.mp hC
+    have heq :=
+      regularized_order_union_eq_of_subset q Lstar huniform havoid hC0 hE0
+        (map_subset_map.mp hCE)
+    exact heq ▸ Subset.rfl
 
 theorem regularizedForbiddenUnion_order
     {V I : Type*} [DecidableEq V] [DecidableEq I]

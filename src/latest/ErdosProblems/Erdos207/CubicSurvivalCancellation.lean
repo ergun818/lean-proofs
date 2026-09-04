@@ -118,7 +118,7 @@ theorem affineEnvelope_loss_of_three_mul
       (3 : ℝ≥0) * (d - K : ℕ) := hratio
   calc
     slope * (M : ℕ) =
-        ((3 : ℝ≥0) * M) * slope / 3 := by norm_num; ring
+        ((3 : ℝ≥0) * M) * slope / 3 := by ring
     _ ≤ ((P : ℝ≥0) * u) * slope / 3 := by gcongr
     _ = (P : ℝ≥0) * (slope * u) / 3 := by ring
     _ ≤ (P : ℝ≥0) * (3 * (d - K : ℕ)) / 3 := by gcongr

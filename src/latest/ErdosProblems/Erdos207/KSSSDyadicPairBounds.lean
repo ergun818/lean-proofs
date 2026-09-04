@@ -25,28 +25,35 @@ theorem ksssPoisson_exp_neg_ge_inverse_scale
   simpa only [Real.exp_neg, one_div] using
     one_div_le_one_div_of_le (Real.exp_pos (ksssPoissonExponent orders a t)) hexp
 
-theorem ksssPairTrajectory_dyadic_bounds
-    (orders : Finset ℕ) (a coeff : ℕ → ℝ) (E₀ A₀ time N t : ℝ) (s b B : ℕ)
-    (hE : 0 < E₀) (hA : 0 < A₀) (hTime : 0 ≤ time) (hclock : 3 * time < E₀)
-    (ha : ∀ d ∈ orders, 0 ≤ a d) (hab : ∀ d ∈ orders, a d * E₀ ^ d ≤ coeff d)
-    (hN : 0 ≤ N) (ht : 4 ≤ t)
-    (hfloor : 1 / t ^ b ≤ ksssEdgeDensity E₀ time)
-    (hratio : N / t ^ b ≤ A₀ / E₀) (hexp : Real.exp (∑ d ∈ orders, coeff d) ≤ t)
-    (hgap : b * B + 3 * b + 2 ≤ s) :
+theorem ksssPairTrajectory_dyadic_bounds (orders : Finset ℕ) (a coeff : ℕ → ℝ)
+    (E₀ A₀ time N t : ℝ) (s b B : ℕ) (hE : 0 < E₀) (_hA : 0 < A₀) (hTime : 0 ≤ time)
+    (hclock : 3 * time < E₀) (ha : ∀ d ∈ orders, 0 ≤ a d)
+    (hab : ∀ d ∈ orders, a d * E₀ ^ d ≤ coeff d) (hN : 0 ≤ N) (ht : 4 ≤ t)
+    (hfloor : 1 / t ^ b ≤ ksssEdgeDensity E₀ time) (hratio : N / t ^ b ≤ A₀ / E₀)
+    (hexp : Real.exp (∑ d ∈ orders, coeff d) ≤ t) (hgap : b * B + 3 * b + 2 ≤ s) :
     N / t ^ (3 * b + 1) ≤ ksssPairTrajectory orders a E₀ A₀ time ∧
-      ksssErrorEnvelope E₀ (N / t ^ s) B time ≤ ksssPairTrajectory orders a E₀ A₀ time / 4 := by
-  have hp := ksssEdgeDensity_pos hE hclock
-  have htpos : 0 < t := by linarith
-  have hr := ksssPoisson_exp_neg_ge_inverse_scale orders a coeff E₀ time t ha hab hTime
-    (by linarith) hexp
-  have hid : ksssPairTrajectory orders a E₀ A₀ time =
-      3 * (A₀ / E₀) * ksssEdgeDensity E₀ time ^ 2 * Real.exp (-ksssPoissonExponent orders a time) := by
-    rw [ksssPairTrajectory_source orders a E₀ A₀ time hE.ne' hp.ne']
-    ring
-  rw [hid]
-  constructor
-  · exact pair_polynomial_power_lower N t _ _ _ b hN htpos hfloor hratio hr
-  · exact dyadic_pair_error_le_quarter N t _ _ _ s b B hN ht hfloor hratio hr hgap
+      ksssErrorEnvelope E₀ (N / t ^ s) B time ≤ ksssPairTrajectory orders a E₀ A₀ time / 4 :=
+  by
+    have hp := ksssEdgeDensity_pos hE hclock
+    have htpos : 0 < t :=
+      by
+        linarith
+    have hr :=
+      ksssPoisson_exp_neg_ge_inverse_scale orders a coeff E₀ time t ha hab hTime
+        (by
+          linarith)
+        hexp
+    have hid :
+      ksssPairTrajectory orders a E₀ A₀ time =
+        3 * (A₀ / E₀) * ksssEdgeDensity E₀ time ^ 2 *
+          Real.exp (-ksssPoissonExponent orders a time) :=
+      by
+        rw [ksssPairTrajectory_source orders a E₀ A₀ time hE.ne' hp.ne']
+        ring
+    rw [hid]
+    constructor
+    · exact pair_polynomial_power_lower N t _ _ _ b hN htpos hfloor hratio hr
+    · exact dyadic_pair_error_le_quarter N t _ _ _ s b B hN ht hfloor hratio hr hgap
 
 theorem ksssPairTrajectory_le_three_ratio
     (orders : Finset ℕ) (a : ℕ → ℝ) (E₀ A₀ time : ℝ)

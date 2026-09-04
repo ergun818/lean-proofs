@@ -77,44 +77,64 @@ theorem greedyKernel_expectationReal_pairUncovered
         (fun T ↦ if T ∉ availableTrianglesContainingPair S P then φ (greedyStep F S T) else 0)
     _ = _ := by rw [sdiff_eq_filter, sum_filter]
 
-theorem greedyKernel_expectationReal_pairUncovered_eq_restricted
-    {V : Type*} [Fintype V] [DecidableEq V]
-    {F : ForbiddenFamilyOn V} {S : GreedyStateOn V} (P : Finset V)
+theorem greedyKernel_expectationReal_pairUncovered_eq_restricted {V : Type*} [Fintype V]
+    [DecidableEq V] {F : ForbiddenFamilyOn V} {S : GreedyStateOn V} (P : Finset V)
     (hP : P.card = 2) (huncovered : PairUncovered P S) (hA : S.available.Nonempty)
     (hR : (S.available \ availableTrianglesContainingPair S P).Nonempty)
     (φ : GreedyStateOn V → ℝ) :
     (greedyKernel F S).expectationReal (fun S' ↦ if PairUncovered P S' then φ S' else 0) =
       ((S.available \ availableTrianglesContainingPair S P).card : ℝ) / S.available.card *
-        (restrictedGreedyKernel F S (S.available \ availableTrianglesContainingPair S P) hR).expectationReal φ := by
-  rw [greedyKernel_expectationReal_pairUncovered P hP huncovered hA,
-    restrictedGreedyKernel_expectationReal]
-  have hRpos : (0 : ℝ) < (S.available \ availableTrianglesContainingPair S P).card := by
-    exact_mod_cast card_pos.mpr hR
-  field_simp
+        (restrictedGreedyKernel F S (S.available \ availableTrianglesContainingPair S P)
+              hR).expectationReal
+          φ :=
+  by
+    rw [greedyKernel_expectationReal_pairUncovered P hP huncovered hA,
+      restrictedGreedyKernel_expectationReal]
+    have hRpos : (0 : ℝ) < (S.available \ availableTrianglesContainingPair S P).card :=
+      by
+        exact_mod_cast card_pos.mpr hR
+    field_simp
 
-theorem greedyKernel_expectationReal_pairUncovered_le_of_restricted
-    {V : Type*} [Fintype V] [DecidableEq V]
-    {F : ForbiddenFamilyOn V} {S : GreedyStateOn V} (P : Finset V)
+theorem greedyKernel_expectationReal_pairUncovered_le_of_restricted {V : Type*} [Fintype V]
+    [DecidableEq V] {F : ForbiddenFamilyOn V} {S : GreedyStateOn V} (P : Finset V)
     (hP : P.card = 2) (huncovered : PairUncovered P S) (hA : S.available.Nonempty)
     (φ : GreedyStateOn V → ℝ) (v : ℝ) (hv : 0 ≤ v)
-    (hbound : ∀ hR : (S.available \ availableTrianglesContainingPair S P).Nonempty,
-      (restrictedGreedyKernel F S (S.available \ availableTrianglesContainingPair S P) hR).expectationReal φ ≤ v) :
-    (greedyKernel F S).expectationReal (fun S' ↦ if PairUncovered P S' then φ S' else 0) ≤ v := by
-  by_cases hR : (S.available \ availableTrianglesContainingPair S P).Nonempty
-  · rw [greedyKernel_expectationReal_pairUncovered_eq_restricted P hP huncovered hA hR]
-    have hApos : (0 : ℝ) < S.available.card := by exact_mod_cast card_pos.mpr hA
-    have hratio : ((S.available \ availableTrianglesContainingPair S P).card : ℝ) / S.available.card ≤ 1 := by
-      apply (div_le_one hApos).mpr
-      exact_mod_cast card_le_card (sdiff_subset :
-        S.available \ availableTrianglesContainingPair S P ⊆ S.available)
-    calc
-      _ ≤ (((S.available \ availableTrianglesContainingPair S P).card : ℝ) / S.available.card) * v :=
-        mul_le_mul_of_nonneg_left (hbound hR) (by positivity)
-      _ ≤ 1 * v := mul_le_mul_of_nonneg_right hratio hv
-      _ = v := one_mul v
-  · rw [greedyKernel_expectationReal_pairUncovered P hP huncovered hA,
-      not_nonempty_iff_eq_empty.mp hR, sum_empty, mul_zero]
-    exact hv
+    (hbound :
+      ∀ hR : (S.available \ availableTrianglesContainingPair S P).Nonempty,
+        (restrictedGreedyKernel F S (S.available \ availableTrianglesContainingPair S P)
+                hR).expectationReal
+            φ ≤
+          v) :
+    (greedyKernel F S).expectationReal (fun S' ↦ if PairUncovered P S' then φ S' else 0) ≤
+      v :=
+  by
+    by_cases hR : (S.available \ availableTrianglesContainingPair S P).Nonempty
+    · rw [greedyKernel_expectationReal_pairUncovered_eq_restricted P hP huncovered hA hR]
+      have hApos : (0 : ℝ) < S.available.card :=
+        by
+          exact_mod_cast card_pos.mpr hA
+      have hratio :
+        ((S.available \ availableTrianglesContainingPair S P).card : ℝ) / S.available.card ≤
+          1 :=
+        by
+          apply (div_le_one hApos).mpr
+          exact_mod_cast
+            card_le_card
+              (sdiff_subset :
+                S.available \ availableTrianglesContainingPair S P ⊆ S.available)
+      calc
+        _ ≤
+            (((S.available \ availableTrianglesContainingPair S P).card : ℝ) /
+                S.available.card) *
+              v :=
+          mul_le_mul_of_nonneg_left (hbound hR)
+            (by
+              positivity)
+        _ ≤ 1 * v := (mul_le_mul_of_nonneg_right hratio hv)
+        _ = v := one_mul v
+    · rw [greedyKernel_expectationReal_pairUncovered P hP huncovered hA,
+        not_nonempty_iff_eq_empty.mp hR, sum_empty, mul_zero]
+      exact hv
 
 end
 

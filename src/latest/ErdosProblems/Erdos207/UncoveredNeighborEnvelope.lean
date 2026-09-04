@@ -18,19 +18,32 @@ noncomputable section
 def uncoveredNeighborErrorEnvelope (E M t : ℝ) (s B : ℕ) (time : ℝ) : ℝ :=
   ksssErrorEnvelope E (16 * M * t / t ^ s) (B + 2) time
 
-theorem ksssPairTrajectory_lower_fixed_initial_ratio
-    (orders : Finset ℕ) (a coeff : ℕ → ℝ) (E A time N t : ℝ)
-    (hE : 0 < E) (hN : 0 < N) (ht : 0 < t) (hTime : 0 ≤ time) (hclock : 3 * time < E)
-    (ha : ∀ d ∈ orders, 0 ≤ a d) (hab : ∀ d ∈ orders, a d * E ^ d ≤ coeff d)
-    (hratio : N / 6 ≤ A / E) (hexp : Real.exp (∑ d ∈ orders, coeff d) ≤ t) :
-    N / (2 * t) * ksssEdgeDensity E time ^ 2 ≤ ksssPairTrajectory orders a E A time := by
-  have hp := ksssEdgeDensity_pos hE hclock
-  have he := ksssPoisson_exp_neg_ge_inverse_scale orders a coeff E time t ha hab hTime (by linarith) hexp
-  rw [ksssPairTrajectory_source orders a E A time hE.ne' hp.ne']
-  calc
-    _ = ksssEdgeDensity E time ^ 2 * (1 / t) * (3 * (N / 6)) := by ring
-    _ ≤ ksssEdgeDensity E time ^ 2 * Real.exp (-ksssPoissonExponent orders a time) * (3 * (A / E)) := by gcongr
-    _ = _ := by ring
+theorem ksssPairTrajectory_lower_fixed_initial_ratio (orders : Finset ℕ) (a coeff : ℕ → ℝ)
+    (E A time N t : ℝ) (hE : 0 < E) (hN : 0 < N) (_ht : 0 < t) (hTime : 0 ≤ time)
+    (hclock : 3 * time < E) (ha : ∀ d ∈ orders, 0 ≤ a d)
+    (hab : ∀ d ∈ orders, a d * E ^ d ≤ coeff d) (hratio : N / 6 ≤ A / E)
+    (hexp : Real.exp (∑ d ∈ orders, coeff d) ≤ t) :
+    N / (2 * t) * ksssEdgeDensity E time ^ 2 ≤ ksssPairTrajectory orders a E A time :=
+  by
+    have hp := ksssEdgeDensity_pos hE hclock
+    have he :=
+      ksssPoisson_exp_neg_ge_inverse_scale orders a coeff E time t ha hab hTime
+        (by
+          linarith)
+        hexp
+    rw [ksssPairTrajectory_source orders a E A time hE.ne' hp.ne']
+    calc
+      _ = ksssEdgeDensity E time ^ 2 * (1 / t) * (3 * (N / 6)) :=
+        by
+          ring
+      _ ≤
+          ksssEdgeDensity E time ^ 2 * Real.exp (-ksssPoissonExponent orders a time) *
+            (3 * (A / E)) :=
+        by
+          gcongr
+      _ = _ :=
+        by
+          ring
 
 theorem pair_error_le_neighbor_envelope
     (N M t p x : ℝ) (s B : ℕ) (hN : 0 < N) (hM : 0 ≤ M) (ht : 0 < t) (hp : 0 < p)
@@ -54,19 +67,29 @@ theorem neighbor_pair_drift_error_le_envelope
     _ = (8 * M * e / x) / L := by ring
     _ ≤ _ := div_le_div_of_nonneg_right hz hL.le
 
-theorem uncoveredNeighborErrorEnvelope_growth_dominates
-    (E M t time : ℝ) (s B : ℕ) (hE : 0 < E) (hM : 0 ≤ M) (ht : 0 < t)
-    (hclock : 3 * (time + 1) < E) :
+theorem uncoveredNeighborErrorEnvelope_growth_dominates (E M t time : ℝ) (s B : ℕ)
+    (hE : 0 < E) (hM : 0 ≤ M) (ht : 0 < t) (hclock : 3 * (time + 1) < E) :
     4 * uncoveredNeighborErrorEnvelope E M t s B time / (E * ksssEdgeDensity E time) ≤
-      uncoveredNeighborErrorEnvelope E M t s B (time + 1) - uncoveredNeighborErrorEnvelope E M t s B time := by
-  have hg := ksssErrorEnvelope_unitStep_growth E (16 * M * t / t ^ s) time (B + 2) hE (by positivity) hclock
-  have hp := ksssEdgeDensity_pos hE (show 3 * time < E by linarith)
-  have hz : 0 ≤ uncoveredNeighborErrorEnvelope E M t s B time := by
-    unfold uncoveredNeighborErrorEnvelope ksssErrorEnvelope
-    positivity
-  have hcoef : (4 : ℝ) ≤ 3 * ((B + 2 : ℕ) : ℝ) := by
-    exact_mod_cast (show 4 ≤ 3 * (B + 2) by omega)
-  exact (div_le_div_of_nonneg_right (mul_le_mul_of_nonneg_right hcoef hz) (mul_pos hE hp).le).trans hg
+      uncoveredNeighborErrorEnvelope E M t s B (time + 1) -
+        uncoveredNeighborErrorEnvelope E M t s B time :=
+  by
+    have hg :=
+      ksssErrorEnvelope_unitStep_growth E (16 * M * t / t ^ s) time (B + 2) hE
+        (by
+          positivity)
+        hclock
+    have hp := ksssEdgeDensity_pos hE (show 3 * time < E by linarith)
+    have hz : 0 ≤ uncoveredNeighborErrorEnvelope E M t s B time :=
+      by
+        unfold uncoveredNeighborErrorEnvelope ksssErrorEnvelope
+        positivity
+    have hcoef : (4 : ℝ) ≤ 3 * ((B + 2 : ℕ) : ℝ) :=
+      by
+        exact_mod_cast (show 4 ≤ 3 * (B + 2) by omega)
+    exact
+      (div_le_div_of_nonneg_right (mul_le_mul_of_nonneg_right hcoef hz)
+            (mul_pos hE hp).le).trans
+        hg
 
 theorem uncoveredNeighborErrorEnvelope_relative_upper
     (E M t time : ℝ) (b B : ℕ) (hM : 0 ≤ M) (ht : 0 < t)

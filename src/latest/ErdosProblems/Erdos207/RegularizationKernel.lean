@@ -23,27 +23,30 @@ def regularizationBatchOutcome
   exact if WeightedRegularizationStepGood (fun v ↦ finiteHypergraphDegree G v)
       (finiteHypergraphDegreeGap G) H ω then regularizationAccept S H ω else regularizationReject S
 
-def RegularizationActive
-    {V : Type*} [Fintype V] [DecidableEq V] [Nonempty V] {k : ℕ}
+def RegularizationActive {V : Type*} [Fintype V] [DecidableEq V] [Nonempty V] {k : ℕ}
     (G0 H0 : Finset (Finset V)) (b t : ℕ) (S : HypergraphRegularizationState V k) : Prop :=
-  S.2 = false ∧ b < finiteHypergraphDegreeGap (regularizationCurrentFamily G0 S) ∧
-    2 ^ t * finiteHypergraphDegreeGap (regularizationCurrentFamily G0 S) ≤ finiteHypergraphDegreeGap G0 ∧
-    (2 : ℝ≥0) ^ k * finiteHypergraphMaxDegree (regularizationCurrentFamily H0 S) ≤
-      (1 / 4 : ℝ≥0) * Nat.choose (Fintype.card V) (k - 1)
+  S.2 = false ∧
+    b < finiteHypergraphDegreeGap (regularizationCurrentFamily G0 S) ∧
+      2 ^ t * finiteHypergraphDegreeGap (regularizationCurrentFamily G0 S) ≤
+          finiteHypergraphDegreeGap G0 ∧
+        (2 : ℝ≥0) ^ k * finiteHypergraphMaxDegree (regularizationCurrentFamily H0 S) ≤
+          (1 / 4 : ℝ≥0) * Nat.choose (Fintype.card V) (k - 1)
 
-def regularizationKernel
-    {V : Type*} [Fintype V] [DecidableEq V] [Nonempty V] {k : ℕ}
+def regularizationKernel {V : Type*} [Fintype V] [DecidableEq V] [Nonempty V] {k : ℕ}
     (G0 H0 : Finset (Finset V)) (hGH : G0 ⊆ H0) (hk : 2 ≤ k)
-    (hsize : 16 * 2 ^ (k - 1) * (k - 1) ≤ Fintype.card V)
-    (b t : ℕ) (S : HypergraphRegularizationState V k) : FiniteLaw (HypergraphRegularizationState V k) := by
-  classical
-  exact if hA : RegularizationActive G0 H0 b t S then
-    FiniteLaw.map
-      (regularizationBatchOutcome (regularizationCurrentFamily G0 S) (regularizationCurrentFamily H0 S) S)
-      (hypergraphRegularizationParameters (regularizationCurrentFamily G0 S) (regularizationCurrentFamily H0 S)
-        (regularizationCurrentFamily_mono_base hGH S) hk
-        (Nat.zero_lt_of_lt hA.2.1) hsize hA.2.2.2).law
-  else FiniteLaw.pure S
+    (hsize : 16 * 2 ^ (k - 1) * (k - 1) ≤ Fintype.card V) (b t : ℕ)
+    (S : HypergraphRegularizationState V k) : FiniteLaw (HypergraphRegularizationState V k) :=
+  by
+    classical
+      exact
+      if hA : RegularizationActive G0 H0 b t S then
+        FiniteLaw.map
+          (regularizationBatchOutcome (regularizationCurrentFamily G0 S)
+            (regularizationCurrentFamily H0 S) S)
+          (hypergraphRegularizationParameters (regularizationCurrentFamily G0 S)
+              (regularizationCurrentFamily H0 S) (regularizationCurrentFamily_mono_base hGH S)
+              hk (Nat.zero_lt_of_lt hA.2.1) hsize hA.2.2.2).law
+      else FiniteLaw.pure S
 
 theorem regularizationKernel_inactive
     {V : Type*} [Fintype V] [DecidableEq V] [Nonempty V] {k : ℕ}
@@ -54,19 +57,19 @@ theorem regularizationKernel_inactive
     regularizationKernel G0 H0 hGH hk hsize b t S = FiniteLaw.pure S := by
   simp only [regularizationKernel, dif_neg hA]
 
-theorem regularizationKernel_active
-    {V : Type*} [Fintype V] [DecidableEq V] [Nonempty V] {k : ℕ}
-    (G0 H0 : Finset (Finset V)) (hGH : G0 ⊆ H0) (hk : 2 ≤ k)
-    (hsize : 16 * 2 ^ (k - 1) * (k - 1) ≤ Fintype.card V)
-    (b t : ℕ) (S : HypergraphRegularizationState V k)
-    (hA : RegularizationActive G0 H0 b t S) :
+theorem regularizationKernel_active {V : Type*} [Fintype V] [DecidableEq V] [Nonempty V]
+    {k : ℕ} (G0 H0 : Finset (Finset V)) (hGH : G0 ⊆ H0) (hk : 2 ≤ k)
+    (hsize : 16 * 2 ^ (k - 1) * (k - 1) ≤ Fintype.card V) (b t : ℕ)
+    (S : HypergraphRegularizationState V k) (hA : RegularizationActive G0 H0 b t S) :
     regularizationKernel G0 H0 hGH hk hsize b t S =
       FiniteLaw.map
-        (regularizationBatchOutcome (regularizationCurrentFamily G0 S) (regularizationCurrentFamily H0 S) S)
-        (hypergraphRegularizationParameters (regularizationCurrentFamily G0 S) (regularizationCurrentFamily H0 S)
-          (regularizationCurrentFamily_mono_base hGH S) hk
-          (Nat.zero_lt_of_lt hA.2.1) hsize hA.2.2.2).law := by
-  simp only [regularizationKernel, dif_pos hA]
+        (regularizationBatchOutcome (regularizationCurrentFamily G0 S)
+          (regularizationCurrentFamily H0 S) S)
+        (hypergraphRegularizationParameters (regularizationCurrentFamily G0 S)
+            (regularizationCurrentFamily H0 S) (regularizationCurrentFamily_mono_base hGH S)
+            hk (Nat.zero_lt_of_lt hA.2.1) hsize hA.2.2.2).law :=
+  by
+    simp only [regularizationKernel, dif_pos hA]
 
 theorem regularizationBatchOutcome_added_subset
     {V : Type*} [Fintype V] [DecidableEq V] [Nonempty V] {k : ℕ}

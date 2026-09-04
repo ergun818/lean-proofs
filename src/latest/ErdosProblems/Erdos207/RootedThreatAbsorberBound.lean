@@ -49,7 +49,7 @@ abbrev IndexedThreatOrder (q : ℕ) := {j : ℕ // j ∈ Icc 3 q}
 abbrev IndexedRootedThreatCode
     (V : Type*) [Fintype V] [DecidableEq V]
     (q : ℕ) (B : TripleSystemOn V) (u v : V) :=
-  Σ T : universeTriplesThroughPair u v,
+  Σ _T : universeTriplesThroughPair u v,
     Σ j : IndexedThreatOrder q,
       {S : TripleSystemOn V //
         S ∈ absorberInducedConfigurationsOn q j.1 B}
@@ -100,20 +100,22 @@ lemma indexedRootedThreatCode_injective
   · exact congrArg (fun c ↦ c.1.1) hzw
 
 lemma rootedThreatRemainder_sdiff
-    {V : Type*} [Fintype V] [DecidableEq V]
+    {V : Type*} [Finite V] [DecidableEq V]
     {F : ForbiddenFamilyOn V} {u v : V}
     (z : RootedThreatWitness V F u v) (A : TripleSystemOn V) :
     rootedThreatRemainder z \ A = z.1.1 \ insert z.1.2 A := by
+  let := Fintype.ofFinite V
   ext T
   simp only [rootedThreatRemainder, mem_sdiff, mem_erase, mem_insert]
   tauto
 
 lemma insert_root_subset_of_remainder
-    {V : Type*} [Fintype V] [DecidableEq V]
+    {V : Type*} [Finite V] [DecidableEq V]
     {F : ForbiddenFamilyOn V} {u v : V}
     (z : RootedThreatWitness V F u v) {A : TripleSystemOn V}
     (hA : A ⊆ rootedThreatRemainder z) :
     insert z.1.2 A ⊆ z.1.1 := by
+  let := Fintype.ofFinite V
   intro T hT
   rw [mem_insert] at hT
   rcases hT with rfl | hTA

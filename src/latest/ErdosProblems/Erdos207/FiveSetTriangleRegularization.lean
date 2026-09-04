@@ -26,7 +26,7 @@ theorem fiveSet_balancing_coefficient_abs_le
   exact div_le_div₀ ((abs_nonneg _).trans hdegree) hdegree hlower hcount
 
 theorem exists_triangle_regularized_of_fiveSet_counts
-    {V : Type*} [Fintype V] [DecidableEq V]
+    {V : Type*} [Finite V] [DecidableEq V]
     (A E Js : Finset (Finset V)) (D eta eps lower upper : ℝ)
     (hA : ∀ T ∈ A, T.card = 3) (hE : ∀ P ∈ E, P.card = 2)
     (hJ : ∀ J ∈ Js, J.card = 5 ∧ J.powersetCard 3 ⊆ A)
@@ -39,6 +39,7 @@ theorem exists_triangle_regularized_of_fiveSet_counts
     ∃ R ⊆ A, ∀ P ∈ E,
       |((R.filter (P ⊆ ·)).card : ℝ) - D / 4| ≤ eta * (D / 4) := by
   classical
+  let := Fintype.ofFinite V
   let c := fiveSetBalancingCoefficient A Js D
   let w := fiveSetFractionalWeight E Js c
   have hB : 0 ≤ eps / lower := div_nonneg heps hlower.le

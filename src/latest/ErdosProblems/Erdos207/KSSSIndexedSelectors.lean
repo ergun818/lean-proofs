@@ -40,17 +40,19 @@ theorem ksssTracked_initial_of_available_subset
   · exact (mem_sdiff.mp hi).1
   · exact hS hi
 
-theorem ksssCenteredTrajectoryObservable_increment
-    {V : Type*} [Fintype V] [DecidableEq V] {q : ℕ}
-    (F : ForbiddenFamilyOn V) (a : ℕ → ℝ) (E A scale time sigma : ℝ) (B : ℕ)
+theorem ksssCenteredTrajectoryObservable_increment {V : Type*} [Fintype V] [DecidableEq V]
+    {q : ℕ} (F : ForbiddenFamilyOn V) (a : ℕ → ℝ) (E A scale time sigma : ℝ) (B : ℕ)
     (S S' : GreedyStateOn V) (i : KSSSTrajectoryIndex V q) :
     ksssCenteredTrajectoryObservable F a E A scale B sigma (time + 1) S' i -
         ksssCenteredTrajectoryObservable F a E A scale B sigma time S i =
-      sigma * ((ksssTrajectoryValue F S' i - ksssTrajectoryValue F S i) -
-        (ksssTrajectoryTarget a E A (time + 1) i - ksssTrajectoryTarget a E A time i)) -
-          (ksssTrajectoryError E A scale B (time + 1) i - ksssTrajectoryError E A scale B time i) := by
-  unfold ksssCenteredTrajectoryObservable
-  ring
+      sigma *
+          ((ksssTrajectoryValue F S' i - ksssTrajectoryValue F S i) -
+            (ksssTrajectoryTarget a E A (time + 1) i - ksssTrajectoryTarget a E A time i)) -
+        (ksssTrajectoryError E A scale B (time + 1) i -
+          ksssTrajectoryError E A scale B time i) :=
+  by
+    unfold ksssCenteredTrajectoryObservable
+    ring
 
 theorem pairUncovered_of_chosen_empty
     {V : Type*} [Fintype V] [DecidableEq V] (P : Finset V) (S : GreedyStateOn V)

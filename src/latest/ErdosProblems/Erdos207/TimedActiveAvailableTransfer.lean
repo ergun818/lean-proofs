@@ -249,11 +249,7 @@ theorem timedStoppedGreedyKernel_probability_selectedAvailableUncovered_le
       have hBempty : B = ∅ := subset_empty.mp (by
           simpa [timedActiveTrackedUncoveredEdges, hactive] using
             hevent.2.2.2.2)
-      simpa [hPendingEmpty, hBempty] using
-        (FiniteLaw.probability_le_one
-          (FiniteLaw.timedStoppedKernel n (fun _ ↦ greedyKernel F) active z)
-          (fun z' ↦ Q \ Sfix ⊆ timedActiveTrackedAvailable active z' ∧
-            B ⊆ timedActiveTrackedUncoveredEdges active E z'))
+      simp [hPendingEmpty, hBempty]
   · intro x hx hevent hxnot
     by_cases hactive : active z.1.1 z.2
     · have hztime : z.1.1 = i :=
@@ -269,8 +265,8 @@ theorem timedStoppedGreedyKernel_probability_selectedAvailableUncovered_le
           exact mem_sdiff.mpr ⟨hSQ hx, by simp⟩
       have hxEmpty : x ∈ (∅ : TripleSystemOn V) := by
         have := hevent.2.2.2.1 hxPending
-        simpa [timedActiveTrackedAvailable, hactive] using this
-      simpa using hxEmpty
+        simp [timedActiveTrackedAvailable, hactive] at this
+      simp at hxEmpty
 
 /-- Full retrospective product law on the support of the timed active
 process. -/

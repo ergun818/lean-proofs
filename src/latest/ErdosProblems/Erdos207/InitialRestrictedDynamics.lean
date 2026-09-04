@@ -39,14 +39,18 @@ theorem initialRestrictedAbsorberFamily_data
     fun _ hC ↦ isPacking_of_mem_absorberErdosForbidden (hsub hC),
     fun _ hC ↦ card_add_two_le_of_mem_absorberErdosForbidden (hsub hC)⟩
 
-theorem initialRestrictedAbsorberFamily_initial_invariant
-    {V : Type*} [Fintype V] [DecidableEq V] (q : ℕ) (H : SimpleGraph V) (bank : TripleSystemOn V) :
-    let S := absorberGreedyInitialState (absorberErdosForbiddenConfigurationsOn q bank)
-      (outsideAvailableTriangles H bank)
-    GreedyInvariant (initialRestrictedAbsorberFamily q bank S.available) S := by
-  dsimp only
-  exact (absorberGreedyInitialState_invariant _ _ (fun _ hC ↦ absorberErdosForbidden_nonempty hC)).1.forbidden_subset
-    (initialRestrictedAbsorberFamily_data q bank _).2.1
+theorem initialRestrictedAbsorberFamily_initial_invariant {V : Type*} [Fintype V]
+    [DecidableEq V] (q : ℕ) (H : SimpleGraph V) (bank : TripleSystemOn V) :
+    let S :=
+      absorberGreedyInitialState (absorberErdosForbiddenConfigurationsOn q bank)
+        (outsideAvailableTriangles H bank)
+    GreedyInvariant (initialRestrictedAbsorberFamily q bank S.available) S :=
+  by
+    dsimp only
+    exact
+      (absorberGreedyInitialState_invariant _ _
+              (fun _ hC ↦ absorberErdosForbidden_nonempty hC)).1.forbidden_subset
+        (initialRestrictedAbsorberFamily_data q bank _).2.1
 
 theorem initialRestrictedAbsorberFamily_restore_invariant
     {V : Type*} [Fintype V] [DecidableEq V] (q : ℕ) (bank ambient : TripleSystemOn V)

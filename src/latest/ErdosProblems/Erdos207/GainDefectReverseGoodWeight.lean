@@ -96,52 +96,76 @@ def gainDefectReverseGoodWeightBound
   (2 * (q + 1) : ℝ≥0) * ((2 : ℝ≥0) ^ q * ((pairExactBankExtensionCoefficient q B : ℕ) *
     (2 : ℝ≥0) ^ (q + 1) * pairExactBankExtensionCoefficient q B))
 
-theorem gainDefectReverseGoodWeight_absorberInduced_le
-    {V : Type*} [Fintype V] [DecidableEq V]
-    (q r s z : ℕ) (B : TripleSystemOn V) (T : TripleOn V) (H : TripleSystemOn V)
-    (hr : r ≤ q) (hs : s ≤ q) (hz : 1 ≤ z) :
+theorem gainDefectReverseGoodWeight_absorberInduced_le {V : Type*} [Fintype V] [DecidableEq V]
+    (q r s z : ℕ) (B : TripleSystemOn V) (T : TripleOn V) (H : TripleSystemOn V) (hr : r ≤ q)
+    (hs : s ≤ q) (hz : 1 ≤ z) :
     gainDefectReverseGoodWeight (absorberInducedConfigurationsOn q r B)
-      (absorberInducedConfigurationsOn q s B) T z H r s (Fintype.card V + 1 : ℝ≥0)⁻¹ ≤
-      gainDefectReverseGoodWeightBound q B * (Fintype.card V + 1 : ℝ≥0) ^ (z - 1) := by
-  classical
-  let F := absorberInducedConfigurationsOn q r B
-  let G := absorberInducedConfigurationsOn q s B
-  let C : ℝ≥0 := pairExactBankExtensionCoefficient q B
-  let M : ℝ≥0 := (2 : ℝ≥0) ^ q * (C * 2 ^ (q + 1) * C)
-  let N : ℝ≥0 := Fintype.card V + 1
-  have hF : ∀ E ∈ F, E.card ≤ q := by
-    intro E hE
-    rw [absorberInducedConfigurationsOn_fixed_card E hE]
-    omega
-  rw [gainDefectReverseGoodWeight_eq_code_sum F G T z H q r s _ hF]
-  have hsupport : ((gainDefectReverseCodeSupport T H q).card : ℝ≥0) ≤ 2 * (q + 1) := by
-    have hc : (gainDefectReverseCodeSupport T H q).card ≤ 2 * (q + 1) := by
-      rw [gainDefectReverseCodeSupport, card_product, card_range]
-      apply Nat.mul_le_mul_right
-      have hc := card_insert_le H ({insert T H} : Finset (Finset (TripleOn V)))
-      simpa only [card_singleton] using hc
-    exact_mod_cast hc
-  calc
-    _ ≤ ∑ _c ∈ gainDefectReverseCodeSupport T H q, M * N ^ (z - 1) := by
-      apply sum_le_sum
-      intro c _
-      split_ifs with hgood
-      · refine (gainDefectReverseClassWeight_absorberInduced_le q r s z B T H c.1 c.2 hz hgood).trans ?_
-        have hp : (2 : ℝ≥0) ^ (s - 2 + 1) ≤ 2 ^ (q + 1) :=
-          pow_le_pow_right' (by norm_num) (by omega)
-        have hm : (2 : ℝ≥0) ^ (r - 2) ≤ 2 ^ q :=
-          pow_le_pow_right' (by norm_num) (by omega)
-        change (2 : ℝ≥0) ^ (r - 2) * ((C * 2 ^ (s - 2 + 1) * C) * N ^ (z - 1)) ≤ _
-        calc
-          _ ≤ (2 : ℝ≥0) ^ q * ((C * 2 ^ (q + 1) * C) * N ^ (z - 1)) :=
-            mul_le_mul hm (mul_le_mul_of_nonneg_right
-              (mul_le_mul_of_nonneg_right (mul_le_mul_of_nonneg_left hp zero_le) zero_le) zero_le)
-              zero_le zero_le
-          _ = _ := by dsimp only [M]; ring
-      · exact zero_le
-    _ = (gainDefectReverseCodeSupport T H q).card * (M * N ^ (z - 1)) := by simp
-    _ ≤ (2 * (q + 1)) * (M * N ^ (z - 1)) := mul_le_mul_of_nonneg_right hsupport zero_le
-    _ = _ := by change _ = (_ * M) * N ^ (z - 1); ring
+        (absorberInducedConfigurationsOn q s B) T z H r s (Fintype.card V + 1 : ℝ≥0)⁻¹ ≤
+      gainDefectReverseGoodWeightBound q B * (Fintype.card V + 1 : ℝ≥0) ^ (z - 1) :=
+  by
+    classical
+    let F := absorberInducedConfigurationsOn q r B
+    let G := absorberInducedConfigurationsOn q s B
+    let C : ℝ≥0 := pairExactBankExtensionCoefficient q B
+    let M : ℝ≥0 := (2 : ℝ≥0) ^ q * (C * 2 ^ (q + 1) * C)
+    let N : ℝ≥0 := Fintype.card V + 1
+    have hF : ∀ E ∈ F, E.card ≤ q :=
+      by
+        intro E hE
+        rw [absorberInducedConfigurationsOn_fixed_card E hE]
+        omega
+    rw [gainDefectReverseGoodWeight_eq_code_sum F G T z H q r s _ hF]
+    have hsupport : ((gainDefectReverseCodeSupport T H q).card : ℝ≥0) ≤ 2 * (q + 1) :=
+      by
+        have hc : (gainDefectReverseCodeSupport T H q).card ≤ 2 * (q + 1) :=
+          by
+            rw [gainDefectReverseCodeSupport, card_product, card_range]
+            apply Nat.mul_le_mul_right
+            have hc := card_insert_le H ({insert T H} : Finset (Finset (TripleOn V)))
+            simpa only [card_singleton] using hc
+        exact_mod_cast hc
+    calc
+      _ ≤ ∑ _c ∈ gainDefectReverseCodeSupport T H q, M * N ^ (z - 1) :=
+        by
+          apply sum_le_sum
+          intro c _
+          split_ifs with hgood
+          · refine
+              (gainDefectReverseClassWeight_absorberInduced_le q r s z B T H c.1 c.2 hz
+                    hgood).trans
+                ?_
+            have hp : (2 : ℝ≥0) ^ (s - 2 + 1) ≤ 2 ^ (q + 1) :=
+              pow_le_pow_right'
+                (by
+                  norm_num)
+                (by
+                  omega)
+            have hm : (2 : ℝ≥0) ^ (r - 2) ≤ 2 ^ q :=
+              pow_le_pow_right'
+                (by
+                  norm_num)
+                (by
+                  omega)
+            change (2 : ℝ≥0) ^ (r - 2) * ((C * 2 ^ (s - 2 + 1) * C) * N ^ (z - 1)) ≤ _
+            calc
+              _ ≤ (2 : ℝ≥0) ^ q * ((C * 2 ^ (q + 1) * C) * N ^ (z - 1)) :=
+                mul_le_mul hm
+                  (mul_le_mul_of_nonneg_right
+                    (mul_le_mul_of_nonneg_right (mul_le_mul_of_nonneg_left hp zero_le)
+                      zero_le)
+                    zero_le)
+                  zero_le zero_le
+              _ = _ :=
+                by
+                  dsimp only [M]; ring
+          · exact zero_le
+      _ = (gainDefectReverseCodeSupport T H q).card * (M * N ^ (z - 1)) :=
+        by
+          simp
+      _ ≤ (2 * (q + 1)) * (M * N ^ (z - 1)) := (mul_le_mul_of_nonneg_right hsupport zero_le)
+      _ = _ :=
+        by
+          change _ = (_ * M) * N ^ (z - 1); ring
 
 end
 

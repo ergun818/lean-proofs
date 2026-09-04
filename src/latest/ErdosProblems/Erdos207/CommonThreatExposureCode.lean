@@ -60,17 +60,18 @@ theorem CommonThreatWitness.exposureCode_mem_support
     change (w.leftRemainder ∩ w.rightRemainder).card < q + 1
     omega
 
-theorem commonThreatExposureClass_eq_code_fibre
-    {W : Type*} [Fintype W] [DecidableEq W]
+theorem commonThreatExposureClass_eq_code_fibre {W : Type*} [Fintype W] [DecidableEq W]
     (F G : Finset (Finset W)) (T T' : W) (H : Finset W) (c : CommonThreatExposureCode W) :
     commonThreatExposureClass F G T T' H c.1.1 c.1.2 c.2.1 c.2.2 =
-      univ.filter (fun w : CommonThreatWitness F G T T' ↦ H ⊆ w.remainder ∧ w.exposureCode H = c) := by
-  classical
-  rcases c with ⟨⟨Q, Q'⟩, ⟨b, k⟩⟩
-  ext w
-  simp only [commonThreatExposureClass, CommonThreatWitness.exposureCode,
-    mem_filter, mem_univ, true_and, Prod.mk.injEq]
-  tauto
+      univ.filter
+        (fun w : CommonThreatWitness F G T T' ↦ H ⊆ w.remainder ∧ w.exposureCode H = c) :=
+  by
+    classical
+    rcases c with ⟨⟨Q, Q'⟩, ⟨b, k⟩⟩
+    ext w
+    simp only [commonThreatExposureClass, CommonThreatWitness.exposureCode, mem_filter,
+      mem_univ, true_and, Prod.mk.injEq]
+    tauto
 
 theorem card_second_root_of_mem_commonThreatExposureCodeSupport
     {W : Type*} [DecidableEq W] {T T' : W} {H : Finset W} {q : ℕ}

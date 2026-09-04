@@ -36,26 +36,37 @@ variable {I J : Type*} [Fintype I] [DecidableEq I] [Nonempty I] [Fintype J] [Dec
 
 def regularizationConfigurationEnvelope : FiniteLaw (Finset (Finset J) × Finset (Finset J)) :=
   FiniteLaw.map (fun z ↦ (z.1, regularizationImageEdges e z.2))
-    (regularizationAmbientEnvelope (uniformHyperedgeMapEmbedding k e) G0 H0 hGH hk hsize beta hbeta b t)
+    (regularizationAmbientEnvelope (uniformHyperedgeMapEmbedding k e) G0 H0 hGH hk hsize beta
+      hbeta b t)
 
 theorem regularizationConfigurationEnvelope_proposal :
-    FiniteLaw.map Prod.fst (regularizationConfigurationEnvelope e G0 H0 hGH hk hsize beta hbeta b t) =
-      FiniteLaw.evolveKernels (fun n ↦ FiniteLaw.proposalUnionKernel
-        (FiniteLaw.independentProposalLaw (fun _ : Finset J ↦ geometricProposalProbability beta n)
-          (fun _ ↦ geometricProposalProbability_le_one beta n))) t (FiniteLaw.pure ∅) := by
-  unfold regularizationConfigurationEnvelope
-  rw [FiniteLaw.map_comp]
-  exact regularizationAmbientEnvelope_proposal _ _ _ _ _ _ _ _ _ _
+    FiniteLaw.map Prod.fst
+        (regularizationConfigurationEnvelope e G0 H0 hGH hk hsize beta hbeta b t) =
+      FiniteLaw.evolveKernels
+        (fun n ↦
+          FiniteLaw.proposalUnionKernel
+            (FiniteLaw.independentProposalLaw
+              (fun _ : Finset J ↦ geometricProposalProbability beta n)
+              (fun _ ↦ geometricProposalProbability_le_one beta n)))
+        t (FiniteLaw.pure ∅) :=
+  by
+    unfold regularizationConfigurationEnvelope
+    rw [FiniteLaw.map_comp]
+    exact regularizationAmbientEnvelope_proposal _ _ _ _ _ _ _ _ _ _
 
-theorem regularizationConfigurationEnvelope_actual
-    (ht : finiteHypergraphDegreeGap G0 ≤ t) :
-    FiniteLaw.map Prod.snd (regularizationConfigurationEnvelope e G0 H0 hGH hk hsize beta hbeta b t) =
-      FiniteLaw.map (regularizationImageEdges e) (regularizationProcessLaw G0 H0 hGH hk hsize b) := by
-  unfold regularizationConfigurationEnvelope
-  rw [FiniteLaw.map_comp, ← regularizationEvolve_eq_processLaw_of_gap_le G0 H0 hGH hk hsize b t ht,
-    ← regularizationAmbientEnvelope_actual (uniformHyperedgeMapEmbedding k e) G0 H0 hGH hk hsize beta hbeta b t,
-    FiniteLaw.map_comp]
-  rfl
+theorem regularizationConfigurationEnvelope_actual (ht : finiteHypergraphDegreeGap G0 ≤ t) :
+    FiniteLaw.map Prod.snd
+        (regularizationConfigurationEnvelope e G0 H0 hGH hk hsize beta hbeta b t) =
+      FiniteLaw.map (regularizationImageEdges e)
+        (regularizationProcessLaw G0 H0 hGH hk hsize b) :=
+  by
+    unfold regularizationConfigurationEnvelope
+    rw [FiniteLaw.map_comp, ←
+      regularizationEvolve_eq_processLaw_of_gap_le G0 H0 hGH hk hsize b t ht, ←
+      regularizationAmbientEnvelope_actual (uniformHyperedgeMapEmbedding k e) G0 H0 hGH hk
+        hsize beta hbeta b t,
+      FiniteLaw.map_comp]
+    rfl
 
 theorem regularizationConfigurationEnvelope_containment :
     (regularizationConfigurationEnvelope e G0 H0 hGH hk hsize beta hbeta b t).SupportedOn

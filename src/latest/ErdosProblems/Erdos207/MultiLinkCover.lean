@@ -136,7 +136,7 @@ lemma CoversBipartiteLink.mono
 is the genuinely new family `P \ P0`, not the enlarged total family; every
 link spoke is covered by this new family itself. -/
 theorem exists_simultaneous_bipartiteLink_cover
-    {O V : Type*} [Fintype O] [DecidableEq O] [DecidableEq V]
+    {O V : Type*} [Finite O] [DecidableEq V]
     (F : ForbiddenFamilyOn V) (available P0 : TripleSystemOn V)
     (K : O → BipartiteLink V)
     (hP0packing : IsPackingOn P0) (hP0avoid : AvoidsForbidden P0 F)
@@ -149,6 +149,7 @@ theorem exists_simultaneous_bipartiteLink_cover
       IsPackingOn (P0 ∪ M) ∧ AvoidsForbidden (P0 ∪ M) F ∧
       ∀ o : O, CoversBipartiteLink (K o) M := by
   classical
+  let := Fintype.ofFinite O
   have hind : ∀ S : Finset O, ∃ P : TripleSystemOn V,
       P0 ⊆ P ∧ P ⊆ P0 ∪ available ∧
       IsPackingOn P ∧ AvoidsForbidden P F ∧

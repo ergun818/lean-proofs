@@ -12,23 +12,44 @@ namespace Erdos207
 def patternCurvatureBudget (h m : ℕ) (B₁ B₂ : ℝ) : ℝ :=
   9 * (h : ℝ) * (h - 1 : ℕ) + 6 * h * m * B₁ + (m : ℝ) ^ 2 * B₁ ^ 2 + m * B₂
 
-theorem pattern_slope_polynomial_bound
-    (h m : ℕ) (p r B₁ : ℝ) (hp : 0 ≤ p) (hp1 : p ≤ 1) (hr : 0 ≤ r) (hrB : r ≤ B₁) :
-    |-(3 * (h : ℝ)) * p ^ (h - 1) - (m : ℝ) * p ^ h * r| ≤ 3 * h + m * B₁ := by
-  have hpow : ∀ n : ℕ, p ^ n ≤ 1 := fun n ↦ by
-    simpa only [one_pow] using pow_le_pow_left₀ hp hp1 n
-  have hfirst : 3 * (h : ℝ) * p ^ (h - 1) ≤ 3 * h := by
-    simpa only [mul_one] using mul_le_mul_of_nonneg_left (hpow (h - 1)) (by positivity : 0 ≤ 3 * (h : ℝ))
-  have hsecond : (m : ℝ) * p ^ h * r ≤ m * B₁ := by
-    have hpr : p ^ h * r ≤ B₁ := by
-      simpa only [one_mul] using mul_le_mul (hpow h) hrB hr (by norm_num : (0 : ℝ) ≤ 1)
-    simpa only [mul_assoc] using mul_le_mul_of_nonneg_left hpr (Nat.cast_nonneg m)
-  have hneg : -(3 * (h : ℝ)) * p ^ (h - 1) ≤ 0 :=
-    mul_nonpos_of_nonpos_of_nonneg (neg_nonpos.mpr (by positivity)) (pow_nonneg hp _)
-  have hnon : 0 ≤ (m : ℝ) * p ^ h * r := by positivity
-  rw [abs_of_nonpos (by linarith only [hneg, hnon] :
-    -(3 * (h : ℝ)) * p ^ (h - 1) - (m : ℝ) * p ^ h * r ≤ 0)]
-  linarith only [hfirst, hsecond]
+theorem pattern_slope_polynomial_bound (h m : ℕ) (p r B₁ : ℝ) (hp : 0 ≤ p) (hp1 : p ≤ 1)
+    (hr : 0 ≤ r) (hrB : r ≤ B₁) :
+    |-(3 * (h : ℝ)) * p ^ (h - 1) - (m : ℝ) * p ^ h * r| ≤ 3 * h + m * B₁ :=
+  by
+    have hpow : ∀ n : ℕ, p ^ n ≤ 1 := fun n ↦
+      by
+        simpa only [one_pow] using pow_le_pow_left₀ hp hp1 n
+    have hfirst : 3 * (h : ℝ) * p ^ (h - 1) ≤ 3 * h :=
+      by
+        simpa only [mul_one] using
+          mul_le_mul_of_nonneg_left (hpow (h - 1))
+            (by
+                positivity :
+              0 ≤ 3 * (h : ℝ))
+    have hsecond : (m : ℝ) * p ^ h * r ≤ m * B₁ :=
+      by
+        have hpr : p ^ h * r ≤ B₁ :=
+          by
+            simpa only [one_mul] using
+              mul_le_mul (hpow h) hrB hr
+                (by
+                    norm_num :
+                  (0 : ℝ) ≤ 1)
+        simpa only [mul_assoc] using mul_le_mul_of_nonneg_left hpr (Nat.cast_nonneg m)
+    have hneg : -(3 * (h : ℝ)) * p ^ (h - 1) ≤ 0 :=
+      mul_nonpos_of_nonpos_of_nonneg
+        (neg_nonpos.mpr
+          (by
+            positivity))
+        (pow_nonneg hp _)
+    have hnon : 0 ≤ (m : ℝ) * p ^ h * r :=
+      by
+        positivity
+    rw [abs_of_nonpos
+        (by
+            linarith only [hneg, hnon] :
+          -(3 * (h : ℝ)) * p ^ (h - 1) - (m : ℝ) * p ^ h * r ≤ 0)]
+    linarith only [hfirst, hsecond]
 
 theorem pattern_curvature_polynomial_bound
     (h m : ℕ) (p r v B₁ B₂ : ℝ)

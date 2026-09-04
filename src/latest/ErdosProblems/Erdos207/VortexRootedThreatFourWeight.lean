@@ -117,8 +117,7 @@ theorem fourRootedThreat_pointWeight_le_code
         rw [← hcode, hsum]
       · have hremEq : rootedThreatRemainder z.1 = ∅ :=
           not_nonempty_iff_eq_empty.mp hrem
-        simp [fourRootedThreatPointCodeWeight, fourRootedThreatCode,
-          hrem, hremEq, setWeight]
+        simp [fourRootedThreatPointCodeWeight, fourRootedThreatCode, hremEq, setWeight]
     · have hAnonempty : A.Nonempty := nonempty_iff_ne_empty.mpr hA
       have hrem : (rootedThreatRemainder z.1).Nonempty :=
         hAnonempty.mono hsub
@@ -174,7 +173,7 @@ theorem sum_fourRootedThreatPointCodeWeight_fiber_le
   classical
   by_cases hA : A = ∅
   · subst A
-    simp only [fourRootedThreatPointCodeWeight, if_pos rfl,
+    simp only [fourRootedThreatPointCodeWeight,
       Fintype.sum_option]
     calc
       (1 : ℝ≥0) + (∑ x : Fin 3 × V,
