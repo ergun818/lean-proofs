@@ -227,7 +227,6 @@ theorem sqrtEuler_le_exp_five_mul (L : ℕ) :
     _ = Real.exp (5 * ((L + 1).primesBelow.card : ℕ)) := by
       rw [Finset.prod_const, ← Real.exp_nat_mul]
       congr 1
-      push_cast
       ring
     _ ≤ Real.exp (5 * (L + 1 : ℕ)) := by
       apply Real.exp_monotone

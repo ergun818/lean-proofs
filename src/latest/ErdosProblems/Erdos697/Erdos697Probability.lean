@@ -95,7 +95,7 @@ theorem finite_upper_tail_le_chebyshev {Ω : Type*} [Fintype Ω]
 
 /-- Triangle inequality for product measures.  The `L¹` distance between
 two product measures is at most the sum of the marginal `L¹` distances. -/
-theorem prod_tv_le_sum_tv {G : Type*} [Fintype G] [DecidableEq G]
+theorem prod_tv_le_sum_tv {G : Type*} [Fintype G]
     {K : ℕ} (f : Fin K → G → ℝ) (u : G → ℝ)
     (hu_nn : ∀ g, 0 ≤ u g)
     (hu_sum : (∑ g, u g) = 1)

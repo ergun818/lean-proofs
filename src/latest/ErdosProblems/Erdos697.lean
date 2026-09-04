@@ -845,14 +845,17 @@ theorem exists_eventually_totient_ratio_le_rpow {η : ℝ} (hη : 0 < η) :
   have hlogbase :
       Real.log (((Y + 1 : ℕ) : ℝ) / Y) ≤ 1 / (Y : ℝ) := by
     have h := Real.log_le_sub_one_of_pos hbasepos
-    convert h using 1 <;> push_cast <;> field_simp <;> ring
+    convert h using 1
+    push_cast
+    field_simp
+    ring
   have hcoef :
       Real.log (((Y + 1 : ℕ) : ℝ) / Y) /
           Real.log ((Y + 1 : ℕ) : ℝ) < η := by
     have hdenlower : Real.log 2 ≤ Real.log ((Y + 1 : ℕ) : ℝ) := by
       apply Real.strictMonoOn_log.monotoneOn
       · norm_num
-      · show (0 : ℝ) < (Y + 1 : ℕ)
+      · change (0 : ℝ) < (Y + 1 : ℕ)
         positivity
       · exact_mod_cast (show 2 ≤ Y + 1 by omega)
     have hlognonneg :
@@ -1010,7 +1013,7 @@ theorem tendsto_oddsMass_cutoff_div_log
     · have hinvcut : Tendsto (fun m : ℕ => 1 / (cutoff m lam : ℝ))
           atTop (𝓝 0) := by
         exact Tendsto.congr'
-          (Eventually.of_forall fun m => by simp [Function.comp_def, one_div])
+          (Eventually.of_forall fun m => by simp [one_div])
           (tendsto_inv_atTop_zero.comp hcutlam)
       simpa only [zero_div] using hinvcut.div_atTop hlog
   have hadd := hrec.add hdiff
@@ -1162,7 +1165,7 @@ theorem exists_eventually_weighted_residue_error
         (by norm_num))
     have hmodrange : (m : ℝ) ≤ Real.sqrt (n : ℝ) /
         Real.rpow (Real.log (n : ℝ)) ((N : ℝ) + 5) := by
-      rw [show (N : ℝ) + 5 = (B : ℕ) by push_cast; simp [B]]
+      rw [show (N : ℝ) + 5 = (B : ℕ) by simp [B]]
       have hrpowB : Real.rpow (Real.log (n : ℝ)) (B : ℝ) =
           Real.log (n : ℝ) ^ B := Real.rpow_natCast _ _
       rw [hrpowB]
@@ -1195,7 +1198,7 @@ theorem exists_eventually_weighted_residue_error
         Real.log (n : ℝ) ^ (N - 2) * Real.log (n : ℝ) ^ 2 := by
       calc
         Real.log (n : ℝ) ^ N =
-            Real.log (n : ℝ) ^ ((N - 2) + 2) := by congr 1 <;> omega
+            Real.log (n : ℝ) ^ ((N - 2) + 2) := by congr 1; omega
         _ = _ := pow_add _ _ _
     have hdenle :
         Real.log (cutoff m lam : ℝ) ^ (N - 2) *
@@ -1434,7 +1437,7 @@ an exact Bernoulli lower bound for `δ`: every nonempty unit-product
 relation supplies an eligible divisor. -/
 theorem sum_weight_relation_le_delta
     {I : Type*} [Fintype I] [LinearOrder I]
-    {m : ℕ} (hm : 0 < m) (α : ℝ)
+    {m : ℕ} (_hm : 0 < m) (α : ℝ)
     (a : I → ℕ) (hprime : ∀ i, (a i).Prime)
     (hinj : Function.Injective a) (hcopm : ∀ i, Nat.Coprime (a i) m)
     (hbound : ∀ T : Finset I, T.Nonempty →
@@ -1473,14 +1476,13 @@ theorem sum_weight_relation_le_delta
       (fun S => ¬ WeightedSubset.noRelationSet f S)
     convert hcrt using 1
     · ext n
-      simp only [R, Set.mem_setOf_eq]
+      simp only [R, Set.mem_ofPred_eq]
       rw [hzero]
     · rfl
   have hRsub : R ⊆ divisorSet m α := by
     intro n hn
-    simp only [R, Set.mem_setOf_eq] at hn
-    simp only [WeightedSubset.noRelationSet, not_forall, not_not,
-      _root_.not_imp] at hn
+    simp only [R, Set.mem_ofPred_eq] at hn
+    simp only [WeightedSubset.noRelationSet, not_forall, not_not] at hn
     obtain ⟨T, hTS, hTne, hprod⟩ := hn
     let d : ℕ := ∏ i ∈ T, a i
     have hdvd : d ∣ n := by
@@ -1504,7 +1506,7 @@ theorem sum_weight_relation_le_delta
 
 theorem sum_weight_boundedRelation_le_delta
     {I : Type*} [Fintype I] [LinearOrder I]
-    {m : ℕ} (hm : 0 < m) (α : ℝ)
+    {m : ℕ} (_hm : 0 < m) (α : ℝ)
     (a : I → ℕ) (hprime : ∀ i, (a i).Prime)
     (hinj : Function.Injective a) (hcopm : ∀ i, Nat.Coprime (a i) m)
     (Kmax : ℕ)
@@ -1546,12 +1548,12 @@ theorem sum_weight_boundedRelation_le_delta
       (fun S => ¬ WeightedSubset.noRelationSet f S ∧ S.card ≤ Kmax)
     convert hcrt using 1
     · ext n
-      simp only [R, Set.mem_setOf_eq]
+      simp only [R, Set.mem_ofPred_eq]
       rw [hzero]
     · rfl
   have hRsub : R ⊆ divisorSet m α := by
     intro n hn
-    simp only [R, Set.mem_setOf_eq] at hn
+    simp only [R, Set.mem_ofPred_eq] at hn
     have hnrel := hn.1
     simp only [WeightedSubset.noRelationSet, not_forall, not_not] at hnrel
     obtain ⟨T, hTS, hTne, hprod⟩ := hnrel
@@ -1633,7 +1635,7 @@ theorem residue_l1_le_of_pointwise
     {L U m : ℕ} [NeZero m] (hm : 0 < m)
     (hcop : ∀ p ∈ PrimeWindow.primes L U, Nat.Coprime p m)
     {W D : ℝ} (hW : W = PrimeWindow.oddsMass L U)
-    (hWpos : 0 < W) (hD : 0 ≤ D)
+    (hWpos : 0 < W) (_hD : 0 ≤ D)
     (hpoint : ∀ a ∈ BoundedGaps.Maynard.coprimeResidues m,
       |PrimeWindow.residueOddsMass L U m a -
         PrimeWindow.oddsMass L U / (m.totient : ℝ)| ≤ D) :
@@ -1694,8 +1696,8 @@ theorem residue_l1_le_of_pointwise
 /-- The omitted Bernoulli normalization cancels the exponential series
 factor up to the difference between odds mass and reciprocal mass. -/
 theorem zeroBase_mul_exp_odds_le
-    {I : Type*} [Fintype I] [DecidableEq I]
-    (p : I → ℝ) (hp0 : ∀ i, 0 ≤ p i) (hp1 : ∀ i, p i ≤ 1) :
+    {I : Type*} [Fintype I]
+    (p : I → ℝ) (_hp0 : ∀ i, 0 ≤ p i) (hp1 : ∀ i, p i ≤ 1) :
     Bernoulli.zeroBase (Finset.univ : Finset I) p *
         Real.exp (∑ i, Bernoulli.odds p i) ≤
       Real.exp ((∑ i, Bernoulli.odds p i) - ∑ i, p i) := by
@@ -1716,7 +1718,7 @@ theorem zeroBase_mul_exp_odds_le
       Real.exp (-(∑ i, p i)) *
         Real.exp (∑ i, Bernoulli.odds p i) :=
       mul_le_mul_of_nonneg_right hprod (Real.exp_pos _).le
-    _ = _ := by rw [← Real.exp_add]; congr 1 <;> ring
+    _ = _ := by rw [← Real.exp_add]; congr 1; ring
 
 /-- Finite upper-regime estimate with all CRT and subset-product
 bookkeeping discharged.  Only scalar error terms remain. -/
@@ -1727,7 +1729,7 @@ theorem one_sub_delta_le_primeWindow_error
     (hpoint : ∀ a ∈ BoundedGaps.Maynard.coprimeResidues m,
       |PrimeWindow.residueOddsMass L U m a -
         PrimeWindow.oddsMass L U / (m.totient : ℝ)| ≤ D)
-    (hEWpos : 0 < PrimeWindow.reciprocalMass L U)
+    (_hEWpos : 0 < PrimeWindow.reciprocalMass L U)
     (hWpos : 0 < PrimeWindow.oddsMass L U)
     (hKmin : 1 ≤ Kmin) (hKK : Kmin ≤ Kmax)
     (hrlo0 : 0 < rlo) (hrlo1 : rlo < 1)
@@ -2782,8 +2784,8 @@ private theorem tendsto_reciprocalMass_cube_cutoff_div_log
       pow_le_pow_left₀ (by positivity) hquarter 4
     have hrootpow : ((cutoff m α : ℝ) ^ (1 / 4 : ℝ)) ^ 4 =
         (cutoff m α : ℝ) := by
-      convert Real.rpow_inv_natCast_pow hUpos.le (by norm_num : (4 : ℕ) ≠ 0) using 1 <;>
-        norm_num
+      convert Real.rpow_inv_natCast_pow hUpos.le (by norm_num : (4 : ℕ) ≠ 0) using 1
+      norm_num
     rw [hrootpow] at hpow4
     have hle4 : m ^ 4 ≤ cutoff m α := by exact_mod_cast hpow4
     have hle : m ^ 3 ≤ cutoff m α := by
@@ -2841,7 +2843,7 @@ private theorem exists_smooth_multiplier_bound :
       gcongr
 
 private theorem tendsto_loglog_sq_mul_exp_loglog_sub_mul_log
-    {c t : ℝ} (hc : 0 ≤ c) (ht : 0 < t) :
+    {c t : ℝ} (_hc : 0 ≤ c) (ht : 0 < t) :
     Tendsto (fun m : ℕ =>
       Real.log (Real.log (m : ℝ)) ^ 2 *
         Real.exp (c * Real.log (Real.log (m : ℝ)) -
@@ -3092,8 +3094,8 @@ private theorem cube_le_of_le_fourth_root {m L : ℕ} (hm : 0 < m)
   have hp4 : (m : ℝ) ^ 4 ≤ ((L : ℝ) ^ (1 / 4 : ℝ)) ^ 4 :=
     pow_le_pow_left₀ hmR.le hroot 4
   have hrootpow : ((L : ℝ) ^ (1 / 4 : ℝ)) ^ 4 = (L : ℝ) := by
-    convert Real.rpow_inv_natCast_pow hLpos.le (by norm_num : (4 : ℕ) ≠ 0) using 1 <;>
-      norm_num
+    convert Real.rpow_inv_natCast_pow hLpos.le (by norm_num : (4 : ℕ) ≠ 0) using 1
+    norm_num
   rw [hrootpow] at hp4
   have hp4n : m ^ 4 ≤ L := by exact_mod_cast hp4
   exact (Nat.pow_le_pow_right (by omega : 1 ≤ m) (by omega : 3 ≤ 4)).trans hp4n
@@ -3272,13 +3274,17 @@ private theorem master_error_le_expanded_envelope
           6 * (Real.log (Real.log (m : ℝ)) ^ 2 *
             Real.exp ((cmid * Real.log 2 + 1) * Real.log (Real.log (m : ℝ)) - Real.log (m : ℝ))) +
           Real.log (Real.log (m : ℝ)) ^ 2 *
-            Real.exp (cmid * Real.log 2 * Real.log (Real.log (m : ℝ)) - (3 - d * Real.log 2) * Real.log (m : ℝ)) +
+            Real.exp (cmid * Real.log 2 * Real.log (Real.log (m : ℝ)) -
+              (3 - d * Real.log 2) * Real.log (m : ℝ)) +
           2 * (Real.log (Real.log (m : ℝ)) ^ 2 *
-            Real.exp (cmid * Real.log 2 * Real.log (Real.log (m : ℝ)) - (1 - d * Real.log 2) * Real.log (m : ℝ))) +
+            Real.exp (cmid * Real.log 2 * Real.log (Real.log (m : ℝ)) -
+              (1 - d * Real.log 2) * Real.log (m : ℝ))) +
           2 * (Real.log (Real.log (m : ℝ)) ^ 2 *
-            Real.exp (cmid * Real.log 2 * Real.log (Real.log (m : ℝ)) - (1 - d * Real.log 2 - lam) * Real.log (m : ℝ))) +
+            Real.exp (cmid * Real.log 2 * Real.log (Real.log (m : ℝ)) -
+              (1 - d * Real.log 2 - lam) * Real.log (m : ℝ))) +
           Cφ * (α - lam + 1) * (Real.log (Real.log (m : ℝ)) ^ 2 *
-            Real.exp ((cmid * Real.log 2 + 1) * Real.log (Real.log (m : ℝ)) - (1 - d * Real.log 2 - η) * Real.log (m : ℝ))) +
+            Real.exp ((cmid * Real.log 2 + 1) * Real.log (Real.log (m : ℝ)) -
+              (1 - d * Real.log 2 - η) * Real.log (m : ℝ))) +
           20 * C * 2 ^ (N - 1) * (Real.log (Real.log (m : ℝ)) ^ 2 *
             Real.exp (cmid * Real.log 2 * Real.log (Real.log (m : ℝ)) -
               (lam * (N - 1 : ℕ) - d * Real.log 2) * Real.log (m : ℝ)))) := by
@@ -3301,7 +3307,8 @@ private theorem master_error_le_expanded_envelope
             Real.exp (-(bmark * α / 2) * Real.log (m : ℝ)) +
             Real.exp (cmid * Real.log 2 * Real.log (Real.log (m : ℝ))) *
               (200 / Real.log (m : ℝ) + (2 / (m : ℝ)) * (1 + 3 * Real.log (m : ℝ))) +
-            Real.exp (cmid * Real.log 2 * Real.log (Real.log (m : ℝ)) + d * Real.log 2 * Real.log (m : ℝ)) *
+            Real.exp (cmid * Real.log 2 * Real.log (Real.log (m : ℝ)) +
+              d * Real.log 2 * Real.log (m : ℝ)) *
               (1 / (m : ℝ) ^ 3 + (2 / (m : ℝ)) * (1 + (m : ℝ) ^ lam) +
                 (α - lam + 1) * Real.log (m : ℝ) * (Cφ * (m : ℝ) ^ η) / m +
                 20 * C * 2 ^ (N - 1) * (m : ℝ) ^ (-(lam * (N - 1 : ℕ))))) :=
@@ -3643,13 +3650,15 @@ private theorem tendsto_delta_zero_of_one_le_of_lt_critical
         Real.exp (-(bmid / 2) * ll m) := by
       have h := upperTail_le_exp_neg_rate_mul hrmid1 hlowMid
       dsimp [bmid]
-      convert h using 1 <;> ring_nf
+      convert h using 1
+      ring_nf
     have htailMark : UpperBound.upperTail rmark
         (PrimeWindow.reciprocalMass (P m) (U m)) ≤
         Real.exp (-(bmark * α / 2) * ell m) := by
       have h := upperTail_le_exp_neg_rate_mul hrmark1 hlowMark
       dsimp [bmark]
-      convert h using 1 <;> ring_nf
+      convert h using 1
+      ring_nf
     have hrank : (Real.sqrt (m : ℝ))⁻¹ * Real.exp (5 * (R m + 1 : ℕ)) ≤
         Real.exp 5 * Real.exp (-(2 / 5 : ℝ) * ell m) := by
       simpa [R, ell] using rankin_floorLog_bound hmpos (by linarith)
@@ -3675,7 +3684,8 @@ private theorem tendsto_delta_zero_of_one_le_of_lt_critical
       (by simpa [ell] using hmidM)
       (by simpa [ell] using hmarkM)
     dsimp [E, F, G, c, q, ell, ll]
-    convert henv using 1 <;> ring_nf
+    convert henv using 1
+    ring_nf
   apply squeeze_zero'
   · exact Eventually.of_forall fun m => delta_nonneg m α
   · exact hδE

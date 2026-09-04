@@ -64,7 +64,7 @@ theorem sum_eq_primeLogHarmonic_abel {x : ℕ} (hx : 2 ≤ x) :
               intro n hn
               by_cases hp : n.Prime
               · have hlog : Real.log (n : ℝ) ≠ 0 := hp.log_ne_zero
-                simp [c, hp, hlog]
+                simp [c, hp]
                 field_simp
               · simp [c, hp]
       _ = ∑ p ∈ Nat.primesLE x, (1 : ℝ) / p := by

@@ -248,7 +248,8 @@ theorem upper_tail_chernoff {ι : Type*} [DecidableEq ι]
   have ha_nonneg : 0 ≤ a := ha_pos.le
   have ha_le : a ≤ 1 / (1 - t) := by
     have hexp : 1 - t ≤ Real.exp (-t) := by
-      convert Real.add_one_le_exp (-t) using 1 <;> ring
+      convert Real.add_one_le_exp (-t) using 1
+      ring
     have hinv : (Real.exp (-t))⁻¹ ≤ (1 - t)⁻¹ :=
       inv_anti₀ hone_sub_t hexp
     simpa [a, Real.exp_neg, one_div] using hinv
@@ -399,13 +400,13 @@ theorem weight_eq_zeroBase_mul_prod_odds
           ∏ i ∈ s \ T, (1 - p i)) *
             ∏ i ∈ T, odds p i := by ring
 
-theorem zeroBase_nonneg {I : Type*} [DecidableEq I]
+theorem zeroBase_nonneg {I : Type*}
     (s : Finset I) (p : I → ℝ) (hp1 : ∀ i ∈ s, p i ≤ 1) :
     0 ≤ zeroBase s p := by
   unfold zeroBase
   exact Finset.prod_nonneg fun i hi => sub_nonneg.mpr (hp1 i hi)
 
-theorem zeroBase_le_one {I : Type*} [DecidableEq I]
+theorem zeroBase_le_one {I : Type*}
     (s : Finset I) (p : I → ℝ) (hp0 : ∀ i ∈ s, 0 ≤ p i)
     (hp1 : ∀ i ∈ s, p i ≤ 1) :
     zeroBase s p ≤ 1 := by

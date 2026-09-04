@@ -77,7 +77,7 @@ private theorem residueClass_hasDensity {q : ℕ} (hq : 0 < q)
     rw [show residueClass q a ∩ Set.Iio n =
         ↑((Finset.range n).filter (fun k => k ≡ a.val [MOD q])) by
       ext k
-      simp only [Set.mem_inter_iff, residueClass, Set.mem_setOf_eq,
+      simp only [Set.mem_inter_iff, residueClass, Set.mem_ofPred_eq,
         Set.mem_Iio, Finset.mem_coe, Finset.mem_filter, Finset.mem_range]
       constructor
       · rintro ⟨hk, hkn⟩
@@ -117,7 +117,7 @@ private def unionResidueClasses (q : ℕ) (R : Finset (ZMod q)) : Set ℕ :=
   {n | (n : ZMod q) ∈ R}
 
 private theorem unionResidueClasses_insert {q : ℕ} {a : ZMod q}
-    {R : Finset (ZMod q)} (ha : a ∉ R) :
+    {R : Finset (ZMod q)} (_ha : a ∉ R) :
     unionResidueClasses q (insert a R) =
       residueClass q a ∪ unionResidueClasses q R := by
   ext n

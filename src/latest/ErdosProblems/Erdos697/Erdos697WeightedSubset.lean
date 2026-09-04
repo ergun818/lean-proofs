@@ -30,7 +30,8 @@ theorem sum_tuple_pushforward
         (∏ j, ∑ i, if f i = g j then w i else 0) * H g := by
   induction K with
   | zero =>
-      simp only [Finset.univ_unique, Finset.univ_eq_empty, Finset.prod_empty, one_mul, Finset.sum_singleton]
+      simp only [Finset.univ_unique, Finset.univ_eq_empty, Finset.prod_empty,
+        one_mul, Finset.sum_singleton]
       exact congrArg H (Subsingleton.elim _ _)
   | succ K ih =>
       rw [Fintype.sum_equiv
@@ -163,7 +164,7 @@ theorem sum_tuple_pushforward
 
 section Enumeration
 
-variable {I : Type*} [Fintype I] [LinearOrder I]
+variable {I : Type*} [LinearOrder I]
 
 private def enumeration {K : ℕ}
     (x : {S : Finset I // S.card = K} × Equiv.Perm (Fin K)) : Fin K → I :=
@@ -211,6 +212,8 @@ private theorem prod_enumeration {K : ℕ} (w : I → ℝ)
         (f := w) (x.1.1.orderEmbOfFin x.1.2).injective.injOn]
       rw [Finset.image_orderEmbOfFin_univ]
 
+variable [Fintype I]
+
 theorem factorial_mul_sum_subsets_le_sum_tuples
     {K : ℕ} (w : I → ℝ) (hw : ∀ i, 0 ≤ w i)
     (Pset : Finset I → Prop) [DecidablePred Pset]
@@ -245,8 +248,7 @@ theorem factorial_mul_sum_subsets_le_sum_tuples
       ∑ x : A × Equiv.Perm (Fin K),
         if Pset x.1.1 then ∏ j, w (enumeration x j) else 0 := by
       simp only [Fintype.sum_prod_type, prod_enumeration,
-        Finset.sum_const, nsmul_eq_mul, Fintype.card_perm,
-        Fintype.card_fin]
+        Finset.sum_const, nsmul_eq_mul]
       rw [← Finset.mul_sum]
       congr 1
       · norm_cast
@@ -290,8 +292,7 @@ end Enumeration
 
 section AlmostUniform
 
-variable {I G : Type*} [Fintype I] [Fintype G] [Nonempty G]
-  [DecidableEq G]
+variable {I G : Type*} [Fintype I] [Fintype G] [DecidableEq G]
 
 def residueMass (w : I → ℝ) (f : I → G) (g : G) : ℝ :=
   ∑ i, if f i = g then w i else 0
@@ -304,6 +305,8 @@ theorem sum_residueMass (w : I → ℝ) (f : I → G) :
   intro i _
   simp
 
+variable [Nonempty G]
+
 theorem sum_tuple_event_le_of_residue_l1
     (w : I → ℝ) (f : I → G) (hw : ∀ i, 0 ≤ w i)
     {W ε B : ℝ} (hW : W = ∑ i, w i) (hWpos : 0 < W)
@@ -311,7 +314,7 @@ theorem sum_tuple_event_le_of_residue_l1
       |residueMass w f g / W - 1 / (Fintype.card G : ℝ)|) ≤ ε)
     {K : ℕ} (P : (Fin K → G) → Prop) [DecidablePred P]
     (hUniform :
-      (∑ g ∈ (Finset.univ : Finset (Fin K → G)).filter P,
+      (∑ _g ∈ (Finset.univ : Finset (Fin K → G)).filter P,
         1 / (Fintype.card G : ℝ) ^ K) ≤ B) :
     (∑ v ∈ (Finset.univ : Finset (Fin K → I)).filter
         (fun v => P (fun j => f (v j))), ∏ j, w (v j)) ≤
@@ -428,8 +431,9 @@ noncomputable def hittingTuples (K : ℕ) (B : Finset G) : Finset (Fin K → G) 
   classical
   exact Finset.univ.filter (hitsTuple B)
 
+omit [DecidableEq G] in
 theorem uniform_noRelationTuple_le {K : ℕ} (hK : 1 ≤ K) :
-    (∑ g ∈ noRelationTuples (G := G) K,
+    (∑ _g ∈ noRelationTuples (G := G) K,
       1 / (Fintype.card G : ℝ) ^ K) ≤
         (Fintype.card G : ℝ) / ((2 : ℝ) ^ K - 1) := by
   classical
@@ -453,8 +457,9 @@ theorem uniform_noRelationTuple_le {K : ℕ} (hK : 1 ≤ K) :
   rw [hevent]
   simpa only [zero_mul, mul_zero, add_zero] using h
 
+omit [DecidableEq G] in
 theorem uniform_hitsTuple_le {K : ℕ} (hK : 1 ≤ K) (B : Finset G) :
-    (∑ g ∈ hittingTuples (G := G) K B,
+    (∑ _g ∈ hittingTuples (G := G) K B,
       1 / (Fintype.card G : ℝ) ^ K) ≤
         (B.card : ℝ) * ((2 : ℝ) ^ K - 1) /
           (Fintype.card G : ℝ) := by
@@ -589,8 +594,7 @@ theorem factorial_mul_noRelationSet_le
           ∏ j, w (v j) := by
     have hraw := factorial_mul_sum_subsets_le_sum_tuples w hw
       (noRelationSet f) Ptuple (by
-        intro S hS σ
-        intro A hA hprod
+        intro S hS σ A hA hprod
         let e : Fin K → I := enumeration (S, σ)
         have heinj : Function.Injective e := by
           intro i j hij
@@ -634,7 +638,7 @@ theorem sum_noRelation_odds_card_range_le
     {W ε : ℝ} (hW : W = ∑ i, w i) (hWpos : 0 < W) (hε : 0 ≤ ε)
     (hTV : (∑ g : G,
       |residueMass w f g / W - 1 / (Fintype.card G : ℝ)|) ≤ ε)
-    {Kmin Kmax : ℕ} (hKmin : 1 ≤ Kmin) (hKK : Kmin ≤ Kmax) :
+    {Kmin Kmax : ℕ} (hKmin : 1 ≤ Kmin) (_hKK : Kmin ≤ Kmax) :
     (∑ k ∈ Finset.Icc Kmin Kmax,
         ∑ S ∈ noRelationSubsets f k, ∏ i ∈ S, w i) ≤
       Real.exp W *
@@ -873,7 +877,7 @@ theorem one_sub_sum_weight_relation_le
     intro S _
     by_cases hn : noRelationSet f S
     · simp only [hn, if_true]
-      split_ifs <;> simp_all <;> omega
+      split_ifs <;> simp_all
     · simp only [hn, if_false, and_false]
       split_ifs <;> simp_all [hweight0 S]
   have hlow :
@@ -957,7 +961,7 @@ theorem one_sub_sum_weight_boundedRelation_le
     · simp only [hr, not_true_eq_false, if_false, zero_sub]
       split_ifs <;> simp_all [hweight0 S]
     · by_cases hk : S.card ≤ Kmax
-      · simp only [hr, not_false_eq_true, hk, if_true, sub_self]
+      · simp only [hr, not_false_eq_true, hk, if_true]
         split_ifs <;> simp_all [hweight0 S]
       · have : Kmax + 1 ≤ S.card := by omega
         simp [hr, hk, this]
@@ -1073,7 +1077,7 @@ theorem sum_hitting_odds_card_range_le
     {W ε : ℝ} (hW : W = ∑ i, w i) (hWpos : 0 < W) (hε : 0 ≤ ε)
     (hTV : (∑ g : G,
       |residueMass w f g / W - 1 / (Fintype.card G : ℝ)|) ≤ ε)
-    {Kmin Kmax : ℕ} (hKmin : 1 ≤ Kmin) (hKK : Kmin ≤ Kmax) :
+    {Kmin Kmax : ℕ} (hKmin : 1 ≤ Kmin) (_hKK : Kmin ≤ Kmax) :
     (∑ k ∈ Finset.Icc Kmin Kmax,
         ∑ S ∈ hittingSubsets f B k, ∏ i ∈ S, w i) ≤
       Real.exp W *

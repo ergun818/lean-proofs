@@ -23,6 +23,7 @@ variable (a : ι → ℕ) [(i : ι) → NeZero (a i)]
 def zeroSet (x : (i : ι) → ZMod (a i)) : Finset ι :=
   Finset.univ.filter fun i => x i = 0
 
+omit [DecidableEq ι] [∀ i, NeZero (a i)] in
 @[simp] theorem mem_zeroSet (x : (i : ι) → ZMod (a i)) (i : ι) :
     i ∈ zeroSet a x ↔ x i = 0 := by
   simp [zeroSet]

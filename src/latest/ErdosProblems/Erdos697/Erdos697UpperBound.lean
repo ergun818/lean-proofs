@@ -35,7 +35,7 @@ def multiples (a : ℕ) : Set ℕ := {n | a ∣ n}
 /-- If a density-bearing set is covered by finitely many other
 density-bearing sets, its density is at most the sum of their densities. -/
 theorem hasDensity_le_finset_iUnion
-    {A : Type*} [DecidableEq A]
+    {A : Type*}
     {S : Set ℕ} {s : ℝ} (hS : S.HasDensity s)
     (I : Finset A) (T : A → Set ℕ) (d : A → ℝ)
     (hT : ∀ i ∈ I, (T i).HasDensity (d i))
@@ -157,12 +157,12 @@ def markedHitProb (L M U m : ℕ) (B : Finset (ZMod m)ˣ) (K : ℕ) : ℝ :=
 private theorem window_pairwise (L U : ℕ) :
     Pairwise (Function.onFun Nat.Coprime
       (fun p : ↑(PrimeWindow.primes L U) ↦ p.1)) :=
-  pairwise_val_primes fun p hp ↦ (PrimeWindow.mem_primes.mp hp).2.2
+  pairwise_val_primes fun _p hp ↦ (PrimeWindow.mem_primes.mp hp).2.2
 
 private theorem coprimeWindow_pairwise (L U m : ℕ) :
     Pairwise (Function.onFun Nat.Coprime
       (fun p : ↑(coprimePrimes L U m) ↦ p.1)) :=
-  pairwise_val_primes fun p hp ↦ (mem_coprimePrimes.mp hp).2.2.1
+  pairwise_val_primes fun _p hp ↦ (mem_coprimePrimes.mp hp).2.2.1
 
 theorem highSet_hasDensity
     {a L U K : ℕ} (ha : a ∈ Smooth.parts L U) :
@@ -300,7 +300,7 @@ theorem smooth_parts_mono_left {R P U a : ℕ} (hRP : R ≤ P)
   omega
 
 theorem goodPart_mem_middle_parts {R P U m a : ℕ}
-    (hRP : R ≤ P) (hmP : m ≤ P) (ha : a ∈ goodParts R U m) :
+    (_hRP : R ≤ P) (hmP : m ≤ P) (ha : a ∈ goodParts R U m) :
     a ∈ Smooth.parts R P := by
   have h := mem_goodParts.mp ha
   rw [Smooth.mem_parts] at h ⊢
@@ -479,7 +479,7 @@ large small-prime part, a repeated rough prime, too many rough primes in
 one of the two windows, or a bounded subset-product witness. -/
 theorem boundedDivisorSet_subset_cover
     {R P U m Kmid Kmark : ℕ}
-    (hR : 1 ≤ R) (hRP : R ≤ P) (hmP : m ≤ P) :
+    (_hR : 1 ≤ R) (_hRP : R ≤ P) (_hmP : m ≤ P) :
     boundedDivisorSet m U ⊆
       ⋃ i ∈ (Finset.univ : Finset (CoverIndex R U m)),
         indexedCoverSet R P U m Kmid Kmark i := by
@@ -514,8 +514,7 @@ theorem boundedDivisorSet_subset_cover
     refine ⟨Sum.inl (Sum.inr Q), Finset.mem_univ _, ?_⟩
     simpa [indexedCoverSet, multiples] using hp2
   have hsqD : ∀ p ∈ PrimeWindow.primes R d, ¬p ^ 2 ∣ n := by
-    intro p hp
-    intro hp2
+    intro p hp hp2
     exact hsquare ⟨p, PrimeWindow.mem_primes.mpr
       ⟨(PrimeWindow.mem_primes.mp hp).1,
         (PrimeWindow.mem_primes.mp hp).2.1.trans hdU,
@@ -634,7 +633,8 @@ theorem sum_indexedCoverDensity
   rw [Fintype.sum_sum_type, Fintype.sum_sum_type,
     Fintype.sum_prod_type]
   simp only [indexedCoverDensity, Fin.sum_univ_four]
-  simp only [Finset.univ_eq_attach, one_div, ↓reduceIte, Fin.isValue, one_ne_zero, Fin.reduceEq, add_right_inj]
+  simp only [Finset.univ_eq_attach, one_div, ↓reduceIte, Fin.isValue, one_ne_zero,
+    Fin.reduceEq, add_right_inj]
   apply Finset.sum_congr rfl
   intro a _
   ring
@@ -673,7 +673,7 @@ theorem highProb_le_chernoff
     ext S
     simp only [Finset.mem_univ, Finset.mem_powerset, true_iff]
     intro q _
-    simpa using q.2
+    simp
   unfold highProb
   rw [huniv]
   simpa [P, p] using h
@@ -863,11 +863,10 @@ def upperTail (r x : ℝ) : ℝ :=
     (((-(r * ((r - 1) / (2 * r)))) +
       (1 / (1 - ((r - 1) / (2 * r))) - 1)) * x)
 
-theorem sum_subtype_eq {α M : Type*} [DecidableEq α] [AddCommMonoid M]
+theorem sum_subtype_eq {α M : Type*} [AddCommMonoid M]
     (s : Finset α) (f : α → M) :
     (∑ x : ↑s, f x.1) = ∑ x ∈ s, f x := by
   classical
-  change (∑ x ∈ (Finset.univ : Finset ↑s), f x.1) = _
   rw [show (Finset.univ : Finset ↑s) = s.attach by ext; simp]
   exact Finset.sum_attach s f
 

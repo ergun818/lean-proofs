@@ -47,9 +47,10 @@ private theorem weight_insert_of_not_mem
   rw [Finset.prod_insert hq]
   ring
 
+omit [Fintype I] [DecidableEq I] [Fintype G] in
 private theorem sum_mul_mem_le_card_mul
     (w : I → ℝ) (hw : ∀ i, 0 ≤ w i) (f : I → G)
-    (J : Finset I) (B : Finset G) (c : G) {M : ℝ} (hM0 : 0 ≤ M)
+    (J : Finset I) (B : Finset G) (c : G) {M : ℝ} (_hM0 : 0 ≤ M)
     (hM : ∀ g : G, (∑ i ∈ J.filter (fun i ↦ f i = g), w i) ≤ M) :
     (∑ i ∈ J.filter (fun i ↦ f i * c ∈ B), w i) ≤
       (B.card : ℝ) * M := by
@@ -84,6 +85,7 @@ private theorem sum_mul_mem_le_card_mul
       exact hM _
     _ = (B.card : ℝ) * M := by simp
 
+omit [Fintype G] in
 /-- Sharp finite marked-hitting estimate.  `M` is an upper bound for the
 odds-mass of every residue fiber among the marked coordinates. -/
 theorem sum_weight_event_le
@@ -230,7 +232,7 @@ theorem sum_weight_event_le
             simp only [Finset.sum_filter]
             apply Finset.sum_congr rfl
             intro q hquniv
-            by_cases hqJ : q ∈ J <;> simp [hqJ, and_assoc]
+            by_cases hqJ : q ∈ J <;> simp [hqJ]
           · simp [hAR]
         · simp [hRK]
       _ ≤ ∑ R ∈ (Finset.univ : Finset (Finset I)).filter (fun R ↦ R.card < K),

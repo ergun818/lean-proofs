@@ -160,7 +160,6 @@ theorem eventSet_hasDensity
     rw [ZMod.castHom_apply,
       ZMod.cast_natCast
         (Finset.dvd_prod_of_mem q' (Finset.mem_univ none)) n]
-    change (n : ZMod (q' none)) = 0 ↔ a ∣ n
     rw [ZMod.natCast_eq_zero_iff]
     rfl
   have herase (n : ℕ) :
@@ -174,7 +173,6 @@ theorem eventSet_hasDensity
       ZMod.cast_natCast
         (Finset.dvd_prod_of_mem q' (Finset.mem_univ (some i))) n]
     simp only [selected, Finset.mem_filter, Finset.mem_univ, true_and]
-    change (n : ZMod (q' (some i))) = 0 ↔ q i ∣ n
     rw [ZMod.natCast_eq_zero_iff]
     rfl
   have hpFun : (fun o : Option I => 1 / (q' o : ℝ)) =
@@ -184,13 +182,14 @@ theorem eventSet_hasDensity
   have hcrt := CRTModel.crt_zeroSet_good_hasDensity q' hpair' Good'
   convert hcrt using 1
   · ext n
-    simp only [eventSet, Set.mem_setOf_eq, Good']
+    simp only [eventSet, Set.mem_ofPred_eq, Good']
     rw [herase, hnone]
   · rw [hpFun]
     simpa [Good'] using
       (sum_option_good_eq (I := I) ((1 : ℝ) / a)
         (fun i => 1 / (q i : ℝ)) Good).symm
 
+omit [Fintype G] [DecidableEq G] in
 /-- Exact density of a fixed-small-factor cover event. -/
 theorem set_hasDensity
     [LinearOrder I]
@@ -240,7 +239,6 @@ theorem set_hasDensity
     rw [ZMod.castHom_apply,
       ZMod.cast_natCast
         (Finset.dvd_prod_of_mem q' (Finset.mem_univ none)) n]
-    change (n : ZMod (q' none)) = 0 ↔ a ∣ n
     rw [ZMod.natCast_eq_zero_iff]
     rfl
   have herase (n : ℕ) :
@@ -254,7 +252,6 @@ theorem set_hasDensity
       ZMod.cast_natCast
         (Finset.dvd_prod_of_mem q' (Finset.mem_univ (some i))) n]
     simp only [selected, Finset.mem_filter, Finset.mem_univ, true_and]
-    change (n : ZMod (q' (some i))) = 0 ↔ q i ∣ n
     rw [ZMod.natCast_eq_zero_iff]
     rfl
   have hpFun : (fun o : Option I => 1 / (q' o : ℝ)) =
@@ -264,7 +261,7 @@ theorem set_hasDensity
   have hcrt := CRTModel.crt_zeroSet_good_hasDensity q' hpair' Good
   convert hcrt using 1
   · ext n
-    simp only [set, Set.mem_setOf_eq, Good]
+    simp only [set, Set.mem_ofPred_eq, Good]
     rw [herase, hnone]
   · rw [hpFun]
     simpa [Good, goodSubsets] using

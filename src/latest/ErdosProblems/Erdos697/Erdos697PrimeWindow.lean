@@ -114,7 +114,7 @@ theorem oddsMass_sub_reciprocalMass_le {L U : ℕ} (hL : 1 ≤ L) :
       rw [show 1 / ((n : ℝ) - 1) - 1 / (n : ℝ) =
           1 / ((n : ℝ) * ((n : ℝ) - 1)) by
             field_simp [hnne, hnsubne]
-            <;> ring]
+            ring]
       positivity
     _ ≤ 1 / (L : ℝ) := sum_Ioc_inv_diff L U hL
 
@@ -223,7 +223,7 @@ theorem residueOddsMass_le_harmonic
         simp
         omega]
       rw [Finset.sum_insert (by simp)]
-      simp only [g, if_pos, Nat.cast_zero]
+      simp only [g, if_pos]
       rw [harmonic_eq_sum_Icc]
       simp only [Rat.cast_sum, Rat.cast_inv, Rat.cast_natCast]
       rw [Finset.mul_sum]
@@ -233,7 +233,7 @@ theorem residueOddsMass_le_harmonic
       have hj0 : j ≠ 0 := by
         have := (Finset.mem_Icc.mp hj).1
         omega
-      simp [g, hj0, one_div]
+      simp [hj0, one_div]
 
 theorem centeredWeight_eq_residueOddsMass_sub {L U q a : ℕ} :
     (∑ n ∈ Finset.Ioc L U,
