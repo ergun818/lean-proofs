@@ -230,8 +230,9 @@ lemma prime_pow_dvd_lcm_iff {p k a b : ℕ} (hp : p.Prime) :
   exact le_max_iff
 
 lemma prime_pow_dvd_finset_lcm_iff {p k : ℕ} (hp : p.Prime) (hk : 0 < k)
-    {I : Type*} [DecidableEq I] (s : Finset I) (m : I → ℕ) :
+    {I : Type*} (s : Finset I) (m : I → ℕ) :
     p ^ k ∣ s.lcm m ↔ ∃ i ∈ s, p ^ k ∣ m i := by
+  classical
   induction s using Finset.induction with
   | empty =>
       simp [hp.ne_one, hk.ne']
@@ -240,8 +241,9 @@ lemma prime_pow_dvd_finset_lcm_iff {p k : ℕ} (hp : p.Prime) (hk : 0 < k)
       simp
 
 lemma isPrimePow_dvd_finset_lcm_iff {n : ℕ} (hn : IsPrimePow n)
-    {I : Type*} [DecidableEq I] (s : Finset I) (m : I → ℕ) :
+    {I : Type*} (s : Finset I) (m : I → ℕ) :
     n ∣ s.lcm m ↔ ∃ i ∈ s, n ∣ m i := by
+  classical
   obtain ⟨p, k, hp, hk, rfl⟩ := (isPrimePow_nat_iff _).mp hn
   exact prime_pow_dvd_finset_lcm_iff hp hk s m
 

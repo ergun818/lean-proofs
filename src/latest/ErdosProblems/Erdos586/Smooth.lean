@@ -287,7 +287,6 @@ lemma six_mul_nat_mul_half_pow_le {k : ℕ} (hk : 6 ≤ k) :
               rw [pow_succ]
               have hp : 0 ≤ (1 / 2 : ℝ) ^ k := by positivity
               have hk' : (k : ℝ) + 1 ≤ 2 * k := by
-                norm_num
                 exact_mod_cast (show k + 1 ≤ 2 * k by omega)
               have hm := mul_le_mul_of_nonneg_right hk' hp
               norm_num [Nat.cast_add, Nat.cast_one]
@@ -374,7 +373,7 @@ lemma pairKernel_le_half_of_ne_zero {x y : Exp2} (h : x ≠ (0, 0) ∨ y ≠ (0,
 lemma pairEnergy_singletons_le {a b : Exp2} (h : ¬(a = (0, 0) ∧ b = (0, 0))) :
     pairEnergy {a} {b} ≤ 31 / 36 := by
   simp only [not_and_or] at h
-  simp [pairEnergy]
+  simp only [pairEnergy, Finset.sum_singleton]
   exact (pairKernel_le_half_of_ne_zero h).trans (by norm_num)
 
 lemma two_card_boundary {A : Finset Exp2} (hA : PairAntichain A) (hc : A.card = 2)
@@ -674,7 +673,7 @@ lemma pairWeightSum_le_scaled {A : Finset Exp2} (hA : PairAntichain A) {a b : �
       rw [Finset.mul_sum]
       apply Finset.sum_congr rfl
       intro i hi
-      simp only [Prod.fst, Prod.snd, pow_add]
+      simp only [pow_add]
       ring
     _ ≤ (1 / 2 : ℝ) ^ a * (1 / 3 : ℝ) ^ b := by
       have hc := canonicalPairWeightSum_le_one A.card
@@ -696,7 +695,7 @@ lemma mem_tripleLevel {A : Finset Exp3} {c : ℕ} {x : Exp2} :
   · simp only [tripleLevel, Finset.mem_image, Finset.mem_filter]
     rintro ⟨y, ⟨hyA, hyc⟩, hy⟩
     rcases y with ⟨u, v, w⟩
-    simp only [tripleThird, triplePair, mkTriple, Prod.mk.injEq] at hyc hy ⊢
+    simp only [tripleThird, triplePair, mkTriple] at hyc hy ⊢
     aesop
   · intro hx
     refine Finset.mem_image.mpr ⟨mkTriple x c, ?_, ?_⟩
@@ -885,10 +884,10 @@ lemma sum_piecewise_reciprocal_bound (S : Finset ℕ) :
     omega
   rw [hrewrite]
   have hzero : (∑ c ∈ S, if c = 0 then (1 / 6 : ℝ) else 0) ≤ 1 / 6 := by
-    simp only [Finset.sum_ite_eq', Finset.mem_filter]
+    simp only [Finset.sum_ite_eq']
     split <;> norm_num
   have hone : (∑ c ∈ S, if c = 1 then (11 / 90 : ℝ) else 0) ≤ 11 / 90 := by
-    simp only [Finset.sum_ite_eq', Finset.mem_filter]
+    simp only [Finset.sum_ite_eq']
     split <;> norm_num
   nlinarith
 
@@ -1177,7 +1176,7 @@ def doubleCorrection (A B : Finset Exp3) : ℝ :=
 lemma onePair_ne_twoPair : onePair ≠ twoPair := by
   intro h
   have hm : (0, 0) ∈ twoPair := by rw [← h]; simp [onePair]
-  simpa [twoPair] using hm
+  simp [twoPair] at hm
 
 lemma twoPair_ne_onePair : twoPair ≠ onePair := onePair_ne_twoPair.symm
 

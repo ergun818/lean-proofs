@@ -36,7 +36,7 @@ noncomputable def sieveMass {Ω : Type*} [Fintype Ω]
 point lies in none of the events.  This is the finite union bound in the exact
 form used at the end of the sieve. -/
 theorem exists_outside_of_sum_mass_lt_one
-    {Ω ι : Type*} [Fintype Ω] [DecidableEq ι]
+    {Ω ι : Type*} [Fintype Ω]
     (weight : Ω → ℝ) (hweight : ∀ ω, 0 ≤ weight ω)
     (hweightsum : ∑ ω, weight ω = 1)
     (B : ι → Set Ω) (s : Finset ι)
@@ -44,7 +44,7 @@ theorem exists_outside_of_sum_mass_lt_one
     ∃ ω : Ω, ∀ i ∈ s, ω ∉ B i := by
   classical
   by_contra h
-  push_neg at h
+  push Not at h
   have hpoint : ∀ ω : Ω,
       weight ω ≤ ∑ i ∈ s, if ω ∈ B i then weight ω else 0 := by
     intro ω
@@ -76,7 +76,7 @@ theorem exists_outside_of_sum_mass_lt_one
 the sum of the final masses of all processed events and is positive, there is
 an uncovered point. -/
 theorem positive_remaining_gives_uncovered
-    {Ω ι : Type*} [Fintype Ω] [DecidableEq ι]
+    {Ω ι : Type*} [Fintype Ω]
     (weight : Ω → ℝ) (hweight : ∀ ω, 0 ≤ weight ω)
     (hweightsum : ∑ ω, weight ω = 1)
     (B : ι → Set Ω) (s : Finset ι)
@@ -85,19 +85,21 @@ theorem positive_remaining_gives_uncovered
       1 - ∑ i ∈ s, sieveMass weight (B i))
     (hpositive : 0 < remaining) :
     ∃ ω : Ω, ∀ i ∈ s, ω ∉ B i := by
+  classical
   apply exists_outside_of_sum_mass_lt_one weight hweight hweightsum B s
   linarith
 
 /-- Union-bound bookkeeping when the recursively accumulated stage costs are
 only upper bounds for the masses of the corresponding final events. -/
 theorem positive_cost_budget_gives_uncovered
-    {Ω ι : Type*} [Fintype Ω] [DecidableEq ι]
+    {Ω ι : Type*} [Fintype Ω]
     (weight : Ω → ℝ) (hweight : ∀ ω, 0 ≤ weight ω)
     (hweightsum : ∑ ω, weight ω = 1)
     (B : ι → Set Ω) (s : Finset ι) (cost : ι → ℝ)
     (hmass : ∀ i ∈ s, sieveMass weight (B i) ≤ cost i)
     (hpositive : 0 < 1 - ∑ i ∈ s, cost i) :
     ∃ ω : Ω, ∀ i ∈ s, ω ∉ B i := by
+  classical
   apply exists_outside_of_sum_mass_lt_one weight hweight hweightsum B s
   have hsum : (∑ i ∈ s, sieveMass weight (B i)) ≤ ∑ i ∈ s, cost i := by
     exact Finset.sum_le_sum fun i hi ↦ hmass i hi
@@ -152,7 +154,7 @@ lemma lossRatio_nonneg {p δ x : ℝ} (hp : 1 < p) (hδ0 : 0 < δ)
 domain.  Stating it independently keeps all later certificate transport free
 of calculus. -/
 lemma linearFraction_mono {c x y : ℝ}
-    (hc : 0 ≤ c) (hx : 0 ≤ x) (hxy : x ≤ y) (hy : c * y < 1) :
+    (hc : 0 ≤ c) (_hx : 0 ≤ x) (hxy : x ≤ y) (hy : c * y < 1) :
     x / (1 - c * x) ≤ y / (1 - c * y) := by
   have hcx : c * x ≤ c * y := mul_le_mul_of_nonneg_left hxy hc
   have hdenx : 0 < 1 - c * x := by linarith
@@ -191,8 +193,8 @@ normalized-`f` balance: when `fNext` is defined using division by `μNext`, one
 first proves this lemma and only then simplifies that definition. -/
 theorem nextRemaining_pos
     {p δ μPrev μNext fPrev : ℝ}
-    (hp : 1 < p) (hδ0 : 0 < δ) (hδ1 : δ < 1)
-    (hμPrev : 0 < μPrev) (hfPrev : 0 ≤ fPrev)
+    (_hp : 1 < p) (_hδ0 : 0 < δ) (_hδ1 : δ < 1)
+    (hμPrev : 0 < μPrev) (_hfPrev : 0 ≤ fPrev)
     (hvalid : lossRatio p δ fPrev < 1)
     (hloss : μPrev - μNext ≤ μPrev * lossRatio p δ fPrev) :
     0 < μNext := by

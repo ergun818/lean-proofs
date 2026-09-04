@@ -123,7 +123,7 @@ has been exposed. -/
 def initialStageDistribution : FiniteProbability (ZMod 1) where
   weight _ := 1
   weight_nonneg _ := by norm_num
-  sum_weight := by simp [ZMod.card]
+  sum_weight := by simp
 
 /-- The recursive distorted measure on the successively exposed cyclic
 groups.  At each transition it is first constructed in CRT product
@@ -208,7 +208,7 @@ lemma stageDistribution_oldEvent_invariant (A : CoveringFamily)
       apply Finset.sum_congr rfl
       intro x hx
       by_cases hS : x ∈ S
-      · simp only [Set.mem_setOf_eq, hS, ↓reduceIte]
+      · simp only [Set.mem_ofPred_eq, hS, ↓reduceIte]
         exact distort_fiber_conservation
           (stageDistribution A s Q hQ r) (stageBadEvent A s Q r hQ)
           (distortionDelta (r + 1)) (distortionDelta_nonneg (r + 1))
@@ -450,7 +450,7 @@ theorem positive_survival_at_horizon_not_coversIndices
     linarith
   have hex : ∃ x : ZMod (partialPeriod Q n), x ∉ U := by
     by_contra h
-    push_neg at h
+    push Not at h
     have hU : U = Set.univ := Set.eq_univ_of_forall h
     have hm : μ.mass U = 1 := by rw [hU, FiniteProbability.mass_univ]
     linarith

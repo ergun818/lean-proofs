@@ -35,7 +35,7 @@ attribute [local instance] Classical.propDecidable
 
 /-! ## Exact expansions of finite indicator sums -/
 
-variable {Ω ι : Type*} [Fintype Ω]
+variable {Ω ι : Type*}
 
 /-- The real-valued indicator of a set. -/
 def realIndicator (S : Set Ω) (ω : Ω) : ℝ := if ω ∈ S then 1 else 0
@@ -72,6 +72,8 @@ lemma weightedIndicatorSum_sq (I : Finset ι) (c : ι → ℝ) (E : ι → Set �
   intro j hj
   rw [← realIndicator_mul]
   ring
+
+variable [Fintype Ω]
 
 lemma FiniteProbability.expectation_weightedIndicatorSum
     (μ : FiniteProbability Ω) (I : Finset ι) (c : ι → ℝ) (E : ι → Set Ω) :
@@ -169,7 +171,6 @@ lemma finite_prime_power_sum_le {p : ℝ} (hp : 1 < p) (N : ℕ) :
         (1 / p) / (1 - 1 / p) := finite_geometric_tail_le hx0 hx1 N
     _ = 1 / (p - 1) := by
       field_simp [ne_of_gt hp0, ne_of_gt (sub_pos.mpr hp)]
-      <;> ring
 
 /-- The independent pair of positive exponents at the new prime contributes
 at most `(p - 1)⁻²`.  The two finite truncation lengths are allowed to differ.
@@ -226,7 +227,7 @@ lemma finite_max_exponent_tail_le {x : ℝ} (hx0 : 0 ≤ x) (hx1 : x < 1)
           2 * (x / (1 - x) ^ 2) + (1 - x)⁻¹ - 1 := by linarith
       _ = x * (3 - x) / (1 - x) ^ 2 := by
         field_simp [ne_of_gt (sub_pos.mpr hx1)]
-        <;> ring
+        ring
   calc
     ∑ n ∈ Finset.range N,
         (2 * ((n + 1 : ℕ) : ℝ) + 1) * x ^ (n + 1) ≤
@@ -251,7 +252,6 @@ lemma finite_prime_max_exponent_tail_le {p : ℝ} (hp : 1 < p) (N : ℕ) :
       finite_max_exponent_tail_le hx0 hx1 N
     _ = (3 * p - 1) / (p - 1) ^ 2 := by
       field_simp [ne_of_gt hp0, ne_of_gt (sub_pos.mpr hp)]
-      <;> ring
 
 /-- A finite sum of coordinatewise products is bounded by the corresponding
 product of local sum bounds.  The left side is the expansion over the finite
@@ -290,13 +290,14 @@ lemma sum_pi_le_prod {κ : ι → Type*} [DecidableEq ι]
 /-- Extend a finite sum through an injective encoding into a larger finite
 box.  This is the subset step preceding `sum_pi_le_prod` in the rough Euler
 product argument. -/
-lemma sum_le_sum_over_injective_encoding {τ κ : Type*} [DecidableEq κ]
+lemma sum_le_sum_over_injective_encoding {τ κ : Type*}
     (I : Finset τ) (T : Finset κ) (encode : τ → κ) (F : τ → ℝ) (G : κ → ℝ)
     (hinj : Set.InjOn encode (I : Set τ))
     (hmem : ∀ i ∈ I, encode i ∈ T)
     (hFG : ∀ i ∈ I, F i ≤ G (encode i))
     (hG0 : ∀ x ∈ T, 0 ≤ G x) :
     (∑ i ∈ I, F i) ≤ ∑ x ∈ T, G x := by
+  classical
   calc
     (∑ i ∈ I, F i) ≤ ∑ i ∈ I, G (encode i) :=
       Finset.sum_le_sum fun i hi => hFG i hi
@@ -414,7 +415,6 @@ lemma finite_secondMomentEulerFactor_le {p δ : ℝ} (hp : 1 < p)
     _ = secondMomentEulerFactor p δ := by
       unfold secondMomentEulerFactor
       field_simp [ne_of_gt (sub_pos.mpr hp), ne_of_gt (sub_pos.mpr hδ)]
-      <;> ring
 
 /-- Adding the outer row and column to a square exponent box contributes
 exactly `2k+1` pairs whose maximum exponent is `k`. -/
@@ -487,7 +487,7 @@ private lemma finite_exponent_pair_factor_eq (c x : ℝ) (N : ℕ) :
         _ = 1 + c * ∑ n ∈ Finset.range (N + 1),
             (2 * ((n + 1 : ℕ) : ℝ) + 1) * x ^ (n + 1) := by
           rw [ih, Finset.sum_range_succ]
-          simp only [Nat.add_eq_zero, one_ne_zero, and_false, if_false]
+          simp only [Nat.add_eq_zero_iff, one_ne_zero, and_false, if_false]
           ring
 
 /-- Concrete finite Euler-box estimate.  The `(a,b)=(0,0)` pair is

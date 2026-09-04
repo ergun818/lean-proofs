@@ -92,7 +92,7 @@ lemma canonicalStage_unique {A : CoveringFamily} (i : Fin A.length)
     (ht : occurrenceStage A i = t) : r = t :=
   hr.symm.trans ht
 
-def canonicalStageDvd (A : CoveringFamily) (i : Fin A.length) (r : ℕ)
+theorem canonicalStageDvd (A : CoveringFamily) (i : Fin A.length) (r : ℕ)
     (hi : occurrenceStage A i = r) :
     (A.get i).modulus ∣ partialPeriod (commonPeriod A) r := by
   subst r
@@ -141,7 +141,6 @@ theorem fullCanonicalStageEvent_eq_preimage (A : CoveringFamily)
     exact hi
   · rintro ⟨i, hi⟩
     refine ⟨i, ?_⟩
-    change x ∈ occurrenceClass A i.1
     change x ∈ congruenceClass (commonPeriod A) (A.get i.1).modulus
       (modulus_dvd_commonPeriod A i.1) (A.get i.1).residue
     rw [congruenceClass_eq_preimage
@@ -315,7 +314,7 @@ def HasAssignedStage (A : CoveringFamily) (s : Finset (Fin A.length))
   i ∈ s ∧ ∃ r : ℕ, 0 < r ∧ r ≤ n ∧
     IsNewModulus Q r (A.get i).modulus
 
-def assignedModulusDvdPartial {A : CoveringFamily}
+theorem assignedModulusDvdPartial {A : CoveringFamily}
     {s : Finset (Fin A.length)} {Q n : ℕ} (hQ : Q ≠ 0)
     (i : Fin A.length) (hi : HasAssignedStage A s Q n i) :
     (A.get i).modulus ∣ partialPeriod Q n := by
@@ -336,7 +335,7 @@ def processedSelectedEvent (A : CoveringFamily)
     (s : Finset (Fin A.length)) (Q : ℕ) (hQ : Q ≠ 0) :
     processedSelectedEvent A s Q 0 hQ = ∅ := by
   ext x
-  simp only [processedSelectedEvent, Set.mem_setOf_eq, Set.mem_empty_iff_false,
+  simp only [processedSelectedEvent, Set.mem_ofPred_eq, Set.mem_empty_iff_false,
     iff_false]
   rintro ⟨i, hi, hxi⟩
   obtain ⟨r, hr, hr0, hnew⟩ := hi.2

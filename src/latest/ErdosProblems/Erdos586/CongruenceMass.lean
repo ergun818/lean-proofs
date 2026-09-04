@@ -251,8 +251,7 @@ theorem finiteFiberWeight_periodicLift {Q q : ℕ} [NeZero Q] [NeZero q]
   have hcard :
       ((Finset.univ : Finset (ZMod Q)).filter
         (fun x => ZMod.castHom hqQ (ZMod q) x = y)).card = Q / q := by
-    have hy : (y.val : ZMod q) = y := ZMod.natCast_zmod_val y
-    have hyInt : ((y.val : ℤ) : ZMod q) = y := by simpa using hy
+    have hyInt : ((y.val : ℤ) : ZMod q) = y := by simp
     have hc := card_congruenceClass hqQ hq0 (y.val : ℤ)
     let F := (Finset.univ : Finset (ZMod Q)).filter
       (fun x => ZMod.castHom hqQ (ZMod q) x = y)
@@ -305,10 +304,10 @@ theorem finiteWeightMass_product_class {q g ℓ : ℕ} [NeZero q] [NeZero ℓ]
   apply Finset.sum_congr rfl
   intro x hx
   by_cases hclass : x ∈ congruenceClass q g hgq b
-  · simp only [Set.mem_ofPred_eq, Prod.fst, Prod.snd, hclass, true_and, if_true]
+  · simp only [Set.mem_ofPred_eq, hclass, true_and, if_true]
     rw [Finset.sum_ite_eq' Finset.univ (b : ZMod ℓ)]
     simp
-  · simp only [Set.mem_ofPred_eq, Prod.fst, Prod.snd, hclass, false_and,
+  · simp only [Set.mem_ofPred_eq, hclass, false_and,
       if_false, Finset.sum_const_zero, zero_div]
 
 /-! ## The processed-prime class-mass step -/
@@ -331,9 +330,9 @@ theorem finiteWeightMass_distort_old_congruenceClass
   apply Finset.sum_congr rfl
   intro x hx
   by_cases hclass : x ∈ congruenceClass q m hmq b
-  · simp only [Set.mem_setOf_eq, hclass, if_true]
+  · simp only [Set.mem_ofPred_eq, hclass, if_true]
     exact distort_fiber_sum μ B hδ0 hδhalf x
-  · simp only [Set.mem_ofPred_eq, Prod.fst, hclass, if_false,
+  · simp only [Set.mem_ofPred_eq, hclass, if_false,
       Finset.sum_const_zero]
 
 /-- Every distorted point weight is at most the uniform-lift weight times
@@ -392,7 +391,7 @@ theorem finiteWeightMass_uniformLift_product_congruenceClass
     card_congruenceClass heP he0 b
   unfold finiteWeightMass uniformLiftWeight FiniteProbability.mass
   rw [Fintype.sum_prod_type]
-  simp only [Set.mem_ofPred_eq, Prod.fst, Prod.snd]
+  simp only [Set.mem_ofPred_eq]
   calc
     (∑ x : ZMod q, ∑ y : ZMod P,
         if x ∈ congruenceClass q g hgq a ∧ y ∈ congruenceClass P e heP b then
@@ -402,7 +401,7 @@ theorem finiteWeightMass_uniformLift_product_congruenceClass
       apply Finset.sum_congr rfl
       intro x hx
       by_cases hxclass : x ∈ congruenceClass q g hgq a
-      · simp only [hxclass, true_and, Finset.sum_ite_irrel, Finset.sum_const_zero]
+      · simp only [hxclass, true_and]
         rw [← Finset.sum_filter]
         simp only [Finset.sum_const, nsmul_eq_mul, ZMod.card]
         rw [show ((Finset.univ : Finset (ZMod P)).filter
@@ -478,9 +477,9 @@ fibre-mass conservation when that prime does not divide the modulus.  The
 result is the finite version of Lemma 3.3 in BBMST specialized to one
 congruence class. -/
 theorem classMass_le_processedClassFactor
-    {Q m : ℕ} [NeZero Q] (hmQ : m ∣ Q) (hm0 : 0 < m)
+    {Q m : ℕ} [NeZero Q] (hmQ : m ∣ Q) (_hm0 : 0 < m)
     (p : ℕ → ℕ) (μ : ℕ → FiniteProbability (ZMod Q)) (δ : ℕ → ℝ)
-    (hδ0 : ∀ s, 0 ≤ δ s) (hδhalf : ∀ s, δ s ≤ 1 / 2)
+    (_hδ0 : ∀ s, 0 ≤ δ s) (hδhalf : ∀ s, δ s ≤ 1 / 2)
     (hbase : ∀ b : ℤ,
       (μ 0).mass (congruenceClass Q m hmQ b) ≤ 1 / (m : ℝ))
     (hdiv : ∀ (r : ℕ) (b : ℤ), p (r + 1) ∣ m →

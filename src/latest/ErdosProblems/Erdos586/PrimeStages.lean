@@ -45,7 +45,7 @@ def stagePrime (r : ℕ) : ℕ := Nat.nth Nat.Prime (r - 1)
   simp [stagePrime, Nat.nth_prime_two_eq_five]
 
 lemma stagePrime_prime {r : ℕ} (_hr : 0 < r) : Nat.Prime (stagePrime r) := by
-  simpa [stagePrime] using Nat.prime_nth_prime (r - 1)
+  simp [stagePrime]
 
 lemma stagePrime_two_le {r : ℕ} (hr : 0 < r) : 2 ≤ stagePrime r :=
   (stagePrime_prime hr).two_le
@@ -357,7 +357,7 @@ private lemma prime_mem_active_before_primeStage {Q p q : ℕ}
         simpa [stagePrime, primeStage, hcp] using hq_le
       · simp [primeStage, hcp]
 
-private lemma stagePrime_not_mem_active_previous {Q r : ℕ} (hr : 0 < r) :
+private lemma stagePrime_not_mem_active_previous {Q r : ℕ} (_hr : 0 < r) :
     stagePrime r ∉ activePrimeFactors Q (r - 1) := by
   by_cases hprev : 0 < r - 1
   · intro hmem
@@ -378,7 +378,7 @@ private lemma activePrimeFactors_insert_stage {Q r : ℕ} (hr : 0 < r)
   · intro q hq
     have hqr := (mem_activePrimeFactors_iff hr).mp hq
     by_cases heq : q = stagePrime r
-    · simpa [heq]
+    · simp [heq]
     · apply Finset.mem_insert_of_mem
       have hqprime := Nat.prime_of_mem_primeFactors hqr.1
       have hqQ := Nat.dvd_of_mem_primeFactors hqr.1
@@ -393,7 +393,7 @@ private lemma activePrimeFactors_insert_stage {Q r : ℕ} (hr : 0 < r)
     · by_cases hprev : 0 < r - 1
       · exact activePrimeFactors_mono hprev (Nat.sub_le r 1) hqold
       · have hz : r - 1 = 0 := Nat.eq_zero_of_not_pos hprev
-        simpa [hz] using hqold
+        simp [hz] at hqold
 
 private lemma activePrimeFactors_eq_previous_of_stage_not_mem {Q r : ℕ}
     (hr : 0 < r) (hmem : stagePrime r ∉ Q.primeFactors) :
@@ -414,7 +414,7 @@ private lemma activePrimeFactors_eq_previous_of_stage_not_mem {Q r : ℕ}
     by_cases hprev : 0 < r - 1
     · exact activePrimeFactors_mono hprev (Nat.sub_le r 1) hq
     · have hz : r - 1 = 0 := Nat.eq_zero_of_not_pos hprev
-      simpa [hz] using hq
+      simp [hz] at hq
 
 /-- Successive partial periods differ by exactly the full power of the new
 stage prime. -/
@@ -578,7 +578,7 @@ theorem isNewModulus_stage_eq_primeStage_largest {Q r d : ℕ}
           omega
         exact hqle.trans hlt.le
       · have hz : r - 1 = 0 := Nat.eq_zero_of_not_pos hprev
-        simpa [hz] using hqactive
+        simp [hz] at hqactive
     · have hqp : q ∣ p := hqprime.dvd_of_dvd_pow hqpow
       exact (Nat.le_of_dvd hp.pos hqp)
   have hlargest_le : largestPrimeFactor d ≤ p :=

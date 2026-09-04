@@ -71,10 +71,10 @@ lemma mass_mono (μ : FiniteProbability Ω) {S T : Set Ω} (hST : S ⊆ T) :
   intro ω hω
   by_cases hS : ω ∈ S
   · have hT : ω ∈ T := hST hS
-    simp [mass, hS, hT]
+    simp [hS, hT]
   · by_cases hT : ω ∈ T
-    · simp [mass, hS, hT, μ.weight_nonneg]
-    · simp [mass, hS, hT]
+    · simp [hS, hT, μ.weight_nonneg]
+    · simp [hS, hT]
 
 lemma mass_le_one (μ : FiniteProbability Ω) (S : Set Ω) : μ.mass S ≤ 1 := by
   simpa using μ.mass_mono (Set.subset_univ S)
@@ -148,7 +148,7 @@ end FiniteProbability
 
 section Fibres
 
-variable {X Y : Type*} [Fintype X] [Fintype Y]
+variable {X Y : Type*} [Fintype Y]
 
 /-- The number of covered points in the fibre above `x`. -/
 def fiberCount (B : Set (X × Y)) (x : X) : ℕ :=
@@ -195,6 +195,8 @@ lemma fiberFraction_eq_zero_iff [Nonempty Y] (B : Set (X × Y)) (x : X) :
       exact h y
     simp [fiberFraction, hc]
 
+variable [Fintype X]
+
 /-- The old distribution, extended uniformly over the new coordinate. -/
 def uniformLiftWeight (μ : FiniteProbability X) (z : X × Y) : ℝ :=
   μ.weight z.1 / Fintype.card Y
@@ -238,7 +240,6 @@ lemma uniformLift_mass_fiber [Nonempty Y] (μ : FiniteProbability X)
   rw [← Finset.sum_filter]
   simp only [Finset.sum_const, nsmul_eq_mul]
   field_simp
-  <;> ring
 
 lemma uniformLift_mass_eq_expectation [Nonempty Y] (μ : FiniteProbability X)
     (B : Set (X × Y)) :
@@ -255,7 +256,7 @@ def distortWeight (μ : FiniteProbability X) (B : Set (X × Y)) (δ : ℝ)
     (z : X × Y) : ℝ :=
   let α := fiberFraction B z.1
   let w := uniformLiftWeight μ z
-  if hzero : α = 0 then
+  if _hzero : α = 0 then
     w
   else if α ≤ δ then
     if z ∈ B then 0 else (1 / (1 - α)) * w
@@ -271,7 +272,7 @@ lemma distortWeight_of_fiberFraction_eq_zero (μ : FiniteProbability X)
   simp [distortWeight, hzero]
 
 lemma distortWeight_nonneg [Nonempty Y] (μ : FiniteProbability X)
-    (B : Set (X × Y)) {δ : ℝ} (hδ0 : 0 ≤ δ) (hδ : δ ≤ 1) (z : X × Y) :
+    (B : Set (X × Y)) {δ : ℝ} (_hδ0 : 0 ≤ δ) (hδ : δ ≤ 1) (z : X × Y) :
     0 ≤ distortWeight μ B δ z := by
   classical
   unfold distortWeight
@@ -290,6 +291,7 @@ lemma distortWeight_nonneg [Nonempty Y] (μ : FiniteProbability X)
     · exact one_div_nonneg.mpr (sub_nonneg.mpr hδ)
     · exact uniformLiftWeight_nonneg μ z
 
+omit [Fintype X] in
 /-- Sum a function which is constant on the covered and uncovered parts of a
 single fibre. -/
 lemma sum_fiber_piecewise (B : Set (X × Y)) (x : X) (a b : ℝ) :
@@ -326,7 +328,7 @@ lemma sum_fiber_piecewise (B : Set (X × Y)) (x : X) (a b : ℝ) :
 
 /-- Distortion preserves the total mass in every old-coordinate fibre. -/
 lemma distort_fiber_sum [Nonempty Y] (μ : FiniteProbability X)
-    (B : Set (X × Y)) {δ : ℝ} (hδ0 : 0 ≤ δ) (hδhalf : δ ≤ 1 / 2)
+    (B : Set (X × Y)) {δ : ℝ} (_hδ0 : 0 ≤ δ) (hδhalf : δ ≤ 1 / 2)
     (x : X) :
     ∑ y : Y, distortWeight μ B δ (x, y) = μ.weight x := by
   classical
@@ -349,7 +351,7 @@ lemma distort_fiber_sum [Nonempty Y] (μ : FiniteProbability X)
     have hsub : (Fintype.card Y : ℝ) - fiberCount B x ≠ 0 := by
       have hcountlt' : (fiberCount B x : ℝ) < Fintype.card Y := by exact_mod_cast hcountlt
       linarith
-    simp only [distortWeight, Prod.fst, α, hzero, ↓reduceDIte, hsmall, ↓reduceIte,
+    simp only [distortWeight, α, hzero, ↓reduceDIte, hsmall, ↓reduceIte,
       uniformLiftWeight]
     rw [sum_fiber_piecewise]
     rw [Nat.cast_sub hcount]
@@ -363,7 +365,7 @@ lemma distort_fiber_sum [Nonempty Y] (μ : FiniteProbability X)
       intro hc
       apply hzero
       simp [α, fiberFraction, hc]
-    simp only [distortWeight, Prod.fst, α, hzero, ↓reduceDIte, hsmall, ↓reduceIte,
+    simp only [distortWeight, α, hzero, ↓reduceDIte, hsmall, ↓reduceIte,
       uniformLiftWeight]
     rw [sum_fiber_piecewise]
     rw [Nat.cast_sub hcount]
@@ -412,7 +414,7 @@ lemma distortWeight_le_uniform_div [Nonempty Y] (μ : FiniteProbability X)
     rw [le_div_iff₀ hδpos]
     linarith
   by_cases hzero : α = 0
-  · simp only [distortWeight, α, hzero, ↓reduceDIte, w]
+  · simp only [distortWeight, α, hzero, ↓reduceDIte]
     simpa only [one_mul] using mul_le_mul_of_nonneg_right hfac hw
   by_cases hsmall : α ≤ δ
   · by_cases hB : z ∈ B
@@ -421,7 +423,7 @@ lemma distortWeight_le_uniform_div [Nonempty Y] (μ : FiniteProbability X)
     · have hαposden : 0 < 1 - α := by linarith
       have hrecip : 1 / (1 - α) ≤ 1 / (1 - δ) :=
         one_div_le_one_div_of_le hδpos (by linarith)
-      simp only [distortWeight, α, hzero, hsmall, hB, ↓reduceDIte, ↓reduceIte, w]
+      simp only [distortWeight, α, hzero, hsmall, hB, ↓reduceDIte, ↓reduceIte]
       exact mul_le_mul_of_nonneg_right hrecip hw
   · by_cases hB : z ∈ B
     · have hαpos : 0 < α := lt_of_le_of_ne hα0 (Ne.symm hzero)
@@ -430,9 +432,9 @@ lemma distortWeight_le_uniform_div [Nonempty Y] (μ : FiniteProbability X)
         apply (div_le_iff₀ hmulpos).2
         field_simp
         nlinarith [mul_nonneg hδ0 (sub_nonneg.mpr hα1)]
-      simp only [distortWeight, α, hzero, hsmall, hB, ↓reduceDIte, ↓reduceIte, w]
+      simp only [distortWeight, α, hzero, hsmall, hB, ↓reduceDIte, ↓reduceIte]
       exact mul_le_mul_of_nonneg_right hquot hw
-    · simp [distortWeight, α, hzero, hsmall, hB, w]
+    · simp [distortWeight, α, hzero, hsmall, hB]
 
 /-- A covered point never gains mass. -/
 lemma distortWeight_covered_le [Nonempty Y] (μ : FiniteProbability X)
@@ -456,7 +458,7 @@ lemma distortWeight_covered_le [Nonempty Y] (μ : FiniteProbability X)
     have hmul : (α - δ) / (α * (1 - δ)) ≤ 1 := by
       rw [div_le_one hdenpos]
       nlinarith [mul_nonneg hδ0 (sub_nonneg.mpr hα1)]
-    simp only [distortWeight, α, hzero, hsmall, hz, ↓reduceDIte, ↓reduceIte, w]
+    simp only [distortWeight, α, hzero, hsmall, hz, ↓reduceDIte, ↓reduceIte]
     simpa only [one_mul] using mul_le_mul_of_nonneg_right hmul hw
 
 /-- Pointwise domination implies the event form of the distortion bound. -/
@@ -561,7 +563,7 @@ def secondMoment (μ : FiniteProbability X) (B : Set (X × Y)) : ℝ :=
 
 /-- The elementary quadratic inequality behind the second-moment stage-cost
 bound. -/
-lemma max_sub_le_sq_div {u v : ℝ} (hu : 0 ≤ u) (hv : 0 < v) :
+lemma max_sub_le_sq_div {u v : ℝ} (_hu : 0 ≤ u) (hv : 0 < v) :
     max (u - v) 0 ≤ u ^ 2 / (4 * v) := by
   rw [le_div_iff₀ (mul_pos (by norm_num) hv)]
   by_cases huv : u ≤ v

@@ -62,8 +62,7 @@ lemma hasDerivAt_P9 (u : ℝ) : HasDerivAt P9 (P9Deriv u) u := by
   have h9 := h8.add_const (362880 : ℝ)
   apply (h9.congr_deriv ?_).congr_of_eventuallyEq
   · exact Filter.Eventually.of_forall (fun y => rfl)
-  · change _ = P9Deriv u
-    unfold P9Deriv
+  · unfold P9Deriv
     norm_num [id_eq]
     ring
 
@@ -177,7 +176,7 @@ theorem logPowerTail_sum_le_P9 {n : ℕ} :
   have hsum' : (∑ j ∈ Finset.range n,
         logPowerTail ((10000 + j + 1 : ℕ) : ℝ)) ≤
       P9Quotient 10000 - P9Quotient (10000 + (n : ℝ)) := by
-    convert hsum using 1 <;> push_cast <;> ring_nf
+    convert hsum using 1; push_cast; ring_nf
   calc
     (∑ j ∈ Finset.range n,
         logPowerTail ((10000 + j + 1 : ℕ) : ℝ)) ≤
@@ -593,7 +592,7 @@ theorem tail_budget (n : ℕ) :
     _ < 1 := terminal_rational_comparison
 
 lemma recurrenceMap_mono {c a x y : ℝ}
-    (hc : 0 ≤ c) (ha : 0 ≤ a) (hx : 0 ≤ x) (hxy : x ≤ y)
+    (hc : 0 ≤ c) (ha : 0 ≤ a) (_hx : 0 ≤ x) (hxy : x ≤ y)
     (hcy : c * y < 1) :
     x * a / (1 - c * x) ≤ y * a / (1 - c * y) := by
   have hcx : c * x < 1 := lt_of_le_of_lt (mul_le_mul_of_nonneg_left hxy hc) hcy
@@ -606,7 +605,7 @@ below supplies `N`, `C`, and the budget bound. -/
 theorem reciprocal_envelope
     {K n : ℕ} {f N C : ℕ → ℝ} {F : ℝ}
     (hF : 0 < F)
-    (hf0 : 0 ≤ f K) (hfK : f K ≤ F)
+    (_hf0 : 0 ≤ f K) (hfK : f K ≤ F)
     (hN : ∀ j < n, 0 ≤ N (K + j + 1))
     (hC : ∀ j < n, 0 ≤ C (K + j + 1))
     (hf_nonneg : ∀ j ≤ n, 0 ≤ f (K + j))
@@ -663,7 +662,7 @@ theorem reciprocal_envelope
               (1 - C (K + n + 1) * B) :=
         recurrenceMap_mono hCn hNn (hf_nonneg n (by omega)) hih hcB
       calc
-        f (K + (n + 1)) = f (K + n + 1) := by congr 1 <;> omega
+        f (K + (n + 1)) = f (K + n + 1) := by congr 1
         _ ≤ f (K + n) * N (K + n + 1) /
             (1 - C (K + n + 1) * f (K + n)) := hstep
         _ ≤ B * N (K + n + 1) /

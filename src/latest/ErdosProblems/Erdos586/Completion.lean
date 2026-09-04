@@ -48,7 +48,7 @@ lemma stageGrowthFactor_pos {r : ℕ} (hr : 4 ≤ r) :
         (((stagePrime r - 1 : ℕ) : ℝ) ^ 2)) := div_nonneg hnum hden.le
   linarith
 
-lemma stageGrowthProduct_pos {n : ℕ} (hn : 3 ≤ n) :
+lemma stageGrowthProduct_pos {n : ℕ} (_hn : 3 ≤ n) :
     0 < stageGrowthProduct 3 n := by
   unfold stageGrowthProduct
   apply Finset.prod_pos
@@ -211,7 +211,7 @@ theorem guardedStageF_step
   have hclass : HasProcessedClassMassBound
       (Q := Q) (r := r)
       (stageDistribution A s Q hQ (r - 1)) distortionDelta := by
-    convert (stageDistribution_hasProcessedClassMassBound A s Q (r - 1) hQ) using 1 <;>
+    convert (stageDistribution_hasProcessedClassMassBound A s Q (r - 1) hQ) using 1;
       omega
   have hM2refined : M2 ≤
       refinedSecondMomentBound fiveSmoothKappa (stagePrime r)

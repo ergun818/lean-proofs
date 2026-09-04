@@ -289,7 +289,7 @@ lemma seven_le_stagePrime {t : ℕ} (ht : 4 ≤ t) : 7 ≤ stagePrime t := by
   norm_num at hp
 
 lemma stagePrime_dvd_iff_dvd_fiveRoughPart {m t : ℕ}
-    (hm : m ≠ 0) (ht : 4 ≤ t) :
+    (_hm : m ≠ 0) (ht : 4 ≤ t) :
     stagePrime t ∣ m ↔ stagePrime t ∣ fiveRoughPart m := by
   have hp := stagePrime_prime (by omega : 0 < t)
   have hp7 := seven_le_stagePrime ht
@@ -589,7 +589,7 @@ lemma fiveRoughPart_eq_of_stage_factorizations
       obtain ⟨t, ht, htp⟩ := prime_dvd_partialPeriod_exists_stage hr hq hq7 hdQ
       rw [← htp]
       exact hfac t ht
-    · push_neg at hd
+    · push Not at hd
       have hmzero : (fiveRoughPart m).factorization q = 0 := by
         have := (hq.dvd_iff_one_le_factorization hrm0).not.mp hd.1
         omega
@@ -837,9 +837,9 @@ lemma fiveRough_lcm_eq_roughLcmProduct
             · exact he.trans htp.symm
           rw [Nat.Prime.factorization_pow
             (stagePrime_prime (by have := (Finset.mem_Ico.mp hu).1; omega))]
-          simp [Finsupp.single_apply, hune]
+          simp [hune]
         · exact fun hnot => (hnot ht).elim
-      · push_neg at hdiv
+      · push Not at hdiv
         have ha : a.factorization q = 0 := by
           have := (hq.dvd_iff_one_le_factorization ha0).not.mp hdiv.1
           omega
@@ -855,7 +855,7 @@ lemma fiveRough_lcm_eq_roughLcmProduct
           simp [ha, hb]
         · rw [Nat.Prime.factorization_pow
             (stagePrime_prime (by have := (Finset.mem_Ico.mp ht).1; omega))]
-          simp [Finsupp.single_apply, he]
+          simp [he]
     · have ha : a.factorization q = 0 :=
         Nat.factorization_eq_zero_of_not_prime _ hq
       have hb : b.factorization q = 0 :=
@@ -1041,7 +1041,7 @@ lemma sum_momentNewExponentPairBox_le
     _ ≤ 1 / ((stagePrime r : ℝ) - 1) ^ 2 := hgeom
 
 lemma sum_momentRoughCoordinateBox_le
-    {Q r : ℕ} (hr : 4 ≤ r) (δ : ℕ → ℝ)
+    {Q r : ℕ} (_hr : 4 ≤ r) (δ : ℕ → ℝ)
     (hδhalf : ∀ t, δ t ≤ 1 / 2) :
     (∑ x ∈ (Finset.Ico 4 r).pi (fun t => momentRoughExponentBox Q t),
       ∏ t ∈ (Finset.Ico 4 r).attach,

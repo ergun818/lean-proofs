@@ -160,7 +160,7 @@ the stronger induction statement underlying
 theorem stageDistribution_classMass_le
     (A : CoveringFamily) (s : Finset (Fin A.length))
     (Q : ℕ) (hQ : Q ≠ 0) :
-    ∀ (r m : ℕ) (hm : m ∣ partialPeriod Q r) (hm0 : 0 < m) (b : ℤ),
+    ∀ (r m : ℕ) (hm : m ∣ partialPeriod Q r) (_hm0 : 0 < m) (b : ℤ),
       (stageDistribution A s Q hQ r).mass
           (congruenceClass (partialPeriod Q r) m hm b) ≤
         (1 / (m : ℝ)) *

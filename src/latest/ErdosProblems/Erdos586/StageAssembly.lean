@@ -297,8 +297,8 @@ theorem momentStage_fiberFraction_le_indicatorSum
           simp only [hx, true_and]
           exact sum_realIndicator_eq_ncard (momentStageNewEvent hQ i)
       rw [hcard, momentStageNewEvent_fraction hQ hr i]
-      simp [weightedIndicatorSum, realIndicator, hx]
-    · simp [weightedIndicatorSum, realIndicator, hx]
+      simp [realIndicator, hx]
+    · simp [realIndicator, hx]
   unfold fiberFraction
   simp only [ZMod.card]
   change (fiberCount (momentStageBadSet A s Q r hQ) x : ℝ) / (P : ℝ) ≤ _
@@ -320,7 +320,7 @@ theorem momentStage_firstMoment_le
 
 /-! ## The concrete LCM second-moment sum -/
 
-lemma partialPeriod_ne_zero_of_Q_ne_zero (Q r : ℕ) (hQ : Q ≠ 0) :
+lemma partialPeriod_ne_zero_of_Q_ne_zero (Q r : ℕ) (_hQ : Q ≠ 0) :
     partialPeriod Q r ≠ 0 :=
   (partialPeriod_pos Q r).ne'
 
@@ -330,7 +330,7 @@ under the LCM which occurs in a second-moment expansion. -/
 def HasProcessedClassMassBound {Q r : ℕ}
     (μ : FiniteProbability (ZMod (partialPeriod Q (r - 1))))
     (δ : ℕ → ℝ) : Prop :=
-  ∀ (m : ℕ) (hm : m ∣ partialPeriod Q (r - 1)) (hm0 : 0 < m) (b : ℤ),
+  ∀ (m : ℕ) (hm : m ∣ partialPeriod Q (r - 1)) (_hm0 : 0 < m) (b : ℤ),
     μ.mass (congruenceClass (partialPeriod Q (r - 1)) m hm b) ≤
       (1 / (m : ℝ)) * processedClassFactor stagePrime δ m (r - 1)
 
@@ -339,7 +339,7 @@ LCM (or the empty set), and the processed class-mass invariant bounds it.
 -/
 lemma momentStage_oldEvent_inter_mass_le
     (A : CoveringFamily) (s : Finset (Fin A.length))
-    {Q r : ℕ} (hQ : Q ≠ 0) (hr : 0 < r)
+    {Q r : ℕ} (hQ : Q ≠ 0) (_hr : 0 < r)
     (μ : FiniteProbability (ZMod (partialPeriod Q (r - 1))))
     (δ : ℕ → ℝ) (hclass : HasProcessedClassMassBound μ δ)
     (i j : MomentStageIndex A s Q r) :
