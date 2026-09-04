@@ -14,7 +14,7 @@ noncomputable section
 
 attribute [local instance] Classical.propDecidable
 
-variable {V : Type*} [Fintype V]
+variable {V : Type*}
 
 /-- A connected graph admits a neighbour strictly closer to any different root. -/
 theorem exists_adj_dist_lt {G : SimpleGraph V} (hc : G.Connected) (r u : V)
@@ -51,13 +51,13 @@ theorem parentGraph_treeParent_le {G : SimpleGraph V} (hc : G.Connected) (r : V)
   · have hu : u ≠ r := by
       intro h
       subst u
-      simp [treeParent] at hpar
+      simp only [treeParent] at hpar
       exact huv hpar
     simpa only [hpar] using (treeParent_spec hc r u hu).1
   · have hv : v ≠ r := by
       intro h
       subst v
-      simp [treeParent] at hpar
+      simp only [treeParent] at hpar
       exact huv hpar.symm
     exact (hpar ▸ (treeParent_spec hc r v hv).1).symm
 
@@ -93,6 +93,8 @@ theorem treeParent_injective (r : V) :
   apply Subtype.ext
   rw [← parentGraph_treeParent T.property r, ← parentGraph_treeParent U.property r]
   exact congrArg parentGraph h
+
+variable [Fintype V]
 
 /-- A polynomially relaxed Cayley upper bound. -/
 theorem card_trees_le_pow (r : V) :

@@ -165,8 +165,8 @@ theorem critical_absence_power_lower {n : ℕ} (hn : 2 ≤ n) (b : ℕ) :
     (exp_neg_quadratic_le_one_sub (by positivity : (0 : ℝ) ≤ 1 / n) hhalf) b
   rw [← Real.exp_nat_mul] at h
   convert h using 1
-  congr 1
-  ring_nf
+  · congr 1
+  · ring_nf
 
 theorem critical_product_lower {n k : ℕ} (hn : 2 ≤ n) (hk : 2 ≤ k) (hkn : 2 * k ≤ n) :
     Real.exp (-(k : ℝ) - 2 * (k : ℝ) / n - 2 * (k : ℝ) ^ 3 / (n : ℝ) ^ 2) ≤

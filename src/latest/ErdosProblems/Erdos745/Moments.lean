@@ -87,7 +87,7 @@ theorem expectation_indicator (lam : ℝ) (n : ℕ)
   split <;> simp_all
 
 /-- Disjoint decomposition of an event by the value of a finite-valued statistic. -/
-theorem probability_sum_fibers {ι : Type*} [DecidableEq ι]
+theorem probability_sum_fibers {ι : Type*}
     (lam : ℝ) (n : ℕ) (s : Finset ι) (f : SimpleGraph (Fin n) → ι)
     (R : SimpleGraph (Fin n) → Prop) :
     probability lam n (fun G ↦ f G ∈ s ∧ R G) =

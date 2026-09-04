@@ -18,7 +18,7 @@ theorem criticalScale_mul_sqrt (n : ℕ) :
   have hb := Real.sqrt_nonneg (criticalScale n)
   have heq : (criticalScale n * Real.sqrt (criticalScale n)) ^ 2 = (n : ℝ) ^ 2 := by
     rw [mul_pow, Real.sq_sqrt hs]
-    convert criticalScale_cube n using 1 <;> ring
+    convert criticalScale_cube n using 1; ring
   nlinarith [Nat.cast_nonneg (α := ℝ) n, mul_nonneg hs hb]
 
 theorem critical_tail_scale_bound {n k h : ℕ} (hn : 0 < n) {C : ℝ} (hC : 1 ≤ C)

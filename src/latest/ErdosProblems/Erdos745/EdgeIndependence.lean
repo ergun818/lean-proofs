@@ -78,7 +78,7 @@ theorem internalEdge_restriction_adj {n : ℕ} (S : Finset (Fin n))
   · subst v
     simp
   · simp only [pairEdge_mem_graphOfEdges u v huv, Finset.mem_inter,
-      mem_internalEdges_pair S (pairEdge u v huv) rfl, hu, hv, true_and, and_true]
+      mem_internalEdges_pair S (pairEdge u v huv) rfl, hu, hv, and_true]
 
 theorem pairEdge_disjoint_internal_erase {n : ℕ} (S : Finset (Fin n))
     (r u : Fin n) (hru : r ≠ u) :

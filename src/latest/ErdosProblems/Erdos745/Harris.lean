@@ -20,14 +20,14 @@ namespace FiniteHarris
 
 open Erdos746.BernoulliFinset
 
-variable {α : Type*} [Fintype α] [DecidableEq α]
+variable {α : Type*} [Fintype α]
 
 theorem powerset_univ : (Finset.univ : Finset α).powerset = Finset.univ := by
   ext A
   simp only [Finset.mem_powerset, Finset.mem_univ, iff_true]
   exact Finset.subset_univ A
 
-theorem weight_modular (p : ℝ) (A B : Finset α) :
+theorem weight_modular [DecidableEq α] (p : ℝ) (A B : Finset α) :
     weight Finset.univ p A * weight Finset.univ p B =
       weight Finset.univ p (A ∩ B) * weight Finset.univ p (A ∪ B) := by
   have hcard := Finset.card_union_add_card_inter A B
@@ -61,6 +61,7 @@ theorem sum_indicator (p : ℝ) (P : Finset α → Prop) :
 /-- A lower event is preserved when present coordinates are removed. -/
 def LowerEvent (P : Finset α → Prop) : Prop := ∀ ⦃A B⦄, A ⊆ B → P B → P A
 
+omit [Fintype α] in
 theorem lower_indicator_monotone {P : Finset α → Prop} (hP : LowerEvent P) :
     Monotone (fun A : OrderDual (Finset α) ↦ if P A then (1 : ℝ) else 0) := by
   intro A B hAB
@@ -79,9 +80,24 @@ theorem eventMass_lower_inter {p : ℝ} (hp : 0 ≤ p) (hp1 : p ≤ 1)
   let g := fun A : Finset α ↦ if Q A then w A else 0
   let t := fun A : Finset α ↦ if P A ∧ Q A then w A else 0
   have hw : 0 ≤ w := fun _ ↦ weight_nonneg hp hp1
-  have hf : 0 ≤ f := by intro A; dsimp [f]; split_ifs; exact hw A; exact le_rfl
-  have hg : 0 ≤ g := by intro A; dsimp [g]; split_ifs; exact hw A; exact le_rfl
-  have ht : 0 ≤ t := by intro A; dsimp [t]; split_ifs; exact hw A; exact le_rfl
+  have hf : 0 ≤ f := by
+    intro A
+    dsimp [f]
+    split_ifs
+    · exact hw A
+    · exact le_rfl
+  have hg : 0 ≤ g := by
+    intro A
+    dsimp [g]
+    split_ifs
+    · exact hw A
+    · exact le_rfl
+  have ht : 0 ≤ t := by
+    intro A
+    dsimp [t]
+    split_ifs
+    · exact hw A
+    · exact le_rfl
   have hmod : ∀ A B, f A * g B ≤ t (A ⊓ B) * w (A ⊔ B) := by
     intro A B
     by_cases hPA : P A
@@ -103,7 +119,7 @@ theorem eventMass_lower_inter {p : ℝ} (hp : 0 ≤ p) (hp1 : p ≤ 1)
     simp only [t, w, eventMass, powerset_univ, Finset.sum_filter]
     apply Finset.sum_congr rfl
     intro A _
-    by_cases hA : P A ∧ Q A <;> simp only [hA, if_true, if_false]
+    by_cases hA : P A ∧ Q A <;> simp only [hA, if_false]
   rw [htSum, show (∑ A, w A) = 1 from sum_weight_univ p, mul_one] at h
   simpa only [f, g, w, eventMass, powerset_univ, Finset.sum_filter] using h
 
@@ -123,7 +139,7 @@ theorem probability_lower_inter (lam : ℝ) (n : ℕ)
   · intro A B hAB hB
     exact hQ (Erdos746.graphOfEdges_mono hAB) hB
 
-theorem probability_lower_forall {ι : Type*} [DecidableEq ι]
+theorem probability_lower_forall {ι : Type*}
     (lam : ℝ) (n : ℕ) (I : Finset ι) (P : ι → SimpleGraph (Fin n) → Prop)
     (hP : ∀ i ∈ I, ∀ ⦃G H⦄, G ≤ H → P i H → P i G) :
     (∏ i ∈ I, probability lam n (P i)) ≤ probability lam n (fun G ↦ ∀ i ∈ I, P i G) := by

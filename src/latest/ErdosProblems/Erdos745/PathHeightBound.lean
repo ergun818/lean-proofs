@@ -53,7 +53,7 @@ theorem one_sub_pow_second_lower' {n : ℕ} (hn : 2 ≤ n) {x : ℝ} (hx : 0 ≤
       x ^ 2 * (1 - x) ^ (n - 2) ≤ (1 - x) ^ n := by
   have h := one_sub_pow_second_lower (n - 2) hx hx1
   rw [Nat.sub_add_cancel hn, Nat.cast_sub hn, Nat.cast_ofNat] at h
-  convert h using 1 <;> ring
+  convert h using 1; ring
 
 theorem critical_absence_power_uniform {n : ℕ} (hn : 2 ≤ n) :
     Real.exp (-2) ≤ (1 - 1 / (n : ℝ)) ^ (n - 2) := by

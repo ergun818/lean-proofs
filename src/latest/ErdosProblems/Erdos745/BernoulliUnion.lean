@@ -12,7 +12,7 @@ attribute [local instance] Classical.propDecidable
 
 open Erdos746.BernoulliFinset
 
-variable {α : Type*} [DecidableEq α]
+variable {α : Type*}
 
 theorem eventMass_congr_on (U : Finset α) (p : ℝ) (P Q : Finset α → Prop)
     (hPQ : ∀ A ⊆ U, P A ↔ Q A) : eventMass U p P = eventMass U p Q := by
@@ -33,6 +33,8 @@ theorem sum_powerset_powers (U : Finset α) (a b : ℝ) :
         Finset.card_sdiff_of_subset (Finset.mem_powerset.mp hA)]
     _ = ∏ _i ∈ U, (a + b) := (Finset.prod_add _ _ _).symm
     _ = _ := Finset.prod_const _
+
+variable [DecidableEq α]
 
 theorem union_eq_iff_cylinder {U A B C : Finset α} (hAC : A ⊆ C) (hBU : B ⊆ U) :
     A ∪ B = C ↔ C \ A ⊆ B ∧ Disjoint (U \ C) B := by

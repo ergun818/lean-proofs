@@ -11,7 +11,7 @@ noncomputable section
 
 attribute [local instance] Classical.propDecidable
 
-variable {V : Type*} [Fintype V] [DecidableEq V]
+variable {V : Type*}
 
 /-- No edge leaves the vertex set. -/
 def IsClosedVertexSet (G : SimpleGraph V) (S : Finset V) : Prop :=
@@ -82,6 +82,8 @@ theorem isTreeComponentSet_iff (G : SimpleGraph V) (S : Finset V) :
   · rintro ⟨htree, hclosed⟩
     exact ⟨⟨htree.connected, hclosed⟩, htree⟩
 
+variable [Fintype V] [DecidableEq V]
+
 /-- Number of tree components whose orders belong to the finite window `I`. -/
 def treeComponentCount (G : SimpleGraph V) (I : Finset ℕ) : ℕ :=
   (Finset.univ.filter fun C : G.ConnectedComponent ↦
@@ -128,8 +130,7 @@ theorem treeComponentCount_eq_vertexSet_count (G : SimpleGraph V) (I : Finset �
       refine Finset.mem_filter.mpr ⟨Finset.mem_powerset.mpr (Finset.subset_univ _), ?_⟩
       refine ⟨?_, ⟨C, by simp⟩, ?_⟩
       · simpa only [← Set.ncard_eq_toFinset_card'] using hC'.2
-      · change (G.induce (↑C.supp.toFinset : Set V)).IsTree
-        rw [Set.coe_toFinset]
+      · rw [Set.coe_toFinset]
         exact hC'.1
     · intro hS
       obtain ⟨_, hsize, ⟨C, hC⟩, htree⟩ := Finset.mem_filter.mp hS

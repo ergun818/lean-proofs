@@ -12,7 +12,7 @@ attribute [local instance] Classical.propDecidable
 
 open Erdos746.BernoulliFinset
 
-variable {α : Type*} [DecidableEq α]
+variable {α : Type*}
 
 def subsetExpectation (U : Finset α) (p : ℝ) (f : Finset α → ℝ) : ℝ :=
   ∑ A ∈ U.powerset, weight U p A * f A
@@ -75,7 +75,7 @@ theorem jointExpectation_first (U : Finset α) (p q : ℝ) (f : Finset α → �
       ring
     _ = _ := by rw [← Finset.mul_sum, sum_weight_powerset, mul_one]
 
-theorem jointExpectation_union (U : Finset α) (p q : ℝ) (f : Finset α → ℝ) :
+theorem jointExpectation_union [DecidableEq α] (U : Finset α) (p q : ℝ) (f : Finset α → ℝ) :
     jointExpectation U p q (fun A B ↦ f (A ∪ B)) =
       subsetExpectation U (p + (1 - p) * q) f := by
   have heq : jointExpectation U p q (fun A B ↦ f (A ∪ B)) =

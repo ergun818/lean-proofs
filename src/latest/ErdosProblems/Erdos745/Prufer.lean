@@ -15,7 +15,7 @@ namespace Erdos745.Prufer
 
 noncomputable section
 
-variable {V : Type*} [LinearOrder V] [Fintype V]
+variable {V : Type*}
 
 attribute [local instance] Classical.propDecidable
 
@@ -23,7 +23,7 @@ attribute [local instance] Classical.propDecidable
 def SupportedOn (G : SimpleGraph V) (S : Finset V) : Prop :=
   ∀ ⦃u v⦄, G.Adj u v → u ∈ S ∧ v ∈ S
 
-theorem degree_eq_zero_of_supported {G : SimpleGraph V} {S : Finset V}
+theorem degree_eq_zero_of_supported [Fintype V] {G : SimpleGraph V} {S : Finset V}
     (hG : SupportedOn G S) {v : V} (hv : v ∉ S) : G.degree v = 0 := by
   classical
   rw [SimpleGraph.degree_eq_zero_iff_notMem_support]
@@ -57,7 +57,7 @@ theorem completeOn_pair (a b : V) :
 theorem isAcyclic_edge (a b : V) : (SimpleGraph.edge a b).IsAcyclic := by
   by_cases hab : a = b
   · subst b
-    simpa using (SimpleGraph.isAcyclic_bot (V := V))
+    simp
   · have hreach : ¬ (⊥ : SimpleGraph V).Reachable a b := by
       simpa only [SimpleGraph.reachable_bot] using hab
     simpa using SimpleGraph.IsAcyclic.sup_edge_of_not_reachable hreach
@@ -79,6 +79,8 @@ theorem missingLabels_nonempty {S : Finset V} {L : List V}
   have hsub : S ⊆ L.toFinset := Finset.sdiff_eq_empty_iff_subset.mp hempty
   have hcard := (Finset.card_le_card hsub).trans L.toFinset_card_le
   omega
+
+variable [LinearOrder V]
 
 def missingLabel (S : Finset V) (L : List V) (h : (missingLabels S L).Nonempty) : V :=
   (missingLabels S L).min' h
@@ -135,9 +137,10 @@ theorem decode_supported (S : Finset V) (L : List V)
     · intro u w huw
       exact False.elim huw
 
-theorem decode_acyclic (S : Finset V) (L : List V)
+theorem decode_acyclic [Finite V] (S : Finset V) (L : List V)
     (hlen : S.card = L.length + 2) (hL : ∀ v ∈ L, v ∈ S) :
     (decode S L).IsAcyclic := by
+  let := Fintype.ofFinite V
   induction L generalizing S with
   | nil => exact completeOn_acyclic (by simpa using hlen)
   | cons a L ih =>
@@ -214,6 +217,7 @@ theorem decode_connectedOn (S : Finset V) (L : List V)
         exact ((hc u hu' a ha).mono le_sup_left).trans hedge.symm
       · exact (hc u hu' v (Finset.mem_erase.mpr ⟨hvw, hv⟩)).mono le_sup_left
 
+omit [LinearOrder V] in
 theorem walk_support_subset {G : SimpleGraph V} {S : Finset V}
     (hG : SupportedOn G S) {u v : V} (p : G.Walk u v) (hu : u ∈ S) :
     ∀ w ∈ p.support, w ∈ S := by
@@ -226,6 +230,7 @@ theorem walk_support_subset {G : SimpleGraph V} {S : Finset V}
     · exact hu
     · exact ih (hG huw).2 x hx
 
+omit [LinearOrder V] in
 theorem connected_induce_of_supported {G : SimpleGraph V} {S : Finset V}
     (hG : SupportedOn G S) (hc : ConnectedOn G S) (hne : S.Nonempty) :
     (G.induce (S : Set V)).Connected := by
@@ -236,12 +241,17 @@ theorem connected_induce_of_supported {G : SimpleGraph V} {S : Finset V}
   exact ⟨p.induce (S : Set V) (walk_support_subset hG p u.property)⟩
 
 /-- A valid Prüfer word always decodes to a tree on precisely the active labels. -/
-theorem decode_isTree_induce (S : Finset V) (L : List V)
+theorem decode_isTree_induce [Finite V] (S : Finset V) (L : List V)
     (hlen : S.card = L.length + 2) (hL : ∀ v ∈ L, v ∈ S) :
     ((decode S L).induce (S : Set V)).IsTree := by
   refine ⟨connected_induce_of_supported (decode_supported S L hL)
     (decode_connectedOn S L hlen hL) ?_, (decode_acyclic S L hlen hL).induce _⟩
   exact Finset.card_pos.mp (by omega)
+
+section
+
+variable [Fintype V]
+omit [LinearOrder V]
 
 theorem neighborFinset_completeOn {S : Finset V} {u : V} (hu : u ∈ S) :
     (completeOn S).neighborFinset u = S.erase u := by
@@ -289,7 +299,9 @@ theorem degree_sup_edge_of_isolated (G : SimpleGraph V) (a b u : V)
     Finset.card_union_of_disjoint hdis]
   simp only [SimpleGraph.card_neighborFinset_eq_degree]
 
-theorem degree_decode (S : Finset V) (L : List V)
+end
+
+theorem degree_decode [Fintype V] (S : Finset V) (L : List V)
     (hlen : S.card = L.length + 2) (hL : ∀ v ∈ L, v ∈ S)
     {u : V} (hu : u ∈ S) :
     (decode S L).degree u = L.count u + 1 := by
@@ -335,9 +347,10 @@ theorem degree_decode (S : Finset V) (L : List V)
       Fintype.card_eq_nat_card] using hadd.trans hsum
 
 /-- The missing letters are precisely the leaves of the decoded tree. -/
-theorem missingLabels_eq_leaves (S : Finset V) (L : List V)
+theorem missingLabels_eq_leaves [Finite V] (S : Finset V) (L : List V)
     (hlen : S.card = L.length + 2) (hL : ∀ v ∈ L, v ∈ S) :
     missingLabels S L = S.filter (fun u ↦ Nat.card ((decode S L).neighborSet u) = 1) := by
+  let := Fintype.ofFinite V
   ext u
   by_cases hu : u ∈ S
   · have hd := degree_decode S L hlen hL hu
@@ -368,9 +381,13 @@ theorem decode_adj_leaf_iff (S : Finset V) (a : V) (L : List V)
     exact (Finset.notMem_erase v S) (decode_supported _ _ htail h).1
   rw [decode, dif_pos hm]
   change (decode (S.erase v) L).Adj v u ∨ (SimpleGraph.edge v a).Adj v u ↔ u = a
-  simp [hnot, SimpleGraph.edge_adj, hva, eq_comm]
-  intro hau huv
-  exact hva (huv.symm.trans hau.symm)
+  simp only [hnot, false_or, SimpleGraph.edge_adj]
+  constructor
+  · rintro ⟨h | h, _⟩
+    · exact h.2
+    · exact (hva h.1).elim
+  · rintro rfl
+    exact ⟨Or.inl ⟨trivial, rfl⟩, hva⟩
 
 /-- Adding the same isolated leaf is injective on graphs supported away from it. -/
 theorem sup_edge_left_cancel {S : Finset V} {v a : V} {G H : SimpleGraph V}
@@ -399,7 +416,7 @@ theorem sup_edge_left_cancel {S : Finset V} {v a : V} {G H : SimpleGraph V}
   tauto
 
 /-- The standard Prüfer decoder is injective on valid words. -/
-theorem decode_injective (S : Finset V) (L M : List V)
+theorem decode_injective [Finite V] (S : Finset V) (L M : List V)
     (hLlen : S.card = L.length + 2) (hMlen : S.card = M.length + 2)
     (hL : ∀ v ∈ L, v ∈ S) (hM : ∀ v ∈ M, v ∈ S)
     (heq : decode S L = decode S M) : L = M := by
