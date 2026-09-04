@@ -158,7 +158,7 @@ theorem probability_inter_ge (n : ℕ) (P Q : Event n) :
 
 /-! ### Finite union bounds -/
 
-theorem eventCard_exists_le_sum {n : ℕ} {I : Type*} [DecidableEq I]
+theorem eventCard_exists_le_sum {n : ℕ} {I : Type*}
     (s : Finset I) (P : I → Event n) :
     eventCard n (fun G ↦ ∃ i ∈ s, P i G) ≤ ∑ i ∈ s, eventCard n (P i) := by
   classical
@@ -179,7 +179,7 @@ theorem eventCard_exists_le_sum {n : ℕ} {I : Type*} [DecidableEq I]
           Nat.add_le_add_left ih _
         _ = ∑ i ∈ insert a s, eventCard n (P i) := by simp [ha]
 
-theorem probability_exists_le_sum {n : ℕ} {I : Type*} [DecidableEq I]
+theorem probability_exists_le_sum {n : ℕ} {I : Type*}
     (s : Finset I) (P : I → Event n) :
     probability n (fun G ↦ ∃ i ∈ s, P i G) ≤
       ∑ i ∈ s, probability n (P i) := by
@@ -268,7 +268,7 @@ theorem eventCard_eq_edgeCard (n : ℕ) (P : Finset (Edge n) → Prop) :
     simpa only [graphOfEdges_edges] using congrArg graphOfEdges h
   · intro S hS
     refine ⟨graphOfEdges S, ?_, edges_graphOfEdges S⟩
-    show P (edges (graphOfEdges S))
+    change P (edges (graphOfEdges S))
     simpa only [edges_graphOfEdges] using hS.2
 
 /-- `Prescribed A B G` says that the edge coordinates of `G`, restricted to

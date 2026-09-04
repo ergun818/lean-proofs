@@ -64,7 +64,7 @@ theorem mem_embeddingEdges_iff {k n : ℕ} (e : Fin k ↪ Fin n)
         have hij : i ≠ j := by
           intro h
           apply haDiag
-          simpa [h]
+          simp [h]
         let b : RandomGraph.Edge k := ⟨s(i, j), by simpa [Sym2.mk_isDiag_iff]⟩
         refine Finset.mem_image.mpr ⟨b, Finset.mem_univ _, ?_⟩
         apply Subtype.ext

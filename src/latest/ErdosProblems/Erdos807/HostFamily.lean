@@ -450,7 +450,7 @@ noncomputable def canonicalPartition (M : Matrix r) :
     (canonicalPartition M).length = r := by
   simp [canonicalPartition]
 
-lemma mem_coveredEdges_iff {G : SimpleGraph V} [Fintype V] [DecidableEq V]
+lemma mem_coveredEdges_iff {G : SimpleGraph V} [DecidableEq V]
     (p : List (Biclique G)) (e : Sym2 V) :
     e ∈ coveredEdges p ↔ ∃ B ∈ p, e ∈ B.edges := by
   induction p with
@@ -561,8 +561,8 @@ lemma coveredEdges_map_relabel {A B : Type*} [Fintype A] [DecidableEq A]
       rw [List.map_cons, coveredEdges_cons, coveredEdges_cons,
         Biclique.edges_relabel, ih, Finset.map_union]
 
-lemma graphEdges_relabel {A B : Type*} [Fintype A] [DecidableEq A]
-    [Fintype B] [DecidableEq B] {GA : SimpleGraph A} {GB : SimpleGraph B}
+lemma graphEdges_relabel {A B : Type*} [Fintype A] [Fintype B]
+    {GA : SimpleGraph A} {GB : SimpleGraph B}
     (f : A ≃ B) (h : GB.comap f = GA) :
     graphEdges GB = (graphEdges GA).map f.toEmbedding.sym2Map := by
   classical

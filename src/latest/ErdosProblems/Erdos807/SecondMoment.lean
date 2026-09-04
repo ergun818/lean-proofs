@@ -74,6 +74,7 @@ lemma card_pos : (0 : ℝ) < Fintype.card Ω := by
 lemma card_ne_zero : (Fintype.card Ω : ℝ) ≠ 0 :=
   ne_of_gt card_pos
 
+omit [Nonempty Ω] in
 /-- Probability is exactly event cardinality divided by sample-space
 cardinality.  This theorem is useful for unfolding without exposing the
 implementation choice in downstream proofs. -/
@@ -84,17 +85,20 @@ theorem probability_eq_card_div (P : Ω → Prop) [DecidablePred P] :
   unfold probability
   rw [Nat.card_eq_fintype_card, Fintype.card_subtype]
 
+omit [Nonempty Ω] in
 /-- Expectation is exactly the finite sum divided by sample-space
 cardinality. -/
 theorem expectation_eq_sum_div (X : Ω → ℝ) :
     expectation X = (∑ ω, X ω) / Fintype.card Ω :=
   rfl
 
+omit [Nonempty Ω] in
 /-- Exact finite-sum formula for the expectation of a natural-valued count. -/
 theorem natExpectation_eq_sum_div (X : Ω → ℕ) :
     natExpectation X = (∑ ω, (X ω : ℝ)) / Fintype.card Ω :=
   rfl
 
+omit [Nonempty Ω] in
 /-- Exact finite-sum formula for the second moment of a natural-valued count. -/
 theorem natSecondMoment_eq_sum_div (X : Ω → ℕ) :
     natSecondMoment X = (∑ ω, (X ω : ℝ) ^ 2) / Fintype.card Ω :=
@@ -110,26 +114,30 @@ theorem probability_le_one (P : Ω → Prop) : probability P ≤ 1 := by
   apply (div_le_one card_pos).2
   exact_mod_cast Finset.card_filter_le (s := Finset.univ) P
 
+omit [Nonempty Ω] in
 theorem probability_false : probability (fun _ : Ω ↦ False) = 0 := by
   classical
   simp [probability]
 
 theorem probability_true : probability (fun _ : Ω ↦ True) = 1 := by
   classical
-  simp [probability, card_ne_zero]
+  simp [probability]
 
 theorem expectation_const (c : ℝ) : expectation (fun _ : Ω ↦ c) = c := by
-  simp [expectation, card_ne_zero]
+  simp [expectation]
 
+omit [Nonempty Ω] in
 theorem expectation_add (X Y : Ω → ℝ) :
     expectation (fun ω ↦ X ω + Y ω) = expectation X + expectation Y := by
   simp [expectation, Finset.sum_add_distrib, add_div]
 
+omit [Nonempty Ω] in
 theorem expectation_smul (c : ℝ) (X : Ω → ℝ) :
     expectation (fun ω ↦ c * X ω) = c * expectation X := by
   simp only [expectation, ← Finset.mul_sum]
   ring
 
+omit [Nonempty Ω] in
 /-- Expectation commutes with a finite sum. -/
 theorem expectation_finset_sum {ι : Type*} (S : Finset ι) (X : ι → Ω → ℝ) :
     expectation (fun ω ↦ ∑ i ∈ S, X i ω) =
@@ -153,6 +161,7 @@ theorem probability_mono {P Q : Ω → Prop} (h : ∀ ω, P ω → Q ω) :
     exact_mod_cast Finset.card_le_card
       (Finset.monotone_filter_right Finset.univ fun ω _ ↦ h ω)) card_pos.le
 
+omit [Nonempty Ω] in
 /-- An event probability is the expectation of its indicator. -/
 theorem expectation_indicator (P : Ω → Prop) :
     expectation (fun ω ↦ indicator (P ω)) = probability P := by
@@ -278,7 +287,7 @@ theorem probability_zero_le_variance_div_expectation_sq (X : Ω → ℝ)
         probability (fun ω ↦ expectation X ^ 2 ≤ (X ω - expectation X) ^ 2) := by
       apply probability_mono
       intro ω hω
-      simpa [hω]
+      simp [hω]
     _ ≤ expectation (fun ω ↦ (X ω - expectation X) ^ 2) /
           expectation X ^ 2 := by
       exact probability_le_expectation_div (fun ω ↦ sq_nonneg _)
@@ -294,6 +303,9 @@ theorem probability_nat_zero_le_variance_div_expectation_sq (X : Ω → ℕ)
     probability_zero_le_variance_div_expectation_sq
       (X := fun ω ↦ (X ω : ℝ)) hmean
 
+end Nonempty
+
+omit [Fintype Ω] in
 /-- Pointwise overlap expansion for the square of a sum of indicators. -/
 theorem indicatorCount_sq {ι : Type*} (S : Finset ι) (P : ι → Ω → Prop)
     (ω : Ω) :
@@ -335,8 +347,6 @@ theorem secondMoment_indicatorCount {ι : Type*} (S : Finset ι)
   apply Finset.sum_congr rfl
   intro j _
   exact expectation_indicator fun ω ↦ P i ω ∧ P j ω
-
-end Nonempty
 
 end FiniteUniform
 end Erdos807

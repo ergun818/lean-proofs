@@ -145,7 +145,7 @@ theorem moderate_cleared_denominator_bound {n k i : ℕ}
   have hn2i : (n ^ i) ^ 2 ≤ (2 * (k * q) ^ 2) ^ i := by
     calc
       (n ^ i) ^ 2 = n ^ (i * 2) := (pow_mul n i 2).symm
-      _ = n ^ (2 * i) := by congr 1 <;> omega
+      _ = n ^ (2 * i) := by congr 1; omega
       _ = (n ^ 2) ^ i := pow_mul n 2 i
       _ ≤ (2 * (k * q) ^ 2) ^ i := Nat.pow_le_pow_left hn2 i
   have he : 2 * i.choose 2 ≤ i * (2 * a + 1) := by
@@ -153,7 +153,7 @@ theorem moderate_cleared_denominator_bound {n k i : ℕ}
   have he2 : (2 ^ i.choose 2) ^ 2 ≤ (2 ^ (2 * a + 1)) ^ i := by
     calc
       (2 ^ i.choose 2) ^ 2 = 2 ^ (i.choose 2 * 2) := (pow_mul 2 _ 2).symm
-      _ = 2 ^ (2 * i.choose 2) := by congr 1 <;> omega
+      _ = 2 ^ (2 * i.choose 2) := by congr 1; omega
       _ ≤ 2 ^ (i * (2 * a + 1)) := Nat.pow_le_pow_right (by norm_num) he
       _ = 2 ^ ((2 * a + 1) * i) := by rw [Nat.mul_comm i]
       _ = (2 ^ (2 * a + 1)) ^ i := pow_mul 2 _ i

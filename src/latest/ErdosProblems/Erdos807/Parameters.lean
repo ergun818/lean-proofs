@@ -584,15 +584,17 @@ theorem eventually_saving_bound :
 theorem saving_power_bound_of_logParameter_ge {n : ℕ}
     (hn : 62000 ≤ logParameter n) :
     n ^ 2008 < 2 ^ (1000 * (structuredSize n - blockCount n)) := by
-  calc
-    n ^ 2008 < (2 ^ (logParameter n + 1)) ^ 2008 :=
-      Nat.pow_lt_pow_left (lt_pow_logParameter_succ n) (by norm_num)
-    _ = 2 ^ (2008 * (logParameter n + 1)) := by
-      rw [← pow_mul]
-      congr 1
-      omega
-    _ ≤ 2 ^ (1000 * (structuredSize n - blockCount n)) :=
-      Nat.pow_le_pow_right (by norm_num) (saving_bound_of_logParameter_ge hn)
+  -- Keep the exponent symbolic while combining the power inequalities.
+  have hpower (m : ℕ) (hm : m ≠ 0)
+      (hbound : m * (logParameter n + 1) ≤ 1000 * (structuredSize n - blockCount n)) :
+      n ^ m < 2 ^ (1000 * (structuredSize n - blockCount n)) := by
+    calc
+      n ^ m < (2 ^ (logParameter n + 1)) ^ m :=
+        Nat.pow_lt_pow_left (lt_pow_logParameter_succ n) hm
+      _ = 2 ^ (m * (logParameter n + 1)) := by rw [← pow_mul, Nat.mul_comm]
+      _ ≤ 2 ^ (1000 * (structuredSize n - blockCount n)) :=
+        Nat.pow_le_pow_right Nat.zero_lt_two hbound
+  exact hpower 2008 (by decide) (saving_bound_of_logParameter_ge hn)
 
 theorem eventually_saving_power_bound :
     ∀ᶠ n : ℕ in atTop,

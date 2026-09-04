@@ -28,11 +28,13 @@ noncomputable def graphEdges (G : SimpleGraph V) : Finset (Sym2 V) := by
   classical
   exact G.edgeFinset
 
+omit [DecidableEq V] in
 @[simp] lemma mem_graphEdges {G : SimpleGraph V} {e : Sym2 V} :
     e ∈ graphEdges G ↔ e ∈ G.edgeSet := by
   classical
   simp [graphEdges]
 
+omit [DecidableEq V] in
 @[simp] lemma coe_graphEdges (G : SimpleGraph V) :
     (graphEdges G : Set (Sym2 V)) = G.edgeSet := by
   ext e
@@ -66,12 +68,14 @@ noncomputable def ofSets (G : SimpleGraph V) (L R : Set V) (hLR : Disjoint L R)
         intro u hu v hv
         exact hcomplete u (Set.mem_toFinset.mp hu) v (Set.mem_toFinset.mp hv) }
 
+omit [DecidableEq V] in
 @[simp] lemma ofSets_left (G : SimpleGraph V) (L R : Set V) (hLR : Disjoint L R)
     (hcomplete : ∀ u ∈ L, ∀ v ∈ R, G.Adj u v) :
     (ofSets G L R hLR hcomplete).left = L.toFinset := by
   classical
   rfl
 
+omit [DecidableEq V] in
 @[simp] lemma ofSets_right (G : SimpleGraph V) (L R : Set V) (hLR : Disjoint L R)
     (hcomplete : ∀ u ∈ L, ∀ v ∈ R, G.Adj u v) :
     (ofSets G L R hLR hcomplete).right = R.toFinset := by
@@ -82,6 +86,7 @@ noncomputable def ofSets (G : SimpleGraph V) (L R : Set V) (hLR : Disjoint L R)
 def edges (B : Biclique G) : Finset (Sym2 V) :=
   B.left.image₂ (fun u v ↦ s(u, v)) B.right
 
+omit [Fintype V] in
 @[simp] lemma mem_edges {B : Biclique G} {e : Sym2 V} :
     e ∈ B.edges ↔ ∃ u ∈ B.left, ∃ v ∈ B.right, s(u, v) = e := by
   simp [edges]
@@ -141,6 +146,7 @@ def singletonEdge (G : SimpleGraph V) {u v : V} (huv : G.Adj u v) : Biclique G w
     subst b
     exact huv
 
+omit [Fintype V] in
 @[simp] lemma edges_singletonEdge (G : SimpleGraph V) {u v : V} (huv : G.Adj u v) :
     (singletonEdge G huv).edges = {s(u, v)} := by
   ext e
@@ -152,13 +158,16 @@ end Biclique
 def coveredEdges {G : SimpleGraph V} (p : List (Biclique G)) : Finset (Sym2 V) :=
   p.foldr (fun B E ↦ B.edges ∪ E) ∅
 
+omit [Fintype V] in
 @[simp] lemma coveredEdges_nil {G : SimpleGraph V} :
     coveredEdges ([] : List (Biclique G)) = ∅ := rfl
 
+omit [Fintype V] in
 @[simp] lemma coveredEdges_cons {G : SimpleGraph V} (B : Biclique G)
     (p : List (Biclique G)) :
     coveredEdges (B :: p) = B.edges ∪ coveredEdges p := rfl
 
+omit [Fintype V] in
 @[simp] lemma mem_coveredEdges {G : SimpleGraph V} {p : List (Biclique G)}
     {e : Sym2 V} :
     e ∈ coveredEdges p ↔ ∃ B ∈ p, e ∈ B.edges := by
@@ -196,6 +205,7 @@ lemma edgesOn_mono {G : SimpleGraph V} [DecidableRel G.Adj] {S T : Finset V}
   rw [mem_edgesOn] at he ⊢
   exact ⟨he.1, he.2.trans hST⟩
 
+omit [Fintype V] in
 lemma Biclique.edges_subset_coveredEdges {G : SimpleGraph V} {B : Biclique G}
     {p : List (Biclique G)} (hB : B ∈ p) : B.edges ⊆ coveredEdges p := by
   induction p with
@@ -207,6 +217,7 @@ lemma Biclique.edges_subset_coveredEdges {G : SimpleGraph V} {B : Biclique G}
       · exact Finset.subset_union_left
       · exact (ih hB).trans Finset.subset_union_right
 
+omit [Fintype V] in
 lemma IsPartitionOn.cons {G : SimpleGraph V} {E : Finset (Sym2 V)}
     {p : List (Biclique G)} (hp : IsPartitionOn E p) (B : Biclique G)
     (hd : Disjoint B.edges E) : IsPartitionOn (B.edges ∪ E) (B :: p) := by
@@ -256,12 +267,14 @@ lemma exists_singletonEdge_bicliquePartition (G : SimpleGraph V) :
   simpa [IsBicliquePartition] using
     exists_singletonEdge_partitionOn G (graphEdges G) (fun _ h ↦ h)
 
+omit [DecidableEq V] in
 lemma disjoint_graphEdges_of_disjoint {H K : SimpleGraph V} (hHK : Disjoint H K) :
     Disjoint (graphEdges H) (graphEdges K) := by
   rw [← Finset.disjoint_coe, coe_graphEdges, coe_graphEdges,
     SimpleGraph.disjoint_edgeSet]
   exact hHK
 
+omit [Fintype V] [DecidableEq V] in
 lemma finset_sup_adj_iff (P : Finset (SimpleGraph V)) (u v : V) :
     (P.sup id).Adj u v ↔ ∃ H ∈ P, H.Adj u v := by
   induction P using Finset.induction_on with
@@ -461,14 +474,15 @@ lemma edgesOn_eq_empty_of_isIndepSet {G : SimpleGraph V} [DecidableRel G.Adj]
 
 /-- The standard star partition associated to an independent set. -/
 lemma exists_star_bicliquePartition_of_isIndepSet
-    {G : SimpleGraph V} [DecidableRel G.Adj] {S : Finset V}
+    {G : SimpleGraph V} {S : Finset V}
     (hS : G.IsIndepSet (S : Set V)) :
     ∃ p : List (Biclique G), IsBicliquePartition G p ∧
       p.length = Fintype.card V - S.card := by
+  classical
   have hp : IsPartitionOn (edgesOn G S) ([] : List (Biclique G)) := by
     constructor
     · simp
-    · simpa [edgesOn_eq_empty_of_isIndepSet hS]
+    · simp [edgesOn_eq_empty_of_isIndepSet hS]
   obtain ⟨p, hp, hcard⟩ := exists_bicliquePartition_of_partitionOn hp
   exact ⟨p, hp, by simpa using hcard⟩
 
@@ -550,9 +564,10 @@ theorem bipartitionNumber_le_card_sub_add_of_partitionOn_eq
 
 /-- The star upper bound from any independent set. -/
 lemma bipartitionNumber_le_card_sub_card_of_isIndepSet
-    {G : SimpleGraph V} [DecidableRel G.Adj] {S : Finset V}
+    {G : SimpleGraph V} {S : Finset V}
     (hS : G.IsIndepSet (S : Set V)) :
     bipartitionNumber G ≤ Fintype.card V - S.card := by
+  classical
   obtain ⟨p, hp, hcard⟩ := exists_star_bicliquePartition_of_isIndepSet hS
   rw [← hcard]
   exact bipartitionNumber_le_of_partition hp
@@ -587,6 +602,7 @@ def ofInduce {G : SimpleGraph V} (S : Finset V)
     obtain ⟨v', hv', rfl⟩ := hv
     exact (SimpleGraph.induce_adj.mp (B.complete u' hu' v' hv'))
 
+omit [Fintype V] in
 lemma edges_ofInduce {G : SimpleGraph V} (S : Finset V)
     (B : Biclique (G.induce (S : Set V))) :
     (ofInduce S B).edges = B.edges.map (inducedVertexEmbedding S).sym2Map := by
@@ -608,6 +624,7 @@ lemma edges_ofInduce {G : SimpleGraph V} (S : Finset V)
 
 end Biclique
 
+omit [Fintype V] in
 lemma coveredEdges_map_ofInduce {G : SimpleGraph V} (S : Finset V)
     (p : List (Biclique (G.induce (S : Set V)))) :
     coveredEdges (p.map (Biclique.ofInduce S)) =
@@ -663,10 +680,11 @@ lemma IsBicliquePartition.map_induce {G : SimpleGraph V} [DecidableRel G.Adj]
 `S` has a biclique partition of length `r`, adding the other vertices as
 stars gives a partition of `G` of length at most `|V| - |S| + r`. -/
 theorem bipartitionNumber_le_card_sub_add_of_induce_partition
-    {G : SimpleGraph V} [DecidableRel G.Adj] {S : Finset V}
+    {G : SimpleGraph V} {S : Finset V}
     {p : List (Biclique (G.induce (S : Set V)))}
     (hp : IsBicliquePartition (G.induce (S : Set V)) p) :
     bipartitionNumber G ≤ Fintype.card V - S.card + p.length := by
+  classical
   have hp' := hp.map_induce (G := G)
   obtain ⟨q, hq, hqcard⟩ := exists_bicliquePartition_of_partitionOn hp'
   apply (bipartitionNumber_le_of_partition hq).trans_eq
@@ -675,19 +693,21 @@ theorem bipartitionNumber_le_card_sub_add_of_induce_partition
 /-- Numerical form of deterministic lifting, with the induced vertex and
 partition cardinalities named `k` and `r`. -/
 theorem bipartitionNumber_le_card_sub_add_of_induced_k_partition_r
-    {G : SimpleGraph V} [DecidableRel G.Adj] {S : Finset V} {k r : ℕ}
+    {G : SimpleGraph V} {S : Finset V} {k r : ℕ}
     {p : List (Biclique (G.induce (S : Set V)))}
     (hS : S.card = k) (hp : IsBicliquePartition (G.induce (S : Set V)) p)
     (hpr : p.length = r) :
     bipartitionNumber G ≤ Fintype.card V - k + r := by
+  classical
   simpa [← hS, ← hpr] using
     bipartitionNumber_le_card_sub_add_of_induce_partition hp
 
 /-- Lifting expressed using the optimal partition of the induced subgraph. -/
 theorem bipartitionNumber_le_card_sub_add_induce
-    (G : SimpleGraph V) [DecidableRel G.Adj] (S : Finset V) :
+    (G : SimpleGraph V) (S : Finset V) :
     bipartitionNumber G ≤ Fintype.card V - S.card +
       bipartitionNumber (G.induce (S : Set V)) := by
+  classical
   obtain ⟨p, hp, hcard⟩ :=
     exists_bicliquePartition_card_eq (G.induce (S : Set V))
   simpa [hcard] using
@@ -703,6 +723,7 @@ variable {W : Type*} [Fintype W] [DecidableEq W]
 def embeddingRangeFinset (e : W ↪ V) : Finset V :=
   Finset.univ.map e
 
+omit [Fintype V] [DecidableEq V] [DecidableEq W] in
 @[simp] lemma card_embeddingRangeFinset (e : W ↪ V) :
     (embeddingRangeFinset e).card = Fintype.card W := by
   simp [embeddingRangeFinset]
@@ -721,6 +742,7 @@ def ofComap {G : SimpleGraph V} (e : W ↪ V) (B : Biclique (G.comap e)) : Bicli
     obtain ⟨v', hv', rfl⟩ := hv
     exact B.complete u' hu' v' hv'
 
+omit [Fintype V] [Fintype W] in
 lemma edges_ofComap {G : SimpleGraph V} (e : W ↪ V) (B : Biclique (G.comap e)) :
     (ofComap e B).edges = B.edges.map e.sym2Map := by
   ext x
@@ -741,6 +763,7 @@ lemma edges_ofComap {G : SimpleGraph V} (e : W ↪ V) (B : Biclique (G.comap e))
 
 end Biclique
 
+omit [Fintype V] [Fintype W] in
 lemma coveredEdges_map_ofComap {G : SimpleGraph V} (e : W ↪ V)
     (p : List (Biclique (G.comap e))) :
     coveredEdges (p.map (Biclique.ofComap e)) = (coveredEdges p).map e.sym2Map := by
@@ -750,6 +773,7 @@ lemma coveredEdges_map_ofComap {G : SimpleGraph V} (e : W ↪ V)
       simp only [List.map_cons, coveredEdges_cons, Biclique.edges_ofComap, ih,
         Finset.map_union]
 
+omit [DecidableEq W] in
 lemma edgesOn_embeddingRangeFinset_eq_map_comap_graphEdges
     (G : SimpleGraph V) [DecidableRel G.Adj] (e : W ↪ V) :
     edgesOn G (embeddingRangeFinset e) = (graphEdges (G.comap e)).map e.sym2Map := by

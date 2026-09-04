@@ -23,7 +23,7 @@ namespace HostMoments
 open Finset
 open FiniteUniform
 
-variable {Omega alpha : Type*} [Fintype Omega] [Nonempty Omega]
+variable {Omega alpha : Type*} [Fintype Omega]
 variable [DecidableEq alpha]
 
 /-- The number of members of a finite family whose event occurs. -/
@@ -32,6 +32,7 @@ noncomputable def eventCount {I : Type*} (S : Finset I)
   classical
   exact (S.filter fun i => P i omega).card
 
+omit [Fintype Omega] in
 /-- A natural-valued event count is the corresponding sum of real indicators. -/
 lemma eventCount_cast_eq_indicatorCount {I : Type*} (S : Finset I)
     (P : I → Omega → Prop) (omega : Omega) :
@@ -95,8 +96,7 @@ theorem sum_pairProbability_eq_sum_intersectionContribution
           ∑ i ∈ range (k + 1), if (AB.1 ∩ AB.2).card = i then f AB else 0 := by
           apply sum_congr rfl
           intro AB hAB
-          simpa [eq_comm, hinter AB hAB] using
-            (sum_ite_eq' (range (k + 1)) (AB.1 ∩ AB.2).card (fun _ ↦ f AB))
+          simp [eq_comm, hinter AB hAB]
     _ = ∑ i ∈ range (k + 1),
           ∑ AB ∈ S ×ˢ S, if (AB.1 ∩ AB.2).card = i then f AB else 0 := by
           rw [sum_comm]
@@ -307,7 +307,6 @@ theorem card_fixed_left_choice (c : HostChoice k q) (i : ℕ) :
         · exact fun h ↦ h.2
         · intro h
           refine ⟨?_, h⟩
-          change slotOverlap c d = i
           rw [slotOverlap, h, hSi]
         ]
       exact card_filter_equalSlotSet_eq c S
@@ -341,8 +340,7 @@ theorem card_choicePairs (k q i : ℕ) :
       · intro d hd
         simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hd
         simp [choicePairs, hd]
-      · intro d hd
-        rintro d' hd' heq
+      · intro d hd d' hd' heq
         exact congrArg Prod.snd heq
       · intro cd hcd
         refine ⟨cd.2, ?_, ?_⟩
@@ -355,7 +353,7 @@ theorem card_choicePairs (k q i : ℕ) :
           · exact (Finset.mem_filter.mp hcd).2.symm
           · rfl
     _ = q ^ k * (Nat.choose k i * (q - 1) ^ (k - i)) := by
-      simp [C, Fintype.card_fun]
+      simp [C]
 
 /-- The probability contribution of an exact slot-overlap stratum. -/
 noncomputable def choiceIntersectionContribution (k q i : ℕ)
@@ -387,8 +385,7 @@ theorem natSecondMoment_choiceCount_eq_sum_intersectionContribution
           if slotOverlap cd.1 cd.2 = i then f cd else 0 := by
       apply sum_congr rfl
       intro cd hcd
-      simpa [eq_comm, hoverlap cd.1 cd.2] using
-        (sum_ite_eq' (range (k + 1)) (slotOverlap cd.1 cd.2) (fun _ ↦ f cd))
+      simp [eq_comm, hoverlap cd.1 cd.2]
     _ = ∑ i ∈ range (k + 1), ∑ cd ∈ C ×ˢ C,
           if slotOverlap cd.1 cd.2 = i then f cd else 0 := by rw [sum_comm]
     _ = ∑ i ∈ range (k + 1), choiceIntersectionContribution k q i P := by
@@ -444,7 +441,7 @@ theorem exists_differingSlotAt_eq {k q j : ℕ} (c d : HostChoice k q)
 chunk of size `9r`. -/
 noncomputable def rightChunkEquiv (r : ℕ) :
     Fin 10 × Fin (9 * r) ≃ Fin (90 * r) :=
-  finProdFinEquiv.trans (Equiv.cast (by congr 1 <;> omega))
+  finProdFinEquiv.trans (Equiv.cast (by congr 1; omega))
 
 /-- The `10*r*j` Boolean coordinates which suffice to reconstruct a
 compatible matrix when `j` slots of the host choice change. -/
@@ -565,7 +562,7 @@ theorem natExpectation_host_witnessCount (n r : ℕ) :
   rw [host_witnessCount_eq_eventCount, natExpectation_eventCount]
   simp_rw [finiteUniform_probability_eq_randomGraph_probability,
     HostFamily.probability_fixedChoiceEvent]
-  simp [HostFamily.card_choice]
+  simp
 
 /-- The exact contribution from pairs of stable choices with `i` common
 slots. -/
