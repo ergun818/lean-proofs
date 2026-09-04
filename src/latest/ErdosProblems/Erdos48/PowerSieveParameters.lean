@@ -62,7 +62,7 @@ theorem powerSieveProductBase_mul_auxScale
   omega
 
 theorem powerSieveAuxCore_le_productBase
-    {n L Q : ℕ} (hn : 1 ≤ n) (hL : 1 ≤ L) (hQ : 1 ≤ Q) :
+    {n L Q : ℕ} (_hn : 1 ≤ n) (hL : 1 ≤ L) (_hQ : 1 ≤ Q) :
     powerSieveAuxCore n L Q ≤ powerSieveProductBase n L := by
   rw [powerSieveAuxCore, max_le_iff]
   constructor
@@ -93,7 +93,7 @@ theorem powerSieveAuxCore_pos
     (le_max_right _ _)
 
 theorem powerSieveAuxLower_lt_upper
-    {n L Q : ℕ} (hn : 3 ≤ n) (hL : 1 ≤ L) :
+    {n L Q : ℕ} (hn : 3 ≤ n) (_hL : 1 ≤ L) :
     powerSieveAuxLower n L Q < powerSieveAuxUpper n L Q := by
   have hcore := powerSieveAuxCore_pos (n := n) (L := L) (Q := Q)
     (show 1 ≤ n by omega)
@@ -209,7 +209,6 @@ theorem eventually_powerSieveAuxPrimes_reciprocal_lower (L : ℕ)
       _ = (120 / 500 : ℝ) * Real.log (n : ℝ) := by
         push_cast
         field_simp
-        <;> ring
       _ ≤ Real.log ((z : ℝ) / (w : ℝ)) - C := by
         nlinarith [abs_nonneg C]
   rw [powerSieveAuxPrimes_reciprocal_eq_interval]

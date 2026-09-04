@@ -261,7 +261,7 @@ canonical raw lower function.  A larger application-specific raw lower
 function may be supplied through `hraw`. -/
 noncomputable def FLPAnalyticScale.of_powerSievePrimeChainAssembly
     {K n L : ℕ} {rawLower : ℕ → ℝ}
-    (hL : 1 ≤ L)
+    (_hL : 1 ≤ L)
     (hu : 2 ≤ powerSieveSmoothBound n L)
     (htwo : 2 ∉ shiftedSmoothBadRoots (powerSieveX n L)
       (powerSieveSmoothBound n L) rawLower)

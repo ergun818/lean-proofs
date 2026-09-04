@@ -329,7 +329,7 @@ theorem exists_turanSecond_contraction_parameter
           ((H : ℝ) * b ^ (H - 1))) := by
       rw [show b ^ H = b ^ (H - 1) * b by
         calc
-          b ^ H = b ^ ((H - 1) + 1) := by congr 1 <;> omega
+          b ^ H = b ^ ((H - 1) + 1) := by congr 1; omega
           _ = b ^ (H - 1) * b := by rw [pow_succ]]
       ring
     _ ≤ (1 / 4 : ℝ) * ((1 / 2 : ℝ) * 1) := by

@@ -246,11 +246,11 @@ theorem sum_invTotient_mul_gaussWeighted_allCharacters_subset_Ioc_le
       apply dirichletCharacterUnitTransform_additive_eq_gaussSum_mul_twist_of_coprime
       intro n hn
       apply hcop q.1
-      have hqmem := q.2
-      simp only [Finset.mem_Icc] at hqmem
-      simp only [Finset.mem_Ioc]
-      omega
-      exact hn
+      · have hqmem := q.2
+        simp only [Finset.mem_Icc] at hqmem
+        simp only [Finset.mem_Ioc]
+        omega
+      · exact hn
     have hparseval := sum_norm_sq_dirichletCharacterUnitTransform b
     simp_rw [htransform] at hparseval
     have hphi : (0 : ℝ) < Nat.totient q.1 := by

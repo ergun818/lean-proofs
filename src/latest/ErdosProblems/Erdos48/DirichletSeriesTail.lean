@@ -156,7 +156,7 @@ theorem summable_vonMangoldt_mul_rpow_neg
 /-- The exponentially damped weighted von Mangoldt tail is controlled by
 the full positive series at the shifted abscissa `1 + eta/2`. -/
 theorem weighted_vonMangoldt_tail_tsum_le
-    (eta R : ℝ) (heta : 0 < eta) (heta1 : eta ≤ 1)
+    (eta R : ℝ) (heta : 0 < eta) (_heta1 : eta ≤ 1)
     (N k : ℕ) (hN : Real.exp (R / eta) ≤ (N : ℝ)) :
     (∑' n : ℕ, if N < n then
         Real.log n ^ k * ArithmeticFunction.vonMangoldt n *
@@ -218,7 +218,7 @@ same exponentially damped tail majorant. -/
 theorem norm_weighted_vonMangoldt_LSeries_sub_sum_le
     {q : ℕ} (chi : DirichletCharacter ℂ q)
     (eta R t : ℝ) (heta : 0 < eta) (heta1 : eta ≤ 1)
-    (N k : ℕ) (hN1 : 1 ≤ N)
+    (N k : ℕ) (_hN1 : 1 ≤ N)
     (hN : Real.exp (R / eta) ≤ (N : ℝ)) :
     let z : ℂ := ((1 + eta : ℝ) : ℂ) + t * I
     let c : ℕ → ℂ := fun n ↦

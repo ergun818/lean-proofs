@@ -66,7 +66,7 @@ theorem primitiveHighZeroRealBandKernelSumAt_eq_zero_of_mass_eq_zero
     apply Finset.eq_empty_iff_forall_notMem.mpr
     intro rho hrho
     have := highZeroRealBand_subset hq psi.1 psi.2 etaLo etaHi T hrho
-    simpa [hrect] using this
+    simp [hrect] at this
   rw [hband]
   simp
 
@@ -90,7 +90,7 @@ theorem primitiveHighZeroPositiveRealBandKernelSumAt_eq_zero_of_mass_eq_zero
     have hreal := (Finset.mem_filter.mp hrho).1
     have hrectMem := highZeroRealBand_subset
       hq psi.1 psi.2 etaLo etaHi T hreal
-    simpa [hrect] using hrectMem
+    simp [hrect] at hrectMem
   rw [hband]
   simp
 

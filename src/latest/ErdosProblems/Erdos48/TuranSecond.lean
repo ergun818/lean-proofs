@@ -31,7 +31,7 @@ noncomputable section
 `2^(1-K)` somewhere on `[-1,1]`.  This is the product form of Chebyshev's
 extremal theorem. -/
 theorem exists_unitInterval_prod_abs_ge_chebyshev
-    {K : ℕ} (hK : 0 < K) (u : Fin K → ℝ) :
+    {K : ℕ} (_hK : 0 < K) (u : Fin K → ℝ) :
     ∃ y ∈ Set.Icc (-1 : ℝ) 1,
       ((2 : ℝ) ^ (K - 1))⁻¹ ≤ ∏ i, |y - u i| := by
   let P : ℝ[X] := ∏ i : Fin K, (X - C (u i))
@@ -42,8 +42,7 @@ theorem exists_unitInterval_prod_abs_ge_chebyshev
       Polynomial.monic_prod_X_sub_C u (Finset.univ : Finset (Fin K))
   have hPnat : P.natDegree = K := by
     dsimp [P]
-    simpa using Polynomial.natDegree_finsetProd_X_sub_C_eq_card
-      (s := Finset.univ) u
+    simp
   have hApos : 0 < A := by dsimp [A]; positivity
   have hAnz : A ≠ 0 := hApos.ne'
   have hQnat : Q.natDegree = K := by
@@ -63,7 +62,7 @@ theorem exists_unitInterval_prod_abs_ge_chebyshev
     rw [Polynomial.coeff_C_mul, hPcoeff]
     simp [A]
   by_contra hnot
-  push_neg at hnot
+  push Not at hnot
   have hbound : ∀ y ∈ Set.Icc (-1 : ℝ) 1, |Q.eval y| ≤ 1 := by
     intro y hy
     have hlt := hnot y hy
@@ -83,9 +82,7 @@ theorem exists_unitInterval_prod_abs_ge_chebyshev
     (Polynomial.Chebyshev.coeff_eq_iff_of_forall_abs_le_one
       hQdeg hbound).mp hQcoeff
   have hone : |Q.eval 1| = 1 := by
-    have hnode := Polynomial.Chebyshev.eval_T_real_node
-      (n := K) (i := 0) (Finset.mem_Iic.mpr hK.le)
-    simpa [hQT, Polynomial.Chebyshev.node_eq_one] using congrArg abs hnode
+    simp [hQT]
   have hlt := hnot 1 (by simp)
   have hPeval : |P.eval 1| = ∏ i, |1 - u i| := by
     dsimp [P]

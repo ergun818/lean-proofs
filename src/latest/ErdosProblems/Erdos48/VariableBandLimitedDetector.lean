@@ -89,13 +89,12 @@ theorem variableDetectorLowerLog_mul_le
           ((variableDetectorDilution E : ℕ) * eta)) :=
       mul_le_mul_of_nonneg_left hfloor heta.le
     _ = (j : ℝ) / variableDetectorDilution E := by
-      push_cast
       field_simp [heta.ne', (variableDetectorDilution_pos E).ne']
 
 /-- The deliberately large dilution constant leaves enough room for both
 the Turan loss and Stirling's factorial lower bound. -/
 theorem variable_detector_dilution_budget
-    {E J j : ℕ} (hE : 1 ≤ E) (hj : 2 ≤ j)
+    {E J j : ℕ} (_hE : 1 ≤ E) (hj : 2 ≤ j)
     (hJ : J ≤ E * (j - 1)) :
     7 * (578 : ℝ) ^ J * (2 : ℝ) ^ j *
         ((j : ℝ) / variableDetectorDilution E) *
@@ -232,7 +231,7 @@ theorem variable_detector_dilution_budget
           ((8 : ℝ) / (2 : ℝ) ^ 40) ^ n) * (n : ℝ) ^ n := by ring
       _ ≤ (1 / 3 : ℝ) ^ n * (n : ℝ) ^ n := by gcongr
       _ = ((1 / 3 : ℝ) * n) ^ n := by rw [mul_pow]
-      _ = ((n : ℝ) / 3) ^ n := by congr 1 <;> ring
+      _ = ((n : ℝ) / 3) ^ n := by congr 1; ring
   have hfactorial := pow_div_three_le_factorial hn
   calc
     7 * (578 : ℝ) ^ J * (2 : ℝ) ^ j *
@@ -586,7 +585,7 @@ theorem exists_variable_propagated_band_series_detector :
     dsimp [M, E]
     calc
       D * H ≤ D * (j - 1) := Nat.mul_le_mul_left D hHj
-      _ ≤ (D + κ) * (j - 1) := by gcongr <;> omega
+      _ ≤ (D + κ) * (j - 1) := by gcongr; omega
   have hcut : variableDetectorLowerCutoff E eta j ≤ N := by
     simpa only [N, R] using
       variableDetectorLowerCutoff_le_zeroDetectorCutoff

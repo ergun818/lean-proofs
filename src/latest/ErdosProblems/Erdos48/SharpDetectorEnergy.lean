@@ -149,7 +149,7 @@ theorem sum_detectorDyadicShell_weighted_energy_sharp_le
           (Real.rpow_natCast _ 2).symm
         _ = (n : ℝ) ^ (-(1 + eta) * 2) :=
           (Real.rpow_mul hnPos.le _ _).symm
-        _ = _ := by congr 1 <;> ring
+        _ = _ := by congr 1; ring
     rw [hsq]
     have hlogMul : (Real.log n ^ k) ^ 2 = Real.log n ^ (2 * k) := by
       rw [← pow_mul]
@@ -185,7 +185,7 @@ theorem sum_detectorDyadicShell_weighted_energy_sharp_le
                 (A : ℝ) ^ (-(2 + 2 * eta)) := by rw [Real.rpow_one]
           _ = (A : ℝ) ^ ((1 : ℝ) + -(2 + 2 * eta)) := by
             rw [Real.rpow_add hAreal]
-          _ = _ := by congr 1 <;> ring
+          _ = _ := by congr 1; ring
       rw [show P ^ (2 * k + 1) = P ^ (2 * k) * P by rw [pow_succ]]
       rw [← hpowA]
       ring

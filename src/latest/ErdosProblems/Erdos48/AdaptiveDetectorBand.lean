@@ -307,7 +307,7 @@ theorem intervalIntegral_weightedDetectorBand_adaptive_le
               rw [Real.rpow_one]
         _ = ((2 ^ a : ℕ) : ℝ) ^ ((1 : ℝ) + -(1 + 2 * eta)) := by
               rw [Real.rpow_add hApos]
-        _ = _ := by congr 1 <;> ring
+        _ = _ := by congr 1; ring
     calc
       ((2 ^ a : ℕ) : ℝ) *
           ∑ n ∈ detectorDyadicShell Y N a, ‖c n‖ ^ 2 ≤

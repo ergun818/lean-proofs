@@ -78,7 +78,7 @@ theorem variable_detector_propagation_budget
     calc
       (2 * eta) ^ j * (2 : ℝ) ^ j = ((2 * eta) * 2) ^ j :=
         (mul_pow _ _ _).symm
-      _ = (eta * 4) ^ j := by congr 1 <;> ring
+      _ = (eta * 4) ^ j := by congr 1; ring
       _ = eta ^ j * (4 : ℝ) ^ j := mul_pow _ _ _
   have hcoef :
       delta * 3 * C * turanSecondLoss K M *
@@ -87,7 +87,7 @@ theorem variable_detector_propagation_budget
       delta * 3 * C * turanSecondLoss K M *
           (j : ℝ) * (4 : ℝ) ^ j ≤
         delta * 3 * C * ((578 : ℝ) ^ J / 2) *
-          (J : ℝ) * (4 : ℝ) ^ J := by gcongr <;> positivity
+          (J : ℝ) * (4 : ℝ) ^ J := by gcongr
       _ = delta * (3 * C / 2) * (J : ℝ) * (2312 : ℝ) ^ J := by
         have hp : (578 : ℝ) ^ J * (4 : ℝ) ^ J =
             (2312 : ℝ) ^ J := by rw [← mul_pow]; norm_num
@@ -175,12 +175,12 @@ theorem exists_variable_propagated_finite_series_detector :
   have hKH : K ≤ κ * H := by simpa only [Z, K] using hKκ
   have hKJ : K ≤ J := hKH.trans <| by
     calc
-      κ * H ≤ (D + κ) * H := by gcongr <;> omega
+      κ * H ≤ (D + κ) * H := by gcongr; omega
       _ ≤ J := hJ
   have hMJ : M ≤ J := by
     dsimp [M]
     calc
-      D * H ≤ (D + κ) * H := by gcongr <;> omega
+      D * H ≤ (D + κ) * H := by gcongr; omega
       _ ≤ J := hJ
   let P : ℝ → ℂ := fun u ↦
     finiteZeroDetectorPolynomial chi eta (j - 1) N u

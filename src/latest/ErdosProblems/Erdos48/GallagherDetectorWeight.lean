@@ -84,7 +84,7 @@ theorem gallagherBaseCoefficient_mul_weight
       (n : ℝ) ^ (-(1 : ℝ)) * (n : ℝ) ^ (-eta) =
           (n : ℝ) ^ (-(1 : ℝ) + -eta) :=
         (Real.rpow_add hnR (-(1 : ℝ)) (-eta)).symm
-      _ = (n : ℝ) ^ (-(1 + eta)) := by congr 1 <;> ring
+      _ = (n : ℝ) ^ (-(1 + eta)) := by congr 1; ring
   have hscalar :
       (ArithmeticFunction.vonMangoldt n * (n : ℝ) ^ (-(1 : ℝ))) *
           gallagherWeight eta k n =
@@ -223,7 +223,7 @@ monotonicity assumption on the weight itself is needed, so it applies on
 both sides of the saddle point `log n = k/eta`. -/
 theorem gallagherWeightVariationFactor_le_slopeSum
     {eta : ℝ} (heta : 0 ≤ eta) (k : ℕ) {A N : ℕ}
-    (hA : 0 < A) (hAN : A ≤ N) :
+    (hA : 0 < A) (_hAN : A ≤ N) :
     gallagherWeightVariationFactor eta k A N ≤
       (N : ℝ) * |gallagherWeight eta k N| ^ 2 +
         ∑ n ∈ Finset.Ico A N,
@@ -263,7 +263,7 @@ theorem natCast_mul_gallagherWeightSlopeMajorant_sq
               rw [Real.rpow_one]
       _ = (n : ℝ) ^ ((1 : ℝ) + (-eta - 1) * 2) :=
         (Real.rpow_add hnR 1 ((-eta - 1) * 2)).symm
-      _ = (n : ℝ) ^ (-2 * eta - 1) := by congr 1 <;> ring
+      _ = (n : ℝ) ^ (-2 * eta - 1) := by congr 1; ring
   change (n : ℝ) *
       (B * (n : ℝ) ^ (-eta - 1)) ^ 2 =
     B ^ 2 * (n : ℝ) ^ (-2 * eta - 1)
@@ -310,7 +310,7 @@ theorem natCast_mul_abs_gallagherWeight_sq
           ((N : ℝ) ^ (-eta)) ^ (2 : ℝ) := (Real.rpow_two _).symm
       _ = (N : ℝ) ^ ((-eta) * 2) :=
         (Real.rpow_mul hNR.le (-eta) 2).symm
-      _ = (N : ℝ) ^ (-2 * eta) := by congr 1 <;> ring
+      _ = (N : ℝ) ^ (-2 * eta) := by congr 1; ring
   have hcombine :
       (N : ℝ) * (N : ℝ) ^ (-2 * eta) =
         (N : ℝ) ^ (1 - 2 * eta) := by
@@ -320,7 +320,7 @@ theorem natCast_mul_abs_gallagherWeight_sq
             rw [Real.rpow_one]
       _ = (N : ℝ) ^ ((1 : ℝ) + (-2 * eta)) :=
         (Real.rpow_add hNR 1 (-2 * eta)).symm
-      _ = (N : ℝ) ^ (1 - 2 * eta) := by congr 1 <;> ring
+      _ = (N : ℝ) ^ (1 - 2 * eta) := by congr 1; ring
   rw [abs_of_nonneg hweight0]
   unfold gallagherWeight
   rw [mul_pow, hlogpow, hrpowsq]

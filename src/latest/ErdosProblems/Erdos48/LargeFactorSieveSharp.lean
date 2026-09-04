@@ -115,8 +115,7 @@ theorem exists_representedLargeFactorPrimes_pointwise_upper_bound :
       (x + 1) y z (q * r * b)).card : ℝ) ≤ F b
     dsimp only [F]
     simpa only [div_eq_mul_inv, mul_assoc] using hpair.trans hres
-  ·
-    have hempty : residualPrimePairFiber (x + 1) y z (q * r * b) = ∅ := by
+  · have hempty : residualPrimePairFiber (x + 1) y z (q * r * b) = ∅ := by
       rw [Finset.eq_empty_iff_forall_notMem]
       intro s hs
       exact hmEven (cofactor_even_of_mem_residualPrimePairFiber hz

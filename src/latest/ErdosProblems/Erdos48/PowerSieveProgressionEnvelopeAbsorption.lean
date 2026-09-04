@@ -76,7 +76,7 @@ private theorem half_div_le_nat_div_cast
     (by simpa [mul_comm] using hreal)
 
 private theorem quotient_mul_modulus_le_two_mul_endpoint
-    {x d b : ℕ} (hx : 1 ≤ x) (hd : 0 < d) (hb : 0 < b) :
+    {x d b : ℕ} (hx : 1 ≤ x) (_hd : 0 < d) (_hb : 0 < b) :
     ((((x + 1) / (d * b) : ℕ) : ℝ)) * ((d * b : ℕ) : ℝ) ≤
       2 * (x : ℝ) := by
   have hnat : d * b * ((x + 1) / (d * b)) ≤ x + 1 :=
@@ -100,7 +100,7 @@ theorem powerSievePointwiseEnvelope_le_crude_of_root_le
     {Aβ Cπ CV CBV : ℝ} {S n L Q q r : ℕ}
     (hAβ : 0 ≤ Aβ) (hCπ : 0 ≤ Cπ) (hCV : 0 ≤ CV) (hCBV : 0 ≤ CBV)
     (hn : 4 ≤ n) (hL : 1 ≤ L) (hSL : S + 1 ≤ L)
-    (hQ : 1 ≤ Q) (hqLower : Q < q) (hqUpper : q ≤ 2 * Q)
+    (_hQ : 1 ≤ Q) (hqLower : Q < q) (hqUpper : q ≤ 2 * Q)
     (hqSmooth : q ≤ powerSieveSmoothBound n L)
     (hr : r ∈ powerSieveAuxPrimes n L Q) :
     powerSievePointwiseEnvelope Aβ Cπ CV CBV S n L q r ≤
@@ -327,7 +327,6 @@ theorem powerSievePointwiseEnvelope_le_crude_of_root_le
           simp only [Nat.card_Icc]
           omega
         rw [Finset.sum_const, nsmul_eq_mul, hcard]
-        push_cast
         ring
   dsimp only [powerSievePointwiseEnvelope]
   change (Finset.Icc 1 B).sum (fun b ↦ main b + err b + residual) ≤ _
@@ -468,7 +467,8 @@ theorem powerSievePointwiseEnvelope_le_quarter_of_numeric_of_root_le
         (powerSieveX n L : ℝ) /
           (12 * (Nat.totient (q * r) : ℝ) *
             Real.log (powerSieveX n L : ℝ)) := by
-    convert hmain using 1 <;> ring
+    convert hmain using 1
+    ring
   have herr' :
       (2 * CBV * (powerSieveX n L : ℝ) *
           (1 + Real.log (powerSieveCofactorBound n L : ℝ))) /
@@ -477,7 +477,8 @@ theorem powerSievePointwiseEnvelope_le_quarter_of_numeric_of_root_le
         (powerSieveX n L : ℝ) /
           (12 * (Nat.totient (q * r) : ℝ) *
             Real.log (powerSieveX n L : ℝ)) := by
-    convert herr using 1 <;> ring
+    convert herr using 1
+    ring
   have hsum := add_le_add (add_le_add hmain' herr') hres
   calc
     _ ≤ (powerSieveX n L : ℝ) /

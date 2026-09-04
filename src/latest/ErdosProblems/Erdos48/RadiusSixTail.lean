@@ -88,7 +88,7 @@ radius-six zero `Finsupp` to the radius-`4*eta` disk. -/
 theorem smallDiskZeroFinsupp_eq_radiusSix_restrict
     {q : ℕ} [NeZero q] (hq : 1 < q)
     (chi : DirichletCharacter ℂ q) (hchi : chi.IsPrimitive)
-    (t eta : ℝ) (heta0 : 0 < eta) (heta1 : eta ≤ 1) (rho : ℂ) :
+    (t eta : ℝ) (_heta0 : 0 < eta) (heta1 : eta ≤ 1) (rho : ℂ) :
     smallDiskZeroFinsupp hq chi hchi t eta rho =
       if dist rho (((1 + eta : ℝ) : ℂ) + t * I) ≤ 4 * eta then
         radiusSixZeroFinsupp hq chi hchi t rho

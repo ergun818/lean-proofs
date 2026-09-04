@@ -134,7 +134,7 @@ theorem intervalIntegral_variableNormalizedDetector_eq
 
 /-- One order term in the variable-order detector density estimate. -/
 noncomputable def variableRawLogFreeDensityTerm
-    (T E N J j : ℕ) (eta : ℝ) : ℝ :=
+    (_T E N J j : ℕ) (eta : ℝ) : ℝ :=
   variableDetectorNormalization eta J j ^ 2 *
     ((2 * Real.exp 2 * (1 + 8 * Real.pi)) *
       ((Nat.log 2 (N - 1) + 1 : ℕ) : ℝ) ^ 2 *

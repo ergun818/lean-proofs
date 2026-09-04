@@ -165,7 +165,7 @@ theorem roughAmplifierCoefficient_mul_primitiveMass_eq
     {q A : ℕ} (hq : 0 < q) (s : Finset ℕ) (c : ℕ → ℂ) :
     roughAmplifierCoefficient q A * primitiveTwistSquareMass q s c =
       ∑ r ∈ Finset.Ioc 0 A,
-        if hgood : Squarefree r ∧ r.Coprime q then
+        if _hgood : Squarefree r ∧ r.Coprime q then
           (Nat.totient (q * r) : ℝ)⁻¹ *
             inducedGaussPrimitiveMass q r s c
         else 0 := by
@@ -207,7 +207,7 @@ theorem sum_roughAmplifier_eq_rectangularPairs
   intro r _hr
   by_cases hgood : Squarefree r ∧ r.Coprime q
   · simp [hgood, Nat.coprime_comm]
-  · simp [hgood, Nat.coprime_comm]
+  · simp [Nat.coprime_comm]
 
 theorem rectangularSquarefreeCoprimePairs_subset_positiveFactorPairs
     (Q A : ℕ) :

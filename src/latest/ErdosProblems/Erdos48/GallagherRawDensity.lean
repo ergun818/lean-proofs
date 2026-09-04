@@ -26,7 +26,7 @@ open BoundedGaps.Maynard
 /-- One detector order on the explicit right hand side of Gallagher's
 amplified density inequality. -/
 noncomputable def gallagherRawDensityTerm
-    (Q T N J j : ℕ) (W eta R : ℝ) : ℝ :=
+    (_Q _T N J j : ℕ) (W eta _R : ℝ) : ℝ :=
   (variableDetectorNormalization eta J j ^ 2 *
       (2 * |gallagherWeight eta (j - 1) N| ^ 2)) *
         gallagherAmplifiedCutoffBandBound W
@@ -38,7 +38,7 @@ noncomputable def gallagherRawDensityTerm
 
 /-- The same term, with the detector lower-cutoff parameter displayed. -/
 noncomputable def gallagherRawDensityTermAt
-    (Q T E N J j : ℕ) (W eta R : ℝ) : ℝ :=
+    (_Q _T E N J j : ℕ) (W eta _R : ℝ) : ℝ :=
   (variableDetectorNormalization eta J j ^ 2 *
       (2 * |gallagherWeight eta (j - 1) N| ^ 2)) *
         gallagherAmplifiedCutoffBandBound W

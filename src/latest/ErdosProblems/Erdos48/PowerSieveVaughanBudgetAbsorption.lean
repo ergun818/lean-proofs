@@ -476,7 +476,7 @@ theorem pow_two_le_mul_auxCore
 
 theorem mul_auxCore_le_two_mul_smoothBound_mul_n
     {n L Q : ℕ} (hn : 1 ≤ n) (hL : 1 ≤ L)
-    (hQ : 1 ≤ Q) (hQupper : Q ≤ powerSieveSmoothBound n L) :
+    (_hQ : 1 ≤ Q) (hQupper : Q ≤ powerSieveSmoothBound n L) :
     Q * powerSieveAuxCore n L Q ≤
       2 * powerSieveSmoothBound n L * n := by
   let P := powerSieveProductBase n L
@@ -554,7 +554,7 @@ theorem sqrt_productVaughanCutoff_le
       _ ≤ 6 * (2 * U * n) * n := by gcongr
       _ = 12 * (U * n ^ 2) := by ring
       _ = 12 * T ^ 2 := by rw [hUT]
-      _ ≤ 16 * T ^ 2 := by gcongr <;> norm_num
+      _ ≤ 16 * T ^ 2 := by gcongr; norm_num
       _ = (4 * T) ^ 2 := by ring
   calc
     Real.sqrt (powerSieveProductVaughanCutoff n L Q : ℝ) ≤
@@ -583,8 +583,8 @@ theorem mul_auxCore_mul_pow_four_le_two_vaughanCutoff
         2 * n ^ (120 * L - 6) * n * n ^ 4 =
             2 * (n ^ (120 * L - 6) * n ^ 5) := by ring
         _ = 2 * n ^ ((120 * L - 6) + 5) := by rw [pow_add]
-        _ = 2 * n ^ (120 * L - 1) := by congr 2 <;> omega
-    _ ≤ 2 * n ^ (120 * L) := by gcongr <;> omega
+        _ = 2 * n ^ (120 * L - 1) := by congr 2; omega
+    _ ≤ 2 * n ^ (120 * L) := by gcongr; omega
     _ = 2 * powerSieveVaughanCutoff n L := rfl
 
 /-- At the block-dependent product cutoff, two powers of `n` are saved

@@ -741,7 +741,8 @@ theorem powerSieveBadRootsErase_prefix_bound_of_endpoint_split
     (by positivity) hlowE hblocks
   intro y
   dsimp only [E] at hpref
-  convert hpref y using 1 <;> ring
+  convert hpref y using 1
+  ring
 
 /-- The exact finite hypotheses consumed by the source-audited prefix
 theorem.  Packaging them makes the eventual all-good and retargeted branches
@@ -847,7 +848,8 @@ theorem PowerSieveEndpointSplitPrefixInput.full_prefix_bound_of_base
   have hfull := card_filter_le_add_one_div_sqrt_of_erase_base
     (E := powerSieveShiftedSmoothBadRoots n L W) (A := 4)
     ((by omega : 1 ≤ 2).trans h.hn) h.erase_prefix_bound
-  convert hfull using 1 <;> norm_num
+  convert hfull using 1
+  norm_num
 
 /-- Eventual coefficient-`4` prefix sparsity for the all-good branch,
 ready to be passed as `hprefix` to `PowerSieveAnalyticAssembly`. -/

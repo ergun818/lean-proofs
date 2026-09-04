@@ -298,7 +298,7 @@ theorem variable_envelope_parameter_bounds
           _ = (4 * pCoeff ^ 2) *
               Real.exp (2 * (h + 2) + 4 * pCoeff * (h + 2)) := by
             rw [exp_mul_exp]
-          _ = _ := by congr 1 <;> ring_nf
+          _ = _ := by congr 1; ring_nf
   have hMpow : M ^ 2 ≤
       (4 * pCoeff ^ 2) * Real.exp (2 * (h + 2)) / eta ^ 2 := by
     have hright : 0 ≤
@@ -364,7 +364,7 @@ theorem variable_envelope_parameter_bounds
               (Real.log ((578 : ℝ) ^ 2) * ((a : ℝ) * (h + 2)))
               ((2 + 4 * pCoeff) * (h + 2))
               (2 * (h + 2))]
-          _ = _ := by congr 1 <;> ring_nf
+          _ = _ := by congr 1; ring_nf
   exact ⟨hJ, hJbound, hJexp, hJoneExp, hKlocal, henv⟩
 
 /-- A power-form log-free density estimate, uniform above the Page width.
@@ -498,7 +498,7 @@ theorem exists_variable_logFreeDensity_power_bound
                 ((2312 : ℝ) ^ J) (h + 2)
                 ((Real.log ((578 : ℝ) ^ 2) * (a : ℝ) +
                   4 * pCoeff + 4) * (h + 2))
-          _ = _ := by congr 2 <;> ring_nf
+          _ = _ := by congr 2; ring_nf
       _ ≤ Craw / eta ^ 3 *
           (Real.exp (Real.log 2312 * ((a : ℝ) * (h + 2))) *
             Real.exp ((Real.log ((578 : ℝ) ^ 2) * (a : ℝ) +

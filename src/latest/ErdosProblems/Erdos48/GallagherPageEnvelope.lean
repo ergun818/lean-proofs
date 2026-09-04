@@ -154,7 +154,7 @@ theorem normalizedGallagherEndpointCoefficient_le
 /-- On the Page interval, the normalized Gamma coefficient is maximized at
 the fixed endpoint `eta = 1/8`. -/
 theorem normalizedGallagherDerivativeGammaCoefficient_le_eighth
-    {eta : ℝ} (heta : 0 ≤ eta) (heta8 : eta ≤ 1 / 8)
+    {eta : ℝ} (_heta : 0 ≤ eta) (heta8 : eta ≤ 1 / 8)
     (J k : ℕ) :
     normalizedGallagherDerivativeGammaCoefficient eta J k ≤
       normalizedGallagherDerivativeGammaCoefficient (1 / 8) J k := by
@@ -320,7 +320,7 @@ theorem gallagherAmplifiedCutoffBandBound_le_page
 theorem gallagherAmplifiedCutoffEnergyBound_le_page
     {b Y N : ℕ} {P H : ℝ}
     (hb : 1 ≤ b) (hY : 1 ≤ Y) (hpow : b ^ 4 ≤ Y)
-    (hP : 0 ≤ P) (hH : 0 ≤ H)
+    (hP : 0 ≤ P) (_hH : 0 ≤ H)
     (hM : (((Nat.log 2 (N - 1) + 1 : ℕ) : ℝ)) ≤
       P * Real.log b)
     (hharm : (∑ m ∈ Finset.Icc Y N, (m : ℝ)⁻¹) ≤
@@ -440,8 +440,9 @@ theorem gallagherRawDensityTermAt_le_page
   have hendpoint :
       variableDetectorNormalization eta J j ^ 2 *
           (2 * |gallagherWeight eta (j - 1) N| ^ 2) ≤ U * eta ^ 2 := by
-    convert normalizedGallagherEndpointCoefficient_le heta heta8 hR J j hj using 1 <;>
-      dsimp [N, U, gallagherPageEndpointEnvelope] <;> ring
+    convert normalizedGallagherEndpointCoefficient_le heta heta8 hR J j hj using 1
+    dsimp [N, U, gallagherPageEndpointEnvelope]
+    ring
   have hgamma :
       normalizedGallagherDerivativeGammaCoefficient eta J (j - 1) ≤ G := by
     simpa only [G] using

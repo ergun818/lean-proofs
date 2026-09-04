@@ -38,8 +38,8 @@ von Mangoldt Dirichlet polynomial, at one of finitely many fixed orders. -/
 theorem exists_uniform_finite_series_detector :
     ∃ L J : ℕ, 2 ≤ L ∧ L ≤ J ∧
       ∃ lambda R : ℝ, 0 < lambda ∧ 0 < R ∧
-        ∀ (q : ℕ) [NeZero q], ∀ (hq : 1 < q),
-          ∀ (chi : DirichletCharacter ℂ q), ∀ (hchi : chi.IsPrimitive),
+        ∀ (q : ℕ) [NeZero q], ∀ (_hq : 1 < q),
+          ∀ (chi : DirichletCharacter ℂ q), ∀ (_hchi : chi.IsPrimitive),
             ∀ (t eta : ℝ), 0 < eta → eta ≤ 1 / 8 →
               eta * Real.log ((q : ℝ) * (|t| + 2)) ≤ lambda →
                 ∀ rho₀ : ℂ,

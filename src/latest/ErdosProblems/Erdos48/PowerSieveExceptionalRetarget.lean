@@ -134,7 +134,7 @@ theorem endpoint_pointwise_twentieth_or_exceptional_with_pageWitness
 /-- A retained Page witness for the canonically selected width satisfies
 the effective logarithmic conductor bound. -/
 theorem PageExceptionalWitness.log_scale_lt_quadraticGapDenom
-    {Q m : ℕ} {c : ℝ} (hQ : 3 ≤ Q) (hc : 0 < c)
+    {Q m : ℕ} {c : ℝ} (hQ : 3 ≤ Q) (_hc : 0 < c)
     (hquadratic : PageWindowIsQuadratic c)
     (h : PageExceptionalWitness Q m c) :
     Real.log (Q : ℝ) < c * retargetQuadraticGapDenom m := by

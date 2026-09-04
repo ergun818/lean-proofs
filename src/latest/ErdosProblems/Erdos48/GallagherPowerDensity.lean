@@ -75,7 +75,7 @@ theorem variableZeroDetectorTailRadius_le_linear
 
 theorem gallagherPageEndpointEnvelope_le_exp_growth
     {J : ℕ} {R a h rCoeff : ℝ}
-    (ha : 0 ≤ a) (hh : 0 ≤ h) (hr : 0 ≤ rCoeff)
+    (_ha : 0 ≤ a) (hh : 0 ≤ h) (_hr : 0 ≤ rCoeff)
     (hJ : (J : ℝ) ≤ a * (h + 2))
     (hR : R ≤ rCoeff * a * (h + 2)) :
     gallagherPageEndpointEnvelope R J ≤
@@ -103,12 +103,12 @@ theorem gallagherPageEndpointEnvelope_le_exp_growth
     _ = 2 * Real.exp
         (Real.log ((578 : ℝ) ^ 2) * (a * (h + 2)) +
           (4 * rCoeff * a + 1) * (h + 2)) := by rw [← Real.exp_add]
-    _ = _ := by congr 2 <;> ring_nf
+    _ = _ := by congr 2; ring_nf
 
 theorem normalizedGallagherDerivativeGammaCoefficient_le_exp_growth
     {eta : ℝ} (heta : 0 ≤ eta) (heta8 : eta ≤ 1 / 8)
     {J k : ℕ} (hkJ : k ≤ J) {a h : ℝ}
-    (ha : 0 ≤ a) (hh : 0 ≤ h)
+    (_ha : 0 ≤ a) (_hh : 0 ≤ h)
     (hJ : (J : ℝ) ≤ a * (h + 2))
     (hJone : ((J + 1 : ℕ) : ℝ) ≤ (a + 1) * Real.exp (h + 2)) :
     normalizedGallagherDerivativeGammaCoefficient eta J k ≤
@@ -156,7 +156,7 @@ theorem normalizedGallagherDerivativeGammaCoefficient_le_exp_growth
           Real.exp (Real.log ((578 : ℝ) ^ 2) * (a * (h + 2)) +
             Real.log 16 * (a * (h + 2)) + 2 * (h + 2)) := by
       rw [← Real.exp_add, ← Real.exp_add]
-    _ = _ := by congr 2 <;> ring_nf
+    _ = _ := by congr 2; ring_nf
 
 theorem gallagherPageTermEnvelope_le_exp_growth
     {eta : ℝ} (heta : 0 ≤ eta) (heta8 : eta ≤ 1 / 8)
@@ -340,7 +340,7 @@ theorem gallagher_density_algebra
           _ = Real.exp ((h + 2) + (cTerm + 1) * (h + 2) +
               (h + 2) + Real.log 2312 * (a * (h + 2))) := by
             rw [← Real.exp_add, ← Real.exp_add, ← Real.exp_add]
-          _ = _ := by congr 1 <;> ring_nf
+          _ = _ := by congr 1; ring_nf
       dsimp [X]
       rw [div_eq_mul_inv]
       calc
@@ -629,7 +629,7 @@ theorem gallagher_rawDensity_sum_le_exp_envelope
             (Real.exp (h + 2) * Real.exp (cTerm * (h + 2))) := by ring
         _ = S * ((a : ℝ) + 1) * (2 + 2 * gConst * P0) *
             Real.exp ((h + 2) + cTerm * (h + 2)) := by rw [← Real.exp_add]
-        _ = _ := by congr 2 <;> ring_nf
+        _ = _ := by congr 2; ring_nf
 
 /-- Amplified Gallagher density in power form, uniform above a fixed Page
 width.  Unlike the unamplified estimate, there is no residual logarithmic

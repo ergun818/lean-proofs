@@ -277,7 +277,7 @@ lemma card_linkSources_le_totient_gcd {r m : ℕ} [NeZero r]
     constructor
     · intro ha
       have hmod : a.val * m + 1 ≡ a₀.val * m + 1 [MOD r] := by
-        show (a.val * m + 1) % r = (a₀.val * m + 1) % r
+        change (a.val * m + 1) % r = (a₀.val * m + 1) % r
         rw [ha, mem_linkSources.mp ha₀]
       have hmul : a.val * m ≡ a₀.val * m [MOD r] :=
         Nat.ModEq.add_right_cancel (Nat.ModEq.refl 1) hmod
@@ -305,10 +305,10 @@ lemma card_linkSources_le_totient_gcd {r m : ℕ} [NeZero r]
         simpa only [R, Nat.div_mul_cancel hdr, Nat.div_mul_cancel hdm,
           mul_assoc] using hscaled
       have hadd := hprod.add_right 1
-      show (a.val * m + 1) % r = b.val
+      change (a.val * m + 1) % r = b.val
       have hbval : b.val < r := ZMod.val_lt b.1
       have ha₀mod : a₀.val * m + 1 ≡ b.val [MOD r] := by
-        show (a₀.val * m + 1) % r = b.val % r
+        change (a₀.val * m + 1) % r = b.val % r
         simpa only [Nat.mod_eq_of_lt hbval] using mem_linkSources.mp ha₀
       have hfinal := hadd.trans ha₀mod
       change (a.val * m + 1) % r = b.val % r at hfinal
@@ -348,7 +348,7 @@ lemma gcd_eq_gcd_pred_of_mem_linkSources {r m : ℕ} [NeZero r]
     omega
   have hbval : b.val < r := ZMod.val_lt b.1
   have hmodAdd : a.val * m + 1 ≡ b.val [MOD r] := by
-    show (a.val * m + 1) % r = b.val % r
+    change (a.val * m + 1) % r = b.val % r
     simpa only [Nat.mod_eq_of_lt hbval] using mem_linkSources.mp ha
   have hmod : a.val * m ≡ b.val - 1 [MOD r] := by
     have hbRewrite : b.val = (b.val - 1) + 1 :=
@@ -580,8 +580,8 @@ lemma positiveCoprimeSeries_div_le_factored_mul {r d : ℕ}
 /-- The gcd-class series is obtained by extracting its mandatory factor
 `d`; the residual integer is coprime to `r/d`. -/
 lemma gcdClassSeries_le_rpow_mul_positiveCoprime {r d : ℕ}
-    (hr : 0 < r) (hdpos : 0 < d) (hd : d ∣ r)
-    (hcop : d.Coprime (r / d)) {s : ℝ} (hs : 1 < s) :
+    (_hr : 0 < r) (hdpos : 0 < d) (hd : d ∣ r)
+    (_hcop : d.Coprime (r / d)) {s : ℝ} (hs : 1 < s) :
     (∑' m : ℕ, gcdClassTerm r d s m) ≤
       (d : ℝ) ^ (-s) * positiveCoprimeSeries (r / d) s := by
   let A : Set ℕ := {m | 0 < m ∧ m.gcd r = d}
@@ -972,9 +972,9 @@ theorem exists_linkWeight_row_contraction {s : ℝ} (hs : 1 < s) :
       positiveCoprimeSeries r s ≤
           1 + ∑' n : {n : ℕ // Y ≤ n}, (n.1 : ℝ) ^ (-s) := by
         apply positiveCoprimeSeries_le_one_add_tail
-        intro p hpPrime hpY
-        exact hpPrime.dvd_primorial_iff.mpr hpY.le
-        exact hs
+        · intro p hpPrime hpY
+          exact hpPrime.dvd_primorial_iff.mpr hpY.le
+        · exact hs
       _ ≤ 1 + ε := by
         simpa [add_comm] using add_le_add_left htail.le 1
   have hROne : R < 1 := by
@@ -1590,10 +1590,11 @@ lemma primeChainTargets_subset_biUnion_atLength (y q : ℕ) :
 
 /-- A nonnegative sum over a finite union is at most the sum over all of its
 pieces, with repetitions retained on the right. -/
-lemma sum_biUnion_le_sum_sum {ι α : Type*} [DecidableEq ι] [DecidableEq α]
+lemma sum_biUnion_le_sum_sum {ι α : Type*} [DecidableEq α]
     (s : Finset ι) (t : ι → Finset α) (f : α → ℝ)
     (hf : ∀ x, 0 ≤ f x) :
     (∑ x ∈ s.biUnion t, f x) ≤ ∑ i ∈ s, ∑ x ∈ t i, f x := by
+  classical
   induction s using Finset.induction with
   | empty => simp
   | @insert a s ha ih =>

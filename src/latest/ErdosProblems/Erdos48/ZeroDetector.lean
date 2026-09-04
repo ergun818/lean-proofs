@@ -43,7 +43,6 @@ theorem iteratedDeriv_weighted_inv_sub_sum
     intro j hj
     have hexp : (-1 - (k : ℤ)) = -((k + 1 : ℕ) : ℤ) := by omega
     rw [hexp, zpow_neg, zpow_natCast]
-    push_cast
     ring
   · intro j hj
     exact (contDiffAt_const.mul

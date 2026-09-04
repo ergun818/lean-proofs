@@ -52,7 +52,7 @@ theorem pairwiseDisjoint_dyadicAnnularShell
     linarith [hrj.2.2, hri.2.1]
 
 private theorem exists_dyadic_shell_index
-    {r d : ℝ} (hr : 0 < r) {N : ℕ}
+    {r d : ℝ} (_hr : 0 < r) {N : ℕ}
     (hlower : r < d) (hupper : d ≤ r * (2 : ℝ) ^ N) :
     ∃ k < N,
       r * (2 : ℝ) ^ k < d ∧ d ≤ r * (2 : ℝ) ^ (k + 1) := by

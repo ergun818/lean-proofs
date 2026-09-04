@@ -141,7 +141,7 @@ theorem tendsto_intervalIntegral_unweightedPrimitiveHybridTaylorMass
   classical
   simp_rw [intervalIntegral_unweightedPrimitiveHybridTaylorMass_eq,
     intervalIntegral_unweightedPrimitiveHybridMass_eq]
-  apply tendsto_finset_sum
+  apply tendsto_finsetSum
   intro q hq
   apply tendsto_finsetSum
   intro psi hpsi

@@ -62,7 +62,7 @@ the selected exponent to be a positive multiple of `L`, while retaining a
 linear upper bound in the number of terms. -/
 theorem exists_norm_sparsePowerSum_gt_distinguished
     {n : ℕ} (hn : 0 < n) (z : Fin n → ℂ) (i₀ : Fin n)
-    (hi₀ : z i₀ ≠ 0) {L : ℕ} (hL : 0 < L) :
+    (hi₀ : z i₀ ≠ 0) {L : ℕ} (_hL : 0 < L) :
     ∃ j : ℕ, L ≤ j ∧ j ≤ L * n ∧
       (1 / 6 : ℝ) * ‖z i₀‖ ^ j <
         ‖∑ i : Fin n, z i ^ j‖ := by
@@ -94,8 +94,7 @@ lemma turanRootPolynomial_monic {K : ℕ} (w : Fin K → ℂ) :
 lemma turanRootPolynomial_natDegree {K : ℕ} (w : Fin K → ℂ) :
     (turanRootPolynomial w).natDegree = K := by
   rw [turanRootPolynomial]
-  simpa using Polynomial.natDegree_finsetProd_X_sub_C_eq_card
-    (s := Finset.univ) w
+  simp
 
 lemma turanRootPolynomial_eval_root {K : ℕ} (w : Fin K → ℂ) (j : Fin K) :
     (turanRootPolynomial w).eval (w j) = 0 := by

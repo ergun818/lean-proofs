@@ -26,6 +26,7 @@ def IsRepresentedLargeFactor (x u q r B p : ℕ) : Prop :=
   ∃ b ∈ Finset.Icc 1 B, ∃ s ∈ Finset.Icc 1 (x + 1),
     s.Prime ∧ u < s ∧ p + 1 = q * r * b * s
 
+@[instance_reducible]
 noncomputable def isRepresentedLargeFactorDecidable (x u q r B : ℕ) :
     DecidablePred (IsRepresentedLargeFactor x u q r B) :=
   Classical.decPred _

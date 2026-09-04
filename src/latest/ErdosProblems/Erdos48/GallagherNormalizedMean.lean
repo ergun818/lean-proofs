@@ -142,7 +142,7 @@ theorem sum_card_primitiveCharacters_le_sq (Q : ℕ) :
 
 private theorem gallagherBaseCoefficient_eq_cutoff'
     {q : ℕ} (chi : DirichletCharacter ℂ q) (t : ℝ)
-    {n : ℕ} (hn : 0 < n) :
+    {n : ℕ} (_hn : 0 < n) :
     gallagherBaseCoefficient chi t n =
       cutoffVonMangoldtCoefficient n * chi n *
         Complex.exp (I * (((-t * Real.log n) : ℝ) : ℂ)) := by

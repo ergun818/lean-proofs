@@ -25,8 +25,8 @@ caused by a primitive Dirichlet `L`-function zero near one. -/
 theorem exists_uniform_weightedLSeries_detector :
     ∃ L J : ℕ, 2 ≤ L ∧ L ≤ J ∧
       ∃ lambda : ℝ, 0 < lambda ∧
-        ∀ (q : ℕ) [NeZero q], ∀ (hq : 1 < q),
-          ∀ (chi : DirichletCharacter ℂ q), ∀ (hchi : chi.IsPrimitive),
+        ∀ (q : ℕ) [NeZero q], ∀ (_hq : 1 < q),
+          ∀ (chi : DirichletCharacter ℂ q), ∀ (_hchi : chi.IsPrimitive),
             ∀ (t eta : ℝ), 0 < eta → eta ≤ 1 / 8 →
               eta * Real.log ((q : ℝ) * (|t| + 2)) ≤ lambda →
                 ∀ rho₀ : ℂ,

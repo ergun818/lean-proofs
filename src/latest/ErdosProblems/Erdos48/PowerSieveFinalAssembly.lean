@@ -88,7 +88,7 @@ private theorem powerSieveSmoothBound_rpow_epsilon_le_final
       Real.rpow_le_rpow_of_exponent_le hnR hexp
 
 private theorem natLog_smoothBound_le_final
-    {n L : ℕ} (hn : 2 ≤ n) :
+    {n L : ℕ} (_hn : 2 ≤ n) :
     (Nat.log 2 (powerSieveSmoothBound n L) : ℝ) ≤
       (((120 * L - 6 : ℕ) : ℝ) * Real.log (n : ℝ)) /
         Real.log 2 := by
@@ -456,7 +456,7 @@ theorem powerSieveEffectiveBranchConstructor_of_escape_and_budget
           (4 / Real.sqrt (n : ℝ)) * (y : ℝ) := hpref y
       _ ≤ (5 / Real.sqrt (n : ℝ)) * (y : ℝ) := by
         have hsqrt : 0 < Real.sqrt (n : ℝ) := by positivity
-        gcongr <;> norm_num
+        gcongr; norm_num
   have hRetarget : ∀ᶠ n : ℕ in atTop,
       PowerSieveRetargetEndpointGood n L →
         Nonempty (FLPAnalyticScale K) := by

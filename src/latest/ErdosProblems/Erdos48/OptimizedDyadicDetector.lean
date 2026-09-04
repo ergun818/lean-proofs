@@ -161,7 +161,7 @@ theorem intervalIntegral_optimizedDetectorShell_le
                 rw [Real.rpow_one]
           _ = (A : ℝ) ^ ((1 : ℝ) + -(1 + 2 * eta)) := by
                 rw [Real.rpow_add hAreal]
-          _ = (A : ℝ) ^ (-(2 * eta)) := by congr 1 <;> ring
+          _ = (A : ℝ) ^ (-(2 * eta)) := by congr 1; ring
       rw [show (1 : ℝ) + 1 = 2 by norm_num]
       rw [← hrpow]
       dsimp [D]
@@ -347,7 +347,7 @@ theorem intervalIntegral_optimizedDetectorShell_hybrid_le
                 rw [Real.rpow_one]
           _ = (A : ℝ) ^ ((1 : ℝ) + -(1 + 2 * eta)) := by
                 rw [Real.rpow_add hAreal]
-          _ = (A : ℝ) ^ (-(2 * eta)) := by congr 1 <;> ring
+          _ = (A : ℝ) ^ (-(2 * eta)) := by congr 1; ring
       rw [show (1 : ℝ) + 1 = 2 by norm_num, ← hrpow]
       ring
     _ = _ := by rfl

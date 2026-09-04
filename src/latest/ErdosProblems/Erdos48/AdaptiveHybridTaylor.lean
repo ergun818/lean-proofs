@@ -26,7 +26,7 @@ theorem sum_weight_mul_norm_offset_pow_sq_le
     {ι : Type*} [Fintype ι]
     (w : ι → ℝ) (hw : ∀ i, 0 ≤ w i)
     (s : ι → Finset ℕ) (c : ℕ → ℂ) (d : ℕ → ℝ)
-    {B : ℝ} (hB : 0 ≤ B)
+    {B : ℝ} (_hB : 0 ≤ B)
     (hd : ∀ i, ∀ n ∈ s i, |d n| ≤ B) (k : ℕ) :
     (∑ i, w i * ∑ n ∈ s i,
         ‖c n * (d n : ℂ) ^ k‖ ^ 2) ≤

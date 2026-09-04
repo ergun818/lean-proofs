@@ -29,14 +29,14 @@ noncomputable def highZeroRectangle
     (chi : DirichletCharacter ℂ q) (hchi : chi.IsPrimitive)
     (eta T : ℝ) : Finset ℂ :=
   let U : Set ℂ := closedBall 0 (T + 2)
-  let D := MeromorphicOn.divisor (DirichletCharacter.LFunction chi) U
+  let _D := MeromorphicOn.divisor (DirichletCharacter.LFunction chi) U
   (divisor_LFunction_closedBall_support_finite
       (character_ne_one_of_isPrimitive hq chi hchi) 0 (T + 2)).toFinset.filter
     fun rho ↦
       1 - eta ≤ rho.re ∧ rho.re ≤ 1 ∧ 0 ≤ rho.im ∧ rho.im ≤ T
 
 private theorem mem_zeroRectangle_closedBall
-    {rho : ℂ} {eta T : ℝ} (heta1 : eta ≤ 1) (hT : 0 ≤ T)
+    {rho : ℂ} {eta T : ℝ} (heta1 : eta ≤ 1) (_hT : 0 ≤ T)
     (hrelo : 1 - eta ≤ rho.re) (hrehi : rho.re ≤ 1)
     (himlo : 0 ≤ rho.im) (himhi : rho.im ≤ T) :
     rho ∈ closedBall (0 : ℂ) (T + 2) := by

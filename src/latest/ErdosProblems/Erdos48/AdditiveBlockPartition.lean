@@ -119,7 +119,7 @@ theorem shortBlock_subset_Ioc
   constructor <;> omega
 
 private theorem shortBlock_index_bound
-    {s : Finset ℕ} {A H : ℕ} (hA : 1 ≤ A) (hH : 0 < H)
+    {s : Finset ℕ} {A H : ℕ} (_hA : 1 ≤ A) (_hH : 0 < H)
     (hs : s ⊆ Finset.Ioc A (2 * A))
     (i : {i // i ∈ shortBlockIndices s A H}) :
     A + i.1 * H + 1 ≤ 2 * A := by

@@ -132,7 +132,7 @@ theorem sum_detectorDyadicShell_logSucc_pow_rpow_le
                 (A : ℝ) ^ (-2 * eta - 1) := by rw [Real.rpow_one]
           _ = (A : ℝ) ^ ((1 : ℝ) + (-2 * eta - 1)) :=
             (Real.rpow_add hApos 1 (-2 * eta - 1)).symm
-          _ = (A : ℝ) ^ (-2 * eta) := by congr 1 <;> ring
+          _ = (A : ℝ) ^ (-2 * eta) := by congr 1; ring
       calc
         (A : ℝ) *
             (((2 : ℝ) ^ p *
@@ -167,7 +167,6 @@ theorem sum_range_succ_pow_mul_two_rpow_neg_le
           (2 : ℝ) ^ (-(c * a)) := by
       rw [← Real.rpow_add (by norm_num : (0 : ℝ) < 2)]
       congr 1
-      push_cast
       ring
     rw [← hexp]
     ring
@@ -251,7 +250,6 @@ theorem sum_Ico_logSucc_pow_rpow_le_gamma
       rw [hcast, ← Real.rpow_natCast]
       rw [← Real.rpow_mul (by norm_num : (0 : ℝ) ≤ 2)]
       congr 1
-      push_cast
       ring
     rw [hrpow, mul_pow]
     ring
@@ -576,7 +574,7 @@ theorem cutoffHalfTilt_mul_gallagherWeight_sq
         (Real.rpow_two _).symm
       _ = (N : ℝ) ^ ((eta / 2) * 2) :=
         (Real.rpow_mul hNR.le (eta / 2) 2).symm
-      _ = (N : ℝ) ^ eta := by congr 1 <;> ring
+      _ = (N : ℝ) ^ eta := by congr 1; ring
   have hnegativeSq :
       ((N : ℝ) ^ (-eta)) ^ 2 = (N : ℝ) ^ (-2 * eta) := by
     calc
@@ -584,7 +582,7 @@ theorem cutoffHalfTilt_mul_gallagherWeight_sq
           ((N : ℝ) ^ (-eta)) ^ (2 : ℝ) := (Real.rpow_two _).symm
       _ = (N : ℝ) ^ ((-eta) * 2) :=
         (Real.rpow_mul hNR.le (-eta) 2).symm
-      _ = (N : ℝ) ^ (-2 * eta) := by congr 1 <;> ring
+      _ = (N : ℝ) ^ (-2 * eta) := by congr 1; ring
   have hcombine :
       (N : ℝ) ^ eta * (N : ℝ) ^ (-2 * eta) =
         (N : ℝ) ^ (-eta) := by
@@ -770,10 +768,10 @@ theorem variableDetectorNormalization_sq_mul_gallagherDerivativeGammaBound
         ((((j - 1).factorial : ℕ) : ℝ) ^ 2 * Real.log 2)
   have hfirst' : A * U = eta ^ 3 * U' := by
     dsimp only [A, U, U']
-    convert hfirst using 1 <;> ring
+    convert hfirst using 1; ring
   have hsecond' : A * V = eta ^ 3 * V' := by
     dsimp only [A, V, V']
-    convert hsecond using 1 <;> ring
+    convert hsecond using 1; ring
   change (G * (2 * eta) ^ j /
       (((j - 1).factorial : ℕ) : ℝ)) ^ 2 * (U + V) =
     eta ^ 3 * (G ^ 2 * (U' + V'))

@@ -302,44 +302,44 @@ theorem exists_pageBand_excludedConductor_with_selection :
   by_cases hexists : ∃ z : PrimitiveRealZero, InPageWindow Q cPage z
   · obtain ⟨z₀, hz₀Page⟩ := hexists
     refine ⟨z₀.modulus, hz₀Page.1, ?_, Or.inr ⟨z₀, rfl, hz₀Page⟩, ?_⟩
-    intro q hqMem hqNe psi
-    have hq : 1 < q := (Finset.mem_Ioc.mp hqMem).1
-    rw [primitiveHighZeroMassAt_eq hq]
-    apply Finset.sum_eq_zero
-    intro rho hrho
-    obtain ⟨z, hzq, hzbeta, hzPage⟩ := hpoint q hq
-      (Finset.mem_Ioc.mp hqMem).2 psi rho hrho
-    have heq := hPage Q hQ z z₀ (hPageMono Q hQ z hzPage)
-      (hPageMono Q hQ z₀ hz₀Page)
-    have hqz₀ : q = z₀.modulus := hzq.symm.trans heq.1
-    exact (hqNe hqz₀).elim
-    refine ⟨?_, ?_⟩
-    · intro z hz
-      exact (hPage Q hQ z z₀ (hPageMono Q hQ z hz)
-        (hPageMono Q hQ z₀ hz₀Page)).1
-    · constructor
-      · intro hzZero
-        have : z₀.modulus = 0 := hzZero
-        exact ((Nat.ne_of_gt (Nat.zero_lt_of_lt z₀.modulus_gt_one)) this).elim
-      · intro hnone
-        exact (hnone ⟨z₀, hz₀Page⟩).elim
+    · intro q hqMem hqNe psi
+      have hq : 1 < q := (Finset.mem_Ioc.mp hqMem).1
+      rw [primitiveHighZeroMassAt_eq hq]
+      apply Finset.sum_eq_zero
+      intro rho hrho
+      obtain ⟨z, hzq, hzbeta, hzPage⟩ := hpoint q hq
+        (Finset.mem_Ioc.mp hqMem).2 psi rho hrho
+      have heq := hPage Q hQ z z₀ (hPageMono Q hQ z hzPage)
+        (hPageMono Q hQ z₀ hz₀Page)
+      have hqz₀ : q = z₀.modulus := hzq.symm.trans heq.1
+      exact (hqNe hqz₀).elim
+    · refine ⟨?_, ?_⟩
+      · intro z hz
+        exact (hPage Q hQ z z₀ (hPageMono Q hQ z hz)
+          (hPageMono Q hQ z₀ hz₀Page)).1
+      · constructor
+        · intro hzZero
+          have : z₀.modulus = 0 := hzZero
+          exact ((Nat.ne_of_gt (Nat.zero_lt_of_lt z₀.modulus_gt_one)) this).elim
+        · intro hnone
+          exact (hnone ⟨z₀, hz₀Page⟩).elim
   · refine ⟨0, by omega, ?_, Or.inl rfl, ?_⟩
-    intro q hqMem hqNe psi
-    have hq : 1 < q := (Finset.mem_Ioc.mp hqMem).1
-    rw [primitiveHighZeroMassAt_eq hq]
-    apply Finset.sum_eq_zero
-    intro rho hrho
-    obtain ⟨z, _hzq, _hzbeta, hzPage⟩ := hpoint q hq
-      (Finset.mem_Ioc.mp hqMem).2 psi rho hrho
-    exact (hexists ⟨z, hzPage⟩).elim
-    refine ⟨?_, ?_⟩
-    · intro z hz
-      exact (hexists ⟨z, hz⟩).elim
-    · constructor
-      · intro _
-        exact hexists
-      · intro _
-        rfl
+    · intro q hqMem hqNe psi
+      have hq : 1 < q := (Finset.mem_Ioc.mp hqMem).1
+      rw [primitiveHighZeroMassAt_eq hq]
+      apply Finset.sum_eq_zero
+      intro rho hrho
+      obtain ⟨z, _hzq, _hzbeta, hzPage⟩ := hpoint q hq
+        (Finset.mem_Ioc.mp hqMem).2 psi rho hrho
+      exact (hexists ⟨z, hzPage⟩).elim
+    · refine ⟨?_, ?_⟩
+      · intro z hz
+        exact (hexists ⟨z, hz⟩).elim
+      · constructor
+        · intro _
+          exact hexists
+        · intro _
+          rfl
 
 /-- Projection of the canonical Page-conductor selection which retains only
 the actual real-zero witness used by the endpoint argument. -/

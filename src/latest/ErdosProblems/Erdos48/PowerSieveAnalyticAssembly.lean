@@ -37,7 +37,7 @@ theorem eventually_nonempty_FLPAnalyticScale_of_powerSieve_badRoots
     (hraw : ∀ᶠ n : ℕ in atTop, ∀ q : ℕ, q.Prime →
       q ≤ powerSieveSmoothBound n L →
         powerSieveRawLower n L q ≤ rawLower n q) :
-    ∀ᶠ n : ℕ in atTop, Nonempty (FLPAnalyticScale K) := by
+    ∀ᶠ _n : ℕ in atTop, Nonempty (FLPAnalyticScale K) := by
   obtain ⟨Q, C, hC, hclosure⟩ :=
     exists_powerSievePrimeChainClosure_eventually_le
       L hL A hA rawLower

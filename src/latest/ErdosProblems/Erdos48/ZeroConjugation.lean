@@ -68,7 +68,7 @@ theorem analyticOrderNatAt_LFunction_inv_conj
       rw [hgf, iteratedDeriv_conj_comp_conj]
       simp only [Function.comp_apply, map_eq_zero]
       simpa [f] using H i hi
-  simpa only [analyticOrderNatAt, g, f, horder]
+  simp only [analyticOrderNatAt, g, f, horder]
 
 /-- The integrated kernel in the Dirichlet explicit formula is compatible
 with complex conjugation when its real scale is positive. -/

@@ -244,12 +244,12 @@ theorem exists_variable_finite_series_detector :
     have hKH : K ≤ κ * H := by simpa only [Z, K] using hKκ
     exact hKH.trans (by
       calc
-        κ * H ≤ (D + κ) * H := by gcongr <;> omega
+        κ * H ≤ (D + κ) * H := by gcongr; omega
         _ ≤ J := hJ)
   have hMJ : M ≤ J := by
     dsimp [M]
     calc
-      D * H ≤ (D + κ) * H := by gcongr <;> omega
+      D * H ≤ (D + κ) * H := by gcongr; omega
       _ ≤ J := hJ
   have htailBudget := variable_weighted_vonMangoldt_tail_budget
     hK hKJ hMJ hjJ hjPos heta (by linarith : eta ≤ 1)

@@ -72,7 +72,7 @@ private theorem selectedDivisor_apply_eq_order
   have hfinite := analyticOrderAt_ne_top_on_closedBall (by positivity)
     hf_inner hc hz
   rw [selectedDivisor, MeromorphicOn.AnalyticOnNhd.divisor_apply hf_inner hz,
-    ← Nat.cast_analyticOrderNatAt hfinite, ENat.map_coe, WithTop.untop₀_coe]
+    ← Nat.cast_analyticOrderNatAt hfinite, ENat.map_natCast, WithTop.untop₀_coe]
 
 private theorem selectedDivisor_nonneg
     {f : ℂ -> ℂ} {c : ℂ} {R : ℝ}
@@ -120,7 +120,7 @@ private theorem meromorphicOrderAt_selectedRawFactor_eq_zero
   have hfinite := analyticOrderAt_ne_top_on_closedBall (by positivity) hf hc hz_outer
   rw [meromorphicOrderAt_selectedRawFactor (hf z hz_outer),
     selectedDivisor_apply_eq_order hR hf hc hz,
-    ← Nat.cast_analyticOrderNatAt hfinite, ENat.map_coe]
+    ← Nat.cast_analyticOrderNatAt hfinite, ENat.map_natCast]
   simp
 
 private theorem meromorphicOrderAt_selectedRawFactor_nonneg
@@ -133,7 +133,7 @@ private theorem meromorphicOrderAt_selectedRawFactor_nonneg
   · have hfinite := analyticOrderAt_ne_top_on_closedBall (by positivity) hf hc hz
     rw [meromorphicOrderAt_selectedRawFactor (hf z hz),
       selectedDivisor, Function.locallyFinsuppWithin.apply_eq_zero_of_notMem _ hz_inner,
-      ← Nat.cast_analyticOrderNatAt hfinite, ENat.map_coe]
+      ← Nat.cast_analyticOrderNatAt hfinite, ENat.map_natCast]
     simp only [WithTop.coe_zero, neg_zero, zero_add]
     exact_mod_cast Nat.zero_le (analyticOrderNatAt f z)
 

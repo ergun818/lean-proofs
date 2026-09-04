@@ -232,11 +232,11 @@ theorem exists_variable_detected_zero_selection :
     have hKJ : K ≤ J := by
       calc
         K ≤ κ * H := by simpa only [Z, K] using hKH
-        _ ≤ (D + κ) * H := by gcongr <;> omega
+        _ ≤ (D + κ) * H := by gcongr; omega
         _ = J := by rfl
     have hMJ : M ≤ J := by
       dsimp [M, J]
-      gcongr <;> omega
+      gcongr; omega
     have hloss := turanSecondLoss_le_orderEnvelope hK hKJ hMJ
     have hpow : (2 * eta) ^ j ≤ (1 : ℝ) :=
       pow_le_one₀ (by positivity) (by linarith)

@@ -113,7 +113,7 @@ theorem card_filter_dvd_le_avoiding_add_loss
     by_cases hav : ∀ t ∈ T, ¬t ∣ p + 1
     · exact Finset.mem_union_left _ <| Finset.mem_filter.mpr
         ⟨mem_avoidingShiftedDivisors.mpr ⟨hpData.1, hav⟩, hpData.2⟩
-    · push_neg at hav
+    · push Not at hav
       obtain ⟨t, htT, htp⟩ := hav
       exact Finset.mem_union_right _ <| Finset.mem_biUnion.mpr
         ⟨t, htT, Finset.mem_filter.mpr ⟨hpData.1, hpData.2, htp⟩⟩

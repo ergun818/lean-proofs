@@ -39,7 +39,7 @@ private theorem sum_zmod_eq_sum_range
                 f (x.1 : ZMod (q + 1)) := by
             congr 1
             apply Fin.ext
-            simp only [ZMod.finEquiv, RingEquiv.refl_apply]
+            simp only [ZMod.finEquiv]
             exact (Nat.mod_eq_of_lt x.2).symm
           simp_rw [hpoint]
           exact Fin.sum_univ_eq_sum_range
@@ -147,7 +147,7 @@ theorem unitAddCharSum_crt {m n : ℕ} [NeZero m] [NeZero n]
           unitAddCharSum (crtRightAddChar h e) := by
       unfold unitAddCharSum
       rw [Fintype.sum_prod_type]
-      simp only [Prod.fst, Prod.snd]
+      dsimp only
       rw [← Fintype.sum_mul_sum]
 
 private theorem unitAddCharSum_eq_sum_isUnitSubtype
@@ -176,7 +176,7 @@ theorem unitAddCharSum_eq_neg_one_of_prime
   have heNe : e ≠ 1 := by
     intro htriv
     apply he (a := (1 : ZMod p)) one_ne_zero
-    simpa [htriv]
+    simp [htriv]
   have hsum : (∑ x : ZMod p, e x) = 0 :=
     AddChar.sum_eq_zero_of_ne_one heNe
   rw [← Finset.sum_erase_add _ _
@@ -355,7 +355,7 @@ theorem gaussSum_eq_mul_of_crt_factor
     _ = (∑ x : ZMod m, chiL x * crtLeftAddChar h e x) *
           ∑ y : ZMod n, chiR y * crtRightAddChar h e y := by
       rw [Fintype.sum_prod_type]
-      simp only [Prod.fst, Prod.snd]
+      dsimp only
       rw [← Fintype.sum_mul_sum]
 
 theorem changeLevel_apply_crt_eq_mul_one

@@ -218,7 +218,7 @@ theorem tendstoUniformlyOn_primitiveHybridTaylorPolynomial
     (x : ι → ℝ) (s : ι → Finset ℕ)
     (c : ℕ → ℂ) (d : ℕ → ℝ) (q : ℕ)
     (psi : primitiveCharacters q) {T B : ℝ}
-    (hT : 0 ≤ T) (hB : 0 ≤ B)
+    (hT : 0 ≤ T) (_hB : 0 ≤ B)
     (hd : ∀ i, ∀ n ∈ s i, |d n| ≤ B) :
     TendstoUniformlyOn
       (fun R t ↦ primitiveHybridTaylorPolynomial R x s c d q psi t)
@@ -567,7 +567,7 @@ theorem tendsto_intervalIntegral_primitiveHybridTaylorMass
   classical
   simp_rw [intervalIntegral_primitiveHybridTaylorMass_eq,
     intervalIntegral_primitiveHybridMass_eq]
-  apply tendsto_finset_sum
+  apply tendsto_finsetSum
   intro q hq
   apply tendsto_const_nhds.mul
   apply tendsto_finsetSum
@@ -704,7 +704,7 @@ costs at most `B^(2k)` in coefficient energy. -/
 theorem sum_norm_mul_offset_pow_sq_le
     {ι : Type*} [Fintype ι]
     (s : ι → Finset ℕ) (c : ℕ → ℂ) (d : ℕ → ℝ)
-    {B : ℝ} (hB : 0 ≤ B)
+    {B : ℝ} (_hB : 0 ≤ B)
     (hd : ∀ i, ∀ n ∈ s i, |d n| ≤ B) (k : ℕ) :
     (∑ i, ∑ n ∈ s i,
         ‖c n * (d n : ℂ) ^ k‖ ^ 2) ≤
@@ -858,7 +858,7 @@ theorem sum_range_inv_factorial_le_exp_one (R : ℕ) :
       simpa only [Real.exp_eq_exp_ℝ] using hs.tsum_eq
 
 theorem sum_range_mul_pow_two_mul_div_factorial_le_exp
-    (R : ℕ) {T B : ℝ} (hT : 0 ≤ T) (hB : 0 ≤ B) :
+    (R : ℕ) {T B : ℝ} (_hT : 0 ≤ T) (_hB : 0 ≤ B) :
     (∑ k ∈ Finset.range R,
         (T * B) ^ (2 * k) / (k.factorial : ℝ)) ≤
       Real.exp ((T * B) ^ 2) := by

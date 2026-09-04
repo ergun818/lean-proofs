@@ -251,7 +251,7 @@ theorem mul_vaughanPolynomial_two_mul_blockBase_le
       calc
         2 * Q ≤ 2 * powerSieveSmoothBound n L :=
           Nat.mul_le_mul_left 2 hQupper
-        _ ≤ 4 * powerSieveSmoothBound n L := by gcongr <;> omega
+        _ ≤ 4 * powerSieveSmoothBound n L := by gcongr; omega
     calc
       Real.sqrt M ≤ Real.sqrt (4 * powerSieveSmoothBound n L : ℕ) := by
         apply Real.sqrt_le_sqrt
@@ -277,7 +277,6 @@ theorem mul_vaughanPolynomial_two_mul_blockBase_le
             rw [show n * (2 * n ^ (60 * L - 3)) =
               2 * (n * n ^ (60 * L - 3)) by ring, ← pow_succ']
             congr 2
-            congr 1
             omega
           _ ≤ 2 * n ^ (80 * L) := by
             exact Nat.mul_le_mul_left 2

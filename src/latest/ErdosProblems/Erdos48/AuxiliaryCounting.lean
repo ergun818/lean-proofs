@@ -112,10 +112,11 @@ theorem mem_representedLargeFactorPrimes_of_not_smooth
 The generic `IsCoprime` lemma is not suitable over `ℕ`, so we record the
 natural-number form directly. -/
 theorem finset_prod_dvd_of_pairwise_coprime_nat
-    {I : Type*} [DecidableEq I] (s : Finset I) (f : I → ℕ) (N : ℕ)
+    {I : Type*} (s : Finset I) (f : I → ℕ) (N : ℕ)
     (hpair : ∀ i ∈ s, ∀ j ∈ s, i ≠ j → Nat.Coprime (f i) (f j))
     (hdvd : ∀ i ∈ s, f i ∣ N) :
     ∏ i ∈ s, f i ∣ N := by
+  classical
   induction s using Finset.induction_on with
   | empty => simp
   | @insert a s ha ih =>
@@ -260,7 +261,7 @@ theorem card_sub_le_card_usableAuxiliaryFiber
 This is the exact inequality used to correct for a shifted prime having
 several auxiliary prime divisors. -/
 theorem sum_card_le_mul_card_of_bounded_multiplicity
-    {I A : Type*} [DecidableEq I] [DecidableEq A]
+    {I A : Type*} [DecidableEq A]
     (s : Finset I) (U : Finset A) (F : I → Finset A) (D : ℕ)
     (hsub : ∀ i ∈ s, F i ⊆ U)
     (hmult : ∀ a ∈ U, (s.filter fun i ↦ a ∈ F i).card ≤ D) :

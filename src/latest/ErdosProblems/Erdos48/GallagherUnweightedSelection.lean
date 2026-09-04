@@ -233,10 +233,6 @@ theorem unweightedPrimitiveWeightedDetectorMass_le_two_endpoint_add_derivative
       rw [unweightedPrimitiveCutoffVonMangoldtEnergy_eq_characterSum]
       unfold unweightedPrimitiveGallagherEndpointSquare
         unweightedPrimitiveNegativeDirichletMass
-      change 2 * W * (∑ q ∈ Finset.Ioc 0 Q,
-          ∑ psi : primitiveCharacters q, F q psi) +
-        2 * D * (∑ q ∈ Finset.Ioc 0 Q,
-          ∑ psi : primitiveCharacters q, E q psi) = _
       ring
 
 theorem sum_selectedOrdinates_card_mul_le_two_unweightedEndpoint_add_derivativeEnergy

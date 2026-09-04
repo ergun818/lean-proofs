@@ -23,7 +23,7 @@ noncomputable def variableDetectorDyadicLength (N : ℕ) : ℝ :=
   ((Nat.log 2 (N - 1) + 1 : ℕ) : ℝ) * Real.log 2
 
 noncomputable def variableLogFreeDensityEnvelope
-    (T N J : ℕ) (eta : ℝ) : ℝ :=
+    (_T N J : ℕ) (eta : ℝ) : ℝ :=
   (578 : ℝ) ^ (2 * J) *
     ((2 * eta * variableDetectorDyadicLength N) *
       Real.exp (2 * eta * variableDetectorDyadicLength N)) ^ 2 *
@@ -31,7 +31,7 @@ noncomputable def variableLogFreeDensityEnvelope
       ((Nat.log 2 (N - 1) + 1 : ℕ) : ℝ) ^ 2)
 
 theorem variableLogFreeDensityEnvelope_nonneg
-    (T N J : ℕ) {eta : ℝ} (heta : 0 ≤ eta) :
+    (T N J : ℕ) {eta : ℝ} (_heta : 0 ≤ eta) :
     0 ≤ variableLogFreeDensityEnvelope T N J eta := by
   unfold variableLogFreeDensityEnvelope variableDetectorDyadicLength
   positivity

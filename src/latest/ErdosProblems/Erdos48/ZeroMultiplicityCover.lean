@@ -26,7 +26,7 @@ ordinate, places a zero in the local disk used by the multiplicity theorem. -/
 theorem highZero_mem_smallDisk_of_ordinate_near
     {rho : ℂ} {y eta delta : ℝ}
     (hrelo : 1 - eta ≤ rho.re) (hrehi : rho.re ≤ 1)
-    (heta : 0 < eta) (hdelta0 : 0 ≤ delta) (hdelta1 : delta ≤ 1)
+    (heta : 0 < eta) (_hdelta0 : 0 ≤ delta) (hdelta1 : delta ≤ 1)
     (hord : dist rho.im y ≤ 2 * delta * eta) :
     dist rho (((1 + eta : ℝ) : ℂ) + y * I) ≤ 4 * eta := by
   rw [Complex.dist_eq]

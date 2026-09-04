@@ -130,7 +130,7 @@ coefficient.  This is the form in which the logarithmic gain is fed into the
 Taylor-block argument. -/
 theorem mul_intervalIntegral_primitive_blockPolynomial_variable_le_of_amplifier
     {ι : Type*} [Fintype ι]
-    (Q A : ℕ) (L : ℝ) (hL : 0 ≤ L)
+    (Q A : ℕ) (L : ℝ) (_hL : 0 ≤ L)
     (hcoeff : ∀ q ∈ Finset.Ioc 0 Q,
       L ≤ roughAmplifierCoefficient q A)
     (H : ι → ℕ) (s : ι → Finset ℕ) (m0 : ι → ℕ)

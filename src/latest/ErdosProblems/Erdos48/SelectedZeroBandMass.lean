@@ -77,7 +77,7 @@ private theorem sum_orderFiber_card_eq
       intro t ht
       have htRange : order t ∈ Finset.Icc L J :=
         Finset.mem_Icc.mpr (horder t ht)
-      simp [Finset.sum_ite_eq', htRange]
+      simp [htRange]
     _ = S.card := by simp
 
 /-- A separated order-labelled family of ordinates is bounded by the sum of

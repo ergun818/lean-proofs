@@ -57,7 +57,6 @@ theorem detectorDyadicShell_subset (Y N a : ℕ) (hY : 1 ≤ Y) :
 theorem disjoint_detectorDyadicShell_of_ne (Y N : ℕ) {a b : ℕ}
     (hab : a ≠ b) :
     Disjoint (detectorDyadicShell Y N a) (detectorDyadicShell Y N b) := by
-  change Disjoint (detectorDyadicShell Y N a) (detectorDyadicShell Y N b)
   rw [Finset.disjoint_left]
   intro n hna hnb
   have haEq := (Finset.mem_filter.mp hna).2
@@ -219,7 +218,7 @@ theorem sum_detectorDyadicShell_weighted_energy_le
               (Real.rpow_natCast _ 2).symm
             _ = (n : ℝ) ^ (-(1 + eta) * 2) :=
               (Real.rpow_mul hnPos.le _ _).symm
-            _ = (n : ℝ) ^ (-(2 + 2 * eta)) := by congr 1 <;> ring
+            _ = (n : ℝ) ^ (-(2 + 2 * eta)) := by congr 1; ring
         rw [hsq]
         exact mul_le_mul_of_nonneg_right
           (pow_le_pow_left₀ (by positivity) hlogWeight 2) (by positivity)

@@ -133,7 +133,7 @@ def primesInProgression (x m a : ℕ) : Finset ℕ :=
 
 /-- Every logarithmic prime weight in a progression is at most `log x`. -/
 theorem thetaProgressionSum_le_card_mul_log
-    {x m a : ℕ} (hx : 2 ≤ x) :
+    {x m a : ℕ} (_hx : 2 ≤ x) :
     thetaProgressionSum x m a ≤
       ((primesInProgression x m a).card : ℝ) * Real.log (x : ℝ) := by
   rw [thetaProgressionSum]
@@ -250,8 +250,8 @@ theorem sum_primitiveCharacterMass_le_vaughan
 /-- Finite Markov inequality for nonnegative weights, stated in the form used
 to count conductors whose primitive mass exceeds a threshold. -/
 theorem card_filter_mul_le_sum_of_nonneg
-    {A : Type*} [DecidableEq A] (s : Finset A) (f : A → ℝ) {T : ℝ}
-    (hT : 0 ≤ T) (hf : ∀ a ∈ s, 0 ≤ f a) :
+    {A : Type*} (s : Finset A) (f : A → ℝ) {T : ℝ}
+    (_hT : 0 ≤ T) (hf : ∀ a ∈ s, 0 ≤ f a) :
     (((s.filter fun a ↦ T < f a).card : ℕ) : ℝ) * T ≤
       ∑ a ∈ s, f a := by
   calc
