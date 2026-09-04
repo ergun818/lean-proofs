@@ -111,8 +111,7 @@ lemma ae_all_coordinates_are_signs :
 lemma integral_coordinate (k : ℕ) :
     ∫ ω : Sample, ω k ∂signMeasure = 0 := by
   rw [(hasLaw_coordinate k).integral_eq]
-  simp only [rademacherMeasure, integral_bernoulliMeasure, id_eq, one_smul, neg_smul,
-    smul_eq_mul]
+  simp only [rademacherMeasure, integral_bernoulliMeasure, smul_eq_mul]
   change (1 / 2 : ℝ) * 1 + (1 - 1 / 2) * -1 = 0
   norm_num
 
@@ -127,7 +126,7 @@ lemma coordinate_hasSubgaussianMGF (k : ℕ) :
   convert hasSubgaussianMGF_of_mem_Icc_of_integral_eq_zero
     (X := fun ω : Sample ↦ ω k) (a := (-1 : ℝ)) (b := 1)
     (measurable_pi_apply k).aemeasurable (coordinate_mem_Icc k) (integral_coordinate k)
-      using 1 <;> norm_num
+      using 1; norm_num
 
 /-- Hoeffding's sharp projection bound for a finite real Rademacher linear form. -/
 lemma measureReal_linearForm_ge_le (s : Finset ℕ) (a : ℕ → ℝ) {t : ℝ} (ht : 0 ≤ t) :
@@ -136,7 +135,7 @@ lemma measureReal_linearForm_ge_le (s : Finset ℕ) (a : ℕ → ℝ) {t : ℝ} 
   have hIndep : iIndepFun (fun k (ω : Sample) ↦ a k * ω k) signMeasure :=
     by
       convert iIndepFun_coordinate.comp (fun (k : ℕ) (x : ℝ) ↦ a k * x)
-        (fun _ ↦ measurable_const.mul measurable_id) using 1 <;>
+        (fun _ ↦ measurable_const.mul measurable_id) using 1;
         simp only [Function.comp_def]
   have hSubG : ∀ k ∈ s,
       HasSubgaussianMGF (fun ω : Sample ↦ a k * ω k)
@@ -538,7 +537,6 @@ lemma sum_standardRoot_pow_re_sq (N r : ℕ) (hN : N ≠ 0) (hr : ¬N ∣ 2 * r)
         (∑ k ∈ Finset.range N, (standardRoot N ^ ((2 * r) * k)).re) / 2 := by
       simp_rw [add_div, Finset.sum_add_distrib, Finset.sum_const,
         Finset.card_range, nsmul_eq_mul]
-      push_cast
       rw [← Finset.sum_div, hpowterms, Finset.sum_div]
       ring
     _ = (N : ℝ) / 2 := by rw [sum_standardRoot_pow_re N (2 * r) hN hr, zero_div, add_zero]
@@ -685,7 +683,7 @@ lemma mgf_mul_coordinate (a t : ℝ) (k : ℕ) :
     _ = Real.cosh (t * a) := by
       simp only [rademacherMeasure, integral_bernoulliMeasure, smul_eq_mul]
       rw [Real.cosh_eq]
-      congr 1 <;> ring_nf
+      ring_nf
 
 /-- A finite real linear form in the signs. -/
 def linearForm (s : Finset ℕ) (a : ℕ → ℝ) (ω : Sample) : ℝ :=
@@ -717,7 +715,8 @@ lemma cgf_linearForm (s : Finset ℕ) (a : ℕ → ℝ) (t : ℝ) :
       · exact Real.exp_le_exp.mpr (le_abs_self _)
       · exact Real.exp_le_exp.mpr (neg_le_abs _)
     exact Integrable.mono' (integrable_const (Real.exp |t * a k|))
-      ((measurable_const.mul (measurable_const.mul (measurable_pi_apply k))).exp.aestronglyMeasurable)
+      ((measurable_const.mul
+        (measurable_const.mul (measurable_pi_apply k))).exp.aestronglyMeasurable)
       hBound
   have h := (iIndepFun_mul_coordinate a).cgf_sum
     (s := s) (t := t) (fun _ ↦ by fun_prop) hInt
@@ -888,7 +887,7 @@ lemma mul_tanh_mul_lower (a t : ℝ) (ht : 0 ≤ t) :
   · have hna : 0 ≤ -a := neg_nonneg.mpr (le_of_lt (lt_of_not_ge ha))
     have h := hpos (-a) hna
     rw [mul_neg, Real.tanh_neg, mul_neg, neg_mul, neg_neg] at h
-    convert h using 1 <;> ring
+    convert h using 1; ring
 
 lemma mul_tanh_mul_upper (a t : ℝ) (ht : 0 ≤ t) :
     a * Real.tanh (t * a) ≤ t * a ^ 2 := by
@@ -901,7 +900,7 @@ lemma mul_tanh_mul_upper (a t : ℝ) (ht : 0 ≤ t) :
   · have hna : 0 ≤ -a := neg_nonneg.mpr (le_of_lt (lt_of_not_ge ha))
     have h := hpos (-a) hna
     rw [mul_neg, Real.tanh_neg, mul_neg, neg_mul, neg_neg] at h
-    convert h using 1 <;> ring
+    convert h using 1; ring
 
 lemma integral_linearForm_tilted_lower (s : Finset ℕ) (a : ℕ → ℝ) (t : ℝ)
     (ht : 0 ≤ t) :
@@ -1089,7 +1088,7 @@ lemma measureReal_tilted_interval_lower (s : Finset ℕ) (a : ℕ → ℝ)
   have hsubset : Dᶜ ⊆ A := by
     intro ω hω
     have hn : ¬r ≤ |linearForm s a ω - m| := by
-      simpa only [D, Set.mem_compl_iff, Set.mem_setOf_eq] using hω
+      simpa only [D, Set.mem_compl_iff, Set.mem_ofPred_eq] using hω
     have habs : |linearForm s a ω - m| < r := lt_of_not_ge hn
     rw [abs_lt] at habs
     have hml : u + r ≤ m := by simpa only [m, μt] using hmean_lower
@@ -1250,8 +1249,8 @@ lemma frequencySet_not_dvd_add {N r s : ℕ} (hN : 4 ≤ N)
     have hs4 : s * 4 ≤ N := (Nat.le_div_iff_mul_le (by omega)).mp hsN
     omega
 
-lemma frequencySet_not_dvd_sub {N r s : ℕ} (hN : 4 ≤ N)
-    (hr : r ∈ frequencySet N) (hs : s ∈ frequencySet N) (hsr : s < r) :
+lemma frequencySet_not_dvd_sub {N r s : ℕ} (_hN : 4 ≤ N)
+    (hr : r ∈ frequencySet N) (_hs : s ∈ frequencySet N) (hsr : s < r) :
     ¬N ∣ r - s := by
   apply not_dvd_of_pos_of_lt
   · omega
@@ -1259,7 +1258,7 @@ lemma frequencySet_not_dvd_sub {N r s : ℕ} (hN : 4 ≤ N)
     have hr4 : r * 4 ≤ N := (Nat.le_div_iff_mul_le (by omega)).mp hrN
     omega
 
-lemma sum_add_sq {ι : Type*} [DecidableEq ι] (s : Finset ι) (a b : ι → ℝ) :
+lemma sum_add_sq {ι : Type*} (s : Finset ι) (a b : ι → ℝ) :
     ∑ k ∈ s, (a k + b k) ^ 2 =
       (∑ k ∈ s, a k ^ 2) + (∑ k ∈ s, b k ^ 2) +
         2 * ∑ k ∈ s, a k * b k := by
@@ -1534,7 +1533,7 @@ lemma integral_rootExceedanceCount (N : ℕ) (u : ℝ) :
     ∫ ω, rootExceedanceCount N u ω ∂signMeasure =
       ∑ r ∈ frequencySet N, signMeasure.real (rootExceedanceEvent N r u) := by
   unfold rootExceedanceCount
-  rw [integral_finset_sum]
+  rw [integral_finsetSum]
   · apply Finset.sum_congr rfl
     intro r _hr
     exact integral_indicator_one (measurableSet_rootExceedanceEvent N r u)
@@ -1573,10 +1572,10 @@ lemma integral_rootExceedanceCount_sq (N : ℕ) (u : ℝ) :
     _ = ∑ r ∈ frequencySet N, ∑ s ∈ frequencySet N,
         signMeasure.real ((rootExceedanceEvent N r u) ∩
           (rootExceedanceEvent N s u)) := by
-      rw [integral_finset_sum]
+      rw [integral_finsetSum]
       · apply Finset.sum_congr rfl
         intro r _hr
-        rw [integral_finset_sum]
+        rw [integral_finsetSum]
         · apply Finset.sum_congr rfl
           intro s _hs
           exact integral_indicator_one
@@ -1587,7 +1586,7 @@ lemma integral_rootExceedanceCount_sq (N : ℕ) (u : ℝ) :
             ((measurableSet_rootExceedanceEvent N r u).inter
               (measurableSet_rootExceedanceEvent N s u))
       · intro r _hr
-        apply integrable_finset_sum
+        apply integrable_finsetSum
         intro s _hs
         exact (integrable_const (μ := signMeasure) (1 : ℝ)).indicator
           ((measurableSet_rootExceedanceEvent N r u).inter
@@ -1816,7 +1815,7 @@ lemma hasDerivAt_affineLogSumExpDerivTwo {ι : Type*} {s : Finset ι}
   ring
 
 lemma abs_affineMomentSum_le {ι : Type*} {s : Finset ι} {β c : ℝ}
-    {a b : ι → ℝ} (hc : 0 ≤ c) (ha : ∀ i ∈ s, |a i| ≤ c) (m : ℕ) (x : ℝ) :
+    {a b : ι → ℝ} (_hc : 0 ≤ c) (ha : ∀ i ∈ s, |a i| ≤ c) (m : ℕ) (x : ℝ) :
     |affineMomentSum s β a b m x| ≤ c ^ m * affineMomentSum s β a b 0 x := by
   unfold affineMomentSum
   calc
@@ -2080,7 +2079,7 @@ lemma contDiff_affineMomentSum {ι : Type*} (s : Finset ι) (β : ℝ)
   fun_prop
 
 lemma contDiff_affineLogSumExp {ι : Type*} {s : Finset ι} (hs : s.Nonempty)
-    {β : ℝ} (hβ : β ≠ 0) (a b : ι → ℝ) :
+    {β : ℝ} (_hβ : β ≠ 0) (a b : ι → ℝ) :
     ContDiff ℝ ⊤ (affineLogSumExp s β a b) := by
   unfold affineLogSumExp
   exact ((contDiff_affineMomentSum s β a b 0).log
@@ -2323,8 +2322,7 @@ lemma hasLaw_coupledGaussian (k : ℕ) :
 lemma integral_coupledSign (k : ℕ) :
     ∫ ω, coupledSign k ω ∂coupledMeasure = 0 := by
   rw [(hasLaw_coupledSign k).integral_eq]
-  simp only [rademacherMeasure, integral_bernoulliMeasure, one_smul, neg_smul,
-    smul_eq_mul]
+  simp only [rademacherMeasure, integral_bernoulliMeasure, smul_eq_mul]
   norm_num
 
 lemma integral_coupledGaussian (k : ℕ) :
@@ -2340,8 +2338,7 @@ lemma integral_sq_coupledSign (k : ℕ) :
       simpa only [Function.comp_apply] using
         (hasLaw_coupledSign k).integral_comp (f := fun x : ℝ ↦ x ^ 2) (by fun_prop)
     _ = 1 := by
-      simp only [rademacherMeasure, integral_bernoulliMeasure, one_smul, neg_smul,
-        smul_eq_mul]
+      simp only [rademacherMeasure, integral_bernoulliMeasure, smul_eq_mul]
       norm_num
 
 lemma integral_sq_standardGaussian :
@@ -2549,7 +2546,7 @@ lemma abs_affineExpNegLogSumExpDerivTwo_le {ι : Type*} {s : Finset ι}
               |γ * affineLogSumExpDerivTwo s β a b x| := abs_sub _ _
         _ = γ ^ 2 * |affineLogSumExpDerivOne s β a b x| ^ 2 +
               γ * |affineLogSumExpDerivTwo s β a b x| := by
-          simp only [abs_mul, abs_pow, abs_of_nonneg hγ, pow_nonneg]
+          simp only [abs_mul, abs_pow, abs_of_nonneg hγ]
     _ ≤ (γ ^ 2 * c ^ 2 + γ * (2 * β * c ^ 2)) * 1 := by gcongr
     _ = (γ ^ 2 + 2 * γ * β) * c ^ 2 := by ring
 
@@ -2707,7 +2704,7 @@ lemma abs_normalizedRootCoeff_le (N r k : ℕ) :
   rw [abs_mul, abs_of_nonneg (Real.sqrt_nonneg _)]
   nlinarith [Real.sqrt_nonneg (2 / (N : ℝ))]
 
-lemma indepFun_coupledCoordinate_hybridRootBaseline {N k : ℕ} (hk : k < N) :
+lemma indepFun_coupledCoordinate_hybridRootBaseline {N k : ℕ} (_hk : k < N) :
     IndepFun (fun ω : CoupledSample ↦ ω k)
       (fun ω r ↦ hybridRootBaseline N k r ω) coupledMeasure := by
   let T : Finset ℕ := (Finset.range N).erase k
@@ -3043,7 +3040,7 @@ Only the cubic Taylor remainders survive after integration. -/
 lemma integral_lindeberg_step
     {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω} [IsFiniteMeasure μ]
     (X Y C₀ C₁ C₂ F_X F_Y : Ω → ℝ) {K : ℝ}
-    (hK : 0 ≤ K)
+    (_hK : 0 ≤ K)
     (hX : Integrable X μ) (hY : Integrable Y μ)
     (hX₂ : Integrable (fun ω ↦ X ω ^ 2) μ)
     (hY₂ : Integrable (fun ω ↦ Y ω ^ 2) μ)
@@ -3202,7 +3199,7 @@ lemma abs_sub_le_sum_range_abs_sub (a : ℕ → ℝ) (N : ℕ) :
   | zero => simp
   | succ N ih =>
       calc
-        |a 0 - a (N + 1)| = |(a 0 - a N) + (a N - a (N + 1))| := by congr 1 <;> ring
+        |a 0 - a (N + 1)| = |(a 0 - a N) + (a N - a (N + 1))| := by congr 1; ring
         _ ≤ |a 0 - a N| + |a N - a (N + 1)| := abs_add_le _ _
         _ ≤ (∑ k ∈ Finset.range N, |a k - a (k + 1)|) +
             |a N - a (N + 1)| := by gcongr
@@ -3217,8 +3214,7 @@ lemma integral_abs_cube_coupledSign (k : ℕ) :
       simpa only [Function.comp_apply] using
         (hasLaw_coupledSign k).integral_comp (f := fun x : ℝ ↦ |x| ^ 3) (by fun_prop)
     _ = 1 := by
-      simp only [rademacherMeasure, integral_bernoulliMeasure, one_smul, neg_smul,
-        smul_eq_mul]
+      simp only [rademacherMeasure, integral_bernoulliMeasure, smul_eq_mul]
       norm_num
 
 def standardGaussianAbsCube : ℝ :=
@@ -3259,13 +3255,13 @@ lemma iIndepFun_coupledGaussian :
     iIndepFun (fun k ↦ coupledGaussian k) coupledMeasure := by
   have h := iIndepFun_coupledCoordinate.comp (fun _ ↦ Prod.snd)
     (fun _ ↦ measurable_snd)
-  convert h using 1 <;> funext ω <;> rfl
+  convert h using 1; funext ω; rfl
 
 lemma iIndepFun_coupledSign :
     iIndepFun (fun k ↦ coupledSign k) coupledMeasure := by
   have h := iIndepFun_coupledCoordinate.comp (fun _ ↦ Prod.fst)
     (fun _ ↦ measurable_fst)
-  convert h using 1 <;> funext ω <;> rfl
+  convert h using 1; funext ω; rfl
 
 def coupledSigns (ω : CoupledSample) : Sample := fun k ↦ coupledSign k ω
 
@@ -3565,7 +3561,7 @@ lemma hybridRootProjection_le_logSumExpZero {N m r : ℕ}
   rw [le_div_iff₀ hβ]
   nlinarith
 
-lemma hybridRootExpNegLogSumExpZero_allGaussian_le {N : ℕ} (hN : 4 ≤ N)
+lemma hybridRootExpNegLogSumExpZero_allGaussian_le {N : ℕ} (_hN : 4 ≤ N)
     {β γ t : ℝ} (hβ : 0 < β) (hγ : 0 ≤ γ) (ω : CoupledSample) :
     hybridRootExpNegLogSumExpZero N N β γ ω ≤
       Real.exp (-γ * t) +
@@ -3581,8 +3577,8 @@ lemma hybridRootExpNegLogSumExpZero_allGaussian_le {N : ℕ} (hN : 4 ≤ N)
     linarith [Real.exp_pos (-γ * t)]
   · have hexists : ∃ r : RootFrequency N,
         t ≤ gaussianRootProjection N r ω := by
-      simp only [gaussianAllBelow, Set.mem_iInter, Set.mem_setOf_eq] at hbelow
-      push_neg at hbelow
+      simp only [gaussianAllBelow, Set.mem_iInter, Set.mem_ofPred_eq] at hbelow
+      push Not at hbelow
       exact hbelow
     obtain ⟨r, hr⟩ := hexists
     have hL : t ≤ hybridRootLogSumExpZero N N β ω := by
@@ -3591,7 +3587,7 @@ lemma hybridRootExpNegLogSumExpZero_allGaussian_le {N : ℕ} (hN : 4 ≤ N)
         _ = hybridRootProjection N N r.1 ω := (hybridRootProjection_allGaussian N r ω).symm
         _ ≤ hybridRootLogSumExpZero N N β ω :=
           hybridRootProjection_le_logSumExpZero r.2 hβ ω
-    simp only [Set.indicator_of_notMem hbelow, Pi.one_apply, add_zero]
+    simp only [Set.indicator_of_notMem hbelow, add_zero]
     unfold hybridRootExpNegLogSumExpZero
     apply Real.exp_le_exp.mpr
     exact mul_le_mul_of_nonpos_left hL (neg_nonpos.mpr hγ)
@@ -3682,7 +3678,7 @@ lemma hybridRootLogSumExpZero_le {N m : ℕ} {β u : ℝ}
 lemma coupledSigns_mem_signAllAtMost_iff (N : ℕ) (u : ℝ) (ω : CoupledSample) :
     coupledSigns ω ∈ signAllAtMost N u ↔
       ∀ r ∈ frequencySet N, hybridRootProjection N 0 r ω ≤ u := by
-  simp only [signAllAtMost, Set.mem_iInter, Set.mem_setOf_eq]
+  simp only [signAllAtMost, Set.mem_iInter, Set.mem_ofPred_eq]
   constructor
   · intro h r hr
     simpa only [hybridRootProjection_zero] using h ⟨r, hr⟩
@@ -3805,16 +3801,15 @@ lemma measureReal_gaussianAllBelow_le_exp {N : ℕ} (hN : 4 ≤ N)
     _ = Real.exp (-((frequencySet N).card : ℝ) * q) := by
       rw [← Real.exp_nat_mul]
       congr 1
-      push_cast
       ring
     _ = Real.exp (-((frequencySet N).card : ℝ) *
         (gaussianPDF 0 1 (t + 1)).toReal) := rfl
 
 /-! ## Explicit parameter estimates for the lower bound -/
 
-lemma card_frequencySet {N : ℕ} (hN : 4 ≤ N) :
+lemma card_frequencySet {N : ℕ} (_hN : 4 ≤ N) :
     (frequencySet N).card = N / 4 := by
-  simp [frequencySet, Nat.add_sub_cancel, Nat.le_div_iff_mul_le (by omega : 0 < 4)]
+  simp [frequencySet]
 
 lemma quarter_le_card_frequencySet {N : ℕ} (hN : 4 ≤ N) :
     (N : ℝ) / 8 ≤ ((frequencySet N).card : ℝ) := by
@@ -3848,13 +3843,13 @@ lemma lowerGamma_nonneg (N : ℕ) : 0 ≤ lowerGamma N := by
   unfold lowerGamma
   positivity
 
-lemma lowerSignLevel_nonneg {δ : ℝ} (hδ0 : 0 ≤ δ) (hδ1 : δ ≤ 1)
-    {N : ℕ} (hN : 1 ≤ N) : 0 ≤ lowerSignLevel δ N := by
+lemma lowerSignLevel_nonneg {δ : ℝ} (_hδ0 : 0 ≤ δ) (hδ1 : δ ≤ 1)
+    {N : ℕ} (_hN : 1 ≤ N) : 0 ≤ lowerSignLevel δ N := by
   unfold lowerSignLevel
   positivity
 
-lemma lowerGaussianLevel_nonneg {δ : ℝ} (hδ0 : 0 ≤ δ) (hδ1 : δ ≤ 1)
-    {N : ℕ} (hN : 1 ≤ N) : 0 ≤ lowerGaussianLevel δ N := by
+lemma lowerGaussianLevel_nonneg {δ : ℝ} (_hδ0 : 0 ≤ δ) (hδ1 : δ ≤ 1)
+    {N : ℕ} (_hN : 1 ≤ N) : 0 ≤ lowerGaussianLevel δ N := by
   unfold lowerGaussianLevel
   have : 0 ≤ 1 - δ / 2 := by linarith
   positivity
@@ -3997,7 +3992,7 @@ lemma lower_smoothed_level_gap {δ : ℝ} {N : ℕ}
   unfold lowerSignLevel lowerGaussianLevel
   linarith
 
-lemma lower_exponential_prefactor_le {δ : ℝ} (hδ0 : 0 ≤ δ) (hδ1 : δ ≤ 1) {N : ℕ}
+lemma lower_exponential_prefactor_le {δ : ℝ} (hδ0 : 0 ≤ δ) (_hδ1 : δ ≤ 1) {N : ℕ}
     (hN : 1 ≤ N)
     (hB : lowerSignLevel δ N +
         Real.log ((frequencySet N).card + 1 : ℝ) / lowerBeta N ≤
@@ -4432,10 +4427,10 @@ lemma measurableSet_lowerMaximumFailure (δ : ℝ) (N : ℕ) :
   exact measurableSet_le (measurable_maximumModulus (N - 1)) measurable_const
 
 lemma lowerMaximumFailure_subset_signAllAtMost {δ : ℝ} {N : ℕ}
-    (hδ : δ ≤ 1) (hN : 1 ≤ N) :
+    (_hδ : δ ≤ 1) (hN : 1 ≤ N) :
     lowerMaximumFailure δ N ⊆ signAllAtMost N (lowerSignLevel δ N) := by
   intro ω hω
-  simp only [signAllAtMost, Set.mem_iInter, Set.mem_setOf_eq]
+  simp only [signAllAtMost, Set.mem_iInter, Set.mem_ofPred_eq]
   intro r
   calc
     normalizedRootRealProjection ω N r.1 ≤
@@ -4694,7 +4689,7 @@ lemma sum_root_pair (M N k l : ℕ) (hM : M ≠ 0) (hsize : 2 * N ≤ M)
     rw [if_pos rfl]
     simp only [← Complex.normSq_eq_conj_mul_self, Complex.normSq_eq_norm_sq,
       norm_standardRoot_pow, one_pow, Finset.sum_const, Finset.card_range,
-      nsmul_eq_mul, mul_one]
+      nsmul_eq_mul]
     norm_num
   · rw [if_neg hkl]
     let q : ℂ := conj (ζ ^ (2 * k)) * ζ ^ (2 * l)
@@ -4711,7 +4706,7 @@ lemma sum_root_pair (M N k l : ℕ) (hM : M ≠ 0) (hsize : 2 * N ≤ M)
       dsimp [q] at hq
       rw [hconj] at hq
       have hpows : ζ ^ (2 * k) = ζ ^ (2 * l) :=
-        (inv_mul_eq_one₀ (pow_ne_zero _ (norm_pos_iff.mp (by simpa [hζnorm])))).mp hq
+        (inv_mul_eq_one₀ (pow_ne_zero _ (norm_pos_iff.mp (by simp [hζnorm])))).mp hq
       have : 2 * k = 2 * l := hζ.pow_inj hkexp hlexp hpows
       omega
     have hqpow : q ^ M = 1 := by
@@ -4922,7 +4917,7 @@ lemma badRootIndices_weighted_card_le (M N : ℕ) {η : ℝ} (hη : 0 ≤ η)
   calc
     (badRootIndices M N η).card * (η * N) ^ 2 =
         ∑ _j ∈ badRootIndices M N η, (η * N) ^ 2 := by
-      simp [mul_comm]
+      simp
     _ ≤ ∑ j ∈ badRootIndices M N η, ‖rootGeometricSum M N j‖ ^ 2 :=
       Finset.sum_le_sum hterm
     _ ≤ ∑ j ∈ Finset.range M, ‖rootGeometricSum M N j‖ ^ 2 := by
@@ -4951,9 +4946,8 @@ lemma fourierSum_one_two_rootAngle (M N j : ℕ) :
   unfold fourierSum rootGeometricSum rootAngle standardRoot
   apply Finset.sum_congr rfl
   intro k _hk
-  simp only [Nat.cast_ofNat, one_mul, Circle.coe_exp]
+  simp only [Circle.coe_exp]
   rw [← Complex.exp_nat_mul, ← Complex.exp_nat_mul]
-  congr 1
   push_cast
   ring_nf
 
@@ -5010,7 +5004,7 @@ lemma exists_phase_projection_ge (Q : ℕ) (hQ : 0 < Q) (w : ℂ) :
       mul_le_mul_of_nonneg_right hcos (norm_nonneg w)
   have hrootangle : Circle.exp (rootAngle Q l) = standardRootCircle Q ^ l := by
     unfold rootAngle standardRootCircle
-    convert Circle.exp_natCast_mul (2 * Real.pi / Q) l using 1 <;> ring_nf
+    convert Circle.exp_natCast_mul (2 * Real.pi / Q) l using 1; ring_nf
   have hpositive : Complex.exp ((φ : ℂ) * Complex.I) =
       Complex.exp ((rootAngle Q l : ℂ) * Complex.I) := by
     have hc : Circle.exp φ = Circle.exp (rootAngle Q l) := by
@@ -5025,7 +5019,7 @@ lemma exists_phase_projection_ge (Q : ℕ) (hQ : 0 < Q) (w : ℂ) :
   rwa [← hnegative]
 
 lemma measureReal_linearForm_ge_le_of_sum_sq_le (s : Finset ℕ) (a : ℕ → ℝ)
-    {t v : ℝ} (ht : 0 < t) (hv : 0 < v) (hsum : ∑ k ∈ s, a k ^ 2 ≤ v) :
+    {t v : ℝ} (ht : 0 < t) (_hv : 0 < v) (hsum : ∑ k ∈ s, a k ^ 2 ≤ v) :
     signMeasure.real {ω | t ≤ linearForm s a ω} ≤ Real.exp (-t ^ 2 / (2 * v)) := by
   let S : ℝ := ∑ k ∈ s, a k ^ 2
   have hS0 : 0 ≤ S := Finset.sum_nonneg fun _ _ ↦ sq_nonneg _
@@ -5078,7 +5072,7 @@ lemma measureReal_fourier_norm_ge_le_of_projection_variance
         (Complex.exp ((-rootAngle Q l : ℂ) * Complex.I) *
           fourierSum ω N θ).re = realProjection ω N θ (rootAngle Q l) :=
       (realProjection_eq_rotated_fourier_re ω N θ (rootAngle Q l)).symm
-    simp only [mem_iUnion, mem_setOf_eq, B]
+    simp only [mem_iUnion, mem_ofPred_eq, B]
     exact ⟨l, ⟨Finset.mem_range.mpr hl, by rw [← hrotated]; exact hthreshold.trans hproj⟩⟩
   calc
     signMeasure.real A ≤ signMeasure.real (⋃ l ∈ Finset.range Q, B l) :=
@@ -5104,7 +5098,7 @@ lemma fourierSum_rootAngle_eq_randomPolynomial (ω : Sample) (n M j : ℕ) :
   congr 1
   have h := Circle.exp_natCast_mul (2 * Real.pi / M) j
   unfold rootAngle standardRootCircle
-  convert congrArg Subtype.val h using 1 <;> ring_nf
+  convert congrArg Subtype.val h using 1; ring_nf
 
 lemma measureReal_fourier_root_norm_ge_le_good
     (M N j Q : ℕ) {η T : ℝ} (hj : j < M) (hN : 0 < N) (hη : 0 < η)
@@ -5125,7 +5119,7 @@ lemma measureReal_fourier_root_norm_ge_le_good
         sum_projection_variances_root_le M N j (rootAngle Q l)
       _ ≤ (1 + η) * N / 2 := by nlinarith
   convert measureReal_fourier_norm_ge_le_of_projection_variance
-    N Q (rootAngle M j) hQ hfactor hT hv hvar using 1 <;> ring_nf
+    N Q (rootAngle M j) hQ hfactor hT hv hvar using 1; ring_nf
 
 lemma measureReal_fourier_root_norm_ge_le_crude
     (M N j Q : ℕ) {T : ℝ} (hN : 0 < N)
@@ -5274,7 +5268,7 @@ lemma measureReal_maximum_ge_le_mesh
     have hroot : fourierSum ω N (rootAngle M j) =
         randomPolynomial ω n (↑(standardRootCircle M ^ j) : ℂ) := by
       simpa only [N] using fourierSum_rootAngle_eq_randomPolynomial ω n M j
-    simp only [mem_iUnion, mem_setOf_eq, B]
+    simp only [mem_iUnion, mem_ofPred_eq, B]
     exact ⟨j, ⟨Finset.mem_range.mpr hj, by rw [hroot]; exact hthreshold.trans hjmax⟩⟩
   let pGood : ℝ :=
     Q * Real.exp (-(phaseFactor Q * T) ^ 2 / ((1 + η) * N))
@@ -5314,7 +5308,7 @@ lemma measureReal_maximum_ge_le_mesh
         simp [badRootIndices]
       rw [← Finset.sum_filter]
       rw [hfilter]
-      simp [mul_comm]
+      simp
     _ = _ := by rfl
 
 def upperMaximumLevel (m N : ℕ) : ℝ :=
@@ -5693,7 +5687,7 @@ lemma measureReal_maximum_ge_le_simple (n : ℕ) {U : ℝ} (hU : 0 < U) :
         exact div_le_div_of_nonneg_right (neg_le_neg hsquare) (by positivity)
       _ = -U ^ 2 / (32 * (n + 1)) := by
         field_simp
-        <;> ring
+        ring
   calc
     signMeasure.real {ω | U ≤ maximumModulus ω n} ≤
         2 * (100 * (n + 1) : ℕ) * 10 *
@@ -5805,7 +5799,6 @@ lemma measureReal_blockMaximumFailure_le {a h : ℕ} {U : ℝ}
         2000 * h * Real.exp (-U ^ 2 / (32 * h)) := Finset.sum_le_sum hterm
     _ = 2000 * h ^ 2 * Real.exp (-U ^ 2 / (32 * h)) := by
       simp only [Finset.sum_const, Finset.card_range, nsmul_eq_mul]
-      push_cast
       ring
 
 def blockLevel (N h : ℕ) : ℝ :=
@@ -5921,7 +5914,6 @@ lemma randomPolynomial_add_shifted_block (ω : Sample) {N : ℕ} (hN : 0 < N)
   apply Finset.sum_congr rfl
   intro k _hk
   rw [pow_add]
-  push_cast
   ring
 
 lemma norm_randomPolynomial_add_shifted_block_sub (ω : Sample) {N : ℕ} (hN : 0 < N)
