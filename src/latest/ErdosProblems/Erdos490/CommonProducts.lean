@@ -3,7 +3,6 @@ import ErdosProblems.Erdos490.Basic
 noncomputable section
 namespace Erdos490
 open Finset BigOperators Nat Real
-set_option maxHeartbeats 800000
 set_option linter.style.longLine false
 set_option linter.style.setOption false
 set_option linter.flexible false

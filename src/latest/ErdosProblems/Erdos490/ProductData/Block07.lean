@@ -27,6 +27,7 @@ def productData112 : List ℕ :=
 
 set_option maxRecDepth 4096 in
 set_option maxHeartbeats 0 in
+-- Kernel reduction checks up to 512 divisor witnesses and rounded products.
 theorem productData112_checked :
     roundedProductCertificate 57346 19524422395104 productData112 = some 19540694605020 := by
   decide +kernel
@@ -54,6 +55,7 @@ def productData113 : List ℕ :=
 
 set_option maxRecDepth 4096 in
 set_option maxHeartbeats 0 in
+-- Kernel reduction checks up to 512 divisor witnesses and rounded products.
 theorem productData113_checked :
     roundedProductCertificate 57858 19540694605020 productData113 = some 19556503018750 := by
   decide +kernel
@@ -81,6 +83,7 @@ def productData114 : List ℕ :=
 
 set_option maxRecDepth 4096 in
 set_option maxHeartbeats 0 in
+-- Kernel reduction checks up to 512 divisor witnesses and rounded products.
 theorem productData114_checked :
     roundedProductCertificate 58370 19556503018750 productData114 = some 19569859439882 := by
   decide +kernel
@@ -108,6 +111,7 @@ def productData115 : List ℕ :=
 
 set_option maxRecDepth 4096 in
 set_option maxHeartbeats 0 in
+-- Kernel reduction checks up to 512 divisor witnesses and rounded products.
 theorem productData115_checked :
     roundedProductCertificate 58882 19569859439882 productData115 = some 19588073072996 := by
   decide +kernel
@@ -135,6 +139,7 @@ def productData116 : List ℕ :=
 
 set_option maxRecDepth 4096 in
 set_option maxHeartbeats 0 in
+-- Kernel reduction checks up to 512 divisor witnesses and rounded products.
 theorem productData116_checked :
     roundedProductCertificate 59394 19588073072996 productData116 = some 19603190910659 := by
   decide +kernel
@@ -162,6 +167,7 @@ def productData117 : List ℕ :=
 
 set_option maxRecDepth 4096 in
 set_option maxHeartbeats 0 in
+-- Kernel reduction checks up to 512 divisor witnesses and rounded products.
 theorem productData117_checked :
     roundedProductCertificate 59906 19603190910659 productData117 = some 19617533694999 := by
   decide +kernel
@@ -189,6 +195,7 @@ def productData118 : List ℕ :=
 
 set_option maxRecDepth 4096 in
 set_option maxHeartbeats 0 in
+-- Kernel reduction checks up to 512 divisor witnesses and rounded products.
 theorem productData118_checked :
     roundedProductCertificate 60418 19617533694999 productData118 = some 19632731161809 := by
   decide +kernel
@@ -216,6 +223,7 @@ def productData119 : List ℕ :=
 
 set_option maxRecDepth 4096 in
 set_option maxHeartbeats 0 in
+-- Kernel reduction checks up to 512 divisor witnesses and rounded products.
 theorem productData119_checked :
     roundedProductCertificate 60930 19632731161809 productData119 = some 19645247375029 := by
   decide +kernel
@@ -243,6 +251,7 @@ def productData120 : List ℕ :=
 
 set_option maxRecDepth 4096 in
 set_option maxHeartbeats 0 in
+-- Kernel reduction checks up to 512 divisor witnesses and rounded products.
 theorem productData120_checked :
     roundedProductCertificate 61442 19645247375029 productData120 = some 19659905969248 := by
   decide +kernel
@@ -270,6 +279,7 @@ def productData121 : List ℕ :=
 
 set_option maxRecDepth 4096 in
 set_option maxHeartbeats 0 in
+-- Kernel reduction checks up to 512 divisor witnesses and rounded products.
 theorem productData121_checked :
     roundedProductCertificate 61954 19659905969248 productData121 = some 19673824091578 := by
   decide +kernel
@@ -297,6 +307,7 @@ def productData122 : List ℕ :=
 
 set_option maxRecDepth 4096 in
 set_option maxHeartbeats 0 in
+-- Kernel reduction checks up to 512 divisor witnesses and rounded products.
 theorem productData122_checked :
     roundedProductCertificate 62466 19673824091578 productData122 = some 19688261874243 := by
   decide +kernel
@@ -324,6 +335,7 @@ def productData123 : List ℕ :=
 
 set_option maxRecDepth 4096 in
 set_option maxHeartbeats 0 in
+-- Kernel reduction checks up to 512 divisor witnesses and rounded products.
 theorem productData123_checked :
     roundedProductCertificate 62978 19688261874243 productData123 = some 19702897572266 := by
   decide +kernel
@@ -351,6 +363,7 @@ def productData124 : List ℕ :=
 
 set_option maxRecDepth 4096 in
 set_option maxHeartbeats 0 in
+-- Kernel reduction checks up to 512 divisor witnesses and rounded products.
 theorem productData124_checked :
     roundedProductCertificate 63490 19702897572266 productData124 = some 19718364522982 := by
   decide +kernel
@@ -378,6 +391,7 @@ def productData125 : List ℕ :=
 
 set_option maxRecDepth 4096 in
 set_option maxHeartbeats 0 in
+-- Kernel reduction checks up to 512 divisor witnesses and rounded products.
 theorem productData125_checked :
     roundedProductCertificate 64002 19718364522982 productData125 = some 19730951437293 := by
   decide +kernel
@@ -405,6 +419,7 @@ def productData126 : List ℕ :=
 
 set_option maxRecDepth 4096 in
 set_option maxHeartbeats 0 in
+-- Kernel reduction checks up to 512 divisor witnesses and rounded products.
 theorem productData126_checked :
     roundedProductCertificate 64514 19730951437293 productData126 = some 19743445225376 := by
   decide +kernel
@@ -432,6 +447,7 @@ def productData127 : List ℕ :=
 
 set_option maxRecDepth 4096 in
 set_option maxHeartbeats 0 in
+-- Kernel reduction checks up to 512 divisor witnesses and rounded products.
 theorem productData127_checked :
     roundedProductCertificate 65026 19743445225376 productData127 = some 19757971897093 := by
   decide +kernel

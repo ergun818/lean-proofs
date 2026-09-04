@@ -8,7 +8,6 @@ namespace Erdos490
 open Finset BigOperators Nat Real Filter
 open scoped Topology
 
-set_option maxHeartbeats 800000
 
 def factorialKernel (n : ℕ) : ℤ :=
   (n : ℤ) - (n / 2 : ℕ) - (n / 3 : ℕ) - (n / 5 : ℕ) + (n / 30 : ℕ)

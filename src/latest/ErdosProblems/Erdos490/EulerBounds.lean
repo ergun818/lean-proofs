@@ -4,7 +4,6 @@ import ErdosProblems.Erdos490.PrimeProductBound
 noncomputable section
 namespace Erdos490
 open Finset BigOperators
-set_option maxHeartbeats 800000
 
 lemma inverse_euler_eq (p : ℕ) (hp : p.Prime) :
     (1 - 1/(p : ℝ))⁻¹ = (p : ℝ)/(p-1) := by

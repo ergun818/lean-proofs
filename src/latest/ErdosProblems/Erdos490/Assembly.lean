@@ -5,7 +5,6 @@ noncomputable section
 namespace Erdos490
 open Finset BigOperators Filter
 open scoped Topology
-set_option maxHeartbeats 800000
 
 lemma common_layer_index_le {n k : ℕ} {A B : Finset ℕ}
     (hAB : ProductAdmissible n A B) (hne : (L_common 2 k A B).Nonempty) : k ≤ n := by
@@ -28,7 +27,8 @@ lemma largest_bad_layer (m : ℕ → ℕ) {n : ℕ} {A B : Finset ℕ}
   let F := (Finset.range (n+1)).filter (fun k => m k < (L_common 2 k A B).card)
   have hmem (k : ℕ) (hk : m k < (L_common 2 k A B).card) : k ∈ F := by
     exact Finset.mem_filter.mpr ⟨Finset.mem_range.mpr (by
-      have := common_layer_index_le hAB (Finset.card_pos.mp (by omega : 0 < (L_common 2 k A B).card))
+      have := common_layer_index_le hAB
+        (Finset.card_pos.mp (by omega : 0 < (L_common 2 k A B).card))
       omega), hk⟩
   obtain ⟨j, hj⟩ := not_forall.mp hbad
   have hF : F.Nonempty := ⟨j, hmem j (lt_of_not_ge hj)⟩
@@ -42,8 +42,8 @@ theorem rectangle_layer_bound (m : ℕ → ℕ) (g : ℕ → ℝ)
     (hsumm : Summable (fun k => Real.log (E_val 2 k (m k))))
     (hweights : Summable (fun k => rectangleWeight m g k * (N_layer 2 k : ℝ)))
     (hΩ : weightTotal (rectangleWeight m g) < 1) (C : ℝ)
-    (hC : (111/100 : ℝ)^2 * Real.exp γ * D_val 2 m /
-      (1-weightTotal (rectangleWeight m g))^2 < C) :
+    (hC : (111 / 100 : ℝ) ^ 2 * Real.exp γ * D_val 2 m /
+      (1 - weightTotal (rectangleWeight m g)) ^ 2 < C) :
     ∃ N₀ : ℕ, ∀ n : ℕ, N₀ ≤ n →
       ∀ A B : Finset ℕ, ProductAdmissible n A B →
         (A.card : ℝ)*B.card < C*n^2/Real.log n := by

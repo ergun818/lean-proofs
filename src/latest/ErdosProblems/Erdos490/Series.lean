@@ -4,7 +4,6 @@ noncomputable section
 namespace Erdos490
 open Finset BigOperators Filter
 open scoped Topology
-set_option maxHeartbeats 800000
 
 /-- A rational upper bound for the reciprocal cube root of two. -/
 def geometricRatio : ℝ := 79371 / 100000

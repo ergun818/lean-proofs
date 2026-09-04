@@ -40,6 +40,7 @@ def generate() -> dict[str, str]:
 
 set_option maxRecDepth 4096 in
 set_option maxHeartbeats 0 in
+-- Kernel reduction checks up to 512 divisor witnesses and rounded products.
 theorem {name}_checked :
     roundedProductCertificate {start} {old} {name} = some {upper} := by
   decide +kernel

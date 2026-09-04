@@ -4,7 +4,6 @@ import ErdosProblems.Erdos490.Series
 noncomputable section
 namespace Erdos490
 open Finset BigOperators
-set_option maxHeartbeats 800000
 
 def rectangleCap (k : ℕ) : ℝ := (4/5) / (geometricRatio^(k+1))^2
 
@@ -19,7 +18,7 @@ lemma rectangleMultiplicity_le (k : ℕ) : rectangleMultiplicity k ≤ N_layer 2
 
 lemma rectangleMultiplicity_active (k : ℕ) (hk : rectangleMultiplicity k < N_layer 2 k) :
     16 ≤ k ∧ rectangleMultiplicity k = ⌊rectangleCap k⌋₊ := by
-  have h16 : ¬ k < 16 := by intro h; simpa [rectangleMultiplicity, h] using hk
+  have h16 : ¬ k < 16 := by intro h; simp [rectangleMultiplicity, h] at hk
   refine ⟨by omega, ?_⟩
   simp only [rectangleMultiplicity, if_neg h16] at hk ⊢
   exact min_eq_right (by omega)

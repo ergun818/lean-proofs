@@ -71,7 +71,7 @@ theorem roundedProductCertificate_sound {n b v : ℕ} {ds : List ℕ}
     split_ifs at h with hd hcomp
     · have hi := ih (by omega : 2 ≤ n + 1) h
       have hstep := mul_le_mul_of_nonneg_right (le_rounded_product (b := b) hn) htail
-      simp only [Nat.add_assoc, Nat.add_left_comm, Nat.add_comm] at hi hstep ⊢
+      simp only [Nat.add_left_comm, Nat.add_comm] at hi hstep ⊢
       simpa [mul_assoc, mul_comm, mul_left_comm, Nat.add_assoc,
         Nat.add_left_comm, Nat.add_comm] using hstep.trans hi
     · have hnp : ¬ n.Prime := by

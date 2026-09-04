@@ -6,7 +6,6 @@ noncomputable section
 namespace Erdos490
 open Finset BigOperators Nat Real Filter
 open scoped Topology
-set_option maxHeartbeats 1600000
 set_option linter.style.longLine false
 set_option linter.style.setOption false
 set_option linter.flexible false
@@ -31,6 +30,24 @@ lemma choose_rectangle_sieve_error (ε : ℝ) (hε : 0 < ε) : ∃ ε₁ > 0, ((
       (111 / 100 : ℝ)^2 * Real.exp γ < (111 / 100)^2 * Real.exp γ + ε))).and
       self_mem_nhdsWithin).exists
   exact ⟨t, htpos, ht⟩
+
+/-- Missing-prime Euler factors for two sets are bounded by the full prime product
+and the reciprocal contribution of the primes dividing elements of both sets. -/
+private lemma missing_prime_products_le (n : ℕ) (A B : Finset ℕ) :
+    (∏ p ∈ (Finset.range (n + 1)).filter (fun p => Nat.Prime p ∧ ¬(sdiv A p).Nonempty), (1 - 1 / (p : ℝ))) * (∏ p ∈ (Finset.range (n + 1)).filter (fun p => Nat.Prime p ∧ ¬(sdiv B p).Nonempty), (1 - 1 / (p : ℝ))) ≤ (∏ p ∈ primesUpTo n, (1 - 1 / (p : ℝ))) * (∏ p ∈ (Finset.range (n + 1)).filter (fun p => Nat.Prime p ∧ (sdiv A p).Nonempty ∧ (sdiv B p).Nonempty), (1 - 1 / (p : ℝ)))⁻¹ := by
+  have h_prod : (∏ p ∈ (Finset.range (n + 1)).filter (fun p => Nat.Prime p ∧ ¬(sdiv A p).Nonempty), (1 - 1 / (p : ℝ))) * (∏ p ∈ (Finset.range (n + 1)).filter (fun p => Nat.Prime p ∧ ¬(sdiv B p).Nonempty), (1 - 1 / (p : ℝ))) ≤ (∏ p ∈ (Finset.range (n + 1)).filter (fun p => Nat.Prime p ∧ (¬(sdiv A p).Nonempty ∨ ¬(sdiv B p).Nonempty)), (1 - 1 / (p : ℝ))) := by
+    convert prod_union_le_of_le_one _ _ using 1;
+    · congr with p ; aesop;
+    · aesop;
+    · aesop;
+  refine le_trans h_prod ?_;
+  rw [ ← div_eq_mul_inv, le_div_iff₀ ];
+  · rw [ ← Finset.prod_union ];
+    · refine le_of_eq ?_;
+      refine Finset.prod_subset ?_ ?_ <;> intro p hp <;> simp_all +decide [ primesUpTo ];
+      grind;
+    · exact Finset.disjoint_filter.mpr ( by aesop );
+  · exact Finset.prod_pos fun p hp => sub_pos.mpr <| by simpa using inv_lt_one_of_one_lt₀ <| Nat.one_lt_cast.mpr <| Nat.Prime.one_lt <| by aesop;
 
 theorem small_interval_case (hCheb : ElementaryChebyshevBound) (ε : ℝ) (hε : ε > 0)
     (lam : ℝ) (m : ℕ → ℕ)
@@ -65,20 +82,7 @@ theorem small_interval_case (hCheb : ElementaryChebyshevBound) (ε : ℝ) (hε :
     · refine mod_cast Finset.card_le_card ?_;
       intro x hx; have := hadm.2.1 hx; simp_all +decide [ sdiv ] ;
     · exact fun p hp => ⟨ Finset.mem_filter.mp hp |>.2.1, mod_cast Finset.mem_range_succ_iff.mp ( Finset.mem_filter.mp hp |>.1 ) ⟩;
-  have h_prod : (∏ p ∈ (Finset.range (n + 1)).filter (fun p => Nat.Prime p ∧ ¬(sdiv A p).Nonempty), (1 - 1 / (p : ℝ))) * (∏ p ∈ (Finset.range (n + 1)).filter (fun p => Nat.Prime p ∧ ¬(sdiv B p).Nonempty), (1 - 1 / (p : ℝ))) ≤ (∏ p ∈ primesUpTo n, (1 - 1 / (p : ℝ))) * (∏ p ∈ (Finset.range (n + 1)).filter (fun p => Nat.Prime p ∧ (sdiv A p).Nonempty ∧ (sdiv B p).Nonempty), (1 - 1 / (p : ℝ)))⁻¹ := by
-    have h_prod : (∏ p ∈ (Finset.range (n + 1)).filter (fun p => Nat.Prime p ∧ ¬(sdiv A p).Nonempty), (1 - 1 / (p : ℝ))) * (∏ p ∈ (Finset.range (n + 1)).filter (fun p => Nat.Prime p ∧ ¬(sdiv B p).Nonempty), (1 - 1 / (p : ℝ))) ≤ (∏ p ∈ (Finset.range (n + 1)).filter (fun p => Nat.Prime p ∧ (¬(sdiv A p).Nonempty ∨ ¬(sdiv B p).Nonempty)), (1 - 1 / (p : ℝ))) := by
-      convert prod_union_le_of_le_one _ _ using 1;
-      · congr with p ; aesop;
-      · aesop;
-      · aesop;
-    refine le_trans h_prod ?_;
-    rw [ ← div_eq_mul_inv, le_div_iff₀ ];
-    · rw [ ← Finset.prod_union ];
-      · refine le_of_eq ?_;
-        refine Finset.prod_subset ?_ ?_ <;> intro p hp <;> simp_all +decide [ primesUpTo ];
-        grind;
-      · exact Finset.disjoint_filter.mpr ( by aesop );
-    · exact Finset.prod_pos fun p hp => sub_pos.mpr <| by simpa using inv_lt_one_of_one_lt₀ <| Nat.one_lt_cast.mpr <| Nat.Prime.one_lt <| by aesop;
+  have h_prod := missing_prime_products_le n A B
   have h_prod_bound : (∏ p ∈ (Finset.range (n + 1)).filter (fun p => Nat.Prime p ∧ (sdiv A p).Nonempty ∧ (sdiv B p).Nonempty), (1 - 1 / (p : ℝ)))⁻¹ ≤ D_val lam m := by
     convert euler_common_product lam hlam m hsumm n A B hL using 1;
     rw [ Finset.prod_inv_distrib ];
@@ -144,7 +148,6 @@ theorem large_rectangle_case (hCheb : ElementaryChebyshevBound) (ε : ℝ) (hε 
           (c * n / Y_val 2 k * Pi_sieve n 2 k B)) =
         c^2 * n^2 * M_layer 2 k * (Pi_sieve n 2 k A * Pi_sieve n 2 k B) := by
       field_simp
-      <;> ring
     rw [heq] at hm
     exact hrect.trans (by simpa only [mul_assoc] using hm)
   have hsecond : ((A.card : ℝ) * B.card) * (g k)^2 ≤
@@ -161,10 +164,10 @@ theorem large_rectangle_case (hCheb : ElementaryChebyshevBound) (ε : ℝ) (hε 
     refine hthird.trans ?_
     convert mul_le_mul_of_nonneg_right
       (mul_le_mul_of_nonneg_left (hN₂ n hn2 k) (sq_nonneg c))
-      (show 0 ≤ D_val 2 m * (n : ℝ)^2 by exact mul_nonneg (Real.exp_nonneg _) (sq_nonneg _)) using 1 <;> ring
+      (show 0 ≤ D_val 2 m * (n : ℝ)^2 by exact mul_nonneg (Real.exp_nonneg _) (sq_nonneg _)) using 1; ring
   refine hfourth.trans ?_
   convert mul_le_mul_of_nonneg_right hc.le
     (show 0 ≤ D_val 2 m * (n : ℝ)^2 / Real.log n by
-      exact div_nonneg (mul_nonneg (Real.exp_nonneg _) (sq_nonneg _)) hlog.le) using 1 <;> ring
+      exact div_nonneg (mul_nonneg (Real.exp_nonneg _) (sq_nonneg _)) hlog.le) using 1; ring
 
 end Erdos490

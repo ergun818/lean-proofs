@@ -4,7 +4,6 @@ import ErdosProblems.Erdos490.EulerBounds
 noncomputable section
 namespace Erdos490
 open Finset BigOperators
-set_option maxHeartbeats 800000
 
 lemma rectangleCap_ratio (k : ℕ) : rectangleCap k / Y_val 2 k ≤
     (4/5 : ℝ)*geometricRatio^(k+1) := by
@@ -39,7 +38,8 @@ lemma rectangle_log_tail_bound (k : ℕ) (hk : 16 ≤ k) :
     have hm : rectangleMultiplicity k ≤ ⌊rectangleCap k⌋₊ := by
       simp only [rectangleMultiplicity, if_neg (by omega : ¬ k < 16)]
       exact min_le_right _ _
-    exact (Nat.cast_le.mpr hm).trans (Nat.floor_le (by unfold rectangleCap; positivity [geometricRatio_pos]))
+    exact (Nat.cast_le.mpr hm).trans
+      (Nat.floor_le (by unfold rectangleCap; positivity [geometricRatio_pos]))
   have hratio : Y_val 2 k/(Y_val 2 k-1) ≤ (131072/131071 : ℝ) := by
     apply (div_le_iff₀ hden).mpr
     linarith
@@ -58,7 +58,8 @@ lemma geometric_shift_hasSum (K : ℕ) :
     HasSum.mul_left (geometricRatio^K)
       (hasSum_geometric_of_lt_one geometricRatio_pos.le geometricRatio_lt_one)
 
-lemma rectangle_log_summable : Summable (fun k => Real.log (E_val 2 k (rectangleMultiplicity k))) := by
+lemma rectangle_log_summable :
+    Summable (fun k => Real.log (E_val 2 k (rectangleMultiplicity k))) := by
   apply (summable_nat_add_iff 16).mp
   apply ((geometric_shift_hasSum 17).summable.mul_left ((4/5 : ℝ)*131072/131071)).of_nonneg_of_le
   · intro k
