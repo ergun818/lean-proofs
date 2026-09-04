@@ -19,7 +19,7 @@ lemma card_pairCandidate (N : ℕ) :
   simp
 
 lemma exists_mul_four_pair_of_small_complement {N : ℕ} (hN : 64 ≤ N)
-    {A : Finset ℕ} (hA : A ⊆ Finset.Icc 1 N)
+    {A : Finset ℕ} (_hA : A ⊆ Finset.Icc 1 N)
     (hcomp : (((Finset.Icc 1 N \ A).card : ℕ) : ℝ) <
       (1 / 64 : ℝ) * N) :
     ∃ m : ℕ, m ∈ A ∧ 4 * m ∈ A ∧ m ≠ 4 * m := by

@@ -26,7 +26,7 @@ def dyadicPrimeMass (b : ℕ) : ℝ :=
 lemma dyadicPrimeMass_nonneg (b : ℕ) : 0 ≤ dyadicPrimeMass b := by
   exact Finset.sum_nonneg fun _ _ => inv_nonneg.mpr (by positivity)
 
-lemma dyadicPrimeMass_upper_of_count {C : ℝ} (hC : 0 ≤ C) (b : ℕ)
+lemma dyadicPrimeMass_upper_of_count {C : ℝ} (_hC : 0 ≤ C) (b : ℕ)
     (hcount : ((Erdos888.dyadicPrimes (2 ^ b)).card : ℝ) ≤
       C * (((2 ^ b : ℕ) : ℝ) / Erdos888.lambda ((2 ^ b : ℕ) : ℝ))) :
     dyadicPrimeMass b ≤ C / Erdos888.lambda ((2 ^ b : ℕ) : ℝ) := by

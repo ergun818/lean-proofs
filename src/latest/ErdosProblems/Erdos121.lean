@@ -43,7 +43,7 @@ theorem exists_denseSquareTupleBound_of_four_step :
       obtain ⟨c, hc, hbound⟩ := ih
       obtain ⟨c', hc', hbound'⟩ := denseSquareTupleBound_add_two hc hbound
       refine ⟨c', hc', ?_⟩
-      convert hbound' using 1 <;> omega
+      convert hbound' using 1; omega
 
 theorem exists_denseSquareTupleBound_of_five_step :
     ∀ j : ℕ, ∃ c : ℝ, 0 < c ∧ DenseSquareTupleBound (5 + 2 * j) c := by
@@ -56,7 +56,7 @@ theorem exists_denseSquareTupleBound_of_five_step :
       obtain ⟨c, hc, hbound⟩ := ih
       obtain ⟨c', hc', hbound'⟩ := denseSquareTupleBound_add_two hc hbound
       refine ⟨c', hc', ?_⟩
-      convert hbound' using 1 <;> omega
+      convert hbound' using 1; omega
 
 theorem exists_denseSquareTupleBound (k : ℕ) (hk : 4 ≤ k) :
     ∃ c : ℝ, 0 < c ∧ DenseSquareTupleBound k c := by

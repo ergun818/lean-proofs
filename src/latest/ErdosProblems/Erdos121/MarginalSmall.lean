@@ -66,14 +66,17 @@ lemma smallVertexFactor_eq_prod {Y : ℕ} (σ : SmallAssignment Y)
       ∏ q : SmallPrime Y,
         if smallLabelIncident v (σ q) then (q : ℕ) else 1 := by
   fin_cases v <;>
-    simp only [Fin.mk_one, Fin.isValue, Finset.univ_eq_attach, Fin.reduceFinMk, Fin.zero_eta] <;>
+    simp only [k5Tuple, smallEdgeFactor, Finset.univ_eq_attach, Fin.isValue,
+      Fin.succ_zero_eq_one, Fin.succ_one_eq_two, Fin.reduceSucc, Fin.zero_eta,
+      Matrix.cons_val_zero, Fin.mk_one, Matrix.cons_val_one, Fin.reduceFinMk,
+      Matrix.cons_val] <;>
     rw [← Finset.prod_mul_distrib, ← Finset.prod_mul_distrib,
       ← Finset.prod_mul_distrib] <;>
     apply Finset.prod_congr rfl
   all_goals
     intro q hq
-    generalize ha : σ q = a
-    fin_cases a <;> simp [smallLabelIncident, ha]
+    generalize σ q = a
+    fin_cases a <;> simp [smallLabelIncident]
 
 def smallMarginalLocalWeight {Y : ℕ} (v : Fin 5) (q : SmallPrime Y)
     (a : Fin 11) : ℝ :=
@@ -103,7 +106,7 @@ lemma sum_smallMarginalLocalWeight_restricted_le {Y : ℕ} (v : Fin 5)
   by_cases hqn : (q : ℕ) ∣ n
   · fin_cases v <;>
       simp [hqn, smallMarginalLocalWeight, smallLocalWeight,
-        smallLabelIncident, Fin.sum_univ_succ, hq0] <;>
+        smallLabelIncident, Fin.sum_univ_succ] <;>
       ring_nf
     all_goals
       rw [mul_inv_cancel₀ hq0]
@@ -111,7 +114,7 @@ lemma sum_smallMarginalLocalWeight_restricted_le {Y : ℕ} (v : Fin 5)
         (mul_nonneg (inv_nonneg.mpr hqpos.le) (by norm_num))
   · fin_cases v <;>
       simp [hqn, smallMarginalLocalWeight, smallLocalWeight,
-        smallLabelIncident, Fin.sum_univ_succ, hq0] <;>
+        smallLabelIncident, Fin.sum_univ_succ] <;>
       ring_nf <;> rfl
 
 def SmallIncidentCondition {Y : ℕ} (v : Fin 5) (n : ℕ)

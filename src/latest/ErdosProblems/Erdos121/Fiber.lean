@@ -102,7 +102,11 @@ lemma k5Parameter_eq_of_incident_bins_eq {U : ℕ} (hU : 1000000000 ≤ U)
     have hc0 := congrFun hcode 0
     have hc1 := congrFun hcode 1
     have hp := congrArg Fin.val hparity
-    simp [k5SolvedBinsInt, k5FreeBins, k5FiberCode, k5FiberParity] at h0 h2 h3 hc0 hc1 hp
+    simp only [k5SolvedBinsInt, Fin.isValue, k5FreeBins, Nat.cast_add, Nat.cast_mul,
+      Nat.cast_ofNat, Int.natCast_ediv, Matrix.cons_val_zero, Matrix.cons_val,
+      Matrix.cons_val_one, neg_sub, k5FiberCode, Nat.succ_eq_add_one, Nat.reduceAdd,
+      Fin.zero_eta, Matrix.cons_val', Matrix.cons_val_fin_one, k5FiberParity, zero_le,
+      ↓reduceIte] at h0 h2 h3 hc0 hc1 hp
     have ht0 : t 0 = t' 0 := hc0
     have ht1 : t 1 = t' 1 := hc1
     have ht2 : t 2 = t' 2 := by omega
@@ -116,7 +120,12 @@ lemma k5Parameter_eq_of_incident_bins_eq {U : ℕ} (hU : 1000000000 ≤ U)
     have hc0 := congrFun hcode 0
     have hc1 := congrFun hcode 1
     have hp := congrArg Fin.val hparity
-    simp [k5SolvedBinsInt, k5FreeBins, k5FiberCode, k5FiberParity] at h4 h5 h6 hc0 hc1 hp
+    simp only [k5SolvedBinsInt, Fin.isValue, k5FreeBins, Nat.cast_add, Nat.cast_mul,
+      Nat.cast_ofNat, Int.natCast_ediv, Matrix.cons_val_zero, Matrix.cons_val,
+      Matrix.cons_val_one, neg_sub, add_right_inj, mul_eq_mul_left_iff, Nat.cast_inj,
+      OfNat.ofNat_ne_zero, or_false, k5FiberCode, Nat.succ_eq_add_one, Nat.reduceAdd,
+      Fin.mk_one, Matrix.cons_val', Matrix.cons_val_fin_one, k5FiberParity, Nat.one_le_ofNat,
+      ↓reduceIte] at h4 h5 h6 hc0 hc1 hp
     have ht0 : t 0 = t' 0 := by omega
     have ht1 : t 1 = t' 1 := by omega
     have ht2 : t 2 = t' 2 := hc0
@@ -130,7 +139,12 @@ lemma k5Parameter_eq_of_incident_bins_eq {U : ℕ} (hU : 1000000000 ≤ U)
     have hc0 := congrFun hcode 0
     have hc1 := congrFun hcode 1
     have hp := congrArg Fin.val hparity
-    simp [k5SolvedBinsInt, k5FreeBins, k5FiberCode, k5FiberParity] at h4 h7 h8 hc0 hc1 hp
+    simp only [k5SolvedBinsInt, Fin.isValue, k5FreeBins, Nat.cast_add, Nat.cast_mul,
+      Nat.cast_ofNat, Int.natCast_ediv, Matrix.cons_val_zero, Matrix.cons_val,
+      Matrix.cons_val_one, neg_sub, add_right_inj, mul_eq_mul_left_iff, Nat.cast_inj,
+      OfNat.ofNat_ne_zero, or_false, k5FiberCode, Nat.succ_eq_add_one, Nat.reduceAdd,
+      Fin.reduceFinMk, Matrix.cons_val', Matrix.cons_val_fin_one, k5FiberParity, Std.le_refl,
+      ↓reduceIte] at h4 h7 h8 hc0 hc1 hp
     have ht0 : t 0 = t' 0 := hc0
     have ht1 : t 1 = t' 1 := hc1
     have ht2 : t 2 = t' 2 := by omega
@@ -143,7 +157,11 @@ lemma k5Parameter_eq_of_incident_bins_eq {U : ℕ} (hU : 1000000000 ≤ U)
     have h9 := hbin 9 (by simp [k5Incident, k5EdgeEnds])
     have hc0 := congrFun hcode 0
     have hc1 := congrFun hcode 1
-    simp [k5SolvedBinsInt, k5FreeBins, k5FiberCode] at h5 h7 h9 hc0 hc1
+    simp only [k5SolvedBinsInt, Fin.isValue, k5FreeBins, Nat.cast_add, Nat.cast_mul,
+      Nat.cast_ofNat, Int.natCast_ediv, Matrix.cons_val_zero, Matrix.cons_val,
+      Matrix.cons_val_one, neg_sub, add_right_inj, mul_eq_mul_left_iff, Nat.cast_inj,
+      OfNat.ofNat_ne_zero, or_false, k5FiberCode, Nat.succ_eq_add_one, Nat.reduceAdd,
+      Fin.reduceFinMk, Matrix.cons_val', Matrix.cons_val_fin_one] at h5 h7 h9 hc0 hc1
     have ht0 : t 0 = t' 0 := by omega
     have ht1 : t 1 = t' 1 := hc0
     have ht2 : t 2 = t' 2 := by omega
@@ -156,7 +174,11 @@ lemma k5Parameter_eq_of_incident_bins_eq {U : ℕ} (hU : 1000000000 ≤ U)
     have h9 := hbin 9 (by simp [k5Incident, k5EdgeEnds])
     have hc0 := congrFun hcode 0
     have hc1 := congrFun hcode 1
-    simp [k5SolvedBinsInt, k5FreeBins, k5FiberCode] at h6 h8 h9 hc0 hc1
+    simp only [k5SolvedBinsInt, Fin.isValue, k5FreeBins, Nat.cast_add, Nat.cast_mul,
+      Nat.cast_ofNat, Int.natCast_ediv, Matrix.cons_val_zero, Matrix.cons_val,
+      Matrix.cons_val_one, neg_sub, add_right_inj, mul_eq_mul_left_iff, Nat.cast_inj,
+      OfNat.ofNat_ne_zero, or_false, k5FiberCode, Nat.succ_eq_add_one, Nat.reduceAdd,
+      Fin.reduceFinMk, Matrix.cons_val', Matrix.cons_val_fin_one] at h6 h8 h9 hc0 hc1
     have ht0 : t 0 = t' 0 := hc0
     have ht1 : t 1 = t' 1 := by omega
     have ht2 : t 2 = t' 2 := hc1
@@ -174,8 +196,7 @@ def k5BoundedFiberCode (U : ℕ) (v : Fin 5) (t : K5Parameter U) :
   ⟨k5FiberCode v t.1 j, by
     have ht := mem_k5ParameterBox.mp t.2
     fin_cases v <;> fin_cases j <;>
-      simp only [k5FiberCode, Matrix.cons_val_zero, Matrix.cons_val_one,
-        Matrix.head_cons, Matrix.tail_cons, Fin.isValue] <;>
+      simp only [k5FiberCode, Fin.isValue] <;>
       exact Nat.lt_succ_of_le (ht _)⟩
 
 /-- The fibre over the four incident bins of a reference parameter. -/

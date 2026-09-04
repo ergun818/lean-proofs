@@ -14,7 +14,7 @@ noncomputable section
 lemma card_k5Parameter (U : ℕ) :
     Fintype.card (K5Parameter U) = (U / 100000000 + 1) ^ 5 := by
   rw [Fintype.card_coe]
-  simp [K5Parameter, k5ParameterBox, Fintype.card_piFinset,
+  simp [k5ParameterBox, Fintype.card_piFinset,
     Finset.prod_const]
 
 lemma sum_k5ControlledAssignment_weight (U : ℕ) :

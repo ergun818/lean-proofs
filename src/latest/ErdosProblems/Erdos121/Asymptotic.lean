@@ -40,7 +40,7 @@ lemma log_smallCutoff (U : ℕ) :
     Real.log (smallCutoff U : ℝ) =
       ((U / 1000000 : ℕ) : ℝ) * Real.log 2 := by
   rw [smallCutoff]
-  convert Real.log_pow (2 : ℝ) (U / 1000000) using 1 <;> norm_num
+  convert Real.log_pow (2 : ℝ) (U / 1000000) using 1; norm_num
 
 lemma log_smallCutoff_lower {U : ℕ} (hU : 4000000 ≤ U) :
     (U : ℝ) ≤ 4000000 * Real.log (smallCutoff U : ℝ) := by
@@ -61,7 +61,7 @@ lemma scale_le_parameter (U : ℕ) :
 private lemma real_coefficient_comparison
     {u r L n E A : ℝ}
     (hu : 0 < u) (hr : 0 < r) (hL : 0 < L) (hn : 0 < n)
-    (hE : 0 ≤ E) (hA : 0 ≤ A)
+    (hE : 0 ≤ E) (_hA : 0 ≤ A)
     (hur : u ≤ 100000000 * r) (huL : u ≤ 4000000 * L) :
     2 * r ^ 2 * (800 * A / u) ^ 6 / n * (E / L) ≤
       (4 * E * (800 * A) ^ 6 * 200 ^ 10 * 4000000 *

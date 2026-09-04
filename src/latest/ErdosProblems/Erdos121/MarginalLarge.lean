@@ -71,7 +71,7 @@ lemma k5IncidentChoice_eq {U : ℕ} (hU : 1000000000 ≤ U)
   rw [k5IncidentLargeProduct, hprime.prime.dvd_finsetProd_iff] at hdvdRight
   obtain ⟨f, _hf, hdiv⟩ := hdvdRight
   by_cases hfinc : k5Incident v f
-  · simp [hfinc] at hdiv
+  · rw [if_pos hfinc] at hdiv
     have hpfPrime := k5LargePrime_prime (p' f)
     have heq : (p e : ℕ) = (p' f : ℕ) := by
       rcases (Nat.dvd_prime hpfPrime).mp hdiv with hone | heq
@@ -80,7 +80,7 @@ lemma k5IncidentChoice_eq {U : ℕ} (hU : 1000000000 ≤ U)
     have hef : e = f := k5LargePrime_edge_eq hU (p e) (p' f) heq
     subst f
     exact heq
-  · simp [hfinc] at hdiv
+  · rw [if_neg hfinc, Nat.dvd_one] at hdiv
     exact (hprime.ne_one hdiv).elim
 
 lemma k5IncidentBins_eq {U : ℕ} (hU : 1000000000 ≤ U)
@@ -437,10 +437,10 @@ lemma sum_k5LargeChoice_output_eq_le {U n : ℕ}
         · rintro rfl
           exact ha₀
       simp_rw [hiff]
-      simpa [k5IncidentChoiceWeight_of_output a₀ ha₀, d]
+      simp [k5IncidentChoiceWeight_of_output a₀ ha₀, d]
     · have hnone : ∀ a : I, d * k5IncidentChoiceProduct a ≠ n := by
         simpa only [not_exists] using hex
-      simp only [ge_iff_le]
+      simp only [hnone, if_false, Finset.sum_const_zero]
       positivity
   have hnon := sum_k5NonincidentChoiceWeight_le hU hprime σ t v
   exact mul_le_mul hincident hnon
@@ -592,7 +592,7 @@ theorem k5Marginal_le {U n : ℕ} (hn : 0 < n)
           change k5Tuple (smallEdgeFactor σ.1) v *
             k5Tuple (fun e => (p e : ℕ)) v = n
           exact hout
-        simp [hnone, smallAssignmentWeight_nonneg]
+        simp [hnone]
     _ = C * ∑ σ : K5ControlledAssignment U,
           if SmallIncidentCondition v n σ.1 then
             smallAssignmentWeight σ.1 *

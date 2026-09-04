@@ -166,8 +166,7 @@ lemma k5LargeVertexProduct_lower {U : ℕ} (ω : K5Outcome U) (v : Fin 5) :
       k5LargeVertexProduct ω v := by
   rw [pow_k5BinRow]
   fin_cases v <;>
-    simp only [k5Tuple, Matrix.cons_val_zero, Matrix.cons_val_one,
-      Matrix.head_cons, Matrix.tail_cons, Fin.isValue, k5LargeVertexProduct] <;>
+    simp only [k5Tuple, Fin.isValue, k5LargeVertexProduct] <;>
     apply mul_four_lt <;>
     first | positivity |
       exact (Erdos888.mem_dyadicPrimes.mp (ω.2.2 _).property).2.1
@@ -177,8 +176,7 @@ lemma k5LargeVertexProduct_upper {U : ℕ} (ω : K5Outcome U) (v : Fin 5) :
       2 ^ (k5BinRow (k5OutcomeBins U ω.1 ω.2.1) v + 4) := by
   rw [pow_k5BinRow_add_four]
   fin_cases v <;>
-    simp only [k5Tuple, Matrix.cons_val_zero, Matrix.cons_val_one,
-      Matrix.head_cons, Matrix.tail_cons, Fin.isValue, k5LargeVertexProduct] <;>
+    simp only [k5Tuple, Fin.isValue, k5LargeVertexProduct] <;>
     apply mul_four_le <;>
     simpa [pow_succ, Nat.mul_comm] using
       (Erdos888.mem_dyadicPrimes.mp (ω.2.2 _).property).2.2

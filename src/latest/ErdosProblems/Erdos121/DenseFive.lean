@@ -134,7 +134,7 @@ theorem denseSquareTupleBound_five :
           obtain ⟨ω, hω, heq⟩ :=
             FiniteWeight.exists_of_mass_pos hmassPos
           have hnrelNat : N < 2 ^ 409 * n := by
-            simpa [U, heq] using
+            simpa only [heq] using
               (k5_window_relative_to_N hN hlog ω v).2
           have hnrel : (N : ℝ) ≤ (2 ^ 409 : ℝ) * n := by
             exact_mod_cast hnrelNat.le
@@ -150,7 +150,8 @@ theorem denseSquareTupleBound_five :
                 k5MarginalConstant * (N : ℝ) ≤
                     k5MarginalConstant * ((2 ^ 409 : ℝ) * n) :=
                   mul_le_mul_of_nonneg_left hnrel k5MarginalConstant_pos.le
-                _ = k5MarginalConstant * (2 ^ 409 : ℝ) * n := by ring
+                _ = k5MarginalConstant * (2 ^ 409 : ℝ) * n :=
+                  (mul_assoc _ _ _).symm
       _ = ((V \ A).card : ℝ) *
           (D / N * W.mass (fun _ => True)) := by
         simp [nsmul_eq_mul]
@@ -181,11 +182,17 @@ theorem denseSquareTupleBound_five :
       apply hsum.trans_eq
       simp only [Finset.sum_const, Finset.card_univ, Fintype.card_fin,
         Nat.cast_ofNat, nsmul_eq_mul]
-      ring
+      simp only [mul_div_assoc, mul_assoc]
     have hm := mul_lt_mul_of_pos_right hratio htotalPos
     have hstrict : 5 * (((V \ A).card : ℝ) * D / N *
         W.mass (fun _ => True)) < W.mass (fun _ => True) := by
-      nlinarith
+      calc
+        _ < 5 * ((1 / 10 : ℝ) * W.mass (fun _ => True)) :=
+          mul_lt_mul_of_pos_left hm (by norm_num)
+        _ = (1 / 2 : ℝ) * W.mass (fun _ => True) := by
+          rw [← mul_assoc, show (5 : ℝ) * (1 / 10) = 1 / 2 by norm_num]
+        _ < W.mass (fun _ => True) :=
+          mul_lt_of_lt_one_left htotalPos (by norm_num)
     exact hsum'.trans_lt hstrict
   exact exists_squareProduct_of_weightedTuple W k5OutcomeTuple
     (fun _ => True) (fun ω hω hgood => k5Outcome_square ω) A hfailure

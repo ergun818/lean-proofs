@@ -154,7 +154,7 @@ lemma k5SolvedBins_row_bounds {U : ℕ} (hU : 1000000000 ≤ U)
   have hcast : (k5BinRow (k5SolvedBins U s t) v : ℤ) =
       k5BinRowInt (k5SolvedBinsInt s (k5FreeBins U t)) v := by
     fin_cases v <;>
-      simp [k5BinRow, k5BinRowInt, k5SolvedBins, Int.toNat_of_nonneg, hn]
+      simp [k5BinRow, k5BinRowInt, k5SolvedBins, hn]
   have hi := k5SolvedBinsInt_row_bounds s (k5FreeBins U t) v
   have hs2 : 2 ≤ s v := by
     have hl := hsLower v

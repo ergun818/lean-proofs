@@ -227,7 +227,7 @@ lemma smallControlledMass_nonneg (Y : ℕ) (T : ℝ) :
     0 ≤ smallControlledMass Y T := by
   exact Finset.sum_nonneg fun σ hσ => smallAssignmentWeight_nonneg σ
 
-lemma small_tail_mul_threshold_le_moment {Y : ℕ} {T : ℝ} (hT : 0 ≤ T) :
+lemma small_tail_mul_threshold_le_moment {Y : ℕ} {T : ℝ} (_hT : 0 ≤ T) :
     T * (∑ σ : SmallAssignment Y with T < smallAssignedLog σ,
       smallAssignmentWeight σ) ≤
       ∑ σ : SmallAssignment Y,
@@ -304,7 +304,7 @@ theorem eventually_smallControlledMass_ge_half :
   have hlogY : Real.log (Y : ℝ) =
       ((U / 1000000 : ℕ) : ℝ) * Real.log 2 := by
     dsimp [Y, smallCutoff]
-    convert Real.log_pow (2 : ℝ) (U / 1000000) using 1 <;> norm_num
+    convert Real.log_pow (2 : ℝ) (U / 1000000) using 1; norm_num
   have hE : E ≤ (U : ℝ) * Real.log 2 / 10000 := by
     have hceil : 10000 * max E 0 / Real.log 2 ≤
         (Nat.ceil (10000 * max E 0 / Real.log 2) : ℝ) := Nat.le_ceil _
