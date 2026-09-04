@@ -82,7 +82,7 @@ theorem intervalSieve_siftedSum (z A U : ℕ) :
 
 /-- Multiples of `d` in `(A,U]` are one modular preimage. -/
 theorem intervalSieve_multSum_eq_card_modularPreimage
-    {z A U d : ℕ} (hd : 0 < d) :
+    {z A U d : ℕ} :
     (intervalSieve z A U).multSum d =
       ((modularPreimageIoc A U d {0}).card : ℝ) := by
   classical
@@ -118,7 +118,7 @@ theorem intervalSieve_abs_rem_le_two
   change
     |(intervalSieve z A U).multSum d -
       binomialSieveNu 1 d * ((Finset.Ioc A U).card : ℝ)| ≤ 2
-  rw [intervalSieve_multSum_eq_card_modularPreimage hdPos]
+  rw [intervalSieve_multSum_eq_card_modularPreimage]
   rw [binomialSieveNu_one_squarefree hsq]
   have hcard : (Finset.Ioc A U).card = U - A := by simp
   rw [hcard]
@@ -282,12 +282,12 @@ theorem multipleSum_eq_main_add_signedRemainder
   rw [BoundingSieve.multSum_eq_main_err]
   ring
 
-/-- The total `L¹` loss of replacing exact roughness by an even Brun
-truncation is controlled by the two adjacent omitted tails and explicit
-interval endpoints. -/
+/-- The signed loss of replacing exact roughness by a Brun truncation is
+controlled by the two omitted tails and explicit interval endpoints. The
+upper cutoff can have either parity. -/
 theorem sum_upperApproximation_sub_roughIndicator_le
     {z A U Lminus Lplus : ℕ} (hAU : A ≤ U) (hz : 1 ≤ z)
-    (hminus : Odd Lminus) (hplus : Even Lplus) :
+    (hminus : Odd Lminus) :
     (∑ n ∈ Finset.Ioc A U,
         (upperApproximation z Lplus n - roughIndicator z n)) ≤
       ((Finset.Ioc A U).card : ℝ) *
@@ -412,7 +412,7 @@ theorem norm_sum_upperApproximation_sub_roughIndicator_mul_le
         Real.norm_of_nonneg (hnonneg n)]
       exact mul_le_of_le_one_right (hnonneg n) (hphase n hn)
     _ ≤ _ := sum_upperApproximation_sub_roughIndicator_le
-      hAU hz hminus hplus
+      hAU hz hminus
 
 end RoughBrun
 
