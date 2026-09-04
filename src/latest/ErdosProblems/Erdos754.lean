@@ -23,7 +23,7 @@ open Finset
 namespace Erdos754
 
 universe u
-variable {V : Type u} [Fintype V] [DecidableEq V]
+variable {V : Type u}
 
 /-! ## Finite averages used by dependent random choice -/
 
@@ -52,7 +52,7 @@ lemma sum_indicator_eq_card_filter (s : Finset V) (p : V → Prop) [DecidablePre
         simp [ha, hp]
         ring
       · rw [indicator_false hp]
-        simp [ha, hp]
+        simp [hp]
 
 noncomputable def samples (t : ℕ) (A : Finset V) : Finset (Fin t → V) :=
   Fintype.piFinset fun _ => A
@@ -231,6 +231,8 @@ noncomputable abbrev commonNeighbors (G : SimpleGraph V) [DecidableRel G.Adj]
     {ι : Type*} [Fintype ι] (q : ι → V) (B : Finset V) : Finset V :=
   Erdos754.commonNeighbors G q B
 end FiniteDefect
+
+variable [Fintype V]
 
 lemma expect_eq01 (hV : Nonempty V) :
     (𝔼 q ∈ FiniteDefect.samples 3 (Finset.univ : Finset V),
@@ -429,6 +431,7 @@ lemma exists_injective_commonNeighbors
 def neighborsIn (G : SimpleGraph V) [DecidableRel G.Adj] (S : Finset V) (v : V) : Finset V :=
   S.filter fun w => G.Adj v w
 
+omit [Fintype V] in
 lemma exists_injective_fin3_of_card_ge_three (S : Finset V) (hS : 3 ≤ S.card) :
     ∃ f : Fin 3 → V, Function.Injective f ∧ ∀ i, f i ∈ S := by
   classical
@@ -474,10 +477,12 @@ def Saturated33 (G : SimpleGraph V) : Prop :=
     (∀ i j, G.Adj (f i) (g j)) →
     ∀ x y, (∀ j, G.Adj x (g j)) → (∀ i, G.Adj y (f i)) → G.Adj x y
 
+omit [Fintype V] in
 lemma card_neighborsIn_le_card (G : SimpleGraph V) [DecidableRel G.Adj]
     (S : Finset V) (v : V) : (neighborsIn G S v).card ≤ S.card :=
   Finset.card_filter_le _ _
 
+omit [Fintype V] in
 lemma card_neighborsIn_le_two_of_not_three
     (G : SimpleGraph V) [DecidableRel G.Adj] (S : Finset V) (v : V)
     (h : ¬ 3 ≤ (neighborsIn G S v).card) :
@@ -495,10 +500,9 @@ lemma sum_neighborsIn_le
           intro v hv
           by_cases hvA : v ∈ A
           · simp [hvA, card_neighborsIn_le_card]
-          · simp [hvA]
+          · simp only [hvA, ↓reduceIte]
             exact card_neighborsIn_le_two_of_not_three G S v (by simpa [hA v] using hvA)
     _ = A.card * S.card + ((Finset.univ.filter fun v : V => v ∉ A).card) * 2 := by
-          change (∑ v ∈ (Finset.univ : Finset V), if v ∈ A then S.card else 2) = _
           rw [Finset.sum_ite]
           simp [mul_comm]
     _ ≤ A.card * S.card + 2 * Fintype.card V := by
@@ -632,6 +636,7 @@ lemma low_degree_of_saturated33
       exact_mod_cast hcardunion
     linarith
 
+omit [Fintype V] in
 lemma saturated33_induce
     (G : SimpleGraph V) (S : Set V) (hSat : Saturated33 G) :
     Saturated33 (G.induce S) := by
@@ -665,13 +670,7 @@ theorem card_edgeFinset_le_quarter_add_linear_of_saturated33 :
         let J := G.induce S
         have hcardS : Fintype.card S = n - 1 := by
           change Fintype.card {x : V // x ≠ v} = n - 1
-          have hone : Fintype.card {x : V // x = v} = 1 := by
-            let e : {x : V // x = v} ≃ PUnit.{0} := {
-              toFun _ := PUnit.unit
-              invFun _ := ⟨v, rfl⟩
-              left_inv x := by apply Subtype.ext; exact x.property.symm
-              right_inv _ := rfl }
-            simpa using Fintype.card_congr e
+          have hone : Fintype.card {x : V // x = v} = 1 := by simp
           calc
             Fintype.card {x : V // x ≠ v} =
                 Fintype.card V - Fintype.card {x : V // x = v} := by
@@ -709,7 +708,7 @@ theorem card_edgeFinset_le_quarter_add_linear_of_saturated33 :
         rw [hn0] at he
         norm_num at he
         subst G
-        simp [hn0]
+        simp
 
 /-! ## Euclidean rectangle completion -/
 
@@ -1065,7 +1064,7 @@ lemma same_le_of_fiber_bounds {W : Type*} [Fintype W]
 def IsFavorite {W : Type*} (p : W → E4) (c : W → ℝ) (x y : W) : Prop :=
   x ≠ y ∧ dist (p x) (p y) = c x
 
-lemma fiber_directed_bound {W : Type*} [Fintype W]
+lemma fiber_directed_bound {W : Type*}
     (p : W → E4) (hp : Function.Injective p) (c : W → ℝ) (hc : ∀ x, 0 < c x)
     (F : Finset W) (t : ℝ) (hFt : ∀ x ∈ F, c x = t) :
     ∑ x ∈ F, ∑ y ∈ F, DRC.indicator (IsFavorite p c x y) ≤
@@ -1100,7 +1099,7 @@ lemma fiber_directed_bound {W : Type*} [Fintype W]
         simp [G, distanceGraph, IsFavorite]
       · simp [G, distanceGraph, q, IsFavorite, hxy, hcx]
     rw [hsum, hdir]
-    have hcard : Fintype.card F = F.card := by simpa using Fintype.card_coe F
+    have hcard : Fintype.card F = F.card := Fintype.card_coe F
     rw [hcard] at hG
     nlinarith
   · have hF0 : F = ∅ := Finset.not_nonempty_iff_eq_empty.mp hF
