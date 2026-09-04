@@ -9,28 +9,35 @@ open Finset
 
 attribute [local instance] Classical.propDecidable
 
-theorem subtype_preimage_ncard_le {V : Type*} [Fintype V] (S T : Set V) :
+theorem subtype_preimage_ncard_le {V : Type*} [Finite V] (S T : Set V) :
     (Subtype.val ⁻¹' T : Set S).ncard ≤ T.ncard := by
+  classical
+  let := Fintype.ofFinite V
   rw [← Set.ncard_image_of_injective _ Subtype.val_injective]
   apply Set.ncard_le_ncard (t := T) ?_ (Set.toFinite T)
   rintro v ⟨w, hw, rfl⟩
   exact hw
 
-theorem induced_neighbor_ncard_le {V : Type*} [Fintype V]
+theorem induced_neighbor_ncard_le {V : Type*} [Finite V]
     (G : _root_.SimpleGraph V) (S : Set V) (v : S) :
-    ((G.induce S).neighborSet v).ncard ≤ (G.neighborSet v.1).ncard :=
-  subtype_preimage_ncard_le S (G.neighborSet v.1)
+    ((G.induce S).neighborSet v).ncard ≤ (G.neighborSet v.1).ncard := by
+  classical
+  let := Fintype.ofFinite V
+  exact subtype_preimage_ncard_le S (G.neighborSet v.1)
 
-theorem induced_common_neighbor_ncard_le {V : Type*} [Fintype V]
+theorem induced_common_neighbor_ncard_le {V : Type*} [Finite V]
     (G : _root_.SimpleGraph V) (S : Set V) (v w : S) :
     ((G.induce S).neighborSet v ∩ (G.induce S).neighborSet w).ncard ≤
-      (G.neighborSet v.1 ∩ G.neighborSet w.1).ncard :=
-  subtype_preimage_ncard_le S (G.neighborSet v.1 ∩ G.neighborSet w.1)
+      (G.neighborSet v.1 ∩ G.neighborSet w.1).ncard := by
+  classical
+  let := Fintype.ofFinite V
+  exact subtype_preimage_ncard_le S (G.neighborSet v.1 ∩ G.neighborSet w.1)
 
-theorem induced_finset_neighbor_ncard {V : Type*} [Fintype V]
+theorem induced_finset_neighbor_ncard {V : Type*} [Finite V]
     (G : _root_.SimpleGraph V) (S : Finset V) (v : (S : Set V)) :
     ((G.induce (S : Set V)).neighborSet v).ncard = (S.filter (G.Adj v.1)).card := by
   classical
+  let := Fintype.ofFinite V
   let e : (G.induce (S : Set V)).neighborSet v ≃ ↥(S.filter (G.Adj v.1)) :=
     { toFun := fun w ↦ ⟨w.1.1, mem_filter.mpr ⟨w.1.2, w.2⟩⟩
       invFun := fun w ↦ ⟨⟨w.1, (mem_filter.mp w.2).1⟩, (mem_filter.mp w.2).2⟩

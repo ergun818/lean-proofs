@@ -9,7 +9,8 @@ variable {V I C : Type*} [Fintype V]
 
 attribute [local instance] Classical.propDecidable
 
-theorem exists_extension_covering_active_colors (H J : SetHypergraph V) (hJH : J ⊆ H)
+omit [Fintype V] in
+theorem exists_extension_covering_active_colors [Finite V] (H J : SetHypergraph V) (hJH : J ⊆ H)
     (color : J.EdgeColoring C) (p : ℕ) (index : Fin p ↪ C)
     (U Y : Set V) (hUY : Disjoint U Y) (X : I → Set V)
     (hX : Pairwise fun i j ↦ Disjoint (X i) (X j)) (hXcover : ∀ v, ∃ i, v ∈ X i)
@@ -28,6 +29,7 @@ theorem exists_extension_covering_active_colors (H J : SetHypergraph V) (hJH : J
       (∀ i, U ⊆ J'.coveredVertices {e | color' e = index i}) ∧
       ∀ a, J.coveredVertices {e | color e = a} ⊆ J'.coveredVertices {e | color' e = a} := by
   classical
+  let := Fintype.ofFinite V
   let G := (H \ J).twoGraph
   let A : Fin p → Set V := fun i ↦ U \ J.coveredVertices {e | color e = index i}
   have hused : ∀ u ∈ U, ((⊥ : _root_.SimpleGraph V).neighborSet u).ncard ≤ 0 := by

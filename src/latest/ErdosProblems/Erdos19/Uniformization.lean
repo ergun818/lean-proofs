@@ -42,7 +42,7 @@ lemma mem_padded_support_inl (H : FiniteHypergraph V E) (r : ℕ) (e : E) (v : V
 lemma mem_padded_support_inr (H : FiniteHypergraph V E) (r : ℕ) (e f : E) (i : ℕ) :
     Sum.inr (f, i) ∈ (padded H r).support e ↔
       e = f ∧ i < r - (H.support e).card := by
-  simp [padded, and_left_comm, and_assoc, and_comm]
+  simp [padded, and_assoc, and_comm]
 
 @[simp]
 lemma mem_padded_vertexSet_inl (H : FiniteHypergraph V E) (r : ℕ) (v : V) :
@@ -91,14 +91,18 @@ lemma padded_edgeDegree_inr_le_one (H : FiniteHypergraph V E) (r : ℕ) (e : E) 
           exact Finset.mem_singleton.mpr h.1
     _ = 1 := Finset.card_singleton e
 
+omit [DecidableEq E] in
 lemma pairDegree_le_degree_left (H : FiniteHypergraph V E) (u v : V) :
     H.edgePairDegree u v ≤ H.edgeDegree u := by
+  classical
   apply Finset.card_le_card
   intro e he
   exact Finset.mem_filter.mpr ⟨Finset.mem_univ _, (Finset.mem_filter.mp he).2.1⟩
 
+omit [DecidableEq E] in
 lemma pairDegree_le_degree_right (H : FiniteHypergraph V E) (u v : V) :
     H.edgePairDegree u v ≤ H.edgeDegree v := by
+  classical
   apply Finset.card_le_card
   intro e he
   exact Finset.mem_filter.mpr ⟨Finset.mem_univ _, (Finset.mem_filter.mp he).2.2⟩

@@ -11,7 +11,8 @@ attribute [local instance] Classical.propDecidable
 
 variable {V I : Type*} [Fintype V]
 
-theorem exists_edgeLabeling_of_matching_cover (G : _root_.SimpleGraph V)
+omit [Fintype V] in
+theorem exists_edgeLabeling_of_matching_cover [Finite V] (G : _root_.SimpleGraph V)
     (F : I → _root_.SimpleGraph V)
     (hdegree : ∀ i v, ((F i).neighborSet v).ncard ≤ 1)
     (hcover : ∀ x y, G.Adj x y → ∃ i, (F i).Adj x y) :
@@ -20,6 +21,7 @@ theorem exists_edgeLabeling_of_matching_cover (G : _root_.SimpleGraph V)
         c.get x y hxy = c.get x z hxz → y = z) ∧
       (∀ e : G.edgeSet, e.1 ∈ (F (c e)).edgeSet) := by
   classical
+  let := Fintype.ofFinite V
   have hex : ∀ e : G.edgeSet, ∃ i, e.1 ∈ (F i).edgeSet := by
     rintro ⟨e, he⟩
     induction e using Sym2.inductionOn with
@@ -37,7 +39,8 @@ theorem exists_edgeLabeling_of_matching_cover (G : _root_.SimpleGraph V)
   rw [← heq] at hz
   exact (Set.ncard_le_one_iff_subsingleton.mp (hdegree _ x)) hy hz
 
-theorem exists_edgeLabeling_completing_matchings [Fintype I]
+omit [Fintype V] in
+theorem exists_edgeLabeling_completing_matchings [Finite V] [Fintype I]
     (G : _root_.SimpleGraph V) (M : I → G.Subgraph)
     (hM : ∀ i, (M i).IsMatching)
     (hdis : Pairwise (fun i j ↦ Disjoint (M i).spanningCoe (M j).spanningCoe)) (D : ℕ)
@@ -48,6 +51,7 @@ theorem exists_edgeLabeling_completing_matchings [Fintype I]
         c.get x y hxy = c.get x z hxz → y = z) ∧
       (∀ (e : G.edgeSet) (i : I), c e = Sum.inl i → e.1 ∈ (M i).edgeSet) := by
   classical
+  let := Fintype.ofFinite V
   let U := ⨆ i, (M i).spanningCoe
   let R := G \ U
   let : DecidableRel R.Adj := fun x y ↦ Classical.propDecidable (R.Adj x y)

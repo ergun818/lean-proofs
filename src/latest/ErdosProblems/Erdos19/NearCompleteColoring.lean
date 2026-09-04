@@ -127,7 +127,7 @@ theorem eventually_color_pairComplete_of_few_missing_pairs :
     have h := hMb v
     simp only [Fintype.card_fin] at h
     omega
-  have hcolor := H.edgeColorable_of_avoiding_matching_family H.largePart (fun _ h ↦ h.1)
+  have hcolor := H.edgeColorable_of_avoiding_matching_family H.largePart
     hrest m (n - m - 1) color M (fun i ↦ (hM i).1) hMd havoid hMbudget
   have hpalette : m + (n - m - 1 + 1) = n := by omega
   simpa only [hpalette] using hcolor
@@ -159,7 +159,8 @@ theorem eventually_color_of_few_missing_pairs :
   have hJmissing : K * H.pairCompletion.missingOrderedPairs.card < n ^ 2 :=
     (Nat.mul_le_mul_left K (Finset.card_le_card
       (missingOrderedPairs_antitone H.subset_pairCompletion))).trans_lt hmissing
-  exact (hN n hn H.pairCompletion hJlinear H.pairCompletion_isPairComplete hJsize hJmissing).of_subset
+  exact (hN n hn H.pairCompletion hJlinear H.pairCompletion_isPairComplete hJsize
+    hJmissing).of_subset
     H.subset_pairCompletion
 
 theorem eventually_color_of_small_missing_pair_density :

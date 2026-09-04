@@ -8,6 +8,7 @@ open Finset
 
 variable {V K : Type*} [Fintype V]
 
+omit [Fintype V] in
 /-- A change restricted to one star is proper if it is proper at the center,
 and each changed color was missing at the other endpoint. -/
 theorem proper_of_star_recoloring (G : SimpleGraph V) (C D : PartialColoring V K)
@@ -50,10 +51,14 @@ variable {G : SimpleGraph V} {C : PartialColoring V K} {x y : V} {n : ℕ}
 noncomputable def recolorWith (F : Fan G C x y n) (values : Fin (n + 1) → Option K) :
     PartialColoring V K := Function.extend (fun i ↦ s(x, F.vert i)) values C
 
-theorem recolorWith_spoke (F : Fan G C x y n) (values : Fin (n + 1) → Option K)
-    (i : Fin (n + 1)) : F.recolorWith values s(x, F.vert i) = values i :=
-  F.edge_injective.extend_apply values C i
+omit [Fintype V] in
+theorem recolorWith_spoke [Finite V] (F : Fan G C x y n) (values : Fin (n + 1) → Option K)
+    (i : Fin (n + 1)) : F.recolorWith values s(x, F.vert i) = values i := by
+  classical
+  let := Fintype.ofFinite V
+  exact F.edge_injective.extend_apply values C i
 
+omit [Fintype V] in
 theorem recolorWith_outside (F : Fan G C x y n) (values : Fin (n + 1) → Option K)
     (u v : V) (hux : u ≠ x) (hvx : v ≠ x) :
     F.recolorWith values s(u, v) = C s(u, v) := by
@@ -63,24 +68,29 @@ theorem recolorWith_outside (F : Fan G C x y n) (values : Fin (n + 1) → Option
   · exact hux hi.1.symm
   · exact hvx hi.1.symm
 
-theorem recolorWith_nonspoke (F : Fan G C x y n) (values : Fin (n + 1) → Option K)
+omit [Fintype V] in
+theorem recolorWith_nonspoke [Finite V] (F : Fan G C x y n) (values : Fin (n + 1) → Option K)
     (v : V) (hv : v ∉ Set.range F.vert) : F.recolorWith values s(x, v) = C s(x, v) := by
+  classical
+  let := Fintype.ofFinite V
   apply Function.extend_apply'
   rintro ⟨i, hi⟩
   rcases Sym2.eq_iff.mp hi with hi | hi
   · exact hv ⟨i, hi.2⟩
   · exact F.center_ne i hi.2.symm
 
+omit [Fintype V] in
 /-- Three local checks suffice for simultaneously replacing every fan spoke:
 distinct new colors at the center, missing colors at the outer endpoints,
 and avoidance of the unchanged center edges. -/
-theorem recolorWith_proper (F : Fan G C x y n) (values : Fin (n + 1) → Option K)
+theorem recolorWith_proper [Finite V] (F : Fan G C x y n) (values : Fin (n + 1) → Option K)
     (hC : IsProper G C)
     (hinj : ∀ i j a, values i = some a → values j = some a → i = j)
     (hmissing : ∀ i a, values i = some a → Missing G C (F.vert i) a)
     (havoid : ∀ i v a, v ∉ Set.range F.vert → G.Adj x v →
       values i = some a → C s(x, v) ≠ some a) : IsProper G (F.recolorWith values) := by
   classical
+  let := Fintype.ofFinite V
   apply proper_of_star_recoloring G C (F.recolorWith values) hC x
   · exact F.recolorWith_outside values
   · intro v w a hxv hxw hvc hwc

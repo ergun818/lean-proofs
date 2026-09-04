@@ -33,10 +33,11 @@ theorem graphPairs_subset (H : SetHypergraph V) (G : _root_.SimpleGraph V)
 
 namespace SetHypergraph
 
-theorem pair_neighbor_ncard_eq_incident [Fintype V] (H : SetHypergraph V)
+theorem pair_neighbor_ncard_eq_incident [Finite V] (H : SetHypergraph V)
     (hpair : ∀ e : H, e.1.ncard = 2) (v : V) :
     (H.twoGraph.neighborSet v).ncard = (H.incidentEdges v).ncard := by
   classical
+  let := Fintype.ofFinite V
   rw [H.twoGraph_neighbor_ncard]
   let equiv : {e : H.incidentEdges v // e.1.1.ncard = 2} ≃ H.incidentEdges v :=
     { toFun := Subtype.val
@@ -54,10 +55,12 @@ theorem twoGraph_inter (H J : SetHypergraph V) : (H ∩ J).twoGraph = H.twoGraph
 theorem twoGraph_mono {H J : SetHypergraph V} (hHJ : H ⊆ J) : H.twoGraph ≤ J.twoGraph :=
   fun _ _ h ↦ ⟨h.1, hHJ h.2⟩
 
-theorem graph_pair_inter_incident_degree [Fintype V] (H : SetHypergraph V)
+theorem graph_pair_inter_incident_degree [Finite V] (H : SetHypergraph V)
     (G : _root_.SimpleGraph V) (v : V) :
     ((H ∩ graphPairs G).incidentEdges v).ncard =
       ((H.twoGraph ⊓ G).neighborSet v).ncard := by
+  classical
+  let := Fintype.ofFinite V
   rw [← (H ∩ graphPairs G).pair_neighbor_ncard_eq_incident
     (fun e ↦ graphPairs_size G ⟨e.1, e.2.2⟩), twoGraph_inter, graphPairs_twoGraph]
 

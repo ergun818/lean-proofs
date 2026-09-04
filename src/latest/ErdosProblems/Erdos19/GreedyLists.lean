@@ -8,7 +8,7 @@ namespace Erdos19
 open Finset
 
 private theorem exists_partial_coloring_avoiding {E A : Type*}
-    [Fintype E] [DecidableEq E] [Fintype A] [DecidableEq A] [Nonempty A]
+    [Fintype E] [Fintype A] [Nonempty A]
     (G : SimpleGraph E) [DecidableRel G.Adj] (F : E → Finset A)
     (hsize : ∀ e, (univ.filter (G.Adj e)).card + (F e).card < Fintype.card A)
     (S : Finset E) :
@@ -60,10 +60,11 @@ private theorem exists_partial_coloring_avoiding {E A : Type*}
 /-- Greedy list coloring of a finite graph, expressed as forbidden sets in a
 fixed finite palette. -/
 theorem exists_coloring_avoiding_of_degree_add_forbidden_lt {E A : Type*}
-    [Fintype E] [DecidableEq E] [Fintype A] [DecidableEq A] [Nonempty A]
+    [Fintype E] [Fintype A] [Nonempty A]
     (G : SimpleGraph E) [DecidableRel G.Adj] (F : E → Finset A)
     (hsize : ∀ e, (univ.filter (G.Adj e)).card + (F e).card < Fintype.card A) :
     ∃ c : G.Coloring A, ∀ e, c e ∉ F e := by
+  classical
   obtain ⟨c, hcF, hc⟩ := exists_partial_coloring_avoiding G F hsize univ
   refine ⟨SimpleGraph.Coloring.mk c (fun {e f} h ↦ hc e (mem_univ _) f (mem_univ _) h), ?_⟩
   exact fun e ↦ hcF e (mem_univ _)

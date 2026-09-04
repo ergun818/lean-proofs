@@ -13,12 +13,14 @@ open Finset
 
 variable {X : Type*} [Fintype X]
 
-theorem card_crossing_disjoint_sets_le (H : SetHypergraph X)
+omit [Fintype X] in
+theorem card_crossing_disjoint_sets_le [Finite X] (H : SetHypergraph X)
     (hlinear : H.IsLinear) (A B : Set X) (hAB : Disjoint A B)
     (S : Finset H) (hA : ∀ e ∈ S, (A ∩ e.1).Nonempty)
     (hB : ∀ e ∈ S, (B ∩ e.1).Nonempty) :
     S.card ≤ A.ncard * B.ncard := by
   classical
+  let := Fintype.ofFinite X
   let a (e : S) : X := Classical.choose (hA e.1 e.2)
   let b (e : S) : X := Classical.choose (hB e.1 e.2)
   have ha (e : S) : a e ∈ A ∩ e.1.1 := Classical.choose_spec (hA e.1 e.2)
@@ -39,10 +41,13 @@ theorem card_crossing_disjoint_sets_le (H : SetHypergraph X)
   have hcard := Fintype.card_le_of_injective code hinj
   simpa only [Fintype.card_coe, Fintype.card_prod, Set.fintypeCard_eq_ncard] using hcard
 
-theorem card_common_neighbors_of_disjoint_le (H : SetHypergraph X)
+omit [Fintype X] in
+theorem card_common_neighbors_of_disjoint_le [Finite X] (H : SetHypergraph X)
     (hlinear : H.IsLinear) (e f : H) (hdis : Disjoint e.1 f.1)
     (S : Finset H) (hS : ∀ g ∈ S, g ∈ H.commonNeighborEdges e f) :
     S.card ≤ e.1.ncard * f.1.ncard := by
+  classical
+  let := Fintype.ofFinite X
   exact H.card_crossing_disjoint_sets_le hlinear e.1 f.1 hdis S
     (fun g hg ↦ (hS g hg).1.2) (fun g hg ↦ (hS g hg).2.2)
 

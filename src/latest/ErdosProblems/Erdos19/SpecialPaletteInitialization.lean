@@ -19,7 +19,8 @@ attribute [local instance] Classical.propDecidable
 
 variable {V : Type*} [Fintype V]
 
-theorem exists_special_palette_initialization (H J : SetHypergraph V) (hJH : J ⊆ H)
+omit [Fintype V] in
+theorem exists_special_palette_initialization [Finite V] (H J : SetHypergraph V) (hJH : J ⊆ H)
     (hlarge : ∀ e : J, 3 ≤ e.1.ncard) (m : ℕ) (color : J.EdgeColoring (Fin m))
     (S : Finset (Fin m)) (bad : Fin m) (hbad : bad ∈ S)
     (R : _root_.SimpleGraph V) (U Y : Set V) (hUY : Disjoint U Y) (d : ℕ)
@@ -37,6 +38,7 @@ theorem exists_special_palette_initialization (H J : SetHypergraph V) (hJH : J �
       ∃ Z : Set V, (∀ x ∈ Z, ∀ y ∈ Z, ¬H.twoGraph.Adj x y) ∧
         ∀ v, v ∉ Z → v ∈ J₀.coveredVertices {e | c₀ e = bad} := by
   classical
+  let := Fintype.ofFinite V
   obtain ⟨p, index, hp, hindexBad, hindexMem, hindexNe, hindexSurj⟩ :=
     exists_distinguished_palette_index S bad hbad
   let Cbad := J.coveredVertices {e | color e = bad}

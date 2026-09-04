@@ -7,10 +7,11 @@ namespace Erdos19
 attribute [local instance] Classical.propDecidable
 
 theorem exists_distinct_corrections_avoiding
-    {V I : Type*} [Fintype V] [Fintype I] (U : Set V) (C : I → Set V)
+    {V I : Type*} [Finite V] [Fintype I] (U : Set V) (C : I → Set V)
     (hroom : ∀ i, Fintype.card I + (C i).ncard ≤ U.ncard) :
     ∃ f : I → V, Function.Injective f ∧ (∀ i, f i ∈ U ∧ f i ∉ C i) := by
   classical
+  let := Fintype.ofFinite V
   obtain ⟨f, hf, hmem⟩ := exists_injective_mem_of_card_le
     (fun i ↦ (U \ C i).toFinset) (fun i ↦ by
       rw [Set.toFinset_card, Set.fintypeCard_eq_ncard]
@@ -21,8 +22,10 @@ theorem exists_distinct_corrections_avoiding
   have h : f i ∈ U \ C i := Set.mem_toFinset.mp (hmem i)
   exact h
 
-theorem auxiliaryTarget_compl_ncard_le {V : Type*} [Fintype V]
+theorem auxiliaryTarget_compl_ncard_le {V : Type*} [Finite V]
     (C : Set V) (z : V) : (auxiliaryTarget C z)ᶜ.ncard ≤ C.ncard + 1 := by
+  classical
+  let := Fintype.ofFinite V
   exact (Set.ncard_le_ncard (auxiliaryTarget_compl_subset C z)).trans
     (by simpa only [Set.ncard_singleton] using Set.ncard_union_le C {z})
 

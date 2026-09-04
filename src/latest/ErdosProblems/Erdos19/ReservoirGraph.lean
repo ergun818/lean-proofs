@@ -26,7 +26,7 @@ theorem exists_graph_realizing_edge_subset {V : Type*} [Fintype V] [DecidableEq 
     ext e
     induction e using Sym2.inductionOn with
     | hf x y =>
-      simp only [mem_edgeFinset, mem_edgeSet, fromEdgeSet_adj]
+      simp only [mem_edgeFinset, mem_edgeSet]
       constructor
       · exact And.left
       · intro h

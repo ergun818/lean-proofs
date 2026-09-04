@@ -96,7 +96,7 @@ theorem finiteModel_covered_card [DecidableEq X] (H : SetHypergraph X)
       H.coveredVertices {e : H | c e = a} := by
     ext x
     simp only [mem_coe, mem_biUnion, mem_filter, mem_univ, true_and,
-      H.finiteModel_mem_support, coveredVertices, Set.mem_iUnion, Set.mem_setOf_eq, exists_prop]
+      H.finiteModel_mem_support, coveredVertices, Set.mem_iUnion, Set.mem_ofPred_eq, exists_prop]
   rw [← hset, Set.ncard_coe_finset]
 
 #print axioms finiteModel_covered_card

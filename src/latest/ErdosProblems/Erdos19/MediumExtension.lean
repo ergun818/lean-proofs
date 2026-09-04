@@ -16,7 +16,8 @@ attribute [local instance] Classical.propDecidable
 
 variable {V : Type*} [Fintype V]
 
-theorem extend_coloring_into_palette (L M : SetHypergraph V) (n A p : ℕ)
+omit [Fintype V] in
+theorem extend_coloring_into_palette [Finite V] (L M : SetHypergraph V) (n A p : ℕ)
     (color : L.EdgeColoring (Fin n)) (hbounded : L.IsCoverBoundedColoring color A)
     (palette : Finset (Fin n)) (cM : M.EdgeColoring palette)
     (hcompatible : ∀ e : M, ∀ f : L, (e.1 ∩ f.1).Nonempty →
@@ -31,6 +32,7 @@ theorem extend_coloring_into_palette (L M : SetHypergraph V) (n A p : ℕ)
         ({e : ↥(L ∪ M) | c.color e = x} : Set ↥(L ∪ M)).ncard ≤ 1 ∨
           ((L ∪ M).coveredVertices {e | c.color e = x}).ncard ≤ A) := by
   classical
+  let := Fintype.ofFinite V
   let cM' : M.EdgeColoring (Fin n) :=
     { color := fun e ↦ (cM.color e).1
       valid := fun {e f} hne hinter heq ↦ cM.valid hne hinter (Subtype.ext heq) }

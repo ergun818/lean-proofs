@@ -14,7 +14,7 @@ open _root_.SimpleGraph
 
 attribute [local instance] Classical.propDecidable
 
-theorem exists_reservoir_augmentation {V : Type*} [Fintype V] [DecidableEq V]
+theorem exists_reservoir_augmentation {V : Type*} [Fintype V]
     {G : _root_.SimpleGraph V} (M : G.Subgraph) (hM : M.IsMatching)
     (R : _root_.SimpleGraph V) (hRG : R ≤ G) (hdis : Disjoint M.edgeSet R.edgeSet)
     (Z : Finset V) (u v : V) (hu : u ∉ M.verts) (hv : v ∉ M.verts)
@@ -87,7 +87,7 @@ theorem exists_reservoir_augmentation {V : Type*} [Fintype V] [DecidableEq V]
     apply Finset.disjoint_left.mpr
     intro z hz hzZ
     obtain ⟨i, _, rfl⟩ := mem_image.mp hz
-    fin_cases i <;> simp only [path, Matrix.cons_val_zero, Matrix.cons_val_succ] at hzZ
+    fin_cases i <;> simp only [path, ] at hzZ
     · exact huZ hzZ
     · exact hpxZ hzZ
     · exact hxZ hzZ

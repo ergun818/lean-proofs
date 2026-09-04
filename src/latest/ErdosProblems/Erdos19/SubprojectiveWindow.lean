@@ -30,7 +30,8 @@ theorem size_window_common_gap (h n r R D : ℕ) (hh : 2 ≤ h) (hn : n ≤ D)
     (R - 1) ^ 2 + (n - 1) / (r - 1) + D / h ≤ D := by
   have hhpos : 0 < h := by omega
   have hdiv : h * ((n - 1) / (r - 1)) ≤ n :=
-    ((Nat.mul_le_mul_right _ (show h ≤ r - 1 by omega)).trans (Nat.mul_div_le (n - 1) (r - 1))).trans
+    ((Nat.mul_le_mul_right _ (show h ≤ r - 1 by omega)).trans (Nat.mul_div_le (n - 1) (r -
+      1))).trans
       (Nat.sub_le n 1)
   have hR' : h * (R - 1) ^ 2 ≤ h * R ^ 2 :=
     Nat.mul_le_mul_left h (Nat.pow_le_pow_left (Nat.sub_le R 1) 2)

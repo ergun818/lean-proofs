@@ -10,6 +10,7 @@ open Finset Erdos76 Erdos76.FiniteHypergraph
 variable {V E I : Type*} [DecidableEq V] [Fintype E] [DecidableEq E]
   [Fintype I] [DecidableEq I]
 
+omit [DecidableEq I] in
 theorem sum_inter_card_le_of_disjoint (S : Finset V) (B : I → Finset V)
     (hB : Pairwise fun i j ↦ Disjoint (B i) (B j)) :
     (∑ i : I, (S ∩ B i).card) ≤ S.card := by
@@ -23,6 +24,7 @@ theorem sum_inter_card_le_of_disjoint (S : Finset V) (B : I → Finset V)
   obtain ⟨i, _, hi⟩ := mem_biUnion.mp hx
   exact (mem_inter.mp hi).1
 
+omit [DecidableEq E] in
 theorem sum_support_inter_card_eq_sum_degree (H : FiniteHypergraph V E) (B : Finset V) :
     (∑ e : E, (H.support e ∩ B).card) = ∑ v ∈ B, H.edgeDegree v := by
   classical
@@ -37,10 +39,11 @@ theorem sum_support_inter_card_eq_sum_degree (H : FiniteHypergraph V E) (B : Fin
   rw [inter_comm]
   simp
 
+omit [DecidableEq E] [DecidableEq I] [Fintype I] in
 /-- Disjoint buffers can be given smaller disjoint dummy pools, provided the
 pool-load slack beats the explicit codegree exclusion bound. Every future
 proper coloring of the augmented hypergraph respects all buffer capacities. -/
-theorem exists_capacity_augmentation
+theorem exists_capacity_augmentation [Finite I]
     (H : FiniteHypergraph V E) (r D L : ℕ) (hD : 0 < D) (hL : 0 < L)
     (B P : I → Finset V) (Dlow : I → ℕ)
     (hB : Pairwise fun i j ↦ Disjoint (B i) (B j))
@@ -59,6 +62,7 @@ theorem exists_capacity_augmentation
       (∀ x ∈ K.vertexSet, ∀ y ∈ K.vertexSet, x ≠ y → K.edgePairDegree x y ≤ L) ∧
       ∀ e i, (K.support e ∩ P i).card = (H.support e ∩ B i).card := by
   classical
+  let := Fintype.ofFinite I
   let a : E → I → ℕ := fun e i ↦ (H.support e ∩ B i).card
   let M : I → ℕ := fun i ↦ (B i).card * Dlow i
   have hrank : ∀ e, (H.support e).card + ∑ i : I, a e i ≤ 2 * r := by

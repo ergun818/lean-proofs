@@ -10,10 +10,13 @@ open _root_.SimpleGraph
 
 variable {V I : Type*} [Fintype V]
 
-theorem missing_neighbors_after_reservoir_use (G used : _root_.SimpleGraph V)
+omit [Fintype V] in
+theorem missing_neighbors_after_reservoir_use [Finite V] (G used : _root_.SimpleGraph V)
     (X : Set V) (v : V) :
     (X \ (G \ used).neighborSet v).ncard ≤
       (X \ G.neighborSet v).ncard + ((G ⊓ used).neighborSet v).ncard := by
+  classical
+  let := Fintype.ofFinite V
   have hsub : X \ (G \ used).neighborSet v ⊆
       (X \ G.neighborSet v) ∪ (G ⊓ used).neighborSet v := by
     intro w hw

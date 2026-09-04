@@ -18,7 +18,7 @@ abbrev ActiveRequest {I J : Type*} (active : I → Finset J) :=
   {p : I × J // p.2 ∈ active p.1}
 
 theorem exists_balanced_request_assignment {I J Y : Type*}
-    [Fintype I] [Fintype J] [Fintype Y] [Nonempty Y] [DecidableEq Y]
+    [Fintype I] [Fintype J] [Finite Y] [Nonempty Y] [DecidableEq Y]
     (active : I → Finset J) (lists : ActiveRequest active → Finset Y)
     (q : ℕ) (hq : 0 < q)
     (hroom : ∀ e, (active e.1.1).card + Fintype.card I +
@@ -28,10 +28,12 @@ theorem exists_balanced_request_assignment {I J Y : Type*}
       (∀ e f, e ≠ f → (e.1.1 = f.1.1 ∨ e.1.2 = f.1.2) → partner e ≠ partner f) ∧
       (∀ y, ((univ : Finset (ActiveRequest active)).filter fun e ↦ partner e = y).card ≤ q) := by
   classical
+  let := Fintype.ofFinite Y
   let E := ActiveRequest active
   let G : _root_.SimpleGraph E :=
     { Adj e f := e ≠ f ∧ (e.1.1 = f.1.1 ∨ e.1.2 = f.1.2)
-      symm.symm := fun _ _ h ↦ ⟨Ne.symm h.1, h.2.elim (fun h ↦ Or.inl h.symm) (fun h ↦ Or.inr h.symm)⟩
+      symm.symm :=
+        fun _ _ h ↦ ⟨Ne.symm h.1, h.2.elim (fun h ↦ Or.inl h.symm) (fun h ↦ Or.inr h.symm)⟩
       loopless.irrefl := fun _ h ↦ h.1 rfl }
   have hrow : ∀ i : I, ({e : E | e.1.1 = i} : Set E).ncard ≤ (active i).card := by
     intro i

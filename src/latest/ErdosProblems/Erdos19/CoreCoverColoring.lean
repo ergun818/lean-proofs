@@ -12,12 +12,14 @@ attribute [local instance] Classical.propDecidable
 
 variable {V : Type*} [Fintype V]
 
-theorem exists_partial_coloring_of_restriction (H : SetHypergraph V)
+omit [Fintype V] in
+theorem exists_partial_coloring_of_restriction [Finite V] (H : SetHypergraph V)
     (S : Finset H) (n A : ℕ) (hn : 0 < n)
     (color : (H.restrictEdges (S : Set H)).EdgeColoring (Fin n))
     (hbounded : (H.restrictEdges (S : Set H)).IsCoverBoundedColoring color A) :
     ∃ c : H → Fin n, H.IsProperOn S c ∧ H.IsCoverBoundedOn S c A := by
   classical
+  let := Fintype.ofFinite V
   let J := H.restrictEdges (S : Set H)
   let E := H.restrictEdgesEquiv (S : Set H)
   let c : H → Fin n := fun e ↦ if he : e ∈ S then color (E ⟨e, he⟩) else ⟨0, hn⟩

@@ -24,8 +24,10 @@ theorem pairCode_eq_pair {e : Set V} (he : e.ncard = 2) (x y : V)
   apply SetLike.coe_injective
   rw [coe_pairCode, hxy, Sym2.coe_mk]
 
-theorem exists_pair_at [Fintype V] {e : Set V} (he : e.ncard = 2) {x : V} (hx : x ∈ e) :
+theorem exists_pair_at [Finite V] {e : Set V} (he : e.ncard = 2) {x : V} (hx : x ∈ e) :
     ∃ y, x ≠ y ∧ e = {x, y} := by
+  classical
+  let := Fintype.ofFinite V
   obtain ⟨y, hy, hyx⟩ := Set.exists_ne_of_one_lt_ncard (by omega : 1 < e.ncard) x
   exact ⟨y, hyx.symm, SetHypergraph.eq_pair_of_ncard_eq_two he hyx.symm hx hy⟩
 
@@ -50,8 +52,8 @@ theorem pairLabel_eq_get {K : Type*} (H : SetHypergraph V)
   congr 1
   exact Subtype.ext (pairCode_eq_pair he x y hexy)
 
-theorem edgeColoring_of_large_part_and_pairLabeling [Fintype V] {I K : Type*}
-    (H J : SetHypergraph V) (hJH : J ⊆ H)
+theorem edgeColoring_of_large_part_and_pairLabeling [Finite V] {I K : Type*}
+    (H J : SetHypergraph V)
     (hrest : ∀ e : H, e.1 ∉ J → e.1.ncard = 2)
     (large : J.EdgeColoring I) (pairs : H.twoGraph.EdgeLabeling (I ⊕ K))
     (hpairs : ∀ x y z (hxy : H.twoGraph.Adj x y) (hxz : H.twoGraph.Adj x z),
@@ -60,6 +62,7 @@ theorem edgeColoring_of_large_part_and_pairLabeling [Fintype V] {I K : Type*}
       pairs.get x y hxy ≠ Sum.inl (large.color e)) :
     Nonempty (H.EdgeColoring (I ⊕ K)) := by
   classical
+  let := Fintype.ofFinite V
   let color : H → I ⊕ K := fun e ↦ if h : e.1 ∈ J then
     Sum.inl (large.color ⟨e.1, h⟩) else H.pairLabel pairs e (hrest e h)
   refine ⟨⟨color, ?_⟩⟩

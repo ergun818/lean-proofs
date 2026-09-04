@@ -38,6 +38,7 @@ theorem card_meeting_family_le (H : SetHypergraph V) (hlinear : H.IsLinear)
   have h := hcount he hv
   simpa only [Nat.mul_one, Set.ncard_eq_toFinset_card'] using h
 
+omit [Fintype C] in
 theorem forbiddenByColoring_card_le (H : SetHypergraph V) (hlinear : H.IsLinear)
     (color : H.EdgeColoring C) (U : Set V) (palette : Finset C)
     (r : ℕ) (hr : 2 ≤ r)
@@ -61,12 +62,15 @@ noncomputable def forbiddenReservedColors (H : SetHypergraph V) (color : H.EdgeC
     (U : Set V) (palette : Finset C) : Finset palette :=
   univ.filter fun a ↦ ∃ e : H, color.color e = a.1 ∧ (U ∩ e.1).Nonempty
 
-theorem forbiddenReservedColors_card_le (H : SetHypergraph V) (hlinear : H.IsLinear)
+omit [Fintype C] in
+theorem forbiddenReservedColors_card_le [Finite C] (H : SetHypergraph V) (hlinear : H.IsLinear)
     (color : H.EdgeColoring C) (U : Set V) (palette : Finset C)
     (r : ℕ) (hr : 2 ≤ r)
     (hmin : ∀ e : H, color.color e ∈ palette → r ≤ e.1.ncard) :
     (H.forbiddenReservedColors color U palette).card ≤
       U.ncard * ((Fintype.card V - 1) / (r - 1)) := by
+  classical
+  let := Fintype.ofFinite C
   have himage : (H.forbiddenReservedColors color U palette).image Subtype.val =
       H.forbiddenByColoring color U palette := by
     ext a

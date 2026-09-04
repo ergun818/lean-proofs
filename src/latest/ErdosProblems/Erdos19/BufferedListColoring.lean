@@ -50,16 +50,19 @@ theorem bounded_approximate_buffered_coloring (r C : ℕ) (hr : 0 < r)
     intro v hv
     rcases v with v | v
     · have hv' : v ∈ H.vertexSet := by
-        simpa [K, PoolPadding.withPool, PoolPadding.realVertices, PoolPadding.dummyVertices] using hv
+        simpa [K, PoolPadding.withPool, PoolPadding.realVertices, PoolPadding.dummyVertices] using
+          hv
       simpa only [K, PoolPadding.edgeDegree_inl] using hdegree v hv'
     · simp only [K, PoolPadding.edgeDegree_inr, Nat.zero_le]
   have hKpair : ∀ x ∈ K.vertexSet, ∀ y ∈ K.vertexSet, x ≠ y → K.edgePairDegree x y ≤ L := by
     intro x hx y hy hxy
     rcases x with x | x <;> rcases y with y | y
     · have hx' : x ∈ H.vertexSet := by
-        simpa [K, PoolPadding.withPool, PoolPadding.realVertices, PoolPadding.dummyVertices] using hx
+        simpa [K, PoolPadding.withPool, PoolPadding.realVertices, PoolPadding.dummyVertices] using
+          hx
       have hy' : y ∈ H.vertexSet := by
-        simpa [K, PoolPadding.withPool, PoolPadding.realVertices, PoolPadding.dummyVertices] using hy
+        simpa [K, PoolPadding.withPool, PoolPadding.realVertices, PoolPadding.dummyVertices] using
+          hy
       simpa only [K, PoolPadding.edgePairDegree_inl_inl] using
         hpair x hx' y hy' (fun h ↦ hxy (congrArg Sum.inl h))
     · simp only [K, PoolPadding.edgePairDegree_inr_right, Nat.zero_le]
@@ -90,10 +93,11 @@ theorem bounded_approximate_buffered_coloring (r C : ℕ) (hr : 0 < r)
     BufferPadding.uncovered_buffer_card] using hbuffer i a
 
 theorem buffered_coloring_total_demand_of_low_degree
-    {V E I : Type*} [DecidableEq V] [Fintype E] [DecidableEq E]
+    {V E I : Type*} [DecidableEq V] [Fintype E]
     (H : FiniteHypergraph V E) (B : I → Finset V) (d : I → ℕ)
     (hlow : ∀ i v, v ∈ B i → H.edgeDegree v ≤ d i) :
     ∀ i, (∑ e : E, (H.support e ∩ B i).card) ≤ (B i).card * d i := by
+  classical
   intro i
   rw [sum_support_inter_card_eq_sum_degree]
   calc

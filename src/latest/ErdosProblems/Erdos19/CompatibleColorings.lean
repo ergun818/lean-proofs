@@ -62,30 +62,34 @@ theorem unionColoring_covered_subset (L M : SetHypergraph V)
     apply Set.mem_iUnion.mpr ⟨?_, hve⟩
     simpa only [Set.mem_ofPred_eq, unionColoring, dif_neg heL] using hcolor
 
-theorem unionColoring_covered_card_le [Fintype V] (L M : SetHypergraph V)
+theorem unionColoring_covered_card_le [Finite V] (L M : SetHypergraph V)
     (cL : L.EdgeColoring P) (cM : M.EdgeColoring P)
     (hcross : ∀ e : L, ∀ f : M, (e.1 ∩ f.1).Nonempty → cL.color e ≠ cM.color f)
     (a : P) :
     ((L ∪ M).coveredVertices {e | (L.unionColoring M cL cM hcross).color e = a}).ncard ≤
       (L.coveredVertices {e | cL.color e = a}).ncard +
-        (M.coveredVertices {e | cM.color e = a}).ncard :=
-  (Set.ncard_le_ncard (L.unionColoring_covered_subset M cL cM hcross a)).trans
+        (M.coveredVertices {e | cM.color e = a}).ncard := by
+  classical
+  let := Fintype.ofFinite V
+  exact (Set.ncard_le_ncard (L.unionColoring_covered_subset M cL cM hcross a)).trans
     (Set.ncard_union_le _ _)
 
-theorem unionColoring_fiber_card_le_left [Fintype V] (L M : SetHypergraph V)
+theorem unionColoring_fiber_card_le_left [Finite V] (L M : SetHypergraph V)
     (cL : L.EdgeColoring P) (cM : M.EdgeColoring P)
     (hcross : ∀ e : L, ∀ f : M, (e.1 ∩ f.1).Nonempty → cL.color e ≠ cM.color f)
     (a : P) (hnotM : ∀ f : M, cM.color f ≠ a) :
     ({e : ↥(L ∪ M) | (L.unionColoring M cL cM hcross).color e = a} : Set ↥(L ∪ M)).ncard ≤
       ({e : L | cL.color e = a} : Set L).ncard := by
   classical
+  let := Fintype.ofFinite V
   let F : Set ↥(L ∪ M) := {e | (L.unionColoring M cL cM hcross).color e = a}
   have hleft (e : F) : e.1.1 ∈ L := by
     by_contra he
     apply hnotM ⟨e.1.1, e.1.2.resolve_left he⟩
     simpa only [F, Set.mem_ofPred_eq, unionColoring, dif_neg he] using e.2
   let code : F → {e : L // cL.color e = a} := fun e ↦
-    ⟨⟨e.1.1, hleft e⟩, by simpa only [F, Set.mem_ofPred_eq, unionColoring, dif_pos (hleft e)] using e.2⟩
+    ⟨⟨e.1.1, hleft e⟩, by simpa only [F, Set.mem_ofPred_eq, unionColoring, dif_pos (hleft e)] using
+      e.2⟩
   have hinj : Function.Injective code := by
     intro e f hef
     apply Subtype.ext
@@ -96,7 +100,7 @@ theorem unionColoring_fiber_card_le_left [Fintype V] (L M : SetHypergraph V)
   change Nat.card F ≤ Nat.card ({e : L | cL.color e = a} : Set L) at hcard
   simpa only [Nat.card_coe_set_eq, F] using hcard
 
-theorem unionColoring_coverBounded_left [Fintype V] (L M : SetHypergraph V)
+theorem unionColoring_coverBounded_left [Finite V] (L M : SetHypergraph V)
     (cL : L.EdgeColoring P) (cM : M.EdgeColoring P)
     (hcross : ∀ e : L, ∀ f : M, (e.1 ∩ f.1).Nonempty → cL.color e ≠ cM.color f)
     (a : P) (A : ℕ) (hnotM : ∀ f : M, cM.color f ≠ a)
@@ -104,6 +108,8 @@ theorem unionColoring_coverBounded_left [Fintype V] (L M : SetHypergraph V)
       (L.coveredVertices {e | cL.color e = a}).ncard ≤ A) :
     ({e : ↥(L ∪ M) | (L.unionColoring M cL cM hcross).color e = a} : Set ↥(L ∪ M)).ncard ≤ 1 ∨
       ((L ∪ M).coveredVertices {e | (L.unionColoring M cL cM hcross).color e = a}).ncard ≤ A := by
+  classical
+  let := Fintype.ofFinite V
   rcases hL with hsmall | hcover
   · exact Or.inl ((L.unionColoring_fiber_card_le_left M cL cM hcross a hnotM).trans hsmall)
   · right

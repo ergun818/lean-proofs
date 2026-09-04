@@ -37,8 +37,11 @@ theorem twice_incident_degree_le_card_add_pair_degree (H : SetHypergraph V)
   have hlarge := H.largeDegree_le_incidentExcess v
   omega
 
-theorem incident_degree_mono {H J : SetHypergraph V} (hJH : J ⊆ H) (v : V) :
+omit [Fintype V] in
+theorem incident_degree_mono [Finite V] {H J : SetHypergraph V} (hJH : J ⊆ H) (v : V) :
     (J.incidentEdges v).ncard ≤ (H.incidentEdges v).ncard := by
+  classical
+  let := Fintype.ofFinite V
   let f : J.incidentEdges v → H.incidentEdges v :=
     fun e ↦ ⟨⟨e.1.1, hJH e.1.2⟩, e.2⟩
   have hinj : Function.Injective f := by
@@ -49,6 +52,7 @@ theorem incident_degree_mono {H J : SetHypergraph V} (hJH : J ⊆ H) (v : V) :
 def pairStarRemainder (H : SetHypergraph V) (U : Set V) : SetHypergraph V :=
   {e | e ∈ H ∧ (e.ncard = 2 → ∀ v ∈ e, v ∉ U)}
 
+omit [Fintype V] in
 theorem pairStarRemainder_subset (H : SetHypergraph V) (U : Set V) :
     H.pairStarRemainder U ⊆ H := fun _ he ↦ he.1
 
@@ -97,10 +101,12 @@ theorem sum_incident_degrees (H : SetHypergraph V) :
     _ = ∑ e : H, ∑ v : V, if v ∈ e.1 then 1 else 0 := sum_comm
     _ = _ := sum_congr rfl (fun e _ ↦ (ncard_eq_sum_indicator e.1).symm)
 
-theorem pair_degree_le_incident_degree (H J : SetHypergraph V)
+omit [Fintype V] in
+theorem pair_degree_le_incident_degree [Finite V] (H J : SetHypergraph V)
     (hpairs : ∀ e ∈ H, e.ncard = 2 → e ∈ J) (v : V) :
     (H.twoGraph.neighborSet v).ncard ≤ (J.incidentEdges v).ncard := by
   classical
+  let := Fintype.ofFinite V
   let f : H.twoGraph.neighborSet v → J.incidentEdges v := fun w ↦
     ⟨⟨{v, w.1}, hpairs _ w.2.2 (Set.ncard_pair w.2.1)⟩, Or.inl rfl⟩
   have hinj : Function.Injective f := by

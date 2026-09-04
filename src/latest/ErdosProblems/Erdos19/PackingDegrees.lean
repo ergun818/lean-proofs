@@ -9,19 +9,25 @@ open _root_.SimpleGraph
 
 variable {V : Type*} [Fintype V]
 
+omit [Fintype V] in
 theorem between_self_support_subset (G : _root_.SimpleGraph V) (A : Set V) :
     (G.between A A).support ⊆ A := by
   rintro v ⟨w, hw⟩
   exact hw.2.elim And.left And.left
 
-theorem neighbor_ncard_between_self_le (G : _root_.SimpleGraph V) (A : Set V) (v : V) :
-    ((G.between A A).neighborSet v).ncard ≤ (G.neighborSet v).ncard :=
-  Set.ncard_le_ncard (fun _ h ↦ h.1)
+omit [Fintype V] in
+theorem neighbor_ncard_between_self_le [Finite V] (G : _root_.SimpleGraph V) (A : Set V) (v : V) :
+    ((G.between A A).neighborSet v).ncard ≤ (G.neighborSet v).ncard := by
+  classical
+  let := Fintype.ofFinite V
+  exact Set.ncard_le_ncard (fun _ h ↦ h.1)
 
-theorem neighbor_ncard_le_between_self_add_compl (G : _root_.SimpleGraph V)
+omit [Fintype V] in
+theorem neighbor_ncard_le_between_self_add_compl [Finite V] (G : _root_.SimpleGraph V)
     (A : Set V) {v : V} (hv : v ∈ A) :
     (G.neighborSet v).ncard ≤ ((G.between A A).neighborSet v).ncard + Aᶜ.ncard := by
   classical
+  let := Fintype.ofFinite V
   have hsub : G.neighborSet v ⊆ (G.between A A).neighborSet v ∪ Aᶜ := by
     intro w hw
     by_cases hwA : w ∈ A
@@ -84,10 +90,13 @@ theorem active_base_uncovered_bound (A : Set V) (a r i L c : ℕ)
     hsize.trans (Nat.mul_le_mul_left c (by omega))
   nlinarith only [Nat.mul_le_mul_right (5 * a + L + 1) (hA.trans hsize')]
 
-theorem available_reservoir_degree_lower (R U : _root_.SimpleGraph V) (r a L : ℕ)
+omit [Fintype V] in
+theorem available_reservoir_degree_lower [Finite V] (R U : _root_.SimpleGraph V) (r a L : ℕ)
     (hR : ∀ v, r ≤ (R.neighborSet v).ncard + a)
     (hload : ∀ v, ((R ⊓ U).neighborSet v).ncard ≤ L) :
     ∀ v, r ≤ ((R \ U).neighborSet v).ncard + a + L := by
+  classical
+  let := Fintype.ofFinite V
   intro v
   have hsplit := Set.ncard_inter_add_ncard_sdiff_eq_ncard (R.neighborSet v) (U.neighborSet v)
   rw [neighborSet_sdiff]

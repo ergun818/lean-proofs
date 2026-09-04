@@ -18,15 +18,18 @@ def insertToEdge (H : FiniteHypergraph V E) (e : E) (d : V)
     · simpa only [if_pos hf] using insert_subset hd (H.support_subset_vertexSet f)
     · simpa only [if_neg hf] using H.support_subset_vertexSet f
 
+omit [Fintype E] in
 @[simp] theorem insertToEdge_support_self (H : FiniteHypergraph V E) (e : E) (d : V)
     (hd : d ∈ H.vertexSet) : (insertToEdge H e d hd).support e = insert d (H.support e) := by
   simp [insertToEdge]
 
+omit [Fintype E] in
 theorem insertToEdge_support_other (H : FiniteHypergraph V E) (e f : E) (d : V)
     (hd : d ∈ H.vertexSet) (hfe : f ≠ e) :
     (insertToEdge H e d hd).support f = H.support f := by
   simp [insertToEdge, hfe]
 
+omit [Fintype E] in
 theorem insertToEdge_mem_support (H : FiniteHypergraph V E) (e f : E) (d x : V)
     (hd : d ∈ H.vertexSet) : x ∈ (insertToEdge H e d hd).support f ↔
       x ∈ H.support f ∨ (f = e ∧ x = d) := by
@@ -100,6 +103,7 @@ theorem insertToEdge_pairDegree_eq_of_not_mem (H : FiniteHypergraph V E)
     simp [insertToEdge, hyd, hy]
   · simp [insertToEdge, hfe]
 
+omit [DecidableEq E] in
 theorem edgePairDegree_symm (H : FiniteHypergraph V E) (x y : V) :
     H.edgePairDegree x y = H.edgePairDegree y x := by
   classical
@@ -145,10 +149,13 @@ theorem insertToEdge_preserves_degree_and_pairDegree (H : FiniteHypergraph V E)
       · rw [insertToEdge_pairDegree_eq_of_ne H e d x y hd hxd hyd]
         exact hpair x hx y hy hxy
 
-theorem insertToEdge_preserves_rank (H : FiniteHypergraph V E)
+omit [Fintype E] in
+theorem insertToEdge_preserves_rank [Finite E] (H : FiniteHypergraph V E)
     (e : E) (d : V) (hd : d ∈ H.vertexSet) (R : ℕ)
     (hbound : H.IsBounded R) (hroom : (H.support e).card < R) :
     (insertToEdge H e d hd).IsBounded R := by
+  classical
+  let := Fintype.ofFinite E
   intro f
   by_cases hfe : f = e
   · subst f
@@ -157,19 +164,25 @@ theorem insertToEdge_preserves_rank (H : FiniteHypergraph V E)
   · rw [insertToEdge_support_other H e f d hd hfe]
     exact hbound f
 
-theorem insertToEdge_support_card (H : FiniteHypergraph V E)
+omit [Fintype E] in
+theorem insertToEdge_support_card [Finite E] (H : FiniteHypergraph V E)
     (e f : E) (d : V) (hd : d ∈ H.vertexSet) (hfresh : d ∉ H.support e) :
     ((insertToEdge H e d hd).support f).card =
       (H.support f).card + if f = e then 1 else 0 := by
+  classical
+  let := Fintype.ofFinite E
   by_cases hfe : f = e
   · subst f
     simp [insertToEdge_support_self, card_insert_of_notMem hfresh]
   · simp only [insertToEdge_support_other H e f d hd hfe, if_neg hfe, add_zero]
 
-theorem insertToEdge_support_inter_card (H : FiniteHypergraph V E)
+omit [Fintype E] in
+theorem insertToEdge_support_inter_card [Finite E] (H : FiniteHypergraph V E)
     (e f : E) (d : V) (hd : d ∈ H.vertexSet) (hfresh : d ∉ H.support e) (P : Finset V) :
     ((insertToEdge H e d hd).support f ∩ P).card =
       (H.support f ∩ P).card + if f = e ∧ d ∈ P then 1 else 0 := by
+  classical
+  let := Fintype.ofFinite E
   by_cases hfe : f = e
   · subst f
     rw [insertToEdge_support_self]
@@ -181,9 +194,12 @@ theorem insertToEdge_support_inter_card (H : FiniteHypergraph V E)
   · simp only [insertToEdge_support_other H e f d hd hfe, hfe, false_and,
       if_false, add_zero]
 
-theorem support_subset_insertToEdge (H : FiniteHypergraph V E)
+omit [Fintype E] in
+theorem support_subset_insertToEdge [Finite E] (H : FiniteHypergraph V E)
     (e f : E) (d : V) (hd : d ∈ H.vertexSet) :
     H.support f ⊆ (insertToEdge H e d hd).support f := by
+  classical
+  let := Fintype.ofFinite E
   intro x hx
   exact (insertToEdge_mem_support H e f d x hd).mpr (Or.inl hx)
 

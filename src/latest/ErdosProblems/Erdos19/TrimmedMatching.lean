@@ -47,24 +47,30 @@ theorem trimMatching_verts_subset (M : G.Subgraph) (hM : M.IsMatching) (U : Set 
     refine ⟨w, hwU, ?_⟩
     exact hM.eq_of_adj_left (matchingPartner_adj M hM hvw.snd_mem) hvw.symm
 
-theorem trimMatching_verts_ncard_le [Fintype V] (M : G.Subgraph) (hM : M.IsMatching)
+theorem trimMatching_verts_ncard_le [Finite V] (M : G.Subgraph) (hM : M.IsMatching)
     (U : Set V) : (trimMatching M U).verts.ncard ≤ 2 * U.ncard := by
+  classical
+  let := Fintype.ofFinite V
   have himage : (matchingPartner M hM '' U).ncard ≤ U.ncard := Set.ncard_image_le
   have hsub := Set.ncard_le_ncard (trimMatching_verts_subset M hM U)
   have hunion := Set.ncard_union_le U (matchingPartner M hM '' U)
   omega
 
-theorem exists_small_matching_covering [Fintype V] (G : _root_.SimpleGraph V) (U : Set V)
+theorem exists_small_matching_covering [Finite V] (G : _root_.SimpleGraph V) (U : Set V)
     (hdegree : ∀ u ∈ U, U.ncard ≤ (G.neighborSet u).ncard) :
     ∃ M : G.Subgraph, M.IsMatching ∧ U ⊆ M.verts ∧
       M.verts.ncard ≤ 2 * U.ncard ∧ ∀ u v, M.Adj u v → u ∈ U ∨ v ∈ U := by
+  classical
+  let := Fintype.ofFinite V
   obtain ⟨M, hM, hU, _⟩ := exists_maximum_matching_covering G U hdegree
   exact ⟨trimMatching M U, trimMatching_isMatching M hM U, trimMatching_covers M hM U hU,
     trimMatching_verts_ncard_le M hM U, fun _ _ h ↦ h.2⟩
 
-theorem matching_verts_ncard_le_of_edges_meet [Fintype V] (M : G.Subgraph)
+theorem matching_verts_ncard_le_of_edges_meet [Finite V] (M : G.Subgraph)
     (hM : M.IsMatching) (U : Set V) (hmeet : ∀ u v, M.Adj u v → u ∈ U ∨ v ∈ U) :
     M.verts.ncard ≤ 2 * U.ncard := by
+  classical
+  let := Fintype.ofFinite V
   have hsub : M.verts ⊆ (trimMatching M U).verts := by
     intro v hv
     obtain ⟨w, hvw, _⟩ := hM hv

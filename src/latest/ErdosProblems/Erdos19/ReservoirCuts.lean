@@ -11,11 +11,13 @@ attribute [local instance] Classical.propDecidable
 
 variable {V : Type*} [Fintype V] [DecidableEq V]
 
-theorem cut_edge_ncard_le_of_degree_bound (R : _root_.SimpleGraph V)
+omit [DecidableEq V] [Fintype V] in
+theorem cut_edge_ncard_le_of_degree_bound [Finite V] (R : _root_.SimpleGraph V)
     (X Y : Finset V) (hXY : Disjoint X Y) (L : ℕ)
     (hL : ∀ v ∈ X, (R.neighborSet v).ncard ≤ L) :
     (R.between (X : Set V) (Y : Set V)).edgeSet.ncard ≤ X.card * L := by
   classical
+  let := Fintype.ofFinite V
   let C := R.between (X : Set V) (Y : Set V)
   have hC : C.IsBipartiteWith (X : Set V) (Y : Set V) :=
     R.between_isBipartiteWith (Finset.disjoint_coe.mpr hXY)
@@ -30,11 +32,14 @@ theorem cut_edge_ncard_le_of_degree_bound (R : _root_.SimpleGraph V)
       _ = X.card * L := by simp
   simpa only [edgeFinset, Set.toFinset_card, Set.fintypeCard_eq_ncard] using hcount
 
-theorem reservoir_cut_after_loads (R U : _root_.SimpleGraph V)
+omit [DecidableEq V] [Fintype V] in
+theorem reservoir_cut_after_loads [Finite V] (R U : _root_.SimpleGraph V)
     (X Y : Finset V) (hXY : Disjoint X Y) (L : ℕ)
     (hL : ∀ v ∈ X, ((R ⊓ U).neighborSet v).ncard ≤ L) :
     (R.between (X : Set V) (Y : Set V)).edgeSet.ncard ≤
       ((R \ U).between (X : Set V) (Y : Set V)).edgeSet.ncard + X.card * L := by
+  classical
+  let := Fintype.ofFinite V
   have hdecomp : R.between (X : Set V) (Y : Set V) =
       (R \ U).between (X : Set V) (Y : Set V) ⊔
       (R ⊓ U).between (X : Set V) (Y : Set V) := by

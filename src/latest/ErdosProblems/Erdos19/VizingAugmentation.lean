@@ -13,7 +13,7 @@ variable {V : Type*} [Fintype V]
 /-- The augmentation only needs missing colors at the center and its
 neighbors; a global degree bound is not necessary. -/
 theorem exists_improvement_of_missing_neighbors (G : SimpleGraph V) {K : Type*}
-    [DecidableEq K] (C : PartialColoring V K)
+    (C : PartialColoring V K)
     (hC : IsProper G C) (x y : V) (hxy : G.Adj x y) (hzero : C s(x, y) = none)
     (hxmissing : ∃ a, Missing G C x a)
     (hneighmissing : ∀ v, G.Adj x v → ∃ a, Missing G C v a) :
@@ -97,7 +97,7 @@ theorem exists_improvement_of_uncolored (G : SimpleGraph V) (D : ℕ)
     ∃ C' : PartialColoring V (Fin (D + 1)), IsProper G C' ∧
       (coloredEdges G C).card < (coloredEdges G C').card :=
   exists_improvement_of_missing_neighbors G C hC x y hxy hzero
-    (exists_missing G D hdegree hC x) (fun v _ ↦ exists_missing G D hdegree hC v)
+    (exists_missing G D hdegree x) (fun v _ ↦ exists_missing G D hdegree v)
 
 /-- A maximum proper partial coloring with `D + 1` colors has no uncolored
 edge. This is the finite Vizing theorem in partial-coloring form. -/

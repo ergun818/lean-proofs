@@ -6,19 +6,24 @@ namespace Erdos19.SetHypergraph
 
 variable {V C : Type*} [Fintype V]
 
-theorem buffer_lower_of_small_trace (Y T : Set V) (d : ℕ)
+omit [Fintype V] in
+theorem buffer_lower_of_small_trace [Finite V] (Y T : Set V) (d : ℕ)
     (hY : 2 * d + 1 ≤ Y.ncard) (htrace : 2 * (Y ∩ T).ncard ≤ Y.ncard + 1) :
     d ≤ (Y \ T).ncard := by
+  classical
+  let := Fintype.ofFinite V
   have hcount := Set.ncard_inter_add_ncard_sdiff_eq_ncard Y T
   omega
 
-theorem exists_exceptional_color_with_buffer (J : SetHypergraph V) (hlinear : J.IsLinear)
+omit [Fintype V] in
+theorem exists_exceptional_color_with_buffer [Finite V] (J : SetHypergraph V) (hlinear : J.IsLinear)
     (color : J → C) (A : ℕ) (hbounded : J.IsCoverBoundedColoring color A)
     (Y : Set V) (hA : 2 * A ≤ Y.ncard + 1) (S : Finset C) (hS : S.Nonempty)
     (d : ℕ) (hY : 2 * (d + S.card) + 1 ≤ Y.ncard) :
     ∃ bad ∈ S, ∀ a ∈ S, a ≠ bad →
       d + S.card ≤ (Y \ J.coveredVertices {e | color e = a}).ncard := by
   classical
+  let := Fintype.ofFinite V
   let exceptional : Set C := {a | Y.ncard + 1 <
     2 * (Y ∩ J.coveredVertices {e | color e = a}).ncard}
   have hsingleton : exceptional.Subsingleton :=

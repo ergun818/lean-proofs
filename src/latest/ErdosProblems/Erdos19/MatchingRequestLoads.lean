@@ -43,13 +43,16 @@ theorem matching_family_total_degree_le_requests (G : _root_.SimpleGraph V)
     _ = 2 * ∑ i : I, (A i).ncard := (mul_sum _ _ _).symm
     _ ≤ _ := Nat.mul_le_mul_left 2 (sum_request_cards_le A a hrequests)
 
-theorem matching_family_load_at_required_vertex (G : _root_.SimpleGraph V)
+omit [Fintype V] in
+theorem matching_family_load_at_required_vertex [Finite V] (G : _root_.SimpleGraph V)
     (M : I → G.Subgraph) (hM : ∀ i, (M i).IsMatching)
     (hdis : Pairwise fun i j ↦ Disjoint (M i).spanningCoe (M j).spanningCoe)
     (A : I → Set V) (U Y : Set V) (hUY : Disjoint U Y)
     (hverts : ∀ i, (M i).verts ⊆ A i ∪ Y) (a : ℕ)
     (hrequests : ∀ v, (∑ i : I, if v ∈ A i then 1 else 0) ≤ a) (v : V) (hv : v ∈ U) :
     ((⨆ i, (M i).spanningCoe).neighborSet v).ncard ≤ a := by
+  classical
+  let := Fintype.ofFinite V
   rw [matching_family_degree G M hM hdis]
   apply le_trans _ (hrequests v)
   apply sum_le_sum

@@ -10,17 +10,23 @@ attribute [local instance] Classical.propDecidable
 
 variable {V : Type*} [Fintype V]
 
-theorem neighbor_ncard_sup_of_disjoint (G H : _root_.SimpleGraph V)
+omit [Fintype V] in
+theorem neighbor_ncard_sup_of_disjoint [Finite V] (G H : _root_.SimpleGraph V)
     (hdis : Disjoint G H) (v : V) :
     ((G ⊔ H).neighborSet v).ncard = (G.neighborSet v).ncard + (H.neighborSet v).ncard := by
+  classical
+  let := Fintype.ofFinite V
   rw [neighborSet_sup]
   exact Set.ncard_union_eq (disjoint_neighborSet.mpr hdis v)
 
-theorem base_reservoir_used_degree_identity (G R U : _root_.SimpleGraph V)
+omit [Fintype V] in
+theorem base_reservoir_used_degree_identity [Finite V] (G R U : _root_.SimpleGraph V)
     (hRG : R ≤ G) (hUG : U ≤ G) (v : V) :
     ((G \ (R ⊔ U)).neighborSet v).ncard + (R.neighborSet v).ncard +
         (U.neighborSet v).ncard =
       (G.neighborSet v).ncard + ((R ⊓ U).neighborSet v).ncard := by
+  classical
+  let := Fintype.ofFinite V
   rw [neighborSet_sdiff, neighborSet_sup, neighborSet_inf]
   have hsub : R.neighborSet v ∪ U.neighborSet v ⊆ G.neighborSet v := by
     intro w hw
@@ -30,10 +36,12 @@ theorem base_reservoir_used_degree_identity (G R U : _root_.SimpleGraph V)
   rw [Set.ncard_sdiff hsub]
   omega
 
-theorem matching_neighbor_ncard (G : _root_.SimpleGraph V) (M : G.Subgraph)
+omit [Fintype V] in
+theorem matching_neighbor_ncard [Finite V] (G : _root_.SimpleGraph V) (M : G.Subgraph)
     (hM : M.IsMatching) (v : V) :
     (M.spanningCoe.neighborSet v).ncard = if v ∈ M.verts then 1 else 0 := by
   classical
+  let := Fintype.ofFinite V
   by_cases hv : v ∈ M.verts
   · rw [if_pos hv]
     have hsmall : (M.spanningCoe.neighborSet v).ncard ≤ 1 := by
@@ -51,16 +59,22 @@ theorem matching_neighbor_ncard (G : _root_.SimpleGraph V) (M : G.Subgraph)
       exact hv (show M.Adj v w from hw).fst_mem
     rw [hempty, Set.ncard_empty]
 
-theorem reservoir_load_sup_matching (U R : _root_.SimpleGraph V)
+omit [Fintype V] in
+theorem reservoir_load_sup_matching [Finite V] (U R : _root_.SimpleGraph V)
     {G : _root_.SimpleGraph V} (M : G.Subgraph) (hdis : Disjoint U M.spanningCoe) (v : V) :
     (((U ⊔ M.spanningCoe) ⊓ R).neighborSet v).ncard =
       ((U ⊓ R).neighborSet v).ncard + ((M.spanningCoe ⊓ R).neighborSet v).ncard := by
+  classical
+  let := Fintype.ofFinite V
   rw [inf_sup_right]
   exact neighbor_ncard_sup_of_disjoint _ _ (hdis.mono inf_le_left inf_le_left) v
 
-theorem matching_reservoir_increment_le_one (R : _root_.SimpleGraph V)
+omit [Fintype V] in
+theorem matching_reservoir_increment_le_one [Finite V] (R : _root_.SimpleGraph V)
     {G : _root_.SimpleGraph V} (M : G.Subgraph) (hM : M.IsMatching) (v : V) :
     ((M.spanningCoe ⊓ R).neighborSet v).ncard ≤ 1 := by
+  classical
+  let := Fintype.ofFinite V
   have hsub : (M.spanningCoe ⊓ R).neighborSet v ⊆ M.spanningCoe.neighborSet v :=
     fun _ h ↦ h.1
   apply (Set.ncard_le_ncard hsub).trans

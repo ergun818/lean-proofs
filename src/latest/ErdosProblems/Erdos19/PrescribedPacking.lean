@@ -17,10 +17,11 @@ attribute [local instance] Classical.propDecidable
 
 variable {V : Type*} [Fintype V] [DecidableEq V]
 
+omit [DecidableEq V] in
 theorem exists_prescribed_matching_packing
     (G R : _root_.SimpleGraph V) (hRG : R ≤ G)
     (A : ℕ → Set V) (m a r c q K b : ℕ)
-    (hn : 0 < Fintype.card V) (hm : m ≤ Fintype.card V)
+    (hn : 0 < Fintype.card V)
     (heven : ∀ i < m, Even (A i).ncard)
     (hsmall : ∀ i < m, (A i)ᶜ.ncard ≤ a)
     (habs : ∀ v, ∑ i ∈ range m, (if v ∈ A i then 0 else 1) ≤ a)

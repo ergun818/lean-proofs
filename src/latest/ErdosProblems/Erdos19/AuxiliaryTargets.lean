@@ -32,8 +32,10 @@ theorem auxiliaryTarget_compl_subset {V : Type*} (C : Set V) (z : V) :
     · exact Or.inr hvz
     · exact (hv (subset_auxiliaryTarget C z ⟨hvC, hvz⟩)).elim
 
-theorem auxiliaryTarget_even {V : Type*} [Fintype V] (C : Set V) (z : V) (hz : z ∉ C) :
+theorem auxiliaryTarget_even {V : Type*} [Finite V] (C : Set V) (z : V) (hz : z ∉ C) :
     Even (auxiliaryTarget C z).ncard := by
+  classical
+  let := Fintype.ofFinite V
   unfold auxiliaryTarget
   split_ifs with heven
   · exact heven

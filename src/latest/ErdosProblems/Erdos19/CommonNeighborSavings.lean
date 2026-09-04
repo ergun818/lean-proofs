@@ -10,12 +10,13 @@ open _root_.SimpleGraph
 
 attribute [local instance] Classical.propDecidable
 
-theorem nonadjacentNeighborPairs_lower_bound {V : Type*} [Fintype V]
+theorem nonadjacentNeighborPairs_lower_bound {V : Type*} [Finite V]
     (G : _root_.SimpleGraph V) (v : V) (c : ℕ)
     (hcommon : ∀ w, G.Adj v w → (G.neighborSet v ∩ G.neighborSet w).ncard ≤ c) :
     (G.neighborSet v).ncard * ((G.neighborSet v).ncard - c - 1) ≤
       2 * (nonadjacentNeighborPairGraph G v).edgeSet.ncard := by
   classical
+  let := Fintype.ofFinite V
   let B := nonadjacentNeighborPairGraph G v
   have hper (w : V) (hw : w ∈ G.neighborSet v) :
       (G.neighborSet v).ncard - c - 1 ≤ (B.neighborSet w).ncard := by

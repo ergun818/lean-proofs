@@ -31,11 +31,12 @@ theorem packingLoadBound_monotone (n a c K : ℕ) : Monotone (packingLoadBound n
   exact Nat.add_le_add_right
     (Nat.div_le_div_right (Nat.mul_le_mul_left K (packingTotalBound_monotone n a c K hij))) 2
 
-theorem IsLoadBalanced.le_packingLoadBound {V : Type*} [Fintype V] [DecidableEq V]
+theorem IsLoadBalanced.le_packingLoadBound {V : Type*} [Fintype V]
     (load : V → ℕ) (a c K i : ℕ) (hn : 0 < Fintype.card V)
     (hbal : IsLoadBalanced K load)
     (htotal : totalLoad load ≤ packingTotalBound (Fintype.card V) a c K i) :
     ∀ v, load v ≤ packingLoadBound (Fintype.card V) a c K i := by
+  classical
   intro v
   have h : load v * Fintype.card V ≤
       K * packingTotalBound (Fintype.card V) a c K i + 2 * Fintype.card V := by

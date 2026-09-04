@@ -12,22 +12,30 @@ variable {V K : Type*} [Fintype V] {G : SimpleGraph V}
 def rotationValues (F : Fan G C x y n) (a : K) : Fin (n + 1) → Option K :=
   Fin.lastCases (some a) (fun i : Fin n ↦ C s(x, F.vert i.succ))
 
+omit [Fintype V] in
 @[simp] theorem rotationValues_last (F : Fan G C x y n) (a : K) :
     F.rotationValues a (Fin.last n) = some a := Fin.lastCases_last ..
 
+omit [Fintype V] in
 @[simp] theorem rotationValues_castSucc (F : Fan G C x y n) (a : K) (i : Fin n) :
     F.rotationValues a i.castSucc = C s(x, F.vert i.succ) := Fin.lastCases_castSucc ..
 
-theorem rotationValues_isSome (F : Fan G C x y n) (a : K) (i : Fin (n + 1)) :
+omit [Fintype V] in
+theorem rotationValues_isSome [Finite V] (F : Fan G C x y n) (a : K) (i : Fin (n + 1)) :
     (F.rotationValues a i).isSome := by
+  classical
+  let := Fintype.ofFinite V
   refine Fin.lastCases ?_ (fun j ↦ ?_) i
   · simp
   · obtain ⟨b, hb, _⟩ := F.step j
     simp [hb]
 
-theorem rotation_proper (F : Fan G C x y n) (hC : IsProper G C) (a : K)
+omit [Fintype V] in
+theorem rotation_proper [Finite V] (F : Fan G C x y n) (hC : IsProper G C) (a : K)
     (hax : Missing G C x a) (halast : Missing G C (F.vert (Fin.last n)) a) :
     IsProper G (F.recolorWith (F.rotationValues a)) := by
+  classical
+  let := Fintype.ofFinite V
   apply F.recolorWith_proper _ hC
   · intro i j b
     refine Fin.lastCases ?_ (fun i ↦ ?_) i <;>
@@ -114,6 +122,7 @@ def initialSegment (F : Fan G C x y n) (j : Fin (n + 1)) : Fan G C x y j.val whe
   adj i := F.adj _
   step i := F.step ⟨i.val, i.isLt.trans_le (Nat.le_of_lt_succ j.isLt)⟩
 
+omit [Fintype V] in
 @[simp] theorem initialSegment_last (F : Fan G C x y n) (j : Fin (n + 1)) :
     (F.initialSegment j).vert (Fin.last j.val) = F.vert j := by
   apply congrArg F.vert

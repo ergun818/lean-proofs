@@ -10,7 +10,8 @@ attribute [local instance] Classical.propDecidable
 
 variable {V : Type*} [Fintype V]
 
-theorem exists_partial_coloring_with_class_control (H : SetHypergraph V)
+omit [Fintype V] in
+theorem exists_partial_coloring_with_class_control [Finite V] (H : SetHypergraph V)
     (S : Finset H) (n : ℕ) (hn : 0 < n)
     (color : (H.restrictEdges (S : Set H)).EdgeColoring (Fin n)) :
     ∃ c : H → Fin n, H.IsProperOn S c ∧
@@ -20,6 +21,7 @@ theorem exists_partial_coloring_with_class_control (H : SetHypergraph V)
       (∀ a, H.coveredVertices {e : H | e ∈ S ∧ c e = a} ⊆
         (H.restrictEdges (S : Set H)).coveredVertices {f | color f = a}) := by
   classical
+  let := Fintype.ofFinite V
   let J := H.restrictEdges (S : Set H)
   let E := H.restrictEdgesEquiv (S : Set H)
   let c : H → Fin n := fun e ↦ if he : e ∈ S then color (E ⟨e, he⟩) else ⟨0, hn⟩

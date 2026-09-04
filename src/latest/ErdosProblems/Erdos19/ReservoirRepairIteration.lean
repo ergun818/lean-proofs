@@ -19,7 +19,8 @@ attribute [local instance] Classical.propDecidable
 
 variable {V I : Type*} [Fintype V]
 
-theorem exists_reservoir_repair_family (G used : _root_.SimpleGraph V)
+omit [Fintype V] in
+theorem exists_reservoir_repair_family [Finite V] (G used : _root_.SimpleGraph V)
     (U Y : Set V) (hUY : Disjoint U Y) (X : I → Set V)
     (hX : Pairwise fun i j ↦ Disjoint (X i) (X j)) (hXcover : ∀ v, ∃ i, v ∈ X i)
     (missing initialLoad requests : ℕ)
@@ -36,6 +37,7 @@ theorem exists_reservoir_repair_family (G used : _root_.SimpleGraph V)
           (M i).verts.ncard ≤ 2 * (A i).ncard ∧ Disjoint used (M i).spanningCoe) ∧
         Pairwise fun i j ↦ Disjoint (M i).spanningCoe (M j).spanningCoe := by
   classical
+  let := Fintype.ofFinite V
   induction m with
   | zero =>
     intro A B _ _ _ _ _ _

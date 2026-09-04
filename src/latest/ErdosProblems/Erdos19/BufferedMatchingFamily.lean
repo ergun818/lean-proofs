@@ -13,7 +13,8 @@ attribute [local instance] Classical.propDecidable
 
 variable {V : Type*} [Fintype V]
 
-theorem exists_buffered_matching_family (G used : _root_.SimpleGraph V)
+omit [Fintype V] in
+theorem exists_buffered_matching_family [Finite V] (G used : _root_.SimpleGraph V)
     (U Y : Set V) (hUY : Disjoint U Y) (d load : ℕ)
     (hmissing : ∀ u ∈ U, (G.neighborSet u)ᶜ.ncard ≤ d)
     (hused : ∀ u ∈ U, (used.neighborSet u).ncard ≤ load) (m : ℕ) :
@@ -24,6 +25,7 @@ theorem exists_buffered_matching_family (G used : _root_.SimpleGraph V)
         (M i).verts.ncard ≤ 2 * (U \ C i).ncard ∧ Disjoint used (M i).spanningCoe) ∧
       Pairwise fun i j ↦ Disjoint (M i).spanningCoe (M j).spanningCoe := by
   classical
+  let := Fintype.ofFinite V
   induction m with
   | zero =>
     intro C _

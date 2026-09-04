@@ -13,10 +13,13 @@ variable {V C : Type*} [Fintype V] [Fintype C] [DecidableEq C]
 noncomputable def largeCoverageColors (H : SetHypergraph V) (c : H → C) (A : ℕ) : Finset C :=
   univ.filter fun a ↦ A < (H.coveredVertices {e | c e = a}).ncard
 
-theorem exists_singleton_edge_of_large_coverage (H : SetHypergraph V) (c : H → C)
+omit [DecidableEq C] [Fintype C] [Fintype V] in
+theorem exists_singleton_edge_of_large_coverage [Finite V] (H : SetHypergraph V) (c : H → C)
     (A : ℕ) (hbounded : H.IsCoverBoundedColoring c A) (a : C)
     (ha : A < (H.coveredVertices {e | c e = a}).ncard) :
     ∃ e : H, c e = a ∧ A < e.1.ncard ∧ H.coveredVertices {f | c f = a} = e.1 := by
+  classical
+  let := Fintype.ofFinite V
   have hsmall : ({e : H | c e = a} : Set H).ncard ≤ 1 :=
     (hbounded a).resolve_right (Nat.not_le.mpr ha)
   obtain ⟨v, hv⟩ := (Set.ncard_pos (Set.toFinite _)).mp (show
@@ -26,6 +29,7 @@ theorem exists_singleton_edge_of_large_coverage (H : SetHypergraph V) (c : H →
   have hcover := H.coveredVertices_eq_of_singleton_family _ hsmall e hea
   exact ⟨e, hea, by simpa only [hcover] using ha, hcover⟩
 
+omit [DecidableEq C] in
 theorem largeCoverageColors_pair_budget (H : SetHypergraph V) (hlinear : H.IsLinear)
     (c : H → C) (A : ℕ) (hbounded : H.IsCoverBoundedColoring c A) :
     (H.largeCoverageColors c A).card * A * (A + 1) ≤ Fintype.card V * (Fintype.card V - 1) := by
@@ -51,10 +55,12 @@ theorem largeCoverageColors_pair_budget (H : SetHypergraph V) (hlinear : H.IsLin
     _ ≤ ∑ e : H, e.1.ncard * (e.1.ncard - 1) := sum_le_sum_of_subset (subset_univ _)
     _ ≤ _ := H.sum_ncard_mul_sub_one_le hlinear
 
+omit [DecidableEq C] in
 theorem largeCoverageColors_card_le_constant (n w : ℕ) (hw : 0 < w) (hn : w ≤ n)
     (H : SetHypergraph (Fin n)) (hlinear : H.IsLinear) (c : H → C)
     (hbounded : H.IsCoverBoundedColoring c (n / w)) :
     (H.largeCoverageColors c (n / w)).card ≤ 4 * w ^ 2 := by
+  classical
   let A := n / w
   have hA : 0 < A := (Nat.le_div_iff_mul_le hw).mpr (by simpa using hn)
   have hfloor := Nat.lt_mul_div_succ n hw

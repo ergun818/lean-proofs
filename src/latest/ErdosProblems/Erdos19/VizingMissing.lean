@@ -10,11 +10,13 @@ attribute [local instance] Classical.propDecidable
 
 variable {V K : Type*} [Fintype V] [Fintype K]
 
-theorem exists_missing_of_colored_neighbors (G : SimpleGraph V) (C : PartialColoring V K)
+omit [Fintype V] in
+theorem exists_missing_of_colored_neighbors [Finite V] (G : SimpleGraph V) (C : PartialColoring V K)
     (v : V) (S : Finset V)
     (hS : ∀ w a, G.Adj v w → C s(v, w) = some a → w ∈ S)
     (hcard : S.card < Fintype.card K) : ∃ a, Missing G C v a := by
   classical
+  let := Fintype.ofFinite V
   by_contra hnone
   have hpresent : ∀ a : K, ∃ w, G.Adj v w ∧ C s(v, w) = some a := by
     intro a

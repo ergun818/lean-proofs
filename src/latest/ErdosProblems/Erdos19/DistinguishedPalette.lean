@@ -7,7 +7,7 @@ namespace Erdos19
 
 open Finset
 
-theorem exists_distinguished_palette_index {C : Type*} [DecidableEq C]
+theorem exists_distinguished_palette_index {C : Type*}
     (S : Finset C) (bad : C) (hbad : bad ∈ S) :
     ∃ p : ℕ, ∃ index : Unit ⊕ Fin p ↪ C,
       p + 1 = S.card ∧ index (Sum.inl ()) = bad ∧

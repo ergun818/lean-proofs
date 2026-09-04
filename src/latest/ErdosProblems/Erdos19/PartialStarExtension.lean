@@ -19,27 +19,37 @@ noncomputable def recolorOn (H : SetHypergraph V) (T : Finset H) (c : H → C)
     (color : T → C) : H → C :=
   fun e ↦ if he : e ∈ T then color ⟨e, he⟩ else c e
 
+omit [DecidableEq C] [Fintype V] in
 theorem recolorOn_of_mem (H : SetHypergraph V) (T : Finset H) (c : H → C)
     (color : T → C) (e : H) (he : e ∈ T) :
     H.recolorOn T c color e = color ⟨e, he⟩ := by
+  classical
   simp [recolorOn, he]
 
+omit [DecidableEq C] [Fintype V] in
 theorem recolorOn_of_not_mem (H : SetHypergraph V) (T : Finset H) (c : H → C)
     (color : T → C) (e : H) (he : e ∉ T) :
     H.recolorOn T c color e = c e := by
+  classical
   simp [recolorOn, he]
 
-theorem recolorOn_agrees (H : SetHypergraph V) (S T : Finset H)
+omit [DecidableEq C] [Fintype V] in
+theorem recolorOn_agrees [Finite V] (H : SetHypergraph V) (S T : Finset H)
     (hST : Disjoint S T) (c : H → C) (color : T → C) :
     ∀ e ∈ S, H.recolorOn T c color e = c e := by
+  classical
+  let := Fintype.ofFinite V
   intro e he
   exact H.recolorOn_of_not_mem T c color e (disjoint_left.mp hST he)
 
-theorem recolorOn_proper (H : SetHypergraph V) (S T : Finset H)
+omit [Fintype V] in
+theorem recolorOn_proper [Finite V] (H : SetHypergraph V) (S T : Finset H)
     (hST : Disjoint S T) (c : H → C) (hc : H.IsProperOn S c)
     (color : T → C) (hinj : Function.Injective color)
     (havoid : ∀ e : T, ∀ v ∈ e.1.1, color e ∉ H.usedColorsOn S c v) :
     H.IsProperOn (S ∪ T) (H.recolorOn T c color) := by
+  classical
+  let := Fintype.ofFinite V
   intro e he f hf hne hinter
   have hagree := H.recolorOn_agrees S T hST c color
   rcases mem_union.mp he with he | he
@@ -62,13 +72,16 @@ theorem recolorOn_proper (H : SetHypergraph V) (S T : Finset H)
     · rw [H.recolorOn_of_mem T c color f hf]
       exact fun h ↦ hne (congrArg (fun z : T ↦ z.1) (hinj h))
 
-theorem recolorOn_coverage (H : SetHypergraph V) (S T : Finset H)
+omit [DecidableEq C] [Fintype V] in
+theorem recolorOn_coverage [Finite V] (H : SetHypergraph V) (S T : Finset H)
     (hST : Disjoint S T) (c : H → C) (color : T → C)
     (hinj : Function.Injective color) (r A : ℕ)
     (hsize : ∀ e ∈ T, e.1.ncard ≤ r)
     (hcover : ∀ a, (H.coveredVertices {e | e ∈ S ∧ c e = a}).ncard ≤ A) :
     ∀ a, (H.coveredVertices
       {e | e ∈ S ∪ T ∧ H.recolorOn T c color e = a}).ncard ≤ A + r := by
+  classical
+  let := Fintype.ofFinite V
   intro a
   have hagree := H.recolorOn_agrees S T hST c color
   by_cases hex : ∃ e : T, color e = a
@@ -98,10 +111,13 @@ theorem recolorOn_coverage (H : SetHypergraph V) (S T : Finset H)
       · exact (hex ⟨⟨f, hf⟩, (H.recolorOn_of_mem T c color f hf).symm.trans hfa⟩).elim
     exact ((Set.ncard_le_ncard hsub).trans (hcover a)).trans (Nat.le_add_right A r)
 
-theorem usedColorsOn_recolor_subset (H : SetHypergraph V) (S T : Finset H)
+omit [Fintype V] in
+theorem usedColorsOn_recolor_subset [Finite V] (H : SetHypergraph V) (S T : Finset H)
     (hST : Disjoint S T) (c : H → C) (color : T → C) (v : V) :
     H.usedColorsOn (S ∪ T) (H.recolorOn T c color) v ⊆
       H.usedColorsOn S c v ∪ ((T.attach.filter fun e ↦ v ∈ e.1.1).image color) := by
+  classical
+  let := Fintype.ofFinite V
   intro a ha
   obtain ⟨e, he, hv, hcolor⟩ := (H.mem_usedColorsOn _ _ _ _).mp ha
   rcases mem_union.mp he with he | he
@@ -112,6 +128,7 @@ theorem usedColorsOn_recolor_subset (H : SetHypergraph V) (S T : Finset H)
     exact mem_image.mpr ⟨⟨e, he⟩, mem_filter.mpr ⟨mem_attach _ _, hv⟩,
       (H.recolorOn_of_mem T c color e he).symm.trans hcolor⟩
 
+omit [Fintype V] in
 theorem star_incident_card_le_one (H : SetHypergraph V) (hlinear : H.IsLinear)
     (T : Finset H) (u v : V) (hvu : v ≠ u) (hcenter : ∀ e ∈ T, u ∈ e.1) :
     (T.attach.filter fun e ↦ v ∈ e.1.1).card ≤ 1 := by
@@ -124,12 +141,15 @@ theorem star_incident_card_le_one (H : SetHypergraph V) (hlinear : H.IsLinear)
     ⟨(mem_filter.mp he).2, (mem_filter.mp hf).2⟩
   exact hvu heq.symm
 
-theorem recolorOn_reserved_degree (H : SetHypergraph V) (hlinear : H.IsLinear)
+omit [Fintype V] in
+theorem recolorOn_reserved_degree [Finite V] (H : SetHypergraph V) (hlinear : H.IsLinear)
     (S T : Finset H) (hST : Disjoint S T) (c : H → C) (color : T → C)
     (reserved : Finset C) (u v : V) (hvu : v ≠ u)
     (hcenter : ∀ e ∈ T, u ∈ e.1) (d : ℕ)
     (hused : (reserved ∩ H.usedColorsOn S c v).card ≤ d) :
     (reserved ∩ H.usedColorsOn (S ∪ T) (H.recolorOn T c color) v).card ≤ d + 1 := by
+  classical
+  let := Fintype.ofFinite V
   have hsub := H.usedColorsOn_recolor_subset S T hST c color v
   calc
     _ ≤ (reserved ∩ (H.usedColorsOn S c v ∪

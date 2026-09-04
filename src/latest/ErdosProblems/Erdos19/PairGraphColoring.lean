@@ -11,11 +11,14 @@ attribute [local instance] Classical.propDecidable
 
 variable {V C : Type*} [Fintype V]
 
-theorem exists_edgeColoring_of_pair_labeling (H : SetHypergraph V)
+omit [Fintype V] in
+theorem exists_edgeColoring_of_pair_labeling [Finite V] (H : SetHypergraph V)
     (hpair : ∀ e : H, e.1.ncard = 2) (label : H.twoGraph.EdgeLabeling C)
     (hlabel : ∀ x y z (hxy : H.twoGraph.Adj x y) (hxz : H.twoGraph.Adj x z),
       label.get x y hxy = label.get x z hxz → y = z) :
     Nonempty (H.EdgeColoring C) := by
+  classical
+  let := Fintype.ofFinite V
   refine ⟨⟨fun e ↦ H.pairLabel label e (hpair e), ?_⟩⟩
   intro e f hef hinter heq
   obtain ⟨x, hxe, hxf⟩ := hinter

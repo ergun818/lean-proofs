@@ -100,7 +100,7 @@ theorem vertexImage_onVertexSet_eq (H : SetHypergraph X) (U : Set X)
       intro x hx
       exact ⟨⟨x, hsupport e he hx⟩, rfl⟩
     have himage := Set.image_preimage_eq_of_subset hrange
-    exact ⟨Subtype.val ⁻¹' e, by simpa only [onVertexSet, Set.mem_setOf_eq, himage] using he,
+    exact ⟨Subtype.val ⁻¹' e, by simpa only [onVertexSet, Set.mem_ofPred_eq, himage] using he,
       himage⟩
 
 #print axioms vertexImage_onVertexSet_eq

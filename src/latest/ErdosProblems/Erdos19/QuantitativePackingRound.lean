@@ -13,6 +13,7 @@ attribute [local instance] Classical.propDecidable
 
 variable {V : Type*} [Fintype V] [DecidableEq V]
 
+omit [DecidableEq V] in
 theorem exists_balanced_matching_packing_round
     (G U R : _root_.SimpleGraph V) (hRG : R ≤ G) (hUG : U ≤ G)
     (A : Set V) (heven : Even A.ncard) (a r i L c q K b : ℕ)

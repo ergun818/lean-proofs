@@ -35,21 +35,24 @@ theorem sum_colorCovered_ncard (H : SetHypergraph V) (c : H.EdgeColoring I) :
     _ = ∑ e : H, e.1.ncard := by
       exact sum_congr rfl (fun e _ ↦ (ncard_eq_sum_indicator _).symm)
 
+omit [Fintype I] [Fintype V] in
 theorem colorCovered_eq_coveredVertices (H : SetHypergraph V) (c : H.EdgeColoring I) (i : I) :
     H.colorCovered c i = H.coveredVertices {e | c.color e = i} := by
   ext v
   simp [colorCovered, coveredVertices]
 
-theorem large_colorClasses_mul_le_total_incidence (H : SetHypergraph V)
+omit [Fintype I] in
+theorem large_colorClasses_mul_le_total_incidence [Finite I] (H : SetHypergraph V)
     (c : H.EdgeColoring I) (A : ℕ) :
     ({i : I | A < (H.coveredVertices {e | c.color e = i}).ncard} : Set I).ncard * (A + 1) ≤
       ∑ e : H, e.1.ncard := by
   classical
+  let := Fintype.ofFinite I
   let B := (univ : Finset I).filter fun i ↦ A < (H.colorCovered c i).ncard
   have hcard : B.card =
       ({i : I | A < (H.coveredVertices {e | c.color e = i}).ncard} : Set I).ncard := by
     rw [ncard_eq_sum_indicator]
-    simp only [sum_boole, Set.mem_setOf_eq, ← colorCovered_eq_coveredVertices]
+    simp only [sum_boole, Set.mem_ofPred_eq, ← colorCovered_eq_coveredVertices]
     rfl
   rw [← hcard, ← H.sum_colorCovered_ncard c]
   calc
@@ -60,9 +63,13 @@ theorem large_colorClasses_mul_le_total_incidence (H : SetHypergraph V)
       exact (mem_filter.mp hi).2
     _ ≤ ∑ i : I, (H.colorCovered c i).ncard := sum_le_sum_of_subset (subset_univ _)
 
-theorem coveredVertices_ncard_le_of_singleton_class (H : SetHypergraph V) (S : Set H) (A : ℕ)
+omit [Fintype V] in
+theorem coveredVertices_ncard_le_of_singleton_class [Finite V] (H : SetHypergraph V) (S : Set
+  H) (A : ℕ)
     (hS : S.ncard ≤ 1) (hedge : ∀ e : H, e.1.ncard ≤ A) :
     (H.coveredVertices S).ncard ≤ A := by
+  classical
+  let := Fintype.ofFinite V
   by_cases hnonempty : S.Nonempty
   · obtain ⟨e, he⟩ := hnonempty
     have hs : H.coveredVertices S ⊆ e.1 := by

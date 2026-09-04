@@ -6,23 +6,28 @@ namespace Erdos19.Vizing
 
 variable {V K : Type*} [Fintype V] [DecidableEq K]
 
-theorem missing_kempeSwapOn_right_of_mem (G : SimpleGraph V)
+omit [Fintype V] in
+theorem missing_kempeSwapOn_right_of_mem [Finite V] (G : SimpleGraph V)
     (C : PartialColoring V K) (a b : K)
     (Q : (bichromGraph G C a b).ConnectedComponent) {v : V}
     (hv : v ∈ Q.supp) (hb : Missing G C v b) :
     Missing G (kempeSwapOn G C a b Q) v a := by
+  classical
+  let := Fintype.ofFinite V
   intro w hvw
   rw [kempeSwapOn_incident_of_mem G C a b Q hv]
   intro h
   have hsame : swapOption a b (C s(v, w)) = swapOption a b (some b) := by simpa using h
   exact hb w hvw (swapOption_injective a b hsame)
 
-theorem missing_kempeSwapOn_fixed (G : SimpleGraph V)
+omit [Fintype V] in
+theorem missing_kempeSwapOn_fixed [Finite V] (G : SimpleGraph V)
     (C : PartialColoring V K) (a b : K)
     (Q : (bichromGraph G C a b).ConnectedComponent) {v : V} {k : K}
     (hka : k ≠ a) (hkb : k ≠ b) (hk : Missing G C v k) :
     Missing G (kempeSwapOn G C a b Q) v k := by
   classical
+  let := Fintype.ofFinite V
   by_cases hv : v ∈ Q.supp
   · intro w hvw
     rw [kempeSwapOn_incident_of_mem G C a b Q hv]
@@ -32,15 +37,17 @@ theorem missing_kempeSwapOn_fixed (G : SimpleGraph V)
     exact hk w hvw (swapOption_injective a b (h.trans hfixed.symm))
   · exact missing_kempeSwapOn_of_not_mem G C a b Q hv hk
 
+omit [DecidableEq K] [Fintype V] in
 /-- Of two distinct outer endpoints missing `b`, at least one lies in a
 two-color component avoiding the center that misses `a`. -/
-theorem exists_component_avoiding_center (G : SimpleGraph V)
+theorem exists_component_avoiding_center [Finite V] (G : SimpleGraph V)
     (C : PartialColoring V K) (hC : IsProper G C) (a b : K) (x u v : V)
     (hxu : x ≠ u) (hxv : x ≠ v) (huv : u ≠ v)
     (hax : Missing G C x a) (hbu : Missing G C u b) (hbv : Missing G C v b) :
     ∃ Q : (bichromGraph G C a b).ConnectedComponent,
       x ∉ Q.supp ∧ (u ∈ Q.supp ∨ v ∈ Q.supp) := by
   classical
+  let := Fintype.ofFinite V
   let B := bichromGraph G C a b
   let Qx := B.connectedComponentMk x
   by_cases hu : u ∈ Qx.supp

@@ -13,10 +13,13 @@ open _root_.SimpleGraph
 
 variable {V : Type*} [Fintype V]
 
-theorem missing_neighbors_after_edge_use (G used : _root_.SimpleGraph V)
+omit [Fintype V] in
+theorem missing_neighbors_after_edge_use [Finite V] (G used : _root_.SimpleGraph V)
     (X : Set V) (v : V) :
     (X \ (G \ used).neighborSet v).ncard ≤
       (X \ G.neighborSet v).ncard + (used.neighborSet v).ncard := by
+  classical
+  let := Fintype.ofFinite V
   have hsub : X \ (G \ used).neighborSet v ⊆
       (X \ G.neighborSet v) ∪ used.neighborSet v := by
     intro w hw
@@ -27,7 +30,8 @@ theorem missing_neighbors_after_edge_use (G used : _root_.SimpleGraph V)
     · exact Or.inl ⟨hw.1, hG⟩
   exact (Set.ncard_le_ncard hsub).trans (Set.ncard_union_le _ _)
 
-theorem exists_buffered_matching_repair (G used : _root_.SimpleGraph V)
+omit [Fintype V] in
+theorem exists_buffered_matching_repair [Finite V] (G used : _root_.SimpleGraph V)
     (A B : Set V) (missing load : ℕ) (hAB : Disjoint A B)
     (hB : missing + load ≤ B.ncard)
     (hmissing : ∀ u ∈ A, ((A ∪ B) \ G.neighborSet u).ncard ≤ missing)
@@ -35,6 +39,8 @@ theorem exists_buffered_matching_repair (G used : _root_.SimpleGraph V)
     ∃ M : G.Subgraph, M.IsMatching ∧ A ⊆ M.verts ∧ M.verts ⊆ A ∪ B ∧
       M.verts.ncard ≤ 2 * A.ncard ∧ Disjoint used M.spanningCoe ∧
       ∀ u v, M.Adj u v → u ∈ A ∨ v ∈ A := by
+  classical
+  let := Fintype.ofFinite V
   let Q := G \ used
   have hQmissing : ∀ u ∈ A, ((A ∪ B) \ Q.neighborSet u).ncard ≤ missing + load := by
     intro u hu

@@ -27,9 +27,11 @@ theorem degreeOutliers_markov {V : Type*} [Fintype V] (G : _root_.SimpleGraph V)
   · rw [if_neg hv, zero_mul]
     exact Nat.zero_le _
 
-theorem induced_compl_neighbor_ncard {V : Type*} [Fintype V]
+theorem induced_compl_neighbor_ncard {V : Type*} [Finite V]
     (G : _root_.SimpleGraph V) (X : Set V) (v : ↥(Xᶜ)) :
     ((G.induce Xᶜ).neighborSet v).ncard = (G.neighborSet v.1 \ X).ncard := by
+  classical
+  let := Fintype.ofFinite V
   have hpre : (G.induce Xᶜ).neighborSet v = Subtype.val ⁻¹' G.neighborSet v.1 := rfl
   rw [hpre, compl_subtype_preimage_ncard]
 

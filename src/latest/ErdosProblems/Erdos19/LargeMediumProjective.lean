@@ -95,7 +95,8 @@ theorem eventually_medium_coloring_of_projective_core (R b a t : ℕ)
     · intro x _
       simpa only [color, EdgeColoring.transport_covered] using hcover' x
     · intro x hx
-      simpa only [color, EdgeColoring.transport_fiber_ncard, EdgeColoring.transport_covered] using hrest x hx
+      simpa only [color, EdgeColoring.transport_fiber_ncard, EdgeColoring.transport_covered] using
+        hrest x hx
   refine ⟨color, palette, hcard, hcontrol, ?_⟩
   intro x
   simpa only [color, EdgeColoring.transport_covered] using hcover' x

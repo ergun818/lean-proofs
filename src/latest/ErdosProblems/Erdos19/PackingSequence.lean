@@ -24,15 +24,18 @@ namespace IsMatchingPacking
 
 variable {G U : _root_.SimpleGraph V} {A : ℕ → Set V} {i : ℕ}
 
+omit [Fintype V] in
 theorem used_le (h : IsMatchingPacking G A i U) : U ≤ G := by
   induction h with
   | nil => exact bot_le
   | snoc _ M _ _ _ ih =>
     exact sup_le ih (fun _ _ hadj ↦ (show M.Adj _ _ from hadj).adj_sub)
 
-theorem degree_add_absences (h : IsMatchingPacking G A i U) (v : V) :
+omit [Fintype V] in
+theorem degree_add_absences [Finite V] (h : IsMatchingPacking G A i U) (v : V) :
     (U.neighborSet v).ncard + ∑ j ∈ range i, (if v ∈ A j then 0 else 1) = i := by
   classical
+  let := Fintype.ofFinite V
   induction h with
   | nil => simp
   | @snoc i U previous M matching covers disjoint ih =>
@@ -40,11 +43,13 @@ theorem degree_add_absences (h : IsMatchingPacking G A i U) (v : V) :
       matching_neighbor_ncard G M matching, covers, sum_range_succ]
     split_ifs <;> omega
 
-theorem degree_bounds (h : IsMatchingPacking G A i U) (m a : ℕ) (him : i ≤ m)
+omit [Fintype V] in
+theorem degree_bounds [Finite V] (h : IsMatchingPacking G A i U) (m a : ℕ) (him : i ≤ m)
     (habs : ∀ v, ∑ j ∈ range m, (if v ∈ A j then 0 else 1) ≤ a) :
     (∀ v, i ≤ (U.neighborSet v).ncard + a) ∧
     (∀ v, (U.neighborSet v).ncard ≤ i) := by
   classical
+  let := Fintype.ofFinite V
   have hbound : ∀ v, ∑ j ∈ range i, (if v ∈ A j then 0 else 1) ≤ a := by
     intro v
     exact (sum_le_sum_of_subset (range_mono him)).trans (habs v)
@@ -57,6 +62,7 @@ theorem degree_bounds (h : IsMatchingPacking G A i U) (m a : ℕ) (him : i ≤ m
     have heq := h.degree_add_absences v
     omega
 
+omit [Fintype V] in
 theorem exists_family_exact (h : IsMatchingPacking G A i U) :
     ∃ M : Fin i → G.Subgraph,
       (∀ j, (M j).IsMatching ∧ (M j).verts = A j ∧ (M j).spanningCoe ≤ U) ∧
@@ -100,14 +106,19 @@ theorem exists_family_exact (h : IsMatchingPacking G A i U) :
           apply iSup_le
           intro j
           exact (by simpa only [Fin.snoc_castSucc] using
-            (le_iSup (fun k ↦ ((Fin.snoc M N : Fin (i + 1) → G.Subgraph) k).spanningCoe) j.castSucc))
+            (le_iSup (fun k ↦ ((Fin.snoc M N : Fin (i + 1) → G.Subgraph) k).spanningCoe)
+              j.castSucc))
         · exact (by simpa only [Fin.snoc_last] using
-            (le_iSup (fun k ↦ ((Fin.snoc M N : Fin (i + 1) → G.Subgraph) k).spanningCoe) (Fin.last i)))
+            (le_iSup (fun k ↦ ((Fin.snoc M N : Fin (i + 1) → G.Subgraph) k).spanningCoe)
+              (Fin.last i)))
 
-theorem exists_family (h : IsMatchingPacking G A i U) :
+omit [Fintype V] in
+theorem exists_family [Finite V] (h : IsMatchingPacking G A i U) :
     ∃ M : Fin i → G.Subgraph,
       (∀ j, (M j).IsMatching ∧ (M j).verts = A j ∧ (M j).spanningCoe ≤ U) ∧
       Pairwise (fun j k ↦ Disjoint (M j).spanningCoe (M k).spanningCoe) := by
+  classical
+  let := Fintype.ofFinite V
   obtain ⟨M, hM, hp, _⟩ := h.exists_family_exact
   exact ⟨M, hM, hp⟩
 

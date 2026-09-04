@@ -10,7 +10,7 @@ theorem mem_diluted_tentativeFiber {V : Type*} (G : _root_.SimpleGraph V) {A C :
     (active : Fin A) (sample : V → Fin A × Fin C) (v w : V) (a : Fin C) :
     w ∈ tentativeNeighborColorFiber G (dilutedSample active sample) v a ↔
       G.Adj v w ∧ sample w = (active, a) := by
-  simp only [tentativeNeighborColorFiber, Set.mem_setOf_eq, dilutedSample_active_iff,
+  simp only [tentativeNeighborColorFiber, Set.mem_ofPred_eq, dilutedSample_active_iff,
     dilutedSample_color]
   constructor
   · rintro ⟨hfirst, hadj, hsecond⟩
@@ -26,7 +26,7 @@ theorem exists_diluted_conflict_of_not_retained {V : Type*}
     ∃ z, G.Adj w z ∧ sample z = (active, a) := by
   classical
   by_contra hex
-  push_neg at hex
+  push Not at hex
   apply hnot
   refine ⟨by simp [dilutedSample, hw], ?_⟩
   intro z hwz hzactive hcolor
@@ -71,8 +71,10 @@ theorem card_dilutedSpoiledExcess_le_of_degree {V : Type*} [Fintype V]
         b + 1 ≤ (dilutedDeletedCollisionColors G active sample v).ncard} := by
     intro sample hs
     rw [mem_eventFinset] at hs ⊢
-    exact hs.trans_le (Set.ncard_le_ncard (spoiledCollisionColors_subset_dilutedDeleted G active sample v))
-  have htail := (Finset.card_le_card hsub).trans (card_dilutedDeletionHighEvent_le G active v (b + 1))
+    exact hs.trans_le (Set.ncard_le_ncard (spoiledCollisionColors_subset_dilutedDeleted G
+      active sample v))
+  have htail :=
+    (Finset.card_le_card hsub).trans (card_dilutedDeletionHighEvent_le G active v (b + 1))
   have hw := mrDeletionWitnessTriples_card_le G v hdegree
   exact htail.trans (Nat.mul_le_mul_right _
     (Nat.mul_le_mul_left _ (Nat.pow_le_pow_left hw (b + 1))))

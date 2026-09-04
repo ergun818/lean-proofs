@@ -4,10 +4,11 @@ import ErdosProblems.Erdos19.Core
 
 namespace Erdos19
 
-theorem nonadjacentNeighborPairs_ncard_le_sq {V : Type*} [Fintype V]
+theorem nonadjacentNeighborPairs_ncard_le_sq {V : Type*} [Finite V]
     (G : _root_.SimpleGraph V) (v : V) :
     (nonadjacentNeighborPairGraph G v).edgeSet.ncard ≤ (G.neighborSet v).ncard ^ 2 := by
   classical
+  let := Fintype.ofFinite V
   let code (e : (nonadjacentNeighborPairGraph G v).edgeSet) :
       G.neighborSet v × G.neighborSet v :=
     (⟨e.1.out.1, (nonadjacentNeighborPairGraph_edge_out G v e).2.1⟩,
@@ -21,10 +22,12 @@ theorem nonadjacentNeighborPairs_ncard_le_sq {V : Type*} [Fintype V]
   have h := Fintype.card_le_of_injective code hinj
   simpa only [Fintype.card_prod, Set.fintypeCard_eq_ncard, pow_two] using h
 
-theorem two_le_neighbor_ncard_of_nonadjacentPair {V : Type*} [Fintype V]
+theorem two_le_neighbor_ncard_of_nonadjacentPair {V : Type*} [Finite V]
     (G : _root_.SimpleGraph V) (v : V)
     (hpos : 0 < (nonadjacentNeighborPairGraph G v).edgeSet.ncard) :
     2 ≤ (G.neighborSet v).ncard := by
+  classical
+  let := Fintype.ofFinite V
   obtain ⟨e, he⟩ := Set.nonempty_of_ncard_ne_zero (Nat.ne_of_gt hpos)
   have hpair := nonadjacentNeighborPairGraph_edge_out G v ⟨e, he⟩
   have hsub : ({e.out.1, e.out.2} : Set V) ⊆ G.neighborSet v := by

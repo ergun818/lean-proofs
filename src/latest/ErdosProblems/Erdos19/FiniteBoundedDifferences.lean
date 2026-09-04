@@ -187,10 +187,7 @@ lemma finite_boundedDifferences_mgf
   | zero =>
       have hfun : ∀ x y : Fin 0 → K, x = y := fun x y ↦ Subsingleton.elim _ _
       let x0 : Fin 0 → K := Fin.elim0
-      have havg : finiteAverage f = f x0 := by
-        unfold finiteAverage
-        simp [hfun _ x0]
-      simp [havg, hfun _ x0, finiteAverage]
+      simp [hfun _ x0, finiteAverage]
   | succ n ih =>
       classical
       let sect : K → (Fin n → K) → ℝ := fun a tail ↦

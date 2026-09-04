@@ -57,7 +57,8 @@ theorem edgeColorable_of_high_volume_window {V : Type*} [Fintype V]
     · have hsplit := H.sum_restrictEdges_add_compl (W : Set H) (fun e ↦ e.ncard * (e.ncard - 1))
       have htotal := H.sum_ncard_mul_sub_one_le hlinear
       have hupper : Fintype.card V * (Fintype.card V - 1) ≤ (Fintype.card V) ^ 2 := by
-        simpa only [pow_two] using Nat.mul_le_mul_left (Fintype.card V) (Nat.sub_le (Fintype.card V) 1)
+        simpa only [pow_two] using
+          Nat.mul_le_mul_left (Fintype.card V) (Nat.sub_le (Fintype.card V) 1)
       change (∑ e : J, e.1.ncard * (e.1.ncard - 1)) +
         (∑ e : R, e.1.ncard * (e.1.ncard - 1)) = _ at hsplit
       omega

@@ -86,7 +86,7 @@ theorem exists_complete_coloring_of_matching_core (D : ℕ) (hD : 0 < D)
         have hHcore : HasMatchingDegreeCore H D := hcore.mono hdegree hHG
         have hHedges : H.edgeFinset = G.edgeFinset.erase s(x, y) := by
           ext e
-          simp [H, removed, SimpleGraph.edgeSet_deleteEdges, and_comm]
+          simp [H, removed, and_comm]
         have hmem : s(x, y) ∈ G.edgeFinset := by
           simpa only [SimpleGraph.mem_edgeFinset, SimpleGraph.mem_edgeSet] using hxy
         have hHlt : H.edgeFinset.card < m := by

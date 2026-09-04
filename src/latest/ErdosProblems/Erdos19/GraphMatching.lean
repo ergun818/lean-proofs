@@ -9,11 +9,12 @@ namespace Erdos19
 open _root_.SimpleGraph
 
 /-- A finite graph has a matching maximizing any natural-number score. -/
-lemma exists_matching_maximizing {V : Type*} [Fintype V]
+lemma exists_matching_maximizing {V : Type*} [Finite V]
     (G : SimpleGraph V) (score : G.Subgraph → ℕ) :
     ∃ M : G.Subgraph, M.IsMatching ∧
       ∀ N : G.Subgraph, N.IsMatching → score N ≤ score M := by
   classical
+  let := Fintype.ofFinite V
   let matchings : Finset G.Subgraph := Finset.univ.filter Subgraph.IsMatching
   have hbottom : (⊥ : G.Subgraph).IsMatching := by
     intro v hv
@@ -45,11 +46,12 @@ lemma matching_delete_endpoints {V : Type*} {G : SimpleGraph V}
 
 /-- If each vertex has at most `d` nonneighbors (including itself), a maximum
 matching leaves at most `d` vertices uncovered. -/
-lemma exists_matching_few_uncovered {V : Type*} [Fintype V]
+lemma exists_matching_few_uncovered {V : Type*} [Finite V]
     (G : SimpleGraph V) (d : ℕ)
     (hnonadj : ∀ v, (G.neighborSet v)ᶜ.ncard ≤ d) :
     ∃ M : G.Subgraph, M.IsMatching ∧ M.vertsᶜ.ncard ≤ d := by
   classical
+  let := Fintype.ofFinite V
   obtain ⟨M, hM, hmax⟩ := exists_maximum_matching G
   refine ⟨M, hM, ?_⟩
   by_cases hnonempty : M.vertsᶜ.Nonempty
@@ -69,10 +71,11 @@ lemma exists_matching_few_uncovered {V : Type*} [Fintype V]
 vertices has at least as many neighbors as the size of the prescribed set.
 This uses a matching maximizing coverage, followed by a one-edge rotation. -/
 theorem exists_matching_covering_of_neighbor_ncard_ge
-    {V : Type*} [Fintype V] (G : SimpleGraph V) (U : Set V)
+    {V : Type*} [Finite V] (G : SimpleGraph V) (U : Set V)
     (hdegree : ∀ u ∈ U, U.ncard ≤ (G.neighborSet u).ncard) :
     ∃ M : G.Subgraph, M.IsMatching ∧ U ⊆ M.verts := by
   classical
+  let := Fintype.ofFinite V
   obtain ⟨M, hM, hmax⟩ := exists_matching_maximizing G
     (fun N ↦ (N.verts ∩ U).ncard)
   refine ⟨M, hM, ?_⟩
@@ -276,11 +279,13 @@ coverage and is at least as large as every local missing-neighbor set. The
 resulting matching covers the required vertices and uses no buffer-buffer
 edges, so every added edge can be charged to a required vertex. -/
 theorem exists_matching_covering_with_buffer
-    {V : Type*} [Fintype V] (G : SimpleGraph V) (A B : Set V) (d : ℕ)
+    {V : Type*} [Finite V] (G : SimpleGraph V) (A B : Set V) (d : ℕ)
     (hdisjoint : Disjoint A B) (hbuffer : d ≤ B.ncard)
     (hmissing : ∀ u ∈ A, ((A ∪ B) \ G.neighborSet u).ncard ≤ d) :
     ∃ M : G.Subgraph, M.IsMatching ∧ A ⊆ M.verts ∧ M.verts ⊆ A ∪ B ∧
       ∀ x y, M.Adj x y → x ∈ A ∨ y ∈ A := by
+  classical
+  let := Fintype.ofFinite V
   let J : SimpleGraph V := {
     Adj := fun x y ↦ G.Adj x y ∧ x ∈ A ∪ B ∧ y ∈ A ∪ B ∧ (x ∈ A ∨ y ∈ A)
     symm := ⟨by

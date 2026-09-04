@@ -142,7 +142,8 @@ theorem exists_reserved_cover_bounded_peelable_extension (H : SetHypergraph V)
       have hdegree : ((S ∪ T.erase e).filter (H.lineGraph.Adj e)).card < k :=
         (card_le_card (filter_subset_filter _
           (union_subset_union_right (erase_subset _ _)))).trans_lt hedeg
-      obtain ⟨c', hagree, hproper, hbounded, havoid⟩ := H.exists_reserved_cover_bounded_insert hlinear
+      obtain ⟨c', hagree, hproper, hbounded, havoid⟩ :=
+        H.exists_reserved_cover_bounded_insert hlinear
         (S ∪ T.erase e) e he n k r A hr hmin (hmax e) hdegree reserved hbudget c hc hb
       have hset : insert e (S ∪ T.erase e) = S ∪ T := by
         ext f

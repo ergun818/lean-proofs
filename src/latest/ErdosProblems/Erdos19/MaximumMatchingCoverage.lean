@@ -9,12 +9,13 @@ open _root_.SimpleGraph
 
 attribute [local instance] Classical.propDecidable
 
-theorem exists_maximum_matching_covering {V : Type*} [Fintype V]
+theorem exists_maximum_matching_covering {V : Type*} [Finite V]
     (G : _root_.SimpleGraph V) (U : Set V)
     (hdegree : ∀ u ∈ U, U.ncard ≤ (G.neighborSet u).ncard) :
     ∃ M : G.Subgraph, M.IsMatching ∧ U ⊆ M.verts ∧
       ∀ N : G.Subgraph, N.IsMatching → N.edgeSet.ncard ≤ M.edgeSet.ncard := by
   classical
+  let := Fintype.ofFinite V
   obtain ⟨M, hM, hmax, hcover⟩ := exists_matching_maximizing_edges_and_coverage G U
   refine ⟨M, hM, ?_, hmax⟩
   intro u hu
