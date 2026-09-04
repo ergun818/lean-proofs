@@ -10,7 +10,7 @@ and to miss only a small number of edges.
 
 namespace Erdos556
 
-theorem core_quadratic_deficit (L b s : ℝ) (hL : 0 ≤ L)
+theorem core_quadratic_deficit (L b s : ℝ) (_hL : 0 ≤ L)
     (hslo : L + b + 1 ≤ s) (hshi : s ≤ 2 * L + b) :
     L * (2 * L + b - s) ≤
       ((2 * L + b) ^ 2 - (2 * (L + b) + 1) * (2 * L + b)) -

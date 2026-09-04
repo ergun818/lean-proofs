@@ -8,7 +8,7 @@ namespace Erdos556
 
 open SimpleGraph Finset
 
-theorem joined_bucket_cross_edges_share_endpoint_of_large_left {V : Type*} [DecidableEq V]
+theorem joined_bucket_cross_edges_share_endpoint_of_large_left {V : Type*}
     (G : SimpleGraph V) (A B S T : Finset V) (r : ℕ) (hr : 4 ≤ r)
     (hAS : A ⊆ S) (hBT : B ⊆ T) (hA : r ≤ A.card) (hB : r ≤ B.card)
     (hjoinA : ∀ a ∈ A, ∀ s ∈ S, a ≠ s → G.Adj a s)

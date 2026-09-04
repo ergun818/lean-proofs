@@ -75,11 +75,12 @@ theorem EdgeMatching.adjoin_edge {V : Type*} [DecidableEq V] {G : SimpleGraph V}
       · exact (hd e he).symm
       · exact hM.2 e he f hf hne
 
-theorem exists_maximum_edgeMatching {V : Type*} [Fintype V] [DecidableEq V]
+theorem exists_maximum_edgeMatching {V : Type*} [Finite V] [DecidableEq V]
     (G : SimpleGraph V) :
     ∃ M : Finset (Sym2 V), EdgeMatching G M ∧
       ∀ T, EdgeMatching G T → T.card ≤ M.card := by
   classical
+  let := Fintype.ofFinite V
   let all := G.edgeFinset.powerset.filter (EdgeMatching G)
   have hall : all.Nonempty := ⟨∅, by simp [all, EdgeMatching.empty]⟩
   obtain ⟨M, hM, hmax⟩ := all.exists_max_image Finset.card hall
@@ -137,8 +138,10 @@ theorem EdgeMatching.augment_three {V : Type*} [DecidableEq V]
   have hv₀ : v ∉ matchingSupport M₀ := by
     have hh := hM.uncovered_erase_left (u := v) (v := u) (by simpa [Sym2.eq_swap] using he)
     simpa [M₀, Sym2.eq_swap] using hh
-  have hx₀ : x ∉ matchingSupport M₀ := fun hh => hx (matchingSupport_mono (Finset.erase_subset _ _) hh)
-  have hy₀ : y ∉ matchingSupport M₀ := fun hh => hy (matchingSupport_mono (Finset.erase_subset _ _) hh)
+  have hx₀ : x ∉ matchingSupport M₀ :=
+    fun hh => hx (matchingSupport_mono (Finset.erase_subset _ _) hh)
+  have hy₀ : y ∉ matchingSupport M₀ :=
+    fun hh => hy (matchingSupport_mono (Finset.erase_subset _ _) hh)
   let M₁ := insert s(u, x) M₀
   have hM₁ : EdgeMatching G M₁ := hM₀.adjoin_edge hux hu₀ hx₀
   have hv₁ : v ∉ matchingSupport M₁ := by

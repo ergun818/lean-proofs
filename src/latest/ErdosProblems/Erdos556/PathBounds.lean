@@ -13,9 +13,10 @@ namespace Erdos556
 
 open SimpleGraph
 
-theorem exists_two_edge_path {V : Type*} [Fintype V] [DecidableEq V]
+theorem exists_two_edge_path {V : Type*} [Fintype V]
     (G : SimpleGraph V) [DecidableRel G.Adj] (u : V) (hu : 2 ≤ G.degree u) :
     ∃ (a b : V) (p : G.Walk a b), p.IsPath ∧ p.length = 2 := by
+  classical
   have hnb : 1 < (G.neighborFinset u).card := by
     rw [card_neighborFinset_eq_degree]
     omega
@@ -28,7 +29,7 @@ theorem exists_two_edge_path {V : Type*} [Fintype V] [DecidableEq V]
 
 /-- The standard connected longest-path bound, with a minimum-degree
 parameter at least two. The conclusion counts vertices of the path. -/
-theorem exists_long_path_of_min_degree {V : Type*} [Fintype V] [DecidableEq V]
+theorem exists_long_path_of_min_degree {V : Type*} [Fintype V]
     (G : SimpleGraph V) [DecidableRel G.Adj] (hconn : G.Connected)
     (d : ℕ) (hd : 2 ≤ d) (hdeg : ∀ v, d ≤ G.degree v) :
     ∃ (u v : V) (p : G.Walk u v), p.IsPath ∧
@@ -53,19 +54,21 @@ theorem exists_long_path_of_min_degree {V : Type*} [Fintype V] [DecidableEq V]
   rw [Walk.length_tail, hq.length_eq] at h
   omega
 
-theorem degree_le_one_of_path_length_le_one {V : Type*} [Fintype V] [DecidableEq V]
+theorem degree_le_one_of_path_length_le_one {V : Type*} [Fintype V]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (hmax : ∀ {u v} (p : G.Walk u v), p.IsPath → p.length ≤ 1) (v : V) :
     G.degree v ≤ 1 := by
+  classical
   by_contra h
   obtain ⟨a, b, p, hp, hlen⟩ := exists_two_edge_path G v (by omega)
   have := hmax p hp
   omega
 
-theorem degree_eq_zero_of_path_length_le_zero {V : Type*} [Fintype V] [DecidableEq V]
+theorem degree_eq_zero_of_path_length_le_zero {V : Type*} [Fintype V]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (hmax : ∀ {u v} (p : G.Walk u v), p.IsPath → p.length ≤ 0) (v : V) :
     G.degree v = 0 := by
+  classical
   by_contra h
   have hn : (G.neighborFinset v).Nonempty := by
     rw [← Finset.card_pos, card_neighborFinset_eq_degree]
@@ -79,10 +82,11 @@ theorem degree_eq_zero_of_path_length_le_zero {V : Type*} [Fintype V] [Decidable
   omega
 
 /-- Degrees do not change when passing to a whole connected component. -/
-theorem degree_component {V : Type*} [Fintype V] [DecidableEq V]
+theorem degree_component {V : Type*} [Fintype V]
     (G : SimpleGraph V) [DecidableRel G.Adj] (C : G.ConnectedComponent)
     [Fintype C] [DecidableRel C.toSimpleGraph.Adj] (v : C) :
     C.toSimpleGraph.degree v = G.degree v.val := by
+  classical
   let e : C.toSimpleGraph.neighborSet v ≃ G.neighborSet v.val :=
     { toFun := fun w => ⟨w.val.val, w.property⟩
       invFun := fun w => ⟨⟨w.val, C.mem_supp_of_adj_mem_supp v.property w.property⟩,
@@ -94,7 +98,7 @@ theorem degree_component {V : Type*} [Fintype V] [DecidableEq V]
 
 /-- If all degrees exceed half a path-length bound, every connected
 component is small enough that all degrees are at most that bound. -/
-theorem degree_le_path_bound_of_min_degree {V : Type*} [Fintype V] [DecidableEq V]
+theorem degree_le_path_bound_of_min_degree {V : Type*} [Fintype V]
     (G : SimpleGraph V) [DecidableRel G.Adj] (k : ℕ) (hk : 2 ≤ k)
     (hmin : ∀ v, k < 2 * G.degree v)
     (hmax : ∀ {u v} (p : G.Walk u v), p.IsPath → p.length ≤ k) (v : V) :
@@ -121,10 +125,11 @@ theorem degree_le_path_bound_of_min_degree {V : Type*} [Fintype V] [DecidableEq 
 #print axioms exists_long_path_of_min_degree
 #print axioms degree_le_path_bound_of_min_degree
 
-theorem twice_edges_le_of_degree_le {V : Type*} [Fintype V] [DecidableEq V]
+theorem twice_edges_le_of_degree_le {V : Type*} [Fintype V]
     (G : SimpleGraph V) [DecidableRel G.Adj] (k : ℕ)
     (hdeg : ∀ v, G.degree v ≤ k) :
     2 * G.edgeFinset.card ≤ k * Fintype.card V := by
+  classical
   calc
     2 * G.edgeFinset.card = ∑ v, G.degree v := G.sum_degrees_eq_twice_card_edges.symm
     _ ≤ ∑ _v : V, k := Finset.sum_le_sum fun v _ => hdeg v
@@ -133,14 +138,15 @@ theorem twice_edges_le_of_degree_le {V : Type*} [Fintype V] [DecidableEq V]
 universe u
 
 private theorem path_edge_bound_aux (N : ℕ) :
-    ∀ (V : Type u) [Fintype V] [DecidableEq V]
+    ∀ (V : Type u) [Fintype V]
       (G : SimpleGraph V) [DecidableRel G.Adj], Fintype.card V = N →
       ∀ k : ℕ,
       (∀ {a b : V} (p : G.Walk a b), p.IsPath → p.length ≤ k) →
       2 * G.edgeFinset.card ≤ k * Fintype.card V := by
+  classical
   induction N using Nat.strong_induction_on with
   | h N ih =>
-      intro V _ _ G _ hcard k hmax
+      intro V _ G _ hcard k hmax
       classical
       by_cases hsmall : k ≤ 1
       · apply twice_edges_le_of_degree_le G k
@@ -180,17 +186,18 @@ private theorem path_edge_bound_aux (N : ℕ) :
           · exact hmax
 
 /-- The finite Erdős--Gallai path edge bound. -/
-theorem path_edge_bound {V : Type*} [Fintype V] [DecidableEq V]
+theorem path_edge_bound {V : Type*} [Fintype V]
     (G : SimpleGraph V) [DecidableRel G.Adj] (k : ℕ)
     (hmax : ∀ {a b : V} (p : G.Walk a b), p.IsPath → p.length ≤ k) :
     2 * G.edgeFinset.card ≤ k * Fintype.card V :=
   path_edge_bound_aux (Fintype.card V) V G rfl k hmax
 
 /-- Strict edge density forces a path longer than the given integer bound. -/
-theorem exists_path_of_twice_edges_gt {V : Type*} [Fintype V] [DecidableEq V]
+theorem exists_path_of_twice_edges_gt {V : Type*} [Fintype V]
     (G : SimpleGraph V) [DecidableRel G.Adj] (k : ℕ)
     (he : k * Fintype.card V < 2 * G.edgeFinset.card) :
     ∃ (a b : V) (p : G.Walk a b), p.IsPath ∧ k < p.length := by
+  classical
   by_contra h
   push Not at h
   have hb := path_edge_bound G k (fun p hp => h _ _ p hp)

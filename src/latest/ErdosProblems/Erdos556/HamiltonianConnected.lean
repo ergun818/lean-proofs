@@ -42,7 +42,8 @@ def endpointAugment {V : Type*} (G : SimpleGraph V) (a b : V) : SimpleGraph (Opt
 @[simp] lemma endpointAugment_none {V : Type*} (G : SimpleGraph V) (a b v : V) :
     (endpointAugment G a b).Adj none (some v) ↔ v = a ∨ v = b := Iff.rfl
 
-def endpointAugmentCopy {V : Type*} (G : SimpleGraph V) (a b : V) : G.Copy (endpointAugment G a b) where
+def endpointAugmentCopy {V : Type*} (G : SimpleGraph V) (a b : V) : G.Copy (endpointAugment G a
+    b) where
   toHom := { toFun := some, map_rel' := fun h ↦ h }
   injective' := Option.some_injective V
 
@@ -196,7 +197,8 @@ theorem hamiltonian_path_of_endpointAugment {V : Type*} [Fintype V] [DecidableEq
   · refine ⟨r.copy hsval htval, ?_⟩
     simpa only [Walk.IsHamiltonian, Walk.support_copy] using hr
   · refine ⟨r.reverse.copy htval hsval, ?_⟩
-    simpa only [Walk.IsHamiltonian, Walk.support_copy, Walk.support_reverse, List.count_reverse] using hr
+    simpa only [Walk.IsHamiltonian, Walk.support_copy, Walk.support_reverse, List.count_reverse]
+      using hr
   · exact (hst (hsval.trans htval.symm)).elim
 
 /-- The Hamiltonian-connected version of Ore's degree-sum theorem. -/

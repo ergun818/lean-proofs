@@ -9,7 +9,8 @@ namespace Erdos556
 
 open Finset
 
-noncomputable def faceEdgeProfiles (w : CubeProfile → ℝ) (i : Fin 3) (b : Bool) : Finset CubeProfile :=
+noncomputable def faceEdgeProfiles (w : CubeProfile → ℝ) (i : Fin 3) (b : Bool) :
+    Finset CubeProfile :=
   (positiveEdgeProfiles w).filter (fun p => profileVertices p ⊆ profileVertices (cubeFace i b))
 
 theorem faceEdgeProfiles_subset (w : CubeProfile → ℝ) (i : Fin 3) (b : Bool) :
@@ -79,7 +80,8 @@ theorem cubeGradient_face_of_edge_support (w x : CubeProfile → ℝ) (i : Fin 3
         rw [hx p hp]
         by_cases hsub : profileVertices p ⊆ profileVertices (cubeFace i b)
         · rw [if_pos hsub, cubeOverlap_of_subset hsub, one_mul]
-        · rw [if_neg hsub, cubeOverlap_face_of_subset_opposite i b p ((hpart p hp).resolve_left hsub), zero_mul]
+        · rw [if_neg hsub,
+            cubeOverlap_face_of_subset_opposite i b p ((hpart p hp).resolve_left hsub), zero_mul]
   simp only [cubeGradient, hsum, cubeFace_dimension, Nat.cast_ofNat]
 
 #print axioms IsCubeWeight.face_edges_card_le_two

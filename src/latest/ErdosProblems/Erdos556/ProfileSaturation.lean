@@ -6,9 +6,10 @@ namespace Erdos556
 
 open SimpleGraph Finset
 
-theorem natCard_edges_split_of_le {V : Type*} [Fintype V] [DecidableEq V]
+theorem natCard_edges_split_of_le {V : Type*} [Finite V]
     (G H : SimpleGraph V) (hGH : G ≤ H) :
     Nat.card H.edgeSet = Nat.card G.edgeSet + Nat.card (H ⊓ Gᶜ).edgeSet := by
+  classical
   have heq : G ⊔ (H ⊓ Gᶜ) = H := by
     ext u v
     constructor
@@ -31,7 +32,7 @@ def ThreeColourDecomposition.potentialMissing {V : Type*} [DecidableEq V]
   profilePotentialGraph h.profile ⊓ h.bipartiteUnionᶜ
 
 theorem ThreeColourDecomposition.potentialMissing_edge_count {V : Type*}
-    [Fintype V] [DecidableEq V] {c : ThreeColouring V} {E D : ℝ}
+    [Finite V] [DecidableEq V] {c : ThreeColouring V} {E D : ℝ}
     (h : ThreeColourDecomposition c E D) :
     (Nat.card (profilePotentialGraph h.profile).edgeSet : ℝ) =
       Nat.card h.bipartiteUnion.edgeSet + Nat.card h.potentialMissing.edgeSet := by

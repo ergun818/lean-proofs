@@ -13,7 +13,7 @@ theorem CleanProfileSystem.positive_core_large {V : Type*} [DecidableEq V]
     (hr : 1 ≤ r) (hη : η ≤ 1 / 100) (p : CubeProfile) (hp : 0 < h.weight p) :
     r + 2 * h.defect + 1 ≤ (h.sets p).card := by
   have hw : 1 ≤ h.weight p := by
-    rcases h.tiling.normalized p hp with ⟨_, he⟩ | ⟨_, he⟩ <;> rw [he] <;> norm_num
+    rcases h.tiling.normalized p hp with ⟨_, he⟩ | ⟨_, he⟩ <;> norm_num [he]
   have hsize := h.size_lower p
   have hd := h.defect_le
   have hrR : (1 : ℝ) ≤ r := by exact_mod_cast hr

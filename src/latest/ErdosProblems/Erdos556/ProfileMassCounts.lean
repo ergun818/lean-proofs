@@ -8,7 +8,8 @@ namespace Erdos556
 open SimpleGraph Finset
 
 theorem ThreeColourDecomposition.mem_profileClass_iff {V : Type*} [Fintype V] [DecidableEq V]
-    {c : ThreeColouring V} {E D : ℝ} (h : ThreeColourDecomposition c E D) (p : CubeProfile) (v : V) :
+    {c : ThreeColouring V} {E D : ℝ} (h : ThreeColourDecomposition c E D) (p : CubeProfile) (v :
+      V) :
     v ∈ h.profileClass p ↔ h.profile v = p := by
   simp only [profileClass, mem_filter, mem_univ, true_and]
 
@@ -17,7 +18,8 @@ theorem ThreeColourDecomposition.profileClass_disjoint {V : Type*} [Fintype V] [
     (p q : CubeProfile) (hpq : p ≠ q) : Disjoint (h.profileClass p) (h.profileClass q) := by
   apply Finset.disjoint_left.mpr
   intro v hvp hvq
-  exact hpq ((h.mem_profileClass_iff p v).mp hvp |>.symm.trans ((h.mem_profileClass_iff q v).mp hvq))
+  exact hpq ((h.mem_profileClass_iff p v).mp hvp |>.symm.trans ((h.mem_profileClass_iff q v).mp
+    hvq))
 
 theorem ThreeColourDecomposition.sum_profileClass_card {V : Type*} [Fintype V] [DecidableEq V]
     {c : ThreeColouring V} {E D : ℝ} (h : ThreeColourDecomposition c E D) :
@@ -45,7 +47,8 @@ theorem ThreeColourDecomposition.sum_stars_card {V : Type*} [Fintype V] [Decidab
       intro v _
       rw [profileDimension, sum_boole]
       simp only [Nat.cast_id]
-    _ = ∑ p, (h.profileClass p).card * profileDimension p := sum_by_fiber_card h.profile profileDimension
+    _ = ∑ p, (h.profileClass p).card * profileDimension p := sum_by_fiber_card h.profile
+      profileDimension
     _ = _ := sum_congr rfl (fun _ _ => Nat.mul_comm _ _)
 
 #print axioms ThreeColourDecomposition.sum_stars_card

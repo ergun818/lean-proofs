@@ -12,7 +12,7 @@ namespace Erdos556
 
 open Finset
 
-theorem exists_large_common_neighbor_class {V : Type*} [Fintype V] [DecidableEq V]
+theorem exists_large_common_neighbor_class {V : Type*} [Fintype V]
     (D L d : ℕ) (hL : 0 < L) (hN : 0 < Fintype.card V)
     (hscale : Fintype.card V ≤ D * d)
     (S : Fin (2 * D * L) → Finset V) (hsize : ∀ i, d ≤ (S i).card) :
@@ -90,7 +90,7 @@ theorem exists_large_common_neighbor_class {V : Type*} [Fintype V] [DecidableEq 
 
 #print axioms exists_large_common_neighbor_class
 
-theorem exists_complete_bipartite_from_degree_pattern {V : Type*} [Fintype V] [DecidableEq V]
+theorem exists_complete_bipartite_from_degree_pattern {V : Type*} [Fintype V]
     (G : SimpleGraph V) [DecidableRel G.Adj] (D L d : ℕ) (hL : 0 < L)
     (hN : 0 < Fintype.card V) (hscale : Fintype.card V ≤ D * d)
     (hdegree : ∀ v, d ≤ G.degree v) (a : Fin (2 * D * L) ↪ V) :

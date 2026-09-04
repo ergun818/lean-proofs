@@ -36,7 +36,7 @@ theorem degree_le_induce_compl_degree_add_card {V : Type*} [Fintype V]
   omega
 
 /-- The short path avoids `S` on its whole support, including its endpoints. -/
-theorem exists_short_path_avoiding {V : Type*} [Fintype V] [DecidableEq V]
+theorem exists_short_path_avoiding {V : Type*} [Fintype V]
     (G : SimpleGraph V) [DecidableRel G.Adj] (b d : ℕ)
     (hconn : ConnectedAfterDeleting G b) (hd : 0 < d)
     (hdeg : ∀ w, d + b ≤ G.degree w) (S : Finset V) (hS : S.card ≤ b)

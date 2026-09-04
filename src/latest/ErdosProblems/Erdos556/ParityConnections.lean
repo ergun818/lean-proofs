@@ -26,7 +26,7 @@ theorem ParityConnection.mono {V : Type*} {G : SimpleGraph V} {L : ℕ} {u v : V
   obtain ⟨p, hp, hlen, hpar, hs⟩ := h r
   exact ⟨p, hp, hlen, hpar, fun x hx hxu hxv => hST (hs x hx hxu hxv)⟩
 
-theorem exists_short_parity_connection_avoiding {V : Type*} [Fintype V] [DecidableEq V]
+theorem exists_short_parity_connection_avoiding {V : Type*} [Fintype V]
     (G : SimpleGraph V) [DecidableRel G.Adj] (b d D : ℕ)
     (hconn : ConnectedAfterDeleting G (b + 3 * D + 3))
     (hnonbip : NonbipartiteAfterDeleting G (b + 3 * D + 3))

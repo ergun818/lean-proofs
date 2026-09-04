@@ -36,7 +36,7 @@ theorem IsCubeWeight.energy_ge_whole_of_high_support {w : CubeProfile → ℝ}
     by_cases hpc : p = wholeCube
     · subst p
       simp [x]
-    · simp [x, hpc, Ne.symm hpc]
+    · simp [x, hpc]
   have hsum : (∑ p, x p) = ∑ p ∈ E, w p := by
     calc
       (∑ p, x p) = ∑ p ∈ E, x p := by
@@ -59,7 +59,8 @@ theorem IsCubeWeight.energy_ge_whole_of_high_support {w : CubeProfile → ℝ}
   have hfull : cubeEnergy w = (∑ p ∈ E, w p ^ 2) - (∑ p ∈ E, w p) +
       w wholeCube * (2 * (∑ p ∈ E, w p) - 3) + (w wholeCube) ^ 2 := by
     calc
-      cubeEnergy w = cubeEnergy (x + Pi.single wholeCube (w wholeCube)) := congrArg cubeEnergy hdecomp
+      cubeEnergy w = cubeEnergy (x + Pi.single wholeCube (w wholeCube)) := congrArg cubeEnergy
+        hdecomp
       _ = _ := by rw [cubeEnergy_add_single, henergy, cubeGradient_wholeCube, hsum]
   have hbound := cube_terminal_bound (w wholeCube) (∑ p ∈ E, w p) (∑ p ∈ E, w p ^ 2)
     (hw.nonneg wholeCube) (sum_nonneg fun p _ => hw.nonneg p) htotal hw.edge_sum_sq_bound

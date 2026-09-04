@@ -35,7 +35,7 @@ theorem weights_eq_one_of_maximal_sum {I : Type*} (S : Finset I) (f : I → ℝ)
   by_contra hne
   have hlt : (∑ j ∈ S, f j) < ∑ _j ∈ S, (1 : ℝ) :=
     sum_lt_sum hf ⟨i, hi, lt_of_le_of_ne (hf i hi) hne⟩
-  simpa only [hsum, sum_const, nsmul_eq_mul, mul_one, hc, lt_self_iff_false] using hlt
+  simp only [hsum, sum_const, nsmul_eq_mul, mul_one, hc, lt_self_iff_false] at hlt
 
 theorem IsCubeWeight.edge_sum_sq_bound {w : CubeProfile → ℝ} (hw : IsCubeWeight w) :
     (∑ p ∈ positiveEdgeProfiles w, w p) ^ 2 ≤ 4 * ∑ p ∈ positiveEdgeProfiles w, w p ^ 2 := by

@@ -25,7 +25,8 @@ theorem cubeBilinear_eq_diagonal (x : CubeProfile → ℝ)
 theorem cubeEnergy_of_edge_support (x : CubeProfile → ℝ) (S : Finset CubeProfile)
     (hsupport : ∀ p, p ∉ S → x p = 0)
     (hdim : ∀ p ∈ S, profileDimension p = 1)
-    (hdisj : (S : Set CubeProfile).Pairwise (fun p q => Disjoint (profileVertices p) (profileVertices q))) :
+    (hdisj : (S : Set CubeProfile).Pairwise (fun p q => Disjoint (profileVertices p)
+      (profileVertices q))) :
     cubeEnergy x = (∑ p ∈ S, x p ^ 2) - ∑ p ∈ S, x p := by
   classical
   have hzero (p q : CubeProfile) (hpq : p ≠ q) : cubeOverlap p q * x p * x q = 0 := by

@@ -18,7 +18,8 @@ structure ProfileRefinement {V : Type*} [DecidableEq V]
   large : ∀ l, evenCubeVertex l ∈ profileVertices p → L ≤ (cores l).card
   profile_disjoint : ∀ l m, l ≠ m → evenCubeVertex l ∈ profileVertices p →
     evenCubeVertex m ∈ profileVertices p →
-    Disjoint (profileVertices (matchingProfile l direction)) (profileVertices (matchingProfile m direction))
+    Disjoint (profileVertices (matchingProfile l direction)) (profileVertices (matchingProfile m
+      direction))
   core_disjoint : ∀ l m, l ≠ m → evenCubeVertex l ∈ profileVertices p →
     evenCubeVertex m ∈ profileVertices p → Disjoint (cores l) (cores m)
   dense : ∀ l m, evenCubeVertex l ∈ profileVertices p →

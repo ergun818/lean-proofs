@@ -14,7 +14,7 @@ namespace Erdos556
 open SimpleGraph Finset
 
 theorem connectedAfterDeleting_of_minimal_quadratic_density
-    {V : Type*} [Fintype V] [DecidableEq V] (G : SimpleGraph V) [DecidableRel G.Adj]
+    {V : Type*} [Fintype V] (G : SimpleGraph V) [DecidableRel G.Adj]
     (b : ℕ) (k η : ℝ) (hk : 0 ≤ k) (hη : 0 ≤ η) (hbk : (b : ℝ) ≤ k)
     (hbudget : (b : ℝ) * Fintype.card V ≤ 2 * η * (k - b) ^ 2)
     (he : k * Fintype.card V + η * (Fintype.card V : ℝ) ^ 2 < (G.edgeFinset.card : ℝ))
@@ -57,7 +57,7 @@ theorem connectedAfterDeleting_of_minimal_quadratic_density
     (by exact_mod_cast hcards.symm) hSR hbk ha hb hbudget (by linarith)
   exact (not_le_of_gt he) hbound
 
-theorem exists_connected_quadratic_dense_core {V : Type*} [Fintype V] [DecidableEq V]
+theorem exists_connected_quadratic_dense_core {V : Type*} [Fintype V]
     (G : SimpleGraph V) [DecidableRel G.Adj] (b : ℕ) (k η : ℝ)
     (hk : 0 ≤ k) (hη : 0 ≤ η) (hbk : (b : ℝ) ≤ k)
     (hbudget : (b : ℝ) * Fintype.card V ≤ 2 * η * (k - b) ^ 2)
@@ -91,7 +91,7 @@ theorem exists_connected_quadratic_dense_core {V : Type*} [Fintype V] [Decidable
 is selected among subsets of the original graph, so no nested vertex type
 is needed by the later bipartite-core argument. -/
 theorem exists_connected_quadratic_dense_core_of_subset
-    {V : Type*} [Fintype V] [DecidableEq V]
+    {V : Type*} [Fintype V]
     (G : SimpleGraph V) [DecidableRel G.Adj] (b : ℕ) (k η : ℝ)
     (hk : 0 ≤ k) (hη : 0 ≤ η) (hbk : (b : ℝ) ≤ k)
     (hbudget : (b : ℝ) * Fintype.card V ≤ 2 * η * (k - b) ^ 2)

@@ -26,7 +26,7 @@ theorem clique_insert_of_joined_core {V : Type*} [DecidableEq V]
       exact hjoin x hxA u hu hxy
     · exact hjoin x hxA y (hAS hyA) hxy
 
-theorem exists_joined_core_path_to_outside {V : Type*} [DecidableEq V]
+theorem exists_joined_core_path_to_outside {V : Type*}
     (G : SimpleGraph V) (A S : Finset V) (hAS : A ⊆ S)
     (hjoin : ∀ a ∈ A, ∀ s ∈ S, a ≠ s → G.Adj a s)
     (L : ℕ) (hL : 3 ≤ L) (hA : L ≤ A.card)
@@ -63,7 +63,7 @@ theorem exists_joined_core_path_to_outside {V : Type*} [DecidableEq V]
       · exact hAS hx
     · exact hx ▸ hv
 
-theorem exists_path_in_joined_core_bucket {V : Type*} [DecidableEq V]
+theorem exists_path_in_joined_core_bucket {V : Type*}
     (G : SimpleGraph V) (A S : Finset V) (hAS : A ⊆ S)
     (hjoin : ∀ a ∈ A, ∀ s ∈ S, a ≠ s → G.Adj a s)
     (L : ℕ) (hL : 3 ≤ L) (hA : L ≤ A.card) (hS : L + 1 ≤ S.card)
@@ -74,7 +74,8 @@ theorem exists_path_in_joined_core_bucket {V : Type*} [DecidableEq V]
   · by_cases huA : u ∈ A
     · by_cases hsize : L + 1 ≤ A.card
       · have hclique : G.IsClique (A : Set V) := fun _ ha _ hb hab => hjoin _ ha _ (hAS hb) hab
-        obtain ⟨p, hp, hlen, hsupp⟩ := exists_path_in_clique G A hclique L (by omega) hsize u v huA hvA huv
+        obtain ⟨p, hp, hlen, hsupp⟩ := exists_path_in_clique G A hclique L (by omega) hsize u v
+          huA hvA huv
         exact ⟨p, hp, hlen, fun x hx => hAS (hsupp x hx)⟩
       · obtain ⟨x, hxS, hxA⟩ := exists_mem_notMem_of_card_lt_card (show A.card < S.card by omega)
         have hsize' : L + 1 ≤ (insert x A).card := by rw [card_insert_of_notMem hxA]; omega

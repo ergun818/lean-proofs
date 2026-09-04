@@ -11,7 +11,7 @@ namespace Erdos556
 
 open SimpleGraph Finset
 
-theorem exists_induced_core_of_card_floor {V : Type*} [Fintype V] [DecidableEq V]
+theorem exists_induced_core_of_card_floor {V : Type*} [Fintype V]
     (G : SimpleGraph V) [DecidableRel G.Adj] (d : ℝ) (a : ℕ) (ha : a ≤ Fintype.card V) :
     ∃ S : Finset V, a ≤ S.card ∧
       (G.edgeFinset.card : ℝ) - d * Fintype.card V ≤
@@ -40,7 +40,8 @@ theorem exists_induced_core_of_card_floor {V : Type*} [Fintype V] [DecidableEq V
   have hcard : T.card + 1 = S.card := card_erase_add_one v.property
   have hedge := induced_edges_erase_add_degree G S v
   have hedgeR : ((G.induce (T : Set V)).edgeFinset.card : ℝ) +
-      (G.induce (S : Set V)).degree v = (G.induce (S : Set V)).edgeFinset.card := by exact_mod_cast hedge
+      (G.induce (S : Set V)).degree v = (G.induce (S : Set V)).edgeFinset.card := by
+        exact_mod_cast hedge
   have hcardR : (T.card : ℝ) + 1 = S.card := by exact_mod_cast hcard
   have hT : T ∈ good := by
     apply mem_filter.mpr

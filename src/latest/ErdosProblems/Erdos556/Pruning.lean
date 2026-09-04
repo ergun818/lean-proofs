@@ -29,7 +29,7 @@ def induceEraseIso {V : Type*} [DecidableEq V] (G : SimpleGraph V)
       right_inv := fun _ => rfl }
   map_rel_iff' := by intro x y; rfl
 
-theorem induced_edges_erase_add_degree {V : Type*} [Fintype V] [DecidableEq V]
+theorem induced_edges_erase_add_degree {V : Type*} [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj] (S : Finset V) (v : S) :
     (G.induce (S.erase v.val : Set V)).edgeFinset.card +
       (G.induce (S : Set V)).degree v = (G.induce (S : Set V)).edgeFinset.card := by
@@ -40,7 +40,7 @@ theorem induced_edges_erase_add_degree {V : Type*} [Fintype V] [DecidableEq V]
 /-- Pruning preserves edge excess over `d` times the vertex count and leaves
 an induced graph in which every vertex has degree strictly greater than `d`.
 The empty induced graph is allowed when the original excess is nonpositive. -/
-theorem exists_induced_core {V : Type*} [Fintype V] [DecidableEq V]
+theorem exists_induced_core {V : Type*} [Fintype V]
     (G : SimpleGraph V) [DecidableRel G.Adj] (d : ℝ) :
     ∃ S : Finset V,
       (G.edgeFinset.card : ℝ) - d * Fintype.card V ≤
@@ -81,12 +81,13 @@ theorem exists_induced_core {V : Type*} [Fintype V] [DecidableEq V]
 
 /-- Positive edge excess ensures that the pruned core is nonempty and keeps
 the same strict edge-density inequality. -/
-theorem exists_dense_induced_core {V : Type*} [Fintype V] [DecidableEq V]
+theorem exists_dense_induced_core {V : Type*} [Fintype V]
     (G : SimpleGraph V) [DecidableRel G.Adj] (d : ℝ)
     (hd : d * Fintype.card V < (G.edgeFinset.card : ℝ)) :
     ∃ S : Finset V, S.Nonempty ∧
       d * S.card < ((G.induce (S : Set V)).edgeFinset.card : ℝ) ∧
       ∀ v : S, d < (G.induce (S : Set V)).degree v := by
+  classical
   obtain ⟨S, hS, hdegree⟩ := exists_induced_core G d
   have he : d * S.card < ((G.induce (S : Set V)).edgeFinset.card : ℝ) := by linarith
   refine ⟨S, ?_, he, hdegree⟩

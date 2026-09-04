@@ -34,7 +34,7 @@ theorem no_common_neighbor_of_shortest_gap {V : Type*} {G : SimpleGraph V}
 
 /-- A shortest path meets pairwise disjoint open neighbourhoods at positions
 `0, 3, 6, ...`. -/
-theorem shortest_path_neighborhood_count {V : Type*} [Fintype V] [DecidableEq V]
+theorem shortest_path_neighborhood_count {V : Type*} [Fintype V]
     (G : SimpleGraph V) [DecidableRel G.Adj] {u v : V} (p : G.Walk u v)
     (hp : p.length = G.dist u v) (d : ℕ) (hdeg : ∀ w, d ≤ G.degree w) :
     (p.length / 3 + 1) * d ≤ Fintype.card V := by
@@ -79,10 +79,11 @@ theorem shortest_path_neighborhood_count {V : Type*} [Fintype V] [DecidableEq V]
   exact hsum.trans hc
 
 /-- A division-free diameter bound, suitable for later real-valued estimates. -/
-theorem exists_short_path_of_min_degree {V : Type*} [Fintype V] [DecidableEq V]
+theorem exists_short_path_of_min_degree {V : Type*} [Fintype V]
     (G : SimpleGraph V) [DecidableRel G.Adj] (hconn : G.Connected)
     (d : ℕ) (hd : 0 < d) (hdeg : ∀ w, d ≤ G.degree w) (u v : V) :
     ∃ p : G.Walk u v, p.IsPath ∧ d * p.length < 3 * Fintype.card V := by
+  classical
   obtain ⟨p, hp, hdist⟩ := hconn.exists_path_of_dist u v
   refine ⟨p, hp, ?_⟩
   have hc := shortest_path_neighborhood_count G p hdist d hdeg

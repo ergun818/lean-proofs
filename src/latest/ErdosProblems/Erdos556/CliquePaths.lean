@@ -11,12 +11,14 @@ namespace Erdos556
 
 open SimpleGraph Finset
 
-theorem exists_path_in_clique {V : Type*} [DecidableEq V] (G : SimpleGraph V)
+theorem exists_path_in_clique {V : Type*} (G : SimpleGraph V)
     (A : Finset V) (hA : G.IsClique (A : Set V)) (L : ℕ) (hL : 2 ≤ L)
     (hsize : L + 1 ≤ A.card) (u v : V) (hu : u ∈ A) (hv : v ∈ A) (huv : u ≠ v) :
     ∃ p : G.Walk u v, p.IsPath ∧ p.length = L ∧ ∀ x ∈ p.support, x ∈ A := by
   classical
-  have hpair : ({u, v} : Finset V) ⊆ A := by simp only [insert_subset_iff, singleton_subset_iff]; exact ⟨hu, hv⟩
+  have hpair : ({u, v} : Finset V) ⊆ A := by
+    simp only [insert_subset_iff, singleton_subset_iff]
+    exact ⟨hu, hv⟩
   have hpaircard : ({u, v} : Finset V).card ≤ L + 1 := by
     have h := card_insert_le u ({v} : Finset V)
     simp only [card_singleton] at h

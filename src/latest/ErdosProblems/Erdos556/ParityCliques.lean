@@ -55,7 +55,7 @@ theorem parityHalf_isClique {V : Type*} [DecidableEq V] {G : SimpleGraph V}
   · change (2 * i.val + b.val) % 2 = (2 * j.val + b.val) % 2
     omega
 
-theorem exists_two_parity_cliques {V : Type*} [DecidableEq V] (G : SimpleGraph V)
+theorem exists_two_parity_cliques {V : Type*} (G : SimpleGraph V)
     (t : ℕ) (ht : 4 ≤ t) (hc : cycleGraph (2 * t) ⊑ G)
     (hno : ¬ cycleGraph (2 * t - 1) ⊑ G) (hnoc : ¬ cycleGraph (2 * t - 1) ⊑ Gᶜ) :
     ∃ A B : Finset V, Disjoint A B ∧ A.card = t ∧ B.card = t ∧

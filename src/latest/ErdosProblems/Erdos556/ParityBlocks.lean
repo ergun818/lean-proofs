@@ -24,7 +24,8 @@ theorem exists_same_parity_block (S : Finset ℕ) (N Q L : ℕ) (hQ : 0 < Q)
   have hBc : B.card * (L - 1) < S.card := by
     simpa only [B, card_product, card_range, Nat.mul_comm (N / Q + 1) 2] using hc
   obtain ⟨b, _, hb⟩ := exists_lt_card_fiber_of_mul_lt_card_of_maps_to hf hBc
-  obtain ⟨T, hT, hTc⟩ := exists_subset_card_eq (show L ≤ (S.filter (fun i => f i = b)).card by omega)
+  obtain ⟨T, hT, hTc⟩ := exists_subset_card_eq (show L ≤ (S.filter (fun i => f i = b)).card by
+    omega)
   refine ⟨T, hT.trans (filter_subset _ _), hTc, ?_⟩
   intro i hi j hj
   have hi' := (mem_filter.mp (hT hi)).2

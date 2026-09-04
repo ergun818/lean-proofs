@@ -18,7 +18,8 @@ theorem monochromatic_predecessor_of_odd_cycle {V : Type*} (G : SimpleGraph V)
   obtain ⟨f⟩ := hc
   have h2 := complement_short_chords_of_cycle_copy (by omega : 4 ≤ 2 * r + 1) f hno.1
   have h3 := three_chords_of_no_predecessor_cycles hm ⟨r, by omega⟩ f hno.1 hno.2
-  obtain ⟨v, c, hcycle, hlen⟩ := exists_even_cycle_of_two_three_steps r (by omega) f f.injective h2 h3
+  obtain ⟨v, c, hcycle, hlen⟩ := exists_even_cycle_of_two_three_steps r (by omega) f f.injective
+    h2 h3
   apply hno.2
   apply (cycleGraph_isContained_iff (by omega : 2 < 2 * r + 1 - 1)).mpr
   exact ⟨v, c, hcycle, by omega⟩

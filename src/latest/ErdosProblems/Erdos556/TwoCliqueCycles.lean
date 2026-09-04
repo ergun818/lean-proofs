@@ -7,13 +7,14 @@ namespace Erdos556
 
 open SimpleGraph Finset
 
-theorem exists_cycle_of_paths_and_cross_edges {V : Type*} [DecidableEq V]
+theorem exists_cycle_of_paths_and_cross_edges {V : Type*}
     {G : SimpleGraph V} {a a' b b' : V}
     (A B : Finset V) (hdis : Disjoint A B) (hb' : b' ∈ B)
     (p : G.Walk a a') (q : G.Walk b' b) (hp : p.IsPath) (hq : q.IsPath)
     (hL : 2 ≤ p.length) (hpA : ∀ x ∈ p.support, x ∈ A) (hqB : ∀ x ∈ q.support, x ∈ B)
     (hab : G.Adj a b) (hab' : G.Adj a' b') :
     ∃ (v : V) (c : G.Walk v v), c.IsCycle ∧ c.length = p.length + q.length + 2 := by
+  classical
   have hbp : b' ∉ p.support := fun h => (Finset.disjoint_left.mp hdis (hpA b' h)) hb'
   have hp' : (p.concat hab').IsPath := hp.concat hbp hab'
   have hinter : ∀ x ∈ (p.concat hab').support, x ∈ q.support → x = b' := by
@@ -29,20 +30,21 @@ theorem exists_cycle_of_paths_and_cross_edges {V : Type*} [DecidableEq V]
   simp only [Walk.length_append, Walk.length_concat] at hlen
   omega
 
-theorem exists_cycle_of_two_cliques_two_edges {V : Type*} [DecidableEq V]
+theorem exists_cycle_of_two_cliques_two_edges {V : Type*}
     (G : SimpleGraph V) (A B : Finset V) (hdis : Disjoint A B)
     (hA : G.IsClique (A : Set V)) (hB : G.IsClique (B : Set V))
     (L M : ℕ) (hL : 2 ≤ L) (hM : 2 ≤ M) (hAc : L + 1 ≤ A.card) (hBc : M + 1 ≤ B.card)
     (a a' b b' : V) (ha : a ∈ A) (ha' : a' ∈ A) (hb : b ∈ B) (hb' : b' ∈ B)
     (haa : a ≠ a') (hbb : b ≠ b') (hab : G.Adj a b) (hab' : G.Adj a' b') :
     ∃ (v : V) (c : G.Walk v v), c.IsCycle ∧ c.length = L + M + 2 := by
+  classical
   obtain ⟨p, hp, hplen, hpA⟩ := exists_path_in_clique G A hA L hL hAc a a' ha ha' haa
   obtain ⟨q, hq, hqlen, hqB⟩ := exists_path_in_clique G B hB M hM hBc b' b hb' hb hbb.symm
   obtain ⟨v, c, hc, hlen⟩ := exists_cycle_of_paths_and_cross_edges A B hdis hb' p q hp hq
     (by omega) hpA hqB hab hab'
   exact ⟨v, c, hc, by omega⟩
 
-theorem two_clique_cross_edges_share_endpoint {V : Type*} [DecidableEq V]
+theorem two_clique_cross_edges_share_endpoint {V : Type*}
     (G : SimpleGraph V) (A B : Finset V) (hdis : Disjoint A B)
     (hA : G.IsClique (A : Set V)) (hB : G.IsClique (B : Set V))
     (r : ℕ) (hr : 3 ≤ r) (hAc : r + 1 ≤ A.card) (hBc : r + 1 ≤ B.card)

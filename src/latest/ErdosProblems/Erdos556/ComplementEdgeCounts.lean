@@ -47,9 +47,10 @@ theorem twice_edge_count_add_complement_real {V : Type*} [Fintype V] [DecidableE
   rw [h, Nat.cast_choose_two]
   ring
 
-theorem twice_edge_count_le_order_real {V : Type*} [Fintype V] [DecidableEq V]
+theorem twice_edge_count_le_order_real {V : Type*} [Fintype V]
     (G : SimpleGraph V) [DecidableRel G.Adj] :
     2 * (G.edgeFinset.card : ℝ) ≤ (Fintype.card V : ℝ) * ((Fintype.card V : ℝ) - 1) := by
+  classical
   have h : (G.edgeFinset.card : ℝ) ≤ ((Fintype.card V).choose 2 : ℝ) := by
     exact_mod_cast G.card_edgeFinset_le_card_choose_two
   rw [Nat.cast_choose_two] at h

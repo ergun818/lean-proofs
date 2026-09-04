@@ -7,7 +7,7 @@ namespace Erdos556
 
 open SimpleGraph Finset
 
-theorem outside_vertex_complete_to_one_core {V : Type*} [DecidableEq V]
+theorem outside_vertex_complete_to_one_core {V : Type*}
     (G : SimpleGraph V) (A B : Finset V) (r : ℕ) (hr : 1 ≤ r)
     (hdis : Disjoint A B) (hA : r ≤ A.card) (hB : r ≤ B.card)
     (hcross : ∀ a ∈ A, ∀ b ∈ B, Gᶜ.Adj a b)

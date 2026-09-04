@@ -59,7 +59,8 @@ theorem exists_profile_approximation_parameters (δ : ℝ) (hδ : 0 < δ) :
   · linarith
   · linarith
   · have hW := h.free_coordinate_mass_le
-    have hmul := mul_le_mul_of_nonneg_left hW (mul_nonneg (by positivity : (0 : ℝ) ≤ 2 * ε) hNnonneg)
+    have hmul := mul_le_mul_of_nonneg_left hW (mul_nonneg (by positivity : (0 : ℝ) ≤ 2 * ε)
+      hNnonneg)
     nlinarith
 
 #print axioms exists_profile_approximation_parameters

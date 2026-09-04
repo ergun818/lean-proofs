@@ -31,7 +31,8 @@ theorem sum_double_by_fiber_card {V P R : Type*} [Fintype V] [Fintype P] [Decida
       exact sum_by_fiber_card label (f (label u))
     _ = ∑ p, ((univ.filter (fun v => label v = p)).card : R) *
         (∑ q, ((univ.filter (fun v => label v = q)).card : R) * f p q) :=
-      sum_by_fiber_card label (fun p => ∑ q, ((univ.filter (fun v => label v = q)).card : R) * f p q)
+      sum_by_fiber_card label (fun p => ∑ q, ((univ.filter (fun v => label v = q)).card : R) * f
+        p q)
     _ = _ := by simp only [mul_sum, mul_assoc]
 
 end Erdos556

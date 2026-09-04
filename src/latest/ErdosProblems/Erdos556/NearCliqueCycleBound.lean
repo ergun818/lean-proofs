@@ -7,11 +7,12 @@ namespace Erdos556
 
 open SimpleGraph Finset
 
-theorem near_clique_order_bound_of_forbidden_cycle {V : Type*} [Fintype V] [DecidableEq V]
-    (G : SimpleGraph V) [DecidableRel G.Adj] (S : Finset V) (n : ℕ) (hn : 8 ≤ n)
+theorem near_clique_order_bound_of_forbidden_cycle {V : Type*} [Finite V]
+    (G : SimpleGraph V) (S : Finset V) (n : ℕ) (hn : 8 ≤ n)
     (hno : ¬ cycleGraph n ⊑ G) :
     n * S.card ≤ n * n + 16 * Nat.card (Gᶜ.induce (S : Set V)).edgeSet := by
   classical
+  let := Fintype.ofFinite V
   let q := n / 4
   obtain ⟨A, hAS, hbad, hclean⟩ := exists_clean_core Gᶜ S q
   have hAn : A.card < n := by

@@ -57,7 +57,8 @@ theorem IsCubeTiling.cover {w : CubeProfile → ℝ} (ht : IsCubeTiling w) (hw :
         sum_congr rfl (fun p hp => ht.card_eq_twice_weight p (mem_filter.mp hp).2)
       _ = 2 * ∑ p ∈ positiveCubeProfiles w, w p := (mul_sum _ _ _).symm
       _ = 8 := by rw [hw.sum_positive_profiles]; norm_num
-  have hsum : (∑ p ∈ positiveCubeProfiles w, (profileVertices p).card) = 8 := by exact_mod_cast hsumR
+  have hsum : (∑ p ∈ positiveCubeProfiles w, (profileVertices p).card) = 8 := by
+    exact_mod_cast hsumR
   have hcard : ((positiveCubeProfiles w).biUnion profileVertices).card = 8 := by
     rw [card_biUnion hdisj, hsum]
   have huniv : (univ : Finset CubeVertex).card = 8 := by decide

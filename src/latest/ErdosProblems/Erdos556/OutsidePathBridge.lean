@@ -6,13 +6,14 @@ namespace Erdos556
 
 open SimpleGraph Finset
 
-theorem exists_cycle_of_two_paths_and_outside_vertex {V : Type*} [DecidableEq V]
+theorem exists_cycle_of_two_paths_and_outside_vertex {V : Type*}
     {G : SimpleGraph V} {a a' b b' x : V}
     (X Y : Finset V) (hdis : Disjoint X Y) (hxX : x ∉ X) (hxY : x ∉ Y) (hb' : b' ∈ Y)
     (p : G.Walk a a') (q : G.Walk b' b) (hp : p.IsPath) (hq : q.IsPath) (hL : 1 ≤ p.length)
     (hpX : ∀ z ∈ p.support, z ∈ X) (hqY : ∀ z ∈ q.support, z ∈ Y)
     (hxa : G.Adj x a) (hxb : G.Adj x b) (hab : G.Adj a' b') :
     ∃ (v : V) (c : G.Walk v v), c.IsCycle ∧ c.length = p.length + q.length + 3 := by
+  classical
   have hxP : x ∉ p.support := fun h => hxX (hpX x h)
   have hp' : (Walk.cons hxa p).IsPath := (Walk.cons_isPath_iff _ _).mpr ⟨hp, hxP⟩
   have hdis' : Disjoint (insert x X) Y := by

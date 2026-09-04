@@ -13,7 +13,7 @@ namespace Erdos556
 open SimpleGraph Finset
 
 private theorem decomposition_real_bound (r N e s : ℕ) (ε : ℝ)
-    (hε : 0 < ε) (hr : 2 ≤ ε * (r + 1))
+    (_hε : 0 < ε) (hr : 2 ≤ ε * (r + 1))
     (hN : 2 * (r + 1) ≤ ε * N)
     (he : (r + 1) * e ≤ (r + 1) * s + (r + 1) ^ 2 * N + N ^ 2) :
     (e : ℝ) ≤ s + ε * (N : ℝ) ^ 2 := by

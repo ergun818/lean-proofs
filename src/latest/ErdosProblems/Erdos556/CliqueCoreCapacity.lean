@@ -6,7 +6,7 @@ namespace Erdos556
 
 open SimpleGraph Finset
 
-theorem clique_core_capacity_bound {V I : Type*} [Fintype V] [DecidableEq V] [Fintype I]
+theorem clique_core_capacity_bound {V I : Type*} [Fintype V] [Fintype I]
     (G : I → SimpleGraph V) (A : I → Finset V) (r : ℕ) (hr : 1 ≤ r)
     (hA : ∀ i, r + 1 ≤ (A i).card) (hclique : ∀ i, (G i).IsClique (A i : Set V))
     (hno : ∀ i, ¬ cycleGraph (2 * r + 1) ⊑ G i)

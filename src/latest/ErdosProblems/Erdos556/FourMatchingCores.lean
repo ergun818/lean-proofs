@@ -12,7 +12,8 @@ structure FourMatchingCores {V : Type*} [DecidableEq V]
   profiles : Fin 4 → CubeProfile
   cores : Fin 4 → Finset V
   dimension : ∀ l, profileDimension (profiles l) = 1
-  profile_disjoint : ∀ l m, l ≠ m → Disjoint (profileVertices (profiles l)) (profileVertices (profiles m))
+  profile_disjoint : ∀ l m, l ≠ m →
+    Disjoint (profileVertices (profiles l)) (profileVertices (profiles m))
   core_disjoint : ∀ l m, l ≠ m → Disjoint (cores l) (cores m)
   large : ∀ l, L ≤ (cores l).card
   dense : ∀ l m i, uniqueProfileSeparator (profiles l) (profiles m) i →
@@ -24,7 +25,8 @@ theorem four_matching_cores_of_refinements {V : Type*} [DecidableEq V]
       Nonempty (ProfileRefinement c p (h.sets p) L h.defect)) :
     Nonempty (FourMatchingCores c L h.defect) := by
   classical
-  have hex (l : Fin 4) : ∃ p : CubeProfile, 0 < h.weight p ∧ evenCubeVertex l ∈ profileVertices p := by
+  have hex (l : Fin 4) :
+      ∃ p : CubeProfile, 0 < h.weight p ∧ evenCubeVertex l ∈ profileVertices p := by
     have hh : evenCubeVertex l ∈ (positiveCubeProfiles h.weight).biUnion profileVertices := by
       rw [h.tiling.cover h.admissible]
       exact mem_univ _
@@ -33,7 +35,8 @@ theorem four_matching_cores_of_refinements {V : Type*} [DecidableEq V]
   choose p hp hmem using hex
   let P : Fin 4 → {q : CubeProfile // 0 < h.weight q} := fun l => ⟨p l, hp l⟩
   let R (q : {q : CubeProfile // 0 < h.weight q}) :
-      ProfileRefinement c q.val (h.sets q.val) L h.defect := Classical.choice (href q.val q.property)
+      ProfileRefinement c q.val (h.sets q.val) L h.defect :=
+    Classical.choice (href q.val q.property)
   have hmemP (l : Fin 4) : evenCubeVertex l ∈ profileVertices (P l).val := hmem l
   have hneq (l m : Fin 4) (hne : P l ≠ P m) : (P l).val ≠ (P m).val :=
     fun he => hne (Subtype.ext he)

@@ -13,13 +13,14 @@ namespace Erdos556
 
 open SimpleGraph
 
-theorem long_odd_cycle_of_bipartite_core {V : Type*} [Fintype V] [DecidableEq V]
+theorem long_odd_cycle_of_bipartite_core {V : Type*} [Fintype V]
     {G : SimpleGraph V} (hG : TwoConnected G) (hnonbip : ¬ G.Colorable 2)
     (S : Set V) (hS : 2 ≤ S.ncard) (colour : (G.induce S).Coloring Bool)
     (k : ℕ) (hk : 1 ≤ k)
     (hlong : ∀ u v : S, u ≠ v → ∃ p : (G.induce S).Walk u v,
       p.IsPath ∧ 2 * k < p.length) :
     ∃ (w : V) (c : G.Walk w w), c.IsCycle ∧ Odd c.length ∧ 2 * k < c.length := by
+  classical
   obtain ⟨u, v, huv, q, hq, hwrong, hqS⟩ :=
     exists_inconsistent_ear_of_twoConnected hG hnonbip S hS colour
   obtain ⟨p, hp, hlen⟩ := hlong u v (fun h => huv (congrArg Subtype.val h))

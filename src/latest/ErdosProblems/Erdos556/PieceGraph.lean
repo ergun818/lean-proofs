@@ -22,7 +22,7 @@ def pieceGraph {V : Type*} (G : SimpleGraph V) (P : Finset (Finset V)) : SimpleG
 theorem pieceGraph_le {V : Type*} (G : SimpleGraph V) (P : Finset (Finset V)) :
     pieceGraph G P ≤ G := fun _ _ h => h.1
 
-theorem pieceGraph_card_edges {V : Type*} [Fintype V] [DecidableEq V]
+theorem pieceGraph_card_edges {V : Type*} [Fintype V]
     (G : SimpleGraph V) [DecidableRel G.Adj] (P : Finset (Finset V))
     [DecidableRel (pieceGraph G P).Adj]
     (hP : (P : Set (Finset V)).Pairwise Disjoint) :
@@ -57,7 +57,7 @@ theorem pieceGraph_card_edges {V : Type*} [Fintype V] [DecidableEq V]
 
 #print axioms pieceGraph_card_edges
 
-theorem pieceGraph_colorable {V : Type*} [DecidableEq V]
+theorem pieceGraph_colorable {V : Type*}
     (G : SimpleGraph V) (P : Finset (Finset V)) (n : ℕ) [NeZero n]
     (hP : (P : Set (Finset V)).Pairwise Disjoint)
     (hcolour : ∀ A ∈ P, (G.induce (A : Set V)).Colorable n) :

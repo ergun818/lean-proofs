@@ -97,6 +97,7 @@ theorem sum_full_bernoulliMass (p : E → ℝ) :
   have h := eventMass_eq_restrictedEventMass_univ p (fun _ => True)
   simpa only [eventMass, if_true, restrictedEventMass_true] using h
 
+omit [Fintype E] in
 theorem contains_dependsOn (L : Finset E) : EventDependsOn L (fun X => L ⊆ X) := by
   intro X Y hXY
   unfold AgreesOn at hXY
@@ -110,6 +111,7 @@ theorem contains_dependsOn (L : Finset E) : EventDependsOn L (fun X => L ⊆ X) 
     rw [← hXY] at hx
     exact (mem_inter.mp hx).1
 
+omit [Fintype E] in
 theorem eventDependsOn_not {L : Finset E} {A : Finset E → Prop}
     (hA : EventDependsOn L A) : EventDependsOn L (fun X => ¬ A X) := by
   intro X Y hXY
@@ -130,10 +132,12 @@ theorem eventMass_contains (p : E → ℝ) (L : Finset E) :
 
 #print axioms eventMass_contains
 
-theorem eventDependsOn_forall_mem {I : Type*} [DecidableEq I]
+omit [Fintype E] in
+theorem eventDependsOn_forall_mem {I : Type*}
     (R : I → Finset E) (A : I → Finset E → Prop)
     (hA : ∀ i, EventDependsOn (R i) (A i)) (J : Finset I) :
     EventDependsOn (J.biUnion R) (fun S => ∀ i ∈ J, A i S) := by
+  classical
   intro S T hST
   constructor
   · intro h i hi
@@ -143,12 +147,13 @@ theorem eventDependsOn_forall_mem {I : Type*} [DecidableEq I]
     have hsub : R i ⊆ J.biUnion R := subset_biUnion_of_mem R hi
     exact (hA i S T (agreesOn_mono hsub hST)).mpr (h i hi)
 
-theorem eventMass_forall_eq_prod {I : Type*} [DecidableEq I]
+theorem eventMass_forall_eq_prod {I : Type*}
     (p : E → ℝ) (R : I → Finset E) (A : I → Finset E → Prop)
     (hA : ∀ i, EventDependsOn (R i) (A i)) (J : Finset I)
     (hdisj : (J : Set I).Pairwise fun i j => Disjoint (R i) (R j)) :
     eventMass (bernoulliMass univ p) (fun S => ∀ i ∈ J, A i S) =
       ∏ i ∈ J, eventMass (bernoulliMass univ p) (A i) := by
+  classical
   revert hdisj
   induction J using Finset.induction_on with
   | empty =>
@@ -168,11 +173,12 @@ theorem eventMass_forall_eq_prod {I : Type*} [DecidableEq I]
         (eventDependsOn_forall_mem R A hA J), ih hDJ]
 
 /-- The probability that none of a disjoint family of sets is fully sampled. -/
-theorem eventMass_missing_all {I : Type*} [DecidableEq I]
+theorem eventMass_missing_all {I : Type*}
     (q : ℝ) (R : I → Finset E) (J : Finset I)
     (hdisj : (J : Set I).Pairwise fun i j => Disjoint (R i) (R j)) :
     eventMass (bernoulliMass univ (fun _ : E => q))
       (fun S => ∀ i ∈ J, ¬ R i ⊆ S) = ∏ i ∈ J, (1 - q ^ (R i).card) := by
+  classical
   rw [eventMass_forall_eq_prod (fun _ => q) R (fun i S => ¬ R i ⊆ S)
     (fun i => eventDependsOn_not (contains_dependsOn (R i))) J hdisj]
   apply prod_congr rfl
@@ -181,12 +187,13 @@ theorem eventMass_missing_all {I : Type*} [DecidableEq I]
     eventMass_contains]
   simp
 
-theorem eventMass_missing_all_le {I : Type*} [DecidableEq I]
+theorem eventMass_missing_all_le {I : Type*}
     (q : ℝ) (hq0 : 0 ≤ q) (hq1 : q ≤ 1) (R : I → Finset E) (J : Finset I)
     (hdisj : (J : Set I).Pairwise fun i j => Disjoint (R i) (R j)) (L : ℕ)
     (hsize : ∀ i ∈ J, (R i).card ≤ L) :
     eventMass (bernoulliMass univ (fun _ : E => q))
       (fun S => ∀ i ∈ J, ¬ R i ⊆ S) ≤ (1 - q ^ L) ^ J.card := by
+  classical
   rw [eventMass_missing_all q R J hdisj]
   calc
     ∏ i ∈ J, (1 - q ^ (R i).card) ≤ ∏ _i ∈ J, (1 - q ^ L) := by
@@ -199,6 +206,7 @@ theorem eventMass_missing_all_le {I : Type*} [DecidableEq I]
 
 #print axioms eventMass_missing_all_le
 
+omit [DecidableEq E] in
 /-- A small sample contains a member of every prescribed disjoint family.
 The explicit failure bound is what will later be checked for the graph
 families; no independence between distinct families is needed. -/
@@ -212,6 +220,7 @@ theorem exists_small_set_hitting_families {I : Type*} [Fintype I]
     (hE : 0 < Fintype.card E) :
     ∃ S : Finset E, (S.card : ℝ) ≤ 2 * q * Fintype.card E ∧
       ∀ i, ∃ j, R i j ⊆ S := by
+  classical
   let mass : Finset E → ℝ := bernoulliMass univ (fun _ => q)
   have hmass (S : Finset E) : 0 ≤ mass S :=
     bernoulliMass_nonneg (subset_univ S) (fun _ _ => hq0.le) (fun _ _ => hq1)

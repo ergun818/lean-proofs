@@ -7,7 +7,7 @@ namespace Erdos556
 
 open SimpleGraph Finset
 
-theorem exists_odd_cycle_in_large_joined_bucket {V : Type*} [DecidableEq V]
+theorem exists_odd_cycle_in_large_joined_bucket {V : Type*}
     (G : SimpleGraph V) (A S : Finset V) (r : ℕ) (hr : 1 ≤ r)
     (hAS : A ⊆ S) (hA : r + 1 ≤ A.card) (hS : 2 * r + 1 ≤ S.card)
     (hjoin : ∀ a ∈ A, ∀ s ∈ S, a ≠ s → G.Adj a s) :
@@ -49,9 +49,10 @@ theorem complement_clique_outside_small_joined_core {V : Type*} [DecidableEq V]
   exact hno ((cycleGraph_isContained_iff (by omega : 2 < 2 * r + 1)).mpr
     (exists_odd_cycle_of_bipartite_side_edge G (S \ A) A r hr hdis hX hA hcross u v hu hv hadj))
 
-theorem joined_bucket_isClique_of_one_outside {V : Type*} [DecidableEq V]
+theorem joined_bucket_isClique_of_one_outside {V : Type*}
     (G : SimpleGraph V) (A S : Finset V) (hAS : A ⊆ S) (hsize : S.card ≤ A.card + 1)
     (hjoin : ∀ a ∈ A, ∀ s ∈ S, a ≠ s → G.Adj a s) : G.IsClique (S : Set V) := by
+  classical
   have hdiff : (S \ A).card ≤ 1 := by rw [card_sdiff, inter_eq_left.mpr hAS]; omega
   intro u hu v hv huv
   by_cases huA : u ∈ A
@@ -60,7 +61,7 @@ theorem joined_bucket_isClique_of_one_outside {V : Type*} [DecidableEq V]
   · exact (hjoin v hvA u hu huv.symm).symm
   exact (huv (card_le_one.mp hdiff u (mem_sdiff.mpr ⟨hu, huA⟩) v (mem_sdiff.mpr ⟨hv, hvA⟩))).elim
 
-theorem isClique_of_complete_complement_cross {V : Type*} [DecidableEq V]
+theorem isClique_of_complete_complement_cross {V : Type*}
     (G : SimpleGraph V) (S T : Finset V) (r : ℕ) (hr : 1 ≤ r)
     (hdis : Disjoint S T) (hS : r + 1 ≤ S.card) (hT : r ≤ T.card)
     (hcross : ∀ s ∈ S, ∀ t ∈ T, Gᶜ.Adj s t)

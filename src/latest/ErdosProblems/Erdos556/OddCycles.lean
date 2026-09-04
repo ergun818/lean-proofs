@@ -78,7 +78,7 @@ theorem colorable_two_iff_no_odd_cycle {V : Type*} (G : SimpleGraph V) :
 
 /-- A connected nonbipartite graph of large minimum degree contains a short
 odd cycle. The bound is deliberately coarse; only its uniformity is needed. -/
-theorem exists_short_odd_cycle {V : Type*} [Fintype V] [DecidableEq V]
+theorem exists_short_odd_cycle {V : Type*} [Fintype V]
     (G : SimpleGraph V) [DecidableRel G.Adj] (hconn : G.Connected)
     (hnonbip : ¬ G.Colorable 2) (d : ℕ) (hd : 0 < d)
     (hdeg : ∀ v, d ≤ G.degree v) :

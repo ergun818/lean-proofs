@@ -29,7 +29,8 @@ theorem exists_even_path_of_bipartite_defect {V : Type*} [DecidableEq V]
             or_false, not_or]
           exact ⟨fun h => huY (h ▸ hy), huv⟩
         · intro z hz
-          simp only [p, Walk.support_cons, Walk.support_nil, List.mem_cons, List.not_mem_nil, or_false] at hz
+          simp only [p, Walk.support_cons, Walk.support_nil, List.mem_cons, List.not_mem_nil,
+            or_false] at hz
           rcases hz with h | h | h
           · exact h ▸ mem_union_left Y hu
           · exact h ▸ mem_union_right X hy

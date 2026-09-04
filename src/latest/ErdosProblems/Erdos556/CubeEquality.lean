@@ -88,7 +88,8 @@ theorem cube_tiling_of_zero_energy (w : CubeProfile → ℝ) (hw : IsCubeWeight 
           have hlt := cubeTransfer_energy_lt_of_tiling hw p q hpq hp hq hpdim hqdim hover ht
           rw [hz, hzero] at hlt
           exact hlt.false
-        rcases cubeTransfer_nonincrease_or_reverse w p q (hw.nonneg p) (hw.nonneg q) hover with hE | hE
+        rcases cubeTransfer_nonincrease_or_reverse w p q (hw.nonneg p) (hw.nonneg q) hover with
+          hE | hE
         · exact (impossible p q hpq hp hq hpdim hqdim hover hE).elim
         · have hqp : cubeOverlap q p = 1 := (cubeOverlap_symm q p).trans hover
           exact (impossible q p hpq.symm hq hp hqdim hpdim hqp hE).elim

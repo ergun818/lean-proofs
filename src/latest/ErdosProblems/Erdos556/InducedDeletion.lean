@@ -42,7 +42,7 @@ noncomputable def induceDeleteIso {V : Type*} [DecidableEq V] (G : SimpleGraph V
     exact ⟨⟨x, hxT⟩, rfl⟩
   exact { toEquiv := Equiv.ofBijective f ⟨hinj, hsurj⟩, map_rel_iff' := Iff.rfl }
 
-theorem ConnectedAfterDeleting.induce_compl {V : Type*} [Fintype V] [DecidableEq V]
+theorem ConnectedAfterDeleting.induce_compl {V : Type*}
     {G : SimpleGraph V} {b s : ℕ} (hG : ConnectedAfterDeleting G (b + s))
     (S : Finset V) (hS : S.card ≤ s) :
     ConnectedAfterDeleting (G.induce (S : Set V)ᶜ) b := by

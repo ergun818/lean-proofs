@@ -14,7 +14,7 @@ namespace Erdos556
 
 open SimpleGraph Finset
 
-theorem exists_shorter_same_parity_path_of_min_degree {V : Type*} [Fintype V] [DecidableEq V]
+theorem exists_shorter_same_parity_path_of_min_degree {V : Type*} [Fintype V]
     (G : SimpleGraph V) [DecidableRel G.Adj] (D d : ℕ) (hD : 0 < D)
     (hscale : Fintype.card V ≤ D * d) (hdegree : ∀ v, d ≤ G.degree v)
     (hN : 8 * (4 * D) ^ 2 ≤ Fintype.card V)

@@ -25,7 +25,7 @@ theorem BipartiteDefect.symm {V : Type*} [DecidableEq V] {G : SimpleGraph V}
     [DecidableRel G.Adj] {X Y : Finset V} {d : ℕ}
     (h : BipartiteDefect G X Y d) : BipartiteDefect G Y X d := ⟨h.right, h.left⟩
 
-theorem exists_neighbor_avoiding_of_defect {V : Type*} [DecidableEq V]
+theorem exists_neighbor_avoiding_of_defect {V : Type*}
     (G : SimpleGraph V) [DecidableRel G.Adj] (x : V) (Y F : Finset V) (d : ℕ)
     (hmiss : (Y.filter (fun y => ¬ G.Adj x y)).card ≤ d) (hsize : F.card + d < Y.card) :
     ∃ y ∈ Y, y ∉ F ∧ G.Adj x y := by
@@ -40,11 +40,12 @@ theorem exists_neighbor_avoiding_of_defect {V : Type*} [DecidableEq V]
   by_contra h
   exact hyB (mem_filter.mpr ⟨hy, h⟩)
 
-theorem exists_common_neighbor_of_defect {V : Type*} [DecidableEq V]
+theorem exists_common_neighbor_of_defect {V : Type*}
     (G : SimpleGraph V) [DecidableRel G.Adj] (u v : V) (Y : Finset V) (d : ℕ)
     (hu : (Y.filter (fun y => ¬ G.Adj u y)).card ≤ d)
     (hv : (Y.filter (fun y => ¬ G.Adj v y)).card ≤ d) (hsize : 2 * d < Y.card) :
     ∃ y ∈ Y, G.Adj u y ∧ G.Adj v y := by
+  classical
   obtain ⟨y, hy, hybad, huy⟩ := exists_neighbor_avoiding_of_defect G u Y
     (Y.filter (fun y => ¬ G.Adj v y)) d hu (by omega)
   refine ⟨y, hy, huy, ?_⟩

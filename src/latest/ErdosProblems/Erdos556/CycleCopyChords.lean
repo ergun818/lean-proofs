@@ -49,10 +49,14 @@ theorem exists_cycle_of_copy_two_chords_skip_one {V : Type*} {G : SimpleGraph V}
       simpa only [h₁, h₂, Nat.cast_add, Nat.cast_one, Copy.toHom_apply] using hstep
     by_cases hke : k + 1 = j
     · have h₁ : reverseSkipIndex j k = 2 := by unfold reverseSkipIndex; split_ifs <;> omega
-      have h₂ : reverseSkipIndex j (k + 1) = j + 1 := by unfold reverseSkipIndex; split_ifs <;> omega
+      have h₂ : reverseSkipIndex j (k + 1) = j + 1 := by
+        unfold reverseSkipIndex
+        split_ifs <;> omega
       simpa only [h₁, h₂, Nat.cast_ofNat] using hsecond
     · have h₁ : reverseSkipIndex j k = k + 1 := by unfold reverseSkipIndex; split_ifs <;> omega
-      have h₂ : reverseSkipIndex j (k + 1) = (k + 1) + 1 := by unfold reverseSkipIndex; split_ifs <;> omega
+      have h₂ : reverseSkipIndex j (k + 1) = (k + 1) + 1 := by
+        unfold reverseSkipIndex
+        split_ifs <;> omega
       have hstep := f.toHom.map_rel
         (cycleGraph_adj_add_one (by omega : 2 ≤ m) (↑(k + 1) : Fin m))
       simpa only [h₁, h₂, Nat.cast_add, Nat.cast_one, Copy.toHom_apply] using hstep

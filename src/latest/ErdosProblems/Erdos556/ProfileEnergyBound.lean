@@ -10,7 +10,7 @@ namespace Erdos556
 
 open SimpleGraph Finset
 
-theorem twice_complete_edge_count {V : Type*} [Fintype V] [DecidableEq V] :
+theorem twice_complete_edge_count {V : Type*} [Fintype V] :
     2 * (Nat.card (⊤ : SimpleGraph V).edgeSet : ℝ) + Fintype.card V =
       (Fintype.card V : ℝ) ^ 2 := by
   classical
@@ -42,9 +42,11 @@ theorem ThreeColourDecomposition.bipartiteUnion_le_potential {V : Type*} [Decida
   exact profileOppositeAt_disjoint _ _ _ (h.bipartite_profiles_opposite i u v hi)
 
 theorem ThreeColourDecomposition.bipartiteUnion_edge_count {V : Type*}
-    [Fintype V] [DecidableEq V] {c : ThreeColouring V} {E D : ℝ}
+    [Finite V] {c : ThreeColouring V} {E D : ℝ}
     (h : ThreeColourDecomposition c E D) :
     Nat.card h.bipartiteUnion.edgeSet = ∑ i, Nat.card (h.bipartite i).edgeSet := by
+  classical
+  let := Fintype.ofFinite V
   apply natCard_edges_iSup
   intro i j hij
   exact (c.graphs_disjoint i j hij).mono (h.bipartite_le i) (h.bipartite_le j)

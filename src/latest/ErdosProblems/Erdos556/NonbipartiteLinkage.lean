@@ -15,7 +15,7 @@ namespace Erdos556
 
 open SimpleGraph
 
-theorem exists_inconsistent_path_of_twoConnected {V : Type*} [Fintype V] [DecidableEq V]
+theorem exists_inconsistent_path_of_twoConnected {V : Type*} [Fintype V]
     {G : SimpleGraph V} (hG : TwoConnected G) (hnonbip : ¬ G.Colorable 2)
     (S : Set V) (hS : 2 ≤ S.ncard) (colour : S → Bool) :
     ∃ a b : S, ∃ p : G.Walk a.val b.val, p.IsPath ∧
@@ -57,12 +57,13 @@ theorem exists_inconsistent_path_of_twoConnected {V : Type*} [Fintype V] [Decida
 
 #print axioms exists_inconsistent_path_of_twoConnected
 
-theorem exists_inconsistent_ear_of_twoConnected {V : Type*} [Fintype V] [DecidableEq V]
+theorem exists_inconsistent_ear_of_twoConnected {V : Type*} [Fintype V]
     {G : SimpleGraph V} (hG : TwoConnected G) (hnonbip : ¬ G.Colorable 2)
     (S : Set V) (hS : 2 ≤ S.ncard) (colour : S → Bool) :
     ∃ a b : S, a.val ≠ b.val ∧ ∃ p : G.Walk a.val b.val, p.IsPath ∧
       ¬ (Even p.length ↔ (colour a ↔ colour b)) ∧
       ∀ z ∈ p.support, z ≠ a.val → z ≠ b.val → z ∉ S := by
+  classical
   obtain ⟨u, v, p, hp, hw⟩ := exists_inconsistent_path_of_twoConnected hG hnonbip S hS colour
   obtain ⟨a, b, hab, q, hq, hqw, _, hav⟩ :=
     exists_inconsistent_ear_of_path S colour (u := u) (v := v) p hp hw

@@ -13,7 +13,7 @@ namespace Erdos556
 
 open SimpleGraph Finset
 
-theorem connectedAfterDeleting_of_complement_cycle_free {V : Type*} [Fintype V] [DecidableEq V]
+theorem connectedAfterDeleting_of_complement_cycle_free {V : Type*} [Fintype V]
     (G : SimpleGraph V) [DecidableRel G.Adj] (L b : ℕ) (hL : 2 ≤ L)
     (hdegree : ∀ v, L + b ≤ G.degree v) (hno : ¬ cycleGraph (2 * L) ⊑ Gᶜ) :
     ConnectedAfterDeleting G b := by

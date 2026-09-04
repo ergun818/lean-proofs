@@ -56,7 +56,8 @@ def ThreeColourDecomposition.profile {V : Type*} [DecidableEq V]
   fun i => if v ∈ h.stars i then none else some (h.bicolouring i v)
 
 def ThreeColourDecomposition.profileClass {V : Type*} [Fintype V] [DecidableEq V]
-    {c : ThreeColouring V} {E D : ℝ} (h : ThreeColourDecomposition c E D) (p : CubeProfile) : Finset V :=
+    {c : ThreeColouring V} {E D : ℝ} (h : ThreeColourDecomposition c E D) (p : CubeProfile) :
+      Finset V :=
   univ.filter (fun v => h.profile v = p)
 
 def ThreeColourDecomposition.retained {V : Type*}

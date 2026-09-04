@@ -12,7 +12,7 @@ namespace Erdos556
 
 open SimpleGraph Finset
 
-theorem exists_disjoint_short_attachments {V : Type*} [Fintype V] [DecidableEq V]
+theorem exists_disjoint_short_attachments {V : Type*} [Fintype V]
     (G : SimpleGraph V) [DecidableRel G.Adj] (b d D : ℕ)
     (hconn : ConnectedAfterDeleting G b) (hd : 0 < d)
     (hdeg : ∀ w, d + b ≤ G.degree w) (hN : Fintype.card V ≤ D * d)

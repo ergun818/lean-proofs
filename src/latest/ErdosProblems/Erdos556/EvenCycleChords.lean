@@ -18,7 +18,8 @@ theorem not_middle_even_chord {V : Type*} {G : SimpleGraph V} (t a : ℕ)
     fin_neg_cast_of_add_eq _ _ (by omega)
   have hrev : G.Adj (g 0) (g (↑(2 * (t - a)) : Fin (2 * t))) := by
     simpa only [g, reverseCycleCopy_apply, neg_zero, hneg] using h
-  have hsecond := complement_cross_chord_of_cycle_copy g (2 * (t - a)) (by omega) (by omega) hno hrev
+  have hsecond := complement_cross_chord_of_cycle_copy g (2 * (t - a)) (by omega) (by omega) hno
+    hrev
   change Gᶜ.Adj (f (-(2 : Fin (2 * t))))
     (f (-(↑(2 * (t - a) + 1) : Fin (2 * t)))) at hsecond
   have hneg2 : -(2 : Fin (2 * t)) = (↑(2 * t - 2) : Fin (2 * t)) :=

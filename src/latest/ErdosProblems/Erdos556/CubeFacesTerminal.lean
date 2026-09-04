@@ -17,7 +17,8 @@ theorem IsCubeWeight.face_support_energy_and_equality {w : CubeProfile → ℝ}
       w (cubeFace i b) + (∑ r ∈ faceEdgeProfiles w i b, w r) = 2 ∧
       w (cubeFace i (!b)) + (∑ r ∈ faceEdgeProfiles w i (!b), w r) = 2 ∧
       ((∑ r ∈ faceEdgeProfiles w i b, w r) = 0 ∨ (∑ r ∈ faceEdgeProfiles w i b, w r) = 2) ∧
-      ((∑ r ∈ faceEdgeProfiles w i (!b), w r) = 0 ∨ (∑ r ∈ faceEdgeProfiles w i (!b), w r) = 2)) := by
+      ((∑ r ∈ faceEdgeProfiles w i (!b), w r) = 0 ∨
+        (∑ r ∈ faceEdgeProfiles w i (!b), w r) = 2)) := by
   classical
   let p := cubeFace i b
   let q := cubeFace i (!b)
@@ -26,8 +27,18 @@ theorem IsCubeWeight.face_support_energy_and_equality {w : CubeProfile → ℝ}
   let x (r : CubeProfile) : ℝ := if r = p ∨ r = q then 0 else w r
   have hx (r : CubeProfile) (hr : r ∈ E) : x r = w r := by
     have hd := (mem_filter.mp hr).2.1
-    have hrp : r ≠ p := by intro h; subst r; change profileDimension (cubeFace i b) = 1 at hd; rw [cubeFace_dimension] at hd; omega
-    have hrq : r ≠ q := by intro h; subst r; change profileDimension (cubeFace i (!b)) = 1 at hd; rw [cubeFace_dimension] at hd; omega
+    have hrp : r ≠ p := by
+      intro h
+      subst r
+      change profileDimension (cubeFace i b) = 1 at hd
+      rw [cubeFace_dimension] at hd
+      omega
+    have hrq : r ≠ q := by
+      intro h
+      subst r
+      change profileDimension (cubeFace i (!b)) = 1 at hd
+      rw [cubeFace_dimension] at hd
+      omega
     exact if_neg (not_or.mpr ⟨hrp, hrq⟩)
   have hzero (r : CubeProfile) (hr : r ∉ E) : x r = 0 := by
     by_cases hfaces : r = p ∨ r = q
@@ -43,11 +54,11 @@ theorem IsCubeWeight.face_support_energy_and_equality {w : CubeProfile → ℝ}
     funext r
     by_cases hrp : r = p
     · subst r
-      simp [x, hpq, Ne.symm hpq]
+      simp [x, hpq]
     by_cases hrq : r = q
     · subst r
-      simp [x, hpq, Ne.symm hpq]
-    · simp [x, hrp, hrq, Ne.symm hrp, Ne.symm hrq]
+      simp [x, Ne.symm hpq]
+    · simp [x, hrp, hrq]
   have hsum : (∑ r, x r) = ∑ r ∈ E, w r := by
     calc
       (∑ r, x r) = ∑ r ∈ E, x r := by
@@ -95,7 +106,8 @@ theorem IsCubeWeight.face_support_energy_and_equality {w : CubeProfile → ℝ}
       (w p) ^ 2 + 2 * w p * E₀ + S₀ - 2 * w p - E₀ +
         ((w q) ^ 2 + 2 * w q * E₁ + S₁ - 2 * w q - E₁) := by
     calc
-      cubeEnergy w = cubeEnergy ((x + Pi.single p (w p)) + Pi.single q (w q)) := congrArg cubeEnergy hdecomp
+      cubeEnergy w = cubeEnergy ((x + Pi.single p (w p)) + Pi.single q (w q)) :=
+        congrArg cubeEnergy hdecomp
       _ = _ := by
         rw [cubeEnergy_add_single, cubeEnergy_add_single, cubeGradient_add_single,
           hgrad₀, hgrad₁, hover, henergy, hsplit, hsplitSq]

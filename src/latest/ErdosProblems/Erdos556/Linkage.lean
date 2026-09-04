@@ -34,25 +34,34 @@ def TwoConnected (G : SimpleGraph V) : Prop :=
 
 namespace TwoConnected
 
+omit [DecidableEq V] in
 theorem card_three_le (hG : TwoConnected G) : 3 ≤ Fintype.card V := hG.1
 
+omit [DecidableEq V] in
 theorem connected (hG : TwoConnected G) : G.Connected := hG.2.1
 
+omit [DecidableEq V] in
 theorem delete_connected (hG : TwoConnected G) (v : V) :
     (G.induce ({v}ᶜ : Set V)).Connected :=
   hG.2.2 v
 
+omit [DecidableEq V] in
 theorem nontrivial (hG : TwoConnected G) : Nontrivial V := by
+  classical
   exact Fintype.one_lt_card_iff_nontrivial.mp (by
     have h := hG.card_three_le
     omega)
 
+omit [DecidableEq V] in
 theorem exists_ne (hG : TwoConnected G) (v : V) : ∃ w : V, w ≠ v := by
+  classical
   let := hG.nontrivial
   exact _root_.exists_ne v
 
+omit [DecidableEq V] in
 theorem exists_two_ne (hG : TwoConnected G) (v : V) :
     ∃ x y : V, x ≠ v ∧ y ≠ v ∧ x ≠ y := by
+  classical
   have hcard : 2 ≤ Fintype.card ({v}ᶜ : Set V) := by
     rw [Fintype.card_compl_set, Set.card_singleton]
     have h := hG.card_three_le
@@ -66,12 +75,14 @@ theorem exists_two_ne (hG : TwoConnected G) (v : V) :
     simpa only [Set.mem_compl_iff, Set.mem_singleton_iff] using y.2
   exact ⟨x, y, hx, hy, fun h ↦ hxy (Subtype.ext h)⟩
 
+omit [DecidableEq V] in
 /-- In a 2-connected graph, any two vertices other than `z` can be joined by
 a simple path avoiding `z`.  This is the direct path-level content of the
 connectivity of `G - z`. -/
 theorem exists_path_avoiding (hG : TwoConnected G) (z : V) {x y : V}
     (hx : x ≠ z) (hy : y ≠ z) :
     ∃ p : G.Walk x y, p.IsPath ∧ z ∉ p.support := by
+  classical
   let x' : ({z}ᶜ : Set V) := ⟨x, hx⟩
   let y' : ({z}ᶜ : Set V) := ⟨y, hy⟩
   obtain ⟨p, hp⟩ := (hG.delete_connected z).exists_isPath x' y'
@@ -97,6 +108,7 @@ theorem exists_path_avoiding (hG : TwoConnected G) (z : V) {x y : V}
     simpa only [q', SimpleGraph.Walk.support_copy] using hqavoid
   exact ⟨q', hq'path, hq'avoid⟩
 
+omit [DecidableEq V] in
 /-- Any two distinct neighbors of a vertex in a 2-connected graph lie with
 that vertex on a simple cycle.  This is a useful rigorously proved special
 linkage consequence which needs only one application of
@@ -104,6 +116,7 @@ linkage consequence which needs only one application of
 theorem exists_cycle_through_two_neighbors (hG : TwoConnected G)
     {x y z : V} (hxy : G.Adj x y) (hxz : G.Adj x z) (hyz : y ≠ z) :
     ∃ c : G.Walk x x, c.IsCycle := by
+  classical
   obtain ⟨p, hp, hpx⟩ :=
     hG.exists_path_avoiding x hxy.ne.symm hxz.ne.symm
   let q : G.Walk y x := p.concat hxz.symm
@@ -149,28 +162,38 @@ namespace TwoLinkage
 
 variable {A B : Set V}
 
+omit [DecidableEq V] [Fintype V] in
 theorem a_ne (L : TwoLinkage G A B) : L.a₁ ≠ L.a₂ := by
+  classical
   intro h
   exact L.disjoint_support L.p.start_mem_support (h.symm ▸ L.q.start_mem_support)
 
+omit [DecidableEq V] [Fintype V] in
 theorem b_ne (L : TwoLinkage G A B) : L.b₁ ≠ L.b₂ := by
+  classical
   intro h
   exact L.disjoint_support L.p.end_mem_support (h.symm ▸ L.q.end_mem_support)
 
+omit [DecidableEq V] [Fintype V] in
 theorem p_nonempty (L : TwoLinkage G A B) (hAB : Disjoint A B) : 0 < L.p.length := by
+  classical
   by_contra h
   have hp0 : L.p.length = 0 := by omega
   have hab : L.a₁ = L.b₁ := L.p.eq_of_length_eq_zero hp0
   exact Set.disjoint_left.1 hAB L.a₁_mem (hab.symm ▸ L.b₁_mem)
 
+omit [DecidableEq V] [Fintype V] in
 theorem q_nonempty (L : TwoLinkage G A B) (hAB : Disjoint A B) : 0 < L.q.length := by
+  classical
   by_contra h
   have hq0 : L.q.length = 0 := by omega
   have hab : L.a₂ = L.b₂ := L.q.eq_of_length_eq_zero hq0
   exact Set.disjoint_left.1 hAB L.a₂_mem (hab.symm ▸ L.b₂_mem)
 
+omit [DecidableEq V] [Fintype V] in
 theorem total_length_pos (L : TwoLinkage G A B) (hAB : Disjoint A B) :
     0 < L.p.length + L.q.length := by
+  classical
   have hp := L.p_nonempty hAB
   omega
 
@@ -186,7 +209,7 @@ namespace Erdos556
 open SimpleGraph
 
 theorem TwoConnected.iso {V W : Type*} [Fintype V] [Fintype W]
-    [DecidableEq V] [DecidableEq W] {G : SimpleGraph V} {H : SimpleGraph W}
+    {G : SimpleGraph V} {H : SimpleGraph W}
     (hG : TwoConnected G) (e : G ≃g H) : TwoConnected H := by
   classical
   refine ⟨?_, hG.connected.map e.toHom e.surjective, ?_⟩

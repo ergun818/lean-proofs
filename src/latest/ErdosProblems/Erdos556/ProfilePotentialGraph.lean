@@ -23,7 +23,7 @@ def profilePotentialGraph {V : Type*} (label : V → CubeProfile) : SimpleGraph 
 def cubeDisjointMass (w : CubeProfile → ℝ) : ℝ :=
   ∑ p, ∑ q, if Disjoint (profileVertices p) (profileVertices q) then w p * w q else 0
 
-theorem twice_edge_count_eq_ordered_pair_sum {V : Type*} [Fintype V] [DecidableEq V]
+theorem twice_edge_count_eq_ordered_pair_sum {V : Type*} [Fintype V]
     (G : SimpleGraph V) [DecidableRel G.Adj] :
     2 * (Nat.card G.edgeSet : ℝ) = ∑ u, ∑ v, if G.Adj u v then (1 : ℝ) else 0 := by
   classical
@@ -36,14 +36,15 @@ theorem twice_edge_count_eq_ordered_pair_sum {V : Type*} [Fintype V] [DecidableE
   simp only [hdegree, edgeFinset_card_eq_natCard_edgeSet] at h
   exact_mod_cast h.symm
 
-theorem profilePotentialGraph_edge_count {V : Type*} [Fintype V] [DecidableEq V]
+theorem profilePotentialGraph_edge_count {V : Type*} [Fintype V]
     (label : V → CubeProfile) :
     2 * (Nat.card (profilePotentialGraph label).edgeSet : ℝ) =
       cubeDisjointMass (fun p => ((univ.filter (fun v => label v = p)).card : ℝ)) := by
   classical
   rw [twice_edge_count_eq_ordered_pair_sum]
   have hadj : (∑ u, ∑ v, if (profilePotentialGraph label).Adj u v then (1 : ℝ) else 0) =
-      ∑ u, ∑ v, if Disjoint (profileVertices (label u)) (profileVertices (label v)) then (1 : ℝ) else 0 := by
+      ∑ u, ∑ v, if Disjoint (profileVertices (label u)) (profileVertices (label v)) then (1 : ℝ)
+        else 0 := by
     apply sum_congr rfl
     intro u _
     apply sum_congr rfl

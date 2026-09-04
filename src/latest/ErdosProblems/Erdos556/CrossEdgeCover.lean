@@ -7,7 +7,7 @@ namespace Erdos556
 
 open SimpleGraph Finset
 
-theorem exists_single_vertex_cross_cover {V : Type*} [DecidableEq V]
+theorem exists_single_vertex_cross_cover {V : Type*}
     (A B : Finset V) (R : V → V → Prop)
     (hmatch : ∀ a ∈ A, ∀ a' ∈ A, ∀ b ∈ B, ∀ b' ∈ B,
       R a b → R a' b' → a = a' ∨ b = b') :
@@ -19,7 +19,7 @@ theorem exists_single_vertex_cross_cover {V : Type*} [DecidableEq V]
     · refine ⟨{a}, by simp, ?_⟩
       intro u hu v hv huv
       exact Or.inl (by simpa using hall u hu v hv huv)
-    · push_neg at hall
+    · push Not at hall
       obtain ⟨c, hc, d, hd, hcd, hca⟩ := hall
       have hdb : d = b := (hmatch c hc a ha d hd b hb hcd hab).resolve_left hca
       subst d

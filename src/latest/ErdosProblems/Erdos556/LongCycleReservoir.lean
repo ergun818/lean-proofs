@@ -33,7 +33,7 @@ theorem exists_cycle_of_path_and_connection_succ {V : Type*} {G : SimpleGraph V}
   simp only [Walk.length_append, Walk.length_reverse]
   omega
 
-theorem exists_long_cycle_of_reservoir {V : Type*} [Fintype V] [DecidableEq V]
+theorem exists_long_cycle_of_reservoir {V : Type*} [Fintype V]
     (G : SimpleGraph V) [DecidableRel G.Adj] (L b K : ℕ) (hL : 2 ≤ L)
     (R : Finset V) (hR : R.card ≤ b) (hconn : ConnectedAfterDeleting G b)
     (hdegree : ∀ v, L + R.card ≤ G.degree v)

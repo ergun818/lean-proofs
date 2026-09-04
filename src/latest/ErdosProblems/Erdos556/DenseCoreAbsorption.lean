@@ -12,9 +12,10 @@ namespace Erdos556
 open SimpleGraph Finset
 
 theorem degree_add_one_ge_card_of_clique_at {V : Type*} [Fintype V]
-    [DecidableEq V] (G : SimpleGraph V) [DecidableRel G.Adj]
+    (G : SimpleGraph V) [DecidableRel G.Adj]
     (A : Finset V) (v : V) (hv : v ∈ A)
     (hadj : ∀ u ∈ A, u ≠ v → G.Adj v u) : A.card ≤ G.degree v + 1 := by
+  classical
   have hsub : A.erase v ⊆ G.neighborFinset v := by
     intro u hu
     rw [mem_erase] at hu

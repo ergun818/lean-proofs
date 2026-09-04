@@ -45,13 +45,14 @@ theorem two_block_count_le_div (N K : ℕ) (hK : 0 < K) (hN : 4 * K ≤ N) :
     nlinarith only [hmul]
   omega
 
-theorem exists_close_same_parity_path_vertices {V : Type*} [DecidableEq V]
+theorem exists_close_same_parity_path_vertices {V : Type*}
     {G : SimpleGraph V} {u v : V} (p : G.Walk u v)
     (W : Finset V) (hW : ∀ x ∈ W, x ∈ p.support)
     (N K : ℕ) (hK : 0 < K) (hN : 4 * K ≤ N) (hpN : p.length < N)
     (hcard : N / K < W.card) :
     ∃ i j : ℕ, i < j ∧ j ≤ p.length ∧ j < i + 4 * K ∧
       i % 2 = j % 2 ∧ p.getVert i ∈ W ∧ p.getVert j ∈ W := by
+  classical
   let S := W.image (fun x => p.support.idxOf x)
   have hidx (x : V) (hx : x ∈ W) : p.support.idxOf x ≤ p.length := by
     have h := List.idxOf_lt_length_of_mem (hW x hx)

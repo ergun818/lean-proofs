@@ -15,7 +15,7 @@ def TwoCliqueCorePair {V : Type*} (G : SimpleGraph V) (r : ℕ) : Prop :=
     G.IsClique (A : Set V) ∧ G.IsClique (B : Set V) ∧
     ∀ a ∈ A, ∀ b ∈ B, Gᶜ.Adj a b
 
-theorem two_clique_core_pair_of_even_cycle {V : Type*} [DecidableEq V]
+theorem two_clique_core_pair_of_even_cycle {V : Type*}
     (G : SimpleGraph V) (r t : ℕ) (hr : 3 ≤ r) (hrt : r + 1 ≤ t)
     (hc : cycleGraph (2 * t) ⊑ G)
     (hno : ¬ cycleGraph (2 * t - 1) ⊑ G) (hnoc : ¬ cycleGraph (2 * t - 1) ⊑ Gᶜ)
@@ -38,11 +38,12 @@ theorem two_clique_core_pair_of_even_cycle {V : Type*} [DecidableEq V]
     exact hB (mem_sdiff.mp ha).1 (mem_sdiff.mp hb).1 hab
   · exact complete_complement_cross_of_cover Gᶜ A B S hdis hcover
 
-theorem two_clique_core_pair_of_long_cycle {V : Type*} [DecidableEq V]
+theorem two_clique_core_pair_of_long_cycle {V : Type*}
     (G : SimpleGraph V) (r : ℕ) (hr : 3 ≤ r)
     (hno : ¬ cycleGraph (2 * r + 1) ⊑ G) (hnoc : ¬ cycleGraph (2 * r + 1) ⊑ Gᶜ)
     (hex : ∃ m, 2 * r + 1 ≤ m ∧ (cycleGraph m ⊑ G ∨ cycleGraph m ⊑ Gᶜ)) :
     TwoCliqueCorePair G r ∨ TwoCliqueCorePair Gᶜ r := by
+  classical
   obtain ⟨m, hmr, hmEven, hcycle, hpred, hpredc⟩ :=
     exists_minimal_even_monochromatic_cycle G (2 * r + 1) (by omega) hno hnoc hex
   obtain ⟨t, ht⟩ := hmEven

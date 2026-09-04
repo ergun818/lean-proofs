@@ -28,7 +28,7 @@ theorem nonempty_of_not_two_colorable {V : Type*} (G : SimpleGraph V)
   intro x
   exact isEmptyElim x
 
-theorem exists_short_odd_cycle_avoiding {V : Type*} [Fintype V] [DecidableEq V]
+theorem exists_short_odd_cycle_avoiding {V : Type*} [Fintype V]
     (G : SimpleGraph V) [DecidableRel G.Adj] (b d : ℕ)
     (hconn : ConnectedAfterDeleting G b) (hnonbip : NonbipartiteAfterDeleting G b)
     (hd : 0 < d) (hdeg : ∀ w, d + b ≤ G.degree w)

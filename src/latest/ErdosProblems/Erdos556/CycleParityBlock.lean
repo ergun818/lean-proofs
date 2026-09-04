@@ -13,7 +13,7 @@ namespace Erdos556
 
 open SimpleGraph Finset
 
-theorem exists_cycle_parity_block {V : Type*} [DecidableEq V] {G : SimpleGraph V} {z : V}
+theorem exists_cycle_parity_block {V : Type*} {G : SimpleGraph V} {z : V}
     (c : G.Walk z z) (hc : c.IsCycle) (W : Finset V) (hW : ∀ x ∈ W, x ∈ c.support)
     (M N K L : ℕ) (hK : 0 < K) (hL : 0 < L) (hN : 8 * K * L ≤ N)
     (hcN : c.length ≤ N) (hsize : N ≤ 2 * K * W.card)
@@ -21,6 +21,7 @@ theorem exists_cycle_parity_block {V : Type*} [DecidableEq V] {G : SimpleGraph V
     ∃ B : Finset ℕ, B.card = L ∧
       (∀ i ∈ B, M < i ∧ i < c.length ∧ c.getVert i ∈ W) ∧
       ∀ i ∈ B, ∀ j ∈ B, i % 2 = j % 2 ∧ j < i + 8 * K * L := by
+  classical
   let S := cycleIndexSet c W
   have hScard : S.card = W.card := cycleIndexSet_card c hc W hW
   have hS (i : ℕ) (hi : i ∈ S) : i < N :=

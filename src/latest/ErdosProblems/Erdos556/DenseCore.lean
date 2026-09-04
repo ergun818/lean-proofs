@@ -31,7 +31,7 @@ noncomputable def induceFinsetMapIso {V : Type*} [DecidableEq V] (G : SimpleGrap
     exact ⟨⟨x, hx⟩, Subtype.ext hxy⟩
   exact { toEquiv := Equiv.ofBijective f ⟨hinj, hsurj⟩, map_rel_iff' := Iff.rfl }
 
-theorem exists_minimal_quadratic_dense_core_of_subset {V : Type*} [Fintype V] [DecidableEq V]
+theorem exists_minimal_quadratic_dense_core_of_subset {V : Type*} [Finite V]
     (G : SimpleGraph V) [DecidableRel G.Adj] (k η : ℝ) (hη : 0 ≤ η)
     (A : Finset V)
     (he : k * A.card + η * (A.card : ℝ) ^ 2 < ((G.induce (A : Set V)).edgeFinset.card : ℝ)) :
@@ -41,6 +41,7 @@ theorem exists_minimal_quadratic_dense_core_of_subset {V : Type*} [Fintype V] [D
       ∀ T : Finset V, T.card < S.card →
         ((G.induce (T : Set V)).edgeFinset.card : ℝ) ≤ k * T.card + η * (T.card : ℝ) ^ 2 := by
   classical
+  let := Fintype.ofFinite V
   let good : Finset (Finset V) := univ.filter fun S =>
     k * S.card + η * (S.card : ℝ) ^ 2 < ((G.induce (S : Set V)).edgeFinset.card : ℝ)
   have hA : A ∈ good := mem_filter.mpr ⟨mem_univ _, he⟩
@@ -79,7 +80,7 @@ theorem exists_minimal_quadratic_dense_core_of_subset {V : Type*} [Fintype V] [D
     simp [hzero, hezero] at hgood
   exact ⟨S, hnonempty, hgood, hdegree, hsmall⟩
 
-theorem exists_minimal_quadratic_dense_core {V : Type*} [Fintype V] [DecidableEq V]
+theorem exists_minimal_quadratic_dense_core {V : Type*} [Fintype V]
     (G : SimpleGraph V) [DecidableRel G.Adj] (k η : ℝ) (hη : 0 ≤ η)
     (he : k * Fintype.card V + η * (Fintype.card V : ℝ) ^ 2 < (G.edgeFinset.card : ℝ)) :
     ∃ S : Finset V, S.Nonempty ∧
@@ -87,6 +88,7 @@ theorem exists_minimal_quadratic_dense_core {V : Type*} [Fintype V] [DecidableEq
       (∀ v : S, k < (G.induce (S : Set V)).degree v) ∧
       ∀ T : Finset V, T.card < S.card →
         ((G.induce (T : Set V)).edgeFinset.card : ℝ) ≤ k * T.card + η * (T.card : ℝ) ^ 2 := by
+  classical
   have heq : (G.induce ((univ : Finset V) : Set V)).edgeFinset.card = G.edgeFinset.card := by
     rw [← G.card_filter_edgeFinset_toFinset_subset univ]
     simp
@@ -94,7 +96,7 @@ theorem exists_minimal_quadratic_dense_core {V : Type*} [Fintype V] [DecidableEq
   simpa only [card_univ, heq] using he
 
 theorem exists_minimal_quadratic_dense_core_internal_of_subset
-    {V : Type*} [Fintype V] [DecidableEq V]
+    {V : Type*} [Finite V]
     (G : SimpleGraph V) [DecidableRel G.Adj] (k η : ℝ) (hη : 0 ≤ η) (A : Finset V)
     (he : k * A.card + η * (A.card : ℝ) ^ 2 < ((G.induce (A : Set V)).edgeFinset.card : ℝ)) :
     ∃ S : Finset V, S.Nonempty ∧
@@ -103,6 +105,8 @@ theorem exists_minimal_quadratic_dense_core_internal_of_subset
       ∀ T : Finset S, T.card < S.card →
         (((G.induce (S : Set V)).induce (T : Set S)).edgeFinset.card : ℝ) ≤
           k * T.card + η * (T.card : ℝ) ^ 2 := by
+  classical
+  let := Fintype.ofFinite V
   obtain ⟨S, hS, hdense, hdeg, hsmall⟩ :=
     exists_minimal_quadratic_dense_core_of_subset G k η hη A he
   refine ⟨S, hS, hdense, hdeg, ?_⟩
@@ -112,7 +116,7 @@ theorem exists_minimal_quadratic_dense_core_internal_of_subset
   rw [← (induceFinsetMapIso G S T).card_edgeFinset_eq, card_map] at h
   exact h
 
-theorem exists_minimal_quadratic_dense_core_internal {V : Type*} [Fintype V] [DecidableEq V]
+theorem exists_minimal_quadratic_dense_core_internal {V : Type*} [Fintype V]
     (G : SimpleGraph V) [DecidableRel G.Adj] (k η : ℝ) (hη : 0 ≤ η)
     (he : k * Fintype.card V + η * (Fintype.card V : ℝ) ^ 2 < (G.edgeFinset.card : ℝ)) :
     ∃ S : Finset V, S.Nonempty ∧
@@ -121,6 +125,7 @@ theorem exists_minimal_quadratic_dense_core_internal {V : Type*} [Fintype V] [De
       ∀ T : Finset S, T.card < S.card →
         (((G.induce (S : Set V)).induce (T : Set S)).edgeFinset.card : ℝ) ≤
           k * T.card + η * (T.card : ℝ) ^ 2 := by
+  classical
   obtain ⟨S, hS, hdense, hdeg, hsmall⟩ := exists_minimal_quadratic_dense_core G k η hη he
   refine ⟨S, hS, hdense, hdeg, ?_⟩
   intro T hT

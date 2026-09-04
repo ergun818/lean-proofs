@@ -12,7 +12,7 @@ def twoParityCycleIndex (t a k : ℕ) : ℕ :=
     else 2 * (a + t - 1 - (k - (t - 1))) + 1
 
 theorem twoParityCycleIndex_lt (t a k : ℕ) (ha : 2 ≤ a) (hat : a + 2 ≤ t)
-    (hk : k < 2 * t - 1) : twoParityCycleIndex t a k < 2 * t := by
+    (_hk : k < 2 * t - 1) : twoParityCycleIndex t a k < 2 * t := by
   unfold twoParityCycleIndex
   split_ifs <;> omega
 

@@ -51,10 +51,16 @@ theorem FourCorePatternTwo.core_cliques {V : Type*} [DecidableEq V]
   · apply c.isClique_of_excluded_colours (A 1) 0 1 2 fin_three_cases
     · exact hside 1 2 0 (by decide) h.red12
     · exact hside 1 0 1 (by decide) h.blue01.symm
-  · apply c.isClique_of_excluded_colours (A 2) 0 2 1 (fun k => by have hk := fin_three_cases k; tauto)
+  · apply c.isClique_of_excluded_colours (A 2) 0 2 1
+      (fun k => by
+        have hk := fin_three_cases k
+        tauto)
     · exact hside 2 0 0 (by decide) h.red02.symm
     · exact hside 2 3 2 (by decide) h.green23
-  · apply c.isClique_of_excluded_colours (A 3) 0 2 1 (fun k => by have hk := fin_three_cases k; tauto)
+  · apply c.isClique_of_excluded_colours (A 3) 0 2 1
+      (fun k => by
+        have hk := fin_three_cases k
+        tauto)
     · exact hside 3 0 0 (by decide) h.red03.symm
     · exact hside 3 2 2 (by decide) h.green23.symm
 

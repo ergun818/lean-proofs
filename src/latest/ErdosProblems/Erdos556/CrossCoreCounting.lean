@@ -46,7 +46,7 @@ theorem cross_degree_sum_complement {V : Type*} [Fintype V] [DecidableEq V]
   simp_rw [sum_congr rfl hsum]
   simp
 
-theorem sum_le_of_few_large_values {V : Type*} [DecidableEq V]
+theorem sum_le_of_few_large_values {V : Type*}
     (B : Finset V) (f : V → ℕ) (a k : ℕ) (hmax : ∀ v ∈ B, f v ≤ a)
     (hgood : (B.filter (fun v => k + 1 ≤ f v)).card ≤ k) :
     ∑ v ∈ B, f v ≤ k * (a + B.card) := by

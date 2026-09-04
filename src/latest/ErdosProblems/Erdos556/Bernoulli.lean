@@ -48,7 +48,7 @@ lemma bernoulliMass_nonneg {U S : Finset E} {p : E → ℝ}
   · exact prod_nonneg fun e he ↦ sub_nonneg.mpr (hp₁ e (mem_sdiff.mp he).1)
 
 lemma bernoulliMass_insert {U T : Finset E} {p : E → ℝ} {e : E}
-    (heU : e ∈ U) (hT : T ⊆ U.erase e) :
+    (_heU : e ∈ U) (hT : T ⊆ U.erase e) :
     bernoulliMass U p (insert e T) = p e * bernoulliMass (U.erase e) p T := by
   have heT : e ∉ T := by
     intro he
@@ -169,7 +169,7 @@ lemma exists_output_ge_average {Omega : Type*} [Fintype Omega]
   have hne : (univ : Finset Omega).Nonempty := by
     by_contra h
     have hempty : (univ : Finset Omega) = ∅ := not_nonempty_iff_eq_empty.mp h
-    simpa [hempty] using hsum
+    simp [hempty] at hsum
   obtain ⟨omega, _, homega⟩ := exists_max_image univ output hne
   refine ⟨omega, ?_⟩
   calc
@@ -188,14 +188,18 @@ def AgreesOn (R S T : Finset E) : Prop := S ∩ R = T ∩ R
 def EventDependsOn (R : Finset E) (event : Finset E → Prop) : Prop :=
   ∀ S T, AgreesOn R S T → (event S ↔ event T)
 
+omit [Fintype E] in
 lemma agreesOn_refl (R S : Finset E) : AgreesOn R S S := rfl
 
+omit [Fintype E] in
 lemma agreesOn_symm {R S T : Finset E} (h : AgreesOn R S T) : AgreesOn R T S := h.symm
 
+omit [Fintype E] in
 lemma agreesOn_trans {R S T V : Finset E}
     (hST : AgreesOn R S T) (hTV : AgreesOn R T V) : AgreesOn R S V :=
   hST.trans hTV
 
+omit [Fintype E] in
 lemma agreesOn_mono {R R' S T : Finset E} (hRR' : R ⊆ R')
     (h : AgreesOn R' S T) : AgreesOn R S T := by
   unfold AgreesOn at h ⊢
@@ -208,15 +212,18 @@ lemma agreesOn_mono {R R' S T : Finset E} (hRR' : R ⊆ R')
   · rintro ⟨heT, heR⟩
     exact ⟨(hmem.mpr ⟨heT, hRR' heR⟩).1, heR⟩
 
+omit [Fintype E] in
 lemma eventDependsOn_mono {R R' : Finset E} {event : Finset E → Prop}
     (hRR' : R ⊆ R') (h : EventDependsOn R event) : EventDependsOn R' event := by
   intro S T hST
   exact h S T (agreesOn_mono hRR' hST)
 
+omit [Fintype E] in
 lemma eventDependsOn_true (R : Finset E) : EventDependsOn R (fun _ ↦ True) := by
   intro S T hST
   simp
 
+omit [Fintype E] in
 lemma eventDependsOn_and {R T : Finset E} {A B : Finset E → Prop}
     (hA : EventDependsOn R A) (hB : EventDependsOn T B) :
     EventDependsOn (R ∪ T) (fun S ↦ A S ∧ B S) := by
@@ -237,8 +244,8 @@ def subsetsEquivPowersetAttach (U : Finset E) :
 def subsetsUnivEquiv : Subsets (Finset.univ : Finset E) ≃ Finset E where
   toFun S := S.1
   invFun S := ⟨S, subset_univ S⟩
-  left_inv S := Subtype.ext rfl
-  right_inv S := rfl
+  left_inv _S := Subtype.ext rfl
+  right_inv _S := rfl
 
 /-- Splitting a subset of a disjoint union into its two coordinate blocks. -/
 def disjointSubsetsEquiv {U V : Finset E} (hUV : Disjoint U V) :
@@ -319,6 +326,7 @@ lemma eventMass_eq_restrictedEventMass_univ (p : E → ℝ)
   intro S
   by_cases h : event S.1 <;> simp [h, subsetsUnivEquiv]
 
+omit [Fintype E] in
 lemma bernoulliMass_union_of_disjoint {U V A B : Finset E} {p : E → ℝ}
     (hUV : Disjoint U V) (hA : A ⊆ U) (hB : B ⊆ V) :
     bernoulliMass (U ∪ V) p (A ∪ B) =

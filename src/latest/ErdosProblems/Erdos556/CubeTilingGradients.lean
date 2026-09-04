@@ -62,7 +62,8 @@ theorem IsCubeTiling.gradient_other_face_ge_four {w : CubeProfile → ℝ}
     · have hz : profileVertices r ∩ profileVertices q = ∅ := disjoint_iff_inter_eq_empty.mp hd.symm
       simp only [hz, card_empty, Nat.cast_zero, cubeOverlap, if_pos hd, zero_mul, mul_zero, le_refl]
     · have hle : ((profileVertices r ∩ profileVertices q).card : ℝ) ≤ (profileVertices r).card := by
-        exact_mod_cast card_le_card (show profileVertices r ∩ profileVertices q ⊆ profileVertices r from inter_subset_left)
+        exact_mod_cast card_le_card (show profileVertices r ∩ profileVertices q ⊆
+          profileVertices r from inter_subset_left)
       rw [ht.card_eq_twice_weight r (mem_filter.mp hr).2] at hle
       simpa only [cubeOverlap, if_neg hd, one_mul] using hle
   have hsum := sum_le_sum hpoint

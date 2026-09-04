@@ -11,7 +11,7 @@ namespace Erdos556
 
 open SimpleGraph
 
-theorem exists_path_in_length_window {V : Type*} [Fintype V] [DecidableEq V]
+theorem exists_path_in_length_window {V : Type*} [Fintype V]
     (G : SimpleGraph V) [DecidableRel G.Adj] (D d : ℕ) (hD : 0 < D)
     (hscale : Fintype.card V ≤ D * d) (hdegree : ∀ v, d ≤ G.degree v)
     (hN : 8 * (4 * D) ^ 2 ≤ Fintype.card V)
@@ -23,6 +23,7 @@ theorem exists_path_in_length_window {V : Type*} [Fintype V] [DecidableEq V]
       t < q.length + (16 * D + 8 * (4 * D) ^ 2) ∧
       q.length % 2 = p.length % 2 ∧
       ∀ z ∈ q.support, z ∈ R → z = u ∨ z = v := by
+  classical
   have aux : ∀ M : ℕ, ∀ p : G.Walk u v, p.length = M → p.IsPath → t ≤ p.length →
       (∀ z ∈ p.support, z ∈ R → z = u ∨ z = v) →
       ∃ q : G.Walk u v, q.IsPath ∧ q.length ≤ t ∧

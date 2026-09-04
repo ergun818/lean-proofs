@@ -11,10 +11,11 @@ namespace Erdos556
 
 open Finset
 
-theorem sum_card_le_card_biUnion_add_sq_mul {I V : Type*} [DecidableEq I] [DecidableEq V]
+theorem sum_card_le_card_biUnion_add_sq_mul {I V : Type*} [DecidableEq V]
     (A : Finset I) (S : I → Finset V) (m : ℕ)
     (hinter : ∀ i ∈ A, ∀ j ∈ A, i ≠ j → (S i ∩ S j).card ≤ m) :
     (∑ i ∈ A, (S i).card) ≤ (A.biUnion S).card + A.card ^ 2 * m := by
+  classical
   induction A using Finset.induction_on with
   | empty => simp
   | @insert i A hi ih =>
@@ -48,10 +49,11 @@ theorem sum_card_le_card_biUnion_add_sq_mul {I V : Type*} [DecidableEq I] [Decid
           nlinarith [Nat.zero_le (A.card * m)]
 
 theorem exists_large_intersection {I V : Type*} [Fintype I] [Fintype V]
-    [DecidableEq I] [DecidableEq V] (S : I → Finset V) (d m : ℕ)
+    [DecidableEq V] (S : I → Finset V) (d m : ℕ)
     (hsize : ∀ i, d ≤ (S i).card)
     (hcount : Fintype.card V + (Fintype.card I) ^ 2 * m < Fintype.card I * d) :
     ∃ i j : I, i ≠ j ∧ m < (S i ∩ S j).card := by
+  classical
   by_contra! h
   have hsum : Fintype.card I * d ≤ ∑ i, (S i).card := by
     calc

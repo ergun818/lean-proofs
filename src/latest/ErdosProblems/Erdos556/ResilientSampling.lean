@@ -14,7 +14,7 @@ namespace Erdos556
 
 open Finset
 
-theorem exists_small_set_of_avoidance {E I : Type*} [Fintype E] [DecidableEq E]
+theorem exists_small_set_of_avoidance {E I : Type*} [Fintype E]
     [Fintype I] (P : I → Finset E → Prop) (q : ℝ) (hq0 : 0 < q) (hq1 : q ≤ 1)
     (L b m a : ℕ) (hbound : ((a + 1) * m) * L ≤ b)
     (havoid : ∀ i S, S.card ≤ b →

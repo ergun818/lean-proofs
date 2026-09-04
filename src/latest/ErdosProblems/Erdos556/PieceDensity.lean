@@ -12,7 +12,7 @@ namespace Erdos556
 
 open SimpleGraph Finset
 
-theorem hereditary_density_of_induce {V : Type*} [Fintype V] [DecidableEq V]
+theorem hereditary_density_of_induce {V : Type*}
     (G : SimpleGraph V) [DecidableRel G.Adj] (A : Finset V) (d : ℝ)
     (h : ∀ T : Finset A, (((G.induce (A : Set V)).induce (T : Set A)).edgeFinset.card : ℝ) ≤
       d * T.card) :
@@ -32,12 +32,13 @@ theorem hereditary_density_of_induce {V : Type*} [Fintype V] [DecidableEq V]
   rw [e.card_edgeFinset_eq, hcard] at hT
   exact hT
 
-theorem edge_count_induce_pieceGraph_le {V : Type*} [Fintype V] [DecidableEq V]
+theorem edge_count_induce_pieceGraph_le {V : Type*} [Finite V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj] (P : Finset (Finset V))
     [DecidableRel (pieceGraph G P).Adj] (S : Finset V) :
     ((pieceGraph G P).induce (S : Set V)).edgeFinset.card ≤
       ∑ A ∈ P, (G.induce (↑(A ∩ S) : Set V)).edgeFinset.card := by
   classical
+  let := Fintype.ofFinite V
   let E (A : Finset V) := G.edgeFinset.filter (fun e => e.toFinset ⊆ A ∩ S)
   let F := (pieceGraph G P).edgeFinset.filter (fun e => e.toFinset ⊆ S)
   have hcover : F ⊆ P.biUnion E := by
@@ -75,13 +76,15 @@ theorem sum_card_inter_le_of_disjoint {V : Type*} [DecidableEq V]
   obtain ⟨A, _, hvA⟩ := mem_biUnion.mp hv
   exact (mem_inter.mp hvA).2
 
-theorem hereditary_density_pieceGraph {V : Type*} [Fintype V] [DecidableEq V]
+theorem hereditary_density_pieceGraph {V : Type*} [Finite V]
     (G : SimpleGraph V) [DecidableRel G.Adj] (P : Finset (Finset V))
     [DecidableRel (pieceGraph G P).Adj]
     (hP : (P : Set (Finset V)).Pairwise Disjoint) (d : ℝ) (hd : 0 ≤ d)
     (h : ∀ A ∈ P, ∀ S : Finset V, S ⊆ A →
       ((G.induce (S : Set V)).edgeFinset.card : ℝ) ≤ d * S.card) :
     ∀ S : Finset V, (((pieceGraph G P).induce (S : Set V)).edgeFinset.card : ℝ) ≤ d * S.card := by
+  classical
+  let := Fintype.ofFinite V
   intro S
   have hcard : (∑ A ∈ P, ((A ∩ S).card : ℝ)) ≤ S.card := by
     exact_mod_cast sum_card_inter_le_of_disjoint P hP S

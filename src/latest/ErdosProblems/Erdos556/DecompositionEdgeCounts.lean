@@ -14,10 +14,12 @@ theorem ThreeColourDecomposition.parts_disjoint {V : Type*}
   intro u v hB hF
   exact (h.bipartite_off i u v hB).1 (h.sparse_on i u v hF).1
 
-theorem ThreeColourDecomposition.retained_edge_count {V : Type*} [Fintype V] [DecidableEq V]
+theorem ThreeColourDecomposition.retained_edge_count {V : Type*} [Finite V]
     {c : ThreeColouring V} {E D : ℝ} (h : ThreeColourDecomposition c E D) :
     Nat.card h.retained.edgeSet =
       ∑ i, (Nat.card (h.bipartite i).edgeSet + Nat.card (h.sparse i).edgeSet) := by
+  classical
+  let := Fintype.ofFinite V
   have hdis (i j : Fin 3) (hij : i ≠ j) :
       Disjoint (h.bipartite i ⊔ h.sparse i) (h.bipartite j ⊔ h.sparse j) :=
     (c.graphs_disjoint i j hij).mono (sup_le (h.bipartite_le i) (h.sparse_le i))
@@ -28,9 +30,11 @@ theorem ThreeColourDecomposition.retained_edge_count {V : Type*} [Fintype V] [De
   intro i _
   exact natCard_edges_sup _ _ (h.parts_disjoint i)
 
-theorem ThreeColourDecomposition.missing_edge_count_le {V : Type*} [Fintype V] [DecidableEq V]
+theorem ThreeColourDecomposition.missing_edge_count_le {V : Type*} [Finite V]
     {c : ThreeColouring V} {E D : ℝ} (h : ThreeColourDecomposition c E D) :
     (Nat.card h.missing.edgeSet : ℝ) ≤ 3 * E := by
+  classical
+  let := Fintype.ofFinite V
   have hcol : (∑ i, (Nat.card (c.graph i).edgeSet : ℝ)) = Nat.card (⊤ : SimpleGraph V).edgeSet := by
     exact_mod_cast c.sum_edge_counts
   have hret : (Nat.card h.retained.edgeSet : ℝ) =
@@ -47,10 +51,11 @@ theorem ThreeColourDecomposition.missing_edge_count_le {V : Type*} [Fintype V] [
       _ = _ := by rw [sum_add_distrib]; simp
   linarith
 
-theorem ThreeColourDecomposition.sparse_edge_count_le {V : Type*} [Fintype V] [DecidableEq V]
+theorem ThreeColourDecomposition.sparse_edge_count_le {V : Type*} [Finite V]
     {c : ThreeColouring V} {E D : ℝ} (h : ThreeColourDecomposition c E D) (i : Fin 3) :
     (Nat.card (h.sparse i).edgeSet : ℝ) ≤ D * (h.stars i).card := by
   classical
+  let := Fintype.ofFinite V
   have hsupp : (h.sparse i).support ⊆ (h.stars i : Set V) := by
     intro u hu
     obtain ⟨v, huv⟩ := hu

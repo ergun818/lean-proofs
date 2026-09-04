@@ -27,7 +27,8 @@ theorem face_even_vertices_differ : ∀ (i k : Fin 3) (b : Bool) (l m : Fin 4),
 theorem face_parallel_profiles_disjoint : ∀ (i a : Fin 3) (b : Bool) (l m : Fin 4),
     a ≠ i → l ≠ m → evenCubeVertex l ∈ profileVertices (cubeFace i b) →
       evenCubeVertex m ∈ profileVertices (cubeFace i b) →
-      Disjoint (profileVertices (matchingProfile l a)) (profileVertices (matchingProfile m a)) := by decide
+      Disjoint (profileVertices (matchingProfile l a)) (profileVertices (matchingProfile m a)) := by
+        decide
 
 theorem face_parallel_unique_separator : ∀ (i a k z : Fin 3) (b : Bool) (l m : Fin 4),
     a ≠ i → k ≠ i → a ≠ k →

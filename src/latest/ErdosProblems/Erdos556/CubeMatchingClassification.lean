@@ -47,7 +47,8 @@ theorem disjoint_cube_edges_have_four_core_pattern (p : Fin 4 → CubeProfile)
     (hdim : ∀ i, profileDimension (p i) = 1)
     (hdis : ∀ i j, i ≠ j → Disjoint (profileVertices (p i)) (profileVertices (p j))) :
     ∃ (s : Fin 4 → Fin 4) (k : Fin 3 → Fin 3), Function.Injective s ∧ Function.Injective k ∧
-      (HasPatternOneSeparators (fun i => p (s i)) k ∨ HasPatternTwoSeparators (fun i => p (s i)) k) := by
+      (HasPatternOneSeparators (fun i => p (s i)) k ∨ HasPatternTwoSeparators (fun i => p (s i))
+        k) := by
   classical
   choose a b hab using fun i => matchingProfile_exists (p i) (hdim i)
   have ha : Function.Injective a := by

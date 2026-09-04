@@ -46,7 +46,8 @@ theorem IsCubeWeight.le_four {w : CubeProfile → ℝ} (hw : IsCubeWeight w) (p 
 
 theorem edge_profiles_packing_bound (E : Finset CubeProfile) (S : Finset CubeVertex)
     (hdim : ∀ p ∈ E, profileDimension p = 1)
-    (hdisj : (E : Set CubeProfile).Pairwise (fun p q => Disjoint (profileVertices p) (profileVertices q)))
+    (hdisj : (E : Set CubeProfile).Pairwise (fun p q => Disjoint (profileVertices p)
+      (profileVertices q)))
     (hsub : ∀ p ∈ E, profileVertices p ⊆ S) : 2 * E.card ≤ S.card := by
   have hsum : (∑ p ∈ E, (profileVertices p).card) = 2 * E.card := by
     calc

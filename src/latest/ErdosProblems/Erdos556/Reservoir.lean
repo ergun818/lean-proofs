@@ -26,7 +26,7 @@ theorem ShortConnection.mono {V : Type*} {G : SimpleGraph V} {L : ℕ} {u v : V}
   obtain ⟨p, hp, hlen, hs⟩ := h
   exact ⟨p, hp, hlen, fun x hx hxu hxv => hST (hs x hx hxu hxv)⟩
 
-theorem exists_short_connection_avoiding {V : Type*} [Fintype V] [DecidableEq V]
+theorem exists_short_connection_avoiding {V : Type*} [Fintype V]
     (G : SimpleGraph V) [DecidableRel G.Adj] (b d L : ℕ)
     (hconn : ConnectedAfterDeleting G b) (hd : 0 < d)
     (hdeg : ∀ w, d + b ≤ G.degree w) (hdiam : 3 * Fintype.card V ≤ d * L)

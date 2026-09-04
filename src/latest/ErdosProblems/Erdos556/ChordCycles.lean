@@ -27,7 +27,8 @@ theorem pathSegment_isPath_of_isCycle {V : Type*} {G : SimpleGraph V} {v : V}
     apply Walk.IsPath.mk'
     have hnodup := (hc.isPath_take hj).support_nodup
     simpa only [pathSegment, Walk.support_copy, Walk.support_take,
-      Walk.drop_support_eq_support_drop_min, Nat.zero_min, List.drop_zero, Nat.sub_zero] using hnodup
+      Walk.drop_support_eq_support_drop_min, Nat.zero_min, List.drop_zero, Nat.sub_zero] using
+        hnodup
   · simpa only [pathSegment, Walk.isPath_copy] using
       (hc.isPath_drop (by omega : 0 < i)).take (j - i)
 
@@ -77,7 +78,8 @@ theorem reverseSkipIndex_lt (m j k : ℕ) (hj : 2 ≤ j) (hjm : j + 1 < m) (hk :
   unfold reverseSkipIndex
   split_ifs <;> omega
 
-theorem reverseSkipIndex_injective (j : ℕ) (hj : 2 ≤ j) : Function.Injective (reverseSkipIndex j) := by
+theorem reverseSkipIndex_injective (j : ℕ) (_hj : 2 ≤ j) : Function.Injective (reverseSkipIndex
+    j) := by
   intro a b h
   unfold reverseSkipIndex at h
   split_ifs at h <;> omega
@@ -109,10 +111,14 @@ theorem exists_cycle_of_two_chords_skip_one {V : Type*} {G : SimpleGraph V} {v :
       simpa only [h₁, h₂] using hstep
     by_cases hke : k + 1 = j
     · have h₁ : reverseSkipIndex j k = 2 := by unfold reverseSkipIndex; split_ifs <;> omega
-      have h₂ : reverseSkipIndex j (k + 1) = j + 1 := by unfold reverseSkipIndex; split_ifs <;> omega
+      have h₂ : reverseSkipIndex j (k + 1) = j + 1 := by
+        unfold reverseSkipIndex
+        split_ifs <;> omega
       simpa only [h₁, h₂] using hsecond
     · have h₁ : reverseSkipIndex j k = k + 1 := by unfold reverseSkipIndex; split_ifs <;> omega
-      have h₂ : reverseSkipIndex j (k + 1) = (k + 1) + 1 := by unfold reverseSkipIndex; split_ifs <;> omega
+      have h₂ : reverseSkipIndex j (k + 1) = (k + 1) + 1 := by
+        unfold reverseSkipIndex
+        split_ifs <;> omega
       simpa only [h₁, h₂] using c.adj_getVert_succ (by omega : k + 1 < c.length)
   · have hlast : reverseSkipIndex j (c.length - 1 - 1) = c.length - 1 := by
       unfold reverseSkipIndex

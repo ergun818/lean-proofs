@@ -31,7 +31,7 @@ theorem path_length_le_of_parity_reservoir {V : Type*} {G : SimpleGraph V}
   have hle := hodd u c hc ho
   omega
 
-theorem edge_bound_of_parity_reservoir {V : Type*} [Fintype V] [DecidableEq V]
+theorem edge_bound_of_parity_reservoir {V : Type*} [Fintype V]
     (G : SimpleGraph V) [DecidableRel G.Adj] (R : Finset V) (L k : ℕ) (hk : 1 ≤ k)
     (hres : ∀ u v, u ≠ v → ParityConnection G L u v R)
     (hodd : ∀ (w : V) (c : G.Walk w w), c.IsCycle → Odd c.length → c.length ≤ 2 * k) :

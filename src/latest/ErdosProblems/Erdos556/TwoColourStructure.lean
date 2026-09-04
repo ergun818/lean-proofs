@@ -20,7 +20,7 @@ def TwoCliquePartition {V : Type*} [Fintype V] [DecidableEq V] (G : SimpleGraph 
     G.IsClique (S : Set V) ∧ G.IsClique (T : Set V) ∧
     (∀ s ∈ S, ∀ t ∈ T, Gᶜ.Adj s t) ∧ S.card ≤ 2 * r ∧ T.card ≤ 2 * r
 
-theorem clique_card_le_of_forbidden_odd_cycle {V : Type*} [DecidableEq V]
+theorem clique_card_le_of_forbidden_odd_cycle {V : Type*}
     (G : SimpleGraph V) (S : Finset V) (r : ℕ) (hr : 1 ≤ r)
     (hclique : G.IsClique (S : Set V)) (hno : ¬ cycleGraph (2 * r + 1) ⊑ G) :
     S.card ≤ 2 * r := by

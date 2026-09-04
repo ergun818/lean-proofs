@@ -27,16 +27,18 @@ noncomputable def isoInduceCompl {V W : Type*} [DecidableEq V] [DecidableEq W]
       right_inv := fun y => Subtype.ext (e.apply_symm_apply y.val) }
   map_rel_iff' := by intro x y; exact e.map_adj_iff
 
-theorem ConnectedAfterDeleting.iso {V W : Type*} [DecidableEq V] [DecidableEq W]
+theorem ConnectedAfterDeleting.iso {V W : Type*}
     {G : SimpleGraph V} {H : SimpleGraph W} {b : ℕ}
     (hG : ConnectedAfterDeleting G b) (e : G ≃g H) : ConnectedAfterDeleting H b := by
+  classical
   intro S hS
   have h := hG (S.map e.symm.toEquiv.toEmbedding) (by simpa only [card_map] using hS)
   exact (isoInduceCompl e.symm S).preconnected_iff.mpr h
 
-theorem NonbipartiteAfterDeleting.iso {V W : Type*} [DecidableEq V] [DecidableEq W]
+theorem NonbipartiteAfterDeleting.iso {V W : Type*}
     {G : SimpleGraph V} {H : SimpleGraph W} {b : ℕ}
     (hG : NonbipartiteAfterDeleting G b) (e : G ≃g H) : NonbipartiteAfterDeleting H b := by
+  classical
   intro S hS hc
   apply hG (S.map e.symm.toEquiv.toEmbedding) (by simpa only [card_map] using hS)
   exact hc.of_hom (isoInduceCompl e.symm S).symm.toHom

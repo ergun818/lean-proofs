@@ -12,7 +12,7 @@ namespace Erdos556
 
 open SimpleGraph Finset
 
-theorem not_large_joined_bucket_with_opposite_set {V : Type*} [DecidableEq V]
+theorem not_large_joined_bucket_with_opposite_set {V : Type*}
     (G : SimpleGraph V) (A S T : Finset V) (r : ℕ) (hr : 1 ≤ r)
     (hAS : A ⊆ S) (hA : r ≤ A.card) (hS : 2 * r + 2 ≤ S.card) (hT : r - 1 ≤ T.card)
     (hdis : Disjoint S T) (hcross : ∀ s ∈ S, ∀ t ∈ T, Gᶜ.Adj s t)

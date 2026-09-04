@@ -40,7 +40,7 @@ theorem cubeBilinear_symm (x y : CubeProfile → ℝ) : cubeBilinear x y = cubeB
 theorem cubeBilinear_single_left (x : CubeProfile → ℝ) (p : CubeProfile) (t : ℝ) :
     cubeBilinear (Pi.single p t) x = t * ∑ q, cubeOverlap p q * x q := by
   classical
-  simp [cubeBilinear, Pi.single_apply, ite_mul, mul_ite, mul_sum, mul_assoc, mul_comm, mul_left_comm]
+  simp [cubeBilinear, Pi.single_apply, mul_ite, mul_sum, mul_comm, mul_left_comm]
 
 theorem cubeBilinear_single_right (x : CubeProfile → ℝ) (p : CubeProfile) (t : ℝ) :
     cubeBilinear x (Pi.single p t) = t * ∑ q, cubeOverlap p q * x q := by
@@ -52,7 +52,8 @@ theorem cubeBilinear_single_single (p : CubeProfile) (s t : ℝ) :
   rw [cubeBilinear_single_left]
   simp [Pi.single_apply, mul_ite, cubeOverlap_self]
 
-theorem cubeLinear_add (x y : CubeProfile → ℝ) : cubeLinear (x + y) = cubeLinear x + cubeLinear y := by
+theorem cubeLinear_add (x y : CubeProfile → ℝ) : cubeLinear (x + y) = cubeLinear x + cubeLinear
+    y := by
   simp only [cubeLinear, Pi.add_apply, mul_add, sum_add_distrib]
 
 theorem cubeLinear_single (p : CubeProfile) (t : ℝ) :
@@ -73,7 +74,8 @@ theorem cubeGradient_add_single (w : CubeProfile → ℝ) (p q : CubeProfile) (t
     cubeGradient (w + Pi.single p t) q = cubeGradient w q + 2 * t * cubeOverlap q p := by
   classical
   simp only [cubeGradient, Pi.add_apply, mul_add, sum_add_distrib]
-  have hsum : (∑ r, cubeOverlap q r * (Pi.single p t : CubeProfile → ℝ) r) = cubeOverlap q p * t := by
+  have hsum : (∑ r, cubeOverlap q r * (Pi.single p t : CubeProfile → ℝ) r) = cubeOverlap q p * t
+    := by
     simp [Pi.single_apply, mul_ite]
   rw [hsum]
   ring

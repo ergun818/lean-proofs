@@ -144,7 +144,8 @@ theorem exists_forbidden_odd_cycle_decomposition (ε : ℝ) (hε : 0 < ε) :
       have herror := mul_le_mul_of_nonneg_left hsq (show 0 ≤ ε / 2 by positivity)
       rw [hcardS] at hE
       simp only [edgeFinset_card_eq_natCard_edgeSet] at hE hcoreLoss
-      change (Nat.card G.edgeSet : ℝ) ≤ (Nat.card B.edgeSet : ℝ) + Nat.card F.edgeSet + ε * (N : ℝ) ^ 2
+      change (Nat.card G.edgeSet : ℝ) ≤ (Nat.card B.edgeSet : ℝ) + Nat.card F.edgeSet + ε * (N :
+        ℝ) ^ 2
       linarith
     · have hkReal : 2 * (k : ℝ) ≤ (n : ℝ) + K := by
         exact_mod_cast (show 2 * k ≤ n + K from Nat.mul_div_le (n + K) 2)

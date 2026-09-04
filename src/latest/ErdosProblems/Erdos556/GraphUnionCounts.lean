@@ -14,28 +14,33 @@ theorem edgeFinset_iSup {V I : Type*} [Fintype V] [DecidableEq V] [Fintype I]
   ext e
   simp only [mem_edgeFinset, edgeSet_iSup, Set.mem_iUnion, mem_biUnion, mem_univ, true_and]
 
-theorem natCard_edges_iSup {V I : Type*} [Fintype V] [DecidableEq V] [Fintype I]
+theorem natCard_edges_iSup {V I : Type*} [Finite V] [Fintype I]
     (G : I → SimpleGraph V) (hdis : ∀ i j, i ≠ j → Disjoint (G i) (G j)) :
     Nat.card (⨆ i, G i).edgeSet = ∑ i, Nat.card (G i).edgeSet := by
   classical
-  have hd : ((univ : Finset I) : Set I).Pairwise (fun i j => Disjoint (G i).edgeFinset (G j).edgeFinset) := by
+  let := Fintype.ofFinite V
+  have hd : ((univ : Finset I) : Set I).Pairwise (fun i j => Disjoint (G i).edgeFinset (G
+    j).edgeFinset) := by
     intro i _ j _ hij
     exact SimpleGraph.disjoint_edgeFinset.mpr (hdis i j hij)
   have h : (⨆ i, G i).edgeFinset.card = ∑ i, (G i).edgeFinset.card := by
     rw [edgeFinset_iSup, card_biUnion hd]
   simpa only [edgeFinset_card_eq_natCard_edgeSet] using h
 
-theorem natCard_edges_sup {V : Type*} [Fintype V] [DecidableEq V]
+theorem natCard_edges_sup {V : Type*} [Finite V]
     (G H : SimpleGraph V) (hdis : Disjoint G H) :
     Nat.card (G ⊔ H).edgeSet = Nat.card G.edgeSet + Nat.card H.edgeSet := by
   classical
+  let := Fintype.ofFinite V
   have h : (G ⊔ H).edgeFinset.card = G.edgeFinset.card + H.edgeFinset.card := by
     rw [edgeFinset_sup, card_union_of_disjoint (SimpleGraph.disjoint_edgeFinset.mpr hdis)]
   simpa only [edgeFinset_card_eq_natCard_edgeSet] using h
 
-theorem natCard_edges_add_complement {V : Type*} [Fintype V] [DecidableEq V]
-    (G : SimpleGraph V) : Nat.card G.edgeSet + Nat.card Gᶜ.edgeSet = Nat.card (⊤ : SimpleGraph V).edgeSet := by
+theorem natCard_edges_add_complement {V : Type*} [Finite V]
+    (G : SimpleGraph V) : Nat.card G.edgeSet + Nat.card Gᶜ.edgeSet = Nat.card (⊤ : SimpleGraph
+      V).edgeSet := by
   classical
+  let := Fintype.ofFinite V
   have h := edge_count_add_complement G
   have ht := card_edgeFinset_top_eq_card_choose_two (V := V)
   simp only [edgeFinset_card_eq_natCard_edgeSet] at h ht
@@ -57,9 +62,11 @@ theorem ThreeColouring.iSup_graph_eq_top {V : Type*} (c : ThreeColouring V) :
   · intro huv
     exact ⟨c.colour u v, huv, rfl⟩
 
-theorem ThreeColouring.sum_edge_counts {V : Type*} [Fintype V] [DecidableEq V]
+theorem ThreeColouring.sum_edge_counts {V : Type*} [Finite V]
     (c : ThreeColouring V) :
     (∑ i, Nat.card (c.graph i).edgeSet) = Nat.card (⊤ : SimpleGraph V).edgeSet := by
+  classical
+  let := Fintype.ofFinite V
   have h := natCard_edges_iSup c.graph c.graphs_disjoint
   rw [c.iSup_graph_eq_top] at h
   exact h.symm

@@ -34,17 +34,17 @@ theorem cubeGradient_shift_difference (w : CubeProfile → ℝ) (p q : CubeProfi
 theorem cubeTransfer_at_source (w : CubeProfile → ℝ) (p q : CubeProfile) (hpq : p ≠ q) :
     cubeTransfer w p q q = 0 := by
   classical
-  simp [cubeTransfer, cubeShift, Pi.single_apply, hpq, Ne.symm hpq]
+  simp [cubeTransfer, cubeShift, Ne.symm hpq]
 
 theorem cubeTransfer_at_target (w : CubeProfile → ℝ) (p q : CubeProfile) (hpq : p ≠ q) :
     cubeTransfer w p q p = w p + w q := by
   classical
-  simp [cubeTransfer, cubeShift, Pi.single_apply, hpq, Ne.symm hpq]
+  simp [cubeTransfer, cubeShift, hpq]
 
 theorem cubeTransfer_at_other (w : CubeProfile → ℝ) (p q r : CubeProfile)
     (hrp : r ≠ p) (hrq : r ≠ q) : cubeTransfer w p q r = w r := by
   classical
-  simp [cubeTransfer, cubeShift, Pi.single_apply, hrp, hrq, Ne.symm hrp, Ne.symm hrq]
+  simp [cubeTransfer, cubeShift, hrp, hrq]
 
 theorem cubeTransfer_nonincrease_or_reverse (w : CubeProfile → ℝ) (p q : CubeProfile)
     (hp : 0 ≤ w p) (hq : 0 ≤ w q) (hpq : cubeOverlap p q = 1) :
@@ -58,7 +58,8 @@ theorem cubeTransfer_nonincrease_or_reverse (w : CubeProfile → ℝ) (p q : Cub
   · right
     have hqp : cubeOverlap q p = 1 := (cubeOverlap_symm q p).trans hpq
     rw [cubeTransfer, cubeEnergy_shift w q p (w p) hqp]
-    have h := mul_nonpos_of_nonneg_of_nonpos hp (by linarith : cubeGradient w q - cubeGradient w p ≤ 0)
+    have h := mul_nonpos_of_nonneg_of_nonpos hp (by linarith : cubeGradient w q - cubeGradient w
+      p ≤ 0)
     linarith
 
 #print axioms cubeEnergy_shift

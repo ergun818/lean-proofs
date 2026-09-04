@@ -54,7 +54,7 @@ theorem IsTwoConnectedPieceFamily.lift {V : Type*} [DecidableEq V]
     refine ⟨by simpa only [card_map] using (hP.2 T hT).1, ?_⟩
     exact (hP.2 T hT).2.iso (induceFinsetMapIso G S T)
 
-theorem sum_edges_liftPieces {V : Type*} [Fintype V] [DecidableEq V]
+theorem sum_edges_liftPieces {V : Type*} [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj] (S : Finset V) (P : Finset (Finset S)) :
     (∑ A ∈ liftPieces S P, (G.induce (A : Set V)).edgeFinset.card) =
       ∑ T ∈ P, ((G.induce (S : Set V)).induce (T : Set S)).edgeFinset.card := by

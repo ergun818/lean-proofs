@@ -32,7 +32,7 @@ theorem exists_cube_compression (w : CubeProfile → ℝ) (hw : IsCubeWeight w) 
             (fun p q => Disjoint (profileVertices p) (profileVertices q))
         · exact ⟨w, hw, hdisj, le_rfl⟩
         simp only [Set.Pairwise] at hdisj
-        push_neg at hdisj
+        push Not at hdisj
         obtain ⟨p, hpH, q, hqH, hpq, hnot⟩ := hdisj
         have hpdim := (mem_filter.mp hpH).2.1
         have hqdim := (mem_filter.mp hqH).2.1
@@ -48,7 +48,8 @@ theorem exists_cube_compression (w : CubeProfile → ℝ) (hw : IsCubeWeight w) 
               cubeEnergy v ≤ cubeEnergy w := by
           obtain ⟨v, hv, hvd, hve⟩ := ih (positiveHighProfiles x).card (by omega) x hx rfl
           exact ⟨v, hv, hvd, hve.trans hxe⟩
-        rcases cubeTransfer_nonincrease_or_reverse w p q (hw.nonneg p) (hw.nonneg q) hover with hE | hE
+        rcases cubeTransfer_nonincrease_or_reverse w p q (hw.nonneg p) (hw.nonneg q) hover with
+          hE | hE
         · exact step (cubeTransfer w p q) (hw.transfer p q hpq hp hpdim hqdim)
             (positiveHighProfiles_transfer_card_lt hw p q hpq hp hq hpdim hqdim) hE
         · exact step (cubeTransfer w q p) (hw.transfer q p hpq.symm hq hqdim hpdim)

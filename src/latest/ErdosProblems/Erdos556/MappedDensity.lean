@@ -11,8 +11,8 @@ theorem edgeFinset_card_eq_natCard_edgeSet {V : Type*} (G : SimpleGraph V) [Fint
     G.edgeFinset.card = Nat.card G.edgeSet :=
   G.card_edgeSet.symm.trans Nat.card_eq_fintype_card.symm
 
-theorem induced_map_edge_count {V W : Type*} [Fintype V] [Fintype W]
-    [DecidableEq V] [DecidableEq W] (G : SimpleGraph V) [DecidableRel G.Adj]
+theorem induced_map_edge_count {V W : Type*} [Fintype V]
+    [DecidableEq W] (G : SimpleGraph V) [DecidableRel G.Adj]
     (f : V ↪ W) (A : Finset W) :
     ((G.map f).induce (A : Set W)).edgeFinset.card =
       (G.induce ((univ.filter (fun v => f v ∈ A) : Finset V) : Set V)).edgeFinset.card := by
@@ -41,7 +41,7 @@ theorem induced_map_edge_count {V W : Type*} [Fintype V] [Fintype W]
           · exact Subtype.ext hb }
   exact e.card_edgeFinset_eq.trans (card_edgeFinset_map g (G.induce (B : Set V)))
 
-theorem preimage_finset_card_le {V W : Type*} [Fintype V] [Fintype W]
+theorem preimage_finset_card_le {V W : Type*} [Fintype V]
     [DecidableEq W] (f : V ↪ W) (A : Finset W) :
     (univ.filter (fun v => f v ∈ A)).card ≤ A.card := by
   classical
@@ -61,11 +61,12 @@ theorem preimage_finset_card_le {V W : Type*} [Fintype V] [Fintype W]
   rw [hcardB, hcardA] at h
   exact h
 
-theorem hereditary_density_map_embedding {V W : Type*} [Fintype V] [Fintype W]
-    [DecidableEq V] [DecidableEq W] (G : SimpleGraph V) [DecidableRel G.Adj]
+theorem hereditary_density_map_embedding {V W : Type*} [Fintype V]
+    [DecidableEq W] (G : SimpleGraph V) [DecidableRel G.Adj]
     (f : V ↪ W) (D : ℝ) (hD : 0 ≤ D)
     (h : ∀ S : Finset V, ((G.induce (S : Set V)).edgeFinset.card : ℝ) ≤ D * S.card) :
     ∀ A : Finset W, (((G.map f).induce (A : Set W)).edgeFinset.card : ℝ) ≤ D * A.card := by
+  classical
   intro A
   rw [induced_map_edge_count G f A]
   apply (h _).trans
@@ -74,17 +75,19 @@ theorem hereditary_density_map_embedding {V W : Type*} [Fintype V] [Fintype W]
 
 #print axioms hereditary_density_map_embedding
 
-theorem mapped_edges_in_set {V W : Type*} [DecidableEq W]
+theorem mapped_edges_in_set {V W : Type*}
     (G : SimpleGraph V) (f : V ↪ W) (S : Finset V)
     (h : ∀ a b, G.Adj a b → a ∈ S ∧ b ∈ S) :
     ∀ a b, (G.map f).Adj a b → a ∈ S.map f ∧ b ∈ S.map f := by
+  classical
   rintro a b ⟨_, u, v, huv, rfl, rfl⟩
   exact ⟨mem_map.mpr ⟨u, (h u v huv).1, rfl⟩, mem_map.mpr ⟨v, (h u v huv).2, rfl⟩⟩
 
-theorem mapped_edges_off_set {V W : Type*} [DecidableEq W]
+theorem mapped_edges_off_set {V W : Type*}
     (G : SimpleGraph V) (f : V ↪ W) (S : Finset V)
     (h : ∀ a b, G.Adj a b → a ∉ S ∧ b ∉ S) :
     ∀ a b, (G.map f).Adj a b → a ∉ S.map f ∧ b ∉ S.map f := by
+  classical
   rintro a b ⟨_, u, v, huv, rfl, rfl⟩
   have hoff (x : V) (hx : x ∉ S) : f x ∉ S.map f := by
     intro hxmem
