@@ -169,6 +169,7 @@ lemma card_linePointFinset [Fintype A] [Nontrivial A] (l : Line A I) :
   exact Finset.card_univ
 
 /-- A concrete `Fintype` structure on combinatorial lines. -/
+@[instance_reducible]
 noncomputable def lineFintype [Fintype A] [Fintype I] : Fintype (Line A I) :=
   Fintype.ofInjective Line.idxFun line_idxFun_injective
 
@@ -520,7 +521,9 @@ theorem exists_suitable_hitting_family {Candidate Colour : Type*}
         _ = D * B := by rw [← hBH]
     have hDB : D * B = (D - 1) * B + B := by
       calc
-        D * B = ((D - 1) + 1) * B := by congr 1 <;> omega
+        D * B = ((D - 1) + 1) * B := by
+          congr 1
+          omega
         _ = (D - 1) * B + B := by rw [Nat.add_mul, one_mul]
     have hcancel : D * R + B ≤ (D - 1) * B + B := hDRB.trans_eq hDB
     exact Nat.le_of_add_le_add_right hcancel
@@ -801,9 +804,11 @@ def SparseHalesJewett (A : Type u) (K : Type w) : Prop :=
 /-- Sparse Hales--Jewett, in the exact tripod/triangle-free form used by
 Reiher--Rödl--Sales.  The ambient cube consists of many disjoint copies of an
 ordinary Hales--Jewett cube. -/
-theorem sparse_hales_jewett (A : Type u) [Fintype A] [Nontrivial A]
-    (K : Type w) [Fintype K] : SparseHalesJewett A K := by
+theorem sparse_hales_jewett (A : Type u) [Finite A] [Nontrivial A]
+    (K : Type w) [Finite K] : SparseHalesJewett A K := by
   classical
+  let : Fintype A := Fintype.ofFinite A
+  let : Fintype K := Fintype.ofFinite K
   cases isEmpty_or_nonempty K with
   | inl hK =>
       let : IsEmpty K := hK
@@ -875,8 +880,7 @@ theorem sparse_hales_jewett (A : Type u) [Fintype A] [Nontrivial A]
         dsimp [Good]
         constructor
         · intro x
-          simp [Erdos847LineExclusions.DegreeBound,
-            Erdos847LineExclusions.lineDegree,
+          simp [Erdos847LineExclusions.lineDegree,
             Erdos847LineExclusions.incidentLines]
         · constructor
           · simp [Erdos847LineExclusions.HasTripod]

@@ -290,7 +290,7 @@ noncomputable def iterate
     (oneFiberAmalgamate : ∀ {P' : Type uP} {C' : Type uC}
       [Fintype P'] [Fintype C']
       (picture : Picture G P' C')
-      (sourceFibers : ∀ y : V, Nontrivial (Fiber picture y))
+      (_sourceFibers : ∀ y : V, Nontrivial (Fiber picture y))
       (x : V)
       [Nontrivial (Fiber picture x)]
       (_lines : SparseFiberLineFamily picture x K),
@@ -310,7 +310,7 @@ noncomputable def iterate
 
 /-- Focusing every base vertex transfers the base Ramsey property to the
 final picture. -/
-theorem focusedExtension_ramsey [Fintype V]
+theorem focusedExtension_ramsey
     {source : Picture G P C} (hrealizes : RealizesEveryEdge source)
     {vertices : List V} (hall : ∀ x : V, x ∈ vertices)
     {K : Type uK} (hG : ThreeGraph.RamseyFor G K)
@@ -339,8 +339,8 @@ theorem focusedExtension_ramsey [Fintype V]
 
 /-- The finite backward-focusing construction, packaged as an existential
 final picture. -/
-theorem exists_ramsey_final_picture [Fintype V]
-    [Fintype P] [Fintype C]
+theorem exists_ramsey_final_picture [Finite V]
+    [Finite P] [Finite C]
     (source : Picture G P C) (K : Type uK)
     (sourceFiberNontrivial : ∀ x : V, Nontrivial (Fiber source x))
     (hrealizes : RealizesEveryEdge source)
@@ -353,7 +353,7 @@ theorem exists_ramsey_final_picture [Fintype V]
     (oneFiberAmalgamate : ∀ {P' : Type uP} {C' : Type uC}
       [Fintype P'] [Fintype C']
       (picture : Picture G P' C')
-      (sourceFibers : ∀ y : V, Nontrivial (Fiber picture y))
+      (_sourceFibers : ∀ y : V, Nontrivial (Fiber picture y))
       (x : V)
       [Nontrivial (Fiber picture x)]
       (_lines : SparseFiberLineFamily picture x K),
@@ -362,6 +362,9 @@ theorem exists_ramsey_final_picture [Fintype V]
       (_ : Fintype Q) (_ : Fintype D) (final : Picture G Q D),
       (∀ x : V, Nontrivial (Fiber final x)) ∧
         PictureRamseyFor final K := by
+  let : Fintype V := Fintype.ofFinite V
+  let : Fintype P := Fintype.ofFinite P
+  let : Fintype C := Fintype.ofFinite C
   let vertices := (Finset.univ : Finset V).toList
   let result := iterate source K vertices sourceFiberNontrivial
     family oneFiberAmalgamate
@@ -444,7 +447,7 @@ theorem lineIndependent_preimage [Fintype P]
   simpa using hall a
 
 /-- Reindex the weight of a pullback by the fibers of the projection. -/
-theorem sum_weight_preimage [Fintype V] [Fintype P]
+theorem sum_weight_preimage [Fintype P]
     (picture : Picture G P C) (I : Finset V) (weight : P → ℝ) :
     (∑ v ∈ I, ∑ p, if picture.proj p = v then weight p else 0) =
       ∑ p ∈ Finset.univ.filter (fun p => picture.proj p ∈ I), weight p := by

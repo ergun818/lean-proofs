@@ -26,7 +26,6 @@ attribute [local instance] Classical.propDecidable Classical.decEq
 universe u v w
 
 variable {A : Type u} {J : Type v} {K : Type w}
-variable [Fintype A] [Fintype J]
 
 /-- The fixed coordinates outside the selected block. -/
 abbrev OutsideIndex (t : ℕ) (j : Fin t) := {k : Fin t // k ≠ j}
@@ -111,6 +110,8 @@ theorem encodedLine_injective {t : ℕ} {S : Finset (Line A J)} :
   subst v
   rfl
 
+variable [Fintype A] [Fintype J]
+
 /-- The finite family of all encoded candidates. -/
 noncomputable def candidateLines (t : ℕ) (S : Finset (Line A J)) :
     Finset (Line A (Fin t × J)) :=
@@ -128,7 +129,7 @@ lemma card_outsideIndex {t : ℕ} (j : Fin t) :
   simp only [Fintype.card_fin] at h
   have heq : Fintype.card {k : Fin t // k = j} = 1 := by simp
   rw [heq] at h
-  simpa [OutsideIndex] using h
+  simp [OutsideIndex]
 
 /-- Exact number of outside words. -/
 lemma card_outsideWord {t : ℕ} (j : Fin t) :
@@ -174,7 +175,7 @@ lemma card_lineFamily_le (S : Finset (Line A J)) :
       (Finset.card_image_of_injOn hinj).symm
     _ ≤ (Finset.univ : Finset (J → Option A)).card :=
       Finset.card_le_card (Finset.subset_univ _)
-    _ = (Fintype.card A + 1) ^ Fintype.card J := by simp [Fintype.card_fun]
+    _ = (Fintype.card A + 1) ^ Fintype.card J := by simp
 
 /-- Nonempty internal families give the basic lower bound on candidates. -/
 theorem candidateLines_card_lower {t : ℕ} {S : Finset (Line A J)}
@@ -213,6 +214,7 @@ noncomputable def chosenInternal {t : ℕ} {S : Finset (Line A J)}
   ⟨Classical.choose (hHJ (fun x ↦ color (framePoint f x))),
     (Classical.choose_spec (hHJ (fun x ↦ color (framePoint f x)))).1⟩
 
+omit [Fintype A] [Fintype J] in
 lemma chosenInternal_mono {t : ℕ} {S : Finset (Line A J)}
     (hHJ : ∀ color : (J → A) → K, ∃ l ∈ S, l.IsMono color)
     (color : (Fin t × J → A) → K) (f : FrameCode A J t) :
@@ -225,6 +227,7 @@ noncomputable def chosenCandidate {t : ℕ} {S : Finset (Line A J)}
     (color : (Fin t × J → A) → K) (f : FrameCode A J t) :
     CandidateCode A J t S := ⟨f.1, f.2, chosenInternal hHJ color f⟩
 
+omit [Fintype A] [Fintype J] in
 lemma chosenCandidate_mono {t : ℕ} {S : Finset (Line A J)}
     (hHJ : ∀ color : (J → A) → K, ∃ l ∈ S, l.IsMono color)
     (color : (Fin t × J → A) → K) (f : FrameCode A J t) :
@@ -234,6 +237,7 @@ lemma chosenCandidate_mono {t : ℕ} {S : Finset (Line A J)}
   intro a
   simpa [chosenCandidate, encodedLine_apply] using hk a
 
+omit [Fintype A] [Fintype J] in
 lemma chosenCandidate_injective {t : ℕ} {S : Finset (Line A J)}
     (hHJ : ∀ color : (J → A) → K, ∃ l ∈ S, l.IsMono color)
     (color : (Fin t × J → A) → K) :
@@ -294,6 +298,7 @@ lemma candidateDegree_eq_incidentCodes_card {t : ℕ} (S : Finset (Line A J))
   rw [Finset.filter_image]
   exact Finset.card_image_of_injective _ encodedLine_injective
 
+omit [Fintype A] in
 /-- A line through a fixed point is determined by its moving-coordinate set. -/
 lemma line_eq_of_movingSet_eq_of_point {I : Type*} [Fintype I]
     {l m : Line A I} {x : I → A}

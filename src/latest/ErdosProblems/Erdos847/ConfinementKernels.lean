@@ -307,11 +307,11 @@ theorem same_range_tripod_kernel {A N : Type*}
     intro s hs0 hs2
     rcases fin3_cases (kind s) with hk | hk | hk
     · rcases (htable s).1 hk with ⟨h0, h1, h2⟩
-      simpa [MovingSet, h0] using hs0
+      simp [MovingSet, h0] at hs0
     · rcases (htable s).2.1 hk with ⟨h0, h1, h2⟩
-      simpa [MovingSet, h2] using hs2
+      simp [MovingSet, h2] at hs2
     · rcases (htable s).2.2 hk with ⟨h0, h1, h2⟩
-      simpa [MovingSet, h0] using hs0
+      simp [MovingSet, h0] at hs0
 
 /--
 The masks `S ∪ T`, `S`, `T` give the three pairwise intersections in the
@@ -389,10 +389,10 @@ theorem distinct_range_triangle_kernel {A N : Type*}
     intro s hs1 hs2
     rcases fin3_cases (kind s) with hk | hk | hk
     · rcases (htable s).1 hk with ⟨h0, h1, h2⟩
-      simpa [MovingSet, h1] using hs1
+      simp [MovingSet, h1] at hs1
     · rcases (htable s).2.1 hk with ⟨h0, h1, h2⟩
-      simpa [MovingSet, h2] using hs2
+      simp [MovingSet, h2] at hs2
     · rcases (htable s).2.2 hk with ⟨h0, h1, h2⟩
-      simpa [MovingSet, h1] using hs1
+      simp [MovingSet, h1] at hs1
 
 end Erdos847ConfinementKernels

@@ -19,7 +19,7 @@ attribute [local instance] Classical.propDecidable Classical.decEq
 
 universe u
 
-variable {A : Type u} [Fintype A]
+variable {A : Type u}
 
 /-- Evaluation on a combinatorial line is injective when the alphabet has at least two letters. -/
 lemma line_apply_injective [Nontrivial A] {n : ℕ} (l : Line A (Fin n)) :
@@ -108,6 +108,8 @@ lemma rawMovingSet_idxFun {n : ℕ} (l : Line A (Fin n)) :
   ext j
   simp [rawMovingSet, movingSet]
 
+variable [Fintype A]
+
 /-- All proper combinatorial lines, stratified by moving-support cardinality. -/
 noncomputable def lineStratum (n i : ℕ) : Finset (Line A (Fin n)) := by
   letI : Fintype (Line A (Fin n)) :=
@@ -152,7 +154,7 @@ lemma lineCode_card (n i : ℕ) :
   rw [Fintype.card_sigma]
   simp_rw [fixedWord_card, support_card]
   rw [Finset.sum_const]
-  simp [support_type_card]
+  simp
 
 /-- Decode a canonical support/fixed-word code into a proper combinatorial line. -/
 def lineOfCode {n i : ℕ} (hi : 0 < i) (c : LineCode A n i) : Line A (Fin n) where
@@ -184,6 +186,7 @@ lemma lineOfCode_injective {n i : ℕ} (hi : 0 < i) :
   simp only [lineOfCode, j.2, dite_false, Option.some.injEq] at hidx
   exact hidx
 
+omit [Fintype A] in
 /-- A coordinate outside the moving support carries a fixed letter. -/
 lemma idxFun_isSome_of_not_mem_movingSet {n : ℕ} (l : Line A (Fin n))
     (j : {j : Fin n // j ∉ movingSet l}) : (l.idxFun j.1).isSome := by
@@ -195,6 +198,7 @@ lemma idxFun_isSome_of_not_mem_movingSet {n : ℕ} (l : Line A (Fin n))
 def fixedLetter {n : ℕ} (l : Line A (Fin n)) (j : {j : Fin n // j ∉ movingSet l}) : A :=
   (l.idxFun j.1).get (idxFun_isSome_of_not_mem_movingSet l j)
 
+omit [Fintype A] in
 @[simp] lemma fixedLetter_spec {n : ℕ} (l : Line A (Fin n))
     (j : {j : Fin n // j ∉ movingSet l}) : l.idxFun j.1 = some (fixedLetter l j) := by
   exact (Option.coe_get (idxFun_isSome_of_not_mem_movingSet l j)).symm
@@ -242,6 +246,7 @@ noncomputable def linesThrough {n : ℕ} (x : Fin n → A) (i : ℕ) :
     l ∈ linesThrough x i ↔ (movingSet l).card = i ∧ ∃ a, l a = x := by
   simp [linesThrough]
 
+omit [Fintype A] in
 lemma line_eq_of_movingSet_eq_of_point {n : ℕ} {x : Fin n → A}
     {l m : Line A (Fin n)} (hS : movingSet l = movingSet m)
     (hl : ∃ a, l a = x) (hm : ∃ b, m b = x) : l = m := by
@@ -301,11 +306,13 @@ noncomputable def extensionSupports {n : ℕ} (l : Line A (Fin n)) (m : ℕ) :
     Finset (Finset (Fin n)) :=
   ((Finset.univ : Finset (Fin n)).powersetCard m).filter (movingSet l ⊆ ·)
 
+omit [Fintype A] in
 @[simp] lemma mem_extensionSupports {n m : ℕ} {l : Line A (Fin n)}
     {M : Finset (Fin n)} :
     M ∈ extensionSupports l m ↔ M ⊆ Finset.univ ∧ M.card = m ∧ movingSet l ⊆ M := by
-  simp [extensionSupports, and_assoc]
+  simp [extensionSupports]
 
+omit [Fintype A] in
 /-- A support of size `i` has exactly `choose (n-i) (m-i)` extensions of size `m`. -/
 theorem card_extensionSupports {n i m : ℕ} (l : Line A (Fin n))
     (hi : (movingSet l).card = i) (him : i ≤ m) :

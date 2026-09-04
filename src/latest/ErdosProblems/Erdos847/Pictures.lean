@@ -614,11 +614,11 @@ theorem extendWord_eq_of_not_mem_fiber (source : Picture G P C) (x : V)
         | some g =>
             have hfg : f = g := Subtype.ext <| by
               simpa [sectionPoint, hU, hW] using ht
-            simp [hU, hW, hfg]
+            simp [hfg]
   have hUW : U = W := by
     cases U
     cases W
-    simp_all only [Combinatorics.Line.mk.injEq]
+    simp_all only []
   exact ⟨hUW, rfl⟩
 
 /-- Fact 4.4(ii), in its representative form. -/
@@ -708,7 +708,7 @@ theorem rawProj_standardCopy (source : Picture G P C) (x : V)
   by_cases hWU : W = U
   · have hqp : q = p := extendWord_injective source x U <| by
       simpa [W, hWU] using heq
-    simpa [q, hqp]
+    simp [q, hqp]
   · obtain ⟨hq, hp⟩ := standard_copies_intersect_only_in_fiber source x hWU heq
     exact hq.trans hp.symm
 

@@ -151,7 +151,7 @@ theorem isQuasiline_of_weak_of_ne {m : ℕ} (u v w : Word m)
 /-- If all points of a picture project into an independent set of the base
 three-graph, their words contain no nonconstant quasiline. -/
 theorem quasiLineFree_image_of_independent
-    {V P : Type*} [Fintype V] [DecidableEq V] [Fintype P] [DecidableEq P]
+    {V P : Type*} [DecidableEq V]
     {G : ThreeGraph V} {m : ℕ} (picture : Picture G P (Fin m))
     {I : Finset V} (hI : Erdos847FiniteArch.Independent G.edges I)
     {D : Finset P} (hproj : ∀ p ∈ D, picture.proj p ∈ I) :
@@ -201,7 +201,7 @@ theorem quasiLineFree_image_of_independent
 provided by the final stage of the picture construction: Ramsey focusing and
 the natural fractional-third property of the base graph. -/
 theorem exists_encoded_block
-    {V P : Type*} [Fintype V] [DecidableEq V] [Fintype P] [DecidableEq P]
+    {V P : Type*} [Fintype V] [DecidableEq V] [Finite P]
     {G : ThreeGraph V} {m r : ℕ} (picture : Picture G P (Fin m))
     (hr : 0 < r)
     (hRamsey : ∀ color : P → Fin r,
@@ -217,6 +217,8 @@ theorem exists_encoded_block
       (∀ Y : Finset ℕ, Y ⊆ X →
         ∃ Z : Finset ℕ, Z ⊆ Y ∧ Y.card ≤ 3 * Z.card ∧
           ThreeAPFree (Z : Set ℕ)) := by
+  classical
+  let : Fintype P := Fintype.ofFinite P
   let f : P → ℕ := fun p => encode m (picture.embed p)
   let X : Finset ℕ := Finset.univ.image f
   have hf : Function.Injective f :=
@@ -305,7 +307,7 @@ theorem exists_encoded_block
 /-- Real-valued form of `exists_encoded_block`, ready to instantiate the
 `mu = 1/3` density field in the separated-block assembly. -/
 theorem exists_encoded_block_one_third
-    {V P : Type*} [Fintype V] [DecidableEq V] [Fintype P] [DecidableEq P]
+    {V P : Type*} [Fintype V] [DecidableEq V] [Finite P]
     {G : ThreeGraph V} {m r : ℕ} (picture : Picture G P (Fin m))
     (hr : 0 < r)
     (hRamsey : ∀ color : P → Fin r,
@@ -338,7 +340,7 @@ the `Coord` type produced existentially by the finite picture iteration
 without asking that construction to choose a literal `Fin m`. -/
 theorem exists_encoded_block_one_third_of_finite_coords
     {V P C : Type*} [Fintype V] [DecidableEq V]
-    [Fintype P] [DecidableEq P] [Fintype C]
+    [Finite P] [Finite C]
     {G : ThreeGraph V} {r : ℕ} (picture : Picture G P C)
     (hr : 0 < r)
     (hRamsey : ∀ color : P → Fin r,
@@ -355,6 +357,8 @@ theorem exists_encoded_block_one_third_of_finite_coords
         ∃ Z : Finset ℕ, Z ⊆ Y ∧
           (Z.card : ℝ) ≥ (1 / 3 : ℝ) * Y.card ∧
           ThreeAPFree (Z : Set ℕ)) := by
+  classical
+  let : Fintype C := Fintype.ofFinite C
   apply exists_encoded_block_one_third (reindexFin picture) hr
   · intro color
     obtain ⟨l, hl, k, hk⟩ := hRamsey color

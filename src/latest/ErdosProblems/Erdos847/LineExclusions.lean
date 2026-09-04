@@ -306,7 +306,7 @@ noncomputable def degreeExcluded [Fintype A] [Fintype I]
     (T S : Finset (Line A I)) (d : ℕ) : Finset (Line A I) :=
   T.filter fun l ↦ ¬ DegreeBound (insert l S) d
 
-lemma lineDegree_insert_le [Fintype A] [Fintype I]
+lemma lineDegree_insert_le
     (S : Finset (Line A I)) (l : Line A I) (x : I → A) :
     lineDegree (insert l S) x ≤ lineDegree S x + 1 := by
   by_cases hx : x ∈ linePoints l
@@ -334,7 +334,7 @@ lemma lineDegree_insert_le [Fintype A] [Fintype I]
     rw [lineDegree, heq, lineDegree]
     omega
 
-lemma lineDegree_insert_eq_of_not_mem [Fintype A] [Fintype I]
+lemma lineDegree_insert_eq_of_not_mem
     (S : Finset (Line A I)) (l : Line A I) (x : I → A)
     (hx : x ∉ linePoints l) :
     lineDegree (insert l S) x = lineDegree S x := by
@@ -718,19 +718,19 @@ lemma triangleExcluded_subset_certificates [Fintype A] [Fintype I] [Nontrivial A
     subst q
     have : p ∈ linePoints l₁ ∩ linePoints l₂ ∩ linePoints l₃ :=
       ⟨⟨hp₁, hp₂⟩, hq₃⟩
-    simpa [hempty] using this
+    simp [hempty] at this
   have hne₂₃₁₂ : x₂₃ ≠ x₁₂ := by
     intro h
     subst x₂₃
     have : x₁₂ ∈ linePoints l₁ ∩ linePoints l₂ ∩ linePoints l₃ :=
       ⟨⟨hx₁, hx₂'⟩, hx₃⟩
-    simpa [hempty] using this
+    simp [hempty] at this
   have hne₃₁₂₃ : x₃₁ ≠ x₂₃ := by
     intro h
     subst x₃₁
     have : x₂₃ ∈ linePoints l₁ ∩ linePoints l₂ ∩ linePoints l₃ :=
       ⟨⟨hx₁', hx₂'⟩, hx₃⟩
-    simpa [hempty] using this
+    simp [hempty] at this
   have hcert (p z q : I → A) (u v : Line A I)
       (hu : u ∈ S) (hv : v ∈ S)
       (hpl : p ∈ linePoints l) (hpu : p ∈ linePoints u)

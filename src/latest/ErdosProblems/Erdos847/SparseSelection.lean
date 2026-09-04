@@ -52,7 +52,7 @@ lemma badColourings_insert (colours : Finset Colour) (Hit : Candidate → Colour
       (badColourings colours Hit S).filter fun c ↦ ¬ Hit x c := by
   classical
   ext c
-  simp [badColourings, and_assoc, and_left_comm, and_comm]
+  simp [badColourings, and_left_comm, and_comm]
 
 end Definitions
 
@@ -83,7 +83,7 @@ variable {Candidate Colour : Type*}
 /-- Multiplicative decay propagates through any prescribed number of greedy steps. -/
 theorem iterate_decay
     (colours : Finset Colour) (Hit : Candidate → Colour → Prop)
-    (Suitable : Finset Candidate → Prop) {D q : ℕ} (hD : 0 < D)
+    (Suitable : Finset Candidate → Prop) {D q : ℕ} (_hD : 0 < D)
     (hempty : Suitable ∅)
     (hstep : ∀ (S : Finset Candidate), Suitable S → S.card < q →
       (badColourings colours Hit S).Nonempty →
@@ -119,7 +119,8 @@ theorem iterate_decay
               rw [pow_succ]
               ring
       · refine ⟨S, hS, hSt.trans (Nat.le_succ t), ?_⟩
-        have hz : (badColourings colours Hit S).card = 0 := Finset.not_nonempty_iff_eq_empty.mp hbad ▸ rfl
+        have hz : (badColourings colours Hit S).card = 0 :=
+          Finset.not_nonempty_iff_eq_empty.mp hbad ▸ rfl
         simp [hz]
 
 end Iteration
@@ -201,7 +202,7 @@ statement applies directly when the unreplicated strata have different positive 
 
 `D = 2 * A * m` is kept explicit in the conclusion. -/
 theorem exists_addable_hits_many
-    (weight : Fin m → ℕ) {A L q : ℕ} (hA : 0 < A) (hL : 0 < L)
+    (weight : Fin m → ℕ) {A L q : ℕ} (_hA : 0 < A) (hL : 0 < L)
     (hcard : ∀ j, weight j * (X j).card = L)
     (hdense : ∀ c ∈ colours, ∃ j,
       (X j).card ≤ A * ((X j).filter fun x ↦ Hit x c).card)
@@ -229,7 +230,7 @@ theorem exists_addable_hits_many
       have hfirst : (Y.filter fun x ↦ Suitable (insert x S)).card = G := by
         congr 1
         ext x
-        simp [Y, G, and_assoc, and_left_comm, and_comm]
+        simp [Y, and_assoc, and_left_comm, and_comm]
       have hsecond : (Y.filter fun x ↦ ¬ Suitable (insert x S)).card ≤ N := by
         apply Finset.card_le_card
         intro x hx

@@ -119,7 +119,7 @@ lemma line_eq_of_idxFun_eq {U W : Combinatorics.Line A I}
     (h : U.idxFun = W.idxFun) : U = W := by
   cases U
   cases W
-  simp_all only [Combinatorics.Line.mk.injEq]
+  simp_all only []
 
 /-- If all coordinates have the `110`, `010`-constant, or `011` pattern displayed below, then
 the three lines are concurrent and their moving supports form the exact RRS tripod relation.
@@ -220,8 +220,8 @@ lemma isRawTriangle_of_section_table
   have hSij := congrFun hij sS
   have hSjk := congrFun hjk sS
   have hTij := congrFun hij sT
-  simp [Combinatorics.Line.coe_apply, hS.1, hS.2.1, hS.2.2,
-    hT.1, hT.2.1, hT.2.2] at hSij hSjk hTij
+  simp only [Combinatorics.Line.coe_apply, hS.1, hS.2.1, hS.2.2,
+    hT.1, hT.2.1, Option.getD_none, Option.getD_some] at hSij hSjk hTij
   apply hab
   exact hSjk.symm.trans (hSij.symm.trans hTij)
 
@@ -297,7 +297,7 @@ theorem normalized_lines_eq_of_third_not_fiber
         (q.line j) (q.point j) z
         (hp_out j) hzf s (hz j)
       have hfij : fi = fj := Subtype.ext (hfiz.trans hfjz.symm)
-      simpa [hfi, hfj, hfij]
+      simp [hfi, hfj, hfij]
     · have hrow_line : IsCombinatorialLine source.embed row :=
         source.quasiline_is_line row hquasi
       have hrow_edge : MapsOntoEdge G source.proj row :=
@@ -333,7 +333,7 @@ theorem normalized_lines_eq_of_third_not_fiber
         have hcoordinate_ne : row 0 ≠ q.point 0 ∨ row 1 ≠ q.point 1 ∨
             row 2 ≠ q.point 2 := by
           by_contra hall
-          push_neg at hall
+          push Not at hall
           apply hne
           funext a
           fin_cases a

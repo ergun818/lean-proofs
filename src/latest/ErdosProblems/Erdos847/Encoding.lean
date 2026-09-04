@@ -56,7 +56,7 @@ theorem encode_injective (m : ℕ) : Function.Injective (encode m) := by
           simp only [Fin.sum_univ_succ, Fin.coe_ofNat_eq_mod, Nat.zero_mod, pow_zero,
             mul_one, Fin.val_succ] at hmod
           simp only [pow_succ, ← mul_assoc, ← Finset.sum_mul] at hmod
-          simp [Nat.add_mod] at hmod
+          simp only [Nat.add_mod, Nat.mul_mod_left, Nat.add_zero, Nat.mod_mod] at hmod
           apply Fin.ext
           rw [Nat.mod_eq_of_lt (by omega), Nat.mod_eq_of_lt (by omega)] at hmod
           exact hmod

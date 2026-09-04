@@ -512,7 +512,7 @@ theorem distinct_range_zero_triangle
     intro hp2
     apply (by decide : (1 : Alphabet) ≠ 2)
     apply htProjInj
-    simpa [row, ht1, ht2, hb, hp2]
+    simp [row, ht1, ht2, hb, hp2]
   have hpAll : ∀ i, source.proj (R.point i) ≠ x := by
     intro i
     fin_cases i
@@ -522,8 +522,8 @@ theorem distinct_range_zero_triangle
   have hproj12 : source.proj (R.point 1) = source.proj (R.point 2) := by
     have h := linear_forces_third_projection source hlinear base row
       (source.quasiline_maps_edge base R.source_section) htMaps
-      (by simpa [base, row, hb0, ht0])
-      (by simpa [base, row, ht1, hb, hfiber])
+      (by simp [base, row, hb0, ht0])
+      (by simp [base, row, ht1, hb, hfiber])
     simpa [base, row, hb1, ht2] using h
   let aa : MusicFiber source x := ⟨base 2, hfiber⟩
   let bb : MusicFiber source x := ⟨b, hb⟩

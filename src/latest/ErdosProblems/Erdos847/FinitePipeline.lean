@@ -203,7 +203,8 @@ noncomputable def rawFiberExtensionOfSystem
   letI : Inhabited K :=
     Classical.inhabited_of_nonempty (inferInstance : Nonempty K)
   have hcopy (U : Line (Fiber picture x) N) (hU : U ∈ S) :
-      StandardCopy picture target (standardCopy picture x lineSet U (by simpa [lineSet] using hU)) := by
+      StandardCopy picture target
+        (standardCopy picture x lineSet U (by simpa [lineSet] using hU)) := by
     refine {
       injective := standardCopy_injective picture x lineSet U _
       proj_copy := ?_
@@ -261,7 +262,7 @@ the sparse Hales--Jewett theorem and the raw constructor produce a one-fiber
 extension.  The result is first built under `Nonempty` because the sparse
 theorem is proposition-valued. -/
 theorem oneFiberExtensionOfConfinement_nonempty
-    [Fintype P] [Fintype C] [Fintype K] [Nonempty K]
+    [Finite P] [Finite C] [Finite K] [Nonempty K]
     (picture : Picture G P C) (x : V)
     [Nontrivial (Fiber picture x)]
     (sourceFiberNontrivial : ∀ y : V, Nontrivial (Fiber picture y))
@@ -271,6 +272,9 @@ theorem oneFiberExtensionOfConfinement_nonempty
           (rawAmalgamationData picture x (S : Set (Line (Fiber picture x) N)))) :
     Nonempty (FiberExtension picture x K) := by
   classical
+  let : Fintype P := Fintype.ofFinite P
+  let : Fintype C := Fintype.ofFinite C
+  let : Fintype K := Fintype.ofFinite K
   rcases sparse_hales_jewett (Fiber picture x) K with
     ⟨N, hN, S, hsparse, hramsey⟩
   let : Fintype N := hN
@@ -326,7 +330,6 @@ noncomputable def sparseFamily
 /-- A vertex lying in two distinct base edges has two distinct points in the
 corresponding fiber of picture zero. -/
 theorem pictureZero_fiber_nontrivial_of_two_incident
-    [Fintype V]
     (hincident : ∀ v : V, ∃ e f : G.Edge, e ≠ f ∧ v ∈ e.1 ∧ v ∈ f.1)
     (v : V) :
     Nontrivial (Fiber (pictureZero G) v) := by

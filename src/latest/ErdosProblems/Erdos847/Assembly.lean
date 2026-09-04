@@ -214,8 +214,7 @@ lemma threeAPFree_blockPrefix {X D : ℕ → Finset ℕ} (hDX : ∀ i, D i ⊆ X
         exact translate_lower hy
       · intro y hy
         exact translate_upper_short (hDX n) hy
-      ·
-        exact offset_separated X n
+      · exact offset_separated X n
 
 /-- Union of a subset chosen from every translated block. -/
 def assembledSubsets (X D : ℕ → Finset ℕ) : Set ℕ :=
