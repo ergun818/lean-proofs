@@ -171,9 +171,10 @@ noncomputable def finiteNatEmbedding (α : Type*) [Fintype α] : α ↪ ℕ :=
   (Fintype.equivFin α).toEmbedding.trans Fin.valEmbedding
 
 lemma erdosLovaszF_le_of_finite_family {α : Type*}
-    [Fintype α] [DecidableEq α] {n M : ℕ}
+    [Finite α] [DecidableEq α] {n M : ℕ}
     {F : Finset (Finset α)} (hF : IsErdosLovaszFamily n F)
     (hcard : F.card ≤ M) : erdosLovaszF n ≤ M := by
+  let := Fintype.ofFinite α
   let e := finiteNatEmbedding α
   have hmem : (relabel e F).card ∈
       {m : ℕ | ∃ G : Finset (Finset ℕ),
@@ -200,6 +201,7 @@ variable {V E : Type*} [Fintype V] [Fintype E]
 def incident (H : IndexedHypergraph V E) (v : V) : Finset E :=
   Finset.univ.filter fun e ↦ v ∈ H.edge e
 
+omit [DecidableEq E] in
 @[simp]
 lemma mem_incident (H : IndexedHypergraph V E) (v : V) (e : E) :
     e ∈ H.incident v ↔ v ∈ H.edge e := by
@@ -269,11 +271,13 @@ lemma dualFamily_isErdosLovaszFamily (H : IndexedHypergraph V E)
     obtain ⟨e, heC, heinc⟩ := Finset.not_disjoint_iff.mp hnondisj
     exact ⟨e, heC, by simpa [dualEdge] using heinc⟩
 
+omit [DecidableEq E] in
 theorem erdosLovaszF_le_of_dualConstruction (H : IndexedHypergraph V E)
     {r M : ℕ} (hr : 0 < r) (hreg : H.IsRegular r)
     (hpairs : H.PairCovered) (hcover : H.EdgeCoverNumberAtLeast r)
     (hvertices : Fintype.card V ≤ M) :
     erdosLovaszF r ≤ M := by
+  classical
   apply erdosLovaszF_le_of_finite_family
     (dualFamily_isErdosLovaszFamily H hr hreg hpairs hcover)
   exact (dualFamily_card_le H).trans hvertices
@@ -511,16 +515,16 @@ def extendedPairEquiv {F : Type*} [Field F]
           exact
             { toFun := fun p ↦ (p.2, p.1 + b * p.2)
               invFun := fun p ↦ (p.2 - b * p.1, p.1)
-              left_inv := by intro p; apply Prod.ext <;> dsimp <;> ring
-              right_inv := by intro p; apply Prod.ext <;> dsimp <;> ring }
+              left_inv := by intro p; apply Prod.ext <;> dsimp; ring
+              right_inv := by intro p; apply Prod.ext <;> dsimp; ring }
   | some a =>
       cases b with
       | none =>
           exact
             { toFun := fun p ↦ (p.1 + a * p.2, p.2)
               invFun := fun p ↦ (p.1 - a * p.2, p.2)
-              left_inv := by intro p; apply Prod.ext <;> dsimp <;> ring
-              right_inv := by intro p; apply Prod.ext <;> dsimp <;> ring }
+              left_inv := by intro p; apply Prod.ext <;> dsimp; ring
+              right_inv := by intro p; apply Prod.ext <;> dsimp; ring }
       | some b =>
           exact affinePairEquiv a b (by simpa using hab)
 
@@ -560,8 +564,8 @@ noncomputable def fullOfFiniteField (F : Type*) [Fintype F] [Field F] :
     · let pairEquiv : F × F ≃ F × F :=
         { toFun := fun p ↦ (p.2, p.1 + b * p.2)
           invFun := fun p ↦ (p.2 - b * p.1, p.1)
-          left_inv := by intro p; apply Prod.ext <;> dsimp <;> ring
-          right_inv := by intro p; apply Prod.ext <;> dsimp <;> ring }
+          left_inv := by intro p; apply Prod.ext <;> dsimp; ring
+          right_inv := by intro p; apply Prod.ext <;> dsimp; ring }
       let total := rowEquiv.trans (pairEquiv.trans outEquiv)
       simpa [total, rowEquiv, pairEquiv, outEquiv, value, hi, hj] using
         total.bijective
@@ -569,8 +573,8 @@ noncomputable def fullOfFiniteField (F : Type*) [Fintype F] [Field F] :
     · let pairEquiv : F × F ≃ F × F :=
         { toFun := fun p ↦ (p.1 + a * p.2, p.2)
           invFun := fun p ↦ (p.1 - a * p.2, p.2)
-          left_inv := by intro p; apply Prod.ext <;> dsimp <;> ring
-          right_inv := by intro p; apply Prod.ext <;> dsimp <;> ring }
+          left_inv := by intro p; apply Prod.ext <;> dsimp; ring
+          right_inv := by intro p; apply Prod.ext <;> dsimp; ring }
       let total := rowEquiv.trans (pairEquiv.trans outEquiv)
       simpa [total, rowEquiv, pairEquiv, outEquiv, value, hi, hj] using
         total.bijective
@@ -921,7 +925,7 @@ lemma incident_assignedLine {F : Type*} [CommRing F] [DecidableEq F]
 /-- A graph line has one assigned affine point and possibly its slope point;
 in particular every assignment fibre has at most two points. -/
 lemma assignedLine_fiber_subsingleton_after_affine
-    {F : Type*} [CommRing F] [DecidableEq F]
+    {F : Type*} [CommRing F]
     {m b : F} {p : Point F} (hp : assignedLine p = graph m b) :
     p = affine m (b + m ^ 2) ∨ (b = 0 ∧ p = slope m) := by
   rcases p with p | p
@@ -1187,14 +1191,12 @@ lemma incident_dual {F : Type*} [CommRing F] [DecidableEq F]
       change y = m * x + b ↔ -b = x * m + -y
       constructor <;> intro h <;> linear_combination h
     · rcases l with c | u
-      · simp [Incident, dualPoint, dualLine, slope, graph, affine,
-          verticalLine, eq_comm]
+      · simp [Incident, dualPoint, dualLine, slope, graph, eq_comm]
       · rfl
   · rcases p with s | u
     · rcases l with mb | l
       · rcases mb with ⟨m, b⟩
-        simp [Incident, dualPoint, dualLine, slope, graph, affine,
-          verticalLine, eq_comm]
+        simp [Incident, dualPoint, dualLine, affine, verticalLine, eq_comm]
       · rcases l with c | u <;> rfl
     · rcases l with mb | l
       · rcases mb with ⟨m, b⟩
@@ -1623,7 +1625,7 @@ structure IsGood {F : Type*} [Fintype F] [Field F] [DecidableEq F]
 
 lemma agree_of_common_approximation {F : Type*} [Fintype F] [Field F]
     [DecidableEq F] (a : Labeling F) (gamma : Point F → Bool)
-    {l m : Line F} (hlm : l ≠ m)
+    {l m : Line F} (_ : l ≠ m)
     (hnotl : (⟨intersectionPoint l m,
       intersectionPoint_incident_left l m⟩ :
         {p : Point F // Incident p l}) ∉ mismatches a gamma l)
@@ -2482,7 +2484,7 @@ lemma gridCellPoint_injective
       · rw [hinter]
         exact intersectionPoint_incident_right c.1.1 c.2.1
     have hnot := hgrid.2.2 c.1.1 c.1.2 d.1.1 d.1.2 hne
-    exact hnot (by simpa [hjoin] using c.2.2)
+    exact hnot (by simp [hjoin])
   apply Prod.ext
   · exact Subtype.ext hl
   · exact Subtype.ext hm
@@ -2732,7 +2734,7 @@ lemma grid_energy_inequality
       · exact card_gridRightBad_le Z hgrid hBT
 
 lemma agree_comm_of_ne
-    {F : Type*} [Fintype F] [Field F] [DecidableEq F]
+    {F : Type*} [Field F] [DecidableEq F]
     (a : Labeling F) {l m : Line F} (hlm : l ≠ m) :
     Agree a l m ↔ Agree a m l := by
   have hp := intersectionPoint_comm_of_ne hlm
@@ -2754,7 +2756,7 @@ lemma agree_of_mem_gridGood
     {F : Type*} [Fintype F] [Field F] [DecidableEq F]
     {x : Point F} {T A B : Finset (Line F)}
     {a : Labeling F} {Z : Exceptions T}
-    (hcomp : Compatible a T Z) (hgrid : IsSeparatedGrid x A B)
+    (hcomp : Compatible a T Z) (_ : IsSeparatedGrid x A B)
     (hAT : A ⊆ T) (hBT : B ⊆ T)
     {c : GridCell A B} (hc : c ∈ gridGood Z A B) :
     Agree a c.1.1 c.2.1 := by
@@ -3161,8 +3163,7 @@ noncomputable def boolFunFinsetEquiv
     funext i
     by_cases hi : f i = true
     · simp [boolSupport, hi]
-    · have hfalse : f i = false := Bool.eq_false_of_not_eq_true hi
-      simp [boolSupport, hi, hfalse]
+    · simp [boolSupport, hi]
   right_inv := by
     intro S
     ext i
@@ -3191,7 +3192,7 @@ lemma card_boolFunctions_support_eq
     rw [Fintype.card_subtype]
   rw [hcard, Fintype.card_congr e]
   rw [Fintype.card_subtype]
-  simpa using Finset.card_powersetCard (Finset.univ : Finset I) k
+  simp
 
 def binomialTail (n b : ℕ) : ℕ :=
   ∑ k ∈ Finset.Icc b n, n.choose k
@@ -3340,7 +3341,7 @@ lemma trueOn_card_eq_support_split
       (boolSupport ((functionSplitEquiv S f).1)).map e = trueOn S f := by
     ext i
     by_cases hi : i ∈ S
-    · simp only [Finset.mem_map, Finset.mem_filter, Finset.mem_attach,
+    · simp only [Finset.mem_map, Finset.mem_filter,
         true_and, trueOn, hi, Finset.mem_filter, e, functionSplitEquiv]
       constructor
       · rintro ⟨j, hj, rfl⟩
@@ -3811,7 +3812,7 @@ lemma card_balanceBad_mul_pow
           (2 * binomialTail (Fintype.card F + 1) (balance + 1)) *
             Fintype.card (Labeling F) := by
       simp only [Finset.sum_const, Nat.nsmul_eq_mul, Finset.card_univ,
-        Projective.card_point, Projective.card_line]
+        Projective.card_point]
       ring
 
 lemma isBalanced_of_not_mem_balanceBad
@@ -4210,25 +4211,21 @@ lemma balance_block_gain :
 lemma balance_many_block_gain (q : ℕ) (hq : 70000 ≤ q) :
     2 ^ 2000 * (25 ^ 25) ^ q ≤
       (2 ^ 25 * 13 ^ 13 * 12 ^ 12) ^ q := by
-  let r := q - 70000
-  have hqeq : q = 70000 + r := by dsimp [r]; omega
-  have hcore : (2 * (25 ^ 25) ^ 35) ^ 2000 =
-      2 ^ 2000 * (25 ^ 25) ^ 70000 := by
-    rw [mul_pow, ← pow_mul]
-  have hleft :
-      2 ^ 2000 * (25 ^ 25) ^ q =
-        (2 * (25 ^ 25) ^ 35) ^ 2000 * (25 ^ 25) ^ r := by
-    rw [hqeq, pow_add, hcore]
-    ring
-  have hright :
-      (2 ^ 25 * 13 ^ 13 * 12 ^ 12) ^ q =
-        ((2 ^ 25 * 13 ^ 13 * 12 ^ 12) ^ 35) ^ 2000 *
-          (2 ^ 25 * 13 ^ 13 * 12 ^ 12) ^ r := by
-    rw [hqeq, pow_add, ← pow_mul]
-  rw [hleft, hright]
-  exact Nat.mul_le_mul
-    (Nat.pow_le_pow_left balance_block_gain 2000)
-    (Nat.pow_le_pow_left balance_block_base r)
+  -- Prove the amplification algebraically before instantiating the large powers.
+  have amplify (a b c k m : ℕ) (hbase : a ≤ b)
+      (hgain : c * a ^ k ≤ b ^ k) (hkm : k * m ≤ q) :
+      c ^ m * a ^ q ≤ b ^ q := by
+    let r := q - k * m
+    have hqeq : q = k * m + r := by dsimp [r]; omega
+    have hcore : (c * a ^ k) ^ m = c ^ m * a ^ (k * m) := by
+      rw [mul_pow, ← pow_mul]
+    calc
+      c ^ m * a ^ q = (c * a ^ k) ^ m * a ^ r := by
+        rw [hqeq, pow_add, hcore, mul_assoc]
+      _ ≤ (b ^ k) ^ m * b ^ r :=
+        Nat.mul_le_mul (Nat.pow_le_pow_left hgain m) (Nat.pow_le_pow_left hbase r)
+      _ = b ^ q := by rw [← pow_mul, ← pow_add, ← hqeq]
+  exact amplify _ _ 2 35 2000 balance_block_base balance_block_gain hq
 
 lemma balance_residue_cost :
     2 ^ 1035 * 25 ^ 24 * 12 ^ 24 ≤ 2 ^ 2000 := by
@@ -4324,7 +4321,10 @@ lemma balance_weight_domination
       (8 * (K ^ 2 + K + 1) ^ 2 * 13 * 25 ^ n) * 12 ^ 24 ≤
           (2 ^ 1035 * ((25 ^ 25) ^ q * 25 ^ 24)) * 12 ^ 24 := by
         exact Nat.mul_le_mul_right _ (Nat.mul_le_mul hcoef h25pow)
-      _ = (2 ^ 1035 * 25 ^ 24 * 12 ^ 24) * (25 ^ 25) ^ q := by ring
+      _ = (2 ^ 1035 * 25 ^ 24 * 12 ^ 24) * (25 ^ 25) ^ q := by
+        have rearrange (a b c d : ℕ) : a * (b * c) * d = (a * c * d) * b := by
+          ac_rfl
+        exact rearrange _ _ _ _
       _ ≤ 2 ^ 2000 * (25 ^ 25) ^ q :=
         Nat.mul_le_mul_right _ balance_residue_cost
   have hgain := balance_many_block_gain q hqL
@@ -4590,7 +4590,7 @@ namespace System
 variable {d t : ℕ}
 
 /-- Blocks in the first matching partition. -/
-def leftBlock (D : System d t) (x : Fin t) : Finset (Fin d × Fin t) :=
+def leftBlock (_ : System d t) (x : Fin t) : Finset (Fin d × Fin t) :=
   Finset.univ.filter fun v ↦ v.2 = x
 
 /-- Blocks in the second matching partition. -/
@@ -4834,7 +4834,7 @@ noncomputable instance (S T : Finset (Fin t)) : Fintype (RestrictedPerm S T) := 
 subsets. -/
 def restriction (S T : Finset (Fin t)) (p : RestrictedPerm S T) : S ↪ T where
   toFun x := ⟨p.1 x, p.2 x x.2⟩
-  inj' x y h := Subtype.ext (p.1.injective (congrArg Subtype.val h))
+  inj' _ _ h := Subtype.ext (p.1.injective (congrArg Subtype.val h))
 
 /-- At most `|T|^|S| (t-|S|)!` permutations map `S` into `T`. -/
 lemma restrictedPerm_card_le (S T : Finset (Fin t)) :
@@ -5553,7 +5553,7 @@ lemma mem_mediumBad_of_eleven_tenths_failure
 noncomputable def rightBad (t : ℕ) : Finset (Expander.System 100 t) :=
   smallBad t ∪ mediumBad t
 
-lemma right_expansion_of_not_mem_rightBad {t : ℕ} (ht : 0 < t)
+lemma right_expansion_of_not_mem_rightBad {t : ℕ} (_ : 0 < t)
     (D : Expander.System 100 t) (hD : D ∉ rightBad t) :
     (∀ S : Finset (Fin t), 2 * S.card ≤ t →
         11 * S.card ≤ 10 * (D.rightNeighbors S).card) ∧
@@ -5665,7 +5665,7 @@ theorem exists_kahn_expander (t : ℕ) (ht : 0 < t) :
         _ < Fintype.card (Expander.System 100 t) := by nlinarith)
   have hexists : ∃ D : Expander.System 100 t, D ∉ forbidden := by
     by_contra hnone
-    push_neg at hnone
+    push Not at hnone
     have heq : forbidden = Finset.univ := Finset.eq_univ_of_forall hnone
     have hcardeq := congrArg Finset.card heq
     simp only [Finset.card_univ] at hcardeq
@@ -5718,7 +5718,7 @@ lemma index_apply_of_ge {q t : ℕ} (hq : q ≤ t) (ht : t ≤ 2 * q)
   simp [index, not_lt.mpr hi]
 
 /-- Every compressed piece has an original block. -/
-lemma index_surjective {q t : ℕ} (hqpos : 0 < q) (hq : q ≤ t)
+lemma index_surjective {q t : ℕ} (_ : 0 < q) (hq : q ≤ t)
     (ht : t ≤ 2 * q) : Function.Surjective (index q t hq ht) := by
   intro c
   by_cases hc : c.1 < t - q
@@ -5994,7 +5994,7 @@ def smallOddPrimes (K : ℕ) : Finset ℕ :=
 
 @[simp] lemma mem_smallOddPrimes_iff {K p : ℕ} :
     p ∈ smallOddPrimes K ↔ p.Prime ∧ p < K ∧ p ≠ 2 := by
-  simp [smallOddPrimes, and_assoc, and_left_comm, and_comm]
+  simp [smallOddPrimes, and_left_comm]
 
 lemma smallOddPrimes_pairwise_coprime (K : ℕ) :
     Set.Pairwise (smallOddPrimes K : Set ℕ) Nat.Coprime := by
@@ -6027,7 +6027,7 @@ lemma avoidingResidue_coprime {K r p : ℕ} (hp : p.Prime) (hp2 : p ≠ 2) :
       (lt_of_le_of_ne hp.two_le (Ne.symm hp2)) hp).symm
 
 lemma avoidingResidue_prevents_dvd {K r p q : ℕ} (hp : p.Prime)
-    (hp2 : p ≠ 2) (hpK : ¬ p ∣ K) (hKqr : K * q ≤ r)
+    (_ : p ≠ 2) (hpK : ¬ p ∣ K) (hKqr : K * q ≤ r)
     (hq : q ≡ avoidingResidue K r p [MOD p]) :
     ¬ p ∣ r - K * q := by
   let : Fact p.Prime := ⟨hp⟩
@@ -6076,7 +6076,7 @@ lemma four_coprime_oddPrimeModulus (K : ℕ) :
 /-- CRT solution for all odd primes below `K`. -/
 noncomputable def oddCRTResidue (K r : ℕ) : ℕ :=
   Nat.chineseRemainderOfFinset (avoidingResidue K r) id (smallOddPrimes K)
-    (fun p hp ↦ (mem_smallOddPrimes_iff.mp hp).1.ne_zero)
+    (fun _ hp ↦ (mem_smallOddPrimes_iff.mp hp).1.ne_zero)
     (smallOddPrimes_pairwise_coprime K)
 
 lemma oddCRTResidue_modEq (K r : ℕ) {p : ℕ} (hp : p ∈ smallOddPrimes K) :
@@ -6171,7 +6171,7 @@ lemma exists_kahnResidue (K r : ℕ)
         _ = kahnResidue K r % 4 := by rw [hqmod]
         _ = 3 := kahnResidue_mod_four K r
     have hq2 : q ≡ 1 [MOD 2] := by
-      show q % 2 = 1 % 2
+      change q % 2 = 1 % 2
       rw [← Nat.mod_mod_of_dvd q (by norm_num : 2 ∣ 4), hq4]
     have hKqK : K * q ≡ K [MOD 2] := by
       simpa using hq2.mul_left K
@@ -6183,7 +6183,7 @@ lemma exists_kahnResidue (K r : ℕ)
       mem_smallOddPrimes_iff.mpr ⟨hp, hpK, hp2⟩
     have hpNotK : ¬ p ∣ K := fun h ↦ hp2 (hKprimeFactors p hp hpK h)
     have hqQ : q ≡ kahnResidue K r [MOD kahnModulus K] := by
-      show q % kahnModulus K = kahnResidue K r % kahnModulus K
+      change q % kahnModulus K = kahnResidue K r % kahnModulus K
       rw [hqmod, Nat.mod_eq_of_lt (kahnResidue_lt K r)]
     have hpdivQ : p ∣ kahnModulus K := by
       exact dvd_mul_of_dvd_right (Finset.dvd_prod_of_mem id hpMem) 4
@@ -6864,7 +6864,7 @@ def compressedIndex {q t : ℕ} (D : Expander.System 100 t)
 small template. -/
 def smallVertexColumn {q t : ℕ} (D : Expander.System 100 t)
     (a : Labeling F) (l : Line F)
-    (hl : ¬ Incident (basePoint : Point F) l)
+    (_ : ¬ Incident (basePoint : Point F) l)
     (hq : q ≤ t) (ht : t ≤ 2 * q)
     (x : BasePoint F) (hxl : Incident x.1 l) (v : Fin 100 × Fin t) :
     SmallColumn l q := by
@@ -7000,6 +7000,7 @@ lemma exists_affine_row {q : ℕ} [Fact q.Prime]
   have h := e.apply_symm_apply (y₁, y₂)
   exact ⟨congrArg Prod.fst h, congrArg Prod.snd h⟩
 
+omit [Fintype F] in
 lemma base_not_incident_assignedLine (x : BasePoint F) :
     ¬ Incident (basePoint : Point F) (assignedLine x.1) := by
   rcases x with ⟨x, hx⟩
@@ -7080,7 +7081,7 @@ lemma hypergraph_pairCovered {q t : ℕ} [Fact q.Prime]
         apply (mem_hypergraph_small D a A hqmod hqK hq ht l hl row
           (z.1, w.2)).2
         refine ⟨hzl, ?_⟩
-        simp [row, affineValue, y₂, s₁, s₂, c₁, c₂, hc, hy₂]
+        simp [row, affineValue, y₂, s₁, c₁, c₂, hc, hy₂]
     · have hs : s₁ ≠ s₂ := by
         exact fun h ↦ hc (smallSlope_injective l hl hqmod hqK h)
       obtain ⟨row, hr₁, hr₂⟩ := exists_affine_row hs
@@ -7184,7 +7185,7 @@ lemma card_edgeTags_large {q t : ℕ} [Fact q.Prime]
       · have hempty := hypergraph_wrong_small_empty D a A hqmod hqK hq ht
           l hl row
         rw [hempty] at hrow
-        exact (by simpa using hrow)
+        simp at hrow
     · intro row
       refine ⟨Sum.inl row.1, ?_⟩
       apply (mem_hypergraph_large D a A hqmod hqK hq ht l hl row.1 z).2
@@ -7227,7 +7228,7 @@ lemma card_edgeTags_small {q t : ℕ} [Fact q.Prime]
       · have hempty := hypergraph_wrong_large_empty D a A hqmod hqK hq ht
           l hl row
         rw [hempty] at hrow
-        exact (by simpa using hrow)
+        simp at hrow
       · refine ⟨row, ?_⟩
         obtain ⟨hzl', h⟩ :=
           (mem_hypergraph_small D a A hqmod hqK hq ht l hl row z).mp hrow
@@ -7271,10 +7272,10 @@ lemma card_edgeTags_not_incident {q t : ℕ} [Fact q.Prime]
         (mem_hypergraph_large D a A hqmod hqK hq ht l hl row z).mp htag
       exact (hzl h).elim
     · rw [hypergraph_wrong_large_empty D a A hqmod hqK hq ht l hl row] at htag
-      simpa using htag
+      simp at htag
   · by_cases hl : Incident (basePoint : Point F) l
     · rw [hypergraph_wrong_small_empty D a A hqmod hqK hq ht l hl row] at htag
-      simpa using htag
+      simp at htag
     · obtain ⟨h, _⟩ :=
         (mem_hypergraph_small D a A hqmod hqK hq ht l hl row z).mp htag
       exact (hzl h).elim
@@ -7409,6 +7410,7 @@ lemma hypergraph_regular {q t : ℕ} [Fact q.Prime]
 def templateSlice {q t : ℕ} (C : Finset (Edge F q t)) (l : Line F) :
     Finset (Edge F q t) := C.filter fun e ↦ e.1 = l
 
+omit [Fintype F] in
 @[simp] lemma mem_templateSlice_iff {q t : ℕ}
     (C : Finset (Edge F q t)) (l : Line F) (e : Edge F q t) :
     e ∈ templateSlice C l ↔ e ∈ C ∧ e.1 = l := by
@@ -7422,6 +7424,7 @@ noncomputable def activeTemplate {q t : ℕ} [Fact q.Prime] (l : Line F) :
   else
     (Finset.univ : Finset (ZMod q × ZMod q)).image fun row ↦ (l, Sum.inr row)
 
+omit [Fintype F] in
 lemma activeTemplate_card_large {q t : ℕ} [Fact q.Prime] (l : Line F)
     (hl : Incident (basePoint : Point F) l) :
     (activeTemplate (q := q) (t := t) l).card = t ^ 2 := by
@@ -7430,6 +7433,7 @@ lemma activeTemplate_card_large {q t : ℕ} [Fact q.Prime] (l : Line F)
   · intro x _ y _ h
     simpa using h
 
+omit [Fintype F] in
 lemma activeTemplate_card_small {q t : ℕ} [Fact q.Prime] (l : Line F)
     (hl : ¬ Incident (basePoint : Point F) l) :
     (activeTemplate (q := q) (t := t) l).card = q ^ 2 := by
@@ -7438,6 +7442,7 @@ lemma activeTemplate_card_small {q t : ℕ} [Fact q.Prime] (l : Line F)
   · intro x _ y _ h
     simpa using h
 
+omit [Fintype F] in
 lemma activeTemplate_first {q t : ℕ} [Fact q.Prime] (l : Line F) {e : Edge F q t}
     (he : e ∈ activeTemplate (q := q) (t := t) l) : e.1 = l := by
   by_cases hl : Incident (basePoint : Point F) l
@@ -7498,6 +7503,7 @@ noncomputable def smallCanonical {q t : ℕ} [Fact q.Prime]
   (Finset.univ : Finset (ZMod q)).image fun u ↦
     (l, Sum.inr (u, 0))
 
+omit [Fintype F] in
 lemma smallCanonical_card {q t : ℕ} [Fact q.Prime] (l : Line F) :
     (smallCanonical (q := q) (t := t) l).card = q := by
   rw [smallCanonical, Finset.card_image_iff.mpr]
@@ -7506,6 +7512,7 @@ lemma smallCanonical_card {q t : ℕ} [Fact q.Prime] (l : Line F) :
     exact congrArg (fun e : Edge F q t ↦ (Sum.elim (fun _ ↦ (0 : ZMod q))
       Prod.fst e.2)) h
 
+omit [Fintype F] in
 lemma smallCanonical_subset_active {q t : ℕ} [Fact q.Prime] (l : Line F)
     (hl : ¬ Incident (basePoint : Point F) l) :
     smallCanonical (q := q) (t := t) l ⊆ activeTemplate l := by
@@ -7595,6 +7602,7 @@ lemma edge_empty_of_not_active {q t : ℕ} [Fact q.Prime]
 noncomputable def activePart {q t : ℕ} [Fact q.Prime] (C : Finset (Edge F q t)) :
     Finset (Edge F q t) := C.filter fun e ↦ e ∈ activeTemplate e.1
 
+omit [Fintype F] in
 lemma activePart_subset {q t : ℕ} [Fact q.Prime] (C : Finset (Edge F q t)) :
     activePart C ⊆ C := Finset.filter_subset _ _
 
@@ -7611,13 +7619,14 @@ lemma activePart_isEdgeCover {q t : ℕ} [Fact q.Prime]
   have heActive : e ∈ activeTemplate e.1 := by
     by_contra he
     rw [edge_empty_of_not_active D a A hqmod hqK hq ht e he] at hze
-    simpa using hze
+    simp at hze
   exact ⟨e, Finset.mem_filter.mpr ⟨heC, heActive⟩, hze⟩
 
 noncomputable def activeSlice {q t : ℕ} [Fact q.Prime]
     (C : Finset (Edge F q t)) (l : Line F) : Finset (Edge F q t) :=
   templateSlice (activePart C) l
 
+omit [Fintype F] in
 lemma activeSlice_subset_activeTemplate {q t : ℕ} [Fact q.Prime]
     (C : Finset (Edge F q t)) (l : Line F) :
     activeSlice C l ⊆ activeTemplate l := by
@@ -7699,10 +7708,10 @@ lemma normalize_isEdgeCover {q t : ℕ} [Fact q.Prime]
       · by_cases hl : Incident (basePoint : Point F) l
         · exact ((mem_hypergraph_large D a A hqmod hqK hq htq l hl row z).mp hze).1
         · rw [hypergraph_wrong_large_empty D a A hqmod hqK hq htq l hl row] at hze
-          simpa using hze
+          simp at hze
       · by_cases hl : Incident (basePoint : Point F) l
         · rw [hypergraph_wrong_small_empty D a A hqmod hqK hq htq l hl row] at hze
-          simpa using hze
+          simp at hze
         · exact ((mem_hypergraph_small D a A hqmod hqK hq htq l hl row z).mp hze).1
     obtain ⟨f, hfCanon, hzf⟩ :=
       canonicalTemplate_covers_on_line D a A hqmod hqK hq htq ht l z hzl
@@ -7754,6 +7763,7 @@ lemma normalize_active {q t : ℕ} [Fact q.Prime]
   have hfirst := activeTemplate_first l heActive
   simpa [hfirst] using heActive
 
+omit [Fintype F] in
 lemma templateCap_le_active_card {q t : ℕ} [Fact q.Prime] (hq : 0 < q) (ht : 0 < t)
     (l : Line F) :
     templateCap q t l ≤ (activeTemplate (q := q) (t := t) l).card := by
@@ -7763,6 +7773,7 @@ lemma templateCap_le_active_card {q t : ℕ} [Fact q.Prime] (hq : 0 < q) (ht : 0
   · rw [templateCap, if_neg hl, activeTemplate_card_small l hl]
     nlinarith
 
+omit [Fintype F] in
 lemma templateSlice_subset_active_of_active {q t : ℕ} [Fact q.Prime]
     {C : Finset (Edge F q t)} (hactive : IsActive C) (l : Line F) :
     templateSlice C l ⊆ activeTemplate l := by
@@ -7780,6 +7791,7 @@ noncomputable def templateExtension {q t : ℕ} [Fact q.Prime]
     (templateSlice_subset_active_of_active hactive l)
     (hnormal l) (templateCap_le_active_card hq ht l))
 
+omit [Fintype F] in
 lemma templateSlice_subset_extension {q t : ℕ} [Fact q.Prime]
     (hq : 0 < q) (ht : 0 < t)
     (C : Finset (Edge F q t)) (hactive : IsActive C) (hnormal : IsNormal C)
@@ -7789,6 +7801,7 @@ lemma templateSlice_subset_extension {q t : ℕ} [Fact q.Prime]
     (templateSlice_subset_active_of_active hactive l)
     (hnormal l) (templateCap_le_active_card hq ht l))).1
 
+omit [Fintype F] in
 lemma templateExtension_subset_active {q t : ℕ} [Fact q.Prime]
     (hq : 0 < q) (ht : 0 < t)
     (C : Finset (Edge F q t)) (hactive : IsActive C) (hnormal : IsNormal C)
@@ -7798,6 +7811,7 @@ lemma templateExtension_subset_active {q t : ℕ} [Fact q.Prime]
     (templateSlice_subset_active_of_active hactive l)
     (hnormal l) (templateCap_le_active_card hq ht l))).2.1
 
+omit [Fintype F] in
 lemma templateExtension_card {q t : ℕ} [Fact q.Prime]
     (hq : 0 < q) (ht : 0 < t)
     (C : Finset (Edge F q t)) (hactive : IsActive C) (hnormal : IsNormal C)
@@ -8075,10 +8089,10 @@ lemma sum_exceptionalWeightAt {q : ℕ}
       simp
 
 /-- Compressed-piece weight of one global edge at one expander copy. -/
-noncomputable def edgeWeightAt {q t : ℕ} (a : Labeling F)
+noncomputable def edgeWeightAt {q t : ℕ} (_ : Labeling F)
     (hqmod : q % 4 = 3) (hqK : 2 * Fintype.card F + 1 ≤ q)
     (e : Edge F q t) (x : BasePoint F) : ℕ :=
-  if hxl : Incident x.1 e.1 then
+  if Incident x.1 e.1 then
     if hl : Incident (basePoint : Point F) e.1 then
       match e.2 with
       | Sum.inl _ => 1
@@ -8087,7 +8101,7 @@ noncomputable def edgeWeightAt {q t : ℕ} (a : Labeling F)
       match e.2 with
       | Sum.inl _ => 0
       | Sum.inr row =>
-          if hx : assignedLine x.1 = e.1 then
+          if assignedLine x.1 = e.1 then
             exceptionalWeightAt e.1 hl hqmod hqK row x
           else 1
   else 0
@@ -8253,9 +8267,8 @@ lemma smallPiecesAt_card_eq_weight {q t : ℕ} [Fact q.Prime]
     · have hsmall' : ¬ Incident (basePoint : Point F) l := by simpa using hsmall
       have hxl' : Incident x.1 l := by simpa using hxl
       by_cases hx : assignedLine x.1 = l
-      · simp only [smallPiecesAt, hxl', hsmall', hx, dite_true, edgeWeightAt,
-          Finset.card_filter]
-        simp only [not_false_eq_true, if_true, if_false, dite_true, dite_false]
+      · simp only [smallPiecesAt, hxl', hsmall', hx, dite_true, edgeWeightAt]
+        simp only [not_false_eq_true, dite_true, dite_false]
         rw [exceptionalWeightAt_of_assigned l hsmall' hqmod hqK row x hx]
         let E := acceptedExceptions l hsmall' hqmod hqK row
         let P : Fin q → Prop := fun c ↦
@@ -8381,7 +8394,7 @@ lemma smallPiecesAt_card_le_weight {q t : ℕ} [Fact q.Prime]
     (smallPiecesAt hqmod hqK e x).card ≤ edgeWeightAt a hqmod hqK e x := by
   by_cases hsmall : ¬ Incident (basePoint : Point F) e.1
   · exact (smallPiecesAt_card_eq_weight a hqmod hqK e x hsmall).le
-  · push_neg at hsmall
+  · push Not at hsmall
     simp [smallPiecesAt, hsmall]
 
 lemma selectedLargeOriginal_card_le {q t : ℕ} [Fact q.Prime]
@@ -8556,10 +8569,10 @@ lemma covered_block_mem_selectedOriginal {q t : ℕ} [Fact q.Prime]
       simp only [largeOriginalAt, hxl, hl, dite_true, Finset.mem_singleton]
       simpa [hside] using hblock
     · rw [hypergraph_wrong_large_empty D a A hqmod hqK hq ht l hl row] at hve
-      simpa using hve
+      simp at hve
   · by_cases hl : Incident (basePoint : Point F) l
     · rw [hypergraph_wrong_small_empty D a A hqmod hqK hq ht l hl row] at hve
-      simpa using hve
+      simp at hve
     · obtain ⟨hxl, hrow⟩ :=
         (mem_hypergraph_small D a A hqmod hqK hq ht l hl row (x, v)).mp hve
       have hside : edgeSideAt a
@@ -8636,7 +8649,7 @@ lemma mismatch_le_match {q t : ℕ} (a : Labeling F)
     mismatchingWeight a hqmod hqK C x ≤ matchingWeight a hqmod hqK C x := by
   by_cases h : sideWeight a hqmod hqK C x false ≤
       sideWeight a hqmod hqK C x true
-  · simpa [mismatchingWeight, matchingWeight, majoritySide, h] using h
+  · simp [mismatchingWeight, matchingWeight, majoritySide, h]
   · have h' : sideWeight a hqmod hqK C x true ≤
         sideWeight a hqmod hqK C x false := (Nat.lt_of_not_ge h).le
     simpa [mismatchingWeight, matchingWeight, majoritySide, h] using h'
@@ -8649,7 +8662,7 @@ lemma two_sideWeight_eq {q t : ℕ} (a : Labeling F)
   rw [sideWeight, sideWeight, ← Finset.sum_add_distrib]
   apply Finset.sum_congr rfl
   intro e _
-  cases h : edgeSideAt a e x <;> simp [h]
+  cases edgeSideAt a e x <;> simp
 
 lemma match_add_mismatch_eq {q t : ℕ} (a : Labeling F)
     (hqmod : q % 4 = 3) (hqK : 2 * Fintype.card F + 1 ≤ q)
@@ -8908,13 +8921,13 @@ lemma global_mismatchingWeight_le {q t : ℕ} [Fact q.Prime]
         rw [← Finset.mul_sum]
         congr 2
         rw [Finset.sum_add_distrib]
-        simp [card_basePoint, K, mul_comm]
+        simp [K, mul_comm]
         ring
   have hdeficit : L * q ≤ FS + DS := by
     dsimp [L, FS, DS]
     have hcardBP : Fintype.card F ^ 2 + Fintype.card F =
         Fintype.card (BasePoint F) := by
-      simp [card_basePoint, pow_two]
+      simp [pow_two]
     rw [hcardBP]
     calc
       Fintype.card (BasePoint F) * q =
@@ -8977,8 +8990,8 @@ lemma sum_edgeMismatch_eq {q t : ℕ}
   unfold mismatchingWeight sideWeight
   apply Finset.sum_congr rfl
   intro e _
-  cases hm : majoritySide a hqmod hqK C x <;>
-    cases hs : edgeSideAt a e x <;> simp [hm, hs]
+  cases majoritySide a hqmod hqK C x <;>
+    cases edgeSideAt a e x <;> simp
 
 noncomputable def goodCoverEdges {q t : ℕ} (a : Labeling F)
     (hqmod : q % 4 = 3) (hqK : 2 * Fintype.card F + 1 ≤ q)
@@ -9076,7 +9089,7 @@ lemma goodLines_large {q t : ℕ} [Fact q.Prime]
       (Fintype.card F ^ 2 + 1) * q)
     {C : Finset (Edge F q t)}
     (hcover : (hypergraph D a A hqmod hqK hq ht).IsEdgeCover C)
-    (hactive : IsActive C) (hnormal : IsNormal C)
+    (_ : IsActive C) (hnormal : IsNormal C)
     (hcard : C.card = t + Fintype.card F * q) :
     3 * Fintype.card F ≤
       4 * (goodLines a hqmod hqK C).card := by
@@ -9417,7 +9430,7 @@ lemma almost_concentrated {q t : ℕ} [Fact q.Prime]
     rw [hcard]
     omega
   by_contra hnot
-  push_neg at hnot
+  push Not at hnot
   have hscaledLower := Nat.mul_le_mul_left 39 hnot
   have hscaledUpper := Nat.mul_lt_mul_of_pos_left hx (by norm_num : 0 < 16)
   simp only [Nat.mul_add] at hscaledLower hscaledUpper
@@ -9544,19 +9557,22 @@ noncomputable def lineSide (a : Labeling F) (m : Line F)
     (z : BasePoint F) : Bool :=
   if hzm : Incident z.1 m then a m ⟨z.1, hzm⟩ else false
 
+omit [Fintype F] in
 @[simp] lemma lineSide_of_incident (a : Labeling F) (m : Line F)
     (z : BasePoint F) (hzm : Incident z.1 m) :
     lineSide a m z = a m ⟨z.1, hzm⟩ := by
   simp [lineSide, hzm]
 
+omit [Fintype F] in
 lemma pencilLine_ne_exterior {x : Point F} {z : BasePoint F} {m : Line F}
-    (hxm : ¬ Incident x m) (hzm : Incident z.1 m) :
+    (hxm : ¬ Incident x m) (_ : Incident z.1 m) :
     lineThroughPoints x z.1 ≠ m := by
   intro h
   apply hxm
   rw [← h]
   exact lineThroughPoints_incident_left x z.1
 
+omit [Fintype F] in
 lemma pencilSide_eq_edgeSide_iff_agree
     (a : Labeling F) {x : Point F} {z : BasePoint F} {m : Line F}
     (hxm : ¬ Incident x m) (hzm : Incident z.1 m) :
@@ -9567,8 +9583,9 @@ lemma pencilSide_eq_edgeSide_iff_agree
   have hinter : intersectionPoint l m = z.1 :=
     intersectionPoint_eq_of_ne hlm (lineThroughPoints_incident_right x z.1) hzm
   simp only [Agree, pencilSide]
-  simpa [l, hinter]
+  simp [l, hinter]
 
+omit [Fintype F] in
 lemma pencilLine_injective_on_exterior (x : Point F) (m : Line F)
     (hxm : ¬ Incident x m) :
     Set.InjOn (fun z : BasePoint F ↦ lineThroughPoints x z.1)
@@ -9721,7 +9738,7 @@ lemma edgePencilWeight_le {q t : ℕ} [Fact q.Prime]
         have hzm := hS z hzS
         have hza : assignedLine z.1 ≠ m := by
           simpa [mem_assignedFiber_iff] using (Finset.mem_sdiff.mp hzS).2
-        simp [edgeSideAt, edgeWeightAt, lineSide, hzm, hm, hza, hp]
+        simp [edgeWeightAt, hzm, hm, hza]
       have hexception :
           (∑ z ∈ assignedFiber m,
             if (pencilSide a center z = edgeSideAt a
@@ -9838,7 +9855,7 @@ lemma edgeWeightAt_le_eight_of_active {q t : ℕ} [Fact q.Prime]
       exact (this he).elim
     · by_cases hxl : Incident x.1 l
       · by_cases hx : assignedLine x.1 = l
-        · simp only [edgeWeightAt, hxl, hl, hx, dite_true]
+        · simp only [edgeWeightAt, hxl, hl, hx]
           have hpart : exceptionalWeightAt l hl hqmod hqK row x ≤
               exceptionalWeight l hl hqmod hqK row := by
             have hxmem : x ∈ assignedFiber l := (mem_assignedFiber_iff l x).mpr hx
@@ -9907,7 +9924,7 @@ lemma selectedOriginal_card_le_exactSideWeight_of_base_pencil
     obtain ⟨e, heC, hie⟩ := Finset.mem_biUnion.mp hi
     have hside : edgeSideAt a e z = side := by
       by_contra hne
-      simp [selectedLargeOriginal, hne] at hie
+      simp [hne] at hie
     apply Finset.mem_biUnion.mpr
     refine ⟨e, Finset.mem_filter.mpr ⟨heC, hside⟩, ?_⟩
     have hie' : i ∈ largeOriginalAt A e z := by simpa [hside] using hie
@@ -9918,7 +9935,7 @@ lemma selectedOriginal_card_le_exactSideWeight_of_base_pencil
     obtain ⟨e, heC, hce⟩ := Finset.mem_biUnion.mp hc
     have hside : edgeSideAt a e z = side := by
       by_contra hne
-      simp [selectedSmallPieces, hne] at hce
+      simp [hne] at hce
     have hce' : c ∈ smallPiecesAt hqmod hqK e z := by simpa [hside] using hce
     exact Finset.mem_biUnion.mpr
       ⟨e, Finset.mem_filter.mpr ⟨heC, hside⟩, hce'⟩
@@ -10420,7 +10437,7 @@ lemma active_edge_exact_weight_le_two_on_incident {q t : ℕ} [Fact q.Prime]
     (hqmod : q % 4 = 3) (hqK : 2 * Fintype.card F + 1 ≤ q)
     (hq : q ≤ t) (ht : t ≤ 2 * q)
     (center : Point F) (e : Edge F q t) (z : BasePoint F)
-    (hze : Incident z.1 e.1) (heActive : e ∈ activeTemplate e.1) :
+    (_ : Incident z.1 e.1) (heActive : e ∈ activeTemplate e.1) :
     exactEdgeWeightAt a A hqmod hqK hq ht center e z ≤ 16 := by
   have hw := edgeWeightAt_le_eight_of_active a hqmod hqK e z heActive
   by_cases hspecial : Incident (basePoint : Point F)
@@ -10474,6 +10491,7 @@ lemma sum_useful_exactEdgeWeight_le_two {q t : ℕ} [Fact q.Prime]
     _ ≤ 16 * 1 := Nat.mul_le_mul_left 16 hU
     _ = 16 := by norm_num
 
+omit [Fintype F] in
 lemma templateSlice_subset_pencilEdges {q t : ℕ}
     (C : Finset (Edge F q t)) {x : Point F} {l : Line F}
     (hxl : Incident x l) : templateSlice C l ⊆ pencilEdges C x := by
@@ -10642,7 +10660,7 @@ lemma pencil_pair_count_le (x : BasePoint F) :
     (∑ l ∈ linesThrough x.1, (usefulPoints x l).card) ≤
       Fintype.card F ^ 2 + Fintype.card F := by
   have h := sum_useful_pencil_le_univ x (fun _ ↦ 1)
-  simp only [Finset.sum_const_nat, Nat.card_eq_fintype_card] at h
+  simp only [Finset.sum_const_nat] at h
   simpa [card_basePoint, pow_two] using h
 
 lemma exactMatchWeight_eq_slice_add_outside {q t : ℕ} [Fact q.Prime]
@@ -10818,7 +10836,7 @@ lemma exact_initial_small_arithmetic
     (hrange : K ^ 2 * (t - q) ≤ q)
     (halmost : 39 * Δ < t + K * q + 156 * fixedC0 * t)
     (hulower : K - 2 ≤ u) (huupper : u ≤ K + 1)
-    (hsf : s ≤ f) (hscap : s ≤ cap)
+    (hsf : s ≤ f) (_ : s ≤ cap)
     (hudef : u * (cap - s) ≤ 16 * Δ + u * (t - q)) :
     2 * (cap - f) ≤ t := by
   have hKpos : 0 < K := by omega
@@ -10899,7 +10917,8 @@ lemma exact_weak_delta_arithmetic
       _ ≤ 10000 * (2 * K ^ 2) * d := by gcongr
       _ = 20000 * K ^ 2 * d := by ring
   have hcancel : (50 * K) * Δ ≤ (50 * K) * (400 * K * d) := by
-    convert hfinal using 1 <;> ring
+    convert hfinal using 1
+    ring
   exact Nat.le_of_mul_le_mul_left hcancel (by positivity)
 
 lemma exact_strong_zero_arithmetic
@@ -10927,7 +10946,7 @@ lemma exact_strong_zero_arithmetic
 
 lemma exact_second_small_arithmetic
     (K q t Δ u s cap f : ℕ)
-    (hK : 20000000 ≤ K) (hqpos : 0 < q) (hq : q ≤ t)
+    (hK : 20000000 ≤ K) (_ : 0 < q) (hq : q ≤ t)
     (hrange : K ^ 2 * (t - q) ≤ q)
     (hdelta : Δ ≤ 400 * K * (t - q))
     (hulower : K - 2 ≤ u) (huupper : u ≤ K + 1)
@@ -11165,7 +11184,7 @@ lemma pencil_exact_strong_sum {q t : ℕ} [Fact q.Prime]
     (hqpos : 0 < q) (hq : q ≤ t) (ht : t ≤ 2 * q)
     (hrange : Fintype.card F ^ 2 * (t - q) ≤ q)
     (hK : 20000000 ≤ Fintype.card F)
-    {C : Finset (Edge F q t)} (hnormal : IsNormal C)
+    {C : Finset (Edge F q t)} (_ : IsNormal C)
     (hactive : IsActive C)
     (hcover : (hypergraph D a A hqmod hqK hq ht).IsEdgeCover C)
     (x : BasePoint F)
@@ -11330,6 +11349,7 @@ lemma chosen_local_strong_waste {q t : ℕ} [Fact q.Prime]
   change _ ≤ 2 * g at hother
   exact hopen.trans hother
 
+omit [Fintype F] in
 lemma base_lineThrough_eq {l : Line F} {z : BasePoint F}
     (hbase : Incident (basePoint : Point F) l)
     (hzl : Incident z.1 l) :
@@ -11475,8 +11495,8 @@ lemma prescribedMismatchWeight_eq_base_outside {q t : ℕ} [Fact q.Prime]
     (a : Labeling F) (hqmod : q % 4 = 3)
     (hqK : 2 * Fintype.card F + 1 ≤ q)
     {C : Finset (Edge F q t)} (hactive : IsActive C)
-    {l : Line F} (hbase : Incident (basePoint : Point F) l)
-    {z : BasePoint F} (hz : z ∈ smallLinePoints l) :
+    {l : Line F} (_ : Incident (basePoint : Point F) l)
+    {z : BasePoint F} (_ : z ∈ smallLinePoints l) :
     prescribedMismatchWeight a hqmod hqK (basePoint : Point F) C z =
       ∑ e ∈ C \ pencilEdges C (basePoint : Point F),
         if (pencilSide a (basePoint : Point F) z = edgeSideAt a e z) = false
@@ -11687,13 +11707,13 @@ lemma base_line_q_deficit_le {q t : ℕ} [Fact q.Prime]
     calc
       Fintype.card F * (q - (templateSlice C l).card) =
           ∑ z ∈ smallLinePoints l, (q - (templateSlice C l).card) := by
-        simp [card_smallLinePoints_of_base l hbase, mul_comm]
+        simp [card_smallLinePoints_of_base l hbase]
       _ ≤ ∑ z ∈ smallLinePoints l,
           ((∑ e ∈ O, edgeWeightAt a hqmod hqK e z) + (t - q)) := hsum
       _ = (∑ e ∈ O, ∑ z ∈ smallLinePoints l,
           edgeWeightAt a hqmod hqK e z) + Fintype.card F * (t - q) := by
         rw [Finset.sum_add_distrib, Finset.sum_comm]
-        simp [card_smallLinePoints_of_base l hbase, mul_comm]
+        simp [card_smallLinePoints_of_base l hbase]
   have hfinal := hsum'.trans (Nat.add_le_add_right hedge _)
   simpa [O] using hfinal
 
@@ -11832,7 +11852,7 @@ lemma base_pencil_deficiency_lower {q t : ℕ} [Fact q.Prime]
       Fintype.card F * (q - (templateSlice C l).card) =
           ∑ z ∈ smallLinePoints l, (q - (templateSlice C l).card) := by
         rw [Finset.sum_const_nat, card_smallLinePoints_of_base l hbase]
-        simp [mul_comm]
+        simp
       _ ≤ ∑ z ∈ smallLinePoints l,
           ((q - prescribedMatchWeight a hqmod hqK
             (basePoint : Point F) C z) +
@@ -11991,7 +12011,8 @@ lemma base_weak_delta_arithmetic
         _ ≤ (11000 * K + 10000 * (K ^ 2 + K)) * d := by omega
         _ ≤ 20000 * K ^ 2 * d := Nat.mul_le_mul_right d hL
     have hcancel : (50 * K) * Δ ≤ (50 * K) * (400 * K * d) := by
-      convert hfinal using 1 <;> ring
+      convert hfinal using 1
+      ring
     exact Nat.le_of_mul_le_mul_left hcancel (by positivity)
   · have hΔd : Δ ≤ d := by omega
     calc
@@ -12658,7 +12679,7 @@ end Construction
 namespace IndexedHypergraph
 
 variable {V E : Type*} [Fintype V] [Fintype E]
-  [DecidableEq V] [DecidableEq E]
+  [DecidableEq V]
 
 /-- Relabel both finite index types by their canonical finite ordinals. -/
 noncomputable def finModel (H : IndexedHypergraph V E) :
