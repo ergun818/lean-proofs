@@ -172,7 +172,8 @@ theorem exists_blockFamily :
       first_added_located := ?_
       old_new_explained := ?_ }⟩
   · intro i j hij x hx y hy
-    exact (blocks_stageFacts (r := r) (layer := layer) (Located := Located) extend j).earlier_separated i hij x hx y hy
+    exact (blocks_stageFacts (r := r) (layer := layer)
+      (Located := Located) extend j).earlier_separated i hij x hx y hy
   · intro i n hn K hK
     obtain ⟨p, hp, hpK⟩ :=
       (blocks_stageFacts (r := r) (layer := layer)
@@ -183,9 +184,11 @@ theorem exists_blockFamily :
       exact Or.inl ⟨j, hji, hpj⟩
     · exact Or.inr hp
   · intro i x hx
-    exact (blocks_stageFacts (r := r) (layer := layer) (Located := Located) extend i).first_added_located x hx
+    exact (blocks_stageFacts (r := r) (layer := layer)
+      (Located := Located) extend i).first_added_located x hx
   · intro i j hij x hx y hy hr
-    exact (blocks_stageFacts (r := r) (layer := layer) (Located := Located) extend j).old_new_explained i hij x hx y hy hr
+    exact (blocks_stageFacts (r := r) (layer := layer)
+      (Located := Located) extend j).old_new_explained i hij x hx y hy hr
 
 end OuterRecursion
 end Global

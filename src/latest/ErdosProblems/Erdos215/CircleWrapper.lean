@@ -464,7 +464,7 @@ theorem threeCircleFiniteness :
       dsimp [R]
       rw [div_pow, hRsqrt]
       dsimp [pairDistSq] at hn
-      convert hn using 1 <;> ring
+      convert hn using 1; ring
     have hrad2 :
         ((w 0).1 + u * X - v * Y - B) ^ 2 +
           ((w 0).2 + v * X + u * Y - C) ^ 2 = S ^ 2 := by
@@ -474,7 +474,7 @@ theorem threeCircleFiniteness :
       dsimp [S]
       rw [div_pow, hSsqrt]
       dsimp [pairDistSq, B, C] at hn
-      convert hn using 1 <;> ring
+      convert hn using 1; ring
     have hq : Circle.NormalizedSolution A B C R S d u v q := by
       exact ⟨hrad0, hXY, hrad1, hrad2⟩
     refine Set.mem_union_left _ ⟨q, hq, ?_⟩
@@ -504,7 +504,7 @@ theorem threeCircleFiniteness :
       dsimp [R]
       rw [div_pow, hRsqrt]
       dsimp [pairDistSq] at hn
-      convert hn using 1 <;> ring
+      convert hn using 1; ring
     have hrad2 :
         ((w 0).1 + u * X + v * Y - B) ^ 2 +
           ((w 0).2 - v * X + u * Y - C) ^ 2 = S ^ 2 := by
@@ -514,11 +514,11 @@ theorem threeCircleFiniteness :
       dsimp [S]
       rw [div_pow, hSsqrt]
       dsimp [pairDistSq, B, C] at hn
-      convert hn using 1 <;> ring
+      convert hn using 1; ring
     have hq : Circle.NormalizedSolution A B C R S d u (-v) q := by
       dsimp [Circle.NormalizedSolution, q]
       refine ⟨hrad0, hXY, hrad1, ?_⟩
-      convert hrad2 using 1 <;> ring
+      convert hrad2 using 1; ring
     refine Set.mem_union_right _ ⟨q, hq, ?_⟩
     funext i
     fin_cases i

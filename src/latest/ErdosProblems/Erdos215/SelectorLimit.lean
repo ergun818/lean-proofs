@@ -55,7 +55,7 @@ lemma LiftData.separated_cast {d e : ℕ} (h : d = e) (s : LiftData d)
 lemma multExtends_one {d : ℕ} (s : LiftData d) :
     MultExtends 1 (by omega) s (s.cast (by simp)) := by
   intro i j
-  simpa [MultExtends, oldIndex]
+  simp [oldIndex]
 
 lemma oldIndex_comp (m n : ℕ) (hm : 0 < m) (hn : 0 < n) {d : ℕ} (i : Fin d) :
     Fin.cast (by simp [Nat.mul_assoc] : n * (m * d) = (n * m) * d)
@@ -205,7 +205,7 @@ lemma chainDenom_eq_factorial (d₀ n : ℕ) :
       rw [chainDenom, ih]
       change (n + 2) * ((n + 1).factorial * d₀) = (n + 2).factorial * d₀
       have hf : (n + 2).factorial = (n + 2) * (n + 1).factorial := by
-        convert Nat.factorial_succ (n + 1) using 1 <;> omega
+        exact Nat.factorial_succ (n + 1)
       rw [hf]
       ring
 
@@ -313,15 +313,13 @@ lemma residue_liftedPoint_eq (d : ℕ) (hd : d ≠ 0) (i j : Fin d)
     residue (liftedPoint d i j k₁ l₁) = residue (liftedPoint d i j k₂ l₂) := by
   apply Prod.ext
   · apply QuotientAddGroup.eq_iff_sub_mem.mpr
-    simp only [liftedPoint, residue, Prod.fst_sub, AddSubgroup.mem_zmultiples_iff]
+    simp only [liftedPoint, AddSubgroup.mem_zmultiples_iff]
     refine ⟨k₁ - k₂, ?_⟩
-    push_cast
     field_simp [hd]
     ring
   · apply QuotientAddGroup.eq_iff_sub_mem.mpr
-    simp only [liftedPoint, residue, Prod.snd_sub, AddSubgroup.mem_zmultiples_iff]
+    simp only [liftedPoint, AddSubgroup.mem_zmultiples_iff]
     refine ⟨l₁ - l₂, ?_⟩
-    push_cast
     field_simp [hd]
     ring
 
@@ -344,7 +342,6 @@ lemma rat_eq_residue_lift (q : ℚ) (D : ℕ) (hD : 0 < D) (hden : q.den ∣ D) 
   have hir : ((i : ℕ) : ℤ) = r := Int.toNat_of_nonneg hr0
   have hsplit : r + (D : ℤ) * k = N := Int.emod_add_mul_ediv N D
   rw [← q.num_div_den]
-  push_cast
   field_simp [q.den_ne_zero, hD.ne']
   have hirQ : ((i : ℕ) : ℚ) = (r : ℚ) := by
     calc
@@ -420,7 +417,7 @@ lemma translateLift_separated {d : ℕ} (s : LiftData d) (a b : ℤ)
     ring
   rwa [heq] at hdiv
 
-lemma translateLift_point_eq {d : ℕ} (hd : d ≠ 0) (s : LiftData d)
+lemma translateLift_point_eq {d : ℕ} (_hd : d ≠ 0) (s : LiftData d)
     (i j : Fin d) (k l : ℤ) :
     (translateLift s (k - s.k i j) (l - s.l i j)).point i j =
       liftedPoint d i j k l := by

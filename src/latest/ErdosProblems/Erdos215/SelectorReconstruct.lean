@@ -133,7 +133,7 @@ theorem targetCoherent_of_consistent {d : ℕ} (hd : d ≠ 0)
     simpa only [delta, neg_sub] using (dvd_neg.mpr h)
   have hlinec := congrArg c.reduce hline
   simp only [map_mul, map_sub, map_neg, c.reduce_natCast, hroot, sub_self,
-    mul_zero, neg_eq_zero] at hlinec
+    mul_zero] at hlinec
   have hjdiffZero : (jdiff : ZMod c.q) = 0 := by
     dsimp only [jdiff]
     push_cast
@@ -162,7 +162,7 @@ theorem targetCoherent_of_consistent {d : ℕ} (hd : d ≠ 0)
       (((rootVal hd lam₁ : ℤ) + rootVal hd lam₂ : ℤ) : ZMod c.q) =
         (2 : ZMod c.q) * c.reduce lam₁ := by
     push_cast
-    simp only [Int.cast_natCast, ← c.reduce_natCast, rootVal_cast, hroot]
+    simp only [← c.reduce_natCast, rootVal_cast, hroot]
     ring
   rw [hsum] at hphase'
   have htwoCoprime : Nat.Coprime 2 c.q := hodd.of_dvd_right c.q_dvd
@@ -178,10 +178,8 @@ theorem targetCoherent_of_consistent {d : ℕ} (hd : d ≠ 0)
       _ = (2 : ZMod c.q) *
           (c.reduce lam₁ * c.localQuotient delta) := by ring
   have hcons := hF c lam₁ lam₂ j₁ j₂ i hroot hline
-  simp only [lineTarget, map_add, map_sub, map_mul, c.reduce_natCast,
-    c.reduce_intCast]
-  simp only [lineTarget, map_add, map_sub, map_mul, c.reduce_natCast,
-    c.reduce_intCast] at hcons ⊢
+  simp only [lineTarget, map_add, map_sub, map_mul, c.reduce_natCast]
+  simp only [c.reduce_natCast] at hcons ⊢
   have hcarryLoc' := hcarryLoc
   dsimp only [mdiff, jdiff] at hcarryLoc' hcons ⊢
   push_cast at hcarryLoc'
@@ -253,9 +251,9 @@ lemma root_sub_negRoot_isUnit {d : ℕ} (hodd : Nat.Coprime 2 d)
     IsUnit.of_mul_eq_one _ (ZMod.coe_mul_inv_eq_one 2 hodd)
   have hprod : IsUnit ((2 : ZMod d) * (lam : ZMod d)) :=
     htwo.mul (root_isUnit lam)
-  convert hprod using 1 <;> simp only [coe_negRoot] <;> ring
+  convert hprod using 1; simp only [coe_negRoot]; ring
 
-lemma reconstructed_plus {d : ℕ} (hd : d ≠ 0) (hodd : Nat.Coprime 2 d)
+lemma reconstructed_plus {d : ℕ} (hd : d ≠ 0) (_hodd : Nat.Coprime 2 d)
     (F : RawLineFamily d) (lam₀ : Root d) (i j : Fin d) :
     reconstructedK hd F lam₀ i j +
         (lam₀ : ZMod d) * reconstructedL hd F lam₀ i j =
@@ -273,8 +271,7 @@ lemma reconstructed_minus {d : ℕ} (hd : d ≠ 0) (hodd : Nat.Coprime 2 d)
     ((lam₀ : ZMod d) - (negRoot lam₀ : ZMod d)) hunit
   simp only [reconstructedK, reconstructedL]
   linear_combination
-    cellTarget hd F lam₀ i j - cellTarget hd F (negRoot lam₀) i j -
-      (cellTarget hd F lam₀ i j - cellTarget hd F (negRoot lam₀) i j) * hinv
+    -(cellTarget hd F lam₀ i j - cellTarget hd F (negRoot lam₀) i j) * hinv
 
 /-- Reconstruction of every line equation from consistency.  The two
 explicit hypotheses are precisely the standard primary-component CRT facts:

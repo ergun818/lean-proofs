@@ -223,7 +223,7 @@ lemma rationalRotation_of_two_common
   let n : ℚ := qx 1 - qy 1
   have huv : u ≠ 0 ∨ v ≠ 0 := by
     by_contra h
-    push_neg at h
+    push Not at h
     have hr : rx = ry := by
       funext i
       fin_cases i
@@ -366,7 +366,7 @@ lemma rational_sqDist_triple_collinear {z w₁ w₂ w₃ : Point}
   have hden : A * E - B * D ≠ 0 := by
     intro h
     apply hdet
-    simp [det₂, A, B, D, E, ratPoint]
+    simp [det₂, ratPoint]
     exact_mod_cast h
   let x : ℚ := (C * E - B * F) / (A * E - B * D)
   let y : ℚ := (A * F - C * D) / (A * E - B * D)
@@ -434,14 +434,14 @@ theorem rational_sqDist_subset_line {z : Point} (hz : ¬IsStandardRational z) :
         · have h1' : q 1 - p 1 ≠ 0 := by simpa using h1
           simp
           field_simp [h1']
-          <;> ring
+          ring
       · refine ⟨(w 0 - p 0) / (q - p) 0, ?_⟩
         ext i
         fin_cases i
         · have h0' : q 0 - p 0 ≠ 0 := by simpa using h0
           simp
           field_simp [h0']
-          <;> ring
+          ring
         · simp [det₂] at hcol ⊢
           have h0' : q 0 - p 0 ≠ 0 := by simpa using h0
           field_simp [h0']
@@ -521,7 +521,8 @@ lemma rotIntLinear_det (a b : ℤ) : LinearMap.det (rotIntLinear a b) = a ^ 2 + 
     funext i
     fin_cases i <;>
       rw [Matrix.toLin'_apply] <;>
-      simp [rotIntLinear, M, Matrix.mulVec, dotProduct, Fin.sum_univ_two] <;> ring
+      simp [rotIntLinear, M, Matrix.mulVec, dotProduct, Fin.sum_univ_two]
+    ring
   rw [hmap, LinearMap.det_toLin']
   rw [Matrix.det_fin_two]
   simp [M]
@@ -552,9 +553,9 @@ lemma scalarIntLattice_le_rotated {a b d e : ℤ} (hde : d ∣ e)
   refine ⟨w, ?_⟩
   ext i
   fin_cases i
-  · simp [scalarIntLattice, rotatedIntLattice, w, rotIntLinear]
+  · simp [w, rotIntLinear]
     linear_combination k * z 0 * hab
-  · simp [scalarIntLattice, rotatedIntLattice, w, rotIntLinear]
+  · simp [w, rotIntLinear]
     linear_combination k * z 1 * hab
 
 /-- Exact finite fundamental-domain count.  The relative index is the number
@@ -612,7 +613,7 @@ transversal for the first which is separated modulo the second is also a
 transversal for the second. -/
 theorem hitsCosets_of_equal_relIndex
     {G : Type*} [AddCommGroup G] (A : Set G) (H K M : AddSubgroup G)
-    (hH : H ≤ M) (hK : K ≤ M)
+    (hH : H ≤ M) (_hK : K ≤ M)
     [Fintype (M ⧸ H.comap M.subtype)] [Fintype (M ⧸ K.comap M.subtype)]
     (hcard : Fintype.card (M ⧸ H.comap M.subtype) =
       Fintype.card (M ⧸ K.comap M.subtype))
@@ -628,7 +629,7 @@ theorem hitsCosets_of_equal_relIndex
   have pick_delta_mem (q : QH) : pick q - x ∈ M := by
     have hr : ((Quotient.out q : M) : G) ∈ M := (Quotient.out q : M).property
     have hs : pick q - center q ∈ M := hH (pick_res q)
-    convert M.add_mem hs hr using 1 <;> simp [center] <;> abel
+    convert M.add_mem hs hr using 1; simp [center]; abel
   let delta (q : QH) : M := ⟨pick q - x, pick_delta_mem q⟩
   let f (q : QH) : QK := QuotientAddGroup.mk (delta q)
   have hf_inj : Function.Injective f := by
@@ -637,7 +638,7 @@ theorem hitsCosets_of_equal_relIndex
       have hk0 : -delta q + delta r ∈ K.comap M.subtype :=
         QuotientAddGroup.eq.mp hqr
       change -(pick q - x) + (pick r - x) ∈ K at hk0
-      convert hk0 using 1 <;> abel
+      convert hk0 using 1; abel
     have hpick : pick q = pick r :=
       (hsep (pick_mem r) (pick_mem q) hkr).symm
     rw [← Quotient.out_eq' q, ← Quotient.out_eq' r]
@@ -645,7 +646,7 @@ theorem hitsCosets_of_equal_relIndex
     change -((Quotient.out q : M) : G) + ((Quotient.out r : M) : G) ∈ H
     have hs := H.sub_mem (pick_res q) (pick_res r)
     rw [hpick] at hs
-    convert hs using 1 <;> simp [center] <;> abel
+    convert hs using 1; simp [center]; abel
   have hf_surj : Function.Surjective f :=
     (Fintype.bijective_iff_injective_and_card f).mpr ⟨hf_inj, hcard⟩ |>.2
   obtain ⟨q, hq⟩ := hf_surj (0 : QK)
@@ -673,14 +674,14 @@ theorem hitsCosets_of_equal_index
     intro q r hqr
     have hkr : pick r - pick q ∈ K := by
       have hk0 : -(pick q - x) + (pick r - x) ∈ K := QuotientAddGroup.eq.mp hqr
-      convert hk0 using 1 <;> abel
+      convert hk0 using 1; abel
     have hpick : pick q = pick r :=
       (hsep (pick_mem r) (pick_mem q) hkr).symm
     rw [← Quotient.out_eq' q, ← Quotient.out_eq' r]
     apply QuotientAddGroup.eq.mpr
     have hs := H.sub_mem (pick_res q) (pick_res r)
     rw [hpick] at hs
-    convert hs using 1 <;> abel
+    convert hs using 1; abel
   have hf_surj : Function.Surjective f :=
     (Fintype.bijective_iff_injective_and_card f).mpr ⟨hf_inj, hcard⟩ |>.2
   obtain ⟨q, hq⟩ := hf_surj (0 : G ⧸ K)
@@ -846,7 +847,7 @@ theorem RationalRotationTransferTheorem
       apply hHle
       refine ⟨z, ?_⟩
       ext i
-      fin_cases i <;> simp [H₀, scalarIntLattice, rotIntLinear, δ]
+      fin_cases i <;> simp [rotIntLinear]
     let y : Λ := ⟨δ, hδ⟩
     refine ⟨y, ?_, ?_⟩
     · change L.fromCoords (ratPoint (o + scaledRatPoint (d * d) y)) ∈ S
@@ -863,7 +864,7 @@ theorem RationalRotationTransferTheorem
     · change y.1 - x.1 ∈ H₀
       refine ⟨z, ?_⟩
       ext i
-      fin_cases i <;> simp [y, δ, H₀, scalarIntLattice, rotIntLinear]
+      fin_cases i <;> simp [y, δ, rotIntLinear]
   have hASep : SeparatedMod A J := by
     intro u hu v hv huv
     change u.1 - v.1 ∈ K₀ at huv
@@ -872,17 +873,16 @@ theorem RationalRotationTransferTheorem
     let pv := L.fromCoords (ratPoint (o + scaledRatPoint (d * d) v))
     have hdist : distSq pu pv = ((z 0) ^ 2 + (z 1) ^ 2 : ℤ) := by
       rw [L.distSq_fromCoords]
-      simp [pu, pv, distSq, Fin.sum_univ_two, scaledRatPoint, ratPoint]
+      simp [distSq, Fin.sum_univ_two, scaledRatPoint, ratPoint]
       have hz0 := congrArg (fun w : ZPair ↦ w 0) hz
       have hz1 := congrArg (fun w : ZPair ↦ w 1) hz
-      simp [K₀, rotIntLinear] at hz0 hz1
+      simp [rotIntLinear] at hz0 hz1
       have hz0R : (d : ℝ) * (a : ℝ) * (z 0 : ℝ) -
           (d : ℝ) * (b : ℝ) * (z 1 : ℝ) = (u.1 0 : ℝ) - (v.1 0 : ℝ) := by
         exact_mod_cast hz0
       have hz1R : (d : ℝ) * (b : ℝ) * (z 0 : ℝ) +
           (d : ℝ) * (a : ℝ) * (z 1 : ℝ) = (u.1 1 : ℝ) - (v.1 1 : ℝ) := by
         exact_mod_cast hz1
-      push_cast at ⊢
       field_simp [hd0]
       rw [← hz0R, ← hz1R]
       have habR : (a : ℝ) ^ 2 + (b : ℝ) ^ 2 = (d : ℝ) ^ 2 := by exact_mod_cast hab
@@ -917,17 +917,15 @@ theorem RationalRotationTransferTheorem
   ext i
   fin_cases i
   · have hz0 := congrArg (fun w : ZPair ↦ w 0) hz
-    simp [p, scaledRatPoint, K₀, rotIntLinear, hA, hB, ratPoint] at hz0 ⊢
+    simp [scaledRatPoint, rotIntLinear, hA, hB, ratPoint] at hz0 ⊢
     have hz0R : (d : ℝ) * (a : ℝ) * (z 0 : ℝ) -
         (d : ℝ) * (b : ℝ) * (z 1 : ℝ) = (u.1 0 : ℝ) := by exact_mod_cast hz0
-    push_cast at ⊢
     field_simp [hd0]
     nlinarith [hz0R]
   · have hz1 := congrArg (fun w : ZPair ↦ w 1) hz
-    simp [p, scaledRatPoint, K₀, rotIntLinear, hA, hB, ratPoint] at hz1 ⊢
+    simp [scaledRatPoint, rotIntLinear, hA, hB, ratPoint] at hz1 ⊢
     have hz1R : (d : ℝ) * (b : ℝ) * (z 0 : ℝ) +
         (d : ℝ) * (a : ℝ) * (z 1 : ℝ) = (u.1 1 : ℝ) := by exact_mod_cast hz1
-    push_cast at ⊢
     field_simp [hd0]
     nlinarith [hz1R]
 

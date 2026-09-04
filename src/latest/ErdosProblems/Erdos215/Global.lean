@@ -576,7 +576,7 @@ namespace ScheduledRequirement
 
 variable {A : TerminalLayer}
 
-noncomputable def encodable : Encodable (ScheduledRequirement A) :=
+@[instance_reducible] noncomputable def encodable : Encodable (ScheduledRequirement A) :=
   Encodable.ofCountable _
 
 /-- Cantor pairing makes every requirement occur infinitely often: the
@@ -644,7 +644,7 @@ namespace CodedDavies
 
 variable (D : DaviesDecomposition Code.skolem)
 
-noncomputable def classEncodable (i : D.Index) :
+@[instance_reducible] noncomputable def classEncodable (i : D.Index) :
     Encodable {C // C ∈ classes D i} :=
   (classes_countable D i).toEncodable
 
@@ -1170,7 +1170,7 @@ theorem candidatePoint_properties {A : TerminalLayer}
         p ∉ line.carrier) ∧
       p ∉ earlierCross A req ∧
       ∀ k : Fin r, p ≠ candidatePoint D default outer hclass hclassInj k.1 := by
-  simpa only [candidateAvailable, Set.mem_setOf_eq] using
+  simpa only [candidateAvailable, Set.mem_ofPred_eq] using
     candidatePoint_spec D default outer hclass hclassInj r
 
 theorem candidatePoint_ne_of_lt {A : TerminalLayer}
@@ -1291,7 +1291,7 @@ theorem candidateSource_rich {A : TerminalLayer}
   refine ⟨u, v, ?_, hua, hvb, ?_⟩
   · simpa only [req, residue] using heq
   · refine ⟨rank k, ?_, rfl⟩
-    simpa only [hschedule, req]
+    simp only [hschedule, req]
 
 theorem candidatePoint_rational {A : TerminalLayer}
     (default : ScheduledRequirement A)
@@ -1944,7 +1944,7 @@ lemma inverseMotion_eq_framePoint (t : Point) (c s : ℝ)
     inverseMotion t c s (intPoint z) = L.fromCoords (intPoint z) := by
   dsimp [OrientedFrame.fromCoords, inverseMotion]
   rw [rotate_sub]
-  simp only [sub_zero, zero_sub, rotate_neg, rotate_zero]
+  simp only [zero_sub, rotate_neg]
   module
 
 /-- Hitting every concrete oriented frame implies the public

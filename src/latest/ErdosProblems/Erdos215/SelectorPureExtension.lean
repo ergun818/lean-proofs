@@ -80,7 +80,7 @@ private lemma prime_pow_coprime_pow_of_ne {p q a b : ℕ}
 `p^(a+1)` component.  The proof uses only coprime cancellation, rather than
 factorization exponents. -/
 theorem component_q_eq_newPrimePower
-    {p u a : ℕ} (hp : p.Prime) (hcop : Nat.Coprime p u)
+    {p u a : ℕ} (_hp : p.Prime) (hcop : Nat.Coprime p u)
     (c : PrimaryComponent (newDenom p u a)) (hcp : c.p = p) :
     c.q = p ^ (a + 1) := by
   let q := p ^ (a + 1)
@@ -110,7 +110,7 @@ theorem component_q_eq_newPrimePower
 /-- Every other full primary component divides the complementary factor
 `u`. -/
 theorem component_q_dvd_complement
-    {p u a : ℕ} (hp : p.Prime) (hcop : Nat.Coprime p u)
+    {p u a : ℕ} (hp : p.Prime) (_hcop : Nat.Coprime p u)
     (c : PrimaryComponent (newDenom p u a)) (hcp : c.p ≠ p) :
     c.q ∣ u := by
   have hprimeCop : Nat.Coprime c.p p := by
@@ -250,7 +250,7 @@ lemma primeRoot_sub_neg_isUnit {p u a : ℕ} (hp : p.Prime) (hp2 : p ≠ 2)
   have htwo : IsUnit (2 : ZMod p) :=
     (ZMod.isUnit_iff_coprime 2 p).2 hcop2
   have hprod := htwo.mul (primeRoot_isUnit (p := p) (u := u) (a := a) lam)
-  convert hprod using 1 <;> ring
+  convert hprod using 1; ring
 
 /-- The distinguished source residue (4.10), now as a `Fin p`.  The same
 formula gives zero for an old line label, so no case split is needed. -/
@@ -347,7 +347,7 @@ lemma complementPower_isUnit {p u a : ℕ} (hcop : Nat.Coprime p u) :
     (hcop.pow_left (a + 1)))
 
 lemma complementLocalQuotient_mul_power
-    {p u a : ℕ} (hu : u ≠ 0) (hcop : Nat.Coprime p u) (z : ℤ) :
+    {p u a : ℕ} (_hu : u ≠ 0) (hcop : Nat.Coprime p u) (z : ℤ) :
     complementLocalQuotient p u a z * (p ^ (a + 1) : ZMod u) =
       (z / (u : ℤ) : ℤ) := by
   simp only [complementLocalQuotient, localizedQuotient, mul_assoc]

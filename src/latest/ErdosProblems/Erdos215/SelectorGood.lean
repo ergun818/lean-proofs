@@ -120,7 +120,7 @@ theorem inducedFamily_good {d : ℕ} (hd : d ≠ 0) (hodd : Nat.Coprime 2 d)
     dsimp [R, L]
     exact_mod_cast mul_rootQuotient hd lam
   have hPcast : ((P : ℤ) : ZMod d) = rootPhase lam := by
-    simpa [P] using (ZMod.natCast_zmod_val (rootPhase lam))
+    simp [P]
   have hphase : (d : ℤ) ∣ 2 * P - R := by
     apply (ZMod.intCast_eq_intCast_iff_dvd_sub R (2 * P) d).mp
     push_cast

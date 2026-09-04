@@ -33,7 +33,7 @@ private def embeddedOldPerm (p : ℕ) (hp : 0 < p) {d : ℕ}
 private lemma embeddedOldPerm_oldIndex_modEq (p : ℕ) (hp : 0 < p) {d : ℕ}
     (sigma : Equiv.Perm (Fin d)) (i : Fin d) :
     (embeddedOldPerm p hp sigma (oldIndex p hp i)).1 ≡ (sigma i).1 [MOD d] := by
-  simp only [embeddedOldPerm, quotientIndex_oldIndex, Fin.coe_castLE]
+  simp only [embeddedOldPerm, quotientIndex_oldIndex, Fin.val_castLE]
   exact Nat.ModEq.refl _
 
 /-- Every prime-power modulus admits a permutation satisfying the exact

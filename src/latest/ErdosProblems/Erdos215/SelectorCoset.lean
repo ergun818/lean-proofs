@@ -37,7 +37,7 @@ def remainderFin (Q : ℕ) (hQ : 0 < Q) {D : ℕ} (i : Fin (Q * D)) : Fin Q :=
     (remainderFin Q hQ i : ℕ) = remainderIndex Q i := rfl
 
 /-- Reassemble a `Q`-coset and a coordinate in its denominator-`D` copy. -/
-def joinIndex (Q : ℕ) (hQ : 0 < Q) {D : ℕ} (a : Fin Q) (x : Fin D) :
+def joinIndex (Q : ℕ) (_hQ : 0 < Q) {D : ℕ} (a : Fin Q) (x : Fin D) :
     Fin (Q * D) :=
   ⟨Q * (x : ℕ) + (a : ℕ), by
     calc
@@ -252,7 +252,7 @@ def cosetCarryIndex (p P Q : ℕ) (hp : 0 < p) (hP : 0 < P) (hQ : 0 < Q)
 
 /-- In the target copy belonging to the coset `p*a mod Q`, the old pure
 residue `x` occurs at `p*x + carry(p,a)`. -/
-def localOldIndex (p P Q : ℕ) (hp : 0 < p) (hP : 0 < P) (hQ : 0 < Q)
+def localOldIndex (p P Q : ℕ) (hp : 0 < p) (_hP : 0 < P) (hQ : 0 < Q)
     (a : Fin Q) (x : Fin P) : Fin (p * P) :=
   ⟨p * (x : ℕ) + cosetCarry p Q a, by
     have hc := cosetCarry_lt p Q hp hQ a

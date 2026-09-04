@@ -138,7 +138,7 @@ noncomputable def stageSource
     (default : ScheduledRequirement (terminalLayer D i)) : ℕ → Set Point :=
   let hOld := stageOld_partial D hprefix
   let hbefore := stageOld_before D hprefix
-  let hclass := fun n hn ↦ active_frame_class_mem_layer D hn
+  let hclass := fun _ hn ↦ active_frame_class_mem_layer D hn
   let hclassInj := terminalLayer_class_injOn D i
   candidateSource D default
     (outerForbiddenLines D circle hOld hbefore hclass)

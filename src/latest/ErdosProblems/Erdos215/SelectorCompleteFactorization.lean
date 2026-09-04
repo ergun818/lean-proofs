@@ -12,7 +12,7 @@ extension.  For every `p ∈ d.primeFactors` it records the full factor
 
 namespace Erdos215.Selector
 
-open Modular
+open Erdos215.Selector.Modular
 
 set_option relaxedAutoImplicit false
 set_option autoImplicit false

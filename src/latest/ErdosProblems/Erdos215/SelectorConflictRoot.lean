@@ -116,8 +116,7 @@ private lemma cappedOrders_eq_of_full_conflict {d : ℕ} (c : PrimaryComponent d
   have hB : (c.p : ℤ) ^ s ∣ B := pow_cappedOrder_dvd c.prime B
   by_contra hne
   rcases lt_or_gt_of_ne hne with hrs | hsr
-  ·
-    have hra : r < c.a := lt_of_lt_of_le hrs hsle
+  · have hra : r < c.a := lt_of_lt_of_le hrs hsle
     have hrs' : r + 1 ≤ s := hrs
     have hB' : (c.p : ℤ) ^ (r + 1) ∣ B :=
       pow_dvd_of_le_of_pow_dvd c.p hrs' hB
@@ -157,8 +156,7 @@ private lemma cappedOrders_eq_of_full_conflict {d : ℕ} (c : PrimaryComponent d
       refine ⟨u - v - w, ?_⟩
       linear_combination hu - hv - hw
     exact pow_twice_cappedOrder_succ_not_dvd_sq c.prime hra hAsq
-  ·
-    have hsa : s < c.a := lt_of_lt_of_le hsr hrle
+  · have hsa : s < c.a := lt_of_lt_of_le hsr hrle
     have hsr' : s + 1 ≤ r := hsr
     have hA' : (c.p : ℤ) ^ (s + 1) ∣ A :=
       pow_dvd_of_le_of_pow_dvd c.p hsr' hA
@@ -341,7 +339,6 @@ theorem exists_component_root_line {d : ℕ} (c : PrimaryComponent d)
         _ = (-w.root.1) * (A : ZMod c.q) := by
           push_cast
           rw [ZMod.natCast_zmod_val w.root.1]
-
     · have hyNot : ¬ r + 1 ≤ padicValInt c.p Y := by
         intro hy
         exact hnotBoth ⟨hxhigh, hy⟩

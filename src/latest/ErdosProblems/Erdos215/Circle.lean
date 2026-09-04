@@ -141,7 +141,7 @@ lemma circleParam_circleSlope {p : ℝ × ℝ} (hunit : normSq p = 1)
     have hyeq : y = 0 := by nlinarith
     exact hne (by simp [hxeq, hyeq])
   have ht : 1 + (y / (1 + x)) ^ 2 ≠ 0 := by positivity
-  ext <;> simp only [circleParam, circleSlope, Prod.fst, Prod.snd]
+  ext <;> simp only [circleParam, circleSlope]
   · field_simp [hx, ht]
     nlinarith
   · field_simp [hx, ht]
@@ -210,7 +210,7 @@ lemma infinite_param_zero_forces_last
       (directionPoly q00 q01 q10 q11 q20 q21 q30).IsRoot t} := by
     apply hinf.mono
     intro t ht
-    simp only [Set.mem_setOf_eq, Polynomial.IsRoot]
+    simp only [Set.mem_ofPred_eq, Polynomial.IsRoot]
     rw [directionPoly_eval, ht, mul_zero]
   exact directionPoly_eq_zero_forces_last q00 q01 q10 q11 q20 q21 q30
     ((directionPoly q00 q01 q10 q11 q20 q21 q30).eq_zero_of_infinite_isRoot hroots)
@@ -221,7 +221,7 @@ lemma infinite_circle_zero_forces_last
     (hzero : ∀ p ∈ D, directionExpr q00 q01 q10 q11 q20 q21 q30 p = 0) :
     q21 = 0 ∧ q30 = 0 := by
   let D' : Set (ℝ × ℝ) := D \ {(-1, 0)}
-  have hD'inf : D'.Infinite := hinf.diff (Set.finite_singleton (-1, 0))
+  have hD'inf : D'.Infinite := hinf.sdiff (Set.finite_singleton (-1, 0))
   have hinj : Set.InjOn circleSlope D' := by
     apply circleSlope_injOn.mono
     intro p hp
@@ -497,7 +497,7 @@ private lemma parameterElimPoly_odd_certificate (A B C R S d u v : ℝ) :
   simp only [pNumX, pNumY, pDelta]
   rw [pB1_quad, pG2_quad, pB2_quad, pG1_quad, pA2_quad, pA1_quad]
   repeat' rw [quadPoly_mul]
-  simp only [coeff_add, coeff_sub, quarticPoly_coeff_zero, quarticPoly_coeff_one,
+  simp only [coeff_sub, quarticPoly_coeff_zero, quarticPoly_coeff_one,
     quarticPoly_coeff_two, quarticPoly_coeff_three, quarticPoly_coeff_four,
     quarticPoly_coeff_five, fCert]
   ring
@@ -510,7 +510,7 @@ private lemma parameterElimPoly_even_certificate (A B C R S d u v : ℝ) :
   simp only [pNumX, pNumY, pDelta]
   rw [pB1_quad, pG2_quad, pB2_quad, pG1_quad, pA2_quad, pA1_quad]
   repeat' rw [quadPoly_mul]
-  simp only [coeff_add, coeff_sub, quarticPoly_coeff_zero, quarticPoly_coeff_one,
+  simp only [coeff_sub, quarticPoly_coeff_zero, quarticPoly_coeff_one,
     quarticPoly_coeff_two, quarticPoly_coeff_three, quarticPoly_coeff_four,
     quarticPoly_coeff_five, quarticPoly_coeff_six, gCert]
   ring
@@ -521,11 +521,11 @@ private lemma certs_not_both_zero
     (ht13 : 0 < u ^ 2 + v ^ 2) (ht23 : 0 < (u - d) ^ 2 + v ^ 2) :
     fCert A B C d u v ≠ 0 ∨ gCert A B C d u v ≠ 0 := by
   by_contra h
-  push_neg at h
+  push Not at h
   rcases h with ⟨hF, hG⟩
   have hb := bezout_certificate A B C d u v
   rw [hF, hG] at hb
-  simp only [mul_zero, zero_mul, add_zero] at hb
+  simp only [mul_zero, add_zero] at hb
   have hbc : B ^ 2 + C ^ 2 ≠ 0 := ne_of_gt hc13
   have hac : (A - B) ^ 2 + C ^ 2 ≠ 0 := ne_of_gt hc23
   have hprod : u * (u - d) * (2 * u - d) = 0 := by
@@ -671,7 +671,7 @@ private lemma solutionDirections_finite
   have heven := parameterElimPoly_even_certificate A B C R S d u v
   rw [hpzero] at hodd heven
   simp only [oddCoeffFunctional, evenCoeffFunctional, coeff_zero, mul_zero, add_zero,
-    sub_zero, zero_mul] at hodd heven
+    sub_zero] at hodd heven
   have hscale : 256 * A * d ≠ 0 := by positivity
   have hF : fCert A B C d u v = 0 := by
     exact (mul_eq_zero.mp (by simpa [mul_assoc] using hodd.symm)).resolve_left hscale
@@ -717,9 +717,9 @@ private lemma finite_unitCircle_line {a b k : ℝ} (hab : a ≠ 0 ∨ b ≠ 0) :
     · change (linePolyY a b k).eval y = 0
       simp only [linePolyY, eval_sub, eval_add, eval_pow, eval_mul, eval_C, eval_X]
       rw [hx]
-      simp only [normSq, Prod.fst, Prod.snd] at hunit
+      simp only [normSq] at hunit
       nlinarith
-    · ext <;> simp only [Prod.fst, Prod.snd]
+    · ext <;> dsimp
       field_simp [ha]
       linarith
   · have hroots : Set.Finite {x : ℝ | (linePolyX a b k).IsRoot x} :=
@@ -731,9 +731,9 @@ private lemma finite_unitCircle_line {a b k : ℝ} (hab : a ≠ 0 ∨ b ≠ 0) :
     · change (linePolyX a b k).eval x = 0
       simp only [linePolyX, eval_sub, eval_add, eval_pow, eval_mul, eval_C, eval_X]
       rw [hy]
-      simp only [normSq, Prod.fst, Prod.snd] at hunit
+      simp only [normSq] at hunit
       nlinarith
-    · ext <;> simp only [Prod.fst, Prod.snd]
+    · ext <;> dsimp
       field_simp [hb]
       linarith
 
@@ -746,7 +746,7 @@ private lemma finite_two_circles {a b r2 : ℝ}
       (a := a) (b := b) (k := (1 + a ^ 2 + b ^ 2 - r2) / 2) hab).subset
     rintro ⟨x, y⟩ ⟨hunit, hcircle⟩
     refine ⟨hunit, ?_⟩
-    simp only [normSq, Prod.fst, Prod.snd] at hunit
+    simp only [normSq] at hunit
     nlinarith
   · have ha : a = 0 := not_ne_iff.mp (not_or.mp hab).1
     have hb : b = 0 := not_ne_iff.mp (not_or.mp hab).2
@@ -757,7 +757,7 @@ private lemma finite_two_circles {a b r2 : ℝ}
       · exact hr
     apply Set.finite_empty.subset
     rintro ⟨x, y⟩ ⟨hunit, hcircle⟩
-    simp only [ha, hb, sub_zero, normSq, Prod.fst, Prod.snd] at hunit hcircle
+    simp only [ha, hb, sub_zero, normSq] at hunit hcircle
     exact hr (by nlinarith)
 
 private def solutionFiber (A B C R S d u v X Y : ℝ) : Set (ℝ × ℝ) :=
@@ -797,7 +797,7 @@ private lemma solutionFiber_finite
       have hX : X = 1 := by nlinarith
       have hAd : A = d := by nlinarith
       have hBu : B = u := by
-        simp only [qx, hX, hY, mul_one, mul_zero, sub_zero, add_zero] at hB
+        simp only [qx, hX, hY, mul_one, mul_zero, sub_zero] at hB
         linarith
       have hCv : C = v := by
         simp only [qy, hX, hY, mul_one, mul_zero, add_zero] at hC

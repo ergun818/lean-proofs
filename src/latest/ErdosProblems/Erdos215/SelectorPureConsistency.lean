@@ -76,7 +76,7 @@ private lemma reduce_eq_complementToComponent
   exact (DFunLike.congr_fun hhom x).symm
 
 private lemma other_component_D_eq
-    {p u a : ℕ} (hp : p.Prime) (hcop : Nat.Coprime p u)
+    {p u a : ℕ} (_hp : p.Prime) (_hcop : Nat.Coprime p u)
     (c : PrimaryComponent (newDenom p u a)) (hdiv : c.q ∣ u) :
     c.D = p ^ (a + 1) * (u / c.q) := by
   apply Nat.eq_of_mul_eq_mul_left c.q_pos
@@ -99,7 +99,7 @@ private lemma cast_complementLocalQuotient_eq_localQuotient
   have hcomp := congrArg f
     (complementLocalQuotient_mul_power (a := a)
       (complement_ne_zero hp hcop) hcop z)
-  simp only [map_mul, map_natCast, map_intCast] at hcomp
+  simp only [map_mul, map_intCast] at hcomp
   rw [other_component_D_eq hp hcop c hdiv]
   push_cast
   have hpow : f ((p : ℕ) : ZMod u) ^ (a + 1) =
@@ -395,7 +395,7 @@ private theorem oldLineExtension_consistent
             (primeRoot p u a lam₂ : ZMod p)) := by
         rw [hoppP]
         have hu := (primeRoot_sub_neg_isUnit hp hp2 lam₂).neg
-        convert hu using 1 <;> ring
+        convert hu using 1; ring
       have hiP : ((i.1 : ℕ) : ZMod p) = 0 := by
         apply hdiffUnit.mul_right_cancel
         simpa using hlineP'
@@ -468,7 +468,7 @@ private lemma reduce_distinguishedValue_eq_auxiliary
     (j jOld i : Fin (newDenom p u a))
     (hjOld : jOld.1 % p = 0)
     (hi : i.1 % p = (distinguishedClass p u a hp lam j : ℕ))
-    (hmuP : (newPrimeComponent p u a hp hcop).reduce mu =
+    (_hmuP : (newPrimeComponent p u a hp hcop).reduce mu =
       -(newPrimeComponent p u a hp hcop).reduce lam)
     (hmuC : c.reduce mu = c.reduce lam)
     (haux : ((i : ℕ) : ZMod (newDenom p u a)) *
@@ -511,7 +511,7 @@ private lemma reduce_distinguishedValue_eq_auxiliary
   have htelescope := localizedQuotient_telescope c.q c.q_ne_zero
     ((c.D : ZMod c.q)⁻¹)
     (j.1 : ℤ) (jOld.1 : ℤ) (jt.1 : ℤ) (jOld.1 : ℤ)
-    hq_jt_old hq_j_jt (by simpa using (dvd_zero (c.q : ℤ)))
+    hq_jt_old hq_j_jt (by simp)
   change c.localQuotient ((jt.1 : ℤ) - jOld.1) +
       c.localQuotient ((j.1 : ℤ) - jt.1) -
         c.localQuotient ((jOld.1 : ℤ) - jOld.1) =
@@ -694,7 +694,7 @@ private theorem old_new_consistent
       -c.localQuotient (((j₁ : ℕ) : ℤ) - (j₂ : ℕ)) := by
     simp only [PrimaryComponent.localQuotient]
     convert localizedQuotient_neg c.q c.q_ne_zero ((c.D : ZMod c.q)⁻¹)
-      (((j₁ : ℕ) : ℤ) - (j₂ : ℕ)) hdiv using 1 <;> ring_nf
+      (((j₁ : ℕ) : ℤ) - (j₂ : ℕ)) hdiv using 1; ring_nf
   rw [hneg, ← hr] at hswap
   linear_combination -hswap
 
@@ -796,7 +796,7 @@ private theorem new_new_complement_same_sign
     (c : PrimaryComponent (newDenom p u a)) (hcp : c.p ≠ p)
     (lam₁ lam₂ : Root (newDenom p u a))
     (j₁ j₂ i : Fin (newDenom p u a))
-    (hj₁ : j₁.1 % p ≠ 0) (hj₂ : j₂.1 % p ≠ 0)
+    (_hj₁ : j₁.1 % p ≠ 0) (_hj₂ : j₂.1 % p ≠ 0)
     (hr : c.reduce lam₁ = c.reduce lam₂)
     (hsame : (newPrimeComponent p u a hp hcop).reduce lam₁ =
       (newPrimeComponent p u a hp hcop).reduce lam₂)
@@ -925,7 +925,7 @@ private theorem new_new_complement_opposite_sign
     (c : PrimaryComponent (newDenom p u a)) (hcp : c.p ≠ p)
     (lam₁ lam₂ : Root (newDenom p u a))
     (j₁ j₂ i : Fin (newDenom p u a))
-    (hj₁ : j₁.1 % p ≠ 0) (hj₂ : j₂.1 % p ≠ 0)
+    (_hj₁ : j₁.1 % p ≠ 0) (_hj₂ : j₂.1 % p ≠ 0)
     (hr : c.reduce lam₁ = c.reduce lam₂)
     (hopp : (newPrimeComponent p u a hp hcop).reduce lam₁ =
       -(newPrimeComponent p u a hp hcop).reduce lam₂)
@@ -1031,7 +1031,6 @@ private theorem new_new_complement_opposite_sign
       (lam₁ : ZMod N) (lam₂ : ZMod N) hline haux₁' haux₂'
     rw [partialGoodShift_cast hN, partialGoodShift_cast hN]
     dsimp only [q₁, q₂, r₂] at hs₇₂ ⊢
-    push_cast at hs₇₂ ⊢
     rw [← hs₇₂]
     simpa only [add_assoc] using hrel
   have hbase := inducedFamily_consistent hN hoddN (copiedLift p u a s)

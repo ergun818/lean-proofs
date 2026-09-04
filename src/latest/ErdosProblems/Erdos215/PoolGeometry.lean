@@ -232,7 +232,7 @@ theorem framedResidueSet_infinite_avoid {L : OrientedFrame}
     apply Set.finite_iUnion
     intro line
     apply (affineLine_integer_progression_subsingleton
-      (hnonparallel line.1 line.2)).finite.subset
+      (base := base) (p := line.1.point) (hnonparallel line.1 line.2)).finite.subset
     intro m hm
     change L.toCoords (L.fromCoords (coord m)) ∈
       affineLine line.1.point line.1.direction at hm

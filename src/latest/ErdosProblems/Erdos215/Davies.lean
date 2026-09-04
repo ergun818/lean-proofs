@@ -301,7 +301,8 @@ theorem iUnion_difference_eq (N : Set U) :
     have hA : A.Nonempty := by
       let i := (enumerate N).symm ⟨x, hxN⟩
       refine ⟨i, ?_⟩
-      have he : (enumerate N i).1 = x := congrArg Subtype.val ((enumerate N).apply_symm_apply ⟨x, hxN⟩)
+      have he : (enumerate N i).1 = x :=
+        congrArg Subtype.val ((enumerate N).apply_symm_apply ⟨x, hxN⟩)
       simpa [A, he] using enumerate_mem_upper sk N i
     obtain ⟨i, hi, hmin⟩ := wellFounded_lt.has_min A hA
     refine mem_iUnion.2 ⟨i, hi, ?_⟩
@@ -486,9 +487,9 @@ theorem childGuards_valid (G : Finset (Set U)) (hG : IsGuardBase sk B G)
   · rw [childGuards, if_pos hne]
     constructor
     · rw [hG.1]
-      simp only [Finset.mem_insert, iUnion_iUnion_eq_left]
+      simp only [Finset.mem_insert]
       ext x
-      simp [or_comm, or_left_comm]
+      simp [or_comm]
     · intro g hg n xs hxs
       rw [Finset.mem_insert] at hg
       rcases hg with rfl | hg
@@ -524,8 +525,7 @@ def ofCountable (G : Finset (Set U)) (hG : IsGuardBase sk B G)
       ext x
       constructor
       · rintro ⟨j, hji, hx⟩
-        have hji' : i < i := by simpa [Subsingleton.elim j i] using hji
-        exact (lt_irrefl i hji').elim
+        simp [Subsingleton.elim j i] at hji
       · simp
     rw [hempty, union_empty]
     exact hG.1
@@ -538,7 +538,7 @@ def ofCountable (G : Finset (Set U)) (hG : IsGuardBase sk B G)
     · exact Or.inl (Or.inl hB)
     · exact Or.inr hN
 
-theorem lex_before_eq (hlocal : LocallyClosed sk B N)
+theorem lex_before_eq (_hlocal : LocallyClosed sk B N)
     (child : ∀ i : DaviesSplit.Stage N,
       RelativeDavies sk (B ∪ DaviesSplit.lower sk N i) (DaviesSplit.difference sk N i))
     (i : DaviesSplit.Stage N) (a : (child i).Index) :

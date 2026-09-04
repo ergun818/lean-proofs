@@ -219,7 +219,7 @@ theorem squareNormRigid_trivial_prime (q : ℕ) (hq : q.Prime)
 theorem squareNormRigid_trivial_prime_pow (q e : ℕ) (hq : q.Prime)
     (htriv : q = 2 ∨ q % 4 = 3) : SquareNormRigid (q ^ e) := by
   induction e with
-  | zero => simpa using squareNormRigid_one
+  | zero => simp [squareNormRigid_one]
   | succ e ih =>
       intro A B hnorm
       have hqSqDvd : (q : ℤ) ^ 2 ∣ ((q ^ (e + 1) : ℕ) : ℤ) ^ 2 := by
@@ -244,13 +244,14 @@ theorem squareNormRigid_trivial_prime_pow (q e : ℕ) (hq : q.Prime)
       · simpa only [Int.natCast_pow, pow_succ, Int.natCast_mul, mul_comm] using
           mul_dvd_mul_left (q : ℤ) hbe
 
-theorem squareNormRigid_finset_prod {I : Type*} [DecidableEq I]
+theorem squareNormRigid_finset_prod {I : Type*}
     (s : Finset I) (f : I → ℕ)
     (hcop : ∀ i ∈ s, ∀ j ∈ s, i ≠ j → (f i).Coprime (f j))
     (hrigid : ∀ i ∈ s, SquareNormRigid (f i)) :
     SquareNormRigid (∏ i ∈ s, f i) := by
+  classical
   induction s using Finset.induction_on with
-  | empty => simpa using squareNormRigid_one
+  | empty => simp [squareNormRigid_one]
   | @insert i s his ih =>
       have hiCop : (f i).Coprime (∏ j ∈ s, f j) := by
         rw [Nat.coprime_prod_right_iff]

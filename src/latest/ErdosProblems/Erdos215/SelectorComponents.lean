@@ -53,11 +53,11 @@ theorem root_eq_or_eq_neg {d : ℕ} (c : PrimaryComponent d)
   have hx0 : red x.1 ≠ 0 := by
     intro hx
     rw [hx] at hxroot
-    simpa using hxroot
+    simp at hxroot
   have hy0 : red y.1 ≠ 0 := by
     intro hy
     rw [hy] at hyroot
-    simpa using hyroot
+    simp at hyroot
   have hprod : (x.1 - y.1) * (x.1 + y.1) = 0 := by
     calc
       (x.1 - y.1) * (x.1 + y.1) = x.1 ^ 2 - y.1 ^ 2 := by ring
