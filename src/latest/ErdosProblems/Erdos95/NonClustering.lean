@@ -41,7 +41,7 @@ noncomputable def rulingPolynomial (p : PlanePoint) : Fin 3 → Poly3
 
 theorem eval_rulingPolynomial (p : PlanePoint) (x : Space3) (i : Fin 3) :
     MvPolynomial.eval x (rulingPolynomial p i) = rulingVectorField p x i := by
-  fin_cases i <;> simp [rulingPolynomial, rulingVectorField] <;> ring
+  fin_cases i <;> simp [rulingPolynomial, rulingVectorField]
 
 /-- The derivation of a polynomial along the ruling vector field. -/
 noncomputable def rulingDerivative (p : PlanePoint) : Poly3 → Poly3 :=
@@ -57,7 +57,7 @@ theorem rulingDerivative_mul (p : PlanePoint) (Q R : Poly3) :
   exact (MvPolynomial.mkDerivation ℝ (rulingPolynomial p)).leibniz Q R
 
 /-- Partial differentiation cannot increase total degree. -/
-theorem totalDegree_pderiv_le {ι : Type*} [Fintype ι]
+theorem totalDegree_pderiv_le {ι : Type*}
     (Q : MvPolynomial ι ℝ) (i : ι) :
     (MvPolynomial.pderiv i Q).totalDegree ≤ Q.totalDegree := by
   classical
@@ -157,7 +157,7 @@ def SingularAt (Q : Poly3) (x : Space3) : Prop :=
 singular, the Hilbert bound applied to a nonzero partial derivative bounds
 the number of lines. -/
 theorem card_le_of_all_lines_singular
-    {I : Type*} [Fintype I] [DecidableEq I]
+    {I : Type*} [Fintype I]
     (idx : I → PlanePoint × PlanePoint) (hinj : Function.Injective idx)
     {Q : Poly3} (hQirr : Irreducible Q)
     (hQlines : ∀ i, LineContained Q
@@ -165,6 +165,7 @@ theorem card_le_of_all_lines_singular
     (hsing : ∀ i t, SingularAt Q (linePoint (idx i).1 (idx i).2 t)) :
     Fintype.card I ≤ Q.totalDegree * Q.totalDegree *
       (2 * (Q.totalDegree * Q.totalDegree) + Q.totalDegree + Q.totalDegree + 2) := by
+  classical
   obtain ⟨j, hj⟩ := exists_pderiv_ne_zero hQirr
   have hdeg := totalDegree_pderiv_lt (i := j) (irreducible_totalDegree_pos hQirr)
   have hnotdiv : ¬ Q ∣ MvPolynomial.pderiv j Q := by
@@ -190,7 +191,7 @@ theorem card_le_of_all_lines_singular
 /-- More lines than the singular-line bound force a nonsingular point on
 one of them. -/
 theorem exists_nonsingular_point_of_bound_lt_card
-    {I : Type*} [Fintype I] [DecidableEq I]
+    {I : Type*} [Fintype I]
     (idx : I → PlanePoint × PlanePoint) (hinj : Function.Injective idx)
     {Q : Poly3} (hQirr : Irreducible Q)
     (hQlines : ∀ i, LineContained Q
@@ -199,6 +200,7 @@ theorem exists_nonsingular_point_of_bound_lt_card
       (2 * (Q.totalDegree * Q.totalDegree) + Q.totalDegree + Q.totalDegree + 2) <
         Fintype.card I) :
     ∃ i t, ¬ SingularAt Q (linePoint (idx i).1 (idx i).2 t) := by
+  classical
   by_contra h
   push Not at h
   exact (Nat.not_le_of_lt hlarge)
@@ -217,7 +219,7 @@ theorem rulingDerivative_eq_pderiv (p : PlanePoint) (Q : Poly3) :
     apply MvPolynomial.derivation_ext
     intro j
     fin_cases j <;>
-      simp [D, MvPolynomial.pderiv_X, Pi.single_apply]
+      simp [D, MvPolynomial.pderiv_X]
   have h := DFunLike.congr_fun hD Q
   simpa [rulingDerivative, D, smul_eq_mul] using h
 
@@ -348,7 +350,7 @@ theorem derivative_lineRestriction {ι : Type*} [Fintype ι]
         change φ (constantDirectionalDerivative v (F * G)) =
           F • φ (constantDirectionalDerivative v G) +
             G • φ (constantDirectionalDerivative v F)
-        simp [constantDirectionalDerivative, Algebra.smul_def, mul_comm,
+        simp [constantDirectionalDerivative, Algebra.smul_def,
           RingHom.algebraMap_toAlgebra] }
   have hD : D₁ = D₂ := by
     apply MvPolynomial.derivation_ext
@@ -374,7 +376,7 @@ private theorem lineRestriction_rulingPolynomial (p q : PlanePoint)
     funext j
     fin_cases j <;> simp [linePoint, lineDirection] <;> ring
   rw [hpoint, eval_rulingPolynomial, rulingVectorField_linePoint]
-  fin_cases i <;> simp [lineDirection] <;> ring
+  fin_cases i <;> simp [lineDirection]
 
 /-- Restriction of the ruling derivative to a ruling line is `(1+X²)`
 times the derivative of the original line restriction. -/
@@ -397,7 +399,7 @@ theorem lineRestriction_rulingDerivative (p q : PlanePoint) (Q : Poly3) :
       leibniz' := fun F G => by
         change φ (rulingDerivative p (F * G)) =
           F • φ (rulingDerivative p G) + G • φ (rulingDerivative p F)
-        simp [rulingDerivative_mul, Algebra.smul_def, mul_comm,
+        simp [rulingDerivative_mul, Algebra.smul_def,
           RingHom.algebraMap_toAlgebra] }
   let Ddir : Derivation ℝ Poly3 (Polynomial ℝ) :=
     { toFun := fun F => φ (constantDirectionalDerivative (lineDirection p q) F)
@@ -408,7 +410,7 @@ theorem lineRestriction_rulingDerivative (p q : PlanePoint) (Q : Poly3) :
         change φ (constantDirectionalDerivative (lineDirection p q) (F * G)) =
           F • φ (constantDirectionalDerivative (lineDirection p q) G) +
             G • φ (constantDirectionalDerivative (lineDirection p q) F)
-        simp [constantDirectionalDerivative, Algebra.smul_def, mul_comm,
+        simp [constantDirectionalDerivative, Algebra.smul_def,
           RingHom.algebraMap_toAlgebra] }
   let D₂ : Derivation ℝ Poly3 (Polynomial ℝ) :=
     (1 + Polynomial.X ^ 2 : Polynomial ℝ) • Ddir
@@ -421,8 +423,6 @@ theorem lineRestriction_rulingDerivative (p q : PlanePoint) (Q : Poly3) :
         φ (constantDirectionalDerivative (lineDirection p q) (MvPolynomial.X i))
     simp only [rulingDerivative, constantDirectionalDerivative,
       MvPolynomial.mkDerivation_X]
-    change φ (rulingPolynomial p i) =
-      (1 + Polynomial.X ^ 2) * φ (MvPolynomial.C (lineDirection p q i))
     simpa [φ, lineSubstitution_apply] using lineRestriction_rulingPolynomial p q i
   have h := DFunLike.congr_fun hD Q
   rw [derivative_lineRestriction]
@@ -575,7 +575,9 @@ lemma tangentPolynomial_ne_zero {Q : Poly3} {x : Space3}
   rw [eval_tangentPolynomial] at heval
   simp only [map_zero] at heval
   dsimp [y] at heval
-  fin_cases j <;> simp at heval <;> exact hj heval
+  simp only [add_sub_cancel_left, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq',
+    Finset.mem_univ, if_true] at heval
+  exact hj heval
 
 lemma dotGradient_lineDirection_eq_zero {p q : PlanePoint} {Q : Poly3}
     (hQ : LineContained Q (linePoint p q 0) (lineDirection p q)) (t : ℝ) :
@@ -633,7 +635,7 @@ lemma affineFirst_injective {p r : PlanePoint} (hpr : p ≠ r) :
   obtain ⟨j, hj⟩ := hcoord
   intro s t hst
   have hc := congrArg (fun z : PlanePoint => z j) hst
-  simp [affineFirst] at hc
+  simp only [affineFirst, PiLp.add_apply, PiLp.smul_apply, smul_eq_mul] at hc
   have hprod : (s - t) * (r j - p j) = 0 := by
     linarith
   exact sub_eq_zero.mp ((mul_eq_zero.mp hprod).resolve_right (sub_ne_zero.mpr hj.symm))
@@ -650,7 +652,7 @@ lemma eval_linePoint_eq_zero_of_lineContained {p q : PlanePoint} {Q : Poly3}
   rwa [hpoint] at h
 
 lemma eq_of_two_exceptional_of_many_lines
-    {I : Type*} [Fintype I] [DecidableEq I]
+    {I : Type*} [Fintype I]
     (idx₀ : I → PlanePoint × PlanePoint) (hinj₀ : Function.Injective idx₀)
     {Q : Poly3} (hQirr : Irreducible Q) (hdeg : 1 < Q.totalDegree)
     (hQlines : ∀ i, LineContained Q
@@ -662,6 +664,7 @@ lemma eq_of_two_exceptional_of_many_lines
     {p r : PlanePoint}
     (hp : Q ∣ rulingDerivative p Q) (hr : Q ∣ rulingDerivative r Q) :
     p = r := by
+  classical
   by_contra hpr
   obtain ⟨i₀, t₀, hxnsing⟩ :=
     exists_nonsingular_point_of_bound_lt_card idx₀ hinj₀ hQirr hQlines hlarge
@@ -704,7 +707,7 @@ lemma eq_of_two_exceptional_of_many_lines
     (totalDegree_tangentPolynomial_le Q x).trans hdeg.le
   have hmono := lineSurfaceBound_mono hTdeg
   have hcontr : Fintype.card (Fin N) ≤ B := hbound.trans hmono
-  simpa [N, B] using hcontr
+  simp [N, B] at hcontr
 
 
 noncomputable def lineIndicesOnSurface (P : Finset PlanePoint) (Q : Poly3) :

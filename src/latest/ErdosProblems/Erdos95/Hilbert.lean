@@ -103,7 +103,7 @@ noncomputable def mulDegreeLE (Q : Poly3) (a T : ℕ)
     rw [hQ]
     omega⟩
   map_add' A B := by ext; simp [mul_add]
-  map_smul' r A := by ext; simp [mul_smul_comm]
+  map_smul' r A := by ext; simp
 
 lemma mulDegreeLE_injective {Q : Poly3} {a T : ℕ}
     (hQ0 : Q ≠ 0) (hQ : Q.totalDegree = a) (ha : a ≤ T) :
@@ -398,7 +398,7 @@ lemma totalDegree_lineEquation_le (p q : PlanePoint) (k : Fin 2) :
 
 section Separators
 
-variable {I : Type*} [Fintype I] [DecidableEq I]
+variable {I : Type*} [DecidableEq I]
     (idx : I → PlanePoint × PlanePoint) (hinj : Function.Injective idx)
 
 noncomputable def separatorCoordinate (i j : I) : Fin 2 :=
@@ -426,6 +426,8 @@ lemma not_lineContained_lineSeparator {i j : I} (hij : i ≠ j) :
 lemma totalDegree_lineSeparator_le (i j : I) :
     (lineSeparator idx hinj i j).totalDegree ≤ 1 :=
   totalDegree_lineEquation_le _ _ _
+
+variable [Fintype I]
 
 noncomputable def lineIsolator (i : I) : Poly3 :=
   ∏ j ∈ (Finset.univ.erase i), lineSeparator idx hinj i j
@@ -498,7 +500,7 @@ noncomputable def isolatorPower
     omega⟩
 
 lemma line_family_quotient_lower
-    {I : Type*} [Fintype I] [DecidableEq I]
+    {I : Type*} [Fintype I]
     (idx : I → PlanePoint × PlanePoint) (hinj : Function.Injective idx)
     {Q R : Poly3} {a b s : ℕ}
     (hQa : Q.totalDegree = a) (hRb : R.totalDegree = b)
@@ -514,6 +516,7 @@ lemma line_family_quotient_lower
               hQa (by omega)) ⊔
             LinearMap.range (mulDegreeLE R b (Fintype.card I - 1 + s)
               hRb (by omega)))) := by
+  classical
   let T := Fintype.card I - 1 + s
   let U : Submodule ℝ (DegreeLE T) :=
     LinearMap.range (mulDegreeLE Q a T hQa (by dsimp [T]; omega)) ⊔
@@ -581,7 +584,7 @@ two coprime surfaces is uniformly bounded in terms of their degrees.  The
 constant is deliberately coarse; only its independence of the line family is
 used in the incidence argument. -/
 lemma card_le_of_lines_in_two_surfaces
-    {I : Type*} [Fintype I] [DecidableEq I]
+    {I : Type*} [Fintype I]
     (idx : I → PlanePoint × PlanePoint) (hinj : Function.Injective idx)
     {Q R : Poly3} {a b : ℕ}
     (hQ0 : Q ≠ 0) (hR0 : R ≠ 0)
@@ -592,6 +595,7 @@ lemma card_le_of_lines_in_two_surfaces
     (hRlines : ∀ i, LineContained R
       (linePoint (idx i).1 (idx i).2 0) (lineDirection (idx i).1 (idx i).2)) :
     Fintype.card I ≤ a * b * (2 * (a * b) + a + b + 2) := by
+  classical
   let m := Fintype.card I
   let s := 2 * (a * b) + a + b + 1
   let T := m - 1 + s

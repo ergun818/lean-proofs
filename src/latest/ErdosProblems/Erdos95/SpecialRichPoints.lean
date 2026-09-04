@@ -175,7 +175,7 @@ theorem full_family_rich_point_bound :
     have hkpairNat : k ^ 2 ≤ 2 * (k * (k - 1)) := by
       calc
         k ^ 2 = k * k := by ring
-        _ ≤ k * (2 * (k - 1)) := by gcongr <;> omega
+        _ ≤ k * (2 * (k - 1)) := by gcongr; omega
         _ = 2 * (k * (k - 1)) := by ring
     have hkpos : 0 < (k : ℝ) := by exact_mod_cast (show 0 < k by omega)
     have hscaled :

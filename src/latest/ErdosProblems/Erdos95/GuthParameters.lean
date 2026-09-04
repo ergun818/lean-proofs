@@ -98,7 +98,7 @@ theorem exists_parameters {η : ℝ} (hη : 0 < η)
       _ = (k j + 1) ^ 3 := by rfl
   · have h36 : 36 * t * s ≤ 2 ^ s := by
       calc
-        36 * t * s ≤ (288 * t) * s := by gcongr <;> omega
+        36 * t * s ≤ (288 * t) * s := by gcongr; omega
         _ = C * s := by rfl
         _ ≤ 2 ^ s := hCs
     have hbadCore :
@@ -113,7 +113,7 @@ theorem exists_parameters {η : ℝ} (hη : 0 < η)
               (2 * t * s - s) + t * s := by rw [Nat.sub_mul]; simp
           _ = 2 * t * s + t * s - s :=
             (Nat.sub_add_comm hsle').symm
-          _ = 3 * t * s - s := by congr 1 <;> ring
+          _ = 3 * t * s - s := by congr 1; ring
       have hsle : s ≤ 3 * t * s := by
         nlinarith
       calc

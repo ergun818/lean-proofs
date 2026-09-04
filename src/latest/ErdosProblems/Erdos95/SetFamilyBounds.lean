@@ -25,7 +25,7 @@ noncomputable def multiplicity {α ι : Type*} [DecidableEq ι]
   exact (I.filter fun i ↦ x ∈ S i).card
 
 theorem sum_card_eq_sum_multiplicity
-    {α ι : Type*} [DecidableEq α] [DecidableEq ι]
+    {α ι : Type*} [DecidableEq ι]
     (U : Finset α) (I : Finset ι) (S : ι → Finset α)
     (hsub : ∀ i ∈ I, S i ⊆ U) :
     (∑ i ∈ I, (S i).card) = ∑ x ∈ U, multiplicity I S x := by
@@ -53,9 +53,6 @@ theorem sum_card_eq_sum_multiplicity
       intro x hx
       unfold multiplicity
       rw [Finset.card_eq_sum_ones, Finset.sum_filter]
-      apply Finset.sum_congr rfl
-      intro i hi
-      by_cases hxi : x ∈ S i <;> simp [hxi]
 
 private theorem multiplicity_mul_pred_eq_double_sum
     {α ι : Type*} [DecidableEq α] [DecidableEq ι]
@@ -163,7 +160,7 @@ theorem sum_multiplicity_mul_pred_le
 
 /-- Guth's many-large-sets lemma, in a denominator-free form. -/
 theorem large_family_bound
-    {α ι : Type*} [DecidableEq α] [DecidableEq ι]
+    {α ι : Type*} [DecidableEq α]
     (U : Finset α) (I : Finset ι) (S : ι → Finset α)
     (A B : ℕ)
     (hsub : ∀ i ∈ I, S i ⊆ U)
@@ -200,7 +197,7 @@ theorem large_family_bound
         intro n
         cases n with
         | zero => simp
-        | succ n => simp [Nat.succ_eq_add_one]; ring
+        | succ n => simp; ring
       exact_mod_cast hnat (k x)
     have hover' :
         (∑ x ∈ U, k x * (k x - 1)) ≤ B * I.card * I.card := by

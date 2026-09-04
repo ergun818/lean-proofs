@@ -602,8 +602,7 @@ theorem equatorRidge_iff_missingCoordinate_last (d : ℕ)
       (coordinate_mem_ridge_of_ne_missing d R (Ne.symm hne))
     have := hEq v hvR
     exact this hvcoord
-  · intro hlast v hvR
-    intro hvlast
+  · intro hlast v hvR hvlast
     apply missingCoordinate_not_mem d R
     rw [hlast, ridgeCoordinateImage]
     exact Finset.mem_image.mpr ⟨v, hvR, hvlast⟩
@@ -799,7 +798,7 @@ theorem card_allowedMissingSign (d : ℕ)
       exact hEq ((equatorRidge_iff_missingCoordinate_last d R).mpr hm)
     simp [AllowedMissingSign, h]
 
-noncomputable def baseHemisphereGeometry (d : ℕ) :
+theorem baseHemisphereGeometry (d : ℕ) :
     HemisphereGeometry (crossPolytopeBoundary (d + 1))
       (BaseUpperVertex d) (BaseEquatorVertex d) (d + 1) where
   ridge_degree R := by
@@ -1151,7 +1150,7 @@ noncomputable def terminalOldRidge
     intro h
     have hv := congrArg Fin.val h
     dsimp [p] at hv
-    simp [Fin.last] at hv
+    simp at hv
   let M := baryRidgeMemberAtRank (k + 2) (by omega) hcard R p hp
   refine ⟨M.1, M.2, ?_, ?_⟩
   · rw [baryRidgeMemberAtRank_card]
@@ -1172,7 +1171,7 @@ theorem terminalOldRidge_mem
     intro h
     have hv := congrArg Fin.val h
     dsimp [p] at hv
-    simp [Fin.last] at hv
+    simp at hv
   change baryRidgeMemberAtRank (k + 2) (by omega) hcard R p hp ∈ R.1
   exact baryRidgeMemberAtRank_mem (k + 2) (by omega) hcard R p hp
 
@@ -1226,7 +1225,7 @@ noncomputable def terminalCandidateToOldTop
     have hr := congrArg Fin.val F.2.1
     rw [hlast] at hr
     dsimp [baryRank] at hr
-    simp [Fin.last] at hr
+    simp at hr
     omega
   refine ⟨⟨F.1.1, F.1.2, hFcard, F.2.2.2⟩, ?_⟩
   have hcomp := F.2.2.1
@@ -1584,7 +1583,7 @@ noncomputable def internalIntermediate_to_candidate
           rw [hLc, hGc] at hc
           have heq : L.1 = G.1 :=
             Finset.eq_of_subset_of_card_le hLG (by omega)
-          simpa [heq]
+          simp [heq]
       have hLF : L.1 ⊆ F.1.1 := by
         have hbase := F.2.1
         simpa [internalLowerSet, i, hi0, l, L] using hbase
@@ -1608,7 +1607,7 @@ noncomputable def internalIntermediate_to_candidate
           rw [hGc, hBc] at hc
           have heq : G.1 = B.1 :=
             Finset.eq_of_subset_of_card_le hGB (by omega)
-          simpa [heq]
+          simp [heq]
       exact F.2.2.1.trans hBG
   · intro v hv
     exact R.2.2.2 (internalUpperFace k hcard R hinternal)
@@ -1711,9 +1710,9 @@ theorem card_terminalBaryInsertionFace
 
 /-- Barycentric subdivision preserves the one-or-two coface law for a
 triangulated hemisphere. -/
-noncomputable def barycentricHemisphereGeometry
+theorem barycentricHemisphereGeometry
     {K : FiniteComplex} {U E : K.Vertex → Prop}
-    [DecidablePred U] [DecidablePred E] (k : ℕ)
+    [DecidablePred E] (k : ℕ)
     (hcard : ∀ {s : Finset K.Vertex}, K.IsFace s → s.card ≤ k + 2)
     (hEcard : ∀ {s : Finset K.Vertex}, K.IsFace s →
       (∀ v ∈ s, E v) → s.card ≤ k + 1)
@@ -1798,7 +1797,7 @@ theorem card_equatorFace_iteratedBoundary_le (d r : ℕ)
       have hinj : Set.InjOn Prod.fst
           (↑s : Set (crossPolytopeBoundary (d + 1)).Vertex) := by
         rintro ⟨i, b⟩ hib ⟨j, c⟩ hjc hij
-        simp only [Prod.fst] at hij
+        dsimp only at hij
         subst j
         have hbc : b = c := by
           by_contra hbc
@@ -1826,7 +1825,7 @@ theorem card_equatorFace_iteratedBoundary_le (d r : ℕ)
 
 /-- Every iterated barycentric subdivision carries the same exact
 upper-hemisphere ridge-degree law. -/
-noncomputable def iteratedHemisphereGeometry (k r : ℕ) :
+theorem iteratedHemisphereGeometry (k r : ℕ) :
     HemisphereGeometry (iteratedBoundary (k + 2) r)
       (UpperVertex (k + 1) r) (EquatorVertex (k + 1) r) (k + 2) := by
   induction r with
@@ -2012,8 +2011,9 @@ noncomputable def equatorBaryVertexEquiv
     apply Subtype.ext
     apply Subtype.ext
     ext v
-    simp [equatorBaryVertexToLower, lowerBaryVertexToEquator,
-      Finset.map_map, hFE]
+    simp only [lowerBaryVertexToEquator, equatorBaryVertexToLower, Finset.map_map,
+      Function.Embedding.mk_trans_mk, Equiv.symm_comp_self, Function.Embedding.mk_id,
+      Finset.map_refl, Finset.subtype_map, Finset.mem_filter, and_iff_left_iff_imp]
     exact fun hv ↦ hFE v hv
   right_inv F := by
     have heq : ∀ a b : (iteratedBoundary d r).Vertex,
@@ -2168,8 +2168,9 @@ noncomputable def equatorRidgeEquivLowerTop (d r : ℕ) :
     apply Subtype.ext
     apply Subtype.ext
     ext v
-    simp [equatorRidgeToLowerTop, lowerTopToEquatorRidge,
-      Finset.map_map]
+    simp only [Nat.add_one_sub_one, lowerTopToEquatorRidge, equatorRidgeToLowerTop, Finset.map_map,
+      Function.Embedding.mk_trans_mk, Equiv.symm_comp_self, Function.Embedding.mk_id,
+      Finset.map_refl, Finset.subtype_map, Finset.mem_filter, and_iff_left_iff_imp]
     exact R.2 v
   right_inv T := by
     apply Subtype.ext
@@ -2416,11 +2417,11 @@ theorem fullTopFace_coordinate_exists (d : ℕ)
     (T : FullTopFace (crossPolytopeBoundary d) d) (i : Fin d) :
     (i, false) ∈ T.1 ∨ (i, true) ∈ T.1 := by
   by_contra hnone
-  push_neg at hnone
+  push Not at hnone
   have hinj : Set.InjOn Prod.fst
       (↑T.1 : Set (crossPolytopeBoundary d).Vertex) := by
     rintro ⟨j, b⟩ hj ⟨l, c⟩ hl heq
-    simp only [Prod.fst] at heq
+    dsimp only at heq
     subst l
     have hbc : b = c := by
       by_contra hbc
@@ -2437,7 +2438,7 @@ theorem fullTopFace_coordinate_exists (d : ℕ)
     refine ⟨?_, Finset.mem_univ _⟩
     intro hvi
     rcases v with ⟨j, b⟩
-    simp only [Prod.fst] at hvi
+    dsimp only at hvi
     subst j
     cases b
     · exact hnone.1 hv
@@ -2563,7 +2564,7 @@ theorem baryTop_member_subset_max
       rw [baryTopMaxFace_card]
       exact hcard G.2
     have heq := Finset.eq_of_subset_of_card_le hMG hc
-    simpa [M, heq]
+    simp [M, heq]
 
 theorem baryFullTop_upper_iff_max
     {K : FiniteComplex} {U : K.Vertex → Prop} (d : ℕ) (hd : 1 ≤ d)

@@ -648,13 +648,13 @@ def signSeqBad {k : ℕ} (s : Fin (k + 1) → Bool) (i : Fin (k + 1)) : Prop :=
 theorem signSeq_not_bad_iff {k : ℕ} (s : Fin (k + 1) → Bool) (i : Fin (k + 1)) :
     ¬ signSeqBad s i ↔ s i = decide (Even i.val) := by
   unfold signSeqBad
-  cases h : decide (Even i.val) <;> cases hs : s i <;> simp [h, hs]
+  cases decide (Even i.val) <;> cases s i <;> simp
 
 theorem signSeq_bad_iff_not_altPos {k : ℕ} (s : Fin (k + 1) → Bool)
     (i : Fin (k + 1)) :
     signSeqBad s i ↔ ¬ s i = decide (Even i.val) := by
   unfold signSeqBad
-  cases h : decide (Even i.val) <;> cases hs : s i <;> simp [h, hs]
+  cases decide (Even i.val) <;> cases s i <;> simp
 
 theorem signSeqDoor_iff_bad_cut {k : ℕ} (s : Fin (k + 1) → Bool) (i : Fin (k + 1)) :
     signSeqDoor s i ↔
@@ -751,9 +751,9 @@ theorem signSeqDoor_nonadjacent_false {k : ℕ} {s : Fin (k + 1) → Bool}
   have hlt : i.val + 1 < j.val := by omega
   let t : Fin (k + 1) := ⟨i.val + 1, by omega⟩
   have hit : i < t := by
-    exact Fin.lt_iff_val_lt_val.mpr (by simp [t])
+    exact Fin.lt_def.mpr (by simp [t])
   have htj : t < j := by
-    exact Fin.lt_iff_val_lt_val.mpr (by simpa [t] using hlt)
+    exact Fin.lt_def.mpr (by simpa [t] using hlt)
   have hbad : signSeqBad s t := (signSeqDoor_iff_bad_cut s i).mp hi |>.2 t hit
   have hnot : ¬ signSeqBad s t := (signSeqDoor_iff_bad_cut s j).mp hj |>.1 t htj
   exact hnot hbad
@@ -777,35 +777,35 @@ theorem signSeqDoorSet_card_le_two {k : ℕ} (s : Fin (k + 1) → Bool) :
   rcases lt_or_gt_of_ne hab with hablt | hbalt
   · rcases lt_trichotomy c a with hca | hcaeq | haclt
     · exact hcontr_pair hdoor_c hdoor_b (lt_trans hca hablt) (by
-        have h1 := Fin.lt_iff_val_lt_val.mp hca
-        have h2 := Fin.lt_iff_val_lt_val.mp hablt
+        have h1 := Fin.lt_def.mp hca
+        have h2 := Fin.lt_def.mp hablt
         omega)
     · exact hac hcaeq.symm
     · rcases lt_trichotomy c b with hcb | hcbeq | hbclt
       · exact hcontr_pair hdoor_a hdoor_b hablt (by
-          have h1 := Fin.lt_iff_val_lt_val.mp haclt
-          have h2 := Fin.lt_iff_val_lt_val.mp hcb
+          have h1 := Fin.lt_def.mp haclt
+          have h2 := Fin.lt_def.mp hcb
           omega)
       · exact hbc hcbeq.symm
       · exact hcontr_pair hdoor_a hdoor_c (lt_trans hablt hbclt) (by
-          have h1 := Fin.lt_iff_val_lt_val.mp hablt
-          have h2 := Fin.lt_iff_val_lt_val.mp hbclt
+          have h1 := Fin.lt_def.mp hablt
+          have h2 := Fin.lt_def.mp hbclt
           omega)
   · rcases lt_trichotomy c b with hcb | hcbeq | hbclt
     · exact hcontr_pair hdoor_c hdoor_a (lt_trans hcb hbalt) (by
-        have h1 := Fin.lt_iff_val_lt_val.mp hcb
-        have h2 := Fin.lt_iff_val_lt_val.mp hbalt
+        have h1 := Fin.lt_def.mp hcb
+        have h2 := Fin.lt_def.mp hbalt
         omega)
     · exact hbc hcbeq.symm
     · rcases lt_trichotomy c a with hca | hcaeq | haclt
       · exact hcontr_pair hdoor_b hdoor_a hbalt (by
-          have h1 := Fin.lt_iff_val_lt_val.mp hbclt
-          have h2 := Fin.lt_iff_val_lt_val.mp hca
+          have h1 := Fin.lt_def.mp hbclt
+          have h2 := Fin.lt_def.mp hca
           omega)
       · exact hac hcaeq.symm
       · exact hcontr_pair hdoor_b hdoor_c (lt_trans hbalt haclt) (by
-          have h1 := Fin.lt_iff_val_lt_val.mp hbalt
-          have h2 := Fin.lt_iff_val_lt_val.mp haclt
+          have h1 := Fin.lt_def.mp hbalt
+          have h2 := Fin.lt_def.mp haclt
           omega)
 
 theorem signSeqDoor_next_of_not_bad {k : ℕ} {s : Fin (k + 1) → Bool}
@@ -815,7 +815,7 @@ theorem signSeqDoor_next_of_not_bad {k : ℕ} {s : Fin (k + 1) → Bool}
   rw [signSeqDoor_iff_bad_cut] at hi ⊢
   constructor
   · intro j hj
-    have hjv : j.val < i.val + 1 := Fin.lt_iff_val_lt_val.mp hj
+    have hjv : j.val < i.val + 1 := Fin.lt_def.mp hj
     by_cases hji : j < i
     · exact hi.1 j hji
     · have hji_eq : j = i := by
@@ -823,13 +823,13 @@ theorem signSeqDoor_next_of_not_bad {k : ℕ} {s : Fin (k + 1) → Bool}
         have hle : i.val ≤ j.val := by
           exact le_of_not_gt (by
             intro hv
-            exact hji (Fin.lt_iff_val_lt_val.mpr hv))
+            exact hji (Fin.lt_def.mpr hv))
         omega
       simpa [hji_eq] using hnot
   · intro j hj
     apply hi.2
-    exact Fin.lt_iff_val_lt_val.mpr (by
-      have hjv : i.val + 1 < j.val := Fin.lt_iff_val_lt_val.mp hj
+    exact Fin.lt_def.mpr (by
+      have hjv : i.val + 1 < j.val := Fin.lt_def.mp hj
       omega)
 
 theorem signSeqDoor_prev_of_bad {k : ℕ} {s : Fin (k + 1) → Bool}
@@ -840,11 +840,11 @@ theorem signSeqDoor_prev_of_bad {k : ℕ} {s : Fin (k + 1) → Bool}
   constructor
   · intro j hj
     apply hi.1
-    exact Fin.lt_iff_val_lt_val.mpr (by
-      have hjv : j.val < i.val - 1 := Fin.lt_iff_val_lt_val.mp hj
+    exact Fin.lt_def.mpr (by
+      have hjv : j.val < i.val - 1 := Fin.lt_def.mp hj
       omega)
   · intro j hj
-    have hjv : i.val - 1 < j.val := Fin.lt_iff_val_lt_val.mp hj
+    have hjv : i.val - 1 < j.val := Fin.lt_def.mp hj
     by_cases hij : i < j
     · exact hi.2 j hij
     · have hji_eq : j = i := by
@@ -852,7 +852,7 @@ theorem signSeqDoor_prev_of_bad {k : ℕ} {s : Fin (k + 1) → Bool}
         have hle : j.val ≤ i.val := by
           exact le_of_not_gt (by
             intro hv
-            exact hij (Fin.lt_iff_val_lt_val.mpr hv))
+            exact hij (Fin.lt_def.mpr hv))
         omega
       simpa [hji_eq] using hbad
 
@@ -937,16 +937,16 @@ theorem signSeqDeletionParity {k : ℕ} (s : Fin (k + 1) → Bool) :
       · left
         intro j
         fin_cases j
-        simpa [hs0]
+        simp [hs0]
       · right
         have hsfalse : s 0 = false := by
           cases h : s 0 <;> simp [h] at hs0 ⊢
         intro j
         fin_cases j
-        simpa [hsfalse]
+        simp [hsfalse]
     · have hend : i = 0 ∨ i = Fin.last k := by
         by_contra hend
-        push_neg at hend
+        push Not at hend
         have hi0v : 0 < i.val := Fin.pos_iff_ne_zero.mpr hend.1
         have hikv : i.val < k := by
           have hilast : i ≠ Fin.last k := hend.2
@@ -1320,7 +1320,7 @@ theorem labelSeqSet_delete_comp_perm_eq {k m : ℕ}
         calc
           y = e (e.symm y) := by simp [y]
           _ = e j := by rw [hy]
-      exact Fin.succAbove_ne (e j) b (by simpa [y] using hy')
+      exact Fin.succAbove_ne (e j) b (by simp [y] at hy')
     rcases Fin.exists_succAbove_eq hne_pre with ⟨a, ha⟩
     have hey : e (j.succAbove a) = y := by
       rw [ha]
@@ -1476,7 +1476,8 @@ theorem alternatingPrefixLabelChains_card_one_any {m : ℕ}
     (label : NonzeroSignedSubset 1 → SignedLabel m) :
     (alternatingPrefixLabelChains label).card = 2 := by
   classical
-  have huniv : alternatingPrefixLabelChains label = (Finset.univ : Finset (SignedPermutation 1)) := by
+  have huniv : alternatingPrefixLabelChains label =
+      (Finset.univ : Finset (SignedPermutation 1)) := by
     ext P
     simp only [Finset.mem_univ, iff_true]
     change P ∈ positiveAlternatingPrefixLabelChains label ∪
@@ -2020,7 +2021,7 @@ theorem IsAltPosLabelSeq_delete_iff_sigmaDeletionOf_of_original_alt {k m : ℕ}
       apply Finset.eq_of_subset_of_card_le hret_subset
       rw [hret_card, halt_card]
     exact SigmaDeletionHasAlternatingLabelSetOf_iff_subset_erase_image.mpr
-      (by simpa [retained, hret_eq_alt])
+      (by simp [retained, hret_eq_alt])
   · intro hdoor
     refine ⟨idx, hidx, ?_⟩
     have himage :=
@@ -2729,7 +2730,7 @@ theorem ext_order_positive {n : ℕ} {P Q : SignedPermutation n}
     (horder : P.order = Q.order) (hpositive : P.positive = Q.positive) : P = Q := by
   cases P
   cases Q
-  simp only [mk.injEq] at horder hpositive
+  dsimp only at horder hpositive
   subst horder
   subst hpositive
   rfl
@@ -2940,7 +2941,7 @@ theorem order_positive_eq_of_prefixChain_eq_of_prev_eq {n : ℕ}
   have hnotlt : ¬ P.order.symm x < i := by
     intro hlt
     have hi_pos : 0 < i.val := by
-      have hvlt := Fin.lt_iff_val_lt_val.mp hlt
+      have hvlt := Fin.lt_def.mp hlt
       omega
     let ipred : Fin n := ⟨i.val - 1, by omega⟩
     have hipred_val : ipred.val + 1 = i.val := by
@@ -2948,7 +2949,7 @@ theorem order_positive_eq_of_prefixChain_eq_of_prev_eq {n : ℕ}
       omega
     have hlePred : P.order.symm x ≤ ipred := by
       exact Fin.le_iff_val_le_val.mpr (by
-        have hvlt := Fin.lt_iff_val_lt_val.mp hlt
+        have hvlt := Fin.lt_def.mp hlt
         dsimp [ipred]
         omega)
     have hxPprev : x ∈ (P.prefixSignedSubset ipred).support :=
@@ -2973,7 +2974,7 @@ theorem order_positive_eq_of_prefixChain_eq_of_prev_eq {n : ℕ}
   have hsign : Q.positive i = P.positive i := by
     by_cases hqpos : Q.positive i
     · have hxQpos : x ∈ Q.prefixPos i := by
-        simpa [x, order_mem_prefixPos_iff, hqpos]
+        simp [x, order_mem_prefixPos_iff, hqpos]
       have hpos_cur : Q.prefixPos i = P.prefixPos i := by
         simpa [prefixChain, prefixSignedSubset] using
           congrArg (fun X : NonzeroSignedSubset n => X.1.pos) hcur
@@ -2982,7 +2983,7 @@ theorem order_positive_eq_of_prefixChain_eq_of_prev_eq {n : ℕ}
       have hppos : P.positive i := (order_mem_prefixPos_iff P i i).mp hxPpos |>.2
       simp [hqpos, hppos]
     · have hxQneg : x ∈ Q.prefixNeg i := by
-        simpa [x, order_mem_prefixNeg_iff, hqpos]
+        simp [x, order_mem_prefixNeg_iff, hqpos]
       have hneg_cur : Q.prefixNeg i = P.prefixNeg i := by
         simpa [prefixChain, prefixSignedSubset] using
           congrArg (fun X : NonzeroSignedSubset n => X.1.neg) hcur
@@ -2994,12 +2995,12 @@ theorem order_positive_eq_of_prefixChain_eq_of_prev_eq {n : ℕ}
 
 theorem positive_eq_of_order_eq_of_prefixChain_eq {n : ℕ}
     (P Q : SignedPermutation n) {i p j : Fin n}
-    (horder : Q.order i = P.order p) (hij : i ≤ j) (hpj : p ≤ j)
+    (horder : Q.order i = P.order p) (hij : i ≤ j) (_ : p ≤ j)
     (hprefix : Q.prefixChain j = P.prefixChain j) :
     Q.positive i = P.positive p := by
   by_cases hqpos : Q.positive i
   · have hxQpos : Q.order i ∈ Q.prefixPos j := by
-      simpa [order_mem_prefixPos_iff, hij, hqpos]
+      simp [order_mem_prefixPos_iff, hij, hqpos]
     have hpos_eq : Q.prefixPos j = P.prefixPos j := by
       simpa [prefixChain, prefixSignedSubset] using
         congrArg (fun X : NonzeroSignedSubset n => X.1.pos) hprefix
@@ -3008,7 +3009,7 @@ theorem positive_eq_of_order_eq_of_prefixChain_eq {n : ℕ}
     have hppos : P.positive p := (order_mem_prefixPos_iff P p j).mp hxPpos |>.2
     simp [hqpos, hppos]
   · have hxQneg : Q.order i ∈ Q.prefixNeg j := by
-      simpa [order_mem_prefixNeg_iff, hij, hqpos]
+      simp [order_mem_prefixNeg_iff, hij, hqpos]
     have hneg_eq : Q.prefixNeg j = P.prefixNeg j := by
       simpa [prefixChain, prefixSignedSubset] using
         congrArg (fun X : NonzeroSignedSubset n => X.1.neg) hprefix
@@ -3204,7 +3205,7 @@ theorem representedRidgePartner_deletion_eq {n : ℕ}
     subst gap
     simpa [hgap] using P.prefixChain_flipSignAt_last_succAbove i
 
-theorem deletion_gap_eq_of_prefixChain_eq {d : ℕ} (hd : 0 < d)
+theorem deletion_gap_eq_of_prefixChain_eq {d : ℕ} (_ : 0 < d)
     {P Q : SignedPermutation (d + 1)} {gap eta : Fin (d + 1)}
     (hdel :
       ∀ a : Fin d,
@@ -3523,12 +3524,14 @@ theorem reindex_swap_gap_prefix_le_next {n : ℕ}
         exact le_trans (by simpa [hswap] using hk) hgap_le_next
   constructor
   · intro x hx
-    simp [SignedPermutation.prefixChain, SignedPermutation.prefixSignedSubset,
-      SignedPermutation.prefixPos, SignedPermutation.reindexPositions, next] at hx ⊢
+    simp only [prefixChain, prefixSignedSubset, prefixPos, reindexPositions, Equiv.symm_trans,
+      Equiv.symm_swap, Equiv.trans_apply, Equiv.swap_apply_self, Finset.mem_filter,
+      Finset.mem_univ, true_and] at hx ⊢
     exact ⟨hswap_le (P.order.symm x) hx.1, hx.2⟩
   · intro x hx
-    simp [SignedPermutation.prefixChain, SignedPermutation.prefixSignedSubset,
-      SignedPermutation.prefixNeg, SignedPermutation.reindexPositions, next] at hx ⊢
+    simp only [prefixChain, prefixSignedSubset, reindexPositions, prefixNeg, Equiv.symm_trans,
+      Equiv.symm_swap, Equiv.trans_apply, Equiv.swap_apply_self, Bool.not_eq_eq_eq_not,
+      Bool.not_true, Finset.mem_filter, Finset.mem_univ, true_and] at hx ⊢
     exact ⟨hswap_le (P.order.symm x) hx.1, hx.2⟩
 
 theorem flipSignAt_last_upperPrefixChain_of_not_boundary {n : ℕ}
@@ -3563,7 +3566,7 @@ theorem flipSignAt_last_not_upperPrefixChain_of_boundary {n : ℕ}
         SignedPermutation.prefixSignedSubset, SignedPermutation.prefixNeg, hcoord] using hpos)
   intro hflip
   exact hflip (Fin.last n) (by
-    simp [UpperHemisphere, SignedPermutation.prefixChain,
+    simp [SignedPermutation.prefixChain,
       SignedPermutation.prefixSignedSubset, SignedPermutation.prefixNeg,
       SignedPermutation.flipSignAt, hcoord, hposLast])
 
@@ -3611,10 +3614,10 @@ theorem last_mem_prefixPos_of_upper_of_order_le {n : ℕ}
     (hle : P.order.symm (Fin.last n) ≤ i) :
     Fin.last n ∈ (P.prefixChain i).1.pos := by
   by_cases hpos : P.positive (P.order.symm (Fin.last n))
-  · simpa [SignedPermutation.prefixChain, SignedPermutation.prefixSignedSubset,
+  · simp [SignedPermutation.prefixChain, SignedPermutation.prefixSignedSubset,
       SignedPermutation.prefixPos, hle, hpos]
   · have hneg : Fin.last n ∈ (P.prefixChain i).1.neg := by
-      simpa [SignedPermutation.prefixChain, SignedPermutation.prefixSignedSubset,
+      simp [SignedPermutation.prefixChain, SignedPermutation.prefixSignedSubset,
         SignedPermutation.prefixNeg, hle, hpos]
     exact False.elim (hupper hneg)
 
@@ -3791,12 +3794,12 @@ theorem actualHemisphereABoundary_iff_represented {d : ℕ}
     constructor
     · intro hpos
       rw [hrho a] at hpos
-      simpa [SignedPermutation.prefixChain, SignedPermutation.prefixSignedSubset,
-        SignedPermutation.prefixPos, hcoord] using hpos
+      simp [SignedPermutation.prefixChain, SignedPermutation.prefixSignedSubset,
+        SignedPermutation.prefixPos, hcoord] at hpos
     · intro hneg
       rw [hrho a] at hneg
-      simpa [SignedPermutation.prefixChain, SignedPermutation.prefixSignedSubset,
-        SignedPermutation.prefixNeg, hcoord] using hneg
+      simp [SignedPermutation.prefixChain, SignedPermutation.prefixSignedSubset,
+        SignedPermutation.prefixNeg, hcoord] at hneg
 
 noncomputable def equatorBoundaryARidgeEquiv {d : ℕ}
     (label : NonzeroSignedSubset (d + 1) → SignedLabel d) :
@@ -3921,13 +3924,13 @@ noncomputable def actualHemisphereAIncidentRepresentedCofaceEquiv {d : ℕ} (hd 
     refine ⟨sigma.1.1, ?_⟩
     by_cases hb : RepresentedUpperRidgeBoundary P gap
     · rcases hcases with hQ | hQ
-      · simpa [representedUpperRidgeLocalCofaces, hb, hQ]
+      · simp [representedUpperRidgeLocalCofaces, hb, hQ]
       · exact False.elim
           (representedRidgePartner_not_upperPrefixChain_of_boundary P gap hP hb
             (by simpa [hQ] using sigma.1.2.1))
     · rcases hcases with hQ | hQ
-      · simpa [representedUpperRidgeLocalCofaces, hb, hQ]
-      · simpa [representedUpperRidgeLocalCofaces, hb, hQ]
+      · simp [representedUpperRidgeLocalCofaces, hb, hQ]
+      · simp [representedUpperRidgeLocalCofaces, hb, hQ]
   invFun Q := by
     classical
     have hQcases : Q.1 = P ∨ Q.1 = representedRidgePartner P gap := by
@@ -4288,12 +4291,12 @@ theorem actualHemisphereIdxBoundary_iff_represented {r m : ℕ}
     constructor
     · intro hpos
       rw [hrho a] at hpos
-      simpa [SignedPermutation.prefixChain, SignedPermutation.prefixSignedSubset,
-        SignedPermutation.prefixPos, hcoord] using hpos
+      simp [SignedPermutation.prefixChain, SignedPermutation.prefixSignedSubset,
+        SignedPermutation.prefixPos, hcoord] at hpos
     · intro hneg
       rw [hrho a] at hneg
-      simpa [SignedPermutation.prefixChain, SignedPermutation.prefixSignedSubset,
-        SignedPermutation.prefixNeg, hcoord] using hneg
+      simp [SignedPermutation.prefixChain, SignedPermutation.prefixSignedSubset,
+        SignedPermutation.prefixNeg, hcoord] at hneg
 
 noncomputable def equatorBoundaryIdxRidgeToEquator {r m : ℕ}
     {idx : Fin r → Fin m}
@@ -4456,13 +4459,13 @@ noncomputable def actualHemisphereIdxIncidentRepresentedCofaceEquiv {r m : ℕ}
     refine ⟨sigma.1.1, ?_⟩
     by_cases hb : RepresentedUpperRidgeBoundary P gap
     · rcases hcases with hQ | hQ
-      · simpa [representedUpperRidgeLocalCofaces, hb, hQ]
+      · simp [representedUpperRidgeLocalCofaces, hb, hQ]
       · exact False.elim
           (representedRidgePartner_not_upperPrefixChain_of_boundary P gap hP hb
             (by simpa [hQ] using sigma.1.2.1))
     · rcases hcases with hQ | hQ
-      · simpa [representedUpperRidgeLocalCofaces, hb, hQ]
-      · simpa [representedUpperRidgeLocalCofaces, hb, hQ]
+      · simp [representedUpperRidgeLocalCofaces, hb, hQ]
+      · simp [representedUpperRidgeLocalCofaces, hb, hQ]
   invFun Q := by
     classical
     have hQcases : Q.1 = P ∨ Q.1 = representedRidgePartner P gap := by
@@ -4789,12 +4792,12 @@ theorem actualHemisphereAltBoundary_iff_represented {r m : ℕ}
     constructor
     · intro hpos
       rw [hrho a] at hpos
-      simpa [SignedPermutation.prefixChain, SignedPermutation.prefixSignedSubset,
-        SignedPermutation.prefixPos, hcoord] using hpos
+      simp [SignedPermutation.prefixChain, SignedPermutation.prefixSignedSubset,
+        SignedPermutation.prefixPos, hcoord] at hpos
     · intro hneg
       rw [hrho a] at hneg
-      simpa [SignedPermutation.prefixChain, SignedPermutation.prefixSignedSubset,
-        SignedPermutation.prefixNeg, hcoord] using hneg
+      simp [SignedPermutation.prefixChain, SignedPermutation.prefixSignedSubset,
+        SignedPermutation.prefixNeg, hcoord] at hneg
 
 def actualHemisphereAltTop {r m : ℕ}
     {label : NonzeroSignedSubset (r + 1) → SignedLabel m}
@@ -4838,13 +4841,13 @@ noncomputable def actualHemisphereAltIncidentRepresentedCofaceEquiv {r m : ℕ}
     refine ⟨sigma.1.1, ?_⟩
     by_cases hb : RepresentedUpperRidgeBoundary P gap
     · rcases hcases with hQ | hQ
-      · simpa [representedUpperRidgeLocalCofaces, hb, hQ]
+      · simp [representedUpperRidgeLocalCofaces, hb, hQ]
       · exact False.elim
           (representedRidgePartner_not_upperPrefixChain_of_boundary P gap hP hb
             (by simpa [hQ] using sigma.1.2))
     · rcases hcases with hQ | hQ
-      · simpa [representedUpperRidgeLocalCofaces, hb, hQ]
-      · simpa [representedUpperRidgeLocalCofaces, hb, hQ]
+      · simp [representedUpperRidgeLocalCofaces, hb, hQ]
+      · simp [representedUpperRidgeLocalCofaces, hb, hQ]
   invFun Q := by
     classical
     have hQcases : Q.1 = P ∨ Q.1 = representedRidgePartner P gap := by
@@ -4913,7 +4916,7 @@ def actualAltRidgeOfChainGap {r m : ℕ}
     ActualHemisphereAltRidge label :=
   ⟨fun a : Fin r => sigma.1.prefixChain (gap.1.succAbove a),
     ⟨fun a => sigma.2 (gap.1.succAbove a),
-      ⟨sigma.1, sigma.2, ⟨gap.1, fun a => rfl⟩⟩,
+      ⟨sigma.1, sigma.2, ⟨gap.1, fun _ => rfl⟩⟩,
       gap.2⟩⟩
 
 theorem actualAltRidgeOfChainGap_edge {r m : ℕ}
@@ -5195,7 +5198,6 @@ noncomputable def equatorBoundaryAltRidgeFromEquator {r m : ℕ}
       rcases Finset.mem_image.mp hx' with ⟨t, _ht, ht⟩
       refine Finset.mem_image.mpr ⟨t, Finset.mem_univ _, ?_⟩
       dsimp [lifted, equatorRestrictedLabelOf, equatorEquiv]
-      change label (equatorEmbed (rho.1 t)) = x
       change label (equatorEmbed (rho.1 t)) = x at ht
       exact ht
   let hactual : ActualHemisphereAltRidge label :=
@@ -5263,7 +5265,7 @@ theorem IsAltPosLabelSeq.not_isAltNeg {k m : ℕ} (hk : 0 < k)
     (sortedLabelSeq_isAltNeg_iff_signSeqAltNeg hidx hLpos).mp hnegPos
   let i : Fin k := ⟨0, hk⟩
   have hi := hsgnNeg i
-  simp [signSeqAltNeg, sgn, i] at hi
+  simp [sgn, i] at hi
 
 theorem IsAltPos.not_isAltNeg {k m n : ℕ} (hk : 0 < k)
     {label : NonzeroSignedSubset n → SignedLabel m}
@@ -5379,7 +5381,7 @@ theorem upperPrefixChain_iff_last_positive {n : ℕ} (P : SignedPermutation (n +
   · intro hupper
     by_contra hpos
     exact hupper (P.order.symm (Fin.last n)) (by
-      simp [UpperHemisphere, SignedPermutation.prefixChain,
+      simp [SignedPermutation.prefixChain,
         SignedPermutation.prefixSignedSubset, SignedPermutation.prefixNeg, hpos])
   · intro hpos i hneg
     have hmem : Fin.last n ∈ (P.prefixChain i).1.neg := hneg
@@ -5551,7 +5553,7 @@ theorem perm_apply_castSucc_ne_last_of_symm_last {r : ℕ}
   intro hlast
   have h := congrArg e.symm hlast
   have hcast : Fin.castSucc i = Fin.last r := by
-    simpa [hcoord] using h
+    simp [hcoord] at h
   exact (Fin.castSucc_lt_last i).ne hcast
 
 theorem perm_symm_apply_castSucc_ne_last_of_symm_last {r : ℕ}
@@ -5561,7 +5563,7 @@ theorem perm_symm_apply_castSucc_ne_last_of_symm_last {r : ℕ}
   intro hlast
   have h := congrArg e hlast
   have hcast : Fin.castSucc i = Fin.last r := by
-    simpa [perm_apply_last_of_symm_last e hcoord] using h
+    simp [perm_apply_last_of_symm_last e hcoord] at h
   exact (Fin.castSucc_lt_last i).ne hcast
 
 noncomputable def equatorDropOrder {r : ℕ} (e : Equiv.Perm (Fin (r + 1)))
@@ -5837,14 +5839,14 @@ noncomputable def upperTopEquivFullAltPos {r m : ℕ}
     let P : SignedPermutation (r + 1) := sigma.1.1
     have hupper : UpperPrefixChain P := sigma.1.2
     by_cases hpos : IsAltPos label (fun i : Fin (r + 1) => P.prefixChain i)
-    · simp [P, hpos, hupper]
+    · simp only [hpos, ↓reduceDIte, hupper, P]
       apply Subtype.ext
       apply Subtype.ext
       rfl
     · have hnotUpperAnti : ¬ UpperPrefixChain P.antipode := by
         intro h
         exact (upperPrefixChain_antipode_iff_not P).mp h hupper
-      simp [P, hpos, hnotUpperAnti]
+      simp only [hpos, ↓reduceDIte, hnotUpperAnti, P]
       apply Subtype.ext
       apply Subtype.ext
       exact SignedPermutation.antipode_involutive P
@@ -5854,7 +5856,7 @@ noncomputable def upperTopEquivFullAltPos {r m : ℕ}
     dsimp [upperTopToFullAltPos, fullAltPosToUpperTop]
     by_cases hupper : UpperPrefixChain P.1
     · have hposP : IsAltPos label (fun i : Fin (r + 1) => P.1.prefixChain i) := P.2
-      simp [hupper, hposP]
+      simp only [hupper, ↓reduceDIte, hposP]
       apply Subtype.ext
       rfl
     · have hupperAnti : UpperPrefixChain P.1.antipode :=
@@ -5866,7 +5868,7 @@ noncomputable def upperTopEquivFullAltPos {r m : ℕ}
             IsAltNeg label (fun i : Fin (r + 1) => P.1.prefixChain i) :=
           (IsAltPos_antipode_iff_isAltNeg hantipodal P.1).mp hposAnti
         exact IsAltPos.not_isAltNeg (Nat.succ_pos r) P.2 hnegP
-      simp [hupper, hupperAnti, hnotPosAnti]
+      simp only [hupper, ↓reduceDIte, hnotPosAnti]
       apply Subtype.ext
       exact SignedPermutation.antipode_involutive P.1
 
@@ -5941,7 +5943,7 @@ noncomputable def fullAltPosChainEquivPositiveAlternatingPrefixLabelChains_one
       have hpos :
           PositiveAlternatingPrefixLabels label P.1 :=
         (IsAltPos_one_iff_positiveAlternatingPrefixLabels label P.1).mp P.2
-      simpa [positiveAlternatingPrefixLabelChains, hpos]⟩
+      simp [positiveAlternatingPrefixLabelChains, hpos]⟩
   invFun P :=
     ⟨P.1, by
       classical
@@ -6135,12 +6137,13 @@ not an empty-type shortcut: it requires an explicit `Nonempty R`. -/
 theorem final_reduction_from_label_set_A_graph
     {R M : Type*} [Fintype R] [Fintype M]
     (D : RhoDegreeManifoldData R M)
-    (oneDoor : M → Prop) [DecidablePred oneDoor]
+    (oneDoor : M → Prop)
     (hm :
       ∀ m : M,
         (Odd (Fintype.card {r : R // D.edge r m}) ↔ oneDoor m))
     (hboundaryOdd : Odd (Fintype.card {r : R // D.boundary r})) :
     ∃ m : M, oneDoor m := by
+  classical
   have hodd : Odd (Fintype.card {m : M // oneDoor m}) :=
     kyFan_parity_step_from_rho_sigma_data D oneDoor hm hboundaryOdd
   have hpos : 0 < Fintype.card {m : M // oneDoor m} := by
@@ -6298,7 +6301,7 @@ theorem final_reduction_graph_gives_prefixChain_complementary_pair {d : ℕ} (hd
     {label : NonzeroSignedSubset (d + 1) → SignedLabel d}
     {R M : Type*} [Fintype R] [Fintype M]
     (D : RhoDegreeManifoldData R M)
-    (oneDoor : M → Prop) [DecidablePred oneDoor]
+    (oneDoor : M → Prop)
     (hm :
       ∀ m : M,
         (Odd (Fintype.card {r : R // D.edge r m}) ↔ oneDoor m))
@@ -6317,6 +6320,7 @@ theorem final_reduction_graph_gives_prefixChain_complementary_pair {d : ℕ} (hd
     ∃ P : SignedPermutation (d + 1), ∃ i j : Fin (d + 1), i < j ∧
       (label (P.prefixChain i)).index = (label (P.prefixChain j)).index ∧
       (label (P.prefixChain i)).positive ≠ (label (P.prefixChain j)).positive := by
+  classical
   obtain ⟨m, hmone⟩ :=
     final_reduction_from_label_set_A_graph D oneDoor hm hboundaryOdd
   obtain ⟨i, j, hij, hidx, hsign⟩ :=

@@ -438,7 +438,7 @@ private theorem sum_two_mul_pred (r : ℕ) :
       cases r with
       | zero => simp
       | succ s =>
-          simp only [Nat.add_sub_cancel, Nat.succ_sub_one]
+          simp only [Nat.succ_sub_one]
           ring
 
 private theorem sum_two_mul_pred_truncate {r n : ℕ} (hrn : r ≤ n) :
@@ -461,9 +461,10 @@ private theorem sum_two_mul_pred_truncate {r n : ℕ} (hrn : r ≤ n) :
       simp [show k ≤ r by omega]
     _ = r * (r - 1) := sum_two_mul_pred r
 
-private theorem sum_indicator_eq_mul_card {α : Type*} [DecidableEq α]
+private theorem sum_indicator_eq_mul_card {α : Type*}
     (S : Finset α) (p : α → Prop) [DecidablePred p] (c : ℕ) :
     (∑ x ∈ S, if p x then c else 0) = c * (S.filter p).card := by
+  classical
   induction S using Finset.induction_on with
   | empty => simp
   | @insert a S ha ih =>
@@ -525,7 +526,7 @@ private theorem intersectingLinePairs_le_of_rich_point_bound_scale
       calc
         2 * ((k : ℝ) - 1) * (richIntersectionPoints P k).card ≤
             2 * (k : ℝ) * (richIntersectionPoints P k).card := by
-          gcongr <;> linarith
+          gcongr; linarith
         _ ≤ 2 * (k : ℝ) * (X / (k : ℝ) ^ 2) := by
           gcongr
           exact hRich k hk2
@@ -597,7 +598,8 @@ theorem intersectingLinePairs_le_of_rich_point_bound
   have h := intersectingLinePairs_le_of_rich_point_bound_scale P
     (A * (P.card : ℝ) ^ 3) (mul_nonneg hA.le (by positivity))
     (fun k hk ↦ hRich P k hk)
-  convert h using 1 <;> ring
+  convert h using 1
+  ring
 
 /-- The same harmonic summation with a real-power scale; this is the form
 used by Guth's epsilon-loss low-degree partitioning theorem. -/
@@ -614,7 +616,8 @@ theorem intersectingLinePairs_le_of_rich_point_bound_rpow
     (A * (P.card : ℝ) ^ (3 + δ))
     (mul_nonneg hA.le (Real.rpow_nonneg (by positivity) _))
     (fun k hk ↦ hRich P k hk)
-  convert h using 1 <;> ring
+  convert h using 1
+  ring
 
 /-- Unshuffle a pair of ordered planar segments into the corresponding pair
 of Elekes--Sharir line indices. -/

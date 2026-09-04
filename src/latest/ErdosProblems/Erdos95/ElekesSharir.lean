@@ -65,7 +65,7 @@ theorem eq_of_linePoint_eq_at_two
   have ht1 := congrFun ht (1 : Fin 3)
   have hu0 := congrFun hu (0 : Fin 3)
   have hu1 := congrFun hu (1 : Fin 3)
-  simp [linePoint] at ht0 ht1 hu0 hu1
+  simp only [linePoint, Fin.isValue, Matrix.cons_val_zero, Matrix.cons_val_one] at ht0 ht1 hu0 hu1
   have hprod1 :
       (t - u) * ((q 1 - p 1) - (s 1 - r 1)) = 0 := by
     nlinarith [ht0, hu0]
@@ -188,7 +188,7 @@ theorem sqDist_eq_of_intersects {a b c d : PlanePoint}
   subst u
   have h0 := congrFun hlines (0 : Fin 3)
   have h1 := congrFun hlines (1 : Fin 3)
-  simp [linePoint] at h0 h1
+  simp only [linePoint, Fin.isValue, Matrix.cons_val_zero, Matrix.cons_val_one] at h0 h1
   have heq0 :
       (a 0 - b 0) + (c 0 - d 0) =
         t * ((a 1 - b 1) - (c 1 - d 1)) := by
@@ -243,7 +243,7 @@ theorem eq_of_intersects_of_translation {a b c d : PlanePoint}
   subst u
   have h0 := congrFun hlines (0 : Fin 3)
   have h1 := congrFun hlines (1 : Fin 3)
-  simp [linePoint] at h0 h1
+  simp only [linePoint, Fin.isValue, Matrix.cons_val_zero, Matrix.cons_val_one] at h0 h1
   dsimp [IsTranslation] at htrans
   have hdir1 : a 0 - c 0 = b 0 - d 0 := by linarith [htrans.1]
   rw [htrans.2] at h0

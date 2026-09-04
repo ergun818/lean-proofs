@@ -46,7 +46,7 @@ theorem rpow_half_mul_self {M : ℕ} (hM : 0 < M) :
         (M : ℝ) ^ ((1 : ℝ) / 2) * (M : ℝ) ^ (1 : ℝ) := by simp
     _ = (M : ℝ) ^ ((1 : ℝ) / 2 + 1) :=
       (Real.rpow_add hMR ((1 : ℝ) / 2) 1).symm
-    _ = (M : ℝ) ^ ((3 : ℝ) / 2) := by congr 1 <;> ring
+    _ = (M : ℝ) ^ ((3 : ℝ) / 2) := by congr 1; ring
 
 theorem rpow_three_halves_le_with_eta {M : ℕ} (hM : 0 < M)
     {η : ℝ} (hη : 0 ≤ η) :
@@ -119,7 +119,7 @@ theorem sixteen_mul_sum_low_cell_rpow_le
           _ = (L.card : ℝ) ^ ((1 : ℝ) / 2 + η + 1) :=
             (Real.rpow_add hLR ((1 : ℝ) / 2 + η) 1).symm
           _ = (L.card : ℝ) ^ ((3 : ℝ) / 2 + η) := by
-            congr 1 <;> ring
+            congr 1; ring
       rw [Real.div_rpow hLR.le hcR.le]
       rw [Real.div_rpow (by positivity) hcR.le]
       simp only [Real.one_rpow]

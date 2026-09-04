@@ -99,7 +99,7 @@ theorem card_face_crossPolytopeBoundary_le (d : ℕ)
   have hinj : Set.InjOn Prod.fst
       (↑s : Set (crossPolytopeBoundary d).Vertex) := by
     rintro ⟨i, b⟩ hib ⟨j, c⟩ hjc hij
-    simp only [Prod.fst] at hij
+    dsimp only at hij
     subst j
     have hbc : b = c := by
       by_contra hbc
@@ -513,7 +513,7 @@ theorem faceDiameter_realize (d : ℕ) (hd : 0 < d) (r : ℕ) :
       change FaceDiameter (barycentricSubdivision (iteratedBoundary d r))
         (faceAverage (realize d r))
         (2 * (1 - 1 / (d : ℝ)) ^ (r + 1))
-      convert h using 1 <;> rw [pow_succ] <;> ring
+      convert h using 1; rw [pow_succ]; ring
 
 /-- Faces in sufficiently deep subdivisions have arbitrarily small diameter. -/
 theorem exists_iteratedBoundary_faceDiameter_lt
@@ -538,7 +538,7 @@ theorem exists_iteratedBoundary_faceDiameter_lt
     convert (tendsto_const_nhds.mul
       (tendsto_pow_atTop_nhds_zero_of_lt_one hq0 hq1) :
         Filter.Tendsto (fun r : ℕ ↦ (2 : ℝ) * q ^ r)
-          Filter.atTop (nhds ((2 : ℝ) * 0))) using 1 <;> norm_num
+          Filter.atTop (nhds ((2 : ℝ) * 0))) using 1; norm_num
   rw [Metric.tendsto_atTop] at htend
   obtain ⟨r, hr⟩ := htend ε hε
   refine ⟨r, ?_⟩
@@ -565,7 +565,7 @@ theorem exists_chain_largest
   · exact hFM
   · have hcard : F.1.card ≤ M.1.card := hMmax F hFS
     have heq : M.1 = F.1 := Finset.eq_of_subset_of_card_le hMF hcard
-    simpa [heq]
+    simp [heq]
 
 /-- Base separation for a face of the cross-polytope boundary. -/
 theorem face_separated_crossPolytope (d : ℕ)

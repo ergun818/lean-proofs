@@ -118,7 +118,9 @@ theorem eq_of_same_first_of_lines_in_affinePlane
   have hq1 := hq 1
   have hr0 := hr 0
   have hr1 := hr 1
-  simp [planeValue, linePoint] at hq0 hq1 hr0 hr1
+  simp only [planeValue, Fin.isValue, linePoint, zero_mul, zero_div, add_zero,
+    Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val, mul_zero, one_mul,
+    mul_one] at hq0 hq1 hr0 hr1
   have hbase :
       normal 0 * (q 0 - r 0) + normal 1 * (q 1 - r 1) = 0 := by
     linarith

@@ -28,7 +28,7 @@ def Bisects {X : Type*} (f : X → ℝ) (S : Finset X) : Prop :=
   2 * (S.filter fun x ↦ 0 < f x).card ≤ S.card ∧
     2 * (S.filter fun x ↦ f x < 0).card ≤ S.card
 
-theorem bisects_neg {X : Type*} [DecidableEq X]
+theorem bisects_neg {X : Type*}
     (f : X → ℝ) (S : Finset X) :
     Bisects (-f) S ↔ Bisects f S := by
   classical

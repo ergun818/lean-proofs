@@ -303,7 +303,8 @@ private theorem kneserColor_proper {n k : ℕ} (hk : 1 ≤ k) (hn : 2 * k ≤ n)
     have hcard_union : ((↑a : Finset (Fin n)) ∪ ↑b).card = 2 * k := by
       rw [Finset.card_union_of_disjoint hdisj]
       have := a.2; have := b.2; omega
-    have hsub : (↑a : Finset (Fin n)) ∪ ↑b ⊆ Finset.univ.filter fun i : Fin n => n - 2 * k < i.val := by
+    have hsub : (↑a : Finset (Fin n)) ∪ ↑b ⊆
+        Finset.univ.filter fun i : Fin n => n - 2 * k < i.val := by
       intro x hx
       exact Finset.mem_filter.mpr ⟨Finset.mem_univ _, by
         rcases Finset.mem_union.mp hx with h | h
@@ -321,7 +322,9 @@ private theorem kneserColor_proper {n k : ℕ} (hk : 1 ≤ k) (hn : 2 * k ≤ n)
         intro j; simp; omega
       calc _ ≥ Fintype.card (Fin (n - 2 * k + 1)) := by
             exact Finset.card_le_card_of_injOn (fun j => ⟨j.val, by omega⟩)
-              (fun j _ => this j) (fun a _ b _ h => by simp [Fin.ext_iff] at h; exact Fin.ext h)
+              (fun j _ => this j) (fun a _ b _ h => by
+                simp only [Fin.ext_iff] at h
+                exact Fin.ext h)
         _ = n - 2 * k + 1 := Fintype.card_fin _
     omega
 
@@ -512,7 +515,7 @@ theorem ext {m : ℕ} {L M : SignedLabel m}
     (hpositive : L.positive = M.positive) (hindex : L.index = M.index) : L = M := by
   cases L
   cases M
-  simp only [mk.injEq] at hpositive hindex
+  dsimp only at hpositive hindex
   subst hpositive
   subst hindex
   rfl
@@ -1220,10 +1223,12 @@ theorem prefixChain_le {n : ℕ} (P : SignedPermutation n) {i j : Fin n} (hij : 
     SignedSubset.Le (P.prefixChain i).1 (P.prefixChain j).1 := by
   constructor
   · intro x hx
-    simp [prefixChain, prefixSignedSubset, prefixPos] at hx ⊢
+    simp only [prefixChain, prefixSignedSubset, prefixPos, Finset.mem_filter, Finset.mem_univ,
+      true_and] at hx ⊢
     exact ⟨hx.1.trans hij, hx.2⟩
   · intro x hx
-    simp [prefixChain, prefixSignedSubset, prefixNeg] at hx ⊢
+    simp only [prefixChain, prefixSignedSubset, prefixNeg, Bool.not_eq_eq_eq_not, Bool.not_true,
+      Finset.mem_filter, Finset.mem_univ, true_and] at hx ⊢
     exact ⟨hx.1.trans hij, hx.2⟩
 
 theorem prefixChain_strictly_ordered {n : ℕ} (P : SignedPermutation n) :
@@ -1288,7 +1293,8 @@ def PositiveAlternatingPrefixLabels {n m : ℕ}
   (StrictMono fun i => (label (P.prefixChain i)).index) ∧
     ∀ i : Fin n, (label (P.prefixChain i)).positive = decide (Even i.val)
 
-/-- Negative-first alternating prefix labels, the antipodal partner of the positive-first version. -/
+/-- Negative-first alternating prefix labels, the antipodal partner of the
+positive-first version. -/
 def NegativeAlternatingPrefixLabels {n m : ℕ}
     (label : NonzeroSignedSubset n → SignedLabel m) (P : SignedPermutation n) : Prop :=
   (StrictMono fun i => (label (P.prefixChain i)).index) ∧
@@ -1323,7 +1329,7 @@ theorem positive_negative_alternating_disjoint {n m : ℕ} (hn : 0 < n)
   let i : Fin n := ⟨0, hn⟩
   have hp := hpos.2 i
   have hn' := hneg.2 i
-  simp [i] at hp hn'
+  simp only [Even.zero, decide_true, Bool.not_true, i] at hp hn'
   rw [hp] at hn'
   simp at hn'
 
@@ -1426,7 +1432,8 @@ theorem alternatingPrefixLabelChains_card_one
     (label : NonzeroSignedSubset 1 → SignedLabel 0) :
     (alternatingPrefixLabelChains label).card = 2 := by
   classical
-  have huniv : alternatingPrefixLabelChains label = (Finset.univ : Finset (SignedPermutation 1)) := by
+  have huniv : alternatingPrefixLabelChains label =
+      (Finset.univ : Finset (SignedPermutation 1)) := by
     ext P
     simp only [Finset.mem_univ, iff_true]
     change P ∈ positiveAlternatingPrefixLabelChains label ∪
@@ -1616,7 +1623,7 @@ theorem endpoint_count_eq_two_mul_paths_of_endpoint_equiv
 
 theorem odd_card_positive_endpoints_of_path_endpoint_equiv
     {Path Base Positive Negative : Type*}
-    [Fintype Path] [Fintype Base] [Fintype Positive] [Fintype Negative]
+    [Finite Path] [Fintype Base] [Fintype Positive] [Fintype Negative]
     (Endpoint : Path → Type*) [∀ p : Path, Fintype (Endpoint p)]
     (pathAntipode : Path ≃ Path)
     (hinv : Function.Involutive pathAntipode)
@@ -1626,6 +1633,7 @@ theorem odd_card_positive_endpoints_of_path_endpoint_equiv
     (hbase : Fintype.card Base = 2)
     (hneg : Fintype.card Negative = Fintype.card Positive) :
     Odd (Fintype.card Positive) := by
+  let := Fintype.ofFinite Path
   exact odd_positive_endpoints_of_antipodal_path_count
     (Fintype.card Positive) (Fintype.card Negative) (Fintype.card Path)
     hneg
