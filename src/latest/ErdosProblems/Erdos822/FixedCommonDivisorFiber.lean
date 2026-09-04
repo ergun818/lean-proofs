@@ -227,7 +227,6 @@ theorem sum_inv_cofactor_fixedCommonDivisorPrimePairs_le_rough_classes
       rw [Finset.mul_sum]
       apply Finset.sum_congr rfl
       intro rq hrq
-      push_cast
       ring
     _ ≤ ((1 : ℝ) / k) *
         (((2 ^ (roughPart h y).primeFactors.card : ℕ) : ℝ) ^ 2 *

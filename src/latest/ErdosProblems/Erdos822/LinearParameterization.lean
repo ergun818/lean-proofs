@@ -22,7 +22,7 @@ namespace Erdos822
 natural parameter: the first coordinate advances by B and the second by A. -/
 theorem exists_common_parameter_of_coprime_linear_eq
     {A B p q p' q' : ℕ}
-    (hA : 0 < A) (hB : 0 < B) (hcop : A.Coprime B)
+    (_ : 0 < A) (hB : 0 < B) (hcop : A.Coprime B)
     (hqp : q ≤ p) (hq'p' : q' ≤ p')
     (heq : A * p + B * q' = A * q + B * p') :
     ∃ k : ℕ, p = q + B * k ∧ p' = q' + A * k := by
@@ -35,7 +35,7 @@ theorem exists_common_parameter_of_coprime_linear_eq
   obtain ⟨k, rfl⟩ := hBu
   have hv : v = A * k := by
     nlinarith
-  exact ⟨k, by ring, by simpa [hv]⟩
+  exact ⟨k, by ring, by simp [hv]⟩
 
 /-- The common parameter is unique as soon as the opposite coefficient is
 positive. -/

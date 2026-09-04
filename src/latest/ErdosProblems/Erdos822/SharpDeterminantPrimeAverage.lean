@@ -5,7 +5,7 @@ import ErdosProblems.Erdos822.SharpDeterminantFiber
 
 namespace Erdos822
 
-open scoped BigOperators Classical
+open scoped BigOperators
 open Filter
 
 theorem sum_inv_sq_smallDeterminantPrimes_le_prime_tail
@@ -37,7 +37,8 @@ theorem exists_eventually_sharp_smallDeterminantPrime_average (C : ℝ) :
   filter_upwards [hbound] with N hbound
   intro B x k r m' h U z cutoff hk hr hm' hlarge hlarge' hB hsupport hh hhN hmass hUN hz
   have hpoint (p : ℕ) (hp : p ∈ smallDeterminantPrimes U z k r h) :
-      (∑ q ∈ smallDeterminantLargePrimeFiberIn B N x k r m' p h, (1 : ℝ) / q) ≤ K / (p * h : ℕ) := by
+      (∑ q ∈ smallDeterminantLargePrimeFiberIn B N x k r m' p h, (1 : ℝ) / q) ≤
+        K / (p * h : ℕ) := by
     have hdata := mem_smallDeterminantPrimes_iff.mp hp
     exact hbound B x k r m' p h cutoff hdata.2.2.1 (hdata.2.1.trans hUN)
       hk hr hm' hlarge hlarge' hdata.2.2.2.1 hdata.2.2.2.2.1 hB hsupport

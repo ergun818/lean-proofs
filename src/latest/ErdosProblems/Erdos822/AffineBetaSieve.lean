@@ -25,7 +25,7 @@ open List
 /-- Rosser's upper main term bounds the actual affine sifted cardinality,
 with the standard square distribution-level loss. -/
 theorem twoAffineBoundingSieve_cardinality_le_upperMain
-    {a s b t X z y S : ℕ} (hz : 2 ≤ z) (hzy : z ≤ y) (hS : 1 ≤ S)
+    {a s b t X z y S : ℕ} (hz : 2 ≤ z) (hzy : z ≤ y) (_ : 1 ≤ S)
     (hadmissible : ∀ p : ℕ, p.Prime →
       p ∣ Erdos387.sievePrimeProduct z (y + 1) → ¬ p ∣ a ∧ ¬ p ∣ b) :
     let P := Erdos851.ascendingSievePrimes z y

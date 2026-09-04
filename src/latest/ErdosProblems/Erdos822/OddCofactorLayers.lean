@@ -122,7 +122,7 @@ theorem oddRawCofactors_le_pow_twenty_eight {N m : ℕ}
 /-- The two prime layers force every odd raw cofactor to lie well above
 the base scale.  This is useful when the later sieve endpoint is chosen as
 a natural root of that scale. -/
-theorem oddRawCofactors_ge_pow_twenty_five {N m : ℕ} (hN : 2 ≤ N)
+theorem oddRawCofactors_ge_pow_twenty_five {N m : ℕ} (_ : 2 ≤ N)
     (hm : m ∈ oddRawCofactors N) : N ^ 25 ≤ m := by
   rw [oddRawCofactors] at hm
   simp only [Finset.mem_image] at hm

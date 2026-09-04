@@ -132,6 +132,8 @@ theorem exists_filteredOdd_collisionEnergy_le_of_logMassMainSum :
         have : 1 ≤ N ^ 60 := one_le_pow₀ (by omega)
         exact this)
       hpos hlarge hG hsum
-  convert henergy using 1 <;> push_cast <;> ring
+  convert henergy using 1
+  push_cast
+  ring
 
 end Erdos822

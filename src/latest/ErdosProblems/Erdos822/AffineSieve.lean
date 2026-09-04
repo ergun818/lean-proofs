@@ -376,7 +376,8 @@ theorem twoAffineNu_le_pairShiftDensity_of_not_dvd_constants_one_slope
       by_cases hpa : p ∣ a
       · rw [affineRootResidues_eq_empty_of_dvd_slope_not_constant hpa hps,
           Finset.empty_union]
-        exact affineRootResidues_card_le_one_of_not_dvd_constant hp hpt
+        exact (affineRootResidues_card_eq_one_of_not_dvd hp
+          (hslopes.resolve_left (not_not.mpr hpa))).le
       · by_cases hpb : p ∣ b
         · rw [affineRootResidues_eq_empty_of_dvd_slope_not_constant hpb hpt,
             Finset.union_empty]

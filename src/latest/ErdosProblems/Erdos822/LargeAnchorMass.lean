@@ -6,7 +6,7 @@ import ErdosProblems.Erdos822.ResidueAboveAnchor
 
 namespace Erdos822
 
-open scoped BigOperators Classical
+open scoped BigOperators
 
 noncomputable def sameInnerSupportedPrimes (N S : ℕ) (C : ℝ) (l q' : ℕ) : Finset ℕ :=
   (largePrimes N).filter fun q ↦ q' < q ∧ l * q ∈ gilCofactors N S C ∧

@@ -47,7 +47,7 @@ theorem card_integerResidueInterval_le
       have hqdata := mem_integerResidueInterval_iff.mp hq
       have hq₀q : q₀ ≤ q := Finset.min'_le Q q hq
       have hmod : q₀ ≡ q [MOD d] := by
-        show q₀ % d = q % d
+        change q₀ % d = q % d
         exact hq₀data.2.2.trans hqdata.2.2.symm
       have hdvd : d ∣ q - q₀ := hmod.dvd'
       have hmul : d * ((q - q₀) / d) = q - q₀ :=
@@ -154,8 +154,9 @@ theorem sum_inv_integerResidueBlock_le
           (j * N ^ 21) ((j + 1) * N ^ 21)).card : ℝ) /
           (j * N ^ 21 + 1) := by
       convert sum_inv_integerResidueInterval_le_card_div d a
-        (j * N ^ 21) ((j + 1) * N ^ 21) using 1 <;>
-        push_cast <;> rfl
+        (j * N ^ 21) ((j + 1) * N ^ 21) using 1
+      push_cast
+      rfl
     _ ≤ (((N ^ 21 / d + 1 : ℕ) : ℝ) /
         (j * N ^ 21 + 1)) := by
       apply div_le_div_of_nonneg_right

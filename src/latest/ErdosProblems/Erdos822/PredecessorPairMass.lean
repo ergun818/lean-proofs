@@ -5,7 +5,7 @@ import ErdosProblems.Erdos822.InternalPrimeChannelBound
 
 namespace Erdos822
 
-open scoped BigOperators Classical
+open scoped BigOperators
 open Filter
 
 theorem exists_primePacket_tail_bound :
@@ -31,6 +31,7 @@ theorem exists_primePacket_tail_bound :
       mul_le_mul_of_nonneg_left (htail N y hy) (by positivity)
     _ = C * D * (b1DoubleLog T + 2 : ℝ) / ((y : ℝ) * Real.log (y : ℝ)) := by ring
 
+open Classical in
 theorem sum_inv_predecessor_common_prime_le_packets
     {N T y : ℕ} {A : Finset ℕ} (hA : A ⊆ Nat.primesLE T) :
     (∑ k ∈ oddSmallFactors N, (1 : ℝ) / k *
@@ -80,6 +81,7 @@ theorem sum_inv_predecessor_common_prime_le_packets
       intro p hp
       ring
 
+open Classical in
 theorem exists_predecessor_common_prime_mass_bound :
     ∃ C : ℝ, 0 < C ∧ ∀ N T y : ℕ, ∀ A : Finset ℕ,
       A ⊆ Nat.primesLE T → 2 ≤ y →
@@ -157,6 +159,7 @@ theorem eventually_harmonic_doubleLog_pow_div_small
       field_simp
     _ ≤ ε * Real.log (N : ℝ) := mul_le_mul_of_nonneg_right hcoeff (by linarith)
 
+open Classical in
 theorem eventually_predecessor_common_prime_mass_small
     {ε : ℝ} (hε : 0 < ε) (a : ℕ) :
     ∀ᶠ N : ℕ in atTop, ∀ A : Finset ℕ, A ⊆ Nat.primesLE (N ^ a) →

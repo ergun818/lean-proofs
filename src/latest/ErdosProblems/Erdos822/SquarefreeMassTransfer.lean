@@ -72,7 +72,7 @@ theorem bad_largeSquarefreeFilter_subset_largeSquareBad
   classical
   intro m hm
   have hmData := mem_badLargeSquarefreeFilter_iff.mp hm
-  push_neg at hmData
+  push Not at hmData
   obtain ⟨p, hp, hyp, hpsq⟩ := hmData.2
   rw [mem_largeSquareBadCoprimeOddCofactors_iff]
   refine ⟨p, ?_, ?_⟩

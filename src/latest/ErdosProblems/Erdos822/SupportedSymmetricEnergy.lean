@@ -138,7 +138,7 @@ theorem exists_filteredOdd_collisionEnergy_le_of_supportedSymmetricB5Sum :
         apply Finset.sum_le_sum
         intro m' hm'
         unfold supportedSieveError
-        split_ifs <;> norm_num <;> positivity
+        split_ifs <;> norm_num
       _ ≤ ∑ m ∈ B,
             ∑ m' ∈ (oddRawCofactors N).erase m,
               (((y ^ S : ℕ) : ℝ) ^ 2) := by
@@ -182,6 +182,8 @@ theorem exists_filteredOdd_collisionEnergy_le_of_supportedSymmetricB5Sum :
         have : 1 ≤ N ^ 60 := one_le_pow₀ (by omega)
         exact this)
       hpos hlarge hG hsum
-  convert henergy using 1 <;> push_cast <;> ring
+  convert henergy using 1
+  push_cast
+  ring
 
 end Erdos822

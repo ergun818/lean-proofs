@@ -11,7 +11,7 @@ import ErdosProblems.Erdos822.FinsetSumUnion
 
 namespace Erdos822
 
-open scoped BigOperators Classical
+open scoped BigOperators
 
 theorem sum_inv_two_pow_Ico_le (J K : ℕ) :
     ∑ j ∈ Finset.Ico J K, (1 : ℝ) / (2 : ℝ) ^ j ≤ 2 / (2 : ℝ) ^ J := by

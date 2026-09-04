@@ -108,10 +108,10 @@ theorem collisionEnergy_image_eq_of_injOn
     obtain ⟨u, hu, huEq⟩ := Finset.mem_image.mp hz.1.1
     obtain ⟨v, hv, hvEq⟩ := Finset.mem_image.mp hz.1.2
     refine ⟨(u, v), ?_, ?_⟩
-    rw [collisionPairs, Finset.mem_filter, Finset.mem_product]
-    refine ⟨⟨hu, hv⟩, ?_⟩
-    simpa [huEq, hvEq] using hz.2
-    exact Prod.ext huEq hvEq
+    · rw [collisionPairs, Finset.mem_filter, Finset.mem_product]
+      refine ⟨⟨hu, hv⟩, ?_⟩
+      simpa [huEq, hvEq] using hz.2
+    · exact Prod.ext huEq hvEq
 
 end FiniteEnergy
 

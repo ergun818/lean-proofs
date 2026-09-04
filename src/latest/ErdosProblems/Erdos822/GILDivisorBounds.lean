@@ -6,7 +6,7 @@ import ErdosProblems.Erdos822.RoughDivisorEuler
 
 namespace Erdos822
 
-open scoped BigOperators Classical
+open scoped BigOperators
 open Filter
 
 theorem gilCofactors_roughDivisor_squarefree {N S m h : ℕ} {C : ℝ}
@@ -35,7 +35,8 @@ theorem eventually_gilCofactors_rough_divisor_euler_bound
   intro m hm h hh
   have hmpos := oddRawCofactors_pos (gilCofactors_subset_oddRaw N S C hm)
   have hsne : shiftedTotient m ≠ 0 := by dsimp [shiftedTotient]; omega
-  have hprimes := (sum_inv_roughPart_primeFactors_le_full (y := b1Cutoff N) hsne hh).trans (hmass m hm)
+  have hprimes := (sum_inv_roughPart_primeFactors_le_full (y := b1Cutoff N) hsne hh).trans
+    (hmass m hm)
   exact (sum_divisors_four_pow_primeFactorsCard_div_le_exp
     (gilCofactors_roughDivisor_squarefree hm hh)).trans
       (Real.exp_le_exp.mpr (mul_le_mul_of_nonneg_left hprimes (by norm_num)))

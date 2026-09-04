@@ -49,7 +49,7 @@ theorem sum_inv_shiftedDivisibleOddCofactors_eq_triple_sum
 the unrestricted large-prime mass, while the remaining factors use a
 uniform reciprocal bound for their shifted-divisible q-fibers. -/
 theorem sum_inv_shiftedDivisibleOddCofactors_le_split
-    {N p : ℕ} (hN : 2 ≤ N) {F : ℝ} (hF : 0 ≤ F)
+    {N p : ℕ} (hN : 2 ≤ N) {F : ℝ} (_ : 0 ≤ F)
     (hfiber : ∀ k ∈ oddSmallFactors N, ¬ p ∣ k →
       ∀ r ∈ middlePrimes N,
         ∑ q ∈ shiftedDivisibleLargePrimes N p k r,
@@ -98,7 +98,6 @@ theorem sum_inv_shiftedDivisibleOddCofactors_le_split
             rw [Finset.mul_sum]
             apply Finset.sum_congr rfl
             intro q hq
-            push_cast
             ring
       _ = ((1 : ℝ) / k) *
           (∑ r ∈ middlePrimes N, (1 : ℝ) / r) *
@@ -129,7 +128,6 @@ theorem sum_inv_shiftedDivisibleOddCofactors_le_split
             rw [Finset.mul_sum]
             apply Finset.sum_congr rfl
             intro q hq
-            push_cast
             ring
           _ ≤ ((1 : ℝ) / k * ((1 : ℝ) / r)) * F := by
             exact mul_le_mul_of_nonneg_left hqr (by positivity)

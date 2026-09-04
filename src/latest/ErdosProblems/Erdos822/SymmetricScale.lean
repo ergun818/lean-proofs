@@ -62,7 +62,7 @@ theorem outerCollisionPairs_card_comm (x m m' : ℕ) :
 /-- With the larger cofactor second, the quotient part of the primitive
 scale is at most x times the shifted-coefficient gcd divided by m*m'. -/
 theorem reducedScale_sub_one_mul_le_of_le
-    {x m m' : ℕ} (hm : 0 < m) (hm' : 0 < m') (hmm' : m ≤ m') :
+    {x m m' : ℕ} (hm : 0 < m) (_ : 0 < m') (hmm' : m ≤ m') :
     (reducedScale x m m' - 1) * (m * m') ≤
       x * shiftedCoefficientGcd m m' := by
   let B := reducedCollisionRight m m'

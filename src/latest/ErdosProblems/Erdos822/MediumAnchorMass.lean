@@ -5,7 +5,7 @@ import ErdosProblems.Erdos822.MediumPairMass
 
 namespace Erdos822
 
-open scoped BigOperators Classical
+open scoped BigOperators
 
 noncomputable def mediumRoughDivisors (N m' : ℕ) : Finset ℕ :=
   (roughPart (shiftedTotient m') (b1Cutoff N)).divisors.filter
@@ -48,7 +48,8 @@ theorem mediumGcdAnchorTerm_le_roughDivisor_sum {N S m m' : ℕ} {C : ℝ}
     calc
       _ ≤ (N : ℝ) * d * ((1 : ℝ) / m) := by
         have hgR : (g : ℝ) ≤ (N : ℝ) * d := by exact_mod_cast hg
-        simpa [div_eq_mul_inv] using mul_le_mul_of_nonneg_right hgR (by positivity : (0 : ℝ) ≤ (m : ℝ)⁻¹)
+        simpa [div_eq_mul_inv] using mul_le_mul_of_nonneg_right hgR
+          (by positivity : (0 : ℝ) ≤ (m : ℝ)⁻¹)
       _ ≤ _ := by
         have hsingle := Finset.single_le_sum
           (s := mediumRoughDivisors N m')
@@ -92,7 +93,8 @@ theorem sum_mediumGcdAnchorTerm_le {N S m' : ℕ} {C : ℝ}
       (5 : ℝ) ^ R.primeFactors.card := by
     calc
       _ ≤ ∑ d ∈ R.divisors, (4 : ℝ) ^ d.primeFactors.card :=
-        Finset.sum_le_sum_of_subset_of_nonneg (Finset.filter_subset _ _) (fun d hd hnot ↦ by positivity)
+        Finset.sum_le_sum_of_subset_of_nonneg (Finset.filter_subset _ _)
+          (fun d hd hnot ↦ by positivity)
       _ = _ := by
         exact_mod_cast sum_divisors_four_pow_primeFactorsCard_eq_five_pow
           (gilCofactors_roughDivisor_squarefree hm' (dvd_refl _))
@@ -107,9 +109,11 @@ theorem sum_mediumGcdAnchorTerm_le {N S m' : ℕ} {C : ℝ}
             (1 : ℝ) / m else 0) := by
       rw [Finset.sum_comm]
       simp only [Finset.mul_sum]
-    _ ≤ ∑ d ∈ mediumRoughDivisors N m', 4 * (harmonic N : ℝ) ^ 3 / N * (4 : ℝ) ^ d.primeFactors.card :=
+    _ ≤ ∑ d ∈ mediumRoughDivisors N m',
+        4 * (harmonic N : ℝ) ^ 3 / N * (4 : ℝ) ^ d.primeFactors.card :=
       Finset.sum_le_sum hfiber
-    _ = (4 * (harmonic N : ℝ) ^ 3 / N) * ∑ d ∈ mediumRoughDivisors N m', (4 : ℝ) ^ d.primeFactors.card :=
+    _ = (4 * (harmonic N : ℝ) ^ 3 / N) *
+        ∑ d ∈ mediumRoughDivisors N m', (4 : ℝ) ^ d.primeFactors.card :=
       (Finset.mul_sum ..).symm
     _ ≤ _ := mul_le_mul_of_nonneg_left hsum (by positivity)
 

@@ -5,7 +5,7 @@ import ErdosProblems.Erdos822.DeterminantSize
 
 namespace Erdos822
 
-open scoped BigOperators Classical
+open scoped BigOperators
 open Filter
 
 theorem exists_eventually_gil_singularFactor_le_charge {S : ℕ} (hS : 0 < S) (C : ℝ) :
@@ -109,7 +109,8 @@ theorem exists_eventually_gil_fullSingularFactor_le_charge {S : ℕ} (hS : 0 < S
   intro k r q m' h U ht hm hm' hne hsupport hh hLU
   have hyZ : b1Cutoff N ≤ b1DoubleLog N := nthRoot_le_self_of_pos (by norm_num : 0 < 4)
   have hyU : b1Cutoff N ≤ U := hyZ.trans ((Nat.log_le_self 2 (Nat.log 2 N)).trans hLU)
-  have hlogy : 0 < Real.log (b1Cutoff N : ℝ) := Real.log_pos (by exact_mod_cast (by omega : 1 < b1Cutoff N))
+  have hlogy : 0 < Real.log (b1Cutoff N : ℝ) :=
+    Real.log_pos (by exact_mod_cast (by omega : 1 < b1Cutoff N))
   have hlogZ : 0 < Real.log (b1DoubleLog N : ℝ) := Real.log_pos
     (by exact_mod_cast (show 1 < b1DoubleLog N by omega))
   have hsmall : Erdos851.singularFactor (reducedTotientDet (k * r * q) m') 2 (b1Cutoff N) ≤

@@ -6,7 +6,7 @@ import ErdosProblems.Erdos387.RoughHarmonicEstimate
 
 namespace Erdos822
 
-open scoped BigOperators Classical
+open scoped BigOperators
 
 theorem exists_roughReciprocalMass_le_const_log_ratio :
     ∃ A : ℝ, 0 < A ∧ ∀ z T : ℕ, 2 ≤ z → z ≤ T →

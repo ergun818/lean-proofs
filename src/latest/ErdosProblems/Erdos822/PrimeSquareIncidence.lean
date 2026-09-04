@@ -30,7 +30,7 @@ theorem mem_squareDivisibleCoprimeOddCofactors_iff
     m ∈ squareDivisibleCoprimeOddCofactors N p ↔
       m ∈ oddRawCofactors N ∧
         p ^ 2 ∣ shiftedTotient m ∧ ¬ p ∣ m := by
-  simp [squareDivisibleCoprimeOddCofactors, and_assoc]
+  simp [squareDivisibleCoprimeOddCofactors]
 
 /-- Exact expansion before the p-coprime restriction is used. -/
 theorem sum_inv_squareDivisibleCoprimeOddCofactors_eq_triple
@@ -185,7 +185,6 @@ theorem sum_inv_squareDivisibleCoprimeOddCofactors_le_of_fiber_bound
           rw [Finset.mul_sum]
           apply Finset.sum_congr rfl
           intro q hq
-          push_cast
           ring
         _ ≤ ((1 : ℝ) / k * ((1 : ℝ) / r)) * F := by
           exact mul_le_mul_of_nonneg_left hqsum

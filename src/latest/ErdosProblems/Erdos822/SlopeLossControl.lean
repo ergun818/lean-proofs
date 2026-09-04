@@ -58,14 +58,14 @@ theorem slopeReciprocalMass_reducedCollision_le_shiftedTotientMass
   by_cases hleft : p ∣ reducedCollisionLeft m m'
   · have hshift : p ∣ shiftedTotient m :=
       dvd_shiftedTotient_of_dvd_reducedCollisionLeft hleft
-    simp only [one_div, ge_iff_le]
-    positivity
+    rw [if_pos (Or.inr hleft), if_pos hshift]
+    exact le_add_of_nonneg_right (by positivity)
   · by_cases hright : p ∣ reducedCollisionRight m m'
     · have hshift : p ∣ shiftedTotient m' :=
         dvd_shiftedTotient_of_dvd_reducedCollisionRight hright
-      simp only [one_div, ge_iff_le]
-      positivity
-    · simp only [one_div]
+      rw [if_pos (Or.inl hright), if_pos hshift]
+      exact le_add_of_nonneg_left (by positivity)
+    · rw [if_neg (by simp [hleft, hright])]
       positivity
 
 /-- In particular, a uniform bound on the two shifted prime masses gives a

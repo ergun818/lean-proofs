@@ -6,7 +6,7 @@ import ErdosProblems.Erdos822.WeightedCommonDivisorRanges
 
 namespace Erdos822
 
-open scoped BigOperators Classical
+open scoped BigOperators
 open Filter
 
 theorem mediumGcdAnchorTerm_nonneg (N m m' : ℕ) : 0 ≤ mediumGcdAnchorTerm N m m' := by

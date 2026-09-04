@@ -62,11 +62,11 @@ the same N^56 count. -/
 theorem sum_const_offDiagonal_le_pow_fifty_six_of_subset_oddRaw
     {N : ℕ} {B : Finset ℕ} {C : ℝ}
     (hB : B ⊆ oddRawCofactors N) (hC : 0 ≤ C) :
-    (∑ m ∈ B, ∑ m' ∈ B.erase m, C) ≤
+    (∑ m ∈ B, ∑ _ ∈ B.erase m, C) ≤
       C * ((N ^ 56 : ℕ) : ℝ) := by
   have hcount := sum_card_erase_le_pow_fifty_six_of_subset_oddRaw hB
   calc
-    (∑ m ∈ B, ∑ m' ∈ B.erase m, C) =
+    (∑ m ∈ B, ∑ _ ∈ B.erase m, C) =
         C * ((∑ m ∈ B, (B.erase m).card : ℕ) : ℝ) := by
       simp_rw [Finset.sum_const, nsmul_eq_mul]
       push_cast

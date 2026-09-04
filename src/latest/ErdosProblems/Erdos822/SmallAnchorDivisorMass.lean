@@ -6,7 +6,7 @@ import ErdosProblems.Erdos822.SmoothClassHarmonic
 
 namespace Erdos822
 
-open scoped BigOperators Classical
+open scoped BigOperators
 open Filter
 
 theorem exists_eventually_small_anchor_divisor_mass_bound {S : ℕ} (hS : 0 < S) (C : ℝ) :

@@ -5,7 +5,7 @@ import ErdosProblems.Erdos822.KernelSplit
 
 namespace Erdos822
 
-open scoped BigOperators Classical
+open scoped BigOperators
 
 noncomputable def primeSingularProduct (P : Finset ℕ) : ℝ :=
   ∏ p ∈ P, (p : ℝ) / ((p : ℝ) - 1)
@@ -70,7 +70,9 @@ theorem exists_restrictedSingularProduct_firstMoment_bound :
   have hM : 0 ≤ D * (Real.log (y : ℝ) / Real.log (z : ℝ)) := by positivity
   by_cases hf1 : f ≤ 1
   · have h := primeSingularProduct_le_exp (P := P) (fun p hp ↦
-      ⟨(Erdos851.mem_sievePrimes.mp (hP hp)).2.2, by have := (Erdos851.mem_sievePrimes.mp (hP hp)).1; omega⟩)
+      ⟨(Erdos851.mem_sievePrimes.mp (hP hp)).2.2, by
+        have := (Erdos851.mem_sievePrimes.mp (hP hp)).1
+        omega⟩)
     calc
       _ ≤ Real.exp (2 * f) := h
       _ ≤ Real.exp 2 := Real.exp_le_exp.mpr (by linarith only [hf1])

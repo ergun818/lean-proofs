@@ -30,7 +30,7 @@ def filteredOddPowerInputs (B : ℕ → Finset ℕ) (x : ℕ) : Finset ℕ :=
 
 theorem filteredOddPowerInputs_bounded
     (B : ℕ → Finset ℕ)
-    (hB : ∀ N, B N ⊆ oddRawCofactors N) (x : ℕ) :
+    (_ : ∀ N, B N ⊆ oddRawCofactors N) (x : ℕ) :
     ∀ n ∈ filteredOddPowerInputs B x, n ≤ x := by
   intro n hn
   let N := Nat.nthRoot 60 x

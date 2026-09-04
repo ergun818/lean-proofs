@@ -6,7 +6,7 @@ import ErdosProblems.Erdos822.AnchorCommonDivisorMass
 
 namespace Erdos822
 
-open scoped BigOperators Classical
+open scoped BigOperators
 
 theorem medium_progression_product_le {N d : ℕ}
     (hN : 2 ≤ N) (hdlo : N ^ 2 < d) (hdhi : d ≤ N ^ 20) :
@@ -31,7 +31,7 @@ theorem medium_progression_product_le {N d : ℕ}
   calc
     _ = 1 / (d : ℝ) + 1 / (N : ℝ) ^ 4 + 1 / (N : ℝ) ^ 21 + (d : ℝ) / (N : ℝ) ^ 25 := by
       field_simp
-      <;> ring
+      ring
     _ ≤ 1 / (N : ℝ) ^ 2 + 1 / (N : ℝ) ^ 2 + 1 / (N : ℝ) ^ 2 + 1 / (N : ℝ) ^ 2 :=
       add_le_add (add_le_add (add_le_add h1 h2) h3) h4
     _ = _ := by ring

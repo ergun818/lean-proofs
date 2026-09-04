@@ -7,7 +7,7 @@ import ErdosProblems.Erdos822.SmallDeterminantFilteredAverage
 
 namespace Erdos822
 
-open scoped BigOperators Classical
+open scoped BigOperators
 open Filter
 
 theorem exists_eventually_sharp_smallDeterminantFiber_bound (C : ℝ) :

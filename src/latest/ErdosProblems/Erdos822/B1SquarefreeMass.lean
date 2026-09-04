@@ -6,7 +6,7 @@ import ErdosProblems.Erdos822.LargeCutoffSquarefreeMass
 
 namespace Erdos822
 
-open scoped BigOperators Classical
+open scoped BigOperators
 open Filter
 
 def smallSquareBadCofactors (N y : ℕ) : Finset ℕ :=
@@ -145,6 +145,7 @@ theorem exists_eventually_sum_inv_gilCofactors_lower :
     ∃ S : ℕ, ∃ C c : ℝ, 101 ≤ S ∧ 0 < C ∧ 0 < c ∧
       ∀ᶠ N : ℕ in atTop,
         c * Real.log (N : ℝ) ≤ ∑ m ∈ gilCofactors N S C, (1 : ℝ) / m := by
+  classical
   obtain ⟨S, C, c, hS, hC, hc, hmass⟩ := exists_eventually_sum_inv_totientB1B5Cofactors_lower
   refine ⟨S, C, c / 2, hS, hC, by positivity, ?_⟩
   filter_upwards [hmass, eventually_largeSquareBadCoprimeOddCofactors_b1_mass_small
@@ -165,7 +166,8 @@ theorem exists_eventually_sum_inv_gilCofactors_lower :
     (fun m ↦ ∀ p : ℕ, p.Prime → b1Cutoff N < p → ¬ p ^ 2 ∣ shiftedTotient m)
     (fun m ↦ (1 : ℝ) / m)
   change (∑ m ∈ gilCofactors N S C, (1 : ℝ) / m) +
-    (∑ m ∈ badLargeSquarefreeFilter (totientB1B5Cofactors N S C) (b1Cutoff N), (1 : ℝ) / m) = _ at hsplit
+    (∑ m ∈ badLargeSquarefreeFilter (totientB1B5Cofactors N S C) (b1Cutoff N),
+      (1 : ℝ) / m) = _ at hsplit
   linarith only [hmassN, hbad, hbad', hsplit]
 
 theorem gilCofactors_preserving {N S m : ℕ} {C : ℝ}

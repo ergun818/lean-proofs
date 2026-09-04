@@ -6,8 +6,9 @@ import ErdosProblems.Erdos822.PrimeMassArithmetic
 
 namespace Erdos822
 
-open scoped BigOperators Classical
+open scoped BigOperators
 
+open Classical in
 theorem primeSingularProduct_filter_mul_compl (P : Finset ℕ) (Q : ℕ → Prop) :
     primeSingularProduct P = primeSingularProduct (P.filter Q) *
       primeSingularProduct (P.filter (fun p ↦ ¬ Q p)) := by
@@ -40,7 +41,8 @@ theorem sum_inv_primeFilter_dvd_le_tail {P : Finset ℕ} {a z : ℕ}
   apply Finset.sum_le_sum_of_subset_of_nonneg
   · intro p hp
     obtain ⟨hp, hpa⟩ := Finset.mem_filter.mp hp
-    exact mem_primeFactorsAbove_iff.mpr ⟨Nat.mem_primeFactors.mpr ⟨(hP p hp).1, hpa, ha⟩, (hP p hp).2⟩
+    exact mem_primeFactorsAbove_iff.mpr
+      ⟨Nat.mem_primeFactors.mpr ⟨(hP p hp).1, hpa, ha⟩, (hP p hp).2⟩
   · intro p hp hnot
     positivity
 

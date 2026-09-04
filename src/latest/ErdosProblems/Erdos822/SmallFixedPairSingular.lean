@@ -8,7 +8,7 @@ import ErdosProblems.Erdos822.MediumRangeGcdMass
 
 namespace Erdos822
 
-open scoped BigOperators Classical
+open scoped BigOperators
 open Filter
 
 noncomputable def smallOffDiagonalPrimePairs (N S : ℕ) (C : ℝ) (k m' h : ℕ) : Finset (ℕ × ℕ) :=
@@ -41,7 +41,8 @@ theorem exists_eventually_small_fixedPair_singular_bound {S : ℕ} (hS : 0 < S) 
   have hlogZ : 1 ≤ Real.log (Z : ℝ) := BoundedGaps.Maynard.one_le_log_natCast hZ
   have hlogZpos : 0 < Real.log (Z : ℝ) := by linarith only [hlogZ]
   have hZR : (0 : ℝ) < Z := by exact_mod_cast (by omega : 0 < Z)
-  have hlogy : 0 < Real.log (b1Cutoff N : ℝ) := Real.log_pos (by exact_mod_cast (by omega : 1 < b1Cutoff N))
+  have hlogy : 0 < Real.log (b1Cutoff N : ℝ) :=
+    Real.log_pos (by exact_mod_cast (by omega : 1 < b1Cutoff N))
   have hR : 0 ≤ R := by dsimp [R]; positivity
   have hB := gilCofactors_subset_squarefreeLargeGcdFree N S C
   have hhMass := hmass m' hm' h hhF
@@ -59,7 +60,8 @@ theorem exists_eventually_small_fixedPair_singular_bound {S : ℕ} (hS : 0 < S) 
       _ ≤ _ := div_le_self (by positivity) (one_le_pow₀ hlogZ)
   calc
     _ ≤ M * Real.log (b1Cutoff N : ℝ) *
-        ∑ rq ∈ smallOffDiagonalPrimePairs N S C k m' h, ((1 : ℝ) / (rq.1 * rq.2 : ℕ)) * (1 + R * f rq) := by
+        ∑ rq ∈ smallOffDiagonalPrimePairs N S C k m' h,
+          ((1 : ℝ) / (rq.1 * rq.2 : ℕ)) * (1 + R * f rq) := by
       rw [Finset.mul_sum]
       apply Finset.sum_le_sum
       rintro ⟨r, q⟩ hrq
@@ -68,7 +70,9 @@ theorem exists_eventually_small_fixedPair_singular_bound {S : ℕ} (hS : 0 < S) 
       have hpoint := hmajor k r q m' h U (mem_oddCofactorTriples_iff.mpr ⟨hk, hd.1, hd.2.1⟩)
         hd.2.2.1 hm' hne hd.2.2.2.1 hhF hLU
       have h := mul_le_mul_of_nonneg_left hpoint (by positivity : (0 : ℝ) ≤ 1 / (r * q : ℕ))
-      convert h using 1 <;> dsimp [R, f, L, Z] <;> ring
+      convert h using 1
+      dsimp [R, f, L, Z]
+      ring
     _ ≤ M * Real.log (b1Cutoff N : ℝ) *
         ∑ rq ∈ Q, ((1 : ℝ) / (rq.1 * rq.2 : ℕ)) * (1 + R * f rq) := by
       apply mul_le_mul_of_nonneg_left _ (by positivity)

@@ -7,7 +7,7 @@ import ErdosProblems.Erdos822.PrimeReciprocalUpper
 
 namespace Erdos822
 
-open scoped BigOperators Classical
+open scoped BigOperators
 open Filter
 
 theorem roughPart_eq_self_of_primeFactors_gt {n y : ℕ} (hn : n ≠ 0)

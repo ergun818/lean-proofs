@@ -37,7 +37,6 @@ theorem sum_inv_sq_le_inv_of_subset_Ioc
           (sum_Ioc_inv_sq_le_sub (α := ℝ) (k := y) (n := U)
             (by omega) hyU)
         norm_num only [one_div, Nat.cast_pow] at h ⊢
-        push_cast at h
         exact h
       _ ≤ (1 : ℝ) / y := by
         have hnonneg : 0 ≤ (1 : ℝ) / U := by positivity
@@ -51,7 +50,7 @@ theorem sum_inv_sq_le_inv_of_subset_Ioc
       apply Finset.not_nonempty_iff_eq_empty.mp
       rintro ⟨n, hn⟩
       have := hS hn
-      simpa [hIoc] using this
+      simp [hIoc] at this
     simp [hEmpty]
 
 end Erdos822

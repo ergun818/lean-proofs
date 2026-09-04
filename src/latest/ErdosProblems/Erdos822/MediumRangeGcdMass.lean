@@ -5,7 +5,7 @@ import ErdosProblems.Erdos822.MediumAnchorMass
 
 namespace Erdos822
 
-open scoped BigOperators Classical
+open scoped BigOperators
 open Filter
 
 theorem eventually_sum_inv_gilCofactors_le_harmonic (S : ℕ) (C : ℝ) :

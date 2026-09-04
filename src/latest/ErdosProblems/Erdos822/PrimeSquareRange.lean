@@ -34,7 +34,7 @@ theorem mem_largeSquarePrimes_iff {N y p : ℕ} :
 explicit square-prime range. -/
 theorem prime_le_two_mul_pow_fourteen_of_sq_dvd_shifted
     {N m p : ℕ} (hN : 1 ≤ N) (hm : m ∈ oddRawCofactors N)
-    (hp : p.Prime) (hpsq : p ^ 2 ∣ shiftedTotient m) :
+    (_ : p.Prime) (hpsq : p ^ 2 ∣ shiftedTotient m) :
     p ≤ 2 * N ^ 14 := by
   have hmle : m ≤ N ^ 28 := oddRawCofactors_le_pow_twenty_eight hm
   have hshiftle : shiftedTotient m ≤ 2 * N ^ 28 :=

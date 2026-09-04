@@ -5,7 +5,7 @@ import ErdosProblems.Erdos822.FullShiftedPrimeMass
 
 namespace Erdos822
 
-open scoped BigOperators Classical
+open scoped BigOperators
 open Filter
 
 theorem prime_sq_dvd_or_primeFactor_pred_of_dvd_totient
@@ -46,7 +46,8 @@ theorem sum_inv_totient_divisible_Icc_le {N p : ℕ} (hp : p.Prime) :
     exact div_le_div_of_nonneg_right (harmonic_cast_mono (Nat.div_le_self N d)) (by positivity)
   calc
     _ ≤ (∑ n ∈ (Finset.Icc 1 N).filter (p ^ 2 ∣ ·), (1 : ℝ) / n) +
-        (∑ n ∈ (b1PrimePacket N p).biUnion (fun q ↦ (Finset.Icc 1 N).filter (q ∣ ·)), (1 : ℝ) / n) :=
+        (∑ n ∈ (b1PrimePacket N p).biUnion (fun q ↦ (Finset.Icc 1 N).filter (q ∣ ·)),
+          (1 : ℝ) / n) :=
       (Finset.sum_le_sum_of_subset_of_nonneg hsub (fun n hn hnot ↦ by positivity)).trans
         (sum_union_le_add_sum (fun n hn ↦ by positivity))
     _ ≤ (harmonic N : ℝ) / (p ^ 2 : ℕ) +
@@ -79,7 +80,8 @@ theorem totientPrimeTailMoment_eq_incidence (N z : ℕ) :
     have hφpos := Nat.totient_pos.mpr (Finset.mem_Icc.mp hn).1
     constructor
     · rintro ⟨⟨hp, hdiv, hne⟩, hzp⟩
-      exact ⟨⟨⟨(Nat.le_of_dvd hφpos hdiv).trans ((Nat.totient_le n).trans (Finset.mem_Icc.mp hn).2), hp⟩,
+      exact ⟨⟨⟨(Nat.le_of_dvd hφpos hdiv).trans
+        ((Nat.totient_le n).trans (Finset.mem_Icc.mp hn).2), hp⟩,
         hzp⟩, hdiv⟩
     · rintro ⟨⟨⟨hpN, hp⟩, hzp⟩, hdiv⟩
       exact ⟨⟨hp, hdiv, hφpos.ne'⟩, hzp⟩
@@ -113,20 +115,24 @@ theorem exists_totientPrimeTailMoment_bound :
     rw [harmonic_eq_sum_Icc, Rat.cast_sum]
     exact Finset.sum_nonneg fun n hn ↦ by positivity
   have hden : 0 < (z : ℝ) * Real.log (z : ℝ) :=
-    mul_pos (by exact_mod_cast (show 0 < z by omega)) (Real.log_pos (by exact_mod_cast (show 1 < z by omega)))
+    mul_pos (by exact_mod_cast (show 0 < z by omega))
+      (Real.log_pos (by exact_mod_cast (show 1 < z by omega)))
   have hcube : (∑ p ∈ (Nat.primesLE N).filter (z < ·), ((1 : ℝ) / p) * (1 / (p : ℝ) ^ 2)) ≤
       D / ((z : ℝ) * Real.log (z : ℝ)) := by
     refine (Finset.sum_le_sum ?_).trans (htail N z hz)
     intro p hp
-    have hp1 : (1 : ℝ) ≤ p := by exact_mod_cast (Nat.mem_primesLE.mp (Finset.mem_filter.mp hp).1).2.one_le
+    have hp1 : (1 : ℝ) ≤ p := by
+      exact_mod_cast (Nat.mem_primesLE.mp (Finset.mem_filter.mp hp).1).2.one_le
     have hfrac : (1 : ℝ) / p ≤ 1 := (div_le_one (by linarith : (0 : ℝ) < p)).mpr hp1
-    simpa only [one_mul] using mul_le_mul_of_nonneg_right hfrac (by positivity : (0 : ℝ) ≤ 1 / (p : ℝ) ^ 2)
+    simpa only [one_mul] using mul_le_mul_of_nonneg_right hfrac
+      (by positivity : (0 : ℝ) ≤ 1 / (p : ℝ) ^ 2)
   rw [totientPrimeTailMoment_eq_incidence]
   calc
     _ ≤ ∑ p ∈ (Nat.primesLE N).filter (z < ·), (1 : ℝ) / p *
         ((harmonic N : ℝ) * ((1 : ℝ) / (p : ℝ) ^ 2 + packetPrimeMean (b1PrimePacket N p))) := by
       exact Finset.sum_le_sum fun p hp ↦ mul_le_mul_of_nonneg_left
-        (sum_inv_totient_divisible_Icc_le (Nat.mem_primesLE.mp (Finset.mem_filter.mp hp).1).2) (by positivity)
+        (sum_inv_totient_divisible_Icc_le (Nat.mem_primesLE.mp (Finset.mem_filter.mp hp).1).2)
+        (by positivity)
     _ = (harmonic N : ℝ) *
         ((∑ p ∈ (Nat.primesLE N).filter (z < ·), ((1 : ℝ) / p) * (1 / (p : ℝ) ^ 2)) +
         ∑ p ∈ (Nat.primesLE N).filter (z < ·), packetPrimeMean (b1PrimePacket N p) / p) := by
@@ -170,7 +176,8 @@ theorem eventually_totientPrimeTailMoment_power_small
     tendsto_b1DoubleLog_atTop.eventually_ge_atTop 2, eventually_ge_atTop 1]
     with N hsmall hZ hN
   have hden : 0 ≤ (b1DoubleLog N : ℝ) * Real.log (b1DoubleLog N : ℝ) :=
-    mul_nonneg (by positivity) (Real.log_nonneg (by exact_mod_cast (show 1 ≤ b1DoubleLog N by omega)))
+    mul_nonneg (by positivity)
+      (Real.log_nonneg (by exact_mod_cast (show 1 ≤ b1DoubleLog N by omega)))
   calc
     _ ≤ C * (harmonic (N ^ a) : ℝ) * (b1DoubleLog (N ^ a) + 2 : ℝ) /
         ((b1DoubleLog N : ℝ) * Real.log (b1DoubleLog N : ℝ)) := hbound _ _ hZ
@@ -200,7 +207,8 @@ theorem sum_inv_totientTailBadOddCofactors_le_moment (N : ℕ) :
       apply Finset.sum_le_sum_of_subset_of_nonneg
       · intro m hm
         have hmraw := (Finset.mem_filter.mp hm).1
-        exact Finset.mem_Icc.mpr ⟨oddRawCofactors_pos hmraw, oddRawCofactors_le_pow_twenty_eight hmraw⟩
+        exact Finset.mem_Icc.mpr
+          ⟨oddRawCofactors_pos hmraw, oddRawCofactors_le_pow_twenty_eight hmraw⟩
       · intro m hm hnot
         positivity
     _ = _ := rfl

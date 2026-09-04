@@ -22,7 +22,8 @@ theorem exists_eventually_gilOuterInputs_card_linear :
   obtain ⟨S, C, c, hS, hC, hc, hmass⟩ := exists_eventually_sum_inv_gilCofactors_lower
   refine ⟨S, C, c / 1200, hS, hC, by positivity, ?_⟩
   simpa only [gilOuterInputs, Nat.cast_pow] using
-    eventually_outerInputs_card_linear_of_log_mass hc (fun N ↦ gilCofactors_subset_oddRaw N S C) hmass
+    eventually_outerInputs_card_linear_of_log_mass hc
+      (fun N ↦ gilCofactors_subset_oddRaw N S C) hmass
 
 #print axioms exists_eventually_gilOuterInputs_card_linear
 

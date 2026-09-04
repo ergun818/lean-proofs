@@ -39,7 +39,6 @@ theorem sum_inv_supported_commonDivisor_eq_fixedPrimePairs
   rw [Finset.sum_filter, ← Finset.sum_product']
   apply Finset.sum_congr rfl
   rintro ⟨r, q⟩ hrq
-  simp only [and_assoc]
   by_cases hmB : k * r * q ∈ B
   · by_cases hcond :
         (outerCollisionPairs x (k * r * q) m').Nonempty ∧

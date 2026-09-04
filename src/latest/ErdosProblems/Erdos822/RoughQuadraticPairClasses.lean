@@ -218,7 +218,6 @@ theorem sum_inv_quadraticPairClasses_roughPart_le_two_pow_sq
           rw [Finset.mul_sum]
           apply Finset.sum_congr rfl
           intro q hq
-          push_cast
           ring
         _ = (∑ r ∈ quadraticMiddlePrimeClasses N (roughPart h y) u v,
               (1 : ℝ) / r) *

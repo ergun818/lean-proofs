@@ -50,7 +50,7 @@ theorem card_primeResidueInterval_le_duplicateCandidates_of_nonempty_of_pos
     have hqdata := mem_primeResidueInterval_iff.mp hq
     have hq₀q : q₀ ≤ q := Finset.min'_le Q q hq
     have hmod : q₀ ≡ q [MOD p] := by
-      show q₀ % p = q % p
+      change q₀ % p = q % p
       exact hq₀data.2.2.2.2.trans hqdata.2.2.2.2.symm
     have hdvd : p ∣ q - q₀ := hmod.dvd'
     have hmul : p * ((q - q₀) / p) = q - q₀ :=

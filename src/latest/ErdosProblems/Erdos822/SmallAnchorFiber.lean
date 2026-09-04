@@ -6,7 +6,7 @@ import ErdosProblems.Erdos822.GILSmoothSupport
 
 namespace Erdos822
 
-open scoped BigOperators Classical
+open scoped BigOperators
 
 noncomputable def smallSupportedDivisorCofactors (N S : ℕ) (C : ℝ) (m' h : ℕ) : Finset ℕ :=
   (gilCofactors N S C).filter (fun m ↦ m ≠ m' ∧
@@ -45,7 +45,8 @@ theorem sum_smallSupportedDivisorCofactors_eq_fixedPairs {N S : ℕ} {C : ℝ}
           ((1 : ℝ) / (rq.1 * rq.2 : ℕ)) *
             Erdos851.singularFactor (reducedTotientDet (k * rq.1 * rq.2) m') 2 U := by
   unfold smallSupportedDivisorCofactors
-  rw [Finset.sum_filter, sum_subset_oddRawCofactors_eq_triple_if hN (gilCofactors_subset_oddRaw N S C)]
+  rw [Finset.sum_filter,
+    sum_subset_oddRawCofactors_eq_triple_if hN (gilCofactors_subset_oddRaw N S C)]
   apply Finset.sum_congr rfl
   intro k hk
   rw [sum_smallOffDiagonalPrimePairs_eq N S C k m' h
@@ -60,7 +61,8 @@ theorem sum_smallSupportedDivisorCofactors_eq_fixedPairs {N S : ℕ} {C : ℝ}
     by_cases hne : k * r * q ≠ m' <;>
     by_cases hs : (outerCollisionPairs (N ^ 60) (k * r * q) m').Nonempty <;>
     by_cases hd : h ∣ shiftedCoefficientGcd (k * r * q) m' <;>
-    simp [hm, hne, hs, hd] <;> ring
+    simp [hm, hne, hs, hd]
+  ring
 
 theorem smallOffDiagonalPrimePairs_empty_of_smoothPart_ne {N S k m' h : ℕ} {C : ℝ}
     (hN : 2 ≤ N) (hk : k ∈ oddSmallFactors N) (hm' : m' ∈ gilCofactors N S C)

@@ -12,7 +12,7 @@ here is only the endpoint of the prime-mass sum and the sieve parameter.
 
 namespace Erdos822
 
-open scoped BigOperators Classical
+open scoped BigOperators
 open Filter
 
 noncomputable def b1B5Cofactors (N S : ℕ) (C : ℝ) : Finset ℕ :=
@@ -23,8 +23,9 @@ theorem b1B5Cofactors_subset_gcd (N S : ℕ) (C : ℝ) :
     b1B5Cofactors N S C ⊆ gcdSmoothB1Cofactors N := Finset.filter_subset _ _
 
 theorem gcdSmoothB1Cofactors_subset_oddRaw (N : ℕ) :
-    gcdSmoothB1Cofactors N ⊆ oddRawCofactors N :=
-  (Finset.filter_subset _ _).trans (smoothB1Cofactors_subset_oddRaw N)
+    gcdSmoothB1Cofactors N ⊆ oddRawCofactors N := by
+  classical
+  exact (Finset.filter_subset _ _).trans (smoothB1Cofactors_subset_oddRaw N)
 
 theorem exists_eventually_sum_inv_b1B5Cofactors_lower :
     ∃ S : ℕ, ∃ C c : ℝ, 101 ≤ S ∧ 0 < C ∧ 0 < c ∧
@@ -73,8 +74,9 @@ theorem b1B5Cofactors_largeGcdFree {N S m : ℕ} {C : ℝ}
 
 theorem b1B5Cofactors_smoothPart_le_natLog {N S m : ℕ} {C : ℝ}
     (hN : 2 ≤ N) (hy : 1 ≤ b1Cutoff N) (hm : m ∈ b1B5Cofactors N S C) :
-    smoothPart m (b1Cutoff N) ≤ Nat.log 2 N :=
-  smoothB1Cofactors_smoothPart_le_natLog hN hy
+    smoothPart m (b1Cutoff N) ≤ Nat.log 2 N := by
+  classical
+  exact smoothB1Cofactors_smoothPart_le_natLog hN hy
     (Finset.mem_filter.mp (b1B5Cofactors_subset_gcd N S C hm)).1
 
 #print axioms exists_eventually_sum_inv_b1B5Cofactors_lower

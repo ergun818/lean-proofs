@@ -6,7 +6,7 @@ import ErdosProblems.Erdos822.MediumRangeInfrastructure
 
 namespace Erdos822
 
-open scoped BigOperators Classical
+open scoped BigOperators
 open Filter
 
 theorem eventually_slowSieveError_mul_harmonic_le {S : ℕ} (hS : 0 < S) :

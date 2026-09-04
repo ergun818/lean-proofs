@@ -8,7 +8,7 @@ import ErdosProblems.Erdos822.LargeCutoffB4
 
 namespace Erdos822
 
-open scoped BigOperators Classical
+open scoped BigOperators
 open Filter
 
 noncomputable def largeAboveAnchor (N S : ℕ) (C : ℝ) (m' : ℕ) : Finset ℕ :=
@@ -128,7 +128,8 @@ theorem eventually_sum_largeAboveAnchor_weight_le (S : ℕ) (C : ℝ) :
       simp only [Finset.mul_sum]
     _ ≤ 23 * (N : ℝ) ^ 3 * N * ((1 : ℝ) / (N ^ 4 : ℕ)) * 1 := by
       exact mul_le_mul
-        (mul_le_mul (mul_le_mul_of_nonneg_left hK (by positivity)) hR (by positivity) (by positivity))
+        (mul_le_mul (mul_le_mul_of_nonneg_left hK (by positivity)) hR
+          (by positivity) (by positivity))
         hQ (by positivity) (by positivity)
     _ = 23 := by
       have hNR : (N : ℝ) ≠ 0 := by exact_mod_cast (by omega : N ≠ 0)

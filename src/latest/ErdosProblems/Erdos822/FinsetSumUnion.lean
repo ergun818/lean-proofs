@@ -25,10 +25,11 @@ theorem sum_union_le_add_sum
   linarith
 
 theorem sum_biUnion_le_sum
-    {α ι : Type*} [DecidableEq α] [DecidableEq ι]
+    {α ι : Type*} [DecidableEq α]
     (s : Finset ι) (t : ι → Finset α) (f : α → ℝ)
     (hf : ∀ i ∈ s, ∀ a ∈ t i, 0 ≤ f a) :
     ∑ a ∈ s.biUnion t, f a ≤ ∑ i ∈ s, ∑ a ∈ t i, f a := by
+  classical
   induction s using Finset.induction_on with
   | empty => simp
   | @insert i s his ih =>
@@ -38,7 +39,7 @@ theorem sum_biUnion_le_sum
         exact hf j (by simp [hj]) a ha
       calc
         (∑ a ∈ (insert i s).biUnion t, f a) =
-            ∑ a ∈ t i ∪ s.biUnion t, f a := by simp [his]
+            ∑ a ∈ t i ∪ s.biUnion t, f a := by simp
         _ ≤ (∑ a ∈ t i, f a) + ∑ a ∈ s.biUnion t, f a :=
           sum_union_le_add_sum (fun a ha => by
             rw [Finset.mem_biUnion] at ha

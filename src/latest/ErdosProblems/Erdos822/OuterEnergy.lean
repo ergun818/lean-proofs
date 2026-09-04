@@ -116,14 +116,14 @@ theorem collisionPairs_outerLabels_card_eq_sum_outerCollisionPairs
     have hp' : m' ∈ B x ∧ p' ∈ outerPrimes x m' := by
       simpa [outerLabels] using hz.1.2
     refine ⟨⟨m, ⟨m', (p, p')⟩⟩, ?_, ?_⟩
-    change ⟨m, ⟨m', (p, p')⟩⟩ ∈ outerCollisionSigma B x
-    rw [outerCollisionSigma]
-    simp only [Finset.mem_sigma]
-    refine ⟨hp.1, hp'.1, ?_⟩
-    rw [mem_outerCollisionPairs_iff]
-    exact ⟨hp.2, hp'.2,
-      by simpa [outerLabelProduct] using hz.2⟩
-    rfl
+    · change ⟨m, ⟨m', (p, p')⟩⟩ ∈ outerCollisionSigma B x
+      rw [outerCollisionSigma]
+      simp only [Finset.mem_sigma]
+      refine ⟨hp.1, hp'.1, ?_⟩
+      rw [mem_outerCollisionPairs_iff]
+      exact ⟨hp.2, hp'.2,
+        by simpa [outerLabelProduct] using hz.2⟩
+    · rfl
 
 /-- Exact sum formula for the collision energy of an injectively labeled
 outer layer. -/

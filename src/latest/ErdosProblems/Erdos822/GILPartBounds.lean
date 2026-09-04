@@ -5,7 +5,7 @@ import ErdosProblems.Erdos822.GILDivisorBounds
 
 namespace Erdos822
 
-open scoped BigOperators Classical
+open scoped BigOperators
 open Filter
 
 theorem smoothPart_dvd_smoothPart_of_dvd {a b y : ℕ} (hb : b ≠ 0) (hab : a ∣ b) :

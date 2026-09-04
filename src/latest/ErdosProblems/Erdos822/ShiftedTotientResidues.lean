@@ -29,7 +29,7 @@ theorem shiftedTotient_mul_prime_add_totient
   apply Nat.sub_add_cancel
   calc
     Nat.totient l ≤ shiftedTotient l := by
-      simpa [shiftedTotient] using Nat.le_add_left l (Nat.totient l)
+      simp [shiftedTotient]
     _ = shiftedTotient l * 1 := by simp
     _ ≤ shiftedTotient l * q :=
       Nat.mul_le_mul_left _ hq.one_le

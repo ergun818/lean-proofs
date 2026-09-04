@@ -6,7 +6,7 @@ import ErdosProblems.Erdos822.DeterminantChargeFubini
 
 namespace Erdos822
 
-open scoped BigOperators Classical
+open scoped BigOperators
 
 theorem goodDeterminantPrimes_subset_admissible {N k r q m' h z U : ℕ}
     (hN : 2 ≤ N) (ht : (k, r, q) ∈ oddCofactorTriples N)

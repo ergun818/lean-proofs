@@ -8,7 +8,7 @@ import Mathlib.Tactic.Ring
 
 namespace Erdos822
 
-open scoped BigOperators Classical
+open scoped BigOperators
 
 theorem sum_erase_symmetric_eq_twice_ordered (B : Finset ℕ) (f : ℕ → ℕ → ℝ)
     (hf : ∀ a b, f a b = f b a) :

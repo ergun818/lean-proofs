@@ -6,7 +6,7 @@ import ErdosProblems.Erdos822.SmoothPart
 
 namespace Erdos822
 
-open scoped BigOperators Classical
+open scoped BigOperators
 open Filter
 
 theorem smoothPart_le_cutoff_pow_cutoff {m y : ℕ} (hy : 1 ≤ y)

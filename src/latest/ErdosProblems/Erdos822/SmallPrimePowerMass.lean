@@ -13,16 +13,18 @@ import ErdosProblems.Erdos387.PrimeReciprocalBound
 namespace Erdos822
 
 open Filter
-open scoped BigOperators Classical
+open scoped BigOperators
 
 def firstPrimePowerAbove (p y : ℕ) : ℕ := p ^ (Nat.log p y + 1)
 
+open Classical in
 noncomputable def smallPrimePowerBadFactors (N y : ℕ) : Finset ℕ :=
   (oddSmallFactors N).filter fun k ↦ ¬ SmallPrimePowersBounded k y
 
 theorem smallPrimePowerBadFactors_subset_union {N y : ℕ} (hy : 0 < y) :
     smallPrimePowerBadFactors N y ⊆ (Nat.primesLE y).biUnion
       (fun p ↦ (oddSmallFactors N).filter fun k ↦ firstPrimePowerAbove p y ∣ k) := by
+  classical
   intro k hk
   obtain ⟨hkodd, hkbad⟩ := Finset.mem_filter.mp hk
   simp only [SmallPrimePowersBounded, not_forall, not_le] at hkbad

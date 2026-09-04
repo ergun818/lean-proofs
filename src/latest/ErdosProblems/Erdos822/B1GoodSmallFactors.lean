@@ -14,7 +14,7 @@ import ErdosProblems.Erdos822.OddCofactorLayers
 namespace Erdos822
 
 open Filter
-open scoped BigOperators Classical
+open scoped BigOperators
 
 def gapSmallFactors (N : ℕ) : Finset ℕ :=
   (Finset.Ico (Nat.log 2 N / 2) (Nat.log 2 N)).biUnion
@@ -192,6 +192,7 @@ theorem b1GoodSmallFactors_squareRich {N k : ℕ} (hk : k ∈ b1GoodSmallFactors
   classical
   exact (Finset.mem_filter.mp hk).2
 
+open Classical in
 theorem gapSmallFactors_not_squareRich_subset (N : ℕ) :
     (gapSmallFactors N).filter (fun k ↦ ¬ TotientSquareRich k (b1Cutoff N)) ⊆
       b1UpperHalfFailures N := by

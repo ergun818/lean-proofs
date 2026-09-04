@@ -24,7 +24,7 @@ open scoped BigOperators
 /-- The left endpoint logarithm times reciprocal prime mass is bounded by
 the log-weighted prime interval sum. -/
 theorem log_mul_reciprocalPrimeIntervalSum_le_primeLogIntervalSum
-    {w z : ℕ} (hw : 2 ≤ w) (hwz : w ≤ z) :
+    {w z : ℕ} (hw : 2 ≤ w) (_ : w ≤ z) :
     Real.log w * reciprocalPrimeIntervalSum w z ≤
       BoundedGaps.Maynard.primeLogIntervalSum w z := by
   have hwpos : (0 : ℝ) < w := by exact_mod_cast (by omega : 0 < w)

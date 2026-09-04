@@ -8,7 +8,7 @@ import ErdosProblems.Erdos822.SmoothB1Cofactors
 
 namespace Erdos822
 
-open scoped BigOperators Classical
+open scoped BigOperators
 open Filter
 
 theorem eventually_internalTotientBadSmallFactors_mass_small
@@ -72,7 +72,6 @@ theorem eventually_slowInternalTotientCofactors_mass_small
     intro r hr
     apply Finset.sum_congr rfl
     intro q hq
-    push_cast
     ring
   rw [hmass]
   calc
@@ -111,7 +110,6 @@ theorem eventually_slowSmallMiddlePredCofactors_mass_small
     intro r hr
     apply Finset.sum_congr rfl
     intro q hq
-    push_cast
     ring
   rw [hmass]
   calc
@@ -151,7 +149,6 @@ theorem eventually_slowSmallLargePredCofactors_mass_small
     intro q hq
     apply Finset.sum_congr rfl
     intro r hr
-    push_cast
     ring
   rw [hmass]
   calc
@@ -178,6 +175,7 @@ theorem eventually_slowCutoffBadOddCofactors_doubleLog_mass_small
     (y := b1DoubleLog N) hN
   linarith only [hI, hM, hL, hfourth, hcoeff, hsum]
 
+open Classical in
 /-- The prime gap built into B1 permits deleting only above the double log,
 although the final B4 condition begins at its fourth root. -/
 theorem smoothB1_bad_gcd_subset_doubleLog {N : ℕ} (hN : 2 ≤ N) :
@@ -193,6 +191,7 @@ theorem smoothB1_bad_gcd_subset_doubleLog {N : ℕ} (hN : 2 ≤ N) :
   exact mem_slowCutoffBadOddCofactors_iff.mpr
     ⟨smoothB1Cofactors_subset_oddRaw N hm, p, hp, hpZ, hpm, hpφ⟩
 
+open Classical in
 noncomputable def gcdSmoothB1Cofactors (N : ℕ) : Finset ℕ :=
   (smoothB1Cofactors N).filter fun m ↦
     ∀ p, p.Prime → b1Cutoff N < p → p ∣ m → ¬ p ∣ Nat.totient m
@@ -200,6 +199,7 @@ noncomputable def gcdSmoothB1Cofactors (N : ℕ) : Finset ℕ :=
 theorem exists_eventually_sum_inv_gcdSmoothB1Cofactors_lower :
     ∃ c : ℝ, 0 < c ∧ ∀ᶠ N : ℕ in atTop,
       c * Real.log (N : ℝ) ≤ ∑ m ∈ gcdSmoothB1Cofactors N, (1 : ℝ) / m := by
+  classical
   obtain ⟨c, hc, hmass⟩ := exists_eventually_sum_inv_smoothB1Cofactors_lower
   refine ⟨c / 2, by positivity, ?_⟩
   filter_upwards [hmass,
@@ -218,12 +218,14 @@ theorem exists_eventually_sum_inv_gcdSmoothB1Cofactors_lower :
   linarith only [hmassN, hbad, hbad', hsplit]
 
 theorem gcdSmoothB1Cofactors_preserving {N m : ℕ} (hN : 2 ≤ N)
-    (hm : m ∈ gcdSmoothB1Cofactors N) : SmoothTotientPreserving m (b1Cutoff N) :=
-  smoothB1Cofactors_preserving hN (Finset.mem_filter.mp hm).1
+    (hm : m ∈ gcdSmoothB1Cofactors N) : SmoothTotientPreserving m (b1Cutoff N) := by
+  classical
+  exact smoothB1Cofactors_preserving hN (Finset.mem_filter.mp hm).1
 
 theorem gcdSmoothB1Cofactors_largeGcdFree {N m : ℕ}
-    (hm : m ∈ gcdSmoothB1Cofactors N) : m ∈ largeGcdFreeOddCofactors N (b1Cutoff N) :=
-  mem_largeGcdFreeOddCofactors_iff.mpr
+    (hm : m ∈ gcdSmoothB1Cofactors N) : m ∈ largeGcdFreeOddCofactors N (b1Cutoff N) := by
+  classical
+  exact mem_largeGcdFreeOddCofactors_iff.mpr
     ⟨smoothB1Cofactors_subset_oddRaw N (Finset.mem_filter.mp hm).1,
       fun p hp hyp h ↦ (Finset.mem_filter.mp hm).2 p hp hyp h.1 h.2⟩
 

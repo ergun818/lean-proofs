@@ -18,7 +18,7 @@ gives the required uniform harmonic bound after summing the blocks.
 
 namespace Erdos822
 
-open scoped BigOperators Classical
+open scoped BigOperators
 
 theorem card_primeResidueInterval_le_width_div_add_one
     {p a L U y : ℕ} (hp : p.Prime) :

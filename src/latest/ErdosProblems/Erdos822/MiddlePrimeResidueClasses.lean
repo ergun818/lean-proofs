@@ -123,8 +123,9 @@ theorem sum_inv_middle_integerResidueBlock_le
           (j * N ^ 4) ((j + 1) * N ^ 4)).card : ℝ) /
           (j * N ^ 4 + 1) := by
       convert sum_inv_integerResidueInterval_le_card_div d a
-        (j * N ^ 4) ((j + 1) * N ^ 4) using 1 <;>
-        push_cast <;> rfl
+        (j * N ^ 4) ((j + 1) * N ^ 4) using 1
+      push_cast
+      rfl
     _ ≤ (((N ^ 4 / d + 1 : ℕ) : ℝ) /
         (j * N ^ 4 + 1)) := by
       apply div_le_div_of_nonneg_right

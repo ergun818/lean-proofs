@@ -38,7 +38,7 @@ theorem divisorReciprocalMass_le_sum_oneShiftDensity
 /-- The determinant exponential is bounded by the square inverse
 one-shift Euler product. -/
 theorem exp_two_divisorReciprocalMass_le_inverseProduct_sq
-    (h z y : ℕ) (hz : 2 ≤ z) :
+    (h z y : ℕ) (_ : 2 ≤ z) :
     Real.exp (2 * divisorReciprocalMass h z y) ≤
       Erdos851.inverseLocalEulerProduct
         Erdos851.oneShiftDensity z y ^ 2 := by

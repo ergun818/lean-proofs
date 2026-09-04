@@ -6,7 +6,7 @@ import ErdosProblems.Erdos822.SlowCutoffAsymptotic
 
 namespace Erdos822
 
-open scoped BigOperators Classical
+open scoped BigOperators
 open Filter
 
 noncomputable def primeDivisorReciprocalMass (n : ℕ) : ℝ :=
@@ -66,10 +66,12 @@ theorem natLog_shifted_oddRaw_le_sixty_log {N m : ℕ}
     (Nat.mul_le_mul_left 2 (oddRawCofactors_le_pow_twenty_eight hm))
   have hpower : (2 : ℝ) ^ Nat.log 2 (shiftedTotient m) ≤ shiftedTotient m := by
     exact_mod_cast Nat.pow_log_le_self 2 hspos.ne'
-  have hlogpower := Real.log_le_log (by positivity : (0 : ℝ) < 2 ^ Nat.log 2 (shiftedTotient m)) hpower
+  have hlogpower := Real.log_le_log
+    (by positivity : (0 : ℝ) < 2 ^ Nat.log 2 (shiftedTotient m)) hpower
   rw [Real.log_pow] at hlogpower
   have hlogshift : Real.log (shiftedTotient m : ℝ) ≤ Real.log 2 + 28 * Real.log (N : ℝ) := by
-    have h := Real.log_le_log (by exact_mod_cast hspos) (show (shiftedTotient m : ℝ) ≤ 2 * (N : ℝ) ^ 28 by exact_mod_cast hs)
+    have h := Real.log_le_log (by exact_mod_cast hspos)
+      (show (shiftedTotient m : ℝ) ≤ 2 * (N : ℝ) ^ 28 by exact_mod_cast hs)
     simpa only [Real.log_mul (by norm_num : (2 : ℝ) ≠ 0) (by positivity : (N : ℝ) ^ 28 ≠ 0),
       Real.log_pow, Nat.cast_ofNat] using h
   have hlogN : 1 ≤ Real.log (N : ℝ) := BoundedGaps.Maynard.one_le_log_natCast hN

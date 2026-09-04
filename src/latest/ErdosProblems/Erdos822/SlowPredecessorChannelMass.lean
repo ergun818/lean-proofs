@@ -91,7 +91,6 @@ theorem sum_inv_slowSmallMiddlePredCofactors_le
       rw [Finset.mul_sum]
       apply Finset.sum_congr rfl
       intro q hq
-      push_cast
       ring
     _ =
         ((1 : ℝ) / k) *
@@ -137,7 +136,6 @@ theorem sum_inv_slowSmallLargePredCofactors_le
       rw [Finset.mul_sum]
       apply Finset.sum_congr rfl
       intro q hq
-      push_cast
       ring
     _ =
         ((1 : ℝ) / k) *

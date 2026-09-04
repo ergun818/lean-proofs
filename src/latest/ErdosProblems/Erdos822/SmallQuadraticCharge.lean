@@ -6,7 +6,7 @@ import ErdosProblems.Erdos822.SmallQuadraticMass
 
 namespace Erdos822
 
-open scoped BigOperators Classical
+open scoped BigOperators
 open Filter
 
 theorem exists_eventually_fixedPair_determinantCharge_bound (C : ℝ) :
@@ -93,7 +93,8 @@ theorem exists_eventually_fixedPair_determinantCharge_bound (C : ℝ) :
       _ ≤ (D / ((h : ℝ) * z * Real.log (z : ℝ))) *
           ((2 : ℝ) ^ h.primeFactors.card * (A / h)) :=
         mul_le_mul_of_nonneg_left
-          ((Finset.sum_le_sum_of_subset_of_nonneg hsub (fun r hr hnot ↦ by positivity)).trans hRmass)
+          ((Finset.sum_le_sum_of_subset_of_nonneg hsub
+            (fun r hr hnot ↦ by positivity)).trans hRmass)
           (by positivity)
       _ = (A * D / ((h : ℝ) ^ 2 * z * Real.log (z : ℝ))) * (2 : ℝ) ^ h.primeFactors.card := by ring
       _ ≤ (A * D / ((h : ℝ) ^ 2 * z * Real.log (z : ℝ))) * (4 : ℝ) ^ h.primeFactors.card :=

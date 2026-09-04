@@ -43,13 +43,12 @@ theorem ascendingSlopeAwareSievePrimes_prod (a b z Y : ℕ) :
     _ = ∏ p ∈ slopeAwareSievePrimes a b z Y, p := by
       congr 1
       ext p
-      simp only [Bool.decide_or, decide_not, toFinset_filter, Bool.or_eq_true, Bool.not_eq_eq_eq_not, Bool.not_true,
-    decide_eq_false_iff_not, Finset.mem_filter, mem_toFinset, Erdos851.mem_ascendingSievePrimes,
-    mem_slopeAwareSievePrimes_iff]
-      intro _hslope
+      simp only [mem_toFinset, List.mem_filter, decide_eq_true_eq,
+        Erdos851.mem_ascendingSievePrimes, Erdos851.mem_sievePrimes,
+        mem_slopeAwareSievePrimes_iff]
       constructor <;> intro h
-      · exact ⟨h.2.2, h.1, by omega⟩
-      · exact ⟨h.2.1, by omega, h.1⟩
+      · exact ⟨h.1.2.2, h.1.1, by have := h.1.2.2.two_le; omega, h.2⟩
+      · exact ⟨⟨h.2.1, by omega, h.1⟩, h.2.2.2⟩
 
 theorem ascendingSlopeAwareSievePrimes_pairwise (a b z Y : ℕ) :
     (ascendingSlopeAwareSievePrimes a b z Y).Pairwise (· ≤ ·) :=
@@ -64,11 +63,12 @@ theorem mem_ascendingSlopeAwareSievePrimes_iff
     {a b z Y p : ℕ} :
     p ∈ ascendingSlopeAwareSievePrimes a b z Y ↔
       p ∈ slopeAwareSievePrimes a b z Y := by
-  simp only [mem_slopeAwareSievePrimes_iff]
-  intro _hslope
+  simp only [ascendingSlopeAwareSievePrimes, List.mem_filter, decide_eq_true_eq,
+    Erdos851.mem_ascendingSievePrimes, Erdos851.mem_sievePrimes,
+    mem_slopeAwareSievePrimes_iff]
   constructor <;> intro h
-  · exact ⟨h.2.2, h.1, by omega⟩
-  · exact ⟨h.2.1, by omega, h.1⟩
+  · exact ⟨h.1.2.2, h.1.1, by have := h.1.2.2.two_le; omega, h.2⟩
+  · exact ⟨⟨h.2.1, by omega, h.1⟩, h.2.2.2⟩
 
 theorem ascendingSlopeAwareSievePrimes_prime {a b z Y : ℕ} :
     ∀ p ∈ ascendingSlopeAwareSievePrimes a b z Y, p.Prime := by
@@ -79,7 +79,7 @@ theorem ascendingSlopeAwareSievePrimes_prime {a b z Y : ℕ} :
 /-- Rosser's upper main term bounds the slope-aware sifted set with the
 usual square distribution-level loss. -/
 theorem slopeAwareTwoAffine_cardinality_le_upperMain
-    {a s b t X z Y S : ℕ} (hz : 2 ≤ z) (hY : 2 ≤ Y) (hS : 1 ≤ S)
+    {a s b t X z Y S : ℕ} (hz : 2 ≤ z) (hY : 2 ≤ Y) (_ : 1 ≤ S)
     (hconstants : ∀ p ∈ slopeAwareSievePrimes a b z Y,
       ¬ p ∣ s ∧ ¬ p ∣ t) :
     let P := ascendingSlopeAwareSievePrimes a b z Y

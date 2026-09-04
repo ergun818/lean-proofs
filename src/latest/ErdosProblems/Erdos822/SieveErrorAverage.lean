@@ -80,7 +80,7 @@ odd raw cofactors is bounded by a fixed multiple of the ambient scale. -/
 theorem sum_oddRaw_slowSieveCutoff_error_sq_le
     (N S : ℕ) (hN : 1 ≤ N) (hS : 0 < S) :
     (∑ m ∈ oddRawCofactors N,
-        ∑ m' ∈ (oddRawCofactors N).erase m,
+        ∑ _ ∈ (oddRawCofactors N).erase m,
           (((Nat.nthRoot (4 * S) N) ^ S : ℕ) : ℝ) ^ 2) ≤
       4 * ((N ^ 60 : ℕ) : ℝ) := by
   have herrNat :

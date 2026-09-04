@@ -6,7 +6,7 @@ import ErdosProblems.Erdos822.ZeroDeterminant
 
 namespace Erdos822
 
-open scoped BigOperators Classical
+open scoped BigOperators
 
 theorem reducedTotientDet_pos_of_odd_supported {N m m' : ℕ}
     (hN : 2 ≤ N) (hm : m ∈ oddRawCofactors N) (hm' : m' ∈ oddRawCofactors N)
@@ -14,7 +14,8 @@ theorem reducedTotientDet_pos_of_odd_supported {N m m' : ℕ}
     0 < reducedTotientDet m m' := by
   have hφne : Nat.totient m ≠ Nat.totient m' := by
     intro hφ
-    exact Finset.not_nonempty_empty (oddOuterCollisionPairs_eq_empty_of_totient_eq_of_ne hN hm hm' hφ hne ▸ hsupport)
+    exact Finset.not_nonempty_empty
+      (oddOuterCollisionPairs_eq_empty_of_totient_eq_of_ne hN hm hm' hφ hne ▸ hsupport)
   have hdelta : 0 < ((Nat.totient m : ℤ) - Nat.totient m').natAbs := by
     apply Int.natAbs_pos.mpr
     apply sub_ne_zero.mpr

@@ -5,7 +5,7 @@ import ErdosProblems.Erdos822.PrimeSquareSieve
 
 namespace Erdos822
 
-open scoped BigOperators Classical
+open scoped BigOperators
 
 theorem slopeReciprocalMass_self_le_full {d z y : ℕ} (hd : d ≠ 0) :
     slopeReciprocalMass d d z y ≤ primeDivisorReciprocalMass d := by
@@ -22,7 +22,8 @@ theorem slopeReciprocalMass_self_le_full {d z y : ℕ} (hd : d ≠ 0) :
 theorem slopePrimeLoss_self_le_exp_full {d z y : ℕ} (hd : d ≠ 0) (hz : 2 ≤ z) :
     slopePrimeLoss 0 d d z y ≤ Real.exp (6 * primeDivisorReciprocalMass d) :=
   (slopePrimeLoss_le_exp_slopeReciprocalMass 0 d d z y hz).trans
-    (Real.exp_le_exp.mpr (mul_le_mul_of_nonneg_left (slopeReciprocalMass_self_le_full hd) (by norm_num)))
+    (Real.exp_le_exp.mpr
+      (mul_le_mul_of_nonneg_left (slopeReciprocalMass_self_le_full hd) (by norm_num)))
 
 theorem exists_fixed_depth_boundedMass_duplicateCandidates_bound :
     ∃ S : ℕ, 101 ≤ S ∧ ∀ C : ℝ, ∃ D : ℝ, 0 < D ∧

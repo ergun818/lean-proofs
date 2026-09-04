@@ -6,7 +6,7 @@ import ErdosProblems.Erdos822.InternalShiftedPrimeMass
 
 namespace Erdos822
 
-open scoped BigOperators Classical
+open scoped BigOperators
 open Filter
 
 theorem internalShiftedPrimeBadSmallFactors_subset_primePackets (N y : ℕ) :
@@ -14,6 +14,7 @@ theorem internalShiftedPrimeBadSmallFactors_subset_primePackets (N y : ℕ) :
       ((Nat.primesLE N).filter (y < ·)).biUnion fun p ↦
         (b1PrimePacket N p).biUnion fun q ↦
           (oddSmallFactors N).filter (p * q ∣ ·) := by
+  classical
   intro k hk
   obtain ⟨hk, p, hp, hyp, hpk, q, hqk, hpq⟩ := Finset.mem_filter.mp hk
   have hk0 := oddSmallFactors_pos hk
@@ -142,7 +143,7 @@ theorem eventually_internalShiftedPrimeBadSmallFactors_mass_small
         ((b1DoubleLog N : ℝ) * Real.log (b1DoubleLog N : ℝ)) := by gcongr
     _ = (4 * C / Real.log (b1DoubleLog N : ℝ)) * Real.log (N : ℝ) := by
       field_simp
-      <;> ring
+      ring
     _ ≤ ε * Real.log (N : ℝ) := mul_le_mul_of_nonneg_right hcoeff (by linarith)
 
 #print axioms eventually_internalShiftedPrimeBadSmallFactors_mass_small

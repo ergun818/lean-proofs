@@ -18,7 +18,7 @@ open scoped BigOperators
 Together with the previously proved reverse inclusion, this identifies the
 exceptional family used in the old concrete-cutoff estimate. -/
 theorem middlePredLargeCofactors_subset_largeCutoffBad
-    {N : ℕ} (hN : 2 ≤ N) :
+    {N : ℕ} (_ : 2 ≤ N) :
     middlePredLargeCofactors N ⊆ largeCutoffBadOddCofactors N := by
   intro m hm
   rw [mem_middlePredLargeCofactors_iff] at hm

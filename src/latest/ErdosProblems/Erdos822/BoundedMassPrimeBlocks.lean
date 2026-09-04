@@ -5,7 +5,7 @@ import ErdosProblems.Erdos822.BoundedMassProgressionSieve
 
 namespace Erdos822
 
-open scoped BigOperators Classical
+open scoped BigOperators
 
 theorem primeSet_subset_residue_blocks {P : Finset ℕ} {N L d a y : ℕ}
     (hL : 0 < L)

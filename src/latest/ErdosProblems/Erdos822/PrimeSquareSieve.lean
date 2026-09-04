@@ -5,7 +5,7 @@ import ErdosProblems.Erdos822.TotientPrimeTail
 
 namespace Erdos822
 
-open scoped BigOperators Classical
+open scoped BigOperators
 
 theorem slopePrimeLoss_prime_sq_self_eq {p z y : ℕ} :
     slopePrimeLoss 0 (p ^ 2) (p ^ 2) z y = slopePrimeLoss 0 p p z y := by
@@ -13,7 +13,8 @@ theorem slopePrimeLoss_prime_sq_self_eq {p z y : ℕ} :
   apply Finset.prod_congr rfl
   intro q hq
   have hqp := (Erdos851.mem_sievePrimes.mp hq).2.2
-  have heq : q ∣ p ^ 2 ↔ q ∣ p := ⟨hqp.dvd_of_dvd_pow, fun h ↦ h.trans (dvd_pow_self p (by norm_num))⟩
+  have heq : q ∣ p ^ 2 ↔ q ∣ p :=
+    ⟨hqp.dvd_of_dvd_pow, fun h ↦ h.trans (dvd_pow_self p (by norm_num))⟩
   simp only [heq]
 
 theorem exists_fixed_depth_duplicatePrimeSquareCandidates_bound :

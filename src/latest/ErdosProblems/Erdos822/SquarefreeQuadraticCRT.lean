@@ -100,7 +100,7 @@ theorem quadraticAssignmentResidues_lt {u v d r : ℕ} (hd : Squarefree d)
   exact quadraticAssignmentResidue_lt hd A
 
 theorem quadraticAssignmentResidues_card_le_two_pow
-    {u v d : ℕ} (hd : Squarefree d) :
+    {u v d : ℕ} (_ : Squarefree d) :
     (quadraticAssignmentResidues u v d).card ≤
       2 ^ d.primeFactors.card := by
   classical

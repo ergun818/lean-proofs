@@ -9,7 +9,7 @@ import ErdosProblems.Erdos822.GILInputSize
 
 namespace Erdos822
 
-open scoped BigOperators Classical
+open scoped BigOperators
 open Filter
 
 theorem exists_eventually_gil_supportedKernel_bound {S T : ℕ}
@@ -17,7 +17,8 @@ theorem exists_eventually_gil_supportedKernel_bound {S T : ℕ}
     ∃ K : ℝ, 0 < K ∧ ∀ᶠ N : ℕ in atTop,
       (Real.log (2 : ℝ) / Real.log (Nat.nthRoot (4 * T) N : ℝ)) ^ 2 *
         (∑ m ∈ gilCofactors N S C, ∑ m' ∈ (gilCofactors N S C).erase m,
-          supportedGcdSingularKernel (N ^ 60) m m' 2 (Nat.nthRoot (4 * T) N)) ≤ K * (N ^ 60 : ℕ) := by
+          supportedGcdSingularKernel (N ^ 60) m m' 2 (Nat.nthRoot (4 * T) N)) ≤
+            K * (N ^ 60 : ℕ) := by
   obtain ⟨K₁, hK₁, hsmall⟩ := exists_eventually_smallWeightedCommonDivisorKernel_bound hS hT C
   obtain ⟨K₂, hK₂, hmedium⟩ := exists_eventually_mediumWeightedCommonDivisorKernel_bound S C
   obtain ⟨K₃, hK₃, hlarge⟩ := exists_eventually_largeWeightedCommonDivisorKernel_bound S C

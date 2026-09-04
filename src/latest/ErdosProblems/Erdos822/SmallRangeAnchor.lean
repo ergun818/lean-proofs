@@ -5,7 +5,7 @@ import ErdosProblems.Erdos822.SmallAnchorDivisorMass
 
 namespace Erdos822
 
-open scoped BigOperators Classical
+open scoped BigOperators
 open Filter
 
 noncomputable def smallRoughDivisors (N m' : ℕ) : Finset ℕ :=
@@ -96,7 +96,8 @@ theorem exists_eventually_smallGcdSingularAnchor_sum_bound {S : ℕ} (hS : 0 < S
       ext m
       simp only [Finset.mem_filter, smallSupportedDivisorCofactors]
       tauto
-    _ ≤ ∑ h ∈ smallRoughDivisors N m', K * Real.log (N : ℝ) * (4 : ℝ) ^ h.primeFactors.card / h := by
+    _ ≤ ∑ h ∈ smallRoughDivisors N m',
+        K * Real.log (N : ℝ) * (4 : ℝ) ^ h.primeFactors.card / h := by
       apply Finset.sum_le_sum
       intro h hh
       obtain ⟨hhdiv, hhN⟩ := Finset.mem_filter.mp hh
@@ -104,7 +105,8 @@ theorem exists_eventually_smallGcdSingularAnchor_sum_bound {S : ℕ} (hS : 0 < S
       have hhR := (Nat.mem_divisors.mp hhdiv).1
       exact hbound m' h U hm' hhpos hhN (hhR.trans (roughPart_dvd _ _))
         (roughPart_eq_self_of_dvd_roughPart hhR) hLU
-    _ = (K * Real.log (N : ℝ)) * ∑ h ∈ smallRoughDivisors N m', (4 : ℝ) ^ h.primeFactors.card / h := by
+    _ = (K * Real.log (N : ℝ)) *
+        ∑ h ∈ smallRoughDivisors N m', (4 : ℝ) ^ h.primeFactors.card / h := by
       rw [Finset.mul_sum]
       apply Finset.sum_congr rfl
       intro h hh

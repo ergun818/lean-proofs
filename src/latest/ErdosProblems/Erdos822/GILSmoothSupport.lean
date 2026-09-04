@@ -43,8 +43,10 @@ theorem gil_gcd_eq_anchor_smooth_mul_rough {N S m m' : ℕ} {C : ℝ}
       roughPart (shiftedCoefficientGcd m m') (b1Cutoff N) := by
   have hmraw := gilCofactors_subset_oddRaw N S C hm
   have hmraw' := gilCofactors_subset_oddRaw N S C hm'
-  apply shiftedCoefficientGcd_eq_smooth_mul_rough_of_class (oddRawCofactors_pos hmraw) (oddRawCofactors_pos hmraw')
-  · exact (smoothPart_shiftedTotient_eq (oddRawCofactors_pos hmraw) (gilCofactors_preserving hN hm)).trans
+  apply shiftedCoefficientGcd_eq_smooth_mul_rough_of_class
+    (oddRawCofactors_pos hmraw) (oddRawCofactors_pos hmraw')
+  · exact (smoothPart_shiftedTotient_eq (oddRawCofactors_pos hmraw)
+      (gilCofactors_preserving hN hm)).trans
       (gil_smoothPart_eq_of_supported hN hm hm' hsupport)
   · exact smoothPart_shiftedTotient_eq (oddRawCofactors_pos hmraw') (gilCofactors_preserving hN hm')
 
@@ -59,7 +61,8 @@ theorem smoothPart_oddTriple_eq_small {N k r q : ℕ} (hN : 2 ≤ N)
     simpa using Nat.pow_lt_pow_right (by omega : 1 < N) (by omega : 1 < 4)
   have hyr : b1Cutoff N < r :=
     (b1Cutoff_le_nat N).trans_lt (hN4.trans_le (mem_middlePrimes_iff.mp hd.2.1).1)
-  have hrq : r < q := (Nat.le_mul_of_pos_left r hk).trans_lt (oddCofactorTriples_separated hN ht).2.2
+  have hrq : r < q :=
+    (Nat.le_mul_of_pos_left r hk).trans_lt (oddCofactorTriples_separated hN ht).2.2
   rw [smoothPart_mul_prime_eq_of_lt (mul_pos hk hr.pos) hq (hyr.trans hrq),
     smoothPart_mul_prime_eq_of_lt hk hr hyr]
 

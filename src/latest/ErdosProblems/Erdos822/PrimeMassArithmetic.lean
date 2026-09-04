@@ -5,7 +5,7 @@ import ErdosProblems.Erdos822.GILDivisorBounds
 
 namespace Erdos822
 
-open scoped BigOperators Classical
+open scoped BigOperators
 open Filter
 
 theorem primeDivisorReciprocalMass_mono {a b : ℕ} (hb : b ≠ 0) (hab : a ∣ b) :
@@ -14,7 +14,8 @@ theorem primeDivisorReciprocalMass_mono {a b : ℕ} (hb : b ≠ 0) (hab : a ∣ 
     (fun p hp hnot ↦ by positivity)
 
 theorem primeDivisorReciprocalMass_mul_le {a b : ℕ} (ha : a ≠ 0) (hb : b ≠ 0) :
-    primeDivisorReciprocalMass (a * b) ≤ primeDivisorReciprocalMass a + primeDivisorReciprocalMass b := by
+    primeDivisorReciprocalMass (a * b) ≤
+      primeDivisorReciprocalMass a + primeDivisorReciprocalMass b := by
   unfold primeDivisorReciprocalMass
   rw [Nat.primeFactors_mul ha hb]
   have hsum := Finset.sum_union_inter (s₁ := a.primeFactors) (s₂ := b.primeFactors)
@@ -33,7 +34,8 @@ theorem primeDivisorReciprocalMass_prime_mul_le {p d : ℕ} (hp : p.Prime) (hd :
   calc
     _ ≤ primeDivisorReciprocalMass p + primeDivisorReciprocalMass d :=
       primeDivisorReciprocalMass_mul_le hp.ne_zero hd
-    _ ≤ 1 + primeDivisorReciprocalMass d := add_le_add (primeDivisorReciprocalMass_prime_le_one hp) le_rfl
+    _ ≤ 1 + primeDivisorReciprocalMass d :=
+      add_le_add (primeDivisorReciprocalMass_prime_le_one hp) le_rfl
     _ = _ := by ring
 
 theorem eventually_gilCofactors_divisor_primeMass_le {S : ℕ} (hS : 0 < S) (C : ℝ) :

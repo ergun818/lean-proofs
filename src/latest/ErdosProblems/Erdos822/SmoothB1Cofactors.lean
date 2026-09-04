@@ -12,8 +12,9 @@ import ErdosProblems.Erdos822.RestrictedCofactors
 namespace Erdos822
 
 open Filter
-open scoped BigOperators Classical
+open scoped BigOperators
 
+open Classical in
 noncomputable def preservingSmallFactors (N : ℕ) : Finset ℕ :=
   (b1GoodSmallFactors N).filter fun k ↦ SmallPrimePowersBounded k (b1Cutoff N)
 
@@ -21,12 +22,14 @@ noncomputable def smoothB1Cofactors (N : ℕ) : Finset ℕ :=
   restrictedCofactors N (preservingSmallFactors N)
 
 theorem preservingSmallFactors_subset_odd (N : ℕ) :
-    preservingSmallFactors N ⊆ oddSmallFactors N :=
-  (Finset.filter_subset _ _).trans (b1GoodSmallFactors_subset_oddSmallFactors N)
+    preservingSmallFactors N ⊆ oddSmallFactors N := by
+  classical
+  exact (Finset.filter_subset _ _).trans (b1GoodSmallFactors_subset_oddSmallFactors N)
 
 theorem exists_eventually_sum_inv_preservingSmallFactors_lower :
     ∃ c : ℝ, 0 < c ∧ ∀ᶠ N : ℕ in atTop,
       c * Real.log (N : ℝ) ≤ ∑ k ∈ preservingSmallFactors N, (1 : ℝ) / k := by
+  classical
   obtain ⟨c, hc, hmass⟩ := exists_eventually_sum_inv_b1GoodSmallFactors_lower
   refine ⟨c / 2, by positivity, ?_⟩
   filter_upwards [hmass,
@@ -56,6 +59,7 @@ theorem smoothB1Cofactors_subset_oddRaw (N : ℕ) :
   restrictedCofactors_subset_oddRaw (preservingSmallFactors_subset_odd N)
 
 theorem smoothB1Cofactors_subset_b1 (N : ℕ) : smoothB1Cofactors N ⊆ b1Cofactors N := by
+  classical
   intro m hm
   obtain ⟨k, r, q, hk, hr, hq, hm⟩ := mem_restrictedCofactors_iff.mp hm
   exact mem_b1Cofactors_iff.mpr ⟨k, r, q, (Finset.mem_filter.mp hk).1, hr, hq, hm⟩
@@ -89,6 +93,7 @@ theorem b1Cutoff_le_self (N : ℕ) : b1Cutoff N ≤ N :=
 theorem smoothB1Cofactors_smallPrimePowersBounded {N m : ℕ}
     (hN : 2 ≤ N) (hm : m ∈ smoothB1Cofactors N) :
     SmallPrimePowersBounded m (b1Cutoff N) := by
+  classical
   obtain ⟨k, r, q, hk, hr, hq, rfl⟩ := mem_restrictedCofactors_iff.mp hm
   have hkp := Finset.mem_filter.mp hk
   have hkpos := oddSmallFactors_pos (preservingSmallFactors_subset_odd N hk)

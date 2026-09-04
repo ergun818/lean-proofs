@@ -6,7 +6,7 @@ import ErdosProblems.Erdos822.RoughQuadraticPairClasses
 
 namespace Erdos822
 
-open scoped BigOperators Classical
+open scoped BigOperators
 open Filter
 
 theorem exists_eventually_small_primeResidueClasses_bound (C : ℝ) :

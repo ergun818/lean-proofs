@@ -6,7 +6,7 @@ import ErdosProblems.Erdos822.IntegerResidueBlocks
 
 namespace Erdos822
 
-open scoped BigOperators Classical
+open scoped BigOperators
 
 theorem sum_inv_integerResidueInterval_above_anchor_le {d a U : ℕ} (hd : 0 < d) :
     (∑ q ∈ integerResidueInterval d a a U, (1 : ℝ) / q) ≤ (harmonic U : ℝ) / d := by

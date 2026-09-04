@@ -5,7 +5,7 @@ import ErdosProblems.Erdos822.RestrictedSingularSplit
 
 namespace Erdos822
 
-open scoped BigOperators Classical
+open scoped BigOperators
 
 theorem sievePrimes_split {a b c : ℕ} (hab : a ≤ b) (hbc : b ≤ c) :
     Erdos851.sievePrimes a c = Erdos851.sievePrimes a b ∪ Erdos851.sievePrimes b c := by
@@ -86,7 +86,8 @@ theorem exists_singularFactor_cutoff_majorant :
   rw [singularFactor_split H hyz (hzL.trans hLU), singularFactor_split H hzL hLU]
   calc
     _ ≤ Erdos851.inverseLocalEulerProduct Erdos851.oneShiftDensity y z *
-        ((Real.exp (2 * ((∑ p ∈ primeFactorsAbove a z, (1 : ℝ) / p) + primeDivisorReciprocalMass b)) *
+        ((Real.exp (2 * ((∑ p ∈ primeFactorsAbove a z, (1 : ℝ) / p) +
+          primeDivisorReciprocalMass b)) *
           (Real.exp 2 + (D * (Real.log (L : ℝ) / Real.log (z : ℝ))) *
             ∑ p ∈ goodDeterminantPrimes H a b z L, (1 : ℝ) / p)) *
           Real.exp (2 * ∑ p ∈ primeFactorsAbove H L, (1 : ℝ) / p)) := by

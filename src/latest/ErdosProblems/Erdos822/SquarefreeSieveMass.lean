@@ -6,7 +6,7 @@ import ErdosProblems.Erdos822.PrimeSquareIncidence
 
 namespace Erdos822
 
-open scoped BigOperators Classical
+open scoped BigOperators
 open Filter
 
 theorem exists_fixed_depth_squareDivisibleCofactors_bound :
@@ -79,7 +79,6 @@ theorem exists_eventually_squareDivisibleCofactors_sharp_bound :
       _ = 1 / (N : ℝ) ^ 19 := by
         rw [show 21 = 2 + 19 by norm_num, pow_add]
         field_simp
-        <;> ring
   intro p hp hpN
   have hF : (2 * (D / Real.log (U : ℝ)) / (p : ℝ) ^ 2 +
       ((U ^ S : ℕ) : ℝ) ^ 2 / (N : ℝ) ^ 21) * (harmonic N : ℝ) ≤

@@ -7,7 +7,7 @@ import ErdosProblems.Erdos822.WeightedCommonDivisorRanges
 
 namespace Erdos822
 
-open scoped BigOperators Classical
+open scoped BigOperators
 open Filter
 
 noncomputable def largeGcdMassKernel (N m m' : ℕ) : ℝ :=

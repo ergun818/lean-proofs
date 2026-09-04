@@ -73,11 +73,13 @@ theorem inner_factors_eq_of_large_supported_gcd
     (Nat.gcd_dvd_right (shiftedTotient (k * r * q)) (shiftedTotient (k' * r' * q'))) hprod
   have hl : k * r ≤ N ^ 6 := by
     calc
-      _ ≤ N * N ^ 5 := Nat.mul_le_mul (oddSmallFactors_le hdata.1) (mem_middlePrimes_iff.mp hdata.2.1).2.1
+      _ ≤ N * N ^ 5 := Nat.mul_le_mul (oddSmallFactors_le hdata.1)
+        (mem_middlePrimes_iff.mp hdata.2.1).2.1
       _ = _ := by ring
   have hl' : k' * r' ≤ N ^ 6 := by
     calc
-      _ ≤ N * N ^ 5 := Nat.mul_le_mul (oddSmallFactors_le hdata'.1) (mem_middlePrimes_iff.mp hdata'.2.1).2.1
+      _ ≤ N * N ^ 5 := Nat.mul_le_mul (oddSmallFactors_le hdata'.1)
+        (mem_middlePrimes_iff.mp hdata'.2.1).2.1
       _ = _ := by ring
   have heq : (k * r * Nat.totient (k * r)) * shiftedTotient (k' * r') =
       (k' * r' * Nat.totient (k' * r')) * shiftedTotient (k * r) := by

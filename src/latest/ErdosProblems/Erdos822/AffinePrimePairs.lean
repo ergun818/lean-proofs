@@ -31,7 +31,7 @@ theorem mem_twoAffinePrimeCandidates_iff
     n ∈ twoAffinePrimeCandidates a s b t X y ↔
       n < X ∧ (a * n + s).Prime ∧ (b * n + t).Prime ∧
         y < a * n + s ∧ y < b * n + t := by
-  simp [twoAffinePrimeCandidates, and_assoc]
+  simp [twoAffinePrimeCandidates]
 
 /-- If both affine values are primes above y, their product is coprime to
 the product of all sieving primes in (z,y]. -/

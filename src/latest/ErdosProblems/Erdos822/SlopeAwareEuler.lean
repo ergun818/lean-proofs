@@ -132,7 +132,7 @@ theorem slopeReciprocalMass_le_add
   apply Finset.sum_le_sum
   intro p hp
   by_cases hpa : p ∣ a <;> by_cases hpb : p ∣ b <;>
-    simp [hpa, hpb] <;> positivity
+    simp [hpa, hpb]
 
 /-- Deleting slope-prime factors is exactly multiplication by the explicit
 inverse-factor loss. -/

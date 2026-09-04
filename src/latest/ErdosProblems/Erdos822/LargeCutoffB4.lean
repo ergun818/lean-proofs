@@ -137,7 +137,7 @@ theorem sum_inv_middlePredLargeCofactors_eq_triple
 /-- The q-fiber cut out by r ∣ q-1 lies in one large-prime residue class
 modulo r. -/
 theorem largePrimes_filter_middle_dvd_pred_subset_residueClass
-    {N r : ℕ} (hN : 2 ≤ N) (hr : r ∈ middlePrimes N) :
+    {N r : ℕ} (hN : 2 ≤ N) (_ : r ∈ middlePrimes N) :
     (largePrimes N).filter (fun q => r ∣ q - 1) ⊆
       largePrimeResidueClass N r 1 (N ^ 4) := by
   intro q hq
@@ -203,7 +203,6 @@ theorem sum_inv_sq_middlePrimes_le_inv_pow_four
         (sum_Ioc_inv_sq_le_sub (α := ℝ) (k := N ^ 4)
           (n := N ^ 5) (by positivity) hpow)
       norm_num only [one_div, Nat.cast_pow] at h ⊢
-      push_cast at h
       exact h
     _ ≤ (1 : ℝ) / (N ^ 4 : ℕ) := by
       have hnonneg : 0 ≤ (1 : ℝ) / (N ^ 5 : ℕ) := by positivity
@@ -262,7 +261,6 @@ theorem sum_inv_largeCutoffBadOddCofactors_le
           rw [Finset.mul_sum]
           apply Finset.sum_congr rfl
           intro q hq
-          push_cast
           ring
         _ ≤ ((1 : ℝ) / k * ((1 : ℝ) / r)) *
               (((1 : ℝ) / r + (1 : ℝ) / (N ^ 21 : ℕ)) * H) := by
@@ -453,7 +451,7 @@ theorem sum_inv_largeCutoffGoodOddCofactors_ge
           ¬ (p ∣ m ∧ p ∣ Nat.totient m)
       · exact Or.inl ⟨hm, hg⟩
       · right
-        push_neg at hg
+        push Not at hg
         exact ⟨hm, hg⟩
     · rintro (⟨hm, _⟩ | ⟨hm, _⟩) <;> exact hm
   have hdisj : Disjoint good bad := by

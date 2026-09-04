@@ -31,7 +31,7 @@ theorem shiftedTotient_pos_of_pos {m : ℕ} (hm : 0 < m) :
   exact hm.trans_le (Nat.le_add_right m (Nat.totient m))
 
 theorem reducedCollisionLeft_pos {m m' : ℕ}
-    (hm : 0 < m) (hm' : 0 < m') :
+    (hm : 0 < m) (_ : 0 < m') :
     0 < reducedCollisionLeft m m' := by
   unfold reducedCollisionLeft
   apply Nat.div_pos
@@ -39,7 +39,7 @@ theorem reducedCollisionLeft_pos {m m' : ℕ}
   · exact Nat.gcd_pos_of_pos_left _ (shiftedTotient_pos_of_pos hm)
 
 theorem reducedCollisionRight_pos {m m' : ℕ}
-    (hm : 0 < m) (hm' : 0 < m') :
+    (_ : 0 < m) (hm' : 0 < m') :
     0 < reducedCollisionRight m m' := by
   unfold reducedCollisionRight
   apply Nat.div_pos
@@ -47,7 +47,7 @@ theorem reducedCollisionRight_pos {m m' : ℕ}
   · exact Nat.gcd_pos_of_pos_right _ (shiftedTotient_pos_of_pos hm')
 
 theorem reducedCollision_coprime {m m' : ℕ}
-    (hm : 0 < m) (hm' : 0 < m') :
+    (_ : 0 < m) (hm' : 0 < m') :
     (reducedCollisionLeft m m').Coprime
       (reducedCollisionRight m m') := by
   unfold reducedCollisionLeft reducedCollisionRight

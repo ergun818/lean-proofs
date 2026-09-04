@@ -5,7 +5,7 @@ import ErdosProblems.Erdos822.SmallRangeAnchor
 
 namespace Erdos822
 
-open scoped BigOperators Classical
+open scoped BigOperators
 open Filter
 
 theorem exists_eventually_smallWeightedKernel_raw_bound {S : ℕ} (hS : 0 < S) (C : ℝ) :
@@ -27,7 +27,8 @@ theorem exists_eventually_smallWeightedKernel_raw_bound {S : ℕ} (hS : 0 < S) (
         (N ^ 60 : ℕ) * (smallGcdSingularAnchorTerm N m m' U / m') := by
     unfold smallWeightedCommonDivisorKernel smallGcdSingularAnchorTerm
     have hne' : m ≠ m' := Ne.symm hne
-    by_cases hcond : (outerCollisionPairs (N ^ 60) m m').Nonempty ∧ shiftedCoefficientGcd m m' ≤ N ^ 3
+    by_cases hcond : (outerCollisionPairs (N ^ 60) m m').Nonempty ∧
+        shiftedCoefficientGcd m m' ≤ N ^ 3
     · rw [if_pos hcond, if_pos (And.intro hne' hcond)]
       push_cast
       ring
@@ -40,13 +41,15 @@ theorem exists_eventually_smallWeightedKernel_raw_bound {S : ℕ} (hS : 0 < S) (
         apply Finset.sum_le_sum
         intro m hm
         exact Finset.sum_le_sum_of_subset_of_nonneg (Finset.erase_subset _ _)
-          (fun m' hm' hnot ↦ div_nonneg (smallGcdSingularAnchorTerm_nonneg N m m' U) (by positivity))
+          (fun m' hm' hnot ↦ div_nonneg
+            (smallGcdSingularAnchorTerm_nonneg N m m' U) (by positivity))
       _ = ∑ m' ∈ gilCofactors N S C,
           (∑ m ∈ gilCofactors N S C, smallGcdSingularAnchorTerm N m m' U) / m' := by
         rw [Finset.sum_comm]
         simp only [Finset.sum_div]
       _ ≤ ∑ m' ∈ gilCofactors N S C, (K * Real.log (N : ℝ)) / m' :=
-        Finset.sum_le_sum fun m' hm' ↦ div_le_div_of_nonneg_right (hanchor m' U hm' hLU) (by positivity)
+        Finset.sum_le_sum fun m' hm' ↦
+          div_le_div_of_nonneg_right (hanchor m' U hm' hLU) (by positivity)
       _ = (K * Real.log (N : ℝ)) * ∑ m' ∈ gilCofactors N S C, (1 : ℝ) / m' := by
         rw [Finset.mul_sum]
         apply Finset.sum_congr rfl
@@ -73,7 +76,8 @@ theorem eventually_natLog_le_slowSieveCutoff {T : ℕ} (hT : 0 < T) :
     ∀ᶠ N : ℕ in atTop, Nat.log 2 N ≤ Nat.nthRoot (4 * T) N := by
   filter_upwards [eventually_slowCutoff_log_cube_div_le_one hT,
     eventually_nthRoot_ge (4 * T) 2 (by omega), eventually_ge_atTop 2] with N hsmall hroot hN
-  have hrootR : (0 : ℝ) < Nat.nthRoot (4 * T) N := by exact_mod_cast (by omega : 0 < Nat.nthRoot (4 * T) N)
+  have hrootR : (0 : ℝ) < Nat.nthRoot (4 * T) N := by
+    exact_mod_cast (by omega : 0 < Nat.nthRoot (4 * T) N)
   have hlog := natLog_two_le_two_realLog (by omega : 1 ≤ N)
   have hlog0 : 0 ≤ Real.log (N : ℝ) := Real.log_nonneg (by exact_mod_cast (by omega : 1 ≤ N))
   have hcube : 2 * Real.log (N : ℝ) ≤ (1 + Real.log (N : ℝ)) ^ 3 := by
@@ -88,7 +92,8 @@ theorem exists_eventually_smallWeightedCommonDivisorKernel_bound
     ∃ K : ℝ, 0 < K ∧ ∀ᶠ N : ℕ in atTop,
       (Real.log (2 : ℝ) / Real.log (Nat.nthRoot (4 * T) N : ℝ)) ^ 2 *
         (∑ m ∈ gilCofactors N S C, ∑ m' ∈ (gilCofactors N S C).erase m,
-          smallWeightedCommonDivisorKernel N m m' 2 (Nat.nthRoot (4 * T) N)) ≤ K * (N ^ 60 : ℕ) := by
+          smallWeightedCommonDivisorKernel N m m' 2 (Nat.nthRoot (4 * T) N)) ≤
+            K * (N ^ 60 : ℕ) := by
   obtain ⟨K, hK, hbound⟩ := exists_eventually_smallWeightedKernel_raw_bound hS C
   have hlog2 : 0 < Real.log (2 : ℝ) := Real.log_pos (by norm_num)
   refine ⟨K * Real.log (2 : ℝ) ^ 2 * (8 * (T : ℝ)) ^ 2, by positivity, ?_⟩

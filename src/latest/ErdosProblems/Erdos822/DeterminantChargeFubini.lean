@@ -6,7 +6,7 @@ import ErdosProblems.Erdos822.FixedCommonDivisorFiber
 
 namespace Erdos822
 
-open scoped BigOperators Classical
+open scoped BigOperators
 
 noncomputable def fixedCommonDivisorLargePrimes
     (B : Finset ℕ) (N x k r m' h : ℕ) : Finset ℕ :=
