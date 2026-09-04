@@ -238,7 +238,7 @@ lemma chapletClearance_le_corridor (R S ε ρ : ℝ) :
   min_le_right _ _ |>.trans (min_le_right _ _)
 
 lemma chapletClearance_le_norm_sub_of_norm_eq
-    {R S T ε ρ : ℝ} (hRρ : R < ρ) (hρS : ρ < S)
+    {R S T ε ρ : ℝ} (_hRρ : R < ρ) (_hρS : ρ < S)
     {a z : ℂ} (ha : ‖a‖ = ρ) (hz : z ∈ Erdos1118Construction.chapletSet R S T ε) :
     chapletClearance R S ε ρ ≤ ‖z - a‖ := by
   rcases Erdos1118Construction.norm_bounds_of_mem_chapletSet hz with hzR | hzS
@@ -344,7 +344,6 @@ lemma norm_linePoleCenter_succ_sub {B ρ : ℝ} {L n : ℕ} (hL : L ≠ 0) :
   have hcast : (L : ℝ) ≠ 0 := by exact_mod_cast hL
   have heq : (B + (ρ - B) * ((n : ℝ) + 1) / (L : ℝ)) -
       (B + (ρ - B) * (n : ℝ) / (L : ℝ)) = (ρ - B) / (L : ℝ) := by
-    push_cast
     field_simp
     ring
   rw [heq, abs_div, abs_of_pos (show (0 : ℝ) < L by exact_mod_cast Nat.pos_of_ne_zero hL),
@@ -650,7 +649,6 @@ lemma listInverseApproximation_residual_le_quarter
                 ‖1 - inverseResidual E (P a) z‖ ≤
                     ‖(1 : ℂ)‖ + ‖inverseResidual E (P a) z‖ := norm_sub_le _ _
                 _ ≤ 1 + 1 / 16 := by simpa [hE] using add_le_add_left ha 1
-
             rw [norm_mul]
             exact add_le_add (by simpa [hE] using ha)
               (mul_le_mul hEP (by simpa [D, Q] using hs) (norm_nonneg _) (by positivity))
@@ -744,7 +742,7 @@ lemma inverseResidual_iteratedInverseNewton (D q : Polynomial ℂ) (n : ℕ) (z 
 
 lemma norm_inverseResidual_iteratedInverseNewton_le
     {D q : Polynomial ℂ} {z : ℂ} {e : ℝ}
-    (he0 : 0 ≤ e) (he : ‖inverseResidual D q z‖ ≤ e) (n : ℕ) :
+    (_he0 : 0 ≤ e) (he : ‖inverseResidual D q z‖ ≤ e) (n : ℕ) :
     ‖inverseResidual D (iteratedInverseNewton D q n) z‖ ≤ e ^ (2 ^ n) := by
   rw [inverseResidual_iteratedInverseNewton, norm_pow]
   exact pow_le_pow_left₀ (norm_nonneg _) he _
@@ -802,11 +800,11 @@ lemma linearFactorProduct_natDegree_le_length (s : List ℂ) :
 
 lemma listInverseApproximation_natDegree_add_one_le
     {P : ℂ → Polynomial ℂ} {s : List ℂ} {E : ℕ}
-    (hE : 1 ≤ E) (hP : ∀ a ∈ s, (P a).natDegree + 1 ≤ E) :
+    (_hE : 1 ≤ E) (hP : ∀ a ∈ s, (P a).natDegree + 1 ≤ E) :
     (listInverseApproximation P s).natDegree + 1 ≤
       8 ^ s.length * (E + s.length + 1) := by
   induction s with
-  | nil => simp [hE]
+  | nil => simp
   | cons a s ih =>
       have ha : (P a).natDegree + 1 ≤ E := hP a (by simp)
       have hs : ∀ b ∈ s, (P b).natDegree + 1 ≤ E := by
@@ -861,7 +859,7 @@ lemma refinedChapletPoleApproximation_natDegree_add_one_le
       rw [pow_succ]
       ring
 
-lemma chapletDenominator_natDegree {ρ : ℝ} {N : ℕ} (hN : N ≠ 0) :
+lemma chapletDenominator_natDegree {ρ : ℝ} {N : ℕ} (_hN : N ≠ 0) :
     (Erdos1118Construction.chapletDenominator ρ N).natDegree = N := by
   change (Polynomial.X ^ N + Polynomial.C (((ρ : ℝ) : ℂ) ^ N)).natDegree = N
   exact Polynomial.natDegree_X_pow_add_C
@@ -1000,7 +998,7 @@ lemma sharpenError_succ (k : ℕ) :
   ring_nf
 
 lemma sharpenStep_norm_le {p : Polynomial ℂ} {z : ℂ} {e : ℝ}
-    (he0 : 0 ≤ e) (he : e ≤ 1 / 8) (hp : ‖p.eval z‖ ≤ e) :
+    (_he0 : 0 ≤ e) (he : e ≤ 1 / 8) (hp : ‖p.eval z‖ ≤ e) :
     ‖(sharpenStep p).eval z‖ ≤ 4 * e ^ 2 := by
   rw [sharpenStep_eval, norm_mul, norm_pow]
   have hfactor : ‖(3 : ℂ) - 2 * p.eval z‖ ≤ 3 + 2 * e := by
@@ -1018,7 +1016,7 @@ lemma sharpenStep_norm_le {p : Polynomial ℂ} {z : ℂ} {e : ℝ}
     _ ≤ 4 * e ^ 2 := by nlinarith [sq_nonneg e]
 
 lemma sharpenStep_sub_one_norm_le {p : Polynomial ℂ} {z : ℂ} {e : ℝ}
-    (he0 : 0 ≤ e) (he : e ≤ 1 / 8) (hp : ‖p.eval z - 1‖ ≤ e) :
+    (_he0 : 0 ≤ e) (he : e ≤ 1 / 8) (hp : ‖p.eval z - 1‖ ≤ e) :
     ‖(sharpenStep p).eval z - 1‖ ≤ 4 * e ^ 2 := by
   have hu : ‖1 - p.eval z‖ ≤ e := by simpa [norm_sub_rev] using hp
   rw [← norm_neg, neg_sub, one_sub_sharpenStep_eval, norm_mul, norm_pow]
@@ -1079,7 +1077,7 @@ lemma sharpenStep_natDegree_add_one_le (p : Polynomial ℂ) :
       Nat.add_le_add_right Polynomial.natDegree_mul_le 1
     _ ≤ 2 * p.natDegree + p.natDegree + 1 := by
       have hp2 : (p ^ 2).natDegree ≤ 2 * p.natDegree := by
-        simpa using Polynomial.natDegree_pow_le p 2
+        simp
       have hsub : (Polynomial.C 3 - Polynomial.C 2 * p).natDegree ≤ p.natDegree := by
         refine (Polynomial.natDegree_sub_le _ _).trans ?_
         exact max_le (by simp) (Polynomial.natDegree_mul_le.trans (by simp))
@@ -1099,7 +1097,7 @@ lemma sharpenPolynomial_natDegree_add_one_le (p : Polynomial ℂ) (k : ℕ) :
         _ = 3 ^ (k + 1) * (p.natDegree + 1) := by rw [pow_succ]; ring
 
 lemma ratio_div_one_sub_le_fifteenth {q : ℝ}
-    (hq0 : 0 ≤ q) (hq : q ≤ 1 / 16) : q / (1 - q) ≤ 1 / 15 := by
+    (_hq0 : 0 ≤ q) (hq : q ≤ 1 / 16) : q / (1 - q) ≤ 1 / 15 := by
   have hden : 0 < 1 - q := by linarith
   rw [div_le_iff₀ hden]
   linarith
@@ -1469,7 +1467,7 @@ lemma stage_chapletPoleSteps {R : ℝ} {A : ℕ} (hR : 0 < R) (hA : 0 < A) :
   rw [heq, Nat.ceil_natCast]
 
 lemma baseChapletSeparator_natDegree_add_one_le
-    {R S T ε ρ : ℝ} {N : ℕ} (hρ : 0 < ρ) :
+    {R S T ε ρ : ℝ} {N : ℕ} (_hρ : 0 < ρ) :
     (baseChapletSeparator R S T ε ρ N).natDegree + 1 ≤
       (refinedChapletDenominatorInverse R S T ε ρ N 2).natDegree + 1 := by
   unfold baseChapletSeparator
@@ -1612,7 +1610,7 @@ lemma cutoff_numeric_bound {m : ℕ} (hm : 0 < m) :
 
 lemma norm_cutoffTerm_le
     {p : Polynomial ℂ} {z : ℂ} {m j : ℕ}
-    (hm : 0 < m) (hj : j ∈ Finset.Ico m (cutoffDegree m + 1))
+    (_hm : 0 < m) (hj : j ∈ Finset.Ico m (cutoffDegree m + 1))
     (hp : ‖p.eval z‖ ≤ 1 / 1024) :
     ‖(cutoffTerm p (cutoffDegree m) j).eval z‖ ≤
       (1 / 1024 : ℝ) ^ m * 4 ^ cutoffDegree m := by
@@ -1846,7 +1844,7 @@ lemma stageFactor_natDegree_add_one_le_two_pow
     calc
       2 ^ (512 * A + 1) + (8 * B + 1) ≤
           2 ^ (512 * B) + 2 ^ (512 * B) := Nat.add_le_add he hlin'
-      _ = 2 ^ (512 * B + 1) := by rw [pow_succ]; ring
+      _ = 2 ^ (512 * B + 1) := by rw [pow_succ, mul_two]
       _ ≤ 2 ^ (513 * B) := Nat.pow_le_pow_right (by norm_num) (by omega)
   have hinner :
       8 ^ (8 * B) * (2 ^ (512 * A + 1) + 8 * B + 1) + 8 * B + 1 ≤
@@ -1869,7 +1867,7 @@ lemma stageFactor_natDegree_add_one_le_two_pow
       _ ≤ 2 ^ (537 * B) + 2 ^ (537 * B) := by
         exact Nat.add_le_add_left
           (Nat.pow_le_pow_right (by norm_num : 0 < (2 : ℕ)) (by omega)) _
-      _ = 2 ^ (537 * B + 1) := by rw [pow_succ]; ring
+      _ = 2 ^ (537 * B + 1) := by rw [pow_succ, mul_two]
       _ ≤ 2 ^ (538 * B) := Nat.pow_le_pow_right (by norm_num) (by omega)
   have hpref : 3 ^ 3 * 3 ^ 2 ≤ 2 ^ (8 * B) := by
     calc
@@ -1885,7 +1883,7 @@ lemma stageFactor_natDegree_add_one_le_two_pow
     _ = (3 ^ 3 * 3 ^ 2) *
           (8 ^ (8 * B) * (2 ^ (512 * A + 1) + 8 * B + 1) + 8 * B + 1) := by
       unfold stageExponent B
-      ring
+      rw [show 2 * (256 * A) = 512 * A by omega, mul_assoc]
     _ ≤ 2 ^ (8 * B) * 2 ^ (538 * B) := Nat.mul_le_mul hpref hinner
     _ = 2 ^ (546 * B) := by
       have hexp : 8 * B + 538 * B = 546 * B := by omega
@@ -2428,7 +2426,7 @@ lemma volume_sharpRadialBad_le
   exact sharpRadialDifference_le hA n
 
 lemma sharpAreaTerm_nonneg
-    {A : ℕ → ℕ} (hA : ∀ n, 0 < A n) (n : ℕ) :
+    {A : ℕ → ℕ} (_hA : ∀ n, 0 < A n) (n : ℕ) :
     0 ≤ sharpAreaTerm A n := by
   unfold sharpAreaTerm
   positivity
@@ -2504,7 +2502,7 @@ lemma exists_sharpAnnulusIndex {x : ℝ} (hx : 1 < x) :
 
 /-- Off the exceptional set, a point outside the unit disk is in an annular bulk. -/
 lemma exists_sharpBulkIndex
-    {A : ℕ → ℕ} (hA : ∀ n, 0 < A n) {z : ℂ} (hz : 1 < ‖z‖)
+    {A : ℕ → ℕ} (_hA : ∀ n, 0 < A n) {z : ℂ} (hz : 1 < ‖z‖)
     (hbad : z ∉ sharpBadSet A) :
     ∃ n : ℕ,
       stagePatchRadius (sharpRadius n) (A n) ≤ ‖z‖ ∧
@@ -2702,7 +2700,6 @@ lemma sharpPolynomials_natDegree_add_one_le
       have hcoarse :
           (sharpPolynomials A (n + 1)).natDegree + 1 ≤
             32 * (n + 1) * (d + 1) ^ 2 * 2 ^ (600 * (A n + 1)) := by
-        change _ ≤ 32 * (n + 1) * (d + 1) ^ 2 * _
         calc
           (sharpPolynomials A (n + 1)).natDegree + 1 ≤
               (d + 1) * (2 * m * 2 ^ (600 * (A n + 1))) := hdeg
@@ -2710,9 +2707,11 @@ lemma sharpPolynomials_natDegree_add_one_le
               (2 * (12 * (n + 1) * (d + 1)) * 2 ^ (600 * (A n + 1))) := by
             gcongr
           _ = 24 * (n + 1) * (d + 1) ^ 2 * 2 ^ (600 * (A n + 1)) := by
+            rw [← mul_assoc]
+            congr 1
             ring
           _ ≤ 32 * (n + 1) * (d + 1) ^ 2 * 2 ^ (600 * (A n + 1)) := by
-            gcongr <;> norm_num
+            gcongr; norm_num
       have hpow :
           32 * (n + 1) * (d + 1) ^ 2 * 2 ^ (600 * (A n + 1)) ≤
             2 ^ (3210 * A n) := by
@@ -2762,9 +2761,12 @@ lemma sharpPolynomials_succ_natDegree_add_one_le
     _ ≤ (d + 1) *
         (2 * (12 * (n + 1) * (d + 1)) * 2 ^ (600 * (A n + 1))) := by
       gcongr
-    _ = 24 * (n + 1) * (d + 1) ^ 2 * 2 ^ (600 * (A n + 1)) := by ring
+    _ = 24 * (n + 1) * (d + 1) ^ 2 * 2 ^ (600 * (A n + 1)) := by
+      rw [← mul_assoc]
+      congr 1
+      ring
     _ ≤ 32 * (n + 1) * (d + 1) ^ 2 * 2 ^ (600 * (A n + 1)) := by
-      gcongr <;> norm_num
+      gcongr; norm_num
     _ ≤ 2 ^ (10 * A n) * (2 ^ (1000 * A n)) ^ 2 *
         2 ^ (600 * (A n + 1)) := by gcongr
     _ = 2 ^ (2010 * A n + 600 * (A n + 1)) := by
@@ -2884,7 +2886,6 @@ lemma sharpFunction_norm_le_on_annulus
         8 * A n * Q + 1 ≤ 8 * A n * Q + A n * Q := Nat.add_le_add_left hAQ1 _
         _ = 9 * A n * Q := by ring
     _ = ((2 ^ (9 * A n * 2 ^ (3210 * A n)) : ℕ) : ℝ) := by
-      change (2 : ℝ) ^ (9 * A n * Q) = _
       norm_cast
 
 /-! ## Extracting a summable scale from the integral hypothesis -/
@@ -3096,7 +3097,7 @@ lemma smoothDenominator_succ_le_four_mul
     unfold smoothDenominator
     rw [← hsplit]
     simp only [Finset.sum_range_succ, Finset.sum_range_zero, zero_add, F, pow_zero,
-      one_mul, Nat.zero_add]
+      one_mul]
     exact le_add_of_nonneg_left hnonneg
   nlinarith
 
@@ -3170,9 +3171,9 @@ lemma regularizedComplexity_four_mul_le
       _ ≤ (Nat.ceil b : ℝ) + 16 ^ n * 16 := by nlinarith)
 
 lemma regularizedComplexity_cast_ge_scale
-    {φ : ℝ → ℝ} (hφmono : Monotone φ)
-    (hφpos : ∀ r, 0 ≤ r → 0 < φ r)
-    (hInt : IntegrableOn (fun r : ℝ ↦ r / φ r) (Set.Ioi 0)) (n : ℕ) :
+    {φ : ℝ → ℝ} (_hφmono : Monotone φ)
+    (_hφpos : ∀ r, 0 ≤ r → 0 < φ r)
+    (_hInt : IntegrableOn (fun r : ℝ ↦ r / φ r) (Set.Ioi 0)) (n : ℕ) :
     smoothScale φ n ≤ (regularizedComplexity φ n : ℝ) := by
   unfold regularizedComplexity
   push_cast
@@ -3344,7 +3345,6 @@ lemma log_log_le_of_stage_bound
           real_two_pow_le_exp (3215 * A)
       _ ≤ Real.exp (4000 * A) := by
         apply Real.exp_le_exp.mpr
-        push_cast
         nlinarith [show (0 : ℝ) < A by exact_mod_cast hA]
   have hlogtwo : Real.log (2 : ℝ) ≤ 1 := by
     exact (Real.log_le_sub_one_of_pos (by norm_num)).trans_eq (by norm_num)

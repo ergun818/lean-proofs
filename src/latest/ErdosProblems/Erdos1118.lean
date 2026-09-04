@@ -2950,7 +2950,7 @@ theorem logPolarSlice_le_posLog_maximumModulus_pow_five {f : ℂ → ℂ}
     logPolarSlice f x θ ≤ (Real.posLog (maximumModulus f (Real.exp x))) ^ 5 := by
   have hnorm : ‖f (polarPoint (Real.exp x) θ)‖ ≤ maximumModulus f (Real.exp x) := by
     apply norm_le_maximumModulus hf.continuous (Real.exp_pos x).le
-    simp [polarPoint, Complex.norm_mul, abs_of_pos (Real.exp_pos x)]
+    simp [polarPoint]
   have hposlog := Real.posLog_le_posLog (norm_nonneg _) hnorm
   have hpow : (Real.posLog ‖f (polarPoint (Real.exp x) θ)‖) ^ 5 ≤
       (Real.posLog (maximumModulus f (Real.exp x))) ^ 5 := by
@@ -3245,7 +3245,7 @@ theorem eventually_pos_logPolarSqrtEnergyFirst {f : ℂ → ℂ}
       exact logPolarSqrtEnergySecond_nonneg hf.1 (hlog x hxX)
   have hex : ∃ y, X ≤ y ∧ 0 < logPolarSqrtEnergyFirst f y := by
     by_contra hnot
-    push_neg at hnot
+    push Not at hnot
     have hslope_nonpos : ∀ y, X ≤ y → logPolarSqrtEnergyFirst f y ≤ 0 := hnot
     let q : ℝ → ℝ := reducedReciprocalLogWidth f
     have hqmeas : AEStronglyMeasurable q volume :=
@@ -3383,7 +3383,8 @@ theorem monotoneOn_logPolarSqrtEnergyFirst {f : ℂ → ℂ}
     exact (hasDerivAt_logPolarSqrtEnergyFirst hf (hlog x hx)).continuousAt.continuousWithinAt
   · intro x hx
     have hxX : X ≤ x := interior_subset hx
-    exact (hasDerivAt_logPolarSqrtEnergyFirst hf (hlog x hxX)).differentiableAt.differentiableWithinAt
+    exact
+      (hasDerivAt_logPolarSqrtEnergyFirst hf (hlog x hxX)).differentiableAt.differentiableWithinAt
   · intro x hx
     have hxX : X ≤ x := interior_subset hx
     rw [(hasDerivAt_logPolarSqrtEnergyFirst hf (hlog x hxX)).deriv]
@@ -4776,7 +4777,7 @@ lemma closedEndpoint_volume_exceptionalSet_eq_top {c : ℝ} (hc : c < 1) :
     volume (exceptionalSet (endpointFunction closedEndpointTarget) c) = ∞ := by
   have hpos : 0 < 1 - c := sub_pos.mpr hc
   have hlim : Tendsto (fun n : ℕ ↦ 2 * endpointMargin n) atTop (𝓝 0) := by
-    convert endpointMargin_tendsto_zero.const_mul 2 using 1 <;> simp
+    convert endpointMargin_tendsto_zero.const_mul 2 using 1; simp
   have hev : ∀ᶠ n : ℕ in atTop, 2 * endpointMargin n < 1 - c :=
     hlim.eventually (Iio_mem_nhds hpos)
   obtain ⟨N, hN⟩ := eventually_atTop.1 hev
@@ -4803,7 +4804,6 @@ lemma closedEndpoint_volume_exceptionalSet_eq_top {c : ℝ} (hc : c < 1) :
     obtain ⟨n, hzS, hzT, hzcorr⟩ := exists_endpointBulkIndex hznorm hzbad
     have hNn : N ≤ n := by
       unfold endpointOuterRadius at hzlarge hzT
-      push_cast at hzlarge hzT
       exact_mod_cast (show (N : ℝ) ≤ n by linarith)
     have hm := hN n hNn
     have hbulk := (closedEndpointFunction_bounds_on_bulk n hzS hzT hzcorr).1
@@ -4848,7 +4848,7 @@ lemma openEndpoint_hasFiniteArea {c : ℝ} (hc : 1 < c) :
     HasFiniteArea (endpointFunction openEndpointTarget) c := by
   have hpos : 0 < c - 1 := sub_pos.mpr hc
   have hlim : Tendsto (fun n : ℕ ↦ 2 * endpointMargin n) atTop (𝓝 0) := by
-    convert endpointMargin_tendsto_zero.const_mul 2 using 1 <;> simp
+    convert endpointMargin_tendsto_zero.const_mul 2 using 1; simp
   have hev : ∀ᶠ n : ℕ in atTop, 2 * endpointMargin n < c - 1 :=
     hlim.eventually (Iio_mem_nhds hpos)
   obtain ⟨N, hN⟩ := eventually_atTop.1 hev
@@ -5000,7 +5000,7 @@ theorem sharpGrowthTheorem : SharpGrowthTheorem := by
     have hnorm2 : ‖(2 : ℂ)‖ = 2 := by norm_num
     have hset : exceptionalSet f 2 = {z : ℂ | 1 < ‖g z‖} := by
       ext z
-      simp only [exceptionalSet, Set.mem_setOf_eq, f, norm_mul, hnorm2]
+      simp only [exceptionalSet, Set.mem_ofPred_eq, f, norm_mul, hnorm2]
       constructor <;> intro h <;> nlinarith [norm_nonneg (g z)]
     unfold HasFiniteArea
     rw [hset]
@@ -5036,7 +5036,7 @@ theorem sharpGrowthTheorem : SharpGrowthTheorem := by
       (2 : ℝ) ^ (9 * A n * 2 ^ (3210 * A n) + 1) := by
     rw [hM]
     calc
-      ‖f z‖ = 2 * ‖g z‖ := by simp [f, norm_mul]
+      ‖f z‖ = 2 * ‖g z‖ := by simp [f]
       _ ≤ 2 * ((2 ^ (9 * A n * 2 ^ (3210 * A n)) : ℕ) : ℝ) := by gcongr
       _ = (2 : ℝ) ^ (9 * A n * 2 ^ (3210 * A n) + 1) := by
         rw [pow_succ]
@@ -5068,13 +5068,15 @@ def Resolution : Prop :=
 
 /-- Complete formal resolution of Erdős Problem 1118. -/
 theorem erdos_1118 : ((∀ (f : ℂ → ℂ) (c : ℝ),
-  Erdos1118.IsNonconstantEntire f → Erdos1118.HasFiniteArea f c → Erdos1118.GrowthIntegralConverges f) ∧ (∀ φ : ℝ → ℝ,
+  Erdos1118.IsNonconstantEntire f → Erdos1118.HasFiniteArea f c →
+    Erdos1118.GrowthIntegralConverges f) ∧ (∀ φ : ℝ → ℝ,
   Monotone φ → (∀ r, 0 ≤ r → 0 < φ r) →
   MeasureTheory.IntegrableOn (fun r : ℝ ↦ r / φ r) (Set.Ioi 0) →
   ∃ (f : ℂ → ℂ) (c C R : ℝ),
     Erdos1118.IsNonconstantEntire f ∧ 0 < c ∧ Erdos1118.HasFiniteArea f c ∧ 0 < C ∧ 0 < R ∧
       ∀ r, R ≤ r →
-        Real.log (Real.log (Erdos1118.maximumModulus f r)) ≤ C * φ r) ∧ (∀ m : ℝ, 0 < m → Erdos1118.ClosedThresholdWitness m ∧ Erdos1118.OpenThresholdWitness m)) :=
+        Real.log (Real.log (Erdos1118.maximumModulus f r)) ≤ C * φ r) ∧ (∀ m : ℝ, 0 < m →
+          Erdos1118.ClosedThresholdWitness m ∧ Erdos1118.OpenThresholdWitness m)) :=
   ⟨directGrowthTheorem, sharpGrowthTheorem, prescribedThresholdTheorem⟩
 
 /-- The second answer follows formally from Gol'dberg's exact theorem. -/

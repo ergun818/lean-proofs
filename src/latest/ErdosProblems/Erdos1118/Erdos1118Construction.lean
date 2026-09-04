@@ -31,7 +31,7 @@ lemma isCompact_chapletSet (R S T ε : ℝ) : IsCompact (chapletSet R S T ε) :=
   apply (isCompact_closedBall 0 R).union
   apply Metric.isCompact_iff_isClosed_bounded.mpr
   constructor
-  · simpa only [Set.setOf_and, Set.setOf_or] using
+  · simpa only [Set.ofPred_and, Set.ofPred_or] using
       ((isClosed_le (continuous_const : Continuous fun _ : ℂ ↦ S) continuous_norm).inter
         ((isClosed_le continuous_norm (continuous_const : Continuous fun _ : ℂ ↦ T)).inter
           ((isClosed_le Complex.continuous_re
@@ -236,7 +236,7 @@ lemma chapletSeparator_mem_uniformClosure
     (((ρ : ℝ) : ℂ) ^ N)
 
 lemma div_sub_le_ratio {A C q : ℝ}
-    (hA : 0 ≤ A) (hC : 0 < C) (hq0 : 0 ≤ q) (hq1 : q < 1)
+    (_hA : 0 ≤ A) (hC : 0 < C) (_hq0 : 0 ≤ q) (hq1 : q < 1)
     (hAC : A ≤ q * C) :
     A / (C - A) ≤ q / (1 - q) := by
   have hAClt : A < C := lt_of_le_of_lt hAC (mul_lt_of_lt_one_left hC hq1)
@@ -612,7 +612,6 @@ lemma endpointPatch_le_outer (n : ℕ) :
     endpointPatchRadius n ≤ endpointOuterRadius n := by
   unfold endpointPatchRadius endpointOuterRadius endpointInnerRadius
   have hg := endpointGap_lt_one n
-  push_cast
   linarith
 
 /-- One fixed Runge step in the endpoint construction. -/
@@ -826,7 +825,7 @@ lemma volume_endpointCorridorBox_eq_error (n : ℕ) :
     unfold endpointOuterRadius endpointGap
     have hn : (n : ℝ) + 2 ≠ 0 := by positivity
     field_simp
-    <;> ring
+    ring
   · have : 0 ≤ endpointOuterRadius n := by
       unfold endpointOuterRadius
       positivity
@@ -862,11 +861,9 @@ lemma endpointRadialDifference_le (n : ℕ) :
   have hg : 0 ≤ g := (endpointGap_pos n).le
   have hReq : R = (n : ℝ) + 1 := by
     unfold R endpointInnerRadius
-    push_cast
     rfl
   have hRle : R ≤ (n : ℝ) + 2 := by
     unfold R endpointInnerRadius
-    push_cast
     linarith
   have hg1 : g ≤ 1 := (endpointGap_lt_one n).le
   have hfactor : 2 * R + g ≤ 2 * ((n : ℝ) + 2) := by linarith
@@ -1047,7 +1044,6 @@ lemma endpointFunction_sub_id_norm_le (a : ℕ → ℂ) {z : ℂ} (hz : ‖z‖ 
     apply hz.trans
     unfold endpointInnerRadius
     have hn : (0 : ℝ) ≤ (n : ℝ) := by positivity
-    push_cast
     linarith
   unfold endpointFunction
   have hsum := tsum_of_norm_bounded summable_endpointError.hasSum hbound
