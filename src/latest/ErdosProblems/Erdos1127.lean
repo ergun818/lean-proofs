@@ -502,6 +502,7 @@ private noncomputable def polynomialToGerm
     apply Filter.Germ.coe_eq.mpr
     exact Filter.Eventually.of_forall (by simp)
 
+@[instance_reducible]
 private noncomputable def polynomialGermAlgebra
     (K : Type*) [Field K] [Algebra K ℝ] (t : ℝ) :
     Algebra (Polynomial K) (Filter.Germ (nhds t) ℝ) :=
@@ -827,7 +828,7 @@ private theorem basisValue_mem_pivotBaseField
         (realTranscendenceBasisValue ''
           ({t}ᶜ : Set RealTranscendenceBasisIndex))) := by
   apply IntermediateField.subset_adjoin
-  exact ⟨s, by simpa [hst], rfl⟩
+  exact ⟨s, by simp [hst], rfl⟩
 
 private noncomputable def basisValueInPivotBaseField
     (t s : RealTranscendenceBasisIndex) (hst : s ≠ t) : PivotBaseField t :=
@@ -900,7 +901,7 @@ private theorem canonicalScalarSupportSet_subset (x : ℝ) :
     have hsub := realTranscendenceMatroid.fundCircuit_subset_insert x
       realTranscendenceBasisSet hyS.1
     rcases hsub with hyx | hyB
-    · exact (hyS.2 (by simpa [hyx])).elim
+    · exact (hyS.2 (by simp [hyx])).elim
     · exact hyB
 
 private theorem canonicalScalarSupportSet_finite (x : ℝ) :
@@ -1099,7 +1100,7 @@ private theorem scalarSupport_empty_of_pointSupport_empty {n : ℕ}
   intro t ht
   have hmem := scalarSupport_subset_pointSupport x i ht
   rw [hx] at hmem
-  simpa using hmem
+  simp at hmem
 
 private theorem isAlgebraic_rat_of_pointSupport_empty {n : ℕ}
     (x : EuclideanSpace ℝ (Fin n))
@@ -1913,11 +1914,9 @@ private theorem analyticAt_chartValue_update
     intro l
     simp only [Function.update]
     split_ifs
-    ·
-      simpa using (analyticAt_fst :
+    · simpa using (analyticAt_fst :
         AnalyticAt ℝ (fun z : ℝ × ℝ ↦ z.1) (u j, y))
-    ·
-      exact analyticAt_const
+    · exact analyticAt_const
   have hmap : AnalyticAt ℝ
       (fun z : ℝ × ℝ ↦ (Function.update u j z.1, z.2)) (u j, y) :=
     hinput.prod analyticAt_snd
@@ -2162,7 +2161,7 @@ private theorem isOpen_strictMono_fin {k : ℕ} :
   rw [show {v : Fin k → ℝ | StrictMono v} =
       ⋂ i : Fin k, ⋂ j : Fin k, ⋂ (_h : i < j), {v | v i < v j} by
     ext v
-    simp only [Set.mem_setOf_eq, Set.mem_iInter]
+    simp only [Set.mem_ofPred_eq, Set.mem_iInter]
     exact Iff.rfl]
   apply isOpen_iInter_of_finite
   intro i
@@ -2289,7 +2288,7 @@ private theorem pointAlgebraicChartCode_spec {n : ℕ}
     IsPointAlgebraicChart (pointAlgebraicChartCode x) x :=
   (exists_point_algebraicChartCode x).choose_spec
 
-private noncomputable def pointChartCardEq {n : ℕ}
+private theorem pointChartCardEq {n : ℕ}
     (x : EuclideanSpace ℝ (Fin n)) :
     (pointAlgebraicChartCode x).1 = (pointTranscendenceSupport x).card :=
   (pointAlgebraicChartCode_spec x).choose
@@ -2419,8 +2418,7 @@ private theorem exists_chartCurve_point_ne {n : ℕ}
     intro l
     by_cases hlj : l = j
     · subst l
-      simp [fixed, z, Function.update,
-        IsScalarTower.algebraMap_apply ℚ (PivotBaseField t) ℝ]
+      simp [fixed, z, Function.update]
     · rw [show fixed l = basisValueInPivotBaseField t
           (pointChartSupportIndex x l)
           ((pointChartSupportIndex_injective x).ne hlj) by
@@ -2457,7 +2455,7 @@ private theorem exists_chartCurve_point_ne {n : ℕ}
     hminimal ⟨t, pointChartSupportIndex_mem x j, rfl⟩
   obtain ⟨s, hst, heqst⟩ := htmem
   have : s = t := Subtype.ext heqst
-  exact hst (by simpa [this])
+  exact hst (by simp [this])
 
 /-! ### The CH finite-support fingerprint
 
@@ -2560,7 +2558,7 @@ private theorem supportFingerprint_eq_imp {X : Type*} [LinearOrder X]
     s.card = t.card ∧
       supportPosition ambient (s.max' hs) s = supportPosition ambient (t.max' ht) t ∧
       (s.max' hs = t.max' ht → s = t) := by
-  simp [supportFingerprint, hs, ht] at hfp
+  simp only [supportFingerprint, dif_pos hs, dif_pos ht, Prod.mk.injEq] at hfp
   refine ⟨hfp.1, hfp.2.1, ?_⟩
   · intro hp
     have hcode := hfp.2.2
@@ -2928,7 +2926,7 @@ private theorem shared_support_index_same_coordinate {n : ℕ}
     have hij : ix < jx := hrs
     have hlt := hvstrict hij
     have hne : ix ≠ jx := ne_of_lt hij
-    simp [v, Function.update, hne] at hlt
+    simp only [v, Function.update_of_ne hne, Function.update_self] at hlt
     exact ((ne_of_lt hlt) hvalue).elim
   · exact hrs
   · let v := Function.update (pointChartParameters x) jx (pointChartParameters y jy)
@@ -2942,7 +2940,7 @@ private theorem shared_support_index_same_coordinate {n : ℕ}
     have hji : jx < ix := hsr
     have hlt := hvstrict hji
     have hne : ix ≠ jx := ne_of_gt hji
-    simp [v, Function.update, hne] at hlt
+    simp only [v, Function.update_of_ne hne, Function.update_self] at hlt
     exact ((ne_of_lt hlt) hvalue.symm).elim
 
 private lemma chartInputBox_update {n : ℕ} (c : AlgebraicChartCode n)
@@ -2969,7 +2967,7 @@ private theorem analyticOnNhd_chartValue_update {n : ℕ}
   let v := Function.update u j z
   have han := isAlgebraicAnalyticAtOver_chartValue_update (K := ℝ) c v i j v
     (fun l hlj ↦ rfl) hzbox hunique (hderiv v hzbox i)
-  have hvj : v j = z := by simp [v, Function.update]
+  have hvj : v j = z := by simp [v]
   rw [← hvj]
   apply han.1.congr
   exact Filter.Eventually.of_forall fun w ↦ by
@@ -3372,12 +3370,12 @@ private theorem replaceBasisIndex_position
   by_cases hrl : idx r l = idx a j
   · by_cases hsq : idx s q = idx a j
     · exact (hpos r a l j hrl).trans (hpos s a q j hsq).symm
-    · simp [replaceBasisIndex, hrl, hsq] at heq
+    · simp only [replaceBasisIndex, if_pos hrl, if_neg hsq] at heq
       exact (hpos r a l j hrl).trans (hpos b s j q heq)
   · by_cases hsq : idx s q = idx a j
-    · simp [replaceBasisIndex, hrl, hsq] at heq
+    · simp only [replaceBasisIndex, if_neg hrl, if_pos hsq] at heq
       exact (hpos r b l j heq).trans (hpos s a q j hsq).symm
-    · simp [replaceBasisIndex, hrl, hsq] at heq
+    · simp only [replaceBasisIndex, if_neg hrl, if_neg hsq] at heq
       exact hpos r s l q heq
 
 private theorem replaceBasisIndex_box
@@ -3469,7 +3467,7 @@ private theorem indexNormalizationStep_preserves_eq
   · have hs : idx s j = idx p.1 p.2 := h.symm.trans hr
     simp [hr, hs]
   · have hs : idx s j ≠ idx p.1 p.2 := fun hs ↦ hr (h.trans hs)
-    simp [hr, hs, h]
+    simp [hs, h]
 
 private theorem normalizeIndices_preserves_eq
     {m n : ℕ} [NeZero m] {c : AlgebraicChartCode n}
@@ -3669,9 +3667,9 @@ private theorem normalizeIndices_preserves_unique_excluded
           indexNormalizationStep idx p r.1 r.2 = idx q.1 q.2 → r = q := by
         intro r hr
         by_cases hrs : idx r.1 r.2 = idx p.1 p.2
-        · simp [indexNormalizationStep, replaceBasisIndex, hrs] at hr
+        · simp only [indexNormalizationStep, replaceBasisIndex, if_pos hrs] at hr
           exact (htarget hr).elim
-        · simp [indexNormalizationStep, replaceBasisIndex, hrs] at hr
+        · simp only [indexNormalizationStep, replaceBasisIndex, if_neg hrs] at hr
           exact hunique r hr
       rw [normalizeIndices, List.foldl_cons]
       have htail := ih (indexNormalizationStep idx p)
@@ -3956,7 +3954,7 @@ private theorem chartConfiguration_avoidsP3
     by_cases hl : l = cfg.pivot
     · subst l
       simp
-    · simp only [Function.update, hl, ↓reduceIte]
+    · simp only [Function.update, hl]
       apply congrArg realTranscendenceBasisValue
       change normalizeIndices L cfg.index 2 l = normalizeIndices L cfg.index 0 l
       apply normalizeIndices_eq_of_mem L cfg.index (p := (2, l))
@@ -4058,7 +4056,7 @@ private theorem chartConfiguration_avoidsP4
     by_cases hl : l = cfg.pivot
     · subst l
       simp
-    · simp only [Function.update, hl, ↓reduceIte]
+    · simp only [Function.update, hl]
       apply congrArg realTranscendenceBasisValue
       change normalizeIndices L cfg.index 1 l = normalizeIndices L cfg.index 0 l
       apply normalizeIndices_eq_of_mem L cfg.index (p := (1, l))
@@ -4269,10 +4267,11 @@ theorem exists_linearlyIndependent_real_coloring (hCH : ContinuumHypothesis) :
       rw [← hpivot] at hencoded
       exact localCode_injective (pivot x.1) x.2.2 rfl y.2.2 hpivot.symm hencoded
 
-private theorem single_sub_single_eq {A : Type*} [DecidableEq A]
+private theorem single_sub_single_eq {A : Type*}
     {a b c d : A} (hab : a ≠ b) (hcd : c ≠ d)
     (h : (Finsupp.single a (1 : ℚ) - Finsupp.single b 1) =
       Finsupp.single c 1 - Finsupp.single d 1) : a = c ∧ b = d := by
+  classical
   have ha := DFunLike.congr_fun h a
   have hac : a = c := by
     by_contra hac
@@ -4280,15 +4279,15 @@ private theorem single_sub_single_eq {A : Type*} [DecidableEq A]
     · have hba : b ≠ a := Ne.symm hab
       have hca : c ≠ a := by simpa [had] using hcd
       have hbd : b ≠ d := fun hbd ↦ hab (had.trans hbd.symm)
-      simp [Finsupp.single_apply, hac, had, hba, hca, hbd, hcd] at ha
+      simp [had, hbd, hcd] at ha
       norm_num at ha
-    · simp [Finsupp.single_apply, hab, hac, had] at ha
+    · simp [hab, hac, had] at ha
   subst c
   have hs : Finsupp.single b (1 : ℚ) = Finsupp.single d 1 := sub_right_inj.mp h
   have hbd : b = d := by
     by_contra hbd
     have hb := DFunLike.congr_fun hs b
-    simp [Finsupp.single_apply, hbd] at hb
+    simp [hbd] at hb
   exact ⟨rfl, hbd⟩
 
 private theorem hasDistinctPairDistances_of_linearIndependentFibers
@@ -4443,7 +4442,8 @@ private theorem translateCode_injective {color : ℝ → ℕ}
     simpa [a, hfst] using hbase
   have hdist : dist (x + a) (x + b) = dist (y + a) (y + b) := by
     simp only [Real.dist_eq]
-    congr 1 <;> ring
+    congr 1
+    ring
   have hneX : x + a ≠ x + b := add_left_cancel_iff.not.mpr hab
   have hneY : y + a ≠ y + b := add_left_cancel_iff.not.mpr hab
   rcases hcolor hsameX hbase' (hbase'.trans hsameY) hneX hneY hdist with h | h
