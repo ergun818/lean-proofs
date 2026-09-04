@@ -119,7 +119,7 @@ theorem indepNum_le_order {n : ℕ} (G : SimpleGraph (Fin n)) :
     _ = n := Fintype.card_fin n
 
 theorem localIndependenceNumber_eq_minimum {n s t : ℕ}
-    (hts : t ≤ s) (hsn : s ≤ n) :
+    (hts : t ≤ s) (_hsn : s ≤ n) :
     ∃ G : SimpleGraph (Fin n),
       HasLocalIndependence G s t ∧
       G.indepNum = localIndependenceNumber n s t := by
@@ -171,7 +171,7 @@ def cubicValue (n : ℕ) : ℕ :=
 
 /-! ## Finite double counting for the lower bound -/
 
-variable {V : Type*} [Fintype V] [DecidableEq V]
+variable {V : Type*} [DecidableEq V]
 
 /-- Independent `r`-subsets of `W`. -/
 def independentSubsets (G : SimpleGraph V) [DecidableRel G.Adj]
@@ -224,7 +224,7 @@ lemma exists_sum_le_card_mul_of_nonempty
 set `W` of at least `s` vertices. -/
 theorem choose_card_le_independentSubsets_mul_choose
     (G : SimpleGraph V) [DecidableRel G.Adj]
-    (W : Finset V) (s u : ℕ) (hus : u ≤ s) (hsW : s ≤ W.card)
+    (W : Finset V) (s u : ℕ) (hus : u ≤ s) (_hsW : s ≤ W.card)
     (hlocal : ∀ S ∈ W.powersetCard s,
       ∃ I : Finset V, I ⊆ S ∧ I.card = u ∧ G.IsIndepSet (I : Set V)) :
     Nat.choose W.card s ≤
@@ -257,7 +257,7 @@ theorem choose_card_le_independentSubsets_mul_choose
 `u`-set `I`. -/
 theorem sum_card_independent_extensions
     (G : SimpleGraph V) [DecidableRel G.Adj]
-    (W : Finset V) (u h : ℕ) (hhu : h ≤ u) :
+    (W : Finset V) (u h : ℕ) (_hhu : h ≤ u) :
     ∑ X ∈ W.powersetCard h,
         #((independentSubsets G W u).filter (fun I ↦ X ⊆ I)) =
       #(independentSubsets G W u) * Nat.choose u h := by
@@ -562,7 +562,7 @@ theorem card_mul_sq_ge_of_choose_bound
 half-set is anticomplete to a remainder which loses at most the factor
 `2 * s ^ 2`. -/
 theorem exists_anticomplete_block
-    (G : SimpleGraph V) [DecidableRel G.Adj]
+    (G : SimpleGraph V)
     (W : Finset V) (s h : ℕ) (hh : 0 < h)
     (hfour : 4 * h ≤ W.card) (hu : 2 * h ≤ s) (hsW : s ≤ W.card)
     (hlocal : ∀ S ∈ W.powersetCard s,
@@ -616,10 +616,11 @@ theorem exists_anticomplete_block
   intro x hx v hv
   exact not_adj_of_mem_extensionRemainder hx hv
 
+omit [DecidableEq V] in
 /-- Iterating the anticomplete-block lemma constructs a large independent
 set inside an arbitrary ambient vertex set. -/
 theorem exists_independent_of_geometric_room
-    (G : SimpleGraph V) [DecidableRel G.Adj]
+    (G : SimpleGraph V)
     (W : Finset V) (s h q : ℕ) (hh : 0 < h) (hs : 0 < s)
     (hfour : 4 * h ≤ s)
     (hroom : s * (2 * s ^ 2) ^ q ≤ W.card)
@@ -786,6 +787,7 @@ def groupEncoding (d k : ℕ) (A : J → Finset E)
       simpa [eA] using he0⟩ : GoodColoring d k),
     fun e ↦ f.1 e)
 
+omit [Fintype E] [DecidableEq J] in
 lemma groupEncoding_injective (d k : ℕ) (A : J → Finset E)
     (hcard : ∀ i, (A i).card = k) :
     Function.Injective (groupEncoding d k A hcard) := by
@@ -806,6 +808,7 @@ lemma groupEncoding_injective (d k : ℕ) (A : J → Finset E)
     have he := congrFun hsnd efree
     simpa [groupEncoding, efree] using he
 
+omit [DecidableEq J] in
 /-- Exact product-space counting, in the upper-bound form needed later: if
 `J` pairwise-disjoint groups each contain `k` coordinates, then color zero
 appearing in every group costs the factor
@@ -817,6 +820,7 @@ theorem card_group_constrained_le
     Fintype.card {f : E → Fin (d + 1) // ∀ i, ∃ e ∈ A i, f e = 0} ≤
       ((d + 1) ^ k - d ^ k) ^ Fintype.card J *
         (d + 1) ^ (Fintype.card E - Fintype.card J * k) := by
+  classical
   let C := (Finset.univ : Finset J).biUnion A
   have hCcard : C.card = Fintype.card J * k := by
     rw [Finset.card_biUnion hdisj]
@@ -1005,7 +1009,7 @@ theorem card_independentColorings
       {f : Sym2 W → Fin (d + 1) //
         ∀ a ∈ pairEdgeFinset s, f a ∈ T} :=
     Equiv.subtypeEquiv (Equiv.refl _) fun f ↦ by
-      simpa only [coloredGraph_isIndepSet_iff, T, Equiv.refl_apply,
+      simp only [coloredGraph_isIndepSet_iff, T, Equiv.refl_apply,
         Finset.mem_erase, Finset.mem_univ, and_true]
   have hfilterCard : #(independentColorings d s) =
       Fintype.card {f : Sym2 W → Fin (d + 1) //
@@ -1098,10 +1102,11 @@ def zeroEdgeCount {W : Type*} [DecidableEq W]
 
 /-- A graph and its complement partition all unordered non-loop pairs. -/
 theorem card_edgeFinset_add_compl
-    {V : Type*} [Fintype V] [DecidableEq V] (G : SimpleGraph V)
+    {V : Type*} [Fintype V] (G : SimpleGraph V)
     [DecidableRel G.Adj] [DecidableRel Gᶜ.Adj] :
     G.edgeFinset.card + Gᶜ.edgeFinset.card =
       Nat.choose (Fintype.card V) 2 := by
+  classical
   have heq : Gᶜ.edgeFinset =
       (⊤ : SimpleGraph V).edgeFinset \ G.edgeFinset := by
     ext e
@@ -1126,11 +1131,12 @@ theorem card_edgeFinset_add_compl
 natural-number inequality is convenient for the local first-moment
 construction below. -/
 theorem turan_edge_lower_bound
-    {V : Type*} [Fintype V] [DecidableEq V] (G : SimpleGraph V)
-    [DecidableRel G.Adj] [DecidableRel Gᶜ.Adj] {t : ℕ}
+    {V : Type*} [Fintype V] (G : SimpleGraph V)
+    [DecidableRel G.Adj] {t : ℕ}
     (ht : 2 ≤ t) (hind : G.indepNum < t) :
     Fintype.card V * (Fintype.card V - (t - 1)) ≤
       2 * (t - 1) * G.edgeFinset.card := by
+  classical
   let N := Fintype.card V
   let r := t - 1
   have hr : 0 < r := by omega
@@ -1205,12 +1211,13 @@ theorem turan_edge_lower_bound
 /-- The combinatorial zero count is exactly the edge count of the graph
 induced on the chosen vertex set. -/
 theorem zeroEdgeCount_eq_card_induce
-    {W : Type*} [Fintype W] [DecidableEq W]
+    {W : Type*} [Finite W] [DecidableEq W]
     (d : ℕ) (f : Sym2 W → Fin (d + 1)) (S : Finset W)
     [DecidableRel (coloredGraph d f).Adj] :
     zeroEdgeCount f S =
       #((coloredGraph d f).induce (↑S : Set W)).edgeFinset := by
   classical
+  let : Fintype W := Fintype.ofFinite W
   rw [← SimpleGraph.card_filter_edgeFinset_toFinset_subset]
   apply congrArg Finset.card
   ext e
@@ -1218,8 +1225,7 @@ theorem zeroEdgeCount_eq_card_induce
   intro a b
   rw [Finset.mem_filter, Finset.mem_filter,
     mem_pairEdgeFinset_iff, SimpleGraph.mem_edgeFinset]
-  simp [Finset.mk_mem_sym2_iff, SimpleGraph.mem_edgeSet, coloredGraph,
-    SimpleGraph.fromEdgeSet_adj, Sym2.toFinset_mk_eq,
+  simp [coloredGraph, Sym2.toFinset_mk_eq,
     Finset.insert_subset_iff, Finset.singleton_subset_iff,
     and_assoc, and_left_comm, and_comm]
 
@@ -1261,7 +1267,7 @@ theorem hasLocalIndependence_of_sparse_coloring
     intro hind
     have hT0 := turan_edge_lower_bound H ht hind
     have hcard : Fintype.card {x // x ∈ (↑S : Set (Fin n))} = s := by
-      simpa [hScard]
+      simp [hScard]
     have hT : s * (s - (t - 1)) ≤
         2 * (t - 1) * H.edgeFinset.card := by
       simpa only [hcard] using hT0
@@ -1388,12 +1394,12 @@ theorem card_denseLocalBadColorings_le (n d s r : ℕ) :
               (d + 1) ^ (Fintype.card (Sym2 (Fin n)) - r) := by
           rw [Finset.sum_const, Finset.card_powersetCard,
             pairEdgeFinset_card, hScard]
-          simp [nsmul_eq_mul]
+          simp
     _ = Nat.choose n s * Nat.choose (Nat.choose s 2) r *
           (d + 1) ^ (Fintype.card (Sym2 (Fin n)) - r) := by
       rw [Finset.sum_const, Finset.card_powersetCard,
         Finset.card_univ, Fintype.card_fin]
-      simp [nsmul_eq_mul, mul_assoc, mul_comm, mul_left_comm]
+      simp [mul_assoc]
 
 /-- Finite first-moment certificate for the square-window construction.
 The displayed strict inequality is precisely the sum of the local and
@@ -1469,7 +1475,7 @@ theorem square_upper_bound_finite
 
 /-- Independence number cannot increase on passing to an induced subgraph. -/
 theorem indepNum_induce_le
-    {W : Type*} [Fintype W] [DecidableEq W]
+    {W : Type*} [Finite W]
     (G : SimpleGraph W) (U : Finset W) :
     (G.induce (↑U : Set W)).indepNum ≤ G.indepNum := by
   classical
@@ -1490,7 +1496,7 @@ theorem indepNum_induce_le
 
 /-- Monotonicity of the independence number for nested induced subgraphs. -/
 theorem indepNum_induce_mono
-    {W : Type*} [Fintype W] [DecidableEq W]
+    {W : Type*}
     (G : SimpleGraph W) {U V : Finset W} (hUV : U ⊆ V) :
     (G.induce (↑U : Set W)).indepNum ≤
       (G.induce (↑V : Set W)).indepNum := by
@@ -1534,7 +1540,7 @@ def IsBlockCertificate {W : Type*} [DecidableEq W]
 
 /-- A maximum independent set dominates every vertex outside it. -/
 theorem maximumIndepSet_dominates
-    {W : Type*} [Fintype W] [DecidableEq W]
+    {W : Type*} [Finite W]
     {G : SimpleGraph W} (I : Finset W) (hI : G.IsMaximumIndepSet I) :
     ∀ v ∉ I, ∃ x ∈ I, G.Adj x v := by
   classical
@@ -1561,7 +1567,7 @@ theorem maximumIndepSet_dominates
 maximal-independent-set procedure supplies any number of domination blocks
 for which there is room. -/
 theorem exists_blockCertificate_of_indepNum_lt
-    {W : Type*} [Fintype W] [DecidableEq W]
+    {W : Type*} [DecidableEq W]
     {d k r : ℕ} (f : Sym2 W → Fin (d + 1)) (U : Finset W)
     (hind : ((coloredGraph d f).induce (↑U : Set W)).indepNum < k)
     (hroom : r * k ≤ U.card) :
@@ -1676,7 +1682,7 @@ def dominationGroups {W : Type*} [DecidableEq W] :
         dominationGroups r (U \ B 0) (Fin.tail B)
 
 theorem starEdgeFinset_subset_pairEdges
-    {W : Type*} [Fintype W] [DecidableEq W]
+    {W : Type*} [Finite W] [DecidableEq W]
     {U B : Finset W} {v : W} (hBU : B ⊆ U) (hv : v ∈ U \ B) :
     starEdgeFinset B v ⊆ pairEdgeFinset U := by
   intro e he
@@ -1694,7 +1700,7 @@ theorem starEdgeFinset_subset_pairEdges
 /-- Every group produced later in the recursion lies completely inside the
 current ambient vertex set. -/
 theorem dominationGroups_subset_pairEdges
-    {W : Type*} [Fintype W] [DecidableEq W]
+    {W : Type*} [Finite W] [DecidableEq W]
     {d k r : ℕ} {f : Sym2 W → Fin (d + 1)}
     {U : Finset W} {B : Fin r → Finset W}
     (hcert : IsBlockCertificate d f k r U B) :
@@ -1716,7 +1722,7 @@ theorem dominationGroups_subset_pairEdges
 
 theorem disjoint_starEdgeFinset
     {W : Type*} [DecidableEq W] {B R : Finset W} {v w : W}
-    (hv : v ∈ R) (hw : w ∈ R) (hRB : Disjoint R B) (hvw : v ≠ w) :
+    (_hv : v ∈ R) (hw : w ∈ R) (hRB : Disjoint R B) (hvw : v ≠ w) :
     Disjoint (starEdgeFinset B v) (starEdgeFinset B w) := by
   rw [Finset.disjoint_left]
   intro e hev hew
@@ -1728,8 +1734,8 @@ theorem disjoint_starEdgeFinset
     exact (Finset.disjoint_left.mp hRB) hw hwB
 
 theorem disjoint_starEdgeFinset_pairEdges
-    {W : Type*} [Fintype W] [DecidableEq W]
-    {U B : Finset W} {v : W} (hv : v ∈ U \ B) :
+    {W : Type*} [Finite W] [DecidableEq W]
+    {U B : Finset W} {v : W} (_hv : v ∈ U \ B) :
     Disjoint (starEdgeFinset B v) (pairEdgeFinset (U \ B)) := by
   rw [Finset.disjoint_left]
   intro e heStar hePair
@@ -1742,7 +1748,7 @@ theorem disjoint_starEdgeFinset_pairEdges
   exact (Finset.mem_sdiff.mp hxDiff).2 hxB
 
 theorem dominationGroups_each_card
-    {W : Type*} [Fintype W] [DecidableEq W]
+    {W : Type*} [DecidableEq W]
     {d k r : ℕ} {f : Sym2 W → Fin (d + 1)}
     {U : Finset W} {B : Fin r → Finset W}
     (hcert : IsBlockCertificate d f k r U B) :
@@ -1759,7 +1765,7 @@ theorem dominationGroups_each_card
       · exact ihr htail A hA
 
 theorem dominationGroups_have_zero
-    {W : Type*} [Fintype W] [DecidableEq W]
+    {W : Type*} [DecidableEq W]
     {d k r : ℕ} {f : Sym2 W → Fin (d + 1)}
     {U : Finset W} {B : Fin r → Finset W}
     (hcert : IsBlockCertificate d f k r U B) :
@@ -1777,7 +1783,7 @@ theorem dominationGroups_have_zero
       · exact ihr htail A hA
 
 theorem dominationGroups_pairwiseDisjoint
-    {W : Type*} [Fintype W] [DecidableEq W]
+    {W : Type*} [Finite W] [DecidableEq W]
     {d k r : ℕ} {f : Sym2 W → Fin (d + 1)}
     {U : Finset W} {B : Fin r → Finset W}
     (hcert : IsBlockCertificate d f k r U B) :
@@ -1814,7 +1820,7 @@ theorem dominationGroups_pairwiseDisjoint
 /-- With `h` vertices still available after all requested removals, every
 round contributes at least `h` pairwise-disjoint domination groups. -/
 theorem dominationGroups_card_lower
-    {W : Type*} [Fintype W] [DecidableEq W]
+    {W : Type*} [Finite W] [DecidableEq W]
     {d k r h : ℕ} {f : Sym2 W → Fin (d + 1)}
     {U : Finset W} {B : Fin r → Finset W}
     (hk : 0 < k) (hcert : IsBlockCertificate d f k r U B)
@@ -1950,7 +1956,7 @@ theorem card_blockSequences
   simp [Finset.card_powersetCard]
 
 theorem blockCertificate_block_spec
-    {W : Type*} [Fintype W] [DecidableEq W]
+    {W : Type*} [DecidableEq W]
     {d k r : ℕ} {f : Sym2 W → Fin (d + 1)}
     {U : Finset W} {B : Fin r → Finset W}
     (hcert : IsBlockCertificate d f k r U B) :
@@ -2039,11 +2045,10 @@ theorem card_cubicLocalBadColorings_le
       intro S hS
       rw [Finset.sum_const, card_blockSequences]
       have hScard := (Finset.mem_powersetCard.mp hS).2
-      simp [hScard, nsmul_eq_mul]
+      simp [hScard]
     _ = Nat.choose n s * (Nat.choose s k) ^ r * certBound := by
       rw [Finset.sum_const, Finset.card_powersetCard]
-      simp [Finset.card_univ, Fintype.card_fin, nsmul_eq_mul,
-        mul_assoc, mul_comm, mul_left_comm]
+      simp [Finset.card_univ, Fintype.card_fin, mul_assoc]
 
 /-- Avoiding the cubic local bad event gives the required local
 independence property. -/
@@ -2503,7 +2508,7 @@ lemma lower_room {n s : ℕ} (hn : n ≠ 0)
       _ = 2 * 2 ^ (u * 2) :=
         congrArg (fun z : ℕ => 2 * z) (pow_mul 2 u 2).symm
       _ = 2 ^ (u * 2 + 1) := by rw [pow_succ]; ac_rfl
-      _ = 2 ^ (2 * u + 1) := by congr 1 <;> omega
+      _ = 2 ^ (2 * u + 1) := by congr 1; omega
   have hq : 4 * u * q ≤ m := by
     dsimp [q, lowerIterations, m, u]
     simpa [mul_comm] using
@@ -3186,7 +3191,7 @@ def lowerTarget (j n : ℕ) : ℕ :=
 
 lemma lowerTarget_discrete_bound {j n e v m u t : ℕ}
     (he : e = m + 1) (hu : u ≤ 3 * v) (hm : 12 * v ≤ m)
-    (het : e ≤ 3 * t) (ht : 2 ≤ t)
+    (het : e ≤ 3 * t) (_ht : 2 ≤ t)
     (huDef : u = binaryLength (logWindow j n))
     (hmDef : m = Nat.log 2 n) (heDef : e = binaryLength n)
     (hvDef : v = binaryLength e) (htDef : t = logThreshold n) :
