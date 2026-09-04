@@ -183,18 +183,14 @@ theorem exists_separatedPrimeProductTransform
         have hone := indicator_separatedPrime_fromYWeight
           (R := globalRadius K) hp hpW hy hk
           (hPsep p (Finset.mem_insert_self p P)) (n := n) (v := v)
-        have hlogic :
-            (∀ q ∈ insert p P, q ∣ n + k) ↔
-              p ∣ n + k ∧ ∀ q ∈ P, q ∣ n + k := by simp [hpP]
         rw [show (if ∀ q ∈ insert p P, q ∣ n + k then sieveWeight K n else 0) =
             if p ∣ n + k then
               (if ∀ q ∈ P, q ∣ n + k then sieveWeight K n else 0)
             else 0 by
           by_cases hpn : p ∣ n + k <;>
-            simp [hlogic, hpn]]
+            simp [hpn]]
         rw [hpoint n, hone]
-        simpa only [z, v', Finset.prod_insert hpP, mul_assoc, mul_left_comm,
-          mul_comm]
+        simp only [z, v', Finset.prod_insert hpP, mul_left_comm, mul_comm]
 
 /-- Exact finite-product realization at a near coordinate when every event
 prime is at least that coordinate's radius.  In this range the forced-prime
@@ -300,7 +296,6 @@ theorem exists_largeCoordinatePrimeProductTransform
             else 0 by
           by_cases hpn : p ∣ n + m.1 <;> simp [hpn]]
         rw [hpoint n, hone]
-        simpa only [z, v', Finset.prod_insert hpP, mul_assoc, mul_left_comm,
-          mul_comm]
+        simp only [z, v', Finset.prod_insert hpP, mul_left_comm, mul_comm]
 
 end Erdos248

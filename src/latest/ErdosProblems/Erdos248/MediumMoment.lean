@@ -137,7 +137,7 @@ theorem mediumWeightedSecondMoment_le_of_eventMass
       intro q hq
       by_cases hpq : p = q
       · subst q
-        simp only [if_pos rfl]
+        simp only
         apply le_add_of_nonneg_right
         exact mul_nonneg
           (mul_nonneg hB (by simpa [u] using mediumPrimeLogWeight_nonneg K k p))
@@ -185,7 +185,7 @@ theorem mediumWeightedSecondMoment_le_of_eventMass
 `(δ_p)^2/p`, while distinct pairs use `(δ_p/p)(δ_q/q)`. -/
 theorem mediumWeightedSecondMoment_le_of_diagonal_pairEventMass
     {K k : ℕ} {Bdiag Bpair : ℝ}
-    (hBdiag : 0 ≤ Bdiag) (hBpair : 0 ≤ Bpair)
+    (_hBdiag : 0 ≤ Bdiag) (hBpair : 0 ≤ Bpair)
     (hsingle : ∀ p ∈ mediumPrimes K k,
       primeProductEventMass K k {p} ≤
         Bdiag * mediumPrimeLogWeight K k p)
@@ -225,7 +225,7 @@ theorem mediumWeightedSecondMoment_le_of_diagonal_pairEventMass
       intro q hq
       by_cases hpq : p = q
       · subst q
-        simp only [if_pos rfl]
+        simp only
         exact le_add_of_nonneg_right <|
           mul_nonneg
             (mul_nonneg hBpair (mediumPrimeLinearLogWeight_nonneg hp))
@@ -268,7 +268,7 @@ two elementary prime sums. -/
 theorem mediumWeightedSecondMoment_le_of_eventMass_and_sums
     {K k : ℕ} {Bdiag Bpair U V : ℝ}
     (hBdiag : 0 ≤ Bdiag) (hBpair : 0 ≤ Bpair)
-    (hU : 0 ≤ U) (hV : 0 ≤ V)
+    (hU : 0 ≤ U) (_hV : 0 ≤ V)
     (hsumU : (∑ p ∈ mediumPrimes K k,
       mediumPrimeLinearLogWeight K k p) ≤ U)
     (hsumV : (∑ p ∈ mediumPrimes K k,
@@ -334,7 +334,7 @@ theorem mediumWeightedSecondMoment_le_of_single_pairMajorants
       intro q hq
       by_cases hpq : p = q
       · subst q
-        simp only [if_pos rfl]
+        simp only
         exact le_add_of_nonneg_right (hG p hp p hp)
       · simp [hpq]
     _ = (∑ p ∈ I, F p) + ∑ p ∈ I, ∑ q ∈ I, G p q := by
@@ -383,7 +383,7 @@ theorem threshold_sq_mul_mediumPrimeBadMass_le_of_relativeEventMass
     (mul_nonneg hB hmass) hsingle hpair
   nlinarith
 
-private theorem exists_mediumNaturalMomentThreshold (L : ℝ) (hL : 0 < L) :
+private theorem exists_mediumNaturalMomentThreshold (L : ℝ) (_hL : 0 < L) :
     ∃ T : ℕ, 0 < T ∧ 16 * L ≤ (T : ℝ) ^ 2 := by
   obtain ⟨T : ℕ, hT⟩ := exists_nat_gt (max 16 (16 * L))
   have hT16 : (16 : ℝ) < T := (le_max_left _ _).trans_lt hT

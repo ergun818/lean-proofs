@@ -348,9 +348,7 @@ theorem sq_selbergCutoff_secondDifference_le
         selbergCutoff (a + ε) + selbergCutoff (a + δ + ε)) ^ 2 =
         |E| * |E| := by
           dsimp [E]
-          simpa [sq] using (sq_abs
-            (selbergCutoff a - selbergCutoff (a + δ) -
-              selbergCutoff (a + ε) + selbergCutoff (a + δ + ε))).symm
+          simp [sq]
     _ ≤ (4 * δ) * (4 * ε) := hmul
     _ = 16 * δ * ε := by ring
 
@@ -855,7 +853,7 @@ theorem sq_mediumPairTransformY_le
       |zp (insertTuplePrime q i r)| ≤ B := by
     intro i him
     by_cases hz : zp (insertTuplePrime q i r) = 0
-    · simp [hz, B]
+    · simp only [hz, abs_zero, B]
       exact add_nonneg
         (mul_nonneg (by norm_num) (primeLogDisplacement_nonneg hp.one_le m))
         (div_nonneg (by positivity) (by positivity))

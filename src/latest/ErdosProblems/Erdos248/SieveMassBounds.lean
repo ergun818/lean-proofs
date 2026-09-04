@@ -62,8 +62,7 @@ theorem abs_sieveIntervalError_lt_quarter_scaled_energy {K : ℕ}
         ((1 / 4 : ℝ) * (1 / 16 : ℝ) ^ K) := by
       have hpow : (16 : ℝ) ^ K ≠ 0 := by positivity
       field_simp
-      simpa [div_pow, hpow] using
-        (inv_mul_cancel₀ hpow).symm
+      simp [hpow]
     _ ≤ (intervalStart K : ℝ) / preSieveModulus K *
         ((1 / 4 : ℝ) * productCoordinateEnergy K) := by
       gcongr

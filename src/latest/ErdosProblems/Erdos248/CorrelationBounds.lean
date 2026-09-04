@@ -570,7 +570,7 @@ theorem varyingCollisionMass_le_majorant {K : ℕ} (hK : 0 < K) :
           primeTotientSquareWeight p) := by
       unfold collisionPairPrimeIndex
       rw [Finset.sum_product]
-      simp only [Prod.snd]
+      dsimp only
       rw [Finset.sum_const, nsmul_eq_mul, ← Finset.sum_mul]
       ring
     _ ≤ ((offDiagonalPairs (nearShifts K)).card : ℝ) *
@@ -619,14 +619,14 @@ theorem varyingMajorantProduct_le_energy {A : ℝ}
         ∏ h : nearShifts K, coordinateEnergy K h := by
       rw [Finset.prod_mul_distrib]
     _ = 96 ^ K * productCoordinateEnergy K := by
-      simp [productCoordinateEnergy, Fintype.card_coe, nearShifts_card]
+      simp [productCoordinateEnergy, nearShifts_card]
 
 theorem thirtyTwo_mul_sq_mul_ninetySixPow_le_tinyCutoff
     {K : ℕ} (hK : 0 < K) :
     32 * K ^ 2 * 96 ^ K ≤ tinyCutoff K := by
   exact (calc
     32 * K ^ 2 * 96 ^ K ≤ 3 * 2 ^ 18 * K ^ 2 * 96 ^ K := by
-      gcongr <;> norm_num
+      gcongr; norm_num
     _ ≤ tinyCutoff K := cross_numeric_numerator_le_tinyCutoff hK)
 
 theorem collision_energy_factor_le_quarter {K : ℕ} (hK : 0 < K) :
@@ -690,7 +690,7 @@ theorem sixteenthPow_innerMass_le_productEnergy {K : ℕ} (hK : 0 < K) :
         ∏ h : nearShifts K,
           ((1 / 16 : ℝ) * innerCoordinateMajorant K h) := by
       rw [Finset.prod_mul_distrib]
-      simp [Fintype.card_coe, nearShifts_card]
+      simp [nearShifts_card]
     _ ≤ ∏ h : nearShifts K, coordinateEnergy K h := by
       apply Finset.prod_le_prod
       · intro h hh

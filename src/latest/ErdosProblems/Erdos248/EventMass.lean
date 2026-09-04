@@ -291,7 +291,9 @@ theorem abs_varyingYEnergy_erasePrimeY_sub_le_uniform
             (∏ h : nearShifts K, varyingCoordinateMajorant K h) +
           (B * δ) * (2 * B + B * δ) *
             (∏ h : nearShifts K, varyingCoordinateMajorant K h) := by
-      convert hraw using 1 <;> dsimp [δ] <;> ring
+      convert hraw using 1
+      dsimp [δ]
+      ring
     _ = δ * ((B * (1 + δ)) ^ 2 + B ^ 2 +
           B * (2 * B + B * δ)) *
         (∏ h : nearShifts K, varyingCoordinateMajorant K h) := by ring
@@ -309,9 +311,9 @@ theorem exists_primeProductEraseTransform_energy
     (hPprime : ∀ p ∈ P, p.Prime)
     (hPcut : ∀ p ∈ P, tinyCutoff K < p)
     (hstep : ∀ {W v p : ℕ} {y : (nearShifts K → ℕ) → ℝ}
-      (hpMem : p ∈ P) (hpW : Nat.Coprime p W)
-      (hy : IsSupportedMaynardY (nearShifts K) (globalRadius K) W y)
-      (hySharp : IsVaryingSupported K y),
+      (_hpMem : p ∈ P) (hpW : Nat.Coprime p W)
+      (_hy : IsSupportedMaynardY (nearShifts K) (globalRadius K) W y)
+      (_hySharp : IsVaryingSupported K y),
       ∀ n,
         (if p ∣ n + k then fromYWeight (globalRadius K) W v y n else 0) =
           fromYWeight (globalRadius K) (W * p)
@@ -411,8 +413,7 @@ theorem exists_primeProductEraseTransform_energy
             else 0 by
           by_cases hpn : p ∣ n + k <;> simp [hpn]]
         rw [hpoint n, hone]
-        simpa only [z, v', Finset.prod_insert hpP, mul_assoc, mul_left_comm,
-          mul_comm]
+        simp only [z, v', Finset.prod_insert hpP, mul_left_comm, mul_comm]
       · have hKp : K ≤ p - 1 :=
           (K_le_tinyCutoff K).trans (by omega)
         have hpEnergy := abs_varyingYEnergy_erasePrimeY_sub_le_uniform hp hKp

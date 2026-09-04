@@ -113,9 +113,7 @@ private theorem mediumSingleEventMass_le_majorant
     _ = mediumSingleMajorant K m p := by
       simp [mediumSingleMajorant, mediumSingleAnalyticCost,
         mediumEnergyScale]
-      push_cast
       field_simp
-      <;> ring
 
 private theorem mediumPairEventMass_le_majorant
     {A : ℝ} (hA : HasUniformWirsingBound A)
@@ -159,9 +157,8 @@ private theorem mediumPairEventMass_le_majorant
     _ = mediumPairMajorant K m p q := by
       simp [mediumPairMajorant, mediumPairAnalyticCost,
         mediumEnergyScale]
-      push_cast
       field_simp
-      <;> ring
+      ring
 
 private theorem mediumPairMajorant_nonneg
     {K p q : ℕ} (m : nearShifts K)
@@ -217,8 +214,8 @@ private theorem sum_mediumSingleAnalyticCost_le
             exact mul_le_mul_of_nonneg_left
               (sum_mediumPrimes_one_div_mul_pred_sq_le K m) (by positivity)
           _ ≤ 16 := by
-            convert ninetySixPow_mul_singleResidual_le_sixteen hK using 1 <;>
-              ring
+            convert ninetySixPow_mul_singleResidual_le_sixteen hK using 1
+            ring
       have htail := crossTail_mul_ninetySixPow_mul_sum_mediumInv_le hK m
       have hmain := sum_mediumPrimes_primeLogDisplacement_sq_div_le m
       nlinarith
@@ -296,11 +293,13 @@ private theorem sum_mediumPairAnalyticCost_le
       have hfirst' : 16 * (K : ℝ) ^ 2 * 96 ^ K * Sb * Sδ2 ≤
           128 * normalizedPrimeLogSquareConstant := by
         dsimp only [Sb, Sδ2]
-        convert hfirst using 1 <;> ring
+        convert hfirst using 1
+        ring
       have hsecond' : 2 * (K : ℝ) ^ 2 * 96 ^ K * Sc * Sb ≤
           128 * normalizedPrimeLogSquareConstant + 256 := by
         dsimp only [Sb, Sc]
-        convert hsecond using 1 <;> ring
+        convert hsecond using 1
+        ring
       have htail' : T * 96 ^ K * S1 ^ 2 ≤
           196608 * farPrimeReciprocalConstant ^ 2 := by
         simpa only [T, S1] using htail
@@ -410,8 +409,8 @@ theorem mediumWeightedSecondMoment_le_absolute
             (16 * (radiusProduct K : ℝ) ^ 6) +
         ((mediumPrimes K k).card : ℝ) ^ 2 *
             (256 * (radiusProduct K : ℝ) ^ 6) := by
-    simp [mediumSingleMajorant, mediumPairMajorant,
-      Finset.sum_add_distrib]
+    simp only [mediumSingleMajorant, mediumPairMajorant,
+      Finset.sum_add_distrib, Finset.sum_const, nsmul_eq_mul]
     rw [double_sum_const_mul]
     rw [sum_const_mul]
     ring

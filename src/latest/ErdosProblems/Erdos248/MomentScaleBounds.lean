@@ -240,7 +240,7 @@ theorem accumulatedFourthIntervalError_lt_sieveMass
       dsimp [F]
       have hpow : (16 : ℝ) ^ K ≠ 0 := by positivity
       field_simp
-      simpa [div_pow, hpow] using (inv_mul_cancel₀ hpow).symm
+      simp [hpow]
     _ ≤ (intervalStart K : ℝ) / preSieveModulus K *
         ((1 / 4 : ℝ) * productCoordinateEnergy K) := by gcongr
     _ < sieveMass K := quarter_scaled_energy_lt_sieveMass hA hreg

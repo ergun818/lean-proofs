@@ -250,7 +250,7 @@ theorem varyingPrimeTupleMass_le {K p : ℕ} (hp : p.Prime) :
       by_cases hdiv : p ∣ divisorTupleProduct (nearShifts K) u
       · rw [if_pos hdiv]
         obtain ⟨h, _hh, hph⟩ :=
-          (Prime.dvd_finset_prod_iff (Nat.prime_iff.mp hp)
+          (Prime.dvd_finsetProd_iff (Nat.prime_iff.mp hp)
             (fun i : nearShifts K => u i)).mp hdiv
         have hsingle := Finset.single_le_sum
           (s := (Finset.univ : Finset (nearShifts K)))

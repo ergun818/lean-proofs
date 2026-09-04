@@ -133,7 +133,7 @@ theorem exists_unique_coordinate_prime_dvd_of_maynard
   exact (hp.coprime_iff_not_dvd.mp hpcop) hpi
 
 theorem removeTuplePrime_isMaynard {H : Finset ℕ} {R W p : ℕ}
-    {r : H → ℕ} (hp : p.Prime) (hr : IsMaynardDivisorTuple H R W r)
+    {r : H → ℕ} (_hp : p.Prime) (hr : IsMaynardDivisorTuple H R W r)
     (h : H) (hpd : p ∣ r h) :
     IsMaynardDivisorTuple H R (W * p) (removeTuplePrime p h r) := by
   let r' := removeTuplePrime p h r
@@ -365,7 +365,7 @@ theorem mem_support_mul_prime_iff {H : Finset ℕ} {R W p : ℕ}
       ⟨hm.mem_maynardDivisorTupleBox, hm.1, hWp, hm.2.2⟩
 
 theorem tupleDvd_insertTuplePrime_iff {H : Finset ℕ} {p : ℕ}
-    (hp : p.Prime) {d r : H → ℕ}
+    (_hp : p.Prime) {d r : H → ℕ}
     (hdcop : Nat.Coprime p (divisorTupleProduct H d)) (m : H) :
     tupleDvd d (insertTuplePrime p m r) ↔ tupleDvd d r := by
   constructor
@@ -619,7 +619,6 @@ theorem moebiusTupleFactor_insertTuplePrime {H : Finset ℕ} {p : ℕ}
   rw [← Finset.mul_prod_erase Finset.univ f (Finset.mem_univ m)]
   simp only [Finset.sdiff_singleton_eq_erase]
   dsimp only [f]
-  push_cast
   ring
 
 /-- Supported `p`-free tuples whose insertion at the distinguished

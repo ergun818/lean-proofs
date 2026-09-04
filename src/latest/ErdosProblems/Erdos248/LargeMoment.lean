@@ -126,7 +126,6 @@ theorem primeProductEventError_le_largeRelative
             (1 / ((∏ p ∈ P, p : ℕ) : ℝ)) := by
               push_cast
               field_simp
-              <;> ring
       _ ≤ ((intervalStart K : ℝ) / preSieveModulus K) *
             productCoordinateEnergy K *
             (50536448 / (K : ℝ) ^ 4) *

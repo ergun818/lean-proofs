@@ -20,7 +20,7 @@ theorem exp_eight_le_two_pow_thirteen :
     Real.exp 8 ≤ (2 : ℝ) ^ 13 := by
   calc
     Real.exp 8 = Real.exp 1 ^ (8 : ℕ) := by
-      simpa using (Real.exp_nat_mul (1 : ℝ) 8)
+      simp
     _ ≤ (3 : ℝ) ^ 8 := by
       exact pow_le_pow_left₀ (Real.exp_pos 1).le Real.exp_one_lt_three.le 8
     _ ≤ (2 : ℝ) ^ 13 := by norm_num
@@ -158,8 +158,7 @@ theorem varyingMajorantProduct_le {A : ℝ}
         ∏ h : nearShifts K, innerCoordinateMajorant K h := by
       rw [Finset.prod_mul_distrib]
     _ = 6 ^ K * innerTupleMass K := by
-      simp [Fintype.card_coe, nearShifts_card,
-        innerTupleMass_eq_majorant_product]
+      simp [nearShifts_card, innerTupleMass_eq_majorant_product]
 
 theorem cross_numeric_numerator_le_tinyCutoff {K : ℕ} (hK : 0 < K) :
     3 * 2 ^ 18 * K ^ 2 * 96 ^ K ≤ tinyCutoff K := by
@@ -361,7 +360,7 @@ theorem fourThousandOneHundredTwenty_mul_le_innerExponent
       _ ≤ 100 ^ K := Nat.pow_le_pow_left (by norm_num) K
   have hexponent : K + 2 ≤ 100 * K - K - 1 := by omega
   calc
-    4120 * K ≤ 500000 * K := by gcongr <;> norm_num
+    4120 * K ≤ 500000 * K := by gcongr; norm_num
     _ ≤ 500000 * 100 ^ K := Nat.mul_le_mul_left 500000 hbase
     _ = 50 * 100 ^ (K + 2) := by
       rw [pow_add]

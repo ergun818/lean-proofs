@@ -146,7 +146,7 @@ theorem quarter_pow_le_tupleCutoff_inner {K : ℕ} (hK : 0 < K)
   unfold tupleCutoff
   calc
     (1 / 4 : ℝ) ^ K = ∏ _h : nearShifts K, (1 / 4 : ℝ) := by
-      simp [Fintype.card_coe, nearShifts_card]
+      simp [nearShifts_card]
     _ ≤ ∏ h : nearShifts K,
         selbergCutoff (((100 ^ (h : ℕ) : ℕ) : ℝ) *
           (Real.log (u h) / Real.log (globalRadius K))) := by
@@ -489,7 +489,7 @@ theorem innerCollisionMass_le_majorant {K : ℕ} (hK : 0 < K) :
           primeTotientSquareWeight p) := by
       unfold collisionPairPrimeIndex
       rw [Finset.sum_product]
-      simp only [Prod.snd]
+      dsimp only
       rw [Finset.sum_const, nsmul_eq_mul]
       rw [← Finset.sum_mul]
       ring

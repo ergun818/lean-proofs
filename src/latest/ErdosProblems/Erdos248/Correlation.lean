@@ -96,7 +96,7 @@ theorem modEq_extendPrimeEventResidue_iff {W p v k n : ℕ}
     exact Nat.chineseRemainder_modEq_unique hcop hnW hnp
 
 theorem modEq_primeEventResidue_iff {W p k n : ℕ}
-    (hW : 0 < W) (hp : 0 < p) (hcop : Nat.Coprime W p) :
+    (_hW : 0 < W) (hp : 0 < p) (hcop : Nat.Coprime W p) :
     n ≡ primeEventResidue hcop k [MOD W * p] ↔
       n ≡ 0 [MOD W] ∧ p ∣ n + k := by
   constructor
@@ -137,7 +137,7 @@ sieve coordinate, no divisor tuple satisfying its translate conditions can
 contain `p`. -/
 theorem not_prime_dvd_tupleProduct_of_event_separated
     {H : Finset ℕ} {R W p n k : ℕ} {d : H → ℕ}
-    (hp : p.Prime) (hd : IsMaynardDivisorTuple H R W d)
+    (hp : p.Prime) (_hd : IsMaynardDivisorTuple H R W d)
     (hdn : divisorTupleCondition H n d) (hpn : p ∣ n + k)
     (hk : ∀ h : H, k ≠ h.1)
     (hsep : ∀ h : H, Nat.dist k h.1 < p) :
@@ -254,7 +254,7 @@ theorem preSievedWeight_on_separated_prime_event_at_residue
 /-- Inserting the event prime in its distinguished coordinate preserves the
 divisor-tuple condition, provided the original tuple is `p`-free. -/
 theorem divisorTupleCondition_insert_event_prime_iff
-    {H : Finset ℕ} {p n : ℕ} {d : H → ℕ} (hp : p.Prime)
+    {H : Finset ℕ} {p n : ℕ} {d : H → ℕ} (_hp : p.Prime)
     (m : H) (hpcop : Nat.Coprime p (divisorTupleProduct H d))
     (hpn : p ∣ n + m.1) :
     divisorTupleCondition H n (insertTuplePrime p m d) ↔
@@ -281,7 +281,7 @@ other coordinate, an admissible divisor tuple containing `p` contains it at
 that distinguished coordinate. -/
 theorem prime_dvd_distinguished_coordinate_of_event
     {H : Finset ℕ} {R W p n : ℕ} {d : H → ℕ}
-    (hp : p.Prime) (hd : IsMaynardDivisorTuple H R W d)
+    (hp : p.Prime) (_hd : IsMaynardDivisorTuple H R W d)
     (hdn : divisorTupleCondition H n d) (m : H)
     (hpn : p ∣ n + m.1)
     (hsep : ∀ h : H, h ≠ m → Nat.dist m.1 h.1 < p)

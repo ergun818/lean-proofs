@@ -513,7 +513,7 @@ theorem sq_mediumPairTransformY_le_sharp
       |zp (insertTuplePrime q i r)| ≤ B := by
     intro i him
     by_cases hz : zp (insertTuplePrime q i r) = 0
-    · simp [hz, B]
+    · simp only [hz, abs_zero, B]
       exact add_nonneg
         (mul_nonneg (by norm_num) (primeLogDisplacement_nonneg hp.one_le m))
         (div_nonneg (by positivity) (by positivity))

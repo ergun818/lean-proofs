@@ -95,7 +95,6 @@ theorem abs_sieveIntervalError_lt_sieveMain {A : ℝ}
           ((intervalStart K : ℝ) / preSieveModulus K) *
             (1 / (4 * 16 ^ K)) := by
         field_simp
-        <;> ring
       _ ≤ ((intervalStart K : ℝ) / preSieveModulus K) * B := by
         exact mul_le_mul_of_nonneg_left hbracket (by positivity)
   rw [sieveMain_eq_diagonal_sub_cross]

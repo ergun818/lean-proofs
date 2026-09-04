@@ -138,7 +138,7 @@ theorem shiftExponent_eq_two_mul_innerExponent {K k : ℕ}
   have hpos : 0 < 100 * K - k := by omega
   calc
     100 ^ (100 * K - k) =
-        100 ^ ((100 * K - k - 1) + 1) := by congr 1 <;> omega
+        100 ^ ((100 * K - k - 1) + 1) := by congr 1; omega
     _ = 100 ^ (100 * K - k - 1) * 100 := by
       simp [pow_succ', Nat.mul_comm]
     _ = 2 * (50 * 100 ^ (100 * K - k - 1)) := by ring

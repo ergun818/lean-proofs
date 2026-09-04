@@ -14,7 +14,7 @@ namespace Erdos248
 
 /-- Every positive real moment constant admits a positive natural threshold
 whose square (and hence fourth power) dominates sixteen times that constant. -/
-theorem exists_natural_moment_threshold (L : ℝ) (hL : 0 < L) :
+theorem exists_natural_moment_threshold (L : ℝ) (_hL : 0 < L) :
     ∃ T : ℕ, 0 < T ∧ 16 * L ≤ (T : ℝ) ^ 2 ∧
       16 * L ≤ (T : ℝ) ^ 4 := by
   obtain ⟨T : ℕ, hT⟩ := exists_nat_gt (max 16 (16 * L))
@@ -31,8 +31,8 @@ theorem exists_natural_moment_threshold (L : ℝ) (hL : 0 < L) :
 the threshold coefficient has square at least sixteen times the moment
 constant. -/
 theorem tail_le_sixteenth_inv_sq_of_secondMoment
-    {D L M B k : ℝ} (hD : 0 < D) (hL : 0 < L) (hM : 0 ≤ M)
-    (hk : 0 < k) (hB : 0 ≤ B) (hsize : 16 * L ≤ D ^ 2)
+    {D L M B k : ℝ} (hD : 0 < D) (_hL : 0 < L) (hM : 0 ≤ M)
+    (hk : 0 < k) (_hB : 0 ≤ B) (hsize : 16 * L ≤ D ^ 2)
     (hmoment : (D * k) ^ 2 * B ≤ L * M) :
     B ≤ M * (1 / (16 * k ^ 2)) := by
   have hDk : 0 < D * k := mul_pos hD hk
@@ -58,8 +58,8 @@ theorem tail_le_sixteenth_inv_sq_of_secondMoment
 reciprocal-square tail once the centered threshold coefficient has fourth
 power at least sixteen times `L`. -/
 theorem tail_le_sixteenth_inv_sq_of_fourthMoment
-    {D L M B k : ℝ} (hD : 0 < D) (hL : 0 < L) (hM : 0 ≤ M)
-    (hk : 0 < k) (hB : 0 ≤ B) (hsize : 16 * L ≤ D ^ 4)
+    {D L M B k : ℝ} (hD : 0 < D) (_hL : 0 < L) (hM : 0 ≤ M)
+    (hk : 0 < k) (_hB : 0 ≤ B) (hsize : 16 * L ≤ D ^ 4)
     (hmoment : (D * k) ^ 4 * B ≤ L * k ^ 2 * M) :
     B ≤ M * (1 / (16 * k ^ 2)) := by
   have hDk : 0 < D * k := mul_pos hD hk
