@@ -39,7 +39,7 @@ theorem f_eq_fVal (n : ℕ) : f n = fVal n := by
   unfold f fVal
   congr 1
   ext k
-  simp only [Set.mem_setOf_eq, badlyOrdered_iff_product_neg, and_assoc]
+  simp only [Set.mem_ofPred_eq, badlyOrdered_iff_product_neg, and_assoc]
 
 theorem erdos_1005 :
     Tendsto (fun n : ℕ => (f n : ℝ) / n) atTop (𝓝 (1 / 4)) := by
