@@ -177,8 +177,8 @@ lemma nearestIntDist_mul_lower_of_approx
   rw [abs_phase_sub_rational_phase] at hlip
   have hnR : (n : ℝ) ≤ N := by exact_mod_cast hn
   have hn0 : (0 : ℝ) ≤ n := Nat.cast_nonneg n
-  have hmul : (n : ℝ) * |α - (a : ℝ) / q| ≤ (N : ℝ) * ε :=
-    mul_le_mul hnR hε (abs_nonneg _) (Nat.cast_nonneg N)
+  have hmul : (n : ℝ) * |α - (a : ℝ) / q| ≤ (N : ℝ) * ε := by
+    simpa only [mul_comm] using mul_le_mul hε hnR hn0 hε0
   linarith
 
 /-- Pointwise Diophantine estimate underlying the minor-arc sum.  If the total
@@ -279,13 +279,17 @@ lemma residueWeight_le_two_reciprocals
   have hrq : r < q := (mem_Ico.mp hr).2
   have hqr0 : q - r ≠ 0 := Nat.ne_of_gt (Nat.sub_pos_of_lt hrq)
   rw [residueWeight, if_neg hr0]
-  refine (min_le_right _ _).trans ?_
-  rw [div_eq_mul_inv]
-  apply mul_le_mul_of_nonneg_left _ (Nat.cast_nonneg q)
-  rw [Nat.cast_min, min_def]
-  split_ifs
-  · exact le_add_of_nonneg_right (inv_nonneg.mpr (Nat.cast_nonneg _))
-  · exact le_add_of_nonneg_left (inv_nonneg.mpr (Nat.cast_nonneg _))
+  calc
+    _ ≤ min cap ((q : ℝ) / r) + min cap ((q : ℝ) / (q - r : ℕ)) := by
+      rw [Nat.cast_min, min_def (r : ℝ) (q - r : ℕ)]
+      split_ifs
+      · exact le_add_of_nonneg_right
+          (le_min hcap (div_nonneg (Nat.cast_nonneg q) (Nat.cast_nonneg _)))
+      · exact le_add_of_nonneg_left
+          (le_min hcap (div_nonneg (Nat.cast_nonneg q) (Nat.cast_nonneg _)))
+    _ ≤ (q : ℝ) / r + (q : ℝ) / (q - r : ℕ) :=
+      add_le_add (min_le_right _ _) (min_le_right _ _)
+    _ = _ := by rw [div_eq_mul_inv, div_eq_mul_inv, mul_add]
 
 lemma approximateResidueWeight_le_two_reciprocals
     {cap : ℝ} {q r : ℕ} (hr : r ∈ Ico 1 q) :
@@ -394,8 +398,9 @@ lemma card_filter_mod_eq_range_le (q N r : ℕ) (hq : 0 < q) :
       change n ∈ (range (N + 1) |>.filter fun n ↦ n % q = r) at hn
       simp only [mem_filter, mem_range] at hn
       apply mem_range.mpr
-      apply Nat.lt_succ_of_le
-      exact Nat.div_le_div_right (Nat.lt_succ_iff.mp hn.1))
+      apply (Nat.div_lt_iff_lt_mul hq).mpr
+      exact (Nat.lt_succ_iff.mp hn.1).trans_lt
+        (by simpa only [Nat.mul_comm] using Nat.lt_mul_div_succ N hq))
     (by
       intro x hx y hy hdiv
       change x ∈ (range (N + 1) |>.filter fun n ↦ n % q = r) at hx

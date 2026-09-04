@@ -89,7 +89,7 @@ theorem omegaCount_gcd_real {a m : ℕ} (ha : a ≠ 0) (hm : m ≠ 0) :
     (omegaCount (a.gcd m) : ℝ) =
       ∑ p ∈ a.primeFactors, if p ∣ m then (1 : ℝ) else 0 := by
   rw [omegaCount, primeFactors_gcd_eq_filter ha hm]
-  simp [Finset.sum_filter]
+  simp
 
 theorem omegaCount_mul_indicator {a m : ℕ} (ha : a ≠ 0) (hm : m ≠ 0) :
     (omegaCount (a * m) : ℝ) = omegaCount a + omegaCount m -

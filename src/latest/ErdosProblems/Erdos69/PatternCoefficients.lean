@@ -39,7 +39,7 @@ theorem sum_termCoefficient {m : ℕ} (hm : 0 < m) (H : ℕ) (q : ℝ) :
   rw [Fintype.sum_prod_type, Finset.sum_comm]
   apply Finset.sum_eq_zero
   intro k hk
-  simp only [Prod.fst, Prod.snd]
+  dsimp only
   rw [← Finset.sum_div, ← Finset.mul_sum]
   have hs : (∑ i : PatternLabel m, (patternSign m i : ℝ)) = 0 := by
     exact_mod_cast sum_patternSign hm
@@ -83,9 +83,9 @@ theorem termCoefficient_mass_le (m H : ℕ) (q : ℝ) :
       |q| * (36 : ℝ) ^ m / 2 ^ (6 * m) := by
   have heq : (∑ t : PatternTerm m H, |termCoefficient m H q t|) =
       |q| * (36 : ℝ) ^ m * ∑ k : Fin H, (1 : ℝ) / 2 ^ (6 * m + 1 + k.val) := by
-    simp [termCoefficient, Fintype.sum_prod_type, abs_div, abs_mul,
+    simp [termCoefficient, Fintype.sum_prod_type, abs_mul,
       patternSign_abs_real, ← Finset.mul_sum, card_patternLabel, div_eq_mul_inv,
-      mul_assoc, mul_left_comm]
+      mul_assoc]
   rw [heq]
   have h := mul_le_mul_of_nonneg_left (finite_binary_tail_le (6 * m) H)
     (by positivity : 0 ≤ |q| * (36 : ℝ) ^ m)

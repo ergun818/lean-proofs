@@ -100,7 +100,8 @@ theorem log_constructionUpperBound_le {m : ℕ} (hm : 0 < m) :
     Real.log_mul (by positivity) (by positivity), hsum]
   have hsize : (6 : ℝ) * dilationPrimeCutoff m + 5 ≤ excludedPrimeCutoff m := by
     exact_mod_cast six_primeCutoff_add_five_le_excluded hm
-  have hlenR : ((6 * m + retainedLength m : ℕ) : ℝ) ≤ dilationPrimeCutoff m := by exact_mod_cast hlen
+  have hlenR : ((6 * m + retainedLength m : ℕ) : ℝ) ≤ dilationPrimeCutoff m := by
+    exact_mod_cast hlen
   push_cast at hlogC hlogsum hlogQ hlogA hlenR ⊢
   linarith [log_constructionModulus_le_excluded hm, log_constructionMaxDilation_le m]
 

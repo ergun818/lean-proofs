@@ -14,6 +14,7 @@ theorem mean_point_indicator [DecidableEq Ω] (μ : FiniteLaw Ω) (a : Ω) :
   classical
   simp [mean]
 
+omit [DecidableEq ι] in
 theorem categorical_mass_of_ne_none (p : ℕ) (hp : 0 < p)
     (hc : Fintype.card ι ≤ p) (a : Option ι) (ha : a ≠ none) :
     (categorical ι p hp hc).mass a = (1 : ℝ) / p := by

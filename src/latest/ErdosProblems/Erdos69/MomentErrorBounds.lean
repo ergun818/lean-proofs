@@ -16,8 +16,9 @@ theorem construction_moment_ratio_le (m : ℕ) :
     calc
       _ ≤ (smallPrimeCutoff m : ℝ) ^ fluctuationScale m :=
         pow_le_pow_left₀ (by norm_num) (by exact_mod_cast smallPrimeCutoff_ge_two m) _
-      _ ≤ _ := pow_le_pow_right₀ (by have h := smallPrimeCutoff_ge_two m
-                                     exact_mod_cast (show 1 ≤ smallPrimeCutoff m by omega)) (by omega)
+      _ ≤ _ := pow_le_pow_right₀ (by
+        have h := smallPrimeCutoff_ge_two m
+        exact_mod_cast (show 1 ≤ smallPrimeCutoff m by omega)) (by omega)
   calc
     _ = (1 : ℝ) / (smallPrimeCutoff m : ℝ) ^ (38 * fluctuationScale m) := by
       rw [smallPrimeCutoff_moment_ratio, Nat.cast_mul, Nat.cast_pow, Nat.cast_pow]
@@ -83,8 +84,10 @@ theorem tendsto_small_sub_model_norm (q : ℝ) :
   have hsmall := hε.const_mul (4 * Real.pi)
   have hmgf := ((hε.pow 2).const_mul ((4 * Real.pi) ^ 2)).mul_const (Real.log 2 + C + 1)
   simp only [mul_zero, zero_pow (by omega : 2 ≠ 0), zero_mul] at hsmall hmgf
-  apply squeeze_zero' (Filter.Eventually.of_forall (fun m ↦ norm_nonneg _)) _ tendsto_modelComparisonError
-  filter_upwards [eventually_ge_atTop (1 : ℕ), hε.eventually (gt_mem_nhds (by norm_num : (0 : ℝ) < 1)),
+  apply squeeze_zero' (Filter.Eventually.of_forall (fun m ↦ norm_nonneg _)) _
+    tendsto_modelComparisonError
+  filter_upwards [eventually_ge_atTop (1 : ℕ),
+    hε.eventually (gt_mem_nhds (by norm_num : (0 : ℝ) < 1)),
     hsmall.eventually (gt_mem_nhds (by norm_num : (0 : ℝ) < 1)),
     hmgf.eventually (gt_mem_nhds (Real.log_pos (by norm_num : (1 : ℝ) < 2)))]
     with m hm he hs hg

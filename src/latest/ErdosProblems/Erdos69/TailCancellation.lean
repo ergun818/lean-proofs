@@ -32,7 +32,8 @@ theorem dilation_quotient_shift {a b n : ℕ} (ha : 0 < a) (hb : b ≤ n)
     (hn : n ≡ b [MOD a]) (h : ℕ) :
     a * ((n - b) / a + h) = n + a * h - b := by
   have hd : a ∣ n - b := (Nat.modEq_iff_dvd' hb).mp hn.symm
-  rw [Nat.mul_add, Nat.mul_div_cancel' hd]
+  obtain ⟨k, hk⟩ := hd
+  rw [Nat.mul_add, hk, Nat.mul_div_cancel_left _ ha]
   omega
 
 theorem corrected_signed_tail_integer {ι : Type*} [Fintype ι]

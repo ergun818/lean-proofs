@@ -8,7 +8,7 @@ open scoped BigOperators
 
 namespace Erdos69.Elementary.FiniteLaw
 
-variable {ρ ι : Type*} [Fintype ρ] [Fintype ι] [DecidableEq ρ] [DecidableEq ι]
+variable {ρ ι : Type*} [Fintype ρ] [Fintype ι] [DecidableEq ρ]
 
 theorem categorical_product_mean_exp_le (p : ρ → ℕ) (hp : ∀ j, 0 < p j)
     (hc : ∀ j, Fintype.card ι ≤ p j) (c : ι → ℝ) (hzero : ∑ i, c i = 0)

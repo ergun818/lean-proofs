@@ -79,7 +79,7 @@ theorem norm_complexMean_le (μ : FiniteLaw Ω) (f : Ω → ℂ) :
   calc
     ‖μ.complexMean f‖ ≤ ∑ x, ‖(μ.mass x : ℂ) * f x‖ := norm_sum_le _ _
     _ = μ.mean (fun x ↦ ‖f x‖) := by
-      simp [mean, norm_mul, Complex.norm_real, Real.norm_eq_abs, abs_of_nonneg (μ.nonneg _)]
+      simp [mean, Complex.norm_real, Real.norm_eq_abs, abs_of_nonneg (μ.nonneg _)]
 
 theorem norm_complexMean_sub_le (μ : FiniteLaw Ω) (f g : Ω → ℂ) :
     ‖μ.complexMean f - μ.complexMean g‖ ≤ μ.mean (fun x ↦ ‖f x - g x‖) := by

@@ -35,7 +35,8 @@ theorem construction_correction_mean_le (m : ℕ) (i : PatternLabel m) :
         5 / Real.log (dilationPrimeCutoff m : ℝ) +
           5 * dilationPrimeCutoff m / (Real.log 2 * progressionLength m) := by
   simp_rw [construction_quotient_affine]
-  have h := FiniteLaw.uniform_compositeCorrection_le (progressionLength m) (constructionDilation m i)
+  have h := FiniteLaw.uniform_compositeCorrection_le
+    (progressionLength m) (constructionDilation m i)
     (constructionModulus m / constructionDilation m i)
     ((constructionBase m - constructionOffset m i) / constructionDilation m i)
     (progressionLength_pos m) (fun p hp ↦

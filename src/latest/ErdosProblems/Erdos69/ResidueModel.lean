@@ -54,6 +54,7 @@ namespace FiniteLaw
 
 variable {ρ ι : Type*} [Fintype ρ] [Fintype ι] [DecidableEq ρ] [DecidableEq ι]
 
+omit [Fintype ι] in
 theorem uniform_residue_partial_assignment_error (p : ρ → ℕ)
     (hp : ∀ j, 0 < p j) (hcop : Pairwise (fun i j ↦ (p i).Coprime (p j)))
     (r : ρ → ι → ℕ) (hr : ∀ j i k, r j i ≡ r j k [MOD p j] → i = k)
@@ -98,8 +99,9 @@ theorem optionalValue_eq_sum_indicators (c : ι → ℝ) (a : Option ι) :
     optionalValue c a = ∑ i, c i * (if a = some i then (1 : ℝ) else 0) := by
   cases a with
   | none => simp [optionalValue]
-  | some i => simp [optionalValue, eq_comm]
+  | some i => simp [optionalValue]
 
+omit [DecidableEq ι] in
 theorem residue_moment_error (p : ρ → ℕ) (hp : ∀ j, 0 < p j)
     (hcop : Pairwise (fun i j ↦ (p i).Coprime (p j)))
     (r : ρ → ι → ℕ) (hr : ∀ j i k, r j i ≡ r j k [MOD p j] → i = k)
@@ -110,6 +112,7 @@ theorem residue_moment_error (p : ρ → ℕ) (hp : ∀ j, 0 < p j)
         (card_le_of_distinct_residues _ (hp j) (r j) (hr j)))).mean
           (fun x ↦ (∑ j, optionalValue c (x j)) ^ m)| ≤
         (1 : ℝ) / T * ((Fintype.card ρ : ℝ) * ∑ i, |c i|) ^ m := by
+  classical
   let μ := uniform T hT
   let ν := independentProduct (fun j ↦ categorical ι (p j) (hp j)
     (card_le_of_distinct_residues _ (hp j) (r j) (hr j)))

@@ -29,7 +29,8 @@ theorem construction_tail_point_error (q : ℝ) (m : ℕ) (t : Fin (progressionL
         omegaCount (constructionPoint m t.val + r))
   rw [hsum]
   apply h.trans
-  have hlog (i : PatternLabel m) : Real.log (constructionPoint m t.val + constructionDilation m i : ℕ) ≤
+  have hlog (i : PatternLabel m) :
+      Real.log (constructionPoint m t.val + constructionDilation m i : ℕ) ≤
       Real.log (constructionUpperBound m : ℝ) := by
     apply Real.log_le_log (by have hp := constructionPoint_pos m t.val; positivity)
     exact_mod_cast sampled_dilation_le_upper m t i
@@ -94,7 +95,8 @@ theorem construction_tail_factor_le {m : ℕ} (hm : 0 < m) :
   rw [pow_mul, pow_right_comm (2 : ℝ) 2 (fluctuationScale m)]
   apply (div_le_div_iff₀ (sq_pos_of_pos hpowpos) hpowpos).mpr
   have hmul := mul_le_mul_of_nonneg_right hX' hpowpos.le
-  have hrest := mul_le_mul_of_nonneg_right hpow (by positivity : (0 : ℝ) ≤ 3 * fluctuationScale m + 2)
+  have hrest := mul_le_mul_of_nonneg_right hpow
+    (by positivity : (0 : ℝ) ≤ 3 * fluctuationScale m + 2)
   have hconst : 0 ≤ 2 / Real.log 2 := by positivity
   nlinarith [mul_nonneg hconst hB]
 

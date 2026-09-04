@@ -55,7 +55,8 @@ theorem largePrime_parameter_error_le {C : ℝ}
     (hC : ∀ x : ℕ, 2 ≤ x → |primeReciprocalSum x - Real.log (Real.log (x : ℝ))| ≤ C)
     {m : ℕ} (hm : 0 < m) :
     primeReciprocalSum (intermediatePrimeCutoff m) - primeReciprocalSum (smallPrimeCutoff m) +
-      ((primeWindow (smallPrimeCutoff m) (intermediatePrimeCutoff m)).card : ℝ) / progressionLength m +
+      ((primeWindow (smallPrimeCutoff m) (intermediatePrimeCutoff m)).card : ℝ) /
+        progressionLength m +
       Real.log (constructionUpperBound m : ℝ) / Real.log (intermediatePrimeCutoff m : ℝ) ≤
         Real.log 20 + 4 * m * Real.log 36 + 2 * C + 4 := by
   have hR := primeReciprocalSum_upper hC _ (intermediatePrimeCutoff_ge_two m)
@@ -64,7 +65,8 @@ theorem largePrime_parameter_error_le {C : ℝ}
   linarith [primeWindow_frequency_le_one m, upper_log_ratio_le_three hm]
 
 noncomputable def constructionRetainedValue (q : ℝ) (m t : ℕ) : ℝ :=
-  ∑ r : ConstructionShift m, constructionCoefficient m q r * omegaCount (constructionPoint m t + r.val)
+  ∑ r : ConstructionShift m,
+    constructionCoefficient m q r * omegaCount (constructionPoint m t + r.val)
 
 noncomputable def retainedCharacteristic (q : ℝ) (m : ℕ) : ℂ :=
   (constructionLaw m).complexMean (fun t ↦ fourierPhase (constructionRetainedValue q m t.val))
@@ -77,10 +79,14 @@ theorem construction_retained_compare_small {C : ℝ} (hC0 : 0 ≤ C)
   have h := FiniteLaw.affine_omega_fourier_compare_small
     (progressionLength m) (constructionModulus m) (constructionBase m)
     (smallPrimeCutoff m) (intermediatePrimeCutoff m) (constructionUpperBound m)
-    (progressionLength_pos m) (constructionModulus_pos m) (constructionModulus_le_smallPrimeCutoff hm)
+    (progressionLength_pos m) (constructionModulus_pos m)
+    (constructionModulus_le_smallPrimeCutoff hm)
     (smallPrimeCutoff_le_intermediate m) (by have h := intermediatePrimeCutoff_ge_two m; omega)
     (fun r : ConstructionShift m ↦ r.val) (constructionCoefficient m q)
-    (fun t r ↦ by have hp := constructionPoint_pos m t.val; change 0 < constructionPoint m t.val + r.val; omega)
+    (fun t r ↦ by
+      have hp := constructionPoint_pos m t.val
+      change 0 < constructionPoint m t.val + r.val
+      omega)
     (sampled_shift_le_upper m)
   have heq (t : Fin (progressionLength m)) :
       (∑ p ∈ freePrimes (constructionModulus m) (smallPrimeCutoff m),

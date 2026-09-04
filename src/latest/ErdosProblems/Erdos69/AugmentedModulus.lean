@@ -52,10 +52,11 @@ theorem log_augmentedModulus_le {A D : ℕ} (hA : 0 < A) (hD : 0 < D) :
   rw [augmentedModulus, Nat.cast_mul, Real.log_mul (by positivity) (by positivity)]
   gcongr
 
-theorem coprime_augmentedModulus_quotient {ι : Type*} [Fintype ι] [DecidableEq ι]
+theorem coprime_augmentedModulus_quotient {ι : Type*} [Fintype ι]
     (a : ι → ℕ) (ha : ∀ i, 0 < a i)
     (hc : Pairwise (fun i j ↦ (a i).Coprime (a j))) (D : ℕ) (i : ι) :
     (augmentedModulus (∏ j, a j) D / a i).Coprime (a i) := by
+  classical
   let A := ∏ j, a j
   have hprod : A = a i * ∏ j ∈ Finset.univ.erase i, a j := by
     exact (Finset.mul_prod_erase _ _ (Finset.mem_univ i)).symm

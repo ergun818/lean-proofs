@@ -73,19 +73,19 @@ theorem constructionOffset_le (m : ℕ) (i : PatternLabel m) :
 noncomputable def constructionResidue (m : ℕ) : ℕ :=
   (Nat.chineseRemainderOfFinset (constructionOffset m) (constructionDilation m) Finset.univ
     (fun i _ ↦ (constructionDilation_pos m i).ne')
-    (fun i _ j _ hij ↦ constructionDilation_pairwise m hij)).val
+    (fun _ _ _ _ hij ↦ constructionDilation_pairwise m hij)).val
 
 theorem constructionResidue_modEq (m : ℕ) (i : PatternLabel m) :
     constructionResidue m ≡ constructionOffset m i [MOD constructionDilation m i] :=
   (Nat.chineseRemainderOfFinset (constructionOffset m) (constructionDilation m) Finset.univ
     (fun i _ ↦ (constructionDilation_pos m i).ne')
-    (fun i _ j _ hij ↦ constructionDilation_pairwise m hij)).property i (Finset.mem_univ i)
+    (fun _ _ _ _ hij ↦ constructionDilation_pairwise m hij)).property i (Finset.mem_univ i)
 
 theorem constructionResidue_lt_product (m : ℕ) :
     constructionResidue m < constructionProduct m :=
   Nat.chineseRemainderOfFinset_lt_prod (constructionOffset m) (constructionDilation m)
     (fun i _ ↦ (constructionDilation_pos m i).ne')
-    (fun i _ j _ hij ↦ constructionDilation_pairwise m hij)
+    (fun _ _ _ _ hij ↦ constructionDilation_pairwise m hij)
 
 noncomputable def constructionBase (m : ℕ) : ℕ :=
   constructionResidue m + constructionModulus m * (6 * m * constructionMaxDilation m + 1)

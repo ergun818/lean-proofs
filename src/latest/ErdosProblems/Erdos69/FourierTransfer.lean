@@ -44,9 +44,11 @@ theorem phaseTaylor_moment_error (μ : FiniteLaw Ω) (ν : FiniteLaw Ξ)
       intro k hk
       rw [← mul_sub, norm_mul, norm_div, norm_pow, ← Complex.ofReal_sub]
       simp only [norm_mul, Complex.norm_real, Real.norm_eq_abs, Complex.norm_I,
-        mul_one, Nat.abs_cast, Complex.norm_natCast, abs_mul, abs_of_pos Real.pi_pos,
+        mul_one, Complex.norm_natCast, abs_of_pos Real.pi_pos,
         abs_of_pos (by norm_num : (0 : ℝ) < 2)]
-      exact mul_le_mul_of_nonneg_left (h k (Finset.mem_range.mp hk)) (by positivity)
+      simpa only [mul_comm] using
+        mul_le_mul (h k (Finset.mem_range.mp hk)) (le_refl ((2 * Real.pi) ^ k / k.factorial))
+          (by positivity) hδ
     _ = _ := by rw [← Finset.sum_mul, mul_comm]
 
 theorem mean_phaseTaylor_remainder (μ : FiniteLaw Ω) (X : Ω → ℝ) (n : ℕ) :
@@ -74,7 +76,8 @@ theorem fourier_moment_transfer (μ : FiniteLaw Ω) (ν : FiniteLaw Ξ)
   have htri := norm_sub_le_norm_sub_add_norm_sub (μ.complexMean (fun x ↦ fourierPhase (X x)))
     (μ.complexMean (fun x ↦ phaseTaylor (n + 1) (X x)))
     (ν.complexMean (fun y ↦ fourierPhase (Y y)))
-  have htri' := norm_sub_le_norm_sub_add_norm_sub (μ.complexMean (fun x ↦ phaseTaylor (n + 1) (X x)))
+  have htri' := norm_sub_le_norm_sub_add_norm_sub
+    (μ.complexMean (fun x ↦ phaseTaylor (n + 1) (X x)))
     (ν.complexMean (fun y ↦ phaseTaylor (n + 1) (Y y)))
     (ν.complexMean (fun y ↦ fourierPhase (Y y)))
   rw [norm_sub_rev (ν.complexMean (fun y ↦ phaseTaylor (n + 1) (Y y)))] at htri'

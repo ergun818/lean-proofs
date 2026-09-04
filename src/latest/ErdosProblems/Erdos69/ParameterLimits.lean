@@ -87,6 +87,7 @@ theorem tendsto_firstCoefficient_square_scale {q : ℝ} (hq : 0 < q) :
 theorem tendsto_independent_decay {q : ℝ} (hq : 0 < q) :
     Tendsto (fun m ↦ Real.exp (-(firstCoefficient q m ^ 2 * fluctuationScale m)))
       atTop (𝓝 0) :=
-  Real.tendsto_exp_atBot.comp (tendsto_neg_atTop_atBot.comp (tendsto_firstCoefficient_square_scale hq))
+  Real.tendsto_exp_atBot.comp
+    (tendsto_neg_atTop_atBot.comp (tendsto_firstCoefficient_square_scale hq))
 
 end Erdos69.Elementary

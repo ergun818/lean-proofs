@@ -50,7 +50,7 @@ theorem smallPrimeCount_difference (n y R : ℕ) (hyR : y ≤ R) :
   have hs : Nat.primesLE R = Nat.primesLE y ∪ primeWindow y R := by
     ext p
     simp only [Nat.mem_primesLE, Finset.mem_union, primeWindow, Finset.mem_filter]
-    by_cases hp : p.Prime <;> simp [hp] <;> omega
+    by_cases hp : p.Prime <;> simp [hp]; omega
   have hd : Disjoint (Nat.primesLE y) (primeWindow y R) := by
     apply Finset.disjoint_left.mpr
     intro p hp hq
@@ -77,7 +77,7 @@ theorem primeWindow_reciprocal_eq (y R : ℕ) (hyR : y ≤ R) :
   have hfilter : (Nat.primesLE R).filter (fun p ↦ ¬y < p) = Nat.primesLE y := by
     ext p
     simp only [Finset.mem_filter, Nat.mem_primesLE, not_lt]
-    by_cases hp : p.Prime <;> simp [hp] <;> omega
+    by_cases hp : p.Prime <;> simp [hp]; omega
   have hsum := Finset.sum_filter_add_sum_filter_not (Nat.primesLE R)
     (fun p ↦ y < p) (fun p : ℕ ↦ (1 : ℝ) / p)
   rw [hfilter] at hsum

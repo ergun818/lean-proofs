@@ -28,7 +28,7 @@ theorem exists_affine_residues {ρ ι : Type*} (p : ρ → ℕ) (hp : ∀ j, 0 <
 
 namespace FiniteLaw
 
-variable {ρ ι : Type*} [Fintype ρ] [Fintype ι] [DecidableEq ρ] [DecidableEq ι]
+variable {ρ ι : Type*} [Fintype ρ] [Fintype ι] [DecidableEq ρ]
 
 theorem affine_moment_error (p : ρ → ℕ) (hp : ∀ j, 0 < p j)
     (hcop : Pairwise (fun i j ↦ (p i).Coprime (p j)))

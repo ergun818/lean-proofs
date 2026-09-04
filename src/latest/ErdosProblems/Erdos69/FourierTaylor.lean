@@ -65,7 +65,7 @@ theorem fourierPhase_taylor_remainder (n : ℕ) (x : ℝ) :
   let z : ℂ := (2 * Real.pi * x : ℝ) * Complex.I
   have hz : z.re = 0 := by simp [z]
   have hnorm : ‖z‖ = 2 * Real.pi * |x| := by
-    simp [z, norm_mul, Real.norm_eq_abs, abs_mul, abs_of_pos Real.pi_pos]
+    simp [z, Real.norm_eq_abs, abs_of_pos Real.pi_pos]
   have hpoly : (∑ k ∈ Finset.range (n + 1), z ^ k / k.factorial) =
       phaseTaylor (n + 1) x := by
     apply Finset.sum_congr rfl
