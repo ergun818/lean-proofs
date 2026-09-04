@@ -41,7 +41,7 @@ def K3Rel (i j : Fin 3) : Prop := i ≠ j
 section FiniteCover
 
 variable {U V W : Type*} [Fintype U] [Fintype V] [Fintype W]
-  [DecidableEq U] [DecidableEq V] [DecidableEq W]
+  [DecidableEq U] [DecidableEq V]
 
 /-- The number of elements of the source sent to `v`. -/
 def fiberCard (f : W → V) (v : V) : ℕ :=
@@ -65,6 +65,7 @@ def IsRelCover (R : W → W → Prop) (S : V → V → Prop)
     (F : Multiset (W → V)) : Prop :=
   ∀ f ∈ F, RelHom R S f
 
+omit [Fintype V] in
 theorem coverPullback_independent (RU : U → U → Prop) (RV : V → V → Prop)
     (RW : W → W → Prop) (f : W → V) (A : Finset (U × V))
     (hf : RelHom RW RV f) (hA : RelIndependent (RelProd RU RV) A) :
@@ -135,10 +136,12 @@ theorem sum_card_coverPullback (F : Multiset (W → V)) (A : Finset (U × V)) :
       intro v _
       exact (Nat.add_mul _ _ _).symm
 
+omit [Fintype V] in
 /-- A `D`-uniform cover counts every subset exactly `D` times. -/
-theorem sum_card_coverPullback_of_uniform {F : Multiset (W → V)} {D : ℕ}
+theorem sum_card_coverPullback_of_uniform [Finite V] {F : Multiset (W → V)} {D : ℕ}
     (hF : UniformCover F D) (A : Finset (U × V)) :
     (F.map fun f ↦ (coverPullback f A).card).sum = D * A.card := by
+  let : Fintype V := Fintype.ofFinite V
   rw [sum_card_coverPullback]
   unfold UniformCover at hF
   simp_rw [hF]
@@ -153,7 +156,7 @@ theorem sum_card_coverPullback_of_uniform {F : Multiset (W → V)} {D : ℕ}
     _ = ∑ p : U × V, if p ∈ A then 1 else 0 := by
       rw [Finset.sum_comm, Fintype.sum_prod_type]
     _ = A.card := by
-      simpa using Finset.sum_boole (fun p : U × V ↦ p ∈ A) Finset.univ
+      simp
 
 /-- The total mass identity forced by a uniform cover. -/
 theorem card_mul_of_uniform {F : Multiset (W → V)} {D : ℕ}
@@ -170,9 +173,10 @@ theorem three_mul_card_of_uniform {V : Type*} [Fintype V] [DecidableEq V]
     3 * F.card = D * Fintype.card V := by
   simpa [mul_comm] using card_mul_of_uniform hF
 
+omit [Fintype V] in
 /-- General fractional-cover transfer.  If every pullback along the cover has
 at most `B` elements, then `D * |A| ≤ |F| * B`. -/
-theorem uniform_cover_transfer {F : Multiset (W → V)} {D B : ℕ}
+theorem uniform_cover_transfer [Finite V] {F : Multiset (W → V)} {D B : ℕ}
     (hF : UniformCover F D) (A : Finset (U × V))
     (hB : ∀ f ∈ F, (coverPullback f A).card ≤ B) :
     D * A.card ≤ F.card * B := by
@@ -188,23 +192,27 @@ theorem uniform_cover_transfer {F : Multiset (W → V)} {D B : ℕ}
       exact Nat.add_le_add (hB f (by simp))
         (ih (fun g hg ↦ hB g (by simp [hg])))
 
+omit [Fintype U] [Fintype V] [DecidableEq U] in
 /-- Relation-aware form of `uniform_cover_transfer`: homomorphism pullbacks
 are independent, so any uniform bound for independent pullbacks transfers. -/
-theorem uniform_relCover_transfer
+theorem uniform_relCover_transfer [Finite U] [Finite V]
     (RU : U → U → Prop) (RV : V → V → Prop) (RW : W → W → Prop)
     {F : Multiset (W → V)} {D B : ℕ}
     (hUniform : UniformCover F D) (hCover : IsRelCover RW RV F)
     (hBound : ∀ B' : Finset (U × W), RelIndependent (RelProd RU RW) B' → B'.card ≤ B)
     (A : Finset (U × V)) (hA : RelIndependent (RelProd RU RV) A) :
     D * A.card ≤ F.card * B := by
+  classical
+  let : Fintype U := Fintype.ofFinite U
   apply uniform_cover_transfer hUniform A
   intro f hf
   exact hBound _ (coverPullback_independent RU RV RW f A (hCover f hf) hA)
 
+omit [Fintype U] [DecidableEq U] in
 /-- Specialized LOS transfer through a positive uniform `K₃`-cover.  The
 cover degree cancels, leaving the particularly convenient denominator-free
 inequality `3 * |A| ≤ |V| * B`. -/
-theorem uniform_k3RelCover_transfer
+theorem uniform_k3RelCover_transfer [Finite U]
     (RU : U → U → Prop) (RV : V → V → Prop)
     {F : Multiset (Fin 3 → V)} {D B : ℕ} (hD : 0 < D)
     (hUniform : UniformCover F D) (hCover : IsRelCover K3Rel RV F)

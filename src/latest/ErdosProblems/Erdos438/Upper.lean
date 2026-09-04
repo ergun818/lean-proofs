@@ -214,7 +214,7 @@ theorem mean_residueDensity {N q : ℕ} (hN : 0 < N) (hq : 0 < q)
   field_simp [hN.ne', hq.ne']
 
 /-- A residue slice in a padded interval has the expected capacity. -/
-theorem residueSlice_card_le_div {N q : ℕ} (hN : 0 < N) (hq : 0 < q)
+theorem residueSlice_card_le_div {N q : ℕ} (_ : 0 < N) (hq : 0 < q)
     (hdiv : q ∣ N) {A : Finset ℕ} (hA : A ⊆ Finset.Icc 1 N) (j : Fin q) :
     (residueSlice A q j).card ≤ N / q := by
   have hsubset : residueSlice A q j ⊆ residueClassIco q 1 (N / q) j := by
@@ -302,7 +302,7 @@ def refinedSlice (A : Finset ℕ) (q r : ℕ) (j : Fin q) (k : Fin r) : Finset �
   tauto
 
 /-- Children partition their parent class. -/
-theorem sum_card_refinedSlice {q r : ℕ} (hq : 0 < q) (hr : 0 < r)
+theorem sum_card_refinedSlice {q r : ℕ} (_ : 0 < q) (hr : 0 < r)
     (A : Finset ℕ) (j : Fin q) :
     ∑ k : Fin r, (refinedSlice A q r j k).card = (residueSlice A q j).card := by
   let f : ℕ → Fin r := fun n ↦ ⟨(n / q) % r, Nat.mod_lt _ hr⟩
@@ -434,7 +434,7 @@ theorem parentVariance_ge_of_mem_badParents {q r : ℕ} (hr : 0 < r)
 
 /-- A good parent of density at least `δ/2` has at least seven eighths
 dense children. -/
-theorem seven_eighths_denseChildren {q r : ℕ} (hr : 0 < r)
+theorem seven_eighths_denseChildren {q r : ℕ} (_ : 0 < r)
     {coarse : Fin q → ℝ} {fine : Fin q → Fin r → ℝ}
     {δ : ℝ} (hδ : 0 ≤ δ) {j : Fin q}
     (hjgood : j ∉ badParents coarse fine δ)
@@ -492,7 +492,7 @@ theorem sum_selectedSlice_eq_sum_refinedSlice
       · rintro ⟨⟨hx, hxG⟩, hxu⟩
         exact (hnot (hxu ▸ hxG)).elim
       · intro hx
-        simpa using hx
+        simp at hx
     simp [hempty]
   calc
     ∑ x ∈ selectedSlice A q r hr a G, f x =
@@ -641,8 +641,8 @@ theorem sum_liftedRoot_le_total
     {A : Finset ℕ} {N q r c : ℕ} (hq : 0 < q) (hr : 0 < r)
     (hA : A ⊆ Finset.Icc 1 N) (a b : Fin q) (hc : c = (a.val + b.val) % q)
     (G₁ G₂ : Finset (Fin r)) :
-    (∑ u ∈ G₁, ∑ x ∈ refinedSlice A q r a u,
-      ∑ v ∈ G₂, ∑ y ∈ refinedSlice A q r b v,
+    (∑ u ∈ G₁, ∑ _ ∈ refinedSlice A q r a u,
+      ∑ v ∈ G₂, ∑ _ ∈ refinedSlice A q r b v,
         liftedRootMultiplicity q r c hq hr
           (sumIndex r hr (carryIndex q r hr a.val b.val) u v)) ≤
       totalShiftedSquarePairCount A (q * r) (squareShiftCutoff N (q * r)) := by
@@ -684,7 +684,7 @@ theorem cyclicPartner_sumIndex {r : ℕ} (hr : 0 < r)
   let : NeZero r := ⟨hr.ne'⟩
   have h : u + v + κ = sumIndex r hr κ u v := by
     apply Fin.ext
-    simp [sumIndex, Fin.add_def, Nat.add_comm, Nat.add_left_comm]
+    simp [sumIndex, Fin.add_def, Nat.add_comm]
   have h' : cyclicPartner hr κ (u + v + κ) u = v := by
     simp only [cyclicPartner]
     abel
@@ -773,8 +773,8 @@ def classWeightedRootCount
 theorem sum_liftedRoot_eq_classWeightedRootCount
     {A : Finset ℕ} {q r c : ℕ} (hq : 0 < q) (hr : 0 < r)
     (a b : Fin q) (G₁ G₂ : Finset (Fin r)) (κ : Fin r) :
-    (∑ u ∈ G₁, ∑ x ∈ refinedSlice A q r a u,
-      ∑ v ∈ G₂, ∑ y ∈ refinedSlice A q r b v,
+    (∑ u ∈ G₁, ∑ _ ∈ refinedSlice A q r a u,
+      ∑ v ∈ G₂, ∑ _ ∈ refinedSlice A q r b v,
         liftedRootMultiplicity q r c hq hr (sumIndex r hr κ u v)) =
       classWeightedRootCount A q r c hq hr a b G₁ G₂ κ := by
   rw [classWeightedRootCount]
@@ -1133,7 +1133,7 @@ theorem exists_square_pair_of_los
     dsimp only [B]
     rw [Finset.card_image_iff.mpr hf.injOn]
   by_contra hnone
-  push_neg at hnone
+  push Not at hnone
   have hB : ∀ x ∈ B, ∀ y ∈ B, ¬ IsSquare (x + y) := by
     intro x hx y hy hsq
     rcases Finset.mem_image.mp hx with ⟨a, ha, rfl⟩

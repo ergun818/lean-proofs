@@ -168,7 +168,7 @@ theorem rootMultiplicity_mul_le_card_squaresInIco
     (hU : (a + H * q) * (a + H * q) ≤ U) :
     rootMultiplicity q c * H ≤
       ((Finset.Ico L U).filter fun n => IsSquare n ∧ n % q = c % q).card := by
-  rw [← card_squareValuesInIco hq]
+  rw [← card_squareValuesInIco (a := a) hq]
   apply Finset.card_le_card
   intro n hn
   obtain ⟨z, hzIco, hzmod, rfl⟩ := (mem_squareValuesInIco hq).mp hn
@@ -194,7 +194,7 @@ theorem rootMultiplicity_mul_le_card_shiftedSquareIndices
     (hresidue : (x + y) % Q = c % Q) (hlower : x + y ≤ a * a)
     (hupper : (a + H * Q) * (a + H * Q) ≤ x + y + (J + 1) * Q) :
     rootMultiplicity Q c * H ≤ (shiftedSquareIndices x y Q J).card := by
-  rw [← card_squareValuesInIco hQ]
+  rw [← card_squareValuesInIco (a := a) hQ]
   let f : ℕ → ℕ := fun n => (n - (x + y)) / Q
   have hdata : ∀ n ∈ squareValuesInIco Q c a H,
       x + y ≤ n ∧ n % Q = c % Q ∧ IsSquare n ∧
@@ -415,9 +415,8 @@ theorem card_refinedSquareValuesInIco
 /-! ## Compatible refined classes and the carry -/
 
 /-- The unique partner of `u` in the congruence `u+v+κ=w (mod r)`. -/
-def cyclicPartner {r : ℕ} (hr : 0 < r) (κ w u : Fin r) : Fin r := by
-  letI : NeZero r := ⟨hr.ne'⟩
-  exact w - u - κ
+def cyclicPartner {r : ℕ} (_ : 0 < r) (κ w u : Fin r) : Fin r :=
+  w - u - κ
 
 theorem cyclicPartner_involutive {r : ℕ} (hr : 0 < r) (κ w u : Fin r) :
     cyclicPartner hr κ w (cyclicPartner hr κ w u) = u := by
@@ -534,7 +533,7 @@ theorem three_mul_mul_le_four_mul_weightedCompatibleRootCount
 /-- The corresponding aggregate count of square values in an interval of
 `H` complete periods for every refined square-residue lift. -/
 def aggregateRefinedSquareValueCount
-    (q r c : ℕ) (hq : 0 < q) (hr : 0 < r) (a H : ℕ)
+    (q r c : ℕ) (_ : 0 < q) (hr : 0 < r) (a H : ℕ)
     (G₁ G₂ : Finset (Fin r)) (κ : Fin r) : ℕ :=
   ∑ w : Fin r,
     (compatibleIndices hr G₁ G₂ κ w).card *
@@ -575,7 +574,7 @@ theorem residueCarry_le_one {q a b : ℕ} (hq : 0 < q)
 
 /-- Exact carry identity for addition of two refined residue classes. -/
 theorem refinedResidue_add_eq
-    {q a b u v : ℕ} (hq : 0 < q) :
+    {q a b u v : ℕ} (_ : 0 < q) :
     (a + q * u) + (b + q * v) =
       (a + b) % q + q * (u + v + residueCarry q a b) := by
   dsimp only [residueCarry]

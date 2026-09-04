@@ -37,7 +37,7 @@ lemma odd_square_lift (a : ℤ) (k : ℕ)
       obtain ⟨q, hq⟩ := ha
       refine ⟨1, q, odd_one, ?_⟩
       norm_num at hq ⊢
-      simpa [hq] using hq
+      simp [hq]
   | succ k ih =>
       obtain ⟨r, q, hr, hq⟩ := ih
       rcases Int.even_or_odd q with hqeven | hqodd
@@ -72,7 +72,7 @@ lemma isSquare_zmod_two_pow_of_mod_eight_eq_one {j a : ℕ} (hj : 3 ≤ j)
     simpa [sub_eq_add_neg, add_comm] using dvd_neg.mpr h
   obtain ⟨q, hq⟩ := hdvd
   obtain ⟨k, rfl⟩ := Nat.exists_eq_add_of_le hj
-  obtain ⟨r, q', -, hr⟩ := odd_square_lift (a : ℤ) k ⟨q, by simpa [hq]⟩
+  obtain ⟨r, q', -, hr⟩ := odd_square_lift (a : ℤ) k ⟨q, by simp [hq]⟩
   refine ⟨(r : ZMod (2 ^ (3 + k))), ?_⟩
   rw [show (a : ZMod (2 ^ (3 + k))) = ((a : ℤ) : ZMod (2 ^ (3 + k))) by simp]
   rw [show ((a : ℤ) : ZMod (2 ^ (3 + k))) = (r : ZMod (2 ^ (3 + k))) * r by
@@ -721,18 +721,18 @@ lemma triangle_cross_relations (a : ℕ)
   let h16 : 16 ∣ 2 ^ (a + 5) := sixteen_dvd_two_pow_add_five a
   let e := triangleEquiv (2 ^ (a + 5)) h16
   have heq : triangleEquiv (2 ^ (a + 5)) (sixteen_dvd_two_pow_add_five a) = e := by
-    simp [e, h16]
+    simp [e]
   rw [heq]
   constructor
   · exact hF x (e x) (by simpa [e, h16] using isSquare_add_triangleEquiv a x hx)
   constructor
   · apply hF x (-x)
-    simpa using (IsSquare.zero : IsSquare (0 : ZMod (2 ^ (a + 5))))
+    simp
   · apply hF (e x) (-x)
     simp only [e, triangleEquiv, Equiv.coe_fn_mk]
     by_cases hx16 : (x.cast : ZMod 16) = 2
     · rw [if_pos hx16]
-      simpa using (IsSquare.zero : IsSquare (0 : ZMod (2 ^ (a + 5))))
+      simp
     · rw [if_neg hx16]
       refine ⟨4, ?_⟩
       simp [zmodSixteen]
@@ -844,9 +844,9 @@ lemma two_six_bound_of_self_square (m : ℕ) [NeZero m]
       apply card_three_le_three_of_pairwise_cross_eq
       · exact hF x x (hself x (by simpa [R2] using hx))
       · apply hF x (-x)
-        simpa using (IsSquare.zero : IsSquare (0 : ZMod (m * 8)))
+        simp
       · apply hF x (-x)
-        simpa using (IsSquare.zero : IsSquare (0 : ZMod (m * 8)))
+        simp
     _ = 3 * m := by simp [R2, residueFinset_card, mul_comm]
 
 lemma r2_self_square_eight (x : ZMod 8)
@@ -949,7 +949,7 @@ lemma coloring_bound_pow_zero
     refine ⟨0, ?_⟩
     have hx := x.val_lt
     norm_num at hx
-    simpa [hx]
+    simp [hx]
   have hsum := coloring_sum_le_modulus_of_self_square F hF hself
   norm_num at hsum ⊢
   omega
@@ -967,7 +967,7 @@ lemma coloring_bound_pow_one
         x + x = (2 : ZMod (2 ^ 1)) * x := by ring
         _ = 0 * x := by rw [htwo]
         _ = 0 := zero_mul x
-    simpa [hx]
+    simp [hx]
   have hsum := coloring_sum_le_modulus_of_self_square F hF hself
   norm_num at hsum ⊢
   omega
@@ -1003,8 +1003,7 @@ theorem los_two_power_all (j : ℕ) : TwoPowerBound (2 ^ j) := by
       obtain ⟨k, rfl⟩ := Nat.exists_eq_add_of_le hj
       have hblock : TwoPowerBound ((2 ^ k) * 8) := by
         unfold TwoPowerBound
-        intro _inst
-        intro G hG
+        intro _inst G hG
         let : NeZero (2 ^ k) := ⟨pow_ne_zero _ (by norm_num)⟩
         have hprevEq : 2 ^ (k + 1) = (2 ^ k) * 2 := by rw [pow_succ]
         have hprev : TwoPowerBound ((2 ^ k) * 2) :=

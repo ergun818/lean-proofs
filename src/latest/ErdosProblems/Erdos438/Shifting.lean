@@ -138,13 +138,13 @@ theorem eventually_shift_lt (η : ℝ) (hη : 0 < η) (M : ℕ) :
         mul_lt_mul_of_pos_left hNM hbase
       _ = (N : ℝ) := by
         rw [← Real.rpow_add hNreal]
-        convert Real.rpow_one (N : ℝ) using 2 <;> ring
+        convert Real.rpow_one (N : ℝ) using 2; ring
   exact_mod_cast hcast
 
 /-- A fixed constant times `N⁻η` is eventually smaller than the minor-arc
 scale `P⁻¹/²`. -/
 theorem eventually_const_mul_rpow_neg_le_inv_sqrt
-    (η C : ℝ) (hη : 0 < η) (hC : 0 ≤ C) (P : ℕ) (hP : 0 < P) :
+    (η C : ℝ) (hη : 0 < η) (_ : 0 ≤ C) (P : ℕ) (hP : 0 < P) :
     ∀ᶠ N : ℕ in Filter.atTop,
       C * (N : ℝ) ^ (-η) ≤ 1 / Real.sqrt (P : ℝ) := by
   have hpow : Filter.Tendsto (fun N : ℕ => (N : ℝ) ^ η)
@@ -220,7 +220,7 @@ theorem three_mul_lt_shiftingFourierModulus (N : ℕ) :
   simp only [shiftingFourierModulus, squareRootCutoff]
   nlinarith [sq_nonneg (Nat.sqrt N + 1)]
 
-theorem shifting_noWrap {N d : ℕ} (hN : 0 < N) (hd : d < N)
+theorem shifting_noWrap {N d : ℕ} (_ : 0 < N) (hd : d < N)
     {A : Finset ℕ} (hA : A ⊆ Finset.Icc 1 N) :
     ∀ x ∈ A, ∀ y ∈ A, x + y + d < shiftingFourierModulus N := by
   intro x hx y hy
@@ -297,7 +297,7 @@ theorem norm_squareExpSum_neg (θ : ℝ) (L : ℕ) :
     apply Finset.sum_congr rfl
     intro z hz
     simp only [zero_mul, add_zero]
-    convert Erdos587.phase_neg (θ * (z : ℝ) ^ 2) using 1 <;> ring_nf
+    convert Erdos587.phase_neg (θ * (z : ℝ) ^ 2) using 1; ring_nf
   rw [heq, Complex.norm_conj]
 
 theorem fourier_phase_nat_eq_phase (T t x : ℕ) :
@@ -311,7 +311,7 @@ theorem fourier_phase_nat_eq_phase (T t x : ℕ) :
 /-- A translation divisible by the approximating denominator has almost
 trivial phase; only the Dirichlet approximation error remains. -/
 theorem norm_phase_mul_sub_one_le_of_approx
-    (θ : ℝ) (a : ℤ) (b Q d : ℕ) (hb : 0 < b) (hQ : 0 < Q)
+    (θ : ℝ) (a : ℤ) (b Q d : ℕ) (hb : 0 < b) (_ : 0 < Q)
     (hbd : b ∣ d)
     (happrox : |θ - (a : ℝ) / b| ≤ 1 / ((b : ℝ) * Q)) :
     ‖Erdos587.phase (θ * d) - 1‖ ≤

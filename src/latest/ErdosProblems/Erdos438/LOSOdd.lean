@@ -155,7 +155,7 @@ theorem card_fiber_surjective_addMonoidHom
   classical
   have htotal := Finset.card_eq_sum_card_fiberwise
     (s := (Finset.univ : Finset A)) (t := (Finset.univ : Finset B))
-    (f := f) (by simp [hf])
+    (f := f) (by simp)
   have heq : ∀ y : B,
       ((Finset.univ : Finset A).filter fun a => f a = y).card =
         ((Finset.univ : Finset A).filter fun a => f a = b).card := by
@@ -250,9 +250,11 @@ theorem isSquare_primePower_unit_iff_reduction
     exact (primePowerReduction_ne_zero_iff_isUnit hp hk _).2 x.isUnit
 
 theorem isSquare_mul_iff_square_iff_square_finiteField
-    {F : Type*} [Field F] [Fintype F] [DecidableEq F]
-    (hodd : ringChar F ≠ 2) {a b : F} (ha0 : a ≠ 0) (hb0 : b ≠ 0) :
+    {F : Type*} [Field F] [Finite F]
+    (_ : ringChar F ≠ 2) {a b : F} (ha0 : a ≠ 0) (hb0 : b ≠ 0) :
     IsSquare (a * b) ↔ (IsSquare a ↔ IsSquare b) := by
+  classical
+  let : Fintype F := Fintype.ofFinite F
   by_cases ha : IsSquare a <;> by_cases hb : IsSquare b
   · exact ⟨fun _ => ⟨fun _ => hb, fun _ => ha⟩, fun _ => ha.mul hb⟩
   · constructor
@@ -330,7 +332,7 @@ theorem exists_square_add_one_nonsquare
 
 section Rooted
 
-variable {V : Type*} [Fintype V] [DecidableEq V]
+variable {V : Type*} [DecidableEq V]
 
 def rootedMultiplicity (F : Multiset (Fin 3 → V)) (i : Fin 3) (x : V) : ℕ :=
   (F.filter fun f => f i = x).card
@@ -357,7 +359,7 @@ theorem coverMultiplicity_eq_sum_rootedMultiplicity
       rw [fiberCard_eq_sum_rootIndicator, ← Finset.sum_add_distrib]
       apply Finset.sum_congr rfl
       intro i hi
-      by_cases h : f i = x <;> simp [rootedMultiplicity, h] <;> omega
+      by_cases h : f i = x <;> simp [rootedMultiplicity, h]; omega
 
 theorem RootUniform.uniformCover {F : Multiset (Fin 3 → V)} {d : ℕ}
     (hF : RootUniform F d) : UniformCover F (3 * d) := by
@@ -395,7 +397,7 @@ noncomputable def leftProductEquiv (x : R) :
   invFun p := p.property.1.unit
   left_inv u := by
     apply Units.ext
-    simp [IsUnit.unit_spec]
+    simp
   right_inv := by
     rintro ⟨⟨a, b⟩, ha, hab⟩
     apply Subtype.ext
@@ -404,7 +406,7 @@ noncomputable def leftProductEquiv (x : R) :
     · change -(↑(ha.unit⁻¹) : R) * x = b
       apply_fun (fun y => a * y) using ha.mul_right_injective
       have hmul : a * (↑(ha.unit⁻¹) : R) = 1 := by
-        simpa [IsUnit.unit_spec] using congrArg Units.val ha.unit.mul_inv
+        simp
       calc
         a * (-((↑(ha.unit⁻¹) : R)) * x) =
             -(a * (↑(ha.unit⁻¹) : R)) * x := by ring
@@ -414,11 +416,11 @@ noncomputable def leftProductEquiv (x : R) :
 noncomputable def rightProductEquiv (x : R) :
     Rˣ ≃ rightProductSolutions R x where
   toFun u := ⟨(-(↑(u⁻¹) : R) * x, (u : R)), u.isUnit, by
-    simp [mul_assoc, mul_comm, mul_left_comm]⟩
+    simp [mul_comm, mul_left_comm]⟩
   invFun p := p.property.1.unit
   left_inv u := by
     apply Units.ext
-    simp [IsUnit.unit_spec]
+    simp
   right_inv := by
     rintro ⟨⟨a, b⟩, hb, hab⟩
     apply Subtype.ext
@@ -428,7 +430,7 @@ noncomputable def rightProductEquiv (x : R) :
       calc
         (-((↑(hb.unit⁻¹) : R)) * x) * b = -x := by
           rw [mul_assoc, mul_comm x b, ← mul_assoc]
-          simp [IsUnit.unit_spec]
+          simp
         _ = a * b := by rw [← hab]; ring
     · simp [IsUnit.unit_spec]
 
@@ -753,7 +755,7 @@ theorem coverMultiplicity_crtPermutedMaps {m n : ℕ} (h : m.Coprime n)
       (ZMod.chineseRemainder h z).2
 
 theorem coverMultiplicity_bind {A V W : Type*}
-    [Fintype V] [Fintype W] [DecidableEq V] [DecidableEq W]
+    [Fintype V] [DecidableEq W]
     (F : Multiset A) (G : A → Multiset (V → W)) (w : W) :
     coverMultiplicity (F.bind G) w =
       (F.map fun a ↦ coverMultiplicity (G a) w).sum := by
@@ -817,7 +819,7 @@ theorem hasPositiveTriangleCover_one : HasPositiveTriangleCover 1 := by
     simp only [Multiset.mem_singleton] at hf
     subst f
     intro i j hij
-    exact ⟨0, by simp [SquareSumRel]⟩
+    exact ⟨0, by simp⟩
 
 theorem HasPositiveTriangleCover.mul {m n : ℕ}
     (hm : HasPositiveTriangleCover m) (hn : HasPositiveTriangleCover n)
@@ -831,7 +833,7 @@ theorem HasPositiveTriangleCover.mul {m n : ℕ}
     crtAggregate_isRelCover hcop hFmR hFnR⟩
 
 theorem hasPositiveTriangleCover_finset_prod
-    {I : Type*} [DecidableEq I] (s : Finset I) (q : I → ℕ)
+    {I : Type*} (s : Finset I) (q : I → ℕ)
     (hpair : Set.Pairwise (↑s : Set I) (Function.onFun Nat.Coprime q))
     (hq : ∀ i ∈ s, HasPositiveTriangleCover (q i)) :
     HasPositiveTriangleCover (∏ i ∈ s, q i) := by
@@ -958,6 +960,7 @@ lemma cover_isRelCover (hq : 3 ∣ q)
     rw [Finset.product_eq_sprod, Finset.mem_product] at hp
     exact triB_relHom hq unitSquare hp.1 hp.2
 
+omit [NeZero q] in
 lemma fiberCard_triA (x v : ZMod q) :
     fiberCard (triA x) v =
       (if x = v then 1 else 0) + 2 * (if -x = v then 1 else 0) := by
@@ -965,6 +968,7 @@ lemma fiberCard_triA (x v : ZMod q) :
   simp [triA]
   by_cases hv : -x = v <;> simp [hv] <;> rfl
 
+omit [NeZero q] in
 lemma fiberCard_triB (u z v : ZMod q) :
     fiberCard (triB u z) v =
       (if u = v then 1 else 0) + (if -u = v then 1 else 0) +
@@ -1007,6 +1011,7 @@ lemma familyB_count (hq : 3 ∣ q) (v : ZMod q) :
   simp_rw [neg_eq_iff_eq_neg]
   simp
 
+omit [NeZero q] in
 lemma coverMultiplicity_add (F G : Multiset (Fin 3 → ZMod q)) (v : ZMod q) :
     coverMultiplicity (F + G) v =
       coverMultiplicity F v + coverMultiplicity G v := by
@@ -1028,19 +1033,19 @@ theorem cover_uniform (hq : 3 ∣ q)
   have h21 : (2 : ZMod 3) ≠ 1 := by decide
   rcases hv with hv | hv | hv
   · have hn : red hq (-v) = 0 := by simp [hv]
-    simp [fiber, hv, hn, h01, h02, h10, h12, h20, h21]
+    simp [fiber, hv, hn, h01]
     ring
   · have hn : red hq (-v) = 2 := by
       calc
         red hq (-v) = -(red hq v) := map_neg (red hq) v
         _ = 2 := by rw [hv]; decide
-    simp [fiber, hv, hn, h01, h02, h10, h12, h20, h21]
+    simp [fiber, hv, hn, h10, h20, h21]
     ring
   · have hn : red hq (-v) = 1 := by
       calc
         red hq (-v) = -(red hq v) := map_neg (red hq) v
         _ = 1 := by rw [hv]; decide
-    simp [fiber, hv, hn, h01, h02, h10, h12, h20, h21]
+    simp [fiber, hv, hn, h10, h20, h21]
     ring
 
 lemma fiber_card_eq (hq : 3 ∣ q) (a b : ZMod 3) :
@@ -1126,7 +1131,7 @@ namespace Prime5
 
 section AbstractFivePowerCover
 
-variable {V : Type*} [Fintype V] [DecidableEq V] [AddCommGroup V]
+variable {V : Type*} [DecidableEq V] [AddCommGroup V]
 
 def mainMap (u x : V) : Fin 3 → V
   | 0 => u
@@ -1151,6 +1156,7 @@ theorem fiberCard_mainMap (u x z : V) :
   simp [mainMap]
   rfl
 
+omit [AddCommGroup V] in
 theorem fiberCard_loopMap (y z : V) :
     fiberCard (loopMap y) z = if y = z then 3 else 0 := by
   by_cases h : y = z <;> simp [fiberCard, loopMap, h]
@@ -1170,6 +1176,7 @@ theorem coverMultiplicity_basicFamily (N Q : Finset V) (z : V) :
   by_cases hn : z ∈ N <;> by_cases hq : z ∈ Q <;>
     by_cases hm : -z ∈ Q <;> simp [hn, hq, hm, neg_eq_iff_eq_neg]
 
+omit [AddCommGroup V] in
 theorem coverMultiplicity_loopFamily (R : Finset V) (t : ℕ) (z : V) :
     coverMultiplicity
         (R.val.bind (fun y => Multiset.replicate (2 * t) (loopMap y))) z =
@@ -1223,6 +1230,7 @@ theorem coverFamily_uniform
     have hneg : -z ∉ Q := by simpa [hnegQ] using hzQ
     simp [hzN, hzQ, hzR, hneg]
 
+omit [DecidableEq V] in
 theorem coverFamily_isRelCover
     (N Q R : Finset V) (S : V → V → Prop)
     (hmain : ∀ u ∈ N, ∀ x ∈ Q, RelHom K3Rel S (mainMap u x))
@@ -1426,9 +1434,11 @@ theorem fivePower_hasPositiveTriangleCover {k : ℕ} (hk : 0 < k) :
 
 
 theorem finiteField_isSquare_mul_iff
-    {F : Type*} [Field F] [Fintype F] [DecidableEq F]
+    {F : Type*} [Field F] [Finite F]
     {a b : F} (ha : a ≠ 0) (hb : b ≠ 0) :
     IsSquare (a * b) ↔ (IsSquare a ↔ IsSquare b) := by
+  classical
+  let : Fintype F := Fintype.ofFinite F
   constructor
   · intro hab
     constructor
@@ -1761,6 +1771,7 @@ theorem rootedMultiplicity_unitConstOrbit_nonunit (c : Rˣ) (i : Fin 3) (x : R)
   rw [hrewrite]
   exact rootedMultiplicity_unitOrbit_nonunit _ _ _ hx
 
+omit [CommRing R] [Fintype R] in
 theorem rootedMultiplicity_add (F G : Multiset (Fin 3 → R)) (i : Fin 3) (x : R) :
     rootedMultiplicity (F + G) i x =
       rootedMultiplicity F i x + rootedMultiplicity G i x := by
