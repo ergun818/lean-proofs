@@ -104,6 +104,7 @@ noncomputable def natIndicator (P : Prop) : ℕ := by
   classical
   exact if P then 1 else 0
 
+omit [Fintype G] in
 lemma tupleRepCount_eq_sum_indicator {k : ℕ} (a : Fin k → G) (g : G) :
     tupleRepCount a g =
       ∑ e : BitVec k, natIndicator (tupleSubsetSum a e = g) := by
@@ -128,6 +129,7 @@ lemma sum_tupleRepCount {k : ℕ} (a : Fin k → G) :
     _ = Fintype.card (BitVec k) := Finset.card_univ
     _ = 2 ^ k := card_bitVec k
 
+omit [Fintype G] in
 /-- A representation count is bounded by the number of Boolean vectors. -/
 lemma tupleRepCount_le_pow {k : ℕ} (a : Fin k → G) (g : G) :
     tupleRepCount a g ≤ 2 ^ k := by
@@ -135,6 +137,7 @@ lemma tupleRepCount_le_pow {k : ℕ} (a : Fin k → G) (g : G) :
   rw [tupleRepCount, ← card_bitVec k, ← Finset.card_univ]
   exact Finset.card_filter_le _ _
 
+omit [Fintype G] in
 @[simp] lemma tupleSubsetSum_append {k s : ℕ} (a : Fin k → G) (b : Fin s → G)
     (e : BitVec k) (f : BitVec s) :
     tupleSubsetSum (Fin.append a b) (Fin.append e f) =
@@ -142,6 +145,7 @@ lemma tupleRepCount_le_pow {k : ℕ} (a : Fin k → G) (g : G) :
   rw [tupleSubsetSum, Fin.sum_univ_add]
   simp [tupleSubsetSum]
 
+omit [Fintype G] in
 /-- Concatenating tuples convolves their representation functions. -/
 lemma tupleRepCount_append {k s : ℕ} (a : Fin k → G) (b : Fin s → G) (g : G) :
     tupleRepCount (Fin.append a b) g =
@@ -162,6 +166,7 @@ lemma tupleRepCount_append {k s : ℕ} (a : Fin k → G) (b : Fin s → G) (g : 
   simp only [natIndicator]
   rw [eq_sub_iff_add_eq]
 
+omit [Fintype G] in
 @[simp] lemma tupleSubsetSum_insertNth {k : ℕ} (p : Fin (k + 1)) (x : G)
     (a : Fin k → G) (e : BitVec (k + 1)) :
     tupleSubsetSum (p.insertNth x a) e =
@@ -201,7 +206,7 @@ lemma sum_affine_collision_indicator {k : ℕ} (e f : BitVec k) (hef : e ≠ f)
   | succ n =>
       obtain ⟨p, hp⟩ : ∃ p : Fin (n + 1), e p ≠ f p := by
         by_contra h
-        push_neg at h
+        push Not at h
         exact hef (funext h)
       rw [← (Fin.insertNthEquiv (fun _ : Fin (n + 1) ↦ G) p).sum_comp]
       rw [Fintype.sum_prod_type]
@@ -245,6 +250,7 @@ lemma natIndicator_and (P Q : Prop) :
   classical
   by_cases hP : P <;> by_cases hQ : Q <;> simp [natIndicator, hP, hQ]
 
+omit [AddCommGroup G] in
 lemma sum_common_value_indicator (x y : G) :
     ∑ g : G, natIndicator (x = g) * natIndicator (y = g) =
       natIndicator (x = y) := by
@@ -301,12 +307,12 @@ lemma sum_sum_tupleRepCount_sq (k : ℕ) :
                 exact sum_collision_indicator e f
                   (Finset.ne_of_mem_erase hf).symm
             _ = (2 ^ k - 1) * Fintype.card G ^ (k - 1) := by
-                simp [card_bitVec]
+                simp
         rw [hoff]
-        simp [natIndicator, Fintype.card_fun, add_comm]
+        simp [natIndicator, add_comm]
     _ = 2 ^ k * Fintype.card G ^ k +
           2 ^ k * (2 ^ k - 1) * Fintype.card G ^ (k - 1) := by
-      simp [card_bitVec]
+      simp
       ring
 
 /-- Squared `L²` distance of the representation function from its mean. -/
@@ -374,7 +380,7 @@ theorem expectation_tupleDispersion (k : ℕ) :
   rw [show (2 : ℝ) ^ (2 * k) = ((2 : ℝ) ^ k) ^ 2 by ring]
   by_cases hk : k = 0
   · subst k
-    simp [hN0]
+    simp
   · have hpow : (Fintype.card G : ℝ) ^ k =
         (Fintype.card G : ℝ) ^ (k - 1) * Fintype.card G := by
       obtain ⟨j, rfl⟩ := Nat.exists_eq_succ_of_ne_zero hk
@@ -390,6 +396,7 @@ noncomputable def blockHitCount {s : ℕ} (H : Finset G) (b : Fin s → G)
   exact (Finset.univ.filter fun e : BitVec s ↦
     g - tupleSubsetSum b e ∈ H).card
 
+omit [Fintype G] in
 lemma blockHitCount_eq_sum {s : ℕ} (H : Finset G) (b : Fin s → G) (g : G) :
     blockHitCount H b g =
       ∑ e : BitVec s,
@@ -401,6 +408,7 @@ lemma blockHitCount_eq_sum {s : ℕ} (H : Finset G) (b : Fin s → G) (g : G) :
   intro e _
   split <;> rfl
 
+omit [AddCommGroup G] [Fintype G] in
 lemma mem_indicator_eq_sum (H : Finset G) (x : G) :
     natIndicator (x ∈ H) = ∑ h ∈ H, natIndicator (x = h) := by
   classical
@@ -418,6 +426,7 @@ noncomputable def blockCollisionMass {s : ℕ} (H : Finset G)
     (b : Fin s → G) : ℕ :=
   ∑ g : G, blockCollisionAt H b g
 
+omit [Fintype G] in
 lemma blockCollisionAt_pos_of_two_hits {s : ℕ} (H : Finset G)
     (b : Fin s → G) (g : G) (h : 2 ≤ blockHitCount H b g) :
     0 < blockCollisionAt H b g := by
@@ -441,11 +450,13 @@ lemma blockCollisionAt_pos_of_two_hits {s : ℕ} (H : Finset G)
     · exact fun _ _ ↦ Nat.zero_le _
     · exact ⟨f, Finset.mem_erase.mpr ⟨hef.symm, Finset.mem_univ f⟩, hterm⟩
 
+omit [Fintype G] in
 lemma blockCollisionAt_ge_one_of_two_hits {s : ℕ} (H : Finset G)
     (b : Fin s → G) (g : G) (h : 2 ≤ blockHitCount H b g) :
     1 ≤ blockCollisionAt H b g :=
   blockCollisionAt_pos_of_two_hits H b g h
 
+omit [Fintype G] in
 lemma sub_eq_iff_add_eq' (g x h : G) : g - x = h ↔ x + h = g := by
   constructor <;> intro heq
   · rw [sub_eq_iff_eq_add] at heq
@@ -541,7 +552,7 @@ lemma sum_blockCollisionMass (H : Finset G) (s : ℕ) :
           (Finset.ne_of_mem_erase hf).symm h h'
     _ = 2 ^ s * (2 ^ s - 1) * H.card ^ 2 *
           Fintype.card G ^ (s - 1) := by
-      simp [card_bitVec]
+      simp
       ring
 
 end RepresentationAlgebra
@@ -554,6 +565,7 @@ variable {K : Type*} [AddCommGroup K] [Fintype K]
 def signedTerm (p q : Bool) (x : K) : K :=
   if p then (if q then 0 else x) else (if q then -x else 0)
 
+omit [Fintype K] in
 lemma sum_signedTerm {m : ℕ} (x : Fin m → K) (e f : BitVec m) :
     ∑ i, signedTerm (e i) (f i) (x i) =
       tupleSubsetSum x e - tupleSubsetSum x f := by
@@ -562,9 +574,11 @@ lemma sum_signedTerm {m : ℕ} (x : Fin m → K) (e f : BitVec m) :
   intro i _
   cases e i <;> cases f i <;> simp [signedTerm]
 
+omit [Fintype K] in
 lemma signedTerm_self (p : Bool) (x : K) : signedTerm p p x = 0 := by
   cases p <;> simp [signedTerm]
 
+omit [Fintype K] in
 lemma signedTerm_left_injective {p q : Bool} (hpq : p ≠ q) :
     Function.Injective (signedTerm p q : K → K) := by
   intro x y hxy
@@ -574,11 +588,12 @@ lemma signedTerm_left_injective {p q : Bool} (hpq : p ≠ q) :
   · exact hxy
   · exact (hpq rfl).elim
 
+omit [Fintype K] in
 /-- If a Boolean relation difference is supported on `I ∪ {j}` and has a
 nonzero `j`-coefficient, its equation determines coordinate `j` from the
 coordinates in `I`. -/
 lemma pivot_determines_coordinate {m : ℕ} (I : Finset (Fin m)) (j : Fin m)
-    (hjI : j ∉ I) (e f : BitVec m) (hej : e j ≠ f j)
+    (_hjI : j ∉ I) (e f : BitVec m) (hej : e j ≠ f j)
     (hsupp : ∀ i, i ∉ insert j I → e i = f i)
     (x y : Fin m → K)
     (hxe : tupleSubsetSum x e = 0) (hxf : tupleSubsetSum x f = 0)
@@ -674,7 +689,7 @@ theorem card_relationSolutions_le {m : ℕ} (R : Finset (BitVec m))
       ∃ e ∈ R, ∃ f ∈ R,
         e ≠ f ∧ ∀ i, i ∉ insert j I → e i = f i := by
     have hn := hnotind j hj
-    simp only [RelationIndependent, not_forall, _root_.not_imp] at hn
+    simp only [RelationIndependent, not_forall] at hn
     obtain ⟨e, heR, f, hfR, hagree, hef⟩ := hn
     exact ⟨e, heR, f, hfR, hef, hagree⟩
   have hIcard : I.card ≤ m - Nat.clog 2 R.card := by
@@ -726,7 +741,7 @@ theorem card_relationSolutions_le {m : ℕ} (R : Finset (BitVec m))
         Fintype.card ↥(relationSolutions (K := K) R) :=
       (Fintype.card_coe _).symm
     _ ≤ Fintype.card (↥I → K) := hcard
-    _ = Fintype.card K ^ I.card := by simp [Fintype.card_fun]
+    _ = Fintype.card K ^ I.card := by simp
     _ ≤ Fintype.card K ^ (m - Nat.clog 2 R.card) := by
       exact Nat.pow_le_pow_right Fintype.card_pos hIcard
 
@@ -748,6 +763,7 @@ noncomputable def characterRelations {m : ℕ} (χ : Fin m → Dual G) :
 noncomputable def characterRelationCount {m : ℕ} (χ : Fin m → Dual G) : ℕ :=
   (characterRelations χ).card
 
+omit [Fintype G] in
 @[simp] lemma tupleSubsetSum_cons {m : ℕ} (a : G) (x : Fin m → G)
     (p : Bool) (e : BitVec m) :
     tupleSubsetSum (Fin.cons a x) (Fin.cons p e) =
@@ -755,6 +771,7 @@ noncomputable def characterRelationCount {m : ℕ} (χ : Fin m → Dual G) : ℕ
   rw [tupleSubsetSum, Fin.sum_univ_succ]
   simp [tupleSubsetSum]
 
+omit [Fintype G] in
 /-- Expanding `∏ᵢ (1 + χᵢ(a))` selects a Boolean subfamily of the
 characters. -/
 lemma prod_one_add_character_eq_sum {m : ℕ} (χ : Fin m → Dual G) (a : G) :
@@ -807,6 +824,7 @@ lemma sum_character_product_at {m : ℕ} (χ : Fin m → Dual G) :
   unfold complexIndicator
   simpa using AddChar.sum_eq_ite (∑ i, χ i)
 
+omit [Fintype G] in
 /-- The corresponding expansion for one character evaluated on all entries
 of a tuple. -/
 lemma prod_one_add_single_character_eq_sum {k : ℕ} (ψ : Dual G)
@@ -1079,11 +1097,11 @@ lemma sum_characterRelationCount_pow_le (m : ℕ) :
               · exact Finset.card_le_univ _
               · exact hpowle
             _ = Fintype.card G ^ m := by
-              simp [Fintype.card_fun, AddChar.card_eq]
+              simp [AddChar.card_eq]
     _ = allRelations.card * Fintype.card G ^ m := by
-      simp [Finset.sum_const_nat]
+      simp
     _ = Fintype.card G ^ m * 2 ^ (2 ^ m) := by
-      simp [allRelations, card_bitVec]
+      simp [allRelations]
       ring
 
 /-- The character moment identity is real-valued; this is the form used by
@@ -1125,7 +1143,6 @@ lemma normalized_tuple_moment_le (q m : ℕ) :
     intro χ _
     by_cases hχ : (∑ i, χ i) = 0
     · simp only [hχ, if_true]
-      push_cast
       rw [mul_pow]
       ring_nf
       exact le_rfl
@@ -1335,6 +1352,7 @@ theorem exceptionalTargets_probability_le {k : ℕ} {η A : ℝ}
       · exact hthreshold
     _ = _ := by rw [expectation_tupleDispersion]
 
+omit [AddCommGroup G] in
 lemma tupleMean_add (k s : ℕ) :
     tupleMean (G := G) (k + s) =
       (2 : ℝ) ^ s * tupleMean (G := G) k := by
@@ -1429,7 +1447,7 @@ exceptional block sums, adjoining the block increases the relative error by
 at most `δ`. -/
 theorem smooth_append_at_of_one_hit {k s : ℕ} (a : Fin k → G)
     (b : Fin s → G) (g : G)
-    {η δ M : ℝ} (hη₀ : 0 ≤ η) (hη₁ : η ≤ 1) (hδ : 0 ≤ δ)
+    {η δ M : ℝ} (hη₀ : 0 ≤ η) (hη₁ : η ≤ 1) (_hδ : 0 ≤ δ)
     (hsmall : 1 ≤ δ * (2 : ℝ) ^ s)
     (hmax : ∀ g : G, (tupleRepCount a g : ℝ) ≤ M)
     (hM : M ≤ δ * (2 : ℝ) ^ s * tupleMean (G := G) k)
@@ -1583,6 +1601,7 @@ section UniformProducts
 
 variable {X Y : Type*} [Fintype X] [Fintype Y] [Nonempty X] [Nonempty Y]
 
+omit [Nonempty X] [Nonempty Y] in
 lemma uniformProbability_equiv (e : X ≃ Y) (P : Y → Prop) :
     uniformProbability (fun x : X ↦ P (e x)) = uniformProbability P := by
   classical
@@ -1590,6 +1609,7 @@ lemma uniformProbability_equiv (e : X ≃ Y) (P : Y → Prop) :
   rw [Nat.card_congr (e.subtypeEquiv fun _ ↦ Iff.rfl)]
   rw [Fintype.card_congr e]
 
+omit [Nonempty X] [Nonempty Y] in
 lemma uniformProbability_prod_fiber (R : X → Y → Prop) :
     uniformProbability (fun z : X × Y ↦ R z.1 z.2) =
       Erdos807.FiniteUniform.expectation
@@ -1641,6 +1661,7 @@ lemma uniformProbability_prod_failure_le (P : X → Prop) (Q : X → Y → Prop)
       rw [Erdos807.FiniteUniform.expectation_const]
       rfl
 
+omit [Nonempty X] in
 lemma uniformProbability_prod_left (P : X → Prop) :
     uniformProbability (fun z : X × Y ↦ P z.1) = uniformProbability P := by
   rw [uniformProbability_prod_fiber (R := fun x : X ↦ fun _ : Y ↦ P x)]
@@ -1648,13 +1669,13 @@ lemma uniformProbability_prod_left (P : X → Prop) :
       fun x : X ↦ Erdos807.FiniteUniform.indicator (P x) := by
     funext x
     by_cases hx : P x
-    · simp [uniformProbability, Erdos807.FiniteUniform.indicator, hx,
-        Erdos807.FiniteUniform.card_ne_zero]
+    · simp [uniformProbability, Erdos807.FiniteUniform.indicator, hx]
     · simp [uniformProbability, Erdos807.FiniteUniform.indicator, hx]
   rw [hconst]
   rw [Erdos807.FiniteUniform.expectation_indicator]
   rfl
 
+omit [AddCommGroup G] in
 lemma uniformProbability_append {k s : ℕ} (P : (Fin (k + s) → G) → Prop) :
     uniformProbability
         (fun z : (Fin k → G) × (Fin s → G) ↦ P (Fin.append z.1 z.2)) =
@@ -1675,7 +1696,7 @@ lemma uniformProbability_not (P : X → Prop) :
   rw [hind]
   unfold Erdos807.FiniteUniform.expectation
   rw [Finset.sum_sub_distrib]
-  simp [Erdos807.FiniteUniform.card_ne_zero]
+  simp
   field_simp
 
 end UniformProducts
@@ -1687,6 +1708,7 @@ def HallState (q t e k : ℕ) (η : ℝ) (a : Fin k → G) : Prop :=
   (∀ g : G, (tupleRepCount a g : ℝ) ≤ (2 : ℝ) ^ (k - q + t)) ∧
     (exceptionalTargets η a).card * (2 : ℝ) ^ e ≤ Fintype.card G
 
+omit [Fintype G] in
 lemma tupleRepCount_append_le_of_max {k s B : ℕ} (a : Fin k → G)
     (b : Fin s → G) (hB : ∀ g : G, tupleRepCount a g ≤ B) (g : G) :
     tupleRepCount (Fin.append a b) g ≤ 2 ^ s * B := by
@@ -1697,7 +1719,7 @@ lemma tupleRepCount_append_le_of_max {k s B : ℕ} (a : Fin k → G)
       apply Finset.sum_le_sum
       intro f _
       exact hB _
-    _ = 2 ^ s * B := by simp [card_bitVec]
+    _ = 2 ^ s * B := by simp
 
 lemma hallState_max_append {q t e k s : ℕ} (hqk : q ≤ k) {η : ℝ}
     {a : Fin k → G} (ha : HallState q t e k η a) (b : Fin s → G) :
@@ -1858,6 +1880,7 @@ theorem hallState_failure_append_le {q t e e' k s : ℕ}
     _ ≤ p + (2 : ℝ) ^ (2 * s + e') / (2 : ℝ) ^ (2 * e) := by
       gcongr
 
+omit [Fintype G] in
 lemma critical_prefix_max_after_initial_block (q t : ℕ)
     (a : Fin q → G) (b : Fin (8 * t) → G)
     (ha : ∀ g : G, tupleRepCount a g ≤ 2 ^ t) :
@@ -2132,7 +2155,7 @@ theorem iterated_hallState_failure_le (m t n : ℕ) {δ : ℝ}
       have hih := ih htolerance'
       have hqk : q ≤ hallLength q t n := by
         unfold hallLength
-        simpa [Nat.add_assoc] using Nat.le_add_right q (8 * t + n * (2 * t))
+        simp [Nat.add_assoc]
       have hcard : (Fintype.card G : ℝ) ≤ 2 * (2 : ℝ) ^ q := by
         have hn : Fintype.card G ≤ 2 * 2 ^ q := by
           calc
@@ -2171,7 +2194,6 @@ lemma hallState_implies_balanced {q t e k : ℕ} {ε : ℝ}
       exact_mod_cast hcard
     linarith [ha.2]
   intro g
-  unfold tupleMean at *
   exact not_mem_exceptionalTargets (by rw [hempty]; simp)
 
 /-- Explicit finite Erdős--Hall bound for independent ordered samples. -/
@@ -2231,6 +2253,7 @@ noncomputable def tupleRange {k : ℕ} (a : Fin k → G) : Finset G := by
   classical
   exact Finset.univ.image a
 
+omit [AddCommGroup G] [Fintype G] in
 lemma selectedImage_subset_range {k : ℕ} (a : Fin k → G) (e : BitVec k) :
     selectedImage a e ⊆ tupleRange a := by
   classical
@@ -2239,6 +2262,7 @@ lemma selectedImage_subset_range {k : ℕ} (a : Fin k → G) (e : BitVec k) :
   obtain ⟨i, _, rfl⟩ := hx
   simp [tupleRange]
 
+omit [Fintype G] in
 lemma selectedImage_sum {k : ℕ} (a : Fin k → G) (ha : Function.Injective a)
     (e : BitVec k) : subsetSum (selectedImage a e) = tupleSubsetSum a e := by
   classical
@@ -2282,6 +2306,7 @@ noncomputable def bitVecPowersetEquiv {k : ℕ} (a : Fin k → G)
       rw [Finset.mem_image]
       exact ⟨i, by simpa, rfl⟩
 
+omit [Fintype G] in
 /-- On an injective tuple, labelled Boolean selections and literal subsets
 give the same representation count. -/
 lemma tupleRepCount_eq_setRepCount_range {k : ℕ} (a : Fin k → G)
@@ -2311,6 +2336,7 @@ lemma tupleRepCount_eq_setRepCount_range {k : ℕ} (a : Fin k → G)
       have hc := congrArg Finset.card hfa
       simpa using hc
 
+omit [AddCommGroup G] [Fintype G] in
 lemma tupleRange_card {k : ℕ} (a : Fin k → G) (ha : Function.Injective a) :
     (tupleRange a).card = k := by
   classical
@@ -2342,11 +2368,13 @@ noncomputable def orderedKSubset {k : ℕ} (A : KSubsets G k)
     (σ : Equiv.Perm (Fin k)) : Fin k → G :=
   fun i ↦ (enumerateKSubset A (σ i)).1
 
+omit [AddCommGroup G] in
 lemma orderedKSubset_injective {k : ℕ} (A : KSubsets G k)
     (σ : Equiv.Perm (Fin k)) : Function.Injective (orderedKSubset A σ) := by
   intro i j hij
   exact σ.injective ((enumerateKSubset A).injective (Subtype.ext hij))
 
+omit [AddCommGroup G] in
 @[simp] lemma tupleRange_orderedKSubset {k : ℕ} (A : KSubsets G k)
     (σ : Equiv.Perm (Fin k)) : tupleRange (orderedKSubset A σ) = A.1 := by
   classical
@@ -2418,6 +2446,7 @@ def injectiveTuplesEmbeddingEquiv {k : ℕ} :
     left_inv := fun _ ↦ rfl
     right_inv := fun _ ↦ rfl }
 
+omit [AddCommGroup G] in
 lemma card_injectiveTuples {k : ℕ} :
     Nat.card (InjectiveTuples G k) =
       k.factorial * Fintype.card (KSubsets G k) := by
@@ -2429,6 +2458,7 @@ lemma card_injectiveTuples {k : ℕ} :
 /-- The Boolean vector selecting a single coordinate. -/
 def singleBit {k : ℕ} (i : Fin k) : BitVec k := fun j ↦ decide (j = i)
 
+omit [Fintype G] in
 @[simp] lemma tupleSubsetSum_singleBit {k : ℕ} (a : Fin k → G) (i : Fin k) :
     tupleSubsetSum a (singleBit i) = a i := by
   classical
@@ -2471,6 +2501,7 @@ noncomputable def collisionUnion (G : Type*) [Fintype G] (k : ℕ) :
   classical
   exact (collisionPairs k).biUnion (coordinateCollision (G := G))
 
+omit [AddCommGroup G] in
 lemma noninjective_subset_collisionUnion {k : ℕ} :
     noninjectiveTuplesFinset G k ⊆
       collisionUnion G k := by
@@ -2525,11 +2556,13 @@ lemma card_badInjectiveTuples_le {k : ℕ} {ε : ℝ} :
       intro x y h
       exact Subtype.ext (congrArg (fun z ↦ z.1) h))
 
+omit [AddCommGroup G] in
 lemma card_KSubsets_pos {k : ℕ} (hk : k ≤ Fintype.card G) :
     0 < Fintype.card (KSubsets G k) := by
   rw [Fintype.card_finset_len]
   exact Nat.choose_pos hk
 
+omit [AddCommGroup G] in
 lemma card_injectiveTuples_pos {k : ℕ} (hk : k ≤ Fintype.card G) :
     0 < Nat.card (InjectiveTuples G k) := by
   rw [card_injectiveTuples]
@@ -2561,6 +2594,7 @@ lemma subset_failure_le_badTuples_div_injective {k : ℕ} {ε : ℝ}
           Fintype.card (KSubsets G k) :=
       Nat.mul_le_mul_right _ card_badInjectiveTuples_le)
 
+omit [AddCommGroup G] in
 lemma card_injective_add_noninjective {k : ℕ} :
     Nat.card (InjectiveTuples G k) +
         Nat.card {a : Fin k → G // ¬ Function.Injective a} =
@@ -2642,7 +2676,7 @@ theorem subset_failure_le_tuple_failure {k : ℕ} {ε : ℝ}
       exact mul_le_mul_of_nonneg_left (birthday_lower_bound hk1) (by positivity)
     _ = _ := by
       unfold B T c uniformProbability
-      simp [Fintype.card_fun, Fintype.card_fin]
+      simp [Fintype.card_fin]
 
 end TupleSetTransfer
 
@@ -3057,7 +3091,6 @@ lemma hallBlock_polynomial_error_tendsto_zero :
     rw [show 4 * ((t : ℝ) ^ 2 / (4 : ℝ) ^ t) =
       (4 * (t : ℝ) ^ 2) / (4 : ℝ) ^ t by ring]
     apply div_le_div_of_nonneg_right _ (by positivity : (0 : ℝ) ≤ (4 : ℝ) ^ t)
-    push_cast
     have htR : (1 : ℝ) ≤ t := by exact_mod_cast ht
     have hprod : (0 : ℝ) ≤ ((t : ℝ) - 1) * (3 * t + 1) :=
       mul_nonneg (sub_nonneg.mpr htR) (by positivity)
