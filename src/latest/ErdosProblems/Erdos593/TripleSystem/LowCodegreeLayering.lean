@@ -28,7 +28,7 @@ theorem exists_lowPairClosureLayering_of_uncountable
     (hW : Cardinal.aleph0 < Cardinal.mk W) :
     Nonempty (FiniteClosureLayering 2 (lowPairClosureFinset H t)
       (Cardinal.mk W).ord.ToType) := by
-  exact _root_.Erdos593.FiniteClosureLayeringConstruction.exists_finiteClosureLayering_of_uncountable
+  exact FiniteClosureLayeringConstruction.exists_finiteClosureLayering_of_uncountable
     (lowPairClosureFinset H t) hW (by decide)
 
 /-- In any layering for the low-pair completion closure, a completion vertex

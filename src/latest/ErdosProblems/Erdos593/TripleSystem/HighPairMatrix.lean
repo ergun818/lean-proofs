@@ -53,7 +53,7 @@ theorem locallyBounded_two_of_injective
 /-- Pair-codegree reservoirs whose total capacity exceeds a finite protected
 core and all grid cells yield a witnessed bipartite matrix. -/
 theorem exists_witnessedBipartiteMatrix_of_pairCodegree
-    {W : Type u} {D : Type v} [DecidableEq W]
+    {W : Type u} {D : Type v}
     {H : TripleSystem W D} {n T : Nat}
     (left right : Fin n ↪ W) (core : Finset W)
     (hleft : ∀ i, left i ∈ core)
@@ -116,13 +116,14 @@ theorem exists_witnessedBipartiteMatrix_of_pairCodegree_core_union
 /-- A uniform pair-codegree threshold of `2n + n²` supplies the capacity
 needed to select globally distinct third vertices for an `n × n` matrix. -/
 theorem exists_witnessedBipartiteMatrix_of_quadratic_pairCodegree
-    {W : Type u} {D : Type v} [DecidableEq W]
+    {W : Type u} {D : Type v}
     {H : TripleSystem W D} {n : Nat}
     (left right : Fin n ↪ W)
     (hcore_disjoint : ∀ i j, left i ≠ right j)
     (completion : ∀ ij : Fin n × Fin n,
       PairCodegreeWitness H (left ij.1) (right ij.2) (2 * n + n * n)) :
     ∃ M : WitnessedBipartiteMatrix H n 2, M.left = left ∧ M.right = right := by
+  classical
   apply exists_witnessedBipartiteMatrix_of_pairCodegree_core_union left right
     hcore_disjoint completion
   have hcore : (Finset.univ.map left ∪ Finset.univ.map right).card ≤ 2 * n := by
@@ -136,7 +137,7 @@ theorem exists_witnessedBipartiteMatrix_of_quadratic_pairCodegree
 /-- A complete finite grid of high pairs at the quadratic threshold supplies
 the pair-codegree witnesses needed for the matrix construction. -/
 theorem exists_witnessedBipartiteMatrix_of_quadratic_highPair
-    {W : Type u} {D : Type v} [DecidableEq W]
+    {W : Type u} {D : Type v}
     {H : TripleSystem W D} {n : Nat}
     (left right : Fin n ↪ W)
     (hhigh : ∀ i j,
@@ -153,7 +154,7 @@ globally injectively.  This strengthens the local `2`-boundedness supplied by
 `exists_witnessedBipartiteMatrix_of_quadratic_highPair`, and is useful when a
 single high-pair grid is itself intended to be a rainbow submatrix. -/
 theorem exists_injectiveWitnessedBipartiteMatrix_of_quadratic_highPair
-    {W : Type u} {D : Type v} [DecidableEq W]
+    {W : Type u} {D : Type v}
     {H : TripleSystem W D} {n : Nat}
     (left right : Fin n ↪ W)
     (hhigh : ∀ i j,

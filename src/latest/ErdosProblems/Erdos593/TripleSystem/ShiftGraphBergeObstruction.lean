@@ -22,7 +22,7 @@ variable {X I : Type u} {F : TripleSystem X I}
 /-- A specified odd Berge cycle in the isolated reduction prevents embedding
 into the corresponding shift-graph sequence lift. -/
 theorem not_nonempty_embedding_shiftHost_of_oddBergeCycle
-    [Fintype I] (hlinear : F.Linear)
+    [Finite I] (hlinear : F.Linear)
     {z : F.NonIsolatedPoint ⊕ I}
     (c : F.isolatedReduction.levi.Walk z z) (hc : c.IsCycle)
     (hodd : ¬ 4 ∣ c.length) :
@@ -41,7 +41,7 @@ theorem not_nonempty_embedding_shiftHost_of_oddBergeCycle
 /-- A finite linear triple system whose isolated reduction has an odd Berge
 cycle is not obligatory. -/
 theorem not_isObligatory_of_linear_of_not_isolatedReduction_evenBergeCycles_shiftHost
-    (F : TripleSystem X I) [Fintype I]
+    (F : TripleSystem X I) [Finite I]
     (hlinear : F.Linear)
     (hno : ¬ F.isolatedReduction.EvenBergeCycles) :
     ¬ F.IsObligatory := by

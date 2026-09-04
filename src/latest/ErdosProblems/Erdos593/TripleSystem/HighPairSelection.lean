@@ -19,7 +19,7 @@ distinct points, and deleting the core still leaves enough choices for all
 `m` cells. This is the finite selection step used when high-codegree pairs
 are assembled into a witnessed bipartite matrix. -/
 theorem exists_injective_choice_of_card_add_le
-    {W : Type u} [DecidableEq W] {m T : Nat}
+    {W : Type u} {m T : Nat}
     (C : Finset W) (reservoir : Fin m → Fin T ↪ W)
     (hcap : C.card + m ≤ T) :
     ∃ choose : Fin m → Fin T,
@@ -63,7 +63,7 @@ theorem exists_injective_choice_of_card_add_le
 type. This form is convenient for the cells of a bipartite matrix, whose
 natural index type is `Fin n × Fin n`. -/
 theorem exists_injective_choice_of_fintype_card_add_le
-    {ι : Type v} {W : Type u} [Fintype ι] [DecidableEq W] {T : Nat}
+    {ι : Type v} {W : Type u} [Fintype ι] {T : Nat}
     (C : Finset W) (reservoir : ι → Fin T ↪ W)
     (hcap : C.card + Fintype.card ι ≤ T) :
     ∃ choose : ι → Fin T,

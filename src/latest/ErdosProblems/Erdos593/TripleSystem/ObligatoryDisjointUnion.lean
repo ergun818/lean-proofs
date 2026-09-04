@@ -264,7 +264,7 @@ variable (F : TripleSystem V E) (G : TripleSystem X A)
 /-- The class of finite obligatory triple systems is closed under tagged
 disjoint union. -/
 theorem IsObligatory.disjointUnion
-    [Fintype V] [Fintype E] [Fintype X] [Fintype A]
+    [Finite V] [Finite E] [Finite X] [Finite A]
     (hF : F.IsObligatory) (hG : G.IsObligatory) :
     (F.disjointUnion G).IsObligatory := by
   intro Y B _ H hH

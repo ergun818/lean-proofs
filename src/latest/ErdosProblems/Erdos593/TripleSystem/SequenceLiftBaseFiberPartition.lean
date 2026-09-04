@@ -92,7 +92,7 @@ theorem finite_activeBaseNodes_of_finite {S : Set (Edge G)}
 /-- A finite embedded source has finite canonical base-node support. -/
 theorem finite_activeBaseNodes_edgeImage
     {W : Type v} {E : Type w} {F : TripleSystem W E}
-    [Fintype E]
+    [Finite E]
     (f : F.Embedding (system G)) :
     (activeBaseNodes f.edgeImage).Finite := by
   exact finite_activeBaseNodes_of_finite (Set.finite_range f.edge)

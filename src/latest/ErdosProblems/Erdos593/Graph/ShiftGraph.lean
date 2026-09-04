@@ -65,7 +65,7 @@ in one of the two directions.
 -/
 theorem adj_iff_shift_or_shift {r : ℕ} (hr : 0 < r) {x y : Tuple κ r} :
     (graph κ r).Adj x y ↔ Shift κ x y ∨ Shift κ y x := by
-  simp +decide [ graph ];
+  simp +decide only [graph, SimpleGraph.fromRel_adj, ne_eq, and_iff_right_iff_imp]
   rintro ( h | h ) <;> [ exact ne_of_shift κ hr h; exact ne_of_shift κ hr h |> Ne.symm ]
 
 /-

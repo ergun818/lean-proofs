@@ -98,7 +98,7 @@ theorem mem_commonNeighborClosure_iff {n : Nat}
     exact hv' i
   · intro hv
     simp only [commonNeighborClosure, Set.Finite.mem_toFinset, commonNeighborSet,
-      Set.mem_setOf_eq]
+      Set.mem_ofPred_eq]
     intro i
     exact hv _ (finiteBipartitePartEmbeddingFinset_mem s.1 s.2 i)
 

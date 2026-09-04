@@ -50,7 +50,7 @@ has cardinality equal to the sum of its distinct local base-letter images over
 the active canonical base nodes. -/
 theorem edgeImage_ncard_eq_sum_baseLetter_image_ncard
     {W : Type v} {E : Type w} {F : TripleSystem W E}
-    [Fintype E] (f : F.Embedding (system G)) (hF : F.HasNoIsolatedPoints)
+    [Finite E] (f : F.Embedding (system G)) (hF : F.HasNoIsolatedPoints)
     (hlinear : F.Linear) :
     f.edgeImage.ncard =
       (@Finset.univ (activeBaseNodeIndex f.edgeImage)
@@ -86,12 +86,13 @@ theorem edge_card_eq_sum_baseLetter_image_ncard
 distinct base-letter images inside its separate active canonical base fibres. -/
 theorem traceKey_image_ncard_eq_sum_baseLetter_image_ncard
     {W : Type v} {E : Type w} {F : TripleSystem W E}
-    [Fintype E] (f : F.Embedding (system G)) (hF : F.HasNoIsolatedPoints)
+    [Finite E] (f : F.Embedding (system G)) (hF : F.HasNoIsolatedPoints)
     (hlinear : F.Linear) :
     (traceKey '' f.edgeImage).ncard =
       (@Finset.univ (activeBaseNodeIndex f.edgeImage)
         (activeBaseNodeIndexFintype (Set.finite_range f.edge))).sum
         (fun q => (baseLetter '' baseFiber f.edgeImage q.1).ncard) := by
+  let := Fintype.ofFinite E
   calc
     (traceKey '' f.edgeImage).ncard = Fintype.card E :=
       (finiteLinear_traceKey_image f hF hlinear).2

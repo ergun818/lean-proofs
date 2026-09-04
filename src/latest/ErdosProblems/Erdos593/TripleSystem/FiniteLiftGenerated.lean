@@ -63,11 +63,12 @@ inductive FiniteLiftGenerated : {X I : Type w} → TripleSystem X I → Prop
 namespace FiniteLiftGenerated
 
 /-- Ergonomic name for the host-factor expansion atom. -/
-theorem ofExpansion {X : Type w} [Fintype X]
+theorem ofExpansion {X : Type w} [Finite X]
     {J : _root_.SimpleGraph X}
     (f : Erdos593.SimpleGraph.NonInducedFactor J G) :
-    FiniteLiftGenerated G (privateVertexExpansion J) :=
-  ofFactorExpansion f
+    FiniteLiftGenerated G (privateVertexExpansion J) := by
+  let := Fintype.ofFinite X
+  exact ofFactorExpansion f
 
 /-- Running-intersection geometry assembles locally host-generated exact
 pieces into a host-generated exact restriction of their total edge union.

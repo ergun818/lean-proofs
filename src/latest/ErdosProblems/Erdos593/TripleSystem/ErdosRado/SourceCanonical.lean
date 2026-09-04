@@ -57,7 +57,7 @@ private theorem before_restrict_eq {a : TraceCarrier} (p : TracePrefix a)
   unfold before
   rw [graph_restrict, graph_restrict, graph_restrict]
   ext z
-  simp only [Set.mem_inter_iff, Set.mem_setOf_eq]
+  simp only [Set.mem_inter_iff, Set.mem_ofPred_eq]
   have hord : ((p.restrictIndex hη ξ).toOrd : Ordinal) =
       (ξ.toOrd : Ordinal) := p.restrictIndex_toOrd hη ξ
   constructor
@@ -97,7 +97,7 @@ theorem restrict_eq_of_isInitialSegment {a : TraceCarrier}
     · have hnode := hseg.choose_spec ξ
       simpa [ξ, liftIndex, TracePrefix.restrictIndex] using! hnode
   · rintro ⟨ξ, rfl⟩
-    refine ⟨?_, Set.mem_setOf.mpr (Set.mem_Iio.mp ξ.toOrd.2)⟩
+    refine ⟨?_, Set.mem_ofPred.mpr (Set.mem_Iio.mp ξ.toOrd.2)⟩
     refine ⟨liftIndex hseg.choose ξ, ?_⟩
     apply Prod.ext
     · exact (liftIndex_toOrd hseg.choose ξ).symm
@@ -113,7 +113,7 @@ private theorem before_snoc_of_lt_eq {c : TraceColoring}
   rw [graph_restrict, graph_restrict, graph_snoc]
   ext z
   simp only [Set.mem_inter_iff, Set.mem_union, Set.mem_singleton_iff,
-    Set.mem_setOf_eq]
+    Set.mem_ofPred_eq]
   constructor
   · rintro ⟨hz | rfl, hzζ⟩
     · refine ⟨hz, ?_⟩
@@ -140,7 +140,7 @@ private theorem before_snoc_of_not_lt_eq {c : TraceColoring}
   rw [heq]
   ext z
   simp only [Set.mem_inter_iff, Set.mem_union, Set.mem_singleton_iff,
-    Set.mem_setOf_eq]
+    Set.mem_ofPred_eq]
   constructor
   · rintro ⟨hz | rfl, hzlt⟩
     · exact hz
@@ -197,7 +197,7 @@ theorem IsSourceCanonicalFor.limitPrefix {c : TraceColoring}
     unfold before
     rw [graph_restrict, graph_restrict, ← hstagegraph]
     ext z
-    simp only [Set.mem_inter_iff, Set.mem_setOf_eq]
+    simp only [Set.mem_inter_iff, Set.mem_ofPred_eq]
     have hord : (ζ.toOrd : Ordinal) = ξ.toOrd :=
       F.diagonalIndex_toOrd ho ξ
     constructor

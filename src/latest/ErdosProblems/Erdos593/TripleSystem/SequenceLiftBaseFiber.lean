@@ -99,7 +99,7 @@ theorem baseFiber_edgeImage_eq_range
 image at every canonical base fibre, with one base letter per fibre edge. -/
 theorem finiteLinear_baseFiber_baseLetter_image
     {W : Type v} {E : Type w} {F : TripleSystem W E}
-    [Fintype E]
+    [Finite E]
     (f : F.Embedding (system G)) (hF : F.HasNoIsolatedPoints)
     (hlinear : F.Linear) (q : Node G) :
     (baseLetter '' baseFiber f.edgeImage q).Finite ∧

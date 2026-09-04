@@ -292,7 +292,7 @@ private theorem eq_of_adj_of_dist_add_one_in_forest
   have hpCX : (pC.concat hCX).IsPath := hpC.concat hXnotC hCX
   have hpDX : (pD.concat hDX).IsPath := hpD.concat hXnotD hDX
   have hpaths : pC.concat hCX = pD.concat hDX := by
-    exact Subtype.mk.inj (hG.path_unique ⟨_, hpCX⟩ ⟨_, hpDX⟩)
+    exact Subtype.mk.inj ((hG.subsingleton_path _ _).elim ⟨_, hpCX⟩ ⟨_, hpDX⟩)
   have hpenultimate := congrArg (fun p => p.penultimate) hpaths
   simpa using! hpenultimate
 
@@ -716,10 +716,12 @@ removed: the intrinsic Levi conditions reconstruct the original system from
 the rooted bridge-block running assembly. -/
 theorem constructible_of_intrinsic_of_hasNoIsolatedPoints
     {X I : Type w} (K : TripleSystem X I)
-    [Fintype X] [Fintype I] [DecidableEq X] [DecidableEq I]
-    [DecidableRel K.levi.Adj]
+    [Finite X] [Finite I]
     (hintrinsic : K.Intrinsic) (hnoisolated : K.HasNoIsolatedPoints) :
     Constructible K := by
+  classical
+  let := Fintype.ofFinite X
+  let := Fintype.ofFinite I
   rcases hintrinsic with ⟨hlinear, hbridge, hberge⟩
   have hrunning : K.RunningEdgeAssembly (rootedComponentPieceList K) :=
     intrinsic_rootedComponentPieceList_runningEdgeAssembly K
@@ -734,8 +736,7 @@ theorem constructible_of_intrinsic_of_hasNoIsolatedPoints
 /-- Finite structural classification on systems with no isolated points. -/
 theorem constructible_iff_intrinsic_of_hasNoIsolatedPoints
     {X I : Type w} (K : TripleSystem X I)
-    [Fintype X] [Fintype I] [DecidableEq X] [DecidableEq I]
-    [DecidableRel K.levi.Adj]
+    [Finite X] [Finite I]
     (hnoisolated : K.HasNoIsolatedPoints) :
     Constructible K ↔ K.Intrinsic := by
   constructor
@@ -747,7 +748,7 @@ theorem constructible_iff_intrinsic_of_hasNoIsolatedPoints
 /-- Clean isolated-reduction form of the finite structural classification. -/
 theorem isolatedReduction_constructible_iff_intrinsic
     {X I : Type w} (K : TripleSystem X I)
-    [Fintype X] [Fintype I] [DecidableEq X] [DecidableEq I] :
+    [Finite X] [Finite I] :
     Constructible K.isolatedReduction ↔ K.isolatedReduction.Intrinsic := by
   classical
   let : Fintype K.NonIsolatedPoint := Fintype.ofFinite _

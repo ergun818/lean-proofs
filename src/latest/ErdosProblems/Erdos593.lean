@@ -12,7 +12,7 @@ namespace Erdos593
 universe u
 
 /-- The complete intrinsic classification after deleting isolated vertices. -/
-theorem erdos_593 {V E : Type u} (F : TripleSystem V E) [Fintype V] [Fintype E] :
+theorem erdos_593 {V E : Type u} (F : TripleSystem V E) [Finite V] [Finite E] :
     F.IsObligatory ↔
       F.isolatedReduction.Linear ∧
       F.isolatedReduction.BridgeAtEveryEdge ∧

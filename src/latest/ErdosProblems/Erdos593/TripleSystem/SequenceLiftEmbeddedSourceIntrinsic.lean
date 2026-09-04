@@ -19,7 +19,7 @@ variable {X I : Type u} {F : TripleSystem X I}
 reduction with only even Berge cycles whenever the host graph has no odd
 closed walk up to the finite Levi-edge bound of that isolated reduction. -/
 theorem isolatedReduction_evenBergeCycles_of_linear_of_embedding
-    [Fintype I] [Fintype F.isolatedReduction.levi.edgeSet]
+    [Finite I] [Fintype F.isolatedReduction.levi.edgeSet]
     (f : F.Embedding (system G)) (hlinear : F.Linear)
     (hG : ∀ ⦃v : V⦄ (q : G.Walk v v),
       q.length ≤ F.isolatedReduction.levi.edgeFinset.card → ¬ Odd q.length) :
@@ -33,7 +33,7 @@ theorem isolatedReduction_evenBergeCycles_of_linear_of_embedding
 cannot embed in a sequence lift over a host graph with no sufficiently short
 odd closed walk. -/
 theorem not_nonempty_embedding_of_not_isolatedReduction_evenBergeCycles
-    [Fintype I] [Fintype F.isolatedReduction.levi.edgeSet]
+    [Finite I] [Fintype F.isolatedReduction.levi.edgeSet]
     (hlinear : F.Linear)
     (hno : ¬ F.isolatedReduction.EvenBergeCycles)
     (hG : ∀ ⦃v : V⦄ (q : G.Walk v v),
@@ -48,7 +48,7 @@ is not obligatory whenever a host graph has no countable colouring and no odd
 closed walk up to the finite Levi-edge bound.  The later shift-graph package
 will instantiate these two host hypotheses simultaneously. -/
 theorem not_isObligatory_of_linear_of_not_isolatedReduction_evenBergeCycles_of_host
-    [Fintype I] [Fintype F.isolatedReduction.levi.edgeSet]
+    [Finite I] [Fintype F.isolatedReduction.levi.edgeSet]
     (hGcolor : ¬ Nonempty (G.Coloring ℕ))
     (hlinear : F.Linear)
     (hno : ¬ F.isolatedReduction.EvenBergeCycles)
@@ -64,7 +64,7 @@ theorem not_isObligatory_of_linear_of_not_isolatedReduction_evenBergeCycles_of_h
 /-- A finite linear source embedded in a two-colourable sequence lift has an
 intrinsic isolated reduction. -/
 theorem isolatedReduction_intrinsic_of_linear_of_embedding
-    [Fintype I]
+    [Finite I]
     (f : F.Embedding (system G)) (hlinear : F.Linear)
     (hG : G.Colorable 2) :
     F.isolatedReduction.Intrinsic := by

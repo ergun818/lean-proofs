@@ -135,8 +135,9 @@ noncomputable def Embedding.extendIsolatedReduction [Fintype V] [Infinite W]
 
 /-- The hard direction: if the isolated reduction of a finite triple system is
 obligatory, then so is the original system. -/
-theorem IsObligatory.of_isolatedReduction [Fintype V]
+theorem IsObligatory.of_isolatedReduction [Finite V]
     (hF : F.isolatedReduction.IsObligatory) : F.IsObligatory := by
+  let := Fintype.ofFinite V
   intro Y B _ K hK
   obtain ⟨f⟩ := hF Y B K hK
   have hvertices : ℵ₀ ≤ #Y :=
@@ -146,7 +147,7 @@ theorem IsObligatory.of_isolatedReduction [Fintype V]
 
 /-- For a finite triple system, deleting isolated vertices preserves and
 reflects obligatoriness. -/
-theorem isObligatory_iff_isolatedReduction [Fintype V] :
+theorem isObligatory_iff_isolatedReduction [Finite V] :
     F.IsObligatory ↔ F.isolatedReduction.IsObligatory := by
   constructor
   · exact IsObligatory.isolatedReduction

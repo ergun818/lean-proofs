@@ -27,7 +27,7 @@ variable {F : TripleSystem V E} {H : TripleSystem W D}
 
 /-- A finite linear source with no isolated vertices determines a finite
 linear exact host-edge trace, isomorphic to the source. -/
-theorem finiteLinear_imageTrace [Fintype E]
+theorem finiteLinear_imageTrace [Finite E]
     (f : F.Embedding H) (hF : F.HasNoIsolatedPoints) (hlinear : F.Linear) :
     f.edgeImage.Finite ∧
       (H.edgeRestriction f.edgeImage).Linear ∧
@@ -37,7 +37,7 @@ theorem finiteLinear_imageTrace [Fintype E]
 
 /-- Removing isolated source vertices yields the same finite linear exact
 trace for an arbitrary finite linear source. -/
-theorem finiteLinear_isolatedReduction_imageTrace [Fintype E]
+theorem finiteLinear_isolatedReduction_imageTrace [Finite E]
     (f : F.Embedding H) (hlinear : F.Linear) :
     let f' := (isolatedReductionEmbedding F).trans f
     f'.edgeImage.Finite ∧

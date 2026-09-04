@@ -200,7 +200,7 @@ theorem supportsRootedCopies_zero [Fintype V] [DecidableEq V] [DecidableEq W]
 /-- Pigeonhole principle in the form needed at the final amalgamation step:
 fewer than `m` vertices cannot meet all `m` pairwise-disjoint pieces. -/
 theorem exists_disjoint_piece_of_card_lt
-    [DecidableEq W] {m : ℕ} (pieces : Fin m → Finset W)
+    {m : ℕ} (pieces : Fin m → Finset W)
     (hpair : ∀ ⦃i j⦄, i ≠ j → Disjoint (pieces i) (pieces j))
     (t : Finset W) (hcard : t.card < m) :
     ∃ i, Disjoint (pieces i) t := by
@@ -332,7 +332,8 @@ theorem root_not_mem_rootedBlockingFinset (m : ℕ) (root : W) :
   classical
   simp only [rootedBlockingFinset, Finset.mem_biUnion]
   rintro ⟨i, _hi, hroot⟩
-  exact ((maximalRootedPacking (F := F) (r := r) (H := H) m root).copy i).root_not_mem_offRootFinset hroot
+  exact ((maximalRootedPacking (F := F) (r := r) (H := H) m root).copy i).root_not_mem_offRootFinset
+    hroot
 
 /-- Uniform size bound on the blocking set from the manuscript. -/
 theorem rootedBlockingFinset_card_le (m : ℕ) (root : W) :
@@ -342,7 +343,8 @@ theorem rootedBlockingFinset_card_le (m : ℕ) (root : W) :
   calc
     (rootedBlockingFinset (F := F) (r := r) (H := H) m root).card ≤
         ∑ i : Fin (maximalRootedPackingSize (F := F) (r := r) (H := H) m root),
-          (((maximalRootedPacking (F := F) (r := r) (H := H) m root).copy i).offRootFinset.card) := by
+          (((maximalRootedPacking (F := F) (r := r) (H := H) m root).copy
+            i).offRootFinset.card) := by
       simpa [rootedBlockingFinset] using!
         (Finset.card_biUnion_le (s :=
           (Finset.univ : Finset (Fin (maximalRootedPackingSize
@@ -391,7 +393,7 @@ end Blocking
 
 section RootedAbundance
 
-variable [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq W]
+variable [Fintype V] [Finite E] [DecidableEq V] [DecidableEq W]
 variable (F : TripleSystem V E) (r : V)
 
 set_option linter.unusedSectionVars false in
@@ -569,8 +571,7 @@ end RootedAbundance
 section ObligatoryAmalgamation
 
 variable {F₀ : TripleSystem V E} {F₁ : TripleSystem X A}
-variable [Fintype V] [Fintype E] [Fintype X] [Fintype A]
-variable [DecidableEq V] [DecidableEq X]
+variable [Finite V] [Finite E] [Finite X] [Finite A]
 
 set_option linter.unusedSectionVars false in
 /-- **One-point-amalgamation closure (manuscript Proposition 4.4).**  This
@@ -582,6 +583,10 @@ theorem IsObligatory.onePointAmalgamation
     (h₀ : F₀.IsObligatory) (h₁ : F₁.IsObligatory) (r₀ : V) (r₁ : X) :
     (OnePointAmalgamation.amalgam F₀ F₁ r₀ r₁).IsObligatory := by
   classical
+  let := Fintype.ofFinite V
+  let := Fintype.ofFinite E
+  let := Fintype.ofFinite X
+  let := Fintype.ofFinite A
   intro W D _ H hH
   let m := Fintype.card X
   have hm : 0 < m := by

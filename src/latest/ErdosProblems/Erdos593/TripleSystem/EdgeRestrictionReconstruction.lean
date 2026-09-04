@@ -26,7 +26,7 @@ variable {V : Type u} {E : Type v} (F : TripleSystem V E)
 theorem edgeSupportSet_union (S T : Set E) :
     F.edgeSupportSet (S ∪ T) = F.edgeSupportSet S ∪ F.edgeSupportSet T := by
   ext x
-  simp only [edgeSupportSet, Set.mem_setOf_eq, Set.mem_union]
+  simp only [edgeSupportSet, Set.mem_ofPred_eq, Set.mem_union]
   constructor
   · rintro ⟨e, heS | heT, hxe⟩
     · exact Or.inl ⟨e, heS, hxe⟩

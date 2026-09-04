@@ -26,9 +26,9 @@ variable {F : TripleSystem V E} {H : TripleSystem W D}
 /-- A non-linear source fails to be obligatory in the presence of a linear
 host of uncountable chromatic cardinality. -/
 theorem not_isObligatory_of_not_linear_of_linear_highChromatic
-    [DecidableEq W]
     (hnotlinear : ¬ F.Linear) (hHlinear : H.Linear)
     (hchi : Cardinal.aleph0 < H.chromaticCardinal) : ¬ F.IsObligatory := by
+  classical
   intro hF
   rcases hF W D H hchi with ⟨f⟩
   exact hnotlinear (f.source_linear_of_target_linear hHlinear)

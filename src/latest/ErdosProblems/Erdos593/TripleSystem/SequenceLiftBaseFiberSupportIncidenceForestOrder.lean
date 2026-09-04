@@ -172,12 +172,13 @@ theorem IsAcyclic.exists_bipartiteLeftVertex_adj_unique
 has a noduplicated order with at most one shared right point at every head.
 The point carrier is recomputed after each removal. -/
 theorem IsAcyclic.exists_finset_bipartiteTailPointSubsingletonOrder
-    (r : A → P → Prop) [Fintype P] [DecidableEq A] [DecidableEq P]
-    [DecidableRel r] (hG : (bipartiteIncidenceGraph r).IsAcyclic)
+    (r : A → P → Prop) [Finite P] [DecidableEq A]
+    (hG : (bipartiteIncidenceGraph r).IsAcyclic)
     (t : Finset A) :
     ∃ l : List A,
       l.Nodup ∧ l.toFinset = t ∧ bipartiteTailPointSubsingleton r l := by
   classical
+  let := Fintype.ofFinite P
   induction t using Finset.strongInduction with
   | H t ih =>
     by_cases ht : t.Nonempty

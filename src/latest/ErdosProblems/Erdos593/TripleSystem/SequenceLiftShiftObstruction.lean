@@ -28,7 +28,7 @@ the finite Levi-edge bound witnesses that a finite linear source with an odd
 Berge cycle in its isolated reduction is not obligatory. -/
 theorem not_isObligatory_of_linear_of_not_isolatedReduction_evenBergeCycles_shiftGraph
     {r : ℕ}
-    [Fintype I] [Fintype F.isolatedReduction.levi.edgeSet]
+    [Finite I] [Fintype F.isolatedReduction.levi.edgeSet]
     (hcolor : ¬ Nonempty ((ShiftGraph.graph κ r).Coloring ℕ))
     (hgirth : F.isolatedReduction.levi.edgeFinset.card < 2 * r + 1)
     (hlinear : F.Linear)
@@ -43,7 +43,7 @@ theorem not_isObligatory_of_linear_of_not_isolatedReduction_evenBergeCycles_shif
 where the shift length is chosen from the finite Levi-edge bound, making the
 odd-girth inequality automatic. -/
 theorem not_isObligatory_of_linear_of_not_isolatedReduction_evenBergeCycles_shiftGraph_succCard
-    [Fintype I] [Fintype F.isolatedReduction.levi.edgeSet]
+    [Finite I] [Fintype F.isolatedReduction.levi.edgeSet]
     (hcolor :
       ¬ Nonempty
         ((ShiftGraph.graph κ (F.isolatedReduction.levi.edgeFinset.card + 1)).Coloring ℕ))

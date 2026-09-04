@@ -64,7 +64,7 @@ theorem highPairGrid_of_completeBipartiteNNCopy
 /-- One complete quadratic high-pair grid has a globally rainbow apex map,
 and therefore embeds the matching positive balanced expansion atom. -/
 theorem nonempty_completeBipartiteExpansionEmbedding_of_quadratic_highPair
-    {W : Type u} {D : Type v} [DecidableEq W]
+    {W : Type u} {D : Type v}
     {H : TripleSystem W D} {n : Nat}
     (left right : Fin n ↪ W)
     (hhigh : ∀ i j,
@@ -84,7 +84,7 @@ theorem nonempty_completeBipartiteExpansionEmbedding_of_quadratic_highPair
 /-- Avoiding the positive `K_{n,n}` expansion rules out a non-induced
 `K_{n,n}` copy in the high-pair graph at the quadratic Hall threshold. -/
 theorem isEmpty_completeBipartiteNNCopy_highPairGraph_of_atomFree
-    {W : Type u} {D : Type u} [DecidableEq W]
+    {W : Type u} {D : Type u}
     {H : TripleSystem W D} {n : Nat}
     (hatomFree : ¬ (completeBipartiteExpansionAtom.{u} n).Appears H) :
     IsEmpty (Copy (completeBipartiteNN.{u} n)
@@ -101,7 +101,7 @@ theorem isEmpty_completeBipartiteNNCopy_highPairGraph_of_atomFree
 countably colorable.  This combines the finite Hall bridge above with the
 singular-cardinal-safe graph coloring theorem. -/
 theorem countablyColorable_highPairGraph_of_atomFree
-    {W : Type u} {D : Type u} [DecidableEq W]
+    {W : Type u} {D : Type u}
     {H : TripleSystem W D} {n : Nat} (hn : 0 < n)
     (hatomFree : ¬ (completeBipartiteExpansionAtom.{u} n).Appears H) :
     Erdos593.SimpleGraph.CountablyColorable

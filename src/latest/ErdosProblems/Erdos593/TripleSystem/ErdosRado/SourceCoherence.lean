@@ -50,7 +50,7 @@ theorem sourceRun_at_candidate
         unfold TracePrefix.before
         rw [TracePrefix.graph_restrict, TracePrefix.graph_restrict]
         ext z
-        simp only [Set.mem_inter_iff, Set.mem_setOf_eq]
+        simp only [Set.mem_inter_iff, Set.mem_ofPred_eq]
         rw [hiord]
       have hcanonicalAt :
           ∃ r : TraceCandidate c (p.restrict eta hbase),
@@ -98,7 +98,7 @@ theorem sourceRun_at_candidate
       rw [sourceRun_limit c q.value eta hlimit]
       rw [TracePrefix.graph_restrict]
       ext z
-      simp only [Set.mem_iUnion, Set.mem_inter_iff, Set.mem_setOf_eq]
+      simp only [Set.mem_iUnion, Set.mem_inter_iff, Set.mem_ofPred_eq]
       constructor
       · rintro ⟨beta, hz⟩
         rw [ih beta.1 beta.2 ((le_of_lt beta.2).trans heta)] at hz
@@ -130,7 +130,7 @@ theorem sourceRun_at_node_stage
   rw [hrun, TracePrefix.graph_restrict, TracePrefix.before,
     TracePrefix.graph_restrict, TracePrefix.graph_restrict]
   ext z
-  simp only [Set.mem_inter_iff, Set.mem_setOf_eq]
+  simp only [Set.mem_inter_iff, Set.mem_ofPred_eq]
   constructor
   · rintro ⟨⟨hz, _⟩, hztheta⟩
     exact ⟨hz, hztheta⟩

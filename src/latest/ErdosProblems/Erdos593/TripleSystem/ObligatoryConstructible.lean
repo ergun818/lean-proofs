@@ -97,8 +97,9 @@ theorem Constructible.finiteTypes {V E : Type w} {F : TripleSystem V E}
         Finite.of_equiv E f.edgeEquiv⟩
 
 /-- Every finite edgeless triple system is obligatory. -/
-theorem edgeless_isObligatory (V : Type w) [Fintype V] :
+theorem edgeless_isObligatory (V : Type w) [Finite V] :
     (edgeless V).IsObligatory := by
+  let := Fintype.ofFinite V
   classical
   intro W D _ H hH
   have hvertices : ℵ₀ ≤ #W :=
@@ -115,7 +116,7 @@ theorem edgeless_isObligatory (V : Type w) [Fintype V] :
 
 /-- A finite triple system with no edge indices is obligatory. -/
 theorem isObligatory_of_isEmptyEdgeIndices
-    {V E : Type w} [Fintype V] [IsEmpty E]
+    {V E : Type w} [Finite V] [IsEmpty E]
     (F : TripleSystem V E) : F.IsObligatory := by
   apply (edgeless_isObligatory V).ofIso
   refine

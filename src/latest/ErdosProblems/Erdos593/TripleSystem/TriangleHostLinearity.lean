@@ -61,9 +61,10 @@ private theorem card_faces {κ : Type u} [DecidableEq κ]
     (t : Triangle κ) : (faces t).card = 3 := by
   simp [faces, Finset.card_powersetCard]
 
-private theorem pair_containing_of_mem {κ : Type u} [DecidableEq κ]
+private theorem pair_containing_of_mem {κ : Type u}
     (t : Triangle κ) {v : κ} (hv : v ∈ t.1) :
     ∃ p : Pair κ, v ∈ p.1 ∧ p.1 ⊆ t.1 := by
+  classical
   rcases Finset.card_eq_three.mp t.2 with ⟨a, b, c, hab, hac, hbc, ht⟩
   rw [ht] at hv ⊢
   simp only [Finset.mem_insert, Finset.mem_singleton] at hv

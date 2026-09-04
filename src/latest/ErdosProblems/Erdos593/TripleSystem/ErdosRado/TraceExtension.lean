@@ -706,7 +706,10 @@ theorem exists_agrees_snoc_old {c : TraceColoring} {α : TraceCarrier}
   let ξ' : (Order.succ p.length).ToType :=
     Ordinal.ToType.mk ⟨(ξ.toOrd : Ordinal), hξsucc⟩
   have hnode : (p.snoc q).node ξ' = p.node ξ := by
-    simp [ξ', TracePrefix.snoc, TracePrefix.snocNode]
+    simp only [TracePrefix.snoc, TracePrefix.snocNode, OrderIso.symm_apply_apply,
+      Order.succ_eq_add_one, Set.Iio_subset_Iio_iff, le_add_iff_nonneg_right, zero_le,
+      Set.coe_inclusion, Subtype.coe_eta, OrderIso.apply_symm_apply, dite_eq_ite,
+      ite_eq_left_iff, not_lt, ξ']
     intro hle
     exact (not_lt_of_ge hle ξ.toOrd.2).elim
   have hlt : p.node ξ < r.value := by

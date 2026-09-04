@@ -51,14 +51,14 @@ theorem edgeRestriction_constructible_of_linear_of_hostColorable_of_tailDegreeBa
 
 /-- The canonical active-base enumeration gives a constructible exact
 restriction when it satisfies the explicit tail-degree-one premise. -/
-theorem edgeRestriction_constructible_of_linear_of_hostColorable_of_activeBaseNodeSupportTailAtMostOneNeighbor
+theorem edgeRestriction_constructible_of_linear_of_hostColorable_of_supportTailAtMostOneNeighbor
     {S : Set (Edge G)} (hS : S.Finite)
     (hlinear : ((system G).edgeRestriction S).Linear)
     (hG : G.Colorable 2)
     (hdegree :
       baseFiberSupportTailAtMostOneNeighbor S (activeBaseNodeList S hS)) :
     TripleSystem.Constructible ((system G).edgeRestriction S) :=
-  edgeRestriction_constructible_of_linear_of_hostColorable_of_activeBaseNodeSupportTailOverlapCoherent
+  edgeRestriction_constructible_of_linear_of_hostColorable_of_supportTailOverlapCoherent
     hS hlinear hG
     (baseFiberSupportTailOverlapCoherent_of_tailAtMostOneNeighbor hdegree)
 
@@ -91,14 +91,14 @@ theorem edgeRestriction_isObligatory_of_linear_of_hostColorable_of_tailDegreeBas
 
 /-- The canonical active-base endpoint is obligatory when the explicit
 tail-degree-one premise holds. -/
-theorem edgeRestriction_isObligatory_of_linear_of_hostColorable_of_activeBaseNodeSupportTailAtMostOneNeighbor
+theorem edgeRestriction_isObligatory_of_linear_of_hostColorable_of_supportTailAtMostOneNeighbor
     {S : Set (Edge G)} (hS : S.Finite)
     (hlinear : ((system G).edgeRestriction S).Linear)
     (hG : G.Colorable 2)
     (hdegree :
       baseFiberSupportTailAtMostOneNeighbor S (activeBaseNodeList S hS)) :
     ((system G).edgeRestriction S).IsObligatory :=
-  edgeRestriction_isObligatory_of_linear_of_hostColorable_of_activeBaseNodeSupportTailOverlapCoherent
+  edgeRestriction_isObligatory_of_linear_of_hostColorable_of_supportTailOverlapCoherent
     hS hlinear hG
     (baseFiberSupportTailOverlapCoherent_of_tailAtMostOneNeighbor hdegree)
 

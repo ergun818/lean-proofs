@@ -32,10 +32,11 @@ def tailAtMostOneNeighbor (G : SimpleGraph V) : List V → Prop
 The result deliberately includes isolated vertices: this makes it apply to
 arbitrary induced subgraphs during leaf elimination. -/
 theorem IsAcyclic.exists_vertex_adj_unique
-    {G : SimpleGraph V} [Fintype V] [DecidableRel G.Adj] [Nonempty V]
+    {G : SimpleGraph V} [Finite V] [Nonempty V]
     (hG : G.IsAcyclic) :
     ∃ q : V, ∀ ⦃u w : V⦄, G.Adj q u → G.Adj q w → u = w := by
   classical
+  let := Fintype.ofFinite V
   let x : V := Classical.choice (inferInstance : Nonempty V)
   by_cases hx : G.degree x = 0
   · refine ⟨x, ?_⟩
@@ -69,7 +70,7 @@ theorem IsAcyclic.exists_vertex_adj_unique
 leaf-elimination order.  In the resulting order each vertex has at most one
 neighbour in its tail. -/
 theorem IsAcyclic.exists_finset_tailAtMostOneNeighborOrder
-    {G : SimpleGraph V} [DecidableEq V] [DecidableRel G.Adj]
+    {G : SimpleGraph V} [DecidableEq V]
     (hG : G.IsAcyclic) (s : Finset V) :
     ∃ l : List V, l.Nodup ∧ l.toFinset = s ∧ G.tailAtMostOneNeighbor l := by
   classical
@@ -115,7 +116,7 @@ theorem IsAcyclic.exists_finset_tailAtMostOneNeighborOrder
 /-- A finite acyclic graph has a noduplicated leaf-elimination order of all
 of its vertices. -/
 theorem IsAcyclic.exists_tailAtMostOneNeighborOrder
-    {G : SimpleGraph V} [Fintype V] [DecidableEq V] [DecidableRel G.Adj]
+    {G : SimpleGraph V} [Fintype V] [DecidableEq V]
     (hG : G.IsAcyclic) :
     ∃ l : List V, l.Nodup ∧ l.toFinset = Finset.univ ∧ G.tailAtMostOneNeighbor l :=
   hG.exists_finset_tailAtMostOneNeighborOrder Finset.univ

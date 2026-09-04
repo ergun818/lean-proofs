@@ -75,7 +75,7 @@ and low-crossing arguments combine to a countable proper colouring of the
 whole host. -/
 theorem exists_natProperColoring_of_atomFree_of_lowPairClosureLayering
     {W : Type u} {D : Type u} {I : Type u}
-    [DecidableEq W] [LinearOrder I]
+    [LinearOrder I]
     {H : TripleSystem W D} {n : Nat}
     (hn : 0 < n)
     (hatomFree : ¬ (completeBipartiteExpansionAtom.{u} n).Appears H)

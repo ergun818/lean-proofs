@@ -111,11 +111,14 @@ def privateVertexExpansionEmbeddingOfCopy
         rw [PrivateVertexExpansion.incidenceSet_eq G he]
         ext p
         rcases p with p | p
-        · simp [Function.Embedding.sumMap, PrivateVertexExpansion.core,
-            PrivateVertexExpansion.Inc,
-            PrivateVertexExpansion.privateVertex,
-            _root_.SimpleGraph.Copy.mapEdgeSet,
-            _root_.SimpleGraph.Hom.mapEdgeSet]
+        · simp only [Function.Embedding.sumMap, SimpleGraph.Copy.mapEdgeSet,
+            Function.Embedding.coeFn_mk, PrivateVertexExpansion.core,
+            PrivateVertexExpansion.privateVertex, Set.mem_image,
+            Set.mem_insert_iff, Set.mem_singleton_iff, exists_eq_or_imp,
+            Sum.map_inl, Sum.inl.injEq, ↓existsAndEq, Sum.map_inr,
+            SimpleGraph.Hom.mapEdgeSet, SimpleGraph.Copy.toHom_apply, Sym2.map_mk,
+            reduceCtorEq, and_false, or_false, PrivateVertexExpansion.Inc,
+            Sym2.mem_iff, Set.mem_ofPred_eq]
           constructor
           · rintro (h | h)
             · exact Or.inl h.symm
@@ -123,11 +126,14 @@ def privateVertexExpansionEmbeddingOfCopy
           · rintro (h | h)
             · exact Or.inl h.symm
             · exact Or.inr h.symm
-        · simp [Function.Embedding.sumMap, PrivateVertexExpansion.core,
-            PrivateVertexExpansion.Inc,
-            PrivateVertexExpansion.privateVertex,
-            _root_.SimpleGraph.Copy.mapEdgeSet,
-            _root_.SimpleGraph.Hom.mapEdgeSet]
+        · simp only [Function.Embedding.sumMap, SimpleGraph.Copy.mapEdgeSet,
+            Function.Embedding.coeFn_mk, PrivateVertexExpansion.core,
+            PrivateVertexExpansion.privateVertex, Set.mem_image,
+            Set.mem_insert_iff, Set.mem_singleton_iff, exists_eq_or_imp,
+            Sum.map_inl, reduceCtorEq, ↓existsAndEq, Sum.map_inr,
+            SimpleGraph.Hom.mapEdgeSet, SimpleGraph.Copy.toHom_apply, Sym2.map_mk,
+            Sum.inr.injEq, true_and, false_or, PrivateVertexExpansion.Inc,
+            Sym2.mem_iff, Set.mem_ofPred_eq]
           constructor <;> intro h <;> exact h.symm
 
 /-- The isolated reduction of a finite two-colourable graph expansion embeds
@@ -151,11 +157,12 @@ graph is obligatory.  This theorem contains only the finite reduction; it
 does not assert the infinitary theorem that the atoms themselves are
 obligatory. -/
 theorem privateVertexExpansion_isObligatory_of_completeBipartiteNN
-    [Fintype V] (hG : G.Colorable 2)
+    [Finite V] (hG : G.Colorable 2)
     (hAtoms : ∀ n : ℕ,
       (privateVertexExpansion (completeBipartiteNN.{u} n)).IsObligatory) :
     (privateVertexExpansion G).IsObligatory := by
   classical
+  let := Fintype.ofFinite V
   obtain ⟨C⟩ := hG
   apply IsObligatory.of_isolatedReduction
   exact (hAtoms (Fintype.card V)).of_sourceEmbedding

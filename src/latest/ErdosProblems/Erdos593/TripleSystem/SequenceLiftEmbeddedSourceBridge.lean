@@ -26,7 +26,7 @@ variable {X I : Type u} {F : TripleSystem X I}
 /-- The isolated reduction of a finite linear source embedded in a sequence
 lift has a Levi bridge incident to every hyperedge. -/
 theorem isolatedReduction_bridgeAtEveryEdge_of_linear_of_embedding
-    [Fintype I]
+    [Finite I]
     (f : F.Embedding (system G)) (hlinear : F.Linear) :
     F.isolatedReduction.BridgeAtEveryEdge := by
   exact TripleSystem.FiniteLiftGenerated.bridgeAtEveryEdge G
@@ -35,7 +35,7 @@ theorem isolatedReduction_bridgeAtEveryEdge_of_linear_of_embedding
 /-- A finite linear source whose isolated reduction has no Levi bridge
 incident to some hyperedge cannot embed into a sequence lift. -/
 theorem not_nonempty_embedding_of_not_isolatedReduction_bridgeAtEveryEdge
-    [Fintype I]
+    [Finite I]
     (hlinear : F.Linear)
     (hno : Not F.isolatedReduction.BridgeAtEveryEdge) :
     Not (Nonempty (F.Embedding (system G))) := by

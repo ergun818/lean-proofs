@@ -26,7 +26,7 @@ variable {X I : Type u} {F : TripleSystem X I}
 is witnessed against obligatoriness by the uncountably chromatic sequence
 lift. -/
 theorem not_isObligatory_of_linear_of_not_isolatedReduction_bridgeAtEveryEdge
-    [Fintype I]
+    [Finite I]
     (hG : ¬ Nonempty (G.Coloring ℕ))
     (hlinear : F.Linear)
     (hno : ¬ F.isolatedReduction.BridgeAtEveryEdge) :

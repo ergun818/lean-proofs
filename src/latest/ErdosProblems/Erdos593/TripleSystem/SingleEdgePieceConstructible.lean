@@ -120,8 +120,9 @@ noncomputable def oneEdgeExpansionSingleEdgePieceIso [Fintype V] (e : E) :
           exact oneEdgeExpansion_inc p a }
 
 /-- Every canonical one-edge piece belongs to the constructive class. -/
-theorem singleEdgePiece_constructible [Fintype V] (e : E) :
+theorem singleEdgePiece_constructible [Finite V] (e : E) :
     Constructible (F.singleEdgePiece e) := by
+  let := Fintype.ofFinite V
   have hExpansion : Constructible
       (privateVertexExpansion oneEdgeGraph.{u}) :=
     Constructible.ofExpansion oneEdgeGraph.{u} oneEdgeGraph_colorable_two
@@ -172,7 +173,7 @@ def singleEdgePieceRestrictionIso (e : E) :
 
 /-- Every exact singleton-edge restriction belongs to the constructive
 class. -/
-theorem singletonEdgeRestriction_constructible [Fintype V] (e : E) :
+theorem singletonEdgeRestriction_constructible [Finite V] (e : E) :
     Constructible (F.edgeRestriction ({e} : Set E)) :=
   Constructible.ofIso (singleEdgePiece_constructible F e)
     (singleEdgePieceRestrictionIso F e)

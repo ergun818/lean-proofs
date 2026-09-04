@@ -62,7 +62,7 @@ theorem edgeRestriction_constructible_of_linear_of_hostColorable_of_coherentBase
 
 /-- The canonical active-base enumeration yields a constructible exact
 restriction when its explicit support-tail-overlap coherence premise holds. -/
-theorem edgeRestriction_constructible_of_linear_of_hostColorable_of_activeBaseNodeSupportTailOverlapCoherent
+theorem edgeRestriction_constructible_of_linear_of_hostColorable_of_supportTailOverlapCoherent
     {S : Set (Edge G)} (hS : S.Finite)
     (hlinear : ((system G).edgeRestriction S).Linear)
     (hG : G.Colorable 2)
@@ -106,7 +106,7 @@ theorem edgeRestriction_isObligatory_of_linear_of_hostColorable_of_coherentBaseN
 
 /-- The canonical active-base endpoint is obligatory when the explicit
 support-tail-overlap coherence premise holds. -/
-theorem edgeRestriction_isObligatory_of_linear_of_hostColorable_of_activeBaseNodeSupportTailOverlapCoherent
+theorem edgeRestriction_isObligatory_of_linear_of_hostColorable_of_supportTailOverlapCoherent
     {S : Set (Edge G)} (hS : S.Finite)
     (hlinear : ((system G).edgeRestriction S).Linear)
     (hG : G.Colorable 2)

@@ -66,7 +66,7 @@ variable {X I : Type u}
 /-- A finite linear triple system whose isolated reduction misses an incident
 Levi bridge is not obligatory. -/
 theorem not_isObligatory_of_linear_of_not_isolatedReduction_bridgeAtEveryEdge
-    (F : TripleSystem X I) [Fintype I]
+    (F : TripleSystem X I) [Finite I]
     (hlinear : F.Linear)
     (hno : ¬ F.isolatedReduction.BridgeAtEveryEdge) :
     ¬ F.IsObligatory := by
