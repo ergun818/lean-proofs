@@ -33,11 +33,12 @@ noncomputable def evalEventEquiv
 
 /-- Removing one point from a finite type lowers its natural cardinality by
 one. -/
-theorem natCard_ne_point {I : Type*} [Finite I] [DecidableEq I] (i : I) :
+theorem natCard_ne_point {I : Type*} [Finite I] (i : I) :
     Nat.card {j : I // j ≠ i} = Nat.card I - 1 := by
+  classical
   change Nat.card (Set.Elem {j : I | j ≠ i}) = Nat.card I - 1
   rw [Nat.card_coe_set_eq]
-  have h := Set.ncard_diff_singleton_of_mem
+  have h := Set.ncard_sdiff_singleton_of_mem
     (s := (Set.univ : Set I)) (a := i) (Set.mem_univ i)
   have heq : (Set.univ : Set I) \ {i} = {j : I | j ≠ i} := by
     ext j
@@ -47,19 +48,22 @@ theorem natCard_ne_point {I : Type*} [Finite I] [DecidableEq I] (i : I) :
 
 /-- Exact cardinality of one coordinate event. -/
 theorem natCard_evalEvent
-    {I L : Type*} [Finite I] [DecidableEq I] [Finite L]
+    {I L : Type*} [Finite I] [Finite L]
     (B : Set L) (i : I) :
     Nat.card {f : I → L // f i ∈ B} =
       Nat.card B * Nat.card L ^ (Nat.card I - 1) := by
+  classical
   rw [Nat.card_congr (evalEventEquiv B i), Nat.card_prod, Nat.card_fun,
     natCard_ne_point]
 
 /-- Finite union bound for coordinatewise bad labels. -/
 theorem ncard_exists_bad_le
-    {I L : Type*} [Fintype I] [DecidableEq I] [Finite L]
+    {I L : Type*} [Finite I] [Finite L]
     (B : Set L) :
     {f : I → L | ∃ i, f i ∈ B}.ncard ≤
       Nat.card I * Nat.card B * Nat.card L ^ (Nat.card I - 1) := by
+  classical
+  let : Fintype I := Fintype.ofFinite _
   let E : I → Set (I → L) := fun i => {f | f i ∈ B}
   have hU : {f : I → L | ∃ i, f i ∈ B} = ⋃ i, E i := by
     ext f

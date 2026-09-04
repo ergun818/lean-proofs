@@ -23,7 +23,7 @@ theorem exists_sample_many
   have hdouble :
       ∑ c : C, (Finset.univ.filter fun ω => Sel ω c).card =
         ∑ ω : Ω, (Finset.univ.filter fun c => Sel ω c).card := by
-    simp only [Finset.card_filter, Finset.card_eq_sum_ones, Finset.sum_filter]
+    simp only [Finset.card_eq_sum_ones, Finset.sum_filter]
     rw [Finset.sum_comm]
   have hlower : Fintype.card C * Fintype.card Ω ≤
       Q * ∑ c : C, (Finset.univ.filter fun ω => Sel ω c).card := by
@@ -34,7 +34,7 @@ theorem exists_sample_many
       _ = Q * ∑ c : C, (Finset.univ.filter fun ω => Sel ω c).card := by
         rw [Finset.mul_sum]
   by_contra h
-  push_neg at h
+  push Not at h
   have hupper : Q * ∑ ω : Ω, (Finset.univ.filter fun c => Sel ω c).card <
       Fintype.card Ω * Fintype.card C := by
     calc

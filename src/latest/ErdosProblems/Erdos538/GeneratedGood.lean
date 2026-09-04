@@ -45,10 +45,11 @@ theorem normalizedNull_fullSupport
 /-- A linearly independent family indexed by `ι` spans the coordinate space
 `ι → K`; hence the generated `Option ι` rows span as well. -/
 theorem generatedRows_surjective
-    {K ι : Type*} [Field K] [Fintype ι] [DecidableEq ι] [Nonempty ι]
+    {K ι : Type*} [Field K] [Fintype ι] [Nonempty ι]
     (tail : ι → K) (basis : ι → (ι → K))
     (hli : LinearIndependent K basis) :
     Function.Surjective (Fintype.linearCombination K (generatedRows tail basis)) := by
+  classical
   have hcard : Fintype.card ι = Module.finrank K (ι → K) :=
     (Module.finrank_fintype_fun_eq_card K).symm
   let bas : Module.Basis ι K (ι → K) :=

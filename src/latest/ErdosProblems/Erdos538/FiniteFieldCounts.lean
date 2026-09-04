@@ -21,8 +21,8 @@ theorem dotProductEquiv_ne_zero
 /-- The kernel of a nonzero functional on a finite vector space has
 `q^(finrank-1)` elements. -/
 theorem natCard_ker_functional
-    {K W : Type*} [Field K] [Fintype K] [AddCommGroup W] [Module K W]
-    [Fintype W] (f : W →ₗ[K] K) (hf : f ≠ 0) :
+    {K W : Type*} [Field K] [Finite K] [AddCommGroup W] [Module K W]
+    [Finite W] (f : W →ₗ[K] K) (hf : f ≠ 0) :
     Nat.card (LinearMap.ker f) =
       Nat.card K ^ (Module.finrank K W - 1) := by
   have hsurj : Function.Surjective f := LinearMap.surjective hf
@@ -40,7 +40,7 @@ theorem natCard_ker_functional
 /-- Over a finite field, the kernel of one nonzero linear equation in `n`
 variables has exactly `q^(n-1)` elements. -/
 theorem natCard_ker_dotProduct
-    {K ι : Type*} [Field K] [Fintype K] [Fintype ι] [DecidableEq ι]
+    {K ι : Type*} [Field K] [Finite K] [Fintype ι] [DecidableEq ι]
     [Nonempty ι] {v : ι → K} (hv : v ≠ 0) :
     Nat.card (LinearMap.ker ((dotProductEquiv K ι) v)) =
       Nat.card K ^ (Fintype.card ι - 1) := by
@@ -50,13 +50,14 @@ theorem natCard_ker_dotProduct
   rw [Module.finrank_fintype_fun_eq_card K] at h
   exact h
 
-/-- A finite type with a decidable zero has one fewer nonzero elements than
+/-- A finite type with zero has one fewer nonzero elements than
 total elements. -/
-theorem natCard_ne_zero {X : Type*} [Finite X] [Zero X] [DecidableEq X] :
+theorem natCard_ne_zero {X : Type*} [Finite X] [Zero X] :
     Nat.card {x : X // x ≠ 0} = Nat.card X - 1 := by
+  classical
   change Nat.card (Set.Elem {x : X | x ≠ 0}) = Nat.card X - 1
   rw [Nat.card_coe_set_eq]
-  have h := Set.ncard_diff_singleton_of_mem
+  have h := Set.ncard_sdiff_singleton_of_mem
     (s := (Set.univ : Set X)) (a := (0 : X)) (Set.mem_univ 0)
   have heq : (Set.univ : Set X) \ {0} = {x : X | x ≠ 0} := by
     ext x
@@ -68,7 +69,7 @@ theorem natCard_ne_zero {X : Type*} [Finite X] [Zero X] [DecidableEq X] :
 `q^(n-1)-1`; the subtraction form avoids choosing a particular finite-type
 instance on the kernel subtype. -/
 theorem natCard_ker_dotProduct_sub_one
-    {K ι : Type*} [Field K] [Fintype K]
+    {K ι : Type*} [Field K] [Finite K]
     [Fintype ι] [DecidableEq ι] [Nonempty ι] {v : ι → K} (hv : v ≠ 0) :
     Nat.card (LinearMap.ker ((dotProductEquiv K ι) v)) - 1 =
       Nat.card K ^ (Fintype.card ι - 1) - 1 := by
@@ -91,8 +92,8 @@ def badPairEquivKer
 `W × K`, imposing one nonzero linear equation on `W` and then determining the
 `K` coordinate leaves `q^(finrank W-1)` pairs. -/
 theorem natCard_bad_pairs
-    {K W : Type*} [Field K] [Fintype K] [AddCommGroup W] [Module K W]
-    [Fintype W] (f : W →ₗ[K] K) (hf : f ≠ 0) (g : W → K) :
+    {K W : Type*} [Field K] [Finite K] [AddCommGroup W] [Module K W]
+    [Finite W] (f : W →ₗ[K] K) (hf : f ≠ 0) (g : W → K) :
     Nat.card {p : W × K // f p.1 = 0 ∧ p.2 = g p.1} =
       Nat.card K ^ (Module.finrank K W - 1) := by
   rw [Nat.card_congr (badPairEquivKer f g)]

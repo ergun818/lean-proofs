@@ -23,10 +23,10 @@ def SafeOutside
   {f : Fin t → ((Fin d → K) × K) // ∀ i, f i ∉ BadOutside p}
 
 @[simp] theorem natCard_outsideLabel
-    {K : Type*} [Field K] [Fintype K] (d : ℕ) :
+    {K : Type*} [Field K] [Finite K] (d : ℕ) :
     Nat.card ((Fin d → K) × K) = Nat.card K ^ (d + 1) := by
   rw [Nat.card_prod, Nat.card_fun]
-  simp only [Nat.card_eq_fintype_card, Fintype.card_fin]
+  simp only [Nat.card_fin]
   rw [pow_succ]
 
 /-- The bad outside-label set has exactly `q^(d-1)` elements. -/

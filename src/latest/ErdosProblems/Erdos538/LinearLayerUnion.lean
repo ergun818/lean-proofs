@@ -110,7 +110,7 @@ theorem exists_admissible_lowSquarefreeLayers_linear
         have : i = j := by omega
         exact (hj (this ▸ hi)).elim
       · intro ha
-        simpa using ha
+        simp at ha
   have hAadm : Admissible 2 N A := by
     apply admissible_of_omegaSlices hrange
     intro j m
@@ -138,7 +138,7 @@ theorem exists_admissible_lowSquarefreeLayers_linear
           simp only [nsmul_eq_mul]
           have hkK : (k : ℚ≥0) ≤ K := by
             exact_mod_cast (Finset.mem_Icc.mp (by simpa [ks] using hk)).2
-          gcongr <;> exact_mod_cast hkK
+          gcongr; exact_mod_cast hkK
     _ = (128 * K) • reciprocalMassNN A := by
       rw [hmassA, nsmul_eq_mul, Finset.mul_sum]
       apply Finset.sum_congr rfl

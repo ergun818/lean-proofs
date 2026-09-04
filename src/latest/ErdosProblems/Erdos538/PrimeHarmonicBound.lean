@@ -52,7 +52,7 @@ theorem dyadicPrimeBlock_subset_primesLE_pow (N j : ℕ) :
 
 /-- Chebyshev's theta bound controls the cardinality of each binary-logarithmic
 prime block. -/
-theorem dyadicPrimeBlock_card_bound (N j : ℕ) (hj : 0 < j) :
+theorem dyadicPrimeBlock_card_bound (N j : ℕ) (_hj : 0 < j) :
     ((dyadicPrimeBlock N j).card : ℝ) * j ≤ 4 * (2 : ℝ) ^ j := by
   let B := dyadicPrimeBlock N j
   have hlogLower : ∀ p ∈ B, (j : ℝ) * Real.log 2 ≤ Real.log p := by
@@ -134,7 +134,6 @@ theorem dyadicPrimeBlock_reciprocal_bound (N j : ℕ) (hj : 0 < j) :
         (B.card : ℝ) * (1 / (2 : ℝ) ^ j) * j =
             ((B.card : ℝ) * j) * ((2 : ℝ) ^ j)⁻¹ := by
               field_simp
-              <;> ring
         _ ≤ (4 * (2 : ℝ) ^ j) * ((2 : ℝ) ^ j)⁻¹ :=
           mul_le_mul_of_nonneg_right hcard' (inv_nonneg.mpr hpow.le)
         _ = 4 := by field_simp

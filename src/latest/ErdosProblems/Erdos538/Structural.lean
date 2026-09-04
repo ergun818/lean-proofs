@@ -95,8 +95,7 @@ theorem representations_card_eq_quotientPrimes {A : Finset ℕ} {m : ℕ} :
     (representations A m).card = (quotientPrimes A m).card := by
   by_cases hm : m = 0
   · subst m
-    simp [representations, quotientPrimes]
-    exact fun _ _ => Nat.not_prime_zero
+    simp [representations, quotientPrimes, Nat.not_prime_zero]
   · have hmpos : 0 < m := Nat.pos_of_ne_zero hm
     have hinj : Set.InjOn Prod.fst (representations A m : Set (ℕ × ℕ)) := by
       intro pa hpa qb hqb hpq

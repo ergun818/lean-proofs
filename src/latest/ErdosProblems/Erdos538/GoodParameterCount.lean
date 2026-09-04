@@ -33,9 +33,10 @@ abbrev IsotropicCoeffParam {K ι : Type*} [Field K] [Fintype ι]
 /-- For a `d+1`-coordinate normalized full-support relation, the admissible
 nonzero diagonal coefficient vectors number `q^d-1`. -/
 theorem natCard_isotropicCoeffParam
-    {K : Type*} [Field K] [Fintype K] [DecidableEq K]
+    {K : Type*} [Field K] [Finite K]
     (d : ℕ) (tail : Fin d → Kˣ) :
     Nat.card (IsotropicCoeffParam tail) = Nat.card K ^ d - 1 := by
+  classical
   rw [natCard_ne_zero]
   rw [natCard_ker_dotProduct (squaredNormalizedNull_ne_zero tail)]
   simp
@@ -60,7 +61,7 @@ theorem natCard_basisParam
 
 /-- There are `(q-1)^d` normalized full-support tails. -/
 theorem natCard_unit_tails
-    {K : Type*} [Field K] [Fintype K] (d : ℕ) :
+    {K : Type*} [Field K] [Finite K] (d : ℕ) :
     Nat.card (Fin d → Kˣ) = (Nat.card K - 1) ^ d := by
   rw [Nat.card_fun, Nat.card_units]
   simp
@@ -218,7 +219,7 @@ theorem goodParam_card_le_goodSamples
 
 /-- Exact total number of child row/coefficient samples. -/
 theorem natCard_childSample
-    {K : Type*} [Field K] [Fintype K] (d : ℕ) :
+    {K : Type*} [Field K] [Finite K] (d : ℕ) :
     Nat.card (ChildSample K d) = Nat.card K ^ ((d + 1) * (d + 1)) := by
   simp only [ChildSample, Nat.card_prod, Nat.card_fun]
   simp

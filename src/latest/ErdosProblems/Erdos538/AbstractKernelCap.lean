@@ -15,7 +15,6 @@ If the restricted form is not totally isotropic, there are at most two such
 facets. -/
 theorem uniqueZeroIsotropic_selected_card_le_two
     {K V ι : Type*} [Field K] [AddCommGroup V] [Module K V]
-    [DecidableEq ι]
     (B : LinearMap.BilinForm K V) (hsym : B.IsSymm)
     (coord : ι → V →ₗ[K] K)
     (selected : Finset ι) (rel : ι → V)
@@ -25,6 +24,7 @@ theorem uniqueZeroIsotropic_selected_card_le_two
     (hfin : Module.finrank K V = 2) (htwo : (2 : K) ≠ 0)
     (hnontotal : ¬ ∀ u v : V, B u v = 0) :
     selected.card ≤ 2 := by
+  classical
   by_contra hcard
   have hthree : 2 < selected.card := by omega
   obtain ⟨x, hx, y, hy, z, hz, hxy, hxz, hyz⟩ :=

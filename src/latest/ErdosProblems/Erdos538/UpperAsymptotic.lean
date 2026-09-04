@@ -63,7 +63,7 @@ theorem harmonic_real_le_prime_euler_product (N : ℕ) :
           ∑ n ∈ S, (n : ℝ)⁻¹ := by
         simpa using Finset.sum_attach S (fun n : ℕ => (n : ℝ)⁻¹)
       _ = (harmonic N : ℝ) := by
-        simpa [S, positiveIntegers, harmonic_eq_sum_Icc]
+        simp [S, positiveIntegers, harmonic_eq_sum_Icc]
   have htsum : (∑' m : (N + 1).smoothNumbers,
       natReciprocalMonoidHom m) =
       ∏ p ∈ (N + 1).primesBelow,
@@ -86,7 +86,7 @@ theorem log_prime_geometric_le_two_div {p : ℕ} (hp : p.Prime) :
       have hp0 : (p : ℝ) ≠ 0 := by positivity
       have hp1 : (p : ℝ) - 1 ≠ 0 := by linarith
       field_simp [hp0, hp1]
-      <;> ring
+      ring
     _ ≤ 2 / p := by
       have hp2 : (2 : ℝ) ≤ p := by exact_mod_cast hp.two_le
       apply (div_le_div_iff₀ (by linarith) (by positivity)).2
@@ -185,7 +185,7 @@ theorem log_prime_euler_product_le_sum_add_one (N : ℕ) :
             have hp0 : (p : ℝ) ≠ 0 := by positivity
             have hp1 : (p : ℝ) - 1 ≠ 0 := by linarith
             field_simp [hp0, hp1]
-            <;> ring
+            ring
       _ = (∑ p ∈ Nat.primesLE N, (p : ℝ)⁻¹) +
           ∑ p ∈ Nat.primesLE N,
             (1 : ℝ) / ((p : ℝ) * ((p : ℝ) - 1)) := by

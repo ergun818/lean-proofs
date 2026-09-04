@@ -74,7 +74,7 @@ theorem squarefree_mass_le_one_add_low_add_high (N K : ℕ) :
     have hnpos : 1 ≤ n :=
       (Finset.mem_Icc.mp (Finset.mem_filter.mp hnSF).1).1
     have hn1 : n = 1 := by omega
-    simpa [hn1]
+    simp [hn1]
   have hzeroMass : reciprocalMassNN zeroLayer ≤ 1 := by
     calc
       reciprocalMassNN zeroLayer ≤ reciprocalMassNN {1} := by
@@ -210,14 +210,13 @@ theorem exists_admissible_of_primeHarmonic_le
     simp only [nsmul_eq_mul] at hbase
     dsimp [q, S, C, M, P, H]
     push_cast at hbase ⊢
-    convert hbase using 1 <;> ring
+    exact hbase
   have hq : (0 : ℚ≥0) < q := by simp [q]
   have hSM : S ≤ 2 * (1 + C * M) := by
     have hmul : q * S ≤ q * (2 * (1 + C * M)) := by
       qify at hbase' htail ⊢
       nlinarith
-    exact (mul_le_mul_iff_of_pos_left hq).mp (by
-      convert hmul using 1 <;> ring)
+    exact (mul_le_mul_iff_of_pos_left hq).mp hmul
   calc
     harmonicMassNN N = H := rfl
     _ ≤ 2 * S := hHS

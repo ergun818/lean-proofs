@@ -61,14 +61,13 @@ theorem exists_admissible_linear_of_primeHarmonic_le
     simp only [nsmul_eq_mul] at hbase
     dsimp [q, S, C, M, P, H]
     push_cast at hbase ⊢
-    convert hbase using 1 <;> ring
+    exact hbase
   have hq : (0 : ℚ≥0) < q := by simp [q]
   have hSM : S ≤ 2 * (1 + C * M) := by
     have hmul : q * S ≤ q * (2 * (1 + C * M)) := by
       qify at hbase' htail ⊢
       nlinarith
-    exact (mul_le_mul_iff_of_pos_left hq).mp (by
-      convert hmul using 1 <;> ring)
+    exact (mul_le_mul_iff_of_pos_left hq).mp hmul
   calc
     harmonicMassNN N = H := rfl
     _ ≤ 2 * S := hHS

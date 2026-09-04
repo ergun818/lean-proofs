@@ -129,7 +129,7 @@ theorem exists_admissible_lowSquarefreeLayers
         have : i = j := by omega
         exact (hj (this ▸ hi)).elim
       · intro ha
-        simpa using ha
+        simp at ha
   have hAadm : Admissible 2 N A := by
     apply admissible_of_omegaSlices hrange
     intro j m

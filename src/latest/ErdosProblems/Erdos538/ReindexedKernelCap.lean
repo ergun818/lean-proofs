@@ -229,7 +229,7 @@ theorem certificateRelation_isotropic
 /-- The common parent relation space has dimension two whenever one selected
 child supplies surjectivity and the parent has `d+2` coordinates. -/
 theorem globalParentKernel_finrank_two
-    {K : Type*} [Field K] [Fintype K]
+    {K : Type*} [Field K] [Finite K]
     {d : ℕ} {I : Type*} [Fintype I]
     (ω : I → VertexLabel K d) (hcard : Fintype.card I = d + 2)
     (hsurj : Function.Surjective (globalParentRowMap ω)) :

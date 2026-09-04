@@ -142,7 +142,7 @@ theorem rangeSelectedFamily_cap_two
 /-- Density and cap combine: one safe-kernel palette retains at least a
 `1/(16q)` share of all children and has at most two facets in every parent. -/
 theorem exists_dense_rangeSelectedFamily
-    {K : Type*} [Field K] [Fintype K] [DecidableEq K]
+    {K : Type*} [Field K] [Fintype K]
     {m d : ℕ} (hd : 0 < d) (htwo : (2 : K) ≠ 0)
     (hqsize : 2 * (d + 1) ≤ Fintype.card K)
     (houtside : 2 * (m - (d + 1)) ≤ (Nat.card K) ^ 2) :

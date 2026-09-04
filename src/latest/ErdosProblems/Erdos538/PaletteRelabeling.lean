@@ -65,7 +65,7 @@ def stabilizerEquivSmulFiber
 cardinality. -/
 theorem card_smulFiber
     {G C : Type*} [Group G] [MulAction G C]
-    [Fintype G] [Fintype C] [DecidableEq C]
+    [Fintype G] [Finite C] [DecidableEq C]
     [MulAction.IsPretransitive G C]
     (x y : C) :
     Fintype.card {g : G // g • x = y} =
@@ -92,7 +92,7 @@ def goodSmulEquivSigma
 /-- Exact cardinality of a good relabeling event. -/
 theorem card_good_smul
     {G C : Type*} [Group G] [MulAction G C]
-    [Fintype G] [Fintype C] [DecidableEq C]
+    [Fintype G] [Finite C] [DecidableEq C]
     [MulAction.IsPretransitive G C]
     (x : C) (F : Finset C) :
     (Finset.univ.filter fun g : G => g • x ∈ F).card =
@@ -197,7 +197,7 @@ theorem exists_weighted_sample_many
       _ = (Q : ℚ≥0) *
           ∑ ω : Ω, ∑ c ∈ Finset.univ.filter (Sel ω), w c := by rw [hdouble]
   by_contra h
-  push_neg at h
+  push Not at h
   have hupper : Q • (∑ ω : Ω,
       ∑ c ∈ Finset.univ.filter (Sel ω), w c) <
       Fintype.card Ω • (∑ c, w c) := by

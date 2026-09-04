@@ -16,8 +16,6 @@ filter below counts equal labels with their full multiplicity.
 
 namespace Erdos538
 
-open scoped Classical
-
 /-- Number of one-part deletions of `μ` whose remaining pattern is selected.
 Equal parts are counted separately. -/
 noncomputable def patternDeletionCount {α : Type*} [DecidableEq α]

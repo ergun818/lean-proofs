@@ -80,7 +80,6 @@ def disassembleGlobal
     assembleGlobal S a (outsideEquiv S i).1 = a.2 i := by
   have hi : (outsideEquiv S i).1 ∉ S.1 := (outsideEquiv S i).2
   rw [assembleGlobal, dif_neg hi]
-  congr
   have hx : (⟨(outsideEquiv S i).1, hi⟩ : {v : Fin m // v ∉ S.1}) =
       outsideEquiv S i := Subtype.ext (by rfl)
   rw [hx, (outsideEquiv S).symm_apply_apply]
@@ -102,17 +101,7 @@ def disassembleGlobal
     (ω : GlobalSample K m d) :
     assembleGlobal S (disassembleGlobal S ω) = ω := by
   funext v
-  by_cases hv : v ∈ S.1
-  · let x : S.1 := ⟨v, hv⟩
-    let o := (childEquiv S).symm x
-    have hvo : (childEquiv S o).1 = v := by
-      exact congrArg Subtype.val ((childEquiv S).apply_symm_apply x)
-    simp [assembleGlobal, disassembleGlobal, hv, o, hvo]
-  · let x : {u : Fin m // u ∉ S.1} := ⟨v, hv⟩
-    let i := (outsideEquiv S).symm x
-    have hvi : (outsideEquiv S i).1 = v := by
-      exact congrArg Subtype.val ((outsideEquiv S).apply_symm_apply x)
-    simp [assembleGlobal, disassembleGlobal, hv, i, hvi]
+  by_cases hv : v ∈ S.1 <;> simp [assembleGlobal, disassembleGlobal, hv]
 
 /-- Child/outside decomposition is an actual equivalence, so no sample mass is
 lost when the fixed-child count is transported to the common global space. -/

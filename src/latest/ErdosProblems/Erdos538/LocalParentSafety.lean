@@ -104,7 +104,7 @@ theorem badOutside_of_localParentTotallyIsotropic
     (localOutsideRelation_is_relation p z) (localOutsideRelation_is_relation p z)
   constructor
   · simp only [localParentPair, Fintype.sum_option, localParentCoeff,
-      localChildRelation, localOutsideRelation, zero_mul, mul_zero, zero_add,
+      localChildRelation, localOutsideRelation, mul_zero, zero_add,
       goodParamToSample, normalizedNull, mul_one] at hcross
     rw [dotProductEquiv_apply_apply]
     simp only [dotProduct, crossVector]
@@ -112,7 +112,7 @@ theorem badOutside_of_localParentTotallyIsotropic
       simpa [mul_assoc] using hcross
     simpa [mul_assoc] using neg_eq_zero.mp hneg
   · simp only [localParentPair, Fintype.sum_option, localParentCoeff,
-      localOutsideRelation, goodParamToSample, mul_one, zero_mul, mul_zero,
+      localOutsideRelation, goodParamToSample, mul_one, mul_zero,
       zero_add, neg_mul, mul_neg, neg_neg] at hself
     have hsum : z.2 + ∑ i, p.2.2.1.1 (some i) * z.1 i ^ 2 = 0 := by
       simpa [pow_two, mul_assoc] using hself

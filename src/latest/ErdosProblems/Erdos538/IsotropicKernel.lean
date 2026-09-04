@@ -58,8 +58,7 @@ theorem total_zero_of_three_isotropic
 space of finrank two. -/
 theorem generate_of_two_cross_coordinates
     {K V ι : Type*} [Field K] [AddCommGroup V] [Module K V]
-    [DecidableEq ι]
-    (coord : ι → V →ₗ[K] K) (u v : V) (x y : ι) (hxy : x ≠ y)
+    (coord : ι → V →ₗ[K] K) (u v : V) (x y : ι) (_hxy : x ≠ y)
     (hu0 : coord x u = 0) (hv0 : coord y v = 0)
     (huy : coord y u ≠ 0) (hvx : coord x v ≠ 0)
     (hfin : Module.finrank K V = 2) :
@@ -70,8 +69,8 @@ theorem generate_of_two_cross_coordinates
     intro a b hab
     have habx := congrArg (coord x) hab
     have haby := congrArg (coord y) hab
-    simp [pair, hu0] at habx
-    simp [pair, hv0] at haby
+    simp [hu0] at habx
+    simp [hv0] at haby
     have hb : b = 0 := habx.resolve_right hvx
     have ha : a = 0 := haby.resolve_right huy
     exact ⟨ha, hb⟩
@@ -91,14 +90,13 @@ vectors generate three lines whose unique zero coordinates are distinct, then
 on their two-generated relation space the form is totally isotropic. -/
 theorem total_zero_of_three_unique_zero_vectors
     {K V ι : Type*} [Field K] [AddCommGroup V] [Module K V]
-    [DecidableEq ι]
     (B : LinearMap.BilinForm K V) (hsym : B.IsSymm)
     (coord : ι → V →ₗ[K] K)
     (u v w : V) (x y z : ι)
-    (hxy : x ≠ y) (hxz : x ≠ z) (hyz : y ≠ z)
+    (_hxy : x ≠ y) (hxz : x ≠ z) (hyz : y ≠ z)
     (hu0 : coord x u = 0) (hv0 : coord y v = 0)
-    (hu_full : ∀ t, t ≠ x → coord t u ≠ 0)
-    (hv_full : ∀ t, t ≠ y → coord t v ≠ 0)
+    (_hu_full : ∀ t, t ≠ x → coord t u ≠ 0)
+    (_hv_full : ∀ t, t ≠ y → coord t v ≠ 0)
     (hw_full : ∀ t, t ≠ z → coord t w ≠ 0)
     (htwo : (2 : K) ≠ 0)
     (hu : B u u = 0) (hv : B v v = 0) (hw : B w w = 0)
@@ -123,7 +121,6 @@ three isotropic vectors with three distinct unique-zero coordinates force total
 isotropy. -/
 theorem finrank_two_total_zero_of_three_unique_zero_vectors
     {K V ι : Type*} [Field K] [AddCommGroup V] [Module K V]
-    [DecidableEq ι]
     (B : LinearMap.BilinForm K V) (hsym : B.IsSymm)
     (coord : ι → V →ₗ[K] K)
     (u v w : V) (x y z : ι)

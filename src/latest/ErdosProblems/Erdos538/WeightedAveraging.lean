@@ -100,8 +100,8 @@ theorem exists_pair_collision_coloring (n q : ℕ) (hq : 0 < q)
             rw [mul_comm, div_mul_cancel₀ total hq0]
       let c' : ℕ → Fin q := Function.update c n z
       have hc'lt (i : ℕ) (hi : i < n) : c' i = c i := by
-        simp [c', Function.update_apply, Nat.ne_of_lt hi]
-      have hc'n : c' n = z := by simp [c', Function.update_apply]
+        simp [c', Nat.ne_of_lt hi]
+      have hc'n : c' n = z := by simp [c']
       have hold :
           (∑ i ∈ Finset.range n,
             ∑ j ∈ Finset.range i with c' j = c' i, W j i) =
@@ -206,7 +206,7 @@ theorem monochromaticPairWeight_pairSupportWeight
         apply Finset.sum_congr rfl
         intro j hj
         by_cases hcolor : c j = c i
-        · simp [hcolor, and_assoc]
+        · simp [hcolor]
         · simp [hcolor]
     _ = ∑ i ∈ Finset.range n, ∑ s ∈ supports, ∑ j ∈ Finset.range i,
           if j ∈ s ∧ i ∈ s ∧ c j = c i then w s else 0 := by
@@ -259,7 +259,7 @@ theorem one_le_supportMonoFactor_of_not_nodup
   have hnotinj : ¬Set.InjOn c s := by
     rwa [← Finset.nodup_map_iff_injOn]
   simp only [Set.InjOn] at hnotinj
-  push_neg at hnotinj
+  push Not at hnotinj
   obtain ⟨a, ha, b, hb, heq, hab⟩ := hnotinj
   rcases lt_or_gt_of_ne hab with hablt | hbalt
   · exact one_le_supportMonoFactor_of_collision c s
@@ -415,7 +415,7 @@ theorem exists_coloring_half_rainbow
       ring
     rw [hfactor] at hbad
     apply (mul_le_mul_iff_of_pos_left hkcast).mp
-    convert hbad using 1 <;> ring
+    convert hbad using 1; ring
   refine ⟨c, ?_⟩
   let good := weightedSupportMass supports
     (fun s => (s.1.map c).Nodup) w
@@ -449,7 +449,7 @@ def supportChecksum {α G : Type*} [AddCommMonoid G]
 `1 / |G|` share of the total weight of the rainbow exact-`k` supports.  The
 corresponding one-residue pattern family simultaneously obeys cap two. -/
 theorem exists_weighted_rainbowChecksum
-    {α G : Type*} [DecidableEq α] [DecidableEq G] [Fintype G]
+    {α G : Type*} [DecidableEq G] [Fintype G]
     [AddCommGroup G]
     (k : ℕ) (supports : Finset (Finset α)) (color : α → G)
     (w : Finset α → ℚ≥0) :

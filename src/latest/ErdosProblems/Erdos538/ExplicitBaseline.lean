@@ -160,7 +160,7 @@ theorem coe_harmonicMassNN (N : ℕ) :
     (harmonicMassNN N : ℝ) = (harmonic N : ℝ) := by
   simp only [harmonicMassNN, reciprocalMassNN]
   push_cast
-  simpa [positiveIntegers, harmonic_eq_sum_Icc]
+  simp [positiveIntegers, harmonic_eq_sum_Icc]
 
 /-- Real-logarithmic form of the explicit baseline, making its numerator
 `log(N+1)` fully formal. -/
