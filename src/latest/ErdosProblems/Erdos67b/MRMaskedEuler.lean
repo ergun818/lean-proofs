@@ -133,7 +133,8 @@ theorem mrNorm_LSeries_halaszPoint_le_finiteDeficit
   have hlim := (tendsto_multiplicative_eulerProduct hmul hbound
     (s := halaszPoint X t) (by rw [halaszPoint_re]; exact one_lt_taoExponent hX)).norm
   have hfinite : ∀ᶠ N : ℕ in atTop,
-      ‖∏ p ∈ N.primesBelow, ∑' e : ℕ, f (p ^ e) * ((p : ℂ) ^ (-halaszPoint X t)) ^ e‖ ≤ Real.exp E := by
+      ‖∏ p ∈ N.primesBelow, ∑' e : ℕ, f (p ^ e) * ((p : ℂ) ^ (-halaszPoint X t)) ^ e‖ ≤ Real.exp E
+        := by
     filter_upwards [eventually_gt_atTop X] with N hN
     exact norm_finiteMultiplicativeEulerProduct_halaszPoint_le hmul hbound hX hN t
   have hbase : ‖LSeries f (halaszPoint X t)‖ ≤ Real.exp E := le_of_tendsto hlim hfinite

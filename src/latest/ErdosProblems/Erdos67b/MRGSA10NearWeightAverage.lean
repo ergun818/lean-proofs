@@ -30,7 +30,7 @@ theorem intervalIntegral_intervalIntegral_exp_two_shift_eq
         Real.exp (-(L + M) * alpha) *
           Real.exp (-(2 * M) * beta) := by
     rw [← Real.exp_add, ← Real.exp_add]
-    congr 1 <;> ring
+    congr 1; ring
   simp_rw [hpoint]
   simp_rw [intervalIntegral.integral_const_mul]
   rw [intervalIntegral.integral_mul_const,

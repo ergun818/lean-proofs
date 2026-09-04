@@ -371,7 +371,7 @@ theorem exists_norm_ge_of_norm_sum_ge
 /-- Deterministic van der Corput extraction.  A small total energy compared
 with the diagonal forces one large off-diagonal correlation. -/
 theorem exists_large_offDiagonal
-    {ι : Type*} [DecidableEq ι]
+    {ι : Type*}
     (s : Finset ι) (A : ι → ι → ℂ) (energy B W δ : ℝ)
     (hs : s.Nonempty) (hW : 0 < W)
     (hdiag : ∀ i ∈ s, A i i = (W : ℂ))
@@ -381,6 +381,7 @@ theorem exists_large_offDiagonal
     (hδ : (s.card : ℝ) ^ 2 * δ ≤ ((s.card : ℝ) - B) * W)
     (hδpos : 0 < δ) :
     ∃ i ∈ s, ∃ j ∈ s, i ≠ j ∧ δ ≤ ‖A i j‖ := by
+  classical
   let off : ι × ι → ℂ := eraseDiagonal A
   have hoff : ∑ p ∈ s ×ˢ s, off p =
       (energy : ℂ) - ((s.card : ℝ) * W : ℝ) := by
@@ -677,10 +678,11 @@ theorem NonasymptoticLogElliott.compactCharacterCorrelation
 
 /-- A finite family of eventual natural-number bounds has one common bound. -/
 theorem exists_uniform_nat_bound
-    {ι : Type*} [Fintype ι] (P : ι → ℕ → Prop)
+    {ι : Type*} [Finite ι] (P : ι → ℕ → Prop)
     (hP : ∀ i, ∃ N : ℕ, 2 ≤ N ∧ ∀ A : ℕ, N ≤ A → P i A) :
     ∃ N : ℕ, 2 ≤ N ∧ ∀ A : ℕ, N ≤ A → ∀ i, P i A := by
   classical
+  let := Fintype.ofFinite ι
   choose N hN hmain using hP
   let N₀ := max 2 (∑ i, N i)
   refine ⟨N₀, le_max_left _ _, ?_⟩

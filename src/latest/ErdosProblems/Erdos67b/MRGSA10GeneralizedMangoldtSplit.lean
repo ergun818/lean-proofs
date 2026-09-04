@@ -87,4 +87,5 @@ end
 end Erdos67b.MRHalaszBands
 
 #print axioms Erdos67b.MRHalaszBands.gsGeneralizedMangoldt_apply_prime
-#print axioms Erdos67b.MRHalaszBands.gsA9HighGeneralizedMangoldt_eq_primePart_add_higherPrimePowerPart
+open Erdos67b.MRHalaszBands in
+#print axioms gsA9HighGeneralizedMangoldt_eq_primePart_add_higherPrimePowerPart

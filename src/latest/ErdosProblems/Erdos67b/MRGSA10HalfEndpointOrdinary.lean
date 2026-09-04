@@ -315,10 +315,10 @@ theorem norm_gsA10TwoBlockTailoredCoefficient_div_two_mul_le_zeroHPP
   refine (norm_gsA10TwoBlockTailoredCoefficient_div_two_mul_le
     hmul hbound P₁ P₂ hQ₂ hQ₃ hX halpha hbeta).trans ?_
   apply div_le_div_of_nonneg_right
-  exact add_le_add le_rfl
-    (gsA10OrdinaryHalfEndpointHPPError_le_zero
-      hmul y X halpha hbeta)
-  positivity
+  · exact add_le_add le_rfl
+      (gsA10OrdinaryHalfEndpointHPPError_le_zero
+        hmul y X halpha hbeta)
+  · positivity
 
 end
 

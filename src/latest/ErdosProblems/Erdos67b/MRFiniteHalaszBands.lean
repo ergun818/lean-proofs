@@ -97,7 +97,7 @@ theorem hasPrimeFactor_iff
 /-- A canonical prime-band part is nontrivial exactly when that band
 actually occurs among the prime factors. -/
 theorem one_lt_primeBandPart_iff
-    (P : ℕ → Prop) [DecidablePred P] {n : ℕ} (hn : n ≠ 0) :
+    (P : ℕ → Prop) [DecidablePred P] {n : ℕ} (_hn : n ≠ 0) :
     1 < primeBandPart P n ↔ HasPrimeFactor P n := by
   constructor
   · intro hpart
@@ -152,7 +152,7 @@ theorem positivePrefixTruncate_LSeriesSummable
 
 /-- Every coordinate of a positive divisor pair is at most its product. -/
 theorem divisorsAntidiagonal_fst_le
-    {n : ℕ} (hn : 0 < n) {q : ℕ × ℕ}
+    {n : ℕ} (_hn : 0 < n) {q : ℕ × ℕ}
     (hq : q ∈ n.divisorsAntidiagonal) :
     q.1 ≤ n := by
   have hprod := (Nat.mem_divisorsAntidiagonal.mp hq).1
@@ -162,7 +162,7 @@ theorem divisorsAntidiagonal_fst_le
   exact Nat.le_mul_of_pos_right q.1 hq2
 
 theorem divisorsAntidiagonal_snd_le
-    {n : ℕ} (hn : 0 < n) {q : ℕ × ℕ}
+    {n : ℕ} (_hn : 0 < n) {q : ℕ × ℕ}
     (hq : q ∈ n.divisorsAntidiagonal) :
     q.2 ≤ n := by
   have hprod := (Nat.mem_divisorsAntidiagonal.mp hq).1

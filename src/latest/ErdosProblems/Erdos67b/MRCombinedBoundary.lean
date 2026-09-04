@@ -96,7 +96,8 @@ theorem mrCommonEndpointBands_real_bounds
     have hnlo : (2 * X : ℕ) ≤ n := hL.le
     have hnr : (n : ℝ) ≤ Nat.floor ((1 + epsilon) * (2 * X)) := by exact_mod_cast hR
     have hfloor := Nat.floor_le (show 0 ≤ (1 + epsilon) * (2 * (X : ℝ)) by positivity)
-    have hnupper : (n : ℝ) ≤ (3 * X : ℕ) := (hnr.trans hfloor).trans (by simpa only [Nat.cast_mul, Nat.cast_ofNat] using hhigh)
+    have hnupper : (n : ℝ) ≤ (3 * X : ℕ) :=
+      (hnr.trans hfloor).trans (by simpa only [Nat.cast_mul, Nat.cast_ofNat] using hhigh)
     refine ⟨?_, by exact_mod_cast hnupper⟩
     have hh : (2 * X : ℝ) ≤ n := by exact_mod_cast hnlo
     linarith
@@ -218,7 +219,8 @@ theorem sum_mrTypicalRamareBoundaryPolynomial_eq_common
         logarithmicDirichletPolynomial (mrCommonEndpointBands X epsilon) (c v) t := by
     unfold mrTypicalRamareBoundaryPolynomial logarithmicDirichletPolynomial
     apply Finset.sum_subset
-      (mrTypicalRamareBoundarySupport_subset_common blocks I heps0 heps1 (hJ v hv) (hwidth v hv) (hD v hv))
+      (mrTypicalRamareBoundarySupport_subset_common blocks I heps0 heps1 (hJ v hv) (hwidth v hv)
+        (hD v hv))
     intro n hnK hnnot
     have hnprod : n ∉ natProductImage (D v) (mrTypicalCofactorRectangle blocks I (J v) X) := by
       intro hnprod
@@ -246,7 +248,8 @@ theorem intervalIntegral_sum_mrTypicalRamareBoundaryPolynomial_le
     {T : ℝ} (hT : 0 ≤ T) :
     (∫ t in -T..T, ‖∑ v ∈ V, mrTypicalRamareBoundaryPolynomial blocks I (J v) (D v) f X t‖ ^ 2) ≤
       32 * (1 + Real.pi) * (T / X + 1) * (3 * epsilon + 1 / X) := by
-  simp_rw [sum_mrTypicalRamareBoundaryPolynomial_eq_common V blocks I J D f X heps0 heps1 hJ hwidth hD]
+  simp_rw [sum_mrTypicalRamareBoundaryPolynomial_eq_common V blocks I J D f X heps0 heps1 hJ
+    hwidth hD]
   apply intervalIntegral_commonEndpointBands_le hX heps0 heps1 (Finset.Subset.refl _) ?_ hT
   intro n hn
   have hnlo := (mrCommonEndpointBands_real_bounds heps0 heps1 hn).1

@@ -8,7 +8,7 @@ In particular it remains valid for the nonmultiplicative typical low
 coefficient at the left line of the moving Perron contour.
 -/
 
-open scoped BigOperators Classical Interval LSeries.notation
+open scoped BigOperators Interval LSeries.notation
 open Finset MeasureTheory
 
 namespace Erdos67b
@@ -62,6 +62,7 @@ theorem mrPrimeScaled_indexedTypicalCoefficient {ι : Type*}
     (A : Finset ℕ) (J : Finset ι) (B : ι → Finset ℕ) (f : ℕ → ℂ) (u : ℝ) :
     mrPrimeScaledCoefficient A (mrIndexedTypicalCoefficient J B f) u =
       mrIndexedTypicalCoefficient J B (mrPrimeScaledCoefficient A f u) := by
+  classical
   funext n
   unfold mrPrimeScaledCoefficient mrIndexedTypicalCoefficient
   split_ifs <;> simp
@@ -72,7 +73,8 @@ theorem mrLSeries_typicalCofactorLow_eq_intervalIntegral {ι : Type*}
     (y : ℕ) {s : ℂ} (hs : 0 < s.re) :
     LSeries (mrTypicalCofactorLowArithmetic A J B f y) s =
       ∫ u in (0 : ℝ)..1,
-        LSeries (gsA9Low (mrIndexedTypicalCoefficient J B (mrPrimeScaledCoefficient A f u)) y) s := by
+        LSeries (gsA9Low (mrIndexedTypicalCoefficient J B
+          (mrPrimeScaledCoefficient A f u)) y) s := by
   have hlow : LSeriesSummable (gsA9Low (mrIndexedTypicalCoefficient J B f) y) s :=
     mrPrimeBandCoefficient_LSeriesSummable_of_bounded_pos_re
       (fun n hn ↦ mrIndexedTypicalCoefficient_norm_le J B hbound hn)

@@ -73,10 +73,10 @@ theorem norm_logPhase_deriv {t x : ℝ} (hx : 0 < x) :
     ‖-(Complex.I * (t : ℂ)) *
         (x : ℂ) ^ (-(Complex.I * (t : ℂ)) - 1)‖ = |t| / x := by
   rw [norm_mul, Complex.norm_cpow_eq_rpow_re_of_pos hx]
-  simp only [map_neg, norm_neg, norm_mul, Complex.norm_I, Complex.norm_real,
+  simp only [norm_neg, norm_mul, Complex.norm_I, Complex.norm_real,
     one_mul, Complex.sub_re, Complex.neg_re, Complex.mul_re, Complex.I_re,
     Complex.ofReal_re, zero_mul, Complex.I_im, Complex.ofReal_im, mul_zero,
-    sub_zero, Complex.one_re, zero_sub]
+    sub_zero, Complex.one_re]
   norm_num
   rw [Real.rpow_neg_one]
   simp [div_eq_mul_inv]
@@ -93,17 +93,17 @@ theorem norm_logPhase_secondDeriv {t x : ℝ} (hx : 0 < x) :
     congr 1
     ring
   rw [hnorm]
-  simp only [map_neg, norm_neg, norm_mul, Complex.norm_I, Complex.norm_real,
-    one_mul, Complex.sub_re, Complex.neg_re, Complex.mul_re, Complex.I_re,
-    Complex.ofReal_re, zero_mul, Complex.I_im, Complex.ofReal_im, mul_zero,
-    sub_zero, OfNat.ofNat, zero_sub]
+  simp only [norm_neg, norm_mul, Complex.norm_I, Complex.norm_real,
+    Complex.sub_re, Complex.neg_re, Complex.mul_re, Complex.I_re,
+    Complex.ofReal_re, Complex.I_im, Complex.ofReal_im,
+    OfNat.ofNat]
   norm_num
   simp only [div_eq_mul_inv]
 
 /-- A pointwise first-derivative estimate on a positive interval.  This is
 the cell estimate used in the elementary sum--integral comparison below. -/
 theorem norm_logPhase_sub_left_le {a b x t : ℝ}
-    (ha : 0 < a) (hab : a ≤ b) (hx : x ∈ Icc a b) (ht : t ≠ 0) :
+    (ha : 0 < a) (_hab : a ≤ b) (hx : x ∈ Icc a b) (ht : t ≠ 0) :
     ‖logPhase t x - logPhase t a‖ ≤ (|t| / a) * (x - a) := by
   let f' : ℝ → ℂ := fun y ↦
     -(Complex.I * (t : ℂ)) *
@@ -126,7 +126,6 @@ theorem norm_logPhase_sub_nat_le {n : ℕ} (hn : 0 < n) {x t : ℝ}
     ‖logPhase t x - natLogTwist n t‖ ≤ |t| / n := by
   have h := norm_logPhase_sub_left_le (t := t)
     (Nat.cast_pos.mpr hn) (by norm_num : (n : ℝ) ≤ n + 1) hx ht
-  unfold natLogTwist at h
   refine h.trans ?_
   have hxsub : x - (n : ℝ) ≤ 1 := by linarith [hx.2]
   have hnonneg : 0 ≤ |t| / (n : ℝ) := by positivity

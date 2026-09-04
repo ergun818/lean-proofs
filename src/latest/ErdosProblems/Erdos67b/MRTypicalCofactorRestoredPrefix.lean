@@ -130,7 +130,8 @@ theorem mrExists_norm_positivePrefix_typicalCofactor_div_le_restoredBudgets_of_l
   calc
     _ ≤ ‖Q‖ / (X : ℝ) + ‖P - Q‖ / (X : ℝ) := by simpa only [add_div] using hdiv
     _ ≤ mrWeightedCofactorContourBudget C (mrCofactorRestoredEnvelope N X) y X K eta T +
-        (gsA10OrdinaryMovingProjectionAveragedBound y X eta + mrTypicalCofactorSecondaryBound y X) :=
+        (gsA10OrdinaryMovingProjectionAveragedBound y X eta + mrTypicalCofactorSecondaryBound y
+          X) :=
       add_le_add hQ hdiff
     _ = _ := by ring
 

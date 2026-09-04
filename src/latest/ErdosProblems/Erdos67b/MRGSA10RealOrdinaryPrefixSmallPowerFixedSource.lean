@@ -80,7 +80,7 @@ the Archimedean-nonpretentious branch, uniformly over `[X,3X]`. -/
 theorem exists_eventually_norm_positivePrefixMean_real_halasz_smallPower_fixedSource :
     ∃ C : ℝ, 0 < C ∧
       ∀ᶠ X : ℕ in atTop, ∀ (f : ℕ → ℂ)
-        (hmul : IsMultiplicativeOnPositiveNat f),
+        (_hmul : IsMultiplicativeOnPositiveNat f),
         IsCompletelyMultiplicativeOnPositive f →
         (∀ n, 0 < n → conj (f n) = f n) →
         (∀ n, ‖f n‖ ≤ 1) →
@@ -237,5 +237,5 @@ end
 
 end Erdos67b.MRHalaszBands
 
-#print axioms
-  Erdos67b.MRHalaszBands.exists_eventually_norm_positivePrefixMean_real_halasz_smallPower_fixedSource
+open Erdos67b.MRHalaszBands in
+#print axioms exists_eventually_norm_positivePrefixMean_real_halasz_smallPower_fixedSource

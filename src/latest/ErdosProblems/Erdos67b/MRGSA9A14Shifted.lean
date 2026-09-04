@@ -257,7 +257,7 @@ theorem norm_localEulerSeries_shift_le_two
     rw [hsplitHigh]
     have htri : ‖(1 : ℂ)‖ ≤ ‖(1 : ℂ) + tailHigh‖ + ‖tailHigh‖ := by
       have h := norm_sub_le ((1 : ℂ) + tailHigh) tailHigh
-      convert h using 1 <;> norm_num <;> ring
+      convert h using 1; norm_num
     norm_num at htri
     linarith
   have hdiffHigh :
@@ -433,7 +433,7 @@ theorem norm_localEulerSeries_shift_le_exp_norm_sub
     rw [hsplitHigh]
     have htri : ‖(1 : ℂ)‖ ≤ ‖(1 : ℂ) + tailHigh‖ + ‖tailHigh‖ := by
       have h := norm_sub_le ((1 : ℂ) + tailHigh) tailHigh
-      convert h using 1 <;> norm_num <;> ring
+      convert h using 1; norm_num
     norm_num at htri
     linarith
   have htriangle : ‖∑' e : ℕ, a e * xLow ^ e‖ ≤

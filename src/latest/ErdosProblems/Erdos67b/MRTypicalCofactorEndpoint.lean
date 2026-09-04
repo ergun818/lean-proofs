@@ -9,7 +9,7 @@ All remaining terms are the existing ordinary higher-prime-power
 remainder, which is bounded by reciprocal masses without a divisor count.
 -/
 
-open scoped BigOperators Classical
+open scoped BigOperators
 open Finset
 
 namespace Erdos67b

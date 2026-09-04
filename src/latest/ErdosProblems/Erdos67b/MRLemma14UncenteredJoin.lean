@@ -48,7 +48,7 @@ theorem dyadicRestrictedNormalizedMeanSquare_le_of_norm_le
 plus `H₁` times the longer normalized average. -/
 theorem uncenteredShortIntervalMeanSquare_dyadicRestricted_le_twoLength_add_long
     (S : Finset ℕ) (f : ℕ → ℂ)
-    {X H₁ H₂ : ℕ} (hH₁ : 0 < H₁) (hH₂ : 0 < H₂) :
+    {X H₁ H₂ : ℕ} (hH₁ : 0 < H₁) (_hH₂ : 0 < H₂) :
     uncenteredShortIntervalMeanSquare
         (dyadicRestrictedCoefficient S f X) X H₁ ≤
       2 * (H₁ : ℝ) ^ 2 *

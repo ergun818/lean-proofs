@@ -313,5 +313,7 @@ end
 
 end Erdos67b.MRHalaszBands
 
-#print axioms Erdos67b.MRHalaszBands.gsFiniteNormDirichletMass_twoBlockAlternatingLow_le_positive_LSeries_explicit
-#print axioms Erdos67b.MRHalaszBands.gsFiniteNormDirichletMass_twoBlockAlternatingLow_le_sourceConstant
+open Erdos67b.MRHalaszBands in
+#print axioms gsFiniteNormDirichletMass_twoBlockAlternatingLow_le_positive_LSeries_explicit
+open Erdos67b.MRHalaszBands in
+#print axioms gsFiniteNormDirichletMass_twoBlockAlternatingLow_le_sourceConstant

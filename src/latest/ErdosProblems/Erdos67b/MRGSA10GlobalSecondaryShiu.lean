@@ -256,5 +256,6 @@ end
 end Erdos67b.MRHalaszBands
 
 #print axioms Erdos67b.MRHalaszBands.gsA10TwoBlockGlobalSecondaryError_le_log
-#print axioms Erdos67b.MRHalaszBands.norm_positivePrefixSum_gsA10TwoBlockReconstructed_le_tailored_add_log
+open Erdos67b.MRHalaszBands in
+#print axioms norm_positivePrefixSum_gsA10TwoBlockReconstructed_le_tailored_add_log
 #print axioms Erdos67b.MRHalaszBands.norm_positivePrefixMean_gsA10TwoBlock_archimedeanUntwist_le

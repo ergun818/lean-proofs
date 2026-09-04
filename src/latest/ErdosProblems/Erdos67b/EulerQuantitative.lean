@@ -240,7 +240,7 @@ theorem tsum_weightedPrimeDifference_tao_le
           rw [← Real.rpow_natCast]
           rw [← Real.rpow_mul hp0.le]
           convert Real.rpow_add hp0 (-1 : ℝ)
-            (1 - 2 * taoExponent X) using 1 <;> ring_nf
+            (1 - 2 * taoExponent X) using 1; ring_nf
         rw [mul_pow, hpow, Real.rpow_neg_one]
         field_simp
         exact le_rfl)
@@ -438,7 +438,7 @@ theorem tendsto_two_taoExponent_sub_one :
     EulerSubpower.tendsto_log_nat_atTop.inv_tendsto_atTop
   have htao : Tendsto (fun X : ℕ ↦ taoExponent X) atTop (nhds 1) := by
     simpa only [taoExponent, add_zero] using tendsto_const_nhds.add hinv
-  convert (htao.const_mul 2).sub tendsto_const_nhds using 1 <;> norm_num
+  convert (htao.const_mul 2).sub tendsto_const_nhds using 1; norm_num
 
 theorem tendsto_two_taoExponent_sub_one_complex_within :
     Tendsto (fun X : ℕ ↦ ((2 * taoExponent X - 1 : ℝ) : ℂ)) atTop
@@ -510,7 +510,7 @@ theorem exists_eventually_zeta_re_le_mul_log :
   calc
     _ ≤ |K| + Real.log (X : ℝ) / 2 := hzeta
     _ ≤ |K| * Real.log (X : ℝ) + Real.log (X : ℝ) := by
-      gcongr <;> linarith
+      gcongr; linarith
     _ = (|K| + 1) * Real.log (X : ℝ) := by ring
 
 theorem eventually_log_zeta_re_le_two_log_log :

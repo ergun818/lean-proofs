@@ -17,7 +17,7 @@ namespace Erdos67b
 /-- A family of eventual natural-number statements indexed by a finite set
 admits one common threshold. -/
 theorem exists_uniform_nat_threshold_on_finset
-    {α : Type*} [DecidableEq α] (s : Finset α) (P : α → ℕ → Prop)
+    {α : Type*} (s : Finset α) (P : α → ℕ → Prop)
     (hP : ∀ a ∈ s, ∃ X₀ : ℕ, ∀ X : ℕ, X₀ ≤ X → P a X) :
     ∃ X₀ : ℕ, ∀ a ∈ s, ∀ X : ℕ, X₀ ≤ X → P a X := by
   classical

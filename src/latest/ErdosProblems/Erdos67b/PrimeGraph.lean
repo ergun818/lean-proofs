@@ -74,7 +74,8 @@ theorem norm_primeGraphCoordinate_le {H : ℕ} (b : Fin H → ℂ) (p h : ℕ) [
     ‖∑ j ∈ s, primeGraphEdge b p h j‖ ≤ ∑ j ∈ s, ‖primeGraphEdge b p h j‖ := norm_sum_le _ _
     _ ≤ ∑ _j ∈ s, B ^ 2 := Finset.sum_le_sum (fun j _ ↦ norm_primeGraphEdge_le b p h hB hb j)
     _ = s.card * B ^ 2 := by rw [Finset.sum_const, nsmul_eq_mul]
-    _ ≤ (H / p + 1 : ℕ) * B ^ 2 := mul_le_mul_of_nonneg_right (by exact_mod_cast hcard) (sq_nonneg B)
+    _ ≤ (H / p + 1 : ℕ) * B ^ 2 :=
+      mul_le_mul_of_nonneg_right (by exact_mod_cast hcard) (sq_nonneg B)
 
 /-- Each edge is counted for exactly one residue, so the uniform
 coordinate mean simply replaces the divisibility indicator by `1/p`. -/

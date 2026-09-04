@@ -269,7 +269,7 @@ theorem dyadicTwoLengthCorrectedPerronMeanSquare_low_le
       Complex.normSq (A x + E x) ≤
         2 * Complex.normSq (A x) + 2 * Complex.normSq (E x) := by
     convert normSq_sub_le_two_mul_add (A x) (-E x) using 1 <;>
-      simp only [sub_neg_eq_add, Complex.normSq_neg] <;> ring
+      simp only [sub_neg_eq_add, Complex.normSq_neg]; ring
   calc
     (∑ x ∈ Finset.Ioc X (2 * X),
         Complex.normSq

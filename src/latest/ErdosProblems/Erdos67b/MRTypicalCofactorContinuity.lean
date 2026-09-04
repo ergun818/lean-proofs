@@ -10,7 +10,7 @@ clamping supplies a continuous extension without asserting regularity
 across a vanishing denominator outside that rectangle.
 -/
 
-open scoped BigOperators Classical LSeries.notation
+open scoped BigOperators LSeries.notation
 open Complex Set MeasureTheory
 
 namespace Erdos67b

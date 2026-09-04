@@ -127,7 +127,7 @@ theorem logarithmicDirichletKernel_eq_exp_sub_div
   have hc : (u : ℂ) * Complex.I ≠ 0 :=
     mul_ne_zero (by exact_mod_cast hu) Complex.I_ne_zero
   convert (integral_exp_mul_complex (a := -T) (b := T) (c := (u : ℂ) * Complex.I) hc)
-    using 1 <;> (push_cast; ring_nf)
+    using 1; (push_cast; ring_nf)
 
 /-- Sine-kernel evaluation of the off-diagonal continuous Dirichlet kernel. -/
 theorem logarithmicDirichletKernel_eq_sin_div
@@ -680,13 +680,14 @@ theorem finiteFrequencyPolynomial_intervalIntegral_diag_offDiag
 
 /-- The finite continuous Dirichlet-polynomial mean-square theorem. -/
 theorem norm_finiteFrequencyPolynomial_intervalIntegral_le
-    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {ι : Type*} [Fintype ι]
     (freq : ι → ℝ) (a : ι → ℂ) {T δ : ℝ} (hT : 0 ≤ T) (hδ : 0 < δ)
     (hsep : ∀ r s, r ≠ s → δ ≤ |freq r - freq s|) :
     ‖∫ t in -T..T,
         conj (finiteFrequencyPolynomial freq a t) *
           finiteFrequencyPolynomial freq a t‖ ≤
       (2 * T + 2 * Real.pi * δ⁻¹) * ∑ r, ‖a r‖ ^ 2 := by
+  classical
   rw [finiteFrequencyPolynomial_intervalIntegral_diag_offDiag]
   have hdiag :
       ‖∑ r, ((2 * T : ℝ) : ℂ) * Complex.normSq (a r)‖ ≤
@@ -833,10 +834,11 @@ theorem finiteDirichletPolynomial_eq_logarithmic
 
 /-- Split a finite double sum into its diagonal and off-diagonal pairs. -/
 theorem sum_pair_eq_sum_diag_add_sum_offDiag
-    {α M : Type*} [DecidableEq α] [AddCommMonoid M]
+    {α M : Type*} [AddCommMonoid M]
     (S : Finset α) (F : α → α → M) :
     (∑ m ∈ S, ∑ n ∈ S, F m n) =
       (∑ m ∈ S, F m m) + ∑ p ∈ S.offDiag, F p.1 p.2 := by
+  classical
   rw [← Finset.sum_product']
   rw [← Finset.diag_union_offDiag]
   rw [Finset.sum_union (Finset.disjoint_diag_offDiag S)]

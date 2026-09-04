@@ -16,12 +16,13 @@ namespace Erdos67b.MRHalaszBands
 noncomputable section
 
 private theorem arithmetic_mul_eq_zero_of_not_primeSupported
-    (P : ℕ → Prop) [DecidablePred P]
+    (P : ℕ → Prop)
     (a b : ArithmeticFunction ℂ)
     (ha : ∀ n, n ≠ 0 → ¬ PrimeSupported P n → a n = 0)
     (hb : ∀ n, n ≠ 0 → ¬ PrimeSupported P n → b n = 0)
-    {n : ℕ} (hn : n ≠ 0) (hnot : ¬ PrimeSupported P n) :
+    {n : ℕ} (_hn : n ≠ 0) (hnot : ¬ PrimeSupported P n) :
     (a * b) n = 0 := by
+  classical
   rw [ArithmeticFunction.mul_apply]
   apply Finset.sum_eq_zero
   intro xy hxy
@@ -262,15 +263,15 @@ theorem continuous_uncurry_norm_gsA10TwoBlockTailoredCoefficient
   dsimp only [gsA10TwoBlockTailoredCoefficient, gsA10TailoredCoefficient]
   simp_rw [ArithmeticFunction.mul_apply]
   apply continuous_norm.comp
-  apply continuous_finset_sum
+  apply continuous_finsetSum
   intro uv huv
   apply Continuous.mul
-  · apply continuous_finset_sum
+  · apply continuous_finsetSum
     intro de hde
     exact continuous_const.mul
       (hshift (gsA9HighArithmetic f y) de.2
         (fun z ↦ z.1 + 2 * z.2) (by fun_prop))
-  · apply continuous_finset_sum
+  · apply continuous_finsetSum
     intro ab hab
     exact (hshift
       (gsA10LambdaWindow (gsA9HighGeneralizedMangoldt hmul y) y X)
@@ -323,15 +324,15 @@ theorem doubleIntervalIntegral_norm_gsA10TwoBlockTailoredCoefficient_le_half
       gsA10TailoredCoefficient]
     simp_rw [ArithmeticFunction.mul_apply]
     apply continuous_norm.comp
-    apply continuous_finset_sum
+    apply continuous_finsetSum
     intro uv huv
     apply Continuous.mul
-    · apply continuous_finset_sum
+    · apply continuous_finsetSum
       intro de hde
       exact continuous_const.mul
         (hshift (gsA9HighArithmetic f y) de.2
           (fun z ↦ z.1 + 2 * z.2) (by fun_prop))
-    · apply continuous_finset_sum
+    · apply continuous_finsetSum
       intro ab hab
       exact (hshift
         (gsA10LambdaWindow (gsA9HighGeneralizedMangoldt hmul y) y X)

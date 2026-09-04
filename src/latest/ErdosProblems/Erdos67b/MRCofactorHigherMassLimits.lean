@@ -27,7 +27,8 @@ theorem mrCofactor_higherMass_le_log_sq {y X Z : ℕ} (hy : 3 ≤ y) (hX : 2 ≤
       gsA10HigherPrimePowerGeometricMass_le hy
     _ ≤ (12 * (2 * Real.log (X : ℝ)) / y) * Real.log (X : ℝ) := by
       apply mul_le_mul
-      · exact div_le_div_of_nonneg_right (mul_le_mul_of_nonneg_left hlog (by norm_num)) (Nat.cast_nonneg y)
+      · exact div_le_div_of_nonneg_right
+          (mul_le_mul_of_nonneg_left hlog (by norm_num)) (Nat.cast_nonneg y)
       · exact hR
       · exact PrimeEstimates.primeReciprocals_nonneg Z
       · positivity
@@ -64,9 +65,11 @@ theorem mrTendsto_higherMass_at_cofactorPowerCutoff {delta : ℝ} (hdelta : 0 < 
   apply squeeze_zero'
   · exact Eventually.of_forall (fun X ↦ gsA10HigherPrimePowerGeometricMass_nonneg_source _ _)
   · filter_upwards [hZ, eventually_ge_atTop 2, mrEventually_primeReciprocals_two_mul_le_log,
-      (mrTendsto_cofactorPowerCutoff hdelta).eventually (eventually_ge_atTop 3)] with X hZ hX hprime hy
+      (mrTendsto_cofactorPowerCutoff hdelta).eventually (eventually_ge_atTop 3)] with X hZ hX
+        hprime hy
     exact mrCofactor_higherMass_le_log_sq hy hX hZ.1 hZ.2 hprime
-  · simpa only [mul_div_assoc, mul_zero] using (mrTendsto_log_pow_div_cofactorPowerCutoff hdelta 2).const_mul 72
+  · simpa only [mul_div_assoc, mul_zero] using (mrTendsto_log_pow_div_cofactorPowerCutoff hdelta
+      2).const_mul 72
 
 theorem mrTendsto_harmonic_mul_higherMass_at_cofactorPowerCutoff {delta : ℝ} (hdelta : 0 < delta)
     (Z : ℕ → ℕ) (hZ : ∀ᶠ X : ℕ in atTop, 2 ≤ Z X ∧ Z X ≤ 2 * X) :
@@ -80,10 +83,12 @@ theorem mrTendsto_harmonic_mul_higherMass_at_cofactorPowerCutoff {delta : ℝ} (
       positivity
     exact mul_nonneg hH (gsA10HigherPrimePowerGeometricMass_nonneg_source _ _)
   · filter_upwards [hZ, eventually_ge_atTop 2, mrEventually_primeReciprocals_two_mul_le_log,
-      (mrTendsto_cofactorPowerCutoff hdelta).eventually (eventually_ge_atTop 3)] with X hZ hX hprime hy
+      (mrTendsto_cofactorPowerCutoff hdelta).eventually (eventually_ge_atTop 3)] with X hZ hX
+        hprime hy
     exact mrCofactor_harmonic_mul_higherMass_le_log_cube hy hX hZ.1 hZ.2 hprime
   · simpa only [mul_div_assoc, mul_zero] using
-      (mrTendsto_log_pow_div_cofactorPowerCutoff hdelta 3).const_mul (144 * gsA10PrimeLambdaHarmonicLogConstant)
+      (mrTendsto_log_pow_div_cofactorPowerCutoff hdelta 3).const_mul (144 *
+        gsA10PrimeLambdaHarmonicLogConstant)
 
 end
 

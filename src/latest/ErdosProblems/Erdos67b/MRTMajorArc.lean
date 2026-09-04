@@ -285,7 +285,7 @@ theorem norm_modulatedShortSum_sub_rational_le
   have h := majorArc_norm_modulatedShortSum_sub_le
     (f := f) (n := n) (H := H) (alpha := α) (beta := (a : ℝ) / q) (delta := δ)
     (fun j _ ↦ hf (n + j)) happrox.2
-  convert h using 1 <;> ring
+  convert h using 1; ring
 
 /-- Exact finite Fourier expansion of an arbitrary periodic short-interval weight. -/
 theorem periodicWeightedShortSum_fourier {q : ℕ} [NeZero q]
@@ -466,10 +466,10 @@ theorem mrComplexNonpretentiousMeanSquareInput_implies_firstMoment
   have hbound₂ : uncenteredShortIntervalMeanSquare f X H ≤
       (ε * H) ^ 2 * (Finset.Ioc X (2 * X)).card := by
     rw [card_Ioc_self_two_mul]
-    convert h₂ using 1 <;> ring
+    convert h₂ using 1; ring
   specialize hL1 hbound₂
   rw [card_Ioc_self_two_mul] at hL1
-  convert hL1 using 1 <;> ring
+  convert hL1 using 1
 
 end
 

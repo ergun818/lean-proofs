@@ -20,7 +20,7 @@ noncomputable section
 
 section FiniteConvolution
 
-variable {G : Type*} [AddCommGroup G] [Fintype G] [DecidableEq G]
+variable {G : Type*} [AddCommGroup G] [Fintype G]
 
 /-- Forward-shift convolution.  This orientation makes its value at `x`
 equal to a short sum of `F (x+j)` when `K` is an interval indicator. -/

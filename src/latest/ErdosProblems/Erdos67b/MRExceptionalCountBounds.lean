@@ -46,7 +46,8 @@ theorem mrCeil_logRatio_cost_le
     calc
       _ ≤ (Real.log T / v + 1) * Real.log B := mul_le_mul_of_nonneg_right hk hlogB
       _ = Real.log T * (Real.log B / v) + Real.log B := by ring
-      _ ≤ Real.log T * sigma + Real.log B := add_le_add (mul_le_mul_of_nonneg_left hlogRatio hs) le_rfl
+      _ ≤ Real.log T * sigma + Real.log B :=
+        add_le_add (mul_le_mul_of_nonneg_left hlogRatio hs) le_rfl
       _ = _ := by ring
   calc
     _ ≤ B ^ k := pow_le_pow_left₀ (by positivity)
@@ -77,7 +78,8 @@ theorem mrOptimizedPrimeSampleBudget_le_uniform
           Real.exp (2 * alpha * (Real.log T + v)) :=
       mul_le_mul_of_nonneg_right hproduct (Real.exp_pos _).le
     _ = _ := by
-      rw [show (2 * alpha + sigma) * Real.log T = 2 * alpha * Real.log T + sigma * Real.log T by ring,
+      rw [show (2 * alpha + sigma) * Real.log T = 2 * alpha * Real.log T + sigma * Real.log T by
+        ring,
         Real.exp_add,
         show 2 * alpha * (Real.log T + v) = 2 * alpha * Real.log T + 2 * alpha * v by ring,
         Real.exp_add]
@@ -113,7 +115,8 @@ theorem mrNoSmallOptimizedCountBudget_le_uniform
   have hQ : 1 ≤ Q := hq.trans (mrLogScheduleUpper_ge hq hj)
   have hB : 0 ≤ mrMomentCostBase R := (mrMomentCostBase_one_le hR).trans' (by norm_num)
   have hC : 0 ≤ C := by dsimp only [C]; positivity
-  have hbeta := mrThresholdExponent_bounds heta0.le (by linarith) (by exact_mod_cast hj : (1 : ℝ) ≤ j)
+  have hbeta :=
+    mrThresholdExponent_bounds heta0.le (by linarith) (by exact_mod_cast hj : (1 : ℝ) ≤ j)
   have hbetap := mrThresholdExponent_le_quarter_sub_eta heta0.le j
   have hs : 0 ≤ Real.log T := Real.log_nonneg hT
   have hpoint (r : ℕ) (hr : r ∈ mrScheduledSubblocks eta p₁ q₁ j) :
@@ -145,7 +148,8 @@ theorem mrNoSmallOptimizedCountBudget_le_uniform
     card_mrLogBlockIndices_le (by nlinarith)
   calc
     _ ≤ ∑ _r ∈ mrScheduledSubblocks eta p₁ q₁ j, C := Finset.sum_le_sum hpoint
-    _ = ((mrScheduledSubblocks eta p₁ q₁ j).card : ℝ) * C := by simp only [Finset.sum_const, nsmul_eq_mul]
+    _ = ((mrScheduledSubblocks eta p₁ q₁ j).card : ℝ) * C := by
+      simp only [Finset.sum_const, nsmul_eq_mul]
     _ ≤ (2 * H * Q) * C := mul_le_mul_of_nonneg_right hcard hC
     _ = _ := by unfold mrUniformNoSmallCountFactor; dsimp only [H, Q, C]; ring
 
@@ -162,7 +166,8 @@ theorem mrArithmetic_noSmall_sample_card_le_uniform
     (hST : ∀ t ∈ S, |t| ≤ T)
     (hsep : ∀ s ∈ S, ∀ t ∈ S, s ≠ t → 1 ≤ |s - t|)
     (hU : ∀ t ∈ S, t ∈ mrNoSmallFrequencyClass (mrArithmeticSmallFrequencySet eta p₁ q₁ f) J) :
-    (S.card : ℝ) ≤ mrUniformNoSmallCountFactor eta p₁ q₁ j R * Real.exp ((1 / 2 - eta) * Real.log T) := by
+    (S.card : ℝ) ≤ mrUniformNoSmallCountFactor eta p₁ q₁ j R * Real.exp ((1 / 2 - eta) * Real.log T)
+      := by
   have hcount := mrArithmetic_noSmall_sample_card_le_optimized heta0 heta1 hp hq hlogq hbudget
     hj hjJ hbound S hT hST hsep hU
   exact hcount.trans (mrNoSmallOptimizedCountBudget_le_uniform heta0 heta1 hp hq hlogq hbudget

@@ -289,7 +289,7 @@ theorem eventually_quarter_log_log_le_oppositeTwistDistSq_polylog :
       have hlogu : Real.log u ≤ 4 * w := by
         have h := Real.log_le_rpow_div hu.le (by norm_num : (0 : ℝ) < 1 / 4)
         dsimp only [w]
-        convert h using 1 <;> ring
+        convert h using 1; ring
       have hwSquare : w ^ (2 : ℕ) = Real.sqrt u := by
         rw [Real.sqrt_eq_rpow]
         dsimp only [w]

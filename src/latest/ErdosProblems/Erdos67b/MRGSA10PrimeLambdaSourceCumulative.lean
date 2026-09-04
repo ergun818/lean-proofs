@@ -881,7 +881,7 @@ end Erdos67b.MRHalaszBands
   Erdos67b.MRHalaszBands.two_gsA10WeightedVerticalEnergy_tao_le_affineRow_diagonal
 #print axioms
   Erdos67b.MRHalaszBands.rpow_half_mul_gsA10WeightedVerticalEnergy_tao_le_affineRow_symmetric
-#print axioms
-  Erdos67b.MRHalaszBands.exists_rpow_half_mul_gsA10WeightedVerticalEnergy_tao_sourceSchedule_symmetric
+open Erdos67b.MRHalaszBands in
+#print axioms exists_rpow_half_mul_gsA10WeightedVerticalEnergy_tao_sourceSchedule_symmetric
 #print axioms
   Erdos67b.MRHalaszBands.exists_rpow_half_mul_gsA10WeightedVerticalEnergy_tao_sourceCutoff_symmetric

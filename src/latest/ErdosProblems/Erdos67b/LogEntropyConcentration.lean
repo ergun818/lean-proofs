@@ -34,7 +34,7 @@ theorem logProbFiniteLaw_residue_l1Dist_uniform_le_of_double
   have hden : (L : ℝ) / 2 ≤ (L : ℝ) * logProbMassNN L U := by nlinarith
   have hbound := div_le_div_of_nonneg_left (by positivity : (0 : ℝ) ≤ 2 * M)
     (by positivity : (0 : ℝ) < (L : ℝ) / 2) hden
-  exact hdist.trans (by convert hbound using 1 <;> field_simp <;> ring)
+  exact hdist.trans (by convert hbound using 1; field_simp; ring)
 
 /-- A uniform lower-endpoint threshold gives nearly maximal residue
 entropy for all upper endpoints at least twice the lower endpoint. -/
@@ -52,7 +52,8 @@ theorem exists_logProb_residue_entropy_deficit_lt
     apply (div_lt_iff₀ (Nat.cast_pos.mpr hL)).mpr
     have h := (div_lt_iff₀ hδ).mp (hN.trans hNl)
     simpa only [mul_comm] using h
-  have hdist := (logProbFiniteLaw_residue_l1Dist_uniform_le_of_double (M := M) hL hU).trans_lt hsmall
+  have hdist := (logProbFiniteLaw_residue_l1Dist_uniform_le_of_double (M :=
+    M) hL hU).trans_lt hsmall
   have hent := hmod _ _ hdist
   rw [entropy_uniformFiniteLaw, ZMod.card, abs_sub_comm] at hent
   exact (le_abs_self _).trans_lt hent

@@ -154,9 +154,9 @@ theorem integral_normSq_realEndpointStepShortSum_eq
         (fun _x : ℝ ↦ Complex.normSq (integerShortSum a n H))
         (Set.Ico (n : ℝ) ((n : ℝ) + 1)) := by
       apply MeasureTheory.integrableOn_const
-      rw [Real.volume_Ico]
-      exact ENNReal.ofReal_ne_top
-      exact enorm_ne_top
+      · rw [Real.volume_Ico]
+        exact ENNReal.ofReal_ne_top
+      · exact enorm_ne_top
     exact hconst.integrable_indicator measurableSet_Ico
 
 /-- Restricted-window form of the exact discrete-to-continuous identity. -/

@@ -191,14 +191,14 @@ theorem norm_LSeries_gsA10TwoBlockTailoredCoefficient_le_movingScalar
       simp only [sLow, sHigh, sigmaLow, Complex.add_re, Complex.add_im,
         Complex.ofReal_re, Complex.ofReal_im, Complex.mul_re, Complex.mul_im,
         Complex.I_re, Complex.I_im, zero_mul, one_mul, sub_zero, zero_add,
-        add_zero] <;> ring
+        add_zero]; ring
   have hWindowLowEq : sLow + (alpha : ℂ) =
       (((c₀ - 2 * beta : ℝ) : ℂ) + Complex.I * (t : ℂ)) := by
     apply Complex.ext <;>
       simp only [sLow, sigmaLow, Complex.add_re, Complex.add_im,
         Complex.ofReal_re, Complex.ofReal_im, Complex.mul_re, Complex.mul_im,
         Complex.I_re, Complex.I_im, zero_mul, one_mul, sub_zero, zero_add,
-        add_zero] <;> ring
+        add_zero]; ring
   rw [hHighEq, hWindowLowEq] at hfour
   have hsmallOutside : ∀ p ∈ gsA9SmallPrimeFinset, P₁ p := by
     intro p hp
@@ -291,7 +291,7 @@ theorem gsA10MovingVerticalScalar_nonneg
     {f : ℕ → ℂ} (hmul : IsMultiplicativeOnPositiveNat f)
     (hcomp : IsCompletelyMultiplicativeOnPositive f)
     (hbound : ∀ n, 0 < n → ‖f n‖ ≤ 1)
-    (P₁ P₂ : ℕ → Prop) [DecidablePred P₁] [DecidablePred P₂]
+    (P₁ P₂ : ℕ → Prop)
     {y A X : ℕ} (hy : 23 ≤ y) (hX : 2 ≤ X)
     (hnonpret : MRArchimedeanNonpretentious f A X)
     (hlarge₂ : ∀ p ∈ primesUpTo y,
@@ -304,6 +304,7 @@ theorem gsA10MovingVerticalScalar_nonneg
     (hbeta0 : 0 ≤ beta)
     (hbeta : beta ≤ (Real.log (y : ℝ))⁻¹) :
     0 ≤ gsA10MovingVerticalScalar y A X := by
+  classical
   have hpoint :=
     norm_LSeries_gsA10TwoBlockTailoredCoefficient_le_movingScalar
       hmul hcomp hbound P₁ P₂ hy hX hnonpret hlarge₂ hlarge₃

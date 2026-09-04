@@ -120,19 +120,19 @@ lower bound on the genuinely integrated window `|t| ≤ T` is required. -/
 theorem exists_norm_gsA10MovingPerronIntegral_fixedHigh_restored_le :
     ∃ Cβ : ℝ, 1 ≤ Cβ ∧
       ∀ {f : ℕ → ℂ} (hmul : IsMultiplicativeOnPositiveNat f)
-        (hbound : ∀ n, 0 < n → ‖f n‖ ≤ 1)
+        (_hbound : ∀ n, 0 < n → ‖f n‖ ≤ 1)
         (P₁ P₂ : ℕ → Prop) [DecidablePred P₁] [DecidablePred P₂]
-        (hsmallOutside : ∀ p ∈ gsA9SmallPrimeFinset, P₁ p)
-        {y A X Q S : ℕ} (hy : 23 ≤ y) (hX : 2 ≤ X)
-        (hQ : 3 ≤ Q) (hQy : Q ≤ y) (hS : 101 ≤ S)
-        (hlogCβ : Real.log Cβ ≤ 2 * (S - 100 : ℕ) / 99)
-        {alpha beta T : ℝ} (hlogy : 6 ≤ Real.log (y : ℝ))
-        (halpha0 : 0 ≤ alpha)
-        (halpha : alpha ≤ (Real.log (y : ℝ))⁻¹)
-        (hbeta0 : 0 ≤ beta)
-        (hbeta : beta ≤ (Real.log (y : ℝ))⁻¹)
-        (hT : 0 < T) (hTX : T ≤ X)
-        (hdist : ∀ t : ℝ, |t| ≤ T →
+        (_hsmallOutside : ∀ p ∈ gsA9SmallPrimeFinset, P₁ p)
+        {y A X Q S : ℕ} (_hy : 23 ≤ y) (_hX : 2 ≤ X)
+        (_hQ : 3 ≤ Q) (_hQy : Q ≤ y) (_hS : 101 ≤ S)
+        (_hlogCβ : Real.log Cβ ≤ 2 * (S - 100 : ℕ) / 99)
+        {alpha beta T : ℝ} (_hlogy : 6 ≤ Real.log (y : ℝ))
+        (_halpha0 : 0 ≤ alpha)
+        (_halpha : alpha ≤ (Real.log (y : ℝ))⁻¹)
+        (_hbeta0 : 0 ≤ beta)
+        (_hbeta : beta ≤ (Real.log (y : ℝ))⁻¹)
+        (_hT : 0 < T) (_hTX : T ≤ X)
+        (_hdist : ∀ t : ℝ, |t| ≤ T →
           (A : ℝ) ≤ pretentiousDistSq f (archimedeanTwist t) X),
         ‖gsA10TwoBlockMovingPerronIntegral
             f hmul P₁ P₂ y X alpha beta T‖ ≤
@@ -359,17 +359,17 @@ This is generic in the selected two-block predicates. -/
 theorem exists_norm_gsA10TwoBlockMovingPerronIntegrated_fixedHigh_restored_le :
     ∃ Cβ : ℝ, 1 ≤ Cβ ∧
       ∀ {f : ℕ → ℂ} (hmul : IsMultiplicativeOnPositiveNat f)
-        (hbound : ∀ n, 0 < n → ‖f n‖ ≤ 1)
+        (_hbound : ∀ n, 0 < n → ‖f n‖ ≤ 1)
         (P₁ P₂ : ℕ → Prop) [DecidablePred P₁] [DecidablePred P₂]
-        (hsmallOutside : ∀ p ∈ gsA9SmallPrimeFinset, P₁ p)
-        {y A X Q S : ℕ} (hy : 23 ≤ y) (hyX : y ≤ X) (hX : 2 ≤ X)
-        (hQ : 3 ≤ Q) (hQy : Q ≤ y) (hS : 101 ≤ S)
-        (hlogCβ : Real.log Cβ ≤ 2 * (S - 100 : ℕ) / 99)
-        {eta T : ℝ} (hlogy : 6 ≤ Real.log (y : ℝ))
-        (heta0 : 0 ≤ eta)
-        (heta : eta ≤ (Real.log (y : ℝ))⁻¹)
-        (hT : 0 < T) (hTX : T ≤ X)
-        (hdist : ∀ t : ℝ, |t| ≤ T →
+        (_hsmallOutside : ∀ p ∈ gsA9SmallPrimeFinset, P₁ p)
+        {y A X Q S : ℕ} (_hy : 23 ≤ y) (_hyX : y ≤ X) (_hX : 2 ≤ X)
+        (_hQ : 3 ≤ Q) (_hQy : Q ≤ y) (_hS : 101 ≤ S)
+        (_hlogCβ : Real.log Cβ ≤ 2 * (S - 100 : ℕ) / 99)
+        {eta T : ℝ} (_hlogy : 6 ≤ Real.log (y : ℝ))
+        (_heta0 : 0 ≤ eta)
+        (_heta : eta ≤ (Real.log (y : ℝ))⁻¹)
+        (_hT : 0 < T) (_hTX : T ≤ X)
+        (_hdist : ∀ t : ℝ, |t| ≤ T →
           (A : ℝ) ≤ pretentiousDistSq f (archimedeanTwist t) X),
         ‖gsA10TwoBlockMovingPerronIntegrated
             f hmul P₁ P₂ y X eta T‖ ≤
@@ -401,18 +401,18 @@ All primes below `23` are in the common outside predicate by construction. -/
 theorem exists_norm_gsA10CanonicalLargeMovingPerronIntegral_fixedHigh_le :
     ∃ Cβ : ℝ, 1 ≤ Cβ ∧
       ∀ {f : ℕ → ℂ} (hmul : IsMultiplicativeOnPositiveNat f)
-        (hbound : ∀ n, 0 < n → ‖f n‖ ≤ 1)
-        {K : ℕ} (hK : 5 ≤ K)
-        {y A X Q S : ℕ} (hy : 23 ≤ y) (hX : 2 ≤ X)
-        (hnonpret : MRArchimedeanNonpretentious f A X)
-        (hQ : 3 ≤ Q) (hQy : Q ≤ y) (hS : 101 ≤ S)
-        (hlogCβ : Real.log Cβ ≤ 2 * (S - 100 : ℕ) / 99)
-        {alpha beta T : ℝ} (hlogy : 6 ≤ Real.log (y : ℝ))
-        (halpha0 : 0 ≤ alpha)
-        (halpha : alpha ≤ (Real.log (y : ℝ))⁻¹)
-        (hbeta0 : 0 ≤ beta)
-        (hbeta : beta ≤ (Real.log (y : ℝ))⁻¹)
-        (hT : 0 < T) (hTX : T ≤ X),
+        (_hbound : ∀ n, 0 < n → ‖f n‖ ≤ 1)
+        {K : ℕ} (_hK : 5 ≤ K)
+        {y A X Q S : ℕ} (_hy : 23 ≤ y) (_hX : 2 ≤ X)
+        (_hnonpret : MRArchimedeanNonpretentious f A X)
+        (_hQ : 3 ≤ Q) (_hQy : Q ≤ y) (_hS : 101 ≤ S)
+        (_hlogCβ : Real.log Cβ ≤ 2 * (S - 100 : ℕ) / 99)
+        {alpha beta T : ℝ} (_hlogy : 6 ≤ Real.log (y : ℝ))
+        (_halpha0 : 0 ≤ alpha)
+        (_halpha : alpha ≤ (Real.log (y : ℝ))⁻¹)
+        (_hbeta0 : 0 ≤ beta)
+        (_hbeta : beta ≤ (Real.log (y : ℝ))⁻¹)
+        (_hT : 0 < T) (_hTX : T ≤ X),
         ‖gsA10TwoBlockMovingPerronIntegral f hmul
             (mrTwoBlockOutside (gsA10CanonicalLargeFirstBlock K)
               (gsA10CanonicalLargeSecondBlock K))
@@ -460,18 +460,18 @@ packaged as one transparent definition. -/
 theorem exists_norm_gsA10CanonicalLargeMovingPerronIntegral_le_restoredBudget :
     ∃ Cβ : ℝ, 1 ≤ Cβ ∧
       ∀ {f : ℕ → ℂ} (hmul : IsMultiplicativeOnPositiveNat f)
-        (hbound : ∀ n, 0 < n → ‖f n‖ ≤ 1)
-        {K : ℕ} (hK : 5 ≤ K)
-        {y A X Q S : ℕ} (hy : 23 ≤ y) (hX : 2 ≤ X)
-        (hnonpret : MRArchimedeanNonpretentious f A X)
-        (hQ : 3 ≤ Q) (hQy : Q ≤ y) (hS : 101 ≤ S)
-        (hlogCβ : Real.log Cβ ≤ 2 * (S - 100 : ℕ) / 99)
-        {alpha beta T : ℝ} (hlogy : 6 ≤ Real.log (y : ℝ))
-        (halpha0 : 0 ≤ alpha)
-        (halpha : alpha ≤ (Real.log (y : ℝ))⁻¹)
-        (hbeta0 : 0 ≤ beta)
-        (hbeta : beta ≤ (Real.log (y : ℝ))⁻¹)
-        (hT : 0 < T) (hTX : T ≤ X),
+        (_hbound : ∀ n, 0 < n → ‖f n‖ ≤ 1)
+        {K : ℕ} (_hK : 5 ≤ K)
+        {y A X Q S : ℕ} (_hy : 23 ≤ y) (_hX : 2 ≤ X)
+        (_hnonpret : MRArchimedeanNonpretentious f A X)
+        (_hQ : 3 ≤ Q) (_hQy : Q ≤ y) (_hS : 101 ≤ S)
+        (_hlogCβ : Real.log Cβ ≤ 2 * (S - 100 : ℕ) / 99)
+        {alpha beta T : ℝ} (_hlogy : 6 ≤ Real.log (y : ℝ))
+        (_halpha0 : 0 ≤ alpha)
+        (_halpha : alpha ≤ (Real.log (y : ℝ))⁻¹)
+        (_hbeta0 : 0 ≤ beta)
+        (_hbeta : beta ≤ (Real.log (y : ℝ))⁻¹)
+        (_hT : 0 < T) (_hTX : T ≤ X),
         ‖gsA10TwoBlockMovingPerronIntegral f hmul
             (mrTwoBlockOutside (gsA10CanonicalLargeFirstBlock K)
               (gsA10CanonicalLargeSecondBlock K))

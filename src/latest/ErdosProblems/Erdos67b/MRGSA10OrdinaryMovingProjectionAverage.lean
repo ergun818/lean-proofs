@@ -874,9 +874,9 @@ end
 end Erdos67b.MRHalaszBands
 
 #print axioms Erdos67b.MRHalaszBands.sum_integral_ordinaryNearKernel_le
-#print axioms
-  Erdos67b.MRHalaszBands.norm_positivePrefixSum_gsA10TwoBlockTailored_sub_movingPerron_le_ordinaryMajorant
+open Erdos67b.MRHalaszBands in
+#print axioms norm_positivePrefixSum_gsA10TwoBlockTailored_sub_movingPerron_le_ordinaryMajorant
 #print axioms
   Erdos67b.MRHalaszBands.gsA10OrdinaryMovingProjectionRectangleMajorant_le
-#print axioms
-  Erdos67b.MRHalaszBands.norm_two_mul_doubleIntervalIntegral_twoBlockTailored_sub_movingPerron_div_le_ordinary
+open Erdos67b.MRHalaszBands in
+#print axioms norm_two_mul_doubleIntervalIntegral_twoBlockTailored_sub_movingPerron_div_le_ordinary

@@ -9,7 +9,7 @@ remains in the prime energies, so no factor proportional to the vertical
 height is charged to the prime main term.
 -/
 
-open scoped BigOperators Classical LSeries.notation
+open scoped BigOperators LSeries.notation
 open Complex
 
 namespace Erdos67b

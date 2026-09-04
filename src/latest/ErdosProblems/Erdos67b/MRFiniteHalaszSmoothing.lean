@@ -513,7 +513,8 @@ theorem integral_logarithmicDirichletPolynomial_mul_tiltedKernel
           tiltedLogTrapezoidKernel rho delta A B hdelta xi) := by
       refine (integrable_tiltedLogTrapezoidKernel rho delta A B hdelta).norm.mono' ?_ ?_
       · exact (by fun_prop : Continuous (fun xi : ℝ ↦
-          Complex.exp (((2 * Real.pi * xi * Real.log n : ℝ) : ℂ) * Complex.I))).aestronglyMeasurable.mul
+          Complex.exp (((2 * Real.pi * xi * Real.log n : ℝ) : ℂ) *
+            Complex.I))).aestronglyMeasurable.mul
             (integrable_tiltedLogTrapezoidKernel rho delta A B hdelta).aestronglyMeasurable
       filter_upwards with xi
       rw [norm_mul, Complex.norm_exp_ofReal_mul_I, one_mul]
@@ -574,7 +575,8 @@ theorem integral_shiftedLogarithmicDirichletPolynomial_mul_tiltedKernel
         logarithmicPhase n (-t0) *
           logTrapezoidWindow delta A B hdelta (Real.log n) := by ring
     _ = a n * logarithmicPhase n (-t0) *
-        logTrapezoidWindow delta A B hdelta (Real.log n) := by rw [exponentiallyShiftedCoefficient_mul_exp]
+        logTrapezoidWindow delta A B hdelta (Real.log n) := by
+          rw [exponentiallyShiftedCoefficient_mul_exp]
 
 /-- Exact finite smoothing identity for a logarithmic Dirichlet polynomial.
 The polynomial is sampled at `-t0 + 2*pi*xi`, so after the usual
@@ -622,7 +624,8 @@ theorem integral_logarithmicDirichletPolynomial_mul_kernel
           logTrapezoidKernel delta A B hdelta xi) := by
       refine (integrable_logTrapezoidKernel delta A B hdelta).norm.mono' ?_ ?_
       · exact (by fun_prop : Continuous (fun xi : ℝ ↦
-          Complex.exp (((2 * Real.pi * xi * Real.log n : ℝ) : ℂ) * Complex.I))).aestronglyMeasurable.mul
+          Complex.exp (((2 * Real.pi * xi * Real.log n : ℝ) : ℂ) *
+            Complex.I))).aestronglyMeasurable.mul
             (integrable_logTrapezoidKernel delta A B hdelta).aestronglyMeasurable
       filter_upwards with xi
       rw [norm_mul, Complex.norm_exp_ofReal_mul_I, one_mul]
@@ -790,7 +793,8 @@ theorem integral_norm_dyadicVertical_mul_kernel_le_mass_of_uniform
   have hq : Integrable q := by
     refine hr.mono' ?_ ?_
     · exact ((continuous_dyadicVerticalDirichletPolynomial S f X).comp
-          (by fun_prop : Continuous (fun xi : ℝ ↦ t0 - 2 * Real.pi * xi))).norm.aestronglyMeasurable.mul
+          (by fun_prop : Continuous (fun xi : ℝ ↦ t0 - 2 * Real.pi *
+            xi))).norm.aestronglyMeasurable.mul
         (integrable_logTrapezoidKernel delta A B hdelta).norm.aestronglyMeasurable
     · filter_upwards with xi
       change ‖q xi‖ ≤ r xi

@@ -89,7 +89,8 @@ theorem mrSample_sum_le_integral_majorant
     (∑ t ∈ S, g t) ≤ ∫ x in -(T + 1)..(T + 1), g x + phi x := by
   calc
     _ ≤ ∑ t ∈ S, ∫ x in (t - 1)..t, g x + phi x :=
-      Finset.sum_le_sum (fun t _ ↦ mrPoint_le_integral_add_derivative_majorant hg hphi hderiv hmajor hpos t)
+      Finset.sum_le_sum (fun t _ ↦ mrPoint_le_integral_add_derivative_majorant hg hphi hderiv
+        hmajor hpos t)
     _ ≤ _ := mrSum_unitInterval_integral_le S hT hST hsep (hg.add hphi)
       (fun x ↦ add_nonneg (hgpos x) (hpos x))
 
@@ -115,7 +116,9 @@ theorem mrSample_normSq_le_energy
     dsimp only [phi]
     nlinarith
   have hh := mrSample_sum_le_integral_majorant S hT hST hsep (hF.norm.pow 2) hphi
-    (fun x ↦ (hderiv x).norm_sq) hmajor (fun x ↦ sq_nonneg _) (fun x ↦ by dsimp only [phi]; positivity)
+    (fun x ↦ (hderiv x).norm_sq) hmajor (fun x ↦ sq_nonneg _) (fun x ↦ by
+      dsimp only [phi]
+      positivity)
   calc
     _ ≤ ∫ x in -(T + 1)..(T + 1), ‖F x‖ ^ 2 + phi x := hh
     _ = _ := by
@@ -199,7 +202,8 @@ theorem mrDiscrete_meanValue_le
     rw [heq]
     exact hh
   have hcont (b : ℕ → ℂ) : Continuous (logarithmicDirichletPolynomial A b) :=
-    continuous_iff_continuousAt.mpr (fun t ↦ (hasDerivAt_logarithmicDirichletPolynomial A b t).continuousAt)
+    continuous_iff_continuousAt.mpr (fun t ↦ (hasDerivAt_logarithmicDirichletPolynomial A b
+      t).continuousAt)
   have hsample := mrSample_normSq_le_energy S hT hST hsep (hcont a) (hcont a')
     (hasDerivAt_logarithmicDirichletPolynomial A a) hL
   have hmean' := (hmean a').trans (mul_le_mul_of_nonneg_left hmass hD)

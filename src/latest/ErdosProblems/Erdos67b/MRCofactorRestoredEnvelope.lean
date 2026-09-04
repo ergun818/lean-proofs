@@ -100,7 +100,8 @@ theorem mrNorm_restoredTypicalCofactorLow_mul_high_le_inverseDistance
     (hle : sigmaLow ≤ taoExponent X)
     (hsigma : 1 - 3 / Real.log (y : ℝ) ≤ sigmaLow)
     (hgap : taoExponent X - sigmaLow ≤ 3 / Real.log (y : ℝ))
-    (t : ℝ) (hD : 0 < pretentiousDistSq (gsDeletePrimeBand f gsA9SmallPrime) (archimedeanTwist t) X) :
+    (t : ℝ) (hD : 0 < pretentiousDistSq (gsDeletePrimeBand f gsA9SmallPrime) (archimedeanTwist
+      t) X) :
     ‖LSeries (mrTypicalCofactorLowArithmetic A J B f y)
           ((sigmaLow : ℂ) + I * (t : ℂ)) * LSeries (gsA9High f y) (halaszPoint X t)‖ ≤
       (gsA9SmallPrimeEulerBound * mrCofactorEulerBase X) *

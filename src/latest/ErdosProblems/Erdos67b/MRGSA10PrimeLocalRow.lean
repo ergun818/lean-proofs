@@ -454,7 +454,7 @@ theorem eventually_gsA10BetaSourceCutoff_le_quarter (Cβ : ℝ) :
   have hmulNat : 4 * Q < n := by exact_mod_cast hmulReal
   simpa only [Q] using (show Q ≤ n / 4 by omega)
 
-/-- Both structural cutoff conditions hold eventually at every row centre.-/
+/-- Both structural cutoff conditions hold eventually at every row centre. -/
 theorem eventually_gsA10BetaSourceRowStructural
     {Cβ : ℝ} (hCβ : 1 ≤ Cβ) :
     ∀ᶠ n : ℕ in atTop,
@@ -465,7 +465,7 @@ theorem eventually_gsA10BetaSourceRowStructural
   exact ⟨hs.1, hquarter⟩
 
 /-- Threshold form convenient for a whole prime window: once its bottom
-`y` exceeds `N`, every row centre `n > y` satisfies both cutoff conditions.-/
+`y` exceeds `N`, every row centre `n > y` satisfies both cutoff conditions. -/
 theorem exists_gsA10BetaSourceRowStructural_threshold
     {Cβ : ℝ} (hCβ : 1 ≤ Cβ) :
     ∃ N : ℕ, ∀ y n : ℕ, N ≤ y → y < n →
@@ -508,12 +508,16 @@ end
 
 end Erdos67b.MRHalaszBands
 
-#print axioms Erdos67b.MRHalaszBands.exists_sum_gsA10PrimeNearWindow_log_div_gaussian_local_beta_bound
-#print axioms Erdos67b.MRHalaszBands.exists_sum_gsA10PrimeNearWindow_log_div_gaussian_source_local_bound
+open Erdos67b.MRHalaszBands in
+#print axioms exists_sum_gsA10PrimeNearWindow_log_div_gaussian_local_beta_bound
+open Erdos67b.MRHalaszBands in
+#print axioms exists_sum_gsA10PrimeNearWindow_log_div_gaussian_source_local_bound
 #print axioms Erdos67b.MRHalaszBands.exists_sum_gsA10PrimeWindow_log_div_gaussian_local_beta_bound
 #print axioms Erdos67b.MRHalaszBands.exists_sum_gsA10PrimeWindow_log_div_gaussian_source_local_bound
 #print axioms Erdos67b.MRHalaszBands.gsA10Prime_source_local_terms_le_uniform
-#print axioms Erdos67b.MRHalaszBands.exists_sum_gsA10PrimeNearWindow_log_div_gaussian_source_uniform_bound
+open Erdos67b.MRHalaszBands in
+#print axioms exists_sum_gsA10PrimeNearWindow_log_div_gaussian_source_uniform_bound
 #print axioms Erdos67b.MRHalaszBands.eventually_gsA10BetaSourceCutoff_le_quarter
 #print axioms Erdos67b.MRHalaszBands.exists_gsA10BetaSourceRowStructural_threshold
-#print axioms Erdos67b.MRHalaszBands.exists_sum_gsA10PrimeNearWindow_log_div_gaussian_source_uniform_eventual_bound
+open Erdos67b.MRHalaszBands in
+#print axioms exists_sum_gsA10PrimeNearWindow_log_div_gaussian_source_uniform_eventual_bound

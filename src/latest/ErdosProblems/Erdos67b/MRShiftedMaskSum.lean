@@ -10,7 +10,7 @@ The theorem is about the actual low/high factor in the Perron integrand,
 not a finite-polynomial endpoint.
 -/
 
-open scoped BigOperators Classical Interval LSeries.notation
+open scoped BigOperators Interval LSeries.notation
 open Finset
 
 namespace Erdos67b
@@ -230,6 +230,7 @@ theorem mrNorm_typicalCofactorLow_mul_high_fixedHalasz_le
 
 theorem mrDeleteSmallPrimes_eq_largePrimeBand (f : ℕ → ℂ) :
     gsDeletePrimeBand f gsA9SmallPrime = primeBandCoefficient f (fun p ↦ 23 ≤ p) := by
+  classical
   funext n
   have hs : PrimeSupported (fun p ↦ ¬ gsA9SmallPrime p) n ↔
       PrimeSupported (fun p ↦ 23 ≤ p) n := by

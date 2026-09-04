@@ -123,7 +123,8 @@ theorem mrRealLogBlock_le_sqrt
   have hH0z : (H₀ : ℝ) ≤ z := Nat.floor_le (by linarith : 0 ≤ z)
   have hscale : 8 * (H : ℝ) * a ≤ U ^ 2 := by
     have hHz := hHle.trans hH0z
-    have hh : (H : ℝ) * (256 * a) ≤ U ^ 2 := (le_div_iff₀ (by positivity : (0 : ℝ) < 256 * a)).mp hHz
+    have hh : (H : ℝ) * (256 * a) ≤ U ^ 2 :=
+      (le_div_iff₀ (by positivity : (0 : ℝ) < 256 * a)).mp hHz
     nlinarith [show (0 : ℝ) ≤ H by positivity]
   have hlag : H = P ∨ U ^ 2 ≤ 512 * a * H := by
     rcases le_total P H₀ with hh | hh

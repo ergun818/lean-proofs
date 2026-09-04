@@ -43,9 +43,11 @@ theorem intervalIntegral_indicator_sum_sub_le
     by_cases ht : t ∈ E
     · simp only [Set.indicator_of_mem ht]
       have hsum : ‖∑ v ∈ V, Q v t‖ ^ 2 ≤ (V.card : ℝ) * ∑ v ∈ V, ‖Q v t‖ ^ 2 := by
-        simpa only [Complex.normSq_eq_norm_sq] using normSq_finset_sum_le_card_mul_sum_normSq V (fun v ↦ Q v t)
+        simpa only [Complex.normSq_eq_norm_sq]
+          using normSq_finset_sum_le_card_mul_sum_normSq V (fun v ↦ Q v t)
       have hsub : ‖(∑ v ∈ V, Q v t) - B t‖ ^ 2 ≤ 2 * (‖∑ v ∈ V, Q v t‖ ^ 2 + ‖B t‖ ^ 2) := by
-        simpa only [Complex.normSq_eq_norm_sq] using normSq_sub_le_two_mul_add (∑ v ∈ V, Q v t) (B t)
+        simpa only [Complex.normSq_eq_norm_sq]
+          using normSq_sub_le_two_mul_add (∑ v ∈ V, Q v t) (B t)
       nlinarith
     · simp only [Set.indicator_of_notMem ht, Finset.sum_const_zero, mul_zero, zero_add]
       positivity
@@ -129,7 +131,8 @@ theorem mrArithmetic_common_frequency_energy_le
   let B := mrScheduledBoundaryPolynomial blocks eta p₁ q₁ j f X
   have hQ : ∀ r ∈ V, Continuous (Q r) := by
     intro r hr
-    exact (continuous_logarithmicDirichletPolynomial _ _).mul (continuous_logarithmicDirichletPolynomial _ _)
+    exact (continuous_logarithmicDirichletPolynomial _ _).mul
+      (continuous_logarithmicDirichletPolynomial _ _)
   have hB : Continuous B := by
     apply continuous_finsetSum
     intro r hr
@@ -144,7 +147,8 @@ theorem mrArithmetic_common_frequency_energy_le
     dsimp only [mrScheduledCommonPolynomial, V, Q, B, mrScheduledProductPolynomial,
       mrScheduledBoundaryPolynomial, mrScheduledTypicalCofactor, mrScheduledNarrowInterval]
     simpa only [Finset.sum_sub_distrib] using hh
-  have hcard : (V.card : ℝ) ≤ 2 * (mrLogBlockResolution eta p₁ q₁ (j : ℝ) * mrLogScheduleUpper q₁ j) := by
+  have hcard : (V.card : ℝ) ≤ 2 * (mrLogBlockResolution eta p₁ q₁ (j : ℝ) * mrLogScheduleUpper q₁ j)
+    := by
     dsimp only [V, mrScheduledSubblocks]
     simpa only [mul_assoc] using card_mrLogBlockIndices_le
       (p := mrLogScheduleLower p₁ q₁ j) hweight
@@ -220,7 +224,8 @@ theorem mrArithmetic_common_firstClass_energy_le
     MeasurableSet.disjointed (measurableSet_mrScheduledSmallFrequencySet _ _ _ _ _) 1
   have hbase := mrArithmetic_common_frequency_energy_le (mrScheduledBlocks p₁ q₁ J)
     heta1 hp hqexp hbudget (by norm_num : 1 ≤ (1 : ℕ))
-    (mrScheduledBlocks_other_disjoint heta1 hp hq hpq hlogq hbudget J (by norm_num)) hbound hX hmeas hT
+    (mrScheduledBlocks_other_disjoint heta1 hp hq hpq hlogq hbudget J (by norm_num)) hbound hX hmeas
+      hT
   have hprod := mrArithmetic_firstClass_product_energy_le (mrScheduledBlocks p₁ q₁ J)
     heta0 heta1 hp hqexp hbudget hbound hX hscale hT
   have hupper : mrLogScheduleUpper q₁ 1 = q₁ := by norm_num [mrLogScheduleUpper]

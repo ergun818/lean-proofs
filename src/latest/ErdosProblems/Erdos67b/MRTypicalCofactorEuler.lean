@@ -8,7 +8,7 @@ Finite inclusion-exclusion and the summed masked Euler estimate apply to
 the typical coefficient without asserting that it is multiplicative.
 -/
 
-open scoped BigOperators Classical
+open scoped BigOperators
 open Finset
 
 namespace Erdos67b
@@ -21,6 +21,7 @@ theorem mrIndexedTypicalCoefficient_div {ι : Type*}
     (J : Finset ι) (B : ι → Finset ℕ) (f D : ℕ → ℂ) :
     mrIndexedTypicalCoefficient J B (fun n ↦ f n / D n) =
       fun n ↦ mrIndexedTypicalCoefficient J B f n / D n := by
+  classical
   funext n
   unfold mrIndexedTypicalCoefficient
   split_ifs <;> simp
@@ -43,7 +44,7 @@ theorem mrCommonCofactorCoefficient_norm_le_one (A : Finset ℕ)
   apply (div_le_iff₀ (by linarith : (0 : ℝ) < mrCommonDenominator A n)).mpr
   simpa only [one_mul] using (hbound n hn).trans hd
 
-theorem mrNorm_typical_cofactor_LSeries_le_mask_sum {ι : Type*} [DecidableEq ι]
+theorem mrNorm_typical_cofactor_LSeries_le_mask_sum {ι : Type*}
     (A : Finset ℕ) (J : Finset ι) (B : ι → Finset ℕ)
     (hB : ∀ j ∈ J, ∀ p ∈ B j, p.Prime)
     {f : ℕ → ℂ} (hbound : ∀ n, 0 < n → ‖f n‖ ≤ 1) {s : ℂ} (hs : 1 < s.re) :
@@ -76,6 +77,7 @@ theorem mrNorm_typical_cofactor_LSeries_le
   exact mrSum_norm_masked_cofactor_LSeries_le A hA J B hX hJ hB hdisj hsmall hmass hmul hbound t
 
 theorem mrIndexedTypicalCoefficient_schedule_eq (p₁ q₁ : ℝ) (J : ℕ) (f : ℕ → ℂ) :
+    open scoped Classical in
     mrIndexedTypicalCoefficient (Finset.Icc 1 J)
       (fun j ↦ primesInBlock (mrScheduledPrimeInterval p₁ q₁ j)) f =
       fun n ↦ if HasTypicalFactorization (mrScheduledBlocks p₁ q₁ J) n then f n else 0 := by
@@ -94,6 +96,7 @@ theorem mrScheduled_norm_typical_cofactor_LSeries_le
     (hJX : mrLogScheduleUpper q₁ J ≤ Real.sqrt (Real.log (X : ℝ)))
     {f : ℕ → ℂ} (hmul : IsMultiplicativeOnPositiveNat f)
     (hbound : ∀ n, 0 < n → ‖f n‖ ≤ 1) (t : ℝ) :
+    open scoped Classical in
     ‖mrCofactorLSeries A
       (fun n ↦ if HasTypicalFactorization (mrScheduledBlocks p₁ q₁ J) n then f n else 0)
       (halaszPoint X t)‖ ≤

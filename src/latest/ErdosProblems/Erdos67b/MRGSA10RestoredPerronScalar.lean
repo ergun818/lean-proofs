@@ -145,14 +145,14 @@ condition and is independent of the scalar cancellation. -/
 theorem exists_norm_gsA10TwoBlockMovingPerronIntegrated_fixedHigh_sourceScalar_le :
     ∃ Cβ : ℝ, 1 ≤ Cβ ∧
       ∀ {f : ℕ → ℂ} (hmul : IsMultiplicativeOnPositiveNat f)
-        (hbound : ∀ n, 0 < n → ‖f n‖ ≤ 1)
+        (_hbound : ∀ n, 0 < n → ‖f n‖ ≤ 1)
         (P₁ P₂ : ℕ → Prop) [DecidablePred P₁] [DecidablePred P₂]
-        (hsmallOutside : ∀ p ∈ gsA9SmallPrimeFinset, P₁ p)
-        {y A X Q S : ℕ} (hy : 23 ≤ y) (hyX : y ≤ X) (hX : 2 ≤ X)
-        (hQ : 3 ≤ Q) (hQy : Q ≤ y) (hS : 101 ≤ S)
-        (hlogCβ : Real.log Cβ ≤ 2 * (S - 100 : ℕ) / 99)
-        (hlogy : 6 ≤ Real.log (y : ℝ))
-        (hlogXsqX : (Real.log (X : ℝ)) ^ 2 ≤ X),
+        (_hsmallOutside : ∀ p ∈ gsA9SmallPrimeFinset, P₁ p)
+        {y A X Q S : ℕ} (_hy : 23 ≤ y) (_hyX : y ≤ X) (_hX : 2 ≤ X)
+        (_hQ : 3 ≤ Q) (_hQy : Q ≤ y) (_hS : 101 ≤ S)
+        (_hlogCβ : Real.log Cβ ≤ 2 * (S - 100 : ℕ) / 99)
+        (_hlogy : 6 ≤ Real.log (y : ℝ))
+        (_hlogXsqX : (Real.log (X : ℝ)) ^ 2 ≤ X),
         (∀ t : ℝ, |t| ≤ (Real.log (X : ℝ)) ^ 2 →
           (A : ℝ) ≤ pretentiousDistSq f (archimedeanTwist t) X) →
         ‖gsA10TwoBlockMovingPerronIntegrated f hmul P₁ P₂ y X
@@ -181,14 +181,14 @@ mass. -/
 theorem exists_norm_gsA10TwoBlockMovingPerronIntegrated_fixedHigh_sourceScalarUpper_le :
     ∃ Cβ : ℝ, 1 ≤ Cβ ∧
       ∀ {f : ℕ → ℂ} (hmul : IsMultiplicativeOnPositiveNat f)
-        (hbound : ∀ n, 0 < n → ‖f n‖ ≤ 1)
+        (_hbound : ∀ n, 0 < n → ‖f n‖ ≤ 1)
         (P₁ P₂ : ℕ → Prop) [DecidablePred P₁] [DecidablePred P₂]
-        (hsmallOutside : ∀ p ∈ gsA9SmallPrimeFinset, P₁ p)
-        {y A X Q S : ℕ} (hy : 23 ≤ y) (hyX : y ≤ X) (hX : 2 ≤ X)
-        (hQ : 3 ≤ Q) (hQy : Q ≤ y) (hS : 101 ≤ S)
-        (hlogCβ : Real.log Cβ ≤ 2 * (S - 100 : ℕ) / 99)
-        (hlogy : 6 ≤ Real.log (y : ℝ))
-        (hlogXsqX : (Real.log (X : ℝ)) ^ 2 ≤ X),
+        (_hsmallOutside : ∀ p ∈ gsA9SmallPrimeFinset, P₁ p)
+        {y A X Q S : ℕ} (_hy : 23 ≤ y) (_hyX : y ≤ X) (_hX : 2 ≤ X)
+        (_hQ : 3 ≤ Q) (_hQy : Q ≤ y) (_hS : 101 ≤ S)
+        (_hlogCβ : Real.log Cβ ≤ 2 * (S - 100 : ℕ) / 99)
+        (_hlogy : 6 ≤ Real.log (y : ℝ))
+        (_hlogXsqX : (Real.log (X : ℝ)) ^ 2 ≤ X),
         (∀ t : ℝ, |t| ≤ (Real.log (X : ℝ)) ^ 2 →
           (A : ℝ) ≤ pretentiousDistSq f (archimedeanTwist t) X) →
         ‖gsA10TwoBlockMovingPerronIntegrated f hmul P₁ P₂ y X
@@ -213,5 +213,5 @@ end Erdos67b.MRHalaszBands
   Erdos67b.MRHalaszBands.exists_norm_gsA10TwoBlockMovingPerronIntegrated_fixedHigh_sourceScalar_le
 #print axioms
   Erdos67b.MRHalaszBands.gsA10RestoredFixedHighSourceScalarBudget_le_upper
-#print axioms
-  Erdos67b.MRHalaszBands.exists_norm_gsA10TwoBlockMovingPerronIntegrated_fixedHigh_sourceScalarUpper_le
+open Erdos67b.MRHalaszBands in
+#print axioms exists_norm_gsA10TwoBlockMovingPerronIntegrated_fixedHigh_sourceScalarUpper_le

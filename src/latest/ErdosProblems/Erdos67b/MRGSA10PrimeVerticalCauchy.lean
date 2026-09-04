@@ -45,7 +45,7 @@ constant. -/
 theorem exists_norm_intervalIntegral_mul_gsA10PrimeLambda_pair_le :
     ∃ Cβ : ℝ, 1 ≤ Cβ ∧
       ∀ {f : ℕ → ℂ} (hmul : IsMultiplicativeOnPositiveNat f)
-        (hbound : ∀ n, 0 < n → ‖f n‖ ≤ 1)
+        (_hbound : ∀ n, 0 < n → ‖f n‖ ≤ 1)
         (y X Q S : ℕ) (beta T M : ℝ) (F : ℝ → ℂ),
         2 ≤ X → 3 ≤ Q → Q ≤ y → 101 ≤ S →
         Real.log Cβ ≤ 2 * (S - 100 : ℕ) / 99 →

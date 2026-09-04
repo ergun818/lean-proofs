@@ -108,5 +108,5 @@ end
 
 end Erdos67b.MRHalaszBands
 
-#print axioms
-  Erdos67b.MRHalaszBands.exists_norm_gsA10TwoBlockSourcePerronIntegrated_le_rawSchedule_of_localHeight
+open Erdos67b.MRHalaszBands in
+#print axioms exists_norm_gsA10TwoBlockSourcePerronIntegrated_le_rawSchedule_of_localHeight

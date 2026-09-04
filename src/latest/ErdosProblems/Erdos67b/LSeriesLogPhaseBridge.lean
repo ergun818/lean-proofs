@@ -73,7 +73,7 @@ theorem weight_add_sum_Ico_sub_succ (w : ℕ → ℝ) {a b : ℕ} (hab : a ≤ b
 decreasing real weight costs only the left endpoint weight. -/
 theorem norm_sum_Icc_mul_le_of_prefix_bound
     (u : ℕ → ℂ) (w : ℕ → ℝ) {a b : ℕ} (hab : a ≤ b)
-    {B : ℝ} (hB : 0 ≤ B) (hwb : 0 ≤ w b)
+    {B : ℝ} (_hB : 0 ≤ B) (hwb : 0 ≤ w b)
     (hw : ∀ n ∈ Finset.Ico a b, w (n + 1) ≤ w n)
     (hprefix : ∀ n ∈ Finset.Icc a b,
       ‖complexIntervalPartialSum u a n‖ ≤ B) :
@@ -119,9 +119,9 @@ theorem norm_sum_Icc_mul_rpow_neg_le_of_prefix_bound
   · exact Real.rpow_nonneg (Nat.cast_nonneg b) _
   · intro n hn
     apply Real.antitoneOn_rpow_Ioi_of_exponent_nonpos (neg_nonpos.mpr hsigma)
-    · show 0 < (n : ℝ)
+    · change 0 < (n : ℝ)
       exact_mod_cast (ha.trans_le (Finset.mem_Ico.mp hn).1)
-    · show 0 < ((n + 1 : ℕ) : ℝ)
+    · change 0 < ((n + 1 : ℕ) : ℝ)
       exact_mod_cast Nat.zero_lt_succ n
     · exact_mod_cast Nat.le_succ n
   · exact hprefix
@@ -212,7 +212,6 @@ theorem character_LSeries_term_eq_logPhase_mul_rpow
   have hnC : (n : ℂ) ≠ 0 := by exact_mod_cast hn.ne'
   rw [show -((sigma : ℂ) + Complex.I * (t : ℂ)) =
       -(Complex.I * (t : ℂ)) + (-(sigma : ℝ) : ℂ) by
-        push_cast
         ring,
     Complex.cpow_add _ _ hnC]
   have hreal :
@@ -305,7 +304,7 @@ theorem sum_range_nat_add_eq_sum_Icc
 /-- A uniform estimate for all finite tails survives the limit defining a
 summable series. -/
 theorem norm_tsum_nat_add_le_of_Icc_bound
-    (f : ℕ → ℂ) (hf : Summable f) {a : ℕ} {B : ℝ} (hB : 0 ≤ B)
+    (f : ℕ → ℂ) (hf : Summable f) {a : ℕ} {B : ℝ} (_hB : 0 ≤ B)
     (hIcc : ∀ b, a ≤ b → ‖∑ n ∈ Finset.Icc a b, f n‖ ≤ B) :
     ‖∑' n : ℕ, f (n + a)‖ ≤ B := by
   have hshift : Summable (fun n : ℕ ↦ f (n + a)) :=

@@ -9,7 +9,7 @@ prime-band restrictions. The identity is stated on positive integers,
 which is exactly the domain used by an L-series.
 -/
 
-open scoped BigOperators Classical
+open scoped BigOperators
 open Finset
 
 namespace Erdos67b
@@ -25,7 +25,7 @@ def mrIndexedTypicalCoefficient {ι : Type*} (J : Finset ι) (B : ι → Finset 
   classical
   exact if ∀ j ∈ J, mrPrimeBlockHit (B j) n then f n else 0
 
-theorem mrPrimeMask_supported_iff {ι : Type*} [DecidableEq ι]
+theorem mrPrimeMask_supported_iff {ι : Type*}
     (S : Finset ι) (B : ι → Finset ℕ)
     (hB : ∀ j ∈ S, ∀ p ∈ B j, p.Prime) {n : ℕ} (hn : 0 < n) :
     PrimeSupported (fun p ↦ p ∉ S.biUnion B) n ↔
@@ -42,6 +42,7 @@ theorem mrPrimeMask_supported_iff {ι : Type*} [DecidableEq ι]
     exact hs j hj ⟨p, hpB, Nat.dvd_of_mem_primeFactors hp⟩
 
 theorem mrProd_missing_prime_indicators {ι : Type*} (S : Finset ι) (B : ι → Finset ℕ) (n : ℕ) :
+    open scoped Classical in
     (∏ j ∈ S, (if mrPrimeBlockHit (B j) n then (0 : ℂ) else 1)) =
       if ∀ j ∈ S, ¬mrPrimeBlockHit (B j) n then 1 else 0 := by
   classical
@@ -54,6 +55,7 @@ theorem mrProd_missing_prime_indicators {ι : Type*} (S : Finset ι) (B : ι →
     exact Finset.prod_eq_zero_iff.mpr ⟨j, hj, if_pos hhit⟩
 
 theorem mrProd_hit_prime_indicators {ι : Type*} (J : Finset ι) (B : ι → Finset ℕ) (n : ℕ) :
+    open scoped Classical in
     (∏ j ∈ J, (1 - (if mrPrimeBlockHit (B j) n then (0 : ℂ) else 1))) =
       if ∀ j ∈ J, mrPrimeBlockHit (B j) n then 1 else 0 := by
   classical
@@ -68,9 +70,10 @@ theorem mrProd_hit_prime_indicators {ι : Type*} (J : Finset ι) (B : ι → Fin
     apply Finset.prod_eq_zero_iff.mpr
     exact ⟨j, hj, by simp [hmiss]⟩
 
-theorem mrPrimeBandCoefficient_eq_missing_product {ι : Type*} [DecidableEq ι]
+theorem mrPrimeBandCoefficient_eq_missing_product {ι : Type*}
     (S : Finset ι) (B : ι → Finset ℕ)
     (hB : ∀ j ∈ S, ∀ p ∈ B j, p.Prime) (f : ℕ → ℂ) {n : ℕ} (hn : 0 < n) :
+    open scoped Classical in
     primeBandCoefficient f (fun p ↦ p ∉ S.biUnion B) n =
       (∏ j ∈ S, (if mrPrimeBlockHit (B j) n then (0 : ℂ) else 1)) * f n := by
   classical
@@ -79,7 +82,7 @@ theorem mrPrimeBandCoefficient_eq_missing_product {ι : Type*} [DecidableEq ι]
   rw [mrPrimeMask_supported_iff S B hB hn]
   split_ifs <;> simp
 
-theorem mrIndexedTypicalCoefficient_eq_mask_sum {ι : Type*} [DecidableEq ι]
+theorem mrIndexedTypicalCoefficient_eq_mask_sum {ι : Type*}
     (J : Finset ι) (B : ι → Finset ℕ)
     (hB : ∀ j ∈ J, ∀ p ∈ B j, p.Prime) (f : ℕ → ℂ) {n : ℕ} (hn : 0 < n) :
     mrIndexedTypicalCoefficient J B f n =
@@ -110,7 +113,7 @@ theorem mrIndexedTypicalCoefficient_norm_le {ι : Type*} (J : Finset ι) (B : ι
   · exact hbound n hn
   · simp
 
-theorem mrLSeries_indexedTypical_eq_mask_sum {ι : Type*} [DecidableEq ι]
+theorem mrLSeries_indexedTypical_eq_mask_sum {ι : Type*}
     (J : Finset ι) (B : ι → Finset ℕ)
     (hB : ∀ j ∈ J, ∀ p ∈ B j, p.Prime)
     {f : ℕ → ℂ} (hbound : ∀ n, 0 < n → ‖f n‖ ≤ 1) {s : ℂ} (hs : 1 < s.re) :
@@ -135,7 +138,7 @@ theorem mrLSeries_indexedTypical_eq_mask_sum {ι : Type*} [DecidableEq ι]
   rw [hcoef, LSeries_sum hsum]
   simp only [F, LSeries_smul]
 
-theorem mrNorm_LSeries_indexedTypical_le_mask_norm_sum {ι : Type*} [DecidableEq ι]
+theorem mrNorm_LSeries_indexedTypical_le_mask_norm_sum {ι : Type*}
     (J : Finset ι) (B : ι → Finset ℕ)
     (hB : ∀ j ∈ J, ∀ p ∈ B j, p.Prime)
     {f : ℕ → ℂ} (hbound : ∀ n, 0 < n → ‖f n‖ ≤ 1) {s : ℂ} (hs : 1 < s.re) :

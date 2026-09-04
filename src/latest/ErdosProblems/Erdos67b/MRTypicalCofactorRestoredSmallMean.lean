@@ -20,7 +20,8 @@ open MRHalaszBands
 
 noncomputable section
 
-theorem mrExists_uniform_small_mean_restoredTypicalCofactor_of_localDistance {epsilon : ℝ} (hepsilon : 0 < epsilon) :
+theorem mrExists_uniform_small_mean_restoredTypicalCofactor_of_localDistance {epsilon : ℝ}
+  (hepsilon : 0 < epsilon) :
     ∃ delta : ℝ, 0 < delta ∧ delta ≤ 1 ∧ ∃ N₀ X₀ : ℕ, 0 < N₀ ∧
       ∀ {N X : ℕ}, N₀ ≤ N → X₀ ≤ X →
       ∀ (A : Finset ℕ), (∀ p ∈ A, p.Prime) →
@@ -35,8 +36,10 @@ theorem mrExists_uniform_small_mean_restoredTypicalCofactor_of_localDistance {ep
       ∀ {f : ℕ → ℂ}, IsMultiplicativeOnPositiveNat f →
         (∀ n, 0 < n → ‖f n‖ ≤ 1) → (∀ t : ℝ, |t| ≤ Real.log (X : ℝ) ^ 2 →
           (N : ℝ) ≤ pretentiousDistSq f (archimedeanTwist t) X) →
-        ‖positivePrefixSum (mrIndexedTypicalCofactorCoefficient A J B f) X‖ / (X : ℝ) ≤ epsilon := by
-  obtain ⟨C, Y, hC, hprefix⟩ := mrExists_norm_positivePrefix_typicalCofactor_div_le_restoredBudgets_of_localDistance
+        ‖positivePrefixSum (mrIndexedTypicalCofactorCoefficient A J B f) X‖ / (X : ℝ) ≤ epsilon
+          := by
+  obtain ⟨C, Y, hC, hprefix⟩ :=
+    mrExists_norm_positivePrefix_typicalCofactor_div_le_restoredBudgets_of_localDistance
   let S := mrCofactorSecondaryMeanConstant
   let M := mrCofactorRestoredMeanConstant C
   have hS : 0 ≤ S := mrCofactorSecondaryMeanConstant_nonneg
@@ -119,7 +122,8 @@ theorem mrExists_uniform_small_mean_restoredTypicalCofactor {epsilon : ℝ} (hep
         (∀ j ∈ J, ∀ p ∈ B j, 23 ≤ p) →
       ∀ {f : ℕ → ℂ}, IsMultiplicativeOnPositiveNat f →
         (∀ n, 0 < n → ‖f n‖ ≤ 1) → MRArchimedeanNonpretentious f N X →
-        ‖positivePrefixSum (mrIndexedTypicalCofactorCoefficient A J B f) X‖ / (X : ℝ) ≤ epsilon := by
+        ‖positivePrefixSum (mrIndexedTypicalCofactorCoefficient A J B f) X‖ / (X : ℝ) ≤ epsilon
+          := by
   obtain ⟨delta, hdelta, hdeltaOne, N₀, X₀, hN₀, hlocal⟩ :=
     mrExists_uniform_small_mean_restoredTypicalCofactor_of_localDistance hepsilon
   obtain ⟨X₁, hX₁⟩ := Filter.eventually_atTop.1

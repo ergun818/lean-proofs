@@ -9,7 +9,7 @@ the whole low coefficient. The two remaining generalized-Mangoldt windows
 retain the exact ordinary prime and higher-prime-power majorants.
 -/
 
-open scoped BigOperators Classical
+open scoped BigOperators
 open Finset
 
 namespace Erdos67b
@@ -52,7 +52,8 @@ theorem mrNorm_typicalCofactorSecondary_le_one {ι : Type*}
     (hbound : ∀ n, 0 < n → ‖f n‖ ≤ 1) (y : ℕ)
     (hAy : ∀ p ∈ A, p ≤ y) (hBy : ∀ j ∈ J, ∀ p ∈ B j, p ≤ y)
     {rho : ℝ} (hrho : 0 ≤ rho) (n : ℕ) :
-    ‖(mrTypicalCofactorLowArithmetic A J B f y * gsRealShift rho (gsA9HighArithmetic f y)) n‖ ≤ 1 := by
+    ‖(mrTypicalCofactorLowArithmetic A J B f y * gsRealShift rho (gsA9HighArithmetic f y)) n‖ ≤
+      1 := by
   by_cases hn : n = 0
   · subst n
     simp

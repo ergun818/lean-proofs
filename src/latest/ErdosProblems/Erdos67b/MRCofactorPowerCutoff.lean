@@ -28,7 +28,8 @@ theorem mrCofactorPowerCutoff_log_upper {delta : ℝ} (hdelta : 0 ≤ delta) {X 
     (hX : 1 ≤ X) :
     Real.log (mrCofactorPowerCutoff delta X : ℝ) ≤ delta * Real.log (X : ℝ) + Real.log 2 := by
   have hL : 0 ≤ Real.log (X : ℝ) := Real.log_nonneg (by exact_mod_cast hX)
-  have hone : 1 ≤ Real.exp (delta * Real.log (X : ℝ)) := Real.one_le_exp_iff.2 (mul_nonneg hdelta hL)
+  have hone : 1 ≤ Real.exp (delta * Real.log (X : ℝ)) :=
+    Real.one_le_exp_iff.2 (mul_nonneg hdelta hL)
   have hceil : (mrCofactorPowerCutoff delta X : ℝ) < Real.exp (delta * Real.log (X : ℝ)) + 1 :=
     Nat.ceil_lt_add_one (Real.exp_pos _).le
   calc
@@ -71,7 +72,8 @@ theorem mrEventually_log_pow_le_cofactorPowerCutoff {delta : ℝ} (hdelta : 0 < 
   filter_upwards [hbound] with X hX
   have hle : Real.log (X : ℝ) ^ k ≤ Real.exp (delta * Real.log (X : ℝ)) := by
     have habs : |Real.log (X : ℝ) ^ k| ≤ Real.exp (delta * Real.log (X : ℝ)) := by
-      simpa only [Function.comp_apply, Real.norm_eq_abs, abs_of_pos (Real.exp_pos _), one_mul] using hX
+      simpa only [Function.comp_apply, Real.norm_eq_abs,
+        abs_of_pos (Real.exp_pos _), one_mul] using hX
     exact (le_abs_self _).trans habs
   exact hle.trans (mrCofactorPowerCutoff_exp_le delta X)
 

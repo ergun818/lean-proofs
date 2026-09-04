@@ -16,7 +16,8 @@ namespace Erdos67b
 noncomputable section
 
 theorem mrTendsto_log_pow_div_cofactorPowerCutoff {delta : ℝ} (hdelta : 0 < delta) (k : ℕ) :
-    Tendsto (fun X : ℕ ↦ Real.log (X : ℝ) ^ k / (mrCofactorPowerCutoff delta X : ℝ)) atTop (𝓝 0) := by
+    Tendsto (fun X : ℕ ↦ Real.log (X : ℝ) ^ k / (mrCofactorPowerCutoff delta X : ℝ)) atTop (𝓝 0)
+      := by
   have hpoly : (fun r : ℝ ↦ r ^ k) =o[atTop] (fun r : ℝ ↦ Real.exp (delta * r)) := by
     simpa only [Real.rpow_natCast] using isLittleO_rpow_exp_pos_mul_atTop (k : ℝ) hdelta
   apply squeeze_zero'
@@ -77,7 +78,8 @@ theorem mrTendsto_cofactorPrimeMajorant_sq_div_log :
     simpa only [Function.comp_def, id_eq, pow_one] using
       (Real.isLittleO_pow_log_id_atTop (n := 1)).tendsto_div_nhds_zero.comp
         EulerSubpower.tendsto_log_nat_atTop
-  have hsq : Tendsto (fun X : ℕ ↦ Real.log (Real.log (X : ℝ)) ^ 2 / Real.log (X : ℝ)) atTop (𝓝 0) := by
+  have hsq : Tendsto (fun X : ℕ ↦ Real.log (Real.log (X : ℝ)) ^ 2 / Real.log (X : ℝ)) atTop (𝓝 0)
+    := by
     simpa only [Function.comp_def, id_eq] using
       (Real.isLittleO_pow_log_id_atTop (n := 2)).tendsto_div_nhds_zero.comp
         EulerSubpower.tendsto_log_nat_atTop
@@ -90,23 +92,27 @@ theorem mrTendsto_cofactorPrimeMajorant_sq_div_log :
   ring
 
 theorem mrTendsto_primeReciprocals_two_mul_div_log :
-    Tendsto (fun X : ℕ ↦ PrimeEstimates.primeReciprocals (2 * X) / Real.log (X : ℝ)) atTop (𝓝 0) := by
+    Tendsto (fun X : ℕ ↦ PrimeEstimates.primeReciprocals (2 * X) / Real.log (X : ℝ)) atTop (𝓝 0)
+      := by
   apply squeeze_zero'
   · filter_upwards [eventually_ge_atTop 2] with X hX
-    exact div_nonneg (PrimeEstimates.primeReciprocals_nonneg _) (Real.log_nonneg (by exact_mod_cast (show 1 ≤ X by omega)))
+    exact div_nonneg (PrimeEstimates.primeReciprocals_nonneg _) (Real.log_nonneg (by
+      exact_mod_cast (show 1 ≤ X by omega)))
   · filter_upwards [eventually_ge_atTop 2] with X hX
     exact div_le_div_of_nonneg_right (mrCofactor_primeReciprocals_two_mul_le hX)
       (Real.log_nonneg (by exact_mod_cast (show 1 ≤ X by omega)))
   · exact mrTendsto_cofactorPrimeMajorant_div_log
 
 theorem mrTendsto_primeReciprocals_two_mul_sq_div_log :
-    Tendsto (fun X : ℕ ↦ PrimeEstimates.primeReciprocals (2 * X) ^ 2 / Real.log (X : ℝ)) atTop (𝓝 0) := by
+    Tendsto (fun X : ℕ ↦ PrimeEstimates.primeReciprocals (2 * X) ^ 2 / Real.log (X : ℝ)) atTop (𝓝
+      0) := by
   apply squeeze_zero'
   · filter_upwards [eventually_ge_atTop 2] with X hX
     exact div_nonneg (sq_nonneg _) (Real.log_nonneg (by exact_mod_cast (show 1 ≤ X by omega)))
   · filter_upwards [eventually_ge_atTop 2] with X hX
     exact div_le_div_of_nonneg_right
-      (pow_le_pow_left₀ (PrimeEstimates.primeReciprocals_nonneg _) (mrCofactor_primeReciprocals_two_mul_le hX) 2)
+      (pow_le_pow_left₀ (PrimeEstimates.primeReciprocals_nonneg _)
+        (mrCofactor_primeReciprocals_two_mul_le hX) 2)
       (Real.log_nonneg (by exact_mod_cast (show 1 ≤ X by omega)))
   · exact mrTendsto_cofactorPrimeMajorant_sq_div_log
 

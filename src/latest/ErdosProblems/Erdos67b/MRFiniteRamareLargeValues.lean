@@ -1704,7 +1704,7 @@ polynomial.  Every product term uses the integrated finite-cofactor mean
 value, every bad-frequency term retains `1/Z`, and the endpoint-boundary
 energy from the exact finite factorisation remains displayed. -/
 theorem intervalIntegral_normSq_mrFiniteDyadicRamarePolynomial_le_integrated_partition
-    {ι : Type*} [DecidableEq ι] {V₀ : Finset ι}
+    {ι : Type*} {V₀ : Finset ι}
     {I : ℕ × ℕ} {D : ι → Finset ℕ} {J : ι → ℕ × ℕ}
     {Z j : ℕ}
     (hdisj : Set.PairwiseDisjoint (↑V₀) D)

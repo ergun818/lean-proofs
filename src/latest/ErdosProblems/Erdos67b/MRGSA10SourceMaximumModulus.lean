@@ -106,7 +106,7 @@ theorem norm_sourceDeleted_LSeries_div_sq_le_maximumModulusScalar
     (hlogX : 1 ≤ Real.log (X : ℝ))
     (hnonpret : MRArchimedeanNonpretentious f A X)
     {beta t T : ℝ} (hbeta0 : 0 ≤ beta) (hbeta : beta ≤ 1 / 4)
-    (hT0 : 0 ≤ T) (hTX : T ≤ X) (ht : |t| ≤ T) :
+    (_hT0 : 0 ≤ T) (hTX : T ≤ X) (ht : |t| ≤ T) :
     let c₀ := Erdos67b.EulerResidue.taoExponent X
     let s : ℂ := ((c₀ + beta : ℝ) : ℂ) + Complex.I * (t : ℂ)
     ‖LSeries (gsA10SourceDeleted f) s / s ^ 2‖ ≤

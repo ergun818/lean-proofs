@@ -21,7 +21,7 @@ open Erdos67b.LogBandCoverage
 
 /-- Eventually, failure of the separated `r=1` inequality forces the raw
 third-derivative step scale into the controlled-Weyl translation window. -/
-theorem exists_rawStepScale_two_threshold (H : ℕ) (hH : 0 < H) :
+theorem exists_rawStepScale_two_threshold (H : ℕ) (_hH : 0 < H) :
     ∃ X₀ : ℕ, ∀ X ≥ X₀, ∀ a U : ℝ,
       0 < a → (X : ℝ) ≤ U → U ≤ a →
       ¬8 * (H : ℝ) * a ≤ U ^ 2 →

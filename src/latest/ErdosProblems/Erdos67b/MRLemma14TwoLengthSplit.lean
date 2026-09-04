@@ -64,7 +64,7 @@ model. -/
 theorem dyadicTwoLengthPerronSegment_eq_low_add_high
     (S : Finset ℕ) (f : ℕ → ℂ)
     {Y x H₁ H₂ : ℕ} (hx : 0 < x) (hH₁ : 0 < H₁) (hH₂ : 0 < H₂)
-    {T U : ℝ} (hTU : T ≤ U) :
+    {T U : ℝ} (_hTU : T ≤ U) :
     dyadicTwoLengthPerronSegment S f Y x H₁ H₂ (-U) U =
       dyadicTwoLengthPerronSegment S f Y x H₁ H₂ (-T) T +
         dyadicTwoLengthPerronSegment S f Y x H₁ H₂ (-U) (-T) +
@@ -79,7 +79,7 @@ theorem dyadicTwoLengthPerronSegment_eq_low_add_high
       (dyadicVerticalDirichletPolynomial S f Y) hF hx hH₁
     have h₂ := continuous_mul_perronIncrementKernel_nat
       (dyadicVerticalDirichletPolynomial S f Y) hF hx hH₂
-    convert h₁.sub h₂ using 1 <;> ext t <;> simp only [Pi.sub_apply] <;> ring
+    convert h₁.sub h₂ using 1; ext t; simp only [Pi.sub_apply]; ring
   have hleft := intervalIntegral.integral_add_adjacent_intervals
     (hG.intervalIntegrable (μ := MeasureTheory.volume) (-U) (-T))
     (hG.intervalIntegrable (μ := MeasureTheory.volume) (-T) T)
@@ -105,7 +105,7 @@ theorem dyadicTwoLengthPerronSegment_eq_low_add_high
 corrected low model and the two high segments. -/
 theorem dyadicTwoLengthCorrectedPerronMeanSquare_le_low_add_high
     (S : Finset ℕ) (f : ℕ → ℂ)
-    {X H₁ H₂ : ℕ} (hX : 0 < X) (hH₁ : 0 < H₁) (hH₂ : 0 < H₂)
+    {X H₁ H₂ : ℕ} (_hX : 0 < X) (hH₁ : 0 < H₁) (hH₂ : 0 < H₂)
     {T U : ℝ} (hTU : T ≤ U) :
     dyadicTwoLengthCorrectedPerronMeanSquare S f X H₁ H₂ U ≤
       2 * dyadicTwoLengthCorrectedPerronMeanSquare S f X H₁ H₂ T +
@@ -183,7 +183,7 @@ pointwise absolute Perron-error estimate is introduced. -/
 theorem dyadicTwoLengthShortMeanSquare_le_of_uniform_high
     (S : Finset ℕ) (f : ℕ → ℂ)
     {X H₁ H₂ : ℕ} (hX : 0 < X) (hH₁ : 0 < H₁) (hH₂ : 0 < H₂)
-    {T E : ℝ} (hT : 0 < T)
+    {T E : ℝ} (_hT : 0 < T)
     (hhigh : ∀ U : ℝ, T ≤ U →
       dyadicTwoLengthPerronHighMeanSquare S f X X H₁ H₂ T U ≤ E) :
     dyadicTwoLengthShortMeanSquare S f X H₁ H₂ ≤

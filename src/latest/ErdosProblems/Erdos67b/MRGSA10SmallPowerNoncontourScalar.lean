@@ -216,7 +216,7 @@ theorem eventually_jointSource_add_shiu_smallPowerBlock_le :
         unfold gsA10SmallPowerNoncontourConstant
         ring
   unfold gsA10JointMovingProjectionSourceBudget
-  convert hfinal using 1 <;> dsimp only [y, R, d, e] <;> ring
+  convert hfinal using 1; dsimp only [y, R, d, e]; ring
 
 end
 

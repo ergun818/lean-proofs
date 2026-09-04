@@ -9,7 +9,7 @@ energy estimate. The resulting transform concerns the exact tailored
 coefficient, with no assertion yet about its finite-prefix error.
 -/
 
-open scoped BigOperators Classical LSeries.notation
+open scoped BigOperators LSeries.notation
 open Complex
 
 namespace Erdos67b
@@ -122,7 +122,8 @@ theorem mrExists_norm_typicalCofactorMovingPerronIntegral_le :
               (gsA10PrimeLambdaRightEnergyBound Cβ Q S y X T) ^ ((1 : ℝ) / 2) +
             2 * T * M *
               gsA10LambdaVerticalSplitError y X (taoExponent X - 2 * beta) (taoExponent X)) := by
-  obtain ⟨Cβ, hCβ, hvertical⟩ := exists_norm_intervalIntegral_mul_gsA10LambdaWindow_fixedHigh_pair_le
+  obtain ⟨Cβ, hCβ, hvertical⟩ :=
+    exists_norm_intervalIntegral_mul_gsA10LambdaWindow_fixedHigh_pair_le
   refine ⟨Cβ, hCβ, ?_⟩
   intro A hA J B N X y Q S hX hy hJ hB hdisj hsmall hmass hAy hBy f hmul hbound hnonpret
     hQ hQy hS hlogCβ alpha beta T hlogy ha0 ha hb0 hb hT hTX

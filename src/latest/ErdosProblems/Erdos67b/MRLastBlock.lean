@@ -31,7 +31,8 @@ theorem mrLogSchedule_exists_last_block {q₁ R : ℝ} (hq : 1 ≤ q₁)
     refine ⟨⌈Real.sqrt R⌉₊, ?_⟩
     have hc := Nat.le_ceil (Real.sqrt R)
     have hs := mrLogScheduleUpper_sq_index_le hq (j := ⌈Real.sqrt R⌉₊ + 1) (by omega)
-    have hj : (1 : ℝ) ≤ (⌈Real.sqrt R⌉₊ + 1 : ℕ) := by exact_mod_cast (by omega : 1 ≤ ⌈Real.sqrt R⌉₊ + 1)
+    have hj : (1 : ℝ) ≤ (⌈Real.sqrt R⌉₊ + 1 : ℕ) := by
+      exact_mod_cast (by omega : 1 ≤ ⌈Real.sqrt R⌉₊ + 1)
     push_cast at hs hj ⊢
     nlinarith
   let J := Nat.find hex
@@ -39,7 +40,8 @@ theorem mrLogSchedule_exists_last_block {q₁ R : ℝ} (hq : 1 ≤ q₁)
   have hJ : 1 ≤ J := by
     by_contra h
     have hzero : J = 0 := by omega
-    simp only [hzero, zero_add, mrLogScheduleUpper, Nat.cast_one, one_pow, one_mul, pow_one] at hnext
+    simp only [hzero, zero_add, mrLogScheduleUpper, Nat.cast_one,
+      one_pow, one_mul, pow_one] at hnext
     linarith
   have hprev : mrLogScheduleUpper q₁ J ≤ Real.sqrt R := by
     by_contra h
@@ -144,7 +146,8 @@ theorem mrUniformNoSmallCountFactor_le_last_block
     Real.exp_le_exp.mpr (by dsimp only [Q]; linarith)
   have h1 : 2 * H * Q * (4 + 2 * Real.pi) ≤
       2 * (R * Real.exp (Real.sqrt R / 6)) * (4 + 2 * Real.pi) := by
-    have hh := mul_le_mul_of_nonneg_right (mul_le_mul_of_nonneg_left hHQ (by norm_num : (0 : ℝ) ≤ 2))
+    have hh :=
+      mul_le_mul_of_nonneg_right (mul_le_mul_of_nonneg_left hHQ (by norm_num : (0 : ℝ) ≤ 2))
       (show 0 ≤ 4 + 2 * Real.pi by positivity)
     simpa only [← mul_assoc] using hh
   have h2 := mul_le_mul h1 hlinear (by positivity : 0 ≤ 3 + 4 * R + 4 * Q) (by positivity)
@@ -195,7 +198,8 @@ theorem mrArithmetic_noSmall_sample_card_le_last_block
       Real.exp ((1 / 2 - eta) * Real.log T) := by
   have hcount := mrArithmetic_noSmall_sample_card_le_optimized heta0 heta1 hp hq hlogq hbudget
     hJ le_rfl hbound S hT hST hsep hU
-  exact hcount.trans (mrNoSmallOptimizedCountBudget_le_last_block heta0 heta1 hp hq hpq hlogq hbudget
+  exact hcount.trans (mrNoSmallOptimizedCountBudget_le_last_block heta0 heta1 hp hq hpq hlogq
+    hbudget
     hJ hT hR hTR hJR hnext)
 
 end

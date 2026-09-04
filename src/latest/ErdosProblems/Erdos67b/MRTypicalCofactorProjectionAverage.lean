@@ -8,7 +8,7 @@ quantitative bound is the existing ordinary averaged majorant, with no
 loss depending on the denominator set or on the number of typical blocks.
 -/
 
-open scoped BigOperators Classical
+open scoped BigOperators
 open Set MeasureTheory
 
 namespace Erdos67b

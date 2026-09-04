@@ -93,7 +93,8 @@ theorem mrPrimeLine_large_log_values_card_le
     (S : Finset ℝ) (hST : ∀ t ∈ S, |t| ≤ T)
     (hsep : ∀ s ∈ S, ∀ t ∈ S, s ≠ t → 1 ≤ |s - t|)
     (hlarge : ∀ t ∈ S,
-      Real.exp (-a * Real.log R) ≤ ‖logarithmicDirichletPolynomial P (mrFinitePrimeLineCoefficient f) t‖) :
+      Real.exp (-a * Real.log R) ≤ ‖logarithmicDirichletPolynomial P (mrFinitePrimeLineCoefficient
+        f) t‖) :
     (S.card : ℝ) ≤ mrLargePrimeCountConstant * R ^ 2 *
       Real.exp (2 * a * Real.log R + (2 * a + 4) * (R / v) * Real.log R) := by
   have hv0 : 0 < v := by linarith
@@ -122,7 +123,8 @@ theorem mrPrimeSubblock_large_log_values_card_le
     (hsep : ∀ s ∈ S, ∀ t ∈ S, s ≠ t → 1 ≤ |s - t|)
     (hlarge : ∀ t ∈ S,
       Real.exp (-a * Real.log R) ≤
-        ‖logarithmicDirichletPolynomial (mrPrimeSubblock H P r) (mrFinitePrimeLineCoefficient f) t‖) :
+        ‖logarithmicDirichletPolynomial (mrPrimeSubblock H P r) (mrFinitePrimeLineCoefficient f) t‖)
+          :
     (S.card : ℝ) ≤ mrLargePrimeCountConstant * R ^ 2 *
       Real.exp (2 * a * Real.log R + (2 * a + 4) * (R / ((r : ℝ) / H)) * Real.log R) := by
   have hH0 : 0 < H := by linarith

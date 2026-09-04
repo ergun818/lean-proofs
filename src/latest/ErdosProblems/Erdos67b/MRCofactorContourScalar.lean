@@ -19,7 +19,8 @@ def mrCofactorContourMeanConstant (C : ℝ) : ℝ :=
       gsA10SourceHPPRectangleBound)
 
 theorem mrCofactorContourScalarConstant_nonneg : 0 ≤ mrCofactorContourScalarConstant := by
-  unfold mrCofactorContourScalarConstant mrCofactorAverageEnvelopeConstant mrCofactorEulerBaseConstant
+  unfold mrCofactorContourScalarConstant mrCofactorAverageEnvelopeConstant
+    mrCofactorEulerBaseConstant
   positivity
 
 theorem mrCofactorContourMeanConstant_nonneg {C : ℝ} (hC : 1 ≤ C) :
@@ -37,7 +38,8 @@ theorem mrCofactor_contourBudget_le_scalar {C : ℝ} (hC : 1 ≤ C) {N y X : ℕ
     mrWeightedCofactorContourBudget C (mrCofactorAverageEnvelope N X)
         y X (mrCofactorDyadicHeight X) (Real.log (y : ℝ))⁻¹ (Real.log (X : ℝ) ^ 2) ≤
       mrCofactorContourScalarConstant *
-        (10 * gsA10SmallPowerSourceRowBound C * gsA10PrimeLambdaHarmonicLogConstant * Real.log (X : ℝ) +
+        (10 * gsA10SmallPowerSourceRowBound C * gsA10PrimeLambdaHarmonicLogConstant * Real.log
+          (X : ℝ) +
           gsA10SourceHPPRectangleBound / Real.log (X : ℝ)) / (N * Real.log (y : ℝ)) := by
   let L := Real.log (X : ℝ)
   let R := 10 * gsA10SmallPowerSourceRowBound C

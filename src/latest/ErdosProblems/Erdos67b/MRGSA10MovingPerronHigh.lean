@@ -116,7 +116,7 @@ theorem LSeries_gsA10SourceTailoredCoefficient_eq_fourFactors_fixedHalasz
     {y X : ℕ} (hX : 1 < X)
     {alpha beta t : ℝ} (hlogy : 6 ≤ Real.log (y : ℝ))
     (halpha : alpha ≤ (Real.log (y : ℝ))⁻¹)
-    (hbeta0 : 0 ≤ beta)
+    (_hbeta0 : 0 ≤ beta)
     (hbeta : beta ≤ (Real.log (y : ℝ))⁻¹) :
     let g := gsA10SourceDeleted f
     let hmulG := gsDeletePrimeBand_isMultiplicativeOnPositiveNat
@@ -181,14 +181,14 @@ theorem LSeries_gsA10SourceTailoredCoefficient_eq_fourFactors_fixedHalasz
       simp only [sLow, sHigh, sigmaLow, Complex.add_re, Complex.add_im,
         Complex.ofReal_re, Complex.ofReal_im, Complex.mul_re, Complex.mul_im,
         Complex.I_re, Complex.I_im, zero_mul, one_mul, sub_zero, zero_add,
-        add_zero] <;> ring
+        add_zero]; ring
   have hWindowLowEq : sLow + (alpha : ℂ) =
       (((c₀ - 2 * beta : ℝ) : ℂ) + Complex.I * (t : ℂ)) := by
     apply Complex.ext <;>
       simp only [sLow, sigmaLow, Complex.add_re, Complex.add_im,
         Complex.ofReal_re, Complex.ofReal_im, Complex.mul_re, Complex.mul_im,
         Complex.I_re, Complex.I_im, zero_mul, one_mul, sub_zero, zero_add,
-        add_zero] <;> ring
+        add_zero]; ring
   rw [hHighEq, hWindowLowEq] at hfour
   simpa only [g, hmulG, c₀, sigmaLow, sLow, sHigh, W,
     gsA10SourceTailoredCoefficient, gsA10TwoBlockTailoredCoefficient,

@@ -56,7 +56,8 @@ theorem mrGS_norm_indexedTypical_central_error_le_source_of_distanceAllowance
     ‖gsTwistedPositivePrefixSum (mrIndexedTypicalCoefficient J B f) (t₁ + u) N / (N : ℂ) -
         gsPrefixArchimedeanFactor u N *
           (gsTwistedPositivePrefixSum (mrIndexedTypicalCoefficient J B f) t₁ N / (N : ℂ))‖ ≤
-      2 * (mrGSTypicalSourceErrorConstant * Real.exp (7 * L)) * (Real.log (N : ℝ)) ^ (-1 / 20 : ℝ) := by
+      2 * (mrGSTypicalSourceErrorConstant * Real.exp (7 * L)) *
+        (Real.log (N : ℝ)) ^ (-1 / 20 : ℝ) := by
   classical
   have hC : 0 ≤ mrGSTypicalSourceErrorConstant * Real.exp (7 * L) :=
     mul_nonneg mrGSTypicalSourceErrorConstant_nonneg (Real.exp_pos _).le

@@ -47,8 +47,7 @@ theorem gsA9HighArithmetic_isCompletelyMultiplicativeOnPositive
   have hhigh := primeBandCoefficient_isCompletelyMultiplicativeOnPositive
     hcomp (fun p ↦ ¬ p ≤ y)
   refine ⟨?_, ?_⟩
-  · simpa [gsA9HighArithmetic_one
-      hcomp.isMultiplicativeOnPositiveNat y] using hhigh.1
+  · simp [gsA9HighArithmetic_one hcomp.isMultiplicativeOnPositiveNat y]
   · intro m n hm hn
     rw [gsA9HighArithmetic_apply_of_ne_zero f y
           (Nat.mul_ne_zero hm.ne' hn.ne'),

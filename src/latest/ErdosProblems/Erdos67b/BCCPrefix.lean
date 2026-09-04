@@ -40,7 +40,7 @@ theorem sum_coeff_mul_star_eq_zero {N : ℕ} [NeZero N]
 Fourier layers are pairwise disjoint. -/
 theorem coeff_scaledCharacterPrefix_family_energy
     {q N L : ℕ} [NeZero q] [NeZero N]
-    {ι : Type*} [DecidableEq ι] (s : Finset ι)
+    {ι : Type*} (s : Finset ι)
     (χ : DirichletCharacter ℂ q) (hχ : χ.IsPrimitive)
     (coeff : ι → ℂ) (d t : ι → ℕ)
     (hd : ∀ i ∈ s, NeZero (d i))
@@ -70,7 +70,7 @@ theorem coeff_scaledCharacterPrefix_family_energy
 preceding Pythagorean identity. -/
 theorem coeff_scaledCharacterPrefix_family_energy_of_normSq_one
     {q N L : ℕ} [NeZero q] [NeZero N]
-    {ι : Type*} [DecidableEq ι] (s : Finset ι)
+    {ι : Type*} (s : Finset ι)
     (χ : DirichletCharacter ℂ q) (hχ : χ.IsPrimitive)
     (coeff : ι → ℂ) (d t : ι → ℕ)
     (hc : ∀ i ∈ s, Complex.normSq (coeff i) = 1)
@@ -96,7 +96,7 @@ theorem coeff_scaledCharacterPrefix_family_energy_of_normSq_one
 selected subfamily is at most the energy of the full family. -/
 theorem coeff_selected_prefix_energy_le_full
     {q N L : ℕ} [NeZero q] [NeZero N]
-    {ι : Type*} [DecidableEq ι] (selected full : Finset ι)
+    {ι : Type*} (selected full : Finset ι)
     (hsub : selected ⊆ full)
     (χ : DirichletCharacter ℂ q) (hχ : χ.IsPrimitive)
     (coeff : ι → ℂ) (d t : ι → ℕ)
@@ -146,7 +146,7 @@ theorem coeff_selected_prefix_energy_le_full
 orthogonal family into the sum of its exact block energies. -/
 theorem coeff_block_energy_le_medium_prefix_energy
     {q N H : ℕ} [NeZero q] [NeZero N]
-    {ι : Type*} [DecidableEq ι] (s : Finset ι)
+    {ι : Type*} (s : Finset ι)
     (χ : DirichletCharacter ℂ q) (hχ : χ.IsPrimitive)
     (coeff : ι → ℂ) (d t : ι → ℕ)
     (hc : ∀ i ∈ s, Complex.normSq (coeff i) = 1)
@@ -237,7 +237,7 @@ exceptional-set estimate is supplied in the scale-free form
 translation of the good residue classes. -/
 theorem bcc_full_family_normalized_diagonal_le_of_good
     {q N H : ℕ} [NeZero q] [NeZero N] (hH : 0 < H)
-    {ι : Type*} [DecidableEq ι]
+    {ι : Type*}
     (selected full : Finset ι) (hsub : selected ⊆ full)
     (χ : DirichletCharacter ℂ q) (hχ : χ.IsPrimitive)
     (coeff : ι → ℂ) (d t : ι → ℕ)
@@ -349,7 +349,7 @@ selected diagonal block energy.  Restoring the omitted cyclic residue classes
 costs exactly the displayed `2 ^ (-k)` term. -/
 theorem bcc_full_family_normalized_diagonal_le
     {q k H : ℕ} [NeZero q] (hH : 0 < H)
-    {ι : Type*} [DecidableEq ι]
+    {ι : Type*}
     (selected full : Finset ι) (hsub : selected ⊆ full)
     (χ : DirichletCharacter ℂ q) (hχ : χ.IsPrimitive)
     (coeff : ι → ℂ) (d t : ι → ℕ)
@@ -503,7 +503,7 @@ disjointness theorem supplies all off-diagonal cancellations, including for
 incomparable scales. -/
 theorem bcc_smooth_full_family_normalized_diagonal_le
     {q k K H : ℕ} [NeZero q] (hH : 0 < H)
-    {ι : Type*} [DecidableEq ι]
+    {ι : Type*}
     (selected full : Finset ι) (hsub : selected ⊆ full)
     (χ : DirichletCharacter ℂ q) (hχ : χ.IsPrimitive)
     (coeff : ι → ℂ) (d t : ι → ℕ)
@@ -551,7 +551,7 @@ normalized diagonal estimate bounds the number of retained layers uniformly
 when `q` ranges over `q ≤ Q`. -/
 theorem bcc_card_le_uniform_of_normalized_diagonal
     {q k Q : ℕ} [NeZero q]
-    {ι : Type*} [DecidableEq ι] (selected : Finset ι)
+    {ι : Type*} (selected : Finset ι)
     (d t : ι → ℕ) (hqQ : q ≤ Q)
     (hd : ∀ i ∈ selected, NeZero (d i))
     (ht : ∀ i ∈ selected, NeZero (t i))

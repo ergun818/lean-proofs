@@ -3,7 +3,7 @@ import ErdosProblems.Erdos67b.MRGSA10FiniteMassScalar
 
 /-! # Finite low mass of the actual typical cofactor -/
 
-open scoped BigOperators Classical LSeries.notation ComplexOrder
+open scoped BigOperators LSeries.notation ComplexOrder
 
 namespace Erdos67b
 

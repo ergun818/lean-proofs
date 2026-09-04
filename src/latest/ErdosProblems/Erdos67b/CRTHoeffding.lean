@@ -83,7 +83,9 @@ theorem residueProductMeasure_eq_uniform {ι : Type*} [Fintype ι] [DecidableEq 
   apply Measure.ext_of_singleton
   intro x
   rw [residueProductMeasure, Measure.pi_singleton]
-  simp [residueMeasure, uniformMeasure, ZMod.card, Fintype.card_pi]
+  simp only [residueMeasure, uniformMeasure, PMF.toMeasure_apply_fintype, Set.indicator_singleton,
+    PMF.uniformOfFintype_apply, ZMod.card, Finset.sum_pi_single', Finset.mem_univ, ↓reduceIte,
+    Fintype.card_pi, Nat.cast_prod]
   symm
   apply ENNReal.prod_inv_distrib
   intro i _ j _ hij
@@ -120,13 +122,14 @@ theorem residueCoordinates_iIndep {ι : Type*} [Fintype ι] [DecidableEq ι]
   exact iIndepFun_pi fun _ => aemeasurable_id
 
 /-- The CRT coordinate residues of one uniform residue modulo the product are independent. -/
-theorem crtCoordinates_iIndep {ι : Type*} [Fintype ι] [DecidableEq ι]
+theorem crtCoordinates_iIndep {ι : Type*} [Fintype ι]
     (a : ι → ℕ) [(i : ι) → NeZero (a i)]
     [NeZero (∏ i, a i)]
     (hcoprime : Pairwise (Function.onFun Nat.Coprime a)) :
     iIndepFun
       (fun i (z : ZMod (∏ i, a i)) => (ZMod.prodEquivPi a hcoprime z) i)
       (residueMeasure (∏ i, a i)) := by
+  classical
   let e := ZMod.prodEquivPi a hcoprime
   let μ := residueMeasure (∏ i, a i)
   have hpush : Measure.map e μ = residueProductMeasure a := by

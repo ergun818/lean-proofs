@@ -85,7 +85,8 @@ theorem mrGS_sourceMasked_linearError_le_log_rpow_of_distanceAllowance
     (hdist : pretentiousDistSq f (archimedeanTwist t₁) N ≤
       Real.log (Real.log (N : ℝ)) / 8 + L) :
     gsPrefixRenormalizationLinearError (gsDeletePrimeBand (archimedeanUntwist f t₁) Q) u N ≤
-      (mrGSTypicalSourceErrorConstant * Real.exp (7 * L)) * (1 + |u|) * (Real.log (N : ℝ)) ^ (-1 / 8 : ℝ) := by
+      (mrGSTypicalSourceErrorConstant * Real.exp (7 * L)) * (1 + |u|) *
+        (Real.log (N : ℝ)) ^ (-1 / 8 : ℝ) := by
   have hB := PrimeEstimates.mertensBound_nonneg
   have hmass := mrGS_primeBandMass_le_half_add_mertens Q hN hlog hsmall
   have hM := abs_le.mp (PrimeEstimates.abs_primeReciprocals_sub_log_log_le hN)

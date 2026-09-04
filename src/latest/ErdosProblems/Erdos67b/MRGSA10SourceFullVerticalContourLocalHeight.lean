@@ -187,5 +187,5 @@ end
 
 end Erdos67b.MRHalaszBands
 
-#print axioms
-  Erdos67b.MRHalaszBands.norm_gsA10SourceTailoredPerronIntegral_le_affineVerticalBudget_of_localHeight
+open Erdos67b.MRHalaszBands in
+#print axioms norm_gsA10SourceTailoredPerronIntegral_le_affineVerticalBudget_of_localHeight

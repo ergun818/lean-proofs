@@ -138,7 +138,8 @@ theorem intervalIntegral_eq_firstSmall_add_noSmall
     rw [intervalIntegrable_iff]
     exact (intervalIntegrable_iff.mp hg).indicator hB
   have hfirst (j : ℕ) := hint (disjointed small j) (MeasurableSet.disjointed hsmall j)
-  have hlast := hint (mrNoSmallFrequencyClass small J) (measurableSet_mrNoSmallFrequencyClass hsmall J)
+  have hlast := hint (mrNoSmallFrequencyClass small J)
+    (measurableSet_mrNoSmallFrequencyClass hsmall J)
   have hsum := IntervalIntegrable.sum (Finset.range (J + 1)) (fun j _ ↦ hfirst j)
   have heq : g = (∑ j ∈ Finset.range (J + 1), (disjointed small j).indicator g) +
       (mrNoSmallFrequencyClass small J).indicator g := by

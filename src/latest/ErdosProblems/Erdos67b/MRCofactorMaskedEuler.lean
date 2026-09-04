@@ -47,7 +47,8 @@ theorem mrNorm_masked_cofactor_LSeries_le_distance_add_mass
   rw [mrCofactorLSeries_eq_intervalIntegral A hmaskBound
     (by rw [halaszPoint_re]; exact one_lt_taoExponent hX)]
   have hpoint : ∀ u ∈ Ι (0 : ℝ) 1,
-      ‖LSeries (mrPrimeScaledCoefficient A (primeBandCoefficient f P) u) (halaszPoint X t)‖ ≤ E := by
+      ‖LSeries (mrPrimeScaledCoefficient A (primeBandCoefficient f P) u) (halaszPoint X t)‖ ≤ E :=
+        by
     intro u hu
     rw [Set.uIoc_of_le (by norm_num : (0 : ℝ) ≤ 1)] at hu
     have hscaledBound : ∀ n, 0 < n → ‖mrPrimeScaledCoefficient A f u n‖ ≤ 1 :=

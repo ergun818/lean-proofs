@@ -142,14 +142,17 @@ theorem norm_primeGraphDiscrepancy_sub_le (F G : ℕ → ℂ) (H h : ℕ) (s : F
       4 * (Nat.primeCounting H : ℝ) * B * ζ * (1 / δ + 1) := by
   have hb : ∀ j, ‖finiteSequenceBlock F H n j‖ ≤ B := fun j ↦ hF _
   have hb' : ∀ j, ‖finiteSequenceBlock G H n j‖ ≤ B := fun j ↦ hG _
-  have hblocks : ∀ j, ‖finiteSequenceBlock F H n j - finiteSequenceBlock G H n j‖ ≤ ζ := fun j ↦ hclose _
+  have hblocks : ∀ j, ‖finiteSequenceBlock F H n j - finiteSequenceBlock G H n j‖ ≤ ζ :=
+    fun j ↦ hclose _
   have hsum := norm_primeGraphSum_sub_le (finiteSequenceBlock F H n) (finiteSequenceBlock G H n)
     h s hB hζ hδ hb hb' hblocks hs (n : ZMod (primeGraphModulus H))
   have hmean := norm_primeGraphMean_sub_le (finiteSequenceBlock F H n) (finiteSequenceBlock G H n)
     h s hB hζ hδ hb hb' hblocks hs
   have heq : primeGraphDiscrepancy F H h s n - primeGraphDiscrepancy G H h s n =
-      (primeGraphSum (finiteSequenceBlock F H n) h s n - primeGraphSum (finiteSequenceBlock G H n) h s n) -
-        (primeGraphMean (finiteSequenceBlock F H n) h s - primeGraphMean (finiteSequenceBlock G H n) h s) := by
+      (primeGraphSum (finiteSequenceBlock F H n) h s n - primeGraphSum (finiteSequenceBlock G H n)
+        h s n) -
+        (primeGraphMean (finiteSequenceBlock F H n) h s - primeGraphMean (finiteSequenceBlock G H
+          n) h s) := by
     unfold primeGraphDiscrepancy
     abel
   rw [heq]
@@ -163,7 +166,8 @@ theorem exists_finite_unitDisk_approximation {ζ : ℝ} (hζ : 0 < ζ) :
   obtain ⟨t, ht, hfinite, hcover⟩ :=
     (isCompact_closedBall (0 : ℂ) 1).finite_cover_balls hζ
   have happrox (z : ℂ) (hz : ‖z‖ ≤ 1) : ∃ w ∈ hfinite.toFinset, ‖z - w‖ ≤ ζ := by
-    have hzball : z ∈ Metric.closedBall (0 : ℂ) 1 := by simpa only [Metric.mem_closedBall, dist_zero_right] using hz
+    have hzball : z ∈ Metric.closedBall (0 : ℂ) 1 := by
+      simpa only [Metric.mem_closedBall, dist_zero_right] using hz
     obtain ⟨w, hwt, hw⟩ := Set.mem_iUnion₂.mp (hcover hzball)
     exact ⟨w, hfinite.mem_toFinset.mpr hwt,
       (by simpa only [dist_eq_norm] using (Metric.mem_ball.mp hw).le)⟩

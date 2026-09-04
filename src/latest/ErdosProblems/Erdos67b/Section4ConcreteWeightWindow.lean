@@ -95,7 +95,7 @@ def concreteSection4WeightWindow (H X Y N : ℕ) (hY : 0 < Y)
   mass_pos := taoWindowMass_pos hY hYN
   weight_nonneg := fun n _ ↦ taoWindowWeight_nonneg X n
   weight_sum := rfl
-  center_lower := fun n hn ↦ taoWindowCenter_lower hn
+  center_lower := fun _n hn ↦ taoWindowCenter_lower hn
 
 /-- The elementary integral-test upper bound for the positive real
 Dirichlet series. -/
@@ -200,7 +200,7 @@ constant `2` comes from the two boundary terms and the telescoping variation
 of the weight. -/
 theorem abs_weighted_sum_le_two_mul_of_abs_prefix_le
     {L U : ℕ} (hL : 0 < L) (hLU : L ≤ U)
-    (f g : ℕ → ℝ) (B : ℝ) (hB : 0 ≤ B)
+    (f g : ℕ → ℝ) (B : ℝ) (_hB : 0 ≤ B)
     (hf_nonneg : ∀ n, 0 ≤ f n)
     (hf_anti : ∀ {m n}, 0 < m → m ≤ n → f n ≤ f m)
     (hprefix : ∀ N, |∑ n ∈ Finset.range N, g n| ≤ B) :
@@ -473,7 +473,7 @@ theorem tendsto_taoHighTailMass_zero {X : ℕ} (hX : 1 < X) :
         (∑' n : ℕ, taoWindowWeight X n) -
           ∑ n ∈ Finset.range (N + 1), taoWindowWeight X n := by
     rw [← hsum.sum_add_tsum_nat_add (N + 1)]
-    simp only [taoHighTailMass, Nat.add_assoc]
+    simp only [taoHighTailMass]
     ring
   rw [show taoHighTailMass X = fun N ↦
       (∑' n : ℕ, taoWindowWeight X n) -
@@ -550,7 +550,7 @@ theorem finiteShiftedResidueSeries_taoWindow_eq
         (taoWindowWeight X n : ℂ) =
           (n : ℂ) ^ (-(taoExponent X : ℂ)) := by
       unfold taoWindowWeight realDirichletWeight
-      convert Complex.ofReal_cpow (Nat.cast_nonneg n) (-taoExponent X) using 1 <;>
+      convert Complex.ofReal_cpow (Nat.cast_nonneg n) (-taoExponent X) using 1;
         simp
     rw [hweight]
     rw [if_pos ha]

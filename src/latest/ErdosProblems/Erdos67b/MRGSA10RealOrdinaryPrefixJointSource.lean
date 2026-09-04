@@ -224,5 +224,5 @@ end Erdos67b.MRHalaszBands
 
 #print axioms
   Erdos67b.MRHalaszBands.norm_positivePrefixMean_twoBlock_le_contour_add_jointSource
-#print axioms
-  Erdos67b.MRHalaszBands.exists_eventually_norm_positivePrefixMean_real_largeZero_twoBlock_le_jointSource
+open Erdos67b.MRHalaszBands in
+#print axioms exists_eventually_norm_positivePrefixMean_real_largeZero_twoBlock_le_jointSource

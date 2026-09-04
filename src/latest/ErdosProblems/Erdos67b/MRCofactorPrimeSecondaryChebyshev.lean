@@ -72,12 +72,11 @@ theorem mrNorm_positivePrefix_secondSecondaryPrimeIntegrand_le
             (d : ℝ) ^ (-(1 - alpha)))) := by
       apply Finset.sum_le_sum
       intro d hd
-      apply mul_le_mul_of_nonneg_left
+      apply mul_le_mul_of_nonneg_left _ (norm_nonneg _)
       apply mul_le_mul_of_nonneg_left
       · exact mrCast_div_rpow_le_mul_rpow_neg
           (Finset.mem_Icc.mp hd).1 hsigma
       · positivity
-      · exact norm_nonneg _
     _ = C * (X : ℝ) ^ (1 - alpha) *
         gsFiniteNormDirichletMass (low * highShift) X (1 - alpha) := by
       unfold gsFiniteNormDirichletMass

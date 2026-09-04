@@ -11,7 +11,7 @@ before the zeta bound. The two finite Lambda windows retain their ordinary
 higher-prime-power correction.
 -/
 
-open scoped BigOperators Classical LSeries.notation ComplexOrder
+open scoped BigOperators LSeries.notation ComplexOrder
 open Finset
 
 namespace Erdos67b
@@ -69,7 +69,8 @@ theorem mrNorm_positiveLow_mul_positiveHigh_le
       simpa only [Complex.ofReal_zero, mul_zero, add_zero] using hζ
     exact hζ''.trans hζ'
   change ‖LSeries (gsA9Low one y) (sigmaLow : ℂ)‖ * _ ≤ _
-  rw [mrLSeries_low_eq_smallPrime_mul_delete hone hbound hy (by simpa using (show 0 < sigmaLow by linarith)),
+  rw [mrLSeries_low_eq_smallPrime_mul_delete hone hbound hy
+    (by simpa using (show 0 < sigmaLow by linarith)),
     norm_mul, mul_assoc]
   calc
     _ ≤ gsA9SmallPrimeEulerBound *
@@ -151,7 +152,8 @@ theorem mrCofactorTailoredCoefficientMass_fixedTao_le {ι : Type*}
     {alpha beta : ℝ} (hlogy : 6 ≤ Real.log (y : ℝ))
     (ha0 : 0 ≤ alpha) (ha : alpha ≤ (Real.log (y : ℝ))⁻¹)
     (hb0 : 0 ≤ beta) (hb : beta ≤ (Real.log (y : ℝ))⁻¹) :
-    dirichletPerronCoefficientMass (mrTypicalCofactorTailoredCoefficient A J B f hmul y X alpha beta)
+    dirichletPerronCoefficientMass (mrTypicalCofactorTailoredCoefficient A J B f hmul y X alpha
+      beta)
         (taoExponent X - alpha - 2 * beta) ≤
       (gsA10SourceCoefficientMassConstant * (1 + Real.log (X : ℝ))) *
         ((gsA10OrdinaryLambdaWindowMassBase y X) ^ 2 *

@@ -129,7 +129,8 @@ theorem exists_eventually_primeGraphMultiplier_bounds {h : ℕ} (hh : 0 < h) :
   · intro t
     change ‖primeGraphMultiplier T h (PrimeEstimates.dyadicPrimes P) t‖ ≤ 16 / Real.log H
     have hp := hprime (2 * P) (by omega)
-    have hlog2P : 0 < Real.log (2 * P : ℕ) := Real.log_pos (by exact_mod_cast (by omega : 1 < 2 * P))
+    have hlog2P : 0 < Real.log (2 * P : ℕ) :=
+      Real.log_pos (by exact_mod_cast (by omega : 1 < 2 * P))
     have hlogle : Real.log (P : ℝ) ≤ Real.log (2 * P : ℕ) :=
       Real.log_le_log hPr (by exact_mod_cast (by omega : P ≤ 2 * P))
     calc

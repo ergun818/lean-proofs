@@ -53,7 +53,8 @@ theorem mrIntegerLogSum_le_dyadic_count
   | zero =>
       have hN : N = 0 := by norm_num only [pow_zero] at hNk; omega
       subst N
-      simp only [mrIntegerLogSum, Finset.Ico_self, Finset.sum_empty, norm_zero, Nat.cast_zero, zero_mul]
+      simp only [mrIntegerLogSum, Finset.Ico_self, Finset.sum_empty, norm_zero, Nat.cast_zero,
+        zero_mul]
       exact le_rfl
   | succ k ih =>
       by_cases hsmall : N < 2 ^ k
@@ -65,7 +66,8 @@ theorem mrIntegerLogSum_le_dyadic_count
       have hUN : 2 ^ k ≤ N := Nat.le_of_not_gt hsmall
       have hUpos : 0 < (2 : ℕ) ^ k := pow_pos (by norm_num) k
       have hUreal : (0 : ℝ) < (2 ^ k : ℕ) := by exact_mod_cast hUpos
-      have hUa : ((2 ^ k : ℕ) : ℝ) ≤ 8 * a := (by exact_mod_cast hUN : ((2 ^ k : ℕ) : ℝ) ≤ N).trans hNa
+      have hUa : ((2 ^ k : ℕ) : ℝ) ≤ 8 * a :=
+        (by exact_mod_cast hUN : ((2 ^ k : ℕ) : ℝ) ≤ N).trans hNa
       have hprev : 2 ^ k - 1 < 2 ^ k := by omega
       have hprevA : ((2 ^ k - 1 : ℕ) : ℝ) ≤ 8 * a :=
         (by exact_mod_cast Nat.sub_le (2 ^ k) 1 : ((2 ^ k - 1 : ℕ) : ℝ) ≤ (2 ^ k : ℕ)).trans hUa
@@ -87,7 +89,8 @@ theorem mrIntegerLogSum_le_dyadic_count
         mrRealLogBlock_le_sqrt ha hUreal hUa (by exact_mod_cast hP)
       rw [hsum]
       calc
-        _ ≤ ‖mrIntegerLogSum a (2 ^ k - 1)‖ + ‖∑ n ∈ range P, realBlockPhase a (2 ^ k : ℕ) n‖ := norm_add_le _ _
+        _ ≤ ‖mrIntegerLogSum a (2 ^ k - 1)‖ + ‖∑ n ∈ range P, realBlockPhase a (2 ^ k : ℕ) n‖ :=
+          norm_add_le _ _
         _ ≤ (k : ℝ) * B + B := add_le_add hfirst hblock
         _ = _ := by push_cast; ring
 
@@ -222,8 +225,10 @@ theorem mrIntegerLogSum_le
     linarith
   rw [hsplit]
   calc
-    _ ≤ ‖mrIntegerLogSum a M‖ + ‖∑ n ∈ range (N - M), realBlockPhase a (M + 1 : ℕ) n‖ := norm_add_le _ _
-    _ ≤ (800 * Real.sqrt a * (1 + Real.log (8 * a)) ^ 2) + 3 * (N : ℝ) / a := add_le_add hfirst htail'
+    _ ≤ ‖mrIntegerLogSum a M‖ + ‖∑ n ∈ range (N - M), realBlockPhase a (M + 1 : ℕ) n‖ :=
+      norm_add_le _ _
+    _ ≤ (800 * Real.sqrt a * (1 + Real.log (8 * a)) ^ 2) + 3 * (N : ℝ) / a :=
+      add_le_add hfirst htail'
     _ = _ := by ring
 
 theorem mrIntegerLogSum_eq_logarithmic (a : ℝ) (N : ℕ) :

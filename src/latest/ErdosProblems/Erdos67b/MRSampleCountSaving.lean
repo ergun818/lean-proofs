@@ -83,7 +83,8 @@ theorem mrArithmetic_noSmall_sample_card_le_small_power
     (S.card : ℝ) ≤ Real.exp (eta * R / 4) * Real.exp ((1 / 2 - eta) * Real.log T) := by
   have hcount := mrArithmetic_noSmall_sample_card_le_optimized heta0 heta1 hp hq hlogq hbudget
     hJ le_rfl hbound S hT hST hsep hU
-  exact hcount.trans (mrNoSmallOptimizedCountBudget_le_small_power heta0 heta1 hp hq hpq hlogq hbudget
+  exact hcount.trans (mrNoSmallOptimizedCountBudget_le_small_power heta0 heta1 hp hq hpq hlogq
+    hbudget
     hJ hT hR hTR hJR hnext hconstant hsqrt)
 
 end

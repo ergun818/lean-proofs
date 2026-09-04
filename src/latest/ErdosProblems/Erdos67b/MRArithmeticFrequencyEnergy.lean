@@ -28,7 +28,8 @@ theorem mrArithmetic_firstSmallClass_product_energy_le
           (fun t ↦ ‖logarithmicDirichletPolynomial (mrScheduledPrimeSubblock eta p₁ q₁ j r)
               (mrFinitePrimeLineCoefficient f) t *
             logarithmicDirichletPolynomial (mrScheduledTypicalCofactor blocks eta p₁ q₁ j r X)
-              (mrFiniteCofactorLineCoefficient (primesInBlock (mrScheduledPrimeInterval p₁ q₁ j)) f) t‖ ^ 2) t) ≤
+              (mrFiniteCofactorLineCoefficient (primesInBlock (mrScheduledPrimeInterval p₁ q₁ j)) f)
+                t‖ ^ 2) t) ≤
       512 * Real.exp 13 * (1 + Real.pi) * (T / X + 1) /
         ((j : ℝ) ^ 2 * Real.exp (mrLogScheduleUpper q₁ (j - 1))) := by
   have hlogq : 1 ≤ Real.log q₁ := by
@@ -50,15 +51,19 @@ theorem mrArithmetic_firstSmallClass_product_energy_le
   · intro r hr m hm
     exact norm_mrFiniteCofactorLineCoefficient_le_inv hbound (mrTypicalCofactorRectangle_pos hm)
   · intro r hr p hpP
-    exact (mrScheduledPrimeSubblock_dyadic_bounds (by linarith : 2 ≤ mrLogBlockResolution eta p₁ q₁ ((j - 1 : ℕ) : ℝ)) p hpP).1
+    exact (mrScheduledPrimeSubblock_dyadic_bounds (by linarith : 2 ≤ mrLogBlockResolution eta p₁ q₁
+      ((j - 1 : ℕ) : ℝ)) p hpP).1
   · intro r hr p hpP
-    exact (mrScheduledPrimeSubblock_dyadic_bounds (by linarith : 2 ≤ mrLogBlockResolution eta p₁ q₁ ((j - 1 : ℕ) : ℝ)) p hpP).2
+    exact (mrScheduledPrimeSubblock_dyadic_bounds (by linarith : 2 ≤ mrLogBlockResolution eta p₁ q₁
+      ((j - 1 : ℕ) : ℝ)) p hpP).2
   · intro r hr
-    exact mrNarrowPrimeInterval_upper_pos (by linarith : 0 < mrLogBlockResolution eta p₁ q₁ (j : ℝ)) r
+    exact mrNarrowPrimeInterval_upper_pos (by linarith : 0 < mrLogBlockResolution eta p₁ q₁ (j : ℝ))
+      r
   · intro r hr
     exact Nat.le_ceil _
   · intro r hr
-    exact mrNarrowPrimeInterval_upper_le_exp_shift (by linarith : 1 ≤ mrLogBlockResolution eta p₁ q₁ (j : ℝ)) r
+    exact mrNarrowPrimeInterval_upper_le_exp_shift (by linarith : 1 ≤ mrLogBlockResolution eta p₁ q₁
+      (j : ℝ)) r
   · intro r hr
     exact mrTypicalCofactorRectangle_subset _ _ _ _
 
@@ -77,7 +82,8 @@ theorem mrArithmetic_firstClass_product_energy_le
           (fun t ↦ ‖logarithmicDirichletPolynomial (mrScheduledPrimeSubblock eta p₁ q₁ 1 r)
               (mrFinitePrimeLineCoefficient f) t *
             logarithmicDirichletPolynomial (mrScheduledTypicalCofactor blocks eta p₁ q₁ 1 r X)
-              (mrFiniteCofactorLineCoefficient (primesInBlock (mrScheduledPrimeInterval p₁ q₁ 1)) f) t‖ ^ 2) t) ≤
+              (mrFiniteCofactorLineCoefficient (primesInBlock (mrScheduledPrimeInterval p₁ q₁ 1)) f)
+                t‖ ^ 2) t) ≤
       256 * Real.exp 1 * (1 + Real.pi) * (T / X * Real.exp q₁ + 1) *
         Real.exp (Real.log q₁ / 3 - (1 / 6 - eta) * p₁) := by
   have hq : 1 ≤ q₁ := (Real.one_le_exp_iff.mpr (by norm_num : (0 : ℝ) ≤ 1)).trans hqexp
@@ -88,7 +94,8 @@ theorem mrArithmetic_firstClass_product_energy_le
     (by norm_num : 1 ≤ (1 : ℕ))
   have hparam (r : ℕ) (hr : r ∈ mrScheduledSubblocks eta p₁ q₁ 1) :
       mrScheduledParameter eta p₁ q₁ 1 r ≤ q₁ := by
-    have hh := (mrScheduledParameter_bounds heta1 hp hq hlogq hbudget (by norm_num : 1 ≤ (1 : ℕ)) hr).2
+    have hh :=
+      (mrScheduledParameter_bounds heta1 hp hq hlogq hbudget (by norm_num : 1 ≤ (1 : ℕ)) hr).2
     simpa only [mrLogScheduleUpper, Nat.cast_one, one_pow, one_mul, pow_one] using hh
   apply mrScheduled_firstClass_rectangle_energy_le heta0 heta1 hp hqexp hbudget
     (mrScheduledPrimeSubblock eta p₁ q₁) (fun _ _ ↦ mrFinitePrimeLineCoefficient f)
@@ -99,14 +106,17 @@ theorem mrArithmetic_firstClass_product_energy_le
   · intro r hr
     exact mrNarrowPrimeInterval_lower_pos _ _
   · intro r hr
-    exact mrNarrowPrimeInterval_upper_pos (by linarith : 0 < mrLogBlockResolution eta p₁ q₁ ((1 : ℕ) : ℝ)) r
+    exact mrNarrowPrimeInterval_upper_pos (by linarith : 0 < mrLogBlockResolution eta p₁ q₁ ((1 : ℕ)
+      : ℝ)) r
   · intro r hr
     apply Nat.ceil_le.mpr
     exact (Real.exp_le_exp.mpr (hparam r hr)).trans hscale
   · intro r hr
-    exact mrNarrowPrimeInterval_dyadic_width (by linarith : 2 ≤ mrLogBlockResolution eta p₁ q₁ ((1 : ℕ) : ℝ)) r
+    exact mrNarrowPrimeInterval_dyadic_width (by linarith : 2 ≤ mrLogBlockResolution eta p₁ q₁ ((1 :
+      ℕ) : ℝ)) r
   · intro r hr
-    apply (mrNarrowPrimeInterval_upper_le_exp_shift (by linarith : 1 ≤ mrLogBlockResolution eta p₁ q₁ ((1 : ℕ) : ℝ)) r).trans
+    apply (mrNarrowPrimeInterval_upper_le_exp_shift (by linarith : 1 ≤ mrLogBlockResolution eta p₁
+      q₁ ((1 : ℕ) : ℝ)) r).trans
     exact Real.exp_le_exp.mpr (add_le_add (hparam r hr) le_rfl)
   · intro r hr
     exact mrTypicalCofactorRectangle_subset _ _ _ _
@@ -123,7 +133,8 @@ theorem mrArithmetic_combinedBoundary_energy_le
     {X : ℕ} (hX : 0 < X) {T : ℝ} (hT : 0 ≤ T) :
     (∫ t in -T..T, ‖∑ r ∈ mrScheduledSubblocks eta p₁ q₁ j,
       mrTypicalRamareBoundaryPolynomial blocks (mrScheduledPrimeInterval p₁ q₁ j)
-        (mrScheduledNarrowInterval eta p₁ q₁ j r) (mrScheduledPrimeSubblock eta p₁ q₁ j r) f X t‖ ^ 2) ≤
+        (mrScheduledNarrowInterval eta p₁ q₁ j r) (mrScheduledPrimeSubblock eta p₁ q₁ j r) f X t‖ ^
+          2) ≤
       32 * (1 + Real.pi) * (T / X + 1) *
         (6 / mrLogBlockResolution eta p₁ q₁ (j : ℝ) + 1 / X) := by
   have hH := mrLogSchedule_resolution_four_le heta1 hp hlogq hbudget hj
@@ -136,7 +147,8 @@ theorem mrArithmetic_combinedBoundary_energy_le
     (mrScheduledNarrowInterval eta p₁ q₁ j) (mrScheduledPrimeSubblock eta p₁ q₁ j)
     hbound hX (by positivity : 0 ≤ 2 / mrLogBlockResolution eta p₁ q₁ (j : ℝ)) heps
     (fun r _ ↦ mrNarrowPrimeInterval_lower_pos _ _)
-    (fun r _ ↦ mrNarrowPrimeInterval_relative_width (by linarith : 2 ≤ mrLogBlockResolution eta p₁ q₁ (j : ℝ)) r)
+    (fun r _ ↦ mrNarrowPrimeInterval_relative_width (by linarith : 2 ≤ mrLogBlockResolution eta p₁
+      q₁ (j : ℝ)) r)
     (fun r _ ↦ mrScheduledPrimeSubblock_integer_bounds hH0)
     (fun r _ ↦ mrScheduledPrimeSubblock_subset eta p₁ q₁ j r)
     (mrScheduledPrimeSubblock_partition eta p₁ q₁ j).1 hT

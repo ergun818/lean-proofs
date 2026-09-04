@@ -216,6 +216,6 @@ theorem l1Dist_logProb_law_translate_le_of_double
   have hbound := div_le_div_of_nonneg_left (by positivity : (0 : ℝ) ≤ 2 * (h : ℕ))
     (by positivity : (0 : ℝ) < (L : ℝ) / 2) hden
   have hscaled := mul_le_mul_of_nonneg_left hbound (Nat.cast_nonneg (Fintype.card α))
-  exact hdist.trans (by convert hscaled using 1 <;> field_simp <;> ring)
+  exact hdist.trans (by convert hscaled using 1; field_simp; ring)
 
 end Erdos67b

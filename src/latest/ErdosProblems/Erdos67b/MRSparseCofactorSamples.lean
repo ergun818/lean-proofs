@@ -56,7 +56,8 @@ theorem mrSparse_cofactor_subset_rectangle_le
         exact pow_le_pow_left₀ (norm_nonneg _) ((hb m hm).trans hi) 2
       _ = (A.card : ℝ) * (M : ℝ)⁻¹ ^ 2 := by simp only [Finset.sum_const, nsmul_eq_mul]
       _ ≤ ((mrDyadicCofactorRectangle (L, U) X).card : ℝ) * (M : ℝ)⁻¹ ^ 2 := by gcongr
-      _ = ((mrDyadicCofactorRectangle (L, U) X).card : ℝ) / (M : ℝ) ^ 2 := by rw [div_eq_mul_inv, inv_pow]
+      _ = ((mrDyadicCofactorRectangle (L, U) X).card : ℝ) / (M : ℝ) ^ 2 := by
+        rw [div_eq_mul_inv, inv_pow]
       _ ≤ _ := mrDyadicCofactorRectangle_cardRatio_cofactor_le hL hU hX hUL
   have hNU : N * U ≤ 4 * X := by
     calc
@@ -99,7 +100,8 @@ theorem mrSparse_smallPrime_product_le
       apply Finset.sum_le_sum
       intro t ht
       rw [norm_mul, mul_pow]
-      exact mul_le_mul_of_nonneg_right (pow_le_pow_left₀ (norm_nonneg _) (hsmall t ht) 2) (sq_nonneg _)
+      exact mul_le_mul_of_nonneg_right (pow_le_pow_left₀ (norm_nonneg _) (hsmall t ht) 2) (sq_nonneg
+        _)
     _ = V ^ 2 * ∑ t ∈ S, ‖logarithmicDirichletPolynomial A b t‖ ^ 2 := (Finset.mul_sum _ _ _).symm
     _ ≤ _ := mul_le_mul_of_nonneg_left
       (mrSparse_cofactor_subset_rectangle_le hL hU hX hUL hA hb S hT hST hsep) (sq_nonneg _)

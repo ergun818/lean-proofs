@@ -10,7 +10,7 @@ count factor. Source parameter selection and small-prime restoration are
 still required for the nonpretentious mean theorem.
 -/
 
-open scoped BigOperators Classical LSeries.notation
+open scoped BigOperators LSeries.notation
 open Complex Set MeasureTheory
 
 namespace Erdos67b
@@ -35,7 +35,8 @@ theorem mrExists_norm_typicalCofactorIntegratedPerron_div_le_averageEnvelope :
         (_heta0 : 0 ≤ eta) (_heta : eta ≤ (Real.log (y : ℝ))⁻¹)
         (_hT : 0 ≤ T) (_hTX : T ≤ X) (_hTK : T ≤ (((2 : ℕ) ^ K : ℕ) : ℝ)),
         ‖mrTypicalCofactorIntegratedPerron A J B (gsDeletePrimeBand f gsA9SmallPrime)
-          (gsDeletePrimeBand_isMultiplicativeOnPositiveNat hmul gsA9SmallPrime) y X eta T‖ / (X : ℝ) ≤
+          (gsDeletePrimeBand_isMultiplicativeOnPositiveNat hmul gsA9SmallPrime) y X eta T‖ / (X
+            : ℝ) ≤
           mrWeightedCofactorContourBudget C (mrCofactorAverageEnvelope N X) y X K eta T := by
   obtain ⟨C, Y, hC, hpoint⟩ := mrExists_norm_typicalCofactorPerron_le_of_lowHigh
   refine ⟨C, Y, hC, ?_⟩
@@ -82,7 +83,8 @@ theorem mrExists_norm_positivePrefix_typicalCofactor_div_le_uniformBudgets :
               y X K (Real.log (y : ℝ))⁻¹ ((Real.log (X : ℝ)) ^ 2) +
             gsA10OrdinaryMovingProjectionAveragedBound y X (Real.log (y : ℝ))⁻¹ +
             mrTypicalCofactorSecondaryBound y X := by
-  obtain ⟨C, Y, hC, hcontour⟩ := mrExists_norm_typicalCofactorIntegratedPerron_div_le_averageEnvelope
+  obtain ⟨C, Y, hC, hcontour⟩ :=
+    mrExists_norm_typicalCofactorIntegratedPerron_div_le_averageEnvelope
   refine ⟨C, Y, hC, ?_⟩
   intro A hA J B N X y hN hY hy hyX hJ hB hdisj hsmall hmass hAy hBy f hmul hbound hnonpret
     K hlogX hlogy hTX hTK hprimeMass hySize
@@ -110,7 +112,8 @@ theorem mrExists_norm_positivePrefix_typicalCofactor_div_le_uniformBudgets :
   calc
     _ ≤ ‖Q‖ / (X : ℝ) + ‖P - Q‖ / (X : ℝ) := by simpa only [add_div] using hdiv
     _ ≤ mrWeightedCofactorContourBudget C (mrCofactorAverageEnvelope N X) y X K eta T +
-        (gsA10OrdinaryMovingProjectionAveragedBound y X eta + mrTypicalCofactorSecondaryBound y X) :=
+        (gsA10OrdinaryMovingProjectionAveragedBound y X eta + mrTypicalCofactorSecondaryBound y
+          X) :=
       add_le_add hQ hdiff
     _ = _ := by ring
 

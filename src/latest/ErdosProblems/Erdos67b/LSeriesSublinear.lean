@@ -99,7 +99,6 @@ theorem norm_sum_Ioc_character_LSeries_term_le_of_uniformResidue
         simpa only [mul_comm] using
           Nat.lt_mul_div_succ (firstResidueAtOrAbove A c) hq
       apply (div_lt_iff₀ (by exact_mod_cast hq : (0 : ℝ) < q)).2
-      push_cast
       exact_mod_cast (by simpa only [mul_comm] using hnat)
     have hUheight : (firstResidueAtOrAbove A c : ℝ) / q ≤
         positiveLogCoefficient t := by
@@ -150,7 +149,7 @@ threshold selection so all rounding-sensitive analytic bookkeeping is
 visible in one finite statement. -/
 theorem norm_character_LSeries_le_of_height_data
     {Q R S₀ N : ℕ} (hQ : 0 < Q) (hR : 2 ≤ R)
-    {e : ℝ} (he : 0 < e) (heOne : e ≤ 1)
+    {e : ℝ} (he : 0 < e) (_heOne : e ≤ 1)
     (hRlarge : (8 : ℝ) ≤ e * R)
     (hresidue : ∀ {q A M : ℕ} [NeZero q] (c : ZMod q) {t : ℝ},
       0 < A → M ≤ 2 * A → t ≠ 0 →

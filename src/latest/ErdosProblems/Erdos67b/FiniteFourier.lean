@@ -16,7 +16,7 @@ noncomputable section
 
 section NormalizedFiniteFourier
 
-variable {G E : Type*} [AddCommGroup G] [Fintype G] [DecidableEq G]
+variable {G E : Type*} [AddCommGroup G] [Fintype G]
   [NormedAddCommGroup E] [InnerProductSpace ℂ E]
 
 /-- The finite Fourier coefficient normalized by `|G|`, i.e. by uniform averaging. -/
@@ -61,8 +61,8 @@ theorem sum_norm_sq_fourierCoeff_eq_average (F : G → E) :
       (∑ x : G, ‖F x‖ ^ 2) / Fintype.card G := by
   simpa only [div_eq_inv_mul] using (sum_norm_sq_fourierCoeff F)
 
-omit [DecidableEq G] in
-private lemma char_mul_conj_ff (psi : AddChar G ℂ) (x y : G) :
+omit [Fintype G] in
+private lemma char_mul_conj_ff [Finite G] (psi : AddChar G ℂ) (x y : G) :
     psi x * conj (psi y) = psi (x - y) := by
   calc
     psi x * conj (psi y) = psi x * (psi y)⁻¹ := by rw [psi.inv_apply_eq_conj]
@@ -70,7 +70,7 @@ private lemma char_mul_conj_ff (psi : AddChar G ℂ) (x y : G) :
     _ = psi (x + -y) := (psi.map_add_eq_mul x (-y)).symm
     _ = psi (x - y) := by rw [sub_eq_add_neg]
 
-private lemma sum_char_mul_conj_ff (x y : G) :
+private lemma sum_char_mul_conj_ff [DecidableEq G] (x y : G) :
     ∑ psi : AddChar G ℂ, psi x * conj (psi y) =
       if x = y then (Fintype.card G : ℂ) else 0 := by
   simp_rw [char_mul_conj_ff]

@@ -60,17 +60,20 @@ theorem mrTendsto_cofactorNearPrime_div {delta : ℝ} (hdelta : 0 < delta) :
         ring
       _ ≤ _ := add_le_add hfirst hsecond
   · simpa only [mul_zero, zero_add] using
-      (mrTendsto_primeReciprocals_two_mul_div_log.const_mul (4 * gsA10NearChebyshevConstant / delta)).add
+      (mrTendsto_primeReciprocals_two_mul_div_log.const_mul (4 * gsA10NearChebyshevConstant /
+        delta)).add
         (mrTendsto_primeReciprocals_two_mul_sq_div_log.const_mul 12)
 
 theorem mrTendsto_cofactorNearHPPMass {delta : ℝ} (hdelta : 0 < delta) :
-    Tendsto (fun X : ℕ ↦ gsA10OrdinaryNearHPPMassBudget (mrCofactorPowerCutoff delta X) X) atTop (𝓝 0) := by
+    Tendsto (fun X : ℕ ↦ gsA10OrdinaryNearHPPMassBudget (mrCofactorPowerCutoff delta X) X) atTop
+      (𝓝 0) := by
   have hZ : ∀ᶠ X : ℕ in atTop, 2 ≤ 2 * X ∧ 2 * X ≤ 2 * X := by
     filter_upwards [eventually_ge_atTop 1] with X hX
     exact ⟨by omega, le_rfl⟩
   have hG := mrTendsto_higherMass_at_cofactorPowerCutoff hdelta (fun X ↦ 2 * X) hZ
   have hHG := mrTendsto_harmonic_mul_higherMass_at_cofactorPowerCutoff hdelta (fun X ↦ 2 * X) hZ
-  simpa only [gsA10OrdinaryNearHPPMassBudget, mul_assoc, mul_zero, zero_pow (by norm_num : 2 ≠ 0), zero_add]
+  simpa only [gsA10OrdinaryNearHPPMassBudget, mul_assoc, mul_zero,
+    zero_pow (by norm_num : 2 ≠ 0), zero_add]
     using (hHG.const_mul 2).add (hG.pow 2)
 
 theorem mrTendsto_cofactorNearHPP_div {delta : ℝ} (hdelta : 0 < delta) :
@@ -92,7 +95,8 @@ theorem mrTendsto_cofactorNearHPP_div {delta : ℝ} (hdelta : 0 < delta) :
   ring
 
 theorem mrTendsto_cofactorHalfEndpoint {delta : ℝ} (hdelta : 0 < delta) :
-    Tendsto (fun X : ℕ ↦ gsA10OrdinaryHalfEndpointBound (mrCofactorPowerCutoff delta X) X) atTop (𝓝 0) := by
+    Tendsto (fun X : ℕ ↦ gsA10OrdinaryHalfEndpointBound (mrCofactorPowerCutoff delta X) X) atTop
+      (𝓝 0) := by
   have hZ : ∀ᶠ X : ℕ in atTop, 2 ≤ X ∧ X ≤ 2 * X := by
     filter_upwards [eventually_ge_atTop 2] with X hX
     exact ⟨hX, by omega⟩
@@ -107,7 +111,8 @@ theorem mrTendsto_cofactorHalfEndpoint {delta : ℝ} (hdelta : 0 < delta) :
   ring
 
 theorem mrTendsto_cofactorOrdinaryProjection {delta : ℝ} (hdelta : 0 < delta) :
-    Tendsto (fun X : ℕ ↦ gsA10OrdinaryMovingProjectionAveragedBound (mrCofactorPowerCutoff delta X) X
+    Tendsto (fun X : ℕ ↦ gsA10OrdinaryMovingProjectionAveragedBound (mrCofactorPowerCutoff delta
+      X) X
       (Real.log (mrCofactorPowerCutoff delta X : ℝ))⁻¹) atTop (𝓝 0) := by
   have heta := mrTendsto_inv_log_cofactorPowerCutoff hdelta
   have hnear := (mrTendsto_cofactorNearPrime_div hdelta).add (mrTendsto_cofactorNearHPP_div hdelta)

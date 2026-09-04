@@ -68,5 +68,5 @@ end
 
 end Erdos67b.MRHalaszBands
 
-#print axioms
-  Erdos67b.MRHalaszBands.exists_norm_intervalIntegral_LSeries_gsA10SourceTailored_fixedHigh_scalar_le
+open Erdos67b.MRHalaszBands in
+#print axioms exists_norm_intervalIntegral_LSeries_gsA10SourceTailored_fixedHigh_scalar_le

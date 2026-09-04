@@ -86,7 +86,8 @@ theorem norm_mrPrimeSquareErrorCoefficient_le
   have hnum : ‖mrTypicalValueCoefficient blocks Z f n -
       mrTypicalCommonCoefficient blocks Z (primesInBlock I) f n‖ ≤ 2 := by
     have ha := norm_mrTypicalValueCoefficient_le_one (blocks := blocks) (Z := Z) hbound hn
-    have hb := norm_mrTypicalCommonCoefficient_le_one (blocks := blocks) (Z := Z) (P := primesInBlock I)
+    have hb := norm_mrTypicalCommonCoefficient_le_one (blocks := blocks) (Z := Z) (P :=
+      primesInBlock I)
       (fun p hp ↦ (mem_primesInBlock.mp hp).1) hbound hn
     exact (norm_sub_le _ _).trans (by linarith)
   unfold mrPrimeSquareErrorCoefficient
@@ -139,7 +140,8 @@ theorem sum_normSq_mrPrimeSquareErrorCoefficient_le
         4 * (primeSquareDivisorCount (primesInBlock I) n : ℝ) / (X : ℝ) ^ 2 := by
       apply Finset.sum_le_sum
       intro n hn
-      exact normSq_mrPrimeSquareErrorCoefficient_le_count hI hX hmul hbound (Finset.mem_Ioc.mp hn).1.le
+      exact normSq_mrPrimeSquareErrorCoefficient_le_count hI hX hmul hbound (Finset.mem_Ioc.mp
+        hn).1.le
     _ = (4 / (X : ℝ) ^ 2) * ∑ n ∈ Finset.Ioc X (2 * X),
         (primeSquareDivisorCount (primesInBlock I) n : ℝ) := by
       rw [Finset.mul_sum]
@@ -170,11 +172,14 @@ theorem intervalIntegral_mrPrimeSquareError_le
     nlinarith [Real.pi_pos, mul_nonneg htau Real.pi_pos.le]
   calc
     _ = ‖∫ t in -T..T,
-        star (logarithmicDirichletPolynomial (Finset.Ioc X (2 * X)) (mrPrimeSquareErrorCoefficient blocks I Z f) t) *
-          logarithmicDirichletPolynomial (Finset.Ioc X (2 * X)) (mrPrimeSquareErrorCoefficient blocks I Z f) t‖ :=
+        star (logarithmicDirichletPolynomial (Finset.Ioc X (2 * X)) (mrPrimeSquareErrorCoefficient
+          blocks I Z f) t) *
+          logarithmicDirichletPolynomial (Finset.Ioc X (2 * X)) (mrPrimeSquareErrorCoefficient
+            blocks I Z f) t‖ :=
       intervalIntegral_norm_sq_eq_norm_conj_mul_self _ hT
     _ ≤ (2 * T + 2 * Real.pi * (2 * X : ℕ)) *
-        ∑ n ∈ Finset.Ioc X (2 * X), Complex.normSq (mrPrimeSquareErrorCoefficient blocks I Z f n) := hmean
+        ∑ n ∈ Finset.Ioc X (2 * X), Complex.normSq (mrPrimeSquareErrorCoefficient blocks I Z f n) :=
+          hmean
     _ ≤ (2 * T + 2 * Real.pi * (2 * X : ℕ)) * (16 / ((X : ℝ) * I.1)) :=
       mul_le_mul_of_nonneg_left hmass (by positivity)
     _ = (32 * (T / X + 2 * Real.pi)) / I.1 := by push_cast; field_simp; ring
@@ -222,7 +227,8 @@ theorem intervalIntegral_typical_le_common_add_primeSquare
     {E : Set ℝ} (hE : MeasurableSet E) {T : ℝ} (hT : 0 ≤ T) :
     (∫ t in -T..T, E.indicator (fun t ↦ ‖mrTypicalDyadicPolynomial blocks f X t‖ ^ 2) t) ≤
       2 * (∫ t in -T..T, E.indicator (fun t ↦ ‖logarithmicDirichletPolynomial (Finset.Ioc X (2 * X))
-        (fun n ↦ mrTypicalCommonCoefficient blocks (2 * X) (primesInBlock I) f n / (n : ℂ)) t‖ ^ 2) t) +
+        (fun n ↦ mrTypicalCommonCoefficient blocks (2 * X) (primesInBlock I) f n / (n : ℂ)) t‖ ^ 2)
+          t) +
       128 * (1 + Real.pi) * (T / X + 1) / I.1 := by
   simp_rw [mrTypicalDyadicPolynomial_eq_common_add_error blocks I f X]
   have hbase := intervalIntegral_indicator_add_le
@@ -234,8 +240,10 @@ theorem intervalIntegral_typical_le_common_add_primeSquare
   apply hbase.trans
   have hh := mul_le_mul_of_nonneg_left herror (by norm_num : (0 : ℝ) ≤ 2)
   calc
-    _ ≤ 2 * (∫ t in -T..T, E.indicator (fun t ↦ ‖logarithmicDirichletPolynomial (Finset.Ioc X (2 * X))
-        (fun n ↦ mrTypicalCommonCoefficient blocks (2 * X) (primesInBlock I) f n / (n : ℂ)) t‖ ^ 2) t) +
+    _ ≤ 2 * (∫ t in -T..T, E.indicator (fun t ↦ ‖logarithmicDirichletPolynomial (Finset.Ioc X (2 *
+      X))
+        (fun n ↦ mrTypicalCommonCoefficient blocks (2 * X) (primesInBlock I) f n / (n : ℂ)) t‖ ^ 2)
+          t) +
       2 * (64 * (1 + Real.pi) * (T / X + 1) / I.1) := add_le_add le_rfl hh
     _ = _ := by ring
 
@@ -259,7 +267,8 @@ theorem mrArithmetic_typical_firstSmallClass_energy_le
       4096 * Real.exp 13 * (1 + Real.pi) * (T / X + 1) /
         ((j : ℝ) ^ 2 * Real.exp (mrLogScheduleUpper q₁ (j - 1))) +
       128 * (1 + Real.pi) * (T / X + 1) *
-        (6 / mrLogBlockResolution eta p₁ q₁ (j : ℝ) + 1 / X + Real.exp (-mrLogScheduleLower p₁ q₁ j)) := by
+        (6 / mrLogBlockResolution eta p₁ q₁ (j : ℝ) + 1 / X + Real.exp (-mrLogScheduleLower p₁ q₁
+          j)) := by
   have hI : mrScheduledPrimeInterval p₁ q₁ j ∈ mrScheduledBlocks p₁ q₁ J :=
     Finset.mem_image.mpr ⟨j, Finset.mem_Icc.mpr ⟨by omega, hjJ⟩, rfl⟩
   have hL : 0 < (mrScheduledPrimeInterval p₁ q₁ j).1 := by
@@ -268,11 +277,13 @@ theorem mrArithmetic_typical_firstSmallClass_energy_le
   have hmeas : MeasurableSet (disjointed (mrArithmeticSmallFrequencySet eta p₁ q₁ f) j) :=
     MeasurableSet.disjointed (measurableSet_mrScheduledSmallFrequencySet _ _ _ _ _) j
   have hbase := intervalIntegral_typical_le_common_add_primeSquare hI hL hX hmul hbound hmeas hT
-  have hcommon := mrArithmetic_common_firstSmallClass_energy_le J heta0 heta1 hp hqexp hpq hbudget hj hbound hX hT
+  have hcommon :=
+    mrArithmetic_common_firstSmallClass_energy_le J heta0 heta1 hp hqexp hpq hbudget hj hbound hX hT
   have herror : 128 * (1 + Real.pi) * (T / X + 1) / (mrScheduledPrimeInterval p₁ q₁ j).1 ≤
       128 * (1 + Real.pi) * (T / X + 1) * Real.exp (-mrLogScheduleLower p₁ q₁ j) := by
     rw [div_eq_mul_inv]
-    exact mul_le_mul_of_nonneg_left (mrScheduledPrimeInterval_inv_lower_le_exp p₁ q₁ j) (by positivity)
+    exact mul_le_mul_of_nonneg_left (mrScheduledPrimeInterval_inv_lower_le_exp p₁ q₁ j) (by
+      positivity)
   apply hbase.trans
   have hh := add_le_add (mul_le_mul_of_nonneg_left hcommon (by norm_num : (0 : ℝ) ≤ 2)) herror
   apply hh.trans_eq
@@ -301,7 +312,8 @@ theorem mrArithmetic_typical_firstClass_energy_le
   have hmeas : MeasurableSet (disjointed (mrArithmeticSmallFrequencySet eta p₁ q₁ f) 1) :=
     MeasurableSet.disjointed (measurableSet_mrScheduledSmallFrequencySet _ _ _ _ _) 1
   have hbase := intervalIntegral_typical_le_common_add_primeSquare hI hL hX hmul hbound hmeas hT
-  have hcommon := mrArithmetic_common_firstClass_energy_le J heta0 heta1 hp hqexp hpq hbudget hbound hX hscale hT
+  have hcommon :=
+    mrArithmetic_common_firstClass_energy_le J heta0 heta1 hp hqexp hpq hbudget hbound hX hscale hT
   have hlowerOne : mrLogScheduleLower p₁ q₁ 1 = p₁ := by
     norm_num [mrLogScheduleLower, mrLogScheduleWeight]
   have herror : 128 * (1 + Real.pi) * (T / X + 1) / (mrScheduledPrimeInterval p₁ q₁ 1).1 ≤

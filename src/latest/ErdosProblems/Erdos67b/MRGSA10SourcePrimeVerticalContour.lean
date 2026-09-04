@@ -86,14 +86,14 @@ theorem rpow_half_mul_intervalIntegral_normSq_gsA10PrimeLambda_tao_le_affineRow_
         hmul y X
           (Erdos67b.EulerResidue.taoExponent X - beta) R A B hR hrow
     dsimp only [IL, Q, DL]
-    convert h using 1 <;> ring
+    convert h using 1; ring
   have hIRE : IR ≤ Q * DR := by
     have h :=
       intervalIntegral_normSq_gsA10PrimeLambdaPolynomial_le_affineRow
         hmul y X
           (Erdos67b.EulerResidue.taoExponent X + beta) R A B hR hrow
     dsimp only [IR, Q, DR]
-    convert h using 1 <;> ring
+    convert h using 1; ring
   have hILhalf : IL ^ ((1 : ℝ) / 2) ≤
       (Q * DL) ^ ((1 : ℝ) / 2) :=
     Real.rpow_le_rpow hIL hILE (by norm_num)
@@ -130,5 +130,5 @@ end
 
 end Erdos67b.MRHalaszBands
 
-#print axioms
-  Erdos67b.MRHalaszBands.rpow_half_mul_intervalIntegral_normSq_gsA10PrimeLambda_tao_le_affineRow_symmetric
+open Erdos67b.MRHalaszBands in
+#print axioms rpow_half_mul_intervalIntegral_normSq_gsA10PrimeLambda_tao_le_affineRow_symmetric

@@ -197,5 +197,7 @@ end
 
 end Erdos67b.MRHalaszBands
 
-#print axioms Erdos67b.MRHalaszBands.exists_norm_intervalIntegral_mul_gsA10PrimeLambda_fixedHigh_pair_le
-#print axioms Erdos67b.MRHalaszBands.exists_norm_intervalIntegral_mul_gsA10LambdaWindow_fixedHigh_pair_le
+open Erdos67b.MRHalaszBands in
+#print axioms exists_norm_intervalIntegral_mul_gsA10PrimeLambda_fixedHigh_pair_le
+open Erdos67b.MRHalaszBands in
+#print axioms exists_norm_intervalIntegral_mul_gsA10LambdaWindow_fixedHigh_pair_le

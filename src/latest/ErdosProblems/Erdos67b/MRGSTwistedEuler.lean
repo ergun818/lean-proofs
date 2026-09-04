@@ -57,7 +57,7 @@ theorem norm_archimedeanUntwist_sub_one_sq_le
   have hsq : ‖archimedeanUntwist f t p‖ ^ 2 ≤ 1 := by
     nlinarith [norm_nonneg (archimedeanUntwist f t p)]
   rw [← Complex.normSq_eq_norm_sq, Complex.normSq_sub]
-  simp only [Complex.normSq_eq_norm_sq, Complex.normSq_one,
+  simp only [Complex.normSq_eq_norm_sq,
     map_one, mul_one]
   change ‖archimedeanUntwist f t p‖ ^ 2 + 1 -
       2 * (archimedeanUntwist f t p).re ≤
@@ -99,7 +99,7 @@ theorem sq_sum_norm_archimedeanUntwist_sub_one_div_le
     · intro p hp
       dsimp [r, a, b]
       field_simp [ne_of_gt (hpPos p hp)]
-      simpa [sub_eq_add_neg, add_comm]
+      simp [sub_eq_add_neg]
   have ha : (∑ p ∈ primesUpTo N, a p) ≤
       2 * pretentiousDistSq f (archimedeanTwist t) N := by
     unfold pretentiousDistSq

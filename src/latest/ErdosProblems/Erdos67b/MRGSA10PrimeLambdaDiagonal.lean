@@ -232,7 +232,7 @@ the vertical Cauchy step. -/
 theorem exists_two_intervalIntegral_normSq_gsA10PrimeLambda_tao_le_betaSchur :
     ∃ Cβ : ℝ, 1 ≤ Cβ ∧
       ∀ {f : ℕ → ℂ} (hmul : IsMultiplicativeOnPositiveNat f)
-        (hbound : ∀ n, 0 < n → ‖f n‖ ≤ 1)
+        (_hbound : ∀ n, 0 < n → ‖f n‖ ≤ 1)
         (y X Q S : ℕ) (beta T : ℝ),
         2 ≤ X → 3 ≤ Q → Q ≤ y → 101 ≤ S →
         Real.log Cβ ≤ 2 * (S - 100 : ℕ) / 99 →
@@ -305,4 +305,5 @@ end
 end Erdos67b.MRHalaszBands
 
 #print axioms Erdos67b.MRHalaszBands.gsA10PrimeLambdaSchurWeight_le_vonMangoldt
-#print axioms Erdos67b.MRHalaszBands.exists_two_intervalIntegral_normSq_gsA10PrimeLambda_tao_le_betaSchur
+open Erdos67b.MRHalaszBands in
+#print axioms exists_two_intervalIntegral_normSq_gsA10PrimeLambda_tao_le_betaSchur

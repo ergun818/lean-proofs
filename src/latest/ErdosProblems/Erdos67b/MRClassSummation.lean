@@ -83,7 +83,8 @@ theorem mrSum_exp_neg_lower_le
         nlinarith
       simpa only [div_eq_mul_inv] using hh
     _ = Real.exp (-p₁) * ∑ j ∈ Finset.Icc 1 J, ((j : ℝ) ^ 2)⁻¹ := (Finset.mul_sum _ _ _).symm
-    _ ≤ Real.exp (-p₁) * 2 := mul_le_mul_of_nonneg_left (mrSum_Icc_inv_sq_le_two J) (Real.exp_pos _).le
+    _ ≤ Real.exp (-p₁) * 2 :=
+      mul_le_mul_of_nonneg_left (mrSum_Icc_inv_sq_le_two J) (Real.exp_pos _).le
     _ = _ := by ring
 
 theorem mrSum_higher_class_weight_le
@@ -110,13 +111,15 @@ theorem mrSum_higher_class_weight_le
     _ ≤ ∑ j ∈ Finset.Icc 1 J, Real.exp (-p₁) * ((j : ℝ) ^ 2)⁻¹ :=
       Finset.sum_le_sum_of_subset_of_nonneg hsub (fun _ _ _ ↦ by positivity)
     _ = Real.exp (-p₁) * ∑ j ∈ Finset.Icc 1 J, ((j : ℝ) ^ 2)⁻¹ := (Finset.mul_sum _ _ _).symm
-    _ ≤ Real.exp (-p₁) * 2 := mul_le_mul_of_nonneg_left (mrSum_Icc_inv_sq_le_two J) (Real.exp_pos _).le
+    _ ≤ Real.exp (-p₁) * 2 :=
+      mul_le_mul_of_nonneg_left (mrSum_Icc_inv_sq_le_two J) (Real.exp_pos _).le
     _ = _ := by ring
 
 theorem mrSum_class_error_terms_le
     {eta p₁ q₁ : ℝ} (hp : 1 ≤ p₁) (hq : 1 ≤ q₁) (J X : ℕ) :
     (∑ j ∈ Finset.Icc 1 J,
-      (6 / mrLogBlockResolution eta p₁ q₁ (j : ℝ) + 1 / (X : ℝ) + Real.exp (-mrLogScheduleLower p₁ q₁ j))) ≤
+      (6 / mrLogBlockResolution eta p₁ q₁ (j : ℝ) + 1 / (X : ℝ) + Real.exp (-mrLogScheduleLower p₁
+        q₁ j))) ≤
       12 / mrLogBlockResolution eta p₁ q₁ 1 + J / (X : ℝ) + 2 * Real.exp (-p₁) := by
   have hresolution := mul_le_mul_of_nonneg_left (mrSum_inv_resolution_le eta p₁ q₁ J)
     (by norm_num : (0 : ℝ) ≤ 6)
@@ -189,7 +192,8 @@ theorem mrAllFirstSmall_energy_le
   have hfirst : F 1 ≤ A + b 1 := by
     have hh := mrArithmetic_typical_firstClass_energy_le J hJ heta0 heta1 hp hqexp hpq hbudget
       hmul hbound hX hscale hT
-    have hlower : mrLogScheduleLower p₁ q₁ 1 = p₁ := by norm_num [mrLogScheduleLower, mrLogScheduleWeight]
+    have hlower : mrLogScheduleLower p₁ q₁ 1 = p₁ := by
+      norm_num [mrLogScheduleLower, mrLogScheduleWeight]
     dsimp only [F, A, b, C]
     simpa only [Nat.cast_one, hlower, mul_assoc] using hh
   have hnext : ∀ j ∈ Finset.Icc 2 J, F j ≤ a j + b j := by
@@ -215,7 +219,8 @@ theorem mrAllFirstSmall_energy_le
       (12 / mrLogBlockResolution eta p₁ q₁ 1 + (J : ℝ) / X + 2 * Real.exp (-p₁)) := by
     dsimp only [b]
     rw [← Finset.mul_sum]
-    exact mul_le_mul_of_nonneg_left (mrSum_class_error_terms_le (by linarith : 1 ≤ p₁) hq J X) (by positivity)
+    exact mul_le_mul_of_nonneg_left (mrSum_class_error_terms_le (by linarith : 1 ≤ p₁) hq J X) (by
+      positivity)
   calc
     _ ≤ A + (∑ j ∈ Finset.Icc 2 J, a j) + ∑ j ∈ Finset.Icc 1 J, b j := hsum
     _ ≤ A + 8192 * Real.exp 13 * C * Real.exp (-p₁) +
@@ -240,7 +245,8 @@ theorem mrTypical_energy_le_firstSmallBudget_add_noSmall
     {X : ℕ} (hX : 0 < X) (hscale : Real.exp q₁ ≤ X) {T : ℝ} (hT : 0 ≤ T) :
     (∫ t in -T..T, ‖mrTypicalDyadicPolynomial (mrScheduledBlocks p₁ q₁ J) f X t‖ ^ 2) ≤
       mrFirstSmallEnergyBudget eta p₁ q₁ X J T +
-        ∫ t in -T..T, (mrNoSmallFrequencyClass (mrArithmeticSmallFrequencySet eta p₁ q₁ f) J).indicator
+        ∫ t in -T..T, (mrNoSmallFrequencyClass (mrArithmeticSmallFrequencySet eta p₁ q₁ f)
+          J).indicator
           (fun t ↦ ‖mrTypicalDyadicPolynomial (mrScheduledBlocks p₁ q₁ J) f X t‖ ^ 2) t := by
   let g : ℝ → ℝ := fun t ↦ ‖mrTypicalDyadicPolynomial (mrScheduledBlocks p₁ q₁ J) f X t‖ ^ 2
   have hg : Continuous g := (continuous_logarithmicDirichletPolynomial _ _).norm.pow 2
@@ -252,14 +258,16 @@ theorem mrTypical_energy_le_firstSmallBudget_add_noSmall
     ext j
     simp only [Finset.mem_range, Finset.mem_insert, Finset.mem_Icc]
     omega
-  have hzero : (∫ t in -T..T, (disjointed (mrArithmeticSmallFrequencySet eta p₁ q₁ f) 0).indicator g t) = 0 := by
+  have hzero : (∫ t in -T..T, (disjointed (mrArithmeticSmallFrequencySet eta p₁ q₁ f) 0).indicator g
+    t) = 0 := by
     rw [mrArithmetic_firstSmall_zero]
     simp only [Set.indicator_empty, intervalIntegral.integral_zero]
   rw [hsets, Finset.sum_insert (by simp), hzero, zero_add] at hsplit
   calc
     _ = (∑ j ∈ Finset.Icc 1 J, ∫ t in -T..T,
         (disjointed (mrArithmeticSmallFrequencySet eta p₁ q₁ f) j).indicator g t) +
-        ∫ t in -T..T, (mrNoSmallFrequencyClass (mrArithmeticSmallFrequencySet eta p₁ q₁ f) J).indicator g t := hsplit
+        ∫ t in -T..T, (mrNoSmallFrequencyClass (mrArithmeticSmallFrequencySet eta p₁ q₁ f)
+          J).indicator g t := hsplit
     _ ≤ _ := add_le_add (mrAllFirstSmall_energy_le J hJ heta0 heta1 hp hqexp hpq hbudget
       hmul hbound hX hscale hT) le_rfl
 

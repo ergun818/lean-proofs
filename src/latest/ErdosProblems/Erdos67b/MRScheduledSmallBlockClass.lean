@@ -207,7 +207,8 @@ theorem scheduled_firstSmallBlock_enlarged_frequencyClass_energy_le
     exact (hcurParam s hs).1
   · intro s hs r hr
     have hvs : 1 ≤ mrScheduledParameter eta p₁ q₁ j s := by linarith [(hcurParam s hs).1]
-    exact amplification_cost_le_of_block_range hPprev (hprevParam r hr).1 (by linarith : 1 ≤ mrScheduledParameter eta p₁ q₁ j s + 1)
+    exact amplification_cost_le_of_block_range hPprev (hprevParam r hr).1 (by linarith : 1 ≤
+      mrScheduledParameter eta p₁ q₁ j s + 1)
       (add_le_add (hcurParam s hs).2 le_rfl)
       (mrLogSchedule_shifted_cost_separation heta0 hp hq hlogq hbudget hj)
   · exact mrLogBlock_covering_cost_le (by linarith) (by linarith) (by linarith) (by linarith)

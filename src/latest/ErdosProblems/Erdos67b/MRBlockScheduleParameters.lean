@@ -198,7 +198,8 @@ theorem exists_eventually_mrLogSchedule_initial
   refine ⟨rho, hrho, hrhoE, hrho1, ?_⟩
   have hsmall := Real.isLittleO_log_id_atTop.bound
     (show 0 < eta * rho / 4096 by positivity)
-  filter_upwards [hsmall, eventually_ge_atTop (Real.exp 1), eventually_ge_atTop (2 / rho)] with q hs hqe hqp
+  filter_upwards [hsmall, eventually_ge_atTop (Real.exp 1),
+    eventually_ge_atTop (2 / rho)] with q hs hqe hqp
   have hq0 : 0 < q := (Real.exp_pos 1).trans_le hqe
   have hq1 : 1 ≤ q := (Real.one_le_exp_iff.mpr (by norm_num : (0 : ℝ) ≤ 1)).trans hqe
   have hlog0 : 0 ≤ Real.log q := Real.log_nonneg hq1
@@ -220,7 +221,8 @@ theorem exists_mrLogSchedule_initial
     {eta epsilon : ℝ} (heta : 0 < eta) (hepsilon : 0 < epsilon) (Q : ℝ) :
     ∃ p q : ℝ, Q ≤ q ∧ Real.exp 1 ≤ q ∧ 2 ≤ p ∧ p ≤ q ∧ p / q ≤ epsilon ∧
       4096 * Real.log q ≤ eta * p := by
-  obtain ⟨rho, hrho, hrhoE, hrho1, heventual⟩ := exists_eventually_mrLogSchedule_initial heta hepsilon
+  obtain ⟨rho, hrho, hrhoE, hrho1, heventual⟩ :=
+    exists_eventually_mrLogSchedule_initial heta hepsilon
   obtain ⟨q, hq, hQ⟩ := (heventual.and (eventually_ge_atTop Q)).exists
   refine ⟨rho * q, q, hQ, hq.1, hq.2.1, hq.2.2.1, ?_, hq.2.2.2⟩
   have hq0 : 0 < q := (Real.exp_pos 1).trans_le hq.1

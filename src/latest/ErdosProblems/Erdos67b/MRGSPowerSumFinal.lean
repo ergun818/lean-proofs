@@ -287,7 +287,7 @@ private theorem abs_trapezoidal_error_one_le
   rw [← uIcc_of_le (by linarith : a ≤ a + 1)] at hdiff hdiffD hiter
   have hraw := @trapezoidal_error_le g a (a + 1)
     hdiff hdiffD zeta hiter 1 (by omega)
-  convert hraw using 1 <;> norm_num
+  convert hraw using 1; norm_num
 
 private theorem abs_trapezoidal_error_re_le
     {f f' f'' : ℝ → ℂ} {a zeta : ℝ}
@@ -368,7 +368,7 @@ private theorem abs_trapezoidal_error_im_le
 -/
 
 private theorem abs_re_complex_trapezoidal_cell_error_le
-    {f f' f'' : ℝ → ℂ} {a : ℝ} (ha : 0 < a)
+    {f f' f'' : ℝ → ℂ} {a : ℝ} (_ha : 0 < a)
     (hderiv : ∀ x ∈ Set.Icc a (a + 1), HasDerivAt f (f' x) x)
     (hderiv2 : ∀ x ∈ Set.Icc a (a + 1), HasDerivAt f' (f'' x) x)
     {zeta : ℝ} (hzeta : 0 ≤ zeta)
@@ -427,7 +427,7 @@ private theorem abs_re_complex_trapezoidal_cell_error_le
 -/
 
 private theorem abs_im_complex_trapezoidal_cell_error_le
-    {f f' f'' : ℝ → ℂ} {a : ℝ} (ha : 0 < a)
+    {f f' f'' : ℝ → ℂ} {a : ℝ} (_ha : 0 < a)
     (hderiv : ∀ x ∈ Set.Icc a (a + 1), HasDerivAt f (f' x) x)
     (hderiv2 : ∀ x ∈ Set.Icc a (a + 1), HasDerivAt f' (f'' x) x)
     {zeta : ℝ} (hzeta : 0 ≤ zeta)
@@ -627,12 +627,12 @@ theorem norm_sum_range_natLogTwist_sub_integral_le
           have hxpos : 0 < x := ha.trans_le hx.1
           have hnorm : ‖f'' x‖ = K / x ^ 2 := by
             dsimp [f'', K]
-            convert LogPhaseSum.norm_logPhase_secondDeriv (t := t) hxpos using 1 <;>
+            convert LogPhaseSum.norm_logPhase_secondDeriv (t := t) hxpos using 1;
               ring_nf
           rw [hnorm]
           exact div_le_div_of_nonneg_left hK (sq_pos_of_pos ha)
             ((sq_le_sq₀ ha.le (ha.le.trans hx.1)).2 hx.1))
-    convert hraw using 1 <;> ring_nf
+    convert hraw using 1; ring_nf
   have hint (n : ℕ) (hn : n < N) :
       IntervalIntegrable f volume ((n : ℝ) + 1) ((n : ℝ) + 2) := by
     have ha : 0 < (n : ℝ) + 1 := by positivity

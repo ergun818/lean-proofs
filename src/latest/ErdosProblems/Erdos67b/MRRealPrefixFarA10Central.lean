@@ -161,7 +161,7 @@ end
 
 end Erdos67b.MRHalaszBands
 
-#print axioms
-  Erdos67b.MRHalaszBands.exists_eventually_norm_gsA10MovingPerronIntegral_real_largeZero_le_movingRpow
-#print axioms
-  Erdos67b.MRHalaszBands.exists_eventually_norm_gsA10MovingPerronIntegrated_real_largeZero_le_movingRpow
+open Erdos67b.MRHalaszBands in
+#print axioms exists_eventually_norm_gsA10MovingPerronIntegral_real_largeZero_le_movingRpow
+open Erdos67b.MRHalaszBands in
+#print axioms exists_eventually_norm_gsA10MovingPerronIntegrated_real_largeZero_le_movingRpow

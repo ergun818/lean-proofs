@@ -291,7 +291,7 @@ end Erdos67b.MRHalaszBands
 
 #print axioms
   Erdos67b.MRHalaszBands.norm_LSeries_halaszPoint_le_one_add_log_mul_exp_of_distance
-#print axioms
-  Erdos67b.MRHalaszBands.norm_twoBlock_alternatingLow_deleteSmallPrimes_mul_high_le_wideHalaszPoint_of_distance
+open Erdos67b.MRHalaszBands in
+#print axioms norm_twoBlock_alternatingLow_deleteSmallPrimes_mul_high_le_wideHalaszPoint_of_distance
 #print axioms
   Erdos67b.MRHalaszBands.norm_twoBlock_alternatingLow_mul_high_le_wideHalaszPoint_of_distance

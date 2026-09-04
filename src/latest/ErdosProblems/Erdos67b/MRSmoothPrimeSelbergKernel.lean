@@ -36,7 +36,8 @@ theorem norm_mrSmoothPrimeSelbergKernel_le (D : ℕ) (hD : 2 ≤ D) {P : ℝ}
   calc
     _ ≤ (2000 * P / (1 + t ^ 2)) / Real.log (D : ℝ) +
         (D : ℝ) ^ 2 * (400 * (1 + |t|)) :=
-      add_le_add (div_le_div_of_nonneg_right (norm_mrScaledPrimeMellinIntegral_le hP t) hlog.le) le_rfl
+      add_le_add
+        (div_le_div_of_nonneg_right (norm_mrScaledPrimeMellinIntegral_le hP t) hlog.le) le_rfl
     _ = _ := by rw [div_div, mul_comm (1 + t ^ 2) (Real.log (D : ℝ))]; ring
 
 theorem mrMem_smoothPrimeKernelSupport {P : ℝ} (hP : 0 < P) {n : ℕ}

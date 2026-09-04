@@ -137,7 +137,8 @@ theorem mrNarrowPrimeInterval_dyadic_width {H : ℝ} (hH : 2 ≤ H) (r : ℕ) :
   have hratio : 2 / H ≤ (1 : ℝ) := (div_le_iff₀ hH0).mpr (by linarith)
   have hh := mrNarrowPrimeInterval_relative_width hH r
   have hm := mul_le_mul_of_nonneg_right hratio (Nat.cast_nonneg (mrNarrowPrimeInterval H r).1)
-  have hbound : ((mrNarrowPrimeInterval H r).2 : ℝ) ≤ 2 * (mrNarrowPrimeInterval H r).1 := by nlinarith
+  have hbound : ((mrNarrowPrimeInterval H r).2 : ℝ) ≤ 2 * (mrNarrowPrimeInterval H r).1 := by
+    nlinarith
   exact_mod_cast hbound
 
 theorem mrNarrowPrimeInterval_upper_le_exp_shift {H : ℝ} (hH : 1 ≤ H) (r : ℕ) :
@@ -204,7 +205,8 @@ theorem mrScheduledPrimeSubblock_dyadic_bounds
   exact ⟨hh.1, hh.2.trans (exp_next_subblock_le_double hH r)⟩
 
 theorem mrScheduledPrimeSubblock_partition (eta p₁ q₁ : ℝ) (j : ℕ) :
-    Set.PairwiseDisjoint (↑(mrScheduledSubblocks eta p₁ q₁ j)) (mrScheduledPrimeSubblock eta p₁ q₁ j) ∧
+    Set.PairwiseDisjoint (↑(mrScheduledSubblocks eta p₁ q₁ j)) (mrScheduledPrimeSubblock eta p₁ q₁
+      j) ∧
       (mrScheduledSubblocks eta p₁ q₁ j).biUnion (mrScheduledPrimeSubblock eta p₁ q₁ j) =
         primesInBlock (mrScheduledPrimeInterval p₁ q₁ j) := by
   constructor

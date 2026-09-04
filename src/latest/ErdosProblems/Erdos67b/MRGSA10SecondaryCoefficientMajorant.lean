@@ -40,19 +40,22 @@ theorem gsA10TwoBlockAlternatingLow_eq_zero_of_not_lowSupported
     simp [gsA9LowArithmetic, toArithmeticFunction, gsA9Low,
       primeBandCoefficient, hn, hnot]
   have h₂ : gsA9LowDeletionArithmetic f (fun p ↦ ¬ P₁ p ∧ P₂ p) y n = 0 := by
-    simp [gsA9LowDeletionArithmetic, toArithmeticFunction, gsA9LowDeletion,
-      primeBandCoefficient, hn]
+    simp only [gsA9LowDeletionArithmetic, toArithmeticFunction, gsA9LowDeletion,
+      primeBandCoefficient, not_and,
+      ArithmeticFunction.coe_mk, hn, ↓reduceIte, ite_eq_right_iff]
     intro hs
     exact (hnot ⟨hs.1, fun p hp ↦ (hs.2 p hp).1⟩).elim
   have h₃ : gsA9LowDeletionArithmetic f (fun p ↦ ¬ P₁ p ∧ ¬ P₂ p) y n = 0 := by
-    simp [gsA9LowDeletionArithmetic, toArithmeticFunction, gsA9LowDeletion,
-      primeBandCoefficient, hn]
+    simp only [gsA9LowDeletionArithmetic, toArithmeticFunction, gsA9LowDeletion,
+      primeBandCoefficient, not_and, Decidable.not_not,
+      ArithmeticFunction.coe_mk, hn, ↓reduceIte, ite_eq_right_iff]
     intro hs
     exact (hnot ⟨hs.1, fun p hp ↦ (hs.2 p hp).1⟩).elim
   have h₂₃ : gsA9LowDeletionArithmetic f
       (fun p ↦ (¬ P₁ p ∧ P₂ p) ∨ (¬ P₁ p ∧ ¬ P₂ p)) y n = 0 := by
-    simp [gsA9LowDeletionArithmetic, toArithmeticFunction, gsA9LowDeletion,
-      primeBandCoefficient, hn]
+    simp only [gsA9LowDeletionArithmetic, toArithmeticFunction, gsA9LowDeletion,
+      primeBandCoefficient, not_or, not_and, Decidable.not_not,
+      ArithmeticFunction.coe_mk, hn, ↓reduceIte, ite_eq_right_iff]
     intro hs
     exact (hnot ⟨hs.1, fun p hp ↦ (hs.2 p hp).1⟩).elim
   change gsA9LowArithmetic f y n -

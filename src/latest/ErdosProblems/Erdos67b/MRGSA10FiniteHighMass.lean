@@ -217,5 +217,6 @@ end
 
 end Erdos67b.MRHalaszBands
 
-#print axioms Erdos67b.MRHalaszBands.gsFiniteNormDirichletMass_gsA9HighArithmetic_le_positive_LSeries
+open Erdos67b.MRHalaszBands in
+#print axioms gsFiniteNormDirichletMass_gsA9HighArithmetic_le_positive_LSeries
 #print axioms Erdos67b.MRHalaszBands.gsFiniteNormDirichletMass_gsA9HighArithmetic_le_sourceConstant

@@ -8,7 +8,7 @@ of a proved pointwise contour bound. Source instances discharge those
 hypotheses with the actual cofactor estimates.
 -/
 
-open scoped BigOperators Classical LSeries.notation
+open scoped BigOperators LSeries.notation
 open Complex Set MeasureTheory
 
 namespace Erdos67b

@@ -10,7 +10,7 @@ moving power cancels the left prime-window growth before either parameter
 is integrated. The higher-power correction stays explicit.
 -/
 
-open scoped BigOperators Classical
+open scoped BigOperators
 open Set MeasureTheory
 
 namespace Erdos67b
@@ -85,7 +85,8 @@ theorem mrWeightedCofactorPointBudget_le_primeFactor
           4 * T * mrWeightedCofactorUniformSplitError y X * growth) :=
       mul_le_mul_of_nonneg_left (add_le_add le_rfl he) hfactor
     _ = _ := by
-      unfold mrWeightedCofactorContourCoefficient gsA10MovingRpowPrimeFactor gsA10MovingPerronKernelScale
+      unfold mrWeightedCofactorContourCoefficient gsA10MovingRpowPrimeFactor
+        gsA10MovingPerronKernelScale
       dsimp only [growth]
       ring
 
@@ -105,8 +106,10 @@ theorem mrExists_norm_typicalCofactorIntegratedPerron_div_le_weightedBudget :
         (_heta0 : 0 ≤ eta) (_heta : eta ≤ (Real.log (y : ℝ))⁻¹)
         (_hT : 0 ≤ T) (_hTX : T ≤ X) (_hTK : T ≤ (((2 : ℕ) ^ K : ℕ) : ℝ)),
         ‖mrTypicalCofactorIntegratedPerron A J B (gsDeletePrimeBand f gsA9SmallPrime)
-          (gsDeletePrimeBand_isMultiplicativeOnPositiveNat hmul gsA9SmallPrime) y X eta T‖ / (X : ℝ) ≤
-          mrWeightedCofactorContourBudget C (mrTypicalCofactorFixedHighEnvelope A N X) y X K eta T := by
+          (gsDeletePrimeBand_isMultiplicativeOnPositiveNat hmul gsA9SmallPrime) y X eta T‖ / (X
+            : ℝ) ≤
+          mrWeightedCofactorContourBudget C (mrTypicalCofactorFixedHighEnvelope A N X) y X K eta
+            T := by
   obtain ⟨C, Y, hC, hpoint⟩ := mrExists_norm_typicalCofactorMovingPerronIntegral_weighted_le
   refine ⟨C, Y, hC, ?_⟩
   intro A hA J B N X y hY hX hy hyX hJ hB hdisj hsmall hmass hAy hBy f hmul hbound hnonpret

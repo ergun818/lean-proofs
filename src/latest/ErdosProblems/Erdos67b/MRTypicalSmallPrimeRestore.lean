@@ -31,7 +31,7 @@ theorem mrLSeries_low_primeBand_eq_smallPrime_mul_delete
       (fun n hn ↦ norm_gsDeletePrimeBand_le_one hbound gsA9SmallPrime hn) P y hs]
   exact prod_filter_eq_smallPrimeEulerProduct_mul_delete hmul P hy hsmallP s
 
-theorem mrLSeries_low_indexedTypical_eq_smallPrime_mul_delete {ι : Type*} [DecidableEq ι]
+theorem mrLSeries_low_indexedTypical_eq_smallPrime_mul_delete {ι : Type*}
     (J : Finset ι) (B : ι → Finset ℕ)
     (hB : ∀ j ∈ J, ∀ p ∈ B j, p.Prime)
     (hlarge : ∀ j ∈ J, ∀ p ∈ B j, 23 ≤ p)
@@ -40,7 +40,8 @@ theorem mrLSeries_low_indexedTypical_eq_smallPrime_mul_delete {ι : Type*} [Deci
     {s : ℂ} (hs : 0 < s.re) :
     LSeries (gsA9Low (mrIndexedTypicalCoefficient J B f) y) s =
       gsA9SmallPrimeEulerProduct f s *
-        LSeries (gsA9Low (mrIndexedTypicalCoefficient J B (gsDeletePrimeBand f gsA9SmallPrime)) y) s := by
+        LSeries (gsA9Low (mrIndexedTypicalCoefficient J B (gsDeletePrimeBand f gsA9SmallPrime))
+          y) s := by
   classical
   rw [mrLSeries_low_indexedTypical_eq_mask_sum J B hB hbound y hs,
     mrLSeries_low_indexedTypical_eq_mask_sum J B hB
@@ -64,7 +65,7 @@ theorem mrPrimeScaled_deletePrimeBand (A : Finset ℕ) (f : ℕ → ℂ) (u : �
   unfold gsDeletePrimeBand
   exact (mrPrimeScaled_primeBandCoefficient A f (fun p ↦ ¬ P p) u).symm
 
-theorem mrLSeries_low_scaledTypical_eq_smallPrime_mul_delete {ι : Type*} [DecidableEq ι]
+theorem mrLSeries_low_scaledTypical_eq_smallPrime_mul_delete {ι : Type*}
     (A : Finset ℕ) (hA : ∀ p ∈ A, p.Prime) (J : Finset ι) (B : ι → Finset ℕ)
     (hB : ∀ j ∈ J, ∀ p ∈ B j, p.Prime)
     (hlarge : ∀ j ∈ J, ∀ p ∈ B j, 23 ≤ p)

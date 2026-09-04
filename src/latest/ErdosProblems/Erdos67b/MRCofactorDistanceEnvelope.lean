@@ -9,7 +9,7 @@ actual denominator average is performed. Only an inverse-distance cost
 remains, with all positive-line convergence already proved.
 -/
 
-open scoped BigOperators Classical LSeries.notation
+open scoped BigOperators LSeries.notation
 open Complex Set MeasureTheory
 
 namespace Erdos67b

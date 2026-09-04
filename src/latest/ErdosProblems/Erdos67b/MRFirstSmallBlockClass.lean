@@ -138,7 +138,8 @@ theorem firstSmallBlock_frequencyClass_energy_le
     have hvs := hv s hs
     linarith
   have hraw := firstSmallBlock_energy_le_double_sum I J P S a b u v F hP ha hb
-    (fun r hr ↦ (hu r hr).1) huv halpha0 hdelta0 hcost hgap hPlo hPhi hX hSlo hShi hF hE hT hsmall hcover
+    (fun r hr ↦ (hu r hr).1) huv halpha0 hdelta0 hcost hgap hPlo hPhi hX hSlo hShi hF hE hT hsmall
+      hcover
   have hbudget : H * q *
       (∑ s ∈ I, ∑ r ∈ J, Real.exp ((1 + 2 * alpha) * u r - delta * v s)) ≤
         4 * (1 / (j ^ 2 * Real.exp qprev)) := by
@@ -255,7 +256,8 @@ theorem firstSmallBlock_enlarged_frequencyClass_energy_le
     have hvs := hv s hs
     linarith
   have hraw := firstSmallBlock_enlarged_energy_le_double_sum I J P S a b u v F hP ha hb
-    (fun r hr ↦ (hu r hr).1) huv halpha0 hbeta hdelta0 hcost hgap hPlo hPhi hX hSlo hShi hF hE hT hsmall hcover
+    (fun r hr ↦ (hu r hr).1) huv halpha0 hbeta hdelta0 hcost hgap hPlo hPhi hX hSlo hShi hF hE hT
+      hsmall hcover
   have hbudget : H * q *
       (∑ s ∈ I, ∑ r ∈ J, Real.exp ((1 + 2 * alpha) * u r - delta * v s)) ≤
         4 * (1 / (j ^ 2 * Real.exp qprev)) := by

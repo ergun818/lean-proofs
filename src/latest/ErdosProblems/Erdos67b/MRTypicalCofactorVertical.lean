@@ -10,7 +10,7 @@ and the proved fixed-high window energies control its vertical integral.
 This does not yet include the Perron kernel or the coefficient projection.
 -/
 
-open scoped BigOperators Classical LSeries.notation
+open scoped BigOperators LSeries.notation
 
 namespace Erdos67b
 
@@ -83,7 +83,8 @@ theorem mrContinuous_LSeries_typicalCofactorLow_vertical {ι : Type*}
       _ ≤ ((sigma / 2 : ℝ) : EReal) := by simpa using hsum.abscissaOfAbsConv_le
       _ < (sigma : EReal) := by exact_mod_cast (by linarith : sigma / 2 < sigma)
   have hline : Continuous (fun t : ℝ ↦ (sigma : ℂ) + Complex.I * (t : ℂ)) := by fun_prop
-  exact (LSeries_differentiableOn (mrTypicalCofactorLowArithmetic A J B f y)).continuousOn.comp_continuous
+  exact (LSeries_differentiableOn (mrTypicalCofactorLowArithmetic A J B f
+    y)).continuousOn.comp_continuous
     hline (fun _ ↦ by simpa using habs)
 
 def mrTypicalCofactorFixedHighEnvelope (A : Finset ℕ) (N X : ℕ) : ℝ :=
@@ -122,7 +123,8 @@ theorem mrExists_norm_intervalIntegral_typicalCofactorTailored_le :
               (gsA10PrimeLambdaRightEnergyBound Cβ Q S y X T) ^ ((1 : ℝ) / 2) +
             2 * T * mrTypicalCofactorFixedHighEnvelope A N X *
               gsA10LambdaVerticalSplitError y X (taoExponent X - 2 * beta) (taoExponent X) := by
-  obtain ⟨Cβ, hCβ, hvertical⟩ := exists_norm_intervalIntegral_mul_gsA10LambdaWindow_fixedHigh_pair_le
+  obtain ⟨Cβ, hCβ, hvertical⟩ :=
+    exists_norm_intervalIntegral_mul_gsA10LambdaWindow_fixedHigh_pair_le
   refine ⟨Cβ, hCβ, ?_⟩
   intro A hA J B N X y Q S hX hy hJ hB hdisj hsmall hmass hAy hBy f hmul hbound hnonpret
     hQ hQy hS hlogCβ alpha beta T hlogy ha0 ha hb0 hb hT hTX
@@ -150,7 +152,8 @@ theorem mrExists_norm_intervalIntegral_typicalCofactorTailored_le :
   have hraw := hvertical hgmul hgbound y X Q S beta T
     (mrTypicalCofactorFixedHighEnvelope A N X) F (by omega) hQ hQy hS hlogCβ hb0 hT
     (Real.exp_pos _).le hFcont hFbound
-  have hid : (fun t : ℝ ↦ LSeries (mrTypicalCofactorTailoredCoefficient A J B g hgmul y X alpha beta)
+  have hid : (fun t : ℝ ↦ LSeries (mrTypicalCofactorTailoredCoefficient A J B g hgmul y X alpha
+    beta)
       ((sigma : ℂ) + Complex.I * (t : ℂ))) =
       fun t ↦ F t *
         LSeries (gsA10LambdaWindow (gsA9HighGeneralizedMangoldt hgmul y) y X)
@@ -158,7 +161,8 @@ theorem mrExists_norm_intervalIntegral_typicalCofactorTailored_le :
         LSeries (gsA10LambdaWindow (gsA9HighGeneralizedMangoldt hgmul y) y X)
           (halaszPoint X t) := by
     funext t
-    have hfour := mrLSeries_typicalCofactorTailored_eq_fourFactors A J B hgmul hgbound hX hlogy ha hb (t := t)
+    have hfour := mrLSeries_typicalCofactorTailored_eq_fourFactors A J B hgmul hgbound hX hlogy
+      ha hb (t := t)
     simpa only [F, sigma, mul_assoc] using hfour
   change ‖∫ t in -T..T, LSeries (mrTypicalCofactorTailoredCoefficient A J B g hgmul y X alpha beta)
     ((sigma : ℂ) + Complex.I * (t : ℂ))‖ ≤ _

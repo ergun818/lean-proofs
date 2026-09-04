@@ -63,7 +63,7 @@ theorem mrRemovedPrimeMass_outside_finset (A : Finset ℕ) {X : ℕ}
   simp only [Finset.mem_filter]
   exact ⟨fun h ↦ h.2, fun hp ↦ ⟨hA hp, hp⟩⟩
 
-theorem mrRemovedPrimeMass_outside_biUnion {ι : Type*} [DecidableEq ι]
+theorem mrRemovedPrimeMass_outside_biUnion {ι : Type*}
     (J : Finset ι) (B : ι → Finset ℕ) {X : ℕ}
     (hB : ∀ j ∈ J, B j ⊆ primesUpTo X)
     (hdisj : Set.PairwiseDisjoint (↑J : Set ι) B) :
@@ -75,7 +75,7 @@ theorem mrRemovedPrimeMass_outside_biUnion {ι : Type*} [DecidableEq ι]
     exact hB j hj hpj)]
   exact Finset.sum_biUnion hdisj
 
-theorem mrSum_exp_neg_le_of_subset_cost {ι : Type*} [DecidableEq ι]
+theorem mrSum_exp_neg_le_of_subset_cost {ι : Type*}
     (J : Finset ι) (D : Finset ι → ℝ) (m : ι → ℝ)
     {M lam kappa : ℝ} (hkappa : 0 ≤ kappa)
     (hD : ∀ S ⊆ J, lam * M + (1 - 2 * lam) * (∑ j ∈ S, m j) ≤ D S) :
@@ -95,7 +95,7 @@ theorem mrSum_exp_neg_le_of_subset_cost {ι : Type*} [DecidableEq ι]
 
 /-- The finite inclusion-exclusion sum retains each deleted block's
 prime mass. No pointwise mean-value estimate is assumed or concluded. -/
-theorem mrSum_exp_neg_mask_distance_le {ι : Type*} [DecidableEq ι]
+theorem mrSum_exp_neg_mask_distance_le {ι : Type*}
     (J : Finset ι) (B : ι → Finset ℕ) {X : ℕ}
     (hB : ∀ j ∈ J, B j ⊆ primesUpTo X)
     (hdisj : Set.PairwiseDisjoint (↑J : Set ι) B)

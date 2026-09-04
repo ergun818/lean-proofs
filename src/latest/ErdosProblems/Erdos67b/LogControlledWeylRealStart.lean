@@ -221,7 +221,7 @@ theorem exists_fixedDepth_realStart_threshold (r : ℕ) (hr : 2 ≤ r) :
         simpa [add_comm] using add_le_add_left hwindowX (X : ℝ)
       _ = 2 * X := by ring
       _ ≤ 2 * U := htwoX
-  exact _root_.Erdos67b.LogControlledWeyl.norm_sum_shiftedLogPhase_realStart_le_of_lower_or_rawStepScale_le
+  exact LogControlledWeyl.norm_sum_shiftedLogPhase_realStart_le_of_lower_or_rawStepScale_le
       hr hXone hP ha hXU hUX hboundary haupper hlargeX hfullWindow
 
 end

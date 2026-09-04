@@ -386,7 +386,7 @@ theorem ramareFiniteSubblockRectangleProduct_eq_dyadic_add_boundary
 /-- Coefficient-explicit partition identity, with an arbitrary full prime
 set `P`. -/
 theorem sum_mrFiniteDyadicRamareSubblockPolynomial_eq_full
-    {ι : Type*} [DecidableEq ι] {V : Finset ι}
+    {ι : Type*} {V : Finset ι}
     {P : Finset ℕ} {D : ι → Finset ℕ}
     (hdisj : Set.PairwiseDisjoint (↑V) D)
     (hcover : V.biUnion D = P)
@@ -416,7 +416,7 @@ subblocks.  Each subblock has its own cofactor range of length on the
 scale `Z/J(v).lo`; the sum of explicitly displayed boundary polynomials
 is the entire error. -/
 theorem mrFiniteDyadicRamarePolynomial_eq_sum_subblockProducts_sub_boundary
-    {ι : Type*} [DecidableEq ι] {V : Finset ι}
+    {ι : Type*} {V : Finset ι}
     {I : ℕ × ℕ} {D : ι → Finset ℕ} {J : ι → ℕ × ℕ}
     (hdisj : Set.PairwiseDisjoint (↑V) D)
     (hcover : V.biUnion D = primesInBlock I)
@@ -495,7 +495,7 @@ is the algebraic `H log Q` part of source Lemma 12: the number of narrow
 subblocks is displayed exactly, and the product energies and boundary
 energies remain separate. -/
 theorem intervalIntegral_normSq_mrFiniteDyadicRamarePolynomial_le_partition
-    {ι : Type*} [DecidableEq ι] {V : Finset ι}
+    {ι : Type*} {V : Finset ι}
     {I : ℕ × ℕ} {D : ι → Finset ℕ} {J : ι → ℕ × ℕ}
     (hdisj : Set.PairwiseDisjoint (↑V) D)
     (hcover : V.biUnion D = primesInBlock I)
@@ -1285,7 +1285,7 @@ eliminated.  The only analytic terms left are the genuine finite
 prime-polynomial times finite-cofactor-polynomial energies; all support
 enlargement errors are the explicit endpoint quantities above. -/
 theorem intervalIntegral_normSq_mrFiniteDyadicRamarePolynomial_le_products_add_boundary
-    {ι : Type*} [DecidableEq ι] {V : Finset ι}
+    {ι : Type*} {V : Finset ι}
     {I : ℕ × ℕ} {D : ι → Finset ℕ} {J : ι → ℕ × ℕ} {Z : ℕ}
     (hdisj : Set.PairwiseDisjoint (↑V) D)
     (hcover : V.biUnion D = primesInBlock I)

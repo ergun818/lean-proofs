@@ -65,7 +65,7 @@ theorem crtComplexMean_im {ι : Type*} [Fintype ι] [DecidableEq ι]
 
 /-- Complex Hoeffding on a single uniform CRT residue. -/
 theorem crt_bounded_complex_concentration
-    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {ι : Type*} [Fintype ι]
     (a : ι → ℕ) [(i : ι) → NeZero (a i)] [NeZero (∏ i, a i)]
     (hcoprime : Pairwise (Function.onFun Nat.Coprime a))
     (s : Finset ι) (f : (i : ι) → ZMod (a i) → ℂ) (radius : ι → ℝ≥0)
@@ -74,6 +74,7 @@ theorem crt_bounded_complex_concentration
     (residueMeasure (∏ i, a i)).real
       {z | t ≤ ‖crtComplexSum a hcoprime s f z - crtComplexMean a s f‖} ≤
       4 * Real.exp (-t ^ 2 / (8 * (∑ i ∈ s, radius i ^ 2 : ℝ≥0))) := by
+  classical
   let A : ZMod (∏ i, a i) → ℂ := fun z ↦
     crtComplexSum a hcoprime s f z - crtComplexMean a s f
   have hre := crt_bounded_bilinear_concentration a hcoprime s (fun _ ↦ 1)
@@ -121,7 +122,7 @@ theorem finiteEventMass_uniform_finset
 /-- Complex CRT tails in exactly the exponential-cardinality form used
 by the entropy transfer. -/
 theorem crt_complex_tail_card_mul_exp_le
-    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {ι : Type*} [Fintype ι]
     (a : ι → ℕ) [(i : ι) → NeZero (a i)] [NeZero (∏ i, a i)]
     (hcoprime : Pairwise (Function.onFun Nat.Coprime a))
     (s : Finset ι) (f : (i : ι) → ZMod (a i) → ℂ) (radius : ι → ℝ≥0)

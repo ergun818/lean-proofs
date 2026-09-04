@@ -40,7 +40,8 @@ theorem norm_primeGraphMean_le {H : ℕ} (b : Fin H → ℂ) (h : ℕ) (s : Fins
     rw [norm_smul, Real.norm_eq_abs, abs_of_nonneg (by positivity)]
     have hsum : ‖∑ x, primeGraphObservable b h s p x‖ ≤ (p.1 : ℝ) * primeGraphRadius B δ := by
       calc
-        ‖∑ x, primeGraphObservable b h s p x‖ ≤ ∑ x, ‖primeGraphObservable b h s p x‖ := norm_sum_le _ _
+        ‖∑ x, primeGraphObservable b h s p x‖ ≤ ∑ x, ‖primeGraphObservable b h s p x‖ :=
+          norm_sum_le _ _
         _ ≤ ∑ _x : ZMod p.1, primeGraphRadius B δ := Finset.sum_le_sum
           (fun x _ ↦ norm_primeGraphObservable_le b h s hB hδ hb hs p x)
         _ = _ := by rw [Finset.sum_const, Finset.card_univ, ZMod.card, nsmul_eq_mul]
@@ -112,7 +113,7 @@ theorem eventually_four_le_mul_nat_div_log {d : ℝ} (hd : 0 < d) :
 prime graph has small exceptional probability under the actual harmonic
 law. All constants and sampling thresholds precede the sequence. -/
 theorem exists_logProb_primeGraph_small_tail
-    {α : Type*} [Fintype α] [Nonempty α]
+    {α : Type*} [Finite α] [Nonempty α]
     (decode : α → ℂ) {B δ ρ κ : ℝ}
     (hB : 0 < B) (hδ : 0 < δ) (hρ : 0 < ρ) (hκ : 0 < κ)
     (hdecode : ∀ a, ‖decode a‖ ≤ B) (Hmin : ℕ) :
@@ -124,6 +125,7 @@ theorem exists_logProb_primeGraph_small_tail
           {n | ρ * entropyScale H₀ j / Real.log (entropyScale H₀ j) ≤
             ‖primeGraphDiscrepancy (decode ∘ F) (entropyScale H₀ j) h s n.1‖} ≤ κ := by
   classical
+  let := Fintype.ofFinite α
   obtain ⟨c, hc, H₁, hH₁, htail⟩ := exists_primeGraph_exponential_tail hB hδ hρ
   obtain ⟨H₂, hH₂⟩ := eventually_atTop.mp (eventually_four_le_mul_nat_div_log (mul_pos hc hκ))
   let H₀ := max Hmin (max H₁ H₂)
@@ -181,11 +183,11 @@ theorem exists_logProb_primeGraph_small_tail
 uniformly over finite-alphabet sequences and all eligible prime subsets.
 This conclusion has no analytic input hypothesis. -/
 theorem exists_logProb_primeGraph_decoupling
-    {α : Type*} [Fintype α] [Nonempty α]
+    {α : Type*} [Finite α] [Nonempty α]
     (decode : α → ℂ) {B δ ε : ℝ} (hB : 0 < B) (hδ : 0 < δ) (hε : 0 < ε)
     (hdecode : ∀ a, ‖decode a‖ ≤ B) (Hmin : ℕ) :
     ∃ H₀ J L₀ : ℕ, Hmin ≤ H₀ ∧ 2 ≤ H₀ ∧ 0 < J ∧ 0 < L₀ ∧
-      ∀ (L U : ℕ) (hL : 0 < L) (hU : 2 * L ≤ U), L₀ ≤ L →
+      ∀ (L U : ℕ) (_hL : 0 < L) (_hU : 2 * L ≤ U), L₀ ≤ L →
       ∀ F : ℕ → α, ∃ j < J, ∀ (h : ℕ) (s : Finset ℕ),
         (∀ p ∈ s, δ * entropyScale H₀ j ≤ p) →
         ‖logProbExpectation L U

@@ -83,7 +83,8 @@ theorem mrLogPrimeInterval_reciprocalMass_lower {p q : ℝ} (hp : 2 ≤ p) (hpq 
     exact_mod_cast (by omega : 1 < (mrLogPrimeInterval p q).1 - 1)
   have hloglogL : Real.log (Real.log (((mrLogPrimeInterval p q).1 - 1 : ℕ) : ℝ)) ≤ Real.log p :=
     Real.log_le_log (Real.log_pos hLm) hlogL
-  have hloglogU : Real.log q - Real.log 2 ≤ Real.log (Real.log ((mrLogPrimeInterval p q).2 : ℝ)) := by
+  have hloglogU : Real.log q - Real.log 2 ≤ Real.log (Real.log ((mrLogPrimeInterval p q).2 : ℝ)) :=
+    by
     have hh := Real.log_le_log (by linarith : 0 < q / 2) hlogU
     simpa only [Real.log_div (by linarith : q ≠ 0) (by norm_num : (2 : ℝ) ≠ 0)] using hh
   rw [mrPrimeBlock_reciprocalMass_eq (by omega : 0 < (mrLogPrimeInterval p q).1)]
@@ -93,7 +94,8 @@ theorem mrLogSchedule_log_ratio {p₁ q₁ : ℝ} (hp : 0 < p₁) (hq : 1 ≤ q�
     {j : ℕ} (hj : 1 ≤ j) :
     Real.log (mrLogScheduleUpper q₁ j) - Real.log (mrLogScheduleLower p₁ q₁ j) =
       2 * Real.log (j : ℝ) + Real.log q₁ - Real.log p₁ := by
-  have hw : 0 < mrLogScheduleWeight q₁ j := lt_of_lt_of_le (by norm_num) (mrLogScheduleWeight_one_le hq hj)
+  have hw : 0 < mrLogScheduleWeight q₁ j :=
+    lt_of_lt_of_le (by norm_num) (mrLogScheduleWeight_one_le hq hj)
   have hj0 : (0 : ℝ) < j := by exact_mod_cast hj
   have hq0 : 0 < q₁ := by linarith
   have hQ : mrLogScheduleUpper q₁ j = mrLogScheduleWeight q₁ j * (j : ℝ) ^ 2 * q₁ := by
@@ -119,7 +121,8 @@ theorem mrScheduledPrimeInterval_reciprocalMass_lower
     nlinarith
   have hh := mrLogPrimeInterval_reciprocalMass_lower hpj hscale
   rw [show Real.log (mrLogScheduleUpper q₁ j) - Real.log (mrLogScheduleLower p₁ q₁ j) =
-    2 * Real.log (j : ℝ) + Real.log q₁ - Real.log p₁ from mrLogSchedule_log_ratio (by linarith) hq hj] at hh
+    2 * Real.log (j : ℝ) + Real.log q₁ - Real.log p₁ from mrLogSchedule_log_ratio (by linarith) hq
+      hj] at hh
   exact hh
 
 theorem mrScheduledPrimeInterval_reciprocalMass_ge_two_log

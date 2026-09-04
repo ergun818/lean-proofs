@@ -506,7 +506,7 @@ theorem tsum_weightedPrimeDifference_le_sqrt {h : ℕ →*₀ ℂ}
           (p : ℝ) ^ (-1 : ℝ) * (p : ℝ) ^ (1 - 2 * u) := by
         rw [← Real.rpow_natCast]
         rw [← Real.rpow_mul hp0.le]
-        convert Real.rpow_add hp0 (-1 : ℝ) (1 - 2 * u) using 1 <;> ring_nf
+        convert Real.rpow_add hp0 (-1 : ℝ) (1 - 2 * u) using 1; ring_nf
       rw [mul_pow, hpow, Real.rpow_neg_one]
       field_simp
       exact le_rfl)
@@ -628,7 +628,7 @@ theorem tsum_twistedWeightedSummandHom_eq_LSeries {r : ℕ}
   apply tsum_congr
   intro n
   rcases eq_or_ne n 0 with rfl | hn
-  · simp [twistedWeightedSummandHom, twistCoefficient]
+  · simp [twistedWeightedSummandHom]
   · simp only [twistedWeightedSummandHom_apply,
       LSeries.term_of_ne_zero hn, twistCoefficient, div_eq_mul_inv,
       Complex.cpow_neg]

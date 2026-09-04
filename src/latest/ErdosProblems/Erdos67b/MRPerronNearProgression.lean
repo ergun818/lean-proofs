@@ -27,7 +27,7 @@ theorem dirichletPerronNearError_nonneg (x : ℕ) {T : ℝ}
   · rfl
 
 theorem dirichletPerronNearError_le_one (x : ℕ) {T : ℝ}
-    (hT : 0 < T) (n : ℕ) :
+    (_hT : 0 < T) (n : ℕ) :
     dirichletPerronNearError x T n ≤ 1 := by
   rw [dirichletPerronNearError]
   split_ifs
@@ -272,7 +272,7 @@ theorem sum_Icc_dirichletPerronNearError_mul_le
     omega
   rw [hpartition, Finset.sum_union hdisj]
   have hEcard : E.card ≤ 2 := by
-    exact (Finset.card_le_card (Finset.inter_subset_left)).trans (by simp [E])
+    exact (Finset.card_le_card (Finset.inter_subset_left)).trans (by simp)
   have hE : (∑ d ∈ E, dirichletPerronNearError x T (d * q)) ≤ 2 := by
     calc
       (∑ d ∈ E, dirichletPerronNearError x T (d * q)) ≤

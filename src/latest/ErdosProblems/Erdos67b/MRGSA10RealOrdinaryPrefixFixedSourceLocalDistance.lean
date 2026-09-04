@@ -11,7 +11,7 @@ noncomputable section
 
 theorem exists_norm_positivePrefixMean_twoBlock_le_smallPower_base_sub_one_of_localDistance :
     ∃ Cbeta : ℝ, ∃ Nrow : ℕ, 1 ≤ Cbeta ∧
-      ∀ {f : ℕ → ℂ} (hmul : IsMultiplicativeOnPositiveNat f),
+      ∀ {f : ℕ → ℂ} (_hmul : IsMultiplicativeOnPositiveNat f),
         IsCompletelyMultiplicativeOnPositive f →
         (∀ n, 0 < n → ‖f n‖ ≤ 1) →
         ∀ {I₁ I₂ : ℕ × ℕ},
@@ -59,5 +59,5 @@ end
 
 end Erdos67b.MRHalaszBands
 
-#print axioms
-  Erdos67b.MRHalaszBands.exists_norm_positivePrefixMean_twoBlock_le_smallPower_base_sub_one_of_localDistance
+open Erdos67b.MRHalaszBands in
+#print axioms exists_norm_positivePrefixMean_twoBlock_le_smallPower_base_sub_one_of_localDistance

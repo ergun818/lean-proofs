@@ -33,7 +33,8 @@ theorem mrExists_weightedLambda_fixedHigh_pair_le :
             ((sigma : ℂ) + I * (t : ℂ))‖ ≤
           M * (gsA10PrimeSourceWeightedRowFactor C y X K *
               (((X / y : ℕ) : ℝ) ^ (2 * beta) * gsA10PrimeLambdaHarmonicBudget X) +
-            4 * T * gsA10LambdaVerticalSplitError y X (taoExponent X - 2 * beta) (taoExponent X)) := by
+            4 * T * gsA10LambdaVerticalSplitError y X (taoExponent X - 2 * beta) (taoExponent
+              X)) := by
   obtain ⟨C, Y, hC, henergy⟩ := mrExists_weightedPrime_fixedHigh_pair_le
   refine ⟨C, Y, hC, ?_⟩
   intro f hmul hbound y X beta sigma T M K F hY hX hbeta hsigma hT hTK hM hF hFbound
@@ -81,7 +82,8 @@ theorem mrExists_weightedLambda_fixedHigh_pair_le :
     convert hraw using 1
     ring
   have hPint : IntervalIntegrable (fun t ↦ F t * P₁ (-t) * P₂ (-t) / s t) volume (-T) T :=
-    (((hF.mul (hP₁.comp continuous_neg)).mul (hP₂.comp continuous_neg)).div hs hsNe).intervalIntegrable _ _
+    (((hF.mul (hP₁.comp continuous_neg)).mul (hP₂.comp continuous_neg)).div hs
+      hsNe).intervalIntegrable _ _
   have hEint : IntervalIntegrable (fun t ↦ (F t / s t) * (A₁ t * A₂ t - P₁ (-t) * P₂ (-t)))
       volume (-T) T :=
     (hdiv.mul ((hA₁.mul hA₂).sub ((hP₁.comp continuous_neg).mul

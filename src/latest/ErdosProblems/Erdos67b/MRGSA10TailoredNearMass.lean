@@ -166,7 +166,7 @@ theorem sum_nested_vonMangoldt_le_log_sq
     have huvData := Nat.mem_divisorsAntidiagonal.mp huv
     have huv2 : uv.2 ≠ 0 := by
       intro h
-      simp [h] at huvData
+      simp only [h, mul_zero] at huvData
       exact hN.ne' huvData.1.symm
     rw [ArithmeticFunction.mul_apply]
     rw [ArithmeticFunction.natCoe_apply,
@@ -188,7 +188,7 @@ theorem sum_nested_vonMangoldt_le_log_sq
         have hab2pos : 0 < ab.2 := by
           by_contra h
           have : ab.2 = 0 := Nat.eq_zero_of_not_pos h
-          simp [this] at habData
+          simp only [this, mul_zero] at habData
           exact hN.ne' habData.1.symm
         have hab2le : ab.2 ≤ N := by
           rw [← habData.1]
@@ -196,7 +196,7 @@ theorem sum_nested_vonMangoldt_le_log_sq
             have hab1pos : 0 < ab.1 := by
               by_contra h
               have : ab.1 = 0 := Nat.eq_zero_of_not_pos h
-              simp [this] at habData
+              simp only [this, zero_mul] at habData
               exact hN.ne' habData.1.symm
             exact hab1pos)
         rw [ArithmeticFunction.log_apply]

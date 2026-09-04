@@ -272,5 +272,6 @@ end
 
 end Erdos67b.MRHalaszBands
 
+open Erdos67b.MRHalaszBands in
 #print axioms
-  Erdos67b.MRHalaszBands.norm_gsA10TwoBlockTailoredIntegratedPrefix_sub_movingPerronIntegrated_div_le_jointSource
+  norm_gsA10TwoBlockTailoredIntegratedPrefix_sub_movingPerronIntegrated_div_le_jointSource

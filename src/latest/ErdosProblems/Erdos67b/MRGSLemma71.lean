@@ -169,7 +169,7 @@ theorem natLogTwist_mul_realQuotient_main
 remainder is absolute on every divisor fiber, so the full error is bounded
 by four times the ordinary partial sum of `|f * μ|`. -/
 theorem norm_gsTwistedPositivePrefixSum_sub_convolutionMain_le
-    (f : ℕ → ℂ) (t : ℝ) {N : ℕ} (hN : 0 < N)
+    (f : ℕ → ℂ) (t : ℝ) {N : ℕ} (_hN : 0 < N)
     (ht : t ≠ 0) (ht_small : |t| ≤ 1) :
     ‖gsTwistedPositivePrefixSum f t N -
         ∑ d ∈ Finset.Ioc 0 N,

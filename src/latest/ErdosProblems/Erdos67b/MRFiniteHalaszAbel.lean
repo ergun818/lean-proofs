@@ -30,7 +30,7 @@ def dyadicHalaszRawCoefficient
 /-- The dyadic vertical polynomial is exactly the harmonic Abel transform
 of the raw coefficient on `[X+1,2X]`. -/
 theorem dyadicVerticalDirichletPolynomial_eq_harmonic_raw
-    (S : Finset ℕ) (f : ℕ → ℂ) {X : ℕ} (hX : 0 < X) (t : ℝ) :
+    (S : Finset ℕ) (f : ℕ → ℂ) {X : ℕ} (_hX : 0 < X) (t : ℝ) :
     dyadicVerticalDirichletPolynomial S f X t =
       ∑ n ∈ Finset.Icc (X + 1) (2 * X),
         dyadicHalaszRawCoefficient S f t n * (((n : ℝ)⁻¹ : ℝ) : ℂ) := by

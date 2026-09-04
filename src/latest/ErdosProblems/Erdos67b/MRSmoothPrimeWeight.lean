@@ -72,7 +72,8 @@ theorem continuous_mrPrimeWeightPolynomial : Continuous mrPrimeWeightPolynomial 
 theorem continuous_mrPrimeWeightPolynomialDeriv : Continuous mrPrimeWeightPolynomialDeriv := by
   fun_prop [mrPrimeWeightPolynomialDeriv]
 
-theorem continuous_mrPrimeWeightPolynomialDerivTwo : Continuous mrPrimeWeightPolynomialDerivTwo := by
+theorem continuous_mrPrimeWeightPolynomialDerivTwo :
+    Continuous mrPrimeWeightPolynomialDerivTwo := by
   fun_prop [mrPrimeWeightPolynomialDerivTwo]
 
 theorem mrPrimeWeightPolynomial_endpoints :

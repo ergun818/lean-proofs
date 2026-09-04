@@ -25,12 +25,14 @@ def mrLargePrimeFrequencySet (E : Set ℝ) (P : Finset ℕ) (f : ℕ → ℂ) (V
 theorem measurableSet_mrSmallPrimeFrequencySet
     {E : Set ℝ} (hE : MeasurableSet E) (P : Finset ℕ) (f : ℕ → ℂ) (V : ℝ) :
     MeasurableSet (mrSmallPrimeFrequencySet E P f V) :=
-  hE.inter (measurableSet_le (continuous_logarithmicDirichletPolynomial P _).norm.measurable measurable_const)
+  hE.inter (measurableSet_le (continuous_logarithmicDirichletPolynomial P _).norm.measurable
+    measurable_const)
 
 theorem measurableSet_mrLargePrimeFrequencySet
     {E : Set ℝ} (hE : MeasurableSet E) (P : Finset ℕ) (f : ℕ → ℂ) (V : ℝ) :
     MeasurableSet (mrLargePrimeFrequencySet E P f V) :=
-  hE.inter (measurableSet_lt measurable_const (continuous_logarithmicDirichletPolynomial P _).norm.measurable)
+  hE.inter (measurableSet_lt measurable_const (continuous_logarithmicDirichletPolynomial P
+    _).norm.measurable)
 
 theorem measurableSet_mrArithmeticNoSmall
     (eta p₁ q₁ : ℝ) (f : ℕ → ℂ) (J : ℕ) :
@@ -46,8 +48,10 @@ theorem mrPrimeThreshold_indicator_split
   classical
   by_cases ht : t ∈ E
   · by_cases hsmall : ‖logarithmicDirichletPolynomial P (mrFinitePrimeLineCoefficient f) t‖ ≤ V
-    · simp [mrSmallPrimeFrequencySet, mrLargePrimeFrequencySet, Set.indicator, ht, hsmall, not_lt.mpr hsmall]
-    · have hlarge : V < ‖logarithmicDirichletPolynomial P (mrFinitePrimeLineCoefficient f) t‖ := lt_of_not_ge hsmall
+    · simp [mrSmallPrimeFrequencySet, mrLargePrimeFrequencySet, Set.indicator, ht, hsmall,
+      not_lt.mpr hsmall]
+    · have hlarge : V < ‖logarithmicDirichletPolynomial P (mrFinitePrimeLineCoefficient f) t‖ :=
+      lt_of_not_ge hsmall
       simp [mrSmallPrimeFrequencySet, mrLargePrimeFrequencySet, Set.indicator, ht, hsmall, hlarge]
   · simp [mrSmallPrimeFrequencySet, mrLargePrimeFrequencySet, Set.indicator, ht]
 
@@ -64,7 +68,8 @@ theorem mrPrimeThreshold_integral_split
     _ = ∫ t in a..b, (mrSmallPrimeFrequencySet E P f V).indicator g t +
         (mrLargePrimeFrequencySet E P f V).indicator g t :=
       intervalIntegral.integral_congr (fun t _ ↦ mrPrimeThreshold_indicator_split E P f V g t)
-    _ = _ := intervalIntegral.integral_add (hint _ (measurableSet_mrSmallPrimeFrequencySet hE P f V))
+    _ = _ :=
+      intervalIntegral.integral_add (hint _ (measurableSet_mrSmallPrimeFrequencySet hE P f V))
       (hint _ (measurableSet_mrLargePrimeFrequencySet hE P f V))
 
 /-- The explicit optimized count bound at one selected original level. -/
@@ -137,7 +142,8 @@ theorem mrArithmetic_noSmall_product_integral_le_small_add_large
             (fun t ↦ ‖logarithmicDirichletPolynomial P (mrFinitePrimeLineCoefficient f) t *
               logarithmicDirichletPolynomial (mrTypicalCofactorRectangle blocks I Jaux X)
                 (mrFiniteCofactorLineCoefficient (primesInBlock I) f) t‖ ^ 2) t := by
-  have hg : Continuous (fun t ↦ ‖logarithmicDirichletPolynomial P (mrFinitePrimeLineCoefficient f) t *
+  have hg : Continuous (fun t ↦ ‖logarithmicDirichletPolynomial P (mrFinitePrimeLineCoefficient f) t
+    *
       logarithmicDirichletPolynomial (mrTypicalCofactorRectangle blocks I Jaux X)
         (mrFiniteCofactorLineCoefficient (primesInBlock I) f) t‖ ^ 2) :=
     ((continuous_logarithmicDirichletPolynomial _ _).mul

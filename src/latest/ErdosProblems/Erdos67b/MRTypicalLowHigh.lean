@@ -10,7 +10,7 @@ denominator-weighted coefficient in one convolution. The low coefficient
 need not be multiplicative.
 -/
 
-open scoped BigOperators Classical LSeries.notation
+open scoped BigOperators LSeries.notation
 open Finset
 
 namespace Erdos67b
@@ -25,6 +25,7 @@ theorem mrConvolution_primeBand_of_low_high_identity
       g d * f e = g (d * e)) {n : ℕ} (hn : 0 < n) :
     LSeries.convolution (primeBandCoefficient g P)
       (primeBandCoefficient f (fun p ↦ ¬ P p)) n = g n := by
+  classical
   rw [LSeries.convolution_def]
   dsimp only
   let d := primeBandPart P n
@@ -71,9 +72,11 @@ theorem mrIndexedTypicalCofactorCoefficient_mul_high {ι : Type*}
     (hd : PrimeSupported (fun p ↦ p ≤ y) d) (he : PrimeSupported (fun p ↦ ¬ p ≤ y) e) :
     mrIndexedTypicalCofactorCoefficient A J B f d * f e =
       mrIndexedTypicalCofactorCoefficient A J B f (d * e) := by
+  classical
   have hcop := coprime_of_complementary_primeSupported (fun p ↦ p ≤ y) hd he
   have hcount : primeDivisorCount A (d * e) = primeDivisorCount A d := by
-    rw [primeDivisorCount_mul_of_coprime hA hcop, mrPrimeDivisorCount_high_eq_zero hA hAsmall he, add_zero]
+    rw [primeDivisorCount_mul_of_coprime hA hcop,
+      mrPrimeDivisorCount_high_eq_zero hA hAsmall he, add_zero]
   have hdenom : mrCommonDenominator A (d * e) = mrCommonDenominator A d := by
     simp only [mrCommonDenominator, hcount]
   have htyp : (∀ j ∈ J, mrPrimeBlockHit (B j) (d * e)) ↔ ∀ j ∈ J, mrPrimeBlockHit (B j) d := by
@@ -130,8 +133,10 @@ theorem mrTypicalCofactorLowArithmetic_mul_high {ι : Type*}
   have heq := congrFun (ArithmeticFunction.coe_mul
     (mrTypicalCofactorLowArithmetic A J B f y) (gsA9HighArithmetic f y)) n
   calc
-    _ = LSeries.convolution (mrTypicalCofactorLowArithmetic A J B f y) (gsA9HighArithmetic f y) n := heq.symm
-    _ = LSeries.convolution (gsA9Low (mrIndexedTypicalCofactorCoefficient A J B f) y) (gsA9High f y) n := hwrap
+    _ = LSeries.convolution (mrTypicalCofactorLowArithmetic A J B f y)
+        (gsA9HighArithmetic f y) n := heq.symm
+    _ = LSeries.convolution (gsA9Low (mrIndexedTypicalCofactorCoefficient A J B f) y)
+        (gsA9High f y) n := hwrap
     _ = mrIndexedTypicalCofactorCoefficient A J B f n := hconv
     _ = _ := by simp [toArithmeticFunction, hn]
 
@@ -142,6 +147,7 @@ theorem mrPrimeBandCoefficient_LSeriesSummable_of_bounded_pos_re
     (P : ℕ → Prop) [DecidablePred P] (y : ℕ)
     (hP : ∀ p, P p → p ≤ y) {s : ℂ} (hs : 0 < s.re) :
     LSeriesSummable (primeBandCoefficient f P) s := by
+  classical
   have honeMul : IsMultiplicativeOnPositiveNat (fun _ : ℕ ↦ (1 : ℂ)) :=
     ⟨rfl, fun _ _ _ _ _ ↦ by simp⟩
   have hmajor := primeBandCoefficient_LSeriesSummable_of_pos_re honeMul

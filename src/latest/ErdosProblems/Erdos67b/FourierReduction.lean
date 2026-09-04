@@ -25,14 +25,15 @@ noncomputable section
 
 section FiniteFourier
 
-variable {G E : Type*} [AddCommGroup G] [Fintype G] [DecidableEq G]
+variable {G E : Type*} [AddCommGroup G] [Fintype G]
   [NormedAddCommGroup E] [InnerProductSpace ℂ E]
 
 /-- The unnormalised Fourier coefficient of a vector-valued function on a finite abelian group. -/
 def rawCoeff (F : G → E) (psi : AddChar G ℂ) : E :=
   ∑ x : G, conj (psi x) • F x
 
-private lemma char_mul_conj (psi : AddChar G ℂ) (x y : G) :
+omit [Fintype G] in
+private lemma char_mul_conj [Finite G] (psi : AddChar G ℂ) (x y : G) :
     psi x * conj (psi y) = psi (x - y) := by
   calc
     psi x * conj (psi y) = psi x * (psi y)⁻¹ := by rw [psi.inv_apply_eq_conj]
@@ -40,7 +41,7 @@ private lemma char_mul_conj (psi : AddChar G ℂ) (x y : G) :
     _ = psi (x + -y) := (psi.map_add_eq_mul x (-y)).symm
     _ = psi (x - y) := by rw [sub_eq_add_neg]
 
-private lemma sum_char_mul_conj (x y : G) :
+private lemma sum_char_mul_conj [DecidableEq G] (x y : G) :
     ∑ psi : AddChar G ℂ, psi x * conj (psi y) =
       if x = y then (Fintype.card G : ℂ) else 0 := by
   simp_rw [char_mul_conj]
@@ -69,12 +70,13 @@ theorem rawCoeff_inner_expansion (F K : G → E) :
         star (psi y) * (psi x * inner ℂ (F x) (K y)) := Finset.sum_comm
     _ = ∑ x : G, ∑ y : G, ∑ psi : AddChar G ℂ,
         psi x * star (psi y) * inner ℂ (F x) (K y) := by
-      simp only [mul_assoc, mul_left_comm, mul_comm]
+      simp only [mul_assoc, mul_comm]
 
 /-- Polarised Parseval identity for the unnormalised transform. -/
 theorem sum_inner_rawCoeff (F K : G → E) :
     ∑ psi : AddChar G ℂ, inner ℂ (rawCoeff F psi) (rawCoeff K psi) =
       (Fintype.card G : ℂ) * ∑ x : G, inner ℂ (F x) (K x) := by
+  classical
   rw [rawCoeff_inner_expansion]
   simp_rw [sum_char_mul_conj]
   rw [Finset.mul_sum]

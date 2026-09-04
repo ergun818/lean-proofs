@@ -7,7 +7,7 @@ The finite mask identity uses absolute convergence of the actual low
 series, including where its real part is at most one.
 -/
 
-open scoped BigOperators Classical LSeries.notation
+open scoped BigOperators LSeries.notation
 open Finset
 
 namespace Erdos67b
@@ -20,6 +20,7 @@ theorem mrPrimeBandCoefficient_LSeriesSummable_of_summable
     {f : ℕ → ℂ} {s : ℂ} (hs : LSeriesSummable f s)
     (P : ℕ → Prop) [DecidablePred P] :
     LSeriesSummable (primeBandCoefficient f P) s := by
+  classical
   apply Summable.of_norm
   apply hs.norm.of_nonneg_of_le (fun _ ↦ norm_nonneg _)
   intro n
@@ -27,13 +28,14 @@ theorem mrPrimeBandCoefficient_LSeriesSummable_of_summable
   unfold primeBandCoefficient
   split_ifs <;> simp
 
-theorem mrLSeries_indexedTypical_eq_mask_sum_of_summable {ι : Type*} [DecidableEq ι]
+theorem mrLSeries_indexedTypical_eq_mask_sum_of_summable {ι : Type*}
     (J : Finset ι) (B : ι → Finset ℕ)
     (hB : ∀ j ∈ J, ∀ p ∈ B j, p.Prime)
     {f : ℕ → ℂ} {s : ℂ} (hs : LSeriesSummable f s) :
     LSeries (mrIndexedTypicalCoefficient J B f) s =
       ∑ S ∈ J.powerset, (-1 : ℂ) ^ S.card *
         LSeries (primeBandCoefficient f (fun p ↦ p ∉ S.biUnion B)) s := by
+  classical
   let F : Finset ι → ℕ → ℂ := fun S ↦ (-1 : ℂ) ^ S.card •
     primeBandCoefficient f (fun p ↦ p ∉ S.biUnion B)
   have hcoef : LSeries (mrIndexedTypicalCoefficient J B f) s =
@@ -53,6 +55,7 @@ theorem mrPrimeBand_indexedTypical_comm {ι : Type*}
     (P : ℕ → Prop) [DecidablePred P] :
     primeBandCoefficient (mrIndexedTypicalCoefficient J B f) P =
       mrIndexedTypicalCoefficient J B (primeBandCoefficient f P) := by
+  classical
   funext n
   unfold primeBandCoefficient mrIndexedTypicalCoefficient
   dsimp only
@@ -65,7 +68,7 @@ theorem mrPrimeBandCoefficient_comm (f : ℕ → ℂ)
   rw [primeBandCoefficient_nested, primeBandCoefficient_nested]
   exact primeBandCoefficient_congr_pred f _ _ (fun _ ↦ and_comm)
 
-theorem mrLSeries_low_indexedTypical_eq_mask_sum {ι : Type*} [DecidableEq ι]
+theorem mrLSeries_low_indexedTypical_eq_mask_sum {ι : Type*}
     (J : Finset ι) (B : ι → Finset ℕ)
     (hB : ∀ j ∈ J, ∀ p ∈ B j, p.Prime)
     {f : ℕ → ℂ} (hbound : ∀ n, 0 < n → ‖f n‖ ≤ 1)
@@ -84,7 +87,7 @@ theorem mrLSeries_low_indexedTypical_eq_mask_sum {ι : Type*} [DecidableEq ι]
   dsimp only [gsA9Low]
   rw [mrPrimeBandCoefficient_comm]
 
-theorem mrNorm_LSeries_low_indexedTypical_mul_le_mask_sum {ι : Type*} [DecidableEq ι]
+theorem mrNorm_LSeries_low_indexedTypical_mul_le_mask_sum {ι : Type*}
     (J : Finset ι) (B : ι → Finset ℕ)
     (hB : ∀ j ∈ J, ∀ p ∈ B j, p.Prime)
     {f : ℕ → ℂ} (hbound : ∀ n, 0 < n → ‖f n‖ ≤ 1)

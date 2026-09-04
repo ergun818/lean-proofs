@@ -8,7 +8,7 @@ projection, and both ordinary secondary estimates. Uniform source parameter
 choices and small-prime restoration remain subsequent steps.
 -/
 
-open scoped BigOperators Classical
+open scoped BigOperators
 
 namespace Erdos67b
 
@@ -67,7 +67,8 @@ theorem mrExists_norm_positivePrefix_typicalCofactor_div_le_sourceBudgets :
   calc
     _ ≤ ‖Q‖ / (X : ℝ) + ‖P - Q‖ / (X : ℝ) := by simpa only [add_div] using hdiv
     _ ≤ mrWeightedCofactorContourBudget C (mrTypicalCofactorFixedHighEnvelope A N X) y X K eta T +
-        (gsA10OrdinaryMovingProjectionAveragedBound y X eta + mrTypicalCofactorSecondaryBound y X) :=
+        (gsA10OrdinaryMovingProjectionAveragedBound y X eta + mrTypicalCofactorSecondaryBound y
+          X) :=
       add_le_add hQ hdiff
     _ = _ := by ring
 

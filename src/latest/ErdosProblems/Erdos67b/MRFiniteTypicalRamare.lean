@@ -197,7 +197,8 @@ theorem mrRestrictedRamareCoefficient_typical_rectangle
     apply Finset.sum_congr rfl
     intro p hp
     by_cases hpn : p ∣ n
-    · have hm := (div_mem_mrTypicalCofactorRectangle_iff (hD hp) hJ (hDJ p hp) hdisj hn hpn).mpr htyp
+    · have hm :=
+      (div_mem_mrTypicalCofactorRectangle_iff (hD hp) hJ (hDJ p hp) hdisj hn hpn).mpr htyp
       simp only [hpn, hm, and_self, ↓reduceIte]
     · simp only [hpn, false_and, ↓reduceIte]
   · rw [if_neg htyp]
@@ -214,7 +215,7 @@ theorem mrRestrictedRamareCoefficient_typical_rectangle
 /-- Summing a disjoint narrow prime partition gives the original typical
 common coefficient, with no boundary error inside the product interval. -/
 theorem sum_mrRestrictedRamareCoefficient_typical_rectangle
-    {ι : Type*} [DecidableEq ι] {V : Finset ι}
+    {ι : Type*} {V : Finset ι}
     {blocks : Finset (ℕ × ℕ)} {I : ℕ × ℕ} {D : ι → Finset ℕ} {J : ι → ℕ × ℕ}
     (hpartition : Set.PairwiseDisjoint (↑V) D) (hcover : V.biUnion D = primesInBlock I)
     (hJ : ∀ v ∈ V, 0 < (J v).1)
@@ -262,7 +263,7 @@ def mrTypicalRamareBoundaryPolynomial
 /-- The typical finite polynomial is exactly the sum of narrow products
 minus their outside boundaries. All factors use the same phase sign. -/
 theorem mrTypicalCommonPolynomial_eq_products_sub_boundary
-    {ι : Type*} [DecidableEq ι] {V : Finset ι}
+    {ι : Type*} {V : Finset ι}
     {blocks : Finset (ℕ × ℕ)} {I : ℕ × ℕ} {D : ι → Finset ℕ} {J : ι → ℕ × ℕ}
     (hpartition : Set.PairwiseDisjoint (↑V) D) (hcover : V.biUnion D = primesInBlock I)
     (hJ : ∀ v ∈ V, 0 < (J v).1)
@@ -296,7 +297,8 @@ theorem mrTypicalCommonPolynomial_eq_products_sub_boundary
         hpartition hcover hJ hDJ hdisj f hn]
   have hproduct (v : ι) (hv : v ∈ V) :
       logarithmicDirichletPolynomial (D v) (mrFinitePrimeLineCoefficient f) t *
-          logarithmicDirichletPolynomial (S v) (mrFiniteCofactorLineCoefficient (primesInBlock I) f) t -
+          logarithmicDirichletPolynomial (S v) (mrFiniteCofactorLineCoefficient (primesInBlock I)
+            f) t -
           mrTypicalRamareBoundaryPolynomial blocks I (J v) (D v) f X t =
         logarithmicDirichletPolynomial (Finset.Ioc X (2 * X)) (c v) t := by
     have hh := logarithmicDirichletPolynomial_mul_eq_interval_add_boundary (B := S v) (hDpos v hv)
@@ -460,7 +462,8 @@ theorem norm_sum_mrFiniteRamareSubblockRectangleCoefficient_le_inv
       (fun p hp ↦ (hP p (hD v hv hp)).pos) f hn
   rw [heq, norm_div, Complex.norm_natCast, div_eq_mul_inv]
   simpa only [one_mul] using mul_le_mul_of_nonneg_right
-    (norm_sum_mrRestrictedRamareCoefficient_le_one hP hD hdisj hbound hn) (by positivity : 0 ≤ (n : ℝ)⁻¹)
+    (norm_sum_mrRestrictedRamareCoefficient_le_one hP hD hdisj hbound hn) (by positivity : 0 ≤ (n
+      : ℝ)⁻¹)
 
 end
 

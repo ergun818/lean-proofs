@@ -10,7 +10,7 @@ comparison with the averaged Perron transform has no assumed regularity
 or hidden truncation error.
 -/
 
-open scoped BigOperators Classical
+open scoped BigOperators
 open Set MeasureTheory
 
 namespace Erdos67b

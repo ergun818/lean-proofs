@@ -288,7 +288,7 @@ theorem norm_typicalModulatedShortSum_sub_common_le_primeSquares_of_oneBounded
                   gcongr
                 _ ≤ 1 := by simpa using hq2
           _ = 2 := by norm_num
-        simpa [hpk]
+        simp [hpk]
       · rw [if_neg hpk,
           ramareDenominator_eq_mrCommon_of_not_dvd hpk]
         simp [hpk]

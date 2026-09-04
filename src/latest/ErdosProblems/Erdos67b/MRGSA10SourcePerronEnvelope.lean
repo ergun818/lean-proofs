@@ -154,7 +154,7 @@ theorem norm_sourceHigh_le_three_mul_norm_sourceLow
       simp only [sHigh, sLow, delta, Complex.add_re, Complex.add_im,
         Complex.ofReal_re, Complex.ofReal_im, Complex.mul_re,
         Complex.mul_im, Complex.I_re, Complex.I_im, zero_mul, one_mul,
-        mul_zero, add_zero, zero_add, sub_zero] <;> ring
+        mul_zero, add_zero, zero_add, sub_zero]; ring
   have hlow : 1 / 2 ≤ ‖sLow‖ := by
     have hre := Complex.abs_re_le_norm sLow
     have hreEq : sLow.re = c - alpha - beta := by simp [sLow]

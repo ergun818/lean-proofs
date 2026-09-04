@@ -30,7 +30,8 @@ theorem mrTendsto_cofactorSecondaryRemainder {delta : ℝ} (hdelta : 0 < delta) 
   have hsecond := (mrTendsto_log_pow_div_cofactorPowerCutoff hdelta 2).const_mul 12
   change Tendsto (fun X : ℕ ↦ mrTypicalCofactorSecondSecondaryPrimeConstant / Real.log (X : ℝ) +
     12 * Real.log (X : ℝ) ^ 2 / mrCofactorPowerCutoff delta X) atTop (𝓝 0)
-  simpa only [mrCofactorSecondaryRemainder, mul_div_assoc, mul_zero, zero_add] using hfirst.add hsecond
+  simpa only [mrCofactorSecondaryRemainder, mul_div_assoc, mul_zero, zero_add] using hfirst.add
+    hsecond
 
 theorem mrEventually_cofactorSecondary_le {delta : ℝ} (hdelta : 0 < delta) :
     ∀ᶠ X : ℕ in atTop,
@@ -42,7 +43,8 @@ theorem mrEventually_cofactorSecondary_le {delta : ℝ} (hdelta : 0 < delta) :
   have hS := gsA10ShiuConstant_nonneg
   have hP := mrTypicalCofactorSecondSecondaryPrimeConstant_nonneg
   have hfirst : (gsA10ShiuConstant * Real.log (mrCofactorPowerCutoff delta X : ℝ) +
-      mrTypicalCofactorSecondSecondaryPrimeConstant * (1 + Real.log (mrCofactorPowerCutoff delta X : ℝ))) /
+      mrTypicalCofactorSecondSecondaryPrimeConstant * (1 + Real.log (mrCofactorPowerCutoff delta
+        X : ℝ))) /
         Real.log (X : ℝ) ≤ mrCofactorSecondaryMeanConstant * delta +
           mrTypicalCofactorSecondSecondaryPrimeConstant / Real.log (X : ℝ) := by
     calc
@@ -55,7 +57,8 @@ theorem mrEventually_cofactorSecondary_le {delta : ℝ} (hdelta : 0 < delta) :
         gcongr
       _ = _ := by unfold mrCofactorSecondaryMeanConstant; field_simp
   have hsecond : 12 * Real.log (X : ℝ) / mrCofactorPowerCutoff delta X *
-      PrimeEstimates.primeReciprocals X ≤ 12 * Real.log (X : ℝ) ^ 2 / mrCofactorPowerCutoff delta X := by
+      PrimeEstimates.primeReciprocals X ≤ 12 * Real.log (X : ℝ) ^ 2 / mrCofactorPowerCutoff
+        delta X := by
     calc
       _ ≤ 12 * Real.log (X : ℝ) / mrCofactorPowerCutoff delta X * Real.log (X : ℝ) :=
         mul_le_mul_of_nonneg_left hprime (by positivity)

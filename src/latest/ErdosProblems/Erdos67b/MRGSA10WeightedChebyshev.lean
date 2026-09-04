@@ -32,7 +32,7 @@ private theorem sum_vonMangoldt_subset_Icc_le
 
 private theorem weighted_vonMangoldt_shell_le
     {alpha : ℝ} (halpha0 : 0 ≤ alpha) (K j : ℕ)
-    (hj : 1 ≤ j) :
+    (_hj : 1 ≤ j) :
     (∑ n ∈ Erdos48.badRootLogShell (Finset.Icc 2 K) j,
         ArithmeticFunction.vonMangoldt n * (n : ℝ) ^ (-alpha)) ≤
       2 * (Real.log 4 + 4) *

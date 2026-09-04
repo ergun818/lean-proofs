@@ -9,7 +9,7 @@ constant is uniform over masks, so the summable deleted-prime cost can be
 preserved when the high factor stays on the Halasz line.
 -/
 
-open scoped BigOperators Classical LSeries.notation
+open scoped BigOperators LSeries.notation
 open Finset
 
 namespace Erdos67b
@@ -101,7 +101,8 @@ theorem mrNorm_maskedLow_mul_high_shift_le
       Real.exp (6 * gsA9WideSourceShiftConstant) *
         ‖LSeries (primeBandCoefficient f P)
           ((sigmaHigh : ℂ) + Complex.I * (t : ℂ))‖ := by
-  have hshift := mrNorm_low_primeBand_shift_le hmul hbound P hy hlarge hhalf hle hsigma hgap (t := t)
+  have hshift := mrNorm_low_primeBand_shift_le hmul hbound P hy hlarge hhalf hle hsigma hgap (t
+    := t)
   have hid := LSeries_gsA9Low_mul_gsA9High
     (primeBandCoefficient_isMultiplicativeOnPositiveNat hmul P)
     (fun n hn ↦ norm_primeBandCoefficient_le_one hbound P hn) y

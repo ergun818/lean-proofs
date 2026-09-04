@@ -71,7 +71,8 @@ theorem mrScheduled_firstSmallClass_energy_le
   · intro t ht _
     obtain ⟨r, hr, hlarge⟩ := mrFirstSmall_preceding_large (mrScheduledSubblocks eta p₁ q₁)
       (fun i r ↦ logarithmicDirichletPolynomial (P i r) (a i r))
-      (fun i r ↦ Real.exp (-mrThresholdExponent eta (i : ℝ) * mrScheduledParameter eta p₁ q₁ i r)) hj ht
+      (fun i r ↦ Real.exp (-mrThresholdExponent eta (i : ℝ) * mrScheduledParameter eta p₁ q₁ i r))
+        hj ht
     exact ⟨r, hr, hlarge.le⟩
 
 /-- The actual first-small frequency class also has summable energy
@@ -103,7 +104,8 @@ theorem mrScheduled_firstSmallClass_enlarged_energy_le
             logarithmicDirichletPolynomial (S s) (b s) t‖ ^ 2) t) ≤
       512 * Real.exp 13 * (1 + Real.pi) * (T / X + 1) /
         ((j : ℝ) ^ 2 * Real.exp (mrLogScheduleUpper q₁ (j - 1))) := by
-  apply scheduled_firstSmallBlock_enlarged_frequencyClass_energy_le heta0 heta1 hp hqexp hpq hbudget hj
+  apply scheduled_firstSmallBlock_enlarged_frequencyClass_energy_le heta0 heta1 hp hqexp hpq hbudget
+    hj
     (P (j - 1)) S (a (j - 1)) b
     (fun s ↦ logarithmicDirichletPolynomial (P j s) (a j s)) hP ha hb hPlo hPhi hX hSlo hShi
     (fun s _ ↦ continuous_logarithmicDirichletPolynomial (P j s) (a j s))
@@ -116,7 +118,8 @@ theorem mrScheduled_firstSmallClass_enlarged_energy_le
   · intro t ht _
     obtain ⟨r, hr, hlarge⟩ := mrFirstSmall_preceding_large (mrScheduledSubblocks eta p₁ q₁)
       (fun i r ↦ logarithmicDirichletPolynomial (P i r) (a i r))
-      (fun i r ↦ Real.exp (-mrThresholdExponent eta (i : ℝ) * mrScheduledParameter eta p₁ q₁ i r)) hj ht
+      (fun i r ↦ Real.exp (-mrThresholdExponent eta (i : ℝ) * mrScheduledParameter eta p₁ q₁ i r))
+        hj ht
     exact ⟨r, hr, hlarge.le⟩
 
 /-- Arithmetic rectangle specialization. Any subset is allowed, including
@@ -216,7 +219,8 @@ theorem mrScheduled_firstClass_rectangle_energy_le
         (fun i s ↦ Real.exp (-mrThresholdExponent eta (i : ℝ) * mrScheduledParameter eta p₁ q₁ i s))
         (by norm_num : 1 ≤ (1 : ℕ)) ht r hr'
       simpa only [mrScheduledParameter, Nat.cast_one] using hh)
-  exact hraw.trans (firstBlock_resolution_energy_prefactor_le (tau := T / X) heta1 hq0 (by positivity))
+  exact hraw.trans (firstBlock_resolution_energy_prefactor_le (tau :=
+    T / X) heta1 hq0 (by positivity))
 
 end
 

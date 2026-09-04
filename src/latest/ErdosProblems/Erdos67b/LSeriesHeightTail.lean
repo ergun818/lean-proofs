@@ -17,8 +17,7 @@ def shiftPow (s : ℂ) (u x : ℝ) : ℂ :=
 lemma hasDerivAt_shiftPow {s : ℂ} {u x : ℝ} (hxu : x + u ≠ 0) (hs : s ≠ 0) :
     HasDerivAt (shiftPow s u) ((-s) * (((x + u : ℝ) : ℂ) ^ (-s - 1))) x := by
   unfold shiftPow
-  convert (hasDerivAt_ofReal_cpow_const hxu (neg_ne_zero.mpr hs)).comp_add_const x u using 1 <;>
-    ring
+  convert (hasDerivAt_ofReal_cpow_const hxu (neg_ne_zero.mpr hs)).comp_add_const x u using 1
 
 lemma integral_shiftPow {s : ℂ} {u a b : ℝ} (ha : 0 < a + u)
     (hab : a ≤ b) (hs0 : s ≠ 0) (hs1 : s ≠ 1) :
@@ -98,7 +97,7 @@ lemma norm_shiftPow_sub_cellIntegral_le {s : ℂ} {u a : ℝ}
     _ = ‖s‖ * (a + u) ^ (-s.re - 1) := by norm_num
 
 lemma sum_Icc_shift_decay_le {u sigma : ℝ} {A B : ℕ}
-    (hu : 0 ≤ u) (hsigma : 1 ≤ sigma) (hA : 3 ≤ A) (hAB : A ≤ B) :
+    (hu : 0 ≤ u) (hsigma : 1 ≤ sigma) (hA : 3 ≤ A) (_hAB : A ≤ B) :
     ∑ n ∈ Finset.Icc A B, ((n : ℝ) + u) ^ (-sigma - 1) ≤
       ((A - 1 : ℕ) : ℝ)⁻¹ := by
   let f : ℝ → ℝ := fun x ↦ x ^ (-2 : ℝ)
@@ -129,7 +128,7 @@ lemma sum_Icc_shift_decay_le {u sigma : ℝ} {A B : ℕ}
       · intro n hn
         positivity
       · have hfSum : Summable (fun n : ℕ ↦ f n) := by
-          simpa [f] using (Real.summable_nat_rpow.mpr (by norm_num : (-2 : ℝ) < -1))
+          simp [f]
         simpa [add_comm] using (summable_nat_add_iff A).mpr hfSum
     _ ≤ ∫ x in Set.Ioi ((A - 1 : ℕ) : ℝ), f x := by
       have hmain := AntitoneOn.tsum_comp_add_le_integral (f := f) (A - 1) ?_ ?_ ?_

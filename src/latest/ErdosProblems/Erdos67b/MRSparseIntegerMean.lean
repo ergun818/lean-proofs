@@ -85,10 +85,15 @@ theorem mrSeparated_reciprocal_gap_sum_le
     have hne := (hR t hh.1).2
     exact lt_of_le_of_ne (le_of_not_gt hh.2) hne
   have hA := mrSum_inv_separated_positive_le A (fun t ↦ t - s) (by positivity : 0 ≤ 2 * T)
-    (fun t ht ↦ by simpa only [abs_of_pos (sub_pos.mpr (hApos t ht))] using hgap t (Finset.mem_filter.mp ht).1)
-    (fun t ht ↦ by simpa only [abs_of_pos (sub_pos.mpr (hApos t ht))] using hmax t (Finset.mem_filter.mp ht).1)
+    (fun t ht ↦ by
+      simpa only [abs_of_pos (sub_pos.mpr (hApos t ht))]
+        using hgap t (Finset.mem_filter.mp ht).1)
+    (fun t ht ↦ by
+      simpa only [abs_of_pos (sub_pos.mpr (hApos t ht))]
+        using hmax t (Finset.mem_filter.mp ht).1)
     (fun t ht u hu hne ↦ by
-      have hh := hsep t (hR t (Finset.mem_filter.mp ht).1).1 u (hR u (Finset.mem_filter.mp hu).1).1 hne
+      have hh :=
+        hsep t (hR t (Finset.mem_filter.mp ht).1).1 u (hR u (Finset.mem_filter.mp hu).1).1 hne
       simpa only [sub_sub_sub_cancel_right] using hh)
   have hB := mrSum_inv_separated_positive_le B (fun t ↦ s - t) (by positivity : 0 ≤ 2 * T)
     (fun t ht ↦ by
@@ -100,7 +105,8 @@ theorem mrSeparated_reciprocal_gap_sum_le
       rw [abs_of_neg (sub_neg.mpr (hBneg t ht))] at hh
       linarith)
     (fun t ht u hu hne ↦ by
-      have hh := hsep u (hR u (Finset.mem_filter.mp hu).1).1 t (hR t (Finset.mem_filter.mp ht).1).1 hne.symm
+      have hh :=
+        hsep u (hR u (Finset.mem_filter.mp hu).1).1 t (hR t (Finset.mem_filter.mp ht).1).1 hne.symm
       simpa only [sub_sub_sub_cancel_left] using hh)
   have hsplit : (∑ t ∈ R, 1 / |t - s|) =
       (∑ t ∈ A, 1 / (t - s)) + ∑ t ∈ B, 1 / (s - t) := by
@@ -222,7 +228,8 @@ theorem mrSparse_integer_meanValue_le_support
   have hmass : (∑ n ∈ Finset.Icc 1 N, ‖b n‖ ^ 2) = ∑ n ∈ A, ‖a n‖ ^ 2 := by
     calc
       _ = ∑ n ∈ A, ‖b n‖ ^ 2 :=
-        (Finset.sum_subset hsub (fun n hn hnot ↦ by simp only [b, if_neg hnot, norm_zero, ne_eq, OfNat.ofNat_ne_zero, not_false_eq_true, zero_pow])).symm
+        (Finset.sum_subset hsub (fun n hn hnot ↦ by simp only [b, if_neg hnot, norm_zero, ne_eq,
+          OfNat.ofNat_ne_zero, not_false_eq_true, zero_pow])).symm
       _ = _ := by
         apply Finset.sum_congr rfl
         intro n hn

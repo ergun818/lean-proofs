@@ -887,7 +887,7 @@ theorem normSq_sum_scaledCharacterPrefix_le {q N : ℕ}
   nlinarith [norm_nonneg (∑ i ∈ s, scaledCharacterPrefix χ (d i) L a)]
 
 theorem normSq_sum_weighted_scaledCharacterPrefix_le {q N : ℕ}
-    [NeZero q] [NeZero N] {ι : Type*} [DecidableEq ι]
+    [NeZero q] [NeZero N] {ι : Type*}
     (s : Finset ι) (χ : DirichletCharacter ℂ q) (d : ι → ℕ)
     (c : ι → ℂ) (hc : ∀ i ∈ s, ‖c i‖ = 1)
     (L : ℕ) (a : ZMod N) :
@@ -1282,7 +1282,7 @@ construction.  Each scale contributes its full block energy and all
 off-diagonal terms vanish because the corresponding `q`-smooth Fourier layers
 are disjoint. -/
 theorem generalized_bcc_energy {q N : ℕ} [NeZero q] [NeZero N]
-    {ι : Type*} [DecidableEq ι] (s : Finset ι)
+    {ι : Type*} (s : Finset ι)
     (χ : DirichletCharacter ℂ q) (hχ : χ.IsPrimitive)
     (d t : ι → ℕ) (hq : 1 < q)
     (hd : ∀ i ∈ s, NeZero (d i)) (ht : ∀ i ∈ s, NeZero (t i))
@@ -1323,7 +1323,7 @@ theorem generalized_bcc_energy {q N : ℕ} [NeZero q] [NeZero N]
 least the average of the exact diagonal energy.  This form avoids division:
 the total diagonal energy is bounded by `N` times the attained square norm. -/
 theorem generalized_bcc_lower {q N : ℕ} [NeZero q] [NeZero N]
-    {ι : Type*} [DecidableEq ι] (s : Finset ι)
+    {ι : Type*} (s : Finset ι)
     (χ : DirichletCharacter ℂ q) (hχ : χ.IsPrimitive)
     (d t : ι → ℕ) (hq : 1 < q)
     (hd : ∀ i ∈ s, NeZero (d i)) (ht : ∀ i ∈ s, NeZero (t i))
@@ -1411,7 +1411,7 @@ theorem scaledCharacterPrefix_family_energy_qpowers {q N L : ℕ}
 distinct `q`-smooth scales.  Unit-modulus coefficients do not alter either
 support or diagonal energy. -/
 theorem scaledCharacterPrefix_family_energy_smooth {q N K L : ℕ}
-    [NeZero q] [NeZero N] {ι : Type*} [DecidableEq ι]
+    [NeZero q] [NeZero N] {ι : Type*}
     (s : Finset ι) (χ : DirichletCharacter ℂ q) (hχ : χ.IsPrimitive)
     (d t : ι → ℕ) (c : ι → ℂ)
     (hd : ∀ i ∈ s, NeZero (d i)) (ht : ∀ i ∈ s, NeZero (t i))
@@ -1458,7 +1458,7 @@ This is the form needed for the gcd decomposition: unselected divisor layers
 are harmless because every diagonal term is nonnegative. -/
 theorem smooth_selected_block_energy_le_medium_weighted_prefix_energy
     {q N K H : ℕ} [NeZero q] [NeZero N]
-    {ι : Type*} [DecidableEq ι]
+    {ι : Type*}
     (all selected : Finset ι) (hsel : selected ⊆ all)
     (χ : DirichletCharacter ℂ q) (hχ : χ.IsPrimitive)
     (d t : ι → ℕ) (c : ι → ℂ)
@@ -1603,7 +1603,7 @@ theorem medium_full_energy_le_good_add_bad_aux {N H : ℕ} [NeZero N]
 smooth family, while retaining only `selected` diagonal layers. -/
 theorem smooth_selected_block_energy_le_medium_good_weighted_prefix_energy
     {q N K H : ℕ} [NeZero q] [NeZero N]
-    {ι : Type*} [DecidableEq ι]
+    {ι : Type*}
     (all selected : Finset ι) (hsel : selected ⊆ all)
     (χ : DirichletCharacter ℂ q) (hχ : χ.IsPrimitive)
     (d t : ι → ℕ) (c : ι → ℂ)
@@ -1652,7 +1652,7 @@ theorem smooth_selected_block_energy_le_medium_good_weighted_prefix_energy
 bound for the restored residue classes. -/
 theorem smooth_selected_block_energy_le_medium_good_weighted_prefix_energy_trivial
     {q N K H : ℕ} [NeZero q] [NeZero N]
-    {ι : Type*} [DecidableEq ι]
+    {ι : Type*}
     (all selected : Finset ι) (hsel : selected ⊆ all)
     (χ : DirichletCharacter ℂ q) (hχ : χ.IsPrimitive)
     (d t : ι → ℕ) (c : ι → ℂ)
@@ -1714,7 +1714,7 @@ theorem q_mul_smooth_diagonal_energy_eq_card {q N : ℕ}
 the number of retained diagonal layers. -/
 theorem smooth_selected_card_lower_le_medium_good_weighted_prefix_energy
     {q N K H : ℕ} [NeZero q] [NeZero N]
-    {ι : Type*} [DecidableEq ι]
+    {ι : Type*}
     (all selected : Finset ι) (hsel : selected ⊆ all)
     (χ : DirichletCharacter ℂ q) (hχ : χ.IsPrimitive)
     (d t : ι → ℕ) (c : ι → ℂ)
@@ -1771,7 +1771,7 @@ theorem smooth_selected_card_lower_le_medium_good_weighted_prefix_energy
 retained smooth layers to be at most `16 q B / φ(q)`. -/
 theorem smooth_selected_family_card_bound
     {q N K H : ℕ} [NeZero q] [NeZero N]
-    {ι : Type*} [DecidableEq ι]
+    {ι : Type*}
     (all selected : Finset ι) (hsel : selected ⊆ all)
     (χ : DirichletCharacter ℂ q) (hχ : χ.IsPrimitive)
     (d t : ι → ℕ) (c : ι → ℂ)
@@ -1838,7 +1838,7 @@ theorem smooth_selected_family_card_bound
 
 theorem smooth_selected_family_contradiction
     {q N K H : ℕ} [NeZero q] [NeZero N]
-    {ι : Type*} [DecidableEq ι]
+    {ι : Type*}
     (all selected : Finset ι) (hsel : selected ⊆ all)
     (χ : DirichletCharacter ℂ q) (hχ : χ.IsPrimitive)
     (d t : ι → ℕ) (c : ι → ℂ)

@@ -10,7 +10,7 @@ existing ordinary source majorant. The moving powers stay together in
 the mass term, ready for the auxiliary rectangle average.
 -/
 
-open scoped BigOperators Classical
+open scoped BigOperators
 
 namespace Erdos67b
 
@@ -43,7 +43,8 @@ theorem mrNorm_positivePrefix_typicalCofactorTailored_sub_perron_le_ordinaryMajo
   let a := mrTypicalCofactorTailoredCoefficient A J B f hmul y X alpha beta
   let sigma := taoExponent X - alpha - 2 * beta
   have hmass' : (32 * (X : ℝ) ^ sigma / (Real.log (X : ℝ)) ^ 2) *
-      dirichletPerronCoefficientMass a sigma ≤ gsA10OrdinaryMovingProjectionMass y X alpha beta := by
+      dirichletPerronCoefficientMass a sigma ≤ gsA10OrdinaryMovingProjectionMass y X alpha beta
+        := by
     calc
       _ ≤ (32 * (X : ℝ) ^ sigma / (Real.log (X : ℝ)) ^ 2) *
           ((gsA10SourceCoefficientMassConstant * (1 + Real.log (X : ℝ))) *
