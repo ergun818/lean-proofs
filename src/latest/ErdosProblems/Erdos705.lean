@@ -64,7 +64,7 @@ def UnitDistancePlaneGraph (V : Set (EuclideanSpace ℝ (Fin 2))) : SimpleGraph 
     simpa [PseudoMetricSpace.dist_comm] using hxy⟩
   loopless := ⟨by
     intro x hxx
-    simpa using hxx⟩
+    simp at hxx⟩
 
 end SimpleGraph
 
@@ -480,7 +480,7 @@ theorem exists_edgeMinimal_restriction (hr : 0 < r) (hH : H.NotThreeColorable) :
       omega
     exact (Nat.find_min hP hsmall) ⟨s.erase e.1, rfl, herase⟩
   unfold NotThreeColorable at hnotErase
-  push_neg at hnotErase
+  push Not at hnotErase
   obtain ⟨c, hc⟩ := hnotErase
   refine ⟨c, ?_⟩
   intro f hfe
@@ -595,11 +595,13 @@ private def thresholdFunEquiv {I : Type*} [Fintype I] (p : I → Prop)
 
 /-- Exact count for independent uniform labels satisfying a coordinatewise
 threshold on a prescribed finite set of coordinates. -/
-private theorem card_thresholdLabelings {I : Type*} [Fintype I]
-    (p : I → Prop) [DecidablePred p] {C D : ℕ} (hCD : C ≤ D) :
+private theorem card_thresholdLabelings {I : Type*} [Finite I]
+    (p : I → Prop) {C D : ℕ} (hCD : C ≤ D) :
     Nat.card {f : I → Fin D // ∀ i, p i → (f i).val < C} =
       C ^ Nat.card {i : I // p i} *
         D ^ Nat.card {i : I // ¬p i} := by
+  classical
+  let : Fintype I := Fintype.ofFinite I
   rw [Nat.card_congr (thresholdFunEquiv p hCD), Nat.card_prod,
     Nat.card_fun, Nat.card_fun, Nat.card_fin, Nat.card_fin]
 
@@ -663,11 +665,13 @@ private def upperThresholdFunEquiv {I : Type*} [Fintype I] (p : I → Prop)
       dsimp only
       rw [dif_neg i.2]
 
-private theorem card_upperThresholdLabelings {I : Type*} [Fintype I]
-    (p : I → Prop) [DecidablePred p] {C D : ℕ} (hCD : C ≤ D) :
+private theorem card_upperThresholdLabelings {I : Type*} [Finite I]
+    (p : I → Prop) {C D : ℕ} (hCD : C ≤ D) :
     Nat.card {f : I → Fin D // ∀ i, p i → C ≤ (f i).val} =
       (D - C) ^ Nat.card {i : I // p i} *
         D ^ Nat.card {i : I // ¬p i} := by
+  classical
+  let : Fintype I := Fintype.ofFinite I
   rw [Nat.card_congr (upperThresholdFunEquiv p hCD), Nat.card_prod,
     Nat.card_fun, Nat.card_fun, Nat.card_fin, Nat.card_fin]
 
@@ -1222,7 +1226,7 @@ private theorem incidenceWalk_getVert_even {u : X} {v : X ⊕ H.Edge}
       have hleft : H.incidenceBicoloring (Sum.inl u) = false := rfl
       have hright : H.incidenceBicoloring (Sum.inr e) = true := rfl
       rw [hleft, hright] at hcongr
-      have : False := by simpa using hcongr
+      have : False := by simp at hcongr
       exact this.elim
 
 private theorem incidenceWalk_getVert_odd {u : X} {v : X ⊕ H.Edge}
@@ -1237,7 +1241,7 @@ private theorem incidenceWalk_getVert_odd {u : X} {v : X ⊕ H.Edge}
       have hleft : H.incidenceBicoloring (Sum.inl u) = false := rfl
       have hright : H.incidenceBicoloring (Sum.inl x) = false := rfl
       rw [hleft, hright] at hcongr
-      have : False := by simpa using hcongr
+      have : False := by simp at hcongr
       exact this.elim
   | inr e => exact ⟨e, rfl⟩
 
@@ -1844,7 +1848,7 @@ private theorem twice_card_cycleHeavyLabelings_le {n r C K : ℕ} (hr : 2 ≤ r)
   change 2 * bad.card ≤ D ^ Fintype.card (UniformEdge n r)
   by_cases hS : S = 0
   · rw [hS] at hmaster
-    simp only [zero_mul, zero_add, one_mul] at hmaster
+    simp only [zero_mul] at hmaster
     omega
   · have hSpos : 0 < S := Nat.pos_of_ne_zero hS
     apply Nat.le_of_mul_le_mul_left (c := S) ?_ hSpos
@@ -1878,7 +1882,6 @@ private theorem eventually_color_tail_exponential (a : ℕ) :
       Real.exp (-(n : ℝ)) := by
     rw [← Real.exp_nat_mul, ← Real.exp_add]
     congr 1
-    push_cast
     ring
   calc
     2 * (3 : ℝ) ^ n * (n : ℝ) ^ a * Real.exp (-3 * (n : ℝ)) ≤
@@ -1903,8 +1906,8 @@ private theorem color_tail_core_bound {n r B C D Q L : ℕ}
   have hbase : ((D - C : ℕ) : ℝ) / (D : ℝ) ≤
       Real.exp (-((C : ℝ) / (D : ℝ))) := by
     rw [Nat.cast_sub hCD]
-    convert Real.one_sub_le_exp_neg ((C : ℝ) / (D : ℝ)) using 1 <;>
-      field_simp
+    convert Real.one_sub_le_exp_neg ((C : ℝ) / (D : ℝ)) using 1
+    field_simp
   have hratioPow : (((D - C : ℕ) : ℝ) / (D : ℝ)) ^ L ≤
       (Real.exp (-((C : ℝ) / (D : ℝ)))) ^ L := by
     exact pow_le_pow_left₀ (by positivity) hbase L
@@ -1915,7 +1918,6 @@ private theorem color_tail_core_bound {n r B C D Q L : ℕ}
       Real.exp (-3 * (n : ℝ)) := by
     rw [← Real.exp_nat_mul]
     apply Real.exp_le_exp.mpr
-    push_cast
     calc
       (L : ℝ) * -((C : ℝ) / (D : ℝ)) =
           -((C : ℝ) * (L : ℝ) / (D : ℝ)) := by ring
@@ -1999,12 +2001,12 @@ private def cycleDeletionBudget (r K : ℕ) : ℕ :=
 /-- On the convenient subsequence `n = 6rm`, the color block contains enough
 `r`-sets for the fixed sampling threshold. -/
 private theorem four_pow_le_threshold_mul_choose {r m : ℕ}
-    (hr : 1 ≤ r) (hm : 1 ≤ m) :
+    (_hr : 1 ≤ r) (hm : 1 ≤ m) :
     4 * (6 * r * m) ^ r ≤
       samplingThreshold r * Nat.choose ((6 * r * m) / 3) r := by
   have hnDiv : (6 * r * m) / 3 = 2 * r * m := by
     calc
-      (6 * r * m) / 3 = (3 * (2 * r * m)) / 3 := by congr 1 <;> ring
+      (6 * r * m) / 3 = (3 * (2 * r * m)) / 3 := by congr 1; ring
       _ = 2 * r * m := Nat.mul_div_cancel_left _ (by norm_num)
   have hrm : r ≤ r * m := by
     simpa using Nat.mul_le_mul_left r hm
@@ -2111,7 +2113,7 @@ private theorem exists_sampling_parameters (r K : ℕ) (hr : 2 ≤ r) (hK : 1 �
       calc
         n * n ^ (r - 1) = n ^ (r - 1) * n := by ac_rfl
         _ = n ^ ((r - 1) + 1) := (pow_succ n (r - 1)).symm
-        _ = n ^ r := by congr 1 <;> omega
+        _ = n ^ r := by congr 1; omega
     have hsplit : C * B + C * (Nat.choose (n / 3) r - B) =
         C * Nat.choose (n / 3) r := by
       rw [← Nat.mul_add, Nat.add_sub_of_le hBQ]
@@ -2701,7 +2703,7 @@ private theorem twice_card_pairColorBadLabelings_lt {n r B C D : ℕ} [NeZero r]
     exact (Nat.sub_le _ _).trans hcandidate
   have hexp' : 2 * (3 : ℝ) ^ (4 * n) * (((4 * n : ℕ) : ℝ)) ^ (r * B) *
       Real.exp (-3 * (((4 * n : ℕ) : ℝ))) < 1 := by
-    convert hexp using 1 <;> norm_num
+    convert hexp using 1; norm_num
   have hcore : 2 * 3 ^ (4 * n) * Nat.choose Q B * (D - C) ^ L < D ^ L :=
     color_tail_core_bound hD hCD hQ hCL hexp'
   have hremaining : 0 < D ^ (E - L) := pow_pos hD _
@@ -2730,7 +2732,7 @@ private theorem six_four_pow_le_pairThreshold_mul_candidates
         (Nat.choose ((6 * r * m) / 3) (r - 1) * ((6 * r * m) / 3)) := by
   have hnDiv : (6 * r * m) / 3 = 2 * r * m := by
     calc
-      (6 * r * m) / 3 = (3 * (2 * r * m)) / 3 := by congr 1 <;> ring
+      (6 * r * m) / 3 = (3 * (2 * r * m)) / 3 := by congr 1; ring
       _ = 2 * r * m := Nat.mul_div_cancel_left _ (by norm_num)
   have hbase : r * m ≤ (6 * r * m) / 3 + 1 - (r - 1) := by
     rw [hnDiv]
@@ -2755,7 +2757,7 @@ private theorem six_four_pow_le_pairThreshold_mul_candidates
   have hmul := Nat.mul_le_mul_left (6 * 24 ^ r * (r * m)) hdesc
   have hrpow : (r * m) ^ r = (r * m) * (r * m) ^ (r - 1) := by
     calc
-      (r * m) ^ r = (r * m) ^ ((r - 1) + 1) := by congr 1 <;> omega
+      (r * m) ^ r = (r * m) ^ ((r - 1) + 1) := by congr 1; omega
       _ = (r * m) ^ (r - 1) * (r * m) := pow_succ _ _
       _ = (r * m) * (r * m) ^ (r - 1) := by ac_rfl
   rw [hnDiv]
@@ -2863,7 +2865,7 @@ private theorem exists_pair_sampling_parameters (r K : ℕ)
       calc
         (4 * n) * (4 * n) ^ (r - 1) = (4 * n) ^ (r - 1) * (4 * n) := by ac_rfl
         _ = (4 * n) ^ ((r - 1) + 1) := (pow_succ _ _).symm
-        _ = (4 * n) ^ r := by congr 1 <;> omega
+        _ = (4 * n) ^ r := by congr 1; omega
     calc
       3 * (4 * n) * (4 * n) ^ (r - 1) =
           3 * ((4 * n) * (4 * n) ^ (r - 1)) := by ring
@@ -2871,7 +2873,7 @@ private theorem exists_pair_sampling_parameters (r K : ℕ)
       _ ≤ C * (Q - B) := by omega
   refine ⟨n, hCD, hBQ, hKn, hCL, ?_⟩
   have hNfour : N ≤ 4 * n := hNm.trans (hmn.trans (by omega))
-  convert hN (4 * n) hNfour using 1 <;> norm_num <;> rfl
+  convert hN (4 * n) hNfour using 1; norm_num; rfl
 
 /-- A high-Berge-girth non-three-colorable hypergraph all of whose edges have
 the geometrically uniform `(r-1,1)` four-block pattern. -/
@@ -3041,7 +3043,7 @@ theorem exists_pairClusterHypergraph (r K : ℕ) (hr : 2 ≤ r) (hK : 1 ≤ K) :
 position lies in the majority cluster. -/
 private theorem ordered_pairCluster_pattern {Y : Type*} {r : ℕ}
     (J : OrderedUniformHypergraph Y r) (cluster : Y → Fin 4)
-    (hr : 1 ≤ r) (hpattern : J.HasPairClusterPattern cluster) (e : J.Edge) :
+    (_hr : 1 ≤ r) (hpattern : J.HasPairClusterPattern cluster) (e : J.Edge) :
     ∃ a b : Fin 4, ∃ q : Fin r, a ≠ b ∧
       ∀ i, cluster (J.vertex e i) = if i = q then b else a := by
   classical
@@ -3154,7 +3156,9 @@ private theorem projectEdge_injective_matching {x : X} {e : H.Edge} {i : Fin r}
     s(Sum.inl x, Sum.inr (e, i)) = a' := by
   classical
   simp only [Option.mem_def] at ha ha'
-  simp [projectEdge, attachedGraph, attachedAdj, projectVertex] at ha
+  simp only [projectEdge, attachedGraph, mem_edgeSet, attachedAdj, projectVertex, Sym2.map_mk,
+    Sym2.mk_isDiag_iff, reduceCtorEq, not_false_eq_true, and_true, Option.ite_none_right_eq_some,
+    Option.some.injEq] at ha
   revert ha'
   refine Sym2.inductionOn a' ?_
   intro u' v' ha'
@@ -3164,7 +3168,9 @@ private theorem projectEdge_injective_matching {x : X} {e : H.Edge} {i : Fin r}
       | inl y' => simp [projectEdge, attachedGraph, attachedAdj] at ha'
       | inr fj =>
           rcases fj with ⟨f, j⟩
-          simp [projectEdge, attachedGraph, attachedAdj, projectVertex] at ha'
+          simp only [projectEdge, attachedGraph, mem_edgeSet, attachedAdj, projectVertex,
+            Sym2.map_mk, Sym2.mk_isDiag_iff, reduceCtorEq, not_false_eq_true, and_true,
+            Option.ite_none_right_eq_some, Option.some.injEq] at ha'
           have heq : s(Sum.inl x, Sum.inr e) = s(Sum.inl x', Sum.inr f) :=
             ha.2.trans ha'.2.symm
           rcases Sym2.eq_iff.mp heq with h | h
@@ -3179,7 +3185,9 @@ private theorem projectEdge_injective_matching {x : X} {e : H.Edge} {i : Fin r}
       rcases fj with ⟨f, j⟩
       cases v' with
       | inl x' =>
-          simp [projectEdge, attachedGraph, attachedAdj, projectVertex] at ha'
+          simp only [projectEdge, attachedGraph, mem_edgeSet, attachedAdj, projectVertex,
+            Sym2.map_mk, Sym2.mk_isDiag_iff, reduceCtorEq, not_false_eq_true, and_true,
+            Option.ite_none_right_eq_some, Option.some.injEq] at ha'
           have heq : s(Sum.inl x, Sum.inr e) = s(Sum.inr f, Sum.inl x') :=
             ha.2.trans ha'.2.symm
           rcases Sym2.eq_iff.mp heq with h | h
@@ -3191,7 +3199,9 @@ private theorem projectEdge_injective_matching {x : X} {e : H.Edge} {i : Fin r}
             subst j
             exact Sym2.eq_swap
       | inr fk =>
-          simp [projectEdge, attachedGraph, attachedAdj, projectVertex] at ha'
+          simp only [projectEdge, attachedGraph, mem_edgeSet, attachedAdj, projectVertex,
+            Sym2.map_mk, Sym2.mk_isDiag_iff, Sum.inr.injEq, Option.ite_none_right_eq_some,
+            Option.some.injEq] at ha'
           exact (ha'.1.2 ha'.1.1.1).elim
 
 private theorem projectEdge_injective_on_some {a a' : Sym2 H.AttachedVertex}
@@ -3214,7 +3224,9 @@ private theorem projectEdge_injective_on_some {a a' : Sym2 H.AttachedVertex}
       | inl x =>
           exact Sym2.eq_swap.trans (projectEdge_injective_matching H (Sym2.eq_swap ▸ ha) ha')
       | inr fj =>
-          simp [projectEdge, attachedGraph, attachedAdj, projectVertex] at ha
+          simp only [projectEdge, attachedGraph, mem_edgeSet, attachedAdj, projectVertex,
+            Sym2.map_mk, Sym2.mk_isDiag_iff, Sum.inr.injEq, Option.mem_def,
+            Option.ite_none_right_eq_some, Option.some.injEq] at ha
           exact (ha.1.2 ha.1.1.1).elim
 
 private theorem incidence_adj_projectVertex_of_ne {u v : H.AttachedVertex}
@@ -3300,7 +3312,7 @@ private theorem projectWalk_ne_nil_of_foundation_mem [DecidableEq X]
     exact ⟨s(Sum.inl x, w), ha, hproject⟩
   intro hnil
   rw [hnil] at hmem
-  simpa using hmem
+  simp at hmem
 
 private theorem cycleGraph_isCycles (hr : 3 ≤ r) : (cycleGraph r).IsCycles := by
   obtain ⟨n, rfl⟩ : ∃ n, r = n + 3 :=
@@ -3311,7 +3323,7 @@ private theorem cycleGraph_isCycles (hr : 3 ≤ r) : (cycleGraph r).IsCycles := 
   intro h
   have hdegree := cycleGraph_degree_three_le (n := n) (v := v)
   rw [SimpleGraph.degree, cycleGraph_neighborFinset, h] at hdegree
-  simpa using hdegree
+  simp at hdegree
 
 /-- In a finite connected graph of degree two, every simple cycle uses all
 vertices. -/
@@ -3422,7 +3434,7 @@ private theorem cycle_length_ge_uniformity_of_no_foundation
               (SimpleGraph.Walk.length_map _ _).symm
             _ = c.length := by
               rw [show q.map (SimpleGraph.Embedding.induce (H.fiberSet e)).toHom = c by
-                simpa [q] using c.map_induce hsupp]
+                simp [q]]
               rfl
 
 /-- O'Donnell's girth transfer.  A cycle avoiding the foundation lies in one
@@ -3563,8 +3575,8 @@ private theorem finite_open_dense_avoidance {α ι : Type*} [TopologicalSpace α
     induction t using Finset.induction_on with
     | empty =>
         constructor
-        · simpa [allGood] using (dense_univ : Dense (Set.univ : Set α))
-        · simpa [allGood] using (isOpen_univ : IsOpen (Set.univ : Set α))
+        · simp [allGood]
+        · simp [allGood]
     | @insert a t ha ih =>
         have hat : a ∈ s := ht (Finset.mem_insert_self a t)
         have hts : t ⊆ s := fun i hi => ht (Finset.mem_insert_of_mem hi)
@@ -3589,7 +3601,7 @@ private theorem eventually_locally_of_eventually {α : Type*} [TopologicalSpace 
 /-- Abstract faithful-selection lemma.  Once a parameterized family realizes
 every intended edge, it suffices that injectivity and nonedge conditions are
 open dense for each of the finitely many vertex pairs. -/
-private theorem faithfulEmbedding_of_openDense_family {X α : Type*} [Fintype X]
+private theorem faithfulEmbedding_of_openDense_family {X α : Type*} [Finite X]
     [TopologicalSpace α] (G : SimpleGraph X) (U : Set α) (hUopen : IsOpen U)
     (hUne : U.Nonempty) (p : α → X → Plane)
     (hedge : ∀ t ∈ U, ∀ x y, G.Adj x y → Dist.dist (p t x) (p t y) = 1)
@@ -3599,6 +3611,7 @@ private theorem faithfulEmbedding_of_openDense_family {X α : Type*} [Fintype X]
       (x = y ∨ p t x ≠ p t y) ∧ (G.Adj x y ∨ Dist.dist (p t x) (p t y) ≠ 1)}) :
     FaithfulUnitDistanceEmbedding G := by
   classical
+  let : Fintype X := Fintype.ofFinite X
   let good : X × X → Set α := fun q => {t |
     (q.1 = q.2 ∨ p t q.1 ≠ p t q.2) ∧
       (G.Adj q.1 q.2 ∨ Dist.dist (p t q.1) (p t q.2) ≠ 1)}
@@ -3625,7 +3638,7 @@ private theorem faithfulEmbedding_of_openDense_family {X α : Type*} [Fintype X]
 
 /-- Continuous realization families automatically satisfy the openness half of
 the faithful-selection criterion. -/
-private theorem faithfulEmbedding_of_dense_continuous_family {X α : Type*} [Fintype X]
+private theorem faithfulEmbedding_of_dense_continuous_family {X α : Type*} [Finite X]
     [TopologicalSpace α] (G : SimpleGraph X) (U : Set α) (hUopen : IsOpen U)
     (hUne : U.Nonempty) (p : α → X → Plane)
     (hcont : ∀ x, Continuous fun t => p t x)
@@ -3676,7 +3689,7 @@ private theorem dense_ne_level_of_fderiv_ne_zero
   have h := interior_levelSet_eq_empty_of_fderiv_ne_zero f c hregular
   have hd : Dense ({x | f x = c} : Set E)ᶜ :=
     interior_eq_empty_iff_dense_compl.mp h
-  simpa only [Set.compl_setOf] using hd
+  simpa only [Set.compl_ofPred] using hd
 
 /-- Relative version of regular-level avoidance.  The derivative is only
 required on an open parameter region; its non-level locus is then dense in
@@ -3705,7 +3718,7 @@ private theorem dense_ne_level_on_open_of_fderiv_ne_zero
   have heq : ((Subtype.val : N → E) ⁻¹' (({x : E | f x = c} ∩ N)ᶜ)) =
       {x : N | f x.1 ≠ c} := by
     ext x
-    simp [x.2]
+    simp
   rwa [heq] at hpull
 
 /-- Avoid finitely many regular levels while retaining a nonempty open ambient
@@ -3714,7 +3727,7 @@ the argument impose collision-freeness, then general position, then the
 faithful nonedge conditions in three successive passes. -/
 private theorem finite_regular_avoidance_open_region
     {E F ι : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
-    [NormedAddCommGroup F] [NormedSpace ℝ F] [Fintype ι]
+    [NormedAddCommGroup F] [NormedSpace ℝ F] [Finite ι]
     (N : Set E) (hNopen : IsOpen N) (hNne : N.Nonempty)
     (f : ι → E → F) (c : ι → F)
     (hderiv : ∀ i x, x ∈ N → ∃ f' : E →L[ℝ] F, HasFDerivAt (f i) f' x)
@@ -3723,6 +3736,7 @@ private theorem finite_regular_avoidance_open_region
     ∃ U : Set E, IsOpen U ∧ U.Nonempty ∧ U ⊆ N ∧
       ∀ x ∈ U, ∀ i, f i x ≠ c i := by
   classical
+  let : Fintype ι := Fintype.ofFinite ι
   let C : Set N := {x | ∀ i, f i x.1 ≠ c i}
   have hgoodOpen (i : ι) : IsOpen {x : N | f i x.1 ≠ c i} := by
     have hcont : Continuous (fun x : N => f i x.1) := by
@@ -3944,7 +3958,7 @@ private theorem path_stress_coefficients_nonzero
         intro heq
         have hu := hunit i (by omega)
         rw [heq] at hu
-        simpa using hu
+        simp at hu
       intro hzero
       have hb := hbalance i hi
       rw [hzero, zero_smul] at hb
@@ -4182,7 +4196,7 @@ private theorem one_ne_zero_fin {r : ℕ} [NeZero r] (hr : 2 ≤ r) :
     (1 : Fin r) ≠ 0 := by
   intro h
   have := congrArg Fin.val h
-  simpa [Fin.val_one, Nat.mod_eq_of_lt (by omega : 1 < r)] using this
+  simp [Nat.mod_eq_of_lt (by omega : 1 < r)] at this
 
 private theorem sum_edgeFlex_single {r : ℕ} [NeZero r] (hr : 3 ≤ r)
     (v : Fin r → Plane) (a : Fin r → ℝ) (k : Fin r) (q : Plane) :
@@ -4269,7 +4283,7 @@ private theorem chord_stress_endpoint_nonzero {r : ℕ} [NeZero r] (hr : 3 ≤ r
     (hij : Dist.dist (v i) (v j) = 1) :
     a (i - 1) ≠ 0 ∨ a i ≠ 0 := by
   by_contra h
-  push_neg at h
+  push Not at h
   let d := v j - v i
   have heval := congrArg (fun L : (Fin r → Plane) →ₗ[ℝ] ℝ =>
     L (Pi.single i d)) hcoeff
@@ -4280,8 +4294,9 @@ private theorem chord_stress_endpoint_nonzero {r : ℕ} [NeZero r] (hr : 3 ≤ r
   have hji : j ≠ i := by
     intro hji
     subst j
-    simpa using hij
-  simp [chordFlexFunctional_apply, hji, d] at heval
+    simp at hij
+  simp only [neg_zero, chordFlexFunctional_apply, ne_eq, hji, not_false_eq_true,
+    Pi.single_eq_of_ne, Pi.single_eq_same, zero_sub, neg_sub, d] at heval
   have hnorm : ‖v j - v i‖ = 1 := by
     rw [norm_sub_rev]
     simpa only [dist_eq_norm] using hij
@@ -4311,7 +4326,8 @@ private theorem chord_stress_endpoint_nonzero_of_ne {r : ℕ} [NeZero r] (hr : 3
     intro hji
     subst j
     exact hij rfl
-  simp [chordFlexFunctional_apply, hji, d] at heval
+  simp only [neg_zero, chordFlexFunctional_apply, ne_eq, hji, not_false_eq_true,
+    Pi.single_eq_of_ne, Pi.single_eq_same, zero_sub, neg_sub, d] at heval
   have hdne : d ≠ 0 := sub_ne_zero.mpr hij.symm
   have hself : inner ℝ d d = 0 := by
     rw [show v i - v j = -d by simp [d], inner_neg_right] at heval
@@ -4432,7 +4448,7 @@ private theorem forward_stressed_arc_distance_eq_index {r : ℕ} [NeZero r]
       i + Fin.ofNat r (k + 1) = (i + Fin.ofNat r k) + 1 := by
     have hnat : Fin.ofNat r (k + 1) = Fin.ofNat r k + 1 := by
       apply Fin.ext
-      simp [Fin.ofNat, Fin.add_def, Nat.add_mod, Nat.mod_mod]
+      simp [Fin.ofNat, Fin.add_def, Nat.add_mod]
     rw [hnat]
     abel
   have hpunit : ∀ k < n, Dist.dist (p k) (p (k + 1)) = 1 := by
@@ -4642,7 +4658,9 @@ private theorem plane_axes_not_common_line (e : Plane) (a b : ℝ)
   have hx0 := congrArg (fun z : Plane => z.ofLp 0) hx
   have hx1 := congrArg (fun z : Plane => z.ofLp 1) hx
   have hy1 := congrArg (fun z : Plane => z.ofLp 1) hy
-  simp [planeAxisX, planeAxisY] at hx0 hx1 hy1
+  simp only [Fin.isValue, PiLp.smul_apply, smul_eq_mul, planeAxisX, PiLp.neg_apply,
+    Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val_fin_one, neg_zero, mul_eq_zero,
+    planeAxisY] at hx0 hx1 hy1
   have ha : a ≠ 0 := by
     intro ha
     rw [ha, zero_mul] at hx0
@@ -4733,18 +4751,20 @@ private theorem quarterTurn_sub (x y : Plane) :
     quarterTurn (x - y) = quarterTurn x - quarterTurn y := by
   apply PiLp.ext
   intro k
-  fin_cases k <;> simp [quarterTurn] <;> ring
+  fin_cases k <;> simp [quarterTurn]
+  ring
 
 private noncomputable def quarterTurnLinear : Plane →ₗ[ℝ] Plane where
   toFun := quarterTurn
   map_add' x y := by
     apply PiLp.ext
     intro k
-    fin_cases k <;> simp [quarterTurn] <;> ring
+    fin_cases k <;> simp [quarterTurn]
+    ring
   map_smul' t x := by
     apply PiLp.ext
     intro k
-    fin_cases k <;> simp [quarterTurn] <;> ring
+    fin_cases k <;> simp [quarterTurn]
 
 private noncomputable def quarterTurnCLM : Plane →L[ℝ] Plane :=
   quarterTurnLinear.toContinuousLinearMap
@@ -4795,10 +4815,10 @@ private theorem exists_smul_of_inner_quarterTurn_eq_zero {x y : Plane}
       apply hx
       apply PiLp.ext
       intro k
-      fin_cases k <;> simpa [hx0, hx1]
+      fin_cases k <;> simp [hx0, hx1]
     have hy0 : y.ofLp 0 = 0 := by
       rw [hx0] at hdet
-      simp only [mul_zero, neg_zero, zero_add] at hdet
+      simp only [mul_zero, zero_add] at hdet
       simpa using (mul_eq_zero.mp hdet).resolve_right hx1
     refine ⟨y.ofLp 1 / x.ofLp 1, ?_⟩
     apply PiLp.ext
@@ -4972,7 +4992,7 @@ private theorem cycle_unit_chord_has_flex {r : ℕ} [NeZero r]
   have hne : i ≠ j := by
     intro h
     subst j
-    simpa using hij
+    simp at hij
   by_contra hflex
   push Not at hflex
   have hvanish : ∀ z : Fin r → Plane,
@@ -5025,7 +5045,7 @@ private theorem cycle_two_chord_has_flex_of_midpoint_off_cycle {r : ℕ} [NeZero
   have hne : i ≠ j := by
     intro h
     subst j
-    simpa using hij
+    simp at hij
   by_contra hflex
   push Not at hflex
   have hvanish : ∀ z : Fin r → Plane,
@@ -5062,7 +5082,7 @@ private theorem cycle_two_chord_has_flex_of_midpoint_off_cycle {r : ℕ} [NeZero
         Dist.dist (v i) (v (i - 1)) = Dist.dist (v (i - 1)) (v i) :=
           _root_.dist_comm _ _
         _ = 1 := by
-          convert hunit (i - 1) using 1 <;> congr 1 <;> abel_nf
+          convert hunit (i - 1) using 1; congr 1; abel_nf
     have hstep2 : Dist.dist (v (i - 1)) (v j) = 1 := by
       rw [hj]
       have hidx : i - 2 + 1 = i - 1 := by
@@ -5151,7 +5171,7 @@ private theorem cycle_external_unit_pair_has_flex {r : ℕ} [NeZero r]
       intro hzero
       have : a = v i := sub_eq_zero.mp hzero
       rw [this] at hai
-      simpa using hai
+      simp at hai
     have hqturn : zrot q - zrot i = quarterTurn (v q - v i) := by
       dsimp only [zrot]
       rw [quarterTurn_sub]
@@ -5205,7 +5225,7 @@ argument. -/
 private noncomputable def attachmentConstraints (r : ℕ) [NeZero r] :
     ((Fin r → Plane) × (Fin r → Plane)) → (Fin r ⊕ Fin r → ℝ)
   | (u, v), Sum.inl i => ‖v i - u i‖ ^ 2
-  | (u, v), Sum.inr i => ‖v (i + 1) - v i‖ ^ 2
+  | (_u, v), Sum.inr i => ‖v (i + 1) - v i‖ ^ 2
 
 private theorem attachmentConstraints_contDiff (r : ℕ) [NeZero r] :
     ContDiff ℝ ⊤ (attachmentConstraints r) := by
@@ -5629,7 +5649,7 @@ private theorem hasFDerivAt_of_attachment_solution {r : ℕ} [NeZero r]
     have hw := congrArg (fun L : (Fin r → Plane) →L[ℝ]
         (Fin r ⊕ Fin r → ℝ) => L w) htotal
     simp only [ContinuousLinearMap.comp_apply, ContinuousLinearMap.prod_apply,
-      ContinuousLinearMap.id_apply, ContinuousLinearMap.zero_apply] at hw
+      ContinuousLinearMap.id_apply, zero_apply] at hw
     have hsplit :
         fderiv ℝ (attachmentConstraints r) (u, ψ u) (w, ψ' w) =
           attachmentFoundationDerivative u (ψ u) w +
@@ -5663,7 +5683,7 @@ private theorem attachment_derivatives_add_eq_zero_of_cycleFlex
   cases q with
   | inl i =>
       simp [attachmentFoundationDerivative, attachmentCycleDerivative,
-        innerSL_apply_apply, inner_sub_left]
+        innerSL_apply_apply]
       ring
   | inr i =>
       have hi := hz i
@@ -5710,8 +5730,8 @@ private theorem attachment_rigid_rotation_linearization {r : ℕ} [NeZero r]
   | inl i =>
       simp only [Pi.add_apply, attachmentFoundationDerivative,
         attachmentCycleDerivative, ContinuousLinearMap.pi_apply,
-        ContinuousLinearMap.smul_apply, ContinuousLinearMap.comp_apply,
-        ContinuousLinearMap.proj_apply, innerSL_apply_apply, smul_eq_mul]
+        smul_apply, ContinuousLinearMap.comp_apply,
+        ContinuousLinearMap.proj_apply, innerSL_apply_apply]
       have hdiff : quarterTurn (v i - c) - quarterTurn (u i - c) =
           quarterTurn (v i - u i) := by
         rw [← quarterTurn_sub]
@@ -5732,10 +5752,10 @@ private theorem attachment_rigid_rotation_linearization {r : ℕ} [NeZero r]
   | inr i =>
       simp only [Pi.add_apply, attachmentFoundationDerivative,
         attachmentCycleDerivative, ContinuousLinearMap.pi_apply,
-        ContinuousLinearMap.zero_apply, zero_add,
-        ContinuousLinearMap.smul_apply, ContinuousLinearMap.comp_apply,
-        ContinuousLinearMap.sub_apply, ContinuousLinearMap.proj_apply,
-        innerSL_apply_apply, smul_eq_mul]
+        zero_apply, zero_add,
+        smul_apply, ContinuousLinearMap.comp_apply,
+        sub_apply, ContinuousLinearMap.proj_apply,
+        innerSL_apply_apply]
       rw [← quarterTurn_sub]
       have harg : v (i + 1) - c - (v i - c) = v (i + 1) - v i := by abel
       rw [harg, inner_quarterTurn_self]
@@ -6129,7 +6149,7 @@ private theorem extendAtLast_derivative_injective {r : ℕ} [NeZero r]
             lt_of_le_of_ne (Nat.le_of_not_gt hi) (Ne.symm hir)
           have hupper : i.val ≤ r + 1 := by
             rw [← Nat.lt_succ_iff]
-            simpa [Nat.add_assoc] using i.isLt
+            simp [Nat.add_assoc]
           exact Nat.le_antisymm hupper (Nat.succ_le_iff.mpr hlo)
         simpa [this] using hDuplicateZero
   intro a b hab
@@ -6258,10 +6278,10 @@ private theorem squareCornerTriangle_is_attachment :
   · intro i
     fin_cases i <;>
       norm_num [squareCornerFoundation, squareCornerTriangle, planePoint, dist_eq_norm,
-        EuclideanSpace.norm_eq, Fin.sum_univ_succ] <;>
-      ring_nf <;>
-      rw [Real.sq_sqrt (by norm_num : (0 : ℝ) ≤ 3)] <;>
-      norm_num
+        EuclideanSpace.norm_eq, Fin.sum_univ_succ]
+    ring_nf
+    rw [Real.sq_sqrt (by norm_num : (0 : ℝ) ≤ 3)]
+    norm_num
   · intro i
     fin_cases i <;>
       norm_num [nextFinThree, squareCornerTriangle, planePoint, dist_eq_norm,
@@ -6582,7 +6602,7 @@ private theorem iterateLast_pair_foundation
           have hv := congrArg Fin.val heq
           simpa [oldFin] using hv
       · rw [extendFoundationAtLast]
-        simp only [hi, ↓reduceIte, ih]
+        simp only [hi, ih]
         have hlastNe : lastFin (oddAttachmentSize m) ≠ pairSingletonIndex m := by
           intro h
           have hv := congrArg Fin.val h
@@ -6836,7 +6856,7 @@ private theorem squarePairOddAttachment_foundation (m : ℕ) (a b : Fin 4)
     · rw [if_neg hi, if_neg hi]
       change squarePairTransform a b (planePoint 0 0) = squareCenter a
       exact squarePairTransform_origin a b
-  · simp only [squarePairOddAttachment, hd, if_neg,
+  · simp only [squarePairOddAttachment, hd,
       if_false, RegularAttachment.rigidMap, sidePairOddAttachment_foundation]
     by_cases hi : i = pairSingletonIndex m
     · rw [if_pos hi, if_pos hi]
@@ -6993,14 +7013,14 @@ private theorem edgeFoundation_extension_zero_of_single_intersection
     have hindices := J.edge_intersection_indices hberge hef hqs hkj
     exact hjs hindices.2.symm
 
-private theorem continuous_edgeFoundation {Y : Type*} [Fintype Y] {r : ℕ}
+private theorem continuous_edgeFoundation {Y : Type*} {r : ℕ}
     (J : OrderedUniformHypergraph Y r) (e : J.Edge) :
     Continuous (edgeFoundation J e) := by
   apply continuous_pi
   intro i
   exact continuous_apply (J.vertex e i)
 
-private noncomputable def pairEdgeInverse {Y : Type*} (m : ℕ)
+private theorem pairEdgeInverse {Y : Type*} (m : ℕ)
     (J : OrderedUniformHypergraph Y (oddAttachmentSize m)) (cluster : Y → Fin 4)
     (hpattern : J.HasPairClusterPattern cluster) (e : J.Edge) :
     (attachmentCycleDerivative
@@ -7030,7 +7050,7 @@ private theorem pairEdgeLocalCycle_apply_base {Y : Type*} (m : ℕ)
     (hpattern : J.HasPairClusterPattern cluster) (e : J.Edge) :
     pairEdgeLocalCycle m J cluster hpattern e (pairBaseFoundation cluster) =
       (pairEdgeRegularAttachment m J cluster hpattern e).cycle := by
-  rw [pairEdgeLocalCycle, edgeFoundation_pairBase]
+  rw [pairEdgeLocalCycle, edgeFoundation_pairBase m J cluster hpattern e]
   unfold regularLocalAttachedCycle
   exact localAttachedCycle_apply_base _ _ _
 
@@ -7386,14 +7406,14 @@ private theorem pairCrossArea_regular_at_injective_zero {Y : Type*} [Fintype Y]
   intro hA
   have happ := congrArg (fun L : (Y → Plane) →L[ℝ] ℝ => L w) hA
   simp only [A', ContinuousLinearMap.comp_apply, ContinuousLinearMap.prod_apply,
-    ContinuousLinearMap.sub_apply, ContinuousLinearMap.proj_apply,
-    fderivInnerCLM_apply, ContinuousLinearMap.zero_apply] at happ
+    sub_apply, ContinuousLinearMap.proj_apply,
+    fderivInnerCLM_apply, zero_apply] at happ
   change inner ℝ (vE i - c) (quarterTurn
       (pairEdgeDerivative m J cluster hpattern u.1 f w j - w (J.vertex e q))) +
     inner ℝ (pairEdgeDerivative m J cluster hpattern u.1 e w i - w (J.vertex e q))
       (quarterTurn (vF j - c)) = 0 at happ
   rw [hrespE, hrespF, hwc] at happ
-  simp only [Pi.zero_apply, zero_sub, sub_zero, quarterTurn_zero,
+  simp only [Pi.zero_apply, sub_zero, quarterTurn_zero,
     inner_zero_right, zero_add] at happ
   have hzEi : zE i = quarterTurn X := by rfl
   have hYv : vF j - c = Yv := by rfl
@@ -7424,7 +7444,7 @@ private theorem pair_foundation_cycle_derivative_ne {Y : Type*} [Fintype Y]
       subst i
       have hs := hvalid.1.1 q
       rw [hqx, ← hcollision] at hs
-      simpa using hs
+      simp at hs
     obtain ⟨z, hzflex, hziq⟩ :=
       odd_cycle_indices_have_separating_flex hr hodd v hvalid.1.2 i q hiq
     let w : Y → Plane := edgeVelocityExtension J e z
@@ -7551,7 +7571,7 @@ private theorem pair_foundation_cycle_unit_variation {Y : Type*} [Fintype Y]
       intro hd
       have hxi : u.1 x = v i := sub_eq_zero.mp hd
       rw [hxi] at hunit
-      simpa [v] using hunit
+      simp [v] at hunit
     let z : Fin (oddAttachmentSize m) → Plane := fun _ => d
     let w : Y → Plane := edgeVelocityExtension J e z
     have hzflex : ∀ k, edgeFlexFunctional v k z = 0 := by
@@ -7679,7 +7699,7 @@ private theorem pair_distinct_cycle_unit_variation {Y : Type*} [Fintype Y]
       have heq : vE i = vF j := sub_eq_zero.mp hd
       change Dist.dist (vE i) (vF j) = 1 at hunit
       rw [heq] at hunit
-      simpa using hunit
+      simp at hunit
     let z : Fin (oddAttachmentSize m) → Plane := fun _ => d
     let w : Y → Plane := edgeVelocityExtension J e z
     have hzflex : ∀ k, edgeFlexFunctional vE k z = 0 := by
@@ -7829,7 +7849,7 @@ private theorem pair_collision_derivative_ne {Y : Type*} [Fintype Y]
           intro hder
           have happ := congrArg (fun L : (Y → Plane) →L[ℝ] Plane => L w) hder
           change w x = w y at happ
-          simp [w, hxy', hxy'.symm] at happ
+          simp only [↓reduceIte, hxy'.symm, w] at happ
           exact planeAxisX_ne_zero happ
       | inr z =>
           rcases z with ⟨e, i⟩
@@ -7871,8 +7891,8 @@ private def pairGeneralPositionAt {Y : Type*} [Fintype Y]
     (m : ℕ) (J : OrderedUniformHypergraph Y (oddAttachmentSize m))
     (cluster : Y → Fin 4) (hpattern : J.HasPairClusterPattern cluster)
     (u : Y → Plane) : Prop :=
-  ∀ (e f : J.Edge) (hef : e ≠ f)
-    (q s : Fin (oddAttachmentSize m)) (hqs : J.vertex e q = J.vertex f s)
+  ∀ (e f : J.Edge) (_hef : e ≠ f)
+    (q s : Fin (oddAttachmentSize m)) (_hqs : J.vertex e q = J.vertex f s)
     (i j : Fin (oddAttachmentSize m)),
     pairCrossArea m J cluster hpattern (J.vertex e q) e f i j u ≠ 0
 
@@ -7910,7 +7930,7 @@ private theorem pair_unit_nonedge_variation {Y : Type*} [Fintype Y]
             intro hxy
             change Dist.dist (u.1 x) (u.1 y) = 1 at hunit
             rw [hxy] at hunit
-            simpa using hunit
+            simp at hunit
           have hxy : x ≠ y := fun h => hpos (congrArg u.1 h)
           let d : Plane := u.1 x - u.1 y
           let w : Y → Plane := fun z => if z = x then d else 0
@@ -7986,8 +8006,8 @@ private theorem pairSquaredDistance_regular_at_unit_nonedge
       (pairDifference_hasFDerivAt m J cluster hpattern u x y).norm_sq
   · intro hL
     have happ := congrArg (fun A : (Y → Plane) →L[ℝ] ℝ => A w) hL
-    simp only [L, ContinuousLinearMap.comp_apply, ContinuousLinearMap.smul_apply,
-      innerSL_apply_apply, ContinuousLinearMap.zero_apply] at happ
+    simp only [L, ContinuousLinearMap.comp_apply, smul_apply,
+      innerSL_apply_apply, zero_apply] at happ
     have hinner : inner ℝ d (D w) = 0 := by
       rw [two_smul] at happ
       linarith
@@ -8108,17 +8128,17 @@ private theorem pairRealization_edges_unit {Y : Type*} [Fintype Y] (m : ℕ)
 realization.  The proof performs three finite regular-level avoidances:
 collisions, collinear pairs in intersecting fibers, and unintended unit
 distances. -/
-private theorem faithful_pairRealization {Y : Type*} [Fintype Y]
+private theorem faithful_pairRealization {Y : Type*} [Finite Y]
     (m : ℕ) (J : OrderedUniformHypergraph Y (oddAttachmentSize m))
     (cluster : Y → Fin 4) (hpattern : J.HasPairClusterPattern cluster)
     (hberge : J.BergeGirthAtLeast 3) :
     FaithfulUnitDistanceEmbedding J.attachedGraph := by
   classical
+  let : Fintype Y := Fintype.ofFinite Y
   let : Fintype J.Edge := Fintype.ofFinite J.Edge
   let N := pairFoundationNeighborhood m J cluster hpattern
   have hNopen : IsOpen N := pairFoundationNeighborhood_isOpen m J cluster hpattern
   have hNne : N.Nonempty := pairFoundationNeighborhood_nonempty m J cluster hpattern
-
   -- First pass: separate every pair of abstract vertices.
   let CollisionIndex :=
     {p : J.AttachedVertex × J.AttachedVertex // p.1 ≠ p.2}
@@ -8152,7 +8172,6 @@ private theorem faithful_pairRealization {Y : Type*} [Fintype Y]
     have hav := hCavoid u hu (⟨(x, y), hne⟩ : CollisionIndex)
     apply hav
     exact sub_eq_zero.mpr hxy
-
   -- Second pass: at a shared foundation vertex, no two points from distinct
   -- fibers are collinear with that vertex.
   let CrossIndex := {a : PairCrossDatum J.Edge (oddAttachmentSize m) //
@@ -8181,7 +8200,6 @@ private theorem faithful_pairRealization {Y : Type*} [Fintype Y]
     intro e f hef q s hqs i j
     exact hGavoid u hu
       (⟨⟨e, f, q, s, i, j⟩, hef, hqs⟩ : CrossIndex)
-
   -- Third pass: exclude squared distance one for every graph nonedge.
   let NonedgeIndex :=
     {p : J.AttachedVertex × J.AttachedVertex // ¬J.attachedGraph.Adj p.1 p.2}
