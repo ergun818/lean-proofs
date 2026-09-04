@@ -10,8 +10,8 @@ namespace Erdos1018Aux
 open Function Finset
 open SimpleGraph
 
-variable {V : Type*} [Fintype V] [DecidableEq V]
-variable (G : SimpleGraph V) [DecidableRel G.Adj]
+variable {V : Type*}
+variable (G : SimpleGraph V)
 
 /-- An endpoint of a longest path has all of its neighbours on the path. -/
 lemma longestPath_neighbor_mem_support_end
@@ -19,14 +19,16 @@ lemma longestPath_neighbor_mem_support_end
     (hp : p.IsPath)
     (hmax : ∀ (u v : V) (q : G.Walk u v), q.IsPath → q.length ≤ p.length)
     {x : V} (hbx : G.Adj b x) : x ∈ p.support := by
+  classical
   by_contra hx
   have hpath : (p.concat hbx).IsPath := hp.concat hx hbx
   have hle := hmax a x (p.concat hbx) hpath
   simp at hle
 
 /-- A longest path has length at least the minimum degree. -/
-lemma exists_path_minDegree_le_length [Nonempty V] :
+lemma exists_path_minDegree_le_length [Fintype V] [DecidableRel G.Adj] [Nonempty V] :
     ∃ (a b : V) (p : G.Walk a b), p.IsPath ∧ G.minDegree ≤ p.length := by
+  classical
   obtain ⟨a, b, p, hp, hmax⟩ :=
     SimpleGraph.Walk.exists_isPath_forall_isPath_length_le_length G
   refine ⟨a, b, p, hp, ?_⟩
@@ -46,14 +48,16 @@ lemma exists_path_minDegree_le_length [Nonempty V] :
       · exact List.mem_toFinset.mpr p.end_mem_support
 
 /-- Minimum degree nine supplies a simple path with ten distinct vertices. -/
-lemma exists_path_length_nine [Nonempty V] (hmin : 9 ≤ G.minDegree) :
+lemma exists_path_length_nine [Fintype V] [DecidableRel G.Adj] [Nonempty V]
+    (hmin : 9 ≤ G.minDegree) :
     ∃ (a b : V) (p : G.Walk a b), p.IsPath ∧ 9 ≤ p.length := by
+  classical
   obtain ⟨a, b, p, hp, hlen⟩ := exists_path_minDegree_le_length G
   exact ⟨a, b, p, hp, hmin.trans hlen⟩
 
 /-- Removing a vertex after inducing on `S` is canonically the same graph
 as first erasing the vertex from `S` and then inducing. -/
-def induceEraseIso (S : Finset V) {v : V} (hv : v ∈ S) :
+def induceEraseIso [DecidableEq V] (S : Finset V) {v : V} (hv : v ∈ S) :
     G.induce (S.erase v : Set V) ≃g
       (G.induce (S : Set V)).induce ({(⟨v, hv⟩ : (S : Set V))}ᶜ) where
   toFun x := ⟨⟨x.1, Finset.mem_of_mem_erase x.2⟩, by
@@ -62,12 +66,13 @@ def induceEraseIso (S : Finset V) {v : V} (hv : v ∈ S) :
   invFun x := ⟨x.1.1, Finset.mem_erase.mpr ⟨by
     simpa only [Set.mem_compl_iff, Set.mem_singleton_iff, Subtype.ext_iff,
       ne_eq] using x.2, x.1.2⟩⟩
-  left_inv x := rfl
-  right_inv x := rfl
+  left_inv _ := rfl
+  right_inv _ := rfl
   map_rel_iff' := by simp
 
 /-- Exact edge count after erasing one vertex from an induced vertex set. -/
-lemma card_edges_induce_erase (S : Finset V) {v : V} (hv : v ∈ S) :
+lemma card_edges_induce_erase [DecidableEq V] [DecidableRel G.Adj]
+    (S : Finset V) {v : V} (hv : v ∈ S) :
     #(G.induce (S.erase v : Set V)).edgeFinset =
       #(G.induce (S : Set V)).edgeFinset -
         (G.induce (S : Set V)).degree ⟨v, hv⟩ := by
@@ -77,19 +82,20 @@ lemma card_edges_induce_erase (S : Finset V) {v : V} (hv : v ∈ S) :
 
 /-- The subtype cut out by the finite universal set is equivalent to the
 original vertex type. -/
-def induceFinsetUnivIso :
+def induceFinsetUnivIso [Fintype V] :
     G.induce ((Finset.univ : Finset V) : Set V) ≃g G where
   toFun x := x.1
   invFun x := ⟨x, Finset.mem_univ x⟩
-  left_inv x := rfl
-  right_inv x := rfl
+  left_inv _ := rfl
+  right_inv _ := rfl
   map_rel_iff' := Iff.rfl
 
 /-- More than `8|V|` edges give an induced subgraph of minimum degree at
 least nine (the standard minimal dense-core argument). -/
-lemma exists_induced_minDegree_nine
+lemma exists_induced_minDegree_nine [Fintype V] [DecidableRel G.Adj]
     (hE : 8 * Fintype.card V < #G.edgeFinset) :
     ∃ S : Finset V, S.Nonempty ∧ 9 ≤ (G.induce (S : Set V)).minDegree := by
+  classical
   let Good : Finset V → Prop := fun S ↦
     8 * #S < #(G.induce (S : Set V)).edgeFinset
   let _ : DecidablePred Good := Classical.decPred Good
@@ -139,11 +145,12 @@ lemma exists_induced_minDegree_nine
   omega
 
 /-- Edge density alone supplies an induced path through ten vertices. -/
-lemma exists_induced_path_length_nine
+lemma exists_induced_path_length_nine [Fintype V] [DecidableRel G.Adj]
     (hE : 8 * Fintype.card V < #G.edgeFinset) :
     ∃ (S : Finset V) (a b : (S : Set V))
       (p : (G.induce (S : Set V)).Walk a b),
       p.IsPath ∧ 9 ≤ p.length := by
+  classical
   obtain ⟨S, ⟨v, hv⟩, hmin⟩ := exists_induced_minDegree_nine G hE
   let : Nonempty (S : Set V) := ⟨⟨v, hv⟩⟩
   obtain ⟨a, b, p, hp, hlen⟩ := exists_path_length_nine (G.induce (S : Set V)) hmin

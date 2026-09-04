@@ -123,10 +123,11 @@ lemma layerN_succ_has_predecessor (hv : v ∈ layerN G c (i + 1)) :
   · exact (hvc.symm.trans hwv.reachable.symm).symm
   · simpa [SimpleGraph.dist_comm] using hdw
 
-lemma exists_short_path_in_closedBallN [DecidableEq V]
+lemma exists_short_path_in_closedBallN
     (hu : u ∈ closedBallN G c r) (hv : v ∈ closedBallN G c r) :
     ∃ p : G.Walk u v, p.IsPath ∧ p.length ≤ 2 * r ∧
       ∀ x ∈ p.support, x ∈ closedBallN G c r := by
+  classical
   rw [mem_closedBallN] at hu hv
   obtain ⟨pu, hpuPath, hpuLen⟩ := hu.1.symm.exists_path_of_dist
   obtain ⟨pv, hpvPath, hpvLen⟩ := hv.1.symm.exists_path_of_dist

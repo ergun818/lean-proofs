@@ -12,7 +12,7 @@ open SimpleGraph
 
 universe u
 
-variable {V : Type u} [Fintype V]
+variable {V : Type u}
 variable (G : SimpleGraph V)
 
 noncomputable def boolColoringOfBipartite (hG : G.IsBipartite) : G.Coloring Bool :=
@@ -45,9 +45,11 @@ lemma adj_dist_consecutive (hG : G.IsBipartite) (hconn : G.Connected) (r : V)
 noncomputable def edgeLevel (r : V) (e : Sym2 V) : ℕ :=
   Sym2.lift ⟨fun v w ↦ min (G.dist r v) (G.dist r w), fun _ _ ↦ min_comm _ _⟩ e
 
-@[simp] lemma edgeLevel_s(v w : V) (r : V) :
+@[simp] lemma edgeLevel_s (v w : V) (r : V) :
     edgeLevel G r s(v, w) = min (G.dist r v) (G.dist r w) := by
   simp [edgeLevel]
+
+variable [Fintype V]
 
 noncomputable def layer (r : V) (i : ℕ) : Finset V :=
   Finset.univ.filter fun v ↦ G.dist r v = i
@@ -172,7 +174,6 @@ lemma edgeBucket_card_le_pairedGraph (hG : G.IsBipartite) (hconn : G.Connected)
     _ = (pairedGraph G r i).edgeSet.ncard := by
           rw [Finset.card_map]
           rw [SimpleGraph.edgeFinset_card]
-          change Fintype.card (G.induce S).edgeSet = _
           rw [← Nat.card_eq_fintype_card, Nat.card_coe_set_eq]
           rfl
 
@@ -280,7 +281,7 @@ open SimpleGraph
 
 universe u
 
-variable {V : Type u} [Fintype V]
+variable {V : Type u}
 
 /-- This is definitionally the same shape as `Erdos1018.hostLayer`. -/
 def hostLayer {G : SimpleGraph V} (J : G.Subgraph) (z : J.verts)
@@ -323,7 +324,7 @@ lemma hostLayer_pair_subset_verts {G : SimpleGraph V} (J : G.Subgraph)
     hostLayer J z k ∪ hostLayer J z (k + 1) ⊆ J.verts := by
   rintro x (⟨hx, _⟩ | ⟨hx, _⟩) <;> exact hx
 
-theorem exists_host_pairedLayers_half_average
+theorem exists_host_pairedLayers_half_average [Finite V]
     {G : SimpleGraph V} (J : G.Subgraph)
     (hconn : J.coe.Connected) (hbip : J.coe.IsBipartite)
     (hE : 0 < J.edgeSet.ncard) (z : J.verts) :

@@ -203,7 +203,7 @@ theorem simpleThroughCenter_support_subset {V : Type*} [DecidableEq V]
 /-- A loop-erased route through a center has no internal vertex in the two
 terminal distance layers when both endpoints lie in the nearer layer. -/
 theorem simpleThroughCenter_interior_disjoint_layers
-    {V : Type*} [Fintype V] [DecidableEq V]
+    {V : Type*} [DecidableEq V]
     {J : SimpleGraph V} {center a b : V} {k : ℕ}
     (p : J.Walk center a) (q : J.Walk center b)
     (hpdist : p.length = J.dist center a) (hplen : p.length = k)
@@ -255,10 +255,10 @@ theorem mapped_route_interior_subset
     refine ⟨hy, ?_, ?_⟩
     · intro hya
       apply hx.2.1
-      simpa [hya]
+      simp [hya]
     · intro hyb
       apply hx.2.2
-      simpa [hyb]
+      simp [hyb]
   exact Set.disjoint_left.mp havoid hyInterior hyA
 
 /-- The five even, respectively odd, positions in a ten-vertex path. -/
@@ -283,7 +283,7 @@ def firstTen {V : Type*} {G : SimpleGraph V} {a b : V}
 
 /-- Along a ten-vertex path contained in two consecutive distance layers,
 one parity class consists entirely of vertices in the nearer layer. -/
-theorem exists_parity_in_near_layer {V : Type*} [Fintype V]
+theorem exists_parity_in_near_layer {V : Type*}
     {J : SimpleGraph V}
     (hconn : J.Connected) (hbip : J.IsBipartite) (center : V) (k : ℕ)
     {a b : V} (p : J.Walk a b) (hlen : 9 ≤ p.length)
@@ -543,7 +543,7 @@ theorem exists_inducedSubgraph_isNonplanar_of_clique_five
 
 The quantifier order makes the vertex bound and the eventual threshold depend
 only on `ε`.  The real power is `Real.rpow`. -/
-def Erdos1018 : Prop :=
+def ProblemStatement : Prop :=
   ∀ ε : ℝ, 0 < ε → ∃ C N : ℕ, ∀ n : ℕ, N ≤ n →
     ∀ G : SimpleGraph (Fin n),
       (n : ℝ) ^ ((1 : ℝ) + ε) ≤ (G.edgeSet.ncard : ℝ) →
@@ -663,8 +663,8 @@ private def cutGraph {V : Type*} (G : SimpleGraph V)
     (c : V → Bool) : SimpleGraph V :=
   G.between (colorSet c) (colorSet c)ᶜ
 
-private lemma mk_mem_cutGraph_edgeFinset_iff {V : Type*} [Fintype V]
-    [DecidableEq V] (G : SimpleGraph V) (c : V → Bool)
+private lemma mk_mem_cutGraph_edgeFinset_iff {V : Type*} [Finite V]
+    (G : SimpleGraph V) (c : V → Bool)
     {u v : V} (he : s(u, v) ∈ G.edgeFinset) :
     s(u, v) ∈ (cutGraph G c).edgeFinset ↔ c u ≠ c v := by
   classical
@@ -674,7 +674,7 @@ private lemma mk_mem_cutGraph_edgeFinset_iff {V : Type*} [Fintype V]
     Set.mem_compl_iff, hadj, true_and]
   cases c u <;> cases c v <;> decide
 
-private lemma cutGraph_edgeFinset_eq_filter {V : Type*} [Fintype V]
+private lemma cutGraph_edgeFinset_eq_filter {V : Type*} [Finite V]
     [DecidableEq V] (G : SimpleGraph V) (c : V → Bool) :
     (cutGraph G c).edgeFinset =
       G.edgeFinset.filter fun e ↦ e ∈ (cutGraph G c).edgeFinset := by
@@ -751,10 +751,11 @@ private lemma sum_cutGraph_edge_card_double {V : Type*} [Fintype V]
 /-- Every finite graph has a bipartite spanning subgraph containing at least
 half of its edges. -/
 theorem exists_bipartite_spanning_subgraph_half_edges
-    {V : Type*} [Fintype V] (G : SimpleGraph V) :
+    {V : Type*} [Finite V] (G : SimpleGraph V) :
     ∃ B : SimpleGraph V, B ≤ G ∧ B.IsBipartite ∧
       G.edgeSet.ncard ≤ 2 * B.edgeSet.ncard := by
   classical
+  let := Fintype.ofFinite V
   have hex : ∃ c : V → Bool,
       #G.edgeFinset ≤ 2 * #(cutGraph G c).edgeFinset := by
     by_contra! h
@@ -840,7 +841,7 @@ lemma kpCoeff_step (n : ℕ) (δ : ℝ) (r i : ℕ)
   field_simp
 
 lemma kpCoeff_twenty_ge (n r : ℕ) (δ : ℝ)
-    (hn : 0 < n) (hr : 0 < r)
+    (hn : 0 < n) (_hr : 0 < r)
     (hratio : (20 : ℝ) / (r : ℝ) ≤ δ) :
     (4 : ℝ) ^ 5 ≤ KPCoeff n δ r 20 := by
   have hn1 : (1 : ℝ) ≤ n := by exact_mod_cast hn
@@ -921,7 +922,7 @@ lemma induce_hostFinset_le {G : SimpleGraph V} (H : G.Subgraph)
     _ = H := SimpleGraph.Subgraph.induce_self_verts
 
 /-- Host-subgraph form of the real bounded-radius density lemma. -/
-theorem exists_host_bounded_radius_dense [Fintype V]
+theorem exists_host_bounded_radius_dense [Finite V]
     {G : SimpleGraph V} (H : G.Subgraph)
     (D a : ℝ) (r : ℕ) (hD : 0 < D) (ha : 1 ≤ a) (hr : 0 < r)
     (hH : H.verts.Nonempty)
@@ -1228,13 +1229,13 @@ theorem exists_twentyStageDensityChain
     (G : SimpleGraph (Fin n))
     (hE : (4 : ℝ) ^ 25 * (n : ℝ) ^ ((1 : ℝ) + δ) ≤
       (G.edgeSet.ncard : ℝ)) :
-    ∃ C : TwentyStageDensityChain G r (KPInvariant n δ r), True := by
+    ∃ _C : TwentyStageDensityChain G r (KPInvariant n δ r), True := by
   classical
   obtain ⟨B, hBG, hBbip, hhalf⟩ :=
     exists_bipartite_spanning_subgraph_half_edges G
   let H0 : G.Subgraph := SimpleGraph.toSubgraph B hBG
   have hH0verts : H0.verts = Set.univ := by
-    simpa [H0] using SimpleGraph.toSubgraph_verts B hBG
+    simp [H0]
   have hH0card : H0.verts.ncard = n := by
     rw [hH0verts, Set.ncard_univ, Nat.card_eq_fintype_card]
     simp

@@ -482,6 +482,7 @@ theorem exists_dense_rball_of_internal_min_degree
     simpa only [Nat.succ_eq_add_one] using hsize
   exact (not_lt_of_ge hsize') (hpwlt.trans_le hcardReal)
 
+omit [DecidableEq V] in
 /-- Complete real bounded-radius density localization.  Starting from average
 degree at least `D`, it loses the unavoidable factor `2` in pruning and the
 factor `a` in localization. -/
@@ -496,6 +497,7 @@ theorem bounded_radius_density
         p.length ≤ r ∧ ∀ x ∈ p.support, x ∈ S) ∧
       (D / (2 * a)) * (#S : ℝ) ≤
         2 * (#(G.induce (S : Set V)).edgeFinset : ℝ) := by
+  classical
   have ha0 : 0 < a := lt_of_lt_of_le zero_lt_one ha
   have hd : 0 < D / 2 := div_pos hD (by norm_num)
   have hprune : (D / 2) * (Fintype.card V : ℝ) ≤ (#G.edgeFinset : ℝ) := by
@@ -518,9 +520,8 @@ theorem bounded_radius_density
   · intro v hv
     obtain ⟨p, hplen, hpsupp⟩ := exists_walk_of_mem_rball G R z hv
     exact ⟨p, hplen.trans hir, hpsupp⟩
-  · change (D / (2 * a)) * (#S : ℝ) ≤ _
-    change c * (#S : ℝ) ≤ _ at hdense
-    rw [← edgesOn_eq_induce] 
+  · change c * (#S : ℝ) ≤ _ at hdense
+    rw [← edgesOn_eq_induce]
     exact hdense
 
 /-- Ball-growth localization from a real minimum-degree threshold.  The
@@ -548,7 +549,7 @@ theorem exists_dense_ball_of_min_degree
     have hsumLower : c * a * (#B : ℝ) < ∑ v ∈ B, (G.degree v : ℝ) := by
       calc
         c * a * (#B : ℝ) = ∑ _v ∈ B, c * a := by
-          simp [mul_assoc, mul_comm, mul_left_comm]
+          simp [mul_assoc, mul_comm]
         _ < ∑ v ∈ B, (G.degree v : ℝ) := by
           exact Finset.sum_lt_sum_of_nonempty hBne (fun v _ ↦ hmin v)
     have hincNat := sum_degreeOn_le_twice_edgesOn G B T
