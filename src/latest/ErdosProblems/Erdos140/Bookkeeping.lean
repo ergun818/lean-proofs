@@ -21,6 +21,7 @@ namespace BohrData
 
 variable {G : Type*} [AddCommGroup G] [Fintype G] [DecidableEq G]
 
+omit [DecidableEq G] in
 /-- Iterating the rank-only half-dilate bound n times costs
 4 ^ (n * rank). The carrier on the right is the actual dyadic dilate. -/
 theorem card_unit_le_four_pow_mul_card_dyadic
@@ -28,6 +29,7 @@ theorem card_unit_le_four_pow_mul_card_dyadic
     (B.dilate 1).carrier.card ≤
       4 ^ (n * B.rank) *
         (B.dilate ((1 / 2 : NNReal) ^ n)).carrier.card := by
+  classical
   induction n with
   | zero =>
       simp
@@ -54,6 +56,7 @@ theorem card_unit_le_four_pow_mul_card_dyadic
               (B.dilate ((1 / 2 : NNReal) ^ (n + 1))).carrier.card := by
               simp [Nat.add_mul, pow_succ, pow_add, mul_assoc, mul_comm]
 
+omit [DecidableEq G] in
 /-- If a scale contains the n-fold dyadic scale, the same explicit
 cardinality loss compares the unit carrier directly with that scale. -/
 theorem card_unit_le_four_pow_mul_card_dilate_of_dyadic_le
@@ -61,6 +64,7 @@ theorem card_unit_le_four_pow_mul_card_dilate_of_dyadic_le
     (hrho : (1 / 2 : NNReal) ^ n ≤ rho) :
     (B.dilate 1).carrier.card ≤
       4 ^ (n * B.rank) * (B.dilate rho).carrier.card := by
+  classical
   calc
     (B.dilate 1).carrier.card ≤
         4 ^ (n * B.rank) *
@@ -70,6 +74,7 @@ theorem card_unit_le_four_pow_mul_card_dilate_of_dyadic_le
       exact Nat.mul_le_mul_left _
         (Finset.card_le_card (carrier_dilate_mono hrho))
 
+omit [DecidableEq G] in
 /-- The same dyadic estimate with the loss displayed as a uniform
 cell-count power, where the cell count is four to the n. This is the shape
 consumed by the final exponential-cardinality bookkeeping. -/
@@ -78,6 +83,7 @@ theorem card_unit_le_dyadicCell_pow_rank_mul_card_dilate_of_dyadic_le
     (hrho : (1 / 2 : NNReal) ^ n ≤ rho) :
     (B.dilate 1).carrier.card ≤
       (4 ^ n) ^ B.rank * (B.dilate rho).carrier.card := by
+  classical
   simpa [pow_mul] using
     card_unit_le_four_pow_mul_card_dilate_of_dyadic_le B n hrho
 
@@ -100,6 +106,7 @@ theorem dyadic_clog_le_inv_nat
     _ ≤ ((P : NNReal)⁻¹) :=
       (inv_le_inv₀ hpowPos hPpos).2 hpowNN
 
+omit [DecidableEq G] in
 /-- Direct arbitrary-scale form for any scale at least the reciprocal of a
 positive natural number. The loss is an explicit cell count to the rank. -/
 theorem card_unit_le_clogCell_pow_rank_mul_card_dilate_of_inv_nat_le
@@ -107,6 +114,7 @@ theorem card_unit_le_clogCell_pow_rank_mul_card_dilate_of_inv_nat_le
     (hrho : ((P : NNReal)⁻¹) ≤ rho) :
     (B.dilate 1).carrier.card ≤
       (4 ^ (Nat.clog 2 P)) ^ B.rank * (B.dilate rho).carrier.card := by
+  classical
   apply card_unit_le_dyadicCell_pow_rank_mul_card_dilate_of_dyadic_le
   exact (dyadic_clog_le_inv_nat P hP).trans hrho
 
@@ -127,12 +135,14 @@ theorem neg_add_half_carrier_subset_carrier
   simpa only [dilate_one] using
     (carrier_dilate_mono hrho hsum)
 
+omit [DecidableEq G] in
 /-- Real-valued half-dilate volume comparison, in the convenient
 unit-carrier form used after local sumset containment. -/
 theorem card_real_le_four_pow_rank_mul_card_half
     (B : BohrData G) :
     (B.carrier.card : ℝ) ≤
       (4 ^ B.rank : ℕ) * ((B.dilate (1 / 2)).carrier.card : ℝ) := by
+  classical
   have h :
       B.carrier.card ≤
         4 ^ B.rank * (B.dilate (1 / 2)).carrier.card := by
@@ -227,7 +237,7 @@ theorem localChangDimension_half_le_of_mul_card_le
 /-- A real-valued cardinal bound can be turned into the natural ceiling
 needed for a rank-cost field. -/
 theorem card_le_natCeil_of_cast_card_le
-    {α : Type*} [Fintype α] (S : Finset α) {D : ℝ}
+    {α : Type*} (S : Finset α) {D : ℝ}
     (hcard : (S.card : ℝ) ≤ D) :
     S.card ≤ ⌈D⌉₊ := by
   exact_mod_cast hcard.trans (Nat.le_ceil D)

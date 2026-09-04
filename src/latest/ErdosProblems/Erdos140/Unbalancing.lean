@@ -31,10 +31,12 @@ def weightedMoment (ν f : X → ℝ) (k : ℕ) : ℝ :=
 def weightedAbsMoment (ν f : X → ℝ) (k : ℕ) : ℝ :=
   ∑ x : X, ν x * |f x| ^ k
 
+omit [DecidableEq X] in
 theorem weightedAbsMoment_nonneg {ν f : X → ℝ} (hν : ∀ x, 0 ≤ ν x) (k : ℕ) :
     0 ≤ weightedAbsMoment ν f k := by
   exact sum_nonneg fun x _ ↦ mul_nonneg (hν x) (pow_nonneg (abs_nonneg _) _)
 
+omit [DecidableEq X] in
 theorem weightedMoment_even_eq_abs {ν f : X → ℝ} {k : ℕ} (hk : Even k) :
     weightedMoment ν f k = weightedAbsMoment ν f k := by
   unfold weightedMoment weightedAbsMoment
@@ -66,7 +68,7 @@ theorem unbalancingExponent_pos {ε : ℝ} {p : ℕ} (hε : 0 < ε) (hp : p ≠ 
     0 < unbalancingExponent ε p := by
   simp [unbalancingExponent, unbalancingMultiplier_pos hε, Nat.pos_of_ne_zero hp]
 
-theorem unbalancingMultiplier_spec {ε : ℝ} (hε : 0 < ε) :
+theorem unbalancingMultiplier_spec {ε : ℝ} (_hε : 0 < ε) :
     60 / ε ^ 2 ≤ unbalancingMultiplier ε := by
   simpa [unbalancingMultiplier] using Nat.le_ceil (60 / ε ^ 2)
 
@@ -79,6 +81,7 @@ private theorem add_pow_le_two_pow_mul_add_pow {a b : ℝ} {n : ℕ}
     (p := (n : ℝ)) (by exact_mod_cast hn)
   exact_mod_cast h
 
+omit [DecidableEq X] in
 /-- **Unbalancing, power-moment form.**  If all moments of `f` against a
 probability weight are nonnegative and the `p`-th absolute moment is at least
 `ε^p`, then at some explicitly bounded even exponent the absolute moment of
@@ -95,6 +98,7 @@ theorem unbalancing_of_nonnegative_moments
     (hlarge : ε ^ p ≤ weightedAbsMoment ν f p) :
     ∃ p' : ℕ, 0 < p' ∧ Even p' ∧ p' ≤ unbalancingExponent ε p ∧
       (1 + ε / 2) ^ p' ≤ weightedAbsMoment ν (f + 1) p' := by
+  classical
   have hp0 : p ≠ 0 := ne_of_gt (lt_of_lt_of_le (by norm_num) hp)
   have hpm1even : Even (p - 1) := Nat.Odd.sub_odd hpodd odd_one
   have hpositive :
@@ -267,7 +271,7 @@ theorem unbalancing_of_nonnegative_moments
         _ = (2 : ℝ) ^ (2 * q) := by rw [← pow_add]; congr 1; omega
     have hmassT : (ε / 8) ^ (2 * p) ≤ ∑ i ∈ T, ν i := by
       have hfq' : weightedAbsMoment ν f (2 * p) ≤ (2 : ℝ) ^ (4 * p) := by
-        convert hfq using 1 <;> simp [q] <;> omega
+        convert hfq using 1; simp [q]; omega
       have hcs' :
           ((4 : ℝ)⁻¹ * ε ^ p) ^ 2 ≤
             (∑ i ∈ T, ν i) * (2 : ℝ) ^ (4 * p) :=
@@ -333,7 +337,7 @@ theorem unbalancing_of_nonnegative_moments
         _ = (ε / 8) ^ (2 * p) * (1 + 3 * ε / 4) ^ (2 * p * m) := by
           rw [mul_pow, ← pow_mul, Nat.mul_comm m (2 * p)]
     have heven : Even (2 * p * m) := by
-      simpa [Nat.mul_assoc] using even_two_mul (p * m)
+      simp [Nat.mul_assoc]
     refine ⟨2 * p * m, by positivity, heven, ?_, ?_⟩
     · simp [unbalancingExponent, m]
     · calc
@@ -360,7 +364,7 @@ theorem unbalancing_of_nonnegative_moments
           apply sum_le_sum_of_subset_of_nonneg (subset_univ T)
           intro i _ _
           exact mul_nonneg (hν i) (pow_nonneg (abs_nonneg _) _)
-          
+
 
 end Moments
 
@@ -372,6 +376,7 @@ open scoped ComplexConjugate ComplexOrder ENNReal mu
 variable {G : Type*} [Fintype G] [DecidableEq G] [AddCommGroup G]
   [MeasurableSpace G] [DiscreteMeasurableSpace G]
 
+omit [DiscreteMeasurableSpace G] [MeasurableSpace G] in
 /-- Physical-space positivity of every moment.  This is Bloom--Sisask Lemma 7:
 autocorrelation representations of both the function and the weight turn the
 moment into a finite sum of complex squared norms. -/

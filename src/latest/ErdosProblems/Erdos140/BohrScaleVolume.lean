@@ -135,6 +135,7 @@ def scaledSignature (B : BohrData G) (rho : NNReal) (m : ℕ)
     scaledCell m ((rho : ℝ) * (B.width γ.1 : ℝ))
       (circleRep (γ.1 x.1))
 
+omit [DecidableEq G] in
 private lemma sub_mem_dilate_div_of_scaledSignature_eq
     (B : BohrData G) (rho : NNReal) {m : ℕ} (hm : 0 < m)
     {x y : ↥(B.dilate rho).carrier}
@@ -165,6 +166,7 @@ private lemma sub_mem_dilate_div_of_scaledSignature_eq
       push_cast
       field_simp
 
+omit [DecidableEq G] in
 private lemma card_scaledSignature_fiber_le
     (B : BohrData G) (rho : NNReal) {m : ℕ} (hm : 0 < m)
     (a : B.freq → Fin (2 * m + 1)) :
@@ -203,6 +205,7 @@ private lemma card_scaledSignature_fiber_le
 
 /-! ## Volume comparison -/
 
+omit [DecidableEq G] in
 /-- Arbitrary-scale relative volume growth for a finite Bohr carrier.
 Shrinking a scale by a positive integer m costs at most
 (2m+1)^rank. -/
@@ -236,12 +239,14 @@ theorem card_dilate_le_two_mul_add_one_pow_rank_mul_card_div
     exact hfiber a
   exact (not_lt_of_ge hfa) ha
 
+omit [DecidableEq G] in
 /-- A cleaner bookkeeping form of the arbitrary-scale volume estimate. -/
 theorem card_dilate_le_three_mul_pow_rank_mul_card_div
     (B : BohrData G) (rho : NNReal) {m : ℕ} (hm : 0 < m) :
     (B.dilate rho).carrier.card ≤
       (3 * m) ^ B.rank *
         (B.dilate (rho / (m : NNReal))).carrier.card := by
+  classical
   calc
     (B.dilate rho).carrier.card ≤
         (2 * m + 1) ^ B.rank *
@@ -253,20 +258,24 @@ theorem card_dilate_le_three_mul_pow_rank_mul_card_div
       apply Nat.pow_le_pow_left
       omega
 
+omit [DecidableEq G] in
 /-- Real-valued form of the clean arbitrary-scale comparison. -/
 theorem card_dilate_real_le_three_mul_pow_rank_mul_card_div
     (B : BohrData G) (rho : NNReal) {m : ℕ} (hm : 0 < m) :
     ((B.dilate rho).carrier.card : ℝ) ≤
       ((3 * m : ℕ) : ℝ) ^ B.rank *
         ((B.dilate (rho / (m : NNReal))).carrier.card : ℝ) := by
+  classical
   exact_mod_cast card_dilate_le_three_mul_pow_rank_mul_card_div B rho hm
 
+omit [DecidableEq G] in
 /-- Exponential rewriting of the real-valued arbitrary-scale comparison. -/
 theorem card_dilate_real_le_exp_rank_log_mul_card_div
     (B : BohrData G) (rho : NNReal) {m : ℕ} (hm : 0 < m) :
     ((B.dilate rho).carrier.card : ℝ) ≤
       Real.exp ((B.rank : ℝ) * Real.log ((3 * m : ℕ) : ℝ)) *
         ((B.dilate (rho / (m : NNReal))).carrier.card : ℝ) := by
+  classical
   have hreal := card_dilate_real_le_three_mul_pow_rank_mul_card_div B rho hm
   have hbase : (0 : ℝ) < ((3 * m : ℕ) : ℝ) := by
     positivity

@@ -254,9 +254,11 @@ theorem normalizedIndicator_le_two_mul_convolution_of_rankRegular
 def finsetIndicator (A : Finset G) (x : G) : ℝ :=
   if x ∈ A then 1 else 0
 
+omit [AddCommGroup G] [Fintype G] in
 @[simp] theorem finsetIndicator_apply_mem {A : Finset G} {x : G} (hx : x ∈ A) :
     finsetIndicator A x = 1 := by simp [finsetIndicator, hx]
 
+omit [AddCommGroup G] [Fintype G] in
 @[simp] theorem finsetIndicator_apply_not_mem {A : Finset G} {x : G} (hx : x ∉ A) :
     finsetIndicator A x = 0 := by simp [finsetIndicator, hx]
 
@@ -268,6 +270,7 @@ def relativeDensityOn (A K : Finset G) : ℝ :=
 def localDensity (A C : Finset G) (x : G) : ℝ :=
   normalizedConvolution (finsetIndicator A) (normalizedIndicator C) x
 
+omit [AddCommGroup G] [Fintype G] in
 /-- Summing an indicator over an ambient set containing it gives its
 cardinality. -/
 theorem sum_finsetIndicator_of_subset {A K : Finset G} (hAK : A ⊆ K) :
@@ -280,10 +283,11 @@ theorem sum_finsetIndicator_of_subset {A K : Finset G} (hAK : A ⊆ K) :
   rw [← hsum]
   simp [finsetIndicator]
 
+omit [AddCommGroup G] in
 /-- Pairing a subset indicator with the probability measure of its ambient
 set gives the relative density. -/
 theorem sum_finsetIndicator_mul_normalizedIndicator
-    {A K : Finset G} (hAK : A ⊆ K) (hK : K.Nonempty) :
+    {A K : Finset G} (hAK : A ⊆ K) (_hK : K.Nonempty) :
     ∑ x : G, finsetIndicator A x * normalizedIndicator K x =
       relativeDensityOn A K := by
   have hsum :
@@ -301,7 +305,7 @@ theorem sum_finsetIndicator_mul_normalizedIndicator
       rw [finsetIndicator_apply_mem hx,
         normalizedIndicator_apply_mem (hAK hx), one_mul]
     _ = relativeDensityOn A K := by
-      simp [relativeDensityOn, div_eq_mul_inv, hK.card_ne_zero]
+      simp [relativeDensityOn, div_eq_mul_inv]
 
 /-- The normalized average of a local-density function differs from the
 ambient relative density only by the regular-Bohr boundary error. -/
@@ -512,7 +516,7 @@ theorem bohr_narrowing_alternative_of_rankRegular
     (hC₁ : C₁.Nonempty) (hC₂ : C₂.Nonempty)
     (hC₁small : C₁ ⊆ (B.dilate κ).carrier)
     (hC₂small : C₂ ⊆ (B.dilate κ).carrier)
-    {ε : ℝ} (hε : 0 < ε)
+    {ε : ℝ} (_hε : 0 < ε)
     (hsmall :
       400 * ((max B.rank 1 : ℕ) : ℝ) * (κ : ℝ) ≤
         ε * relativeDensityOn A B.carrier / 4) :

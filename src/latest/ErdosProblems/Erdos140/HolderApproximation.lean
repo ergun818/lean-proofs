@@ -17,7 +17,6 @@ namespace Erdos140.HolderApproximation
 noncomputable section
 
 variable {G : Type*} [Fintype G] [DecidableEq G] [AddCommGroup G]
-  [MeasurableSpace G] [DiscreteMeasurableSpace G]
 
 private lemma normalizedIndicator_neg_eq (K : BohrData G) (x : G) :
     normalizedIndicator K.carrier (-x) = normalizedIndicator K.carrier x := by
@@ -69,7 +68,7 @@ theorem abs_normalizedConvolution_subset_carrier_sub_inv_le
         refine Fintype.sum_equiv (Equiv.neg G) _ _ ?_
         intro x
         simp only [Equiv.neg_apply]
-        congr 2 <;> abel_nf
+        congr 2; abel_nf
       _ ≤ E := htranslate
   have hweighted :
       ∑ x : G, normalizedIndicator A x *
@@ -129,6 +128,7 @@ theorem abs_normalizedConvolution_subset_carrier_sub_inv_le
       rw [abs_mul, abs_of_nonneg (normalizedIndicator_nonneg A x)]
     _ ≤ (A.card : ℝ)⁻¹ * E := hweighted
 
+omit [AddCommGroup G] [DecidableEq G] [Fintype G] in
 private lemma localAverage_sub_const
     {C : Finset G} (hC : C.Nonempty) (f : G → ℝ) (c : ℝ) :
     HolderLifting.localAverage C f - c =
@@ -139,6 +139,7 @@ private lemma localAverage_sub_const
   have hCcard : (C.card : ℝ) ≠ 0 := by exact_mod_cast hC.card_ne_zero
   field_simp
 
+omit [AddCommGroup G] [DecidableEq G] [Fintype G] in
 private lemma localAverage_const
     {C : Finset G} (hC : C.Nonempty) (c : ℝ) :
     HolderLifting.localAverage C (fun _ ↦ c) = c := by
@@ -178,6 +179,7 @@ theorem abs_localAverage_normalizedConvolution_subset_carrier_sub_inv_le
       · positivity
     _ = M := localAverage_const hC M
 
+omit [DecidableEq G] in
 private lemma normalizedConvolution_sub_sub_apply
     (a k : G → ℝ) (x : G) :
     normalizedConvolution (a - k) (a - k) x =
@@ -187,6 +189,7 @@ private lemma normalizedConvolution_sub_sub_apply
   simp only [Pi.sub_apply, mul_sub, sub_mul, Finset.sum_sub_distrib]
   ring
 
+omit [AddCommGroup G] [DecidableEq G] [Fintype G] in
 private lemma localAverage_add
     {C : Finset G} (f g : G → ℝ) :
     HolderLifting.localAverage C (fun x ↦ f x + g x) =
@@ -194,6 +197,7 @@ private lemma localAverage_add
   unfold HolderLifting.localAverage
   rw [Finset.sum_add_distrib, add_div]
 
+omit [AddCommGroup G] [DecidableEq G] [Fintype G] in
 private lemma localAverage_sub
     {C : Finset G} (f g : G → ℝ) :
     HolderLifting.localAverage C (fun x ↦ f x - g x) =
@@ -201,6 +205,7 @@ private lemma localAverage_sub
   unfold HolderLifting.localAverage
   rw [Finset.sum_sub_distrib, sub_div]
 
+omit [AddCommGroup G] [DecidableEq G] [Fintype G] in
 private lemma localAverage_mul_const_left
     {C : Finset G} (c : ℝ) (f : G → ℝ) :
     HolderLifting.localAverage C (fun x ↦ c * f x) =
@@ -393,8 +398,9 @@ theorem normalizedMixedProgression_scaledBalanced_approximation_of_boundaryWidth
       hA'' hCsmall hwidth'
 
 end
-end Erdos140.HolderApproximation
 
-#print axioms Erdos140.HolderApproximation.abs_normalizedConvolution_subset_carrier_sub_inv_le
-#print axioms Erdos140.HolderApproximation.normalizedMixedProgression_scaledBalanced_approximation
-#print axioms Erdos140.HolderApproximation.normalizedMixedProgression_scaledBalanced_approximation_of_boundaryWidth
+#print axioms abs_normalizedConvolution_subset_carrier_sub_inv_le
+#print axioms normalizedMixedProgression_scaledBalanced_approximation
+#print axioms normalizedMixedProgression_scaledBalanced_approximation_of_boundaryWidth
+
+end Erdos140.HolderApproximation

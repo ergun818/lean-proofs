@@ -51,6 +51,7 @@ theorem IsWeightedDissociated.mono_subset {mu : G → ℝ} {K : ℝ}
       simp [v, hpsiGamma]
   simpa only [heq] using h v hv
 
+omit [AddCommGroup G] in
 /-- Jensen's inequality for an arbitrary nonnegative finite probability
 weight.  Keeping this lemma in finite-sum form avoids introducing a second
 measure-theoretic normalization layer. -/
@@ -335,7 +336,7 @@ theorem card_weightedDissociated_relativeLargeSpectrum_le
 parameter `R` is any upper bound for the reciprocal weighted mass of `X`;
 in the smoothed-Bohr application it is `2 * |B| / |X|`. -/
 theorem card_weightedDissociated_finsetIndicator_le
-    [DecidableEq G] (B X : Finset G) (hXB : X ⊆ B) (hX : X.Nonempty)
+    (B X : Finset G) (hXB : X ⊆ B) (hX : X.Nonempty)
     (w : G → ℝ) (c R eta : ℝ)
     (hw0 : ∀ x, 0 ≤ w x) (hw : ∀ x ∈ B, w x = c)
     (hc : 0 < c) (hR : (c * X.card)⁻¹ ≤ R)
@@ -343,6 +344,7 @@ theorem card_weightedDissociated_finsetIndicator_le
     (hDelta : IsWeightedDissociated w 1 Delta)
     (hsub : Delta ⊆ Chang.largeSpectrum X eta) :
     (Delta.card : ℝ) ≤ 2 * (1 + log R) / eta ^ 2 := by
+  classical
   have hmass_eq :
       ∑ x : G, finsetIndicator X x * w x = c * X.card :=
     RelativeSpectrumBridge.sum_finsetIndicator_mul_eq_const_mul_card hXB hw
@@ -373,8 +375,9 @@ theorem card_weightedDissociated_finsetIndicator_le
     _ ≤ 2 * (1 + log R) / eta ^ 2 := by
       gcongr
 
+omit [Fintype G] in
 /-- The finite capped-maximality step used by the local Chang argument. -/
-theorem exists_capped_addDissociatedMod
+theorem exists_capped_addDissociatedMod [Finite G]
     (S T : Finset (AddChar G ℂ)) (hzero : 0 ∈ S)
     (hneg : ∀ s ∈ S, -s ∈ S) (D : ℝ) (k : ℕ)
     (hDk : D < k)
@@ -383,6 +386,7 @@ theorem exists_capped_addDissociatedMod
     ∃ Delta : Finset (AddChar G ℂ),
       Delta ⊆ T ∧ (Delta.card : ℝ) ≤ D ∧
         ∀ psi ∈ T, ∃ z ∈ Delta.addSpan, ∃ s ∈ S, psi = z + s := by
+  let := Fintype.ofFinite G
   classical
   obtain ⟨Delta, hDeltaT, hDeltaMod, hcover⟩ :=
     exists_maximal_addDissociatedMod S T hzero hneg
@@ -392,7 +396,7 @@ theorem exists_capped_addDissociatedMod
     obtain ⟨Gamma, hGammaDelta, hGammaCard⟩ :=
       Finset.exists_subset_card_eq hkDelta
     have hGammaDim := hdim Gamma (hGammaDelta.trans hDeltaT)
-      (hDeltaMod.mono hGammaDelta) (by simpa [hGammaCard])
+      (hDeltaMod.mono hGammaDelta) (by simp [hGammaCard])
     rw [hGammaCard] at hGammaDim
     exact (not_le_of_gt hDk) hGammaDim
   exact ⟨Delta, hDeltaT, hdim Delta hDeltaT hDeltaMod hDeltaCard, hcover⟩
@@ -425,7 +429,7 @@ new characters, modulo the half-large spectrum of an explicit regular
 dilate of `B`.  In particular the logarithm contains no ambient-group
 cardinality. -/
 theorem exists_relativeLargeSpectrum_cover
-    [DecidableEq G] (B : BohrData G) (hBreg : B.IsRankRegular)
+    (B : BohrData G) (hBreg : B.IsRankRegular)
     (X : Finset G) (hX : X.Nonempty) (hXB : X ⊆ B.carrier)
     (eta : ℝ) (heta : 0 < eta) :
     ∃ rho : NNReal, ∃ C : BohrData G,

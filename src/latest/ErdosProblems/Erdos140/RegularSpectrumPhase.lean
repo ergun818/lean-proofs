@@ -64,6 +64,7 @@ private lemma normalizedSpectrum_translate (A : Finset G)
   rw [Finset.sum_sub_distrib, htranslate]
   ring
 
+omit [DecidableEq G] in
 /-- A character in the `eta`-large spectrum of a rank-regular Bohr carrier
 has phase variation at most `200 * max(rank,1) * sigma / eta` on the
 `sigma`-dilate. -/
@@ -123,6 +124,7 @@ theorem norm_one_sub_le_of_mem_largeSpectrum
       _ ≤ 200 * ((max C.rank 1 : ℕ) : ℝ) * (sigma : ℝ) := htranslation
   exact (le_div_iff₀ heta).2 hmul
 
+omit [DecidableEq G] in
 /-- Threshold-`1/2` specialization of
 `norm_one_sub_le_of_mem_largeSpectrum`. -/
 theorem norm_one_sub_le_of_mem_largeSpectrum_half
@@ -131,6 +133,7 @@ theorem norm_one_sub_le_of_mem_largeSpectrum_half
     {psi : AddChar G ℂ} (hpsi : psi ∈ Chang.largeSpectrum C.carrier (1 / 2))
     {t : G} (ht : t ∈ (C.dilate sigma).carrier) :
     ‖1 - psi t‖ ≤ 400 * ((max C.rank 1 : ℕ) : ℝ) * (sigma : ℝ) := by
+  classical
   have h := norm_one_sub_le_of_mem_largeSpectrum hreg (eta := (1 / 2 : ℝ))
     (by norm_num) hsigma hpsi ht
   convert h using 1

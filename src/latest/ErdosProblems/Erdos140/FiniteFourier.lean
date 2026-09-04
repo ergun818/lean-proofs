@@ -38,9 +38,11 @@ lemma character_orthogonality (χ ψ : AddChar G ℂ) :
     ⟪(χ : G → ℂ), ψ⟫ₙ_[ℂ] = if χ = ψ then 1 else 0 :=
   AddChar.wInner_cWeight_eq_boole χ ψ
 
+omit [Fintype G] in
 /-- Orthogonality in the dual variable. -/
-lemma dual_orthogonality [DecidableEq G] (a : G) :
+lemma dual_orthogonality [Finite G] [DecidableEq G] (a : G) :
     𝔼 χ : AddChar G ℂ, χ a = if a = 0 then 1 else 0 := by
+  let := Fintype.ofFinite G
   classical
   simpa using AddChar.expect_apply_eq_ite a
 

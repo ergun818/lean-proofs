@@ -40,18 +40,22 @@ unbalancing. -/
 def smoothingWeight (D E : Finset G) : G → ℝ≥0 :=
   smoothingBase D E ○ᵈ smoothingBase D E
 
+omit [DiscreteMeasurableSpace G] [MeasurableSpace G] in
 lemma smoothingBase_sum {D E : Finset G} (hD : D.Nonempty) (hE : E.Nonempty) :
     ∑ x : G, smoothingBase D E x = 1 := by
   simp [smoothingBase, sum_ddconv, hD, hE]
 
+omit [DiscreteMeasurableSpace G] [MeasurableSpace G] in
 lemma smoothingWeight_sum {D E : Finset G} (hD : D.Nonempty) (hE : E.Nonempty) :
     ∑ x : G, smoothingWeight D E x = 1 := by
   simp [smoothingWeight, sum_dddconv, smoothingBase_sum hD hE]
 
+omit [DiscreteMeasurableSpace G] [MeasurableSpace G] in
 lemma smoothingWeight_nonneg (D E : Finset G) :
     0 ≤ smoothingWeight D E := by
   simp [smoothingWeight]
 
+omit [DiscreteMeasurableSpace G] [MeasurableSpace G] in
 /-- The complex autocorrelation representation of the concrete smoothing
 weight. -/
 lemma smoothingWeight_autocorrelation (D E : Finset G) :
@@ -70,6 +74,7 @@ lemma smoothingWeight_autocorrelation (D E : Finset G) :
       funext x
       rfl
 
+omit [AddCommGroup G] [DecidableEq G] in
 /-- `BalancedRestriction.weightedLpNorm` agrees with APAP's weighted norm on
 positive natural exponents. -/
 lemma weightedLpNorm_eq_wLpNorm (w : G → ℝ≥0) (f : G → ℝ)
@@ -80,39 +85,46 @@ lemma weightedLpNorm_eq_wLpNorm (w : G → ℝ≥0) (f : G → ℝ)
   congr 1
   · apply Finset.sum_congr rfl
     intro x _
-    simp only [weightedAbsMoment, NNReal.smul_def, smul_eq_mul, norm_eq_abs,
+    simp only [NNReal.smul_def, smul_eq_mul, norm_eq_abs,
       Function.comp_apply, ENNReal.toReal_natCast]
     rw [Real.rpow_natCast]
   · simp [one_div]
 
+omit [AddCommGroup G] [DecidableEq G] in
 /-- Minkowski's inequality in the local natural-exponent notation. -/
 lemma weightedLpNorm_sub_le
     (w : G → ℝ≥0) (f g : G → ℝ) {p : ℕ} (hp : 1 ≤ p) :
     BalancedRestriction.weightedLpNorm ((↑) ∘ w) (f - g) p ≤
       BalancedRestriction.weightedLpNorm ((↑) ∘ w) f p +
         BalancedRestriction.weightedLpNorm ((↑) ∘ w) g p := by
+  classical
   rw [weightedLpNorm_eq_wLpNorm w _ (Nat.zero_lt_of_lt hp),
     weightedLpNorm_eq_wLpNorm w _ (Nat.zero_lt_of_lt hp),
     weightedLpNorm_eq_wLpNorm w _ (Nat.zero_lt_of_lt hp)]
   exact wLpNorm_sub_le (by exact_mod_cast hp) w f g
 
+omit [AddCommGroup G] [DecidableEq G] in
 lemma weightedLpNorm_smul_of_nonneg
     (w : G → ℝ≥0) (f : G → ℝ) (c : ℝ) (hc : 0 ≤ c)
     {p : ℕ} (hp : 0 < p) :
     BalancedRestriction.weightedLpNorm ((↑) ∘ w) (c • f) p =
       c * BalancedRestriction.weightedLpNorm ((↑) ∘ w) f p := by
+  classical
   rw [weightedLpNorm_eq_wLpNorm w _ hp, weightedLpNorm_eq_wLpNorm w _ hp,
     wLpNorm_smul]
   simp [Real.norm_eq_abs, abs_of_nonneg hc]
 
+omit [AddCommGroup G] [DecidableEq G] in
 lemma weightedLpNorm_le_add_of_add
     (w : G → ℝ≥0) (f g : G → ℝ) {p : ℕ} (hp : 1 ≤ p) :
     BalancedRestriction.weightedLpNorm ((↑) ∘ w) f p ≤
       BalancedRestriction.weightedLpNorm ((↑) ∘ w) (f + g) p +
         BalancedRestriction.weightedLpNorm ((↑) ∘ w) g p := by
+  classical
   simp_rw [weightedLpNorm_eq_wLpNorm w _ (Nat.zero_lt_of_lt hp)]
   exact wLpNorm_le_add_wLpNorm_add (by exact_mod_cast hp) w f g
 
+omit [AddCommGroup G] [DecidableEq G] in
 /-- A pointwise bound controls the local weighted norm for a probability
 weight. -/
 lemma weightedLpNorm_le_of_abs_le
@@ -120,6 +132,7 @@ lemma weightedLpNorm_le_of_abs_le
     {f : G → ℝ} {C : ℝ} (hC : 0 ≤ C) {p : ℕ} (hp : 0 < p)
     (hf : ∀ x, |f x| ≤ C) :
     BalancedRestriction.weightedLpNorm ((↑) ∘ w) f p ≤ C := by
+  classical
   rw [weightedLpNorm_eq_wLpNorm w f hp]
   calc
     ‖f‖_[p, w] ≤ ‖(fun _ : G ↦ C)‖_[p, w] := by
@@ -136,11 +149,13 @@ lemma weightedLpNorm_le_of_abs_le
         simpa [NNReal.smul_def] using heq]
       exact Real.pow_rpow_inv_natCast hC hp.ne'
 
+omit [AddCommGroup G] [DecidableEq G] in
 lemma weightedLpNorm_le_of_abs_le_on_support
     {w : G → ℝ≥0} (hw : ∑ x : G, w x = 1)
     {f : G → ℝ} {C : ℝ} (hC : 0 ≤ C) {p : ℕ} (hp : 0 < p)
     (hf : ∀ x, w x ≠ 0 → |f x| ≤ C) :
     BalancedRestriction.weightedLpNorm ((↑) ∘ w) f p ≤ C := by
+  classical
   let g : G → ℝ := fun x ↦ if w x = 0 then 0 else f x
   have hnorm : BalancedRestriction.weightedLpNorm ((↑) ∘ w) f p =
       BalancedRestriction.weightedLpNorm ((↑) ∘ w) g p := by
@@ -158,6 +173,7 @@ lemma weightedLpNorm_le_of_abs_le_on_support
   · simp [g, hx, hC]
   · simpa [g, hx] using hf x hx
 
+omit [AddCommGroup G] [DiscreteMeasurableSpace G] [Fintype G] [MeasurableSpace G] in
 /-- APAP's normalized measure agrees with the counting-probability indicator
 used by the local Bohr files. -/
 lemma mu_eq_normalizedIndicator (S : Finset G) :
@@ -165,6 +181,7 @@ lemma mu_eq_normalizedIndicator (S : Finset G) :
   funext x
   by_cases hx : x ∈ S <;> simp [mu_apply, normalizedIndicator, hx]
 
+omit [DiscreteMeasurableSpace G] [MeasurableSpace G] in
 /-- A mixed normalized correlation with a rank-regular Bohr measure is close
 to the constant `1 / |B|` on a narrow dilate. -/
 lemma abs_mixedCorrelation_sub_inv_card_le
@@ -237,6 +254,7 @@ lemma abs_mixedCorrelation_sub_inv_card_le
           (200 * ((max B.rank 1 : ℕ) : ℝ) * (kappa : ℝ)) :=
       mul_le_mul_of_nonneg_left htranslate (by positivity)
 
+omit [DiscreteMeasurableSpace G] [MeasurableSpace G] in
 /-- Expansion of the balanced autocorrelation, with every Bohr-boundary term
 estimated explicitly. -/
 lemma abs_positive_sub_baseline_add_balanced_le
@@ -303,6 +321,7 @@ lemma abs_positive_sub_baseline_add_balanced_le
     ring
   simpa [m, eA, eB, hexpand] using hsum
 
+omit [DiscreteMeasurableSpace G] [MeasurableSpace G] in
 /-- Autocorrelation representation of the balanced autocorrelation after
 normalizing its natural scale `1 / |B|` to one. -/
 lemma scaled_balanced_autocorrelation
@@ -316,20 +335,20 @@ lemma scaled_balanced_autocorrelation
   rw [smul_dddconv, dddconv_smul]
   rw [← Complex.ofReal_comp_dddconv]
   funext x
-  simp only [Pi.smul_apply, Function.comp_apply, smul_eq_mul, map_mul,
-    starRingEnd_apply]
+  simp only [Pi.smul_apply, Function.comp_apply, smul_eq_mul]
   rw [show star (↑(Real.sqrt (K.card : ℝ)) : ℂ) =
       ↑(Real.sqrt (K.card : ℝ)) by simp]
   rw [← mul_assoc]
   norm_cast
   rw [← pow_two, Real.sq_sqrt (by positivity : (0 : ℝ) ≤ K.card)]
 
+omit [DecidableEq G] [DiscreteMeasurableSpace G] [MeasurableSpace G] in
 /-- The readable rank-scale width bound implies the boundary-error inequality
 used by `localized_unbalancing`.  Since `|A| / |B|` is the relative density,
 the premise is exactly `kappa ≤ epsilon * alpha / (4800 * d)`. -/
 lemma boundary_error_of_rank_width
     {B : BohrData G} {A : Finset G} (hA : A.Nonempty) (hAB : A ⊆ B.carrier)
-    {epsilon : ℝ} (hepsilon : 0 ≤ epsilon) {kappa : ℝ≥0}
+    {epsilon : ℝ} (_hepsilon : 0 ≤ epsilon) {kappa : ℝ≥0}
     (hwidth : (kappa : ℝ) ≤
       epsilon * (A.card : ℝ) /
         (4800 * ((max B.rank 1 : ℕ) : ℝ) * (B.carrier.card : ℝ))) :
@@ -473,7 +492,8 @@ theorem localized_unbalancing
     have hb := abs_positive_sub_baseline_add_balanced_le hreg hA hAB hkappa
       (hsupport x hx)
     have hsurrogatePoint : surrogate x = main + corr x := by
-      simp [surrogate, f, smul_eq_mul]
+      simp only [smul_add, Pi.add_apply, Pi.smul_apply, smul_eq_mul, Pi.one_apply,
+        mul_one, surrogate, f]
       rw [← mul_assoc, show main * (K.card : ℝ) = 1 by nlinarith, one_mul]
       ring
     simpa [K, balanced, corr, positive, main, hsurrogatePoint] using hb.trans hwidth

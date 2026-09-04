@@ -69,7 +69,7 @@ theorem convolutionPower_normalizedIndicator_support
         simpa using
           (normalizedIndicator_ne_zero_iff (singleton_nonempty 0) x).mp hx
       subst x
-      simpa using (B.dilate 0).zero_mem_carrier
+      simp
   | succ n ihn =>
       intro x hx
       rw [convolutionPower_succ, normalizedConvolution] at hx
@@ -83,7 +83,7 @@ theorem convolutionPower_normalizedIndicator_support
         (normalizedIndicator_ne_zero_iff
           (B.dilate σ).carrier_nonempty (x - y)).mp hysmall
       have hadd := BohrData.add_mem_dilate hyB hxyB
-      have hxsum : y + (x - y) = x := by simp [add_comm]
+      have hxsum : y + (x - y) = x := by simp
       rw [hxsum] at hadd
       simpa [Nat.cast_add, Nat.cast_one, add_mul] using hadd
 
@@ -129,12 +129,13 @@ theorem norm_massCoeff_normalizedIndicator_lt_half_of_not_mem_largeSpectrum
     ‖massCoeff (normalizedIndicator C.carrier) ψ‖ =
         (C.carrier.card : ℝ)⁻¹ * ‖Chang.spectrumSum C.carrier ψ‖ := by
       rw [massCoeff_normalizedIndicator, norm_mul]
-      simp [norm_inv, Complex.norm_natCast]
+      simp [norm_inv]
     _ < (C.carrier.card : ℝ)⁻¹ *
         ((1 / 2 : ℝ) * C.carrier.card) :=
       mul_lt_mul_of_pos_left hspectrum (inv_pos.mpr hcard)
     _ = 1 / 2 := by field_simp
 
+omit [DecidableEq G] in
 /-- Counting convolution turns into multiplication of mass Fourier
 coefficients. -/
 theorem massCoeff_normalizedConvolution (f g : G → ℝ) (ψ : AddChar G ℂ) :
@@ -158,7 +159,7 @@ theorem massCoeff_normalizedConvolution (f g : G → ℝ) (ψ : AddChar G ℂ) :
       refine Fintype.sum_equiv (Equiv.subRight y) _ _ fun z ↦ ?_
       have hψ : ψ z = ψ y * ψ (z - y) := by
         calc
-          ψ z = ψ (y + (z - y)) := congrArg ψ (by simp [add_comm])
+          ψ z = ψ (y + (z - y)) := congrArg ψ (by simp)
           _ = ψ y * ψ (z - y) := AddChar.map_add_eq_mul ψ y (z - y)
       simp only [Equiv.subRight_apply]
       rw [hψ]
@@ -183,6 +184,7 @@ theorem massCoeff_convolutionPower (f : G → ℝ) (ψ : AddChar G ℂ) :
   | succ n ihn =>
       rw [convolutionPower_succ, massCoeff_normalizedConvolution, ihn, pow_succ]
 
+omit [DecidableEq G] in
 /-- A nonnegative mass has Fourier magnitude at most its total mass. -/
 theorem norm_massCoeff_le_sum {w : G → ℝ} (hw : ∀ x, 0 ≤ w x)
     (ψ : AddChar G ℂ) :
@@ -194,7 +196,7 @@ theorem norm_massCoeff_le_sum {w : G → ℝ} (hw : ∀ x, 0 ≤ w x)
     _ = ∑ x : G, w x := by
       apply Finset.sum_congr rfl
       intro x hx
-      simp [norm_mul, hw x]
+      simp [hw x]
 
 /-! ## The Bohr smoothing measure -/
 
@@ -255,6 +257,7 @@ theorem bohrSmoothingMeasure_apply_of_mem
         (sum_normalizedIndicator (B.dilate σ).carrier_nonempty)]
       simp
 
+omit [DecidableEq G] in
 /-- Rank regularity bounds the carrier at the total smoothing radius by
 twice the central carrier. -/
 theorem card_dilate_one_add_le_two_mul

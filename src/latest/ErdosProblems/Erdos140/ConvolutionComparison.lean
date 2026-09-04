@@ -114,6 +114,7 @@ theorem comparisonWeight_isProbability
 
 /-! ## The factor-two averaging step -/
 
+omit [DecidableEq G] in
 /-- Majorization by a smoothed probability weight costs exactly a factor two
 once every translate of the inner weight satisfies the same moment bound. -/
 theorem weightedMoment_le_two_of_majorization

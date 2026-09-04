@@ -91,9 +91,11 @@ def IsPlateauRegularAt (B : BohrData G) (rho eta : ℝ≥0) : Prop :=
 noncomputable def plateauStep (G : Type*) [Fintype G] : ℝ≥0 :=
   (((2 * (Fintype.card G + 1) : ℕ) : ℝ≥0))⁻¹
 
+omit [AddCommGroup G] [DecidableEq G] in
 private lemma plateauStep_pos : 0 < plateauStep G := by
   simp [plateauStep]
 
+omit [DecidableEq G] in
 private lemma plateauStep_mul :
     plateauStep G * ((Fintype.card G + 1 : ℕ) : ℝ≥0) = 1 / 2 := by
   rw [plateauStep]
@@ -102,6 +104,7 @@ private lemma plateauStep_mul :
   norm_num [Nat.cast_add, Nat.cast_mul]
   exact mul_comm _ _
 
+omit [DecidableEq G] in
 /-- Every finite Bohr datum has an exactly regular plateau at a scale in
 `[1/2,1]`.  The radius is the explicit number
 `1 / (4 * (|G| + 1))`.
@@ -114,6 +117,7 @@ theorem exists_plateauRegularAt (B : BohrData G) :
       1 / 2 ≤ rho ∧ rho ≤ 1 ∧
       eta = plateauStep G / 2 ∧
       B.IsPlateauRegularAt rho eta := by
+  classical
   let step : ℝ≥0 := plateauStep G
   let scale : ℕ → ℝ≥0 := fun i ↦ 1 / 2 + (i : ℝ≥0) * step
   let f : ℕ → ℕ := fun i ↦ (B.dilate (scale i)).carrier.card
@@ -221,6 +225,7 @@ def IsRankRegular (B : BohrData G) : Prop :=
       ((B.dilate (1 + kappa)).carrier.card : ℝ) ≤
           (1 + 100 * (d : ℝ) * (kappa : ℝ)) * (B.carrier.card : ℝ)
 
+omit [DecidableEq G] in
 /-- Rank regularity is stable under a further scalar dilation: this lemma is
 only a normalization of the nested-dilation formula. -/
 theorem isRankRegular_dilate_iff (B : BohrData G) (rho : ℝ≥0) :
@@ -236,6 +241,7 @@ theorem isRankRegular_dilate_iff (B : BohrData G) (rho : ℝ≥0) :
                 ((B.dilate rho).carrier.card : ℝ) := by
   simp [IsRankRegular, mul_comm]
 
+omit [DecidableEq G] in
 /-- Quantitative regular-value lemma.  If the total growth from scale `1/2`
 to scale `1` is less than `2^n`, one of the `n` equal shells has growth at
 most two.  Its midpoint lies in `[1/2,1]` and its half-width is exactly
@@ -314,10 +320,12 @@ theorem exists_coarselyRegularAt_of_card_growth
 noncomputable def translateFinset (A : Finset G) (t : G) : Finset G :=
   A.map (Equiv.addRight t).toEmbedding
 
+omit [DecidableEq G] [Fintype G] in
 @[simp] lemma mem_translateFinset {A : Finset G} {t x : G} :
     x ∈ translateFinset A t ↔ x - t ∈ A := by
   simp [translateFinset, sub_eq_add_neg]
 
+omit [DecidableEq G] [Fintype G] in
 @[simp] lemma card_translateFinset (A : Finset G) (t : G) :
     (translateFinset A t).card = A.card := by
   simp [translateFinset]
@@ -473,6 +481,7 @@ theorem sum_abs_normalizedIndicator_translate_le_of_rankRegular
   rw [div_le_iff₀ hcenter_pos]
   nlinarith [hcards.1, hcards.2]
 
+omit [DecidableEq G] in
 /-- A translation belonging to the plateau radius preserves the central
 Bohr carrier exactly. -/
 theorem translate_carrier_eq_of_plateauRegular
@@ -480,6 +489,7 @@ theorem translate_carrier_eq_of_plateauRegular
     (hreg : B.IsPlateauRegularAt rho eta) {t : G}
     (ht : t ∈ (B.dilate eta).carrier) :
     translateFinset (B.dilate rho).carrier t = (B.dilate rho).carrier := by
+  classical
   have houter := (hreg.2 eta le_rfl).2
   apply Finset.ext
   intro x

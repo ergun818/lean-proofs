@@ -55,11 +55,13 @@ probability average from `Core`. -/
 noncomputable def pairing (f : G → ℝ) (C : Finset G) : ℝ :=
   ambientAverage fun x ↦ f x * normalizedIndicator C x
 
+omit [AddCommGroup G] [Fintype G] in
 lemma localAverage_nonneg {B : Finset G} {f : G → ℝ}
     (hf : ∀ x ∈ B, 0 ≤ f x) : 0 ≤ localAverage B f := by
   unfold localAverage
   exact div_nonneg (sum_nonneg fun x hx ↦ hf x hx) (by positivity)
 
+omit [AddCommGroup G] [Fintype G] in
 lemma localMoment_nonneg (B : Finset G) (p : ℕ) (f : G → ℝ) :
     0 ≤ localMoment B p f := by
   exact localAverage_nonneg fun _ _ ↦ by positivity
@@ -81,6 +83,7 @@ lemma pairing_eq_localAverage {C : Finset G} (hC : C.Nonempty) (f : G → ℝ) :
     exact_mod_cast (Fintype.card_ne_zero : Fintype.card G ≠ 0)
   field_simp
 
+omit [AddCommGroup G] [Fintype G] in
 lemma abs_localAverage_le_localAverage_abs {C : Finset G} (f : G → ℝ) :
     |localAverage C f| ≤ localAverage C fun x ↦ |f x| := by
   unfold localAverage
@@ -93,6 +96,7 @@ lemma abs_localAverage_le_localAverage_abs {C : Finset G} (f : G → ℝ) :
     _ ≤ (∑ x ∈ C, |f x|) / (C.card : ℝ) :=
       div_le_div_of_nonneg_right (Finset.abs_sum_le_sum_abs f C) (by positivity)
 
+omit [AddCommGroup G] [Fintype G] in
 /-- Jensen's inequality for the uniform probability measure on a nonempty
 finite set, stated with a natural exponent. -/
 lemma localAverage_abs_pow_le_localMoment {C : Finset G} (hC : C.Nonempty)
@@ -193,7 +197,7 @@ theorem half_main_term_or_quarter_moment {B C : Finset G} (hC : C.Nonempty)
       (mainTerm / 4) ^ p ≤ localMoment B p f := by
   have happ : |(progression - mainTerm) - pairing f C| ≤
       (1 / 2 : ℝ) * mainTerm / 4 := by
-    convert happrox using 1 <;> ring
+    convert happrox using 1; ring
   have hdich := localized_holder_dichotomy hC hCB p hp f progression mainTerm
     (1 / 2 : ℝ) hmain.le (by norm_num) hdensity happ
   rcases hdich with hgood | hbad
@@ -201,7 +205,7 @@ theorem half_main_term_or_quarter_moment {B C : Finset G} (hC : C.Nonempty)
     have hlower := (abs_le.mp hgood).1
     linarith
   · right
-    convert hbad using 1 <;> ring
+    convert hbad using 1; ring
 
 /-- Specialized endgame used in progression counting.  Under the balanced
 `1/8` moment bound the bad Hölder alternative is impossible, so the normalized

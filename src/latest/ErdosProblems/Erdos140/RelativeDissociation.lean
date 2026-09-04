@@ -30,14 +30,16 @@ def AddDissociatedMod (S Delta : Finset (AddChar G ℂ)) : Prop :=
     Disjoint t u → (t ∪ u).Nonempty →
       (∑ psi ∈ t, psi) - ∑ psi ∈ u, psi ∉ S
 
+omit [Fintype G] in
 theorem addDissociatedMod_empty (S : Finset (AddChar G ℂ)) :
     AddDissociatedMod S ∅ := by
   intro t u ht hu htu hne
   simp only [Finset.subset_empty] at ht hu
   subst t
   subst u
-  simpa using hne
+  simp at hne
 
+omit [Fintype G] in
 theorem AddDissociatedMod.mono {S : Finset (AddChar G ℂ)}
     {Delta Gamma : Finset (AddChar G ℂ)}
     (h : AddDissociatedMod S Delta) (hsub : Gamma ⊆ Delta) :
@@ -45,15 +47,17 @@ theorem AddDissociatedMod.mono {S : Finset (AddChar G ℂ)}
   intro t u ht hu
   exact h t u (ht.trans hsub) (hu.trans hsub)
 
+omit [Fintype G] in
 /-- Maximal dissociation modulo a negation-invariant set gives a signed-span
 cover. -/
-theorem exists_maximal_addDissociatedMod
+theorem exists_maximal_addDissociatedMod [Finite G]
     (S T : Finset (AddChar G ℂ))
     (hzero : 0 ∈ S)
     (hS : ∀ s, s ∈ S → -s ∈ S) :
     ∃ Delta : Finset (AddChar G ℂ),
       Delta ⊆ T ∧ AddDissociatedMod S Delta ∧
         ∀ psi ∈ T, ∃ z ∈ Delta.addSpan, ∃ s ∈ S, psi = z + s := by
+  let := Fintype.ofFinite G
   classical
   let candidates := T.powerset.filter (AddDissociatedMod S)
   have hcandidates : candidates.Nonempty := by
@@ -74,7 +78,7 @@ theorem exists_maximal_addDissociatedMod
       have hsub := hDelta_max hinsert_mem (Finset.subset_insert psi Delta)
       exact hpsiDelta (hsub (Finset.mem_insert_self psi Delta))
     rw [AddDissociatedMod] at hnot
-    push_neg at hnot
+    push Not at hnot
     obtain ⟨t, u, ht, hu, htu, hne, hsumS⟩ := hnot
     have hpsi_tu : psi ∈ t ∪ u := by
       by_contra hpsi
@@ -130,9 +134,10 @@ theorem exists_maximal_addDissociatedMod
       rw [← Finset.sum_erase_add _ _ hpsi_u]
       abel
 
+omit [Fintype G] in
 /-- A capped dimension estimate for all small dissociated subsets applies to
 the maximal modulo-dissociated set. -/
-theorem exists_maximal_addDissociatedMod_card_le
+theorem exists_maximal_addDissociatedMod_card_le [Finite G]
     (S T : Finset (AddChar G ℂ)) (hzero : 0 ∈ S)
     (hS : ∀ s, s ∈ S → -s ∈ S) (D : ℝ) (k : ℕ)
     (hDk : D < k)
@@ -143,6 +148,7 @@ theorem exists_maximal_addDissociatedMod_card_le
       Delta ⊆ T ∧ AddDissociatedMod S Delta ∧
         (Delta.card : ℝ) ≤ D ∧
         ∀ psi ∈ T, ∃ z ∈ Delta.addSpan, ∃ s ∈ S, psi = z + s := by
+  let := Fintype.ofFinite G
   obtain ⟨Delta, hDeltaT, hDelta, hcover⟩ :=
     exists_maximal_addDissociatedMod S T hzero hS
   have hcard : Delta.card ≤ k := by
@@ -165,11 +171,13 @@ private def signedCoefficient (v : AddChar G ℂ → ℂ)
   ((∏ psi ∈ u, v psi) * ∏ psi ∈ t \ u, conj (v psi)) /
     (2 : ℂ) ^ t.card
 
-private lemma rieszProduct_eq_signedExpansion
+omit [Fintype G] in
+private lemma rieszProduct_eq_signedExpansion [Finite G]
     (Delta : Finset (AddChar G ℂ)) (v : AddChar G ℂ → ℂ) (x : G) :
     ∏ psi ∈ Delta, ((1 + (v psi * psi x).re : ℝ) : ℂ) =
       ∑ t ∈ Delta.powerset, ∑ u ∈ t.powerset,
         signedCoefficient v t u * signedFrequency t u x := by
+  let := Fintype.ofFinite G
   calc
     ∏ psi ∈ Delta, ((1 + (v psi * psi x).re : ℝ) : ℂ) =
         ∏ psi ∈ Delta,
@@ -222,6 +230,7 @@ private lemma weightedRiesz_eq_signedExpansion
   intro x hx
   ring
 
+omit [Fintype G] in
 private lemma signedFrequency_not_mem
     {S Delta t u : Finset (AddChar G ℂ)}
     (hDelta : AddDissociatedMod S Delta)
@@ -235,6 +244,7 @@ private lemma signedFrequency_not_mem
     exact (Finset.mem_sdiff.mp hpsitu).2 hpsiu
   · simpa [Finset.union_sdiff_of_subset hu] using ht0
 
+omit [Fintype G] in
 private lemma norm_signedCoefficient_le
     {v : AddChar G ℂ → ℂ} {t u : Finset (AddChar G ℂ)}
     (hu : u ⊆ t) (hv : ∀ psi ∈ t, ‖v psi‖ ≤ 1) :
@@ -382,7 +392,7 @@ theorem AddDissociatedMod.isWeightedDissociated_of_le_quarter_pow
   calc
     q * (2 : ℝ) ^ k ≤ (1 / 4 : ℝ) ^ k * (2 : ℝ) ^ k :=
       mul_le_mul_of_nonneg_right hq_quarter (pow_nonneg (by norm_num) _)
-    _ = (1 / 2 : ℝ) ^ k := by rw [← mul_pow]; congr 1 <;> norm_num
+    _ = (1 / 2 : ℝ) ^ k := by rw [← mul_pow]; congr 1; norm_num
     _ ≤ 1 := pow_le_one₀ (by norm_num) (by norm_num)
 
 /-! ## The ordinary large spectrum is symmetric -/

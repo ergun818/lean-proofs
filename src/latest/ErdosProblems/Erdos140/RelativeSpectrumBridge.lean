@@ -18,6 +18,7 @@ variable {G : Type*} [Fintype G] [AddCommGroup G] [DecidableEq G]
 
 /-! ## A general constant-on-the-ambient-set bridge -/
 
+omit [AddCommGroup G] in
 /-- If `w` is constant with value `c` on an ambient set containing `X`, then
 the weighted mass of `1_X` is `c * |X|`. -/
 theorem sum_finsetIndicator_mul_eq_const_mul_card

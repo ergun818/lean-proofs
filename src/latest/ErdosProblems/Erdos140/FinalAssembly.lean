@@ -143,6 +143,7 @@ structure TwoBohrEndpointPackage
         t.rank ≤ s.rank + rankCost ∧
         Real.exp (-sizeCost) * (s.card : ℝ) ≤ (t.card : ℝ)
 
+omit [DiscreteMeasurableSpace G] [MeasurableSpace G] in
 /-- Weakening the demanded density gain preserves the rank and card costs. -/
 theorem controlledIncrement_of_le
     {q q' sizeCost : ℝ} {rankCost : ℕ}
@@ -177,9 +178,11 @@ def rank {original : Finset G} (s : RankRegularLocatedRestriction original) :
 def card {original : Finset G} (s : RankRegularLocatedRestriction original) :
     ℕ := s.located.card
 
+omit [DiscreteMeasurableSpace G] [MeasurableSpace G] in
 lemma density_pos {original : Finset G} (s : RankRegularLocatedRestriction original) :
     0 < s.density := s.located.density_pos
 
+omit [DiscreteMeasurableSpace G] [MeasurableSpace G] in
 lemma density_nonneg {original : Finset G} (s : RankRegularLocatedRestriction original) :
     0 ≤ s.density := s.density_pos.le
 
@@ -215,6 +218,7 @@ structure RankRegularNarrowingPackage
   cardOne : Real.exp (-sizeCost) * (s.card : ℝ) ≤ childOne.carrier.card
   cardTwo : Real.exp (-sizeCost) * (s.card : ℝ) ≤ childTwo.carrier.card
 
+omit [DiscreteMeasurableSpace G] [MeasurableSpace G] in
 /-- Rank-regular narrowing preserves rank-regularity on the increment
 branch and retains the honest dense-pair branch on the same two children. -/
 theorem densePair_or_rankRegular_increment
@@ -630,6 +634,7 @@ inductive RankRegularControlledChain {original : Finset G}
 
 namespace RankRegularControlledChain
 
+omit [DiscreteMeasurableSpace G] [MeasurableSpace G] in
 theorem forget {original : Finset G} {q sizeCost : ℝ} {rankCost n : ℕ}
     {s t : RankRegularLocatedRestriction original}
     (h : RankRegularControlledChain q rankCost sizeCost n s t) :
@@ -640,6 +645,7 @@ theorem forget {original : Finset G} {q sizeCost : ℝ} {rankCost n : ℕ}
 
 end RankRegularControlledChain
 
+omit [DiscreteMeasurableSpace G] [MeasurableSpace G] in
 /-- Finite stopping while preserving rank-regularity in every state. -/
 theorem exists_terminal_rankRegular_chain
     {original : Finset G}
@@ -715,6 +721,7 @@ noncomputable def cyclicInitialRankRegularLocated (N : ℕ)
     (cyclicInitialRankRegularLocated N A hA).card = intervalModulus N := by
   exact cyclicInitialLocated_card N A hA
 
+omit [DiscreteMeasurableSpace G] [MeasurableSpace G] in
 /-- Bounded rank-regular stopping with the dyadic and rank invariants exposed
 at each used-step index.  This is the form consumed by the concrete supplier,
 whose quantitative construction only needs those two bounds. -/
@@ -779,7 +786,7 @@ theorem exists_terminal_rankRegular_chain_bounded_aux
 
 /-- Dyadic scale for the honest cyclic initial rank-regular state. -/
 theorem cyclicInitialRankRegular_onDyadicScale
-    {N d : ℕ} (hN : 1 ≤ N)
+    {N d : ℕ} (_hN : 1 ≤ N)
     {A : Finset (ZMod (intervalModulus N))} (hA : A.Nonempty)
     (hlog : Real.log (((intervalModulus N : ℕ) : ℝ) / (#A : ℝ)) ≤
       (d : ℝ) * Real.log 2) :

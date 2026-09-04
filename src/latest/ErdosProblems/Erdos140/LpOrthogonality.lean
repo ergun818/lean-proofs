@@ -178,6 +178,7 @@ theorem spectrallyNonnegative_counting_autocorrelation_convolution
       (Complex.normSq_nonneg _))
   · exact Complex.ofReal_im _
 
+omit [AddCommGroup G] in
 lemma absMoment_nonneg (f : G → ℂ) (p : ℕ) : 0 ≤ absMoment f p := by
   exact expect_nonneg fun _ _ ↦ pow_nonneg (norm_nonneg _) _
 
@@ -186,19 +187,22 @@ zero; all substantive results below assume the exponent is positive. -/
 def lpNorm (f : G → ℂ) (p : ℕ) : ℝ :=
   if p = 0 then 0 else (absMoment f p) ^ (1 / (p : ℝ))
 
+omit [AddCommGroup G] in
 lemma lpNorm_of_pos (f : G → ℂ) {p : ℕ} (hp : 0 < p) :
     lpNorm f p = (absMoment f p) ^ (1 / (p : ℝ)) := by
   simp [lpNorm, hp.ne']
 
+omit [AddCommGroup G] in
 lemma lpNorm_nonneg (f : G → ℂ) (p : ℕ) : 0 ≤ lpNorm f p := by
   unfold lpNorm
   split
   · exact le_rfl
   · exact Real.rpow_nonneg (absMoment_nonneg f p) _
 
+omit [AddCommGroup G] in
 /-- Expansion of an even normalized moment of a finite Fourier polynomial.
 The two tuples index the `k` conjugated and `k` unconjugated factors. -/
-lemma absMoment_two_mul_sum_pow {I : Type*} {k : ℕ} (hk : k ≠ 0)
+lemma absMoment_two_mul_sum_pow {I : Type*} {k : ℕ} (_hk : k ≠ 0)
     (s : Finset I) (u : I → G → ℂ) :
     (absMoment (∑ i ∈ s, u i) (2 * k) : ℂ) =
       ∑ x ∈ s ^^ k, ∑ y ∈ s ^^ k,
@@ -215,6 +219,7 @@ lemma absMoment_two_mul_sum_pow {I : Type*} {k : ℕ} (hk : k ≠ 0)
     _ = _ := by
       simp_rw [sum_pow', Finset.sum_mul_sum, expect_sum_comm]
 
+omit [AddCommGroup G] in
 /-- Weighted version of `absMoment_two_mul_sum_pow`. -/
 lemma weightedAbsMoment_two_mul_sum_pow {I : Type*} {k : ℕ} (_hk : k ≠ 0)
     (nu : G → ℝ) (s : Finset I) (u : I → G → ℂ) :
@@ -248,8 +253,7 @@ theorem absMoment_convolution_le_autocorrelation {p : ℕ} (hp : p ≠ 0)
         (∏ i, coeff f (ψ.2 i) ^ 2) *
           (𝔼 x : G, (∑ i, ψ.2 i - ∑ i, ψ.1 i) x))
     univ (absMoment_nonneg _ _) ?_ ?_
-  · push_cast
-    have hinv : convolution f f =
+  · have hinv : convolution f f =
         ∑ χ : AddChar G ℂ, fun x ↦ coeff (convolution f f) χ * χ x := by
       funext x
       simpa only [Finset.sum_apply] using (inversion (convolution f f) x).symm
@@ -261,8 +265,7 @@ theorem absMoment_convolution_le_autocorrelation {p : ℕ} (hp : p ≠ 0)
     simp_rw [coeff_convolution, ← sq,
       Fintype.sum_prod_type, mul_expect, AddChar.sub_apply]
     simp [mul_mul_mul_comm, mul_comm, map_neg_eq_conj, prod_mul_distrib]
-  · push_cast
-    have hinv : differenceConvolution f f =
+  · have hinv : differenceConvolution f f =
         ∑ χ : AddChar G ℂ, fun x ↦ coeff (differenceConvolution f f) χ * χ x := by
       funext x
       simpa only [Finset.sum_apply] using
@@ -276,7 +279,7 @@ theorem absMoment_convolution_le_autocorrelation {p : ℕ} (hp : p ≠ 0)
       Fintype.sum_prod_type, mul_expect]
     congr 1 with ψ
     congr 1 with φ
-    simp only [Pi.smul_apply, smul_eq_mul, map_mul, map_pow, Complex.conj_ofReal,
+    simp only [map_mul, map_pow, Complex.conj_ofReal,
       prod_mul_distrib, mul_mul_mul_comm, ← mul_expect, map_prod, AddChar.sub_apply,
       AddChar.coe_sum, Finset.prod_apply, norm_mul, norm_prod, norm_pow, RCLike.norm_conj,
       Complex.ofReal_mul, Complex.ofReal_prod, Complex.ofReal_pow]
@@ -300,14 +303,17 @@ theorem lpNorm_convolution_le_autocorrelation {p : ℕ} (hp : p ≠ 0)
     (absMoment_convolution_le_autocorrelation hp heven f)
     (div_nonneg zero_le_one hpR.le)
 
+omit [AddCommGroup G] in
 lemma weightedAbsMoment_nonneg {nu : G → ℝ} (hnu : ∀ x, 0 ≤ nu x)
     (f : G → ℂ) (p : ℕ) : 0 ≤ weightedAbsMoment nu f p := by
   exact expect_nonneg fun x _ ↦ mul_nonneg (hnu x) (pow_nonneg (norm_nonneg _) _)
 
+omit [AddCommGroup G] in
 lemma weightedLpNorm_of_pos (nu : G → ℝ) (f : G → ℂ) {p : ℕ} (hp : 0 < p) :
     weightedLpNorm nu f p = (weightedAbsMoment nu f p) ^ (1 / (p : ℝ)) := by
   simp [weightedLpNorm, hp.ne']
 
+omit [AddCommGroup G] in
 lemma weightedLpNorm_nonneg {nu : G → ℝ} (hnu : ∀ x, 0 ≤ nu x)
     (f : G → ℂ) (p : ℕ) : 0 ≤ weightedLpNorm nu f p := by
   unfold weightedLpNorm
@@ -331,6 +337,7 @@ lemma half_le_two_rpow_neg_one_div_nat {p : ℕ} (hp : 0 < p) :
       rw [Real.rpow_neg_eq_inv_rpow]
       norm_num
 
+omit [AddCommGroup G] in
 /-- Hölder-style root lifting: a factor `2` in a positive `p`-th-moment
 estimate costs exactly `2⁻¹ᵖ` after taking `p`-th roots. -/
 theorem two_rpow_neg_one_div_mul_weightedLpNorm_le_of_moment_le_two_mul
@@ -354,6 +361,7 @@ theorem two_rpow_neg_one_div_mul_weightedLpNorm_le_of_moment_le_two_mul
       rw [← mul_assoc, ← Real.rpow_add (by norm_num : (0 : ℝ) < 2)]
       simp
 
+omit [AddCommGroup G] in
 /-- The convenient uniform version of the preceding root lifting: for every
 positive natural `p`, the exact factor `2⁻¹ᵖ` is at least `1/2`. -/
 theorem half_weightedLpNorm_le_of_moment_le_two_mul
@@ -395,7 +403,7 @@ theorem weightedAbsMoment_translate_convolution_le_autocorrelation
     simp only [term]
     simp_rw [coeff_convolution, ← sq, Fintype.sum_prod_type, mul_expect,
       AddChar.sub_apply]
-    simp [term, mul_mul_mul_comm, mul_comm, map_neg_eq_conj, prod_mul_distrib]
+    simp [mul_mul_mul_comm, mul_comm, map_neg_eq_conj, prod_mul_distrib]
     ring_nf
   · have hinv : differenceConvolution f f =
         ∑ chi : AddChar G ℂ,
@@ -414,15 +422,14 @@ theorem weightedAbsMoment_translate_convolution_le_autocorrelation
     congr 1 with psi
     congr 1 with phi
     simp only [map_mul, map_pow, prod_mul_distrib, mul_mul_mul_comm,
-      ← mul_expect, map_prod, AddChar.sub_apply, AddChar.coe_sum,
-      Finset.prod_apply, norm_mul, norm_prod, norm_pow, RCLike.norm_conj,
-      Complex.ofReal_mul, Complex.ofReal_prod, Complex.ofReal_pow,
+      map_prod, AddChar.sub_apply, AddChar.coe_sum,
+      Finset.prod_apply,
       Complex.conj_ofReal]
     have hchars :
         (𝔼 x : G, (nu x : ℂ) *
             ((∏ i, conj (psi i x)) * ∏ i, phi i x)) =
           characterAverage nu (∑ i, phi i - ∑ i, psi i) := by
-      simp [characterAverage, map_neg_eq_conj, mul_comm, mul_left_comm,
+      simp [characterAverage, map_neg_eq_conj, mul_comm,
         AddChar.sub_apply]
     let a : ℂ :=
       (∏ i, (‖coeff f (psi i)‖ ^ 2 : ℂ)) *
@@ -464,7 +471,7 @@ theorem weightedAbsMoment_translate_convolution_le_autocorrelation
       rw [characterAverage_eq_ofReal hspec]
       dsimp only [a, c]
       push_cast
-      simp [abs_of_nonneg (hspec eta).1, norm_prod]
+      simp [norm_prod]
     simpa [a, c, pow_two, prod_mul_distrib, mul_assoc, mul_comm, mul_left_comm] using hgoal
 
 /-- Root form of the translated positive-definite-measure comparison. -/

@@ -50,13 +50,16 @@ def meet (B C : BohrData G) : BohrData G where
       else B.width gamma
     else C.width gamma
 
+omit [DecidableEq G] in
 @[simp] theorem freq_meet (B C : BohrData G) :
     (meet B C).freq = B.freq ∪ C.freq := rfl
 
+omit [DecidableEq G] in
 theorem rank_meet_le (B C : BohrData G) :
     (meet B C).rank ≤ B.rank + C.rank := by
   simpa [BohrData.rank, meet] using Finset.card_union_le B.freq C.freq
 
+omit [DecidableEq G] in
 @[simp] theorem mem_meet_carrier (B C : BohrData G) (x : G) :
     x ∈ (meet B C).carrier ↔ x ∈ B.carrier ∧ x ∈ C.carrier := by
   classical
@@ -97,9 +100,11 @@ def onFrequencies (Delta : Finset (AddCharacter G)) (width : NNReal) : BohrData 
   freq := Delta
   width := fun _ => width
 
+omit [DecidableEq G] [Fintype G] in
 @[simp] theorem rank_onFrequencies (Delta : Finset (AddCharacter G)) (width : NNReal) :
     (onFrequencies Delta width).rank = Delta.card := rfl
 
+omit [DecidableEq G] in
 @[simp] theorem mem_onFrequencies_carrier
     (Delta : Finset (AddCharacter G)) (width : NNReal) (x : G) :
     x ∈ (onFrequencies Delta width).carrier ↔
@@ -111,11 +116,14 @@ def extend (B : BohrData G) (Delta : Finset (AddCharacter G)) (width : NNReal) :
     BohrData G :=
   meet B (onFrequencies Delta width)
 
+omit [DecidableEq G] in
 theorem rank_extend_le (B : BohrData G) (Delta : Finset (AddCharacter G))
     (width : NNReal) :
     (extend B Delta width).rank ≤ B.rank + Delta.card := by
+  classical
   simpa [extend] using rank_meet_le B (onFrequencies Delta width)
 
+omit [DecidableEq G] in
 @[simp] theorem mem_extend_carrier (B : BohrData G)
     (Delta : Finset (AddCharacter G)) (width : NNReal) (x : G) :
     x ∈ (extend B Delta width).carrier ↔
@@ -288,6 +296,7 @@ the fibre inside the symmetric Bohr carrier containing `C`. -/
 def narrowingSet (A C : Finset G) (x : G) : Finset G :=
   (C.filter fun c => x - c ∈ A).image fun c => -c
 
+omit [Fintype G] in
 @[simp] theorem mem_narrowingSet {A C : Finset G} {x z : G} :
     z ∈ narrowingSet A C x ↔ -z ∈ C ∧ x + z ∈ A := by
   classical
@@ -299,6 +308,7 @@ def narrowingSet (A C : Finset G) (x : G) : Finset G :=
     refine ⟨-z, ?_, by simp⟩
     exact ⟨hzC, by simpa [sub_eq_add_neg] using hxzA⟩
 
+omit [Fintype G] in
 theorem card_narrowingSet (A C : Finset G) (x : G) :
     (narrowingSet A C x).card = (C.filter fun c => x - c ∈ A).card := by
   classical
@@ -318,7 +328,7 @@ theorem narrowingSet_subset_carrier
 /-- Exact normalization of a local density as the cardinality of the centred
 translated fibre. -/
 theorem localDensity_eq_card_narrowingSet_div
-    {A C : Finset G} (hC : C.Nonempty) (x : G) :
+    {A C : Finset G} (_hC : C.Nonempty) (x : G) :
     localDensity A C x = (narrowingSet A C x).card / (C.card : Real) := by
   classical
   rw [localDensity, normalizedConvolution]
@@ -346,9 +356,10 @@ theorem localDensity_eq_card_narrowingSet_div
 
 /-! ## Sifting and localized-almost-periodicity normalization -/
 
-open Function MeasureTheory Real
+open Function MeasureTheory Erdos140.Real
 open scoped ENNReal Indicator Pointwise mu
 
+omit [AddCommGroup G] [Fintype G] in
 /-- APAP's probability indicator is the same counting-probability indicator
 used by the local almost-periodicity file. -/
 theorem probabilityIndicator_eq_mu (A : Finset G) :
@@ -431,7 +442,7 @@ theorem threefold_eq_ofReal_finiteInner
       _ = _ := hcount.symm
   have honeS : ((↑) ∘ oneS : G → Complex) = (𝟭_[S] : G → Complex) := by
     ext x
-    by_cases hx : x ∈ S <;> simp [oneS, Set.indicator_apply, hx]
+    by_cases hx : x ∈ S <;> simp [oneS, hx]
   rw [← hreal]
   change ((μ_[Complex] (-A₁) ∗ᵈ (𝟭_[S] : G → Complex)) ∗ᵈ μ A₂) t =
     (Complex.ofReal ∘ ((μ_[Real] (-A₁) ∗ᵈ oneS) ∗ᵈ b)) t
@@ -503,6 +514,7 @@ def siftingDensityLower (A B₁ B₂ : Finset G) (p : Nat) : Real :=
       ‖𝟭_[A, ℝ] ○ᵈ 𝟭_[A]‖_[p, μ B₁ ○ᵈ μ B₂] ^ (2 * p) /
     (A.card : Real) ^ (2 * p)
 
+omit [DiscreteMeasurableSpace G] [MeasurableSpace G] in
 /-- The explicit shift count used by the elementary sifting identity is
 exactly the unnormalised indicator autocorrelation. -/
 theorem commonShiftCount_eq_indicatorCorrelation
@@ -514,8 +526,7 @@ theorem commonShiftCount_eq_indicatorCorrelation
   have hcount :
       ((#(Finset.univ.filter fun t : G ↦ x - t ∈ A ∧ -t ∈ A) : Nat) : Real) =
         ∑ t : G, if x - t ∈ A ∧ -t ∈ A then (1 : Real) else 0 := by
-    simpa using congrArg (fun n : Nat ↦ (n : Real))
-      (Finset.card_filter (fun t : G ↦ x - t ∈ A ∧ -t ∈ A) Finset.univ)
+    simp
   rw [hcount]
   refine Fintype.sum_equiv (Equiv.subLeft x) _ _ (fun y ↦ ?_)
   simp only [Equiv.subLeft_apply, Set.indicator_apply]
@@ -607,6 +618,7 @@ theorem sum_card_siftedSet_mul_card_siftedSet
         abs_of_nonneg (hcorr x), NNReal.coe_dddconv,
         NNReal.coe_comp_mu, corr]
 
+omit [DiscreteMeasurableSpace G] [MeasurableSpace G] in
 /-- First moment of one common-tuple sifted set. -/
 theorem sum_card_siftedSet (A B : Finset G) (p : Nat) :
     (∑ u : Fin p → G, ((Sifting.siftedSet A B u).card : Real)) =
@@ -616,8 +628,8 @@ theorem sum_card_siftedSet (A B : Finset G) (p : Nat) :
       ∑ u : Fin p → G, (Sifting.siftedSet A B u).card =
         A.card ^ p * B.card := by
     simp only [card_eq_sum_indicator_one, Sifting.siftedSet,
-      Set.indicator_apply, mem_coe, mem_filter, mem_univ, true_and,
-      boole_mul, mul_sum, sum_mul, @sum_comm G, Fintype.piFinset_univ,
+      Set.indicator_apply, mem_coe, mem_filter,
+      mul_sum, sum_mul, @sum_comm G, Fintype.piFinset_univ,
       sum_pow']
     congr with b
     refine Fintype.sum_equiv (Equiv.subLeft fun _ : Fin p ↦ b) _ _ (fun u ↦ ?_)
@@ -701,12 +713,12 @@ theorem exists_common_sifted_density
     by_cases h : ∀ u, g u ≠ 0 → M ^ 2 ≤ g u
     · have hne : ∃ u, g u ≠ 0 := by
         by_contra hn
-        push_neg at hn
+        push Not at hn
         have : ∑ u, g u = 0 := by simp [hn]
         linarith
       obtain ⟨u, hu⟩ := hne
       exact ⟨u, h u hu⟩
-    · push_neg at h
+    · push Not at h
       obtain ⟨u₁, hu₁ne, hu₁low⟩ := h
       have hlow : (2 : Real) * ∑ u with g u < M ^ 2, g u < ∑ u, g u := by
         rw [← lt_div_iff₀' (by norm_num : (0 : Real) < 2), div_eq_inv_mul]
@@ -748,7 +760,7 @@ theorem exists_common_sifted_density
               mul_assoc, Real.mul_self_sqrt, hgB, mul_right_comm, mul_assoc]
             all_goals positivity
       by_contra hnone
-      push_neg at hnone
+      push Not at hnone
       have hpartition : ∑ u, g u = ∑ u with g u < M ^ 2, g u := by
         congr 1
         symm
@@ -818,16 +830,19 @@ def supportedPopularSet
     (A B₁ B₂ : Finset G) (p : Nat) (epsilon : Real) : Finset G :=
   _root_.s p epsilon B₁ B₂ A ∩ (B₁ - B₂)
 
+omit [DiscreteMeasurableSpace G] in
 theorem supportedPopularSet_subset_sub
     (A B₁ B₂ : Finset G) (p : Nat) (epsilon : Real) :
     supportedPopularSet A B₁ B₂ p epsilon ⊆ B₁ - B₂ :=
   Finset.inter_subset_right
 
+omit [DiscreteMeasurableSpace G] in
 theorem card_supportedPopularSet_le_card_sub
     (A B₁ B₂ : Finset G) (p : Nat) (epsilon : Real) :
     (supportedPopularSet A B₁ B₂ p epsilon).card ≤ (B₁ - B₂).card :=
   Finset.card_le_card (supportedPopularSet_subset_sub A B₁ B₂ p epsilon)
 
+omit [DiscreteMeasurableSpace G] in
 /-- Positive retained mass forces both sifted sets to be genuine nonempty
 sets.  This small fact is essential before they may be used as probability
 indicators by localized almost-periodicity. -/
@@ -843,14 +858,15 @@ theorem output_nonempty
   · by_contra hnonempty
     have hempty : data.A₁ = ∅ := not_nonempty_iff_eq_empty.mp hnonempty
     rw [hempty] at hmass
-    simp [mu_apply] at hmass
+    simp at hmass
     linarith
   · by_contra hnonempty
     have hempty : data.A₂ = ∅ := not_nonempty_iff_eq_empty.mp hnonempty
     rw [hempty] at hmass
-    simp [mu_apply] at hmass
+    simp at hmass
     linarith
 
+omit [DiscreteMeasurableSpace G] in
 /-- Intersecting the popular set with B₁-B₂ does not change the retained
 mass, because every difference carrying μ_A₁ ○ μ_A₂ already lies there. -/
 theorem supported_popular_mass
@@ -890,6 +906,7 @@ theorem supported_popular_mass
   rw [countingInner_difference_setIndicator_eq_sum, hsum]
   exact hglobal
 
+omit [DiscreteMeasurableSpace G] [MeasurableSpace G] in
 /-- A normalized difference convolution is pointwise bounded by the
 reciprocal of the left set size.  We use the right probability measure as
 the summation variable, so the translate still has total mass one. -/
@@ -916,6 +933,7 @@ theorem dddconv_mu_le_inv_card_left
     _ = (A₁.card : Real)⁻¹ := by
       rw [sum_mu Real hA₂, mul_one]
 
+omit [DiscreteMeasurableSpace G] in
 /-- The retained supported mass forces the supported popular set to have
 at least (1 - delta) * |A₁| elements.  This is the quantitative lower
 bound that keeps the Croot--Sisask sampling ratio local and uniform. -/
@@ -962,6 +980,7 @@ theorem one_sub_delta_mul_card_le_card_supportedPopularSet
           (data.A₁.card : Real) := by rw [div_eq_mul_inv]
   exact (le_div_iff₀ (by exact_mod_cast houtputs.1.card_pos)).mp hratio
 
+omit [DiscreteMeasurableSpace G] in
 /-- When the discarded mass is at most one half, at least half of the left
 sifted set survives in the support-restricted popular set. -/
 theorem card_div_two_le_card_supportedPopularSet
@@ -981,6 +1000,7 @@ theorem card_div_two_le_card_supportedPopularSet
       linarith
     _ ≤ (supportedPopularSet A B₁ B₂ p epsilon).card := hmain
 
+omit [DiscreteMeasurableSpace G] in
 /-- Positive supported popular mass makes the support-restricted popular set
 nonempty. -/
 theorem supportedPopularSet_nonempty
@@ -1265,6 +1285,7 @@ def SupportedLocalizedSiftingPackage.mono
       _ ≤ approximationError' * (data.A₁.card : Real) * data.A₂.card := by
         gcongr
 
+omit [DiscreteMeasurableSpace G] in
 /-- The lossless sifting certificate and a concrete localized
 almost-periodicity package imply the normalized smoothed popular-mass
 bound.  This is the analytic input to the final adjoint/averaging step. -/
@@ -1295,6 +1316,7 @@ theorem localized_smoothed_popular_mass_lower_bound
   exact smoothed_popular_mass_lower_bound hnonempty.1 hnonempty.2
     hmass P.triple_error
 
+omit [DiscreteMeasurableSpace G] [MeasurableSpace G] in
 /-- APAP's smoothed probability convolution is exactly the discrete
 counting convolution used by the sifting and adjoint identities. -/
 theorem sumConvolution_probability_difference_eq
@@ -1310,6 +1332,7 @@ theorem sumConvolution_probability_difference_eq
     differenceConvolution_probability_eq_dddconv,
     LocalizedAlmostPeriodicity.sumConvolution, ddconv_eq_sum_sub']
 
+omit [DiscreteMeasurableSpace G] [MeasurableSpace G] in
 /-- Exact set-mass form of the localized smoothed inner product. -/
 theorem countingInner_smoothed_setIndicator_eq_sum
     (D A₁ A₂ S : Finset G) :
@@ -1330,6 +1353,7 @@ theorem countingInner_smoothed_setIndicator_eq_sum
   have hfilter : Finset.univ.filter (fun x : G ↦ x ∈ S) = S := by ext; simp
   rw [hfilter]
 
+omit [DiscreteMeasurableSpace G] [MeasurableSpace G] in
 /-- A lower bound for smoothed mass on a superlevel set gives the
 corresponding lower bound for the full correlation inner product.  This is
 the positivity half of the adjoint step and keeps every counting
@@ -1376,6 +1400,7 @@ theorem smoothed_superlevel_inner_lower_bound
       exact Finset.sum_le_univ_sum_of_nonneg fun x ↦
         mul_nonneg (hf_nonneg x) (hcorr x)
 
+omit [DecidableEq G] [DiscreteMeasurableSpace G] [MeasurableSpace G] in
 /-- A finite probability-weighted average cannot exceed every value of the
 averaged function.  The witness is chosen at a genuine maximum of the
 finite ambient group. -/
@@ -1396,6 +1421,7 @@ theorem exists_value_ge_probability_average
       exact mul_le_mul_of_nonneg_left (hxmax y (by simp)) (hw y)
     _ = f x := by rw [← Finset.sum_mul, hwsum, one_mul]
 
+omit [AddCommGroup G] [DecidableEq G] [DiscreteMeasurableSpace G] [MeasurableSpace G] in
 /-- Support-sensitive form of finite probability selection.  This keeps the
 selected point inside the finite support, which is essential when the point
 is subsequently represented as a difference of two Bohr-carrier elements. -/
@@ -1417,6 +1443,7 @@ theorem exists_value_ge_probability_average_on
       · rw [hwsupport y hy, zero_mul, zero_mul]
     _ = f x := by rw [← Finset.sum_mul, hwsum, one_mul]
 
+omit [DiscreteMeasurableSpace G] [MeasurableSpace G] in
 /-- The localized-unbalancing weight admits the cross-difference
 factorization used to select the translate in the sifting argument. -/
 theorem coe_smoothingWeight_eq_crossDifference
@@ -1430,6 +1457,7 @@ theorem coe_smoothingWeight_eq_crossDifference
   symm
   rw [dddconv_ddconv_dddconv_comm, ddconv_comm (μ_[Real] E) (μ D)]
 
+omit [DiscreteMeasurableSpace G] [MeasurableSpace G] in
 /-- Expanding the cross-difference factorization writes the high moment as
 an average of moments against translated finite difference measures. -/
 theorem smoothingWeight_absMoment_eq_crossAverage
@@ -1450,6 +1478,7 @@ theorem smoothingWeight_absMoment_eq_crossAverage
   intro x _
   ring
 
+omit [DiscreteMeasurableSpace G] [MeasurableSpace G] in
 /-- A high moment under the fourfold smoothing weight selects a translate
 `z + E` which genuinely meets `D`, while retaining the full moment lower
 bound against `μ_(z+E) ○ μ_D`. -/
@@ -1496,7 +1525,7 @@ theorem exists_translated_difference_moment_ge
     rw [Finset.mem_vadd_finset]
     refine ⟨e, he, ?_⟩
     rw [← hde]
-    simp only [vadd_eq_add, neg_smul, one_smul]
+    simp only [vadd_eq_add]
     exact sub_add_cancel d e
   · dsimp only [F] at hzlarge
     have hweight :
@@ -1510,7 +1539,7 @@ theorem exists_translated_difference_moment_ge
 /-- Norm-form translate selection used directly before sifting. -/
 theorem exists_translated_difference_lpNorm_ge
     {D E A : Finset G} (hD : D.Nonempty) (hE : E.Nonempty)
-    (hA : A.Nonempty) {p : Nat} (hp : 0 < p) {lower : Real}
+    (_hA : A.Nonempty) {p : Nat} (hp : 0 < p) {lower : Real}
     (hlowerNonneg : 0 ≤ lower)
     (hlower : lower ≤
       BalancedRestriction.weightedLpNorm
@@ -1582,6 +1611,7 @@ theorem exists_translated_difference_lpNorm_ge
     (μ_[Real] A ○ᵈ μ A) hp] at hlocal
   exact hlocal
 
+omit [DiscreteMeasurableSpace G] [MeasurableSpace G] in
 /-- The APAP probability convolution is the local translate density divided
 by `|A|`.  This is the final normalization conversion before
 `narrowLocated`. -/
@@ -1611,6 +1641,7 @@ theorem card_mul_mu_ddconv_eq_localDensity
   · intro y
     simp [e]
 
+omit [DiscreteMeasurableSpace G] [MeasurableSpace G] in
 /-- The exact adjoint identity at the heart of the localized density step.
 It moves the smoothed difference convolution from the popular-difference
 side onto the original set, leaving a nonnegative probability weight. -/
@@ -1639,7 +1670,7 @@ weight.  Consequently the smoothed correlation is bounded by the genuine
 pointwise supremum of the child average of the original set. -/
 theorem smoothed_correlation_le_linfty
     {D A₁ A₂ A : Finset G}
-    (hD : D.Nonempty) (hA₁ : A₁.Nonempty)
+    (_hD : D.Nonempty) (hA₁ : A₁.Nonempty)
     (hA₂ : A₂.Nonempty) (hA : A.Nonempty) :
     ∑ x : G, (μ_[Real] D ∗ᵈ (μ A₁ ○ᵈ μ A₂)) x * (μ A ○ᵈ μ A) x ≤
       ‖μ_[Real] D ∗ᵈ μ A‖_[∞] := by
@@ -1669,13 +1700,14 @@ theorem smoothed_correlation_le_linfty
         sum_mu _ hA, mul_one, mul_one]
     _ = ‖μ_[Real] D ∗ᵈ μ A‖_[∞] := rfl
 
+omit [DiscreteMeasurableSpace G] [MeasurableSpace G] in
 /-- The complete adjoint-selection step.  A smoothed popular-difference
 mass supplies a genuine translate on which the original set has the
 corresponding local density.  The conclusion is about an actual group
 element and an actual finite carrier, not an `L∞` surrogate. -/
 theorem exists_localDensity_ge_of_smoothed_superlevel
     {D A₁ A₂ A S : Finset G}
-    (hD : D.Nonempty) (hA₁ : A₁.Nonempty)
+    (_hD : D.Nonempty) (hA₁ : A₁.Nonempty)
     (hA₂ : A₂.Nonempty) (hA : A.Nonempty)
     {threshold mass lower : Real} (hthreshold : 0 ≤ threshold)
     (hcorr : ∀ x, 0 ≤ (μ_[Real] A ○ᵈ μ A) x)
@@ -1754,6 +1786,7 @@ namespace RegularChild
 def carrier (c : RegularChild (G := G)) : Finset G :=
   (c.bohr.dilate c.outer).carrier
 
+omit [DecidableEq G] in
 lemma carrier_nonempty (c : RegularChild (G := G)) : c.carrier.Nonempty :=
   (c.bohr.dilate c.outer).carrier_nonempty
 
@@ -1768,6 +1801,7 @@ def asRestriction (c : RegularChild (G := G))
   nonempty := hA
   subset_carrier := hAcarrier
 
+omit [DecidableEq G] in
 /-- Every finite Bohr datum has a genuine coarsely regular child at a scale
 between one half and one.  Its carrier still contains the half-dilate, so the
 regularization loses at most the rank-only factor from Bourgain's volume
@@ -1808,6 +1842,7 @@ theorem exists_of_bohr (B : BohrData G) :
   refine ⟨c, rfl, hrhoLower, hrhoUpper, ?_⟩
   exact Finset.card_le_card (BohrData.carrier_dilate_mono hrhoLower)
 
+omit [DecidableEq G] in
 /-- A rank-regular datum is already a valid regular child at its unit
 carrier.  The explicit `1/(400 max(rank,1))` inner width turns the two
 rank-regular cardinality estimates into the required factor-two shell
@@ -1939,8 +1974,6 @@ theorem controlledIncrement_of_rankRegular_localDensity
 
 section AnalyticLocatedIncrement
 
-variable [MeasurableSpace G] [DiscreteMeasurableSpace G]
-
 /-- Stable assembly point for the analytic density step.  Localized
 almost-periodicity supplies the smoothed-mass premise on an actual
 rank-regular datum `D`; the adjoint identity selects a translate; and the
@@ -1982,6 +2015,8 @@ theorem locatedIncrement_of_smoothed_superlevel
   apply controlledIncrement_of_rankRegular_localDensity s D hDreg hq
     hrank hcard
   exact ⟨x, hgain.trans hx⟩
+
+variable [MeasurableSpace G] [DiscreteMeasurableSpace G]
 
 /-- **High smoothing norm gives a genuine located increment.**
 
@@ -2224,6 +2259,7 @@ theorem triple_error_of_threefold_dLinfty
   have hscaled := (div_le_iff₀ hcard).mp hquot
   nlinarith
 
+omit [DiscreteMeasurableSpace G] [MeasurableSpace G] in
 /-- Reflection/symmetry identity for the TeX orientation of the threefold
 convolution: swapping the first and middle normalized sets and negating the
 popular set changes the triple-sum parameter from t to -t. -/
@@ -2255,7 +2291,7 @@ theorem tripleIndicatorSum_reflect_swap
     · obtain ⟨u, hu, rfl⟩ := Finset.mem_neg.mp hs
       by_cases ha : t + a₂ - -u ∈ A₁ <;>
         by_cases ha₂ : a₂ ∈ A₂ <;>
-          simp [LocalizedAlmostPeriodicity.setIndicator, hu, ha, ha₂]
+          simp [LocalizedAlmostPeriodicity.setIndicator, hu, ha₂]
     · have hs' : -s ∉ S := by
         intro h
         apply hs
@@ -2329,6 +2365,7 @@ theorem triple_error_of_reflected_threefold_dLinfty
         (A₁.card : Real) * A₂.card := by
       field_simp [hA₁card]
 
+omit [DiscreteMeasurableSpace G] [MeasurableSpace G] in
 /-- Reflection identity for the normalization-compatible ordering: after
 swapping the two normalized sets, the negated popular set stays in the last
 slot and the shift parameter changes sign. -/
@@ -2387,6 +2424,7 @@ theorem triple_error_of_commuted_reflected_threefold_dLinfty
     tripleIndicatorSum_commuted_reflect A₁ A₂ S 0] at h
   simpa [mul_comm, mul_left_comm, mul_assoc] using h
 
+omit [DiscreteMeasurableSpace G] in
 /-- Positive retained popular mass makes the popular-difference set itself
 nonempty.  This is the small input needed to use it as the middle set in the
 final localized almost-periodicity theorem. -/

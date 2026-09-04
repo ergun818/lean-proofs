@@ -141,7 +141,7 @@ theorem croot_sisask_subset
     simpa [neg_sub, mul_div_cancel₀ _ (two_ne_zero' ℝ)] using htri
 
 private theorem crootSisaskRatioBound
-    {G : Type*} [Fintype G] (B C : Finset G) (hB : B.Nonempty) (hC : C.Nonempty)
+    {G : Type*} (B C : Finset G) (hB : B.Nonempty) (hC : C.Nonempty)
     (q : ℕ) (hq : q = ⌈1 + Real.log (min 1 ((#C : ℝ) / #B))⁻¹⌉₊) :
     ((#C : ℝ) / #B) ^ (-((2 * q : ℕ) : ℝ)⁻¹) ≤ Real.exp 1 := by
   let r : ℝ := min 1 ((#C : ℝ) / #B)
@@ -218,10 +218,8 @@ private theorem crootSisaskHolderAt
     {A : Finset G} {ε : ℝ} (B C : Finset G)
     (hC : C.Nonempty) (u x : G) (q : ℕ) (hq₁ : 1 ≤ q)
     (hF₀ :
-      ‖τ u (mu A ∗ᵈ (𝟭_[B] : G → ℂ)) - mu A ∗ᵈ 𝟭_[B]‖_[
-          2 * q] ≤
-        ε / Real.exp 1 * ‖(𝟭_[B] : G → ℂ)‖_[
-          2 * q]) :
+      ‖τ u (mu A ∗ᵈ (𝟭_[B] : G → ℂ)) - mu A ∗ᵈ 𝟭_[B]‖_[2 * q] ≤
+        ε / Real.exp 1 * ‖(𝟭_[B] : G → ℂ)‖_[2 * q]) :
     ‖(τ u ((mu A ∗ᵈ 𝟭_[B]) ∗ᵈ mu C) -
       (mu A ∗ᵈ 𝟭_[B]) ∗ᵈ mu C : G → ℂ) x‖ ≤
         ε * (((#C : ℝ) / #B) ^ (-((2 * q : ℕ) : ℝ)⁻¹) / Real.exp 1) := by
@@ -268,10 +266,8 @@ private theorem crootSisaskHolderUpgrade
     (hC : C.Nonempty) (u : G) (q : ℕ) (hq₁ : 1 ≤ q)
     (hratio : ((#C : ℝ) / #B) ^ (-((2 * q : ℕ) : ℝ)⁻¹) ≤ Real.exp 1)
     (hF₀ :
-      ‖τ u (mu A ∗ᵈ (𝟭_[B] : G → ℂ)) - mu A ∗ᵈ 𝟭_[B]‖_[
-          2 * q] ≤
-        ε / Real.exp 1 * ‖(𝟭_[B] : G → ℂ)‖_[
-          2 * q]) :
+      ‖τ u (mu A ∗ᵈ (𝟭_[B] : G → ℂ)) - mu A ∗ᵈ 𝟭_[B]‖_[2 * q] ≤
+        ε / Real.exp 1 * ‖(𝟭_[B] : G → ℂ)‖_[2 * q]) :
     ‖(τ u ((mu A ∗ᵈ 𝟭_[B]) ∗ᵈ mu C) -
       (mu A ∗ᵈ 𝟭_[B]) ∗ᵈ mu C : G → ℂ)‖_[∞] ≤ ε := by
   rw [MeasureTheory.dLinftyNorm_eq_iSup_norm]
@@ -377,7 +373,8 @@ theorem croot_sisask_linfty_subset
       rpow_le_rpow_of_nonpos (by positivity) inf_le_right <| neg_nonpos.2 <| by positivity
     _ ≤ r ^ (-(1 + Real.log r⁻¹)⁻¹) :=
       rpow_le_rpow_of_exponent_ge (by positivity) inf_le_left <| neg_le_neg <| inv_anti₀
-        (by positivity) <| (Nat.le_ceil _).trans <| mod_cast Nat.le_mul_of_pos_left _ (by positivity)
+        (by positivity) <| (Nat.le_ceil _).trans <|
+          mod_cast Nat.le_mul_of_pos_left _ (by positivity)
     _ ≤ r ^ (-(0 + Real.log r⁻¹)⁻¹) := by
       obtain hr | hr : r = 1 ∨ r < 1 := inf_le_left.eq_or_lt
       · simp [hr]

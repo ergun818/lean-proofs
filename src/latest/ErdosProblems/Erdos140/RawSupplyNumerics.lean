@@ -261,13 +261,14 @@ lemma crootSisaskSampleSize_mono_q {q Q : ℕ} {epsilon : ℝ}
 /-- Direct form used after the supported-popular cardinal bounds have supplied
 the ratio alpha/2 ≤ |A₁|/|S|. -/
 lemma localizedAPSampleK_le_sampleKBound
-    {G : Type*} [AddCommGroup G] [Fintype G] [DecidableEq G]
+    {G : Type*} [AddCommGroup G]
     (M L : Finset G) {alpha : ℝ}
     (halpha : 0 < alpha) (halpha_two : alpha ≤ 2)
     (hratio : alpha / 2 ≤ (L.card : ℝ) / M.card)
     (hm : 0 < tailExponent alpha) :
     DensityStep.localizedAPSampleK M L approximationDelta
         (tailExponent alpha) ≤ sampleKBound alpha := by
+  classical
   unfold DensityStep.localizedAPSampleK sampleKBound
   apply crootSisaskSampleSize_mono_q
   · unfold DensityStep.localizedAPSampleQ
@@ -379,11 +380,10 @@ lemma log_two_div_crootBeta_eq
   rw [harg, Real.log_div (by norm_num) (pow_ne_zero _ hhalf.ne'),
     Real.log_pow, Real.log_div (by norm_num) halpha.ne',
     Real.log_div halpha.ne' (by norm_num)]
-  push_cast
   ring
 
 lemma delta_card_le_changRankCost
-    {G : Type*} [AddCommGroup G] [Fintype G] [DecidableEq G]
+    {G : Type*} [AddCommGroup G] [Fintype G]
     (B : BohrData G) (T : Finset G) {alpha : ℝ} {k : ℕ}
     (halpha : 0 < alpha) (hT : T.Nonempty)
     (hbeta :
@@ -393,6 +393,7 @@ lemma delta_card_le_changRankCost
       (Delta.card : ℝ) ≤
         RelativeChangSanders.localChangDimension B T (1 / 2)) :
     Delta.card ≤ changRankCost alpha k := by
+  classical
   apply card_le_natCeil_of_cast_card_le
   calc
     (Delta.card : ℝ) ≤
@@ -402,7 +403,7 @@ lemma delta_card_le_changRankCost
         (crootBeta_pos halpha) hT hbeta
 
 lemma delta_card_le_dyadicRankCost
-    {G : Type*} [AddCommGroup G] [Fintype G] [DecidableEq G]
+    {G : Type*} [AddCommGroup G] [Fintype G]
     (B : BohrData G) (T : Finset G) {d : ℕ}
     (hT : T.Nonempty)
     (hbeta :
@@ -413,6 +414,7 @@ lemma delta_card_le_dyadicRankCost
       (Delta.card : ℝ) ≤
         RelativeChangSanders.localChangDimension B T (1 / 2)) :
     Delta.card ≤ dyadicRankCost d := by
+  classical
   apply (delta_card_le_changRankCost B T
     (dyadicSiftedAlpha_pos d) hT hbeta Delta hDelta).trans
   unfold dyadicRankCost dyadicSampleKBound
@@ -1150,13 +1152,14 @@ lemma log_sourcePow_dyadicFormula_le_degree_eleven
 /-- The explicit source denominator is below the actual nested
 local-Chang/source scale whenever the final source scale is 1/m. -/
 lemma inv_sourceDenominator_le_localChang_source_scale
-    {G : Type*} [AddCommGroup G] [Fintype G] [DecidableEq G]
+    {G : Type*} [AddCommGroup G] [Fintype G]
     (B : BohrData G) (T : Finset G) (eta : ℝ) (m : ℕ)
     (hm : 0 < m) (rho : NNReal) (hrho : 1 / 2 ≤ rho) :
     ((sourceDenominator B.rank
         (RelativeChangSanders.localChangCap B T eta) m : NNReal)⁻¹) ≤
       rho * RelativeChangSanders.localChangBaseScale B T eta *
         (m : NNReal)⁻¹ := by
+  classical
   unfold sourceDenominator RelativeChangSanders.localChangBaseScale
   have hrank : (0 : NNReal) < max B.rank 1 := by positivity
   have hcap : (0 : NNReal) <
@@ -1173,16 +1176,17 @@ lemma inv_sourceDenominator_le_localChang_source_scale
     exact mul_le_mul_of_nonneg_left hrho (by positivity)
   field_simp
   norm_num at hmul ⊢
-  convert hmul using 1 <;> ring
+  convert hmul using 1; ring
 
 /-- One reciprocal natural scale controls an arbitrary target scale above
 it, with the clean three-P-to-rank loss from BohrScaleVolume. -/
 lemma card_unit_le_three_mul_pow_rank_mul_card_dilate_of_inv_nat_le
-    {G : Type*} [AddCommGroup G] [Fintype G] [DecidableEq G]
+    {G : Type*} [AddCommGroup G] [Fintype G]
     (B : BohrData G) (P : ℕ) (hP : 0 < P) {rho : NNReal}
     (hrho : ((P : NNReal)⁻¹) ≤ rho) :
     B.carrier.card ≤
       (3 * P) ^ B.rank * (B.dilate rho).carrier.card := by
+  classical
   have hbase :=
     BohrData.card_dilate_le_three_mul_pow_rank_mul_card_div B 1 hP
   have hmono :
@@ -1225,7 +1229,6 @@ lemma log_reciprocalLossFormula {rank m : ℕ} (hm : 0 < m) :
   push_cast
   rw [Real.log_mul (pow_ne_zero _ (mul_ne_zero (by norm_num) hmR.ne'))
       (pow_ne_zero _ (by norm_num)), Real.log_pow, Real.log_pow]
-  push_cast
   ring
 
 lemma log_twoReciprocalLossFormula {rank mOne mTwo : ℕ}
@@ -1645,7 +1648,7 @@ lemma log_dyadicTotalLossFormula_le_degree_eleven
 /-- Compose a source-volume loss with the cell multiplier into the single
 finite loss consumed by child_card_of_loss. -/
 lemma card_le_source_cellMultiplier_mul_child
-    {G : Type*} [AddCommGroup G] [Fintype G] [DecidableEq G]
+    {G : Type*} [AddCommGroup G] [Fintype G]
     {B : BohrData G} {source child : Finset G}
     {P rank delta n : ℕ}
     (hB :
@@ -1654,6 +1657,7 @@ lemma card_le_source_cellMultiplier_mul_child
       source.card ≤ cellMultiplier rank delta n * child.card) :
     B.carrier.card ≤
       ((3 * P) ^ B.rank * cellMultiplier rank delta n) * child.card := by
+  classical
   calc
     B.carrier.card ≤ (3 * P) ^ B.rank * source.card := hB
     _ ≤ (3 * P) ^ B.rank *

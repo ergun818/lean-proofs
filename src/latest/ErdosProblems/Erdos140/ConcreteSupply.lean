@@ -37,20 +37,24 @@ noncomputable section
 
 variable {G : Type*} [AddCommGroup G] [Fintype G] [DecidableEq G]
 
+omit [DecidableEq G] [Fintype G] in
 /-- Transport commutes with scalar dilation. -/
 theorem map_dilate_eq
-    {H : Type*} [AddCommGroup H] [Fintype H] [DecidableEq H]
+    {H : Type*} [AddCommGroup H]
     (B : BohrData G) (e : G ≃+ H) (rho : NNReal) :
     (B.map e).dilate rho = (B.dilate rho).map e := by
+  classical
   rfl
 
+omit [DecidableEq G] in
 /-- Rank regularity is invariant under an additive equivalence.  In
 particular this supplies regularity of the doubled middle carrier in odd
 cyclic groups. -/
 theorem isRankRegular_map
-    {H : Type*} [AddCommGroup H] [Fintype H] [DecidableEq H]
+    {H : Type*} [AddCommGroup H] [Fintype H]
     (B : BohrData G) (e : G ≃+ H) (hB : B.IsRankRegular) :
     (B.map e).IsRankRegular := by
+  classical
   unfold BohrData.IsRankRegular at hB ⊢
   simp only [BohrData.rank_map]
   intro kappa hkappa
@@ -68,6 +72,7 @@ theorem doubledBohrData_rankRegular
     (GroupCount.doubledBohrData M hM B).IsRankRegular := by
   exact isRankRegular_map B (BohrData.zmodDoublingEquiv M hM) hB
 
+omit [DecidableEq G] in
 /-- A regular child obtained from a reciprocal scalar dilate.  The natural
 cardinality inequality is the exact combination of arbitrary-scale Bohr
 volume and the rank-regular subdatum loss. -/
@@ -381,6 +386,7 @@ theorem exp_mul_loss_le_one_of_log_loss
       have hlossR : (0 : ℝ) < loss := by exact_mod_cast hloss
       field_simp
 
+omit [Fintype G] in
 /-- Croot--Sisask lower bound with a large carrier for the sampled set and
 a smaller carrier for the translating set.
 
@@ -578,12 +584,14 @@ structure SmoothingHierarchy (W : BohrData G) where
   B₀_small : B₀.carrier ⊆ (W.dilate eta).carrier
   B₀_in_Ephi : B₀.carrier ⊆ (Ebohr.dilate phi).carrier
 
+omit [DecidableEq G] in
 /-- Unconditional two-scale smoothing hierarchy inside a rank-regular
 doubled middle carrier.  The chosen constants are deliberately coarse:
 eta pays the fourfold support expansion, and theta pays the local
 factor-two sumset comparison. -/
 theorem exists_smoothingHierarchy (W : BohrData G) :
     Nonempty (SmoothingHierarchy W) := by
+  classical
   let dW : ℕ := max W.rank 1
   let eta : NNReal := 1 / (1600 * (dW : NNReal))
   have hdW : 0 < dW := by simp [dW]
@@ -710,11 +718,13 @@ theorem exists_smoothingHierarchy (W : BohrData G) :
     B₀_small := hB₀small
     B₀_in_Ephi := hB₀phi }⟩
 
+omit [DecidableEq G] in
 /-- Regularizing at a scale at least one half costs at most the standard
 four-to-the-rank factor. -/
 theorem card_le_four_pow_rank_mul_card_dilate_of_half_le
     (B : BohrData G) (rho : NNReal) (hrho : 1 / 2 ≤ rho) :
     B.carrier.card ≤ 4 ^ B.rank * (B.dilate rho).carrier.card := by
+  classical
   have hhalf := B.card_unit_le_four_pow_rank_mul_card_half
   have hmono :
       (B.dilate (1 / 2)).carrier.card ≤ (B.dilate rho).carrier.card :=
@@ -725,6 +735,7 @@ theorem card_le_four_pow_rank_mul_card_dilate_of_half_le
     _ ≤ 4 ^ B.rank * (B.dilate rho).carrier.card :=
       Nat.mul_le_mul_left _ hmono
 
+omit [DecidableEq G] in
 /-- All three datums in the hierarchy retain the rank of the doubled
 middle datum. -/
 theorem smoothingHierarchy_ranks (W : BohrData G) (H : SmoothingHierarchy W) :
@@ -751,9 +762,11 @@ def smoothingHierarchyLoss (W : BohrData G) : ℕ :=
     ((3 * (200 * max W.rank 1)) ^ W.rank * 4 ^ W.rank) *
     ((3 * (200 * max W.rank 1)) ^ W.rank * 4 ^ W.rank)
 
+omit [DecidableEq G] in
 theorem smoothingHierarchy_card_loss
     (W : BohrData G) (H : SmoothingHierarchy W) :
     W.carrier.card ≤ smoothingHierarchyLoss W * H.B₀.carrier.card := by
+  classical
   let Peta : ℕ := 1600 * max W.rank 1
   let Psmall : ℕ := 200 * max W.rank 1
   have hPeta : 0 < Peta := by dsimp [Peta]; positivity
@@ -932,6 +945,7 @@ def hierarchyBeta
     (k : ℕ) : ℝ :=
   ((DensityStep.siftingDensityLower A B₁ H.Ebohr.carrier p / 2) ^ k) / 2
 
+omit [DiscreteMeasurableSpace G] in
 /-- The three-level hierarchy turns the raw relative-T Croot lower bound
 into a genuine density lower bound inside the sampling carrier B₀.
 
@@ -988,6 +1002,7 @@ theorem hierarchy_relativeT_beta
       (D := H.Ebohr.carrier) k halpha (by norm_num : (0 : ℝ) < 2)
       hnegA (H.B₀).carrier_nonempty hnegAdense hsum hT)
 
+omit [DiscreteMeasurableSpace G] in
 /-- The same local Croot estimate gives the uniform natural-number rank
 cap used by the localized package. -/
 theorem hierarchy_delta_card_le_of_croot
@@ -1032,6 +1047,7 @@ theorem hierarchy_delta_card_le_of_croot
       hTbeta
   exact card_le_natCeil_of_cast_card_le Delta (hDelta.trans hdim)
 
+omit [DiscreteMeasurableSpace G] in
 /-- The real-valued companion to the preceding cardinality bound.  This is
 kept separate because the spectral quantizer depends on the Chang dimension
 itself, not just on the cardinality of the chosen spectrum. -/
@@ -1561,6 +1577,7 @@ theorem siftingDensityLower_pos_of_nonempty
   dsimp [N] at hNpos
   positivity
 
+omit [DiscreteMeasurableSpace G] in
 /-- In the large/small hierarchy orientation, the commuted LocalAP ratio
 of A₁-cardinality to supported-popular cardinality is bounded below by half
 of any lower bound for the common sifted density.  This is exactly the
@@ -1618,6 +1635,7 @@ theorem supported_ratio_lower_of_hierarchy
     _ = alpha * (H.Dbohr.carrier.card : ℝ) := by ring
     _ ≤ (data.A₁.card : ℝ) := hAone
 
+omit [AddCommGroup G] [DecidableEq G] [DiscreteMeasurableSpace G] [Fintype G] [MeasurableSpace G] in
 /-- Turn the favorable A₁/S ratio into the square-root reciprocal bound
 appearing in the commuted LocalAP error term. -/
 theorem sqrt_supported_ratio_le_two_div
@@ -1634,6 +1652,7 @@ theorem sqrt_supported_ratio_le_two_div
     nlinarith
   exact Real.sqrt_le_sqrt hdiv
 
+omit [AddCommGroup G] [DecidableEq G] [DiscreteMeasurableSpace G] [Fintype G] [MeasurableSpace G] in
 /-- RawSupplyNumerics pays the phase and tail terms, while a single width
 input pays the regular-Bohr translation term.  Together they give the fixed
 1/512 commuted LocalAP error target. -/
@@ -1655,6 +1674,7 @@ theorem dyadic_commuted_hsmall
             (kappa + kappa : NNReal) +
           2 * (1 / 2 : ℝ) ^ RawSupplyNumerics.dyadicTailExponent d) *
         Real.sqrt ((S.card : ℝ) / A₁.card) ≤ (1 / 512 : ℝ) := by
+  classical
   have halphaPos := RawSupplyNumerics.dyadicSiftedAlpha_pos d
   have hsqrt :
       Real.sqrt ((S.card : ℝ) / A₁.card) ≤
@@ -1827,6 +1847,7 @@ lemma two_dyadicHierarchyKappa_le_rank_scale
     exact_mod_cast hreal
   simpa [two_mul] using hnn
 
+omit [DiscreteMeasurableSpace G] in
 /-- A dyadic lower bound for the common sifted density and the canonical
 sample-count upper bound imply the fixed dyadic Chang-rank budget. -/
 theorem hierarchy_rankBudget_of_dyadic_lower
@@ -1889,6 +1910,7 @@ theorem hierarchy_rankBudget_of_dyadic_lower
   unfold RawSupplyNumerics.dyadicRankCost RawSupplyNumerics.changRankCost
   exact le_max_right _ _
 
+omit [DiscreteMeasurableSpace G] in
 /-- The real Chang dimension obeys the same dyadic budget.  This is the
 version needed to bound the spectral quantization factor in the localized
 cell count. -/
@@ -1927,6 +1949,7 @@ theorem hierarchy_dimension_le_dyadicRankCost
     exact_mod_cast hrank
   exact hdim.trans (hceil.trans hrankReal)
 
+omit [DiscreteMeasurableSpace G] in
 /-- A single fixed cell multiplier dominates every commuted relative-T
 package at the dyadic scale once the parent rank is capped. -/
 theorem hierarchy_cellMultiplier_le_dyadic
@@ -2071,7 +2094,7 @@ theorem dyadicSiftedAlpha_le_siftingDensity_of_localNorm
       conv_rhs =>
         rw [← pow_mul, ← pow_mul]
       congr 1
-      simp [Nat.mul_assoc, Nat.mul_comm, Nat.mul_left_comm]
+      simp [Nat.mul_comm]
     rw [hcomm] at hpow
     nlinarith
   rw [hrewrite, siftingDensityLower_eq_normalizedLp A B₁ B₂ hr]
@@ -2111,6 +2134,7 @@ theorem dyadic_high_gain_numeric :
         (1 - 1 / 8192 - 1 / 512) := by
   norm_num
 
+omit [DiscreteMeasurableSpace G] [MeasurableSpace G] in
 /-- At the endpoint fibre, the fixed high threshold and the three fixed
 errors give the 257/256 density gain required by the rank-regular high
 branch. -/
@@ -2159,6 +2183,7 @@ theorem endpoint_dyadic_high_gain
           (1 - (1 / 8192 : ℝ) - (1 / 512 : ℝ))) := by
       field_simp
 
+omit [DiscreteMeasurableSpace G] [MeasurableSpace G] in
 /-- One extra dyadic bit pays for the 511/512 dense-pair loss before the
 high branch is run on the endpoint fibre. -/
 theorem endpointLocated_on_nextDyadicScale
@@ -2194,6 +2219,7 @@ theorem endpointLocated_on_nextDyadicScale
     _ = densePairDensity s epsilonDense := by simp [densePairDensity, hepsilonDense]
     _ ≤ u.density := huDensity
 
+omit [DiscreteMeasurableSpace G] [MeasurableSpace G] in
 /-- The larger Holder exponent at d+1 still satisfies the dense-pair power
 condition required by the raw endpoint. -/
 theorem densePairDensity_power_next_of_dyadic
@@ -2252,6 +2278,7 @@ theorem boundary_width_of_endpoint_density
       have hKinv : 0 ≤ Kcard⁻¹ := by positivity
       nlinarith
 
+omit [DiscreteMeasurableSpace G] [MeasurableSpace G] in
 /-- The concrete second reciprocal denominator makes the Holder boundary
 width small enough on a dyadic-density endpoint fibre. -/
 theorem dyadic_boundary_width
@@ -2342,8 +2369,10 @@ theorem dyadic_boundary_width
     rw [hpow2]
     nlinarith
   convert boundary_width_of_endpoint_density hApos hKpos halphaPos halphaOne
-      hAK hwidth hwidthNonneg using 1 <;> simp [width] <;> norm_num
+      hAK hwidth hwidthNonneg using 1
+  norm_num
 
+open DensityStep in
 /-- Consume the commuted, support-restricted relative-T constructor inside
 the three-level smoothing hierarchy.
 
@@ -2408,7 +2437,7 @@ theorem supportedLocalizedPackage_of_hierarchy
         4 ^ (H.B₀.rank + Delta.card) ≤ cardMultiplier)
     (hcardMultiplier : 0 < cardMultiplier)
     (hsource : ∀ (T : Finset G) (rho : NNReal) (C₀ : BohrData G)
-        (Delta : Finset (AddChar G Complex)),
+        (_Delta : Finset (AddChar G Complex)),
       ((hierarchyNegCard data.A₂ ^
           (DensityStep.localizedAPSampleK
             (-(DensityStep.SiftedPopularData.supportedPopularSet
@@ -2433,7 +2462,7 @@ theorem supportedLocalizedPackage_of_hierarchy
         Real.exp (-sizeCost) * (s.card : ℝ) ≤ P.child.carrier.card := by
   obtain ⟨T, X, rho, C₀, Delta, hTcard, hTB₀, hXne, hDelta,
       hrhoHalf, hrhoOne, hC₀, Praw⟩ :=
-    DensityStep.exists_supportedLocalizedSiftingPackage_of_relativeT_scaled_le_with_witnesses_commuted
+    exists_supportedLocalizedSiftingPackage_of_relativeT_scaled_le_with_witnesses_commuted
       data hdelta approxDelta happroxDelta m hm H.B₀ H.B₀_regular
       kappa hkappa qQuant hqQuant approximationError hsmall
   obtain ⟨Praw⟩ := Praw
@@ -2559,7 +2588,7 @@ theorem supportedLocalizedPackage_of_dyadic_hierarchy
         4 ^ (H.B₀.rank + Delta.card) ≤ cardMultiplier)
     (hcardMultiplier : 0 < cardMultiplier)
     (hsource : ∀ (T : Finset G) (rho : NNReal) (C₀ : BohrData G)
-        (Delta : Finset (AddChar G Complex)),
+        (_Delta : Finset (AddChar G Complex)),
       ((hierarchyNegCard data.A₂ ^
           (DensityStep.localizedAPSampleK
             (-(DensityStep.SiftedPopularData.supportedPopularSet
@@ -2650,6 +2679,7 @@ theorem supportedLocalizedPackage_of_dyadic_hierarchy
   · exact hcardMultiplier
   · exact hsource
 
+omit [DecidableEq G] [DiscreteMeasurableSpace G] [MeasurableSpace G] in
 /-- A reusable source-cardinality adapter.  Once an earlier geometric loss
 compares the ambient state to B and the single displayed exponential
 inequality pays the remaining reciprocal source scale and cell multiplier,
@@ -2668,6 +2698,7 @@ theorem source_card_of_inv_scale_and_budget
           (((3 * P) ^ B.rank : ℕ) : ℝ) * (cardMultiplier : ℝ) ≤ 1) :
     Real.exp (-sizeCost) * baseCard * (cardMultiplier : ℝ) ≤
       (source.card : ℝ) := by
+  classical
   have hBsourceNat :
       B.carrier.card ≤ (3 * P) ^ B.rank * source.card := by
     rw [hsource]
@@ -2700,6 +2731,7 @@ theorem source_card_of_inv_scale_and_budget
       mul_le_mul_of_nonneg_right hbudget (by positivity)
     _ = (source.card : ℝ) := by ring
 
+omit [DecidableEq G] [DiscreteMeasurableSpace G] [MeasurableSpace G] in
 /-- Apply the preceding source adapter to the actual nested local-Chang
 regular datum and the fixed dyadic hierarchy width. -/
 theorem source_card_of_localChang_hierarchy
@@ -2719,6 +2751,7 @@ theorem source_card_of_localChang_hierarchy
             (cardMultiplier : ℝ) ≤ 1) :
     Real.exp (-sizeCost) * baseCard * (cardMultiplier : ℝ) ≤
       ((C₀.dilate (dyadicHierarchyKappa d rankCap)).carrier.card : ℝ) := by
+  classical
   let m := dyadicHierarchyDenominator d rankCap
   let P := RawSupplyNumerics.sourceDenominator H.B₀.rank
     (RelativeChangSanders.localChangCap H.B₀ T (1 / 2)) m
@@ -2740,7 +2773,7 @@ theorem source_card_of_localChang_hierarchy
             (m : NNReal)⁻¹)).carrier := by
     rw [hC₀]
     simp [dyadicHierarchyKappa, m, BohrData.dilate_dilate,
-      mul_assoc, mul_comm, mul_left_comm]
+      mul_comm, mul_left_comm]
   apply source_card_of_inv_scale_and_budget
     (rho := rho * RelativeChangSanders.localChangBaseScale H.B₀ T (1 / 2) *
     (m : NNReal)⁻¹)
@@ -2779,6 +2812,7 @@ lemma dyadicCardMultiplier_pos (d rankCap : ℕ) :
   have hn := dyadicCellCount_pos d
   positivity
 
+omit [DiscreteMeasurableSpace G] in
 /-- The local Chang cap itself is at most one more than the dyadic rank
 budget whenever the hierarchy Croot lower bound is available. -/
 theorem hierarchy_localChangCap_le_dyadic
@@ -3043,8 +3077,7 @@ theorem highSmoothingNorm_rankRegularLocatedIncrement
     (hlocalized :
       ∀ (z : G), z ∈ D - E → ((z +ᵥ E) ∩ D).Nonempty →
         lowerNorm ≤
-          ‖μ_[ℝ] s.restriction.set ○ᵈ μ s.restriction.set‖_[
-            r, μ (z +ᵥ E) ○ᵈ μ D] →
+          ‖μ_[ℝ] s.restriction.set ○ᵈ μ s.restriction.set‖_[r, μ (z +ᵥ E) ○ᵈ μ D] →
         ∀ data : DensityStep.SiftedPopularData s.restriction.set
             (z +ᵥ E) D r sigma delta,
           ∃ (parent : BohrData G) (parentWidth : NNReal)
@@ -3096,8 +3129,7 @@ theorem highSmoothingNorm_rankRegularLocatedIncrement
     intro x hx
     have hxPopular :
         (1 - sigma) *
-            ‖μ_[ℝ] s.restriction.set ○ᵈ μ s.restriction.set‖_[
-              r, μ B₁ ○ᵈ μ B₂] <
+            ‖μ_[ℝ] s.restriction.set ○ᵈ μ s.restriction.set‖_[r, μ B₁ ○ᵈ μ B₂] <
           (μ_[ℝ] s.restriction.set ○ᵈ μ s.restriction.set) x :=
       (mem_s'.mp hx)
     exact (mul_le_mul_of_nonneg_left hlocalNorm
@@ -3159,8 +3191,7 @@ theorem highSmoothingNorm_rankRegularLocatedIncrement_supported
     (hlocalized :
       ∀ (z : G), z ∈ D - E → ((z +ᵥ E) ∩ D).Nonempty →
         lowerNorm ≤
-          ‖μ_[ℝ] s.restriction.set ○ᵈ μ s.restriction.set‖_[
-            r, μ (z +ᵥ E) ○ᵈ μ D] →
+          ‖μ_[ℝ] s.restriction.set ○ᵈ μ s.restriction.set‖_[r, μ (z +ᵥ E) ○ᵈ μ D] →
         ∀ data : DensityStep.SiftedPopularData s.restriction.set
             (z +ᵥ E) D r sigma delta,
           ∃ (parent : BohrData G) (parentWidth : NNReal)
@@ -3218,8 +3249,7 @@ theorem highSmoothingNorm_rankRegularLocatedIncrement_supported
       exact (Finset.mem_inter.mp hx').1
     have hxPopular :
         (1 - sigma) *
-            ‖μ_[ℝ] s.restriction.set ○ᵈ μ s.restriction.set‖_[
-              r, μ B₁ ○ᵈ μ B₂] <
+            ‖μ_[ℝ] s.restriction.set ○ᵈ μ s.restriction.set‖_[r, μ B₁ ○ᵈ μ B₂] <
           (μ_[ℝ] s.restriction.set ○ᵈ μ s.restriction.set) x :=
       (mem_s'.mp hxGlobal)
     exact (mul_le_mul_of_nonneg_left hlocalNorm
@@ -3296,8 +3326,7 @@ theorem highNorm_endpoint_rankRegular_increment_of_supportedPackage
               (endpointLocated s C.childOne C.childTwo hdense
                 hepsilonDense_lt_one).restriction.set ○ᵈ
               μ (endpointLocated s C.childOne C.childTwo hdense
-                hepsilonDense_lt_one).restriction.set‖_[
-            r, μ (z +ᵥ E) ○ᵈ μ D] →
+                hepsilonDense_lt_one).restriction.set‖_[r, μ (z +ᵥ E) ○ᵈ μ D] →
         ∀ data : DensityStep.SiftedPopularData
             (endpointLocated s C.childOne C.childTwo hdense
               hepsilonDense_lt_one).restriction.set
@@ -3360,8 +3389,6 @@ end EndpointHighNorm
 /-! ## Raw two-Bohr endpoint data -/
 
 section TwoBohr
-
-variable [MeasurableSpace G] [DiscreteMeasurableSpace G]
 
 /-- The scaled balanced convolution used by the Holder endpoint. -/
 def scaledBalanced (K : BohrData G) (A : Finset G) : G → ℝ :=
@@ -3581,6 +3608,8 @@ theorem finalRawTwoBohrEndpointPackage_of_twoScale
     approximation := happrox
     highNorm_increment := hhigh }⟩
 
+variable [MeasurableSpace G] [DiscreteMeasurableSpace G]
+
 /-- The actual dyadic hierarchy fills the raw endpoint interface once the
 two outer volume budgets and the single fixed local budget are supplied.
 All analytic choices are now literal constants. -/
@@ -3657,8 +3686,8 @@ theorem finalRawTwoBohrEndpointPackage_of_dyadic_hierarchy
       ∀ (z : G), z ∈ H.Ebohr.carrier - H.Dbohr.carrier →
         ((z +ᵥ H.Dbohr.carrier) ∩ H.Ebohr.carrier).Nonempty →
         (65 / 64 : ℝ) * (C.childOne.bohr.carrier.card : ℝ)⁻¹ ≤
-          ‖μ_[ℝ] u.restriction.set ○ᵈ μ u.restriction.set‖_[
-            RawSupplyNumerics.smoothingExponent (d + 1),
+          ‖μ_[ℝ] u.restriction.set ○ᵈ
+            μ u.restriction.set‖_[RawSupplyNumerics.smoothingExponent (d + 1),
               μ (z +ᵥ H.Dbohr.carrier) ○ᵈ μ H.Ebohr.carrier] →
         ∀ data : DensityStep.SiftedPopularData u.restriction.set
             (z +ᵥ H.Dbohr.carrier) H.Ebohr.carrier
@@ -3934,8 +3963,7 @@ theorem exists_rawConcreteSupply :
           exact ConcreteNumerics.inv_mOne_le_rank_scale hrankCost hsrank
         · dsimp [mOne]
           exact ConcreteNumerics.mOne_scale_density hrankCost hsrank hscaleE
-        ·
-          have hloss :
+        · have hloss :
               (0 : ℝ) <
                 (reciprocalLoss s.located.restriction.bohr mOne : ℕ) := by
             unfold reciprocalLoss
@@ -3946,8 +3974,7 @@ theorem exists_rawConcreteSupply :
           unfold rawSupplyConstant
           gcongr
           norm_num
-        ·
-          have hloss :
+        · have hloss :
               (0 : ℝ) <
                 (twoReciprocalLoss s.located.restriction.bohr mOne mTwo : ℕ) := by
             unfold twoReciprocalLoss reciprocalLoss

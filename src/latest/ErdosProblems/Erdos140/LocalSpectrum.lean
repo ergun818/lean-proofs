@@ -42,17 +42,21 @@ noncomputable def circleLogCharacter (psi : AddChar G ℂ) : AddCharacter G := b
           e.apply_symm_apply]
         exact AddChar.map_add_eq_mul _ _ _ }
 
+omit [DecidableEq G] in
 theorem toCircle_circleLogCharacter (psi : AddChar G ℂ) (x : G) :
     AddCircle.toCircle (circleLogCharacter psi x) =
       (AddChar.circleEquivComplex.symm psi) x := by
   rw [← AddCircle.homeomorphCircle_apply (by norm_num : (1 : ℝ) ≠ 0)]
   simp [circleLogCharacter]
 
+omit [DecidableEq G] in
 theorem coe_toCircle_circleLogCharacter (psi : AddChar G ℂ) (x : G) :
     (AddCircle.toCircle (circleLogCharacter psi x) : ℂ) = psi x := by
+  classical
   rw [toCircle_circleLogCharacter]
   exact DFunLike.congr_fun (AddChar.circleEquivComplex.apply_symm_apply psi) x
 
+omit [DecidableEq G] in
 theorem circleLogCharacter_injective :
     Function.Injective (circleLogCharacter (G := G)) := by
   intro psi chi h
@@ -78,6 +82,7 @@ noncomputable def circleLogHom :
     simp [coe_toCircle_circleLogCharacter, AddCircle.toCircle_add,
       AddChar.add_apply]
 
+omit [DecidableEq G] in
 @[simp] theorem circleLogHom_apply (psi : AddChar G ℂ) :
     circleLogHom psi = circleLogCharacter psi := rfl
 
@@ -89,16 +94,19 @@ noncomputable def basisBohrData (Delta : Finset (AddChar G ℂ)) (r : ℝ≥0) :
   freq := Delta.image circleLogCharacter
   width := fun _ ↦ r
 
+omit [DecidableEq G] in
 @[simp] theorem basisBohrData_rank (Delta : Finset (AddChar G ℂ)) (r : ℝ≥0) :
     (basisBohrData Delta r).rank = Delta.card := by
   classical
   rw [BohrData.rank, basisBohrData]
   exact Finset.card_image_iff.mpr circleLogCharacter_injective.injOn
 
+omit [DecidableEq G] in
 @[simp] theorem basisBohrData_width (Delta : Finset (AddChar G ℂ)) (r : ℝ≥0)
     (gamma : AddCharacter G) :
     (basisBohrData Delta r).width gamma = r := rfl
 
+omit [DecidableEq G] in
 /-- A point of the basis Bohr set approximately annihilates every character
 in the `{0,1,-1}`-span of the basis. -/
 theorem norm_circleLogCharacter_le_card_mul_of_mem_addSpan
@@ -127,7 +135,7 @@ theorem norm_circleLogCharacter_le_card_mul_of_mem_addSpan
         ∑ gamma ∈ Delta, (epsilon gamma • circleLogCharacter gamma) x := by
     induction Delta using Finset.induction_on with
     | empty => simp
-    | @insert gamma Delta hgamma ih => simp [hgamma, ih]
+    | @insert gamma Delta hgamma ih => simp [hgamma]
   rw [← hsumLog, hsumApply]
   calc
     ‖∑ gamma ∈ Delta, (epsilon gamma • circleLogCharacter gamma) x‖ ≤
@@ -165,6 +173,7 @@ noncomputable def adjoinBasis (B : BohrData G)
           else kappa * B.width gamma
         else r }
 
+omit [DecidableEq G] in
 theorem adjoinBasis_rank_le (B : BohrData G)
     (Delta : Finset (AddChar G ℂ)) (kappa r : ℝ≥0) :
     (adjoinBasis B Delta kappa r).rank ≤ B.rank + Delta.card := by
@@ -173,6 +182,7 @@ theorem adjoinBasis_rank_le (B : BohrData G)
   exact (Finset.card_union_le _ _).trans_eq (by
     rw [Finset.card_image_iff.mpr circleLogCharacter_injective.injOn])
 
+omit [DecidableEq G] in
 theorem adjoinBasis_carrier_subset_dilate (B : BohrData G)
     (Delta : Finset (AddChar G ℂ)) (kappa r : ℝ≥0) :
     (adjoinBasis B Delta kappa r).carrier ⊆ (B.dilate kappa).carrier := by
@@ -201,6 +211,7 @@ theorem adjoinBasis_carrier_subset_dilate (B : BohrData G)
     rw [if_pos hgammaB, if_neg hnew] at hbound
     simpa only [BohrData.width_dilate, NNReal.coe_mul] using hbound
 
+omit [DecidableEq G] in
 theorem adjoinBasis_carrier_subset_basisBohrData (B : BohrData G)
     (Delta : Finset (AddChar G ℂ)) (kappa r : ℝ≥0) :
     (adjoinBasis B Delta kappa r).carrier ⊆ (basisBohrData Delta r).carrier := by
@@ -234,6 +245,7 @@ theorem adjoinBasis_carrier_subset_basisBohrData (B : BohrData G)
     rw [if_neg hold] at hbound
     exact hbound
 
+omit [DecidableEq G] in
 /-- The adjoined datum is subordinate to `B.dilate kappa` and annihilates
 the whole signed span of the new basis. -/
 theorem norm_circleLogCharacter_le_card_mul_of_mem_adjoinBasis
@@ -297,6 +309,7 @@ theorem adjoinBasis_carrier_eq_inter (B : BohrData G)
 
 /-! ## Arc norm versus chord norm -/
 
+omit [DecidableEq G] in
 /-- On a short arc, chord length is at most four pi times additive-circle
 norm.  The coarse factor four lets us use Mathlib's elementary local estimate
 for the complex exponential. -/
@@ -304,6 +317,7 @@ theorem norm_one_sub_character_le_four_pi_mul
     (psi : AddChar G ℂ) (x : G)
     (hshort : ‖circleLogCharacter psi x‖ ≤ (2 * Real.pi)⁻¹) :
     ‖1 - psi x‖ ≤ 4 * Real.pi * ‖circleLogCharacter psi x‖ := by
+  classical
   let a : ℝ := AddCircle.equivIoc (1 : ℝ) (-1 / 2) (circleLogCharacter psi x)
   have ha_mem : a ∈ Set.Ioc (-1 / 2) (-1 / 2 + 1) :=
     (AddCircle.equivIoc (1 : ℝ) (-1 / 2) (circleLogCharacter psi x)).property
@@ -316,7 +330,7 @@ theorem norm_one_sub_character_le_four_pi_mul
     rw [← hcoe]
     exact (AddCircle.norm_coe_eq_abs_iff (1 : ℝ) (by norm_num)).2 (by simpa using ha_abs)
   have hnorm_scalar : ‖(2 * Real.pi * a : ℂ)‖ = 2 * Real.pi * |a| := by
-    simp [norm_mul, Real.norm_eq_abs, abs_mul, abs_of_nonneg Real.pi_nonneg]
+    simp [Real.norm_eq_abs, abs_of_nonneg Real.pi_nonneg]
   have harg : ‖(2 * Real.pi * a : ℂ) * Complex.I‖ ≤ 1 := by
     rw [norm_mul, Complex.norm_I, mul_one, hnorm_scalar, ← hnorm_a]
     have hpi : 0 < 2 * Real.pi := by positivity
@@ -340,6 +354,7 @@ theorem norm_one_sub_character_le_four_pi_mul
       rw [norm_mul, Complex.norm_I, mul_one, hnorm_scalar, hnorm_a]
       ring
 
+omit [DecidableEq G] in
 /-- Chord-length version of signed-span annihilation on an adjoined Bohr
 datum. -/
 theorem norm_one_sub_character_le_of_mem_adjoinBasis
@@ -349,6 +364,7 @@ theorem norm_one_sub_character_le_of_mem_adjoinBasis
     (hx : x ∈ (adjoinBasis B Delta kappa r).carrier)
     (hpsi : psi ∈ Delta.addSpan) :
     ‖1 - psi x‖ ≤ 4 * Real.pi * ((Delta.card : ℝ) * (r : ℝ)) := by
+  classical
   have harc := norm_circleLogCharacter_le_card_mul_of_mem_adjoinBasis
     B hx hpsi
   calc
@@ -357,6 +373,7 @@ theorem norm_one_sub_character_le_of_mem_adjoinBasis
     _ ≤ 4 * Real.pi * ((Delta.card : ℝ) * (r : ℝ)) :=
       mul_le_mul_of_nonneg_left harc (by positivity)
 
+omit [DecidableEq G] in
 /-- If a family of characters is covered by the signed span of `Delta` plus
 a residual family, then the adjoined datum annihilates the covered family up
 to the sum of the two errors.  This is the algebraic assembly step in the
@@ -370,6 +387,7 @@ theorem norm_one_sub_character_le_of_addSpan_add_cover
     (hresidual : ∀ s ∈ S, ‖1 - s x‖ ≤ beta) :
     ∀ psi ∈ Q,
       ‖1 - psi x‖ ≤ 4 * Real.pi * ((Delta.card : ℝ) * (r : ℝ)) + beta := by
+  classical
   intro psi hpsi
   obtain ⟨z, hz, s, hs, rfl⟩ := hcover psi hpsi
   have hzbound :
@@ -386,6 +404,7 @@ theorem norm_one_sub_character_le_of_addSpan_add_cover
     _ ≤ 4 * Real.pi * ((Delta.card : ℝ) * (r : ℝ)) + beta :=
       add_le_add hzbound (hresidual s hs)
 
+omit [DecidableEq G] in
 /-- Relative-cover specialization for a rank-regular Bohr datum.  The
 residual set is the half-large spectrum of the old carrier, so membership in
 the old `sigma`-dilate supplies its phase error.  This is the geometric half
@@ -402,6 +421,7 @@ theorem norm_one_sub_character_le_of_localSpectrum_cover
       ‖1 - psi x‖ ≤
         4 * Real.pi * ((Delta.card : ℝ) * (r : ℝ)) +
           400 * ((max C.rank 1 : ℕ) : ℝ) * (sigma : ℝ) := by
+  classical
   intro x hx
   apply norm_one_sub_character_le_of_addSpan_add_cover
     C hsmall hx hcover
@@ -409,6 +429,7 @@ theorem norm_one_sub_character_le_of_localSpectrum_cover
   exact Erdos140.norm_one_sub_le_of_mem_largeSpectrum_half
     hreg hsigma hs (adjoinBasis_carrier_subset_dilate C Delta sigma r hx)
 
+omit [DecidableEq G] in
 /-- Rank, subordination, and phase control bundled for the explicit datum
 obtained from a local signed-span-plus-spectrum cover. -/
 theorem controlled_bohr_of_localSpectrum_cover
@@ -433,6 +454,7 @@ theorem controlled_bohr_of_localSpectrum_cover
 
 /-! ## The relative Chang--Sanders Bohr theorem -/
 
+omit [DecidableEq G] in
 /-- **Relative Chang--Sanders, in explicit Bohr form.**
 
 For a nonempty `X` inside a rank-regular Bohr set `B`, the `eta`-large
@@ -492,6 +514,7 @@ theorem exists_controlled_relativeLargeSpectrum_bohr
 
 /-! ## Global Chang-to-Bohr corollary -/
 
+omit [DecidableEq G] in
 /-- Global Chang's theorem, packaged as a Bohr annihilation statement.  This
 corollary is useful when the ambient density `|A|/|G|` is the relevant one;
 the relative Chang--Sanders theorem used inside a small ambient Bohr set needs

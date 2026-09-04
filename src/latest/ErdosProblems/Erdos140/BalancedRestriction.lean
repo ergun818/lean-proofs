@@ -50,17 +50,21 @@ lemma weightedLpNorm_of_pos (ν f : X → ℝ) {p : ℕ} (hp : 0 < p) :
       (weightedAbsMoment ν f p) ^ (1 / (p : ℝ)) := by
   simp [weightedLpNorm, hp.ne']
 
+omit [DecidableEq X] in
 lemma weightedLpNorm_nonneg {ν : X → ℝ} (hν : ProbabilityWeight ν)
     (f : X → ℝ) (p : ℕ) :
     0 ≤ weightedLpNorm ν f p := by
+  classical
   unfold weightedLpNorm
   split
   · exact le_rfl
   · exact Real.rpow_nonneg (weightedAbsMoment_nonneg hν.nonneg p) _
 
+omit [DecidableEq X] in
 lemma weightedLpNorm_pow {ν f : X → ℝ} (hν : ProbabilityWeight ν)
     {p : ℕ} (hp : 0 < p) :
     weightedLpNorm ν f p ^ p = weightedAbsMoment ν f p := by
+  classical
   rw [weightedLpNorm_of_pos _ _ hp, ← Real.rpow_natCast,
     ← Real.rpow_mul (weightedAbsMoment_nonneg hν.nonneg p)]
   have hpR : (p : ℝ) ≠ 0 := by exact_mod_cast hp.ne'
@@ -76,12 +80,14 @@ private lemma abs_pow_rpow_div {x : ℝ} {p q : ℕ} (hp : 0 < p) :
   have hpR : (p : ℝ) ≠ 0 := by exact_mod_cast hp.ne'
   field_simp
 
+omit [DecidableEq X] in
 /-- Generalized-mean inequality for finite probability weights, in the exact
 form used by the balanced-restriction proof. -/
 theorem weightedLpNorm_mono_exponent
     {ν f : X → ℝ} (hν : ProbabilityWeight ν)
     {p q : ℕ} (hp : 0 < p) (hpq : p ≤ q) :
     weightedLpNorm ν f p ≤ weightedLpNorm ν f q := by
+  classical
   have hq : 0 < q := hp.trans_le hpq
   have hpR : (0 : ℝ) < p := by exact_mod_cast hp
   have hqR : (0 : ℝ) < q := by exact_mod_cast hq
@@ -115,6 +121,7 @@ theorem weightedLpNorm_mono_exponent
       field_simp
     _ ≤ (weightedAbsMoment ν f q) ^ (1 / (q : ℝ)) := hroot
 
+omit [DecidableEq X] in
 /-- Taking a positive natural root weakens a factor two by at most a factor
 two.  This is the root adapter used after the moment-form convolution
 comparison theorem. -/
@@ -123,6 +130,7 @@ theorem weightedLpNorm_le_two_of_moment_le_two
     {p : ℕ} (hp : 0 < p)
     (hmoment : weightedAbsMoment μ f p ≤ 2 * weightedAbsMoment ν g p) :
     weightedLpNorm μ f p ≤ 2 * weightedLpNorm ν g p := by
+  classical
   have hpR : (0 : ℝ) < p := by exact_mod_cast hp
   have ha : 0 ≤ (1 / (p : ℝ)) := by positivity
   have haone : (1 / (p : ℝ)) ≤ 1 := by
@@ -176,6 +184,7 @@ theorem comparisonExponent_le_unbalancingInputExponent (p : ℕ) :
   simp only [unbalancingInputExponent]
   omega
 
+omit [DecidableEq X] in
 /-- The second exponent promotion in the corrected argument: the even
 comparison exponent may be promoted to the odd unbalancing input on any
 finite probability space. -/
@@ -183,6 +192,7 @@ theorem weightedLpNorm_comparison_le_unbalancingInput
     {ν f : X → ℝ} (hν : ProbabilityWeight ν) {p : ℕ} (hp : 0 < p) :
     weightedLpNorm ν f (comparisonExponent p) ≤
       weightedLpNorm ν f (unbalancingInputExponent p) := by
+  classical
   apply weightedLpNorm_mono_exponent hν
   · exact Nat.mul_pos (by norm_num) hp
   · exact comparisonExponent_le_unbalancingInputExponent p
@@ -221,6 +231,7 @@ theorem stoppingExponent_le_const_mul {ε : ℝ} {p : ℕ} (hp : 0 < p) :
   have h := Nat.mul_le_mul_right (unbalancingMultiplier (ε / 2)) hlinear
   simpa [mul_assoc, mul_comm, mul_left_comm] using h
 
+omit [DecidableEq X] in
 /-- The exact-scaling core of localized unbalancing.  In the Bohr argument
 the identity `positiveCorr = mainTerm * (1 + f)` holds up to a small boundary
 error; regularity absorbs that error before this lemma is invoked.  This
@@ -236,6 +247,7 @@ theorem unbalancing_of_exact_scaling
     (hscale : ∀ x, positiveCorr x = mainTerm * (1 + f x)) :
     ∃ r : ℕ, 0 < r ∧ Even r ∧ r ≤ unbalancingExponent η p ∧
       (1 + η / 2) * mainTerm ≤ weightedLpNorm ν positiveCorr r := by
+  classical
   obtain ⟨r, hr, hreven, hrBound, hunbalanced⟩ :=
     unbalancing_of_nonnegative_moments hν.nonneg hν.sum_eq_one hmom
       hη₀ hη₁ hp hpodd hlarge
@@ -263,6 +275,7 @@ theorem unbalancing_of_exact_scaling
   rw [Real.pow_rpow_inv_natCast hbase hr.ne'] at hroot
   simpa [one_div] using hroot
 
+omit [DecidableEq X] in
 /-- The corrected exponent chain specialized to exact scaling. -/
 theorem unbalancing_at_stoppingExponent_of_exact_scaling
     {ν : X → ℝ} (hν : ProbabilityWeight ν)
@@ -274,6 +287,7 @@ theorem unbalancing_at_stoppingExponent_of_exact_scaling
     (hscale : ∀ x, positiveCorr x = mainTerm * (1 + f x)) :
     ∃ r : ℕ, 0 < r ∧ Even r ∧ r ≤ stoppingExponent ε p ∧
       (1 + ε / 8) * mainTerm ≤ weightedLpNorm ν positiveCorr r := by
+  classical
   let qOdd := unbalancingInputExponent p
   have hqOddPos : 0 < qOdd := by
     have := five_le_unbalancingInputExponent hp
@@ -300,6 +314,7 @@ theorem unbalancing_at_stoppingExponent_of_exact_scaling
         linarith
       _ ≤ weightedLpNorm ν positiveCorr r := hrLarge
 
+omit [DecidableEq X] in
 /-- **Even-exponent promotion and the `1/8` contradiction.**
 
 `balanced` is the balanced convolution, `corr` its autocorrelation after the
@@ -330,6 +345,7 @@ theorem balanced_convolution_of_stopping
       weightedLpNorm ν positiveCorr (stoppingExponent ε p) <
         (1 + ε / 8) * mainTerm) :
     weightedLpNorm μ balanced p ≤ ε * mainTerm := by
+  classical
   have hεmain : 0 < ε * mainTerm := mul_pos hε hmain
   by_contra hbound
   have hfail : ε * mainTerm < weightedLpNorm μ balanced p := lt_of_not_ge hbound

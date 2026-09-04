@@ -177,7 +177,7 @@ lemma fixedIncrement_growth_of_dyadicScale
     rw [pow_succ]
     field_simp
   rw [hleft] at hmul
-  linarith
+  exact lt_of_lt_of_le (by norm_num : (1 : ℝ) < 2) hmul
 
 /-- The fixed-factor maximal located chain specialized to the `1025/1024`
 increment used by the concrete narrowing step. -/
@@ -763,7 +763,7 @@ noncomputable def of_locatedTerminalData
   have hbohr := bohr_product_of_individual_bounds hB hB'
   have hsize := quantitative_size_of_density_and_bohr hdensityCube hbohr
   exact ofHolderCountCertificate c (by
-    convert hsize using 1 <;> ring_nf)
+    convert hsize using 1; ring_nf)
 
 end CyclicHolderCertificate
 

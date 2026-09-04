@@ -13,7 +13,6 @@ namespace Erdos140.BalancedRestrictionAssembly
 noncomputable section
 
 variable {G : Type*} [Fintype G] [DecidableEq G] [AddCommGroup G]
-  [MeasurableSpace G] [DiscreteMeasurableSpace G]
 
 lemma normalizedConvolution_eq_ddconv (f g : G → ℝ) :
     normalizedConvolution f g = f ∗ᵈ g := by
@@ -43,6 +42,7 @@ theorem coe_smoothingWeight_eq_comparisonWeight (D E : Finset G) :
     (normalizedIndicator D) (normalizedIndicator D)
     (normalizedIndicator E) (normalizedIndicator E)).symm
 
+omit [DecidableEq G] in
 private lemma abs_normalizedConvolution_pow
     (a : G → ℝ) (p : ℕ) (x : G) :
     |normalizedConvolution a a x| ^ p =
@@ -57,6 +57,7 @@ private lemma abs_normalizedConvolution_pow
     simpa only [Real.norm_eq_abs] using h
   rw [h', mul_pow]
 
+omit [DecidableEq G] in
 private lemma abs_normalizedDifferenceConvolution_pow
     (a : G → ℝ) (p : ℕ) (x : G) :
     |normalizedDifferenceConvolution a a x| ^ p =
@@ -71,12 +72,14 @@ private lemma abs_normalizedDifferenceConvolution_pow
     simpa only [Real.norm_eq_abs] using h
   rw [h', mul_pow]
 
+omit [DecidableEq G] in
 private lemma weightedAbsMoment_normalizedConvolution_eq
     (w a : G → ℝ) (p : ℕ) :
     weightedAbsMoment w (normalizedConvolution a a) p =
       (Fintype.card G : ℝ) ^ p *
         ∑ x : G, w x *
           ‖FiniteFourier.convolution ((↑) ∘ a) ((↑) ∘ a) x‖ ^ p := by
+  classical
   unfold weightedAbsMoment
   rw [Finset.mul_sum]
   apply Finset.sum_congr rfl
@@ -84,12 +87,14 @@ private lemma weightedAbsMoment_normalizedConvolution_eq
   rw [abs_normalizedConvolution_pow]
   ring
 
+omit [DecidableEq G] in
 private lemma weightedAbsMoment_normalizedDifferenceConvolution_eq
     (w a : G → ℝ) (p : ℕ) :
     weightedAbsMoment w (normalizedDifferenceConvolution a a) p =
       (Fintype.card G : ℝ) ^ p *
         ∑ x : G, w x *
           ‖FiniteFourier.differenceConvolution ((↑) ∘ a) ((↑) ∘ a) x‖ ^ p := by
+  classical
   unfold weightedAbsMoment
   rw [Finset.mul_sum]
   apply Finset.sum_congr rfl
@@ -181,6 +186,8 @@ theorem weighted_comparison_of_moment
   apply BalancedRestriction.weightedLpNorm_le_two_of_moment_le_two
       houter hnu hp
   simpa [nu] using hmoment
+
+variable [MeasurableSpace G] [DiscreteMeasurableSpace G]
 
 /-- Specialization of the stopping contradiction to the proved localized
 unbalancing theorem. -/

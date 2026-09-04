@@ -36,20 +36,24 @@ variable {G : Type*} [AddCommGroup G] [Fintype G] [DecidableEq G]
 def doubledFinset (S : Finset G) : Finset G :=
   S.image fun x ↦ x + x
 
+omit [Fintype G] in
 @[simp] theorem mem_doubledFinset {S : Finset G} {x : G} :
     x ∈ doubledFinset S ↔ ∃ y ∈ S, y + y = x := by
   simp [doubledFinset]
 
+omit [Fintype G] in
 theorem doubledFinset_nonempty {S : Finset G} (hS : S.Nonempty) :
     (doubledFinset S).Nonempty := by
   exact hS.image _
 
+omit [Fintype G] in
 theorem doubledFinset_mono {S T : Finset G} (hST : S ⊆ T) :
     doubledFinset S ⊆ doubledFinset T := by
   intro x hx
   obtain ⟨y, hy, rfl⟩ := mem_doubledFinset.mp hx
   exact mem_doubledFinset.mpr ⟨y, hST hy, rfl⟩
 
+omit [Fintype G] in
 /-- Doubling preserves finite-set cardinality whenever it is injective on the
 ambient group. -/
 theorem card_doubledFinset (S : Finset G)
@@ -57,6 +61,7 @@ theorem card_doubledFinset (S : Finset G)
     #(doubledFinset S) = #S := by
   exact card_image_of_injective _ hdouble
 
+omit [Fintype G] in
 /-- Consequently doubling preserves relative density. -/
 theorem relativeDensity_doubledFinset (S T : Finset G)
     (hdouble : Function.Injective (fun x : G ↦ x + x)) :
@@ -67,6 +72,7 @@ theorem relativeDensity_doubledFinset (S T : Finset G)
 
 /-! ## The doubled Bohr carrier in an odd cyclic group -/
 
+omit [DecidableEq G] in
 /-- Transporting Bohr data through an additive equivalence maps its carrier
 exactly, not merely up to cardinality. -/
 theorem image_bohrCarrier_eq_map
@@ -172,6 +178,7 @@ theorem normalizedMixedProgression_eq_localAverage
 
 /-! ## Conversion from the balanced-restriction norm to the Holder moment -/
 
+omit [AddCommGroup G] in
 /-- The counting-probability normalized indicator is a probability weight in
 the sense used by `BalancedRestriction`. -/
 theorem normalizedIndicator_isProbabilityWeight {S : Finset G} (hS : S.Nonempty) :
@@ -179,6 +186,7 @@ theorem normalizedIndicator_isProbabilityWeight {S : Finset G} (hS : S.Nonempty)
   refine ⟨normalizedIndicator_nonneg S, ?_⟩
   exact sum_normalizedIndicator hS
 
+omit [AddCommGroup G] in
 /-- The weighted absolute moment for the uniform weight on `S` is exactly the
 local moment used by Holder lifting. -/
 theorem weightedAbsMoment_normalizedIndicator_eq_localMoment
@@ -197,11 +205,12 @@ theorem weightedAbsMoment_normalizedIndicator_eq_localMoment
   rw [← Finset.mul_sum, div_eq_mul_inv]
   ring
 
+omit [AddCommGroup G] in
 /-- A balanced `L^p` bound on the concrete uniform probability measure gives
 the power-moment bound expected by `HolderLifting`. -/
 theorem localMoment_le_of_weightedLpNorm_le
     {S : Finset G} (hS : S.Nonempty) {p : ℕ} (hp : 0 < p)
-    (f : G → ℝ) {C : ℝ} (hC : 0 ≤ C)
+    (f : G → ℝ) {C : ℝ} (_hC : 0 ≤ C)
     (hbalanced :
       BalancedRestriction.weightedLpNorm (normalizedIndicator S) f p ≤ C) :
     HolderLifting.localMoment S p f ≤ C ^ p := by

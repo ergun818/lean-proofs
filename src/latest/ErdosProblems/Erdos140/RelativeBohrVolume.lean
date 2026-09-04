@@ -103,6 +103,7 @@ def signature (Delta : Finset (AddChar G Complex))
     (m : Nat) (hm : 0 < m) (x : G) : Delta → Fin m :=
   fun psi ↦ circleCell m hm (circleLogCharacter psi.1 x)
 
+omit [DecidableEq G] in
 /-- Membership in `adjoinBasis` is exactly old-dilate membership together
 with all the newly adjoined width bounds. -/
 theorem mem_adjoinBasis_carrier_iff
@@ -146,6 +147,7 @@ theorem mem_adjoinBasis_carrier_iff
       · rw [if_neg hOld]
         exact hDelta psi hpsi
 
+omit [DecidableEq G] in
 private theorem sub_mem_adjoinBasis_of_signature_eq
     (B : BohrData G) (Delta : Finset (AddChar G Complex))
     (kappa : NNReal) {m : Nat} (hm : 0 < m)
@@ -153,6 +155,7 @@ private theorem sub_mem_adjoinBasis_of_signature_eq
     {x y : ↥S} (hxy : signature Delta m hm x.1 = signature Delta m hm y.1) :
     x.1 - y.1 ∈
       (adjoinBasis B Delta (kappa + kappa) (m : NNReal)⁻¹).carrier := by
+  classical
   rw [mem_adjoinBasis_carrier_iff]
   constructor
   · exact BohrData.sub_mem_dilate (hS x.2) (hS y.2)
@@ -162,6 +165,7 @@ private theorem sub_mem_adjoinBasis_of_signature_eq
     have hbound := norm_sub_le_inv_of_circleCell_eq hm hcoord
     simpa only [NNReal.coe_inv, NNReal.coe_natCast, one_div] using hbound
 
+omit [DecidableEq G] in
 private theorem card_signature_fiber_le
     (B : BohrData G) (Delta : Finset (AddChar G Complex))
     (kappa : NNReal) {m : Nat} (hm : 0 < m)
@@ -194,6 +198,7 @@ private theorem card_signature_fiber_le
 
 /-! ## The relative-volume theorem -/
 
+omit [DecidableEq G] in
 /-- **Subset-relative Bohr volume.**  Adjoining `Delta` at width `1/m` after
 doubling the old scale costs at most `m ^ |Delta|`, measured relative to the
 given subset `S` rather than relative to the ambient group. -/
@@ -227,6 +232,7 @@ theorem card_le_pow_mul_card_adjoinBasis
     exact hfiber a
   exact (not_lt_of_ge hfa) ha
 
+omit [DecidableEq G] in
 /-- Real-valued form of `card_le_pow_mul_card_adjoinBasis`. -/
 theorem card_cast_le_pow_mul_card_adjoinBasis
     (B : BohrData G) (Delta : Finset (AddChar G Complex))
@@ -235,8 +241,10 @@ theorem card_cast_le_pow_mul_card_adjoinBasis
     (S.card : Real) ≤ (m : Real) ^ Delta.card *
       ((adjoinBasis B Delta (kappa + kappa)
         (m : NNReal)⁻¹).carrier.card : Real) := by
+  classical
   exact_mod_cast card_le_pow_mul_card_adjoinBasis B Delta kappa hm S hS
 
+omit [DecidableEq G] in
 /-- Carrier specialization of the subset-relative bound. -/
 theorem card_dilate_le_pow_mul_card_adjoinBasis
     (B : BohrData G) (Delta : Finset (AddChar G Complex))
@@ -245,6 +253,7 @@ theorem card_dilate_le_pow_mul_card_adjoinBasis
       (adjoinBasis B Delta (kappa + kappa) (m : NNReal)⁻¹).carrier.card :=
   card_le_pow_mul_card_adjoinBasis B Delta kappa hm _ (fun _ hx ↦ hx)
 
+omit [DecidableEq G] in
 /-- Real-valued carrier specialization. -/
 theorem card_dilate_cast_le_pow_mul_card_adjoinBasis
     (B : BohrData G) (Delta : Finset (AddChar G Complex))
@@ -254,6 +263,7 @@ theorem card_dilate_cast_le_pow_mul_card_adjoinBasis
         (m : NNReal)⁻¹).carrier.card : Real) :=
   card_cast_le_pow_mul_card_adjoinBasis B Delta kappa hm _ (fun _ hx ↦ hx)
 
+omit [DecidableEq G] in
 /-- The cardinality estimate together with the rank and subordination
 properties of its explicit adjoined datum. -/
 theorem controlled_adjoinBasis
@@ -267,6 +277,7 @@ theorem controlled_adjoinBasis
       S.card ≤ m ^ Delta.card *
         (adjoinBasis B Delta (kappa + kappa)
           (m : NNReal)⁻¹).carrier.card := by
+  classical
   exact ⟨adjoinBasis_rank_le B Delta _ _,
     adjoinBasis_carrier_subset_dilate B Delta _ _,
     card_le_pow_mul_card_adjoinBasis B Delta kappa hm S hS⟩

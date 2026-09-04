@@ -83,7 +83,7 @@ def fourCell (w r : ℝ) : Fin 4 :=
   else 3
 
 lemma abs_sub_le_half_of_fourCell_eq {w r s : ℝ}
-    (hw : 0 ≤ w) (hr : |r| ≤ w) (hs : |s| ≤ w)
+    (_hw : 0 ≤ w) (hr : |r| ≤ w) (hs : |s| ≤ w)
     (hcell : fourCell w r = fourCell w s) :
     |r - s| ≤ w / 2 := by
   rw [abs_le] at hr hs ⊢
@@ -97,6 +97,7 @@ def unitSignature (B : BohrData G) (x : ↥(B.dilate 1).carrier) :
     B.freq → Fin 4 :=
   fun γ ↦ fourCell (B.width γ.1 : ℝ) (circleRep (γ.1 x.1))
 
+omit [DecidableEq G] in
 private lemma sub_mem_half_of_unitSignature_eq (B : BohrData G)
     {x y : ↥(B.dilate 1).carrier}
     (hxy : B.unitSignature x = B.unitSignature y) :
@@ -105,7 +106,7 @@ private lemma sub_mem_half_of_unitSignature_eq (B : BohrData G)
   intro γ hγ
   have hx := (mem_carrier (B.dilate 1) x.1).mp x.2 γ hγ
   have hy := (mem_carrier (B.dilate 1) y.1).mp y.2 γ hγ
-  simp only [width_dilate, one_mul, NNReal.coe_one, NNReal.coe_mul] at hx hy ⊢
+  simp only [width_dilate, one_mul, NNReal.coe_mul] at hx hy ⊢
   rw [map_sub]
   have hxrep : |circleRep (γ x.1)| ≤ (B.width γ : ℝ) := by
     rwa [← norm_eq_abs_circleRep]
@@ -121,6 +122,7 @@ private lemma sub_mem_half_of_unitSignature_eq (B : BohrData G)
       norm_num
       ring
 
+omit [DecidableEq G] in
 private lemma card_unitSignature_fiber_le (B : BohrData G)
     (a : B.freq → Fin 4) :
     Fintype.card {x : ↥(B.dilate 1).carrier // B.unitSignature x = a} ≤
@@ -149,6 +151,7 @@ private lemma card_unitSignature_fiber_le (B : BohrData G)
   · simp only [not_nonempty_iff] at hfiber
     simp
 
+omit [DecidableEq G] in
 /-- Rank-only relative volume growth between the half and unit dilates. -/
 theorem card_unit_le_four_pow_rank_mul_card_half (B : BohrData G) :
     (B.dilate 1).carrier.card ≤
@@ -176,16 +179,18 @@ theorem card_unit_le_four_pow_rank_mul_card_half (B : BohrData G) :
     exact hfiber a
   exact (not_lt_of_ge hfa) ha
 
+omit [DecidableEq G] in
 /-- A buffered version of the relative-volume estimate.  It is convenient in
 the regular-value argument because every permitted perturbation of a scale in
 `[1/2,1]` remains between `1/4` and `2`. -/
 theorem card_two_le_four_pow_three_rank_mul_card_quarter (B : BohrData G) :
     (B.dilate 2).carrier.card ≤
       4 ^ (3 * B.rank) * (B.dilate (1 / 4)).carrier.card := by
+  classical
   have h₂ := card_unit_le_four_pow_rank_mul_card_half (B.dilate 2)
   have h₁ := card_unit_le_four_pow_rank_mul_card_half B
   have hhalf := card_unit_le_four_pow_rank_mul_card_half (B.dilate (1 / 2))
-  simp only [rank_dilate, dilate_dilate, mul_one] at h₂ hhalf
+  simp only [rank_dilate, dilate_dilate] at h₂ hhalf
   norm_num at h₂ hhalf
   calc
     (B.dilate 2).carrier.card ≤ 4 ^ B.rank * B.carrier.card := h₂
@@ -272,7 +277,7 @@ private theorem exists_regular_point_of_monotone
       rw [Real.closedBall_eq_Icc]
       dsimp [center, radius, p]
       constructor <;> rcases le_total x y with hle | hle <;>
-        simp [min_eq_left, min_eq_right, max_eq_left, max_eq_right, hle] <;> linarith
+        simp [hle] <;> linarith
     have hxb : x ∈ Metric.closedBall (center b) (5 * radius b) := hsub hxp
     rw [Metric.mem_closedBall] at hxb
     rw [Set.mem_iUnion]
@@ -316,7 +321,7 @@ private theorem exists_regular_point_of_monotone
         simp only [Real.volume_ball]
         rw [← ENNReal.ofReal_sum_of_nonneg]
         · congr 1
-          simp only [center, radius]
+          simp only [radius]
           calc
             ∑ b ∈ v, 2 * (6 * ((b.1.2 - b.1.1) / 2)) =
                 ∑ b ∈ v, 6 * (b.1.2 - b.1.1) := by
@@ -378,10 +383,12 @@ private theorem exists_regular_point_of_monotone
       (fun b hb ↦ (huBad b.2).2.2.2)
   linarith
 
+omit [DecidableEq G] in
 private theorem log_card_growth_lt_five_mul_rank (B : BohrData G) :
     Real.log ((B.dilate (5 / 4)).carrier.card : ℝ) -
         Real.log ((B.dilate (1 / 4)).carrier.card : ℝ) <
       5 * (max B.rank 1 : ℕ) := by
+  classical
   let d : ℕ := max B.rank 1
   have hcard : (B.dilate (5 / 4)).carrier.card ≤
       4 ^ (3 * B.rank) * (B.dilate (1 / 4)).carrier.card := by
@@ -425,6 +432,7 @@ private noncomputable def normalizedLogCard (B : BohrData G) (s : ℝ) : ℝ :=
   Real.log ((B.dilate s.toNNReal).carrier.card : ℝ) /
     (max B.rank 1 : ℕ)
 
+omit [DecidableEq G] in
 private theorem normalizedLogCard_monotone (B : BohrData G) :
     Monotone B.normalizedLogCard := by
   intro s t hst
@@ -435,8 +443,10 @@ private theorem normalizedLogCard_monotone (B : BohrData G) :
   · exact_mod_cast Finset.card_le_card
       (carrier_dilate_mono (B := B) (Real.toNNReal_mono hst))
 
+omit [DecidableEq G] in
 private theorem normalizedLogCard_buffer_growth (B : BohrData G) :
     B.normalizedLogCard (5 / 4) - B.normalizedLogCard (1 / 4) < 5 := by
+  classical
   have h := log_card_growth_lt_five_mul_rank B
   have hd : (0 : ℝ) < (max B.rank 1 : ℕ) := by positivity
   have h54 : Real.toNNReal (5 / 4 : ℝ) = (5 / 4 : NNReal) := by
@@ -452,11 +462,13 @@ private theorem normalizedLogCard_buffer_growth (B : BohrData G) :
   rw [div_sub_div_same]
   exact (div_lt_iff₀ hd).2 (by simpa [mul_comm] using h)
 
+omit [DecidableEq G] in
 /-- **Bourgain regular-dilate theorem.** Every finite Bohr datum has a
 rank-regular scalar dilate at a scale between `1/2` and `1`. -/
 theorem exists_rankRegular_dilate (B : BohrData G) :
     ∃ rho : NNReal, 1 / 2 ≤ rho ∧ rho ≤ 1 ∧
       (B.dilate rho).IsRankRegular := by
+  classical
   let d : ℕ := max B.rank 1
   obtain ⟨r, hr, hlip⟩ := exists_regular_point_of_monotone
     B.normalizedLogCard (normalizedLogCard_monotone B)
@@ -515,14 +527,12 @@ theorem exists_rankRegular_dilate (B : BohrData G) :
         _ ≤ 5 / 4 := by norm_num
   have hsplus_buf : (splus : ℝ) ∈ Set.Icc (1 / 4 : ℝ) (5 / 4) := by
     dsimp [splus]
-    push_cast
     constructor <;> nlinarith
   have hdistminus : |(sminus : ℝ) - r| ≤ (kappa : ℝ) := by
     rw [← hrho]
     dsimp [sminus]
     rw [NNReal.coe_sub hkappa_one]
     simp only [NNReal.coe_one]
-    change |(1 - (kappa : ℝ)) * (rho : ℝ) - (rho : ℝ)| ≤ (kappa : ℝ)
     have hrnonneg : (0 : ℝ) ≤ rho := by positivity
     rw [show (1 - (kappa : ℝ)) * (rho : ℝ) - rho = -(kappa * rho) by ring,
       abs_neg, abs_of_nonneg (mul_nonneg (by positivity) hrnonneg)]
@@ -530,7 +540,6 @@ theorem exists_rankRegular_dilate (B : BohrData G) :
   have hdistplus : |(splus : ℝ) - r| ≤ (kappa : ℝ) := by
     rw [← hrho]
     dsimp [splus]
-    push_cast
     have hrnonneg : (0 : ℝ) ≤ rho := by positivity
     rw [show (1 + (kappa : ℝ)) * (rho : ℝ) - rho = kappa * rho by ring,
       abs_of_nonneg (mul_nonneg (by positivity) hrnonneg)]

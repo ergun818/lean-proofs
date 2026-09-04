@@ -25,11 +25,13 @@ noncomputable section
 def siftedSet (A B : Finset G) {p : ℕ} (s : Fin p → G) : Finset G :=
   B.filter fun b ↦ ∀ i, b - s i ∈ A
 
+omit [Fintype G] in
 theorem siftedSet_subset (A B : Finset G) {p : ℕ} (s : Fin p → G) :
     siftedSet A B s ⊆ B := by
   intro b hb
   exact (mem_filter.mp hb).1
 
+omit [Fintype G] in
 @[simp] theorem mem_siftedSet {A B : Finset G} {p : ℕ} {s : Fin p → G} {b : G} :
     b ∈ siftedSet A B s ↔ b ∈ B ∧ ∀ i, b - s i ∈ A := by
   simp [siftedSet]
@@ -38,6 +40,7 @@ theorem siftedSet_subset (A B : Finset G) {p : ℕ} (s : Fin p → G) :
 def pairSum (A₁ A₂ : Finset G) (F : G → ℝ) : ℝ :=
   ∑ a₁ ∈ A₁, ∑ a₂ ∈ A₂, F (a₁ - a₂)
 
+omit [DecidableEq G] [Fintype G] in
 theorem pairSum_const_mul (A₁ A₂ : Finset G) (c : ℝ) (F : G → ℝ) :
     pairSum A₁ A₂ (fun x ↦ c * F x) = c * pairSum A₁ A₂ F := by
   unfold pairSum
@@ -61,10 +64,12 @@ def pairProbability (A₁ A₂ : Finset G) (F : G → ℝ) : ℝ :=
 def differenceSet (A₁ A₂ : Finset G) : Finset G :=
   A₁.biUnion fun a₁ ↦ A₂.image fun a₂ ↦ a₁ - a₂
 
+omit [Fintype G] in
 @[simp] theorem mem_differenceSet {A₁ A₂ : Finset G} {x : G} :
     x ∈ differenceSet A₁ A₂ ↔ ∃ a₁ ∈ A₁, ∃ a₂ ∈ A₂, a₁ - a₂ = x := by
   simp [differenceSet]
 
+omit [Fintype G] in
 /-- Restricting a test function to the actual difference support does not
 change its pair average. -/
 theorem pairSum_support_restrict (A₁ A₂ : Finset G) (F : G → ℝ) :
@@ -77,6 +82,7 @@ theorem pairSum_support_restrict (A₁ A₂ : Finset G) (F : G → ℝ) :
   intro a₂ ha₂
   simp [mem_differenceSet.mpr ⟨a₁, ha₁, a₂, ha₂, rfl⟩]
 
+omit [Fintype G] in
 theorem pairProbability_support_restrict (A₁ A₂ : Finset G) (F : G → ℝ) :
     pairProbability A₁ A₂
         (fun x ↦ if x ∈ differenceSet A₁ A₂ then F x else 0) =
@@ -111,10 +117,7 @@ private theorem sum_pair_shift_indicator (A : Finset G) (b₁ b₂ : G) :
   let e : G ≃ G := Equiv.subRight b₂
   rw [show ((#(Finset.univ.filter fun t : G ↦ b₁ - b₂ - t ∈ A ∧ -t ∈ A) : ℕ) : ℝ) =
       ∑ t : G, if b₁ - b₂ - t ∈ A ∧ -t ∈ A then (1 : ℝ) else 0 by
-    simpa using (Finset.sum_boole
-      (fun t : G ↦ b₁ - b₂ - t ∈ A ∧ -t ∈ A) (Finset.univ : Finset G) :
-        (∑ t ∈ (Finset.univ : Finset G),
-          if b₁ - b₂ - t ∈ A ∧ -t ∈ A then (1 : ℝ) else 0) = _)]
+    simp]
   refine Fintype.sum_equiv e
     (fun s : G ↦ if b₁ - s ∈ A ∧ b₂ - s ∈ A then (1 : ℝ) else 0)
     (fun t : G ↦ if b₁ - b₂ - t ∈ A ∧ -t ∈ A then (1 : ℝ) else 0)
@@ -141,11 +144,7 @@ private theorem sum_all_coordinate_indicators (A : Finset G) (b₁ b₂ : G) (p 
         if ∀ i, b₁ - s i ∈ A ∧ b₂ - s i ∈ A then (1 : ℝ) else 0) =
         ((Finset.univ.filter
           (fun s : Fin p → G ↦ ∀ i, b₁ - s i ∈ A ∧ b₂ - s i ∈ A)).card : ℝ) := by
-      simpa using (Finset.sum_boole
-        (fun s : Fin p → G ↦ ∀ i, b₁ - s i ∈ A ∧ b₂ - s i ∈ A)
-        (Finset.univ : Finset (Fin p → G)) :
-          (∑ s ∈ (Finset.univ : Finset (Fin p → G)),
-            if ∀ i, b₁ - s i ∈ A ∧ b₂ - s i ∈ A then (1 : ℝ) else 0) = _)
+      simp
     _ = ((Fintype.piFinset fun _ : Fin p ↦ D).card : ℝ) := by rw [hsets]
     _ = (D.card : ℝ) ^ p := by simp [Fintype.card_piFinset]
     _ = (commonShiftCount A (b₁ - b₂) : ℝ) ^ p := by

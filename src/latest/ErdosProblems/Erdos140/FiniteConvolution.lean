@@ -41,16 +41,19 @@ def normalizedDifferenceConvolution (f g : G → ℝ) (x : G) : ℝ :=
 def finiteInner (f g : G → ℝ) : ℝ :=
   ∑ x : G, f x * g x
 
+omit [AddCommGroup G] [Fintype G] in
 @[simp]
 theorem normalizedIndicator_apply_mem {A : Finset G} {x : G} (hx : x ∈ A) :
     normalizedIndicator A x = (#A : ℝ)⁻¹ := by
   simp [normalizedIndicator, hx]
 
+omit [AddCommGroup G] [Fintype G] in
 @[simp]
 theorem normalizedIndicator_apply_not_mem {A : Finset G} {x : G} (hx : x ∉ A) :
     normalizedIndicator A x = 0 := by
   simp [normalizedIndicator, hx]
 
+omit [AddCommGroup G] [Fintype G] in
 theorem normalizedIndicator_nonneg (A : Finset G) (x : G) :
     0 ≤ normalizedIndicator A x := by
   unfold normalizedIndicator
@@ -58,6 +61,7 @@ theorem normalizedIndicator_nonneg (A : Finset G) (x : G) :
   · exact inv_nonneg.mpr (Nat.cast_nonneg _)
   · exact le_rfl
 
+omit [AddCommGroup G] [Fintype G] in
 theorem normalizedIndicator_pos_iff {A : Finset G} (hA : A.Nonempty) (x : G) :
     0 < normalizedIndicator A x ↔ x ∈ A := by
   unfold normalizedIndicator
@@ -66,6 +70,7 @@ theorem normalizedIndicator_pos_iff {A : Finset G} (hA : A.Nonempty) (x : G) :
     exact inv_pos.mpr (Nat.cast_pos.mpr hA.card_pos)
   · simp [hx]
 
+omit [AddCommGroup G] [Fintype G] in
 theorem normalizedIndicator_ne_zero_iff {A : Finset G} (hA : A.Nonempty) (x : G) :
     normalizedIndicator A x ≠ 0 ↔ x ∈ A := by
   unfold normalizedIndicator
@@ -73,6 +78,7 @@ theorem normalizedIndicator_ne_zero_iff {A : Finset G} (hA : A.Nonempty) (x : G)
   · simp [hx, hA.card_ne_zero]
   · simp [hx]
 
+omit [AddCommGroup G] in
 theorem sum_normalizedIndicator {A : Finset G} (hA : A.Nonempty) :
     ∑ x : G, normalizedIndicator A x = 1 := by
   change (∑ x ∈ (univ : Finset G), if x ∈ A then (#A : ℝ)⁻¹ else 0) = 1
@@ -81,11 +87,13 @@ theorem sum_normalizedIndicator {A : Finset G} (hA : A.Nonempty) :
   rw [hfilter]
   simp [hA.card_ne_zero]
 
+omit [DecidableEq G] in
 theorem normalizedConvolution_nonneg {f g : G → ℝ}
     (hf : ∀ x, 0 ≤ f x) (hg : ∀ x, 0 ≤ g x) (z : G) :
     0 ≤ normalizedConvolution f g z := by
   exact sum_nonneg fun x _ ↦ mul_nonneg (hf x) (hg (z - x))
 
+omit [DecidableEq G] in
 theorem normalizedDifferenceConvolution_nonneg {f g : G → ℝ}
     (hf : ∀ x, 0 ≤ f x) (hg : ∀ x, 0 ≤ g x) (z : G) :
     0 ≤ normalizedDifferenceConvolution f g z := by
@@ -110,7 +118,8 @@ theorem normalizedConvolution_indicators_pos_iff {A B : Finset G}
     0 < normalizedConvolution (normalizedIndicator A) (normalizedIndicator B) x ↔
       ∃ y ∈ A, x - y ∈ B := by
   rw [normalizedConvolution_indicators_eq_card]
-  simp [hA.card_pos, hB.card_pos, Nat.cast_pos, inv_pos, Finset.card_pos]
+  simp only [inv_pos, Nat.cast_pos, hB.card_pos, mul_pos_iff_of_pos_right, hA.card_pos,
+    card_pos]
   constructor
   · rintro ⟨y, hy⟩
     exact ⟨y, (mem_filter.mp hy).1, (mem_filter.mp hy).2⟩
@@ -134,13 +143,15 @@ theorem normalizedDifferenceConvolution_indicators_pos_iff {A B : Finset G}
     0 < normalizedDifferenceConvolution (normalizedIndicator A) (normalizedIndicator B) x ↔
       ∃ y ∈ A, y - x ∈ B := by
   rw [normalizedDifferenceConvolution_indicators_eq_card]
-  simp [hA.card_pos, hB.card_pos, Nat.cast_pos, inv_pos, Finset.card_pos]
+  simp only [inv_pos, Nat.cast_pos, hB.card_pos, mul_pos_iff_of_pos_right, hA.card_pos,
+    card_pos]
   constructor
   · rintro ⟨y, hy⟩
     exact ⟨y, (mem_filter.mp hy).1, (mem_filter.mp hy).2⟩
   · rintro ⟨y, hyA, hyB⟩
     exact ⟨y, mem_filter.mpr ⟨hyA, hyB⟩⟩
 
+omit [Fintype G] in
 /-- A one-variable representation fiber is in bijection with the pairs counted
 by Mathlib's additive convolution. -/
 theorem card_filter_sub_mem_eq_addConvolution (A B : Finset G) (x : G) :
@@ -160,7 +171,7 @@ theorem card_filter_sub_mem_eq_addConvolution (A B : Finset G) (x : G) :
     refine ⟨ha, ?_⟩
     have hxb : x - a = b := by
       rw [← hsum]
-      simp [add_comm]
+      simp
     simpa [hxb] using hb
   · intro y _
     rfl
@@ -170,7 +181,7 @@ theorem card_filter_sub_mem_eq_addConvolution (A B : Finset G) (x : G) :
     rcases hab with ⟨-, hsum⟩
     have hxb : x - a = b := by
       rw [← hsum]
-      simp [add_comm]
+      simp
     simp [hxb]
 
 theorem normalizedConvolution_indicators_eq_addConvolution (A B : Finset G) (x : G) :
@@ -184,11 +195,13 @@ section Algebra
 
 variable {G : Type*} [AddCommGroup G] [Fintype G] [DecidableEq G]
 
+omit [DecidableEq G] in
 /-- Total mass is invariant under translation. -/
 theorem sum_translate_real (a : G) (f : G → ℝ) :
     ∑ x : G, translate a f x = ∑ x : G, f x :=
   sum_translate a f
 
+omit [DecidableEq G] in
 /-- Convolution is commutative on an additive commutative group. -/
 theorem normalizedConvolution_comm (f g : G → ℝ) :
     normalizedConvolution f g = normalizedConvolution g f := by
@@ -197,6 +210,7 @@ theorem normalizedConvolution_comm (f g : G → ℝ) :
   refine Fintype.sum_equiv (Equiv.subLeft x) _ _ fun y ↦ ?_
   simp [mul_comm]
 
+omit [DecidableEq G] in
 /-- Translating the left input translates the convolution output. -/
 theorem normalizedConvolution_translate_left (a : G) (f g : G → ℝ) :
     normalizedConvolution (translate a f) g = translate a (normalizedConvolution f g) := by
@@ -212,9 +226,11 @@ theorem normalizedConvolution_translate_left (a : G) (f g : G → ℝ) :
     x + -y = (a + -a) + (x + -y) := by simp
     _ = x + -a + (a + -y) := by ac_rfl
 
+omit [DecidableEq G] in
 /-- Translating the right input translates the convolution output. -/
 theorem normalizedConvolution_translate_right (a : G) (f g : G → ℝ) :
     normalizedConvolution f (translate a g) = translate a (normalizedConvolution f g) := by
+  classical
   calc
     normalizedConvolution f (translate a g) = normalizedConvolution (translate a g) f :=
       normalizedConvolution_comm _ _
@@ -223,22 +239,24 @@ theorem normalizedConvolution_translate_right (a : G) (f g : G → ℝ) :
     _ = translate a (normalizedConvolution f g) := by
       rw [normalizedConvolution_comm]
 
+omit [DecidableEq G] in
 /-- Difference convolution is convolution against the reflected second input. -/
 theorem normalizedDifferenceConvolution_eq_convolution (f g : G → ℝ) :
     ∀ x, normalizedDifferenceConvolution f g x =
       normalizedConvolution f (fun y ↦ g (-y)) x := by
   intro x
-  simp [normalizedDifferenceConvolution, normalizedConvolution, sub_eq_add_neg,
-    add_comm, add_left_comm, add_assoc]
+  simp [normalizedDifferenceConvolution, normalizedConvolution, sub_eq_add_neg]
 
+omit [DecidableEq G] in
 /-- Difference convolution reverses its argument when its two inputs are swapped. -/
 theorem normalizedDifferenceConvolution_swap (f g : G → ℝ) (x : G) :
     normalizedDifferenceConvolution f g x =
       normalizedDifferenceConvolution g f (-x) := by
   rw [normalizedDifferenceConvolution, normalizedDifferenceConvolution]
   refine Fintype.sum_equiv (Equiv.subRight x) _ _ fun y ↦ ?_
-  simp [mul_comm, sub_eq_add_neg, add_comm, add_left_comm, add_assoc]
+  simp [mul_comm, sub_eq_add_neg, add_comm]
 
+omit [DecidableEq G] in
 /-- The total mass of a convolution is the product of the two total masses. -/
 theorem sum_normalizedConvolution (f g : G → ℝ) :
     ∑ x : G, normalizedConvolution f g x = (∑ x : G, f x) * ∑ x : G, g x := by
@@ -250,6 +268,7 @@ theorem sum_normalizedConvolution (f g : G → ℝ) :
   congr 1
   exact Fintype.sum_equiv (Equiv.subRight y) _ _ fun x ↦ by simp
 
+omit [DecidableEq G] in
 /-- The total mass of a difference convolution is likewise multiplicative. -/
 theorem sum_normalizedDifferenceConvolution (f g : G → ℝ) :
     ∑ x : G, normalizedDifferenceConvolution f g x =
@@ -285,6 +304,7 @@ variable {G : Type*} [AddCommGroup G] [Fintype G] [DecidableEq G]
 def mixedThreeAPCount (A C : Finset G) : ℕ :=
   #(((A ×ˢ A) ×ˢ C).filter fun x ↦ x.1.1 + x.1.2 = x.2 + x.2)
 
+omit [Fintype G] in
 /-- The mixed count is the sum of endpoint representation counts over its
 allowed middle terms. -/
 theorem mixedThreeAPCount_eq_sum_addConvolution (A C : Finset G) :
@@ -300,6 +320,7 @@ theorem mixedThreeAPCount_eq_sum_addConvolution (A C : Finset G) :
     _ = ∑ c ∈ C, ∑ a ∈ A, ∑ b ∈ A, if a + b = c + c then 1 else 0 := by
       rw [Finset.sum_comm]
 
+omit [Fintype G] in
 /-- Ordered three-term progressions can be counted by summing the additive
 convolution fiber at `b+b` over all possible middle terms `b`. -/
 theorem threeAPCount_eq_sum_addConvolution (A : Finset G) :
@@ -345,7 +366,7 @@ theorem finiteInner_convolution_doubleIndicator {A : Finset G}
           rw [Finset.sum_mul]
           apply Finset.sum_congr rfl
           intro z _
-          simp only [pow_succ, pow_two]
+          simp only [pow_succ]
           ac_rfl
     _ = (threeAPCount A : ℝ) * (#A : ℝ)⁻¹ ^ 3 := by
       rw [hsumReal]
@@ -389,6 +410,7 @@ theorem finiteInner_convolution_mixedDoubleIndicator {A C : Finset G}
   simp only [pow_two]
   ac_rfl
 
+omit [Fintype G] in
 /-- Restricting the endpoints and middle terms can only decrease the mixed
 progression count. -/
 theorem mixedThreeAPCount_mono {A A' C C' : Finset G}
@@ -401,10 +423,12 @@ theorem mixedThreeAPCount_mono {A A' C C' : Finset G}
   simp only [mem_filter, mem_product] at hx ⊢
   exact ⟨⟨⟨hA hx.1.1.1, hA hx.1.1.2⟩, hC hx.1.2⟩, hx.2⟩
 
+omit [Fintype G] in
 /-- The unmixed count agrees with `threeAPCount`. -/
 theorem mixedThreeAPCount_self (A : Finset G) : mixedThreeAPCount A A = threeAPCount A := by
   rw [mixedThreeAPCount_eq_sum_addConvolution, threeAPCount_eq_sum_addConvolution]
 
+omit [Fintype G] in
 /-- In particular, a mixed configuration inside one ambient set is bounded by
 the ambient ordered AP count. -/
 theorem mixedThreeAPCount_le_threeAPCount {A A' C : Finset G}
@@ -413,6 +437,7 @@ theorem mixedThreeAPCount_le_threeAPCount {A A' C : Finset G}
   rw [← mixedThreeAPCount_self A]
   exact mixedThreeAPCount_mono hA hC
 
+omit [Fintype G] in
 /-- Translation invariance of the AP equation gives the exact lifting used
 after a local argument: if both local sets become subsets of `A` after
 translation by `-t`, their mixed count is bounded by the AP count of `A`. -/

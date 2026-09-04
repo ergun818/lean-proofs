@@ -36,6 +36,7 @@ variable {G : Type*} [Fintype G] [AddCommGroup G] [DecidableEq G]
 noncomputable def fourierL1 (f : G → ℂ) : ℝ :=
   ∑ ψ : AddChar G ℂ, ‖Erdos140.FiniteFourier.coeff f ψ‖
 
+omit [DecidableEq G] in
 /-- Fourier inversion bounds a pointwise translation error by the spectral
 weighted `ℓ¹` norm.  This is the exact estimate used when the Bohr set
 annihilates the large spectrum of the Croot--Sisask smoothing measure. -/
@@ -68,12 +69,14 @@ theorem norm_sub_translate_le_fourier_sum (f : G → ℂ) (t x : G) :
         ring
       rw [hfactor, norm_mul, norm_mul, AddChar.norm_apply, mul_one]
 
+omit [DecidableEq G] in
 /-- Uniform annihilation of every Fourier mode controls every translate by
 `delta * fourierL1 f`. -/
 theorem norm_sub_translate_le_mul_fourierL1
-    (f : G → ℂ) (t x : G) {delta : ℝ} (hdelta : 0 ≤ delta)
+    (f : G → ℂ) (t x : G) {delta : ℝ} (_hdelta : 0 ≤ delta)
     (hann : ∀ ψ : AddChar G ℂ, ‖ψ (-t) - 1‖ ≤ delta) :
     ‖f (x - t) - f x‖ ≤ delta * fourierL1 f := by
+  classical
   calc
     ‖f (x - t) - f x‖ ≤
         ∑ ψ : AddChar G ℂ,
@@ -85,10 +88,6 @@ theorem norm_sub_translate_le_mul_fourierL1
       exact hann ψ
     _ = delta * fourierL1 f := by
       rw [fourierL1]
-      change Finset.univ.sum
-          (fun ψ : AddChar G ℂ ↦ ‖Erdos140.FiniteFourier.coeff f ψ‖ * delta) =
-        delta * Finset.univ.sum
-          (fun ψ : AddChar G ℂ ↦ ‖Erdos140.FiniteFourier.coeff f ψ‖)
       calc
         Finset.univ.sum
             (fun ψ : AddChar G ℂ ↦ ‖Erdos140.FiniteFourier.coeff f ψ‖ * delta) =
@@ -97,13 +96,14 @@ theorem norm_sub_translate_le_mul_fourierL1
           (Finset.sum_mul _ _ _).symm
         _ = _ := mul_comm _ _
 
+omit [DecidableEq G] in
 /-- A spectral cutoff version of Fourier inversion.  On the chosen spectrum
 `Omega` one uses the supplied character-annihilation estimate; off `Omega`
 one uses the universal chord bound `2`.  This is the finite Fourier step in
 the Schoen--Sisask argument, separated from the construction of `Omega`. -/
 theorem norm_sub_translate_le_spectrum_cutoff
     (f : G → ℂ) (Omega : Finset (AddChar G ℂ)) (t x : G)
-    {theta : ℝ} (htheta : 0 ≤ theta)
+    {theta : ℝ} (_htheta : 0 ≤ theta)
     (hann : ∀ psi ∈ Omega, ‖psi (-t) - 1‖ ≤ theta) :
     ‖f (x - t) - f x‖ ≤
       theta * ∑ psi ∈ Finset.univ.filter (fun psi ↦ psi ∈ Omega),
@@ -138,10 +138,11 @@ theorem norm_sub_translate_le_spectrum_cutoff
       rw [← Finset.sum_mul, ← Finset.sum_mul]
       ring
 
+omit [DecidableEq G] in
 /-- Transfer a Fourier cutoff estimate through a uniform approximation. -/
 theorem norm_sub_translate_le_of_uniform_approx_and_spectrum_cutoff
     (f p : G → ℂ) (Omega : Finset (AddChar G ℂ)) (t x : G)
-    {delta theta : ℝ} (hdelta : 0 ≤ delta) (htheta : 0 ≤ theta)
+    {delta theta : ℝ} (_hdelta : 0 ≤ delta) (htheta : 0 ≤ theta)
     (happrox : ∀ y, ‖p y - f y‖ ≤ delta)
     (hann : ∀ psi ∈ Omega, ‖psi (-t) - 1‖ ≤ theta) :
     ‖f (x - t) - f x‖ ≤
@@ -150,6 +151,7 @@ theorem norm_sub_translate_le_of_uniform_approx_and_spectrum_cutoff
           ‖Erdos140.FiniteFourier.coeff p psi‖ +
         2 * ∑ psi ∈ Finset.univ.filter (fun psi ↦ psi ∉ Omega),
           ‖Erdos140.FiniteFourier.coeff p psi‖ := by
+  classical
   have hdecomp : f (x - t) - f x =
       (f (x - t) - p (x - t)) + (p (x - t) - p x) + (p x - f x) := by ring
   rw [hdecomp]
@@ -180,8 +182,9 @@ theorem norm_sub_translate_le_of_uniform_approx_and_spectrum_cutoff
         2 * ∑ psi ∈ Finset.univ.filter (fun psi ↦ psi ∉ Omega),
           ‖Erdos140.FiniteFourier.coeff p psi‖ := by ring
 
+omit [DecidableEq G] [Fintype G] in
 /-- Chord distance from one is unchanged by negating the group argument. -/
-lemma norm_character_neg_sub_one (psi : AddChar G ℂ) (t : G) :
+lemma norm_character_neg_sub_one [Finite G] (psi : AddChar G ℂ) (t : G) :
     ‖psi (-t) - 1‖ = ‖1 - psi t‖ := by
   rw [psi.map_neg_eq_inv]
   have hne : psi t ≠ 0 := by
@@ -323,8 +326,8 @@ lemma dft_mu_eq_massCoeff_neg (X : Finset G) (psi : AddChar G ℂ) :
       Erdos140.massCoeff (Erdos140.normalizedIndicator X) (-psi) := by
   classical
   rw [dft_apply, wInner_one_eq_sum]
-  simp only [inner_apply', Erdos140.massCoeff, Pi.neg_apply,
-    AddChar.neg_apply, AddChar.inv_apply_eq_conj]
+  simp only [inner_apply', Erdos140.massCoeff,
+    AddChar.neg_apply]
   apply Finset.sum_congr rfl
   intro x _
   unfold mu Erdos140.normalizedIndicator
@@ -333,6 +336,7 @@ lemma dft_mu_eq_massCoeff_neg (X : Finset G) (psi : AddChar G ℂ) :
       ← AddChar.map_neg_eq_inv, mul_comm]
   · simp [hx, smul_eq_mul]
 
+omit [DecidableEq G] in
 /-- Translation changes a discrete Fourier coefficient only by a unit
 character phase, so its norm is unchanged. -/
 lemma norm_dft_translate (f : G → ℂ) (a : G) (psi : AddChar G ℂ) :
@@ -364,6 +368,7 @@ lemma norm_dft_mu_vaddFinset (T : Finset G) (a : G) (psi : AddChar G ℂ) :
   rw [← translate_mu (K := ℂ)]
   exact norm_dft_translate (μ_[ℂ] T) a psi
 
+omit [DecidableEq G] in
 /-- The half-large DFT spectrum of the probability measure agrees with the
 half-large Chang spectrum used by the relative selector. -/
 theorem mem_largeSpectrum_of_half_le_norm_dft_mu
@@ -476,8 +481,9 @@ lemma scaled_spectral_phase_le (D : ℝ) (d q : ℕ)
       field_simp
       ring
 
+omit [DecidableEq G] [Fintype G] in
 /-- Transfer almost-periodicity through a uniform smoothing approximation. -/
-theorem transfer_smoothing_translate
+theorem transfer_smoothing_translate [Finite G]
     [MeasurableSpace G] [DiscreteMeasurableSpace G]
     (F P : G → ℂ) (t : G) {delta E : ℝ}
     (hdelta : ‖P - F‖_[∞] ≤ delta)
@@ -503,6 +509,7 @@ theorem transfer_smoothing_translate
 
 /-! ## Global Chang spectrum converted to a Bohr datum -/
 
+omit [DecidableEq G] in
 /-- Geometry/volume assembly for any proved spectrum cover.  This is the
 interface expected from the relative Chang--Sanders step: once `Omega` is
 covered by the signed span of `Delta`, no further analytic assumption is
@@ -533,6 +540,7 @@ theorem controlled_bohr_of_spectrum_cover
     (Erdos140.LocalSpectrum.norm_one_sub_character_le_of_mem_adjoinBasis
       B hsmall ht (hcover hpsi))
 
+omit [DecidableEq G] in
 /-- Relative Chang--Sanders geometry interface.  A local spectral selector
 need only return the displayed signed-span-plus-old-spectrum cover; this
 theorem supplies the adjoined datum, its relative volume, and its explicit
@@ -568,6 +576,7 @@ theorem controlled_bohr_of_relativeSpectrum_cover
     (Erdos140.LocalSpectrum.norm_one_sub_character_le_of_localSpectrum_cover
       C hCreg hsigma hsmall hcover t ht psi hpsi)
 
+omit [DecidableEq G] in
 /-- Every finite Bohr datum has a rank-regular sub-dilate of the same rank.
 Passing to it costs at most `4 ^ rank` in cardinality. -/
 theorem exists_rankRegular_subdatum (D : Erdos140.BohrData G) :
@@ -589,6 +598,7 @@ theorem exists_rankRegular_subdatum (D : Erdos140.BohrData G) :
       _ ≤ 4 ^ D.rank * (D.dilate rho).carrier.card :=
         Nat.mul_le_mul_left _ hhalf
 
+omit [DecidableEq G] in
 /-- Rank-regular form of `controlled_bohr_of_spectrum_cover`. -/
 theorem exists_regular_controlled_bohr_of_spectrum_cover
     (B : Erdos140.BohrData G) (Omega Delta : Finset (AddChar G ℂ))
@@ -622,6 +632,7 @@ theorem exists_regular_controlled_bohr_of_spectrum_cover
   · intro t ht psi hpsi
     exact hD.2.2.2 t (hRD ht) psi hpsi
 
+omit [DecidableEq G] in
 /-- Rank-regular output for the relative Chang--Sanders cover interface. -/
 theorem exists_regular_controlled_bohr_of_relativeSpectrum_cover
     (C : Erdos140.BohrData G) (hCreg : C.IsRankRegular)
@@ -660,6 +671,7 @@ theorem exists_regular_controlled_bohr_of_relativeSpectrum_cover
   · intro t ht psi hpsi
     exact hD.2.2.2 t (hRD ht) psi hpsi
 
+omit [DecidableEq G] in
 /-- Unconditional local Chang--Sanders geometry, including regularization and
 relative volume.  The logarithmic dimension parameter involves only the
 density of `X` inside `B`; no ambient-group cardinality occurs.
@@ -1066,6 +1078,7 @@ theorem exists_unconditional_localized_linfty_almostPeriods
       hA hS₀ delta hdelta m hm M L hM hL B₀ hB₀reg hlocal
         kappa hkappa 1 (by norm_num))
 
+omit [DecidableEq G] in
 /-- Explicit regular-Bohr `L∞` almost-periodicity assembled from a uniform
 Croot--Sisask approximation and a relative Chang--Sanders spectrum cover. -/
 theorem exists_regular_fourier_almostPeriods_of_relativeSpectrum_cover
@@ -1106,6 +1119,7 @@ theorem exists_regular_fourier_almostPeriods_of_relativeSpectrum_cover
   rw [norm_character_neg_sub_one]
   exact hphase t ht psi hpsi
 
+omit [DecidableEq G] in
 /-- The (global) Chang cover, converted into explicit finite Bohr data.
 
 This lemma is unconditional and is useful on its own.  The stronger localized
@@ -1147,6 +1161,7 @@ theorem exists_global_largeSpectrum_bohr
     (Erdos140.LocalSpectrum.norm_one_sub_character_le_of_mem_adjoinBasis
       B hsmall ht (hspan hpsi))
 
+omit [DecidableEq G] in
 /-- Global Chang together with the subset-relative volume theorem.  The
 explicit output datum is subordinate to the doubled input scale and its
 relative-cardinality loss is exactly `m ^ |Delta|`. -/
@@ -1189,6 +1204,7 @@ theorem exists_global_largeSpectrum_controlled_bohr
     (Erdos140.LocalSpectrum.norm_one_sub_character_le_of_mem_adjoinBasis
       B hsmall ht (hspan hpsi))
 
+omit [DecidableEq G] in
 /-- Fully unconditional regular-Bohr form of global Chang, with explicit
 relative-volume loss. -/
 theorem exists_regular_global_largeSpectrum_controlled_bohr
@@ -1246,12 +1262,15 @@ noncomputable def countingInner (f g : G → ℝ) : ℝ :=
 noncomputable def setIndicator (A : Finset G) (x : G) : ℝ :=
   if x ∈ A then 1 else 0
 
+omit [AddCommGroup G] [Fintype G] in
 @[simp] lemma setIndicator_apply_mem {A : Finset G} {x : G} (hx : x ∈ A) :
     setIndicator A x = 1 := by simp [setIndicator, hx]
 
+omit [AddCommGroup G] [Fintype G] in
 @[simp] lemma setIndicator_apply_not_mem {A : Finset G} {x : G} (hx : x ∉ A) :
     setIndicator A x = 0 := by simp [setIndicator, hx]
 
+omit [AddCommGroup G] [Fintype G] in
 lemma setIndicator_nonneg (A : Finset G) (x : G) : 0 ≤ setIndicator A x := by
   simp only [setIndicator]
   split <;> positivity
@@ -1311,7 +1330,7 @@ theorem finiteInner_translate_differenceConvolution_eq
           intro a₁ _
           refine (Fintype.sum_equiv (Equiv.subLeft (t + a₁)) _ _ fun a₂ ↦ ?_).symm
           simp only [Equiv.subLeft_apply]
-          congr 2 <;> abel_nf
+          congr 2; abel_nf
     _ = (∑ a₁ : G, ∑ a₂ : G,
             setIndicator A₁ a₁ * setIndicator A₂ a₂ *
               setIndicator S (t + a₁ - a₂)) /
@@ -1322,7 +1341,7 @@ theorem finiteInner_translate_differenceConvolution_eq
 /-- Convolution by a nonempty normalized indicator is the uniform average of
 translates. -/
 lemma normalizedConvolution_normalizedIndicator_apply
-    {D : Finset G} (hD : D.Nonempty) (f : G → ℝ) (x : G) :
+    {D : Finset G} (_hD : D.Nonempty) (f : G → ℝ) (x : G) :
     sumConvolution (probabilityIndicator D) f x =
       (∑ t ∈ D, f (x - t)) / D.card := by
   classical
