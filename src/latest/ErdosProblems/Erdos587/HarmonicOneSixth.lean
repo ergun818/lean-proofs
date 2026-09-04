@@ -12,7 +12,8 @@ lemma phaseIncrement_const_mul (c : ℝ) (f : ℕ → ℝ) (n : ℕ) :
   ring
 
 lemma phaseIncrement_twice_const_mul (c : ℝ) (f : ℕ → ℝ) (n : ℕ) :
-    phaseIncrement (phaseIncrement (fun n => c * f n)) n = c * phaseIncrement (phaseIncrement f) n := by
+    phaseIncrement (phaseIncrement (fun n => c * f n)) n = c * phaseIncrement (phaseIncrement f)
+      n := by
   have heq : phaseIncrement (fun n => c * f n) = fun n => c * phaseIncrement f n :=
     funext (phaseIncrement_const_mul c f)
   rw [heq, phaseIncrement_const_mul]
@@ -29,8 +30,10 @@ theorem norm_phase_real_harmonic_sum_le (f : ℕ → ℝ) {N : ℕ} (hN : 0 < N)
     {F C : ℝ} (hNF : (N : ℝ) ≤ F) (hC : 1 ≤ C)
     (hsecondLo : ∀ n, n + 1 < N → -(C * (F / (N : ℝ) ^ 2)) ≤ phaseIncrement (phaseIncrement f) n)
     (hsecondHi : ∀ n, n + 1 < N → phaseIncrement (phaseIncrement f) n ≤ -(F / (N : ℝ) ^ 2))
-    (hthirdLo : ∀ n, n + 2 < N → F / (N : ℝ) ^ 3 ≤ phaseIncrement (phaseIncrement (phaseIncrement f)) n)
-    (hthirdHi : ∀ n, n + 2 < N → phaseIncrement (phaseIncrement (phaseIncrement f)) n ≤ C * (F / (N : ℝ) ^ 3))
+    (hthirdLo : ∀ n, n + 2 < N → F / (N : ℝ) ^ 3 ≤ phaseIncrement (phaseIncrement
+      (phaseIncrement f)) n)
+    (hthirdHi : ∀ n, n + 2 < N → phaseIncrement (phaseIncrement (phaseIncrement f)) n ≤ C * (F /
+      (N : ℝ) ^ 3))
     {r : ℝ} (hr : 1 ≤ r) :
     ‖∑ n ∈ Finset.range N, phase (r * f n)‖ ≤
       (100 * C * F ^ (1 / 6 : ℝ) * Real.sqrt N) * r ^ (1 / 6 : ℝ) := by
@@ -50,13 +53,15 @@ theorem norm_phase_real_harmonic_sum_le (f : ℕ → ℝ) {N : ℕ} (hN : 0 < N)
       _ ≤ r * (-(F / (N : ℝ) ^ 2)) := mul_le_mul_of_nonneg_left (hsecondHi n hn) hrpos.le
       _ = _ := by ring
   have h₃lo (n : ℕ) (hn : n + 2 < N) :
-      r * F / (N : ℝ) ^ 3 ≤ phaseIncrement (phaseIncrement (phaseIncrement (fun n => r * f n))) n := by
+      r * F / (N : ℝ) ^ 3 ≤ phaseIncrement (phaseIncrement (phaseIncrement (fun n => r * f n)))
+        n := by
     rw [phaseIncrement_thrice_const_mul]
     calc
       _ = r * (F / (N : ℝ) ^ 3) := by ring
       _ ≤ _ := mul_le_mul_of_nonneg_left (hthirdLo n hn) hrpos.le
   have h₃hi (n : ℕ) (hn : n + 2 < N) :
-      phaseIncrement (phaseIncrement (phaseIncrement (fun n => r * f n))) n ≤ C * (r * F / (N : ℝ) ^ 3) := by
+      phaseIncrement (phaseIncrement (phaseIncrement (fun n => r * f n))) n ≤ C * (r * F / (N :
+        ℝ) ^ 3) := by
     rw [phaseIncrement_thrice_const_mul]
     calc
       _ ≤ r * (C * (F / (N : ℝ) ^ 3)) := mul_le_mul_of_nonneg_left (hthirdHi n hn) hrpos.le
@@ -70,8 +75,10 @@ theorem norm_phase_integer_harmonic_sum_le (f : ℕ → ℝ) {N : ℕ} (hN : 0 <
     {F C : ℝ} (hNF : (N : ℝ) ≤ F) (hC : 1 ≤ C)
     (hsecondLo : ∀ n, n + 1 < N → -(C * (F / (N : ℝ) ^ 2)) ≤ phaseIncrement (phaseIncrement f) n)
     (hsecondHi : ∀ n, n + 1 < N → phaseIncrement (phaseIncrement f) n ≤ -(F / (N : ℝ) ^ 2))
-    (hthirdLo : ∀ n, n + 2 < N → F / (N : ℝ) ^ 3 ≤ phaseIncrement (phaseIncrement (phaseIncrement f)) n)
-    (hthirdHi : ∀ n, n + 2 < N → phaseIncrement (phaseIncrement (phaseIncrement f)) n ≤ C * (F / (N : ℝ) ^ 3))
+    (hthirdLo : ∀ n, n + 2 < N → F / (N : ℝ) ^ 3 ≤ phaseIncrement (phaseIncrement
+      (phaseIncrement f)) n)
+    (hthirdHi : ∀ n, n + 2 < N → phaseIncrement (phaseIncrement (phaseIncrement f)) n ≤ C * (F /
+      (N : ℝ) ^ 3))
     (m : ℤ) (hm : m ≠ 0) :
     ‖∑ n ∈ Finset.range N, phase ((m : ℝ) * f n)‖ ≤
       (100 * C * F ^ (1 / 6 : ℝ) * Real.sqrt N) * |(m : ℝ)| ^ (1 / 6 : ℝ) := by

@@ -27,12 +27,14 @@ theorem value_bounds {x y : ℕ} (hx : x ≤ P.firstWidth) (hy : y ≤ P.secondW
       (g : ℝ) ^ 2 * ((P.base : ℝ) + P.firstStep * x + P.secondStep * y) ∧
     (g : ℝ) ^ 2 * ((P.base : ℝ) + P.firstStep * x + P.secondStep * y) ≤
       (g : ℝ) * ((t : ℝ) + u * H + v * J) := by
-  let w := positiveLatticeBoxPoint g u v P.first P.second P.center P.firstHalfWidth P.secondHalfWidth x y
+  let w := positiveLatticeBoxPoint g u v P.first P.second P.center P.firstHalfWidth
+    P.secondHalfWidth x y
   have hw := P.central_quarter x hx y hy
   obtain ⟨hX, hY, hwx, hwy⟩ := natural_coordinates_of_central_quarter hw
   have hxR : (w.1.toNat : ℝ) = (w.1 : ℝ) := by exact_mod_cast hwx
   have hyR : (w.2.toNat : ℝ) = (w.2 : ℝ) := by exact_mod_cast hwy
-  have hi := (lattice_box_natural_image P.factor_pos P.basis P.coset P.central_quarter x hx y hy).2.2
+  have hi := (lattice_box_natural_image P.factor_pos P.basis P.coset P.central_quarter x hx y
+    hy).2.2
   have hiR : (g : ℝ) ^ 2 * ((P.base : ℝ) + P.firstStep * x + P.secondStep * y) =
       (g : ℝ) * ((t : ℝ) + u * w.1.toNat + v * w.2.toNat) := by exact_mod_cast hi
   have hxmin : (H : ℝ) / 4 ≤ w.1.toNat := by rw [hxR]; exact hw.1.1
@@ -43,7 +45,7 @@ theorem value_bounds {x y : ℕ} (hx : x ≤ P.firstWidth) (hy : y ≤ P.secondW
     have ht := Nat.cast_nonneg (α := ℝ) t
     nlinarith
   have hhi : (t : ℝ) + u * w.1.toNat + v * w.2.toNat ≤ (t : ℝ) + u * H + v * J := by
-    gcongr <;> exact_mod_cast (by assumption)
+    gcongr
   rw [hiR]
   constructor
   · simpa only [mul_div_assoc] using mul_le_mul_of_nonneg_left hlo (Nat.cast_nonneg g)
@@ -71,7 +73,8 @@ theorem volume_lower : (H : ℝ) * J / (8192 * g) ≤ (P.firstWidth : ℝ) * P.s
   have hgZ : (0 : ℤ) < g := by exact_mod_cast P.factor_pos
   have hprod := (reduced_congruence_basis_product_bounds hH hJ hgZ P.basis P.order P.reduced).2
   push_cast at hprod
-  exact lattice_box_volume_lower P.firstNorm_pos P.secondNorm_pos hH hJ hg P.first_small P.small hprod
+  exact lattice_box_volume_lower P.firstNorm_pos P.secondNorm_pos hH hJ hg P.first_small P.small
+    hprod
 
 theorem span_lower : ((u : ℝ) * H + (v : ℝ) * J) / (256 * g) ≤
     (P.firstStep : ℝ) * P.firstWidth + (P.secondStep : ℝ) * P.secondWidth := by
@@ -83,8 +86,10 @@ theorem span_lower : ((u : ℝ) * H + (v : ℝ) * J) / (256 * g) ≤
     P.basis P.order P.reduced
   push_cast at hdual
   have hh := lattice_box_span_lower P.firstNorm_pos P.secondNorm_pos P.first_small P.small
-    (abs_nonneg (latticeLinear u v P.first : ℝ)) (abs_nonneg (latticeLinear u v P.second : ℝ)) hg hdual
-  have hp : (P.firstStep : ℝ) * g = |(latticeLinear u v P.first : ℝ)| := latticeBoxStep_mul_factor P.basis
+    (abs_nonneg (latticeLinear u v P.first : ℝ)) (abs_nonneg (latticeLinear u v P.second : ℝ))
+      hg hdual
+  have hp : (P.firstStep : ℝ) * g = |(latticeLinear u v P.first : ℝ)| :=
+    latticeBoxStep_mul_factor P.basis
   have hq : (P.secondStep : ℝ) * g = |(latticeLinear u v P.second : ℝ)| :=
     latticeBoxStep_mul_factor P.basis.swap
   rw [← hp, ← hq] at hh

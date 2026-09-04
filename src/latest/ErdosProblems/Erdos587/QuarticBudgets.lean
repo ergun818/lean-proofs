@@ -19,7 +19,7 @@ lemma three_quarter_weight_pow_four {T Λ : ℝ} (hT : 0 ≤ T) (B : ℕ) :
   rw [mul_pow, hroot, ← pow_mul, Nat.mul_comm B 4]
 
 lemma quarter_weight_le_of_budget {T Λ F H L : ℝ} (B : ℕ)
-    (hT : 0 ≤ T) (hΛ : 0 ≤ Λ) (hF : 0 < F) (hL : 0 ≤ L)
+    (hT : 0 ≤ T) (_hΛ : 0 ≤ Λ) (hF : 0 < F) (hL : 0 ≤ L)
     (hbudget : F ^ 4 * T * Λ ^ (4 * B) ≤ H ^ 4)
     (hH : 0 ≤ H) (hside : H ≤ F * L) :
     T ^ (1 / 4 : ℝ) * Λ ^ B ≤ L := by
@@ -33,7 +33,7 @@ lemma quarter_weight_le_of_budget {T Λ F H L : ℝ} (B : ℕ)
     _ ≤ (F * L) ^ 4 := pow_le_pow_left₀ hH hside 4
 
 lemma three_quarter_weight_le_of_budget {T Λ D H L : ℝ} (B : ℕ)
-    (hT : 0 ≤ T) (hΛ : 0 ≤ Λ) (hD : 0 < D) (hL : 0 ≤ L)
+    (hT : 0 ≤ T) (_hΛ : 0 ≤ Λ) (hD : 0 < D) (hL : 0 ≤ L)
     (hbudget : D ^ 4 * T ^ 3 * Λ ^ (4 * B) ≤ H ^ 12)
     (hH : 0 ≤ H) (harea : H ^ 3 ≤ D * L) :
     T ^ (3 / 4 : ℝ) * Λ ^ B ≤ L := by

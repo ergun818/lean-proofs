@@ -25,7 +25,8 @@ lemma centeredChirpSeries_eq_discrete_mean (f : 𝓢(ℝ, ℂ)) (q : ℕ) (a : �
         (completeQuadraticGaussSum q a 0 / q) * ∑' n : ℤ, quadraticChirpMul A f (δ * n) := by
   have hw : Summable (fun n : ℤ => quadraticChirpMul A f (δ * n)) :=
     summable_schwartz_int (dilateSchwartz (quadraticChirpMul A f) δ hδ)
-  have hquad : Summable (fun n : ℤ => quadraticResiduePhase q a n * quadraticChirpMul A f (δ * n)) := by
+  have hquad : Summable (fun n : ℤ => quadraticResiduePhase q a n * quadraticChirpMul A f (δ *
+    n)) := by
     apply Summable.of_norm
     simpa only [quadraticResiduePhase, norm_mul, norm_phase, one_mul] using hw.norm
   have hmean := hw.mul_left (completeQuadraticGaussSum q a 0 / q)

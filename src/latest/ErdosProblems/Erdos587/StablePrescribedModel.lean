@@ -45,7 +45,8 @@ theorem exists_uniform_stable_rank_two_model (b : ℕ) :
     apply Finset.insert_subset
     · simp
     · exact hBA.trans hA
-  have hBZcard : 2 ≤ (insert 0 B).card := hBcard.trans (Finset.card_le_card (Finset.subset_insert _ _))
+  have hBZcard : 2 ≤ (insert 0 B).card := hBcard.trans (Finset.card_le_card
+    (Finset.subset_insert _ _))
   have hN : 2 ^ L ≤ (2 ^ t) ^ b := by
     rw [← pow_mul]
     exact Nat.pow_le_pow_right (by omega) hambient

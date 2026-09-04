@@ -20,7 +20,8 @@ theorem exists_ordered_common_factor_terminal (C : ℝ) (hC : 0 < C) :
       (T : ℝ) ^ (1 / 4 : ℝ) * (1 + Real.log T) ^ B ≤ J →
       (T : ℝ) ^ (3 / 4 : ℝ) * (1 + Real.log T) ^ B ≤ (H : ℝ) * J →
       ∃ x ≤ H, ∃ y ≤ J, ∃ z : ℕ, 0 < z ∧ z ^ 2 = g * (t + u * x + v * y) := by
-  obtain ⟨B, hB, Tprim, hprimitive⟩ := exists_primitive_terminal_unoriented (256 * C) (by positivity)
+  obtain ⟨B, hB, Tprim, hprimitive⟩ :=
+    exists_primitive_terminal_unoriented (256 * C) (by positivity)
   obtain ⟨A, hA, hlongSide⟩ := exists_nonprimitive_long_side
   have hevent := (eventually_ge_atTop (1 : ℝ)).and
     ((Real.tendsto_log_atTop.eventually_ge_atTop (max 8192 A)).and

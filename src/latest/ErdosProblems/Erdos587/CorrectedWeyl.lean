@@ -218,7 +218,7 @@ lemma twistedResiduePairCount_complement
   unfold twistedResiduePairCount
   congr 1
   ext x
-  simp only [Finset.mem_filter, Finset.mem_product]
+  simp only [Finset.mem_filter]
   constructor
   · rintro ⟨hx, h⟩
     exact ⟨hx, (complementary_twisted_residue_eq_iff
@@ -652,7 +652,7 @@ lemma corrected_weyl_budget_of_three_bounds
   have hmain' : 48 * A < (L : ℝ) ^ 2 := by
     simpa only [A, mul_assoc] using hmain
   have hzero' : 384 * B < (L : ℝ) ^ 2 := by
-    convert hzero using 1 <;> simp only [B] <;> ring
+    convert hzero using 1; simp only [B]; ring
   have hnonzero' : 192 * C < (L : ℝ) ^ 2 := by
     simpa only [C, mul_assoc] using hnonzero
   have hsum : 48 * A + 384 * B + 192 * C <

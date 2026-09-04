@@ -32,14 +32,16 @@ lemma norm_sum_le_of_inverse_difference_variation (z b : ℕ → ℂ) (N : ℕ) 
       b N * z (N + 1) - b 0 * z 0 -
         ∑ n ∈ Finset.range N, (b (n + 1) - b n) * z (n + 1) := by
     rw [← sum_weighted_forward_difference]
-    exact Finset.sum_congr rfl (fun n hn => (hrec n (by have := Finset.mem_range.mp hn; omega)).symm)
+    exact Finset.sum_congr rfl
+      (fun n hn => (hrec n (by have := Finset.mem_range.mp hn; omega)).symm)
   have hsum : ‖∑ n ∈ Finset.range N, (b (n + 1) - b n) * z (n + 1)‖ ≤ V := by
     apply (norm_sum_le _ _).trans
     apply le_trans _ hvariation
     apply Finset.sum_le_sum
     intro n hn
     rw [norm_mul]
-    exact mul_le_of_le_one_right (norm_nonneg _) (hz (n + 1) (by have := Finset.mem_range.mp hn; omega))
+    exact mul_le_of_le_one_right (norm_nonneg _)
+      (hz (n + 1) (by have := Finset.mem_range.mp hn; omega))
   have hfirst : ‖b N * z (N + 1)‖ ≤ B := by
     rw [norm_mul]
     exact (mul_le_of_le_one_right (norm_nonneg _) (hz _ le_rfl)).trans hbN

@@ -34,7 +34,8 @@ lemma continuous_periodizedSchwartz (g : 𝓢(ℝ, ℂ)) {σ : ℝ} (hσ : 0 < �
     funext t
     exact periodizedSchwartz_eq_fourier g hσ t
   rw [heq]
-  have hterms (m : ℤ) : Continuous (fun t : ℝ => scaledFourierCoeff g σ m * phase ((m : ℝ) * t)) := by
+  have hterms (m : ℤ) : Continuous (fun t : ℝ => scaledFourierCoeff g σ m * phase ((m : ℝ) * t))
+    := by
     unfold phase
     fun_prop
   apply continuous_tsum hterms (summable_scaledFourierCoeff g hσ).norm

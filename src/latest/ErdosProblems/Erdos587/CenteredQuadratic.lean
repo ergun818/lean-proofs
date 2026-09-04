@@ -189,7 +189,8 @@ lemma sum_rationalMajorant_short_period_le {q a R : ℕ} (hq : 0 < q) (ha : a.Co
   apply add_le_add _ le_rfl
   rw [← Finset.sum_filter, Finset.sum_const, nsmul_eq_mul]
   have hcard := card_zero_residue_differences_le_one hq ha hR
-  have hcardR : ((((Finset.Icc 1 R).filter (fun h => residueDistance a q h = 0)).card : ℕ) : ℝ) ≤ 1 := by
+  have hcardR : ((((Finset.Icc 1 R).filter (fun h => residueDistance a q h = 0)).card : ℕ) : ℝ)
+    ≤ 1 := by
     exact_mod_cast hcard
   simpa only [one_mul] using mul_le_mul_of_nonneg_right hcardR (Nat.cast_nonneg R)
 

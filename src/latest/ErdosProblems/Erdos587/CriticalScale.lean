@@ -61,7 +61,7 @@ lemma critical_scale_lower_cutoff (u v H M : ℕ) {T : ℝ}
     _ ≤ M * T := mul_le_mul_of_nonneg_left huH (by positivity)
 
 lemma critical_scale_upper_cutoff (v H M p : ℕ) {T C₀ : ℝ}
-    (hT : 1 ≤ T) (hH : 0 < H) (hC₀ : 0 ≤ C₀)
+    (hT : 1 ≤ T) (hH : 0 < H) (_hC₀ : 0 ≤ C₀)
     (hHlo : Real.sqrt T * T ^ (-(1 / 1000 : ℝ)) ≤ H)
     (hM : (M : ℝ) ≤ C₀ * ((v : ℝ) / H) * (1 + Real.log T) ^ p)
     (hlog : C₀ * (1 + Real.log T) ^ p ≤ T ^ (3 / 125 : ℝ)) :
@@ -140,7 +140,7 @@ theorem exists_critical_nearby_mean_bound_with_power_cutoff (f : 𝓢(ℝ, ℂ))
   have hMcut : (M : ℝ) * x ^ 19 ≤ v := by
     apply critical_scale_upper_cutoff v H M p hT hH
       (mul_nonneg hC₀ (Real.rpow_nonneg hTpos.le δ)) hH0
-    · convert hM1 using 1 <;> ring
+    · convert hM1 using 1; ring
     · calc
         (C₀ * T ^ δ) * (1 + Real.log T) ^ p =
             (C₀ * (1 + Real.log T) ^ p) * T ^ δ := by ring

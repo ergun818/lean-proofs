@@ -60,7 +60,8 @@ theorem absorb_geometric_log_loss {T T₀ S p : ℝ} (B : ℕ)
     have hh := mul_le_mul_of_nonneg_right hlarge (pow_nonneg hΛ B)
     nlinarith
   calc
-    _ ≤ T₀ ^ p * (1 + Real.log T) ^ B := mul_le_mul_of_nonneg_left hpow (Real.rpow_nonneg hT₀pos.le p)
+    _ ≤ T₀ ^ p * (1 + Real.log T) ^ B := mul_le_mul_of_nonneg_left hpow (Real.rpow_nonneg
+      hT₀pos.le p)
     _ ≤ T₀ ^ p * (1 + Real.log T) ^ (B + 1) / 8192 := by
       apply (le_div_iff₀ (by norm_num : (0 : ℝ) < 8192)).mpr
       have hh := mul_le_mul_of_nonneg_left hextra (Real.rpow_nonneg hT₀pos.le p)

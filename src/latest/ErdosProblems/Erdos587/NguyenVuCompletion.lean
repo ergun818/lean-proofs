@@ -913,7 +913,7 @@ first-coordinate smoothing width.  In the source notation this is the
 elementary estimate `L₀ L₁ ≪ q₂ log q₂`. -/
 lemma canonical_balanced_cutoff_mul_side_le
     {b L₁ Hx : ℕ}
-    (hb : 0 < b) (hside : 16 ≤ L₁) (hHx : Hx = L₁ / 8)
+    (_hb : 0 < b) (hside : 16 ≤ L₁) (hHx : Hx = L₁ / 8)
     (hproper : L₁ < b) :
     nvBalancedCutoff b Hx * L₁ ≤
       32 * b * nvBalancedMoment b := by
@@ -1114,7 +1114,7 @@ theorem configured_rank_two_section8_second_axis
     (hAN : A ⊆ Finset.Icc 1 N)
     (hlarge : nvOneStepLoss N₀ * nvBinaryLogScale N < A.card)
     (hq₁ : 0 < q₁) (hq₂ : 0 < q₂)
-    (hL₁pos : 0 < L₁) (hL₂pos : 0 < L₂)
+    (_hL₁pos : 0 < L₁) (hL₂pos : 0 < L₂)
     (hfamily : ∀ u ∈ B.subsetSum, ∀ x ≤ L₁, ∀ y ≤ L₂,
       r + u + q₁ * x + q₂ * y ∈ A.subsetSum)
     (hq₁step : (q₁ : ℤ) = R.positiveForm.step
@@ -1278,7 +1278,7 @@ theorem configured_rank_two_section8_first_axis
     (hAN : A ⊆ Finset.Icc 1 N)
     (hlarge : nvOneStepLoss N₀ * nvBinaryLogScale N < A.card)
     (hq₁ : 0 < q₁) (hq₂ : 0 < q₂)
-    (hL₁pos : 0 < L₁) (hL₂pos : 0 < L₂)
+    (hL₁pos : 0 < L₁) (_hL₂pos : 0 < L₂)
     (hfamily : ∀ u ∈ B.subsetSum, ∀ x ≤ L₁, ∀ y ≤ L₂,
       r + u + q₁ * x + q₂ * y ∈ A.subsetSum)
     (hq₁step : (q₁ : ℤ) = R.positiveForm.step
@@ -1504,8 +1504,8 @@ theorem configured_rank_two_terminal_of_balanced_locator
   have hzero : 0 ∈ B.subsetSum := by simp
   have hspan : q₁ * L₁ + q₂ * L₂ ≤ A.card * N := by
     apply natGAP_two_span_le_of_subsetSum_bound hsumBound
-    intro x hx y hy
-    simpa only [Nat.add_zero] using hfamily 0 hzero x hx y hy
+    · intro x hx y hy
+      simpa only [Nat.add_zero] using hfamily 0 hzero x hx y hy
   let X := nvCubicScale N₀ * nvInitialPolylog N₀
   by_cases hL₁small : L₁ < X
   · exact configured_rank_two_section8_second_axis (hrank := hrank)
@@ -1647,7 +1647,7 @@ theorem configured_nguyen_vu_one_step_of_balanced_rank_two_locator
     (Finset.add_subset_add_left hcastSub).trans hcontain
   have hcoverB : natToIntFinset B ⊆
       Z + iteratedDifference ((d + 2) + 1) R.carrier := by
-    convert hcover using 1 <;> omega
+    convert hcover using 1
   have hn : d + 2 ≤ freimanRank (64 ^ 2) + 2 := by omega
   have hLossA : nvOneStepLoss N₀ < A.card := by
     calc

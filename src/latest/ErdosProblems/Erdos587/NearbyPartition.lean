@@ -172,7 +172,8 @@ theorem exists_nearby_large_frequency_sum_bound (j : ℕ) (f : 𝓢(ℝ, ℂ)) :
     have hlogR : 0 ≤ Real.log (35 * (2 : ℝ) ^ k) := Real.log_nonneg (by nlinarith)
     have hlog : Real.log (35 * (2 : ℝ) ^ k) ≤ Real.log (35 * (M : ℝ)) :=
       Real.log_le_log (by positivity) (by linarith)
-    have hh := hblock a u v M M₀ Y hu hv hY ha huv hav L hL hcutoff hYv hglobal hsize d hd (2 ^ k) hR
+    have hh := hblock a u v M M₀ Y hu hv hY ha huv hav L hL hcutoff hYv hglobal hsize d hd (2 ^
+      k) hR
     have hh' : (∑ r ∈ nearbyHighBlock (u / d) v M M₀ d (2 ^ k) L,
         ‖nearbyQuadraticRemainder f u (d * r) v (a : ℤ) L‖) ≤
           C * (2 : ℝ) ^ k * Real.sqrt L * Real.log (35 * (2 : ℝ) ^ k) ^ O := by

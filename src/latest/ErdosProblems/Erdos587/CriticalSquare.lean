@@ -90,7 +90,8 @@ theorem exists_critical_square_of_main_budgets (C₀ c₀ : ℝ) (hC₀ : 0 < C�
       _ < _ := hprod
   have herrT := herr f hfF a b u v H t hu hv hH hHv hab hb huv hu0 hu1 hv0 hv1 hH0 huH
   have hcount := ne_zero_of_norm_sub_lt_re (herrT.trans_lt (hdominates.trans_le hmainT))
-  apply positive_square_of_supported_count f physicalSquareWeight hv hH hab t (Real.sqrt T) _ _ hcount
+  apply positive_square_of_supported_count f physicalSquareWeight hv hH hab t (Real.sqrt T) _ _
+    hcount
   · intro x hx
     obtain ⟨hlo, hhi⟩ := physicalSquareWeight_support hx
     exact ⟨by linarith, hhi.le⟩

@@ -120,8 +120,8 @@ theorem lattice_box_natural_proper {g u v t H J : ℕ} {p q z : ℤ × ℤ} {ell
   obtain ⟨_, _, hwx₁, hwy₁⟩ := natural_coordinates_of_central_quarter (hbox x₁ hx₁ y₁ hy₁)
   obtain ⟨_, _, hwx₂, hwy₂⟩ := natural_coordinates_of_central_quarter (hbox x₂ hx₂ y₂ hy₂)
   apply positiveLatticeBoxPoint_injective hdet ell₁ ell₂
-  ext
-  · rw [← hwx₁, ← hwx₂, hX]
-  · rw [← hwy₁, ← hwy₂, hY]
+  · ext
+    · rw [← hwx₁, ← hwx₂, hX]
+    · rw [← hwy₁, ← hwy₂, hY]
 
 end Erdos587

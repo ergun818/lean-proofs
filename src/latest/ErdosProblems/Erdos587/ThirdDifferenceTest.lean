@@ -129,7 +129,8 @@ theorem short_shift_third_difference_bound (f : ℕ → ℝ) {N K : ℕ}
   simp only [Nat.add_assoc] at hweyl
   have hbase : (K : ℝ) ^ 2 * ‖∑ n ∈ Finset.range N, phase (f n)‖ ^ 2 ≤
       2 * N * ((K : ℝ) * N + 2 * K *
-        (10 * C * ((N : ℝ) * Real.sqrt lam * K * Real.sqrt K + 2 * Real.sqrt K / Real.sqrt lam))) := by
+        (10 * C * ((N : ℝ) * Real.sqrt lam * K * Real.sqrt K + 2 * Real.sqrt K / Real.sqrt
+          lam))) := by
     apply hweyl.trans
     gcongr
   have hrootquot : Real.sqrt (K : ℝ) / K = 1 / Real.sqrt (K : ℝ) := by

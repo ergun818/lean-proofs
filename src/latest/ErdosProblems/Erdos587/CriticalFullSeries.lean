@@ -62,7 +62,8 @@ theorem exists_critical_full_positive_mean_bound (f g : 𝓢(ℝ, ℂ))
     simpa only [one_mul, pow_zero, mul_one] using hNhi
   have hprefix := hmeanT a u v H M N hu hv hH hM hMN ha huv hav hu0 hu1 hv0 hv1 hH0 huH
     hrM hNbound σ W hσ hW.le hσlo hσhi w (fun m hm => hdecay σ hσ m)
-  have hprefix' : (∑ n ∈ Finset.range N, F n) ≤ C * W * Real.sqrt (Real.sqrt T) * (1 + Real.log T) ^ O := by
+  have hprefix' : (∑ n ∈ Finset.range N, F n) ≤
+      C * W * Real.sqrt (Real.sqrt T) * (1 + Real.log T) ^ O := by
     rw [show (∑ n ∈ Finset.range N, F n) = ∑ m ∈ Finset.Icc 1 N, ‖w m * R m‖ from
       sum_range_succ_eq_sum_Icc (fun m => ‖w m * R m‖) N]
     exact hprefix

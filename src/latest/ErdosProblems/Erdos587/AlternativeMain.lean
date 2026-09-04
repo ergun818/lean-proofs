@@ -67,7 +67,8 @@ lemma alternative_frequency_factor (f g : 𝓢(ℝ, ℂ))
       ((phase (-(m : ℝ) * a * t / v) * quadraticResiduePhase u (m * b) (r : ℕ)) *
         nearbyQuadraticIntegral f u m v L)) =
       (scaledFourierCoeff g σ m * phase (-(m : ℝ) * a * t / v)) *
-        ((∑ r : Fin u, quadraticResiduePhase u (m * b) (r : ℕ)) * nearbyQuadraticIntegral f u m v L) := by
+        ((∑ r : Fin u, quadraticResiduePhase u (m * b) (r : ℕ)) * nearbyQuadraticIntegral f u m
+          v L) := by
     rw [Finset.sum_mul, Finset.mul_sum]
     apply Finset.sum_congr rfl
     intro r hr

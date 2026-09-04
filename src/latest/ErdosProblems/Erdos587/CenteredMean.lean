@@ -29,7 +29,8 @@ lemma sum_norm_centeredQuadraticInterval_sq_le_majorants (a q M L : ℕ) (hq : 0
     · apply mul_le_mul_of_nonneg_left _ (by norm_num)
       apply Finset.sum_le_sum_of_subset_of_nonneg
       · intro h hh
-        exact Finset.mem_Icc.mpr ⟨(Finset.mem_Icc.mp hh).1, (Finset.mem_Icc.mp hh).2.trans (hl m hm)⟩
+        exact Finset.mem_Icc.mpr ⟨(Finset.mem_Icc.mp hh).1, (Finset.mem_Icc.mp hh).2.trans (hl m
+          hm)⟩
       · intro h hh hnot
         exact rationalMajorant_nonneg _ _ _ _
   apply (Finset.sum_le_sum hpoint).trans_eq

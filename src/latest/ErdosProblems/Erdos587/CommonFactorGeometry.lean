@@ -31,7 +31,8 @@ theorem exists_primitive_subrectangle {g u v t H J T : ℕ} {C : ℝ}
   have hwidths := P.widths_lower_of_short_side hTR hshort
   refine ⟨P.base, P.firstStep, P.secondStep, P.firstWidth, P.secondWidth, P.maximum,
     hsteps.1, hsteps.2, P.firstWidth_pos, P.secondWidth_pos, P.coprime_steps,
-    rfl, P.proper hproper, P.image, hmaximum.1, hmaximum.2, ?_, P.volume_lower, hwidths.1, hwidths.2⟩
+    rfl, P.proper hproper, P.image, hmaximum.1, hmaximum.2, ?_, P.volume_lower, hwidths.1,
+      hwidths.2⟩
   apply P.span_control hC
   rwa [← hTcast]
 

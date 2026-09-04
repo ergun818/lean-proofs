@@ -70,8 +70,10 @@ theorem exists_critical_full_signed_mean_bound (f g : 𝓢(ℝ, ℂ))
     _ ≤ C₁ * Real.sqrt (Real.sqrt T) * (1 + Real.log T) ^ max O₁ O₂ +
         C₂ * Real.sqrt (Real.sqrt T) * (1 + Real.log T) ^ max O₁ O₂ := by
       apply add_le_add
-      · exact mul_le_mul_of_nonneg_left (pow_le_pow_right₀ hlog1 (le_max_left O₁ O₂)) (by positivity)
-      · exact mul_le_mul_of_nonneg_left (pow_le_pow_right₀ hlog1 (le_max_right O₁ O₂)) (by positivity)
+      · exact mul_le_mul_of_nonneg_left
+          (pow_le_pow_right₀ hlog1 (le_max_left O₁ O₂)) (by positivity)
+      · exact mul_le_mul_of_nonneg_left
+          (pow_le_pow_right₀ hlog1 (le_max_right O₁ O₂)) (by positivity)
     _ = _ := by ring
 
 end Erdos587

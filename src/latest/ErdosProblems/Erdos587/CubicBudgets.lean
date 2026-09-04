@@ -5,7 +5,7 @@ import ErdosProblems.Erdos587.QuarticBudgets
 namespace Erdos587
 
 theorem terminal_budgets_of_cubic_surplus {H N S F D E Λ : ℝ} (B : ℕ)
-    (hH : 0 ≤ H) (hN : 0 ≤ N) (hS : 0 ≤ S) (hF : 0 ≤ F)
+    (hH : 0 ≤ H) (hN : 0 ≤ N) (hS : 0 ≤ S) (_hF : 0 ≤ F)
     (hD : 1 ≤ D) (hΛ : 1 ≤ Λ)
     (hEside : F ^ 4 * S ≤ E) (hEone : 16 * D ^ 2 * S ≤ E)
     (hlarge : E * N * Λ ^ (4 * B) ≤ H ^ 3) :

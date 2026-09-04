@@ -665,7 +665,6 @@ lemma normalize_square_base_mod
   rw [Int.modEq_iff_dvd] at hrmod
   obtain ⟨t₁, ht₁⟩ := hrmod
   refine ⟨z₁, hz₁, -t₁, ?_⟩
-  push_cast at ht₁ ⊢
   linear_combination -ht₁
 
 /-- Rank-one terminal trichotomy.  The bounded translate cover supplies the
@@ -675,11 +674,11 @@ If adjustment succeeds, the elementary next-square estimate gives a genuine
 a proper divisor of the progression step. -/
 theorem rank_one_square_or_common_divisor
     {A B : Finset ℕ} {N p r q L n C : ℕ}
-    {R : GeneralizedAP} {t : ℤ} {Z : Finset ℤ}
+    {R : GeneralizedAP} {_t : ℤ} {Z : Finset ℤ}
     (hp : 0 < p) (hq : 0 < q)
-    (hAN : A ⊆ Finset.Icc 1 N) (hBA : B ⊆ A)
-    (hR : R.Proper) (hrank : R.rank = 1)
-    (hside : ∀ i : Fin R.rank, 0 < R.length i)
+    (hAN : A ⊆ Finset.Icc 1 N) (_hBA : B ⊆ A)
+    (_hR : R.Proper) (hrank : R.rank = 1)
+    (_hside : ∀ i : Fin R.rank, 0 < R.length i)
     (hqstep : (q : ℤ) = R.positiveForm.step
       ⟨0, by simp [GeneralizedAP.rank_positiveForm, hrank]⟩)
     (hfamily : ∀ u ∈ B.subsetSum,
@@ -885,8 +884,8 @@ theorem rank_two_square_or_common_divisor_of_locator
     {A B : Finset ℕ} {p r q₁ q₂ L₁ L₂ n C : ℕ}
     {R : GeneralizedAP} {Z : Finset ℤ}
     (hp : 0 < p) (hq₁ : 0 < q₁) (hq₂ : 0 < q₂)
-    (hR : R.Proper) (hrank : R.rank = 2)
-    (hside : ∀ i : Fin R.rank, 0 < R.length i)
+    (_hR : R.Proper) (hrank : R.rank = 2)
+    (_hside : ∀ i : Fin R.rank, 0 < R.length i)
     (hq₁step : (q₁ : ℤ) = R.positiveForm.step
       ⟨0, by simp [GeneralizedAP.rank_positiveForm, hrank]⟩)
     (hq₂step : (q₂ : ℤ) = R.positiveForm.step
@@ -1361,7 +1360,7 @@ the rectangle.  This geometric fact is shared by the reduced-period and
 finite-smoothing branches. -/
 lemma rank_two_quadratic_strip_of_endpoint_bounds
     {p q₁ q₂ L₁ L₂ z₀ X Hx Z L : ℕ} {t : ℤ}
-    (hxside : X + Hx ≤ L₁)
+    (_hxside : X + Hx ≤ L₁)
     (hleft : ((q₁ / q₁.gcd q₂) * (X + Hx) : ℕ) + t ≤
       (p * q₁.gcd q₂ : ℕ) * (Z : ℤ) ^ 2 +
         (2 * p * z₀ : ℕ) * Z)
@@ -1727,7 +1726,7 @@ theorem exists_rank_two_congruence_reduced_period :
       let u : (ZMod b)ˣ := ZMod.unitOfCoprime a hcop
       let A : ℕ := (((u⁻¹ : (ZMod b)ˣ) : ZMod b) * a₀).val
       let B : ℕ := (((u⁻¹ : (ZMod b)ˣ) : ZMod b) * b₀).val
-      let C : ℕ := (((u⁻¹ : (ZMod b)ˣ) : ZMod b) * (-(t : ZMod b))).val
+      let _C : ℕ := (((u⁻¹ : (ZMod b)ˣ) : ZMod b) * (-(t : ZMod b))).val
       let r := (A.gcd B).gcd b
       let b' := b / r
       b' ≤ Hz + 1 →
@@ -2135,7 +2134,6 @@ theorem canonical_balanced_parameters
     have hMpos : (0 : ℝ) < M + 1 := by positivity
     have htwo : (0 : ℝ) < 2 := by norm_num
     apply (div_lt_div_iff₀ (mul_pos htwo hMpos) htwo).2
-    push_cast at hMUreal ⊢
     nlinarith
   have hratioNonneg : 0 ≤ (q : ℝ) / (2 * (M + 1)) := by positivity
   have hUp : 0 < (U : ℝ) / 2 := by positivity
@@ -2383,7 +2381,7 @@ left endpoint has been chosen, only the *increment* of the quadratic across
 the rectangle must fit in the second GAP direction. -/
 theorem rankTwoBalancedEndpointData_of_relative_capacity
     {p q₁ q₂ L₁ L₂ z₀ X Hx L U k M r u : ℕ} {t : ℤ}
-    (hp : 0 < p) (hq₁ : 0 < q₁) (hq₂ : 0 < q₂)
+    (hp : 0 < p) (hq₁ : 0 < q₁) (_hq₂ : 0 < q₂)
     (hz₀ : z₀ < q₁.gcd q₂)
     (hbase : ((r + u : ℕ) : ℤ) =
       (p : ℤ) * (z₀ : ℤ) ^ 2 + t * (q₁.gcd q₂ : ℕ))
@@ -2475,7 +2473,7 @@ chooses the first admissible quadratic height and returns the two endpoint
 inequalities, without committing to either the period or smoothing branch. -/
 theorem rankTwoBalancedEndpointGeometry_of_relative_capacity
     {p q₁ q₂ L₂ z₀ X Hx L r u : ℕ} {t : ℤ}
-    (hp : 0 < p) (hq₁ : 0 < q₁) (hq₂ : 0 < q₂)
+    (hp : 0 < p) (hq₁ : 0 < q₁) (_hq₂ : 0 < q₂)
     (hz₀ : z₀ < q₁.gcd q₂)
     (hbase : ((r + u : ℕ) : ℤ) =
       (p : ℤ) * (z₀ : ℤ) ^ 2 + t * (q₁.gcd q₂ : ℕ))
@@ -2577,8 +2575,8 @@ This is the quantitative link between the translated quadratic rectangle and
 the original interval `[0,H]`. -/
 lemma canonical_rank_two_Z_le_ambient_sqrt
     {p q₁ q₂ L₁ L₂ z₀ X Hx r u H : ℕ} {t : ℤ}
-    (hp : 0 < p) (hq₁ : 0 < q₁) (hq₂ : 0 < q₂)
-    (hz₀ : z₀ < q₁.gcd q₂)
+    (hp : 0 < p) (hq₁ : 0 < q₁) (_hq₂ : 0 < q₂)
+    (_hz₀ : z₀ < q₁.gcd q₂)
     (hbase : ((r + u : ℕ) : ℤ) =
       (p : ℤ) * (z₀ : ℤ) ^ 2 + t * (q₁.gcd q₂ : ℕ))
     (hambient : r + u + q₁ * L₁ + q₂ * L₂ ≤ H)
@@ -2896,7 +2894,7 @@ theorem rankTwoBalancedEndpointData_of_canonical_parameters
 condition for the canonical balanced rectangle. -/
 theorem rankTwoBalancedEndpointData_of_ambient_capacity
     {p q₁ q₂ L₁ L₂ z₀ X Hx L U k M r u H : ℕ} {t : ℤ}
-    (hp : 0 < p) (hq₁ : 0 < q₁) (hq₂ : 0 < q₂)
+    (hp : 0 < p) (hq₁ : 0 < q₁) (_hq₂ : 0 < q₂)
     (hz₀ : z₀ < q₁.gcd q₂)
     (hbase : ((r + u : ℕ) : ℤ) =
       (p : ℤ) * (z₀ : ℤ) ^ 2 + t * (q₁.gcd q₂ : ℕ))
@@ -3316,7 +3314,7 @@ lemma gcd_mul_side_product_le_span_of_injective
     exact Nat.div_pos (Nat.le_of_dvd hq₂ (Nat.gcd_dvd_right q₁ q₂)) hg
   have halt : L₁ < b ∨ L₂ < a := by
     by_contra hnot
-    push_neg at hnot
+    push Not at hnot
     have hcollision :
         r + q₁ * b + q₂ * 0 = r + q₁ * 0 + q₂ * a := by
       rw [← hga, ← hgb]
@@ -3411,7 +3409,7 @@ lemma nvStoppedBudgetScaledCardFactor_pos (c : ℕ) (hc : 1 ≤ c) :
   have hstopped : 0 < nvStoppedRankReductionCardFactor c := by
     unfold nvStoppedRankReductionCardFactor
     dsimp
-    exact Nat.mul_pos (pow_pos huniform _) 
+    exact Nat.mul_pos (pow_pos huniform _)
       (GeneralizedAP.nvRankReductionFactor_pos _)
   unfold nvStoppedBudgetScaledCardFactor
   exact Nat.mul_pos hstopped
@@ -3542,7 +3540,7 @@ theorem rank_one_terminal_of_cubic_budget
       _ ≤ L ^ 2 := hBsq.le
   obtain ⟨hshort, hlong⟩ :=
     rank_one_location_bounds hp hq hLpos hqL hbig
-  rcases rank_one_square_or_common_divisor (t := t) hp hq hAN hBA hR hrank
+  rcases rank_one_square_or_common_divisor (_t := t) hp hq hAN hBA hR hrank
       hside hqstep hfamily hcover hZ hshort hlong with
     hsquare | ⟨d, E, hEB, hd, hdq, hcard, hdiv⟩
   · exact Or.inl hsquare
@@ -3601,8 +3599,8 @@ theorem rank_two_terminal_of_locator
   have hzero : 0 ∈ B.subsetSum := by simp
   have hspan : q₁ * L₁ + q₂ * L₂ ≤ A.card * N := by
     apply natGAP_two_span_le_of_subsetSum_bound hsumBound
-    intro x hx y hy
-    simpa only [Nat.add_zero] using hfamily 0 hzero x hx y hy
+    · intro x hx y hy
+      simpa only [Nat.add_zero] using hfamily 0 hzero x hx y hy
   have hL₁pos : 0 < L₁ := by simpa only [hL₁] using hside ⟨0, by omega⟩
   have hq₁H : q₁ ≤ A.card * N := by
     have : q₁ ≤ q₁ * L₁ := by
@@ -3704,7 +3702,7 @@ theorem has_pMultipleSquareSubsetSum_of_descent_step
 copy of `L`, while division by `d > 1` lowers the binary logarithm of the
 ambient interval by at least one. -/
 theorem has_pMultipleSquareSubsetSum_of_logarithmic_descent_step
-    {N₀ L : ℕ} (hL : 0 < L)
+    {N₀ L : ℕ} (_hL : 0 < L)
     (hstep : ∀ (p N : ℕ) (A : Finset ℕ),
       0 < p → p * N ≤ N₀ → A ⊆ Finset.Icc 1 N →
       L * (Nat.log 2 N + 1) < A.card →
@@ -4170,7 +4168,7 @@ lemma nv_initial_length_bookkeeping_le_loss (N : ℕ) :
     ring
   rw [hfour]
   simp only [nvInitialPolylog, nvOneStepLoss]
-  convert hraw using 1 <;> ring
+  convert hraw using 1; ring
 
 lemma two_pow_log_sixty_four_le_cubicScale (N : ℕ) :
     2 ^ Nat.log 64 N ≤ nvCubicScale N := by
@@ -4634,7 +4632,7 @@ lemma configured_rank_two_common_step_bound
   simpa only [C, S, M] using this
 
 lemma log_two_le_twice_binaryLogScale_of_le_square
-    {q N : ℕ} (hq : 0 < q) (hN : 0 < N) (hqN : q ≤ N ^ 2) :
+    {q N : ℕ} (hq : 0 < q) (_hN : 0 < N) (hqN : q ≤ N ^ 2) :
     Nat.log 2 q ≤ 2 * nvBinaryLogScale N := by
   have hNpow : N < 2 ^ nvBinaryLogScale N := by
     simpa only [nvBinaryLogScale] using
@@ -4825,7 +4823,7 @@ lemma configured_rank_one_terminal_dominance
     exact Nat.sqrt_pos.2 hprodPos
   have hrootSuccSq : (R + 1) ^ 2 ≤ 768 * h * S ^ 3 := by
     calc
-      (R + 1) ^ 2 ≤ (2 * R) ^ 2 := by gcongr <;> omega
+      (R + 1) ^ 2 ≤ (2 * R) ^ 2 := by gcongr; omega
       _ = 4 * R ^ 2 := by ring
       _ ≤ 4 * (a * N₀) := by gcongr
       _ ≤ 4 * ((3 * h) * (64 * S ^ 3)) := by gcongr
@@ -4969,7 +4967,7 @@ theorem configured_rank_one_terminal
       _ ≤ L ^ 2 := hBsq.le
   obtain ⟨hshort, hlong⟩ :=
     rank_one_location_bounds hp hq hLpos hqL hbig
-  rcases rank_one_square_or_common_divisor (t := t) hp hq hAN hBA hR hrank
+  rcases rank_one_square_or_common_divisor (_t := t) hp hq hAN hBA hR hrank
       hside hqstep hfamily hcover hZ hshort hlong with
     hsquare | ⟨d, D, hDB, hd, _hdq, hcard, hdiv⟩
   · exact Or.inl hsquare
@@ -5043,8 +5041,8 @@ theorem configured_rank_two_terminal_of_locator
   have hzero : 0 ∈ B.subsetSum := by simp
   have hspan : q₁ * L₁ + q₂ * L₂ ≤ A.card * N := by
     apply natGAP_two_span_le_of_subsetSum_bound hsumBound
-    intro x hx y hy
-    simpa only [Nat.add_zero] using hfamily 0 hzero x hx y hy
+    · intro x hx y hy
+      simpa only [Nat.add_zero] using hfamily 0 hzero x hx y hy
   have hgspan : q₁.gcd q₂ * L₁ * L₂ ≤ A.card * N :=
     (gcd_mul_side_product_le_span_of_injective hq₁ hq₂ hinj).trans hspan
   have hgW : q₁.gcd q₂ * ((A.card / 2) *
@@ -5232,7 +5230,7 @@ theorem configured_nguyen_vu_one_step_of_rank_two_locator
     (Finset.add_subset_add_left hcastSub).trans hcontain
   have hcoverB : natToIntFinset B ⊆
       Z + iteratedDifference ((d + 2) + 1) R.carrier := by
-    convert hcover using 1 <;> omega
+    convert hcover using 1
   have hLossA : nvOneStepLoss N₀ < A.card := by
     calc
       nvOneStepLoss N₀ = nvOneStepLoss N₀ * 1 := by simp

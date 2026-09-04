@@ -50,11 +50,11 @@ lemma critical_root_plateau_gaps {t U V L C : ℝ}
       (show t + U / 4 ≤ t + V / 8 + 5 * U / 32 by linarith)
       (show t + V / 8 + 5 * U / 32 ≤ L ^ 2 by linarith)
       (hscale _ _ hgap₁)
-    convert hh using 1 <;> ring
+    convert hh using 1; ring
   · have hh := sqrt_gap_of_square_gap hL (by positivity : 0 ≤ t + V / 2 + 7 * U / 32)
       (show t + V / 2 + 7 * U / 32 ≤ t + V by linarith)
       (show t + V ≤ L ^ 2 by linarith) (hscale _ _ hgap₂)
-    convert hh using 1 <;> ring
+    convert hh using 1; ring
 
 theorem exists_finite_critical_root_weights {C : ℝ} (hC : 0 < C) :
     ∃ F : Finset 𝓢(ℝ, ℂ),

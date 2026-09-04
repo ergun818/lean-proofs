@@ -59,8 +59,8 @@ lemma addTranslate_add (a b : G) (S : Finset G) :
   ext x
   simp only [mem_addTranslate]
   constructor <;> intro hx
-  · convert hx using 1 <;> abel
-  · convert hx using 1 <;> abel
+  · convert hx using 1; abel
+  · convert hx using 1; abel
 
 lemma addTranslate_union (a : G) (S T : Finset G) :
     addTranslate a (S ∪ T) = addTranslate a S ∪ addTranslate a T := by
@@ -148,9 +148,9 @@ lemma length_stable_add_length_growth (A : List G) :
   | cons a A ih =>
       by_cases h : addTranslate a (listSubsetSums A) = listSubsetSums A
       · simp only [subsetSumStableTerms, subsetSumGrowthTerms, h, if_pos,
-          ite_true, List.length_cons]
+          List.length_cons]
         omega
-      · simp only [subsetSumStableTerms, subsetSumGrowthTerms, h, if_neg,
+      · simp only [subsetSumStableTerms, subsetSumGrowthTerms, h,
           ite_false, List.length_cons]
         omega
 
@@ -184,9 +184,7 @@ lemma stable_append_growth_perm (A : List G) :
       · have hmove :
             (subsetSumStableTerms A ++ a :: subsetSumGrowthTerms A).Perm
               (a :: subsetSumStableTerms A ++ subsetSumGrowthTerms A) := by
-          simpa [List.append_assoc] using
-            (List.perm_append_comm (l₁ := subsetSumStableTerms A)
-              (l₂ := [a])).append_right (subsetSumGrowthTerms A)
+          simp
         simpa [subsetSumStableTerms, subsetSumGrowthTerms, h] using
           hmove.trans (ih.cons a)
 
@@ -201,10 +199,10 @@ lemma mem_stable_stabilizes_listSubsetSums {A : List G} {b : G}
       by_cases ha : addTranslate a (listSubsetSums A) = listSubsetSums A
       · simp only [subsetSumStableTerms, ha, if_pos, List.mem_cons] at hb
         rcases hb with rfl | hb
-        · simpa [listSubsetSums_cons, ha]
+        · simp [listSubsetSums_cons, ha]
         · have hbstab := ih hb
           simpa [listSubsetSums_cons, ha] using hbstab
-      · simp only [subsetSumStableTerms, ha, if_neg] at hb
+      · simp only [subsetSumStableTerms, ha] at hb
         have hbstab := ih hb
         rw [listSubsetSums_cons, addTranslate_union, hbstab,
           addTranslate_add, add_comm b a, ← addTranslate_add, hbstab]
@@ -234,7 +232,7 @@ lemma growth_length_add_one_le_card_listSubsetSums (A : List G) :
           have hlt := Finset.card_lt_card hproper
           simp only [listSubsetSums_cons]
           omega
-        simp only [subsetSumGrowthTerms, ha, if_neg, ite_false, List.length_cons]
+        simp only [subsetSumGrowthTerms, ha, ite_false, List.length_cons]
         omega
 
 /-- In a finite group, all but at most `|G|-1` list occurrences stabilize
@@ -374,7 +372,7 @@ lemma exists_sublist_sum_mod_eq_of_mem {q : ℕ} (hq : 0 < q) (A : List ℕ)
       (T.map fun a : ℕ => (a : ZMod q)).sum := by
     induction T with
     | nil => simp
-    | cons a T ih => simp [ih]
+    | cons a T ih => simp
   rw [hcastsum, ← hUT]
   exact hUsum
 
@@ -436,7 +434,7 @@ lemma exists_large_sublist_with_common_divisor_of_not_complete
     intro x _
     have hx := (finsetAddStabilizer S).nsmul_mem hone x.val
     have hval : x.val • (1 : ZMod q) = x := by
-      simpa using ZMod.natCast_zmod_val x
+      simp
     rwa [hval] at hx
   have hdgt : 1 < d := by omega
   have hsub := subsetSumStableTerms_sublist M

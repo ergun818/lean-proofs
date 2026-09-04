@@ -71,7 +71,8 @@ theorem exists_centered_quadratic_mean_of_power_margin (j : ℕ) :
   intro a q M L
   dsimp only
   intro ha hq hX hroot hmargin s l hl
-  obtain ⟨D, hD, hqX, hqD, hsize⟩ := centered_root_cutoff_conditions j (2 * M * L) q hX hroot hmargin
+  obtain ⟨D, hD, hqX, hqD, hsize⟩ := centered_root_cutoff_conditions j (2 * M * L) q hX hroot
+    hmargin
   exact hmean a q M L D ha hq hD hqX hqD hsize s l hl
 
 theorem exists_centered_quadratic_first_mean_of_power_margin (j : ℕ) :

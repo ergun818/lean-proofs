@@ -72,9 +72,7 @@ lemma det_bohrLatticeMatrix {N : ℕ} (Gamma : Finset (ZMod N)) (hN : 1 < N) :
     rw [Matrix.diagonal_apply]
     simp [Matrix.submatrix]
   rw [Matrix.det_succ_row_zero, Fin.sum_univ_succ]
-  simp only [bohrLatticeMatrix_zero_zero Gamma hN, Nat.cast_ofNat,
-    pow_zero, one_mul, bohrLatticeMatrix_zero_succ, zero_mul,
-    Finset.sum_const_zero, add_zero]
+  simp only [bohrLatticeMatrix_zero_zero Gamma hN, bohrLatticeMatrix_zero_succ]
   rw [hminor]
   rw [Matrix.det_diagonal]
   simp
@@ -132,7 +130,7 @@ lemma bohrLatticePoint_cast_coordinate {N : ℕ} [NeZero N]
   by_cases hi : i = 0
   · subst i
     simp
-  · simpa [mul_comm]
+  · simp [mul_comm]
 
 /-! ## Centred progressions in a finite cyclic group -/
 
@@ -229,8 +227,7 @@ lemma intCastVec_bohrCertificatePoint {N : ℕ} [NeZero N]
   rw [bohrCertificatePoint, intCastVec_bohrLatticePoint]
   rw [← bohrCertificateCoeff_spec Gamma hN R hR i]
   funext k
-  simp only [Matrix.mulVec, dotProduct, Finset.sum_apply, Pi.smul_apply,
-    Int.cast_smul_eq_zsmul, smul_eq_mul]
+  simp only [Matrix.mulVec, dotProduct, Finset.sum_apply, Pi.smul_apply]
   apply Finset.sum_congr rfl
   intro j hj
   rw [bohrLatticeBasis_apply]
@@ -257,7 +254,7 @@ lemma bohrCertificate_scale_pos {N : ℕ} [NeZero N]
     ext j
     have hlo := hm.1 j
     have hhi := hm.2 j
-    simp only [Pi.zero_apply, mul_zero, neg_zero] at hlo hhi
+    simp only [Pi.zero_apply, neg_zero] at hlo hhi
     exact le_antisymm hhi hlo
   exact C.independent.ne_zero i hpzero
 
@@ -441,7 +438,7 @@ theorem bohrCyclicProgression_proper {N : ℕ} [NeZero N]
       hv0cast, zero_mul]
   have hvabs (j : Fin (Gamma.card + 1)) : |(v j : ℝ)| ≤ R / 2 := by
     convert abs_intCast_bohrCertificateCombination_le Gamma hN R hR 2 u hu j
-      using 1 <;> norm_num <;> ring
+      using 1; norm_num; ring
   have hvzero : v = 0 := by
     funext j
     apply int_eq_zero_of_cast_zmod_eq_zero_of_abs_lt (hvcast j)

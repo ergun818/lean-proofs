@@ -108,7 +108,7 @@ lemma norm_nvQuadraticIntervalSum_eq
       rw [← abs_of_nonneg hs, ← hd]
     rw [hsabs]
     push_cast
-    congr 3 <;> ring
+    congr 3; ring
   · have hsabs : (s : ℤ) = -(d : ℤ) := by
       have habs := abs_of_nonpos hs
       rw [← hd] at habs
@@ -233,7 +233,7 @@ lemma sum_low_norm_nvQuadraticIntervalSum_le
 lemma norm_nvQuadraticIntervalSum_sq_le
     (q A B C X Z L : ℕ) [NeZero q] (h : ZMod q) :
     let r := A.gcd q
-    let A' := A / r
+    let _A' := A / r
     let q' := q / r
     let d := h.valMinAbs.natAbs
     ‖nvQuadraticIntervalSum q A B C X Z L h‖ ^ 2 ≤
@@ -329,7 +329,6 @@ lemma nvCyclicIntervalCoeff_eq_intervalFourierCoefficient
     constructor
     · omega
     · have hu' := u.isLt
-      push_cast
       omega
   · intro u hu v hv huv
     exact Fin.ext (by exact_mod_cast huv)
@@ -471,8 +470,8 @@ lemma card_nv_low_frequencies_le
 theorem exists_smoothed_quadratic_rectangle_of_low_sum
     {q A B C X Z L U k M : ℕ} {E : ℝ}
     [NeZero q] (hU : 0 < U) (hL : 0 < L)
-    (hMhalf : M ≤ q / 2)
-    (hE : 0 ≤ E)
+    (_hMhalf : M ≤ q / 2)
+    (_hE : 0 ≤ E)
     (hlow :
       (∑ h ∈ (Finset.univ.erase (0 : ZMod q)).filter
         (fun h ↦ h.valMinAbs.natAbs ≤ M),
@@ -685,7 +684,7 @@ theorem exists_smoothed_quadratic_rectangle
       _ ≤ (2 * M : ℕ) * E := by
         gcongr
         exact_mod_cast card_nv_low_frequencies_le q M hMhalf
-  · convert hdom using 1 <;> push_cast <;> ring
+  · convert hdom using 1; push_cast; ring
 
 /-- The finite smoothing criterion with its low-frequency input discharged by the
 correct reduced-denominator quadratic Weyl estimate. -/

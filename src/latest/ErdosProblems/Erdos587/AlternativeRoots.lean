@@ -50,7 +50,8 @@ theorem selected_roots_le_periodized_weight (g : 𝓢(ℝ, ℂ))
   let S := Y.filter (fun y : ℕ => r ^ 2 ≡ (t : ℤ) + v * (y : ℤ) [ZMOD u])
   have hex (y : ℕ) : ∃ k : ℤ, y ∈ S → (y : ℤ) + b * (r ^ 2 - t) + u * k = 0 := by
     by_cases hy : y ∈ S
-    · obtain ⟨k, hk⟩ := exists_period_index_of_square_congruence hab t y r (Finset.mem_filter.mp hy).2
+    · obtain ⟨k, hk⟩ := exists_period_index_of_square_congruence hab t y r (Finset.mem_filter.mp
+        hy).2
       exact ⟨k, fun _ => hk⟩
     · exact ⟨0, fun h => (hy h).elim⟩
   choose k hk using hex

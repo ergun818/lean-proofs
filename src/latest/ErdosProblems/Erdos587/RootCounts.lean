@@ -86,10 +86,11 @@ lemma two_le_squareRootCount_of_unit_square {q n : ℕ} [NeZero q]
   exact Fintype.one_lt_card_iff.mpr
     ⟨⟨z, hzsq⟩, ⟨-z, hzneg⟩, fun heq => hne (congrArg Subtype.val heq)⟩
 
-lemma squareRootCount_prod {ι : Type*} [DecidableEq ι] (s : Finset ι)
+lemma squareRootCount_prod {ι : Type*} (s : Finset ι)
     (m : ι → ℕ) (a : ℕ) (hpos : ∀ i ∈ s, 0 < m i)
     (hpair : Set.Pairwise (s : Set ι) fun i j => (m i).Coprime (m j)) :
     squareRootCount (∏ i ∈ s, m i) a = ∏ i ∈ s, squareRootCount (m i) a := by
+  classical
   induction s using Finset.induction_on with
   | empty => simp only [Finset.prod_empty, squareRootCount_one]
   | @insert i s hi ih =>

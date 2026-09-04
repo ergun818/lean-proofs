@@ -31,7 +31,7 @@ lemma primitive_width_density_budget {q H J T Λ : ℝ} {B : ℕ}
   simpa only [mul_pow, Real.sq_sqrt hq] using hsq
 
 lemma primitive_width_cutoff_budget {q H J T Λ : ℝ} {B : ℕ}
-    (hq : 0 ≤ q) (hH : 0 ≤ H) (hJ : 0 < J) (hT : 0 < T) (hΛ : 8 ≤ Λ)
+    (_hq : 0 ≤ q) (_hH : 0 ≤ H) (hJ : 0 < J) (hT : 0 < T) (hΛ : 8 ≤ Λ)
     (hspan : q * J ≤ T)
     (hprod : T ^ (3 / 4 : ℝ) * Λ ^ (B + 1) ≤ H * J) :
     q * Λ ^ B ≤ (H / 8) * T ^ (1 / 4 : ℝ) := by

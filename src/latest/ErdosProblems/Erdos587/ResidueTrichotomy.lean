@@ -190,7 +190,7 @@ lemma positiveIntResidue_modEq {q : ℕ} (hq : 0 < q) (z : ℤ) :
   change (positiveIntResidue q z : ℤ) % (q : ℤ) = z % (q : ℤ)
   unfold positiveIntResidue
   by_cases hz : z % (q : ℤ) = 0
-  · simp [hz, hq.ne']
+  · simp [hz]
   · simp only [hz, ↓reduceIte]
     have hnonneg : 0 ≤ z % (q : ℤ) :=
       Int.emod_nonneg _ (by exact_mod_cast hq.ne')
@@ -522,7 +522,7 @@ lemma iteratedDifference_rank_two_exists_first_coordinate
       · rw [abs_le]
         constructor <;> norm_num at * <;> omega
       · have := hax.sub hby
-        convert this using 1 <;> ring
+        convert this using 1; ring
   | succ n ih =>
       intro z hz
       obtain ⟨a, ha, b, hb, rfl⟩ := Finset.mem_sub.mp hz
@@ -538,7 +538,7 @@ lemma iteratedDifference_rank_two_exists_first_coordinate
             norm_num
             rw [pow_succ]
             ring
-      · convert hax.sub hby using 1 <;> ring
+      · convert hax.sub hby using 1; ring
 
 /-- The preceding coordinate interval gives a linear, rather than
 exponential-in-the-side-length, residue bound for iterated differences. -/
@@ -621,7 +621,7 @@ lemma carrier_modEq_second_coordinate_rank_two
   rw [heval]
   have hmod := hzero.add (Int.ModEq.refl
     (S.base + ((v i₁ : ℕ) : ℤ) * S.step i₁))
-  convert hmod using 1 <;> simp [S, i₁] <;> ring
+  convert hmod using 1 <;> simp [S, i₁]; ring
 
 lemma iteratedDifference_rank_two_exists_second_coordinate
     (R : GeneralizedAP) (hrank : R.rank = 2) {q : ℕ}
@@ -646,7 +646,7 @@ lemma iteratedDifference_rank_two_exists_second_coordinate
       · rw [abs_le]
         constructor <;> norm_num at * <;> omega
       · have := hax.sub hby
-        convert this using 1 <;> ring
+        convert this using 1; ring
   | succ n ih =>
       intro z hz
       obtain ⟨a, ha, b, hb, rfl⟩ := Finset.mem_sub.mp hz
@@ -662,7 +662,7 @@ lemma iteratedDifference_rank_two_exists_second_coordinate
             norm_num
             rw [pow_succ]
             ring
-      · convert hax.sub hby using 1 <;> ring
+      · convert hax.sub hby using 1; ring
 
 lemma intResidues_iteratedDifference_rank_two_first_step_card_le
     (R : GeneralizedAP) (hrank : R.rank = 2) {q n : ℕ}
@@ -753,7 +753,7 @@ lemma usedPositiveResidues_card_le_of_iteratedDifference_cover
     have hmod : (a : ℤ) ≡ z [ZMOD (q : ℤ)] := by
       rw [Int.modEq_iff_dvd]
       have : (q : ℤ) ∣ -y := dvd_neg.mpr hdy
-      convert this using 1 <;> omega
+      convert this using 1; omega
     apply Finset.mem_image.mpr
     exact ⟨z, hz,
       (positiveResidue_eq_positiveIntResidue_of_modEq hq hmod).symm⟩
@@ -774,7 +774,7 @@ lemma usedPositiveResidues_card_le_rank_one
     (usedPositiveResidues q A).card ≤ Z.card := by
   apply usedPositiveResidues_card_le_of_iteratedDifference_cover R hq
   · intro i
-    have hi : i = ⟨0, by simpa [hrank] using i.isLt⟩ := by
+    have hi : i = ⟨0, by simp [hrank]⟩ := by
       apply Fin.ext
       omega
     subst i
@@ -788,7 +788,7 @@ lemma usedPositiveResidues_card_le_rank_one
 lemma usedPositiveResidues_card_le_rank_two
     {q₁ q₂ n : ℕ} {A : Finset ℕ} {Z : Finset ℤ}
     (R : GeneralizedAP) (hrank : R.rank = 2)
-    (hq₁ : 0 < q₁) (hq₂ : 0 < q₂)
+    (hq₁ : 0 < q₁) (_hq₂ : 0 < q₂)
     (hq₁step : (q₁ : ℤ) = R.positiveForm.step
       ⟨0, by simp [GeneralizedAP.rank_positiveForm, hrank]⟩)
     (hq₂step : (q₂ : ℤ) = R.positiveForm.step

@@ -11,7 +11,7 @@ open scoped BigOperators
 
 namespace Erdos587.CFP
 
-variable {α G H : Type*} [DecidableEq α] [AddCommGroup G] [DecidableEq G]
+variable {α G H : Type*} [AddCommGroup G] [DecidableEq G]
 
 theorem listSubsetSums_growthTerms_eq (A : List G) :
     listSubsetSums (subsetSumGrowthTerms A) = listSubsetSums A := by
@@ -22,6 +22,7 @@ theorem listSubsetSums_growthTerms_eq (A : List G) :
     · simp [subsetSumGrowthTerms, ha, ih, listSubsetSums_cons]
     · simp [subsetSumGrowthTerms, ha, ih, listSubsetSums_cons]
 
+omit [DecidableEq G] in
 theorem generatedSubgroup_comp [AddCommGroup H] (ψ : G →+ H) (φ : α → G) (A : Finset α) :
     generatedSubgroup (fun a => ψ (φ a)) A = (generatedSubgroup φ A).map ψ := by
   rw [generatedSubgroup, generatedSubgroup, ψ.map_closure, Set.image_image]
@@ -34,6 +35,7 @@ theorem mem_listSubsetSums_of_stable_generators [Fintype G]
       generatedSubgroup φ D = generatedSubgroup φ A)
     {x : G} (hx : x ∈ generatedSubgroup φ A) :
     x ∈ listSubsetSums (A.toList.map φ) := by
+  classical
   let s := A.toList.map φ
   obtain ⟨U, hUA, hUmap⟩ := List.sublist_map_iff.mp (subsetSumStableTerms_sublist s)
   have hUnodup : U.Nodup := A.nodup_toList.sublist hUA
@@ -70,6 +72,7 @@ theorem exists_small_subset_of_mem_listSubsetSums [Fintype G]
     (φ : α → G) (A : Finset α) {x : G}
     (hx : x ∈ listSubsetSums (A.toList.map φ)) :
     ∃ B ⊆ A, B.card + 1 ≤ Fintype.card G ∧ ∑ a ∈ B, φ a = x := by
+  classical
   let s := A.toList.map φ
   have hx' : x ∈ listSubsetSums (subsetSumGrowthTerms s) := by
     rw [listSubsetSums_growthTerms_eq]
@@ -92,15 +95,18 @@ theorem exists_small_subset_of_mem_listSubsetSums [Fintype G]
   rw [List.sum_toFinset φ hUnodup, ← hUmap]
   exact hsum
 
+omit [DecidableEq G] in
 theorem exists_small_subset_sum_of_stable_generators [Fintype G]
     (φ : α → G) (A : Finset α) (r : ℕ) (hsize : Fintype.card G ≤ r + 1)
     (hstable : ∀ D ⊆ A, A.card ≤ D.card + r →
       generatedSubgroup φ D = generatedSubgroup φ A)
     {x : G} (hx : x ∈ generatedSubgroup φ A) :
-    ∃ B ⊆ A, B.card + 1 ≤ Fintype.card G ∧ ∑ a ∈ B, φ a = x :=
-  exists_small_subset_of_mem_listSubsetSums φ A
+    ∃ B ⊆ A, B.card + 1 ≤ Fintype.card G ∧ ∑ a ∈ B, φ a = x := by
+  classical
+  exact exists_small_subset_of_mem_listSubsetSums φ A
     (mem_listSubsetSums_of_stable_generators φ A r hsize hstable hx)
 
+omit [DecidableEq G] in
 /-- Finite-index residue adjustment using actual distinct available indices. -/
 theorem exists_small_subset_sum_mod_subgroup
     (φ : α → G) (A : Finset α) (Δ : AddSubgroup G) [Δ.FiniteIndex]

@@ -16,7 +16,8 @@ lemma phaseIncrement_twice_neg (f : ℕ → ℝ) (n : ℕ) :
   rw [heq, phaseIncrement_neg]
 
 lemma phaseIncrement_sub_shift (f : ℕ → ℝ) (r n : ℕ) :
-    phaseIncrement (fun n => f (n + r) - f n) n = phaseIncrement f (n + r) - phaseIncrement f n := by
+    phaseIncrement (fun n => f (n + r) - f n) n =
+      phaseIncrement f (n + r) - phaseIncrement f n := by
   change (f (n + 1 + r) - f (n + 1)) - (f (n + r) - f n) =
     (f (n + r + 1) - f (n + r)) - (f (n + 1) - f n)
   rw [show n + 1 + r = n + r + 1 by omega]

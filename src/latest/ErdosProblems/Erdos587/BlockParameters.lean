@@ -59,7 +59,7 @@ lemma nearbyBlockWidth_profile_scale {R r v : ℕ} {L : ℝ}
     nlinarith
 
 theorem nearbyBlockWidth_global_conditions (j u v M Y d q R : ℕ) {L : ℝ}
-    (hd : 0 < d) (hq : 0 < q) (hv : 0 < v) (hY : 1 ≤ Y) (hL : 0 < L)
+    (hd : 0 < d) (_hq : 0 < q) (hv : 0 < v) (hY : 1 ≤ Y) (hL : 0 < L)
     (hdq : d * q = u) (hdR : d * R ≤ M)
     (hwidth : 2 ≤ (R : ℝ) * L / v)
     (hYv : 4 * (Y : ℝ) * L ≤ v) (hglobal : 64 * (M : ℝ) * L ≤ u * v)

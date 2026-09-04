@@ -114,7 +114,8 @@ theorem poisson_nearby_reciprocal_series (f : 𝓢(ℝ, ℂ)) {q r v : ℕ}
   let F : ℤ → ℂ := fun k => (q : ℂ)⁻¹ * completeQuadraticGaussSum q ((r : ℤ) * b) k *
     𝓕 g ((k : ℝ) / q)
   have hF : Summable F := by
-    simpa only [F, mul_assoc] using (summable_gauss_fourier_lattice g hq ((r : ℤ) * b)).mul_left (q : ℂ)⁻¹
+    simpa only [F, mul_assoc] using
+      (summable_gauss_fourier_lattice g hq ((r : ℤ) * b)).mul_left (q : ℂ)⁻¹
   have hpoisson : (∑' z : ℤ, quadraticResiduePhase q ((r : ℤ) * b) z * g z) = ∑' k, F k := by
     rw [poisson_quadratic_weight g hq]
     simp only [F, mul_assoc, tsum_mul_left]

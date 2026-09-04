@@ -37,7 +37,8 @@ theorem exists_primitive_terminal (C : ℝ) (hC : 0 < C) :
   · have hJupper := (lt_of_not_ge hJwide).le
     by_cases huLarge : (T : ℝ) ^ (1 / 16 : ℝ) ≤ u
     · apply hcritical t u v H J T hTc hu hv hH
-        (first_side_lt_step_of_proper hv horient hproper).le huv hambient horient hspan huLarge hJupper
+        (first_side_lt_step_of_proper hv horient hproper).le huv hambient horient hspan huLarge
+          hJupper
       · exact (mul_le_mul_of_nonneg_left hpowc (Real.rpow_nonneg (by positivity) _)).trans hsideJ
       · exact (mul_le_mul_of_nonneg_left hpowc (Real.rpow_nonneg (by positivity) _)).trans hprod
     · have hpow1 : 1 ≤ (1 + Real.log T) ^ max B₁ B₂ := one_le_pow₀ hΛ1
@@ -63,7 +64,8 @@ theorem exists_primitive_terminal_unoriented (C : ℝ) (hC : 0 < C) :
   refine ⟨B, hB, T₀, ?_⟩
   intro t u v H J T hbig hu hv hH hJ huv hambient hspan hproper hsideH hsideJ hprod
   by_cases horient : u * H ≤ v * J
-  · exact hterminal t u v H J T hbig hu hv hH hJ huv hambient horient hspan hproper hsideH hsideJ hprod
+  · exact hterminal t u v H J T hbig hu hv hH hJ huv hambient horient hspan hproper hsideH
+      hsideJ hprod
   · have hambient' : t + v * J + u * H ≤ T := by
       simpa only [Nat.add_assoc, Nat.add_comm (v * J) (u * H)] using hambient
     have hspan' : (T : ℝ) ≤ C * ((v * J + u * H : ℕ) : ℝ) := by

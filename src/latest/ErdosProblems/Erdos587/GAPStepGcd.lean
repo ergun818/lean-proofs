@@ -54,7 +54,7 @@ theorem stepGcd_dvd_of_carrier_subset (P Q : GeneralizedAP)
   have h₀ := Q.stepGcd_dvd_sub_base (hsub hbase)
   have h₁ := Q.stepGcd_dvd_sub_base (hsub (P.base_add_step_mem i (hpos i)))
   have hd := dvd_sub h₁ h₀
-  convert hd using 1 <;> ring
+  convert hd using 1; ring
 
 theorem homogeneousBase_of_carrier_subset (P Q : GeneralizedAP)
     (hpos : ∀ i, 0 < P.length i) (hsub : P.carrier ⊆ Q.carrier)

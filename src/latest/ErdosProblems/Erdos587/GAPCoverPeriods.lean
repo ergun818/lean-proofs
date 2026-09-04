@@ -71,7 +71,7 @@ theorem exists_coordinate_period_of_difference_cover
     have hcard : C + 1 ≤ F.card := by simpa using hh
     omega
   unfold Function.Injective at hnot
-  push_neg at hnot
+  push Not at hnot
   obtain ⟨u, v, huv, hne⟩ := hnot
   have hfeq : f u = f v := congrArg Subtype.val huv
   let z : ℤ := (u.val : ℤ) - (v.val : ℤ)

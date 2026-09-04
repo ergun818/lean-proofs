@@ -114,7 +114,8 @@ lemma card_zmod_two_mul_zero_le {q : ℕ} [NeZero q] :
   by_cases hzero : ∀ x ∈ S, x = 0
   · have hsub : S ⊆ {0} := fun x hx => by simpa using hzero x hx
     have hcard := Finset.card_le_card hsub
-    simpa only [Finset.card_singleton] using hcard.trans (by norm_num : ({0} : Finset (ZMod q)).card ≤ 2)
+    simpa only [Finset.card_singleton] using
+      hcard.trans (by norm_num : ({0} : Finset (ZMod q)).card ≤ 2)
   · push Not at hzero
     obtain ⟨x, hx, hx0⟩ := hzero
     have hxval := zmod_two_mul_zero_nonzero_val x (Finset.mem_filter.mp hx).2 hx0

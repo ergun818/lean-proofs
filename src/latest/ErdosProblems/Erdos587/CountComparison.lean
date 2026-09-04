@@ -57,7 +57,8 @@ theorem exists_critical_count_comparison (f g : 𝓢(ℝ, ℂ)) (c₀ : ℝ) (hc
     simp only [scaledFourierCoeff, norm_mul, norm_phase, mul_one]
   have hsum : Summable (fun m : ℤ =>
       ‖(scaledFourierCoeff g σ m * phase (-(m : ℝ) * a * t / v)) *
-        signedNearbyQuadraticRemainder f u m v b (Real.sqrt T)‖) := hh.1.congr (fun m => (hnorm m).symm)
+        signedNearbyQuadraticRemainder f u m v b (Real.sqrt T)‖) := hh.1.congr (fun m => (hnorm
+          m).symm)
   apply (norm_tsum_le_tsum_norm hsum).trans
   simpa only [hnorm] using hh.2
 

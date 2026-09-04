@@ -129,7 +129,7 @@ theorem exists_large_coordinate_GAP_of_dense_summands
         conv_rhs => rw [← Fin.snoc_init_self c]
         rw [NVFullGAP.eval_snocAP]
         ext i
-        refine Fin.lastCases ?_ (fun j => ?_) i <;> simp <;> ring
+        refine Fin.lastCases ?_ (fun j => ?_) i <;> simp; ring
       · rw [← hL, card_nvCoordBox_snoc]
         have hQcard : Q.carrier.card = P.carrier.card * (R + 1) :=
           NVFullGAP.card_carrier_snocAP P hPproper us.sum zs.sum a q hq R

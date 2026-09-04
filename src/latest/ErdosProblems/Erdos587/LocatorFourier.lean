@@ -36,7 +36,8 @@ lemma summable_finite_fourier_count (g : 𝓢(ℝ, ℂ)) {σ : ℝ} (hσ : 0 < �
     apply mul_le_mul_of_nonneg_left _ (norm_nonneg _)
     calc
       _ ≤ ∑ n ∈ Finset.range N, ‖phase ((m : ℝ) * θ n)‖ := norm_sum_le _ _
-      _ = (N : ℝ) := by simp only [norm_phase, Finset.sum_const, Finset.card_range, nsmul_eq_mul, mul_one]
+      _ = (N : ℝ) := by
+        simp only [norm_phase, Finset.sum_const, Finset.card_range, nsmul_eq_mul, mul_one]
 
 theorem finite_periodization_error_bound (g : 𝓢(ℝ, ℂ)) {σ E D : ℝ}
     (hσ : 0 < σ) (hE : 0 ≤ E) (θ : ℕ → ℝ) (N : ℕ)

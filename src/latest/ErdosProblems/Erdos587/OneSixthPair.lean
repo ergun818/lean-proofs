@@ -41,8 +41,10 @@ theorem norm_phase_sum_le_one_sixth_pair (f : ℕ → ℝ) {N : ℕ} (hN : 0 < N
     {F C : ℝ} (hNF : (N : ℝ) ≤ F) (hC : 1 ≤ C)
     (hsecondLo : ∀ n, n + 1 < N → -(C * (F / (N : ℝ) ^ 2)) ≤ phaseIncrement (phaseIncrement f) n)
     (hsecondHi : ∀ n, n + 1 < N → phaseIncrement (phaseIncrement f) n ≤ -(F / (N : ℝ) ^ 2))
-    (hthirdLo : ∀ n, n + 2 < N → F / (N : ℝ) ^ 3 ≤ phaseIncrement (phaseIncrement (phaseIncrement f)) n)
-    (hthirdHi : ∀ n, n + 2 < N → phaseIncrement (phaseIncrement (phaseIncrement f)) n ≤ C * (F / (N : ℝ) ^ 3)) :
+    (hthirdLo : ∀ n, n + 2 < N → F / (N : ℝ) ^ 3 ≤ phaseIncrement (phaseIncrement
+      (phaseIncrement f)) n)
+    (hthirdHi : ∀ n, n + 2 < N → phaseIncrement (phaseIncrement (phaseIncrement f)) n ≤ C * (F /
+      (N : ℝ) ^ 3)) :
     ‖∑ n ∈ Finset.range N, phase (f n)‖ ≤ 100 * C * F ^ (1 / 6 : ℝ) * Real.sqrt N := by
   have hNR : (0 : ℝ) < N := by exact_mod_cast hN
   have hN1 : (1 : ℝ) ≤ N := by exact_mod_cast hN

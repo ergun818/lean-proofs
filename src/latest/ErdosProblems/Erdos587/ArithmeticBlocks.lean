@@ -11,7 +11,7 @@ open scoped BigOperators
 
 namespace Erdos587
 
-lemma sum_le_sum_family_of_cover {α ι : Type*} [DecidableEq α]
+lemma sum_le_sum_family_of_cover {α ι : Type*}
     (S : Finset α) (I : Finset ι) (F : ι → Finset α) (w : α → ℝ)
     (hw : ∀ x, 0 ≤ w x) (hcover : ∀ x ∈ S, ∃ i ∈ I, x ∈ F i) :
     (∑ x ∈ S, w x) ≤ ∑ i ∈ I, ∑ x ∈ F i, w x := by

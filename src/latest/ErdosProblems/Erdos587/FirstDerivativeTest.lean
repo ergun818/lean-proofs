@@ -56,7 +56,9 @@ theorem norm_phase_sum_le_of_monotone_increments (f : ℕ → ℝ) (N : ℕ) (k 
   have hh := norm_phase_sum_le_of_monotone_unit_increments g N hδ
     (fun n hn => by rw [hinc]; linarith [hlo n hn])
     (fun n hn => by rw [hinc]; linarith [hhi n hn])
-    (fun n hn => by rw [hinc, hinc]; simpa only [Nat.add_assoc] using sub_le_sub_right (hmono n hn) k)
+    (fun n hn => by
+      rw [hinc, hinc]
+      simpa only [Nat.add_assoc] using sub_le_sub_right (hmono n hn) k)
   simpa only [g, phase_sub_integer_linear] using hh
 
 end Erdos587

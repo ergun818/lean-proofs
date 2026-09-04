@@ -80,7 +80,8 @@ theorem exists_combined_nearby_mean_bound (j : ℕ) (f : 𝓢(ℝ, ℂ)) :
       rw [show ((m : ℝ) / (u * v)) * L ^ 2 = ((m : ℝ) * L ^ 2) / (u * v) by ring]
       exact (div_le_one₀ (mul_pos huPos hvPos)).mpr (hmprod.trans hprod)
     have hh := hlow a u v M₀ K ha hu hv hK hD₀ huX huD L hL hlo hhi hA
-    have hXthree : 3 ≤ X₀ := hD₀.trans ((Nat.sqrt_le_self (Nat.sqrt X₀)).trans (Nat.sqrt_le_self X₀))
+    have hXthree : 3 ≤ X₀ := hD₀.trans ((Nat.sqrt_le_self (Nat.sqrt X₀)).trans (Nat.sqrt_le_self
+      X₀))
     have hXZ : X₀ ≤ Z := Nat.mul_le_mul_right K (Nat.mul_le_mul (by norm_num : 2 ≤ 35) hM₀M)
     have hlogX : Real.log (X₀ : ℝ) ≤ F :=
       Real.log_le_log (by exact_mod_cast (by omega : 0 < X₀)) (by exact_mod_cast hXZ)

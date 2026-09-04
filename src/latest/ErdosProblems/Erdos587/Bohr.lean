@@ -74,8 +74,7 @@ lemma stdAddChar_intCast_close {N : ℕ} [NeZero N] (t : ℤ)
     (x := 2 * Real.pi * (t : ℝ) / N)).trans ?_
   have htAbs : |(t : ℝ)| = (t.natAbs : ℝ) := by
     rw [← Int.cast_abs]
-    simpa using congrArg (fun z : ℤ => (z : ℝ))
-      (Int.natCast_natAbs t).symm
+    simp
   have hNAbs : |(N : ℝ)| = (N : ℝ) :=
     abs_of_nonneg (Nat.cast_nonneg N)
   rw [Real.norm_eq_abs, abs_div, abs_mul, abs_mul,

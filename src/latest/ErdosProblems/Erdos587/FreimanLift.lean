@@ -34,7 +34,7 @@ def Mem (B : Finset β) (p : FourfoldPresentation β) : Prop :=
 end FourfoldPresentation
 
 variable {α β : Type*} [AddCommGroup α] [AddCommGroup β]
-  [DecidableEq α] [DecidableEq β]
+  [DecidableEq β]
 
 lemma mem_two_nsmul_sub_two_nsmul_iff
     {B : Finset β} {x : β} :
@@ -126,6 +126,7 @@ lemma add_fourfold_sub_eq_iff_cross_add {G : Type*} [AddCommGroup G]
             (c₁ + c₂ + d₁ + d₂ + g₁ + g₂ + h₁ + h₂) := by rw [heq]
       _ = (e₁ + e₂ - g₁ - g₂) + (f₁ + f₂ - h₁ - h₂) := by abel
 
+omit [DecidableEq β] in
 lemma fourfoldMapValue_eq_iff_eval_eq
     {A : Set α} {B : Finset β} {g : β → α}
     (hg : IsAddFreimanIso 4 (B : Set β) A g)
@@ -181,7 +182,7 @@ lemma freimanFourfoldLift_eq_of_presentation
   apply (fourfoldMapValue_eq_iff_eval_eq hg hs.1 hp).mpr
   exact hs.2.trans hpx.symm
 
-lemma freimanFourfoldLift_mem_two_nsmul_sub_two_nsmul
+lemma freimanFourfoldLift_mem_two_nsmul_sub_two_nsmul [DecidableEq α]
     {A : Finset α} {B : Finset β} (hB : B.Nonempty) {g : β → α}
     (hg : Set.MapsTo g (B : Set β) (A : Set α))
     {x : β} (hx : x ∈ 2 • B - 2 • B) :

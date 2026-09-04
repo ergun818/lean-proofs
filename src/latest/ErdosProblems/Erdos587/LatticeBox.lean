@@ -82,8 +82,10 @@ theorem latticeHalfWidth_box_mem_central_quarter {H J : ℝ} {p q z : ℤ × ℤ
   have hqPos := latticeScaledNorm_pos hH.ne' hJ.ne' hq
   apply lattice_box_mem_central_quarter hH hJ hcenterX hcenterY (by linarith)
   · have hmR : |(m : ℝ)| ≤ (latticeHalfWidth (latticeScaledNorm H J p) : ℝ) := by exact_mod_cast hm
-    exact (mul_le_mul_of_nonneg_right hmR hpPos.le).trans (latticeHalfWidth_bounds hpPos hpSmall).2.2
+    exact (mul_le_mul_of_nonneg_right hmR hpPos.le).trans (latticeHalfWidth_bounds hpPos
+      hpSmall).2.2
   · have hnR : |(n : ℝ)| ≤ (latticeHalfWidth (latticeScaledNorm H J q) : ℝ) := by exact_mod_cast hn
-    exact (mul_le_mul_of_nonneg_right hnR hqPos.le).trans (latticeHalfWidth_bounds hqPos hqSmall).2.2
+    exact (mul_le_mul_of_nonneg_right hnR hqPos.le).trans (latticeHalfWidth_bounds hqPos
+      hqSmall).2.2
 
 end Erdos587

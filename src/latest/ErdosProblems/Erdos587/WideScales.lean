@@ -42,7 +42,8 @@ theorem eventually_wide_cutoff_bounds (F : ℕ) :
   have hx2 : 2 ≤ T ^ (1 / 4 : ℝ) / (1 + Real.log T) ^ F := by linarith
   have hhalf := half_le_nat_floor hx2
   have hMlo : T ^ (2499 / 10000 : ℝ) ≤ (⌊T ^ (1 / 4 : ℝ) / (1 + Real.log T) ^ F⌋₊ : ℝ) :=
-    (by linarith : T ^ (2499 / 10000 : ℝ) ≤ (T ^ (1 / 4 : ℝ) / (1 + Real.log T) ^ F) / 2).trans hhalf
+    (by linarith : T ^ (2499 / 10000 : ℝ) ≤
+      (T ^ (1 / 4 : ℝ) / (1 + Real.log T) ^ F) / 2).trans hhalf
   refine ⟨?_, hMlo, Nat.floor_le (by linarith), hhalf⟩
   exact_mod_cast (lt_of_lt_of_le (by positivity : (0 : ℝ) < T ^ (2499 / 10000 : ℝ)) hMlo)
 

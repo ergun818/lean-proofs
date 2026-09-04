@@ -11,15 +11,16 @@ open scoped BigOperators
 
 namespace Erdos587.CFP
 
-variable {ι α : Type*} [Fintype ι] [DecidableEq ι] [DecidableEq α]
+variable {ι α : Type*} [Fintype ι]
 
 def coordinateMultiples (a : ι → ℤ) : AddSubgroup (ι → ℤ) where
   carrier := {v | ∀ i, a i ∣ v i}
-  zero_mem' i := dvd_zero _
+  zero_mem' _i := dvd_zero _
   add_mem' hx hy i := dvd_add (hx i) (hy i)
   neg_mem' hx i := dvd_neg.mpr (hx i)
 
-theorem coordinateMultiples_period (a : ι → ℤ) (j : ι) :
+omit [Fintype ι] in
+theorem coordinateMultiples_period [DecidableEq ι] (a : ι → ℤ) (j : ι) :
     (a j).natAbs • coordinateUnit j ∈ coordinateMultiples a := by
   intro i
   by_cases hij : i = j
@@ -30,16 +31,19 @@ theorem coordinateMultiples_period (a : ι → ℤ) (j : ι) :
       · rw [abs_of_nonneg hj]
       · rw [abs_of_nonpos hj]
         exact dvd_neg.mpr (dvd_refl _)
-    simpa [coordinateUnit, nsmul_eq_mul] using hd
-  · simp [coordinateUnit, Pi.single_apply, hij]
+    simp [coordinateUnit]
+  · simp [coordinateUnit, hij]
 
-theorem coordinateMultiples_finiteIndex (a : ι → ℤ) (ha : ∀ i, a i ≠ 0) :
+omit [Fintype ι] in
+theorem coordinateMultiples_finiteIndex [Finite ι] (a : ι → ℤ) (ha : ∀ i, a i ≠ 0) :
     (coordinateMultiples a).FiniteIndex := by
+  classical
   exact finiteIndex_of_coordinate_periods
     (fun i => Int.natAbs_pos.mpr (ha i)) (coordinateMultiples_period a)
 
 theorem coordinateMultiples_index_le_product (a : ι → ℤ) (ha : ∀ i, a i ≠ 0) :
     (coordinateMultiples a).index ≤ ∏ i, (a i).natAbs := by
+  classical
   exact index_le_product_of_coordinate_periods
     (fun i => Int.natAbs_pos.mpr (ha i)) (coordinateMultiples_period a)
 

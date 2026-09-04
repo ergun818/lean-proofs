@@ -19,14 +19,16 @@ theorem coordinateRemainder_mem_box (k : ι → ℕ) (hk : ∀ i, 0 < k i) (x : 
   exact ⟨Int.emod_nonneg _ hki.ne',
     by simpa [coordinateRemainder] using Int.emod_lt_of_pos (x i) hki⟩
 
-theorem sub_coordinateRemainder_mem {Γ : AddSubgroup (ι → ℤ)} {k : ι → ℕ}
+omit [Fintype ι] in
+theorem sub_coordinateRemainder_mem [Finite ι] {Γ : AddSubgroup (ι → ℤ)} {k : ι → ℕ}
     (hperiod : ∀ i, k i • coordinateUnit i ∈ Γ) (x : ι → ℤ) :
     x - coordinateRemainder k x ∈ Γ := by
+  let := Fintype.ofFinite ι
   have heq : ∑ i, (x i / (k i : ℤ)) • (k i • coordinateUnit i) =
       x - coordinateRemainder k x := by
     ext j
     simp only [Finset.sum_apply, Pi.sub_apply, coordinateRemainder]
-    simp [coordinateUnit, nsmul_eq_mul, zsmul_eq_mul, Pi.single_apply]
+    simp [coordinateUnit, nsmul_eq_mul, Pi.single_apply]
     have hh := Int.emod_add_mul_ediv (x j) (k j : ℤ)
     nlinarith
   rw [← heq]
@@ -42,9 +44,11 @@ theorem coordinate_box_surjects_quotient {Γ : AddSubgroup (ι → ℤ)} {k : ι
   apply QuotientAddGroup.eq.mpr
   simpa only [sub_eq_add_neg, add_comm] using sub_coordinateRemainder_mem hperiod x
 
-theorem finiteIndex_of_coordinate_periods {Γ : AddSubgroup (ι → ℤ)} {k : ι → ℕ}
+omit [Fintype ι] in
+theorem finiteIndex_of_coordinate_periods [Finite ι] {Γ : AddSubgroup (ι → ℤ)} {k : ι → ℕ}
     (hk : ∀ i, 0 < k i) (hperiod : ∀ i, k i • coordinateUnit i ∈ Γ) :
     Γ.FiniteIndex := by
+  let := Fintype.ofFinite ι
   have hsurj := coordinate_box_surjects_quotient hk hperiod
   have : Finite ((ι → ℤ) ⧸ Γ) := Finite.of_surjective _ hsurj
   exact AddSubgroup.finiteIndex_of_finite_quotient

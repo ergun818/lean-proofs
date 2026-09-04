@@ -144,7 +144,7 @@ lemma complete_unit_quadratic_count_tail_lower
   intro j hj
   have hu : (u : ZMod q) = a := ZMod.coe_unitOfCoprime a ha
   dsimp only [b]
-  simp only [Nat.cast_add, Nat.cast_mul, Nat.cast_pow, Nat.cast_zero, zero_mul, add_zero, hu]
+  simp only [Nat.cast_add, Nat.cast_mul, Nat.cast_pow, zero_mul, add_zero, hu]
   constructor <;> intro h <;> linear_combination h
 
 theorem exists_smoothed_complete_period_density :

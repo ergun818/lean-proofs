@@ -86,9 +86,9 @@ lemma eval_eq_eval_minParam_add_sum {N : ℕ} [NeZero N]
     (Q : CyclicCenteredGAP N) (x : Q.Param) :
     Q.eval x = Q.eval Q.minParam +
       ∑ i, (x i : ZMod N) * Q.step i := by
-  simp only [eval, coeff, minParam, Fin.zero_eta, Fin.val_zero,
-    Nat.cast_zero, Int.ofNat_eq_coe, Int.cast_sub, Int.cast_natCast,
-    zero_sub, neg_mul, Finset.sum_neg_distrib]
+  simp only [eval, coeff, minParam, Fin.val_zero,
+    Nat.cast_zero, Int.cast_sub, Int.cast_natCast,
+    zero_sub]
   rw [← Finset.sum_add_distrib]
   apply Finset.sum_congr rfl
   intro i hi
@@ -137,7 +137,6 @@ lemma eval_predParam_add_eval_unitParam {N : ℕ} [NeZero N]
       rw [Q.predParam_apply_ne x i j hi hji]
     rw [hrest, Q.predParam_apply_self]
     have hxi : (x i : ℕ) - 1 + 1 = x i := Nat.sub_add_cancel hi
-    push_cast
     rw [← hxi]
     push_cast
     ring

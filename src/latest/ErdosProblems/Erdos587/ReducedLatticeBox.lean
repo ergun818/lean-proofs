@@ -80,12 +80,14 @@ lemma secondWidth_pos : 0 < P.secondWidth := by
   exact Nat.mul_pos (by omega) (latticeHalfWidth_bounds P.secondNorm_pos P.small).1
 
 theorem central_quarter : ∀ x ≤ 2 * P.firstHalfWidth, ∀ y ≤ 2 * P.secondHalfWidth,
-    let w := positiveLatticeBoxPoint g u v P.first P.second P.center P.firstHalfWidth P.secondHalfWidth x y
+    let w := positiveLatticeBoxPoint g u v P.first P.second P.center P.firstHalfWidth
+      P.secondHalfWidth x y
     ((w.1 : ℝ) ∈ Set.Icc ((H : ℝ) / 4) (3 * H / 4)) ∧
       ((w.2 : ℝ) ∈ Set.Icc ((J : ℝ) / 4) (3 * J / 4)) := by
   intro x hx y hy
   apply latticeHalfWidth_box_mem_central_quarter
-    (by exact_mod_cast P.width_pos) (by exact_mod_cast P.height_pos) P.first_ne_zero P.second_ne_zero
+    (by exact_mod_cast P.width_pos) (by exact_mod_cast P.height_pos)
+    P.first_ne_zero P.second_ne_zero
     P.center_first P.center_second P.first_small P.small
   · exact signedBoxCoefficient_bound _ hx
   · exact signedBoxCoefficient_bound _ hy
@@ -94,7 +96,8 @@ theorem image : ∀ x ≤ P.firstWidth, ∀ y ≤ P.secondWidth,
     ∃ X ≤ H, ∃ Y ≤ J, g ^ 2 * (P.base + P.firstStep * x + P.secondStep * y) =
       g * (t + u * X + v * Y) := by
   intro x hx y hy
-  obtain ⟨hX, hY, heq⟩ := lattice_box_natural_image P.factor_pos P.basis P.coset P.central_quarter x hx y hy
+  obtain ⟨hX, hY, heq⟩ := lattice_box_natural_image P.factor_pos P.basis P.coset
+    P.central_quarter x hx y hy
   exact ⟨_, hX, _, hY, heq⟩
 
 theorem coprime_steps : P.firstStep.Coprime P.secondStep :=

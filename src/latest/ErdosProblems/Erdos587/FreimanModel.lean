@@ -12,7 +12,7 @@ def badMultipliers (q M : ℕ) [NeZero q] (x : ℤ) : Finset (ZMod q) :=
   simp [badMultipliers]
 
 lemma card_badMultipliers_le {q M : ℕ} [NeZero q] [Fact q.Prime]
-    (hM : 0 < M) {x : ℤ} (hx : (x : ZMod q) ≠ 0) :
+    (_hM : 0 < M) {x : ℤ} (hx : (x : ZMod q) ≠ 0) :
     (badMultipliers q M x).card ≤ q / M + 1 := by
   let f : ZMod q → ℕ := fun lam => (lam * (x : ZMod q)).val / M
   rw [← Finset.card_range (q / M + 1)]
@@ -99,11 +99,11 @@ theorem exists_good_multiplier {D : Finset ℤ} {N q : ℕ}
         _ < q := multiplier_union_card_lt hN hq
     have hUne : U ≠ Finset.univ := by
       intro hEq
-      have : U.card = q := by simpa [hEq]
+      have : U.card = q := by simp [hEq]
       omega
     have hex : ∃ lam : ZMod q, lam ∉ U := by
       by_contra h
-      push_neg at h
+      push Not at h
       apply hUne
       ext lam
       simp [h lam]
@@ -156,7 +156,7 @@ lemma ruzsaRepresentative_cast (q : ℕ) [NeZero q] (lam : ZMod q) (a : ℤ) :
   exact ZMod.natCast_zmod_val _
 
 lemma ruzsaColor_lt {q s : ℕ} [NeZero q] (lam : ZMod q)
-    (hs : 0 < s) (hq : 2 * s < q) (a : ℤ) :
+    (hs : 0 < s) (_hq : 2 * s < q) (a : ℤ) :
     ruzsaColor q s lam a < 2 * s := by
   let L := q / (2 * s) + 1
   have hden : 0 < 2 * s := by omega
@@ -290,7 +290,7 @@ lemma ruzsaModelMap_sum (q M : ℕ) [NeZero q] [NeZero M]
       simp only [ruzsaModelMap, ruzsaRepresentativeSum, Multiset.map_cons,
         Multiset.sum_cons, Nat.cast_add, ih]
 
-lemma ruzsaBlockWidth_lt {q s : ℕ} (hs : 0 < s) (hq : 2 * s < q) :
+lemma ruzsaBlockWidth_lt {q s : ℕ} (_hs : 0 < s) (hq : 2 * s < q) :
     s * (q / (2 * s) + 1) < q := by
   have hdiv := Nat.mul_div_le q (2 * s)
   have hhalf : 2 * (s * (q / (2 * s))) ≤ q := by

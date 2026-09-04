@@ -85,7 +85,7 @@ lemma norm_negative_nearby_weighted_term (f g : 𝓢(ℝ, ℂ)) {q : ℕ} (hq : 
     ‖((σ : ℂ) * reflectedSchwartz g (σ * m)) *
       nearbyQuadraticRemainder (conjugateSchwartz f) q m v b L‖ := by
   rw [signedNearbyQuadraticRemainder_neg_nat f hq]
-  simp only [norm_mul, Complex.norm_conj, reflectedSchwartz_apply, Int.cast_neg,
+  simp only [norm_mul, Complex.norm_conj, reflectedSchwartz_apply,
     Int.cast_natCast, mul_neg]
 
 lemma summable_int_of_positive_negative {f : ℤ → ℝ} (hzero : f 0 = 0)

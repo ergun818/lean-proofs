@@ -7,7 +7,7 @@ These estimates do not infer coordinate projection indices from subgroup index.
 
 namespace Erdos587.CFP
 
-variable {G : Type*} [AddCommGroup G] [DecidableEq G]
+variable {G : Type*} [AddCommGroup G]
 
 theorem consecutive_cosets_injective {Γ : AddSubgroup G} {a : G} {M : ℕ}
     (hperiod : ∀ k : ℕ, 0 < k → k < M → k • a ∉ Γ)
@@ -30,6 +30,7 @@ theorem card_mul_le_of_no_short_period {Γ : AddSubgroup G} {S V : Finset G}
     (hperiod : ∀ k : ℕ, 0 < k → k < M → k • a ∉ Γ)
     (hfit : ∀ x ∈ S, ∀ i < M, x + i • a ∈ V) :
     S.card * M ≤ V.card := by
+  classical
   have hinj : Set.InjOn (fun p : G × ℕ => p.1 + p.2 • a)
       (↑(S.product (Finset.range M)) : Set (G × ℕ)) := by
     intro p hp q hq heq

@@ -20,7 +20,8 @@ theorem plane_dual_sum_bound {x₁ x₂ y₁ y₂ P Q U V : ℝ}
           ((U * x₁ + V * x₂) * y₂) 0 ((U * y₁ + V * y₂) * x₂)
       _ = A * |y₂| + B * |x₂| := by rw [abs_mul, abs_mul]
       _ ≤ A * Q + B * P := add_le_add
-        (mul_le_mul_of_nonneg_left hy₂ (abs_nonneg _)) (mul_le_mul_of_nonneg_left hx₂ (abs_nonneg _))
+        (mul_le_mul_of_nonneg_left hy₂ (abs_nonneg _)) (mul_le_mul_of_nonneg_left hx₂
+          (abs_nonneg _))
   have hsecond : V * |x₁ * y₂ - x₂ * y₁| ≤ A * Q + B * P := by
     calc
       V * |x₁ * y₂ - x₂ * y₁| = |V * (x₁ * y₂ - x₂ * y₁)| := by rw [abs_mul, abs_of_nonneg hV]
@@ -30,7 +31,8 @@ theorem plane_dual_sum_bound {x₁ x₂ y₁ y₂ P Q U V : ℝ}
           ((U * y₁ + V * y₂) * x₁) 0 ((U * x₁ + V * x₂) * y₁)
       _ = B * |x₁| + A * |y₁| := by rw [abs_mul, abs_mul]
       _ ≤ B * P + A * Q := add_le_add
-        (mul_le_mul_of_nonneg_left hx₁ (abs_nonneg _)) (mul_le_mul_of_nonneg_left hy₁ (abs_nonneg _))
+        (mul_le_mul_of_nonneg_left hx₁ (abs_nonneg _)) (mul_le_mul_of_nonneg_left hy₁
+          (abs_nonneg _))
       _ = A * Q + B * P := add_comm _ _
   have hscaled := mul_le_mul_of_nonneg_left hdet (add_nonneg hU hV)
   apply (mul_le_mul_iff_left₀ (mul_pos hP hQ)).mp

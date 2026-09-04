@@ -245,7 +245,7 @@ lemma divisorResidueCount_mul_weight_le {d q r X : ℕ}
     (divisorResidueCount d q r X : ℝ) * ((q : ℝ) / r) ≤
       (X : ℝ) / d + q := by
   by_cases hc : divisorResidueCount d q r X = 0
-  · simp [hc]
+  · simp only [hc, Nat.cast_zero, zero_mul]
     positivity
   have hcpos : 0 < divisorResidueCount d q r X := Nat.pos_of_ne_zero hc
   let l := d.lcm q
@@ -295,7 +295,7 @@ lemma divisorResidueCount_mul_weight_le_scaled {d q r X : ℕ}
     (divisorResidueCount d q r X : ℝ) * ((q : ℝ) / r) ≤
       ((X : ℝ) / d + q) * ((d.gcd q : ℝ) / r) := by
   by_cases hc : divisorResidueCount d q r X = 0
-  · simp [hc]
+  · simp only [hc, Nat.cast_zero, zero_mul]
     positivity
   have hcpos : 0 < divisorResidueCount d q r X := Nat.pos_of_ne_zero hc
   let l := d.lcm q
@@ -412,7 +412,7 @@ lemma sum_divisorResidueCount_weight_le {d q X n : ℕ}
           (divisorResidueCount d q r X : ℝ) * ((q : ℝ) / r) := by
     rw [Finset.sum_subset (Finset.filter_subset _ _)]
     intro r hrI hrR
-    simp only [R, Finset.mem_filter, hrI, true_and, not_not] at hrR
+    simp only [Finset.mem_filter, hrI, true_and, not_not] at hrR
     simp [hrR]
   rw [hrestrict]
   calc
@@ -917,7 +917,8 @@ theorem exists_divisorPower_mean_log_bound (b : ℕ) :
     _ ≤ A * (N : ℝ) / Real.log (N : ℝ) *
           ((3 : ℝ) ^ O * Real.log (N : ℝ) ^ O) := by
       apply mul_le_mul_of_nonneg_left _ hcoeff
-      simpa [O] using exp_mul_log_log_le_natPow (mul_nonneg hC.le primeReciprocalConstant_pos.le) N hN
+      simpa [O] using exp_mul_log_log_le_natPow (mul_nonneg hC.le
+        primeReciprocalConstant_pos.le) N hN
     _ ≤ (A * (N : ℝ)) *
           ((3 : ℝ) ^ O * Real.log (N : ℝ) ^ O) := by
       exact mul_le_mul_of_nonneg_right
@@ -953,7 +954,7 @@ lemma weighted_sum_eq_partial_sums (a : ℕ → ℝ) (ha0 : a 0 = 0)
         omega
   have hrange0 : ∑ i ∈ Finset.range (0 + 1), a i = 0 := by simp [ha0]
   rw [hrangeN, hrange0] at hbp
-  simp only [inv_one, mul_zero, sub_zero] at hbp
+  simp only [mul_zero, sub_zero] at hbp
   rw [show Finset.Ioc 0 (N - 1) = Finset.Icc 1 (N - 1) by ext i; simp; omega] at hbp
   calc
     ∑ i ∈ Finset.Icc 1 N, a i / (i : ℝ) =
@@ -1363,7 +1364,7 @@ lemma primeFactorization_pos {n p : ℕ} (hp : p ∈ n.primeFactors) :
 lemma lowPrimeProduct_le_lowPrimePart (n : ℕ) :
     (∏ p ∈ lowPrimes n, p) ≤ lowPrimePart n := by
   unfold lowPrimePart
-  apply Finset.prod_le_prod' 
+  apply Finset.prod_le_prod'
   intro p hp
   have hpSupport : p ∈ n.primeFactors := (Finset.mem_filter.mp hp).1
   exact Nat.le_pow (primeFactorization_pos hpSupport)
@@ -1461,8 +1462,7 @@ lemma card_divisors_floorRoot_four {n : ℕ} (hn : n ≠ 0) :
 lemma floorRoot_four_coprime_lowPrimeQuarterProduct {n : ℕ} (hn : n ≠ 0) :
     (Nat.floorRoot 4 n).Coprime (lowPrimeQuarterProduct n) := by
   apply Nat.coprime_of_dvd
-  intro p hp hproot
-  intro hpquarter
+  intro p hp hproot hpquarter
   rw [lowPrimeQuarterProduct_eq_prod_selected] at hpquarter
   obtain ⟨q, hqsel, hpq⟩ :=
     (hp.prime.dvd_finsetProd_iff (fun q : ℕ => q)).mp hpquarter
@@ -1828,7 +1828,8 @@ theorem exists_weighted_residuePairCount_polylog_bound :
   intro hq hD hnX hqD
   by_cases hn0 : n = 0
   · subst n
-    simp only [Order.lt_one_iff, Finset.Icc_eq_empty_of_lt, Finset.sum_empty, Nat.cast_mul, Nat.cast_ofNat]
+    simp only [Order.lt_one_iff, Finset.Icc_eq_empty_of_lt, Finset.sum_empty, Nat.cast_mul,
+      Nat.cast_ofNat]
     have hDleX₀ : D ≤ X := by
       dsimp [D]
       exact (Nat.sqrt_le_self (Nat.sqrt X)).trans (Nat.sqrt_le_self X)
@@ -1974,7 +1975,7 @@ lemma twistedDivisorResidueCount_mul_weight_le_scaled {a d q r X : ℕ}
     (twistedDivisorResidueCount a d q r X : ℝ) * ((q : ℝ) / r) ≤
       ((X : ℝ) / d + q) * ((d.gcd q : ℝ) / r) := by
   by_cases hc : twistedDivisorResidueCount a d q r X = 0
-  · simp [hc]
+  · simp only [hc, Nat.cast_zero, zero_mul]
     positivity
   have hcpos : 0 < twistedDivisorResidueCount a d q r X := Nat.pos_of_ne_zero hc
   let l := d.lcm q
@@ -2100,7 +2101,7 @@ lemma sum_twistedDivisorResidueCount_weight_le {a d q X n : ℕ}
           (twistedDivisorResidueCount a d q r X : ℝ) * ((q : ℝ) / r) := by
     rw [Finset.sum_subset (Finset.filter_subset _ _)]
     intro r hrI hrR
-    simp only [R, Finset.mem_filter, hrI, true_and, not_not] at hrR
+    simp only [Finset.mem_filter, hrI, true_and, not_not] at hrR
     simp [hrR]
   rw [hrestrict]
   calc
@@ -2476,7 +2477,8 @@ theorem exists_weighted_twistedResiduePairCount_polylog_bound :
   intro haq hq hD hnX hqD
   by_cases hn0 : n = 0
   · subst n
-    simp only [Order.lt_one_iff, Finset.Icc_eq_empty_of_lt, Finset.sum_empty, Nat.cast_mul, Nat.cast_ofNat]
+    simp only [Order.lt_one_iff, Finset.Icc_eq_empty_of_lt, Finset.sum_empty, Nat.cast_mul,
+      Nat.cast_ofNat]
     have hDleX₀ : D ≤ X := by
       dsimp [D]
       exact (Nat.sqrt_le_self (Nat.sqrt X)).trans (Nat.sqrt_le_self X)
@@ -3029,7 +3031,7 @@ lemma quadraticChar_four_correlation_le_zero_of_repeated
         quadraticCharReal ((x + b) * (x + c)) +
           if x + a = 0 then 1 else 0 := by
     convert quadraticCharReal_square_mul_le
-      (x + a) ((x + b) * (x + c)) using 1 <;> ring_nf
+      (x + a) ((x + b) * (x + c)) using 1; ring_nf
   have hpair :
       (∑ x : F, quadraticCharReal ((x + b) * (x + c))) = -1 := by
     simpa only [sub_neg_eq_add] using
@@ -3391,7 +3393,7 @@ lemma quarticWeierstrassCurve_isElliptic
   rw [quarticWeierstrassCurve_discriminant]
   apply isUnit_iff_ne_zero.mpr
   have h16 : (16 : F) ≠ 0 := by
-    convert pow_ne_zero 4 (Ring.two_ne_zero h2) using 1 <;> norm_num
+    convert pow_ne_zero 4 (Ring.two_ne_zero h2) using 1; norm_num
   exact
     mul_ne_zero
       (mul_ne_zero
@@ -3694,7 +3696,7 @@ lemma quarticAffinePointCount_hasse
   have hh := hasse_normalizedQuartic h2 hA hB hC hAB hAC hBC
   have he := Fintype.card_congr (shiftQuarticPointEquiv v)
   rw [quarticAffinePointCount_eq_card_subtype, he]
-  convert hh using 1 <;> ring_nf
+  convert hh using 1; ring_nf
 
 /-- Arithmetic consequence of Hasse's bound for the smooth projective
 completion of a squarefree monic quartic.  Such a completion has two points
@@ -3711,7 +3713,7 @@ lemma quadraticChar_four_correlation_le_three_sqrt_of_hasse
   have hhasse' :
       |(∑ x : F, quadraticCharReal (∏ i : Fin 4, (x + v i))) + 1| ≤
         2 * Real.sqrt (Fintype.card F) := by
-    convert hhasse using 1 <;> ring_nf
+    convert hhasse using 1; ring_nf
   have hsqrt : 1 ≤ Real.sqrt (Fintype.card F) := by
     have hcard : (1 : ℝ) ≤ Fintype.card F := by
       exact_mod_cast Fintype.card_pos
@@ -3812,7 +3814,7 @@ lemma burgessRatioEnergy_nonneg {F : Type*} [Field F] [Fintype F]
 /-- The sum of the squares of all fiber sizes of a finite map is the number
 of ordered pairs in the domain with the same image. -/
 lemma sum_card_fiber_sq_eq_card_collision
-    {A B : Type*} [Fintype B] [DecidableEq A] [DecidableEq B]
+    {A B : Type*} [Fintype B] [DecidableEq B]
     (s : Finset A) (f : A → B) :
     (∑ y : B, ((s.filter fun a ↦ f a = y).card) ^ 2) =
       (((s ×ˢ s).filter fun ab ↦ f ab.1 = f ab.2).card) := by
@@ -4957,7 +4959,7 @@ lemma exists_isSquare_zmod_in_interval_of_burgess_bound
     ∃ i ∈ Finset.range H,
       IsSquare (((M + i : ℕ) : ZMod p)) := by
   by_contra hnone
-  push_neg at hnone
+  push Not at hnone
   have hchar : ∀ i ∈ Finset.range H,
       quadraticCharReal (((M + i : ℕ) : ZMod p)) = -1 := by
     intro i hi
@@ -5175,7 +5177,7 @@ lemma sum_quadraticPrimeFactorProduct_eq_squarefreeSquareIndicator
   · rw [if_neg hsquare]
     have hnotlocal : ¬∀ p ∈ q.primeFactors, IsSquare (n : ZMod p) := by
       rwa [← isSquare_zmod_iff_local_of_squarefree hq]
-    push_neg at hnotlocal
+    push Not at hnotlocal
     obtain ⟨p, hpq, hpnot⟩ := hnotlocal
     have hp : p.Prime := Nat.prime_of_mem_primeFactors hpq
     let : Fact p.Prime := ⟨hp⟩
@@ -5201,7 +5203,7 @@ lemma sum_restrictedQuadraticPrimeFactorProduct_powerset
   classical
   rw [unitSquareExpansionValue]
   by_cases hnq : n.Coprime q
-  · simp only [restrictedQuadraticPrimeFactorProduct, if_pos hnq, hnq, true_and]
+  · simp only [restrictedQuadraticPrimeFactorProduct, if_pos hnq]
     rw [sum_quadraticPrimeFactorProduct_eq_squarefreeSquareIndicator hq hnq]
     rw [squarefreeSquareIndicator]
     by_cases hs : IsSquare (n : ZMod q)
@@ -5224,7 +5226,7 @@ lemma exists_coprime_isSquare_zmod_in_interval_of_character_domination
       (M + i).Coprime q ∧ IsSquare ((M + i : ℕ) : ZMod q) := by
   classical
   by_contra hnone
-  push_neg at hnone
+  push Not at hnone
   let F : Finset ℕ → ℝ := fun t ↦
     ∑ i ∈ Finset.range H,
       restrictedQuadraticPrimeFactorProduct q t (M + i)
@@ -5309,7 +5311,7 @@ lemma sum_quadraticPrimeFactorProduct_eq_zero_of_not_isSquare
     (∑ t ∈ q.primeFactors.powerset, quadraticPrimeFactorProduct t n) = 0 := by
   have hnotlocal : ¬∀ p ∈ q.primeFactors, IsSquare (n : ZMod p) := by
     rwa [← isSquare_zmod_iff_local_of_squarefree hq]
-  push_neg at hnotlocal
+  push Not at hnotlocal
   obtain ⟨p, hpq, hpnot⟩ := hnotlocal
   have hp : p.Prime := Nat.prime_of_mem_primeFactors hpq
   let : Fact p.Prime := ⟨hp⟩
@@ -5327,7 +5329,7 @@ lemma exists_isSquare_zmod_in_interval_of_character_domination
     ∃ i ∈ Finset.range H, IsSquare ((M + i : ℕ) : ZMod q) := by
   classical
   by_contra hnone
-  push_neg at hnone
+  push Not at hnone
   let F : Finset ℕ → ℝ := fun t ↦
     ∑ i ∈ Finset.range H, quadraticPrimeFactorProduct t (M + i)
   have htotal : (∑ t ∈ q.primeFactors.powerset, F t) = 0 := by
@@ -5625,7 +5627,7 @@ lemma norm_localQuadraticGaussSum_le_sqrt
   rw [hsum]
   by_cases hψ : ψ = 1
   · rw [hψ, gaussSum_one_right hχne]
-    simpa using Real.sqrt_nonneg (p : ℝ)
+    simp
   · have hψprim : ψ.IsPrimitive := AddChar.IsPrimitive.of_ne_one hψ
     have hg := gaussSum_sq hχne hχquad hψprim
     have hχnorm : ‖χ (-1)‖ = 1 := by
@@ -5662,7 +5664,8 @@ lemma primeSet_addChar_eq_prod_local
     funext p
     simp
   rw [← hy]
-  simp only [Finset.univ_eq_attach, map_sum, Finset.sum_apply, Finset.sum_pi_single, Finset.mem_attach,
+  simp only [Finset.univ_eq_attach, map_sum, Finset.sum_apply, Finset.sum_pi_single,
+    Finset.mem_attach,
     ↓reduceIte]
   rw [Finset.mul_sum]
   exact addChar_map_sum_eq_prod ZMod.stdAddChar
@@ -6096,7 +6099,7 @@ lemma abs_quadraticChar_four_correlation_le_three_sqrt_of_hasse
   have hhasse' :
       |(∑ x : F, quadraticCharReal (∏ i : Fin 4, (x + v i))) + 1| ≤
         2 * Real.sqrt (Fintype.card F) := by
-    convert hhasse using 1 <;> ring_nf
+    convert hhasse using 1; ring_nf
   have hsqrt : 1 ≤ Real.sqrt (Fintype.card F) := by
     have hcard : (1 : ℝ) ≤ Fintype.card F := by
       exact_mod_cast Fintype.card_pos
@@ -6644,7 +6647,7 @@ lemma general_prime_product_le_of_modEq_of_ne
 
 lemma general_localDiagonal_prime_product_le_cube
     (t : Finset ℕ) (ht : ∀ p ∈ t, p.Prime)
-    {V : ℕ} (hV : 0 < V) (n : Fin 4 → ℕ)
+    {V : ℕ} (_hV : 0 < V) (n : Fin 4 → ℕ)
     (hn : ∀ i, n i ∈ Finset.Icc 1 V)
     (hnotdiag : ¬burgessDiagonal n)
     (hdiag : ∀ p ∈ t,
@@ -6809,7 +6812,7 @@ lemma general_quarticBound_le_trivial
 lemma general_quarticBound_le_offDiagonal_general
     (s : Finset ℕ) (hs : ∀ p ∈ s, p.Prime)
     (hodd : ∀ p ∈ s, p ≠ 2) {V : ℕ} (hV : 0 < V)
-    (hVq : V < primeSetModulus s)
+    (_hVq : V < primeSetModulus s)
     (v : Fin 4 → ↥(zmodPositiveInterval (primeSetModulus s) V))
     (hv : ¬burgessDiagonal v) :
     quadraticPrimeSetQuarticBound s hs
@@ -8519,7 +8522,7 @@ lemma exists_divisible_sum_factorization
 uniform bound for shorter consecutive sums of the same character. -/
 lemma abs_divisible_quadraticPrimeFactorProduct_sum_le
     (t : Finset ℕ) (ht : ∀ p ∈ t, p.Prime)
-    (M H d : ℕ) (hd : 0 < d) {B : ℝ} (hB : 0 ≤ B)
+    (M H d : ℕ) (hd : 0 < d) {B : ℝ} (_hB : 0 ≤ B)
     (hinterval : ∀ K L : ℕ, L ≤ H → L ≤ H / d + 1 →
       |∑ j ∈ Finset.range L,
         quadraticPrimeFactorProduct t (K + j)| ≤ B) :
@@ -8714,7 +8717,7 @@ lemma prod_primeDivisibilityIndicator
   · rw [if_neg h]
     have hnall : ¬ ∀ p ∈ u, p ∣ n := by
       rwa [← prod_dvd_iff_all_prime_dvd u hu n]
-    push_neg at hnall
+    push Not at hnall
     obtain ⟨p, hp, hpd⟩ := hnall
     apply Finset.prod_eq_zero hp
     simp [primeDivisibilityIndicator, hpd]
@@ -8787,7 +8790,7 @@ lemma restrictedQuadraticPrimeFactorProduct_eq_alternating
     rw [Finset.mul_sum]
     apply Finset.sum_congr rfl
     intro u hu
-    by_cases hd : (∏ p ∈ u, p) ∣ n <;> simp [hd] <;> ring]
+    by_cases hd : (∏ p ∈ u, p) ∣ n <;> simp [hd]; ring]
   rw [alternating_dvd_indicator (s \ t) hrt n]
   by_cases hcop : n.Coprime (primeSetModulus s)
   · rw [if_pos hcop]
@@ -10732,7 +10735,7 @@ certificate.  The admissible-denominator count may be replaced below by any
 nonnegative real lower bound `L`, while occurrences on the upper-bound side
 are enlarged to `U`. -/
 lemma coprimeBurgessCertificate_of_explicit_majorant
-    (s : Finset ℕ) (hs : ∀ p ∈ s, p.Prime)
+    (s : Finset ℕ) (_hs : ∀ p ∈ s, p.Prime)
     {H U V : ℕ} {B L : ℝ}
     (hB : 0 ≤ B) (hL₀ : 0 ≤ L)
     (hU₀ : 0 < U) (hV₀ : 0 < V)
@@ -10955,7 +10958,7 @@ lemma burgessScaledAlgebra
       ((U * (1 / (2 * a)) * V) * (H / (16 * a))) ^ 4 = R := by
     dsimp [R]
     field_simp
-    <;> ring
+    ring
   rw [hleft, hright]
   nlinarith
 
@@ -11071,7 +11074,7 @@ lemma burgessScaledAlgebra_extraLoss
       ((U * (1 / (2 * a)) * V) * (H / (16 * a * J))) ^ 4 = R := by
     dsimp [R]
     field_simp
-    <;> ring
+    ring
   rw [hleft, hright]
   nlinarith
 
@@ -12291,7 +12294,7 @@ lemma exists_coprime_isSquare_primeSetModulus_of_budget_cases
     (hodd : ∀ p ∈ s, p ≠ 2) (M H : ℕ) (hH : 0 < H)
     (hlarge : (2 : ℝ) * (4 : ℝ) ^ s.card ≤ H)
     (hcases : ∀ t ∈ s.powerset.filter Finset.Nonempty,
-      ∀ u ∈ (s \ t).powerset, ∀ K L : ℕ,
+      ∀ u ∈ (s \ t).powerset, ∀ _K L : ℕ,
         L ≤ H →
         L ≤ H / (∏ p ∈ u, p) + 1 →
         (L : ℝ) ≤ unitSquareTermBudget s.card H ∨
@@ -12665,7 +12668,7 @@ lemma exists_coprime_isSquare_primeSetAffine_of_budget_cases
     (H : ℕ) (hH : 0 < H)
     (hlarge : (2 : ℝ) * (4 : ℝ) ^ s.card ≤ H)
     (hcases : ∀ t ∈ s.powerset.filter Finset.Nonempty,
-      ∀ u ∈ (s \ t).powerset, ∀ K L : ℕ,
+      ∀ u ∈ (s \ t).powerset, ∀ _K L : ℕ,
         L ≤ H →
         L ≤ H / (∏ p ∈ u, p) + 1 →
         (L : ℝ) ≤ unitSquareTermBudget s.card H ∨
@@ -13359,7 +13362,7 @@ lemma exists_quadratic_modEq_mul_of_coprime
   have hz2 : z ≡ z₂ [ZMOD (n : ℤ)] := by
     have h := (hu.mul_right (z₂ - z₁)).add_left z₁
     change z₁ + (m : ℤ) * u * (z₂ - z₁) ≡ z₂ [ZMOD (n : ℤ)]
-    convert h using 1 <;> ring
+    convert h using 1; ring
   have hpoly1 :
       A * z ^ 2 + B * z + C ≡ A * z₁ ^ 2 + B * z₁ + C
         [ZMOD (m : ℤ)] :=
@@ -13381,13 +13384,14 @@ lemma exists_quadratic_modEq_mul_of_coprime
 /-- Finite CRT for roots of one quadratic polynomial over pairwise coprime
 moduli. -/
 lemma exists_quadratic_modEq_finset_prod
-    {ι : Type*} [DecidableEq ι] (s : Finset ι) (m : ι → ℕ)
+    {ι : Type*} (s : Finset ι) (m : ι → ℕ)
     (A B C x : ℤ)
     (hpair : Set.Pairwise (↑s : Set ι) fun i j ↦ (m i).Coprime (m j))
     (hroot : ∀ i ∈ s, ∃ z : ℤ,
       x ≡ A * z ^ 2 + B * z + C [ZMOD (m i : ℤ)]) :
     ∃ z : ℤ, x ≡ A * z ^ 2 + B * z + C
       [ZMOD ((∏ i ∈ s, m i : ℕ) : ℤ)] := by
+  classical
   induction s using Finset.induction_on with
   | empty =>
       exact ⟨0, by simp [Int.modEq_one]⟩
@@ -13526,7 +13530,7 @@ lemma exists_square_modEq_mul_of_coprime
   have hzy : z ≡ y [ZMOD (n : ℤ)] := by
     have h := (hu.mul_right (y - x)).add_left x
     change x + (m : ℤ) * u * (y - x) ≡ y [ZMOD (n : ℤ)]
-    convert h using 1 <;> ring
+    convert h using 1; ring
   refine ⟨z, ?_⟩
   have hm : a ≡ z ^ 2 [ZMOD (m : ℤ)] := hx.trans (hzx.pow 2).symm
   have hn : a ≡ z ^ 2 [ZMOD (n : ℤ)] := hy.trans (hzy.pow 2).symm
@@ -13537,10 +13541,11 @@ lemma exists_square_modEq_mul_of_coprime
 
 /-- Finite CRT for square congruences over pairwise coprime moduli. -/
 lemma exists_square_modEq_finset_prod
-    {ι : Type*} [DecidableEq ι] (s : Finset ι) (m : ι → ℕ) (a : ℤ)
+    {ι : Type*} (s : Finset ι) (m : ι → ℕ) (a : ℤ)
     (hpair : Set.Pairwise (↑s : Set ι) fun i j ↦ (m i).Coprime (m j))
     (hsq : ∀ i ∈ s, ∃ z : ℤ, a ≡ z ^ 2 [ZMOD (m i : ℤ)]) :
     ∃ z : ℤ, a ≡ z ^ 2 [ZMOD ((∏ i ∈ s, m i : ℕ) : ℤ)] := by
+  classical
   induction s using Finset.induction_on with
   | empty =>
       exact ⟨0, by simp [Int.modEq_one]⟩
@@ -13928,7 +13933,7 @@ theorem exists_quadraticRootOddUniformThreshold :
     have hxInt : ((D + (4 * A) * x : ℕ) : ℤ) ≡ 1
         [ZMOD (radical : ℤ)] := by
       have hx' := hx.add_right 1
-      convert hx' using 1 <;> push_cast <;> ring
+      convert hx' using 1 <;> push_cast; ring
     have hxNat : D + (4 * A) * x ≡ 1 [MOD radical] := by
       exact_mod_cast hxInt
     have hxcop : (D + (4 * A) * x).Coprime radical := by
@@ -13941,7 +13946,7 @@ theorem exists_quadraticRootOddUniformThreshold :
           (D + (4 * A) * x) 1 radical).2 hxNat
         simpa using hz
       refine ⟨1, ?_⟩
-      simpa [hxZ]
+      simp [hxZ]
     have hxsqFull : IsSquare
         ((D + (4 * A) * x : ℕ) : ZMod q) :=
       isSquare_zmod_of_coprime_square_primeSet hq hodd
@@ -14711,8 +14716,7 @@ lemma exists_nat_modEq_mem_interval
   · dsimp only [w]
     omega
   · dsimp only [w]
-    simpa [add_comm] using
-      (Nat.ModEq.modulus_mul_add (m := q) (a := k) (b := r))
+    simp
 
 /-- Translated-interval form of the uniform quadratic representation theorem.
 The represented value may start at an arbitrary residue `X`; its length is
@@ -14770,7 +14774,7 @@ theorem exists_rank_two_congruence_long_variable :
       let u : (ZMod q₂)ˣ := ZMod.unitOfCoprime q₁ hcop
       let A : ℕ := (((u⁻¹ : (ZMod q₂)ˣ) : ZMod q₂) * a).val
       let B : ℕ := (((u⁻¹ : (ZMod q₂)ˣ) : ZMod q₂) * b).val
-      let C : ℕ := (((u⁻¹ : (ZMod q₂)ˣ) : ZMod q₂) * (-(t : ZMod q₂))).val
+      let _C : ℕ := (((u⁻¹ : (ZMod q₂)ˣ) : ZMod q₂) * (-(t : ZMod q₂))).val
       let r := (A.gcd B).gcd q₂
       let q' := q₂ / r
       r + r * (7 + 8 * (Q₀ + Nat.sqrt (ordCompl[2] q'))) ≤ Hx →
@@ -15339,7 +15343,7 @@ lemma exists_coefficients_assigned_to_primePowerFactors
   · intro a ha
     obtain ⟨i, hi⟩ := List.mem_iff_get.mp ha
     have hrel := List.forall₂_iff_get.mp hassigned |>.2 i
-      (by simpa [hassigned.length_eq] using i.isLt) i.isLt
+      (by simp [hassigned.length_eq]) i.isLt
     rw [hi] at hrel
     exact hrel.1
   · apply List.Forall₂.flip
@@ -16228,13 +16232,13 @@ lemma binaryTree_longAP_or_growth
         obtain ⟨a, d, hd, hAP⟩ := hleftAP
         obtain ⟨b, _hb, htrans⟩ :=
           natAP_translate_subset_add_right hAP hrightNonempty
-        exact ⟨a + b, d, hd, htrans.trans (by simpa [hroot])⟩
+        exact ⟨a + b, d, hd, htrans.trans (by simp [hroot])⟩
       rcases ih right hrightLen hrightCard with hrightAP | hrightGrowth
       · left
         obtain ⟨a, d, hd, hAP⟩ := hrightAP
         obtain ⟨b, _hb, htrans⟩ :=
           natAP_translate_subset_add_left hleftNonempty hAP
-        exact ⟨b + a, d, hd, htrans.trans (by simpa [hroot])⟩
+        exact ⟨b + a, d, hd, htrans.trans (by simp [hroot])⟩
       rcases Erdos13Additive.growth_or_long_AP hleftNonempty hrightNonempty with
         hgrowth | hprog
       · right
@@ -16391,7 +16395,7 @@ lemma card_nvCoordBox {d : ℕ} (L : Fin d → ℕ) :
 lemma card_nvCoordBox_snoc {d : ℕ} (L : Fin d → ℕ) (H : ℕ) :
     (nvCoordBox (Fin.snoc L H)).card = (nvCoordBox L).card * (H + 1) := by
   rw [nvCoordBox, nvCoordBox, Pi.card_Icc, Pi.card_Icc]
-  simp only [Int.card_Icc, Int.toNat_natCast]
+  simp only [Int.card_Icc]
   rw [Fin.prod_univ_castSucc]
   simp
 
@@ -17353,7 +17357,7 @@ theorem exists_large_NVFullGAP_of_dense_different_summands
         conv_rhs => rw [← Fin.snoc_init_self c]
         rw [NVFullGAP.eval_snocAP]
         ext i
-        refine Fin.lastCases ?_ (fun j => ?_) i <;> simp <;> ring
+        refine Fin.lastCases ?_ (fun j => ?_) i <;> simp; ring
       · rw [← hL, card_nvCoordBox_snoc]
         have hQcard : Q.carrier.card = P.carrier.card * (R + 1) := by
           exact NVFullGAP.card_carrier_snocAP P hPproper us.sum zs.sum
@@ -19680,8 +19684,8 @@ lemma commonSideCrop_step_pattern
     obtain ⟨a, ha, hexc⟩ :=
       hstep i (Fin.cast hrank i) (by simp) hRpos
     refine ⟨a, ?_, ?_⟩
-    change (if L i = 0 then 0 else R.step i) = _
-    · simpa [hz] using ha
+    · change (if L i = 0 then 0 else R.step i) = _
+      simpa [hz] using ha
     · have hRone : (1 : ℤ) ≤ R.length i := by exact_mod_cast hRpos
       calc
         |a| = 1 * |a| := by ring
@@ -22038,12 +22042,12 @@ lemma exists_bounded_nonzero_vanishingVector_of_not_proper
       (∃ i, v i ≠ 0) ∧
       ∀ i, -(Q.length i : ℤ) ≤ v i ∧ v i ≤ Q.length i := by
   rw [Proper, Function.Injective] at hQ
-  push_neg at hQ
+  push Not at hQ
   obtain ⟨x, y, heval, hxy⟩ := hQ
   let v : Fin Q.rank → ℤ := fun i => (x i : ℤ) - (y i : ℤ)
   refine ⟨v, (eval_eq_iff_linearEval_sub_eq_zero Q x y).mp heval, ?_, ?_⟩
   · by_contra hzero
-    push_neg at hzero
+    push Not at hzero
     apply hxy
     funext i
     have hcast : (x i : ℤ) = (y i : ℤ) := sub_eq_zero.mp (hzero i)
@@ -22258,7 +22262,7 @@ rank exactly one less. -/
 theorem exists_primitiveQuotientData {d : ℕ} (u : Fin d → ℤ)
     (hu : PrimitiveIntVector u) :
     ∃ n : ℕ, ∃ a : Fin d → ℤ,
-      ∃ b : Module.Basis (Fin n) ℤ (LinearMap.ker (dotLinear a)),
+      ∃ _b : Module.Basis (Fin n) ℤ (LinearMap.ker (dotLinear a)),
         dotLinear a u = 1 ∧ n + 1 = d := by
   obtain ⟨a, hua⟩ := hu
   obtain ⟨n, b, hn⟩ := exists_primitiveKernelBasis u a hua
@@ -22268,7 +22272,7 @@ theorem exists_primitiveQuotientData {d : ℕ} (u : Fin d → ℤ)
 The result is primitive, is no larger coordinatewise, and the original vector
 is a nonzero scalar multiple of it. -/
 lemma exists_primitiveIntVector_factorization
-    {ι : Type*} [Fintype ι] [DecidableEq ι] (v : ι → ℤ)
+    {ι : Type*} [Fintype ι] (v : ι → ℤ)
     (hv : ∃ i, v i ≠ 0) :
     ∃ c : ℤ, ∃ u : ι → ℤ,
       c ≠ 0 ∧
@@ -22456,9 +22460,6 @@ noncomputable def primitiveCoordinateEquiv {d n : ℕ}
           | Sum.inr _ => dotLinear a (g y)) = q (g y) j
         rw [e.symm_apply_apply]]
       dsimp only [g]
-      change q ((y (e (Sum.inr 0))) • u +
-        ((k.symm (fun j => y (e (Sum.inl j))) :
-          LinearMap.ker (dotLinear a)) : Fin d → ℤ)) j = y (e (Sum.inl j))
       simp only [map_add, map_smul]
       have hqu : q u = 0 :=
         (primitiveQuotientProjection_eq_zero_iff u a hua b u).2 (by simp [hua])
@@ -22649,9 +22650,9 @@ lemma measurePreserving_splitCoords {d n : ℕ}
       (MeasureTheory.volume : Measure (Fin n → ℝ))).prod hlast
   have hcomp := h₃.comp (h₂.comp h₁)
   convert hcomp using 1
-  funext x
-  apply Prod.ext <;> rfl
-  rw [Measure.volume_eq_prod]
+  · funext x
+    apply Prod.ext <;> rfl
+  · rw [Measure.volume_eq_prod]
 
 lemma volume_image_intLinearEquivRealExtension {d : ℕ}
     (e : (Fin d → ℤ) ≃ₗ[ℤ] (Fin d → ℤ))
@@ -22687,8 +22688,8 @@ lemma isClosedEmbedding_intCastVec {d : ℕ} :
   change Topology.IsClosedEmbedding
     (fun (v : Fin d → ℤ) (i : Fin d) => (v i : ℝ))
   convert (Topology.IsClosedEmbedding.piMap fun _ : Fin d =>
-    Int.isClosedEmbedding_coe_real) using 1 <;>
-  funext v i <;> rfl
+    Int.isClosedEmbedding_coe_real) using 1;
+  funext v i; rfl
 
 /-- A bounded set in a finite-dimensional real coordinate space contains
 only finitely many points of the standard integer lattice. -/
@@ -22759,12 +22760,12 @@ lemma Icc_subset_fiberAt_half_projection {n : ℕ}
       (Fin n → ℝ) × ℝ) ∈ K := by
     have hc := hconv hp hminus (by norm_num : 0 ≤ (2 : ℝ)⁻¹)
       (by norm_num : 0 ≤ (2 : ℝ)⁻¹) (by norm_num)
-    convert hc using 1 <;> ext <;> simp <;> ring
+    convert hc using 1; ext <;> simp; ring
   have hupp : (((2 : ℝ)⁻¹ • p.1, (p.2 + h) / 2) :
       (Fin n → ℝ) × ℝ) ∈ K := by
     have hc := hconv hp hplus (by norm_num : 0 ≤ (2 : ℝ)⁻¹)
       (by norm_num : 0 ≤ (2 : ℝ)⁻¹) (by norm_num)
-    convert hc using 1 <;> ext <;> simp <;> ring
+    convert hc using 1; ext <;> simp; ring
   have hzEq : z = (2 : ℝ)⁻¹ • p.1 := by
     simpa using hzy.symm
   subst z
@@ -23299,12 +23300,12 @@ lemma exists_nonzero_intPoint (X : ConvexProgression) (hrank : 0 < X.rank) :
   have hne : (Pi.single i (1 : ℝ) : Fin X.rank → ℝ) ≠ 0 := by
     intro hz
     have hi := congrFun hz i
-    simpa [Pi.single_apply] using hi
+    simp at hi
   exact hne (by
     have : Pi.single i (1 : ℝ) ∈
         (⊤ : Submodule ℝ (Fin X.rank → ℝ)) := trivial
     rw [hspan] at this
-    simpa using this)
+    simp at this)
 
 /-- Existence of a shortest nonzero lattice vector for the body's Minkowski
 gauge.  Boundedness makes the relevant gauge sublevel finite, so this is an
@@ -23623,7 +23624,7 @@ lemma dotLinear_basisShearCoefficients_basis {n : ℕ}
         (quotientBasis i) = k i := by
   unfold basisShearCoefficients
   rw [dotLinear_linearFunctionalCoefficients]
-  simp [dotLinear, Pi.single_apply]
+  simp [dotLinear]
 
 lemma primitiveQuotientProjection_unadjustedBasis_castSucc {d n : ℕ}
     (u a : Fin d → ℤ) (hua : dotLinear a u = 1)
@@ -23713,7 +23714,7 @@ lemma exists_eq_smul_direction_of_real_quotient_eq_zero {d n : ℕ}
   apply L.injective
   rw [map_smul, map_smul, hucoord]
   apply Prod.ext
-  · simpa [hzfst]
+  · simp [hzfst]
   · simp [r]
 
 @[simp] lemma intCastVec_add {d : ℕ} (x y : Fin d → ℤ) :
@@ -23900,7 +23901,7 @@ lemma exists_primitive_vanishing_intPoint_of_not_sProper
   have hu0 : u ≠ 0 := by
     intro hu
     subst u
-    simp at heu
+    simp only [smul_zero] at heu
     exact he0 heu
   have hueval : X.eval u = 0 := by
     rw [heu, map_zsmul] at heval
@@ -24178,7 +24179,7 @@ noncomputable def toConvexProgression (Q : GeneralizedAP) :
       · classical
         simp only [intCastVec, v]
         have hlen : (0 : ℝ) ≤ Q.length j := by positivity
-        by_cases hji : j = i <;> simp [hji] <;> linarith
+        by_cases hji : j = i <;> simp [hji]; linarith
     · funext j
       by_cases hji : j = i
       · subst j
@@ -24272,7 +24273,7 @@ lemma volume_toConvexProgression (Q : GeneralizedAP) :
   · congr 1
     rw [boxCard]
     push_cast
-    simp only [sub_neg_eq_add, add_assoc, one_add_one_eq_two,
+    simp only [sub_neg_eq_add,
       ← two_mul, Finset.prod_mul_distrib]
     simp
   · intro i _
@@ -24528,7 +24529,6 @@ lemma eval_dilate_centeredGAP {X : ConvexProgression}
   rw [eval_latticeSynthesis, eval_latticeSynthesis,
     eval_latticeSynthesis]
   dsimp [r]
-  push_cast
   simp_rw [mul_assoc]
   rw [← Finset.mul_sum]
   ring
@@ -24536,7 +24536,7 @@ lemma eval_dilate_centeredGAP {X : ConvexProgression}
 /-- The containing rectangular progression is `t`-proper whenever the convex
 progression is proper at the enlarged scale `t * scale`. -/
 lemma tProper_centeredGAP {X : ConvexProgression}
-    (D : LatticeBoxData X) {t : ℕ} (ht : 0 < t)
+    (D : LatticeBoxData X) {t : ℕ} (_ht : 0 < t)
     (hproper : X.SProper (t * D.scale)) : D.centeredGAP.TProper t := by
   intro x y hxy
   rw [D.eval_dilate_centeredGAP, D.eval_dilate_centeredGAP] at hxy
@@ -24769,7 +24769,7 @@ lemma exists_of_rank_eq_zero (X : ConvexProgression) (hrank : X.rank = 0) :
       exact Fin.elim0 (Fin.cast hrank i)
     scale := 1
     scale_pos := by omega
-    scale_bound := by simp [hrank] }
+    scale_bound := by simp }
   refine ⟨D, ?_, ?_⟩
   · simp [D, hrank]
   · simp [energy, D, hrank]
@@ -25068,7 +25068,6 @@ lemma liftedEnergy_le_four_mul_add_two {X : ConvexProgression}
   have hlast : (liftedBoundLast D M + 1) * lam = 1 + P + lam := by
     dsimp only [liftedBoundLast, lam, P]
     field_simp [D.cost_pos.ne']
-    <;> ring
   have henergy : liftedEnergy D M = 2 * M.energy + (1 + P + lam) := by
     rw [liftedEnergy]
     let e : Fin (D.quotientRank + 1) ≃ Fin X.rank := finCongr D.rank_eq
@@ -25305,7 +25304,6 @@ lemma liftedBoundLast_mul_cost_le {X : ConvexProgression}
   have hlast : (liftedBoundLast D M + 1) * lam = 1 + P + lam := by
     dsimp only [liftedBoundLast, lam, P]
     field_simp [D.cost_pos.ne']
-    <;> ring
   have hP : P ≤ 2 * M.energy := by
     dsimp only [P, energy]
     rw [Finset.mul_sum]
@@ -25527,8 +25525,7 @@ lemma MahlerBoxData.boxConstant_le_pow_square (n : ℕ) :
   | succ n ih =>
       have hfactor : 6 * 8 ^ n ≤ 8 ^ (n + 1) := by
         rw [pow_succ]
-        simpa [mul_comm] using
-          Nat.mul_le_mul_right (8 ^ n) (show 6 ≤ 8 by norm_num)
+        simp [mul_comm]
       rw [MahlerBoxData.boxConstant]
       calc
         6 * 8 ^ n * MahlerBoxData.boxConstant n ≤
@@ -25554,7 +25551,7 @@ lemma MahlerBoxData.dimension_factor_le (r : ℕ) (hr : 2 ≤ r) :
       calc
         8 ^ (2 * (r * r)) ≤ (r ^ 2) ^ (2 * (r * r)) :=
           pow_le_pow_left' h8 _
-        _ = r ^ (4 * (r * r)) := by rw [← pow_mul]; congr 1 <;> ring
+        _ = r ^ (4 * (r * r)) := by rw [← pow_mul]; congr 1; ring
     have hpow2 : 2 ^ r ≤ r ^ (2 * (r * r)) := by
       calc
         2 ^ r ≤ r ^ r := pow_le_pow_left' h2 r
@@ -26434,7 +26431,7 @@ lemma exists_bounded_primitive_vanishingVector_of_not_tProper
   have huNonzero : ∃ i, u i ≠ 0 := by
     obtain ⟨a, ha⟩ := huPrimitive
     by_contra hzero
-    push_neg at hzero
+    push Not at hzero
     simp [hzero] at ha
   refine ⟨u, huVanish, huPrimitive, huNonzero, ?_⟩
   intro i
@@ -26897,7 +26894,7 @@ lemma explicit_doubling_drop_of_not_proper_dilate_two
     T * (Q.dilate 4).carrier.card ≤
       (T * R - 1) * (Q.dilate 2).carrier.card
   by_contra h
-  push_neg at h
+  push Not at h
   rcases h with ⟨hfirst, hsecond⟩
   dsimp [T] at hfirst hsecond
   let U := 12 * R
@@ -27667,11 +27664,12 @@ theorem exists_stopping_dense_fiber
     exact hpiece
 
 lemma exists_pivot_companion_and_list
-    {α : Type*} [DecidableEq α] (J : Finset α) (n : ℕ)
+    {α : Type*} (J : Finset α) (n : ℕ)
     (hJtwo : 2 ≤ J.card) (hn : n + 1 ≤ J.card) :
     ∃ i ∈ J, ∃ j ∈ J, i ≠ j ∧
       ∃ ks : List α, ks.length = n ∧ ks.Nodup ∧
         ∀ k ∈ ks, k ∈ J ∧ k ≠ i := by
+  classical
   have hJne : J.Nonempty := Finset.card_pos.mp (by omega)
   obtain ⟨i, hiJ⟩ := hJne
   have herase : (J.erase i).card = J.card - 1 :=
@@ -28361,7 +28359,7 @@ lemma selected_standardPatterns_subset_A_subsetSum
           natToIntFinset (G.values.get k)) := by
       induction selectedKChunks with
       | nil => simp
-      | cons ks kss ih => simp [ih]
+      | cons ks kss ih => simp
     rw [hflat]
     simpa [List.map_map, Function.comp_def] using hcast
   refine ⟨(I.toList.map τ).sum, ?_⟩
@@ -28549,7 +28547,7 @@ lemma selected_uniformStandardPatterns_subset_A_subsetSum
           natToIntFinset (G.values.get k)) := by
       induction selectedKChunks with
       | nil => simp
-      | cons ks kss ih => simp [ih]
+      | cons ks kss ih => simp
     rw [hflat]
     simpa [List.map_map, Function.comp_def] using hcast
   refine ⟨(I.toList.map τ).sum, ?_⟩
@@ -30220,7 +30218,7 @@ lemma exists_natGAP_two_of_translated_rank_two_GAP
       simp only [Finset.mem_univ, Finset.mem_insert, Finset.mem_singleton,
         true_iff]
       exact hall j
-    refine ⟨v, ?_, by simp [v, hi01, hi10], by simp [v, hi01, hi10]⟩
+    refine ⟨v, ?_, by simp [v], by simp [v, hi10]⟩
     simp only [GeneralizedAP.eval]
     have hsum : Finset.sum (Finset.univ : Finset (Fin S.rank))
         (fun j ↦ ((v j : ℕ) : ℤ) * S.step j) =
@@ -30847,7 +30845,7 @@ theorem exists_p_mul_square_in_rank_two_unbalanced :
     rw [hgcd] at hz₂'
     push_cast at hz₂' ⊢
     rw [hr, hwSq]
-    convert hz₂' using 1 <;> ring
+    convert hz₂' using 1; ring
   have hmodNat : r + d * q₁ * x ≡ p * w ^ 2 [MOD d * q₂] := by
     exact_mod_cast hmodInt
   obtain ⟨m, hm, hmpos, v, hmv⟩ :=

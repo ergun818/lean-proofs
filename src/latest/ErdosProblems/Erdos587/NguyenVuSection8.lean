@@ -74,9 +74,9 @@ def rankTwoSwap (R : GeneralizedAP) (hrank : R.rank = 2) : GeneralizedAP where
   base := R.positiveForm.base
   step := Fin.cases
     (R.positiveForm.step
-      ⟨1, by simpa [GeneralizedAP.rank_positiveForm, hrank]⟩)
+      ⟨1, by simp [GeneralizedAP.rank_positiveForm, hrank]⟩)
     (fun _ : Fin 1 ↦ R.positiveForm.step
-      ⟨0, by simpa [GeneralizedAP.rank_positiveForm, hrank]⟩)
+      ⟨0, by simp [GeneralizedAP.rank_positiveForm, hrank]⟩)
   length := Fin.cases
     (R.length ⟨1, by omega⟩)
     (fun _ : Fin 1 ↦ R.length ⟨0, by omega⟩)
@@ -117,9 +117,9 @@ def rankTwoSwap (R : GeneralizedAP) (hrank : R.rank = 2) : GeneralizedAP where
     (R.rankTwoSwap hrank).positiveForm.step
       ⟨0, by simp [rankTwoSwap]⟩ =
       R.positiveForm.step
-        ⟨1, by simpa [GeneralizedAP.rank_positiveForm, hrank]⟩ := by
+        ⟨1, by simp [GeneralizedAP.rank_positiveForm, hrank]⟩ := by
   change |R.positiveForm.step
-    ⟨1, by simpa [GeneralizedAP.rank_positiveForm, hrank]⟩| = _
+    ⟨1, by simp [GeneralizedAP.rank_positiveForm, hrank]⟩| = _
   apply abs_of_nonneg
   exact R.step_positiveForm_nonneg _
 
@@ -128,9 +128,9 @@ def rankTwoSwap (R : GeneralizedAP) (hrank : R.rank = 2) : GeneralizedAP where
     (R.rankTwoSwap hrank).positiveForm.step
       ⟨1, by simp [rankTwoSwap]⟩ =
       R.positiveForm.step
-        ⟨0, by simpa [GeneralizedAP.rank_positiveForm, hrank]⟩ := by
+        ⟨0, by simp [GeneralizedAP.rank_positiveForm, hrank]⟩ := by
   change |R.positiveForm.step
-    ⟨0, by simpa [GeneralizedAP.rank_positiveForm, hrank]⟩| = _
+    ⟨0, by simp [GeneralizedAP.rank_positiveForm, hrank]⟩| = _
   apply abs_of_nonneg
   exact R.step_positiveForm_nonneg _
 
@@ -440,7 +440,6 @@ lemma exists_essential_value_of_monotone_sum_gap
   let c : ℤ := t a
   have hab : a ≤ b := by
     apply Fin.mk_le_mk.mpr
-    change (i : ℕ) ≤ m - l + (i : ℕ)
     omega
   have hinterval : Finset.Icc a b ⊆
       (Finset.univ : Finset (Fin m)).filter fun j => t j = c := by
@@ -876,7 +875,7 @@ lemma nodup_sortedFiber {B : Finset ℕ} {Z : Finset ℤ}
 noncomputable def sortedIndex {B : Finset ℕ} {Z : Finset ℤ} {R : GeneralizedAP}
     {hrank : R.rank = 2} (M : RankTwoCoverModel B Z R hrank) (z : ℤ)
     (i : Fin (M.fiber z).card) : Fin (M.sortedFiber z).length :=
-  ⟨i, by simpa using i.isLt⟩
+  ⟨i, by simp⟩
 
 noncomputable def fiberElement {B : Finset ℕ} {Z : Finset ℤ} {R : GeneralizedAP}
     {hrank : R.rank = 2} (M : RankTwoCoverModel B Z R hrank) (z : ℤ)

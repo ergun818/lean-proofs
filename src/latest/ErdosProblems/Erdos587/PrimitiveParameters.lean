@@ -45,7 +45,7 @@ lemma exists_nat_positive_bezout {u v : ℕ} (hu : 0 < u) (hv : 0 < v) (huv : u.
     exact ⟨a, b, hab, coprime_of_nat_bezout hab⟩
 
 lemma critical_parameter_ranges {t u v H J T C : ℝ}
-    (ht : 0 ≤ t) (hu : 0 ≤ u) (hv : 0 ≤ v) (hH : 0 ≤ H) (hJ : 0 ≤ J)
+    (ht : 0 ≤ t) (hu : 0 ≤ u) (hv : 0 ≤ v) (hH : 0 ≤ H) (_hJ : 0 ≤ J)
     (hT : 0 < T) (hC : 0 < C)
     (hupper : t + u * H + v * J ≤ T) (horient : u * H ≤ v * J)
     (hspan : T ≤ C * (u * H + v * J))
@@ -89,7 +89,7 @@ lemma critical_parameter_ranges {t u v H J T C : ℝ}
       _ = _ := by rw [← Real.rpow_add hT]; norm_num
   refine ⟨?_, ?_, hvlo, hvhi⟩
   · rw [Real.sqrt_eq_rpow, ← Real.rpow_add hT]
-    convert hHlo using 1 <;> ring_nf
+    convert hHlo using 1; ring_nf
   · rw [Real.sqrt_eq_rpow, ← Real.rpow_add hT]
     exact huhi
 

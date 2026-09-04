@@ -47,7 +47,8 @@ lemma lattice_box_both_widths_lower {s₁ s₂ : ℝ}
 
 lemma latticeHalfWidth_controls_functional {s A : ℝ} (hs : 0 < s)
     (hsmall : s ≤ 1 / 128) (hA : 0 ≤ A) : A / s ≤ 128 * (latticeHalfWidth s : ℝ) * A := by
-  have hh := mul_le_mul_of_nonneg_left (latticeHalfWidth_lower hs hsmall) (show 0 ≤ 128 * A by positivity)
+  have hh := mul_le_mul_of_nonneg_left (latticeHalfWidth_lower hs hsmall)
+    (show 0 ≤ 128 * A by positivity)
   have heq : (128 * A) * (1 / (128 * s)) = A / s := by field_simp
   rw [heq] at hh
   nlinarith

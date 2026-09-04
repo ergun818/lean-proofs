@@ -26,7 +26,8 @@ theorem widths_lower_of_second_coordinate (hp₂ : P.first.2 ≠ 0) :
   have hJ : (0 : ℝ) < J := by exact_mod_cast P.height_pos
   have hg : (0 : ℝ) < g := by exact_mod_cast P.factor_pos
   have hgZ : (0 : ℤ) < g := by exact_mod_cast P.factor_pos
-  have hnorm := reduced_basis_second_norm_of_second_coordinate hH hJ hgZ P.basis P.order P.reduced hp₂
+  have hnorm := reduced_basis_second_norm_of_second_coordinate hH hJ hgZ P.basis P.order
+    P.reduced hp₂
   push_cast at hnorm
   have hh := reciprocal_norm_width_lower hH hg P.secondNorm_pos hnorm
   exact ⟨hh.trans P.both_widths_lower.1, hh.trans P.both_widths_lower.2⟩

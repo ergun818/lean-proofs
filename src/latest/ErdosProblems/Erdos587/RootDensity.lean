@@ -57,7 +57,8 @@ lemma unitSquareExpansion_sum_lower {q H : ℕ} (hq : Squarefree q) (f : ℕ →
       q.primeFactors.powerset.filter Finset.Nonempty := by
     ext t
     simp [Finset.nonempty_iff_ne_empty, and_comm]
-  have hsplit := Finset.sum_erase_add q.primeFactors.powerset F (by simp : ∅ ∈ q.primeFactors.powerset)
+  have hsplit := Finset.sum_erase_add q.primeFactors.powerset F
+    (by simp : ∅ ∈ q.primeFactors.powerset)
   rw [herase, htotal] at hsplit
   have herr : -(∑ t ∈ q.primeFactors.powerset.filter Finset.Nonempty, |F t|) ≤
       ∑ t ∈ q.primeFactors.powerset.filter Finset.Nonempty, F t := by
@@ -154,7 +155,7 @@ lemma unitSquareExpansion_affine_density_lower_of_budget_cases
     (hDM : D ≡ R * M [MOD primeSetModulus s])
     (hlarge : (4 : ℝ) * (4 : ℝ) ^ s.card ≤ H)
     (hcases : ∀ t ∈ s.powerset.filter Finset.Nonempty,
-      ∀ u ∈ (s \ t).powerset, ∀ K L : ℕ,
+      ∀ u ∈ (s \ t).powerset, ∀ _K L : ℕ,
         L ≤ H → L ≤ H / (∏ p ∈ u, p) + 1 →
         (L : ℝ) ≤ unitSquareTermBudget s.card H ∨
         Real.log (primeSetModulus t) * Real.sqrt (primeSetModulus t) ≤
