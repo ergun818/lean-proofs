@@ -63,6 +63,7 @@ noncomputable instance (u v : (ZMod p)ˣ) (c : ZMod p) :
   unfold affineSolution
   infer_instance
 
+omit [NeZero p] in
 private theorem affineSolution_fst_injective (u v : (ZMod p)ˣ) (c : ZMod p) :
     Function.Injective (fun z : affineSolution u v c ↦ z.1.1) := by
   intro z z' hz
@@ -80,6 +81,7 @@ private theorem affineSolution_fst_injective (u v : (ZMod p)ˣ) (c : ZMod p) :
     _ = v⁻¹.1 * (v.1 * z'.1.2) := by rw [hv]
     _ = z'.1.2 := by simp
 
+omit [NeZero p] in
 private theorem affineSolution_snd_injective (u v : (ZMod p)ˣ) (c : ZMod p) :
     Function.Injective (fun z : affineSolution u v c ↦ z.1.2) := by
   intro z z' hz
@@ -213,6 +215,7 @@ private theorem prod_finiteL2_nonneg (gs : List (ZMod p → ℂ)) :
       simp only [List.map_cons, List.prod_cons]
       exact mul_nonneg (finiteL2_nonneg g) ih
 
+omit [NeZero p] in
 private theorem prod_sqrt_nonneg (gs : List (ZMod p → ℂ)) :
     0 ≤ (gs.map fun _ ↦ Real.sqrt p).prod := by
   induction gs with
@@ -439,10 +442,6 @@ theorem fundamental_le (t : FundamentalSystem) (f : ∀ i, t.Value i → ℂ) :
               ∏ i, f i (c.project i x, t.project i s))‖ ≤
             c.scale * ∏ i, Real.sqrt ((c.valueFintype i).elems.sum (fun x ↦
               ‖f i (x, t.project i s)‖ ^ 2)) := by
-        change ‖c.stateFintype.elems.sum (fun x ↦
-            ∏ i, f i (c.project i x, t.project i s))‖ ≤
-          c.scale * ∏ i, Real.sqrt ((c.valueFintype i).elems.sum
-            (fun x ↦ ‖f i (x, t.project i s)‖ ^ 2))
         exact c.localBound (fun i x ↦ f i (x, t.project i s))
       have hnonneg (s : t.State) :
           0 ≤ ∏ i, Real.sqrt ((c.valueFintype i).elems.sum (fun x ↦
@@ -590,7 +589,10 @@ noncomputable def primeCoordinateTwo : FundamentalCoordinate where
     change ‖∑ a : ZMod p, ∏ i, f i (twoConvolutionProject p i a)‖ ≤ _
     have heq : (∑ a : ZMod p, ∏ i, f i (twoConvolutionProject p i a)) =
         finiteConv (f 0) (f 1) 0 * (f 2 0 * f 3 0 * f 4 0 * f 5 0) := by
-      simp [finiteConv, Fin.prod_univ_succ, twoConvolutionProject]
+      simp only [twoConvolutionProject, Fin.prod_univ_succ, Fin.isValue,
+        Fin.coe_ofNat_eq_mod, Nat.zero_mod, Fin.val_succ, Fin.succ_zero_eq_one,
+        zero_add, Fin.succ_one_eq_two, Fin.reduceSucc, Finset.univ_unique,
+        Fin.default_eq_zero, Finset.prod_singleton, finiteConv, zero_sub]
       rw [Finset.sum_mul]
       apply Finset.sum_congr rfl
       intro x hx
@@ -886,8 +888,6 @@ noncomputable def primeCoordinateForSupport (J : Finset (Fin 6))
       (by
         intro f
         rw [h4]
-        change ‖∑ s : FourConvolutionState p,
-          ∏ i, f i (fourConvolutionProject p i s)‖ ≤ _
         rw [fourConvolution_sum_eq, norm_mul]
         have hactive := norm_iterConv_le (f 0) (f 1) [f 2, f 3] 0
         simp only [List.map_cons, List.map_nil, List.prod_cons, List.prod_nil,

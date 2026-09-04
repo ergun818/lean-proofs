@@ -88,7 +88,7 @@ theorem productAddChar_orthogonality (T : Finset ℕ)
     simp [primeProduct]
   · have hcoordinate : ∃ p : T, x p ≠ 0 := by
       by_contra h
-      push_neg at h
+      push Not at h
       exact hx (funext h)
     obtain ⟨p, hp⟩ := hcoordinate
     rw [Finset.prod_eq_zero (Finset.mem_univ p)]

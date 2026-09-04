@@ -101,14 +101,13 @@ theorem interval_parseval (q h : ℕ) (hq : 0 < q) :
     rw [norm_sq_mul_conj, intervalExponentialSum, map_sum, Finset.sum_mul]
     simp +decide only [map_pow]
     norm_cast
-    simp +decide [div_eq_mul_inv, Finset.mul_sum _ _ _]
+    simp only [Finset.mul_sum]
     norm_num [fourierRoot, Complex.inv_def, Complex.normSq_eq_norm_sq,
       Complex.norm_exp]
     apply Finset.sum_congr rfl
     intro t ht
     apply Finset.sum_congr rfl
     intro u hu
-    congr 1
     rw [← Complex.exp_conj]
     have hconj :
         (starRingEnd ℂ)

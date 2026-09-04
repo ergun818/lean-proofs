@@ -392,6 +392,6 @@ theorem smallPrime_lowerTail_of_sixthMomentBound {A : ℝ}
   calc
     (h : ℝ) * (bad * (h : ℝ) ^ 2) = bad * (h : ℝ) ^ 3 := by ring
     _ ≤ B * s * h := hpre
-    _ = (h : ℝ) * (B * s) := by ring
+    _ = (h : ℝ) * (B * s) := mul_comm _ _
 
 end Erdos220

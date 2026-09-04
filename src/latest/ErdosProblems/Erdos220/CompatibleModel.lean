@@ -476,7 +476,7 @@ noncomputable def compatibleFundamentalModelOfNoSingleton
       let : NeZero p.1 :=
         ⟨(Nat.prime_of_mem_primeFactors (hsub p.2)).ne_zero⟩
       simp only [compatibleSystemList, FundamentalSystem.scale,
-        List.map_cons, List.prod_cons, compatiblePrimeCoordinate_scale, ih]
+        List.map_cons, List.prod_cons, ih]
 
 @[simp] theorem compatibleSystem_scale
     (s : ℕ) (U : Fin 6 → Finset ℕ)
@@ -526,8 +526,7 @@ theorem compatibleIntervalContraction_le_of_noSingleton
   rw [show M.system.scale =
       ∏ p ∈ usedPrimes U,
         Real.sqrt p ^ ((primeSupport U p).card - 2) by
-    simpa [M] using compatibleFundamentalModelOfNoSingleton_scale
-      s U hsub hnoone] at hbound
+    simp [M]] at hbound
   exact hbound
 
 end

@@ -38,7 +38,7 @@ lemma squarefree_squarefreeKernel (n : ℕ) : Squarefree (squarefreeKernel n) :=
 lemma squarefreeKernel_dvd (n : ℕ) : squarefreeKernel n ∣ n := by
   exact Nat.prod_primeFactors_dvd n
 
-lemma squarefreeKernel_pos {n : ℕ} (hn : 0 < n) : 0 < squarefreeKernel n := by
+lemma squarefreeKernel_pos {n : ℕ} (_hn : 0 < n) : 0 < squarefreeKernel n := by
   rw [squarefreeKernel]
   exact Finset.prod_pos fun p hp ↦ Nat.pos_of_mem_primeFactors hp
 
@@ -96,7 +96,7 @@ lemma card_filter_range_mul_of_periodic (p : ℕ → Prop) [DecidablePred p]
         have hh := hp.nsmul m k
         change p (k + m * d) = p k at hh
         simpa only [Nat.add_comm] using hh
-      simpa only [hshift]
+      simp only [hshift]
 
 lemma emptyWindows_squarefreeKernel_pred {n h x : ℕ} (hn : 0 < n) :
     (unitCount (squarefreeKernel n) h x = 0) ↔ (unitCount n h x = 0) := by
@@ -307,7 +307,7 @@ lemma card_emptyWindows_eq_shiftedNonunitCount {m : ℕ} (hm : 0 < m) (h : ℕ) 
   rw [shiftedNonunitCount_eq_noncoprime hm]
   apply congrArg Finset.card
   ext x
-  simp only [emptyWindows, shiftedNoncoprimeResidueCount, Finset.mem_filter,
+  simp only [emptyWindows, Finset.mem_filter,
     Finset.mem_range]
   constructor
   · rintro ⟨hx, hempty⟩
@@ -337,7 +337,7 @@ lemma card_survivingShifts_eq_unitCount {s : ℕ} [NeZero s]
   classical
   apply congrArg Finset.card
   ext t
-  simp only [survivingShifts, unitCount, Finset.mem_filter, Finset.mem_Icc]
+  simp only [survivingShifts, Finset.mem_filter, Finset.mem_Icc]
   rw [shifted_isUnit_iff_coprime]
   simp only [Nat.coprime_comm]
 
@@ -419,7 +419,7 @@ noncomputable def emptyCrtEquiv (s v h : ℕ) [NeZero s] [NeZero v]
       ∀ t : ↑U, ¬IsUnit (x + (t.1 : ZMod v))) hset)
 
 theorem shiftedNonunitCount_mul_eq_sum (s v h : ℕ) [NeZero s] [NeZero v]
-    (hs : 0 < s) (hv : 0 < v) (hcop : s.Coprime v) :
+    (_hs : 0 < s) (_hv : 0 < v) (hcop : s.Coprime v) :
     shiftedNonunitCount (s * v) (Finset.Icc 1 h) =
       ∑ u : ZMod s, shiftedNonunitCount v (survivingShifts s h u) := by
   change Nat.card {x : ZMod (s * v) //
@@ -447,7 +447,7 @@ theorem card_emptyWindows_mul_eq_sum {s v : ℕ} (hs : 0 < s) (hv : 0 < v)
 
 /-! ## Two elementary analytic inequalities used in the good/bad split -/
 
-lemma one_sub_pow_le_exp_neg_mul {x : ℝ} (hx0 : 0 ≤ x) (hx1 : x ≤ 1) (a : ℕ) :
+lemma one_sub_pow_le_exp_neg_mul {x : ℝ} (_hx0 : 0 ≤ x) (hx1 : x ≤ 1) (a : ℕ) :
     (1 - x) ^ a ≤ Real.exp (-(a * x)) := by
   have hbase0 : 0 ≤ 1 - x := sub_nonneg.mpr hx1
   have hbase : 1 - x ≤ Real.exp (-x) := by
@@ -458,7 +458,6 @@ lemma one_sub_pow_le_exp_neg_mul {x : ℝ} (hx0 : 0 ≤ x) (hx1 : x ≤ 1) (a : 
     _ = Real.exp (-(a * x)) := by
       rw [← Real.exp_nat_mul]
       congr 1
-      push_cast
       ring
 
 /-- The uniform polynomial form of exponential decay used for good smooth
@@ -578,7 +577,7 @@ lemma card_filter_zmod_val_eq_range {s : ℕ} [NeZero s]
       exact ha'.2
     · exact ZMod.val_natCast_of_lt (Finset.mem_range.mp ha'.1)
 
-lemma bad_residue_sum_le {α : Type*} [Fintype α] {B d : ℝ} {s v h : ℕ}
+lemma bad_residue_sum_le {α : Type*} {B d : ℝ} {s v h : ℕ}
     (hv : 0 < v) (hd0 : 0 ≤ d) (hd1 : d ≤ 1) (bad : Finset α)
     (A : α → Finset ℕ)
     (htail : (bad.card : ℝ) * (h : ℝ) ^ 2 ≤ B * s) :
@@ -601,7 +600,6 @@ lemma bad_residue_sum_le {α : Type*} [Fintype α] {B d : ℝ} {s v h : ℕ}
         hweight hweight0 (Nat.cast_nonneg _)
     _ = (v : ℝ) * ((bad.card : ℝ) * (h : ℝ) ^ 2) := by
       simp only [Finset.sum_const, nsmul_eq_mul]
-      push_cast
       ring
     _ ≤ (v : ℝ) * (B * s) :=
       mul_le_mul_of_nonneg_left htail (Nat.cast_nonneg _)
@@ -630,7 +628,7 @@ lemma good_residue_sum_le {s v h : ℕ} [NeZero s] (hv : 0 < v)
 
 /-- The complete smooth--rough assembly for a squarefree modulus, assuming
 only the lower-tail consequence of the small-prime moment estimate. -/
-theorem squarefree_emptyWindows_bound_of_lowerTail {B : ℝ} (hB0 : 0 ≤ B)
+theorem squarefree_emptyWindows_bound_of_lowerTail {B : ℝ} (_hB0 : 0 ≤ B)
     (hLower : ∀ {s h : ℕ}, 0 < s → Squarefree s → 1 ≤ h →
       (∀ p ∈ s.primeFactors, p ≤ h) →
       (((Finset.range s).filter fun u ↦

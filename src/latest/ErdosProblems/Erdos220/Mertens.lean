@@ -67,7 +67,8 @@ theorem partial_euler_product_le_log :
         exact partial_euler_product_one
       _ = (Real.log 3)⁻¹ * Real.log 3 := by field_simp
       _ ≤ C * Real.log 3 := mul_le_mul_of_nonneg_right hsmall hlog3.le
-    convert hfinal using 1 <;> norm_num
+    convert hfinal using 1
+    norm_num
 
 /-- The same natural-endpoint bound in the `log (2h)` form used in the
 small-prime/large-prime split. -/

@@ -41,7 +41,7 @@ lemma mem_nonemptySixSubsetFamilies {P : Finset ℕ}
 /-- An injective encoding of a finite family of admissible, nonempty support
 tuples has total weight bounded by the complete local Euler product. -/
 theorem sum_encoded_admissible_weights_le_localFactorProduct
-    {A : Type*} [DecidableEq A] (P : Finset ℕ)
+    {A : Type*} (P : Finset ℕ)
     (hP : ∀ p ∈ P, 2 ≤ p) (S : Finset A)
     (encode : A → SixSubsetTuple P)
     (hinj : Set.InjOn encode S)

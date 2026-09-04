@@ -83,9 +83,9 @@ theorem abs_unitCount_centered_pow_six
     simpa using congrArg Complex.re hcenter
   rw [hre, abs_mul, abs_of_nonneg (density_nonneg s), mul_pow,
     Even.pow_abs]
-  rw [norm_pow_six_eq_re_pow_six_of_im_eq_zero
-    (centeredRamanujanAmplitude_im s h u hs hsquare)]
-  norm_num
+  · rw [norm_pow_six_eq_re_pow_six_of_im_eq_zero
+      (centeredRamanujanAmplitude_im s h u hs hsquare)]
+  · norm_num
 
 /-- Exact reduction of the smooth sixth moment to the sixth norm moment of
 the nonconstant Ramanujan amplitude. -/
@@ -178,7 +178,7 @@ prime-local compatibility equation, because its unique frequency is a unit
 modulo that prime. -/
 lemma not_sixPrimeCompatible_of_support_card_one
     {s : ℕ} {U : Fin 6 → Finset ℕ}
-    (hsub : ∀ i, U i ⊆ s.primeFactors) (p : s.primeFactors)
+    (_hsub : ∀ i, U i ⊆ s.primeFactors) (p : s.primeFactors)
     (hpone : (familySupportTuple s.primeFactors U p).card = 1)
     (a : ∀ i, PrimitiveFrequencyTuple (U i)) :
     ¬ sixPrimeCompatible s a := by
@@ -412,7 +412,7 @@ lemma fixedSupportMomentContribution_eq_zero_of_not_admissible
   have hsub : ∀ i, U i ⊆ s.primeFactors :=
     (mem_nonemptySixSubsetFamilies.mp hU).1
   simp only [IsAdmissibleSixTuple, sixMultiplicity] at hbad
-  push_neg at hbad
+  push Not at hbad
   obtain ⟨p, hpone⟩ := hbad
   have hzero :=
     fixedSupportCompatibleIntervalContraction_eq_zero_of_support_card_one

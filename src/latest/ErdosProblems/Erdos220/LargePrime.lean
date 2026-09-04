@@ -95,10 +95,10 @@ noncomputable def coveredConsEquiv {α : Type*} {p : ℕ} {ps : List ℕ}
       · exact Or.inl h.symm
       · exact Or.inr ((Forbidden.hit_comap (remainingEmbedding e x.1) f x.2.1
           ⟨a, h⟩).mp (x.2.2 ⟨a, h⟩))⟩
-  left_inv x := by ext <;> rfl
+  left_inv x := by ext; rfl
   right_inv x := by rcases x with ⟨y, x⟩; ext <;> rfl
 
-@[simp] theorem coverCount_cons {α : Type*} [Fintype α] {p : ℕ} {ps : List ℕ}
+@[simp] theorem coverCount_cons {α : Type*} {p : ℕ} {ps : List ℕ}
     (e : α ↪ Fin p) (f : Forbidden α ps) :
     coverCount (.cons e f) =
       ∑ y : Fin p, coverCount (f.comap (remainingEmbedding e y)) := by
@@ -118,7 +118,7 @@ theorem natCard_remaining {α : Type*} [Fintype α] {p : ℕ}
   · have hne : ∀ a, e a ≠ y := fun a h => hy (Finset.mem_map.mpr ⟨a, by simp, h⟩)
     simp [Nat.card_eq_fintype_card, hy, hne]
 
-theorem card_range_embedding {α β : Type*} [Fintype α] [Fintype β]
+theorem card_range_embedding {α β : Type*} [Fintype α]
     (e : α ↪ β) :
     (Finset.univ.map e).card = Fintype.card α := by simp
 
@@ -200,13 +200,13 @@ theorem avoidProb_le_one : ∀ {ps : List ℕ}, (∀ p ∈ ps, 0 < p) → avoidP
 each of which has one distinct forbidden residue for each label. -/
 theorem cover_density_le :
     ∀ (ps : List ℕ) {α : Type*} [Fintype α]
-      (hpos : ∀ p ∈ ps, 0 < p) (f : Forbidden α ps),
+      (_ : ∀ p ∈ ps, 0 < p) (f : Forbidden α ps),
       (coverCount f : ℚ) / ps.prod ≤
         (1 - avoidProb ps) ^ Fintype.card α := by
   intro ps
   induction ps with
   | nil =>
-      intro α _hαF hpos f
+      intro α _hαF _ f
       cases f with
       | nil =>
           classical
@@ -216,7 +216,7 @@ theorem cover_density_le :
           · let a : α := Classical.choice (not_isEmpty_iff.mp hα)
             have hempty : IsEmpty (Covered (Forbidden.nil : Forbidden α [])) :=
               ⟨fun x => False.elim (x.2 a)⟩
-            simp [coverCount, avoidProb, hempty]
+            simp [coverCount, avoidProb]
   | cons p ps ih =>
       intro α _hαF hpos family
       cases family with
@@ -308,8 +308,8 @@ def intervalForbidden (h : ℕ) (A : Finset ℕ) (hA : A ⊆ Finset.Icc 1 h) :
 /-- Recursive Chinese-remainder equivalence from one residue modulo a product
 to the corresponding product of canonical finite residue spaces. -/
 noncomputable def crtConfigEquiv :
-    ∀ (ps : List ℕ) (hcop : ps.Pairwise Nat.Coprime)
-      (hpos : ∀ p ∈ ps, 0 < p), ZMod ps.prod ≃ Config ps
+    ∀ (ps : List ℕ) (_ : ps.Pairwise Nat.Coprime)
+      (_ : ∀ p ∈ ps, 0 < p), ZMod ps.prod ≃ Config ps
   | [], _, _ => Equiv.ofUnique (ZMod 1) Unit
   | p :: ps, hcop, hpos => by
       have hp : 0 < p := hpos p (by simp)
@@ -321,7 +321,7 @@ noncomputable def crtConfigEquiv :
         (Equiv.prodCongr (ZMod.finEquiv p).symm.toEquiv
           (crtConfigEquiv ps (List.Pairwise.of_cons hcop) htail))
 
-theorem negShiftFin_iff_dvd_add {p t : ℕ} (hp : 0 < p) (ht0 : 0 < t)
+theorem negShiftFin_iff_dvd_add {p t : ℕ} (_hp : 0 < p) (ht0 : 0 < t)
     (htp : t < p) (x : Fin p) :
     x = negShiftFin p t ht0 htp ↔ p ∣ x.1 + t := by
   constructor
@@ -616,8 +616,8 @@ theorem squarefree_largePrime_conditional_count_le {v h r u : ℕ}
       v * (v - Nat.totient v) ^ A.card := by
   dsimp
   apply squarefree_largePrime_count_mul_pow_le
-  intro t ht
-  exact (Finset.mem_filter.mp ht).1
+  · intro t ht
+    exact (Finset.mem_filter.mp ht).1
   · exact hsq
   · exact hlarge
 
@@ -631,8 +631,8 @@ theorem squarefree_largePrime_conditional_noncoprime_count_le {v h r u : ℕ}
       v * (v - Nat.totient v) ^ A.card := by
   dsimp
   apply squarefree_largePrime_noncoprime_count_mul_pow_le
-  intro t ht
-  exact (Finset.mem_filter.mp ht).1
+  · intro t ht
+    exact (Finset.mem_filter.mp ht).1
   · exact hsq
   · exact hlarge
 
@@ -644,8 +644,8 @@ theorem squarefree_largePrime_conditional_gcd_count_le {v h r u : ℕ}
       v * (v - Nat.totient v) ^ A.card := by
   dsimp
   apply squarefree_largePrime_gcd_count_mul_pow_le
-  intro t ht
-  exact (Finset.mem_filter.mp ht).1
+  · intro t ht
+    exact (Finset.mem_filter.mp ht).1
   · exact hsq
   · exact hlarge
 
