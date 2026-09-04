@@ -289,14 +289,14 @@ lemma test_heightDropKernel_interval_mass_lower {eta c R y : ℝ}
   have hshift : (∫ x in y - D..y + D, heightDropKernel eta (x - y)) =
       ∫ t in -D..D, heightDropKernel eta t := by
     convert (intervalIntegral.integral_comp_sub_right (f := heightDropKernel eta)
-      (a := y - D) (b := y + D) y) using 1 <;> ring_nf
+      (a := y - D) (b := y + D) y) using 1; ring_nf
   rw [hshift] at hmono
   exact hcore.trans hmono
 
 lemma test_localNodeCount_le_of_heightDrop_on_interval {n : ℕ} (hn : 0 < n)
     (X : NodeConfiguration n) {c R D eta E rhoMax : ℝ}
     (hR : 0 ≤ R) (hD : 0 < D) (heta : 0 < eta)
-    (hcore : 0 ≤ Real.pi * eta - 3 * eta ^ 2 / D)
+    (_hcore : 0 ≤ Real.pi * eta - 3 * eta ^ 2 / D)
     (happrox : ∀ x ∈ Set.Icc (c - (R + D)) (c + (R + D)),
       (1 / (n : ℝ)) * ∑ k : Fin n, heightDropKernel eta (x - X k) ≤
         Real.pi * eta * rhoMax + E) :
@@ -321,7 +321,7 @@ lemma test_localNodeCount_le_of_heightDrop_on_interval {n : ℕ} (hn : 0 < n)
     have hb := IntervalIntegrable.sum Finset.univ (fun k _ ↦ htermInt k)
     apply hb.congr_ae
     filter_upwards with x
-    show (∑ k : Fin n, fun u : ℝ ↦ heightDropKernel eta (u - X k)) x =
+    change (∑ k : Fin n, fun u : ℝ ↦ heightDropKernel eta (u - X k)) x =
       ∑ k : Fin n, heightDropKernel eta (x - X k)
     exact Finset.sum_apply x Finset.univ _
   have hFInt : IntervalIntegrable F volume
@@ -376,7 +376,7 @@ lemma test_localNodeCount_le_of_heightDrop_on_interval {n : ℕ} (hn : 0 < n)
     simpa only [smul_eq_mul] using (show
       (∫ x in c - (R + D)..c + (R + D), F x) ≤
         2 * (R + D) * (Real.pi * eta * rhoMax + E) by
-      convert hmono using 1 <;> ring)
+      convert hmono using 1; ring)
   have hnR : 0 < (n : ℝ) := by exact_mod_cast hn
   rw [hsumEq] at hsumLower
   have hscale : (∫ x in c - (R + D)..c + (R + D),
@@ -404,7 +404,7 @@ lemma test_heightDropKernel_interval_mass_upper {eta a b y : ℝ}
 
 lemma test_localNodeCount_lower_of_heightDrop_on_interval {n : ℕ} (hn : 0 < n)
     (X : NodeConfiguration n) {c R D eta E rhoMin Tail : ℝ}
-    (hD : 0 ≤ D) (hDR : D ≤ R) (heta : 0 < eta)
+    (_hD : 0 ≤ D) (hDR : D ≤ R) (heta : 0 < eta)
     (happrox : ∀ x ∈ Set.Icc (c - (R - D)) (c + (R - D)),
       Real.pi * eta * rhoMin - E ≤
         (1 / (n : ℝ)) * ∑ k : Fin n, heightDropKernel eta (x - X k))
@@ -434,7 +434,7 @@ lemma test_localNodeCount_lower_of_heightDrop_on_interval {n : ℕ} (hn : 0 < n)
     have hb := IntervalIntegrable.sum Finset.univ (fun k _ ↦ htermInt k)
     apply hb.congr_ae
     filter_upwards with x
-    show (∑ k : Fin n, fun u : ℝ ↦ heightDropKernel eta (u - X k)) x =
+    change (∑ k : Fin n, fun u : ℝ ↦ heightDropKernel eta (u - X k)) x =
       ∑ k : Fin n, heightDropKernel eta (x - X k)
     exact Finset.sum_apply x Finset.univ _
   have hFInt : IntervalIntegrable F volume
@@ -450,7 +450,7 @@ lemma test_localNodeCount_lower_of_heightDrop_on_interval {n : ℕ} (hn : 0 < n)
     simpa only [smul_eq_mul] using (show
       2 * (R - D) * (Real.pi * eta * rhoMin - E) ≤
         ∫ x in c - (R - D)..c + (R - D), F x by
-      convert hmono using 1 <;> ring)
+      convert hmono using 1; ring)
   have hnR : 0 < (n : ℝ) := by exact_mod_cast hn
   have hscaled : (n : ℝ) * (2 * (R - D)) *
       (Real.pi * eta * rhoMin - E) ≤
@@ -502,7 +502,7 @@ lemma test_localNodeCount_lower_of_heightDrop_on_interval {n : ℕ} (hn : 0 < n)
     simpa only [t] using htail
   linarith
 
-lemma test_sum_union_le_add { α : Type*} [DecidableEq α]
+lemma test_sum_union_le_add {α : Type*} [DecidableEq α]
     (s t : Finset α) (f : α → ℝ) (hf : ∀ x, 0 ≤ f x) :
     ∑ x ∈ s ∪ t, f x ≤ (∑ x ∈ s, f x) + ∑ x ∈ t, f x := by
   have hdisj : Disjoint s (t \ s) := Finset.disjoint_sdiff
@@ -550,7 +550,7 @@ lemma test_exists_linear_shell {N : ℕ} {D q : ℝ}
           · refine ⟨N, by omega, ?_, ?_⟩
             · have hq' : ((N + 1 : ℕ) : ℝ) * D < q := lt_of_not_ge hq
               exact hq'.le
-            · convert hqupper using 1 <;> norm_num
+            · exact hqupper
 
 lemma test_heightDropKernel_interval_mass_le_of_separated
     {eta a b y d : ℝ} (heta : 0 < eta) (hab : a ≤ b) (hd : 0 < d)
@@ -585,7 +585,7 @@ lemma test_heightDropKernel_interval_mass_le_of_separated
 
 lemma test_heightDropKernel_annulus_sum_le {n N : ℕ}
     (X : NodeConfiguration n) {c R S D eta B : ℝ}
-    (hN : 0 < N) (hS : 0 ≤ S)
+    (hN : 0 < N) (_hS : 0 ≤ S)
     (hD : 0 < D) (hDR : D ≤ R)
     (heta : 0 < eta) (hcover : S + D ≤ (N : ℝ) * D)
     (hshellRight : ∀ j < N,
@@ -744,7 +744,8 @@ lemma test_heightDropKernel_annulus_sum_le {n N : ℕ}
             have hsqInv : (((j + 1 : ℕ) : ℝ) ^ 2)⁻¹ ≤
                 (((j + 1 : ℕ) : ℝ)⁻¹) := by
               rw [inv_le_inv₀ (by positivity) (by positivity)]
-              nlinarith [show 1 ≤ ((j + 1 : ℕ) : ℝ) by exact_mod_cast Nat.one_le_iff_ne_zero.mpr (by omega)]
+              nlinarith [show 1 ≤ ((j + 1 : ℕ) : ℝ) by
+                exact_mod_cast Nat.one_le_iff_ne_zero.mpr (by omega)]
             have hB : 0 ≤ B := (Nat.cast_nonneg (right j).card).trans hcard
             have hmul := mul_le_mul hcard hsqInv (by positivity) hB
             calc
@@ -862,7 +863,7 @@ lemma test_abs_heightDrop_average_sub_density_le_uniform
     (normalizationLevel X) A B x eta
     (uniformAffineError n eta gap M)
     (uniformAffineError n (2 * eta) gap M) heta h₁ (by
-      convert h₂ using 1 <;> norm_num)
+      convert h₂ using 1; norm_num)
   have htwo := uniformAffineError_two_mul_le (gap := gap) hn heta hM
   exact havg.trans (by linarith)
 
@@ -957,7 +958,7 @@ noncomputable def test_intervalNodeCount {n : ℕ} (X : NodeConfiguration n)
   ((Finset.univ : Finset (Fin n)).filter fun k ↦ L ≤ X k ∧ X k ≤ U).card
 
 lemma test_intervalNodeCount_eq_localNodeCount {n : ℕ}
-    (X : NodeConfiguration n) {L D : ℝ} (hD : 0 ≤ D) :
+    (X : NodeConfiguration n) {L D : ℝ} (_hD : 0 ≤ D) :
     test_intervalNodeCount X L (L + D) =
       localNodeCount X (L + D / 2) (D / 2) := by
   unfold test_intervalNodeCount localNodeCount
@@ -1519,7 +1520,7 @@ lemma test_abs_nodal_on_local_interval_le_amplitude
     nlinarith [mul_le_mul_of_nonneg_left hxabs hradius]
   have hycenter : |y - center| ≤ radius := by
     dsimp only [y]
-    convert hxr using 1 <;> ring_nf
+    convert hxr using 1; ring_nf
   have hy : y ∈ Set.Icc A B := by
     rw [abs_le] at hycenter
     constructor <;> linarith [hycenter.1, hycenter.2]
@@ -1570,9 +1571,7 @@ lemma test_abs_nodal_derivative_le_of_local_potential
         radius := by
   have hn : 0 < n := by omega
   have hdeg : (nodalPolynomial X).natDegree ≤ n := by
-    simpa [nodalPolynomial] using
-      (Lagrange.natDegree_nodal (s := (Finset.univ : Finset (Fin n)))
-        (v := X.nodes)).le
+    simp [nodalPolynomial]
   let Aedge := Real.exp (rate * radius) * amplitude X A B rate center hAB
   let Mellipse := test_localEllipseBound X A B center radius r gap M
   have hAedge : 0 ≤ Aedge := by
@@ -1734,7 +1733,7 @@ lemma test_geometric_count_reciprocal_le {n J : ℕ}
     rw [Finset.sum_add_distrib, Finset.sum_comm]
     rw [← Finset.sum_div]
     rw [← test_localNodeCount_eq_sum_cutoff]
-    apply congrArg₂ (.+.) rfl
+    apply congrArg₂ (· + ·) rfl
     apply Finset.sum_congr rfl
     intro j hj
     rw [← Finset.sum_mul]
@@ -2160,7 +2159,7 @@ lemma test_annulus_normalization_identity
 
 lemma test_far_normalization_identity
     {nR D R eta q p Q T : ℝ}
-    (hn : nR ≠ 0) (hD : D ≠ 0) (hR : R ≠ 0)
+    (hn : nR ≠ 0) (_hD : D ≠ 0) (hR : R ≠ 0)
     (hq : q ≠ 0) (hp : p ≠ 0) (hQ : Q ≠ 0) (hT : T ≠ 0)
     (hDdef : D = R / Q) (heta : eta = D / q ^ 2) :
     nR * (3 * (R - D) * eta ^ 2 / T ^ 2) /
@@ -2716,7 +2715,7 @@ lemma test_exp_div_pow_eq {E r : ℝ} {m : ℕ} (hr : 0 < r) :
   congr 1
 
 lemma test_exp_div_pow_le_safety
-    {E r s : ℝ} {m : ℕ} (hr : 1 < r) (hs : 0 ≤ s)
+    {E r s : ℝ} {m : ℕ} (hr : 1 < r) (_hs : 0 ≤ s)
     (hm : E / Real.log r + s ≤ (m : ℝ)) :
     Real.exp E / r ^ m ≤ Real.exp (-s * Real.log r) := by
   rw [test_exp_div_pow_eq (zero_lt_one.trans hr)]
@@ -2740,7 +2739,7 @@ lemma test_scale_le_of_anchor
       dsimp only [F]
       have hexp : Real.exp (rate * h) * Real.exp (-rate * h) = 1 := by
         rw [← Real.exp_add]
-        convert Real.exp_zero using 1 <;> ring_nf
+        convert Real.exp_zero using 1; ring_nf
       symm
       calc
         (2 * nR / h) * Real.exp (rate * h) *
@@ -2822,7 +2821,7 @@ lemma test_localEllipseBound_le_derivativeExponent
 lemma test_truncated_derivative_expression_le
     {nR mR radius edge amp tail mainC tailC tailBound : ℝ}
     (hnR : 0 ≤ nR) (hmR : 0 ≤ mR) (hradius : 0 < radius)
-    (hedge : 0 ≤ edge) (hamp : 0 ≤ amp) (htail0 : 0 ≤ tail)
+    (_hedge : 0 ≤ edge) (hamp : 0 ≤ amp) (_htail0 : 0 ≤ tail)
     (htailC : 0 ≤ tailC)
     (hsize : (mR + 1) + (nR + 1) ≤ 3 * nR)
     (hmain : (mR + 1) * edge / radius ≤ mainC)
@@ -2861,8 +2860,8 @@ lemma test_abs_nodal_derivative_le_of_controls
     (hA : -1 ≤ A) (hB : B ≤ 1) (hAB : A ≤ B)
     (hM : 0 ≤ M) (hnorm : |normalizationLevel X| ≤ M)
     (hLeb : ∀ v ∈ Set.Icc A B, lebesgueFunction X v ≤ (n : ℝ))
-    (hgap : 0 < gap) (hdelta : 0 < delta)
-    (hrho0 : 0 ≤ exteriorDensity X (normalizationLevel X) A B z 0)
+    (hgap : 0 < gap) (_hdelta : 0 < delta)
+    (_hrho0 : 0 ≤ exteriorDensity X (normalizationLevel X) A B z 0)
     (hzunit : |z| ≤ 1)
     (hzsep : ∀ v ∉ Set.Icc A B, gap ≤ |z - v|)
     (hdist : |center - z| ≤ test_maxRadius n)
@@ -2936,7 +2935,8 @@ lemma test_abs_nodal_derivative_le_of_controls
     have hs := test_scale_le_of_anchor (inv_pos.mpr hq)
       (show 0 < (n : ℝ) by exact_mod_cast hn) hanchor
     dsimp only [amp]
-    convert hs using 1 <;> field_simp [hq.ne'] <;> ring
+    convert hs using 1
+    field_simp [hq.ne']
   have hmLower : E / Real.log r + 8 * q ^ 2 ≤ (m : ℝ) := by
     dsimp only [m, test_derivativeCutoff, E, rho, q, r]
     exact Nat.le_ceil _
@@ -2946,7 +2946,7 @@ lemma test_abs_nodal_derivative_le_of_controls
       exact hmLower.trans (by exact_mod_cast Nat.le_succ m)
     convert test_exp_div_pow_le_safety (E := E) (r := r)
       (s := 8 * q ^ 2) (m := m + 1) hr
-      (mul_nonneg (by norm_num) (sq_nonneg q)) hmcast using 1 <;> ring_nf
+      (mul_nonneg (by norm_num) (sq_nonneg q)) hmcast using 1; ring_nf
   have htail0 : 0 ≤ tail := by
     dsimp only [tail, Mellipse]
     exact div_nonneg
@@ -3103,7 +3103,7 @@ lemma test_tendsto_derivativeHoriz :
   have hfactor : Tendsto (fun n ↦
       (test_derivativeBase n + (test_derivativeBase n)⁻¹) / 2)
       atTop (𝓝 1) := by
-    convert (hbase.add hbaseInv).div_const 2 using 1 <;> norm_num
+    convert (hbase.add hbaseInv).div_const 2 using 1; norm_num
   unfold test_derivativeHoriz
   convert hrad.mul hfactor using 1
   · funext n
@@ -3710,7 +3710,6 @@ lemma test_tendsto_shellSteps_div_logScale (Q : ℕ) :
         unfold test_shellSteps
         exact Nat.floor_le (mul_nonneg (Nat.cast_nonneg Q) hrange))
     · filter_upwards [hqpos, hrangePos] with n hq hrange
-      change err n ≤ (test_logScale n)⁻¹
       dsimp only [err]
       rw [inv_eq_one_div]
       have hfloor := Nat.lt_floor_add_one ((Q : ℝ) * test_logRange n)
@@ -3864,7 +3863,7 @@ lemma test_tendsto_scaled_nat_ratio {L : ℕ} (hL : 0 < L) :
   field_simp [hkR, hLR]
 
 lemma test_exists_shell_parameters {rho0 rhoU epsilon : ℝ}
-    (hrho0 : 0 < rho0) (hrhoU : 0 ≤ rhoU) (hepsilon : 0 < epsilon) :
+    (hrho0 : 0 < rho0) (_hrhoU : 0 ≤ rhoU) (hepsilon : 0 < epsilon) :
     ∃ Q : ℕ, ∃ delta : ℝ,
       2 ≤ Q ∧ 0 < delta ∧ delta < rho0 ∧
       2 * rhoU / (Q : ℝ) ≤ delta / 4 ∧
@@ -3923,7 +3922,7 @@ lemma test_exists_shell_parameters {rho0 rhoU epsilon : ℝ}
   · simpa only [Q, delta] using htarget
 
 lemma test_density_ratio_mono {rho0 rho delta : ℝ}
-    (hrho0 : 0 < rho0) (hdelta : 0 < delta) (hdeltarho : delta < rho0)
+    (hrho0 : 0 < rho0) (hdelta : 0 < delta) (_hdeltarho : delta < rho0)
     (hrho : rho0 ≤ rho) :
     2 * (rho0 - delta) / (Real.pi * rho0 + delta) ≤
       2 * (rho - delta) / (Real.pi * rho + delta) := by
@@ -4381,7 +4380,7 @@ theorem erdos_1153 : (∀ a b : ℝ, -1 ≤ a → a < b → b ≤ 1 →
         have hc := hcount X hnorm hLeb z hregularCount hrhoNonneg
           (R0 * ratio ^ j) hmin hmax
         dsimp only [rho] at hc ⊢
-        convert hc using 1 <;> ring
+        convert hc using 1; ring
       have hzNe : ∀ k, z ≠ X k := by
         have hampLower := amplitude_anchor_lower hn2 X hab.le hrate.le hh
           hx0left0 hx0right0 hx0left hx0right
@@ -4483,7 +4482,7 @@ theorem erdos_1153 : (∀ a b : ℝ, -1 ≤ a → a < b → b ≤ 1 →
       · change (2 / Real.pi - epsilon) * test_logScale n ≤
           lebesgueFunction X z
         exact htargetFactor.trans (hfactor.trans hAbel)
-    · push_neg at hLeb
+    · push Not at hLeb
       obtain ⟨x, hx, hlarge⟩ := hLeb
       exact ⟨x, hx, htargetNat.trans hlarge.le⟩
   obtain ⟨N, hN⟩ := eventually_atTop.1 hevent

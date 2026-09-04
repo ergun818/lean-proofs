@@ -352,7 +352,7 @@ lemma complexNodalPolynomial_eval {n : ℕ} (X : NodeConfiguration n) (z : ℂ) 
       ∏ k : Fin n, (Polynomial.X - Polynomial.C (X k : ℂ)) by
     simp only [complexNodalPolynomial, nodalPolynomial, Lagrange.nodal,
       Polynomial.map_prod, Polynomial.map_sub, Polynomial.map_X,
-      Polynomial.map_C, map_natCast]
+      Polynomial.map_C]
     rfl]
   simp [complexNodalValue, Polynomial.eval_prod]
 
@@ -360,9 +360,7 @@ lemma complexNodalPolynomial_natDegree {n : ℕ} (X : NodeConfiguration n) :
     (complexNodalPolynomial X).natDegree = n := by
   rw [complexNodalPolynomial, Polynomial.natDegree_map_eq_of_injective
     Complex.ofRealHom.injective]
-  simpa [nodalPolynomial] using
-    (Lagrange.natDegree_nodal (s := (Finset.univ : Finset (Fin n)))
-      (v := X.nodes))
+  simp [nodalPolynomial]
 
 lemma complexNodalPolynomial_eval_ofReal {n : ℕ}
     (X : NodeConfiguration n) (x : ℝ) :
@@ -641,7 +639,7 @@ lemma logPotential_add_mul_I_eq_sum {n : ℕ} (X : NodeConfiguration n)
     congr 1
     simp only [Complex.normSq_apply, Complex.add_re, Complex.sub_re,
       Complex.mul_re, Complex.mul_im, Complex.ofReal_re, Complex.I_re,
-      Complex.I_im, Complex.ofReal_im, mul_zero, zero_mul, sub_zero,
+      Complex.I_im, Complex.ofReal_im, mul_zero, sub_zero,
       add_zero, zero_add, mul_one, Complex.add_im, Complex.sub_im]
     ring_nf
   unfold logPotential
@@ -718,8 +716,8 @@ lemma logPotential_half_height_sub_lower {n : ℕ} (hn : 0 < n)
         ((x - X k) ^ 2 + (H / 2) ^ 2)) := by
     intro k
     apply log_half_height_ratio_lower
-    exact abs_sub_le_iff.mpr ⟨by linarith [hx.2, (X.nodes_mem k).1],
-      by linarith [hx.1, (X.nodes_mem k).2]⟩
+    · exact abs_sub_le_iff.mpr ⟨by linarith [hx.2, (X.nodes_mem k).1],
+        by linarith [hx.1, (X.nodes_mem k).2]⟩
     · exact hH
     · exact hH1
   have hsum : (n : ℝ) * (3 * H ^ 2 / 20) ≤
@@ -1483,7 +1481,7 @@ private lemma integral_log_abs_sin_sub_arctan (a : ℝ) :
   rw [intervalIntegral.integral_comp_sub_right
     (fun y : ℝ ↦ Real.log |Real.sin y|) (Real.arctan a)]
   have h := integral_log_abs_sin_length_pi (-(Real.pi / 2) - Real.arctan a)
-  convert h using 1 <;> ring_nf
+  convert h using 1; ring_nf
 
 private lemma sin_sub_mul_sqrt (a x : ℝ) :
     Real.sqrt (1 + a ^ 2) * Real.sin (x - Real.arctan a) =
@@ -2534,7 +2532,7 @@ private lemma weighted_cauchyKernel_horizontal_sub_le
         have hB : 1 ≤ (gap⁻¹) ^ 3 * (D ^ 2 * F) := by
           have hs : 1 ≤ (gap⁻¹ * D) ^ 2 * (gap⁻¹ * F) := by
             nlinarith [sq_nonneg (gap⁻¹ * D - 1)]
-          convert hs using 1 <;> ring
+          convert hs using 1; ring
         nlinarith
       · apply (div_le_iff₀ (mul_pos hD (sq_pos_of_pos hF))).2
         have hD' : 1 ≤ gap⁻¹ * D := by
@@ -2552,7 +2550,7 @@ private lemma weighted_cauchyKernel_horizontal_sub_le
         have hB : 1 ≤ (gap⁻¹) ^ 3 * (D * F ^ 2) := by
           have hs : 1 ≤ (gap⁻¹ * D) * (gap⁻¹ * F) ^ 2 := by
             nlinarith [sq_nonneg (gap⁻¹ * F - 1)]
-          convert hs using 1 <;> ring
+          convert hs using 1; ring
         nlinarith
     _ = 6 * (gap⁻¹ + (gap⁻¹) ^ 3) * |x - y| := by ring
 
@@ -2560,7 +2558,7 @@ private lemma weighted_cauchyKernel_horizontal_sub_le
 point stays a positive distance from the exterior set. -/
 lemma integrableOn_exterior_density_kernel {n : ℕ} (hn : 0 < n)
     (X : NodeConfiguration n) (alpha A B x eta gap : ℝ)
-    (hgap : 0 < gap) (hx : |x| ≤ 1) (heta : 0 ≤ eta)
+    (hgap : 0 < gap) (hx : |x| ≤ 1) (_heta : 0 ≤ eta)
     (hsep : ∀ v ∉ Set.Icc A B, gap ≤ |x - v|) :
     IntegrableOn (fun v : ℝ ↦
       (logPotential X (v : ℂ) - alpha) / ((x - v) ^ 2 + eta ^ 2))
@@ -2603,7 +2601,7 @@ lemma integrableOn_exterior_density_kernel {n : ℕ} (hn : 0 < n)
       have hetaSq : 0 ≤ eta ^ 2 := sq_nonneg eta
       nlinarith [sq_nonneg (x - v)]
     simp only [Real.norm_eq_abs, abs_div, abs_of_pos hdpos,
-      abs_mul, abs_of_nonneg hC, abs_abs, abs_of_pos hvpos]
+      abs_of_pos hvpos]
     let q : ℝ := |logPotential X (v : ℂ) - alpha|
     have hq : 0 ≤ q := abs_nonneg _
     have hmul : q * (v ^ 2 + 1) ≤ q * (C * ((x - v) ^ 2 + eta ^ 2)) :=
@@ -2660,8 +2658,7 @@ lemma abs_exteriorDensity_le_uniform {n : ℕ} (hn : 0 < n)
         have hratio : v ^ 2 + 1 ≤ C * (x - v) ^ 2 := by
           dsimp [C]
           nlinarith
-        simp only [f, g, Real.norm_eq_abs, abs_div, abs_pow,
-          abs_of_pos hd, abs_of_nonneg hC]
+        simp only [f, g, Real.norm_eq_abs, abs_div, abs_of_pos hd]
         let q : ℝ := |logPotential X (v : ℂ) - alpha|
         have hq : 0 ≤ q := abs_nonneg _
         change q / (x - v) ^ 2 ≤ C * (q / (v ^ 2 + 1))
@@ -3227,7 +3224,7 @@ pointwise maximum. -/
 lemma abs_setIntegral_upperPoissonKernel_mul_potential_sub_le_cap
     {n : ℕ} (hn : 0 < n) (X : NodeConfiguration n)
     (alpha x eta : ℝ) (s : Set ℝ) (heta : 0 < eta)
-    (hs : MeasurableSet s) (hsubset : s ⊆ Set.Icc (-2 : ℝ) 2) :
+    (_hs : MeasurableSet s) (hsubset : s ⊆ Set.Icc (-2 : ℝ) 2) :
     |∫ v in s,
       upperPoissonKernel eta (x - v) *
         (logPotential X (v : ℂ) - alpha)| ≤
@@ -3378,7 +3375,7 @@ lemma uniformInteriorError_two_mul_le {n : ℕ} (hn : 0 < n)
 decomposition give the explicit uniform error above. -/
 lemma abs_interior_poisson_error_le_uniform {n : ℕ} (hn2 : 2 ≤ n)
     (X : NodeConfiguration n) {A B x eta M : ℝ}
-    (hA : -1 ≤ A) (hB : B ≤ 1) (heta : 0 < eta) (hM : 0 ≤ M)
+    (hA : -1 ≤ A) (hB : B ≤ 1) (heta : 0 < eta) (_hM : 0 ≤ M)
     (hnorm : |normalizationLevel X| ≤ M)
     (hLeb : ∀ v ∈ Set.Icc A B, lebesgueFunction X v ≤ (n : ℝ)) :
     |∫ v in Set.Icc A B,
@@ -3701,13 +3698,6 @@ lemma tendsto_uniformAffineError_div_mesoscopicHeight (gap M : ℝ) :
     Real.sq_sqrt hnR.le
   symm
   unfold uniformAffineError uniformInteriorError mesoscopicHeight
-  change _ =
-    (densityHeightCoefficient gap M / (n : ℝ) +
-      (1 / Real.pi) *
-        (logSquareConstant / (n : ℝ) ^ 3 +
-          1 / (2 * (n : ℝ) ^ 4) + 2 * M / (n : ℝ) ^ 8)) +
-      (Real.log (2 * (n : ℝ)) + 10 * Real.log (n : ℝ)) /
-        Real.sqrt (n : ℝ)
   rw [show Real.pi * (Real.sqrt (n : ℝ))⁻¹ *
       ((1 / Real.pi ^ 2) * weightedPotentialBound M *
         (3 * ((gap ^ 2)⁻¹ + ((gap ^ 2)⁻¹) ^ 2)) *
@@ -4018,7 +4008,7 @@ lemma eventually_localNodeCount_mesoscopic_le {a b : ℝ}
     (normalizationLevel X) a b x (mesoscopicHeight n) E₁ E₂ heta
     (by simpa only [E₁] using h₁) (by
       dsimp only [E₂]
-      convert h₂ using 1 <;> norm_num)
+      convert h₂ using 1; norm_num)
   have hdensity : exteriorDensity X (normalizationLevel X) a b x 0 ≤ R := by
     exact exteriorDensity_le_localDensityUpper hn X hgap hxabs hsep hM hnorm
   have hcount := localNodeCount_core_le_of_heightDrop_approx hn X
@@ -4113,7 +4103,7 @@ private lemma chebyshevNodal_derivative_eval_zero {m : ℕ}
       (fun x : ℝ ↦ (chebyshevNodal m).eval (-x))
       (-(chebyshevNodal m).derivative.eval 0) 0 := by
     convert! ((chebyshevNodal m).hasDerivAt (-(0 : ℝ))).comp 0
-      (hasDerivAt_neg (0 : ℝ)) using 1 <;> norm_num [Function.comp_def]
+      (hasDerivAt_neg (0 : ℝ)) using 1; norm_num [Function.comp_def]
   have hright : HasDerivAt
       (fun x : ℝ ↦ (chebyshevNodal m).eval x)
       ((chebyshevNodal m).derivative.eval 0) 0 :=
@@ -4732,9 +4722,8 @@ lemma ellipseLift_chebyshev_centered {N k : ℕ} (hk : k ≤ N) :
       (Polynomial.C ((2 : ℂ)⁻¹) *
         (Polynomial.X ^ (N - k) + Polynomial.X ^ (N + k))).eval (f m)
   rw [ellipseLift_eval_joukowski hdeg 0 1 hw]
-  simp only [joukowskiMap, Nat.cast_zero, Complex.ofReal_zero, zero_add,
-    Nat.cast_one, Complex.ofReal_one, one_div, one_mul,
-    Polynomial.eval_mul, Polynomial.eval_C, Polynomial.eval_add,
+  simp only [joukowskiMap, Complex.ofReal_zero, zero_add,
+    Complex.ofReal_one, one_div, Polynomial.eval_mul, Polynomial.eval_C, Polynomial.eval_add,
     Polynomial.eval_pow, Polynomial.eval_X]
   rw [show (2 : ℂ)⁻¹ * (f m + (f m)⁻¹) =
       (f m + (f m)⁻¹) / 2 by ring]
@@ -4763,8 +4752,8 @@ lemma joukowski_nat_injective : Function.Injective
   intro m k hmk
   have hm : (((m + 1 : ℕ) : ℂ)) ≠ 0 := by exact_mod_cast Nat.succ_ne_zero m
   have hk : (((k + 1 : ℕ) : ℂ)) ≠ 0 := by exact_mod_cast Nat.succ_ne_zero k
-  simp only [joukowskiMap, Nat.cast_zero, Complex.ofReal_zero, zero_add,
-    Nat.cast_one, Complex.ofReal_one, one_div, one_mul] at hmk
+  simp only [joukowskiMap, Complex.ofReal_zero, zero_add,
+    Complex.ofReal_one, one_div] at hmk
   have hfactor :
       ((((m + 1 : ℕ) : ℂ) - ((k + 1 : ℕ) : ℂ)) *
         ((((m + 1 : ℕ) : ℂ) * ((k + 1 : ℕ) : ℂ)) - 1)) = 0 := by
@@ -4851,7 +4840,7 @@ lemma fullChebyshevExpansion_natDegree_le (p : ℝ[X]) (N : ℕ) :
   unfold fullChebyshevExpansion
   apply (Polynomial.natDegree_add_le _ _).trans
   apply max_le
-  · simpa using Polynomial.natDegree_C_mul_le (Polynomial.Chebyshev.T ℝ 0)
+  · simp
   · apply Polynomial.natDegree_sum_le_of_forall_le
     intro j hj
     have hjN : j < N := Finset.mem_range.mp hj
@@ -4968,7 +4957,7 @@ lemma chebyshevPartialSum_natDegree_le (p : ℝ[X]) (N m : ℕ) :
   unfold chebyshevPartialSum
   apply (Polynomial.natDegree_add_le _ _).trans
   apply max_le
-  · simpa using Polynomial.natDegree_C_mul_le (Polynomial.Chebyshev.T ℝ 0)
+  · simp
   · apply Polynomial.natDegree_sum_le_of_forall_le
     intro j hj
     have hfilter := (Finset.mem_filter.mp hj).2
@@ -5490,7 +5479,7 @@ lemma amplitude_anchor_lower {n : ℕ} (hn2 : 2 ≤ n)
     exists_controlled_potential_away_from_nodes hn X ha hlocal hb
   have hyradius : h / (2 * (n : ℝ)) ≤ distanceToNodes hn X y := by
     have h := radius_le_distanceToNodes_of_not_mem hn X hyaway
-    convert h using 1 <;> ring
+    convert h using 1; ring
   have hynodes : ∀ k, y ≠ X k := by
     intro k hyk
     apply hyaway
@@ -5549,7 +5538,7 @@ lemma amplitude_maximizer_exp_lower {n : ℕ} (hn2 : 2 ≤ n)
   have hmul' := mul_le_mul_of_nonneg_left hmul
     (show 0 ≤ (1 : ℝ) / (2 * (n : ℝ)) by positivity)
   apply (mul_le_mul_iff_of_pos_left hscale).mp
-  convert hmul' using 1 <;> field_simp [hnR.ne'] <;> ring
+  convert hmul' using 1 <;> field_simp [hnR.ne']; ring
 
 /-! ## Exact resolved statements -/
 
