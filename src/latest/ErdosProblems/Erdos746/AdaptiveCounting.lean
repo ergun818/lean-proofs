@@ -412,7 +412,7 @@ theorem uniformBoosterLowerTailMass_eq_uniformFreshEventMass
             · simp
             · intro tail
               simp [boosterLowerTailEvent, boosterHitCountFrom, hhit]
-          · simp only [boosterHit, hhit, decide_false, if_false]
+          · simp only [boosterHit, hhit, decide_false]
             congr 1
             change uniformBoosterLowerTailMass ambient boosters
               (h ++ [a]) steps 0 = _
@@ -435,7 +435,7 @@ theorem uniformBoosterLowerTailMass_eq_uniformFreshEventMass
             intro tail
             simp only [boosterLowerTailEvent, boosterHitCountFrom, hhit, if_pos]
             omega
-          · simp only [boosterHit, hhit, decide_false, if_false]
+          · simp only [boosterHit, hhit, decide_false]
             congr 1
             change uniformBoosterLowerTailMass ambient boosters
               (h ++ [a]) steps (budget + 1) = _

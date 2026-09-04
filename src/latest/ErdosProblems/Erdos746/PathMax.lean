@@ -19,7 +19,7 @@ namespace Erdos746.PathMax
 
 noncomputable section
 
-variable {V : Type*} [Fintype V] [DecidableEq V]
+variable {V : Type*}
 
 /-- `G` contains a simple path with exactly `m` edges. -/
 def HasPathLength (G : SimpleGraph V) (m : ℕ) : Prop :=
@@ -30,7 +30,7 @@ theorem hasPathLength_zero (G : SimpleGraph V) [Nonempty V] :
   let u : V := Classical.choice inferInstance
   exact ⟨u, u, .nil, by simp⟩
 
-theorem HasPathLength.lt_card {G : SimpleGraph V} {m : ℕ}
+theorem HasPathLength.lt_card [Fintype V] {G : SimpleGraph V} {m : ℕ}
     (h : HasPathLength G m) : m < Fintype.card V := by
   obtain ⟨u, v, p, hp, rfl⟩ := h
   exact hp.length_lt
@@ -39,6 +39,8 @@ theorem HasPathLength.mono {G H : SimpleGraph V} (hGH : G ≤ H) {m : ℕ}
     (h : HasPathLength G m) : HasPathLength H m := by
   obtain ⟨u, v, p, hp, rfl⟩ := h
   exact ⟨u, v, p.mapLe hGH, hp.mapLe hGH, by simp⟩
+
+variable [Fintype V]
 
 /-- The maximum number of edges in a simple path of `G`. -/
 def maxPathLength (G : SimpleGraph V) : ℕ :=
@@ -107,7 +109,7 @@ theorem maxPathLength_mono {G H : SimpleGraph V} (hGH : G ≤ H) :
       ((hasPathLength_maxPathLength G).mono hGH)
   · have : IsEmpty V := not_nonempty_iff.mp hV
     have hEq : G = H := Subsingleton.elim G H
-    simpa [hEq]
+    simp [hEq]
 
 /-- The maximum number of vertices in a simple path. -/
 def maxPathOrder (G : SimpleGraph V) : ℕ :=
@@ -163,6 +165,10 @@ theorem exists_path_of_order_maxPathOrder (G : SimpleGraph V) [Nonempty V] :
   exact ⟨u, v, p, hp.isPath, hp.order_eq⟩
 
 /-! ## Adding one edge -/
+
+section Edges
+
+omit [Fintype V]
 
 /-- Add the unordered pair `e` to a graph.  A diagonal pair has no effect. -/
 def addEdge (G : SimpleGraph V) (e : Sym2 V) : SimpleGraph V :=
@@ -257,11 +263,15 @@ theorem IsMissingEdge.lt_addEdge {G : SimpleGraph V} {e : Sym2 V}
     (he : IsMissingEdge G e) : G < addEdge G e := by
   exact lt_of_le_of_ne (le_addEdge G e) (Ne.symm he.addEdge_ne)
 
+end Edges
+
 theorem maxPathLength_le_addEdge (G : SimpleGraph V) (e : Sym2 V) :
     maxPathLength G ≤ maxPathLength (addEdge G e) :=
   maxPathLength_mono (le_addEdge G e)
 
 /-! ## Boosters and finite adapters -/
+
+variable [DecidableEq V]
 
 /-- A booster is a missing genuine edge whose addition either creates a
 Hamiltonian graph or strictly increases the maximum simple-path length. -/
@@ -317,6 +327,7 @@ def missingEdgeFinset (G : SimpleGraph V) : Finset (Sym2 V) := by
   classical
   exact Finset.univ.filter (IsMissingEdge G)
 
+omit [DecidableEq V] in
 @[simp] theorem mem_missingEdgeFinset {G : SimpleGraph V} {e : Sym2 V} :
     e ∈ missingEdgeFinset G ↔ IsMissingEdge G e := by
   simp [missingEdgeFinset]

@@ -114,7 +114,7 @@ def edgePrefixFiberEquiv {n m : ℕ} (G : FixedEdgeGraph n m) :
   toFun p :=
     let hset : edgePrefixSet p.1 = G.1 := congrArg Subtype.val p.2
     (edgePrefixRangeEquiv p.1).trans
-      (Equiv.setCongr (by simpa only [hset]))
+      (Equiv.setCongr (by simp only [hset]))
   invFun e := ⟨edgePrefixOfEquiv e, edgePrefixFixedGraph_edgePrefixOfEquiv e⟩
   left_inv p := by
     apply Subtype.ext
@@ -376,8 +376,7 @@ def oneStepExtensionEquiv {n m : ℕ} (p : EdgePrefix n m) :
     intro j
     refine Fin.lastCases ?_ (fun i ↦ ?_) j
     · exact snocEdgePrefix_last p (lastUnusedEdge q)
-    ·
-      rw [snocEdgePrefix_castSucc]
+    · rw [snocEdgePrefix_castSucc]
       have h := congrArg (fun r : EdgePrefix n m ↦ r i) q.2
       exact h.symm
   right_inv e := by
@@ -403,8 +402,7 @@ theorem existsUnique_oneStepExtension_last {n m : ℕ}
     intro j
     refine Fin.lastCases ?_ (fun i ↦ ?_) j
     · exact hq.trans (snocEdgePrefix_last p e).symm
-    ·
-      change q.1 i.castSucc = snocEdgePrefix p e i.castSucc
+    · change q.1 i.castSucc = snocEdgePrefix p e i.castSucc
       rw [snocEdgePrefix_castSucc]
       have h := congrArg (fun r : EdgePrefix n m ↦ r i) q.2
       exact h

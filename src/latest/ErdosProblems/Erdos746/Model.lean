@@ -185,7 +185,8 @@ theorem uniformProbability_false {Ω : Type*} [Fintype Ω] :
 @[simp]
 theorem uniformProbability_true {Ω : Type*} [Fintype Ω] [Nonempty Ω] :
     uniformProbability (fun _ : Ω => True) = 1 := by
-  simp [uniformProbability, ne_of_gt (show (0 : ℝ) < Fintype.card Ω by exact_mod_cast Fintype.card_pos)]
+  simp [uniformProbability, ne_of_gt
+    (show (0 : ℝ) < Fintype.card Ω by exact_mod_cast Fintype.card_pos)]
 
 /-- The (real-valued) probability that a uniform `m`-edge graph on `Fin n`
 is Hamiltonian. -/

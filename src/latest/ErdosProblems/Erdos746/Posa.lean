@@ -36,10 +36,12 @@ def outerNeighborFinset (G : SimpleGraph V) (S : Finset V) : Finset V :=
 def IsTwoExpanderUpTo (G : SimpleGraph V) (k : ℕ) : Prop :=
   ∀ S : Finset V, S.card ≤ k → 2 * S.card ≤ (outerNeighborFinset G S).card
 
+omit [DecidableEq V] [Fintype V] in
 /-- A walk from a set to its complement crosses the edge boundary. -/
 theorem Walk.exists_adj_mem_notMem {G : SimpleGraph V} {u v : V}
     (q : G.Walk u v) (S : Finset V) (hu : u ∈ S) (hv : v ∉ S) :
     ∃ x ∈ S, ∃ y ∉ S, G.Adj x y := by
+  classical
   induction q with
   | nil => exact (hv hu).elim
   | @cons u w v huw q ih =>
@@ -47,10 +49,12 @@ theorem Walk.exists_adj_mem_notMem {G : SimpleGraph V} {u v : V}
       · exact ih hw hv
       · exact ⟨u, hu, w, hw, huw⟩
 
+omit [DecidableEq V] [Fintype V] in
 /-- A nonempty proper vertex set in a connected graph has a boundary edge. -/
 theorem Connected.exists_adj_mem_notMem (G : SimpleGraph V) (hG : G.Connected)
     (S : Finset V) (u : V) (hu : u ∈ S) (w : V) (hw : w ∉ S) :
     ∃ x ∈ S, ∃ y ∉ S, G.Adj x y := by
+  classical
   exact (hG.preconnected u w).elim fun q ↦ q.exists_adj_mem_notMem S hu hw
 
 namespace Walk
@@ -60,11 +64,12 @@ variable {G : SimpleGraph V} {a b : V}
 /-- A Pósa rotation fixes the first vertex and uses an edge from the old last
 vertex to an internal pivot. -/
 def posaRotate (p : G.Walk a b) (x : V) (hx : x ∈ p.support)
-    (hxa : x ≠ a) (hxb : x ≠ b) (hbx : G.Adj b x) :
+    (_hxa : x ≠ a) (_hxb : x ≠ b) (hbx : G.Adj b x) :
     G.Walk a ((p.dropUntil x hx).snd) :=
   (p.takeUntil x hx).append
     (Walk.cons hbx.symm (p.dropUntil x hx).tail.reverse)
 
+omit [Fintype V] in
 @[simp] theorem length_posaRotate (p : G.Walk a b) (x : V) (hx : x ∈ p.support)
     (hxa : x ≠ a) (hxb : x ≠ b) (hbx : G.Adj b x) :
     (p.posaRotate x hx hxa hxb hbx).length = p.length := by
@@ -75,6 +80,7 @@ def posaRotate (p : G.Walk a b) (x : V) (hx : x ∈ p.support)
   simp only [Walk.length_append] at hsplit
   omega
 
+omit [Fintype V] in
 theorem isPath_posaRotate (p : G.Walk a b) (hp : p.IsPath) (x : V) (hx : x ∈ p.support)
     (hxa : x ≠ a) (hxb : x ≠ b) (hbx : G.Adj b x) :
     (p.posaRotate x hx hxa hxb hbx).IsPath := by
@@ -89,6 +95,7 @@ theorem isPath_posaRotate (p : G.Walk a b) (hp : p.IsPath) (x : V) (hx : x ∈ p
     exact hr
   exact hperm.nodup_iff.mpr hp.support_nodup
 
+omit [Fintype V] in
 theorem support_posaRotate_perm (p : G.Walk a b) (x : V) (hx : x ∈ p.support)
     (hxa : x ≠ a) (hxb : x ≠ b) (hbx : G.Adj b x) :
     (p.posaRotate x hx hxa hxb hbx).support.Perm p.support := by
@@ -100,6 +107,7 @@ theorem support_posaRotate_perm (p : G.Walk a b) (x : V) (hx : x ∈ p.support)
   rw [← Walk.support_append, Walk.take_spec] at hr
   exact hr
 
+omit [Fintype V] in
 /-- A rotation deletes only the old path edge immediately after the pivot. -/
 theorem mem_edges_posaRotate_of_ne (p : G.Walk a b) (x : V) (hx : x ∈ p.support)
     (hxa : x ≠ a) (hxb : x ≠ b) (hbx : G.Adj b x) (e : Sym2 V)
@@ -151,8 +159,10 @@ def pathNeighborFinset (p : G.Walk a b) (u : V) : Finset V :=
     classical
     exact Finset.univ.filter (p.toSubgraph.Adj u)
 
+omit [DecidableEq V] in
 @[simp] theorem mem_pathNeighborFinset (p : G.Walk a b) (u v : V) :
     v ∈ p.pathNeighborFinset u ↔ s(u, v) ∈ p.edges := by
+  classical
   simp only [pathNeighborFinset, Finset.mem_filter, Finset.mem_univ, true_and,
     Walk.adj_toSubgraph_iff_mem_edges]
 
@@ -164,8 +174,10 @@ def pathNeighborhood (p : G.Walk a b) (S : Finset V) : Finset V :=
     v ∈ p.pathNeighborhood S ↔ ∃ u ∈ S, s(u, v) ∈ p.edges := by
   simp [pathNeighborhood]
 
+omit [DecidableEq V] in
 theorem IsPath.card_pathNeighborFinset_end_le_one {p : G.Walk a b}
     (hp : p.IsPath) (hn : ¬ p.Nil) : (p.pathNeighborFinset b).card ≤ 1 := by
+  classical
   have hs := hp.neighborSet_toSubgraph_endpoint hn
   have heq : p.pathNeighborFinset b = {p.penultimate} := by
     ext v
@@ -175,8 +187,10 @@ theorem IsPath.card_pathNeighborFinset_end_le_one {p : G.Walk a b}
       Finset.mem_singleton] using Set.ext_iff.mp hs v
   simp [heq]
 
+omit [DecidableEq V] in
 theorem IsPath.card_pathNeighborFinset_le_two {p : G.Walk a b}
     (hp : p.IsPath) {u : V} (hu : u ∈ p.support) : (p.pathNeighborFinset u).card ≤ 2 := by
+  classical
   rw [Walk.mem_support_iff_exists_getVert] at hu
   obtain ⟨i, hi, hil⟩ := hu
   subst u
@@ -188,7 +202,7 @@ theorem IsPath.card_pathNeighborFinset_le_two {p : G.Walk a b}
       have hzero : p.pathNeighborFinset (p.getVert 0) = ∅ :=
         Finset.eq_empty_iff_forall_notMem.mpr fun v hv ↦ by
           rw [mem_pathNeighborFinset, hedge] at hv
-          simpa using hv
+          simp at hv
       rw [hzero]
       simp
     · have hs := hp.neighborSet_toSubgraph_startpoint hn
@@ -209,7 +223,7 @@ theorem IsPath.card_pathNeighborFinset_le_two {p : G.Walk a b}
         have hzero : p.pathNeighborFinset b = ∅ :=
           Finset.eq_empty_iff_forall_notMem.mpr fun v hv ↦ by
             rw [mem_pathNeighborFinset, hedge] at hv
-            simpa using hv
+            simp at hv
         rw [hzero]
         simp
       · exact hp.card_pathNeighborFinset_end_le_one hn |>.trans (by omega)
@@ -225,9 +239,11 @@ theorem IsPath.card_pathNeighborFinset_le_two {p : G.Walk a b}
       rw [heq]
       exact Finset.card_le_two
 
+omit [DecidableEq V] in
 theorem IsPath.card_pathNeighborFinset_eq_two {p : G.Walk a b}
     (hp : p.IsPath) {u : V} (hu : u ∈ p.support) (hua : u ≠ a) (hub : u ≠ b) :
     (p.pathNeighborFinset u).card = 2 := by
+  classical
   rw [Walk.mem_support_iff_exists_getVert] at hu
   obtain ⟨i, rfl, hil⟩ := hu
   have hi0 : i ≠ 0 := by
@@ -237,12 +253,12 @@ theorem IsPath.card_pathNeighborFinset_eq_two {p : G.Walk a b}
   have hil' : i < p.length := by
     apply lt_of_le_of_ne hil
     intro heq
-    exact hub (by simpa [heq])
+    exact hub (by simp [heq])
   rw [← Set.ncard_coe_finset]
   have hset : ((p.pathNeighborFinset (p.getVert i) : Finset V) : Set V) =
       p.toSubgraph.neighborSet (p.getVert i) := by
     ext v
-    simp only [Set.mem_setOf_eq, Finset.mem_coe, mem_pathNeighborFinset,
+    simp only [Finset.mem_coe, mem_pathNeighborFinset,
       Subgraph.mem_neighborSet, Walk.adj_toSubgraph_iff_mem_edges]
   rw [hset, hp.ncard_neighborSet_toSubgraph_internal_eq_two hi0 hil']
 
@@ -271,6 +287,7 @@ theorem IsPath.card_pathNeighborhood_lt_two_mul {p : G.Walk a b}
       have : 0 < S.card := Finset.card_pos.mpr ⟨b, hb⟩
       omega
 
+omit [Fintype V] in
 theorem IsPosaReachable.isPath {p : G.Walk a b} (hp : p.IsPath)
     {c : V} {q : G.Walk a c} (hq : IsPosaReachable p q) : q.IsPath := by
   induction hq with
@@ -278,6 +295,7 @@ theorem IsPosaReachable.isPath {p : G.Walk a b} (hp : p.IsPath)
   | rotate hreach x hx hxa hxc hcx ih =>
       exact isPath_posaRotate _ ih x hx hxa hxc hcx
 
+omit [Fintype V] in
 theorem IsPosaReachable.length_eq {p : G.Walk a b}
     {c : V} {q : G.Walk a c} (hq : IsPosaReachable p q) : q.length = p.length := by
   induction hq with
@@ -285,7 +303,8 @@ theorem IsPosaReachable.length_eq {p : G.Walk a b}
   | rotate hreach x hx hxa hxc hcx ih =>
       exact (length_posaRotate _ x hx hxa hxc hcx).trans ih
 
-theorem IsPosaReachable.support_perm {p : G.Walk a b} (hp : p.IsPath)
+omit [Fintype V] in
+theorem IsPosaReachable.support_perm {p : G.Walk a b} (_hp : p.IsPath)
     {c : V} {q : G.Walk a c} (hq : IsPosaReachable p q) : q.support.Perm p.support := by
   induction hq with
   | refl => exact .refl _
@@ -336,7 +355,7 @@ theorem not_adj_end_start_of_longest_path {p : G.Walk a b}
     refine ⟨hc, ?_⟩
     intro v
     simpa [c, Walk.IsHamiltonian] using hp.isHamiltonian_of_mem hall v
-  · push_neg at hall
+  · push Not at hall
     obtain ⟨w, hw⟩ := hall
     let S : Finset V := p.support.toFinset
     obtain ⟨x, hxS, y, hyS, hxy⟩ :=
@@ -372,7 +391,7 @@ in its neighbourhood along the original path.  The last hypothesis excludes
 the separate cycle-closing case; it is discharged from connectedness and
 non-Hamiltonicity when the booster theorem is applied. -/
 theorem posa_outerNeighbor_subset_pathNeighborhood {p : G.Walk a b}
-    (hp : p.IsPath) (hn : ¬ p.Nil)
+    (hp : p.IsPath) (_hn : ¬ p.Nil)
     (hmax : ∀ (u v : V) (q : G.Walk u v), q.IsPath → q.length ≤ p.length)
     (hclose : ∀ (c : V) (q : G.Walk a c), IsPosaReachable p q → ¬ G.Adj c a) :
     outerNeighborFinset G p.posaEndpointFinset ⊆
@@ -534,7 +553,7 @@ theorem isBooster_mk_of_isPosaReachable {G : SimpleGraph V}
     intro hac
     subst c
     have : q = Walk.nil := Subtype.ext_iff.mp (SimpleGraph.Path.loop_eq ⟨q, hqp⟩)
-    have hzero : q.length = 0 := by simpa [this]
+    have hzero : q.length = 0 := by simp [this]
     omega
   refine ⟨⟨?_, by simpa [Sym2.mk_isDiag_iff] using hac⟩, ?_⟩
   · intro he
@@ -563,7 +582,7 @@ theorem isBooster_mk_of_isPosaReachable {G : SimpleGraph V}
       have hhamq := hqp.isHamiltonian_of_mem hall
       simpa [cyc, qH, Walk.IsHamiltonian] using hhamq v
     · right
-      push_neg at hall
+      push Not at hall
       obtain ⟨w, hw⟩ := hall
       let S : Finset V := q.support.toFinset
       obtain ⟨x, hxS, y, hyS, hxy⟩ :=

@@ -49,10 +49,10 @@ theorem sum_pow_le_geometric_tail {a : ℝ} {n : ℕ} {I : Finset ℕ}
 collection of admissible positive set sizes. -/
 theorem small_range_sum_le_geometricError {A δ : ℝ} {n : ℕ}
     {I : Finset ℕ} {u : ℕ → ℝ}
-    (hA : 0 ≤ A) (hδ : 0 < δ)
+    (hA : 0 ≤ A) (_hδ : 0 < δ)
     (hratio : baseRatio A δ n < 1)
     (hI : ∀ s ∈ I, 1 ≤ s ∧ s ≤ n)
-    (hu0 : ∀ s ∈ I, 0 ≤ u s)
+    (_hu0 : ∀ s ∈ I, 0 ≤ u s)
     (hu : ∀ s ∈ I, u s ≤ (baseRatio A δ n) ^ s) :
     ∑ s ∈ I, u s ≤ geometricError A δ n := by
   have hratio0 : 0 ≤ baseRatio A δ n := by
@@ -140,7 +140,7 @@ theorem tendsto_mediumRangeError_zero {c : ℝ} (hc : 0 < c) :
   apply h.congr'
   exact Eventually.of_forall fun n ↦ by
     unfold mediumRangeError
-    congr 1 <;> ring
+    congr 1
 
 /-- Adapter-neutral convergence theorem for Range II. -/
 theorem tendsto_medium_range_sum_zero {c : ℝ} (hc : 0 < c)
@@ -220,7 +220,7 @@ theorem tendsto_largeRangeError_zero {c : ℝ} (hc : 0 < c) :
     apply h.congr'
     exact Eventually.of_forall fun n ↦ by
       unfold largeLinearError
-      congr 1 <;> ring
+      congr 1
   have hlog : Tendsto (largeLogError c) atTop (nhds 0) := by
     have h := tendsto_large_set_error_zero hc
     apply h.congr'

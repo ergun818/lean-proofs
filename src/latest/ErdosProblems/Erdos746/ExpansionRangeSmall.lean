@@ -34,7 +34,7 @@ def rangeOneConstant (c : ℝ) : ℝ := Real.exp 3 * c ^ 2 / 4
 
 /-- Integer-power Bernoulli inequality in the form needed for the upper
 bound on `1-(1-p)^s`. -/
-lemma one_sub_nat_mul_le_pow_one_sub {p : ℝ} (hp0 : 0 ≤ p) (hp1 : p ≤ 1) :
+lemma one_sub_nat_mul_le_pow_one_sub {p : ℝ} (_hp0 : 0 ≤ p) (hp1 : p ≤ 1) :
     ∀ s : ℕ, 1 - (s : ℝ) * p ≤ (1 - p) ^ s := by
   intro s
   induction s with

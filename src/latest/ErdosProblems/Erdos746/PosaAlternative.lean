@@ -17,7 +17,7 @@ namespace Erdos746.PosaAlternative
 
 noncomputable section
 
-variable {V : Type*} [Fintype V] [DecidableEq V]
+variable {V : Type*}
 
 open SimpleGraph
 
@@ -38,7 +38,7 @@ theorem sym2_orientation_injOn {I : Type*} [LinearOrder I]
     Set.InjOn (fun x : V × V ↦ (s(x.1, x.2), decide (key x.1 < key x.2)))
       {x : V × V | x.1 ≠ x.2} := by
   rintro ⟨a, b⟩ hab ⟨c, d⟩ hcd h
-  simp only [Set.mem_setOf_eq, Prod.mk.injEq] at hab hcd h ⊢
+  simp only [Set.mem_ofPred_eq, Prod.mk.injEq] at hab hcd h ⊢
   rcases h with ⟨hedge, hbit⟩
   simp only [Sym2.eq, Sym2.rel_iff', Prod.mk.injEq, Prod.swap_prod_mk] at hedge
   rcases hedge with ⟨hac, hbd⟩ | ⟨had, hbc⟩
@@ -54,12 +54,13 @@ theorem sym2_orientation_injOn {I : Type*} [LinearOrder I]
 
 /-- Mapping ordered pairs to unordered pairs loses at most the two possible
 orientations.  This is the finite counting step in Pósa's booster lemma. -/
-theorem card_sigma_le_two_mul_card
+theorem card_sigma_le_two_mul_card [Finite V]
     (R : Finset V) (T : V → Finset V) (B : Finset (Sym2 V))
     (hne : ∀ v ∈ R, ∀ w ∈ T v, v ≠ w)
     (hB : ∀ v ∈ R, ∀ w ∈ T v, s(v, w) ∈ B) :
     (R.sigma fun v ↦ T v).card ≤ 2 * B.card := by
   classical
+  let := Fintype.ofFinite V
   let key : V → Fin (Fintype.card V) := Fintype.equivFin V
   let f : (Σ _v : V, V) → Sym2 V × Bool :=
     fun x ↦ (s(x.1, x.2), decide (key x.1 < key x.2))
@@ -102,13 +103,15 @@ theorem sq_le_card_sigma {k : ℕ} (R : Finset V) (T : V → Finset V)
     (k + 1) ^ 2 ≤ R.card * (k + 1) := by
       rw [pow_two]
       exact Nat.mul_le_mul_right (k + 1) hR
-    _ = ∑ _v ∈ R, (k + 1) := by simp [Nat.mul_comm]
+    _ = ∑ _v ∈ R, (k + 1) := by simp
     _ ≤ ∑ v ∈ R, (T v).card := by
       exact Finset.sum_le_sum fun v hv ↦ hT v hv
     _ = (R.sigma fun v ↦ T v).card := by
       simp [Finset.sigma]
 
 /-! ## Pósa's booster theorem -/
+
+variable [Fintype V] [DecidableEq V]
 
 /-- A finite connected non-Hamiltonian graph which two-expands through sets
 of size `k` has at least `(k+1)^2 / 2` boosters. -/

@@ -36,11 +36,13 @@ theorem weight_eq_prod {U A : Finset α} (hA : A ⊆ U) (p : ℝ) :
   rw [weight, Finset.prod_const, Finset.prod_const]
   congr 2
   rw [Finset.card_sdiff]
-  simpa [Finset.inter_eq_left.mpr hA]
+  simp [Finset.inter_eq_left.mpr hA]
 
+omit [DecidableEq α] in
 /-- The Bernoulli weights have total mass one. -/
 @[simp] theorem sum_weight_powerset (U : Finset α) (p : ℝ) :
     (∑ A ∈ U.powerset, weight U p A) = 1 := by
+  classical
   calc
     (∑ A ∈ U.powerset, weight U p A) =
         ∑ A ∈ U.powerset,
@@ -52,19 +54,26 @@ theorem weight_eq_prod {U A : Finset α} (hA : A ⊆ U) (p : ℝ) :
       rw [Finset.prod_add]
     _ = 1 := by simp
 
+omit [DecidableEq α] in
 @[simp] theorem eventMass_true (U : Finset α) (p : ℝ) :
     eventMass U p (fun _ => True) = 1 := by
+  classical
   simp [eventMass]
 
+omit [DecidableEq α] in
 @[simp] theorem eventMass_false (U : Finset α) (p : ℝ) :
     eventMass U p (fun _ => False) = 0 := by
+  classical
   simp [eventMass]
 
+omit [DecidableEq α] in
 /-- Every atom has nonnegative mass when `p ∈ [0,1]`. -/
 theorem weight_nonneg {U A : Finset α} {p : ℝ}
     (hp0 : 0 ≤ p) (hp1 : p ≤ 1) : 0 ≤ weight U p A := by
+  classical
   exact mul_nonneg (pow_nonneg hp0 _) (pow_nonneg (sub_nonneg.mpr hp1) _)
 
+omit [DecidableEq α] in
 /-- Every event has nonnegative mass when `p ∈ [0,1]`. -/
 theorem eventMass_nonneg (U : Finset α) {p : ℝ}
     (hp0 : 0 ≤ p) (hp1 : p ≤ 1) (event : Finset α → Prop) :
@@ -72,6 +81,7 @@ theorem eventMass_nonneg (U : Finset α) {p : ℝ}
   classical
   exact Finset.sum_nonneg fun A _ => weight_nonneg hp0 hp1
 
+omit [DecidableEq α] in
 /-- Monotonicity of finite Bernoulli event mass. -/
 theorem eventMass_mono (U : Finset α) {p : ℝ}
     (hp0 : 0 ≤ p) (hp1 : p ≤ 1)
@@ -87,13 +97,16 @@ theorem eventMass_mono (U : Finset α) {p : ℝ}
   · intro A _ _
     exact weight_nonneg hp0 hp1
 
+omit [DecidableEq α] in
 /-- Every event has mass at most one. -/
 theorem eventMass_le_one (U : Finset α) {p : ℝ}
     (hp0 : 0 ≤ p) (hp1 : p ≤ 1) (event : Finset α → Prop) :
     eventMass U p event ≤ 1 := by
+  classical
   rw [← eventMass_true U p]
   exact eventMass_mono U hp0 hp1 event (fun _ => True) (fun _ _ => trivial)
 
+omit [DecidableEq α] in
 /-- The union bound for two events. -/
 theorem eventMass_or_le (U : Finset α) {p : ℝ}
     (hp0 : 0 ≤ p) (hp1 : p ≤ 1)
@@ -113,6 +126,7 @@ theorem eventMass_or_le (U : Finset α) {p : ℝ}
   · simp only [h₁, h₂, false_or, if_false]
     norm_num
 
+omit [DecidableEq α] in
 /-- An event and its complement partition the finite sample space. -/
 theorem eventMass_add_not (U : Finset α) (p : ℝ)
     (event : Finset α → Prop) :
@@ -127,12 +141,15 @@ theorem eventMass_add_not (U : Finset α) (p : ℝ)
     by_cases hE : event A <;> simp [hE]
   · exact sum_weight_powerset U p
 
+omit [DecidableEq α] in
 /-- Complement rule. -/
 theorem eventMass_not (U : Finset α) (p : ℝ)
     (event : Finset α → Prop) :
     eventMass U p (fun A => ¬ event A) = 1 - eventMass U p event := by
+  classical
   linarith [eventMass_add_not U p event]
 
+omit [DecidableEq α] in
 /-- Exact mass of the empty selected subset. -/
 @[simp] theorem eventMass_eq_empty (U : Finset α) (p : ℝ) :
     eventMass U p (fun A => A = ∅) = (1 - p) ^ U.card := by
@@ -145,9 +162,11 @@ theorem eventMass_not (U : Finset α) (p : ℝ)
     simp [hAne]
   · simp
 
+omit [DecidableEq α] in
 /-- Exact mass that at least one coordinate is selected. -/
 theorem eventMass_nonempty (U : Finset α) (p : ℝ) :
     eventMass U p Finset.Nonempty = 1 - (1 - p) ^ U.card := by
+  classical
   rw [show Finset.Nonempty = (fun A : Finset α => ¬ A = ∅) by
     funext A
     apply propext
@@ -236,6 +255,7 @@ private theorem cylinder_coordinate_product {U S T : Finset α}
   rw [hfilterT, Finset.prod_const]
   simp
 
+omit [DecidableEq α] in
 /-- Exact cylinder probability: every coordinate of `S` is selected, every
 coordinate of the disjoint set `T` is absent, and all other coordinates are
 free. -/
@@ -256,18 +276,23 @@ theorem eventMass_contains_disjoint {U S T : Finset α}
   · simpa [hC] using
       (cylinder_summand (T := T) (Finset.mem_powerset.mp hA) hSU p).symm
 
+omit [DecidableEq α] in
 /-- Exact probability that every member of `S` is selected. -/
 theorem eventMass_contains {U S : Finset α} (hSU : S ⊆ U) (p : ℝ) :
     eventMass U p (fun A => S ⊆ A) = p ^ S.card := by
+  classical
   simpa using eventMass_contains_disjoint hSU (Finset.empty_subset U)
     (by simp : Disjoint S ∅) p
 
+omit [DecidableEq α] in
 /-- Exact probability that every member of `T` is absent. -/
 theorem eventMass_avoids {U T : Finset α} (hTU : T ⊆ U) (p : ℝ) :
     eventMass U p (fun A => Disjoint T A) = (1 - p) ^ T.card := by
+  classical
   simpa using eventMass_contains_disjoint (Finset.empty_subset U) hTU
     (by simp : Disjoint ∅ T) p
 
+omit [DecidableEq α] in
 /-- Finite union bound. -/
 theorem eventMass_exists_mem_le_sum {ι : Type*} (U : Finset α) {p : ℝ}
     (hp0 : 0 ≤ p) (hp1 : p ≤ 1) (s : Finset ι)
@@ -468,10 +493,11 @@ theorem eventMass_inter_factor {U V : Finset α} (hUV : Disjoint U V)
     intro A hA
     rw [Finset.mul_sum]
 
+omit [DecidableEq α] in
 /-- Partition an event according to the value of a finite-valued
 classifier.  This is the finite-sum analogue of summing a probability over
 the fibers of a random variable. -/
-theorem eventMass_classifier_mem {β : Type*} [DecidableEq β]
+theorem eventMass_classifier_mem {β : Type*}
     (U : Finset α) (p : ℝ) (f : Finset α → β) (s : Finset β) :
     eventMass U p (fun A => f A ∈ s) =
       ∑ b ∈ s, eventMass U p (fun A => f A = b) := by
@@ -518,7 +544,7 @@ theorem eventMass_restrict {U V : Finset α} (hVU : V ⊆ U) (p : ℝ)
 
 section Bundles
 
-variable {β : Type*} [DecidableEq β]
+variable {β : Type*}
 
 /-- Union of a finite indexed family of coordinate bundles. -/
 def bundleUnion (I : Finset β) (B : β → Finset α) : Finset α :=
@@ -596,13 +622,13 @@ theorem eventMass_bundle_all (I : Finset β) (B : β → Finset α)
           · rw [← hinter C i hiI]
             exact hrest i hiI
       rw [show bundleUnion (insert a I) B = B a ∪ bundleUnion I B by
-        simp [bundleUnion, ha]]
+        simp [bundleUnion]]
       rw [hpred, eventMass_inter_factor hdis p (event a)
         (fun D => ∀ i ∈ I, event i (D ∩ B i))]
       rw [ih hpairI]
       simp [ha]
 
-private theorem occupiedBundles_eq_iff {I K : Finset β} {B : β → Finset α}
+private theorem occupiedBundles_eq_iff [DecidableEq β] {I K : Finset β} {B : β → Finset α}
     {A : Finset α} (hKI : K ⊆ I) :
     occupiedBundles I B A = K ↔
       ∀ i ∈ I,

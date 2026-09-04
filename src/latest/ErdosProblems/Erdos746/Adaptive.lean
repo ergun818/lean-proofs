@@ -230,7 +230,7 @@ theorem adaptiveLowerTailMass_le_exp_mul_pow
               by_cases hzero : transition h a = 0
               · simp [hzero]
               · by_cases hs : success h a = true
-                · simp [hs]
+                · simp only [hs, ↓reduceIte, mul_zero]
                   exact mul_nonneg
                     (mul_nonneg (htransition h a) (Real.exp_nonneg _))
                     (pow_nonneg hc steps)

@@ -95,12 +95,10 @@ theorem expansion_range_cover (c : ℝ) {n s : ℕ}
   have htwelveNat : n < 12 * s := Nat.lt_of_not_ge hlinear
   have htwelve : (n : ℝ) / 12 ≤ (s : ℝ) := by
     have htwelveR : (n : ℝ) < 12 * (s : ℝ) := by exact_mod_cast htwelveNat
-    norm_num at htwelveR ⊢
     linarith
   have hfourNat : 4 * s ≤ n := by omega
   have hquarter : (s : ℝ) ≤ (n : ℝ) / 4 := by
     have hfourR : 4 * (s : ℝ) ≤ (n : ℝ) := by exact_mod_cast hfourNat
-    norm_num at hfourR ⊢
     linarith
   exact Or.inr <| Or.inr <| Or.inr <| Or.inr <|
     mem_largeLogExpansionIndices.mpr ⟨hs1, hsn, htwelve, hquarter⟩
@@ -163,7 +161,7 @@ theorem expansion_total_sum_le_range_sums {c : ℝ} {n : ℕ}
         ∑ s ∈ U, expansionBinomialUnionTerm c n s := htoU
     _ ≤ (∑ s ∈ {0}, expansionBinomialUnionTerm c n s) +
         ∑ s ∈ S ∪ (M ∪ (L ∪ H)), expansionBinomialUnionTerm c n s := by
-      simpa [U] using hzero
+      exact hzero
     _ ≤ (∑ s ∈ {0}, expansionBinomialUnionTerm c n s) +
         ((∑ s ∈ S, expansionBinomialUnionTerm c n s) +
           ∑ s ∈ M ∪ (L ∪ H), expansionBinomialUnionTerm c n s) := by
@@ -395,8 +393,9 @@ theorem eventually_largeExpansion_pointwise {c : ℝ} (hc : 0 < c) :
     have htwelve := hsData.2.2.2
     have hthree : 3 * s ≤ n := by omega
     convert expansionBinomialUnionTerm_le_large_linear hc hn hs hthree htwelve
-        hpN.1 hpN.2 hsLower habsN using 1 <;>
-      simp only [largeLinearCoefficient] <;> ring_nf
+        hpN.1 hpN.2 hsLower habsN using 1
+    simp only [largeLinearCoefficient]
+    ring_nf
   · filter_upwards [hp, eventually_ge_atTop 2] with n hpN hn
     intro s hsMem
     have hsData := mem_largeLogExpansionIndices.mp hsMem

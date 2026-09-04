@@ -240,7 +240,7 @@ mean estimates in equation (4), plus the condition needed to invoke the
 finite Chernoff bound. -/
 theorem expansionBinomialUnionTerm_le_small_envelope
     {c δ : ℝ} {n s : ℕ}
-    (hδ : 0 < δ) (hc0 : 0 ≤ c) (hn : 1 ≤ n) (hs : 1 ≤ s)
+    (_hδ : 0 < δ) (hc0 : 0 ≤ c) (hn : 1 ≤ n) (hs : 1 ≤ s)
     (hp0 : 0 ≤ rangeOneProbability c n)
     (hp1 : rangeOneProbability c n ≤ 1)
     (hmeanLower : (1 + δ / 2) * (s : ℝ) * Real.log (n : ℝ) ≤
@@ -288,7 +288,7 @@ theorem expansionBinomialUnionTerm_le_small_envelope
               rw [Real.exp_log hnR]
       _ = Real.exp (Real.log (n : ℝ) +
           -((1 + δ / 2) * Real.log (n : ℝ))) := by rw [Real.exp_add]
-      _ = Real.exp (- (δ / 2) * Real.log (n : ℝ)) := by congr 1 <;> ring
+      _ = Real.exp (- (δ / 2) * Real.log (n : ℝ)) := by congr 1; ring
   have hconst :
       Real.exp 1 ^ 2 * c ^ 2 / 4 ≤ Real.exp 3 * c ^ 2 / 4 := by
     have he : Real.exp 1 ^ 2 ≤ Real.exp 3 := by

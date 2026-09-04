@@ -59,7 +59,6 @@ lemma half_mul_le_one_sub_one_sub_pow {p : ℝ} (s : ℕ)
       _ = Real.exp (-(p * (s : ℝ))) := by
         rw [← Real.exp_nat_mul]
         congr 1
-        push_cast
         ring
   have hhalf := half_le_one_sub_exp_neg hx0 hps
   linarith

@@ -149,9 +149,8 @@ theorem eventually_adaptive_exp_le_thresholdSprinklingError
     eventually_ge_atTop 1] with n hgap hn
   unfold adaptiveSprinklingError thresholdSprinklingError
   apply Real.exp_le_exp.mpr
-  have hexp : 0 < 1 - Real.exp (-1) := by
-    have : Real.exp (-1) < Real.exp 0 := Real.exp_lt_exp.mpr (by norm_num)
-    simpa using this
+  have hexp : 0 < 1 - Real.exp (-1) :=
+    sub_pos.mpr (Real.exp_lt_one_iff.mpr (by norm_num))
   have hcast : (((n - 1 : ℕ) : ℝ)) = (n : ℝ) - 1 := by
     rw [Nat.cast_sub hn]
     norm_num
