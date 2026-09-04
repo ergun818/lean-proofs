@@ -35,8 +35,8 @@ public theorem maxLog_eq_log {b x : ℝ} (h : b.exp ≤ x) : maxLog b x = x.log 
   simp [maxLog, max_eq_right h]
 
 public theorem maxLog_le {b x y : ℝ} (yb : b ≤ y) (xy : x ≤ y.exp) : maxLog b x ≤ y := by
-  rw [maxLog, Real.log_le_iff_le_exp max_exp_pos]; apply max_le
-  apply Real.exp_le_exp.mpr yb; exact xy
+  rw [maxLog, Real.log_le_iff_le_exp max_exp_pos]
+  exact max_le (Real.exp_le_exp.mpr yb) xy
 
 @[bound] public lemma le_exp_maxLog (b x : ℝ) : x ≤ (maxLog b x).exp := by
   rw [maxLog, Real.exp_log max_exp_pos]; bound
@@ -55,7 +55,7 @@ public theorem monotone_maxLog (b : ℝ) : Monotone fun x ↦ maxLog b x := by
 public theorem continuous_maxLog (b : ℝ) : Continuous fun x ↦ maxLog b x := by
   simp_rw [maxLog]; rw [continuous_iff_continuousAt]; intro x
   refine (ContinuousAt.log ?_ max_exp_pos.ne').comp ?_
-  · apply Continuous.continuousAt; apply Continuous.max; exact continuous_const; exact continuous_id
+  · exact (continuous_const.max continuous_id).continuousAt
   · exact continuousAt_id
 
 /-- `max b (log ‖f z‖)` is continuous for continuous `f` -/
@@ -75,7 +75,9 @@ theorem LipschitzOnWith.log (b : ℝ) : LipschitzOnWith (-b).exp.toNNReal Real.l
     rw [abs_of_nonneg (sub_nonneg.mpr ((Real.log_le_log_iff yp xp).mpr xy))]
     rw [← Real.log_div xp.ne' yp.ne']
     rw [Real.log_le_iff_le_exp (div_pos xp yp)]
-    trans (y⁻¹ * (x - y)).exp; swap; bound
+    trans (y⁻¹ * (x - y)).exp
+    swap
+    · bound
     have e : y⁻¹ * (x - y) = x / y - 1 := by field_simp [yp.ne']
     rw [e]
     have e1 := Real.add_one_le_exp (x / y - 1)

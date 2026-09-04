@@ -38,7 +38,7 @@ lemma tendsto_shortPathRadialPoint_one (theta : ℝ) :
 
 /-- A bijective holomorphic disk map cannot have a radial limit in the interior of its image. -/
 theorem riemannMap_noInteriorLimit {D : Set ℂ} {F : ℂ → ℂ}
-    (hDopen : IsOpen D)
+    (_hDopen : IsOpen D)
     (hFdiff : DifferentiableOn ℂ F (ball 0 1))
     (hFbij : BijOn F (ball 0 1) D) :
     ∀ (theta : ℝ) (b : ℂ),

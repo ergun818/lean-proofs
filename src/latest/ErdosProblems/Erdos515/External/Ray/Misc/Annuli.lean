@@ -79,7 +79,7 @@ public lemma norm_Ici_mono {r s : ℝ} (rs : r ≤ s) : norm_Ici s ⊆ norm_Ici 
   exact le_trans r0 (by bound)
 
 public lemma isPathConnected_norm_Ici {r : ℝ} : IsPathConnected (norm_Ici r) := by
-  cases' lt_or_ge r 0 with r0 r0
+  rcases lt_or_ge r 0 with r0 | r0
   · simp only [norm_Ici_eq_univ r0.le, isPathConnected_univ]
   simp only [norm_Ici, ← Set.preimage_ofPred_eq, Ici_def]
   refine IsPathConnected.of_frontier ?_ continuous_norm isClosed_Ici
@@ -145,7 +145,8 @@ public lemma measurableSet_annulus_cc {c : ℂ} {r0 r1 : ℝ} :
 @[simp, aesop (rule_sets := [finiteness]) safe apply] public lemma finite_measure_annulus_cc {c : ℂ}
     {r0 r1 : ℝ} : volume (annulus_cc c r0 r1) ≠ ⊤ := isCompact_annulus_cc.measure_ne_top
 
-public lemma annulus_oc_subset_norm_Ioi {a r s : ℝ} (ar : a ≤ r) : annulus_oc 0 r s ⊆ norm_Ioi a := by
+public lemma annulus_oc_subset_norm_Ioi {a r s : ℝ} (ar : a ≤ r) :
+    annulus_oc 0 r s ⊆ norm_Ioi a := by
   intro z m
   simp only [annulus_oc, mem_sdiff, Metric.mem_closedBall, dist_zero_right, not_le, norm_Ioi,
     mem_ofPred_eq] at m ⊢

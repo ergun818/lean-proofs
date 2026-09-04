@@ -39,7 +39,7 @@ theorem IsJordanCurve.isSimplyConnected_inside {C : Set Plane} (hC : IsJordanCur
     (Plane.convex_openSquare 0 1).contractibleSpace
       ⟨0, by simp [Plane.openSquare, Plane.supDist, Plane.supNorm]⟩
   let : ContractibleSpace (inside C) := e.contractibleSpace
-  show SimplyConnectedSpace (inside C)
+  change SimplyConnectedSpace (inside C)
   infer_instance
 
 end Schoenflies

@@ -59,7 +59,7 @@ lemma WindInj.mono_cm (i : WindInj f r) (t : ℝ) :
 
 /-- `t ↦ snap (f (cis t))` is injective for close values, via monotonicity of `arg`.
     We use closeness to avoid `arg` wraparound issues. -/
-lemma WindInj.inj_near (i : WindInj f r) {a b : ℝ} (ab : a < b) (ba : b ≤ a + 1/2) :
+lemma WindInj.inj_near (i : WindInj f r) {a b : ℝ} (ab : a < b) (ba : b ≤ a + 1 / 2) :
     snap (f (circleMap 0 r a)) ≠ snap (f (circleMap 0 r b)) := by
   generalize hc : f (circleMap 0 r a) = c
   rw [← hc]
@@ -122,7 +122,7 @@ lemma WindInj.inj_near (i : WindInj f r) {a b : ℝ} (ab : a < b) (ba : b ≤ a 
   · intro t m; simp only [(dg t (interior_subset m)).deriv, i.mono_cm]
 
 /-- `t ↦ snap (f (cis t))` is injective for close values (symmetric version)` -/
-lemma WindInj.inj_near' (i : WindInj f r) {a b : ℝ} (ne : a ≠ b) (ab : |b - a| ≤ 1/2) :
+lemma WindInj.inj_near' (i : WindInj f r) {a b : ℝ} (ne : a ≠ b) (ab : |b - a| ≤ 1 / 2) :
     snap (f (circleMap 0 r a)) ≠ snap (f (circleMap 0 r b)) := by
   by_cases h : a < b
   · rw [abs_of_nonneg (by bound)] at ab

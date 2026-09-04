@@ -138,9 +138,8 @@ theorem cauchy1_hasSum {f : ℂ → E} {c w : ℂ} {r : ℝ} (rp : r > 0) (fc : 
     HasSum
       (fun n : ℕ ↦ w ^ n • (2 * π * I : ℂ)⁻¹ • ∮ z in C(c, r), (z - c)⁻¹ ^ n • (z - c)⁻¹ • f z)
       ((2 * π * I : ℂ)⁻¹ • ∮ z in C(c, r), (z - (c + w))⁻¹ • f z) := by
-  simp only [mul_inv_rev, Complex.inv_I, neg_mul, inv_pow, neg_smul, smul_neg] at wm
   have ci : CircleIntegrable f c r := ContinuousOn.circleIntegrable (by linarith) fc
-  have h := hasSum_cauchyPowerSeries_integral ci wm
+  have h := hasSum_cauchyPowerSeries_integral ci (mem_ball_zero_iff.mp wm)
   simp_rw [cauchyPowerSeries_apply] at h
   generalize hs : (2*π*I : ℂ)⁻¹ = s; simp_rw [hs] at h
   generalize hg : (s • ∮ z : ℂ in C(c, r), (z - (c + w))⁻¹ • f z) = g; rw [hg] at h
@@ -168,23 +167,30 @@ theorem ContinuousOn.circleIntegral {f : ℂ → ℂ → E} {s : Set ℂ} (rp : 
   refine intervalIntegral.continuousWithinAt_of_dominated_interval ?_ fb (by simp) ?_
   · apply eventually_nhdsWithin_of_forall; intro x xs
     apply ContinuousOn.aestronglyMeasurable
-    apply ContinuousOn.smul
-    rw [(by rfl : deriv (circleMap c1 r) = fun t ↦ deriv (circleMap c1 r) t)]
-    simp only [deriv_circleMap]
-    exact ContinuousOn.mul (Continuous.continuousOn (continuous_circleMap _ _)) continuousOn_const
-    have comp : (fun t ↦ f x (circleMap c1 r t)) = uncurry f ∘ fun t ↦ (x, circleMap c1 r t) := by
-      apply funext; intro t; simp
-    simp; rw [comp]; apply ContinuousOn.comp fc
-    exact ContinuousOn.prodMk continuousOn_const (Continuous.continuousOn (continuous_circleMap _ _))
-    intro t _; simp; exact ⟨xs, by linarith⟩
-    exact measurableSet_uIoc
+    · apply ContinuousOn.smul
+      · rw [(by rfl : deriv (circleMap c1 r) = fun t ↦ deriv (circleMap c1 r) t)]
+        simp only [deriv_circleMap]
+        exact ContinuousOn.mul (continuous_circleMap _ _).continuousOn continuousOn_const
+      · have comp : (fun t ↦ f x (circleMap c1 r t)) =
+            uncurry f ∘ fun t ↦ (x, circleMap c1 r t) := by
+          funext t; rfl
+        change ContinuousOn (fun t ↦ f x (circleMap c1 r t)) _
+        rw [comp]
+        apply ContinuousOn.comp fc
+        · exact ContinuousOn.prodMk continuousOn_const (continuous_circleMap _ _).continuousOn
+        · intro t _
+          exact ⟨xs, circleMap_mem_sphere _ rp.le _⟩
+    · exact measurableSet_uIoc
   · apply MeasureTheory.ae_of_all _; intro t _; simp only [deriv_circleMap]
     apply ContinuousOn.smul continuousOn_const
-    have comp : (fun x ↦ f x (circleMap c1 r t)) = uncurry f ∘ fun x ↦ (x, circleMap c1 r t) := by
-      apply funext; intro t; simp
-    rw [comp]; apply ContinuousOn.comp fc (ContinuousOn.prodMk continuousOn_id continuousOn_const)
-    intro x xs; simp; exact ⟨xs, by linarith⟩
-    exact z1s
+    · have comp : (fun x ↦ f x (circleMap c1 r t)) =
+            uncurry f ∘ fun x ↦ (x, circleMap c1 r t) := by
+        funext x; rfl
+      rw [comp]
+      apply ContinuousOn.comp fc (ContinuousOn.prodMk continuousOn_id continuousOn_const)
+      intro x xs
+      exact ⟨xs, circleMap_mem_sphere _ rp.le _⟩
+    · exact z1s
 
 /-- Cauchy series terms are continuous in the function -/
 theorem ContinuousOn.cauchy1 {n1 : ℕ} (rp : r > 0)
@@ -192,24 +198,21 @@ theorem ContinuousOn.cauchy1 {n1 : ℕ} (rp : r > 0)
     ContinuousOn (fun z0 ↦ ∮ z1 in C(c1, r), (z1 - c1)⁻¹ ^ n1 • (z1 - c1)⁻¹ • f (z0, z1))
       (sphere c0 r) := by
   apply ContinuousOn.circleIntegral rp (isCompact_sphere _ _)
-  apply ContinuousOn.smul; apply ContinuousOn.pow; apply ContinuousOn.inv₀
-  apply Continuous.continuousOn
-  exact Continuous.sub (Continuous.snd continuous_id) continuous_const
-  intro x xp; exact center_not_in_sphere rp (Set.mem_prod.mp xp).right
-  apply ContinuousOn.smul; apply ContinuousOn.inv₀
-  apply Continuous.continuousOn
-  exact Continuous.sub (Continuous.snd continuous_id) continuous_const
-  intro x xp; exact center_not_in_sphere rp (Set.mem_prod.mp xp).right
-  simp only [Prod.mk.eta]; exact fc
+  have ci : ContinuousOn (fun z : ℂ × ℂ ↦ (z.2 - c1)⁻¹)
+      (sphere c0 r ×ˢ sphere c1 r) := by
+    apply ContinuousOn.inv₀ (continuous_snd.sub continuous_const).continuousOn
+    intro x xp
+    exact center_not_in_sphere rp xp.2
+  exact (ci.pow _).smul (ci.smul fc)
 
 /-- One 2D coefficient of the 2D Cauchy series -/
-@[nolint unusedArguments]  -- Don't complain about the first argument
+@[nolint unusedArguments] -- Don't complain about the first argument
 def Separate.series2Coeff (_ : Separate f c0 c1 r b s) (n0 n1 : ℕ) : E :=
   (2*π*I : ℂ)⁻¹ • ∮ z0 in C(c0, r), (z0 - c0)⁻¹ ^ n0 • (z0 - c0)⁻¹ •
     (2*π*I : ℂ)⁻¹ • ∮ z1 in C(c1, r), (z1 - c1)⁻¹ ^ n1 • (z1 - c1)⁻¹ • f (z0, z1)
 
 /-- `series2Coeff` summed over `n0` -/
-@[nolint unusedArguments]  -- Don't complain about the first argument
+@[nolint unusedArguments] -- Don't complain about the first argument
 def Separate.series2CoeffN0Sum (_ : Separate f c0 c1 r b s) (n1 : ℕ) (w0 : ℂ) : E :=
   (2*π*I : ℂ)⁻¹ • ∮ z0 : ℂ in C(c0, r), (z0 - (c0 + w0))⁻¹ •
     (2*π*I : ℂ)⁻¹ • ∮ z1 : ℂ in C(c1, r), (z1 - c1)⁻¹ ^ n1 • (z1 - c1)⁻¹ • f (z0, z1)
@@ -230,18 +233,21 @@ theorem sum_integral_commute {f : ℕ → ℂ → E} {g : ℂ → E} {c : ℂ} {
     HasSum (fun n ↦ ∮ z in C(c, r), f n z) (∮ z in C(c, r), g z) := by
   rw [circleIntegral]; simp_rw [circleIntegral]; simp only [deriv_circleMap]
   apply intervalIntegral.hasSum_integral_of_dominated_convergence fun n _ ↦ r * b n
-  · intro n; apply ContinuousOn.aestronglyMeasurable; apply ContinuousOn.smul
-    apply ContinuousOn.mul (Continuous.continuousOn (continuous_circleMap _ _)) continuousOn_const
-    apply ContinuousOn.comp (fc n) (Continuous.continuousOn (continuous_circleMap _ _))
-    intro t _; exact circleMap_mem_sphere _ (by linarith) _
-    exact measurableSet_uIoc
-  · intro n; apply MeasureTheory.ae_of_all; intro t _; rw [norm_smul]; simp
+  · intro n
+    apply ContinuousOn.aestronglyMeasurable
+    · apply ContinuousOn.smul
+      · exact ContinuousOn.mul (continuous_circleMap _ _).continuousOn continuousOn_const
+      · apply ContinuousOn.comp (fc n) (continuous_circleMap _ _).continuousOn
+        intro t _; exact circleMap_mem_sphere _ rp.le _
+    · exact measurableSet_uIoc
+  · intro n; apply MeasureTheory.ae_of_all; intro t _; rw [norm_smul]
+    simp only [Complex.norm_mul, norm_circleMap_zero, Complex.norm_I, mul_one]
     rw [abs_of_pos rp]
     refine mul_le_mul_of_nonneg_left ?_ rp.le
     exact fb n (circleMap c r t) (circleMap_mem_sphere _ (by linarith) _)
   · apply MeasureTheory.ae_of_all; intro t _
     exact Summable.mul_left _ bs
-  · simp only [ne_eq, enorm_ne_top, not_false_eq_true, intervalIntegrable_const]
+  · exact intervalIntegrable_const
   · apply MeasureTheory.ae_of_all; intro t _
     apply HasSum.const_smul
     exact h (circleMap c r t) (circleMap_mem_sphere _ (by linarith) _)
@@ -265,9 +271,8 @@ theorem bounded_circleIntegral {f : ℂ → E} {c : ℂ} {r b : ℝ} (rp : r > 0
     apply ContinuousOn.intervalIntegrable
     have ca : ContinuousOn (norm : E → ℝ) Set.univ := Continuous.continuousOn continuous_norm
     refine ContinuousOn.comp ca ?_ (Set.mapsTo_univ _ _)
-    apply ContinuousOn.comp fc
-    exact Continuous.continuousOn (continuous_circleMap _ _)
-    intro t _; exact circleMap_mem_sphere _ (by linarith) _
+    apply ContinuousOn.comp fc (continuous_circleMap _ _).continuousOn
+    intro t _; exact circleMap_mem_sphere _ rp.le _
   have i1 : IntervalIntegrable (fun _ ↦ b) Real.measureSpace.volume 0 (2 * π) :=
     intervalIntegrable_const
   have im := intervalIntegral.integral_mono_on nonneg_2π i0 i1 mo
@@ -297,8 +302,7 @@ theorem cauchy1_bound {f : ℂ → E} {b r : ℝ} {c : ℂ} (rp : r > 0)
       _ ≤ 2 * π * r * (r⁻¹ ^ n * r⁻¹ * b) := isb
       _ = 2 * π * b * r⁻¹ ^ n * (r * r⁻¹) := by ring
       _ = 2 * π * b * r⁻¹ ^ n := by rw [mul_inv_cancel₀ rp.ne']; simp
-  · apply ContinuousOn.smul; apply ContinuousOn.pow; exact ContinuousOn.inv_sphere rp
-    apply ContinuousOn.smul; exact ContinuousOn.inv_sphere rp; assumption
+  · exact ((ContinuousOn.inv_sphere rp).pow _).smul ((ContinuousOn.inv_sphere rp).smul fc)
 
 /-- The 1D Cauchy integral with the constant has the expected bound -/
 public theorem cauchy1_bound' {f : ℂ → E} {r : ℝ} {c : ℂ} (rp : r > 0) (b : ℝ)
@@ -372,10 +376,11 @@ theorem series2_norm (h : Separate f c0 c1 r b s) (n : ℕ) :
   rw [series2]; simp only [inv_pow]
   have tb : ∀ n0, n0 ∈ Finset.range (n+1) →
       ‖termCmmap ℂ n n0 (h.series2Coeff n0 (n - n0))‖ ≤ b * r⁻¹ ^ n := by
-    intro n0 n0n; simp only [inv_pow] at n0n
+    intro n0 n0n
+    have n0le : n0 ≤ n := Nat.le_of_lt_succ (Finset.mem_range.mp n0n)
     apply le_trans (termCmmap_norm ℂ n n0 (h.series2Coeff n0 (n - n0)))
     have sb := series2Coeff_bound h n0 (n - n0)
-    rw [← Nat.add_sub_assoc n0n n0, Nat.add_sub_cancel_left] at sb
+    rw [← Nat.add_sub_assoc n0le n0, Nat.add_sub_cancel_left] at sb
     assumption
   trans (Finset.range (n + 1)).sum fun n0 ↦ ‖termCmmap ℂ n n0 (h.series2Coeff n0 (n - n0))‖
   · bound
@@ -392,7 +397,8 @@ theorem cauchy2_radius (h : Separate f c0 c1 r b s) : ENNReal.ofReal r ≤ (seri
   rw [←ENNReal.toReal_lt_toReal (@ENNReal.coe_ne_top t) (@ENNReal.ofReal_ne_top r)] at tr
   rw [ENNReal.coe_toReal, ENNReal.toReal_ofReal h.rp.le] at tr
   apply FormalMultilinearSeries.le_radius_of_summable_nnnorm
-  simp_rw [← norm_toNNReal, ← NNReal.summable_coe]; simp only [norm_toNNReal, NNReal.coe_mul, coe_nnnorm, NNReal.coe_pow]
+  simp_rw [← norm_toNNReal, ← NNReal.summable_coe]
+  simp only [norm_toNNReal, NNReal.coe_mul, coe_nnnorm, NNReal.coe_pow]
   have lo : ∀ n : ℕ, 0 ≤ ‖series2 h n‖ * (t:ℝ)^n := by intro; bound
   have hi : ∀ n : ℕ, ‖series2 h n‖ * (t:ℝ)^n ≤ (n + 1) * b * (t / r) ^ n := by
     intro n; trans (↑n + 1) * b * r⁻¹ ^ n * (t:ℝ)^n
@@ -400,7 +406,9 @@ theorem cauchy2_radius (h : Separate f c0 c1 r b s) : ENNReal.ofReal r ≤ (seri
     · rw [mul_assoc ((↑n + 1) * b) _ _, ← mul_pow, inv_mul_eq_div]
   refine .of_nonneg_of_le lo hi ?_
   simp_rw [mul_comm _ b, mul_assoc b _ _]; apply Summable.mul_left b
-  have trn : ‖↑t / r‖ < 1 := by simp only [norm_div, Real.norm_eq_abs, NNReal.abs_eq]; rw [abs_of_pos h.rp, div_lt_one h.rp]; assumption
+  have trn : ‖↑t / r‖ < 1 := by
+    simp only [norm_div, Real.norm_eq_abs, NNReal.abs_eq, abs_of_pos h.rp]
+    exact (div_lt_one h.rp).mpr tr
   simp_rw [right_distrib _ _ _, one_mul]
   exact Summable.add (hasSum_coe_mul_geometric_of_norm_lt_one trn).summable
     (hasSum_geometric_of_norm_lt_one trn).summable
@@ -468,15 +476,15 @@ theorem cauchy2_hasSum_n1n0 (h : Separate f c0 c1 r b s) (w0m : w0 ∈ ball (0 :
   · intro n
     apply ContinuousOn.smul continuousOn_const
     apply ContinuousOn.smul continuousOn_const
-    apply ContinuousOn.smul
-    exact ContinuousOn.inv_sphere_ball w0m
+    apply ContinuousOn.smul (ContinuousOn.inv_sphere_ball w0m)
     apply ContinuousOn.cauchy1 h.rp
     apply ContinuousOn.mono h.fc h.rs'
   · rw [← hs]; exact fun n z0 z0s ↦ cauchy2_hasSum_n1n0_bound h w0m n z0s
   · apply Summable.mul_left
     apply summable_geometric_of_norm_lt_one
     simp only [norm_div, Real.norm_eq_abs, abs_of_pos h.rp]
-    simp only [abs_norm] at w1m ⊢; exact (div_lt_one h.rp).mpr w1m
+    simp only [abs_norm]
+    exact (div_lt_one h.rp).mpr (mem_ball_zero_iff.mp w1m)
   · intro z0 z0s
     simp_rw [smul_comm s _]; simp_rw [smul_comm (w1 ^ _) _]; apply HasSum.const_smul
     have fcs : ContinuousOn (fun z1 ↦ f (z0, z1)) (sphere c1 r) :=
@@ -500,7 +508,7 @@ theorem cauchy2_hasSum_2d (h : Separate f c0 c1 r b s) (w0m : w0 ∈ ball (0 : �
     intro n1; rw [← hf, ← hg]; simp only
     simp_rw [smul_comm (w0 ^ _) _]; apply HasSum.const_smul; exact cauchy2_hasSum_n0 h w0m n1
   have fb : ∀ n : ℕ × ℕ, ‖f n‖ ≤ b * (‖w0‖ / r) ^ n.snd * (‖w1‖ / r) ^ n.fst := by
-    intro n; rw [← hf]; simp
+    intro n; rw [← hf]; dsimp only
     rw [norm_smul, norm_smul, mul_assoc]
     simp only [norm_pow, ← mul_assoc]
     trans ‖w0‖ ^ n.snd * ‖w1‖ ^ n.fst * (b * r⁻¹ ^ (n.snd + n.fst))
@@ -527,7 +535,8 @@ theorem HasSum.antidiagonal_of_2d {V : Type} [AddCommMonoid V] [TopologicalSpace
   rw [←Finset.HasAntidiagonal.sigmaAntidiagonalEquivProd.hasSum_iff] at h
   have fg : ∀ n, HasSum (fun d : Finset.antidiagonal n ↦
       (f ∘ Finset.HasAntidiagonal.sigmaAntidiagonalEquivProd) ⟨n, d⟩) (g n) := by
-    intro n; simp only [Function.comp_apply, Finset.HasAntidiagonal.sigmaAntidiagonalEquivProd_apply]
+    intro n
+    simp only [Function.comp_apply, Finset.HasAntidiagonal.sigmaAntidiagonalEquivProd_apply]
     have fs := hasSum_fintype fun d : ↥(Finset.antidiagonal n) ↦ f ↑d
     -- simp at fs,
     have e : (Finset.univ.sum fun d : ↥(Finset.antidiagonal n) ↦ f ↑d) = g n := by
@@ -563,8 +572,8 @@ theorem osgood_h (h : Separate f c0 c1 r b s) :
       simp only [Metric.eball_ofReal, Metric.mem_ball, dist_zero_right, Prod.forall]
       intro w0 w1 wr; rw [Prod.norm_def] at wr
       simp only [max_lt_iff] at wr
-      have w0m : w0 ∈ ball (0 : ℂ) r := by simp only [Metric.mem_ball, dist_zero_right]; exact wr.left
-      have w1m : w1 ∈ ball (0 : ℂ) r := by simp only [Metric.mem_ball, dist_zero_right]; exact wr.right
+      have w0m : w0 ∈ ball (0 : ℂ) r := mem_ball_zero_iff.mpr wr.left
+      have w1m : w1 ∈ ball (0 : ℂ) r := mem_ball_zero_iff.mpr wr.right
       exact cauchy2_hasSum h w0m w1m }
 
 end osgood

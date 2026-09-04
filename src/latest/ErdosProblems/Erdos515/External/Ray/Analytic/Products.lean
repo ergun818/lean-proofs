@@ -32,7 +32,7 @@ open Complex (exp log)
 open Filter (atTop)
 open Metric (ball closedBall sphere)
 open Set
-open scoped Classical Real NNReal ENNReal Topology
+open scoped Real NNReal ENNReal Topology
 noncomputable section
 
 variable {ι : Type}
@@ -107,7 +107,9 @@ theorem product_drop' {f : ℕ → ℂ} (f0 : f 0 ≠ 0) (h : ProdExists f) :
 theorem product_head_zero {f : ℕ → ℂ} (f0 : f 0 = 0) : HasProd f 0 := by
   rw [HasProd, SummationFilter.unconditional_filter, Metric.tendsto_atTop]; intro e ep
   use Finset.range 1; intro N N1
-  simp only [dist_zero_right, norm_prod] at N1; rw [Finset.prod_eq_zero N1 f0]; simpa
+  have h0 : 0 ∈ N := N1 (by simp)
+  rw [Finset.prod_eq_zero h0 f0]
+  simpa using ep
 
 /-- Separate out head and tail in a product -/
 public theorem product_split {f : ℕ → ℂ} (h : ProdExists f) :
@@ -159,7 +161,10 @@ public theorem fast_products_converge {f : ℕ → ℂ → ℂ} {s : Set ℂ} {a
       Filter.Tendsto.comp (Continuous.tendsto Complex.continuous_exp _) us
     have expsum0 : (exp ∘ fun N : Finset ℕ ↦ N.sum fun n ↦ fl n z) = fun N : Finset ℕ ↦
         N.prod fun n ↦ f n z := by
-      apply funext; intro N; simp only [Function.comp_apply]; rw [Complex.exp_sum]; simp_rw [expfl _ z zs]
+      funext N
+      simp only [Function.comp_apply]
+      rw [Complex.exp_sum]
+      simp_rw [expfl _ z zs]
     rw [expsum0] at comp; rw [← hg]; assumption
   · rw [← hg]; exact fun z zs ↦ analyticAt_cexp.comp (gla z zs)
   · simp only [Complex.exp_ne_zero, Ne, not_false_iff, imp_true_iff, ← hg]
@@ -189,16 +194,18 @@ theorem fast_products_converge_eventually {f : ℕ → ℂ → ℂ} {s : Set ℂ
         ((∏ n ∈ Finset.range M, f (N - M + n) z) * g z) by
       simpa only [tsub_self, zero_add] using P N (le_refl _)
     intro M MN
-    induction' M with M H
-    · simpa using fg
-    · specialize H (by omega)
+    induction M with
+    | zero => simpa using fg
+    | succ M H =>
+      specialize H (by omega)
       have e : ∀ k, (N - (M + 1) + (k + 1)) = (N - M + k) := by grind
       have ec : (Stream'.cons (f (N - (M + 1)) z) fun n ↦ f (N - M + n) z) =
           fun n ↦ f (N - (M + 1) + n) z := by
         ext n
-        induction' n with n h
-        · simp only [Stream'.get, Stream'.cons, add_zero]
-        · simp only [Stream'.get, Stream'.cons]
+        cases n with
+        | zero => simp only [Stream'.get, Stream'.cons, add_zero]
+        | succ n =>
+          simp only [Stream'.get, Stream'.cons]
           grind
       simpa only [Finset.prod_range_succ', e, add_zero, mul_comm _ (f _ _), mul_assoc (f _ _),
         ec] using product_cons (a := f (N - (M + 1)) z) H
@@ -218,7 +225,8 @@ public theorem fast_products_converge' {f : ℕ → ℂ → ℂ} {s : Set ℂ} {
   · intro z zs; rw [gp.tprodOn_eq z zs]; exact g0 z zs
 
 /-- Same as `fast_products_converge_eventually`, but converge to `tprodOn` -/
-public theorem fast_products_converge_eventually' {f : ℕ → ℂ → ℂ} {s : Set ℂ} {c a : ℝ} (o : IsOpen s)
+public theorem fast_products_converge_eventually' {f : ℕ → ℂ → ℂ} {s : Set ℂ} {c a : ℝ}
+    (o : IsOpen s)
     (a0 : 0 ≤ a) (a1 : a < 1) (h : ∀ n, AnalyticOnNhd ℂ (f n) s)
     (hf : ∀ᶠ n in atTop, ∀ z ∈ s, ‖f n z - 1‖ ≤ c * a ^ n) :
     ProdExistsOn f s ∧ AnalyticOnNhd ℂ (tprodOn f) s ∧
@@ -248,9 +256,11 @@ lemma norm_mul_sub_one_le {a b : ℂ} :
 
 lemma Finset.norm_prod_sub_one_le {f : ι → ℂ} {s : Finset ι} :
     ‖∏ i ∈ s, f i - 1‖ ≤ ∏ i ∈ s, (1 + ‖f i - 1‖) - 1 := by
-  induction' s using Finset.induction with i s is h
-  · simp only [prod_empty, sub_self, norm_zero, le_refl]
-  · simp only [Finset.prod_insert is]
+  classical
+  induction s using Finset.induction with
+  | empty => simp only [prod_empty, sub_self, norm_zero, le_refl]
+  | @insert i s is h =>
+    simp only [Finset.prod_insert is]
     exact le_trans norm_mul_sub_one_le (by bound)
 
 /-- Bound a product in terms of bounds on the first few terms, and a geometric tail bound -/

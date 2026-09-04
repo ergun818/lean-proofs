@@ -13,7 +13,6 @@ import ErdosProblems.Erdos515.External.Ray.Misc.Continuation
 If `f : ℂ → ℂ` is analytic and nonzero in `ball 0 r`, we can take its logarithm.
 -/
 
-open Classical
 open Complex (exp log)
 open Metric (ball closedBall isOpen_ball)
 open Set
@@ -40,8 +39,8 @@ public theorem AnalyticOnNhd.exists_log (fa : AnalyticOnNhd ℂ f (ball c r))
     ∃ g : ℂ → ℂ, AnalyticOnNhd ℂ g (ball c r) ∧ g c = Complex.log (f c) ∧
       ∀ z ∈ ball c r, f z = exp (g z) := by
   by_cases r0 : r ≤ 0
-  · simp only [Metric.mem_ball]
-    exact ⟨fun z ↦ Complex.log (f z), rfl⟩
+  · rw [Metric.ball_eq_empty.mpr r0]
+    exact ⟨fun z ↦ Complex.log (f z), by simp⟩
   simp only [not_le] at r0
   set p : (ℂ → ℂ) → ℂ → Prop := fun g z ↦ AnalyticAt ℂ g z ∧ f z = exp (g z)
   have slit : ∀ w ∈ ball c r, ∀ᶠ z in 𝓝 w, f z / f w ∈ Complex.slitPlane := by

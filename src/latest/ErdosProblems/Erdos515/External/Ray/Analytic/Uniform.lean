@@ -24,7 +24,7 @@ variable {E : Type} [NormedAddCommGroup E] [NormedSpace ℂ E]
 theorem analyticOn_small_cball {f : ℂ → E} {z : ℂ} {r : ℝ≥0} (h : AnalyticOnNhd ℂ f (ball z r))
     (s : ℝ≥0) (sr : s < r) : AnalyticOnNhd ℂ f (closedBall z s) := by
   intro x hx
-  rw [closedBall] at hx; simp at hx
+  rw [closedBall] at hx; simp only [dist_le_coe, Set.mem_ofPred_eq] at hx
   have hb : x ∈ ball z r := by
     rw [ball]; simp only [dist_lt_coe, Set.mem_ofPred_eq]; exact lt_of_le_of_lt hx sr
   exact h x hb
@@ -204,7 +204,7 @@ public theorem uniform_analytic_lim {I : Type} [Lattice I] [Nonempty I] {f : I �
         r_pos := ENNReal.coe_pos.mpr rp
         hasSum := ?_ }
   intro y yb
-  have yr := yb; simp at yr
+  have yr := yb; simp only [Metric.eball_coe, Metric.mem_ball, dist_zero_right] at yr
   set a := ‖y‖ / r
   have a0 : a ≥ 0 := by bound
   have a1 : a < 1 := (div_lt_one (NNReal.coe_pos.mpr rp)).mpr yr
@@ -229,7 +229,7 @@ public theorem uniform_analytic_lim {I : Type} [Lattice I] [Nonempty I] {f : I �
   have dppr : dist (M.sum fun k : ℕ ↦ p k fun _ ↦ y)
       (M.sum fun k : ℕ ↦ pr n k fun _ ↦ y) ≤ e / 4 := by
     trans M.sum fun k : ℕ ↦ dist (p k fun _ ↦ y) (pr n k fun _ ↦ y)
-    apply dist_sum_sum_le M (fun k : ℕ ↦ p k fun _ ↦ y) fun k : ℕ ↦ pr n k fun _ ↦ y
+    · exact dist_sum_sum_le M (fun k : ℕ ↦ p k fun _ ↦ y) fun k : ℕ ↦ pr n k fun _ ↦ y
     trans M.sum fun k ↦ a ^ k * d
     · apply Finset.sum_le_sum; intro k _
       have hak : a ^ k = ‖y‖ ^ k * r⁻¹ ^ k := by

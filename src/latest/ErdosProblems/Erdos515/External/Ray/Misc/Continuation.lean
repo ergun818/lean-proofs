@@ -27,7 +27,6 @@ but this may require a lot of machinery to cover manifolds in particular: the nL
 the existence of Riemannian metrics.
 -/
 
-open Classical
 open Filter (Tendsto atTop)
 open Metric (ball closedBall isOpen_ball mem_ball mem_ball_self closedBall_zero)
 open Set
@@ -80,25 +79,25 @@ lemma Base.ball (b : Base p s f) (x : closure s) :
 
 /-- A particular `g` that continues `f` near `x` -/
 def Base.g (b : Base p s f) (x : closure s) : E → α :=
-  choose (b.ball x)
+  Classical.choose (b.ball x)
 
 /-- The radius on which `g` is valid around `x` -/
 def Base.r (b : Base p s f) (x : closure s) : ℝ :=
-  choose (choose_spec (b.ball x))
+  Classical.choose (Classical.choose_spec (b.ball x))
 
 /-- The radius is positive -/
 lemma Base.rp (b : Base p s f) (x : closure s) : 0 < b.r x :=
-  (choose_spec (choose_spec (b.ball x))).1
+  (Classical.choose_spec (Classical.choose_spec (b.ball x))).1
 
-/-- `g` is valid on `ball x r`-/
+/-- `g` is valid on `ball x r` -/
 lemma Base.gp (b : Base p s f) (x : closure s) (m : z ∈ Metric.ball (x : E) (b.r x)) :
     p (b.g x) z :=
-  (choose_spec (choose_spec (b.ball x))).2.1 _ m
+  (Classical.choose_spec (Classical.choose_spec (b.ball x))).2.1 _ m
 
 /-- `g` matches `f` where they are both defined -/
 lemma Base.gf (b : Base p s f) (x : closure s) :
     b.g x =ᶠ[𝓝ˢ (s ∩ Metric.ball (x : E) (b.r x))] f :=
-  (choose_spec (choose_spec (b.ball x))).2.2
+  (Classical.choose_spec (Classical.choose_spec (b.ball x))).2.2
 
 /-- There exists a finite subcover of the `g` balls -/
 lemma Base.exists_cover (b : Base p s f) :
@@ -109,7 +108,7 @@ lemma Base.exists_cover (b : Base p s f) :
 
 /-- Choose a finite subcover of the `g` balls -/
 def Base.c (b : Base p s f) : Finset (closure s) :=
-  choose b.exists_cover
+  Classical.choose b.exists_cover
 
 /-- The union of our chosen finite set of `g` balls -/
 def Base.t (b : Base p s f) : Set E :=
@@ -117,16 +116,17 @@ def Base.t (b : Base p s f) : Set E :=
 
 /-- Map a point in the union of our ball cover to one ball that contains it -/
 def Base.y (b : Base p s f) (m : z ∈ b.t) : closure s :=
-  choose (mem_iUnion.mp m)
+  Classical.choose (mem_iUnion.mp m)
 
 lemma Base.yt (b : Base p s f) (m : z ∈ b.t) : z ∈ Metric.ball (b.y m : E) (b.r (b.y m)) := by
-  simp only [Base.t, Base.y, mem_iUnion] at m ⊢; exact choose_spec (choose_spec m)
+  simp only [Base.t, Base.y, mem_iUnion] at m ⊢
+  exact Classical.choose_spec (Classical.choose_spec m)
 
 lemma Base.ot (b : Base p s f) : IsOpen b.t :=
   isOpen_iUnion fun _ ↦ isOpen_iUnion fun _ ↦ isOpen_ball
 
 theorem Base.cover (b : Base p s f) : closure s ⊆ b.t :=
-  choose_spec b.exists_cover
+  Classical.choose_spec b.exists_cover
 
 /-- Given two intersecting balls centered in `closure s`, their intersection touches `s` -/
 theorem Convex.inter_ball (c : Convex ℝ s) (x0 x1 : closure s) {r0 r1 : ℝ} (r0p : 0 < r0)
@@ -163,12 +163,15 @@ theorem Convex.inter_ball (c : Convex ℝ s) (x0 x1 : closure s) {r0 r1 : ℝ} (
     use mem_closure_iff_frequently.mp m0, mem_closure_iff_frequently.mp m1
   rcases(f.and_eventually e).exists with ⟨⟨z0, z1⟩, ⟨m0, m1⟩, m⟩
   refine ⟨_, ⟨?_, m.1⟩, m.2⟩
-  apply c m0 m1; bound; bound
-  simp only [← add_div, add_comm r1 r0, div_self (add_pos r0p r1p).ne']
+  apply c m0 m1
+  · bound
+  · bound
+  · simp only [← add_div, add_comm r1 r0, div_self (add_pos r0p r1p).ne']
 
 /-- Our full continuation `u` throughout `closure s` -/
-public def Base.u (b : Base p s f) : E → α := fun z ↦
-  if m : z ∈ b.t then b.g (b.y m) z else f z
+public def Base.u (b : Base p s f) : E → α := by
+  classical
+  exact fun z ↦ if m : z ∈ b.t then b.g (b.y m) z else f z
 
 /-- The continuation `u` is equal to each `g` -/
 theorem Base.ug (b : Base p s f) (x : closure s) :
@@ -291,9 +294,9 @@ lemma Grow.sup {u : ℕ → ℝ} (mono : Monotone u) (tend : Tendsto u atTop (�
     intro x lt
     simp only [lt, n]
     exact Nat.find_spec (ex _ lt)
-  set fn : E → E → α := fun x ↦ choose (grow (n x))
+  set fn : E → E → α := fun x ↦ Classical.choose (grow (n x))
   have spec : ∀ x, fn x c = fs c ∧ ∀ᶠ y in 𝓝ˢ (ball c (u (n x))), p (fn x) y :=
-    fun x ↦ choose_spec (grow (n x))
+    fun x ↦ Classical.choose_spec (grow (n x))
   set f : E → α := fun x ↦ fn x x
   refine ⟨f, (spec _).1, ?_⟩
   simp only [isOpen_ball.nhdsSet_eq, Filter.eventually_principal, mem_ball, dist_eq_norm]
@@ -347,3 +350,5 @@ public lemma grow : i.Grow (ball c r) := by
     linarith [le_csSup above us]
   · simp only [not_lt] at sup_lt
     exact (down r (sSup s) i.pos sup_lt self).2.2
+
+end Continuation

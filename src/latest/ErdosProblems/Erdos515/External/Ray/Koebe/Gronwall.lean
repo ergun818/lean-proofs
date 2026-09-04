@@ -52,7 +52,6 @@ image is star-shaped for sufficiently large `r`, then use the machinery in `Wind
 -/
 
 open Bornology (cobounded)
-open Classical
 open Complex (exp I)
 open Function (uncurry)
 open Metric (ball closedBall sphere)
@@ -82,7 +81,8 @@ def g (_ : Gronwall f) (w : ℂ) : ℂ := w * f w⁻¹
 
 /-- `g` is analytic for `1 < ‖z‖` -/
 lemma ga (i : Gronwall f) {z : ℂ} (z1 : 1 < ‖z‖) : AnalyticAt ℂ i.g z := by
-  refine analyticAt_id.mul ((i.fa _ (by simp only [Metric.mem_ball, dist_zero_right, norm_inv]; bound)).comp (analyticAt_inv ?_))
+  refine analyticAt_id.mul ((i.fa _
+    (by simp only [Metric.mem_ball, dist_zero_right, norm_inv]; bound)).comp (analyticAt_inv ?_))
   rw [← norm_pos_iff]; linarith
 
 /-- `g` is analytic for `1 < ‖z‖` -/
@@ -130,8 +130,12 @@ lemma norm_coeff_le (i : Gronwall f) (r0 : 0 < r) (r1 : r < 1) :
   exact le''
 def norm_prop (i : Gronwall f) (r : ℝ) : Prop :=
   ∃ ac : ℝ × ℝ, ac.1 ∈ Set.Ioo 0 1 ∧ 0 < ac.2 ∧ ∀ n, ‖i.coeff n‖ ≤ ac.2 * (ac.1 * r) ^ n
-def a (i : Gronwall f) (r : ℝ) : ℝ := if p : i.norm_prop r then (choose p).1 else 1
-def C (i : Gronwall f) (r : ℝ) : ℝ := if p : i.norm_prop r then (choose p).2 else 1
+def a (i : Gronwall f) (r : ℝ) : ℝ := by
+  classical
+  exact if p : i.norm_prop r then (Classical.choose p).1 else 1
+def C (i : Gronwall f) (r : ℝ) : ℝ := by
+  classical
+  exact if p : i.norm_prop r then (Classical.choose p).2 else 1
 lemma ac_prop (i : Gronwall f) (r1 : 1 < r) : i.a r ∈ Ioo 0 1 ∧ 0 < i.C r ∧
     ∀ n, ‖i.coeff n‖ ≤ i.C r * (i.a r * r) ^ n := by
   have p : i.norm_prop r := by
@@ -466,8 +470,8 @@ lemma hasSum_fe (i : Gronwall f) : ∀ᶠ r in atTop, ∀ w : WindDiff (i.gc r),
     intro t
     have sum := i.hasFPowerSeriesOnBall.hasSum (y := circleMap 0 r⁻¹ t)
       (by simp [← ofReal_norm, abs_of_pos ri0, ri1])
-    simpa only [FormalMultilinearSeries.ofScalars_apply_eq, mul_comm, zero_add, mul_pow, smul_eq_mul,
-      ← mul_assoc, zero_add, Complex.ofReal_inv] using sum
+    simpa only [FormalMultilinearSeries.ofScalars_apply_eq, mul_comm, zero_add, mul_pow,
+      smul_eq_mul, ← mul_assoc, zero_add, Complex.ofReal_inv] using sum
   have pow : ∀ n : ℕ, circleMap 0 r t * circleMap 0 r⁻¹ (-t) ^ n =
       circleMap 0 r t ^ (1 - n : ℤ) := by
     intro n
@@ -502,7 +506,10 @@ lemma le_udf (i : Gronwall f) (r1 : 1 < r) :
     ‖(1 - n : ℤ) * I * i.coeff n * circleMap 0 r t ^ (1 - n : ℤ)‖ ≤ i.udf r n := by
   obtain ⟨⟨a0,a1⟩,C0,cle⟩ := i.ac_prop r1
   have r0 : 0 < r := by linarith
-  have nb : ‖(1 - n : ℂ)‖ ≤ n + 1 := by induction' n with n; all_goals simp; try linarith
+  have nb : ‖(1 - n : ℂ)‖ ≤ n + 1 := by
+    calc
+      ‖(1 - n : ℂ)‖ ≤ ‖(1 : ℂ)‖ + ‖(n : ℂ)‖ := norm_sub_le _ _
+      _ = n + 1 := by simp [add_comm]
   simp only [Int.cast_sub, Int.cast_one, Int.cast_natCast, zpow_natCast, Complex.norm_mul, mul_one,
     norm_circleMap_zero, abs_of_pos r0, Complex.norm_I, udf, norm_zpow, zpow_sub₀ r0.ne', zpow_one]
   calc ‖(1 - n : ℂ)‖ * ‖i.coeff n‖ * (r / r ^ n)
@@ -579,7 +586,11 @@ lemma inner_nonneg (i : Gronwall f) : ∀ᶠ r in atTop, ∀ w : WindDiff (i.gc 
   generalize hf : f w⁻¹ = fw
   generalize hd : deriv f w⁻¹ = dfw
   have nw : ‖w‖ = r := by simp [← hw, z, r0.le]
-  have f0 : 0 < ‖fw‖ := by simp only [norm_pos_iff, ne_eq] at g0c ⊢; exact g0c.2
+  have f0 : 0 < ‖fw‖ := by
+    apply norm_pos_iff.mpr
+    intro hf0
+    apply g0c (t := t)
+    simp only [g, hw, hf, hf0, mul_zero]
   ring_nf
   simp only [Complex.I_sq]
   ring_nf
@@ -610,7 +621,8 @@ def term (i : Gronwall f) (r : ℝ) (n m : ℕ) (t : ℝ) : ℂ :=
   fun_prop
 
 -- Bounds on `i.term`
-def ut (i : Gronwall f) (r : ℝ) (p : ℕ × ℕ) : ℝ := i.C r ^ 2 * (p.1 + 1) * r ^ 2 * i.a r ^ (p.1 + p.2)
+def ut (i : Gronwall f) (r : ℝ) (p : ℕ × ℕ) : ℝ :=
+  i.C r ^ 2 * (p.1 + 1) * r ^ 2 * i.a r ^ (p.1 + p.2)
 lemma le_ut (i : Gronwall f) (r1 : 1 < r) : ∀ n m t, ‖i.term r n m t‖ ≤ i.ut r (n,m) := by
   intro n m t
   obtain ⟨⟨a0,a1⟩,C0,cle⟩ := i.ac_prop r1
@@ -618,7 +630,10 @@ lemma le_ut (i : Gronwall f) (r1 : 1 < r) : ∀ n m t, ‖i.term r n m t‖ ≤ 
   generalize i.a r = a at a0 a1 cle
   have r0 : 0 < r := by linarith
   have rn0 : ∀ {n}, r ^ n ≠ 0 := by intro n; positivity
-  have nb : ‖(1 - n : ℂ)‖ ≤ n + 1 := by induction' n with n; all_goals simp; try linarith
+  have nb : ‖(1 - n : ℂ)‖ ≤ n + 1 := by
+    calc
+      ‖(1 - n : ℂ)‖ ≤ ‖(1 : ℂ)‖ + ‖(n : ℂ)‖ := norm_sub_le _ _
+      _ = n + 1 := by simp [add_comm]
   simp only [norm_mul, Complex.norm_div, Complex.norm_I, mul_one, RCLike.norm_conj, norm_pow,
     Complex.norm_real, Real.norm_eq_abs, abs_of_pos r0, Complex.norm_exp, Complex.mul_re,
     Complex.sub_re, Complex.natCast_re, Complex.ofReal_re, Complex.sub_im, Complex.natCast_im,
@@ -797,7 +812,11 @@ lemma analyticAt_series (i : Gronwall f) {z : ℂ} (z1 : 1 < ‖z‖) :
   set s := ‖z‖ + 1
   obtain ⟨⟨a0,a1⟩,C0,_⟩ := i.ac_prop t1
   set b : ℝ := i.a t ^ 2
-  have b1 : b < 1 := by rw [pow_lt_one_iff_of_nonneg]; exact a1; bound; norm_num
+  have b1 : b < 1 := by
+    rw [pow_lt_one_iff_of_nonneg]
+    · exact a1
+    · bound
+    · norm_num
   have subexp : Subexp (fun n ↦ π * ‖(1 - n : ℂ)‖ * s ^ 2 * i.C t ^ 2) := by fun_prop
   obtain ⟨C,c,c0,c1,le⟩ := subexp.le_exp b (by positivity) b1
   have ta : AnalyticOnNhd ℂ (fun r ↦ ∑' n, i.gronwall_c r n) (norm_Ioo t s) := by
@@ -1152,7 +1171,7 @@ public theorem gronwall_volume_ne_top (fa : AnalyticOnNhd ℂ f (ball 0 1)) (f0 
     volume ((fun z ↦ z * f z⁻¹) '' norm_Ioi 1)ᶜ ≠ ⊤ :=
   Gronwall.volume_disk_finite ⟨fa, f0, inj⟩
 
-/-- The Grönwall area has a nice series-/
+/-- The Grönwall area has a nice series -/
 public theorem gronwall_volume_sum (fa : AnalyticOnNhd ℂ f (ball 0 1)) (f0 : f 0 = 1)
     (inj : InjOn (fun z ↦ z * f z⁻¹) (norm_Ioi 1)) :
     HasSum (fun n ↦ π * n * ‖iteratedDeriv (n + 1) f 0 / (n + 1).factorial‖ ^ 2)

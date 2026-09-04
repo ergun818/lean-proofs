@@ -103,9 +103,9 @@ theorem lintegral_threePeriodCutoff_le {q : ℂ → ℂ} {R C : ℝ}
     have hperiod' :
         (∫ x in (-2 * Real.pi)..(-2 * Real.pi + 2 * Real.pi), v x) =
           ∫ x in (0 : ℝ)..2 * Real.pi, v x := by
-      convert hperiod using 1 <;> ring_nf
+      convert hperiod using 1; ring_nf
     rw [hperiod'] at hmany
-    convert hmany using 1 <;> norm_num <;> ring_nf
+    convert hmany using 1 <;> norm_num; ring_nf
   have hthree_le : (∫ x in threePeriodInterval, v x) ≤ 3 * C := by
     rw [threePeriodInterval, ← intervalIntegral.integral_of_le
       (by linarith [Real.pi_pos] : (-2 * Real.pi : ℝ) ≤ 4 * Real.pi)]

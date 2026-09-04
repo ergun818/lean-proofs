@@ -21,7 +21,6 @@ This file chooses a countable set of linear functions `duals n : E →L[ℂ] ℂ
 such that `‖x‖ = ⨆ n, ‖duals n x‖`.
 -/
 
-open Classical
 open Filter (atTop)
 open Function (curry uncurry)
 open Metric (ball closedBall sphere)
@@ -36,17 +35,17 @@ variable {F : Type} [NormedAddCommGroup F] [NormedSpace ℂ F]
 
 /-- A nonconstructive function which extracts a dual vector `f` exhibiting `f x = ‖x‖` -/
 def dualVector (x : E) : E →L[ℂ] ℂ :=
-  choose (exists_dual_vector'' ℂ x)
+  Classical.choose (exists_dual_vector'' ℂ x)
 
 @[bound] lemma dualVector_norm (x : F) : ‖dualVector x‖ ≤ 1 :=
-  (choose_spec (exists_dual_vector'' ℂ x)).1
+  (Classical.choose_spec (exists_dual_vector'' ℂ x)).1
 
 @[bound] lemma dualVector_nnnorm (x : F) : ‖dualVector x‖₊ ≤ 1 :=
   dualVector_norm _
 
 @[simp]
 theorem dualVector_apply (x : F) : dualVector x x = ‖x‖ :=
-  (choose_spec (exists_dual_vector'' ℂ x)).2
+  (Classical.choose_spec (exists_dual_vector'' ℂ x)).2
 
 theorem dualVector_le (x y : F) : ‖dualVector x y‖ ≤ ‖y‖ := by
   calc ‖dualVector x y‖

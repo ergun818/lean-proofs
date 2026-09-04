@@ -58,16 +58,18 @@ theorem isPreconnected_iff_subset_of_fully_disjoint_open [NormalSpace X] {s : Se
     have h0 : s ⊆ s ∩ u ∪ s ∩ v := by
       simp only [←inter_union_distrib_left]; exact subset_inter (subset_refl _) suv
     have h1 : Disjoint (s ∩ u) (s ∩ v) := Disjoint.inter_left' _ (Disjoint.inter_right' _ uv)
-    cases' h (s ∩ u) (s ∩ v) suc svc h0 h1 with su sv
+    rcases h (s ∩ u) (s ∩ v) suc svc h0 h1 with su | sv
     · left; exact (subset_inter_iff.mp su).2
     · right; exact (subset_inter_iff.mp sv).2
   · intro h u v uc vc suv uv
     rcases NormalSpace.normal u v uc vc uv with ⟨u', v', uo, vo, uu, vv, uv'⟩
-    cases' h u' v' uo vo (_root_.trans suv (union_subset_union uu vv)) uv' with h h
-    · left; intro x m; cases' (mem_union _ _ _).mp (suv m) with mu mv
-      exact mu; exfalso; exact disjoint_left.mp uv' (h m) (vv mv)
-    · right; intro x m; cases' (mem_union _ _ _).mp (suv m) with mu mv
-      exfalso; exact disjoint_right.mp uv' (h m) (uu mu); exact mv
+    rcases h u' v' uo vo (_root_.trans suv (union_subset_union uu vv)) uv' with h | h
+    · left; intro x m; rcases (mem_union _ _ _).mp (suv m) with mu | mv
+      · exact mu
+      · exfalso; exact disjoint_left.mp uv' (h m) (vv mv)
+    · right; intro x m; rcases (mem_union _ _ _).mp (suv m) with mu | mv
+      · exfalso; exact disjoint_right.mp uv' (h m) (uu mu)
+      · exact mv
 
 /-- Directed intersections of preconnected compact sets are preconnected -/
 public theorem IsPreconnected.directed_iInter {I : Type} {s : I → Set X} [Nonempty I] [T4Space X]
@@ -84,17 +86,17 @@ public theorem IsPreconnected.directed_iInter {I : Type} {s : I → Set X} [None
       rcases n with ⟨x, n⟩; simp only [mem_iInter, mem_sdiff, forall_and, forall_const] at n
       rw [← mem_iInter] at n; simp only [suv n.1, not_true] at n; exact n.2
     apply IsCompact.nonempty_iInter_of_directed_nonempty_isCompact_isClosed
-    intro a b; rcases d a b with ⟨c, ac, bc⟩
-    use c, (sdiff_subset_sdiff_left ac.le).ge, (sdiff_subset_sdiff_left bc.le).ge
-    intro a; rcases h a with ⟨x, xa, xuv⟩; exact ⟨x, mem_sdiff_of_mem xa xuv⟩
-    intro a; exact (c a).diff (uo.union vo)
-    intro a; exact ((c a).diff (uo.union vo)).isClosed
+    · intro a b; rcases d a b with ⟨c, ac, bc⟩
+      use c, (sdiff_subset_sdiff_left ac.le).ge, (sdiff_subset_sdiff_left bc.le).ge
+    · intro a; rcases h a with ⟨x, xa, xuv⟩; exact ⟨x, mem_sdiff_of_mem xa xuv⟩
+    · intro a; exact (c a).diff (uo.union vo)
+    · intro a; exact ((c a).diff (uo.union vo)).isClosed
   rcases e with ⟨a, auv⟩
   use a, u, v, uo, vo, auv, uv
   contrapose no
-  cases' no with su sv
-  left; exact _root_.trans (iInter_subset _ _) su
-  right; exact _root_.trans (iInter_subset _ _) sv
+  rcases no with su | sv
+  · left; exact _root_.trans (iInter_subset _ _) su
+  · right; exact _root_.trans (iInter_subset _ _) sv
 
 /-- The limit points of a ray `atTop` are preconnected, where a ray is a map from a linearly
     ordered, conditionally complete space. -/
@@ -190,16 +192,17 @@ public theorem IsPreconnected.relative_clopen {s t : Set X} (sp : IsPreconnected
     refine _root_.trans (continuous_subtype_val.closure_preimage_subset _) ?_
     intro ⟨x, m⟩ h; exact cl ⟨m, h⟩
   have p : IsPreconnected (univ : Set s) := (Subtype.preconnectedSpace sp).isPreconnected_univ
-  cases' disjoint_or_subset_of_isClopen p ⟨uc, uo⟩ with h h
+  rcases disjoint_or_subset_of_isClopen p ⟨uc, uo⟩ with h | h
   · simp only [univ_disjoint, preimage_eq_empty_iff, Subtype.range_coe, ← hu] at h
     exfalso; exact ne.not_disjoint h.symm
   · rw [← Subtype.coe_preimage_self, ← hu, preimage_subset_preimage_iff] at h
-    exact _root_.trans (subset_inter (subset_refl _) h) op
-    simp only [Subtype.range_coe, subset_refl]
+    · exact _root_.trans (subset_inter (subset_refl _) h) op
+    · simp only [Subtype.range_coe, subset_refl]
 
 /-- `ContinuousOn` images of preconnected sets are preconnected (this is a version of
     `IsPathConnected.image` assuming only `ContinuousOn`) -/
-public theorem IsPathConnected.image_of_continuousOn {X Y : Type} [TopologicalSpace X] [TopologicalSpace Y]
+public theorem IsPathConnected.image_of_continuousOn {X Y : Type}
+    [TopologicalSpace X] [TopologicalSpace Y]
     {s : Set X} (sc : IsPathConnected s) {f : X → Y} (fc : ContinuousOn f s) :
     IsPathConnected (f '' s) := by
   have uc : IsPathConnected (univ : Set s) := by
@@ -207,8 +210,8 @@ public theorem IsPathConnected.image_of_continuousOn {X Y : Type} [TopologicalSp
     simp only [mem_univ, mem_preimage, Subtype.mem]
   have e : f '' s = s.domRestrict f '' univ := by
     apply Set.ext; intro y; constructor
-    intro ⟨x, m, e⟩; use⟨x, m⟩, mem_univ _, e
-    intro ⟨⟨x, m⟩, _, e⟩; use x, m, e
+    · intro ⟨x, m, e⟩; use ⟨x, m⟩, mem_univ _, e
+    · intro ⟨⟨x, m⟩, _, e⟩; use x, m, e
   rw [e]; exact uc.image (continuousOn_iff_continuous_domRestrict.mp fc)
 
 /-- Circles are path connected -/
@@ -273,8 +276,9 @@ public theorem IsPathConnected.of_frontier {X Y : Type} [TopologicalSpace X] [To
       rw [← hu]; refine ⟨⟨_root_.trans m.1 tz.le, z1.le⟩, ?_⟩
       simp only [mem_iInter₂, mem_Iic]; intro w ws
       contrapose ws; simp only [not_le] at ws ⊢
-      by_cases xw : x < w; refine interior_subset (h _ xw (_root_.trans ws zy))
-      simp only [not_lt] at xw; exact lo _ (_root_.trans xw xt.le)
+      by_cases xw : x < w
+      · exact interior_subset (h _ xw (_root_.trans ws zy))
+      · simp only [not_lt] at xw; exact lo _ (_root_.trans xw xt.le)
   -- Walk from b to p t
   refine ((pc.joinedIn _ ft b fb).mono (preimage_mono sc.frontier_subset)).symm.trans
     (JoinedIn.symm ?_)

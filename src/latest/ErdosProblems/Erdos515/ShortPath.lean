@@ -363,7 +363,7 @@ theorem short_positive_countable_polygonal_path
     (K J scale : ℝ)
     (hD : IsOpen D)
     (hFzero : F 0 = a)
-    (hK : 0 ≤ K) (hJ : 0 ≤ J) (hscale : 0 ≤ scale)
+    (hK : 0 ≤ K) (hJ : 0 ≤ J) (_hscale : 0 ≤ scale)
     (hselection : volume radialBad + volume logBad < volume good)
     (hgood : ∀ theta ∈ good, ∀ r ∈ Ico (0 : ℝ) 1,
       shortPathRadialCurve F theta r ∈ D ∧ 0 < v (shortPathRadialCurve F theta r))
@@ -410,7 +410,7 @@ theorem short_positive_polygonal_path
     (K J scale boundaryValue T : ℝ)
     (hD : IsOpen D) (hv : Continuous v)
     (hFzero : F 0 = a)
-    (hK : 0 ≤ K) (hJ : 0 ≤ J) (hscale : 0 ≤ scale)
+    (hK : 0 ≤ K) (hJ : 0 ≤ J) (_hscale : 0 ≤ scale)
     (hHall : ENNReal.ofReal Real.pi ≤ volume good)
     (hPrawitz : volume radialBad < ENNReal.ofReal (Real.pi / 4))
     (hLogArea : volume logBad < ENNReal.ofReal (Real.pi / 4))

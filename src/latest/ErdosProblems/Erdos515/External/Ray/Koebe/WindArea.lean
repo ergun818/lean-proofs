@@ -142,7 +142,8 @@ lemma disk_eq (i : WindDiff f) :
         · simpa using n.1.1
   · simp only [mem_image, mem_union, mem_singleton_iff]
     rintro ⟨y,(y0 | ⟨x,m,xy⟩),yw⟩
-    · simp [← yw, y0]
+    · simp only [← yw, y0, Complex.measurableEquivRealProd_symm_apply,
+        Prod.fst_zero, Prod.snd_zero]
       apply i.wind.zero_mem_disk
     · rw [i.gs_eq _ m.1.1] at xy
       simp [← yw, ← xy, Wind.disk, m.1.2, abs_of_pos m.1.1]
@@ -173,3 +174,5 @@ public theorem volume_eq (i : WindDiff f) :
     · simp [← intervalIntegral.integral_of_le zero_le_one]
     · intro x m; simp [m.1.le]
   · rw [intervalIntegral.integral_of_le (by bound)]
+
+end WindDiff

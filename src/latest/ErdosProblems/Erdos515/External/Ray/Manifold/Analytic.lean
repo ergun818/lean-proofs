@@ -95,13 +95,14 @@ public theorem AnalyticAt.mAnalyticAt {f : E → F} {x : E} (fa : AnalyticAt �
   exact fa.analyticWithinAt
 
 /-- ContMDiff functions are analytic -/
-public theorem ContMDiffAt.analyticAt [CompleteSpace F] (I : ModelWithCorners 𝕜 E A) [I.Boundaryless]
+public theorem ContMDiffAt.analyticAt [CompleteSpace F]
+    (I : ModelWithCorners 𝕜 E A) [I.Boundaryless]
     [ChartedSpace A E] [IsManifold I ω E] [ExtChartEqRefl I] (J : ModelWithCorners 𝕜 F B)
     [ChartedSpace B F] [IsManifold J ω F] [ExtChartEqRefl J] {f : E → F} {x : E} :
     ContMDiffAt I J ω f x → AnalyticAt 𝕜 f x :=
   (analyticAt_iff_mAnalyticAt _ _).mpr
 
-/-- Complex powers `f x ^ g x` are analytic if `f x` avoids the negative real axis  -/
+/-- Complex powers `f x ^ g x` are analytic if `f x` avoids the negative real axis -/
 public theorem ContMDiffAt.cpow [NormedSpace ℂ E] [CompleteSpace E] {I : ModelWithCorners ℂ E A}
     [IsManifold I ω M] {f g : M → ℂ} {x : M} (fa : ContMDiffAt I (𝓘(ℂ, ℂ)) ω f x)
     (ga : ContMDiffAt I (𝓘(ℂ, ℂ)) ω g x) (a : 0 < (f x).re ∨ (f x).im ≠ 0) :
@@ -141,7 +142,8 @@ public theorem isOpen_mAnalyticAt [I.Boundaryless] [J.Boundaryless] [CompleteSpa
   rw [isOpen_iff_eventually]; intro x fa; exact fa.eventually
 
 /-- `ContMDiffOnNhd` restricts to subsets -/
-public lemma ContMDiffOnNhd.mono {f : M → N} {s t : Set M} (fa : ContMDiffOnNhd I J f s) (st : t ⊆ s) :
+public lemma ContMDiffOnNhd.mono {f : M → N} {s t : Set M}
+    (fa : ContMDiffOnNhd I J f s) (st : t ⊆ s) :
     ContMDiffOnNhd I J f t := fun x m ↦ fa x (st m)
 
 /-- `ContMDiffOnNhd` extends `ContMDiffOn` -/

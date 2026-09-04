@@ -743,7 +743,7 @@ lemma diskGreen_bound_on_ball_away
   have hdist : e / 2 ≤ ‖w - ζ‖ := by
     have htri : ‖c - ζ‖ ≤ ‖c - w‖ + ‖w - ζ‖ := by
       calc
-        ‖c - ζ‖ = ‖(c - w) + (w - ζ)‖ := by congr 1 <;> ring
+        ‖c - ζ‖ = ‖(c - w) + (w - ζ)‖ := by congr 1; ring
         _ ≤ _ := norm_add_le _ _
     have hcw : ‖c - w‖ < e / 2 := by
       simpa [Metric.mem_ball, dist_eq_norm, norm_sub_rev] using hw
@@ -768,7 +768,7 @@ lemma diskGreen_bound_on_ball_away
     calc
       (1 - ‖w‖ ^ 2) * (1 - ‖ζ‖ ^ 2) ≤ (1 - ‖w‖ ^ 2) * 1 :=
         mul_le_mul_of_nonneg_left hζle hwfac
-      _ ≤ 1 := by simpa using hwle
+      _ ≤ 1 := by simp
   have hden : e ^ 2 / 2 ≤ 2 * ‖w - ζ‖ ^ 2 := by
     nlinarith [sq_le_sq₀ (by positivity : 0 ≤ e / 2) (norm_nonneg (w - ζ)) |>.2 hdist]
   have hdistpos : 0 < ‖w - ζ‖ := norm_pos_iff.mpr (sub_ne_zero.mpr hne)
@@ -786,7 +786,7 @@ lemma continuousAt_arcGreenPotential
     {z : ℂ} (hzunit : z ∈ unitDisk) (hzaway : z ∉ closure a.carrier) :
     ContinuousAt (arcGreenPotential a) z := by
   have hOpenUD : IsOpen unitDisk := by
-    simpa [unitDisk] using (Metric.isOpen_ball : IsOpen (Metric.ball (0 : ℂ) 1))
+    simp [unitDisk]
   have hΩ : IsOpen (unitDisk \ closure a.carrier) :=
     hOpenUD.sdiff isClosed_closure
   have hzΩ : z ∈ unitDisk \ closure a.carrier := ⟨hzunit, hzaway⟩
@@ -835,7 +835,7 @@ lemma integrableOn_diskGreen_radial
     Integrable (fun θ ↦ diskGreen z (radialPoint a.radius θ))
       (volume.restrict a.angles) := by
   have hOpenUD : IsOpen unitDisk := by
-    simpa [unitDisk] using (Metric.isOpen_ball : IsOpen (Metric.ball (0 : ℂ) 1))
+    simp [unitDisk]
   have hΩ : IsOpen (unitDisk \ closure a.carrier) := hOpenUD.sdiff isClosed_closure
   obtain ⟨e, he, hball⟩ := Metric.isOpen_iff.1 hΩ z ⟨hzunit, hzaway⟩
   have hsep : ∀ θ ∈ a.angles, e ≤ ‖z - radialPoint a.radius θ‖ := by
@@ -905,7 +905,7 @@ lemma circleAverage_arcGreenPotential_eq
     Real.circleAverage (arcGreenPotential a) c R = arcGreenPotential a c := by
   have hΩopen : IsOpen (unitDisk \ closure a.carrier) := by
     have : IsOpen unitDisk := by
-      simpa [unitDisk] using (Metric.isOpen_ball : IsOpen (Metric.ball (0 : ℂ) 1))
+      simp [unitDisk]
     exact this.sdiff isClosed_closure
   obtain ⟨e, he, hthick⟩ :=
     (isCompact_closedBall c R).exists_thickening_subset_open hΩopen hball
@@ -941,7 +941,7 @@ lemma circleAverage_arcGreenPotential_eq
         (measurableSet_uIoc : MeasurableSet (Set.uIoc (0 : ℝ) (2 * Real.pi)))] with t ht
       filter_upwards [ae_restrict_mem a.measurableSet_angles] with θ hθ
       have hwSphere : circleMap c R t ∈ Metric.sphere c R := by
-        simpa [abs_of_pos hR] using circleMap_mem_sphere' c R t
+        simp [abs_of_pos hR]
       have hwClosed : circleMap c R t ∈ Metric.closedBall c R :=
         Metric.sphere_subset_closedBall hwSphere
       exact diskGreen_bound_on_ball_away he
@@ -984,7 +984,7 @@ lemma continuousOn_greenPotentialReal_logMeasure
       (unitDisk \ closure A.carrier) := by
   intro z hz
   have hOpenUD : IsOpen unitDisk := by
-    simpa [unitDisk] using (Metric.isOpen_ball : IsOpen (Metric.ball (0 : ℂ) 1))
+    simp [unitDisk]
   have hΩopen : IsOpen (unitDisk \ closure A.carrier) := hOpenUD.sdiff isClosed_closure
   let rhs : ℂ → ℝ := fun w ↦
     ∑ i, (ENNReal.ofReal (1 / Real.log (1 / (A.arc i).radius))).toReal *
@@ -1008,7 +1008,7 @@ theorem greenPotentialReal_logMeasure_subharmonicOn
     SubharmonicOn (greenPotentialReal A.logMeasure)
       (unitDisk \ closure A.carrier) := by
   have hOpenUD : IsOpen unitDisk := by
-    simpa [unitDisk] using (Metric.isOpen_ball : IsOpen (Metric.ball (0 : ℂ) 1))
+    simp [unitDisk]
   have hΩopen : IsOpen (unitDisk \ closure A.carrier) := hOpenUD.sdiff isClosed_closure
   refine ⟨hΩopen, continuousOn_greenPotentialReal_logMeasure A hfinite, ?_⟩
   intro c hc R hR hball
@@ -1060,7 +1060,7 @@ theorem greenPotentialReal_logMeasure_subharmonicOn
       exact (heq (hsphere (by simpa [abs_of_pos hR] using hw))).symm
 
 lemma diskGreen_norm_le_boundary_rate {z ζ : ℂ} {ρ : ℝ}
-    (hρ0 : 0 ≤ ρ) (hζρ : ‖ζ‖ ≤ ρ) (hρz : ρ < ‖z‖) (hz1 : ‖z‖ < 1)
+    (_hρ0 : 0 ≤ ρ) (hζρ : ‖ζ‖ ≤ ρ) (hρz : ρ < ‖z‖) (hz1 : ‖z‖ < 1)
     (hζ1 : ‖ζ‖ < 1) :
     ‖diskGreen z ζ‖ ≤ (1 - ‖z‖ ^ 2) / (2 * (‖z‖ - ρ) ^ 2) := by
   have hne : z ≠ ζ := by
@@ -1080,7 +1080,7 @@ lemma diskGreen_norm_le_boundary_rate {z ζ : ℂ} {ρ : ℝ}
   have hdist : ‖z‖ - ρ ≤ ‖z - ζ‖ := by
     have htri : ‖z‖ ≤ ‖z - ζ‖ + ‖ζ‖ := by
       calc
-        ‖z‖ = ‖(z - ζ) + ζ‖ := by congr 1 <;> ring
+        ‖z‖ = ‖(z - ζ) + ζ‖ := by congr 1; ring
         _ ≤ _ := norm_add_le _ _
     linarith
   have hgap : 0 < ‖z‖ - ρ := sub_pos.mpr hρz
@@ -1114,7 +1114,7 @@ lemma abs_arcGreenPotential_le_boundary_rate
       (by simpa [norm_radialPoint a.radius_pos.le] using har) hρz hz1
       (by simpa [norm_radialPoint a.radius_pos.le] using a.radius_lt_one)
   · rw [measureReal_def]
-    simp [μ, Measure.restrict_apply_univ, hfinite]
+    simp
 
 noncomputable def logMeasureMass (A : DisjointRadialArcs) : ℝ :=
   ∑ i, (ENNReal.ofReal (1 / Real.log (1 / (A.arc i).radius))).toReal *
@@ -1136,7 +1136,7 @@ lemma closure_carrier_subset_closedBall_of_radius_le
 
 lemma abs_greenPotentialReal_logMeasure_le_boundary_rate
     (A : DisjointRadialArcs) (hfinite : ∀ i, volume (A.arc i).angles ≠ ∞)
-    {z : ℂ} {ρ : ℝ} (hρ0 : 0 ≤ ρ) (hρ1 : ρ < 1)
+    {z : ℂ} {ρ : ℝ} (hρ0 : 0 ≤ ρ) (_hρ1 : ρ < 1)
     (hr : ∀ i, (A.arc i).radius ≤ ρ) (hρz : ρ < ‖z‖) (hz1 : ‖z‖ < 1) :
     |greenPotentialReal A.logMeasure z| ≤
       ((1 - ‖z‖ ^ 2) / (2 * (‖z‖ - ρ) ^ 2)) * logMeasureMass A := by
@@ -1202,7 +1202,6 @@ lemma abs_greenPotentialReal_logMeasure_le_boundary_linear
       exact div_le_div_of_nonneg_left hnum (by positivity) hden
     _ = 2 * (1 - ‖z‖ ^ 2) / (1 - ρ) ^ 2 := by
       field_simp
-      <;> ring
 
 theorem greenPotentialReal_logMeasure_tends_uniformly_zero_of_radius_le
     (A : DisjointRadialArcs) (hfinite : ∀ i, volume (A.arc i).angles ≠ ∞)
@@ -1256,7 +1255,6 @@ theorem greenPotentialReal_logMeasure_tends_uniformly_zero_of_radius_le
         rw [div_lt_iff₀ (by linarith : 0 < C + 1)]
         nlinarith
   exact lt_of_le_of_lt (hbound.trans hlinear) hCeps
-
 
 end Erdos515
 

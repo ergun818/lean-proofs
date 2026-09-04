@@ -148,7 +148,9 @@ theorem Bounded.dist1 (h : Har f s) {z w : ℂ × ℂ} {b e r : ℝ} (bp : 0 < b
   have wrs : ball w (r / 2) ⊆ s := by
     refine _root_.trans ?_ rs; apply Metric.ball_subset_ball'
     have rr := _root_.trans wz.le (min_le_left _ _)
-    trans r / 2 + r / 2; linarith; ring_nf; apply le_refl
+    calc
+      r / 2 + dist w z ≤ r / 2 + r / 2 := by linarith
+      _ = r := by ring
   have rs' : ball (swap w) (r / 2) ⊆ swap '' s := by rw [ball_swap]; exact Set.image_mono wrs
   have wz' : dist (swap z) (swap w) < min (r / 2) (e * r / b / 24) := by rwa [dist_swap, dist_comm]
   have fb' : ∀ z, z ∈ swap '' s → ‖(f ∘ swap) z‖ ≤ b := fun z zs ↦ fb z.swap (swap_mem'.mp zs)
@@ -285,7 +287,7 @@ theorem on_subdisk [CompleteSpace E] (h : Har f (closedBall (c0, c1) r)) (rp : r
 /-- Separate analyticity on a polydisk, full analyticity on a polydisk smaller in one direction.
 
     This records the situation in the stage of the proof after applying the Baire category theorem.
-    -/
+-/
 structure Uneven (f : ℂ × ℂ → E) (c0 c1 : ℂ) (r0 r1 : ℝ) : Prop where
   r0p : r0 > 0
   r1p : r1 > 0
@@ -319,7 +321,9 @@ theorem diam_ball_eq {c : ℂ} {r : ℝ} (rp : r ≥ 0) : Metric.diam (ball c r)
   have lo :=
     Metric.dist_le_diam_of_mem Metric.isBounded_ball (m 1 (by norm_num)) (m (-1) (by norm_num))
   have e : ‖(2 * ↑r - ↑e : ℂ)‖ = 2 * r - e := by
-    have re : 2 * r - e ≥ 0 := by trans r - e; linarith; simp only [sub_nonneg, er.le]
+    have re : 2 * r - e ≥ 0 := by
+      calc 0 ≤ r - e := sub_nonneg.mpr er.le
+           _ ≤ 2 * r - e := by linarith
     calc ‖(2 * ↑r - ↑e : ℂ)‖
       _ = ‖(↑(2 * r - e) : ℂ)‖ := by
         simp only [Complex.ofReal_sub, Complex.ofReal_mul]
@@ -333,8 +337,8 @@ theorem diam_ball_eq {c : ℂ} {r : ℝ} (rp : r ≥ 0) : Metric.diam (ball c r)
 theorem diam_closedBall_eq {c : ℂ} {r : ℝ} (rp : r ≥ 0) : Metric.diam (closedBall c r) = 2 * r := by
   apply le_antisymm (Metric.diam_closedBall rp)
   trans Metric.diam (ball c r)
-  rw [diam_ball_eq rp]
-  exact Metric.diam_mono Metric.ball_subset_closedBall Metric.isBounded_closedBall
+  · rw [diam_ball_eq rp]
+  · exact Metric.diam_mono Metric.ball_subset_closedBall Metric.isBounded_closedBall
 
 /-- If a ball is contained in a closed ball, the radii must be `≤` -/
 theorem le_of_ball_subset_closedBall {z0 z1 : ℂ} {r0 r1 : ℝ} (r0p : r0 ≥ 0) (r1p : r1 ≥ 0) :
@@ -362,12 +366,13 @@ theorem to_uneven [CompleteSpace E] (h : Har f (closedBall (c0, c1) r)) (rp : r 
     simp only [Metric.mem_ball]; rw [dist_comm]; apply lt_of_le_of_lt m; bound
   have h' : Har f (closedBall (c0', c1) (r / 2)) := by
     refine Har.mono ?_ h; simp only [← closedBall_prod_same]; apply Set.prod_mono
-    assumption; apply Metric.closedBall_subset_closedBall; linarith
+    · assumption
+    · apply Metric.closedBall_subset_closedBall; linarith
   have a' : AnalyticOnNhd ℂ f (ball c0' (min r0 (r / 2)) ×ˢ ball c1 (r / 2)) := by
     apply a.mono; apply Set.prod_mono
-    apply Metric.ball_subset_ball'
-    simp only [dist_self, add_zero, min_le_iff, le_refl, true_or]
-    apply Metric.ball_subset_ball; linarith
+    · apply Metric.ball_subset_ball'
+      simp only [dist_self, add_zero, min_le_iff, le_refl, true_or]
+    · apply Metric.ball_subset_ball; linarith
   use c0', min r0 (r / 2), r / 2, _root_.trans Metric.ball_subset_closedBall sub, c0m
   exact
     { r0p := by bound
@@ -441,7 +446,8 @@ theorem unevenSeries_uniform_bound [CompleteSpace E] (u : Uneven f c0 c1 r0 r1) 
     ∃ c a : ℝ, c > 0 ∧ a > 0 ∧ ∀ n z1, z1 ∈ closedBall c1 s →
       ‖unevenSeries u z1 n‖ ≤ c * a ^ n := by
   have fc : ContinuousOn f (sphere c0 (r0 / 2) ×ˢ closedBall c1 s) := by
-    suffices fa' : AnalyticOnNhd ℂ f (sphere c0 (r0 / 2) ×ˢ closedBall c1 s) by exact fa'.continuousOn
+    suffices fa' : AnalyticOnNhd ℂ f (sphere c0 (r0 / 2) ×ˢ closedBall c1 s) by
+      exact fa'.continuousOn
     refine u.a.mono (Set.prod_mono ?_ ?_)
     · have rh : r0 / 2 < r0 := by linarith [u.r0p]
       exact _root_.trans Metric.sphere_subset_closedBall (Metric.closedBall_subset_ball rh)
@@ -552,7 +558,8 @@ theorem Along0.radius (p : FormalMultilinearSeries ℂ (ℂ × ℂ) E) : p.radiu
   refine iSup_mono' ?_; intro h
   have h' : ∀ n, ‖p.along0 n‖ * (r:ℝ)^n ≤ C := by
     intro n; refine le_trans ?_ (h n); apply mul_le_mul_of_nonneg_right
-    exact Along0.norm (p n); bound
+    · exact Along0.norm (p n)
+    · bound
   use h'
 
 /-- If `f : ℂ × ℂ → E` is analytic with series `p`, `fun z0 ↦ f (z0,z1)`
@@ -661,17 +668,20 @@ theorem unevenLog_uniform_bound [CompleteSpace E] (u : Uneven f c0 c1 r0 r1) {s 
   · simp only [n0, CharP.cast_eq_zero, inv_zero, pow_zero, one_smul, zero_mul, le_maxLog]
   have np : n ≥ 1 := Nat.one_le_of_lt (Nat.pos_of_ne_zero n0)
   rw [inv_mul_le_iff₀ (Nat.cast_pos.mpr (Nat.pos_of_ne_zero n0) : 0 < (n : ℝ))]
-  apply maxLog_le; trans (0 : ℝ); norm_num; bound
+  apply maxLog_le
+  · calc -1 ≤ (0 : ℝ) := by norm_num
+         _ ≤ _ := by bound
   simp only [norm_smul, abs_of_pos u.r1p, norm_pow, Real.norm_eq_abs]
-  trans r1 ^ n * (c * a ^ n); bound
+  trans r1 ^ n * (c * a ^ n)
+  · bound
   rw [Real.exp_nat_mul]
   trans (r1 * (max 1 c * a)) ^ n
-  simp only [mul_pow]
-  gcongr
-  · bound
-  · trans max 1 c
+  · simp only [mul_pow]
+    gcongr
     · bound
-    · bound
+    · trans max 1 c
+      · bound
+      · bound
   · bound
 
 /-- Nonuniform bound on `unevenTerm` in terms of `unevenLog` -/
@@ -692,7 +702,9 @@ theorem unevenLog_nonuniform_bound [CompleteSpace E] (u : Uneven f c0 c1 r0 r1)
   clear z1s
   -- Prove the desired bound
   rw [unevenLog, inv_mul_le_iff₀ (lt_of_lt_of_le mp (Nat.cast_le.mpr mn))]
-  apply maxLog_le; trans (0 : ℝ); norm_num; bound
+  apply maxLog_le
+  · calc -1 ≤ (0 : ℝ) := by norm_num
+         _ ≤ _ := by bound
   have nb : c.log / (d - e) ≤ n := le_trans (le_trans (by bound) mb.le) (Nat.cast_le.mpr mn)
   calc ‖r1 ^ n • unevenTerm u z1 n‖
     _ = r1 ^ n * t := by
@@ -816,7 +828,8 @@ end Hartogs
 public theorem Pair.hartogs {E : Type} [NormedAddCommGroup E] [NormedSpace ℂ E] [CompleteSpace E]
     [SecondCountableTopology E] {f : ℂ × ℂ → E} {s : Set (ℂ × ℂ)} (so : IsOpen s)
     (fa0 : ∀ c0 c1, (c0, c1) ∈ s → AnalyticAt ℂ (fun z0 ↦ f (z0, c1)) c0)
-    (fa1 : ∀ c0 c1, (c0, c1) ∈ s → AnalyticAt ℂ (fun z1 ↦ f (c0, z1)) c1) : AnalyticOnNhd ℂ f s := by
+    (fa1 : ∀ c0 c1, (c0, c1) ∈ s → AnalyticAt ℂ (fun z1 ↦ f (c0, z1)) c1) :
+    AnalyticOnNhd ℂ f s := by
   have h : Har f s := ⟨fa0, fa1⟩
   intro c cs
   rcases Metric.isOpen_iff.mp so c cs with ⟨r, rp, rs⟩

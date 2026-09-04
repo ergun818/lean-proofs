@@ -18,7 +18,6 @@ import Mathlib.RingTheory.Norm.Transitivity
 ## Complex facts
 -/
 
-open Classical
 open Metric (sphere)
 open Complex (arg log I imCLM slitPlane)
 open ContinuousLinearMap (lsmul)

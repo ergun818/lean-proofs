@@ -36,7 +36,7 @@ def globalMaximalFunction (u : ℝ → ℝ≥0∞) (x : ℝ) : ℝ≥0∞ :=
 theorem laverage_le_globalMaximalFunction {u : ℝ → ℝ≥0∞} {x z r : ℝ}
     (hx : x ∈ ball z r) :
     ballAverage u z r ≤ globalMaximalFunction u x := by
-  exact le_iSup_of_le z <| le_iSup_of_le r <| by simp [globalMaximalFunction, hx]
+  exact le_iSup_of_le z <| le_iSup_of_le r <| by simp [hx]
 
 private def truncatedBalls (B : Set (ℝ × ℝ)) (k : ℕ) : Set (ℝ × ℝ) :=
   {i | i ∈ B ∧ 0 < i.2 ∧ i.2 ≤ k}
@@ -50,7 +50,7 @@ private lemma volume_ball_four_le (z r : ℝ) :
   rw [Real.volume_ball, Real.volume_ball]
   by_cases hr : 0 ≤ r
   · calc
-      ENNReal.ofReal (2 * (4 * r)) = ENNReal.ofReal (4 * (2 * r)) := by congr 1 <;> ring
+      ENNReal.ofReal (2 * (4 * r)) = ENNReal.ofReal (4 * (2 * r)) := by congr 1; ring
       _ = ENNReal.ofReal 4 * ENNReal.ofReal (2 * r) := by
         rw [ENNReal.ofReal_mul (by norm_num : (0 : ℝ) ≤ 4)]
       _ = 4 * ENNReal.ofReal (2 * r) := by norm_num

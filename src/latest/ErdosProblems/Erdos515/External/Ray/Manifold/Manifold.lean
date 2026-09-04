@@ -66,8 +66,8 @@ public theorem extChartAt_symm_map_nhds' (I : ModelWithCorners 𝕜 E A) [I.Boun
     [TopologicalSpace M] [ChartedSpace A M] (x : M) :
     Filter.map (extChartAt I x).symm (𝓝 (extChartAt I x x)) = 𝓝 x := by
   convert extChartAt_symm_map_nhds (mem_extChartAt_target x)
-  simp only [PartialEquiv.left_inv _ (mem_extChartAt_source x)]
-  infer_instance
+  · simp only [PartialEquiv.left_inv _ (mem_extChartAt_source x)]
+  · infer_instance
 
 /-- Nontrivial manifolds have no isolated points.
     Unfortunately, making this an instance gives "cannot find synthesization order for instance" -/

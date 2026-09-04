@@ -25,7 +25,6 @@ this means that the type signatures on all the small definitions are very import
 to make `simp` go through correctly.
 -/
 
-open Classical
 open Filter (Tendsto)
 open Function (uncurry)
 open OneDimension
@@ -138,7 +137,8 @@ variable [cmt : IsManifold I ω T]
 lemma Cinv.has_df' (i : Cinv f c z) : HasMFDerivAt II I i.f' (c, i.z') i.df' := by
   apply HasMFDerivAt.comp (I' := I) (c, i.z')
   · rw [i.zz]
-    exact ((contMDiffAt_extChartAt' (mem_chart_source _ _)).mdifferentiableAt one_ne_zero).hasMFDerivAt
+    exact ((contMDiffAt_extChartAt' (mem_chart_source _ _)).mdifferentiableAt
+      one_ne_zero).hasMFDerivAt
   · simp only [Cinv.df]
     have fd := i.fa.mdifferentiableAt (by decide)
     rw [← i.zz] at fd

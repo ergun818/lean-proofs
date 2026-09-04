@@ -7,7 +7,6 @@ public import Mathlib.Analysis.Complex.Basic
 ## Analytic definitions, allowing minimal public imports
 -/
 
-open Classical
 open Set
 noncomputable section
 
@@ -21,8 +20,9 @@ variable {E : Type} [NormedAddCommGroup E] [NormedSpace 𝕜 E]
 /-- The order of a zero at a point.
     We define this in terms of the function alone so that expressions involving order can
     depend only on `f`. -/
-@[expose] public def orderAt (f : 𝕜 → E) (c : 𝕜) : ℕ :=
-  if p : AnalyticAt 𝕜 f c then (choose p).order else 0
+@[expose] public def orderAt (f : 𝕜 → E) (c : 𝕜) : ℕ := by
+  classical
+  exact if p : AnalyticAt 𝕜 f c then (Classical.choose p).order else 0
 
 /-- The leading nonzero coefficient of `f`'s power series -/
 @[expose] public def leadingCoeff (f : 𝕜 → E) (c : 𝕜) : E :=

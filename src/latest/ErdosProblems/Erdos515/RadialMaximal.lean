@@ -62,7 +62,7 @@ theorem differentiableOn_of_continuousOn_pow_four_eq
   have hS_ne : ∀ᶠ w in nhdsWithin z (U \ {z}), S w ≠ 0 := by
     have hSne : ∀ᶠ w in nhdsWithin z {z}ᶜ, S w ≠ 0 :=
       hSc (isOpen_ne.mem_nhds hS0)
-    exact hSne.filter_mono (nhdsWithin_mono z (diff_subset_compl U {z}))
+    exact hSne.filter_mono (nhdsWithin_mono z (sdiff_subset_compl U {z}))
   have hslopeEq : ∀ᶠ w in nhdsWithin z (U \ {z}),
       slope q z w = slope g z w / S w := by
     filter_upwards [hmemU, hne, hS_ne] with w hwU hwz hSw
@@ -75,7 +75,7 @@ theorem differentiableOn_of_continuousOn_pow_four_eq
     field_simp [sub_ne_zero.mpr hwz, hSw]
   apply (tendsto_congr' hslopeEq).mpr
   have hmono : nhdsWithin z (U \ {z}) ≤ nhdsWithin z {z}ᶜ :=
-    nhdsWithin_mono z (diff_subset_compl U {z})
+    nhdsWithin_mono z (sdiff_subset_compl U {z})
   exact (hslopeG.mono_left hmono).div (hSc.mono_left hmono) hS0
 
 /-- The holomorphic quotient `G(z)/z`, with its removable value at zero. -/
@@ -283,7 +283,7 @@ theorem radialMaxE_superlevel_eq_radialQuotientBadDirections
     angularInterval ∩ {θ | (K : EReal) < radialMaxE G θ} =
       radialQuotientBadDirections G K := by
   ext θ
-  simp only [radialQuotientBadDirections, mem_inter_iff, mem_setOf_eq,
+  simp only [radialQuotientBadDirections, mem_inter_iff, mem_ofPred_eq,
     and_congr_right_iff]
   intro _
   constructor
@@ -296,7 +296,7 @@ theorem scaledRadialQuotientBadDirections_eq
     scaledRadialQuotientBadDirections G a K = radialQuotientBadDirections G K := by
   ext θ
   simp only [scaledRadialQuotientBadDirections, radialQuotientBadDirections,
-    mem_inter_iff, mem_setOf_eq, and_congr_right_iff]
+    mem_inter_iff, mem_ofPred_eq, and_congr_right_iff]
   intro _
   apply exists_congr
   intro r
@@ -350,7 +350,7 @@ lemma exists_lt_exhaustionRadius {r : ℝ} (hr : r < 1) :
   refine ⟨n, ?_⟩
   rw [exhaustionRadius]
   have hden : (1 / (n + 2 : ℝ)) ≤ 1 / (n + 1 : ℝ) := by
-    gcongr <;> norm_num
+    gcongr; norm_num
   linarith
 
 /-- Directions on which the fourth root exceeds `T` before radius `R`. -/
@@ -597,7 +597,7 @@ theorem WeakRadialMaxBound.const_mul {H : ℝ → ℝ} {A a : ℝ}
   have hsets : angularInterval ∩ {θ | K * a < a * H θ} =
       angularInterval ∩ {θ | K < H θ} := by
     ext θ
-    simp only [mem_inter_iff, mem_setOf_eq, and_congr_right_iff]
+    simp only [mem_inter_iff, mem_ofPred_eq, and_congr_right_iff]
     intro _
     simpa [mul_comm] using
       (mul_lt_mul_iff_of_pos_left ha : a * K < a * H θ ↔ K < H θ)

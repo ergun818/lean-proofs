@@ -50,7 +50,7 @@ lemma normalizedMap_injOn {F : ℂ → ℂ}
   exact sub_left_inj.mp hsub
 
 @[simp] lemma deriv_normalizedMap_zero {F : ℂ → ℂ}
-    (hF : DifferentiableOn ℂ F (ball 0 1)) (hderiv : deriv F 0 ≠ 0) :
+    (_hF : DifferentiableOn ℂ F (ball 0 1)) (hderiv : deriv F 0 ≠ 0) :
     deriv (normalizedMap F) 0 = 1 := by
   change deriv (fun z ↦ (F z - F 0) / deriv F 0) 0 = 1
   rw [deriv_div_const, deriv_sub_const_fun]
@@ -158,7 +158,7 @@ theorem volume_radialBad_lt_quarter {G : ℂ → ℂ}
     (hHardy : HardyQuarterBound G hardyQuarterConstant) :
     volume (radialBad G) < ENNReal.ofReal (Real.pi / 4) := by
   have hle := measure_radialQuotientBadDirections_le hG.differentiableOn hG0
-    (by simpa [hdG0]) hinj hHardy radialThreshold_pos
+    (by simp [hdG0]) hinj hHardy radialThreshold_pos
   rw [volume_radialBad]
   refine hle.trans_lt ?_
   exact ENNReal.ofReal_lt_ofReal_iff (by positivity : 0 < Real.pi / 4) |>.2

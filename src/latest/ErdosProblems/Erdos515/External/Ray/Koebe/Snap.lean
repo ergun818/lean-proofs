@@ -11,7 +11,6 @@ import ErdosProblems.Erdos515.External.Ray.Misc.Complex
 ## Snap a complex number to `Circle`
 -/
 
-open Classical
 open Complex (arg I)
 open Set
 open scoped ContDiff Real Topology ComplexConjugate
@@ -149,8 +148,9 @@ section Units
 variable {α : Type} [GroupWithZero α]
 
 /-- `Units.mk0` with a default to 1 -/
-public def Units.mk1 (x : α) : αˣ :=
-  if h : x ≠ 0 then Units.mk0 x h else 1
+public def Units.mk1 (x : α) : αˣ := by
+  classical
+  exact if h : x ≠ 0 then Units.mk0 x h else 1
 
 @[simp] public lemma Units.mk1_zero : Units.mk1 (0 : α) = 1 := by
   simp only [mk1, ne_eq, not_true_eq_false, ↓reduceDIte]

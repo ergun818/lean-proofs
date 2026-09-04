@@ -22,7 +22,6 @@ import ErdosProblems.Erdos515.External.Ray.Misc.Finset
 ## Assorted bound lemmas
 -/
 
-open Classical
 open Complex (exp log I slitPlane)
 open Filter (atTop)
 open scoped Real NNReal Topology symmDiff
@@ -68,7 +67,8 @@ theorem late_series_sum {m : ℕ} {N : Finset ℕ} (h : Late N m) (f : ℕ → �
     simp only [Function.comp_apply]
     apply Iff.intro
     · intro kN; exists k; apply And.intro
-      assumption; exact Nat.sub_add_cancel (h k kN)
+      · assumption
+      · exact Nat.sub_add_cancel (h k kN)
     · intro ha; rcases ha with ⟨a, aN, ak⟩
       rw [Nat.sub_add_cancel (h a aN)] at ak
       rw [← ak]; assumption
@@ -101,7 +101,7 @@ theorem finset_partition (A B : Finset ℕ) : A = A \ B ∪ A ∩ B := by
     · right; use a,b
     · left; use a,b
   · intro h
-    cases' h with m m
+    rcases h with m | m
     repeat exact m.1
 
 theorem finset_sum_partition (A B : Finset ℕ) (f : ℕ → M) :
@@ -135,8 +135,8 @@ public theorem symmDiff_late {A B : Finset ℕ} {m : ℕ} (ha : A ≥ Finset.ran
     (hb : B ≥ Finset.range m) : Late (A ∆ B) m := by
   intro n ab
   rw [symmDiff_def, Finset.sup_eq_union, Finset.mem_union] at ab
-  by_contra h; simp at h
-  cases' ab with a b
+  by_contra h; simp only [ge_iff_le, not_le] at h
+  rcases ab with a | b
   · rw [Finset.mem_sdiff] at a
     have h := Finset.mem_of_subset hb (Finset.mem_range.mpr h)
     exact a.2 h
@@ -202,8 +202,9 @@ theorem weak_log1p_small {z : ℂ} {r : ℝ} (r1 : r < 1) (h : ‖z‖ < r) :
     have L : ‖log (1 + z) - log 1‖ ≤ 1/(1 - r) * ‖1 + z - 1‖ := by
       generalize hs : Metric.ball (1:ℂ) r = s
       have o : IsOpen s := by rw [← hs]; exact Metric.isOpen_ball
-      have s1z : 1 + z ∈ s := by simp [← hs]; assumption
-      have s1 : (1:ℂ) ∈ s := by simp [← hs]; assumption
+      have s1z : 1 + z ∈ s := by
+        simp only [← hs, Metric.mem_ball, dist_self_add_left]; assumption
+      have s1 : (1:ℂ) ∈ s := by simp only [← hs, Metric.mem_ball, dist_self]; assumption
       have sp : ∀ w : ℂ, w ∈ s → w.re > 0 ∨ w.im ≠ 0 := by
         intro w ws
         apply mem_slitPlane_of_near_one
@@ -221,12 +222,13 @@ theorem weak_log1p_small {z : ℂ} {r : ℝ} (r1 : r < 1) (h : ‖z‖ < r) :
       · exact DifferentiableOn.clog differentiableOn_id sp
       · intro w ws
         rw [derivWithin.clog o ws, derivWithin.cid o ws]
-        simp only [one_div, norm_inv]
-        rw [inv_le_comm₀]
-        have aw := sa w ws; simp at aw; field_simp; linarith
-        have aw := sa w ws; linarith; norm_num; assumption
-        exact differentiableWithinAt_id
-        exact sp w ws
+        · simp only [one_div, norm_inv]
+          rw [inv_le_comm₀]
+          · have aw := sa w ws; simp at aw; field_simp; linarith
+          · have aw := sa w ws; linarith
+          · norm_num; assumption
+        · exact differentiableWithinAt_id
+        · exact sp w ws
       · rw [← hs]; exact convex_ball _ _
     simp only [Complex.log_one, sub_zero, one_div, add_sub_cancel_left] at L
     simpa only [one_div, ge_iff_le]
@@ -257,13 +259,14 @@ theorem Metric.continuous_near {f : ℂ → ℂ} {z : ℂ} {r : ℝ} (fc : Conti
   intro e ep
   rcases Metric.continuousAt_iff.mp fc e ep with ⟨s,sp,sc⟩
   simp_rw [ Complex.dist_eq ] at sc
-  by_cases sr : s ≤ r; exists s
+  by_cases sr : s ≤ r
+  · exact ⟨s, sp, sr, @sc⟩
   simp only [not_le] at sr
   exists r
   refine ⟨rp, by bound, ?_⟩
   intro w wr
   refine @sc w ?_
-  trans r; assumption; assumption
+  exact lt_trans wr sr
 
 theorem slightly_smaller {z : ℂ} (nz : z ≠ 0) {r : ℝ} (rp : 0 < r) :
     ∃ w, ‖w - z‖ < r ∧ ‖w‖ < ‖z‖ := by
@@ -315,14 +318,15 @@ theorem log1p_small' {z : ℂ} {r : ℝ} (r1 : r < 1) (zr : ‖z‖ ≤ r) :
     simp only [z0, add_zero, Complex.log_one, norm_zero, one_div, mul_zero, le_refl]
   simp only [not_le] at r0
   have fc : ContinuousAt (fun z ↦ log (1 + z)) z := by
-    apply ContinuousAt.clog; apply ContinuousAt.add; exact continuousAt_const; exact continuousAt_id
-    refine mem_slitPlane_of_near_one ?_
-    simp only [add_sub_cancel_left, lt_of_le_of_lt zr r1]
+    apply ContinuousAt.clog
+    · exact continuousAt_const.add continuousAt_id
+    · apply mem_slitPlane_of_near_one
+      simp only [add_sub_cancel_left, lt_of_le_of_lt zr r1]
   apply weak_to_strong_small r0 (by bound) zr fc
   intro w wr
   exact @weak_log1p_small w r (by bound) wr
 
-theorem log1p_small {z : ℂ} (zs : ‖z‖ ≤ 1/2) : ‖log (1 + z)‖ ≤ 2 * ‖z‖ :=
+theorem log1p_small {z : ℂ} (zs : ‖z‖ ≤ 1 / 2) : ‖log (1 + z)‖ ≤ 2 * ‖z‖ :=
   le_trans (log1p_small' (by norm_num) zs) (le_of_eq (by norm_num))
 
 /-- `log (1+x)` is small for small `x` -/
@@ -335,7 +339,7 @@ theorem Real.log1p_small' {x r : ℝ} (r1 : r < 1) (xr : |x| ≤ r) :
   simp only [Complex.ofReal_add, Complex.ofReal_one, le_refl, z]
 
 /-- `log (1+x)` is small for small `x` -/
-theorem Real.log1p_small {x : ℝ} (xr : |x| ≤ 1/2) : |Real.log (1 + x)| ≤ 2 * |x| :=
+theorem Real.log1p_small {x : ℝ} (xr : |x| ≤ 1 / 2) : |Real.log (1 + x)| ≤ 2 * |x| :=
   le_trans (Real.log1p_small' (by norm_num) xr) (le_of_eq (by norm_num))
 
 /-- `log z` is small for `z ≈ 1` -/
@@ -361,8 +365,7 @@ theorem exp_small' {z : ℂ} {r : ℝ} (zs : ‖z‖ ≤ r) (r1 : r ≤ 1) : ‖
   have r0 : 0 < r := lt_of_lt_of_le (norm_pos_iff.mpr z0) zs
   have cp : 0 < 1 + r := by linarith
   have fc : ContinuousAt (fun z ↦ exp z - 1) z := by
-    apply ContinuousAt.sub; apply ContinuousAt.cexp
-    exact continuousAt_id; exact continuousAt_const
+    exact continuousAt_id.cexp.sub continuousAt_const
   apply weak_to_strong_small r0 cp zs fc
   intro w wr
   exact weak_exp_small' wr r1
@@ -384,7 +387,7 @@ lemma exp_small_general {z : ℂ} {r : ℝ} (zs : ‖z‖ ≤ r) : ‖exp z - 1�
   unfold psg
   bound
 
-public theorem pow1p_small_general {z w : ℂ} {r s : ℝ} (zr : ‖z‖ ≤ r) (ws : ‖w‖ ≤ s) (r1 : r < 1)  :
+public theorem pow1p_small_general {z w : ℂ} {r s : ℝ} (zr : ‖z‖ ≤ r) (ws : ‖w‖ ≤ s) (r1 : r < 1) :
     ‖(1 + z) ^ w - 1‖ ≤ psg r s * ‖z‖ * ‖w‖ := by
   by_cases z0 : z = 0
   · simp [z0]
@@ -437,7 +440,7 @@ theorem pow1p_small' {z w : ℂ} {r s : ℝ} (zr : ‖z‖ ≤ r) (ws : ‖w‖ 
     grind
   · bound
 
-public theorem pow1p_small {z w : ℂ} (zs : ‖z‖ ≤ 1/2) (ws : ‖w‖ ≤ 1) :
+public theorem pow1p_small {z w : ℂ} (zs : ‖z‖ ≤ 1 / 2) (ws : ‖w‖ ≤ 1) :
     ‖(1 + z) ^ w - 1‖ ≤ 4 * ‖z‖ * ‖w‖ := by
   have L := pow1p_small' zs ws (by norm_num) (by bound)
   norm_num at L
@@ -452,7 +455,8 @@ theorem pow_small' {z w : ℂ} {r s : ℝ} (zr : ‖z - 1‖ ≤ r) (ws : ‖w�
   exact wz ▸ pow1p_small' (by rwa [← zw]) ws r1 rs1
 
 /-- `‖z^w - 1‖ = O(‖z - 1‖ * ‖w‖)` for `z ≈ 1`, `w` small -/
-public theorem pow_small_general {z w : ℂ} {r s : ℝ} (zr : ‖z - 1‖ ≤ r) (ws : ‖w‖ ≤ s) (r1 : r < 1) :
+public theorem pow_small_general {z w : ℂ} {r s : ℝ}
+    (zr : ‖z - 1‖ ≤ r) (ws : ‖w‖ ≤ s) (r1 : r < 1) :
     ‖z ^ w - 1‖ ≤ psg r s * ‖z - 1‖ * ‖w‖ := by
   generalize zw : z - 1 = z1
   have wz : z = 1 + z1 := by rw [← zw]; ring
@@ -497,7 +501,7 @@ theorem Real.exp_forth_lt_four_thirds : Real.exp (1/4) < 4/3 := by
 
 /-- Bound `abs (product - 1)` in terms of `abs (sum)` -/
 public theorem dist_prod_one_le_abs_sum {f : ℕ → ℂ} {s : Finset ℕ} {c : ℝ}
-    (le : s.sum (fun n ↦ ‖f n - 1‖) ≤ c) (c1 : c ≤ 1/2) : ‖s.prod f - 1‖ ≤ 4 * c := by
+    (le : s.sum (fun n ↦ ‖f n - 1‖) ≤ c) (c1 : c ≤ 1 / 2) : ‖s.prod f - 1‖ ≤ 4 * c := by
   set g := fun n ↦ Complex.log (f n)
   have b : ∀ n, n ∈ s → ‖f n - 1‖ ≤ c := by
     intro n m; refine _root_.trans ?_ le

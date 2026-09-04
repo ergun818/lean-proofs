@@ -482,7 +482,7 @@ theorem volume_compact_innerBadDirections_le
   have hreal : greenPotentialReal A.logMeasure 0 ≤ (10 * Real.pi) * δ := by
     have hcomp0 := hcomparison 0 h0G
     rw [hw0] at hcomp0
-    convert hcomp0 using 1 <;> ring
+    convert hcomp0 using 1; ring
   have hfinite : ∀ i, volume (A.arc i).angles ≠ ∞ :=
     volume_arc_angles_ne_top_of_angularSupport_subset A hangle
   calc
@@ -535,7 +535,7 @@ theorem volume_compact_outerBadDirections_le
   have hreal : greenPotentialReal A.logMeasure 0 ≤ (256 * Real.pi) * δ := by
     have hcomp0 := hcomparison 0 h0G
     rw [hw0] at hcomp0
-    convert hcomp0 using 1 <;> ring
+    convert hcomp0 using 1; ring
   have hfinite : ∀ i, volume (A.arc i).angles ≠ ∞ :=
     volume_arc_angles_ne_top_of_angularSupport_subset A hangle
   calc

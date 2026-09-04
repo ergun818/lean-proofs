@@ -305,7 +305,6 @@ lemma circleAverage_diskGreen_left {c ζ : ℂ} {R : ℝ} (hR : 0 < R)
       intro h
       exact hpole (by simpa [abs_of_pos hR, h] using hz))
 
-
 lemma norm_one_sub_conj_mul_le_three_boundaryDist {z ζ : ℂ}
     (hz : ‖z‖ < 1) (hclose : ‖z - ζ‖ ≤ (1 - ‖z‖) / 2) :
     ‖1 - (starRingEnd ℂ) ζ * z‖ ≤ 3 * (1 - ‖z‖) := by
@@ -350,7 +349,6 @@ lemma diskGreen_le_localLog {z ζ : ℂ}
   · exact div_pos hn hd
   · exact div_le_div_of_nonneg_right
       (norm_one_sub_conj_mul_le_three_boundaryDist hz hclose) hd.le
-
 
 /-- The point of radius `r` and angle `θ`. -/
 noncomputable def radialPoint (r θ : ℝ) : ℂ :=
@@ -447,7 +445,6 @@ theorem hall_outer_projection_of_potential {S : Set ℝ} {ν : Measure ℂ}
     (volume S).toReal ≤ Cproj * greenPotentialReal ν 0 := hproj
     _ ≤ Cproj * (Ccomp * ψ 0) := mul_le_mul_of_nonneg_left hcomp hCproj
     _ = Cproj * Ccomp * δ := by rw [hcenter]; ring
-
 
 /-! ### The inner Riesz/maximal-function stage -/
 
@@ -712,7 +709,7 @@ lemma measurableSet_outerBadDirections {w : ℂ → ℝ}
         ⋃ n : ℕ, { θ | ∃ r ∈ outerCompactInterval n,
           w (radialPoint r θ) ≤ 0 } := by
       ext θ
-      simp only [mem_setOf_eq, mem_iUnion]
+      simp only [mem_ofPred_eq, mem_iUnion]
       constructor
       · rintro ⟨r, hr, hrw⟩
         rw [Ioo_quarter_one_eq_iUnion_outerCompactInterval, mem_iUnion] at hr
@@ -758,7 +755,7 @@ lemma measurableSet_goodDirections {w : ℂ → ℝ}
         ⋃ n : ℕ, { θ | ∃ r ∈ outerCompactInterval n,
           w (radialPoint r θ) ≤ 0 } := by
       ext θ
-      simp only [mem_setOf_eq, mem_iUnion]
+      simp only [mem_ofPred_eq, mem_iUnion]
       constructor
       · rintro ⟨r, hr, hrw⟩
         rw [Ioo_quarter_one_eq_iUnion_outerCompactInterval, mem_iUnion] at hr
@@ -779,7 +776,7 @@ lemma measurableSet_goodDirections {w : ℂ → ℝ}
   have hcompl : { θ | ∀ r ∈ Ico (0 : ℝ) 1, 0 < w (radialPoint r θ) } =
       { θ | ∃ r ∈ Ico (0 : ℝ) 1, w (radialPoint r θ) ≤ 0 }ᶜ := by
     ext θ
-    simp only [mem_setOf_eq, mem_compl_iff, not_exists, not_and, not_le]
+    simp only [mem_ofPred_eq, mem_compl_iff, not_exists, not_and, not_le]
   rw [hcompl, hbad]
   exact measurableSet_Ico.inter (hinnerRaw.union houterRaw).compl
 

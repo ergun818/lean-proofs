@@ -10,7 +10,6 @@ import Mathlib.Analysis.Calculus.Deriv.Pow
 ## Dynamics definitions, allowing minimal public imports
 -/
 
-open Classical
 open Filter (Tendsto atTop)
 open Function (uncurry)
 open OneDimension
@@ -137,10 +136,11 @@ public class OnePreimage (s : Super f d a) : Prop where
 -/
 
 /-- `s.potential c z` measures how quickly `z` attracts to `a` under `f c`. -/
-@[expose] public def Super.potential (s : Super f d a) (c : ℂ) (z : S) : ℝ :=
-  if h : (c, z) ∈ s.basin ∧
+@[expose] public def Super.potential (s : Super f d a) (c : ℂ) (z : S) : ℝ := by
+  classical
+  exact if h : (c, z) ∈ s.basin ∧
     ∃ p : ℝ, 0 ≤ p ∧ ∀ᶠ n in atTop, ‖s.bottcherNear c ((f c)^[n] z)‖ = p ^ d ^ n
-  then choose h.2 else 1
+  then Classical.choose h.2 else 1
 
 /-- The set of potentials of non-`a` critical points of `f c`, with 1 included.
     For compact `S` 1 is automatically a critical value, but we don't want to show this here. -/

@@ -16,7 +16,6 @@ If `f : ball 0 1 → ℂ` is analytic and injective, its image contains `ball (f
 The proof follows Wikipedia: https://en.wikipedia.org/wiki/Koebe_quarter_theorem
 -/
 
-open Classical
 open Metric (ball closedBall isOpen_ball sphere)
 open Set
 open Filter (atTop Tendsto)

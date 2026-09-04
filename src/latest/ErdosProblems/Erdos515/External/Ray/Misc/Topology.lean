@@ -16,7 +16,6 @@ import Mathlib.Topology.MetricSpace.Basic
 ## Various topology lemmas
 -/
 
-open Classical
 open Metric (ball closedBall sphere mem_sphere mem_ball)
 open Filter
 open OrderDual (ofDual toDual)
@@ -35,18 +34,24 @@ public theorem UniformCauchySeqOn.bounded {X Y : Type} [TopologicalSpace X] [Nor
   rw [Metric.uniformCauchySeqOn_iff] at u
   rcases u 1 (by norm_num) with ⟨N, H⟩; clear u
   generalize hbs : Finset.image c (Finset.range (N + 1)) = bs
-  have c0 : c 0 ∈ bs := by simp [← hbs]; exists 0; simp
+  have c0 : c 0 ∈ bs := by
+    simp only [← hbs, Finset.mem_image, Finset.mem_range, Order.lt_add_one_iff]
+    exists 0; simp
   generalize hb : 1 + bs.max' ⟨_, c0⟩ = b
   exists b; constructor
   · rw [← hb]; exact add_nonneg (by norm_num) (_root_.trans (cs 0).1 (Finset.le_max' _ _ c0))
   · intro n x xs
     by_cases nN : n ≤ N
-    · have cn : c n ∈ bs := by simp [← hbs]; exists n
+    · have cn : c n ∈ bs := by
+        simp only [← hbs, Finset.mem_image, Finset.mem_range, Order.lt_add_one_iff]
+        exact ⟨n, nN, rfl⟩
       exact _root_.trans ((cs n).2 x xs) (_root_.trans (Finset.le_max' _ _ cn)
         (by simp only [le_add_iff_nonneg_left, zero_le_one, ← hb]))
     · simp at nN
       specialize H N le_rfl n nN.le x xs
-      have cN : c N ∈ bs := by simp [← hbs]; exists N
+      have cN : c N ∈ bs := by
+        simp only [← hbs, Finset.mem_image, Finset.mem_range, Order.lt_add_one_iff]
+        exact ⟨N, le_rfl, rfl⟩
       have bN := _root_.trans ((cs N).2 x xs) (Finset.le_max' _ _ cN)
       rw [dist_eq_norm] at H
       calc ‖f n x‖ = ‖f N x - (f N x - f n x)‖ := by rw [sub_sub_cancel]
@@ -287,12 +292,13 @@ public lemma eventually_atTop_iff_nhdsGT_zero {p : ℝ → Prop} :
 /-- Pull an `∃` out of an `∃ᶠ` via Skolemization -/
 public lemma frequently_skolem {X Y : Type} [TopologicalSpace X] [n : Nonempty Y] {p : X → Y → Prop}
     (f : Filter X) : (∃ᶠ x in f, ∃ y, p x y) ↔ ∃ s : X → Y, ∃ᶠ x in f, p x (s x) := by
+  classical
   constructor
   · intro h
     set s : X → Y := fun x ↦ if q : ∃ y, p x y then Classical.choose q else Classical.choice n
     use s
     refine h.mp (.of_forall fun x e ↦ ?_)
-    simp only [e, ↓reduceDIte, choose_spec, s]
+    simp only [e, ↓reduceDIte, Classical.choose_spec, s]
   · intro ⟨s,h⟩
     refine h.mp (.of_forall fun x e ↦ ?_)
     use s x

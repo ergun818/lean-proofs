@@ -141,7 +141,7 @@ public lemma continuous_fe (i : Wind f) : Continuous i.fe := by
     simp only [z0, dist_zero_right, fe, Complex.real_smul, norm_zero, snap_zero, zero_smul,
       Complex.norm_mul, Complex.norm_real, norm_norm, lt_div_iff₀ i.max_pos] at wz ⊢
     exact lt_of_le_of_lt (by bound) wz
-  · show ContinuousAt (fun z : ℂ ↦ ‖z‖ • ((f (snap z)).val : ℂ)) z
+  · change ContinuousAt (fun z : ℂ ↦ ‖z‖ • ((f (snap z)).val : ℂ)) z
     simp only [Complex.real_smul]
     apply ContinuousAt.mul
     · exact Complex.continuous_ofReal.continuousAt.comp continuous_norm.continuousAt
@@ -244,3 +244,5 @@ public lemma large_mem_outer (i : Wind f) : ∀ᶠ z in cobounded ℂ, z ∈ i.o
     Complex.norm_real, norm_norm, Circle.norm_coe, mul_one]
   rw [one_lt_div₀ (by simp)]
   exact lt_of_le_of_lt i.le_max lt
+
+end Wind

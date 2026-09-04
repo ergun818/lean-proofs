@@ -215,7 +215,7 @@ lemma integral_hallLogAbsSin_shift_zero_two_pi (φ : ℝ) :
       _ = _ := integral_hallLogAbsSin_zero_pi
   have hshiftPeriodic : Function.Periodic (fun θ ↦ hallLogAbsSin (θ - φ)) Real.pi :=
     fun θ ↦ by
-      convert periodic_hallLogAbsSin (θ - φ) using 1 <;> ring_nf
+      convert periodic_hallLogAbsSin (θ - φ) using 1; ring_nf
   have hint1 : IntervalIntegrable (fun θ ↦ hallLogAbsSin (θ - φ)) volume 0 Real.pi := by
     convert (intervalIntegrable_hallLogAbsSin (-φ) (Real.pi - φ)).comp_sub_right φ using 1 <;>
       ring
@@ -440,7 +440,7 @@ lemma diskGreen_div_log_le_normalizedInnerGreenMajorant
     calc
       ‖1 - (starRingEnd ℂ) ζ * z‖ ≤
           ‖(1 : ℂ)‖ + ‖(starRingEnd ℂ) ζ * z‖ := norm_sub_le _ _
-      _ = 1 + r * ρ := by simp [hζnorm, ρ, Complex.norm_conj]
+      _ = 1 + r * ρ := by simp [hζnorm, ρ]
       _ ≤ 5 / 4 := by
         have hρ0 : 0 ≤ ρ := norm_nonneg z
         have hρ1 : ρ ≤ 1 := hz.le
@@ -587,7 +587,8 @@ lemma diskGreenENNReal_div_log_le_normalizedInnerGreenMajorant
     intro heq
     have htrans := norm_radialPoint_sub_ge_mul_abs_sin z r θ
     rw [heq] at htrans
-    simp [radialPoint, abs_of_pos hr] at htrans
+    simp only [radialPoint, Complex.norm_mul, Complex.norm_real, Real.norm_eq_abs, abs_of_pos hr,
+      Complex.norm_exp_ofReal_mul_I, mul_one, sub_self, norm_zero] at htrans
     have hs0 : |Real.sin (θ - (radialPoint r θ).arg)| = 0 :=
       le_antisymm (nonpos_of_mul_nonpos_right htrans hr) (abs_nonneg _)
     apply hsin
@@ -879,7 +880,10 @@ theorem lintegral_diskGreenENNReal_selfRadius_normalized {z : ℂ}
     · rw [heq]
       simp [diskGreen]
     · apply diskGreen_nonneg hz
-        (by simp [ρ, radialPoint]; exact hz)
+        (by
+          simp only [radialPoint, Complex.norm_mul, Complex.norm_real, norm_norm,
+            Complex.norm_exp_ofReal_mul_I, mul_one, ρ]
+          exact hz)
         heq
   have hreal : ∫ θ, F θ ∂volume.restrict angleDomain = 2 * Real.pi := by
     rw [angleDomain, integral_Ico_eq_integral_Ioc,
@@ -898,7 +902,8 @@ theorem lintegral_diskGreenENNReal_selfRadius_normalized {z : ℂ}
       intro heq
       have htrans := norm_radialPoint_sub_ge_mul_abs_sin z ρ θ
       rw [heq] at htrans
-      simp [radialPoint, abs_of_pos hρ] at htrans
+      simp only [radialPoint, Complex.norm_mul, Complex.norm_real, Real.norm_eq_abs, abs_of_pos hρ,
+        Complex.norm_exp_ofReal_mul_I, mul_one, sub_self, norm_zero] at htrans
       have hs0 : |Real.sin (θ - (radialPoint ρ θ).arg)| = 0 :=
         le_antisymm (nonpos_of_mul_nonpos_right htrans hρ) (abs_nonneg _)
       apply hθ
@@ -915,7 +920,7 @@ lemma one_sub_sq_le_two_mul_log_one_div {r : ℝ} (hr : 0 < r) (hr1 : r < 1) :
   have hr0 : 0 ≤ r := hr.le
   calc
     1 - r ^ 2 = (1 - r) * (1 + r) := by ring
-    _ ≤ (1 - r) * 2 := by gcongr <;> linarith
+    _ ≤ (1 - r) * 2 := by gcongr; linarith
     _ ≤ Real.log (1 / r) * 2 := by gcongr
     _ = 2 * Real.log (1 / r) := by ring
 
@@ -1209,7 +1214,7 @@ lemma diskGreen_div_log_le_self_add_poisson_near
     linarith
   have hpoisson : 2 * Real.log 3 / a ≤ 16 * outerPoissonMajorant z θ := by
     have hlog3 : Real.log 3 ≤ 2 := by
-      convert Real.log_le_sub_one_of_pos (by norm_num : (0:ℝ)<3) using 1 <;> norm_num
+      convert Real.log_le_sub_one_of_pos (by norm_num : (0:ℝ)<3) using 1; norm_num
     have hsq : D^2 ≤ 4*a^2 := by nlinarith [sq_nonneg (D-2*a), hDle]
     have hnum : a ≤ 1-ρ^2 := by
       dsimp [a]
@@ -1249,7 +1254,6 @@ lemma diskGreen_div_log_le_self_add_poisson_near
       linarith
     _ ≤ 16*(diskGreen z η/L₀)+16*outerPoissonMajorant z θ := by gcongr
     _ = _ := by rfl
-
 
 noncomputable def outerNormalizedGreenMajorant (z : ℂ) (θ : ℝ) : ℝ≥0∞ :=
   if ‖z‖ ≤ 1 / 8 then 64 else
@@ -1350,7 +1354,5 @@ lemma diskGreenENNReal_div_log_le_outerNormalizedGreenMajorant
         linarith
       · have hnear : ‖z-radialPoint r θ‖ ≤ (1-‖z‖)/2 := le_of_not_gt hfar
         exact diskGreen_div_log_le_self_add_poisson_near hz hzlarge hr0 hr1 hnear hself
-
-
 
 end Erdos515

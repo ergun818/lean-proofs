@@ -92,7 +92,7 @@ lemma quotient_ne_zero (hz : z ∈ ball (0 : ℂ) 1) : b.quotient z ≠ 0 := by
     simp [quotient, dslope_of_ne _ h0, slope, h0, b.map_zero, hGz]
 
 /-- A normalized analytic eighth root of `G z / z` (with the removable value at zero). -/
-def existsEighthRoot :
+theorem existsEighthRoot :
     ∃ H : ℂ → ℂ, AnalyticOnNhd ℂ H (ball 0 1) ∧ H 0 = 1 ∧
       ∀ z ∈ ball (0 : ℂ) 1, b.quotient z = H z ^ 8 := by
   obtain ⟨H, hH, hH0, hpow⟩ :=
@@ -453,7 +453,7 @@ lemma radialPrawitzCoeff_sq_mono {x y : ℝ} (hx : 0 ≤ x) (hxy : x ≤ y) (n :
     ‖b.radialPrawitzCoeff (x ^ 8) n‖ ^ 2 ≤
       ‖b.radialPrawitzCoeff (y ^ 8) n‖ ^ 2 := by
   simp only [radialPrawitzCoeff, norm_mul, norm_pow, Complex.norm_real,
-    Real.norm_eq_abs, abs_of_nonneg (pow_nonneg hx 8)]
+    Real.norm_eq_abs]
   gcongr
 
 lemma deriv_eighthLift (hz : z ∈ ball (0 : ℂ) 1) :
@@ -469,7 +469,7 @@ lemma deriv_eighthLift (hz : z ∈ ball (0 : ℂ) 1) :
   ring
 
 /-- The area of the lift image is the Dirichlet integral of its complex derivative. -/
-lemma volume_image_closedBall_eighthLift {R : ℝ} (hR0 : 0 ≤ R) (hR1 : R < 1) :
+lemma volume_image_closedBall_eighthLift {R : ℝ} (_hR0 : 0 ≤ R) (hR1 : R < 1) :
     volume.real (b.eighthLift '' closedBall (0 : ℂ) R) =
       ∫ z in closedBall (0 : ℂ) R, ‖deriv b.eighthLift z‖ ^ 2 := by
   have hsub : closedBall (0 : ℂ) R ⊆ ball 0 1 := by
@@ -495,7 +495,7 @@ lemma volume_image_closedBall_eighthLift {R : ℝ} (hR0 : 0 ≤ R) (hR1 : R < 1)
     measurableSet_closedBall hd (b.inj_eighthLift.mono hsub)]
   apply setIntegral_congr_fun measurableSet_closedBall
   intro z hz
-  simp only [Pi.one_apply, smul_eq_mul, mul_one, hdet z hz]
+  simp only [smul_eq_mul, mul_one, hdet z hz]
 
 private lemma intervalIntegral_eq_two_pi_mul_circleAverage {f : ℂ → ℝ} :
     (∫ θ in (0 : ℝ)..2 * Real.pi, f (circleMap 0 1 θ)) =
@@ -660,7 +660,7 @@ lemma partial_coeff_area_le {R : ℝ} (hR0 : 0 ≤ R) (hR1 : R < 1) (N : ℕ) :
     _ = ∫ t in Ioc (0 : ℝ) R,
         ∑ n ∈ Finset.range N,
           t * ((2 * Real.pi) * ‖b.radialPrawitzCoeff (t ^ 8) n‖ ^ 2) := by
-      rw [MeasureTheory.integral_finset_sum]
+      rw [MeasureTheory.integral_finsetSum]
       intro n hn
       have hc : Continuous (fun t : ℝ ↦
           t * ((2 * Real.pi) * ‖b.radialPrawitzCoeff (t ^ 8) n‖ ^ 2)) := by
@@ -821,7 +821,7 @@ lemma partial_coeff_kernel_pointwise {s : ℝ} (hs0 : 0 < s) (hs1 : s < 1) (N : 
             rw [Real.rpow_one]
           _ = s ^ ((1 : ℝ) + (((2 * n : ℕ) : ℝ) - 3 / 4)) :=
             (Real.rpow_add hs0 _ _).symm
-          _ = s ^ (((2 * n : ℕ) : ℝ) + 1 / 4) := by congr 1 <;> ring
+          _ = s ^ (((2 * n : ℕ) : ℝ) + 1 / 4) := by congr 1; ring
       rw [show Real.pi * s *
           ((8 * n + 1) * ‖b.coeff n‖ ^ 2 *
             s ^ ((2 * n : ℕ) - (3 : ℝ) / 4)) =
@@ -836,7 +836,7 @@ lemma partial_coeff_kernel_pointwise {s : ℝ} (hs0 : 0 < s) (hs1 : s < 1) (N : 
           s * s ^ (-(3 : ℝ) / 4) = s ^ (1 : ℝ) * s ^ (-(3 : ℝ) / 4) := by
             rw [Real.rpow_one]
           _ = s ^ ((1 : ℝ) + (-(3 : ℝ) / 4)) := (Real.rpow_add hs0 _ _).symm
-          _ = s ^ ((1 : ℝ) / 4) := by congr 1 <;> ring
+          _ = s ^ ((1 : ℝ) / 4) := by congr 1; ring
       rw [show Real.pi * s *
           (s ^ (-(3 : ℝ) / 4) * (1 - s) ^ (-(1 : ℝ) / 2)) =
           Real.pi * (s * s ^ (-(3 : ℝ) / 4)) *
@@ -915,7 +915,7 @@ lemma partial_coeff_integral_le {r : ℝ} (hr0 : 0 < r) (hr1 : r < 1) (N : ℕ) 
         ∑ n ∈ Finset.range N,
           (8 * n + 1) * ‖b.coeff n‖ ^ 2 *
             s ^ ((2 * n : ℕ) - (3 : ℝ) / 4) := by
-      rw [MeasureTheory.integral_finset_sum]
+      rw [MeasureTheory.integral_finsetSum]
       exact htermInt
     _ ≤ ∫ s in Ioc (0 : ℝ) r, Prawitz.koebeQuarterKernel s := by
       apply setIntegral_mono_of_nonneg
@@ -966,13 +966,13 @@ lemma radialQuotient_quarter_eq_norm_H_sq {r θ : ℝ} (hr : 0 < r) (hr1 : r < 1
   have hzmem : Prawitz.circlePoint r θ ∈ ball (0 : ℂ) 1 := by
     simp only [Prawitz.circlePoint, mem_ball, dist_zero_right, norm_mul, Complex.norm_real,
       Real.norm_eq_abs, abs_of_pos hr, Complex.norm_exp, Complex.mul_re, Complex.ofReal_re,
-      Complex.I_re, mul_zero, Complex.ofReal_im, Complex.I_im, zero_mul, sub_zero,
+      Complex.I_re, mul_zero, Complex.ofReal_im, Complex.I_im, sub_zero,
       Real.exp_zero, mul_one]
     exact hr1
   have hznorm : ‖Prawitz.circlePoint r θ‖ = r := by
     simp only [Prawitz.circlePoint, norm_mul, Complex.norm_real, Real.norm_eq_abs, abs_of_pos hr,
       Complex.norm_exp, Complex.mul_re, Complex.ofReal_re, Complex.I_re, mul_zero,
-      Complex.ofReal_im, Complex.I_im, zero_mul, sub_zero, Real.exp_zero, mul_one]
+      Complex.ofReal_im, Complex.I_im, sub_zero, Real.exp_zero, mul_one]
   rw [Prawitz.radialQuotient, b.G_eq_z_mul_H_pow hzmem, norm_mul, hznorm, norm_pow]
   rw [mul_div_cancel_left₀ _ hr.ne']
   simp only [Prawitz.quarter]

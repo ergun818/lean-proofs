@@ -29,7 +29,10 @@ public def pop (N : Finset ℕ) :=
 
 /-- `push` almost cancels `pop` -/
 public theorem push_pop {N : Finset ℕ} : push (pop N) = insert 0 N := by
-  rw [push, pop]; apply Finset.ext; simp only [Finset.mem_insert, Finset.mem_image, Finset.mem_erase, ne_eq, exists_exists_and_eq_and]
+  rw [push, pop]
+  apply Finset.ext
+  simp only [Finset.mem_insert, Finset.mem_image, Finset.mem_erase, ne_eq,
+    exists_exists_and_eq_and]
   intro n; by_cases n0 : n = 0; · rw [n0]; simp
   simp_rw [or_iff_right n0]
   constructor
@@ -80,8 +83,8 @@ theorem push_range : Set.range push = {N : Finset ℕ | 0 ∈ N} := by
 
 theorem push_comap_atTop : Filter.comap push atTop = atTop := by
   apply Filter.comap_embedding_atTop
-  exact @push_le_push
-  intro N; exists pop N; rw [push_pop]; simp
+  · exact @push_le_push
+  · intro N; exists pop N; rw [push_pop]; simp
 
 /-- `f ∘ push` converges `atTop` iff `f` does -/
 public theorem tendsto_comp_push {A : Type} {f : Finset ℕ → A} {l : Filter A} :
@@ -94,8 +97,10 @@ public theorem tendsto_comp_push {A : Type} {f : Finset ℕ → A} {l : Filter A
 /-- Triangle inequality for finset sums -/
 public theorem finset_norm_sum_le (N : Finset ℕ) (f : ℕ → G) :
     ‖N.sum fun n ↦ f n‖ ≤ N.sum fun n ↦ ‖f n‖ := by
-  induction' N using Finset.induction with n N Nn h; · simp
-  · rw [Finset.sum_insert Nn]
+  induction N using Finset.induction with
+  | empty => simp
+  | @insert n N Nn h =>
+    rw [Finset.sum_insert Nn]
     rw [Finset.sum_insert Nn]
     trans ‖f n‖ + ‖N.sum fun n ↦ f n‖
     · apply norm_add_le

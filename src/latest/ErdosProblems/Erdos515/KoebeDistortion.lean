@@ -68,7 +68,7 @@ theorem preSchwarzian_bound
   have hKd0 : deriv K 0 = 1 := by
     rw [hKderiv 0 zero_mem_unitBall, mobius_zero, deriv_mobius_zero ha]
     rw [mul_comm]
-    convert div_self hqd using 1 <;> push_cast <;> rfl
+    convert div_self hqd using 1; push_cast; rfl
   have hKK : (fun z ↦ deriv K z) =ᶠ[nhds 0]
       (fun z ↦ deriv G (mobius a z) * deriv (mobius a) z /
         ((((‖a‖ ^ 2 - 1 : ℝ) : ℂ)) * deriv G a)) :=
@@ -95,7 +95,7 @@ theorem preSchwarzian_bound
           (fun z ↦ (((‖a‖ ^ 2 - 1 : ℝ) : ℂ)) /
             (1 - conj a * z) ^ 2) := by
         filter_upwards [isOpen_ball.mem_nhds zero_mem_unitBall] with z hz
-        convert deriv_mobius ha (by simpa using hz) using 1 <;> push_cast <;> rfl
+        convert deriv_mobius ha (by simpa using hz) using 1; push_cast; rfl
       rw [he.deriv_eq]
       have hinner := (hasDerivAt_const (x := (0 : ℂ)) (1 : ℂ)).sub
         ((hasDerivAt_id' (x := (0 : ℂ))).const_mul (conj a))
@@ -127,7 +127,7 @@ theorem preSchwarzian_bound
 theorem radial_logDeriv_re_le
     (hG : AnalyticOnNhd ℂ G (ball 0 1)) (hinj : InjOn G (ball 0 1))
     {t : ℝ} (ht : 0 ≤ t) (ht1 : t < 1) {ζ : ℂ} (hζ : ‖ζ‖ = 1)
-    (hd : deriv G ((t : ℂ) * ζ) ≠ 0) :
+    (_hd : deriv G ((t : ℂ) * ζ) ≠ 0) :
     (ζ * (deriv (deriv G) ((t : ℂ) * ζ) / deriv G ((t : ℂ) * ζ))).re ≤
       (4 + 2 * t) / (1 - t ^ 2) := by
   let a : ℂ := (t : ℂ) * ζ
@@ -173,7 +173,7 @@ theorem radial_deriv_normSq_slope_le
   let p : ℂ := deriv G ((t : ℂ) * ζ)
   let q : ℂ := deriv (deriv G) ((t : ℂ) * ζ)
   by_cases hp : p = 0
-  · simp [p, q, hp]
+  · simp [p, hp]
   have hlog := radial_logDeriv_re_le hG hinj ht ht1 hζ hp
   have hinner : inner ℝ p (ζ * q) = ‖p‖ ^ 2 * (ζ * (q / p)).re := by
     rw [Complex.inner]
@@ -203,7 +203,7 @@ private lemma hasDerivAt_distortionWeight {t : ℝ} (ht : 0 ≤ t) (ht1 : t < 1)
   change HasDerivAt (((fun x : ℝ ↦ 1) - fun x ↦ x) ^ 6 /
     ((fun x : ℝ ↦ 1) + fun x ↦ x) ^ 2) _ t
   apply hraw.congr_deriv
-  simp only [distortionWeight, Pi.div_apply, Pi.pow_apply, Pi.sub_apply, Pi.add_apply,
+  simp only [distortionWeight, Pi.pow_apply, Pi.sub_apply, Pi.add_apply,
     id_eq, Nat.cast_ofNat, Nat.add_one_sub_one, pow_one, mul_one, zero_sub, zero_add]
   have hquad : 1 - t ^ 2 ≠ 0 := ne_of_gt (by nlinarith)
   have hplus : 1 + t ≠ 0 := ne_of_gt (by linarith)
@@ -287,8 +287,8 @@ private lemma hasDerivAt_growthPrimitive {t : ℝ} (ht : t < 1) :
   change HasDerivAt ((fun x : ℝ ↦ x) /
     ((fun x : ℝ ↦ 1) - fun x ↦ x) ^ 2) _ t
   apply hraw.congr_deriv
-  simp only [derivMajorant, Pi.div_apply, Pi.pow_apply, Pi.sub_apply, id_eq,
-    Nat.cast_ofNat, Nat.add_one_sub_one, pow_one, mul_one, zero_sub]
+  simp only [derivMajorant, Pi.pow_apply, Pi.sub_apply, id_eq,
+    Nat.cast_ofNat, Nat.add_one_sub_one, pow_one, zero_sub]
   have hminus : 1 - t ≠ 0 := ne_of_gt (sub_pos.mpr ht)
   field_simp [hminus]
   ring

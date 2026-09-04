@@ -52,7 +52,7 @@ lemma lrwNormalizedControl_nonneg {delta : ℝ} {u : ℂ → ℝ}
   exact mul_nonneg (inv_nonneg.mpr a.positive.le) (le_max_right _ _)
 
 lemma lrwNormalizedControl_self {delta : ℝ} {u : ℂ → ℝ}
-    (hdelta0 : 0 < delta) (hdelta1 : delta < 1) (a : PositiveControlPoint u) :
+    (_hdelta0 : 0 < delta) (hdelta1 : delta < 1) (a : PositiveControlPoint u) :
     lrwNormalizedControl delta u a a.point = (1 - delta) ^ 2 := by
   have hsub : 0 < 1 - delta := sub_pos.mpr hdelta1
   have hinside : 0 ≤ (1 - delta) * (u a.point - delta * u a.point) := by
@@ -114,9 +114,9 @@ lemma lrwDiskControl_zero {delta : ℝ} {u : ℂ → ℝ}
 /-- For `u = log⁺ |f|`, the pulled-back normalized control is subharmonic.  This uses the
 identity `logPosNorm f (F z) = logPosNorm (f ∘ F) z`, avoiding any separate general theorem
 about composition of subharmonic functions with holomorphic maps. -/
-theorem subharmonicOn_lrwDiskControl_logPosNorm {f F : ℂ → ℂ} {base : ℂ}
+theorem subharmonicOn_lrwDiskControl_logPosNorm {f F : ℂ → ℂ} {_base : ℂ}
     {delta : ℝ} (hf : Differentiable ℂ f)
-    (hdelta0 : 0 < delta) (hdelta1 : delta < 1)
+    (_hdelta0 : 0 < delta) (hdelta1 : delta < 1)
     (a : PositiveControlPoint (logPosNorm f))
     (hFdiff : DifferentiableOn ℂ F (ball 0 1)) :
     SubharmonicOn (lrwDiskControl delta (logPosNorm f) a F) unitDisk := by
@@ -165,7 +165,7 @@ theorem hall_measure_lrwDiskControl
       (goodDirections (lrwDiskControl lrwRecursionDelta (logPosNorm f)
         a.controlPoint F)) := by
   apply hHall _ lrwHallDefect
-  · exact subharmonicOn_lrwDiskControl_logPosNorm (base := base) hf lrwRecursionDelta_pos
+  · exact subharmonicOn_lrwDiskControl_logPosNorm (_base := base) hf lrwRecursionDelta_pos
       lrwRecursionDelta_lt_one a.controlPoint hFdiff
   · intro z _hz
     exact lrwDiskControl_nonneg a.controlPoint F z
@@ -201,7 +201,7 @@ namespace LRWPrawitzStageData
 
 /-- Combine a Hall measure estimate with the Prawitz stage data. -/
 noncomputable def toStageEstimates {f F : ℂ → ℂ} {base : ℂ} {delta constant : ℝ}
-    (hdelta0 : 0 < delta) (hdelta1 : delta < 1)
+    (_hdelta0 : 0 < delta) (_hdelta1 : delta < 1)
     (a : LRWAdmissiblePoint delta (logPosNorm f) base)
     (hFmaps : MapsTo F (ball 0 1)
       (lrwDomain delta (logPosNorm f) base a.controlPoint))
@@ -281,7 +281,7 @@ noncomputable def ofHallAndPrawitz {f : ℂ → ℂ} {base : ℂ}
   delta_pos := lrwRecursionDelta_pos
   delta_lt_one := lrwRecursionDelta_lt_one
   constant_nonneg := hconstant
-  hall := fun a F hFdiff hFbij hFzero ↦
+  hall := fun a _F hFdiff hFbij hFzero ↦
     hall_measure_lrwDiskControl hf a hFdiff hFbij hFzero hHall
   prawitz := hPrawitz
 
@@ -302,7 +302,7 @@ noncomputable def ofPrawitz {f : ℂ → ℂ} {base : ℂ}
 
 /-- Convert the separated Hall and Prawitz theorems to the stage-estimate provider consumed by
 the Riemann-map adapter. -/
-def estimates {f : ℂ → ℂ} {base : ℂ} (A : LRWStageTheorems f base) :
+theorem estimates {f : ℂ → ℂ} {base : ℂ} (A : LRWStageTheorems f base) :
     ∀ (a : LRWAdmissiblePoint A.delta (logPosNorm f) base) (F : ℂ → ℂ),
       DifferentiableOn ℂ F (ball 0 1) →
       BijOn F (ball 0 1) (lrwDomain A.delta (logPosNorm f) base a.controlPoint) →

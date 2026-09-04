@@ -508,7 +508,7 @@ lemma scan_blockStart (B : FiniteArcBlocks) (k : ℕ) :
       rw [show B.blockStart k + B.segCount k =
           (B.blockStart k + (B.segCount k - 1)) + 1 by omega,
         B.scan_succ, hlast]
-      simp only [Prod.fst, Prod.snd]
+      dsimp only
       rw [if_neg (by omega)]
 
 lemma scan_blockStart_add (B : FiniteArcBlocks) (k : ℕ) (j : ℕ)
@@ -524,11 +524,11 @@ lemma blockStart_add_scan (B : FiniteArcBlocks) (n : ℕ) :
   | succ n ih =>
       rw [B.scan_succ]
       split_ifs with h
-      · simp only [Prod.fst, Prod.snd]
+      · dsimp only
         omega
       · have hlt := B.scan_second_lt n
         rw [B.blockStart_succ]
-        simp only [Prod.fst, Prod.snd]
+        dsimp only
         omega
 
 /-- The natural order-preserving enumeration of all segments in all blocks. -/

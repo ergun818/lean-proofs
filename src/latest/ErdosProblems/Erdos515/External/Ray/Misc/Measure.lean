@@ -45,7 +45,7 @@ variable {μ : Measure M}
 
 /-- Removing a null set isn't significant measure-wise -/
 theorem ae_minus_null {s t : Set M} (tz : volume t = 0) : s =ᵐ[volume] s \ t := by
-  simp only [Filter.EventuallyEq, Pi.sdiff_apply, eq_iff_iff]
+  simp only [Filter.EventuallyEq, eq_iff_iff]
   have e : ∀ x, x ∉ t → (x ∈ s ↔ x ∈ s \ t) := by
     intro x h; simp only [Set.mem_sdiff, h, not_false_iff, and_true]
   refine Filter.Eventually.mono ?_ e
@@ -187,7 +187,8 @@ public theorem average_congr_on {f g : M → G} {s : Set M} (sn : NiceVolume s)
   simp only [← ae_restrict_iff' sn.measurable] at h; exact average_congr h
 
 /-- Means are at most the values of the function -/
-public theorem mean_bound {f : M → ℝ} {s : Set M} {b : ℝ} (sn : NiceVolume s) (fi : IntegrableOn f s)
+public theorem mean_bound {f : M → ℝ} {s : Set M} {b : ℝ}
+    (sn : NiceVolume s) (fi : IntegrableOn f s)
     (fb : ∀ z, z ∈ s → f z ≤ b) : ⨍ x in s, f x ≤ b := by
   rw [average_eq, smul_eq_mul]
   have bi := sn.integrableOn_const b
@@ -213,9 +214,10 @@ public theorem LocalVolume.closure_interior {M : Type} [MetricSpace M] [MeasureS
   set t := min e (r - dist x y)
   have es : ball y t ⊆ s ∩ ball x r := by
     simp only [Set.subset_inter_iff]; constructor
-    exact _root_.trans (Metric.ball_subset_ball (by bound)) (_root_.trans ye interior_subset)
-    apply Metric.ball_subset_ball'
-    trans r - dist x y + dist y x; bound; simp [dist_comm]
+    · exact _root_.trans (Metric.ball_subset_ball (by bound)) (_root_.trans ye interior_subset)
+    · apply Metric.ball_subset_ball'
+      calc t + dist y x ≤ r - dist x y + dist y x := by bound
+           _ = r := by simp [dist_comm]
   exact lt_of_lt_of_le (bp y t (by bound)) (measure_mono es)
 
 /-- Ioc has local volume -/
@@ -249,8 +251,8 @@ public theorem mean_squeeze {f : X → ℝ} {s : Set X} {b : ℝ} (sn : NiceVolu
   have sc : s \ t ∪ t = s := Set.sdiff_union_of_subset ts
   nth_rw 2 [← sc]
   rw [setIntegral_union]
-  simp only [MeasurableSet.univ, measureReal_restrict_apply, Set.univ_inter, gt_iff_lt]
-  · set m := (b + f x) / 2
+  · simp only [MeasurableSet.univ, measureReal_restrict_apply, Set.univ_inter, gt_iff_lt]
+    set m := (b + f x) / 2
     set vs := volume.real s
     set vt := volume.real t
     have vsp : vs > 0 := sn.real_pos
@@ -272,18 +274,18 @@ public theorem mean_squeeze {f : X → ℝ} {s : Set X} {b : ℝ} (sn : NiceVolu
     have i1 : ∫ x in t, f x ≤ vt * m := by
       have fm := setIntegral_mono_on (μ := volume) (f := f) (g := fun _ ↦ m) (s := t)
         (fi.mono ts (le_refl _)) (integrableOn_const tf.ne_top) tm ?_
-      simp only [integral_const, MeasurableSet.univ, measureReal_restrict_apply,
-        Set.univ_inter, smul_eq_mul] at fm
-      exact fm
-      intro y yt
-      rw [← ht] at yt; simp at ht yt
-      specialize he y yt.left yt.right
-      simp [Real.dist_eq] at he
-      calc f y
-        _ = f x + (f y - f x) := by ring
-        _ ≤ f x + |f y - f x| := by bound
-        _ ≤ f x + (b - f x) / 2 := by bound
-        _ = (b + f x) / 2 := by ring
+      · simp only [integral_const, MeasurableSet.univ, measureReal_restrict_apply,
+          Set.univ_inter, smul_eq_mul] at fm
+        exact fm
+      · intro y yt
+        rw [← ht] at yt; simp at ht yt
+        specialize he y yt.left yt.right
+        simp [Real.dist_eq] at he
+        calc f y
+          _ = f x + (f y - f x) := by ring
+          _ ≤ f x + |f y - f x| := by bound
+          _ ≤ f x + (b - f x) / 2 := by bound
+          _ = (b + f x) / 2 := by ring
     calc (∫ x : X in s \ t, f x) + ∫ x : X in t, f x
       _ ≤ (vs - vt) * b + vt * m := by bound
       _ = vs * b - vt * (b - m) := by ring

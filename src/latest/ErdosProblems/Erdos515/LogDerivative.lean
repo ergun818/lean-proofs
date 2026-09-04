@@ -130,8 +130,8 @@ lemma lintegral_ball_inv_norm :
     _ = ENNReal.ofReal (2 * Real.pi) := by
       change (volume.prod volume) (Ioo (0 : ℝ) 1 ×ˢ Ioo (-Real.pi) Real.pi) = _
       rw [Measure.prod_prod]
-      simp only [Real.volume_Ioo, sub_zero, ENNReal.ofReal_one, sub_neg_eq_add, one_mul, Nat.ofNat_nonneg,
-    ENNReal.ofReal_mul, ENNReal.ofReal_ofNat]
+      simp only [Real.volume_Ioo, sub_zero, ENNReal.ofReal_one, sub_neg_eq_add, one_mul,
+        Nat.ofNat_nonneg, ENNReal.ofReal_mul, ENNReal.ofReal_ofNat]
       rw [← ENNReal.ofReal_ofNat 2,
         ← ENNReal.ofReal_mul (by norm_num : (0 : ℝ) ≤ 2)]
       congr 1
@@ -303,7 +303,7 @@ lemma lintegral_compl_ball_inv_norm_rpow :
       rw [Measure.volume_eq_prod, MeasureTheory.setLIntegral_prod]
       · apply lintegral_congr
         intro r
-        simp only [Prod.fst]
+        dsimp only
         rw [MeasureTheory.setLIntegral_const]
       · fun_prop
     _ = ENNReal.ofReal (8 * Real.pi) := by
@@ -321,11 +321,11 @@ lemma lintegral_compl_ball_inv_norm_rpow :
         norm_num
       rw [Real.volume_Ioo]
       rw [MeasureTheory.lintegral_mul_const]
-      rw [hrad]
-      rw [← ENNReal.ofReal_mul (by norm_num : (0 : ℝ) ≤ 4)]
-      apply congrArg ENNReal.ofReal
-      ring
-      fun_prop
+      · rw [hrad]
+        rw [← ENNReal.ofReal_mul (by norm_num : (0 : ℝ) ≤ 4)]
+        apply congrArg ENNReal.ofReal
+        ring
+      · fun_prop
 
 /-- The target-space kernel on the part of the image lying in the unit disk. -/
 def innerTargetKernel (w : ℂ) : ℝ≥0∞ :=
@@ -659,7 +659,7 @@ lemma logDerivative_le_logAreaMajorant (G : ℂ → ℂ) (z : ℂ) :
       (ENNReal.ofReal (a ^ 2) * outerTargetKernel (G z) +
         ENNReal.ofReal (b ^ ((1 : ℝ) / 4)))
     rw [outerTargetKernel, Set.indicator_of_mem hmem]
-    exact hY.trans (le_add_left (by simpa [a, b]))
+    exact hY.trans (le_add_left (by simp [a, b]))
 
 lemma measurable_innerTargetKernel : Measurable innerTargetKernel := by
   unfold innerTargetKernel
@@ -796,7 +796,7 @@ lemma angular_lintegral_logRadialIntegralE_eq {G : ℂ → ℂ}
       simp only [circlePoint, mem_ball, dist_zero_right, norm_mul, Complex.norm_real,
         Real.norm_eq_abs, abs_of_pos hr.1, Complex.norm_exp, Complex.mul_re,
         Complex.ofReal_re, Complex.I_re, mul_zero, Complex.ofReal_im, Complex.I_im,
-        zero_mul, sub_zero, Real.exp_zero, mul_one]
+        sub_zero, Real.exp_zero, mul_one]
       exact hr.2
     change ENNReal.ofReal r * q (circlePoint r θ) =
       ENNReal.ofReal (r * ‖deriv G (circlePoint r θ)‖ / ‖G (circlePoint r θ)‖)
@@ -872,7 +872,7 @@ lemma measurable_logRadialIntegralE {G : ℂ → ℂ}
       simp only [circlePoint, mem_ball, dist_zero_right, norm_mul, Complex.norm_real,
         Real.norm_eq_abs, abs_of_pos hr.1, Complex.norm_exp, Complex.mul_re,
         Complex.ofReal_re, Complex.I_re, mul_zero, Complex.ofReal_im, Complex.I_im,
-        zero_mul, sub_zero, Real.exp_zero, mul_one]
+        sub_zero, Real.exp_zero, mul_one]
       exact hr.2
     change ENNReal.ofReal r * q (circlePoint r θ) =
       ENNReal.ofReal (r * ‖deriv G (circlePoint r θ)‖ / ‖G (circlePoint r θ)‖)

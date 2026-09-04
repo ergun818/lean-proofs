@@ -35,7 +35,6 @@ One wart: we require not only that `f c` has a zero of order `d ≥ 2`, but also
 formulas, but is probably better to remove.
 -/
 
-open Classical
 open Complex (exp log cpow)
 open Filter (Tendsto atTop)
 open Function (curry uncurry)
@@ -112,7 +111,7 @@ theorem SuperAt.ga_of_fa (s : SuperAt f d) {c : ℂ} (fa : AnalyticAt ℂ f c) :
       simp only [g, zs.2, if_false]
     rw [differentiableOn_congr e]
     apply DifferentiableOn.div (fa.mono sdiff_subset).differentiableOn
-    exact (Differentiable.pow differentiable_id _).differentiableOn
+      (Differentiable.pow differentiable_id _).differentiableOn
     intro z zs; exact pow_ne_zero _ (Set.mem_sdiff_singleton.mp zs).2
   rw [Complex.analyticOnNhd_iff_differentiableOn o]
   by_cases t0 : (0 : ℂ) ∉ t; · rw [Set.sdiff_singleton_eq_self t0] at ga; exact ga
@@ -187,8 +186,8 @@ theorem SuperAt.super_on_ball (s : SuperAt f d) {r : ℝ} (rp : 0 < r) (r2 : r �
           _ ≤ (‖f z / z ^ d - 1‖ + ‖(1 : ℂ)‖) * r ^ d := by bound
           _ ≤ (b + ‖(1 : ℂ)‖) * r ^ d := by bound [gs z0 zs]
           _ ≤ (1 + b) * r ^ (d - 1) * r := by
-            simp only [mul_assoc, ← pow_succ, Nat.sub_add_cancel (le_trans one_le_two s.d2), norm_one,
-              add_comm b, le_refl]
+            simp only [mul_assoc, ← pow_succ, Nat.sub_add_cancel (le_trans one_le_two s.d2),
+              norm_one, add_comm b, le_refl]
           _ ≤ (1 + b) * a ^ (d - 1) * r := by bound
           _ ≤ (1 + b) * a ^ (2 - 1) * r := by bound
           _ = a * (1 + b) * r := by ring
@@ -288,16 +287,18 @@ theorem f_converges (s : SuperNear f d t a b) : z ∈ t → ‖f z‖ ≤ s.c * 
 
 /-- Iterating f remains in t -/
 theorem SuperNear.mapsTo (s : SuperNear f d t a b) (n : ℕ) : MapsTo f^[n] t t := by
-  induction' n with n h; simp only [Set.mapsTo_id, Function.iterate_zero]
-  rw [Function.iterate_succ']; exact s.ft.comp h
+  induction n with
+  | zero => simp only [Set.mapsTo_id, Function.iterate_zero]
+  | succ n h => rw [Function.iterate_succ']; exact s.ft.comp h
 
 /-- `‖f^[n] z‖ ≤ s.c ^ n * ‖z‖` -/
 public theorem iterates_converge (s : SuperNear f d t a b) :
     ∀ n, z ∈ t → ‖f^[n] z‖ ≤ s.c ^ n * ‖z‖ := by
   intro n zt
-  induction' n with n nh
-  · simp only [Function.iterate_zero, id, pow_zero, one_mul, le_refl]
-  · rw [Function.iterate_succ']
+  induction n with
+  | zero => simp only [Function.iterate_zero, id, pow_zero, one_mul, le_refl]
+  | succ n nh =>
+    rw [Function.iterate_succ']
     trans s.c * ‖f^[n] z‖
     · exact f_converges s (s.mapsTo n zt)
     · calc s.c * ‖f^[n] z‖
@@ -308,10 +309,13 @@ public theorem iterates_converge (s : SuperNear f d t a b) :
 
 /-- Iterates are analytic -/
 theorem iterates_analytic (s : SuperNear f d t a b) : ∀ n, AnalyticOnNhd ℂ f^[n] t := by
-  intro n; induction' n with n h
-  · simp only [Function.iterate_zero]
+  intro n
+  induction n with
+  | zero =>
+    simp only [Function.iterate_zero]
     exact analyticOnNhd_id
-  · rw [Function.iterate_succ']
+  | succ n h =>
+    rw [Function.iterate_succ']
     intro z zt
     exact (s.fa _ (s.mapsTo n zt)).comp (h z zt)
 
@@ -380,14 +384,18 @@ public theorem bottcherNear_eqn (s : SuperNear f d t a b) (zt : z ∈ t) :
 /-- `bottcherNear_eqn`, iterated -/
 public theorem bottcherNear_eqn_iter (s : SuperNear f d t a b) (zt : z ∈ t) (n : ℕ) :
     bottcherNear f d (f^[n] z) = bottcherNear f d z ^ d ^ n := by
-  induction' n with n h; simp only [Function.iterate_zero, id, pow_zero, pow_one]
-  simp only [Function.comp, Function.iterate_succ', pow_succ, pow_mul,
-    bottcherNear_eqn s (s.mapsTo n zt), h]
+  induction n with
+  | zero => simp only [Function.iterate_zero, id, pow_zero, pow_one]
+  | succ n h =>
+    simp only [Function.comp, Function.iterate_succ', pow_succ, pow_mul,
+      bottcherNear_eqn s (s.mapsTo n zt), h]
 
 /-- `f^[n] 0 = 0` -/
 theorem iterates_at_zero (s : SuperNear f d t a b) : ∀ n, f^[n] 0 = 0 := by
-  intro n; induction' n with n h; simp only [Function.iterate_zero, id]
-  simp only [Function.iterate_succ', Function.comp_apply, h, s.f0]
+  intro n
+  induction n with
+  | zero => simp only [Function.iterate_zero, id]
+  | succ n h => simp only [Function.iterate_succ', Function.comp_apply, h, s.f0]
 
 /-- `term s n 0 = 1` -/
 theorem term_at_zero (s : SuperNear f d t a b) (n : ℕ) : term f d n 0 = 1 := by
@@ -422,7 +430,8 @@ public theorem bottcherNear_analytic_z (s : SuperNear f d t a b) :
 /-- `f^[n] z → 0` -/
 public theorem iterates_tendsto (s : SuperNear f d t a b) (zt : z ∈ t) :
     Tendsto (fun n ↦ f^[n] z) atTop (𝓝 0) := by
-  by_cases z0 : z = 0; simp only [z0, iterates_at_zero s, tendsto_const_nhds]
+  by_cases z0 : z = 0
+  · simp only [z0, iterates_at_zero s, tendsto_const_nhds]
   rw [Metric.tendsto_atTop]; intro e ep
   simp only [Complex.dist_eq, sub_zero]
   have xp : e / ‖z‖ > 0 := div_pos ep (norm_pos_iff.mpr z0)
@@ -608,20 +617,23 @@ public theorem SuperAtC.superNearC' (s : SuperAtC f d u) {w : Set (ℂ × ℂ)} 
             simp only [Metric.mem_ball, Complex.dist_eq] at m
             intro z zr; exact @gs ⟨c', z⟩ (lt_of_lt_of_le m rr4) (lt_of_lt_of_le zr rr4)
         fa := fa.mono (Metric.ball_subset_ball (min_le_of_left_le (min_le_left _ _))) }
-  set r := fun c : u ↦ choose (h _ c.mem)
+  set r := fun c : u ↦ Classical.choose (h _ c.mem)
   set v := fun c : u ↦ ball (c : ℂ) (r c)
   set t := fun c : u ↦ ball ((c : ℂ), (0 : ℂ)) (r c)
   use⋃ c : u, t c
   have e : u = ⋃ c : u, v c := by
     apply Set.ext; intro c; rw [Set.mem_iUnion]; constructor
-    · intro m; use⟨c, m⟩; rcases choose_spec (h c m) with ⟨rp, _, _⟩
+    · intro m; use⟨c, m⟩; rcases Classical.choose_spec (h c m) with ⟨rp, _, _⟩
       exact mem_ball_self rp
-    · intro m; rcases m with ⟨i, m⟩; rcases choose_spec (h _ i.mem) with ⟨_, us, _⟩
+    · intro m; rcases m with ⟨i, m⟩; rcases Classical.choose_spec (h _ i.mem) with ⟨_, us, _⟩
       exact us m
   have tw : (⋃ c : u, t c) ⊆ w := by
-    apply Set.iUnion_subset; intro i; rcases choose_spec (h _ i.mem) with ⟨_, _, rw, _⟩; exact rw
+    apply Set.iUnion_subset
+    intro i
+    rcases Classical.choose_spec (h _ i.mem) with ⟨_, _, rw, _⟩
+    exact rw
   have si : ∀ c : u, SuperNearC f d (v c) (t c) (1 / 2) (1 / 4) := by
-    intro i; rcases choose_spec (h _ i.mem) with ⟨_, _, _, s⟩; exact s
+    intro i; rcases Classical.choose_spec (h _ i.mem) with ⟨_, _, _, s⟩; exact s
   have s := SuperNearC.union si; rw [← e] at s
   exact ⟨tw, s⟩
 
@@ -631,8 +643,10 @@ theorem SuperAtC.superNearC (s : SuperAtC f d u) : ∃ t, SuperNearC f d u t (1 
 
 theorem iterates_analytic_c (s : SuperNearC f d u t a b) {c z : ℂ} (n : ℕ) (m : (c, z) ∈ t) :
     AnalyticAt ℂ (fun c ↦ (f c)^[n] z) c := by
-  induction' n with n nh; · simp only [Function.iterate_zero, id]; exact analyticAt_const
-  · simp_rw [Function.iterate_succ']; simp only [Function.comp_apply]
+  induction n with
+  | zero => simp only [Function.iterate_zero, id]; exact analyticAt_const
+  | succ n nh =>
+    simp_rw [Function.iterate_succ']; simp only [Function.comp_apply]
     refine (s.fa _ ?_).comp (analyticAt_id.prod nh)
     exact (s.ts m).mapsTo n m
 
@@ -682,7 +696,7 @@ public theorem df_ne_zero (s : SuperNearC f d u t a b) {c : ℂ} (m : c ∈ u) :
     intro e z m; apply HasDerivAt.deriv
     have fg : f e = fun z ↦ z ^ d * g (f e) d z := by funext; rw [(s.ts m).fg]
     nth_rw 1 [fg]
-    apply HasDerivAt.mul; apply hasDerivAt_pow
+    apply HasDerivAt.mul (hasDerivAt_pow _ _)
     rw [hasDerivAt_deriv_iff]; exact ((s.ts m).ga _ m).differentiableAt
   have small : ∀ᶠ p : ℂ × ℂ in 𝓝 (c, 0),
       ‖p.2 * deriv (g (f p.1) d) p.2‖ < ‖↑d * g (f p.1) d p.2‖ := by

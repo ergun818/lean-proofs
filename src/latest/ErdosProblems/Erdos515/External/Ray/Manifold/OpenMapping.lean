@@ -32,7 +32,6 @@ unparameterized version, and specificaly our underlying workhorse is
 extentions of the flat versions lifted to charts.
 -/
 
-open Classical
 open Complex
 open Filter (Tendsto)
 open Function (curry uncurry)
@@ -169,7 +168,8 @@ public theorem NontrivialMAnalyticAt.nhds_le_map_nhds_param' {f : ℂ → ℂ �
       Function.uncurry, and_imp] at ft
     simp only [mem_ball, Complex.dist_eq, lt_min_iff] at dt
     have a1 : ‖f d w - f c w‖ ≤ e / 4 :=
-      (ft d w dt.2.le (le_of_eq (mem_sphere_iff_norm.mp wr)) c w (norm_sub_self_lt rp).le (le_of_eq (mem_sphere_iff_norm.mp wr)) dt.1
+      (ft d w dt.2.le (le_of_eq (mem_sphere_iff_norm.mp wr)) c w
+        (norm_sub_self_lt rp).le (le_of_eq (mem_sphere_iff_norm.mp wr)) dt.1
         (norm_sub_self_lt tp)).le
     have a2 : ‖f c z - f d z‖ ≤ e / 4 := by
       refine (ft c z (norm_sub_self_lt rp).le (norm_sub_self_lt rp).le d z
@@ -212,7 +212,7 @@ public theorem NontrivialMAnalyticAt.nhds_eq_map_nhds [IsManifold I ω T] {f : S
   generalize hg : (fun x ↦ extChartAt I (f z) (f ((extChartAt I z).symm x))) = g
   have ga : AnalyticAt ℂ g (extChartAt I z z) := by
     rw [← hg]; exact (mAnalyticAt_iff_of_boundaryless.mp n.mAnalyticAt).2
-  cases' ga.eventually_constant_or_nhds_le_map_nhds with h h
+  rcases ga.eventually_constant_or_nhds_le_map_nhds with h | h
   · contrapose h; clear h; simp only [Filter.not_eventually]
     apply n.inCharts.nonconst.mp; simp only [← hg, Ne, imp_self, Filter.eventually_true]
   · -- The open mapping theorem for g = c ∘ f ∘ c⁻¹ (with charts c) is

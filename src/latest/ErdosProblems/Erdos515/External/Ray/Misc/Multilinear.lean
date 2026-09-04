@@ -64,9 +64,10 @@ theorem fstCmmap_norm [NormedRing A] [NormedAlgebra 𝕜 A] [NormOneClass A] [No
     rw [e]
     rw [fstCmmap_apply]; simp only [Fin.isValue, Prod.mk.eta, ge_iff_le]; exact norm_fst_le (z 0)
   · have lo := (fstCmmap 𝕜 A B).unit_le_opNorm (m := fun _ ↦ (1, 1)) ?_
-    rw [fstCmmap_apply, norm_one] at lo; assumption
-    rw [pi_norm_le_iff_of_nonneg]; intro i; simp only [Prod.norm_def, norm_one]
-    repeat norm_num
+    · rw [fstCmmap_apply, norm_one] at lo; assumption
+    · rw [pi_norm_le_iff_of_nonneg]
+      · intro i; simp only [Prod.norm_def, norm_one]; norm_num
+      · norm_num
 
 theorem sndCmmap_norm [NormedRing A] [NormedAlgebra 𝕜 A] [NormOneClass A] [NormedRing B]
     [NormedAlgebra 𝕜 B] [NormOneClass B] : ‖sndCmmap 𝕜 A B‖ = 1 := by
@@ -77,9 +78,10 @@ theorem sndCmmap_norm [NormedRing A] [NormedAlgebra 𝕜 A] [NormOneClass A] [No
     rw [e]
     rw [sndCmmap_apply]; simp only [Fin.isValue, Prod.mk.eta, ge_iff_le]; exact norm_snd_le (z 0)
   · have lo := (sndCmmap 𝕜 A B).unit_le_opNorm (m := fun _ ↦ (1, 1)) ?_
-    rw [sndCmmap_apply, norm_one] at lo; assumption
-    rw [pi_norm_le_iff_of_nonneg]; intro i; simp only [Prod.norm_def, norm_one]
-    repeat norm_num
+    · rw [sndCmmap_apply, norm_one] at lo; assumption
+    · rw [pi_norm_le_iff_of_nonneg]
+      · intro i; simp only [Prod.norm_def, norm_one]; norm_num
+      · norm_num
 
 -- Lemmas for `smulCmmap`
 theorem update_0_0 (z : Fin (n + 1) → A) (x : A) :
@@ -181,7 +183,8 @@ theorem smulCmmap_norm [NormedAddCommGroup A] [NormedSpace 𝕜 A] [NormedAddCom
     [NormedSpace 𝕜 B] (x : ContinuousMultilinearMap 𝕜 (fun _ : Fin 1 ↦ A) 𝕜)
     (xs : ContinuousMultilinearMap 𝕜 (fun _ : Fin n ↦ A) B) :
     ‖smulCmmap 𝕜 A B x xs‖ ≤ ‖x‖ * ‖xs‖ := by
-  apply ContinuousMultilinearMap.opNorm_le_bound; bound
+  apply ContinuousMultilinearMap.opNorm_le_bound
+  · bound
   intro z; rw [smulCmmap_apply]
   have xb := ContinuousMultilinearMap.le_opNorm x fun _ : Fin 1 ↦ z 0
   have xsb := ContinuousMultilinearMap.le_opNorm xs fun i : Fin n ↦ z i.succ
@@ -208,16 +211,17 @@ public noncomputable def termCmmap (𝕜 : Type) [NontriviallyNormedField 𝕜] 
 public theorem termCmmap_apply [NormedAddCommGroup E] [NormedSpace 𝕜 E] [SMulCommClass 𝕜 𝕜 E]
     [IsScalarTower 𝕜 𝕜 E] (n k : ℕ) (a b : 𝕜) (x : E) :
     (termCmmap 𝕜 n k x fun _ ↦ (a, b)) = a ^ min k n • b ^ (n - k) • x := by
-  induction' n with n h
-  · simp only [termCmmap, ContinuousMultilinearMap.constOfIsEmpty_apply, min_zero, pow_zero,
+  induction n with
+  | zero => simp only [termCmmap, ContinuousMultilinearMap.constOfIsEmpty_apply, min_zero, pow_zero,
     zero_tsub, one_smul]
-  · rw [termCmmap, smulCmmap_apply, h]
+  | succ n h =>
+    rw [termCmmap, smulCmmap_apply, h]
     by_cases nk : n < k
     · have nsk : n.succ ≤ k := Nat.succ_le_iff.mpr nk
       simp only [nk, if_true, fstCmmap_apply, min_eq_right nk.le, min_eq_right nsk,
         Nat.sub_eq_zero_of_le nk.le, Nat.sub_eq_zero_of_le nsk, pow_zero, one_smul, smul_smul,
         pow_succ']
-    · simp [nk]; simp at nk
+    · simp only [nk, ↓reduceIte]; simp only [not_lt] at nk
       rw [sndCmmap_apply]
       have nsk : k ≤ n.succ := Nat.le_succ_of_le nk
       rw [min_eq_left nk, min_eq_left nsk]
@@ -225,9 +229,10 @@ public theorem termCmmap_apply [NormedAddCommGroup E] [NormedSpace 𝕜 E] [SMul
 
 public theorem termCmmap_norm (𝕜 : Type) [NontriviallyNormedField 𝕜] [NormedAddCommGroup E]
     [NormedSpace 𝕜 E] (n k : ℕ) (x : E) : ‖termCmmap 𝕜 n k x‖ ≤ ‖x‖ := by
-  induction' n with n nh
-  · simp only [termCmmap, le_refl, ContinuousMultilinearMap.norm_constOfIsEmpty]
-  · rw [termCmmap]; simp only
+  induction n with
+  | zero => simp only [termCmmap, le_refl, ContinuousMultilinearMap.norm_constOfIsEmpty]
+  | succ n nh =>
+    rw [termCmmap]; simp only
     generalize ht : termCmmap 𝕜 n k x = t; rw [ht] at nh
     have tn := smulCmmap_norm (if n < k then fstCmmap 𝕜 𝕜 𝕜 else sndCmmap 𝕜 𝕜 𝕜) t
     by_cases nk : n < k

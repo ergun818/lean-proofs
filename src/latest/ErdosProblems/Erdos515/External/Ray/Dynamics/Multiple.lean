@@ -78,9 +78,9 @@ theorem SuperAt.not_local_inj {f : ℂ → ℂ} {d : ℕ} (s : SuperAt f d) :
     have d0 : mfderiv I I (fun z : ℂ ↦ z) 0 ≠ 0 := id_mderiv_ne_zero
     rw [(Filter.EventuallyEq.symm ib).mfderiv_eq] at d0
     rw [←Function.comp_def, mfderiv_comp 0 _ ba.differentiableAt.mdifferentiableAt] at d0
-    rw [bottcherNear_zero] at d0
-    exact fun h ↦ d0 (ContinuousLinearMap.ext fun v ↦ by rw [h]; rfl)
-    rw [bottcherNear_zero]; exact ia.mdifferentiableAt (by decide)
+    · rw [bottcherNear_zero] at d0
+      exact fun h ↦ d0 (ContinuousLinearMap.ext fun v ↦ by rw [h]; rfl)
+    · rw [bottcherNear_zero]; exact ia.mdifferentiableAt (by decide)
   rcases exist_root_of_unity s.d2 with ⟨a, a1, ad⟩
   refine ⟨fun z ↦ i (a * bottcherNear f d z), ?_, ?_, ?_⟩
   · apply ContMDiffAt.analyticAt I I
@@ -160,8 +160,9 @@ theorem not_local_inj_of_deriv_zero {f : ℂ → ℂ} {c : ℂ} (fa : AnalyticAt
   have df' : HasDerivAt f' (0 * 1) 0 := by
     refine HasDerivAt.sub_const _ ?_
     have e : (fun z ↦ f (z + c)) = f ∘ fun z ↦ z + c := rfl
-    rw [e]; apply HasDerivAt.comp; simp only [zero_add, df]
-    exact HasDerivAt.add_const _ (hasDerivAt_id _)
+    rw [e]; apply HasDerivAt.comp
+    · simp only [zero_add, df]
+    · exact HasDerivAt.add_const _ (hasDerivAt_id _)
   simp only [MulZeroClass.zero_mul] at df'
   have f0' : (fun z ↦ f (z + c) - f c) 0 = 0 := by simp only [zero_add, sub_self]
   rcases not_local_inj_of_deriv_zero' fa' df' f0' with ⟨g, ga, e, h⟩; clear fa df fa' df'
@@ -175,8 +176,8 @@ theorem not_local_inj_of_deriv_zero {f : ℂ → ℂ} {c : ℂ} (fa : AnalyticAt
     refine (sc.eventually h).mp (.of_forall ?_)
     simp only [mem_compl_singleton_iff, sub_ne_zero]
     intro z h zc; rcases h zc with ⟨gz, ff⟩; constructor
-    contrapose gz; nth_rw 2 [← gz]; ring
-    simp only [sub_left_inj, sub_add_cancel, f'] at ff; exact ff
+    · contrapose gz; nth_rw 2 [← gz]; ring
+    · simp only [sub_left_inj, sub_add_cancel, f'] at ff; exact ff
 
 /-- If `f' z = 0`, then every value near `f z` is achieved at least twice (manifold version).
     We operationalize this statement via a nontrivial function `g : S → T` s.t. `f (g w) = f w`
@@ -187,9 +188,8 @@ public theorem not_local_inj_of_mfderiv_zero {f : S → T} {c : S} (fa : ContMDi
   generalize hg : (fun z ↦ extChartAt I (f c) (f ((extChartAt I c).symm z))) = g
   have dg : mfderiv I I g (extChartAt I c c) = 0 := by
     have fd : MDifferentiableAt I I f ((extChartAt I c).symm (extChartAt I c c)) := by
-      rw [PartialEquiv.left_inv]
+      rw [PartialEquiv.left_inv _ (mem_extChartAt_source c)]
       exact fa.mdifferentiableAt (by decide)
-      apply mem_extChartAt_source
     rw [← hg, ←Function.comp_def, ← Function.comp_def,
       mfderiv_comp _ ((contMDiffAt_extChartAt' _).mdifferentiableAt one_ne_zero) _,
       mfderiv_comp _ fd (((contMDiffOn_extChartAt_symm _).contMDiffAt
@@ -214,9 +214,9 @@ public theorem not_local_inj_of_mfderiv_zero {f : S → T} {c : S} (fa : ContMDi
   refine ⟨fun z ↦ (extChartAt I c).symm (h (extChartAt I c z)), ?_, ?_, ?_⟩
   · apply ((contMDiffOn_extChartAt_symm _).contMDiffAt
       (extChartAt_target_mem_nhds' (mem_extChartAt_target c))).comp_of_eq
-    apply (ha.mAnalyticAt I I).comp_of_eq
-      (contMDiffAt_extChartAt' (mem_chart_source _ c)) rfl
-    exact h0
+    · exact (ha.mAnalyticAt I I).comp_of_eq
+        (contMDiffAt_extChartAt' (mem_chart_source _ c)) rfl
+    · exact h0
   · simp only [h0, PartialEquiv.left_inv _ (mem_extChartAt_source c)]
   · rw [eventually_nhdsWithin_iff] at e ⊢
     apply ((continuousAt_extChartAt c).eventually e).mp
@@ -230,9 +230,11 @@ public theorem not_local_inj_of_mfderiv_zero {f : S → T} {c : S} (fa : ContMDi
     have m3 : ∀ᶠ z in 𝓝 c,
         f ((extChartAt I c).symm (h (extChartAt I c z))) ∈ (extChartAt I (f c)).source := by
       refine ContinuousAt.eventually_mem ?_ (extChartAt_source_mem_nhds' ?_)
-      · apply fa.1.comp_of_eq; apply (continuousAt_extChartAt_symm _).comp_of_eq
-        apply ha.continuousAt.comp_of_eq; exact continuousAt_extChartAt _
-        rfl; exact h0; rw [h0, PartialEquiv.left_inv _ (mem_extChartAt_source _)]
+      · apply fa.1.comp_of_eq
+        · apply (continuousAt_extChartAt_symm _).comp_of_eq
+          · exact ha.continuousAt.comp_of_eq (continuousAt_extChartAt _) rfl
+          · exact h0
+        · rw [h0, PartialEquiv.left_inv _ (mem_extChartAt_source _)]
       · rw [h0, PartialEquiv.left_inv _ (mem_extChartAt_source _)]
         apply mem_extChartAt_source
     refine m1.mp (m2.mp (m3.mp (.of_forall ?_)))
@@ -241,9 +243,10 @@ public theorem not_local_inj_of_mfderiv_zero {f : S → T} {c : S} (fa : ContMDi
     rcases even ((PartialEquiv.injOn _).ne m0 (mem_extChartAt_source c) zc) with ⟨hz, gh⟩
     constructor
     · nth_rw 2 [← PartialEquiv.left_inv _ m0]
-      rw [(PartialEquiv.injOn _).ne_iff]; exact hz
-      rw [PartialEquiv.symm_source]; exact m1
-      rw [PartialEquiv.symm_source]; exact PartialEquiv.map_source _ m0
+      rw [(PartialEquiv.injOn _).ne_iff]
+      · exact hz
+      · rw [PartialEquiv.symm_source]; exact m1
+      · rw [PartialEquiv.symm_source]; exact PartialEquiv.map_source _ m0
     · simp only [← hg] at gh
       rw [PartialEquiv.left_inv _ m0] at gh
       rw [(PartialEquiv.injOn _).eq_iff m3 m2] at gh; exact gh

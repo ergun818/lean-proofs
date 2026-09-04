@@ -47,7 +47,6 @@ From these, we have a variety of consequences, such as:
 6. Locally constant functions are constant on preconnected sets
 -/
 
-open Classical
 open Filter (Tendsto)
 open Function (curry uncurry)
 open Metric (ball closedBall isOpen_ball mem_ball mem_closedBall mem_ball_self
@@ -70,7 +69,7 @@ variable {f : ℂ → ℂ} {s : Set ℂ}
 theorem NontrivialAnalyticOn.isolated (n : NontrivialAnalyticOn f s) {z : ℂ} (zs : z ∈ s) :
     ∀ᶠ w in 𝓝[{z}ᶜ] z, f w ≠ f z := by
   have fa : AnalyticAt ℂ (fun w ↦ f w - f z) z := (n.analyticOn z zs).sub analyticAt_const
-  cases' fa.eventually_eq_zero_or_eventually_ne_zero with h h
+  rcases fa.eventually_eq_zero_or_eventually_ne_zero with h | h
   · have b := h.and_frequently (n.nonconst z zs)
     simp only [sub_eq_zero, Ne, and_not_self_iff, Filter.frequently_false] at b
   · simp only [sub_ne_zero] at h; exact h
@@ -78,7 +77,8 @@ theorem NontrivialAnalyticOn.isolated (n : NontrivialAnalyticOn f s) {z : ℂ} (
 /-- Nontrivial analytic functions have isolated values -/
 theorem NontrivialAnalyticOn.isolated' (n : NontrivialAnalyticOn f s) {z : ℂ} (zs : z ∈ s) (a : ℂ) :
     ∀ᶠ w in 𝓝[{z}ᶜ] z, f w ≠ a := by
-  by_cases h : f z = a; simp only [← h]; exact n.isolated zs
+  by_cases h : f z = a
+  · simpa only [← h] using n.isolated zs
   exact ((n.analyticOn _ zs).continuousAt.eventually_ne h).filter_mono nhdsWithin_le_nhds
 
 /-- Nonconstant functions on preconnected sets are nontrivial -/
@@ -136,7 +136,7 @@ theorem IsTotallyDisconnected.allRootsOfUnity : IsTotallyDisconnected allRootsOf
   apply IsCountable.isTotallyDisconnected
   simp only [_root_.allRootsOfUnity, ofPred_exists]; apply countable_iUnion; intro n
   by_cases n0 : n = 0
-  simp only [n0, Ne, not_true, false_and, ofPred_false, countable_empty]
+  · simp only [n0, Ne, not_true, false_and, ofPred_false, countable_empty]
   simp only [Ne, n0, not_false_iff, true_and]
   have np : 0 < n := Nat.pos_of_ne_zero n0
   generalize hn' : (⟨n, np⟩ : ℕ+) = n'
@@ -205,7 +205,7 @@ public theorem ContMDiffAt.eventually_eq_or_eventually_ne [T2Space T] {f g : S �
     simp only [Filter.not_eventually, not_not] at fg
     exact tendsto_nhds_unique_of_frequently_eq fc gc (fg.filter_mono nhdsWithin_le_nhds)
   simp only [not_not] at fg
-  cases' fa.eventually_eq_or_eventually_ne ga with e e
+  rcases fa.eventually_eq_or_eventually_ne ga with e | e
   · left; clear fa ga
     replace e := (continuousAt_extChartAt z).eventually e
     replace e := Filter.EventuallyEq.fun_comp e (_root_.extChartAt I (f z)).symm
@@ -243,12 +243,14 @@ public theorem ContMDiffOn.const_of_locally_const [T2Space T] {f : S → T} {s :
   · use z; simp only [Set.mem_inter_iff, ← ht]; exact ⟨zs, zs, c⟩
   · intro z m; simp only [Set.mem_inter_iff, mem_closure_iff_frequently] at m
     have aa : ContMDiffAt I I ω (fun _ ↦ a) z := contMDiffAt_const
-    cases' (fa.contMDiffAt (o.mem_nhds m.2)).eventually_eq_or_eventually_ne aa with h h
+    rcases (fa.contMDiffAt (o.mem_nhds m.2)).eventually_eq_or_eventually_ne aa with h | h
     · rw [← ht]; use m.2, h
     · simp only [eventually_nhdsWithin_iff, Set.mem_compl_singleton_iff] at h
       have m' := m.1; contrapose m'; simp only [Filter.not_frequently]
       refine h.mp (.of_forall ?_); intro x i
-      by_cases xz : x = z; rwa [xz]; specialize i xz; contrapose i
+      by_cases xz : x = z
+      · rwa [xz]
+      specialize i xz; contrapose i
       simp only [← ht] at i ⊢; exact i.2.self_of_nhds
 
 /-- If `S` is locally connected, we don't need the open assumption in
@@ -266,7 +268,7 @@ public theorem ContMDiffOnNhd.const_of_locally_const [LocallyConnectedSpace S] [
 public theorem NontrivialMAnalyticAt.eventually_ne [T2Space T] {f : S → T} {z : S}
     (n : NontrivialMAnalyticAt f z) : ∀ᶠ w in 𝓝 z, w ≠ z → f w ≠ f z := by
   have ca : ContMDiffAt I I ω (fun _ ↦ f z) z := contMDiffAt_const
-  cases' n.mAnalyticAt.eventually_eq_or_eventually_ne ca with h h
+  rcases n.mAnalyticAt.eventually_eq_or_eventually_ne ca with h | h
   · have b := h.and_frequently n.nonconst
     simp only [and_not_self_iff, Filter.frequently_false] at b
   · simp only [eventually_nhdsWithin_iff, mem_compl_singleton_iff] at h; convert h
@@ -423,8 +425,8 @@ public theorem ContMDiffOnNhd.eq_of_locally_eq [CompleteSpace F] {f g : M → N}
         extChartAt K (g x) (g ((extChartAt J x).symm y))) = d
     generalize hz : extChartAt J x x = z
     suffices h : d =ᶠ[𝓝 z] 0 by
-      simp only [← hz, ← map_extChartAt_nhds_of_boundaryless x, Filter.eventually_map, Filter.EventuallyEq,
-        ← ht] at h ⊢
+      simp only [← hz, ← map_extChartAt_nhds_of_boundaryless x, Filter.eventually_map,
+        Filter.EventuallyEq, ← ht] at h ⊢
       refine
         h.mp (((isOpen_extChartAt_source x).eventually_mem
         (mem_extChartAt_source (I := J) x)).mp ?_)

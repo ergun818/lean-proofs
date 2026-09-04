@@ -10,7 +10,6 @@ import Mathlib.Topology.MetricSpace.Basic
 ## Countable sets and space are totally disconnected
 -/
 
-open Classical
 open Function (uncurry)
 open Metric (ball closedBall mem_ball mem_closedBall isOpen_ball isClosed_closedBall mem_ball_self)
 open Set
@@ -18,8 +17,9 @@ open scoped Topology
 noncomputable section
 
 /-- A left inverse to subtype coe -/
-def Set.Nonempty.invCoe {X : Type} {s : Set X} (ne : s.Nonempty) : X → s := fun x ↦
-  if m : x ∈ s then (⟨x, m⟩ : s) else (⟨ne.some, ne.some_mem⟩ : s)
+def Set.Nonempty.invCoe {X : Type} {s : Set X} (ne : s.Nonempty) : X → s := by
+  classical
+  exact fun x ↦ if m : x ∈ s then (⟨x, m⟩ : s) else (⟨ne.some, ne.some_mem⟩ : s)
 
 theorem Set.Nonempty.left_invCoe {X : Type} {s : Set X} (ne : s.Nonempty) :
     ∀ x : s, ne.invCoe x = x := by
@@ -49,8 +49,8 @@ theorem isTotallyDisconnected_iff_totally_disconnected_subtype {X : Type} [Topol
       have e : t = (fun x : s ↦ x.val) '' t' := by
         apply Set.ext; intro x; simp only [mem_image]; constructor
         · intro xt; use ⟨x, ts xt⟩; refine ⟨⟨x,xt,?_⟩,?_⟩
-          simp only [Subtype.ext_iff, ne.right_invCoe _ (ts xt)]
-          rw [Subtype.coe_mk]
+          · simp only [Subtype.ext_iff, ne.right_invCoe _ (ts xt)]
+          · rw [Subtype.coe_mk]
         · intro ⟨⟨y, ys⟩, ⟨z, zt, zy⟩, yx⟩
           simp only [Subtype.ext_iff, ne.right_invCoe _ (ts zt)] at yx zy
           rw [← yx, ← zy]; exact zt
@@ -83,9 +83,10 @@ public theorem Countable.totallyDisconnectedSpace {X : Type} [MetricSpace X] [Co
     apply Set.ext; intro z; simp only [mem_ball, mem_closedBall]
     simp only [mem_ofPred, not_exists, ← hR] at rr; simp only [Ne.le_iff_lt (rr z x)]
   refine ⟨ball x r, ⟨?_, isOpen_ball⟩, ?_⟩
-  rw [e]; exact isClosed_closedBall; use mem_ball_self rp
-  simp only [mem_compl_iff, mem_ball, dist_comm, not_lt]
-  exact rxy.le
+  · rw [e]; exact isClosed_closedBall
+  · use mem_ball_self rp
+    simp only [mem_compl_iff, mem_ball, dist_comm, not_lt]
+    exact rxy.le
 
 /-- Countable sets are totally disconnected -/
 public theorem IsCountable.isTotallyDisconnected {X : Type} [MetricSpace X] {s : Set X}

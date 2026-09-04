@@ -23,7 +23,7 @@ def partialPoly (u : ℕ → ℂ) (N : ℕ) : ℂ[X] :=
 
 lemma eval_partialPoly (u : ℕ → ℂ) (N : ℕ) (z : ℂ) :
     (partialPoly u N).eval z = ∑ n ∈ Finset.range N, u n * z ^ n := by
-  simp [partialPoly, Polynomial.eval_finsetSum, mul_comm]
+  simp [partialPoly, Polynomial.eval_finsetSum]
 
 lemma coeff_partialPoly (u : ℕ → ℂ) (N n : ℕ) :
     (partialPoly u N).coeff n = if n < N then u n else 0 := by
@@ -167,7 +167,7 @@ lemma norm_partial_hardySum_le_tsum {u : ℕ → ℂ} (hu : Summable (fun n ↦ 
   calc
     ‖∑ n ∈ Finset.range N, u n * z ^ n‖ ≤
         ∑ n ∈ Finset.range N, ‖u n * z ^ n‖ := norm_sum_le _ _
-    _ = ∑ n ∈ Finset.range N, ‖u n‖ := by simp [norm_mul, norm_pow, hznorm]
+    _ = ∑ n ∈ Finset.range N, ‖u n‖ := by simp [norm_pow, hznorm]
     _ ≤ ∑' n, ‖u n‖ := hu.sum_le_tsum (Finset.range N) (fun n _ ↦ norm_nonneg _)
 
 lemma norm_hardySum_le_tsum {u : ℕ → ℂ} (hu : Summable (fun n ↦ ‖u n‖))
@@ -178,7 +178,7 @@ lemma norm_hardySum_le_tsum {u : ℕ → ℂ} (hu : Summable (fun n ↦ ‖u n�
     simpa [norm_mul, norm_pow, hznorm] using hu
   calc
     ‖hardySum u z‖ ≤ ∑' n, ‖u n * z ^ n‖ := norm_tsum_le_tsum_norm hs
-    _ = ∑' n, ‖u n‖ := by congr 1; funext n; simp [norm_mul, norm_pow, hznorm]
+    _ = ∑' n, ‖u n‖ := by congr 1; funext n; simp [norm_pow, hznorm]
 
 lemma uniform_partial_inner {u v : ℕ → ℂ}
     (hu : Summable (fun n ↦ ‖u n‖)) (hv : Summable (fun n ↦ ‖v n‖)) :
@@ -241,7 +241,7 @@ lemma summable_re_mul_conj {u v : ℕ → ℂ}
   intro n
   calc
     ‖(u n * conj (v n)).re‖ ≤ ‖u n * conj (v n)‖ := Complex.abs_re_le_norm _
-    _ = ‖u n‖ * ‖v n‖ := by simp [norm_mul]
+    _ = ‖u n‖ * ‖v n‖ := by simp
     _ ≤ ‖u n‖ * Bv := mul_le_mul_of_nonneg_left (hv_le n) (norm_nonneg (u n))
     _ = Bv * ‖u n‖ := mul_comm _ _
 

@@ -168,16 +168,16 @@ theorem arg_exp_of_im (t : ℝ) : ∃ n : ℤ, arg (exp (t * I)) = t - 2 * π * 
 
 /-- `realCircleMap` is injective on the square -/
 theorem rcm_inj {c : ℂ} {r0 r1 : ℝ} (r0p : 0 ≤ r0) : InjOn (realCircleMap c) (square r0 r1) := by
-  intro x xs y ys e; simp [square] at xs ys
+  intro x xs y ys e; simp only [square, mem_prod, mem_Ioc] at xs ys
   simp_rw [realCircleMap_eq_circleMap, Equiv.apply_eq_iff_eq] at e
-  simp_rw [circleMap] at e; simp at e
+  simp_rw [circleMap] at e; simp only [add_right_inj] at e
   have re : ‖↑x.1 * exp (x.2 * I)‖ = ‖↑y.1 * exp (y.2 * I)‖ := by rw [e]
   have x0 : 0 < x.1 := by linarith
   have y0 : 0 < y.1 := by linarith
   simp only [norm_mul, Complex.norm_real, abs_of_pos x0, Complex.norm_exp_ofReal_mul_I, mul_one,
     abs_of_pos y0, Real.norm_eq_abs] at re
   have ae : arg (↑x.1 * exp (x.2 * I)) = arg (↑y.1 * exp (y.2 * I)) := by rw [e]
-  simp [Complex.arg_real_mul _ x0, Complex.arg_real_mul _ y0] at ae
+  simp only [Complex.arg_real_mul _ x0, Complex.arg_real_mul _ y0] at ae
   rcases arg_exp_of_im x.2 with ⟨nx, hx⟩
   rcases arg_exp_of_im y.2 with ⟨ny, h⟩
   rw [← ae, hx] at h; clear e ae hx
@@ -230,7 +230,7 @@ public theorem fubini_annulus {E : Type} [NormedAddCommGroup E] [NormedSpace ℝ
     intro x xs; rw [abs_of_pos (square.rp r0p xs)]
   rw [MeasureTheory.setIntegral_congr_fun Measurable.square e]; clear e
   rw [square, Measure.volume_eq_prod, MeasureTheory.setIntegral_prod]
-  simp [integral_smul]
+  · simp [integral_smul]
   have fi : IntegrableOn (fun x : ℝ × ℝ ↦ x.1 • f (circleMap c x.1 x.2))
       (Icc r0 r1 ×ˢ Icc 0 (2 * π)) := by
     apply ContinuousOn.integrableOn_compact

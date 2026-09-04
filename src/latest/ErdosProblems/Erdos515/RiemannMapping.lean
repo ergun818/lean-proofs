@@ -202,11 +202,11 @@ private theorem AnalyticOnNhd.exists_finset_eq_prod_smul_nonzero515
     rw [analyticOrderAt_eq_top] at hfx
     exact hf₀ <| hfs.eqOn_zero_of_preconnected_of_eventuallyEq_zero hs_conn hx hfx
   obtain ⟨t, hts⟩ : ∃ t : Finset 𝕜, ∀ x, x ∈ t ↔ x ∈ s ∧ f x = 0 := by
-    use hs_comp.finite_diff_of_mem_codiscreteWithin
-      hfs.codiscreteWithin_setOf_analyticOrderAt_eq_zero_or_top |>.toFinset
-    simp only [Finite.mem_toFinset, mem_diff, mem_setOf_eq, not_or, analyticOrderAt_eq_zero,
+    use hs_comp.finite_sdiff_of_mem_codiscreteWithin
+      hfs.codiscreteWithin_setOfPred_analyticOrderAt_eq_zero_or_top |>.toFinset
+    simp only [Finite.mem_toFinset, Set.mem_sdiff, mem_ofPred_eq, not_or, analyticOrderAt_eq_zero,
       and_congr_right_iff]
-    push_neg
+    push Not
     intro x hx
     simp [hfs _ hx, hf_top hfs hf₀ x hx]
   use t, hts
@@ -401,11 +401,11 @@ private theorem eqOn_zero_or_forall_ne_zero_of_tendstoLocallyUniformlyOn515
             analyticOrderAt_eq_top, hfd.analyticAt (hUo.mem_nhds hc), hR₀]
         rw [eventually_nhdsWithin_iff] at hfc₀
         refine Frequently.mp ?_ hfc₀
-        rw [frequently_iff_neBot, setOf_mem_eq, ← nhdsWithin]
+        rw [frequently_iff_neBot, ofPred_mem_eq, ← nhdsWithin]
         infer_instance
-      · have hfinite := (isCompact_closedBall c R).finite_diff_of_mem_codiscreteWithin
+      · have hfinite := (isCompact_closedBall c R).finite_sdiff_of_mem_codiscreteWithin
           (((hfd.analyticOnNhd hUo).mono hRU)
-            |>.codiscreteWithin_setOf_analyticOrderAt_eq_zero_or_top)
+            |>.codiscreteWithin_setOfPred_analyticOrderAt_eq_zero_or_top)
         refine hfinite.subset ?_
         simp +contextual [subset_def, analyticOrderNatAt, le_of_lt]
     · exact hfd.analyticOnNhd hUo |>.mono hRU
@@ -510,7 +510,7 @@ private theorem exists_mapsTo_unitBall_injOn_deriv_ne_zero515
 
 private theorem exists_map_unitDisc_injOn_deriv_ne_zero₀515
     {U : Set ℂ} (hUo : IsOpen U) (hUc : IsSimplyConnected U) (hU : U ≠ univ)
-    {x : ℂ} (hx : x ∈ U) :
+    {x : ℂ} (_hx : x ∈ U) :
     ∃ f : ℂ → Complex.UnitDisc, f x = 0 ∧ InjOn f U ∧
       (∀ z ∈ U, deriv (fun z ↦ (f z : ℂ)) z ≠ 0) := by
   classical
@@ -561,7 +561,7 @@ private theorem exists_map_unitDisc_injOn_norm_deriv_gt515
   have hg₀ : ∀ z ∈ U, g z ≠ 0 := by
     intro z hz
     suffices g z ^ (2 : ℕ+) ≠ 0 by simpa using this
-    simp [hgf, Function.comp_def, hc z hz]
+    simp [hgf, hc z hz]
   have hdg : ∀ z ∈ U, HasDerivAt (fun z ↦ (g z : ℂ))
       (((1 - conj ((-c : Complex.UnitDisc) : ℂ) * (-c : Complex.UnitDisc)) /
           (1 + conj ((-c : Complex.UnitDisc) : ℂ) * f z) ^ 2 *
@@ -571,7 +571,7 @@ private theorem exists_map_unitDisc_injOn_norm_deriv_gt515
       (Complex.UnitDisc.continuous_coe.continuousAt.comp <| hgc.continuousAt <| hUo.mem_nhds hz)
       (Complex.UnitDisc.hasDerivAt_shift515_comp (-c) <|
         (hdf.hasDerivAt <| hUo.mem_nhds hz))
-      (by simp [Function.comp_def, hg₀ z hz])
+      (by simp [hg₀ z hz])
       (.of_forall fun x ↦ congr(Complex.UnitDisc.coe $(hgf x)))
     simpa [Function.comp_def, hg₀ z hz] using H
   have hg_sq_norm (z : ℂ) :
@@ -596,11 +596,13 @@ private theorem exists_map_unitDisc_injOn_norm_deriv_gt515
         ‖deriv (fun z ↦ (f z : ℂ)) x‖ *
           (‖(g x : ℂ)‖ + ‖(g x : ℂ)‖⁻¹) / 2 := by
       rw [Complex.UnitDisc.deriv_shift515_comp, (hdg x hx).deriv]
-      simp only [G, norm_mul, norm_div, norm_pow, Complex.UnitDisc.coe_neg, map_neg,
-        neg_mul, neg_neg, norm_ofNat]
-      simp only [mul_neg, neg_neg]
+      simp only [norm_mul, norm_div, norm_pow, Complex.UnitDisc.coe_neg, map_neg,
+        neg_mul, norm_ofNat]
+      simp only [mul_neg, neg_neg, Complex.UnitDisc.norm_one_sub_conj_mul_self515,
+        ← sub_eq_add_neg, hf₀, Complex.UnitDisc.coe_zero, mul_zero, neg_zero, add_zero,
+        norm_one, one_pow, div_one]
       rw [← hsq]
-      field_simp [hspos.ne']
+      field_simp [hspos.ne', hsone.ne']
       ring
     rw [hkey, mul_div_assoc]
     apply lt_mul_of_one_lt_right
@@ -620,7 +622,7 @@ private theorem uniformEquicontinuousOn_of_thickening_subset_of_forall_norm_le51
   rcases hf with ⟨C, hC⟩
   rcases exists_pos_mul_lt hε (2 * C / r) with ⟨δ, hδ₀, hδ⟩
   use min δ r, by positivity
-  simp only [mem_setOf, mem_inter_iff, prodMk_mem_set_prod_eq]
+  simp only [mem_ofPred, mem_inter_iff, prodMk_mem_set_prod_eq]
   rintro x y ⟨hdist, hx, hy⟩ i
   rw [lt_min_iff] at hdist
   rw [thickening_eq_biUnion_ball, iUnion₂_subset_iff] at hU

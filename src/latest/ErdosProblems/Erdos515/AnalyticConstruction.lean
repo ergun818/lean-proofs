@@ -107,7 +107,7 @@ lemma lrwGrowthFactor_lt_inv_one_sub {delta : ℝ}
 
 lemma positive_of_lrwNormalizedControl_pos {delta : ℝ} {u : ℂ → ℝ}
     {a : PositiveControlPoint u} {z : ℂ}
-    (hdelta0 : 0 < delta) (hdelta1 : delta < 1)
+    (_hdelta0 : 0 < delta) (hdelta1 : delta < 1)
     (hz : 0 < lrwNormalizedControl delta u a z) :
     delta * u a.point < u z := by
   unfold lrwNormalizedControl at hz
@@ -186,8 +186,8 @@ noncomputable def finitePrefix {D : Set ℂ} {v : ℂ → ℝ} {a b : ℂ}
   vertex i := Q.vertex i
   start := Q.start
   finish := rfl
-  segment_mem i hi t ht := Q.segment_mem i t ht
-  segment_positive i hi t ht := Q.segment_positive i t ht
+  segment_mem i _hi t ht := Q.segment_mem i t ht
+  segment_positive i _hi t ht := Q.segment_positive i t ht
 
 /-- Taking a finite prefix cannot increase the total polygonal length. -/
 lemma finitePrefix_length_le {D : Set ℂ} {v : ℂ → ℝ} {a b : ℂ}
@@ -568,7 +568,7 @@ theorem exists_boundaryControl_logPosNorm {f : ℂ → ℂ}
         Real.exp ((Cconst * height k - M) / n) := by
       have hlevelEq : level k = Cconst * height k := by
         dsimp [level, Cconst, height, lrwLevel]
-        simp only [LRWShortPathPrinciple.matchingArcs_endpoint, div_eq_mul_inv, mul_comm]
+        simp only [div_eq_mul_inv, mul_comm]
       rw [hlevelEq]
     rw [hexpEq] at hd
     apply max_le

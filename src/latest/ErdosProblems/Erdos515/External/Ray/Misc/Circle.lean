@@ -14,7 +14,6 @@ import ErdosProblems.Erdos515.External.Ray.Misc.Complex
 ## `Circle` facts
 -/
 
-open Classical
 open Complex (arg exp I slitPlane)
 open Metric (sphere)
 open Set
@@ -73,6 +72,7 @@ lemma Circle.isConnected_compl_singleton (s : Circle) : IsConnected {s}ᶜ := by
 /-- There are no continuous, injective maps `Circle → ℝ` -/
 lemma Circle.not_continuous_or_not_injective {f : Circle → ℝ} (cont : Continuous f)
     (inj : f.Injective) : False := by
+  classical
   obtain ⟨a,_,lo⟩ := isCompact_univ.exists_isMinOn univ_nonempty cont.continuousOn
   obtain ⟨b,_,hi⟩ := isCompact_univ.exists_isMaxOn univ_nonempty cont.continuousOn
   simp only [isMinOn_iff, mem_univ, forall_const, isMaxOn_iff] at lo hi

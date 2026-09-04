@@ -12,7 +12,6 @@ This is a straightforward consequence of the inverse function theorem.  We also 
 parameterized versions, where `f : ℂ → S → T`.
 -/
 
-open Classical
 open Filter (Tendsto)
 open Function (uncurry)
 open OneDimension
