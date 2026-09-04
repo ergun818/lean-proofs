@@ -15,7 +15,7 @@ open Finset G5Vertex
 
 section FiniteChoices
 
-variable {Color : Type*} [DecidableEq Color]
+variable {Color : Type*}
 
 /-- Choose a member of a finite set outside a strictly smaller forbidden set. -/
 lemma exists_mem_avoiding {A F : Finset Color} (h : F.card < A.card) :
@@ -27,12 +27,13 @@ lemma exists_mem_ne_of_two {A : Finset Color} (hA : 2 ≤ A.card) (q : Color) :
     ∃ a ∈ A, a ≠ q := by
   exact A.exists_mem_ne (by omega) q
 
-lemma card_pair_le_two (a b : Color) : ({a, b} : Finset Color).card ≤ 2 := by
+lemma card_pair_le_two [DecidableEq Color] (a b : Color) : ({a, b} : Finset Color).card ≤ 2 := by
   calc
     ({a, b} : Finset Color).card ≤ ({b} : Finset Color).card + 1 := card_insert_le _ _
     _ = 2 := by simp
 
-lemma card_triple_le_three (a b c : Color) : ({a, b, c} : Finset Color).card ≤ 3 := by
+lemma card_triple_le_three [DecidableEq Color] (a b c : Color) :
+    ({a, b, c} : Finset Color).card ≤ 3 := by
   calc
     ({a, b, c} : Finset Color).card ≤ ({b, c} : Finset Color).card + 1 := card_insert_le _ _
     _ ≤ 3 := by have := card_pair_le_two b c; omega
@@ -41,11 +42,12 @@ lemma card_triple_le_three (a b c : Color) : ({a, b, c} : Finset Color).card ≤
 lemma triangle_extension {A B : Finset Color} (hA : 2 ≤ A.card)
     (hB : 2 ≤ B.card) (hne : A ≠ B) (q : Color) :
     ∃ a ∈ A, ∃ b ∈ B, a ≠ b ∧ a ≠ q ∧ b ≠ q := by
+  classical
   obtain ⟨a, haA, haq⟩ := exists_mem_ne_of_two hA q
   by_cases hb : ∃ b ∈ B, b ≠ q ∧ b ≠ a
   · obtain ⟨b, hbB, hbq, hba⟩ := hb
     exact ⟨a, haA, b, hbB, hba.symm, haq, hbq⟩
-  · push_neg at hb
+  · push Not at hb
     have hBsub : B ⊆ {q, a} := by
       intro b hbB
       simp only [mem_insert, mem_singleton]
@@ -80,7 +82,7 @@ lemma triangle_extension {A B : Finset Color} (hA : 2 ≤ A.card)
 from the list at the last vertex. -/
 lemma cycle5_from_missing {A B C D E : Finset Color}
     (hB : 2 ≤ B.card) (hC : 2 ≤ C.card) (hD : 2 ≤ D.card)
-    (hE : 2 ≤ E.card) {a : Color} (haA : a ∈ A) (haE : a ∉ E) :
+    (hE : 2 ≤ E.card) {a : Color} (_haA : a ∈ A) (haE : a ∉ E) :
     ∃ b ∈ B, ∃ c ∈ C, ∃ d ∈ D, ∃ e ∈ E,
       a ≠ b ∧ b ≠ c ∧ c ≠ d ∧ d ≠ e ∧ e ≠ a := by
   obtain ⟨b, hbB, hba⟩ := exists_mem_ne_of_two hB a
@@ -98,6 +100,7 @@ lemma cycle5_nonconstant {A B C D E : Finset Color}
     (hne : ¬ (A = B ∧ B = C ∧ C = D ∧ D = E)) :
     ∃ a ∈ A, ∃ b ∈ B, ∃ c ∈ C, ∃ d ∈ D, ∃ e ∈ E,
       a ≠ b ∧ b ≠ c ∧ c ≠ d ∧ d ≠ e ∧ e ≠ a := by
+  classical
   have adjacent (P Q R S T : Finset Color)
       (hP : 2 ≤ P.card) (hQ : 2 ≤ Q.card) (hR : 2 ≤ R.card)
       (hS : 2 ≤ S.card) (hT : 2 ≤ T.card) (hPQ : P ≠ Q) :
@@ -136,9 +139,10 @@ lemma cycle5_nonconstant {A B C D E : Finset Color}
 /-- A precolouring of two nonadjacent vertices of a five-cycle extends when
 all five lists are a common set of at least three colours. -/
 lemma common_cycle5_extension {A : Finset Color} (hA : 3 ≤ A.card)
-    {a c : Color} (ha : a ∈ A) (hc : c ∈ A) :
+    {a c : Color} (_ha : a ∈ A) (_hc : c ∈ A) :
     ∃ b ∈ A, ∃ d ∈ A, ∃ e ∈ A,
       a ≠ b ∧ b ≠ c ∧ c ≠ d ∧ d ≠ e ∧ e ≠ a := by
+  classical
   obtain ⟨b, hbA, hb⟩ := exists_mem_avoiding
     (A := A) (F := {a, c}) (by have := card_pair_le_two a c; omega)
   obtain ⟨d, hdA, hdc⟩ := exists_mem_ne_of_two (by omega : 2 ≤ A.card) c
@@ -150,7 +154,7 @@ lemma common_cycle5_extension {A : Finset Color} (hA : 3 ≤ A.card)
 
 /-- Equal singleton deletions of two equicardinal sets force the original
 sets to be equal. -/
-lemma eq_of_sdiff_singleton_eq_of_card_eq {A B : Finset Color} {q : Color}
+lemma eq_of_sdiff_singleton_eq_of_card_eq [DecidableEq Color] {A B : Finset Color} {q : Color}
     (hcard : A.card = B.card) (hdel : A \ {q} = B \ {q}) : A = B := by
   by_cases hqA : q ∈ A
   · have hqB : q ∈ B := by
@@ -190,7 +194,7 @@ end FiniteChoices
 
 section StructuredColorings
 
-variable {Color : Type*} [DecidableEq Color]
+variable {Color : Type*}
 
 /-- Dependent case analysis on the two-element type without proposition-based
 enumeration. -/
@@ -361,6 +365,7 @@ def G2Flexible (L : G5Vertex → Finset Color) : Prop :=
 /-- DHS Lemma 5, positive half: `G₂` has the required flexible boundary. -/
 theorem g2_flexible {L : G5Vertex → Finset Color} (hL : IsHalfListAssignment L) :
     G2Flexible L := by
+  classical
   have hv1 : (L v1).card = 3 := by rw [hL]; decide
   have hu2 : (L u2).card = 3 := by rw [hL]; decide
   have hv3 : (L v3).card = 3 := by rw [hL]; decide
@@ -411,7 +416,7 @@ theorem g2_flexible {L : G5Vertex → Finset Color} (hL : IsHalfListAssignment L
       · intro h; exact hhubA (h ▸ cyc.e_mem)
     have hhubTri : hub ≠ tri.a := by
       intro h
-      exact (mem_sdiff.mp tri.a_mem).2 (by simpa [h] using mem_singleton_self hub)
+      exact (mem_sdiff.mp tri.a_mem).2 (by simp [h])
     refine ⟨⟨cyc', hub, hhub, hhubCycle.1, hhubCycle.2.1,
       hhubCycle.2.2.1, hhubCycle.2.2.2.1, hhubCycle.2.2.2.2,
       ⟨tri.a, tri.b, tri.c, (mem_sdiff.mp tri.a_mem).1, tri.b_mem, tri.c_mem,
@@ -488,6 +493,7 @@ of `G₅` is greedily colourable. -/
 lemma g1_from_fixed_ends {L : G5Vertex → Finset Color}
     (hL : IsHalfListAssignment L) {a c : Color} (ha : a ∈ L v1) (hc : c ∈ L v3) :
     ∃ R : G1Choice L, R.cycle.a = a ∧ R.cycle.c = c := by
+  classical
   have hv2 : (L v2).card = 3 := by rw [hL]; decide
   have hv4 : (L v4).card = 3 := by rw [hL]; decide
   have hv5 : (L v5).card = 2 := by rw [hL]; decide
@@ -504,7 +510,7 @@ lemma g1_from_fixed_ends {L : G5Vertex → Finset Color}
   obtain ⟨xx, hxx, hxxavoid⟩ := exists_mem_avoiding
     (A := L x) (F := {yy, a}) (by have := card_pair_le_two yy a; omega)
   simp only [mem_insert, mem_singleton, not_or] at hbavoid hdavoid hxxavoid
-  simp only [mem_singleton, not_false_eq_true] at heavoid hyyavoid
+  simp only [mem_singleton] at heavoid hyyavoid
   let cyc : C5Choice (L v1) (L v2) (L v3) (L v4) (L v5) :=
     ⟨a, b, c, d, e, ha, hb, hc, hd, he,
       Ne.symm hbavoid.1, hbavoid.2, Ne.symm hdavoid.2, hdavoid.1, heavoid⟩
@@ -517,6 +523,7 @@ lemma g1_equal_avoiding {L : G5Vertex → Finset Color}
     (hL : IsHalfListAssignment L) (heq : L v1 = L v3) (d0 d1 : Color) :
     ∃ R : G1Choice L,
       R.cycle.b ≠ d0 ∧ R.cycle.d ≠ d0 ∧ R.xcolor ≠ d1 ∧ R.ycolor ≠ d1 := by
+  classical
   have hv1 : (L v1).card = 3 := by rw [hL]; decide
   have hv2 : (L v2).card = 3 := by rw [hL]; decide
   have hv3 : (L v3).card = 3 := by rw [hL]; decide
@@ -549,7 +556,7 @@ lemma g1_equal_avoiding {L : G5Vertex → Finset Color}
     have h := card_sub_card_le_card_sdiff (L v4) ({d0} : Finset Color)
     simp only [card_singleton, hv4] at h
     exact h
-  have hE : 2 ≤ E.card := by simpa [E, hv5]
+  have hE : 2 ≤ E.card := by simp [E, hv5]
   have hnon : ¬ (A = B ∧ B = C ∧ C = D ∧ D = E) := by
     rintro ⟨hAB, hBC, hCD, hDE⟩
     have hAE : A = E := hAB.trans (hBC.trans (hCD.trans hDE))
@@ -608,8 +615,9 @@ lemma g1_equal_avoiding {L : G5Vertex → Finset Color}
 /-- With the colour of `y₄` fixed, a `z`-piece admits a direct greedy
 colouring.  This is the construction used in the second relaxed case. -/
 lemma z_piece_greedy {L : G5Vertex → Finset Color}
-    (hL : IsHalfListAssignment L) (i : Fin 2) {q : Color} (hq : q ∈ L y4) :
+    (hL : IsHalfListAssignment L) (i : Fin 2) {q : Color} (_hq : q ∈ L y4) :
     Nonempty (ZPieceChoice L i q) := by
+  classical
   have h0 : (L (z i 0)).card = 2 := by rw [hL]; fin_cases i <;> decide
   have h1 : (L (z i 1)).card = 2 := by rw [hL]; fin_cases i <;> decide
   have h2 : (L (z i 2)).card = 3 := by rw [hL]; fin_cases i <;> decide
@@ -648,6 +656,7 @@ lemma z_piece_free_terminal {L : G5Vertex → Finset Color}
     (hL : IsHalfListAssignment L) (i : Fin 2) :
     ∃ guard : Color, ∀ q ∈ L y4, q ≠ guard →
       ∀ r ∈ L (z i 6), ∃ Z : ZPieceChoice L i q, Z.tail.c = r := by
+  classical
   have h0 : (L (z i 0)).card = 2 := by rw [hL]; fin_cases i <;> decide
   have h1 : (L (z i 1)).card = 2 := by rw [hL]; fin_cases i <;> decide
   have h2 : (L (z i 2)).card = 3 := by rw [hL]; fin_cases i <;> decide
@@ -739,6 +748,7 @@ lemma small_triangles_free_terminal {L : G5Vertex → Finset Color}
     ∃ r ∈ L (w 2), ∀ (i : Fin 2) (e : Color), e ∈ L (wt i 2) →
       ∃ S : AttachedTriangleChoice (L (wt i 0)) (L (wt i 1)) (L (wt i 2)) r,
         S.triangle.c = e := by
+  classical
   have hw2 : (L (w 2)).card = 3 := by rw [hL]; decide
   have hi0 (i : Fin 2) : (L (wt i 0)).card = 3 := by rw [hL]; fin_cases i <;> decide
   have hi1 (i : Fin 2) : (L (wt i 1)).card = 2 := by rw [hL]; fin_cases i <;> decide
@@ -772,6 +782,7 @@ lemma main_triangle_free_sources {L : G5Vertex → Finset Color}
     ∃ d0 ∈ L (z 0 6), ∃ d1 ∈ L (z 1 6),
       ∃ M : TriangleChoice (L (w 0)) (L (w 1)) (L (w 2)),
         M.c = r ∧ d0 ≠ M.a ∧ d1 ≠ M.a := by
+  classical
   have hw0 : (L (w 0)).card = 3 := by rw [hL]; decide
   have hw1 : (L (w 1)).card = 2 := by rw [hL]; decide
   have hz0 : (L (z 0 6)).card = 3 := by rw [hL]; decide
@@ -845,9 +856,10 @@ lemma g4_addition_greedy {L : G5Vertex → Finset Color}
     (Z : (i : Fin 2) → ZPieceChoice L i q) :
     ∃ M : TriangleChoice (L (w 0)) (L (w 1)) (L (w 2)),
       (Z 0).tail.c ≠ M.a ∧ (Z 1).tail.c ≠ M.a ∧
-      ∃ S : (i : Fin 2) →
+      ∃ _ : (i : Fin 2) →
         AttachedTriangleChoice (L (wt i 0)) (L (wt i 1)) (L (wt i 2)) M.c,
         True := by
+  classical
   have hw0 : (L (w 0)).card = 3 := by rw [hL]; decide
   have hw1 : (L (w 1)).card = 2 := by rw [hL]; decide
   have hw2 : (L (w 2)).card = 3 := by rw [hL]; decide

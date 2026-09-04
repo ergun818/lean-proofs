@@ -276,7 +276,7 @@ lemma g2_forces_y4
   have hy4dis78 : Disjoint (phi y4) colors78 := by
     apply Finset.disjoint_left.mpr
     intro c hc hc78
-    simp [colors78] at hc78
+    simp only [colors78, Finset.mem_insert, Finset.mem_singleton] at hc78
     rcases hc78 with rfl | rfl
     · exact havoid.1 hc
     · exact havoid.2 hc
