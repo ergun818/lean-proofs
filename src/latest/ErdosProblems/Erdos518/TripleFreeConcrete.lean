@@ -18,6 +18,7 @@ noncomputable local instance tripleFreeConcreteDecidableAdj : DecidableRel C.G.A
 noncomputable local instance tripleFreeConcreteDecidableComplAdj : DecidableRel C.Gᶜ.Adj :=
   Classical.decRel _
 
+omit [Fintype V] in
 /-- An outside vertex cannot have complement-colour edges to two consecutive vertices of a
 globally longest complement-colour path. -/
 lemma not_compl_adj_consecutive_of_globally_longest

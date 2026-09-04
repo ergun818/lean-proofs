@@ -78,13 +78,13 @@ lemma predCliqueEnd_adj_outside {y : V} (hy : y ∈ C.Y) :
   have hyRev : y ∉ C.Q.reverse := by simpa using hyQ
   have hnblue := not_compl_adj_head_of_globally_longest hQrev hlongRev hyRev
   have hhead : C.Q.reverse.head hQrev.1 = C.predCliqueEnd := by
-    simpa [predCliqueEnd] using List.head_reverse C.q_isPath.1
+    simp [predCliqueEnd]
   rw [hhead] at hnblue
   by_contra hred
   have hne : y ≠ C.predCliqueEnd := by
     intro heq
     apply hyQ
-    simpa [predCliqueEnd, heq] using List.getLast_mem C.q_isPath.1
+    simp [predCliqueEnd, heq]
   exact hnblue ((SimpleGraph.compl_adj C.G y C.predCliqueEnd).2
     ⟨hne, fun h ↦ hred h.symm⟩)
 

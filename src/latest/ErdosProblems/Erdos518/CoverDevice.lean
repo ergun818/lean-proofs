@@ -124,7 +124,7 @@ lemma coverDevice_small_blocks {G : SimpleGraph V} {X Y₀ D : Finset V} {h : �
       have hxList : x ∈ D.toList := Finset.mem_toList.mpr hxD
       rw [← hflatten] at hxList
       obtain ⟨block, hblock, hxBlock⟩ := List.mem_flatten.mp hxList
-      have hblock0 : block ≠ [] := fun hnil ↦ by simpa [hnil] using hxBlock
+      have hblock0 : block ≠ [] := fun hnil ↦ by simp [hnil] at hxBlock
       have hblockLive : block ∈ liveBlocks := by
         exact List.mem_filter.mpr ⟨hblock, by simpa⟩
       refine ⟨smallBlockPath Y₀ block, List.mem_map.mpr ⟨block, hblockLive, rfl⟩, ?_⟩
@@ -164,7 +164,7 @@ lemma mem_exceptionalBlockPath_of_mem_seed {z : V} {Y₀ : Finset V}
         | cons v tail =>
             cases tail with
             | nil => exact ⟨u, v, rfl⟩
-            | cons w tail => simp only [List.length_cons, List.length_nil] at hseed; omega
+            | cons w tail => simp only [List.length_cons] at hseed; omega
   simp only [List.mem_cons, List.not_mem_nil, or_false] at hx
   rcases hx with rfl | rfl <;> simp [exceptionalBlockPath, exceptionalBlockPathUV]
 
@@ -180,7 +180,7 @@ lemma mem_exceptionalBlockPath_of_mem_filler {z : V} {Y₀ : Finset V}
         | cons v tail =>
             cases tail with
             | nil => exact ⟨u, v, rfl⟩
-            | cons w tail => simp only [List.length_cons, List.length_nil] at hseed; omega
+            | cons w tail => simp only [List.length_cons] at hseed; omega
   have hxa : x ∈ alternate (v :: filler) (Y₀.toList.take filler.length) :=
     mem_alternate_left (List.mem_cons_of_mem v hx)
   simp only [exceptionalBlockPath, exceptionalBlockPathUV, List.mem_cons]
@@ -272,7 +272,7 @@ lemma isPath_exceptionalBlockPath {G : SimpleGraph V} {X Y₀ Y₁ : Finset V}
             cases tail with
             | nil => exact ⟨u, v, rfl⟩
             | cons w tail =>
-                simp only [List.length_cons, List.length_nil] at hseedLen
+                simp only [List.length_cons] at hseedLen
                 omega
   apply isPath_exceptionalBlockPathUV hz
   · exact hseedX u (by simp)
@@ -358,7 +358,7 @@ lemma coverDevice_exceptional_blocks {G : SimpleGraph V}
     have hle : fillerSizes.sum ≤ R.toList.length := hfillerSum.le
     have h := List.splitLengths_length_getElem R.toList fillerSizes hle i hi
     simp only [fillers, List.length_splitLengths] at hi
-    simp [fillerSizes, hi, hp] at h ⊢
+    simp [fillerSizes] at h ⊢
     split_ifs with hip
     · simpa [hip] using h
     · have hpi : p ≤ i := Nat.le_of_not_gt hip
@@ -377,12 +377,12 @@ lemma coverDevice_exceptional_blocks {G : SimpleGraph V}
     if hip : i.1 < p then
       exceptionalBlockPath z Y₀
         (seeds[i.1]'(by simpa [hseedsLength] using hip))
-        (fillers[i.1]'(by simpa [hfillersLength] using i.2))
+        (fillers[i.1]'(by simp [hfillersLength]))
     else
-      smallBlockPath Y₀ (fillers[i.1]'(by simpa [hfillersLength] using i.2))
+      smallBlockPath Y₀ (fillers[i.1]'(by simp [hfillersLength]))
   let paths : List (List V) := List.ofFn pathAt
   have hpathAt (i : Fin h) : IsPath G (pathAt i) := by
-    have hfi : i.1 < fillers.length := by simpa [hfillersLength] using i.2
+    have hfi : i.1 < fillers.length := by simp [hfillersLength]
     by_cases hip : i.1 < p
     · have hsi : i.1 < seeds.length := by simpa [hseedsLength] using hip
       simp only [pathAt, dif_pos hip]
@@ -516,8 +516,7 @@ theorem coverDevice_case_two {G : SimpleGraph V} {X Y₀ Y₁ D : Finset V} {h �
     omega
   obtain ⟨M, hMsub, hMcard⟩ := Finset.exists_subset_card_eq hred
   apply coverDevice_exceptional_blocks hDX hz hph hcard
-  · exact hMsub.trans (by simpa [redNeighboursIn] using
-      (Finset.filter_subset (G.Adj z) D))
+  · exact hMsub.trans (by simp [redNeighboursIn])
   · exact hMcard
   · intro x hxM
     exact (Finset.mem_filter.mp (by simpa [redNeighboursIn] using hMsub hxM)).2
@@ -975,8 +974,8 @@ lemma card_inter_redNeighboursIn_add_two_mul [DecidableEq V] {G : SimpleGraph V}
   have hB := card_le_redNeighboursIn_add hDX hz
   have hunionSub : A ∪ B ⊆ D := by
     apply Finset.union_subset
-    · simpa [A, redNeighboursIn] using (Finset.filter_subset (G.Adj y) D)
-    · simpa [B, redNeighboursIn] using (Finset.filter_subset (G.Adj z) D)
+    · simp [A, redNeighboursIn]
+    · simp [B, redNeighboursIn]
   have hunion := Finset.card_le_card hunionSub
   have hident := Finset.card_inter_add_card_union A B
   dsimp only [A, B] at hA hB hunion hident ⊢
@@ -1200,44 +1199,44 @@ theorem coverDevice_case_three {G : SimpleGraph V} {X Y₀ Y₁ D : Finset V} {h
       exact length_coverDeviceEndpointCandidates
         (hrowNonempty i (by simpa [hrowsLen] using hi))
     let leftAt : Fin h → V := fun i ↦
-      (endpointBlocks[i.1]'(by simpa [hendpointBlocksLen] using i.2))[0]'(by
+      (endpointBlocks[i.1]'(by simp [hendpointBlocksLen]))[0]'(by
         have := hendpointBlockLen i.1 i.2
         omega)
     let rightAt : Fin h → V := fun i ↦
-      (endpointBlocks[i.1]'(by simpa [hendpointBlocksLen] using i.2))[1]'(by
+      (endpointBlocks[i.1]'(by simp [hendpointBlocksLen]))[1]'(by
         have := hendpointBlockLen i.1 i.2
         omega)
     let xsAt : Fin h → List V := fun i ↦
-      leftAt i :: commonBlocks[i.1]'(by simpa [hcommonBlocksLen] using i.2) ++ [rightAt i]
+      leftAt i :: commonBlocks[i.1]'(by simp [hcommonBlocksLen]) ++ [rightAt i]
     have hleftAt : ∀ i : Fin h, leftAt i ∈ redNeighboursIn G D
-        ((rows[i.1]'(by simpa [hrowsLen] using i.2)).head
-          (hrowNonempty i.1 (by simpa [hrowsLen] using i.2))) := by
+        ((rows[i.1]'(by simp [hrowsLen])).head
+          (hrowNonempty i.1 (by simp [hrowsLen]))) := by
       intro i
       have hrel := hendpointAt i.1 i.2
       rw [coverDeviceEndpointCandidates_eq
-        (hrowNonempty i.1 (by simpa [hrowsLen] using i.2))] at hrel
+        (hrowNonempty i.1 (by simp [hrowsLen]))] at hrel
       have hget := List.Forall₂.get hrel (i := 0) (by simp) (by
         have := hendpointBlockLen i.1 i.2
         omega)
       simpa [leftAt] using hget
     have hrightAt : ∀ i : Fin h, rightAt i ∈ redNeighboursIn G D
-        ((rows[i.1]'(by simpa [hrowsLen] using i.2)).getLast
-          (hrowNonempty i.1 (by simpa [hrowsLen] using i.2))) := by
+        ((rows[i.1]'(by simp [hrowsLen])).getLast
+          (hrowNonempty i.1 (by simp [hrowsLen]))) := by
       intro i
       have hrel := hendpointAt i.1 i.2
       rw [coverDeviceEndpointCandidates_eq
-        (hrowNonempty i.1 (by simpa [hrowsLen] using i.2))] at hrel
+        (hrowNonempty i.1 (by simp [hrowsLen]))] at hrel
       have hget := List.Forall₂.get hrel (i := 1) (by simp) (by
         have := hendpointBlockLen i.1 i.2
         omega)
       simpa [rightAt] using hget
     have hcommonMemReps : ∀ i : Fin h, ∀ x ∈
-        commonBlocks[i.1]'(by simpa [hcommonBlocksLen] using i.2), x ∈ commonReps := by
+        commonBlocks[i.1]'(by simp [hcommonBlocksLen]), x ∈ commonReps := by
       intro i x hx
       rw [← hcommonBlocksFlat]
       exact List.mem_flatten.mpr ⟨_, List.getElem_mem _, hx⟩
     have hendpointMemReps : ∀ i : Fin h, ∀ x ∈
-        endpointBlocks[i.1]'(by simpa [hendpointBlocksLen] using i.2), x ∈ endpointReps := by
+        endpointBlocks[i.1]'(by simp [hendpointBlocksLen]), x ∈ endpointReps := by
       intro i x hx
       rw [← hendpointBlocksFlat]
       exact List.mem_flatten.mpr ⟨_, List.getElem_mem _, hx⟩
@@ -1251,8 +1250,8 @@ theorem coverDevice_case_three {G : SimpleGraph V} {X Y₀ Y₁ D : Finset V} {h
       exact List.getElem_mem _
     have hxsNodup : ∀ i : Fin h, (xsAt i).Nodup := by
       intro i
-      have hci : i.1 < commonBlocks.length := by simpa [hcommonBlocksLen] using i.2
-      have hei : i.1 < endpointBlocks.length := by simpa [hendpointBlocksLen] using i.2
+      have hci : i.1 < commonBlocks.length := by simp [hcommonBlocksLen]
+      have hei : i.1 < endpointBlocks.length := by simp [hendpointBlocksLen]
       have hcN := hcommonBlockNodup _ (List.getElem_mem hci)
       have heN := hendpointBlockNodup _ (List.getElem_mem hei)
       have hlr : leftAt i ≠ rightAt i := by
@@ -1282,7 +1281,7 @@ theorem coverDevice_case_three {G : SimpleGraph V} {X Y₀ Y₁ D : Finset V} {h
     have hxsD : ∀ i : Fin h, ∀ x ∈ xsAt i, x ∈ D := by
       intro i x hx
       rcases (by simpa [xsAt] using hx : x = leftAt i ∨
-          x ∈ commonBlocks[i.1]'(by simpa [hcommonBlocksLen] using i.2) ∨
+          x ∈ commonBlocks[i.1] ∨
           x = rightAt i) with rfl | hx | rfl
       · exact (Finset.mem_filter.mp (hleftAt i)).1
       · obtain ⟨C, hC, hxC⟩ := (hcommonAt i.1 i.2).exists_candidate_of_mem hx
@@ -1291,23 +1290,23 @@ theorem coverDevice_case_three {G : SimpleGraph V} {X Y₀ Y₁ D : Finset V} {h
         exact (Finset.mem_filter.mp (Finset.mem_inter.mp hxC).1).1
       · exact (Finset.mem_filter.mp (hrightAt i)).1
     have hxsLen : ∀ i : Fin h, (xsAt i).length =
-        (rows[i.1]'(by simpa [hrowsLen] using i.2)).length + 1 := by
+        (rows[i.1]'(by simp [hrowsLen])).length + 1 := by
       intro i
       have hcLen := (hcommonAt i.1 i.2).length_eq
       rw [length_sequentialCommonCandidates] at hcLen
-      have hrowPos : 0 < (rows[i.1]'(by simpa [hrowsLen] using i.2)).length :=
-        List.length_pos_iff.mpr (hrowNonempty i.1 (by simpa [hrowsLen] using i.2))
+      have hrowPos : 0 < (rows[i.1]'(by simp [hrowsLen])).length :=
+        List.length_pos_iff.mpr (hrowNonempty i.1 (by simp [hrowsLen]))
       dsimp only [xsAt]
       simp only [List.length_cons, List.length_append, List.length_nil]
       rw [← hcLen]
       omega
     have hcore : ∀ i : Fin h, IsPath G (alternate (xsAt i)
-        (rows[i.1]'(by simpa [hrowsLen] using i.2))) := by
+        (rows[i.1]'(by simp [hrowsLen]))) := by
       intro i
       apply isPath_exceptionalRowCore
-        (hrowNonempty i.1 (by simpa [hrowsLen] using i.2))
-        (hrowNodup i.1 (by simpa [hrowsLen] using i.2))
-        (hrowY₁ i.1 (by simpa [hrowsLen] using i.2))
+        (hrowNonempty i.1 (by simp [hrowsLen]))
+        (hrowNodup i.1 (by simp [hrowsLen]))
+        (hrowY₁ i.1 (by simp [hrowsLen]))
         (hcommonAt i.1 i.2) (hleftAt i) (hrightAt i)
       · exact hxsNodup i
       · exact hDX
@@ -1362,7 +1361,7 @@ theorem coverDevice_case_three {G : SimpleGraph V} {X Y₀ Y₁ D : Finset V} {h
         (by simpa [fillers, fillerSizes] using hi)
       simpa [fillerSizes] using hget
     have hfillerR : ∀ i : Fin h, ∀ x ∈
-        fillers[i.1]'(by simpa [hfillersLen] using i.2), x ∈ R := by
+        fillers[i.1]'(by simp [hfillersLen]), x ∈ R := by
       intro i x hx
       apply Finset.mem_toList.mp
       rw [← hfillersFlat]
@@ -1370,7 +1369,7 @@ theorem coverDevice_case_three {G : SimpleGraph V} {X Y₀ Y₁ D : Finset V} {h
     have hxsUsed : ∀ i : Fin h, ∀ x ∈ xsAt i, x ∈ used := by
       intro i x hx
       rcases (by simpa [xsAt] using hx : x = leftAt i ∨
-          x ∈ commonBlocks[i.1]'(by simpa [hcommonBlocksLen] using i.2) ∨
+          x ∈ commonBlocks[i.1] ∨
           x = rightAt i) with rfl | hx | rfl
       · simpa [used] using (show leftAt i ∈ commonReps ∨ leftAt i ∈ endpointReps from
           Or.inr (hleftMemEndpoint i))
@@ -1379,12 +1378,12 @@ theorem coverDevice_case_three {G : SimpleGraph V} {X Y₀ Y₁ D : Finset V} {h
       · simpa [used] using (show rightAt i ∈ commonReps ∨ rightAt i ∈ endpointReps from
           Or.inr (hrightMemEndpoint i))
     let pathAt : Fin h → List V := fun i ↦ exceptionalRowPath Y₀ (xsAt i)
-      (rows[i.1]'(by simpa [hrowsLen] using i.2))
-      (fillers[i.1]'(by simpa [hfillersLen] using i.2))
+      (rows[i.1]'(by simp [hrowsLen]))
+      (fillers[i.1]'(by simp [hfillersLen]))
     have hpathAt : ∀ i : Fin h, IsPath G (pathAt i) := by
       intro i
       apply isPath_exceptionalRowPath (hcore i) (hxsLen i) (hxsD i)
-        (hrowY₁ i.1 (by simpa [hrowsLen] using i.2))
+        (hrowY₁ i.1 (by simp [hrowsLen]))
       · exact hfillersNodup _ (List.getElem_mem _)
       · intro x hx
         exact (Finset.mem_sdiff.mp (hfillerR i x hx)).1

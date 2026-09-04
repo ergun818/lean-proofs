@@ -160,7 +160,7 @@ lemma no_common_adj_consecutive_of_longest {G : SimpleGraph V} {p : List V}
     isPath_insert_between (hsplit ▸ hp) (hsplit ▸ hy) hxy hyz
   have hle := hmax.2 _ (Or.inl hpath)
   rw [hsplit] at hle
-  simpa [path_length_insert_between] using hle
+  simp at hle
 
 /-- The local three-vertex observation used in the two-maximal-path proof:
 one member of every consecutive pair sends opposite-colour edges to at least
@@ -169,7 +169,7 @@ lemma rotation_triple_observation {G : SimpleGraph V} {p : List V}
     (hp : IsPath G p) (hmax : IsGloballyLongestMonoPath G p)
     {l r : List V} {x z a b c : V} (hsplit : p = l ++ x :: z :: r)
     (ha : a ∉ p) (hb : b ∉ p) (hc : c ∉ p)
-    (hab : a ≠ b) (hac : a ≠ c) (hbc : b ≠ c) :
+    (_hab : a ≠ b) (_hac : a ≠ c) (_hbc : b ≠ c) :
     ((Gᶜ.Adj x a ∧ Gᶜ.Adj x b) ∨
       (Gᶜ.Adj x a ∧ Gᶜ.Adj x c) ∨
       (Gᶜ.Adj x b ∧ Gᶜ.Adj x c)) ∨
@@ -389,7 +389,7 @@ opposite-colour edge to an even-positioned internal vertex.  Otherwise the
 odd positions together with the two endpoints alternate with all of `B` to
 form a closed globally-longest opposite-colour path. -/
 lemma exists_compl_even_edge_of_odd_borderline
-    [Fintype V] [DecidableEq V] {G : SimpleGraph V} {p C : List V}
+     [DecidableEq V] {G : SimpleGraph V} {p C : List V}
     {a d : V} (hp : IsPath G p) (hmax : IsGloballyLongestMonoPath G p)
     (hncut : ¬ IsCutColoring G) (hpEq : p = a :: C ++ [d])
     (B : Finset V) (hB : Disjoint B p.toFinset)
@@ -397,7 +397,7 @@ lemma exists_compl_even_edge_of_odd_borderline
     ∃ x ∈ evenIndexedVertices C, ∃ y ∈ B, Gᶜ.Adj x y := by
   classical
   by_contra hex
-  push_neg at hex
+  push Not at hex
   have hpN : (a :: C ++ [d]).Nodup := hpEq ▸ hp.2.1
   have htailN := List.nodup_cons.mp hpN
   have hCN : C.Nodup := (List.nodup_append.mp htailN.2).1
@@ -586,10 +586,11 @@ private lemma card_inter_eq_filter_length [DecidableEq V]
   ext x
   simp [and_comm]
 
-private lemma isPath_prepend_BC [DecidableEq V] {H : SimpleGraph V}
+private lemma isPath_prepend_BC {H : SimpleGraph V}
     {p : List V} (hp : IsPath H p) {b c : V}
     (hb : b ∉ p) (hc : c ∉ p) (hbc : H.Adj b c)
     (hcp : H.Adj c (p.head hp.1)) : IsPath H (b :: c :: p) := by
+  classical
   cases p with
   | nil => exact (hp.1 rfl).elim
   | cons x p =>
@@ -602,18 +603,19 @@ private lemma isPath_prepend_BC [DecidableEq V] {H : SimpleGraph V}
 /-- The list-level join used when the bridge vertex sees both `B` endpoints.
 It removes the final `C` endpoint of `q`, reverses what remains, and joins it
 to `p` through `c`. -/
-private lemma isPath_merge [DecidableEq V] {H : SimpleGraph V}
+private lemma isPath_merge {H : SimpleGraph V}
     {p q : List V} (hp : IsPath H p) (hq : IsPath H q)
     (hq2 : 2 ≤ q.length) {c : V} (hc : c ∉ p) (hcq : c ∉ q)
     (hpq : (p ++ q).Nodup)
     (hqc : H.Adj (q.head hq.1) c) (hcp : H.Adj c (p.head hp.1)) :
     IsPath H (q.dropLast.reverse ++ c :: p) := by
+  classical
   have hqd0 : q.dropLast ≠ [] := by
     intro heq
     have hlen := congrArg List.length heq
     simp only [List.length_dropLast, List.length_nil] at hlen
     omega
-  refine ⟨by simp [hp.1, hqd0], ?_, ?_⟩
+  refine ⟨by simp [hqd0], ?_, ?_⟩
   · have hsubq : ∀ x ∈ q.dropLast.reverse, x ∈ q := by
       intro x hx
       exact List.mem_of_mem_dropLast (by simpa using hx)
@@ -701,7 +703,7 @@ one- and three-outside-vertex consequences of longestness.
 The conclusion gives one nonempty alternating path and an optional second
 one.  They are disjoint and together cover `B`. -/
 theorem exists_two_altBCPath_cover
-    [Fintype V] [DecidableEq V]
+    [Finite V] [DecidableEq V]
     (H : SimpleGraph V) (cpath : List V) (B R : Finset V)
     (hCB : Disjoint cpath.toFinset B)
     (hR : R ⊆ cpath.toFinset)
@@ -727,6 +729,7 @@ theorem exists_two_altBCPath_cover
       (p ++ q).Nodup ∧
       ∀ y ∈ B, y ∈ p ∨ y ∈ q := by
   classical
+  let : Fintype V := Fintype.ofFinite V
   let Pair : List V → List V → Prop := fun p q ↦
     AltBCPath H cpath.toFinset B p ∧
       (q = [] ∨ AltBCPath H cpath.toFinset B q) ∧
@@ -919,13 +922,14 @@ theorem exists_two_altBCPath_cover
 /-- Join the reverse of the first alternating path to the two original
 endpoints and then, when present, continue along the second alternating path. -/
 theorem isPath_reverse_append_endpoints
-    [DecidableEq V] {H : SimpleGraph V} {p q : List V} {a d : V}
+     {H : SimpleGraph V} {p q : List V} {a d : V}
     (hp : IsPath H p) (hq : q = [] ∨ IsPath H q)
     (hpq : (p ++ q).Nodup)
     (ha : a ∉ p ++ q) (hd : d ∉ p ++ q) (hadne : a ≠ d)
     (hpa : H.Adj (p.head hp.1) a) (had : H.Adj a d)
     (hdq : ∀ hq0 : q ≠ [], H.Adj d (q.head hq0)) :
     IsPath H (p.reverse ++ a :: d :: q) := by
+  classical
   have htail : (a :: d :: q).IsChain H.Adj := by
     rcases hq with rfl | hq
     · simpa using had
@@ -974,11 +978,12 @@ theorem altBCPair_internal_card_eq
     exact Finset.mem_inter.mpr ⟨by simpa using hy', hy⟩
   rw [hside, heq]
 
-private lemma compl_adj_one_of_consecutive [DecidableEq V]
+private lemma compl_adj_one_of_consecutive
     {G : SimpleGraph V} {p : List V}
     (hp : IsPath G p) (hmax : IsGloballyLongestMonoPath G p)
     {l r : List V} {x z y : V} (hsplit : p = l ++ x :: z :: r)
     (hy : y ∉ p) : Gᶜ.Adj x y ∨ Gᶜ.Adj z y := by
+  classical
   have hxy : x ≠ y := fun h ↦ hy (hsplit ▸ by simp [h])
   have hzy : z ≠ y := fun h ↦ hy (hsplit ▸ by simp [h])
   by_cases hx : G.Adj x y
@@ -994,7 +999,7 @@ private lemma compl_adj_one_of_consecutive [DecidableEq V]
 /-- Strengthened strict rotation lemma.  Besides the numerical conclusion it
 records both support containment and the consecutive endpoint edge; these are
 needed for the equality case. -/
-theorem rotation_strict_with_endpoints [Fintype V] [DecidableEq V]
+theorem rotation_strict_with_endpoints [Finite V] [DecidableEq V]
     {G : SimpleGraph V} {p : List V}
     (hp : IsPath G p) (hmax : IsGloballyLongestMonoPath G p)
     (hncut : ¬ IsCutColoring G) (ht : 2 ≤ p.length)
@@ -1038,7 +1043,7 @@ theorem rotation_strict_with_endpoints [Fintype V] [DecidableEq V]
     refine ⟨q, hq, by simp, ?_, ?_, ?_⟩
     · intro y hy
       refine Or.inl ?_
-      simp [q] at hy
+      simp only [List.mem_cons, List.not_mem_nil, or_false, q] at hy
       rcases hy with rfl | rfl <;> simp [hpEq]
     · have hsub : ({a, d} : Finset V) ⊆ q.toFinset ∩ p.toFinset := by
         intro x hx
@@ -1177,7 +1182,7 @@ theorem rotation_strict_with_endpoints [Fintype V] [DecidableEq V]
             simp [hpEq, this])
       · exact Or.inl (by simp [hpEq])
       · exact Or.inl (by simp [hpEq])
-      · obtain hp₂alt := hp₂.resolve_left (fun h ↦ by simpa [h] using hy)
+      · obtain hp₂alt := hp₂.resolve_left (fun h ↦ by simp [h] at hy)
         rcases hp₂alt.2.mem_union hy with hyB | hyC
         · exact Or.inr hyB
         · exact Or.inl (by
@@ -1217,7 +1222,7 @@ theorem rotation_strict_with_endpoints [Fintype V] [DecidableEq V]
     rw [ha, hd]
 
 /-- Erdős--Gyárfás strict rotation lemma. -/
-theorem rotation_strict [Fintype V] [DecidableEq V]
+theorem rotation_strict [Finite V] [DecidableEq V]
     {G : SimpleGraph V} {p : List V}
     (hp : IsPath G p) (hmax : IsGloballyLongestMonoPath G p)
     (hncut : ¬ IsCutColoring G) (ht : 2 ≤ p.length)
@@ -1230,7 +1235,7 @@ theorem rotation_strict [Fintype V] [DecidableEq V]
   exact ⟨q, hq, hcover, hcard⟩
 
 /-- Erdős--Gyárfás rotation lemma in the even equality case. -/
-theorem rotation_even [Fintype V] [DecidableEq V]
+theorem rotation_even [Finite V] [DecidableEq V]
     {G : SimpleGraph V} {p : List V}
     (hp : IsPath G p) (hmax : IsGloballyLongestMonoPath G p)
     (hncut : ¬ IsCutColoring G) (ht : 2 ≤ p.length)

@@ -90,17 +90,17 @@ theorem exists_injective_representatives_fin {n : ℕ} (C : Fin n → Finset A)
   have hlen : xs.length = n := by
     rw [← hrep.length_eq]
     simp [Cs]
-  let f : Fin n → A := fun i ↦ xs.get ⟨i.1, by simpa [hlen] using i.2⟩
+  let f : Fin n → A := fun i ↦ xs.get ⟨i.1, by simp [hlen]⟩
   refine ⟨f, ?_, ?_⟩
   · intro i j hij
-    let i' : Fin xs.length := ⟨i.1, by simpa [hlen] using i.2⟩
-    let j' : Fin xs.length := ⟨j.1, by simpa [hlen] using j.2⟩
+    let i' : Fin xs.length := ⟨i.1, by simp [hlen]⟩
+    let j' : Fin xs.length := ⟨j.1, by simp [hlen]⟩
     have hij' : i' = j' := hxs.get_inj_iff.mp (by simpa [f, i', j'] using hij)
     have hval : i'.val = j'.val := congrArg (fun k : Fin xs.length ↦ k.val) hij'
     exact Fin.ext hval
   · intro i
     have hi := List.Forall₂.get hrep (i := i.1) (by simp [Cs])
-      (by simpa [hlen] using i.2)
+      (by simp [hlen])
     simpa [Cs, f] using hi
 
 /-- A finite family indexed by an arbitrary finset has distinct representatives when every

@@ -30,6 +30,7 @@ noncomputable local instance lowMuDecidableEq : DecidableEq V := Classical.decEq
 noncomputable local instance lowMuDecidableAdj : DecidableRel C.G.Adj := Classical.decRel _
 noncomputable local instance lowMuDecidableComplAdj : DecidableRel C.Gᶜ.Adj := Classical.decRel _
 
+omit [Fintype V] in
 /-- Representatives of the sequential common-neighbour sets are adjacent to the two
 corresponding entries of the ordered outside list. -/
 lemma representative_sequential_edges {N : V → Finset V} {ys xs : List V}
@@ -59,6 +60,7 @@ lemma representative_sequential_edges {N : V → Finset V} {ys xs : List V}
                   · simpa using List.Forall₂.cons (R := fun y x ↦ x ∈ N y) hx'.1 hleft
                   · simpa using List.Forall₂.cons (R := fun x y ↦ x ∈ N y) hx'.2 hright
 
+omit [Fintype V] in
 lemma IsRepresentativeList.exists_left_of_mem_right
     {Cs : List (Finset V)} {xs : List V}
     (hrep : IsRepresentativeList Cs xs) {x : V} (hx : x ∈ xs) :
@@ -72,6 +74,7 @@ lemma IsRepresentativeList.exists_left_of_mem_right
       · obtain ⟨D, hDCs, hxD⟩ := ih hx
         exact ⟨D, by simp [hDCs], hxD⟩
 
+omit [Fintype V] in
 lemma exists_pair_of_mem_sequentialCommonCandidates {N : V → Finset V}
     {ys : List V} {D : Finset V} (hD : D ∈ sequentialCommonCandidates N ys) :
     ∃ y ∈ ys, ∃ y' ∈ ys, D = N y ∩ N y' := by
@@ -87,6 +90,7 @@ lemma exists_pair_of_mem_sequentialCommonCandidates {N : V → Finset V}
           · obtain ⟨u, hu, v, hv, rfl⟩ := ih hD
             exact ⟨u, by simp [hu], v, by simp [hv], rfl⟩
 
+omit [Fintype V] in
 /-- Exact-edge version of the alternating-path constructor when the first side has one
 extra vertex. -/
 lemma isPath_alternate_of_aligned_edges_add_one {G : SimpleGraph V} {xs ys : List V}
@@ -239,7 +243,7 @@ lemma exists_red_neighbor_in_large_set {S : Finset V} {y : V}
     ∃ e ∈ S, C.G.Adj e y := by
   classical
   by_contra h
-  push_neg at h
+  push Not at h
   have hSub : S ⊆ C.X.filter fun x ↦ C.Gᶜ.Adj y x := by
     intro x hx
     have hyx : y ≠ x := by
@@ -434,7 +438,7 @@ theorem exists_lowMu_spanning_path
   have hwa : C.w < a := C.lowMu_deficit_gt_w hc hw hY1 hlow
   have hBounds := C.lowMu_candidate_bounds hc hw hY1 hlow hSX hScard
   let ys := C.Y.toList
-  have hysLen : ys.length = C.w := by simp [ys, C.w_eq_card_Y]
+  have hysLen : ys.length = C.w := by simp [ys]
   have hys0 : ys ≠ [] := by
     apply List.ne_nil_of_length_pos
     omega
@@ -518,7 +522,7 @@ theorem exists_lowMu_spanning_path
     hyxMem.imp fun y x hx ↦ (C.mem_redNeighborsIn.mp hx).2
   have hxallLen : xall.length = C.w + 1 := by
     have hrepLen := hrep.length_eq
-    simp only [xall, List.length_cons, List.length_append, List.length_singleton,
+    simp only [xall, List.length_cons, List.length_append,
       List.length_nil, length_sequentialCommonCandidates, hysLen] at hrepLen ⊢
     omega
   let p := alternate xall ys
@@ -619,7 +623,7 @@ theorem lowMu_impossible_of_key
       simpa [Configuration.blueDegreeToX] using hdeg
     omega
   have hpDef : P = (D.card : ℤ) - (h : ℤ) * ((C.a0 : ℤ) + 1) := by
-    simp [P, coverDeviceP, C.a0_eq_card_Y0]
+    simp [P, coverDeviceP]
   have hdZ : (D.card : ℤ) = C.c ^ 2 + C.r - 2 * C.w - 1 := by
     have hInterLe : (pathSupport p ∩ C.X).card ≤ C.X.card :=
       Finset.card_le_card hInterSub

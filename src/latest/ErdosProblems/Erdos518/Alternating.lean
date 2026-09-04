@@ -150,7 +150,9 @@ lemma isChain_alternate_of_length_eq_add_one {G : SimpleGraph V} {xs ys : List V
   | cons x xs ih =>
       cases ys with
       | nil =>
-          have hxslen : xs.length = 0 := by simp only [List.length_cons, List.length_nil] at hlen; omega
+          have hxslen : xs.length = 0 := by
+            simp only [List.length_cons, List.length_nil] at hlen
+            omega
           have : xs = [] := List.eq_nil_of_length_eq_zero hxslen
           subst xs
           simp

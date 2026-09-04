@@ -28,7 +28,8 @@ variable {V : Type u} [Fintype V] (C : Configuration V)
 
 noncomputable local instance highFinalDecidableEq : DecidableEq V := Classical.decEq V
 noncomputable local instance highFinalDecidableAdj : DecidableRel C.G.Adj := Classical.decRel _
-noncomputable local instance highFinalDecidableComplAdj : DecidableRel C.Gᶜ.Adj := Classical.decRel _
+noncomputable local instance highFinalDecidableComplAdj : DecidableRel C.Gᶜ.Adj :=
+  Classical.decRel _
 
 /-- Every element of `extensionRedNeighbors s y` belongs to the extension reservoir. -/
 lemma extensionRedNeighbors_subset (s y : V) :
@@ -266,7 +267,7 @@ theorem exists_highMu_final_outside_list
         exact Finset.disjoint_left.mp C.Y0_disjoint_Y1 hu huY1
       let ys := u :: C.Y0.toList
       have hlen : ys.length = b := by
-        simp [ys]
+        simp only [List.length_cons, Finset.length_toList, ys]
         rw [← C.a0_eq_card_Y0]
         omega
       have hnodup : ys.Nodup := by
@@ -329,12 +330,12 @@ theorem exists_highMu_final_outside_list
         subst v
         exact hv0 hy0
       have hlen : ys.length = b := by
-        simp [ys, L]
+        simp only [List.length_cons, Finset.length_toList, ys, L]
         rw [Finset.card_erase_of_mem hy0, ← C.a0_eq_card_Y0]
         omega
       have hnodup : ys.Nodup := by
-        simp only [ys, List.nodup_cons, List.mem_cons, List.not_mem_nil,
-          List.mem_nil_iff, or_false, not_or]
+        simp only [ys, List.nodup_cons, List.mem_cons,
+          not_or]
         exact ⟨⟨huy0, ⟨hvu.symm, huL⟩⟩,
           ⟨⟨hy0v, hy0L⟩, ⟨hvL, hLN⟩⟩⟩
       have hallY : ∀ y ∈ ys, y ∈ C.Y := by

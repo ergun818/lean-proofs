@@ -31,6 +31,7 @@ namespace Configuration
 
 variable [Fintype V] [DecidableEq V] (C : Configuration V)
 
+omit [DecidableEq V] in
 /-- Adapter from the fully proved configuration-level triple-free estimate to the numerical
 shape consumed by `highMu_structural_reduction`. -/
 theorem tripleFree_estimate_highMu_form
@@ -62,6 +63,7 @@ def HasCliqueExtensionData (y : V) : Prop :=
       List.Forall₂ C.G.Adj ys xs ∧
       List.Forall₂ C.G.Adj xs.dropLast ys.tail
 
+omit [DecidableEq V] in
 /-- Lemma 3.4 rules out the exact extension data above. -/
 lemma not_hasCliqueExtensionData {y : V} (hy : y ∈ C.Y1)
     (hdeg : C.blueDegreeToX y < C.r) : ¬ C.HasCliqueExtensionData y := by
@@ -202,7 +204,6 @@ theorem highMu_structural_reduction [DecidableEq V]
   have ha1pos : 1 <= a1 := by
     rw [← hY1card]
     exact Finset.one_le_card.mpr ⟨z, hzY1⟩
-
   have hEven : Even a1 := by
     rcases Nat.even_or_odd a1 with heven | hodd
     · exact heven
@@ -217,7 +218,6 @@ theorem highMu_structural_reduction [DecidableEq V]
         simp only [max_eq_left (Nat.zero_le (a1 - 2))]
         omega
       omega
-
   have hEdgeNonempty : H.Nonempty := by
     by_contra hne
     have hHem : H = ∅ := Finset.not_nonempty_iff_eq_empty.mp hne
@@ -230,7 +230,6 @@ theorem highMu_structural_reduction [DecidableEq V]
       simp only [max_eq_left (Nat.zero_le (a1 - 2))]
       omega
     omega
-
   obtain ⟨T, hTH⟩ := hEdgeNonempty
   have hmatch : MatchingNumberAtMostOne H := hEvenMatching hEven
   have hfreeComp : IsTripleFreeIn H (Y1 \ T) :=
@@ -242,12 +241,10 @@ theorem highMu_structural_reduction [DecidableEq V]
   have hs0le : degree s0 <= degree s := hsMax s0 hs0Comp
   have hs0High : r + 1 <= 2 * degree s0 := (mem_highVertices.mp hs0HighMem).2
   have hsHigh : r + 1 <= 2 * degree s := by omega
-
   have hTsub : T ⊆ Y1 := (hUniform T hTH).1
   have hTcard : T.card = 3 := (hUniform T hTH).2
   have hCompCard : (Y1 \ T).card = a1 - 3 := by
     rw [Finset.card_sdiff_of_subset hTsub, hY1card, hTcard]
-
   have ha1lt : a1 < 8 := by
     by_contra hnot
     have ha1ge : 8 <= a1 := by omega
@@ -267,7 +264,6 @@ theorem highMu_structural_reduction [DecidableEq V]
       hfreeComp s hsComp hsHigh
     have hdeficit : r - degree s <= c - 1 := highMu_deficit_le_pred hr hsHigh
     omega
-
   have ha1ge3 : 3 <= a1 := by
     rw [← hY1card, ← hTcard]
     exact Finset.card_le_card hTsub
@@ -448,6 +444,7 @@ noncomputable def extensionRedNeighbors (s y : V) : Finset V := by
   classical
   exact (C.extensionReservoir s).filter fun x => C.G.Adj y x
 
+omit [DecidableEq V] in
 @[simp] lemma mem_extensionRedNeighbors {s y x : V} :
     x ∈ C.extensionRedNeighbors s y ↔
       x ∈ C.extensionReservoir s ∧ C.G.Adj y x := by

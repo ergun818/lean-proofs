@@ -139,7 +139,7 @@ lemma card_nonRedNeighboursIn_X_eq_blueDegree {y : V} (hy : y ∈ C.Y) :
   classical
   congr 1
   ext x
-  simp only [nonRedNeighboursIn, blueDegreeToX, Finset.mem_filter]
+  simp only [nonRedNeighboursIn, Finset.mem_filter]
   constructor
   · rintro ⟨hx, hred⟩
     have hyx : y ≠ x := by
@@ -175,7 +175,7 @@ lemma path_plus_unused_X_cover_impossible (hc : C.c = 3) {p : List V}
   · intro v
     by_cases hvp : v ∈ p
     · exact ⟨p, by simp, hvp⟩
-    · have hvXY : v ∈ C.X ∪ C.Y := by simpa [C.X_union_Y]
+    · have hvXY : v ∈ C.X ∪ C.Y := by simp [C.X_union_Y]
       rcases Finset.mem_union.mp hvXY with hvX | hvY
       · obtain ⟨q, hq, hvq⟩ := hpsCover v
           (Finset.mem_sdiff.mpr ⟨hvX, by simpa using hvp⟩)

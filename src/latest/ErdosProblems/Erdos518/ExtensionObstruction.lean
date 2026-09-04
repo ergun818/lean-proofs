@@ -26,8 +26,10 @@ universe u
 variable {V : Type u} [Fintype V] (C : Configuration V)
 
 noncomputable local instance extensionObstructionDecidableEq : DecidableEq V := Classical.decEq V
-noncomputable local instance extensionObstructionDecidableAdj : DecidableRel C.G.Adj := Classical.decRel _
-noncomputable local instance extensionObstructionDecidableComplAdj : DecidableRel C.Gᶜ.Adj := Classical.decRel _
+noncomputable local instance extensionObstructionDecidableAdj : DecidableRel C.G.Adj :=
+  Classical.decRel _
+noncomputable local instance extensionObstructionDecidableComplAdj : DecidableRel C.Gᶜ.Adj :=
+  Classical.decRel _
 
 /-- Chen's predecessor clique `S_y` for the distinguished blue path `Q`. -/
 noncomputable def extensionPredecessorSet (y : V) : Finset V :=
@@ -104,13 +106,13 @@ lemma extensionPredecessorEnd_adj_Y {z : V} (hz : z ∈ C.Y) :
   have hzRev : z ∉ C.Q.reverse := by simpa using hzQ
   have hnblue := not_compl_adj_head_of_globally_longest hQrev hlongRev hzRev
   have hhead : C.Q.reverse.head hQrev.1 = C.extensionPredecessorEnd := by
-    simpa [extensionPredecessorEnd] using List.head_reverse C.q_isPath.1
+    simp [extensionPredecessorEnd]
   rw [hhead] at hnblue
   by_contra hred
   have hne : z ≠ C.extensionPredecessorEnd := by
     intro heq
     apply hzQ
-    simpa [extensionPredecessorEnd, heq] using List.getLast_mem C.q_isPath.1
+    simp [extensionPredecessorEnd, heq]
   exact hnblue ((SimpleGraph.compl_adj C.G z C.extensionPredecessorEnd).2
     ⟨hne, fun h ↦ hred h.symm⟩)
 
@@ -205,6 +207,7 @@ def extensionInitIndex (a : ℕ) (i : Fin (a - 1)) : Fin a :=
 def extensionTailIndex (a : ℕ) (i : Fin (a - 1)) : Fin a :=
   ⟨i.1 + 1, by omega⟩
 
+omit [Fintype V] in
 private lemma forall₂_ofFn
     {n : ℕ} {f g : Fin n → V} {R : V → V → Prop}
     (h : ∀ i, R (f i) (g i)) :
@@ -215,6 +218,7 @@ private lemma forall₂_ofFn
   · intro i hi hj
     simpa using h ⟨i, by simpa using hi⟩
 
+omit [Fintype V] in
 private lemma forall₂_dropLast_tail_ofFn
     {n : ℕ} {f g : Fin n → V} {R : V → V → Prop}
     (h : ∀ i : Fin (n - 1),

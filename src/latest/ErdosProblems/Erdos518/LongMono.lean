@@ -18,20 +18,22 @@ universe u
 
 variable {V : Type u}
 
-private lemma isPath_prepend_one [DecidableEq V] {H : SimpleGraph V}
+private lemma isPath_prepend_one {H : SimpleGraph V}
     {p : List V} (hp : IsPath H p) {x : V}
     (hx : x ∉ p) (hxp : H.Adj x (p.head hp.1)) : IsPath H (x :: p) := by
+  classical
   cases p with
   | nil => exact (hp.1 rfl).elim
   | cons y p =>
     simp only [List.head_cons] at hxp
     exact ⟨by simp, hp.2.1.cons hx, .cons_cons hxp hp.2.2⟩
 
-private lemma closed_path_extend_at [DecidableEq V] {H : SimpleGraph V}
+private lemma closed_path_extend_at {H : SimpleGraph V}
     {p : List V} (hp : IsPath H p)
     (hclosed : H.Adj (p.head hp.1) (p.getLast hp.1))
     {x v : V} (hx : x ∉ p) (hv : v ∈ p) (hxv : H.Adj x v) :
     ∃ q : List V, IsPath H q ∧ q.length = p.length + 1 := by
+  classical
   obtain ⟨l, r, hpEq, _⟩ := List.eq_append_cons_of_mem hv
   subst p
   cases l with
@@ -73,10 +75,11 @@ private lemma closed_path_extend_at [DecidableEq V] {H : SimpleGraph V}
       · simp [core]
         omega
 
-lemma compl_cross_of_closed_longest [DecidableEq V] {H : SimpleGraph V}
+lemma compl_cross_of_closed_longest {H : SimpleGraph V}
     {p : List V} (hp : IsPath H p) (hmax : IsGloballyLongestMonoPath H p)
     (hclosed : H.Adj (p.head hp.1) (p.getLast hp.1))
     {x y : V} (hx : x ∉ p) (hy : y ∈ p) : Hᶜ.Adj x y := by
+  classical
   rw [SimpleGraph.compl_adj]
   refine ⟨fun hxy ↦ hx (hxy ▸ hy), ?_⟩
   intro hxy
@@ -90,11 +93,12 @@ private lemma card_compl_pathVertices [Fintype V] [DecidableEq V]
   rw [Finset.card_sdiff]
   simp [List.toFinset_card_of_nodup hp]
 
-private lemma closed_longest_two_thirds [Fintype V] [DecidableEq V]
+private lemma closed_longest_two_thirds [Fintype V]
     {H : SimpleGraph V} {p : List V} (hp : IsPath H p)
     (hmax : IsGloballyLongestMonoPath H p)
     (hclosed : H.Adj (p.head hp.1) (p.getLast hp.1)) :
     Fintype.card V * 2 / 3 + 1 ≤ p.length := by
+  classical
   by_contra hbound
   have hshort : p.length < Fintype.card V * 2 / 3 + 1 := Nat.lt_of_not_ge hbound
   have hplen : p.length ≤ Fintype.card V := hp.2.1.length_le_card
@@ -103,7 +107,7 @@ private lemma closed_longest_two_thirds [Fintype V] [DecidableEq V]
     | nil => exact (hp.1 rfl).elim
     | cons a p =>
       cases p with
-      | nil => simpa using hclosed
+      | nil => simp at hclosed
       | cons b p => simp
   let O : Finset V := Finset.univ \ p.toFinset
   have hOcard : O.card = Fintype.card V - p.length := by
@@ -176,9 +180,10 @@ private lemma outside_add_inter_le_path_length [Fintype V] [DecidableEq V]
     _ ≤ q.toFinset.card := Finset.card_le_card hsub
     _ = q.length := List.toFinset_card_of_nodup hq
 
-private lemma two_le_length_of_globally_longest [Fintype V] [DecidableEq V]
+private lemma two_le_length_of_globally_longest [Fintype V]
     {H : SimpleGraph V} {p : List V} (hmax : IsGloballyLongestMonoPath H p)
     (hcard : 2 ≤ Fintype.card V) : 2 ≤ p.length := by
+  classical
   obtain ⟨x, y, hxy⟩ := Fintype.exists_pair_of_one_lt_card (by omega : 1 < Fintype.card V)
   have hmono : IsMonochromaticPath H [x, y] := by
     by_cases hadj : H.Adj x y
@@ -231,10 +236,11 @@ private lemma globally_longest_two_thirds_of_rotations [Fintype V] [DecidableEq 
     have hle := hmax.2 q (Or.inr hq)
     omega
 
-private lemma globally_longest_two_thirds_of_not_cut [Fintype V] [DecidableEq V]
+private lemma globally_longest_two_thirds_of_not_cut [Fintype V]
     {H : SimpleGraph V} {p : List V} (hp : IsPath H p)
     (hmax : IsGloballyLongestMonoPath H p) (hncut : ¬ IsCutColoring H) :
     Fintype.card V * 2 / 3 + 1 ≤ p.length := by
+  classical
   by_cases hcard : 2 ≤ Fintype.card V
   · have hp2 : 2 ≤ p.length := two_le_length_of_globally_longest hmax hcard
     apply globally_longest_two_thirds_of_rotations hp hmax hp2
@@ -254,9 +260,10 @@ private lemma globally_longest_two_thirds_of_not_cut [Fintype V] [DecidableEq V]
     have hp1 : 1 ≤ p.length := List.length_pos_of_ne_nil hp.1
     omega
 
-private lemma globally_longest_two_thirds_of_cut [Fintype V] [DecidableEq V]
+private lemma globally_longest_two_thirds_of_cut [Fintype V]
     {H : SimpleGraph V} {p : List V} (hpmax : IsGloballyLongestMonoPath H p)
     (hcut : IsCutColoring H) : Fintype.card V * 2 / 3 + 1 ≤ p.length := by
+  classical
   obtain ⟨q, hqmax, hqclosed⟩ := hcut
   have hqp : q.length ≤ p.length := hpmax.2 q hqmax.1
   rcases hqclosed with hqclosed | hqclosed
@@ -269,10 +276,11 @@ private lemma globally_longest_two_thirds_of_cut [Fintype V] [DecidableEq V]
 
 /-- In every two-colouring of the complete graph on a nonempty finite vertex type,
 one colour contains a path on at least `⌊2 |V| / 3⌋ + 1` vertices. -/
-theorem exists_long_monochromatic_path [Fintype V] [DecidableEq V] [Nonempty V]
+theorem exists_long_monochromatic_path [Fintype V] [Nonempty V]
     (G : SimpleGraph V) :
     ∃ p : List V, (IsPath G p ∨ IsPath Gᶜ p) ∧
       Fintype.card V * 2 / 3 + 1 ≤ p.length := by
+  classical
   obtain ⟨p, hpmax⟩ := exists_globally_longest_mono_path G
   refine ⟨p, hpmax.1, ?_⟩
   by_cases hcut : IsCutColoring G

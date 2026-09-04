@@ -122,7 +122,6 @@ theorem no_blueTripleHyperedge_contains_all_high
       ¬ highVertices C.Y1 C.blueDegreeToX C.r ⊆ T := by
   classical
   intro T hT hAllHigh
-
   have hY0 : C.Y0.Nonempty := C.Y0_nonempty
   have hdegBound : C.mu + 2 ≤ C.r := by
     apply C.mu_add_two_le_r_of_bounds C.Y1_nonempty hY0 (by omega)
@@ -137,7 +136,6 @@ theorem no_blueTripleHyperedge_contains_all_high
   have hsT : s ∈ T := hAllHigh hsHigh
   have hsY : s ∈ C.Y := C.Y1_subset_Y hsY1
   have hsDegLt : C.blueDegreeToX s < C.r := by omega
-
   have hTsubY1 : T ⊆ C.Y1 := (C.blueTripleHypergraph_threeUniform hT).1
   have hTcard : T.card = 3 := (C.blueTripleHypergraph_threeUniform hT).2
   have hTsubY : T ⊆ C.Y := hTsubY1.trans C.Y1_subset_Y
@@ -155,7 +153,6 @@ theorem no_blueTripleHyperedge_contains_all_high
   have hwLarge : C.c + 2 ≤ C.w := by
     have hw := C.w_eq_a0_add_a1
     omega
-
   let outside : Finset V := C.Y \ T
   have houtsideCard : outside.card = C.w - 3 := by
     dsimp only [outside]
@@ -174,7 +171,6 @@ theorem no_blueTripleHyperedge_contains_all_high
   have haOutside : a ≤ outside.card := by
     rw [houtsideCard]
     omega
-
   have hnotHigh : ∀ y ∈ outside, 2 * C.blueDegreeToX y ≤ C.r := by
     intro y hyOutside
     have hyData : y ∈ C.Y ∧ y ∉ T := Finset.mem_sdiff.mp hyOutside
@@ -190,14 +186,12 @@ theorem no_blueTripleHyperedge_contains_all_high
     have hyHigh : y ∈ highVertices C.Y1 C.blueDegreeToX C.r :=
       mem_highVertices.mpr ⟨hyY1, hhigh⟩
     exact hyData.2 (hAllHigh hyHigh)
-
   have hfourSquare : 4 * C.c ≤ C.c ^ 2 := by
     calc
       4 * C.c = C.c * 4 := by omega
       _ ≤ C.c * C.c := Nat.mul_le_mul_left C.c hc
       _ = C.c ^ 2 := by simp [pow_two]
   have hWcard := C.extensionReservoir_card_identity hsY
-
   have hendpointCard : ∀ y ∈ outside,
       a ≤ (C.extensionRedNeighbors s y).card := by
     intro y hyOutside
@@ -212,7 +206,6 @@ theorem no_blueTripleHyperedge_contains_all_high
     have hw := C.w_le_r_sub_two
     have hr := C.r_le_two_mul_c
     omega
-
   have hcommonCard : ∀ y ∈ outside, ∀ z ∈ outside,
       a - 1 ≤
         (C.extensionRedNeighbors s y ∩ C.extensionRedNeighbors s z).card := by
@@ -228,7 +221,6 @@ theorem no_blueTripleHyperedge_contains_all_high
     have hw := C.w_le_r_sub_two
     have hr := C.r_le_two_mul_c
     omega
-
   let ys : List V := outside.toList.take a
   have hysLen : ys.length = a := by
     simp only [ys, List.length_take, Finset.length_toList]
@@ -262,7 +254,6 @@ theorem no_blueTripleHyperedge_contains_all_high
     intro D hD
     rw [length_sequentialCommonCandidates, hysLen]
     exact hcommonAux ys hysOutside D hD
-
   let last := ys.getLast hys0
   have hlastMem : last ∈ ys := List.getLast_mem hys0
   have hlastOutside : last ∈ outside := hysOutside last hlastMem

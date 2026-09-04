@@ -48,7 +48,7 @@ lemma mem_consecutivePairs_iff {a b : V} {P : List V} :
   | cons x tail ih =>
     cases tail with
     | nil =>
-        simp only [List.consecutivePairs, List.tail_cons, List.tail_nil, List.zip_nil_right,
+        simp only [List.consecutivePairs, List.tail_cons, List.zip_nil_right,
           List.not_mem_nil, false_iff, not_exists]
         intro A R h
         have hlen := congrArg List.length h
@@ -109,7 +109,7 @@ lemma mem_bluePredecessors_iff
   constructor
   · rintro ⟨e, ⟨he, hblue⟩, hea⟩
     obtain ⟨a', b⟩ := e
-    simp only [Prod.fst] at hea
+    simp only [] at hea
     subst a'
     obtain ⟨A, R, hP⟩ := mem_consecutivePairs_iff.mp he
     exact ⟨b, A, R, hP, of_decide_eq_true hblue⟩
@@ -297,8 +297,8 @@ lemma order_two_consecutivePair_decompositions
     exact ⟨b :: R, by simpa [List.append_assoc] using hA.symm⟩
   have hBprefix : B ++ [c] <+: P := by
     exact ⟨d :: S, by simpa [List.append_assoc] using hB.symm⟩
-  have hApre : A <+: P := A.prefix_append (a :: b :: R) |>.trans (by simpa [hA])
-  have hBpre : B <+: P := B.prefix_append (c :: d :: S) |>.trans (by simpa [hB])
+  have hApre : A <+: P := A.prefix_append (a :: b :: R) |>.trans (by simp [hA])
+  have hBpre : B <+: P := B.prefix_append (c :: d :: S) |>.trans (by simp [hB])
   rcases lt_trichotomy A.length B.length with hlt | heq | hgt
   · left
     have hsmall : (A ++ [a]).length ≤ B.length := by simp; omega
@@ -307,7 +307,7 @@ lemma order_two_consecutivePair_decompositions
     obtain ⟨L, hBL⟩ := hprefix
     have hcombined : P = A ++ a :: L ++ c :: d :: S := by
       rw [hB, ← hBL]
-      simp only [List.append_assoc, List.singleton_append, List.cons_append, List.nil_append]
+      simp only [List.append_assoc, List.cons_append, List.nil_append]
     have htail : b :: R = L ++ c :: d :: S := by
       apply List.append_cancel_left (as := A ++ [a])
       simpa only [List.append_assoc, List.singleton_append, List.cons_append,
@@ -330,7 +330,7 @@ lemma order_two_consecutivePair_decompositions
     obtain ⟨L, hAL⟩ := hprefix
     have hcombined : P = B ++ c :: L ++ a :: b :: R := by
       rw [hA, ← hAL]
-      simp only [List.append_assoc, List.singleton_append, List.cons_append,
+      simp only [List.append_assoc, List.cons_append,
         List.nil_append]
     have htail : d :: S = L ++ a :: b :: R := by
       apply List.append_cancel_left (as := B ++ [c])
@@ -470,7 +470,7 @@ lemma bluePredecessors_length_eq_blueDegree
   | cons x P =>
       simp only [List.head_cons] at hhead
       have hfalse : decide (Gᶜ.Adj y x) = false := decide_eq_false hhead
-      simpa only [List.tail_cons, List.filter_cons, hfalse, Bool.false_eq_true, ↓reduceIte]
+      simp only [List.tail_cons, List.filter_cons, hfalse, Bool.false_eq_true, ↓reduceIte]
 
 /-- Injectivity of the predecessor construction, expressed as an exact finite-set cardinality. -/
 lemma bluePredecessors_toFinset_card

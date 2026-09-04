@@ -134,7 +134,7 @@ noncomputable def tripleFreeF
     x ∈ C.betweenVertices lo hi ↔
       x ∈ C.X ∧ lo < C.Q.idxOf x + 1 ∧ C.Q.idxOf x + 1 < hi := by
   classical
-  simp [betweenVertices, and_assoc]
+  simp [betweenVertices]
 
 @[simp] lemma mem_outsideReservoir {S : Finset V} {x : V} {lo hi : ℕ} :
     x ∈ C.outsideReservoir S lo hi ↔
@@ -177,10 +177,10 @@ lemma upperBlueSet_eq_empty_of_two_lower
   obtain ⟨delta, hdelta, hhidelta⟩ := hz'.2.2
   have hex : ∃ u ∈ C.lowerBlueSet Y' s mid, u ≠ z := by
     by_contra h
-    push_neg at h
+    push Not at h
     have hsub : C.lowerBlueSet Y' s mid ⊆ {z} := by
       intro u hu
-      simpa [h u hu]
+      simp [h u hu]
     have hc := Finset.card_le_card hsub
     simp only [Finset.card_singleton] at hc
     omega
@@ -277,7 +277,7 @@ lemma adj_middleOutside_outsideReservoir
     have hhii : hi ≤ i := Nat.le_of_not_gt h
     have hymem : y ∈ C.upperBlueSet Y' s hi :=
       C.mem_upperBlueSet.mpr ⟨hy'.1, hy'.2.2, i, hiBlue, hhii⟩
-    simpa [hupper] using hymem
+    simp [hupper] at hymem
   exact hx'.2.2 (C.mem_betweenVertices.mpr ⟨hx'.1, hlo, hhi⟩)
 
 /-- Vertices in `Y₀` have no blue edge to `X`, so in particular all their edges to `F`

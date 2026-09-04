@@ -40,7 +40,8 @@ noncomputable def rightCore [DecidableEq V] (G : SimpleGraph V) (X Y : Finset V)
     exact Y.filter fun y ↦ ∀ x ∈ X, G.Adj x y
 
 /-- Vertices of `Y` which are not in the complete right core. -/
-noncomputable def rightExceptional [DecidableEq V] (G : SimpleGraph V) (X Y : Finset V) : Finset V :=
+noncomputable def rightExceptional [DecidableEq V] (G : SimpleGraph V)
+    (X Y : Finset V) : Finset V :=
   Y \ rightCore G X Y
 
 section Interlace
@@ -49,7 +50,7 @@ section Interlace
 first list has either the same length as the second or one additional element. -/
 def interlace {A : Type*} : List A → List A → List A
   | [], _ => []
-  | a :: as, [] => [a]
+  | a :: _as, [] => [a]
   | a :: as, b :: bs => a :: b :: interlace as bs
 
 @[simp] lemma interlace_nil_left {A : Type*} (bs : List A) :
@@ -117,12 +118,12 @@ lemma nodup_interlace {A : Type*} {as bs : List A} (h : as.length = bs.length + 
             exact hd (a := x) (by simp) (by simp [hxy])
           have hx_tail : x ∉ interlace xs ys := by
             rw [mem_interlace_iff h']
-            push_neg
+            push Not
             exact ⟨(List.nodup_cons.mp ha).1,
               fun hxy ↦ hd (a := x) (by simp) (by simp [hxy])⟩
           have hy_tail : y ∉ interlace xs ys := by
             rw [mem_interlace_iff h']
-            push_neg
+            push Not
             exact ⟨fun hyx ↦ hd (a := y) (by simp [hyx]) (by simp),
               (List.nodup_cons.mp hb).1⟩
           simp [interlace, hxy, hx_tail, hy_tail, ht]
@@ -211,7 +212,7 @@ lemma exists_bounded_groups {A : Type*} (as bs : List A) (k c d : ℕ)
           omega
       have hremTotal : ar.length + br.length ≤ k * c := by
         simp only [ar, br, List.length_drop]
-        have hgaEq : ga.length = min d as.length := by simp [ga, Nat.min_comm]
+        have hgaEq : ga.length = min d as.length := by simp [ga]
         have hfree : free = c - min d as.length := by simp [free, hgaEq]
         rw [hfree]
         by_cases hbfree : bs.length ≤ c - min d as.length
@@ -353,15 +354,16 @@ lemma isChain_interlace_append {G : SimpleGraph V}
           exact List.isChain_cons_cons.mpr ⟨hay, hychain⟩
 
 /-- A list contained in a finset is disjoint from a list contained in a disjoint finset. -/
-lemma list_disjoint_of_mem_finsets [DecidableEq V] {A B : Finset V} {as bs : List V}
+lemma list_disjoint_of_mem_finsets {A B : Finset V} {as bs : List V}
     (hAB : Disjoint A B) (ha : ∀ a ∈ as, a ∈ A) (hb : ∀ b ∈ bs, b ∈ B) :
     List.Disjoint as bs := by
+  classical
   intro z hzas hzbs
   exact Finset.disjoint_left.mp hAB (ha z hzas) (hb z hzbs)
 
 /-- Build one alternating path from a bounded group of exceptional and core left vertices.
 If the group has the maximum possible size, the path contains every vertex of `Y`. -/
-lemma exists_path_for_core_group [DecidableEq V] (G : SimpleGraph V)
+lemma exists_path_for_core_group (G : SimpleGraph V)
     (X Y Y₀ X₀ : Finset V) (hXY : Disjoint X Y)
     (hY₀Y : Y₀ ⊆ Y) (hX₀X : X₀ ⊆ X) (hY₀ne : Y₀.Nonempty)
     (hY₀ : ∀ y ∈ Y₀, ∀ x ∈ X, G.Adj x y)
@@ -377,8 +379,8 @@ lemma exists_path_for_core_group [DecidableEq V] (G : SimpleGraph V)
   by_cases hempty : as = [] ∧ bs = []
   · obtain ⟨y, hy⟩ := hY₀ne
     refine ⟨[y], isPath_singleton G y, ?_, ?_, ?_⟩
-    · simpa [hempty.1]
-    · simpa [hempty.2]
+    · simp [hempty.1]
+    · simp [hempty.2]
     · intro hfull
       simp [hempty] at hfull
   · let special : ℕ := if bs = [] then as.length - 1 else as.length
@@ -523,7 +525,7 @@ end CorePaths
 section CompleteCoreCover
 
 /-- The numerical heart of the complete-core lemma. -/
-lemma complete_core_arithmetic {x₀ x₁ y₀ y₁ : ℕ} (hy₀ : 0 < y₀)
+lemma complete_core_arithmetic {x₀ x₁ y₀ y₁ : ℕ} (_hy₀ : 0 < y₀)
     (hzero : y₁ = 0 → x₁ = 0)
     (hsize : y₀ + y₁ < x₀ + x₁) (hratio : 2 * x₁ * y₁ < x₀ * y₀) :
     y₁ < x₀ ∧
@@ -639,7 +641,7 @@ theorem complete_core_bipartite_path_cover [DecidableEq V] (G : SimpleGraph V)
       rw [hY₁eq]
       exact Finset.mem_sdiff.mpr ⟨hyY, hyNotCore⟩
     have hY₁empty : Y₁ = ∅ := Finset.card_eq_zero.mp hY₁zero
-    simpa [hY₁empty] using hyY₁
+    simp [hY₁empty] at hyY₁
   have hsizeParts : Y₀.card + Y₁.card < X₀.card + X₁.card := by omega
   have hratioParts : 2 * X₁.card * Y₁.card < X₀.card * Y₀.card := by
     rcases hcore with hcomplete | hratio
