@@ -241,7 +241,7 @@ theorem cylinder_independent
 
 section FiniteLocalLemma
 
-variable {ι Ω : Type*} [Fintype ι] [DecidableEq ι] [Fintype Ω] [Nonempty Ω]
+variable {ι Ω : Type*} [Fintype ι] [DecidableEq ι] [Fintype Ω]
 
 /-- The assignments avoiding every event indexed by `S`. -/
 noncomputable def avoid (bad : ι → Ω → Prop) (S : Finset ι) : Finset Ω := by
@@ -292,7 +292,7 @@ lemma avoid_insert_card_add_restricted_card (bad : ι → Ω → Prop) (i : ι) 
 `indep` is exactly the independence equation needed in the standard proof: event
 `i` is independent of avoiding any family consisting entirely of non-neighbors.
 The use of finite cardinalities keeps this theorem independent of measure theory. -/
-theorem finite_local_lemma
+theorem finite_local_lemma [Nonempty Ω]
     (bad : ι → Ω → Prop) (neighbor : ι → Finset ι) (y : ι → ℝ)
     (hy0 : ∀ i, 0 ≤ y i) (hy1 : ∀ i, y i < 1)
     (hmass : ∀ i,
@@ -323,8 +323,8 @@ theorem finite_local_lemma
         have hdisj : Disjoint T U := by
           refine Finset.disjoint_left.mpr ?_
           intro j hjT hjU
-          simp [T] at hjT
-          simp [U] at hjU
+          simp only [mem_filter, T] at hjT
+          simp only [mem_filter, U] at hjU
           exact hjT.2 hjU.2
         have hTnon : ∀ j ∈ T, j ∉ neighbor i := by
           intro j hj
@@ -453,6 +453,7 @@ theorem finite_local_lemma
   obtain ⟨ω, hω⟩ := hnonempty
   exact ⟨ω, fun i ↦ (mem_avoid.mp hω) i (Finset.mem_univ i)⟩
 
+omit [Fintype ι] [DecidableEq ι] in
 /-- Avoiding a finite family of cylinder events is determined by the union of
 their coordinate supports. -/
 lemma determined_avoid
@@ -974,8 +975,8 @@ def BadIndex.constraintCount {V : Type*} : BadIndex V → ℕ
 empty events.  In probability notation this says that the four event types
 have probability at most `x⁻¹`, `x⁻³`, `x⁻²`, and `x⁻¹`. -/
 theorem occurs_card_mul_palette_pow_le
-    {V C : Type*} [Fintype V] [LinearOrder V] [Fintype C] [DecidableEq C]
-    (G : SimpleGraph V) [DecidableRel G.Adj] (r : ℕ) (i : BadIndex V)
+    {V C : Type*} [Fintype V] [LinearOrder V] [Fintype C]
+    (G : SimpleGraph V) (r : ℕ) (i : BadIndex V)
     [DecidablePred (i.occurs G r : (V → C) → Prop)] :
     Fintype.card {ω : V → C // i.occurs G r ω} *
         Fintype.card C ^ i.constraintCount ≤ Fintype.card (V → C) := by
@@ -1334,10 +1335,11 @@ lemma incidentPathToPositionSum_injective
 /-- At most `5d⁴` ordered length-four walks can contain a fixed vertex when
 the graph has maximum degree at most `d`. -/
 theorem card_incidentPathTuple_le
-    {V : Type*} [Fintype V] [DecidableEq V]
+    {V : Type*} [Fintype V]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     {d : ℕ} (hdeg : ∀ v, G.degree v ≤ d) (u : V) :
     Nat.card (IncidentPathTuple G u) ≤ 5 * d ^ 4 := by
+  classical
   let : Finite (PathAt0 G u) := Finite.of_injective Subtype.val Subtype.val_injective
   let : Finite (PathAt1 G u) := Finite.of_injective Subtype.val Subtype.val_injective
   let : Finite (PathAt2 G u) := Finite.of_injective Subtype.val Subtype.val_injective
@@ -1462,7 +1464,7 @@ noncomputable def squareAt0ToCode
   refine ⟨⟨⟨v1, by simpa using h.1⟩,
     ⟨⟨v2, by simpa using h.2.1⟩, PUnit.unit⟩⟩,
     ⟨v3, h.2.2.2.2.1, ?_⟩⟩
-  simp [commonNeighbors]
+  simp only [commonNeighbors, Finset.mem_inter, SimpleGraph.mem_neighborFinset]
   exact ⟨h.2.2.2.1.symm, h.2.2.1⟩
 
 lemma squareAt0ToCode_injective
@@ -1485,7 +1487,7 @@ lemma squareAt0ToCode_injective
   rfl
 
 theorem card_squareCompletionCode_le
-    {V : Type*} [Fintype V] [DecidableEq V]
+    {V : Type*} [Fintype V]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     {d r : ℕ} (hdeg : ∀ v, G.degree v ≤ d) (u : V) :
     Nat.card (SquareCompletionCode G r u) ≤ d ^ 2 * r ^ 2 := by
@@ -1531,7 +1533,7 @@ theorem card_squareCompletionCode_le
     _ ≤ d ^ 2 * r ^ 2 := Nat.mul_le_mul_right _ (card_chainsFrom_le G hdeg 2 u)
 
 theorem card_squareAt0_le
-    {V : Type*} [Fintype V] [DecidableEq V]
+    {V : Type*} [Fintype V]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     {d r : ℕ} (hdeg : ∀ v, G.degree v ≤ d) (u : V) :
     Nat.card (SquareAt0 G r u) ≤ d ^ 2 * r ^ 2 := by
@@ -1621,7 +1623,7 @@ def squareAt3EquivAt0 {V : Type*} [Fintype V]
   right_inv := by intro p; apply Subtype.ext; exact SquareTuple.rotate_four p.1
 
 theorem card_squareAt1_le
-    {V : Type*} [Fintype V] [DecidableEq V]
+    {V : Type*} [Fintype V]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     {d r : ℕ} (hdeg : ∀ v, G.degree v ≤ d) (u : V) :
     Nat.card (SquareAt1 G r u) ≤ d ^ 2 * r ^ 2 := by
@@ -1629,7 +1631,7 @@ theorem card_squareAt1_le
   exact card_squareAt0_le G hdeg u
 
 theorem card_squareAt2_le
-    {V : Type*} [Fintype V] [DecidableEq V]
+    {V : Type*} [Fintype V]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     {d r : ℕ} (hdeg : ∀ v, G.degree v ≤ d) (u : V) :
     Nat.card (SquareAt2 G r u) ≤ d ^ 2 * r ^ 2 := by
@@ -1637,7 +1639,7 @@ theorem card_squareAt2_le
   exact card_squareAt0_le G hdeg u
 
 theorem card_squareAt3_le
-    {V : Type*} [Fintype V] [DecidableEq V]
+    {V : Type*} [Fintype V]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     {d r : ℕ} (hdeg : ∀ v, G.degree v ≤ d) (u : V) :
     Nat.card (SquareAt3 G r u) ≤ d ^ 2 * r ^ 2 := by
@@ -1695,10 +1697,11 @@ lemma incidentSquareToPositionSum_injective
     _ = q.1 := by simp
 
 theorem card_incidentSquareTuple_le
-    {V : Type*} [Fintype V] [DecidableEq V]
+    {V : Type*} [Fintype V]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     {d r : ℕ} (hdeg : ∀ v, G.degree v ≤ d) (u : V) :
     Nat.card (IncidentSquareTuple G r u) ≤ 4 * (d ^ 2 * r ^ 2) := by
+  classical
   let : Finite (SquareAt0 G r u) := Finite.of_injective Subtype.val Subtype.val_injective
   let : Finite (SquareAt1 G r u) := Finite.of_injective Subtype.val Subtype.val_injective
   let : Finite (SquareAt2 G r u) := Finite.of_injective Subtype.val Subtype.val_injective
@@ -1903,7 +1906,7 @@ lemma specialWitnessToCode_injective
   rfl
 
 theorem card_neighborTwoStepCode_le
-    {V : Type*} [Fintype V] [DecidableEq V]
+    {V : Type*} [Fintype V]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     {d : ℕ} (hdeg : ∀ v, G.degree v ≤ d) (u : V) :
     Nat.card (NeighborTwoStepCode G u) ≤ d ^ 2 := by
@@ -1924,12 +1927,12 @@ theorem card_neighborTwoStepCode_le
     _ = G.degree u * d := by
       rw [Finset.sum_const, Finset.card_univ, Fintype.card_coe,
         SimpleGraph.card_neighborFinset_eq_degree]
-      simp [nsmul_eq_mul]
+      simp
     _ ≤ d ^ 2 := by simpa [pow_two] using Nat.mul_le_mul_right d (hdeg u)
 
 theorem card_specialWitness_lower
-    {V : Type*} [Fintype V] [DecidableEq V]
-    (G : SimpleGraph V) [DecidableRel G.Adj]
+    {V : Type*} [Fintype V]
+    (G : SimpleGraph V)
     (r : ℕ) (u : V) :
     Nat.card (SpecialOther G r u) * (r ^ 2 + 1) ≤
       Nat.card (SpecialWitness G r u) := by
@@ -1952,7 +1955,7 @@ theorem card_specialWitness_lower
       exact v.2.2
 
 theorem card_specialOther_le
-    {V : Type*} [Fintype V] [DecidableEq V]
+    {V : Type*} [Fintype V]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     {d r : ℕ} (hdeg : ∀ v, G.degree v ≤ d) (hdr : d ≤ r ^ 3) (u : V) :
     Nat.card (SpecialOther G r u) ≤ r ^ 4 := by
@@ -2278,9 +2281,10 @@ theorem overlapWeightSum_lt_half
 open Finset
 
 theorem one_sub_sum_le_prod
-    {ι : Type*} [DecidableEq ι] (s : Finset ι) (y : ι → ℝ)
+    {ι : Type*} (s : Finset ι) (y : ι → ℝ)
     (hy0 : ∀ i ∈ s, 0 ≤ y i) (hy1 : ∀ i ∈ s, y i ≤ 1) :
     1 - ∑ i ∈ s, y i ≤ ∏ i ∈ s, (1 - y i) := by
+  classical
   induction s using Finset.induction_on with
   | empty => simp
   | @insert a s ha ih =>
@@ -2494,17 +2498,18 @@ theorem exists_distinct_same_color
     (hcard : Fintype.card C < Fintype.card V) :
     ∃ u v : V, u ≠ v ∧ c u = c v := by
   by_contra h
-  push_neg at h
+  push Not at h
   have hc : Injective c := fun u v huv ↦ by
     by_contra huv'
     exact h u v huv' huv
   exact (not_le_of_gt hcard) (Fintype.card_le_of_injective c hc)
 
 theorem exists_monochromaticPairing
-    {V C : Type*} [Fintype V] [DecidableEq V] [Fintype C]
+    {V C : Type*} [Fintype V] [Fintype C]
     (c : V → C) (q : ℕ)
     (hcard : 2 * q + Fintype.card C ≤ Fintype.card V) :
     MonochromaticPairing c q := by
+  classical
   induction q generalizing V with
   | zero =>
       refine ⟨fun z ↦ Fin.elim0 z.1, ?_, fun i ↦ Fin.elim0 i⟩
@@ -2603,12 +2608,13 @@ theorem not_acyclic_of_monochromatic_square
   have hn30 : v3 ≠ v0 := h30.ne
   have hw : w.IsCycle := by
     rw [SimpleGraph.Walk.isCycle_def]
-    simp [w, Sym2.eq_iff, hn01, hn01.symm, hn12, hn12.symm,
-      hn23, hn23.symm, hn30, hn30.symm, h02, h02.symm, h13, h13.symm]
+    simp [w, hn01, hn01.symm, hn12,
+      hn23, hn30, hn30.symm, h02, h02.symm, h13]
   apply hc.2 w hw
   refine ⟨c v0, c v1, ?_⟩
   intro u hu
-  simp [w] at hu
+  simp only [SimpleGraph.Walk.support_cons, SimpleGraph.Walk.support_nil, List.mem_cons,
+    List.not_mem_nil, or_false, w] at hu
   rcases hu with rfl | rfl | rfl | hu
   · exact Or.inl rfl
   · exact Or.inr rfl
@@ -2662,8 +2668,8 @@ theorem blockCoord_injective {V : Type*} {q : ℕ}
     cases h1
     cases h2
     rfl
-  · simp only [blockCoord, Fin.isValue, Fin.zero_eta, Fin.mk_one,
-      OfNat.ofNat, ne_eq, one_ne_zero, ↓reduceIte] at h
+  · simp only [blockCoord, Fin.zero_eta, Fin.mk_one,
+      OfNat.ofNat, ↓reduceIte] at h
     have h1 : (i, a) = (l, e) := hp (Prod.mk.inj h).1
     have h2 : (j, b) = (k, c) := hp (Prod.mk.inj h).2
     have hil : i = l := congrArg Prod.fst h1
@@ -2671,8 +2677,8 @@ theorem blockCoord_injective {V : Type*} {q : ℕ}
     subst l
     subst k
     exact (lt_asymm hij hkl).elim
-  · simp only [blockCoord, Fin.isValue, Fin.zero_eta, Fin.mk_one,
-      OfNat.ofNat, ne_eq, one_ne_zero, ↓reduceIte] at h
+  · simp only [blockCoord, Fin.zero_eta, Fin.mk_one,
+      OfNat.ofNat, ↓reduceIte] at h
     have h1 : (j, b) = (k, c) := hp (Prod.mk.inj h).1
     have h2 : (i, a) = (l, e) := hp (Prod.mk.inj h).2
     have hjk : j = k := congrArg Prod.fst h1
@@ -2680,8 +2686,7 @@ theorem blockCoord_injective {V : Type*} {q : ℕ}
     subst k
     subst l
     exact (lt_asymm hij hkl).elim
-  · simp only [blockCoord, Fin.isValue, Fin.mk_one, OfNat.ofNat,
-      ne_eq, one_ne_zero, ↓reduceIte] at h
+  · simp only [blockCoord, Fin.mk_one, OfNat.ofNat] at h
     have h1 : (j, b) = (l, e) := hp (Prod.mk.inj h).1
     have h2 : (i, a) = (k, c) := hp (Prod.mk.inj h).2
     cases h1
@@ -2802,7 +2807,7 @@ noncomputable instance someSquareSafeColoringSamplesFintype
       ∃ c : V → Fin q, IsSquareSafe (graphOfSample ω) c} :=
   Fintype.ofFinite _
 
-theorem card_rowGood {R C : Type*} [Fintype R] [Fintype C] [DecidableEq C]
+theorem card_rowGood {R C : Type*} [Fintype R] [Fintype C]
     (base : C) :
     Fintype.card {g : R → C // RowGood base g} =
       Fintype.card C ^ Fintype.card R - 1 := by
@@ -2835,7 +2840,6 @@ private def goodRowsEquiv {B R C : Type*} (base : C) :
   right_inv _ := rfl
 
 theorem card_goodRows {B R C : Type*} [Fintype B] [Fintype R] [Fintype C]
-    [DecidableEq C]
     (base : C) :
     Fintype.card {h : B → R → C // ∀ b, RowGood base (h b)} =
       (Fintype.card C ^ Fintype.card R - 1) ^ Fintype.card B := by
@@ -2882,7 +2886,7 @@ private def splitGoodEquiv
 
 theorem card_block_avoidance_mul
     {B R E C : Type*} [Fintype B] [Fintype R] [Fintype E]
-    [Fintype C] [DecidableEq E] [DecidableEq C]
+    [Fintype C] [DecidableEq E]
     (base : C) (f : B × R → E) (hf : Injective f) :
     Fintype.card {w : E → C // ∀ b, ∃ r, w (f (b, r)) ≠ base} *
         Fintype.card C ^ (Fintype.card B * Fintype.card R) =
@@ -2993,7 +2997,7 @@ theorem card_squareSafe_samples_mul_le
       simpa only [Nat.mul_comm] using hcount'
 
 theorem natCard_exists_le_sum
-    {I X : Type*} [Fintype I] [Fintype X]
+    {I X : Type*} [Fintype I] [Finite X]
     (A : I → X → Prop) :
     Nat.card {x : X // ∃ i, A i x} ≤
       ∑ i : I, Nat.card {x : X // A i x} := by
@@ -3199,7 +3203,7 @@ theorem lower_color_numeric {s : ℕ} (hs : 1 ≤ s) :
   have hqpow' : lowerQ s ^ lowerN s ≤ 2 ^ (16 * s * lowerN s) := by
     simpa [pow_mul] using hqpow
   have hqpos : 0 < lowerQ s := by
-    simp [lowerQ, lowerA, lowerM]
+    dsimp only [lowerQ, lowerA, lowerM]
     positivity
   have hsq : 1 ≤ s * lowerQ s := Nat.one_le_iff_ne_zero.mpr (mul_ne_zero (by omega) (by omega))
   have hexp : 2 + 16 * s * lowerN s < lowerL s := by
@@ -3342,7 +3346,7 @@ theorem card_adj_samples_mul_le
   classical
   by_cases huv : u = v
   · subst v
-    simp [graphOfSample_adj]
+    simp
   · have hfixed := card_two_fixed_mul_le (M := M)
       (e := (u, v)) (f := (v, u)) (by
         intro h
@@ -3607,7 +3611,7 @@ theorem card_highVertices_lt_lowerK
     (highVertices ω).card < lowerK s := by
   have hn : 0 < Fintype.card (Fin (lowerN s)) := by
     rw [Fintype.card_eq_nat_card, Nat.card_fin]
-    simp [lowerN, lowerQ, lowerA, lowerM]
+    dsimp only [lowerN, lowerQ, lowerA, lowerM]
     positivity
   have h := eight_mul_card_highVertices_lt ω hn (by
     simpa only [Fintype.card_eq_nat_card, Nat.card_fin] using hsparse)
