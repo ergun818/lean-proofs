@@ -115,7 +115,7 @@ theorem eventually_boundedSubsetEulerMass_regular_lower
             (regularSquarefreeEulerLowerConstant / (p : ℝ) *
               ((1 / 2 : ℝ) * Real.sqrt (Real.log (M : ℝ)))) := by
                 field_simp [hpR.ne']
-                <;> ring
+                ring
         _ ≤ (1 / 4 : ℝ) *
             (regularSquarefreeEulerLowerConstant / (p : ℝ) *
               Real.sqrt (Real.log (M.sqrt : ℝ))) := hmul4
@@ -500,7 +500,7 @@ theorem eventually_regularKernelLogSum_lower_by_reciprocal
         Real.log n := freshRegularPrimeLog_sum_le_regularKernelLogSum p N
 
 theorem regularKernelLogSum_le_log_mul_card
-    (p : ℕ) {N : ℕ} (hN : 1 ≤ N) :
+    (p : ℕ) {N : ℕ} (_hN : 1 ≤ N) :
     (∑ n ∈ specialRegularSquarefreeKernels p N, Real.log n) ≤
       Real.log (N : ℝ) *
         ((specialRegularSquarefreeKernels p N).card : ℝ) := by
@@ -564,7 +564,7 @@ theorem eventually_specialRegularSquarefreeKernels_uniform_lower
           (regularSquarefreeEulerLowerConstant / (8 * (p : ℝ)) *
             ((1 / 2 : ℝ) * Real.sqrt (Real.log (N : ℝ)))) := by
           field_simp [hpR.ne']
-          <;> ring
+          ring
       _ ≤ (1 / 32 : ℝ) * (N : ℝ) *
           (regularSquarefreeEulerLowerConstant / (8 * (p : ℝ)) *
             Real.sqrt (Real.log (N.sqrt : ℝ))) := by
@@ -585,7 +585,7 @@ theorem eventually_specialRegularSquarefreeKernels_uniform_lower
       (p : ℝ)⁻¹ * ((N : ℝ) / Real.sqrt (Real.log (N : ℝ))) =
       (regularSquarefreeEulerLowerConstant / (512 * (p : ℝ)) *
         (N : ℝ)) / Real.sqrt (Real.log (N : ℝ)) by
-        field_simp [hpR.ne'] <;> ring]
+        field_simp [hpR.ne']; ring]
   apply (div_le_iff₀ hsqrtlog).2
   apply le_of_mul_le_mul_right ?_ hsqrtlog
   calc

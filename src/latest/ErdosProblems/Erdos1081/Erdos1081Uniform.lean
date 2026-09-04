@@ -149,7 +149,7 @@ theorem norm_eulerLogNat_sub_quadraticMain_le
       (mul_nonneg (norm_nonneg _) hr) hr).2
         (mul_le_of_le_one_left hr hchi))
 
-theorem Erdos164.analyticSeries_eq_tsum_nat {s : ℝ} (hs : 1 < s) :
+theorem Erdos164.analyticSeries_eq_tsum_nat {s : ℝ} (_hs : 1 < s) :
     Erdos164.analyticSeries s =
       ∑' q : ℕ, if 2 ≤ q then
         ArithmeticFunction.vonMangoldt q / Real.rpow (q : ℝ) s else 0 := by
@@ -487,10 +487,10 @@ theorem primeRpowTail_shiftedEulerExponent_le {Q : ℕ} (hQ : 2 ≤ Q) :
             8 * (Real.log (Q : ℝ) + 2) /
               (Real.log (Q : ℝ)) ^ 2 := by
         field_simp [hlog_ne]
-        <;> ring
+        ring
       rw [hsq]
       field_simp [hlog_ne, hlog_add_ne]
-      <;> ring
+      ring
     _ ≤ (1 : ℝ) / 4 := by
       apply (div_le_div_iff₀ (by positivity)
         (show (0 : ℝ) < 4 by norm_num)).mpr
@@ -517,7 +517,7 @@ theorem exp_eulerLogFinite_re_lower_shifted {M : ℕ} [NeZero M]
       (eulerLogTail chi Q (shiftedEulerExponent Q)).re ≤ (3 / 8 : ℝ) :=
     Complex.re_le_norm _ |>.trans htail
   have hEuler := exp_tsum_eulerLogNat_eq_LFunction chi hs
-  rw [tsum_eulerLogNat_eq_finite_add_tail chi hs] at hEuler
+  rw [tsum_eulerLogNat_eq_finite_add_tail chi (Q := Q) hs] at hEuler
   have hnorm := congrArg norm hEuler
   rw [Complex.norm_exp] at hnorm
   have hupper :
@@ -1210,7 +1210,7 @@ theorem eventually_squarefreeEulerMass_regular_lower
         squarefreeEulerMass (specialRegularAllowedPrimesFinite p Q) := by
     rw [← Real.exp_add]
     unfold specialRegularAllowedPrimeReciprocal
-    convert hexp using 1 <;> ring_nf
+    convert hexp using 1; ring_nf
   unfold regularSquarefreeEulerLowerConstant
   calc
     Real.exp (-Erdos469.naturalSquareSeries) *
@@ -1308,7 +1308,7 @@ theorem eventually_specialLocalReciprocal_uniform_lower
             (regularSquarefreeEulerLowerConstant / (p : ℝ) *
               ((1 / 2 : ℝ) * Real.sqrt (Real.log (N : ℝ)))) := by
                 field_simp [hpR.ne']
-                <;> ring
+                ring
         _ ≤ (1 / 4 : ℝ) *
             (regularSquarefreeEulerLowerConstant / (p : ℝ) *
               Real.sqrt (Real.log (N.sqrt : ℝ))) := hmul4
@@ -1443,9 +1443,9 @@ theorem eventually_specialLocal_logPartialSum_uniform_lower
   have hlog := eventually_specialLocal_logPartialSum_lower_of_reciprocal
     (Fact.out : p.Prime) hp4 hc hrec
   filter_upwards [hlog] with N hN
-  convert hN using 1 <;>
-    unfold uniformSpecialLocalLowerConstant <;>
-    field_simp [hpR.ne'] <;> ring
+  convert hN using 1;
+    unfold uniformSpecialLocalLowerConstant;
+    field_simp [hpR.ne']; ring
 
 theorem eventually_specialLocalValues_lower_of_log
     {p : ℕ} {c : ℝ}

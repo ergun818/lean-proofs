@@ -332,11 +332,11 @@ theorem surjectiveMonoidHom_fiber_card_mul
 /-- A fiber of an arbitrary homomorphism has size `|domain| / |range|`,
 provided the specified target lies in the range. -/
 theorem monoidHom_fiber_card_mul_range
-    {H K : Type*} [Group H] [Fintype H] [Group K] [Fintype K]
+    {H K : Type*} [Group H] [Fintype H] [Group K]
     [DecidableEq K] (f : H →* K) {y : K} (hy : y ∈ f.range) :
     Fintype.card {x : H // f x = y} * Nat.card f.range = Fintype.card H := by
   classical
-  let : Fintype f.range := Fintype.ofFinite _
+  let : Fintype f.range := Fintype.ofSurjective f.rangeRestrict f.rangeRestrict_surjective
   let y' : f.range := ⟨y, hy⟩
   have h := surjectiveMonoidHom_fiber_card_mul f.rangeRestrict
     f.rangeRestrict_surjective y'
@@ -2201,7 +2201,6 @@ theorem exists_specialForm_representation_of_signedClassProduct
     _ = z.norm.natAbs := by rw [algebraNorm_zsqrtd]
     _ = z.re.natAbs ^ 2 + p ^ 3 * z.im.natAbs ^ 2 := by
       rw [Zsqrtd.norm_def]
-      change (z.re * z.re - d * z.im * z.im).natAbs = _
       rw [show z.re * z.re - d * z.im * z.im =
           z.re ^ 2 + (p : ℤ) ^ 3 * z.im ^ 2 by
         dsimp [d]
@@ -2575,8 +2574,7 @@ theorem pairNonresidueResidues_spec {p q a : ℕ}
     rw [show ((f z : ℕ) : ZMod (p * q)) = (u : ZMod (p * q)) by
       exact ZMod.natCast_zmod_val (u : ZMod (p * q))]
     exact u.isUnit
-  · simp only [pairNonSquareUnits, Finset.mem_union,
-      Finset.mem_product, Finset.mem_univ, and_true, true_and] at hz
+  · simp only [pairNonSquareUnits, Finset.mem_union] at hz
     rcases hz with hz | hz
     · left
       rw [hep]
@@ -2814,7 +2812,7 @@ theorem eventually_geometricPairObstructionPrimes_reciprocal_lower
   filter_upwards [hAll, eventually_ge_atTop 1] with k hk hk1
   have hlogpos : 0 < Real.log (4 / 3 : ℝ) := Real.log_pos (by norm_num)
   have hlogle : Real.log (4 / 3 : ℝ) ≤ 1 / 3 := by
-    convert Real.log_le_sub_one_of_pos (by norm_num : (0 : ℝ) < 4 / 3) using 1 <;>
+    convert Real.log_le_sub_one_of_pos (by norm_num : (0 : ℝ) < 4 / 3) using 1;
       norm_num
   have hkpos : (0 : ℝ) < k := by exact_mod_cast hk1
   have hphi : (0 : ℝ) < (p * q).totient := by
@@ -3203,7 +3201,7 @@ noncomputable def specialLocalLogCoeff (p l k : ℕ) : ℝ :=
   else Real.log l
 
 theorem specialLocalLogCoeff_nonneg
-    (p k : ℕ) {l : ℕ} (hl : l.Prime) :
+    (p k : ℕ) {l : ℕ} (_hl : l.Prime) :
     0 ≤ specialLocalLogCoeff p l k := by
   classical
   unfold specialLocalLogCoeff
@@ -3224,7 +3222,7 @@ theorem sum_Icc_even_two (r : ℕ) :
       simp only [ih]
       have hodd : Odd (2 * r + 1) := ⟨r, by omega⟩
       have heven : Even (2 * r + 2) := ⟨r + 1, by omega⟩
-      simp [hodd, heven]
+      simp [heven]
       ring
 
 /-- Exact one-prime logarithmic convolution.  This is the coefficient-level
@@ -3243,7 +3241,7 @@ theorem specialLocalIndicator_prime_pow_log_convolution
       have heven : Even (2 * r) := ⟨r, by omega⟩
       have hind : specialLocalIndicator p (l ^ (2 * r)) = 1 := by
         rw [specialLocalIndicator_prime_pow hl]
-        simp [hobs, heven, Nat.not_odd_iff_even.mpr heven]
+        simp [hobs, Nat.not_odd_iff_even.mpr heven]
       have hsumPoint (k : ℕ) (hk : k ∈ Finset.Icc 1 (2 * r)) :
           specialLocalIndicator p (l ^ (2 * r - k)) *
               specialLocalLogCoeff p l k =
@@ -3579,6 +3577,7 @@ theorem eventually_specialLocalLogMass_lower
     _ ≤ specialLocalLogMass p Q :=
       specialAllowedPrimeLog_le_specialLocalLogMass p Q
 
+open BoundedGaps.Maynard in
 /-- A fixed-modulus logarithmic-saving estimate extracted from the proved
 Siegel--Walfisz/Bombieri--Vinogradov endpoint theorem. -/
 theorem exists_eventually_fixed_modulus_centered_discrepancy
@@ -3587,7 +3586,7 @@ theorem exists_eventually_fixed_modulus_centered_discrepancy
       BoundedGaps.Maynard.maxCenteredProgressionDiscrepancyUpTo x q ≤
         K * (x : ℝ) / Real.log (x : ℝ) ^ 3 := by
   obtain ⟨C, c, hC, hc, X0, hX0, hmain⟩ :=
-    BoundedGaps.Maynard.exists_siegelWalfisz_sum_maxCenteredProgressionDiscrepancyUpTo_le_logSaving_allCutoffs
+    exists_siegelWalfisz_sum_maxCenteredProgressionDiscrepancyUpTo_le_logSaving_allCutoffs
       3 (by norm_num)
   let K : ℝ := C + 40 *
     BoundedGaps.Maynard.vaughanPrimitiveMeanEquationOneTwoConstant
@@ -3700,8 +3699,7 @@ private theorem centeredProgressionDiscrepancy_le_max
   apply Finset.le_sup'_of_le
     (fun b => |BoundedGaps.Maynard.chebyshevProgressionSum x q b -
       Chebyshev.psi (x : ℝ) / (q.totient : ℝ)|)
-  · show a ∈ BoundedGaps.Maynard.coprimeResidues q
-    rw [BoundedGaps.Maynard.coprimeResidues, Finset.mem_filter,
+  · rw [BoundedGaps.Maynard.coprimeResidues, Finset.mem_filter,
       Finset.mem_range]
     exact ⟨haLt, haCop⟩
   · exact le_rfl
@@ -4440,8 +4438,8 @@ theorem specialLocalValues_card_eq_indicator_partialSum (p N : ℕ) :
     ((specialLocalValues p N).card : ℝ) =
       HalberstamScratch.partialSum (specialLocalIndicator p) N := by
   classical
-  simp [specialLocalValues, HalberstamScratch.partialSum,
-    specialLocalIndicator]
+  simp only [specialLocalValues, HalberstamScratch.partialSum, specialLocalIndicator,
+    sum_boole, Nat.cast_inj]
   congr 1
   ext n
   simp only [Finset.mem_filter, Finset.mem_Icc]
@@ -6447,7 +6445,7 @@ theorem half_real_div_le_nat_div {N m : ℕ}
   exact (div_le_iff₀ (by positivity : (0 : ℝ) < 2 * (m : ℝ))).2 hNtwoR
 
 theorem logPartialSum_le_log_mul_partialSum
-    (f : ℕ → ℝ) (hf : ∀ n, 0 ≤ f n) {N : ℕ} (hN : 1 ≤ N) :
+    (f : ℕ → ℝ) (hf : ∀ n, 0 ≤ f n) {N : ℕ} (_hN : 1 ≤ N) :
     HalberstamScratch.logPartialSum f N ≤
       Real.log (N : ℝ) * HalberstamScratch.partialSum f N := by
   unfold HalberstamScratch.logPartialSum HalberstamScratch.partialSum
@@ -6913,7 +6911,7 @@ theorem geometricPairObstructionPrimesBetween_sum_le_mass
 /-- Splitting the harmonic sum at a fixed index loses only a fixed finite
 prefix. -/
 theorem harmonic_le_prefix_add_tail {k₀ K : ℕ}
-    (hk₀ : 1 ≤ k₀) (hK : k₀ ≤ K) :
+    (hk₀ : 1 ≤ k₀) (_hK : k₀ ≤ K) :
     (harmonic K : ℝ) ≤
       (∑ k ∈ Finset.Icc 1 (k₀ - 1), (k : ℝ)⁻¹) +
         ∑ k ∈ Finset.Icc k₀ K, (k : ℝ)⁻¹ := by

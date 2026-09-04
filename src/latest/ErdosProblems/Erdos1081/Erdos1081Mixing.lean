@@ -18,7 +18,7 @@ theorem tendsto_finsetSum_atTop_of_nonneg_of_exhaustive
   intro b
   have hlarge : ∃ F : Finset ι, b < ∑ i ∈ F, f i := by
     by_contra h
-    push_neg at h
+    push Not at h
     exact hnot (summable_of_sum_le hf h)
   obtain ⟨F, hF⟩ := hlarge
   obtain ⟨N, hFN⟩ := hexhaust F
@@ -360,7 +360,7 @@ theorem mem_specialFormValues_of_signed_primeFactors
       _ ≤ N := haN
 
 theorem countOutsideSubgroup_ofFn_eq_card_filter
-    {G : Type*} [CommGroup G] [Fintype G] [DecidableEq G]
+    {G : Type*} [CommGroup G]
     {k : ℕ} (H : Subgroup G) [DecidablePred (· ∈ H)]
     (x : Fin k → G) :
     countOutsideSubgroup H (List.ofFn x) =
@@ -373,10 +373,10 @@ theorem countOutsideSubgroup_ofFn_eq_card_filter
       by_cases h0 : x 0 ∈ H
       · rw [countOutsideSubgroup_cons_of_mem H _ _ h0]
         rw [ih (fun i : Fin k ↦ x i.succ)]
-        simpa [Finset.card_filter, Fin.sum_univ_succ, h0]
+        simp [Finset.card_filter, Fin.sum_univ_succ, h0]
       · rw [countOutsideSubgroup_cons_of_not_mem H _ _ h0]
         rw [ih (fun i : Fin k ↦ x i.succ)]
-        simpa [Finset.card_filter, Fin.sum_univ_succ, h0, Nat.add_comm]
+        simp [Finset.card_filter, Fin.sum_univ_succ, h0, Nat.add_comm]
 
 theorem exists_squareSubgroup_with_few_primeDivisors_of_exception
     {p N a : ℕ} [Fact p.Prime]
@@ -584,7 +584,7 @@ theorem specialRegularKernelExceptions_card_le_cover
   have hsub : specialRegularKernelExceptions p N ⊆ {1} ∪ U := by
     intro a ha
     rcases specialRegularKernelException_mem_cover hsqtop ha with ha1 | haH
-    · exact Finset.mem_union_left _ (by simpa [ha1])
+    · exact Finset.mem_union_left _ (by simp [ha1])
     · obtain ⟨H, hHP, haH⟩ := haH
       exact Finset.mem_union_right _
         (Finset.mem_biUnion.mpr ⟨H, hHP, haH⟩)

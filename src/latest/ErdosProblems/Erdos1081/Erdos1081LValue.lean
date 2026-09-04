@@ -62,9 +62,6 @@ theorem one_sub_exp_mul_I_factor {theta : ℝ} :
     (1 : ℂ) - Complex.exp (theta * Complex.I) =
       (2 * Real.sin (theta / 2) : ℝ) *
         Complex.exp ((↑(theta / 2 - Real.pi / 2) : ℂ) * Complex.I) := by
-  change (1 : ℂ) - Complex.exp ((theta : ℂ) * Complex.I) =
-    (2 * Real.sin (theta / 2) : ℝ) *
-      Complex.exp (((theta / 2 - Real.pi / 2 : ℝ) : ℂ) * Complex.I)
   rw [Complex.exp_mul_I, Complex.exp_mul_I]
   rw [← Complex.ofReal_cos theta, ← Complex.ofReal_sin theta,
     ← Complex.ofReal_cos (theta / 2 - Real.pi / 2),
@@ -90,13 +87,11 @@ theorem one_sub_exp_mul_I_mem_slitPlane
   rw [one_sub_exp_mul_I_factor]
   rw [Complex.mem_slitPlane_iff]
   left
-  change 0 < ((2 * Real.sin (theta / 2) : ℝ) *
-    Complex.exp (((theta / 2 - Real.pi / 2 : ℝ) : ℂ) * Complex.I)).re
   rw [Complex.re_ofReal_mul, Complex.exp_mul_I]
   rw [← Complex.ofReal_cos (theta / 2 - Real.pi / 2),
     ← Complex.ofReal_sin (theta / 2 - Real.pi / 2)]
   simp only [Complex.add_re, Complex.ofReal_re, Complex.mul_re, Complex.ofReal_im,
-    Complex.I_re, Complex.I_im, mul_zero, zero_mul, mul_one, sub_zero, add_zero]
+    Complex.I_re, Complex.I_im, mul_zero, mul_one, sub_zero, add_zero]
   have hsin : 0 < Real.sin (theta / 2) :=
     Real.sin_pos_of_pos_of_lt_pi (by linarith) (by linarith)
   have hcos : 0 < Real.cos (theta / 2 - Real.pi / 2) :=
@@ -115,10 +110,10 @@ theorem log_one_sub_exp_mul_I
   rw [Complex.log_ofReal_mul hsin (Complex.exp_ne_zero _)]
   rw [Complex.log_exp]
   · simp only [Complex.mul_im, Complex.ofReal_re, Complex.ofReal_im,
-      Complex.I_re, Complex.I_im, mul_one, zero_mul, sub_zero]
+      Complex.I_re, Complex.I_im, mul_one, zero_mul]
     linarith [Real.pi_pos]
   · simp only [Complex.mul_im, Complex.ofReal_re, Complex.ofReal_im,
-      Complex.I_re, Complex.I_im, mul_one, zero_mul, sub_zero]
+      Complex.I_re, Complex.I_im, mul_one, zero_mul]
     linarith [Real.pi_pos]
 
 theorem exists_tendsto_exp_mul_I_div_nat_add_one
@@ -132,7 +127,7 @@ theorem exists_tendsto_exp_mul_I_div_nat_add_one
   ext n
   apply Finset.sum_congr rfl
   intro i hi
-  simp only [one_div, Complex.real_smul, div_eq_mul_inv]
+  simp only [Complex.real_smul, div_eq_mul_inv]
   push_cast
   ring
 
@@ -157,7 +152,7 @@ theorem tsum_exp_mul_I_powerSeries_eq_neg_log_div
       rw [pow_succ (r : ℂ)]
       field_simp [ne_of_gt hr0]
     _ = (r : ℂ)⁻¹ * -Complex.log (1 - (r : ℂ) * z) := by
-      convert hs.tsum_eq using 1 <;> simp [Nat.cast_add]
+      convert hs.tsum_eq using 1; simp [Nat.cast_add]
     _ = -Complex.log (1 - (r : ℂ) * Complex.exp (theta * Complex.I)) / (r : ℂ) := by
       simp only [z, div_eq_mul_inv]
       ring
@@ -175,7 +170,7 @@ theorem tendsto_neg_log_one_sub_real_mul_exp_div
       (fun r : ℝ ↦ (1 : ℂ) - (r : ℂ) * Complex.exp (theta * Complex.I))
       (nhdsWithin (1 : ℝ) (Set.Iio 1))
       (nhds ((1 : ℂ) - Complex.exp (theta * Complex.I))) := by
-    convert tendsto_const_nhds.sub (hcoe.mul_const (Complex.exp (theta * Complex.I))) using 1 <;>
+    convert tendsto_const_nhds.sub (hcoe.mul_const (Complex.exp (theta * Complex.I))) using 1;
       ring_nf
   have hlog := harg.clog (one_sub_exp_mul_I_mem_slitPlane htheta0 htheta2pi)
   have hdiv := hlog.neg.div hcoe (by norm_num : (1 : ℂ) ≠ 0)
@@ -447,7 +442,7 @@ theorem expZeta_apply_one_eq_neg_log
       tendsto_one_div_add_atTop_nhds_zero_nat
     have hsmall : Tendsto (fun m : ℕ ↦ 4 * b * (1 / ((m : ℝ) + 1))) atTop
         (nhds 0) := by
-      convert tendsto_const_nhds.mul honeDiv using 1 <;> norm_num
+      convert tendsto_const_nhds.mul honeDiv using 1; norm_num
     have hev := hsmall.eventually (eventually_lt_nhds (half_pos heps))
     rw [eventually_atTop] at hev
     obtain ⟨m, hm⟩ := hev
@@ -484,7 +479,7 @@ theorem expZeta_apply_one_eq_neg_log
     calc
       ‖HurwitzZeta.expZeta x (q k : ℂ) - -Complex.log (1 - z)‖ =
           ‖(HurwitzZeta.expZeta x (q k : ℂ) - Hk) + (Hk - H1) +
-            (H1 - -Complex.log (1 - z))‖ := by congr 1 <;> ring
+            (H1 - -Complex.log (1 - z))‖ := by congr 1; ring
       _ ≤ ‖HurwitzZeta.expZeta x (q k : ℂ) - Hk‖ + ‖Hk - H1‖ +
           ‖H1 - -Complex.log (1 - z)‖ := by
         calc
@@ -506,8 +501,8 @@ theorem expZeta_apply_one_eq_neg_log
       (nhds (HurwitzZeta.expZeta x 1)) := by
     have hqComplex : Tendsto (fun k : ℕ ↦ (q k : ℂ)) atTop (nhds (1 : ℂ)) :=
       (Complex.continuous_ofReal.tendsto 1).comp hq
-    exact (HurwitzZeta.differentiableAt_expZeta (x : UnitAddCircle) 1 (Or.inr hxUnit)).continuousAt.tendsto.comp
-      hqComplex
+    exact (HurwitzZeta.differentiableAt_expZeta (x : UnitAddCircle) 1 (Or.inr hxUnit))
+      |>.continuousAt.tendsto.comp hqComplex
   simpa [theta, z] using tendsto_nhds_unique hcont hseq
 
 theorem sinZeta_apply_one
@@ -788,7 +783,7 @@ theorem complexQuadraticChar_LFunction_one_norm_lower
       ‖DirichletCharacter.LFunction (complexQuadraticChar p) 0‖ =
         (p : ℝ)⁻¹ * ‖(S : ℂ)‖ := by
     rw [hL0eq]
-    simp only [norm_mul, norm_neg, norm_inv, norm_natCast, norm_one, one_div,
+    simp only [norm_mul, norm_neg, norm_inv, norm_natCast, one_div,
       S]
   have hL0lower : (p : ℝ)⁻¹ ≤
       ‖DirichletCharacter.LFunction (complexQuadraticChar p) 0‖ := by

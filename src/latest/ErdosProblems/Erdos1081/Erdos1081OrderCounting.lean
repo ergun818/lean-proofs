@@ -73,7 +73,7 @@ theorem specialMaximal_isPrincipal_or_eq_orientedSplit
     (P : Ideal (Zsqrtd (-(p : ℤ) ^ 3))) (hP : P.IsMaximal)
     (hconductor : Zsqrtd.ofInt ((2 * p : ℕ) : ℤ) ∉ P) :
     P.IsPrincipal ∨
-      ∃ q : ℕ, ∃ hq : q.Prime, ∃ hq2 : q ≠ 2, ∃ hqp : q ≠ p,
+      ∃ q : ℕ, ∃ _hq : q.Prime, ∃ _hq2 : q ≠ 2, ∃ _hqp : q ≠ p,
         ∃ h : ¬ IsQuadraticObstruction (p ^ 3) q, ∃ b : Bool,
           P = specialOrientedSplitIdeal p q h b := by
   let : Module.Free ℤ (Zsqrtd (-(p : ℤ) ^ 3)) :=
@@ -205,8 +205,7 @@ instance : Coe (IntegralUnitIdeal S) (Ideal S) := ⟨Subtype.val⟩
     (h : (I : Ideal S) = (J : Ideal S)) : I = J := Subtype.ext h
 
 instance : One (IntegralUnitIdeal S) :=
-  ⟨⟨⊤, by simpa using
-    (isUnit_one : IsUnit (1 : FractionalIdeal S⁰ (FractionRing S)))⟩⟩
+  ⟨⟨⊤, by simp⟩⟩
 
 instance : Mul (IntegralUnitIdeal S) :=
   ⟨fun I J ↦ ⟨(I : Ideal S) * (J : Ideal S), by
@@ -518,7 +517,7 @@ theorem exists_specialSplitPrimeClass_not_mem_of_idealClass_not_mem
         have hIeq : I = 1 := IntegralUnitIdeal.ext
           (htop.trans IntegralUnitIdeal.coe_one.symm)
         subst I
-        exact hclassI (by simpa using H.one_mem)
+        exact hclassI (by simp)
       obtain ⟨P, hPmax, hIP⟩ := Ideal.exists_le_maximal (I : Ideal O) hIneTop
       have hcond : Zsqrtd.ofInt ((2 * p : ℕ) : ℤ) ∉ P := by
         intro hfP
@@ -666,7 +665,7 @@ theorem exists_specialSplitPrimeClass_not_mem_of_idealClass_not_mem
 def SpecialNormBall (p K : ℕ) :=
   {z : Zsqrtd (-(p : ℤ) ^ 3) // z.norm.natAbs ≤ K}
 
-noncomputable def finiteSpecialNormBall {p K : ℕ} (hp : 1 ≤ p) :
+theorem finiteSpecialNormBall {p K : ℕ} (hp : 1 ≤ p) :
     Finite (SpecialNormBall p K) := by
   let s := K.sqrt
   let A := {a : ℤ // a ∈ Finset.Icc (-(s : ℤ)) (s : ℤ)}
@@ -793,7 +792,7 @@ def SpecialClassBall (p N : ℕ) [Fact p.Prime]
     IntegralUnitIdeal.idealClass I = C ∧
       (I : Ideal (Zsqrtd (-(p : ℤ) ^ 3))).cardQuot ≤ N}
 
-noncomputable def finiteSpecialClassBall
+theorem finiteSpecialClassBall
     {p N : ℕ} [Fact p.Prime]
     (C : ClassGroup (Zsqrtd (-(p : ℤ) ^ 3))) :
     Finite (SpecialClassBall p N C) := by
@@ -1161,7 +1160,7 @@ theorem specialBoxElement_span_isCoprime
           Set (Zsqrtd (-(p : ℤ) ^ 3))) from le_sup_right) hmw
   have hone := add_mem hz' hmw'
   convert hone using 1 <;> ext <;>
-    simp [specialBoxElement, w] <;> ring
+    simp [specialBoxElement, w]
 
 theorem specialBoxElement_eq_of_associated
     {p m a b c e : ℕ} [Fact p.Prime] (hm : 0 < m)
@@ -1300,7 +1299,6 @@ theorem exists_coprime_inverse_integralUnitIdeal
         rw [← IsScalarTower.algebraMap_smul A r (e.symm 1), map_smul,
           e.apply_symm_apply]
         rw [smul_eq_mul, mul_one]
-        change a - algebraMap S A r = 0
         rw [← hr]
         simp [A, Ideal.Quotient.algebraMap_eq]
       have hvker : v ∈ LinearMap.ker (TensorProduct.mk S A M 1) := by
@@ -1548,7 +1546,7 @@ theorem natCard_specialCoprimeClassBall_le_sum_divisible
     (F : Ideal (Zsqrtd (-(p : ℤ) ^ 3)))
     (T : Finset (SpecialSplitPrimeData p))
     (hcover : ∀ I : SpecialCoprimeClassBall p N C F,
-      ∃ s : SpecialSplitPrimeData p, ∃ hs : s ∈ T, ∃ b : Bool,
+      ∃ s : SpecialSplitPrimeData p, ∃ _hs : s ∈ T, ∃ b : Bool,
         ∃ J : IntegralUnitIdeal (Zsqrtd (-(p : ℤ) ^ 3)),
           s.integralUnitIdeal b * J = I.1.1) :
     Nat.card (SpecialCoprimeClassBall p N C F) ≤

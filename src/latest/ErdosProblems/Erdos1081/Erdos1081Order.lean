@@ -38,18 +38,18 @@ noncomputable local instance (d : ℤ) : Module.Free ℤ (Zsqrtd d) :=
 noncomputable local instance (d : ℤ) : Module.Finite ℤ (Zsqrtd d) :=
   Module.Finite.of_basis (zsqrtdBasis d)
 
-def zsqrtdNoZeroDivisors (d : ℤ) (hd : d < 0) :
-    NoZeroDivisors (Zsqrtd d) where
-  eq_zero_or_eq_zero_of_mul_eq_zero := by
-    intro a b hab
-    have hnorm : a.norm * b.norm = 0 := by
-      rw [← Zsqrtd.norm_mul]
-      simp [hab]
-    rcases mul_eq_zero.mp hnorm with ha | hb
-    · exact Or.inl ((Zsqrtd.norm_eq_zero_iff hd a).mp ha)
-    · exact Or.inr ((Zsqrtd.norm_eq_zero_iff hd b).mp hb)
+theorem zsqrtdNoZeroDivisors (d : ℤ) (hd : d < 0) :
+    NoZeroDivisors (Zsqrtd d) := by
+  constructor
+  intro a b hab
+  have hnorm : a.norm * b.norm = 0 := by
+    rw [← Zsqrtd.norm_mul]
+    simp [hab]
+  rcases mul_eq_zero.mp hnorm with ha | hb
+  · exact Or.inl ((Zsqrtd.norm_eq_zero_iff hd a).mp ha)
+  · exact Or.inr ((Zsqrtd.norm_eq_zero_iff hd b).mp hb)
 
-def zsqrtdIsDomain (d : ℤ) (hd : d < 0) : IsDomain (Zsqrtd d) := by
+theorem zsqrtdIsDomain (d : ℤ) (hd : d < 0) : IsDomain (Zsqrtd d) := by
   let : NoZeroDivisors (Zsqrtd d) := zsqrtdNoZeroDivisors d hd
   exact NoZeroDivisors.to_isDomain _
 
@@ -147,7 +147,7 @@ noncomputable def idealSpanMulLinearEquiv
       map_smul' := by
         intro n x
         apply Subtype.ext
-        simp [Algebra.smul_def, mul_assoc, mul_comm, mul_left_comm] }
+        simp [Algebra.smul_def, mul_assoc, mul_comm] }
   refine LinearEquiv.ofBijective f ⟨?_, ?_⟩
   · intro x y hxy
     apply Subtype.ext
@@ -165,6 +165,7 @@ noncomputable def idealSpanMulLinearEquiv
     ((idealSpanMulLinearEquiv I ha x :
       Ideal.span ({a} : Set S) * I) : S) = a * (x : S) := rfl
 
+omit [IsDomain S] in
 /-- Quotient cardinality is the absolute determinant of any full-rank
 integral basis of the ideal. -/
 theorem cardQuot_eq_natAbs_det_basis_change
@@ -183,11 +184,13 @@ theorem cardQuot_eq_natAbs_det_basis_change
 the absolute algebra norm of the generator. -/
 theorem cardQuot_span_singleton_mul
     [Module.Free ℤ S] [Module.Finite ℤ S]
-    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {ι : Type*} [Finite ι]
     (b : Module.Basis ι ℤ S) (I : Ideal S)
     (bI : Module.Basis ι ℤ I) {a : S} (ha : a ≠ 0) :
     (Ideal.span ({a} : Set S) * I).cardQuot =
       (Algebra.norm ℤ a).natAbs * I.cardQuot := by
+  classical
+  let : Fintype ι := Fintype.ofFinite ι
   let bMul : Module.Basis ι ℤ (Ideal.span ({a} : Set S) * I) :=
     bI.map (idealSpanMulLinearEquiv I ha)
   rw [cardQuot_eq_natAbs_det_basis_change b _ bMul,
@@ -211,7 +214,7 @@ noncomputable def idealFullBasis
 canonically by Smith normal form. -/
 theorem cardQuot_span_singleton_mul_of_ne_bot
     [Module.Free ℤ S] [Module.Finite ℤ S]
-    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {ι : Type*} [Finite ι]
     (b : Module.Basis ι ℤ S) (I : Ideal S) (hI : I ≠ ⊥)
     {a : S} (ha : a ≠ 0) :
     (Ideal.span ({a} : Set S) * I).cardQuot =
@@ -223,7 +226,7 @@ expected quotient-cardinality ratio.  This is the non-Dedekind replacement
 for the corresponding `Ideal.absNorm` calculation. -/
 theorem cardQuot_ratio_of_principal_mul_eq
     [Module.Free ℤ S] [Module.Finite ℤ S]
-    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {ι : Type*} [Finite ι]
     (b : Module.Basis ι ℤ S) {I J : Ideal S}
     (hI : I ≠ ⊥) (hJ : J ≠ ⊥) {a c : S}
     (ha : a ≠ 0) (hc : c ≠ 0)
@@ -236,6 +239,7 @@ theorem cardQuot_ratio_of_principal_mul_eq
 
 open TensorProduct
 
+omit [IsDomain S] in
 /-- Tensoring an invertible module with a residue field makes it a
 one-dimensional vector space.  Consequently multiplication by a maximal
 ideal has relative additive index equal to the cardinality of the residue
@@ -259,6 +263,7 @@ theorem relIndex_smul_invertible_submodule_eq_cardQuot
     (Module.Invertible.free_iff_linearEquiv.mp (by infer_instance)).some
   exact Nat.card_congr e'.toEquiv
 
+omit [IsDomain S] in
 /-- Multiplication on the left by a maximal ideal multiplies quotient
 cardinality by its residue-field cardinality whenever the right ideal is
 invertible as a module. -/
@@ -304,9 +309,10 @@ noncomputable def idealSubtypeEquivCoeFractionalIdeal (J : Ideal S) :
     obtain ⟨x, hx, rfl⟩ := (FractionalIdeal.mem_coeIdeal S⁰).mp hy
     exact ⟨⟨x, hx⟩, rfl⟩
 
+omit [IsDomain S] in
 /-- An integral ideal which is a unit in the fractional-ideal monoid is an
 invertible module. -/
-noncomputable def moduleInvertibleIdealOfIsUnit (J : Ideal S)
+theorem moduleInvertibleIdealOfIsUnit (J : Ideal S)
     (hJ : IsUnit (J : FractionalIdeal S⁰ (FractionRing S))) :
     Module.Invertible S J := by
   let uF : (FractionalIdeal S⁰ (FractionRing S))ˣ := hJ.unit
@@ -323,6 +329,7 @@ noncomputable def moduleInvertibleIdealOfIsUnit (J : Ideal S)
     LinearEquiv.ofEq _ _ hsub ≪≫ₗ (idealSubtypeEquivCoeFractionalIdeal J).symm
   exact Module.Invertible.congr e
 
+omit [IsDomain S] in
 /-- Quotient cardinality is multiplicative when the left factor is maximal
 and the right integral ideal is invertible as a fractional ideal. -/
 theorem cardQuot_mul_of_isUnit_right
@@ -367,6 +374,7 @@ variable {abv}
 variable (adm : abv.IsAdmissible)
 variable [Infinite R] [DecidableEq R]
 
+omit [IsDomain S] [Infinite R] [DecidableEq R] in
 /-- A nonzero ideal contains an element of minimal norm.  This is the
 non-Dedekind version of `ClassGroup.exists_min`; its proof only needs the
 ideal to be nonzero. -/
@@ -403,7 +411,7 @@ theorem exists_integralUnitRep_mem_fixed
   have hM : algebraMap R S M ≠ 0 := ClassGroup.prod_finsetApprox_ne_zero bS adm
   have hI' : I' ≠ ⊥ := by
     intro hzero
-    have : (I : FractionalIdeal S⁰ (FractionRing S)) = 0 := by simpa [hI, hzero]
+    have : (I : FractionalIdeal S⁰ (FractionRing S)) = 0 := by simp [hI, hzero]
     exact I.ne_zero this
   obtain ⟨b, b_mem, b_ne_zero, b_min⟩ :=
     exists_min_nonzero (abv := abv) I' hI'
@@ -500,6 +508,7 @@ theorem exists_integralUnitRep_mem_fixed
 the Dedekind assumption in Mathlib's class-number theorem by the exact two
 properties used here: finite quotients and invertibility of the ideals that
 represent class-group elements. -/
+@[instance_reducible]
 noncomputable def fintypeClassGroupOfFiniteQuotients
     [Ring.HasFiniteQuotients S] [Algebra.IsAlgebraic R S] :
     Fintype (ClassGroup S) := by
@@ -543,6 +552,7 @@ end General
 
 /-- The concrete ring class group attached to a negative quadratic order is
 finite, including nonmaximal orders such as `ℤ[√(-p³)]`. -/
+@[instance_reducible]
 noncomputable def zsqrtdClassGroupFintype (d : ℤ) (hd : d < 0) :
     letI : IsDomain (Zsqrtd d) := zsqrtdIsDomain d hd
     Fintype (ClassGroup (Zsqrtd d)) := by

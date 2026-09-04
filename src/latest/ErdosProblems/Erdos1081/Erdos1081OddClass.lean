@@ -149,8 +149,8 @@ theorem fractionalIdealConj_coeIdeal (d : ℤ) [IsDomain (Zsqrtd d)]
         FractionalIdeal (Zsqrtd d)⁰ (FractionRing (Zsqrtd d))) := by
   ext x
   simp only [fractionalIdealConj, FractionalIdeal.ringEquivOfRingEquiv_apply,
-    FractionalIdeal.mem_coeIdeal, FractionalIdeal.coe_mk,
-    Submodule.mem_map, mem_idealConj_iff]
+    FractionalIdeal.mem_coeIdeal,
+    mem_idealConj_iff]
   constructor
   · rintro ⟨_, ⟨z, hz, rfl⟩, rfl⟩
     refine ⟨star z, ?_, ?_⟩
@@ -206,7 +206,6 @@ theorem span_ofInt_sup_span_ofInt_isPrincipal (d x y : ℤ) :
         apply Zsqrtd.ext
         · simp only [Zsqrtd.re_ofInt, Zsqrtd.re_mul, Zsqrtd.im_ofInt,
             mul_zero, add_zero]
-          change x = g * a
           rw [ha]
         · simp only [Zsqrtd.im_ofInt, Zsqrtd.im_mul, Zsqrtd.re_ofInt,
             mul_zero, zero_mul, add_zero]
@@ -217,7 +216,6 @@ theorem span_ofInt_sup_span_ofInt_isPrincipal (d x y : ℤ) :
         apply Zsqrtd.ext
         · simp only [Zsqrtd.re_ofInt, Zsqrtd.re_mul, Zsqrtd.im_ofInt,
             mul_zero, add_zero]
-          change y = g * b
           rw [hb]
         · simp only [Zsqrtd.im_ofInt, Zsqrtd.im_mul, Zsqrtd.re_ofInt,
             mul_zero, zero_mul, add_zero]
@@ -471,7 +469,7 @@ theorem exists_specialFractionCocycle
 theorem exists_specialHilbert90Beta
     {p : ℕ} [Fact p.Prime]
     {alpha : FractionRing (Zsqrtd (-((p : ℤ) ^ 3)))}
-    (halpha : alpha ≠ 0)
+    (_halpha : alpha ≠ 0)
     (hnorm : alpha * zsqrtdFractionConj (-((p : ℤ) ^ 3)) alpha = 1) :
     ∃ beta : FractionRing (Zsqrtd (-((p : ℤ) ^ 3))),
       beta ≠ 0 ∧
@@ -604,7 +602,7 @@ theorem exists_specialIdealHermiteData
     have hmul : Zsqrtd.sqrtd * Zsqrtd.ofInt (a : ℤ) ∈ I :=
       I.mul_mem_left _ haI
     have hz := himzero _ hmul
-    simpa [Zsqrtd.sqrtd, ha.ne'] using hz
+    simp [Zsqrtd.sqrtd, ha.ne'] at hz
   have hc : 0 < c := Int.natAbs_pos.mpr hcg
   have hdecomp (z : Zsqrtd (-(p : ℤ) ^ 3)) (hz : z ∈ I) : ∃ x y : ℤ,
       z = Zsqrtd.ofInt (x * a) + Zsqrtd.ofInt y * w := by
@@ -895,7 +893,7 @@ theorem mem_one_of_spanSingleton_mul_le_self
 
 theorem normalizedHermiteIdeal_primitive
     {p A : ℕ} [Fact p.Prime] {B k : ℤ}
-    (hApos : 0 < A)
+    (_hApos : 0 < A)
     (hnorm : B ^ 2 + (p : ℤ) ^ 3 = (A : ℤ) * k)
     (hunit : IsUnit (((normalizedHermiteIdeal p A B :
         Ideal (Zsqrtd (-((p : ℤ) ^ 3)))) :
@@ -938,7 +936,7 @@ theorem normalizedHermiteIdeal_primitive
     rw [div_mul_eq_mul_div, div_eq_iff hme0]
     rw [← map_mul, ← map_mul]
     apply congrArg (algebraMap O K)
-    apply Zsqrtd.ext <;> simp [e, hA₀, mul_comm, mul_left_comm, mul_assoc]
+    apply Zsqrtd.ext <;> simp [e, hA₀, mul_comm, mul_left_comm]
   have hgv : g * algebraMap O K v =
       algebraMap O K (Zsqrtd.ofInt t * v -
         Zsqrtd.ofInt ((A : ℤ) * k₀)) := by
@@ -1238,11 +1236,11 @@ theorem normalizedHermiteIdeal_isPrincipal_of_leading
         rcases hz with rfl | rfl
         · apply Ideal.mem_span_singleton.mpr
           refine ⟨-Zsqrtd.sqrtd, ?_⟩
-          apply Zsqrtd.ext <;> simp <;> ring
+          apply Zsqrtd.ext <;> simp
         · apply Ideal.mem_span_singleton.mpr
           refine ⟨Zsqrtd.ofInt (-C) * Zsqrtd.sqrtd + 1, ?_⟩
           rw [hC]
-          apply Zsqrtd.ext <;> simp [specialHermiteVector] <;> ring
+          apply Zsqrtd.ext <;> simp [specialHermiteVector]
       · apply Ideal.span_le.mpr
         intro z hz
         have hz' : z = Zsqrtd.sqrtd := by simpa using hz
@@ -1319,7 +1317,7 @@ theorem normalizedHermiteContentIdeal_eq_top
   have htwoEq : (Zsqrtd.ofInt (2 * B) :
       Zsqrtd (-((p : ℤ) ^ 3))) =
       specialHermiteVector p B + star (specialHermiteVector p B) := by
-    apply Zsqrtd.ext <;> simp [specialHermiteVector] <;> ring
+    apply Zsqrtd.ext <;> simp [specialHermiteVector]; ring
   have htwoin : Zsqrtd.ofInt (2 * B) ∈
       normalizedHermiteContentIdeal p A B k := by
     rw [htwoEq]

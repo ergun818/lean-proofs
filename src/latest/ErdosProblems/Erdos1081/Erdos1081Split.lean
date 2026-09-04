@@ -479,7 +479,7 @@ theorem orientedSplitIdeal_isCoprime_of_coprime
     ext <;> simp only [Zsqrtd.re_add, Zsqrtd.im_add,
       Zsqrtd.re_mul, Zsqrtd.im_mul, Zsqrtd.re_ofInt,
       Zsqrtd.im_ofInt, Zsqrtd.re_one, Zsqrtd.im_one,
-      mul_zero, zero_mul, add_zero, zero_add]
+      mul_zero, zero_mul, add_zero]
     linarith
 
 /-- Chinese remaindering makes quotient cardinality multiplicative for a
@@ -535,7 +535,7 @@ theorem exists_generator_norm_eq_prod_of_class_product_eq_one
           ∏ i, ((U i :
             (FractionalIdeal S⁰ (FractionRing S))ˣ) :
               FractionalIdeal S⁰ (FractionRing S)) := by
-        simpa using (Units.coe_prod U (Finset.univ : Finset (Fin k)))
+        simp
       _ = ∏ i, ((J i : Ideal S) :
           FractionalIdeal S⁰ (FractionRing S)) :=
         Finset.prod_congr rfl fun i _ => hcoe i

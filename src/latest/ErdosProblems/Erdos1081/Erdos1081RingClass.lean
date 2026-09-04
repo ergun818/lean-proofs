@@ -69,7 +69,7 @@ theorem exists_missedClass_of_no_signedProduct_of_squareClass
     ∃ g : G, ∀ i : Fin k, x i ≠ g := by
   classical
   by_contra h
-  push_neg at h
+  push Not at h
   obtain ⟨sigma, hsigma⟩ :=
     exists_signedProduct_eq_of_surjective_of_squareClass x h c hclass
   exact hmiss sigma hsigma
@@ -298,7 +298,7 @@ noncomputable def parityAvoidanceValues
 /-- Avoiding an adjoined prime is stronger than imposing even valuation at
 that prime, because the valuation is then zero. -/
 theorem parityAvoidanceValues_subset_unionParity
-    (L B : Finset ℕ) (hBprime : ∀ q ∈ B, q.Prime) (N : ℕ) :
+    (L B : Finset ℕ) (_hBprime : ∀ q ∈ B, q.Prime) (N : ℕ) :
     ∀ n ∈ parityAvoidanceValues L B N,
       n ∈ Finset.Icc 1 N ∧ ParityAdmissible (L ∪ B) n := by
   classical
@@ -477,7 +477,7 @@ theorem primeDivisorCount_prime_pow
           (Finset.mem_filter.mp hq).2
         have hqpEq : q = p :=
           (Nat.prime_dvd_prime_iff_eq hqprime hp).mp hqp
-        simpa [hqpEq]
+        simp [hqpEq]
       · intro hq
         have hqpEq : q = p := Finset.mem_singleton.mp hq
         subst q
@@ -1328,8 +1328,7 @@ theorem centeredThetaProgressionDiscrepancy_le_max1081
   apply Finset.le_sup'_of_le
     (fun b => |BoundedGaps.Maynard.thetaProgressionSum x q b -
       Chebyshev.theta (x : ℝ) / (q.totient : ℝ)|)
-  · show a ∈ BoundedGaps.Maynard.coprimeResidues q
-    rw [BoundedGaps.Maynard.coprimeResidues, Finset.mem_filter,
+  · rw [BoundedGaps.Maynard.coprimeResidues, Finset.mem_filter,
       Finset.mem_range]
     exact ⟨haLt, haCop⟩
   · exact le_rfl
@@ -1343,8 +1342,13 @@ theorem thetaAP_nat_eq_thetaProgressionSum1081
   rw [Nat.primesLE_eq_filter_Icc_one]
   apply Finset.sum_congr
   · ext l
-    simp only [Nat.floor_natCast, mem_filter, Finset.mem_Iic, Finset.mem_Icc]
-    exact fun _ _ hl => hl.one_le
+    simp only [Nat.floor_natCast, mem_filter, Finset.mem_Iic, Finset.mem_Icc,
+      Nat.mod_eq_of_lt ha]
+    constructor
+    · rintro ⟨hlQ, hl, hmod⟩
+      exact ⟨⟨⟨hl.one_le, hlQ⟩, hl⟩, hmod⟩
+    · rintro ⟨⟨⟨_, hlQ⟩, hl⟩, hmod⟩
+      exact ⟨hlQ, hl, hmod⟩
   · intro l hl
     rfl
 
@@ -2175,7 +2179,7 @@ theorem eventually_specialObstructionReciprocalMass_half_lower
 
 section SubsetProductStabilizer
 
-variable {G : Type*} [CommGroup G] [Fintype G] [DecidableEq G]
+variable {G : Type*} [CommGroup G] [DecidableEq G]
 
 /-- Left multiplication of a finite subset of a commutative group. -/
 def leftMulFinset (a : G) (S : Finset G) : Finset G :=
@@ -2246,7 +2250,7 @@ def finsetMulStabilizer (S : Finset G) : Subgroup G where
     change leftMulFinset a⁻¹ S = S
     apply leftMulFinset_injective a
     rw [← leftMulFinset_mul]
-    simpa [ha]
+    simp [ha]
 
 @[simp] theorem mem_finsetMulStabilizer_iff {S : Finset G} {a : G} :
     a ∈ finsetMulStabilizer S ↔ leftMulFinset a S = S := Iff.rfl
@@ -2278,7 +2282,7 @@ theorem mem_subsetProductsList_ofFn_iff {k : ℕ}
         z = ∏ i, if sigma i then x i else 1 := by
   induction k generalizing z with
   | zero =>
-      simp [subsetProductsList]
+      simp
   | succ k ih =>
       rw [List.ofFn_succ, subsetProductsList_cons, Finset.mem_union]
       constructor
@@ -2313,7 +2317,7 @@ theorem mem_subsetProductsList_ofFn_iff {k : ℕ}
           rw [leftMulFinset, Finset.mem_image]
           refine ⟨∏ i : Fin k, if sigma i.succ then x i.succ else 1, ?_, ?_⟩
           · exact htail
-          · simp [h0]
+          · simp
 
 /-- A multiplier stabilizing the old subset-product set continues to
 stabilize it after one more coordinate is adjoined. -/
@@ -2358,16 +2362,19 @@ noncomputable def countOutsideSubgroup (H : Subgroup G) (l : List G) : ℕ := by
   classical
   exact (l.filter fun a => decide (a ∉ H)).length
 
+omit [DecidableEq G] in
 @[simp] theorem countOutsideSubgroup_nil (H : Subgroup G) :
     countOutsideSubgroup H ([] : List G) = 0 := by
   simp [countOutsideSubgroup]
 
+omit [DecidableEq G] in
 theorem countOutsideSubgroup_cons_of_mem (H : Subgroup G)
     (a : G) (l : List G) (ha : a ∈ H) :
     countOutsideSubgroup H (a :: l) = countOutsideSubgroup H l := by
   classical
   simp [countOutsideSubgroup, ha]
 
+omit [DecidableEq G] in
 theorem countOutsideSubgroup_cons_of_not_mem (H : Subgroup G)
     (a : G) (l : List G) (ha : a ∉ H) :
     countOutsideSubgroup H (a :: l) = countOutsideSubgroup H l + 1 := by
@@ -2407,7 +2414,7 @@ theorem length_filter_not_mem_subgroup_lt_card_subsetProductsList
 
 /-- If the reachable subset products do not fill the group, then all but at
 most `|G|-1` coordinates lie in one proper stabilizer subgroup. -/
-theorem exists_proper_stabilizer_with_few_outside
+theorem exists_proper_stabilizer_with_few_outside [Fintype G]
     (l : List G) (hproper : subsetProductsList l ≠ Finset.univ) :
     ∃ H : Subgroup G, H ≠ ⊤ ∧
       countOutsideSubgroup H l < Fintype.card G := by
@@ -2455,7 +2462,7 @@ theorem signedProduct_mul_selectedSquareProduct {k : ℕ}
   rw [signedProduct, selectedSquareProduct, ← Finset.prod_mul_distrib]
   apply Finset.prod_congr rfl
   intro i hi
-  cases h : sigma i <;> simp [h, pow_two]
+  cases h : sigma i <;> simp [pow_two]
 
 theorem signedProduct_eq_iff_selectedSquareProduct_eq {k : ℕ}
     (sigma : Fin k → Bool) (x : Fin k → G) (c : G) :
@@ -2498,7 +2505,7 @@ def classSquareElement (x : G) :
 condition, forces all but fewer than `|G²|` coordinate squares into one
 proper subgroup of `G²`. -/
 theorem exists_proper_squareSubgroup_with_few_coordinates_of_no_signedProduct
-    [Fintype G] [DecidableEq G] {k : ℕ}
+    [Finite G] {k : ℕ}
     (x : Fin k → G) (c : G)
     (hclass :
       (QuotientGroup.mk' (classSquareSubgroup : Subgroup G)) (∏ i, x i) =
@@ -2529,7 +2536,7 @@ theorem exists_proper_squareSubgroup_with_few_coordinates_of_no_signedProduct
               (classSquareSubgroup : Subgroup G)) : G) := by
           apply Finset.prod_congr rfl
           intro i hi
-          cases h : sigma i <;> simp [h]
+          cases h : sigma i <;> simp
         _ = (∏ i, x i) / c := by
           simpa [target] using hsigmaVal.symm
     exact hmiss sigma

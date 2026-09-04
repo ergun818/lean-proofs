@@ -312,10 +312,10 @@ theorem specialSieveElement_cast_coordinates
     (ZMod.natCast_eq_zero_iff _ _).mpr hdiv
   rw [splitResiduePairEquivPi_apply]
   constructor
-  · simp only [specialSieveElement_re, Int.cast_natCast, Prod.fst]
+  · simp only [specialSieveElement_re, Int.cast_natCast]
     push_cast
     simp only [hzero, zero_mul, add_zero]
-  · simp only [specialSieveElement_im, Int.cast_natCast, Prod.snd]
+  · simp only [specialSieveElement_im, Int.cast_natCast]
     push_cast
     simp only [hzero, zero_mul, add_zero]
 
@@ -496,7 +496,7 @@ theorem specialSieveClassBall_lower
     (hIcop : ∀ s : {s // s ∈ S}, ∀ b : Bool,
       IsCoprime (I : Ideal (Zsqrtd (-(p : ℤ) ^ 3)))
         (s.1.integralUnitIdeal b : Ideal (Zsqrtd (-(p : ℤ) ^ 3))))
-    (L : ℕ) (hL : 0 < L) :
+    (L : ℕ) (_hL : 0 < L) :
     (∏ s ∈ S, (s.q - 1) ^ 2) * L ^ 2 ≤
       Nat.card (SpecialSieveClassBall p
         ((4 * (1 + p ^ 3) * (specialSieveModulus S) ^ 2 *
@@ -647,7 +647,6 @@ theorem exists_integralUnitIdeal_generator_mod_mul
         rw [← IsScalarTower.algebraMap_smul A r (e.symm 1), map_smul,
           e.apply_symm_apply]
         rw [smul_eq_mul, mul_one]
-        change a - algebraMap R A r = 0
         rw [← hr]
         simp [A, Ideal.Quotient.algebraMap_eq]
       have hvker : v ∈ LinearMap.ker (TensorProduct.mk R A M 1) :=
@@ -803,9 +802,7 @@ theorem specialSieveModulus_span_le_oriented
       (s.1.integralUnitIdeal b : Ideal (Zsqrtd (-(p : ℤ) ^ 3))) := by
     cases b <;>
       exact Ideal.subset_span (by
-        simp [SpecialSplitPrimeData.integralUnitIdeal,
-          specialOrientedIntegralUnitIdeal, specialOrientedSplitIdeal,
-          splitPrimeIdeal, splitConjugateIdeal])
+        simp)
   rw [show Zsqrtd.ofInt ((s.1.q * k : ℕ) : ℤ) =
       Zsqrtd.ofInt (k : ℤ) * Zsqrtd.ofInt (s.1.q : ℤ) by
     ext <;> simp [mul_comm]]
@@ -1006,7 +1003,7 @@ theorem specialShiftedGenerator_norm_natAbs_le
               ℤ) := by
       rw [Zsqrtd.norm_def]
       push_cast
-      simp only [Int.natCast_natAbs, sq_abs]
+      simp only [sq_abs]
       ring
     rw [hnormZ, Int.natAbs_natCast]
   rw [hnorm]
@@ -1039,8 +1036,6 @@ theorem splitAllowedResiduePair_eq_of_base_sub_mem
     rw [hre]
     simp only [Zsqrtd.re_mul, Zsqrtd.re_ofInt, Zsqrtd.im_ofInt,
       mul_zero, zero_mul, add_zero]
-    change (((specialSieveModulus S : ℤ) * c.re : ℤ) :
-      ZMod (∏ s ∈ S, s.q)) = 0
     have hmod : (((specialSieveModulus S : ℤ) :
         ZMod (∏ s ∈ S, s.q))) = 0 := by
       rw [ZMod.intCast_zmod_eq_zero_iff_dvd]
@@ -1051,7 +1046,7 @@ theorem splitAllowedResiduePair_eq_of_base_sub_mem
         ZMod (∏ s ∈ S, s.q)) = 0 := by
     rw [him]
     simp only [Zsqrtd.im_mul, Zsqrtd.re_ofInt, Zsqrtd.im_ofInt,
-      mul_zero, zero_mul, add_zero]
+      zero_mul, add_zero]
     have hmod : (((specialSieveModulus S : ℤ) :
         ZMod (∏ s ∈ S, s.q))) = 0 := by
       rw [ZMod.intCast_zmod_eq_zero_iff_dvd]
@@ -1123,13 +1118,13 @@ theorem specialShiftedGenerator_sub_base_mem
     have hprod := (J : Ideal (Zsqrtd (-(p : ℤ) ^ 3))).mul_mem_right
       (⟨(specialGeneratorRadius S g + 1 + a : ℕ), (b : ℕ)⟩ :
         Zsqrtd (-(p : ℤ) ^ 3)) hm_mem
-    convert hprod using 1 <;> ext <;> simp [v] <;> ring
+    convert hprod using 1; ext <;> simp [v]
   have hM : Zsqrtd.ofInt (specialSieveModulus S : ℤ) ∈
       Ideal.span ({Zsqrtd.ofInt (specialSieveModulus S : ℤ)} :
         Set (Zsqrtd (-(p : ℤ) ^ 3))) :=
     Ideal.mem_span_singleton_self _
   have hmul := Ideal.mul_mem_mul hM hv
-  convert hmul using 1 <;> ext <;>
+  convert hmul using 1; ext <;>
     simp [specialShiftedGenerator, v] <;> ring
 
 theorem specialShiftedGenerator_mem
@@ -1155,7 +1150,7 @@ theorem specialShiftedGenerator_mem
           (J : Ideal (Zsqrtd (-(p : ℤ) ^ 3))) ≤
         (J : Ideal (Zsqrtd (-(p : ℤ) ^ 3))) := Ideal.mul_le_right
   have := add_mem hbase (hmulLe hshift)
-  convert this using 1 <;> ring
+  convert this using 1; ring
 
 /-- A class-independent sharp finite sieve.  The fixed ideal representative
 only enters through its index; the admissible density is the exact CRT
@@ -1410,7 +1405,7 @@ theorem specialConductorSieveElement_sub_mem
     (specialSieveModulus S : ZMod c)⁻¹ * (-(w.im : ZMod c))
   rw [Ideal.mem_span_singleton]
   refine ⟨⟨(kRe.val : ℤ), (kIm.val : ℤ)⟩, ?_⟩
-  ext <;> simp [specialConductorSieveElement, c, w, kRe, kIm] <;> ring
+  ext <;> simp [specialConductorSieveElement, c, w, kRe, kIm]
 
 theorem specialConductorSieveElement_not_mem_oriented
     {p : ℕ} [Fact p.Prime] (S : Finset (SpecialSplitPrimeData p))
@@ -1424,7 +1419,7 @@ theorem specialConductorSieveElement_not_mem_oriented
   have hold : specialSieveElement S x 0 0 ∈
       (s.1.integralUnitIdeal b : Ideal (Zsqrtd (-(p : ℤ) ^ 3))) := by
     have := sub_mem hz hcorrP
-    convert this using 1 <;> ring
+    convert this using 1; ring
   exact specialSieveElement_not_mem_oriented S x 0 0 s b hold
 
 theorem specialConductorSieveElement_mod_conductor
@@ -1511,7 +1506,7 @@ theorem specialConductorSieveElement_span_isCoprime
         Ideal.span ({Zsqrtd.ofInt (specialConductor p : ℤ)} :
           Set (Zsqrtd (-(p : ℤ) ^ 3))) from le_sup_right) hneg
   have := add_mem hz' hneg'
-  convert this using 1 <;> ring
+  convert this using 1; ring
 
 def specialFullSieveModulus
     {p : ℕ} (S : Finset (SpecialSplitPrimeData p)) : ℕ :=
@@ -1675,7 +1670,7 @@ theorem specialConductorShiftedGenerator_norm_natAbs_le
               ℤ) := by
       rw [Zsqrtd.norm_def]
       push_cast
-      simp only [Int.natCast_natAbs, sq_abs]
+      simp only [sq_abs]
       ring
     rw [hnormZ, Int.natAbs_natCast]
   rw [hnorm]
@@ -1698,7 +1693,7 @@ theorem specialFullSieveModulus_span_le_sieve
   rw [show Zsqrtd.ofInt (specialFullSieveModulus S : ℤ) =
       Zsqrtd.ofInt (specialConductor p : ℤ) *
         Zsqrtd.ofInt (specialSieveModulus S : ℤ) by
-    ext <;> simp [specialFullSieveModulus] <;> ring]
+    ext <;> simp [specialFullSieveModulus]]
   exact (Ideal.span ({Zsqrtd.ofInt (specialSieveModulus S : ℤ)} :
     Set (Zsqrtd (-(p : ℤ) ^ 3)))).mul_mem_left _
       (Ideal.mem_span_singleton_self _)
@@ -1713,7 +1708,7 @@ theorem specialFullSieveModulus_span_le_conductor
   rw [show Zsqrtd.ofInt (specialFullSieveModulus S : ℤ) =
       Zsqrtd.ofInt (specialSieveModulus S : ℤ) *
         Zsqrtd.ofInt (specialConductor p : ℤ) by
-    ext <;> simp [specialFullSieveModulus] <;> ring]
+    ext <;> simp [specialFullSieveModulus]; ring]
   exact (Ideal.span ({Zsqrtd.ofInt (specialConductor p : ℤ)} :
     Set (Zsqrtd (-(p : ℤ) ^ 3)))).mul_mem_left _
       (Ideal.mem_span_singleton_self _)
@@ -1739,12 +1734,12 @@ theorem specialConductorShiftedGenerator_sub_base_mem
     have hprod := (J : Ideal (Zsqrtd (-(p : ℤ) ^ 3))).mul_mem_right
       (⟨(specialConductorGeneratorRadius S g + 1 + a : ℕ), (b : ℕ)⟩ :
         Zsqrtd (-(p : ℤ) ^ 3)) hm_mem
-    convert hprod using 1 <;> ext <;> simp [v] <;> ring
+    convert hprod using 1; ext <;> simp [v]
   have hM : Zsqrtd.ofInt (specialFullSieveModulus S : ℤ) ∈
       Ideal.span ({Zsqrtd.ofInt (specialFullSieveModulus S : ℤ)} :
         Set (Zsqrtd (-(p : ℤ) ^ 3))) := Ideal.mem_span_singleton_self _
   have hmul := Ideal.mul_mem_mul hM hv
-  convert hmul using 1 <;> ext <;>
+  convert hmul using 1; ext <;>
     simp [specialConductorShiftedGenerator, v] <;> ring
 
 theorem specialConductorShiftedGenerator_mem
@@ -1770,7 +1765,7 @@ theorem specialConductorShiftedGenerator_mem
           (J : Ideal (Zsqrtd (-(p : ℤ) ^ 3))) ≤
         (J : Ideal (Zsqrtd (-(p : ℤ) ^ 3))) := Ideal.mul_le_right
   have := add_mem hbase (hle hshift)
-  convert this using 1 <;> ring
+  convert this using 1; ring
 
 theorem specialConductorShiftedGenerator_eq_of_associated
     {p m a b c e : ℕ} [Fact p.Prime] (hm : 0 < m)
@@ -1835,7 +1830,7 @@ theorem splitAllowedResiduePair_eq_of_conductor_base_sub_mem
   have hold : specialSieveElement S x 0 0 -
       specialSieveElement S y 0 0 ∈ P := by
     have := add_mem (sub_mem hbase hcx) hcy
-    convert this using 1 <;> ring
+    convert this using 1; ring
   exact splitAllowedResiduePair_eq_of_base_sub_mem S x y hold
 
 theorem integralUnitIdeal_factor_isCoprime_of_generator_mod
@@ -1860,7 +1855,7 @@ theorem integralUnitIdeal_factor_isCoprime_of_generator_mod
       exact (show F * (J : Ideal R) ≤
         Ideal.span ({z} : Set R) ⊔ F * (J : Ideal R) from le_sup_right) hzg
     have := add_mem hzmem hneg
-    convert this using 1 <;> ring
+    convert this using 1; ring
   have hgLe : Ideal.span ({g} : Set R) ≤
       Ideal.span ({z} : Set R) + F * (J : Ideal R) :=
     (Ideal.span_singleton_le_iff_mem _).mpr hgmem
@@ -1888,7 +1883,7 @@ theorem sub_generator_mem_of_congruent_one
     (Ideal.mul_mono hFtFc le_rfl) hshift
   have hwg : (w - 1) * g ∈ Fc * J := Ideal.mul_mem_mul hwone hg
   have := add_mem hshiftFc hwg
-  convert this using 1 <;> ring
+  convert this using 1; ring
 
 theorem specialConductorShiftedGenerator_sub_generator_mem
     {p m a b : ℕ} [Fact p.Prime]
@@ -2189,7 +2184,7 @@ theorem natCard_specialFullSieveClassBall_le_sum_divisible
     (C : ClassGroup (Zsqrtd (-(p : ℤ) ^ 3)))
     (S T : Finset (SpecialSplitPrimeData p))
     (hcover : ∀ I : SpecialFullSieveClassBall p N C S,
-      ∃ s : SpecialSplitPrimeData p, ∃ hs : s ∈ T, ∃ b : Bool,
+      ∃ s : SpecialSplitPrimeData p, ∃ _hs : s ∈ T, ∃ b : Bool,
         ∃ J : IntegralUnitIdeal (Zsqrtd (-(p : ℤ) ^ 3)),
           s.integralUnitIdeal b * J = I.1.1.1) :
     Nat.card (SpecialFullSieveClassBall p N C S) ≤
