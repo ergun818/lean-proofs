@@ -21,6 +21,7 @@ attribute [local instance] Classical.propDecidable Classical.decEq
 
 variable {V I : Type*} [Fintype V] [Fintype I] {G : SimpleGraph V}
 
+omit [Fintype V] in
 theorem connected_induce_insert_of_adj {S : Finset V} {u v : V}
     (hS : (G.induce (S : Set V)).Connected) (hu : u ∈ S) (huv : G.Adj u v) :
     (G.induce (↑(insert v S) : Set V)).Connected := by
@@ -33,9 +34,10 @@ theorem connected_induce_insert_of_adj {S : Finset V} {u v : V}
     tauto
   rwa [heq] at h
 
+omit [Fintype I] [Fintype V] in
 /-- Any finite nonempty family of disjoint nonempty connected sets in a
 connected graph extends to a connected partition, retaining every initial set. -/
-theorem exists_connected_partition_extending [Nonempty I]
+theorem exists_connected_partition_extending [Finite I] [Finite V] [Nonempty I]
     (hconn : G.Connected) (initial : I → Finset V)
     (hinit : ∀ i, (initial i).Nonempty ∧ (G.induce (initial i : Set V)).Connected)
     (hinit_disj : Pairwise fun i j ↦ Disjoint (initial i) (initial j)) :
@@ -43,6 +45,8 @@ theorem exists_connected_partition_extending [Nonempty I]
       (∀ i, initial i ⊆ B i ∧ (G.induce (B i : Set V)).Connected) ∧
       (Pairwise fun i j ↦ Disjoint (B i) (B j)) ∧
       ∀ v : V, ∃ i, v ∈ B i := by
+  let : Fintype I := Fintype.ofFinite I
+  let : Fintype V := Fintype.ofFinite V
   let valid : (I → Finset V) → Prop := fun B ↦
     (∀ i, initial i ⊆ B i ∧ (G.induce (B i : Set V)).Connected) ∧
       Pairwise fun i j ↦ Disjoint (B i) (B j)
@@ -114,9 +118,10 @@ theorem exists_connected_partition_extending [Nonempty I]
     ⟨hcover, fun h ↦ heout (h.symm ▸ hnew)⟩
   exact (Finset.card_lt_card hstrict).not_ge (hmax B' hB'mem)
 
+omit [Fintype I] [Fintype V] in
 /-- Any finite nonempty family of distinct roots in a connected graph
 extends to a partition into connected sets, one for each root. -/
-theorem exists_connected_rooted_partition [Nonempty I]
+theorem exists_connected_rooted_partition [Finite I] [Finite V] [Nonempty I]
     (hconn : G.Connected) (root : I → V) (hinj : Function.Injective root) :
     ∃ B : I → Finset V,
       (∀ i, root i ∈ B i ∧ (G.induce (B i : Set V)).Connected) ∧
@@ -133,6 +138,7 @@ theorem exists_connected_rooted_partition [Nonempty I]
     (fun i ↦ {root i}) hinit hdisj
   exact ⟨B, fun i ↦ ⟨(hB i).1 (Finset.mem_singleton_self _), (hB i).2⟩, hd, hc⟩
 
+omit [Fintype V] in
 /-- Restricting the ambient vertex type to a larger finite set preserves
 connectedness of an induced subgraph on a contained set. -/
 theorem connected_subtypeFinset {S K : Finset V} (hSK : S ⊆ K)
@@ -153,9 +159,10 @@ theorem connected_subtypeFinset {S K : Finset V} (hSK : S ⊆ K)
     exact ⟨⟨v, hv⟩, rfl⟩
   exact hS.map f hf
 
+omit [Fintype I] [Fintype V] in
 /-- The connected partition extension can be performed wholly within a
 specified connected finite region of the host graph. -/
-theorem exists_connected_partition_inside [Nonempty I]
+theorem exists_connected_partition_inside [Finite I] [Nonempty I]
     (K : Finset V) (hK : (G.induce (K : Set V)).Connected)
     (initial : I → Finset V)
     (hinit : ∀ i, (initial i).Nonempty ∧ (G.induce (initial i : Set V)).Connected)
@@ -180,7 +187,8 @@ theorem exists_connected_partition_inside [Nonempty I]
     intro v hvi hvj
     exact Finset.disjoint_left.mp (hdisj hij) ((hmem i v).mp hvi) ((hmem j v).mp hvj)
   obtain ⟨B, hB, hBd, hBc⟩ := exists_connected_partition_extending hK S hS hSdisj
-  let e : (G.induce (K : Set V)).Copy G := (SimpleGraph.Embedding.induce (G := G) (K : Set V)).toCopy
+  let e : (G.induce (K : Set V)).Copy G := (SimpleGraph.Embedding.induce (G := G) (K : Set
+    V)).toCopy
   refine ⟨fun i ↦ (B i).map e.toEmbedding, ?_, ?_, ?_⟩
   · intro i
     refine ⟨?_, ?_, Erdos73Infrastructure.SimpleGraph.connected_induce_map_copy e (B i) (hB i).2⟩
@@ -209,6 +217,7 @@ def connectedPartitionGraph (G : SimpleGraph V) (B : I → Finset V) : SimpleGra
     exact ⟨hij.symm, y, hy, x, hx, hxy.symm⟩⟩
   loopless := ⟨by rintro i ⟨hii, _⟩; exact hii rfl⟩
 
+omit [Fintype I] [Fintype V] in
 /-- A connected host induces a connected quotient by a connected rooted
 partition. The walk argument explicitly permits consecutive vertices
 to lie in the same part; it does not assert a loop-preserving homomorphism. -/
@@ -236,6 +245,7 @@ theorem connectedPartitionGraph_connected [Nonempty I]
   obtain ⟨W⟩ := hconn.preconnected (root i) (root j)
   simpa only [howner_eq (hroot i), howner_eq (hroot j)] using hwalk W
 
+omit [Fintype I] [Fintype V] in
 /-- A connected finite region, rather than the whole host, is enough
 for connectedness of its partition quotient. -/
 theorem connectedPartitionGraph_connected_on [Nonempty I]

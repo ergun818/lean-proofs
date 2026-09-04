@@ -5,16 +5,18 @@ import Mathlib.Combinatorics.SimpleGraph.Hamiltonian
 
 namespace Erdos73
 noncomputable section
-open scoped Classical
 
 open SimpleGraph Finset
 
 variable {V : Type*} [Fintype V] [DecidableEq V] {G : SimpleGraph V}
 
+omit [Fintype V] in
 theorem IsOddCycleSubgraph.exists_cycleWalk {H : G.Subgraph} (hH : IsOddCycleSubgraph H) :
     ∃ v : V, ∃ c : G.Walk v v, c.IsCycle ∧ Odd c.length ∧
       (c.support.toFinset : Set V) = H.verts := by
+  classical
   obtain ⟨n, hn3, hnodd, ⟨e⟩⟩ := hH
+  let : Fintype H.verts := Fintype.ofEquiv (Fin n) e.toEquiv
   have hcopy : cycleGraph n ⊑ H.coe := ⟨e.toCopy⟩
   obtain ⟨v, c, hc, hlen⟩ := (cycleGraph_isContained_iff (by omega : 2 < n)).mp hcopy
   have hcard : Fintype.card H.verts = n := by

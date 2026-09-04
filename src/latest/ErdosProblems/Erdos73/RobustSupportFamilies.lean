@@ -4,7 +4,6 @@ import ErdosProblems.Erdos73.RobustConnectedSupport
 
 namespace Erdos73
 noncomputable section
-open scoped Classical
 
 open SimpleGraph Finset
 
@@ -16,6 +15,7 @@ theorem deletionOneConnected_walkUnion (R : I → Finset V)
     (hJ : ∀ i j, J.Adj i j → 2 ≤ (R i ∩ R j).card)
     {i j : I} (p : J.Walk i j) :
     DeletionOneConnected G (p.support.toFinset.biUnion R) := by
+  classical
   induction p with
   | @nil i => simpa using hR i
   | @cons i j k hij p ih =>
@@ -27,10 +27,12 @@ theorem deletionOneConnected_walkUnion (R : I → Finset V)
     have hh := (hR i).union ih hcard
     simpa only [Walk.support_cons, List.toFinset_cons, biUnion_insert] using hh
 
+omit [DecidableEq I] in
 theorem deletionOneConnected_biUnion [Fintype I] (R : I → Finset V)
     (hR : ∀ i, DeletionOneConnected G (R i)) (hconn : J.Connected)
     (hJ : ∀ i j, J.Adj i j → 2 ≤ (R i ∩ R j).card) :
     DeletionOneConnected G (Finset.univ.biUnion R) := by
+  classical
   intro X hX
   let U := (Finset.univ.biUnion R) \ X
   have hsub {i j : I} (p : J.Walk i j) :

@@ -6,20 +6,22 @@ import ErdosProblems.Erdos73.Menger
 
 namespace Erdos73
 noncomputable section
-open scoped Classical
 
 open SimpleGraph Finset Erdos73Infrastructure.SimpleGraph
 
 variable {V : Type*} [Fintype V] [DecidableEq V] {G : SimpleGraph V}
 
+open scoped Classical in
 theorem IsOddCycleSubgraph.exists_terminal_separator {H : G.Subgraph}
     (hH : IsOddCycleSubgraph H) (N : Finset V)
     (hno : ¬ ∃ P : GraphPath G, IsOddTerminalPath N P) :
     ∃ Y : Finset V, Y.card ≤ 1 ∧ STSeparator G H.verts.toFinset N Y := by
+  classical
   rcases Menger.finite_vertex_menger_sharp G H.verts.toFinset N 2 with hpaths | ⟨Y, hY, hsep⟩
   · exact (hno (hH.exists_oddTerminalPath_of_two_paths N hpaths)).elim
   · exact ⟨Y, by omega, hsep⟩
 
+omit [Fintype V] in
 theorem exists_oddCycle_region_separator (N R : Finset V)
     (hR : ¬ (G.induce (R : Set V)).IsBipartite)
     (hno : ¬ ∃ P : GraphPath (G.induce (R : Set V)),
@@ -28,6 +30,7 @@ theorem exists_oddCycle_region_separator (N R : Finset V)
       ∃ Y : Finset V, Y ⊆ R ∧ Y.card ≤ 1 ∧
         ∀ S : Finset V, S ⊆ R → (G.induce (S : Set V)).Connected →
           Disjoint S Y → (∃ v ∈ S, v ∈ N) → Disjoint (S : Set V) H.verts := by
+  classical
   have hex : ∃ H : (G.induce (R : Set V)).Subgraph, IsOddCycleSubgraph H := by
     by_contra hnone
     exact hR ((isBipartite_iff_no_oddCycleSubgraph _).mpr hnone)

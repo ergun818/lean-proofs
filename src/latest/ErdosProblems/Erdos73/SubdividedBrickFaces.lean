@@ -5,14 +5,15 @@ import ErdosProblems.Erdos73.SubdivisionCycles
 
 namespace Erdos73
 noncomputable section
-open scoped Classical
 
 open SimpleGraph Finset
 
 variable {V : Type*} {G : SimpleGraph V}
 
+open scoped Classical in
 theorem hexagonSubdivision_deletionOneConnected
     (S : GraphSubdivisionModel (cycleGraph 6) G) : DeletionOneConnected G S.vertexSet := by
+  classical
   have hverts : ∀ v : Fin 6, v ∈ (cycleGraph.cycle 3).support := by
     intro v
     have he : (cycleGraph.cycle 3).getVert (6 - v.val) = v := by
@@ -54,6 +55,7 @@ def brickFaceSupport {c r : ℕ} (S : GraphSubdivisionModel (elementaryWall c r)
     (a b : ℕ) (hr : a + 1 < r) (hc : b + 2 < 2 * c) (hpar : (b + a) % 2 = 1) : Finset V :=
   (S.restrictCopy (elementaryBrickFaceCopy a b hr hc hpar)).vertexSet
 
+open scoped Classical in
 theorem brickFaceSupport_deletionOneConnected {c r : ℕ}
     (S : GraphSubdivisionModel (elementaryWall c r) G)
     (a b : ℕ) (hr : a + 1 < r) (hc : b + 2 < 2 * c) (hpar : (b + a) % 2 = 1) :

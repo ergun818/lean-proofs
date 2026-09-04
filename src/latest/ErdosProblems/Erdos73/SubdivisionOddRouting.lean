@@ -16,7 +16,9 @@ def oddRoutingVertex : OddSubdivisionVertex H t → V
   | Sum.inl w => S.branchVertex w
   | Sum.inr ⟨e, i⟩ => (S.edgePath e).walk.getVert (i.val + 1)
 
+omit [Fintype V] [Fintype W] in
 include hlen in
+omit [Fintype V] [Fintype W] in
 theorem internal_getVert_not_branch (e : OrientedEdge H) (i : Fin (2 * t e)) (w : W) :
     (S.edgePath e).walk.getVert (i.val + 1) ≠ S.branchVertex w := by
   intro he
@@ -34,6 +36,7 @@ theorem internal_getVert_not_branch (e : OrientedEdge H) (i : Fin (2 * t e)) (w 
     have hz := (S.edgePath e).isPath.getVert_eq_end_iff hi.le |>.mp ht
     omega
 
+omit [Fintype V] [Fintype W] in
 include hlen in
 theorem oddRoutingVertex_injective : Function.Injective (S.oddRoutingVertex t) := by
   intro x y he
@@ -70,7 +73,9 @@ theorem oddRoutingVertex_injective : Function.Injective (S.oddRoutingVertex t) :
         obtain ⟨w, hw, _, _⟩ := S.intersection hef _ hxe hxf
         exact (S.internal_getVert_not_branch t hlen e i w hw).elim
 
+omit [Fintype V] [Fintype W] in
 include hlen in
+omit [Fintype V] in
 theorem oddRoutingVertex_path (e : OrientedEdge H) (i : Fin (2 * t e + 2)) :
     S.oddRoutingVertex t (oddSubdivisionPathVertex t e i) = (S.edgePath e).walk.getVert i.val := by
   induction i using Fin.cases with
@@ -103,6 +108,7 @@ def toOddSubdivisionRoutingOfLengths : OddSubdivisionRouting H G where
         rw [hlen]; have hi := i.isLt; omega
       simpa only [hij] using ((S.edgePath e).walk.adj_getVert_succ hj).symm
 
+omit [Fintype W] in
 theorem exists_oddSubdivisionRouting (hodd : ∀ e, Odd (S.edgePath e).walk.length) :
     Nonempty (OddSubdivisionRouting H G) := by
   have hex (e : OrientedEdge H) : ∃ s, (S.edgePath e).walk.length = 2 * s + 1 := by

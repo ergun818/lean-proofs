@@ -9,10 +9,11 @@ noncomputable section
 attribute [local instance] Classical.propDecidable Classical.decEq
 open SimpleGraph Finset
 
-theorem disjointFamily_meeting_card_le {I W : Type*} [DecidableEq I] [DecidableEq W]
+theorem disjointFamily_meeting_card_le {I W : Type*} [DecidableEq W]
     (s : Finset I) (R : I → Finset W) (X : Finset W)
     (hR : Pairwise (fun i j => Disjoint (R i) (R j))) :
     (s.filter (fun i => ¬ Disjoint (R i) X)).card ≤ X.card := by
+  classical
   let bad := s.filter (fun i => ¬ Disjoint (R i) X)
   have hh := card_le_mul_of_hits_with_congestion bad R X 1
     (fun i hi => Finset.not_disjoint_iff.mp (mem_filter.mp hi).2) (by

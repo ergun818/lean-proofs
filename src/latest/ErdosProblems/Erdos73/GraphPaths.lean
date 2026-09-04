@@ -54,16 +54,12 @@ variable {u v : V}
 @[simp] theorem getVert_mapLe (hGG' : G ≤ G') (p : G.Walk u v)
     (n : ℕ) :
     (p.mapLe hGG').getVert n = p.getVert n := by
-  simpa [_root_.SimpleGraph.Walk.mapLe] using
-    (_root_.SimpleGraph.Walk.getVert_map
-      (f := _root_.SimpleGraph.Hom.ofLE hGG') (p := p) n)
+  simp [_root_.SimpleGraph.Walk.mapLe]
 
 @[simp] theorem penultimate_mapLe (hGG' : G ≤ G') (p : G.Walk u v) :
     (p.mapLe hGG').penultimate = p.penultimate := by
   have hlen : (p.mapLe hGG').length = p.length := by
-    simpa [_root_.SimpleGraph.Walk.mapLe] using
-      (_root_.SimpleGraph.Walk.length_map
-        (f := _root_.SimpleGraph.Hom.ofLE hGG') (p := p))
+    simp [_root_.SimpleGraph.Walk.mapLe]
   change (p.mapLe hGG').getVert ((p.mapLe hGG').length - 1) =
     p.getVert (p.length - 1)
   rw [hlen]
@@ -374,7 +370,7 @@ theorem takeUntil_vertexSet_subset (P : GraphPath G) {v : V}
   have hx' : x ∈ (P.walk.takeUntil v hv').support := by
     simpa [takeUntil, vertexSet] using hx
   exact by
-    simpa [vertexSet] using P.walk.support_takeUntil_subset hv' hx'
+    simpa [vertexSet] using P.walk.support_takeUntil_subset_support hv' hx'
 
 /-- A terminal segment uses only vertices from the original path. -/
 theorem dropUntil_vertexSet_subset (P : GraphPath G) {v : V}
@@ -386,7 +382,7 @@ theorem dropUntil_vertexSet_subset (P : GraphPath G) {v : V}
   have hx' : x ∈ (P.walk.dropUntil v hv').support := by
     simpa [dropUntil, vertexSet] using hx
   exact by
-    simpa [vertexSet] using P.walk.support_dropUntil_subset hv' hx'
+    simpa [vertexSet] using P.walk.support_dropUntil_subset_support hv' hx'
 
 /-- A terminal segment uses only edges from the original path. -/
 theorem dropUntil_edgeSet_subset (P : GraphPath G) {v : V}
@@ -398,7 +394,7 @@ theorem dropUntil_edgeSet_subset (P : GraphPath G) {v : V}
   have he' : e ∈ (P.walk.dropUntil v hv').edges := by
     simpa [dropUntil, edgeSet] using he
   exact by
-    simpa [edgeSet] using P.walk.edges_dropUntil_subset hv' he'
+    simpa [edgeSet] using P.walk.edges_dropUntil_subset_edges hv' he'
 
 /-- An initial segment uses only edges from the original path. -/
 theorem takeUntil_edgeSet_subset (P : GraphPath G) {v : V}
@@ -410,7 +406,7 @@ theorem takeUntil_edgeSet_subset (P : GraphPath G) {v : V}
   have he' : e ∈ (P.walk.takeUntil v hv').edges := by
     simpa [takeUntil, edgeSet] using he
   exact by
-    simpa [edgeSet] using P.walk.edges_takeUntil_subset hv' he'
+    simpa [edgeSet] using P.walk.edges_takeUntil_subset_edges hv' he'
 
 /-- An internal vertex of a simple graph path is incident with two distinct
 edges of the path. -/
@@ -469,7 +465,7 @@ theorem eq_source_of_source_eq_target_of_mem_vertexSet
       dsimp at hst hv ⊢
       subst target
       have hwalk : walk = _root_.SimpleGraph.Walk.nil :=
-        _root_.SimpleGraph.Walk.isPath_iff_eq_nil.mp isPath
+        (_root_.SimpleGraph.Walk.isPath_iff_nil.mp isPath).eq_nil
       simpa [GraphPath.vertexSet, hwalk] using hv
 
 /-- Any vertex on a nontrivial graph path is incident with some edge of the
@@ -961,7 +957,7 @@ theorem before_of_mem_segmentOfBefore_right (P : GraphPath G) {a b v : V}
   have hvTakeList :
       v ∈ Q.walk.support.take (Q.walk.support.idxOf b + 1) := by
     simpa [_root_.SimpleGraph.Walk.takeUntil_eq_take,
-      _root_.SimpleGraph.Walk.take_support_eq_support_take_succ] using
+      _root_.SimpleGraph.Walk.support_take] using
       hvTakeSupport
   have hvQ : v ∈ Q.vertexSet := by
     exact by
@@ -993,7 +989,7 @@ theorem before_of_mem_takeUntil (P : GraphPath G) {b v : V}
   have hvTakeList :
       v ∈ P.walk.support.take (P.walk.support.idxOf b + 1) := by
     simpa [_root_.SimpleGraph.Walk.takeUntil_eq_take,
-      _root_.SimpleGraph.Walk.take_support_eq_support_take_succ] using
+      _root_.SimpleGraph.Walk.support_take] using
       hvTakeSupport
   have hvP : v ∈ P.vertexSet := by
     simpa [vertexSet] using List.mem_of_mem_take hvTakeList
@@ -1019,7 +1015,7 @@ theorem mem_takeUntil_of_before (P : GraphPath G) {b v : V}
   have hvTakeSupport :
       v ∈ (P.walk.takeUntil b (by simpa [vertexSet] using hb)).support := by
     simpa [_root_.SimpleGraph.Walk.takeUntil_eq_take,
-      _root_.SimpleGraph.Walk.take_support_eq_support_take_succ] using
+      _root_.SimpleGraph.Walk.support_take] using
       hvTakeList
   simpa [takeUntil, vertexSet] using hvTakeSupport
 
@@ -1407,7 +1403,7 @@ theorem ofWalk_vertexSet_subset {s t : V} (W : G.Walk s t) :
     simpa [ofWalk, vertexSet] using hv
   have hsub :
       (W.toPath : G.Walk s t).support ⊆ W.support :=
-    _root_.SimpleGraph.Walk.support_toPath_subset W
+    _root_.SimpleGraph.Walk.support_toPath_subset_support W
   exact by
     simpa using hsub hv_support
 
@@ -1421,7 +1417,7 @@ theorem ofWalk_edgeSet_subset {s t : V} (W : G.Walk s t) :
     simpa [ofWalk, edgeSet] using he
   have hsub :
       (W.toPath : G.Walk s t).edges ⊆ W.edges :=
-    _root_.SimpleGraph.Walk.edges_toPath_subset W
+    _root_.SimpleGraph.Walk.edges_toPath_subset_edges W
   exact by
     simpa using hsub he_edges
 
@@ -1601,7 +1597,7 @@ noncomputable def ofConnectedInduce
       (⟨s, by simpa [Uset] using hs⟩ : Uset)
       (⟨t, by simpa [Uset] using ht⟩ : Uset)).map
         (_root_.SimpleGraph.Embedding.induce Uset).toHom
-  · exact _root_.SimpleGraph.Walk.map_isPath_of_injective
+  · exact _root_.SimpleGraph.Walk.IsPath.map
       (f := (_root_.SimpleGraph.Embedding.induce Uset).toHom)
       (by
         intro a b h
@@ -1675,13 +1671,13 @@ def mapLe (P : GraphPath G) {H : _root_.SimpleGraph V} (hGH : G ≤ H) :
     {H : _root_.SimpleGraph V} (hGH : G ≤ H) :
     (P.mapLe hGH).vertexSet = P.vertexSet := by
   classical
-  simp [mapLe, vertexSet, _root_.SimpleGraph.Walk.support_mapLe_eq_support]
+  simp [mapLe, vertexSet]
 
 @[simp] theorem mapLe_edgeSet (P : GraphPath G)
     {H : _root_.SimpleGraph V} (hGH : G ≤ H) :
     (P.mapLe hGH).edgeSet = P.edgeSet := by
   classical
-  simp [mapLe, edgeSet, _root_.SimpleGraph.Walk.edges_mapLe_eq_edges]
+  simp [mapLe, edgeSet]
 
 /-- Transfer a graph path to another graph on the same vertex type, given that
 the target graph contains all of the path's edges. -/
@@ -2393,8 +2389,9 @@ theorem left_vertexSet_subset_appendWithEq (P Q : GraphPath G)
     P.vertexSet ⊆ (P.appendWithEq Q h hpath).vertexSet := by
   classical
   intro v hv
-  simp [appendWithEq, vertexSet,
-    _root_.SimpleGraph.Walk.mem_support_append_iff] at hv ⊢
+  simp only [vertexSet, List.mem_toFinset, appendWithEq,
+    _root_.SimpleGraph.Walk.mem_support_append_iff,
+    _root_.SimpleGraph.Walk.support_copy] at hv ⊢
   exact Or.inl hv
 
 /-- The right constituent path is contained in a concatenation. -/
@@ -2404,8 +2401,9 @@ theorem right_vertexSet_subset_appendWithEq (P Q : GraphPath G)
     Q.vertexSet ⊆ (P.appendWithEq Q h hpath).vertexSet := by
   classical
   intro v hv
-  simp [appendWithEq, vertexSet,
-    _root_.SimpleGraph.Walk.mem_support_append_iff] at hv ⊢
+  simp only [vertexSet, List.mem_toFinset, appendWithEq,
+    _root_.SimpleGraph.Walk.mem_support_append_iff,
+    _root_.SimpleGraph.Walk.support_copy] at hv ⊢
   exact Or.inr hv
 
 private theorem appendWithEq_vertexIndex_left (P Q : GraphPath G)

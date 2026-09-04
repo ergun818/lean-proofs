@@ -6,12 +6,12 @@ import ErdosProblems.Erdos73.ParityColoring
 
 namespace Erdos73
 noncomputable section
-open scoped Classical
 
 open SimpleGraph Finset
 
 variable {V I : Type*} {G : SimpleGraph V} {c r : ℕ}
 
+open scoped Classical in
 structure ColumnHandleFamily (S : GraphSubdivisionModel (elementaryWall c r) G)
     (col : BipartiteColoringOn G S.vertexSet) (I : Type*) where
   path : I → Erdos73Infrastructure.SimpleGraph.GraphPath G
@@ -29,12 +29,14 @@ namespace ColumnHandleFamily
 variable {S : GraphSubdivisionModel (elementaryWall c r) G}
 variable {col : BipartiteColoringOn G S.vertexSet}
 
+open scoped Classical in
 def of_paths (P : I → Erdos73Infrastructure.SimpleGraph.GraphPath G)
     (hP : ∀ i, IsParityBreakingPath col.color S.vertexSet (P i))
     (hdis : Pairwise (fun i j => Disjoint (P i).vertexSet (P j).vertexSet))
     (hends : ∀ i, ∃ u v : ElementaryWallVertex c r,
       (P i).source = S.branchVertex u ∧ (P i).target = S.branchVertex v ∧
       OnBrickColumnBoundary u ∧ OnBrickColumnBoundary v) : ColumnHandleFamily S col I := by
+  classical
   choose u v hs ht hu hv using hends
   exact ⟨P, hP, hdis, u, v, hs, ht, hu, hv⟩
 
@@ -43,12 +45,15 @@ def endpoint (F : ColumnHandleFamily S col I) (i : I) (b : Bool) : ElementaryWal
 
 theorem endpoint_boundary (F : ColumnHandleFamily S col I) (i : I) (b : Bool) :
     OnBrickColumnBoundary (F.endpoint i b) := by
+  classical
   cases b
   · exact F.source_boundary i
   · exact F.target_boundary i
 
+open scoped Classical in
 theorem endpoint_mem (F : ColumnHandleFamily S col I) (i : I) (b : Bool) :
     S.branchVertex (F.endpoint i b) ∈ (F.path i).vertexSet := by
+  classical
   cases b
   · rw [show F.endpoint i false = F.sourceNail i from rfl, ← F.source_eq]
     exact (F.path i).source_mem_vertexSet
@@ -58,6 +63,7 @@ theorem endpoint_mem (F : ColumnHandleFamily S col I) (i : I) (b : Bool) :
 theorem endpoint_rank_ne_of_ne_index (F : ColumnHandleFamily S col I) (hc : 2 ≤ c)
     {i j : I} (hij : i ≠ j) (b e : Bool) :
     brickBoundaryRank (F.endpoint i b) ≠ brickBoundaryRank (F.endpoint j e) := by
+  classical
   intro he
   have hn := brickBoundaryRank_injective_on_boundary hc (F.endpoint_boundary i b)
     (F.endpoint_boundary j e) he
@@ -67,8 +73,10 @@ theorem endpoint_rank_ne_of_ne_index (F : ColumnHandleFamily S col I) (hc : 2 �
 
 theorem source_rank_ne_target_rank (F : ColumnHandleFamily S col I) (hc : 2 ≤ c) (i : I) :
     brickBoundaryRank (F.sourceNail i) ≠ brickBoundaryRank (F.targetNail i) := by
+  classical
   intro he
-  have hn := brickBoundaryRank_injective_on_boundary hc (F.source_boundary i) (F.target_boundary i) he
+  have hn := brickBoundaryRank_injective_on_boundary hc (F.source_boundary i) (F.target_boundary i)
+    he
   apply (F.clean i).breaking.source_ne_target
   exact (F.source_eq i).trans ((congrArg S.branchVertex hn).trans (F.target_eq i).symm)
 
@@ -80,6 +88,7 @@ def upperRank (F : ColumnHandleFamily S col I) (i : I) : ℕ :=
 
 theorem lowerRank_lt_upperRank (F : ColumnHandleFamily S col I) (hc : 2 ≤ c) (i : I) :
     F.lowerRank i < F.upperRank i := by
+  classical
   have hh := F.source_rank_ne_target_rank hc i
   dsimp only [lowerRank, upperRank]
   omega
@@ -88,6 +97,7 @@ theorem sorted_ranks_separate (F : ColumnHandleFamily S col I) (hc : 2 ≤ c)
     {i j : I} (hij : i ≠ j) :
     F.lowerRank i ≠ F.lowerRank j ∧ F.lowerRank i ≠ F.upperRank j ∧
       F.upperRank i ≠ F.lowerRank j ∧ F.upperRank i ≠ F.upperRank j := by
+  classical
   have hff := F.endpoint_rank_ne_of_ne_index hc hij false false
   have hft := F.endpoint_rank_ne_of_ne_index hc hij false true
   have htf := F.endpoint_rank_ne_of_ne_index hc hij true false

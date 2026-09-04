@@ -44,6 +44,7 @@ def innerRowEmbedding (g : ℕ) : Fin (g - 2) ↪ Fin g :=
     change r.val + 1 = s.val + 1 at hh
     omega)⟩
 
+omit [Fintype V] in
 theorem exists_monochromatic_row_terminals {g : ℕ}
     (S : GraphSubdivisionModel (elementaryWall g g) G) (hg : 2 ≤ g)
     (c : BipartiteColoringOn G S.vertexSet) (u : ℕ) (hsize : 2 * u + 2 ≤ g) :
@@ -52,7 +53,8 @@ theorem exists_monochromatic_row_terminals {g : ℕ}
       (∀ r ∈ J, ∃ v ∈ N, v ∈ interiorWallRowSupport S hg r) ∧
       (∀ v ∈ N, c.color v = b) ∧
       (∀ v ∈ N, ∃ r : Fin (g - 2),
-        v = S.branchVertex (elementaryWallInteriorNail hg (innerRowEmbedding g r) ⟨1, by omega⟩)) := by
+        v = S.branchVertex (elementaryWallInteriorNail hg (innerRowEmbedding g r) ⟨1, by omega⟩)) :=
+          by
   let sample (r : Fin (g - 2)) :=
     S.branchVertex (elementaryWallInteriorNail hg (innerRowEmbedding g r) ⟨1, by omega⟩)
   obtain ⟨b, I, hIcard, hIcolor⟩ := exists_large_bool_fiber (c.color ∘ sample) u

@@ -7,7 +7,6 @@ import ErdosProblems.Erdos73.RegularSubwalls
 
 namespace Erdos73
 noncomputable section
-open scoped Classical
 
 open SimpleGraph Finset
 
@@ -21,6 +20,7 @@ theorem brickFaceCopyAt_translate (a d : ℕ) (hc : a + (d + 1) ≤ c)
     (b : Fin (r - 1)) (j : Fin d) :
     (brickColumnSliceCopy a d hc).comp (brickFaceCopyAt (b, j)) =
       brickFaceCopyAt (b, brickBlockColumnIndex a d (by omega) j) := by
+  classical
   apply Copy.ext
   intro l
   apply Subtype.ext
@@ -40,6 +40,7 @@ theorem brickFaceRegion_translate (S : GraphSubdivisionModel (elementaryWall c r
     (a d : ℕ) (hc : a + (d + 1) ≤ c) (b : Fin (r - 1)) (j : Fin d) :
     brickFaceRegion (S.restrictCopy (brickColumnSliceCopy a d hc)) (b, j) =
       brickFaceRegion S (b, brickBlockColumnIndex a d (by omega) j) := by
+  classical
   change ((S.restrictCopy (brickColumnSliceCopy a d hc)).restrictCopy
     (brickFaceCopyAt (b, j))).vertexSet =
       (S.restrictCopy (brickFaceCopyAt (b, brickBlockColumnIndex a d (by omega) j))).vertexSet
@@ -49,6 +50,7 @@ theorem brickFaceEdgeGraph_translate (S : GraphSubdivisionModel (elementaryWall 
     (a d : ℕ) (hc : a + (d + 1) ≤ c) (b : Fin (r - 1)) (j : Fin d) :
     brickFaceEdgeGraph (S.restrictCopy (brickColumnSliceCopy a d hc)) (b, j) =
       brickFaceEdgeGraph S (b, brickBlockColumnIndex a d (by omega) j) := by
+  classical
   change ((S.restrictCopy (brickColumnSliceCopy a d hc)).restrictCopy
     (brickFaceCopyAt (b, j))).actualEdgeGraph =
       (S.restrictCopy (brickFaceCopyAt (b, brickBlockColumnIndex a d (by omega) j))).actualEdgeGraph
@@ -58,6 +60,7 @@ theorem brickColumnSlice_vertexSet (S : GraphSubdivisionModel (elementaryWall c 
     (a d : ℕ) (hc : a + (d + 1) ≤ c) (hr : 2 ≤ r) (hd : 0 < d) :
     (S.restrictCopy (brickColumnSliceCopy a d hc)).vertexSet =
       brickColumnBlock S a d (by omega) := by
+  classical
   rw [brickWall_vertexSet_eq_faceUnion _ (by omega : 2 ≤ d + 1) hr]
   ext x
   constructor
@@ -76,6 +79,7 @@ theorem brickColumnSlice_actualEdgeGraph (S : GraphSubdivisionModel (elementaryW
     (a d : ℕ) (hc : a + (d + 1) ≤ c) (hr : 2 ≤ r) (hd : 0 < d) :
     (S.restrictCopy (brickColumnSliceCopy a d hc)).actualEdgeGraph =
       brickColumnBlockGraph S a d (by omega) := by
+  classical
   rw [brickWall_actualEdgeGraph_eq_faceUnion _ (by omega : 2 ≤ d + 1) hr]
   apply le_antisymm
   · apply iSup_le

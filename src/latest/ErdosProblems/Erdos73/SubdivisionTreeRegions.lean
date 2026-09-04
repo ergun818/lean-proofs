@@ -14,6 +14,7 @@ open SimpleGraph Finset Erdos73Infrastructure.SimpleGraph
 variable {W V : Type*} [Fintype W] [LinearOrder W] [Fintype V]
 variable {H : SimpleGraph W} {G : SimpleGraph V}
 
+omit [Fintype V] in
 theorem exists_tree_region (S : GraphSubdivisionModel H G) (R : Finset W)
     (hR : (H.induce (R : Set W)).Connected) :
     ∃ T : SimpleGraph (R : Set W), T.IsTree ∧
@@ -30,6 +31,7 @@ theorem exists_tree_region (S : GraphSubdivisionModel H G) (R : Finset W)
   obtain ⟨x, _, rfl⟩ := mem_image.mp hw
   exact x.property
 
+omit [Fintype V] in
 theorem exists_even_tree_region (S : GraphSubdivisionModel H G)
     (col : BipartiteColoringOn G S.vertexSet) (b : Bool)
     (hb : ∀ w, col.color (S.branchVertex w) = b) (R : Finset W)

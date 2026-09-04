@@ -15,6 +15,7 @@ def incidenceVertex : W ⊕ OrientedEdge H → V
   | Sum.inl w => S.branchVertex w
   | Sum.inr e => S.firstInternal e
 
+omit [Fintype V] [Fintype W] [LinearOrder (W ⊕ OrientedEdge H)] in
 theorem incidenceVertex_injective (hlong : ∀ e, 2 ≤ (S.edgePath e).walk.length) :
     Function.Injective S.incidenceVertex := by
   intro x y he
@@ -33,6 +34,7 @@ def incidencePath (d : OrientedEdge (treeIncidenceGraph H)) : GraphPath G :=
   if d.lo = Sum.inl (halfEndpoint D.original D.side) then S.halfPath D.original D.side
   else (S.halfPath D.original D.side).reverse
 
+omit [Fintype V] [Fintype W] in
 theorem incidencePath_source (d : OrientedEdge (treeIncidenceGraph H)) :
     (S.incidencePath d).source = S.incidenceVertex d.lo := by
   rcases (incidenceEdgeWitness d).endpoints with he | he
@@ -45,6 +47,7 @@ theorem incidencePath_source (d : OrientedEdge (treeIncidenceGraph H)) :
     rw [if_neg hn, GraphPath.reverse_source, S.halfPath_target, he.1]
     rfl
 
+omit [Fintype V] [Fintype W] in
 theorem incidencePath_target (d : OrientedEdge (treeIncidenceGraph H)) :
     (S.incidencePath d).target = S.incidenceVertex d.hi := by
   rcases (incidenceEdgeWitness d).endpoints with he | he
@@ -54,12 +57,14 @@ theorem incidencePath_target (d : OrientedEdge (treeIncidenceGraph H)) :
     simp only [incidencePath, if_neg hn, GraphPath.reverse_target, S.halfPath_source, he.2,
       incidenceVertex]
 
+omit [Fintype V] [Fintype W] in
 theorem incidencePath_vertexSet (d : OrientedEdge (treeIncidenceGraph H)) :
     (S.incidencePath d).vertexSet =
       (S.halfPath (incidenceEdgeWitness d).original (incidenceEdgeWitness d).side).vertexSet := by
   dsimp only [incidencePath]
   split_ifs <;> simp only [GraphPath.reverse_vertexSet]
 
+omit [Fintype V] [Fintype W] in
 theorem incidence_branch_on_path (hlong : ∀ e, 2 ≤ (S.edgePath e).walk.length)
     (d : OrientedEdge (treeIncidenceGraph H)) (w : W ⊕ OrientedEdge H)
     (hw : S.incidenceVertex w ∈ (S.incidencePath d).vertexSet) : w = d.lo ∨ w = d.hi := by
@@ -72,6 +77,7 @@ theorem incidence_branch_on_path (hlong : ∀ e, 2 ≤ (S.edgePath e).walk.lengt
     have hh := S.firstInternal_on_halfPath hlong _ e _ hw
     exact hh ▸ (incidenceEdgeWitness d).midpoint_incident
 
+omit [Fintype V] [Fintype W] in
 theorem incidence_paths_intersection (hlong : ∀ e, 2 ≤ (S.edgePath e).walk.length)
     {d f : OrientedEdge (treeIncidenceGraph H)} (hdf : d ≠ f) {x : V}
     (hx : x ∈ (S.incidencePath d).vertexSet) (hx' : x ∈ (S.incidencePath f).vertexSet) :
@@ -86,7 +92,8 @@ theorem incidence_paths_intersection (hlong : ∀ e, 2 ≤ (S.edgePath e).walk.l
     refine ⟨Sum.inr D.original, hh, D.midpoint_incident, ?_⟩
     rw [he]
     exact F.midpoint_incident
-  · obtain ⟨w, hw, _, _⟩ := S.intersection he x (S.halfPath_subset _ _ hx) (S.halfPath_subset _ _ hx')
+  · obtain ⟨w, hw, _, _⟩ := S.intersection he x (S.halfPath_subset _ _ hx) (S.halfPath_subset _ _
+    hx')
     have hwD := S.branch_on_halfPath hlong D.original D.side w (hw ▸ hx)
     have hwF := S.branch_on_halfPath hlong F.original F.side w (hw ▸ hx')
     exact ⟨Sum.inl w, hw, hwD ▸ D.branch_incident, hwF ▸ F.branch_incident⟩
@@ -101,6 +108,7 @@ def incidenceSubdivisionModel (hlong : ∀ e, 2 ≤ (S.edgePath e).walk.length) 
   branch_on_path := S.incidence_branch_on_path hlong
   intersection := fun _ _ hdf _ hx hx' => S.incidence_paths_intersection hlong hdf hx hx'
 
+omit [Fintype V] [Fintype W] in
 theorem incidencePath_odd (heven : ∀ e, Even (S.edgePath e).walk.length)
     (d : OrientedEdge (treeIncidenceGraph H)) : Odd (S.incidencePath d).walk.length := by
   have hh := S.halfPath_odd heven (incidenceEdgeWitness d).original (incidenceEdgeWitness d).side
@@ -122,6 +130,7 @@ theorem incidencePath_odd (heven : ∀ e, Even (S.edgePath e).walk.length)
       _root_.SimpleGraph.Walk.length_reverse _
     exact (hl.trans hrev).symm ▸ hh
 
+omit [Fintype V] in
 theorem incidenceSubdivisionModel_vertexSet_subset (hlong : ∀ e, 2 ≤ (S.edgePath e).walk.length) :
     (S.incidenceSubdivisionModel hlong).vertexSet ⊆ S.vertexSet := by
   intro x hx

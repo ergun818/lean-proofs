@@ -6,12 +6,12 @@ import ErdosProblems.Erdos73.UnflaggedBlock
 
 namespace Erdos73
 noncomputable section
-open scoped Classical
 
 open SimpleGraph Finset Erdos73Infrastructure.SimpleGraph
 
 variable {V : Type*} {G : SimpleGraph V} {c r m h : ℕ}
 
+open scoped Classical in
 theorem exists_brickStripSelectionState
     (S : GraphSubdivisionModel (elementaryWall c r) G) (color : V → Bool)
     (P : Fin m → GraphPath G) (N : Finset V) (b : Bool)
@@ -23,6 +23,7 @@ theorem exists_brickStripSelectionState
     (hdis : Pairwise (fun j k => Disjoint (P j).vertexSet (P k).vertexSet))
     (hrows : 2 * h < r - 1) (hcols : 6 * h < c - 1) (hsize : 72 * h * h + h < m) :
     Nonempty (BrickStripSelectionState S color P h) := by
+  classical
   have hex : ∀ i ≤ h, Nonempty (BrickStripSelectionState S color P i) := by
     intro i
     induction i with
@@ -40,6 +41,7 @@ theorem exists_brickStripSelectionState
       exact ⟨st.extend hdis t ht hrow hcol havoid⟩
   exact hex h le_rfl
 
+open scoped Classical in
 theorem BrickStripSelectionState.exists_free_block
     {S : GraphSubdivisionModel (elementaryWall c r) G} {color : V → Bool}
     {P : Fin m → GraphPath G} (st : BrickStripSelectionState S color P h)
@@ -47,15 +49,18 @@ theorem BrickStripSelectionState.exists_free_block
     ∃ a : ℕ, a + d ≤ c - 1 ∧
       ∀ j : Fin h, ∀ b : Fin (c - 1), a ≤ b.val → b.val < a + d →
         Disjoint (st.segment j).path.vertexSet (brickFaceColumnStrip S b) := by
+  classical
   obtain ⟨a, ha, hfree⟩ := exists_unflagged_block st.forbiddenColumns st.columns_card hwidth
   exact ⟨a, ha, fun j b hlo hhi => st.avoids_available_columns j b (hfree b hlo hhi)⟩
 
+open scoped Classical in
 theorem BrickStripSelectionState.support_congestion_le_five
     {S : GraphSubdivisionModel (elementaryWall c r) G} {color : V → Bool}
     {P : Fin m → GraphPath G} (st : BrickStripSelectionState S color P h) (x : V) :
     (Finset.univ.filter (fun j => x ∈
       brickStripNetwork S (st.segment j).rows (st.segment j).columns ∪
         (st.segment j).path.vertexSet)).card ≤ 5 := by
+  classical
   exact union_disjoint_supports_membership_card_le_add_one
     (fun j => brickStripNetwork S (st.segment j).rows (st.segment j).columns)
     (fun j => (st.segment j).path.vertexSet) st.paths_disjoint 4

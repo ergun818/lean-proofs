@@ -31,9 +31,11 @@ variable (C : TreeCellLinks F T port G)
 
 def branch (w : TreeExpansionVertex T) : V := (C.cell w.1).branchVertex w.2
 
+omit [Fintype U] [Fintype V] in
 theorem branch_mem (w : TreeExpansionVertex T) : C.branch w ∈ (C.cell w.1).vertexSet :=
   ((C.cell w.1).mem_vertexSet _).mpr (Or.inl ⟨w.2, rfl⟩)
 
+omit [Fintype U] [Fintype V] in
 theorem branch_injective : Function.Injective C.branch := by
   rintro ⟨u, x⟩ ⟨v, y⟩ he
   by_cases huv : u = v
@@ -46,10 +48,12 @@ def path : TreeExpansionEdgeIndex F T → GraphPath G
   | Sum.inl ⟨u, e⟩ => (C.cell u).edgePath e
   | Sum.inr e => C.link e
 
+omit [Fintype U] [Fintype V] in
 theorem internal_subset (u : U) (e : OrientedEdge (treeIncidenceGraph (T u))) :
     ((C.cell u).edgePath e).vertexSet ⊆ (C.cell u).vertexSet := fun _ hx =>
   ((C.cell u).mem_vertexSet _).mpr (Or.inr ⟨e, hx⟩)
 
+omit [Fintype U] [Fintype V] in
 theorem branch_on_internal (u : U) (e : OrientedEdge (treeIncidenceGraph (T u)))
     (w : TreeExpansionVertex T) (hw : C.branch w ∈ ((C.cell u).edgePath e).vertexSet) :
     w = ⟨u, e.lo⟩ ∨ w = ⟨u, e.hi⟩ := by
@@ -61,6 +65,7 @@ theorem branch_on_internal (u : U) (e : OrientedEdge (treeIncidenceGraph (T u)))
   · exact (Finset.disjoint_left.mp (C.disjoint huv) (C.internal_subset u e hw)
       (C.branch_mem ⟨v, x⟩)).elim
 
+omit [Fintype U] [Fintype V] in
 theorem link_inter_cell_branch (e : OrientedEdge F) (u : U) (x : V)
     (hx : x ∈ (C.link e).vertexSet) (hu : x ∈ (C.cell u).vertexSet) :
     ∃ w : TreeExpansionVertex T, x = C.branch w := by
@@ -68,6 +73,7 @@ theorem link_inter_cell_branch (e : OrientedEdge F) (u : U) (x : V)
   · exact ⟨⟨e.lo, Sum.inl (port e.lo e.hi)⟩, hh.trans (C.source_eq e)⟩
   · exact ⟨⟨e.hi, Sum.inl (port e.hi e.lo)⟩, hh.trans (C.target_eq e)⟩
 
+omit [Fintype U] [Fintype V] in
 theorem branch_on_link (e : OrientedEdge F) (w : TreeExpansionVertex T)
     (hw : C.branch w ∈ (C.link e).vertexSet) :
     w = ⟨e.lo, Sum.inl (port e.lo e.hi)⟩ ∨
@@ -76,6 +82,7 @@ theorem branch_on_link (e : OrientedEdge F) (w : TreeExpansionVertex T)
   · exact Or.inl (C.branch_injective (hh.trans (C.source_eq e)))
   · exact Or.inr (C.branch_injective (hh.trans (C.target_eq e)))
 
+omit [Fintype U] [Fintype V] in
 theorem paths_intersection {i j : TreeExpansionEdgeIndex F T} (hij : i ≠ j) (x : V)
     (hx : x ∈ (C.path i).vertexSet) (hy : x ∈ (C.path j).vertexSet) :
     ∃ w : TreeExpansionVertex T, x = C.branch w := by
@@ -127,6 +134,7 @@ def realization [LinearOrder (TreeExpansionVertex T)] :
 def toSubdivisionModel [LinearOrder (TreeExpansionVertex T)] :
     GraphSubdivisionModel (treeExpansionGraph F T port) G := C.realization.toSubdivisionModel
 
+omit [Fintype U] [Fintype V] in
 theorem toSubdivisionModel_odd [LinearOrder (TreeExpansionVertex T)]
     (hc : ∀ u e, Odd ((C.cell u).edgePath e).walk.length)
     (hl : ∀ e, Odd (C.link e).walk.length) (e : OrientedEdge (treeExpansionGraph F T port)) :

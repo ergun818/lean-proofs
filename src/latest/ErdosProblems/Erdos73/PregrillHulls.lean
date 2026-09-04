@@ -158,7 +158,8 @@ theorem expandedColumn_disjoint (P : FullPregrill G m n) :
 theorem expandedColumn_connected (P : FullPregrill G m n) (j : Fin n) :
     (G.induce (P.expandedColumn j : Set V)).Connected := by
   have hconn (S : Finset (Fin m)) :
-      (G.induce (↑(P.column j ∪ S.biUnion fun r ↦ (P.rowHull r j).vertexSet) : Set V)).Connected := by
+      (G.induce (↑(P.column j ∪ S.biUnion fun r ↦ (P.rowHull r j).vertexSet) : Set V)).Connected :=
+        by
     induction S using Finset.induction_on with
     | empty =>
       rw [Finset.biUnion_empty, Finset.union_empty]
@@ -212,7 +213,7 @@ theorem expandedColumn_ordered (P : FullPregrill G m n)
 
 /-- Partition an expanded column without splitting any row hull. The
 quotient column graph is connected and all parts stay in this column. -/
-theorem exists_column_partition [Fintype V]
+theorem exists_column_partition
     (P : FullPregrill G m n) (hm : 0 < m) (j : Fin n) :
     ∃ B : Fin m → Finset V,
       (∀ r, (P.rowHull r j).vertexSet ⊆ B r ∧ B r ⊆ P.expandedColumn j ∧

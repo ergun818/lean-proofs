@@ -5,7 +5,6 @@ import ErdosProblems.Erdos73.ParityGraphTransport
 
 namespace Erdos73.ColumnHandleFamily
 noncomputable section
-open scoped Classical
 
 open SimpleGraph Finset Erdos73Infrastructure.SimpleGraph
 
@@ -29,6 +28,7 @@ def reverseWhere (F : ColumnHandleFamily S col I) (flip : I → Bool) :
     ColumnHandleFamily S col I where
   path := fun i => if flip i then (F.path i).reverse else F.path i
   clean := fun i => by
+    classical
     split_ifs
     · exact (F.clean i).reverse
     · exact F.clean i
@@ -54,8 +54,10 @@ def reverseWhere (F : ColumnHandleFamily S col I) (flip : I → Bool) :
     · exact F.source_boundary i
     · exact F.target_boundary i
 
+open scoped Classical in
 theorem reverseWhere_vertexSet (F : ColumnHandleFamily S col I) (flip : I → Bool) (i : I) :
     ((F.reverseWhere flip).path i).vertexSet = (F.path i).vertexSet := by
+  classical
   dsimp only [reverseWhere]
   split_ifs <;> simp only [GraphPath.reverse_vertexSet]
 
@@ -64,6 +66,7 @@ def orientByRow (F : ColumnHandleFamily S col I) : ColumnHandleFamily S col I :=
 
 theorem orientByRow_ordered (F : ColumnHandleFamily S col I) (i : I) :
     (F.orientByRow.sourceNail i).val.1.val ≤ (F.orientByRow.targetNail i).val.1.val := by
+  classical
   dsimp only [orientByRow, reverseWhere]
   split_ifs with hh <;> simp only [decide_eq_true_eq] at hh <;> omega
 

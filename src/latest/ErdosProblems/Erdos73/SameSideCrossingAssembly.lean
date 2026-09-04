@@ -5,7 +5,6 @@ import ErdosProblems.Erdos73.EqualRowElimination
 
 namespace Erdos73.ColumnHandleFamily
 noncomputable section
-open scoped Classical
 
 open SimpleGraph Finset
 
@@ -13,7 +12,8 @@ variable {V I : Type*} [Fintype V] {G : SimpleGraph V} {c r : ℕ}
 variable {S : GraphSubdivisionModel (elementaryWall c r) G}
 variable {col : BipartiteColoringOn G S.vertexSet}
 
-theorem oddPacking_or_sameSide_crossing_any_rows (F : ColumnHandleFamily S col I)
+omit [Fintype V] in
+theorem oddPacking_or_sameSide_crossing_any_rows [Finite V] (F : ColumnHandleFamily S col I)
     (leftSide : Bool) (k : ℕ) (hc : k + 2 ≤ c)
     (hdis : Pairwise (fun i j => Disjoint (F.rows i) (F.rows j)))
     (hs : ∀ i, if leftSide then (F.sourceNail i).val.2.val ≤ 1

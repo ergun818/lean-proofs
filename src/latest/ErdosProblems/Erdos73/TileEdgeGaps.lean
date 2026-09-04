@@ -6,13 +6,13 @@ import ErdosProblems.Erdos73.BrickEdgeCoordinates
 
 namespace Erdos73
 noncomputable section
-open scoped Classical
 
 open SimpleGraph Finset Erdos73Infrastructure.SimpleGraph
 
 theorem brickWallPort_horizontal_forward {c r : ℕ} {u v : ElementaryWallVertex c r}
     (hrow : u.val.1 = v.val.1) (hcol : u.val.2.val + 1 = v.val.2.val) :
     brickWallPort u.val v.val = 1 ∧ brickWallPort v.val u.val = 0 := by
+  classical
   have hlt : u.val.2.val < v.val.2.val := by omega
   have hn : ¬ v.val.2.val < u.val.2.val := by omega
   simp only [brickWallPort, if_pos hrow, if_pos hrow.symm, if_neg hn, if_pos hlt]
@@ -20,6 +20,7 @@ theorem brickWallPort_horizontal_forward {c r : ℕ} {u v : ElementaryWallVertex
 
 theorem brickWallPort_vertical {c r : ℕ} {u v : ElementaryWallVertex c r}
     (hrow : u.val.1 ≠ v.val.1) : brickWallPort u.val v.val = 2 := by
+  classical
   simp only [brickWallPort, if_neg hrow]
 
 namespace BrickTileArray
@@ -34,18 +35,21 @@ def edgeGap (u v : ElementaryWallVertex c r) : Finset (ElementaryWallVertex C R)
 theorem edgeGap_eq_horizontal {u v : ElementaryWallVertex c r}
     (hrow : u.val.1 = v.val.1) (hcol : u.val.2.val + 1 = v.val.2.val) :
     A.edgeGap u v = A.horizontalGap u.val.1 u.val.2 v.val.2 := by
+  classical
   have hle : u.val.2 ≤ v.val.2 := by change u.val.2.val ≤ v.val.2.val; omega
   simp only [edgeGap, if_pos hrow, min_eq_left hle, max_eq_right hle]
 
 theorem edgeGap_eq_vertical {u v : ElementaryWallVertex c r}
     (hrow : u.val.1.val + 1 = v.val.1.val) :
     A.edgeGap u v = A.verticalGap u.val.1 v.val.1 u.val.2 := by
+  classical
   have hne : u.val.1 ≠ v.val.1 := by intro he; have hh := congrArg Fin.val he; omega
   have hle : u.val.1 ≤ v.val.1 := by change u.val.1.val ≤ v.val.1.val; omega
   simp only [edgeGap, if_neg hne, min_eq_left hle, max_eq_right hle]
 
 theorem edgeGap_symm {u v : ElementaryWallVertex c r}
     (huv : (elementaryWall c r).Adj u v) : A.edgeGap u v = A.edgeGap v u := by
+  classical
   by_cases hrow : u.val.1 = v.val.1
   · simp only [edgeGap, hrow, ite_true, min_comm, max_comm]
   · have hcol : u.val.2 = v.val.2 := by
@@ -59,6 +63,7 @@ theorem exists_edge_gap_path {u v : ElementaryWallVertex c r}
     ∃ P : GraphPath (elementaryWall C R),
       P.source = (A.arm u (brickWallPort u.val v.val)).target ∧
       P.target = (A.arm v (brickWallPort v.val u.val)).target ∧ P.vertexSet ⊆ A.edgeGap u v := by
+  classical
   have hsym := A.edgeGap_symm huv
   change (rawBrickWall c r).Adj u.val v.val at huv
   rcases huv with ⟨hr, hc⟩ | ⟨hc, hr⟩
@@ -83,7 +88,8 @@ theorem exists_edge_gap_path {u v : ElementaryWallVertex c r}
       exact hP
     · have hn : u.val.1 ≠ v.val.1 := by intro he; have hh := congrArg Fin.val he; omega
       obtain ⟨P, hs, ht, hP⟩ := A.exists_vertical_gap_path v u hrow hc.symm hpar
-      refine ⟨P.reverse, by simpa only [brickWallPort_vertical hn, GraphPath.reverse_source] using ht,
+      refine ⟨P.reverse, by simpa only [brickWallPort_vertical hn, GraphPath.reverse_source] using
+        ht,
         by simpa only [brickWallPort_vertical (Ne.symm hn), GraphPath.reverse_target] using hs, ?_⟩
       rw [hsym, A.edgeGap_eq_vertical hrow, GraphPath.reverse_vertexSet]
       exact hP

@@ -4,7 +4,6 @@ import ErdosProblems.Erdos73.HandleFamilySelection
 
 namespace Erdos73.ColumnHandleFamily
 noncomputable section
-open scoped Classical
 
 open SimpleGraph Finset
 
@@ -21,6 +20,7 @@ theorem exists_pure_row_ordered_selection (F : ColumnHandleFamily S col I)
       ∃ shape : EndpointPairShape, ∀ i j, i < j →
         shape.Rel (F.sourceNail (f i)).val.1.val (F.targetNail (f i)).val.1.val
           (F.sourceNail (f j)).val.1.val (F.targetNail (f j)).val.1.val := by
+  classical
   have hneq {i j : I} (hij : i ≠ j) :
       (F.sourceNail i).val.1.val ≠ (F.sourceNail j).val.1.val ∧
       (F.sourceNail i).val.1.val ≠ (F.targetNail j).val.1.val ∧

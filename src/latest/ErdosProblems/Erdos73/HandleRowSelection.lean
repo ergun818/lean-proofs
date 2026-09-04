@@ -5,7 +5,6 @@ import ErdosProblems.Erdos73.DisjointSetSelection
 
 namespace Erdos73.ColumnHandleFamily
 noncomputable section
-open scoped Classical
 
 open SimpleGraph Finset
 
@@ -17,6 +16,7 @@ def rows (F : ColumnHandleFamily S col I) (i : I) : Finset (Fin r) :=
   {(F.sourceNail i).val.1, (F.targetNail i).val.1}
 
 theorem rows_nonempty (F : ColumnHandleFamily S col I) (i : I) : (F.rows i).Nonempty := by
+  classical
   exact ⟨(F.sourceNail i).val.1, mem_insert_self _ _⟩
 
 theorem rows_card_le_two (F : ColumnHandleFamily S col I) (i : I) : (F.rows i).card ≤ 2 :=
@@ -24,12 +24,14 @@ theorem rows_card_le_two (F : ColumnHandleFamily S col I) (i : I) : (F.rows i).c
 
 theorem exists_endpoint_at_row (F : ColumnHandleFamily S col I) (i : I) (b : Fin r)
     (hb : b ∈ F.rows i) : ∃ e : Bool, (F.endpoint i e).val.1 = b := by
+  classical
   rcases mem_insert.mp hb with hb | hb
   · exact ⟨false, hb.symm⟩
   · exact ⟨true, (mem_singleton.mp hb).symm⟩
 
 theorem row_membership_card_le_four (F : ColumnHandleFamily S col I) (hc : 2 ≤ c)
     (s : Finset I) (b : Fin r) : (s.filter (fun i => b ∈ F.rows i)).card ≤ 4 := by
+  classical
   let A := s.filter (fun i => b ∈ F.rows i)
   have hex (i : A) : ∃ e : Bool, (F.endpoint i.val e).val.1 = b :=
     F.exists_endpoint_at_row i.val b (mem_filter.mp i.property).2
@@ -37,7 +39,8 @@ theorem row_membership_card_le_four (F : ColumnHandleFamily S col I) (hc : 2 ≤
   have hf : Function.Injective f := by
     intro i j hij
     have hrow : (F.endpoint i.val (hex i).choose).val.1 =
-        (F.endpoint j.val (hex j).choose).val.1 := (hex i).choose_spec.trans (hex j).choose_spec.symm
+        (F.endpoint j.val (hex j).choose).val.1 := (hex i).choose_spec.trans (hex
+          j).choose_spec.symm
     have he := brickBoundaryColumnCode_injective_at_row
       (F.endpoint_boundary i.val (hex i).choose) (F.endpoint_boundary j.val (hex j).choose) hrow hij
     apply Subtype.ext

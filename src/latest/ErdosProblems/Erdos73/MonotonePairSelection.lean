@@ -4,7 +4,6 @@ import ErdosProblems.Erdos73.OrderedFiniteSelection
 
 namespace Erdos73
 noncomputable section
-open scoped Classical
 
 open Finset
 
@@ -13,6 +12,7 @@ theorem exists_monotone_pair_selection {I : Type*} (s : Finset I) (a b : I → �
     (k : ℕ) (hsize : twoColorRamseyBound k k ≤ s.card) :
     ∃ f : Fin k → I, Function.Injective f ∧ (∀ i, f i ∈ s) ∧
       StrictMono (a ∘ f) ∧ (StrictMono (b ∘ f) ∨ StrictAnti (b ∘ f)) := by
+  classical
   let R (i j : I) := (a i < a j ∧ b i < b j) ∨ (a j < a i ∧ b j < b i)
   have hR : Std.Symm R := ⟨fun i j h => h.symm⟩
   obtain ⟨t, hts, ht | ht⟩ := exists_pairwise_or_pairwise_compl R hR k k s hsize

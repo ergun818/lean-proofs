@@ -4,7 +4,6 @@ import ErdosProblems.Erdos73.Foundations
 
 namespace Erdos73
 noncomputable section
-open scoped Classical
 
 open Finset
 
@@ -22,6 +21,7 @@ def EndpointPairShape.Rel (s : EndpointPairShape) (a b c d : ℕ) : Prop :=
 
 theorem EndpointPairShape.rel_symm (s : EndpointPairShape) (a b c d : ℕ) :
     s.Rel a b c d → s.Rel c d a b := by
+  classical
   cases s <;> simp only [Rel] <;> tauto
 
 theorem endpointPairs_crossing_of_not_series_not_nested {a b c d : ℕ}
@@ -29,6 +29,7 @@ theorem endpointPairs_crossing_of_not_series_not_nested {a b c d : ℕ}
     (hs : ¬ EndpointPairShape.series.Rel a b c d)
     (hn : ¬ EndpointPairShape.nested.Rel a b c d) :
     EndpointPairShape.crossing.Rel a b c d := by
+  classical
   dsimp only [EndpointPairShape.Rel] at hs hn ⊢
   omega
 
@@ -42,6 +43,7 @@ theorem exists_pure_endpoint_pairs {I : Type*} (s : Finset I) (lo hi : I → ℕ
     (t : ℕ) (hsize : pureEndpointPairBound t ≤ s.card) :
     ∃ u : Finset I, u ⊆ s ∧ t ≤ u.card ∧ ∃ shape : EndpointPairShape,
       (u : Set I).Pairwise (fun i j => shape.Rel (lo i) (hi i) (lo j) (hi j)) := by
+  classical
   let R := fun i j => EndpointPairShape.series.Rel (lo i) (hi i) (lo j) (hi j)
   let N := fun i j => EndpointPairShape.nested.Rel (lo i) (hi i) (lo j) (hi j)
   have hR : Std.Symm R := ⟨fun i j => EndpointPairShape.rel_symm .series _ _ _ _⟩

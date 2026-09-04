@@ -9,6 +9,7 @@ def avoidanceGraph (G : _root_.SimpleGraph V) (D : Finset V) : _root_.SimpleGrap
   symm := ⟨by rintro x y ⟨hxy, hx, hy⟩; exact ⟨hxy.symm, hy, hx⟩⟩
   loopless := ⟨by rintro x ⟨hxx, _⟩; exact hxx.ne rfl⟩
 
+omit [DecidableEq V] in
 theorem avoidanceGraph_le (D : Finset V) : avoidanceGraph G D ≤ G := fun _ _ h => h.1
 
 namespace GraphPath

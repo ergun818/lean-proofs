@@ -29,15 +29,18 @@ variable (R : EdgePathRealization H G I)
 
 def edgeIndex (e : OrientedEdge H) : I := (R.covers e).choose
 
+omit [Fintype V] [Fintype W] in
 theorem edgeIndex_eq (e : OrientedEdge H) :
     s(R.left (R.edgeIndex e), R.right (R.edgeIndex e)) = s(e.lo, e.hi) :=
   (R.covers e).choose_spec
 
+omit [Fintype V] [Fintype W] in
 theorem edgeIndex_injective : Function.Injective R.edgeIndex := by
   intro e f he
   apply OrientedEdge.eq_of_sym2_eq
   exact (R.edgeIndex_eq e).symm.trans (he ▸ R.edgeIndex_eq f)
 
+omit [Fintype V] [Fintype W] in
 theorem edgeIndex_endpoints (e : OrientedEdge H) (w : W) :
     (w = R.left (R.edgeIndex e) ∨ w = R.right (R.edgeIndex e)) ↔
       (w = e.lo ∨ w = e.hi) := by
@@ -45,6 +48,7 @@ theorem edgeIndex_endpoints (e : OrientedEdge H) (w : W) :
   · rw [he.1, he.2]
   · rw [he.1, he.2, or_comm]
 
+omit [Fintype V] [Fintype W] in
 theorem path_connects (e : OrientedEdge H) :
     (R.path (R.edgeIndex e)).Connects {R.branch e.lo} {R.branch e.hi} := by
   simp only [GraphPath.Connects, mem_singleton, R.source_eq, R.target_eq]
@@ -55,10 +59,12 @@ theorem path_connects (e : OrientedEdge H) :
 def orientedPath (e : OrientedEdge H) : GraphPath G :=
   (R.path (R.edgeIndex e)).orientBetween (R.path_connects e)
 
+omit [Fintype V] [Fintype W] in
 theorem orientedPath_vertexSet (e : OrientedEdge H) :
     (R.orientedPath e).vertexSet = (R.path (R.edgeIndex e)).vertexSet :=
   GraphPath.orientBetween_vertexSet _ _
 
+omit [Fintype V] [Fintype W] in
 theorem orientedPath_branch (e : OrientedEdge H) (w : W)
     (hw : R.branch w ∈ (R.orientedPath e).vertexSet) : w = e.lo ∨ w = e.hi := by
   rw [R.orientedPath_vertexSet] at hw
@@ -80,6 +86,7 @@ def toSubdivisionModel : GraphSubdivisionModel H G where
     exact ⟨w, hw, R.orientedPath_branch e w (hw ▸ hx),
       R.orientedPath_branch f w (hw ▸ hy)⟩
 
+omit [Fintype V] [Fintype W] in
 theorem orientedPath_length (e : OrientedEdge H) :
     (R.orientedPath e).walk.length = (R.path (R.edgeIndex e)).walk.length := by
   let P := R.path (R.edgeIndex e)
@@ -94,6 +101,7 @@ theorem orientedPath_length (e : OrientedEdge H) :
       exact if_neg h
     exact (congrArg (fun Q : GraphPath G => Q.walk.length) he).trans P.walk.length_reverse
 
+omit [Fintype V] [Fintype W] in
 theorem toSubdivisionModel_odd (hodd : ∀ i, Odd (R.path i).walk.length)
     (e : OrientedEdge H) : Odd (R.toSubdivisionModel.edgePath e).walk.length := by
   change Odd (R.orientedPath e).walk.length

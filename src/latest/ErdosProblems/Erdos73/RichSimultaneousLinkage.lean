@@ -10,7 +10,7 @@ open scoped BigOperators
 /-- Choose one path whose deletion retains a specified positive fraction
 of each of finitely many proper linkages (qualitative Leaf--Seymour 3.4). -/
 theorem exists_path_simultaneously_preserving_of_no_rootedRichGrid
-    {V I : Type*} [Fintype V] [DecidableEq V] [Fintype I]
+    {V I : Type*} [Finite V] [DecidableEq V] [Fintype I]
     {G : SimpleGraph V} (A B : I → Finset V) {S T Z : Finset V}
     (P : ∀ i, PathPacking G (A i) (B i)) (Q : PathPacking G S T)
     (hP : ∀ i, (P i).IsBoundaryProper Z) (hQ : Q.IsBoundaryProper Z)

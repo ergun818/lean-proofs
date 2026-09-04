@@ -709,7 +709,7 @@ theorem spliceTwo_target_left {U : Finset V}
       hotherTargetNotTail₀ hotherTargetNotTail₁ hi₁TargetNotTail₀
       hi₀TargetNotTail₁ htails).path i₀).target = tail₀.target := by
   classical
-  simp [spliceTwo, withSameIndex]
+  simp
 
 theorem spliceTwo_target_right {U : Finset V}
     (P : EndpointCleanPathPacking G S U)
@@ -749,7 +749,7 @@ theorem spliceTwo_target_right {U : Finset V}
       hotherTargetNotTail₀ hotherTargetNotTail₁ hi₁TargetNotTail₀
       hi₀TargetNotTail₁ htails).path i₁).target = tail₁.target := by
   classical
-  simp [spliceTwo, withSameIndex, hidx.symm]
+  simp [hidx.symm]
 
 theorem spliceTwo_target_other {U : Finset V}
     (P : EndpointCleanPathPacking G S U)
@@ -790,7 +790,7 @@ theorem spliceTwo_target_other {U : Finset V}
       hotherTargetNotTail₀ hotherTargetNotTail₁ hi₁TargetNotTail₀
       hi₀TargetNotTail₁ htails).path j).target = (P.path j).target := by
   classical
-  simp [spliceTwo, withSameIndex, hj₀, hj₁]
+  simp [hj₀, hj₁]
 
 /-- Replace one path by a new endpoint-clean path contained in the old path,
 possibly after changing the right terminal set.  The endpoint-clean hypotheses

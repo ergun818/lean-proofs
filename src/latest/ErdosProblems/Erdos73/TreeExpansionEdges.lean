@@ -26,6 +26,7 @@ def treeExpansionEdgeRight (port : ∀ u, U → W u) :
   | Sum.inl ⟨u, e⟩ => ⟨u, e.hi⟩
   | Sum.inr e => ⟨e.hi, Sum.inl (port e.hi e.lo)⟩
 
+omit [(u : U) → Fintype (W u)] [Fintype U] in
 theorem treeExpansionEdge_covers [LinearOrder (TreeExpansionVertex T)]
     (port : ∀ u, U → W u) (e : OrientedEdge (treeExpansionGraph F T port)) :
     ∃ i, s(treeExpansionEdgeLeft F T port i, treeExpansionEdgeRight F T port i) =

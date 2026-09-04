@@ -5,7 +5,6 @@ import ErdosProblems.Erdos73.BlockBoundaryBranches
 
 namespace Erdos73
 noncomputable section
-open scoped Classical
 
 open SimpleGraph Finset Erdos73Infrastructure.SimpleGraph
 
@@ -13,7 +12,9 @@ variable {V : Type*} [Fintype V] {G : SimpleGraph V} {c r m h : ℕ}
 variable {S : GraphSubdivisionModel (elementaryWall c r) G}
 variable {P : Fin m → Erdos73Infrastructure.SimpleGraph.GraphPath G}
 
-theorem BrickStripSelectionState.exists_breaking_slice_packing
+omit [Fintype V] in
+open scoped Classical in
+theorem BrickStripSelectionState.exists_breaking_slice_packing [Finite V]
     (col : BipartiteColoringOn G S.vertexSet) (st : BrickStripSelectionState S col.color P h)
     (k d : ℕ) (hr : 2 ≤ r) (hd : 0 < d)
     (hwidth : (6 * h + 1) * d ≤ c - 1) (hnumber : 5 * (2 * k - 2) < h) :
@@ -28,7 +29,8 @@ theorem BrickStripSelectionState.exists_breaking_slice_packing
           (∃ v, (B i).target = S'.branchVertex v)) ∧
         (∀ i, (B i).source ∈ internalVertexBoundary S.actualEdgeGraph S'.vertexSet ∧
           (B i).target ∈ internalVertexBoundary S.actualEdgeGraph S'.vertexSet) := by
-  obtain ⟨a, ha, B, hB, hdis, hBJ, hUT⟩ := st.exists_breaking_block_packing col k d hr hd hwidth hnumber
+  obtain ⟨a, ha, B, hB, hdis, hBJ, hUT⟩ := st.exists_breaking_block_packing col k d hr hd hwidth
+    hnumber
   have hs : a + (d + 1) ≤ c := by omega
   let S' := S.restrictCopy (brickColumnSliceCopy a d hs)
   have hset : S'.vertexSet = brickColumnBlock S a d ha := brickColumnSlice_vertexSet S a d hs hr hd

@@ -421,7 +421,7 @@ theorem spanningGraph_walk_support_subset_path
   induction W with
   | nil =>
       intro x hx
-      simp at hx
+      simp only [SimpleGraph.Walk.support_nil, List.mem_cons, List.not_mem_nil, or_false] at hx
       subst x
       exact hu
   | @cons u v z huv W ih =>
@@ -3184,7 +3184,8 @@ theorem concatOfFirstInternallyDisjointSecondStaysIn_internallyDisjointFromSet
     (hPC : P.toPathPacking.InternallyDisjointFromSet C)
     (hQC : Q.toPathPacking.InternallyDisjointFromSet C)
     (hTdisj : Disjoint T C) :
-    ((P.concatOfFirstInternallyDisjointSecondStaysIn Q hP hQ hSdisj).toPathPacking).InternallyDisjointFromSet C := by
+    ((P.concatOfFirstInternallyDisjointSecondStaysIn Q hP hQ
+      hSdisj).toPathPacking).InternallyDisjointFromSet C := by
   intro i v hv hvC
   have hsplit :=
     P.concatOfFirstInternallyDisjointSecondStaysIn_path_vertexSet_subset
@@ -3216,7 +3217,8 @@ theorem concatOfFirstStaysInSecondInternallyDisjoint_internallyDisjointFromSet
     (hPC : P.toPathPacking.InternallyDisjointFromSet C)
     (hQC : Q.toPathPacking.InternallyDisjointFromSet C)
     (hTdisj : Disjoint T C) :
-    ((P.concatOfFirstStaysInSecondInternallyDisjoint Q hP hQ hUdisj).toPathPacking).InternallyDisjointFromSet C := by
+    ((P.concatOfFirstStaysInSecondInternallyDisjoint Q hP hQ
+      hUdisj).toPathPacking).InternallyDisjointFromSet C := by
   intro i v hv hvC
   have hsplit :=
     P.concatOfFirstStaysInSecondInternallyDisjoint_path_vertexSet_subset
@@ -3269,7 +3271,7 @@ noncomputable def toPerfectOfCardEq (P : PathPacking G S T)
       have hi : ((P.orient).path i).source ∈ ((P.orient).path i).vertexSet :=
         GraphPath.source_mem_vertexSet ((P.orient).path i)
       have hj : ((P.orient).path i).source ∈ ((P.orient).path j).vertexSet := by
-        simpa [hsrc] using GraphPath.source_mem_vertexSet ((P.orient).path j)
+        simp [hsrc]
       exact Finset.disjoint_left.mp hdisj hi hj
     · rw [Fintype.card_coe]
       exact hcardS
@@ -3286,7 +3288,7 @@ noncomputable def toPerfectOfCardEq (P : PathPacking G S T)
       have hi : ((P.orient).path i).target ∈ ((P.orient).path i).vertexSet :=
         GraphPath.target_mem_vertexSet ((P.orient).path i)
       have hj : ((P.orient).path i).target ∈ ((P.orient).path j).vertexSet := by
-        simpa [htgt] using GraphPath.target_mem_vertexSet ((P.orient).path j)
+        simp [htgt]
       exact Finset.disjoint_left.mp hdisj hi hj
     · rw [Fintype.card_coe]
       exact hcardT

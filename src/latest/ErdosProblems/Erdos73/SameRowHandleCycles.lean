@@ -6,7 +6,6 @@ import ErdosProblems.Erdos73.ParityReturnPaths
 
 namespace Erdos73.ColumnHandleFamily
 noncomputable section
-open scoped Classical
 
 open SimpleGraph Finset Erdos73Infrastructure.SimpleGraph
 
@@ -14,10 +13,13 @@ variable {V : Type*} [Fintype V] {G : SimpleGraph V} {c r k : ℕ}
 variable {S : GraphSubdivisionModel (elementaryWall c r) G}
 variable {col : BipartiteColoringOn G S.vertexSet}
 
-theorem oddCyclePacking_of_same_row (F : ColumnHandleFamily S col (Fin k))
+omit [Fintype V] in
+theorem oddCyclePacking_of_same_row [Finite V] (F : ColumnHandleFamily S col (Fin k))
     (hsame : ∀ i, (F.sourceNail i).val.1 = (F.targetNail i).val.1)
     (hrows : Pairwise (fun i j => (F.sourceNail i).val.1 ≠ (F.sourceNail j).val.1)) :
     HasOddCyclePacking k G := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   let R (i : Fin k) := S.supportOver (brickRowVertices (F.sourceNail i).val.1)
   have hR : Pairwise (fun i j => Disjoint (R i) (R j)) :=
     fun i j hij => S.supportOver_disjoint (brickRowVertices_disjoint (hrows hij))

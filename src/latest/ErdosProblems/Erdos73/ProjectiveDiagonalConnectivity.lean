@@ -56,7 +56,7 @@ theorem projectiveDiagonal_odd_positive_row_reachable {n : ℕ} (hn : 2 ≤ n)
     · have her : r % 2 = 0 := by omega
       have hh := (projectiveDiagonal_adj_right_even hn hnEven ⟨r, hr⟩ her).reachable.symm
       convert hh using 1
-      apply Prod.ext <;> apply Fin.ext <;> dsimp only <;> omega
+      apply Prod.ext <;> apply Fin.ext <;> dsimp only ; omega
     by_cases hbottom : r + 1 = n
     · have hec : c % 2 = 0 := by omega
       have hc' : c + 1 < n := by omega
@@ -64,7 +64,7 @@ theorem projectiveDiagonal_odd_positive_row_reachable {n : ℕ} (hn : 2 ≤ n)
       have ht := projectiveDiagonal_top_even_reachable hn (n - 2 - c) (by omega) (by omega)
       have hh := hadj.reachable.trans ht
       convert hh using 1
-      apply Prod.ext <;> apply Fin.ext <;> dsimp only <;> omega
+      apply Prod.ext <;> apply Fin.ext <;> dsimp only ; omega
     have hrec := ih (n - (r + 1)) (by omega) (r + 1) (c + 1)
       (by omega) (by omega) (by omega) (by omega) rfl
     have hadj := projectiveDiagonal_adj_southeast hn r c (by omega) (by omega)
@@ -85,13 +85,13 @@ theorem projectiveDiagonal_reachable_root {n : ℕ} (hn : 2 ≤ n) (hnEven : n %
   by_cases hright : c + 1 = n
   · have hh := (projectiveDiagonal_adj_right_even hn hnEven ⟨0, by omega⟩ rfl).reachable.symm
     convert hh using 1
-    apply Prod.ext <;> apply Fin.ext <;> dsimp only <;> omega
+    apply Prod.ext <;> apply Fin.ext <;> dsimp only ; omega
   have hwrap := projectiveDiagonal_adj_wrap hn (n - 2 - c) (by omega)
   have hbot := projectiveDiagonal_even_reachable hn (n - 1) (n - 2 - c)
     (by omega) (by omega) (by omega)
   have hh := hwrap.reachable.symm.trans hbot
   convert hh using 1
-  apply Prod.ext <;> apply Fin.ext <;> dsimp only <;> omega
+  apply Prod.ext <;> apply Fin.ext <;> dsimp only ; omega
 
 theorem projectiveDiagonal_connected {n : ℕ} (hn : 2 ≤ n) (hnEven : n % 2 = 0) :
     (projectiveDiagonalGraph hn).Connected := by

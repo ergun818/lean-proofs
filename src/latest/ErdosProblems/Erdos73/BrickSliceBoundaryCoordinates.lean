@@ -6,7 +6,6 @@ import ErdosProblems.Erdos73.BlockBoundaryPaths
 
 namespace Erdos73
 noncomputable section
-open scoped Classical
 
 open SimpleGraph Finset
 
@@ -16,6 +15,7 @@ theorem rawBrickWall_adj_numeric {c r : ℕ} {x y : Fin r × Fin (2 * c)}
       (x.2.val = y.2.val ∧
         ((x.1.val + 1 = y.1.val ∧ (x.2.val + x.1.val) % 2 = 1) ∨
           (y.1.val + 1 = x.1.val ∧ (y.2.val + y.1.val) % 2 = 1))) := by
+  classical
   rcases hxy with ⟨hr, hc⟩ | ⟨hc, hr⟩
   · exact Or.inl ⟨congrArg Fin.val hr, pathGraph_adj.mp hc⟩
   · exact Or.inr ⟨congrArg Fin.val hc, hr⟩
@@ -27,6 +27,7 @@ theorem brickColumnSliceCopy_lifts_interior_neighbors {c r : ℕ}
     (huz : (elementaryWall c r).Adj (brickColumnSliceCopy a d hc u) z) :
     ∃ v : ElementaryWallVertex (d + 1) r,
       (elementaryWall (d + 1) r).Adj u v ∧ brickColumnSliceCopy a d hc v = z := by
+  classical
   have hn := rawBrickWall_adj_numeric huz
   change ((2 * 0 + u.val.1.val = z.val.1.val ∧
       (2 * a + u.val.2.val + 1 = z.val.2.val ∨
@@ -71,6 +72,7 @@ theorem brickColumnSlice_boundary_column {V : Type*} {G : SimpleGraph V} {c r : 
       internalVertexBoundary S.actualEdgeGraph
         (S.restrictCopy (brickColumnSliceCopy a d hc)).vertexSet) :
     u.val.2.val ≤ 1 ∨ 2 * d ≤ u.val.2.val := by
+  classical
   by_contra hn
   have hlo : 1 < u.val.2.val := by omega
   have hhi : u.val.2.val + 2 < 2 * (d + 1) := by omega

@@ -4,7 +4,6 @@ import ErdosProblems.Erdos73.BrickHookRegions
 
 namespace Erdos73
 noncomputable section
-open scoped Classical
 
 open SimpleGraph Finset Erdos73Infrastructure.SimpleGraph
 
@@ -18,11 +17,13 @@ theorem mem_brickRightHook {a b j : ℕ} {w : ElementaryWallVertex c r} :
     w ∈ brickRightHook a b j ↔
       ((w.val.1.val = a ∨ w.val.1.val = b) ∧ 2 * j ≤ w.val.2.val) ∨
       (a ≤ w.val.1.val ∧ w.val.1.val ≤ b ∧ 2 * j ≤ w.val.2.val ∧ w.val.2.val ≤ 2 * j + 1) := by
+  classical
   simp only [brickRightHook, mem_filter, mem_univ, true_and]
 
 theorem brickRightHook_row_bounds {a b j : ℕ} (hab : a ≤ b)
     {w : ElementaryWallVertex c r} (hw : w ∈ brickRightHook a b j) :
     a ≤ w.val.1.val ∧ w.val.1.val ≤ b := by
+  classical
   rw [mem_brickRightHook] at hw
   omega
 
@@ -48,6 +49,7 @@ theorem exists_brick_right_hook_path (u v : ElementaryWallVertex c r)
     (hu : 2 * j ≤ u.val.2.val) (hv : 2 * j ≤ v.val.2.val) :
     ∃ P : GraphPath (elementaryWall c r), P.source = u ∧ P.target = v ∧
       P.vertexSet ⊆ brickRightHook u.val.1.val v.val.1.val j := by
+  classical
   obtain ⟨C, hCs, hCt, hC⟩ := exists_brick_column_path
     u.val.1.val v.val.1.val j huv v.val.1.isLt hj hjc
   have hCscol := (hC C.source C.source_mem_vertexSet).2.2.1
@@ -68,12 +70,14 @@ theorem exists_brick_right_hook_path (u v : ElementaryWallVertex c r)
   · exact mem_brickRightHook.mpr (Or.inl
       ⟨Or.inr ((congrArg Fin.val (hR w hh).1).trans hCt), (hR w hh).2.1⟩)
 
+open scoped Classical in
 theorem GraphSubdivisionModel.exists_right_hook_path {V : Type*} {G : SimpleGraph V}
     (S : GraphSubdivisionModel (elementaryWall c r) G) (u v : ElementaryWallVertex c r)
     (huv : u.val.1.val ≤ v.val.1.val) (j : ℕ) (hj : 0 < j) (hjc : j + 1 < c)
     (hu : 2 * j ≤ u.val.2.val) (hv : 2 * j ≤ v.val.2.val) :
     ∃ P : GraphPath G, P.source = S.branchVertex u ∧ P.target = S.branchVertex v ∧
       P.vertexSet ⊆ S.supportOver (brickRightHook u.val.1.val v.val.1.val j) := by
+  classical
   obtain ⟨Q, hs, ht, hQ⟩ := exists_brick_right_hook_path u v huv j hj hjc hu hv
   obtain ⟨P, hPs, hPt, hP⟩ := S.exists_path_with_walkSupport Q.walk Q.isPath
   refine ⟨P, hPs.trans (congrArg S.branchVertex hs), hPt.trans (congrArg S.branchVertex ht), ?_⟩

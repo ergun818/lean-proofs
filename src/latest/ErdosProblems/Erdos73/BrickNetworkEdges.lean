@@ -5,7 +5,6 @@ import ErdosProblems.Erdos73.CrossFamilyRobust
 
 namespace Erdos73
 noncomputable section
-open scoped Classical
 
 open SimpleGraph Finset
 
@@ -27,9 +26,11 @@ theorem brickFaceEdgeGraph_adj_support (S : GraphSubdivisionModel (elementaryWal
     x ∈ brickFaceRegion S i ∧ y ∈ brickFaceRegion S i :=
   GraphSubdivisionModel.actualEdgeGraph_adj_support _ hxy
 
+open scoped Classical in
 theorem brickFaceRegion_robust_in_graph (S : GraphSubdivisionModel (elementaryWall c r) G)
     (i : Fin (r - 1) × Fin (c - 1)) (J : SimpleGraph V) (hJ : brickFaceEdgeGraph S i ≤ J) :
     DeletionOneConnected J (brickFaceRegion S i) := by
+  classical
   let T := S.restrictCopy (elementaryBrickFaceCopy i.1.val (brickFaceColumn i.1.val i.2.val)
     (by have hi := i.1.isLt; omega)
     (by have hi := i.2.isLt; unfold brickFaceColumn; omega)
@@ -42,10 +43,12 @@ theorem brickFaceRegion_robust_in_graph (S : GraphSubdivisionModel (elementaryWa
       brickFaceSupport, T]
   exact he ▸ hh
 
+open scoped Classical in
 theorem brickFaceRowStrip_robust_in_graph (S : GraphSubdivisionModel (elementaryWall c r) G)
     (hc : 2 ≤ c) (a : Fin (r - 1)) (J : SimpleGraph V)
     (hJ : ∀ j, DeletionOneConnected J (brickFaceRegion S (a, j))) :
     DeletionOneConnected J (brickFaceRowStrip S a) := by
+  classical
   have : NeZero (c - 1) := ⟨by omega⟩
   apply deletionOneConnected_biUnion (fun j => brickFaceRegion S (a, j)) hJ
     (show (pathGraph (c - 1)).Connected from ⟨pathGraph_preconnected _⟩)
@@ -55,10 +58,12 @@ theorem brickFaceRowStrip_robust_in_graph (S : GraphSubdivisionModel (elementary
   · rw [inter_comm]
     exact brickFaceRegion_horizontal_overlap S a j i hij
 
+open scoped Classical in
 theorem brickFaceColumnStrip_robust_in_graph (S : GraphSubdivisionModel (elementaryWall c r) G)
     (hr : 2 ≤ r) (j : Fin (c - 1)) (J : SimpleGraph V)
     (hJ : ∀ a, DeletionOneConnected J (brickFaceRegion S (a, j))) :
     DeletionOneConnected J (brickFaceColumnStrip S j) := by
+  classical
   have : NeZero (r - 1) := ⟨by omega⟩
   apply deletionOneConnected_biUnion (fun a => brickFaceRegion S (a, j)) hJ
     (show (pathGraph (r - 1)).Connected from ⟨pathGraph_preconnected _⟩)
@@ -68,11 +73,13 @@ theorem brickFaceColumnStrip_robust_in_graph (S : GraphSubdivisionModel (element
   · rw [inter_comm]
     exact brickFaceRegion_vertical_overlap S b a j hab
 
+open scoped Classical in
 theorem brickStripNetwork_robust_in_graph (S : GraphSubdivisionModel (elementaryWall c r) G)
     (A : Finset (Fin (r - 1))) (B : Finset (Fin (c - 1)))
     (hA : A.Nonempty) (hB : B.Nonempty) (J : SimpleGraph V)
     (hJ : ∀ i, i.1 ∈ A ∨ i.2 ∈ B → DeletionOneConnected J (brickFaceRegion S i)) :
     DeletionOneConnected J (brickStripNetwork S A B) := by
+  classical
   obtain ⟨a, ha⟩ := hA
   obtain ⟨b, hb⟩ := hB
   have hr : 2 ≤ r := by have hh := a.isLt; omega
@@ -96,6 +103,7 @@ theorem brickFaceRegion_subset_network (S : GraphSubdivisionModel (elementaryWal
     (A : Finset (Fin (r - 1))) (B : Finset (Fin (c - 1)))
     (i : Fin (r - 1) × Fin (c - 1)) (hi : i.1 ∈ A ∨ i.2 ∈ B) :
     brickFaceRegion S i ⊆ brickStripNetwork S A B := by
+  classical
   intro x hx
   apply (mem_brickStripNetwork S A B x).mpr
   rcases hi with hi | hi
@@ -106,17 +114,20 @@ theorem brickStripNetworkGraph_adj_support (S : GraphSubdivisionModel (elementar
     (A : Finset (Fin (r - 1))) (B : Finset (Fin (c - 1))) {x y : V}
     (hxy : (brickStripNetworkGraph S A B).Adj x y) :
     x ∈ brickStripNetwork S A B ∧ y ∈ brickStripNetwork S A B := by
+  classical
   obtain ⟨i, hxy⟩ := SimpleGraph.iSup_adj.mp hxy
   obtain ⟨hi, hxy⟩ := SimpleGraph.iSup_adj.mp hxy
   have hh := brickFaceEdgeGraph_adj_support S i hxy
   exact ⟨brickFaceRegion_subset_network S A B i hi hh.1,
     brickFaceRegion_subset_network S A B i hi hh.2⟩
 
+open scoped Classical in
 theorem brickStripNetwork_robust_of_edges (S : GraphSubdivisionModel (elementaryWall c r) G)
     (A : Finset (Fin (r - 1))) (B : Finset (Fin (c - 1)))
     (hA : A.Nonempty) (hB : B.Nonempty) (J : SimpleGraph V)
     (hJ : brickStripNetworkGraph S A B ≤ J) :
     DeletionOneConnected J (brickStripNetwork S A B) := by
+  classical
   apply brickStripNetwork_robust_in_graph S A B hA hB J
   intro i hi
   apply brickFaceRegion_robust_in_graph S i J

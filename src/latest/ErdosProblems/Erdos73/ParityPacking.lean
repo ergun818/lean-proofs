@@ -6,7 +6,6 @@ import ErdosProblems.Erdos73.OddTerminalPaths
 
 namespace Erdos73
 noncomputable section
-open scoped Classical
 
 open SimpleGraph Finset Erdos73Infrastructure.SimpleGraph
 
@@ -19,10 +18,12 @@ def HasParityBreakingPathPacking (G : SimpleGraph V) (c : V → Bool) (T : Finse
 def HitsParityBreakingPaths (G : SimpleGraph V) (c : V → Bool) (T X : Finset V) : Prop :=
   ∀ P : GraphPath G, IsParityBreakingPath c T P → ¬ Disjoint P.vertexSet X
 
-theorem parityBreaking_paths_packing_or_covering (G : SimpleGraph V) (c : V → Bool)
+omit [Fintype V] in
+theorem parityBreaking_paths_packing_or_covering [Finite V] (G : SimpleGraph V) (c : V → Bool)
     (T : Finset V) (k : ℕ) :
     HasParityBreakingPathPacking G c T k ∨
       ∃ X : Finset V, X.card ≤ 2 * k - 2 ∧ HitsParityBreakingPaths G c T X := by
+  classical
   rcases odd_terminal_paths_packing_or_covering (parityPendantGraph G T c)
       (parityPendantTerminals T c) k with ⟨P, hP, hdis⟩ | ⟨Z, hZcard, hZ⟩
   · have hex (i : Fin k) := exists_parityBreaking_path_of_oddPendantPath (P i) (hP i)

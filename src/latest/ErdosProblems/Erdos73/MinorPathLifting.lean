@@ -130,6 +130,7 @@ theorem liftPacking_vertex_mem {S T : Finset W} {A B : Finset V}
   M.vertex_mem_of_branchSet_mem_walkBranchUnion hxw
     (M.liftGraphPath_vertexSet_subset_walkBranchUnion (P.path i) (hs i) (ht i) hx)
 
+omit [DecidableEq W] in
 /-- The union of branches indexed by a connected finite set is connected.
 This is the singleton-pattern instance of actual minor-model composition. -/
 theorem connected_induce_branchUnion (M : MinorModel H G) (S : Finset W)

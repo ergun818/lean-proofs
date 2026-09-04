@@ -4,12 +4,12 @@ import ErdosProblems.Erdos73.BrickFaceArray
 
 namespace Erdos73
 noncomputable section
-open scoped Classical
 
 open SimpleGraph Finset
 
 theorem exists_faceRow_cover {r : ℕ} (hr : 2 ≤ r) (x : Fin r) :
     ∃ a : Fin (r - 1), ∃ d : Fin 2, x.val = a.val + d.val := by
+  classical
   by_cases hx : x.val < r - 1
   · exact ⟨⟨x.val, hx⟩, 0, by simp⟩
   · refine ⟨⟨r - 2, by omega⟩, 1, ?_⟩
@@ -20,6 +20,7 @@ theorem exists_faceRow_cover {r : ℕ} (hr : 2 ≤ r) (x : Fin r) :
 theorem exists_faceColumn_cover {c q x : ℕ} (hc : 2 ≤ c)
     (hlo : q ≤ x) (hhi : x ≤ 2 * (c - 1) + q) :
     ∃ j : Fin (c - 1), ∃ d : Fin 3, x = 2 * j.val + q + d.val := by
+  classical
   by_cases hx : x - q < 2 * (c - 1)
   · refine ⟨⟨(x - q) / 2, by omega⟩, ⟨(x - q) % 2, by omega⟩, ?_⟩
     dsimp only
@@ -53,10 +54,12 @@ theorem exists_brickFace_at_interior_vertex {c r : ℕ} (hc : 2 ≤ c) (hr : 2 �
     rw [hi]
     exact hj.symm
 
+open scoped Classical in
 theorem interior_branch_mem_faceRegion_union {V : Type*} {G : SimpleGraph V} {c r : ℕ}
     (S : GraphSubdivisionModel (elementaryWall c r) G) (hc : 2 ≤ c) (hr : 2 ≤ r)
     (x : ElementaryWallVertex c r) (hl : 0 < x.val.2.val) (hh : x.val.2.val + 1 < 2 * c) :
     S.branchVertex x ∈ Finset.univ.biUnion (brickFaceRegion S) := by
+  classical
   obtain ⟨a, j, i, he⟩ := exists_brickFace_at_interior_vertex hc hr x hl hh
   refine mem_biUnion.mpr ⟨(a, j), mem_univ _, ?_⟩
   rw [← he]

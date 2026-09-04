@@ -102,10 +102,11 @@ theorem maxDegreeAtMost_of_le {V : Type*}
       (MaxDegreeAtMost.card_neighborFinset_le hG v)
 
 /-- A vertex has degree exactly one when it has a unique neighbor. -/
-theorem degreeEquals_one_of_unique_neighbor {V : Type*} [DecidableEq V]
+theorem degreeEquals_one_of_unique_neighbor {V : Type*}
     {G : _root_.SimpleGraph V} {v u : V}
     (hadj : G.Adj v u) (huniq : ∀ w : V, G.Adj v w → w = u) :
     DegreeEquals G v 1 := by
+  classical
   refine ⟨{u}, ?_, by simp⟩
   intro w
   constructor
@@ -116,10 +117,11 @@ theorem degreeEquals_one_of_unique_neighbor {V : Type*} [DecidableEq V]
     simp [huniq w hvw]
 
 /-- A degree-one vertex has at most one neighbor. -/
-theorem DegreeEquals.one_adj_eq {V : Type*} [DecidableEq V]
+theorem DegreeEquals.one_adj_eq {V : Type*}
     {G : _root_.SimpleGraph V} {v u w : V}
     (h : DegreeEquals G v 1) (hu : G.Adj v u) (hw : G.Adj v w) :
     u = w := by
+  classical
   rcases h with ⟨N, hN, hcard⟩
   have huN : u ∈ N := (hN u).2 hu
   have hwN : w ∈ N := (hN w).2 hw
@@ -129,10 +131,11 @@ theorem DegreeEquals.one_adj_eq {V : Type*} [DecidableEq V]
   exact hua.trans hwa.symm
 
 /-- A degree-one vertex has a unique neighbor, in existence form. -/
-theorem DegreeEquals.one_exists_unique_adj {V : Type*} [DecidableEq V]
+theorem DegreeEquals.one_exists_unique_adj {V : Type*}
     {G : _root_.SimpleGraph V} {v : V}
     (h : DegreeEquals G v 1) :
     ∃ u : V, G.Adj v u ∧ ∀ w : V, G.Adj v w → w = u := by
+  classical
   rcases h with ⟨N, hN, hcard⟩
   rcases Finset.card_eq_one.mp hcard with ⟨u, hN_eq⟩
   have huN : u ∈ N := by simp [hN_eq]
@@ -143,7 +146,7 @@ theorem DegreeEquals.one_exists_unique_adj {V : Type*} [DecidableEq V]
 
 /-- A degree-two vertex has no neighbor other than two given distinct
 neighbors. -/
-theorem DegreeEquals.two_adj_eq_or_eq {V : Type*} [DecidableEq V]
+theorem DegreeEquals.two_adj_eq_or_eq {V : Type*}
     {G : _root_.SimpleGraph V} {v a b w : V}
     (h : DegreeEquals G v 2) (ha : G.Adj v a) (hb : G.Adj v b)
     (hab : a ≠ b) (hw : G.Adj v w) :
@@ -156,7 +159,7 @@ theorem DegreeEquals.two_adj_eq_or_eq {V : Type*} [DecidableEq V]
   let P : Finset V := {a, b}
   have hPsubset : P ⊆ N := by
     intro x hx
-    simp [P] at hx
+    simp only [Finset.mem_insert, Finset.mem_singleton, P] at hx
     rcases hx with rfl | rfl
     · exact haN
     · exact hbN
@@ -171,7 +174,7 @@ theorem DegreeEquals.two_adj_eq_or_eq {V : Type*} [DecidableEq V]
 
 /-- A degree-two vertex adjacent to `a` has another neighbor distinct from
 `a`. -/
-theorem DegreeEquals.two_exists_adj_ne {V : Type*} [DecidableEq V]
+theorem DegreeEquals.two_exists_adj_ne {V : Type*}
     {G : _root_.SimpleGraph V} {v a : V}
     (h : DegreeEquals G v 2) (_ha : G.Adj v a) :
     ∃ b : V, G.Adj v b ∧ b ≠ a := by
@@ -189,22 +192,24 @@ theorem DegreeEquals.two_exists_adj_ne {V : Type*} [DecidableEq V]
 
 /-- A degree-two vertex adjacent to two distinct accounted-for neighbors has
 no third neighbor. -/
-theorem DegreeEquals.two_not_adj_of_ne {V : Type*} [DecidableEq V]
+theorem DegreeEquals.two_not_adj_of_ne {V : Type*}
     {G : _root_.SimpleGraph V} {v a b w : V}
     (h : DegreeEquals G v 2) (ha : G.Adj v a) (hb : G.Adj v b)
     (hab : a ≠ b) (hwa : w ≠ a) (hwb : w ≠ b) :
     ¬ G.Adj v w := by
+  classical
   intro hw
   rcases DegreeEquals.two_adj_eq_or_eq h ha hb hab hw with hwa' | hwb'
   · exact hwa hwa'
   · exact hwb hwb'
 
 /-- Symmetric version of `DegreeEquals.two_not_adj_of_ne`. -/
-theorem DegreeEquals.two_not_adj_to_of_ne {V : Type*} [DecidableEq V]
+theorem DegreeEquals.two_not_adj_to_of_ne {V : Type*}
     {G : _root_.SimpleGraph V} {v a b w : V}
     (h : DegreeEquals G v 2) (ha : G.Adj v a) (hb : G.Adj v b)
     (hab : a ≠ b) (hwa : w ≠ a) (hwb : w ≠ b) :
     ¬ G.Adj w v := by
+  classical
   intro hw
   exact DegreeEquals.two_not_adj_of_ne h ha hb hab hwa hwb
     hw.symm
@@ -218,7 +223,7 @@ three nonconsecutive local adjacencies touching `A` or the middle vertices are
 impossible.  The right endpoint saturation is not needed for these three
 undirected skip pairs, but the symmetric paper proof often supplies it as
 well. -/
-theorem DegreeEquals.cross_four_no_skip_left {α : Type*} [DecidableEq α]
+theorem DegreeEquals.cross_four_no_skip_left {α : Type*}
     {G : _root_.SimpleGraph α} {A U M D L : α}
     (hAU : G.Adj A U) (hUM : G.Adj U M) (hMD : G.Adj M D)
     (hU : DegreeEquals G U 2) (hM : DegreeEquals G M 2)
@@ -227,6 +232,7 @@ theorem DegreeEquals.cross_four_no_skip_left {α : Type*} [DecidableEq α]
     (hAU_ne : A ≠ U) (hAD : A ≠ D) (hUD : U ≠ D)
     (hAM : A ≠ M) (hDM : D ≠ M) (hLD : L ≠ D) :
     ¬ G.Adj A M ∧ ¬ G.Adj A D ∧ ¬ G.Adj U D := by
+  classical
   constructor
   · exact DegreeEquals.two_not_adj_to_of_ne hM
       hUM.symm hMD hUD hAU_ne hAD
@@ -247,7 +253,7 @@ can occur.
 The proof only needs the left endpoint saturation together with the two middle
 degree-two facts; the right endpoint hypotheses are included so that the lemma
 matches the Figure 8 successor invariant exactly. -/
-theorem DegreeEquals.cross_four_no_skip {α : Type*} [DecidableEq α]
+theorem DegreeEquals.cross_four_no_skip {α : Type*}
     {G : _root_.SimpleGraph α} {A U V D L R : α}
     (hAU : G.Adj A U) (hUV : G.Adj U V) (hVD : G.Adj V D)
     (hU : DegreeEquals G U 2) (hV : DegreeEquals G V 2)
@@ -262,7 +268,7 @@ theorem DegreeEquals.cross_four_no_skip {α : Type*} [DecidableEq α]
 
 /-- A degree-two vertex has a second neighbor distinct from any given
 neighbor. -/
-theorem DegreeEquals.two_exists_ne_adj {V : Type*} [DecidableEq V]
+theorem DegreeEquals.two_exists_ne_adj {V : Type*}
     {G : _root_.SimpleGraph V} {v a : V}
     (h : DegreeEquals G v 2) (ha : G.Adj v a) :
     ∃ b : V, b ≠ a ∧ G.Adj v b := by
@@ -285,10 +291,11 @@ theorem DegreeEquals.two_exists_ne_adj {V : Type*} [DecidableEq V]
 /-- The finset-neighborhood formulation follows from mathlib's `degree` when
 the adjacency relation is decidable. -/
 theorem maxDegreeAtMost_of_degree_le
-    {V : Type*} [Fintype V] [DecidableEq V]
+    {V : Type*} [Fintype V]
     {G : _root_.SimpleGraph V} [DecidableRel G.Adj] {d : ℕ}
     (h : ∀ v : V, G.degree v ≤ d) :
     MaxDegreeAtMost G d := by
+  classical
   intro v
   refine ⟨G.neighborFinset v, ?_, h v⟩
   intro u

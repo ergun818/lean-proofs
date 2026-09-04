@@ -31,11 +31,13 @@ variable {V : Type*} [Fintype V] {G : SimpleGraph V} {g : ℕ}
 def interiorWallRowSupport (S : GraphSubdivisionModel (elementaryWall g g) G)
     (hg : 2 ≤ g) (r : Fin g) : Finset V := (S.restrictCopy (interiorWallRowCopy hg r)).vertexSet
 
+omit [Fintype V] in
 theorem interiorNail_mem_rowSupport (S : GraphSubdivisionModel (elementaryWall g g) G)
     (hg : 2 ≤ g) (r i : Fin g) :
     S.branchVertex (elementaryWallInteriorNail hg r i) ∈ interiorWallRowSupport S hg r :=
   (S.restrictCopy (interiorWallRowCopy hg r)).branch_mem_supportOver (Finset.mem_univ i)
 
+omit [Fintype V] in
 theorem interiorWallRowSupport_connected (S : GraphSubdivisionModel (elementaryWall g g) G)
     (hg : 2 ≤ g) (r : Fin g) :
     (G.induce (interiorWallRowSupport S hg r : Set V)).Connected := by
@@ -47,6 +49,7 @@ theorem interiorWallRowSupport_connected (S : GraphSubdivisionModel (elementaryW
   rw [heq]
   exact ((pathGraph g).induceUnivIso.connected_iff).mpr ⟨pathGraph_preconnected g⟩
 
+omit [Fintype V] in
 theorem interiorWallRowSupport_disjoint (S : GraphSubdivisionModel (elementaryWall g g) G)
     (hg : 2 ≤ g) : Pairwise (fun r s =>
       Disjoint (interiorWallRowSupport S hg r) (interiorWallRowSupport S hg s)) := by
@@ -75,7 +78,8 @@ theorem WallGridAnchor.interiorRow_not_subset_smallSide {n : ℕ}
       omega)⟩
   apply hitsColumns_of_embedding (e.trans A.column)
   intro i
-  refine ⟨S.branchVertex (elementaryWallInteriorNail hg r i), ?_, interiorNail_mem_rowSupport S hg r i⟩
+  refine ⟨S.branchVertex (elementaryWallInteriorNail hg r i), ?_, interiorNail_mem_rowSupport S hg r
+    i⟩
   exact (mem_gridColumnSupport M (A.column (e i)) _).mpr
     ⟨A.row r, A.branch_mem (elementaryWallInteriorNail hg r i)⟩
 

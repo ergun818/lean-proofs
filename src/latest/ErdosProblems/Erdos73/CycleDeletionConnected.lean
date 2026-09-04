@@ -4,7 +4,6 @@ import ErdosProblems.Erdos73.GraphPaths
 
 namespace Erdos73
 noncomputable section
-open scoped Classical
 
 open SimpleGraph Finset Erdos73Infrastructure.SimpleGraph
 
@@ -12,6 +11,7 @@ variable {V : Type*} [DecidableEq V] {G : SimpleGraph V}
 
 theorem cycle_support_erase_connected {v : V} (c : G.Walk v v) (hc : c.IsCycle) :
     (G.induce ((c.support.toFinset.erase v : Finset V) : Set V)).Connected := by
+  classical
   let P : GraphPath G := ⟨c.snd, v, c.tail, hc.isPath_tail⟩
   have hnil : ¬ c.Nil := hc.not_nil
   have hne : P.source ≠ P.target := (c.adj_snd hnil).ne.symm
@@ -40,6 +40,7 @@ theorem cycle_support_erase_connected {v : V} (c : G.Walk v v) (hc : c.IsCycle) 
 theorem cycle_support_sdiff_connected {v : V} (c : G.Walk v v) (hc : c.IsCycle)
     (X : Finset V) (hX : X.card < 2) :
     (G.induce ((c.support.toFinset \ X : Finset V) : Set V)).Connected := by
+  classical
   rcases X.eq_empty_or_nonempty with hXempty | hXnonempty
   · subst X
     have he : ((c.support.toFinset \ ∅ : Finset V) : Set V) = {x | x ∈ c.support} := by

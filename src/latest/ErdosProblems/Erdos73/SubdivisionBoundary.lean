@@ -11,6 +11,7 @@ open SimpleGraph Finset Erdos73Infrastructure.SimpleGraph
 variable {U W V : Type*} [Fintype U] [LinearOrder U] [Fintype W] [LinearOrder W]
 variable {F : SimpleGraph U} {H : SimpleGraph W} {G : SimpleGraph V}
 
+omit [Fintype W] in
 theorem branchVertex_mem_restrictCopy_iff (S : GraphSubdivisionModel H G) (f : F.Copy H) (w : W) :
     S.branchVertex w ∈ (S.restrictCopy f).vertexSet ↔ ∃ u : U, f u = w := by
   constructor
@@ -24,6 +25,7 @@ theorem branchVertex_mem_restrictCopy_iff (S : GraphSubdivisionModel H G) (f : F
   · rintro ⟨u, rfl⟩
     exact ((S.restrictCopy f).mem_vertexSet _).mpr (Or.inl ⟨u, rfl⟩)
 
+omit [Fintype W] in
 theorem branch_of_adj_leaving_restrictCopy (S : GraphSubdivisionModel H G) (f : F.Copy H)
     (T : Finset V) (hT : (S.restrictCopy f).vertexSet ⊆ T) {x y : V}
     (hx : x ∈ (S.restrictCopy f).vertexSet) (hxy : S.actualEdgeGraph.Adj x y) (hy : y ∉ T) :
@@ -44,6 +46,7 @@ theorem branch_of_adj_leaving_restrictCopy (S : GraphSubdivisionModel H G) (f : 
     · obtain ⟨w, hxw, _, _⟩ := S.intersection hed x hxe hends.1
       exact ⟨w, hxw⟩
 
+omit [Fintype W] in
 theorem neighbor_mem_restrictCopy_of_lifted_pattern_neighbors
     (S : GraphSubdivisionModel H G) (f : F.Copy H) (u : U)
     (hlift : ∀ z, H.Adj (f u) z → ∃ v : U, F.Adj u v ∧ f v = z)

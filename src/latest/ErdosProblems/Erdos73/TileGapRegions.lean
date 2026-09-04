@@ -4,7 +4,6 @@ import ErdosProblems.Erdos73.BrickTileArray
 
 namespace Erdos73.BrickTileArray
 noncomputable section
-open scoped Classical
 
 open SimpleGraph Finset
 
@@ -22,6 +21,7 @@ def verticalGap (i i' : Fin r) (j : Fin (2 * c)) : Finset (ElementaryWallVertex 
 theorem mem_horizontalGap {i : Fin r} {j j' : Fin (2 * c)} {w : ElementaryWallVertex C R} :
     w ∈ A.horizontalGap i j j' ↔ w.val.1.val = 12 * A.row i + 4 ∧
       16 * A.column j + 10 ≤ w.val.2.val ∧ w.val.2.val ≤ 16 * A.column j' + 2 := by
+  classical
   simp only [horizontalGap, mem_filter, mem_univ, true_and]
 
 theorem mem_verticalGap {i i' : Fin r} {j : Fin (2 * c)} {w : ElementaryWallVertex C R} :
@@ -29,12 +29,14 @@ theorem mem_verticalGap {i i' : Fin r} {j : Fin (2 * c)} {w : ElementaryWallVert
       w.val.1.val ≤ 12 * A.row i' ∧ 16 * A.column j + 6 ≤ w.val.2.val ∧
       w.val.2.val ≤ 16 * A.column j + 7 ∧
       (w.val.1.val = 12 * A.row i' → w.val.2.val = 16 * A.column j + 6) := by
+  classical
   simp only [verticalGap, mem_filter, mem_univ, true_and]
 
 theorem horizontalGap_inter_indices {i l : Fin r} {j j' t t' : Fin (2 * c)}
     (hj : j.val + 1 = j'.val) (ht : t.val + 1 = t'.val)
     {w : ElementaryWallVertex C R} (hw : w ∈ A.horizontalGap i j j')
     (hw' : w ∈ A.horizontalGap l t t') : i = l ∧ j = t ∧ j' = t' := by
+  classical
   rw [A.mem_horizontalGap] at hw hw'
   have hil : i = l := A.row_strictMono.injective (by omega)
   have hjt : j = t := by
@@ -52,6 +54,7 @@ theorem verticalGap_inter_indices {i i' l l' : Fin r} {j t : Fin (2 * c)}
     (hi : i.val + 1 = i'.val) (hl : l.val + 1 = l'.val)
     {w : ElementaryWallVertex C R} (hw : w ∈ A.verticalGap i i' j)
     (hw' : w ∈ A.verticalGap l l' t) : i = l ∧ i' = l' ∧ j = t := by
+  classical
   rw [A.mem_verticalGap] at hw hw'
   have hjt : j = t := A.column_strictMono.injective (by omega)
   have hil : i = l := by
@@ -67,6 +70,7 @@ theorem verticalGap_inter_indices {i i' l l' : Fin r} {j t : Fin (2 * c)}
 
 theorem horizontalGap_disjoint_verticalGap (i l l' : Fin r) (j j' t : Fin (2 * c))
     (hj : j.val + 1 = j'.val) : Disjoint (A.horizontalGap i j j') (A.verticalGap l l' t) := by
+  classical
   apply Finset.disjoint_left.mpr
   intro w hw hw'
   rw [A.mem_horizontalGap] at hw

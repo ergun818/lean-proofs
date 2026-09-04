@@ -5,7 +5,6 @@ import ErdosProblems.Erdos73.SubdivisionBoundary
 
 namespace Erdos73
 noncomputable section
-open scoped Classical
 
 open SimpleGraph Finset Erdos73Infrastructure.SimpleGraph
 
@@ -16,6 +15,7 @@ theorem brickColumnBlock_boundary_is_branch
     (a d : ℕ) (ha : a + d ≤ c - 1) {x : V}
     (hx : x ∈ internalVertexBoundary S.actualEdgeGraph (brickColumnBlock S a d ha)) :
     ∃ w : ElementaryWallVertex c r, x = S.branchVertex w := by
+  classical
   obtain ⟨hxT, y, hy, hxy⟩ := mem_filter.mp hx
   obtain ⟨j, _, hxj⟩ := mem_biUnion.mp hxT
   obtain ⟨b, _, hxb⟩ := mem_biUnion.mp hxj
@@ -30,8 +30,9 @@ theorem brickColumnBlock_boundary_is_branch
     exact mem_biUnion.mpr ⟨j, mem_univ _, mem_biUnion.mpr ⟨b, mem_univ _, hz⟩⟩
   exact S.branch_of_adj_leaving_restrictCopy f _ hsub hxb hxy hy
 
+open scoped Classical in
 theorem BrickStripSelectionState.block_path_endpoints_are_branches
-    [Fintype V] {m h : ℕ} {S : GraphSubdivisionModel (elementaryWall c r) G}
+    {m h : ℕ} {S : GraphSubdivisionModel (elementaryWall c r) G}
     {P : Fin m → Erdos73Infrastructure.SimpleGraph.GraphPath G}
     (col : BipartiteColoringOn G S.vertexSet) (st : BrickStripSelectionState S col.color P h)
     (a d : ℕ) (ha : a + d ≤ c - 1)
@@ -41,6 +42,7 @@ theorem BrickStripSelectionState.block_path_endpoints_are_branches
     (hBJ : GraphPath.actualEdgeGraph B ≤ st.wallSegmentGraph col) :
     (∃ u : ElementaryWallVertex c r, B.source = S.branchVertex u) ∧
       (∃ v : ElementaryWallVertex c r, B.target = S.branchVertex v) := by
+  classical
   have hh := st.block_path_endpoints_on_wall_boundary col a d ha hUT B hB hBJ
   exact ⟨brickColumnBlock_boundary_is_branch S a d ha hh.1,
     brickColumnBlock_boundary_is_branch S a d ha hh.2⟩

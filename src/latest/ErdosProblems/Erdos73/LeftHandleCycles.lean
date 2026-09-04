@@ -5,7 +5,6 @@ import ErdosProblems.Erdos73.HandleReturnCycles
 
 namespace Erdos73.ColumnHandleFamily
 noncomputable section
-open scoped Classical
 
 open SimpleGraph Finset Erdos73Infrastructure.SimpleGraph
 
@@ -13,7 +12,8 @@ variable {V : Type*} [Fintype V] {G : SimpleGraph V} {c r k : ℕ}
 variable {S : GraphSubdivisionModel (elementaryWall c r) G}
 variable {col : BipartiteColoringOn G S.vertexSet}
 
-theorem oddCyclePacking_of_left_hooks (F : ColumnHandleFamily S col (Fin k))
+omit [Fintype V] in
+theorem oddCyclePacking_of_left_hooks [Finite V] (F : ColumnHandleFamily S col (Fin k))
     (j : Fin k → ℕ) (hj : ∀ i, 0 < j i) (hjc : ∀ i, j i + 1 < c)
     (hrow : ∀ i, (F.sourceNail i).val.1.val ≤ (F.targetNail i).val.1.val)
     (hs : ∀ i, (F.sourceNail i).val.2.val ≤ 2 * j i + 1)
@@ -33,13 +33,15 @@ theorem oddCyclePacking_of_left_hooks (F : ColumnHandleFamily S col (Fin k))
   intro i l hil
   exact (S.supportOver_disjoint (hdis hil)).mono (hQ i) (hQ l)
 
-theorem oddCyclePacking_of_left_series (F : ColumnHandleFamily S col (Fin k))
+omit [Fintype V] in
+theorem oddCyclePacking_of_left_series [Finite V] (F : ColumnHandleFamily S col (Fin k))
     (hc : 3 ≤ c)
     (hrow : ∀ i, (F.sourceNail i).val.1.val ≤ (F.targetNail i).val.1.val)
     (hs : ∀ i, (F.sourceNail i).val.2.val ≤ 1)
     (ht : ∀ i, (F.targetNail i).val.2.val ≤ 1)
     (hseries : ∀ i l, i < l → (F.targetNail i).val.1.val < (F.sourceNail l).val.1.val) :
     HasOddCyclePacking k G := by
+  classical
   apply F.oddCyclePacking_of_left_hooks (fun _ => 1) (fun _ => by omega)
     (fun _ => by omega) hrow (fun i => by have hh := hs i; omega)
     (fun i => by have hh := ht i; omega)
@@ -48,7 +50,8 @@ theorem oddCyclePacking_of_left_series (F : ColumnHandleFamily S col (Fin k))
   · exact brickLeftHook_disjoint_series (hrow i) (hrow l) (hseries i l h)
   · exact (brickLeftHook_disjoint_series (hrow l) (hrow i) (hseries l i h)).symm
 
-theorem oddCyclePacking_of_left_nested (F : ColumnHandleFamily S col (Fin k))
+omit [Fintype V] in
+theorem oddCyclePacking_of_left_nested [Finite V] (F : ColumnHandleFamily S col (Fin k))
     (hc : k + 1 < c)
     (hrow : ∀ i, (F.sourceNail i).val.1.val ≤ (F.targetNail i).val.1.val)
     (hs : ∀ i, (F.sourceNail i).val.2.val ≤ 1)
@@ -57,6 +60,7 @@ theorem oddCyclePacking_of_left_nested (F : ColumnHandleFamily S col (Fin k))
       (F.sourceNail i).val.1.val < (F.sourceNail l).val.1.val ∧
       (F.targetNail l).val.1.val < (F.targetNail i).val.1.val) :
     HasOddCyclePacking k G := by
+  classical
   let j (i : Fin k) := k - i.val
   have hj (i : Fin k) : 0 < j i := by have hi := i.isLt; dsimp [j]; omega
   have hjc (i : Fin k) : j i + 1 < c := by dsimp [j]; omega

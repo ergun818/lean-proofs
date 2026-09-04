@@ -8,10 +8,11 @@ open Erdos73Infrastructure.SimpleGraph SimpleGraph
 
 variable {V I : Type*} {G : SimpleGraph V} {m n : ℕ}
 
-theorem fullPregrill_has_grillModel_with_columns [Fintype V]
+theorem fullPregrill_has_grillModel_with_columns [Finite V]
     (P : FullPregrill G m n) (hm : 0 < m) (hn : 0 < n) :
     ∃ H : SimpleGraph (Fin m × Fin n), IsGrill H ∧
       ∃ M : MinorModel H G, ∀ r j, ∃ v ∈ P.column j, v ∈ M.branchSet (r, j) := by
+  let : Fintype V := Fintype.ofFinite V
   cases n with
   | zero => omega
   | succ n =>
@@ -55,7 +56,7 @@ theorem grill_has_columnRich_grid_or_bipartite
   exact ⟨v, hvQ, (MinorModel.mem_composeBranchSet L N (r, j) v).mpr
     ⟨(r, c j), column_mem_block c r j, hvN⟩⟩
 
-theorem fullPregrill_has_columnRich_grid_or_bipartite [Fintype V]
+theorem fullPregrill_has_columnRich_grid_or_bipartite [Finite V]
     (P : FullPregrill G m n) (g h : ℕ) (hh : 0 < h)
     (hm : h ^ (2 * g) < m) (hn : max (2 * g) h * 2 ^ (m * m) ≤ n) :
     ColumnRichGrid G P.column g ∨ ColumnRichBipartite G P.column h (2 * g) := by
@@ -66,7 +67,7 @@ theorem fullPregrill_has_columnRich_grid_or_bipartite [Fintype V]
   exact grill_has_columnRich_grid_or_bipartite H hH g h hh hm hn N P.column
     (Function.Embedding.refl _) hhit
 
-theorem pregrill_has_columnRich_grid_or_bipartite [Fintype V]
+theorem pregrill_has_columnRich_grid_or_bipartite [Finite V]
     {d : ℕ} (P : Pregrill G m n d) (g h : ℕ) (hh : 0 < h)
     (hm : qualitativeGrillRows (2 * g) h ≤ m)
     (hd : 2 * qualitativeGrillRows (2 * g) h * d ≤ m)

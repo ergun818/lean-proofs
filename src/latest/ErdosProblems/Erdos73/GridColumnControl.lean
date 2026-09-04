@@ -26,18 +26,22 @@ def transposeGridModel (M : MinorModel (squareGrid g) G) : MinorModel (squareGri
 def gridColumnSupport (M : MinorModel (squareGrid g) G) (c : Fin g) : Finset V :=
   gridRowSupport (transposeGridModel M) c
 
+omit [Fintype V] in
 theorem mem_gridColumnSupport (M : MinorModel (squareGrid g) G) (c : Fin g) (v : V) :
     v ∈ gridColumnSupport M c ↔ ∃ r : Fin g, v ∈ M.branchSet (r, c) :=
   mem_gridRowSupport (transposeGridModel M) c v
 
+omit [Fintype V] in
 theorem gridColumnSupport_pairwise_disjoint (M : MinorModel (squareGrid g) G) :
     Pairwise fun c d => Disjoint (gridColumnSupport M c) (gridColumnSupport M d) :=
   gridRowSupport_pairwise_disjoint (transposeGridModel M)
 
+omit [Fintype V] in
 theorem gridColumnSupport_connected (M : MinorModel (squareGrid g) G) (c : Fin g) :
     (G.induce (gridColumnSupport M c : Set V)).Connected :=
   gridRowSupport_connected (transposeGridModel M) c
 
+omit [Fintype V] in
 theorem grid_row_meets_column (M : MinorModel (squareGrid g) G) (r c : Fin g) :
     ∃ v ∈ gridRowSupport M r, v ∈ gridColumnSupport M c := by
   obtain ⟨v, hv⟩ := M.branch_nonempty (r, c)

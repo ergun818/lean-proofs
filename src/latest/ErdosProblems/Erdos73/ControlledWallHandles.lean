@@ -43,7 +43,8 @@ theorem WallGridAnchor.exists_wall_with_breaking_handles
   obtain ⟨a, hs, B, hB, hBdis, _, _, hends⟩ :=
     st.exists_breaking_slice_handles col k d hg hd hwidth hnumber
   let S' := S.restrictCopy (brickColumnSliceCopy a d hs)
-  let col' := col.mono_support (S.restrictCopy_vertexSet_subset_vertexSet (brickColumnSliceCopy a d hs))
+  let col' := col.mono_support (S.restrictCopy_vertexSet_subset_vertexSet (brickColumnSliceCopy a d
+    hs))
   exact ⟨S', ⟨A.restrictOffsets 0 a (by omega) hs⟩, col', B, hB, hBdis, hends⟩
 
 theorem BrambleHaven.exists_controlled_wall_with_breaking_handles

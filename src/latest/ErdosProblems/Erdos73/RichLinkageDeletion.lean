@@ -143,7 +143,7 @@ private theorem rich_perfect_linkage_deletion_by_card
 /-- The linkage-deletion theorem for a perfect linkage, without any
 uniqueness or spanning assumption. The numerical bound is qualitative. -/
 theorem perfect_linkage_avoiding_column_of_no_richGrid
-    {V I : Type*} [Fintype V] [DecidableEq V] [Fintype I]
+    {V I : Type*} [Finite V] [DecidableEq V] [Fintype I]
     {G : SimpleGraph V} {A B : Finset V}
     (R : PerfectPathPacking G A B)
     (Q : I → Finset V) (hne : ∀ i, (Q i).Nonempty)
@@ -154,14 +154,15 @@ theorem perfect_linkage_avoiding_column_of_no_richGrid
     (hgrid : ¬ ColumnRichGrid G Q g) :
     ∃ i, ∃ P : PathPacking G (A \ Q i) (B \ Q i),
       R.card / (2 * controlledGrillRows g) + 1 ≤ P.card ∧
-        ∀ r, Disjoint (P.path r).vertexSet (Q i) :=
-  rich_perfect_linkage_deletion_by_card g R.card hm hsize (Fintype.card V)
+        ∀ r, Disjoint (P.path r).vertexSet (Q i) := by
+  let : Fintype V := Fintype.ofFinite V
+  exact rich_perfect_linkage_deletion_by_card g R.card hm hsize (Fintype.card V)
     V rfl G A B R rfl Q hne hconn hdisj hgrid
 
 /-- The full arbitrary-linkage version of Leaf--Seymour's deletion lemma,
 with the elementary grill constants proved in this development. -/
 theorem linkage_avoiding_column_of_no_richGrid
-    {V I : Type*} [Fintype V] [DecidableEq V] [Fintype I]
+    {V I : Type*} [Finite V] [DecidableEq V] [Fintype I]
     {G : SimpleGraph V} {A B : Finset V}
     (R : PathPacking G A B)
     (Q : I → Finset V) (hne : ∀ i, (Q i).Nonempty)

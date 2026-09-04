@@ -143,7 +143,8 @@ theorem extendedBranch_disjoint (C : ColumnPartitions P) : Pairwise fun x y ↦
     Disjoint (C.extendedBranch x) (C.extendedBranch y) := by
   intro x y hxy
   exact Finset.disjoint_union_left.mpr ⟨
-    Finset.disjoint_union_right.mpr ⟨C.branch_disjoint hxy, (C.attachment_disjoint_branch hxy.symm).symm⟩,
+    Finset.disjoint_union_right.mpr ⟨C.branch_disjoint hxy, (C.attachment_disjoint_branch
+      hxy.symm).symm⟩,
     Finset.disjoint_union_right.mpr ⟨C.attachment_disjoint_branch hxy, P.attachment_disjoint hxy⟩⟩
 
 /-- The assembled labelled grill has each actual quotient column graph
@@ -232,13 +233,14 @@ end ColumnPartitions
 
 /-- A full ordered pregrill with at least one row and column contains
 an ordinary grill minor of exactly the same dimensions. -/
-theorem exists_grillMinor [Fintype V]
+theorem exists_grillMinor [Finite V]
     (P : FullPregrill G m (n + 1)) (hm : 0 < m) :
     ∃ H : _root_.SimpleGraph (Fin m × Fin (n + 1)), Erdos73.IsGrill H ∧ IsMinor H G := by
+  let : Fintype V := Fintype.ofFinite V
   let C := P.chooseColumnPartitions hm
   exact ⟨C.grillGraph, C.grillGraph_isGrill, ⟨C.minorModel⟩⟩
 
-theorem exists_grillMinor_of_pos [Fintype V]
+theorem exists_grillMinor_of_pos [Finite V]
     (P : FullPregrill G m n) (hm : 0 < m) (hn : 0 < n) :
     ∃ H : _root_.SimpleGraph (Fin m × Fin n), Erdos73.IsGrill H ∧ IsMinor H G := by
   cases n with

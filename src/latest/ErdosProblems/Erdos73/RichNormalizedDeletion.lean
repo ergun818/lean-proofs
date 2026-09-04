@@ -16,7 +16,7 @@ theorem controlledGrillRows_pos (g : ℕ) : 0 < controlledGrillRows g :=
 /-- The normalized alternative yields a grid with actual witnesses on
 `2*g` distinct original columns in every row, unless a packing survives. -/
 theorem unique_linkage_avoiding_column_of_no_richGrid
-    {V I : Type*} [Fintype V] [Fintype I] {G : SimpleGraph V} {A B : Finset V}
+    {V I : Type*} [Finite V] [Fintype I] {G : SimpleGraph V} {A B : Finset V}
     (R : PerfectPathPacking G A B) (hunique : R.IsUniqueLinkage)
     (Q : I → Finset V) (hne : ∀ i, (Q i).Nonempty)
     (hconn : ∀ i, (G.induce (Q i : Set V)).Connected)

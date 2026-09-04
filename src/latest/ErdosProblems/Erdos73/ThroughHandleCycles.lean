@@ -5,7 +5,6 @@ import ErdosProblems.Erdos73.HandleReturnCycles
 
 namespace Erdos73.ColumnHandleFamily
 noncomputable section
-open scoped Classical
 
 open SimpleGraph Finset Erdos73Infrastructure.SimpleGraph
 
@@ -13,7 +12,8 @@ variable {V : Type*} [Fintype V] {G : SimpleGraph V} {c r k : ℕ}
 variable {S : GraphSubdivisionModel (elementaryWall c r) G}
 variable {col : BipartiteColoringOn G S.vertexSet}
 
-theorem oddCyclePacking_of_through_ordered (F : ColumnHandleFamily S col (Fin k))
+omit [Fintype V] in
+theorem oddCyclePacking_of_through_ordered [Finite V] (F : ColumnHandleFamily S col (Fin k))
     (goRight : Bool) (hc : k + 1 < c)
     (hrow : ∀ i, (F.sourceNail i).val.1.val ≤ (F.targetNail i).val.1.val)
     (hs : ∀ i, if goRight then (F.sourceNail i).val.2.val ≤ 1
@@ -24,6 +24,7 @@ theorem oddCyclePacking_of_through_ordered (F : ColumnHandleFamily S col (Fin k)
       (F.sourceNail i).val.1.val < (F.sourceNail l).val.1.val ∧
       (F.targetNail i).val.1.val < (F.targetNail l).val.1.val) :
     HasOddCyclePacking k G := by
+  classical
   let j (i : Fin k) := if goRight then k - i.val else i.val + 1
   have hj (i : Fin k) : 0 < j i := by
     have hi := i.isLt

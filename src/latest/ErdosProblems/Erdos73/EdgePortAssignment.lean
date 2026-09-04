@@ -9,9 +9,11 @@ open SimpleGraph Finset
 
 variable {U W : Type*} [Fintype U] [LinearOrder U] {F : SimpleGraph U}
 
+omit [Fintype U] in
 theorem OrientedEdge.ofAdj_adj (e : OrientedEdge F) : OrientedEdge.ofAdj e.adj = e :=
   OrientedEdge.eq_of_sym2_eq (OrientedEdge.ofAdj_sym2 e.adj)
 
+omit [Fintype U] in
 theorem OrientedEdge.ofAdj_symm {u v : U} (h : F.Adj u v) :
     OrientedEdge.ofAdj h.symm = OrientedEdge.ofAdj h := by
   apply OrientedEdge.eq_of_sym2_eq
@@ -22,10 +24,12 @@ def edgePortAssignment (s t : OrientedEdge F → W) (defaultPort : U → W) (u v
     if u = (OrientedEdge.ofAdj h).lo then s (OrientedEdge.ofAdj h) else t (OrientedEdge.ofAdj h)
   else defaultPort u
 
+omit [Fintype U] in
 theorem edgePortAssignment_lo (s t : OrientedEdge F → W) (defaultPort : U → W)
     (e : OrientedEdge F) : edgePortAssignment s t defaultPort e.lo e.hi = s e := by
   simp only [edgePortAssignment, dif_pos e.adj, OrientedEdge.ofAdj_adj, ite_true]
 
+omit [Fintype U] in
 theorem edgePortAssignment_hi (s t : OrientedEdge F → W) (defaultPort : U → W)
     (e : OrientedEdge F) : edgePortAssignment s t defaultPort e.hi e.lo = t e := by
   rw [edgePortAssignment, dif_pos e.adj.symm]
@@ -33,11 +37,13 @@ theorem edgePortAssignment_hi (s t : OrientedEdge F → W) (defaultPort : U → 
     (OrientedEdge.ofAdj_symm e.adj).trans (OrientedEdge.ofAdj_adj e)
   rw [he, if_neg e.adj.ne.symm]
 
-theorem edgePortAssignment_mem [DecidableEq W]
+omit [Fintype U] in
+theorem edgePortAssignment_mem
     (R : U → Finset W) (s t : OrientedEdge F → W) (defaultPort : U → W)
     (hs : ∀ e, s e ∈ R e.lo) (ht : ∀ e, t e ∈ R e.hi)
     (hd : ∀ u, defaultPort u ∈ R u) (u v : U) :
     edgePortAssignment s t defaultPort u v ∈ R u := by
+  classical
   by_cases huv : F.Adj u v
   · rw [edgePortAssignment, dif_pos huv]
     rcases OrientedEdge.ofAdj_endpoints huv with he | he

@@ -5,7 +5,6 @@ import ErdosProblems.Erdos73.BrickFaceCoverage
 
 namespace Erdos73
 noncomputable section
-open scoped Classical
 
 open SimpleGraph Finset
 open scoped BigOperators
@@ -24,6 +23,7 @@ theorem brickFaceBranch_mem_region (S : GraphSubdivisionModel (elementaryWall c 
     brickFaceBranch S i l ∈ brickFaceRegion S i :=
   branch_mem_brickFaceSupport S _ _ _ _ _ l
 
+open scoped Classical in
 def forbiddenBrickBranches (S : GraphSubdivisionModel (elementaryWall c r) G)
     (R : Finset (Fin (r - 1))) (C : Finset (Fin (c - 1))) : Finset V :=
   (R ×ˢ C).biUnion fun i => Finset.univ.image (brickFaceBranch S i)
@@ -31,6 +31,7 @@ def forbiddenBrickBranches (S : GraphSubdivisionModel (elementaryWall c r) G)
 theorem forbiddenBrickBranches_card (S : GraphSubdivisionModel (elementaryWall c r) G)
     (R : Finset (Fin (r - 1))) (C : Finset (Fin (c - 1))) :
     (forbiddenBrickBranches S R C).card ≤ 6 * R.card * C.card := by
+  classical
   calc
     (forbiddenBrickBranches S R C).card ≤
         ∑ i ∈ R ×ˢ C, (Finset.univ.image (brickFaceBranch S i)).card := card_biUnion_le
@@ -38,7 +39,7 @@ theorem forbiddenBrickBranches_card (S : GraphSubdivisionModel (elementaryWall c
       apply sum_le_sum
       intro i _
       exact card_image_le.trans (by simp)
-    _ = 6 * R.card * C.card := by simp [Nat.mul_comm, Nat.mul_left_comm, Nat.mul_assoc]
+    _ = 6 * R.card * C.card := by simp [Nat.mul_comm, Nat.mul_assoc]
 
 theorem interior_branch_outside_available_strips
     (S : GraphSubdivisionModel (elementaryWall c r) G) (hc : 2 ≤ c) (hr : 2 ≤ r)
@@ -46,6 +47,7 @@ theorem interior_branch_outside_available_strips
     (w : ElementaryWallVertex c r) (hl : 0 < w.val.2.val) (hh : w.val.2.val + 1 < 2 * c)
     (hout : S.branchVertex w ∉ brickStripNetwork S (Finset.univ \ R) (Finset.univ \ C)) :
     S.branchVertex w ∈ forbiddenBrickBranches S R C := by
+  classical
   obtain ⟨a, j, l, he⟩ := exists_brickFace_at_interior_vertex hc hr w hl hh
   have he' : brickFaceBranch S (a, j) l = S.branchVertex w := congrArg S.branchVertex he
   have hface : S.branchVertex w ∈ brickFaceRegion S (a, j) :=
@@ -65,6 +67,7 @@ theorem interior_branch_outside_available_strips
   exact mem_biUnion.mpr ⟨(a, j), mem_product.mpr ⟨ha, hj⟩,
     mem_image.mpr ⟨l, mem_univ _, he'⟩⟩
 
+open scoped Classical in
 theorem interior_terminals_outside_available_strips_card
     (S : GraphSubdivisionModel (elementaryWall c r) G) (hc : 2 ≤ c) (hr : 2 ≤ r)
     (N : Finset V)
@@ -73,6 +76,7 @@ theorem interior_terminals_outside_available_strips_card
     (R : Finset (Fin (r - 1))) (C : Finset (Fin (c - 1))) :
     (N \ brickStripNetwork S (Finset.univ \ R) (Finset.univ \ C)).card ≤
       6 * R.card * C.card := by
+  classical
   apply le_trans (card_le_card ?_) (forbiddenBrickBranches_card S R C)
   intro x hx
   obtain ⟨hxN, hxout⟩ := mem_sdiff.mp hx

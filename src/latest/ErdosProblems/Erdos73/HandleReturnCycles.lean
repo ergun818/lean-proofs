@@ -5,7 +5,6 @@ import ErdosProblems.Erdos73.ParityReturnPaths
 
 namespace Erdos73.ColumnHandleFamily
 noncomputable section
-open scoped Classical
 
 open SimpleGraph Finset Erdos73Infrastructure.SimpleGraph
 
@@ -13,12 +12,16 @@ variable {V : Type*} [Fintype V] {G : SimpleGraph V} {c r k : ℕ}
 variable {S : GraphSubdivisionModel (elementaryWall c r) G}
 variable {col : BipartiteColoringOn G S.vertexSet}
 
-theorem oddCyclePacking_of_disjoint_return_paths (F : ColumnHandleFamily S col (Fin k))
+omit [Fintype V] in
+open scoped Classical in
+theorem oddCyclePacking_of_disjoint_return_paths [Finite V] (F : ColumnHandleFamily S col (Fin k))
     (Q : Fin k → GraphPath G) (hs : ∀ i, (Q i).source = (F.path i).source)
     (ht : ∀ i, (Q i).target = (F.path i).target)
     (hQW : ∀ i, (Q i).vertexSet ⊆ S.vertexSet)
     (hQQ : Pairwise (fun i j => Disjoint (Q i).vertexSet (Q j).vertexSet)) :
     HasOddCyclePacking k G := by
+  classical
+  let : Fintype V := Fintype.ofFinite V
   have hPQ {i j : Fin k} (hij : i ≠ j) : Disjoint (F.path i).vertexSet (Q j).vertexSet := by
     apply Finset.disjoint_left.mpr
     intro x hxP hxQ

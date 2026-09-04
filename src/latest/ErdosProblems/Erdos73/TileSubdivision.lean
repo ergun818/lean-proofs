@@ -4,7 +4,6 @@ import ErdosProblems.Erdos73.TileEdgeRegions
 
 namespace Erdos73.BrickTileArray
 noncomputable section
-open scoped Classical
 open SimpleGraph Finset Erdos73Infrastructure.SimpleGraph
 
 variable {c r C R : ℕ} (A : BrickTileArray c r C R)
@@ -31,15 +30,18 @@ def routedEdgePath (e : OrientedEdge (elementaryWall c r)) : GraphPath (elementa
 
 theorem routedEdgePath_source (e : OrientedEdge (elementaryWall c r)) :
     (A.routedEdgePath e).source = A.center e.lo := by
+  classical
   simp only [routedEdgePath, GraphPath.append3WithEqToPath_source, A.arm_source]
 
 theorem routedEdgePath_target (e : OrientedEdge (elementaryWall c r)) :
     (A.routedEdgePath e).target = A.center e.hi := by
+  classical
   simp only [routedEdgePath, GraphPath.append3WithEqToPath_target, GraphPath.reverse_target,
     A.arm_source]
 
 theorem routedEdgePath_subset (e : OrientedEdge (elementaryWall c r)) :
     (A.routedEdgePath e).vertexSet ⊆ A.edgeRegion e := by
+  classical
   intro x hx
   have hh := (A.arm e.lo (brickWallPort e.lo.val e.hi.val)).append3WithEqToPath_vertexSet_subset
     (A.gapPath e) (A.arm e.hi (brickWallPort e.hi.val e.lo.val)).reverse

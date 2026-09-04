@@ -73,7 +73,7 @@ structure Pregrill (G : _root_.SimpleGraph V) (m n d : ℕ) where
 The first conclusion supplies real paths avoiding the deleted column;
 the second supplies the full ordered pregrill data. -/
 theorem pregrill_or_avoiding_linkage_of_unique_with_columns
-    [Fintype V] {I : Type*} [Fintype I]
+    [Finite V] {I : Type*} [Fintype I]
     (R : PerfectPathPacking G A B) (hunique : R.IsUniqueLinkage)
     (Q : I → Finset V) (hne : ∀ i, (Q i).Nonempty)
     (hconn : ∀ i, (G.induce (Q i : Set V)).Connected)
@@ -83,6 +83,7 @@ theorem pregrill_or_avoiding_linkage_of_unique_with_columns
       k ≤ P.card ∧ ∀ r, Disjoint (P.path r).vertexSet (Q i)) ∨
       (∃ P : Pregrill G R.card n (k - 1), ∃ e : Fin n ↪ I,
         ∀ j, P.column j = Q (e j)) := by
+  let : Fintype V := Fintype.ofFinite V
   by_cases h : ∃ i, k ≤ (R.toPathPacking.avoidingIndices (Q i)).card
   · obtain ⟨i, hi⟩ := h
     exact Or.inl ⟨i, R.toPathPacking.avoiding (Q i),
@@ -107,7 +108,7 @@ theorem pregrill_or_avoiding_linkage_of_unique_with_columns
 
 /-- The original unlabelled alternative is an immediate consequence. -/
 theorem pregrill_or_avoiding_linkage_of_unique
-    [Fintype V] {I : Type*} [Fintype I]
+    [Finite V] {I : Type*} [Fintype I]
     (R : PerfectPathPacking G A B) (hunique : R.IsUniqueLinkage)
     (Q : I → Finset V) (hne : ∀ i, (Q i).Nonempty)
     (hconn : ∀ i, (G.induce (Q i : Set V)).Connected)

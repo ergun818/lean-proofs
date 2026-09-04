@@ -6,7 +6,6 @@ import ErdosProblems.Erdos73.OrderedFiniteSelection
 
 namespace Erdos73.ColumnHandleFamily
 noncomputable section
-open scoped Classical
 
 open SimpleGraph Finset
 
@@ -19,15 +18,17 @@ theorem reindex_rows (F : ColumnHandleFamily S col I) (f : J → I)
 
 theorem reverseWhere_rows (F : ColumnHandleFamily S col I) (flip : I → Bool) (i : I) :
     (F.reverseWhere flip).rows i = F.rows i := by
+  classical
   ext b
   dsimp only [rows, reverseWhere]
-  split_ifs <;> simp only [mem_insert, mem_singleton] <;> tauto
+  split_ifs <;> simp only [mem_insert, mem_singleton] ; tauto
 
 theorem orientByRow_rows (F : ColumnHandleFamily S col I) (i : I) :
     F.orientByRow.rows i = F.rows i := F.reverseWhere_rows _ i
 
 theorem endpoint_row_mem (F : ColumnHandleFamily S col I) (i : I) (b : Bool) :
     (F.endpoint i b).val.1 ∈ F.rows i := by
+  classical
   cases b
   · exact mem_insert_self _ _
   · exact mem_insert_of_mem (mem_singleton_self _)
@@ -36,6 +37,7 @@ theorem endpoint_row_ne (F : ColumnHandleFamily S col I)
     (hdis : Pairwise (fun i j => Disjoint (F.rows i) (F.rows j)))
     {i j : I} (hij : i ≠ j) (b e : Bool) :
     (F.endpoint i b).val.1.val ≠ (F.endpoint j e).val.1.val := by
+  classical
   intro he
   have hh := Fin.ext he
   apply Finset.disjoint_left.mp (hdis hij) (F.endpoint_row_mem i b)
@@ -45,12 +47,14 @@ theorem endpoint_row_ne (F : ColumnHandleFamily S col I)
 theorem sourceRow_injective (F : ColumnHandleFamily S col I)
     (hdis : Pairwise (fun i j => Disjoint (F.rows i) (F.rows j))) :
     Function.Injective (fun i => (F.sourceNail i).val.1.val) := by
+  classical
   intro i j he
   by_contra hn
   exact F.endpoint_row_ne hdis hn false false he
 
 theorem lowerRank_injOn (F : ColumnHandleFamily S col I) (hc : 2 ≤ c) (s : Finset I) :
     Set.InjOn F.lowerRank (s : Set I) := by
+  classical
   intro i _ j _ he
   by_contra hn
   exact (F.sorted_ranks_separate hc hn).1 he
@@ -63,6 +67,7 @@ theorem exists_homogeneous_row_disjoint_subfamily (F : ColumnHandleFamily S col 
     ∃ E : ColumnHandleFamily S col (Fin k),
       Pairwise (fun i j => Disjoint (E.rows i) (E.rows j)) ∧
       ∃ sides : Bool × Bool, ∀ i, E.attachmentSides i = sides := by
+  classical
   obtain ⟨t, hts, htcard, htdis⟩ := F.exists_row_disjoint_subfamily hc s (4 * k) hsize
   obtain ⟨sides, u, hut, hucard, husides⟩ := exists_large_finite_fiber t F.attachmentSides k
     (by simpa only [Fintype.card_prod, Fintype.card_bool] using htcard)
@@ -79,6 +84,7 @@ theorem orientByRow_left (F : ColumnHandleFamily S col I)
     (ht : ∀ i, (F.targetNail i).val.2.val ≤ 1) (i : I) :
     (F.orientByRow.sourceNail i).val.2.val ≤ 1 ∧
       (F.orientByRow.targetNail i).val.2.val ≤ 1 := by
+  classical
   dsimp only [orientByRow, reverseWhere]
   split_ifs
   · exact ⟨ht i, hs i⟩
@@ -89,6 +95,7 @@ theorem orientByRow_right (F : ColumnHandleFamily S col I)
     (ht : ∀ i, 2 * (c - 1) ≤ (F.targetNail i).val.2.val) (i : I) :
     2 * (c - 1) ≤ (F.orientByRow.sourceNail i).val.2.val ∧
       2 * (c - 1) ≤ (F.orientByRow.targetNail i).val.2.val := by
+  classical
   dsimp only [orientByRow, reverseWhere]
   split_ifs
   · exact ⟨ht i, hs i⟩

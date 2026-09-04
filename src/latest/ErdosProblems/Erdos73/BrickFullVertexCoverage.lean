@@ -4,7 +4,6 @@ import ErdosProblems.Erdos73.BrickFaceCoverage
 
 namespace Erdos73
 noncomputable section
-open scoped Classical
 
 open SimpleGraph Finset
 
@@ -12,6 +11,7 @@ theorem boundary_vertex_has_vertical_face_row {c r : ℕ}
     (x : ElementaryWallVertex c r) (hb : x.val.2.val = 0 ∨ x.val.2.val + 1 = 2 * c) :
     ∃ a : Fin (r - 1), ∃ d : Fin 2,
       x.val.1.val = a.val + d.val ∧ (x.val.2.val + a.val) % 2 = 1 := by
+  classical
   obtain ⟨y, hy, z, hz, hyz⟩ := Finset.one_lt_card.mp
     (show 1 < ((rawBrickWall c r).neighborFinset x.val).card from x.property)
   have hxy := ((rawBrickWall c r).mem_neighborFinset x.val y).mp hy

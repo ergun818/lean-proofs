@@ -6,7 +6,6 @@ import ErdosProblems.Erdos73.RightHandleCycles
 
 namespace Erdos73.ColumnHandleFamily
 noncomputable section
-open scoped Classical
 
 open SimpleGraph Finset
 
@@ -26,7 +25,8 @@ def HasSameSideCrossingHandles (leftSide : Bool) (k : ℕ) : Prop :=
       (E.sourceNail j).val.1.val < (E.targetNail i).val.1.val ∧
       (E.targetNail i).val.1.val < (E.targetNail j).val.1.val
 
-theorem oddPacking_or_sameSide_crossing (F : ColumnHandleFamily S col I)
+omit [Fintype V] in
+theorem oddPacking_or_sameSide_crossing [Finite V] (F : ColumnHandleFamily S col I)
     (leftSide : Bool) (k : ℕ) (hc : k + 2 ≤ c)
     (hdis : Pairwise (fun i j => Disjoint (F.rows i) (F.rows j)))
     (hrow : ∀ i, (F.sourceNail i).val.1.val < (F.targetNail i).val.1.val)
@@ -45,6 +45,7 @@ theorem oddPacking_or_sameSide_crossing (F : ColumnHandleFamily S col I)
       ∀ i j, i < j → (E.sourceNail i).val.1.val < (E.sourceNail j).val.1.val ∧
         (E.sourceNail j).val.1.val < (E.targetNail i).val.1.val ∧
         (E.targetNail i).val.1.val < (E.targetNail j).val.1.val := by
+  classical
   by_cases hk : k = 0
   · subst k
     exact Or.inl (hasOddCyclePacking_zero G)

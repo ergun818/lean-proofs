@@ -5,7 +5,6 @@ import ErdosProblems.Erdos73.MonochromaticRectangle
 
 namespace Erdos73
 noncomputable section
-open scoped Classical
 open SimpleGraph Finset
 
 namespace BrickTileArray
@@ -24,6 +23,7 @@ def select (f : Fin r' → Fin r) (g : Fin (2 * c') → Fin (2 * c))
 theorem select_point (f : Fin r' → Fin r) (g : Fin (2 * c') → Fin (2 * c))
     (hf : StrictMono f) (hg : StrictMono g) (z : Fin r' × Fin (2 * c')) :
     (A.select f g hf hg).point z = A.point (f z.1, g z.2) := by
+  classical
   apply Subtype.ext
   apply Prod.ext
   · apply Fin.ext
@@ -37,6 +37,7 @@ include A in
 theorem exists_monochromatic_selection (color : ElementaryWallVertex C R → Bool)
     (hc : 4 * c' ≤ 2 * c) (hr : 2 ^ (2 * c) * r' ≤ r) :
     ∃ B : BrickTileArray c' r' C R, ∃ b : Bool, ∀ z, color (B.point z) = b := by
+  classical
   obtain ⟨rows, cols, b, hrows, hcols, hcolor⟩ := exists_monochromatic_rectangle
     (fun i j => color (A.point (i, j))) r' (2 * c')
     (by simp only [Fintype.card_fin]; omega) (by simpa only [Fintype.card_fin] using hr)
@@ -66,6 +67,7 @@ theorem exists_monochromatic_tileArray {C R : ℕ}
     (color : ElementaryWallVertex C R → Bool) (c r : ℕ)
     (hc : 32 * c ≤ C) (hr : 12 * (2 ^ (4 * c) * r) ≤ R) :
     ∃ A : BrickTileArray c r C R, ∃ b : Bool, ∀ z, color (A.point z) = b := by
+  classical
   let B := standardBrickTileArray (2 * c) (2 ^ (4 * c) * r) C R (by omega) hr
   exact B.exists_monochromatic_selection color (by omega)
     (by rw [show 2 * (2 * c) = 4 * c by omega])

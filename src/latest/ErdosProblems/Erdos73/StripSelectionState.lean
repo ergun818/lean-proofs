@@ -6,7 +6,6 @@ import ErdosProblems.Erdos73.StripCongestion
 
 namespace Erdos73
 noncomputable section
-open scoped Classical
 
 open SimpleGraph Finset Erdos73Infrastructure.SimpleGraph
 
@@ -15,18 +14,21 @@ variable {V : Type*} {G : SimpleGraph V} {c r m : ℕ}
 theorem brickStripNetwork_mono (S : GraphSubdivisionModel (elementaryWall c r) G)
     {A A' : Finset (Fin (r - 1))} {B B' : Finset (Fin (c - 1))}
     (hA : A ⊆ A') (hB : B ⊆ B') : brickStripNetwork S A B ⊆ brickStripNetwork S A' B' := by
+  classical
   intro x hx
   apply (mem_brickStripNetwork S A' B' x).mpr
   rcases (mem_brickStripNetwork S A B x).mp hx with ⟨a, ha, hx⟩ | ⟨b, hb, hx⟩
   · exact Or.inl ⟨a, hA ha, hx⟩
   · exact Or.inr ⟨b, hB hb, hx⟩
 
+open scoped Classical in
 def endpointBrickColumns (S : GraphSubdivisionModel (elementaryWall c r) G)
     (x y : V) : Finset (Fin (c - 1)) :=
   Finset.univ.filter (fun j => x ∈ brickFaceColumnStrip S j ∨ y ∈ brickFaceColumnStrip S j)
 
 theorem endpointBrickColumns_card_le_four (S : GraphSubdivisionModel (elementaryWall c r) G)
     (x y : V) : (endpointBrickColumns S x y).card ≤ 4 := by
+  classical
   have hsub : endpointBrickColumns S x y ⊆
       Finset.univ.filter (fun j => x ∈ brickFaceColumnStrip S j) ∪
       Finset.univ.filter (fun j => y ∈ brickFaceColumnStrip S j) := by
@@ -39,12 +41,14 @@ theorem endpointBrickColumns_card_le_four (S : GraphSubdivisionModel (elementary
   have hy := brickFaceColumnStrip_membership_card_le_two S y
   omega
 
+open scoped Classical in
 theorem parityBreaking_segment_avoids_unflagged_columns
     (S : GraphSubdivisionModel (elementaryWall c r) G) (color : V → Bool)
     (A : Finset (Fin (r - 1))) (B : Finset (Fin (c - 1))) (U : GraphPath G)
     (hU : IsParityBreakingPath color (brickStripNetwork S A B) U)
     (j : Fin (c - 1)) (hj : j ∈ B) (hn : j ∉ endpointBrickColumns S U.source U.target) :
     Disjoint U.vertexSet (brickFaceColumnStrip S j) := by
+  classical
   apply Finset.disjoint_left.mpr
   intro x hxU hxj
   have hxD : x ∈ brickStripNetwork S A B :=
@@ -56,6 +60,7 @@ theorem parityBreaking_segment_avoids_unflagged_columns
   · exact Or.inl (he ▸ hxj)
   · exact Or.inr (he ▸ hxj)
 
+open scoped Classical in
 structure SelectedBrickSegment (S : GraphSubdivisionModel (elementaryWall c r) G)
     (color : V → Bool) (P : Fin m → GraphPath G) where
   path : GraphPath G
@@ -69,6 +74,7 @@ structure SelectedBrickSegment (S : GraphSubdivisionModel (elementaryWall c r) G
   origin : Fin m
   support_subset : path.vertexSet ⊆ (P origin).vertexSet
 
+open scoped Classical in
 structure BrickStripSelectionState (S : GraphSubdivisionModel (elementaryWall c r) G)
     (color : V → Bool) (P : Fin m → GraphPath G) (i : ℕ) where
   used : Finset (Fin m)
@@ -83,7 +89,8 @@ structure BrickStripSelectionState (S : GraphSubdivisionModel (elementaryWall c 
   columns_subset : ∀ j, (segment j).columns ⊆ forbiddenColumns
   rows_disjoint : Pairwise (fun j k => Disjoint (segment j).rows (segment k).rows)
   columns_disjoint : Pairwise (fun j k => Disjoint (segment j).columns (segment k).columns)
-  paths_disjoint : Pairwise (fun j k => Disjoint (segment j).path.vertexSet (segment k).path.vertexSet)
+  paths_disjoint : Pairwise (fun j k => Disjoint (segment j).path.vertexSet (segment
+    k).path.vertexSet)
   avoids_available_columns : ∀ j a, a ∉ forbiddenColumns →
     Disjoint (segment j).path.vertexSet (brickFaceColumnStrip S a)
 

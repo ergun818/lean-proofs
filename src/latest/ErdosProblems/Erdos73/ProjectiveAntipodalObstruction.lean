@@ -41,7 +41,8 @@ theorem exists_projective_antipodal_word {n : ℕ} (hn : 2 ≤ n) (hnEven : n % 
       (projectivePair_commutes_contour hn hnEven).eq
   obtain ⟨word, hsurj, hNC, hcover⟩ := C.exists_noncrossing_antipodal_word hN hcard
     (projectivePortLabel_surjective hn) (projectivePortPair n) (projectivePortPair_involutive n)
-    projectivePortPair_free hcomm (twistedCoordinateGraph n) (projective_coordinate_edge_covered hn hnEven)
+    projectivePortPair_free hcomm (twistedCoordinateGraph n) (projective_coordinate_edge_covered hn
+      hnEven)
   exact ⟨N, hN, word, hsurj, hNC, (twistedGridGraph_le_coordinateGraph n).trans hcover⟩
 
 theorem exists_high_defect_antipodal_word (r : ℕ) :

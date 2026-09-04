@@ -5,12 +5,12 @@ import ErdosProblems.Erdos73.OddCycleTails
 
 namespace Erdos73
 noncomputable section
-open scoped Classical
 
 open SimpleGraph Finset Erdos73Infrastructure.SimpleGraph
 
 variable {V : Type*} [Fintype V] [DecidableEq V] {G : SimpleGraph V}
 
+omit [Fintype V] in
 theorem exists_parityBreaking_extension_supported {R T : Finset V} (c : BipartiteColoringOn G R)
     (U P Q : GraphPath G) (hU : IsParityBreakingPath c.color R U)
     (hPQ : Disjoint P.vertexSet Q.vertexSet)
@@ -19,6 +19,7 @@ theorem exists_parityBreaking_extension_supported {R T : Finset V} (c : Bipartit
     (hPt : P.target ∈ T) (hQt : Q.target ∈ T) :
     ∃ B : GraphPath G, IsParityBreakingPath c.color T B ∧
       B.vertexSet ⊆ P.vertexSet ∪ U.vertexSet ∪ Q.vertexSet := by
+  classical
   have hPclean : ∀ x ∈ P.vertexSet, x ∈ U.vertexSet → x = P.source := by
     intro x hxP hxU
     rcases hU.internal_disjoint x hxU (hPR hxP) with hx | hx
@@ -46,6 +47,7 @@ theorem exists_parityBreaking_extension_supported {R T : Finset V} (c : Bipartit
     (hBs ▸ hPt) (hBt ▸ hQt) hbreak
   exact ⟨D, hD, hDB.trans hBsub⟩
 
+omit [Fintype V] in
 theorem exists_parityBreaking_extension {R T : Finset V} (c : BipartiteColoringOn G R)
     (U P Q : GraphPath G) (hU : IsParityBreakingPath c.color R U)
     (hPQ : Disjoint P.vertexSet Q.vertexSet)
@@ -54,6 +56,7 @@ theorem exists_parityBreaking_extension {R T : Finset V} (c : BipartiteColoringO
     (hPt : P.target ∈ T) (hQt : Q.target ∈ T) :
     ∃ B : GraphPath G, IsParityBreakingPath c.color T B ∧
       B.vertexSet ⊆ R ∪ U.vertexSet := by
+  classical
   obtain ⟨B, hB, hsub⟩ := exists_parityBreaking_extension_supported c U P Q hU hPQ
     hPR hQR hPs hQs hPt hQt
   refine ⟨B, hB, hsub.trans ?_⟩

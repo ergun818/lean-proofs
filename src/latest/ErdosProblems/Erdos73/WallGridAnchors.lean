@@ -18,6 +18,7 @@ structure WallGridAnchor (M : MinorModel (squareGrid n) G)
   column : Fin (2 * c) ↪ Fin n
   branch_mem : ∀ w, S.branchVertex w ∈ M.branchSet (row w.val.1, column w.val.2)
 
+omit [Fintype V] in
 theorem exists_wallSubdivision_with_gridAnchor {g : ℕ} (M : MinorModel (squareGrid (2 * g)) G) :
     ∃ S : GraphSubdivisionModel (elementaryWall g g) G, Nonempty (WallGridAnchor M S) := by
   obtain ⟨S, hS⟩ := exists_wallSubdivision_anchored_in_grid M

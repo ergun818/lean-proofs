@@ -11,7 +11,6 @@ import ErdosProblems.Erdos73.MinorModels
 
 namespace Erdos73Infrastructure.SimpleGraph.TreewidthSparsifier
 universe u v w
-open scoped Classical
 variable {V : Type u} [DecidableEq V]
 
 
@@ -46,7 +45,7 @@ noncomputable instance instFintype [Fintype V] :
       right_inv := ?_ }
   · intro z
     cases z with
-    | inl z => cases z <;> rfl
+    | inl z => cases z ; rfl
     | inr z => rfl
   · intro x
     cases x <;> rfl
@@ -160,6 +159,7 @@ theorem mem_branchSet_projection (x : V) :
 /-- Every contracted-edge vertex has a nonempty branch set. -/
 theorem branchSet_nonempty (x : EdgeContractVertex V u v) :
     (branchSet x).Nonempty := by
+  classical
   cases x with
   | merged =>
       exact ⟨u, by simp⟩
@@ -209,7 +209,8 @@ def representative (x : EdgeContractVertex V u v) : V :=
   | merged => u
   | keep z => z.1
 
-theorem representative_injective (huv : u ≠ v) :
+omit [DecidableEq V] in
+theorem representative_injective (_ : u ≠ v) :
     Function.Injective (representative (V := V) (u := u) (v := v)) := by
   intro x y hxy
   cases x with
@@ -228,6 +229,7 @@ theorem representative_injective (huv : u ≠ v) :
           apply congrArg keep
           exact Subtype.ext hxy
 
+omit [DecidableEq V] in
 theorem representative_not_surjective (huv : u ≠ v) :
     ¬ Function.Surjective
       (representative (V := V) (u := u) (v := v)) := by
@@ -413,6 +415,7 @@ noncomputable def minorModel :
 /-- Contracting an edge produces a minor of the original graph. -/
 theorem isMinor :
     IsMinor (contractEdgeGraph G huv) G := by
+  classical
   exact ⟨minorModel (G := G) (huv := huv)⟩
 
 end contractEdgeGraph

@@ -4,7 +4,6 @@ import ErdosProblems.Erdos73.BrickHorizontalPaths
 
 namespace Erdos73
 noncomputable section
-open scoped Classical
 
 open SimpleGraph Finset Erdos73Infrastructure.SimpleGraph
 
@@ -29,6 +28,7 @@ def tilePathOfPositions {n : ℕ} (f : Fin (n + 1) → Fin 9 × Fin 12)
     (hf : Function.Injective f)
     (hstep : ∀ i : Fin n, (rawBrickWall 6 9).Adj (f i.castSucc) (f i.succ)) :
     GraphPath (elementaryWall 6 9) := by
+  classical
   let g (i : Fin (n + 1)) : ElementaryWallVertex 6 9 :=
     ⟨f i, rawBrickWall_degree_ge_two_of_interior (c := 6) (r := 9)
       (f i) (hinterior i).1 (hinterior i).2⟩
@@ -39,6 +39,7 @@ def tilePathOfPositions {n : ℕ} (f : Fin (n + 1) → Fin 9 × Fin 12)
 
 theorem tilePathOfPositions_source_val {n : ℕ} (f : Fin (n + 1) → Fin 9 × Fin 12)
     (hinterior hf hstep) : (tilePathOfPositions f hinterior hf hstep).source.val = f 0 := by
+  classical
   let g (i : Fin (n + 1)) : ElementaryWallVertex 6 9 :=
     ⟨f i, rawBrickWall_degree_ge_two_of_interior (c := 6) (r := 9)
       (f i) (hinterior i).1 (hinterior i).2⟩
@@ -47,6 +48,7 @@ theorem tilePathOfPositions_source_val {n : ℕ} (f : Fin (n + 1) → Fin 9 × F
 theorem tilePathOfPositions_target_val {n : ℕ} (f : Fin (n + 1) → Fin 9 × Fin 12)
     (hinterior hf hstep) :
     (tilePathOfPositions f hinterior hf hstep).target.val = f (Fin.last n) := by
+  classical
   let g (i : Fin (n + 1)) : ElementaryWallVertex 6 9 :=
     ⟨f i, rawBrickWall_degree_ge_two_of_interior (c := 6) (r := 9)
       (f i) (hinterior i).1 (hinterior i).2⟩
@@ -55,6 +57,7 @@ theorem tilePathOfPositions_target_val {n : ℕ} (f : Fin (n + 1) → Fin 9 × F
 theorem tilePathOfPositions_mem {n : ℕ} (f : Fin (n + 1) → Fin 9 × Fin 12)
     (hinterior hf hstep) (w : ElementaryWallVertex 6 9) :
     w ∈ (tilePathOfPositions f hinterior hf hstep).vertexSet ↔ ∃ i, f i = w.val := by
+  classical
   let g (i : Fin (n + 1)) : ElementaryWallVertex 6 9 :=
     ⟨f i, rawBrickWall_degree_ge_two_of_interior (c := 6) (r := 9)
       (f i) (hinterior i).1 (hinterior i).2⟩
@@ -76,6 +79,7 @@ theorem tilePathOfPositions_intersection {n m : ℕ}
     (hwf : w ∈ (tilePathOfPositions f hfi hff hfs).vertexSet)
     (hwg : w ∈ (tilePathOfPositions g hgi hgf hgs).vertexSet) :
     w = (tilePathOfPositions f hfi hff hfs).source := by
+  classical
   obtain ⟨i, hi⟩ := (tilePathOfPositions_mem f hfi hff hfs w).mp hwf
   obtain ⟨j, hj⟩ := (tilePathOfPositions_mem g hgi hgf hgs w).mp hwg
   obtain ⟨rfl, _⟩ := hcross i j (hi.trans hj.symm)

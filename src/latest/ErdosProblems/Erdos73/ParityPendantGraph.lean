@@ -6,7 +6,6 @@ import ErdosProblems.Erdos73.PackingCopy
 
 namespace Erdos73
 noncomputable section
-open scoped Classical
 
 open SimpleGraph Finset Erdos73Infrastructure.SimpleGraph
 
@@ -37,12 +36,16 @@ def pendantProjection : V ⊕ V → V := Sum.elim id id
 def pendantTerminal (c : V → Bool) (v : V) : V ⊕ V :=
   if c v then Sum.inr v else Sum.inl v
 
+omit [DecidableEq V] in
 theorem pendantProjection_terminal (c : V → Bool) (v : V) :
     pendantProjection (pendantTerminal c v) = v := by
+  classical
   simp only [pendantTerminal]
   split <;> rfl
 
+omit [DecidableEq V] in
 theorem pendantTerminal_injective (c : V → Bool) : Function.Injective (pendantTerminal c) := by
+  classical
   intro x y h
   simpa only [pendantProjection_terminal] using congrArg pendantProjection h
 
@@ -52,6 +55,7 @@ def parityPendantTerminals (T : Finset V) (c : V → Bool) : Finset (V ⊕ V) :=
 theorem mem_parityPendantTerminals (T : Finset V) (c : V → Bool) (x : V ⊕ V) :
     x ∈ parityPendantTerminals T c ↔
       pendantProjection x ∈ T ∧ x = pendantTerminal c (pendantProjection x) := by
+  classical
   constructor
   · intro hx
     obtain ⟨v, hv, rfl⟩ := mem_image.mp hx
@@ -62,12 +66,14 @@ theorem mem_parityPendantTerminals (T : Finset V) (c : V → Bool) (x : V ⊕ V)
 
 @[simp] theorem inl_mem_parityPendantTerminals (T : Finset V) (c : V → Bool) (v : V) :
     Sum.inl v ∈ parityPendantTerminals T c ↔ v ∈ T ∧ c v = false := by
+  classical
   rw [mem_parityPendantTerminals]
   change (v ∈ T ∧ Sum.inl v = pendantTerminal c v) ↔ _
   cases hc : c v <;> simp [pendantTerminal, hc]
 
 @[simp] theorem inr_mem_parityPendantTerminals (T : Finset V) (c : V → Bool) (v : V) :
     Sum.inr v ∈ parityPendantTerminals T c ↔ v ∈ T ∧ c v = true := by
+  classical
   rw [mem_parityPendantTerminals]
   change (v ∈ T ∧ Sum.inr v = pendantTerminal c v) ↔ _
   cases hc : c v <;> simp [pendantTerminal, hc]
@@ -77,15 +83,18 @@ def parityPendantCopy (G : SimpleGraph V) (T : Finset V) (c : V → Bool) :
   toHom := ⟨Sum.inl, fun h => h⟩
   injective' := Sum.inl_injective
 
+omit [DecidableEq V] in
 theorem parityPendant_leaf_adj {G : SimpleGraph V} {T : Finset V} {c : V → Bool}
     (v : V) (x : V ⊕ V) :
     (parityPendantGraph G T c).Adj (Sum.inr v) x ↔
       x = Sum.inl v ∧ v ∈ T ∧ c v = true := by
+  classical
   cases x <;> simp [parityPendantGraph]
 
 theorem parityPendant_leaf_endpoint {G : SimpleGraph V} {T : Finset V} {c : V → Bool}
     (P : GraphPath (parityPendantGraph G T c)) {v : V} (hv : Sum.inr v ∈ P.vertexSet) :
     Sum.inr v = P.source ∨ Sum.inr v = P.target := by
+  classical
   by_contra hn
   push Not at hn
   obtain ⟨a, b, hab, ha, hb⟩ := P.internal_neighbors hv hn.1 hn.2
@@ -97,6 +106,7 @@ theorem parityPendant_projection_closed {G : SimpleGraph V} {T : Finset V} {c : 
     (P : GraphPath (parityPendantGraph G T c)) (hne : P.source ≠ P.target)
     {x : V ⊕ V} (hx : x ∈ P.vertexSet) :
     Sum.inl (pendantProjection x) ∈ P.vertexSet := by
+  classical
   cases x with
   | inl v => exact hx
   | inr v =>

@@ -47,6 +47,7 @@ def WallGridAnchor.tile (B : WallGridAnchor M S) {c r : ℕ} (A : BrickTileArray
       M.branchSet (B.row (A.rowIndex w.val.1), B.column (A.columnEmbedding w.val.2))
     simpa only [A.point_rowIndex, A.point_columnEmbedding] using B.branch_mem (A.point w.val)
 
+omit [Fintype V] in
 theorem WallGridAnchor.exists_monochromatic_subwall (B : WallGridAnchor M S)
     (col : BipartiteColoringOn G S.vertexSet) (c r : ℕ)
     (hc : 32 * c ≤ C) (hr : 12 * (2 ^ (4 * c) * r) ≤ R) :

@@ -4,7 +4,6 @@ import ErdosProblems.Erdos73.StripSelectionState
 
 namespace Erdos73
 noncomputable section
-open scoped Classical
 
 open SimpleGraph Finset Erdos73Infrastructure.SimpleGraph
 
@@ -12,6 +11,7 @@ variable {V : Type*} {G : SimpleGraph V} {c r m i : ℕ}
 variable {S : GraphSubdivisionModel (elementaryWall c r) G} {color : V → Bool}
 variable {P : Fin m → GraphPath G}
 
+open scoped Classical in
 def BrickStripSelectionState.extend (st : BrickStripSelectionState S color P i)
     (hdis : Pairwise (fun j k => Disjoint (P j).vertexSet (P k).vertexSet))
     (t : SelectedBrickSegment S color P) (ht : t.origin ∉ st.used)
@@ -21,6 +21,7 @@ def BrickStripSelectionState.extend (st : BrickStripSelectionState S color P i)
       j ∉ endpointBrickColumns S t.path.source t.path.target →
         Disjoint t.path.vertexSet (brickFaceColumnStrip S j)) :
     BrickStripSelectionState S color P (i + 1) := by
+  classical
   let R := st.forbiddenRows ∪ t.rows
   let E := endpointBrickColumns S t.path.source t.path.target
   let C := (st.forbiddenColumns ∪ t.columns) ∪ E

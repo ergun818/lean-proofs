@@ -11,6 +11,7 @@ open SimpleGraph Finset Erdos73Infrastructure.SimpleGraph
 variable {N : ℕ} {U W V : Type*} [Fintype U] [LinearOrder U] [Fintype V]
 variable {G : SimpleGraph V}
 
+omit [Fintype V] in
 theorem GraphPath.orientBetween_length (P : GraphPath G) {x y : V}
     (h : P.Connects {x} {y}) : (P.orientBetween h).walk.length = P.walk.length := by
   by_cases hdir : P.source ∈ ({x} : Finset V) ∧ P.target ∈ ({y} : Finset V)
@@ -23,6 +24,7 @@ theorem GraphPath.orientBetween_length (P : GraphPath G) {x y : V}
       exact if_neg hdir
     exact (congrArg (fun Q : GraphPath G => Q.walk.length) he).trans P.walk.length_reverse
 
+omit [Fintype U] [Fintype V] in
 theorem exists_antipodal_edge_paths (label : Fin (2 * N) → U)
     (nails : Fin (2 * N) → W) (branch : W → V) (P : Fin N → GraphPath G)
     (hs : ∀ i, (P i).source = branch (nails (firstPort i)))

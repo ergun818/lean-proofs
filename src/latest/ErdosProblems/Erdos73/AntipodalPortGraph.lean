@@ -27,17 +27,20 @@ variable [Fintype U] [LinearOrder U] (label : Fin (2 * N) → U)
 def antipodalEdgeIndex (e : OrientedEdge (antipodalPortGraph label)) : Fin N :=
   e.adj.2.choose
 
+omit [Fintype U] in
 theorem antipodalEdgeIndex_endpoints (e : OrientedEdge (antipodalPortGraph label)) :
     (label (firstPort (antipodalEdgeIndex label e)) = e.lo ∧
       label (secondPort (antipodalEdgeIndex label e)) = e.hi) ∨
     (label (firstPort (antipodalEdgeIndex label e)) = e.hi ∧
       label (secondPort (antipodalEdgeIndex label e)) = e.lo) := e.adj.2.choose_spec
 
+omit [Fintype U] in
 theorem antipodalEdgeIndex_sym2 (e : OrientedEdge (antipodalPortGraph label)) :
     s(label (firstPort (antipodalEdgeIndex label e)),
       label (secondPort (antipodalEdgeIndex label e))) = s(e.lo, e.hi) :=
   Sym2.eq_iff.mpr (antipodalEdgeIndex_endpoints label e)
 
+omit [Fintype U] in
 theorem antipodalEdgeIndex_injective : Function.Injective (antipodalEdgeIndex label) := by
   intro e f he
   apply OrientedEdge.eq_of_sym2_eq
@@ -51,6 +54,7 @@ def antipodalEdgeTarget (e : OrientedEdge (antipodalPortGraph label)) : Fin (2 *
   if label (firstPort (antipodalEdgeIndex label e)) = e.lo then
     secondPort (antipodalEdgeIndex label e) else firstPort (antipodalEdgeIndex label e)
 
+omit [Fintype U] in
 theorem antipodalEdgeSource_label (e : OrientedEdge (antipodalPortGraph label)) :
     label (antipodalEdgeSource label e) = e.lo := by
   rcases antipodalEdgeIndex_endpoints label e with he | he
@@ -61,6 +65,7 @@ theorem antipodalEdgeSource_label (e : OrientedEdge (antipodalPortGraph label)) 
     rw [antipodalEdgeSource, if_neg hn]
     exact he.2
 
+omit [Fintype U] in
 theorem antipodalEdgeTarget_label (e : OrientedEdge (antipodalPortGraph label)) :
     label (antipodalEdgeTarget label e) = e.hi := by
   rcases antipodalEdgeIndex_endpoints label e with he | he

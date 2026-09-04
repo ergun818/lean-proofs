@@ -4,7 +4,6 @@ import ErdosProblems.Erdos73.BrickHookRegions
 
 namespace Erdos73
 noncomputable section
-open scoped Classical
 
 open SimpleGraph Finset Erdos73Infrastructure.SimpleGraph
 
@@ -21,10 +20,11 @@ theorem mem_brickThroughHook {goRight : Bool} {a b j : ℕ} {w : ElementaryWallV
       (w.val.1.val = a ∧ (if goRight then w.val.2.val ≤ 2 * j + 1 else 2 * j ≤ w.val.2.val)) ∨
       (w.val.1.val = b ∧ (if goRight then 2 * j ≤ w.val.2.val else w.val.2.val ≤ 2 * j + 1)) ∨
       (a ≤ w.val.1.val ∧ w.val.1.val ≤ b ∧ 2 * j ≤ w.val.2.val ∧ w.val.2.val ≤ 2 * j + 1) := by
+  classical
   simp only [brickThroughHook, mem_filter, mem_univ, true_and]
 
 theorem brickThroughHook_disjoint {goRight : Bool} {a b j a' b' j' : ℕ}
-    (hab : a ≤ b) (hab' : a' ≤ b') (ha : a < a') (hb : b < b')
+    (hab : a ≤ b) (_ : a' ≤ b') (ha : a < a') (hb : b < b')
     (hj : if goRight then j' < j else j < j') :
     Disjoint (brickThroughHook (c := c) (r := r) goRight a b j)
       (brickThroughHook goRight a' b' j') := by
@@ -39,6 +39,7 @@ theorem exists_brick_through_hook_path (goRight : Bool) (u v : ElementaryWallVer
     (hv : if goRight then 2 * j ≤ v.val.2.val else v.val.2.val ≤ 2 * j + 1) :
     ∃ P : GraphPath (elementaryWall c r), P.source = u ∧ P.target = v ∧
       P.vertexSet ⊆ brickThroughHook goRight u.val.1.val v.val.1.val j := by
+  classical
   obtain ⟨C, hCs, hCt, hC⟩ := exists_brick_column_path
     u.val.1.val v.val.1.val j huv v.val.1.isLt hj hjc
   have hCscol := (hC C.source C.source_mem_vertexSet).2.2
@@ -81,6 +82,7 @@ theorem exists_brick_through_hook_path (goRight : Bool) (u v : ElementaryWallVer
     have hb := (hR w hh).2
     cases goRight <;> simp_all only [Bool.false_eq_true, ↓reduceIte]
 
+open scoped Classical in
 theorem GraphSubdivisionModel.exists_through_hook_path {V : Type*} {G : SimpleGraph V}
     (S : GraphSubdivisionModel (elementaryWall c r) G) (goRight : Bool)
     (u v : ElementaryWallVertex c r) (huv : u.val.1.val ≤ v.val.1.val)
@@ -89,6 +91,7 @@ theorem GraphSubdivisionModel.exists_through_hook_path {V : Type*} {G : SimpleGr
     (hv : if goRight then 2 * j ≤ v.val.2.val else v.val.2.val ≤ 2 * j + 1) :
     ∃ P : GraphPath G, P.source = S.branchVertex u ∧ P.target = S.branchVertex v ∧
       P.vertexSet ⊆ S.supportOver (brickThroughHook goRight u.val.1.val v.val.1.val j) := by
+  classical
   obtain ⟨Q, hs, ht, hQ⟩ := exists_brick_through_hook_path goRight u v huv j hj hjc hu hv
   obtain ⟨P, hPs, hPt, hP⟩ := S.exists_path_with_walkSupport Q.walk Q.isPath
   refine ⟨P, hPs.trans (congrArg S.branchVertex hs), hPt.trans (congrArg S.branchVertex ht), ?_⟩

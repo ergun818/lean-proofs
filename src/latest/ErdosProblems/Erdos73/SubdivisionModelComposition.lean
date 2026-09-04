@@ -9,7 +9,7 @@ attribute [local instance] Classical.propDecidable Classical.decEq
 
 open SimpleGraph Finset Erdos73Infrastructure.SimpleGraph
 
-theorem OrientedEdge.common_endpoint_unique {U : Type*} [Fintype U] [LinearOrder U]
+theorem OrientedEdge.common_endpoint_unique {U : Type*} [LinearOrder U]
     {F : SimpleGraph U} {e f : OrientedEdge F} (hef : e ≠ f) {u v : U}
     (hue : u = e.lo ∨ u = e.hi) (huf : u = f.lo ∨ u = f.hi)
     (hve : v = e.lo ∨ v = e.hi) (hvf : v = f.lo ∨ v = f.hi) : u = v := by
@@ -74,6 +74,7 @@ def compose (S : GraphSubdivisionModel H G) (T : GraphSubdivisionModel F H) :
     have hh := S.supportOver_inter_subset_singleton hinter (mem_inter.mpr ⟨hxE, hxF⟩)
     exact ⟨u, mem_singleton.mp hh, hue, huf⟩
 
+omit [Fintype U] in
 theorem compose_branchVertex (S : GraphSubdivisionModel H G) (T : GraphSubdivisionModel F H)
     (u : U) : (S.compose T).branchVertex u = S.branchVertex (T.branchVertex u) := rfl
 

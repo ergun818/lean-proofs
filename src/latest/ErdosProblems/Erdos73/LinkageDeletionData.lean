@@ -93,6 +93,7 @@ end Erdos73Infrastructure.SimpleGraph.LinkageNormalization
 namespace Erdos73Infrastructure.SimpleGraph
 variable {V : Type*} [DecidableEq V] {G : _root_.SimpleGraph V}
 
+omit [DecidableEq V] in
 theorem connected_finset_singleton_or_adj (Q : Finset V)
     (hQ : (G.induce {x | x ∈ Q}).Connected) (v : V) (hv : v ∈ Q) :
     Q = {v} ∨ ∃ w ∈ Q, G.Adj v w := by

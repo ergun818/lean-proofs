@@ -1,6 +1,7 @@
 import ErdosProblems.Erdos73.SubdivisionWalkSupport
 
-/-! Simple pattern paths expand to simple host paths with exactly the prescribed corridor support. -/
+/-! Simple pattern paths expand to simple host paths with exactly the prescribed corridor support.
+-/
 
 namespace Erdos73.GraphSubdivisionModel
 noncomputable section

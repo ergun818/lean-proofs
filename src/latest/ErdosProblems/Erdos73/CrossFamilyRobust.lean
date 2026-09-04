@@ -8,13 +8,14 @@ noncomputable section
 open SimpleGraph Finset
 
 theorem deletionOneConnected_twoFamilyUnion
-    {V I J : Type*} [DecidableEq V] [DecidableEq I] [DecidableEq J] {G : SimpleGraph V}
+    {V I J : Type*} [DecidableEq V] {G : SimpleGraph V}
     (A : Finset I) (B : Finset J) (R : I → Finset V) (C : J → Finset V)
     (hA : A.Nonempty) (hB : B.Nonempty)
     (hR : ∀ a ∈ A, DeletionOneConnected G (R a))
     (hC : ∀ b ∈ B, DeletionOneConnected G (C b))
     (hover : ∀ a ∈ A, ∀ b ∈ B, 2 ≤ (R a ∩ C b).card) :
     DeletionOneConnected G (A.biUnion R ∪ B.biUnion C) := by
+  classical
   obtain ⟨a, ha⟩ := hA
   obtain ⟨b, hb⟩ := hB
   have hfirst : DeletionOneConnected G (C b ∪ A.biUnion R) := by

@@ -9,9 +9,10 @@ attribute [local instance] Classical.propDecidable Classical.decEq
 
 open SimpleGraph Finset
 
-theorem exists_bipartite_region_of_no_packing {V : Type*} [Fintype V] {G : SimpleGraph V}
+theorem exists_bipartite_region_of_no_packing {V : Type*} [Finite V] {G : SimpleGraph V}
     {p : ℕ} (R : Fin p → Finset V) (hdis : Pairwise (fun i j => Disjoint (R i) (R j)))
     (hno : ¬ HasOddCyclePacking p G) : ∃ i, (G.induce (R i : Set V)).IsBipartite := by
+  let : Fintype V := Fintype.ofFinite V
   by_contra hnone
   push Not at hnone
   exact hno (DisjointNonbipartiteRegions.hasOddCyclePacking ⟨R, fun _ _ h => hdis h, hnone⟩)
@@ -46,11 +47,12 @@ theorem columnBlockWallCopy_disjoint (c r : ℕ) {C R p : ℕ}
     rw [Nat.add_mul, Nat.one_mul] at hh
     omega
 
-theorem exists_bipartite_columnBlock_subdivision {V : Type*} [Fintype V] {G : SimpleGraph V}
+theorem exists_bipartite_columnBlock_subdivision {V : Type*} [Finite V] {G : SimpleGraph V}
     {c r C R p : ℕ} (S : GraphSubdivisionModel (elementaryWall C R) G)
     (hC : p * c ≤ C) (hr : r ≤ R) (hno : ¬ HasOddCyclePacking p G) :
     ∃ i : Fin p,
-      (G.induce ((S.restrictCopy (columnBlockWallCopy c r hC hr i)).vertexSet : Set V)).IsBipartite := by
+      (G.induce
+        ((S.restrictCopy (columnBlockWallCopy c r hC hr i)).vertexSet : Set V)).IsBipartite := by
   apply exists_bipartite_region_of_no_packing
     (fun i => (S.restrictCopy (columnBlockWallCopy c r hC hr i)).vertexSet) ?_ hno
   intro i j hij

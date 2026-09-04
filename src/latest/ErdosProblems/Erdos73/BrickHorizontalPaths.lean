@@ -7,7 +7,6 @@ import ErdosProblems.Erdos73.SubdivisionAnchors
 
 namespace Erdos73
 noncomputable section
-open scoped Classical
 
 open SimpleGraph Finset Erdos73Infrastructure.SimpleGraph
 
@@ -25,6 +24,7 @@ theorem brickRowVertices_disjoint {a b : Fin r} (hab : a ≠ b) :
 def brickHorizontalVertex (u v : ElementaryWallVertex c r) (hrow : u.val.1 = v.val.1)
     (huv : u.val.2.val ≤ v.val.2.val) (i : Fin (v.val.2.val - u.val.2.val + 1)) :
     ElementaryWallVertex c r := by
+  classical
   let x : Fin r × Fin (2 * c) := (u.val.1, ⟨u.val.2.val + i.val, by
     have hv := v.val.2.isLt
     have hi := i.isLt
@@ -50,6 +50,7 @@ def brickHorizontalVertex (u v : ElementaryWallVertex c r) (hrow : u.val.1 = v.v
 
 theorem brickHorizontalVertex_injective (u v : ElementaryWallVertex c r) (hrow huv) :
     Function.Injective (brickHorizontalVertex u v hrow huv) := by
+  classical
   intro i j he
   have hh := congrArg (fun w : ElementaryWallVertex c r => w.val.2.val) he
   change u.val.2.val + i.val = u.val.2.val + j.val at hh
@@ -60,6 +61,7 @@ theorem brickHorizontalVertex_adj (u v : ElementaryWallVertex c r) (hrow huv)
     (elementaryWall c r).Adj
       (brickHorizontalVertex u v hrow huv ⟨i, by omega⟩)
       (brickHorizontalVertex u v hrow huv ⟨i + 1, hi⟩) := by
+  classical
   apply Or.inl
   refine ⟨rfl, pathGraph_adj.mpr (Or.inl ?_)⟩
   change u.val.2.val + i + 1 = u.val.2.val + (i + 1)
@@ -70,6 +72,7 @@ theorem exists_brick_horizontal_interval_path_of_le (u v : ElementaryWallVertex 
     ∃ P : GraphPath (elementaryWall c r), P.source = u ∧ P.target = v ∧
       (∀ w ∈ P.vertexSet, w.val.1 = u.val.1 ∧
         u.val.2.val ≤ w.val.2.val ∧ w.val.2.val ≤ v.val.2.val) := by
+  classical
   let f := brickHorizontalVertex u v hrow huv
   let hf := brickHorizontalVertex_injective u v hrow huv
   let ha := brickHorizontalVertex_adj u v hrow huv
@@ -98,6 +101,7 @@ theorem exists_brick_horizontal_path_bounded (u v : ElementaryWallVertex c r)
     (hv : l ≤ v.val.2.val ∧ v.val.2.val ≤ h) :
     ∃ P : GraphPath (elementaryWall c r), P.source = u ∧ P.target = v ∧
       (∀ w ∈ P.vertexSet, w.val.1 = u.val.1 ∧ l ≤ w.val.2.val ∧ w.val.2.val ≤ h) := by
+  classical
   by_cases huv : u.val.2.val ≤ v.val.2.val
   · obtain ⟨P, hs, ht, hP⟩ := exists_brick_horizontal_interval_path_of_le u v hrow huv
     exact ⟨P, hs, ht, fun w hw => ⟨(hP w hw).1,
@@ -114,6 +118,7 @@ theorem exists_brick_horizontal_path_of_le (u v : ElementaryWallVertex c r)
     (hrow : u.val.1 = v.val.1) (huv : u.val.2.val ≤ v.val.2.val) :
     ∃ P : GraphPath (elementaryWall c r), P.source = u ∧ P.target = v ∧
       P.vertexSet ⊆ brickRowVertices u.val.1 := by
+  classical
   obtain ⟨P, hs, ht, hP⟩ := exists_brick_horizontal_interval_path_of_le u v hrow huv
   exact ⟨P, hs, ht, fun w hw => mem_filter.mpr ⟨mem_univ _, (hP w hw).1⟩⟩
 
@@ -121,16 +126,19 @@ theorem exists_brick_horizontal_path (u v : ElementaryWallVertex c r)
     (hrow : u.val.1 = v.val.1) :
     ∃ P : GraphPath (elementaryWall c r), P.source = u ∧ P.target = v ∧
       P.vertexSet ⊆ brickRowVertices u.val.1 := by
+  classical
   by_cases huv : u.val.2.val ≤ v.val.2.val
   · exact exists_brick_horizontal_path_of_le u v hrow huv
   obtain ⟨P, hs, ht, hP⟩ := exists_brick_horizontal_path_of_le v u hrow.symm (by omega)
   exact ⟨P.reverse, ht, hs, by simpa only [GraphPath.reverse_vertexSet, hrow] using hP⟩
 
+open scoped Classical in
 theorem GraphSubdivisionModel.exists_horizontal_path {V : Type*} {G : SimpleGraph V}
     (S : GraphSubdivisionModel (elementaryWall c r) G) (u v : ElementaryWallVertex c r)
     (hrow : u.val.1 = v.val.1) :
     ∃ P : GraphPath G, P.source = S.branchVertex u ∧ P.target = S.branchVertex v ∧
       P.vertexSet ⊆ S.supportOver (brickRowVertices u.val.1) := by
+  classical
   obtain ⟨Q, hs, ht, hQ⟩ := exists_brick_horizontal_path u v hrow
   obtain ⟨P, hPs, hPt, hP⟩ := S.exists_path_with_walkSupport Q.walk Q.isPath
   refine ⟨P, hPs.trans (congrArg S.branchVertex hs), hPt.trans (congrArg S.branchVertex ht), ?_⟩

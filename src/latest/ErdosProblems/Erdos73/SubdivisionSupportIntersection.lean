@@ -24,7 +24,8 @@ theorem branch_mem_supportOver_iff (S : GraphSubdivisionModel H G) (T : Finset W
 theorem supportOver_inter (S : GraphSubdivisionModel H G) (T R : Finset W) :
     S.supportOver (T ∩ R) = S.supportOver T ∩ S.supportOver R := by
   apply Subset.antisymm
-  · exact subset_inter (S.supportOver_mono inter_subset_left) (S.supportOver_mono inter_subset_right)
+  · exact subset_inter (S.supportOver_mono inter_subset_left) (S.supportOver_mono
+    inter_subset_right)
   · intro x hx
     obtain ⟨hxT, hxR⟩ := mem_inter.mp hx
     rcases (S.mem_supportOver T x).mp hxT with ⟨w, hw, rfl⟩ | ⟨e, he, he', hxe⟩

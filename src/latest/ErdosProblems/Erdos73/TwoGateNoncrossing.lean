@@ -65,6 +65,7 @@ namespace TreeSwitchSystem
 
 variable {D U : Type*} [Finite D] (C : TreeSwitchSystem D U)
 
+omit [Finite D] in
 theorem contour_word_noncrossing {N : ℕ} (e : Fin N → D) (hinj : Function.Injective e)
     (hsucc : ∀ i j, i.val + 1 = j.val → e j = C.contour (e i)) :
     NoncrossingPortWord (fun i => C.label (e i)) := by

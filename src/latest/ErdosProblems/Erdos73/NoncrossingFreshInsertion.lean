@@ -50,7 +50,7 @@ def insertPortIndex (p m : ℕ) (hp : p ≤ N) (i : Fin (N + m)) : Option (Fin N
 theorem insertPortIndex_none_iff (p m : ℕ) (hp : p ≤ N) (i : Fin (N + m)) :
     insertPortIndex p m hp i = none ↔ p ≤ i.val ∧ i.val < p + m := by
   dsimp only [insertPortIndex]
-  split_ifs <;> simp only [reduceCtorEq, true_iff, false_iff] <;> omega
+  split_ifs <;> simp only [true_iff, false_iff] <;> omega
 
 theorem insertPortIndex_some_bounds (p m : ℕ) (hp : p ≤ N)
     (i : Fin (N + m)) (a : Fin N) (hi : insertPortIndex p m hp i = some a) :

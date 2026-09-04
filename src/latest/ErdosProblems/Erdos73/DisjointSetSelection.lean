@@ -4,17 +4,17 @@ import ErdosProblems.Erdos73.PathCongestion
 
 namespace Erdos73
 noncomputable section
-open scoped Classical
 
 open Finset
 
 theorem exists_disjoint_subfamily_of_bounded_congestion
-    {I X : Type*} [DecidableEq I] [DecidableEq X]
+    {I X : Type*} [DecidableEq X]
     (s : Finset I) (R : I → Finset X) (q b k : ℕ)
     (hne : ∀ i ∈ s, (R i).Nonempty) (hrank : ∀ i ∈ s, (R i).card ≤ q)
     (hcong : ∀ x, (s.filter (fun i => x ∈ R i)).card ≤ b)
     (hsize : q * b * (k - 1) < s.card) :
     ∃ t : Finset I, t ⊆ s ∧ k ≤ t.card ∧ (t : Set I).PairwiseDisjoint R := by
+  classical
   let C := s.powerset.filter (fun t : Finset I => (t : Set I).PairwiseDisjoint R)
   obtain ⟨t, htmax⟩ := C.exists_maximal (filter_nonempty_iff.mpr
     ⟨∅, empty_mem_powerset s, by simp⟩)

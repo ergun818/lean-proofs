@@ -25,7 +25,8 @@ theorem NoncrossingPortWord.interval_cases {label : Fin N → U} (h : Noncrossin
     exact huv (ha.symm.trans ((h a c b d h₁ h₂ h₃ (ha.trans hb.symm) (hc.trans hd.symm)).trans hc))
   have hn₂ : ¬ (c < a ∧ a < d ∧ d < b) := by
     rintro ⟨h₁, h₂, h₃⟩
-    exact huv (ha.symm.trans ((h c a d b h₁ h₂ h₃ (hc.trans hd.symm) (ha.trans hb.symm)).symm.trans hc))
+    exact huv (ha.symm.trans ((h c a d b h₁ h₂ h₃ (hc.trans hd.symm) (ha.trans hb.symm)).symm.trans
+      hc))
   omega
 
 theorem NoncrossingPortWord.outer_block_avoids_inner {label : Fin N → U}
@@ -37,12 +38,14 @@ theorem NoncrossingPortWord.outer_block_avoids_inner {label : Fin N → U}
   have hxd : x ≠ d := fun he => huv (hx.symm.trans ((congrArg label he).trans hd))
   have hcx : c < x := by omega
   have hxd' : x < d := by omega
-  exact huv (ha.symm.trans ((h a c x d hac hcx hxd' (ha.trans hx.symm) (hc.trans hd.symm)).trans hc))
+  exact huv (ha.symm.trans ((h a c x d hac hcx hxd' (ha.trans hx.symm) (hc.trans hd.symm)).trans
+    hc))
 
 def portWordFiber (label : Fin N → U) (u : U) : Finset (Fin N) := univ.filter (fun i => label i = u)
 
 theorem mem_portWordFiber (label : Fin N → U) (u : U) (i : Fin N) :
-    i ∈ portWordFiber label u ↔ label i = u := by simp only [portWordFiber, mem_filter, mem_univ, true_and]
+    i ∈ portWordFiber label u ↔ label i = u := by simp only [portWordFiber, mem_filter, mem_univ,
+      true_and]
 
 theorem portWordFiber_nonempty (label : Fin N → U) (hsurj : Function.Surjective label) (u : U) :
     (portWordFiber label u).Nonempty := by

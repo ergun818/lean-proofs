@@ -237,10 +237,8 @@ noncomputable def of_iso_right {W V V' : Type*}
     intro u v huv
     rcases M.adjacent huv with ⟨x, hx, y, hy, hxy⟩
     refine ⟨e x, ?_, e y, ?_, ?_⟩
-    · change e x ∈ (M.branchSet u).map e.toEquiv.toEmbedding
-      exact Finset.mem_map.mpr ⟨x, hx, rfl⟩
-    · change e y ∈ (M.branchSet v).map e.toEquiv.toEmbedding
-      exact Finset.mem_map.mpr ⟨y, hy, rfl⟩
+    · exact Finset.mem_map.mpr ⟨x, hx, rfl⟩
+    · exact Finset.mem_map.mpr ⟨y, hy, rfl⟩
     · exact (_root_.SimpleGraph.Iso.map_adj_iff e).mpr hxy
 
 end MinorModel

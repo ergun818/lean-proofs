@@ -5,7 +5,6 @@ import ErdosProblems.Erdos73.BrickColumnPathsClipped
 
 namespace Erdos73.BrickTileArray
 noncomputable section
-open scoped Classical
 
 open SimpleGraph Finset Erdos73Infrastructure.SimpleGraph
 
@@ -16,9 +15,12 @@ theorem exists_horizontal_gap_path (u v : ElementaryWallVertex c r)
     ∃ P : GraphPath (elementaryWall C R),
       P.source = (A.arm u 1).target ∧ P.target = (A.arm v 0).target ∧
       P.vertexSet ⊆ A.horizontalGap u.val.1 u.val.2 v.val.2 := by
+  classical
   have hu := A.arm_one_target_coordinates u
   have hv := A.arm_zero_target_coordinates v
-  have hcols := A.column_strictMono (show u.val.2 < v.val.2 by change u.val.2.val < v.val.2.val; omega)
+  have hcols := A.column_strictMono (show u.val.2 < v.val.2 by
+    change u.val.2.val < v.val.2.val
+    omega)
   have hrows := congrArg A.row hrow
   have hportrow : (A.arm u 1).target.val.1 = (A.arm v 0).target.val.1 := Fin.ext (by omega)
   obtain ⟨P, hs, ht, hP⟩ := exists_brick_horizontal_path_bounded
@@ -35,6 +37,7 @@ theorem exists_vertical_gap_path (u v : ElementaryWallVertex c r)
     ∃ P : GraphPath (elementaryWall C R),
       P.source = (A.arm u 2).target ∧ P.target = (A.arm v 2).target ∧
       P.vertexSet ⊆ A.verticalGap u.val.1 v.val.1 u.val.2 := by
+  classical
   have hup : (v.val.2.val + v.val.1.val) % 2 ≠ 1 := by
     have hh := congrArg Fin.val hcol
     omega

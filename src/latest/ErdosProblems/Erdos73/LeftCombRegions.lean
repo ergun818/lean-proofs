@@ -61,7 +61,7 @@ theorem brickLeftHook_subset_comb {rows : Finset ℕ} {a b s j : ℕ}
     · exact hr ▸ hs
   · exact mem_brickLeftComb.mpr (Or.inr ⟨hh.1, hh.2.1.trans hsb, hh.2.2⟩)
 
-theorem exists_connected_leftComb_region {I : Type*} [Fintype I]
+theorem exists_connected_leftComb_region {I : Type*} [Finite I]
     (root : ElementaryWallVertex c r) (ports : I → ElementaryWallVertex c r)
     (rows : Finset ℕ) (b j : ℕ) (hj : 0 < j) (hjc : j + 1 < c)
     (hroot : root.val.1.val ∈ rows) (hrootcol : root.val.2.val ≤ 2 * j + 1)
@@ -72,7 +72,9 @@ theorem exists_connected_leftComb_region {I : Type*} [Fintype I]
     ∃ T : Finset (ElementaryWallVertex c r), root ∈ T ∧ (∀ i, ports i ∈ T) ∧
       T ⊆ brickLeftComb rows root.val.1.val b j ∧
       ((elementaryWall c r).induce (T : Set (ElementaryWallVertex c r))).Connected := by
-  have hex (i : I) := exists_brick_left_hook_path root (ports i) (horder i) j hj hjc hrootcol (hcols i)
+  let : Fintype I := Fintype.ofFinite I
+  have hex (i : I) := exists_brick_left_hook_path root (ports i) (horder i) j hj hjc hrootcol (hcols
+    i)
   choose P hPs hPt hP using hex
   let T := insert root (univ.biUnion (fun i => (P i).vertexSet))
   refine ⟨T, mem_insert_self _ _, ?_, ?_, ?_⟩

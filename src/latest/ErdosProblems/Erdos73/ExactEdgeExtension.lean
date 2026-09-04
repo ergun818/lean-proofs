@@ -7,12 +7,13 @@ import ErdosProblems.Erdos73.RobustConnectedSupport
 
 namespace Erdos73
 noncomputable section
-open scoped Classical
 
 open SimpleGraph Finset Erdos73Infrastructure.SimpleGraph
 
 variable {V : Type*} [Fintype V] {G : SimpleGraph V} {D T : Finset V}
 
+omit [Fintype V] in
+open scoped Classical in
 theorem exists_exact_edge_network_extension
     (c : BipartiteColoringOn G (D ∪ T)) (U : Erdos73Infrastructure.SimpleGraph.GraphPath G)
     (hU : IsParityBreakingPath c.color D U) (hUT : Disjoint U.vertexSet T)
@@ -24,6 +25,7 @@ theorem exists_exact_edge_network_extension
     ∃ B : Erdos73Infrastructure.SimpleGraph.GraphPath G,
       IsParityBreakingPath c.color T B ∧ B.vertexSet ⊆ D ∪ U.vertexSet ∧
         GraphPath.actualEdgeGraph B ≤ J := by
+  classical
   have hUR : IsParityBreakingPath c.color (D ∪ T) U := by
     refine ⟨mem_union_left _ hU.source_mem, mem_union_left _ hU.target_mem, hU.breaking, ?_⟩
     intro x hx hxR

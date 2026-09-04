@@ -268,7 +268,7 @@ theorem exists_shortcutAround
         simp [first, edge]
   let Q := first.appendClean suffix (by simp [first, suffix, edge])
     hfirst_suffix
-  refine ⟨Q, by simp [Q, first, pref], by simp [Q, first, suffix, edge], ?_, ?_⟩
+  refine ⟨Q, by simp [Q, first, pref], by simp [Q, suffix], ?_, ?_⟩
   · intro z hzQ
     have hzSplit :=
       GraphPath.appendWithEq_vertexSet_subset first suffix (by simp [first, suffix, edge])
@@ -412,7 +412,7 @@ theorem exists_crossPrefixSuffix
       · simp [first, edge]
   let Q := first.appendClean suffix
     (by simp [first, suffix, edge]) hfirst_suffix
-  refine ⟨Q, by simp [Q, first, pref], by simp [Q, first, suffix, edge], ?_, ?_⟩
+  refine ⟨Q, by simp [Q, first, pref], by simp [Q, suffix], ?_, ?_⟩
   · intro z hzQ
     have hzSplit :=
       GraphPath.appendWithEq_vertexSet_subset first suffix
@@ -529,6 +529,7 @@ theorem crossPrefixSuffix_vertexSet_subset_parts
           (by simpa [suffix] using GraphPath.source_mem_vertexSet suffix)
   · exact Finset.mem_union_right _ (by simpa [suffix] using hzSuffix)
 
+omit [Fintype V] in
 /-- If a path contains vertices on both sides of a rank threshold, then some
 edge of the path crosses the threshold from the lower side to the upper side.
 
@@ -557,7 +558,7 @@ theorem exists_adjacent_rank_crossing
             u ∈ P.vertexSet ∧ v ∈ P.vertexSet ∧
               rank u < t ∧ t ≤ rank v ∧ G.Adj u v := by
     intro Q hsrcP htgtP hQP hsrcRank htgtRank
-    let U : Finset V := Finset.univ.filter fun v : V => t ≤ rank v
+    let U : Finset V := Q.vertexSet.filter fun v : V => t ≤ rank v
     have hne : (Q.vertexSet ∩ U).Nonempty := by
       exact ⟨Q.target, Finset.mem_inter.2
         ⟨GraphPath.target_mem_vertexSet Q, by simp [U, htgtRank]⟩⟩
@@ -570,7 +571,7 @@ theorem exists_adjacent_rank_crossing
         have hsrcUC : C.source ∈ U := by
           simpa [hst] using htargetU
         simpa [C] using hsrcUC
-      have : t ≤ rank Q.source := by simpa [U] using hsrcU
+      have : t ≤ rank Q.source := (Finset.mem_filter.mp hsrcU).2
       omega
     let u : V := C.penultimate
     let v : V := C.target
@@ -588,11 +589,11 @@ theorem exists_adjacent_rank_crossing
         simpa [C] using Q.cleanPrefixToSet_vertexSet_subset U hne
       exact hsub hvC
     have hvRank : t ≤ rank v := by
-      simpa [v, U] using htargetU
+      exact (Finset.mem_filter.mp htargetU).2
     have huRank : rank u < t := by
       by_contra hnot
       have huU : u ∈ U := by
-        simp [U, le_of_not_gt hnot]
+        exact Finset.mem_filter.mpr ⟨huQ, le_of_not_gt hnot⟩
       have hu_eq_target :
           u = Q.firstHitVertex U hne := by
         exact Q.eq_firstHitVertex_of_mem_takeUntil_of_mem_set U hne
@@ -798,18 +799,19 @@ theorem rotateClosed_one
           exact Nat.succ_lt_succ hp.2⟩ =
       p i.succ := by
   classical
-  simp [rotateClosed, RelSeries.smash, RelSeries.drop, Fin.addCases]
+  simp only [rotateClosed, RelSeries.smash, RelSeries.drop, Fin.val_castSucc, Fin.addCases,
+    Fin.castAdd_castLT, Function.comp_apply, Fin.val_castLT, eq_rec_constant]
   by_cases h : 1 < p.length - i.1
-  · simp [h]
+  · simp only [h, ↓reduceDIte]
     apply congrArg p.toFun
     ext
     simp [Nat.add_comm]
-  · simp [h]
+  · simp only [h, ↓reduceDIte]
     have hi_last : i.1 + 1 = p.length := by omega
     have hi_succ : i.succ = (Fin.last p.length) := by
       ext
       simpa [Fin.val_succ] using hi_last
-    simp [RelSeries.take]
+    simp only [RelSeries.take, Fin.val_castSucc, Fin.val_subNat]
     change p ⟨1 - (p.length - i.1), by omega⟩ = p i.succ
     rw [show (⟨1 - (p.length - i.1), by omega⟩ : Fin (p.length + 1)) =
         (0 : Fin (p.length + 1)) by
@@ -829,9 +831,10 @@ theorem rotateClosed_apply_forward
           omega⟩ =
       p j.castSucc := by
   classical
-  simp [rotateClosed, RelSeries.smash, RelSeries.drop, Fin.addCases]
+  simp only [rotateClosed, RelSeries.smash, RelSeries.drop, Fin.val_castSucc, Fin.addCases,
+    Fin.castAdd_castLT, Function.comp_apply, Fin.val_castLT, eq_rec_constant]
   have hif : j.1 - i.1 < p.length - i.1 := by omega
-  simp [hif]
+  simp only [hif, ↓reduceDIte]
   apply congrArg p.toFun
   ext
   simp
@@ -846,7 +849,11 @@ theorem rotateClosed_apply_wrapped
           omega⟩ =
       p j.castSucc := by
   classical
-  simp [rotateClosed, RelSeries.smash, RelSeries.drop, RelSeries.take, Fin.addCases]
+  simp only [rotateClosed, RelSeries.smash, RelSeries.drop, Fin.val_castSucc, RelSeries.take,
+    Fin.addCases,
+    Fin.castAdd_castLT, Function.comp_apply, Fin.val_castLT, Fin.val_subNat, Fin.val_cast,
+    add_lt_iff_neg_left,
+    not_lt_zero, ↓reduceDIte, add_tsub_cancel_left, eq_rec_constant]
   apply congrArg p.toFun
   ext
   simp
@@ -1177,7 +1184,7 @@ theorem closed_dependency_series_type2_rows_injective_of_minimal
           simp [rot]
           omega⟩
       have hk_pos : 0 < k.1 := by
-        simp [k]
+        simp only [tsub_pos_iff_lt, Fin.val_fin_lt, k]
         exact hab
       have hnot :=
         closed_dependency_series_not_head_before_later_same_row_of_minimal
@@ -1747,9 +1754,9 @@ noncomputable def reroutedPerfectPathPacking
     apply Subtype.ext
     cases x with
     | inl i =>
-        simp [reroutedPathPacking, sourceRow]
+        simp [sourceRow]
     | inr j =>
-        simp [reroutedPathPacking, sourceRow]
+        simp [sourceRow]
   target_bijective := by
     classical
     have hcomp :
@@ -1763,9 +1770,9 @@ noncomputable def reroutedPerfectPathPacking
     apply Subtype.ext
     cases x with
     | inl i =>
-        simp [reroutedPathPacking, targetRow]
+        simp [targetRow]
     | inr j =>
-        simp [reroutedPathPacking, targetRow]
+        simp [targetRow]
 
 omit [Fintype V] in
 theorem reroutedPerfectPathPacking_cross_edge_mem
@@ -1874,7 +1881,7 @@ theorem linkageDependency_acyclic_of_unique
     by_cases hi : i.1 + 1 < p.length
     · have hnext : next i = ⟨i.1 + 1, hi⟩ := by
         simpa [next] using fin_addRight_one_apply_of_lt i hi
-      simp [vertex, hnext]
+      simp only [hnext, Fin.castSucc_mk, vertex]
       apply congrArg p.toFun
       ext
       simp [Fin.val_succ]

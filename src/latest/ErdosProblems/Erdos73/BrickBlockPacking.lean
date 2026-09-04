@@ -6,7 +6,6 @@ import ErdosProblems.Erdos73.PathCongestion
 
 namespace Erdos73
 noncomputable section
-open scoped Classical
 
 open SimpleGraph Finset Erdos73Infrastructure.SimpleGraph
 
@@ -18,11 +17,14 @@ def BrickStripSelectionState.wallSegmentGraph (col : BipartiteColoringOn G S.ver
     (st : BrickStripSelectionState S col.color P h) : SimpleGraph V :=
   S.actualEdgeGraph ⊔ ⨆ j, GraphPath.actualEdgeGraph (st.segment j).path
 
+omit [Fintype V] in
 theorem BrickStripSelectionState.wallSegmentGraph_le (col : BipartiteColoringOn G S.vertexSet)
     (st : BrickStripSelectionState S col.color P h) : st.wallSegmentGraph col ≤ G :=
   sup_le S.actualEdgeGraph_le (iSup_le fun j => GraphPath.actualEdgeGraph_le (st.segment j).path)
 
-theorem BrickStripSelectionState.exists_breaking_block_packing
+omit [Fintype V] in
+open scoped Classical in
+theorem BrickStripSelectionState.exists_breaking_block_packing [Finite V]
     (col : BipartiteColoringOn G S.vertexSet) (st : BrickStripSelectionState S col.color P h)
     (k d : ℕ) (hr : 2 ≤ r) (hd : 0 < d)
     (hwidth : (6 * h + 1) * d ≤ c - 1) (hnumber : 5 * (2 * k - 2) < h) :
@@ -31,6 +33,7 @@ theorem BrickStripSelectionState.exists_breaking_block_packing
       Pairwise (fun i j => Disjoint (B i).vertexSet (B j).vertexSet) ∧
       (∀ i, GraphPath.actualEdgeGraph (B i) ≤ st.wallSegmentGraph col) ∧
       (∀ j, Disjoint (st.segment j).path.vertexSet (brickColumnBlock S a d ha)) := by
+  classical
   obtain ⟨a, ha, hfree⟩ := st.exists_free_block d hwidth
   let T := brickColumnBlock S a d ha
   have hUT (j : Fin h) : Disjoint (st.segment j).path.vertexSet T := by

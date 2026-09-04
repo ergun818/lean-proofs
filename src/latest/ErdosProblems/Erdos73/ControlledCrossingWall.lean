@@ -6,7 +6,6 @@ import ErdosProblems.Erdos73.OddPackingMonotone
 
 namespace Erdos73
 noncomputable section
-open scoped Classical
 
 open SimpleGraph Finset Erdos73Infrastructure.SimpleGraph ColumnHandleFamily
 

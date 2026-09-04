@@ -54,7 +54,8 @@ theorem sameCycle_rotation_of_switch {σ S : Perm D} (hS : Function.Involutive S
   simpa only [Perm.mul_apply, hS x] using hh
 
 theorem label_eq_of_sameCycle {U : Type*} (σ : Perm D) (label : D → U)
-    (hlabel : ∀ d, label (σ d) = label d) {a b : D} (hab : σ.SameCycle a b) : label a = label b := by
+    (hlabel : ∀ d, label (σ d) = label d) {a b : D} (hab : σ.SameCycle a b) : label a = label b :=
+      by
   obtain ⟨n, rfl⟩ := hab.exists_nat_pow_eq
   clear hab
   induction n with

@@ -5,15 +5,16 @@ import ErdosProblems.Erdos73.SubdivisionAnchors
 
 namespace Erdos73
 noncomputable section
-open scoped Classical
 
 open SimpleGraph Finset
 
 variable {V : Type*} {G : SimpleGraph V} {c r : ℕ}
 
+open scoped Classical in
 def brickFaceRowStrip (S : GraphSubdivisionModel (elementaryWall c r) G)
     (a : Fin (r - 1)) : Finset V := Finset.univ.biUnion fun j => brickFaceRegion S (a, j)
 
+open scoped Classical in
 def brickFaceColumnStrip (S : GraphSubdivisionModel (elementaryWall c r) G)
     (j : Fin (c - 1)) : Finset V := Finset.univ.biUnion fun a => brickFaceRegion S (a, j)
 
@@ -23,12 +24,14 @@ theorem brickFaceRegion_subset (S : GraphSubdivisionModel (elementaryWall c r) G
 
 theorem brickFaceRowStrip_subset (S : GraphSubdivisionModel (elementaryWall c r) G)
     (a : Fin (r - 1)) : brickFaceRowStrip S a ⊆ S.vertexSet := by
+  classical
   intro x hx
   obtain ⟨j, _, hx⟩ := mem_biUnion.mp hx
   exact brickFaceRegion_subset S (a, j) hx
 
 theorem brickFaceColumnStrip_subset (S : GraphSubdivisionModel (elementaryWall c r) G)
     (j : Fin (c - 1)) : brickFaceColumnStrip S j ⊆ S.vertexSet := by
+  classical
   intro x hx
   obtain ⟨a, _, hx⟩ := mem_biUnion.mp hx
   exact brickFaceRegion_subset S (a, j) hx
@@ -52,6 +55,7 @@ theorem anchor_bounds_of_mem_brickFaceRegion
 
 theorem card_finset_fin_le_two_of_values {n : ℕ} (A : Finset (Fin n)) (a b : ℕ)
     (hA : ∀ i ∈ A, i.val = a ∨ i.val = b) : A.card ≤ 2 := by
+  classical
   have hsub : A.image Fin.val ⊆ {a, b} := by
     intro x hx
     obtain ⟨i, hi, rfl⟩ := mem_image.mp hx
@@ -62,9 +66,11 @@ theorem card_finset_fin_le_two_of_values {n : ℕ} (A : Finset (Fin n)) (a b : �
     by_cases he : a = b <;> simp [he]
   exact hh.trans hp
 
+open scoped Classical in
 theorem brickFaceRowStrip_membership_card_le_two
     (S : GraphSubdivisionModel (elementaryWall c r) G) (x : V) :
     (Finset.univ.filter (fun a => x ∈ brickFaceRowStrip S a)).card ≤ 2 := by
+  classical
   by_cases hxS : x ∈ S.vertexSet
   · let z : {v : V // v ∈ S.vertexSet} := ⟨x, hxS⟩
     let a := (S.supportAnchor z).val.1.val
@@ -81,9 +87,11 @@ theorem brickFaceRowStrip_membership_card_le_two
     rw [he]
     simp only [card_empty, Nat.zero_le]
 
+open scoped Classical in
 theorem brickFaceColumnStrip_membership_card_le_two
     (S : GraphSubdivisionModel (elementaryWall c r) G) (x : V) :
     (Finset.univ.filter (fun j => x ∈ brickFaceColumnStrip S j)).card ≤ 2 := by
+  classical
   by_cases hxS : x ∈ S.vertexSet
   · let z : {v : V // v ∈ S.vertexSet} := ⟨x, hxS⟩
     let b := (S.supportAnchor z).val.2.val / 2

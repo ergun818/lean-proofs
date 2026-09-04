@@ -57,7 +57,7 @@ theorem twistedLVertex_adj_of_succ {n : ℕ} (c : TwistedLeftColumn n) (r : Fin 
     have hs := twistedLeft_add_span c
     have hz := twistedLeft_lt_right c
     dsimp only [twistedCoordinateAdj, twistedLVertex]
-    split_ifs <;> simp only [Fin.ext_iff, Fin.val_mk, true_and]
+    split_ifs <;> simp only [Fin.ext_iff, true_and]
     all_goals omega
 
 theorem twistedLVertex_adj_of_wrap {n : ℕ} (c : TwistedLeftColumn n) (r : Fin n)
@@ -77,7 +77,7 @@ theorem twistedLVertex_adj_of_wrap {n : ℕ} (c : TwistedLeftColumn n) (r : Fin 
     have hj' : ¬j.val ≤ r.val := by omega
     dsimp only [twistedCoordinateAdj]
     rw [twistedLVertex, dif_pos hi', twistedLVertex, dif_neg hj']
-    split <;> simp only [Fin.mk.injEq, Fin.val_mk]
+    split <;> simp only [Fin.mk.injEq]
     all_goals dsimp only [twistedRightColumn] at *
     all_goals omega
 

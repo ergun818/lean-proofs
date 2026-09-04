@@ -31,7 +31,7 @@ theorem qualitativeGrillColumns_pos (g h : ℕ) (hh : 0 < h) : 0 < qualitativeGr
 /-- The full qualitative pregrill theorem, including averaging, column
 normalization, and actual grill-to-grid/complete-bipartite minor models. -/
 theorem pregrill_has_grid_or_completeBipartite
-    {V : Type*} [Fintype V] {G : SimpleGraph V} {m n d : ℕ}
+    {V : Type*} [Finite V] {G : SimpleGraph V} {m n d : ℕ}
     (P : Pregrill G m n d) (g h : ℕ) (hh : 0 < h)
     (hm : qualitativeGrillRows g h ≤ m)
     (hd : 2 * qualitativeGrillRows g h * d ≤ m)
@@ -51,7 +51,7 @@ many disjoint connected columns retains a positive fraction of a linkage
 unless one of the two ordinary minors exists. The returned paths lie
 outside the deleted column and have endpoints outside it as well. -/
 theorem unique_linkage_avoiding_connected_column
-    {V I : Type*} [Fintype V] [Fintype I] {G : SimpleGraph V} {A B : Finset V}
+    {V I : Type*} [Finite V] [Fintype I] {G : SimpleGraph V} {A B : Finset V}
     (R : PerfectPathPacking G A B) (hunique : R.IsUniqueLinkage)
     (Q : I → Finset V) (hne : ∀ i, (Q i).Nonempty)
     (hconn : ∀ i, (G.induce (Q i : Set V)).Connected)

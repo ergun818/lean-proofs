@@ -4,17 +4,17 @@ import ErdosProblems.Erdos73.PathCongestion
 
 namespace Erdos73
 noncomputable section
-open scoped Classical
 
 open SimpleGraph Finset Erdos73Infrastructure.SimpleGraph
 
 theorem exists_unused_terminal_path
-    {V I : Type*} [DecidableEq V] [Fintype I] [DecidableEq I] {G : SimpleGraph V}
+    {V I : Type*} [DecidableEq V] [Fintype I] {G : SimpleGraph V}
     (P : I → GraphPath G) (N D : Finset V)
     (hends : ∀ i, (P i).source ∈ N ∧ (P i).target ∈ N)
     (hdis : Pairwise (fun i j => Disjoint (P i).vertexSet (P j).vertexSet))
     (used : Finset I) (hsize : (N \ D).card + used.card < Fintype.card I) :
     ∃ i, i ∉ used ∧ (P i).source ∈ D ∧ (P i).target ∈ D := by
+  classical
   let bad := Finset.univ.filter (fun i => (P i).source ∉ D ∨ (P i).target ∉ D)
   have hhit : ∀ i ∈ bad, ∃ x ∈ (P i).vertexSet, x ∈ N \ D := by
     intro i hi

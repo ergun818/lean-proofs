@@ -4,7 +4,6 @@ import ErdosProblems.Erdos73.ParityPendantGraph
 
 namespace Erdos73
 noncomputable section
-open scoped Classical
 
 open SimpleGraph Finset Erdos73Infrastructure.SimpleGraph
 
@@ -16,10 +15,11 @@ theorem attach_pendant_source (P : GraphPath (parityPendantGraph G T c))
       Q.target = P.target ∧ Q.walk.length = P.walk.length + (c v).toNat ∧
       Q.vertexSet ⊆ P.vertexSet ∪ {Sum.inr v} ∧
       Q.vertexSet.image pendantProjection ⊆ P.vertexSet.image pendantProjection := by
+  classical
   cases hc : c v with
   | false =>
     exact ⟨P, by simpa only [pendantTerminal, hc, Bool.false_eq_true, ↓reduceIte] using hs,
-      rfl, by simp [hc], subset_union_left, subset_rfl⟩
+      rfl, by simp, subset_union_left, subset_rfl⟩
   | true =>
     have ha : (parityPendantGraph G T c).Adj (Sum.inr v) P.source :=
       (parityPendant_leaf_adj v _).mpr ⟨hs, hv, hc⟩
@@ -35,7 +35,7 @@ theorem attach_pendant_source (P : GraphPath (parityPendantGraph G T c))
       · exact mem_union_right _ (mem_singleton_self _)
       · exact mem_union_left _ (List.mem_toFinset.mpr hh)
     refine ⟨Q, by simp only [Q, pendantTerminal, hc, ↓reduceIte], rfl, ?_, hsub, ?_⟩
-    · simp only [Q, Walk.length_cons, hc, Bool.toNat_true]
+    · simp only [Q, Walk.length_cons, Bool.toNat_true]
     · intro x hx
       obtain ⟨y, hy, rfl⟩ := mem_image.mp hx
       rcases mem_union.mp (hsub hy) with hy | hy

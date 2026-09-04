@@ -1,7 +1,8 @@
 import ErdosProblems.Erdos73.SubdivisionTreeRegions
 import ErdosProblems.Erdos73.PathCutParity
 
-/-! Split each long subdivision corridor at its first internal vertex, retaining exact incidences. -/
+/-! Split each long subdivision corridor at its first internal vertex, retaining exact incidences.
+-/
 
 namespace Erdos73.GraphSubdivisionModel
 noncomputable section
@@ -11,6 +12,7 @@ open SimpleGraph Finset Erdos73Infrastructure.SimpleGraph
 variable {W V : Type*} [Fintype W] [LinearOrder W] [Fintype V]
 variable {H : SimpleGraph W} {G : SimpleGraph V} (S : GraphSubdivisionModel H G)
 
+omit [Fintype V] [Fintype W] in
 theorem edgePath_length_pos (e : OrientedEdge H) : 0 < (S.edgePath e).walk.length := by
   by_contra hn
   have hh := Walk.eq_of_length_eq_zero (show (S.edgePath e).walk.length = 0 by omega)
@@ -18,6 +20,7 @@ theorem edgePath_length_pos (e : OrientedEdge H) : 0 < (S.edgePath e).walk.lengt
     (S.source_eq e).symm.trans (hh.trans (S.target_eq e))
   exact (ne_of_lt e.lo_lt_hi) (S.injective he)
 
+omit [Fintype V] [Fintype W] in
 theorem edgePath_length_two_le_of_even (h : ∀ e, Even (S.edgePath e).walk.length)
     (e : OrientedEdge H) : 2 ≤ (S.edgePath e).walk.length := by
   have hp := S.edgePath_length_pos e
@@ -27,9 +30,11 @@ theorem edgePath_length_two_le_of_even (h : ∀ e, Even (S.edgePath e).walk.leng
 
 def firstInternal (e : OrientedEdge H) : V := (S.edgePath e).walk.getVert 1
 
+omit [Fintype V] [Fintype W] in
 theorem firstInternal_mem (e : OrientedEdge H) : S.firstInternal e ∈ (S.edgePath e).vertexSet :=
   List.mem_toFinset.mpr ((S.edgePath e).walk.getVert_mem_support 1)
 
+omit [Fintype V] [Fintype W] in
 theorem firstInternal_not_branch (hlong : ∀ e, 2 ≤ (S.edgePath e).walk.length)
     (e : OrientedEdge H) (w : W) : S.firstInternal e ≠ S.branchVertex w := by
   intro he
@@ -44,6 +49,7 @@ theorem firstInternal_not_branch (hlong : ∀ e, 2 ≤ (S.edgePath e).walk.lengt
     have hz := ((S.edgePath e).isPath.getVert_eq_end_iff (by omega)).mp hh
     omega
 
+omit [Fintype V] [Fintype W] in
 theorem firstInternal_injective (hlong : ∀ e, 2 ≤ (S.edgePath e).walk.length) :
     Function.Injective S.firstInternal := by
   intro e f he
@@ -58,17 +64,20 @@ def halfPath (e : OrientedEdge H) (side : Bool) : GraphPath G :=
 
 def halfEndpoint (e : OrientedEdge H) (side : Bool) : W := if side then e.hi else e.lo
 
+omit [Fintype V] [Fintype W] in
 theorem halfPath_source (e : OrientedEdge H) (side : Bool) :
     (S.halfPath e side).source = S.branchVertex (halfEndpoint e side) := by
   cases side <;> simp only [halfPath, halfEndpoint, Bool.false_eq_true, ↓reduceIte,
     GraphPath.reverse_source, GraphPath.takeUntil_source, GraphPath.dropUntil_target,
     S.source_eq, S.target_eq]
 
+omit [Fintype V] [Fintype W] in
 theorem halfPath_target (e : OrientedEdge H) (side : Bool) :
     (S.halfPath e side).target = S.firstInternal e := by
   cases side <;> simp only [halfPath, Bool.false_eq_true, ↓reduceIte,
     GraphPath.reverse_target, GraphPath.takeUntil_target, GraphPath.dropUntil_source]
 
+omit [Fintype V] [Fintype W] in
 theorem halfPath_subset (e : OrientedEdge H) (side : Bool) :
     (S.halfPath e side).vertexSet ⊆ (S.edgePath e).vertexSet := by
   cases side
@@ -76,6 +85,7 @@ theorem halfPath_subset (e : OrientedEdge H) (side : Bool) :
   · simpa only [halfPath, ↓reduceIte, GraphPath.reverse_vertexSet] using
       (S.edgePath e).dropUntil_vertexSet_subset (S.firstInternal_mem e)
 
+omit [Fintype V] [Fintype W] in
 theorem halfPaths_intersection (e : OrientedEdge H) {side side' : Bool} (hne : side ≠ side')
     {x : V} (hx : x ∈ (S.halfPath e side).vertexSet) (hx' : x ∈ (S.halfPath e side').vertexSet) :
     x = S.firstInternal e := by
@@ -85,8 +95,10 @@ theorem halfPaths_intersection (e : OrientedEdge H) {side side' : Bool} (hne : s
   · exact Erdos73.GraphPath.takeUntil_dropUntil_intersection (S.edgePath e) (S.firstInternal_mem e)
       hx' (by simpa only [halfPath, ↓reduceIte, GraphPath.reverse_vertexSet] using hx)
 
+omit [Fintype V] [Fintype W] in
 theorem branch_on_halfPath (hlong : ∀ e, 2 ≤ (S.edgePath e).walk.length)
-    (e : OrientedEdge H) (side : Bool) (w : W) (hw : S.branchVertex w ∈ (S.halfPath e side).vertexSet) :
+    (e : OrientedEdge H) (side : Bool) (w : W) (hw : S.branchVertex w ∈ (S.halfPath e
+      side).vertexSet) :
     w = halfEndpoint e side := by
   have he := S.branch_on_path e w (S.halfPath_subset e side hw)
   cases side
@@ -94,7 +106,7 @@ theorem branch_on_halfPath (hlong : ∀ e, 2 ≤ (S.edgePath e).walk.length)
     · exact he
     · have hother : S.branchVertex w ∈ (S.halfPath e true).vertexSet := by
         have hs := S.halfPath_source e true
-        simp only [halfEndpoint, if_pos rfl, ite_true] at hs
+        simp only [halfEndpoint, ite_true] at hs
         rw [he, ← hs]
         exact (S.halfPath e true).source_mem_vertexSet
       have hh := S.halfPaths_intersection e (by decide : false ≠ true) hw hother
@@ -109,6 +121,7 @@ theorem branch_on_halfPath (hlong : ∀ e, 2 ≤ (S.edgePath e).walk.length)
       exact (S.firstInternal_not_branch hlong e w hh.symm).elim
     · exact he
 
+omit [Fintype V] [Fintype W] in
 theorem firstInternal_on_halfPath (hlong : ∀ e, 2 ≤ (S.edgePath e).walk.length)
     (e f : OrientedEdge H) (side : Bool)
     (hf : S.firstInternal f ∈ (S.halfPath e side).vertexSet) : f = e := by
@@ -116,6 +129,7 @@ theorem firstInternal_on_halfPath (hlong : ∀ e, 2 ≤ (S.edgePath e).walk.leng
   obtain ⟨w, hw, _, _⟩ := S.intersection hne _ (S.firstInternal_mem f) (S.halfPath_subset e side hf)
   exact S.firstInternal_not_branch hlong f w hw
 
+omit [Fintype V] [Fintype W] in
 theorem halfPath_odd (heven : ∀ e, Even (S.edgePath e).walk.length)
     (e : OrientedEdge H) (side : Bool) : Odd (S.halfPath e side).walk.length := by
   have hp := S.edgePath_length_pos e

@@ -58,7 +58,8 @@ theorem bramble_grid_or_completeBipartite
     intro r
     exact ⟨hZsub _ ((P e).endpoint_clean r).source_mem,
       hZsub _ ((P e).endpoint_clean r).target_mem, (hPprop e r).2.1, (hPprop e r).2.2⟩
-  have hPsize (e : E) : simultaneousRoutingBound g h (Fintype.card E) ≤ (P e).toPathPacking.card := by
+  have hPsize (e : E) : simultaneousRoutingBound g h (Fintype.card E) ≤ (P e).toPathPacking.card :=
+    by
     rw [hE, EndpointCleanPathPacking.toPathPacking_card, hPcard, hZcard]
   obtain ⟨R, hR, hRd⟩ := exists_boundaryProper_disjoint_paths_staysIn
     (fun e => Z (left e)) (fun e => Z (right e)) (A ∩ B) B

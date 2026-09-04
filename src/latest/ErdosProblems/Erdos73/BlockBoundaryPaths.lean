@@ -4,20 +4,22 @@ import ErdosProblems.Erdos73.BrickBlockPacking
 
 namespace Erdos73
 noncomputable section
-open scoped Classical
 
 open SimpleGraph Finset Erdos73Infrastructure.SimpleGraph
 
 variable {V : Type*} {G : SimpleGraph V}
 
+open scoped Classical in
 def internalVertexBoundary (K : SimpleGraph V) (T : Finset V) : Finset V :=
   T.filter (fun x => ∃ y, y ∉ T ∧ K.Adj x y)
 
+open scoped Classical in
 theorem IsParityBreakingPath.source_mem_boundary {T : Finset V}
     (c : BipartiteColoringOn G T) {P : Erdos73Infrastructure.SimpleGraph.GraphPath G}
     (hP : IsParityBreakingPath c.color T P) (K L : SimpleGraph V)
     (hPKL : GraphPath.actualEdgeGraph P ≤ K ⊔ L)
     (hL : ∀ x y, L.Adj x y → x ∉ T) : P.source ∈ internalVertexBoundary K T := by
+  classical
   have hnil : ¬ P.walk.Nil := fun hn => hP.breaking.source_ne_target hn.eq
   have hpedge : (GraphPath.actualEdgeGraph P).Adj P.source P.walk.snd :=
     P.walk.toSubgraph_adj_snd hnil
@@ -28,19 +30,22 @@ theorem IsParityBreakingPath.source_mem_boundary {T : Finset V}
     · exact (hL _ _ hh hP.source_mem).elim
   exact mem_filter.mpr ⟨hP.source_mem, P.walk.snd, hsnd, hK⟩
 
+open scoped Classical in
 theorem IsParityBreakingPath.endpoints_mem_boundary {T : Finset V}
     (c : BipartiteColoringOn G T) {P : Erdos73Infrastructure.SimpleGraph.GraphPath G}
     (hP : IsParityBreakingPath c.color T P) (K L : SimpleGraph V)
     (hPKL : GraphPath.actualEdgeGraph P ≤ K ⊔ L)
     (hL : ∀ x y, L.Adj x y → x ∉ T) :
     P.source ∈ internalVertexBoundary K T ∧ P.target ∈ internalVertexBoundary K T := by
+  classical
   refine ⟨hP.source_mem_boundary c K L hPKL hL, ?_⟩
   apply hP.reverse.source_mem_boundary c K L
   · simpa only [GraphPath.actualEdgeGraph_reverse] using hPKL
   · exact hL
 
+open scoped Classical in
 theorem BrickStripSelectionState.block_path_endpoints_on_wall_boundary
-    [Fintype V] {c r m h : ℕ} {S : GraphSubdivisionModel (elementaryWall c r) G}
+    {c r m h : ℕ} {S : GraphSubdivisionModel (elementaryWall c r) G}
     {P : Fin m → Erdos73Infrastructure.SimpleGraph.GraphPath G}
     (col : BipartiteColoringOn G S.vertexSet) (st : BrickStripSelectionState S col.color P h)
     (a d : ℕ) (ha : a + d ≤ c - 1)
@@ -50,6 +55,7 @@ theorem BrickStripSelectionState.block_path_endpoints_on_wall_boundary
     (hBJ : GraphPath.actualEdgeGraph B ≤ st.wallSegmentGraph col) :
     B.source ∈ internalVertexBoundary S.actualEdgeGraph (brickColumnBlock S a d ha) ∧
       B.target ∈ internalVertexBoundary S.actualEdgeGraph (brickColumnBlock S a d ha) := by
+  classical
   apply hB.endpoints_mem_boundary (col.mono_support (brickColumnBlock_subset S a d ha))
     S.actualEdgeGraph (⨆ j, GraphPath.actualEdgeGraph (st.segment j).path) hBJ
   intro x y hxy hxT

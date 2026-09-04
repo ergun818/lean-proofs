@@ -6,7 +6,6 @@ import ErdosProblems.Erdos73.OddTerminalSegments
 
 namespace Erdos73
 noncomputable section
-open scoped Classical
 
 open SimpleGraph Finset Erdos73Infrastructure.SimpleGraph
 
@@ -17,6 +16,7 @@ theorem exists_oddPendantPath_of_parityBreakingPath (P : GraphPath G)
     ∃ D : GraphPath (parityPendantGraph G T c),
       IsOddTerminalPath (parityPendantTerminals T c) D ∧
       D.vertexSet.image pendantProjection ⊆ P.vertexSet := by
+  classical
   let B := P.mapCopy (parityPendantCopy G T c)
   have hnoLeaf (v : V) : Sum.inr v ∉ B.vertexSet := by
     intro hv
@@ -31,7 +31,8 @@ theorem exists_oddPendantPath_of_parityBreakingPath (P : GraphPath G)
     attach_pendant_source B P.source hP.source_mem rfl (hnoLeaf P.source)
   have hQfresh : Sum.inr P.target ∉ Q.reverse.vertexSet := by
     intro hv
-    have hvQ : Sum.inr P.target ∈ Q.vertexSet := by simpa only [GraphPath.reverse_vertexSet] using hv
+    have hvQ : Sum.inr P.target ∈ Q.vertexSet := by simpa only [GraphPath.reverse_vertexSet] using
+      hv
     rcases mem_union.mp (hQsub hvQ) with hvB | he
     · exact hnoLeaf P.target hvB
     · have heq : P.target = P.source := Sum.inr.inj (mem_singleton.mp he)
@@ -47,7 +48,8 @@ theorem exists_oddPendantPath_of_parityBreakingPath (P : GraphPath G)
       simp only [B, GraphPath.mapCopy, Walk.length_map]
     simpa only [R, GraphPath.reverse, Walk.length_reverse, hQlen, hBlen] using hLlen
   have hRimage : R.vertexSet.image pendantProjection ⊆ P.vertexSet := by
-    have hh : Q.reverse.vertexSet.image pendantProjection ⊆ B.vertexSet.image pendantProjection := by
+    have hh : Q.reverse.vertexSet.image pendantProjection ⊆ B.vertexSet.image pendantProjection :=
+      by
       simpa only [GraphPath.reverse_vertexSet] using hQimage
     simpa only [R, GraphPath.reverse_vertexSet] using hLimage.trans (hh.trans hBimage)
   have hsT : R.source ∈ parityPendantTerminals T c :=

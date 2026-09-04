@@ -4,24 +4,26 @@ import ErdosProblems.Erdos73.TileEdgeGapSeparation
 
 namespace Erdos73.BrickTileArray
 noncomputable section
-open scoped Classical
 open SimpleGraph Finset
 
 variable {c r C R : ℕ} (A : BrickTileArray c r C R)
 
 theorem center_mem_arm (w : ElementaryWallVertex c r) (a : Fin 3) :
     A.center w ∈ (A.arm w a).vertexSet := by
+  classical
   rw [← A.arm_source w a]
   exact (A.arm w a).source_mem_vertexSet
 
 theorem center_on_arm {w u : ElementaryWallVertex c r} {a : Fin 3}
     (hw : A.center w ∈ (A.arm u a).vertexSet) : w = u := by
+  classical
   by_contra hne
   exact Finset.disjoint_left.mp (A.arms_disjoint_of_ne hne 0 a) (A.center_mem_arm w 0) hw
 
 theorem center_not_mem_edgeGap {u v : ElementaryWallVertex c r}
     (huv : (elementaryWall c r).Adj u v) (w : ElementaryWallVertex c r) :
     A.center w ∉ A.edgeGap u v := by
+  classical
   intro hw
   have he := (A.edgeGap_arm_endpoint huv w 0 hw (A.center_mem_arm w 0)).2
   exact A.arm_target_ne_center w 0 he.symm
@@ -30,6 +32,7 @@ theorem gap_disjoint_other_arm {e : OrientedEdge (elementaryWall c r)}
     {u v : ElementaryWallVertex c r} (huv : (elementaryWall c r).Adj u v)
     (hne : s(u, v) ≠ s(e.lo, e.hi)) :
     Disjoint (A.edgeGap e.lo e.hi) (A.arm u (brickWallPort u.val v.val)).vertexSet := by
+  classical
   apply Finset.disjoint_left.mpr
   intro x hx hxa
   obtain ⟨hh, _⟩ := A.edgeGap_arm_endpoint e.adj u (brickWallPort u.val v.val) hx hxa
@@ -37,7 +40,8 @@ theorem gap_disjoint_other_arm {e : OrientedEdge (elementaryWall c r)}
   rcases hh with ⟨rfl, hp⟩ | ⟨rfl, hp⟩
   · have hv : v = e.hi := Subtype.ext (brickWallPort_injective_on_neighbors e.lo.val huv e.adj hp)
     rw [hv]
-  · have hv : v = e.lo := Subtype.ext (brickWallPort_injective_on_neighbors e.hi.val huv e.adj.symm hp)
+  · have hv : v = e.lo := Subtype.ext (brickWallPort_injective_on_neighbors e.hi.val huv e.adj.symm
+    hp)
     rw [hv, Sym2.eq_swap]
 
 theorem arms_of_distinct_edges_intersection {u v s t : ElementaryWallVertex c r}
@@ -46,6 +50,7 @@ theorem arms_of_distinct_edges_intersection {u v s t : ElementaryWallVertex c r}
     (hx : x ∈ (A.arm u (brickWallPort u.val v.val)).vertexSet)
     (hx' : x ∈ (A.arm s (brickWallPort s.val t.val)).vertexSet) :
     u = s ∧ x = A.center u := by
+  classical
   have hus : u = s := by
     by_contra hn
     exact Finset.disjoint_left.mp (A.arms_disjoint_of_ne hn _ _) hx hx'
@@ -65,6 +70,7 @@ theorem mem_edgeRegion_cases {e : OrientedEdge (elementaryWall c r)}
     x ∈ A.edgeGap e.lo e.hi ∨
       ∃ u v, (elementaryWall c r).Adj u v ∧ s(u, v) = s(e.lo, e.hi) ∧
         x ∈ (A.arm u (brickWallPort u.val v.val)).vertexSet := by
+  classical
   simp only [edgeRegion, mem_union] at hx
   rcases hx with (hx | hx) | hx
   · exact Or.inr ⟨e.lo, e.hi, e.adj, rfl, hx⟩
@@ -74,6 +80,7 @@ theorem mem_edgeRegion_cases {e : OrientedEdge (elementaryWall c r)}
 theorem edgeRegion_branch {e : OrientedEdge (elementaryWall c r)}
     {w : ElementaryWallVertex c r} (hw : A.center w ∈ A.edgeRegion e) :
     w = e.lo ∨ w = e.hi := by
+  classical
   rcases A.mem_edgeRegion_cases hw with hw | ⟨u, v, _, he, hw⟩
   · exact (A.center_not_mem_edgeGap e.adj w hw).elim
   · have hwu := A.center_on_arm hw
@@ -84,6 +91,7 @@ theorem edgeRegion_branch {e : OrientedEdge (elementaryWall c r)}
 theorem edgeRegion_intersection {e f : OrientedEdge (elementaryWall c r)} (hef : e ≠ f)
     {x : ElementaryWallVertex C R} (hx : x ∈ A.edgeRegion e) (hx' : x ∈ A.edgeRegion f) :
     ∃ w, x = A.center w ∧ (w = e.lo ∨ w = e.hi) ∧ (w = f.lo ∨ w = f.hi) := by
+  classical
   have hsym : s(e.lo, e.hi) ≠ s(f.lo, f.hi) := fun he => hef (OrientedEdge.eq_of_sym2_eq he)
   rcases A.mem_edgeRegion_cases hx with hx | ⟨u, v, huv, he, hx⟩
   · rcases A.mem_edgeRegion_cases hx' with hx' | ⟨s, t, hst, hf, hx'⟩

@@ -26,13 +26,13 @@ theorem projectiveReference_cap_one {n : ℕ} (hn : 2 ≤ n) (hnEven : n % 2 = 0
   by_cases hj : j.val = 0
   · have he : projectiveAcrossFace hn hnEven (Sum.inr j, 1) =
         (Sum.inl (⟨0, by omega⟩, ⟨0, by omega⟩), 3) := by
-      simp [projectiveAcrossFace, hj, Fin.ext_iff]
+      simp [projectiveAcrossFace, hj]
     apply projectiveReference_of_across
     rw [he]
     exact projectiveReference_cell hn hnEven _ _ _
   · have he : projectiveAcrossFace hn hnEven (Sum.inr j, 1) =
         (Sum.inr ⟨j.val - 1, by have hh := j.isLt; omega⟩, 3) := by
-      simp [projectiveAcrossFace, hj, Fin.ext_iff]
+      simp [projectiveAcrossFace, hj]
     apply projectiveReference_of_across
     rw [he]
     exact projectiveReference_cap_high hn hnEven _ 3 (by decide)
@@ -46,13 +46,13 @@ theorem projectiveReference_cap_zero {n : ℕ} (hn : 2 ≤ n) (hnEven : n % 2 = 
     · subst k
       have he : projectiveAcrossFace hn hnEven (Sum.inr ⟨0, hk⟩, 0) =
           (Sum.inl (⟨0, by omega⟩, ⟨0, by omega⟩), 0) := by
-        simp [projectiveAcrossFace, Fin.ext_iff]
+        simp [projectiveAcrossFace]
       apply projectiveReference_of_across
       rw [he]
       exact projectiveReference_cell hn hnEven _ _ _
     · have he : projectiveAcrossFace hn hnEven (Sum.inr ⟨k, hk⟩, 0) =
           (Sum.inr ⟨k - 1, by omega⟩, 0) := by
-        simp [projectiveAcrossFace, hz, Fin.ext_iff]
+        simp [projectiveAcrossFace, hz]
       apply projectiveReference_of_across
       rw [he]
       exact ih (k - 1) (by omega) (by omega)

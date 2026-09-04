@@ -9,13 +9,15 @@ open Erdos73Infrastructure.SimpleGraph
 
 variable {V : Type*} [Fintype V] [DecidableEq V] {G : SimpleGraph V}
 
-theorem exists_disjoint_augmentingPaths {M N : Finset (Sym2 V)}
+omit [Fintype V] in
+theorem exists_disjoint_augmentingPaths [Finite V] {M N : Finset (Sym2 V)}
     (hM : EdgeMatching G M) (hN : EdgeMatching G N) {k : ℕ}
     (hk : M.card + k ≤ N.card) :
     ∃ P : Fin k → GraphPath G,
       (∀ i, IsMatchingAugmentingPath M (P i)) ∧
         Pairwise (fun i j => Disjoint (P i).vertexSet (P j).vertexSet) := by
   classical
+  let : Fintype V := Fintype.ofFinite V
   let H := matchingUnion hM hN
   let good : Finset H.ConnectedComponent := Finset.univ.filter
     (fun C => (componentMatching M C).card < (componentMatching N C).card)

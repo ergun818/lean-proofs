@@ -6,12 +6,12 @@ import ErdosProblems.Erdos73.OddPathRegion
 
 namespace Erdos73
 noncomputable section
-open scoped Classical
 
 open SimpleGraph Finset Erdos73Infrastructure.SimpleGraph
 
 variable {V : Type*} [Fintype V] [DecidableEq V] {G : SimpleGraph V}
 
+omit [Fintype V] in
 theorem exists_two_tails_in_support (D T : Finset V) (a b : V)
     (ha : a ∈ D) (hb : b ∈ D) (hab : a ≠ b) (hTD : T ⊆ D) (hT : 2 ≤ T.card)
     (hconn : ∀ X : Finset (D : Set V), X.card < 2 →
@@ -19,6 +19,7 @@ theorem exists_two_tails_in_support (D T : Finset V) (a b : V)
     ∃ P Q : GraphPath G, P.source = a ∧ Q.source = b ∧
       P.target ∈ T ∧ Q.target ∈ T ∧ P.vertexSet ⊆ D ∧ Q.vertexSet ⊆ D ∧
       Disjoint P.vertexSet Q.vertexSet := by
+  classical
   let a' : (D : Set V) := ⟨a, ha⟩
   let b' : (D : Set V) := ⟨b, hb⟩
   have hne : a' ≠ b' := fun hh => hab (congrArg Subtype.val hh)
@@ -42,6 +43,7 @@ theorem exists_two_tails_in_support (D T : Finset V) (a b : V)
     have he : x = y := f.injective (hxv.trans hyv.symm)
     exact Finset.disjoint_left.mp hPQ hx (he ▸ hy)
 
+omit [Fintype V] in
 theorem exists_parityBreaking_network_extension {R D T : Finset V}
     (c : BipartiteColoringOn G R) (U : GraphPath G)
     (hU : IsParityBreakingPath c.color R U) (hDR : D ⊆ R)
@@ -50,8 +52,10 @@ theorem exists_parityBreaking_network_extension {R D T : Finset V}
       ((G.induce (D : Set V)).induce (X : Set (D : Set V))ᶜ).Preconnected) :
     ∃ B : GraphPath G, IsParityBreakingPath c.color T B ∧
       B.vertexSet ⊆ D ∪ U.vertexSet := by
+  classical
   obtain ⟨P, Q, hPs, hQs, hPt, hQt, hPD, hQD, hPQ⟩ :=
-    exists_two_tails_in_support D T U.source U.target hs ht hU.breaking.source_ne_target hTD hT hconn
+    exists_two_tails_in_support D T U.source U.target hs ht hU.breaking.source_ne_target hTD hT
+      hconn
   obtain ⟨B, hB, hsub⟩ := exists_parityBreaking_extension_supported c U P Q hU hPQ
     (hPD.trans hDR) (hQD.trans hDR) hPs hQs hPt hQt
   refine ⟨B, hB, hsub.trans ?_⟩

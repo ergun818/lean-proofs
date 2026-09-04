@@ -4,15 +4,16 @@ import ErdosProblems.Erdos73.ParityColoring
 
 namespace Erdos73
 noncomputable section
-open scoped Classical
 
 open SimpleGraph Finset Erdos73Infrastructure.SimpleGraph
 
-theorem not_bipartite_union_of_parityBreaking {V : Type*} [Fintype V]
+open scoped Classical in
+theorem not_bipartite_union_of_parityBreaking {V : Type*}
     {G : SimpleGraph V} {T : Finset V} (c : BipartiteColoringOn G T)
     (P Q : GraphPath G) (hP : ParityBreaking c.color P)
     (hs : P.source = Q.source) (ht : P.target = Q.target) (hQ : Q.vertexSet ⊆ T) :
     ¬ (G.induce ((P.vertexSet ∪ Q.vertexSet : Finset V) : Set V)).IsBipartite := by
+  classical
   intro hb
   let d := bipartiteColoringOnOfBipartite hb
   have hPe := d.even_walk P.walk (fun v hv => mem_union_left _ (List.mem_toFinset.mpr hv))

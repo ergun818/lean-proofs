@@ -5,7 +5,6 @@ import ErdosProblems.Erdos73.BrickSliceBoundaryCoordinates
 
 namespace Erdos73
 noncomputable section
-open scoped Classical
 
 open SimpleGraph Finset
 
@@ -13,7 +12,9 @@ variable {V : Type*} [Fintype V] {G : SimpleGraph V} {c r m h : ℕ}
 variable {S : GraphSubdivisionModel (elementaryWall c r) G}
 variable {P : Fin m → Erdos73Infrastructure.SimpleGraph.GraphPath G}
 
-theorem BrickStripSelectionState.exists_breaking_slice_handles
+omit [Fintype V] in
+open scoped Classical in
+theorem BrickStripSelectionState.exists_breaking_slice_handles [Finite V]
     (col : BipartiteColoringOn G S.vertexSet) (st : BrickStripSelectionState S col.color P h)
     (k d : ℕ) (hr : 2 ≤ r) (hd : 0 < d)
     (hwidth : (6 * h + 1) * d ≤ c - 1) (hnumber : 5 * (2 * k - 2) < h) :

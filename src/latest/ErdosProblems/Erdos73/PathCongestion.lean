@@ -4,15 +4,15 @@ import ErdosProblems.Erdos73.ParityPacking
 
 namespace Erdos73
 noncomputable section
-open scoped Classical
 
 open SimpleGraph Finset Erdos73Infrastructure.SimpleGraph
 open scoped BigOperators
 
-theorem card_le_mul_of_hits_with_congestion {I V : Type*} [DecidableEq I] [DecidableEq V]
+theorem card_le_mul_of_hits_with_congestion {I V : Type*} [DecidableEq V]
     (s : Finset I) (R : I → Finset V) (X : Finset V) (r : ℕ)
     (hhit : ∀ i ∈ s, ∃ v ∈ R i, v ∈ X)
     (hcong : ∀ v ∈ X, (s.filter (fun i => v ∈ R i)).card ≤ r) : s.card ≤ X.card * r := by
+  classical
   have hsub : s ⊆ X.biUnion (fun v => s.filter (fun i => v ∈ R i)) := by
     intro i hi
     obtain ⟨v, hvR, hvX⟩ := hhit i hi
@@ -24,12 +24,13 @@ theorem card_le_mul_of_hits_with_congestion {I V : Type*} [DecidableEq I] [Decid
     _ = X.card * r := by simp
 
 theorem parityBreaking_packing_of_bounded_congestion
-    {V I : Type*} [Fintype V] [DecidableEq V] [Fintype I] [DecidableEq I]
+    {V I : Type*} [Finite V] [DecidableEq V] [Fintype I]
     (G : SimpleGraph V) (c : V → Bool) (T : Finset V) (P : I → GraphPath G)
     (hP : ∀ i, IsParityBreakingPath c T (P i)) (k r : ℕ)
     (hsize : r * (2 * k - 2) < Fintype.card I)
     (hcong : ∀ v, (Finset.univ.filter (fun i => v ∈ (P i).vertexSet)).card ≤ r) :
     HasParityBreakingPathPacking G c T k := by
+  classical
   rcases parityBreaking_paths_packing_or_covering G c T k with hp | ⟨X, hXcard, hX⟩
   · exact hp
   · have hhits : ∀ i ∈ (Finset.univ : Finset I), ∃ v ∈ (P i).vertexSet, v ∈ X := by

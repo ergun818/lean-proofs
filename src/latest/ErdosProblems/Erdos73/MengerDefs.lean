@@ -242,9 +242,9 @@ theorem mem_targetSet_replacePath_iff {T' : Finset V}
   · intro hv
     rcases hv with rfl | ⟨i, hi, rfl⟩
     · exact Finset.mem_image.2
-        ⟨i₀, by simp, by simp [replacePath]⟩
+        ⟨i₀, by simp, by simp⟩
     · exact Finset.mem_image.2
-        ⟨i, by simp, by simp [replacePath, hi]⟩
+        ⟨i, by simp, by simp [hi]⟩
 
 theorem target_mem_right_of_mem_replacePath_targetSet_ne {T' : Finset V}
     (P : EndpointCleanPathPacking G S T) (i₀ : P.Index)

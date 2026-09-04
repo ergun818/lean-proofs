@@ -42,7 +42,8 @@ theorem quadrangleOpposite_pair (b : Bool) (i : Fin 4) :
 
 theorem quadrangleSelected_opposite (b : Bool) (i : Fin 4) :
     quadrangleSelected b (quadrangleOpposite i) = quadrangleSelected b i := by
-  cases b <;> fin_cases i <;> simp [quadrangleSelected, quadrangleOpposite, swap_apply_def, Fin.ext_iff]
+  cases b <;> fin_cases i <;> simp [quadrangleSelected, quadrangleOpposite, swap_apply_def,
+    Fin.ext_iff]
 
 theorem quadrangleSelected_pair (b f : Bool) (i : Fin 4) :
     quadrangleSelected f (quadranglePair b i) = !(quadrangleSelected f i) := by
@@ -63,7 +64,8 @@ theorem fiberPermutation_involutive {F I : Type*} (p : F → Perm I)
 theorem quadrangleSelected_iff (b : Bool) (i : Fin 4) :
     quadrangleSelected b i = true ↔
       i = (if b then 1 else 0) ∨ i = quadrangleOpposite (if b then 1 else 0) := by
-  cases b <;> fin_cases i <;> simp [quadrangleSelected, quadrangleOpposite, swap_apply_def, Fin.ext_iff]
+  cases b <;> fin_cases i <;> simp [quadrangleSelected, quadrangleOpposite, swap_apply_def,
+    Fin.ext_iff]
 
 theorem quadranglePair_side_zero_one (b : Bool) :
     quadranglePair b 0 = 1 ∨ quadranglePair (!b) 0 = 1 := by

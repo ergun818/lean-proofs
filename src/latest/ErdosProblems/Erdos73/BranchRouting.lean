@@ -66,7 +66,8 @@ theorem halfOpen_subset_augmented (e : E) :
 theorem augmented_connected (i : I) : (G.induce (R.augmentedBase i : Set V)).Connected := by
   classical
   have haux (S : Finset E) (hS : ∀ e ∈ S, R.source e = i) :
-      (G.induce (↑(R.base i ∪ S.biUnion fun e => (R.path e).dropLast.vertexSet) : Set V)).Connected := by
+      (G.induce (↑(R.base i ∪ S.biUnion fun e => (R.path e).dropLast.vertexSet) :
+        Set V)).Connected := by
     induction S using Finset.induction_on with
     | empty =>
       rw [Finset.biUnion_empty, Finset.union_empty]
@@ -87,7 +88,8 @@ theorem augmented_connected (i : I) : (G.induce (R.augmentedBase i : Set V)).Con
         ⟨_, Finset.mem_union_left _ hsrc, (R.path e).dropLast.source_mem_vertexSet⟩
   exact haux (R.edgesFrom i) (fun e he => (R.mem_edgesFrom e i).mp he)
 
-theorem augmented_disjoint : Pairwise fun i j => Disjoint (R.augmentedBase i) (R.augmentedBase j) := by
+theorem augmented_disjoint : Pairwise fun i j => Disjoint (R.augmentedBase i) (R.augmentedBase j) :=
+    by
   intro i j hij
   rw [Finset.disjoint_left]
   intro v hvi hvj

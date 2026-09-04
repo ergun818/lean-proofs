@@ -45,10 +45,10 @@ theorem projectiveDiagonalEnds_ne {n : ℕ} (hn : 2 ≤ n) (f : ProjectiveFace n
   · have hrr := r.isLt
     have hcc := c.isLt
     dsimp only [projectiveDiagonalEnds] at hr hc
-    split_ifs at hr hc <;> simp only [Prod.fst, Prod.snd, Fin.val_mk] at hr hc <;> omega
+    split_ifs at hr hc <;> simp only at hr hc <;> omega
   · have hj := j.isLt
     dsimp only [projectiveDiagonalEnds, projectiveRoot, projectiveBoundary] at hr hc
-    split_ifs at hr hc <;> simp only [Prod.fst, Prod.snd, Fin.val_mk] at hr hc <;> omega
+    split_ifs at hr hc ; simp only at hr hc ; omega
 
 theorem projectiveDiagonal_adj {n : ℕ} (hn : 2 ≤ n) (f : ProjectiveFace n) :
     (projectiveDiagonalGraph hn).Adj

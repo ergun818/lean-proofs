@@ -4,15 +4,16 @@ import ErdosProblems.Erdos73.ParityPaths
 
 namespace Erdos73
 noncomputable section
-open scoped Classical
 
 open SimpleGraph Finset Erdos73Infrastructure.SimpleGraph
 
 variable {V : Type*} [DecidableEq V] {G : SimpleGraph V}
 
+omit [DecidableEq V] in
 theorem BipartiteColoringOn.even_walk {T : Finset V} (c : BipartiteColoringOn G T)
     {x y : V} (w : G.Walk x y) (hw : ∀ v ∈ w.support, v ∈ T) :
     Even (w.length + (c.color x).toNat + (c.color y).toNat) := by
+  classical
   induction w with
   | @nil z => exact ⟨(c.color z).toNat, by simp⟩
   | @cons x z y hxz w ih =>
@@ -29,16 +30,20 @@ theorem BipartiteColoringOn.even_walk {T : Finset V} (c : BipartiteColoringOn G 
 theorem BipartiteColoringOn.not_parityBreaking_of_subset {T : Finset V}
     (c : BipartiteColoringOn G T) (P : GraphPath G) (hP : P.vertexSet ⊆ T) :
     ¬ ParityBreaking c.color P := by
+  classical
   have he := c.even_walk P.walk (fun v hv => hP (List.mem_toFinset.mpr hv))
   exact Nat.not_odd_iff_even.mpr he
 
 theorem IsParityBreakingPath.not_subset {T : Finset V} (c : BipartiteColoringOn G T)
     {P : GraphPath G} (hP : IsParityBreakingPath c.color T P) : ¬ P.vertexSet ⊆ T := by
+  classical
   intro hsub
   exact c.not_parityBreaking_of_subset P hsub hP.breaking
 
+omit [DecidableEq V] in
 theorem ParityBreaking.source_ne_target {c : V → Bool} {P : GraphPath G}
     (hP : ParityBreaking c P) : P.source ≠ P.target := by
+  classical
   intro he
   have hnil := P.isPath.nil_iff_eq.mpr he
   have hlen : P.walk.length = 0 := hnil.length_eq_zero

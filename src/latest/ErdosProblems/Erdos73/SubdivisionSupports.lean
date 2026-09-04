@@ -70,11 +70,14 @@ theorem restrictCopy_vertexSet_subset (S : GraphSubdivisionModel H G) (f : F.Cop
       · exact Finset.mem_image.mpr ⟨e.hi, Finset.mem_univ _, h.2.symm⟩
       · exact Finset.mem_image.mpr ⟨e.lo, Finset.mem_univ _, h.2.symm⟩
 
-theorem restrictCopy_vertexSet_disjoint {U' : Type*} [Fintype U'] [LinearOrder U']
+omit [Fintype W] in
+theorem restrictCopy_vertexSet_disjoint [Finite W]
+    {U' : Type*} [Fintype U'] [LinearOrder U']
     {F' : SimpleGraph U'} (S : GraphSubdivisionModel H G) (f : F.Copy H) (g : F'.Copy H)
     (h : Disjoint (Finset.univ.image f) (Finset.univ.image g)) :
-    Disjoint (S.restrictCopy f).vertexSet (S.restrictCopy g).vertexSet :=
-  (S.supportOver_disjoint h).mono (S.restrictCopy_vertexSet_subset f)
+    Disjoint (S.restrictCopy f).vertexSet (S.restrictCopy g).vertexSet := by
+  let : Fintype W := Fintype.ofFinite W
+  exact (S.supportOver_disjoint h).mono (S.restrictCopy_vertexSet_subset f)
     (S.restrictCopy_vertexSet_subset g)
 
 end

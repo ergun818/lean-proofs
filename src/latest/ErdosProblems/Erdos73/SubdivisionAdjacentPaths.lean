@@ -15,6 +15,7 @@ def pathAlongAdj (S : GraphSubdivisionModel H G) {u v : W} (h : H.Adj u v) : Gra
   let e := OrientedEdge.ofAdj h
   if e.lo = u then S.edgePath e else (S.edgePath e).reverse
 
+omit [Fintype W] in
 theorem pathAlongAdj_source (S : GraphSubdivisionModel H G) {u v : W} (h : H.Adj u v) :
     (S.pathAlongAdj h).source = S.branchVertex u := by
   rcases OrientedEdge.ofAdj_endpoints h with he | he
@@ -22,6 +23,7 @@ theorem pathAlongAdj_source (S : GraphSubdivisionModel H G) {u v : W} (h : H.Adj
   · have hvu : v ≠ u := h.ne.symm
     simp only [pathAlongAdj, he.1, if_neg hvu, GraphPath.reverse_source, S.target_eq, he.2]
 
+omit [Fintype W] in
 theorem pathAlongAdj_target (S : GraphSubdivisionModel H G) {u v : W} (h : H.Adj u v) :
     (S.pathAlongAdj h).target = S.branchVertex v := by
   rcases OrientedEdge.ofAdj_endpoints h with he | he
@@ -29,6 +31,7 @@ theorem pathAlongAdj_target (S : GraphSubdivisionModel H G) {u v : W} (h : H.Adj
   · have hvu : v ≠ u := h.ne.symm
     simp only [pathAlongAdj, he.1, if_neg hvu, GraphPath.reverse_target, S.source_eq]
 
+omit [Fintype W] in
 theorem pathAlongAdj_vertexSet (S : GraphSubdivisionModel H G) {u v : W} (h : H.Adj u v) :
     (S.pathAlongAdj h).vertexSet = (S.edgePath (OrientedEdge.ofAdj h)).vertexSet := by
   dsimp only [pathAlongAdj]

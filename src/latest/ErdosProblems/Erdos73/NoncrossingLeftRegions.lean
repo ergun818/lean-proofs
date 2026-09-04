@@ -1,7 +1,8 @@
 import ErdosProblems.Erdos73.LeftCombRegions
 import ErdosProblems.Erdos73.NoncrossingPortBlocks
 
-/-! Realize every noncrossing partition of ordered left-boundary nails by disjoint connected regions. -/
+/-! Realize every noncrossing partition of ordered left-boundary nails by disjoint connected
+regions. -/
 
 namespace Erdos73
 noncomputable section
@@ -10,7 +11,8 @@ open SimpleGraph Finset
 
 variable {N c r : ℕ} {U : Type*}
 
-def portWordRows (label : Fin N → U) (nails : Fin N → ElementaryWallVertex c r) (u : U) : Finset ℕ :=
+def portWordRows (label : Fin N → U) (nails : Fin N → ElementaryWallVertex c r) (u : U) : Finset ℕ
+    :=
   (portWordFiber label u).image (fun i => (nails i).val.1.val)
 
 def portWordLeftComb (label : Fin N → U) (hsurj : Function.Surjective label)
@@ -102,7 +104,8 @@ theorem exists_disjoint_noncrossing_left_regions (label : Fin N → U)
       Pairwise (fun u v => Disjoint (R u) (R v)) ∧
       (∀ i, nails i ∈ R (label i)) ∧
       ∀ u, ((elementaryWall c r).induce (R u : Set (ElementaryWallVertex c r))).Connected := by
-  choose R hports hsub hconn using exists_connected_portWordLeft_region label hsurj nails hmono hleft hc
+  choose R hports hsub hconn using exists_connected_portWordLeft_region label hsurj nails hmono
+    hleft hc
   refine ⟨R, ?_, fun i => hports (label i) i rfl, hconn⟩
   intro u v huv
   exact (portWordLeftComb_disjoint hsurj hNC nails hmono huv).mono (hsub u) (hsub v)

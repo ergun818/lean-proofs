@@ -19,13 +19,15 @@ theorem projectiveBetaPair_injective {n : ℕ} (hn : 2 ≤ n) (hnEven : n % 2 = 
 theorem projectiveSameCycle_of_shared_pair {n : ℕ} (hn : 2 ≤ n) (hnEven : n % 2 = 0)
     (d e : ProjectivePort n)
     (hpair : orientedPortPair (projectivePortLabel hn) (projectivePortPair n) d =
-      orientedPortPair (projectivePortLabel hn) (projectivePortOpposite n * projectivePortPair n) e) :
+      orientedPortPair (projectivePortLabel hn)
+        (projectivePortOpposite n * projectivePortPair n) e) :
     (projectiveAcrossPermutation hn hnEven).SameCycle d e := by
   have he : projectiveAcrossFace hn hnEven d = e := by
     apply projectiveBetaPair_injective hn hnEven
     exact (projectiveAcrossFace_pair hn hnEven d).trans hpair
   have hh := (Perm.SameCycle.refl (projectiveAcrossPermutation hn hnEven) d).apply_right
-  change (projectiveAcrossPermutation hn hnEven).SameCycle d (projectiveAcrossFace hn hnEven d) at hh
+  change (projectiveAcrossPermutation hn hnEven).SameCycle d
+    (projectiveAcrossFace hn hnEven d) at hh
   exact he ▸ hh
 
 theorem projectiveSameCycle_label {n : ℕ} (hn : 2 ≤ n) (hnEven : n % 2 = 0)
@@ -48,10 +50,10 @@ theorem projectiveSameCycle_right_top {n : ℕ} (hn : 2 ≤ n) (hnEven : n % 2 =
     simp only [hp, hq, decide_true, decide_false, Bool.not_false]
     by_cases hrow : r.val + 1 < n
     all_goals simp only [projectiveFaceCorner, hrow, dite_true, dite_false, quadranglePair,
-      Bool.true_eq, if_true, Equiv.Perm.mul_apply, Equiv.swap_apply_def, Fin.ext_iff,
+      if_true, Equiv.Perm.mul_apply, Equiv.swap_apply_def, Fin.ext_iff,
       Fin.coe_ofNat_eq_mod, Nat.reduceMod, Nat.reduceEqDiff, if_false,
       Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val_two, Matrix.cons_val_three,
-      Matrix.head_cons, Matrix.tail_cons, Prod.mk.injEq, Fin.val_mk, true_and, and_true]
+      Matrix.head_cons, Matrix.tail_cons, Prod.mk.injEq, true_and]
     all_goals omega
   · apply Perm.SameCycle.symm
     apply projectiveSameCycle_of_shared_pair hn hnEven
@@ -62,10 +64,10 @@ theorem projectiveSameCycle_right_top {n : ℕ} (hn : 2 ≤ n) (hnEven : n % 2 =
     simp only [hp, hq, decide_true, decide_false, Bool.not_false]
     by_cases hrow : r.val + 1 < n
     all_goals simp only [projectiveFaceCorner, hrow, dite_true, dite_false, quadranglePair,
-      Bool.true_eq, if_true, Equiv.Perm.mul_apply, Equiv.swap_apply_def, Fin.ext_iff,
+      if_true, Equiv.Perm.mul_apply, Equiv.swap_apply_def, Fin.ext_iff,
       Fin.coe_ofNat_eq_mod, Nat.reduceMod, Nat.reduceEqDiff, if_false,
       Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val_two, Matrix.cons_val_three,
-      Matrix.head_cons, Matrix.tail_cons, Prod.mk.injEq, Fin.val_mk, true_and, and_true]
+      Matrix.head_cons, Matrix.tail_cons, Prod.mk.injEq, true_and]
     all_goals omega
 
 theorem projectiveSameCycle_below_right {n : ℕ} (hn : 2 ≤ n) (hnEven : n % 2 = 0)
@@ -82,10 +84,11 @@ theorem projectiveSameCycle_below_right {n : ℕ} (hn : 2 ≤ n) (hnEven : n % 2
     simp only [hp, hq, decide_true, decide_false, Bool.not_true]
     by_cases hrow : r.val + 1 + 1 < n
     all_goals simp only [projectiveFaceCorner, hr, hrow, dite_true, dite_false, quadranglePair,
-      Bool.false_eq_true, if_true, if_false, Equiv.Perm.mul_apply, Equiv.swap_apply_def, Fin.ext_iff,
+      Bool.false_eq_true, if_true, if_false, Equiv.Perm.mul_apply, Equiv.swap_apply_def,
+        Fin.ext_iff,
       Fin.coe_ofNat_eq_mod, Nat.reduceMod, Nat.reduceEqDiff,
       Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val_two, Matrix.cons_val_three,
-      Matrix.head_cons, Matrix.tail_cons, Prod.mk.injEq, Fin.val_mk, true_and, and_true]
+      Matrix.head_cons, Matrix.tail_cons]
   · apply projectiveSameCycle_of_shared_pair hn hnEven
     dsimp only [orientedPortPair]
     rw [projectivePortPair_apply, projectivePortOtherPair_apply]
@@ -94,10 +97,11 @@ theorem projectiveSameCycle_below_right {n : ℕ} (hn : 2 ≤ n) (hnEven : n % 2
     simp only [hp, hq, decide_true, decide_false, Bool.not_true]
     by_cases hrow : r.val + 1 + 1 < n
     all_goals simp only [projectiveFaceCorner, hr, hrow, dite_true, dite_false, quadranglePair,
-      Bool.false_eq_true, if_true, if_false, Equiv.Perm.mul_apply, Equiv.swap_apply_def, Fin.ext_iff,
+      Bool.false_eq_true, if_true, if_false, Equiv.Perm.mul_apply, Equiv.swap_apply_def,
+        Fin.ext_iff,
       Fin.coe_ofNat_eq_mod, Nat.reduceMod, Nat.reduceEqDiff,
       Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val_two, Matrix.cons_val_three,
-      Matrix.head_cons, Matrix.tail_cons, Prod.mk.injEq, Fin.val_mk, true_and, and_true]
+      Matrix.head_cons, Matrix.tail_cons]
 
 theorem projectiveSameCycle_wrap_right {n : ℕ} (hn : 2 ≤ n) (hnEven : n % 2 = 0)
     (r : Fin n) (c : Fin (n - 1)) (hr : ¬r.val + 1 < n) :
@@ -115,10 +119,11 @@ theorem projectiveSameCycle_wrap_right {n : ℕ} (hn : 2 ≤ n) (hnEven : n % 2 
     dsimp only [projectivePortLabel, projectiveFaceParity]
     simp only [Nat.zero_add, hp, hq, decide_true, decide_false, Bool.not_true]
     simp only [projectiveFaceCorner, hr, hsmall, dite_true, dite_false, quadranglePair,
-      Bool.false_eq_true, if_true, if_false, Equiv.Perm.mul_apply, Equiv.swap_apply_def, Fin.ext_iff,
+      Bool.false_eq_true, if_true, if_false, Equiv.Perm.mul_apply, Equiv.swap_apply_def,
+        Fin.ext_iff,
       Fin.coe_ofNat_eq_mod, Nat.reduceMod, Nat.reduceEqDiff, Nat.zero_add,
       Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val_two, Matrix.cons_val_three,
-      Matrix.head_cons, Matrix.tail_cons, Prod.mk.injEq, Fin.val_mk, true_and, and_true]
+      Matrix.head_cons, Matrix.tail_cons, Prod.mk.injEq, true_and]
     omega
   · apply projectiveSameCycle_of_shared_pair hn hnEven
     dsimp only [orientedPortPair]
@@ -127,10 +132,11 @@ theorem projectiveSameCycle_wrap_right {n : ℕ} (hn : 2 ≤ n) (hnEven : n % 2 
     dsimp only [projectivePortLabel, projectiveFaceParity]
     simp only [Nat.zero_add, hp, hq, decide_true, decide_false, Bool.not_true]
     simp only [projectiveFaceCorner, hr, hsmall, dite_true, dite_false, quadranglePair,
-      Bool.false_eq_true, if_true, if_false, Equiv.Perm.mul_apply, Equiv.swap_apply_def, Fin.ext_iff,
+      Bool.false_eq_true, if_true, if_false, Equiv.Perm.mul_apply, Equiv.swap_apply_def,
+        Fin.ext_iff,
       Fin.coe_ofNat_eq_mod, Nat.reduceMod, Nat.reduceEqDiff, Nat.zero_add,
       Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val_two, Matrix.cons_val_three,
-      Matrix.head_cons, Matrix.tail_cons, Prod.mk.injEq, Fin.val_mk, true_and, and_true]
+      Matrix.head_cons, Matrix.tail_cons, Prod.mk.injEq, true_and]
     omega
 
 theorem projectiveSameCycle_below_left {n : ℕ} (hn : 2 ≤ n) (hnEven : n % 2 = 0)
@@ -147,10 +153,11 @@ theorem projectiveSameCycle_below_left {n : ℕ} (hn : 2 ≤ n) (hnEven : n % 2 
     simp only [hp, hq, decide_true, decide_false, Bool.not_true]
     by_cases hrow : r.val + 1 + 1 < n
     all_goals simp only [projectiveFaceCorner, hr, hrow, dite_true, dite_false, quadranglePair,
-      Bool.false_eq_true, if_true, if_false, Equiv.Perm.mul_apply, Equiv.swap_apply_def, Fin.ext_iff,
+      Bool.false_eq_true, if_true, if_false, Equiv.Perm.mul_apply, Equiv.swap_apply_def,
+        Fin.ext_iff,
       Fin.coe_ofNat_eq_mod, Nat.reduceMod, Nat.reduceEqDiff,
       Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val_two, Matrix.cons_val_three,
-      Matrix.head_cons, Matrix.tail_cons, Prod.mk.injEq, Fin.val_mk, true_and, and_true]
+      Matrix.head_cons, Matrix.tail_cons]
   · apply projectiveSameCycle_of_shared_pair hn hnEven
     dsimp only [orientedPortPair]
     rw [projectivePortPair_apply, projectivePortOtherPair_apply]
@@ -159,10 +166,11 @@ theorem projectiveSameCycle_below_left {n : ℕ} (hn : 2 ≤ n) (hnEven : n % 2 
     simp only [hp, hq, decide_true, decide_false, Bool.not_true]
     by_cases hrow : r.val + 1 + 1 < n
     all_goals simp only [projectiveFaceCorner, hr, hrow, dite_true, dite_false, quadranglePair,
-      Bool.false_eq_true, if_true, if_false, Equiv.Perm.mul_apply, Equiv.swap_apply_def, Fin.ext_iff,
+      Bool.false_eq_true, if_true, if_false, Equiv.Perm.mul_apply, Equiv.swap_apply_def,
+        Fin.ext_iff,
       Fin.coe_ofNat_eq_mod, Nat.reduceMod, Nat.reduceEqDiff,
       Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val_two, Matrix.cons_val_three,
-      Matrix.head_cons, Matrix.tail_cons, Prod.mk.injEq, Fin.val_mk, true_and, and_true]
+      Matrix.head_cons, Matrix.tail_cons]
 
 theorem projectiveSameCycle_wrap_left {n : ℕ} (hn : 2 ≤ n) (hnEven : n % 2 = 0)
     (r : Fin n) (c : Fin (n - 1)) (hr : ¬r.val + 1 < n) :
@@ -180,10 +188,11 @@ theorem projectiveSameCycle_wrap_left {n : ℕ} (hn : 2 ≤ n) (hnEven : n % 2 =
     dsimp only [projectivePortLabel, projectiveFaceParity]
     simp only [Nat.zero_add, hp, hq, decide_true, decide_false, Bool.not_true]
     simp only [projectiveFaceCorner, hr, hsmall, dite_true, dite_false, quadranglePair,
-      Bool.false_eq_true, if_true, if_false, Equiv.Perm.mul_apply, Equiv.swap_apply_def, Fin.ext_iff,
+      Bool.false_eq_true, if_true, if_false, Equiv.Perm.mul_apply, Equiv.swap_apply_def,
+        Fin.ext_iff,
       Fin.coe_ofNat_eq_mod, Nat.reduceMod, Nat.reduceEqDiff, Nat.zero_add,
       Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val_two, Matrix.cons_val_three,
-      Matrix.head_cons, Matrix.tail_cons, Prod.mk.injEq, Fin.val_mk, true_and, and_true]
+      Matrix.head_cons, Matrix.tail_cons, Prod.mk.injEq, true_and, and_true]
     omega
   · apply projectiveSameCycle_of_shared_pair hn hnEven
     dsimp only [orientedPortPair]
@@ -192,10 +201,11 @@ theorem projectiveSameCycle_wrap_left {n : ℕ} (hn : 2 ≤ n) (hnEven : n % 2 =
     dsimp only [projectivePortLabel, projectiveFaceParity]
     simp only [Nat.zero_add, hp, hq, decide_true, decide_false, Bool.not_true]
     simp only [projectiveFaceCorner, hr, hsmall, dite_true, dite_false, quadranglePair,
-      Bool.false_eq_true, if_true, if_false, Equiv.Perm.mul_apply, Equiv.swap_apply_def, Fin.ext_iff,
+      Bool.false_eq_true, if_true, if_false, Equiv.Perm.mul_apply, Equiv.swap_apply_def,
+        Fin.ext_iff,
       Fin.coe_ofNat_eq_mod, Nat.reduceMod, Nat.reduceEqDiff, Nat.zero_add,
       Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val_two, Matrix.cons_val_three,
-      Matrix.head_cons, Matrix.tail_cons, Prod.mk.injEq, Fin.val_mk, true_and, and_true]
+      Matrix.head_cons, Matrix.tail_cons, Prod.mk.injEq, true_and, and_true]
     omega
 
 end

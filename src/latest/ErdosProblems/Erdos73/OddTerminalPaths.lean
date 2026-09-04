@@ -19,10 +19,13 @@ theorem OddPathBarrierWitness.hits_oddTerminalPaths {k : ℕ}
   intro x hx hxX
   exact Finset.disjoint_left.mp hdis (hproj x hx) hxX
 
-theorem odd_terminal_paths_packing_or_covering (G : SimpleGraph V) (A : Finset V) (k : ℕ) :
+omit [Fintype V] in
+theorem odd_terminal_paths_packing_or_covering [Finite V]
+    (G : SimpleGraph V) (A : Finset V) (k : ℕ) :
     HasOddTerminalPathPacking G A k ∨
       ∃ X : Finset V, X.card ≤ 2 * k - 2 ∧ HitsOddTerminalPaths G A X := by
   classical
+  let : Fintype V := Fintype.ofFinite V
   by_cases hpack : HasOddTerminalPathPacking G A k
   · exact Or.inl hpack
   · obtain ⟨B⟩ := exists_oddPathBarrierWitness hpack

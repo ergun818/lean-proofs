@@ -6,7 +6,6 @@ import ErdosProblems.Erdos73.ThroughHandleCycles
 
 namespace Erdos73.ColumnHandleFamily
 noncomputable section
-open scoped Classical
 
 open SimpleGraph Finset
 
@@ -22,7 +21,8 @@ def HasThroughCrossingHandles (k : ℕ) : Prop :=
     ∀ i j, i < j → (E.sourceNail i).val.1.val < (E.sourceNail j).val.1.val ∧
       (E.targetNail j).val.1.val < (E.targetNail i).val.1.val
 
-theorem oddPacking_or_through_crossing (F : ColumnHandleFamily S col I)
+omit [Fintype V] in
+theorem oddPacking_or_through_crossing [Finite V] (F : ColumnHandleFamily S col I)
     (k : ℕ) (hc : k + 2 ≤ c)
     (hdis : Pairwise (fun i j => Disjoint (F.rows i) (F.rows j)))
     (hs : ∀ i, (F.sourceNail i).val.2.val ≤ 1)
@@ -34,6 +34,7 @@ theorem oddPacking_or_through_crossing (F : ColumnHandleFamily S col I)
       (∀ i, 2 * (c - 1) ≤ (E.targetNail i).val.2.val) ∧
       ∀ i j, i < j → (E.sourceNail i).val.1.val < (E.sourceNail j).val.1.val ∧
         (E.targetNail j).val.1.val < (E.targetNail i).val.1.val := by
+  classical
   let a (i : I) := (F.sourceNail i).val.1.val
   let b (i : I) := (F.targetNail i).val.1.val
   obtain ⟨down, t, hts, htcard, hdown⟩ := exists_large_finite_fiber s

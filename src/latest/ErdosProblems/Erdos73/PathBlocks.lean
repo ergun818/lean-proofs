@@ -33,7 +33,7 @@ theorem pathGraph_isTree (n : ℕ) (hn : 0 < n) : (SimpleGraph.pathGraph n).IsTr
   exact ⟨⟨SimpleGraph.pathGraph_preconnected n⟩, pathGraph_isAcyclic n⟩
 
 def pathBlockEmbedding {t s : ℕ} (i : Fin t) : Fin s ↪ Fin (t * s) :=
-  ⟨fun j => finProdFinEquiv (i, j), fun j k h =>
+  ⟨fun j => finProdFinEquiv (i, j), fun _ _ h =>
     (Prod.mk.inj (finProdFinEquiv.injective h)).2⟩
 
 def pathBlock {t s : ℕ} (i : Fin t) : Finset (Fin (t * s)) :=
@@ -70,9 +70,11 @@ def pathBlockCopy {t s : ℕ} (i : Fin t) :
   injective' := (pathBlockEmbedding i).injective
 
 theorem pathBlock_connected {t s : ℕ} (hs : 0 < s) (i : Fin t) :
-    ((SimpleGraph.pathGraph (t * s)).induce (pathBlock (s := s) i : Set (Fin (t * s)))).Connected := by
+    ((SimpleGraph.pathGraph (t * s)).induce (pathBlock (s := s) i : Set (Fin (t * s)))).Connected :=
+      by
   have : Nonempty (Fin s) := ⟨⟨0, hs⟩⟩
-  have hc : ((SimpleGraph.pathGraph s).induce ((Finset.univ : Finset (Fin s)) : Set (Fin s))).Connected := by
+  have hc : ((SimpleGraph.pathGraph s).induce ((Finset.univ : Finset (Fin s)) : Set (Fin
+    s))).Connected := by
     rw [Finset.coe_univ]
     exact ((SimpleGraph.pathGraph s).induceUnivIso.connected_iff).mpr
       ⟨SimpleGraph.pathGraph_preconnected _⟩

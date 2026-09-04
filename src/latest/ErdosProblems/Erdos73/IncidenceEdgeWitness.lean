@@ -11,6 +11,7 @@ open SimpleGraph GraphSubdivisionModel
 variable {W : Type*} [Fintype W] [LinearOrder W] {H : SimpleGraph W}
 variable [LinearOrder (W ⊕ OrientedEdge H)]
 
+omit [Fintype W] in
 theorem exists_incidence_edge_code (d : OrientedEdge (treeIncidenceGraph H)) :
     ∃ e : OrientedEdge H, ∃ side : Bool,
       s(d.lo, d.hi) = s(Sum.inl (halfEndpoint e side), Sum.inr e) := by
@@ -25,7 +26,7 @@ theorem exists_incidence_edge_code (d : OrientedEdge (treeIncidenceGraph H)) :
       · refine ⟨e, false, ?_⟩
         simp only [OrientedEdge.lo, OrientedEdge.hi, halfEndpoint, Bool.false_eq_true, if_false]
       · refine ⟨e, true, ?_⟩
-        simp only [OrientedEdge.lo, OrientedEdge.hi, halfEndpoint, if_pos rfl, ite_true]
+        simp only [OrientedEdge.lo, OrientedEdge.hi, halfEndpoint, ite_true]
   | inr e =>
     cases y with
     | inr f => exact hadj.elim
@@ -36,7 +37,7 @@ theorem exists_incidence_edge_code (d : OrientedEdge (treeIncidenceGraph H)) :
         simp only [OrientedEdge.lo, OrientedEdge.hi, halfEndpoint, Bool.false_eq_true, if_false]
         exact Sym2.eq_swap
       · refine ⟨e, true, ?_⟩
-        simp only [OrientedEdge.lo, OrientedEdge.hi, halfEndpoint, if_pos rfl, ite_true]
+        simp only [OrientedEdge.lo, OrientedEdge.hi, halfEndpoint, ite_true]
         exact Sym2.eq_swap
 
 structure IncidenceEdgeWitness (d : OrientedEdge (treeIncidenceGraph H)) where
@@ -52,20 +53,24 @@ namespace IncidenceEdgeWitness
 
 variable {d f : OrientedEdge (treeIncidenceGraph H)}
 
+omit [Fintype W] in
 theorem endpoints (D : IncidenceEdgeWitness d) :
     (d.lo = Sum.inl (halfEndpoint D.original D.side) ∧ d.hi = Sum.inr D.original) ∨
       (d.lo = Sum.inr D.original ∧ d.hi = Sum.inl (halfEndpoint D.original D.side)) :=
   Sym2.eq_iff.mp D.edge_eq
 
+omit [Fintype W] in
 theorem branch_incident (D : IncidenceEdgeWitness d) :
     Sum.inl (halfEndpoint D.original D.side) = d.lo ∨
       Sum.inl (halfEndpoint D.original D.side) = d.hi :=
   D.endpoints.elim (fun hh => Or.inl hh.1.symm) (fun hh => Or.inr hh.2.symm)
 
+omit [Fintype W] in
 theorem midpoint_incident (D : IncidenceEdgeWitness d) :
     Sum.inr D.original = d.lo ∨ Sum.inr D.original = d.hi :=
   D.endpoints.elim (fun hh => Or.inr hh.2.symm) (fun hh => Or.inl hh.1.symm)
 
+omit [Fintype W] in
 theorem edge_eq_of_code (D : IncidenceEdgeWitness d) (F : IncidenceEdgeWitness f)
     (he : D.original = F.original) (hs : D.side = F.side) : d = f := by
   apply OrientedEdge.eq_of_sym2_eq

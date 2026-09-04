@@ -4,7 +4,6 @@ import ErdosProblems.Erdos73.BrickStripNetworks
 
 namespace Erdos73
 noncomputable section
-open scoped Classical
 
 open SimpleGraph Finset
 
@@ -15,6 +14,7 @@ theorem exists_brickStripNetwork_pair
     (A : Finset (Fin (r - 1))) (B : Finset (Fin (c - 1)))
     (hA : A.Nonempty) (hB : B.Nonempty) (x : V) (hx : x ∈ brickStripNetwork S A B) :
     ∃ a ∈ A, ∃ b ∈ B, x ∈ brickFaceRowStrip S a ∨ x ∈ brickFaceColumnStrip S b := by
+  classical
   rcases (mem_brickStripNetwork S A B x).mp hx with ⟨a, ha, hx⟩ | ⟨b, hb, hx⟩
   · obtain ⟨b, hb⟩ := hB
     exact ⟨a, ha, b, hb, Or.inl hx⟩
@@ -29,6 +29,7 @@ theorem exists_small_brickStripNetwork
     ∃ A' : Finset (Fin (r - 1)), ∃ B' : Finset (Fin (c - 1)),
       A' ⊆ A ∧ B' ⊆ B ∧ A'.Nonempty ∧ B'.Nonempty ∧ A'.card ≤ 2 ∧ B'.card ≤ 2 ∧
       x ∈ brickStripNetwork S A' B' ∧ y ∈ brickStripNetwork S A' B' := by
+  classical
   obtain ⟨a, ha, b, hb, hx⟩ := exists_brickStripNetwork_pair S A B hA hB x hx
   obtain ⟨a', ha', b', hb', hy⟩ := exists_brickStripNetwork_pair S A B hA hB y hy
   refine ⟨{a, a'}, {b, b'}, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩

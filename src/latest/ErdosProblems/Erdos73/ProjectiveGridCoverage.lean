@@ -33,7 +33,8 @@ theorem exists_projective_alpha_pair_symm {n : ℕ} (hn : 2 ≤ n) {u v : Fin n 
 theorem exists_projective_alpha_horizontal {n : ℕ} (hn : 2 ≤ n) (hnEven : n % 2 = 0)
     (r : Fin n) (c : Fin (n - 1)) :
     ∃ d, projectivePortLabel hn d = (r, ⟨c.val, by have hh := c.isLt; omega⟩) ∧
-      projectivePortLabel hn (projectivePortPair n d) = (r, ⟨c.val + 1, by have hh := c.isLt; omega⟩) := by
+      projectivePortLabel hn (projectivePortPair n d) =
+        (r, ⟨c.val + 1, by have hh := c.isLt; omega⟩) := by
   have hh := exists_alpha_pair_of_face_side hn hnEven (Sum.inl (r, c)) 0 1
     (quadranglePair_side_zero_one _)
   by_cases hr : r.val + 1 < n
@@ -62,7 +63,7 @@ theorem exists_projective_alpha_down {n : ℕ} (hn : 2 ≤ n) (hnEven : n % 2 = 
     refine ⟨d, hd.trans ?_, ht.trans ?_⟩
     all_goals dsimp only [projectiveFaceCorner, projectiveDown]
     all_goals split <;> simp only [Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val_two,
-      Matrix.head_cons, Matrix.tail_cons, Prod.mk.injEq, Fin.ext_iff, Fin.val_mk, true_and, and_true]
+      Matrix.head_cons, Matrix.tail_cons, Prod.mk.injEq, Fin.ext_iff, true_and]
     all_goals omega
 
 theorem exists_projective_alpha_horizontal_step {n : ℕ} (hn : 2 ≤ n) (hnEven : n % 2 = 0)

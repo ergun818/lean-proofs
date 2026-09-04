@@ -7,6 +7,7 @@ attribute [local instance] Classical.propDecidable Classical.decEq
 open Erdos73Infrastructure.SimpleGraph
 variable {V : Type*} [Fintype V] {G : SimpleGraph V} {g : ℕ}
 
+omit [Fintype V] in
 theorem minorSupport_disjoint {W : Type*} {H : SimpleGraph W}
     (M : MinorModel H G) {S T : Finset W} (hST : Disjoint S T) :
     Disjoint (minorSupport M S) (minorSupport M T) := by
@@ -17,6 +18,7 @@ theorem minorSupport_disjoint {W : Type*} {H : SimpleGraph W}
   have hst : s ≠ t := fun h => Finset.disjoint_left.mp hST hs (h ▸ ht)
   exact Finset.disjoint_left.mp (M.branch_disjoint hst) hvs hvt
 
+omit [Fintype V] in
 theorem gridRowSupport_pairwise_disjoint (M : MinorModel (squareGrid g) G) :
     Pairwise fun r s => Disjoint (gridRowSupport M r) (gridRowSupport M s) := by
   intro r s hrs
@@ -26,6 +28,7 @@ theorem gridRowSupport_pairwise_disjoint (M : MinorModel (squareGrid g) G) :
   intro x hxr hxs
   exact hrs ((mem_productRow.mp hxr).symm.trans (mem_productRow.mp hxs))
 
+omit [Fintype V] in
 theorem gridRowSupport_connected (M : MinorModel (squareGrid g) G) (r : Fin g) :
     (G.induce (gridRowSupport M r : Set V)).Connected := by
   have : Nonempty (Fin g) := ⟨r⟩
@@ -34,6 +37,7 @@ theorem gridRowSupport_connected (M : MinorModel (squareGrid g) G) (r : Fin g) :
     (productRow_connected (SimpleGraph.pathGraph g) (SimpleGraph.pathGraph g)
       ⟨SimpleGraph.pathGraph_preconnected g⟩ r)
 
+omit [Fintype V] in
 theorem exists_gridRowSupport_disjoint (M : MinorModel (squareGrid g) G)
     (S : Finset V) (hS : S.card < g) :
     ∃ r : Fin g, Disjoint (gridRowSupport M r) S := by

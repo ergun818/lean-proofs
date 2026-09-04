@@ -236,10 +236,11 @@ namespace Menger
 variable {V : Type u} [Fintype V] [DecidableEq V]
 variable {G : _root_.SimpleGraph V} {S T J : Finset V}
 
-/-- There is always at least one blocking set, namely the full vertex set. -/
+omit [Fintype V] in
+/-- There is always at least one blocking set, namely the left terminal set. -/
 theorem exists_blocking_set :
     ∃ m : ℕ, ∃ J : Finset V, BlocksAllPaths G S T J ∧ J.card = m :=
-  ⟨(Finset.univ : Finset V).card, Finset.univ, BlocksAllPaths.univ, rfl⟩
+  ⟨S.card, S, BlocksAllPaths.left, rfl⟩
 
 /-- The minimum cardinality of a finite vertex set blocking all `S`-to-`T`
 paths. -/
@@ -1560,11 +1561,12 @@ theorem finite_vertex_menger_of_minSeparator_le_maxPacking
 finite vertex-Menger alternative. -/
 theorem finite_vertex_menger_sharp_of_minSeparator_le_maxPacking
     (hminmax : MinSeparatorLeMaxPackingStatement.{u}) :
-    ∀ {V : Type u} [Fintype V] [DecidableEq V]
+    ∀ {V : Type u} [Finite V] [DecidableEq V]
       (G : _root_.SimpleGraph V) (S T : Finset V) (k : ℕ),
         HasDisjointSTPaths G S T k ∨
           ∃ X : Finset V, X.card < k ∧ STSeparator G S T X := by
-  intro V _instFintype _instDecidableEq G S T k
+  intro V _instFinite _instDecidableEq G S T k
+  let : Fintype V := Fintype.ofFinite V
   by_cases hk : k ≤ maxPackingSize G S T
   · rcases maxPackingSize_hasAtLeast (G := G) (S := S) (T := T) with
       ⟨P, hP⟩
@@ -1588,7 +1590,7 @@ theorem finite_vertex_menger :
 for every `k`, either there are `k` disjoint paths or a separator has size
 strictly less than `k`. -/
 theorem finite_vertex_menger_sharp :
-    ∀ {V : Type u} [Fintype V] [DecidableEq V]
+    ∀ {V : Type u} [Finite V] [DecidableEq V]
       (G : _root_.SimpleGraph V) (S T : Finset V) (k : ℕ),
         HasDisjointSTPaths G S T k ∨
           ∃ X : Finset V, X.card < k ∧ STSeparator G S T X :=

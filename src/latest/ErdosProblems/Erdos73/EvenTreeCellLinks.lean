@@ -45,6 +45,7 @@ def toTreeCellLinks : TreeCellLinks F T port G where
   clean := fun e u x hx hu => C.clean e u x hx
     ((C.cell u).incidenceSubdivisionModel_vertexSet_subset _ hu)
 
+omit [Fintype V] [Fintype U] in
 theorem toTreeCellLinks_odd (u : U) (e : OrientedEdge (treeIncidenceGraph (T u))) :
     Odd ((C.toTreeCellLinks.cell u).edgePath e).walk.length :=
   (C.cell u).incidencePath_odd (C.even u) e

@@ -16,6 +16,7 @@ def pathAlongCopy (S : GraphSubdivisionModel H G) (f : F.Copy H) (e : OrientedEd
   if f e.lo < f e.hi then S.edgePath (OrientedEdge.mapCopy f e)
   else (S.edgePath (OrientedEdge.mapCopy f e)).reverse
 
+omit [Fintype U] [Fintype W] in
 theorem pathAlongCopy_source (S : GraphSubdivisionModel H G) (f : F.Copy H) (e : OrientedEdge F) :
     (S.pathAlongCopy f e).source = S.branchVertex (f e.lo) := by
   unfold pathAlongCopy
@@ -25,6 +26,7 @@ theorem pathAlongCopy_source (S : GraphSubdivisionModel H G) (f : F.Copy H) (e :
   · rw [GraphPath.reverse_source, S.target_eq]
     exact congrArg S.branchVertex (max_eq_left (le_of_not_gt hh))
 
+omit [Fintype U] [Fintype W] in
 theorem pathAlongCopy_target (S : GraphSubdivisionModel H G) (f : F.Copy H) (e : OrientedEdge F) :
     (S.pathAlongCopy f e).target = S.branchVertex (f e.hi) := by
   unfold pathAlongCopy
@@ -34,7 +36,9 @@ theorem pathAlongCopy_target (S : GraphSubdivisionModel H G) (f : F.Copy H) (e :
   · rw [GraphPath.reverse_target, S.source_eq]
     exact congrArg S.branchVertex (min_eq_right (le_of_not_gt hh))
 
-theorem pathAlongCopy_vertexSet (S : GraphSubdivisionModel H G) (f : F.Copy H) (e : OrientedEdge F) :
+omit [Fintype U] [Fintype W] in
+theorem pathAlongCopy_vertexSet (S : GraphSubdivisionModel H G)
+    (f : F.Copy H) (e : OrientedEdge F) :
     (S.pathAlongCopy f e).vertexSet = (S.edgePath (OrientedEdge.mapCopy f e)).vertexSet := by
   unfold pathAlongCopy
   split_ifs <;> simp only [GraphPath.reverse_vertexSet]
@@ -66,9 +70,11 @@ def restrictCopy (S : GraphSubdivisionModel H G) (f : F.Copy H) : GraphSubdivisi
       · rw [hwe] at hwd
         exact hwd.imp (fun he => f.injective he) (fun he => f.injective he)
 
+omit [Fintype U] [Fintype W] in
 @[simp] theorem restrictCopy_branchVertex (S : GraphSubdivisionModel H G) (f : F.Copy H) (u : U) :
     (S.restrictCopy f).branchVertex u = S.branchVertex (f u) := rfl
 
+omit [Fintype U] [Fintype W] in
 theorem restrictCopy_edgePath_vertexSet (S : GraphSubdivisionModel H G) (f : F.Copy H)
     (e : OrientedEdge F) : ((S.restrictCopy f).edgePath e).vertexSet =
       (S.edgePath (OrientedEdge.mapCopy f e)).vertexSet := S.pathAlongCopy_vertexSet f e

@@ -31,7 +31,8 @@ theorem incidence_card_eq {T : SimpleGraph W} (I : Finset (W ⊕ OrientedEdge T)
 
 theorem incidenceEdge_endpoints_omitted {T : SimpleGraph W} {I : Finset (W ⊕ OrientedEdge T)}
     (hI : (treeIncidenceGraph T).IsIndepSet (I : Set _)) {e : OrientedEdge T}
-    (he : e ∈ incidenceEdgePart I) : e.lo ∉ incidenceOriginalPart I ∧ e.hi ∉ incidenceOriginalPart I := by
+    (he : e ∈ incidenceEdgePart I) :
+    e.lo ∉ incidenceOriginalPart I ∧ e.hi ∉ incidenceOriginalPart I := by
   have heI : Sum.inr e ∈ I := (mem_filter.mp he).2
   constructor
   · intro hv

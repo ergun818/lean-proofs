@@ -5,7 +5,6 @@ import ErdosProblems.Erdos73.BrickNetworkEdges
 
 namespace Erdos73
 noncomputable section
-open scoped Classical
 
 open SimpleGraph Finset
 
@@ -15,6 +14,7 @@ theorem exists_brickFace_oriented_edge (hc : 2 ≤ c) (hr : 2 ≤ r)
     (e : OrientedEdge (elementaryWall c r)) :
     ∃ i : Fin (r - 1) × Fin (c - 1), ∃ f : OrientedEdge (cycleGraph 6),
       OrientedEdge.mapCopy (brickFaceCopyAt i) f = e := by
+  classical
   obtain ⟨a, j, u, v, huv, hu, hv⟩ := exists_brickFace_at_adj hc hr e.lo e.hi e.adj
   refine ⟨(a, j), OrientedEdge.ofAdj huv, ?_⟩
   apply OrientedEdge.eq_of_sym2_eq
@@ -25,9 +25,11 @@ theorem exists_brickFace_oriented_edge (hc : 2 ≤ c) (hr : 2 ≤ r)
 
 variable {V : Type*} {G : SimpleGraph V}
 
+open scoped Classical in
 theorem brickWall_vertexSet_eq_faceUnion
     (S : GraphSubdivisionModel (elementaryWall c r) G) (hc : 2 ≤ c) (hr : 2 ≤ r) :
     S.vertexSet = Finset.univ.biUnion (brickFaceRegion S) := by
+  classical
   ext x
   constructor
   · intro hx
@@ -50,6 +52,7 @@ theorem brickWall_vertexSet_eq_faceUnion
 theorem brickWall_actualEdgeGraph_eq_faceUnion
     (S : GraphSubdivisionModel (elementaryWall c r) G) (hc : 2 ≤ c) (hr : 2 ≤ r) :
     S.actualEdgeGraph = ⨆ i : Fin (r - 1) × Fin (c - 1), brickFaceEdgeGraph S i := by
+  classical
   apply le_antisymm
   · apply iSup_le
     intro e
@@ -60,9 +63,11 @@ theorem brickWall_actualEdgeGraph_eq_faceUnion
       ((S.restrictCopy (brickFaceCopyAt i)).edgePath f)) f
   · exact iSup_le (brickFaceEdgeGraph_le S)
 
+open scoped Classical in
 theorem brickWall_vertexSet_robust_of_edges
     (S : GraphSubdivisionModel (elementaryWall c r) G) (hc : 2 ≤ c) (hr : 2 ≤ r)
     (J : SimpleGraph V) (hJ : S.actualEdgeGraph ≤ J) : DeletionOneConnected J S.vertexSet := by
+  classical
   rw [brickWall_vertexSet_eq_faceUnion S hc hr]
   have : NeZero (r - 1) := ⟨by omega⟩
   have : NeZero (c - 1) := ⟨by omega⟩

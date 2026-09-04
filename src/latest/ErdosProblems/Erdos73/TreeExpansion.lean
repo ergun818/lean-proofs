@@ -27,6 +27,7 @@ def treeExpansionGraph (F : SimpleGraph U) (T : ∀ u, SimpleGraph (W u))
     (port : ∀ u, U → W u) : SimpleGraph (TreeExpansionVertex T) :=
   (⨆ u, (treeIncidenceGraph (T u)).map (Sigma.mk u)) ⊔ treeExpansionLinks F T port
 
+omit [(u : U) → Fintype (W u)] [Fintype U] in
 theorem treeExpansionGraph_adj_fiber (F : SimpleGraph U) (T : ∀ u, SimpleGraph (W u))
     (port : ∀ u, U → W u) (u : U) {x y : W u ⊕ OrientedEdge (T u)}
     (hxy : (treeIncidenceGraph (T u)).Adj x y) :
@@ -37,6 +38,7 @@ theorem treeExpansionGraph_adj_fiber (F : SimpleGraph U) (T : ∀ u, SimpleGraph
   intro he
   exact hxy.ne (eq_of_heq (Sigma.mk.inj he).2)
 
+omit [(u : U) → Fintype (W u)] [Fintype U] in
 theorem treeExpansionGraph_adj_ports (F : SimpleGraph U) (T : ∀ u, SimpleGraph (W u))
     (port : ∀ u, U → W u) {u v : U} (huv : F.Adj u v) :
     (treeExpansionGraph F T port).Adj ⟨u, Sum.inl (port u v)⟩ ⟨v, Sum.inl (port v u)⟩ :=
@@ -45,9 +47,11 @@ theorem treeExpansionGraph_adj_ports (F : SimpleGraph U) (T : ∀ u, SimpleGraph
 def treeExpansionFiber {T : ∀ u, SimpleGraph (W u)} (I : Finset (TreeExpansionVertex T)) (u : U) :
     Finset (W u ⊕ OrientedEdge (T u)) := univ.filter (fun z => Sigma.mk u z ∈ I)
 
-def treeExpansionHigh {T : ∀ u, SimpleGraph (W u)} (I : Finset (TreeExpansionVertex T)) : Finset U :=
+def treeExpansionHigh {T : ∀ u, SimpleGraph (W u)} (I : Finset (TreeExpansionVertex T)) : Finset U
+    :=
   univ.filter (fun u => ∀ v : W u, Sigma.mk u (Sum.inl v) ∈ I)
 
+omit [Fintype U] in
 theorem treeExpansionFiber_isIndepSet {F : SimpleGraph U} {T : ∀ u, SimpleGraph (W u)}
     {port : ∀ u, U → W u} {I : Finset (TreeExpansionVertex T)}
     (hI : (treeExpansionGraph F T port).IsIndepSet (I : Set _)) (u : U) :
@@ -82,7 +86,8 @@ theorem treeExpansion_isIndepSet_card_le {F : SimpleGraph U} {T : ∀ u, SimpleG
     {port : ∀ u, U → W u} {I : Finset (TreeExpansionVertex T)}
     (hT : ∀ u, (T u).IsTree) (hI : (treeExpansionGraph F T port).IsIndepSet (I : Set _)) :
     I.card ≤ (∑ u, Fintype.card (OrientedEdge (T u))) + F.indepNum := by
-  have hh := Finset.sum_le_sum (s := (univ : Finset U)) (fun u _ => treeExpansionFiber_card_le hT hI u)
+  have hh := Finset.sum_le_sum (s := (univ : Finset U)) (fun u _ => treeExpansionFiber_card_le hT hI
+    u)
   rw [← treeExpansion_card_eq_sum I, Finset.sum_add_distrib] at hh
   have hh' : I.card ≤ (∑ u, Fintype.card (OrientedEdge (T u))) + (treeExpansionHigh I).card := by
     simpa using hh
@@ -90,7 +95,8 @@ theorem treeExpansion_isIndepSet_card_le {F : SimpleGraph U} {T : ∀ u, SimpleG
 
 theorem treeExpansion_indepNum_le (F : SimpleGraph U) (T : ∀ u, SimpleGraph (W u))
     (port : ∀ u, U → W u) (hT : ∀ u, (T u).IsTree) :
-    (treeExpansionGraph F T port).indepNum ≤ (∑ u, Fintype.card (OrientedEdge (T u))) + F.indepNum := by
+    (treeExpansionGraph F T port).indepNum ≤
+      (∑ u, Fintype.card (OrientedEdge (T u))) + F.indepNum := by
   obtain ⟨I, hI, hcard⟩ := (treeExpansionGraph F T port).exists_isNIndepSet_indepNum
   rw [← hcard]
   exact treeExpansion_isIndepSet_card_le hT hI

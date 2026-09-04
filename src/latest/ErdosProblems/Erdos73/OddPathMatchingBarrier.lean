@@ -20,13 +20,15 @@ theorem oddTerminalPacking_of_large_auxMatching {N : Finset (Sym2 (OddPathVertex
   intro i j hij
   exact (oddPathAugmenting_projection_disjoint (hP j) (hdis hij)).mono (hsub i) (hsub j)
 
+omit [Fintype V] in
 open scoped Classical in
-theorem exists_oddPathMatchingBarrier {k : ℕ}
+theorem exists_oddPathMatchingBarrier [Finite V] {k : ℕ}
     (hno : ¬ HasOddTerminalPathPacking G A k) :
     ∃ W : Finset (OddPathVertex A),
       W.card + A.card + 2 ≤
         (((⊤ : (oddPathAuxiliary G A).Subgraph).deleteVerts
           (W : Set (OddPathVertex A))).coe).oddComponents.ncard + 2 * k := by
+  let : Fintype V := Fintype.ofFinite V
   obtain ⟨N, hN, _, W, hW⟩ := tutte_berge_certificate (oddPathAuxiliary G A)
   have hbound : N.card < (oddPathBaseMatching A).card + k := by
     by_contra hbad
@@ -36,7 +38,7 @@ theorem exists_oddPathMatchingBarrier {k : ℕ}
     · omega
   have hbase := oddPathBaseMatching_card_add A
   have hverts := oddPathAuxiliary_card A
-  rw [← Fintype.card_eq_nat_card] at hW
+  rw [← @Fintype.card_eq_nat_card (OddPathVertex A) inferInstance] at hW
   have hWcoe : (W.toFinset : Set (OddPathVertex A)) = W := by
     ext x
     exact Set.mem_toFinset

@@ -58,7 +58,7 @@ open Erdos73Infrastructure.SimpleGraph
 /-- Delete one member of a sufficiently large proper linkage while
 retaining a proper sublinkage of a fixed positive fraction of the rows. -/
 theorem boundaryProper_linkage_avoiding_path
-    {V : Type*} [Fintype V] [DecidableEq V] {G : SimpleGraph V}
+    {V : Type*} [Finite V] [DecidableEq V] {G : SimpleGraph V}
     {A B S T Z : Finset V}
     (P : PathPacking G A B) (Q : PathPacking G S T)
     (hP : P.IsBoundaryProper Z) (hQ : Q.IsBoundaryProper Z)

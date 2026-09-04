@@ -12,7 +12,7 @@ def mapCopy (P : GraphPath G) (e : G.Copy H) : GraphPath H where
   source := e P.source
   target := e P.target
   walk := P.walk.map e.toHom
-  isPath := _root_.SimpleGraph.Walk.map_isPath_of_injective e.injective P.isPath
+  isPath := _root_.SimpleGraph.Walk.IsPath.map e.injective P.isPath
 
 theorem mem_mapCopy_vertexSet (P : GraphPath G) (e : G.Copy H) (z : W) :
     z ∈ (P.mapCopy e).vertexSet ↔ ∃ x ∈ P.vertexSet, e x = z := by

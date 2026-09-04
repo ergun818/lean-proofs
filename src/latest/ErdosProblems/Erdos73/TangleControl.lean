@@ -52,7 +52,8 @@ theorem BrambleHaven.boundary_smallSide_card_le (h : BrambleHaven G β q)
   have hlt : ((A ∪ C) ∩ (B ∩ D)).card < (A ∩ B).card := by omega
   have hpoint := h.pointsTo_join hAB hCD hpAB hpCD
     ((Finset.card_union_le _ _).trans_lt hsize) (hlt.trans hpAB.choose)
-  exact hlt.not_ge (hmin _ _ (hAB.join hCD) Finset.subset_union_left Finset.inter_subset_left hpoint)
+  exact hlt.not_ge (hmin _ _ (hAB.join hCD) Finset.subset_union_left Finset.inter_subset_left
+    hpoint)
 
 /-- A separated small side can meet only as many disjoint rooted connected
 sets as the separator and its contained roots can account for. -/

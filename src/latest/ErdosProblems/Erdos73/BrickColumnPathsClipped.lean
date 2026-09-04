@@ -4,7 +4,6 @@ import ErdosProblems.Erdos73.BrickColumnPaths
 
 namespace Erdos73
 noncomputable section
-open scoped Classical
 
 open SimpleGraph Finset Erdos73Infrastructure.SimpleGraph
 
@@ -17,6 +16,7 @@ theorem exists_brick_column_path_clipped {c r : ℕ} (a b j : ℕ)
       ∀ w ∈ P.vertexSet, a ≤ w.val.1.val ∧ w.val.1.val ≤ b ∧
         2 * j ≤ w.val.2.val ∧ w.val.2.val ≤ 2 * j + 1 ∧
         (w.val.1.val = b → w.val.2.val = 2 * j) := by
+  classical
   let f (t : Fin (2 * (b - a) + 1)) :=
     brickColumnVertex a b j hab hb hj hjc t.castSucc
   have hf : Function.Injective f := (brickColumnVertex_injective a b j hab hb hj hjc).comp

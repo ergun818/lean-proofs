@@ -13,10 +13,11 @@ def AtMostTwoNeighbors (G : _root_.SimpleGraph V) : Prop :=
 
 namespace GraphPath
 
-omit [DecidableEq V] in
-theorem exists_longest_from (G : _root_.SimpleGraph V) (x : V) :
+omit [Fintype V] [DecidableEq V] in
+theorem exists_longest_from [Finite V] (G : _root_.SimpleGraph V) (x : V) :
     ∃ P : GraphPath G, P.source = x ∧
       ∀ Q : GraphPath G, Q.source = x → Q.walk.length ≤ P.walk.length := by
+  let : Fintype V := Fintype.ofFinite V
   let lengths : Set ℕ := {n | ∃ P : GraphPath G, P.source = x ∧ P.walk.length = n}
   have hfin : lengths.Finite := (Set.finite_lt_nat (Fintype.card V)).subset (by
     rintro n ⟨P, _, rfl⟩
@@ -67,7 +68,8 @@ theorem neighbor_mem_of_internal (P : GraphPath G) (hG : AtMostTwoNeighbors G)
   · exact h ▸ (P.endpoints_mem_vertexSet_of_edgeSet ha).2
   · exact h ▸ (P.endpoints_mem_vertexSet_of_edgeSet hb).2
 
-theorem exists_closed_path_from_degree_one (hG : AtMostTwoNeighbors G) (x : V)
+omit [Fintype V] in
+theorem exists_closed_path_from_degree_one [Finite V] (hG : AtMostTwoNeighbors G) (x : V)
     (hx : ∃ y, G.Adj x y) (hdeg : ∀ a b, G.Adj x a → G.Adj x b → a = b) :
     ∃ P : GraphPath G, P.source = x ∧ P.source ≠ P.target ∧
       ∀ v ∈ P.vertexSet, ∀ w, G.Adj v w → w ∈ P.vertexSet := by

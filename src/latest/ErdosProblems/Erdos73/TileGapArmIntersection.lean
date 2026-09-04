@@ -4,7 +4,6 @@ import ErdosProblems.Erdos73.TileGapRegions
 
 namespace Erdos73.BrickTileArray
 noncomputable section
-open scoped Classical
 
 open SimpleGraph Finset
 
@@ -16,6 +15,7 @@ theorem horizontalGap_arm_endpoint {i : Fin r} {j j' : Fin (2 * c)}
     (hwa : x ∈ (A.arm w a).vertexSet) :
     w.val.1 = i ∧ ((w.val.2 = j ∧ a = 1 ∧ x = (A.arm w 1).target) ∨
       (w.val.2 = j' ∧ a = 0 ∧ x = (A.arm w 0).target)) := by
+  classical
   have hg := A.mem_horizontalGap.mp hx
   have hb := A.arm_box w a hwa
   have hr : A.row w.val.1 = A.row i := by omega
@@ -53,6 +53,7 @@ theorem verticalGap_arm_endpoint {i i' : Fin r} {j : Fin (2 * c)}
     {x : ElementaryWallVertex C R} (hx : x ∈ A.verticalGap i i' j)
     (hwa : x ∈ (A.arm w a).vertexSet) :
     w.val.2 = j ∧ (w.val.1 = i ∨ w.val.1 = i') ∧ a = 2 ∧ x = (A.arm w 2).target := by
+  classical
   have hg := A.mem_verticalGap.mp hx
   have hb := A.arm_box w a hwa
   have hc : A.column w.val.2 = A.column j := by omega

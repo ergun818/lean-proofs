@@ -4,7 +4,6 @@ import ErdosProblems.Erdos73.BrickFaceCoordinates
 
 namespace Erdos73
 noncomputable section
-open scoped Classical
 
 open SimpleGraph Finset
 
@@ -15,6 +14,7 @@ theorem exists_brickFace_at_horizontal (hc : 2 ≤ c) (hr : 2 ≤ r)
     (hcol : x.val.2.val + 1 = y.val.2.val) :
     ∃ a : Fin (r - 1), ∃ j : Fin (c - 1), ∃ i l : Fin 6,
       (cycleGraph 6).Adj i l ∧ brickFaceCopyAt (a, j) i = x ∧ brickFaceCopyAt (a, j) l = y := by
+  classical
   obtain ⟨a, d, ha, hlo, hhi⟩ := exists_faceRow_cover_horizontal hc hr x y hrow hcol
   obtain ⟨j, e, he⟩ := exists_faceColumn_cover_horizontal hlo (hcol ▸ hhi)
   let e0 : Fin 3 := ⟨e.val, by have hh := e.isLt; omega⟩
@@ -43,6 +43,7 @@ theorem exists_brickFace_at_vertical (hc : 2 ≤ c)
     (hcol : x.val.2 = y.val.2) (hp : (x.val.2.val + x.val.1.val) % 2 = 1) :
     ∃ a : Fin (r - 1), ∃ j : Fin (c - 1), ∃ i l : Fin 6,
       (cycleGraph 6).Adj i l ∧ brickFaceCopyAt (a, j) i = x ∧ brickFaceCopyAt (a, j) l = y := by
+  classical
   let a : Fin (r - 1) := ⟨x.val.1.val, by have hh := y.val.1.isLt; omega⟩
   let q := (a.val + 1) % 2
   have hlo : q ≤ x.val.2.val := by dsimp only [q, a]; omega
@@ -77,6 +78,7 @@ theorem exists_brickFace_at_adj (hc : 2 ≤ c) (hr : 2 ≤ r)
     (x y : ElementaryWallVertex c r) (hxy : (elementaryWall c r).Adj x y) :
     ∃ a : Fin (r - 1), ∃ j : Fin (c - 1), ∃ i l : Fin 6,
       (cycleGraph 6).Adj i l ∧ brickFaceCopyAt (a, j) i = x ∧ brickFaceCopyAt (a, j) l = y := by
+  classical
   rcases hxy with ⟨hrow, hcol⟩ | ⟨hcol, hrow | hrow⟩
   · rcases pathGraph_adj.mp hcol with hcol | hcol
     · exact exists_brickFace_at_horizontal hc hr x y hrow hcol

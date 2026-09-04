@@ -12,6 +12,7 @@ variable {U W Z V : Type*} [Fintype U] [LinearOrder U] [Fintype W] [LinearOrder 
 variable [Fintype Z] [LinearOrder Z]
 variable {F : SimpleGraph U} {H : SimpleGraph W} {K : SimpleGraph Z} {G : SimpleGraph V}
 
+omit [Fintype U] [Fintype W] [Fintype Z] in
 theorem OrientedEdge.mapCopy_comp (g : H.Copy K) (f : F.Copy H) (e : OrientedEdge F) :
     mapCopy g (mapCopy f e) = mapCopy (g.comp f) e := by
   apply eq_of_sym2_eq
@@ -22,6 +23,7 @@ theorem OrientedEdge.mapCopy_comp (g : H.Copy K) (f : F.Copy H) (e : OrientedEdg
   · rw [he.1, he.2]
     exact Sym2.eq_swap
 
+omit [Fintype W] [Fintype Z] in
 theorem GraphSubdivisionModel.restrictCopy_comp_vertexSet (S : GraphSubdivisionModel K G)
     (g : H.Copy K) (f : F.Copy H) :
     ((S.restrictCopy g).restrictCopy f).vertexSet = (S.restrictCopy (g.comp f)).vertexSet := by
@@ -35,6 +37,7 @@ theorem GraphSubdivisionModel.restrictCopy_comp_vertexSet (S : GraphSubdivisionM
   simp only [GraphSubdivisionModel.mem_vertexSet, GraphSubdivisionModel.restrictCopy_branchVertex,
     Copy.comp_apply, hedge]
 
+omit [Fintype U] [Fintype W] [Fintype Z] in
 theorem GraphSubdivisionModel.restrictCopy_comp_actualEdgeGraph (S : GraphSubdivisionModel K G)
     (g : H.Copy K) (f : F.Copy H) :
     ((S.restrictCopy g).restrictCopy f).actualEdgeGraph =

@@ -28,6 +28,7 @@ variable {D U : Type*} [Finite D] (C : TreeSwitchSystem D U)
 
 def contour : Perm D := C.rotation * C.switch
 
+omit [Finite D] in
 theorem contour_label (d : D) : C.label (C.contour d) = C.label (C.switch d) :=
   C.rotation_label _
 
@@ -79,6 +80,7 @@ theorem contour_isCycleOn : C.contour.IsCycleOn Set.univ := by
   exact ⟨fun _ _ => trivial, C.contour.injective.injOn,
     fun y _ => ⟨C.contour.symm y, trivial, C.contour.apply_symm_apply y⟩⟩
 
+omit [Finite D] in
 /-- A tree-edge cut has only the two selected ports as contour crossings. -/
 theorem cut_crossing_ports {u v : U} (huv : C.tree.Adj u v) :
     ∃ a b : D, ∀ d,

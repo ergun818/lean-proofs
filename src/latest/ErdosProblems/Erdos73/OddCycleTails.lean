@@ -6,12 +6,12 @@ import ErdosProblems.Erdos73.MengerDefs
 
 namespace Erdos73
 noncomputable section
-open scoped Classical
 
 open SimpleGraph Finset Erdos73Infrastructure.SimpleGraph
 
 variable {V : Type*} [Fintype V] [DecidableEq V] {G : SimpleGraph V}
 
+omit [Fintype V] in
 theorem join_disjoint_tails (S : Finset V) (P Q L : GraphPath G)
     (hPQ : Disjoint P.vertexSet Q.vertexSet)
     (hP : ∀ x ∈ P.vertexSet, x ∈ S → x = P.source)
@@ -20,6 +20,7 @@ theorem join_disjoint_tails (S : Finset V) (P Q L : GraphPath G)
     ∃ B : GraphPath G, B.source = P.target ∧ B.target = Q.target ∧
       B.vertexSet ⊆ P.vertexSet ∪ S ∪ Q.vertexSet ∧
       B.walk.length = P.walk.length + L.walk.length + Q.walk.length := by
+  classical
   have hinter : ∀ ⦃x⦄, x ∈ P.reverse.vertexSet → x ∈ L.vertexSet → x = P.reverse.target := by
     intro x hx hy
     exact hP x (by simpa using hx) (hL hy)
@@ -44,6 +45,7 @@ theorem join_disjoint_tails (S : Finset V) (P Q L : GraphPath G)
   · simp only [B, A, GraphPath.appendWithEqOfInterSubsetTarget, GraphPath.appendWithEq,
       GraphPath.reverse, Walk.length_append, Walk.length_copy, Walk.length_reverse]
 
+open scoped Classical in
 theorem IsOddCycleSubgraph.exists_oddTerminalPath_of_two_clean_tails
     {H : G.Subgraph} (hH : IsOddCycleSubgraph H) (N : Finset V) (P Q : GraphPath G)
     (hP : P.EndpointClean H.verts.toFinset N)
@@ -51,6 +53,7 @@ theorem IsOddCycleSubgraph.exists_oddTerminalPath_of_two_clean_tails
     (hPQ : Disjoint P.vertexSet Q.vertexSet) :
     ∃ B : GraphPath G, IsOddTerminalPath N B ∧
       B.vertexSet ⊆ P.vertexSet ∪ H.verts.toFinset ∪ Q.vertexSet := by
+  classical
   have hne : P.source ≠ Q.source := by
     intro he
     exact Finset.disjoint_left.mp hPQ P.source_mem_vertexSet
@@ -76,10 +79,12 @@ theorem IsOddCycleSubgraph.exists_oddTerminalPath_of_two_clean_tails
       (hCs ▸ hP.target_mem) (hCt ▸ hQ.target_mem) hCodd
     exact ⟨D, hD, hDsub.trans hCsub⟩
 
+open scoped Classical in
 theorem IsOddCycleSubgraph.exists_oddTerminalPath_of_two_paths
     {H : G.Subgraph} (hH : IsOddCycleSubgraph H) (N : Finset V)
     (hpaths : HasDisjointSTPaths G H.verts.toFinset N 2) :
     ∃ B : GraphPath G, IsOddTerminalPath N B := by
+  classical
   obtain ⟨P, hP⟩ := hpaths
   let Q := P.toEndpointClean
   have hcard : 2 ≤ Fintype.card Q.Index := hP

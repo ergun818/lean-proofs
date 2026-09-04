@@ -5,7 +5,6 @@ import ErdosProblems.Erdos73.ParityPendantProjection
 
 namespace Erdos73
 noncomputable section
-open scoped Classical
 
 open SimpleGraph Finset Erdos73Infrastructure.SimpleGraph
 
@@ -16,6 +15,7 @@ theorem exists_parityBreaking_path_of_oddPendantPath
     (hP : IsOddTerminalPath (parityPendantTerminals T c) P) :
     ∃ B : GraphPath G, IsParityBreakingPath c T B ∧
       B.vertexSet ⊆ P.vertexSet.image pendantProjection := by
+  classical
   have hnil : ¬ P.walk.Nil := by
     intro hn
     have hz := hn.length_eq_zero

@@ -46,7 +46,8 @@ def brickBoundaryColumnCode {c r : ℕ} (w : ElementaryWallVertex c r) : Fin 4 :
 
 theorem brickBoundaryColumnCode_injective_at_row {c r : ℕ}
     {v w : ElementaryWallVertex c r} (hv : OnBrickColumnBoundary v) (hw : OnBrickColumnBoundary w)
-    (hrow : v.val.1 = w.val.1) (he : brickBoundaryColumnCode v = brickBoundaryColumnCode w) : v = w := by
+    (hrow : v.val.1 = w.val.1) (he : brickBoundaryColumnCode v = brickBoundaryColumnCode w) :
+    v = w := by
   have hh := congrArg Fin.val he
   have hvc := v.val.2.isLt
   have hwc := w.val.2.isLt

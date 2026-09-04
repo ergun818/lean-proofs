@@ -4,7 +4,6 @@ import ErdosProblems.Erdos73.TileEdgeGaps
 
 namespace Erdos73.BrickTileArray
 noncomputable section
-open scoped Classical
 open SimpleGraph Finset
 
 variable {c r C R : ℕ} (A : BrickTileArray c r C R)
@@ -13,6 +12,7 @@ theorem edgeGap_inter_code {u v s t : ElementaryWallVertex c r}
     (huv : (elementaryWall c r).Adj u v) (hst : (elementaryWall c r).Adj s t)
     {x : ElementaryWallVertex C R} (hx : x ∈ A.edgeGap u v) (hx' : x ∈ A.edgeGap s t) :
     brickEdgeCode u v = brickEdgeCode s t := by
+  classical
   have hu := brickAdj_coordinates huv
   have hs := brickAdj_coordinates hst
   by_cases hr : u.val.1 = v.val.1
@@ -65,6 +65,7 @@ theorem edgeGap_inter_code {u v s t : ElementaryWallVertex c r}
 
 theorem edgeGap_disjoint {e f : OrientedEdge (elementaryWall c r)} (hef : e ≠ f) :
     Disjoint (A.edgeGap e.lo e.hi) (A.edgeGap f.lo f.hi) := by
+  classical
   apply Finset.disjoint_left.mpr
   intro x hx hx'
   exact hef (brickEdgeCode_injective (A.edgeGap_inter_code e.adj f.adj hx hx'))
@@ -75,6 +76,7 @@ theorem horizontal_edgeGap_arm_endpoint {u v : ElementaryWallVertex c r}
     (hx : x ∈ A.edgeGap u v) (hwa : x ∈ (A.arm w a).vertexSet) :
     ((w = u ∧ a = brickWallPort u.val v.val) ∨
       (w = v ∧ a = brickWallPort v.val u.val)) ∧ x = (A.arm w a).target := by
+  classical
   rw [A.edgeGap_eq_horizontal hrow hcol] at hx
   obtain ⟨hr, hh⟩ := A.horizontalGap_arm_endpoint hcol w a hx hwa
   have hp := brickWallPort_horizontal_forward hrow hcol
@@ -90,6 +92,7 @@ theorem vertical_edgeGap_arm_endpoint {u v : ElementaryWallVertex c r}
     (hx : x ∈ A.edgeGap u v) (hwa : x ∈ (A.arm w a).vertexSet) :
     ((w = u ∧ a = brickWallPort u.val v.val) ∨
       (w = v ∧ a = brickWallPort v.val u.val)) ∧ x = (A.arm w a).target := by
+  classical
   rw [A.edgeGap_eq_vertical hrow] at hx
   obtain ⟨hc, hr, ha, he⟩ := A.verticalGap_arm_endpoint hrow hpar w a hx hwa
   have hn : u.val.1 ≠ v.val.1 := by intro he; have hh := congrArg Fin.val he; omega
@@ -106,6 +109,7 @@ theorem edgeGap_arm_endpoint {u v : ElementaryWallVertex c r}
     (hwa : x ∈ (A.arm w a).vertexSet) :
     ((w = u ∧ a = brickWallPort u.val v.val) ∨
       (w = v ∧ a = brickWallPort v.val u.val)) ∧ x = (A.arm w a).target := by
+  classical
   have hsym := A.edgeGap_symm huv
   change (rawBrickWall c r).Adj u.val v.val at huv
   rcases huv with ⟨hr, hc⟩ | ⟨hc, hr⟩

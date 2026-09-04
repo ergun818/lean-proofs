@@ -6,12 +6,12 @@ import ErdosProblems.Erdos73.UnusedTerminalPath
 
 namespace Erdos73
 noncomputable section
-open scoped Classical
 
 open SimpleGraph Finset Erdos73Infrastructure.SimpleGraph
 
 variable {V : Type*} {G : SimpleGraph V} {c r m i : ℕ}
 
+open scoped Classical in
 theorem BrickStripSelectionState.exists_next_segment
     (S : GraphSubdivisionModel (elementaryWall c r) G) (color : V → Bool)
     (P : Fin m → GraphPath G) (N : Finset V) (b : Bool)
@@ -28,6 +28,7 @@ theorem BrickStripSelectionState.exists_next_segment
       t.columns ⊆ Finset.univ \ st.forbiddenColumns ∧
       ∀ j, j ∉ st.forbiddenColumns → j ∉ endpointBrickColumns S t.path.source t.path.target →
         Disjoint t.path.vertexSet (brickFaceColumnStrip S j) := by
+  classical
   let A := Finset.univ \ st.forbiddenRows
   let B := Finset.univ \ st.forbiddenColumns
   let D := brickStripNetwork S A B

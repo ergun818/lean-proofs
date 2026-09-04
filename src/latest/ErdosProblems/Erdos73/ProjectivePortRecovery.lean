@@ -68,19 +68,18 @@ theorem projectiveRecoveredPort_cell_ordinary_odd {n : ℕ} (hn : 2 ≤ n) (hnEv
       (quadranglePair (projectiveFaceParity (Sum.inl (r, c))) i))) = _
   fin_cases i
   all_goals simp only [projectiveFaceCorner, projectiveFaceParity, projectivePortCode,
-    hrow, hp, decide_true, decide_false, dite_true, dite_false, quadranglePair,
-    Bool.true_eq, Bool.false_eq_true, if_true, if_false, Equiv.Perm.mul_apply,
-    Equiv.swap_apply_def, Fin.ext_iff] 
-  all_goals simp only [Fin.reduceFinMk, Fin.val_zero, Fin.val_one, Fin.val_two,
-    Fin.coe_ofNat_eq_mod, Nat.reduceMod, Nat.reduceEqDiff, if_true, if_false,
+    hrow, hp, decide_true, dite_true, quadranglePair,
+    if_true, Equiv.Perm.mul_apply,
+    Equiv.swap_apply_def, Fin.ext_iff]
+  all_goals simp only [Fin.reduceFinMk, Fin.coe_ofNat_eq_mod, Nat.reduceMod, Nat.reduceEqDiff,
+    if_true, if_false,
     Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val_two, Matrix.cons_val_three,
     Matrix.head_cons, Matrix.tail_cons]
   all_goals dsimp only [projectiveRawVertex, projectiveRecoveredPort]
   all_goals simp only [Nat.min_def]
   all_goals repeat' first | rfl | omega |
     (split <;> try simp only [Prod.mk.injEq, true_and, and_true, true_or, or_true,
-      not_true_eq_false, Bool.false_eq_true, Bool.true_eq_false, Prod.fst, Prod.snd,
-      ite_true, ite_false] at *)
+      ite_true] at *)
 
 theorem projectiveRecoveredPort_cell_ordinary_even {n : ℕ} (hn : 2 ≤ n) (hnEven : n % 2 = 0)
     (r : Fin n) (c : Fin (n - 1)) (i : Fin 4)
@@ -97,19 +96,17 @@ theorem projectiveRecoveredPort_cell_ordinary_even {n : ℕ} (hn : 2 ≤ n) (hnE
       (quadranglePair (projectiveFaceParity (Sum.inl (r, c))) i))) = _
   fin_cases i
   all_goals simp only [projectiveFaceCorner, projectiveFaceParity, projectivePortCode,
-    hrow, hp, decide_true, decide_false, dite_true, dite_false, quadranglePair,
-    Bool.true_eq, Bool.false_eq_true, if_true, if_false, Equiv.Perm.mul_apply,
-    Equiv.swap_apply_def, Fin.ext_iff] 
-  all_goals simp only [Fin.reduceFinMk, Fin.val_zero, Fin.val_one, Fin.val_two,
-    Fin.coe_ofNat_eq_mod, Nat.reduceMod, Nat.reduceEqDiff, if_true, if_false,
+    hrow, hp, decide_false, dite_true, quadranglePair,
+    Bool.false_eq_true, if_false, Equiv.Perm.mul_apply,
+    Equiv.swap_apply_def, Fin.ext_iff]
+  all_goals simp only [Fin.reduceFinMk, Fin.coe_ofNat_eq_mod, Nat.reduceMod, Nat.reduceEqDiff,
+    if_true, if_false,
     Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val_two, Matrix.cons_val_three,
     Matrix.head_cons, Matrix.tail_cons]
   all_goals dsimp only [projectiveRawVertex, projectiveRecoveredPort]
   all_goals simp only [Nat.min_def]
   all_goals repeat' first | rfl | omega |
-    (split <;> try simp only [Prod.mk.injEq, true_and, and_true, true_or, or_true,
-      not_true_eq_false, Bool.false_eq_true, Bool.true_eq_false, Prod.fst, Prod.snd,
-      ite_true, ite_false] at *)
+    (split <;> try simp only [Prod.mk.injEq, true_and, and_true, not_true_eq_false] at *)
 
 theorem projectiveRecoveredPort_cell_wrap_odd {n : ℕ} (hn : 2 ≤ n) (hnEven : n % 2 = 0)
     (r : Fin n) (c : Fin (n - 1)) (i : Fin 4)
@@ -126,19 +123,17 @@ theorem projectiveRecoveredPort_cell_wrap_odd {n : ℕ} (hn : 2 ≤ n) (hnEven :
       (quadranglePair (projectiveFaceParity (Sum.inl (r, c))) i))) = _
   fin_cases i
   all_goals simp only [projectiveFaceCorner, projectiveFaceParity, projectivePortCode,
-    hrow, hp, decide_true, decide_false, dite_true, dite_false, quadranglePair,
-    Bool.true_eq, Bool.false_eq_true, if_true, if_false, Equiv.Perm.mul_apply,
-    Equiv.swap_apply_def, Fin.ext_iff] 
-  all_goals simp only [Fin.reduceFinMk, Fin.val_zero, Fin.val_one, Fin.val_two,
-    Fin.coe_ofNat_eq_mod, Nat.reduceMod, Nat.reduceEqDiff, if_true, if_false,
+    hrow, hp, decide_true, dite_false, quadranglePair,
+    if_true, Equiv.Perm.mul_apply,
+    Equiv.swap_apply_def, Fin.ext_iff]
+  all_goals simp only [Fin.reduceFinMk, Fin.coe_ofNat_eq_mod, Nat.reduceMod, Nat.reduceEqDiff,
+    if_true, if_false,
     Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val_two, Matrix.cons_val_three,
     Matrix.head_cons, Matrix.tail_cons]
   all_goals dsimp only [projectiveRawVertex, projectiveRecoveredPort]
   all_goals simp only [Nat.min_def]
   all_goals repeat' first | rfl | omega |
-    (split <;> try simp only [Prod.mk.injEq, true_and, and_true, true_or, or_true,
-      not_true_eq_false, Bool.false_eq_true, Bool.true_eq_false, Prod.fst, Prod.snd,
-      ite_true, ite_false] at *)
+    (split <;> try simp only [Prod.mk.injEq, true_and, and_true, Bool.true_eq_false] at *)
 
 theorem projectiveRecoveredPort_cell_wrap_even {n : ℕ} (hn : 2 ≤ n) (hnEven : n % 2 = 0)
     (r : Fin n) (c : Fin (n - 1)) (i : Fin 4)
@@ -155,19 +150,17 @@ theorem projectiveRecoveredPort_cell_wrap_even {n : ℕ} (hn : 2 ≤ n) (hnEven 
       (quadranglePair (projectiveFaceParity (Sum.inl (r, c))) i))) = _
   fin_cases i
   all_goals simp only [projectiveFaceCorner, projectiveFaceParity, projectivePortCode,
-    hrow, hp, decide_true, decide_false, dite_true, dite_false, quadranglePair,
-    Bool.true_eq, Bool.false_eq_true, if_true, if_false, Equiv.Perm.mul_apply,
-    Equiv.swap_apply_def, Fin.ext_iff] 
-  all_goals simp only [Fin.reduceFinMk, Fin.val_zero, Fin.val_one, Fin.val_two,
-    Fin.coe_ofNat_eq_mod, Nat.reduceMod, Nat.reduceEqDiff, if_true, if_false,
+    hrow, hp, decide_false, dite_false, quadranglePair,
+    Bool.false_eq_true, if_false, Equiv.Perm.mul_apply,
+    Equiv.swap_apply_def, Fin.ext_iff]
+  all_goals simp only [Fin.reduceFinMk, Fin.coe_ofNat_eq_mod, Nat.reduceMod, Nat.reduceEqDiff,
+    if_true, if_false,
     Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val_two, Matrix.cons_val_three,
     Matrix.head_cons, Matrix.tail_cons]
   all_goals dsimp only [projectiveRawVertex, projectiveRecoveredPort]
   all_goals simp only [Nat.min_def]
   all_goals repeat' first | rfl | omega |
-    (split <;> try simp only [Prod.mk.injEq, true_and, and_true, true_or, or_true,
-      not_true_eq_false, Bool.false_eq_true, Bool.true_eq_false, Prod.fst, Prod.snd,
-      ite_true, ite_false] at *)
+    (split <;> try simp only [Prod.mk.injEq, true_and, and_true, not_true_eq_false] at *)
 
 theorem projectiveRecoveredPort_cell {n : ℕ} (hn : 2 ≤ n) (hnEven : n % 2 = 0)
     (r : Fin n) (c : Fin (n - 1)) (i : Fin 4) :
@@ -185,99 +178,103 @@ theorem projectiveRecoveredPort_cell {n : ℕ} (hn : 2 ≤ n) (hnEven : n % 2 = 
 
 theorem projectiveRecoveredPort_cap_zero {n : ℕ} (hn : 2 ≤ n) (hnEven : n % 2 = 0)
     (j : Fin (n - 1)) :
-    projectiveRecoveredPort n (projectiveRawVertex (projectivePortLabel hn (Sum.inr j, (0 : Fin 4))))
-      (projectiveRawVertex (projectivePortLabel hn (projectivePortPair n (Sum.inr j, (0 : Fin 4))))) =
+    projectiveRecoveredPort n (projectiveRawVertex (projectivePortLabel hn (Sum.inr j, (0 : Fin
+      4))))
+      (projectiveRawVertex (projectivePortLabel hn (projectivePortPair n (Sum.inr j, (0 : Fin 4)))))
+        =
       projectivePortCode (Sum.inr j, (0 : Fin 4)) := by
   have hj := j.isLt
   rw [projectivePortPair_apply]
   change projectiveRecoveredPort n
     (projectiveRawVertex (projectiveFaceCorner hn (Sum.inr j) (0 : Fin 4)))
-    (projectiveRawVertex (projectiveFaceCorner hn (Sum.inr j) (quadranglePair false (0 : Fin 4)))) = _
+    (projectiveRawVertex (projectiveFaceCorner hn (Sum.inr j) (quadranglePair false (0 : Fin 4)))) =
+      _
   all_goals simp only [projectiveFaceCorner, projectivePortCode, quadranglePair,
     Bool.false_eq_true, if_false, Equiv.Perm.mul_apply, Equiv.swap_apply_def, Fin.ext_iff]
-  all_goals simp only [Fin.reduceFinMk, Fin.coe_ofNat_eq_mod, Nat.reduceMod, Nat.reduceEqDiff,
-    if_true, if_false, Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val_two,
-    Matrix.cons_val_three, Matrix.head_cons, Matrix.tail_cons]
+  all_goals simp only [Fin.coe_ofNat_eq_mod, Nat.reduceMod, Nat.reduceEqDiff,
+    if_true, if_false, Matrix.cons_val_zero, Matrix.cons_val_one]
   all_goals dsimp only [projectiveBoundary, projectiveRoot, projectiveRawVertex]
   all_goals split_ifs <;> try omega
   all_goals dsimp only [projectiveRawVertex, projectiveRecoveredPort]
   all_goals simp only [Nat.min_def]
   all_goals repeat' first | rfl | omega |
-    (split <;> try simp only [Prod.mk.injEq, true_and, and_true, true_or, or_true,
-      not_true_eq_false, Bool.false_eq_true, Bool.true_eq_false, Prod.fst, Prod.snd,
-      ite_true, ite_false] at *)
+    (split <;> try simp only [Prod.mk.injEq, true_and, and_true, Bool.false_eq_true, ite_true] at *)
 
 theorem projectiveRecoveredPort_cap_one {n : ℕ} (hn : 2 ≤ n) (hnEven : n % 2 = 0)
     (j : Fin (n - 1)) :
-    projectiveRecoveredPort n (projectiveRawVertex (projectivePortLabel hn (Sum.inr j, (1 : Fin 4))))
-      (projectiveRawVertex (projectivePortLabel hn (projectivePortPair n (Sum.inr j, (1 : Fin 4))))) =
+    projectiveRecoveredPort n (projectiveRawVertex (projectivePortLabel hn (Sum.inr j, (1 : Fin
+      4))))
+      (projectiveRawVertex (projectivePortLabel hn (projectivePortPair n (Sum.inr j, (1 : Fin 4)))))
+        =
       projectivePortCode (Sum.inr j, (1 : Fin 4)) := by
   have hj := j.isLt
   rw [projectivePortPair_apply]
   change projectiveRecoveredPort n
     (projectiveRawVertex (projectiveFaceCorner hn (Sum.inr j) (1 : Fin 4)))
-    (projectiveRawVertex (projectiveFaceCorner hn (Sum.inr j) (quadranglePair false (1 : Fin 4)))) = _
+    (projectiveRawVertex (projectiveFaceCorner hn (Sum.inr j) (quadranglePair false (1 : Fin 4)))) =
+      _
   all_goals simp only [projectiveFaceCorner, projectivePortCode, quadranglePair,
     Bool.false_eq_true, if_false, Equiv.Perm.mul_apply, Equiv.swap_apply_def, Fin.ext_iff]
-  all_goals simp only [Fin.reduceFinMk, Fin.coe_ofNat_eq_mod, Nat.reduceMod, Nat.reduceEqDiff,
-    if_true, if_false, Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val_two,
-    Matrix.cons_val_three, Matrix.head_cons, Matrix.tail_cons]
+  all_goals simp only [Fin.coe_ofNat_eq_mod, Nat.reduceMod, Nat.reduceEqDiff,
+    if_true, if_false, Matrix.cons_val_zero, Matrix.cons_val_one]
   all_goals dsimp only [projectiveBoundary, projectiveRoot, projectiveRawVertex]
   all_goals split_ifs <;> try omega
   all_goals dsimp only [projectiveRawVertex, projectiveRecoveredPort]
   all_goals simp only [Nat.min_def]
   all_goals repeat' first | rfl | omega |
-    (split <;> try simp only [Prod.mk.injEq, true_and, and_true, true_or, or_true,
-      not_true_eq_false, Bool.false_eq_true, Bool.true_eq_false, Prod.fst, Prod.snd,
-      ite_true, ite_false] at *)
+    (split <;> try simp only [Prod.mk.injEq, true_and, and_true, Bool.false_eq_true, ite_true] at *)
 
 theorem projectiveRecoveredPort_cap_two {n : ℕ} (hn : 2 ≤ n) (hnEven : n % 2 = 0)
     (j : Fin (n - 1)) :
-    projectiveRecoveredPort n (projectiveRawVertex (projectivePortLabel hn (Sum.inr j, (2 : Fin 4))))
-      (projectiveRawVertex (projectivePortLabel hn (projectivePortPair n (Sum.inr j, (2 : Fin 4))))) =
+    projectiveRecoveredPort n (projectiveRawVertex (projectivePortLabel hn (Sum.inr j, (2 : Fin
+      4))))
+      (projectiveRawVertex (projectivePortLabel hn (projectivePortPair n (Sum.inr j, (2 : Fin 4)))))
+        =
       projectivePortCode (Sum.inr j, (2 : Fin 4)) := by
   have hj := j.isLt
   rw [projectivePortPair_apply]
   change projectiveRecoveredPort n
     (projectiveRawVertex (projectiveFaceCorner hn (Sum.inr j) (2 : Fin 4)))
-    (projectiveRawVertex (projectiveFaceCorner hn (Sum.inr j) (quadranglePair false (2 : Fin 4)))) = _
+    (projectiveRawVertex (projectiveFaceCorner hn (Sum.inr j) (quadranglePair false (2 : Fin 4)))) =
+      _
   all_goals simp only [projectiveFaceCorner, projectivePortCode, quadranglePair,
     Bool.false_eq_true, if_false, Equiv.Perm.mul_apply, Equiv.swap_apply_def, Fin.ext_iff]
-  all_goals simp only [Fin.reduceFinMk, Fin.coe_ofNat_eq_mod, Nat.reduceMod, Nat.reduceEqDiff,
-    if_true, if_false, Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val_two,
+  all_goals simp only [Fin.coe_ofNat_eq_mod, Nat.reduceMod, Nat.reduceEqDiff,
+    if_true, if_false, Matrix.cons_val_two,
     Matrix.cons_val_three, Matrix.head_cons, Matrix.tail_cons]
   all_goals dsimp only [projectiveBoundary, projectiveRoot, projectiveRawVertex]
   all_goals split_ifs <;> try omega
   all_goals dsimp only [projectiveRawVertex, projectiveRecoveredPort]
   all_goals simp only [Nat.min_def]
   all_goals repeat' first | rfl | omega |
-    (split <;> try simp only [Prod.mk.injEq, true_and, and_true, true_or, or_true,
-      not_true_eq_false, Bool.false_eq_true, Bool.true_eq_false, Prod.fst, Prod.snd,
-      ite_true, ite_false] at *)
+    (split <;> try simp only [Prod.mk.injEq, true_and, and_true, true_or, Bool.false_eq_true,
+      ite_true] at *)
 
 theorem projectiveRecoveredPort_cap_three {n : ℕ} (hn : 2 ≤ n) (hnEven : n % 2 = 0)
     (j : Fin (n - 1)) :
-    projectiveRecoveredPort n (projectiveRawVertex (projectivePortLabel hn (Sum.inr j, (3 : Fin 4))))
-      (projectiveRawVertex (projectivePortLabel hn (projectivePortPair n (Sum.inr j, (3 : Fin 4))))) =
+    projectiveRecoveredPort n (projectiveRawVertex (projectivePortLabel hn (Sum.inr j, (3 : Fin
+      4))))
+      (projectiveRawVertex (projectivePortLabel hn (projectivePortPair n (Sum.inr j, (3 : Fin 4)))))
+        =
       projectivePortCode (Sum.inr j, (3 : Fin 4)) := by
   have hj := j.isLt
   rw [projectivePortPair_apply]
   change projectiveRecoveredPort n
     (projectiveRawVertex (projectiveFaceCorner hn (Sum.inr j) (3 : Fin 4)))
-    (projectiveRawVertex (projectiveFaceCorner hn (Sum.inr j) (quadranglePair false (3 : Fin 4)))) = _
+    (projectiveRawVertex (projectiveFaceCorner hn (Sum.inr j) (quadranglePair false (3 : Fin 4)))) =
+      _
   all_goals simp only [projectiveFaceCorner, projectivePortCode, quadranglePair,
     Bool.false_eq_true, if_false, Equiv.Perm.mul_apply, Equiv.swap_apply_def, Fin.ext_iff]
-  all_goals simp only [Fin.reduceFinMk, Fin.coe_ofNat_eq_mod, Nat.reduceMod, Nat.reduceEqDiff,
-    if_true, if_false, Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val_two,
+  all_goals simp only [Fin.coe_ofNat_eq_mod, Nat.reduceMod, Nat.reduceEqDiff,
+    if_true, if_false, Matrix.cons_val_two,
     Matrix.cons_val_three, Matrix.head_cons, Matrix.tail_cons]
   all_goals dsimp only [projectiveBoundary, projectiveRoot, projectiveRawVertex]
   all_goals split_ifs <;> try omega
   all_goals dsimp only [projectiveRawVertex, projectiveRecoveredPort]
   all_goals simp only [Nat.min_def]
   all_goals repeat' first | rfl | omega |
-    (split <;> try simp only [Prod.mk.injEq, true_and, and_true, true_or, or_true,
-      not_true_eq_false, Bool.false_eq_true, Bool.true_eq_false, Prod.fst, Prod.snd,
-      ite_true, ite_false] at *)
+    (split <;> try simp only [Prod.mk.injEq, true_and, and_true, or_true,
+      Bool.false_eq_true, ite_true] at *)
 
 theorem projectiveRecoveredPort_cap {n : ℕ} (hn : 2 ≤ n) (hnEven : n % 2 = 0)
     (j : Fin (n - 1)) (i : Fin 4) :

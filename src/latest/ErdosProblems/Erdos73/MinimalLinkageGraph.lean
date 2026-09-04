@@ -12,10 +12,13 @@ def columnGraph (G : _root_.SimpleGraph V) : _root_.SimpleGraph V where
   symm := ⟨by rintro x y ⟨hxy, i, hx, hy⟩; exact ⟨hxy.symm, i, hy, hx⟩⟩
   loopless := ⟨by rintro x ⟨hxx, _⟩; exact hxx.ne rfl⟩
 
+omit [DecidableEq V] in
 theorem columnGraph_le : columnGraph Q G ≤ G := fun _ _ h => h.1
 
+omit [DecidableEq V] in
 theorem columnGraph_induce (i : I) :
     (columnGraph Q G).induce {x | x ∈ Q i} = G.induce {x | x ∈ Q i} := by
+  classical
   ext x y
   exact ⟨fun h => h.1, fun h => ⟨h, i, x.property, y.property⟩⟩
 
@@ -25,13 +28,14 @@ def EdgeMinimal (G : _root_.SimpleGraph V) (A B : Finset V) : Prop :=
   ∀ H : _root_.SimpleGraph V, H ≤ G → Nonempty (PerfectPathPacking H A B) →
     (∀ i, (H.induce {x | x ∈ Q i}).Connected) → G ≤ H
 
-theorem exists_edgeMinimal [Fintype V]
+theorem exists_edgeMinimal [Finite V]
     (R : PerfectPathPacking G A B)
     (hQ : ∀ i, (G.induce {x | x ∈ Q i}).Connected) :
     ∃ H : _root_.SimpleGraph V, H ≤ G ∧
       Nonempty (PerfectPathPacking H A B) ∧
       (∀ i, (H.induce {x | x ∈ Q i}).Connected) ∧ EdgeMinimal Q H A B := by
   classical
+  let : Fintype V := Fintype.ofFinite V
   let eligible (H : _root_.SimpleGraph V) := H ≤ G ∧
     Nonempty (PerfectPathPacking H A B) ∧ ∀ i, (H.induce {x | x ∈ Q i}).Connected
   have hex : ∃ n, ∃ H, eligible H ∧ H.edgeFinset.card = n :=

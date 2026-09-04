@@ -219,7 +219,7 @@ lemma card_union_union_inter_le (A B X₁ X₂ : Finset V) :
 /-- A deletion set in an induced graph can be viewed as a deletion set in
 the ambient vertex type, with the same cardinality. -/
 lemma bipartiteAfterDeletingAtMost_induce_finset
-    {V : Type*} [Fintype V] (G : SimpleGraph V) (S : Finset V) (C : ℕ)
+    {V : Type*} (G : SimpleGraph V) (S : Finset V) (C : ℕ)
     (h : BipartiteAfterDeletingAtMost C (G.induce (S : Set V))) :
     ∃ X : Finset V, X ⊆ S ∧ X.card ≤ C ∧
       (G.induce (((S \ X : Finset V) : Set V))).IsBipartite := by
@@ -1122,9 +1122,10 @@ noncomputable def IsOddCycleSubgraph.toCopyData
     Set.range hH.toCopyData.copy = H.verts := by
   classical
   unfold IsOddCycleSubgraph.toCopyData
-  simp only [SimpleGraph.Copy.comp_apply]
+  simp only
   ext v
-  simp only [SimpleGraph.Copy.coe_comp, SimpleGraph.Copy.coe_mk, RelHom.coeFn_mk, RelIso.coe_fn_toEquiv,
+  simp only [SimpleGraph.Copy.coe_comp, SimpleGraph.Copy.coe_mk, RelHom.coeFn_mk,
+    RelIso.coe_fn_toEquiv,
     EquivLike.range_comp, mem_range, Subtype.exists]
   constructor
   · rintro ⟨a, b, rfl⟩
@@ -1205,7 +1206,7 @@ theorem bipartite_induce_compl_iff_meetsEveryOddCycleSubgraph
       (Erdos58.mem_oddCycleLengths_iff_cycleGraph_isContained hn3).2
         ⟨hnodd, ⟨f⟩⟩
     have hempty := oddCycleLengths_eq_empty_of_bipartite hbip
-    simpa [hempty] using hnmem
+    simp [hempty] at hnmem
   · intro hmeet
     apply Erdos58.colorable_two_of_oddCycleLengths_eq_empty
     rw [Set.eq_empty_iff_forall_notMem]
@@ -1235,8 +1236,9 @@ theorem bipartite_induce_compl_iff_meetsEveryOddCycleSubgraph
 odd cycle.  This is the subgraph-copy form of the standard odd-cycle
 characterization and is convenient when orienting separations. -/
 theorem isBipartite_iff_no_oddCycleSubgraph
-    {V : Type*} [Fintype V] (G : SimpleGraph V) :
+    {V : Type*} [Finite V] (G : SimpleGraph V) :
     G.IsBipartite ↔ ¬ ∃ H : G.Subgraph, IsOddCycleSubgraph H := by
+  let : Fintype V := Fintype.ofFinite V
   constructor
   · intro hbip
     have hzero : BipartiteAfterDeletingAtMost 0 G :=
@@ -1823,7 +1825,7 @@ lemma IsHalfIntegralOddCycleFamily.insert_disjoint
       exact hP.2 v
 
 lemma IsHalfIntegralOddCycleFamily.card_insert_disjoint
-    {V : Type*} [Fintype V] {G : SimpleGraph V}
+    {V : Type*} {G : SimpleGraph V}
     {P : Finset G.Subgraph} {H : G.Subgraph}
     (hH : IsOddCycleSubgraph H)
     (hdisj : ∀ K ∈ P, Disjoint H.verts K.verts) :
@@ -1840,7 +1842,7 @@ member.  At the level of the canonical packing representation, the new
 cycle is prepended to the list and the two graph copies are joined by a
 disjoint graph sum. -/
 lemma hasOddCyclePacking_succ_of_disjoint_induces
-    {V : Type*} [Fintype V] (G : SimpleGraph V)
+    {V : Type*} (G : SimpleGraph V)
     {S T : Set V} (hST : Disjoint S T) {p : ℕ}
     (hP : HasOddCyclePacking p (G.induce S))
     (hT : ∃ H : (G.induce T).Subgraph, IsOddCycleSubgraph H) :
@@ -1904,7 +1906,6 @@ lemma hasHalfIntegralOddCyclePacking_succ_of_disjoint_induces
     exact Set.disjoint_left.mp hST s.2 (hts ▸ t.2)
   refine ⟨insert K Q, ?_, hQfamily.insert_disjoint hKodd hKQ⟩
   rw [IsHalfIntegralOddCycleFamily.card_insert_disjoint hKodd hKQ]
-  change Q.card + 1 = p + 1
   rw [show Q.card = P.card by
     exact Finset.card_image_of_injective _
       (subgraphMap_injective_of_embedding fS)]
@@ -2433,7 +2434,7 @@ def IsUniformOddCycleEdgeCertificate {V : Type*} [Fintype V]
         (∑ e ∈ M.filter fun e ↦ v ∈ e, edgeWeight e) =
           if v ∈ S then q else 0
 
-lemma weighted_cycle_inter_double_count {V : Type*} [Fintype V]
+lemma weighted_cycle_inter_double_count {V : Type*}
     {G : SimpleGraph V} (I : Finset V) (P : Finset G.Subgraph)
     (w : G.Subgraph → ℕ) :
     (∑ H ∈ P, w H * (I.filter fun v ↦ v ∈ H.verts).card) =
@@ -2463,7 +2464,7 @@ lemma weighted_cycle_verts_double_count {V : Type*} [Fintype V]
   intro v hv
   simp [Finset.sum_filter]
 
-lemma weighted_edge_inter_double_count {V : Type*} [Fintype V]
+lemma weighted_edge_inter_double_count {V : Type*}
     (I : Finset V) (M : Finset (Sym2 V)) (w : Sym2 V → ℕ) :
     (∑ e ∈ M, w e * (I.filter fun v ↦ v ∈ e).card) =
       ∑ v ∈ I, ∑ e ∈ M.filter (fun e ↦ v ∈ e), w e := by
@@ -2519,7 +2520,7 @@ lemma independent_edge_inter_card_le_one {V : Type*} [Fintype V]
       · rfl
 
 lemma weighted_sum_oddCycleSubgraph_independent_inter_defect
-    {V : Type*} [Fintype V] {G : SimpleGraph V}
+    {V : Type*} [Finite V] {G : SimpleGraph V}
     (P : Finset G.Subgraph) (w : G.Subgraph → ℕ)
     (hP : ∀ H ∈ P, IsOddCycleSubgraph H)
     (I : Finset V) (hI : G.IsIndepSet (I : Set V)) :
@@ -2694,7 +2695,7 @@ def IsUniformIndexedOddCycleEdgeCertificate
           if v ∈ S then q else 0
 
 lemma weighted_indexed_cycle_inter_double_count
-    {V : Type*} [Fintype V] {G : SimpleGraph V}
+    {V : Type*} {G : SimpleGraph V}
     {ι : Type*} [Fintype ι] (I : Finset V)
     (C : ι → G.Subgraph) (w : ι → ℕ) :
     (∑ i : ι, w i * (I.filter fun v ↦ v ∈ (C i).verts).card) =
@@ -2703,7 +2704,7 @@ lemma weighted_indexed_cycle_inter_double_count
   rw [Finset.sum_comm]
   apply Finset.sum_congr rfl
   intro v hv
-  simp [Finset.sum_filter]
+  simp
 
 lemma weighted_indexed_cycle_verts_double_count
     {V : Type*} [Fintype V] {G : SimpleGraph V}
@@ -2721,10 +2722,10 @@ lemma weighted_indexed_cycle_verts_double_count
   rw [Finset.sum_comm]
   apply Finset.sum_congr rfl
   intro v hv
-  simp [Finset.sum_filter]
+  simp
 
 lemma weighted_sum_indexed_oddCycleSubgraph_independent_inter_defect
-    {V : Type*} [Fintype V] {G : SimpleGraph V}
+    {V : Type*} [Finite V] {G : SimpleGraph V}
     {ι : Type*} [Fintype ι] (C : ι → G.Subgraph) (w : ι → ℕ)
     (hC : ∀ i, IsOddCycleSubgraph (C i))
     (I : Finset V) (hI : G.IsIndepSet (I : Set V)) :
@@ -3701,8 +3702,9 @@ theorem hasHalfIntegralOddCyclePacking_one_or_bipartite
 This packages the usual odd-cycle characterization in the canonical
 `HasOddCyclePacking` representation. -/
 theorem hasOddCyclePacking_one_or_bipartite
-    {V : Type*} [Fintype V] (G : SimpleGraph V) :
+    {V : Type*} [Finite V] (G : SimpleGraph V) :
     HasOddCyclePacking 1 G ∨ G.IsBipartite := by
+  let : Fintype V := Fintype.ofFinite V
   rcases hasHalfIntegralOddCyclePacking_one_or_bipartite G with
     ⟨P, hPcard, hP⟩ | hbip
   · obtain ⟨H, hHP⟩ : ∃ H, H ∈ P := by
@@ -4484,10 +4486,10 @@ lemma mem_range_twistedLEmbedding_iff {n : ℕ}
     · exact Or.inl ⟨rfl, hi₁⟩
     · split <;> rename_i hi₂
       · right; left
-        simp only [Fin.val_mk]
+        simp only
         refine ⟨trivial, ?_, ?_⟩ <;> omega
       · right; right
-        simp only [Fin.val_mk]
+        simp only
         refine ⟨trivial, ?_⟩
         omega
   · intro hv
@@ -4514,7 +4516,7 @@ lemma mem_range_twistedLEmbedding_iff {n : ℕ}
         change (twistedLVertex c r i).1.1 = v.1.1
         dsimp [twistedLVertex, i]
         split <;> rename_i hi₁
-        · simp only [Prod.fst, Fin.val_mk]
+        · simp only
           omega
         · split <;> rename_i hi₂
           · exact hmiddle.1.symm
@@ -4523,10 +4525,10 @@ lemma mem_range_twistedLEmbedding_iff {n : ℕ}
         change (twistedLVertex c r i).2.1 = v.2.1
         dsimp [twistedLVertex, i]
         split <;> rename_i hi₁
-        · simp only [Fin.val_mk]
+        · simp only
           omega
         · split <;> rename_i hi₂
-          · simp only [Fin.val_mk]
+          · simp only
             omega
           · omega
     · let i : Fin (twistedLCycleLength c) :=
@@ -4541,18 +4543,18 @@ lemma mem_range_twistedLEmbedding_iff {n : ℕ}
         split <;> rename_i hi₁
         · omega
         · split <;> rename_i hi₂
-          · simp only [Fin.val_mk]
+          · simp only
             omega
-          · simp only [Fin.val_mk]
+          · simp only
             omega
       · apply Fin.ext
         change (twistedLVertex c r i).2.1 = v.2.1
         dsimp [twistedLVertex, i]
         split <;> rename_i hi₁
-        · simp only [Fin.val_mk]
+        · simp only
           omega
         · split <;> rename_i hi₂
-          · simp only [Fin.val_mk]
+          · simp only
             omega
           · exact hright.1.symm
 
@@ -4651,7 +4653,7 @@ lemma mem_range_twistedCycleEmbedding_true_iff {n : ℕ}
       rw [hi]
       exact twistedGridReflection_involutive n v
   rw [hrange, mem_range_twistedLEmbedding_iff]
-  simp only [twistedGridReflection_apply, Prod.fst, Prod.snd]
+  simp only [twistedGridReflection_apply]
   dsimp [Fin.rev, twistedRightColumn]
   have hrevadd : n - (v.2.1 + 1) + (v.2.1 + 1) = n :=
     Nat.sub_add_cancel (Nat.succ_le_of_lt hvn)
@@ -4770,7 +4772,7 @@ lemma twistedCyclePairLoad_eq {n : ℕ} (c : TwistedLeftColumn n)
             simp
           _ = n - v.1 := by simp
       rw [hlower, hupper]
-      simp only [hvc, hvz, or_true, if_true]
+      simp only [hvz, or_true, if_true]
       omega
     · by_cases hinterior : c.1 < v.2.1 ∧ v.2.1 < twistedRightColumn c
       · have hfalse (r : Fin n) :
@@ -4782,7 +4784,7 @@ lemma twistedCyclePairLoad_eq {n : ℕ} (c : TwistedLeftColumn n)
           rw [mem_range_twistedCycleEmbedding_true_iff]
           omega
         simp_rw [hfalse, htrue]
-        simp only [hvc, hvz, or_self, false_or, if_false, hinterior, if_true]
+        simp only [hvc, hvz, or_self, if_false, hinterior]
         rw [Finset.sum_add_distrib]
         simp
       · have hfalse (r : Fin n) :
@@ -5006,7 +5008,7 @@ lemma sum_twistedColumnWeight_mul_pairLoad_even (m : ℕ)
       apply Finset.sum_congr rfl
       intro c _
       by_cases hlt : c < d <;> by_cases heq : c = d <;>
-        simp [hlt, heq, Nat.mul_comm, Nat.mul_left_comm]
+        simp [hlt, heq, Nat.mul_comm]
     _ = 2 * (∑ i ∈ Finset.range d.1, w i) + (2 * m + 1) * w d.1 := by
       rw [hprefix, hpoint]
     _ = (2 * m + 1) ^ m := by
@@ -5037,7 +5039,7 @@ lemma twistedCycleWeightedVertexLoad (m : ℕ)
       dsimp [twistedCycleWeight]
       by_cases ht : v ∈ Set.range (twistedCycleEmbedding c r true) <;>
         by_cases hf : v ∈ Set.range (twistedCycleEmbedding c r false) <;>
-        simp [ht, hf, Nat.mul_add, Nat.mul_comm, Nat.mul_left_comm, Nat.mul_two]
+        simp [ht, hf, Nat.mul_two]
     _ = (2 * m + 1) ^ m := sum_twistedColumnWeight_mul_pairLoad_even m v
 
 /-- The full twisted grid carries a uniform indexed odd-cycle certificate
@@ -5186,7 +5188,8 @@ variable {U : Type*} [Fintype U] [LinearOrder U]
 def OrientedEdge (F : SimpleGraph U) :=
   {e : U × U // e.1 < e.2 ∧ F.Adj e.1 e.2}
 
-instance orientedEdgeFinite (F : SimpleGraph U) : Finite (OrientedEdge F) :=
+omit [Fintype U] in
+instance orientedEdgeFinite [Finite U] (F : SimpleGraph U) : Finite (OrientedEdge F) :=
   Finite.of_injective Subtype.val Subtype.val_injective
 
 noncomputable instance orientedEdgeFintype (F : SimpleGraph U) :
@@ -5199,7 +5202,9 @@ variable {F : SimpleGraph U}
 def lo (e : OrientedEdge F) : U := e.1.1
 def hi (e : OrientedEdge F) : U := e.1.2
 
+omit [Fintype U] in
 lemma lo_lt_hi (e : OrientedEdge F) : e.lo < e.hi := e.2.1
+omit [Fintype U] in
 lemma adj (e : OrientedEdge F) : F.Adj e.lo e.hi := e.2.2
 
 end OrientedEdge
@@ -5218,11 +5223,13 @@ def oddSubdivisionPathVertex {F : SimpleGraph U}
     Fin.lastCases (Sum.inl e.hi)
       (fun i : Fin (2 * t e) ↦ Sum.inr ⟨e, i⟩) j
 
+omit [Fintype U] in
 @[simp] lemma oddSubdivisionPathVertex_zero {F : SimpleGraph U}
     (t : OrientedEdge F → ℕ) (e : OrientedEdge F) :
     oddSubdivisionPathVertex t e 0 = Sum.inl e.lo := by
   simp [oddSubdivisionPathVertex]
 
+omit [Fintype U] in
 @[simp] lemma oddSubdivisionPathVertex_last {F : SimpleGraph U}
     (t : OrientedEdge F → ℕ) (e : OrientedEdge F) :
     oddSubdivisionPathVertex t e (Fin.last (2 * t e + 1)) = Sum.inl e.hi := by
@@ -5230,12 +5237,14 @@ def oddSubdivisionPathVertex {F : SimpleGraph U}
   unfold oddSubdivisionPathVertex
   rw [Fin.cases_succ, Fin.lastCases_last]
 
+omit [Fintype U] in
 @[simp] lemma oddSubdivisionPathVertex_internal {F : SimpleGraph U}
     (t : OrientedEdge F → ℕ) (e : OrientedEdge F)
     (i : Fin (2 * t e)) :
     oddSubdivisionPathVertex t e i.castSucc.succ = Sum.inr ⟨e, i⟩ := by
   simp [oddSubdivisionPathVertex]
 
+omit [Fintype U] in
 lemma oddSubdivisionPathVertex_injective {F : SimpleGraph U}
     (t : OrientedEdge F → ℕ) (e : OrientedEdge F) :
     Function.Injective (oddSubdivisionPathVertex t e) := by
@@ -5291,6 +5300,7 @@ def oddSubdivisionGraph (F : SimpleGraph U)
     SimpleGraph.map (oddSubdivisionPathVertex t e)
       (SimpleGraph.pathGraph (2 * t e + 2))
 
+omit [Fintype U] in
 lemma oddSubdivisionGraph_adj_path_succ {F : SimpleGraph U}
     (t : OrientedEdge F → ℕ) (e : OrientedEdge F)
     (i : Fin (2 * t e + 1)) :
@@ -5318,10 +5328,11 @@ def consecutivePairEquiv (n : ℕ) : Fin n × Fin 2 ≃ Fin (2 * n) :=
 
 /-- Any pairing of a finite type into `n` labelled pairs bounds a subset
 which contains at most one member of every pair. -/
-lemma card_le_of_pairing {α : Type*} [Fintype α] (n : ℕ)
+lemma card_le_of_pairing {α : Type*} (n : ℕ)
     (E : Fin n × Fin 2 ≃ α) (J : Finset α)
     (hJ : ∀ j : Fin n, ¬ (E (j, 0) ∈ J ∧ E (j, 1) ∈ J)) :
     J.card ≤ n := by
+  let : Fintype α := Fintype.ofEquiv _ E
   have hcard : J.card = ∑ i : α, if i ∈ J then (1 : ℕ) else 0 := by simp
   rw [hcard, ← E.sum_comp]
   rw [Fintype.sum_prod_type]
@@ -5363,6 +5374,7 @@ def oddPathPairEquiv (n : ℕ) : Fin (n + 1) × Fin 2 ≃ Fin (2 * n + 2) :=
   change (consecutivePairEquiv (n + 1) (j, b)).1 = _
   exact consecutivePairEquiv_val (n + 1) j b
 
+omit [Fintype U] in
 lemma oddSubdivisionGraph_adj_internal_pair {F : SimpleGraph U}
     (t : OrientedEdge F → ℕ) (e : OrientedEdge F) (j : Fin (t e)) :
     (oddSubdivisionGraph F t).Adj
@@ -5382,6 +5394,7 @@ lemma oddSubdivisionGraph_adj_internal_pair {F : SimpleGraph U}
     apply Fin.ext
     simp [k]
 
+omit [Fintype U] in
 lemma oddSubdivisionGraph_adj_path_pair {F : SimpleGraph U}
     (t : OrientedEdge F → ℕ) (e : OrientedEdge F) (j : Fin (t e + 1)) :
     (oddSubdivisionGraph F t).Adj
@@ -5415,12 +5428,14 @@ def subdivisionPathPart {F : SimpleGraph U}
     u ∈ subdivisionBranchPart I ↔ Sum.inl u ∈ I := by
   simp [subdivisionBranchPart]
 
+omit [Fintype U] in
 @[simp] lemma mem_subdivisionInternalPart {F : SimpleGraph U}
     {t : OrientedEdge F → ℕ} (I : Finset (OddSubdivisionVertex F t))
     (e : OrientedEdge F) (i : Fin (2 * t e)) :
     i ∈ subdivisionInternalPart I e ↔ Sum.inr (Sigma.mk e i) ∈ I := by
   simp [subdivisionInternalPart]
 
+omit [Fintype U] in
 lemma subdivisionInternalPart_card_le {F : SimpleGraph U}
     (t : OrientedEdge F → ℕ) (I : Finset (OddSubdivisionVertex F t))
     (hI : (oddSubdivisionGraph F t).IsIndepSet (I : Set _))
@@ -5431,6 +5446,7 @@ lemma subdivisionInternalPart_card_le {F : SimpleGraph U}
   have hadj := oddSubdivisionGraph_adj_internal_pair t e j
   exact hI (by simpa using hj.1) (by simpa using hj.2) hadj.ne hadj
 
+omit [Fintype U] in
 lemma subdivisionPathPart_card_le {F : SimpleGraph U}
     (t : OrientedEdge F → ℕ) (I : Finset (OddSubdivisionVertex F t))
     (hI : (oddSubdivisionGraph F t).IsIndepSet (I : Set _))
@@ -5442,6 +5458,7 @@ lemma subdivisionPathPart_card_le {F : SimpleGraph U}
   exact hI (by simpa [subdivisionPathPart] using hj.1)
     (by simpa [subdivisionPathPart] using hj.2) hadj.ne hadj
 
+omit [Fintype U] in
 lemma subdivisionPathPart_card_eq_internal_add_two_of_endpoints
     {F : SimpleGraph U} (t : OrientedEdge F → ℕ)
     (I : Finset (OddSubdivisionVertex F t)) (e : OrientedEdge F)
@@ -5465,6 +5482,7 @@ lemma subdivisionPathPart_card_eq_internal_add_two_of_endpoints
   rw [if_pos hlo, if_pos hhi, ← hinterior]
   omega
 
+omit [Fintype U] in
 lemma subdivisionInternalPart_card_add_indicator_le {F : SimpleGraph U}
     (t : OrientedEdge F → ℕ) (I : Finset (OddSubdivisionVertex F t))
     (hI : (oddSubdivisionGraph F t).IsIndepSet (I : Set _))
@@ -6014,6 +6032,7 @@ lemma bramble_avoiding_separator_one_side {β : Finset (Finset V)}
     · exact (hleft ⟨T, hT, hTdisj, hTA⟩).elim
     · exact hTB
 
+omit [Fintype V] in
 lemma bramble_replacement_hits {β : Finset (Finset V)}
     {A B X : Finset V} (hX : IsBrambleHittingSet β X)
     (hside : ∀ T ∈ β, Disjoint T (A ∩ B) → T ⊆ A \ B) :

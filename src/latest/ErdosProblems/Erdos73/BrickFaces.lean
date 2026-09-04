@@ -4,7 +4,6 @@ import ErdosProblems.Erdos73.BrickWall
 
 namespace Erdos73
 noncomputable section
-open scoped Classical
 
 open SimpleGraph
 
@@ -68,6 +67,7 @@ def elementaryBrickFaceCopy {c r : ℕ} (a b : ℕ) (hr : a + 1 < r) (hc : b + 2
     (hpar : (b + a) % 2 = 1) : (cycleGraph 6).Copy (elementaryWall c r) where
   toHom := {
     toFun := fun i => ⟨rawBrickFaceCopy a b hr hc hpar i, by
+      classical
       have hh := (rawBrickFaceCopy a b hr hc hpar).degree_le i
       simpa only [cycleGraph_degree_three_le] using hh⟩
     map_rel' := fun h => (rawBrickFaceCopy a b hr hc hpar).toHom.map_adj h }

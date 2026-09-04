@@ -13,7 +13,8 @@ def projectiveReferencePort {n : ℕ} (hn : 2 ≤ n) (v : Fin n × Fin n) : Proj
 
 def ProjectiveReachesReference {n : ℕ} (hn : 2 ≤ n) (hnEven : n % 2 = 0)
     (d : ProjectivePort n) : Prop :=
-  (projectiveAcrossPermutation hn hnEven).SameCycle d (projectiveReferencePort hn (projectivePortLabel hn d))
+  (projectiveAcrossPermutation hn hnEven).SameCycle d (projectiveReferencePort hn
+    (projectivePortLabel hn d))
 
 theorem projectiveReference_transfer {n : ℕ} (hn : 2 ≤ n) (hnEven : n % 2 = 0)
     {d e : ProjectivePort n} (hde : (projectiveAcrossPermutation hn hnEven).SameCycle d e)
@@ -24,7 +25,8 @@ theorem projectiveReference_transfer {n : ℕ} (hn : 2 ≤ n) (hnEven : n % 2 = 
   exact hde.trans he
 
 theorem projectiveReference_of_across {n : ℕ} (hn : 2 ≤ n) (hnEven : n % 2 = 0)
-    (d : ProjectivePort n) (h : ProjectiveReachesReference hn hnEven (projectiveAcrossFace hn hnEven d)) :
+    (d : ProjectivePort n) (h : ProjectiveReachesReference hn hnEven (projectiveAcrossFace hn hnEven
+      d)) :
     ProjectiveReachesReference hn hnEven d :=
   projectiveReference_transfer hn hnEven
     (Perm.SameCycle.refl (projectiveAcrossPermutation hn hnEven) d).apply_right h

@@ -17,6 +17,7 @@ def incidentOrientedNeighbor {w : W} (e : IncidentOrientedEdge H w) : H.neighbor
     ⟨e.val.lo, (congrArg (fun z => H.Adj z e.val.lo)
       (e.property.resolve_left h)).mp e.val.adj.symm⟩
 
+omit [Fintype W] in
 theorem incidentOrientedNeighbor_injective (w : W) :
     Function.Injective (incidentOrientedNeighbor (H := H) (w := w)) := by
   intro e f hef

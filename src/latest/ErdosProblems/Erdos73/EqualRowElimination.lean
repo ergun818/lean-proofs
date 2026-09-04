@@ -5,7 +5,6 @@ import ErdosProblems.Erdos73.SameRowHandleCycles
 
 namespace Erdos73.ColumnHandleFamily
 noncomputable section
-open scoped Classical
 
 open SimpleGraph Finset
 
@@ -13,13 +12,15 @@ variable {V I : Type*} [Fintype V] {G : SimpleGraph V} {c r : ℕ}
 variable {S : GraphSubdivisionModel (elementaryWall c r) G}
 variable {col : BipartiteColoringOn G S.vertexSet}
 
-theorem oddPacking_or_strict_row_selection (F : ColumnHandleFamily S col I)
+omit [Fintype V] in
+theorem oddPacking_or_strict_row_selection [Finite V] (F : ColumnHandleFamily S col I)
     (hdis : Pairwise (fun i j => Disjoint (F.rows i) (F.rows j)))
     (hrow : ∀ i, (F.sourceNail i).val.1.val ≤ (F.targetNail i).val.1.val)
     (s : Finset I) (k m : ℕ) (hsize : k - 1 + m ≤ s.card) :
     HasOddCyclePacking k G ∨ ∃ f : Fin m → I,
       Function.Injective f ∧ (∀ i, f i ∈ s) ∧
       ∀ i, (F.sourceNail (f i)).val.1.val < (F.targetNail (f i)).val.1.val := by
+  classical
   let e := s.filter (fun i => (F.sourceNail i).val.1.val = (F.targetNail i).val.1.val)
   by_cases he : k ≤ e.card
   · obtain ⟨f, hf, hfe, _⟩ := exists_rank_ordered_selection e

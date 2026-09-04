@@ -6,13 +6,13 @@ import Mathlib.Combinatorics.Pigeonhole
 
 namespace Erdos73
 noncomputable section
-open scoped Classical
 
 open Finset
 
 theorem exists_rank_ordered_selection {I : Type*} (s : Finset I) (rank : I → ℕ)
     (hrank : Set.InjOn rank (s : Set I)) (k : ℕ) (hsize : k ≤ s.card) :
     ∃ f : Fin k → I, Function.Injective f ∧ (∀ i, f i ∈ s) ∧ StrictMono (rank ∘ f) := by
+  classical
   obtain ⟨t, hts, htcard⟩ := exists_subset_card_eq hsize
   have htinj : Set.InjOn rank (t : Set I) := hrank.mono hts
   have himage : (t.image rank).card = k := (card_image_iff.mpr htinj).trans htcard
@@ -32,6 +32,7 @@ theorem exists_rank_ordered_selection {I : Type*} (s : Finset I) (rank : I → �
 theorem exists_large_finite_fiber {I B : Type*} [Fintype B] [Nonempty B]
     (s : Finset I) (f : I → B) (k : ℕ) (hsize : Fintype.card B * k ≤ s.card) :
     ∃ b : B, ∃ t : Finset I, t ⊆ s ∧ k ≤ t.card ∧ ∀ i ∈ t, f i = b := by
+  classical
   obtain ⟨b, _, hb⟩ := exists_le_card_fiber_of_mul_le_card_of_maps_to
     (s := s) (t := (univ : Finset B)) (f := f) (fun _ _ => mem_univ _) univ_nonempty
     (by simpa only [card_univ] using hsize)

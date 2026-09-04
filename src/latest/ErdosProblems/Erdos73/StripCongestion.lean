@@ -4,16 +4,16 @@ import ErdosProblems.Erdos73.BrickStripNetworks
 
 namespace Erdos73
 noncomputable section
-open scoped Classical
 
 open SimpleGraph Finset
 
 theorem biUnion_membership_card_le_of_pairwise_disjoint
-    {I J V : Type*} [Fintype I] [Fintype J] [DecidableEq I] [DecidableEq J] [DecidableEq V]
+    {I J V : Type*} [Fintype I] [Fintype J] [DecidableEq V]
     (D : I → Finset J) (R : J → Finset V)
     (hD : Pairwise (fun i j => Disjoint (D i) (D j))) (x : V) :
     (Finset.univ.filter (fun i => x ∈ (D i).biUnion R)).card ≤
       (Finset.univ.filter (fun j => x ∈ R j)).card := by
+  classical
   let A := Finset.univ.filter (fun i => x ∈ (D i).biUnion R)
   let B := Finset.univ.filter (fun j => x ∈ R j)
   have hex (i : A) : ∃ j, j ∈ D i.val ∧ x ∈ R j :=
@@ -30,15 +30,18 @@ theorem biUnion_membership_card_le_of_pairwise_disjoint
 
 variable {V : Type*} {G : SimpleGraph V} {c r : ℕ}
 
+open scoped Classical in
 theorem brickStripNetwork_membership_card_le_four {I : Type*} [Fintype I]
     (S : GraphSubdivisionModel (elementaryWall c r) G)
     (A : I → Finset (Fin (r - 1))) (B : I → Finset (Fin (c - 1)))
     (hA : Pairwise (fun i j => Disjoint (A i) (A j)))
     (hB : Pairwise (fun i j => Disjoint (B i) (B j))) (x : V) :
     (Finset.univ.filter (fun i => x ∈ brickStripNetwork S (A i) (B i))).card ≤ 4 := by
+  classical
   have hrow := (biUnion_membership_card_le_of_pairwise_disjoint A (brickFaceRowStrip S) hA x).trans
     (brickFaceRowStrip_membership_card_le_two S x)
-  have hcol := (biUnion_membership_card_le_of_pairwise_disjoint B (brickFaceColumnStrip S) hB x).trans
+  have hcol := (biUnion_membership_card_le_of_pairwise_disjoint B (brickFaceColumnStrip S) hB
+    x).trans
     (brickFaceColumnStrip_membership_card_le_two S x)
   have hsub : Finset.univ.filter (fun i => x ∈ brickStripNetwork S (A i) (B i)) ⊆
       Finset.univ.filter (fun i => x ∈ (A i).biUnion (brickFaceRowStrip S)) ∪
@@ -51,10 +54,11 @@ theorem brickStripNetwork_membership_card_le_four {I : Type*} [Fintype I]
   omega
 
 theorem union_disjoint_supports_membership_card_le_add_one
-    {I V : Type*} [Fintype I] [DecidableEq I] [DecidableEq V]
+    {I V : Type*} [Fintype I] [DecidableEq V]
     (D U : I → Finset V) (hU : Pairwise (fun i j => Disjoint (U i) (U j)))
     (t : ℕ) (hD : ∀ x, (Finset.univ.filter (fun i => x ∈ D i)).card ≤ t) (x : V) :
     (Finset.univ.filter (fun i => x ∈ D i ∪ U i)).card ≤ t + 1 := by
+  classical
   have hUc : (Finset.univ.filter (fun i => x ∈ U i)).card ≤ 1 := by
     apply card_le_one.mpr
     intro i hi j hj

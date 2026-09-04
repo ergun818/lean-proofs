@@ -4,7 +4,6 @@ import ErdosProblems.Erdos73.OrderedFiniteSelection
 
 namespace Erdos73
 noncomputable section
-open scoped Classical
 
 open Finset
 
@@ -14,6 +13,7 @@ theorem exists_monochromatic_rectangle {I J : Type*} [Fintype I] [Fintype J]
     (hrows : 2 ^ Fintype.card J * m ≤ Fintype.card I) :
     ∃ A : Finset I, ∃ B : Finset J, ∃ b : Bool,
       m ≤ A.card ∧ n ≤ B.card ∧ ∀ i ∈ A, ∀ j ∈ B, color i j = b := by
+  classical
   obtain ⟨pattern, A, _, hA, hpattern⟩ := exists_large_finite_fiber univ color m
     (by simpa only [card_univ, Fintype.card_fun, Fintype.card_bool] using hrows)
   obtain ⟨b, B, _, hB, hcolor⟩ := exists_large_finite_fiber univ pattern n

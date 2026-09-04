@@ -4,7 +4,6 @@ import ErdosProblems.Erdos73.MonochromaticTileArms
 
 namespace Erdos73
 noncomputable section
-open scoped Classical
 
 open SimpleGraph Finset Erdos73Infrastructure.SimpleGraph
 
@@ -22,12 +21,14 @@ def wallTileArmRawSupport (down : Bool) (a : Fin 3) : Finset (Fin 9 × Fin 12) :
 
 theorem wallTileArm_source_val (down : Bool) (a : Fin 3) :
     (wallTileArm down a).source.val = (4, 6) := by
+  classical
   cases down <;> fin_cases a <;>
     exact tilePathOfPositions_source_val _ (by decide) (by decide)
       (by simp only [rawBrickWall, pathGraph_adj]; decide)
 
 theorem wallTileArm_target_val (down : Bool) (a : Fin 3) :
     (wallTileArm down a).target.val = wallTilePort down a := by
+  classical
   cases down <;> fin_cases a <;>
     exact tilePathOfPositions_target_val _ (by decide) (by decide)
       (by simp only [rawBrickWall, pathGraph_adj]; decide)
@@ -44,6 +45,7 @@ theorem wallTileArm_source (down : Bool) (a : Fin 3) :
 
 theorem wallTileArm_mem_raw (down : Bool) (a : Fin 3) (w : ElementaryWallVertex 6 9) :
     w ∈ (wallTileArm down a).vertexSet ↔ w.val ∈ wallTileArmRawSupport down a := by
+  classical
   have hmem {n : ℕ} (f : Fin (n + 1) → Fin 9 × Fin 12) (hi hf hs) :
       w ∈ (tilePathOfPositions f hi hf hs).vertexSet ↔ w.val ∈ univ.image f := by
     rw [tilePathOfPositions_mem]
@@ -71,12 +73,14 @@ theorem wallTileArmRawSupport_bottom_bounds : ∀ down a, ∀ w ∈ wallTileArmR
 theorem wallTileArm_intersection (down : Bool) {a b : Fin 3} (hab : a ≠ b)
     {w : ElementaryWallVertex 6 9} (hwa : w ∈ (wallTileArm down a).vertexSet)
     (hwb : w ∈ (wallTileArm down b).vertexSet) : w = (wallTileArm down a).source := by
+  classical
   have hh := wallTileArmRawSupport_intersection down a b hab
     (mem_inter.mpr ⟨(wallTileArm_mem_raw down a w).mp hwa, (wallTileArm_mem_raw down b w).mp hwb⟩)
   exact Subtype.ext ((mem_singleton.mp hh).trans (wallTileArm_source_val down a).symm)
 
 theorem wallTileArm_port_not_mem_other (down : Bool) {a b : Fin 3} (hab : a ≠ b) :
     (wallTileArm down a).target ∉ (wallTileArm down b).vertexSet := by
+  classical
   intro hh
   have hraw := (wallTileArm_mem_raw down b _).mp hh
   rw [wallTileArm_target_val] at hraw

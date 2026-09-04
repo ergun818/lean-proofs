@@ -1,6 +1,7 @@
 import ErdosProblems.Erdos73.BrickThroughHooks
 
-/-! Order-preserving boundary pairings have disjoint staircases even with mixed vertical directions. -/
+/-! Order-preserving boundary pairings have disjoint staircases even with mixed vertical directions.
+-/
 
 namespace Erdos73
 noncomputable section
@@ -82,7 +83,7 @@ theorem orderedThroughRegion_left_boundary (u v : Fin N → ElementaryWallVertex
   have hi := i.isLt
   dsimp only [orderedThroughRegion] at hx
   split_ifs at hx <;> rw [mem_brickThroughHook] at hx <;>
-    simp only [Bool.false_eq_true, Bool.true_eq, ↓reduceIte] at hx <;> omega
+    simp only [Bool.false_eq_true, ↓reduceIte] at hx <;> omega
 
 theorem orderedThroughRegion_right_boundary (u v : Fin N → ElementaryWallVertex c r)
     (hc : N + 2 ≤ c) (i : Fin N) {x : ElementaryWallVertex c r}
@@ -91,7 +92,7 @@ theorem orderedThroughRegion_right_boundary (u v : Fin N → ElementaryWallVerte
   have hi := i.isLt
   dsimp only [orderedThroughRegion] at hx
   split_ifs at hx <;> rw [mem_brickThroughHook] at hx <;>
-    simp only [Bool.false_eq_true, Bool.true_eq, ↓reduceIte] at hx <;> omega
+    simp only [Bool.false_eq_true, ↓reduceIte] at hx <;> omega
 
 theorem exists_disjoint_ordered_through_paths (u v : Fin N → ElementaryWallVertex c r)
     (hu : StrictMono (fun i => (u i).val.1.val)) (hv : StrictMono (fun i => (v i).val.1.val))

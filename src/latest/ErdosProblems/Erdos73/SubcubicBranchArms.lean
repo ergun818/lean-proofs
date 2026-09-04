@@ -53,6 +53,7 @@ theorem exists_subcubicBranchArms (M : MinorModel H G) (hdeg : ∀ w, H.degree w
 namespace SubcubicBranchArms
 variable {M : MinorModel H G} (A : SubcubicBranchArms M)
 
+omit [Fintype W] in
 theorem center_injective : Function.Injective A.center := by
   intro u v huv
   by_contra hne
@@ -62,12 +63,15 @@ theorem center_injective : Function.Injective A.center := by
 def edgePath (e : OrientedEdge H) : GraphPath G :=
   (A.arm e.lo e.incidentLo).joinViaEdge (A.arm e.hi e.incidentHi).reverse (A.link e)
 
+omit [Fintype W] in
 theorem edgePath_source (e : OrientedEdge H) : (A.edgePath e).source = A.center e.lo :=
   A.source_eq _ _
 
+omit [Fintype W] in
 theorem edgePath_target (e : OrientedEdge H) : (A.edgePath e).target = A.center e.hi :=
   A.source_eq _ _
 
+omit [Fintype W] in
 theorem edgePath_subset_arms (e : OrientedEdge H) :
     (A.edgePath e).vertexSet ⊆ (A.arm e.lo e.incidentLo).vertexSet ∪
       (A.arm e.hi e.incidentHi).vertexSet := by
@@ -76,22 +80,26 @@ theorem edgePath_subset_arms (e : OrientedEdge H) :
   rw [GraphPath.reverse_vertexSet] at hs
   exact hs
 
+omit [Fintype W] in
 theorem edgePath_subset_branches (e : OrientedEdge H) :
     (A.edgePath e).vertexSet ⊆ M.branchSet e.lo ∪ M.branchSet e.hi :=
   (A.edgePath_subset_arms e).trans (Finset.union_subset_union (A.stays _ _) (A.stays _ _))
 
+omit [Fintype W] in
 /-- An arm cannot contain the centre of a different minor branch. -/
 theorem eq_of_center_mem_arm {w z : W} {e : IncidentOrientedEdge H w}
     (hz : A.center z ∈ (A.arm w e).vertexSet) : z = w := by
   by_contra hne
   exact Finset.disjoint_left.mp (M.branch_disjoint hne) (A.center_mem z) (A.stays w e hz)
 
+omit [Fintype W] in
 theorem branchVertex_on_edgePath {e : OrientedEdge H} {w : W}
     (hw : A.center w ∈ (A.edgePath e).vertexSet) : w = e.lo ∨ w = e.hi := by
   rcases Finset.mem_union.mp (A.edgePath_subset_arms e hw) with hlo | hhi
   · exact Or.inl (A.eq_of_center_mem_arm hlo)
   · exact Or.inr (A.eq_of_center_mem_arm hhi)
 
+omit [Fintype W] in
 theorem arms_intersection_of_distinct_edges {u w : W}
     {e : IncidentOrientedEdge H u} {f : IncidentOrientedEdge H w}
     (hef : e.val ≠ f.val) {v : V}
@@ -103,6 +111,7 @@ theorem arms_intersection_of_distinct_edges {u w : W}
   subst w
   exact ⟨rfl, A.intersection u (fun h => hef (congrArg Subtype.val h)) v hve hvf⟩
 
+omit [Fintype W] in
 theorem edgePaths_intersection {e f : OrientedEdge H} (hef : e ≠ f) {v : V}
     (hve : v ∈ (A.edgePath e).vertexSet) (hvf : v ∈ (A.edgePath f).vertexSet) :
     ∃ w, v = A.center w ∧ (w = e.lo ∨ w = e.hi) ∧ (w = f.lo ∨ w = f.hi) := by

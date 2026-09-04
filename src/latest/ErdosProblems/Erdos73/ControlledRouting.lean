@@ -39,7 +39,7 @@ theorem controlledRoutingBound_union_lt (g n : ℕ) :
 /-- Sufficiently large proper linkages for finitely many pairs yield
 mutually vertex-disjoint proper paths for every pair. -/
 theorem exists_controlled_boundaryProper_disjoint_paths
-    {V : Type*} [Fintype V] [DecidableEq V] (g : ℕ) :
+    {V : Type*} [Finite V] [DecidableEq V] (g : ℕ) :
     ∀ n, ∀ {G : SimpleGraph V} (A B : Fin n → Finset V) (Z : Finset V)
       (P : ∀ i, PathPacking G (A i) (B i)),
       (∀ i, (P i).IsBoundaryProper Z) → (∀ i, A i ⊆ Z) → (∀ i, B i ⊆ Z) →
@@ -134,7 +134,7 @@ theorem exists_controlled_boundaryProper_disjoint_paths
 
 /-- The routing theorem is invariant under enumerating any finite index type. -/
 theorem exists_controlled_boundaryProper_disjoint_paths_fintype
-    {V I : Type*} [Fintype V] [DecidableEq V] [Fintype I]
+    {V I : Type*} [Finite V] [DecidableEq V] [Fintype I]
     {G : SimpleGraph V} (A B : I → Finset V) (Z : Finset V)
     (P : ∀ i, PathPacking G (A i) (B i))
     (hP : ∀ i, (P i).IsBoundaryProper Z) (hA : ∀ i, A i ⊆ Z) (hB : ∀ i, B i ⊆ Z)
@@ -155,7 +155,7 @@ theorem exists_controlled_boundaryProper_disjoint_paths_fintype
 /-- Localized routing: if the linkages and their boundary lie in a region,
 the simultaneous paths can be required to stay in that region as well. -/
 theorem exists_controlled_boundaryProper_disjoint_paths_staysIn
-    {V I : Type*} [Fintype V] [DecidableEq V] [Fintype I]
+    {V I : Type*} [Finite V] [DecidableEq V] [Fintype I]
     {G : SimpleGraph V} (A B : I → Finset V) (Z W : Finset V)
     (P : ∀ i, PathPacking G (A i) (B i))
     (hP : ∀ i, (P i).IsBoundaryProper Z) (hA : ∀ i, A i ⊆ Z) (hB : ∀ i, B i ⊆ Z)
@@ -166,6 +166,7 @@ theorem exists_controlled_boundaryProper_disjoint_paths_staysIn
     ∃ R : I → GraphPath G,
       (∀ i, (R i).Connects (A i) (B i) ∧ (R i).IsBoundaryProper Z ∧ (R i).vertexSet ⊆ W) ∧
       Pairwise fun i j => Disjoint (R i).vertexSet (R j).vertexSet := by
+  let : Fintype V := Fintype.ofFinite V
   let D := Finset.univ \ W
   have hd (i : I) (r : (P i).Index) : Disjoint ((P i).path r).vertexSet D := by
     apply Finset.disjoint_left.mpr

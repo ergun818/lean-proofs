@@ -89,7 +89,7 @@ theorem projectiveBoundary_injective {n : ℕ} (hn : 2 ≤ n) :
   have hj := j.isLt
   apply Fin.ext
   dsimp only [projectiveBoundary] at hr hc
-  split_ifs at hr hc <;> simp only [Fin.val_mk] at hr hc <;> omega
+  split_ifs at hr hc <;> simp only at hr hc <;> omega
 
 theorem projectiveFaceCorner_injective {n : ℕ} (hn : 2 ≤ n) (f : ProjectiveFace n) :
     Function.Injective (projectiveFaceCorner hn f) := by
@@ -105,8 +105,7 @@ theorem projectiveFaceCorner_injective {n : ℕ} (hn : 2 ≤ n) (f : ProjectiveF
       dsimp only [projectiveBoundary, projectiveRoot]
       rw [dif_pos (by omega)]
     fin_cases i <;> fin_cases j <;>
-      simp only [projectiveFaceCorner, Matrix.cons_val_zero, Matrix.cons_val_one,
-        Matrix.cons_val_two, Matrix.cons_val_three, hz] at he
+      simp only [projectiveFaceCorner, hz] at he
     all_goals try rfl
     all_goals have hh := congrArg Fin.val (projectiveBoundary_injective hn he)
     all_goals apply Fin.ext

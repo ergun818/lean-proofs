@@ -24,7 +24,8 @@ theorem projectiveSelectedFirst_selected {n : ℕ} (f : ProjectiveFace n) :
 
 theorem projectivePortSelected_cases {n : ℕ} {d : ProjectivePort n}
     (hd : projectivePortSelected d = true) :
-    d = projectiveSelectedFirst d.1 ∨ d = projectivePortOpposite n (projectiveSelectedFirst d.1) := by
+    d = projectiveSelectedFirst d.1 ∨ d = projectivePortOpposite n (projectiveSelectedFirst d.1) :=
+      by
   rcases (quadrangleSelected_iff (projectiveFaceFlipped d.1) d.2).mp hd with h | h
   · exact Or.inl (Prod.ext rfl h)
   · exact Or.inr (Prod.ext rfl h)
@@ -49,7 +50,8 @@ theorem projectiveSelectedFirst_labels {n : ℕ} (hn : 2 ≤ n) (f : ProjectiveF
       quadrangleOpposite, swap_apply_def, Fin.ext_iff]
 
 theorem projectivePortSwitch_eq_of_selected {n : ℕ} {d : ProjectivePort n}
-    (hd : projectivePortSelected d = true) : projectivePortSwitch n d = projectivePortOpposite n d := by
+    (hd : projectivePortSelected d = true) :
+    projectivePortSwitch n d = projectivePortOpposite n d := by
   change (if projectivePortSelected d then projectivePortOpposite n d else d) = _
   rw [hd]
   rfl
@@ -69,7 +71,8 @@ theorem projectiveSelected_edge {n : ℕ} (hn : 2 ≤ n) {d : ProjectivePort n}
   have hl := projectiveSelectedFirst_labels hn d.1
   rcases projectivePortSelected_cases hd with hh | hh
   · have he₁ := (congrArg (projectivePortLabel hn) hh).trans hl.1
-    have he₂ := (congrArg (fun x => projectivePortLabel hn (projectivePortOpposite n x)) hh).trans hl.2
+    have he₂ := (congrArg (fun x => projectivePortLabel hn (projectivePortOpposite n x)) hh).trans
+      hl.2
     rw [he₁, he₂]
     rfl
   · have hh' : projectivePortOpposite n d = projectiveSelectedFirst d.1 := by
@@ -122,7 +125,8 @@ theorem projectivePortSwitch_port_unique {n : ℕ} (hn : 2 ≤ n) (hnEven : n % 
     apply (projectiveDiagonalEdge_bijective hn hnEven).injective
     apply Subtype.ext
     rw [← projectiveSelected_edge hn hsd, ← projectiveSelected_edge hn hse]
-    rw [← projectivePortSwitch_eq_of_selected hsd, ← projectivePortSwitch_eq_of_selected hse, hl, hr]
+    rw [← projectivePortSwitch_eq_of_selected hsd, ← projectivePortSwitch_eq_of_selected hse, hl,
+      hr]
   rcases d with ⟨f, i⟩
   rcases e with ⟨g, j⟩
   dsimp only at hfaces

@@ -20,6 +20,7 @@ def ofAdj {u v : U} (h : F.Adj u v) : OrientedEdge F := by
     · simpa only [min_eq_left huv, max_eq_right huv] using h
     · simpa only [min_eq_right hvu, max_eq_left hvu] using h.symm
 
+omit [Fintype U] in
 theorem ofAdj_endpoints {u v : U} (h : F.Adj u v) :
     ((ofAdj h).lo = u ∧ (ofAdj h).hi = v) ∨
       ((ofAdj h).lo = v ∧ (ofAdj h).hi = u) := by
@@ -27,12 +28,14 @@ theorem ofAdj_endpoints {u v : U} (h : F.Adj u v) :
   · exact Or.inl ⟨min_eq_left hh, max_eq_right hh⟩
   · exact Or.inr ⟨min_eq_right hh, max_eq_left hh⟩
 
+omit [Fintype U] in
 theorem ofAdj_sym2 {u v : U} (h : F.Adj u v) :
     s((ofAdj h).lo, (ofAdj h).hi) = s(u, v) := by
   rcases ofAdj_endpoints h with h | h
   · rw [h.1, h.2]
   · rw [h.1, h.2, Sym2.eq_swap]
 
+omit [Fintype U] in
 theorem eq_of_sym2_eq {e f : OrientedEdge F} (he : s(e.lo, e.hi) = s(f.lo, f.hi)) : e = f := by
   rcases Sym2.eq_iff.mp he with he | he
   · exact Subtype.ext (Prod.ext he.1 he.2)
@@ -43,20 +46,24 @@ theorem eq_of_sym2_eq {e f : OrientedEdge F} (he : s(e.lo, e.hi) = s(f.lo, f.hi)
 
 def mapCopy (f : F.Copy H) (e : OrientedEdge F) : OrientedEdge H := ofAdj (f.toHom.map_adj e.adj)
 
+omit [Fintype U] [Fintype W] in
 theorem mapCopy_endpoints (f : F.Copy H) (e : OrientedEdge F) :
     ((mapCopy f e).lo = f e.lo ∧ (mapCopy f e).hi = f e.hi) ∨
       ((mapCopy f e).lo = f e.hi ∧ (mapCopy f e).hi = f e.lo) :=
   ofAdj_endpoints _
 
+omit [Fintype U] [Fintype W] in
 theorem mapCopy_sym2 (f : F.Copy H) (e : OrientedEdge F) :
     s((mapCopy f e).lo, (mapCopy f e).hi) = s(f e.lo, f e.hi) := ofAdj_sym2 _
 
+omit [Fintype U] [Fintype W] in
 theorem mapCopy_endpoint_iff (f : F.Copy H) (e : OrientedEdge F) (w : W) :
     (w = (mapCopy f e).lo ∨ w = (mapCopy f e).hi) ↔ (w = f e.lo ∨ w = f e.hi) := by
   rcases mapCopy_endpoints f e with hh | hh
   · rw [hh.1, hh.2]
   · rw [hh.1, hh.2, or_comm]
 
+omit [Fintype U] [Fintype W] in
 theorem mapCopy_injective (f : F.Copy H) : Function.Injective (mapCopy f) := by
   intro e d he
   have hh := congrArg (fun a : OrientedEdge H => s(a.lo, a.hi)) he

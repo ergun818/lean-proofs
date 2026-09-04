@@ -5,7 +5,6 @@ import ErdosProblems.Erdos73.FiniteSequencePath
 
 namespace Erdos73
 noncomputable section
-open scoped Classical
 
 open SimpleGraph Finset Erdos73Infrastructure.SimpleGraph
 
@@ -16,6 +15,7 @@ theorem project_original_pendant_path (P : GraphPath (parityPendantGraph G T c))
     ∃ Q : GraphPath G, Q.source = pendantProjection P.source ∧
       Q.target = pendantProjection P.target ∧ Q.walk.length = P.walk.length ∧
       Q.vertexSet ⊆ P.vertexSet.image pendantProjection := by
+  classical
   let f : Fin (P.walk.length + 1) → V := fun i => pendantProjection (P.walk.getVert i.val)
   have hget (i : ℕ) : P.walk.getVert i = Sum.inl (pendantProjection (P.walk.getVert i)) :=
     horig _ (List.mem_toFinset.mpr (P.walk.getVert_mem_support i))

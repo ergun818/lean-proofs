@@ -5,7 +5,6 @@ import ErdosProblems.Erdos73.ThroughCrossingSelection
 
 namespace Erdos73
 noncomputable section
-open scoped Classical
 
 open SimpleGraph Finset
 
@@ -21,7 +20,8 @@ variable {V I : Type*} [Fintype V] {G : SimpleGraph V} {c r : ℕ}
 variable {S : GraphSubdivisionModel (elementaryWall c r) G}
 variable {col : BipartiteColoringOn G S.vertexSet}
 
-theorem oddPacking_or_crossing_handles (F : ColumnHandleFamily S col I)
+omit [Fintype V] in
+theorem oddPacking_or_crossing_handles [Finite V] (F : ColumnHandleFamily S col I)
     (k : ℕ) (hc : k + 2 ≤ c) (s : Finset I)
     (hsize : crossingHandleSelectionBound k ≤ s.card) :
     HasOddCyclePacking k G ∨

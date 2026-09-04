@@ -54,6 +54,7 @@ variable {H : SimpleGraph W} {G : SimpleGraph V}
 def actualEdgeGraph (S : GraphSubdivisionModel H G) : SimpleGraph V :=
   ⨆ e, GraphPath.actualEdgeGraph (S.edgePath e)
 
+omit [Fintype W] in
 theorem actualEdgeGraph_le (S : GraphSubdivisionModel H G) : S.actualEdgeGraph ≤ G :=
   iSup_le fun e => GraphPath.actualEdgeGraph_le (S.edgePath e)
 
@@ -87,7 +88,8 @@ theorem transferTo_vertexSet (S : GraphSubdivisionModel H G) (J : SimpleGraph V)
   simp only [mem_vertexSet, transferTo,
     Erdos73Infrastructure.SimpleGraph.GraphPath.transfer_vertexSet]
 
-theorem restrictCopy_actualEdgeGraph_le {U : Type*} [Fintype U] [LinearOrder U]
+omit [Fintype W] in
+theorem restrictCopy_actualEdgeGraph_le {U : Type*} [LinearOrder U]
     {F : SimpleGraph U} (S : GraphSubdivisionModel H G) (f : F.Copy H) :
     (S.restrictCopy f).actualEdgeGraph ≤ S.actualEdgeGraph := by
   apply iSup_le
@@ -99,7 +101,8 @@ theorem restrictCopy_actualEdgeGraph_le {U : Type*} [Fintype U] [LinearOrder U]
   · rw [GraphPath.actualEdgeGraph_reverse]
     exact le_iSup (fun d => GraphPath.actualEdgeGraph (S.edgePath d)) (OrientedEdge.mapCopy f e)
 
-theorem restrictCopy_edgePath_actualEdgeGraph {U : Type*} [Fintype U] [LinearOrder U]
+omit [Fintype W] in
+theorem restrictCopy_edgePath_actualEdgeGraph {U : Type*} [LinearOrder U]
     {F : SimpleGraph U} (S : GraphSubdivisionModel H G) (f : F.Copy H) (e : OrientedEdge F) :
     GraphPath.actualEdgeGraph ((S.restrictCopy f).edgePath e) =
       GraphPath.actualEdgeGraph (S.edgePath (OrientedEdge.mapCopy f e)) := by

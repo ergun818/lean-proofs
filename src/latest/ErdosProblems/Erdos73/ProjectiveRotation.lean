@@ -25,10 +25,12 @@ def projectiveRotation {n : ℕ} (hn : 2 ≤ n) (hnEven : n % 2 = 0) : Perm (Pro
 theorem projectiveRotation_pair {n : ℕ} (hn : 2 ≤ n) (hnEven : n % 2 = 0) (d : ProjectivePort n) :
     orientedPortPair (projectivePortLabel hn) (projectivePortPair n)
       (projectiveRotation hn hnEven d) =
-        orientedPortPair (projectivePortLabel hn) (projectivePortOpposite n * projectivePortPair n) d := by
+        orientedPortPair (projectivePortLabel hn) (projectivePortOpposite n * projectivePortPair n)
+          d := by
   have hh := projectiveAcrossFace_pair hn hnEven (projectiveRotation hn hnEven d)
   change orientedPortPair (projectivePortLabel hn) (projectivePortOpposite n * projectivePortPair n)
-    (projectiveAcrossPermutation hn hnEven ((projectiveAcrossPermutation hn hnEven).symm d)) = _ at hh
+    (projectiveAcrossPermutation hn hnEven
+      ((projectiveAcrossPermutation hn hnEven).symm d)) = _ at hh
   rw [(projectiveAcrossPermutation hn hnEven).apply_symm_apply] at hh
   exact hh.symm
 
@@ -36,7 +38,8 @@ theorem projectiveRotation_label {n : ℕ} (hn : 2 ≤ n) (hnEven : n % 2 = 0) (
     projectivePortLabel hn (projectiveRotation hn hnEven d) = projectivePortLabel hn d :=
   congrArg Prod.fst (projectiveRotation_pair hn hnEven d)
 
-theorem projectiveAcrossFace_label {n : ℕ} (hn : 2 ≤ n) (hnEven : n % 2 = 0) (d : ProjectivePort n) :
+theorem projectiveAcrossFace_label {n : ℕ} (hn : 2 ≤ n) (hnEven : n % 2 = 0)
+    (d : ProjectivePort n) :
     projectivePortLabel hn (projectiveAcrossFace hn hnEven d) = projectivePortLabel hn d :=
   congrArg Prod.fst (projectiveAcrossFace_pair hn hnEven d)
 
@@ -70,7 +73,8 @@ theorem projectivePair_commutes_contour {n : ℕ} (hn : 2 ≤ n) (hnEven : n % 2
   exact faceSwitch_commutes_with_edge_pairing (projectivePortPair n) (projectiveRotation hn hnEven)
     (projectivePortOpposite n) projectivePortSelected (projectivePortPair_involutive n)
     (projectivePortOpposite_involutive n) (projectivePortPair_commute n)
-    projectivePortSelected_opposite projectivePortSelected_pair (projectiveRotation_face_identity hn hnEven)
+    projectivePortSelected_opposite projectivePortSelected_pair (projectiveRotation_face_identity hn
+      hnEven)
 
 end
 end Erdos73

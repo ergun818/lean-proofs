@@ -4,7 +4,6 @@ import ErdosProblems.Erdos73.CycleDeletionConnected
 
 namespace Erdos73
 noncomputable section
-open scoped Classical
 
 open SimpleGraph Finset
 
@@ -19,6 +18,7 @@ theorem DeletionOneConnected.of_cycle {v : V} (c : G.Walk v v) (hc : c.IsCycle) 
 theorem DeletionOneConnected.union {S T : Finset V}
     (hS : DeletionOneConnected G S) (hT : DeletionOneConnected G T)
     (hST : 2 ≤ (S ∩ T).card) : DeletionOneConnected G (S ∪ T) := by
+  classical
   intro X hX
   have hex : ∃ v ∈ S ∩ T, v ∉ X := by
     by_contra hn
@@ -41,6 +41,7 @@ theorem DeletionOneConnected.union {S T : Finset V}
 theorem DeletionOneConnected.induced_delete_preconnected {S : Finset V}
     (hS : DeletionOneConnected G S) (X : Finset (S : Set V)) (hX : X.card < 2) :
     ((G.induce (S : Set V)).induce (X : Set (S : Set V))ᶜ).Preconnected := by
+  classical
   let Y := X.image Subtype.val
   have hY : Y.card < 2 := card_image_le.trans_lt hX
   let f : G.induce ((S \ Y : Finset V) : Set V) →g

@@ -5,7 +5,6 @@ import ErdosProblems.Erdos73.OddTerminalPathsDefs
 
 namespace Erdos73
 noncomputable section
-open scoped Classical
 
 open SimpleGraph Finset Erdos73Infrastructure.SimpleGraph
 
@@ -20,8 +19,10 @@ structure IsParityBreakingPath (c : V → Bool) (T : Finset V) (P : GraphPath G)
   breaking : ParityBreaking c P
   internal_disjoint : ∀ v ∈ P.vertexSet, v ∈ T → v = P.source ∨ v = P.target
 
+omit [DecidableEq V] in
 theorem parityBreaking_of_odd_of_sameColor (c : V → Bool) (P : GraphPath G)
     (ho : Odd P.walk.length) (hc : c P.source = c P.target) : ParityBreaking c P := by
+  classical
   rw [ParityBreaking, Nat.odd_iff, hc]
   rw [Nat.odd_iff] at ho
   omega
@@ -29,6 +30,7 @@ theorem parityBreaking_of_odd_of_sameColor (c : V → Bool) (P : GraphPath G)
 theorem exists_parityBreaking_segment (c : V → Bool) (T : Finset V) (P : GraphPath G)
     (hs : P.source ∈ T) (ht : P.target ∈ T) (hbreak : ParityBreaking c P) :
     ∃ Q : GraphPath G, IsParityBreakingPath c T Q ∧ Q.vertexSet ⊆ P.vertexSet := by
+  classical
   induction hn : P.walk.length using Nat.strong_induction_on generalizing P with
   | h n ih =>
     by_cases hclean : ∀ v ∈ P.vertexSet, v ∈ T → v = P.source ∨ v = P.target
@@ -64,6 +66,7 @@ theorem exists_parityBreakingPathPacking_of_oddTerminalPathPacking
     (hc : ∀ v ∈ N, c v = b) (k : ℕ) (hpack : HasOddTerminalPathPacking G N k) :
     ∃ P : Fin k → GraphPath G, (∀ i, IsParityBreakingPath c T (P i)) ∧
       Pairwise (fun i j => Disjoint (P i).vertexSet (P j).vertexSet) := by
+  classical
   obtain ⟨P, hP, hdis⟩ := hpack
   have hex (i : Fin k) : ∃ Q : GraphPath G,
       IsParityBreakingPath c T Q ∧ Q.vertexSet ⊆ (P i).vertexSet :=

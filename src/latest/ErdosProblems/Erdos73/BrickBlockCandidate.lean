@@ -6,7 +6,6 @@ import ErdosProblems.Erdos73.ExactEdgeExtension
 
 namespace Erdos73
 noncomputable section
-open scoped Classical
 
 open SimpleGraph Finset Erdos73Infrastructure.SimpleGraph
 
@@ -14,6 +13,8 @@ variable {V : Type*} [Fintype V] {G : SimpleGraph V} {c r m : ℕ}
 variable {S : GraphSubdivisionModel (elementaryWall c r) G}
 variable {P : Fin m → Erdos73Infrastructure.SimpleGraph.GraphPath G}
 
+omit [Fintype V] in
+open scoped Classical in
 theorem SelectedBrickSegment.exists_breaking_block_path
     (col : BipartiteColoringOn G S.vertexSet) (t : SelectedBrickSegment S col.color P)
     (a d : ℕ) (ha : a + d ≤ c - 1) (hr : 2 ≤ r) (hd : 0 < d)
@@ -22,6 +23,7 @@ theorem SelectedBrickSegment.exists_breaking_block_path
       IsParityBreakingPath col.color (brickColumnBlock S a d ha) B ∧
       B.vertexSet ⊆ brickStripNetwork S t.rows t.columns ∪ t.path.vertexSet ∧
       GraphPath.actualEdgeGraph B ≤ S.actualEdgeGraph ⊔ GraphPath.actualEdgeGraph t.path := by
+  classical
   let D := brickStripNetwork S t.rows t.columns
   let T := brickColumnBlock S a d ha
   let K := brickStripNetworkGraph S t.rows t.columns ⊔ GraphPath.actualEdgeGraph t.path

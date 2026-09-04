@@ -12,6 +12,7 @@ variable {V : Type*} [Fintype V] {G : SimpleGraph V} {g : ℕ}
 def wallRowNails (S : GraphSubdivisionModel (elementaryWall g g) G) (r : Fin g) : Finset V :=
   (Finset.univ.filter fun w : ElementaryWallVertex g g => w.val.1 = r).image S.branchVertex
 
+omit [Fintype V] in
 theorem branchVertex_mem_wallRowNails (S : GraphSubdivisionModel (elementaryWall g g) G)
     {w : ElementaryWallVertex g g} {r : Fin g} (hw : w.val.1 = r) :
     S.branchVertex w ∈ wallRowNails S r :=
@@ -22,13 +23,15 @@ def NoWallRowNailsInHavenSmallSide {β : Finset (Finset V)} {q : ℕ}
   ∀ C D : Finset V, IsVertexSeparation G C D → (C ∩ D).card < g →
     h.PointsTo C D → ∀ r : Fin g, ¬ wallRowNails S r ⊆ C
 
+omit [Fintype V] in
 theorem exists_wallSubdivision_anchored_in_grid (M : MinorModel (squareGrid (2 * g)) G) :
     ∃ S : GraphSubdivisionModel (elementaryWall g g) G,
       ∀ w, S.branchVertex w ∈
         M.branchSet (Fin.castLE (show g ≤ 2 * g by omega) w.val.1, w.val.2) := by
   let f := elementaryWallGridCopy (show g ≤ 2 * g by omega) (le_refl (2 * g))
   let N := (MinorModel.of_copy f).trans M
-  obtain ⟨S, hS, _⟩ := exists_subdivisionModel_of_subcubic_minor N (elementaryWall_degree_le_three g g)
+  obtain ⟨S, hS, _⟩ := exists_subdivisionModel_of_subcubic_minor N (elementaryWall_degree_le_three g
+    g)
   refine ⟨S, fun w => ?_⟩
   obtain ⟨z, hz, hvz⟩ := (MinorModel.mem_composeBranchSet (MinorModel.of_copy f) M w _).mp (hS w)
   have hz' : z = f w := Finset.mem_singleton.mp hz

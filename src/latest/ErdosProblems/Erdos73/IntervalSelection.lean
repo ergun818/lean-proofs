@@ -190,7 +190,7 @@ theorem before_of_rank_lt
   by_contra h
   have hyx : (R.path r).Before y x := (R.path r).before_iff_vertexIndex_le.mpr
     ⟨hy, hx, (lt_of_not_ge h).le⟩
-  have hne : y ≠ x := fun heq ↦ (by simpa [heq] using hxy : False)
+  have hne : y ≠ x := fun heq ↦ (by simp [heq] at hxy : False)
   exact (theta.row_strict r hy hx hyx hne).asymm hxy
 
 /-- Select and explicitly enumerate any prescribed number of ordered

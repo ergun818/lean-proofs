@@ -5,16 +5,17 @@ import ErdosProblems.Erdos73.PackingCopy
 
 namespace Erdos73
 noncomputable section
-open scoped Classical
 
 open SimpleGraph Finset Erdos73Infrastructure.SimpleGraph
 
 variable {V : Type*} [Fintype V] [DecidableEq V] {G : SimpleGraph V}
 
-theorem two_paths_of_delete_preconnected
+omit [Fintype V] in
+theorem two_paths_of_delete_preconnected [Finite V]
     (hconn : ∀ X : Finset V, X.card < 2 → (G.induce (X : Set V)ᶜ).Preconnected)
     (A B : Finset V) (hA : 2 ≤ A.card) (hB : 2 ≤ B.card) :
     HasDisjointSTPaths G A B 2 := by
+  classical
   rcases Menger.finite_vertex_menger_sharp G A B 2 with hp | ⟨X, hX, hsep⟩
   · exact hp
   · have ha : ∃ a ∈ A, a ∉ X := by
@@ -38,10 +39,12 @@ theorem two_paths_of_delete_preconnected
     obtain ⟨z, _, rfl⟩ := (P.mem_mapCopy_vertexSet _ v).mp hv
     exact (z.property hvX).elim
 
+omit [Fintype V] in
 theorem two_clean_tails_of_pair_packing (a b : V) (hab : a ≠ b) (T : Finset V)
     (hp : HasDisjointSTPaths G {a, b} T 2) :
     ∃ P Q : GraphPath G, P.EndpointClean {a, b} T ∧ Q.EndpointClean {a, b} T ∧
       P.source = a ∧ Q.source = b ∧ Disjoint P.vertexSet Q.vertexSet := by
+  classical
   obtain ⟨R, hR⟩ := hp
   let C := R.toEndpointClean
   have hcard : ({a, b} : Finset V).card ≤ C.sourceSet.card := by
@@ -49,8 +52,10 @@ theorem two_clean_tails_of_pair_packing (a b : V) (hab : a ≠ b) (T : Finset V)
     change ({a, b} : Finset V).card ≤ R.card
     simpa only [card_pair hab] using hR
   have heq : C.sourceSet = {a, b} := eq_of_subset_of_card_le C.sourceSet_subset_left hcard
-  obtain ⟨i, hi⟩ := C.exists_index_source_eq_of_mem_sourceSet (heq ▸ (by simp : a ∈ ({a, b} : Finset V)))
-  obtain ⟨j, hj⟩ := C.exists_index_source_eq_of_mem_sourceSet (heq ▸ (by simp : b ∈ ({a, b} : Finset V)))
+  obtain ⟨i, hi⟩ := C.exists_index_source_eq_of_mem_sourceSet (heq ▸ (by simp : a ∈ ({a, b} : Finset
+    V)))
+  obtain ⟨j, hj⟩ := C.exists_index_source_eq_of_mem_sourceSet (heq ▸ (by simp : b ∈ ({a, b} : Finset
+    V)))
   have hij : i ≠ j := by
     intro hij
     exact hab (hi.symm.trans ((congrArg (fun t => (C.path t).source) hij).trans hj))

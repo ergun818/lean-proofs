@@ -46,7 +46,8 @@ theorem WallGridAnchor.exists_wall_with_odd_handles
   obtain ⟨a, hs, B, hB, hBdis, _, _, hends⟩ :=
     st.exists_breaking_slice_handles col k d hg hd hwidth hnumber
   let S' := S.restrictCopy (brickColumnSliceCopy a d hs)
-  let col' := col.mono_support (S.restrictCopy_vertexSet_subset_vertexSet (brickColumnSliceCopy a d hs))
+  let col' := col.mono_support (S.restrictCopy_vertexSet_subset_vertexSet (brickColumnSliceCopy a d
+    hs))
   have hb' : ∀ w, col'.color (S'.branchVertex w) = b :=
     fun w => hb (brickColumnSliceCopy a d hs w)
   refine ⟨S', ⟨A.restrictOffsets 0 a (by omega) hs⟩, col', hb', B, hB, ?_, hBdis, hends⟩
