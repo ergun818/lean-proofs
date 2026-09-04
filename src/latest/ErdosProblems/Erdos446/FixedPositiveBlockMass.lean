@@ -240,7 +240,7 @@ theorem ford_positive_block_mass_46
   have hdefect := fordPositiveBlockFamily_defect_lower
     hM hK hC hmass hselect hbudget hhalf hE hN hendpoint hprime
   rw [← pow_mul_fordPositiveBoxVolume (M := M) (E := E) hK] at hdefect
-  convert hdefect using 1 <;> ring
+  convert hdefect using 1; ring
 
 /-- Combining (46) with Ford's isolated-divisor power inequality (41)
 produces the exact extra factor `2^(K(r-1))` needed for a fixed

@@ -185,7 +185,7 @@ theorem splitAtCompositionEquiv_mem_smirnovOccupancies_iff
 /-- The fiber with marked prefix mass `s` is exactly the product of the
 two residual Smirnov regions. -/
 theorem fixedLowerPrefixFiber_eq_map_product
-    {k h s : ℕ} (hh : h ≤ k) (hs : s ≤ h) :
+    {k h s : ℕ} (hh : h ≤ k) (_hs : s ≤ h) :
     (smirnovOccupancies k 1 k).filter
         (fun c ↦ occupancyPrefix c h = s) =
       ((smirnovOccupancies s 1 h) ×ˢ
@@ -383,7 +383,7 @@ theorem fixedLowerPrefixEnergyMoment_eq_deficitSum (k : ℕ) :
       congrArg Sigma.fst heq
     have hiEq : x₁.1 = x₂.1 := by omega
     apply Sigma.ext hiEq
-    simpa [hsEq]
+    simp [hsEq]
   · intro y hy
     rw [Finset.mem_sigma] at hy
     rcases hy with ⟨hd, hp⟩
@@ -402,7 +402,7 @@ theorem fixedLowerPrefixEnergyMoment_eq_deficitSum (k : ℕ) :
       · dsimp [i, s]
         omega
       · have hkp : k - (k - y.2) = y.2 := by omega
-        simpa [s, hkp]
+        simp [s, hkp]
   · intro x hx
     rw [Finset.mem_sigma] at hx
     rcases hx with ⟨hi, hs⟩
@@ -463,7 +463,6 @@ theorem smirnovOccupancyMass_one_general_eq
   have hpow : (0 : ℝ) < ((q + d : ℕ) : ℝ) ^ q := by positivity
   field_simp
   congr 2
-  norm_cast
   omega
 
 /-- Uniform prefix estimate which also covers the zero-point endpoint. -/
@@ -511,7 +510,7 @@ theorem smirnovProbability_w_one_le
         (k := p) (u := d + 1) (v := p - d) (w := 1)
         hpLarge huLarge (by omega) (by omega) (by omega)
       norm_num at h ⊢
-      convert h using 1 <;> ring
+      convert h using 1; ring
     · have hone := smirnovProbability_le_one
         (k := p) (u := d + 1) (v := p - d) hv
       refine hone.trans ?_
@@ -579,7 +578,7 @@ noncomputable def fixedEnergyDeficitInterior (k d : ℕ) : ℝ :=
       smirnovOccupancyMass p (d + 1) (p - d)
 
 theorem pow_div_index_le_pred_pow {p d : ℕ}
-    (hp : 1 ≤ p) (hdp : d ≤ p) :
+    (hp : 1 ≤ p) (_hdp : d ≤ p) :
     (((p - d : ℕ) : ℝ) ^ p) / (p : ℝ) ≤
       ((p - d : ℕ) : ℝ) ^ (p - 1) := by
   have hpR : (0 : ℝ) < p := by positivity
@@ -619,7 +618,7 @@ theorem inv_factorial_mul_inv_factorial_eq_choose_div
   nlinarith
 
 theorem fixedEnergyDeficitInterior_le_abel
-    {k d : ℕ} (hd : 1 ≤ d) (hdk : d < k)
+    {k d : ℕ} (hd : 1 ≤ d) (_hdk : d < k)
     (hsuffix : ∀ p ∈ Finset.Ico (d + 1) k,
       smirnovOccupancyMass p (d + 1) (p - d) ≤
         96 * ((d + 2 : ℕ) : ℝ) / (p : ℝ) *

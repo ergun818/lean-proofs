@@ -40,7 +40,7 @@ theorem mem_fordExceptionalOccupancies
 
 /-- A triple `(h,m,l)` for which the fixed-rank four-factor estimate is
 applicable after `u=γ+h`, `g=2^m`, and `s=2m`. -/
-def IsFordCrowdingIndex (k v γ : ℕ) (z : ℕ × ℕ × ℕ) : Prop :=
+def IsFordCrowdingIndex (_k v γ : ℕ) (z : ℕ × ℕ × ℕ) : Prop :=
   let h := z.1
   let m := z.2.1
   let l := z.2.2
@@ -186,7 +186,7 @@ theorem reciprocalFactorialMassOver_fordWeightedOccupancies_le_split
     (reciprocalFactorialMassOver_union_le _ _)
 
 private theorem reciprocalFactorialMassOver_biUnion_le
-    {v : ℕ} {T : Type*} [DecidableEq T]
+    {v : ℕ} {T : Type*}
     (S : Finset T) (F : T → Finset (Fin v → ℕ)) :
     reciprocalFactorialMassOver (S.biUnion F) ≤
       ∑ z ∈ S, reciprocalFactorialMassOver (F z) := by

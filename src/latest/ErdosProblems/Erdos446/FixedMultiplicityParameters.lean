@@ -88,7 +88,6 @@ theorem exists_fixedMultiplicity_parameters :
           (4 * C / Real.log 2) * ((m : ℝ) ^ 2 / (2 : ℝ) ^ m) +
           (12 / Real.log 2) * ((m : ℝ) ^ 4 / (2 : ℝ) ^ m) := by
       funext m
-      push_cast
       rw [show ((m : ℝ) * m) ^ 2 = (m : ℝ) ^ 4 by ring]
       field_simp [hlogne]
     rw [heq]
@@ -103,7 +102,6 @@ theorem exists_fixedMultiplicity_parameters :
         fun m : ℕ ↦ (4 * (C / Real.log 2)) *
           ((m : ℝ) ^ 2 / (2 : ℝ) ^ m) := by
       funext m
-      push_cast
       ring
     rw [heq]
     simpa using (tendsto_nat_pow_div_two_pow 2).const_mul

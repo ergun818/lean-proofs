@@ -199,7 +199,6 @@ theorem card_fordComplementaryRoughValues_le
     _ = B * (X : ℝ) /
         ((a : ℝ) * (p : ℝ) * Real.log (p : ℝ)) := by
       field_simp [hapR.ne', hlogp.ne']
-      <;> ring
 
 /-- Endpoint-free largest-prime/rough-sieve shell reduction. -/
 theorem exists_pos_squarefreeDivisorShell_le_complementary_weight :

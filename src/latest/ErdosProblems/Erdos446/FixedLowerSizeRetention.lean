@@ -69,7 +69,7 @@ theorem smirnovOccupancyMass_one_le_three_scale
   have hpow :
       (((k : ℝ) + 1) / (k : ℝ)) ^ k ≤ Real.exp 1 := by
     have h := Real.one_add_inv_pow_le_exp (n := k)
-    convert h using 1 <;> field_simp [hkR.ne']
+    convert h using 1; field_simp [hkR.ne']
   have hpowThree :
       ((k : ℝ) + 1) ^ k ≤ 3 * (k : ℝ) ^ k := by
     have hkpow : (0 : ℝ) < (k : ℝ) ^ k := pow_pos hkR _

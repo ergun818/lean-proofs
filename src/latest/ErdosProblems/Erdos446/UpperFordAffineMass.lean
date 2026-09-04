@@ -63,9 +63,9 @@ theorem fordAffineOccupancies_eq_empty_of_terminal
     have hempty := smirnovOccupancies_empty_of_add_le
       (k := k) (u := γ + r) (v := v) hv huv
     rw [hempty] at hsm
-    simpa using hsm
+    simp at hsm
   · intro hempty
-    simpa using hempty
+    simp at hempty
 
 /-- In the high-deficit case `k-v ≥ γ+5`, Ford's canonical affine
 alternative is empty. -/

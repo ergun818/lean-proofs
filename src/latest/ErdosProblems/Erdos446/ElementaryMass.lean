@@ -79,7 +79,7 @@ theorem extension_deletion_weight_bijection
   · intro pS hpS
     have hpSnot := (mem_extensionPairs.mp hpS).2.2.2
     apply Prod.ext
-    · simp [hpSnot]
+    · rfl
     · simpa using Finset.erase_insert hpSnot
   · intro Tp hTp
     have hpT := (mem_deletionPairs.mp hTp).2.2.2
@@ -169,7 +169,7 @@ theorem elementaryMass_nonneg_of_mem {α : Type*} [DecidableEq α]
   exact hw x ((Finset.mem_powersetCard.mp hS).1 hx)
 
 theorem subset_sum_le_card_mul
-    {α : Type*} [DecidableEq α] {P S : Finset α}
+    {α : Type*} {P S : Finset α}
     {w : α → ℝ} {m : ℝ} (hSP : S ⊆ P)
     (hw : ∀ x ∈ P, 0 ≤ w x ∧ w x ≤ m) :
     (∑ x ∈ S, w x) ≤ (S.card : ℝ) * m := by

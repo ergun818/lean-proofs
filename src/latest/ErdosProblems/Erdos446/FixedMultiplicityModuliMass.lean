@@ -28,11 +28,11 @@ open scoped BigOperators
 /-- The finite dependent family of a small factor together with one of its
 admissible outer-prime sets. -/
 def smallOuterPairs (A : Finset ℕ) (F : ℕ → Finset (Finset ℕ)) :
-    Finset ((a : ℕ) × Finset ℕ) :=
+    Finset ((_ : ℕ) × Finset ℕ) :=
   A.sigma F
 
 /-- The modulus determined by a small factor and its outer-prime set. -/
-def smallOuterModulus (x : (a : ℕ) × Finset ℕ) : ℕ :=
+def smallOuterModulus (x : (_ : ℕ) × Finset ℕ) : ℕ :=
   x.1 * ∏ p ∈ x.2, p
 
 /-- The finite family of moduli produced by the small/outer factorization. -/
@@ -41,7 +41,7 @@ def smallOuterModuli (A : Finset ℕ) (F : ℕ → Finset (Finset ℕ)) :
   (smallOuterPairs A F).image smallOuterModulus
 
 theorem mem_smallOuterPairs {A : Finset ℕ} {F : ℕ → Finset (Finset ℕ)}
-    {x : (a : ℕ) × Finset ℕ} :
+    {x : (_ : ℕ) × Finset ℕ} :
     x ∈ smallOuterPairs A F ↔ x.1 ∈ A ∧ x.2 ∈ F x.1 := by
   simp [smallOuterPairs]
 
@@ -59,7 +59,7 @@ theorem mem_smallOuterModuli {A : Finset ℕ} {F : ℕ → Finset (Finset ℕ)}
 /-- Reciprocal of one constructed modulus, factored into the reciprocal of
 the small part and the product of reciprocal outer primes. -/
 theorem reciprocal_smallOuterModulus
-    (x : (a : ℕ) × Finset ℕ) :
+    (x : (_ : ℕ) × Finset ℕ) :
     1 / (smallOuterModulus x : ℝ) =
       (1 / (x.1 : ℝ)) * ∏ p ∈ x.2, 1 / (p : ℝ) := by
   rw [smallOuterModulus, Nat.cast_mul, Nat.cast_prod]

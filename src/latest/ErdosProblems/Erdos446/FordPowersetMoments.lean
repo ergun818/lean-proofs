@@ -63,7 +63,7 @@ lemma sum_powerset_mul_sum_eq (P : Finset α) (F : Finset α → ℝ)
 private lemma erase_injective_on_mem (p : α) :
     Set.InjOn (fun S : Finset α ↦ S.erase p) {S | p ∈ S} := by
   intro S hS T hT hEq
-  rw [Set.mem_setOf_eq] at hS hT
+  rw [Set.mem_ofPred_eq] at hS hT
   calc
     S = insert p (S.erase p) := (Finset.insert_erase hS).symm
     _ = insert p (T.erase p) := by simpa using congrArg (insert p) hEq

@@ -54,7 +54,7 @@ private theorem prime_mem_primesUpTo_of_le {N p : ℕ}
 /-- In an exact valuation cell, the ordinary small-prime divisibility
 pattern is exactly the support of `c`. -/
 theorem primePattern_eq_supportPattern_of_mem_exactValuationCell
-    {N c m : ℕ} (hc : 0 < c) (hcut : PrimeFactorsAtMost N c)
+    {N c m : ℕ} (hc : 0 < c) (_hcut : PrimeFactorsAtMost N c)
     (hm : m ∈ exactValuationCell N c) :
     primePattern N m = supportPattern N c := by
   ext p
@@ -74,7 +74,7 @@ theorem primePattern_eq_supportPattern_of_mem_exactValuationCell
 
 private theorem prime_square_not_dvd_fixedFactor
     {p c : ℕ} (hp : p.Prime) (hc : Squarefree c)
-    (hpc : p ∣ c) : ¬p * p ∣ c := by
+    (_hpc : p ∣ c) : ¬p * p ∣ c := by
   intro hppc
   exact hp.not_isUnit (hc p hppc)
 
@@ -119,7 +119,7 @@ theorem exactSmallPrimeValuations_of_mem_exactValuationCell
 /-- Conversely, the exact small-prime valuation prescription determines the
 rough-factor cell. -/
 theorem mem_exactValuationCell_of_exactSmallPrimeValuations
-    {N c m : ℕ} (hcpos : 0 < c) (hcsq : Squarefree c)
+    {N c m : ℕ} (_hcpos : 0 < c) (hcsq : Squarefree c)
     (hcut : PrimeFactorsAtMost N c)
     (hval : ExactSmallPrimeValuations N c m) :
     m ∈ exactValuationCell N c := by

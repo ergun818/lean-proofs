@@ -589,7 +589,7 @@ theorem sizedCappedComposition_cycleWeight_lower {M K : ℕ}
         calc
           (128 : ℝ) ≤ (512 : ℝ) := by norm_num
           _ = (2 : ℝ) ^ 9 := by norm_num
-          _ ≤ (2 : ℝ) ^ (M * M) := by gcongr <;> norm_num
+          _ ≤ (2 : ℝ) ^ (M * M) := by gcongr; norm_num
       apply (div_le_iff₀ (by positivity : (0 : ℝ) < (2 : ℝ) ^ (M * M))).2
       nlinarith
     have hcapBad' :

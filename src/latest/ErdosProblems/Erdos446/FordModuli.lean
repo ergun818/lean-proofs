@@ -113,7 +113,7 @@ theorem fordModuli_reciprocal_sum
   · simp only [hgood, if_true]
     push_cast
     ring
-  · simp only [hgood, if_false, mul_zero]
+  · simp only [hgood, if_false]
 
 theorem fordModuli_squarefree
     {y B : ℕ} {A : Finset ℕ}

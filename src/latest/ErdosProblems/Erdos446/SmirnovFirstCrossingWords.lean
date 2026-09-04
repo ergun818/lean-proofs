@@ -72,7 +72,7 @@ theorem card_barrierWords_add_failed (k u v : ℕ) :
     Finset.card_filter_add_card_filter_not]
   simp
 
-private def firstFailureExists {k v : ℕ} (u : ℕ) (f : Fin k → Fin v) :
+private theorem firstFailureExists {k v : ℕ} (u : ℕ) (f : Fin k → Fin v) :
     ∃ h : ℕ,
       (1 ≤ h ∧ h ≤ v ∧ u + h ≤ wordPrefix f h) ∨ h = v + 1 :=
   ⟨v + 1, Or.inr rfl⟩
@@ -87,7 +87,7 @@ theorem exists_failedSlot_of_not_wordBarrier
     (hbad : ¬ SatisfiesWordBarrier u f) :
     ∃ h, 1 ≤ h ∧ h ≤ v ∧ u + h ≤ wordPrefix f h := by
   simp only [SatisfiesWordBarrier] at hbad
-  push_neg at hbad
+  push Not at hbad
   exact hbad
 
 theorem firstFailedSlot_spec
@@ -139,7 +139,7 @@ theorem wordPrefix_succ_eq_add_slot {k v : ℕ} (f : Fin k → Fin v)
       · exact Or.inr hi
     · rintro (hi | hi)
       · exact Nat.lt_succ_of_lt hi
-      · simpa [hi]
+      · simp [hi]
   · rw [Finset.disjoint_left]
     intro i hi hj
     simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hi hj

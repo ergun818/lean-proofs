@@ -16,7 +16,7 @@ to the divisors of an integer.
 
 namespace Erdos446
 
-variable {X ι : Type*} [MeasurableSpace X] {μ : Measure X}
+variable {X ι : Type*}
 
 private noncomputable def ind (A : ι → Set X) (i : ι) (x : X) : ℝ :=
   (A i).indicator (fun _ ↦ (1 : ℝ)) x
@@ -29,6 +29,8 @@ private lemma ind_mul_ind (A : ι → Set X) (i j : ι) (x : X) :
     ind A i x * ind A j x = (A i ∩ A j).indicator (fun _ ↦ (1 : ℝ)) x := by
   by_cases hi : x ∈ A i <;> by_cases hj : x ∈ A j <;>
     simp [ind, hi, hj]
+
+variable [MeasurableSpace X] {μ : Measure X}
 
 /-- The finite-set form of the Cauchy--Schwarz second-moment inequality:
 the square of the sum of the individual measures is at most the measure of
@@ -62,14 +64,14 @@ theorem finite_union_second_moment
         MemLp (fun x ↦ ∑ i ∈ t, ind A i x) (ENNReal.ofReal 2) μ := by
     intro t ht
     induction t using Finset.induction_on with
-    | empty => simpa using
-        (MemLp.zero : MemLp (fun _ : X ↦ (0 : ℝ)) (ENNReal.ofReal 2) μ)
+    | empty => simp
     | @insert i t hi ih =>
         have hiLp := ht i (Finset.mem_insert_self i t)
         have htLp : ∀ j ∈ t, MemLp (ind A j) (ENNReal.ofReal 2) μ :=
           fun j hj ↦ ht j (Finset.mem_insert_of_mem hj)
-        convert hiLp.add (ih htLp) using 1 <;> ext x <;>
-          simp only [Pi.add_apply, Finset.sum_insert hi]
+        convert hiLp.add (ih htLp) using 1
+        ext x
+        simp only [Pi.add_apply, Finset.sum_insert hi]
   have hf_memLp : MemLp f (ENNReal.ofReal 2) μ := by
     dsimp [f]
     exact hsum_memLp s hind_memLp
@@ -116,7 +118,8 @@ theorem finite_union_second_moment
       Integrable (fun x ↦ ind A i x * ind A j x) μ := by
     have hmeas : MeasurableSet (A i ∩ A j) := (hA i hi).inter (hA j hj)
     have hfin : μ (A i ∩ A j) ≠ ∞ := by
-      exact ne_of_lt (lt_of_le_of_lt (measure_mono inter_subset_left) (lt_top_iff_ne_top.mpr (hAfin i hi)))
+      exact ne_of_lt (lt_of_le_of_lt (measure_mono inter_subset_left)
+        (lt_top_iff_ne_top.mpr (hAfin i hi)))
     have hiint : Integrable ((A i ∩ A j).indicator (fun _ ↦ (1 : ℝ))) μ :=
       (integrableOn_const hfin).integrable_indicator hmeas
     simpa only [ind_mul_ind A i j] using hiint
@@ -176,7 +179,8 @@ theorem finite_union_second_moment
   have hleft_nonneg : 0 ≤ ∑ i ∈ s, μ.real (A i) := by positivity
   have hpair_nonneg : 0 ≤ ∑ i ∈ s, ∑ j ∈ s, μ.real (A i ∩ A j) := by positivity
   have hU_nonneg : 0 ≤ μ.real U := by positivity
-  have hsquared := (sq_le_sq₀ hleft_nonneg (mul_nonneg (Real.sqrt_nonneg _) (Real.sqrt_nonneg _))).mpr hsqrt
+  have hsquared :=
+    (sq_le_sq₀ hleft_nonneg (mul_nonneg (Real.sqrt_nonneg _) (Real.sqrt_nonneg _))).mpr hsqrt
   rw [mul_pow, Real.sq_sqrt hpair_nonneg, Real.sq_sqrt hU_nonneg] at hsquared
   simpa [U, mul_comm] using hsquared
 

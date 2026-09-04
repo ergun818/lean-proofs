@@ -71,7 +71,7 @@ theorem properPrefixProductMass_eq_sum_take (l : List ℝ) :
       rw [properPrefixProductMass_cons, List.length_cons,
         Finset.sum_range_succ']
       simp only [List.take_zero, List.prod_nil, List.take_succ_cons,
-        List.prod_cons, one_mul, ih, Finset.mul_sum]
+        List.prod_cons, ih, Finset.mul_sum]
       ring
 
 theorem properPrefixProductMass_append (u v : List ℝ) :
@@ -290,7 +290,7 @@ theorem ofFn_rotateComposition {k : ℕ} {α : Type*} (r : Fin k)
   · intro i hi hi'
     have : NeZero k := NeZero.of_pos r.pos
     rw [List.get_rotate]
-    simp only [List.length_ofFn, Fin.cast_eq_self, List.get_ofFn,
+    simp only [List.length_ofFn, List.get_ofFn,
       rotateComposition_apply, finCycle_apply]
     rfl
 

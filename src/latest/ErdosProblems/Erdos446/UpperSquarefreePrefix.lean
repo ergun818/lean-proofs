@@ -48,19 +48,15 @@ theorem squarefreeDivisorPrefixCount_eq_exceptionalPrefixCount
   classical
   unfold squarefreeDivisorPrefixCount squarefreeDivisorPrefixSet
     Erdos851.exceptionalPrefixCount squarefreeDivisorSet
-  simp only [Set.mem_setOf_eq]
+  simp only [Set.mem_ofPred_eq]
 
 theorem squarefreeDivisorShell_card_eq_exceptionalDyadicCount
     (X y z : ℕ) :
     (squarefreeDivisorShell X (2 * X) y z).card =
       Erdos851.exceptionalDyadicCount (squarefreeDivisorSet y z) X := by
-  classical
-  rw [Erdos851.exceptionalDyadicCount_eq_filter_card]
-  apply congrArg Finset.card
-  ext n
-  simp only [squarefreeDivisorShell, squarefreeDivisorSet,
-    Erdos851.dyadicInterval, Finset.mem_filter, Finset.mem_Ioc,
-    Set.mem_setOf_eq, and_assoc]
+  unfold squarefreeDivisorShell Erdos851.exceptionalDyadicCount
+    Erdos851.dyadicInterval squarefreeDivisorSet
+  congr
 
 /-- Every positive integer contributes the interval belonging to the divisor
 `1`, hence its cluster has length at least `log 2`. -/
@@ -96,7 +92,7 @@ theorem log_two_le_squarefreeClusterMass (P : ℕ) :
       apply Finset.single_le_sum
       · intro S hS
         exact primeSubsetClusterTerm_nonneg S
-      · simpa using hempty
+      · exact hempty
 
 /-- The variable-denominator sum is strictly positive.  This fact is used
 only to make the two slopes in the dyadic induction genuinely distinct. -/

@@ -56,7 +56,7 @@ theorem cappedBlockFamilies_pairwiseDisjoint (M K : ℕ) :
   intro b hb c hc hbc
   apply blockFamily_disjoint_of_ne
   by_contra hnone
-  push_neg at hnone
+  push Not at hnone
   apply hbc
   funext i
   simpa only [extendComposition_fin] using hnone i i.isLt

@@ -173,7 +173,7 @@ theorem comparable_primeSetMass_upper
         add_le_add le_rfl hendpointInv
       _ = 7 / Real.log (blockEndpoint j : ℝ) := by ring
   · rw [Finset.not_nonempty_iff_eq_empty.mp hQ]
-    simp [primeSetMass]
+    simp only [primeSetMass, Finset.sum_empty]
     positivity
 
 end Erdos446

@@ -134,7 +134,7 @@ theorem exists_uniform_roughPositiveIoc_card_le_div_log :
                 Real.log (p - 1 : ℕ) := by ring
       have hpowNat : ((p - 1) ^ S) ^ 2 ≤ p ^ (2 * S) := by
         calc
-          ((p - 1) ^ S) ^ 2 ≤ (p ^ S) ^ 2 := by gcongr <;> omega
+          ((p - 1) ^ S) ^ 2 ≤ (p ^ S) ^ 2 := by gcongr; omega
           _ = p ^ (2 * S) := by
             rw [← pow_mul]
             congr 1

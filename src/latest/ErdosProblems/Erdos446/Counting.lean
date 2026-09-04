@@ -117,7 +117,7 @@ theorem epsilon_bounds_of_dyadicPrefixBounds
     nlinarith
 
 theorem epsilon_isTheta_growth446_of_dyadicPrefixBounds
-    {c C : ℝ} {Y : ℕ} (hY : 1 ≤ Y) (hc : 0 < c) (hC : 0 < C)
+    {c C : ℝ} {Y : ℕ} (hY : 1 ≤ Y) (hc : 0 < c) (_hC : 0 < C)
     (h : DyadicPrefixBounds c C Y) :
     (fun y ↦ epsilon y (2 * y)) =Θ[atTop] growth446 := by
   have hb := epsilon_bounds_of_dyadicPrefixBounds hY h

@@ -45,12 +45,12 @@ def nonemptySmoothSupports (P : ℕ) : Finset (Finset ℕ) :=
 /-- The dependent target of largest-prime deletion: a largest prime `p`
 and an arbitrary support made of primes at most `p`. -/
 def largestPrimeDeletionTargets (P : ℕ) :
-    Finset ((p : ℕ) × Finset ℕ) :=
+    Finset ((_ : ℕ) × Finset ℕ) :=
   (primesUpTo P).sigma fun p ↦ (primesUpTo p).powerset
 
 /-- Delete the maximum from a nonempty support.  Proof irrelevance makes the
 chosen nonemptiness witness immaterial. -/
-def deleteSupportMaximum (S : Finset ℕ) : (p : ℕ) × Finset ℕ :=
+def deleteSupportMaximum (S : Finset ℕ) : (_ : ℕ) × Finset ℕ :=
   ⟨primeSupportMax S, S.erase (primeSupportMax S)⟩
 
 private theorem deleteSupportMaximum_injective :
@@ -69,7 +69,7 @@ private theorem deleteSupportMaximum_injective :
 
 private theorem erase_max_subset_primesUpTo
     {P : ℕ} {S : Finset ℕ} (hSP : S ⊆ primesUpTo P)
-    (hS : S.Nonempty) :
+    (_hS : S.Nonempty) :
     S.erase (primeSupportMax S) ⊆ primesUpTo (primeSupportMax S) := by
   intro q hq
   have hqS : q ∈ S := Finset.mem_of_mem_erase hq
@@ -95,13 +95,13 @@ noncomputable def largestPrimeWeightedClusterMoment (P : ℕ) : ℝ :=
 
 /-- The enlarged summand after deleting the largest prime. -/
 noncomputable def largestPrimeDeletionTerm
-    (z : (p : ℕ) × Finset ℕ) : ℝ :=
+    (z : (_ : ℕ) × Finset ℕ) : ℝ :=
   (2 / (z.1 : ℝ)) * primeSubsetClusterTerm z.2 *
       (Real.log ((z.2.prod id : ℕ) : ℝ) + Real.log (z.1 : ℝ)) ^ 3 /
     Real.log (z.1 : ℝ) ^ 2
 
 theorem largestPrimeDeletionTerm_nonneg
-    {z : (p : ℕ) × Finset ℕ}
+    {z : (_ : ℕ) × Finset ℕ}
     (hp : z.1.Prime) (hT : z.2 ⊆ primesUpTo z.1) :
     0 ≤ largestPrimeDeletionTerm z := by
   have hTpos : 0 < z.2.prod id := primeSubset_product_pos hT
@@ -335,7 +335,7 @@ theorem exists_pos_largestPrimeWeightedClusterMoment_le :
                 squarefreeClusterMass p := by
           field_simp [hlogp.ne', (by exact_mod_cast hpPrime.ne_zero :
             (p : ℝ) ≠ 0)]
-          <;> ring
+          ring
         _ ≤ (8 * (C₃ + 1)) *
               (Real.log (p : ℝ) / (p : ℝ)) *
                 squarefreeClusterMass P := by

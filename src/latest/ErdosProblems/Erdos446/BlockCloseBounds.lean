@@ -261,7 +261,7 @@ theorem slotMassProductAway_upper
   have hpow : Real.log 2 ^ K =
       Real.log 2 * Real.log 2 ^ (K - 1) := by
     calc
-      Real.log 2 ^ K = Real.log 2 ^ ((K - 1) + 1) := by congr 1 <;> omega
+      Real.log 2 ^ K = Real.log 2 ^ ((K - 1) + 1) := by congr 1; omega
       _ = Real.log 2 ^ (K - 1) * Real.log 2 := by rw [pow_succ]
       _ = Real.log 2 * Real.log 2 ^ (K - 1) := by ring
   change P ≤ _
@@ -378,7 +378,7 @@ theorem compositionBlockFamily_closeWeight_upper
             Real.log 2 * Real.log 2 ^ (K - 1) := by
           calc
             Real.log 2 ^ K = Real.log 2 ^ ((K - 1) + 1) := by
-              congr 1 <;> omega
+              congr 1; omega
             _ = Real.log 2 ^ (K - 1) * Real.log 2 := by rw [pow_succ]
             _ = _ := by ring
         rw [mul_pow, hpowK]

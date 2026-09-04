@@ -88,7 +88,7 @@ private theorem growthDenominator446_isLittleO_natCast :
   have hproduct := hlogNat.mul hlogLogNat
   refine hproduct.congr' ?_ ?_
   · exact Eventually.of_forall fun n ↦ by
-      simp only [growthDenominator446, Pi.mul_apply]
+      simp only [growthDenominator446]
   · filter_upwards [eventually_gt_atTop 0] with n hn
     have hnR : (0 : ℝ) < n := by exact_mod_cast hn
     rw [← Real.rpow_add hnR]
@@ -107,7 +107,7 @@ theorem one_div_nat_isLittleO_growth446 :
   filter_upwards [eventually_growthDenominator446_pos,
     eventually_gt_atTop 0] with n hden hn
   have hnR : (0 : ℝ) < n := by exact_mod_cast hn
-  simp only [growth446, one_div, div_eq_mul_inv, inv_inv]
+  simp only [growth446, div_eq_mul_inv, inv_inv]
   field_simp [hden.ne', hnR.ne']
 
 theorem endpointError_isLittleO_growth446 :
@@ -115,7 +115,7 @@ theorem endpointError_isLittleO_growth446 :
   have h := one_div_nat_isLittleO_growth446.const_mul_left (1 / 2 : ℝ)
   refine h.congr_left ?_
   intro n
-  simp only [one_div, Nat.cast_ofNat, Nat.cast_mul]
+  simp only [one_div]
   rw [mul_inv_rev]
   ring
 

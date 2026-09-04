@@ -110,7 +110,7 @@ theorem isolatedDyadicPrimeMass_lower_of_divisor_scales
       exact hlocal d (mem_sigmaIsolatedDivisors.mp hd).1
 
 theorem isolatedDyadicPrimeSupport_atom_upper
-    {y a p : ℕ} (hy : 0 < y) (ha : 0 < a)
+    {y a p : ℕ} (hy : 0 < y) (_ha : 0 < a)
     (hp : p ∈ isolatedDyadicPrimeSupport y a) :
     1 / (p : ℝ) ≤ (a : ℝ) / (y : ℝ) := by
   rw [isolatedDyadicPrimeSupport, Finset.mem_biUnion] at hp

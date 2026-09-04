@@ -175,7 +175,9 @@ theorem reciprocalFactorialMassOver_fordCrowdingOccupanciesAt_le_uniform
           2400 * (w + 1 : ℝ) ^ 2 *
             (((v - (l - u) : ℕ) : ℝ) ^ (k - l) /
               ((k - l + 1).factorial : ℝ)) := by
-        convert hsuf using 1 <;> push_cast <;> ring
+        convert hsuf using 1
+        push_cast
+        ring
       have hPnon : 0 ≤ 2400 * (u + 1 : ℝ) * (g + 3 : ℝ) ^ 2 *
           (((l - u + 1 : ℕ) : ℝ) ^ (l - g - 1) /
             ((l - g).factorial : ℝ)) := by positivity
@@ -257,9 +259,7 @@ theorem reciprocalFactorialMassOver_fordCrowdingOccupancies_le_abelSum
   apply hfix.trans_eq
   rw [fordCrowdingAbelSummand]
   have hjg : j + g - g = j := by omega
-  have hjgPred : j + g - g - 1 = j - 1 := by omega
-  have hkg : k - (j + g) = k - (j + g) := rfl
-  simp only [hjg, hjgPred, hkg]
+  simp only [hjg]
   norm_num [pow_two]
   ring
 
@@ -468,7 +468,7 @@ theorem fordCrowdingAbelSum_le_shifted
             (((j - d : ℕ) : ℝ) ^ (j - 1)) / (j.factorial : ℝ) *
               ((B + (t - j : ℕ)) ^ (t - j - 1) /
                 (((t - j).factorial : ℕ) : ℝ)) := by
-          gcongr <;> positivity
+          gcongr
         _ = (1 / (t.factorial : ℝ)) *
             ((t.choose j : ℝ) * (((j : ℝ) - (d : ℝ)) ^ (j - 1)) *
               (B + (t - j : ℕ)) ^ (t - j - 1)) := by

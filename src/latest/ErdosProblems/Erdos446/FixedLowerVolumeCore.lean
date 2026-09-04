@@ -38,7 +38,9 @@ theorem smirnovOccupancyMass_one_eq {k : ℕ} (hk : 1 ≤ k) :
   have hfac : (k.factorial : ℝ) ≠ 0 := by positivity
   apply (eq_div_iff hfac).2
   rw [mul_comm]
-  convert hprob using 1 <;> push_cast <;> ring
+  convert hprob using 1
+  push_cast
+  ring
 
 /-- Equation (47a), in the equal-cell finite occupancy normalization.  The
 left side is exactly `k ^ k` times `1 / (k+1)!`, the volume scale used in
@@ -142,7 +144,7 @@ theorem two_pow_sq_le_compositionPrefixTerm_of_fordCap_failure
       _ ≤ P := hci
   have hpow :
       (2 : ℝ) ^ (M * M + (i.val + 1)) ≤ (2 : ℝ) ^ P := by
-    gcongr <;> norm_num
+    gcongr; norm_num
   calc
     (2 : ℝ) ^ (M * M) =
         (2 : ℝ) ^ (M * M + (i.val + 1)) /

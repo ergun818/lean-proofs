@@ -61,13 +61,13 @@ theorem divisorCount_add_intervalLcm (n m : ℕ) :
 theorem exactDivisorSet_periodic (r n : ℕ) :
     Function.Periodic (fun m ↦ m ∈ exactDivisorSet r n) (intervalLcm n) := by
   intro m
-  simp only [exactDivisorSet, Set.mem_setOf_eq]
+  simp only [exactDivisorSet, Set.mem_ofPred_eq]
   exact congrArg (fun k ↦ k = r) (divisorCount_add_intervalLcm n m)
 
 theorem divisorSet_periodic (n : ℕ) :
     Function.Periodic (fun m ↦ m ∈ divisorSet n) (intervalLcm n) := by
   intro m
-  simp only [divisorSet, Set.mem_setOf_eq]
+  simp only [divisorSet, Set.mem_ofPred_eq]
   exact congrArg (fun k ↦ 0 < k) (divisorCount_add_intervalLcm n m)
 
 /-! ## A periodic-set density lemma over the natural numbers -/
@@ -258,7 +258,7 @@ theorem divisorSet_hasDensity (n : ℕ) :
 theorem exactDivisorSet_one_subset (n : ℕ) :
     exactDivisorSet 1 n ⊆ divisorSet n := by
   intro m hm
-  simp only [exactDivisorSet, divisorSet, Set.mem_setOf_eq] at hm ⊢
+  simp only [exactDivisorSet, divisorSet, Set.mem_ofPred_eq] at hm ⊢
   omega
 
 end Erdos446

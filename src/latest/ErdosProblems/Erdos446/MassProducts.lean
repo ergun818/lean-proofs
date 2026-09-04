@@ -52,10 +52,11 @@ theorem sum_blockSlot_local {k : ℕ} {b : ℕ → ℕ}
   rw [Fintype.sum_sigma]
 
 /-- A finite version of `1 - ∑ zᵢ ≤ ∏ (1-zᵢ)` for `zᵢ ∈ [0,1]`. -/
-theorem one_sub_sum_le_prod_one_sub {ι : Type*} [DecidableEq ι]
+theorem one_sub_sum_le_prod_one_sub {ι : Type*}
     (S : Finset ι) (z : ι → ℝ)
     (hz0 : ∀ i ∈ S, 0 ≤ z i) (hz1 : ∀ i ∈ S, z i ≤ 1) :
     1 - ∑ i ∈ S, z i ≤ ∏ i ∈ S, (1 - z i) := by
+  classical
   induction S using Finset.induction_on with
   | empty => simp
   | @insert a S ha ih =>

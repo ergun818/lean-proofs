@@ -195,7 +195,7 @@ theorem divisorSet_endpoint_symmDiff_subset (n : ℕ) (hn : 0 < n) :
       (divisorSetIoc n (2 * n) \ divisorSet n) ⊆ multipleSet (2 * n) := by
   intro m hm
   simp only [divisorSet, divisorSetIoc, multipleSet, Set.mem_union,
-    Set.mem_diff, Set.mem_ofPred_eq] at hm ⊢
+    Set.mem_sdiff, Set.mem_ofPred_eq] at hm ⊢
   by_contra hend
   have heq := divisorCountIoc_eq_open_add_endpoint n m hn
   rw [if_neg hend, add_zero] at heq
@@ -209,7 +209,7 @@ theorem exactDivisorSet_endpoint_symmDiff_subset (r n : ℕ) (hn : 0 < n) :
         multipleSet (2 * n) := by
   intro m hm
   simp only [exactDivisorSet, exactDivisorSetIoc, multipleSet, Set.mem_union,
-    Set.mem_diff, Set.mem_ofPred_eq] at hm ⊢
+    Set.mem_sdiff, Set.mem_ofPred_eq] at hm ⊢
   by_contra hend
   have heq := divisorCountIoc_eq_open_add_endpoint n m hn
   rw [if_neg hend, add_zero] at heq

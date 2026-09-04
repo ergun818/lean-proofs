@@ -168,7 +168,7 @@ theorem roughFamilyEvent_subset_exactDivisorSetIoc
     roughFamilyEvent N C ⊆ exactDivisorSetIoc r y z := by
   intro n hn
   rcases hn with ⟨c, hc, hnc⟩
-  rw [exactDivisorSetIoc, Set.mem_setOf_eq,
+  rw [exactDivisorSetIoc, Set.mem_ofPred_eq,
     divisorCountIoc_eq_fixedFactor_of_rough hzN hnc]
   exact hexact c hc
 

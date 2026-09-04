@@ -125,7 +125,7 @@ theorem fordWitnessBinDivisor_pos {X y a j : ℕ}
   Nat.pos_of_mem_divisors (fordWitnessBinDivisor_spec hj).1
 
 /-- Integers in one binary-log bin differ by less than a factor two. -/
-theorem lt_two_mul_of_log_two_eq {d e j : ℕ} (hd : 0 < d) (he : 0 < e)
+theorem lt_two_mul_of_log_two_eq {d e j : ℕ} (_hd : 0 < d) (he : 0 < e)
     (hdj : Nat.log 2 d = j) (hej : Nat.log 2 e = j) :
     d < 2 * e := by
   have hdUpper : d < 2 ^ (j + 1) := by
@@ -719,7 +719,7 @@ theorem exists_pos_admissiblePrimeFiber_log_weight_le :
       rw [← biUnion_fordAdmissiblePrimeFiberBins X y a, hBempty]
       simp
     rw [hFiberEmpty]
-    simp only [Finset.sum_empty, zero_le]
+    simp only [Finset.sum_empty]
     exact div_nonneg
       (mul_nonneg hC.le (clusterLength_nonneg a)) (sq_nonneg _)
 

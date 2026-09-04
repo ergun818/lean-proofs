@@ -24,7 +24,7 @@ open scoped BigOperators
 noncomputable section
 
 theorem fordVariableLogArgument_target_le_two_mul_prime
-    {X y w a p : ℕ} (hy : 1 ≤ y)
+    {X y w a p : ℕ} (_hy : 1 ≤ y)
     (hyw : (y : ℝ) ^ (2 / 3 : ℝ) ≤ (w : ℝ))
     (hap : (a, p) ∈ fordAdmissibleLargestPrimePairs X w (2 * w)) :
     fordVariableLogArgument y a.primeFactors ≤ 2 * (p : ℝ) := by
@@ -244,7 +244,7 @@ theorem exists_pos_admissiblePrimeFiber_target_log_weight_le :
       rw [← biUnion_fordAdmissiblePrimeFiberBins X w a, hBempty]
       simp
     rw [hFiberEmpty]
-    simp only [Finset.sum_empty, zero_le]
+    simp only [Finset.sum_empty]
     exact div_nonneg
       (mul_nonneg hC.le (clusterLength_nonneg a)) (sq_nonneg _)
 

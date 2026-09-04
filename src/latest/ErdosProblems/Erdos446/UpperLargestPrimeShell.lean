@@ -216,7 +216,7 @@ theorem squarefree_largestPrime_shell
 /-- If a complementary factor has a larger largest prime, the rough
 residual is nontrivial and is itself larger than the pivot. -/
 theorem largestPrimeFactor_lt_fordUpperPrimePart_of_complement
-    {n m e : ℕ} (hn : Squarefree n) (hm : m ∣ n) (hmOne : 1 < m)
+    {n m e : ℕ} (hn : Squarefree n) (_hm : m ∣ n) (_hmOne : 1 < m)
     (he : e ∣ n) (heOne : 1 < e)
     (hmax : Erdos469.largestPrimeFactor m <
       Erdos469.largestPrimeFactor e) :

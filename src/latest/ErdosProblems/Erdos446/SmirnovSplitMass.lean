@@ -98,7 +98,7 @@ theorem occupancyPrefix_splitAt_left
 theorem occupancyPrefix_splitAt_add
     (v h : ℕ) (hh : h ≤ v)
     (a : Fin h → ℕ) (b : Fin (v - h) → ℕ)
-    {t : ℕ} (ht : t ≤ v - h) :
+    {t : ℕ} (_ht : t ≤ v - h) :
     occupancyPrefix (splitAtCompositionEquiv v h hh (a, b)) (h + t) =
       (∑ i, a i) + occupancyPrefix b t := by
   have htakeA : (List.ofFn a).take (h + t) = List.ofFn a := by

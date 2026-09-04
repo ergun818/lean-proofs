@@ -165,7 +165,7 @@ theorem finite_divisor_family_moment_lower
     lt_trans hy (Finset.mem_Ioc.mp (hinterval c hc)).1
   have hsub : finiteMultipleSet C ⊆ divisorSetIoc y z := by
     rintro m ⟨c, hc, hcm⟩
-    rw [divisorSetIoc, Set.mem_setOf_eq, divisorCountIoc]
+    rw [divisorSetIoc, Set.mem_ofPred_eq, divisorCountIoc]
     exact Finset.card_pos.mpr
       ⟨c, Finset.mem_filter.mpr ⟨hinterval c hc, hcm⟩⟩
   have hdensityLe : finiteMultipleDensity C ≤ epsilon y z :=
@@ -194,7 +194,7 @@ theorem finite_divisor_moduli_moment_lower
   have hsub : finiteMultipleSet C ⊆ divisorSetIoc y z := by
     rintro m ⟨c, hc, hcm⟩
     obtain ⟨d, hdIoc, hdc⟩ := hwitness c hc
-    rw [divisorSetIoc, Set.mem_setOf_eq, divisorCountIoc]
+    rw [divisorSetIoc, Set.mem_ofPred_eq, divisorCountIoc]
     exact Finset.card_pos.mpr
       ⟨d, Finset.mem_filter.mpr ⟨hdIoc, hdc.trans hcm⟩⟩
   have hdensityLe : finiteMultipleDensity C ≤ epsilon y z :=

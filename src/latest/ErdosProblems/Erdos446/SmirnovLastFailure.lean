@@ -49,7 +49,7 @@ theorem exists_failedPrefix_of_not_barrier
     (hbad : ¬ SatisfiesSmirnovBarrier u c) :
     ∃ h, 1 ≤ h ∧ h ≤ v ∧ u + h ≤ occupancyPrefix c h := by
   simp only [SatisfiesSmirnovBarrier] at hbad
-  push_neg at hbad
+  push Not at hbad
   obtain ⟨h, hh, hvh, hfail⟩ := hbad
   exact ⟨h, hh, hvh, hfail⟩
 

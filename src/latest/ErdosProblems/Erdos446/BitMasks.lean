@@ -137,7 +137,7 @@ theorem nondiagonalBitMasks_subset_biUnion_last (k : ℕ) (b : ℕ → ℕ) :
   have hex : ∃ t : Lex (BlockSlot k b),
       (c (ofLex t)).1 ≠ (c (ofLex t)).2 := by
     by_contra h
-    push_neg at h
+    push Not at h
     exact hc.2 (fun s ↦ by simpa using h (toLex s))
   let D : Finset (Lex (BlockSlot k b)) :=
     Finset.univ.filter fun t ↦ (c (ofLex t)).1 ≠ (c (ofLex t)).2

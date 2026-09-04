@@ -158,10 +158,10 @@ private theorem log_prefixSelection_le_weight
   have hlogProd :
       Real.log (((J.prod id : ℕ) : ℝ)) = ∑ p ∈ J, Real.log (p : ℝ) := by
     rw [Nat.cast_prod, Real.log_prod]
-    simp only [id_eq]
-    intro p hp
-    have hpPool := (Finset.mem_inter.mp hp).2
-    exact_mod_cast (prime_of_mem_blockPool hpPool).ne_zero
+    · simp only [id_eq]
+    · intro p hp
+      have hpPool := (Finset.mem_inter.mp hp).2
+      exact_mod_cast (prime_of_mem_blockPool hpPool).ne_zero
   rw [show S ∩ blockPool M h = J by rfl, hlogProd, hJ,
     Finset.sum_biUnion (block_inter_pairwiseDisjoint M h J)]
   calc

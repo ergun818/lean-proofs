@@ -53,7 +53,7 @@ private def divisorTranslateEnvelope (a d : ℕ) : Set ℝ :=
     (Real.log (d : ℝ) + Real.log (a : ℝ))
 
 private theorem divisorCluster_mul_subset_envelopes {a b : ℕ}
-    (ha : 0 < a) (hb : 0 < b) :
+    (ha : 0 < a) (_hb : 0 < b) :
     divisorCluster (a * b) ⊆
       ⋃ d ∈ b.divisors, divisorTranslateEnvelope a d := by
   intro u hu
@@ -83,7 +83,7 @@ private theorem divisorCluster_mul_subset_envelopes {a b : ℕ}
     linarith
 
 private theorem volume_real_divisorTranslateEnvelope {a d : ℕ}
-    (ha : 0 < a) (hd : 0 < d) :
+    (ha : 0 < a) (_hd : 0 < d) :
     volume.real (divisorTranslateEnvelope a d) =
       Real.log (a : ℝ) + Real.log 2 := by
   rw [divisorTranslateEnvelope, Real.volume_real_Ico_of_le]

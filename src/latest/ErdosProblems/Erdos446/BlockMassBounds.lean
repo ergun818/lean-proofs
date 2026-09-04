@@ -118,7 +118,7 @@ theorem blockSlotLoss_sum_le {M K : ℕ} {C : ℝ} (hC : 0 ≤ C)
       field_simp [hlog.ne']
 
 theorem blockSlot_factor_lower
-    {M K : ℕ} {C : ℝ} (hC : 0 ≤ C)
+    {M K : ℕ} {C : ℝ} (_hC : 0 ≤ C)
     {b : Fin K → ℕ}
     (hmass : ∀ i : Fin K,
       |primeBlockMass (M + i) - Real.log 2| ≤
@@ -145,7 +145,6 @@ theorem blockSlot_factor_lower
         Real.log 2 -
           C / (2 : ℝ) ^ (M + s.1.val) -
           (s.2.val : ℝ) / (2 : ℝ) ^ (M + s.1.val) := by
-      push_cast
       field_simp [hlog.ne', hpow.ne']
       ring
     _ ≤ primeBlockMass (M + s.1) -

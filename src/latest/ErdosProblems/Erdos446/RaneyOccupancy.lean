@@ -136,7 +136,7 @@ theorem isRaneyGoodStart_occupancyWalk_iff
   · intro hgood h hh hhv
     have hhvWalk : h ≤ (occupancyWalk c).length := by simpa using hhv
     have hrWalk : r.val ≤ (occupancyWalk c).length := by
-      simpa using r.isLt.le
+      simp
     have hpos := hgood.2 h hh hhvWalk
     rw [← intPrefixSum_rotate_eq_cyclicIntPrefixSum hrWalk hhvWalk,
       ← occupancyWalk_rotateComposition,
@@ -144,11 +144,11 @@ theorem isRaneyGoodStart_occupancyWalk_iff
     exact_mod_cast (show (occupancyPrefix (rotateComposition r c) h : ℤ) <
       (h : ℤ) by omega)
   · intro hbarrier
-    refine ⟨by simpa using r.isLt, ?_⟩
+    refine ⟨by simp, ?_⟩
     intro h hh hhv
     have hhvNat : h ≤ v := by simpa using hhv
     have hrWalk : r.val ≤ (occupancyWalk c).length := by
-      simpa using r.isLt.le
+      simp
     have hlt := hbarrier h hh hhvNat
     rw [← intPrefixSum_rotate_eq_cyclicIntPrefixSum hrWalk hhv,
       ← occupancyWalk_rotateComposition,
@@ -268,7 +268,7 @@ theorem add_mul_abelKernel_eq_pow {w : ℕ} (hw : 0 < w) (k : ℕ) :
       simp [abelKernel, ne_of_gt hw]
   | succ k =>
       rw [abelKernel_eq_pow (Nat.succ_ne_zero k)]
-      simp only [Nat.cast_add, Nat.cast_one, Nat.succ_sub_one,
+      simp only [Nat.cast_add, Nat.succ_sub_one,
         Nat.cast_succ]
       rw [pow_succ]
       ring_nf

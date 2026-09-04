@@ -63,7 +63,7 @@ theorem card_slotAway {k : ℕ} {b : ℕ → ℕ} (s : BlockSlot k b) :
   simp
 
 theorem piAway_primeWeight_upper {M k : ℕ} {b : ℕ → ℕ}
-    {H : ℝ} (hH : 0 ≤ H)
+    {H : ℝ} (_hH : 0 ≤ H)
     (hmass : ∀ i : Fin k, primeBlockMass (M + i) ≤ H)
     (s : BlockSlot k b) :
     (∑ v : PiAway (fun t : BlockSlot k b ↦ ↥(primeBlock (M + t.1))) s,
@@ -243,9 +243,10 @@ private theorem sum_union_le_add {α : Type*} [DecidableEq α]
   exact add_le_add le_rfl hdiff
 
 private theorem sum_biUnion_le_sum_sum {ι α : Type*}
-    [DecidableEq ι] [DecidableEq α] (S : Finset ι) (T : ι → Finset α)
+    [DecidableEq α] (S : Finset ι) (T : ι → Finset α)
     (f : α → ℝ) (hf : ∀ x, 0 ≤ f x) :
     (∑ x ∈ S.biUnion T, f x) ≤ ∑ i ∈ S, ∑ x ∈ T i, f x := by
+  classical
   induction S using Finset.induction_on with
   | empty => simp
   | @insert i S hi ih =>
@@ -430,7 +431,7 @@ theorem primeBlockMass_nonneg (j : ℕ) : 0 ≤ primeBlockMass j := by
 
 theorem slotMassProduct_nonneg (M k : ℕ) (b : ℕ → ℕ) :
     0 ≤ ∏ s : BlockSlot k b, primeBlockMass (M + s.1) :=
-  Finset.prod_nonneg fun s hs ↦ primeBlockMass_nonneg _
+  Finset.prod_nonneg fun _ _ ↦ primeBlockMass_nonneg _
 
 theorem diagonal_configuration_sum_upper_exact
     {M k : ℕ} {b : ℕ → ℕ} :

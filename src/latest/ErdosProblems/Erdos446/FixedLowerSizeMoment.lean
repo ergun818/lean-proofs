@@ -137,7 +137,7 @@ theorem fixedLowerCoordinateMoment_le_predMass
     by_cases hci : 0 < c i
     · simp [hci]
     · have hzero : c i = 0 := by omega
-      simp [hci, hzero]
+      simp [hzero]
   have hinj : Set.InjOn D P := by
     intro c hc d hd
     have hcpos : 0 < c i := by
@@ -191,7 +191,7 @@ theorem fixedLowerCoordinateMoment_le_two_mass
   have hfac : (0 : ℝ) < ((k - 1).factorial : ℝ) := by positivity
   have hkfac : k.factorial = k * (k - 1).factorial := by
     calc
-      k.factorial = (k - 1 + 1).factorial := by congr 1 <;> omega
+      k.factorial = (k - 1 + 1).factorial := by congr 1; omega
       _ = (k - 1 + 1) * (k - 1).factorial := Nat.factorial_succ _
       _ = k * (k - 1).factorial := by
         rw [Nat.sub_add_cancel (by omega : 1 ≤ k)]

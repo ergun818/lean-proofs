@@ -187,7 +187,8 @@ theorem smirnovProbability_le_uniform
       2400 * (u + 1 : ℝ) * (w + 1 : ℝ) ^ 2 / (k + 1 : ℕ) := by
   by_cases hv0 : v = 0
   · subst v
-    simp only [Nat.cast_add, Nat.cast_one]
+    simp only [smirnovProbability, Nat.cast_zero, zero_pow hk.ne', div_zero,
+      Nat.cast_add, Nat.cast_one]
     positivity
   have hv : 0 < v := by omega
   have hprob := smirnovProbability_le_one (k := k) (u := u) hv
@@ -588,7 +589,7 @@ private theorem crowding_prefix_before_crossing
 theorem crowding_firstPart_mem
     {k u v g s l : ℕ} {c : Fin v → ℕ}
     (hc : c ∈ fordCrowdingOccupanciesAt k u v g s l)
-    (hg : 1 ≤ g) (hgl : g + 1 ≤ l) (hul : u ≤ l)
+    (hg : 1 ≤ g) (hgl : g + 1 ≤ l) (_hul : u ≤ l)
     (hlk : l ≤ k) (hhv : l - u < v) :
     occupancyTake c (l - g - 1) ∈
       (smirnovOccupancies (l - g - 1) u (l - u + 1)).map

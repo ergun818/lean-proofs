@@ -89,8 +89,7 @@ theorem smirnovOccupancyMass_nonneg (k u v : ℕ) :
 
 theorem smirnovOccupancies_mono_u (k v : ℕ) :
     Monotone fun u ↦ smirnovOccupancies k u v := by
-  intro u u' huu'
-  intro c hc
+  intro u u' huu' c hc
   rw [mem_smirnovOccupancies] at hc ⊢
   refine ⟨hc.1, ?_⟩
   intro h hh hv

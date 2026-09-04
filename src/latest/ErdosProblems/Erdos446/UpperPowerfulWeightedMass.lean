@@ -50,7 +50,7 @@ theorem exists_divisorCard_div_le_powerfulWeight :
     have hexp' :
         (1 + (1 : ℝ)) * Real.log 2 / Real.log (Real.log (q : ℝ)) ≤
           1 / 8 := by
-      convert hexp using 1 <;> norm_num
+      convert hexp using 1; norm_num
     have hpow : (q.divisors.card : ℝ) ≤ (q : ℝ) ^ (1 / 8 : ℝ) :=
       hdiv.trans (Real.rpow_le_rpow_of_exponent_le hqR hexp')
     have hquot : (q.divisors.card : ℝ) / (q : ℝ) ≤

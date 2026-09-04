@@ -65,7 +65,7 @@ theorem dyadicPrimes_subset_support (y a : ℕ) {d : ℕ}
   exact mem_dyadicPrimeSupport.mpr ⟨d, hd, hp⟩
 
 /-- Every prime in the support is eligible for Ford's modulus construction. -/
-theorem dyadicPrimeSupport_subset_eligiblePrimes {y a : ℕ} (ha : 0 < a) :
+theorem dyadicPrimeSupport_subset_eligiblePrimes {y a : ℕ} (_ha : 0 < a) :
     dyadicPrimeSupport y a ⊆ eligiblePrimes y a := by
   intro p hp
   obtain ⟨d, hd, hp⟩ := mem_dyadicPrimeSupport.mp hp
@@ -263,7 +263,7 @@ theorem dyadicPrimes_inter_eq_empty_of_not_close {y d e : ℕ}
 
 /-- Summed pairwise intersections are controlled by the close-pair count. -/
 theorem sum_dyadicPrimeIntersectionMass_le
-    {y a : ℕ} {M : ℝ} (ha : 0 < a) (hM : 0 ≤ M)
+    {y a : ℕ} {M : ℝ} (_ha : 0 < a) (_hM : 0 ≤ M)
     (hupper : ∀ d ∈ a.divisors, dyadicPrimeMass (y / d) ≤ M) :
     (∑ d ∈ a.divisors, ∑ e ∈ a.divisors,
         dyadicPrimeIntersectionMass y d e) ≤

@@ -116,7 +116,7 @@ theorem largePowerfulDivisorPrefix_subset_biUnion
 
 /-- There are at most `X/q + 1` multiples of a positive `q` below `X`.
 The extra endpoint is convenient in the subsequent reciprocal tail sum. -/
-theorem card_multiplePrefix_le (X q : ℕ) (hq : 0 < q) :
+theorem card_multiplePrefix_le (X q : ℕ) (_hq : 0 < q) :
     (multiplePrefix X q).card ≤ X / q + 1 := by
   let φ : ℕ → ℕ := fun m ↦ m / q
   have hmaps : ∀ m ∈ multiplePrefix X q, φ m ∈ Finset.range (X / q + 1) := by
@@ -260,7 +260,7 @@ the corresponding squarefree cofactor fiber. -/
 theorem squarefreePart_mem_squarefreeCofactorFiber
     {X y z Q m : ℕ}
     (hm : m ∈ positiveDivisorPrefixSet X y z)
-    (hsmall : Erdos469.powerfulPart m ≤ Q) :
+    (_hsmall : Erdos469.powerfulPart m ≤ Q) :
     Erdos469.squarefreePart m ∈
       squarefreeCofactorFiber X y z (Erdos469.powerfulPart m) := by
   have hmpos := positiveDivisorPrefixSet_member_pos hm

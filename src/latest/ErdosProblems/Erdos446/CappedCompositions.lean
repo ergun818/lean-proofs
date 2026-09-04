@@ -118,7 +118,7 @@ theorem prod_compositionFactor_le_one {d n : ℕ}
     (hnd : n ≤ d) {b : Fin d → ℕ} (hb : b ∈ compositionsOf d n) :
     (List.ofFn (compositionFactor b)).prod ≤ 1 := by
   rw [prod_compositionFactor_eq_pow_div hb]
-  exact (div_le_one (by positivity)).2 (by gcongr <;> norm_num)
+  exact (div_le_one (by positivity)).2 (by gcongr; norm_num)
 
 theorem compositionPenalty_pos_of_pos_length {d : ℕ} (hd : 0 < d)
     (b : Fin d → ℕ) : 0 < compositionPenalty b := by
@@ -295,8 +295,7 @@ theorem compositionPenalty_joinComposition {j d : ℕ}
           (((2 : ℝ) ^ l / 2) * (1 + compositionPenalty c)) := by
   rw [compositionPenalty, compositionFactor_joinComposition,
     List.ofFn_fin_append, prefixProductMass_append]
-  simp only [List.ofFn_cons, List.prod_cons, List.prod_nil,
-    prefixProductMass_cons, compositionPenalty]
+  simp only [List.ofFn_cons, prefixProductMass_cons, compositionPenalty]
 
 theorem prod_compositionFactor_eq_pow_sum_div {j : ℕ}
     (a : Fin j → ℕ) :
@@ -432,13 +431,13 @@ theorem mem_splitBadCompositions {j d k L : ℕ}
       simpa [splitValue] using hl
   · rintro ⟨hsum, hl⟩
     refine ⟨splitCompositionEquiv j d x, ?_, ?_⟩
-    rw [Finset.mem_filter]
-    constructor
-    · rw [mem_compositionsOf, splitCompositionEquiv_apply,
-        sum_joinComposition]
-      exact hsum
-    · rw [splitCompositionEquiv_apply, joinComposition_eq_append]
-      simpa [splitValue] using hl
+    · rw [Finset.mem_filter]
+      constructor
+      · rw [mem_compositionsOf, splitCompositionEquiv_apply,
+          sum_joinComposition]
+        exact hsum
+      · rw [splitCompositionEquiv_apply, joinComposition_eq_append]
+        simpa [splitValue] using hl
     · exact (splitCompositionEquiv j d).symm_apply_apply x
 
 theorem sum_bad_compositionCycleWeight_eq_split (j d k L : ℕ) :
@@ -484,7 +483,6 @@ theorem splitBad_fiber_eq_map_product {j d k L l s : ℕ}
           rw [hprefix, hvalue]
         _ = k := htotal
     have htail : ∑ i, c i = k - l - s := by
-      change ∑ i, c i = _
       omega
     refine ⟨(a, c), ⟨mem_compositionsOf.mpr ?_,
       mem_compositionsOf.mpr htail⟩, ?_⟩
@@ -561,7 +559,7 @@ theorem sum_splitBad_eq_nested (j d k L : ℕ) :
 
 theorem card_mul_sum_joinComposition_le
     {j d k l s : ℕ} (hd : 0 < d) (hdim : k = j + (d + 1))
-    (hlk : l ≤ k) (hsk : s ≤ k - l) (hj : j + 1 ≤ s + l) :
+    (_hlk : l ≤ k) (_hsk : s ≤ k - l) (hj : j + 1 ≤ s + l) :
     (d : ℝ) *
         (∑ ac ∈ (compositionsOf j s) ×ˢ
             (compositionsOf d (k - l - s)),
@@ -1046,7 +1044,7 @@ theorem badCoordinateWeight_le_reindexed {K : ℕ} (j d L : ℕ)
 
 /-- Coordinate-indexed form of `badCoordinateWeight_le`. -/
 theorem badCoordinateWeight_le_fin {K : ℕ} (i : Fin K) (L : ℕ)
-    (hL : L < K) (hiL : i.val ≤ L) (hdouble : 2 * (i.val + 1) ≤ K) :
+    (_hL : L < K) (hiL : i.val ≤ L) (hdouble : 2 * (i.val + 1) ≤ K) :
     (∑ b ∈ (compositionsOf K K).filter (fun b ↦ L < b i),
       compositionCycleWeight b) ≤
       (4 / (2 : ℝ) ^ L) *
@@ -1157,7 +1155,8 @@ theorem badFordCoordinateWeight_le {M K : ℕ} (hM : 2 ≤ M)
         omega
       · simp
     rw [show M * (M + i.val) = L by rfl, hempty]
-    simp only [sum_empty, Nat.ofNat_pos, div_pos_iff_of_pos_left, pow_pos, mul_nonneg_iff_of_pos_left, ge_iff_le]
+    simp only [sum_empty, Nat.ofNat_pos, div_pos_iff_of_pos_left, pow_pos,
+      mul_nonneg_iff_of_pos_left, ge_iff_le]
     positivity
 
 theorem fordCapExponent_lower {M i : ℕ} (hM : 1 ≤ M) :
@@ -1176,7 +1175,7 @@ theorem sum_ford_bad_coeff_le (M K : ℕ) (hM : 1 ≤ M) :
     intro i
     have hexp := fordCapExponent_lower (i := i.val) hM
     have hpow : (2 : ℝ) ^ (M * M + i.val) ≤
-        (2 : ℝ) ^ (M * (M + i.val)) := by gcongr <;> norm_num
+        (2 : ℝ) ^ (M * (M + i.val)) := by gcongr; norm_num
     calc
       4 / (2 : ℝ) ^ (M * (M + i.val)) ≤
           4 / (2 : ℝ) ^ (M * M + i.val) := by
@@ -1237,7 +1236,7 @@ theorem sixteen_div_two_pow_sq_le_half {M : ℕ} (hM : 3 ≤ M) :
   have hpow : (512 : ℝ) ≤ (2 : ℝ) ^ (M * M) := by
     calc
       (512 : ℝ) = (2 : ℝ) ^ 9 := by norm_num
-      _ ≤ (2 : ℝ) ^ (M * M) := by gcongr <;> norm_num
+      _ ≤ (2 : ℝ) ^ (M * M) := by gcongr; norm_num
   have hpowPos : 0 < (2 : ℝ) ^ (M * M) := by positivity
   apply (div_le_iff₀ hpowPos).2
   nlinarith

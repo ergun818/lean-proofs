@@ -108,7 +108,7 @@ theorem isolatedCount_pow_mass_lower
 /-- Every prime in the isolated support has a unique divisor of `a` which
 moves it into the dyadic target interval. -/
 theorem exists_unique_eligible_isolated_divisor
-    {y a p : ℕ} (ha : 0 < a)
+    {y a p : ℕ} (_ha : 0 < a)
     (hp : p ∈ isolatedDyadicPrimeSupport y a) :
     ∃ d ∈ sigmaIsolatedDivisors a (Real.log 2),
       y < d * p ∧ d * p ≤ 2 * y ∧

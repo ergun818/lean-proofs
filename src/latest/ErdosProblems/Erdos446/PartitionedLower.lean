@@ -26,7 +26,7 @@ The denominator in every summand is positive for the nonempty squarefree
 block classes used below.  Stating that fact as a hypothesis keeps this
 lemma independent of the particular prime-block construction. -/
 theorem ford_partitioned_cluster_lower_reduction
-    {ι : Type*} [DecidableEq ι] {I : Finset ι}
+    {ι : Type*} {I : Finset ι}
     {N y B : ℕ} {A : ι → Finset ℕ}
     (hN : 3 ≤ N)
     (hprime : ∀ x : ℕ, N ≤ x →
@@ -48,6 +48,7 @@ theorem ford_partitioned_cluster_lower_reduction
               (∑ a ∈ A i, (a.divisors.card : ℝ) / a) ^ 2) /
             (∑ a ∈ A i, (closePairCount a : ℝ) / a)) ≤
       epsilon y (2 * y) := by
+  classical
   let U : Finset ℕ := I.biUnion A
   have hUpos : ∀ a ∈ U, 0 < a := by
     intro a ha

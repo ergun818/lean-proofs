@@ -53,7 +53,7 @@ theorem roughAt_iff {N b : ℕ} :
     let q : PrimeIndex N := ⟨p, hp⟩
     have hq : q ∈ primePattern N b := mem_primePattern_iff.mpr hpb
     rw [h] at hq
-    simpa using hq
+    simp at hq
   · intro h
     ext q
     simp only [Finset.notMem_empty, iff_false]
@@ -185,7 +185,6 @@ theorem roughFactorEvent_hasDensity (N c : ℕ) (hc : 0 < c) :
     have hcR : (c : ℝ) ≠ 0 := by exact_mod_cast hc.ne'
     have hQR : (roughPeriod N : ℝ) ≠ 0 := by
       exact_mod_cast (roughPeriod_pos N).ne'
-    push_cast
     field_simp
   rw [Nat.cast_mul] at hperiod
   rw [harith] at hperiod

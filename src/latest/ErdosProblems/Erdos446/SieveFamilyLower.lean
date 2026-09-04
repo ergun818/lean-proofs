@@ -228,7 +228,7 @@ theorem squarefreePatternEvent_subset_divisorSetIoc
   rcases Finset.mem_image.mp hm with ⟨c, hc, hpat⟩
   have hdiv : c ∣ m :=
     dvd_of_primePattern_eq_supportPattern (hsq c hc) (hcut c hc) hpat.symm
-  rw [divisorSetIoc, Set.mem_setOf_eq, divisorCountIoc]
+  rw [divisorSetIoc, Set.mem_ofPred_eq, divisorCountIoc]
   exact Finset.card_pos.mpr
     ⟨c, Finset.mem_filter.mpr ⟨hinterval c hc, hdiv⟩⟩
 
@@ -281,7 +281,7 @@ theorem squarefree_moduli_lower_bound
     have hcm : c ∣ m :=
       dvd_of_primePattern_eq_supportPattern (hsq c hc) (hcut c hc) hpat.symm
     obtain ⟨d, hdIoc, hdc⟩ := hwitness c hc
-    rw [divisorSetIoc, Set.mem_setOf_eq, divisorCountIoc]
+    rw [divisorSetIoc, Set.mem_ofPred_eq, divisorCountIoc]
     exact Finset.card_pos.mpr
       ⟨d, Finset.mem_filter.mpr ⟨hdIoc, hdc.trans hcm⟩⟩
   have hmono :

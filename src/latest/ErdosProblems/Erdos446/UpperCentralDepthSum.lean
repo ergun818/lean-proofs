@@ -192,8 +192,8 @@ theorem fordPoissonFactor_right_decay
         cases d with
         | zero => simp [fordPoissonFactor, fordCentralDepthMain]
         | succ d =>
-            simp [fordPoissonFactor, fordCentralDepthMain]
-            exact pow_nonneg (by norm_num) _
+            simpa [fordPoissonFactor, fordCentralDepthMain] using
+              pow_nonneg (by norm_num : (0 : ℝ) ≤ 3 / 4) (d + 1)
     | succ v => simp [fordPoissonFactor, fordCentralDepthMain]
   have hxpos : 0 < x := lt_of_le_of_ne hx0 (Ne.symm hxzero)
   have hratio (d : ℕ) :
