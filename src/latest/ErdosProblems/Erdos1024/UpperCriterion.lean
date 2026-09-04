@@ -37,8 +37,7 @@ lemma prod_badIndex_eq_projections {n t : ℕ}
   classical
   calc
     (∏ i ∈ N, f i) = ∏ i : BadIndex n t, if i ∈ N then f i else 1 := by
-      simpa using (Finset.prod_filter (s := (Finset.univ : Finset (BadIndex n t)))
-        (p := fun i ↦ i ∈ N) f).symm
+      simp
     _ = (∏ a : OverlapIndex n,
           if Sum.inl a ∈ N then f (Sum.inl a) else 1) *
         ∏ S : HoleIndex n t,
@@ -92,7 +91,7 @@ def twoCharge {n t : ℕ} (xA : ℝ) (xB : HoleIndex n t → ℝ) :
 
 lemma product_twoCharge_lower {n t : ℕ}
     (N : Finset (BadIndex n t)) (xA : ℝ) (xB : HoleIndex n t → ℝ)
-    (hxA0 : 0 ≤ xA) (hxA1 : xA ≤ 1)
+    (_ : 0 ≤ xA) (hxA1 : xA ≤ 1)
     (hxB0 : ∀ S, 0 ≤ xB S) (hxB1 : ∀ S, xB S ≤ 1)
     (htotal : ∑ S, xB S ≤ 1) :
     (1 - xA) ^ (overlapProjection N).card *
@@ -195,7 +194,7 @@ theorem twoCharge_criterion
       have hxB := hxB0 S
       have hscaled := mul_le_mul_of_nonneg_left hprodHole hxB
       have hq0 : 0 ≤ badProbability K (Sum.inr S) := by
-        simp [badProbability]
+        dsimp [badProbability]
         positivity
       nlinarith [hholes S]
 

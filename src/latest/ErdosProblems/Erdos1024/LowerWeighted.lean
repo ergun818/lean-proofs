@@ -27,6 +27,7 @@ def independentSets (H : System V) : Finset (Finset V) :=
     I ∈ independentSets H ↔ Independent H I := by
   simp [independentSets]
 
+omit [Fintype V] [DecidableEq V] in
 lemma independent_mono {H : System V} {I J : Finset V}
     (hI : Independent H I) (hJI : J ⊆ I) : Independent H J := by
   intro e heH heJ
@@ -115,6 +116,7 @@ lemma union_available_independent {H : System V}
     hlin htri hR hdisj)
   exact Finset.union_subset_union Finset.Subset.rfl hSJ
 
+omit [Fintype V] in
 lemma union_right_injective_of_disjoint {R J : Finset V}
     (hRJ : Disjoint R J) : Set.InjOn (fun S : Finset V ↦ R ∪ S) J.powerset := by
   intro S hS T hT hEq
@@ -127,10 +129,11 @@ lemma union_right_injective_of_disjoint {R J : Finset V}
   have hxRnotT : x ∈ R → x ∉ T := fun hxR hxT ↦
     Finset.disjoint_left.mp hRJ hxR (hTsub hxT)
   by_cases hxR : x ∈ R
-  · simp [hxR, hxRnotS hxR, hxRnotT hxR]
+  · simp [hxRnotS hxR, hxRnotT hxR]
   · have hm := Finset.ext_iff.mp hEq x
     simpa [hxR] using hm
 
+omit [Fintype V] in
 lemma insert_union_injective_of_disjoint {v : V} {R J : Finset V}
     (hvR : v ∉ R) (hvJ : v ∉ J) (hRJ : Disjoint R J) :
     Set.InjOn (fun S : Finset V ↦ insert v (R ∪ S)) J.powerset := by
@@ -271,6 +274,7 @@ lemma baseFiber_card_le {H : System V} {v : V} {R : Finset V} :
       Nat.add_le_add (Finset.card_image_le) (Finset.card_image_le)
     _ = 2 * 2 ^ J.card := by simp [Finset.card_powerset]; ring
 
+omit [Fintype V] in
 lemma omitImage_card {R J : Finset V} (hRJ : Disjoint R J) :
     (omitImage R J).card = 2 ^ J.card := by
   classical
@@ -343,12 +347,14 @@ def linkVertices (M : Finset (Finset V)) : Finset V :=
 def unusedVertices (J : Finset V) (M : Finset (Finset V)) : Finset V :=
   J \ linkVertices M
 
+omit [Fintype V] in
 lemma linkVertices_subset {J : Finset V} {M : Finset (Finset V)}
     (hMJ : ∀ e ∈ M, e ⊆ J) : linkVertices M ⊆ J := by
   intro x hx
   obtain ⟨e, heM, hxe⟩ := Finset.mem_biUnion.mp hx
   exact hMJ e heM hxe
 
+omit [Fintype V] in
 lemma card_linkVertices {H : System V} (h3 : ThreeUniform H)
     (hlin : Linear H) {v : V} {J : Finset V} :
     (linkVertices (linkPairs H v J)).card = 2 * (linkPairs H v J).card := by

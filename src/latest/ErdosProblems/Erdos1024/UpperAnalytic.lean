@@ -74,8 +74,7 @@ lemma choose_three_lower {t : ℕ} (ht : 4 ≤ t) :
       6 * t.choose 3 = Nat.factorial 3 * t.choose 3 := by norm_num
       _ = t.descFactorial 3 := (Nat.descFactorial_eq_factorial_mul_choose t 3).symm
       _ = t * (t - 1) * (t - 2) := by
-        simp [Nat.descFactorial_succ, Nat.descFactorial, Nat.mul_comm,
-          Nat.mul_left_comm, Nat.mul_assoc]
+        simp [Nat.descFactorial, Nat.mul_comm, Nat.mul_assoc]
   have hdesc : (6 : ℝ) * (t.choose 3 : ℕ) =
       (t : ℝ) * ((t : ℝ) - 1) * ((t : ℝ) - 2) := by
     have hdescCast : (6 : ℝ) * (t.choose 3 : ℕ) =
@@ -85,7 +84,8 @@ lemma choose_three_lower {t : ℕ} (ht : 4 ≤ t) :
   have ht0 : 0 ≤ (t : ℝ) := by positivity
   have hprod : (t : ℝ) * ((t : ℝ) / 2) * ((t : ℝ) / 2) ≤
       (t : ℝ) * ((t : ℝ) - 1) * ((t : ℝ) - 2) := by
-    gcongr <;> nlinarith
+    gcongr
+    nlinarith
   nlinarith
 
 lemma exp_neg_two_mul_le_one_sub {x : ℝ} (hx0 : 0 ≤ x) (hxhalf : x ≤ 1 / 2) :
@@ -293,7 +293,6 @@ lemma total_hole_charge_le {n : ℕ} (hn : 3 ≤ n) :
           colorCount n) := by
         rw [← Real.exp_nat_mul]
         congr 1
-        push_cast
         ring
   have hcorr : 2 * overlapCharge n *
       (6 * n * (upperThreshold n).choose 3 : ℕ) =
@@ -394,7 +393,7 @@ theorem exists_upper_system (n : ℕ) (hn : 3 ≤ n) :
     (fun i ↦ by
       cases i with
       | inl _ =>
-          simp [twoCharge]
+          dsimp [twoCharge]
           exact (overlapCharge_le_half hn0).trans_lt (by norm_num)
       | inr S => simpa [twoCharge] using hxB1 S)
     hcriterion

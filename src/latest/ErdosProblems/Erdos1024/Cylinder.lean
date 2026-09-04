@@ -127,12 +127,14 @@ def constraintEvent (S : Finset Coordinate) (R : Finset Value) :
     Finset (Coordinate → Value) :=
   Finset.univ.filter fun f ↦ ∀ c ∈ S, f c ∈ R
 
+omit [Nonempty Value] in
 lemma coordinateEvent_dependsOn (c : Coordinate) (R : Finset Value) :
     DependsOn (coordinateEvent c R) {c} := by
   intro f g hfg
   simp only [coordinateEvent, Finset.mem_filter, Finset.mem_univ, true_and]
   rw [hfg c (Finset.mem_singleton_self c)]
 
+omit [Nonempty Value] in
 lemma constraintEvent_dependsOn (S : Finset Coordinate) (R : Finset Value) :
     DependsOn (constraintEvent S R) S := by
   intro f g hfg
@@ -155,8 +157,7 @@ noncomputable def coordinateEventEquiv (c : Coordinate) (R : Finset Value) :
   invFun z := by
     let f := (Equiv.funSplitAt c Value).symm (z.1.1, z.2)
     refine ⟨f, Finset.mem_filter.mpr ⟨Finset.mem_univ _, ?_⟩⟩
-    change f c ∈ R
-    simpa [f] using z.1.2
+    simp [f]
   left_inv f := by
     apply Subtype.ext
     exact (Equiv.funSplitAt c Value).left_inv f.1
@@ -186,11 +187,13 @@ theorem uniformProbability_coordinateEvent (c : Coordinate) (R : Finset Value) :
       (Fintype.card Value : ℝ) * Fintype.card Rest by exact_mod_cast hall]
   field_simp
 
+omit [Nonempty Value] in
 lemma constraintEvent_empty (R : Finset Value) :
     constraintEvent (∅ : Finset Coordinate) R = Finset.univ := by
   ext f
   simp [constraintEvent]
 
+omit [Nonempty Value] in
 lemma constraintEvent_insert {c : Coordinate} {S : Finset Coordinate}
     (R : Finset Value) :
     constraintEvent (insert c S) R =
@@ -224,8 +227,9 @@ section EventFamily
 
 variable [Fintype Coordinate] [DecidableEq Coordinate]
 variable [Fintype Value] [Nonempty Value] [DecidableEq Value]
-variable [Fintype ι] [DecidableEq ι]
+variable [DecidableEq ι]
 
+omit [Nonempty Value] in
 lemma avoiding_dependsOn_biUnion
     (event : ι → Finset (Coordinate → Value))
     (support : ι → Finset Coordinate)
@@ -246,6 +250,7 @@ lemma avoiding_dependsOn_biUnion
     intro c hc
     exact hfg c (Finset.mem_biUnion.mpr ⟨j, hj, hc⟩)
 
+omit [Fintype Coordinate] [DecidableEq ι] in
 lemma disjoint_biUnion_of_pairwise_disjoint
     (support : ι → Finset Coordinate) {i : ι} {J : Finset ι}
     (h : ∀ j ∈ J, Disjoint (support i) (support j)) :

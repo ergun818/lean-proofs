@@ -76,23 +76,27 @@ def linkPairs (H : System V) (v : V) (J : Finset V) :
     Finset (Finset V) :=
   (H.filter fun e ↦ v ∈ e ∧ e.erase v ⊆ J).image fun e ↦ e.erase v
 
+omit [Fintype V] in
 lemma mem_linkPairs {H : System V} {v : V} {J a : Finset V} :
     a ∈ linkPairs H v J ↔
       ∃ e ∈ H, v ∈ e ∧ e.erase v ⊆ J ∧ e.erase v = a := by
   classical
   simp [linkPairs, and_assoc]
 
+omit [Fintype V] in
 lemma linkPairs_subset {H : System V} {v : V} {J : Finset V}
     {a : Finset V} (ha : a ∈ linkPairs H v J) : a ⊆ J := by
   obtain ⟨e, -, -, heJ, rfl⟩ := mem_linkPairs.mp ha
   exact heJ
 
+omit [Fintype V] in
 lemma linkPairs_card_two {H : System V} (h3 : ThreeUniform H)
     {v : V} {J : Finset V} {a : Finset V} (ha : a ∈ linkPairs H v J) :
     a.card = 2 := by
   obtain ⟨e, heH, hve, -, rfl⟩ := mem_linkPairs.mp ha
   rw [Finset.card_erase_of_mem hve, h3 e heH]
 
+omit [Fintype V] in
 lemma linkPairs_pairwiseDisjoint {H : System V} (hlin : Linear H)
     {v : V} {J : Finset V} :
     (linkPairs H v J : Set (Finset V)).PairwiseDisjoint id := by

@@ -70,7 +70,7 @@ lemma card_overlapPartners_le {n : ℕ} (e : Triple n) :
       have hintereq : (e.1 ∩ f.1).card = 3 := by omega
       have hi_eq_e : e.1 ∩ f.1 = e.1 :=
         Finset.eq_of_subset_of_card_le Finset.inter_subset_left (by
-          simpa [e.2, hintereq])
+          simp [e.2, hintereq])
       have hsubef : e.1 ⊆ f.1 := by
         rw [← hi_eq_e]
         exact Finset.inter_subset_right
@@ -194,7 +194,7 @@ lemma card_overlap_neighbors_of_hole_le {n t : ℕ} (S : HoleIndex n t) :
         (support (Sum.inr S)).card * (6 * n) := card_neighboringOverlaps_le _
     _ = 6 * n * t.choose 3 := by
       rw [support_hole_card]
-      simp [Nat.mul_comm, Nat.mul_left_comm, Nat.mul_assoc]
+      simp [Nat.mul_comm, Nat.mul_left_comm]
 
 end Upper
 end Erdos1024

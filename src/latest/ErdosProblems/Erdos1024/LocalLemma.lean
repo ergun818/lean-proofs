@@ -1,6 +1,7 @@
 /- leanprover/lean4:v4.33.0  mathlib v4.33.0 -/
 
 import Mathlib.Data.Fintype.Card
+import Mathlib.Data.Fintype.EquivFin
 import Mathlib.Data.Finset.Lattice.Fold
 import Mathlib.Data.Real.Basic
 import Mathlib.Tactic.FieldSimp
@@ -36,7 +37,7 @@ def avoiding [Fintype Omega] [DecidableEq Omega] [DecidableEq ι]
 
 section Elementary
 
-variable [Fintype Omega] [Nonempty Omega] [DecidableEq Omega]
+variable [Fintype Omega] [Nonempty Omega]
 
 lemma card_pos : 0 < (Fintype.card Omega : ℝ) := by
   exact_mod_cast Fintype.card_pos
@@ -71,8 +72,8 @@ end Elementary
 
 section Avoiding
 
-variable [Fintype Omega] [Nonempty Omega] [DecidableEq Omega]
-variable [Fintype ι] [DecidableEq ι]
+variable [Fintype Omega] [DecidableEq Omega]
+variable [DecidableEq ι]
 variable (event : ι → Finset Omega)
 
 @[simp] lemma avoiding_empty : avoiding event ∅ = Finset.univ := by
@@ -116,7 +117,7 @@ end Avoiding
 section Asymmetric
 
 variable [Fintype Omega] [Nonempty Omega] [DecidableEq Omega]
-variable [Fintype ι] [DecidableEq ι]
+variable [Finite ι] [DecidableEq ι]
 
 /--
 Finite asymmetric Lovász local lemma.
@@ -137,8 +138,8 @@ theorem exists_avoiding_of_asymmetric
       uniformProbability (event i ∩ avoiding event S) =
         uniformProbability (event i) * uniformProbability (avoiding event S)) :
     ∃ omega : Omega, ∀ i, omega ∉ event i := by
+  let := Fintype.ofFinite ι
   have hfactor0 (i : ι) : 0 ≤ 1 - x i := sub_nonneg.mpr (hx1 i).le
-
   /- The standard inductive conditional estimate, written without division
   so it remains meaningful before positivity of all denominators is known. -/
   have conditional : ∀ S : Finset ι, ∀ i ∉ S,
@@ -174,7 +175,6 @@ theorem exists_avoiding_of_asymmetric
             uniformProbability_mono heventSub
           _ = uniformProbability (event i) * uniformProbability (avoiding event F) :=
             h_indep i F hF_nonNeighbor
-
       /- Successively insert the neighbors in `T`.  At every insertion the
       strong induction hypothesis loses at most the corresponding factor
       `1 - x j`. -/
@@ -222,8 +222,7 @@ theorem exists_avoiding_of_asymmetric
             _ = uniformProbability (avoiding event (insert j T ∪ F)) := by
               congr 2
               ext k
-              simp [or_assoc, or_left_comm]
-
+              simp
       have hprodN : (∏ j ∈ N, (1 - x j)) *
           uniformProbability (avoiding event F) ≤
             uniformProbability (avoiding event S) := by
@@ -242,7 +241,6 @@ theorem exists_avoiding_of_asymmetric
               uniformProbability (avoiding event F)) := by ring
         _ ≤ x i * uniformProbability (avoiding event S) :=
           mul_le_mul_of_nonneg_left hprodN (hx0 i)
-
   have avoiding_pos : ∀ S : Finset ι,
       0 < uniformProbability (avoiding event S) := by
     intro S
@@ -255,7 +253,6 @@ theorem exists_avoiding_of_asymmetric
       have hpart := uniformProbability_avoiding_partition event i S
       have hfactor : 0 < 1 - x i := sub_pos.mpr (hx1 i)
       nlinarith
-
   have hall := avoiding_pos (Finset.univ : Finset ι)
   have hnonempty : (avoiding event (Finset.univ : Finset ι)).Nonempty :=
     (uniformProbability_pos_iff_nonempty _).mp hall

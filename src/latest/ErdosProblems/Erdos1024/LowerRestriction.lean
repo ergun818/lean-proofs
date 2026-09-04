@@ -15,13 +15,14 @@ open scoped BigOperators
 namespace Erdos1024
 namespace Lower
 
-variable {V : Type*} [Fintype V] [DecidableEq V]
+variable {V : Type*} [DecidableEq V]
 
 def subtypeEmbedding (Y : Finset V) : Y ↪ V := Function.Embedding.subtype _
 
 def valMap (Y : Finset V) (I : Finset Y) : Finset V :=
   I.map (subtypeEmbedding Y)
 
+omit [DecidableEq V] in
 @[simp] lemma card_valMap (Y : Finset V) (I : Finset Y) :
     (valMap Y I).card = I.card := by
   simp [valMap]
@@ -37,6 +38,7 @@ def restrictSystem (H : System V) (Y : Finset V) : System Y :=
   · intro h
     exact ⟨Finset.subset_univ _, h⟩
 
+omit [DecidableEq V] in
 lemma valMap_injective (Y : Finset V) : Function.Injective (valMap Y) := by
   exact Finset.map_injective _
 
@@ -54,6 +56,7 @@ lemma restrict_linear {H : System V} (hlin : Linear H) (Y : Finset V) :
   rw [valMap, valMap, ← Finset.map_inter, Finset.card_map] at h
   exact h
 
+omit [DecidableEq V] in
 lemma valMap_subset_Y (Y : Finset V) (I : Finset Y) : valMap Y I ⊆ Y := by
   intro x hx
   obtain ⟨v, -, rfl⟩ := Finset.mem_map.mp hx
@@ -121,8 +124,10 @@ lemma restrict_triangleFree {H : System V} {Y : Finset V}
       ⟨mem_restrictSystem.mp hg, valMap_subset_Y Y g⟩,
     hEF, hEG, hFG, hEFcard, hEGcard, hFGcard, hcommonCard⟩
 
+variable [Fintype V]
+
 lemma extensionCount_restrict_le {H : System V} {Y : Finset V}
-    (h3 : ThreeUniform H) {B : ℕ} (v : Y) (Z : Finset Y) :
+    (_ : ThreeUniform H) {B : ℕ} (v : Y) (Z : Finset Y) :
     truncatedExtension (restrictSystem H Y) B v Z ≤
       truncatedExtension H B v.1 (valMap Y Z) := by
   classical
@@ -142,8 +147,7 @@ lemma extensionCount_restrict_le {H : System V} {Y : Finset V}
     have hvE : v.1 ∈ E := by
       exact Finset.mem_map.mpr ⟨v, hve, rfl⟩
     have herase : E.erase v.1 = valMap Y (e.erase v) := by
-      simpa [E, valMap, subtypeEmbedding] using
-        (Finset.map_erase (subtypeEmbedding Y) e v).symm
+      simp [E, valMap, subtypeEmbedding]
     have hEN : E.erase v.1 ⊆ neighborhood H v.1 := by
       intro x hx
       have hxE := Finset.mem_of_mem_erase hx
@@ -162,6 +166,7 @@ lemma extensionCount_restrict_le {H : System V} {Y : Finset V}
         ((pairsAt (restrictSystem H Y) v Z).map emb).card := by simp
     _ ≤ (pairsAt H v.1 (valMap Y Z)).card := Finset.card_le_card hsub
 
+omit [Fintype V] in
 lemma map_univ_sdiff (Y : Finset V) (Z : Finset Y) :
     (Finset.univ \ Z).map (subtypeEmbedding Y) = Y \ valMap Y Z := by
   ext x

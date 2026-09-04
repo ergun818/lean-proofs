@@ -145,6 +145,7 @@ instance isLooseTripleDecidable (H : System V) (t : EdgeTriple V) :
 def looseTriangles (H : System V) : Finset (EdgeTriple V) :=
   ((H.product H).product H).filter (IsLooseTriple H)
 
+omit [Fintype V] in
 @[simp] lemma mem_looseTriangles {H : System V} {t : EdgeTriple V} :
     t ∈ looseTriangles H ↔ IsLooseTriple H t := by
   rw [looseTriangles, Finset.mem_filter]
@@ -154,6 +155,7 @@ def looseTriangles (H : System V) : Finset (EdgeTriple V) :=
     refine ⟨Finset.mem_product.mpr ⟨?_, h.2.2.1⟩, h⟩
     exact Finset.mem_product.mpr ⟨h.1, h.2.1⟩
 
+omit [Fintype V] in
 lemma hasLooseTriangle_iff_looseTriangles_nonempty {H : System V} :
     HasLooseTriangle H ↔ (looseTriangles H).Nonempty := by
   constructor
@@ -174,6 +176,7 @@ lemma hasLooseTriangle_iff_looseTriangles_nonempty {H : System V} :
       (mem_looseTriangles.mp ht).2.2.2.2.2.2.2.2.1,
       (mem_looseTriangles.mp ht).2.2.2.2.2.2.2.2.2⟩
 
+omit [Fintype V] in
 lemma edge_eq_of_two_common {H : System V} (hlin : Linear H)
     {e f : Finset V} (he : e ∈ H) (hf : f ∈ H)
     {x y : V} (hxe : x ∈ e) (hxf : x ∈ f)
@@ -197,6 +200,7 @@ variable [LinearOrder V]
 def singletonVertex (s : Finset V) (hs : s.card = 1) : V :=
   s.min' (Finset.card_pos.mp (by omega))
 
+omit [Fintype V] [DecidableEq V] in
 lemma singletonVertex_mem (s : Finset V) (hs : s.card = 1) :
     singletonVertex s hs ∈ s := by
   exact Finset.min'_mem _ _
@@ -209,6 +213,7 @@ def looseTriangleCode (H : System V) (t : LooseTriangle H) : V × V × V :=
     singletonVertex (t.1.1.1 ∩ t.1.2) h.2.2.2.2.2.2.2.1,
     singletonVertex (t.1.1.2 ∩ t.1.2) h.2.2.2.2.2.2.2.2.1)
 
+omit [Fintype V] in
 lemma looseTriangleCode_injective {H : System V} (hlin : Linear H) :
     Function.Injective (looseTriangleCode H) := by
   rintro ⟨t, ht⟩ ⟨u, hu⟩ hcode
@@ -282,6 +287,7 @@ end TriangleCode
 def triangleVertices (t : EdgeTriple V) : Finset V :=
   t.1.1 ∪ t.1.2 ∪ t.2
 
+omit [Fintype V] in
 theorem card_triangleVertices_of_mem {H : System V} (h3 : ThreeUniform H)
     {t : EdgeTriple V} (ht : t ∈ looseTriangles H) :
     (triangleVertices t).card = 6 := by
@@ -304,7 +310,7 @@ theorem card_triangleVertices_of_mem {H : System V} (h3 : ThreeUniform H)
           ⟨(Finset.mem_inter.mp hxE).1, (Finset.mem_inter.mp hxF).1⟩,
           (Finset.mem_inter.mp hxE).2⟩
     have hzero : e ∩ f ∩ g = ∅ := Finset.card_eq_zero.mp h.2.2.2.2.2.2.2.2.2
-    simpa [hzero] using hcommon
+    simp [hzero] at hcommon
   have hinterCard : ((e ∪ f) ∩ g).card = 2 := by
     rw [hinterEq, Finset.card_union_of_disjoint hdisj,
       h.2.2.2.2.2.2.2.1, h.2.2.2.2.2.2.2.2.1]
@@ -318,6 +324,7 @@ abbrev Coloring (V : Type*) (K : ℕ) := V → Fin K
 def selectedSet {K : ℕ} [NeZero K] (omega : Coloring V K) : Finset V :=
   Finset.univ.filter fun v ↦ omega v = 0
 
+omit [DecidableEq V] in
 @[simp] lemma mem_selectedSet {K : ℕ} [NeZero K]
     {omega : Coloring V K} {v : V} :
     v ∈ selectedSet omega ↔ omega v = 0 := by
@@ -460,6 +467,7 @@ variable [LinearOrder V]
 def triangleRepresentative (H : System V) (t : LooseTriangle H) : V :=
   (looseTriangleCode H t).1
 
+omit [Fintype V] in
 lemma triangleRepresentative_mem (H : System V) (t : LooseTriangle H) :
     triangleRepresentative H t ∈ triangleVertices t.1 := by
   let h := mem_looseTriangles.mp t.property
@@ -593,7 +601,7 @@ lemma sum_exp_selectedWeight_eq_product {K : ℕ} [NeZero K]
       change (∑ c ∈ (Finset.univ : Finset (Fin K)),
         Real.exp (((if c = 0 then w v else 0 : ℕ) : ℝ) / B)) = _
       rw [← Finset.sum_erase_add _ _ hzero]
-      simp only [if_pos, Nat.cast_zero, zero_div, Real.exp_zero]
+      simp only [if_pos]
       congr 1
       calc
         ∑ c ∈ (Finset.univ : Finset (Fin K)).erase 0,
@@ -707,7 +715,7 @@ lemma uniformProbability_weightBadEvent {K B S T : ℕ} [NeZero K]
       _ ≤ _ := sum_exp_selectedWeight_bound hB w hwB hwSum
   have hcardOmega : (Fintype.card Omega : ℝ) =
       (K : ℝ) ^ Fintype.card V := by
-    simp [Omega, Fintype.card_fun]
+    simp [Omega]
   have hcard : ((weightBadEvent (K := K) w T).card : ℝ) ≤
       (Fintype.card Omega : ℝ) *
         Real.exp (2 * (S : ℝ) / ((K : ℝ) * B) - (T : ℝ) / B) := by
@@ -785,7 +793,7 @@ lemma selectedWeight_extensionWeight_eq {K : ℕ} [NeZero K]
           intro hv'
           exact hv (Finset.mem_sdiff.mpr ⟨hv', hvZ⟩)
         have hvOmega : omega v ≠ 0 := by simpa using hvSel
-        simp [hvZ, hvOmega]
+        simp [hvOmega]
     _ = ∑ v ∈ Finset.univ.filter (fun v ↦ omega v = 0) \ Z,
         truncatedExtension H B v Z := by
       apply Finset.sum_congr rfl
