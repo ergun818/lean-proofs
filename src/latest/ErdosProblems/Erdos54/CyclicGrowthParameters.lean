@@ -67,7 +67,8 @@ theorem cyclicTupleLength_le_six_mul_scale {x : ℕ} (hx : 1 ≤ x) :
     cyclicTupleLength x ≤ 6 * cyclicLogScale x := by
   apply Nat.ceil_le.mpr
   have hlog : Real.log (x : ℝ) ≤ cyclicLogScale x := Nat.le_ceil _
-  exact_mod_cast (mul_le_mul_of_nonneg_left hlog (by norm_num : (0 : ℝ) ≤ 6))
+  exact_mod_cast mul_le_mul (le_refl (6 : ℝ)) hlog
+    (Real.log_nonneg (by exact_mod_cast hx)) (by norm_num)
 
 theorem five_mul_scale_le_cyclicTupleLength {x : ℕ} (hx : 1 ≤ x)
     (hu : 5 ≤ cyclicLogScale x) :
@@ -492,7 +493,7 @@ theorem cyclic_collision_supply_of_bounds {x : ℕ}
     have huone : 1 ≤ u := hu
     have hpow_eq : 2 ^ u = 2 * 2 ^ (u - 1) := by
       calc
-        2 ^ u = 2 ^ ((u - 1) + 1) := by congr 2 <;> omega
+        2 ^ u = 2 ^ ((u - 1) + 1) := by congr 2; omega
         _ = 2 * 2 ^ (u - 1) := by rw [pow_succ]; ring
     have hscaled : 2 * (2 ^ 31 * u ^ 3) ≤ 2 * 2 ^ (u - 1) := by
       calc

@@ -29,7 +29,7 @@ open scoped BigOperators
 
 section FiniteAdditiveGroup
 
-variable {G : Type*} [AddCommGroup G] [Fintype G] [DecidableEq G]
+variable {G : Type*} [AddCommGroup G] [DecidableEq G]
 
 /-- Translation of a finite set by an element on the right. -/
 def translate (A : Finset G) (x : G) : Finset G :=
@@ -58,7 +58,7 @@ theorem translate_zero (A : Finset G) : translate A 0 = A := by
 theorem translate_add (A : Finset G) (x y : G) :
     translate (translate A x) y = translate A (x + y) := by
   ext a
-  simp [sub_sub, add_comm, add_left_comm, add_assoc]
+  simp [sub_sub, add_comm]
 
 /-- The number of points newly exposed by translating `A` by `x`. -/
 def expansion (A : Finset G) (x : G) : ℕ :=
@@ -68,23 +68,23 @@ def expansion (A : Finset G) (x : G) : ℕ :=
 abbrev e_A (A : Finset G) (x : G) : ℕ := expansion A x
 
 /-- The finite set of translations which expose at most `d` new points. -/
-def almostPeriods (A : Finset G) (d : ℕ) : Finset G :=
+def almostPeriods [Fintype G] (A : Finset G) (d : ℕ) : Finset G :=
   Finset.univ.filter (fun x => expansion A x ≤ d)
 
 /-- The notation `G_d(A)` used in CFP for the set of `d`-almost periods. -/
-abbrev G_d (A : Finset G) (d : ℕ) : Finset G := almostPeriods A d
+abbrev G_d [Fintype G] (A : Finset G) (d : ℕ) : Finset G := almostPeriods A d
 
 @[simp]
-theorem mem_almostPeriods {A : Finset G} {d : ℕ} {x : G} :
+theorem mem_almostPeriods [Fintype G] {A : Finset G} {d : ℕ} {x : G} :
     x ∈ almostPeriods A d ↔ expansion A x ≤ d := by
   simp [almostPeriods]
 
 @[simp]
-theorem zero_mem_almostPeriods (A : Finset G) (d : ℕ) :
+theorem zero_mem_almostPeriods [Fintype G] (A : Finset G) (d : ℕ) :
     0 ∈ almostPeriods A d := by
   simp [expansion]
 
-theorem almostPeriods_mono {A : Finset G} {d e : ℕ} (hde : d ≤ e) :
+theorem almostPeriods_mono [Fintype G] {A : Finset G} {d e : ℕ} (hde : d ≤ e) :
     almostPeriods A d ⊆ almostPeriods A e := by
   intro x hx
   exact mem_almostPeriods.mpr ((mem_almostPeriods.mp hx).trans hde)
@@ -109,7 +109,7 @@ private theorem card_incidencePairs (A H : Finset G) :
 private theorem card_inter_translate_add_expansion (A : Finset G) (x : G) :
     (A ∩ translate A x).card + expansion A x = A.card := by
   rw [Finset.inter_comm]
-  simpa [expansion] using Finset.card_sdiff_add_card_inter (translate A x) A
+  simp [expansion, Finset.card_inter_add_card_sdiff]
 
 /-- The boundary definition of expansion agrees with CFP's union definition. -/
 theorem card_translate_union (A : Finset G) (x : G) :
@@ -120,7 +120,7 @@ theorem card_translate_union (A : Finset G) (x : G) :
   omega
 
 /-- Characterization of `G_d(A)` in the exact union-cardinality form used by CFP. -/
-theorem mem_almostPeriods_iff_card_union_le {A : Finset G} {d : ℕ} {x : G} :
+theorem mem_almostPeriods_iff_card_union_le [Fintype G] {A : Finset G} {d : ℕ} {x : G} :
     x ∈ almostPeriods A d ↔ (translate A x ∪ A).card ≤ A.card + d := by
   rw [mem_almostPeriods, card_translate_union]
   omega
@@ -133,8 +133,7 @@ private theorem incidencePairs_card_le_square (A H : Finset G) :
     change (p.2 - p.1, p.2) = (q.2 - q.1, q.2) at hpq
     injection hpq with hfirst hsecond
     apply Prod.ext
-    ·
-      rw [hsecond] at hfirst
+    · rw [hsecond] at hfirst
       exact sub_right_inj.mp hfirst
     · exact hsecond
   have himage : (incidencePairs A H).image f ⊆ A.product A := by
@@ -156,7 +155,7 @@ private theorem incidencePairs_card_le_square (A H : Finset G) :
 
 The proof double-counts pairs `(x,a)` with `x` an almost period and both
 `a-x` and `a` in `A`. -/
-theorem card_almostPeriods_mul_sub_le_square (A : Finset G) (d : ℕ) :
+theorem card_almostPeriods_mul_sub_le_square [Fintype G] (A : Finset G) (d : ℕ) :
     (almostPeriods A d).card * (A.card - d) ≤ A.card * A.card := by
   calc
     (almostPeriods A d).card * (A.card - d) =
@@ -200,7 +199,7 @@ theorem expansion_add_le (A : Finset G) (x y : G) :
       simp [expansion]
 
 /-- A sum of a list of `d`-almost periods is a `length * d`-almost period. -/
-theorem expansion_list_sum_le {A : Finset G} {d : ℕ} (xs : List G)
+theorem expansion_list_sum_le [Fintype G] {A : Finset G} {d : ℕ} (xs : List G)
     (hxs : ∀ x ∈ xs, x ∈ almostPeriods A d) :
     expansion A xs.sum ≤ xs.length * d := by
   induction xs with
@@ -217,13 +216,13 @@ theorem expansion_list_sum_le {A : Finset G} {d : ℕ} (xs : List G)
         _ = (x :: xs).length * d := by simp [Nat.succ_mul, Nat.add_comm]
 
 /-- Membership formulation of `expansion_list_sum_le`. -/
-theorem list_sum_mem_almostPeriods {A : Finset G} {d : ℕ} (xs : List G)
+theorem list_sum_mem_almostPeriods [Fintype G] {A : Finset G} {d : ℕ} (xs : List G)
     (hxs : ∀ x ∈ xs, x ∈ almostPeriods A d) :
     xs.sum ∈ almostPeriods A (xs.length * d) :=
   mem_almostPeriods.mpr (expansion_list_sum_le xs hxs)
 
 /-- Finset-indexed version of CFP Lemma 2.7. -/
-theorem finset_sum_mem_almostPeriods {ι : Type*} {A : Finset G} {d : ℕ}
+theorem finset_sum_mem_almostPeriods [Fintype G] {ι : Type*} {A : Finset G} {d : ℕ}
     (s : Finset ι) (z : ι → G) (hz : ∀ i ∈ s, z i ∈ almostPeriods A d) :
     (∑ i ∈ s, z i) ∈ almostPeriods A (s.card * d) := by
   classical

@@ -114,7 +114,7 @@ theorem DyadicBlockSystem.positive (D : DyadicBlockSystem) :
 
 /-- Every two-coloring of a finite set has a color occurring on at least half
 of the set.  The multiplication formulation avoids division and rounding. -/
-theorem exists_majority_fin_two {X : Type*} [DecidableEq X]
+theorem exists_majority_fin_two {X : Type*}
     (s : Finset X) (color : X → Fin 2) :
     ∃ c : Fin 2, s.card ≤ 2 * (s.filter fun x ↦ color x = c).card := by
   classical

@@ -28,7 +28,7 @@ theorem tuple_univ_card [Fintype X] (n : ℕ) :
     (Finset.univ : Finset (Fin n → X)).card = Fintype.card X ^ n := by
   simp
 
-theorem exists_not_of_filter_card_lt [Fintype X] [DecidableEq X]
+theorem exists_not_of_filter_card_lt [Fintype X]
     (n : ℕ) (bad : (Fin n → X) → Prop) [DecidablePred bad]
     (hbad : (Finset.univ.filter bad).card < Fintype.card X ^ n) :
     ∃ f : Fin n → X, ¬ bad f := by
@@ -39,7 +39,7 @@ theorem exists_not_of_filter_card_lt [Fintype X] [DecidableEq X]
   rw [hall, tuple_univ_card] at hbad
   exact (Nat.lt_irrefl _ hbad)
 
-theorem exists_good_of_bad_card_lt [Fintype X] [DecidableEq X]
+theorem exists_good_of_bad_card_lt [Fintype X]
     (n : ℕ) (good : (Fin n → X) → Prop) [DecidablePred good]
     (hbad : (Finset.univ.filter fun f ↦ ¬ good f).card < Fintype.card X ^ n) :
     ∃ f : Fin n → X, good f := by
@@ -48,8 +48,8 @@ theorem exists_good_of_bad_card_lt [Fintype X] [DecidableEq X]
 
 /-! ## Union bounds -/
 
-theorem card_filter_exists_le_sum [Fintype X] [DecidableEq X]
-    [Fintype ι] [DecidableEq ι] (n : ℕ)
+theorem card_filter_exists_le_sum [Fintype X]
+    [Fintype ι] (n : ℕ)
     (event : ι → (Fin n → X) → Prop) [∀ i, DecidablePred (event i)] :
     (Finset.univ.filter fun f ↦ ∃ i, event i f).card ≤
       ∑ i : ι, (Finset.univ.filter (event i)).card := by
@@ -65,8 +65,8 @@ theorem card_filter_exists_le_sum [Fintype X] [DecidableEq X]
       Finset.mem_filter.mpr ⟨Finset.mem_univ f, hi⟩⟩
   exact (Finset.card_le_card hsubset).trans (Finset.card_biUnion_le)
 
-theorem card_filter_exists_le_mul [Fintype X] [DecidableEq X]
-    [Fintype ι] [DecidableEq ι] (n B : ℕ)
+theorem card_filter_exists_le_mul [Fintype X]
+    [Fintype ι] (n B : ℕ)
     (event : ι → (Fin n → X) → Prop) [∀ i, DecidablePred (event i)]
     (hcard : ∀ i, (Finset.univ.filter (event i)).card ≤ B) :
     (Finset.univ.filter fun f ↦ ∃ i, event i f).card ≤ Fintype.card ι * B := by
@@ -162,7 +162,7 @@ theorem pullbackTuples_card_le [Fintype X] [DecidableEq X] {q n : ℕ}
 /-- Union bound for a family of bad short patterns placed in selected
 coordinates of a full tuple. -/
 theorem card_exists_badProjection_le
-    [Fintype X] [DecidableEq X] [Fintype ι] [DecidableEq ι] {q n : ℕ}
+    [Fintype X] [DecidableEq X] [Fintype ι] {q n : ℕ}
     (embedding : ι → Fin q ↪ Fin n) (bad : ι → Finset (Fin q → X)) :
     (Finset.univ.filter fun f : Fin n → X ↦
         ∃ i, projectTuple (embedding i) f ∈ bad i).card ≤
@@ -260,7 +260,7 @@ theorem collisionTuples_card_le [Fintype X] [DecidableEq X] (n : ℕ) :
 /-! ## Avoiding a family of bad events and all collisions -/
 
 theorem exists_injective_avoiding_of_card_add_lt
-    [Fintype X] [DecidableEq X] [Fintype ι] [DecidableEq ι]
+    [Fintype X] [DecidableEq X] [Fintype ι]
     (n : ℕ) (event : ι → (Fin n → X) → Prop)
     [∀ i, DecidablePred (event i)]
     (hsmall :
@@ -290,13 +290,14 @@ theorem exists_injective_avoiding_of_card_add_lt
       (Finset.mem_filter.mpr ⟨Finset.mem_univ f, ⟨i, hi⟩⟩))
 
 theorem exists_injective_avoiding_of_bounds
-    [Fintype X] [DecidableEq X] [Fintype ι] [DecidableEq ι]
+    [Fintype X] [Fintype ι]
     (n B : ℕ) (event : ι → (Fin n → X) → Prop)
     [∀ i, DecidablePred (event i)]
     (hevent : ∀ i, (Finset.univ.filter (event i)).card ≤ B)
     (hsmall : Fintype.card ι * B +
         n * n * (Fintype.card X ^ (n - 1)) < Fintype.card X ^ n) :
     ∃ f : Fin n → X, Function.Injective f ∧ ∀ i, ¬ event i f := by
+  classical
   apply exists_injective_avoiding_of_card_add_lt n event
   exact add_le_add (card_filter_exists_le_mul n B event hevent)
     (collisionTuples_card_le n) |>.trans_lt hsmall
@@ -304,13 +305,14 @@ theorem exists_injective_avoiding_of_bounds
 /-- Version of the selection lemma with a separate cardinality budget for
 each event. -/
 theorem exists_injective_avoiding_of_sum_bounds
-    [Fintype X] [DecidableEq X] [Fintype ι] [DecidableEq ι]
+    [Fintype X] [Fintype ι]
     (n : ℕ) (event : ι → (Fin n → X) → Prop)
     [∀ i, DecidablePred (event i)] (B : ι → ℕ)
     (hevent : ∀ i, (Finset.univ.filter (event i)).card ≤ B i)
     (hsmall : (∑ i : ι, B i) +
         n * n * (Fintype.card X ^ (n - 1)) < Fintype.card X ^ n) :
     ∃ f : Fin n → X, Function.Injective f ∧ ∀ i, ¬ event i f := by
+  classical
   apply exists_injective_avoiding_of_card_add_lt n event
   have hunion :
       (Finset.univ.filter fun f : Fin n → X ↦ ∃ i, event i f).card ≤
@@ -566,7 +568,7 @@ theorem all_prefixStageEvents_card_le [Fintype X] [DecidableEq X]
             ac_rfl
 
 /-- Binomial/choice-set bound for adaptive bad stages. -/
-theorem card_atLeast_prefixStageBad_le [Fintype X] [DecidableEq X]
+theorem card_atLeast_prefixStageBad_le [Fintype X]
     (stepBad : List X → X → Prop) (q b B : ℕ)
     [∀ history, DecidablePred (stepBad history)]
     (hstep : ∀ history : List X,
@@ -575,6 +577,7 @@ theorem card_atLeast_prefixStageBad_le [Fintype X] [DecidableEq X]
         b ≤ (Finset.univ.filter fun i : Fin q ↦
           prefixStageEvent stepBad i f).card).card ≤
       Nat.choose q b * (B ^ b * Fintype.card X ^ (q - b)) := by
+  classical
   apply card_atLeast_le_choose_mul (C := B ^ b * Fintype.card X ^ (q - b))
   intro s hs hscard
   simpa [hscard] using all_prefixStageEvents_card_le stepBad B hstep s
