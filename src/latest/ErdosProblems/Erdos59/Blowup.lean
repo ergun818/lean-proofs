@@ -262,7 +262,7 @@ lemma projected_six_nodup {V : Type*} [LinearOrder V] {G : SimpleGraph V}
 
 /-- A three-fold matching blowup of a triangle-free and `C₆`-free graph is
 again `C₆`-free. -/
-theorem matchingBlowup_c6Free {V : Type*} [Fintype V] [LinearOrder V]
+theorem matchingBlowup_c6Free {V : Type*} [LinearOrder V]
     {G : SimpleGraph V} (C : MatchingChoice G)
     (htriangle : TriangleFree G) (hC6 : C6Free G) :
     C6Free (matchingBlowup G C) := by

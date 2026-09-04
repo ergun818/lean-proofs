@@ -475,7 +475,7 @@ theorem U1ComponentClassification.piece_bound
   | exceptionalThree _ hp => exact Or.inr hp
 
 theorem U1ComponentClassification.exception_stronglyInduced
-    {C : QuadrilateralComponent G} (h : U1ComponentClassification G C)
+    {C : QuadrilateralComponent G}
     (he : IsExceptionalComponent G C) :
     StronglyInduced G (componentVertices G C : Set V) :=
   exceptionalComponent_stronglyInduced G he
@@ -494,7 +494,7 @@ theorem U1Certificate.atMostTenPieces (h : U1Certificate G)
   (h.classify C).piece_bound
 
 /-- U1, projected to strong inducedness of every exceptional component. -/
-theorem U1Certificate.exceptionStronglyInduced (h : U1Certificate G)
+theorem U1Certificate.exceptionStronglyInduced
     {C : QuadrilateralComponent G} (he : IsExceptionalComponent G C) :
     StronglyInduced G (componentVertices G C : Set V) :=
   exceptionalComponent_stronglyInduced G he
@@ -512,7 +512,7 @@ theorem fnvU1 (h : U1Certificate G) :
     (∀ C : QuadrilateralComponent G, IsExceptionalComponent G C →
       StronglyInduced G (componentVertices G C : Set V)) := by
   exact ⟨existsUnique_component G, h.classification, h.atMostTenPieces,
-    fun _ ↦ h.exceptionStronglyInduced⟩
+    fun _ ↦ U1Certificate.exceptionStronglyInduced G⟩
 
 end Certificate
 

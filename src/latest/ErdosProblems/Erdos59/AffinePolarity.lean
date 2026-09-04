@@ -57,7 +57,7 @@ lemma two_mul_theta_sq (a : ℕ) : 2 * theta a * theta a = 2 ^ (2 * a + 1) := by
   calc
     2 * 2 ^ a * 2 ^ a = 2 ^ a * 2 ^ a * 2 := by ring
     _ = 2 ^ (a + a + 1) := by rw [pow_succ, pow_add]
-    _ = 2 ^ (2 * a + 1) := by congr 2 <;> omega
+    _ = 2 ^ (2 * a + 1) := by congr 2; omega
 
 lemma two_mul_theta (a : ℕ) : 2 * theta a = 2 ^ (a + 1) := by
   simp [theta, pow_succ, mul_comm]
@@ -98,11 +98,11 @@ def lineThrough {a : ℕ} (p : Point a) (u : F a) : Line a :=
 lemma incident_lineThrough {a : ℕ} (p : Point a) (u : F a) :
     Incident p (lineThrough p u) := by
   constructor
-  · simp only [Incident, lineThrough, CharTwo.sub_eq_add]
+  · simp only [lineThrough, CharTwo.sub_eq_add]
     calc
       p.y + u * p.x + p.y = (p.y + p.y) + u * p.x := by ring
       _ = u * p.x := by rw [CharTwo.add_self_eq_zero, zero_add]
-  · simp only [Incident, lineThrough, CharTwo.sub_eq_add]
+  · simp only [lineThrough, CharTwo.sub_eq_add]
     calc
       p.z + (p.y + u * p.x) * p.x + p.z =
           (p.z + p.z) + (p.y + u * p.x) * p.x := by ring
@@ -284,7 +284,8 @@ lemma add_pow_two_theta {a : ℕ} (x y : F a) :
 lemma pow_theta_pow_two_theta {a : ℕ} (x : F a) :
     (x ^ theta a) ^ (2 * theta a) = x := by
   rw [pow_mul_theta]
-  convert pow_two_theta_sq a x using 1 <;> ring
+  convert pow_two_theta_sq a x using 1
+  ring
 
 lemma pow_two_theta_pow_theta {a : ℕ} (x : F a) :
     (x ^ (2 * theta a)) ^ theta a = x := by
@@ -520,7 +521,8 @@ lemma pow_absolute_converse_leading {a : ℕ} (x : F a) :
   have hqpow : x ^ ((2 * theta a * theta a) * 2) = x ^ 2 := by
     rw [pow_mul, pow_two_theta_sq]
   rw [hqpow, ← pow_add]
-  congr 1 <;> ring
+  congr 1
+  ring
 
 lemma absolutePoint_isAbsolute {a : ℕ} (x y : F a) :
     IsAbsolute (absolutePoint x y) := by
@@ -537,7 +539,7 @@ lemma absolutePoint_isAbsolute {a : ℕ} (x y : F a) :
   constructor
   · simpa only [IsAbsolute, Incident, absolutePoint, pointToLine,
       CharTwo.sub_eq_add] using hfirst
-  · simp only [IsAbsolute, Incident, absolutePoint, pointToLine,
+  · simp only [absolutePoint, pointToLine,
       CharTwo.sub_eq_add]
     have hv : (x * y) ^ theta a + (absoluteZ x y) ^ theta a =
         x ^ (2 * theta a) * x + y := by

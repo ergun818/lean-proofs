@@ -23,6 +23,7 @@ variable (G : SimpleGraph V) [DecidableRel G.Adj]
 
 attribute [local instance] Classical.propDecidable
 
+omit [DecidableRel G.Adj] [Fintype V] [LinearOrder V] in
 private theorem false_of_six_cycle_shortcut (hC6 : WalkC6Free G)
     {a b c d e f : V}
     (hab : G.Adj a b) (hbc : G.Adj b c) (hcd : G.Adj c d)
@@ -47,12 +48,12 @@ variable {G}
 
 def pair (o : NondegenerateOccurrence G) : EndpointPair V := o.1.1
 
-def pair_mem (o : NondegenerateOccurrence G) :
+theorem pair_mem (o : NondegenerateOccurrence G) :
     o.pair ∈ nondegenerateExceptionalPairs G := o.1.2
 
 def path (o : NondegenerateOccurrence G) : Path3 G := o.2.1
 
-def path_mem (o : NondegenerateOccurrence G) :
+theorem path_mem (o : NondegenerateOccurrence G) :
     o.path ∈ pathFiber G o.pair := o.2.2
 
 noncomputable def centre (hC6 : WalkC6Free G)
@@ -652,6 +653,7 @@ theorem card_nondegenerateOccurrence_eq_multiplicitySum :
       rw [hatt] at hs
       exact hs
 
+omit [LinearOrder V] in
 theorem card_orientedWedge_eq_sum_degree_sq :
     Fintype.card (OrientedWedge G) = ∑ v, G.degree v * G.degree v := by
   simp only [OrientedWedge, Fintype.card_sigma, Fintype.card_prod,

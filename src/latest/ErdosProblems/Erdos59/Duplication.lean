@@ -157,7 +157,7 @@ private lemma c4_collision {a b c d : V} (hfree : C4Free G)
     (hab : G.Adj a b) (hbc : G.Adj b c) (hcd : G.Adj c d) (hda : G.Adj d a) :
     a = c ∨ b = d := by
   by_contra h
-  push_neg at h
+  push Not at h
   apply hfree ![a, b, c, d]
   constructor
   · intro i j hij
@@ -236,8 +236,8 @@ private lemma gap_two_orientation_contradiction
     have hab : O.Dir a b := he23'.2
     have hba : O.Dir b a := he50'.2
     exact O.not_rev hab hba
-  · simpa [h2, h3, duplication] using he23
-  · simpa [h5, h0, duplication] using he50
+  · simp [h2, h3, duplication] at he23
+  · simp [h5, h0, duplication] at he50
   · have he23' : G.Adj a b ∧ O.Dir b a := by
       simpa [h2, h3, duplication] using he23
     have he50' : G.Adj b a ∧ O.Dir a b := by
@@ -257,7 +257,7 @@ theorem duplication_c6Free (h3 : TriangleFree G) (h4 : C4Free G) (h6 : C6Free G)
   by_cases hp : Function.Injective p
   · exact h6 p ⟨hp, padj⟩
   · rw [Function.Injective] at hp
-    push_neg at hp
+    push Not at hp
     obtain ⟨i, j, hpij, hij⟩ := hp
     rcases fin6_pair_cases i j hij with h | h | h | h | h
     · exact (padj i).ne <| by simpa [h] using hpij
@@ -340,6 +340,7 @@ private def oldEdges : Finset (Sym2 (DuplicateVertex A)) :=
 private def addedEdges : Finset (Sym2 (DuplicateVertex A)) :=
   (addedPairs G A O).map (crossEdgeEmbedding A)
 
+omit [DecidableEq V] in
 private lemma mem_oldEdges_iff (e : Sym2 (DuplicateVertex A)) :
     e ∈ oldEdges G A ↔
       ∃ x y : V, G.Adj x y ∧ e = s(Sum.inl x, Sum.inl y) := by
@@ -384,19 +385,20 @@ private lemma edgeFinset_duplication :
       | inl x =>
           cases y with
           | inl y =>
-              simp only [duplication_adj_old_old, Sym2.eq, Sym2.rel_iff', Prod.mk.injEq, Sum.inl.injEq, Prod.swap_prod_mk,
-    reduceCtorEq, false_and, and_false, or_self, exists_false, or_false]
+              simp only [duplication_adj_old_old, Sym2.eq, Sym2.rel_iff', Prod.mk.injEq,
+                Sum.inl.injEq, Prod.swap_prod_mk, reduceCtorEq, false_and, and_false, or_self,
+                exists_false, or_false]
               constructor
               · intro hxy
                 exact ⟨x, y, hxy, Or.inl ⟨rfl, rfl⟩⟩
               · rintro ⟨u, v, huv, ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩⟩
                 · exact huv
                 · exact huv.symm
-          | inr y => simp [duplication, Sym2.eq_iff, G.adj_comm]
+          | inr y => simp [duplication, G.adj_comm]
       | inr x =>
           cases y with
-          | inl y => simp [duplication, Sym2.eq_iff, G.adj_comm]
-          | inr y => simp [duplication, Sym2.eq_iff, G.adj_comm]
+          | inl y => simp [duplication, G.adj_comm]
+          | inr y => simp [duplication, G.adj_comm]
 
 private lemma oldEdges_disjoint_addedEdges :
     Disjoint (oldEdges G A) (addedEdges G A O) := by
@@ -414,6 +416,7 @@ private lemma oldEdges_disjoint_addedEdges :
       · exact Sum.inr_ne_inl h
       · exact Sum.inr_ne_inl h
 
+omit [DecidableEq V] in
 private lemma card_oldEdges : (oldEdges G A).card = G.edgeFinset.card := by
   simp [oldEdges]
 

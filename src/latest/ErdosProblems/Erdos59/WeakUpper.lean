@@ -155,7 +155,7 @@ private theorem u4IndexPath_isPath3 {V : Type*} [Fintype V] [DecidableEq V]
   constructor
   · intro i j hij
     fin_cases i <;> fin_cases j <;>
-      simp_all [u4IndexPath, G.loopless]
+      simp_all [u4IndexPath]
   · exact ⟨hux.symm, huv, hvy⟩
 
 private def path3ToU4Index {V : Type*} [Fintype V] [DecidableEq V] [LinearOrder V]
@@ -302,8 +302,9 @@ private noncomputable def path3SigmaEquiv
 
 private theorem card_path3_eq_sum_multiplicity
     {V : Type*} [Fintype V] [LinearOrder V]
-    (G : SimpleGraph V) [DecidableRel G.Adj] :
+    (G : SimpleGraph V) :
     Fintype.card (Path3 G) = ∑ pi, pathMultiplicity G pi := by
+  classical
   calc
     Fintype.card (Path3 G) =
         Fintype.card (Σ pi : EndpointPair V, pathFiber G pi) :=
@@ -340,10 +341,7 @@ private theorem card_path3_le_sq_add_exceptional
           ∑ _pi ∈ (Finset.univ : Finset (EndpointPair V)) \ E, 2 := by
             exact Finset.sum_le_sum hsmall
       _ = 2 * ((Finset.univ : Finset (EndpointPair V)) \ E).card := by
-        have hsum := Finset.sum_const_nat
-          (s := (Finset.univ : Finset (EndpointPair V)) \ E)
-          (m := 2) (f := fun _pi : EndpointPair V ↦ 2) (by simp)
-        simpa [Nat.mul_comm] using hsum
+        simp [Nat.mul_comm]
       _ ≤ 2 * Fintype.card (EndpointPair V) := by
         exact Nat.mul_le_mul_left 2 (Finset.card_le_univ _)
       _ ≤ Fintype.card V ^ 2 := card_endpointPair_twice_le
@@ -390,7 +388,7 @@ private theorem exists_minimal_weak_counterexample
         ∀ m < n,
           (SimpleGraph.extremalNumber m (SimpleGraph.cycleGraph 6) : ℝ) ≤
             weakThreshold m := by
-  push_neg at hfail
+  push Not at hfail
   let n := Nat.find hfail
   refine ⟨n, Nat.find_spec hfail, ?_⟩
   intro m hm
@@ -467,7 +465,6 @@ private theorem extremalNumber_cycleGraph_six_le_weakThreshold (n : ℕ) :
     simpa [t] using nat_rpow_one_third_cube hm
   have hpow : (m : ℝ) ^ (4 / 3 : ℝ) = (m : ℝ) * t := by
     simpa [t] using nat_rpow_four_thirds_eq hm
-
   obtain ⟨G, inst, hGext⟩ :=
     (SimpleGraph.exists_isExtremal_iff_exists
       ((SimpleGraph.cycleGraph 6).Free : SimpleGraph (Fin m) → Prop)).2
@@ -487,7 +484,6 @@ private theorem extremalNumber_cycleGraph_six_le_weakThreshold (n : ℕ) :
       (m : ℝ) * ((63 / 100 : ℝ) * t + 10000) < e := by
     rw [weakThreshold, weakLeading, weakLinear, hpow] at he
     nlinarith
-
   have hdegree : ∀ v : Fin m,
       weakThreshold m - weakThreshold (m - 1) < (G.degree v : ℝ) := by
     intro v
@@ -524,7 +520,6 @@ private theorem extremalNumber_cycleGraph_six_le_weakThreshold (n : ℕ) :
   have hmin4 : 4 ≤ G.minDegree := by
     have ht0 : 0 ≤ t := ht.le
     exact_mod_cast (show (4 : ℝ) ≤ G.minDegree by nlinarith)
-
   have hcompNat := degree_comparison_direct G hfree
   have hcomp : (G.maxDegree : ℝ) * ((G.minDegree - 4 : ℕ) : ℝ) ^ 2 ≤
       64 * (m : ℝ) := by
@@ -556,7 +551,6 @@ private theorem extremalNumber_cycleGraph_six_le_weakThreshold (n : ℕ) :
     have hmul := mul_lt_mul_of_pos_right hgt hpos
     rw [← ht3] at hcomp'
     nlinarith [sq_pos_of_pos ht]
-
   have hwalk : WalkC6Free G := walkC6Free_of_free G hfree
   have hu4 := fnv_u4_general G
   have hu8 := u4PathCount_le_sq_add_thirtyfive G hwalk

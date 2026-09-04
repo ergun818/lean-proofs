@@ -81,7 +81,7 @@ private theorem baseEdgeCard_cast (a : ℕ) :
   rw [AffineCount.card_graph_edges, fnvBaseEdges]
   have h2q : 2 ∣ AffineCount.q a := by
     rw [AffineCount.q, show 2 * a + 1 = 2 * a + 1 from rfl, pow_succ]
-    simpa [mul_comm] using dvd_mul_right 2 (2 ^ (2 * a))
+    simp [mul_comm]
   have h2q2 : 2 ∣ AffineCount.q a ^ 2 :=
     dvd_pow h2q (by norm_num)
   have h2q4 : 2 ∣ AffineCount.q a ^ 4 :=
