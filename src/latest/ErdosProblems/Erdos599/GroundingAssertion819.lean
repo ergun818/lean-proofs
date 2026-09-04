@@ -318,7 +318,8 @@ theorem assertion819StrictCollisionIndices_nonstationary
     (PopularGroundingBridge.requestFan S r)
     {p | GroundingConcreteControls.hangingLadderCollision
       (L.popularAuxiliaryInput hL.legal) S.cut r p}
-  apply _root_.Erdos599.PopularSwitching.indexSubset_nonstationary_of_regressive_countable_collisions
+  apply
+    _root_.Erdos599.PopularSwitching.indexSubset_nonstationary_of_regressive_countable_collisions
       (L.popularAuxiliaryIndexed hL) F
       (L.assertion819StrictCollisionIndices hL S r)
       (L.assertion819StrictRank hL S r)
@@ -335,7 +336,7 @@ def assertion819StrictCollisionPath
     (r : PopularGroundingBridge.Request
       (L.popularAuxiliaryInput hL.legal) S.cut)
     (p : FinitePath (L.popularAuxiliaryInput hL.legal).lambda.graph) : Prop :=
-  ∃ hp : p ∈ (PopularSwitching.restrictPaths
+  ∃ _hp : p ∈ (PopularSwitching.restrictPaths
       (PopularGroundingBridge.requestFan S r)
       {q | GroundingConcreteControls.hangingLadderCollision
         (L.popularAuxiliaryInput hL.legal) S.cut r q}).paths,
@@ -378,7 +379,7 @@ theorem assertion819StrictCollisionPath_initialIndices
             {q | L.assertion819StrictCollisionPath hL S r q})
             |>.starts_in_source hpAll⟩ := by
       apply Subtype.ext
-      simpa only [hdp]
+      simp only [hdp]
     have hba : b = a := d.owner.index_eq.symm.trans
       ((congrArg (L.popularAuxiliaryIndexed hL).f hs).trans hpa)
     exact hba ▸ ⟨d⟩

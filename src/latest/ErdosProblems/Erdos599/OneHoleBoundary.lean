@@ -46,7 +46,7 @@ private theorem singleton_end_suffix {D : Digraph V} {a b : V}
   induction w with
   | nil => exact List.suffix_rfl
   | @cons a c b hac w ih =>
-      exact ih.trans (by simpa using List.suffix_cons a w.support)
+      exact ih.trans (by simp)
 
 /-- Backward closure along every edge of a finite walk propagates membership
 from any vertex of the walk to its initial vertex. -/
@@ -96,7 +96,7 @@ private theorem exists_cons_suffix_of_mem_edgeSet
         subst y
         exact ⟨hac, w, List.suffix_rfl⟩
       · obtain ⟨h, r, hr⟩ := ih hxy
-        exact ⟨h, r, hr.trans (by simpa using List.suffix_cons a w.support)⟩
+        exact ⟨h, r, hr.trans (by simp)⟩
 
 /-- The start vertex satisfying the defining properties of a last hit is
 unique. -/
@@ -109,7 +109,7 @@ private theorem LastHit.startpoint_eq {D : Digraph V} {a b : V}
     have hm' : L.startpoint = M.startpoint ∨
         L.startpoint ∈ M.walk.support.tail := by
       have hhead : M.startpoint ∈ M.walk.support.head? := by
-        rw [List.head?_eq_head M.walk.support_ne_nil, M.walk.head_support]
+        rw [List.head?_eq_some_head M.walk.support_ne_nil, M.walk.head_support]
         simp
       have hs := List.eq_cons_of_mem_head? hhead
       rw [hs] at hm ⊢
@@ -122,7 +122,7 @@ private theorem LastHit.startpoint_eq {D : Digraph V} {a b : V}
     have hl' : M.startpoint = L.startpoint ∨
         M.startpoint ∈ L.walk.support.tail := by
       have hhead : L.startpoint ∈ L.walk.support.head? := by
-        rw [List.head?_eq_head L.walk.support_ne_nil, L.walk.head_support]
+        rw [List.head?_eq_some_head L.walk.support_ne_nil, L.walk.head_support]
         simp
       have hs := List.eq_cons_of_mem_head? hhead
       rw [hs] at hl ⊢
@@ -349,7 +349,7 @@ theorem isOneHoleBlockingSet_oneHoleMarkedReachable_of_no_targetGap
               simp [hzfinish]
             · exact ⟨.pending z, hs, rfl⟩
           · obtain ⟨w, hzwq⟩ :=
-              _root_.Erdos599.Alternating.FinitePath.exists_outgoing_edge_of_mem_support_of_ne_finish
+              Erdos599.Alternating.FinitePath.exists_outgoing_edge_of_mem_support_of_ne_finish
                 q hzq hzfinish
             have hzwp : (z, w) ∈ p.edgeSet := by
               rw [hpq]

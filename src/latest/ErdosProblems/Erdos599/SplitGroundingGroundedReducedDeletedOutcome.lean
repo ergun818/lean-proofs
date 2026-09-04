@@ -335,7 +335,9 @@ end Erdos599
 
 #print axioms
   Erdos599.DWeb.KappaLadder.splitGroundedReducedDeletedOutcomeAt
-#print axioms
-  Erdos599.DWeb.KappaLadder.SplitGroundedUnusedRecord.SplitGroundedReducedFiniteSourceRootFailureAt.deletedOutcome
-#print axioms
-  Erdos599.DWeb.KappaLadder.SplitGroundedUnusedRecord.SplitGroundedReducedBBRootFailureAt.refineDeleted
+open
+  Erdos599.DWeb.KappaLadder.SplitGroundedUnusedRecord.SplitGroundedReducedFiniteSourceRootFailureAt
+  in
+#print axioms deletedOutcome
+open Erdos599.DWeb.KappaLadder.SplitGroundedUnusedRecord.SplitGroundedReducedBBRootFailureAt in
+#print axioms refineDeleted

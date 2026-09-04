@@ -34,7 +34,7 @@ universe u
 
 variable {V I : Type u} {Gamma : DWeb V}
 
-abbrev LV (L : PopularAuxiliary.Input Gamma I) :=
+abbrev LV (_L : PopularAuxiliary.Input Gamma I) :=
   PopularAuxiliary.Input.LambdaVertex V I
 
 abbrev Path (L : PopularAuxiliary.Input Gamma I) :=
@@ -98,7 +98,7 @@ theorem normalizedRoute_contact_beforeEq_blockingPoint
     {p : Path L}
     (hp : p ∈ (GroundingAssembly.normalizedRequestFan S K r).paths)
     (P : L.Fragment) (hP : P ∈ GroundingCut.G0 L S.cut)
-    (hblockable : GroundingCut.IsBlockable L S.cut P)
+    (_hblockable : GroundingCut.IsBlockable L S.cut P)
     {x : V}
     (hx : (PopularAuxiliary.Input.LambdaVertex.old x : LV L) ∈ p.support)
     (hxP : x ∈ P.path.support)

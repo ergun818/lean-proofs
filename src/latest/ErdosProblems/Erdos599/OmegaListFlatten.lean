@@ -280,7 +280,7 @@ theorem finite_of_triple_eq {S : Set ℕ}
       simp only [Set.mem_singleton_iff]
       by_contra hki
       exact hsecond ⟨k, hkS, hki⟩
-  · simpa [Set.not_nonempty_iff_eq_empty.mp hSne]
+  · simp [Set.not_nonempty_iff_eq_empty.mp hSne]
 
 /-- A generic edge predicate carried by every adjacent pair in every
 block is carried by every adjacent pair in the flattened raw stream. -/

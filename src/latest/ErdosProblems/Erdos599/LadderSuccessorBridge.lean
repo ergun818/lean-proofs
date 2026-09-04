@@ -443,7 +443,7 @@ theorem clean_liftStagePath_of_selfRoof
   · rintro ⟨hxr, hxOld⟩
     have hxRoof := hself hxOld
     by_cases hxi : x = f.finish
-    · simpa [hxi]
+    · simp [hxi]
     · have hxne : x ≠ r.initial := by simpa [hstart] using hxi
       let Q := G.quotient (G.terminalFrontier (L.warpAt a))
       let r' : Q.essentialPart.DPath := r
@@ -768,7 +768,7 @@ theorem arrowRealizesRung_of_pair_unique
     (hpair : ∀ (p : G.DPath) (hp : p ∈ L.warpAt a),
       L.IsRungArrowPair a p
         (G.arrowPath (L.warpAt a) (L.liftedRung a) ⟨p, hp⟩))
-    (hunique : ∀ (p : G.DPath) (hp : p ∈ L.warpAt a)
+    (hunique : ∀ (p : G.DPath) (_hp : p ∈ L.warpAt a)
       (q r : G.DPath), L.IsRungArrowPair a p q →
         L.IsRungArrowPair a p r → q = r) :
     L.ArrowRealizesRung a := by
@@ -801,7 +801,7 @@ theorem exactSuccessorArrowAt_of_pair_unique
     (hpair : ∀ (p : G.DPath) (hp : p ∈ L.warpAt a),
       L.IsRungArrowPair a p
         (G.arrowPath (L.warpAt a) (L.liftedRung a) ⟨p, hp⟩))
-    (hunique : ∀ (p : G.DPath) (hp : p ∈ L.warpAt a)
+    (hunique : ∀ (p : G.DPath) (_hp : p ∈ L.warpAt a)
       (q r : G.DPath), L.IsRungArrowPair a p q →
         L.IsRungArrowPair a p r → q = r)
     (hsucc : L.successorWarp a =
@@ -868,7 +868,7 @@ theorem canonicalLadder_hasExactSuccessorArrows
         L.markerPathSet a := by
     by_cases hactive : s.2 = true
     · rw [hsuccState, ladderSuccessorState, dif_pos hactive]
-      simp only [Prod.fst]
+      simp only []
       rw [extendLadderPreference_stage, hwarpState,
         hliftedState, hmarkerState]
       rfl

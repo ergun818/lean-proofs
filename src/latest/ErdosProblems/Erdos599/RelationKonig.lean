@@ -133,7 +133,7 @@ instance : OrderBot (RootedSimplePath r root) where
       | cons x xs => exact ⟨x, xs, rfl⟩
     have hxroot : x = root := by
       have := p.head_eq
-      simp [hx] at this
+      simp only [hx, List.head_cons] at this
       exact this
     subst x
     exact ⟨xs, by simpa using hx.symm⟩
@@ -141,7 +141,7 @@ instance : OrderBot (RootedSimplePath r root) where
 /-- Prefixing a rooted simple path at a positive length again gives a rooted
 simple path. -/
 def take (p : RootedSimplePath r root) (n : ℕ) (hn : 0 < n)
-    (hnp : n ≤ p.vertices.length) : RootedSimplePath r root where
+    (_hnp : n ≤ p.vertices.length) : RootedSimplePath r root where
   vertices := p.vertices.take n
   ne_nil := by
     intro hnil
@@ -182,7 +182,7 @@ instance : IsStronglyAtomic (RootedSimplePath r root) where
     · rw [covBy_iff_lt_and_eq_or_eq]
       refine ⟨?_, ?_⟩
       · refine ⟨?_, ?_⟩
-        · show p.vertices <+: s.vertices
+        · change p.vertices <+: s.vertices
           have hpTake : p.vertices.take (p.vertices.length + 1) = p.vertices :=
             List.take_of_length_le (by omega)
           rw [← hpTake]
@@ -204,7 +204,7 @@ instance : IsStronglyAtomic (RootedSimplePath r root) where
             hzs.length_le.trans_eq hslen
           have heq : z.vertices.length = p.vertices.length + 1 := by omega
           exact hzs.eq_of_length (heq.trans hslen.symm)
-    · show s.vertices <+: q.vertices
+    · change s.vertices <+: q.vertices
       simpa [s, take] using q.vertices.take_prefix (p.vertices.length + 1)
 
 /-- Every reachable vertex is the terminal vertex of a finite rooted simple
@@ -251,16 +251,16 @@ theorem vertices_eq_append_terminal_of_covBy
     | cons x xs => exact ⟨x, xs, rfl⟩
   subst suffix
   let z := q.take (p.vertices.length + 1)
-    (by have := p.ne_nil; simpa using List.length_pos.2 this)
+    (by have := p.ne_nil; simp)
     (by rw [← hsuffix]; simp)
   have hpz : p ≤ z := by
-    show p.vertices <+: z.vertices
+    change p.vertices <+: z.vertices
     have hpTake : p.vertices.take (p.vertices.length + 1) = p.vertices :=
       List.take_of_length_le (by omega)
     rw [← hpTake]
     simpa [z, take] using hpq.lt.le.take (p.vertices.length + 1)
   have hzq : z ≤ q := by
-    show z.vertices <+: q.vertices
+    change z.vertices <+: q.vertices
     simpa [z, take] using q.vertices.take_prefix (p.vertices.length + 1)
   have hzp_or_zq := hpq.eq_or_eq hpz hzq
   have hzp : z ≠ p := by

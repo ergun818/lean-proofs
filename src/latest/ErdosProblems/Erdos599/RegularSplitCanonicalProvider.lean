@@ -26,7 +26,7 @@ namespace Erdos599
 namespace CardinalInduction
 namespace RegularSplitCanonicalProvider
 
-open SingularExtension
+open SingularExtension RegularSplitProtectedComparisonAdapter
 
 universe u
 
@@ -221,7 +221,7 @@ theorem hasCanonicalStageProvider_of_source915
         (previous : ∀ j : Ladder.Stage kappa, j < i →
           RegularCompletedPendingSplice.RecursivePayload
             G L Sigma Z (G.source ∩ Z))
-        (hprevious : ∀ j (hji : j < i),
+        (_hprevious : ∀ j (hji : j < i),
           RegularCompletedPendingSplice.IsValidRecursiveStage request j
             (fun l hlj ↦ previous l (lt_trans hlj hji))
             (previous j hji))
@@ -302,7 +302,7 @@ theorem hasCanonicalStageProvider_of_roofedAnnularSource915
         (previous : ∀ j : Ladder.Stage kappa, j < i →
           RegularCompletedPendingSplice.RecursivePayload
             G L Sigma Z (G.source ∩ Z))
-        (hprevious : ∀ j (hji : j < i),
+        (_hprevious : ∀ j (hji : j < i),
           RegularCompletedPendingSplice.IsValidRecursiveStage request j
             (fun l hlj ↦ previous l (lt_trans hlj hji))
             (previous j hji))
@@ -358,7 +358,7 @@ theorem hasCanonicalStageProvider_of_roofedAnnularSource915
     simpa only [D, I,
       RegularDirectInstalledStage.DirectInstalledStage.payload,
       RegularDirectPersistentCanonicalSuccessor.DirectPersistentSplitInput.toDirectInstalledStage,
-      RegularSplitProtectedComparisonAdapter.RoofedAnnularSplitTargetedComparisonStage.directPersistentSplitInput]
+      RoofedAnnularSplitTargetedComparisonStage.directPersistentSplitInput]
       using h'
   exact ⟨⟨D, hresult⟩⟩
 
@@ -425,7 +425,7 @@ theorem hasCanonicalStageProvider_of_protectedSource915
         (previous : ∀ j : Ladder.Stage kappa, j < i →
           RegularCompletedPendingSplice.RecursivePayload
             G L Sigma Z (G.source ∩ Z))
-        (hprevious : ∀ j (hji : j < i),
+        (_hprevious : ∀ j (hji : j < i),
           RegularCompletedPendingSplice.IsValidRecursiveStage request j
             (fun l hlj ↦ previous l (lt_trans hlj hji))
             (previous j hji))

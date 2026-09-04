@@ -223,7 +223,7 @@ theorem coordinateInterval_projectedRun_isSubpathOf_parent
           rw [show (a + runLower T.runs j.1 + k).succ =
             a + (runLower T.runs j.1 + k + 1) by omega]
           exact hnNext
-        · simpa only [T, coordinateInterval_vertex, n, Nat.add_assoc]
+        · simp only [T, coordinateInterval_vertex, n, Nat.add_assoc]
     | backward =>
         have hparent : S.colour (runBoundary S.colour hchange p) = .backward :=
           hdir.trans hchild
@@ -259,7 +259,7 @@ theorem coordinateInterval_projectedRun_isSubpathOf_parent
           rw [show (a + runLower T.runs j.1 + k).succ =
             a + (runLower T.runs j.1 + k + 1) by omega]
           exact hnNext
-        · simpa only [T, coordinateInterval_vertex, n, Nat.add_assoc]
+        · simp only [T, coordinateInterval_vertex, n, Nat.add_assoc]
 
 /-- Distinct maximal runs of a bounded restriction lie in distinct maximal
 runs of the original infinite stream.  Otherwise the intervening restricted
@@ -306,7 +306,7 @@ theorem coordinateIntervalParentRun_injective
     apply hneDir
     change T.runDirection ⟨j.1, by omega⟩ =
       T.runDirection ⟨j.1 + 1, by omega⟩
-    convert heqDir using 1 <;> apply Fin.ext <;> rfl
+    convert heqDir using 1
   intro j k hparent
   by_cases heq : j = k
   · exact heq

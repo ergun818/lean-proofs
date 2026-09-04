@@ -50,6 +50,7 @@ theorem roof_frontier_mono_of_deferredLegal
   · exact Gamma.roof_cut (hL.frontierChronology hab)
   · exact Set.Subset.rfl
 
+omit [Nonempty I] in
 /-- The real carrier union of an indexed scheduler chain is roofed by any
 upper bound of its actual ladder indices. -/
 theorem realVertexLimit_subset_roof_frontier
@@ -71,6 +72,7 @@ theorem realVertexLimit_subset_roof_frontier
     (C.stage i).isBlueprint.vertices_roofed hxStage
   exact roof_frontier_mono_of_deferredLegal hL (hupper i) hxRoof
 
+omit [Nonempty I] in
 /-- The same carrier union lies in every monotone closing set at an upper
 bound of the actual scheduler indices. -/
 theorem realVertexLimit_subset_closedStage

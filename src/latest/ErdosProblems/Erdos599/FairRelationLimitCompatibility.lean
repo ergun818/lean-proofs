@@ -41,6 +41,7 @@ namespace RealExtensionChain
 
 variable {I : Type u} [LinearOrder I] [Nonempty I]
 
+omit [Nonempty I] in
 /-- A source vertex in the union carrier is a root of the all-real union.
 The proof uses the stage which contains a hypothetical incoming real edge,
 not a no-new-predecessor invariant. -/
@@ -136,6 +137,7 @@ noncomputable def compatibleLimitState
       (C.toRealExtensionChain.realPart_extends_relationLimit H i)
       ((C.stage i).links x hxi)
 
+omit [Nonempty I] in
 /-- A terminal of an arbitrary honest all-real relation limit was already a
 real terminal at some stage. -/
 theorem exists_stage_realTerminal_of_compatibleRelationLimit_terminal

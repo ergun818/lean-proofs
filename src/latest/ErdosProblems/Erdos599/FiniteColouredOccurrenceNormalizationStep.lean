@@ -209,7 +209,7 @@ private theorem FixedSafePrefixState.forward_start_removed
 /-- A contact outcome produces the next full-lower-anchored safe state.
 Every new forward/backward edge remains in the one fixed total word. -/
 theorem FixedSafePrefixState.exists_successor_of_contact
-    (hW : Gamma.IsWarp W) (hY : Gamma.IsWarp Y)
+    (_hW : Gamma.IsWarp W) (hY : Gamma.IsWarp Y)
     (hYfin : Gamma.HasFiniteCharacter Y)
     {total : FiniteColouredOccurrenceWord W Y}
     (htotal : total.IsIntervalSafe)

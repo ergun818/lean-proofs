@@ -230,7 +230,7 @@ private noncomputable def rayEdgeSplit (r : Ray D) {u v : V}
       · exact Or.inl (Or.inl ⟨k, hk, rfl⟩)
       by_cases hkn : k = n
       · subst k
-        exact Or.inl (Or.inr (by simpa [hu, hv]))
+        exact Or.inl (Or.inr (by simp [hu, hv]))
       · apply Or.inr
         refine ⟨k - (n + 1), ?_⟩
         have hkge : n + 1 ≤ k := by omega
@@ -268,7 +268,7 @@ noncomputable def edgeSplit (q : Path D) {u v : V}
 only at the old tail of that edge. -/
 theorem EdgeSplit.front_inter_insert_subset
     {q : Path D} {u v : V} (S : q.EdgeSplit u v)
-    (P : FinitePath D) (hstart : P.start = u)
+    (P : FinitePath D) (_hstart : P.start = u)
     (hfresh : q.support ∩ P.support ⊆ {u, v}) :
     S.front.support ∩ P.support ⊆ {u} := by
   intro x hx
@@ -336,7 +336,7 @@ its old initial vertex `v`. -/
 theorem insertFront_inter_back_subset
     {q : Path D} {u v : V} (S : q.EdgeSplit u v)
     (P : FinitePath D) (hstart : P.start = u)
-    (hfinish : P.finish = v)
+    (_hfinish : P.finish = v)
     (hfresh : q.support ∩ P.support ⊆ {u, v}) :
     (insertFront S P hstart hfresh).support ∩ S.back.support ⊆ {v} := by
   intro x hx
@@ -477,7 +477,7 @@ theorem no_incoming_edge_at_initial (q : Path D) (y : V) :
     suffixFrom_insertFront_finish S P hstart hfinish hfresh,
     insertFront_edgeSet, S.edgeSet_eq]
   ext e
-  simp only [Set.mem_union, Set.mem_diff, Set.mem_singleton_iff]
+  simp only [Set.mem_union, Set.mem_sdiff, Set.mem_singleton_iff]
   by_cases he : e = (u, v)
   · subst e
     simp only [S.cutEdge_not_mem_front, S.cutEdge_not_mem_back,
@@ -639,7 +639,7 @@ theorem subdividedPaths_isWarp
   change (W.subdividedPaths huv P hstart hfinish hfresh).PairwiseDisjoint
     Path.support
   intro q hq r hr hqr
-  simp only [subdividedPaths, Set.mem_union, Set.mem_diff,
+  simp only [subdividedPaths, Set.mem_union, Set.mem_sdiff,
     Set.mem_singleton_iff] at hq hr
   rcases hq with hq | rfl <;> rcases hr with hr | rfl
   · exact W.isWarp hq.1 hr.1 hqr
@@ -686,8 +686,7 @@ noncomputable def subdivideEdge
   ext x
   constructor
   · rintro ⟨q, hq, hxq⟩
-    simp only [subdivideEdge_paths, Set.mem_union, Set.mem_diff,
-      Set.mem_singleton_iff] at hq
+    simp only [subdivideEdge_paths] at hq
     rcases hq with hq | rfl
     · exact Or.inl ⟨q, hq.1, hxq⟩
     · have hxq' : x ∈
@@ -727,7 +726,7 @@ noncomputable def subdivideEdge
       W.initialSet := by
   ext x
   simp only [mem_initialSet, subdivideEdge_paths, Set.mem_union,
-    Set.mem_diff, Set.mem_singleton_iff]
+    Set.mem_sdiff, Set.mem_singleton_iff]
   constructor
   · rintro ⟨q, hq | rfl, hqx⟩
     · exact ⟨q, hq.1, hqx⟩
@@ -750,7 +749,7 @@ noncomputable def subdivideEdge
       (W.edgeSet \ {(u, v)}) ∪ P.edgeSet := by
   ext e
   simp only [LinkageBlueprint.edgeSet, Set.mem_iUnion,
-    subdivideEdge_paths, Set.mem_union, Set.mem_diff,
+    subdivideEdge_paths, Set.mem_union, Set.mem_sdiff,
     Set.mem_singleton_iff]
   constructor
   · rintro ⟨q, hq | rfl, heq⟩

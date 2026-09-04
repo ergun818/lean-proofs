@@ -246,12 +246,12 @@ theorem mk_currentRequiredInitials_lt
   | none =>
       have hempty : currentRequiredInitials request i = ∅ := by
         ext x
-        simp only [currentRequiredInitials, Set.mem_setOf_eq,
+        simp only [currentRequiredInitials, Set.mem_ofPred_eq,
           Set.mem_empty_iff_false, iff_false]
         rintro ⟨a, ha, _⟩
         rw [h] at ha
         contradiction
-      rw [hempty, Cardinal.mk_emptyCollection]
+      rw [hempty, Cardinal.mk_eq_zero]
       exact Cardinal.aleph0_pos.trans huncountable
   | some a =>
       have hsingleton : currentRequiredInitials request i = {a.1} := by

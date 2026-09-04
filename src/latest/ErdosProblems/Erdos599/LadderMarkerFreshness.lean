@@ -481,7 +481,7 @@ theorem ladderAccumulatedStateAux_inactive_frozen
           simpa only [ladderAccumulatedStateAux] using hall
         rw [dif_pos hmatching', if_pos hall']
       rw [AllPriorLadderStagesActive] at hnotAll
-      push_neg at hnotAll
+      push Not at hnotAll
       obtain ⟨b, hb, hbInactive⟩ := hnotAll
       have hprior := ih b hb hbInactive
       have hfamily := G.ladderAccumulatedStateAux_fst_eq_of_inactive

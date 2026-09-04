@@ -143,7 +143,7 @@ theorem CoupledHammockReplacement.continuation930
     (R : CoupledHammockReplacement W cut U u z T) :
     Continuation930 W cut U u z T B := by
   have hlinksZ : U.RealLinksTo u {z} := by
-    exact ⟨R.path, R.path_start, by simpa [R.path_finish],
+    exact ⟨R.path, R.path_start, by simp [R.path_finish],
       R.path_vertices, R.path_edges⟩
   have hlinksT : U.RealLinksTo u T := by
     exact ⟨R.path, R.path_start, R.path_finish.symm ▸ R.endpoint_mem_slice,

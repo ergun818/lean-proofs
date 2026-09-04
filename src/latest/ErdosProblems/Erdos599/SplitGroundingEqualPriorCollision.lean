@@ -376,4 +376,5 @@ end KappaLadder
 end DWeb
 end Erdos599
 
-#print axioms Erdos599.DWeb.KappaLadder.SplitGroundedAssertion819EqualMatch.source_mem_freshInessentialRecordStages
+open Erdos599.DWeb.KappaLadder.SplitGroundedAssertion819EqualMatch in
+#print axioms source_mem_freshInessentialRecordStages

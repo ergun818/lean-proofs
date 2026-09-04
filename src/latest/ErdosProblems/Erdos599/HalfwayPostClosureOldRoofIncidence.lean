@@ -502,7 +502,6 @@ theorem assigned_vertex_not_mem_currentRoof_of_mem_closedSet_of_ne_initial
       · rwa [← hQ]
       · exact hxX
       · rwa [← hQ]
-
   | infinite S hchange hQ =>
       apply A.infinite_vertex_not_mem_currentRoof_of_mem_closedSet_of_ne_initial
         s S hchange hQ
@@ -718,12 +717,21 @@ end Erdos599
 
 #print axioms Erdos599.Alternating.RunCompressor.FiniteInput.colour_eq_forward_of_next_vertex_mem
 #print axioms Erdos599.Alternating.RunCompressor.InfiniteInput.colour_eq_forward_of_next_vertex_mem
-#print axioms Erdos599.Blueprint.LinkageBlueprint.PostClosureIntervalTransaction.intervalFamilyEdge_head_not_mem_currentRoof
-#print axioms Erdos599.Blueprint.LinkageBlueprint.PostClosureProducedAssignment.assigned_forwardEdge_head_not_mem_currentRoof
-#print axioms Erdos599.Blueprint.LinkageBlueprint.PostClosureCompressorAssignment.finite_breakPoint_target_not_mem_currentRoof
-#print axioms Erdos599.Blueprint.LinkageBlueprint.PostClosureCompressorAssignment.infinite_contact_target_not_mem_currentRoof
-#print axioms Erdos599.Blueprint.LinkageBlueprint.PostClosureCompressorAssignment.actualSegmentedRetainedEdge_head_not_mem_currentRoof
-#print axioms Erdos599.Blueprint.LinkageBlueprint.PostClosureCompressorAssignment.actualPostClosureFreshEdges_subset_imaginaryGraph
-#print axioms Erdos599.Blueprint.LinkageBlueprint.PostClosureCompressorAssignment.actualPostClosureFreshEdge_head_not_mem_currentRoof
-#print axioms Erdos599.Blueprint.LinkageBlueprint.PostClosureCompressorAssignment.actualPostClosureFreshEdges_noIncoming_current
-#print axioms Erdos599.Blueprint.LinkageBlueprint.PostClosureCompressorAssignment.currentInitial_noIncoming_current_union_actualPostClosureFreshEdges
+open Erdos599.Blueprint.LinkageBlueprint.PostClosureIntervalTransaction in
+#print axioms intervalFamilyEdge_head_not_mem_currentRoof
+open Erdos599.Blueprint.LinkageBlueprint.PostClosureProducedAssignment in
+#print axioms assigned_forwardEdge_head_not_mem_currentRoof
+open Erdos599.Blueprint.LinkageBlueprint.PostClosureCompressorAssignment in
+#print axioms finite_breakPoint_target_not_mem_currentRoof
+open Erdos599.Blueprint.LinkageBlueprint.PostClosureCompressorAssignment in
+#print axioms infinite_contact_target_not_mem_currentRoof
+open Erdos599.Blueprint.LinkageBlueprint.PostClosureCompressorAssignment in
+#print axioms actualSegmentedRetainedEdge_head_not_mem_currentRoof
+open Erdos599.Blueprint.LinkageBlueprint.PostClosureCompressorAssignment in
+#print axioms actualPostClosureFreshEdges_subset_imaginaryGraph
+open Erdos599.Blueprint.LinkageBlueprint.PostClosureCompressorAssignment in
+#print axioms actualPostClosureFreshEdge_head_not_mem_currentRoof
+open Erdos599.Blueprint.LinkageBlueprint.PostClosureCompressorAssignment in
+#print axioms actualPostClosureFreshEdges_noIncoming_current
+open Erdos599.Blueprint.LinkageBlueprint.PostClosureCompressorAssignment in
+#print axioms currentInitial_noIncoming_current_union_actualPostClosureFreshEdges

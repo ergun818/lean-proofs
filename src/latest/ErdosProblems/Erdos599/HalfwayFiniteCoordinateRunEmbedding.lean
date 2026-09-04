@@ -197,4 +197,5 @@ theorem coordinateIntervalGlobalUpper_le_parentUpper (S : FiniteInput D)
 
 end Erdos599.Alternating.RunCompressor.FiniteInput
 
-#print axioms Erdos599.Alternating.RunCompressor.FiniteInput.coordinateIntervalGlobalUpper_le_parentUpper
+open Erdos599.Alternating.RunCompressor.FiniteInput in
+#print axioms coordinateIntervalGlobalUpper_le_parentUpper

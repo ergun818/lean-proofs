@@ -186,7 +186,7 @@ theorem pathSupportRoof : Γ.PathSupportRoofProperty := by
       have hyr : y ∈ (Path.support (.inr r) : Set V) :=
         Γ.rayPrefixWalk_support_subset r n hypre
       have hy := hinter ⟨hyr, hyS⟩
-      simpa using hy
+      simp at hy
     let qwalk' : DirectedPath.Walk Γ.graph (r n) q.finish :=
       RelationalRoof.castStart Γ.graph.Adj (hq.1.trans hnx.symm) q.walk
     let w := pre.append qwalk'

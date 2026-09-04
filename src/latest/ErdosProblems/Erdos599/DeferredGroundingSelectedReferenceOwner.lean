@@ -171,8 +171,8 @@ theorem canonicalDeferredLadder_reservedStrongSelected_essentialOwner_contact_gr
     · have hproxyData : ∃ i, p.start = .proxy i ∧ Y = J.proxyPath i := by
         generalize hs : p.start = s at hproxy ⊢
         cases s with
-        | old z => simp [exposedLadderPaths] at hproxy
-        | edge z w => simp [exposedLadderPaths] at hproxy
+        | old z => simp at hproxy
+        | edge z w => simp at hproxy
         | proxy i =>
             refine ⟨i, rfl, ?_⟩
             simpa [exposedLadderPaths] using hproxy
@@ -291,13 +291,13 @@ end KappaLadder
 end DWeb
 end Erdos599
 
-#print axioms
-  Erdos599.DWeb.KappaLadder.Deferred.requestExit_mem_support_of_requestAuxVertex_mem_ladderTrace
-#print axioms
-  Erdos599.DWeb.KappaLadder.Deferred.eq_terminalOwner_of_requestAuxVertex_mem_ladderTrace
-#print axioms
-  Erdos599.DWeb.KappaLadder.Deferred.canonicalDeferredLadder_reservedStrongSelected_essentialOwner_contact_grounded_or_apex
-#print axioms
-  Erdos599.DWeb.KappaLadder.Deferred.canonicalDeferredLadder_reservedStrongSelected_forwardReferenceOwner_grounded_or_apex
-#print axioms
-  Erdos599.DWeb.KappaLadder.Deferred.canonicalDeferredLadder_reservedStrongSelected_forwardVertexOwner_grounded_or_apex
+open Erdos599.DWeb.KappaLadder.Deferred in
+#print axioms requestExit_mem_support_of_requestAuxVertex_mem_ladderTrace
+open Erdos599.DWeb.KappaLadder.Deferred in
+#print axioms eq_terminalOwner_of_requestAuxVertex_mem_ladderTrace
+open Erdos599.DWeb.KappaLadder.Deferred in
+#print axioms canonicalDeferredLadder_reservedStrongSelected_essentialOwner_contact_grounded_or_apex
+open Erdos599.DWeb.KappaLadder.Deferred in
+#print axioms canonicalDeferredLadder_reservedStrongSelected_forwardReferenceOwner_grounded_or_apex
+open Erdos599.DWeb.KappaLadder.Deferred in
+#print axioms canonicalDeferredLadder_reservedStrongSelected_forwardVertexOwner_grounded_or_apex

@@ -100,7 +100,7 @@ theorem IsImaginaryEdgeDeletionAt.tail_mem_terminalSet
   have hwv : w = v :=
     Erdos599.Alternating.IsWarp.familyEdges_rightUnique W.isWarp
       huwW h.edge_mem
-  exact huwcut'.2 (by simpa [hwv])
+  exact huwcut'.2 (by simp [hwv])
 
 /-- At a real terminal, deleting its outgoing imaginary edge preserves all
 real vertices and edges. -/

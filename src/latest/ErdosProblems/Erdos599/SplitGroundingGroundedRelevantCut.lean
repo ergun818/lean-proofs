@@ -183,4 +183,5 @@ end Erdos599
 
 #print axioms Erdos599.DWeb.KappaLadder.splitGroundedRelevantBB_subset_reducedBB
 #print axioms Erdos599.DWeb.KappaLadder.splitGrounded_fragment_meeting_escape_mem_relevantG0
-#print axioms Erdos599.DWeb.KappaLadder.splitGroundedRelevantG0_parent_mem_essentialLadder_of_not_meetsEscape
+open Erdos599.DWeb.KappaLadder in
+#print axioms splitGroundedRelevantG0_parent_mem_essentialLadder_of_not_meetsEscape

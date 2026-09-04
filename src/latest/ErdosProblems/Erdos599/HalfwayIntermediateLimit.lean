@@ -49,7 +49,7 @@ structure IntermediateLimitData
 
 /-- The cardinal field of an intermediate boundary is automatic when the
 proper initial segment has cardinality at most `kappa`. -/
-def intermediateRelationBoundary_of_ray
+theorem intermediateRelationBoundary_of_ray
     (C : ResolutionChain I compiler hpersistent)
     (hkappa : aleph0 ≤ kappa) (hindex : #I ≤ kappa)
     (hray : ∀ r : DirectedPath.Ray (imaginaryGraph Gamma Y kappa),
@@ -78,7 +78,7 @@ structure NormalizedIntermediateLimitData
 /-- Compile normalized scheduler invariants to the general proper-limit
 input.  The relation-ray field is the theorem proved in
 `IntermediateRelationLimitRay`. -/
-def NormalizedIntermediateLimitData.toIntermediateLimitData
+theorem NormalizedIntermediateLimitData.toIntermediateLimitData
     {C : ResolutionChain I compiler hpersistent}
     (D : NormalizedIntermediateLimitData C) : IntermediateLimitData C where
   noNewPredecessors := D.noNewPredecessors
@@ -233,7 +233,7 @@ namespace ResolutionChain
 
 /-- Normalization discharges the only ray premise left by the final all-real
 relation-limit compiler. -/
-def rayRelationBoundaryData_of_normalized
+theorem rayRelationBoundaryData_of_normalized
     (C : ResolutionChain I compiler hpersistent)
     (hGamma : Gamma.IsNormalized) (hBtarget : B ⊆ Gamma.target) :
     RayRelationBoundaryData C where

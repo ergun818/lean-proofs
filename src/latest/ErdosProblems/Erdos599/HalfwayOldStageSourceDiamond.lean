@@ -25,7 +25,7 @@ namespace Erdos599.Blueprint.LinkageBlueprint
 
 open DirectedPath Ladder
 open _root_.Erdos599.Alternating
-open CardinalInduction
+open _root_.Erdos599.Blueprint.LinkageBlueprint.CardinalInduction
 
 universe u
 
@@ -220,7 +220,9 @@ end OldStageIntervalTransaction
 #print axioms OldStageIntervalTransaction.ambientInterval_vertexSet_inter_oldRoof
 #print axioms OldStageIntervalTransaction.SourceInsideRestriction.starCompatible_of_oldStageInterval
 #print axioms OldStageIntervalTransaction.SourceInsideRestriction.oldStageIntervalDiamond
-#print axioms OldStageIntervalTransaction.SourceInsideRestriction.oldStageIntervalDiamond_noNewIncomingOld
-#print axioms OldStageIntervalTransaction.SourceInsideRestriction.front_edgeSet_subset_oldStageIntervalDiamond
+open OldStageIntervalTransaction.SourceInsideRestriction in
+#print axioms oldStageIntervalDiamond_noNewIncomingOld
+open OldStageIntervalTransaction.SourceInsideRestriction in
+#print axioms front_edgeSet_subset_oldStageIntervalDiamond
 
 end Erdos599.Blueprint.LinkageBlueprint

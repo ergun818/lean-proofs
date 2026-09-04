@@ -31,7 +31,7 @@ open Cardinal Order Set
 namespace Erdos599
 namespace DWeb
 
-open DirectedPath
+open _root_.Erdos599.DWeb.DirectedPath
 
 universe u
 

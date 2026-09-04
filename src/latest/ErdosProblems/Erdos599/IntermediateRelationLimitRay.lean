@@ -66,7 +66,7 @@ variable {I : Type v} [LinearOrder I] [Nonempty I]
 limit relation be captured at one stage.  This is source-faithful under edge
 subdivision: it makes no assertion about predecessors of old vertices. -/
 def CountablyBounded
-    (C : RealExtensionChain I Gamma Y kappa T Z persistent B) : Prop :=
+    (_C : RealExtensionChain I Gamma Y kappa T Z persistent B) : Prop :=
   ∀ f : ℕ → I, ∃ j : I, ∀ n, f n ≤ j
 
 /-- Under countable boundedness, every reverse ray in the eventual full-edge
@@ -85,6 +85,7 @@ theorem eventualEdgeLimit_not_containsReverseDirectedRay_of_countablyBounded
   exact blueprint_edgeSet_not_containsReverseDirectedRay (C.stage j)
     ⟨r, fun n ↦ hstageAt n j (hj n)⟩
 
+omit [Nonempty I] in
 /-- The same localization excludes a reverse ray in the monotone union of
 real edges, without any predecessor-preservation hypothesis. -/
 theorem realEdgeLimit_not_containsReverseDirectedRay_of_countablyBounded
@@ -102,9 +103,10 @@ theorem realEdgeLimit_not_containsReverseDirectedRay_of_countablyBounded
   exact blueprint_edgeSet_not_containsReverseDirectedRay (C.stage j)
     ⟨r, fun n ↦ (C.stage_edges_mono (hj n) (hstageAt n)).1⟩
 
+omit [Nonempty I] in
 /-- Countable boundedness also supplies the honest core for the final
 all-real relation limit.  No predecessor-preservation hypothesis is used. -/
-def relationLimitCore_of_countablyBounded
+theorem relationLimitCore_of_countablyBounded
     (C : RealExtensionChain I Gamma Y kappa T Z persistent B)
     (H : C.CountablyBounded) : C.RelationLimitCore where
   no_directed_cycle := C.realEdgeLimit_not_containsDirectedCycle
@@ -123,6 +125,7 @@ private theorem finite_Iio_nat (k : ℕ) : (Set.Iio k : Set ℕ).Finite := by
       rw [heq]
       exact ih.insert k
 
+omit [Nonempty I] in
 /-- A ray all of whose edges lie in a single blueprint has infinitely many
 strong edges.  The ray may begin in the middle of the blueprint member, so
 the proof identifies it with a suffix of that member. -/
@@ -272,7 +275,7 @@ theorem eventualRelationLimit_every_ray_strong
     apply hr
     refine ⟨N + 1 + n, ?_⟩
     simp only [s, DirectedPath.Ray.tail_apply]
-    congr 2 <;> omega
+    congr 2
   have hsWeak (n : ℕ) :
       ¬IsStrongImaginaryEdge Gamma Y kappa (s n) (s (n + 1)) := by
     intro hn
@@ -379,7 +382,7 @@ theorem realEdgeLimit_every_ray_strong
 
 /-- In a normalized web the complete proper-limit boundary has no residual
 ray premise: only the carrier cardinality remains to be supplied. -/
-def eventualRelationLimitBoundary_of_normalized
+theorem eventualRelationLimitBoundary_of_normalized
     (C : RealExtensionChain I Gamma Y kappa T Z persistent B)
     (hGamma : Gamma.IsNormalized) (hB : B ⊆ Gamma.target)
     (hcard : #C.realVertexLimit ≤ kappa) :
@@ -389,7 +392,7 @@ def eventualRelationLimitBoundary_of_normalized
     C.eventualRelationLimit_every_ray_strong hGamma hB
 
 /-- The index-cardinality form used by a transfinite scheduler. -/
-def eventualRelationLimitBoundary_of_normalized_index
+theorem eventualRelationLimitBoundary_of_normalized_index
     {J : Type u} [LinearOrder J] [Nonempty J]
     (C : RealExtensionChain J Gamma Y kappa T Z persistent B)
     (hGamma : Gamma.IsNormalized) (hB : B ⊆ Gamma.target)

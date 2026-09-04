@@ -83,8 +83,10 @@ private theorem mem_proxyReverseGadgetCore_support
       z = LambdaVertex.edge e.1 e.2 := by
   induction q generalizing a with
   | nil =>
-      simp only [Walk.edgeSet_cons, Walk.edgeSet_nil, union_empty, mem_singleton_iff, exists_eq_left] at hz ⊢
-      exact hz
+      simp only [proxyReverseGadgetCore, Walk.support_cons, Walk.support_nil, List.mem_cons,
+        List.not_mem_nil, or_false] at hz
+      simpa only [Walk.edgeSet_cons, Walk.edgeSet_nil, union_empty, mem_singleton_iff,
+        exists_eq_left] using hz
   | @cons c d b hcd q ih =>
       have hcdFamily : (c, d) ∈ L.familyEdges := hfamily (by simp)
       have hqFamily : q.edgeSet ⊆ L.familyEdges := by
@@ -98,7 +100,6 @@ private theorem mem_proxyReverseGadgetCore_support
           Set.mem_singleton_iff] at he ⊢
         tauto
       simp only [proxyReverseGadgetCore, Walk.support_concat,
-        Walk.support_cons, List.tail_cons, List.nil_append,
         List.mem_append, List.mem_cons, List.not_mem_nil] at hz
       rcases hz with hz | hz
       · rcases ih hcd htailProxy hcdFamily hqFamily hz with

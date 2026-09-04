@@ -47,7 +47,7 @@ structure Section9SchedulerEnvironment
 
 /-- Add the limit-only ambient facts to the occurrence-aware successor
 environment. -/
-def OccurrenceSection9Environment.withLimitGeometry
+theorem OccurrenceSection9Environment.withLimitGeometry
     (E : OccurrenceSection9Environment
       (Gamma := Gamma) (Y := Y) (kappa := kappa) T Z persistent B)
     (hGamma : Gamma.IsNormalized) (hYwarp : Gamma.IsWarp Y) :
@@ -225,8 +225,7 @@ theorem linked_subset_certifiedStep
     (S : TerminalResolutionState Gamma Y kappa T Z persistent B) (u : V) :
     S.linked ⊆ (certifiedStep E S u).linked := by
   by_cases hu : u ∈ S.blueprint.realPart.terminals
-  · simpa [certifiedStep, hu, certifiedAdvance] using
-      Set.subset_insert u S.linked
+  · simp [certifiedStep, hu, certifiedAdvance]
   · by_cases hlinked : S.blueprint.RealLinksTo u B <;>
       simp [certifiedStep, hu, hlinked, recordLinked]
 
@@ -256,7 +255,7 @@ theorem terminal_or_completed_mem_linked_certifiedStep
 /-- Compatibility compiler used only as the phantom compiler parameter of
 `ResolutionChain`.  Successor execution itself continues to use the
 reachable certified transition, on the larger all-real-terminal domain. -/
-noncomputable def schedulerCompiler
+theorem schedulerCompiler
     (E : Section9SchedulerEnvironment
       (Gamma := Gamma) (Y := Y) (kappa := kappa) T Z persistent B) :
     Stable934Compiler
@@ -326,7 +325,7 @@ def priorRealExtensionChain
 
 /-- Full predecessor preservation of the chain extracted from a coherent
 history. -/
-def priorChainNoNewPredecessors
+theorem priorChainNoNewPredecessors
     {o : Ordinal.{u}}
     (prior : Set.Iio o →
       TerminalResolutionState Gamma Y kappa T Z persistent B)
@@ -501,7 +500,7 @@ theorem state_limit
       (T := T) (Z := Z) (persistent := persistent) (B := B))
     (request : Ordinal.{u} → V) (o : Ordinal.{u}) (ho : IsSuccLimit o) :
     R.state request o = R.limitOrSeed o ho
-      (fun a ha ↦ R.state request a) := by
+      (fun a _ha ↦ R.state request a) := by
   simpa [state] using
     (Ordinal.limitRecOn_limit o R.seed
       (fun a S ↦ R.step S (request a))
@@ -687,7 +686,7 @@ noncomputable def repeatedResolutionRecursor
     (E : Section9SchedulerEnvironment
       (Gamma := Gamma) (Y := Y) (kappa := kappa) T Z persistent B)
     (seed : TerminalResolutionState Gamma Y kappa T Z persistent B)
-    (u₀ : V) (hu₀ : u₀ ∈ seed.blueprint.realPart.terminals)
+    (u₀ : V) (_hu₀ : u₀ ∈ seed.blueprint.realPart.terminals)
     (hZ : #Z ≤ kappa)
     (hBtarget : B ⊆ Gamma.target)
     (hterminalB : B ⊆ {x | IsPopular Gamma Y persistent kappa x} ∪ T)
@@ -749,7 +748,7 @@ noncomputable def repeatedResolutionChain
 
 /-- Full predecessor preservation of the recursion supplies the exact real
 predecessor invariant required by the final relation limit. -/
-def repeatedResolutionChainNoNewRealPredecessors
+theorem repeatedResolutionChainNoNewRealPredecessors
     [LinearOrder Z] [WellFoundedLT Z]
     (E : Section9SchedulerEnvironment
       (Gamma := Gamma) (Y := Y) (kappa := kappa) T Z persistent B)

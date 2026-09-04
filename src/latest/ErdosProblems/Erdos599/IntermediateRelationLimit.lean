@@ -365,7 +365,7 @@ theorem accounted_eventualRelationLimit
 at every stage where it occurs, or belongs to the completion target `B`. -/
 theorem eventualRelationSink_mem_B_or_stage_terminal
     (C : RealExtensionChain I Gamma Y kappa T Z persistent B)
-    (H : C.NoNewPredecessors) {x : V}
+    (_H : C.NoNewPredecessors) {x : V}
     (hx : x ∈ C.realVertexLimit ∧
       ¬ ∃ y, (x, y) ∈ C.eventualEdgeLimit) (i : I)
     (hxi : x ∈ (C.stage i).vertexSet) :

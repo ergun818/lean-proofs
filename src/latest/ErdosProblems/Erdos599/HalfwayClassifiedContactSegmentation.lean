@@ -154,8 +154,7 @@ theorem retainedEdges_subset_originalForward
       (Y := Y) (kappa := kappa) Q X persistent u) :
     T.retainedEdges ⊆ Q.directionEdges .forward := by
   cases hC : T.classification with
-  | popular _ => simpa [retainedEdges, hC] using
-      (Set.empty_subset (Q.directionEdges .forward))
+  | popular _ => simp [retainedEdges, hC]
   | initialCovered _ => simpa [retainedEdges, hC] using
       T.forwardEdges_subset_original
 
@@ -263,13 +262,15 @@ theorem shortcutEdges_biUnique
 theorem shortcutEdges_acyclic
     (C : ClassifiedContactChain (Y := Y) (kappa := kappa) Q X I J) :
     ¬ ContainsDirectedCycle C.shortcutEdges :=
-  Alternating.GenericSimultaneousSwitch.not_containsDirectedCycle_of_wellFoundedRank C.shortcutEdges C.contactRank
+  Alternating.GenericSimultaneousSwitch.not_containsDirectedCycle_of_wellFoundedRank
+    C.shortcutEdges C.contactRank
     C.contactRank_lt_of_mem_shortcutEdges
 
 theorem shortcutEdges_no_reverse_ray
     (C : ClassifiedContactChain (Y := Y) (kappa := kappa) Q X I J) :
     ¬ ContainsReverseDirectedRay C.shortcutEdges :=
-  Alternating.GenericSimultaneousSwitch.not_containsReverseDirectedRay_of_wellFoundedRank C.shortcutEdges C.contactRank
+  Alternating.GenericSimultaneousSwitch.not_containsReverseDirectedRay_of_wellFoundedRank
+    C.shortcutEdges C.contactRank
     C.contactRank_lt_of_mem_shortcutEdges
 
 end ClassifiedContactChain
@@ -307,7 +308,7 @@ def toChain
   source_injective := Fin.castSucc_injective _
   target_injective := Fin.succ_injective _
   indexRank := fun i ↦ i.1
-  rank_step := fun i ↦ Fin.castSucc_lt_succ
+  rank_step := fun _i ↦ Fin.castSucc_lt_succ
   piece := S.piece
 
 end FiniteClassifiedContactSegmentation
@@ -347,7 +348,7 @@ def toChain
   source_injective := Fin.castSucc_injective _
   target_injective := Fin.succ_injective _
   indexRank := fun i ↦ i.1
-  rank_step := fun i ↦ Fin.castSucc_lt_succ
+  rank_step := fun _i ↦ Fin.castSucc_lt_succ
   piece := S.piece
 
 end EventuallyClassifiedContactSegmentation
@@ -488,14 +489,16 @@ theorem shortcutEdges_acyclic
     (S : ClassifiedContactSegmentation
       (Y := Y) (kappa := kappa) Q X persistent) :
     ¬ ContainsDirectedCycle S.shortcutEdges :=
-  Alternating.GenericSimultaneousSwitch.not_containsDirectedCycle_of_wellFoundedRank S.shortcutEdges S.contactRank
+  Alternating.GenericSimultaneousSwitch.not_containsDirectedCycle_of_wellFoundedRank
+    S.shortcutEdges S.contactRank
     S.contactRank_lt_of_mem_shortcutEdges
 
 theorem shortcutEdges_no_reverse_ray
     (S : ClassifiedContactSegmentation
       (Y := Y) (kappa := kappa) Q X persistent) :
     ¬ ContainsReverseDirectedRay S.shortcutEdges :=
-  Alternating.GenericSimultaneousSwitch.not_containsReverseDirectedRay_of_wellFoundedRank S.shortcutEdges S.contactRank
+  Alternating.GenericSimultaneousSwitch.not_containsReverseDirectedRay_of_wellFoundedRank
+    S.shortcutEdges S.contactRank
     S.contactRank_lt_of_mem_shortcutEdges
 
 end ClassifiedContactSegmentation
@@ -621,13 +624,15 @@ theorem edge_acyclic
     (S : GroupedClassifiedContactSegmentedAssignment
       (kappa := kappa) A X persistent G) :
     ¬ ContainsDirectedCycle S.edge :=
-  Alternating.GenericSimultaneousSwitch.not_containsDirectedCycle_of_wellFoundedRank S.edge S.rank S.rank_lt_of_mem_edge
+  Alternating.GenericSimultaneousSwitch.not_containsDirectedCycle_of_wellFoundedRank S.edge S.rank
+    S.rank_lt_of_mem_edge
 
 theorem edge_no_reverse_ray
     (S : GroupedClassifiedContactSegmentedAssignment
       (kappa := kappa) A X persistent G) :
     ¬ ContainsReverseDirectedRay S.edge :=
-  Alternating.GenericSimultaneousSwitch.not_containsReverseDirectedRay_of_wellFoundedRank S.edge S.rank S.rank_lt_of_mem_edge
+  Alternating.GenericSimultaneousSwitch.not_containsReverseDirectedRay_of_wellFoundedRank S.edge
+    S.rank S.rank_lt_of_mem_edge
 
 end GroupedClassifiedContactSegmentedAssignment
 

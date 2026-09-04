@@ -115,7 +115,7 @@ theorem exists_infiniteCoordinateContactPiece_with_certificate
     refine ⟨P, rfl, ?_⟩
     intro e he
     change e ∈ (∅ : Set (V × V)) at he
-    exact (by simpa using he : False).elim
+    simp at he
   · by_cases haY : S.vertex a ∈ Gamma.vertexSet C.ladder.limitWarp
     · let owner : ClosedReferenceOwner C.ladder.limitWarp
           Rlimit.closedSet (S.vertex a) :=
@@ -124,7 +124,7 @@ theorem exists_infiniteCoordinateContactPiece_with_certificate
       refine ⟨P, rfl, ?_⟩
       intro e he
       change e ∈ (∅ : Set (V × V)) at he
-      exact (by simpa using he : False).elim
+      simp at he
     · by_cases hbY : S.vertex b ∈ Gamma.vertexSet C.ladder.limitWarp
       · let owner : ClosedReferenceOwner C.ladder.limitWarp
             Rlimit.closedSet (S.vertex b) :=
@@ -133,7 +133,7 @@ theorem exists_infiniteCoordinateContactPiece_with_certificate
         refine ⟨P, rfl, ?_⟩
         intro e he
         change e ∈ (∅ : Set (V × V)) at he
-        exact (by simpa using he : False).elim
+        simp at he
       · have hsafe : IsSafe C.ladder.limitWarp Q := by
           apply (A.infinite_coordinateInterval_internallySafe
             s S hchange hS a b hab).isSafe_of_exposedEndpoints

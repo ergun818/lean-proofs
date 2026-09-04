@@ -134,7 +134,7 @@ theorem exists_later_candidate_of_registrationWitness
     (havoid : Disjoint Sigma L.phi)
     {delta gamma zeta : Ladder.Stage kappa}
     (hdeltaZeta : delta < zeta)
-    (hzetaSigma : zeta ∈ Sigma)
+    (_hzetaSigma : zeta ∈ Sigma)
     (hregistrationRoof :
       RegularLocalizedProtectedRegistration.registrationAt
           L request delta gamma ⊆ G.roof (L.frontier zeta))
@@ -294,8 +294,8 @@ theorem exists_later_candidate_of_lower
           (G.canonicalLadderCore kappa
             (Qrow.preferred hregular.aleph0_le)) request delta gamma := by
     apply RegularLocalizedProtectedRegistration.registrationAt_congr_stageData
-    exact DWeb.KappaLadder.withValidBookkeeping_warpAt _ _
-    rfl
+    · exact DWeb.KappaLadder.withValidBookkeeping_warpAt _ _
+    · rfl
   have hregistered : RegularLocalizedProtectedRegistration.registrationAt
       L request delta gamma ⊆ (Qrow.rowSystem hregular.aleph0_le).carrier := by
     rw [hregistrationEq]

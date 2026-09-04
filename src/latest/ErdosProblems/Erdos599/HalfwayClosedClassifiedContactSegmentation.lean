@@ -339,7 +339,7 @@ def toChain
   source_injective := Fin.castSucc_injective _
   target_injective := Fin.succ_injective _
   indexRank := fun i ↦ i.1
-  rank_step := fun i ↦ Fin.castSucc_lt_succ
+  rank_step := fun _i ↦ Fin.castSucc_lt_succ
   piece := S.piece
 
 end FiniteClosedClassifiedContactSegmentation
@@ -377,7 +377,7 @@ def toChain
   source_injective := Fin.castSucc_injective _
   target_injective := Fin.succ_injective _
   indexRank := fun i ↦ i.1
-  rank_step := fun i ↦ Fin.castSucc_lt_succ
+  rank_step := fun _i ↦ Fin.castSucc_lt_succ
   piece := S.piece
 
 end EventuallyClosedClassifiedContactSegmentation
@@ -690,11 +690,14 @@ theorem edge_no_reverse_ray
 
 end GroupedClosedClassifiedContactSegmentedAssignment
 
-#print axioms ClassifiedOrClosedFiniteContactPiece.retainedEdges_subset_originalForward_union_shortcut
+#print axioms
+  ClassifiedOrClosedFiniteContactPiece.retainedEdges_subset_originalForward_union_shortcut
 #print axioms ClosedClassifiedContactChain.shortcutEdges_biUnique
-#print axioms ClosedClassifiedContactSegmentation.retainedEdges_subset_originalForward_union_shortcut
+#print axioms
+  ClosedClassifiedContactSegmentation.retainedEdges_subset_originalForward_union_shortcut
 #print axioms GroupedClosedClassifiedContactSegmentedAssignment.edge_biUnique
-#print axioms GroupedClosedClassifiedContactSegmentedAssignment.retainedEdges_subset_assignedForward_union_edge
+#print axioms
+  GroupedClosedClassifiedContactSegmentedAssignment.retainedEdges_subset_assignedForward_union_edge
 
 end LinkageBlueprint
 end Blueprint

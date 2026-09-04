@@ -328,8 +328,8 @@ def ofSimultaneous {Zf : FracturedWarp Γ}
     (A : SimultaneousAssignment Zf.paths Y) :
     CompressedFracturedAssignment Zf Y where
   outcome s := (A.assigned s).terminal?
-  finite_exit_mem s v hterminal := A.finite_terminal_mem s hterminal
-  finite_exits_injective s₁ s₂ v h₁ h₂ :=
+  finite_exit_mem s _v hterminal := A.finite_terminal_mem s hterminal
+  finite_exits_injective _s₁ _s₂ _v h₁ h₂ :=
     A.finite_terminals_injective h₁ h₂
 
 /-- Retain the projected endpoint data of an occurrence-aware assignment in
@@ -606,7 +606,7 @@ theorem assignedInfiniteSources_popular
   ext u
   simp only [CompressedFracturedAssignment.infiniteSources,
     CompressedFracturedAssignment.ofSimultaneous, assignedInfiniteSources,
-    Set.mem_setOf_eq]
+    Set.mem_ofPred_eq]
   constructor
   · rintro ⟨s, rfl, hs⟩
     exact ⟨s, rfl, (A.assigned s).isInfinite_iff_terminal?_eq_none.mpr hs⟩

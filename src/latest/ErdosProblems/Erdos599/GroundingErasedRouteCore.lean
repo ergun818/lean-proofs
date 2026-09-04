@@ -146,10 +146,9 @@ theorem RunsFromTo.exists_suffix_from_mem
       · have hzTail : z ∈ signedVertexChain s.exit q := by
           simpa [signedVertexChain, hzx] using hz
         obtain ⟨r, hrq, hruns, hrchain⟩ := ih hzTail
-        exact ⟨r, hrq.trans (by simpa using List.suffix_cons s q), hruns,
+        exact ⟨r, hrq.trans (by simp), hruns,
           hrchain.trans (by
-            simpa [signedVertexChain] using
-              List.suffix_cons s.entry (signedVertexChain s.exit q))⟩
+            simp [signedVertexChain])⟩
 
 /-- A loop-erased signed subroute.  It has the same ordered endpoints as the
 raw trace, its signed steps form a sublist of the raw steps, and its projected
@@ -202,7 +201,6 @@ def routeVertex (n : ℕ) : V := E.vertexChain.getD n y
 theorem routeVertex_eq_entry (n : Fin E.steps.length) :
     E.routeVertex n = (E.steps.get n).entry := by
   unfold routeVertex vertexChain signedVertexChain
-  change (x :: E.steps.map SignedEdge.exit).getD n.1 y = _
   calc
     (x :: E.steps.map SignedEdge.exit).getD n.1 y =
         (x :: E.steps.map SignedEdge.exit).get ⟨n.1, by simp⟩ :=
@@ -437,8 +435,7 @@ noncomputable def compressionOfValid
   · have hxy : x = y := RunsFromTo.start_eq_of_nil (hnil ▸ E.runs)
     exact {
       path := .trivial x
-      edgeSet_eq := by simp [Alternating.AltPath.edgeSet_trivial, hnil,
-        signedEdgeSet_nil]
+      edgeSet_eq := by simp [Alternating.AltPath.edgeSet_trivial, hnil]
       initial_eq := Alternating.AltPath.initial_trivial x
       terminal_eq := by simp [Alternating.AltPath.terminal?_trivial, hxy] }
   · let S := E.toFiniteInputOfValid hnil hvalid
@@ -939,7 +936,7 @@ theorem requestExit_mem_selectedErasedCompression_vertexSet
       exact Q.terminal_mem_vertexSet
   | infinite Q =>
       have hfalse : (none : Option V) = some (requestExit r) := by
-        simpa [hp] using hterminal
+        simp [hp] at hterminal
       cases hfalse
 
 /-- Every compressed backward link of a selected route is a fragment of a

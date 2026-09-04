@@ -40,7 +40,7 @@ variable {V : Type u} {I : Type v} {Gamma : DWeb V}
 abbrev Input (Gamma : DWeb V) (I : Type v) : Type (max u v) :=
   PopularAuxiliary.Input Gamma I
 
-abbrev LV (J : Input Gamma I) : Type (max u v) :=
+abbrev LV (_J : Input Gamma I) : Type (max u v) :=
   PopularAuxiliary.Input.LambdaVertex V I
 
 /-- The literal record represented by one auxiliary source vertex.  This is
@@ -80,8 +80,8 @@ private theorem familyEdges_of_mem_record
 tail endpoint retained in its type. -/
 private theorem exists_walk_tail_of_mem_edgeSet {D : Digraph V} :
     ∀ {a b x y : V} (p : Walk D a b), (x, y) ∈ p.edgeSet →
-      ∃ (hxy : D.Adj x y) (q : Walk D y b), q.edgeSet ⊆ p.edgeSet
-  | _, _, _, _, .nil, h => by simpa using h
+      ∃ (_hxy : D.Adj x y) (q : Walk D y b), q.edgeSet ⊆ p.edgeSet
+  | _, _, _, _, .nil, h => by simp at h
   | a, b, x, y, @Walk.cons _ _ _ c _ hac tail, h => by
       simp only [Walk.edgeSet_cons, Set.mem_union,
         Set.mem_singleton_iff] at h
@@ -173,7 +173,7 @@ theorem exists_auxiliaryPath_to_mem_ladderTrace_union_source
           · simpa [w] using hqStart
           · simpa [w] using hqFinish
       | proxy j =>
-          simpa [PopularSwitching.ladderTrace] using hzTrace
+          simp [PopularSwitching.ladderTrace] at hzTrace
     · have hzEq : z = .old p.finish := by simpa using hzSource
       subst z
       let w : Walk J.lambda.graph (.old p.finish) (.old p.finish) := .nil
@@ -259,7 +259,7 @@ theorem exists_auxiliaryPath_to_mem_ladderTrace_union_source
                     exact Or.inr ⟨(r n, r (n + 1)), ⟨n, rfl⟩, rfl⟩)
                 · exact ha.elim)
       | proxy j =>
-          simpa [PopularSwitching.ladderTrace] using hzTrace
+          simp [PopularSwitching.ladderTrace] at hzTrace
     · have hzEq : z = .proxy i := by simpa using hzSource
       subst z
       let w : Walk J.lambda.graph (.proxy i) (.proxy i) := .nil
@@ -389,6 +389,8 @@ end SplitGroundedAuxiliarySourceRecord
 end DWeb.KappaLadder
 end Erdos599
 
-#print axioms Erdos599.GroundingGroundedRecordTraceReachability.exists_auxiliaryPath_to_mem_ladderTrace_union_source
+open Erdos599.GroundingGroundedRecordTraceReachability in
+#print axioms exists_auxiliaryPath_to_mem_ladderTrace_union_source
 #print axioms Erdos599.DWeb.KappaLadder.exists_splitGroundedAuxiliarySourceRecord
-#print axioms Erdos599.DWeb.KappaLadder.SplitGroundedAuxiliarySourceRecord.exists_auxiliaryPath_to_mem_ownCarrier
+open Erdos599.DWeb.KappaLadder.SplitGroundedAuxiliarySourceRecord in
+#print axioms exists_auxiliaryPath_to_mem_ownCarrier

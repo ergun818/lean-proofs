@@ -40,6 +40,8 @@ structure PostClosureCompressorAssignment
 
 namespace PostClosureIntervalTransaction
 
+open FracturedAssignmentPeel.OutsideFracturedWarp
+
 variable {C : ClubStageGeometry Gamma Y kappa (succ kappa)}
 variable {globalZ X0 : Set V} {z : V}
 variable {R : DynamicMoving931GlobalClosure C globalZ X0}
@@ -58,7 +60,8 @@ theorem exists_compressorAssignment
       (outsideReference T.intervalReference R.closedSet) :=
     T.intervalReference_isLinkageBetween.isWarp.subset
       (outsideReference_subset (Y := T.intervalReference) (X := R.closedSet))
-  obtain ⟨A⟩ := FracturedAssignmentPeel.OutsideFracturedWarp.exists_compressorProducedBracketFracturedAssignment_anyReference
+  obtain ⟨A⟩ :=
+    exists_compressorProducedBracketFracturedAssignment_anyReference
     F.outside hboundary hOutsideWarp hinitial
   exact ⟨{
     fractured := F

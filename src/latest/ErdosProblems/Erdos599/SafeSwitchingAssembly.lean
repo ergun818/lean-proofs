@@ -94,8 +94,8 @@ theorem familyEdges_isolatedPaths (I : Set V) :
   simp only [familyEdges, isolatedPaths, Set.mem_iUnion, Set.mem_image,
     Set.mem_empty_iff_false, iff_false]
   rintro ⟨p, ⟨x, hx, rfl⟩, he⟩
-  simpa [DWeb.trivialPath, Path.trivial, FinitePath.trivial,
-    FinitePath.edgeSet, Walk.edgeSet] using he
+  simp [DWeb.trivialPath, Path.trivial, FinitePath.trivial,
+    FinitePath.edgeSet, Walk.edgeSet] at he
 
 theorem isolatedVertices_isolatedPaths (I : Set V) :
     isolatedVertices (isolatedPaths G I) = I := by
@@ -132,7 +132,7 @@ theorem rootPaths_no_isolated
     (hcarrier : O.carrier = IncidentVertices O.edge) :
     isolatedVertices O.rootPaths = ∅ := by
   ext x
-  simp only [isolatedVertices, Set.mem_setOf_eq, Set.mem_empty_iff_false,
+  simp only [isolatedVertices, Set.mem_ofPred_eq, Set.mem_empty_iff_false,
     iff_false]
   rintro ⟨r, heq⟩
   have hrx : r.1 = x := by
@@ -146,8 +146,8 @@ theorem rootPaths_no_isolated
       have hcomp : O.component r.1 = r.1 := O.root_label r.2.1 r.2.2
       simpa [hcomp] using O.rootPath_contains_edge hry
     rw [heq] at he
-    simpa [DWeb.trivialPath, Path.trivial, FinitePath.trivial,
-      FinitePath.edgeSet, Walk.edgeSet] using he
+    simp [DWeb.trivialPath, Path.trivial, FinitePath.trivial,
+      FinitePath.edgeSet, Walk.edgeSet] at he
   · have hrpred : ForwardOrientation.HasPredecessor O.edge r.1 :=
       ⟨y, hyr⟩
     have hdepth : O.depth r.1 = 0 := r.2.2
@@ -201,7 +201,7 @@ theorem exists_finiteWarp_realizing_orientation_with_isolated
   · rw [familyEdges_union_local, hPE, familyEdges_isolatedPaths G I,
       Set.union_empty]
   · ext x
-    simp only [isolatedVertices, Set.mem_setOf_eq, Set.mem_union]
+    simp only [isolatedVertices, Set.mem_ofPred_eq, Set.mem_union]
     constructor
     · intro hx
       rcases hx with hx | hx
@@ -289,7 +289,7 @@ theorem rayPrefixWalk_support (r : Ray D) (n : ℕ) :
       rw [rayPrefixWalk, Walk.support_concat, ih]
       rw [@List.ofFn_succ_last V (n + 1)
         (fun i : Fin ((n + 1) + 1) ↦ r i)]
-      congr 1 <;> simp
+      congr 1
 
 theorem rayPrefixWalk_isPath (r : Ray D) (n : ℕ) :
     (rayPrefixWalk r n).IsPath := by
@@ -307,8 +307,7 @@ theorem rayPrefixPath_edgeSet (r : Ray D) (n : ℕ) :
     (rayPrefixPath r n).edgeSet =
       {e | ∃ k < n, e = (r k, r (k + 1))} := by
   induction n with
-  | zero => simp [rayPrefixPath, rayPrefixWalk, FinitePath.edgeSet,
-      Walk.edgeSet]
+  | zero => simp [rayPrefixPath, rayPrefixWalk, FinitePath.edgeSet]
   | succ n ih =>
       change (rayPrefixWalk r (n + 1)).edgeSet = _
       have ih' : (rayPrefixWalk r n).edgeSet =
@@ -316,7 +315,7 @@ theorem rayPrefixPath_edgeSet (r : Ray D) (n : ℕ) :
         simpa [rayPrefixPath, FinitePath.edgeSet] using ih
       rw [rayPrefixWalk, RelationComponents.walkEdgeSetConcatRC, ih']
       ext e
-      simp only [Set.mem_union, Set.mem_setOf_eq, Set.mem_singleton_iff]
+      simp only [Set.mem_union, Set.mem_ofPred_eq, Set.mem_singleton_iff]
       constructor
       · rintro (⟨k, hk, rfl⟩ | rfl)
         · exact ⟨k, hk.trans (Nat.lt_succ_self n), rfl⟩
@@ -334,7 +333,7 @@ def raySegmentPath (r : Ray D) (i n : ℕ) : FinitePath D :=
 
 @[simp] theorem raySegmentPath_start (r : Ray D) (i n : ℕ) :
     (raySegmentPath r i n).start = r i := by
-  simp [raySegmentPath, rayPrefixPath, Ray.initial]
+  simp [raySegmentPath, rayPrefixPath]
 
 @[simp] theorem raySegmentPath_finish (r : Ray D) (i n : ℕ) :
     (raySegmentPath r i n).finish = r (i + n) := by
@@ -345,7 +344,7 @@ theorem raySegmentPath_edgeSet (r : Ray D) (i n : ℕ) :
       {e | ∃ k < n, e = (r (i + k), r (i + k + 1))} := by
   rw [raySegmentPath, rayPrefixPath_edgeSet]
   ext e
-  simp only [Set.mem_setOf_eq]
+  simp only [Set.mem_ofPred_eq]
   constructor
   · rintro ⟨k, hk, rfl⟩
     exact ⟨k, hk, by simp [Nat.add_assoc]⟩
@@ -433,7 +432,7 @@ theorem reverseRayPrefixPath_edgeSet (R : DirectedRay V)
       {e | ∃ k < n, e = (R.vertex (k + 1), R.vertex k)} := by
   induction n with
   | zero => simp [reverseRayPrefixPath, reverseRayPrefixWalk,
-      FinitePath.edgeSet, Walk.edgeSet]
+      FinitePath.edgeSet]
   | succ n ih =>
       change (reverseRayPrefixWalk R hAdj (n + 1)).edgeSet = _
       have ih' : (reverseRayPrefixWalk R hAdj n).edgeSet =
@@ -441,7 +440,7 @@ theorem reverseRayPrefixPath_edgeSet (R : DirectedRay V)
         simpa [reverseRayPrefixPath, FinitePath.edgeSet] using ih
       rw [reverseRayPrefixWalk, Walk.edgeSet_cons, ih']
       ext e
-      simp only [Set.mem_union, Set.mem_singleton_iff, Set.mem_setOf_eq]
+      simp only [Set.mem_union, Set.mem_singleton_iff, Set.mem_ofPred_eq]
       constructor
       · rintro (rfl | ⟨k, hk, rfl⟩)
         · exact ⟨n, Nat.lt_succ_self n, rfl⟩
@@ -483,7 +482,7 @@ theorem reverseRaySegmentPath_edgeSet (R : DirectedRay V)
         e = (R.vertex (i + k + 1), R.vertex (i + k))} := by
   rw [reverseRaySegmentPath, reverseRayPrefixPath_edgeSet]
   ext e
-  simp only [Set.mem_setOf_eq]
+  simp only [Set.mem_ofPred_eq]
   constructor <;> rintro ⟨k, hk, rfl⟩ <;>
     exact ⟨k, hk, by simp [Nat.add_assoc]⟩
 
@@ -597,7 +596,7 @@ private theorem cyclePrefixWalk_support (C : DirectedCycle V)
       rw [@List.ofFn_succ_last V (n + 1)
         (fun i : Fin ((n + 1) + 1) =>
           C.vertex ⟨i.1, by omega⟩)]
-      congr 1 <;> simp
+      congr 1
 
 private theorem cyclePrefixWalk_isPath (C : DirectedCycle V)
     (hAdj : ∀ i, D.Adj (C.vertex i) (C.vertex (C.next i)))
@@ -629,8 +628,7 @@ private theorem cyclePrefixPath_edgeSet (C : DirectedCycle V)
       {e | ∃ i : Fin C.length, i.1 < n ∧ e =
         (C.vertex i, C.vertex (C.next i))} := by
   induction n with
-  | zero => simp [cyclePrefixPath, cyclePrefixWalk, FinitePath.edgeSet,
-      Walk.edgeSet]
+  | zero => simp [cyclePrefixPath, cyclePrefixWalk, FinitePath.edgeSet]
   | succ n ih =>
       change (cyclePrefixWalk C hAdj (n + 1) hn).edgeSet = _
       have ih' : (cyclePrefixWalk C hAdj n (by omega)).edgeSet =
@@ -639,7 +637,7 @@ private theorem cyclePrefixPath_edgeSet (C : DirectedCycle V)
         simpa [cyclePrefixPath, FinitePath.edgeSet] using ih (by omega)
       rw [cyclePrefixWalk, RelationComponents.walkEdgeSetConcatRC, ih']
       ext e
-      simp only [Set.mem_union, Set.mem_setOf_eq, Set.mem_singleton_iff]
+      simp only [Set.mem_union, Set.mem_ofPred_eq, Set.mem_singleton_iff]
       constructor
       · rintro (⟨i, hi, rfl⟩ | rfl)
         · exact ⟨i, by omega, rfl⟩
@@ -901,7 +899,7 @@ theorem isSwitchingSafe_noForwardSandwich
       (Q.directionEdges .forward) := by
   intro r hrne hrB a b hIn hOut
   have hfrag := finitePath_isFragmentOf_of_edgeSet_subset_familyEdges
-    hSafe.1.1.1 r hrne (hrB.trans Set.diff_subset)
+    hSafe.1.1.1 r hrne (hrB.trans Set.sdiff_subset)
   rcases hfrag with ⟨p, hpY, hrp⟩
   rcases hfin hpY with ⟨q, rfl⟩
   exact hSafe.no_forward_retainedPath_forward hpY hrp hrne hrB hIn hOut
@@ -1092,7 +1090,7 @@ theorem union_not_containsDirectedRay
     refine ⟨T, ?_⟩
     rintro e ⟨n, rfl⟩
     apply hN
-    exact ⟨n, by simp [r, T, Nat.add_assoc]⟩
+    exact ⟨n, by simp [r, T]⟩
   · rcases htail with ⟨N, hN⟩
     apply hF
     let T : DirectedRay V :=
@@ -1101,7 +1099,7 @@ theorem union_not_containsDirectedRay
     refine ⟨T, ?_⟩
     rintro e ⟨n, rfl⟩
     apply hN
-    exact ⟨n, by simp [r, T, Nat.add_assoc]⟩
+    exact ⟨n, by simp [r, T]⟩
 
 theorem union_not_containsReverseDirectedRay
     (B F : Set (V × V))

@@ -36,8 +36,8 @@ theorem InternallySafe.infiniteCoordinateInterval
     (a b : Nat) (hab : a < b)
     (hparent : InternallySafe Y
       (.infinite (S.toInfiniteRunWalk hchange).toInfiniteTrace))
-    (P : (AltPath.infinite (S.toInfiniteRunWalk hchange).toInfiniteTrace
-      ).IndexedBackwardProvenance Y I) :
+    (P : (AltPath.infinite (S.toInfiniteRunWalk hchange).toInfiniteTrace).IndexedBackwardProvenance
+      Y I) :
     InternallySafe Y
       (.finite
         (S.coordinateInterval a b hab).toFiniteRunWalk.toFiniteTrace) := by

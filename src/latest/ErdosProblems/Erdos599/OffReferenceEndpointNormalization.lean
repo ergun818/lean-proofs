@@ -131,7 +131,7 @@ theorem FixedSafePrefixState.exists_fixedNextForward_of_last_mem
     (S : FixedSafePrefixState total)
     (hfirst : total.vertex 0 ∈ Gamma.initialSet W)
     (hfirstOff : total.vertex 0 ∉ Gamma.vertexSet Y)
-    (hlastMem : total.vertex (Fin.last total.length) ∈ Gamma.vertexSet W)
+    (_hlastMem : total.vertex (Fin.last total.length) ∈ Gamma.vertexSet W)
     (hlastOff : total.vertex (Fin.last total.length) ∉ Gamma.vertexSet Y)
     (hcurrentNe : S.word.vertex (Fin.last S.word.length) ≠
       total.vertex (Fin.last total.length)) :

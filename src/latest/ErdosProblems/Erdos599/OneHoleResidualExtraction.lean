@@ -230,9 +230,7 @@ theorem oneHoleRouteSource_injective
     Function.Injective (oneHoleRouteSource l) := by
   intro i j hij
   apply Fin.ext
-  apply (hl.getElem_inj_iff).1
-  change l[i.1] = l[j.1]
-  exact hij
+  exact (hl.getElem_inj_iff (hi := by omega) (hj := by omega)).1 hij
 
 theorem oneHoleRouteTarget_injective
     {l : List (OneHoleResidualState V)} (hl : l.Nodup) :
@@ -240,9 +238,7 @@ theorem oneHoleRouteTarget_injective
   intro i j hij
   apply Fin.ext
   have hs : i.1 + 1 = j.1 + 1 := by
-    apply (hl.getElem_inj_iff).1
-    change l[i.1 + 1] = l[j.1 + 1]
-    exact hij
+    exact (hl.getElem_inj_iff (hi := by omega) (hj := by omega)).1 hij
   omega
 
 theorem oneHoleRoute_first
@@ -307,7 +303,7 @@ theorem oneHoleRouteForwardEdges_finite (G : DWeb V)
   have hI : I.Finite := Set.toFinite I
   have heq : oneHoleRouteForwardEdges G J l = f '' I := by
     ext e
-    simp only [oneHoleRouteForwardEdges, Set.mem_setOf_eq, Set.mem_image,
+    simp only [oneHoleRouteForwardEdges, Set.mem_ofPred_eq, Set.mem_image,
       I, f]
     constructor
     · rintro ⟨i, hi, rfl⟩
@@ -328,7 +324,7 @@ theorem oneHoleRouteBackwardEdges_finite (G : DWeb V)
   have hI : I.Finite := Set.toFinite I
   have heq : oneHoleRouteBackwardEdges G J l = f '' I := by
     ext e
-    simp only [oneHoleRouteBackwardEdges, Set.mem_setOf_eq, Set.mem_image,
+    simp only [oneHoleRouteBackwardEdges, Set.mem_ofPred_eq, Set.mem_image,
       I, f]
     constructor
     · rintro ⟨i, hi, rfl⟩
@@ -384,17 +380,17 @@ theorem oneHoleRouteForwardEdges_biUnique
       simp only [OneHoleChosenForwardStep, hsj] at hj
     cases hti : oneHoleRouteTarget l i with
     | ready vi =>
-        simp only [OneHoleChosenForwardStep, hti] at hi
+        simp only [hti] at hi
         cases htj : oneHoleRouteTarget l j with
         | ready vj =>
-            simp only [OneHoleChosenForwardStep, htj] at hj
+            simp only [htj] at hj
             have hv : vi = vj := by simpa [hti, htj] using hz_i.symm.trans hz_j
             have hij : i = j := oneHoleRouteTarget_injective hl.2.1 (by
               rw [hti, htj, hv])
             subst j
             exact (Prod.mk.inj (hei.trans hej.symm)).1
         | pending vj =>
-            simp only [OneHoleChosenForwardStep, htj] at hj
+            simp only [htj] at hj
             have hv : vi = vj := by simpa [hti, htj] using hz_i.symm.trans hz_j
             have hiOutside : vi ∉ G.vertexSet J := by
               simpa [hti] using hi.2.2
@@ -402,10 +398,10 @@ theorem oneHoleRouteForwardEdges_biUnique
               simpa [htj] using hj.2.2
             exact False.elim (hiOutside (hv ▸ hjInside))
     | pending vi =>
-        simp only [OneHoleChosenForwardStep, hti] at hi
+        simp only [hti] at hi
         cases htj : oneHoleRouteTarget l j with
         | ready vj =>
-            simp only [OneHoleChosenForwardStep, htj] at hj
+            simp only [htj] at hj
             have hv : vi = vj := by simpa [hti, htj] using hz_i.symm.trans hz_j
             have hiInside : vi ∈ G.vertexSet J := by
               simpa [hti] using hi.2.2
@@ -413,7 +409,7 @@ theorem oneHoleRouteForwardEdges_biUnique
               simpa [htj] using hj.2.2
             exact False.elim (hjOutside (hv.symm ▸ hiInside))
         | pending vj =>
-            simp only [OneHoleChosenForwardStep, htj] at hj
+            simp only [htj] at hj
             have hv : vi = vj := by simpa [hti, htj] using hz_i.symm.trans hz_j
             have hij : i = j := oneHoleRouteTarget_injective hl.2.1 (by
               rw [hti, htj, hv])
@@ -736,7 +732,7 @@ theorem oneHoleRouteForwardEdge_left_ne_isolated
           oneHoleRouteBackwardEdges_subset_familyEdges G J l hkMem
         exact (Alternating.IsWarp.familyEdge_not_incident_isolated
           hJ.isWarp hv hkOld).1
-          (by simpa [htv])
+          (by simp [htv])
 
 theorem oneHoleRouteForwardEdge_right_ne_isolated
     {G : DWeb V} {J : Set G.DPath}
@@ -1060,7 +1056,6 @@ theorem exists_onePointAugmentation_of_toggleCertificate
       · subst x
         simp [propInt, hbNotIso, hbBal, hab.symm]
       · simp [propInt, hxa, hxb]
-
   · ext x
     rw [C.mem_terminalFrontier_pathPart_iff_isolated_or_edgeBalance_eq_neg_one
       hCfin]
@@ -1091,6 +1086,5 @@ theorem oneHoleMarkedAugmentation_of_routeBalance
         (hbalance G J a b l hJ ha hl)
     exact exists_onePointAugmentation_of_toggleCertificate
       G hJ ha hb hab T
-
 end DWeb
 end Erdos599

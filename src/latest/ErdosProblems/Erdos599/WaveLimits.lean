@@ -370,7 +370,7 @@ theorem exists_chainLimit (C : Set (Path D)) (hCne : C.Nonempty)
             q.finish = q.walk.support.getLast q.walk.support_ne_nil :=
               q.walk.getLast_support.symm
             _ = t.walk.support.getLast t.walk.support_ne_nil := by
-              simpa only [hs]
+              simp only [hs]
             _ = t.finish := t.walk.getLast_support
         simpa [hfinish] using htterm
       · simp at htterm
@@ -520,7 +520,7 @@ theorem initialSet_waveChainUpper (c : Set G.Wave) (hcne : c.Nonempty)
       G.initialSet (G.waveChainBase c hcne).1 := by
   apply Set.Subset.antisymm
   · rintro x ⟨p, ⟨a, rfl⟩, rfl⟩
-    simpa [G.waveThreadLimit_initial c hcne hc a] using a.2
+    simp [G.waveThreadLimit_initial c hcne hc a]
   · intro x hx
     let a : G.initialSet (G.waveChainBase c hcne).1 := ⟨x, hx⟩
     exact ⟨G.waveThreadLimit c hcne hc a, ⟨a, rfl⟩,
@@ -1063,7 +1063,7 @@ def prependRay : {a b : V} → (p : Walk D a b) → p.IsPath →
         support_eq := by
           ext x
           simp only [support_nil, List.mem_singleton, Set.mem_union,
-            Set.mem_setOf_eq, Set.mem_singleton_iff]
+            Set.mem_ofPred_eq]
           constructor
           · exact Or.inr
           · rintro (rfl | hx)
@@ -1655,7 +1655,7 @@ theorem isWave_star_liftQuotientFamily
     (hU : (G.quotient
       (G.essential (G.terminalFrontier W))).IsWave U) :
     let S := G.essential (G.terminalFrontier W)
-    let L := G.liftQuotientFamily S U
+    let _L := G.liftQuotientFamily S U
     let hc := G.starCompatible_liftQuotientFamily hW hU
     G.IsWave (G.star hc) := by
   dsimp only
@@ -1780,7 +1780,7 @@ theorem not_forwardExtension_star_liftQuotientFamily_of_nontrivial
     (hqne : q ≠ (G.quotient
       (G.essential (G.terminalFrontier W))).trivialPath q.initial) :
     let S := G.essential (G.terminalFrontier W)
-    let L := G.liftQuotientFamily S U
+    let _L := G.liftQuotientFamily S U
     let hc := G.starCompatible_liftQuotientFamily hW hU
     ¬ G.ForwardExtension (G.star hc) W := by
   dsimp only
@@ -1965,7 +1965,7 @@ noncomputable def prependRayAux : ∀ {a b : V} (p : Walk D a b) (r : Ray D),
         support_eq := by
           have ha : a ∈ r.support := hinit ▸ r.initial_mem_support
           ext x
-          simp only [support_nil, List.mem_singleton, Set.mem_union, Set.mem_setOf_eq]
+          simp only [support_nil, List.mem_singleton, Set.mem_union, Set.mem_ofPred_eq]
           constructor
           · exact fun hx ↦ Or.inr hx
           · rintro (rfl | hx)
@@ -1983,7 +1983,7 @@ noncomputable def prependRayAux : ∀ {a b : V} (p : Walk D a b) (r : Ray D),
         exact Set.disjoint_left.1 hdis (by simp) har
       have ha_not_R : a ∉ R.ray.support := by
         rw [R.support_eq]
-        simp only [Set.mem_union, Set.mem_setOf_eq, not_or]
+        simp only [Set.mem_union, Set.mem_ofPred_eq, not_or]
         exact ⟨ha_not_p, ha_not_r⟩
       have h' : D.Adj a R.ray.initial := by simpa [R.initial_eq] using h
       exact
@@ -1999,8 +1999,8 @@ noncomputable def prependRayAux : ∀ {a b : V} (p : Walk D a b) (r : Ray D),
           support_eq := by
             rw [Ray.support_prependVertex, R.support_eq]
             ext x
-            simp only [Ray.support_prependVertex, Set.mem_insert_iff, Set.mem_union,
-              Set.mem_setOf_eq, Walk.support_cons, List.mem_cons]
+            simp only [Set.mem_insert_iff, Set.mem_union,
+              Set.mem_ofPred_eq, Walk.support_cons, List.mem_cons]
             constructor
             · rintro (hxa | hxp | hxr)
               · exact Or.inl (Or.inl hxa)
@@ -2030,7 +2030,7 @@ theorem exists_walk_suffix {a b : V} (p : Walk D a b) (x : V)
       rcases hx with rfl | hx
       · exact ⟨.cons h p, List.suffix_rfl⟩
       · obtain ⟨w, hw⟩ := ih x hx
-        exact ⟨w, hw.trans (by simpa using List.suffix_cons a p.support)⟩
+        exact ⟨w, hw.trans (by simp)⟩
 
 /-- Exact-endpoint data for the suffix of a finite path beginning at a
 specified support vertex. -/
@@ -2324,13 +2324,13 @@ theorem start_mem_suffixFrom_or_start_mem_suffixFrom (q : Path D)
     by_cases hmn : m ≤ n
     · right
       refine ⟨n - m, ?_⟩
-      simp only [suffixFrom, Ray.suffixFrom, Ray.tail_apply]
+      simp only [Ray.suffixFrom, Ray.tail_apply]
       dsimp only [m, n]
       rw [Nat.add_sub_of_le hmn, hn]
     · left
       have hnm : n ≤ m := Nat.le_of_not_ge hmn
       refine ⟨m - n, ?_⟩
-      simp only [suffixFrom, Ray.suffixFrom, Ray.tail_apply]
+      simp only [Ray.suffixFrom, Ray.tail_apply]
       dsimp only [m, n]
       rw [Nat.add_sub_of_le hnm, hm]
 
@@ -2426,7 +2426,7 @@ theorem arrowPath_extends (U W : Set G.DPath) (p : U) :
   (G.extends_initial (G.arrowPath_extends U W p)).symm
 
 /-- An arrow image meets the old warp exactly in its original path. -/
-theorem support_arrowPath_inter_vertexSet (hU : G.IsWarp U)
+theorem support_arrowPath_inter_vertexSet (_hU : G.IsWarp U)
     (U W : Set G.DPath) (p : U) :
     (G.arrowPath U W p).support ∩ G.vertexSet U = p.1.support := by
   apply Set.Subset.antisymm
@@ -2573,9 +2573,9 @@ theorem suffix_support_eq_of_same_start {a b x : V}
     (hs : s.support <:+ q.support) : r.support = s.support := by
   rcases List.suffix_total hr hs with hrs | hsr
   · exact List.Nodup.eq_of_head_mem_of_suffix (hne := s.support_ne_nil) hrs
-      (by simpa using r.start_mem_support) (hs.nodup hq)
+      (by simp) (hs.nodup hq)
   · exact (List.Nodup.eq_of_head_mem_of_suffix (hne := r.support_ne_nil) hsr
-      (by simpa using s.start_mem_support) (hr.nodup hq)).symm
+      (by simp) (hr.nodup hq)).symm
 
 /-- If a finite W-path ending at `z` has an A-avoiding continuation to the
 target, then its last U-terminal supplies a clean arrow candidate ending at
@@ -2625,8 +2625,9 @@ theorem exists_arrow_candidate_ending
       · rintro ⟨hxs, hxU⟩
         change x ∈ sf.walk.support at hxs
         rw [hsfL] at hxs
-        rcases RelationalRoof.mem_support_iff_start_or_mem_tail G.graph.Adj L.walk |>.1 hxs with hxeq | hxtail
-        · simpa [hxeq]
+        rcases RelationalRoof.mem_support_iff_start_or_mem_tail G.graph.Adj L.walk |>.1 hxs with
+          hxeq | hxtail
+        · simp [hxeq]
         · exfalso
           obtain ⟨v, hvU, hxv⟩ := hxU
           have hxRoof : x ∈ G.roof (G.terminalFrontier U) :=
@@ -2644,7 +2645,8 @@ theorem exists_arrow_candidate_ending
             rcases List.mem_append.mp hy with hyX | hyr
             · have hyL : y ∈ L.walk.support := X.support_subset (by
                 simpa [RelationalRoof.support_castStart] using hyX)
-              rcases RelationalRoof.mem_support_iff_start_or_mem_tail G.graph.Adj L.walk |>.1 hyL with hyeq | hytail
+              rcases RelationalRoof.mem_support_iff_start_or_mem_tail G.graph.Adj L.walk |>.1 hyL
+                with hyeq | hytail
               · have hxEq : x = L.startpoint := by
                   have hLXin : L.startpoint ∈ X.walk.support := by
                     have hyX' : y ∈ X.walk.support := by

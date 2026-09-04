@@ -46,6 +46,7 @@ noncomputable def rangeSup
     · exact hI.trans_lt (Cardinal.lift_lt.mpr (lt_succ kappa))
     · exact fun i ↦ (index i).2⟩
 
+omit [LinearOrder I] [Nonempty I] in
 /-- `rangeSup` is the least upper bound of the indexed range. -/
 theorem rangeSup_isLUB
     (hkappa : Cardinal.aleph0 ≤ kappa)
@@ -66,6 +67,7 @@ theorem rangeSup_isLUB
     intro i
     exact hb ⟨i, rfl⟩
 
+omit [LinearOrder I] [Nonempty I] in
 /-- Every indexed stage lies below the range supremum. -/
 theorem le_rangeSup
     (hkappa : Cardinal.aleph0 ≤ kappa)
@@ -128,6 +130,7 @@ theorem exists_data
     exact (hLUB.isSuccLimit_of_notMem hrange hattained).subtypeVal
       (isLowerSet_Iio _)
 
+omit [LinearOrder I] in
 /-- The nonattained branch exposed without unpacking `Data`. -/
 theorem all_lt_and_isSuccLimit_of_not_mem_range
     (hkappa : Cardinal.aleph0 ≤ kappa)

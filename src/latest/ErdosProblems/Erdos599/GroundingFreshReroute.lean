@@ -172,7 +172,7 @@ theorem essential_terminal_insert_of_roofMaximal_wave
     · have hsimp : (T ∪ Q.terminalFrontier C) \ {y} = T := by
         rw [hCterminal]
         ext x
-        simp only [Set.mem_diff, Set.mem_union, Set.mem_singleton_iff]
+        simp only [Set.mem_sdiff, Set.mem_union, Set.mem_singleton_iff]
         constructor
         · rintro ⟨hx, hxne⟩
           rcases hx with hxT | hxT | hxy

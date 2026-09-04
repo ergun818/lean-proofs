@@ -279,5 +279,5 @@ end KappaLadder
 end DWeb
 end Erdos599
 
-#print axioms
-  Erdos599.DWeb.KappaLadder.Deferred.canonicalDeferredLadder_popularAuxiliary_popularSeparator_nonempty
+open Erdos599.DWeb.KappaLadder.Deferred in
+#print axioms canonicalDeferredLadder_popularAuxiliary_popularSeparator_nonempty

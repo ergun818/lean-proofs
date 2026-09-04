@@ -51,7 +51,7 @@ private theorem Ray.hasIncoming_of_mem_support_of_ne_initial
   rcases hx with ⟨n, rfl⟩
   cases n with
   | zero => exact False.elim (hne rfl)
-  | succ n => exact ⟨r n, n, by simp only [Nat.succ_eq_add_one]⟩
+  | succ n => exact ⟨r n, n, by simp only []⟩
 
 private theorem Ray.hasOutgoing_of_mem_support
     {D : Digraph V} (r : Ray D) {x : V} (hx : x ∈ r.support) :
@@ -149,7 +149,7 @@ private theorem mem_terminalFrontier_of_mem_vertexSet_of_not_hasOutgoing
   obtain ⟨p, hp, hxp⟩ := hx
   rcases p with p | r
   · by_cases hfinish : x = p.finish
-    · exact ⟨Sum.inl p, hp, by simpa [hfinish]⟩
+    · exact ⟨Sum.inl p, hp, by simp [hfinish]⟩
     · obtain ⟨y, hy⟩ :=
         FinitePath.exists_outgoing_edge_of_mem_support_of_ne_finish
           p hxp hfinish

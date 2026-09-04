@@ -174,4 +174,5 @@ theorem finite_breakInterval_hammockEligible
 end Erdos599.Blueprint.LinkageBlueprint.PostClosureCompressorAssignment
 
 #print axioms Erdos599.Alternating.RunCompressor.FiniteInput.colour_eq_forward_of_vertex_mem
-#print axioms Erdos599.Blueprint.LinkageBlueprint.PostClosureCompressorAssignment.finite_breakInterval_hammockEligible
+open Erdos599.Blueprint.LinkageBlueprint.PostClosureCompressorAssignment in
+#print axioms finite_breakInterval_hammockEligible

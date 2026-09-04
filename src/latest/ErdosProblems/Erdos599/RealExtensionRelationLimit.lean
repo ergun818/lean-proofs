@@ -226,7 +226,7 @@ theorem realEdgeLimit_not_containsReverseDirectedRay
   have hexit : ∃ n, (R.vertex (n + 1), R.vertex n) ∉
       (C.stage i).realPart.edges := by
     by_contra hall
-    push_neg at hall
+    push Not at hall
     exact blueprint_edgeSet_not_containsReverseDirectedRay (C.stage i)
       ⟨R, fun n ↦ (hall n).1⟩
   let n := Nat.find hexit
@@ -265,7 +265,7 @@ theorem realEdgeLimit_not_containsReverseDirectedRay
 
 /-- The source-root invariant supplies both global decomposition obligations
 for the real-edge union. -/
-def relationLimitCore_of_sourceRooted
+theorem relationLimitCore_of_sourceRooted
     (C : RealExtensionChain I Gamma Y kappa T Z persistent B)
     (H : C.SourceRooted) : C.RelationLimitCore where
   no_directed_cycle := C.realEdgeLimit_not_containsDirectedCycle
@@ -273,7 +273,7 @@ def relationLimitCore_of_sourceRooted
 
 /-- The scheduler-facing limit core: forward-only successor extensions
 provide the exact invariant needed to exclude a reverse ray. -/
-def relationLimitCore_of_noNewRealPredecessors
+theorem relationLimitCore_of_noNewRealPredecessors
     (C : RealExtensionChain I Gamma Y kappa T Z persistent B)
     (H : C.NoNewRealPredecessors) : C.RelationLimitCore where
   no_directed_cycle := C.realEdgeLimit_not_containsDirectedCycle
@@ -751,7 +751,7 @@ real terminal are precisely the two independent inputs needed for the stable
 limit theorem.  The former compiles the six blueprint conditions and
 stability; the latter derives the full persistence/accounting disjunction
 (9.32). -/
-def stableRelationLimitData_of_boundary_eventuallyCompleted
+theorem stableRelationLimitData_of_boundary_eventuallyCompleted
     (C : RealExtensionChain I Gamma Y kappa T Z persistent B)
     (H : C.RelationLimitCore) (D : C.RelationLimitBoundaryData)
     (eventuallyCompleted : ∀ i x,
@@ -764,7 +764,7 @@ def stableRelationLimitData_of_boundary_eventuallyCompleted
 
 /-- Exact scheduler form of relation-limit accounting: only real terminals
 which are not already full blueprint terminals must be completed. -/
-def stableRelationLimitData_of_boundary_eventuallyCompleted_nonterminal
+theorem stableRelationLimitData_of_boundary_eventuallyCompleted_nonterminal
     (C : RealExtensionChain I Gamma Y kappa T Z persistent B)
     (H : C.RelationLimitCore) (D : C.RelationLimitBoundaryData)
     (eventuallyCompleted : ∀ i x,

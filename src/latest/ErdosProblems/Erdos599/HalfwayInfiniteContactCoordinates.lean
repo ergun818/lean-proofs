@@ -59,7 +59,7 @@ private theorem exists_nat_interval {f : Nat → Nat}
 
 private theorem exists_fin_interval {count : Nat}
     {f : Fin (count + 1) → Nat}
-    (hf : StrictMono f) (hzero : f ⟨0, Nat.zero_lt_succ _⟩ = 0)
+    (_hf : StrictMono f) (hzero : f ⟨0, Nat.zero_lt_succ _⟩ = 0)
     {n : Nat} (hn : n < f ⟨count, Nat.lt_succ_self _⟩) :
     ∃ i : Fin count, f i.castSucc ≤ n ∧ n < f i.succ := by
   have hexists : ∃ j : Nat, ∃ hj : j < count + 1,
@@ -144,7 +144,7 @@ def interval (E : EventualContactCoordinates S X) (i : Fin E.count) :
 def suffix (E : EventualContactCoordinates S X) : InfiniteInput D :=
   S.shift E.last
 
-def suffixChanges (E : EventualContactCoordinates S X)
+theorem suffixChanges (E : EventualContactCoordinates S X)
     (hchange : ∀ n, ∃ m, n < m ∧ S.colour m ≠ S.colour n) :
     ∀ n, ∃ m, n < m ∧ E.suffix.colour m ≠ E.suffix.colour n :=
   S.shift_changes hchange E.last

@@ -123,8 +123,8 @@ theorem decodedVertexCarrier_disjoint_exposedLadderPath_of_support_disjoint
     rcases hY with hY | hY
     · exact hY.1
     · cases hstart : q.start with
-      | old v => simp [exposedLadderPaths, hstart] at hY
-      | edge u v => simp [exposedLadderPaths, hstart] at hY
+      | old v => simp [hstart] at hY
+      | edge u v => simp [hstart] at hY
       | proxy i =>
           have hEq : Y = L.proxyPath i := by
             simpa [exposedLadderPaths, hstart] using hY

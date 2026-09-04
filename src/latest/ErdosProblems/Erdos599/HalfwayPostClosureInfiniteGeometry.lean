@@ -57,11 +57,11 @@ theorem infinite_coordinateInterval_internallySafe
   let H := A.toPostClosureProducedAssignment.assigned_backward_global s
   let I : Type u := H.Index
   have hP :
-      (A.assignment.produced.bracket.assignment.assigned s
-        ).IndexedBackwardProvenance C.ladder.limitWarp I := H.certificate
+      (A.assignment.produced.bracket.assignment.assigned s).IndexedBackwardProvenance
+        C.ladder.limitWarp I := H.certificate
   have P :
-      (AltPath.infinite (S.toInfiniteRunWalk hchange).toInfiniteTrace
-        ).IndexedBackwardProvenance C.ladder.limitWarp I := hS ▸ hP
+      (AltPath.infinite (S.toInfiniteRunWalk hchange).toInfiniteTrace).IndexedBackwardProvenance
+        C.ladder.limitWarp I := hS ▸ hP
   exact hparent.infiniteCoordinateInterval S hchange a b hab P
 
 /-- The exact infinite suffix after the last contact is likewise internally
@@ -85,11 +85,11 @@ theorem infinite_shift_internallySafe
   let H := A.toPostClosureProducedAssignment.assigned_backward_global s
   let I : Type u := H.Index
   have hP :
-      (A.assignment.produced.bracket.assignment.assigned s
-        ).IndexedBackwardProvenance C.ladder.limitWarp I := H.certificate
+      (A.assignment.produced.bracket.assignment.assigned s).IndexedBackwardProvenance
+        C.ladder.limitWarp I := H.certificate
   have P :
-      (AltPath.infinite (S.toInfiniteRunWalk hchange).toInfiniteTrace
-        ).IndexedBackwardProvenance C.ladder.limitWarp I := hS ▸ hP
+      (AltPath.infinite (S.toInfiniteRunWalk hchange).toInfiniteTrace).IndexedBackwardProvenance
+        C.ladder.limitWarp I := hS ▸ hP
   exact hparent.infiniteShift S hchange a P
 
 /-- At a closed raw coordinate of the actual infinite assignment, its
@@ -162,6 +162,9 @@ theorem infinite_shift_hammockEligible
 
 end Erdos599.Blueprint.LinkageBlueprint.PostClosureCompressorAssignment
 
-#print axioms Erdos599.Blueprint.LinkageBlueprint.PostClosureCompressorAssignment.infinite_coordinateInterval_internallySafe
-#print axioms Erdos599.Blueprint.LinkageBlueprint.PostClosureCompressorAssignment.infinite_shift_internallySafe
-#print axioms Erdos599.Blueprint.LinkageBlueprint.PostClosureCompressorAssignment.infinite_rawEdge_mem_intervalFamily
+open Erdos599.Blueprint.LinkageBlueprint.PostClosureCompressorAssignment in
+#print axioms infinite_coordinateInterval_internallySafe
+open Erdos599.Blueprint.LinkageBlueprint.PostClosureCompressorAssignment in
+#print axioms infinite_shift_internallySafe
+open Erdos599.Blueprint.LinkageBlueprint.PostClosureCompressorAssignment in
+#print axioms infinite_rawEdge_mem_intervalFamily

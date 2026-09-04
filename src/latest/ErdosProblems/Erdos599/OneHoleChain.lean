@@ -360,11 +360,10 @@ theorem IsReducedMarkedRoute.ne_of_ordered_occurrences
   let suffix : List (OneHoleResidualState V) := s :: mid ++ s :: post
   have hdup : List.Duplicate s suffix := by
     apply List.Duplicate.cons_mem
-    simp [suffix]
+    simp
   have hsuffix : List.Sublist suffix l := by
     rw [hdecomp]
-    simpa [suffix, List.append_assoc] using
-      (List.sublist_append_right pre suffix)
+    simp [suffix, List.append_assoc]
   exact (hdup.mono_sublist hsuffix).not_nodup hl.2.1
 
 /-- The only possible repeated projected vertex in traversal order is a
@@ -415,7 +414,7 @@ theorem IsReducedMarkedRoute.chosenForward_ready_ready_of_pending_before
     OneHoleChosenForwardStep G J (.ready x) (.ready y) := by
   have hout : G.OneHoleMarkedStep J (.ready x) (.ready y) := by
     apply (List.isChain_iff_forall_rel_of_append_cons_cons.mp hl.1.2.1)
-    show l = (pre ++ .pending x :: mid) ++ .ready x :: .ready y :: post
+      (l₁ := pre ++ .pending x :: mid) (l₂ := post)
     simpa [List.append_assoc] using hdecomp
   rcases (oneHoleMarkedStep_iff_chosenDirection G J _ _).1 hout with
     hforward | hbackward
@@ -426,7 +425,7 @@ theorem IsReducedMarkedRoute.chosenForward_ready_ready_of_pending_before
         have hxx : (x, x) ∈ familyEdges J := by
           have hin : G.OneHoleMarkedStep J (.pending x) (.ready x) := by
             apply (List.isChain_iff_forall_rel_of_append_cons_cons.mp hl.1.2.1)
-            show l = pre ++ .pending x :: .ready x :: .ready y :: post
+              (l₁ := pre) (l₂ := .ready y :: post)
             simpa [List.append_assoc] using hdecomp
           exact hin
         exact False.elim (not_self_mem_familyEdges hxx)
@@ -455,12 +454,10 @@ theorem IsReducedMarkedRoute.chosenForward_ready_ready_of_pending_before
               .ready y :: mid ++ .ready x :: .ready y :: post
             have hdup : List.Duplicate (.ready y) suffix := by
               apply List.Duplicate.cons_mem
-              simp [suffix]
+              simp
             have hsuffix : List.Sublist suffix l := by
               rw [hdecomp]
-              simpa [suffix, List.append_assoc] using
-                (List.sublist_append_right
-                  (pre ++ [OneHoleResidualState.pending x]) suffix)
+              simp [suffix, List.append_assoc]
             exact ((hdup.mono_sublist hsuffix).not_nodup hl.2.1).elim
 
 /-- Specialized state-simple, chordless realization of marked residual

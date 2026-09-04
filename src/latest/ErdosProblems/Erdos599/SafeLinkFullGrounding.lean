@@ -108,7 +108,6 @@ theorem roof_terminalFrontier_subset_fullWaveToLargerQuotient
       exact hvZ
     exact G.quotient_roof_subset_original_roof_of_essential X S hEssX
       ⟨hvQ, hvStrict⟩
-
 end DWeb
 
 namespace SafeLink
@@ -156,7 +155,6 @@ theorem sectionSixFullAccumClosure_grounding
     (base.sectionSixFullAccumStage_carrier_subset_closure
       hNoEnter F K Y Q T y (n + 1))
   refine ⟨by simpa only [K, X] using hKX, ?_⟩
-
   have htOffRoot : t ∈ T \ {a} := by
     apply G.sectionSixFullAccumStage_carrier_subset_offRoot a hNoEnter
       F K Y Q T y
@@ -177,13 +175,11 @@ theorem sectionSixFullAccumClosure_grounding
       (Set.mem_iUnion_of_mem t (Set.mem_iUnion_of_mem htStage hx)))
   let oldAtNext := base.fullWaveToLargerQuotient hNoEnter hKnext Uw
   let next := base.sectionSixFullAccumNext hNoEnter F K Y Q T s
-
   have hRoofTransport :
       base.roof ((base.quotient (K t)).terminalFrontier Uw.1) ⊆
         base.roof ((base.quotient Xnext).terminalFrontier oldAtNext.1) :=
     base.roof_terminalFrontier_subset_fullWaveToLargerQuotient
       hNoEnter hKnext Uw
-
   have hOldNextQ :
       (base.quotient Xnext).RoofLE oldAtNext.1 next.wave.1 := by
     exact base.sectionSixFullAccumNext_roofs_every_wave
@@ -193,26 +189,22 @@ theorem sectionSixFullAccumClosure_grounding
         base.roof ((base.quotient Xnext).terminalFrontier next.wave.1) :=
     base.original_roofLE_of_quotient_roofLE hNoEnter
       next.wave.2 hOldNextQ
-
   have hXnextX : Xnext ⊆ X := by
     intro x hx
     apply Set.mem_iUnion_of_mem (n + 1)
     change x ∈ Xnext
     exact hx
   let commonNext := base.fullWaveToLargerQuotient hNoEnter hXnextX next.wave
-
   have hRoofCommonStage :
       base.roof ((base.quotient Xnext).terminalFrontier next.wave.1) ⊆
         base.roof ((base.quotient X).terminalFrontier commonNext.1) := by
     exact base.roof_terminalFrontier_subset_fullWaveToLargerQuotient
       hNoEnter hXnextX next.wave
-
   have hCommonNextEq : commonNext =
       base.sectionSixFullAccumCommonStage
         hNoEnter F K Y Q T y (n + 1) := by
     apply Subtype.ext
     rfl
-
   have hCommonFinalQ :
       (base.quotient X).RoofLE commonNext.1 M.1 := by
     rw [hCommonNextEq]
@@ -222,7 +214,6 @@ theorem sectionSixFullAccumClosure_grounding
       base.roof ((base.quotient X).terminalFrontier commonNext.1) ⊆
         base.roof ((base.quotient X).terminalFrontier M.1) :=
     base.original_roofLE_of_quotient_roofLE hNoEnter M.2 hCommonFinalQ
-
   have hRoofAll :
       base.roof ((base.quotient (K t)).terminalFrontier U) ⊆
         base.roof ((base.quotient X).terminalFrontier M.1) :=
@@ -233,8 +224,6 @@ theorem sectionSixFullAccumClosure_grounding
     have hdelete := G.strictRoof_subset_delete_strictRoof
       ((base.quotient (K t)).terminalFrontier U) ({a} : Set V)
     apply hdelete
-    change t ∈ G.strictRoof
-      ((base.quotient (K t)).terminalFrontier U)
     rw [← base.terminalFrontier_liftQuotientFamily]
     rw [← G.terminalFrontier_liftDeleteFamily]
     exact htStrictG
@@ -251,7 +240,5 @@ theorem sectionSixFullAccumClosure_grounding
   rw [G.terminalFrontier_liftDeleteFamily,
     base.terminalFrontier_liftQuotientFamily]
   exact htStrictFinal
-
 end SafeLink
-
 end Erdos599

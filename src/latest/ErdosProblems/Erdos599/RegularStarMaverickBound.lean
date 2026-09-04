@@ -33,7 +33,7 @@ theorem mk_sliceMavericks_star_lt
     (hW : IsLinkageBetween G A C W)
     (hR : IsLinkageBetween G C T R)
     (hcompat : G.StarCompatible W R)
-    (hGood : Good ⊆ R)
+    (_hGood : Good ⊆ R)
     (hbad : #(↥(R \ Good)) < kappa)
     (hordinary : ∀ (p : W) (q : G.DPath), q ∈ Good →
       G.terminal? p.1 = some q.initial →
@@ -75,8 +75,6 @@ theorem mk_sliceMavericks_star_lt
   let badNext (p : M) : ↥(R \ Good) := ⟨next p, hnextBad p⟩
   have hnextSupport (p : M) : (next p).initial ∈ p.1.support := by
     rw [← hold p]
-    change (next p).initial ∈
-      (G.starPath hcompat (old p)).support
     let old' : W := ⟨.inl (oldFinite p), by
       simpa only [← holdFinite p] using (old p).2⟩
     have holdOld : old p = old' := Subtype.ext (holdFinite p)

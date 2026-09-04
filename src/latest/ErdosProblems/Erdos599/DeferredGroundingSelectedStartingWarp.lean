@@ -98,7 +98,7 @@ theorem truncatedWarp_initialSet
     DWeb.IsWarp.initialSet_sdiff_singleton Gamma hwarp hrecord,
     X.oldPrefix_start]
   ext x
-  simp only [Set.mem_insert_iff, Set.mem_diff, Set.mem_singleton_iff]
+  simp only [Set.mem_insert_iff, Set.mem_sdiff, Set.mem_singleton_iff]
   constructor
   · rintro (rfl | hx)
     · exact ⟨record, hrecord, rfl⟩
@@ -313,7 +313,7 @@ theorem terminalFrontier_truncatedWarp_sdiff_contact
         {X.lastContact.vertex} = Gamma.terminalFrontier rest
   rw [Gamma.terminalFrontier_insert_finite, X.oldPrefix_finish]
   ext x
-  simp only [Set.mem_diff, Set.mem_insert_iff, Set.mem_singleton_iff]
+  simp only [Set.mem_sdiff, Set.mem_insert_iff, Set.mem_singleton_iff]
   constructor
   · rintro ⟨hx | hx, hxne⟩
     · exact False.elim (hxne hx)
@@ -686,23 +686,23 @@ end KappaLadder
 end DWeb
 end Erdos599
 
-#print axioms
-  Erdos599.DWeb.KappaLadder.Deferred.ReservedStrongSelectedStartingLastContact.truncatedWarp_isWarp
-#print axioms
-  Erdos599.DWeb.KappaLadder.Deferred.ReservedStrongSelectedStartingLastContact.normalizedSuffix_backwardLinksOn_truncatedWarp
-#print axioms
-  Erdos599.DWeb.KappaLadder.Deferred.ReservedStrongSelectedStartingLastContact.terminalContactGeometryOutcome_on_truncatedWarp
-#print axioms
-  Erdos599.DWeb.KappaLadder.Deferred.ReservedStrongSelectedStartingLastContact.exists_terminalContactSwitchWarp
-#print axioms
-  Erdos599.DWeb.KappaLadder.Deferred.ReservedStrongSelectedStartingLastContact.terminalContactSwitch_roots_untouchedFrontier
-#print axioms
-  Erdos599.DWeb.KappaLadder.Deferred.ReservedStrongSelectedStartingLastContact.exists_terminalContact_sourceFirstExchangeWarp
-#print axioms
-  Erdos599.DWeb.KappaLadder.Deferred.ReservedStrongSelectedStartingLastContact.exists_sourcePath_to_displacedFiniteSink
-#print axioms
-  Erdos599.DWeb.KappaLadder.Deferred.ReservedStrongSelectedStartingLastContact.canonicalDeferredLadder_truncatedOwner_grounded_or_terminal_or_inessential
-#print axioms
-  Erdos599.DWeb.KappaLadder.Deferred.ReservedStrongSelectedStartingLastContact.canonicalDeferredLadder_truncatedForwardReferenceOwner_exists
-#print axioms
-  Erdos599.DWeb.KappaLadder.Deferred.ReservedStrongSelectedStartingLastContact.canonicalDeferredLadder_truncatedUncoveredForwardOwner_exists
+open Erdos599.DWeb.KappaLadder.Deferred.ReservedStrongSelectedStartingLastContact in
+#print axioms truncatedWarp_isWarp
+open Erdos599.DWeb.KappaLadder.Deferred.ReservedStrongSelectedStartingLastContact in
+#print axioms normalizedSuffix_backwardLinksOn_truncatedWarp
+open Erdos599.DWeb.KappaLadder.Deferred.ReservedStrongSelectedStartingLastContact in
+#print axioms terminalContactGeometryOutcome_on_truncatedWarp
+open Erdos599.DWeb.KappaLadder.Deferred.ReservedStrongSelectedStartingLastContact in
+#print axioms exists_terminalContactSwitchWarp
+open Erdos599.DWeb.KappaLadder.Deferred.ReservedStrongSelectedStartingLastContact in
+#print axioms terminalContactSwitch_roots_untouchedFrontier
+open Erdos599.DWeb.KappaLadder.Deferred.ReservedStrongSelectedStartingLastContact in
+#print axioms exists_terminalContact_sourceFirstExchangeWarp
+open Erdos599.DWeb.KappaLadder.Deferred.ReservedStrongSelectedStartingLastContact in
+#print axioms exists_sourcePath_to_displacedFiniteSink
+open Erdos599.DWeb.KappaLadder.Deferred.ReservedStrongSelectedStartingLastContact in
+#print axioms canonicalDeferredLadder_truncatedOwner_grounded_or_terminal_or_inessential
+open Erdos599.DWeb.KappaLadder.Deferred.ReservedStrongSelectedStartingLastContact in
+#print axioms canonicalDeferredLadder_truncatedForwardReferenceOwner_exists
+open Erdos599.DWeb.KappaLadder.Deferred.ReservedStrongSelectedStartingLastContact in
+#print axioms canonicalDeferredLadder_truncatedUncoveredForwardOwner_exists

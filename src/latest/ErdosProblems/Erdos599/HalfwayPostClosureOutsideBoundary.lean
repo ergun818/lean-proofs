@@ -90,12 +90,14 @@ theorem OutsideSplitWarp.SplitProjectedOutsideFracturedWarp.initialSet_sdiff_sub
   rw [F.outside.initialSet_eq]
   exact cutInitial_sdiff_subset_initialSet hW
 
+namespace OutsideSplitWarp.SplitProjectedOutsideFracturedWarp
+
 /-- Consequently, if an outside reference is claimed to have all its
 initials among the literal holes, those initials must already be initials of
 the original later row.  For a raw `T_alpha`--`T_beta` interval linkage this
 forces the reference initials onto `T_alpha`; a full global or stage-prefix
 reference normally fails this test. -/
-theorem OutsideSplitWarp.SplitProjectedOutsideFracturedWarp.outsideReference_initialSet_subset_original_of_holes
+theorem outsideReference_initialSet_subset_original_of_holes
     (F : OutsideSplitWarp.SplitProjectedOutsideFracturedWarp
       (Gamma := Gamma) W X)
     (hW : Gamma.IsWarp W)
@@ -110,6 +112,8 @@ theorem OutsideSplitWarp.SplitProjectedOutsideFracturedWarp.outsideReference_ini
     rw [← hpx]
     exact p.initial_mem_support
   exact fun hxX ↦ Set.disjoint_left.1 hpOutside.2 hxSupport hxX
+
+end OutsideSplitWarp.SplitProjectedOutsideFracturedWarp
 
 /-- A literal cut initial that lies on a retained outside-reference member
 is an initial of that member.  The only reference-to-row assumption is the
@@ -232,13 +236,15 @@ theorem OutsideSplitWarp.SplitProjectedOutsideFracturedWarp.boundaryData_of_sdif
 #print axioms outsideReference_subset_of_sdiff_vertexSet_subset
 #print axioms cutInitial_sdiff_subset_initialSet
 #print axioms OutsideSplitWarp.SplitProjectedOutsideFracturedWarp.initialSet_sdiff_subset_original
-#print axioms OutsideSplitWarp.SplitProjectedOutsideFracturedWarp.outsideReference_initialSet_subset_original_of_holes
+open OutsideSplitWarp.SplitProjectedOutsideFracturedWarp in
+#print axioms outsideReference_initialSet_subset_original_of_holes
 #print axioms cutInitial_inter_outsideReference_subset
 #print axioms cutTerminal_inter_outsideReference_subset
 #print axioms outsideReference_initial_subset_cutInitial_of_subset
 #print axioms OutsideSplitWarp.SplitProjectedOutsideFracturedWarp.boundaryAligned_outsideReference
 #print axioms OutsideSplitWarp.SplitProjectedOutsideFracturedWarp.outsideReference_initialSet_subset
-#print axioms OutsideSplitWarp.SplitProjectedOutsideFracturedWarp.boundaryData_of_sdiff_vertexSet_subset
+open OutsideSplitWarp.SplitProjectedOutsideFracturedWarp in
+#print axioms boundaryData_of_sdiff_vertexSet_subset
 
 end LinkageBlueprint
 end Blueprint

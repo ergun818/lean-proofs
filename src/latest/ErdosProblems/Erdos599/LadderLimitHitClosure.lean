@@ -268,7 +268,7 @@ theorem IsSplitLegal.extends_limitWarp_of_stage_intersects (hL : L.IsSplitLegal)
 /-- Every hit of a limiting ladder path is witnessed by an essential
 component of the corresponding accumulated warp. -/
 theorem IsSplitLegal.limitWarp_hitStages_essential_prefix (hL : L.IsSplitLegal)
-    {p : G.DPath} (hp : p ∈ L.limitWarp)
+    {p : G.DPath} (_hp : p ∈ L.limitWarp)
     (Sigma : Set (Stage κ)) :
     ∀ a ∈ L.hitStages Sigma p,
       ∃ q ∈ G.essentialWarpPart (L.warpAt a),

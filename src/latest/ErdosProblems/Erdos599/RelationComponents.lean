@@ -109,7 +109,7 @@ private theorem Walk.support_length_eq_length_add_one {a b : V}
     (p : Walk D a b) : p.support.length = p.length + 1 := by
   induction p with
   | nil => rfl
-  | cons h p ih => simp [ih, Nat.add_assoc, Nat.add_comm, Nat.add_left_comm]
+  | cons h p ih => simp [ih, Nat.add_comm]
 
 private theorem finitePath_support_length_le_ncard
     {E : Set (V × V)} {c : Component E}
@@ -135,7 +135,7 @@ private theorem exists_longest_componentPath
   let p₀ := FinitePath.trivial D x
   have hp₀ : IsComponentPath E c p₀ := by
     constructor
-    · simp [p₀, FinitePath.edgeSet, Walk.edgeSet]
+    · simp [p₀, FinitePath.edgeSet]
     · simpa [p₀] using hxc
   let P : ℕ → Prop := fun n ↦
     ∃ p : FinitePath D, IsComponentPath E c p ∧
@@ -386,7 +386,7 @@ theorem cycleOfPath_edgeSet (p : FinitePath D) :
       apply Prod.ext
       · exact getElem_last_support_eq_finish p i.1
           (by simpa [cycleOfPath] using i.2) hi
-      · simpa [cycleOfPath] using p.support_getElem_zero
+      · simp [cycleOfPath]
   · intro he
     rcases he with he | he
     · rcases (walkMemEdgeSetIffGetElem p.walk).mp he with
@@ -416,7 +416,7 @@ theorem cycleOfPath_edgeSet (p : FinitePath D) :
       apply Prod.ext
       · exact (getElem_last_support_eq_finish p i.1
           (by simpa [cycleOfPath] using i.2) hnot).symm
-      · simpa [cycleOfPath] using p.support_getElem_zero
+      · simp [cycleOfPath]
 
 /-- A longest path in a finite weak component contains every vertex of that
 component. -/
@@ -832,8 +832,6 @@ theorem pathComponents_cycles_disjoint
       componentPath_support_eq E hE hout hin d (hfinite d)]
     exact componentSupport_disjoint hcd
   · rcases hp with ⟨x, hxI, rfl⟩
-    change Disjoint (G.trivialPath x).support
-      (cycleOfPath (componentPath (D := G.graph) E d (hfinite d))).support
     rw [G.support_trivialPath, cycleOfPath_support,
       componentPath_support_eq E hE hout hin d (hfinite d),
       Set.disjoint_singleton_left]
@@ -851,8 +849,8 @@ theorem familyEdges_pathComponents_subset
   · rcases hp with ⟨c, hcactive, hcnoclose, rfl⟩
     exact (componentPath_spec E c (hfinite c)).1.1 hep
   · rcases hp with ⟨x, hxI, rfl⟩
-    simpa [DWeb.trivialPath, Path.trivial, FinitePath.trivial,
-      FinitePath.edgeSet, Walk.edgeSet] using hep
+    simp [DWeb.trivialPath, Path.trivial, FinitePath.trivial,
+      FinitePath.edgeSet, Walk.edgeSet] at hep
 
 theorem cycleEdges_subset
     (G : DWeb V) (E : Set (V × V))
@@ -939,8 +937,8 @@ theorem isolatedVertices_pathComponents
       have hep' : e ∈ Path.edgeSet (.inl p : G.DPath) := hep
       have heq' : G.trivialPath v = (.inl p : G.DPath) := heq
       rw [← heq'] at hep'
-      simpa [DWeb.trivialPath, Path.trivial, FinitePath.trivial,
-        FinitePath.edgeSet, Walk.edgeSet] using hep'
+      simp [DWeb.trivialPath, Path.trivial, FinitePath.trivial,
+        FinitePath.edgeSet, Walk.edgeSet] at hep'
     · rcases hv with ⟨x, hxI, heq⟩
       have hini := congrArg Path.initial heq
       have hvx : v = x := by

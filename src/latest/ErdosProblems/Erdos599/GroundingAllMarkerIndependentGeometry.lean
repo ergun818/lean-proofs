@@ -71,7 +71,8 @@ theorem independentSelectedPath_origin_disjoint_met_fragment
   have hiP : Vertex.source i ∈ L.fragmentCarrier S.cut P :=
     hCarriers.symm ▸ (show Vertex.source i ∈ L.recordCarrier i from rfl)
   have hiFootR := L.recordCarrier_subset_routeFootprint S.cut
-    (L.independentSelectedPath S hInitial r) i hi hri (show Vertex.source i ∈ L.recordCarrier i from rfl)
+    (L.independentSelectedPath S hInitial r) i hi hri (show Vertex.source i ∈ L.recordCarrier i
+      from rfl)
   have hiFootS := L.fragmentCarrier_subset_routeFootprint S.cut
     (L.independentSelectedPath S hInitial s) hP e heP heRoute hiP
   exact Set.disjoint_left.mp (L.independentSelectedPath_footprints_disjoint S hInitial hrs)

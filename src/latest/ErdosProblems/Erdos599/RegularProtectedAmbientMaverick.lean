@@ -89,7 +89,7 @@ private theorem star_wholeExchange_suffix_isLadderFragment
     (hW : IsLinkageBetween Q A C W)
     (hY : IsLinkageBetween Q (A \ E) T Y)
     (hsep : RelationalRoof.Separates Q.graph.Adj (A \ E) T C)
-    (hEsub : E ⊆ A)
+    (_hEsub : E ⊆ A)
     (hRwarp : Q.IsWarp R)
     (hcompat : Q.StarCompatible
       (SliceCandidate.wholeComponentMixedFamily Q W
@@ -234,7 +234,7 @@ private theorem star_wholeExchange_suffix_isLadderFragment
       exact (SliceCandidate.linkageMemberAt hY a.1).2
     · change DirectedPath.Path.IsSubpathOf
         (.inl (first.appendFinite suffix (by
-          simpa only [first, suffix,
+          simp only [first, suffix,
             SliceCandidate.linkageSuffixAtFirstHit_start]) hinter))
         (.inl whole)
       have hfirstSub : first.IsSubpathOf (.inl whole : Q.DPath) :=

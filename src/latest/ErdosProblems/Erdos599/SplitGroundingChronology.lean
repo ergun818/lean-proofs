@@ -98,8 +98,8 @@ structure SplitLemma717SuccessorRoofTransport
     (L : Gamma.KappaLadder kappa) (hlegal : L.IsSplitLegal) : Prop where
   finite : ∀
       (q : FinitePath (L.splitPopularAuxiliaryInput hlegal).lambda.graph)
-      (hs : q.start ∈ (L.splitPopularAuxiliaryInput hlegal).lambda.source)
-      (ht : q.finish ∈ (L.splitPopularAuxiliaryInput hlegal).lambda.target)
+      (_hs : q.start ∈ (L.splitPopularAuxiliaryInput hlegal).lambda.source)
+      (_ht : q.finish ∈ (L.splitPopularAuxiliaryInput hlegal).lambda.target)
       (x : L.finiteTerminalSet) (y : V),
       q.start = .old x.1 → q.finish = .old y →
       y ∈ Gamma.roof
@@ -107,8 +107,8 @@ structure SplitLemma717SuccessorRoofTransport
           (L.splitSuccessorStage hlegal (L.finiteTerminalStage x)))
   proxy : ∀
       (q : FinitePath (L.splitPopularAuxiliaryInput hlegal).lambda.graph)
-      (hs : q.start ∈ (L.splitPopularAuxiliaryInput hlegal).lambda.source)
-      (ht : q.finish ∈ (L.splitPopularAuxiliaryInput hlegal).lambda.target)
+      (_hs : q.start ∈ (L.splitPopularAuxiliaryInput hlegal).lambda.source)
+      (_ht : q.finish ∈ (L.splitPopularAuxiliaryInput hlegal).lambda.target)
       (i : L.splitInfiniteRecords) (y : V),
       q.start = .proxy i → q.finish = .old y →
       y ∈ Gamma.roof

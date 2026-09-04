@@ -162,7 +162,7 @@ theorem exists_canonicalOccurrenceData (Z : FracturedWarp Gamma)
     support_eq := by
       rw [swappedExpansion_support, hsupport, List.flatMap_cons, htail,
         List.flatMap_append]
-      simp [canonicalBlock, middle, List.append_assoc] }
+      simp [canonicalBlock, middle] }
   exact ⟨⟨H, rfl, rfl⟩⟩
 
 /-- A canonical choice of the endpoint occurrence. -/
@@ -219,7 +219,7 @@ private theorem walk_edgeSet_append
   | nil => simp
   | @cons a b d hab q ih =>
       ext e
-      simp only [Walk.append, Walk.edgeSet_cons, ih, Set.mem_insert_iff,
+      simp only [Walk.append, Walk.edgeSet_cons, ih,
         Set.mem_union]
       tauto
 
@@ -403,7 +403,7 @@ members.  Singleton members are deliberately absent from this family. -/
 def liftedActiveFinitePaths (Z : FracturedWarp Gamma) :
     Set (web Gamma Z).DPath :=
   {P | ∃ (p : FinitePath Gamma.graph)
-      (hp : (.inl p : Gamma.DPath) ∈ Z.paths)
+      (_hp : (.inl p : Gamma.DPath) ∈ Z.paths)
       (hne : p.start ≠ p.finish),
       P = .inl (lift Z p hne)}
 
@@ -501,7 +501,7 @@ theorem liftedActiveFinitePaths_isWarp (Z : FracturedWarp Gamma) :
         (hxt.trans hqfinish.symm)
     have hroles : outgoing p.start = incoming q.finish :=
       hzp'.symm.trans hzq'
-    simpa [outgoing, incoming] using hroles
+    simp [outgoing, incoming] at hroles
   · rcases hmeet with ⟨t, hpt, hqi, hinter⟩
     have hpfinish : p.finish = t := by
       change some p.finish = some t at hpt
@@ -520,7 +520,7 @@ theorem liftedActiveFinitePaths_isWarp (Z : FracturedWarp Gamma) :
         (hxt.trans hqstart.symm)
     have hroles : incoming p.finish = outgoing q.start :=
       hzp'.symm.trans hzq'
-    simpa [outgoing, incoming] using hroles
+    simp [outgoing, incoming] at hroles
 
 /-- Every proper edge of the active lifted warp projects to a literal edge of
 the original fractured family. -/

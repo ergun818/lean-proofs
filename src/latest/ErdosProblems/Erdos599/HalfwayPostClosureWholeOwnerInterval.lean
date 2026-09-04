@@ -307,32 +307,32 @@ theorem intervalReference_initial_mem_wholeOwnerIntervalSeed_of_meets_tail
   simp only [oldStageContactInitials]
   obtain ⟨pH, hpOrdinary, hpLift⟩ := hp
   refine ⟨pH, ?_, ?_⟩
-  refine ⟨hpOrdinary, ?_⟩
-  have hpathSafe : (Sum.inl T.interval.path : Gamma.DPath) ∈
-      T.interval.safe.ambientFamily := T.interval.path_mem_safe
-  rw [T.interval.safe.ambient_eq_lift] at hpathSafe
-  obtain ⟨qH, hqSafe, hqLift⟩ := hpathSafe
-  refine ⟨qH, hqSafe, ?_⟩
-  rw [Set.not_disjoint_iff]
-  refine ⟨x, ?_, ?_⟩
-  · have hxpLift : x ∈
-        (Rlimit.capturedGeometry.ladder.liftStagePath
-          Rlimit.capturedGeometry.oldStage pH).support := by
-      rw [hpLift]
-      exact hxp
-    simpa only [Rlimit.capturedGeometry.ladder.support_liftStagePath]
-      using hxpLift
-  · have hxPath : x ∈ T.interval.path.support :=
-      T.interval.tail_support_subset_path hxTail
-    have hxqLift : x ∈
-        (Rlimit.capturedGeometry.ladder.liftStagePath
-          Rlimit.capturedGeometry.oldStage qH).support := by
-      rw [hqLift]
-      exact hxPath
-    simpa only [Rlimit.capturedGeometry.ladder.support_liftStagePath]
-      using hxqLift
-  simpa only [SliceSegmentCore.liftStagePath_initial] using
-    congrArg Path.initial hpLift
+  · refine ⟨hpOrdinary, ?_⟩
+    have hpathSafe : (Sum.inl T.interval.path : Gamma.DPath) ∈
+        T.interval.safe.ambientFamily := T.interval.path_mem_safe
+    rw [T.interval.safe.ambient_eq_lift] at hpathSafe
+    obtain ⟨qH, hqSafe, hqLift⟩ := hpathSafe
+    refine ⟨qH, hqSafe, ?_⟩
+    rw [Set.not_disjoint_iff]
+    refine ⟨x, ?_, ?_⟩
+    · have hxpLift : x ∈
+          (Rlimit.capturedGeometry.ladder.liftStagePath
+            Rlimit.capturedGeometry.oldStage pH).support := by
+        rw [hpLift]
+        exact hxp
+      simpa only [Rlimit.capturedGeometry.ladder.support_liftStagePath]
+        using hxpLift
+    · have hxPath : x ∈ T.interval.path.support :=
+        T.interval.tail_support_subset_path hxTail
+      have hxqLift : x ∈
+          (Rlimit.capturedGeometry.ladder.liftStagePath
+            Rlimit.capturedGeometry.oldStage qH).support := by
+        rw [hqLift]
+        exact hxPath
+      simpa only [Rlimit.capturedGeometry.ladder.support_liftStagePath]
+        using hxqLift
+  · simpa only [SliceSegmentCore.liftStagePath_initial] using
+      congrArg Path.initial hpLift
 
 /-- The normalized interval still meets the selected ambient target tail
 only at the scheduled splice vertex.  The left-family part inherits the

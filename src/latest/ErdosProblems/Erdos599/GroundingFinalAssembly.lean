@@ -58,9 +58,9 @@ hindrance in the original web. -/
 theorem Assertion822Output.exists_hindrance
     {L : PopularAuxiliary.Input Gamma I} {C : Set L.LV}
     (O : Assertion822Output L C)
-    (hC : Popular.IsSeparator L.lambda C)
-    (hterminal : Popular.IsSeparator Gamma L.terminalCut)
-    (hdecode : GroundingCut.FiniteDescentDecoder L C) :
+    (_hC : Popular.IsSeparator L.lambda C)
+    (_hterminal : Popular.IsSeparator Gamma L.terminalCut)
+    (_hdecode : GroundingCut.FiniteDescentDecoder L C) :
     ∃ H : Set Gamma.DPath, Gamma.IsHindrance H := by
   have hwave : Gamma.IsWave O.warp :=
     DWeb.isWave_of_terminalFrontier_isSeparator O.isWarp

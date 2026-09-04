@@ -194,7 +194,7 @@ contains the invariant bookkeeping after that choice. -/
 theorem exists_isBracketAlternating_replaceLastBackward
     {Y Z : Set Γ.DPath} (P : FiniteTrace Γ.graph)
     (old new : Link Γ.graph)
-    (holdDir : old.direction = .backward)
+    (_holdDir : old.direction = .backward)
     (hnewDir : new.direction = .backward)
     (holdJoin : P.terminal = old.entry)
     (holdAlt : P.lastLink.direction ≠ old.direction)
@@ -202,7 +202,7 @@ theorem exists_isBracketAlternating_replaceLastBackward
     (hnewJoin : P.terminal = new.entry)
     (hnewAlt : P.lastLink.direction ≠ new.direction)
     (hnewCompat : P.SnocCompatible new)
-    (holdnew : old.path.support ⊆ new.path.support)
+    (_holdnew : old.path.support ⊆ new.path.support)
     (hnewZ : IsFragmentOf new.path Z)
     (hT : IsBracketAlternating Y Z
       (.finite (P.snoc old holdJoin holdAlt holdCompat))) :
@@ -215,22 +215,22 @@ theorem exists_isBracketAlternating_replaceLastBackward
   rcases hT with ⟨hA, hFY⟩
   rcases hA with ⟨hZWarp, hBZ, hIni, hTer⟩
   have hlinksOld : Told.links = P.links ∪ {old} := by
-    simpa [Told] using FiniteTrace.links_snoc P old holdJoin holdAlt holdCompat
+    simp [Told]
   have hlinksNew : Tnew.links = P.links ∪ {new} := by
-    simpa [Tnew] using FiniteTrace.links_snoc P new hnewJoin hnewAlt hnewCompat
+    simp [Tnew]
   have hfirstOld : Told.firstLink = P.firstLink := by
-    simpa [Told] using FiniteTrace.firstLink_snoc P old holdJoin holdAlt holdCompat
+    simp [Told]
   have hfirstNew : Tnew.firstLink = P.firstLink := by
-    simpa [Tnew] using FiniteTrace.firstLink_snoc P new hnewJoin hnewAlt hnewCompat
+    simp [Tnew]
   have hinit : Tnew.initial = Told.initial := by
     rw [show Tnew.initial = P.initial by
-      simpa [Tnew] using FiniteTrace.initial_snoc P new hnewJoin hnewAlt hnewCompat]
+      simp [Tnew]]
     symm
-    simpa [Told] using FiniteTrace.initial_snoc P old holdJoin holdAlt holdCompat
+    simp [Told]
   have hlastNew : Tnew.lastLink = new := by
-    simpa [Tnew] using FiniteTrace.lastLink_snoc P new hnewJoin hnewAlt hnewCompat
+    simp [Tnew]
   have hterminal : Tnew.terminal = new.exit := by
-    simpa [Tnew] using FiniteTrace.terminal_snoc P new hnewJoin hnewAlt hnewCompat
+    simp [Tnew]
   refine ⟨Tnew, ⟨⟨hZWarp, ?_, ?_, ?_⟩, ?_⟩, hinit, hterminal⟩
   · intro k hk hkback
     change k ∈ Tnew.links at hk
@@ -557,7 +557,7 @@ theorem exists_isBracketSafe_forward_backward
     (hcompat : CompatibleInOrder True F R)
     (hFZ : IsFragmentOf F.path Z)
     (hRY : IsFragmentOf R.path Y)
-    (hFoff : Disjoint F.path.edgeSet (familyEdges Y))
+    (_hFoff : Disjoint F.path.edgeSet (familyEdges Y))
     (hFinitial : F.entry ∉ Γ.vertexSet Y) :
     ∃ T : FiniteTrace Γ.graph,
       IsBracketSafe Z Y (.finite T) ∧
@@ -567,7 +567,7 @@ theorem exists_isBracketSafe_forward_backward
   have hjoin₀ : T₀.terminal = R.entry := by
     simpa [T₀] using hjoin
   have halt₀ : T₀.lastLink.direction ≠ R.direction := by
-    simpa [T₀, hFdir, hRdir]
+    simp [T₀, hFdir, hRdir]
   have hcompat₀ : T₀.SnocCompatible R := by
     intro i
     have hi : i = 0 := Fin.eq_zero i
@@ -586,7 +586,7 @@ theorem exists_isBracketSafe_forward_backward
       exact ⟨0, by simp [T₀, FiniteTrace.singleton]⟩
   have hlinks : T.links = {F, R} := by
     rw [show T.links = T₀.links ∪ {R} by
-      simpa [T] using FiniteTrace.links_snoc T₀ R hjoin₀ halt₀ hcompat₀]
+      simp [T]]
     rw [hlinks₀]
     ext l
     simp [or_comm]
@@ -608,7 +608,7 @@ theorem exists_isBracketSafe_forward_backward
       simpa [T, T₀] using hFinitial
     · intro t ht hlast
       have hlastR : T.lastLink = R := by
-        simpa [T] using FiniteTrace.lastLink_snoc T₀ R hjoin₀ halt₀ hcompat₀
+        simp [T]
       change some T.lastLink.direction = some .forward at hlast
       rw [hlastR, hRdir] at hlast
       simp at hlast
@@ -675,8 +675,8 @@ theorem isBracketAlternating_snoc_forward_backward
     (hRdir : R.direction = .backward)
     (hFZ : IsFragmentOf F.path Z)
     (hRY : IsFragmentOf R.path Y)
-    (hFoff : Disjoint F.path.edgeSet (familyEdges Y))
-    (hcontacts : F.path.support ∩ Γ.vertexSet Y ⊆
+    (_hFoff : Disjoint F.path.edgeSet (familyEdges Y))
+    (_hcontacts : F.path.support ∩ Γ.vertexSet Y ⊆
       (AltPath.finite T).directionVertices .backward ∪ R.path.support) :
     IsBracketAlternating Z Y
       (.finite ((T.snoc F hTFjoin hTFalt hTFcompat).snoc R
@@ -684,15 +684,15 @@ theorem isBracketAlternating_snoc_forward_backward
   let TF := T.snoc F hTFjoin hTFalt hTFcompat
   let TFR := TF.snoc R hFRjoin hFRalt hFRcompat
   have hlinksTF : TF.links = T.links ∪ {F} := by
-    simpa [TF] using FiniteTrace.links_snoc T F hTFjoin hTFalt hTFcompat
+    simp [TF]
   have hlinksTFR : TFR.links = TF.links ∪ {R} := by
-    simpa [TFR] using FiniteTrace.links_snoc TF R hFRjoin hFRalt hFRcompat
+    simp [TFR]
   have hfirstTF : TF.firstLink = T.firstLink := by
-    simpa [TF] using FiniteTrace.firstLink_snoc T F hTFjoin hTFalt hTFcompat
+    simp [TF]
   have hfirstTFR : TFR.firstLink = TF.firstLink := by
-    simpa [TFR] using FiniteTrace.firstLink_snoc TF R hFRjoin hFRalt hFRcompat
+    simp [TFR]
   have hlastTFR : TFR.lastLink = R := by
-    simpa [TFR] using FiniteTrace.lastLink_snoc TF R hFRjoin hFRalt hFRcompat
+    simp [TFR]
   rcases hT.isBracketAlternating with ⟨hAlt, hforwardZ⟩
   rcases hAlt with ⟨hYWarp, hbackY, hfirstOutside, hlastOutside⟩
   change IsBracketAlternating Z Y (.finite TFR)
@@ -785,7 +785,7 @@ theorem contactMarkedSafeAlternatingDichotomy_of_infiniteLinks
     (hinitial : (f 0).entry = u)
     (hback : ∀ n, (f n).direction = .backward →
       IsFragmentOf (f n).path Y)
-    (hforwardOff : ∀ n, (f n).direction = .forward →
+    (_hforwardOff : ∀ n, (f n).direction = .forward →
       Disjoint (f n).path.edgeSet (familyEdges Y))
     (hcontacts :
       (⋃ n, ⋃ (_ : (f n).direction = .forward), (f n).path.support) ∩
@@ -999,7 +999,7 @@ theorem isBracketSwitchingAlternating_single_backward
     IsBracketSwitchingAlternating U Z
       (AltPath.single ⟨q, .backward, hneq⟩) := by
   refine ⟨isBracketAlternating_single_backward hZ q hqZ hneq, ?_, ?_⟩
-  · simp [ForwardLinksOff, AltPath.directionEdges]
+  · simp [ForwardLinksOff]
   · simp [ForwardVertexContactsCovered, AltPath.directionVertices]
 
 theorem safeAlternatingDichotomy_of_disjoint_path

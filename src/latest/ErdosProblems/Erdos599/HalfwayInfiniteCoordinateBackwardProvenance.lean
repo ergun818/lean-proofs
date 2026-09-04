@@ -38,8 +38,7 @@ noncomputable def coordinateIntervalParentProvenanceIndex
     (hchange : ∀ n, ∃ m, n < m ∧ S.colour m ≠ S.colour n)
     (a b : Nat) (hab : a < b)
     (P : (AltPath.infinite
-      (S.toInfiniteRunWalk hchange).toInfiniteTrace
-      ).IndexedBackwardProvenance Y I)
+      (S.toInfiniteRunWalk hchange).toInfiniteTrace).IndexedBackwardProvenance Y I)
     (i : Fin ((S.coordinateInterval a b hab).runs.length - 1 + 1)) : I :=
   Classical.choose (by
     have hmem := (S.toInfiniteRunWalk hchange).run_link_mem
@@ -56,8 +55,7 @@ theorem link_coordinateIntervalParentProvenanceIndex
     (hchange : ∀ n, ∃ m, n < m ∧ S.colour m ≠ S.colour n)
     (a b : Nat) (hab : a < b)
     (P : (AltPath.infinite
-      (S.toInfiniteRunWalk hchange).toInfiniteTrace
-      ).IndexedBackwardProvenance Y I)
+      (S.toInfiniteRunWalk hchange).toInfiniteTrace).IndexedBackwardProvenance Y I)
     (i : Fin ((S.coordinateInterval a b hab).runs.length - 1 + 1)) :
     P.link (S.coordinateIntervalParentProvenanceIndex
       hchange a b hab P i) =
@@ -94,11 +92,9 @@ noncomputable def coordinateIntervalIndexedBackwardProvenance
     (hchange : ∀ n, ∃ m, n < m ∧ S.colour m ≠ S.colour n)
     (a b : Nat) (hab : a < b)
     (P : (AltPath.infinite
-      (S.toInfiniteRunWalk hchange).toInfiniteTrace
-      ).IndexedBackwardProvenance Y I) :
+      (S.toInfiniteRunWalk hchange).toInfiniteTrace).IndexedBackwardProvenance Y I) :
     (AltPath.finite
-      (S.coordinateInterval a b hab).toFiniteRunWalk.toFiniteTrace
-      ).IndexedBackwardProvenance Y
+      (S.coordinateInterval a b hab).toFiniteRunWalk.toFiniteTrace).IndexedBackwardProvenance Y
         (Fin ((S.coordinateInterval a b hab).runs.length - 1 + 1)) where
   link i := ((S.coordinateInterval a b hab).toFiniteRunWalk.run i).link
   links_eq_range :=

@@ -56,7 +56,7 @@ roles even when the tail is a nil walk. -/
 def canonicalConsWalk (Z : FracturedWarp Gamma) :
     {x y z : V} → Gamma.graph.Adj x y → Walk Gamma.graph y z →
       Walk (web Gamma Z).graph (outgoing x) (incoming z)
-  | _, y, _, h, .nil =>
+  | _, _y, _, h, .nil =>
       .cons (canonicalProperAdj Z h) .nil
   | _, y, _, h, .cons hnext q =>
       .cons (canonicalProperAdj Z h)
@@ -373,7 +373,7 @@ theorem referenceLiftFinitePath_edge_roles_of_project_ne
       (project e.1, project e.2) ∈ p.edgeSet := by
   by_cases h : p.start = p.finish
   · rw [referenceLiftFinitePath, dif_pos h] at he
-    simpa [FinitePath.edgeSet, FinitePath.trivial] using he
+    simp [FinitePath.edgeSet, FinitePath.trivial] at he
   · rw [referenceLiftFinitePath, dif_neg h] at he
     exact activeLiftFinitePath_edge_roles_of_project_ne Z p h he hproper
 

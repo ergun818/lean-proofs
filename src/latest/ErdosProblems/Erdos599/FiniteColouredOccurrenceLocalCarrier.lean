@@ -46,7 +46,7 @@ theorem localOwnerCarrier_finite
 /-- A nontrivial finite `W` path starting at `a` lies on the unique `W`
 owner through `a`. -/
 theorem finiteForward_support_subset_coveredPathSupport
-    (hW : Gamma.IsWarp W) (hY : Gamma.IsWarp Y)
+    (hW : Gamma.IsWarp W) (_hY : Gamma.IsWarp Y)
     (p : FinitePath Gamma.graph) (hne : p.start ≠ p.finish)
     (hp : p.edgeSet ⊆ familyEdges W) {a : V} (ha : a = p.start) :
     p.support ⊆ coveredPathSupport hW a := by

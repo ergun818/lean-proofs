@@ -99,7 +99,7 @@ theorem noForwardSandwich_of_incidence_intervalConvex
     have hfinishNe : r.finish ≠ p.finish := by
       intro heq
       apply hfinishNotTerminal
-      exact ⟨.inl p, hpY, by simpa [heq]⟩
+      exact ⟨.inl p, hpY, by simp [heq]⟩
     obtain ⟨z, hzP⟩ :=
       FinitePath.exists_edge_to_of_mem_of_ne_start p
         (hrp.1 r.start_mem_support) hstartNe

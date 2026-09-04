@@ -56,7 +56,7 @@ theorem initialBoundaryRoof_of_waveExtraction
       ∀ (H : DWeb V) (v : V), H.IsUnhindered → v ∉ H.source →
         (H.delete {v}).IsHindered →
           ∃ U : Set H.DPath, H.IsWave U ∧ v ∈ H.terminalFrontier U)
-    (G : DWeb V) (hG : G.IsNormalized) {a : V} (ha : a ∈ G.source)
+    (G : DWeb V) (hG : G.IsNormalized) {a : V} (_ha : a ∈ G.source)
     {T : Set V} (hT : Maximal (G.IsTreeSet a) T)
     {y : V} (hy : y ∈ G.outerBoundary T) :
     let H := G.delete {a}
@@ -156,7 +156,6 @@ theorem proposition63_of_sectionSixAccumProvenance
   let X := base.sectionSixAccumClosure hNoEnter F K Y Q T y
   let M := base.sectionSixAccumCommonWave hNoEnter F K Y Q T y
   let H := base.quotient X
-
   have hprov : ∀ z ∈ H.vertexSet (H.essentialMeetingPaths M.1 X),
       ∃ n, z ∈ base.meetingVertexSet
         (base.sectionSixAccumStageLift
@@ -164,7 +163,6 @@ theorem proposition63_of_sectionSixAccumProvenance
         (base.sectionSixAccumStage hNoEnter F K Y Q T y n).carrier := by
     simpa only [base, hNoEnter, F, K, Y, Q, X, M, H] using
       provenance G hG ha hT y
-
   have hXcount : X.Countable := by
     exact base.sectionSixAccumClosure_countable hNoEnter
       (fun z ↦ boundaryObstruction_finite G hG hT z)
@@ -181,7 +179,6 @@ theorem proposition63_of_sectionSixAccumProvenance
         (liftDeleteQuotientFamily G a X M.1)) := by
     intro t ht
     exact (sectionSixAccumClosure_grounding G hG ha hT y t ht).2
-
   let : Nonempty V := ⟨a⟩
   obtain ⟨e, henum⟩ := Set.countable_iff_exists_subset_range.mp hXcount
   let R := SafeLinkGroundFinal.DWeb.groundRemoved G a X e
@@ -192,7 +189,6 @@ theorem proposition63_of_sectionSixAccumProvenance
   have hgroundQ : Disjoint ((base.delete R).vertexSet ground.1) Q := by
     exact SafeLinkGroundFinal.DWeb.groundWave_vertexSet_disjoint_nonBounded
       G hG ha hT.1 hXT e
-
   have h64 := assertion6_4_quotient G hG ha hT.1 hXcount hXT
     M.2 hclosed hground
   obtain ⟨U, W, hU, hWdef, hW, hWfinite, hWinitial,
@@ -204,7 +200,6 @@ theorem proposition63_of_sectionSixAccumProvenance
       hW.essentialWarpPart⟩
   let groundQ : ((base.delete Q).delete R).Wave :=
     restrictGroundWave base R Q ground hgroundQ
-
   have hboundaryGround : ∀ z ∈ G.outerBoundary T,
       z ∈ H.vertexSet (H.essentialMeetingPaths M.1 X) →
       z ∈ (base.delete R).roof
@@ -226,7 +221,6 @@ theorem proposition63_of_sectionSixAccumProvenance
     intro z hz hzM
     exact roof_restrictGroundWave base R Q ground hgroundQ
       (hboundaryGround z hz hzM)
-
   have hmeet : ∀ p ∈ Wessential.1, ∃ u ∈ p.support, u ∉ R ∧
       u ∈ ((base.delete Q).delete R).roof
         (((base.delete Q).delete R).terminalFrontier groundQ.1) := by
@@ -237,7 +231,6 @@ theorem proposition63_of_sectionSixAccumProvenance
     · exact hWancestry
     · exact h64.1
     · exact hboundaryGroundQ
-
   have hFyX : F y ⊆ X := by
     intro x hx
     apply base.sectionSixAccumStage_carrier_subset_closure
@@ -250,7 +243,6 @@ theorem proposition63_of_sectionSixAccumProvenance
       (fun J v hJ hv hdel ↦
         DWeb.exists_wave_terminalFrontier_of_delete_isHindered J hJ hv hdel)
       G hG hT hXT e henum hy (by simpa only [F] using hFyX)
-
   simpa only [Q, base] using
     (finalBoundaryWave_of_ground_and_quotient G hG hT.1 hXT hRX
       ground hgroundQ Wessential hmeet hyground)
@@ -280,7 +272,5 @@ theorem exists_safeTargetPath_of_boundaryWaves
   apply DWeb.HasSafeTargetPath.of_normalized
   exact exists_safeTargetPath_normalized_of_boundaryWaves boundaryWaves
     G.normalized G.normalized_isNormalized hG.normalized ha
-
 end SafeLink
-
 end Erdos599

@@ -43,7 +43,7 @@ variable {V : Type u} {I : Type v} {Gamma : DWeb V}
 abbrev Input (Gamma : DWeb V) (I : Type v) : Type (max u v) :=
   PopularAuxiliary.Input Gamma I
 
-abbrev LV (L : Input Gamma I) : Type (max u v) :=
+abbrev LV (_L : Input Gamma I) : Type (max u v) :=
   PopularAuxiliary.Input.LambdaVertex V I
 
 /-! ## Replacing the old initial gadget of an escape -/
@@ -82,7 +82,7 @@ theorem edge_not_mem_cut_of_not_mem_CE
 the gadget for its first edge.  No old vertex is inserted between two
 successive edge gadgets. -/
 def reverseGadgetCore (L : Input Gamma I) :
-    ∀ {a c b : V} (h : Gamma.graph.Adj a c)
+    ∀ {a c b : V} (_h : Gamma.graph.Adj a c)
       (q : Walk Gamma.graph c b),
       (a, c) ∈ L.familyEdges → q.edgeSet ⊆ L.familyEdges →
         Walk L.lambda.graph (.old b) (.edge a c)
@@ -125,15 +125,16 @@ theorem mem_reverseGadgetCore_support
         z = PopularAuxiliary.Input.LambdaVertex.edge e.1 e.2 := by
   induction q generalizing a with
   | nil =>
-      simp only [Walk.edgeSet_cons, Walk.edgeSet_nil, union_empty, mem_singleton_iff, exists_eq_left] at hz ⊢
-      exact hz
+      simp only [reverseGadgetCore, Walk.support_cons, Walk.support_nil, List.mem_cons,
+        List.not_mem_nil, or_false] at hz
+      simpa only [Walk.edgeSet_cons, Walk.edgeSet_nil, union_empty, mem_singleton_iff,
+        exists_eq_left] using hz
   | @cons c d b hcd r ih =>
       have hcdFamily : (c, d) ∈ L.familyEdges := hfamily (by simp)
       have hrFamily : r.edgeSet ⊆ L.familyEdges := by
         intro e he
         exact hfamily (by simp [he])
       simp only [reverseGadgetCore, Walk.support_concat,
-        Walk.support_cons, List.tail_cons, List.nil_append,
         List.mem_append, List.mem_cons, List.not_mem_nil] at hz
       rcases hz with hz | hz
       · rcases ih hcd hcdFamily hrFamily hz with hzold | ⟨e, he, hze⟩
@@ -161,7 +162,6 @@ theorem mem_reverseGadgetWalk_support
         intro e he
         exact hfamily (by simp [he])
       simp only [reverseGadgetWalk, Walk.support_concat,
-        Walk.support_cons, List.tail_cons, List.nil_append,
         List.mem_append, List.mem_cons, List.not_mem_nil] at hz
       rcases hz with hz | hz
       · rcases mem_reverseGadgetCore_support L h q hac hqFamily hz with
@@ -227,7 +227,7 @@ def raySegmentWalk (r : Ray Gamma.graph) (i : ℕ) :
       rw [raySegmentWalk, Walk.support_concat, ih]
       rw [@List.ofFn_succ_last V (n + 1)
         (fun k : Fin ((n + 1) + 1) ↦ r (i + k))]
-      congr 1 <;> simp [Nat.add_assoc]
+      congr 1
 
 theorem raySegmentWalk_isPath
     (r : Ray Gamma.graph) (i n : ℕ) :
@@ -251,7 +251,7 @@ theorem raySegmentPath_edgeSet_subset
   intro e he
   change e ∈ (raySegmentWalk r i n).edgeSet at he
   induction n with
-  | zero => simpa [raySegmentWalk, Walk.edgeSet] using he
+  | zero => simp [raySegmentWalk] at he
   | succ n ih =>
       rw [raySegmentWalk,
         Alternating.RelationComponents.walkEdgeSetConcatRC] at he
@@ -472,7 +472,7 @@ theorem exists_avoiding_reverse_to_relaxedEscape
         finish := E.route.finish
         walk := q.1
         isPath := q.2 }
-    refine ⟨r, by simpa only [r, hpFinish], E.target, ?_⟩
+    refine ⟨r, by simp only [r, hpFinish], E.target, ?_⟩
     change Disjoint r.support C
     rw [Set.disjoint_left]
     intro w hwr hwC

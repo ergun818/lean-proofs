@@ -190,7 +190,7 @@ at that stage.  Its proof only uses the source-roof identity, so it remains
 valid for the repaired deferred legality package. -/
 theorem HalfwayGeometry.limitWarp_hitStages_essential_prefix
     {L : G.KappaLadder kappa} (hL : HalfwayGeometry L)
-    {p : G.DPath} (hp : p ∈ L.limitWarp)
+    {p : G.DPath} (_hp : p ∈ L.limitWarp)
     (Sigma : Set (Ladder.Stage kappa)) :
     ∀ a ∈ L.hitStages Sigma p,
       ∃ q ∈ G.essentialWarpPart (L.warpAt a),

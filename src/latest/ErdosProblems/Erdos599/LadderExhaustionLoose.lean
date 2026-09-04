@@ -97,7 +97,7 @@ for the exhaustion calculation. -/
 theorem canonicalArrow_crossRoof
     (hNoEnter : G.NoEdgeEnters G.source)
     (s : G.LadderAccumulationState)
-    (hwarp : G.IsWarp s.1)
+    (_hwarp : G.IsWarp s.1)
     (hself : G.vertexSet s.1 ⊆ G.roof (G.terminalFrontier s.1))
     (hsource : G.source ⊆ G.roof (G.terminalFrontier s.1)) :
     G.initialSet (s.1 ∪ G.liftedLadderRungOfState s) ⊆
@@ -256,7 +256,7 @@ theorem not_adj_stageWebOf_activeLadderSuccessor_of_candidates_empty
     by_contra hyNot
     have hyCandidate : y ∈ G.ladderMarkerCandidatesOfState s :=
       ⟨⟨hyStageReach, hyOldQuotient⟩, hyNot⟩
-    simpa [hempty] using hyCandidate
+    simp [hempty] at hyCandidate
   have hyRoofT : y ∈ G.roof T := by
     rcases hyCovered with hySource | hyRung
     · have hyQSource : y ∈ Q.source := hySource.1
@@ -387,7 +387,7 @@ theorem stageWebOf_activeLadderSuccessor_surviving_reachable_subset_source
     by_contra hyNot
     have hyCandidate : y ∈ G.ladderMarkerCandidatesOfState s :=
       ⟨⟨hyStageReach, hyOldQuotient⟩, hyNot⟩
-    simpa [hempty] using hyCandidate
+    simp [hempty] at hyCandidate
   have hyRoofT : y ∈ G.roof T := by
     rcases hyCovered with hySource | hyRung
     · have hyQSource : y ∈ Q.source := hySource.1

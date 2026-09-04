@@ -42,7 +42,7 @@ variable {V : Type u} {I : Type v} {Gamma : DWeb V}
 abbrev Input (Gamma : DWeb V) (I : Type v) : Type (max u v) :=
   PopularAuxiliary.Input Gamma I
 
-abbrev LV (L : Input Gamma I) : Type (max u v) :=
+abbrev LV (_L : Input Gamma I) : Type (max u v) :=
   PopularAuxiliary.Input.LambdaVertex V I
 
 /-- Consecutive support entries of a walk are adjacent.  This local copy
@@ -162,7 +162,6 @@ theorem relaxedEscape_of_adjacent_ordinary
   · exact ⟨{
       route := q
       start_eq := Or.inr (by
-        change L.RelaxedForwardStep x q.start
         rw [hqStart]
         exact ⟨hyRight, hxy⟩)
       target := hqTarget
@@ -175,7 +174,6 @@ theorem relaxedEscape_of_adjacent_ordinary
     · exact ⟨{
         route := q
         start_eq := Or.inr (by
-          change L.RelaxedForwardStep x q.start
           rw [hqStart]
           exact ⟨Or.inr hyMarker, hxy⟩)
         target := hqTarget

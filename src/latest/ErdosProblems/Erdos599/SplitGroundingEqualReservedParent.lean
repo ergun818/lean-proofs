@@ -133,7 +133,7 @@ theorem splitReservedGroundedParent_nonempty
           splitInfinitePath], hstart⟩
       parent_exposed := ?_ }⟩
     right
-    simpa [GroundingSimultaneousDecode.exposedLadderPaths, hstart,
+    simp [hstart,
       SplitEqualInput, splitPopularAuxiliaryInput, splitInfinitePath]
 
 /-- The essential terminal cut is disjoint from every inessential component

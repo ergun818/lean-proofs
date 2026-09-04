@@ -124,4 +124,5 @@ theorem exists_breakIntervalMixedPiece
 end FiniteBreakMixedPiece
 end Erdos599.Blueprint.LinkageBlueprint
 
-#print axioms Erdos599.Blueprint.LinkageBlueprint.FiniteBreakMixedPiece.exists_breakIntervalMixedPiece
+open Erdos599.Blueprint.LinkageBlueprint.FiniteBreakMixedPiece in
+#print axioms exists_breakIntervalMixedPiece

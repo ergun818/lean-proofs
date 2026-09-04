@@ -33,7 +33,7 @@ variable {V : Type u} {I : Type v} {Gamma : DWeb V}
 abbrev Input (Gamma : DWeb V) (I : Type v) : Type (max u v) :=
   PopularAuxiliary.Input Gamma I
 
-abbrev LV (L : Input Gamma I) : Type (max u v) :=
+abbrev LV (_L : Input Gamma I) : Type (max u v) :=
   PopularAuxiliary.Input.LambdaVertex V I
 
 /-- The edge of a ray beginning at index `n`. -/
@@ -62,7 +62,7 @@ def raySegmentWalk (r : Ray Gamma.graph) (i : ℕ) :
       rw [raySegmentWalk, Walk.support_concat, ih]
       rw [@List.ofFn_succ_last V (n + 1)
         (fun k : Fin ((n + 1) + 1) ↦ r (i + k))]
-      congr 1 <;> simp [Nat.add_assoc]
+      congr 1
 
 theorem raySegmentWalk_isPath
     (r : Ray Gamma.graph) (i n : ℕ) :
@@ -133,7 +133,7 @@ theorem raySegmentPath_edgeSet_eq
         simpa [raySegmentPath, FinitePath.edgeSet] using ih
       rw [ih']
       ext e
-      simp only [Set.mem_union, Set.mem_setOf_eq, Set.mem_singleton_iff]
+      simp only [Set.mem_union, Set.mem_ofPred_eq, Set.mem_singleton_iff]
       constructor
       · rintro (⟨t, ht, rfl⟩ | rfl)
         · exact ⟨t, by omega, rfl⟩
@@ -177,7 +177,7 @@ theorem rayTail_edgeSet_subset (r : Ray Gamma.graph) (i : ℕ) :
     (r.tail i).edgeSet ⊆ r.edgeSet := by
   rintro e ⟨n, rfl⟩
   refine ⟨i + n, ?_⟩
-  simp [rayEdge, Nat.add_assoc]
+  simp [Nat.add_assoc]
 
 theorem rayTail_disjoint
     (L : Input Gamma I) (C : Set (LV L)) (r : Ray Gamma.graph)
@@ -306,7 +306,7 @@ theorem finiteRayFragment_mem_fragments
     apply raySegmentPath_disjoint L C r i (n - i)
     intro t ht
     apply hkeep (i + t)
-    · simpa [i]
+    · simp [i]
     · omega
   · change (raySegmentPath r i (n - i)).support =
       {y | y ∈ r.support ∧
@@ -334,7 +334,7 @@ theorem finiteRayFragment_mem_fragments
       · apply raySegmentPath_disjoint L C r i t
         intro s hs
         apply hkeep (i + s)
-        · simpa [i]
+        · simp [i]
         · omega
     · rintro ⟨⟨j, hjy⟩, q, hend, _, hqEdge, hqDisjoint⟩
       change q.edgeSet ⊆ r.edgeSet at hqEdge
@@ -354,7 +354,7 @@ theorem finiteRayFragment_mem_fragments
         refine ⟨j - i, by omega, ?_⟩
         calc
           y = r j := hjy.symm
-          _ = r (i + (j - i)) := by congr 1 <;> omega
+          _ = r (i + (j - i)) := by congr 1; omega
       · change q.start = y ∧ q.finish = r i at hbackward
         have hstart : r j = q.start := hjy.trans hbackward.1.symm
         have hfinish : r i = q.finish := hbackward.2.symm
@@ -409,7 +409,7 @@ theorem tailRayFragment_mem_fragments
       · apply raySegmentPath_disjoint L C r i t
         intro s _
         apply hkeep (i + s)
-        simpa [i]
+        simp [i]
     · rintro ⟨⟨j, hjy⟩, q, hend, _, hqEdge, hqDisjoint⟩
       change q.edgeSet ⊆ r.edgeSet at hqEdge
       rcases hend with hforward | hbackward
@@ -483,7 +483,7 @@ theorem exists_ray_fragment_containing
       refine ⟨k - i, by omega, ?_⟩
       calc
         x = r k := hkx.symm
-        _ = r (i + (k - i)) := by congr 1 <;> omega
+        _ = r (i + (k - i)) := by congr 1; omega
   · have hkeep : ∀ t, i ≤ t →
         rayEdge r t ∉ GroundingCut.CE L C := by
       intro t hit htCut

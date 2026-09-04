@@ -1232,7 +1232,7 @@ theorem isLinkable_of_localSpliceOperation
     (hSigma : Stationary.IsClubBelow kappa Sigma)
     (A₀ S : Set V) (F : Set G.DPath) (hA₀S : A₀ ⊆ S)
     (hF : IsLinkageBetween G (G.source \ A₀) G.target F)
-    (hY : G.IsWarp L.limitWarp)
+    (_hY : G.IsWarp L.limitWarp)
     {request : Ladder.Stage kappa →
       Option ↑(G.source ∩ twoWarpClosure G F L.limitWarp S)}
     (R : SliceSplice.LocalSpliceOperation G L Sigma

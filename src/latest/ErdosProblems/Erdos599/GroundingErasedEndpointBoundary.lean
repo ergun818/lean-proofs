@@ -147,9 +147,9 @@ theorem activeOldRequest_noOutgoing_forward
     (U : Popular.KappaIndexed L.lambda kappa)
     (S : Popular.PopularSeparator U)
     (K : GroundingSelection.Controls S)
-    (hfaith : ProxyPathsFaithful L)
+    (_hfaith : ProxyPathsFaithful L)
     (r : oldRequests L S.cut)
-    (hrActive : IsActiveControl U S K (oldRequestControl r)) :
+    (_hrActive : IsActiveControl U S K (oldRequestControl r)) :
     ¬ HasOutgoing (erasedSelectedRetainedForwardEdges U S K) r.1 := by
   exact oldRequest_noOutgoing_erasedSelectedRetainedForwardEdges U S K r
 
@@ -160,9 +160,9 @@ theorem activeOldRequest_noOutgoing_switched
     (U : Popular.KappaIndexed L.lambda kappa)
     (S : Popular.PopularSeparator U)
     (K : GroundingSelection.Controls S)
-    (hfaith : ProxyPathsFaithful L)
+    (_hfaith : ProxyPathsFaithful L)
     (r : oldRequests L S.cut)
-    (hrActive : IsActiveControl U S K (oldRequestControl r)) :
+    (_hrActive : IsActiveControl U S K (oldRequestControl r)) :
     ¬ HasOutgoing (erasedSelectedSwitchedEdges U S K) r.1 :=
   GroundingOldExitOutgoingObstruction.oldRequest_noOutgoing U S K r
 

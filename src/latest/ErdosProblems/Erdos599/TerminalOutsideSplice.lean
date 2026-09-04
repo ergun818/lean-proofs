@@ -50,8 +50,7 @@ theorem vertexSet_diamond
   ext x
   constructor
   · rintro ⟨p, hp, hxp⟩
-    simp only [diamond, diamondPaths, Set.mem_union, Set.mem_diff,
-      Set.mem_singleton_iff] at hp
+    simp only [diamond, diamondPaths] at hp
     rcases hp with hp | hp
     · exact Or.inl ⟨p, hp.1, hxp⟩
     · subst p
@@ -106,7 +105,7 @@ theorem edgeSet_diamond
   · intro he
     rcases Set.mem_iUnion.1 he with ⟨p, he⟩
     rcases Set.mem_iUnion.1 he with ⟨hp, hep⟩
-    simp only [diamond, diamondPaths, Set.mem_union, Set.mem_diff,
+    simp only [diamond, diamondPaths, Set.mem_union, Set.mem_sdiff,
       Set.mem_singleton_iff] at hp
     rcases hp with hp | hp
     · exact Or.inl <| Set.mem_iUnion.2 ⟨p,
@@ -127,7 +126,7 @@ theorem edgeSet_diamond
       · subst p
         refine Set.mem_iUnion.2 ⟨.inl (diamondPath q P hstart hqfresh),
           Set.mem_iUnion.2 ⟨?_, ?_⟩⟩
-        · simp [diamond, diamondPaths, hqfresh]
+        · simp [diamond, diamondPaths]
         · change e ∈ (diamondPath q P hstart _).edgeSet
           unfold diamondPath
           rw [FinitePath.edgeSet_appendFinite, liftOriginal_edgeSet]
@@ -137,7 +136,7 @@ theorem edgeSet_diamond
         exact Or.inl ⟨hpW, hpq⟩
     · refine Set.mem_iUnion.2 ⟨.inl (diamondPath q P hstart hqfresh),
         Set.mem_iUnion.2 ⟨?_, ?_⟩⟩
-      · simp [diamond, diamondPaths, hqfresh]
+      · simp [diamond, diamondPaths]
       · change e ∈ (diamondPath q P hstart _).edgeSet
         unfold diamondPath
         rw [FinitePath.edgeSet_appendFinite, liftOriginal_edgeSet]

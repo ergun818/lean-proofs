@@ -257,7 +257,7 @@ theorem state_limit
       (persistent := persistent) (B := B) slice closure)
     (request : Ordinal.{u} → V) (o : Ordinal.{u}) (ho : IsSuccLimit o) :
     R.state request o = R.limitOrSeed o ho
-      (fun a ha ↦ R.state request a) := by
+      (fun a _ha ↦ R.state request a) := by
   simpa [state] using
     (Ordinal.limitRecOn_limit o R.seed
       (fun a state ↦ R.successor.step state (request a))
@@ -367,7 +367,7 @@ noncomputable def repeatedRecursor
     (seed : IndexedTerminalResolutionState
       (Gamma := Gamma) (Y := Y) (kappa := kappa)
       (persistent := persistent) (B := B) slice closure)
-    (u₀ : V) (hu₀ : u₀ ∈ seed.blueprint.realPart.terminals)
+    (u₀ : V) (_hu₀ : u₀ ∈ seed.blueprint.realPart.terminals)
     (limit : ProperLimitCompiler
       (Gamma := Gamma) (Y := Y) (kappa := kappa)
       (persistent := persistent) (B := B) slice closure
@@ -441,7 +441,8 @@ noncomputable def repeatedChain
       exact R.state_extends_below
         (TerminalResolutionState.ReachableResolutionRecursor.repeatedOrdinalRequest
           (Z := Request) u₀) _
-        (TerminalResolutionState.ReachableResolutionRecursor.typein_add_one_lt_repeatedRequestLength j)
+        (TerminalResolutionState.ReachableResolutionRecursor.typein_add_one_lt_repeatedRequestLength
+          j)
         _ hordinal }
 
 /-- Name the actual request whenever it is currently terminal or already
@@ -512,7 +513,8 @@ theorem repeatedScheduled_mem_linked
     have hu₀linked : u₀ ∈ R.seed.linked :=
       successor.terminal_or_completed_linked seed u₀ (Or.inl hu₀)
     have hmono := R.state_linked_mono_below request (rank + 1)
-      (TerminalResolutionState.ReachableResolutionRecursor.typein_add_one_lt_repeatedRequestLength i)
+      (TerminalResolutionState.ReachableResolutionRecursor.typein_add_one_lt_repeatedRequestLength
+        i)
       0 bot_le
     exact hmono (by simpa only [R.state_zero request] using hu₀linked)
 
@@ -598,10 +600,12 @@ theorem repeatedChain_covers_stage_realTerminals
   have hready : x ∈
       (R.state request
         (Ordinal.typein
-          (fun a b : TerminalResolutionState.RepeatedRequestIndex Request ↦ a < b) j)).blueprint.realPart.terminals ∨
+          (fun a b : TerminalResolutionState.RepeatedRequestIndex Request ↦ a < b)
+            j)).blueprint.realPart.terminals ∨
       (R.state request
         (Ordinal.typein
-          (fun a b : TerminalResolutionState.RepeatedRequestIndex Request ↦ a < b) j)).blueprint.RealLinksTo x B := by
+          (fun a b : TerminalResolutionState.RepeatedRequestIndex Request ↦ a < b)
+            j)).blueprint.RealLinksTo x B := by
     apply TerminalResolutionState.realTerminal_or_realLinksTo_of_realExtends
       hextends.realExtends
     simpa only [repeatedChain, repeatedStage, R, request] using hx
@@ -612,10 +616,12 @@ theorem repeatedChain_covers_stage_realTerminals
   change (if (TerminalResolutionState.repeatedRequest j : Request).1 ∈
       (R.state request
         (Ordinal.typein
-          (fun a b : TerminalResolutionState.RepeatedRequestIndex Request ↦ a < b) j)).blueprint.realPart.terminals ∨
+          (fun a b : TerminalResolutionState.RepeatedRequestIndex Request ↦ a < b)
+            j)).blueprint.realPart.terminals ∨
       (R.state request
         (Ordinal.typein
-          (fun a b : TerminalResolutionState.RepeatedRequestIndex Request ↦ a < b) j)).blueprint.RealLinksTo
+          (fun a b : TerminalResolutionState.RepeatedRequestIndex Request ↦ a < b)
+            j)).blueprint.RealLinksTo
             (TerminalResolutionState.repeatedRequest j : Request).1 B
     then (TerminalResolutionState.repeatedRequest j : Request).1 else u₀) = x
   rw [hjvalue, if_pos hready]

@@ -251,13 +251,13 @@ theorem terminalFrontier_terminalSuffixFamily (X : Set V) (U : Set G.DPath) :
     have hfinish : p.finish = x := by
       simpa only [G.terminal?_finite, G.terminalRoofSuffix_finish,
         Option.some.injEq] using hqx
-    exact ⟨⟨.inl p, hpU, by simpa [hfinish]⟩, hfinish ▸ hpfin⟩
+    exact ⟨⟨.inl p, hpU, by simp [hfinish]⟩, hfinish ▸ hpfin⟩
   · rintro ⟨⟨q, hqU, hqx⟩, hx⟩
     rcases q with p | r
     · have hfinish : p.finish = x := Option.some.inj hqx
       refine ⟨.inl (G.terminalRoofSuffix X p),
         ⟨p, hqU, hfinish ▸ hx, rfl⟩, ?_⟩
-      simpa [hfinish]
+      simp [hfinish]
     · simp at hqx
 
 theorem initialSet_terminalSuffixFamily_subset

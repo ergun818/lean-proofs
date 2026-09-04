@@ -721,7 +721,7 @@ theorem project_image_support_endpointLiftFinitePath
   by_cases h : p.start = p.finish
   · rw [endpointLiftFinitePath, if_pos h]
     · ext x
-      simp only [support_expandFinitePath, Set.mem_image, Set.mem_setOf_eq]
+      simp only [support_expandFinitePath, Set.mem_image, Set.mem_ofPred_eq]
       constructor
       · rintro ⟨z, ⟨y, hy, hzy⟩, rfl⟩
         simpa only [mem_vertexBlock_project Z hzy] using hy
@@ -892,7 +892,7 @@ noncomputable def normalizeExactFinitePath (Delta : DWeb V)
     (normalizeExactFinitePath Delta p hsource htarget).support = p.support := by
   unfold normalizeExactFinitePath
   ext x
-  simp only [FinitePath.support, Set.mem_setOf_eq]
+  simp only [FinitePath.support, Set.mem_ofPred_eq]
   rw [Delta.support_normalizeWalk p.walk hsource htarget]
 
 theorem normalizeExactFinitePath_congr (Delta : DWeb V)

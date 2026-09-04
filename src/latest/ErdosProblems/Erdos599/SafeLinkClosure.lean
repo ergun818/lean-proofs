@@ -83,7 +83,7 @@ theorem hasFiniteCharacter_waveToLargerQuotient_basic
         G.quotient_quotient_eq_union X Y hNoEnter
       _ = G.quotient Y := by rw [Set.union_eq_right.mpr hXY]
   have htransport : G.waveToLargerQuotient hNoEnter hXY W = heq ▸ Z := by
-    simp only [waveToLargerQuotient, Z, heq]
+    simp only [waveToLargerQuotient, Z]
   rw [htransport]
   intro p hp
   exact hasFiniteCharacter_wave_cast
@@ -718,7 +718,7 @@ theorem safeLink_verticesMeeting_eq_verticesMeetingSet
   ext x
   simp only [SafeLink.verticesMeeting, SafeLink.pathsMeeting,
     verticesMeetingSet, pathsMeetingSet, vertexSet, Set.mem_iUnion,
-    Set.mem_setOf_eq]
+    Set.mem_ofPred_eq]
   aesop
 
 /-- Every finite accumulated arrow is below the final countable arrow in
@@ -770,8 +770,7 @@ theorem omegaArrowClosure_F
   have hmono : Monotone X :=
     G.omegaArrowClosureStage_mono W F K Y T Q y
   apply G.boundary_subset_iUnion_of_omegaArrow_step W X hmono Y F
-  · intro n z hzStage
-    intro x hxF
+  · intro n z hzStage x hxF
     change x ∈ G.omegaArrowClosureStage W F K Y T Q y (n + 1)
     rw [G.omegaArrowClosureStage_succ]
     exact Or.inl (Or.inl (Or.inr

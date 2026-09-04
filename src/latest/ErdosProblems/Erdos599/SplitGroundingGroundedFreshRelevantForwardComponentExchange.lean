@@ -198,10 +198,10 @@ theorem exists_splitGroundedFreshRelevantComponentExchangeWarp_of_segment_with_t
     have hpAllowed := hWInitial ▸ hpInitial
     simpa only [A, ExchangeSources] using hpAllowed
   have hqStart : q.start = p.initial := by
-    simpa only [q, FinitePath.appendFinite_start, hfrontStart]
+    simp only [q, FinitePath.appendFinite_start, hfrontStart]
   have hqFinish : q.finish = segment.finish := by
     have htailFinish : tail.finish = segment.finish := rfl
-    simpa only [q, FinitePath.appendFinite_finish, htailFinish]
+    simp only [q, FinitePath.appendFinite_finish, htailFinish]
   have hqEdges : q.edgeSet ⊆ E ∪ segment.edgeSet := by
     rw [show q.edgeSet = front.edgeSet ∪ tail.edgeSet by
       exact Blueprint.LinkageBlueprint.FinitePath.edgeSet_appendFinite
@@ -222,7 +222,7 @@ theorem exists_splitGroundedFreshRelevantComponentExchangeWarp_of_segment_with_t
       DWeb.IsWarp.initialSet_sdiff_singleton Gamma hW hpW, hqStart,
       hWInitial]
     ext x
-    simp only [Set.mem_insert_iff, Set.mem_diff, Set.mem_singleton_iff]
+    simp only [Set.mem_insert_iff, Set.mem_sdiff, Set.mem_singleton_iff]
     constructor
     · rintro (rfl | hx)
       · exact hpInitialA
@@ -272,7 +272,7 @@ theorem exists_splitGroundedFreshRelevantComponentExchangeWarp_of_segment_with_t
           rw [Gamma.terminalFrontier_insert_finite,
             DWeb.IsWarp.terminalFrontier_sdiff_singleton Gamma hW hpW rfl,
             hWTerminal]
-          simpa only [ExchangeSinkBoundary, hqFinish]
+          simp only [ExchangeSinkBoundary, hqFinish]
     | inr ray =>
         right
         have hremove : Gamma.terminalFrontier (W \ {Sum.inr ray}) =
@@ -290,7 +290,7 @@ theorem exists_splitGroundedFreshRelevantComponentExchangeWarp_of_segment_with_t
         change Gamma.terminalFrontier
             (insert (.inl q : Gamma.DPath) (W \ {Sum.inr ray})) = _
         rw [Gamma.terminalFrontier_insert_finite, hremove, hWTerminal]
-        simpa only [ExchangeSinkBoundary, hqFinish]
+        simp only [ExchangeSinkBoundary, hqFinish]
   refine ⟨W', q, hW', hW'Initial, Set.mem_insert _ _, hqFinish,
     hqEdges, ?_, hterminalUpdate⟩
   exact ⟨.inl q, Set.mem_insert _ _, congrArg some hqFinish⟩
@@ -508,14 +508,14 @@ theorem SplitGroundedFreshRelevantForwardFirstHit.exists_componentExchangeWarp
     have hpAllowed := hWInitial ▸ hpInitial
     simpa only [A, ExchangeSources] using hpAllowed
   have hqStart : q.start = p.initial := by
-    simpa only [q, FinitePath.appendFinite_start, hfrontStart]
+    simp only [q, FinitePath.appendFinite_start, hfrontStart]
   have hqFinish : q.finish = state.rootPath.finish := by
     have htailFinish : tail.finish = state.rootPath.finish := by
       calc
         tail.finish = oldSuffix.finish := rfl
         _ = state.rootPath.finish :=
           state.rootPath.suffixFrom_finish splice.incomingTail htailParent
-    simpa only [q, FinitePath.appendFinite_finish, htailFinish]
+    simp only [q, FinitePath.appendFinite_finish, htailFinish]
   have hqEdges : q.edgeSet ⊆ E ∪ state.rootPath.edgeSet := by
     rw [show q.edgeSet = front.edgeSet ∪ tail.edgeSet by
       exact Blueprint.LinkageBlueprint.FinitePath.edgeSet_appendFinite
@@ -537,7 +537,7 @@ theorem SplitGroundedFreshRelevantForwardFirstHit.exists_componentExchangeWarp
       DWeb.IsWarp.initialSet_sdiff_singleton Gamma hW hpW, hqStart,
       hWInitial]
     ext x
-    simp only [Set.mem_insert_iff, Set.mem_diff, Set.mem_singleton_iff]
+    simp only [Set.mem_insert_iff, Set.mem_sdiff, Set.mem_singleton_iff]
     constructor
     · rintro (rfl | hx)
       · exact hpInitialA
@@ -763,6 +763,8 @@ theorem SplitGroundedFreshRelevantForwardFirstHit.exists_componentExchangeWarp_t
       (hL := hL) (hground := hground) (hnotFresh := hnotFresh)
       (S := S) hNoEnter initial.parent htailRoot htailBeforeFinish
 
+namespace SplitGroundedFreshRelevantForwardFirstHit
+
 /-- The terminal-update form of the exact first-hit exchange, specialized
 to the selected exposed parent which caused the conflict.  Besides the new
 warp, it retains the literal old-parent segment inserted by the exchange.
@@ -770,7 +772,7 @@ Consequently, in the finite displaced-component case the final carrier
 contact is certified to lie on the selected owner's exposed parent.  This
 is the provenance needed by the route-order protection argument; it is not
 available from the generic segment exchange alone. -/
-theorem SplitGroundedFreshRelevantForwardFirstHit.exists_componentExchangeWarp_to_initialFinish_with_terminalUpdate
+theorem exists_componentExchangeWarp_to_initialFinish_with_terminalUpdate
     (hNoEnter : Gamma.NoEdgeEnters Gamma.source)
     (initial state : L.SplitGroundedFreshRelevantBackwardState
       (hL := hL) (hground := hground)
@@ -879,7 +881,7 @@ theorem SplitGroundedFreshRelevantForwardFirstHit.exists_componentExchangeWarp_t
     by_cases h : splice.incomingTail = initial.rootPath.finish
     · refine ⟨FinitePath.trivial Gamma.graph splice.incomingTail,
         FinitePath.trivial_start Gamma.graph splice.incomingTail, ?_, ?_⟩
-      · simpa only [FinitePath.trivial_finish, h]
+      · simp only [FinitePath.trivial_finish, h]
       · intro e he
         simp [FinitePath.edgeSet, FinitePath.trivial] at he
     · exact GroundingCutDecoder.exists_forward_segment_of_before
@@ -929,6 +931,8 @@ theorem SplitGroundedFreshRelevantForwardFirstHit.exists_componentExchangeWarp_t
           simpa only [hsegmentFinish] using hterminal⟩
     · right
       simpa only [hsegmentFinish] using hray
+
+end SplitGroundedFreshRelevantForwardFirstHit
 
 /-- The native-frontier boundary-departure branch performs the same genuine
 family exchange.  Its rooted incoming tail is retained, while the old
@@ -985,19 +989,19 @@ theorem exists_splitGroundedFreshRelevantBoundaryComponentExchangeWarp_to_initia
 end DWeb.KappaLadder
 end Erdos599
 
-#print axioms
-  Erdos599.DWeb.KappaLadder.exists_splitGroundedFreshRelevantComponentExchangeWarp_of_segment_with_terminalUpdate
-#print axioms
-  Erdos599.DWeb.KappaLadder.exists_splitGroundedFreshRelevantComponentExchangeWarp_of_segment
-#print axioms
-  Erdos599.DWeb.KappaLadder.exists_splitGroundedFreshRelevantComponentExchangeWarp_of_rooted_beforeEq
-#print axioms
-  Erdos599.DWeb.KappaLadder.SplitGroundedFreshRelevantForwardFirstHit.exists_componentExchangeWarp
-#print axioms
-  Erdos599.DWeb.KappaLadder.SplitGroundedFreshRelevantForwardFirstHit.exists_currentComponent_ending_at_finish
-#print axioms
-  Erdos599.DWeb.KappaLadder.SplitGroundedFreshRelevantForwardFirstHit.exists_componentExchangeWarp_to_initialFinish
-#print axioms
-  Erdos599.DWeb.KappaLadder.SplitGroundedFreshRelevantForwardFirstHit.exists_componentExchangeWarp_to_initialFinish_with_terminalUpdate
-#print axioms
-  Erdos599.DWeb.KappaLadder.exists_splitGroundedFreshRelevantBoundaryComponentExchangeWarp_to_initialFinish
+open Erdos599.DWeb.KappaLadder in
+#print axioms exists_splitGroundedFreshRelevantComponentExchangeWarp_of_segment_with_terminalUpdate
+open Erdos599.DWeb.KappaLadder in
+#print axioms exists_splitGroundedFreshRelevantComponentExchangeWarp_of_segment
+open Erdos599.DWeb.KappaLadder in
+#print axioms exists_splitGroundedFreshRelevantComponentExchangeWarp_of_rooted_beforeEq
+open Erdos599.DWeb.KappaLadder.SplitGroundedFreshRelevantForwardFirstHit in
+#print axioms exists_componentExchangeWarp
+open Erdos599.DWeb.KappaLadder.SplitGroundedFreshRelevantForwardFirstHit in
+#print axioms exists_currentComponent_ending_at_finish
+open Erdos599.DWeb.KappaLadder.SplitGroundedFreshRelevantForwardFirstHit in
+#print axioms exists_componentExchangeWarp_to_initialFinish
+open Erdos599.DWeb.KappaLadder.SplitGroundedFreshRelevantForwardFirstHit in
+#print axioms exists_componentExchangeWarp_to_initialFinish_with_terminalUpdate
+open Erdos599.DWeb.KappaLadder in
+#print axioms exists_splitGroundedFreshRelevantBoundaryComponentExchangeWarp_to_initialFinish

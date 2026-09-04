@@ -241,6 +241,7 @@ namespace GrowingWarpChain
 
 variable {I : Type v} [LinearOrder I] [Nonempty I] [IsDirectedOrder I]
 
+omit [Nonempty I] in
 /-- If an inessential component occurs literally at every stage of a tail,
 then it occurs literally and inessentially in the genuine threadwise direct
 limit, provided its old strict roof persists to that limit. -/

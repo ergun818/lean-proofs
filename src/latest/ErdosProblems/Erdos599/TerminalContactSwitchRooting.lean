@@ -88,7 +88,7 @@ theorem IsTerminalContactSwitching.oldTerminal_rooted
     change switchedEdges Z (.finite Q) ⊆
       familyEdges Z ∪ (AltPath.finite Q).directionEdges .forward
     rw [FiniteTrace.switchedEdges_eq_backward_sdiff_union_forward Q hQ]
-    exact Set.union_subset_union (Set.diff_subset) (Set.Subset.rfl)
+    exact Set.union_subset_union (Set.sdiff_subset) (Set.Subset.rfl)
   have hboundary : ∀ x, edgeBalance E x = 1 → x ∈ A := by
     intro x hx
     by_cases hxv : x = v
@@ -114,7 +114,7 @@ theorem IsTerminalContactSwitching.oldTerminal_rooted
         simp [propInt, hubal, huv] at hx
     · have hxbal : edgeBalance (familyEdges Z) x = 1 := by
         rw [hbalance] at hx
-        simp [propInt, hxv, hxu] at hx
+        simp only [propInt, hxv, ↓reduceIte, add_zero, hxu, sub_zero] at hx
         exact hx
       exact ⟨
         (mem_initialSet_iff_isolated_or_edgeBalance_eq_one_anyWarp

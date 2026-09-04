@@ -415,7 +415,7 @@ theorem edgeTagCarrier_injective_on_colour
       | inl j =>
           have hij : i = j :=
             C.z_injective hZ hY hroot (Subtype.ext hcarrier)
-          simpa [hij]
+          simp [hij]
       | inr j => simp [edgeTagColour] at hcolour
   | inr i =>
       cases b with
@@ -423,7 +423,7 @@ theorem edgeTagCarrier_injective_on_colour
       | inr j =>
           have hij : i = j :=
             C.y_injective hZ hY hroot (Subtype.ext hcarrier)
-          simpa [hij]
+          simp [hij]
 
 theorem edgeTagCarrier_mem_forward (a : EdgeTag)
     (hcolour : edgeTagColour a = .forward) :

@@ -951,7 +951,7 @@ theorem IsEdgeInterval.mem_of_between_positions [DecidableEq V]
     e ∈ E := by
   classical
   rcases hI with rfl | ⟨q, hsub, rfl⟩
-  · exact False.elim (by simpa using he₁)
+  · exact False.elim (by simp at he₁)
   · obtain ⟨r, rfl⟩ := Path.finite_of_isSubpathOf_finite hsub
     change e₁ ∈ r.edgeSet at he₁
     change e₂ ∈ r.edgeSet at he₂
@@ -1308,14 +1308,14 @@ theorem IsWarp.familyEdge_not_incident_isolated
     have hp : p = Γ.trivialPath v :=
       DWeb.IsWarp.eq_of_mem_support hY hpY htrivY (h ▸ hs.1) hvtriv
     rw [hp] at hep
-    simpa [DWeb.trivialPath, DirectedPath.Path.trivial,
-      DirectedPath.FinitePath.trivial, FinitePath.edgeSet] using hep
+    simp [DWeb.trivialPath, DirectedPath.Path.trivial,
+      DirectedPath.FinitePath.trivial, FinitePath.edgeSet] at hep
   · intro h
     have hp : p = Γ.trivialPath v :=
       DWeb.IsWarp.eq_of_mem_support hY hpY htrivY (h ▸ hs.2) hvtriv
     rw [hp] at hep
-    simpa [DWeb.trivialPath, DirectedPath.Path.trivial,
-      DirectedPath.FinitePath.trivial, FinitePath.edgeSet] using hep
+    simp [DWeb.trivialPath, DirectedPath.Path.trivial,
+      DirectedPath.FinitePath.trivial, FinitePath.edgeSet] at hep
 
 /-- Retained singleton components are disjoint from every switched edge. -/
 theorem IsSwitchingSafe.switchedEdge_not_incident_isolated
@@ -1647,7 +1647,7 @@ noncomputable def orbitWalk (O : ForwardOrientation D) (r : V) :
       rw [orbitWalk, Walk.support_concat, ih]
       rw [@List.ofFn_succ_last V (n + 1)
         (fun i : Fin ((n + 1) + 1) ↦ O.orbit r i)]
-      congr 1 <;> simp
+      congr 1
 
 theorem Walk.edgeSet_append {a b c : V} (p : Walk D a b) (q : Walk D b c) :
     (p.append q).edgeSet = p.edgeSet ∪ q.edgeSet := by
@@ -1680,7 +1680,7 @@ noncomputable def finiteOrbitPath {r : V} (hr : O.IsRoot r) (n : ℕ)
 noncomputable def infiniteOrbitRay {r : V} (hr : O.IsRoot r)
     (h : ∀ n : ℕ, O.HasNext (O.orbit r n)) : Ray D where
   toFun := O.orbit r
-  adj_succ n := O.edge_in_graph (O.orbit_edge (fun k _ ↦ h k))
+  adj_succ _n := O.edge_in_graph (O.orbit_edge (fun k _ ↦ h k))
   injective := O.orbit_injective_of_neverStops hr h
 
 theorem finiteOrbitPath_edgeSet_subset {r : V} (hr : O.IsRoot r) (n : ℕ)
@@ -1728,11 +1728,11 @@ theorem orbitWalk_edgeSet_eq {r : V} (n : ℕ) (h : O.Alive r n) :
     (O.orbitWalk r n h).edgeSet =
       {e | ∃ k < n, e = (O.orbit r k, O.orbit r (k + 1))} := by
   induction n with
-  | zero => simp [orbitWalk, Walk.edgeSet]
+  | zero => simp [orbitWalk]
   | succ n ih =>
       rw [orbitWalk.eq_def, Walk.edgeSet_concat, ih]
       ext e
-      simp only [Set.mem_union, Set.mem_setOf_eq, Set.mem_singleton_iff]
+      simp only [Set.mem_union, Set.mem_ofPred_eq, Set.mem_singleton_iff]
       constructor
       · rintro (⟨k, hk, rfl⟩ | rfl)
         · exact ⟨k, hk.trans (Nat.lt_succ_self n), rfl⟩
@@ -2083,7 +2083,7 @@ noncomputable def wellFoundedDepth (E : Set (V × V))
 theorem wellFoundedDepth_eq (E : Set (V × V))
     (hwf : WellFounded (fun x y ↦ (x, y) ∈ E)) (x : V) :
     wellFoundedDepth E hwf x =
-      if h : HasPredecessor E x then
+      if _h : HasPredecessor E x then
         wellFoundedDepth E hwf (chosenPred E x) + 1 else 0 := by
   rw [wellFoundedDepth, WellFounded.fix_eq]
 
@@ -2096,7 +2096,7 @@ noncomputable def wellFoundedRoot (E : Set (V × V))
 theorem wellFoundedRoot_eq (E : Set (V × V))
     (hwf : WellFounded (fun x y ↦ (x, y) ∈ E)) (x : V) :
     wellFoundedRoot E hwf x =
-      if h : HasPredecessor E x then
+      if _h : HasPredecessor E x then
         wellFoundedRoot E hwf (chosenPred E x) else x := by
   rw [wellFoundedRoot, WellFounded.fix_eq]
 

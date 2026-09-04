@@ -124,10 +124,10 @@ theorem exists_exchangeWarp_of_segment_with_terminalUpdate
       (DWeb.IsWarp.sdiff_singleton Gamma hW p) q hqDisjoint
   have hpInitial : p.initial ∈ Gamma.initialSet W := ⟨p, hpW, rfl⟩
   have hqStart : q.start = p.initial := by
-    simpa only [q, FinitePath.appendFinite_start, hfrontStart]
+    simp only [q, FinitePath.appendFinite_start, hfrontStart]
   have hqFinish : q.finish = segment.finish := by
     have htailFinish : tail.finish = segment.finish := rfl
-    simpa only [q, FinitePath.appendFinite_finish, htailFinish]
+    simp only [q, FinitePath.appendFinite_finish, htailFinish]
   have hqEdges : q.edgeSet ⊆ familyEdges W ∪ segment.edgeSet := by
     rw [show q.edgeSet = front.edgeSet ∪ tail.edgeSet by
       exact Blueprint.LinkageBlueprint.FinitePath.edgeSet_appendFinite
@@ -145,7 +145,7 @@ theorem exists_exchangeWarp_of_segment_with_terminalUpdate
     rw [Gamma.initialSet_insert_finite,
       DWeb.IsWarp.initialSet_sdiff_singleton Gamma hW hpW, hqStart]
     ext x
-    simp only [Set.mem_insert_iff, Set.mem_diff, Set.mem_singleton_iff]
+    simp only [Set.mem_insert_iff, Set.mem_sdiff, Set.mem_singleton_iff]
     constructor
     · rintro (rfl | hx)
       · exact hpInitial
@@ -176,7 +176,7 @@ theorem exists_exchangeWarp_of_segment_with_terminalUpdate
             (insert (.inl q : Gamma.DPath) (W \ {Sum.inl old})) = _
           rw [Gamma.terminalFrontier_insert_finite,
             DWeb.IsWarp.terminalFrontier_sdiff_singleton Gamma hW hpW rfl]
-          simpa only [hqFinish]
+          simp only [hqFinish]
     | inr ray =>
         right
         have hremove : Gamma.terminalFrontier (W \ {Sum.inr ray}) =
@@ -194,7 +194,7 @@ theorem exists_exchangeWarp_of_segment_with_terminalUpdate
         change Gamma.terminalFrontier
             (insert (.inl q : Gamma.DPath) (W \ {Sum.inr ray})) = _
         rw [Gamma.terminalFrontier_insert_finite, hremove]
-        simpa only [hqFinish]
+        simp only [hqFinish]
   refine ⟨W', q, hW', hW'Initial, Set.mem_insert _ _, ?_, hqFinish,
     hqEdges, ?_, hterminalUpdate⟩
   · simpa only [hqStart] using hpInitial

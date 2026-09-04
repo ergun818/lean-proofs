@@ -285,8 +285,8 @@ theorem mem_metLadderTrace_iff
       exact Set.mem_iUnion.2 ⟨Y, Set.mem_iUnion.2 ⟨hY, hxY⟩⟩
     · right
       cases hstart : q.start with
-      | old v => simp [exposedLadderPaths, hstart] at hY
-      | edge u v => simp [exposedLadderPaths, hstart] at hY
+      | old v => simp [hstart] at hY
+      | edge u v => simp [hstart] at hY
       | proxy i =>
           have hEq : Y = L.proxyPath i := by
             simpa [exposedLadderPaths, hstart] using hY
@@ -308,8 +308,8 @@ theorem proxyPath_mem_exposedLadderPaths_of_meets
     rcases hY with hY | hY
     · exact hY.1
     · cases hstart : q.start with
-      | old v => simp [exposedLadderPaths, hstart] at hY
-      | edge u v => simp [exposedLadderPaths, hstart] at hY
+      | old v => simp [hstart] at hY
+      | edge u v => simp [hstart] at hY
       | proxy j =>
           have hEq : Y = L.proxyPath j := by
             simpa [exposedLadderPaths, hstart] using hY
@@ -448,7 +448,7 @@ theorem componentCollidingIndices_nonstationary
         (componentCollidingPaths L F q)) := by
   apply PopularAuxiliary.Input.joinedFamily_initialIndices_nonstationary_of_meets_countable
     U (PopularSwitching.restrictPaths F (componentCollidingPaths L F q))
-    ((metLadderTrace_countable L q).mono (Set.diff_subset))
+    ((metLadderTrace_countable L q).mono (Set.sdiff_subset))
   · exact Set.disjoint_sdiff_left
   · intro p hp
     obtain ⟨x, hxtrace, hxp⟩ := hp.2.2
@@ -565,13 +565,13 @@ theorem strongFreshCandidates_nonempty
     intro b
     dsimp only [bad]
     cases hq : previous b.1 b.2 with
-    | none => simp [hq]
+    | none => simp
     | some q =>
         have hv := hprevious b.1 b.2
         cases hrb : GroundingAssembly.requestAt rank b.1 with
         | none =>
             simp only [StrongChoiceValidAt, hrb] at hv
-            exact False.elim (by simpa [hq] using hv)
+            exact False.elim (by simp [hq] at hv)
         | some rb =>
             simp only [StrongChoiceValidAt, hrb] at hv
             obtain ⟨q', hq', hq'fresh⟩ := hv

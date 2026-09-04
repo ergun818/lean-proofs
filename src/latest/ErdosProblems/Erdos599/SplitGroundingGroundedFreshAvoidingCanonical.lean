@@ -235,4 +235,5 @@ end Erdos599
 #print axioms Erdos599.DWeb.KappaLadder.splitGroundedFreshAvoidingCanonicalEdges_biUnique
 #print axioms Erdos599.DWeb.KappaLadder.splitGroundedFreshAvoidingCanonicalPath_no_hangingCollision
 #print axioms Erdos599.DWeb.KappaLadder.splitGroundedFreshAvoidingCanonicalBackwardOwner_rootPrefix
-#print axioms Erdos599.DWeb.KappaLadder.splitGroundedFreshAvoidingCanonicalAssertion822Output_or_obstruction
+open Erdos599.DWeb.KappaLadder in
+#print axioms splitGroundedFreshAvoidingCanonicalAssertion822Output_or_obstruction

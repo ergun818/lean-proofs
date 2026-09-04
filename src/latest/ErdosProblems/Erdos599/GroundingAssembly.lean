@@ -33,7 +33,7 @@ universe u
 
 variable {V I : Type u} {Gamma : DWeb V}
 
-abbrev LV (L : PopularAuxiliary.Input Gamma I) :=
+abbrev LV (_L : PopularAuxiliary.Input Gamma I) :=
   PopularAuxiliary.Input.LambdaVertex V I
 
 abbrev Path (L : PopularAuxiliary.Input Gamma I) :=
@@ -310,7 +310,7 @@ theorem freshCandidates_nonempty
     {U : Popular.KappaIndexed L.lambda kappa}
     (S : Popular.PopularSeparator U) (K : GroundingSelection.Controls S)
     (rank : Request L S.cut ↪ Below kappa) (a : Below kappa)
-    (r : Request L S.cut) (hra : requestAt rank a = some r)
+    (r : Request L S.cut) (_hra : requestAt rank a = some r)
     (previous : ∀ b : Below kappa, b < a → Option (Path L))
     (hprevious : ∀ b (hba : b < a),
       ChoiceValidAt S K rank b
@@ -328,13 +328,13 @@ theorem freshCandidates_nonempty
     dsimp only [bad]
     cases hq : previous b.1 b.2 with
     | none =>
-        simp [hq]
+        simp
     | some q =>
         have hv := hprevious b.1 b.2
         cases hrb : requestAt rank b.1 with
         | none =>
             simp only [ChoiceValidAt, hrb] at hv
-            exact False.elim (by simpa [hq] using hv)
+            exact False.elim (by simp [hq] at hv)
         | some rb =>
             simp only [ChoiceValidAt, hrb] at hv
             obtain ⟨q', hq', hq'fresh⟩ := hv

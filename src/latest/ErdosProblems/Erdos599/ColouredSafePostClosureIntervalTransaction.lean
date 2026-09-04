@@ -152,7 +152,7 @@ variable {seed : Set V} {z : V} {R : LimitClosure C seed}
 
 /-- The literal deferred survivor intervals between the current and native
 captured later stage. -/
-def intervalReference (T : NativePostClosureIntervalTransaction C seed z R) :
+def intervalReference (_T : NativePostClosureIntervalTransaction C seed z R) :
     Set Gamma.DPath :=
   SliceSegmentCore.liftStageFamily (nativeCapturedGeometry R).ladder
     (nativeCapturedGeometry R).oldStage

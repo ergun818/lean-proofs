@@ -89,7 +89,7 @@ theorem activeRequestAt_retainedForwardVertex_unrooted_outcome
     · exact False.elim <| hnot <|
         activeRequestAt_retainedForwardVertex_rooted_of_anchor_reachability
           U S K T c hinitial hbackward hx
-    · push_neg at hbackward
+    · push Not at hbackward
       obtain ⟨l, hlmem, hldir, parent, hparent, hsub,
         hnotRooted⟩ := hbackward
       refine .backwardOwner l parent hlmem hldir hparent hsub ?_

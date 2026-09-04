@@ -206,7 +206,6 @@ theorem edgeSet_projectedPath (S : OutsideSplitWarp W X)
   rw [edgeSet_mapWalk]
   congr 1
   ext e
-  change e ∈ (S.finitePath p).walk.edgeSet ↔ e ∈ p.1.edgeSet
   rw [← finitePath_eq S p]
   rfl
 
@@ -326,7 +325,6 @@ theorem terminalFrontier_projectedPaths (S : OutsideSplitWarp W X) :
       rw [← S.finitePath_eq p]
       rfl
     refine ⟨(S.finitePath p).finish, ⟨p.1, p.property, hpterm⟩, ?_⟩
-    change project (S.finitePath p).finish = x
     change some (project (S.finitePath p).finish) = some x at hqx
     exact Option.some.inj hqx
   · rintro ⟨z, ⟨q, hqS, hqz⟩, rfl⟩
@@ -597,7 +595,7 @@ theorem support_inter_projectedPath_eq_singleton
             _ = project q.1.initial := congrArg project hyBackward.2
             _ = project zq := congrArg project hxBackward.2.symm
             _ = x := hzqProject
-    simpa [hyx]
+    simp [hyx]
   · intro y hy
     have hyx : y = x := Set.mem_singleton_iff.1 hy
     subst y

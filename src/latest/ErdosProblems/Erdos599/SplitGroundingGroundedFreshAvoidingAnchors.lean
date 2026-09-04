@@ -197,7 +197,7 @@ theorem exists_splitGroundedFreshAvoidingInitialDeletedData
   · exact Or.inl hCE
   · exact Or.inr (Or.inl hbackward)
   · exact Or.inr (Or.inr hconflict)
-  · exact False.elim (by simpa using huEmpty)
+  · exact False.elim (by simp at huEmpty)
 
 /-- Positive finite data behind an unrooted selected backward owner in the
 fresh-avoiding canonical relation. -/
@@ -301,7 +301,7 @@ theorem exists_splitGroundedFreshAvoidingBackwardDeletedData
   · exact Or.inl hCE
   · exact Or.inr (Or.inl hbackward)
   · exact Or.inr (Or.inr hconflict)
-  · exact False.elim (by simpa using huEmpty)
+  · exact False.elim (by simp at huEmpty)
 
 end DWeb.KappaLadder
 end Erdos599

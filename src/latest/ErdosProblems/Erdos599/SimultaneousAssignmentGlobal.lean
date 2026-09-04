@@ -386,7 +386,7 @@ theorem simultaneousAssignment_of_safeAlternatingDichotomy_global
     let Zz : Set Γ.DPath := macroOrbit Z Y p
     let Yz : Set Γ.DPath := macroReference Z Y p
     have hpinit : p.1.initial = z.1 := by
-      simpa [p] using initialPath_initial Z ⟨z.1, z.property.1⟩
+      simp [p]
     have hpOutside : p.1.initial ∉ Γ.vertexSet Y := by
       simpa [p] using hrootOutside z
     have hZzsource : Γ.initialSet Zz ⊆ Γ.source := by

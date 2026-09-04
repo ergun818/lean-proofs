@@ -256,7 +256,7 @@ theorem isActiveControl_iff
     (K : GroundingSelection.Controls S)
     (c : ControlRequest L S.cut) :
     IsActiveControl U S K c ↔
-      ∀ d (hd : controlRank U S d < controlRank U S c),
+      ∀ d (_hd : controlRank U S d < controlRank U S c),
         IsActiveControl U S K d →
           ¬ HitsEarlierExposedComponent U S K d c := by
   unfold IsActiveControl
@@ -290,7 +290,7 @@ theorem exists_active_earlier_of_not_active
       IsActiveControl U S K d ∧
       HitsEarlierExposedComponent U S K d c := by
   rw [isActiveControl_iff] at hc
-  push_neg at hc
+  push Not at hc
   obtain ⟨d, hd, hactive, hhit⟩ := hc
   exact ⟨d, hd, hactive, hhit⟩
 
@@ -562,7 +562,7 @@ theorem isActiveControlAt_iff
     (K : GroundingSelection.Controls S)
     (T : Set V) (c : ControlRequest L S.cut) :
     IsActiveControlAt U S K T c ↔
-      ∀ d (hd : controlRank U S d < controlRank U S c),
+      ∀ d (_hd : controlRank U S d < controlRank U S c),
         IsActiveControlAt U S K T d →
           ¬ HitsEarlierExposedComponentAt U S K T d c := by
   unfold IsActiveControlAt
@@ -608,7 +608,7 @@ theorem exists_active_earlierAt_of_not_active
       IsActiveControlAt U S K T d ∧
       HitsEarlierExposedComponentAt U S K T d c := by
   rw [isActiveControlAt_iff] at hc
-  push_neg at hc
+  push Not at hc
   obtain ⟨d, hd, hactive, hhit⟩ := hc
   exact ⟨d, hd, hactive, hhit⟩
 

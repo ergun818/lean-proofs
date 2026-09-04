@@ -155,13 +155,15 @@ theorem intervalReferenceOwner_injective
       ((nativeCapturedGeometry R).deferredOldStageRealization.toSegmentRealization.carrier_mem a)
       ((nativeCapturedGeometry R).deferredOldStageRealization.toSegmentRealization.carrier_mem b)
     calc
-      ((nativeCapturedGeometry R).deferredOldStageRealization.toSegmentRealization.carrier a).initial =
+      ((nativeCapturedGeometry R).deferredOldStageRealization.toSegmentRealization.carrier
+        a).initial =
           (T.limitOwnerForIntervalSource a).initial :=
         Gamma.extends_initial (T.carrier_extends_limitOwnerForIntervalSource a)
       _ = (T.limitOwnerForIntervalSource b).initial := by
         exact congrArg DirectedPath.Path.initial howner
       _ =
-          ((nativeCapturedGeometry R).deferredOldStageRealization.toSegmentRealization.carrier b).initial :=
+          ((nativeCapturedGeometry R).deferredOldStageRealization.toSegmentRealization.carrier
+            b).initial :=
         (Gamma.extends_initial
           (T.carrier_extends_limitOwnerForIntervalSource b)).symm
   have hab : a = b :=
@@ -429,9 +431,9 @@ theorem exists_intervalReference_containing_of_limitWarp_hits_frontiers
 end NativePostClosureIntervalTransaction
 
 #print axioms NativePostClosureIntervalTransaction.intervalGlobalReferenceEmbedding
-#print axioms
-  NativePostClosureIntervalTransaction.exists_intervalReference_terminal_of_limitWarp_hits_frontiers
-#print axioms
-  NativePostClosureIntervalTransaction.exists_intervalReference_containing_of_limitWarp_hits_frontiers
+open NativePostClosureIntervalTransaction in
+#print axioms exists_intervalReference_terminal_of_limitWarp_hits_frontiers
+open NativePostClosureIntervalTransaction in
+#print axioms exists_intervalReference_containing_of_limitWarp_hits_frontiers
 
 end Erdos599.Blueprint.LinkageBlueprint

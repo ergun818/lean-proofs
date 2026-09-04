@@ -82,5 +82,5 @@ end Erdos599
 
 #print axioms
   Erdos599.DWeb.KappaLadder.Deferred.DeferredCutAvoidingRecord.relevantPruningData
-#print axioms
-  Erdos599.DWeb.KappaLadder.Deferred.DeferredCutAvoidingRecord.fragment_meeting_escape_mem_relevantG0
+open Erdos599.DWeb.KappaLadder.Deferred.DeferredCutAvoidingRecord in
+#print axioms fragment_meeting_escape_mem_relevantG0

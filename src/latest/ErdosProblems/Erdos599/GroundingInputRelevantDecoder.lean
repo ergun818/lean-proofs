@@ -581,7 +581,7 @@ private theorem endpointOpen_old_not_mem_cut_before
 
 private theorem endpointOpen_state_position_ne_zero
     (D : Data J C) (hcovered : SourceCovered J)
-    (hC : Popular.IsSeparator J.lambda C)
+    (_hC : Popular.IsSeparator J.lambda C)
     (R : FinitePath Gamma.graph) (hsource : R.start ∈ Gamma.source)
     (hfinish : R.finish ∉ Gamma.source)
     (hfirst : ∀ {x : V}, x ∈ R.walk.support.dropLast →

@@ -242,7 +242,7 @@ theorem IsNormalized.terminal?_eq_of_mem_path
     Γ.terminal? p = some z := by
   rcases p with p | r
   · have hz := hΓ.eq_finish_of_mem_walk p.walk hzp hzB
-    simpa [hz]
+    simp [hz]
   · rcases hzp with ⟨n, rfl⟩
     exact False.elim ((hΓ (r.adj_succ n)).2 hzB)
 

@@ -76,7 +76,8 @@ private abbrev ForwardDescentSources : Set V :=
 rooted incoming tail immediately roots the selected forward head.  An
 unrooted tail produces a strictly smaller state and invokes the existing
 well-founded normalizer on that state. -/
-theorem SplitGroundedFreshRelevantBackwardNormalizedOutcome.forwardSplice_headRooted_or_strictDescent
+theorem
+  SplitGroundedFreshRelevantBackwardNormalizedOutcome.forwardSplice_headRooted_or_strictDescent
     (state : L.SplitGroundedFreshRelevantBackwardState
       (hL := hL) (hground := hground)
       (hnotFresh := hnotFresh) (S := S))
@@ -891,7 +892,7 @@ theorem SplitGroundedFreshRelevantForwardFirstHit.exists_source_to_parent_finish
         tail.finish = oldSuffix.finish := rfl
         _ = state.rootPath.finish :=
           state.rootPath.suffixFrom_finish splice.incomingTail htailParent
-    simpa only [q, FinitePath.appendFinite_finish, htailFinish]
+    simp only [q, FinitePath.appendFinite_finish, htailFinish]
   · rw [show q.edgeSet = front.edgeSet ∪ tail.edgeSet by
       exact Blueprint.LinkageBlueprint.FinitePath.edgeSet_appendFinite
         front tail hfrontFinish.symm hinter]
@@ -1112,7 +1113,7 @@ theorem splitGroundedFreshRelevant_forwardLinkFinish_advances
   | trivial v =>
       have : l ∈ (∅ : Set (Alternating.Link Gamma.graph)) := by
         simpa only [C, hpath, AltPath.links] using hl
-      exact False.elim (by simpa using this)
+      exact False.elim (by simp at this)
   | infinite Q =>
       have hfalse : (none : Option V) =
           some (requestExit (chosenRequest owner.1)) := by
@@ -1170,8 +1171,8 @@ theorem splitGroundedFreshRelevant_forwardLinkFinish_advances
               simpa only [hstartEq, hterminal] using hjRoot
             · right
               right
-              exact ⟨Q, i, j, Q.link j, parent, by simpa only [C] using hpath,
-                hiLink, rfl, (by show i.1 < j.1; simpa only [j] using hiLt), hjDir,
+              exact ⟨Q, i, j, Q.link j, parent, by simp only,
+                hiLink, rfl, (by change i.1 < j.1; simpa only [j] using hiLt), hjDir,
                 hparent, hsub, hjRoot⟩
         | forward =>
             cases hlastIndex : Q.lastIndex with
@@ -1184,7 +1185,7 @@ theorem splitGroundedFreshRelevant_forwardLinkFinish_advances
                 have hlastEq : Q.link last = Q.lastLink := by
                   apply congrArg Q.link
                   apply Fin.ext
-                  simp only [last, FiniteTrace.lastLink, hlastIndex]
+                  simp only [last, hlastIndex]
                 have hlastDir' : (Q.link last).direction = .forward := by
                   rw [hlastEq]
                   exact hlastDir
@@ -1270,7 +1271,7 @@ theorem splitGroundedFreshRelevant_forwardLinkFinish_advances
                   right
                   right
                   exact ⟨Q, i, pred, Q.link pred, parent,
-                    by simpa only [C] using hpath, hiLink, rfl,
+                    by simp only, hiLink, rfl,
                     hiPred, hpredDir, hparent, hsub, hpredRoot⟩
 
 /-- Exact route-order form of `splitGroundedFreshRelevant_forwardLinkFinish_advances`.
@@ -1338,7 +1339,7 @@ theorem splitGroundedFreshRelevant_forwardLinkFinish_advances_exact
   | trivial v =>
       have : l ∈ (∅ : Set (Alternating.Link Gamma.graph)) := by
         simpa only [C, hpath, AltPath.links] using hl
-      exact False.elim (by simpa using this)
+      exact False.elim (by simp at this)
   | infinite Q =>
       have hfalse : (none : Option V) =
           some (requestExit (chosenRequest owner.1)) := by
@@ -1396,8 +1397,8 @@ theorem splitGroundedFreshRelevant_forwardLinkFinish_advances_exact
               simpa only [hstartEq, hterminal] using hjRoot
             · right
               right
-              exact ⟨Q, i, j, Q.link j, parent, by simpa only [C] using hpath,
-                hiLink, rfl, (by show i.1 < j.1; simpa only [j] using hiLt), hjDir,
+              exact ⟨Q, i, j, Q.link j, parent, by simp only,
+                hiLink, rfl, (by change i.1 < j.1; simpa only [j] using hiLt), hjDir,
                 hparent, hsub, hjRoot⟩
         | forward =>
             cases hlastIndex : Q.lastIndex with
@@ -1410,7 +1411,7 @@ theorem splitGroundedFreshRelevant_forwardLinkFinish_advances_exact
                 have hlastEq : Q.link last = Q.lastLink := by
                   apply congrArg Q.link
                   apply Fin.ext
-                  simp only [last, FiniteTrace.lastLink, hlastIndex]
+                  simp only [last, hlastIndex]
                 have hlastDir' : (Q.link last).direction = .forward := by
                   rw [hlastEq]
                   exact hlastDir
@@ -1496,7 +1497,7 @@ theorem splitGroundedFreshRelevant_forwardLinkFinish_advances_exact
                   right
                   right
                   exact ⟨Q, i, pred, Q.link pred, parent,
-                    by simpa only [C] using hpath, hiLink, rfl,
+                    by simp only, hiLink, rfl,
                     hiPred, hpredDir, hparent, hsub, hpredRoot⟩
 
 
@@ -1778,7 +1779,8 @@ progress, rather than a stranded obstruction.  If its frontier tail is not
 already rooted, the initial segment ending at that tail has a last deleted
 head strictly before the old one.  This produces the same-parent state used
 by the established well-founded normalizer. -/
-theorem SplitGroundedFreshRelevantBackwardNormalizedOutcome.boundaryDeparture_rooted_or_strictDescent
+theorem
+  SplitGroundedFreshRelevantBackwardNormalizedOutcome.boundaryDeparture_rooted_or_strictDescent
     (state : L.SplitGroundedFreshRelevantBackwardState
       (hL := hL) (hground := hground)
       (hnotFresh := hnotFresh) (S := S))
@@ -1786,7 +1788,7 @@ theorem SplitGroundedFreshRelevantBackwardNormalizedOutcome.boundaryDeparture_ro
     (incoming_mem : (tail, state.deleted.head) ∈ state.rootPath.edgeSet)
     (_residual : (tail, state.deleted.head) ∈ residualLadderEdges
       (ForwardDescentIndexed (L := L) (hL := hL) (hground := hground)) S)
-    (tail_mem : tail ∈ ForwardDescentFrontier
+    (_tail_mem : tail ∈ ForwardDescentFrontier
       (L := L) (hL := hL) (S := S)) :
     (∃ a ∈ ForwardDescentSources
         (L := L) (hL := hL) (hground := hground)
@@ -1966,7 +1968,7 @@ theorem splitGroundedFreshRelevant_backwardLinkStart_advances_or_backwardNormali
   | trivial v =>
       have : link ∈ (∅ : Set (Alternating.Link Gamma.graph)) := by
         simpa only [C, hpath, AltPath.links] using hlink
-      exact False.elim (by simpa using this)
+      exact False.elim (by simp at this)
   | infinite Q =>
       have hfalse : (none : Option V) =
           some (requestExit (chosenRequest owner.1)) := by
@@ -2048,33 +2050,33 @@ theorem splitGroundedFreshRelevant_backwardLinkStart_advances_or_backwardNormali
             have hi'k : i' = k := finiteTrace_link_injective Q hi'
             have hij' : i < j := by
               rw [hi'k] at hij
-              exact lt_trans (by show i.1 < k.1; simp only [k]; omega) hij
+              exact lt_trans (by change i.1 < k.1; simp only [k]; omega) hij
             exact Or.inr (Or.inr ⟨Q, i, j, b, parent, state,
-              by simpa only [C] using hpath, hiLink, hj, hij', hbdir,
+              by simp only, hiLink, hj, hij', hbdir,
               hparent, hbsub, hcontrol, hstateParent, hstate⟩)
 
 end DWeb.KappaLadder
 end Erdos599
 
-#print axioms
-  Erdos599.DWeb.KappaLadder.SplitGroundedFreshRelevantBackwardNormalizedOutcome.forwardSplice_headRooted_or_strictDescent
-#print axioms
-  Erdos599.DWeb.KappaLadder.SplitGroundedFreshRelevantBackwardNormalizedOutcome.forwardSplice_headRoot_advances_exact
-#print axioms
-  Erdos599.DWeb.KappaLadder.SplitGroundedFreshRelevantForwardFirstHit.conflictTail_rooted
-#print axioms
-  Erdos599.DWeb.KappaLadder.SplitGroundedFreshRelevantForwardFirstHit.exists_source_to_parent_finish_exchangePath
-#print axioms
-  Erdos599.DWeb.KappaLadder.SplitGroundedFreshRelevantBackwardNormalizedOutcome.forwardSplice_headRoot_advances
+open Erdos599.DWeb.KappaLadder.SplitGroundedFreshRelevantBackwardNormalizedOutcome in
+#print axioms forwardSplice_headRooted_or_strictDescent
+open Erdos599.DWeb.KappaLadder.SplitGroundedFreshRelevantBackwardNormalizedOutcome in
+#print axioms forwardSplice_headRoot_advances_exact
+open Erdos599.DWeb.KappaLadder.SplitGroundedFreshRelevantForwardFirstHit in
+#print axioms conflictTail_rooted
+open Erdos599.DWeb.KappaLadder.SplitGroundedFreshRelevantForwardFirstHit in
+#print axioms exists_source_to_parent_finish_exchangePath
+open Erdos599.DWeb.KappaLadder.SplitGroundedFreshRelevantBackwardNormalizedOutcome in
+#print axioms forwardSplice_headRoot_advances
 #print axioms
   Erdos599.DWeb.KappaLadder.splitGroundedFreshRelevant_forwardLinkFinish_advances
 #print axioms
   Erdos599.DWeb.KappaLadder.splitGroundedFreshRelevant_forwardLinkFinish_advances_exact
-#print axioms
-  Erdos599.DWeb.KappaLadder.splitGroundedFreshRelevant_forwardLinkFinish_advances_or_backwardNormalization
-#print axioms
-  Erdos599.DWeb.KappaLadder.splitGroundedFreshRelevant_forwardLinkFinish_advances_or_backwardNormalization_exact
-#print axioms
-  Erdos599.DWeb.KappaLadder.SplitGroundedFreshRelevantBackwardNormalizedOutcome.boundaryDeparture_rooted_or_strictDescent
-#print axioms
-  Erdos599.DWeb.KappaLadder.splitGroundedFreshRelevant_backwardLinkStart_advances_or_backwardNormalization
+open Erdos599.DWeb.KappaLadder in
+#print axioms splitGroundedFreshRelevant_forwardLinkFinish_advances_or_backwardNormalization
+open Erdos599.DWeb.KappaLadder in
+#print axioms splitGroundedFreshRelevant_forwardLinkFinish_advances_or_backwardNormalization_exact
+open Erdos599.DWeb.KappaLadder.SplitGroundedFreshRelevantBackwardNormalizedOutcome in
+#print axioms boundaryDeparture_rooted_or_strictDescent
+open Erdos599.DWeb.KappaLadder in
+#print axioms splitGroundedFreshRelevant_backwardLinkStart_advances_or_backwardNormalization

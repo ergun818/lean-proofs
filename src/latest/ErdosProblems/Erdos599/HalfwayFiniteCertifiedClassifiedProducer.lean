@@ -84,7 +84,7 @@ theorem exists_breakIntervalMixedPiece_with_certificate
     refine ⟨P, rfl, ?_⟩
     intro e he
     change e ∈ (∅ : Set (V × V)) at he
-    exact (by simpa using he : False).elim
+    simp at he
   · by_cases huY :
         S.finiteWalk.breakPoint X i.castSucc ∈ Gamma.vertexSet Y
     · let owner : ClosedReferenceOwner Y X
@@ -112,7 +112,7 @@ theorem exists_breakIntervalMixedPiece_with_certificate
       refine ⟨P, rfl, ?_⟩
       intro e he
       change e ∈ (∅ : Set (V × V)) at he
-      exact (by simpa using he : False).elim
+      simp at he
     · by_cases hvY :
           S.finiteWalk.breakPoint X i.succ ∈ Gamma.vertexSet Y
       · let owner : ClosedReferenceOwner Y X
@@ -140,7 +140,7 @@ theorem exists_breakIntervalMixedPiece_with_certificate
         refine ⟨P, rfl, ?_⟩
         intro e he
         change e ∈ (∅ : Set (V × V)) at he
-        exact (by simpa using he : False).elim
+        simp at he
       · have hsafe : IsSafe Y (S.breakIntervalPath X i) := by
           apply (hinternal huY hvY).isSafe_of_exposedEndpoints
           · simpa only [S.breakIntervalPath_initial] using huY

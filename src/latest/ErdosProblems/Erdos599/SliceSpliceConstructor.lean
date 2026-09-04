@@ -916,7 +916,7 @@ theorem eq_of_extends_of_terminal_mem_target
 the endpoint-purity required by the final `A`--target linkage. -/
 theorem targetPathPure_of_tightLinkage
     {Gamma : DWeb V} (hNorm : Gamma.IsNormalized)
-    {A R : Set V} (hA : A ⊆ Gamma.source)
+    {A R : Set V} (_hA : A ⊆ Gamma.source)
     {W : Set Gamma.DPath} (hW : TightLinkageBetween Gamma A R W)
     {p : Gamma.DPath} (hp : p ∈ W) {b : V}
     (hb : b ∈ Gamma.target) (hpterm : Gamma.terminal? p = some b) :
@@ -998,7 +998,7 @@ noncomputable def payload
 stage data.  These are exactly what the base/successor/limit lemmas prove:
 a tight partial linkage, closure, forward extension of every earlier
 family, and realization of the source scheduled at this recursion index. -/
-def IsSound (hNorm : Gamma.IsNormalized) (hA : A ⊆ Gamma.source)
+def IsSound (_hNorm : Gamma.IsNormalized) (_hA : A ⊆ Gamma.source)
     (i : Ladder.Stage kappa)
     (previous : ∀ j : Ladder.Stage kappa, j < i →
       SliceSplice.StagePayload Gamma L Sigma Z)
@@ -1108,7 +1108,7 @@ theorem exists_sound_successorData
       SliceSplice.IsValidStage request l
         (fun m hml ↦ previous m (lt_trans hml hli))
         (previous l hli))
-    (hmax : ∀ l (hli : l < i), l ≤ j)
+    (hmax : ∀ l (_hli : l < i), l ≤ j)
     {U : Set V}
     (hUsub : U ⊆ L.frontier (previous j hji).nextIndex ∩ Z)
     (hUsmall : #U < kappa)
@@ -1281,7 +1281,7 @@ theorem exists_tightStageData_of_trackedSlices
   have hemptySub : (∅ : Set V) ⊆ L.frontier alpha ∩ Z :=
     Set.empty_subset _
   have hemptySmall : #(∅ : Set V) < kappa := by
-    rw [Cardinal.mk_emptyCollection]
+    rw [Cardinal.mk_eq_zero]
     exact Cardinal.aleph0_pos.trans_le hkappa.aleph0_le
   obtain ⟨beta, hbeta, hab, T, hT⟩ :=
     hslices alpha halpha ∅ hemptySub hemptySmall
@@ -1375,7 +1375,7 @@ theorem hasTightStageData_of_stageCaseCompilers
     (hsucc : ∀ (i : Ladder.Stage kappa)
       (previous : ∀ j : Ladder.Stage kappa, j < i →
         SliceSplice.StagePayload Gamma L Sigma Z)
-      (j : Ladder.Stage kappa) (hji : j < i),
+      (j : Ladder.Stage kappa) (_hji : j < i),
       Order.succ j.1 = i.1 →
       (∀ l (hli : l < i),
         SliceSplice.IsValidStage request l

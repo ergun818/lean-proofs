@@ -210,7 +210,8 @@ theorem splitGroundedAssertion819StrictCollisionIndices_nonstationary
     (PopularGroundingBridge.requestFan S r)
     {p | GroundingConcreteControls.hangingLadderCollision
       (L.splitGroundedPopularAuxiliaryInput hL.legal) S.cut r p}
-  apply _root_.Erdos599.PopularSwitching.indexSubset_nonstationary_of_regressive_countable_collisions
+  apply
+    _root_.Erdos599.PopularSwitching.indexSubset_nonstationary_of_regressive_countable_collisions
       (L.splitGroundedPopularAuxiliaryIndexed hL hground) F
       (L.splitGroundedAssertion819StrictCollisionIndices hL hground S r)
       (L.splitGroundedAssertion819StrictRank hL hground S r)
@@ -232,7 +233,7 @@ def splitGroundedAssertion819StrictCollisionPath
       (L.splitGroundedPopularAuxiliaryInput hL.legal) S.cut)
     (p : FinitePath
       (L.splitGroundedPopularAuxiliaryInput hL.legal).lambda.graph) : Prop :=
-  ∃ hp : p ∈ (PopularSwitching.restrictPaths
+  ∃ _hp : p ∈ (PopularSwitching.restrictPaths
       (PopularGroundingBridge.requestFan S r)
       {q | GroundingConcreteControls.hangingLadderCollision
         (L.splitGroundedPopularAuxiliaryInput hL.legal) S.cut r q}).paths,
@@ -278,7 +279,7 @@ theorem splitGroundedAssertion819StrictCollisionPath_initialIndices
               hL hground S r q})
             |>.starts_in_source hpAll⟩ := by
       apply Subtype.ext
-      simpa only [hdp]
+      simp only [hdp]
     have hba : b = a := d.owner.index_eq.symm.trans
       ((congrArg (L.splitGroundedPopularAuxiliaryIndexed hL hground).f hs).trans hpa)
     exact hba ▸ ⟨d⟩

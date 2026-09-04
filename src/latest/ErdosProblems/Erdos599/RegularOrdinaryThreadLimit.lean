@@ -30,6 +30,7 @@ variable {V : Type u} {G : DWeb V}
 variable {I : Type v} [LinearOrder I] [Nonempty I]
 variable {J : Type w} [LinearOrder J]
 
+omit [Nonempty I] in
 /-- A cofinal stagewise embedding of growing warp chains sends every thread
 limit of the first chain to the limit family of the second. -/
 theorem threadLimit_mem_limitPaths_of_cofinal

@@ -55,7 +55,7 @@ structure EventualRelationLimitCompatibility
 /-- Compatibility with the older, stronger API.  This adapter is useful
 when a concrete transition really does preserve every predecessor; the
 source-faithful compiler itself does not require that property. -/
-def EventualRelationLimitCompatibility.ofNoNewPredecessors
+theorem EventualRelationLimitCompatibility.ofNoNewPredecessors
     (C : RealExtensionChain I Gamma Y kappa T Z persistent B)
     (H : C.NoNewPredecessors) : C.EventualRelationLimitCompatibility where
   no_reverse_ray :=
@@ -63,7 +63,7 @@ def EventualRelationLimitCompatibility.ofNoNewPredecessors
 
 /-- A countably bounded stage order supplies the compatibility datum by
 capturing all edges of a reverse ray at one stage. -/
-def EventualRelationLimitCompatibility.ofCountablyBounded
+theorem EventualRelationLimitCompatibility.ofCountablyBounded
     (C : RealExtensionChain I Gamma Y kappa T Z persistent B)
     (H : C.CountablyBounded) : C.EventualRelationLimitCompatibility where
   no_reverse_ray :=
@@ -450,7 +450,7 @@ theorem stableLimitConclusion_compatibleEventualRelationLimit
 
 /-- Under countable boundedness both infinitary relation boundaries follow
 from stage blueprints, leaving only the cardinal estimate. -/
-def EventualRelationLimitBoundary.ofCountablyBounded
+theorem EventualRelationLimitBoundary.ofCountablyBounded
     (C : RealExtensionChain I Gamma Y kappa T Z persistent B)
     (H : C.CountablyBounded) (hcard : #C.realVertexLimit ≤ kappa) :
     C.EventualRelationLimitBoundary where

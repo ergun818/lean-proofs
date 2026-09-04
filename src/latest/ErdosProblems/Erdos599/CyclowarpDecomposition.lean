@@ -749,7 +749,7 @@ theorem FiniteTrace.affected_of_familyEdge_of_affected_left
           rw [coveredPathSupport, dif_pos haZ, ← hpxeq]
           exact hyp)
     · rw [coveredPathSupport, dif_neg haZ] at hxa
-      exact False.elim (by simpa using hxa)
+      exact False.elim (by simp at hxa)
 
 theorem FiniteTrace.affected_of_familyEdge_of_affected_right
     {Z : Set Γ.DPath} (Q : FiniteTrace Γ.graph)
@@ -777,7 +777,7 @@ theorem FiniteTrace.affected_of_familyEdge_of_affected_right
           rw [coveredPathSupport, dif_pos haZ, ← hpeq]
           exact hxp)
     · rw [coveredPathSupport, dif_neg haZ] at hya
-      exact False.elim (by simpa using hya)
+      exact False.elim (by simp at hya)
 
 theorem FiniteTrace.affected_of_switchedEdge_of_affected_left
     {Z : Set Γ.DPath} (Q : FiniteTrace Γ.graph)
@@ -846,7 +846,7 @@ private theorem FiniteTrace.componentBound_of_familyEdge_left
         rw [← hpeq]
         exact hyp
       · rw [coveredPathSupport, dif_neg hrZ] at hxcover
-        exact False.elim (by simpa using hxcover)
+        exact False.elim (by simp at hxcover)
   · have hxroot' : x = root := by simpa using hxroot
     subst x
     simp only [familyEdges, Set.mem_iUnion] at hxy
@@ -882,7 +882,7 @@ private theorem FiniteTrace.componentBound_of_familyEdge_right
         rw [← hpeq]
         exact hxp
       · rw [coveredPathSupport, dif_neg hrZ] at hycover
-        exact False.elim (by simpa using hycover)
+        exact False.elim (by simp at hycover)
   · have hyroot' : y = root := by simpa using hyroot
     subst y
     simp only [familyEdges, Set.mem_iUnion] at hxy
@@ -970,8 +970,8 @@ private theorem isolated_no_incoming_family
   have hp0 : p = Γ.trivialPath x :=
     DWeb.IsWarp.eq_of_mem_support hZ hpZ hxiso hxp (by simp)
   subst p
-  simpa [DWeb.trivialPath, Path.trivial, FinitePath.edgeSet,
-    FinitePath.trivial, Walk.edgeSet] using hyp
+  simp [DWeb.trivialPath, Path.trivial, FinitePath.edgeSet,
+    FinitePath.trivial, Walk.edgeSet] at hyp
 
 private theorem isolated_no_outgoing_family
     {Z : Set Γ.DPath} (hZ : Γ.IsWarp Z) {x : V}
@@ -984,8 +984,8 @@ private theorem isolated_no_outgoing_family
   have hp0 : p = Γ.trivialPath x :=
     DWeb.IsWarp.eq_of_mem_support hZ hpZ hxiso hxp (by simp)
   subst p
-  simpa [DWeb.trivialPath, Path.trivial, FinitePath.edgeSet,
-    FinitePath.trivial, Walk.edgeSet] using hyp
+  simp [DWeb.trivialPath, Path.trivial, FinitePath.edgeSet,
+    FinitePath.trivial, Walk.edgeSet] at hyp
 
 private theorem FiniteTrace.not_mem_backwardVertices_of_mem_isolated
     {Z : Set Γ.DPath} (Q : FiniteTrace Γ.graph)
@@ -1229,8 +1229,8 @@ theorem not_hasIncoming_of_mem_isolatedVertices
   have hp0 : p = Γ.trivialPath x :=
     DWeb.IsWarp.eq_of_mem_support hW hpW hx hxp (by simp)
   subst p
-  simpa [DWeb.trivialPath, Path.trivial, FinitePath.edgeSet,
-    FinitePath.trivial, Walk.edgeSet] using hyp
+  simp [DWeb.trivialPath, Path.trivial, FinitePath.edgeSet,
+    FinitePath.trivial, Walk.edgeSet] at hyp
 
 theorem not_hasOutgoing_of_mem_isolatedVertices
     {W : Set Γ.DPath} (hW : Γ.IsWarp W) {x : V}
@@ -1243,8 +1243,8 @@ theorem not_hasOutgoing_of_mem_isolatedVertices
   have hp0 : p = Γ.trivialPath x :=
     DWeb.IsWarp.eq_of_mem_support hW hpW hx hxp (by simp)
   subst p
-  simpa [DWeb.trivialPath, Path.trivial, FinitePath.edgeSet,
-    FinitePath.trivial, Walk.edgeSet] using hyp
+  simp [DWeb.trivialPath, Path.trivial, FinitePath.edgeSet,
+    FinitePath.trivial, Walk.edgeSet] at hyp
 
 /-- Initial vertices expressed using only edge incidence and the explicit
 singleton-component set. -/

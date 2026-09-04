@@ -194,10 +194,10 @@ theorem canonicalLadder_limitFamilyEdge_tail_mem_strictRoof_arrowPartFrontier
           subst q
           change (u, v) ∈
             (G.trivialPath y).edgeSet at heq
-          simpa [DWeb.trivialPath, DirectedPath.Path.trivial,
+          simp [DWeb.trivialPath, DirectedPath.Path.trivial,
             DirectedPath.FinitePath.edgeSet,
             DirectedPath.FinitePath.trivial,
-            DirectedPath.Walk.edgeSet] using heq
+            DirectedPath.Walk.edgeSet] at heq
   exact edge_tail_mem_strictRoof_of_selfRoofing
     (hlegal.arrowPart_isWarp a)
     (canonicalLadder_arrowPart_selfRoofing

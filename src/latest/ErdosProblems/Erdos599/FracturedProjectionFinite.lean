@@ -44,7 +44,7 @@ def projectedForwardSteps (Z : FracturedWarp Gamma) :
     {a b : Vertex V} -> Walk (web Gamma Z).graph a b ->
       List (SignedEdge V)
   | _, _, .nil => []
-  | _, _, @Walk.cons _ _ a b _ h q =>
+  | _, _, @Walk.cons _ _ a b _ _h q =>
       if project a = project b then projectedForwardSteps Z q
       else SignedEdge.forward (project a, project b) ::
         projectedForwardSteps Z q
@@ -55,7 +55,7 @@ def projectedBackwardSteps (Z : FracturedWarp Gamma) :
     {a b : Vertex V} -> Walk (web Gamma Z).graph a b ->
       List (SignedEdge V)
   | _, _, .nil => []
-  | _, _, @Walk.cons _ _ a b _ h q =>
+  | _, _, @Walk.cons _ _ a b _ _h q =>
       projectedBackwardSteps Z q ++
         if project a = project b then []
         else [SignedEdge.backward (project a, project b)]
@@ -237,7 +237,7 @@ theorem finiteTraceLinks_ne_nil
       rw [List.getLast_ofFn]
       apply congrArg Q.link
       apply Fin.ext
-      simp [FiniteTrace.lastLink]
+      simp
 
 theorem finiteTraceLinks_isChain
     (Q : FiniteTrace (web Gamma Z).graph) :
@@ -342,7 +342,7 @@ private theorem mem_mapWalk_edgeSet_projects
     (he : e ∈ (FracturedDuplication.mapWalk f hf q).edgeSet) :
     (g e.1, g e.2) ∈ q.edgeSet := by
   induction q with
-  | nil => simp [FracturedDuplication.mapWalk, Walk.edgeSet] at he
+  | nil => simp [FracturedDuplication.mapWalk] at he
   | @cons a b c h q ih =>
       simp only [FracturedDuplication.mapWalk, Walk.edgeSet_cons,
         Set.mem_union, Set.mem_singleton_iff] at he ⊢

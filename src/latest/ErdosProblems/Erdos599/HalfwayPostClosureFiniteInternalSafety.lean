@@ -51,12 +51,13 @@ theorem finite_breakInterval_internallySafe
   let H := A.toPostClosureProducedAssignment.assigned_backward_global s
   let I : Type u := H.Index
   have hP :
-      (A.assignment.produced.bracket.assignment.assigned s
-        ).IndexedBackwardProvenance C.ladder.limitWarp I := H.certificate
-  have P : (AltPath.finite S.toFiniteRunWalk.toFiniteTrace
-      ).IndexedBackwardProvenance C.ladder.limitWarp I := hS ▸ hP
+      (A.assignment.produced.bracket.assignment.assigned s).IndexedBackwardProvenance
+        C.ladder.limitWarp I := H.certificate
+  have P : (AltPath.finite S.toFiniteRunWalk.toFiniteTrace).IndexedBackwardProvenance
+    C.ladder.limitWarp I := hS ▸ hP
   exact hparent.breakIntervalPath S R.closedSet P i
 
 end Erdos599.Blueprint.LinkageBlueprint.PostClosureCompressorAssignment
 
-#print axioms Erdos599.Blueprint.LinkageBlueprint.PostClosureCompressorAssignment.finite_breakInterval_internallySafe
+open Erdos599.Blueprint.LinkageBlueprint.PostClosureCompressorAssignment in
+#print axioms finite_breakInterval_internallySafe

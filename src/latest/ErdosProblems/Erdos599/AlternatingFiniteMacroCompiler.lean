@@ -126,7 +126,7 @@ tagged owner. -/
 theorem retainedMember_eq_of_colour_constant
     (P : FiniteEdgeProvenance f Z Y M) (hZ : Γ.IsWarp Z) (hY : Γ.IsWarp Y)
     {a k : ℕ} (hak : a ≤ k) (hk : k < finiteLoopLength f)
-    (hcolour : ∀ j (haj : a ≤ j) (hjk : j ≤ k),
+    (hcolour : ∀ j (_haj : a ≤ j) (hjk : j ≤ k),
       P.colour (P.retainedMember ⟨j, hjk.trans_lt hk⟩) =
         P.colour (P.retainedMember ⟨a, hak.trans_lt hk⟩)) :
     P.retainedMember ⟨k, hk⟩ = P.retainedMember ⟨a, by omega⟩ := by
@@ -348,7 +348,7 @@ theorem finiteRunWalk_literalBracketLabels
 
 /-- Distinct maximal finite runs have distinct tagged owners. -/
 theorem finiteRunOwner_ne_of_lt
-    (P : FiniteEdgeProvenance f Z Y M) (hZ : Γ.IsWarp Z) (hY : Γ.IsWarp Y)
+    (P : FiniteEdgeProvenance f Z Y M) (_hZ : Γ.IsWarp Z) (_hY : Γ.IsWarp Y)
     {i j : Fin (P.finiteInput hN hroot).runs.length} (hij : i < j) :
     P.finiteRunOwner hN hroot i ≠ P.finiteRunOwner hN hroot j := by
   let S := P.finiteInput hN hroot
@@ -600,14 +600,12 @@ noncomputable def compilation
       rw [hflast]
       exact C.final_uncovered
   · exact P.finiteIndexedBackwardProvenance hN hrootUnique hZ hY
-  · change W.vertex 0 = _
-    calc
+  · calc
       W.vertex 0 = f ⟨0, Nat.zero_lt_succ _⟩ :=
         RunCompressor.FiniteInput.ofLoopErasure_runWalk_initial
           hN f hrootUnique _ _ _
       _ = _ := C.routeRawVertex_zero hZfin hYfin
-  · change W.vertex (W.run W.lastRunIndex).last = _
-    calc
+  · calc
       W.vertex (W.run W.lastRunIndex).last =
           f ⟨(C.routeWalk hZfin hYfin).length, Nat.lt_succ_self _⟩ :=
         RunCompressor.FiniteInput.ofLoopErasure_runWalk_terminal

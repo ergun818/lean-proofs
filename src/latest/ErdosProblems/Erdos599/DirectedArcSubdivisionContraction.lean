@@ -59,18 +59,18 @@ private def castWalkStart {x y z : V} (h : x = y) (p : Walk D y z) :
 def contractWalk : {a b : Vertex D} → Walk (graph D) a b →
     Walk D (project a) (project b)
   | _, _, .nil => .nil
-  | .original x, _, .cons (v := .original y) h _ => False.elim h
-  | .original x, _, .cons (v := .first e) h p =>
+  | .original _x, _, .cons (v := .original y) h _ => False.elim h
+  | .original _x, _, .cons (v := .first e) h p =>
       castWalkStart h (contractWalk p)
-  | .original x, _, .cons (v := .second e) h _ => False.elim h
-  | .first e, _, .cons (v := .original y) h _ => False.elim h
-  | .first e, _, .cons (v := .first f) h _ => False.elim h
-  | .first e, _, .cons (v := .second f) h p =>
+  | .original _x, _, .cons (v := .second e) h _ => False.elim h
+  | .first _e, _, .cons (v := .original y) h _ => False.elim h
+  | .first _e, _, .cons (v := .first f) h _ => False.elim h
+  | .first _e, _, .cons (v := .second f) h p =>
       castWalkStart (congrArg (fun g : Arc D => g.1.1) h) (contractWalk p)
   | .second e, _, .cons (v := .original y) h p =>
       Walk.cons e.2 (castWalkStart h (contractWalk p))
-  | .second e, _, .cons (v := .first f) h _ => False.elim h
-  | .second e, _, .cons (v := .second f) h _ => False.elim h
+  | .second _e, _, .cons (v := .first f) h _ => False.elim h
+  | .second _e, _, .cons (v := .second f) h _ => False.elim h
 
 /-- Exact list formula for contraction of an arbitrary subdivided walk. -/
 theorem support_contractWalk {a b : Vertex D}
@@ -158,7 +158,7 @@ theorem support_contractWalk_original_start {a : V} {b : Vertex D}
           _ = some (.original a) := by
             rw [List.head?_eq_some_head p.support_ne_nil, p.head_support]
       subst x
-      simpa using project_original (D := D) a
+      simp
 
 /-- Original-vertex support is preserved exactly by contraction. -/
 @[simp] theorem original_mem_support_contractWalk {a : V} {b : Vertex D}
@@ -170,7 +170,7 @@ theorem support_contractWalk_original_start {a : V} {b : Vertex D}
   · rintro ⟨z, hz, hzx⟩
     cases z with
     | original y =>
-        simp at hzx
+        simp only [original?_original, Option.some.injEq] at hzx
         subst y
         exact hz
     | first e => simp at hzx

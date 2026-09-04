@@ -76,7 +76,7 @@ theorem lastHit_support_eq {p : FinitePath D} {S : Set V}
     have hcases : L.startpoint = M.startpoint ∨
         L.startpoint ∈ M.walk.support.tail := by
       have hhead : M.startpoint ∈ M.walk.support.head? := by
-        rw [List.head?_eq_head M.walk.support_ne_nil, M.walk.head_support]
+        rw [List.head?_eq_some_head M.walk.support_ne_nil, M.walk.head_support]
         simp
       have hs := List.eq_cons_of_mem_head? hhead
       rw [hs] at hstartL ⊢
@@ -96,7 +96,7 @@ theorem lastHit_support_eq {p : FinitePath D} {S : Set V}
     have hcases : M.startpoint = L.startpoint ∨
         M.startpoint ∈ L.walk.support.tail := by
       have hhead : L.startpoint ∈ L.walk.support.head? := by
-        rw [List.head?_eq_head L.walk.support_ne_nil, L.walk.head_support]
+        rw [List.head?_eq_some_head L.walk.support_ne_nil, L.walk.head_support]
         simp
       have hs := List.eq_cons_of_mem_head? hhead
       rw [hs] at hstartM ⊢
@@ -130,7 +130,7 @@ theorem lastHit_support_eq_of_support_eq
     have hcases : L.startpoint = M.startpoint ∨
         L.startpoint ∈ M.walk.support.tail := by
       have hhead : M.startpoint ∈ M.walk.support.head? := by
-        rw [List.head?_eq_head M.walk.support_ne_nil, M.walk.head_support]
+        rw [List.head?_eq_some_head M.walk.support_ne_nil, M.walk.head_support]
         simp
       have hs := List.eq_cons_of_mem_head? hhead
       rw [hs] at hstartL ⊢
@@ -150,7 +150,7 @@ theorem lastHit_support_eq_of_support_eq
     have hcases : M.startpoint = L.startpoint ∨
         M.startpoint ∈ L.walk.support.tail := by
       have hhead : L.startpoint ∈ L.walk.support.head? := by
-        rw [List.head?_eq_head L.walk.support_ne_nil, L.walk.head_support]
+        rw [List.head?_eq_some_head L.walk.support_ne_nil, L.walk.head_support]
         simp
       have hs := List.eq_cons_of_mem_head? hhead
       rw [hs] at hstartM ⊢
@@ -164,7 +164,6 @@ theorem lastHit_support_eq_of_support_eq
     · rw [L.walk.head_support, ← hstarts]
       exact M.walk.start_mem_support
     · exact L.isPath p.isPath
-
 end DirectedPath.FinitePath
 
 namespace DWeb
@@ -230,7 +229,7 @@ theorem terminalRoofSuffix_support_mono {R S : Set V}
         have hcases : LR.startpoint = LS.startpoint ∨
             LR.startpoint ∈ LS.walk.support.tail := by
           have hhead : LS.startpoint ∈ LS.walk.support.head? := by
-            rw [List.head?_eq_head LS.walk.support_ne_nil,
+            rw [List.head?_eq_some_head LS.walk.support_ne_nil,
               LS.walk.head_support]
             simp
           have hs := List.eq_cons_of_mem_head? hhead
@@ -752,8 +751,8 @@ theorem exists_later_omegaArrowStage_path_supporting_essential
       change v ∈ qf.walk.support at hv
       rwa [hsupp]
     · have : False := by
-        simpa only [hsPath, hqPath,
-          DirectedPath.Path.not_extends_ray_finite] using hsu
+        simp only [hsPath, hqPath,
+          DirectedPath.Path.not_extends_ray_finite] at hsu
       exact this.elim
   · rw [hqPath] at hqt
     simp at hqt
@@ -948,7 +947,7 @@ essential only in a later quotient.  Ambient strict-roof propagation is
 enough: a surviving ambient strict point descends to a strict point in the
 later quotient, contradicting essentiality there. -/
 theorem exists_quotient_forwardExtension_path_same_support_of_later_essential
-    (hNoEnter : G.NoEdgeEnters G.source) {X Y : Set V} (hXY : X ⊆ Y)
+    (hNoEnter : G.NoEdgeEnters G.source) {X Y : Set V} (_hXY : X ⊆ Y)
     {U W : Set (G.quotient X).DPath} (hW : (G.quotient X).IsWave W)
     (hUW : (G.quotient X).ForwardExtension U W)
     (M : (G.quotient Y).Wave)
@@ -1340,7 +1339,6 @@ theorem mem_meetingVertexSet_liftQuotientFamily
   rw [meetingVertexSet]
   exact Set.mem_iUnion_of_mem q (Set.mem_iUnion_of_mem
     ⟨hqW, ⟨x, hxq, hxX⟩⟩ hzq)
-
 end DWeb
 
 namespace SafeLink
@@ -1391,7 +1389,6 @@ theorem sectionSixAccumClosure_grounding
     (base.sectionSixAccumStage_carrier_subset_closure
       hNoEnter F K Y Q T y (n + 1))
   refine ⟨by simpa only [K, X] using hKX, ?_⟩
-
   have htOffRoot : t ∈ T \ {a} := by
     apply G.sectionSixAccumStage_carrier_subset_offRoot a hNoEnter
       F K Y Q T y
@@ -1412,13 +1409,11 @@ theorem sectionSixAccumClosure_grounding
       (Set.mem_iUnion_of_mem t (Set.mem_iUnion_of_mem htStage hx)))
   let oldAtNext := base.waveToLargerQuotient hNoEnter hKnext Uw
   let next := base.sectionSixAccumNext hNoEnter F K Y Q T s
-
   have hRoofTransport :
       base.roof ((base.quotient (K t)).terminalFrontier Uw.1) ⊆
         base.roof ((base.quotient Xnext).terminalFrontier oldAtNext.1) :=
     base.roof_terminalFrontier_subset_waveToLargerQuotient
       hNoEnter hKnext Uw
-
   have hOldNextQ :
       (base.quotient Xnext).RoofLE oldAtNext.1 next.wave.1 := by
     exact base.sectionSixAccumNext_roofs hNoEnter F K Y Q T s oldAtNext
@@ -1427,25 +1422,21 @@ theorem sectionSixAccumClosure_grounding
         base.roof ((base.quotient Xnext).terminalFrontier next.wave.1) :=
     base.original_roofLE_of_quotient_roofLE hNoEnter
       next.wave.2 hOldNextQ
-
   have hXnextX : Xnext ⊆ X := by
     intro x hx
     apply Set.mem_iUnion_of_mem (n + 1)
     change x ∈ Xnext
     exact hx
   let commonNext := base.waveToLargerQuotient hNoEnter hXnextX next.wave
-
   have hRoofCommonStage :
       base.roof ((base.quotient Xnext).terminalFrontier next.wave.1) ⊆
         base.roof ((base.quotient X).terminalFrontier commonNext.1) := by
     exact base.roof_terminalFrontier_subset_waveToLargerQuotient hNoEnter
       hXnextX next.wave
-
   have hCommonNextEq : commonNext =
       base.sectionSixAccumCommonStage hNoEnter F K Y Q T y (n + 1) := by
     apply Subtype.ext
     rfl
-
   have hCommonFinalQ :
       (base.quotient X).RoofLE commonNext.1 M.1 := by
     rw [hCommonNextEq]
@@ -1455,7 +1446,6 @@ theorem sectionSixAccumClosure_grounding
       base.roof ((base.quotient X).terminalFrontier commonNext.1) ⊆
         base.roof ((base.quotient X).terminalFrontier M.1) :=
     base.original_roofLE_of_quotient_roofLE hNoEnter M.2 hCommonFinalQ
-
   have hRoofAll :
       base.roof ((base.quotient (K t)).terminalFrontier U) ⊆
         base.roof ((base.quotient X).terminalFrontier M.1) :=
@@ -1466,8 +1456,6 @@ theorem sectionSixAccumClosure_grounding
     have hdelete := G.strictRoof_subset_delete_strictRoof
       ((base.quotient (K t)).terminalFrontier U) ({a} : Set V)
     apply hdelete
-    change t ∈ G.strictRoof
-      ((base.quotient (K t)).terminalFrontier U)
     rw [← base.terminalFrontier_liftQuotientFamily]
     rw [← G.terminalFrontier_liftDeleteFamily]
     exact htStrictG
@@ -1484,7 +1472,5 @@ theorem sectionSixAccumClosure_grounding
   rw [G.terminalFrontier_liftDeleteFamily,
     base.terminalFrontier_liftQuotientFamily]
   exact htStrictFinal
-
 end SafeLink
-
 end Erdos599

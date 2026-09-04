@@ -392,7 +392,7 @@ theorem mk_heightVerticesAt_le
   | none =>
       simp only [heightVerticesAt, chosenHeightSetOfUncountable,
         chosenStageHeightSetOfUncountable, hoption,
-        Cardinal.mk_emptyCollection]
+        Cardinal.mk_eq_zero]
       exact bot_le
   | some D =>
       simpa only [heightVerticesAt, chosenHeightSetOfUncountable,
@@ -835,7 +835,7 @@ def componentMixedFamily (Q : DWeb V) (W Y : Set Q.DPath)
 theorem componentMixedFamily_isLinkageBetween_of_complement
     (Q : DWeb V) {A B E : Set V} {W Y : Set Q.DPath}
     (hW : IsLinkageBetween Q A B W)
-    (hY : IsLinkageBetween Q (A \ E) B Y) (hEsub : E ⊆ A) :
+    (hY : IsLinkageBetween Q (A \ E) B Y) (_hEsub : E ⊆ A) :
     IsLinkageBetween Q A B (componentMixedFamily Q W Y E) := by
   let D := exceptionalComponentVertices Q W Y E
   let WL := initialPart Q W D
@@ -988,7 +988,7 @@ theorem wholeComponentMixedFamily_isLinkageBetween
     (hW : IsLinkageBetween Q A C W)
     (hY : IsLinkageBetween Q (A \ E) T Y)
     (hsep : RelationalRoof.Separates Q.graph.Adj (A \ E) T C)
-    (hEsub : E ⊆ A) :
+    (_hEsub : E ⊆ A) :
     IsLinkageBetween Q A C
       (wholeComponentMixedFamily Q W (firstHitPrefixFamily hY hsep) Y E) := by
   let D := exceptionalComponentVertices Q W Y E
@@ -1183,7 +1183,7 @@ theorem linkageSuffixAtFirstHit_edgeSet_subset
 /-- Later-linkage sources whose alternating component is not exceptional. -/
 def wholeNonexceptionalPrefixSources
     {Q : DWeb V} {A C T E : Set V} {Y : Set Q.DPath}
-    (hY : IsLinkageBetween Q (A \ E) T Y)
+    (_hY : IsLinkageBetween Q (A \ E) T Y)
     (_hsep : RelationalRoof.Separates Q.graph.Adj (A \ E) T C)
     (W : Set Q.DPath) : Set (↑(A \ E) : Type u) :=
   {a | a.1 ∉ exceptionalComponentVertices Q W Y E}
@@ -2374,7 +2374,7 @@ theorem isAnnularSliceCandidate_congr_stageData
       IsAnnularSliceCandidate Gamma L' request' delta beta gamma T := by
   simp only [IsAnnularSliceCandidate, IsTightAnnularSlice,
     SliceSpliceSource.IsTightAnnularSlice, SliceSplice.IsAnnularSlice,
-    SliceGood, RightBoundaryTight,
+    SliceGood,
     SliceSpliceSource.MeetsOnlyAtTerminal,
     DWeb.KappaLadder.lowerRegion, DWeb.KappaLadder.upperRegion,
     HasStageIntervalSegments, IsStageInterval,
@@ -2564,7 +2564,7 @@ theorem mk_candidateVerticesAt_le
         exact hp
       · exact False.elim
     rw [candidateVerticesAt, hvertices]
-    rw [Cardinal.mk_emptyCollection]
+    rw [Cardinal.mk_eq_zero]
     exact bot_le
 
 theorem vertexSet_chosenAnnularMavericks_subset

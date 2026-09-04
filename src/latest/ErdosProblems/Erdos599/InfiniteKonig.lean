@@ -549,7 +549,7 @@ theorem finish_injective {C D : Set V} {c : V} (F : InFan G C D c)
   by_contra hpq
   change p.1.finish = q.1.finish at hfinish
   have hmeet : p.1.finish ∈ p.1.support ∩ q.1.support :=
-    ⟨p.1.finish_mem_support, by simpa [hfinish] using q.1.finish_mem_support⟩
+    ⟨p.1.finish_mem_support, by simp [hfinish]⟩
   have heq : p.1.finish = c := Set.mem_singleton_iff.1
     (F.joined p.2 q.2 hpq hmeet)
   exact Set.disjoint_left.1 hCD F.join_mem (heq ▸ F.finish_mem p.2)
@@ -1013,7 +1013,7 @@ fans toward a set of size at most `λ`, one fan meets the successor-sized
 fan core on every branch. -/
 theorem exists_fan_hitting_largeFanPoints
     {C D : Set V} {l : Cardinal.{u}}
-    (hl : ℵ₀ ≤ l) (hCD : Disjoint C D) (hD : #D ≤ l)
+    (hl : ℵ₀ ≤ l) (_hCD : Disjoint C D) (hD : #D ≤ l)
     (hC : l < #C) (Fs : ∀ c : C, InFan G C D c.1) :
     ∃ c : C, ∀ p ∈ (Fs c).paths,
       ∃ x ∈ p.support, IsLargeFanPoint G C l x := by

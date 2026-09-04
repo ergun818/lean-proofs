@@ -42,8 +42,8 @@ theorem familyEdges_activeReference :
     refine ⟨p, ⟨hp, ?_⟩, he⟩
     intro hcovered
     obtain ⟨x, _, rfl⟩ := exists_singleton_of_mem_coveredSingletonReference Z hcovered
-    simpa [DWeb.trivialPath, Path.trivial, FinitePath.edgeSet,
-      FinitePath.trivial, Walk.edgeSet] using he
+    simp [DWeb.trivialPath, Path.trivial, FinitePath.edgeSet,
+      FinitePath.trivial, Walk.edgeSet] at he
 
 theorem edge_not_incident_singletonVertex
     {x : V} (hx : x ∈ singletonVertices Z) {e : V × V}
@@ -55,8 +55,8 @@ theorem edge_not_incident_singletonVertex
     intro hxp
     have hpTriv := eq_trivialPath_of_mem_support_singletonHole Z hx hp hxp
     rw [hpTriv] at he
-    simpa [DWeb.trivialPath, Path.trivial, FinitePath.edgeSet,
-      FinitePath.trivial, Walk.edgeSet] using he
+    simp [DWeb.trivialPath, Path.trivial, FinitePath.edgeSet,
+      FinitePath.trivial, Walk.edgeSet] at he
   have heV := p.edgeSet_subset_support_prod he
   exact ⟨fun h ↦ hnot (h ▸ heV.1), fun h ↦ hnot (h ▸ heV.2)⟩
 

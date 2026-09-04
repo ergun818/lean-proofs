@@ -121,7 +121,7 @@ def forwardIntervalWalk (vertex : ℕ → V) (a : ℕ) :
       rw [forwardIntervalWalk, Walk.support_concat, ih]
       rw [@List.ofFn_succ_last V (n + 1)
         (fun i : Fin ((n + 1) + 1) ↦ vertex (a + i))]
-      congr 1 <;> simp
+      congr 1
 
 theorem forwardIntervalWalk_isPath (vertex : ℕ → V)
     (a n : ℕ)
@@ -188,7 +188,7 @@ theorem set_ofFn_add_eq_image_Icc (vertex : ℕ → V) (a n : ℕ) :
     {x | x ∈ List.ofFn (fun i : Fin (n + 1) ↦ vertex (a + i))} =
       vertex '' Set.Icc a (a + n) := by
   ext x
-  simp only [Set.mem_setOf_eq, List.mem_ofFn, Set.mem_image, Set.mem_Icc]
+  simp only [Set.mem_ofPred_eq, List.mem_ofFn, Set.mem_image, Set.mem_Icc]
   constructor
   · rintro ⟨i, rfl⟩
     exact ⟨a + i, ⟨Nat.le_add_right _ _, by omega⟩, rfl⟩
@@ -229,7 +229,7 @@ theorem forwardIntervalWalk_edgeSet_subset (vertex : ℕ → V) (a n : ℕ)
     (hE : ∀ k < n, (vertex (a + k), vertex (a + k + 1)) ∈ E) :
     (forwardIntervalWalk vertex a n hAdj).edgeSet ⊆ E := by
   induction n with
-  | zero => simp [forwardIntervalWalk, Walk.edgeSet]
+  | zero => simp [forwardIntervalWalk]
   | succ n ih =>
       rw [forwardIntervalWalk, Walk.concat, walk_edgeSet_append]
       intro e he
@@ -288,7 +288,7 @@ theorem backwardIntervalWalk_edgeSet_subset (vertex : ℕ → V) (a n : ℕ)
     (hE : ∀ k < n, (vertex (a + k + 1), vertex (a + k)) ∈ E) :
     (backwardIntervalWalk vertex a n hAdj).edgeSet ⊆ E := by
   induction n with
-  | zero => simp [backwardIntervalWalk, Walk.edgeSet]
+  | zero => simp [backwardIntervalWalk]
   | succ n ih =>
       rw [backwardIntervalWalk, Walk.edgeSet_cons]
       intro e he
@@ -390,7 +390,7 @@ noncomputable def projectedRun
         apply Nat.ne_of_lt hab
         apply S.vertex_injective
         simpa [p, forwardIntervalPath, habsub] using heq
-      · simpa [Link.exit, p, forwardIntervalPath, habsub]
+      · simp [Link.exit, p, forwardIntervalPath, habsub]
       · simpa [p, habsub] using
           (forwardIntervalPath_support (D := D) S.vertex a (b - a) hinj _)
   else
@@ -417,7 +417,7 @@ noncomputable def projectedRun
         apply Nat.ne_of_lt hab
         apply S.vertex_injective
         simpa [p, backwardIntervalPath, habsub] using heq.symm
-      · simpa [Link.exit, p, backwardIntervalPath, habsub]
+      · simp [Link.exit, p, backwardIntervalPath, habsub]
       · simpa [p, habsub] using
           (backwardIntervalPath_support (D := D) S.vertex a (b - a) hinj _)
 
@@ -493,7 +493,7 @@ theorem projectedRun_edgeSet_subset_backward (hchange) (i : ℕ)
       S.backwardRunEdges hchange i := by
   unfold projectedRun
   dsimp only
-  rw [dif_neg (by simpa [hdir])]
+  rw [dif_neg (by simp [hdir])]
   apply backwardIntervalPath_edgeSet_subset
   · intro r s _ _ hrs
     exact S.vertex_injective hrs
@@ -511,7 +511,7 @@ theorem projectedRun_edgeSet_eq_forward (hchange) (i : ℕ)
   dsimp only
   rw [dif_pos hdir, forwardIntervalPath_edgeSet_eq]
   ext e
-  simp only [Set.mem_setOf_eq, forwardRunEdges]
+  simp only [Set.mem_ofPred_eq, forwardRunEdges]
   constructor
   · rintro ⟨k, hk, rfl⟩
     refine ⟨runBoundary S.colour hchange i + k, by omega, ?_, rfl⟩
@@ -529,9 +529,9 @@ theorem projectedRun_edgeSet_eq_backward (hchange) (i : ℕ)
       S.backwardRunEdges hchange i := by
   unfold projectedRun
   dsimp only
-  rw [dif_neg (by simpa [hdir]), backwardIntervalPath_edgeSet_eq]
+  rw [dif_neg (by simp [hdir]), backwardIntervalPath_edgeSet_eq]
   ext e
-  simp only [Set.mem_setOf_eq, backwardRunEdges]
+  simp only [Set.mem_ofPred_eq, backwardRunEdges]
   constructor
   · rintro ⟨k, hk, rfl⟩
     refine ⟨runBoundary S.colour hchange i + k, by omega, ?_, rfl⟩
@@ -570,7 +570,7 @@ noncomputable def toInfiniteRunWalk
   vertex_injective := S.vertex_injective
   run := S.projectedRun hchange
   starts_zero := by simp
-  consecutive := by intro i; simp [Nat.add_assoc]
+  consecutive := by intro i; simp
   ordered := by
     intro i j hij
     simp only [projectedRun_last, projectedRun_first]
@@ -947,7 +947,7 @@ theorem projectedRun_edgeSet_eq_backward (i : Fin S.runs.length)
     (S.projectedRun i).link.path.edgeSet = S.backwardRunEdges i := by
   unfold projectedRun
   dsimp only
-  rw [dif_neg (by simpa [hdir]), backwardIntervalPath_edgeSet_eq]
+  rw [dif_neg (by simp [hdir]), backwardIntervalPath_edgeSet_eq]
   rfl
 
 /-- Exact edge provenance for a finite compressed run.  This is the finite

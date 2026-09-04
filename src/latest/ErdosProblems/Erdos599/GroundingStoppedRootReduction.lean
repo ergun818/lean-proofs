@@ -190,4 +190,5 @@ end DWeb.KappaLadder
 end Erdos599
 
 #print axioms Erdos599.DWeb.KappaLadder.exists_unrootedLastDeletedHead
-#print axioms Erdos599.DWeb.KappaLadder.Assertion822StoppedRootObstruction.exists_unrootedClassifiedLastDeletedHead_of_finiteSource
+open Erdos599.DWeb.KappaLadder.Assertion822StoppedRootObstruction in
+#print axioms exists_unrootedClassifiedLastDeletedHead_of_finiteSource

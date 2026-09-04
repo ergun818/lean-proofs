@@ -46,7 +46,7 @@ first-hit/last-exit conclusion which the Section 9 cut argument must prove. -/
 structure ClosedSetAvoidingReplacement
     {Z : Set Gamma.DPath}
     (A : SimultaneousAssignment Z Y) (X : Set V) where
-  path : ∀ s : {x // x ∈ Gamma.initialSet Z \ Gamma.initialSet Y},
+  path : ∀ _s : {x // x ∈ Gamma.initialSet Z \ Gamma.initialSet Y},
     AltPath Gamma.graph
   starts_at : ∀ s, (path s).initial = s.1
   safe : ∀ s, IsSafe Y (path s)
@@ -169,7 +169,7 @@ closed-set avoidance. -/
 theorem exists_of_literalOutsideCut
     {W : Set Gamma.DPath} {X before innerRoof outerRoof : Set V}
     (hW : Gamma.IsWarp W) (hfinite : Gamma.HasFiniteCharacter W)
-    (boundary : ∀ F :
+    (boundary : ∀ _F :
       OutsideSplitWarp.SplitProjectedOutsideFracturedWarp W X,
       OutsideCutBoundary (Y := Y) W X before innerRoof outerRoof)
     (assigned : ∀ F :
@@ -192,7 +192,7 @@ simultaneous assignment axioms automatically. -/
 theorem exists_of_literalOutsideCut_and_avoidingReplacement
     {W : Set Gamma.DPath} {X before innerRoof outerRoof : Set V}
     (hW : Gamma.IsWarp W) (hfinite : Gamma.HasFiniteCharacter W)
-    (boundary : ∀ F :
+    (boundary : ∀ _F :
       OutsideSplitWarp.SplitProjectedOutsideFracturedWarp W X,
       OutsideCutBoundary (Y := Y) W X before innerRoof outerRoof)
     (baseAssignment : ∀ F :

@@ -42,7 +42,7 @@ variable {V I : Type u} {Gamma : DWeb V}
 abbrev Input (Gamma : DWeb V) (I : Type u) :=
   PopularAuxiliary.Input Gamma I
 
-abbrev LV (L : Input Gamma I) :=
+abbrev LV (_L : Input Gamma I) :=
   PopularAuxiliary.Input.LambdaVertex V I
 
 /-- The endpoints of an edge of a directed simple finite path or ray are

@@ -408,7 +408,7 @@ theorem canonicalLadder_no_freshFinite_of_essential_arrowPart
       have hzy : z = y := by
         exact (Option.some.inj
           ((G.terminal?_trivialPath y).symm.trans hpz)).symm
-      exact Or.inr (Or.inr (by simpa [hzy]))
+      exact Or.inr (Or.inr (by simp [hzy]))
   have hxSuccessorEssential : f.finish ∈
       G.essential (G.terminalFrontier (L.successorWarp a.1)) :=
     essential_of_mem_of_subset G hSuccessorSubset hxSuccessor hxAmbientMarker
@@ -419,7 +419,7 @@ theorem canonicalLadder_no_freshFinite_of_essential_arrowPart
       (L.chosen_freshGroundRecordPath hlegal a))
   subst p
   exact hpInessential.2
-    ⟨hpInessential.1, f.finish, by simpa [hrecord], hxSuccessorEssential⟩
+    ⟨hpInessential.1, f.finish, by simp [hrecord], hxSuccessorEssential⟩
 
 /-- A finite fresh grounded record cannot have a target-pure auxiliary
 route to the marker born at its own stage. -/
@@ -568,7 +568,7 @@ theorem canonicalLadder_no_freshFinite_equalTargetPureRoute
       have hzy : z = y := by
         exact (Option.some.inj
           ((G.terminal?_trivialPath y).symm.trans hpz)).symm
-      exact Or.inr (Or.inr (by simpa [hzy]))
+      exact Or.inr (Or.inr (by simp [hzy]))
   have hxSuccessorEssential : f.finish ∈
       G.essential (G.terminalFrontier (L.successorWarp a.1)) :=
     essential_of_mem_of_subset G hSuccessorSubset hxSuccessor hxAmbientMarker
@@ -579,7 +579,7 @@ theorem canonicalLadder_no_freshFinite_equalTargetPureRoute
       (L.chosen_freshGroundRecordPath hlegal a))
   subst p
   exact hpInessential.2
-    ⟨hpInessential.1, f.finish, by simpa [hrecord], hxSuccessorEssential⟩
+    ⟨hpInessential.1, f.finish, by simp [hrecord], hxSuccessorEssential⟩
 
 end KappaLadder
 end DWeb

@@ -207,8 +207,7 @@ theorem exists_eventuallyCertifiedInfiniteContactSegmentation
           rw [tail_path]
           exact hx
       · rintro x ((hx | hx) | hx)
-        · change x ∈ (S.toInfiniteRunWalk hchange).toInfiniteTrace.vertexSet
-          rw [S.toInfiniteTrace_vertexSet hchange]
+        · rw [S.toInfiniteTrace_vertexSet hchange]
           obtain ⟨i, rfl⟩ := hx
           exact ⟨E.coord i, rfl⟩
         · simp only [Set.mem_iUnion] at hx
@@ -304,8 +303,7 @@ theorem exists_omegaCertifiedInfiniteContactSegmentation
         rw [(piece_spec i).1]
         exact hxi
       · rintro x (hx | hx)
-        · change x ∈ (S.toInfiniteRunWalk hchange).toInfiniteTrace.vertexSet
-          rw [S.toInfiniteTrace_vertexSet hchange]
+        · rw [S.toInfiniteTrace_vertexSet hchange]
           obtain ⟨i, rfl⟩ := hx
           exact ⟨E.coord i, rfl⟩
         · simp only [Set.mem_iUnion] at hx

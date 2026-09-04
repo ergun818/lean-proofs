@@ -366,7 +366,9 @@ end KappaLadder
 end DWeb
 end Erdos599
 
-#print axioms Erdos599.DWeb.KappaLadder.splitGroundedFreshAvoidingStrongSelectedPath_no_hangingCollision
+open Erdos599.DWeb.KappaLadder in
+#print axioms splitGroundedFreshAvoidingStrongSelectedPath_no_hangingCollision
 #print axioms Erdos599.DWeb.KappaLadder.SplitGroundedUnusedRecord.stage_unused_reservedControlsFrom
-#print axioms Erdos599.DWeb.KappaLadder.splitGroundedFreshAvoidingReservedStrongSelectedPath_no_hangingCollision
+open Erdos599.DWeb.KappaLadder in
+#print axioms splitGroundedFreshAvoidingReservedStrongSelectedPath_no_hangingCollision
 #print axioms Erdos599.DWeb.KappaLadder.splitGroundedFreshAvoidingReservedBackwardOwner_rootPrefix

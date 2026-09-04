@@ -42,6 +42,7 @@ private theorem finite_Iio_nat (k : ℕ) : (Set.Iio k : Set ℕ).Finite := by
       rw [heq]
       exact ih.insert k
 
+omit [Nonempty I] in
 /-- A ray all of whose edges lie in a single blueprint has infinitely many
 strong edges.  The ray may begin in the middle of the blueprint member, so
 the proof identifies it with a suffix of that member. -/
@@ -172,7 +173,7 @@ theorem eventualRelationLimit_every_ray_strong
     apply hr
     refine ⟨N + 1 + n, ?_⟩
     simp only [s, DirectedPath.Ray.tail_apply]
-    congr 2 <;> omega
+    congr 2
   have hsWeak (n : ℕ) :
       ¬IsStrongImaginaryEdge Gamma Y kappa (s n) (s (n + 1)) := by
     intro hn

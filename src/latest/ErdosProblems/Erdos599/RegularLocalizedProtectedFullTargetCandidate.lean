@@ -188,7 +188,7 @@ theorem exists_weakSplitAnnularCandidate_of_fullTarget
       apply Set.eq_empty_iff_forall_notMem.2
       intro p hp
       exact (hcleanEmpty ▸ hp.1).elim
-    rw [hmavericks, Cardinal.mk_emptyCollection]
+    rw [hmavericks, Cardinal.mk_eq_zero]
     exact Cardinal.aleph0_pos.trans hL.uncountable
 
 end RegularLocalizedProtectedFullTargetCandidate

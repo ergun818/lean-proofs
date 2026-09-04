@@ -263,13 +263,13 @@ theorem ordinal_isClub_ordinalsOfBelow {κ : Cardinal.{u}}
     (hC : IsClubBelow κ C) :
     Ordinal.IsClub (ordinalsOfBelow κ C) κ.ord := by
   constructor
-  · rw [Ordinal.isClosedBelow_iff]
+  · rw [Ordinal.isClosed_Iio_iff]
     intro p hpκ hp
     let p' : Below κ := ⟨p, hpκ⟩
     let d : Set (Below κ) := C ∩ Set.Iio p'
     have hdC : d ⊆ C := Set.inter_subset_left
     have hdne : d.Nonempty := by
-      obtain ⟨q, hqC, _hq0, hqp⟩ := hp.forall_lt 0 hp.pos
+      obtain ⟨q, hqC, _hq0, hqp⟩ := ((Ordinal.accPt_principal_iff _ _).mp hp).2 0 hp.isSuccLimit.pos
       obtain ⟨hqκ, hqC'⟩ := mem_ordinalsOfBelow.mp hqC
       exact ⟨⟨q, hqκ⟩, hqC', hqp⟩
     have hdLUB : IsLUB d p' := by
@@ -279,13 +279,13 @@ theorem ordinal_isClub_ordinalsOfBelow {κ : Cardinal.{u}}
       · intro q hq
         by_contra hpq
         have hqp : q.1 < p := lt_of_not_ge hpq
-        obtain ⟨r, hrC, hqr, hrp⟩ := hp.forall_lt q.1 hqp
+        obtain ⟨r, hrC, hqr, hrp⟩ := ((Ordinal.accPt_principal_iff _ _).mp hp).2 q.1 hqp
         obtain ⟨hrκ, hrC'⟩ := mem_ordinalsOfBelow.mp hrC
         exact (not_le_of_gt hqr) (hq ⟨hrC', hrp⟩)
     have hpC : p' ∈ C :=
       hC.dirSupClosed hdC hdne (DirectedOn.of_linearOrder d) hdLUB
     exact ⟨p', hpC, rfl⟩
-  · rw [Ordinal.isAcc_iff]
+  · rw [Ordinal.accPt_principal_iff]
     refine ⟨hκ.ord_pos.ne', fun a haκ ↦ ?_⟩
     have hlim : IsSuccLimit κ.ord := Cardinal.isSuccLimit_ord hκ.aleph0_le
     let a' : Below κ := ⟨succ a, hlim.succ_lt haκ⟩
@@ -303,8 +303,8 @@ theorem isClubBelow_restrictBelow {κ : Cardinal.{u}}
   · intro d hdC hdne _hdDirected a ha
     by_cases had : a ∈ d
     · exact hdC had
-    have haAcc : Ordinal.IsAcc a.1 C := by
-      rw [Ordinal.isAcc_iff]
+    have haAcc : AccPt a.1 (Filter.principal C) := by
+      rw [Ordinal.accPt_principal_iff]
       constructor
       · intro ha0
         obtain ⟨b, hb⟩ := hdne
@@ -330,7 +330,7 @@ theorem isClubBelow_restrictBelow {κ : Cardinal.{u}}
         exact ⟨b.1, hdC hb, hp'b, hba_lt⟩
     exact hC.mem_of_isAcc a.2 haAcc
   · intro a
-    obtain ⟨b, hbC, hab, hbκ⟩ := hC.isAcc.forall_lt a.1 a.2
+    obtain ⟨b, hbC, hab, hbκ⟩ := hC.forall_lt a.1 a.2
     exact ⟨⟨b, hbκ⟩, hbC, hab.le⟩
 
 /-- Mathlib stationarity on `Below κ` is equivalent to stationarity of the
@@ -638,7 +638,7 @@ theorem not_isStationaryBelow_of_injOn_regressive {κ : Cardinal.{u}}
   have hsub : S ∩ {x | f x = i} ⊆ ({a} : Set (Below κ)) := by
     intro b hb
     have hba : b = a := hinj hb.1 ha.1 (hb.2.trans ha.2.symm)
-    simpa [hba]
+    simp [hba]
   have hsingleton : IsStationaryBelow κ ({a} : Set (Below κ)) :=
     hi.mono hsub
   have honeκ : (1 : Cardinal.{u}) < κ :=

@@ -33,7 +33,7 @@ namespace Blueprint
 namespace LinkageBlueprint
 
 open DirectedPath Ladder
-open CardinalInduction
+open _root_.Erdos599.Blueprint.LinkageBlueprint.CardinalInduction
 open CardinalInduction.SliceSpliceSource
 
 universe u

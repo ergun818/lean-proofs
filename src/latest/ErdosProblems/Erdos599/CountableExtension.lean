@@ -239,7 +239,7 @@ noncomputable def extendFresh
       queue_source := ?_
       old_pending := ?_ }
   · ext x
-    simp only [DWeb.vertexSet, Set.mem_setOf_eq, Set.mem_union,
+    simp only [DWeb.vertexSet, Set.mem_ofPred_eq, Set.mem_union,
       Set.mem_insert_iff]
     constructor
     · rintro ⟨p, rfl | hp, hxp⟩
@@ -485,7 +485,7 @@ def initialState (F : Set G.DPath) (hG : G.IsUnhindered) :
   finiteCharacter := by intro p hp; exact hp.elim
   chosen_spec := by intro p hp; exact hp.elim
   queue_source := by intro a ha; simp at ha
-  old_pending := by intro p hp hmeet; simpa using hmeet
+  old_pending := by intro p hp hmeet; simp at hmeet
 
 /-! ## Fairness of the FIFO schedule -/
 
@@ -786,7 +786,7 @@ theorem retainedOld_isPathBetween
   refine ⟨q, rfl, ?_, ?_⟩
   · rw [← hends]
     ext x
-    simp only [Set.mem_inter_iff, Set.mem_union, Set.mem_diff]
+    simp only [Set.mem_inter_iff, Set.mem_union, Set.mem_sdiff]
     constructor
     · rintro ⟨hxs, hxsour | hxt⟩
       · exact ⟨hxs, Or.inl ⟨hxsour,
@@ -797,7 +797,7 @@ theorem retainedOld_isPathBetween
       · exact ⟨hxs, Or.inr hxt⟩
   · rw [← hsource]
     ext x
-    simp only [Set.mem_inter_iff, Set.mem_diff]
+    simp only [Set.mem_inter_iff, Set.mem_sdiff]
     constructor
     · rintro ⟨hxs, hxsour⟩
       exact ⟨hxs, hxsour,

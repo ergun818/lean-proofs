@@ -257,15 +257,15 @@ statements and marker freshness. -/
 structure Lemma717RoofTransport
     (L : Gamma.KappaLadder kappa) (hlegal : L.IsLegal) : Prop where
   finite : ∀ (q : FinitePath (L.popularAuxiliaryInput hlegal).lambda.graph)
-      (hs : q.start ∈ (L.popularAuxiliaryInput hlegal).lambda.source)
-      (ht : q.finish ∈ (L.popularAuxiliaryInput hlegal).lambda.target)
+      (_hs : q.start ∈ (L.popularAuxiliaryInput hlegal).lambda.source)
+      (_ht : q.finish ∈ (L.popularAuxiliaryInput hlegal).lambda.target)
       (x : L.finiteTerminalSet) (y : V),
       q.start = .old x.1 → q.finish = .old y →
       y ∈ Gamma.roof
         (L.frontier (L.finiteTerminalStage x))
   proxy : ∀ (q : FinitePath (L.popularAuxiliaryInput hlegal).lambda.graph)
-      (hs : q.start ∈ (L.popularAuxiliaryInput hlegal).lambda.source)
-      (ht : q.finish ∈ (L.popularAuxiliaryInput hlegal).lambda.target)
+      (_hs : q.start ∈ (L.popularAuxiliaryInput hlegal).lambda.source)
+      (_ht : q.finish ∈ (L.popularAuxiliaryInput hlegal).lambda.target)
       (i : L.groundedInfiniteRecords) (y : V),
       q.start = .proxy i → q.finish = .old y →
       y ∈ Gamma.roof (L.frontier (L.groundedInfiniteStage i))

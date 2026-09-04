@@ -38,7 +38,7 @@ variable {V : Type u} {I : Type v} {Gamma : DWeb V}
 abbrev Input (Gamma : DWeb V) (I : Type v) : Type (max u v) :=
   PopularAuxiliary.Input Gamma I
 
-abbrev LV (L : Input Gamma I) : Type (max u v) :=
+abbrev LV (_L : Input Gamma I) : Type (max u v) :=
   PopularAuxiliary.Input.LambdaVertex V I
 
 /-- Every vertex of a directed finite path or ray occurs weakly after its
@@ -75,9 +75,9 @@ later splicing.  Loop erasure is performed by
 `exists_path_to_cutPredecessor` below. -/
 theorem exists_walk_to_cutPredecessor
     (L : Input Gamma I) (C : Set (LV L))
-    {P : L.Fragment} (hP : P ∈ GroundingCut.fragments L C)
+    {P : L.Fragment} (_hP : P ∈ GroundingCut.fragments L C)
     {s : V × V}
-    (hsC : s ∈ GroundingCut.CE L C)
+    (_hsC : s ∈ GroundingCut.CE L C)
     (hsParent : s ∈ P.parent.edgeSet)
     (hsHead : s.2 = P.path.initial)
     {x : V} (hx : x ∈ P.path.support) :
@@ -100,8 +100,7 @@ theorem exists_walk_to_cutPredecessor
         ⟨hsFamily, Or.inl rfl⟩) .nil
     refine ⟨w, ?_⟩
     intro z hz
-    simp only [w, Walk.support_cons, Walk.support_nil, List.mem_cons,
-      List.mem_singleton] at hz
+    simp only [w, Walk.support_cons, Walk.support_nil, List.mem_cons] at hz
     rcases hz with rfl | hz
     · exact Or.inl (Set.mem_singleton _)
     · rcases hz with rfl | hz
@@ -131,7 +130,7 @@ theorem exists_walk_to_cutPredecessor
     intro z hz
     rcases GroundingCutDecoder.mem_reverseGadgetCore_support
         L hsAdj qwalk hsFamily hqwalkFamily hz with hzOld | ⟨e, he, hze⟩
-    · exact Or.inl (by simpa [hzOld])
+    · exact Or.inl (by simp [hzOld])
     · apply Or.inr
       refine ⟨e, ?_, hze.symm⟩
       simp only [Walk.edgeSet_cons, Set.mem_union,

@@ -354,12 +354,12 @@ theorem FiniteTrace.switchedEdges_out_unique
   · rcases Q.exists_forward_link_of_mem_edgeSet_not_familyEdges
       hQ.backwardLinksOn hxz.1 hxz.2 with ⟨j, hdj, hxzj⟩
     exact False.elim (hxy.2
-      (_root_.Erdos599.Alternating.TerminalContactSwitch.FiniteTrace.reference_outgoing_mem_edgeSet_at_forward_source
+      (FiniteTrace.reference_outgoing_mem_edgeSet_at_forward_source
         Q hQ hdj hxzj hxy.1))
   · rcases Q.exists_forward_link_of_mem_edgeSet_not_familyEdges
       hQ.backwardLinksOn hxy.1 hxy.2 with ⟨i, hdi, hxyi⟩
     exact False.elim (hxz.2
-      (_root_.Erdos599.Alternating.TerminalContactSwitch.FiniteTrace.reference_outgoing_mem_edgeSet_at_forward_source
+      (FiniteTrace.reference_outgoing_mem_edgeSet_at_forward_source
         Q hQ hdi hxyi hxz.1))
   · rcases Q.exists_forward_link_of_mem_edgeSet_not_familyEdges
       hQ.backwardLinksOn hxy.1 hxy.2 with ⟨i, hdi, hxyi⟩
@@ -378,12 +378,12 @@ theorem FiniteTrace.switchedEdges_in_unique
   · rcases Q.exists_forward_link_of_mem_edgeSet_not_familyEdges
       hQ.backwardLinksOn hyz.1 hyz.2 with ⟨j, hdj, hyzj⟩
     exact False.elim (hxz.2
-      (_root_.Erdos599.Alternating.TerminalContactSwitch.FiniteTrace.reference_incoming_mem_edgeSet_at_forward_target
+      (FiniteTrace.reference_incoming_mem_edgeSet_at_forward_target
         Q hQ hdj hyzj hxz.1))
   · rcases Q.exists_forward_link_of_mem_edgeSet_not_familyEdges
       hQ.backwardLinksOn hxz.1 hxz.2 with ⟨i, hdi, hxzi⟩
     exact False.elim (hyz.2
-      (_root_.Erdos599.Alternating.TerminalContactSwitch.FiniteTrace.reference_incoming_mem_edgeSet_at_forward_target
+      (FiniteTrace.reference_incoming_mem_edgeSet_at_forward_target
         Q hQ hdi hxzi hyz.1))
   · rcases Q.exists_forward_link_of_mem_edgeSet_not_familyEdges
       hQ.backwardLinksOn hxz.1 hxz.2 with ⟨i, hdi, hxzi⟩
@@ -447,16 +447,16 @@ theorem FiniteTrace.edgeBalance_switched_eq_add_directionBalances
   have hinE : Relator.LeftUnique (fun a b ↦ (a, b) ∈ E) :=
     fun _ _ _ h₁ h₂ ↦ familyEdges_in_unique hQ.warp h₁ h₂
   have houtS : Relator.RightUnique (fun a b ↦ (a, b) ∈ E \ B ∪ F) := by
-    rw [← _root_.Erdos599.Alternating.TerminalContactSwitch.FiniteTrace.switchedEdges_eq_backward_sdiff_union_forward Q hQ]
+    rw [← FiniteTrace.switchedEdges_eq_backward_sdiff_union_forward Q hQ]
     exact fun _ _ _ h₁ h₂ ↦
-      _root_.Erdos599.Alternating.TerminalContactSwitch.FiniteTrace.switchedEdges_out_unique
+      FiniteTrace.switchedEdges_out_unique
         (u := u) Q hQ h₁ h₂
   have hinS : Relator.LeftUnique (fun a b ↦ (a, b) ∈ E \ B ∪ F) := by
-    rw [← _root_.Erdos599.Alternating.TerminalContactSwitch.FiniteTrace.switchedEdges_eq_backward_sdiff_union_forward Q hQ]
+    rw [← FiniteTrace.switchedEdges_eq_backward_sdiff_union_forward Q hQ]
     exact fun _ _ _ h₁ h₂ ↦
-      _root_.Erdos599.Alternating.TerminalContactSwitch.FiniteTrace.switchedEdges_in_unique
+      FiniteTrace.switchedEdges_in_unique
         (u := u) Q hQ h₁ h₂
-  rw [_root_.Erdos599.Alternating.TerminalContactSwitch.FiniteTrace.switchedEdges_eq_backward_sdiff_union_forward Q hQ]
+  rw [FiniteTrace.switchedEdges_eq_backward_sdiff_union_forward Q hQ]
   simpa only [E, B, F] using
     edgeBalance_sdiff_union_eq_add_sub hBE houtE hinE houtS hinS hFB x
 
@@ -469,7 +469,7 @@ theorem FiniteTrace.hasTerminalContactBalanceDelta
     edgeBalance (switchedEdges Z (.finite Q)) x =
       edgeBalance (familyEdges Z) x + propInt (x = Q.initial) -
         propInt (x = Q.terminal) := by
-  rw [_root_.Erdos599.Alternating.TerminalContactSwitch.FiniteTrace.edgeBalance_switched_eq_add_directionBalances Q hQ]
+  rw [FiniteTrace.edgeBalance_switched_eq_add_directionBalances Q hQ]
   have hdir := Q.directionBalance_difference_eq_sum_entries x
   have hsum := Q.sum_entry_exit_eq_boundary x
   omega
@@ -569,9 +569,9 @@ theorem FiniteTrace.exists_terminalContact_application_cyclowarp
       Gamma (switchedEdges Z (.finite Q)) (isolatedVertices Z \ {u})
       (Cyclowarp.application Z (.finite Q)).edges_in_graph
       (fun hxy hxz ↦
-        _root_.Erdos599.Alternating.TerminalContactSwitch.FiniteTrace.switchedEdges_out_unique Q hQ hxy hxz)
+        FiniteTrace.switchedEdges_out_unique Q hQ hxy hxz)
       (fun hxz hyz ↦
-        _root_.Erdos599.Alternating.TerminalContactSwitch.FiniteTrace.switchedEdges_in_unique Q hQ hxz hyz)
+        FiniteTrace.switchedEdges_in_unique Q hQ hxz hyz)
       hfinite hI with ⟨C, hCedges, hCisolated, hCfin⟩
   exact ⟨C, by simpa using hCedges, by simpa using hCisolated, hCfin⟩
 
@@ -635,7 +635,7 @@ theorem Cyclowarp.pathPart_frontiers_eq_sdiff_of_finite_terminalContact
         propInt (x = v) - propInt (x = u) := by
     intro x
     rw [hEdges, Cyclowarp.application_edges,
-      _root_.Erdos599.Alternating.TerminalContactSwitch.FiniteTrace.hasTerminalContactBalanceDelta Q hQ,
+      FiniteTrace.hasTerminalContactBalanceDelta Q hQ,
       hQi, hQ.terminal_eq]
   rcases hQ.terminal_outgoing_or_isolated with huout | huisolated
   · have huniso := not_isolated_of_hasOutgoing hQ.warp huout
@@ -720,10 +720,10 @@ theorem exists_terminalContactSwitch
         Gamma.initialSet Z' = Gamma.initialSet Z \ {u} ∧
         Gamma.terminalFrontier Z' = Gamma.terminalFrontier Z \ {v} := by
   obtain ⟨C, hEdges, hIso, hCfin⟩ :=
-    _root_.Erdos599.Alternating.TerminalContactSwitch.FiniteTrace.exists_terminalContact_application_cyclowarp
+    FiniteTrace.exists_terminalContact_application_cyclowarp
       Q hQ hZfin
   have hfrontiers :=
-    _root_.Erdos599.Alternating.TerminalContactSwitch.Cyclowarp.pathPart_frontiers_eq_sdiff_of_finite_terminalContact
+    Cyclowarp.pathPart_frontiers_eq_sdiff_of_finite_terminalContact
       hZfin Q hQ hv hQi C hEdges hIso hCfin
   exact ⟨C.pathPart, C.pathPart_isWarp, hCfin,
     hfrontiers.1, hfrontiers.2⟩
@@ -732,8 +732,13 @@ end TerminalContactSwitch
 end Alternating
 end Erdos599
 
-#print axioms Erdos599.Alternating.TerminalContactSwitch.FiniteTrace.switchedEdges_out_unique
-#print axioms Erdos599.Alternating.TerminalContactSwitch.FiniteTrace.switchedEdges_in_unique
-#print axioms Erdos599.Alternating.TerminalContactSwitch.FiniteTrace.exists_terminalContact_application_cyclowarp
-#print axioms Erdos599.Alternating.TerminalContactSwitch.Cyclowarp.pathPart_frontiers_eq_sdiff_of_finite_terminalContact
-#print axioms Erdos599.Alternating.TerminalContactSwitch.exists_terminalContactSwitch
+open Erdos599.Alternating.TerminalContactSwitch in
+#print axioms FiniteTrace.switchedEdges_out_unique
+open Erdos599.Alternating.TerminalContactSwitch in
+#print axioms FiniteTrace.switchedEdges_in_unique
+open Erdos599.Alternating.TerminalContactSwitch in
+#print axioms FiniteTrace.exists_terminalContact_application_cyclowarp
+open Erdos599.Alternating.TerminalContactSwitch in
+#print axioms Cyclowarp.pathPart_frontiers_eq_sdiff_of_finite_terminalContact
+open Erdos599.Alternating.TerminalContactSwitch in
+#print axioms exists_terminalContactSwitch

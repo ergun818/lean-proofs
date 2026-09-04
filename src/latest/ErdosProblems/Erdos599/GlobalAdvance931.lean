@@ -1410,6 +1410,8 @@ theorem ClosureAdaptedAdvance931AuxiliaryLinkageRequest.exists_fullyPredecessorP
   exact (R.compile L hL A hclassified.1 hclassified.2).some.1
     |>.exists_fullyPredecessorPreservingAdvance931 hzT
 
+namespace OccurrenceClosureAdaptedAdvance931AuxiliaryLinkageRequest
+
 /-- Solve the occurrence-aware scheduled-closure transaction directly.
 
 Unlike the legacy projected-assignment seam above, this theorem does not
@@ -1417,7 +1419,7 @@ reconstruct an alternating path in the unsplit web.  The request already
 carries the endpoint summary and the two classifications proved by its
 split-occurrence compiler, so cardinal induction is the only remaining
 input. -/
-theorem OccurrenceClosureAdaptedAdvance931AuxiliaryLinkageRequest.exists_fullyPredecessorPreservingAdvance931
+theorem exists_fullyPredecessorPreservingAdvance931
     (hlower : CardinalInduction.UniversalCardinalInductionBelow V kappa)
     (hext : CardinalInduction.UniversalExtensionClauseAt V kappa)
     {ancestor current : LinkageBlueprint Gamma Y kappa}
@@ -1432,6 +1434,8 @@ theorem OccurrenceClosureAdaptedAdvance931AuxiliaryLinkageRequest.exists_fullyPr
     hlower hext R.auxiliary R.auxiliary_unhindered R.source_card
   exact (R.compile L hL).some.1.attachment
     |>.exists_fullyPredecessorPreservingAdvance931 hzT
+
+end OccurrenceClosureAdaptedAdvance931AuxiliaryLinkageRequest
 
 /-- The original assignment-rich relation factors through the exact minimal
 relation before root-orbit compilation. -/

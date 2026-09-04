@@ -107,10 +107,11 @@ theorem exists_intervalReference_terminal_of_limitWarp_hits_frontiers
       Rlimit.toDynamicMoving931GlobalClosure.capturedGeometry.deferredOldStageExceptional := by
     rintro ⟨_hxOld, hxNotSurvivor⟩
     exact hxNotSurvivor hxSurvivor
-  let a : ↑(Rlimit.toDynamicMoving931GlobalClosure.capturedGeometry.oldSlice \
-      Rlimit.toDynamicMoving931GlobalClosure.capturedGeometry.deferredOldStageExceptional : Set V) :=
+  let geometry := Rlimit.toDynamicMoving931GlobalClosure.capturedGeometry
+  let a : ↑(geometry.oldSlice \
+      geometry.deferredOldStageExceptional : Set V) :=
     ⟨x, hxOld, hxNotExceptional⟩
-  let D := Rlimit.toDynamicMoving931GlobalClosure.capturedGeometry.deferredOldStageRealization
+  let D := geometry.deferredOldStageRealization
   have hleft : D.leftPrefix a = fa := by
     have hxLeft : x ∈ (D.leftPrefix a).support := by
       have hmem := (D.leftPrefix a).finish_mem_support
@@ -179,10 +180,10 @@ theorem exists_intervalReference_terminal_of_limitWarp_hits_frontiers
   let q : Gamma.DPath := .inl (D.toSegmentRealization.segment a)
   have hqReference : q ∈ T.intervalReference := by
     change q ∈ SliceSegmentCore.liftStageFamily
-      Rlimit.toDynamicMoving931GlobalClosure.capturedGeometry.ladder
-      Rlimit.toDynamicMoving931GlobalClosure.capturedGeometry.oldStage
-      Rlimit.toDynamicMoving931GlobalClosure.capturedGeometry.deferredOldStageOrdinaryFamily
-    rw [Rlimit.toDynamicMoving931GlobalClosure.capturedGeometry.liftStageFamily_deferredOldStageOrdinaryFamily]
+      geometry.ladder
+      geometry.oldStage
+      geometry.deferredOldStageOrdinaryFamily
+    rw [geometry.liftStageFamily_deferredOldStageOrdinaryFamily]
     exact ⟨a, rfl⟩
   refine ⟨q, hqReference, ?_, ?_⟩
   · change some (D.toSegmentRealization.segment a).finish = some v
@@ -256,8 +257,8 @@ theorem finite_terminal_mem_closedSet
 end PostClosureCompressorAssignment
 
 #print axioms ClubStageGeometry.exists_limitWarp_owner_of_mem_frontier
-#print axioms
-  PostClosureIntervalTransaction.exists_intervalReference_terminal_of_limitWarp_hits_frontiers
+open PostClosureIntervalTransaction in
+#print axioms exists_intervalReference_terminal_of_limitWarp_hits_frontiers
 #print axioms PostClosureCompressorAssignment.finite_terminal_mem_closedSet
 
 end Erdos599.Blueprint.LinkageBlueprint

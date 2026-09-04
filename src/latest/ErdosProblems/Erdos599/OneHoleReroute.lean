@@ -402,7 +402,7 @@ theorem isHindered_delete_singleton_of_oneHolePrinciple
         by_contra hne
         exact Set.disjoint_left.1 (hU.1.1 s.2.1 pU.2 hne)
           htr' (G.terminal_mem_support hqt)
-      exact s.2.2 (by simpa [hsp])
+      exact s.2.2 (by simp [hsp])
     have hJterm : (G.delete {v}).terminalFrontier J =
         G.terminalFrontier U \ {t} := by
       rw [G.terminalFrontier_restrictDeleteFamily]

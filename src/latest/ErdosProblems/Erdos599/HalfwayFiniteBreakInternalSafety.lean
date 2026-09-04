@@ -33,8 +33,7 @@ theorem InternallySafe.breakIntervalPath
     (X : Set V)
     (hparent : InternallySafe Y
       (.finite S.toFiniteRunWalk.toFiniteTrace))
-    (P : (AltPath.finite S.toFiniteRunWalk.toFiniteTrace
-      ).IndexedBackwardProvenance Y I)
+    (P : (AltPath.finite S.toFiniteRunWalk.toFiniteTrace).IndexedBackwardProvenance Y I)
     (i : Fin (S.finiteWalk.breakCount X)) :
     InternallySafe Y (S.breakIntervalPath X i) := by
   unfold RunCompressor.FiniteInput.breakIntervalPath

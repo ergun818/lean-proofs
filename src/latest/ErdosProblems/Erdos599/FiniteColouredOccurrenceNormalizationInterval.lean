@@ -46,7 +46,7 @@ theorem exists_fullRemovedInterval_of_mem
     {e : V × V} (he : e ∈ R ∩ owner.edgeSet) :
     Nonempty (FullRemovedInterval owner R) := by
   rcases hinterval with hempty | ⟨q, hq, hEq⟩
-  · exact False.elim (by simpa [hempty] using he)
+  · exact False.elim (by simp [hempty] at he)
   · obtain ⟨p, rfl⟩ := Path.finite_of_isSubpathOf_finite hq
     exact ⟨⟨p, hq, hEq⟩⟩
 
@@ -151,7 +151,7 @@ private theorem exists_choice_of_empty
     have : e ∈ old.edgeSet := by
       rw [← holdEq]
       exact ⟨heR, heOwner⟩
-    simpa [old, FinitePath.edgeSet, FinitePath.trivial] using this
+    simp [old, FinitePath.edgeSet, FinitePath.trivial] at this
   exact ⟨{
     full := full.path
     old := old

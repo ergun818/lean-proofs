@@ -26,7 +26,7 @@ namespace Erdos599
 namespace CardinalInduction
 namespace RegularDirectPersistentCanonicalSuccessor
 
-open SingularExtension SliceSpliceSource
+open SingularExtension SliceSpliceSource RegularPersistentCanonicalSuccessor
 
 universe u
 
@@ -209,7 +209,8 @@ def toDirectInstalledStage
         (S.slice.target ∪ S.slice.clean) S.compatible),
       SliceSpliceConstructor.IsStagePrefix G L S.stageIndex r ∨
         ∃ x ∈ nextRequest, G.terminal? r = some x := by
-    apply RegularPersistentCanonicalSuccessor.pendingPart_freezeCompletedStar_status_of_completedExceptions
+    apply
+      pendingPart_freezeCompletedStar_status_of_completedExceptions
       hNorm S.base_warp S.slice hL S.cleanIntervals S.compatible
       S.old_pending_status
     intro p hp x hx hpx
@@ -471,7 +472,8 @@ def toDirectInstalledStage
         (S.slice.target ∪ S.slice.clean) S.compatible),
       SliceSpliceConstructor.IsStagePrefix G L S.stageIndex r ∨
         ∃ x ∈ nextRequest, G.terminal? r = some x := by
-    apply RegularPersistentCanonicalSuccessor.pendingPart_freezeCompletedStar_status_of_completedExceptions
+    apply
+      pendingPart_freezeCompletedStar_status_of_completedExceptions
       hNorm S.base_warp S.slice hL S.cleanIntervals S.compatible
       S.old_pending_status
     intro p hp x hx hpx

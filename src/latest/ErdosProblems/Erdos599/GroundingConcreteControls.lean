@@ -38,7 +38,7 @@ universe u
 
 variable {V I : Type u} {Gamma : DWeb V}
 
-abbrev LV (L : PopularAuxiliary.Input Gamma I) :=
+abbrev LV (_L : PopularAuxiliary.Input Gamma I) :=
   PopularAuxiliary.Input.LambdaVertex V I
 
 abbrev Path (L : PopularAuxiliary.Input Gamma I) :=
@@ -263,7 +263,7 @@ def ConcreteControls.toHangingLadderRankData
     exact ⟨x, hx, hxp⟩
 
 /-- Concrete controls recover the exact Assertion 8.20 data package. -/
-def ConcreteControls.toHangingFragmentWarpData
+theorem ConcreteControls.toHangingFragmentWarpData
     {L : PopularAuxiliary.Input Gamma I} {kappa : Cardinal.{u}}
     {U : Popular.KappaIndexed L.lambda kappa}
     {S : Popular.PopularSeparator U} (K : ConcreteControls S) :

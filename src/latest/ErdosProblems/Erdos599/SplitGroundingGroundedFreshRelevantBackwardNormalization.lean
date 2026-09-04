@@ -654,7 +654,7 @@ theorem splitGroundedFreshRelevant_deletedHead_before_oldHead
   apply GroundingCutDecoder.beforeEq_antisymm hstartOld.1
   simpa only [heq] using hheadStart
 
-private def splitGroundedFreshRelevant_normalizeBackwardStep
+private theorem splitGroundedFreshRelevant_normalizeBackwardStep
     (state : L.SplitGroundedFreshRelevantBackwardState
       (hL := hL) (hground := hground)
       (hnotFresh := hnotFresh) (S := S))
@@ -853,7 +853,7 @@ private def splitGroundedFreshRelevant_normalizeBackwardStep
 
 /-- Total well-founded elimination of repeated unrooted backward owners in
 the canonical fresh relation stopped at the relevant source-first frontier. -/
-noncomputable def SplitGroundedFreshRelevantBackwardState.normalize
+theorem SplitGroundedFreshRelevantBackwardState.normalize
     (state : L.SplitGroundedFreshRelevantBackwardState
       (hL := hL) (hground := hground)
       (hnotFresh := hnotFresh) (S := S)) :

@@ -577,20 +577,20 @@ occurrence and literal endpoint-contact geometry.  Eligibility is requested
 only in the one branch which actually invokes Claim 2: a backward link with
 both endpoints uncovered from the reference warp. -/
 theorem classifySingletonTransaction_of_contacts
-    {Q : AltPath Gamma.graph} (hQsafe : IsSafe Y Q)
-    (l : Link Gamma.graph) (hl : l ∈ Q.links)
-    (hclosed : HammockClosedUpTo Gamma Y X before innerRoof outerRoof kappa)
-    (hreferenceClosed : ClosedUnderPaths Gamma Y X)
-    (heligible : l.direction = .backward →
+    {Q : AltPath Gamma.graph} (_hQsafe : IsSafe Y Q)
+    (l : Link Gamma.graph) (_hl : l ∈ Q.links)
+    (_hclosed : HammockClosedUpTo Gamma Y X before innerRoof outerRoof kappa)
+    (_hreferenceClosed : ClosedUnderPaths Gamma Y X)
+    (_heligible : l.direction = .backward →
       l.entry ∉ Gamma.vertexSet Y → l.exit ∉ Gamma.vertexSet Y →
       HammockEligible before innerRoof outerRoof l.entry (.vertex l.exit))
-    (houtsideGeometry : l.direction = .backward →
+    (_houtsideGeometry : l.direction = .backward →
       l.entry ∉ Gamma.vertexSet Y → l.exit ∉ Gamma.vertexSet Y →
       (∀ x ∈ l.path.support, x ∈ X →
         x = l.entry ∨ x = l.exit) ∧
       (l.entry ∉ X ∨ l.exit ∉ X))
-    (hentryX : l.entry ∈ Gamma.vertexSet Y → l.entry ∈ X)
-    (hexitX : l.exit ∈ Gamma.vertexSet Y → l.exit ∈ X) :
+    (_hentryX : l.entry ∈ Gamma.vertexSet Y → l.entry ∈ X)
+    (_hexitX : l.exit ∈ Gamma.vertexSet Y → l.exit ∈ X) :
     Nonempty (SingletonTransactionClassification
       (Y := Y) (X := X) (kappa := kappa) l) := by
   cases hdirection : l.direction with

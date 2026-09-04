@@ -281,7 +281,7 @@ def restrictWalkToQuotient (T : Set V) :
         ⟨e,
           hstrict (by simp),
           hstrict (by simp),
-          hcommit (by simpa using p.start_mem_support)⟩
+          hcommit (by simp)⟩
         (restrictWalkToQuotient T p
           (fun {_} hx hbad ↦ hstrict (by simp [hx]) hbad)
           (fun {_} hx hbad ↦ hcommit (by
@@ -736,7 +736,7 @@ theorem walk_tail_avoids_of_noEdgeEnters {A : Set V}
 vertex of that set is the initial vertex. -/
 theorem targetPath_meets_noEdgeEnters_only_at_start
     {A : Set V} (hA : G.NoEdgeEnters A)
-    (p : FinitePath G.graph) (hpA : p.start ∈ A) :
+    (p : FinitePath G.graph) (_hpA : p.start ∈ A) :
     ∀ {x}, x ∈ p.support → x ∈ A → x = p.start := by
   intro x hxp hxA
   have hxwalk : x ∈ p.walk.support := hxp

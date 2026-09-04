@@ -189,7 +189,7 @@ def ProperRelationLimitBoundaryProvider
 
 /-- Turn the honest indexed relation-limit boundary provider into the
 proper-limit compiler consumed by the ordinal recursor. -/
-noncomputable def properLimitCompilerOfBoundaryProvider
+theorem properLimitCompilerOfBoundaryProvider
     {length : Ordinal.{u}}
     (P : ProperRelationLimitBoundaryProvider
       (Gamma := Gamma) (Y := Y) (kappa := kappa)
@@ -230,6 +230,7 @@ structure FinalRelationLimitBoundary
   index_least : ∀ b : Stage,
     (∀ i, (C.stage i).stageIndex ≤ b) → limitIndex ≤ b
 
+omit [Nonempty I] in
 /-- Successful enumeration turns each stage real terminal into a completed
 real vertex at some later (not necessarily ordered) stage. -/
 theorem successfulResolutionEnumeration_eventuallyCompleted

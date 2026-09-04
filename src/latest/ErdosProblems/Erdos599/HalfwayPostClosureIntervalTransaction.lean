@@ -162,7 +162,7 @@ It is the ambient lift of the canonical deferred survivor intervals, so its
 initials lie on the current frontier and its terminals lie on the captured
 later frontier. -/
 def intervalReference
-    (T : PostClosureIntervalTransaction C globalZ X0 z R) :
+    (_T : PostClosureIntervalTransaction C globalZ X0 z R) :
     Set Gamma.DPath :=
   SliceSegmentCore.liftStageFamily R.capturedGeometry.ladder
     R.capturedGeometry.oldStage

@@ -1544,7 +1544,7 @@ private theorem singletonUnitBlueprint_isLB :
     simp
   · intro r hr
     have : False := by
-      simpa [singletonUnitBlueprint, DirectedPath.Path.trivial] using hr
+      simp [singletonUnitBlueprint, DirectedPath.Path.trivial] at hr
     exact this.elim
   · intro x hx
     exact Or.inl (Or.inl (Set.mem_univ x))
@@ -1562,8 +1562,8 @@ private theorem unit_real_terminal :
     rcases Set.mem_iUnion.1 hvW with ⟨hp, hpedge⟩
     simp only [singletonUnitBlueprint, Set.mem_singleton_iff] at hp
     subst p
-    simpa [DirectedPath.Path.trivial, DirectedPath.FinitePath.trivial,
-      DirectedPath.FinitePath.edgeSet] using hpedge
+    simp [DirectedPath.Path.trivial, DirectedPath.FinitePath.trivial,
+      DirectedPath.FinitePath.edgeSet] at hpedge
 
 private theorem vacuous_hammock_closure :
     HammockClosedUpTo emptyUnitWeb ∅ Set.univ ∅ Set.univ Set.univ ℵ₀ := by
@@ -2391,7 +2391,7 @@ def IsEdgeReal (U : LinkageBlueprint Gamma Y kappa) : Prop :=
 /-- Reinterpret one member of an edge-real blueprint in the original web. -/
 def realPath (U : LinkageBlueprint Gamma Y kappa) (hreal : U.IsEdgeReal)
     (p : U.paths) : Gamma.DPath :=
-  p.1.restrictGraphOnEdges fun e he =>
+  p.1.restrictGraphOnEdges fun _e he =>
     hreal (Set.mem_iUnion.2 <| Exists.intro p.1 <|
       Set.mem_iUnion.2 <| Exists.intro p.2 he)
 
@@ -2402,7 +2402,7 @@ def realFinitePath (U : LinkageBlueprint Gamma Y kappa)
     (q : FinitePath (imaginaryGraph Gamma Y kappa))
     (hq : (Sum.inl q : DirectedPath.Path (imaginaryGraph Gamma Y kappa)) ∈
       U.paths) : FinitePath Gamma.graph :=
-  q.restrictGraphOnEdges fun e he ↦
+  q.restrictGraphOnEdges fun _e he ↦
     hreal (Set.mem_iUnion.2 <| Exists.intro (Sum.inl q) <|
       Set.mem_iUnion.2 <| Exists.intro hq he)
 
@@ -2475,7 +2475,7 @@ theorem disjoint_referenceRemainder
 /-- The endpoint-purity information which an imaginary-graph blueprint
 must carry before it can be converted to an actual linkage.  This is a
 path-level structural condition, stated before changing graphs. -/
-def IsPathBetween (U : LinkageBlueprint Gamma Y kappa)
+def IsPathBetween (_U : LinkageBlueprint Gamma Y kappa)
     (A C : Set V) (p : DirectedPath.Path (imaginaryGraph Gamma Y kappa)) :
     Prop :=
   ∃ q : FinitePath (imaginaryGraph Gamma Y kappa),
@@ -2637,7 +2637,6 @@ theorem initialSet_realFamily (U : LinkageBlueprint Gamma Y kappa)
   · rintro ⟨p, hp, hpx⟩
     let ps : U.paths := ⟨p, hp⟩
     refine ⟨U.realPath hreal ps, ⟨ps, rfl⟩, ?_⟩
-    change (U.realPath hreal ps).initial = x
     rw [U.initial_realPath hreal]
     exact hpx
 

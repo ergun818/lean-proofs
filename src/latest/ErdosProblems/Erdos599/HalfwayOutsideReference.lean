@@ -271,7 +271,7 @@ its source-starting outside components are retained by the later linkage. -/
 theorem OutsideCutBoundary.of_closedUnderLater_outsideReference_of_outsideSubset
     {W : Set Gamma.DPath} {before innerRoof outerRoof : Set V}
     (hW : Gamma.IsWarp W) (hWclosed : ClosedUnderPaths Gamma W X)
-    (hY : Gamma.IsWarp Y) (hYclosed : ClosedUnderPaths Gamma Y X)
+    (_hY : Gamma.IsWarp Y) (hYclosed : ClosedUnderPaths Gamma Y X)
     (hYW : outsideReference Y X ⊆ W)
     (hsource_location :
       Gamma.initialSet W \ Gamma.initialSet Y ⊆ before ∩ innerRoof)

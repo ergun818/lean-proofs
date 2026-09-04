@@ -31,8 +31,7 @@ noncomputable def shiftParentProvenanceIndex
     (hchange : ∀ n, ∃ m, n < m ∧ S.colour m ≠ S.colour n)
     (a : Nat)
     (P : (AltPath.infinite
-      (S.toInfiniteRunWalk hchange).toInfiniteTrace
-      ).IndexedBackwardProvenance Y I)
+      (S.toInfiniteRunWalk hchange).toInfiniteTrace).IndexedBackwardProvenance Y I)
     (i : Nat) : I :=
   Classical.choose (by
     have hmem := (S.toInfiniteRunWalk hchange).run_link_mem
@@ -49,8 +48,7 @@ theorem link_shiftParentProvenanceIndex
     (hchange : ∀ n, ∃ m, n < m ∧ S.colour m ≠ S.colour n)
     (a : Nat)
     (P : (AltPath.infinite
-      (S.toInfiniteRunWalk hchange).toInfiniteTrace
-      ).IndexedBackwardProvenance Y I)
+      (S.toInfiniteRunWalk hchange).toInfiniteTrace).IndexedBackwardProvenance Y I)
     (i : Nat) :
     P.link (S.shiftParentProvenanceIndex hchange a P i) =
       ((S.toInfiniteRunWalk hchange).run
@@ -84,12 +82,10 @@ noncomputable def shiftIndexedBackwardProvenance
     (hchange : ∀ n, ∃ m, n < m ∧ S.colour m ≠ S.colour n)
     (a : Nat)
     (P : (AltPath.infinite
-      (S.toInfiniteRunWalk hchange).toInfiniteTrace
-      ).IndexedBackwardProvenance Y I) :
+      (S.toInfiniteRunWalk hchange).toInfiniteTrace).IndexedBackwardProvenance Y I) :
     (AltPath.infinite
       ((S.shift a).toInfiniteRunWalk
-        (S.shift_changes hchange a)).toInfiniteTrace
-      ).IndexedBackwardProvenance Y Nat where
+        (S.shift_changes hchange a)).toInfiniteTrace).IndexedBackwardProvenance Y Nat where
   link i := (((S.shift a).toInfiniteRunWalk
     (S.shift_changes hchange a)).run i).link
   links_eq_range := ((S.shift a).toInfiniteRunWalk

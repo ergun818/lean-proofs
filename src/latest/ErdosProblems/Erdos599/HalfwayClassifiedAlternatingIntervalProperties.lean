@@ -100,10 +100,9 @@ variable (hbackwardOff : ∀ l ∈ (AltPath.finite Q).links,
       hbackwardOff).initial =
         (Sfirst.pieceLink Sfirst.lastPiece).entry := by
   have hpos : 0 < last.1 - first.1 := Nat.sub_pos_of_lt hfl
-  simp only [crossContactInterval]
-  simp only [Link.ForwardContactSplit.pieceLink_entry]
+  change (if (0 : Nat) = last.1 - first.1 then Slast.pieceLink Slast.firstPiece
+    else Sfirst.pieceLink Sfirst.lastPiece).entry = _
   rw [if_neg (Nat.ne_of_lt hpos)]
-  rfl
 
 @[simp] theorem crossContactInterval_terminal :
     (Q.crossContactInterval X first last hfl Sfirst Slast hlastContact

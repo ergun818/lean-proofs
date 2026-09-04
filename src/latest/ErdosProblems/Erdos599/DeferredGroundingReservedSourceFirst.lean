@@ -143,7 +143,7 @@ end Erdos599
 
 #print axioms
   Erdos599.DWeb.KappaLadder.Deferred.reservedStrongSelectedSourceFirstBB_isSeparator
-#print axioms
-  Erdos599.DWeb.KappaLadder.Deferred.reservedStrongSelected_sourceFirst_escapeBlocker_source_or_virtual
-#print axioms
-  Erdos599.DWeb.KappaLadder.Deferred.reservedStrongSelected_sourceFirst_escapeBlocker_rooted_or_virtual
+open Erdos599.DWeb.KappaLadder.Deferred in
+#print axioms reservedStrongSelected_sourceFirst_escapeBlocker_source_or_virtual
+open Erdos599.DWeb.KappaLadder.Deferred in
+#print axioms reservedStrongSelected_sourceFirst_escapeBlocker_rooted_or_virtual

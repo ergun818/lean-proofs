@@ -399,7 +399,9 @@ end KappaLadder
 end DWeb
 end Erdos599
 
-#print axioms
-  Erdos599.DWeb.KappaLadder.Deferred.ReservedStrongSelectedStartingLastContact.SourceSaturation.sourceFirstBoundary_retainedPrefix_or_strictOwnerTail
-#print axioms
-  Erdos599.DWeb.KappaLadder.Deferred.ReservedStrongSelectedStartingLastContact.SourceSaturation.sourceFirstBoundary_rooted_or_strictOwnerTail
+open Erdos599.DWeb.KappaLadder.Deferred.ReservedStrongSelectedStartingLastContact.SourceSaturation
+  in
+#print axioms sourceFirstBoundary_retainedPrefix_or_strictOwnerTail
+open Erdos599.DWeb.KappaLadder.Deferred.ReservedStrongSelectedStartingLastContact.SourceSaturation
+  in
+#print axioms sourceFirstBoundary_rooted_or_strictOwnerTail

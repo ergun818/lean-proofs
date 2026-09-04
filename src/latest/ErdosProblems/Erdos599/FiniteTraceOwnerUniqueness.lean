@@ -46,7 +46,7 @@ theorem FiniteTrace.last_direction_eq_forward_of_terminal_not_mem
   | forward => rfl
   | backward =>
       have hmem : R.lastLink ∈ (AltPath.finite R).links := by
-        simpa [AltPath.links] using R.lastLink_mem_links
+        simp [AltPath.links]
       obtain ⟨p, hpY, hsub⟩ := hsafe.1.2.1 R.lastLink hmem hdir
       exfalso
       apply hterminal
@@ -134,7 +134,6 @@ theorem FiniteTrace.backward_support_disjoint_of_lt
       by_contra hnot
       have heq : j = imid := by
         apply Fin.ext
-        change j.1 = imid.1
         change ¬ imid.1 < j.1 at hnot
         dsimp [imid] at hnot ⊢
         omega
@@ -241,7 +240,7 @@ private theorem FiniteTrace.not_backward_common_finite_owner_of_start_lt
       (List.idxOf_inj (l := p.walk.support) hfinishP).mp heq
     exact Set.disjoint_left.1 hdij
       (R.link i).path.finish_mem_support
-      (by simpa [b, hvertex] using (R.link j).path.start_mem_support)
+      (by simp [b, hvertex])
   let k := p.walk.support.idxOf (R.link i).path.finish
   have hk : k < p.walk.length := by
     have hlen := Walk.support_length_eq p.walk

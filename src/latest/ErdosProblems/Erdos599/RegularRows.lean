@@ -805,7 +805,7 @@ def ofRegistrationTables (hkappa : aleph0 <= kappa)
 namespace CausalState
 
 /-- Canonical column numbering of a bounded row. -/
-def rowEmbedding (s : CausalState kappa X) (hkappa : aleph0 <= kappa) :
+def rowEmbedding (s : CausalState kappa X) (_hkappa : aleph0 <= kappa) :
     s.row ↪ RegularCardinal.Stage kappa :=
   Classical.choice
     (RegularCardinal.nonempty_embedding_stage_of_mk_le s.row_mk_le)
@@ -817,7 +817,7 @@ namespace CausalRowRule
 /-- Extend the preferences in a strict-prior state family by `none` at the
 current and all later stages.  A causal graph row may safely build its
 temporary canonical ladder from this stream. -/
-def truncatedPreferred (Q : CausalRowRule kappa X)
+def truncatedPreferred (_Q : CausalRowRule kappa X)
     (a : RegularCardinal.Stage kappa)
     (prior : ∀ b : RegularCardinal.Stage kappa,
       b < a -> CausalState kappa X) :
@@ -833,7 +833,7 @@ abbrev priorPreferred (Q : CausalRowRule kappa X)
 
 /-- A task visible at stage `a`: a vertex in one of the strictly earlier
 rows. -/
-abbrev EarlierTask (Q : CausalRowRule kappa X)
+abbrev EarlierTask (_Q : CausalRowRule kappa X)
     (a : RegularCardinal.Stage kappa)
     (prior : ∀ b : RegularCardinal.Stage kappa,
       b < a -> CausalState kappa X) :=
@@ -889,7 +889,7 @@ noncomputable instance earlierPriority_isWellOrder
   exact (Q.earlierTaskCoordinate_injective hkappa).isWellOrder _
 
 /-- Ambient vertices selected before the current causal stage. -/
-def selectedBefore (Q : CausalRowRule kappa X)
+def selectedBefore (_Q : CausalRowRule kappa X)
     {a : RegularCardinal.Stage kappa}
     (prior : ∀ b : RegularCardinal.Stage kappa,
       b < a -> CausalState kappa X) : Set X :=

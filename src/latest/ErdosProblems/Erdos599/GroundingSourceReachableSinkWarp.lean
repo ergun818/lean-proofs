@@ -156,7 +156,7 @@ theorem exists_sourceReachableComponentWarp
     rw [TerminalContactSwitch.vertexSet_eq_isolated_union_incident_anyWarp hW,
       hWI, hWE]
     ext x
-    simp only [Set.mem_union, Set.mem_setOf_eq]
+    simp only [Set.mem_union, Set.mem_ofPred_eq]
     constructor
     · rintro (hxI | hxIncident)
       · exact RootReachableRelation.roots_subset_carrier E A hxI.1

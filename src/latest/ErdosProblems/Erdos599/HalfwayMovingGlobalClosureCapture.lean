@@ -50,7 +50,7 @@ namespace LaterClubRoofCapture
 
 /-- Deferred legality contains exactly the ladder geometry used by the
 regular roof-capture lemma. -/
-private def spliceGeometry
+private theorem spliceGeometry
     (C : ClubStageGeometry Gamma Y kappa (succ kappa)) :
     CardinalInduction.SliceSpliceConstructor.SpliceLadderGeometry
       Gamma C.ladder :=

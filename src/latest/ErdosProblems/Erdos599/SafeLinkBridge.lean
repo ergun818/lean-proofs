@@ -247,7 +247,7 @@ theorem NoEdgeEnters.delete {A Q : Set V} (hA : G.NoEdgeEnters A) :
 /-- The initial vertex of a deleted-web walk is retained whenever its
 terminal vertex is retained. -/
 private theorem deleteWalk_start_not_mem (Q : Set V) :
-    ∀ {a b : V} (p : DirectedPath.Walk (G.delete Q).graph a b),
+    ∀ {a b : V} (_p : DirectedPath.Walk (G.delete Q).graph a b),
       b ∉ Q → a ∉ Q
   | _, _, .nil, hb => hb
   | _, _, .cons e _, _ => e.2.1

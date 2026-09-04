@@ -43,7 +43,8 @@ theorem routeFootprint_source_reaches_finish (C : Set L.Vertex)
     have haI := L.mem_vertexFragmentCarrier_symm C hiA
     have hiGood : i ∉ L.badRecords C := by
       by_contra hiBad
-      simp only [vertexFragmentCarrier, if_neg (not_not_intro hiBad), Set.mem_empty_iff_false] at haI
+      simp only [vertexFragmentCarrier, if_neg (not_not_intro hiBad), Set.mem_empty_iff_false]
+        at haI
     have haOwn : a ∈ L.recordCarrier i := by
       simpa only [vertexFragmentCarrier, if_pos hiGood] using haI
     have hOwnFoot : L.recordCarrier i ⊆ L.routeFootprint C p := by
@@ -83,9 +84,11 @@ def selectedFootprintRegions : Popular.CountableCutRegions L.web S.cut (L.Reques
       (L.independentSelectedPath S hInitial r) i hiFoot
     exact ⟨q, hqs.trans hi, hqt.trans (L.independentSelectedPath_finish S hInitial r), hqSupport⟩
 
-def usedFootprintIndices : Set (Below kappa) := (L.selectedFootprintRegions S hInitial).capturedIndices U
+def usedFootprintIndices : Set (Below kappa) := (L.selectedFootprintRegions S
+  hInitial).capturedIndices U
 
-theorem usedFootprintIndices_nonstationary : ¬ IsStationaryBelow kappa (L.usedFootprintIndices S hInitial) :=
+theorem usedFootprintIndices_nonstationary : ¬ IsStationaryBelow kappa (L.usedFootprintIndices S
+  hInitial) :=
   (L.selectedFootprintRegions S hInitial).capturedIndices_nonstationary U S.not_strongly_popular
 
 #print axioms routeFootprint_source_reaches_finish

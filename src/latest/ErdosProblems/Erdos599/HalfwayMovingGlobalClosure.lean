@@ -410,10 +410,9 @@ theorem exists_of_globalClosedSet
       meetingVertices Gamma C.ladder.limitWarp S ⊆ globalZ := by
     intro x hx
     obtain ⟨p, hxp⟩ := Set.mem_iUnion.1 hx
-    apply hGlobalReferenceClosed p.1 p.2.1
+    refine hGlobalReferenceClosed p.1 p.2.1 ?_ hxp
     obtain ⟨z, hzp, hzS⟩ := p.2.2
     exact ⟨z, hzp, hSglobal hzS⟩
-    exact hxp
   have hstepGlobal (S : Set V) (hSglobal : S ⊆ globalZ) :
       step S ⊆ globalZ := by
     intro x hx

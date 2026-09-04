@@ -80,7 +80,7 @@ source predicate into the repository's switching-ready predicate. -/
 theorem IsSourceAlternating.isAlternating
     {Y : Set Gamma.DPath} {Q : AltPath Gamma.graph}
     (hQ : IsSourceAlternating Gamma Y Q)
-    (hoff : ForwardLinksOff Y Q)
+    (_hoff : ForwardLinksOff Y Q)
     (_hcontacts : ForwardVertexContactsCovered Y Q) :
     IsAlternating Y Q :=
   ⟨hQ.1.1, hQ.1.2.1, hQ.1.2.2, hQ.2⟩
@@ -465,7 +465,7 @@ theorem mem_representedEdges_iff_of_start_in_source
 
 /-- A proxy can occur on a source-starting auxiliary path only as its first
 vertex, since no auxiliary arc enters a proxy. -/
-theorem proxy_mem_support_eq_start (hstart : p.start ∈ L.lambda.source)
+theorem proxy_mem_support_eq_start (_hstart : p.start ∈ L.lambda.source)
     {i : I} (hi : LambdaVertex.proxy i ∈ p.support) :
     p.start = .proxy i := by
   by_contra hne

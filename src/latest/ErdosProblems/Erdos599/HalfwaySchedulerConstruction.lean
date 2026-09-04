@@ -325,7 +325,7 @@ theorem linked_subset_step
     (S : TerminalResolutionState Gamma Y kappa T Z persistent B)
     (u : V) : S.linked ⊆ (S.step compiler hpersistent u).linked := by
   by_cases hu : u ∈ S.blueprint.realPart.terminals ∧ u ∈ T
-  · simpa [step, hu] using Set.subset_insert u S.linked
+  · simp [step, hu]
   · simp [step, hu]
 
 theorem realPart_extends_step
@@ -680,7 +680,7 @@ def toRealExtensionChain
 /-- The canonical limit core.  Directed cycles are excluded by finite-stage
 capture; reverse rays are excluded by the explicitly maintained invariant
 that successors never insert a new predecessor before an old real vertex. -/
-def relationLimitCore (C : ResolutionChain I compiler hpersistent)
+theorem relationLimitCore (C : ResolutionChain I compiler hpersistent)
     (H : C.toRealExtensionChain.NoNewRealPredecessors) :
     C.toRealExtensionChain.RelationLimitCore :=
   C.toRealExtensionChain.relationLimitCore_of_noNewRealPredecessors H
@@ -718,7 +718,7 @@ structure RayRelationBoundaryData
 /-- Compile the residual ray/sink boundary conditions to the full raw
 relation-boundary record.  The two omitted fields are consequences of the
 ordinary chain invariants and cardinal bounds. -/
-def ResidualRelationBoundaryData.toRelationLimitBoundaryData
+theorem ResidualRelationBoundaryData.toRelationLimitBoundaryData
     [Nonempty I] {C : ResolutionChain I compiler hpersistent}
     (D : ResidualRelationBoundaryData C)
     (H : C.toRealExtensionChain.NoNewRealPredecessors)
@@ -920,7 +920,7 @@ rather than supplied as an independent limit assumption.  Once a stage real
 terminal is inserted into a later state's `linked` set, that state's stored
 real path completes it to `B`; `accounted_relationLimit` transports the path
 to the relation union. -/
-def FairRelationSchedule.limitData
+theorem FairRelationSchedule.limitData
     {C : ResolutionChain I compiler hpersistent}
     {seed : TerminalResolutionState Gamma Y kappa T Z persistent B}
     (S : FairRelationSchedule C seed) :

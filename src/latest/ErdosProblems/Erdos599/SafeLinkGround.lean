@@ -78,9 +78,9 @@ theorem terminal_eq_of_extends_of_mem_finish
         p.finish = p.walk.support.getLast p.walk.support_ne_nil :=
           p.walk.getLast_support.symm
         _ = q.walk.support.getLast q.walk.support_ne_nil := by
-          simpa only [hsupp]
+          simp only [hsupp]
         _ = q.finish := q.walk.getLast_support
-    simpa only [Path.terminal?_finite, hfinishEq]
+    simp only [Path.terminal?_finite, hfinishEq]
   · exact False.elim hpq
 
 end FinitePath

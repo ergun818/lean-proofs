@@ -57,8 +57,8 @@ theorem familyEdges_sdiff_trivialPath
   · rintro ⟨p, hp, he⟩
     by_cases hps : p = Gamma.trivialPath s
     · subst p
-      simpa [DWeb.trivialPath, Path.trivial, FinitePath.edgeSet,
-        FinitePath.trivial, Walk.edgeSet] using he
+      simp [DWeb.trivialPath, Path.trivial, FinitePath.edgeSet,
+        FinitePath.trivial, Walk.edgeSet] at he
     · exact ⟨p, ⟨hp, hps⟩, he⟩
 
 /-- Removing the trivial member at `s` removes exactly `s` from the
@@ -73,7 +73,7 @@ theorem isolatedVertices_sdiff_trivialPath
     refine ⟨hxW, ?_⟩
     intro hxs
     have hxs' : x = s := Set.mem_singleton_iff.mp hxs
-    exact hxne (Set.mem_singleton_iff.2 (by simpa [hxs']))
+    exact hxne (Set.mem_singleton_iff.2 (by simp [hxs']))
   · rintro ⟨hxW, hxne⟩
     refine ⟨hxW, ?_⟩
     intro hpaths
@@ -169,7 +169,7 @@ theorem exists_safe_occurrence_dichotomy_total
         hUinitial, hUterminal⟩
       rw [hUI]
       ext x
-      simp only [Set.mem_diff, Set.mem_singleton_iff]
+      simp only [Set.mem_sdiff, Set.mem_singleton_iff]
       constructor
       · intro hx
         exact ⟨hx, fun hxs ↦ hsiso (hxs ▸ hx)⟩

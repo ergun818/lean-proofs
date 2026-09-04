@@ -121,7 +121,7 @@ theorem orientationBlueprint_terminalSet_eq_no_outgoing
       split at hterm <;> rename_i hstop
       · exact nomatch hterm
       · simp only [DWeb.terminal?, DirectedPath.Path.terminal?,
-          DirectedPath.Path.terminal?_finite, Option.some.injEq] at hterm
+          Option.some.injEq] at hterm
         subst x
         exact O.not_hasNext_stoppingIndex hstop
   · rintro ⟨hxcarrier, hnoout⟩

@@ -48,9 +48,9 @@ theorem start_not_mem_suffixFromAux_of_ne
     · exact p.isPath
   have hheads := congrArg List.head? heq
   apply hne
-  rw [List.head?_eq_head (p.suffixData x hx).walk.support_ne_nil,
+  rw [List.head?_eq_some_head (p.suffixData x hx).walk.support_ne_nil,
     (p.suffixData x hx).walk.head_support,
-    List.head?_eq_head p.walk.support_ne_nil,
+    List.head?_eq_some_head p.walk.support_ne_nil,
     p.walk.head_support] at hheads
   exact Option.some.inj hheads
 
@@ -92,11 +92,11 @@ theorem suffixFrom_liftQuotientPath_avoids_subset
       · exact lifted.isPath
     have hheads := congrArg List.head? heq
     have huInit : u = q.start := by
-      rw [List.head?_eq_head
+      rw [List.head?_eq_some_head
           (lifted.suffixFrom u huLift).walk.support_ne_nil,
         (lifted.suffixFrom u huLift).walk.head_support,
         lifted.suffixFrom_start u huLift,
-        List.head?_eq_head lifted.walk.support_ne_nil,
+        List.head?_eq_some_head lifted.walk.support_ne_nil,
         lifted.walk.head_support] at hheads
       exact Option.some.inj hheads
     exact huX (huInit ▸ hyX)
@@ -119,7 +119,7 @@ same-type model of vertex deletion: a deleted vertex belongs vacuously to
 every deleted-web roof. -/
 theorem quotientFinitePath_meets_deleteWave_terminal
     {X Z : Set V} (hXZ : X ⊆ Z)
-    {U : Set (G.delete X).DPath} (hU : (G.delete X).IsWave U)
+    {U : Set (G.delete X).DPath} (_hU : (G.delete X).IsWave U)
     (q : FinitePath (G.quotient Z).graph)
     (hmeet : ∃ u ∈ q.support,
       u ∉ X ∧ u ∈ (G.delete X).roof ((G.delete X).terminalFrontier U))
@@ -141,7 +141,7 @@ theorem quotientFinitePath_meets_deleteWave_terminal
     SafeLink.Walk.toDelete G X suffix.walk (Set.disjoint_left.1 hsuffixX)
   let qdel : Walk (G.delete X).graph u suffix.finish :=
     RelationalRoof.castStart (G.delete X).graph.Adj
-      (by simpa [suffix]) qdel0
+      (by simp [suffix]) qdel0
   have hsuffixFinish : suffix.finish = q.finish := by
     calc
       suffix.finish = lifted.finish := lifted.suffixFrom_finish u huLift
@@ -206,7 +206,7 @@ theorem exists_arrowCandidate_liftDelete_liftQuotient
     (hrAvoidU : Disjoint r.support ((G.delete X).terminalFrontier U)) :
     let L := G.liftDeleteFamily X U
     let R := SafeLink.liftQuotientFamily G Z W
-    ∃ f : FinitePath G.graph, ∃ hfL : (.inl f : G.DPath) ∈ L,
+    ∃ f : FinitePath G.graph, ∃ _hfL : (.inl f : G.DPath) ∈ L,
       ∃ c : G.ArrowCandidate L R f,
         c.path = G.liftQuotientPath Z (.inl q) ∧
         c.path.terminal? = some q.finish := by
@@ -277,7 +277,7 @@ theorem exists_arrowCandidate_liftDelete_liftQuotient
           rw [hcsSf] at hxs
           exact hxs
         by_cases hxeq : x = last.startpoint
-        · simpa [hfFinish, hxeq]
+        · simp [hfFinish, hxeq]
         · have hxLast : x ∈ last.walk.support := hsfLast ▸ hxs'
           have hxTail : x ∈ last.walk.support.tail :=
             (RelationalRoof.mem_support_iff_start_or_mem_tail
@@ -312,7 +312,7 @@ theorem exists_arrowCandidate_liftDelete_liftQuotient
             SafeLink.Walk.toDelete G X sx.walk (Set.disjoint_left.1 hsxAvoidX)
           let sxdel : Walk (G.delete X).graph x sx.finish :=
             RelationalRoof.castStart (G.delete X).graph.Adj
-              (by simpa [sx]) sxdel₀
+              (by simp [sx]) sxdel₀
           have hsxFinish : sx.finish = q.finish := by
             calc
               sx.finish = lifted.finish := lifted.suffixFrom_finish x hxLifted
@@ -359,9 +359,9 @@ theorem exists_arrowCandidate_liftDelete_liftQuotient
                   · exact (hsxSuffix.nodup lifted.isPath)
                 have hhead := congrArg List.head? heq
                 have : last.startpoint = x := by
-                  rw [List.head?_eq_head last.walk.support_ne_nil,
+                  rw [List.head?_eq_some_head last.walk.support_ne_nil,
                     last.walk.head_support,
-                    List.head?_eq_head sx.walk.support_ne_nil,
+                    List.head?_eq_some_head sx.walk.support_ne_nil,
                     sx.walk.head_support] at hhead
                   have hsxStart : sx.start = x := by simp [sx]
                   rw [hsxStart] at hhead
@@ -379,9 +379,9 @@ theorem exists_arrowCandidate_liftDelete_liftQuotient
                 · exact last.isPath lifted.isPath
               have hhead := congrArg List.head? heq
               have : x = last.startpoint := by
-                rw [List.head?_eq_head sx.walk.support_ne_nil,
+                rw [List.head?_eq_some_head sx.walk.support_ne_nil,
                   sx.walk.head_support,
-                  List.head?_eq_head last.walk.support_ne_nil,
+                  List.head?_eq_some_head last.walk.support_ne_nil,
                   last.walk.head_support] at hhead
                 have hsxStart : sx.start = x := by simp [sx]
                 rw [hsxStart] at hhead

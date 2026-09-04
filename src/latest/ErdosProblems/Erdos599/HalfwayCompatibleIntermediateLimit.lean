@@ -64,7 +64,7 @@ structure NormalizedCompatibleIntermediateLimitData
   kappa_infinite : aleph0 ≤ kappa
   index_small : #I ≤ kappa
 
-def NormalizedCompatibleIntermediateLimitData.toCompatibleData
+theorem NormalizedCompatibleIntermediateLimitData.toCompatibleData
     {C : ResolutionChain I compiler hpersistent}
     (D : NormalizedCompatibleIntermediateLimitData C) :
     CompatibleIntermediateLimitData C where
@@ -78,7 +78,7 @@ def NormalizedCompatibleIntermediateLimitData.toCompatibleData
 
 /-- Countable boundedness discharges reverse-ray exclusion as well as the
 strong-ray boundary. -/
-def compatibleIntermediateLimitData_of_countablyBounded
+theorem compatibleIntermediateLimitData_of_countablyBounded
     (C : ResolutionChain I compiler hpersistent)
     (H : C.toRealExtensionChain.CountablyBounded)
     (hYwarp : Gamma.IsWarp Y)
@@ -98,7 +98,7 @@ def compatibleIntermediateLimitData_of_countablyBounded
 
 /-- A predecessor-refining chain supplies the compatibility field, while
 the remaining blueprint boundary is kept explicit. -/
-def compatibleIntermediateLimitData_of_refinement
+theorem compatibleIntermediateLimitData_of_refinement
     (C : ResolutionChain I compiler hpersistent)
     (H : C.toRealExtensionChain.PredecessorRefinement)
     (hYwarp : Gamma.IsWarp Y)
@@ -117,7 +117,7 @@ def compatibleIntermediateLimitData_of_refinement
 /-- In the normalized setting predecessor refinement supplies the only
 remaining infinitary compatibility field; the strong-ray boundary is then
 derived automatically by `toCompatibleData`. -/
-def normalizedCompatibleIntermediateLimitData_of_refinement
+theorem normalizedCompatibleIntermediateLimitData_of_refinement
     (C : ResolutionChain I compiler hpersistent)
     (H : C.toRealExtensionChain.PredecessorRefinement)
     (hYwarp : Gamma.IsWarp Y) (hGamma : Gamma.IsNormalized)

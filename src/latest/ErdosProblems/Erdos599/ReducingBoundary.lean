@@ -484,7 +484,7 @@ private theorem propInt_exists_eq_sum_of_unique
       simp [propInt, hnj]
     · simp
   · have hall : ∀ i, ¬ P i := fun i hi ↦ h ⟨i, hi⟩
-    simp [propInt, h, hall]
+    simp [propInt, hall]
 
 theorem FiniteTrace.directionEdges_edgeBalance_eq_sum
     {D : Digraph V} (Q : FiniteTrace D) (d : Direction) (x : V) :
@@ -614,7 +614,7 @@ theorem mem_initialSet_iff_isolated_or_edgeBalance_eq_one
     x ∈ Γ.initialSet W ↔
       x ∈ isolatedVertices W ∨ edgeBalance (familyEdges W) x = 1 := by
   rw [initialSet_eq_isolated_union_outgoing_boundary hW hWfin]
-  simp only [Set.mem_union, Set.mem_setOf_eq, edgeBalance_eq_one_iff]
+  simp only [Set.mem_union, Set.mem_ofPred_eq, edgeBalance_eq_one_iff]
 
 theorem mem_terminalFrontier_iff_isolated_or_edgeBalance_eq_neg_one
     {W : Set Γ.DPath} (hW : Γ.IsWarp W)
@@ -622,7 +622,7 @@ theorem mem_terminalFrontier_iff_isolated_or_edgeBalance_eq_neg_one
     x ∈ Γ.terminalFrontier W ↔
       x ∈ isolatedVertices W ∨ edgeBalance (familyEdges W) x = -1 := by
   rw [terminalFrontier_eq_isolated_union_incoming_boundary hW hWfin]
-  simp only [Set.mem_union, Set.mem_setOf_eq, edgeBalance_eq_neg_one_iff]
+  simp only [Set.mem_union, Set.mem_ofPred_eq, edgeBalance_eq_neg_one_iff]
 
 theorem Cyclowarp.mem_initialSet_pathPart_iff_isolated_or_edgeBalance_eq_one
     (C : Cyclowarp Γ) (hCfin : Γ.HasFiniteCharacter C.pathPart) {x : V} :
@@ -794,7 +794,7 @@ theorem Cyclowarp.pathPart_frontiers_eq_sdiff_of_finite_reducing
   constructor
   · ext x
     rw [C.mem_initialSet_pathPart_iff_isolated_or_edgeBalance_eq_one hCfin]
-    simp only [Set.mem_diff, Set.mem_singleton_iff]
+    simp only [Set.mem_sdiff, Set.mem_singleton_iff]
     rw [mem_initialSet_iff_isolated_or_edgeBalance_eq_one hQ.1.1 hZfin,
       hIso', hbalance]
     by_cases hxv : x = v
@@ -802,12 +802,12 @@ theorem Cyclowarp.pathPart_frontiers_eq_sdiff_of_finite_reducing
       simp [propInt, hvniso, hvbal, hvu]
     · by_cases hxu : x = u
       · subst x
-        simp [propInt, huniso, hubal, hvu, huv]
+        simp [propInt, huniso, hubal, huv]
       · simp [propInt, hxv, hxu]
   · ext x
     rw [C.mem_terminalFrontier_pathPart_iff_isolated_or_edgeBalance_eq_neg_one
       hCfin]
-    simp only [Set.mem_diff, Set.mem_singleton_iff]
+    simp only [Set.mem_sdiff, Set.mem_singleton_iff]
     rw [mem_terminalFrontier_iff_isolated_or_edgeBalance_eq_neg_one
       hQ.1.1 hZfin, hIso', hbalance]
     by_cases hxv : x = v
@@ -815,7 +815,7 @@ theorem Cyclowarp.pathPart_frontiers_eq_sdiff_of_finite_reducing
       simp [propInt, hvniso, hvbal, hvu]
     · by_cases hxu : x = u
       · subst x
-        simp [propInt, huniso, hubal, hvu, huv]
+        simp [propInt, huniso, hubal, huv]
       · simp [propInt, hxv, hxu]
 
 

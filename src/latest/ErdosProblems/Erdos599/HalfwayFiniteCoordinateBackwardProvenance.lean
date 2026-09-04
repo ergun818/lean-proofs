@@ -103,8 +103,7 @@ def coordinateIntervalParentNativeRun (S : FiniteInput Gamma.graph)
 noncomputable def coordinateIntervalParentProvenanceIndex
     (S : FiniteInput Gamma.graph)
     (a b : Nat) (hab : a < b) (hb : b ≤ S.lastEdge)
-    (P : (AltPath.finite S.toFiniteRunWalk.toFiniteTrace
-      ).IndexedBackwardProvenance Y I)
+    (P : (AltPath.finite S.toFiniteRunWalk.toFiniteTrace).IndexedBackwardProvenance Y I)
     (i : Fin ((S.coordinateInterval a b hab hb).runs.length - 1 + 1)) : I :=
   Classical.choose (by
     have hmem := S.toFiniteRunWalk.run_link_mem
@@ -118,8 +117,7 @@ noncomputable def coordinateIntervalParentProvenanceIndex
 theorem link_coordinateIntervalParentProvenanceIndex
     (S : FiniteInput Gamma.graph)
     (a b : Nat) (hab : a < b) (hb : b ≤ S.lastEdge)
-    (P : (AltPath.finite S.toFiniteRunWalk.toFiniteTrace
-      ).IndexedBackwardProvenance Y I)
+    (P : (AltPath.finite S.toFiniteRunWalk.toFiniteTrace).IndexedBackwardProvenance Y I)
     (i : Fin ((S.coordinateInterval a b hab hb).runs.length - 1 + 1)) :
     P.link (S.coordinateIntervalParentProvenanceIndex a b hab hb P i) =
       (S.toFiniteRunWalk.run
@@ -138,11 +136,9 @@ finite compressor. -/
 noncomputable def coordinateIntervalIndexedBackwardProvenance
     (S : FiniteInput Gamma.graph)
     (a b : Nat) (hab : a < b) (hb : b ≤ S.lastEdge)
-    (P : (AltPath.finite S.toFiniteRunWalk.toFiniteTrace
-      ).IndexedBackwardProvenance Y I) :
+    (P : (AltPath.finite S.toFiniteRunWalk.toFiniteTrace).IndexedBackwardProvenance Y I) :
     (AltPath.finite
-      (S.coordinateInterval a b hab hb).toFiniteRunWalk.toFiniteTrace
-      ).IndexedBackwardProvenance Y
+      (S.coordinateInterval a b hab hb).toFiniteRunWalk.toFiniteTrace).IndexedBackwardProvenance Y
         (Fin ((S.coordinateInterval a b hab hb).runs.length - 1 + 1)) where
   link i := ((S.coordinateInterval a b hab hb).toFiniteRunWalk.run i).link
   links_eq_range :=
@@ -256,4 +252,5 @@ noncomputable def coordinateIntervalIndexedBackwardProvenance
 end RunCompressor.FiniteInput
 end Erdos599.Alternating
 
-#print axioms Erdos599.Alternating.RunCompressor.FiniteInput.coordinateIntervalIndexedBackwardProvenance
+open Erdos599.Alternating.RunCompressor.FiniteInput in
+#print axioms coordinateIntervalIndexedBackwardProvenance

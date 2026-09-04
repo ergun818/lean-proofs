@@ -141,7 +141,7 @@ theorem exists_reservedStrongSelected_finiteStartCompression
         hpNotT, hpInessential⟩
   | infinite ray =>
       have himpossible : (none : Option V) = some (requestExit r) := by
-        simpa [hpath] using hCTerminal
+        simp [hpath] at hCTerminal
       cases himpossible
 
 /-- Total source-correct terminal-contact geometry for the actual final

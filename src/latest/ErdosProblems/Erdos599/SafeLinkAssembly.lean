@@ -64,8 +64,8 @@ theorem quotientWave_support_ne_root
   have hpInitialNe : p.initial ≠ a := by
     intro hpa
     rcases hpSource.1 with hpBaseSource | hpX
-    · exact hpBaseSource.2 (by simpa [hpa])
-    · exact (hXT hpX).2 (by simpa [hpa])
+    · exact hpBaseSource.2 (by simp [hpa])
+    · exact (hXT hpX).2 (by simp [hpa])
   let pb : base.DPath := base.liftQuotientPath X p
   have hpbInitial : pb.initial ∉ ({a} : Set V) := by
     simpa only [Set.mem_singleton_iff, pb,
@@ -195,8 +195,8 @@ theorem assertion6_4_quotient
     have hpInitialNe : p.initial ≠ a := by
       intro hpa
       rcases hpSource.1 with hpBaseSource | hpX
-      · exact hpBaseSource.2 (by simpa [hpa])
-      · exact (hXT hpX).2 (by simpa [hpa])
+      · exact hpBaseSource.2 (by simp [hpa])
+      · exact (hXT hpX).2 (by simp [hpa])
     have hqNeA : q ≠ a := by
       exact quotientWave_support_ne_root G hXT hW hpW hqp
     by_contra hnotTerminalMeeting

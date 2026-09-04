@@ -33,7 +33,7 @@ variable {V I : Type u} {Gamma : DWeb V}
 abbrev Input (Gamma : DWeb V) (I : Type u) :=
   PopularAuxiliary.Input Gamma I
 
-abbrev LV (L : Input Gamma I) :=
+abbrev LV (_L : Input Gamma I) :=
   PopularAuxiliary.Input.LambdaVertex V I
 
 /-- A first-hit prefix meets its target set only at its terminal vertex. -/

@@ -88,7 +88,7 @@ def AllRealTerminalRefiningStable934Compiler
 
 /-- Projection to the older scheduled-slice compiler.  The artificial
 `u ∈ T` argument is deliberately unused. -/
-def AllRealTerminalRefiningStable934Compiler.toStable934Compiler
+theorem AllRealTerminalRefiningStable934Compiler.toStable934Compiler
     (C : AllRealTerminalRefiningStable934Compiler
       (Gamma := Gamma) (Y := Y) (kappa := kappa) T Z persistent B) :
     Stable934Compiler
@@ -183,7 +183,7 @@ theorem linked_subset_step
     (S : TerminalResolutionState Gamma Y kappa T Z persistent B) (u : V) :
     S.linked ⊆ (step C hpersistent S u).linked := by
   by_cases hu : u ∈ S.blueprint.realPart.terminals
-  · simpa [step, hu, advance] using Set.subset_insert u S.linked
+  · simp [step, hu, advance]
   · by_cases hlinked : S.blueprint.RealLinksTo u B <;>
       simp [step, hu, hlinked, recordLinked]
 
@@ -268,7 +268,7 @@ def compatiblePriorRealExtensionChain
     exact (hcoherent _ _ (Ordinal.ToType.mk.symm.monotone hab)).realExtends
 
 /-- Refinement coherence of the chain extracted from a reachable history. -/
-def compatiblePriorChainPredecessorRefinement
+theorem compatiblePriorChainPredecessorRefinement
     {o : Ordinal.{u}}
     (prior : Set.Iio o →
       TerminalResolutionState Gamma Y kappa T Z persistent B)
@@ -292,7 +292,7 @@ def ProperLimitCompatibilityProvider (length : Ordinal.{u}) : Prop :=
 
 /-- Predecessor refinement canonically supplies compatibility at every
 proper limit; no separate reverse-ray oracle remains in the scheduler. -/
-def properLimitCompatibilityProvider_of_refinement
+theorem properLimitCompatibilityProvider_of_refinement
     (length : Ordinal.{u}) :
     ProperLimitCompatibilityProvider
       (Gamma := Gamma) (Y := Y) (kappa := kappa)
@@ -523,7 +523,7 @@ theorem state_limit
       (T := T) (Z := Z) (persistent := persistent) (B := B))
     (request : Ordinal.{u} → V) (o : Ordinal.{u}) (ho : IsSuccLimit o) :
     R.state request o = R.limitOrSeed o ho
-      (fun a ha ↦ R.state request a) := by
+      (fun a _ha ↦ R.state request a) := by
   simpa [state] using
     (Ordinal.limitRecOn_limit o R.seed
       (fun a state ↦ R.step state (request a))
@@ -627,7 +627,7 @@ noncomputable def repeatedRecursor
       (Gamma := Gamma) (Y := Y) (kappa := kappa)
       (T := T) (Z := Z) (persistent := persistent) (B := B))
     (seed : TerminalResolutionState Gamma Y kappa T Z persistent B)
-    (u₀ : V) (hu₀ : u₀ ∈ seed.blueprint.realPart.terminals)
+    (u₀ : V) (_hu₀ : u₀ ∈ seed.blueprint.realPart.terminals)
     (hYwarp : Gamma.IsWarp Y) (hGamma : Gamma.IsNormalized)
     (hkappa : aleph0 ≤ kappa) (hZ : #Z ≤ kappa)
     (hBtarget : B ⊆ Gamma.target)
@@ -704,7 +704,7 @@ noncomputable def repeatedChain
 
 /-- The repeated successor chain inherits predecessor refinement from the
 reachable-state recursion. -/
-def repeatedChainPredecessorRefinement
+theorem repeatedChainPredecessorRefinement
     [LinearOrder Z] [WellFoundedLT Z]
     (S : CompatibleSchedulerSuccessor
       (Gamma := Gamma) (Y := Y) (kappa := kappa)

@@ -316,7 +316,7 @@ private theorem fragment_initial_eq_parent_initial_of_mem
 
 private theorem escapeSuffixState_position_ne_zero
     (L : Gamma.KappaLadder kappa) (hL : L.IsSplitLegal)
-    (C : Set (SplitLV L hL)) (hC : Popular.IsSeparator
+    (C : Set (SplitLV L hL)) (_hC : Popular.IsSeparator
       (SplitAux L hL).lambda C)
     (R : FinitePath Gamma.graph) (hsource : R.start ∈ Gamma.source)
     (havoid : Gamma.Avoids R (GroundingCut.BB (SplitAux L hL) C))

@@ -108,7 +108,7 @@ of the corresponding auxiliary arc. -/
 def decodeWalkSteps : {a b : L.LV} -> Walk L.lambda.graph a b ->
     List (SignedEdge V)
   | a, _, .nil => L.gadgetSteps a
-  | _, _, @Walk.cons _ _ a b c h q =>
+  | _, _, @Walk.cons _ _ a b c _h q =>
       L.gadgetSteps a ++ L.connectorSteps a b ++ decodeWalkSteps q
 
 @[simp] theorem decodeWalkSteps_nil (a : L.LV) :
@@ -138,14 +138,14 @@ def directedSignedEdgeSet (d : Direction) (q : List (SignedEdge V)) :
     (q : List (SignedEdge V)) :
     signedEdgeSet (s :: q) = {s.edge} ∪ signedEdgeSet q := by
   ext e
-  simp only [signedEdgeSet, Set.mem_setOf_eq, List.mem_cons,
+  simp only [signedEdgeSet, Set.mem_ofPred_eq, List.mem_cons,
     Set.mem_union, Set.mem_singleton_iff]
   aesop
 
 @[simp] theorem signedEdgeSet_append (q r : List (SignedEdge V)) :
     signedEdgeSet (q ++ r) = signedEdgeSet q ∪ signedEdgeSet r := by
   ext e
-  simp only [signedEdgeSet, Set.mem_setOf_eq, List.mem_append, Set.mem_union]
+  simp only [signedEdgeSet, Set.mem_ofPred_eq, List.mem_append, Set.mem_union]
   aesop
 
 @[simp] theorem directedSignedEdgeSet_nil (d : Direction) :
@@ -159,7 +159,7 @@ def directedSignedEdgeSet (d : Direction) (q : List (SignedEdge V)) :
       (if s.direction = d then {s.edge} else ∅) ∪
         directedSignedEdgeSet d q := by
   ext e
-  simp only [directedSignedEdgeSet, Set.mem_setOf_eq, List.mem_cons,
+  simp only [directedSignedEdgeSet, Set.mem_ofPred_eq, List.mem_cons,
     Set.mem_union]
   by_cases hsd : s.direction = d <;> simp only [hsd, ↓reduceIte,
     Set.mem_singleton_iff, Set.mem_empty_iff_false, false_or]
@@ -170,7 +170,7 @@ def directedSignedEdgeSet (d : Direction) (q : List (SignedEdge V)) :
     directedSignedEdgeSet d (q ++ r) =
       directedSignedEdgeSet d q ∪ directedSignedEdgeSet d r := by
   ext e
-  simp only [directedSignedEdgeSet, Set.mem_setOf_eq, List.mem_append,
+  simp only [directedSignedEdgeSet, Set.mem_ofPred_eq, List.mem_append,
     Set.mem_union]
   aesop
 
@@ -348,7 +348,7 @@ its right gadget. -/
 theorem connectorSteps_runs_of_some {a b : L.LV} {x y : V}
     (hchosen : L.chosenConnector? a b = some (x, y)) :
     RunsFromTo x y (L.connectorSteps a b) := by
-  simp [connectorSteps, hchosen]
+  simp only [connectorSteps, hchosen]
   exact RunsFromTo.singleton (SignedEdge.forward (x, y))
 
 /-- A backward join contributes no signed edge and identifies the two
@@ -356,7 +356,7 @@ adjacent gadget endpoints. -/
 theorem connectorSteps_runs_of_none {a b : L.LV} {x : V}
     (hchosen : L.chosenConnector? a b = none) :
     RunsFromTo x x (L.connectorSteps a b) := by
-  simp [connectorSteps, hchosen]
+  simp only [connectorSteps, hchosen]
   exact .nil x
 
 /-- Every gadget with an entry also has an exit. -/
@@ -432,7 +432,7 @@ theorem decodeWalkSteps_runs_from_proxy {i : I} {b : L.LV}
             rcases hconn.1 with hbad | hproxy
             · simp at hbad
             · rcases hproxy with ⟨j, hji, hx⟩
-              simp at hji
+              simp only [LambdaVertex.proxy.injEq] at hji
               subst j
               exact hx
           have hcentry : L.gadgetEntry c = some y := hconn.2.1

@@ -654,7 +654,7 @@ theorem erasedSelectedForwardCutEdgesAt_empty
     erasedSelectedForwardCutEdgesAt U S K (∅ : Set V) = ∅ := by
   rw [erasedSelectedForwardCutEdgesAt,
     erasedSelectedRetainedForwardEdgesAt_empty]
-  exact Set.diff_self
+  exact Set.sdiff_self
 
 theorem forward_diff_erasedSelectedForwardCutEdgesAt_eq_retained
     {kappa : Cardinal.{u}}
@@ -701,7 +701,7 @@ theorem erasedSelectedSwitchedEdgesAt_empty_eq
   rw [erasedSelectedSwitchedEdgesAt, erasedSelectedToggleEdgesAt,
     boundaryOutgoingCutEdgesAt_empty,
     erasedSelectedForwardCutEdgesAt_empty]
-  simp only [Set.union_empty, Set.diff_empty]
+  simp only [Set.union_empty, Set.sdiff_empty]
 
 theorem activeRetainedForwardEdgesAt_subset_switched
     {kappa : Cardinal.{u}}

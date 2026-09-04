@@ -185,6 +185,7 @@ theorem relevantBB_disjoint_record_of_trace_disjoint
 end DWeb.KappaLadder.SplitGroundedUnusedRecord
 
 #print axioms GroundingCut.wholeFragment_mem_fragments
-#print axioms DWeb.KappaLadder.SplitGroundedUnusedRecord.relevantBB_disjoint_record_of_trace_disjoint
+open DWeb.KappaLadder.SplitGroundedUnusedRecord in
+#print axioms relevantBB_disjoint_record_of_trace_disjoint
 
 end Erdos599

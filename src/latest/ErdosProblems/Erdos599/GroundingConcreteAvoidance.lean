@@ -31,7 +31,7 @@ universe u
 
 variable {V I : Type u} {Gamma : DWeb V}
 
-abbrev LV (L : PopularAuxiliary.Input Gamma I) :=
+abbrev LV (_L : PopularAuxiliary.Input Gamma I) :=
   PopularAuxiliary.Input.LambdaVertex V I
 
 abbrev Path (L : PopularAuxiliary.Input Gamma I) :=

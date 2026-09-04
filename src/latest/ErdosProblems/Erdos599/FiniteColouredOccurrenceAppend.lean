@@ -164,14 +164,14 @@ def append (Q P : FiniteColouredOccurrenceWord W Y)
                 have hPj : P.direction j = .forward := hdir.symm.trans hQi
                 exact False.elim (Set.disjoint_left.1 hforward
                   ⟨⟨i, hQi⟩, by simpa [forwardEdge, actualEdge]⟩
-                  ⟨⟨j, hPj⟩, by simpa [forwardEdge, actualEdge] using hedge.symm⟩)
+                  ⟨⟨j, hPj⟩, by simp [forwardEdge, actualEdge]⟩)
             | backward =>
                 have hPj : P.direction j ≠ .forward := by
                   rw [hdir.symm, hQi]
                   exact Direction.noConfusion
                 exact False.elim (Set.disjoint_left.1 hbackward
                   ⟨⟨i, by simp [hQi]⟩, by simpa [backwardEdge, actualEdge]⟩
-                  ⟨⟨j, hPj⟩, by simpa [backwardEdge, actualEdge] using hedge.symm⟩)
+                  ⟨⟨j, hPj⟩, by simp [backwardEdge, actualEdge]⟩)
     | right i =>
         induction j using Fin.addCases with
         | left j =>
@@ -298,15 +298,13 @@ theorem append_forwardEdges (Q P : FiniteColouredOccurrenceWord W Y)
       Fin.addCases (fun i ↦ Or.inl ⟨i, rfl⟩)
         (fun i ↦ Or.inr ⟨i, rfl⟩) k
     rcases hcase with ⟨i, rfl⟩ | ⟨i, rfl⟩
-    ·
-      left
+    · left
       have hi : Q.direction i = .forward := by
         simpa [append, appendDirection_left] using hk
       exact ⟨⟨i, hi⟩, by
         simpa [forwardEdge] using
           (Q.append_actualEdge_left P hjoin hforward hbackward i).symm⟩
-    ·
-      right
+    · right
       have hi : P.direction i = .forward := by
         simpa [append, appendDirection_right] using hk
       exact ⟨⟨i, hi⟩, by
@@ -337,15 +335,13 @@ theorem append_backwardEdges (Q P : FiniteColouredOccurrenceWord W Y)
       Fin.addCases (fun i ↦ Or.inl ⟨i, rfl⟩)
         (fun i ↦ Or.inr ⟨i, rfl⟩) k
     rcases hcase with ⟨i, rfl⟩ | ⟨i, rfl⟩
-    ·
-      left
+    · left
       have hi : Q.direction i ≠ .forward := by
         simpa [append, appendDirection_left] using hk
       exact ⟨⟨i, hi⟩, by
         simpa [backwardEdge] using
           (Q.append_actualEdge_left P hjoin hforward hbackward i).symm⟩
-    ·
-      right
+    · right
       have hi : P.direction i ≠ .forward := by
         simpa [append, appendDirection_right] using hk
       exact ⟨⟨i, hi⟩, by
@@ -369,7 +365,7 @@ private def finitePathVertex {D : Digraph V} (p : FinitePath D) :
 
 @[simp] private theorem finitePathVertex_zero {D : Digraph V}
     (p : FinitePath D) : finitePathVertex p 0 = p.start := by
-  simpa [finitePathVertex] using p.support_getElem_zero
+  simp [finitePathVertex]
 
 @[simp] private theorem finitePathVertex_last {D : Digraph V}
     (p : FinitePath D) :
@@ -391,7 +387,7 @@ private theorem finitePathEdge_mem {D : Digraph V} (p : FinitePath D)
   · rw [Walk.support_length_eq]
     omega
   · simp only [finitePathVertex]
-    congr 1 <;> apply Fin.ext <;> simp
+    congr 1
 
 private theorem finitePathVertexSet {D : Digraph V} (p : FinitePath D) :
     Set.range (finitePathVertex p) = p.support := by
@@ -476,7 +472,7 @@ theorem ofForwardPath_forwardEdges (p : FinitePath Gamma.graph)
     refine ⟨⟨i, rfl⟩, ?_⟩
     simp only [forwardEdge, actualEdge, ofForwardPath]
     simp only [finitePathVertex, i]
-    congr 1 <;> apply Fin.ext <;> simp
+    congr 1
 
 theorem ofForwardPath_backwardEdges (p : FinitePath Gamma.graph)
     (hp : p.edgeSet ⊆ familyEdges W) :

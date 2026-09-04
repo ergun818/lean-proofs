@@ -91,7 +91,7 @@ theorem exists_of_terminal_boundary
     ∃ r : Z, MacroStep Z Y p r := by
   obtain ⟨fp, hfp⟩ := hZfinite p.2
   have hpterm : Gamma.terminal? p.1 = some fp.finish := by
-    simpa [hfp]
+    simp [hfp]
   have htZ : fp.finish ∈ Gamma.terminalFrontier Z :=
     ⟨p.1, p.2, hpterm⟩
   have htY : fp.finish ∈ Gamma.vertexSet Y := hpY fp.finish hpterm
@@ -170,7 +170,7 @@ theorem finiteMacroRoute_or_infiniteMacroChain_of_boundary
     have hfinal : ∃ t, Gamma.terminal? (z N).1 = some t ∧
         t ∉ Gamma.vertexSet Y := by
       dsimp only [Covered] at hN
-      push_neg at hN
+      push Not at hN
       exact hN
     let t : V := Classical.choose hfinal
     have ht := Classical.choose_spec hfinal
@@ -387,7 +387,7 @@ theorem boundaryMacroOwnedBracketSimultaneousAssignment
     let Zz : Set Gamma.DPath := macroOrbit Z Y p
     let Yz : Set Gamma.DPath := macroReference Z Y p
     have hpinit : p.1.initial = z.1 := by
-      simpa [p] using initialPath_initial Z ⟨z.1, z.property.1⟩
+      simp [p]
     have hpOutside : p.1.initial ∉ Gamma.vertexSet Y := by
       simpa [p] using hrootOutside z
     have hpZz : p.1 ∈ Zz := mem_macroOrbit_root Z Y p

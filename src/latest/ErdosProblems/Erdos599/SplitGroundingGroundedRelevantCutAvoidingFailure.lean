@@ -329,11 +329,11 @@ theorem exists_hindrance_or_exists_splitGroundedRelevantCutAvoidingFailure
 end DWeb.KappaLadder.SplitGroundedUnusedRecord
 end Erdos599
 
-#print axioms
-  Erdos599.DWeb.KappaLadder.SplitGroundedUnusedRecord.sourceEndpoint_ne_of_trace_disjoint
-#print axioms
-  Erdos599.DWeb.KappaLadder.SplitGroundedUnusedRecord.virtualEscape_origin_hanging_of_trace_disjoint
-#print axioms
-  Erdos599.DWeb.KappaLadder.SplitGroundedUnusedRecord.exists_hindrance_or_splitGroundedRelevantCutAvoidingFailure
-#print axioms
-  Erdos599.DWeb.KappaLadder.SplitGroundedUnusedRecord.exists_hindrance_or_exists_splitGroundedRelevantCutAvoidingFailure
+open Erdos599.DWeb.KappaLadder.SplitGroundedUnusedRecord in
+#print axioms sourceEndpoint_ne_of_trace_disjoint
+open Erdos599.DWeb.KappaLadder.SplitGroundedUnusedRecord in
+#print axioms virtualEscape_origin_hanging_of_trace_disjoint
+open Erdos599.DWeb.KappaLadder.SplitGroundedUnusedRecord in
+#print axioms exists_hindrance_or_splitGroundedRelevantCutAvoidingFailure
+open Erdos599.DWeb.KappaLadder.SplitGroundedUnusedRecord in
+#print axioms exists_hindrance_or_exists_splitGroundedRelevantCutAvoidingFailure

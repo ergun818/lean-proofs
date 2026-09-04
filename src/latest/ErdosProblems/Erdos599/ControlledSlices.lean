@@ -44,7 +44,7 @@ been recorded at a strictly earlier stage.  Since the bookkeeping records
 at most one path per stage, there are fewer than `κ` such components. -/
 theorem mk_inessentialSuccessor_lt_of_not_mem_phi
     {κ : Cardinal.{u}} (Γ : DWeb V) (L : Γ.KappaLadder κ)
-    (hL : L.IsSplitLegal) (α : RegularCardinal.Stage κ)
+    (_hL : L.IsSplitLegal) (α : RegularCardinal.Stage κ)
     (hα : α ∉ L.phi) :
     #(Γ.inessentialPaths (L.successorWarp α)) < κ := by
   classical

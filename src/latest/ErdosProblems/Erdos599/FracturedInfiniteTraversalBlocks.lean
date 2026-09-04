@@ -61,7 +61,7 @@ theorem exists_warp_carrier_of_consWalk
       have htail : (Walk.cons f r).edgeSet ⊆ familyEdges W := by
         intro g hg
         apply hfamily
-        simp only [Walk.edgeSet_cons, Set.mem_insert_iff]
+        simp only [Walk.edgeSet_cons]
         exact Or.inr hg
       obtain ⟨p, hpW, hp⟩ := ih f htail
       have heFamily : (a, b) ∈ familyEdges W := by
@@ -79,7 +79,7 @@ theorem exists_warp_carrier_of_consWalk
       subst s
       refine ⟨p, hpW, ?_⟩
       intro g hg
-      simp only [Walk.edgeSet_cons, Set.mem_insert_iff] at hg
+      simp only [Walk.edgeSet_cons] at hg
       rcases hg with rfl | hg
       · exact hes
       · exact hp hg
@@ -210,7 +210,7 @@ edges whose endpoints have equal projection. -/
 def forwardSteps : {a b : Vertex V} → Walk (web Gamma Z).graph a b →
     List (TraversalStep (V := V))
   | _, _, .nil => []
-  | _, _, @Walk.cons _ _ a b _ h q =>
+  | _, _, @Walk.cons _ _ a b _ _h q =>
       if project a = project b then forwardSteps q
       else TraversalStep.forward (a, b) :: forwardSteps q
 
@@ -218,7 +218,7 @@ def forwardSteps : {a b : Vertex V} → Walk (web Gamma Z).graph a b →
 def backwardSteps : {a b : Vertex V} → Walk (web Gamma Z).graph a b →
     List (TraversalStep (V := V))
   | _, _, .nil => []
-  | _, _, @Walk.cons _ _ a b _ h q =>
+  | _, _, @Walk.cons _ _ a b _ _h q =>
       backwardSteps q ++
         if project a = project b then []
         else [TraversalStep.backward (a, b)]
@@ -646,7 +646,6 @@ theorem projected_link_indices_finite
   apply hS.subset
   intro i hi
   rcases hi with ⟨z, hz, hzx⟩
-  change i ∈ S
   rcases z with ⟨y, r⟩
   change y = x at hzx
   subst y
@@ -702,7 +701,7 @@ private theorem mem_mapWalk_edgeSet_projects
     (he : e ∈ (FracturedDuplication.mapWalk f hf q).edgeSet) :
     (g e.1, g e.2) ∈ q.edgeSet := by
   induction q with
-  | nil => simp [FracturedDuplication.mapWalk, Walk.edgeSet] at he
+  | nil => simp [FracturedDuplication.mapWalk] at he
   | @cons a b c h q ih =>
       simp only [FracturedDuplication.mapWalk, Walk.edgeSet_cons,
         Set.mem_union, Set.mem_singleton_iff] at he ⊢

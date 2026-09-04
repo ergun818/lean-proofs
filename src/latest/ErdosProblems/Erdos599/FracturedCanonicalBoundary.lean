@@ -359,7 +359,7 @@ theorem initialSet_canonicalPeeledReferenceLift_subset_activeLift
     (hboundary : BoundaryAligned Z.paths Y)
     (hY : Gamma.IsWarp Y)
     (hZfinite : Gamma.HasFiniteCharacter Z.paths)
-    (hYfinite : Gamma.HasFiniteCharacter Y)
+    (_hYfinite : Gamma.HasFiniteCharacter Y)
     (hsource : Gamma.initialSet Y ⊆ Gamma.initialSet Z.paths) :
     (web Gamma Z).initialSet (canonicalPeeledReferenceLift Z Y) ⊆
       (web Gamma Z).initialSet (canonicalActiveLift Z) := by
@@ -445,7 +445,7 @@ theorem boundaryAligned_canonicalLift
     (Z : FracturedWarp Gamma) {Y : Set Gamma.DPath}
     (hboundary : BoundaryAligned Z.paths Y)
     (hY : Gamma.IsWarp Y)
-    (hZfinite : Gamma.HasFiniteCharacter Z.paths)
+    (_hZfinite : Gamma.HasFiniteCharacter Z.paths)
     (hYfinite : Gamma.HasFiniteCharacter Y)
     (hsource : Gamma.initialSet Y ⊆ Gamma.initialSet Z.paths)
     (hnoJunction :

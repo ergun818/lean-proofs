@@ -99,7 +99,7 @@ theorem mem_edgePairs_reverseInto_swap {D : Digraph V}
     (e.2, e.1) ∈ p.edgeSet := by
   induction p with
   | nil =>
-      simp [_root_.Erdos599.Alternating.Walk.reverseInto, edgePairs] at he
+      simp [_root_.Erdos599.Alternating.Walk.reverseInto] at he
   | @cons a c b h p ih =>
       simp only [_root_.Erdos599.Alternating.Walk.reverseInto,
         _root_.Erdos599.DirectedPath.Walk.concat,
@@ -116,7 +116,7 @@ theorem mem_edgePairs_reverseInto_swap {D : Digraph V}
 /-- Looking up edge occurrence `i` gives support vertices `i` and `i+1`. -/
 theorem edgePairs_get_support {D : Digraph V} {a b : V}
     (p : Walk D a b) (i : Fin p.length) :
-    p.edgePairs.get ⟨i.1, by simpa using i.2⟩ =
+    p.edgePairs.get ⟨i.1, by simp⟩ =
       (p.support.get ⟨i.1, by
           rw [_root_.Erdos599.Alternating.Walk.support_length_eq_length_add_one]
           omega⟩,
@@ -128,11 +128,11 @@ theorem edgePairs_get_support {D : Digraph V} {a b : V}
   | @cons a c b h p ih =>
       cases i using Fin.cases with
       | zero =>
-          simp only [edgePairs, List.get_eq_getElem, List.getElem_cons_zero,
+          simp only [edgePairs, List.get_eq_getElem,
             Walk.support_cons, List.getElem_cons_succ]
           have hp : 0 < p.support.length :=
             List.length_pos_iff.mpr p.support_ne_nil
-          simpa [List.getElem_zero hp, p.head_support]
+          simp [List.getElem_zero hp, p.head_support]
       | succ i =>
           simp only [edgePairs, List.get_eq_getElem, List.getElem_cons_succ,
             Walk.support_cons]
@@ -358,8 +358,8 @@ theorem routeTaggedEdges_rank_le
   | succ n ih =>
       intro hn
       simp only [prefixTaggedEdges, List.map_append, taggedWalkEdges,
-        List.map_map, Function.comp_apply, prefixWalk, Walk.edgePairs_append,
-        Walk.edgePairs_castEndpoints, ih, C.stepBlockWalk_edgePairs]
+        List.map_map, prefixWalk, Walk.edgePairs_append,
+        ih, C.stepBlockWalk_edgePairs]
       simp [Function.comp_def, List.append_assoc]
 
 @[simp] theorem routeTaggedEdges_map_snd
@@ -569,7 +569,7 @@ theorem edgeTagCarrier_injective_on_colour
       | inl j =>
           have hij : i = j := C.z_injective hZ hY hroot
             (Subtype.ext hcarrier)
-          simpa [hij]
+          simp [hij]
       | inr j => simp [edgeTagColour] at hcolour
   | inr i =>
       cases b with
@@ -577,7 +577,7 @@ theorem edgeTagCarrier_injective_on_colour
       | inr j =>
           have hij : i = j := C.y_injective hZ hY hroot
             (Subtype.ext hcarrier)
-          simpa [hij]
+          simp [hij]
 
 theorem routeEdgeTag_rank_mono
     (hZfin : Γ.HasFiniteCharacter Z) (hYfin : Γ.HasFiniteCharacter Y)

@@ -278,4 +278,5 @@ end Erdos599
 
 #print axioms Erdos599.Popular.XSWarp.exists_maximalDecodedTargetPureAvoidingRestricted_extension
 #print axioms Erdos599.Popular.XSWarp.exists_maximalDecodedTargetPureAvoiding_reserving
-#print axioms Erdos599.Popular.MaximalDecodedTargetPureAvoidingRestrictedXSWarp.support_meets_or_decodedCarrier_meets
+open Erdos599.Popular.MaximalDecodedTargetPureAvoidingRestrictedXSWarp in
+#print axioms support_meets_or_decodedCarrier_meets

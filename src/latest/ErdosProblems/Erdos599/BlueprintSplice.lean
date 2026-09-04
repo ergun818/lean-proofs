@@ -78,7 +78,7 @@ theorem FinitePath.edgeSet_appendFinite
       (hinter ⟨hxp, hxqSupport⟩)
     have hhead : qwalk.support.head qwalk.support_ne_nil = p.finish :=
       qwalk.head_support
-    exact hq.rel_head_tail hxq (by simpa only [hhead, hxeq])
+    exact hq.rel_head_tail hxq (by simp only [hhead, hxeq])
   have happend :
       p.appendFinite
           (⟨p.finish, qfinish, qwalk, hq⟩ : FinitePath D) rfl hinter =
@@ -166,7 +166,7 @@ theorem diamondPaths_isWarp
       (diamondPaths cut p P hstart hinter) := by
   change (diamondPaths cut p P hstart hinter).PairwiseDisjoint Path.support
   intro r hr s hs hrs
-  simp only [diamondPaths, Set.mem_union, Set.mem_diff,
+  simp only [diamondPaths, Set.mem_union, Set.mem_sdiff,
     Set.mem_singleton_iff] at hr hs
   rcases hr with hr | rfl <;> rcases hs with hs | rfl
   · exact cut.isWarp hr.1 hs.1 hrs
@@ -174,7 +174,7 @@ theorem diamondPaths_isWarp
     rw [diamondPath_support]
     rw [Set.disjoint_union_right]
     constructor
-    · exact cut.isWarp hr.1 hp (fun h ↦ hr.2 (by simpa [h]))
+    · exact cut.isWarp hr.1 hp (fun h ↦ hr.2 (by simp [h]))
     · apply Set.disjoint_left.2
       intro x hxr hxP
       have hxin : x ∈ cut.vertexSet := ⟨r, hr.1, hxr⟩
@@ -182,12 +182,12 @@ theorem diamondPaths_isWarp
         (hfreshCut ⟨hxin, hxP⟩)
       have hxPp : x ∈ p.support := hxeq ▸ p.finish_mem_support
       exact Set.disjoint_left.1
-        (cut.isWarp hr.1 hp (fun h ↦ hr.2 (by simpa [h]))) hxr hxPp
+        (cut.isWarp hr.1 hp (fun h ↦ hr.2 (by simp [h]))) hxr hxPp
   · change Disjoint (diamondPath p P hstart hinter).support s.support
     rw [diamondPath_support]
     rw [Set.disjoint_union_left]
     constructor
-    · exact cut.isWarp hp hs.1 (fun h ↦ hs.2 (by simpa [h.symm]))
+    · exact cut.isWarp hp hs.1 (fun h ↦ hs.2 (by simp [h.symm]))
     · apply Set.disjoint_left.2
       intro x hxP hxs
       have hxin : x ∈ cut.vertexSet := ⟨s, hs.1, hxs⟩
@@ -195,7 +195,7 @@ theorem diamondPaths_isWarp
         (hfreshCut ⟨hxin, hxP⟩)
       have hxPp : x ∈ p.support := hxeq ▸ p.finish_mem_support
       exact Set.disjoint_left.1
-        (cut.isWarp hp hs.1 (fun h ↦ hs.2 (by simpa [h]))) hxPp hxs
+        (cut.isWarp hp hs.1 (fun h ↦ hs.2 (by simp [h]))) hxPp hxs
   · exact (hrs rfl).elim
 
 /-- The concrete `cut \diamond P` blueprint. -/
@@ -205,9 +205,9 @@ def diamond (cut : LinkageBlueprint Γ Y κ)
     (hfreshCut : cut.vertexSet ∩ P.support ⊆ {p.finish}) :
     LinkageBlueprint Γ Y κ where
   paths := diamondPaths cut p P hstart
-    (fun x hx ↦ hfreshCut ⟨⟨.inl p, hp, hx.1⟩, hx.2⟩)
+    (fun _x hx ↦ hfreshCut ⟨⟨.inl p, hp, hx.1⟩, hx.2⟩)
   isWarp := diamondPaths_isWarp cut p hp P hstart
-    (fun x hx ↦ hfreshCut ⟨⟨.inl p, hp, hx.1⟩, hx.2⟩) hfreshCut
+    (fun _x hx ↦ hfreshCut ⟨⟨.inl p, hp, hx.1⟩, hx.2⟩) hfreshCut
 
 end LinkageBlueprint
 end Blueprint

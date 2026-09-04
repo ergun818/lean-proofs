@@ -185,7 +185,7 @@ theorem IsEdgeInterval.mem_of_between_ray_positions
     (hij : i ≤ j) (hjk : j ≤ k) :
     (p j, p (j + 1)) ∈ E := by
   rcases hI with rfl | ⟨q, hsub, rfl⟩
-  · simpa using hi
+  · simp at hi
   · exact Path.ray_edge_mem_of_between p q hsub hi hk hij hjk
 
 /-- Contact coverage supplies an incoming backward edge on an arbitrary
@@ -302,7 +302,7 @@ theorem isSwitchingSafe_noForwardSandwich
       (Q.directionEdges .forward) := by
   intro r hrne hrB a b hIn hOut
   have hfrag := finitePath_isFragmentOf_of_edgeSet_subset_familyEdges
-    hSafe.1.1.1 r hrne (hrB.trans Set.diff_subset)
+    hSafe.1.1.1 r hrne (hrB.trans Set.sdiff_subset)
   rcases hfrag with ⟨p, hpY, hrp⟩
   rcases p with p | p
   · exact hSafe.no_forward_retainedPath_forward hpY hrp hrne hrB hIn hOut

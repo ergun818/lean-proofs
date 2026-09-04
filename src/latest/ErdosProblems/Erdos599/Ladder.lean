@@ -546,7 +546,7 @@ theorem initialSet_limitPaths (C : G.GrowingWarpChain I) :
     G.initialSet (C.limitPaths G) = C.initialUnion := by
   apply Set.Subset.antisymm
   · rintro x ⟨p, ⟨a, rfl⟩, rfl⟩
-    simpa [C.threadLimit_initial G a] using a.2
+    simp [C.threadLimit_initial G a]
   · intro x hx
     let a : C.initialUnion := ⟨x, hx⟩
     exact ⟨C.threadLimit G a, ⟨a, rfl⟩, C.threadLimit_initial G a⟩
@@ -921,12 +921,12 @@ theorem ladderMarkerOfState_eq_none_iff
           cases hnone
   · intro hempty
     have hne : ¬ (G.ladderMarkerCandidatesOfState s).Nonempty := by
-      simpa [hempty]
+      simp [hempty]
     cases hpref : preferred with
     | none => simp [ladderMarkerOfState.eq_def, hactive, hne]
     | some y =>
         have hy : y ∉ G.ladderMarkerCandidatesOfState s := by
-          simpa [hempty]
+          simp [hempty]
         simp [ladderMarkerOfState.eq_def, hactive, hy, hne]
 
 /-- Lift a path in the essential quotient stage back to the ambient web. -/

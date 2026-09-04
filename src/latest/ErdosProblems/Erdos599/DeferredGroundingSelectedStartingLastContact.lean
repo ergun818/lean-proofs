@@ -308,9 +308,9 @@ end Erdos599
 
 #print axioms
   Erdos599.DWeb.KappaLadder.Deferred.exists_reservedStrongSelectedStartingLastContact
-#print axioms
-  Erdos599.DWeb.KappaLadder.Deferred.ReservedStrongSelectedStartingLastContact.normalizedSuffix_meets_record_only_at_contact
-#print axioms
-  Erdos599.DWeb.KappaLadder.Deferred.ReservedStrongSelectedStartingLastContact.discardedRecord_disjoint_relevantBB
-#print axioms
-  Erdos599.DWeb.KappaLadder.Deferred.canonicalDeferredLadder_startingLastContact_essentialOwner_grounded_or_terminal
+open Erdos599.DWeb.KappaLadder.Deferred.ReservedStrongSelectedStartingLastContact in
+#print axioms normalizedSuffix_meets_record_only_at_contact
+open Erdos599.DWeb.KappaLadder.Deferred.ReservedStrongSelectedStartingLastContact in
+#print axioms discardedRecord_disjoint_relevantBB
+open Erdos599.DWeb.KappaLadder.Deferred in
+#print axioms canonicalDeferredLadder_startingLastContact_essentialOwner_grounded_or_terminal

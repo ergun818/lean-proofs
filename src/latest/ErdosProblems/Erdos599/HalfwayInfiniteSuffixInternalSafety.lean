@@ -35,8 +35,8 @@ theorem InternallySafe.infiniteShift
     (a : Nat)
     (hparent : InternallySafe Y
       (.infinite (S.toInfiniteRunWalk hchange).toInfiniteTrace))
-    (P : (AltPath.infinite (S.toInfiniteRunWalk hchange).toInfiniteTrace
-      ).IndexedBackwardProvenance Y I) :
+    (P : (AltPath.infinite (S.toInfiniteRunWalk hchange).toInfiniteTrace).IndexedBackwardProvenance
+      Y I) :
     InternallySafe Y
       (.infinite ((S.shift a).toInfiniteRunWalk
         (S.shift_changes hchange a)).toInfiniteTrace) := by

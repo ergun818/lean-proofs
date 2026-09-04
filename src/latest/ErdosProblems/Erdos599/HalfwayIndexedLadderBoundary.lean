@@ -52,6 +52,7 @@ theorem target_not_mem_strictRoof
   exact hxNotEssential <| CardinalInduction.target_mem_essential hxB
     (target_mem_boundary_of_mem_roof hxB hxRoof)
 
+omit [Nonempty I] in
 /-- The carrier-local target hypothesis for indexed limits is a theorem
 for the actual persistent set, without normalization or extra choices. -/
 theorem target_inter_realVertexLimit_subset_persistent

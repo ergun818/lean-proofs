@@ -76,7 +76,7 @@ theorem FixedSafePrefixState.current_totalBackward_incoming_imp_prefix
   subst owner
   rcases S.intervals p hownerY with hempty | hprior
   · have : (a, b) ∈ S.word.backwardEdges ∩ p.edgeSet := ⟨hab, habOwner⟩
-    exact False.elim (by simpa [hempty] using this)
+    exact False.elim (by simp [hempty] at this)
   · let A := hprior.some
     obtain ⟨z, hza⟩ := htotalIn
     have hzaY := total.backwardEdges_subset_familyEdges hza

@@ -42,7 +42,7 @@ theorem exists_run_offset_of_lt_flatten
         obtain ⟨i, k, hk, hnk⟩ := ih hnTail
         refine ⟨⟨i.1 + 1, by simp⟩, k, by simpa using hk, ?_⟩
         simp only [runLower, List.take_succ_cons, List.map_cons,
-          List.sum_cons, List.get_cons_succ]
+          List.sum_cons]
         change n = r.length + runLower runs i + k
         have hnGe : r.length ≤ n := Nat.le_of_not_gt hnr
         omega

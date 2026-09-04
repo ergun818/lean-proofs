@@ -135,7 +135,7 @@ theorem GrowingWarpChain.strictRoof_terminalFrontier_subset_limitPaths
     · subst z
       exact (G.mem_strictRoof_iff_mem_roof_sdiff_singleton _ _).1
         hxStrict
-    · exact G.subset_roof _ ⟨hz, by simpa [hzx]⟩
+    · exact G.subset_roof _ ⟨hz, by simp [hzx]⟩
   have hxUnion : x ∈ ⋃ j : Tail, G.roof (S j) := by
     exact Set.mem_iUnion.2 ⟨⟨i, le_rfl⟩, hx⟩
   have hxLiminf : x ∈ G.roof (WarpLimits.setLiminf S) :=

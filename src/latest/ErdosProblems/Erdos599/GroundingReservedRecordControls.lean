@@ -27,7 +27,7 @@ open Cardinal Order Set
 namespace Erdos599
 namespace DWeb.KappaLadder
 
-open DirectedPath Stationary PopularGroundingBridge
+open _root_.Erdos599.DWeb.DirectedPath Stationary PopularGroundingBridge
 
 universe u
 

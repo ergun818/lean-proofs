@@ -292,7 +292,8 @@ end OutsideSplitWarp.SplitProjectedOutsideFracturedWarp
 
 #print axioms OutsideSplitWarp.SplitProjectedOutsideFracturedWarp.originalOwner
 #print axioms OutsideSplitWarp.SplitProjectedOutsideFracturedWarp.fragment_initial_eq_owner_or_exit
-#print axioms OutsideSplitWarp.SplitProjectedOutsideFracturedWarp.fragment_terminal_eq_owner_or_entry
+#print axioms
+  OutsideSplitWarp.SplitProjectedOutsideFracturedWarp.fragment_terminal_eq_owner_or_entry
 
 end LinkageBlueprint
 end Blueprint

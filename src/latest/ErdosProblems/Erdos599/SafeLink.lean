@@ -83,7 +83,7 @@ theorem exists_lastExit : ∀ {u v : V} (p : DirectedPath.Walk D u v) (Q : Set V
           suffix := L.suffix
           suffix_avoids := L.suffix_avoids
           support_suffix := L.support_suffix.trans ?_ }⟩
-        simpa using (List.suffix_cons u p.support)
+        simp
       · have huQ : u ∈ Q := by
           rcases hmeet with ⟨x, hx, hxQ⟩
           simp only [DirectedPath.Walk.support_cons, List.mem_cons] at hx
@@ -101,7 +101,7 @@ theorem exists_lastExit : ∀ {u v : V} (p : DirectedPath.Walk D u v) (Q : Set V
           suffix := p
           suffix_avoids := hpavoids
           support_suffix := ?_ }⟩
-        simpa using (List.suffix_cons u p.support)
+        simp
 
 /-- The suffix supplied by `LastExit` remains a simple path. -/
 theorem LastExit.suffix_isPath {u v : V} {p : DirectedPath.Walk D u v}
@@ -611,9 +611,9 @@ theorem liftDelete_no_essential_overlap
         · exact p.isPath
       have hheads := congrArg List.head? heq
       have hyz : y = z := by
-        rw [List.head?_eq_head (p.suffixData y hyp).walk.support_ne_nil,
+        rw [List.head?_eq_some_head (p.suffixData y hyp).walk.support_ne_nil,
           (p.suffixData y hyp).walk.head_support,
-          List.head?_eq_head p.walk.support_ne_nil,
+          List.head?_eq_some_head p.walk.support_ne_nil,
           p.walk.head_support] at hheads
         exact (Option.some.inj hheads).trans hpTarget.1
       exact hyNe hyz
@@ -1626,10 +1626,8 @@ theorem pathsMeeting_countable {W : Set (DirectedPath.Path D)} {X : Set V}
     · by_cases hq : q ∈ W
       · have hd := hW hp hq hpq
         apply hd.mono
-        · simpa [f, hp] using
-            (show p.support ∩ X ⊆ p.support from Set.inter_subset_left)
-        · simpa [f, hq] using
-            (show q.support ∩ X ⊆ q.support from Set.inter_subset_left)
+        · simp [hp]
+        · simp [hq]
       · change Disjoint (f p) (f q)
         rw [show f q = ∅ by simp [f, hq]]
         exact Set.disjoint_empty _

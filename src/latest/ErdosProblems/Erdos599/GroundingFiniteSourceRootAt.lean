@@ -318,4 +318,5 @@ end DWeb
 end Erdos599
 
 #print axioms Erdos599.DWeb.KappaLadder.familyEdge_deleted_classificationAt
-#print axioms Erdos599.DWeb.KappaLadder.UnusedGroundedRecord.exists_cutFiniteSource_rootedAt_of_lastDeletedHead
+open Erdos599.DWeb.KappaLadder.UnusedGroundedRecord in
+#print axioms exists_cutFiniteSource_rootedAt_of_lastDeletedHead

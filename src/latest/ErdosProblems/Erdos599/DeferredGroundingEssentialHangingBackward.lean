@@ -189,7 +189,8 @@ theorem canonicalDeferredLadder_reservedStrongSelected_backwardEdges_disjoint_es
 /-- Native-relation form.  A backward edge deleted from an essential
 hanging parent exposes the actual active request which attaches to that
 parent at its own apex. -/
-theorem canonicalDeferredLadder_reservedNative_backwardEdge_on_essentialHanging_exists_apexAttachment
+theorem
+  canonicalDeferredLadder_reservedNative_backwardEdge_on_essentialHanging_exists_apexAttachment
     (preferred : Stage kappa → Option V)
     (hkappa : kappa.IsRegular) (huncountable : aleph0 < kappa)
     (hNoEnter : Gamma.NoEdgeEnters Gamma.source)
@@ -237,11 +238,13 @@ end KappaLadder
 end DWeb
 end Erdos599
 
+open Erdos599.DWeb.KappaLadder.Deferred in
+#print axioms canonicalDeferredLadder_reservedStrongSelected_meets_essentialHanging_apex_mem
+open Erdos599.DWeb.KappaLadder.Deferred in
 #print axioms
-  Erdos599.DWeb.KappaLadder.Deferred.canonicalDeferredLadder_reservedStrongSelected_meets_essentialHanging_apex_mem
+  canonicalDeferredLadder_reservedStrongSelected_backwardEdge_on_essentialHanging_apex_mem
+open Erdos599.DWeb.KappaLadder.Deferred in
+#print axioms canonicalDeferredLadder_reservedStrongSelected_backwardEdges_disjoint_essentialHanging
+open Erdos599.DWeb.KappaLadder.Deferred in
 #print axioms
-  Erdos599.DWeb.KappaLadder.Deferred.canonicalDeferredLadder_reservedStrongSelected_backwardEdge_on_essentialHanging_apex_mem
-#print axioms
-  Erdos599.DWeb.KappaLadder.Deferred.canonicalDeferredLadder_reservedStrongSelected_backwardEdges_disjoint_essentialHanging
-#print axioms
-  Erdos599.DWeb.KappaLadder.Deferred.canonicalDeferredLadder_reservedNative_backwardEdge_on_essentialHanging_exists_apexAttachment
+  canonicalDeferredLadder_reservedNative_backwardEdge_on_essentialHanging_exists_apexAttachment

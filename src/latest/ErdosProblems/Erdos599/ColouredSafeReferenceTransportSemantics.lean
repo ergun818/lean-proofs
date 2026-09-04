@@ -266,7 +266,8 @@ theorem retypeLimitReference_injective
 
 end ColouredSafeAmbientOccurrence
 
-#print axioms ColouredSafeReverseReachability.CurrentSafeOccurrence.hasFiniteSwitchedPathTo_retypeLimitReference_iff
+open ColouredSafeReverseReachability.CurrentSafeOccurrence in
+#print axioms hasFiniteSwitchedPathTo_retypeLimitReference_iff
 #print axioms ColouredSafeAmbientOccurrence.retypeLimitReference_injective
 
 end Erdos599

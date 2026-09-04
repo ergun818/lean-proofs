@@ -191,7 +191,8 @@ private theorem isLinkable_of_bounded_exceptional_complement_extensionThrough
     apply SliceSpliceSource.isLinkageBetween_initialRestriction hF
     rintro x ⟨hxSource, hxE'⟩
     exact ⟨hxSource, fun hxE ↦ hxE' (hEE' hxE)⟩
-  · exact _root_.Erdos599.CardinalInduction.ProtectedCardinalAssembly.ExtensionThroughFor.linkable_of_source_mk_le
+  · exact
+      ProtectedCardinalAssembly.ExtensionThroughFor.linkable_of_source_mk_le
       hext hGBase hG (lt_of_not_ge hlarge).le
 
 /-- The old-stage residual is still roofed by the new frontier after the
@@ -593,8 +594,7 @@ theorem ClubStageGeometry.exists_oldStageIntervalTransaction_of_safe_extensionTh
   have hL : IsLinkageBetween H R.source C.newSlice L :=
     IsLinkageBetween.mono_target_sdiff hLsmall hLX
   have holdRoof : C.oldSlice ⊆ H.roof C.newSlice := by
-    intro v hv
-    intro p hp
+    intro v hv p hp
     let qG := SliceSegmentCore.liftStageFinitePath
       C.ladder C.oldStage p
     have hqG : Gamma.IsTargetPathFrom v qG := by

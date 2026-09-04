@@ -397,7 +397,7 @@ theorem mk_registeredVerticesAt_le
         rw [hcleanEmpty] at hpClean
         exact hpClean
     rw [hregisteredEmpty]
-    rw [Cardinal.mk_emptyCollection]
+    rw [Cardinal.mk_eq_zero]
     exact bot_le
 
 end RegularWeakSplitCandidate

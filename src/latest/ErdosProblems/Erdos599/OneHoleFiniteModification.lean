@@ -70,7 +70,7 @@ private theorem coveredPathSupport_closed_left
       DWeb.IsWarp.eq_of_mem_support hJ hpJ hpath hxp hx
     simpa [← hpeq] using hyp
   · rw [coveredPathSupport, dif_neg haJ] at hx
-    exact False.elim (by simpa using hx)
+    exact False.elim (by simp at hx)
 
 private theorem coveredPathSupport_closed_right
     (G : DWeb V) {J : Set G.DPath} (hJ : G.IsWarp J)
@@ -89,7 +89,7 @@ private theorem coveredPathSupport_closed_right
       DWeb.IsWarp.eq_of_mem_support hJ hpJ hpath hyp hy
     simpa [← hpeq] using hxp
   · rw [coveredPathSupport, dif_neg haJ] at hy
-    exact False.elim (by simpa using hy)
+    exact False.elim (by simp at hy)
 
 private theorem finiteModificationAffected_closed_left
     (G : DWeb V) {J : Set G.DPath} (hJ : G.IsWarp J)

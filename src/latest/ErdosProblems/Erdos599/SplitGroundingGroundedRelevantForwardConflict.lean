@@ -380,15 +380,15 @@ theorem SplitGroundedReducedForwardConflictSpliceData.sameTail_or_unrootedAnchor
 end DWeb.KappaLadder
 end Erdos599
 
-#print axioms
-  Erdos599.DWeb.KappaLadder.SplitGroundedReducedForwardConflictSpliceData.sameTail_or_unrootedAnchor
+open Erdos599.DWeb.KappaLadder.SplitGroundedReducedForwardConflictSpliceData in
+#print axioms sameTail_or_unrootedAnchor
 #print axioms
   Erdos599.DWeb.KappaLadder.LastDeletedHead.finish_rooted_of_beforeEq_rooted
-#print axioms
-  Erdos599.DWeb.KappaLadder.SplitGroundedReducedForwardConflictSpliceData.before_head_or_finish_rooted
-#print axioms
-  Erdos599.DWeb.KappaLadder.SplitGroundedReducedForwardConflictSpliceData.before_head_of_unrooted_finish
-#print axioms
-  Erdos599.DWeb.KappaLadder.SplitGroundedReducedForwardConflictSpliceData.before_head_of_unrooted_endpoint
-#print axioms
-  Erdos599.DWeb.KappaLadder.SplitGroundedReducedForwardConflictSpliceData.segmentLastContact_beforeEq_incomingTail
+open Erdos599.DWeb.KappaLadder.SplitGroundedReducedForwardConflictSpliceData in
+#print axioms before_head_or_finish_rooted
+open Erdos599.DWeb.KappaLadder.SplitGroundedReducedForwardConflictSpliceData in
+#print axioms before_head_of_unrooted_finish
+open Erdos599.DWeb.KappaLadder.SplitGroundedReducedForwardConflictSpliceData in
+#print axioms before_head_of_unrooted_endpoint
+open Erdos599.DWeb.KappaLadder.SplitGroundedReducedForwardConflictSpliceData in
+#print axioms segmentLastContact_beforeEq_incomingTail

@@ -137,7 +137,7 @@ def concat {u v w : V} (p : Walk D u v) (h : D.Adj v w) : Walk D u w :=
 
 @[simp] theorem append_assoc : ∀ {u v w z : V} (p : Walk D u v) (q : Walk D v w)
     (r : Walk D w z), (p.append q).append r = p.append (q.append r)
-  | _, _, _, _, .nil, q, r => rfl
+  | _, _, _, _, .nil, _q, _r => rfl
   | _, _, _, _, .cons h p, q, r => congrArg (Walk.cons h) (append_assoc p q r)
 
 @[simp] theorem length_append : ∀ {u v w : V} (p : Walk D u v) (q : Walk D v w),
@@ -294,7 +294,7 @@ theorem exists_lastHit : ∀ {u v : V} (p : Walk D u v) (S : Set V),
           walk := L.walk
           startpoint_mem := L.startpoint_mem
           support_suffix := by
-            exact L.support_suffix.trans (by simpa using List.suffix_cons u p.support)
+            exact L.support_suffix.trans (by simp)
           no_mem_after := L.no_mem_after }⟩
       · have hu : u ∈ S := by
           rcases hmeet with ⟨x, hx, hxS⟩

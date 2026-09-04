@@ -145,7 +145,7 @@ theorem mk_registration_lt
         huncountable hP (by simpa only [hP.initialSet_eq] using hsource)
   · have hempty : registration Q U kappa = ∅ := by
       rw [registration, SliceCandidate.chooseVertexSet, dif_neg hnonempty]
-    rw [hempty, Cardinal.mk_emptyCollection]
+    rw [hempty, Cardinal.mk_eq_zero]
     exact Cardinal.aleph0_pos.trans huncountable
 
 /-- Prefix transport is literal extensionality: only the visible stage web

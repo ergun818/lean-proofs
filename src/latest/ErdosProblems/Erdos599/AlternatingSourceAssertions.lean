@@ -91,11 +91,11 @@ theorem IsBracketAlternating.snoc_backward
     IsBracketAlternating U Y (.finite (T.snoc R hjoin halt hcompat)) := by
   let TR := T.snoc R hjoin halt hcompat
   have hlinks : TR.links = T.links ∪ {R} := by
-    simpa [TR] using FiniteTrace.links_snoc T R hjoin halt hcompat
+    simp [TR]
   have hfirst : TR.firstLink = T.firstLink := by
-    simpa [TR] using FiniteTrace.firstLink_snoc T R hjoin halt hcompat
+    simp [TR]
   have hlast : TR.lastLink = R := by
-    simpa [TR] using FiniteTrace.lastLink_snoc T R hjoin halt hcompat
+    simp [TR]
   rcases hT with ⟨hAlt, hforwardU⟩
   rcases hAlt with ⟨hYWarp, hbackY, hinitial, hterminal⟩
   refine ⟨⟨hYWarp, ?_, ?_, ?_⟩, ?_⟩
@@ -143,10 +143,10 @@ theorem exists_bracketContinuation_snoc_backward
   refine ⟨.finite TR, hT.snoc_backward T R hjoin halt hcompat hRdir hRY,
     ?_, ?_⟩
   · change TR.initial = T.initial
-    simpa [TR] using FiniteTrace.initial_snoc T R hjoin halt hcompat
+    simp [TR]
   · change some TR.terminal = some R.exit
     congr 1
-    simpa [TR] using FiniteTrace.terminal_snoc T R hjoin halt hcompat
+    simp [TR]
 
 /-- Reverse reachability is closed under a collision-resolved reverse-trace
 extension.  This is the common inference in Assertions 4.15, 4.17, and

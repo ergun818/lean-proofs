@@ -89,4 +89,5 @@ theorem exists_actualFiniteClosedClassifiedContactSegmentation
 
 end Erdos599.Blueprint.LinkageBlueprint.PostClosureCompressorAssignment
 
-#print axioms Erdos599.Blueprint.LinkageBlueprint.PostClosureCompressorAssignment.exists_actualFiniteClosedClassifiedContactSegmentation
+open Erdos599.Blueprint.LinkageBlueprint.PostClosureCompressorAssignment in
+#print axioms exists_actualFiniteClosedClassifiedContactSegmentation

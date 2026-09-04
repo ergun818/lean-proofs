@@ -303,7 +303,7 @@ theorem pendingPart_vertexSet_subset_roof_of_split_selected
       p = G.trivialPath p.initial) :
     G.vertexSet (SingularExtension.pendingPart G W) ⊆
       G.roof S.boundary := by
-  rw [← clean_union_boundary_of_initialSet_subset hsource,
+  rw [← clean_union_boundary_of_initialSet_subset (C := S.boundary) hsource,
     G.vertexSet_union]
   exact Set.union_subset S.clean_pending_roof
     (boundaryPendingPart_vertexSet_subset_roof_of_trivial G htrivial)
@@ -318,7 +318,7 @@ theorem pendingPart_selected_vertexSet_subset_roof_of_split
       p = G.trivialPath p.initial) :
     G.vertexSet (SingularExtension.pendingPart G W₁) ⊆
       G.roof S.boundary := by
-  rw [← clean_union_boundary_of_initialSet_subset hsource,
+  rw [← clean_union_boundary_of_initialSet_subset (C := S.boundary) hsource,
     G.vertexSet_union]
   refine Set.union_subset ?_ ?_
   · rintro x ⟨p, hp, hxp⟩
@@ -335,7 +335,7 @@ theorem pendingPart_selected_terminalClean_of_split
     (hW : W₁ ⊆ W₂)
     (hsource : G.initialSet W₁ ⊆ G.source) :
     TerminalCleanAt G (SingularExtension.pendingPart G W₁) S.boundary := by
-  rw [← clean_union_boundary_of_initialSet_subset hsource]
+  rw [← clean_union_boundary_of_initialSet_subset (C := S.boundary) hsource]
   intro p hp
   rcases hp with hpClean | hpBoundary
   · exact S.clean_pending_terminalClean p
@@ -367,7 +367,7 @@ theorem pendingRequests_eq_terminalFrontier_pendingPart_of_trivial_selected
     pendingRequests G W C =
       G.terminalFrontier (SingularExtension.pendingPart G W) := by
   unfold pendingRequests
-  rw [← clean_union_boundary_of_initialSet_subset hsource,
+  rw [← clean_union_boundary_of_initialSet_subset (C := C) hsource,
     G.terminalFrontier_union,
     terminalFrontier_boundaryPendingPart_eq_initialSet_of_trivial G htrivial]
 

@@ -144,4 +144,5 @@ end SplitGroundedUnusedRecord
 end DWeb.KappaLadder
 end Erdos599
 
-#print axioms Erdos599.DWeb.KappaLadder.SplitGroundedUnusedRecord.selectedRequest_initial_rootedAt_of_lastDeletedHead_cases
+open Erdos599.DWeb.KappaLadder.SplitGroundedUnusedRecord in
+#print axioms selectedRequest_initial_rootedAt_of_lastDeletedHead_cases

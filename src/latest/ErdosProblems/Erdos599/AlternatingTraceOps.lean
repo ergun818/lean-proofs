@@ -573,7 +573,7 @@ theorem support_inter_subset_singleton_of_isSubpathOf
         x = P.walk.support.get fix := by simpa [fix] using hixval.symm
         _ = P.walk.support.get fij := congrArg _ heq
         _ = q.finish := by simpa [fij] using hijval
-    simpa [hxfinish]
+    simp [hxfinish]
   · rcases hq.1 hxq with ⟨ix, hixval⟩
     rcases hq.1 q.finish_mem_support with ⟨ij, hijval⟩
     let qs := q.suffixFrom x hxq
@@ -602,7 +602,7 @@ theorem support_inter_subset_singleton_of_isSubpathOf
         x = R ix := hixval.symm
         _ = R ij := congrArg R.toFun heq
         _ = q.finish := hijval
-    simpa [hxfinish]
+    simp [hxfinish]
 
 /-- Append two ambient-path fragments which meet end-to-start. -/
 theorem exists_append_isSubpathOf
@@ -666,7 +666,7 @@ theorem exists_append_isSubpathOf
       · exact List.mem_append_left _ hxq
       · by_cases hx : x = r.start
         · apply List.mem_append_left
-          simpa [hx, ← hjoin] using q.finish_mem_support
+          simp [hx, ← hjoin]
         · apply List.mem_append_right
           change x ∈ r.walk.support at hxr
           have hrdecomp : r.walk.support = r.start :: r.walk.support.tail := by
@@ -1459,8 +1459,7 @@ theorem directionVertices_finite_reverse (Q : FiniteTrace D) (d : Direction) :
       (AltPath.finite Q).directionVertices d.flip := by
   ext v
   simp only [directionVertices, links, FiniteTrace.links, Set.mem_iUnion,
-    Set.mem_range, FiniteTrace.reverse_link, Link.reverse_direction,
-    Link.reverse_path]
+    Set.mem_range]
   constructor
   · rintro ⟨l, ⟨i, rfl⟩, hdir, hv⟩
     change (Q.link i.rev).direction.flip = d at hdir
@@ -1470,15 +1469,14 @@ theorem directionVertices_finite_reverse (Q : FiniteTrace D) (d : Direction) :
     simpa using hdir
   · rintro ⟨l, ⟨i, rfl⟩, hdir, hv⟩
     refine ⟨(Q.link i).reverse, ⟨i.rev, by simp⟩, ?_, hv⟩
-    simpa [hdir]
+    simp [hdir]
 
 theorem directionEdges_finite_reverse (Q : FiniteTrace D) (d : Direction) :
     (AltPath.finite Q.reverse).directionEdges d =
       (AltPath.finite Q).directionEdges d.flip := by
   ext e
   simp only [directionEdges, links, FiniteTrace.links, Set.mem_iUnion,
-    Set.mem_range, FiniteTrace.reverse_link, Link.reverse_direction,
-    Link.reverse_path]
+    Set.mem_range]
   constructor
   · rintro ⟨l, ⟨i, rfl⟩, hdir, he⟩
     change (Q.link i.rev).direction.flip = d at hdir
@@ -1488,7 +1486,7 @@ theorem directionEdges_finite_reverse (Q : FiniteTrace D) (d : Direction) :
     simpa using hdir
   · rintro ⟨l, ⟨i, rfl⟩, hdir, he⟩
     refine ⟨(Q.link i).reverse, ⟨i.rev, by simp⟩, ?_, he⟩
-    simpa [hdir]
+    simp [hdir]
 
 end AltPath
 
@@ -1678,7 +1676,7 @@ theorem backwardLinksOff_of_symmetric_coverage
 
 theorem terminal_not_mem_of_symmetric_coverage
     {U Y : Set Γ.DPath} {Q : FiniteTrace Γ.graph}
-    (hQ : IsBracketAlternating U Y (.finite Q))
+    (_hQ : IsBracketAlternating U Y (.finite Q))
     (hcover : (AltPath.finite Q).directionVertices .backward ∩ Γ.vertexSet U ⊆
       (AltPath.finite Q).directionVertices .forward)
     (hlast : Q.lastLink.direction = .backward) :
@@ -1718,7 +1716,7 @@ theorem terminal_not_mem_of_symmetric_coverage
 
 theorem initial_not_mem_of_symmetric_coverage
     {U Y : Set Γ.DPath} {Q : FiniteTrace Γ.graph}
-    (hQ : IsBracketAlternating U Y (.finite Q))
+    (_hQ : IsBracketAlternating U Y (.finite Q))
     (hcover : (AltPath.finite Q).directionVertices .backward ∩ Γ.vertexSet U ⊆
       (AltPath.finite Q).directionVertices .forward)
     (hfirst : Q.firstLink.direction = .backward) :

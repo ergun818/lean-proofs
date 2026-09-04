@@ -92,7 +92,7 @@ theorem FiniteTrace.initial_not_mem_backwardVertices_of_firstForward
 /-- Any initial point of an arbitrary warp is either an isolated singleton
 component or has an outgoing family edge. -/
 theorem initialSet_mem_isolated_or_hasOutgoing
-    {Z : Set Gamma.DPath} (hZ : Gamma.IsWarp Z) {y : V}
+    {Z : Set Gamma.DPath} (_hZ : Gamma.IsWarp Z) {y : V}
     (hy : y ∈ Gamma.initialSet Z) :
     y ∈ isolatedVertices Z ∨ HasOutgoing (familyEdges Z) y := by
   obtain ⟨p, hp, hpInitial⟩ := hy

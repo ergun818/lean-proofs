@@ -265,7 +265,7 @@ theorem exists_tight_limitFamily
     have hfFrontier : f.finish ∈ L.frontier B.index := by
       apply hlink.1.terminalFrontier_subset
       exact ⟨C.threadLimit Gamma a, ⟨a, rfl⟩, by
-        simpa only [hf, Gamma.terminal?_finite]⟩
+        simp only [hf, Gamma.terminal?_finite]⟩
     refine ⟨f, hf, ?_, hfFrontier⟩
     rw [hf] at hpWarp
     refine ⟨hpWarp, f.finish, ?_, ?_⟩

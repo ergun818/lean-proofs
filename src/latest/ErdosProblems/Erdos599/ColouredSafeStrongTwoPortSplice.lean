@@ -280,7 +280,7 @@ theorem switch_other_avoids_head {q : Gamma.DPath}
     exact Set.disjoint_left.mp
       (D.switch_isWarp hq.1 D.toHead_mem hne) ht htTo
   exact hq.2 (by simp only [Set.mem_insert_iff, Set.mem_singleton_iff, hqTo,
-    true_or, or_true])
+    or_true])
 
 theorem old_other_disjoint_switch_path {q : Gamma.DPath}
     (hq : q ∈ D.oldRemainder) {r : Gamma.DPath} (hr : r ∈ K) :
@@ -345,7 +345,7 @@ theorem right_disjoint_switch_other {q : Gamma.DPath}
   refine ⟨?_, ?_⟩
   · exact D.switch_isWarp D.toHead_mem hq.1 (fun h ↦ hq.2 (by
       simp only [Set.mem_insert_iff, Set.mem_singleton_iff, h,
-        true_or, or_true]))
+        or_true]))
   · exact (D.switch_other_disjoint_old hq).symm.mono_left (by
       intro x hx
       rw [D.split.support_eq]

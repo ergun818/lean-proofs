@@ -89,7 +89,7 @@ theorem canonicalDeferredLadder_chosen_mem_arrowPart
   · cases hm : L.marker a with
     | none =>
         exfalso
-        simpa [markerPathSet, hm] using hpMarker
+        simp [markerPathSet, hm] at hpMarker
     | some y =>
         have hp : p = G.trivialPath y := by
           simpa [markerPathSet, hm] using hpMarker
@@ -273,7 +273,7 @@ theorem canonicalDeferredLadder_no_chosenFinite_of_essential_arrowPart
       subst p
       have hzy : z = y :=
         (Option.some.inj ((G.terminal?_trivialPath y).symm.trans hpz)).symm
-      exact Or.inr (Or.inr (by simpa [hzy]))
+      exact Or.inr (Or.inr (by simp [hzy]))
   have hxSuccessorEssential : f.finish ∈
       G.essential (G.terminalFrontier (L.successorWarp a)) :=
     essential_of_mem_of_subset G hSuccessorSubset hxSuccessor hxAmbientMarker

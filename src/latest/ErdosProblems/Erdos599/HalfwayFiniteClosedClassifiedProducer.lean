@@ -146,4 +146,5 @@ theorem exists_finiteClosedClassifiedContactSegmentation
 end FiniteBreakMixedPiece
 end Erdos599.Blueprint.LinkageBlueprint
 
-#print axioms Erdos599.Blueprint.LinkageBlueprint.FiniteBreakMixedPiece.exists_finiteClosedClassifiedContactSegmentation
+open Erdos599.Blueprint.LinkageBlueprint.FiniteBreakMixedPiece in
+#print axioms exists_finiteClosedClassifiedContactSegmentation

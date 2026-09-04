@@ -138,4 +138,5 @@ theorem coordinateInterval_directionEdges_subset (S : FiniteInput D)
 end Erdos599.Alternating.RunCompressor.FiniteInput
 
 #print axioms Erdos599.Alternating.RunCompressor.FiniteInput.mem_directionEdges_exists_rawEdge
-#print axioms Erdos599.Alternating.RunCompressor.FiniteInput.coordinateInterval_directionEdges_subset
+open Erdos599.Alternating.RunCompressor.FiniteInput in
+#print axioms coordinateInterval_directionEdges_subset

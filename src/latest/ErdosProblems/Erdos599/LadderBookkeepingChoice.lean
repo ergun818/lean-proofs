@@ -70,7 +70,7 @@ private theorem chooseFromSet_spec (available : Set Path)
           simpa [chooseFromSet, hray, havailable] using hp
         rw [← hp']
         exact Classical.choose_spec havailable
-      · simpa [chooseFromSet, hray, havailable] using hp
+      · simp [chooseFromSet, hray, havailable] at hp
 
 /-- One step of the ray-preferring choice recursion. -/
 private noncomputable def chooseAt

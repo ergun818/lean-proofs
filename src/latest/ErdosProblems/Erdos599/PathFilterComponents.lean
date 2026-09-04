@@ -296,7 +296,7 @@ paths and rays, provided `C` records every vertex which should remain. -/
 theorem exists_warp_filtering_to_subgraph
     (H : DWeb V) (W : Set G.DPath) (C : Set V)
     (hW : G.IsWarp W)
-    (hsub : ∀ {x y}, H.graph.Adj x y → G.graph.Adj x y)
+    (_hsub : ∀ {x y}, H.graph.Adj x y → G.graph.Adj x y)
     (hendpoints : ∀ e ∈ filteredFamilyEdges W H.graph,
       e.1 ∈ C ∧ e.2 ∈ C) :
     ∃ Q : Set H.DPath,

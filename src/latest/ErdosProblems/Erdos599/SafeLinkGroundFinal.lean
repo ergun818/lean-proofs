@@ -867,7 +867,7 @@ theorem groundState_roof_subset_groundStageWave_roof
     rw [H.delete_delete]
     congr 1
     calc
-      S ∪ R \ S = S ∪ R := Set.union_diff_self
+      S ∪ R \ S = S ∪ R := Set.union_sdiff_self
       _ = R := Set.union_eq_right.mpr hSR
   intro x hx
   have hx' := DWeb.roof_subset_delete_roof (H.delete S)
@@ -900,7 +900,7 @@ theorem exists_groundWave
     (hG : G.IsNormalized) {a : V} (ha : a ∈ G.source)
     {T X : Set V} (hT : G.IsTreeSet a T) (hXcount : X.Countable)
     (hXT : X ⊆ T \ {a}) :
-    ∃ (e : ℕ → V) (R : Set V)
+    ∃ (_e : ℕ → V) (R : Set V)
       (ground : ((G.delete {a}).delete R).Wave),
       R.Countable ∧ R ⊆ X ∧
         Disjoint T (((G.delete {a}).delete R).terminalFrontier ground.1) ∧

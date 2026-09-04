@@ -143,7 +143,7 @@ theorem covered_of_not_mem_limitingShortcut
       (Y := C.selectedReference) (kappa := kappa) Q X u v)
     (hSafeRoof : EligibleHammocksContainedInRoof Gamma C.selectedReference
       C.before C.innerRoof C.outerRoof)
-    (hlocal : (u, v) ∈ P.shortcutEdges)
+    (_hlocal : (u, v) ∈ P.shortcutEdges)
     (hglobal : (u, v) ∉ P.limitingShortcutEdges hSafeRoof) :
     (Nonempty (ClubStageGeometry.LimitingReferenceEndpointOwner C u) ∨
        Nonempty (ClubStageGeometry.LimitingReferenceEndpointOwner C v)) ∧
@@ -223,7 +223,8 @@ theorem limitingRetainedEdges_subset_imaginaryGraph
 end ClassifiedInfiniteContactTail
 
 #print axioms ClassifiedFiniteContactPiece.covered_of_not_mem_limitingShortcut
-#print axioms ClassifiedFiniteContactPiece.limitingRetainedEdges_subset_originalForward_union_shortcut
+#print axioms
+  ClassifiedFiniteContactPiece.limitingRetainedEdges_subset_originalForward_union_shortcut
 #print axioms ClassifiedInfiniteContactTail.limitingRetainedEdges_subset_originalForward
 
 end Erdos599.Blueprint.LinkageBlueprint

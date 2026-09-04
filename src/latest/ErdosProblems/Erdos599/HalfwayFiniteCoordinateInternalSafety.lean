@@ -35,8 +35,7 @@ theorem InternallySafe.coordinateInterval
     (a b : Nat) (hab : a < b) (hb : b ≤ S.lastEdge)
     (hparent : InternallySafe Y
       (.finite S.toFiniteRunWalk.toFiniteTrace))
-    (P : (AltPath.finite S.toFiniteRunWalk.toFiniteTrace
-      ).IndexedBackwardProvenance Y I) :
+    (P : (AltPath.finite S.toFiniteRunWalk.toFiniteTrace).IndexedBackwardProvenance Y I) :
     InternallySafe Y
       (.finite
         (S.coordinateInterval a b hab hb).toFiniteRunWalk.toFiniteTrace) := by

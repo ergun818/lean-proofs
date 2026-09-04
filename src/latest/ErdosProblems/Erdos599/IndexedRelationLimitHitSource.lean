@@ -73,6 +73,7 @@ theorem limitWarp_meets_frontier_at_iSup
   obtain ⟨x, hxFrontier, hxp⟩ := haHit.2
   exact ⟨x, hxp, hxFrontier⟩
 
+omit [Nonempty I] in
 /-- Tail form: meeting every stage above one index is enough, because a
 tail of a monotone family has the same least upper bound. -/
 theorem limitWarp_meets_frontier_at_iSup_of_eventually

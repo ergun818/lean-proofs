@@ -57,7 +57,7 @@ private theorem appendFinite_trivial
       q.support ⊆ {x}) :
     DirectedPath.Path.appendFinite
       (DirectedPath.FinitePath.trivial Gamma.graph x) q
-      (by simpa using hstart) (by simpa using hinter) = q := by
+      (by simpa using hstart) (by simp) = q := by
   rcases q with q | r
   · cases q with
     | mk start finish walk isPath =>
@@ -102,7 +102,7 @@ theorem initialRestriction_path_stagePrefix_or_maverickTerminal
     rw [hpsegment]
     have happend' := happend
     rw [appendFinite_trivial x (.inl segment) (by simpa using hsegmentStart)
-      (by simpa using hsegmentInter)] at happend'
+      (by simp)] at happend'
     exact happend'
   · right
     have hpMaverick : p.1 ∈
@@ -383,7 +383,7 @@ theorem hasTightStageData_of_firstTrackedSlice_and_stageCompilers
     (hsucc : ∀ (i : Ladder.Stage kappa)
       (previous : ∀ j : Ladder.Stage kappa, j < i →
         SliceSplice.StagePayload Gamma L Sigma Z)
-      (j : Ladder.Stage kappa) (hji : j < i),
+      (j : Ladder.Stage kappa) (_hji : j < i),
       Order.succ j.1 = i.1 →
       (∀ l (hli : l < i),
         SliceSplice.IsValidStage request l

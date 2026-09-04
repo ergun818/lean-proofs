@@ -58,7 +58,8 @@ theorem PostClosureIntervalTransaction.outsideReference_initialSet_subset_curren
 
 /-- One surviving reference initial off the current frontier is therefore a
 formal obstruction to the required source inclusion. -/
-theorem PostClosureIntervalTransaction.not_outsideReference_initialSet_subset_holes_of_not_currentSlice
+theorem
+  PostClosureIntervalTransaction.not_outsideReference_initialSet_subset_holes_of_not_currentSlice
     {C : ClubStageGeometry Gamma Y kappa (succ kappa)}
     {globalZ X0 : Set V} {z x : V}
     {R : DynamicMoving931GlobalClosure C globalZ X0}
@@ -93,10 +94,10 @@ theorem PostClosureIntervalTransaction.boundaryData_of_intervalReference_sdiff_s
   F.boundaryData_of_sdiff_vertexSet_subset
     T.interval.ambientInterval_linkage.isWarp hmissing
 
-#print axioms
-  PostClosureIntervalTransaction.outsideReference_initialSet_subset_currentSlice_of_holes
-#print axioms
-  PostClosureIntervalTransaction.not_outsideReference_initialSet_subset_holes_of_not_currentSlice
+open PostClosureIntervalTransaction in
+#print axioms outsideReference_initialSet_subset_currentSlice_of_holes
+open PostClosureIntervalTransaction in
+#print axioms not_outsideReference_initialSet_subset_holes_of_not_currentSlice
 #print axioms
   PostClosureIntervalTransaction.boundaryData_of_intervalReference_sdiff_subset
 

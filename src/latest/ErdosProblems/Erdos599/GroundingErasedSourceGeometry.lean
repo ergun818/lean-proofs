@@ -222,68 +222,66 @@ theorem selectedRequestTrace_grounded_record_data
   obtain ⟨hpSource, haGround⟩ := hpGround
   rcases J.start_of_mem_lambda_source p hpSource with
       ⟨x, hxFinite, hstart⟩ | ⟨i, hstart⟩
-  ·
-      let xs : L.groundedFiniteTerminalSet :=
-        ⟨x, hxFinite⟩
-      have hindex : U.f ⟨p.start, hpSource⟩ =
-          L.finiteTerminalIndex xs := by
-        have hs :
-            (⟨p.start, hpSource⟩ : J.lambda.source) =
-              ⟨.old xs.1, (J.mem_lambda_source_old xs.1).2 xs.2⟩ := by
-          exact Subtype.ext hstart
-        rw [congrArg U.f hs]
-        rfl
-      have ha : L.finiteTerminalIndex xs ∈ L.phiGround :=
-        L.finiteTerminalStage_mem_phiGround hL.legal xs
-      let xs' : L.finiteTerminalSet :=
-        ⟨xs.1, L.groundedFiniteTerminalSet_subset_finiteTerminalSet xs.2⟩
-      obtain ⟨_hfinite, parent, hchosen, hterminal⟩ :=
-        L.finiteTerminalStage_spec xs'
-      have hstage : L.finiteTerminalStage xs' = L.finiteTerminalIndex xs := rfl
-      rw [hstage] at hchosen
-      have hparentSource : parent.initial ∈ Gamma.source := by
-        obtain ⟨q, hq, hqSource⟩ := ha
-        have hpq : parent = q := Option.some.inj (hchosen.symm.trans hq)
-        exact hpq ▸ hqSource
-      have hTinitial : T.initial = x := by
-        exact L.selectedRequestTrace_initial_of_start_old hL S r x hstart
-      have hindexSelected : U.f ⟨p.start, hpSelectedSource⟩ =
-          L.finiteTerminalIndex xs := by
-        simpa only using hindex
-      refine ⟨L.finiteTerminalIndex xs, parent, ha, hchosen,
-        L.recorded_mem_limitWarp_inessential_sourceGeometry
-          hL.legal hchosen, ?_,
-        hparentSource, hindexSelected.symm, Or.inl ⟨xs, hstart, hterminal⟩⟩
-      rw [hTinitial]
-      exact Gamma.terminal_mem_support hterminal
-  ·
-      have hindex : U.f ⟨p.start, hpSource⟩ =
-          L.groundedInfiniteStage i := by
-        have hs :
-            (⟨p.start, hpSource⟩ : J.lambda.source) =
-              ⟨.proxy i, J.mem_lambda_source_proxy i⟩ := by
-          exact Subtype.ext hstart
-        rw [congrArg U.f hs]
-        rfl
-      have ha : L.groundedInfiniteStage i ∈ L.phiGround :=
-        (L.groundedInfiniteStage_spec i).1.1
-      have hchosen := (L.groundedInfiniteStage_spec i).2
-      have hparentSource : i.1.initial ∈ Gamma.source := by
-        obtain ⟨q, hq, hqSource⟩ := ha
-        have hiq : i.1 = q := Option.some.inj (hchosen.symm.trans hq)
-        exact hiq ▸ hqSource
-      have hTinitial : T.initial ∈ i.1.support := by
-        exact L.selectedRequestTrace_initial_mem_proxyPath_of_start_proxy
-          hL S r i hstart
-      have hindexSelected : U.f ⟨p.start, hpSelectedSource⟩ =
-          L.groundedInfiniteStage i := by
-        simpa only using hindex
-      refine ⟨L.groundedInfiniteStage i, i.1, ha, hchosen,
-        L.recorded_mem_limitWarp_inessential_sourceGeometry
-          hL.legal hchosen, ?_,
-        hparentSource, hindexSelected.symm, Or.inr ⟨i, hstart, rfl⟩⟩
-      simpa only [J, KappaLadder.popularAuxiliaryInput,
-        KappaLadder.groundedInfinitePath, T, U, K, p] using hTinitial
+  · let xs : L.groundedFiniteTerminalSet :=
+      ⟨x, hxFinite⟩
+    have hindex : U.f ⟨p.start, hpSource⟩ =
+        L.finiteTerminalIndex xs := by
+      have hs :
+          (⟨p.start, hpSource⟩ : J.lambda.source) =
+            ⟨.old xs.1, (J.mem_lambda_source_old xs.1).2 xs.2⟩ := by
+        exact Subtype.ext hstart
+      rw [congrArg U.f hs]
+      rfl
+    have ha : L.finiteTerminalIndex xs ∈ L.phiGround :=
+      L.finiteTerminalStage_mem_phiGround hL.legal xs
+    let xs' : L.finiteTerminalSet :=
+      ⟨xs.1, L.groundedFiniteTerminalSet_subset_finiteTerminalSet xs.2⟩
+    obtain ⟨_hfinite, parent, hchosen, hterminal⟩ :=
+      L.finiteTerminalStage_spec xs'
+    have hstage : L.finiteTerminalStage xs' = L.finiteTerminalIndex xs := rfl
+    rw [hstage] at hchosen
+    have hparentSource : parent.initial ∈ Gamma.source := by
+      obtain ⟨q, hq, hqSource⟩ := ha
+      have hpq : parent = q := Option.some.inj (hchosen.symm.trans hq)
+      exact hpq ▸ hqSource
+    have hTinitial : T.initial = x := by
+      exact L.selectedRequestTrace_initial_of_start_old hL S r x hstart
+    have hindexSelected : U.f ⟨p.start, hpSelectedSource⟩ =
+        L.finiteTerminalIndex xs := by
+      simpa only using hindex
+    refine ⟨L.finiteTerminalIndex xs, parent, ha, hchosen,
+      L.recorded_mem_limitWarp_inessential_sourceGeometry
+        hL.legal hchosen, ?_,
+      hparentSource, hindexSelected.symm, Or.inl ⟨xs, hstart, hterminal⟩⟩
+    rw [hTinitial]
+    exact Gamma.terminal_mem_support hterminal
+  · have hindex : U.f ⟨p.start, hpSource⟩ =
+        L.groundedInfiniteStage i := by
+      have hs :
+          (⟨p.start, hpSource⟩ : J.lambda.source) =
+            ⟨.proxy i, J.mem_lambda_source_proxy i⟩ := by
+        exact Subtype.ext hstart
+      rw [congrArg U.f hs]
+      rfl
+    have ha : L.groundedInfiniteStage i ∈ L.phiGround :=
+      (L.groundedInfiniteStage_spec i).1.1
+    have hchosen := (L.groundedInfiniteStage_spec i).2
+    have hparentSource : i.1.initial ∈ Gamma.source := by
+      obtain ⟨q, hq, hqSource⟩ := ha
+      have hiq : i.1 = q := Option.some.inj (hchosen.symm.trans hq)
+      exact hiq ▸ hqSource
+    have hTinitial : T.initial ∈ i.1.support := by
+      exact L.selectedRequestTrace_initial_mem_proxyPath_of_start_proxy
+        hL S r i hstart
+    have hindexSelected : U.f ⟨p.start, hpSelectedSource⟩ =
+        L.groundedInfiniteStage i := by
+      simpa only using hindex
+    refine ⟨L.groundedInfiniteStage i, i.1, ha, hchosen,
+      L.recorded_mem_limitWarp_inessential_sourceGeometry
+        hL.legal hchosen, ?_,
+      hparentSource, hindexSelected.symm, Or.inr ⟨i, hstart, rfl⟩⟩
+    simpa only [J, KappaLadder.popularAuxiliaryInput,
+      KappaLadder.groundedInfinitePath, T, U, K, p] using hTinitial
 
 /-- The erased route selected at a grounding request starts on a grounded
 recorded component of the limiting ladder.  In particular the parent

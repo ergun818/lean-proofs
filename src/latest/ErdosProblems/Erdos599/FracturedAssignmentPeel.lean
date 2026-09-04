@@ -179,8 +179,8 @@ theorem activePath_avoids_singletonVertices
 assignment downstairs. -/
 theorem uncoveredSingleton_has_trivialAssignment
     (hY : Gamma.IsWarp Y) (Z : FracturedWarp Gamma)
-    {x : V} (hxZ : Gamma.trivialPath x ∈ Z.paths)
-    (hxY : x ∉ Gamma.initialSet Y) :
+    {x : V} (_hxZ : Gamma.trivialPath x ∈ Z.paths)
+    (_hxY : x ∉ Gamma.initialSet Y) :
     IsSafe Y (.trivial x) ∧
       (AltPath.trivial x : AltPath Gamma.graph).initial = x ∧
       (AltPath.trivial x : AltPath Gamma.graph).terminal? = some x := by

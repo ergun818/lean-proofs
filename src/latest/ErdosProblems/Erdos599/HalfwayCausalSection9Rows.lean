@@ -187,7 +187,7 @@ def increment
       coherentHammockIncrement Gamma kappa a prior)
 
 theorem mk_recordedBefore_priorDeferred_le
-    (hkappa : aleph0 ≤ kappa)
+    (_hkappa : aleph0 ≤ kappa)
     (a : Ladder.Stage (succ kappa))
     (prior : ∀ b : Ladder.Stage (succ kappa),
       b < a → CausalState (succ kappa) V) :
@@ -216,7 +216,7 @@ theorem mk_recordedBefore_priorDeferred_le
   exact lt_succ_iff.mp hlt
 
 theorem mk_markerSetBelow_priorDeferred_le
-    (hkappa : aleph0 ≤ kappa)
+    (_hkappa : aleph0 ≤ kappa)
     (a : Ladder.Stage (succ kappa))
     (prior : ∀ b : Ladder.Stage (succ kappa),
       b < a → CausalState (succ kappa) V) :
@@ -251,7 +251,8 @@ theorem mk_historyIncrement_le
   unfold historyIncrement
   apply (Cardinal.mk_union_le _ _).trans
   apply Cardinal.add_le_of_le hkappa
-  · apply _root_.Erdos599.CardinalInduction.HalfwayFrontierHeight.mk_vertexSet_le_of_mk_family_le hkappa
+  · apply _root_.Erdos599.CardinalInduction.HalfwayFrontierHeight.mk_vertexSet_le_of_mk_family_le
+      hkappa
     exact mk_recordedBefore_priorDeferred_le hkappa a prior
   · exact mk_markerSetBelow_priorDeferred_le hkappa a prior
 
@@ -812,7 +813,7 @@ theorem exists_later_safeStageTargetChoice
     (hzCarrier : z ∈ globalCarrier Gamma kappa hkappa hGamma seed hseed)
     (hzFrontier : z ∈
       (finalLadder Gamma kappa hkappa hGamma seed hseed).frontier alpha) :
-    ∃ (a : Ladder.Stage (succ kappa)) (halpha : alpha < a)
+    ∃ (a : Ladder.Stage (succ kappa)) (_halpha : alpha < a)
       (hUprior : ((priorCore Gamma a (fun b _hba ↦
         (rule Gamma kappa hkappa hGamma seed hseed).state
           (hkappa.trans (le_succ kappa)) b)).stageWeb alpha).IsUnhindered)

@@ -107,7 +107,6 @@ theorem essential_terminalFrontier_arrow_eq_union_of_crossRoof
     rcases p with ⟨p, hp⟩
     rcases p with p | p
     · simp only [DWeb.arrowPath]
-      change H.arrowFinite U W p hp = G.arrowFinite U W p hp
       rw [DWeb.arrowFinite, DWeb.arrowFinite]
       by_cases hH : Nonempty (H.ArrowCandidate U W p)
       · have hG : Nonempty (G.ArrowCandidate U W p) :=

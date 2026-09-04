@@ -118,7 +118,7 @@ theorem exists_lt_of_lt_limitRangeSup {kappa : Cardinal.{u}}
     (a : Ladder.Stage kappa) (ha : a < limitRangeSup hkappa i f) :
     ∃ j : Set.Iio i, a < f j := by
   by_contra h
-  push_neg at h
+  push Not at h
   have haUpper : a ∈ upperBounds (Set.range f) := by
     rintro x ⟨j, rfl⟩
     exact h j

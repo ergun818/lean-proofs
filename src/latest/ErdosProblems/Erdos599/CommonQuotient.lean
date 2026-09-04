@@ -173,9 +173,7 @@ theorem vertexSet_omegaArrowStage_subset (W : ℕ → G.Wave) (n : ℕ) :
       ⋃ i ≤ n, G.vertexSet (W i).1 := by
   induction n with
   | zero =>
-      simpa using (Set.subset_iUnion (fun i : ℕ ↦
-        ⋃ _h : i ≤ 0, G.vertexSet (W i).1) 0 |>.trans
-          (Set.subset_iUnion (fun _h : 0 ≤ 0 ↦ G.vertexSet (W 0).1) le_rfl))
+      simp
   | succ n ih =>
       rw [G.omegaArrowStage_succ]
       refine (G.vertexSet_arrow_subset

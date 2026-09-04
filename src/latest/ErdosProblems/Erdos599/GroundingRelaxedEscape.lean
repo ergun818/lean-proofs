@@ -38,7 +38,7 @@ variable {V : Type u} {I : Type v} {Gamma : DWeb V}
 abbrev Input (Gamma : DWeb V) (I : Type v) : Type (max u v) :=
   PopularAuxiliary.Input Gamma I
 
-abbrev LV (L : Input Gamma I) : Type (max u v) :=
+abbrev LV (_L : Input Gamma I) : Type (max u v) :=
   PopularAuxiliary.Input.LambdaVertex V I
 
 abbrev RelaxedForwardStep (L : Input Gamma I) (x : V) : LV L → Prop :=
@@ -183,7 +183,7 @@ theorem exists_avoiding_reverse_to_relaxedEscape
         finish := E.route.finish
         walk := q.1
         isPath := q.2 }
-    refine ⟨r, by simpa only [r, hpFinish], E.target, ?_⟩
+    refine ⟨r, by simp only [r, hpFinish], E.target, ?_⟩
     change Disjoint r.support C
     rw [Set.disjoint_left]
     intro w hwr hwC

@@ -446,7 +446,8 @@ noncomputable def globalizeClosedEndpointPairing
 #print axioms globalizeLocalImaginary
 #print axioms globalizeLocalPopular
 #print axioms LimitingFiniteContactClassification.retainedEdges_subset_imaginaryGraph
-#print axioms LimitingFiniteContactClassification.retainedEdges_subset_originalForward_union_shortcut
+#print axioms
+  LimitingFiniteContactClassification.retainedEdges_subset_originalForward_union_shortcut
 #print axioms globalizeClosedEndpointPairing
 
 end ClubStageGeometry

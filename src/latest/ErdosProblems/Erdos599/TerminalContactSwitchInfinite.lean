@@ -57,7 +57,7 @@ private theorem finitePath_eq_trivial_of_start_eq_finish
 /-- The carrier of an arbitrary warp is its isolated vertices together with
 the vertices incident with a family edge.  This includes ray members. -/
 theorem vertexSet_eq_isolated_union_incident_anyWarp
-    {W : Set Gamma.DPath} (hW : Gamma.IsWarp W) :
+    {W : Set Gamma.DPath} (_hW : Gamma.IsWarp W) :
     Gamma.vertexSet W = isolatedVertices W ∪
       {x | HasIncoming (familyEdges W) x ∨
         HasOutgoing (familyEdges W) x} := by
@@ -209,7 +209,7 @@ theorem mem_initialSet_iff_isolated_or_edgeBalance_eq_one_anyWarp
       x ∈ isolatedVertices W ∨ edgeBalance (familyEdges W) x = 1 := by
   rw [initialSet_eq_vertexSet_diff_hasIncoming_anyWarp hW,
     vertexSet_eq_isolated_union_incident_anyWarp hW]
-  simp only [Set.mem_sdiff, Set.mem_union, Set.mem_setOf_eq,
+  simp only [Set.mem_sdiff, Set.mem_union, Set.mem_ofPred_eq,
     edgeBalance_eq_one_iff]
   constructor
   · rintro ⟨hxiso | hin | hout, hnin⟩
@@ -227,7 +227,7 @@ theorem mem_terminalFrontier_iff_isolated_or_edgeBalance_eq_neg_one_anyWarp
       x ∈ isolatedVertices W ∨ edgeBalance (familyEdges W) x = -1 := by
   rw [terminalFrontier_eq_vertexSet_diff_hasOutgoing_anyWarp hW,
     vertexSet_eq_isolated_union_incident_anyWarp hW]
-  simp only [Set.mem_sdiff, Set.mem_union, Set.mem_setOf_eq,
+  simp only [Set.mem_sdiff, Set.mem_union, Set.mem_ofPred_eq,
     edgeBalance_eq_neg_one_iff]
   constructor
   · rintro ⟨hxiso | hin | hout, hnout⟩
@@ -285,7 +285,7 @@ theorem terminalContact_switchedEdges_not_containsReverseDirectedRay
       (B := familyEdges Z)
       (F := (AltPath.finite Q).directionEdges .forward)
   · rw [FiniteTrace.switchedEdges_eq_backward_sdiff_union_forward Q hQ]
-    exact Set.union_subset_union Set.diff_subset Set.Subset.rfl
+    exact Set.union_subset_union Set.sdiff_subset Set.Subset.rfl
   · exact
       _root_.Erdos599.PathFilterComponents.DWeb.IsWarp.familyEdges_not_containsReverseDirectedRay
         hQ.warp
@@ -558,7 +558,7 @@ theorem exists_terminalContactSwitch_of_noDirectedCycle
     (Z : Set Gamma.DPath) (Q : FiniteTrace Gamma.graph) (u v : V)
     (hQ : IsTerminalContactSwitching Z Q u)
     (hv : v ∈ Gamma.terminalFrontier Z) (hQi : Q.initial = v)
-    (hcycle : ¬ ContainsDirectedCycle (switchedEdges Z (.finite Q))) :
+    (_hcycle : ¬ ContainsDirectedCycle (switchedEdges Z (.finite Q))) :
     ∃ Z' : Set Gamma.DPath,
       Gamma.IsWarp Z' ∧
         Gamma.initialSet Z' = Gamma.initialSet Z \ {u} ∧
@@ -570,5 +570,6 @@ end Alternating
 end Erdos599
 
 #print axioms Erdos599.Alternating.TerminalContactSwitch.exists_terminalContactSwitch_of_acyclic
-#print axioms Erdos599.Alternating.TerminalContactSwitch.exists_terminalContactSwitch_of_noDirectedCycle
+#print axioms
+  Erdos599.Alternating.TerminalContactSwitch.exists_terminalContactSwitch_of_noDirectedCycle
 #print axioms Erdos599.Alternating.TerminalContactSwitch.exists_terminalContactSwitch_anyWarp

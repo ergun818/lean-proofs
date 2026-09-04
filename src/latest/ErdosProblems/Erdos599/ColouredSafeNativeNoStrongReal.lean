@@ -112,11 +112,12 @@ theorem Valid.forward_endpoint_incidence
   have hBackT : edgeBalance A.backwardEdges t = 0 := by
     simp [edgeBalance, hBOutT, hBInT]
   have hForwardS : edgeBalance A.forwardEdges s = 1 := by
-    simp [terminalDefect, hend, propInt, hne, hBackS] at hBalS
+    simp only [hBackS, sub_zero, propInt, ↓reduceIte, terminalDefect, hend, hne] at hBalS
     exact hBalS
   have hForwardT : edgeBalance A.forwardEdges t = -1 := by
     have hts : t ≠ s := Ne.symm hne
-    simp [terminalDefect, hend, propInt, hts, hBackT] at hBalT
+    simp only [hBackT, sub_zero, propInt, hts, ↓reduceIte, terminalDefect, hend, zero_sub,
+      Int.reduceNeg] at hBalT
     exact hBalT
   exact ⟨(edgeBalance_eq_one_iff.mp hForwardS).1,
     (edgeBalance_eq_neg_one_iff.mp hForwardT).1⟩

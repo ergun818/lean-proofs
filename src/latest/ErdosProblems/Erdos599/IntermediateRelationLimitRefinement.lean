@@ -95,8 +95,9 @@ structure PredecessorRefinement
   of_le : ∀ ⦃i j : I⦄, i ≤ j →
     (C.stage i).PredecessorRefines (C.stage j)
 
+omit [Nonempty I] in
 /-- Convert the older stronger chain invariant to predecessor refinement. -/
-def PredecessorRefinement.ofNoNewPredecessors
+theorem PredecessorRefinement.ofNoNewPredecessors
     (C : RealExtensionChain I Gamma Y kappa T Z persistent B)
     (H : C.NoNewPredecessors) : C.PredecessorRefinement where
   of_le := by
@@ -140,6 +141,7 @@ private theorem exists_initialFinitePrefix
     obtain ⟨m, _hm, rfl⟩ := he
     exact ⟨m, rfl⟩
 
+omit [Nonempty I] in
 /-- Every stage vertex is reached from a stage initial vertex through the
 stage edge relation. -/
 private theorem exists_initial_reflTransGen
@@ -287,7 +289,7 @@ theorem realEdgeLimit_not_containsReverseDirectedRay_of_refinement
 
 /-- Predecessor refinement supplies the exact direct compatibility record
 used by the source-faithful proper-limit compiler. -/
-def EventualRelationLimitCompatibility.ofPredecessorRefinement
+theorem EventualRelationLimitCompatibility.ofPredecessorRefinement
     (C : RealExtensionChain I Gamma Y kappa T Z persistent B)
     (H : C.PredecessorRefinement) :
     C.EventualRelationLimitCompatibility where
@@ -295,7 +297,7 @@ def EventualRelationLimitCompatibility.ofPredecessorRefinement
     C.eventualEdgeLimit_not_containsReverseDirectedRay_of_refinement H
 
 /-- It also supplies the honest final all-real relation core. -/
-def relationLimitCore_of_predecessorRefinement
+theorem relationLimitCore_of_predecessorRefinement
     (C : RealExtensionChain I Gamma Y kappa T Z persistent B)
     (H : C.PredecessorRefinement) : C.RelationLimitCore where
   no_directed_cycle := C.realEdgeLimit_not_containsDirectedCycle

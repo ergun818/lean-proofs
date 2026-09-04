@@ -81,13 +81,15 @@ private theorem selectedRequestTrace_initial_mem_proxyPath
       change ((popularAuxiliaryInput L hL.legal).decodeFinitePathToExit
         p hpSource y.1 _).initial ∈
         ((popularAuxiliaryInput L hL.legal).proxyPath i).support
-      apply (popularAuxiliaryInput L hL.legal).decodeFinitePathToExit_initial_mem_proxyPath_of_start_proxy
+      apply (popularAuxiliaryInput L
+        hL.legal).decodeFinitePathToExit_initial_mem_proxyPath_of_start_proxy
       exact hstart
   | inr e =>
       change ((popularAuxiliaryInput L hL.legal).decodeFinitePathToEdgeEntry
         p hpSource e.1.1 e.1.2 _).initial ∈
         ((popularAuxiliaryInput L hL.legal).proxyPath i).support
-      apply (popularAuxiliaryInput L hL.legal).decodeFinitePathToEdgeEntry_initial_mem_proxyPath_of_start_proxy
+      apply (popularAuxiliaryInput L
+        hL.legal).decodeFinitePathToEdgeEntry_initial_mem_proxyPath_of_start_proxy
       exact hstart
 
 /-- The decoded selected route begins on its literal deferred starting
@@ -150,7 +152,7 @@ end KappaLadder
 end DWeb
 end Erdos599
 
-#print axioms
-  Erdos599.DWeb.KappaLadder.Deferred.strongSelectedRequestTrace_initial_mem_startingRecord
+open Erdos599.DWeb.KappaLadder.Deferred in
+#print axioms strongSelectedRequestTrace_initial_mem_startingRecord
 #print axioms
   Erdos599.DWeb.KappaLadder.Deferred.exists_strongSelectedRequest_rootPrefix

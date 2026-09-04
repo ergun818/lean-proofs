@@ -115,7 +115,7 @@ theorem CompatibleInOrder.replace_left_forward_suffix
           have hxold : x ∈ left.path.support ∩ right.path.support :=
             ⟨hsub.1 hxchild, hxright⟩
           have hx : x = left.exit := by simpa using hinter.subset hxold
-          simpa [hx, hexit]
+          simp [hx, hexit]
         · rintro x hx
           have hxEq : x = child.exit := by simpa using hx
           subst x
@@ -217,7 +217,7 @@ def interval (Q : FiniteTrace D)
     have hcast : (⟨first.1 + i.1, by omega⟩ : Fin (Q.lastIndex + 1)) =
         j.castSucc := by
       apply Fin.ext
-      simp [j, Nat.add_assoc]
+      simp [j]
     have hsucc : (⟨first.1 + (i.1 + 1), by omega⟩ :
         Fin (Q.lastIndex + 1)) = j.succ := by
       apply Fin.ext
@@ -268,14 +268,14 @@ def interval (Q : FiniteTrace D)
     (Q.interval first last hfl).firstLink = Q.link first := by
   apply congrArg Q.link
   apply Fin.ext
-  simp [FiniteTrace.firstLink]
+  simp
 
 @[simp] theorem interval_lastLink (Q : FiniteTrace D)
     (first last : Fin (Q.lastIndex + 1)) (hfl : first ≤ last) :
     (Q.interval first last hfl).lastLink = Q.link last := by
   apply congrArg Q.link
   apply Fin.ext
-  simp [FiniteTrace.lastLink]
+  simp
   omega
 
 theorem interval_links_subset (Q : FiniteTrace D)
@@ -313,7 +313,7 @@ theorem interval_edgeSet_subset (Q : FiniteTrace D)
 traversal exit.  The trace must have a later link; a one-link contact piece
 is represented directly as a singleton trace. -/
 def replaceFirstForwardSuffix (Q : FiniteTrace D) (child : Link D)
-    (hpositive : 0 < Q.lastIndex)
+    (_hpositive : 0 < Q.lastIndex)
     (hfirst : Q.firstLink.direction = .forward)
     (hchild : child.direction = .forward)
     (hsub : child.path.IsSubpathOf (.inl Q.firstLink.path))
@@ -391,7 +391,7 @@ theorem replaceFirstForwardSuffix_links_subset
 `X`.  Earlier backward links avoid `X`, which is exactly the nontrivial
 compatibility condition at the newly exposed terminal. -/
 def replaceLastForwardPrefix (Q : FiniteTrace D) (child : Link D)
-    (hpositive : 0 < Q.lastIndex)
+    (_hpositive : 0 < Q.lastIndex)
     (hlast : Q.lastLink.direction = .forward)
     (hchild : child.direction = .forward)
     (hsub : child.path.IsSubpathOf (.inl Q.lastLink.path))

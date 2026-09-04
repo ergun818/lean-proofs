@@ -38,7 +38,7 @@ variable {V : Type u} {I : Type v} {Gamma : DWeb V}
 abbrev Input (Gamma : DWeb V) (I : Type v) : Type (max u v) :=
   PopularAuxiliary.Input Gamma I
 
-abbrev LV (L : Input Gamma I) : Type (max u v) :=
+abbrev LV (_L : Input Gamma I) : Type (max u v) :=
   PopularAuxiliary.Input.LambdaVertex V I
 
 /-- Removing one old auxiliary vertex does not change the represented edge
@@ -49,7 +49,7 @@ theorem CE_diff_singleton_old
         (C \ {(PopularAuxiliary.Input.LambdaVertex.old x : LV L)}) =
       GroundingCut.CE L C := by
   ext e
-  simp only [GroundingCut.mem_CE, Set.mem_diff, Set.mem_singleton_iff]
+  simp only [GroundingCut.mem_CE, Set.mem_sdiff, Set.mem_singleton_iff]
   constructor
   · exact fun h => ⟨h.1.1, h.2⟩
   · intro h
@@ -67,7 +67,7 @@ theorem fragments_diff_singleton_old
   have hCE := CE_diff_singleton_old L C x
   ext P
   simp only [GroundingCut.fragments, GroundingCut.IsDeletedFragment,
-    Set.mem_setOf_eq]
+    Set.mem_ofPred_eq]
   rw [hCE]
   simp only [GroundingCut.SurvivingConnected, hCE]
 
@@ -245,7 +245,7 @@ theorem assertion8_21_edgeTail
         { route := E.route
           start_eq := E.start_eq
           target := E.target
-          avoids := Set.disjoint_of_subset_right Set.diff_subset E.avoids
+          avoids := Set.disjoint_of_subset_right Set.sdiff_subset E.avoids
           old_not_mem := fun h => E.old_not_mem h.1 }
       have hxNotC' :
           (PopularAuxiliary.Input.LambdaVertex.old x : LV L) ∉ C' := by

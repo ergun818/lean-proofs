@@ -39,7 +39,7 @@ private theorem propInt_exists_eq_sum_of_unique_finite
       simp [propInt, hnj]
     · simp
   · have hall : ∀ i, ¬ P i := fun i hi ↦ h ⟨i, hi⟩
-    simp [propInt, h, hall]
+    simp [propInt, hall]
 
 /-- The balance of a finite injective, locally bi-unique edge enumeration is
 the sum of plus one at every enumerated source and minus one at every
@@ -80,16 +80,14 @@ theorem edgeBalance_range_eq_sum
     · exact hi.symm.trans hj
     · apply hunique.2
       · exact ⟨i, rfl⟩
-      · simpa [hi.symm.trans hj] using
-          (show e j ∈ Set.range e from ⟨j, rfl⟩)
+      · simp [hi.symm.trans hj]
   have hinuniq : ∀ {i j}, x = (e i).2 → x = (e j).2 → i = j := by
     intro i j hi hj
     apply hinjective
     apply Prod.ext
     · apply hunique.1
       · exact ⟨i, rfl⟩
-      · simpa [hi.symm.trans hj] using
-          (show e j ∈ Set.range e from ⟨j, rfl⟩)
+      · simp [hi.symm.trans hj]
     · exact hi.symm.trans hj
   rw [edgeBalance, hout, hin,
     propInt_exists_eq_sum_of_unique_finite _ houtuniq,

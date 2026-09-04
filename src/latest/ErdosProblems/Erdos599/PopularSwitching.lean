@@ -50,7 +50,7 @@ variable {V : Type u}
 vertices and the vertices representing its directed edges.  This is the
 countable collision set used when pressing down in Assertion 8.19. -/
 def ladderTrace {I : Type*} {Gamma : DWeb V}
-    (L : PopularAuxiliary.Input Gamma I) (p : Gamma.DPath) :
+    (_L : PopularAuxiliary.Input Gamma I) (p : Gamma.DPath) :
     Set (PopularAuxiliary.Input.LambdaVertex V I) :=
   PopularAuxiliary.Input.LambdaVertex.old '' p.support ∪
     (fun e : V × V ↦

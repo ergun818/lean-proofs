@@ -48,7 +48,7 @@ def successorStage (L : Gamma.KappaLadder kappa) (hlegal : L.IsLegal)
         (lt_trans Cardinal.one_lt_aleph0 hlegal.uncountable)
     have hbound := Stationary.iSup_add_one_lt_ord_of_lt
       hlegal.regular (f := fun _ : PUnit ↦ a.1) hone (fun _ ↦ a.2)
-    show a.1 + 1 < kappa.ord
+    change a.1 + 1 < kappa.ord
     exact lt_of_le_of_lt
       (Ordinal.le_iSup (fun _ : PUnit ↦ a.1 + 1) PUnit.unit) hbound⟩
 
@@ -74,8 +74,8 @@ structure Lemma717SuccessorRoofTransport
     (L : Gamma.KappaLadder kappa) (hlegal : L.IsLegal) : Prop where
   finite : ∀
       (q : FinitePath (L.popularAuxiliaryInput hlegal).lambda.graph)
-      (hs : q.start ∈ (L.popularAuxiliaryInput hlegal).lambda.source)
-      (ht : q.finish ∈ (L.popularAuxiliaryInput hlegal).lambda.target)
+      (_hs : q.start ∈ (L.popularAuxiliaryInput hlegal).lambda.source)
+      (_ht : q.finish ∈ (L.popularAuxiliaryInput hlegal).lambda.target)
       (x : L.finiteTerminalSet) (y : V),
       q.start = .old x.1 → q.finish = .old y →
       y ∈ Gamma.roof
@@ -83,8 +83,8 @@ structure Lemma717SuccessorRoofTransport
           (L.successorStage hlegal (L.finiteTerminalStage x)))
   proxy : ∀
       (q : FinitePath (L.popularAuxiliaryInput hlegal).lambda.graph)
-      (hs : q.start ∈ (L.popularAuxiliaryInput hlegal).lambda.source)
-      (ht : q.finish ∈ (L.popularAuxiliaryInput hlegal).lambda.target)
+      (_hs : q.start ∈ (L.popularAuxiliaryInput hlegal).lambda.source)
+      (_ht : q.finish ∈ (L.popularAuxiliaryInput hlegal).lambda.target)
       (i : L.groundedInfiniteRecords) (y : V),
       q.start = .proxy i → q.finish = .old y →
       y ∈ Gamma.roof

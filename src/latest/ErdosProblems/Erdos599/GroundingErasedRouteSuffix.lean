@@ -243,11 +243,11 @@ theorem compressionOfValid_vertexSet_subset_vertexChain
       {v | v ∈ E.vertexChain} := by
   classical
   by_cases hnil : E.steps = []
-  · simpa [compressionOfValid, hnil, ErasedSignedRoute.vertexChain,
+  · simp [compressionOfValid, hnil, ErasedSignedRoute.vertexChain,
       signedVertexChain]
   · let S := E.toFiniteInputOfValid hnil hvalid
     intro v hv
-    simp only [mem_ofPred_eq] at hv
+    simp only [compressionOfValid, hnil] at hv
     have hv' : v ∈ S.toFiniteRunWalk.toFiniteTrace.vertexSet := by
       change v ∈ S.toFiniteRunWalk.toFiniteTrace.vertexSet at hv
       exact hv
@@ -274,7 +274,7 @@ theorem vertexChain_subset_compressionOfValid_vertexSet
       (E.compressionOfValid hvalid).path.vertexSet := by
   classical
   by_cases hnil : E.steps = []
-  · simpa [compressionOfValid, hnil, ErasedSignedRoute.vertexChain,
+  · simp [compressionOfValid, hnil, ErasedSignedRoute.vertexChain,
       signedVertexChain]
   · let S := E.toFiniteInputOfValid hnil hvalid
     intro v hv
@@ -540,13 +540,13 @@ end ErasedSignedRoute
 end PopularAuxiliary.Input
 end Erdos599
 
-#print axioms
-  Erdos599.PopularAuxiliary.Input.ErasedSignedRoute.suffixCompressionOfValid_edgeSet_subset
-#print axioms
-  Erdos599.PopularAuxiliary.Input.ErasedSignedRoute.suffixCompressionOfValid_directionEdges_subset
+open Erdos599.PopularAuxiliary.Input.ErasedSignedRoute in
+#print axioms suffixCompressionOfValid_edgeSet_subset
+open Erdos599.PopularAuxiliary.Input.ErasedSignedRoute in
+#print axioms suffixCompressionOfValid_directionEdges_subset
 #print axioms
   Erdos599.PopularAuxiliary.Input.ErasedSignedRoute.exists_lastContact
-#print axioms
-  Erdos599.PopularAuxiliary.Input.ErasedSignedRoute.LastContact.eq_vertex_of_mem_suffix_vertexChain_of_mem
-#print axioms
-  Erdos599.PopularAuxiliary.Input.ErasedSignedRoute.LastContact.position_eq_of_subset_of_vertex_mem
+open Erdos599.PopularAuxiliary.Input.ErasedSignedRoute.LastContact in
+#print axioms eq_vertex_of_mem_suffix_vertexChain_of_mem
+open Erdos599.PopularAuxiliary.Input.ErasedSignedRoute.LastContact in
+#print axioms position_eq_of_subset_of_vertex_mem

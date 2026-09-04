@@ -251,5 +251,7 @@ theorem coordinateIntervalParentRun_eq_imp_eq_of_direction
 
 end Erdos599.Alternating.RunCompressor.FiniteInput
 
-#print axioms Erdos599.Alternating.RunCompressor.FiniteInput.coordinateInterval_projectedRun_isSubpathOf_parent
-#print axioms Erdos599.Alternating.RunCompressor.FiniteInput.coordinateIntervalParentRun_eq_imp_eq_of_direction
+open Erdos599.Alternating.RunCompressor.FiniteInput in
+#print axioms coordinateInterval_projectedRun_isSubpathOf_parent
+open Erdos599.Alternating.RunCompressor.FiniteInput in
+#print axioms coordinateIntervalParentRun_eq_imp_eq_of_direction

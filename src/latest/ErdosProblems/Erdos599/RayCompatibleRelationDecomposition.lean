@@ -64,7 +64,7 @@ theorem exists_warp_realizing_orientation_with_isolated
       RelationDecomposition.DWeb.familyEdges_isolatedPaths G I,
       Set.union_empty]
   · ext x
-    simp only [isolatedVertices, Set.mem_setOf_eq, Set.mem_union]
+    simp only [isolatedVertices, Set.mem_ofPred_eq, Set.mem_union]
     constructor
     · intro hx
       rcases hx with hx | hx

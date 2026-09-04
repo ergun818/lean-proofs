@@ -52,7 +52,7 @@ theorem successorStageCompiler_of_trackedSlices
     ∀ (i : Ladder.Stage kappa)
       (previous : ∀ l : Ladder.Stage kappa, l < i →
         SliceSplice.StagePayload Gamma L Sigma Z)
-      (j : Ladder.Stage kappa) (hji : j < i),
+      (j : Ladder.Stage kappa) (_hji : j < i),
       Order.succ j.1 = i.1 →
       (∀ l (hli : l < i),
         SliceSplice.IsValidStage request l

@@ -180,7 +180,8 @@ def AllRealTerminalFullyPredecessorPreservingContinuation930Compiler
 /-- The two concrete coupled-replacement branches construct the
 all-real-terminal 9.30 certificate, including its full-edge predecessor
 invariant. -/
-theorem allRealTerminalFullyPredecessorPreservingContinuation930Compiler_of_coupledHammockReplacement
+theorem
+  allRealTerminalFullyPredecessorPreservingContinuation930Compiler_of_coupledHammockReplacement
     {T Z persistent B : Set V}
     (hkappa : aleph0 ≤ kappa)
     (hterminal :

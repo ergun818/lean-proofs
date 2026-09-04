@@ -67,6 +67,7 @@ def eventualEdgeLimit
     (C : IndexedRealExtensionChain I Gamma Y kappa B) : Set (V × V) :=
   WarpLimits.setLiminf fun i ↦ (C.stage i).edgeSet
 
+omit [Nonempty I] in
 theorem stage_vertices_mono
     (C : IndexedRealExtensionChain I Gamma Y kappa B)
     {i j : I} (hij : i ≤ j) :
@@ -74,6 +75,7 @@ theorem stage_vertices_mono
       (C.stage j).realPart.vertices :=
   (C.realExtends hij).realPart_extends.1
 
+omit [Nonempty I] in
 theorem stage_edges_mono
     (C : IndexedRealExtensionChain I Gamma Y kappa B)
     {i j : I} (hij : i ≤ j) :
@@ -81,11 +83,13 @@ theorem stage_edges_mono
       (C.stage j).realPart.edges :=
   (C.realExtends hij).realEdges_mono
 
+omit [Nonempty I] in
 theorem stage_vertices_subset_realVertexLimit
     (C : IndexedRealExtensionChain I Gamma Y kappa B) (i : I) :
     (C.stage i).realPart.vertices ⊆ C.realVertexLimit :=
   Set.subset_iUnion (fun j ↦ (C.stage j).realPart.vertices) i
 
+omit [Nonempty I] in
 theorem stage_edges_subset_realEdgeLimit
     (C : IndexedRealExtensionChain I Gamma Y kappa B) (i : I) :
     (C.stage i).realPart.edges ⊆ C.realEdgeLimit :=
@@ -193,6 +197,7 @@ private theorem exists_initialFinitePrefix
     obtain ⟨m, _hm, rfl⟩ := he
     exact ⟨m, rfl⟩
 
+omit [Nonempty I] in
 private theorem exists_initial_reflTransGen
     (C : IndexedRealExtensionChain I Gamma Y kappa B)
     (i : I) {x : V} (hx : x ∈ (C.stage i).vertexSet) :
@@ -467,6 +472,7 @@ theorem predecessorRefines_eventualRelationBlueprint
 
 /-! ### All-real final relation -/
 
+omit [Nonempty I] in
 theorem realEdgeLimit_in_graph
     (C : IndexedRealExtensionChain I Gamma Y kappa B) :
     C.realEdgeLimit ⊆
@@ -475,6 +481,7 @@ theorem realEdgeLimit_in_graph
   obtain ⟨i, hei⟩ := Set.mem_iUnion.1 he
   exact Or.inl hei.2
 
+omit [Nonempty I] in
 theorem realEdgeLimit_endpoints
     (C : IndexedRealExtensionChain I Gamma Y kappa B) :
     ∀ e ∈ C.realEdgeLimit,
@@ -490,6 +497,7 @@ theorem realEdgeLimit_endpoints
     C.stage_vertices_subset_realVertexLimit i
       (by simpa only [realPart_vertices] using hends.2)⟩
 
+omit [Nonempty I] in
 theorem realEdgeLimit_biUnique
     (C : IndexedRealExtensionChain I Gamma Y kappa B) :
     Relator.BiUnique (fun x y ↦ (x, y) ∈ C.realEdgeLimit) := by

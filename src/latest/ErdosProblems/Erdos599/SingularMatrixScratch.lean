@@ -33,12 +33,24 @@ abbrev Index (kappa : Cardinal.{u}) : Type u :=
 /-- A chosen ordinal fundamental sequence cofinal in `kappa.ord`. -/
 noncomputable def rawFundamental (kappa : Cardinal.{u}) :
     (i : Ordinal.{u}) → i < kappa.ord.cof.ord → Ordinal.{u} :=
-  Classical.choose (Ordinal.exists_fundamental_sequence kappa.ord)
+  fun i hi => (Classical.choose
+    (Ordinal.exists_isFundamentalSeq (o := kappa.ord) rfl) ⟨i, hi⟩).1
 
 theorem rawFundamental_spec (kappa : Cardinal.{u}) :
-    kappa.ord.IsFundamentalSequence kappa.ord.cof.ord
-      (rawFundamental kappa) :=
-  Classical.choose_spec (Ordinal.exists_fundamental_sequence kappa.ord)
+    kappa.ord.cof.ord ≤ kappa.ord.cof.ord ∧
+      (∀ {i j} (hi : i < kappa.ord.cof.ord) (hj : j < kappa.ord.cof.ord),
+        i < j → rawFundamental kappa i hi < rawFundamental kappa j hj) ∧
+      (⨆ i : Iio kappa.ord.cof.ord, rawFundamental kappa i.1 i.2 + 1) = kappa.ord := by
+  have hf := Classical.choose_spec (Ordinal.exists_isFundamentalSeq (o := kappa.ord) rfl)
+  exact ⟨le_rfl, fun hi hj hij => hf.strictMono (show (⟨_, hi⟩ : Iio _) < ⟨_, hj⟩ from hij),
+    hf.iSup_add_one_eq⟩
+
+private theorem rawFundamental_cofinal (kappa : Cardinal.{u})
+    {xi : Ordinal.{u}} (hxi : xi < kappa.ord) :
+    ∃ j, ∃ hj : j < kappa.ord.cof.ord, xi ≤ rawFundamental kappa j hj := by
+  have hf := Classical.choose_spec (Ordinal.exists_isFundamentalSeq (o := kappa.ord) rfl)
+  obtain ⟨_, ⟨j, rfl⟩, hj⟩ := hf.isCofinal_range ⟨xi, hxi⟩
+  exact ⟨j.1, j.2, hj⟩
 
 /-- The ordinal rank of an index in the canonical cofinality order. -/
 def indexRank (kappa : Cardinal.{u}) (i : Index kappa) : Ordinal.{u} :=
@@ -55,12 +67,13 @@ def fundamentalAt (kappa : Cardinal.{u}) (i : Index kappa) : Ordinal.{u} :=
 
 theorem fundamentalAt_lt (kappa : Cardinal.{u}) (i : Index kappa) :
     fundamentalAt kappa i < kappa.ord :=
-  (rawFundamental_spec kappa).lt (indexRank_lt kappa i)
+  (Classical.choose (Ordinal.exists_isFundamentalSeq (o := kappa.ord) rfl)
+    ⟨indexRank kappa i, indexRank_lt kappa i⟩).2
 
 theorem fundamentalAt_strictMono (kappa : Cardinal.{u}) :
     StrictMono (fundamentalAt kappa) := by
   intro i j hij
-  apply (rawFundamental_spec kappa).strict_mono
+  apply (rawFundamental_spec kappa).2.1
       (indexRank_lt kappa i) (indexRank_lt kappa j)
   exact (Ordinal.typein_lt_typein
     (fun x y : Index kappa => x < y)).2 hij
@@ -81,10 +94,8 @@ noncomputable def floorOrdinalIndex (kappa : Cardinal.{u})
     Ordinal.{u} := by
   have hord : (scaleFloor kappa).ord < kappa.ord :=
     Cardinal.ord_lt_ord.2 (scaleFloor_lt kappa huncountable hsingular)
-  have hbelow : (scaleFloor kappa).ord <
-      Ordinal.blsub kappa.ord.cof.ord (rawFundamental kappa) := by
-    simpa only [(rawFundamental_spec kappa).blsub_eq] using hord
-  exact Classical.choose (Ordinal.lt_blsub_iff.1 hbelow)
+  have hcofinal := rawFundamental_cofinal kappa hord
+  exact Classical.choose hcofinal
 
 theorem floorOrdinalIndex_lt (kappa : Cardinal.{u})
     (huncountable : aleph0 < kappa) (hsingular : kappa.IsSingular) :
@@ -92,11 +103,9 @@ theorem floorOrdinalIndex_lt (kappa : Cardinal.{u})
       kappa.ord.cof.ord := by
   have hord : (scaleFloor kappa).ord < kappa.ord :=
     Cardinal.ord_lt_ord.2 (scaleFloor_lt kappa huncountable hsingular)
-  have hbelow : (scaleFloor kappa).ord <
-      Ordinal.blsub kappa.ord.cof.ord (rawFundamental kappa) := by
-    simpa only [(rawFundamental_spec kappa).blsub_eq] using hord
+  have hcofinal := rawFundamental_cofinal kappa hord
   exact Classical.choose (Classical.choose_spec
-    (Ordinal.lt_blsub_iff.1 hbelow))
+    hcofinal)
 
 theorem floorOrdinalIndex_bound (kappa : Cardinal.{u})
     (huncountable : aleph0 < kappa) (hsingular : kappa.IsSingular) :
@@ -105,11 +114,9 @@ theorem floorOrdinalIndex_bound (kappa : Cardinal.{u})
       (floorOrdinalIndex_lt kappa huncountable hsingular) := by
   have hord : (scaleFloor kappa).ord < kappa.ord :=
     Cardinal.ord_lt_ord.2 (scaleFloor_lt kappa huncountable hsingular)
-  have hbelow : (scaleFloor kappa).ord <
-      Ordinal.blsub kappa.ord.cof.ord (rawFundamental kappa) := by
-    simpa only [(rawFundamental_spec kappa).blsub_eq] using hord
+  have hcofinal := rawFundamental_cofinal kappa hord
   exact Classical.choose_spec (Classical.choose_spec
-    (Ordinal.lt_blsub_iff.1 hbelow))
+    hcofinal)
 
 /-- A canonical-type index corresponding to `floorOrdinalIndex`. -/
 noncomputable def floorIndex (kappa : Cardinal.{u})
@@ -204,10 +211,8 @@ theorem scale_cofinal (kappa : Cardinal.{u})
     ∃ i : Index kappa, rho < scale kappa huncountable hsingular i := by
   have hsucc : succ rho < kappa := hsingular.isSuccLimit.succ_lt hrho
   have hord : (succ rho).ord < kappa.ord := Cardinal.ord_lt_ord.2 hsucc
-  have hbelow : (succ rho).ord <
-      Ordinal.blsub kappa.ord.cof.ord (rawFundamental kappa) := by
-    simpa only [(rawFundamental_spec kappa).blsub_eq] using hord
-  obtain ⟨j, hj, hle⟩ := Ordinal.lt_blsub_iff.1 hbelow
+  have hcofinal := rawFundamental_cofinal kappa hord
+  obtain ⟨j, hj, hle⟩ := hcofinal
   let i0 : Index kappa := Ordinal.enum
     (fun x y : Index kappa => x < y)
     ⟨j, by rw [Ordinal.type_toType]; exact hj⟩
@@ -259,10 +264,8 @@ theorem cutOrdinal_cofinal (kappa : Cardinal.{u})
     ∃ i : Index kappa, xi < cutOrdinal kappa huncountable hsingular i := by
   have hxisucc : Order.succ xi < kappa.ord :=
     (Cardinal.isSuccLimit_ord huncountable.le).succ_lt hxi
-  have hbelow : Order.succ xi <
-      Ordinal.blsub kappa.ord.cof.ord (rawFundamental kappa) := by
-    simpa only [(rawFundamental_spec kappa).blsub_eq] using hxisucc
-  obtain ⟨j, hj, hle⟩ := Ordinal.lt_blsub_iff.1 hbelow
+  have hcofinal := rawFundamental_cofinal kappa hxisucc
+  obtain ⟨j, hj, hle⟩ := hcofinal
   let i0 : Index kappa := Ordinal.enum
     (fun x y : Index kappa => x < y)
     ⟨j, by rw [Ordinal.type_toType]; exact hj⟩
@@ -572,7 +575,7 @@ noncomputable def competitorMatrixOfPaths
   sources := matrixSources G fixed paths initial
   paths := paths
   sources_subset_source := matrixSources_subset_source G fixed paths initial
-    hinitialSource (hfixedInitial.le.trans Set.diff_subset) (fun i n => by
+    hinitialSource (hfixedInitial.le.trans Set.sdiff_subset) (fun i n => by
       rw [hpathsInitial i n])
   sources_card := matrixSources_card G fixed paths initial kappa
     hfixedWarp hpathsWarp hkappaInfinite hindex hinitialCard

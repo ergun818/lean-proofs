@@ -176,7 +176,7 @@ theorem linkage_union_outside
       refine ⟨q, rfl, ?_, ?_⟩
       · rw [← hends]
         ext x
-        simp only [Set.mem_inter_iff, Set.mem_union, Set.mem_singleton_iff]
+        simp only [Set.mem_inter_iff, Set.mem_union]
         constructor
         · rintro ⟨hxs, hxsour | hxtarget⟩
           · exact ⟨hxs, Or.inl ⟨hxsour, hsZ hxs⟩⟩
@@ -199,7 +199,7 @@ theorem linkage_union_outside
       refine ⟨q, rfl, ?_, ?_⟩
       · rw [← hends]
         ext x
-        simp only [Set.mem_inter_iff, Set.mem_union, Set.mem_diff]
+        simp only [Set.mem_inter_iff, Set.mem_union, Set.mem_sdiff]
         constructor
         · rintro ⟨hxs, hxsour | hxtarget⟩
           · exact ⟨hxs, Or.inl ⟨hxsour,
@@ -210,7 +210,7 @@ theorem linkage_union_outside
           · exact ⟨hxs, Or.inr hxtarget⟩
       · rw [← hsource]
         ext x
-        simp only [Set.mem_inter_iff, Set.mem_diff]
+        simp only [Set.mem_inter_iff, Set.mem_sdiff]
         constructor
         · rintro ⟨hxs, hxsour⟩
           exact ⟨hxs, hxsour,
@@ -383,7 +383,7 @@ theorem competitorMatrix_targetPath_source_pure_full
         (hqsub hxq) hxsource
     exact Set.mem_singleton_iff.2 <|
       hxinit.trans (hcarrierInit.trans (by
-        simpa only [q,
+        simp only [
           SingularCardinal.CompetitorMatrix.targetPath_start]))
   · rintro x hx
     have hxq : x = q.start := Set.mem_singleton_iff.1 hx
@@ -438,6 +438,7 @@ def sourceColumns (M : Matrix Γ κs A₀ Qualified)
     (a : globalSources M) : Set I :=
   {i | a.1 ∈ limitSources Γ M i}
 
+omit [WellFoundedLT I] in
 theorem sourceColumns_nonempty (M : Matrix Γ κs A₀ Qualified)
     (a : globalSources M) :
     (sourceColumns M a).Nonempty := by
@@ -527,6 +528,7 @@ theorem leastColumn_eq_of_not_disjoint
   have hia_le : ia ≤ ib := leastColumn_le M a haIb
   exact le_antisymm hia_le hib_le
 
+omit [WellFoundedLT I] in
 /-- Target prefixes belonging to equal (possibly dependently presented)
 columns are disjoint when their initial vertices differ. -/
 theorem targetPath_disjoint_of_index_eq (M : Matrix Γ κs A₀ Qualified)
@@ -618,6 +620,7 @@ theorem selectedTargetPath_endpoint_pure
   simp only [selectedTargetPath_initial]
   exact Set.singleton_union
 
+omit [WellFoundedLT I] in
 /-- A fixed path meeting the global source union must itself start in that
 union, by column closure and full-source coverage of the direct limit. -/
 theorem fixed_initial_mem_globalSources_of_meets
@@ -738,7 +741,7 @@ theorem isLinkable_of_competitorMatrix
       refine ⟨q, rfl, ?_, ?_⟩
       · rw [← hends]
         ext x
-        simp only [Set.mem_inter_iff, Set.mem_union, Set.mem_diff]
+        simp only [Set.mem_inter_iff, Set.mem_union, Set.mem_sdiff]
         constructor
         · rintro ⟨hxs, hxsour | hxt⟩
           · exact ⟨hxs, Or.inl ⟨hxsour,
@@ -749,7 +752,7 @@ theorem isLinkable_of_competitorMatrix
           · exact ⟨hxs, Or.inr hxt⟩
       · rw [← hsour]
         ext x
-        simp only [Set.mem_inter_iff, Set.mem_diff]
+        simp only [Set.mem_inter_iff, Set.mem_sdiff]
         constructor
         · rintro ⟨hxs, hxsour⟩
           exact ⟨hxs, hxsour,

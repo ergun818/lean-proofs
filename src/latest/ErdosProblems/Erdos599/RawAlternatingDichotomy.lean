@@ -46,7 +46,7 @@ theorem lastOccurrence_mem {A : Type u} (f : ℕ → A)
     f (lastOccurrence f hfinite n) = f n := by
   have hmem : lastOccurrence f hfinite n ∈
       (hfinite n).toFinset := Finset.max'_mem _ _
-  simpa only [Set.Finite.mem_toFinset, occurrenceFiber, Set.mem_setOf_eq]
+  simpa only [Set.Finite.mem_toFinset, occurrenceFiber, Set.mem_ofPred_eq]
     using hmem
 
 theorem le_lastOccurrence {A : Type u} (f : ℕ → A)
@@ -54,7 +54,7 @@ theorem le_lastOccurrence {A : Type u} (f : ℕ → A)
     (hm : f m = f n) :
     m ≤ lastOccurrence f hfinite n := by
   apply Finset.le_max'
-  simpa only [Set.Finite.mem_toFinset, occurrenceFiber, Set.mem_setOf_eq]
+  simpa only [Set.Finite.mem_toFinset, occurrenceFiber, Set.mem_ofPred_eq]
     using hm
 
 theorem le_lastOccurrence_self {A : Type u} (f : ℕ → A)
@@ -173,12 +173,12 @@ theorem IsBracketAlternating.reverse_finite_of_boundary_forward
     have hcontra : Q.lastLink.direction = .backward := by
       cases hd : Q.lastLink.direction <;>
         simp [AltPath.firstDirection?_finite_reverse, hd] at hreverseFirst ⊢
-    exact (by simpa [hlast] using hcontra)
+    exact (by simp [hlast] at hcontra)
   · intro t _hterm hreverseLast
     have hcontra : Q.firstLink.direction = .backward := by
       cases hd : Q.firstLink.direction <;>
         simp [AltPath.lastDirection?_finite_reverse, hd] at hreverseLast ⊢
-    exact (by simpa [hfirst] using hcontra)
+    exact (by simp [hfirst] at hcontra)
   · intro l hl hldir
     change l ∈ Q.reverse.links at hl
     rw [FiniteTrace.links_reverse] at hl
@@ -289,7 +289,7 @@ theorem finiteMacroRoute_or_infiniteMacroChain
     have hfinal : ∃ t,
         Γ.terminal? (z N).1 = some t ∧ t ∉ Γ.vertexSet Y := by
       dsimp only [Covered] at hN
-      push_neg at hN
+      push Not at hN
       rcases hN with ⟨t, ht, htY⟩
       exact ⟨t, ht, htY⟩
     let t : V := Classical.choose hfinal

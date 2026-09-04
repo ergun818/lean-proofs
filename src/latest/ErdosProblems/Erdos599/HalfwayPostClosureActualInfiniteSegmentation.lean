@@ -140,8 +140,7 @@ private theorem exists_eventuallyClosedClassifiedContactSegmentation
             (S.shift_changes hchange E.last)).toInfiniteTrace.vertexSet
           exact hx
       · rintro x ((hx | hx) | hx)
-        · change x ∈ (S.toInfiniteRunWalk hchange).toInfiniteTrace.vertexSet
-          rw [S.toInfiniteTrace_vertexSet hchange]
+        · rw [S.toInfiniteTrace_vertexSet hchange]
           obtain ⟨i, rfl⟩ := hx
           exact ⟨E.coord i, rfl⟩
         · simp only [Set.mem_iUnion] at hx
@@ -234,8 +233,7 @@ private theorem exists_omegaClosedClassifiedContactSegmentation
         change x ∈ (E.interval i).toFiniteRunWalk.toFiniteTrace.vertexSet
         exact hxi
       · rintro x (hx | hx)
-        · change x ∈ (S.toInfiniteRunWalk hchange).toInfiniteTrace.vertexSet
-          rw [S.toInfiniteTrace_vertexSet hchange]
+        · rw [S.toInfiniteTrace_vertexSet hchange]
           obtain ⟨i, rfl⟩ := hx
           exact ⟨E.coord i, rfl⟩
         · simp only [Set.mem_iUnion] at hx

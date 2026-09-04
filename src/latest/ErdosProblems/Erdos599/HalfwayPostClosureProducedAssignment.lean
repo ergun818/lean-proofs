@@ -46,6 +46,8 @@ structure PostClosureProducedAssignment
 
 namespace PostClosureIntervalTransaction
 
+open FracturedAssignmentPeel.OutsideFracturedWarp
+
 variable {C : ClubStageGeometry Gamma Y kappa (succ kappa)}
 variable {globalZ X0 : Set V} {z : V}
 variable {R : DynamicMoving931GlobalClosure C globalZ X0}
@@ -64,7 +66,8 @@ theorem exists_producedAssignment
       (outsideReference T.intervalReference R.closedSet) :=
     T.intervalReference_isLinkageBetween.isWarp.subset
       (outsideReference_subset (Y := T.intervalReference) (X := R.closedSet))
-  obtain ⟨A⟩ := FracturedAssignmentPeel.OutsideFracturedWarp.exists_traversalProducedBracketFracturedAssignment_anyReference
+  obtain ⟨A⟩ :=
+    exists_traversalProducedBracketFracturedAssignment_anyReference
     F.outside hboundary hOutsideWarp hinitial
   exact ⟨{ fractured := F, assignment := A }⟩
 

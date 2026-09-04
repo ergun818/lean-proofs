@@ -30,8 +30,9 @@ namespace Erdos599
 namespace CardinalInduction
 namespace RegularLocalizedProtectedCandidate
 
-open DirectedPath SliceSpliceSource
+open DirectedPath SliceSpliceSource RegularProtectedAmbientMaverick
 open Blueprint.LinkageBlueprint.CardinalInduction
+open RegularLocalizedProtectedCleanSlice.LocalizedProtectedHalfwayGeometry
 
 universe u
 variable {V : Type u}
@@ -63,12 +64,12 @@ theorem LocalizedProtectedHalfwayGeometry.exists_advancedCleanTargetSlice_with_m
     RegularLocalizedProtectedCleanSlice.LocalizedProtectedHalfwayGeometry.toCleanTargetSlice
       D hNorm
   have hsource : (Gamma.delete X).source = Gamma.source \ selected :=
-    RegularLocalizedProtectedCleanSlice.LocalizedProtectedHalfwayGeometry.delete_targetCarrier_source
-      D hNorm
+    delete_targetCarrier_source D hNorm
   have hR : IsLinkageBetween Gamma (Gamma.delete X).source
       D.stopover D.remainder := by
     rw [hsource]
-    exact RegularLocalizedProtectedCleanSlice.LocalizedProtectedHalfwayGeometry.remainder_isLinkageBetween D
+    exact
+      remainder_isLinkageBetween D
   have hRavoid : Disjoint (Gamma.vertexSet D.remainder) X := by
     apply Set.disjoint_left.2
     rintro x hxR hxP
@@ -76,7 +77,7 @@ theorem LocalizedProtectedHalfwayGeometry.exists_advancedCleanTargetSlice_with_m
     obtain ⟨p, hp, hxp⟩ := hxP
     exact Set.disjoint_left.1 (D.families_disjoint p hp r hr) hxp hxr
   obtain ⟨K, hmavericks⟩ :=
-    RegularProtectedAmbientMaverick.exists_protectedAmbientCompletion_of_ambientRemainder_with_mavericks
+    exists_protectedAmbientCompletion_of_ambientRemainder_with_mavericks
       hregular huncountable Gamma hlower hNorm
         (RegularLocalizedProtectedCleanSlice.LocalizedProtectedHalfwayGeometry.targetCarrier_small
           D hNorm huncountable hrho)
@@ -315,8 +316,7 @@ theorem exists_weakSplitAnnularCandidate_of_localizedProtected
   have hselectedSource : selected ⊆ Q.source :=
     D.targetPaths_initial_subset_source
   have hP : IsLinkageBetween Q selected Q.target D.targetPaths :=
-    RegularLocalizedProtectedCleanSlice.LocalizedProtectedHalfwayGeometry.targetPaths_isLinkageBetween
-      D hNormQ
+    targetPaths_isLinkageBetween D hNormQ
   have hterminal : Q.terminalFrontier D.targetPaths ⊆ T :=
     terminalFrontier_subset_of_targetCarrier_roof
       (G := G) (Q := Q) hP rfl htargetRoof

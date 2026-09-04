@@ -1016,7 +1016,7 @@ theorem IsCleanFiniteWarp.target_gap_disjoint_vertexSet
     exact ⟨hbv, hb.1⟩)
 
 theorem IsCleanFiniteWarp.initialSet_ne_source_of_gap_nonempty
-    {J : Set Γ.DPath} (hJ : Γ.IsCleanFiniteWarp J)
+    {J : Set Γ.DPath} (_hJ : Γ.IsCleanFiniteWarp J)
     (hgap : (Γ.source \ Γ.initialSet J).Nonempty) :
     Γ.initialSet J ≠ Γ.source := by
   rintro heq
@@ -1080,7 +1080,7 @@ theorem oneHoleDichotomy_empty (hsource : Γ.source.Nonempty)
       have hainit : a ∈ Γ.initialSet (∅ : Set Γ.DPath) := by
         rw [heq]
         exact ha
-      simpa [initialSet] using hainit
+      simp [initialSet] at hainit
 
 /-- If no uncovered source has any target path, the family obtained by
 cutting every old member at its initial vertex is already a hindrance.  This
@@ -1168,7 +1168,7 @@ theorem IsWarp.initialSet_sdiff_singleton {W : Set Γ.DPath}
     have hinit : q.initial = p.initial := hqa.trans hap
     have hqp : q = p :=
       DWeb.IsWarp.eq_of_initial_eq Γ hW hq.1 hp hinit
-    exact hq.2 (by simpa [hqp])
+    exact hq.2 (by simp [hqp])
   · rintro ⟨⟨q, hqW, hqa⟩, hane⟩
     refine ⟨q, ⟨hqW, ?_⟩, hqa⟩
     intro hqp
@@ -1189,7 +1189,7 @@ theorem IsWarp.terminalFrontier_sdiff_singleton {W : Set Γ.DPath}
     have hqt : Γ.terminal? q = some t := by simpa [hxt'] using hqx
     have hqp : q = p :=
       DWeb.IsWarp.eq_of_terminal_eq Γ hW hq.1 hp hqt hpt
-    exact hq.2 (by simpa [hqp])
+    exact hq.2 (by simp [hqp])
   · rintro ⟨⟨q, hqW, hqx⟩, hxne⟩
     refine ⟨q, ⟨hqW, ?_⟩, hqx⟩
     intro hqp
@@ -1299,7 +1299,7 @@ theorem fd_hasFiniteCharacter_restrictDeleteFamily {X : Set V}
 
 theorem fd_source_clean_restrictDeleteFamily {X : Set V}
     {Z : Set Γ.DPath} (havoid : Disjoint (Γ.vertexSet Z) X)
-    (hXA : X ⊆ Γ.sourceᶜ)
+    (_hXA : X ⊆ Γ.sourceᶜ)
     (hclean : ∀ p ∈ Z, p.support ∩ Γ.source ⊆ {p.initial}) :
     ∀ q ∈ Γ.restrictDeleteFamily X Z havoid,
       q.support ∩ (Γ.delete X).source ⊆ {q.initial} := by

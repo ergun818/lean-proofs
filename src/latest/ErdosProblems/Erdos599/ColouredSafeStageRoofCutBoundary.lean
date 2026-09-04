@@ -378,7 +378,7 @@ private theorem reference_balance_nonnegative_off_frontier
 private theorem endpoint_mem_occurrence_of_new_terminal
     (hL : DWeb.KappaLadder.Deferred.HalfwayGeometry L)
     (A : ColouredSafeAmbientOccurrence.Occurrence L.limitWarp s)
-    {U : Set Gamma.DPath} (hU : Gamma.IsWarp U)
+    {U : Set Gamma.DPath} (_hU : Gamma.IsWarp U)
     (hUE : familyEdges U = edges A (Y A) (L.frontier a))
     (hcarrier : Gamma.vertexSet U ⊆ Gamma.vertexSet (Y A) ∪ A.vertexSet)
     {x : V} (hxU : x ∈ Gamma.vertexSet U)

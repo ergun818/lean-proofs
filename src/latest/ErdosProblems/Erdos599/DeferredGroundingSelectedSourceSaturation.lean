@@ -315,7 +315,7 @@ theorem saturatedWarp_initialSet
       X.truncatedWarp_isWarp D.owner_mem,
     D.prefix_start]
   ext x
-  simp only [Set.mem_insert_iff, Set.mem_diff, Set.mem_singleton_iff]
+  simp only [Set.mem_insert_iff, Set.mem_sdiff, Set.mem_singleton_iff]
   constructor
   · rintro (rfl | hx)
     · exact ⟨D.owner, D.owner_mem, rfl⟩
@@ -403,7 +403,7 @@ theorem terminalFrontier_saturatedWarp_sdiff_contact
         {D.contact.vertex} = Gamma.terminalFrontier rest
   rw [Gamma.terminalFrontier_insert_finite, D.prefix_finish]
   ext x
-  simp only [Set.mem_diff, Set.mem_insert_iff, Set.mem_singleton_iff]
+  simp only [Set.mem_sdiff, Set.mem_insert_iff, Set.mem_singleton_iff]
   constructor
   · rintro ⟨hx | hx, hxne⟩
     · exact False.elim (hxne hx)
@@ -938,25 +938,35 @@ end KappaLadder
 end DWeb
 end Erdos599
 
-#print axioms
-  Erdos599.DWeb.KappaLadder.Deferred.ReservedStrongSelectedStartingLastContact.SourceSaturation.forwardLinksOff_sourceGroundedOwners
-#print axioms
-  Erdos599.DWeb.KappaLadder.Deferred.ReservedStrongSelectedStartingLastContact.SourceSaturation.contact_eq_initial_or_suffix_vertexChain_lt
-#print axioms
-  Erdos599.DWeb.KappaLadder.Deferred.ReservedStrongSelectedStartingLastContact.SourceSaturation.normalizedSuffix_backwardLinksOn_saturatedWarp
-#print axioms
-  Erdos599.DWeb.KappaLadder.Deferred.ReservedStrongSelectedStartingLastContact.SourceSaturation.terminalContactGeometryOutcome_on_saturatedWarp
-#print axioms
-  Erdos599.DWeb.KappaLadder.Deferred.ReservedStrongSelectedStartingLastContact.SourceSaturation.canonicalDeferredLadder_saturatedForwardReference_terminal_or_inessential
-#print axioms
-  Erdos599.DWeb.KappaLadder.Deferred.ReservedStrongSelectedStartingLastContact.SourceSaturation.canonicalDeferredLadder_saturatedUncoveredForward_contact_or_terminal_or_inessential
-#print axioms
-  Erdos599.DWeb.KappaLadder.Deferred.ReservedStrongSelectedStartingLastContact.SourceSaturation.exists_sourcePath_to_firstLinkExit_of_contact_forward
-#print axioms
-  Erdos599.DWeb.KappaLadder.Deferred.ReservedStrongSelectedStartingLastContact.SourceSaturation.exists_terminalContactSwitchWarp
-#print axioms
-  Erdos599.DWeb.KappaLadder.Deferred.ReservedStrongSelectedStartingLastContact.SourceSaturation.terminalContactSwitch_roots_untouchedFrontier
-#print axioms
-  Erdos599.DWeb.KappaLadder.Deferred.ReservedStrongSelectedStartingLastContact.SourceSaturation.terminalContactSwitch_oldFrontier_rooted_or_displacedOwner
-#print axioms
-  Erdos599.DWeb.KappaLadder.Deferred.ReservedStrongSelectedStartingLastContact.exists_sourceSaturation
+open Erdos599.DWeb.KappaLadder.Deferred.ReservedStrongSelectedStartingLastContact.SourceSaturation
+  in
+#print axioms forwardLinksOff_sourceGroundedOwners
+open Erdos599.DWeb.KappaLadder.Deferred.ReservedStrongSelectedStartingLastContact.SourceSaturation
+  in
+#print axioms contact_eq_initial_or_suffix_vertexChain_lt
+open Erdos599.DWeb.KappaLadder.Deferred.ReservedStrongSelectedStartingLastContact.SourceSaturation
+  in
+#print axioms normalizedSuffix_backwardLinksOn_saturatedWarp
+open Erdos599.DWeb.KappaLadder.Deferred.ReservedStrongSelectedStartingLastContact.SourceSaturation
+  in
+#print axioms terminalContactGeometryOutcome_on_saturatedWarp
+open Erdos599.DWeb.KappaLadder.Deferred.ReservedStrongSelectedStartingLastContact.SourceSaturation
+  in
+#print axioms canonicalDeferredLadder_saturatedForwardReference_terminal_or_inessential
+open Erdos599.DWeb.KappaLadder.Deferred.ReservedStrongSelectedStartingLastContact.SourceSaturation
+  in
+#print axioms canonicalDeferredLadder_saturatedUncoveredForward_contact_or_terminal_or_inessential
+open Erdos599.DWeb.KappaLadder.Deferred.ReservedStrongSelectedStartingLastContact.SourceSaturation
+  in
+#print axioms exists_sourcePath_to_firstLinkExit_of_contact_forward
+open Erdos599.DWeb.KappaLadder.Deferred.ReservedStrongSelectedStartingLastContact.SourceSaturation
+  in
+#print axioms exists_terminalContactSwitchWarp
+open Erdos599.DWeb.KappaLadder.Deferred.ReservedStrongSelectedStartingLastContact.SourceSaturation
+  in
+#print axioms terminalContactSwitch_roots_untouchedFrontier
+open Erdos599.DWeb.KappaLadder.Deferred.ReservedStrongSelectedStartingLastContact.SourceSaturation
+  in
+#print axioms terminalContactSwitch_oldFrontier_rooted_or_displacedOwner
+open Erdos599.DWeb.KappaLadder.Deferred.ReservedStrongSelectedStartingLastContact in
+#print axioms exists_sourceSaturation

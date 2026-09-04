@@ -162,5 +162,7 @@ theorem breakIntervalPath_inside_or_outside
 
 end Erdos599.Alternating.RunCompressor.FiniteInput
 
-#print axioms Erdos599.Alternating.RunCompressor.FiniteInput.breakIntervalPath_hammockInterior_disjoint
-#print axioms Erdos599.Alternating.RunCompressor.FiniteInput.breakPosition_succ_eq_of_interval_subset
+open Erdos599.Alternating.RunCompressor.FiniteInput in
+#print axioms breakIntervalPath_hammockInterior_disjoint
+open Erdos599.Alternating.RunCompressor.FiniteInput in
+#print axioms breakPosition_succ_eq_of_interval_subset

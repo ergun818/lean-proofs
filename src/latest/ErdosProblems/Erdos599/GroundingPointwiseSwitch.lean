@@ -56,7 +56,7 @@ theorem hasIncoming_edgeSet_of_mem_support_of_ne_initial
   | zero => exact False.elim (hne rfl)
   | succ n =>
       refine ⟨r n, n, ?_⟩
-      simp only [Nat.succ_eq_add_one]
+      simp only []
 
 end Ray
 
@@ -352,7 +352,7 @@ theorem AlternatingCompression.realizedBy_frontiers_of_reducing
     exact hWapp.2.2
   constructor
   · ext z
-    simp only [Set.mem_diff, Set.mem_singleton_iff]
+    simp only [Set.mem_sdiff, Set.mem_singleton_iff]
     rw [mem_initialSet_iff_isolated_or_edgeBalance_eq_one_anyWarp hW.1,
       mem_initialSet_iff_isolated_or_edgeBalance_eq_one_anyWarp
         L.ladder.disjoint,
@@ -362,10 +362,10 @@ theorem AlternatingCompression.realizedBy_frontiers_of_reducing
       simp [propInt, hxy, hxnotiso, hxbal]
     · by_cases hzy : z = T.terminal
       · subst z
-        simp [propInt, hxy, hyx, hynotiso, hybal]
+        simp [propInt, hyx, hynotiso, hybal]
       · simp [propInt, hzx, hzy]
   · ext z
-    simp only [Set.mem_diff, Set.mem_singleton_iff]
+    simp only [Set.mem_sdiff, Set.mem_singleton_iff]
     rw [mem_terminalFrontier_iff_isolated_or_edgeBalance_eq_neg_one_anyWarp
         hW.1,
       mem_terminalFrontier_iff_isolated_or_edgeBalance_eq_neg_one_anyWarp
@@ -376,7 +376,7 @@ theorem AlternatingCompression.realizedBy_frontiers_of_reducing
       simp [propInt, hxy, hxnotiso, hxbal]
     · by_cases hzy : z = T.terminal
       · subst z
-        simp [propInt, hxy, hyx, hynotiso, hybal]
+        simp [propInt, hyx, hynotiso, hybal]
       · simp [propInt, hzx, hzy]
 
 end PopularAuxiliary.Input

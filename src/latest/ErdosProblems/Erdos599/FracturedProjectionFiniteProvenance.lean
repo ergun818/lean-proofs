@@ -668,9 +668,9 @@ noncomputable def finiteTraceCompression_backwardProvenance
     let E := (projectedFiniteTraceSteps_runs Z Q).erasedSignedRoute
     by_cases hnil : E.steps = []
     · have : l ∈ (AltPath.trivial (project Q.initial)).links := by
-        simpa [finiteTraceCompression, ErasedSignedRoute.compressionOfValid,
-          E, hnil] using hl
-      simpa using this
+        simp [finiteTraceCompression, ErasedSignedRoute.compressionOfValid,
+          E, hnil] at hl
+      simp at this
     · let S := projectedFiniteTraceInput Z Q hnil
       rw [finiteTraceCompression_path_eq_of_steps_ne_nil Z Q hnil] at hl hr
       change l ∈ S.toFiniteRunWalk.toFiniteTrace.links at hl

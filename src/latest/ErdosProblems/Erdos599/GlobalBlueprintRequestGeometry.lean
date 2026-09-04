@@ -436,8 +436,7 @@ theorem uncoveredSourcesOutsideReference_of_initial_boundary
     (h : Gamma.initialSet Zf.paths ∩ Gamma.vertexSet Y ⊆
       Gamma.initialSet Y) :
     FracturedDuplication.UncoveredSourcesOutsideReference Zf Y := by
-  intro x hx
-  intro hxY
+  intro x hx hxY
   exact hx.2 (h ⟨hx.1, hxY⟩)
 
 /-- The terminal half of boundary alignment is the corresponding truthful

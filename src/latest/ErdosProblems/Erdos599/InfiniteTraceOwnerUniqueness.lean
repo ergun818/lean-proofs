@@ -137,7 +137,7 @@ private theorem InfiniteTrace.not_backward_common_finite_owner_of_start_lt
     intro hab
     exact Set.disjoint_left.1 hdij
       (R.link i).path.start_mem_support
-      (by simpa [a, b, hab] using (R.link j).path.start_mem_support)
+      (by simp [a, b, hab])
   have habpos : p.walk.support.idxOf a < p.walk.support.idxOf b := by
     simpa [a, b] using hstartlt
   have hstartFinish : p.walk.support.idxOf a <
@@ -180,7 +180,7 @@ private theorem InfiniteTrace.not_backward_common_finite_owner_of_start_lt
       (List.idxOf_inj (l := p.walk.support) hfinishP).mp heq
     exact Set.disjoint_left.1 hdij
       (R.link i).path.finish_mem_support
-      (by simpa [b, hvertex] using (R.link j).path.start_mem_support)
+      (by simp [b, hvertex])
   let k := p.walk.support.idxOf (R.link i).path.finish
   have hk : k < p.walk.length := by
     have hlen := Walk.support_length_eq p.walk

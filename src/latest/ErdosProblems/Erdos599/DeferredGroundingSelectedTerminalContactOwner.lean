@@ -268,7 +268,7 @@ end Erdos599
   Erdos599.DWeb.KappaLadder.Deferred.reservedStrongSelected_forwardReferenceOwner_exists
 #print axioms
   Erdos599.DWeb.KappaLadder.Deferred.reservedStrongSelected_uncoveredForwardOwner_exists
-#print axioms
-  Erdos599.DWeb.KappaLadder.Deferred.reservedStrongSelected_forwardReferenceOwner_grounded_or_terminal_or_inessential
-#print axioms
-  Erdos599.DWeb.KappaLadder.Deferred.reservedStrongSelected_uncoveredForwardOwner_grounded_or_terminal_or_inessential
+open Erdos599.DWeb.KappaLadder.Deferred in
+#print axioms reservedStrongSelected_forwardReferenceOwner_grounded_or_terminal_or_inessential
+open Erdos599.DWeb.KappaLadder.Deferred in
+#print axioms reservedStrongSelected_uncoveredForwardOwner_grounded_or_terminal_or_inessential

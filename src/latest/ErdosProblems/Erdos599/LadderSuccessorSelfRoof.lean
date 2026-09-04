@@ -112,7 +112,7 @@ theorem exists_arrow_candidate_ending_of_self_roofing
         rw [hsfL] at hxs
         rcases RelationalRoof.mem_support_iff_start_or_mem_tail
             G.graph.Adj L.walk |>.1 hxs with hxeq | hxtail
-        · simpa [hxeq]
+        · simp [hxeq]
         · exfalso
           have hxRoof : x ∈ G.roof (G.terminalFrontier U) :=
             hUself hxU
@@ -185,7 +185,7 @@ theorem exists_arrow_candidate_ending_of_self_roofing
 /-- Every essential point of the union of two cross-roofed self-roofing
 warps is a terminal of their concrete arrow. -/
 theorem essential_union_subset_terminalFrontier_arrow_of_crossRoof
-    {U W : Set G.DPath} (hUwarp : G.IsWarp U) (hWwarp : G.IsWarp W)
+    {U W : Set G.DPath} (_hUwarp : G.IsWarp U) (hWwarp : G.IsWarp W)
     (hUself : G.vertexSet U ⊆ G.roof (G.terminalFrontier U))
     (hWself : G.vertexSet W ⊆ G.roof (G.terminalFrontier W))
     (hUroof : G.initialSet (U ∪ W) ⊆
@@ -269,7 +269,7 @@ theorem roof_terminalFrontier_arrow_eq_union_of_crossRoof'
     (hWself : G.vertexSet W ⊆ G.roof (G.terminalFrontier W))
     (hUroof : G.initialSet (U ∪ W) ⊆
       G.roof (G.terminalFrontier U))
-    (hWroof : G.initialSet (U ∪ W) ⊆
+    (_hWroof : G.initialSet (U ∪ W) ⊆
       G.roof (G.terminalFrontier W)) :
     G.roof (G.terminalFrontier (G.arrow U W)) =
       G.roof (G.terminalFrontier U ∪ G.terminalFrontier W) := by

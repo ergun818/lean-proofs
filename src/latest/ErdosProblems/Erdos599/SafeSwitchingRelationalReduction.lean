@@ -131,7 +131,7 @@ theorem exists_finiteWarp_reducing_of_finiteRelationalSwitch
       Gamma.initialSet Z \ {u} := by
     ext x
     rw [C.mem_initialSet_pathPart_iff_isolated_or_edgeBalance_eq_one hCfinite]
-    simp only [Set.mem_diff, Set.mem_singleton_iff]
+    simp only [Set.mem_sdiff, Set.mem_singleton_iff]
     rw [mem_initialSet_iff_isolated_or_edgeBalance_eq_one hZ hZfinite,
       hCIso, hCEdges, hbalance]
     by_cases hxv : x = v
@@ -146,7 +146,7 @@ theorem exists_finiteWarp_reducing_of_finiteRelationalSwitch
     ext x
     rw [C.mem_terminalFrontier_pathPart_iff_isolated_or_edgeBalance_eq_neg_one
       hCfinite]
-    simp only [Set.mem_diff, Set.mem_singleton_iff]
+    simp only [Set.mem_sdiff, Set.mem_singleton_iff]
     rw [mem_terminalFrontier_iff_isolated_or_edgeBalance_eq_neg_one
       hZ hZfinite, hCIso, hCEdges, hbalance]
     by_cases hxv : x = v

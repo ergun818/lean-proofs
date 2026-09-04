@@ -99,13 +99,13 @@ theorem exists_avoiding_terminal_escape_of_not_mem_BB
       q.start = PopularAuxiliary.Input.LambdaVertex.old t ∧
         q.finish ∈ L.lambda.target ∧ L.lambda.Avoids q C := by
   apply exists_avoiding_terminal_escape L C P hP ht hescape
-  intro htC
-  apply htNotBB
-  exact GroundingCut.CV_subset_BB L C (by simpa using htC)
-  intro hblock
-  apply htNotBB
-  apply GroundingCut.BL_subset_BB L C
-  exact ⟨P, hP.2, hblock⟩
+  · intro htC
+    apply htNotBB
+    exact GroundingCut.CV_subset_BB L C (by simpa using htC)
+  · intro hblock
+    apply htNotBB
+    apply GroundingCut.BL_subset_BB L C
+    exact ⟨P, hP.2, hblock⟩
 
 end GroundingEscapeSuffix
 end Erdos599

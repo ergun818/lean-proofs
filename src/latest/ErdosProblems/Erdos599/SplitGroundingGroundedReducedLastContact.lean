@@ -306,7 +306,7 @@ end Erdos599
   Erdos599.DWeb.KappaLadder.exists_splitGroundedReducedForwardConflictSpliceData
 #print axioms
   Erdos599.DWeb.KappaLadder.exists_splitGroundedReducedForwardConflictLastContact
-#print axioms
-  Erdos599.DWeb.KappaLadder.SplitGroundedReducedForwardConflictLastContact.suffix_meets_parent_only_at_vertex
-#print axioms
-  Erdos599.DWeb.KappaLadder.SplitGroundedReducedForwardConflictSpliceData.segmentLastContact_beforeEq_head_or_head_beforeEq
+open Erdos599.DWeb.KappaLadder.SplitGroundedReducedForwardConflictLastContact in
+#print axioms suffix_meets_parent_only_at_vertex
+open Erdos599.DWeb.KappaLadder.SplitGroundedReducedForwardConflictSpliceData in
+#print axioms segmentLastContact_beforeEq_head_or_head_beforeEq

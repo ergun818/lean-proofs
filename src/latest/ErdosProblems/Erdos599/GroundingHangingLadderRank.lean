@@ -27,7 +27,7 @@ namespace Erdos599
 namespace DWeb
 namespace KappaLadder
 
-open DirectedPath
+open _root_.Erdos599.DWeb.DirectedPath
 
 universe u
 
@@ -471,7 +471,7 @@ theorem assertion819Trace_countable
   | some d =>
       rw [L.assertion819Trace_eq_of_stageComponent hL S r a d howner]
       exact (PopularSwitching.ladderTrace_countable
-        (L.popularAuxiliaryInput hL.legal) d.component).mono Set.diff_subset
+        (L.popularAuxiliaryInput hL.legal) d.component).mono Set.sdiff_subset
 
 /-- Every totalized trace avoids its request apex.  On collision indices
 this is part of the literal source hypothesis; off those indices the trace

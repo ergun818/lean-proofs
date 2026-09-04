@@ -75,7 +75,6 @@ theorem boundaryWave_of_sectionSixData
       p.initial ∈ (base.delete Q).source ∪ X := by
     intro p hp
     exact hInitial ⟨p, hp.1, rfl⟩
-
   let : Nonempty V := ⟨a⟩
   obtain ⟨e, henum⟩ := Set.countable_iff_exists_subset_range.mp hXcount
   let R := SafeLinkGroundFinal.DWeb.groundRemoved G a X e
@@ -88,7 +87,6 @@ theorem boundaryWave_of_sectionSixData
       G hG ha hT.1 hXT e
   let groundQ : ((base.delete Q).delete R).Wave :=
     restrictGroundWave base R Q ground hgroundQ
-
   have hboundaryGround : ∀ z ∈ G.outerBoundary T,
       z ∈ H.vertexSet (H.essentialMeetingPaths M.1 X) →
       z ∈ ((base.delete Q).delete R).roof
@@ -97,19 +95,16 @@ theorem boundaryWave_of_sectionSixData
     apply roof_restrictGroundWave base R Q ground hgroundQ
     exact boundary_roof_groundWave finiteDeletion waveExtraction
       G hG hT hXT e henum hz (hboundaryClosed z hz hzM)
-
   have hmeet : ∀ p ∈ Wess, ∃ u ∈ p.support, u ∉ R ∧
       u ∈ ((base.delete Q).delete R).roof
         (((base.delete Q).delete R).terminalFrontier groundQ.1) := by
     apply corollary69_of_reducedAncestry G hT.1 hXT hRX
       hInitialEss hAncestry h64.1 groundQ
     exact hboundaryGround
-
   have hyground : y ∈ (base.delete R).roof
       ((base.delete R).terminalFrontier ground.1) := by
     exact boundary_roof_groundWave finiteDeletion waveExtraction
       G hG hT hXT e henum hy hFyX
-
   exact finalBoundaryWave_of_ground_and_quotient
     G hG hT.1 hXT hRX ground hgroundQ ⟨Wess, hWess⟩ hmeet hyground
 
@@ -142,7 +137,5 @@ theorem boundaryWave_of_sectionSixData_unconditional
       H.exists_wave_terminalFrontier_of_delete_isHindered hH hvA hdel)
     G hG ha hT hy X M hXcount hXT hFyX hclosed
       hboundaryClosed hground
-
 end SafeLink
-
 end Erdos599

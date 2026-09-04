@@ -35,7 +35,7 @@ wave; all other Section 6 inputs are already unconditional. -/
 theorem proposition63_of_dependentClosure
     (hboundary :
       ∀ (G : DWeb V) (hG : G.IsNormalized) {a : V}
-        (ha : a ∈ G.source) {T : Set V}
+        (_ha : a ∈ G.source) {T : Set V}
         (hT : Maximal (G.IsTreeSet a) T) (y : V),
         let base := G.delete {a}
         let hNoEnter : base.NoEdgeEnters base.source :=
@@ -52,7 +52,7 @@ theorem proposition63_of_dependentClosure
           F z ⊆ X)
     (htree :
       ∀ (G : DWeb V) (hG : G.IsNormalized) {a : V}
-        (ha : a ∈ G.source) {T : Set V}
+        (_ha : a ∈ G.source) {T : Set V}
         (hT : Maximal (G.IsTreeSet a) T) (y : V),
         let base := G.delete {a}
         let hNoEnter : base.NoEdgeEnters base.source :=
@@ -76,7 +76,6 @@ theorem proposition63_of_dependentClosure
   let Q := nonBoundedTreeVertices G a T
   let X := base.sectionSixAccumClosure hNoEnter F K Y Q T y
   let M := base.sectionSixAccumCommonWave hNoEnter F K Y Q T y
-
   apply boundaryWave_of_sectionSixData_unconditional
     G hG ha hT hy X M
   · exact base.sectionSixAccumClosure_countable hNoEnter
@@ -136,7 +135,7 @@ argument from the already unconditional pointwise Section 6 assembler. -/
 theorem proposition63_of_fullDependentClosure
     (hboundary :
       ∀ (G : DWeb V) (hG : G.IsNormalized) {a : V}
-        (ha : a ∈ G.source) {T : Set V}
+        (_ha : a ∈ G.source) {T : Set V}
         (hT : Maximal (G.IsTreeSet a) T) (y : V),
         let base := G.delete {a}
         let hNoEnter : base.NoEdgeEnters base.source :=
@@ -153,7 +152,7 @@ theorem proposition63_of_fullDependentClosure
           F z ⊆ X)
     (htree :
       ∀ (G : DWeb V) (hG : G.IsNormalized) {a : V}
-        (ha : a ∈ G.source) {T : Set V}
+        (_ha : a ∈ G.source) {T : Set V}
         (hT : Maximal (G.IsTreeSet a) T) (y : V),
         let base := G.delete {a}
         let hNoEnter : base.NoEdgeEnters base.source :=
@@ -168,7 +167,7 @@ theorem proposition63_of_fullDependentClosure
             ((base.quotient X).essentialMeetingPaths M.1 X) ∩ T ⊆ X)
     (hground :
       ∀ (G : DWeb V) (hG : G.IsNormalized) {a : V}
-        (ha : a ∈ G.source) {T : Set V}
+        (_ha : a ∈ G.source) {T : Set V}
         (hT : Maximal (G.IsTreeSet a) T) (y : V),
         let base := G.delete {a}
         let hNoEnter : base.NoEdgeEnters base.source :=
@@ -192,7 +191,6 @@ theorem proposition63_of_fullDependentClosure
   let Q := nonBoundedTreeVertices G a T
   let X := base.sectionSixFullAccumClosure hNoEnter F K Y Q T y
   let M := base.sectionSixFullAccumCommonWave hNoEnter F K Y Q T y
-
   apply boundaryWave_of_sectionSixData_unconditional
     G hG ha hT hy X M
   · exact base.sectionSixFullAccumClosure_countable hNoEnter
@@ -209,7 +207,5 @@ theorem proposition63_of_fullDependentClosure
   · exact htree G hG ha hT y
   · exact hboundary G hG ha hT y
   · exact hground G hG ha hT y
-
 end SafeLink
-
 end Erdos599

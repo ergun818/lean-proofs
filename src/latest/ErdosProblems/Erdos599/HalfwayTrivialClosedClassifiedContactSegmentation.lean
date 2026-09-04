@@ -87,4 +87,5 @@ def trivialClosedClassifiedContactSegmentationSum
 end Erdos599.Blueprint.LinkageBlueprint
 
 #print axioms Erdos599.Blueprint.LinkageBlueprint.trivialClosedClassifiedContactSegmentation
-#print axioms Erdos599.Blueprint.LinkageBlueprint.trivialClosedClassifiedContactSegmentationSum_shortcutEdges
+#print axioms
+  Erdos599.Blueprint.LinkageBlueprint.trivialClosedClassifiedContactSegmentationSum_shortcutEdges
