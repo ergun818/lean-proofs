@@ -113,7 +113,7 @@ lemma tripartite_cycle_or_hole (m height n : ℕ) (hm : 1 ≤ m)
   · exact Or.inl (tripartite_noHole_cycle m height n hm hn hnm hh hpowLo hpowHi
       hgap R hnoHole)
   · right
-    push_neg at hnoHole
+    push Not at hnoHole
     obtain ⟨X, Y, hdisj, hXcard, hYcard, hnone⟩ := hnoHole
     exact ⟨X, Y, hdisj, hXcard, hYcard, hnone⟩
 

@@ -12,11 +12,13 @@ noncomputable def setNeighbors (G : SimpleGraph V) (X : Finset V) : Finset V := 
   classical
   exact Finset.univ.filter fun v => ∃ x ∈ X, G.Adj x v
 
+omit [DecidableEq V] in
 @[simp] lemma mem_setNeighbors {G : SimpleGraph V} {X : Finset V} {v : V} :
     v ∈ setNeighbors G X ↔ ∃ x ∈ X, G.Adj x v := by
   classical
   simp [setNeighbors]
 
+omit [DecidableEq V] in
 @[simp] lemma setNeighbors_empty (G : SimpleGraph V) :
     setNeighbors G ∅ = ∅ := by
   classical
@@ -29,6 +31,7 @@ lemma setNeighbors_union (G : SimpleGraph V) (X Y : Finset V) :
   simp [mem_setNeighbors]
   aesop
 
+omit [DecidableEq V] in
 lemma setNeighbors_mono {G : SimpleGraph V} {X Y : Finset V} (hXY : X ⊆ Y) :
     setNeighbors G X ⊆ setNeighbors G Y := by
   intro v hv
@@ -127,6 +130,7 @@ lemma critical_card_le_of_large_expansion (S : ExtendableState G d m)
   have := hlarge X hmX hX.1
   omega
 
+omit [Fintype V] in
 lemma degreeSum_modular (f : V → ℕ) (X Y : Finset V) :
     (∑ x ∈ X ∩ Y, f x) + (∑ x ∈ X ∪ Y, f x) =
       (∑ x ∈ X, f x) + ∑ x ∈ Y, f x := by
@@ -136,7 +140,7 @@ lemma degreeSum_modular (f : V → ℕ) (X Y : Finset V) :
   | @insert a X ha ih =>
       by_cases hay : a ∈ Y
       · simp [ha, hay, ih, Nat.add_assoc, Nat.add_left_comm, Nat.add_comm]
-      · simp [ha, hay, ih, Nat.add_assoc, Nat.add_left_comm, Nat.add_comm]
+      · simp [ha, hay, ih, Nat.add_left_comm, Nat.add_comm]
 
 lemma critical_union (S : ExtendableState G d m)
     (hlarge : ∀ X : Finset V, m < X.card → X.card ≤ 2 * m →
@@ -173,9 +177,10 @@ lemma critical_union (S : ExtendableState G d m)
 lemma critical_biUnion (S : ExtendableState G d m)
     (hlarge : ∀ X : Finset V, m < X.card → X.card ≤ 2 * m →
       d * X.card + S.used.card + 1 ≤ (setNeighbors G X).card)
-    {ι : Type*} [DecidableEq ι] (I : Finset ι) (X : ι → Finset V)
+    {ι : Type*} (I : Finset ι) (X : ι → Finset V)
     (hcrit : ∀ i ∈ I, S.Critical (X i)) :
     S.Critical (I.biUnion X) := by
+  classical
   induction I using Finset.induction_on with
   | empty => simpa using S.critical_empty
   | @insert i I hi ih =>
@@ -278,10 +283,7 @@ lemma exists_add_leaf (S : ExtendableState G d m)
   have hyY' := mem_sdiff.mp hyY
   have hyused : y ∉ S.used := hyY'.2
   have hadj : G.Adj s y := by simpa [Y] using hyY'.1
-  have hys : y ≠ s := by
-    intro h
-    have hloop : G.Adj y y := by simpa [h] using hadj
-    exact G.loopless.irrefl y hloop
+  have hys : y ≠ s := hadj.ne.symm
   let deg' := S.addLeafDeg s y
   have hdegOff : ∀ ⦃v⦄, v ∉ insert y S.used → deg' v = 0 := by
     intro v hv
@@ -296,7 +298,7 @@ lemma exists_add_leaf (S : ExtendableState G d m)
     intro v
     by_cases hvs : v = s
     · subst v
-      simp [deg', addLeafDeg, hys, hys.symm]
+      simp [deg', addLeafDeg, hys.symm]
       omega
     · by_cases hvy : v = y
       · subst v

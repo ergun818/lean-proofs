@@ -150,7 +150,7 @@ lemma exists_sparse_noHole_graph (k : ℕ) (hk : 16 ≤ k) :
     simp [p]
   have hs_real : ((toNNReal (σ p) : NNReal) : ℝ) = 1 - (16 : ℝ) / k := by
     have hsum : ((toNNReal (σ p) : NNReal) : ℝ) + (16 : ℝ) / k = 1 := by
-      simpa [p] using congrArg (fun x : NNReal ↦ (x : ℝ)) (unitInterval.toNNReal_symm_add p)
+      simp [p]
     linarith
   have hedge_real :
       (Nat.choose (7 * k) 2 : ℝ) * ((16 : ℝ) / k) ≤ (784 * k : ℕ) := by
@@ -173,7 +173,7 @@ lemma exists_sparse_noHole_graph (k : ℕ) (hk : 16 ≤ k) :
     have hp_enn : ((toNNReal p : NNReal) : ℝ≥0∞) =
         ENNReal.ofReal ((16 : ℝ) / k) := by
       rw [ENNReal.coe_nnreal_eq]
-      simpa [hp_real]
+      simp [hp_real]
     rw [← ENNReal.ofReal_natCast, hp_enn,
       ← ENNReal.ofReal_mul (by positivity : 0 ≤ (Nat.choose (7 * k) 2 : ℝ))]
     have hright : ENNReal.ofReal ((784 * k : ℕ) : ℝ) =
@@ -203,7 +203,7 @@ lemma exists_sparse_noHole_graph (k : ℕ) (hk : 16 ≤ k) :
     have hs_enn : ((toNNReal (σ p) : NNReal) : ℝ≥0∞) =
         ENNReal.ofReal (1 - (16 : ℝ) / k) := by
       rw [ENNReal.coe_nnreal_eq]
-      simpa [hs_real]
+      simp [hs_real]
     rw [← ENNReal.ofReal_natCast, ← ENNReal.ofReal_pow (by positivity) 2,
       hs_enn, ← ENNReal.ofReal_pow (by
         rw [sub_nonneg, div_le_one (by exact_mod_cast hkpos : (0 : ℝ) < k)]

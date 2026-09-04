@@ -9,7 +9,7 @@ namespace Erdos720
 open Finset SimpleGraph
 open ExtendableState
 
-variable {V : Type*} [Fintype V] [DecidableEq V]
+variable {V : Type*}
 
 /-- A simple path represented by a vertex list, with specified endpoints and
 exactly the specified number of edges. -/
@@ -30,13 +30,13 @@ lemma isChain_append_tail {α : Type*} {R : α → α → Prop}
   exact (List.isChain_cons.mp hr).1 b hb
 
 lemma isChain_reverse_append_tail {α : Type*} {R : α → α → Prop}
-    (hsymm : Symmetric R) {l r : List α} {x : α}
+    (hsymm : Std.Symm R) {l r : List α} {x : α}
     (hl : l.IsChain R) (hr : r.IsChain R)
     (hlhead : l.head? = some x) (hrhead : r.head? = some x) :
     (l.reverse ++ r.tail).IsChain R := by
   have hrev : l.reverse.IsChain R := by
     rw [List.isChain_reverse]
-    exact hl.imp fun _ _ hab => hsymm hab
+    exact hl.imp fun _ _ hab => hsymm.symm _ _ hab
   apply isChain_append_tail hrev hr
   · simpa only [List.getLast?_reverse] using hlhead
   · exact hrhead
@@ -53,7 +53,7 @@ lemma RobustConnector.exactSimplePath {height q : ℕ} (C : RobustConnector G he
   rcases C.rightPaths hb with
     ⟨r, hrnd, hrch, hrlen, hrhead, hrlast, hrsub, hrfresh⟩
   have hchain₁ : (l.reverse ++ c.tail).IsChain G.Adj :=
-    isChain_reverse_append_tail (fun _ _ h => (G.adj_comm _ _).mp h)
+    isChain_reverse_append_tail ⟨fun _ _ h => (G.adj_comm _ _).mp h⟩
       hlch hcch hlhead hchead
   have hcne : c.length ≠ 1 := by omega
   have hctailLast : c.tail.getLast? = some C.rootRight := by

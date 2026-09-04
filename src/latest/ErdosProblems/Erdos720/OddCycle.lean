@@ -72,7 +72,7 @@ lemma tripartite_connector_two_edge_closes (m height q : ℕ) (hm : 1 ≤ m)
   have hzfresh : Sum.inr z ∉ l.map f := by simp [f]
   have hnd : (l.map f ++ [Sum.inr z]).Nodup := by
     rw [List.nodup_append]
-    simp [hmapnd, hzfresh]
+    simp [hmapnd]
   have hch : (l.map f ++ [Sum.inr z]).IsChain R.Adj := by
     rw [List.isChain_append]
     refine ⟨hmapch, by simp, ?_⟩

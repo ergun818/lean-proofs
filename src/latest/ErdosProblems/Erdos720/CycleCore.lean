@@ -14,16 +14,19 @@ noncomputable def sumLeftPart : Finset (A ⊕ B) :=
 noncomputable def sumRightPart : Finset (A ⊕ B) :=
   Finset.univ.map ⟨Sum.inr, Sum.inr_injective⟩
 
+omit [Fintype B] [DecidableEq A] [DecidableEq B] in
 @[simp] lemma mem_sumLeftPart {v : A ⊕ B} :
     v ∈ (sumLeftPart : Finset (A ⊕ B)) ↔ ∃ a, v = Sum.inl a := by
   classical
   simp [sumLeftPart, eq_comm]
 
+omit [Fintype A] [DecidableEq A] [DecidableEq B] in
 @[simp] lemma mem_sumRightPart {v : A ⊕ B} :
     v ∈ (sumRightPart : Finset (A ⊕ B)) ↔ ∃ b, v = Sum.inr b := by
   classical
   simp [sumRightPart, eq_comm]
 
+omit [DecidableEq A] [DecidableEq B] in
 lemma sumParts_disjoint :
     Disjoint (sumLeftPart : Finset (A ⊕ B)) sumRightPart := by
   classical
@@ -35,11 +38,13 @@ lemma sumParts_cover :
   classical
   ext (_ | _) <;> simp
 
+omit [Fintype B] [DecidableEq A] [DecidableEq B] in
 @[simp] lemma card_sumLeftPart :
     (sumLeftPart : Finset (A ⊕ B)).card = Fintype.card A := by
   classical
   simp [sumLeftPart]
 
+omit [Fintype A] [DecidableEq A] [DecidableEq B] in
 @[simp] lemma card_sumRightPart :
     (sumRightPart : Finset (A ⊕ B)).card = Fintype.card B := by
   classical
@@ -64,7 +69,7 @@ lemma exists_bipartite_connector (m height q : ℕ) (hm : 1 ≤ m)
   intro S hS
   exact hZexp S (by omega)
 
-lemma ExactSimplePath.odd_end_flip {V : Type*} [DecidableEq V]
+lemma ExactSimplePath.odd_end_flip {V : Type*}
     {G : SimpleGraph V} (X : Finset V)
     (hflip : ∀ ⦃u v⦄, G.Adj u v → (u ∈ X ↔ v ∉ X))
     (k : ℕ) {a b : V} (P : ExactSimplePath G a (2 * k + 1) b) :
@@ -105,6 +110,7 @@ lemma ExactSimplePath.odd_end_flip {V : Type*} [DecidableEq V]
                 tauto
               exact hay.trans (ih htail)
 
+omit [Fintype B] [DecidableEq A] [DecidableEq B] in
 lemma bipartite_adj_flip
     {G : SimpleGraph (A ⊕ B)} (hG : G ≤ completeBipartiteGraph A B)
     {u v : A ⊕ B} (huv : G.Adj u v) :
@@ -113,6 +119,7 @@ lemma bipartite_adj_flip
   have h := hG huv
   rcases u with u | u <;> rcases v with v | v <;> simp_all [completeBipartiteGraph]
 
+omit [DecidableEq A] [DecidableEq B] in
 lemma not_mem_sumLeftPart_iff {v : A ⊕ B} :
     v ∉ (sumLeftPart : Finset (A ⊕ B)) ↔ v ∈ sumRightPart := by
   rcases v with v | v <;> simp
@@ -215,10 +222,10 @@ lemma bipartite_connector_closes (m height q k : ℕ) (hm : 1 ≤ m)
     exact hcycle.trans (Embedding.induce (G := G) (↑Z : Set _)).isContained
 
 lemma exists_common_external_vertex {V W : Type*}
-    [Fintype V] [Fintype W] [DecidableEq V] [DecidableEq W]
+    [Fintype W]
     (m : ℕ) (hm : 1 ≤ m) (hW : Fintype.card W = 2 * m - 1)
     (L R : Finset V) (hL : m ≤ L.card) (hR : m ≤ R.card)
-    (E : V → W → Prop) [DecidableRel E]
+    (E : V → W → Prop)
     (hnoL : ∀ A : Finset V, A ⊆ L → A.card = m →
       ∀ B : Finset W, B.card = m → ∃ a ∈ A, ∃ b ∈ B, E a b)
     (hnoR : ∀ A : Finset V, A ⊆ R → A.card = m →
@@ -236,9 +243,8 @@ lemma exists_common_external_vertex {V W : Type*}
     obtain ⟨B, hB, hBcard⟩ := exists_subset_card_eq hcomp
     obtain ⟨a, ha, z, hz, haz⟩ := hnoL A hA hAcard B hBcard
     have hzcomp := hB hz
-    exact (mem_sdiff.mp hzcomp).2 (by
-      simp [NL]
-      exact ⟨a, hA ha, haz⟩)
+    exact (mem_sdiff.mp hzcomp).2
+      (mem_filter.mpr ⟨mem_univ z, a, hA ha, haz⟩)
   have hNR : m ≤ NR.card := by
     by_contra hbad
     have hcomp : m ≤ (univ \ NR).card := by
@@ -248,9 +254,8 @@ lemma exists_common_external_vertex {V W : Type*}
     obtain ⟨B, hB, hBcard⟩ := exists_subset_card_eq hcomp
     obtain ⟨a, ha, z, hz, haz⟩ := hnoR A hA hAcard B hBcard
     have hzcomp := hB hz
-    exact (mem_sdiff.mp hzcomp).2 (by
-      simp [NR]
-      exact ⟨a, hA ha, haz⟩)
+    exact (mem_sdiff.mp hzcomp).2
+      (mem_filter.mpr ⟨mem_univ z, a, hA ha, haz⟩)
   have hinter : (NL ∩ NR).Nonempty := by
     rw [nonempty_iff_ne_empty]
     intro hempty

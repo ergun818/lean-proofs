@@ -97,6 +97,7 @@ lemma dfsInvariant_card {G : SimpleGraph V} {U : Finset V} {s : List V} {D : Fin
         Finset.card_union_of_disjoint hUs]
     _ = Fintype.card V := by simp [hcover]
 
+omit [Fintype V] [DecidableEq V] in
 lemma pathGraph_isContained_of_list {G : SimpleGraph V} {l : List V} {k : ℕ}
     (hk : 0 < k) (hl : k ≤ l.length) (hnodup : l.Nodup) (hchain : l.IsChain G.Adj) :
     pathGraph k ⊑ G := by
@@ -212,6 +213,7 @@ lemma dfs_exists_finished_card (G : SimpleGraph V) (t : ℕ)
           omega
         exact (not_lt_of_ge (hmax q' hq'Q)) hlt
 
+omit [DecidableEq V] in
 /-- A graph without a `k`-vertex path has two prescribed large anticomplete sets. -/
 lemma exists_anticomplete_sets_of_path_free (G : SimpleGraph V) (t k : ℕ) (hk : 0 < k)
     (hsize : 2 * t + k ≤ Fintype.card V + 1)

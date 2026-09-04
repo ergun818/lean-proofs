@@ -20,9 +20,10 @@ def Arrows {V W : Type*} (H : SimpleGraph V) (F : SimpleGraph W) : Prop :=
 def IsSizeRamseyWitness {W : Type*} (F : SimpleGraph W) (m : ℕ) : Prop :=
   ∃ N : ℕ, ∃ H : SimpleGraph (Fin N), Nat.card H.edgeSet = m ∧ Arrows H F
 
-lemma exists_sizeRamseyWitness {W : Type*} [Fintype W] (F : SimpleGraph W) :
+lemma exists_sizeRamseyWitness {W : Type*} [Finite W] (F : SimpleGraph W) :
     ∃ m, IsSizeRamseyWitness F m := by
   classical
+  let := Fintype.ofFinite W
   let k := Fintype.card W
   let N := Ramsey.ramseyNumber k k
   let H : SimpleGraph (Fin N) := ⊤

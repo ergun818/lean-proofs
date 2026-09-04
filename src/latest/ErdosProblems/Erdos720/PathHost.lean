@@ -9,7 +9,7 @@ namespace Erdos720
 
 open SimpleGraph
 
-lemma two_crossing_subsets {V : Type*} [Fintype V] [DecidableEq V]
+lemma two_crossing_subsets {V : Type*} [DecidableEq V]
     (k : ℕ) (U W A D : Finset V)
     (hUW : Disjoint U W) (hU : U.card = 3 * k) (hW : W.card = 3 * k)
     (hAD : Disjoint A D) (hA : A.card = (5 * k) / 2) (hD : D.card = (5 * k) / 2)

@@ -31,6 +31,7 @@ structure RobustConnector (G : SimpleGraph V) (height q : ℕ) where
   rightPaths : ∀ ⦃b⦄, b ∈ rightLeaves →
     ExactPathIn G support leftBase rootRight height b
 
+omit [DecidableEq V] in
 lemma robust_connector (G : SimpleGraph V) (M height q : ℕ) (root : V)
     (hM : 1 ≤ M) (hh : 0 < height) (hq : 0 < q)
     (hcap : 1 + q + 2 * (2 ^ (height + 1) - 2) ≤ M)

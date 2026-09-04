@@ -4,7 +4,7 @@ namespace Erdos720
 
 open Finset SimpleGraph
 
-variable {V : Type*} [Fintype V] [DecidableEq V]
+variable {V : Type*}
 
 noncomputable def subtypeFinset {Z : Finset V} (S : Finset {v // v ∈ Z}) : Finset V :=
   S.map ⟨Subtype.val, Subtype.val_injective⟩
@@ -23,6 +23,8 @@ lemma subtypeFinset_subset {Z : Finset V} (S : Finset {v // v ∈ Z}) :
     subtypeFinset S ⊆ Z := by
   intro v hv
   simpa using (mem_subtypeFinset.mp hv).choose
+
+variable [Fintype V] [DecidableEq V]
 
 lemma induced_neighbors_map {G : SimpleGraph V} {Z : Finset V}
     (S : Finset {v // v ∈ Z}) :

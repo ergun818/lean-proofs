@@ -97,6 +97,7 @@ lemma pairEdgeFinset_subset_diagCompl {α : Type*} [Finite α] [DecidableEq α]
 def crossEdgeFinset (A B : Finset V) : Finset (Sym2 V) :=
   (A ×ˢ B).image fun ab ↦ s(ab.1, ab.2)
 
+omit [Fintype V] in
 lemma mem_crossEdgeFinset_iff {A B : Finset V} {e : Sym2 V} :
     e ∈ crossEdgeFinset A B ↔ ∃ a ∈ A, ∃ b ∈ B, e = s(a, b) := by
   constructor
@@ -106,6 +107,7 @@ lemma mem_crossEdgeFinset_iff {A B : Finset V} {e : Sym2 V} :
   · rintro ⟨a, ha, b, hb, rfl⟩
     exact Finset.mem_image.mpr ⟨(a, b), Finset.mem_product.mpr ⟨ha, hb⟩, rfl⟩
 
+omit [Fintype V] in
 lemma crossEdgeFinset_card {A B : Finset V} (hAB : Disjoint A B) :
     (crossEdgeFinset A B).card = A.card * B.card := by
   classical
@@ -119,6 +121,7 @@ lemma crossEdgeFinset_card {A B : Finset V} (hAB : Disjoint A B) :
     · exfalso
       exact Finset.disjoint_left.mp hAB hxA (h.1 ▸ hyB)
 
+omit [Fintype V] in
 lemma crossEdgeFinset_subset_diagCompl {A B : Finset V} (hAB : Disjoint A B) :
     (↑(crossEdgeFinset A B) : Set (Sym2 V)) ⊆ Sym2.diagSetᶜ := by
   intro e he
@@ -131,7 +134,7 @@ def holePairs (N k : ℕ) : Finset (Finset (Fin N) × Finset (Fin N)) :=
 
 lemma mem_holePairs_iff {N k : ℕ} {A B : Finset (Fin N)} :
     (A, B) ∈ holePairs N k ↔ A.card = k ∧ B.card = k ∧ Disjoint A B := by
-  simp [holePairs, and_assoc, and_left_comm]
+  simp [holePairs, and_assoc]
 
 def holeCount (N k : ℕ) (ω : Set (Sym2 (Fin N))) : ℕ := by
   classical
@@ -222,7 +225,7 @@ lemma holeCount_lintegral_le (N k : ℕ) (p : I) :
           P.card ≤ (univ.powersetCard k ×ˢ univ.powersetCard k :
               Finset (Finset (Fin N) × Finset (Fin N))).card := by
                 exact Finset.card_filter_le _ _
-          _ = (Nat.choose N k) ^ 2 := by simp [P, holePairs, pow_two]
+          _ = (Nat.choose N k) ^ 2 := by simp [pow_two]
       exact_mod_cast hP
 
 def randomEdgeCount (N : ℕ) (ω : Set (Sym2 (Fin N))) : ℕ := by
@@ -284,6 +287,6 @@ lemma randomEdgeCount_eq_card_edgeSet (N : ℕ) (ω : Set (Sym2 (Fin N))) :
   apply congrArg Finset.card
   ext e
   rw [SimpleGraph.mem_edgeFinset, SimpleGraph.edgeSet_fromEdgeSet]
-  simp [randomEdgeCount, mem_pairEdgeFinset_iff, and_comm, and_left_comm]
+  simp [mem_pairEdgeFinset_iff, and_comm]
 
 end Erdos720

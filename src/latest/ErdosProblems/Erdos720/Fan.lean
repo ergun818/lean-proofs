@@ -11,7 +11,7 @@ namespace ExtendableState
 variable {G : SimpleGraph V} {M : ℕ}
 
 lemma singleton_state (root : V)
-    (hM : 1 ≤ M)
+    (_hM : 1 ≤ M)
     (hexp : ∀ X : Finset V, X.card ≤ 2 * M →
       4 * X.card ≤ (setNeighbors G X).card) :
     ∃ S : ExtendableState G 3 M,
@@ -150,7 +150,7 @@ lemma expand_frontier
         rw [hS₂deg]
         simp only [addLeafDeg, hvs, hvy₂, if_false, add_zero]
         rw [hS₁deg]
-        simp only [ge_iff_le]
+        simp only [addLeafDeg, hvs, hvy₁, if_false, add_zero]
         exact hLdeg v (mem_insert_of_mem hv)
       have hcap₂ : S₂.used.card + 2 * L.card ≤ M := by
         rw [hS₂card]
@@ -253,6 +253,7 @@ def ExactPathIn (G : SimpleGraph V) (support base : Finset V)
     l.head? = some root ∧ l.getLast? = some last ∧
     (∀ x ∈ l, x ∈ support) ∧ (∀ x ∈ l, x = root ∨ x ∉ base)
 
+omit [Fintype V] [DecidableEq V] in
 lemma exactPathIn_zero {support : Finset V} {root : V} (hr : root ∈ support) :
     ExactPathIn G support support root 0 root := by
   refine ⟨[root], by simp, by simp, by simp, by simp, by simp, ?_, by simp⟩
@@ -260,6 +261,7 @@ lemma exactPathIn_zero {support : Finset V} {root : V} (hr : root ∈ support) :
   intro x hx
   simpa [hx] using hr
 
+omit [Fintype V] [DecidableEq V] in
 lemma ExactPathIn.mono {U W base : Finset V} {root last : V} {length : ℕ}
     (h : ExactPathIn G U base root length last) (hUW : U ⊆ W) :
     ExactPathIn G W base root length last := by
@@ -267,6 +269,7 @@ lemma ExactPathIn.mono {U W base : Finset V} {root last : V} {length : ℕ}
   exact ⟨l, hnd, hch, hlen, hhead, hlast,
     fun x hx => hUW (hsub x hx), hfresh⟩
 
+omit [Fintype V] [DecidableEq V] in
 lemma ExactPathIn.snoc {U W base : Finset V} {root last y : V} {length : ℕ}
     (h : ExactPathIn G U base root length last) (hUW : U ⊆ W) (hbaseU : base ⊆ U)
     (hyU : y ∉ U) (hyW : y ∈ W) (hxy : G.Adj last y) :
@@ -294,8 +297,8 @@ lemma ExactPathIn.snoc {U W base : Finset V} {root last y : V} {length : ℕ}
   · apply List.isChain_append.mpr
     refine ⟨hch, by simp, ?_⟩
     intro a ha b hb
-    simp [hlast] at ha
-    simp at hb
+    simp only [hlast, Option.mem_def, Option.some.injEq] at ha
+    simp only [List.head?_cons, Option.mem_def, Option.some.injEq] at hb
     subst a
     subst b
     exact hxy
@@ -311,6 +314,7 @@ lemma ExactPathIn.snoc {U W base : Finset V} {root last y : V} {length : ℕ}
     · exact hfresh x hx
     · exact Or.inr fun hy => hyU (hbaseU hy)
 
+omit [Fintype V] [DecidableEq V] in
 lemma ExactPathIn.end_eq_start {U base : Finset V} {root last : V}
     (h : ExactPathIn G U base root 0 last) : last = root := by
   rcases h with ⟨l, -, -, hlen, hhead, hlast, -, -⟩
@@ -320,7 +324,7 @@ lemma ExactPathIn.end_eq_start {U base : Finset V} {root last : V}
   | cons a l =>
       cases l with
       | nil =>
-          simp at hhead hlast
+          simp only [List.head?_cons, Option.some.injEq, List.getLast?_singleton] at hhead hlast
           exact hlast.symm.trans hhead
       | cons b l => simp at this
 
@@ -371,7 +375,7 @@ lemma binary_fan
           S.used.card + (2 ^ (height + 1) - 2)
               ≤ S.used.card + (2 ^ (height + 2) - 2) := by
                 exact Nat.add_le_add_left (Nat.sub_le_sub_right hpowmono 2) _
-          _ = S.used.card + (2 ^ (height.succ + 1) - 2) := by congr 2 <;> omega
+          _ = S.used.card + (2 ^ (height.succ + 1) - 2) := by congr 2
           _ ≤ M := hcap
       obtain ⟨T, ⟨F⟩⟩ := ih S hcap0 hroot hrootdeg
       have hfrontCap : T.used.card + 2 * F.leaves.card ≤ M := by
@@ -516,7 +520,7 @@ lemma extend_path
             intro heq
             subst y
             exact hyfresh (P.used_mono hroot)
-          simp [addLeafDeg, hne.symm, hrooty, P.root_deg, hzero,
+          simp [addLeafDeg, hne.symm, hrooty, P.root_deg,
             Nat.pos_of_ne_zero hzero]
       have hpres : ∀ ⦃v⦄, v ∈ S.used → v ≠ root → T'.deg v = S.deg v := by
         intro v hvS hvroot

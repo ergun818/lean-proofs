@@ -11,7 +11,7 @@ lemma linear_le_pow_two (C t : ℕ) (hC : 1 ≤ C) (ht : 16 * C ≤ t) :
       calc
         C * (4 * (16 * C) + 3) ≤ 2 * (8 * C) ^ 2 + 1 := by nlinarith
         _ ≤ 2 ^ (2 * (8 * C)) := Nat.two_mul_sq_add_one_le_two_pow_two_mul _
-        _ = 2 ^ (16 * C) := by congr 1 <;> omega
+        _ = 2 ^ (16 * C) := by congr 1; omega
   | succ t ht ih =>
       calc
         C * (4 * (t + 1) + 3) ≤ 2 * (C * (4 * t + 3)) := by nlinarith
