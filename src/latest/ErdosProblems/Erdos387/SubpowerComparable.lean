@@ -200,7 +200,7 @@ theorem medium_sq_le_X_half {N k : ℕ} (hN : 0 < N) (hk : 3 ≤ k) :
     (t := base N k) (B := 1) (e := 2 * BPZScale.mediumExp k)
       (by omega) (by simpa using hbaseTwo) hExp
 
-theorem z_le_secondMin {N k : ℕ} (hN : 0 < N) (hk : 3 ≤ k)
+theorem z_le_secondMin {N k : ℕ} (_hN : 0 < N) (_hk : 3 ≤ k)
     (hNk : 2 * k ≤ N ^ 2) :
     z N k ≤ secondMin N k := by
   rw [secondMin_eq_pow_two]
@@ -431,7 +431,8 @@ theorem comparable_normalization_identity
     (x * (12 * A ^ 2 / k) + 2 * c) * (3 * v / 2) +
         c * E * (P * v) =
       (18 * A ^ 2 / k + (3 * (c / x) + (c / x) * E * P)) * (x * v) := by
-  field_simp [hx, hk] <;> ring
+  field_simp [hx, hk]
+  ring
 
 theorem comparable_normalization_identity_with_modulus
     (x k m v c A E P : ℝ) (hx : x ≠ 0) (hk : k ≠ 0)
@@ -440,7 +441,8 @@ theorem comparable_normalization_identity_with_modulus
         c * E * (P * v) =
       (18 * A ^ 2 / (m * k) +
         (3 * (c / x) + (c / x) * E * P)) * (x * v) := by
-  field_simp [hx, hk, hm] <;> ring
+  field_simp [hx, hk, hm]
+  ring
 
 /-- The comparable-prime exceptional set has normalized upper density
 `O(1/(M k))`, where `M` is the fixed refined progression modulus, uniformly
@@ -487,8 +489,8 @@ theorem eventually_refinedComparablePrimeErrors_normalized_lt
       tendsto_comparableSourceEndpoint_normalized_zero S.hk3 a b
   have hQ0 : Tendsto Q atTop (𝓝 0) := by
     dsimp [Q]
-    convert (tendsto_const_nhds.mul hC0).add hendpoint0 using 1 <;>
-      norm_num
+    convert (tendsto_const_nhds.mul hC0).add hendpoint0 using 1
+    norm_num
   have hQsmall : ∀ᶠ N : ℕ in atTop, Q N < ε :=
     (tendsto_order.1 hQ0).2 ε hε
   have hzEv : ∀ᶠ N : ℕ in atTop, 2 * S.k ≤ z N S.k :=

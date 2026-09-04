@@ -150,10 +150,12 @@ theorem exists_second_dvd_of_reciprocalNumerator_eq
       exact hleft
     exact hnotErase ((Nat.dvd_add_left hrightRest).mp hsum)
 
+omit [DecidableEq ι] in
 theorem prime_sq_dvd_univ_prod_of_two
     (s : ι → ℕ) {p : ℕ} {i j : ι} (hij : i ≠ j)
     (hpi : p ∣ s i) (hpj : p ∣ s j) :
     p ^ 2 ∣ ∏ t : ι, s t := by
+  classical
   let T : Finset ι := (Finset.univ.erase i).erase j
   have hi : i ∈ (Finset.univ : Finset ι) := Finset.mem_univ i
   have hj : j ∈ (Finset.univ : Finset ι).erase i :=

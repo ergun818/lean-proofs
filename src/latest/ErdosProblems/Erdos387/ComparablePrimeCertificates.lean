@@ -39,11 +39,12 @@ theorem primePairFactor_pairwise {k : ℕ} (i j : Fin k) {q r : ℕ}
     Nat.Coprime (primePairFactor i j q r a)
       (primePairFactor i j q r b) := by
   unfold primePairFactor
-  split_ifs <;> simp_all only [mul_one, one_mul]
-  · exact hqr
-  · exact hqr.symm
+  split_ifs <;>
+    simp_all only [ne_eq, not_true_eq_false, not_false_eq_true, mul_one, one_mul,
+      Nat.coprime_comm, Nat.coprime_one_right_eq_true, Nat.coprime_self]
+  all_goals exact hqr
 
-theorem prod_primePairFactor {k : ℕ} (hk : 0 < k)
+theorem prod_primePairFactor {k : ℕ} (_hk : 0 < k)
     (i j : Fin k) (q r : ℕ) :
     ∏ a : Fin k, primePairFactor i j q r a = q * r := by
   unfold primePairFactor
@@ -51,7 +52,7 @@ theorem prod_primePairFactor {k : ℕ} (hk : 0 < k)
   simp
 
 noncomputable def primePairTupleCertificate
-    {k X : ℕ} (hk : 0 < k) (i j : Fin k) {q r : ℕ}
+    {k X : ℕ} (_hk : 0 < k) (i j : Fin k) {q r : ℕ}
     (hq : 0 < q) (hr : 0 < r) (hqr : Nat.Coprime q r)
     (hqrX : q * r ≤ X) : TupleCertificate k X := by
   classical

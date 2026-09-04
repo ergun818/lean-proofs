@@ -16,7 +16,7 @@ namespace Erdos387.CoverBPZ
 /-- Unconditional Section 6 cover data, with arbitrarily large `k`. -/
 theorem unconditional_fixed_B_cover_section6_input
     (B K : ℕ) (hB : 3 ≤ B) :
-    ∃ S : BPZSection6Input B K, True :=
+    ∃ _ : BPZSection6Input B K, True :=
   fixed_B_cover_section6_input Erdos387.shiftedSiegelWalfiszLower B K hB
 
 /-- Unconditional public fixed-`B` covering theorem. -/

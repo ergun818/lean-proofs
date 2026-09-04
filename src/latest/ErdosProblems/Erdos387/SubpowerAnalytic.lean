@@ -133,7 +133,7 @@ theorem outerSwitchEndpoint_le_X_pow
       calc
         X * X ^ (2 * k) = X ^ 1 * X ^ (2 * k) := by simp
         _ = X ^ (1 + 2 * k) := (pow_add X 1 (2 * k)).symm
-        _ = X ^ (2 * k + 1) := by congr 1 <;> omega
+        _ = X ^ (2 * k + 1) := by congr 1; omega
 
 /-- A natural upper bound by a power of `X` becomes the corresponding
 logarithmic upper bound. -/
@@ -403,7 +403,7 @@ theorem exists_localizedSwitchedReciprocalEnvelope_le_div
         simp
       _ = (N : ℝ) ^ (2 + 2 * S.k) * (N : ℝ) ^ 1 := by rw [pow_add]
       _ = (N : ℝ) ^ (2 + 2 * S.k + 1) := (pow_add _ _ _).symm
-      _ = (N : ℝ) ^ (2 * S.k + 3) := by congr 1 <;> omega
+      _ = (N : ℝ) ^ (2 * S.k + 3) := by congr 1; omega
   have hpowNthree :
       (N : ℝ) ^ 3 * ((N : ℝ) ^ 2) ^ S.k =
         (N : ℝ) ^ (2 * S.k + 3) := by
@@ -411,7 +411,7 @@ theorem exists_localizedSwitchedReciprocalEnvelope_le_div
       (N : ℝ) ^ 3 * ((N : ℝ) ^ 2) ^ S.k =
           (N : ℝ) ^ 3 * (N : ℝ) ^ (2 * S.k) := by rw [← pow_mul]
       _ = (N : ℝ) ^ (3 + 2 * S.k) := (pow_add _ _ _).symm
-      _ = (N : ℝ) ^ (2 * S.k + 3) := by congr 1 <;> omega
+      _ = (N : ℝ) ^ (2 * S.k + 3) := by congr 1; omega
   have hpowA : A * A ^ S.k = A ^ (S.k + 1) := by
     rw [pow_succ']
   have heq :
@@ -680,7 +680,7 @@ def brunEndpointExponent (a b N k : ℕ) : ℕ :=
       CoverBPZ.refinedEvenBrunDepth a b (z N k) + 3
 
 theorem two_mul_brunEndpointExponent_le_scalePower
-    {a b N k : ℕ} (hk : 0 < k)
+    {a b N k : ℕ} (_hk : 0 < k)
     (hN : 2 * ((BPZScale.xExp k + brunFixedBaseExponent k) *
           (2 * depthSlope a b k + 1)) + 6 ≤ N) :
     2 * brunEndpointExponent a b N k ≤ scalePower N k := by

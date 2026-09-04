@@ -464,10 +464,11 @@ theorem localizedRoughSwitchPairs_sum_le
       ring
 
 private theorem sum_biUnion_le_sum_sum
-    {α β : Type*} [DecidableEq α] [DecidableEq β]
+    {α β : Type*} [DecidableEq β]
     (s : Finset α) (t : α → Finset β) (f : β → ℝ)
     (hf : ∀ b, 0 ≤ f b) :
     (∑ b ∈ s.biUnion t, f b) ≤ ∑ a ∈ s, ∑ b ∈ t a, f b := by
+  classical
   induction s using Finset.induction_on with
   | empty => simp
   | @insert a s ha ih =>

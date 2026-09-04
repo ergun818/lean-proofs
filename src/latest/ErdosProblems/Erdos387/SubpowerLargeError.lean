@@ -64,7 +64,8 @@ theorem tendsto_refinedLargeErrors_normalized_zero
   have hQ0 : Tendsto Q atTop (𝓝 0) := by
     dsimp [Q]
     convert ((tendsto_const_nhds.mul hR0).add
-      (tendsto_const_nhds.mul hC0)).add hendpoint0 using 1 <;> norm_num
+      (tendsto_const_nhds.mul hC0)).add hendpoint0 using 1
+    norm_num
   let gmax : ℕ := (Finset.univ : Finset (Fin S.k)).sup (fun i => 6 * S.g i)
   have hgEv : ∀ᶠ N : ℕ in atTop, ∀ i : Fin S.k, 6 * S.g i ≤ z N S.k := by
     filter_upwards [eventually_const_le_z (k := S.k)

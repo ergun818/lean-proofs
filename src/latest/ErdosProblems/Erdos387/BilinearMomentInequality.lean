@@ -29,7 +29,7 @@ noncomputable def phaseIndex
   exact S.sigma fun _ => Finset.univ
 
 theorem sum_norm_mul_sq_le_moments
-    {I : Type*} [DecidableEq I]
+    {I : Type*}
     (S : Finset I) (modulus : I → ℕ) [∀ i, NeZero (modulus i)]
     (nu rho : (i : I) → ZMod (modulus i) → ℂ) :
     (∑ i ∈ S, ∑ u : ZMod (modulus i), ‖nu i u‖ * ‖rho i u‖) ^ 2 ≤
@@ -45,7 +45,7 @@ theorem sum_norm_mul_sq_le_moments
 /-- Complex form: triangle inequality followed by the sigma-indexed
 Cauchy--Schwarz inequality. -/
 theorem norm_sum_mul_sq_le_moments
-    {I : Type*} [DecidableEq I]
+    {I : Type*}
     (S : Finset I) (modulus : I → ℕ) [∀ i, NeZero (modulus i)]
     (nu rho : (i : I) → ZMod (modulus i) → ℂ) :
     ‖∑ i ∈ S, ∑ u : ZMod (modulus i), nu i u * rho i u‖ ^ 2 ≤
@@ -73,7 +73,7 @@ theorem norm_sum_mul_sq_le_moments
 /-- Ready-to-use Cauchy form when separate numerical bounds for the two
 moments have already been proved. -/
 theorem norm_sum_mul_sq_le_of_moment_bounds
-    {I : Type*} [DecidableEq I]
+    {I : Type*}
     (S : Finset I) (modulus : I → ℕ) [∀ i, NeZero (modulus i)]
     (nu rho : (i : I) → ZMod (modulus i) → ℂ)
     {A B : ℝ}

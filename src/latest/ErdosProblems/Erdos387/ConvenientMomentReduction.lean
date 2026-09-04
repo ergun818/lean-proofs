@@ -111,7 +111,7 @@ theorem sum_norm_reciprocalCharacter_pow_eq_bilinear
 /-- Jensen/Hölder in the precise finite form used to pass from the first
 moment over a finite certificate family to an `ell`-th moment. -/
 theorem sum_pow_le_card_pow_mul_sum_pow
-    {I : Type*} [DecidableEq I]
+    {I : Type*}
     (S : Finset I) (f : I → ℝ) (ell : ℕ) (hell : 1 ≤ ell)
     (hf : ∀ i ∈ S, 0 ≤ f i) :
     (∑ i ∈ S, f i) ^ ell ≤
@@ -122,7 +122,7 @@ theorem sum_pow_le_card_pow_mul_sum_pow
 
 /-- Hölder followed by a supplied square bound for the high moment. -/
 theorem holder_cauchy_of_moment_sq_le
-    {I : Type*} [DecidableEq I]
+    {I : Type*}
     (S : Finset I) (f : I → ℝ) (ell : ℕ) (hell : 1 ≤ ell)
     (hf : ∀ i ∈ S, 0 ≤ f i) {B : ℝ}
     (hmoment : (∑ i ∈ S, f i ^ ell) ^ 2 ≤ B) :
@@ -148,7 +148,7 @@ theorem holder_cauchy_of_moment_sq_le
 /-- Product-indexed version of the preceding theorem, matching the outer
 modulus/short-variable pair in the convenient-factor argument. -/
 theorem family_holder_cauchy_of_moment_sq_le
-    {I J : Type*} [DecidableEq I] [DecidableEq J]
+    {I J : Type*}
     (S : Finset I) (T : Finset J) (f : I → J → ℝ)
     (ell : ℕ) (hell : 1 ≤ ell)
     (hf : ∀ i ∈ S, ∀ j ∈ T, 0 ≤ f i j) {B : ℝ}
