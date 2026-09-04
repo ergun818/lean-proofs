@@ -39,7 +39,7 @@ theorem replaceLastLetter_ne_last (i : Fin k) (a : Fin (k + 1)) :
     replaceLastLetter i a ≠ Fin.last k := by
   by_cases h : a = Fin.last k
   · simp [h]
-  · simpa [replaceLastLetter, h] using h
+  · simp [replaceLastLetter, h]
 
 @[simp] theorem replaceLastLetter_idem (i : Fin k) (a : Fin (k + 1)) :
     replaceLastLetter i (replaceLastLetter i a) = replaceLastLetter i a := by
@@ -186,7 +186,7 @@ theorem isLastInsensitive_iff_preimage (i : Fin k)
     · rintro ⟨y, hy, hyx⟩
       exact (h x y ((lastEquivalent_iff_endpoint_eq i x y).2 hyx.symm)).mpr hy
   · rintro ⟨B, rfl⟩ x y hxy
-    simpa only [Set.mem_preimage, (lastEquivalent_iff_endpoint_eq i x y).mp hxy]
+    simp only [Set.mem_preimage, (lastEquivalent_iff_endpoint_eq i x y).mp hxy]
 
 theorem IsLastInsensitive.compl {i : Fin k} {C : Set (Word (k + 1) n)}
     (hC : IsLastInsensitive i C) : IsLastInsensitive i Cᶜ := by
@@ -235,7 +235,7 @@ def endpointCylinder (i : Fin k) (A : Set (Word k n)) : Set (Word (k + 1) n) :=
 theorem endpointCylinder_isLastInsensitive (i : Fin k) (A : Set (Word k n)) :
     IsLastInsensitive i (endpointCylinder i A) := by
   intro x y hxy
-  simpa only [mem_endpointCylinder, (lastEquivalent_iff_endpoint_eq i x y).mp hxy]
+  simp only [mem_endpointCylinder, (lastEquivalent_iff_endpoint_eq i x y).mp hxy]
 
 @[simp] theorem mem_iInter_endpointCylinder (A : Set (Word k n))
     (x : Word (k + 1) n) :

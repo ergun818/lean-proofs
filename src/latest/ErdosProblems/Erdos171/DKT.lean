@@ -661,7 +661,7 @@ noncomputable def densityIncrementStep_succ
 /-- The density-increment hypothesis required by alphabet induction. -/
 noncomputable def alphabetDensityIncrement :
     AlphabetDensityIncrementHypothesis :=
-  fun k hk hDHJfinite delta hdelta ↦
+  fun _ hk hDHJfinite delta hdelta ↦
     densityIncrementStep_succ hk hDHJfinite delta hdelta
 
 end Erdos171

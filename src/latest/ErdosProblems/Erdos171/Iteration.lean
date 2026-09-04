@@ -131,7 +131,7 @@ theorem iterate_or_terminal_density (step : DensityIncrementStep t delta) :
   | zero =>
       intro A _hA
       right
-      exact ⟨A, by simpa using (le_refl (density A))⟩
+      exact ⟨A, by simp⟩
   | succ r ih =>
       intro A hA
       rcases step.force (backwardDimension step r) A hA with hline | ⟨U, hU⟩

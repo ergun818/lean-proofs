@@ -392,7 +392,7 @@ theorem firstTailMoving_idxFun (q : Line α (Empty ⊕ Fin m)) :
 theorem firstTailMoving_min (q : Line α (Empty ⊕ Fin m)) (j : Fin m)
     (hj : j < firstTailMoving q) : q.idxFun (Sum.inr j) ≠ none := by
   intro hnone
-  have hjmem : j ∈ tailMoving q := by simpa [tailMoving, hnone]
+  have hjmem : j ∈ tailMoving q := by simp [tailMoving, hnone]
   exact (not_le_of_gt hj) (Finset.min'_le _ _ hjmem)
 
 theorem sameFirstTail_singleton (a₀ : α) (q : Line α (Empty ⊕ Fin m)) :

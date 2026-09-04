@@ -433,8 +433,7 @@ theorem exists_correlated_subspace_of_uniform_sections
   obtain ⟨N, hN⟩ :=
     GrahamRothschild.exists_subspace_lines_subset_or_disjoint (Fin k) m
   refine ⟨N, ?_⟩
-  intro ι κ _ _
-  intro r hr U A ρ hρ hsection
+  intro ι κ _ _ r hr U A ρ hρ hsection
   let θ : ℝ := IncrementArithmetic.theta δ₀
     (Fintype.card (Combinatorics.Line (Fin k) (Fin m₀)))
   let good : Set (Combinatorics.Line (Fin k) (Fin r)) :=

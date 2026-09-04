@@ -239,7 +239,7 @@ noncomputable def wordFibre {t m s r q : ℕ}
     z ∈ wordFibre A p x ↔
       wordEquiv t m s r
         (p.prepend (x, (wordEquiv t m s q).symm z)) ∈ A := by
-  simp [wordFibre]
+  simp only [wordFibre, Finset.mem_map_equiv, BlockTower.mem_fibre]
   rw [FrozenPrefix.mem_iterFibre]
   simp [towerPullback]
 

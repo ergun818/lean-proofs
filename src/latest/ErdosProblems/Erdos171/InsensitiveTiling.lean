@@ -23,7 +23,7 @@ open Combinatorics
 
 /-- Membership in the image of a finite set under an equivalence. -/
 @[simp] theorem mem_map_equiv_toEmbedding {A B : Type*}
-    [DecidableEq A] [DecidableEq B] (e : A ≃ B) (S : Finset A) (b : B) :
+    (e : A ≃ B) (S : Finset A) (b : B) :
     b ∈ S.map e.toEmbedding ↔ e.symm b ∈ S := by
   constructor
   · intro hb
@@ -347,11 +347,13 @@ noncomputable def futureFiber (R : Finset ((X × B) × Y))
   classical
   exact Finset.univ.filter fun x ↦ ((x, b), y) ∈ R
 
+omit [Fintype Y] in
 @[simp] theorem mem_prefixSection (R : Finset ((X × B) × Y))
     (y : Y) (z : X × B) : z ∈ prefixSection R y ↔ (z, y) ∈ R := by
   classical
   simp [prefixSection]
 
+omit [Fintype X] [Fintype Y] in
 @[simp] theorem mem_middleFiber (R : Finset ((X × B) × Y))
     (x : X) (y : Y) (b : B) : b ∈ middleFiber R x y ↔ ((x, b), y) ∈ R := by
   classical
@@ -363,11 +365,13 @@ noncomputable def futureFiber (R : Finset ((X × B) × Y))
   classical
   simp [commonBlockSupport]
 
+omit [Fintype Y] in
 @[simp] theorem mem_supportFiber (S : Finset (X × Y))
     (y : Y) (x : X) : x ∈ supportFiber S y ↔ (x, y) ∈ S := by
   classical
   simp [supportFiber]
 
+omit [Fintype B] [Fintype Y] in
 @[simp] theorem mem_futureFiber (R : Finset ((X × B) × Y))
     (b : B) (y : Y) (x : X) : x ∈ futureFiber R b y ↔ ((x, b), y) ∈ R := by
   classical
@@ -380,11 +384,12 @@ theorem commonBlockLayer_subset (R : Finset ((X × B) × Y))
   have hz' := (mem_commonBlockLayer _ _ _).mp hz
   exact (mem_commonBlockSupport R V (z.1.1, z.2)).mp hz'.1 z.1.2 hz'.2
 
+omit [Fintype Y] in
 /-- Joint insensitivity on unused coordinates and the current block implies
 insensitivity of every current-block fibre. -/
 theorem IsRelationInsensitive.middleFiber
     (rX : X → X → Prop) (rB : B → B → Prop)
-    (hreflX : Reflexive rX) (R : Finset ((X × B) × Y))
+    (hreflX : ∀ x, rX x x) (R : Finset ((X × B) × Y))
     (hR : ∀ y, IsRelationInsensitive (ProductRelation rX rB)
       (prefixSection R y)) (x : X) (y : Y) :
     IsRelationInsensitive rB (middleFiber R x y) := by
@@ -396,7 +401,7 @@ theorem IsRelationInsensitive.middleFiber
 insensitive. -/
 theorem IsRelationInsensitive.supportFiber
     (rX : X → X → Prop) (rB : B → B → Prop)
-    (hreflB : Reflexive rB) (R : Finset ((X × B) × Y))
+    (hreflB : ∀ b, rB b b) (R : Finset ((X × B) × Y))
     (hR : ∀ y, IsRelationInsensitive (ProductRelation rX rB)
       (prefixSection R y)) (V : Finset B) (y : Y) :
     IsRelationInsensitive rX (supportFiber (commonBlockSupport R V) y) := by
@@ -412,10 +417,11 @@ theorem IsRelationInsensitive.supportFiber
     have := (hR y (x, b) (x', b) ⟨hxx', hreflB b⟩).mpr hmem
     simpa using this
 
+omit [Fintype Y] in
 /-- Before subtraction, every future fibre is insensitive. -/
 theorem IsRelationInsensitive.futureFiber
     (rX : X → X → Prop) (rB : B → B → Prop)
-    (hreflB : Reflexive rB) (R : Finset ((X × B) × Y))
+    (hreflB : ∀ b, rB b b) (R : Finset ((X × B) × Y))
     (hR : ∀ y, IsRelationInsensitive (ProductRelation rX rB)
       (prefixSection R y)) (b : B) (y : Y) :
     IsRelationInsensitive rX (futureFiber R b y) := by
@@ -429,7 +435,7 @@ in all coordinates which remain unused.  This is the precise invariant used
 at the next greedy stage. -/
 theorem IsRelationInsensitive.residual_futureFiber
     (rX : X → X → Prop) (rB : B → B → Prop)
-    (hreflB : Reflexive rB) (R : Finset ((X × B) × Y))
+    (hreflB : ∀ b, rB b b) (R : Finset ((X × B) × Y))
     (hR : ∀ y, IsRelationInsensitive (ProductRelation rX rB)
       (prefixSection R y)) (V : Finset B) (b : B) (y : Y) :
     IsRelationInsensitive rX
@@ -471,7 +477,7 @@ positive density, lies in the old remainder, and the new remainder satisfies
 the fresh-block invariant. -/
 theorem exists_common_block_layer
     {k d M : ℕ} (i : Fin k) (beta : ℝ) (hbeta : 0 < beta)
-    (rX : X → X → Prop) (hreflX : Reflexive rX)
+    (rX : X → X → Prop) (hreflX : ∀ x, rX x x)
     (hblock : ∀ A : Finset (Word (k + 1) M),
       beta ≤ density A → ContainsRestrictedSubspace d
         (A : Set (Word (k + 1) M)))
@@ -545,14 +551,14 @@ three-block word cube. -/
 theorem exists_common_block_tiling_step
     {k d M : ℕ}
     [Fintype (xi → Fin (k + 1))] [Nonempty (xi → Fin (k + 1))]
-    [Fintype (upsilon → Fin (k + 1))] [Nonempty (upsilon → Fin (k + 1))]
+    [Finite (upsilon → Fin (k + 1))] [Nonempty (upsilon → Fin (k + 1))]
     [DecidableEq (xi → Fin (k + 1))]
     [DecidableEq (upsilon → Fin (k + 1))]
     [Fintype (((xi ⊕ Fin M) ⊕ upsilon) → Fin (k + 1))]
     [DecidableEq (((xi ⊕ Fin M) ⊕ upsilon) → Fin (k + 1))]
     (i : Fin k) (beta : ℝ) (hbeta : 0 < beta)
     (rX : (xi → Fin (k + 1)) → (xi → Fin (k + 1)) → Prop)
-    (hreflX : Reflexive rX)
+    (hreflX : ∀ x, rX x x)
     (hblock : ∀ A : Finset (Word (k + 1) M),
       beta ≤ density A → ContainsRestrictedSubspace d
         (A : Set (Word (k + 1) M)))
@@ -573,6 +579,7 @@ theorem exists_common_block_tiling_step
           (R.map splitMiddleWord.toEmbedding \ T.covered.map splitMiddleWord.toEmbedding)
           b y) := by
   classical
+  let := Fintype.ofFinite (upsilon → Fin (k + 1))
   let D := R.map splitMiddleWord.toEmbedding
   have hDden : density D = density R := by
     simpa [D] using density_map_equiv
@@ -659,13 +666,13 @@ def blockAssocEquiv (M r s : ℕ) :
     | Sum.inr (Sum.inl b) => Sum.inl (Sum.inr b)
     | Sum.inr (Sum.inr y) => Sum.inr y
   left_inv
-    | Sum.inl (Sum.inl x) => rfl
-    | Sum.inl (Sum.inr b) => rfl
-    | Sum.inr y => rfl
+    | Sum.inl (Sum.inl _) => rfl
+    | Sum.inl (Sum.inr _) => rfl
+    | Sum.inr _ => rfl
   right_inv
-    | Sum.inl x => rfl
-    | Sum.inr (Sum.inl b) => rfl
-    | Sum.inr (Sum.inr y) => rfl
+    | Sum.inl _ => rfl
+    | Sum.inr (Sum.inl _) => rfl
+    | Sum.inr (Sum.inr _) => rfl
 
 /-- Freeze the used coordinate suffix of a word set. -/
 noncomputable def sumSection {A C alpha : Type*}
@@ -703,7 +710,7 @@ theorem density_subspacePoints_block {k d M : ℕ}
     (U : Subspace (Fin d) (Fin (k + 1)) (Fin M)) :
     density (subspacePoints U) =
       (k + 1 : ℝ) ^ d / (k + 1 : ℝ) ^ M := by
-  simp [density_eq_card_div_card, card_subspacePoints_fin, Word]
+  simp [density_eq_card_div_card]
 
 /-- The finite fresh-block recursion.  Either it already leaves a remainder
 of density below `2 * beta`, or its disjoint tiles occupy at least one copy of
@@ -953,12 +960,12 @@ terminated must terminate before more than `1 / theta` steps.  The geometric
 fresh-block lemmas supply `covered`, `remainder`, and the step inequality. -/
 theorem exists_small_remainder_of_density_gain
     (covered remainder : ℕ → Finset Omega) (theta beta : ℝ) (R : ℕ)
-    (htheta : 0 < theta) (hR : 1 < (R : ℝ) * theta)
+    (_htheta : 0 < theta) (hR : 1 < (R : ℝ) * theta)
     (hstep : ∀ j < R, ¬ density (remainder j) < 2 * beta →
       density (covered j) + theta ≤ density (covered (j + 1))) :
     ∃ j ≤ R, density (remainder j) < 2 * beta := by
   by_contra hstop
-  push_neg at hstop
+  push Not at hstop
   have hlower : ∀ j ≤ R, (j : ℝ) * theta ≤ density (covered j) := by
     intro j hj
     induction j with

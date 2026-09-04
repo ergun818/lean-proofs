@@ -25,8 +25,7 @@ namespace Erdos171
 
 open Combinatorics
 
-@[simp] theorem mem_finsetMap_equiv {A B : Type*} [DecidableEq A]
-    [DecidableEq B] (e : A ≃ B) (D : Finset A) (x : B) :
+@[simp] theorem mem_finsetMap_equiv {A B : Type*} (e : A ≃ B) (D : Finset A) (x : B) :
     x ∈ D.map e.toEmbedding ↔ e.symm x ∈ D := by
   constructor
   · intro hx
@@ -139,7 +138,7 @@ theorem density_image_subspace [Fintype (eta → alpha)]
   field_simp
 
 theorem subspacePoints_comp [Fintype (zeta → alpha)]
-    [Fintype (eta → alpha)] [DecidableEq (eta → alpha)]
+    [DecidableEq (eta → alpha)]
     [DecidableEq (iota → alpha)] (U : Subspace eta alpha iota)
     (V : Subspace zeta alpha eta) :
     subspacePoints (U.comp V) = (subspacePoints V).image U := by
@@ -177,10 +176,11 @@ theorem subspacePoints_comp_subset_iff [Fintype (zeta → alpha)]
     simpa only [Subspace.comp_apply] using hz
 
 theorem subspacePoints_comp_subset [Fintype (zeta → alpha)]
-    [Fintype (eta → alpha)] [DecidableEq (eta → alpha)]
+    [Fintype (eta → alpha)]
     [DecidableEq (iota → alpha)] (U : Subspace eta alpha iota)
     (V : Subspace zeta alpha eta) :
     subspacePoints (U.comp V) ⊆ subspacePoints U := by
+  classical
   rw [subspacePoints_comp]
   intro x hx
   simp only [Finset.mem_image] at hx
@@ -235,7 +235,6 @@ structure SubspaceTiling (eta alpha iota : Type*)
 namespace SubspaceTiling
 
 variable {zeta : Type*} [Fintype (zeta → alpha)]
-  [DecidableEq (eta → alpha)]
 
 /-- The empty tiling. -/
 noncomputable def empty : SubspaceTiling eta alpha iota := by
@@ -296,24 +295,27 @@ theorem tile_subset_covered (T : SubspaceTiling eta alpha iota)
 
 section AmbientReindex
 
-variable {kappa : Type*} [DecidableEq (kappa → alpha)]
+variable {kappa : Type*}
 
 /-- The word equivalence induced by reindexing ambient coordinates. -/
 def ambientWordEquiv (e : iota ≃ kappa) :
     (iota → alpha) ≃ (kappa → alpha) :=
   e.arrowCongr (Equiv.refl alpha)
 
+omit [DecidableEq (iota → alpha)] in
 theorem ambientWordEquiv_symm (e : iota ≃ kappa) :
     (ambientWordEquiv (alpha := alpha) e).symm = ambientWordEquiv e.symm := by
   ext x j
   rfl
 
+omit [DecidableEq (iota → alpha)] in
 @[simp] theorem mem_map_ambientWordEquiv (e : iota ≃ kappa)
     (D : Finset (iota → alpha)) (x : kappa → alpha) :
     x ∈ D.map (ambientWordEquiv e).toEmbedding ↔
       (ambientWordEquiv e).symm x ∈ D := by
   exact mem_finsetMap_equiv (ambientWordEquiv e) D x
 
+omit [Fintype (eta → alpha)] [DecidableEq (iota → alpha)] in
 theorem ambientReindex_injective (e : iota ≃ kappa) :
     Function.Injective (fun U : Subspace eta alpha iota ↦
       U.reindex (Equiv.refl eta) (Equiv.refl alpha) e) := by
@@ -328,6 +330,8 @@ noncomputable def ambientReindexEmbedding (e : iota ≃ kappa) :
     Subspace eta alpha iota ↪ Subspace eta alpha kappa :=
   ⟨fun U ↦ U.reindex (Equiv.refl eta) (Equiv.refl alpha) e,
     ambientReindex_injective e⟩
+
+variable [DecidableEq (kappa → alpha)]
 
 theorem subspacePoints_ambientReindex (e : iota ≃ kappa)
     (U : Subspace eta alpha iota) :
@@ -498,6 +502,8 @@ theorem card_covered (T : SubspaceTiling eta alpha iota) :
   classical
   exact Finset.card_biUnion T.pairwiseDisjoint
 
+omit [Fintype (eta → alpha)] [DecidableEq (iota → alpha)]
+  [Fintype (zeta → alpha)] in
 theorem comp_left_injective (U : Subspace eta alpha iota) :
     Function.Injective (U.comp : Subspace zeta alpha eta → Subspace zeta alpha iota) := by
   intro V W hVW
@@ -510,6 +516,10 @@ theorem comp_left_injective (U : Subspace eta alpha iota) :
 noncomputable def compEmbedding (U : Subspace eta alpha iota) :
     Subspace zeta alpha eta ↪ Subspace zeta alpha iota :=
   ⟨U.comp, comp_left_injective U⟩
+
+section Composition
+
+variable [DecidableEq (eta → alpha)]
 
 /-- Map every tile in a parameter cube into an outer combinatorial subspace. -/
 noncomputable def comp (T : SubspaceTiling zeta alpha eta)
@@ -529,6 +539,7 @@ noncomputable def comp (T : SubspaceTiling zeta alpha eta)
           Finset.disjoint_image U.parameter_injective]
         exact T.pairwiseDisjoint hV₀ hW₀ hne₀ }
 
+omit [Fintype (eta → alpha)] in
 theorem covered_comp (T : SubspaceTiling zeta alpha eta)
     (U : Subspace eta alpha iota) :
     (T.comp U).covered = T.covered.image U := by
@@ -626,6 +637,8 @@ theorem covered_bind (T : SubspaceTiling eta alpha iota)
     refine ⟨A, ?_, hxA⟩
     change A ∈ T.tiles.biUnion (fun V ↦ ((R V).comp V).tiles)
     exact Finset.mem_biUnion.mpr ⟨U, hU, hAU⟩
+
+end Composition
 
 theorem density_covered [Fintype (iota → alpha)]
     (T : SubspaceTiling eta alpha iota) :

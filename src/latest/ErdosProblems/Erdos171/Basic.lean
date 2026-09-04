@@ -99,8 +99,7 @@ noncomputable def fixedTemplateEquiv {α ι : Type*} :
 
 /-- The number of proper line templates is the number of all templates minus
 the number of wildcard-free templates. -/
-theorem card_eq_templates_sub_words {α ι : Type*} [Fintype α] [Fintype ι]
-    [DecidableEq ι] :
+theorem card_eq_templates_sub_words {α ι : Type*} [Fintype α] [Fintype ι] :
     Fintype.card (Line α ι) =
       (Fintype.card α + 1) ^ Fintype.card ι -
         Fintype.card α ^ Fintype.card ι := by

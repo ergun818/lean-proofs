@@ -140,7 +140,7 @@ theorem density_sectionTails_freeBlockTail_eq_wordFibre
   exact density_map_equiv e.symm _
 
 theorem pullback_lineFreeOn {alpha eta iota : Type*}
-    [Fintype alpha] [DecidableEq alpha] [Fintype eta] [DecidableEq eta]
+    [Fintype alpha] [Fintype eta] [DecidableEq eta]
     (U : Subspace eta alpha iota) (A : Finset (iota → alpha))
     (hA : ¬ ContainsLineOn (A : Set (iota → alpha))) :
     ¬ ContainsLineOn (pullbackFinset U A : Set (eta → alpha)) := by

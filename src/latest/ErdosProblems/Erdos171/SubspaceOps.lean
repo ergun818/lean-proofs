@@ -156,8 +156,8 @@ theorem sumWord_injective :
   have hy : sumWord x y ∘ Sum.inr = y := by funext f; rfl
   funext q
   cases q with
-  | inl i => simpa [hx] using sum_apply_inl U V (sumWord x y) i
-  | inr j => simpa [hy] using sum_apply_inr U V (sumWord x y) j
+  | inl i => simp [hx]
+  | inr j => simp [hy]
 
 theorem sum_parameter_injective (U : Subspace η α ι) (V : Subspace ζ α κ) :
     Function.Injective (U.sum V) :=
@@ -394,7 +394,7 @@ def liftFinset [DecidableEq (η → Fin (k + 1))] (A : Finset (η → Fin k)) :
 @[simp] theorem mem_liftFinset [DecidableEq (η → Fin (k + 1))]
     {A : Finset (η → Fin k)} {x : η → Fin k} :
     liftWord x ∈ liftFinset A ↔ x ∈ A := by
-  simp [liftFinset, liftWord_injective.eq_iff]
+  simp [liftFinset]
 
 @[simp] theorem card_liftFinset [DecidableEq (η → Fin (k + 1))]
     (A : Finset (η → Fin k)) :

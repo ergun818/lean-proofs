@@ -156,7 +156,7 @@ theorem subspaceDensity_eq_relative [Fintype (η → α)] [Fintype (ι → α)]
   ext x
   simp [Combinatorics.Subspace.comp_apply]
 
-@[simp] theorem pullbackSetFinset_comp [Fintype (η → α)] [Fintype (ζ → α)]
+@[simp] theorem pullbackSetFinset_comp [Fintype (ζ → α)]
     (U : Combinatorics.Subspace η α ι) (V : Combinatorics.Subspace ζ α η)
     (A : Set (ι → α)) :
     pullbackSetFinset (U.comp V) A = pullbackSetFinset V (U ⁻¹' A) := by
@@ -171,7 +171,7 @@ theorem subspaceDensity_eq_relative [Fintype (η → α)] [Fintype (ι → α)]
       subspaceDensityFinset V (pullbackFinset U A) := by
   simp [subspaceDensityFinset]
 
-@[simp] theorem subspaceDensity_comp [Fintype (η → α)] [Fintype (ζ → α)]
+@[simp] theorem subspaceDensity_comp [Fintype (ζ → α)]
     (U : Combinatorics.Subspace η α ι) (V : Combinatorics.Subspace ζ α η)
     (A : Set (ι → α)) :
     subspaceDensity (U.comp V) A = subspaceDensity V (U ⁻¹' A) := by

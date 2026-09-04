@@ -134,8 +134,7 @@ def appendSubspaceLine {t m n r : ℕ}
     simp only [wordAddEquiv_apply_fst, appendSubspaceLine,
       Combinatorics.Subspace.reindex_apply, Equiv.refl_apply,
       Equiv.refl_symm, finSumFinEquiv_symm_apply_castAdd,
-      Combinatorics.Subspace.sum_apply_inl, Function.comp_apply,
-      finSumFinEquiv_apply_left]
+      Combinatorics.Subspace.sum_apply_inl]
     have hf :
         ((⇑(Equiv.refl (Fin t)) ∘ x ∘ ⇑finSumFinEquiv) ∘ Sum.inl) =
           (fun j : Fin m ↦ x (Fin.castAdd 1 j)) := by
@@ -363,7 +362,7 @@ theorem FiniteDensityHJ.finiteDensityMDHJ {t : ℕ} (h : FiniteDensityHJ t)
       have heval :
           e.symm (U xp, l (x (Fin.last m))) = appendSubspaceLine U l x := by
         apply e.injective
-        simpa [e, xp] using wordAddEquiv_appendSubspaceLine_apply U l x
+        simp [e, xp]
       simpa [heval] using hmemA
 
 /-- As for lines, a single witnessing dimension for an `m`-subspace works in

@@ -94,7 +94,7 @@ theorem density_pos [Fintype α] (A : Finset α) :
   · intro h
     rw [Finset.nonempty_iff_ne_empty]
     intro hA
-    simpa [hA] using h
+    simp [hA] at h
   · intro h
     rw [lt_iff_le_and_ne]
     refine ⟨density_nonneg A, ?_⟩
@@ -103,7 +103,7 @@ theorem density_pos [Fintype α] (A : Finset α) :
 
 theorem average_const [Fintype α] [Nonempty α] (c : ℝ) :
     average (fun _ : α ↦ c) = c := by
-  simp [average, Fintype.expect_const]
+  simp [average]
 
 theorem average_add [Fintype α] (f g : α → ℝ) :
     average (fun x ↦ f x + g x) = average f + average g := by
@@ -249,7 +249,7 @@ theorem card_eq_sum_card_fiber [Fintype α] [Fintype β] (A : Finset (α × β))
     apply Prod.ext
     · have hp' := (Finset.mem_filter.1 hp).2
       have hq' := (Finset.mem_filter.1 hq).2
-      simpa [hp', hq']
+      simp [hp', hq']
     · exact hpq
   · intro b hb
     refine ⟨(a, b), ?_, rfl⟩
@@ -286,8 +286,7 @@ theorem density_eq_average_fiber [Fintype α] [Fintype β]
 theorem average_indicator [Fintype α] [DecidableEq α] (A : Finset α) :
     average (fun x ↦ if x ∈ A then (1 : ℝ) else 0) = density A := by
   classical
-  simp [average_eq_sum_div_card, density_eq_card_div_card,
-    Finset.sum_boole]
+  simp [average_eq_sum_div_card, density_eq_card_div_card]
 
 /-- The exact uniform average of a two-valued function. -/
 theorem average_piecewise_const [Fintype α] [Nonempty α] [DecidableEq α]
@@ -305,10 +304,11 @@ theorem average_piecewise_const [Fintype α] [Nonempty α] [DecidableEq α]
 
 /-- A pointwise upper bound on and off a set gives the corresponding upper bound
 for the uniform average. -/
-theorem average_le_density_mul_add [Fintype α] [Nonempty α] [DecidableEq α]
+theorem average_le_density_mul_add [Fintype α] [Nonempty α]
     (A : Finset α) (f : α → ℝ) (a b : ℝ)
     (hA : ∀ x ∈ A, f x ≤ a) (hAc : ∀ x ∉ A, f x ≤ b) :
     average f ≤ density A * a + (1 - density A) * b := by
+  classical
   rw [← average_piecewise_const A a b]
   apply average_mono
   intro x
@@ -318,10 +318,11 @@ theorem average_le_density_mul_add [Fintype α] [Nonempty α] [DecidableEq α]
 
 /-- A pointwise lower bound on and off a set gives the corresponding lower bound
 for the uniform average. -/
-theorem density_mul_add_le_average [Fintype α] [Nonempty α] [DecidableEq α]
+theorem density_mul_add_le_average [Fintype α] [Nonempty α]
     (A : Finset α) (f : α → ℝ) (a b : ℝ)
     (hA : ∀ x ∈ A, a ≤ f x) (hAc : ∀ x ∉ A, b ≤ f x) :
     density A * a + (1 - density A) * b ≤ average f := by
+  classical
   rw [← average_piecewise_const A a b]
   apply average_mono
   intro x
@@ -342,7 +343,7 @@ theorem mem_superlevel [Fintype α] (f : α → ℝ) (c : ℝ) (x : α) :
 
 /-- Quantitative averaging: if `f ≤ B` and its average is at least `μ`, then
 the density of the set where `f ≥ c` is at least `(μ-c)/(B-c)`. -/
-theorem density_superlevel_ge [Fintype α] [Nonempty α] [DecidableEq α]
+theorem density_superlevel_ge [Fintype α] [Nonempty α]
     (f : α → ℝ) {μ c B : ℝ} (havg : μ ≤ average f)
     (hub : ∀ x, f x ≤ B) (hcB : c < B) :
     (μ - c) / (B - c) ≤ density (superlevel f c) := by
@@ -357,28 +358,30 @@ theorem density_superlevel_ge [Fintype α] [Nonempty α] [DecidableEq α]
   nlinarith
 
 /-- The particularly useful half-threshold form of quantitative averaging. -/
-theorem half_le_density_superlevel [Fintype α] [Nonempty α] [DecidableEq α]
+theorem half_le_density_superlevel [Fintype α] [Nonempty α]
     (f : α → ℝ) {δ : ℝ} (hδ0 : 0 ≤ δ) (havg : δ ≤ average f)
     (hub : ∀ x, f x ≤ 1) :
     δ / 2 ≤ density (superlevel f (δ / 2)) := by
   have havg' : average f ≤ density (superlevel f (δ / 2)) +
       (1 - density (superlevel f (δ / 2))) * (δ / 2) := by
     convert average_le_density_mul_add (superlevel f (δ / 2)) f 1 (δ / 2)
-      (fun x _ ↦ hub x) (fun x hx ↦ le_of_lt (not_le.1 (by simpa using hx))) using 1 <;> ring
+      (fun x _ ↦ hub x) (fun x hx ↦ le_of_lt (not_le.1 (by simpa using hx))) using 1
+    ring
   have hdle : density (superlevel f (δ / 2)) ≤ 1 := density_le_one _
   have hd0 : 0 ≤ density (superlevel f (δ / 2)) := density_nonneg _
   have hδle : δ ≤ 1 := havg.trans (average_le_const hub)
   nlinarith
 
 /-- Markov's inequality for the finite uniform distribution. -/
-theorem density_superlevel_le [Fintype α] [Nonempty α] [DecidableEq α]
+theorem density_superlevel_le [Fintype α] [Nonempty α]
     (f : α → ℝ) {μ c : ℝ} (havg : average f ≤ μ)
     (hnonneg : ∀ x, 0 ≤ f x) (hc : 0 < c) :
     density (superlevel f c) ≤ μ / c := by
   have hlower : density (superlevel f c) * c ≤ average f := by
     convert density_mul_add_le_average (superlevel f c) f c 0
       (fun x hx ↦ (mem_superlevel f c x).1 hx)
-      (fun x _ ↦ hnonneg x) using 1 <;> ring
+      (fun x _ ↦ hnonneg x) using 1
+    ring
   rw [le_div_iff₀ hc]
   exact hlower.trans havg
 
