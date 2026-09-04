@@ -12,7 +12,7 @@ open Nat Finset
 namespace Erdos394
 
 /-- First-moment double counting for a finite incidence relation. -/
-theorem sum_hitCount_eq_singleCount [DecidableEq α] [DecidableEq β]
+theorem sum_hitCount_eq_singleCount
     (H : Finset α) (T : Finset β) (hit : α → β → Prop)
     [DecidableRel hit] :
     (∑ h ∈ H, (T.filter (hit h)).card) =
@@ -153,7 +153,7 @@ theorem normalized_rootBoxTupleSecondMoment_le_corrections
   unfold rootBoxMainParameter rootBoxAreaCorrection
     rootBoxRationalCorrection rootBoxNonrationalCorrection
     rootBoxConstantCorrection
-  convert h using 1 <;> push_cast <;> ring
+  convert h using 1; push_cast; ring
 
 /-- If the area correction is within `1/R` and all three boundary corrections
 are at most two, the normalized second moment has a simple variance-ready
@@ -239,7 +239,7 @@ noncomputable def rootBoxTupleNoHitSet
 /-- A generic finite Chebyshev estimate centered at an external main term.
 The first moment may lie one unit below `mu`. -/
 theorem finite_zero_fraction_le_of_moments
-    [DecidableEq α] (H : Finset α) (N : α → ℕ)
+    (H : Finset α) (N : α → ℕ)
     (mu delta A B : ℝ)
     (hH : 0 < H.card) (hmu : 0 < mu)
     (hfirst : mu - 1 ≤

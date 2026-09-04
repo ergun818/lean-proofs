@@ -147,11 +147,9 @@ noncomputable def rootBoxHitTupleCount (P : Finset ℕ) (K j : ℕ)
 
 /-- Total number of independent local unit-multiplier tuples. -/
 noncomputable def rootBoxTupleUniverseCount (P : Finset ℕ)
-    (hprime : ∀ p ∈ P, p.Prime) : ℕ := by
+    (_hprime : ∀ p ∈ P, p.Prime) : ℕ := by
   classical
-  letI (p : ↥P) : NeZero p.1 :=
-    ⟨(hprime p.1 p.2).ne_zero⟩
-  letI (p : ↥P) : Fintype (ZMod p.1)ˣ := Fintype.ofFinite _
+  let (p : ↥P) : Fintype (ZMod p.1)ˣ := Fintype.ofFinite _
   exact ((Finset.univ : Finset ↥P).pi
     (fun p ↦ (Finset.univ : Finset (ZMod p.1)ˣ))).card
 

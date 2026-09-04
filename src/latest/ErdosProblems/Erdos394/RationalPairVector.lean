@@ -98,7 +98,7 @@ theorem rational_lattice_vector_forces_compatible_label
     (hKp : K * K < p) (hpP : p ∈ P)
     (x : globalForcedPairLattice P F a b hFP)
     (hL : L = intSupHeight2 (x : Fin 2 → ℤ))
-    (hAK : A < K) (hBK : B < K) (hAB : A ≠ 0 ∨ B ≠ 0)
+    (hAK : A < K) (hBK : B < K) (_hAB : A ≠ 0 ∨ B ≠ 0)
     (hrat : (A : ℤ) * (x : Fin 2 → ℤ) 1 =
       (B : ℤ) * (x : Fin 2 → ℤ) 0)
     (hpL : ¬p ∣ L) :

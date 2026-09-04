@@ -76,7 +76,7 @@ theorem prod_pairStateNonzero_constant
       by_cases hz : f ⟨p, hp⟩ = (0, 0)
       · have hz' : (f ⟨p, hp⟩).1 = 0 ∧ (f ⟨p, hp⟩).2 = 0 :=
           ⟨congrArg Prod.fst hz, congrArg Prod.snd hz⟩
-        simp [hz, hz']
+        simp [hz]
       · have hz' : ¬((f ⟨p, hp⟩).1 = 0 ∧ (f ⟨p, hp⟩).2 = 0) := by
           intro h
           exact hz (Prod.ext h.1 h.2)
@@ -167,8 +167,8 @@ theorem pairState_nonrational_factor
   have hZR : (0 : ℝ) < Z := by exact_mod_cast hZ
   unfold pairMultiplierLocalWeight pairNonrationalLocalFactor
   by_cases hz : f p = (0, 0)
-  · simp [hz, ne_of_gt hp1R, ne_of_gt hpR, ne_of_gt hZR]
-  · simp [hz, ne_of_gt hp1R, ne_of_gt hpR, ne_of_gt hZR]
+  · simp [hz, ne_of_gt hp1R]
+  · simp [hz]
     ring
 
 end Erdos394

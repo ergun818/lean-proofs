@@ -23,7 +23,7 @@ lemma forwardCap_nonneg {x a z : ℝ} (hx0 : 0 ≤ x) (hx1 : x ≤ 1) (hz : 0 �
   · exact hz
 
 lemma add_mul_mem_Icc_of_le_forwardCap {x a z t : ℝ}
-    (hx0 : 0 ≤ x) (hx1 : x ≤ 1) (hz : 0 ≤ z)
+    (hx0 : 0 ≤ x) (hx1 : x ≤ 1) (_hz : 0 ≤ z)
     (ht0 : 0 ≤ t) (ht : t ≤ forwardCap x a z) :
     0 ≤ x + t * a ∧ x + t * a ≤ 1 := by
   unfold forwardCap at ht
@@ -43,7 +43,7 @@ lemma add_mul_mem_Icc_of_le_forwardCap {x a z t : ℝ}
     simp [ha0, hx0, hx1]
 
 lemma add_forwardCap_mul_eq_boundary_or_stationary {x a z : ℝ}
-    (hx0 : 0 ≤ x) (hx1 : x ≤ 1) :
+    (_hx0 : 0 ≤ x) (_hx1 : x ≤ 1) :
     x + forwardCap x a z * a = 0 ∨
       x + forwardCap x a z * a = 1 ∨
       (a = 0 ∧ forwardCap x a z = z) := by
@@ -86,12 +86,14 @@ theorem exists_forward_face {x y z a b : ℝ}
   · exact Or.inl ht
   · rcases min_choice ca cb with hca | hcb
     · have htcaeq : t = ca := ht.trans hca
-      rcases add_forwardCap_mul_eq_boundary_or_stationary (z := z) hx.1 hx.2 with h0 | h1 | ⟨ha0, hcaz⟩
+      rcases add_forwardCap_mul_eq_boundary_or_stationary (z := z) hx.1 hx.2 with
+        h0 | h1 | ⟨ha0, hcaz⟩
       · exact Or.inr (Or.inl (by simpa [htcaeq] using h0))
       · exact Or.inr (Or.inr (Or.inl (by simpa [htcaeq] using h1)))
       · exact Or.inl (htcaeq.trans hcaz)
     · have htcbeq : t = cb := ht.trans hcb
-      rcases add_forwardCap_mul_eq_boundary_or_stationary (z := z) hy.1 hy.2 with h0 | h1 | ⟨hb0, hcbz⟩
+      rcases add_forwardCap_mul_eq_boundary_or_stationary (z := z) hy.1 hy.2 with
+        h0 | h1 | ⟨hb0, hcbz⟩
       · exact Or.inr (Or.inr (Or.inr (Or.inl (by simpa [htcbeq] using h0))))
       · exact Or.inr (Or.inr (Or.inr (Or.inr (by simpa [htcbeq] using h1))))
       · exact Or.inl (htcbeq.trans hcbz)

@@ -27,7 +27,7 @@ theorem prime_of_mem_primeInterval {a b p : ℕ} (hp : p ∈ primeInterval a b) 
     p.Prime := (Nat.mem_primesLE.mp (Finset.mem_sdiff.mp hp).1).2
 
 /-- A prime interval ending at positive `y` has cardinality at most `y`. -/
-theorem card_primeInterval_le {a y : ℕ} (hy : 0 < y) :
+theorem card_primeInterval_le {a y : ℕ} (_hy : 0 < y) :
     (primeInterval a y).card ≤ y := by
   have hsub : primeInterval a y ⊆ Finset.Icc 1 y := by
     intro p hp

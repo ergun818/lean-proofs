@@ -95,7 +95,7 @@ theorem exists_supnorm_reduced_integral_basis
       have hs := hmin (swapBasis b')
       simpa [L, u, hb'0] using hs
     refine ⟨b', L, ?_, hL, hsecond, Or.inl ⟨?_, ?_⟩⟩
-    · simpa [hb'0, L]
+    · simp [hb'0, L]
     · simpa [hb'0, u] using hcoordCase
     · rw [hb'1]
       change 2 * (v 0 - n * u 0).natAbs ≤ L
@@ -116,7 +116,7 @@ theorem exists_supnorm_reduced_integral_basis
       have hs := hmin (swapBasis b')
       simpa [L, u, hb'0] using hs
     refine ⟨b', L, ?_, hL, hsecond, Or.inr ⟨?_, ?_⟩⟩
-    · simpa [hb'0, L]
+    · simp [hb'0, L]
     · simpa [hb'0, u] using hreverse
     · rw [hb'1]
       change 2 * (v 1 - n * u 1).natAbs ≤ L

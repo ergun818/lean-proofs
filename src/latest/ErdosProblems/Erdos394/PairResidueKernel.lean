@@ -74,7 +74,7 @@ def pairEquationLinear (P : Finset ℕ) (a b : ℕ → ℕ) :
     · funext p
       dsimp
       split_ifs <;> try rfl
-      simp [smul_eq_mul]
+      simp
       ring
     · funext p
       rfl
@@ -93,7 +93,7 @@ moduli and every non-both-zero equation has a nonzero coefficient. -/
 theorem pairEquationLinear_surjective
     (P : Finset ℕ) (a b : ℕ → ℕ) {K : ℕ}
     (hprime : ∀ p ∈ P, p.Prime)
-    (ha : ∀ p ∈ P, a p < K) (hb : ∀ p ∈ P, b p < K)
+    (ha : ∀ p ∈ P, a p < K) (_hb : ∀ p ∈ P, b p < K)
     (hKp : ∀ p ∈ P, K < p) :
     Function.Surjective (pairEquationLinear P a b) := by
   classical
@@ -115,15 +115,15 @@ theorem pairEquationLinear_surjective
     by_cases hboth : a p.val = 0 ∧ b p.val = 0
     · simp [hboth]
     · by_cases ha0 : a p.val = 0
-      · simp [hboth, ha0]
+      · simp [ha0]
       · by_cases hb0 : b p.val = 0
-        · simp [hboth, ha0, hb0]
+        · simp [ha0, hb0]
         · let : Fact p.val.Prime := ⟨hprime p.val p.property⟩
           have hapos : 0 < a p.val := Nat.pos_of_ne_zero ha0
           have hap : a p.val < p.val := (ha p.val p.property).trans (hKp p.val p.property)
           have hane : ((a p.val : ℕ) : ZMod p.val) ≠ 0 :=
             natCast_zmod_ne_zero_of_pos_of_lt hapos hap
-          simp [j, l, hboth, ha0, hb0, hane]
+          simp [ha0, hb0, hane]
   · funext p
     have hpzero : a p.val = 0 ∧ b p.val = 0 :=
       (Finset.mem_filter.mp p.property).2

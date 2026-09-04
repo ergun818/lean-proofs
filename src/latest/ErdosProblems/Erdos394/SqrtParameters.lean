@@ -96,7 +96,6 @@ theorem eventually_hundred_mul_geometricBrunOrder_add_one_le :
     nlinarith
   have hJR : (100000 : ℝ) ≤ J := by exact_mod_cast hJ
   have hfinal : (100 : ℝ) * (geometricBrunOrder J + 1) ≤ J := by
-    push_cast
     norm_num at hlog
     nlinarith
   exact_mod_cast hfinal
@@ -208,7 +207,7 @@ theorem sixteen_pow_half_mul_le {N : ℕ} (hN : 2 ≤ N) :
   calc
     16 ^ (N / 2) * N ≤ 16 ^ (N / 2) * 16 ^ (N / 2) :=
       Nat.mul_le_mul_left _ hNpow
-    _ = 16 ^ (2 * (N / 2)) := by rw [← pow_add]; congr 1 <;> omega
+    _ = 16 ^ (2 * (N / 2)) := by rw [← pow_add]; congr 1; omega
     _ ≤ 16 ^ N := Nat.pow_le_pow_right (by norm_num) (by omega)
 
 /-- The logarithmic decay exponent produced by the moving interval

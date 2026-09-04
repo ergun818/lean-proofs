@@ -137,7 +137,7 @@ theorem basis_square_card_mul_det_le_pair_dets
         4 * volume (para ![Y, 0] (b 1)) +
         4 * volume (para ![0, Y] (b 1)) +
         4 * volume (para (b 0) (b 1)) ≠ ∞ := by
-    simp [volume_para, ENNReal.add_ne_top, ENNReal.mul_ne_top]
+    simp [volume_para, ENNReal.mul_ne_top]
   have ht := ENNReal.toReal_mono htop h
   simp only [ENNReal.toReal_mul, ENNReal.toReal_natCast] at ht
   norm_num [volume_para, ENNReal.toReal_add, ENNReal.mul_ne_top] at ht

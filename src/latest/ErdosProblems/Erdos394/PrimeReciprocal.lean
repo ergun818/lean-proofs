@@ -20,7 +20,7 @@ noncomputable def primeReciprocalSum (N : ℕ) : ℝ :=
 /-- The reciprocal mass in `(a,b]` dominates the number of primes in that
 interval divided by `b`. -/
 theorem primeCounting_sub_div_le_primeReciprocalSum_sub
-    {a b : ℕ} (hab : a ≤ b) (hb : 0 < b) :
+    {a b : ℕ} (hab : a ≤ b) (_hb : 0 < b) :
     ((b.primeCounting - a.primeCounting : ℕ) : ℝ) / b ≤
       primeReciprocalSum b - primeReciprocalSum a := by
   let block := b.primesLE \ a.primesLE
@@ -211,7 +211,7 @@ theorem primeReciprocal_block_upper
         48 * Real.log 2 * n / Real.log n := by
     rw [div_le_div_iff₀ hlog16n hlogn, hcoeff]
     have hnonneg : 0 ≤ 48 * Real.log 2 * (n : ℝ) := by positivity
-    convert mul_le_mul_of_nonneg_left hlogle hnonneg using 1 <;> ring
+    convert mul_le_mul_of_nonneg_left hlogle hnonneg using 1; ring
   have hcount :
       (((16 * n).primeCounting - n.primeCounting : ℕ) : ℝ) ≤
         ((16 * n).primeCounting : ℝ) := by

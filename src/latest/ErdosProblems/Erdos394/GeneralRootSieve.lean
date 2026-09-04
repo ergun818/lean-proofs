@@ -19,8 +19,8 @@ noncomputable local instance zmodUnitsFintypeGeneralRootSieve (q : ℕ) :
 noncomputable def tKMulCoprimeSiftedMass
     (K : ℕ) (P : Finset ℕ) (M q : ℕ) : ℝ :=
   ∑ m ∈ Finset.range (M + 1),
-    if hm : 0 < m then
-      if hcop : m.Coprime q then
+    if _hm : 0 < m then
+      if _hcop : m.Coprime q then
         if badPrimeSet P m = ∅ then (t K (m * q) : ℝ) else 0
       else 0
     else 0
@@ -30,7 +30,7 @@ unit residue classes. -/
 noncomputable def unitWeightedSiftedMass
     (P : Finset ℕ) (M q : ℕ) (L : (ZMod q)ˣ → ℝ) : ℝ :=
   ∑ m ∈ Finset.range (M + 1),
-    if hm : 0 < m then
+    if _hm : 0 < m then
       if hcop : m.Coprime q then
         if badPrimeSet P m = ∅ then
           (m : ℝ) * L (ZMod.unitOfCoprime m hcop)
@@ -224,7 +224,7 @@ theorem tKMulCoprimeSiftedMass_le_brun
       (h := unitResidue (primeProduct Q) a) (R := Rbrun)
       hq ha_lt hcopS hR htail
     dsimp [Xmain]
-    convert hsieve using 1 <;> ring
+    convert hsieve using 1; ring
   have hsumL := normalized_sum_globalUnitLeastHit_le Q K Z hK hZ hQ
     hQprime hKp hK2p hlarge hZp hZ2p hareaSize hratSize hZsize hRq
   have hphi : (0 : ℝ) < primeUnitCount Q := by

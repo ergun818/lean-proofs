@@ -241,7 +241,7 @@ theorem sum_gapInSet (q : ℕ) (s : Finset ℕ) (hs : s.Nonempty)
 
 section AbstractCosets
 
-variable {G : Type*} [Group G] [Fintype G]
+variable {G : Type*} [Group G]
 
 /-- Natural coordinates occupied by the right coset `aH`. -/
 noncomputable def cosetValues (v : G → ℕ) (H : Subgroup G) [Fintype H]
@@ -322,6 +322,8 @@ theorem sum_abstractCosetGap_mul (q : ℕ) (v : G → ℕ)
   rw [← himage]
   exact sum_gapInSet q s hs hsbound
 
+variable [Fintype G]
+
 /-- **Abstract coset-gap averaging identity.**  For any injective placement of
 a finite group in a circle of circumference `q`, the sum of the least positive
 clockwise gaps inside right cosets of `H`, multiplied by `|H|`, is exactly
@@ -368,11 +370,11 @@ def involutionSubgroup (q : ℕ) : Subgroup (ZMod q)ˣ where
   one_mem' := by simp
   mul_mem' := by
     intro a b ha hb
-    simp only [Set.mem_setOf_eq] at ha hb ⊢
+    simp only [Set.mem_ofPred_eq] at ha hb ⊢
     rw [mul_pow, ha, hb, one_mul]
   inv_mem' := by
     intro a ha
-    simp only [Set.mem_setOf_eq] at ha ⊢
+    simp only [Set.mem_ofPred_eq] at ha ⊢
     rw [inv_pow, ha, inv_one]
 
 noncomputable instance involutionSubgroupFintype (q : ℕ) :

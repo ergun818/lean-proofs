@@ -59,7 +59,7 @@ theorem div_primePart_pos (P : Finset ℕ) (hprime : ∀ p ∈ P, p.Prime)
 /-- With no selected prime square, the quotient and selected prime part are
 coprime. -/
 theorem div_primePart_coprime (P : Finset ℕ)
-    (hprime : ∀ p ∈ P, p.Prime) {n : ℕ} (hn : 0 < n)
+    (hprime : ∀ p ∈ P, p.Prime) {n : ℕ} (_hn : 0 < n)
     (hno : noSquaredPrime P n) :
     (n / primePart P n).Coprime (primePart P n) := by
   rw [Nat.coprime_iff_gcd_eq_one]
@@ -83,7 +83,7 @@ theorem div_primePart_coprime (P : Finset ℕ)
 
 /-- The quotient is free of every ambient prime not selected into `q`. -/
 theorem badPrimeSet_sdiff_div_primePart_eq_empty
-    (P : Finset ℕ) (hprime : ∀ p ∈ P, p.Prime) {n : ℕ} (hn : 0 < n) :
+    (P : Finset ℕ) (hprime : ∀ p ∈ P, p.Prime) {n : ℕ} (_hn : 0 < n) :
     badPrimeSet (P \ badPrimeSet P n) (n / primePart P n) = ∅ := by
   ext p
   constructor

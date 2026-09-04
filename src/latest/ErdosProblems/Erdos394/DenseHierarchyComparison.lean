@@ -26,6 +26,7 @@ lemma generalRootMeanFactor_eq_denseRootCoefficient (L r : ℕ) :
 
 set_option maxRecDepth 20000 in
 set_option maxHeartbeats 2000000 in
+-- Comparing the three numerator terms with the denominator requires many arithmetic reductions.
 /-- Uniformly between consecutive dense-grid points, the adjacent numerator
 is eventually at most `3/h` times the denominator, where `h=⌊log₂N⌋`. -/
 theorem eventually_dense_adjacent_three_mul_bound_uniform
@@ -136,7 +137,8 @@ theorem eventually_dense_adjacent_three_mul_bound_uniform
       _ ≤ (2 * (N : ℝ)) * 4 := mul_le_mul_of_nonneg_right hN1 (by norm_num)
       _ = 8 * (N : ℝ) := by ring
       _ ≤ (h : ℝ) * (N : ℝ) := mul_le_mul_of_nonneg_right h8h (by positivity)
-  have hC0eq : C0 = h ^ 1000 := rfl
+  have hC0eq : C0 = h ^ 1000 := by
+    dsimp only [C0, denseDenominatorDilution, h]
   have hFbound : (2 * 1048576 * K : ℝ) / Real.log 2 ≤ (h : ℝ) := by
     have hF : Fcoef + 2 ≤ h :=
       (le_max_right (max (1001 + 2) (2 * (2 * K + 1)))
@@ -253,7 +255,16 @@ theorem eventually_dense_adjacent_three_mul_bound_uniform
       _ = (N : ℝ) * (h : ℝ) ^ 1005 * ((V * Eplus) / Eden) := by ring
   have hQ2nonneg : 0 ≤ ((2 * 1048576 * (K : ℝ) / Real.log 2) *
       (C0 : ℝ) * Real.log X * (h : ℝ) * W *
-        ((V * Eplus) / Eden)) := by positivity
+        ((V * Eplus) / Eden)) := by
+    exact mul_nonneg
+      (mul_nonneg
+        (mul_nonneg
+          (mul_nonneg
+            (mul_nonneg (by positivity) (Nat.cast_nonneg C0))
+            hlogXpos.le)
+          (Nat.cast_nonneg h))
+        hW0)
+      (div_nonneg hA0 hEdenPos.le)
   have hQ2pow : (((2 * 1048576 * (K : ℝ) / Real.log 2) *
       (C0 : ℝ) * Real.log X * (h : ℝ) * W *
         ((V * Eplus) / Eden)) ^ M) ≤ 1 := by
@@ -287,11 +298,16 @@ theorem eventually_dense_adjacent_three_mul_bound_uniform
     exact (pow_le_pow_iff_left₀ hQ2nonneg zero_le_one hMpos).mp (by simpa using hQ2pow)
   have hzposNat : 0 < z := by simp [z, denseHierarchyZ]
   have hC0posNat : 0 < C0 := by
-    rw [hC0eq]
-    exact pow_pos hhpos 1000
+    dsimp only [C0, denseDenominatorDilution]
+    apply Nat.pow_pos
+    exact hhpos
   have hDmainPos : 0 < Dmain := by
-    dsimp [Dmain]
-    positivity
+    dsimp only [Dmain]
+    refine mul_pos (div_pos ?_ ?_) hEdenPos
+    · positivity
+    · refine mul_pos (mul_pos (mul_pos (by norm_num) ?_) ?_) hlogXpos
+      · exact_mod_cast hC0posNat
+      · exact_mod_cast (show 0 < K by omega)
   have hterm2 : (h : ℝ) * U2 ≤ Dmain := by
     let Q := (2 * 1048576 * (K : ℝ) / Real.log 2) *
       (C0 : ℝ) * Real.log X * (h : ℝ) * W * ((V * Eplus) / Eden)
@@ -308,7 +324,9 @@ theorem eventually_dense_adjacent_three_mul_bound_uniform
     exact (Nat.lt_pow_succ_log_self (by norm_num) N).le
   have hsmall1Nat : N * h ^ 1003 ≤ z := by
     calc
-      N * h ^ 1003 ≤ 2 ^ (h + 1) * 2 ^ h := Nat.mul_le_mul hNupper hpoly
+      N * h ^ 1003 ≤ 2 ^ (h + 1) * 2 ^ h := by
+        apply Nat.mul_le_mul hNupper
+        simpa only [h] using hpoly
       _ = 2 ^ (2 * h + 1) := by
         rw [← pow_add]
         congr 1
@@ -387,8 +405,9 @@ theorem eventually_dense_adjacent_three_mul_bound_uniform
   have hpolyDisc : N * h ^ 1008 ≤ 2 ^ N := by
     have hhN : h ≤ N := Nat.log_le_self 2 N
     calc
-      N * h ^ 1008 ≤ N * N ^ 1008 :=
-        Nat.mul_le_mul_left N (Nat.pow_le_pow_left hhN 1008)
+      N * h ^ 1008 ≤ N * N ^ 1008 := by
+        apply Nat.mul_le_mul_left
+        exact pow_le_pow_left' hhN 1008
       _ = N ^ 1009 := by ring
       _ ≤ 2 ^ N := hNpoly
   have htwoNle : 2 ^ N ≤ 16 ^ (N / 2) := by
@@ -405,7 +424,7 @@ theorem eventually_dense_adjacent_three_mul_bound_uniform
         exact Nat.pow_le_pow_right (by omega) (by simpa [mul_comm] using hthreeExp)
       _ ≤ 16 ^ (N / 2) * 16 ^ (N / 2) :=
         Nat.mul_le_mul_right _ htwoNle
-      _ = 16 ^ (2 * (N / 2)) := by rw [← pow_add]; congr 1 <;> omega
+      _ = 16 ^ (2 * (N / 2)) := by rw [← pow_add]; congr 1; omega
       _ ≤ 16 ^ N := Nat.pow_le_pow_right (by omega) (by omega)
       _ = denseHierarchyX N := rfl
       _ ≤ X := hXlower

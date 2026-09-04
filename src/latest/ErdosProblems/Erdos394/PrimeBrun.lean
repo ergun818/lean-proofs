@@ -207,7 +207,6 @@ theorem subsetMass_prime_progression_approx
     have hdr : (d : ℝ) ≠ 0 := by positivity
     push_cast
     field_simp
-    <;> ring
   rw [hmain]
   exact hres
 

@@ -27,8 +27,8 @@ theorem sum_univ_fintype_independent {α : Type*} {β : Type*}
 noncomputable def tMulCoprimeSiftedMass
     (P : Finset ℕ) (M q : ℕ) : ℝ :=
   ∑ m ∈ Finset.range (M + 1),
-    if hm : 0 < m then
-      if hcop : m.Coprime q then
+    if _hm : 0 < m then
+      if _hcop : m.Coprime q then
         if badPrimeSet P m = ∅ then (t 2 (m * q) : ℝ) else 0
       else 0
     else 0
@@ -37,7 +37,7 @@ noncomputable def tMulCoprimeSiftedMass
 noncomputable def rootWeightedSiftedMass
     (P : Finset ℕ) (M q : ℕ) (hodd : Odd q) : ℝ :=
   ∑ m ∈ Finset.range (M + 1),
-    if hm : 0 < m then
+    if _hm : 0 < m then
       if hcop : m.Coprime q then
         if badPrimeSet P m = ∅ then
           (m : ℝ) * restrictedRootMin q hodd (ZMod.unitOfCoprime m hcop)
@@ -171,7 +171,7 @@ theorem tMulCoprimeSiftedMass_le_brun
       P hprime (M := M) (q := q) (h := unitResidue q a) (R := R)
       hodd.pos ha_lt hcopP hR htail
     dsimp [Xmain]
-    convert hsieve using 1 <;> ring
+    convert hsieve using 1; ring
   calc
     (∑ a : (ZMod q)ˣ,
       (restrictedRootMin q hodd a : ℝ) *

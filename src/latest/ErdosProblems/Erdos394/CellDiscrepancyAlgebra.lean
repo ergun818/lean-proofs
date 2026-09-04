@@ -14,7 +14,7 @@ radius estimate and the first Minkowski bound, implies the standard planar
 lattice discrepancy with an explicit absolute constant. -/
 theorem expanded_cell_discrepancy
     {N D Y ρ L : ℝ}
-    (hN : 0 ≤ N) (hD : 0 < D) (hY : 0 ≤ Y) (hρ : 0 ≤ ρ) (hL : 0 < L)
+    (_hN : 0 ≤ N) (hD : 0 < D) (hY : 0 ≤ Y) (hρ : 0 ≤ ρ) (hL : 0 < L)
     (hpack : N * D ≤ (Y + 2 * ρ) ^ 2)
     (hreduced : ρ ≤ D / L + 2 * L)
     (hminkowski : L ^ 2 ≤ D) :

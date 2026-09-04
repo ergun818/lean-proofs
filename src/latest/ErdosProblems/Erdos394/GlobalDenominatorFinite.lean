@@ -55,7 +55,7 @@ theorem canonical_fixedQ_shiftedGood_lower
     P T K (selectedHorizon K C0 T) (selectedPrimeBase X T)
       (16 * selectedPrimeBase X T) R C0 hK hC0 hTP hprime hlarge
       hPupper hheight hR htail hY htotal
-  convert h using 1 <;> ring
+  convert h using 1; ring
 
 /-- If the two bad terms consume at most half the Chebyshev main term, the
 canonical fixed-q contribution retains `Y L/4`. -/
@@ -115,6 +115,6 @@ theorem quarter_horizon_primeMain_le_canonical_mass
     exact hscaled.trans (by
       simpa only [sub_add_eq_sub_sub] using hfixed)
   dsimp [L] at hmid
-  convert hmid using 1 <;> ring
+  convert hmid using 1; ring
 
 end Erdos394

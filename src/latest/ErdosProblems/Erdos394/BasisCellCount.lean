@@ -59,7 +59,7 @@ theorem basis_lattice_card_mul_det_le
     rw [show E = Set.Icc (fun _ ↦ -ρ) (fun _ ↦ Y + ρ) by rfl]
     simp only [measureReal_def]
     rw [Real.volume_Icc_pi_toReal]
-    · simp [Fin.prod_univ_two]
+    · simp
       ring
     · intro i
       linarith

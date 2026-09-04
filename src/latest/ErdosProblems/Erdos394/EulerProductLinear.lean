@@ -14,11 +14,12 @@ namespace Erdos394
 /-- If every nonnegative local increment is at most `e` and
 `2 |S| e ≤ 1`, then the product is bounded by its linear majorant. -/
 theorem prod_one_add_le_linear
-    {α : Type*} [DecidableEq α] (S : Finset α) (g : α → ℝ) (e : ℝ)
+    {α : Type*} (S : Finset α) (g : α → ℝ) (e : ℝ)
     (he : 0 ≤ e) (hg0 : ∀ a ∈ S, 0 ≤ g a)
     (hge : ∀ a ∈ S, g a ≤ e)
     (hsmall : 2 * (S.card : ℝ) * e ≤ 1) :
     ∏ a ∈ S, (1 + g a) ≤ 1 + 2 * (S.card : ℝ) * e := by
+  classical
   induction S using Finset.induction_on with
   | empty => simp
   | @insert a S ha ih =>
@@ -51,7 +52,7 @@ theorem prod_one_add_le_linear
 
 /-- Under the same hypothesis the product is at most two. -/
 theorem prod_one_add_le_two
-    {α : Type*} [DecidableEq α] (S : Finset α) (g : α → ℝ) (e : ℝ)
+    {α : Type*} (S : Finset α) (g : α → ℝ) (e : ℝ)
     (he : 0 ≤ e) (hg0 : ∀ a ∈ S, 0 ≤ g a)
     (hge : ∀ a ∈ S, g a ≤ e)
     (hsmall : 2 * (S.card : ℝ) * e ≤ 1) :

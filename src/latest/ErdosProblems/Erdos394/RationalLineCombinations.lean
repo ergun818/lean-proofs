@@ -105,7 +105,7 @@ theorem exists_addN_not_onSmallRatioLine {K : ℕ} (hK : 0 < K)
     Finset.exists_ne_map_eq_of_card_lt_of_maps_to hcard hmaps
   have habmem := hfmem n
   have habnz : (f n).1 ≠ 0 ∨ (f n).2 ≠ 0 := by
-    simp only [nonzeroLabelPairs, Finset.mem_erase, ne_eq, Prod.mk.injEq,
+    simp only [nonzeroLabelPairs, Finset.mem_erase, ne_eq,
       Finset.mem_product, Finset.mem_range] at habmem
     by_contra hz
     push Not at hz

@@ -145,7 +145,7 @@ theorem card_localPairCongruenceSet_nonzero_nonzero {p A B : ℕ} [NeZero p]
         refine ⟨(j, l), ?_, rfl⟩
         apply Finset.mem_filter.mpr
         refine ⟨Finset.mem_univ _, ?_⟩
-        simp only [localPairCongruenceSet, hA, hB, and_self, if_false, s]
+        simp only [hA, hB, and_self, if_false]
         dsimp [l]
         field_simp
     _ = p := by simp [ZMod.card]
@@ -309,7 +309,7 @@ theorem card_localExactPairSet_nonzero_nonzero {p A B : ℕ} [NeZero p]
         refine ⟨(j, l), ?_, rfl⟩
         apply Finset.mem_filter.mpr
         refine ⟨Finset.mem_univ _, ?_⟩
-        simp only [localExactPairSet, hA, hB, and_self, if_false]
+        simp only [hA, hB, and_self, if_false]
         refine ⟨hjne, hlne, ?_⟩
         dsimp [l]
         field_simp

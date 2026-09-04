@@ -13,7 +13,7 @@ open Nat Finset
 namespace Erdos394
 
 /-- Generic double-counting identity for a finite hit relation. -/
-theorem sum_hitCount_sq_eq_pairCount [DecidableEq α] [DecidableEq β]
+theorem sum_hitCount_sq_eq_pairCount
     (H : Finset α) (T : Finset β) (hit : α → β → Prop)
     [DecidableRel hit] :
     (∑ h ∈ H, ((T.filter (hit h)).card) ^ 2) =
@@ -80,7 +80,7 @@ theorem mem_rootBoxGlobalHitSet_iff
   · intro hh p
     exact (Finset.mem_filter.mp (hh p)).2
   · intro hh p
-    simpa [localBlockHitSet, hh p]
+    simp [localBlockHitSet, hh p]
 
 /-- Number of positive hit times through `Y` for one multiplier tuple. -/
 noncomputable def rootBoxTupleHitNumber
@@ -406,11 +406,6 @@ theorem natPair_mem_pairStateLattice_iff
       dsimp [globalForcedPairEquationLinear, forcedPairEquationLinear,
         pairCRTLinear, zmodPiLinear]
       simp only [Int.cast_natCast]
-      change (if p.val ∈ F then (j : ZMod p.val)
-        else if a p.val = 0 then (j : ZMod p.val)
-        else if b p.val = 0 then (l : ZMod p.val)
-        else (a p.val : ZMod p.val) * (l : ZMod p.val) -
-          (b p.val : ZMod p.val) * (j : ZMod p.val)) = 0
       have hc := hall p
       by_cases hz : f p = (0, 0)
       · have hpF : p.val ∈ F := by

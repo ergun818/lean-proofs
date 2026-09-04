@@ -54,7 +54,7 @@ theorem natCast_positiveZModResidue {q : ℕ} (hq : 0 < q) (x : ZMod q) :
     (positiveZModResidue q x : ZMod q) = x := by
   let : NeZero q := ⟨Nat.ne_of_gt hq⟩
   by_cases hx : x = 0
-  · simp [positiveZModResidue, hx, ZMod.natCast_self]
+  · simp [positiveZModResidue, hx]
   · simp only [positiveZModResidue, if_neg hx]
     exact ZMod.natCast_zmod_val x
 

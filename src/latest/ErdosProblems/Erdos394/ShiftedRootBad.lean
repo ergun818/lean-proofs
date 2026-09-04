@@ -27,7 +27,7 @@ noncomputable def localShiftedBlockHitSet
 
 /-- If `p|j`, every shifted local hit set is at most the whole unit group. -/
 theorem card_localShiftedBlockHitSet_of_dvd_le
-    {p K j a : ℕ} [NeZero p] (hp : p.Prime) (hpj : p ∣ j) :
+    {p K j a : ℕ} [NeZero p] (hp : p.Prime) (_hpj : p ∣ j) :
     (localShiftedBlockHitSet p K j a).card ≤ p - 1 := by
   classical
   calc

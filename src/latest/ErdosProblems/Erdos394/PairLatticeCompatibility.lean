@@ -107,7 +107,7 @@ theorem forced_pair_lattice_nonrational_height
 /-- Real reciprocal form of the preceding height bound, tailored to the
 `40Y/L` boundary term in the lattice count. -/
 theorem forty_boundary_le_of_nonrational_height
-    {K Z r Y L : ℕ} (hK : 1 < K) (hZ : 1 ≤ Z) (hL : 0 < L)
+    {K Z r Y L : ℕ} (_hK : 1 < K) (hZ : 1 ≤ Z) (hL : 0 < L)
     (hheight : Z ^ r ≤ 2 * K * L) :
     (40 : ℝ) * ((Y : ℝ) / (L : ℝ)) ≤
       80 * (K : ℝ) * (Y : ℝ) / ((Z ^ r : ℕ) : ℝ) := by

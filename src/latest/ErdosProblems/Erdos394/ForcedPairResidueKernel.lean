@@ -61,7 +61,7 @@ theorem forcedPairEquationLinear_surjective
     (hFP : F ⊆ P)
     (hzeroF : bothZeroLabelPrimes P a b ⊆ F)
     (hprime : ∀ p ∈ P, p.Prime)
-    (ha : ∀ p ∈ P, a p < K) (hb : ∀ p ∈ P, b p < K)
+    (ha : ∀ p ∈ P, a p < K) (_hb : ∀ p ∈ P, b p < K)
     (hKp : ∀ p ∈ P, K < p) :
     Function.Surjective (forcedPairEquationLinear P F a b hFP) := by
   classical
@@ -94,7 +94,7 @@ theorem forcedPairEquationLinear_surjective
             (ha p.val p.property).trans (hKp p.val p.property)
           have hane : (a p.val : ZMod p.val) ≠ 0 :=
             natCast_zmod_ne_zero_of_pos_of_lt hapos hap
-          simp [j, l, hpF, ha0, hb0, hane]
+          simp [hpF, ha0, hb0, hane]
   · funext p
     change l (forcedPrimeIncl hFP p) = y.2 p
     have hpF' : (forcedPrimeIncl hFP p).val ∈ F := p.property

@@ -31,6 +31,7 @@ theorem eventually_const_le_two_pow (C : ℕ) :
 
 set_option maxRecDepth 10000 in
 set_option maxHeartbeats 800000 in
+-- The parameter bounds and sieve specialization require many arithmetic reductions.
 /-- F-074 specialized to the sparse polynomial grid. The factorial tail is
 absorbed into a second copy of the Euler main term. -/
 theorem eventually_hierarchy_numerator_bound (K : ℕ) (hK : 2 ≤ K) :
@@ -39,7 +40,7 @@ theorem eventually_hierarchy_numerator_bound (K : ℕ) (hK : 2 ≤ K) :
       let X := hierarchyX K j
       let z := hierarchyZ K j
       let y := hierarchyY K j
-      let Z := hierarchyRootHeight K j
+      let _Z := hierarchyRootHeight K j
       let R := hierarchyOrder K j
       let P := primeInterval z y
       let V := localEulerProduct P (fun p ↦ 1 / (p : ℝ))

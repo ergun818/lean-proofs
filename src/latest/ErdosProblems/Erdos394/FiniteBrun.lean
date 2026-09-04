@@ -93,7 +93,7 @@ theorem siftedMass_le_brun [DecidableEq α] [DecidableEq β]
 /-- Signed errors of uniformly bounded absolute value contribute at most
 `E` times the number of retained subsets. -/
 theorem signed_error_sum_le_card_mul {I : Finset α} (err : α → ℝ) (E : ℝ)
-    (hE : 0 ≤ E) (herr : ∀ i ∈ I, |err i| ≤ E) (sign : α → ℝ)
+    (_hE : 0 ≤ E) (herr : ∀ i ∈ I, |err i| ≤ E) (sign : α → ℝ)
     (hsign : ∀ i ∈ I, |sign i| = 1) :
     ∑ i ∈ I, sign i * err i ≤ I.card * E := by
   calc

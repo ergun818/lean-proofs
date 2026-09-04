@@ -25,7 +25,7 @@ theorem dvd_consecutiveProduct_two_iff {n m : ℕ} :
     obtain ⟨a, d, ha, hd, hn⟩ := exists_dvd_and_dvd_of_dvd_mul h
     refine ⟨a, d, ?_, hn, ha, hd⟩
     apply Nat.Coprime.of_dvd ha hd
-    simpa using (Nat.coprime_self_add_right : (m.Coprime (m + 1) ↔ m.Coprime 1))
+    simp
   · rintro ⟨a, d, _, rfl, ha, hd⟩
     exact mul_dvd_mul ha hd
 
@@ -52,8 +52,7 @@ theorem t_two_le_of_bezout {n a d r s : ℕ} (hn : n = a * d)
   apply dvd_consecutiveProduct_two_iff.mpr
   refine ⟨a, d, ?_, hn, dvd_mul_right a r, ?_⟩
   · apply Nat.Coprime.of_dvd (dvd_mul_right a r) (hm ▸ dvd_mul_right d s)
-    simpa using
-      (Nat.coprime_self_add_right : ((a * r).Coprime (a * r + 1) ↔ (a * r).Coprime 1))
+    simp
   · exact hm ▸ dvd_mul_right d s
 
 end Erdos394

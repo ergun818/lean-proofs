@@ -60,13 +60,13 @@ theorem sum_arithmeticProgression_le_area (M L r N : ℕ) (hL : 0 < L)
   rw [show (M : ℝ) ^ 2 / (2 * (L : ℝ)) + 2 * M =
       ((M : ℝ) ^ 2 + 4 * (L : ℝ) * M) / (2 * (L : ℝ)) by
         field_simp
-        <;> ring]
+        ring]
   exact (le_div_iff₀ (by positivity : 0 < 2 * (L : ℝ))).2 (by
     nlinarith)
 
 /-- Reverse area estimate when `N` is the final progression index. -/
 theorem area_le_sum_arithmeticProgression (M L r N : ℕ) (hL : 0 < L)
-    (hr : r < L) (hlast : r + N * L ≤ M)
+    (hr : r < L) (_hlast : r + N * L ≤ M)
     (hnext : M < r + (N + 1) * L) :
     (M : ℝ) ^ 2 / (2 * (L : ℝ)) ≤
       (∑ t ∈ Finset.range (N + 1), ((r + t * L : ℕ) : ℝ)) +
@@ -133,7 +133,7 @@ theorem residueClassUpTo_eq_image (M L r : ℕ) (hL : 0 < L)
       (Nat.le_div_iff_mul_le hL).mp htdiv
     constructor
     · omega
-    · simpa [Nat.add_mul_mod_self_right, Nat.mod_eq_of_lt hr]
+    · simp [Nat.add_mul_mod_self_right, Nat.mod_eq_of_lt hr]
 
 /-- The map indexing a positive-step arithmetic progression is injective. -/
 theorem arithmeticProgression_injective (r L : ℕ) (hL : 0 < L) :

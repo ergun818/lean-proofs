@@ -64,10 +64,10 @@ theorem shiftedGoodPrimeTMass_eq_sum_set
   by_cases hcop : ell.Coprime (primeProduct P)
   · by_cases hgood : ZMod.unitOfCoprime ell hcop ∉
         globalShiftedRootBadUnitSet P K Y hprime
-    · simp [hcop, hgood]
+    · simp [hgood]
     · have hbad : ZMod.unitOfCoprime ell hcop ∈
           globalShiftedRootBadUnitSet P K Y hprime := not_not.mp hgood
-      simp [hcop, hbad]
+      simp [hbad]
   · simp [hcop]
 
 /-- Nested large-prime constructions over selected subsets inject into the

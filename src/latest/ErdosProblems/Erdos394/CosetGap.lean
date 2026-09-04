@@ -20,7 +20,7 @@ theorem affine_square_eq_one_iff {R : Type*} [CommRing R]
     (h j : R) (h2 : IsUnit (2 : R)) (hh : IsUnit h) :
     (2 * h * j + 1) ^ 2 = 1 ↔ j * (h * j + 1) = 0 := by
   have h4 : IsUnit (4 : R) := by
-    convert h2.mul h2 using 1 <;> norm_num
+    convert h2.mul h2 using 1; norm_num
   have hunit : IsUnit (4 * h : R) := h4.mul hh
   constructor
   · intro hs

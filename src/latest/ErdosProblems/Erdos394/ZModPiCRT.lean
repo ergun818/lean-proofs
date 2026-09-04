@@ -16,7 +16,7 @@ def zmodPiLinear (P : Finset ℕ) :
     ℤ →ₗ[ℤ] (∀ p : {p // p ∈ P}, ZMod p.val) where
   toFun := fun z p ↦ (z : ZMod p.val)
   map_add' x y := by ext p; simp
-  map_smul' n x := by ext p; simp [smul_eq_mul]
+  map_smul' n x := by ext p; simp
 
 @[simp] theorem zmodPiLinear_apply (P : Finset ℕ) (z : ℤ)
     (p : {p // p ∈ P}) : zmodPiLinear P z p = (z : ZMod p.val) := rfl

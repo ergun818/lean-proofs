@@ -28,7 +28,7 @@ theorem primeProduct_insert {p : ℕ} {T : Finset ℕ} (hpT : p ∉ T) :
 theorem squarefree_primeProduct (T : Finset ℕ)
     (hprime : ∀ p ∈ T, p.Prime) : Squarefree (primeProduct T) := by
   induction T using Finset.induction_on with
-  | empty => simp [primeProduct, squarefree_one]
+  | empty => simp [primeProduct]
   | @insert p T hpT ih =>
       have hp : p.Prime := hprime p (Finset.mem_insert_self p T)
       have hTprime : ∀ q ∈ T, q.Prime := by
@@ -130,7 +130,7 @@ theorem localEulerProduct_mul_sdiff [DecidableEq α]
 
 /-- A local Euler product with weights in `[0,1]` is nonnegative. -/
 theorem localEulerProduct_nonneg (P : Finset α) (x : α → ℝ)
-    (hx0 : ∀ i ∈ P, 0 ≤ x i) (hx1 : ∀ i ∈ P, x i ≤ 1) :
+    (_hx0 : ∀ i ∈ P, 0 ≤ x i) (hx1 : ∀ i ∈ P, x i ≤ 1) :
     0 ≤ localEulerProduct P x := by
   unfold localEulerProduct
   apply Finset.prod_nonneg
@@ -202,9 +202,10 @@ theorem factorial_tail_le_localEulerProduct_sdiff
     localEulerProduct_le_sdiff P T hTP _ hx0 hx1
 
 /-- Exact subset expansion of `∏(1+x_i)`. -/
-theorem sum_powerset_prod_eq_prod_one_add [DecidableEq α]
+theorem sum_powerset_prod_eq_prod_one_add
     (P : Finset α) (x : α → ℝ) :
     (∑ T ∈ P.powerset, ∏ i ∈ T, x i) = ∏ i ∈ P, (1 + x i) := by
+  classical
   induction P using Finset.induction_on with
   | empty => simp
   | @insert a P ha ih =>

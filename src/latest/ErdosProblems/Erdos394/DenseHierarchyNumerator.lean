@@ -15,6 +15,7 @@ namespace Erdos394
 
 set_option maxRecDepth 10000 in
 set_option maxHeartbeats 1000000 in
+-- The uniform sieve specialization requires extensive arithmetic on the hierarchy parameters.
 /-- F-074 specialized to the dense hierarchy parameters, uniformly in the
 summatory cutoff `X`. -/
 theorem eventually_dense_hierarchy_numerator_bound_uniform (K : ℕ) (hK : 2 ≤ K) :
@@ -22,7 +23,7 @@ theorem eventually_dense_hierarchy_numerator_bound_uniform (K : ℕ) (hK : 2 ≤
       let L := K + 1
       let z := denseHierarchyZ N
       let y := denseHierarchyY N
-      let Z := denseRootHeight N
+      let _Z := denseRootHeight N
       let R := denseHierarchyOrder N
       let P := primeInterval z y
       let V := localEulerProduct P (fun p ↦ 1 / (p : ℝ))
@@ -241,7 +242,7 @@ theorem eventually_dense_hierarchy_numerator_bound (K : ℕ) (hK : 2 ≤ K) :
       let X := denseHierarchyX N
       let z := denseHierarchyZ N
       let y := denseHierarchyY N
-      let Z := denseRootHeight N
+      let _Z := denseRootHeight N
       let R := denseHierarchyOrder N
       let P := primeInterval z y
       let V := localEulerProduct P (fun p ↦ 1 / (p : ℝ))

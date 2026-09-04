@@ -19,6 +19,7 @@ def denseDenominatorDilution (N : ℕ) : ℕ := denseHierarchyLog N ^ 1000
 
 set_option maxRecDepth 20000 in
 set_option maxHeartbeats 2000000 in
+-- Combining the moving denominator estimates requires extensive arithmetic reductions.
 /-- F-090 specialized to the dense hierarchy, uniformly for cutoffs in the
 next dense-grid interval. -/
 theorem eventually_dense_hierarchy_denominator_bound_uniform
@@ -98,8 +99,9 @@ theorem eventually_dense_hierarchy_denominator_bound_uniform
   have hypos : 0 < y := by simp [y, denseHierarchyY]
   have hXpos : 0 < X := (by simp [denseHierarchyX] : 0 < denseHierarchyX N).trans_le hXlower
   have hC0pos : 0 < C0 := by
-    dsimp [C0, denseDenominatorDilution]
-    exact pow_pos hhpos 1000
+    dsimp only [C0, denseDenominatorDilution]
+    apply Nat.pow_pos
+    exact hhpos
   have hprime : ∀ p ∈ P, p.Prime := by
     intro p hp
     exact prime_of_mem_primeInterval hp
@@ -130,8 +132,8 @@ theorem eventually_dense_hierarchy_denominator_bound_uniform
     exact denseHierarchyOrder_even N
   have hC02 : C0 ≤ 2 ^ (h * h) := by
     calc
-      C0 = h ^ 1000 := rfl
-      _ ≤ 2 ^ h := hpoly
+      C0 = h ^ 1000 := by dsimp only [C0, denseDenominatorDilution, h]
+      _ ≤ 2 ^ h := by simpa only [h] using hpoly
       _ ≤ 2 ^ (h * h) := Nat.pow_le_pow_right (by omega) (by nlinarith)
   have htwo2 : 2 ≤ 2 ^ (h * h) := by
     exact (show 2 = 2 ^ 1 by norm_num) ▸
@@ -252,7 +254,8 @@ theorem eventually_dense_hierarchy_denominator_bound_uniform
       2 * K ≤ selectedHorizon K C0 T * selectedPrimeBase X T := by
     intro T hT
     have hhor := hcanonicalHorizon T hT
-    have hdenpos : 0 < C0 * K ^ (T.card + 1) := by positivity
+    have hdenpos : 0 < C0 * K ^ (T.card + 1) :=
+      Nat.mul_pos hC0pos (Nat.pow_pos (by omega))
     have hYtwo : 2 ≤ selectedHorizon K C0 T := by
       dsimp [selectedHorizon]
       exact (Nat.le_div_iff_mul_le hdenpos).2 hhor
@@ -281,14 +284,14 @@ theorem eventually_dense_hierarchy_denominator_bound_uniform
     simpa [V, P, z, y, h] using hscaledN
   have hCbigNat : 2 * 131072 * h ^ 100 ≤ C0 := by
     have hcoef900 : 2 * 131072 ≤ h ^ 900 := by
-      calc
-        2 * 131072 ≤ h := by omega
-        _ ≤ h ^ 900 := Nat.le_pow (by omega)
+      apply le_trans (show 2 * 131072 ≤ h by omega)
+      apply Nat.le_pow
+      omega
     calc
       2 * 131072 * h ^ 100 ≤ h ^ 900 * h ^ 100 :=
         Nat.mul_le_mul_right _ hcoef900
       _ = h ^ 1000 := by ring
-      _ = C0 := rfl
+      _ = C0 := by dsimp only [C0, denseDenominatorDilution, h]
   have hCbig : (131072 : ℝ) * (h : ℝ) ^ (100 : ℕ) ≤
       Real.log 2 * (C0 : ℝ) := by
     have hc : (2 : ℝ) * 131072 * (h : ℝ) ^ (100 : ℕ) ≤ C0 := by
@@ -335,7 +338,7 @@ theorem eventually_dense_hierarchy_denominator_bound_uniform
         simpa [mul_comm] using hthreeExp
       _ ≤ 16 ^ (N / 2) * 16 ^ (N / 2) :=
         Nat.mul_le_mul_right _ htwoN_le
-      _ = 16 ^ (2 * (N / 2)) := by rw [← pow_add]; congr 1 <;> omega
+      _ = 16 ^ (2 * (N / 2)) := by rw [← pow_add]; congr 1; omega
       _ ≤ 16 ^ N := Nat.pow_le_pow_right (by omega) (by omega)
       _ = denseHierarchyX N := rfl
       _ ≤ X := hXlower
@@ -457,7 +460,8 @@ theorem eventually_dense_hierarchy_denominator_bound_uniform
         Real.log 2 * (C0 : ℝ) * (B : ℝ) := by
       have hdenq : (0 : ℝ) < 64 * (q : ℝ) := by positivity
       have hsdiv := div_le_div_of_nonneg_right hlargeSuff hdenq.le
-      have hcoefnonneg : 0 ≤ Real.log 2 * (C0 : ℝ) := by positivity
+      have hcoefnonneg : 0 ≤ Real.log 2 * (C0 : ℝ) :=
+        mul_nonneg (Real.log_pos (by norm_num)).le (Nat.cast_nonneg C0)
       have hrightLower := mul_le_mul_of_nonneg_left hNlower hcoefnonneg
       calc
         2048 * (q : ℝ) * (A : ℝ) * Real.log (B : ℝ) =

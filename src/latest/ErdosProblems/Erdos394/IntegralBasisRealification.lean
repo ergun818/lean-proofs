@@ -55,7 +55,6 @@ lemma realBasisOfIntPair_det (u v : Fin 2 → ℤ)
       ((u 0 * v 1 - u 1 * v 0).natAbs : ℝ) := by
   rw [realBasisOfIntPair_zero, realBasisOfIntPair_one, basisFun_det_pair]
   simp only [intVecToReal_apply]
-  push_cast
   rw [← Int.cast_mul, ← Int.cast_mul, ← Int.cast_sub,
     ← Int.cast_abs, ← Int.natCast_natAbs]
   norm_num

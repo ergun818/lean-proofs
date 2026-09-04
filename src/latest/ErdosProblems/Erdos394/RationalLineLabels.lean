@@ -17,7 +17,7 @@ def compatibleRatioLabels (K s t : ℕ) : Finset (ℕ × ℕ) :=
 
 /-- For a nonzero slope vector below `K`, at most `K-1` label pairs lie on its
 exact rational line. -/
-theorem card_compatibleRatioLabels_le {K s t : ℕ} (hK : 0 < K)
+theorem card_compatibleRatioLabels_le {K s t : ℕ} (_hK : 0 < K)
     (hst : s ≠ 0 ∨ t ≠ 0) :
     (compatibleRatioLabels K s t).card ≤ K - 1 := by
   classical

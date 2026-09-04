@@ -153,11 +153,11 @@ theorem rootBoxLocalWeight_subset_expansion (P : Finset ℕ) (K j : ℕ)
               intro p hp
               simp [hall p hp]
             rw [hprod]
-            simp [hdiv, mul_assoc]
+            simp [hdiv]
           · have hnotall : ¬ ∀ p ∈ T, p ∣ j := by
               intro hall
               exact hdiv ((primeProduct_dvd_iff_all_dvd T hTprime j).mpr hall)
-            push_neg at hnotall
+            push Not at hnotall
             obtain ⟨p, hpT, hpnd⟩ := hnotall
             have hzero :
                 (∏ p ∈ T, if p ∣ j then p - K else 0) = 0 := by
@@ -281,7 +281,7 @@ theorem sum_rootBoxSubsetCoeff (P : Finset ℕ) (K : ℕ)
 /-- A cast subset coefficient divided by its prime product factors
 coordinatewise. -/
 theorem cast_rootBoxSubsetCoeff_div (P : Finset ℕ) (K : ℕ) (T : Finset ℕ)
-    (hTP : T ⊆ P) (hK : 1 ≤ K) (hlarge : ∀ p ∈ P, K ≤ p) :
+    (_hTP : T ⊆ P) (_hK : 1 ≤ K) (_hlarge : ∀ p ∈ P, K ≤ p) :
     (rootBoxSubsetCoeff P K T : ℝ) / (primeProduct T : ℝ) =
       (∏ p ∈ T, ((p - K : ℕ) : ℝ) / (p : ℝ)) *
         ∏ _p ∈ P \ T, ((K - 1 : ℕ) : ℝ) := by

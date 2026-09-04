@@ -61,19 +61,19 @@ theorem sum_allLabelPairs_zero_other {R : Type*} [AddCommMonoid R]
 
 /-- The normalized local area sum obtained by ignoring the removed origins in
 an exact pair event. -/
-noncomputable def pairAreaLocalFactor (p K : ℕ) (ab : ℕ × ℕ) : ℝ :=
+noncomputable def pairAreaLocalFactor (p _K : ℕ) (ab : ℕ × ℕ) : ℝ :=
   if ab = (0, 0) then ((p - 1 : ℕ) : ℝ) / (p : ℝ) ^ 2
   else 1 / (p : ℝ)
 
 /-- The normalized local non-rational boundary factor after extracting the
 both-zero prime product. -/
-noncomputable def pairNonrationalLocalFactor (p K Z : ℕ)
+noncomputable def pairNonrationalLocalFactor (p _K Z : ℕ)
     (ab : ℕ × ℕ) : ℝ :=
   if ab = (0, 0) then 1 / (p : ℝ)
   else 1 / ((Z : ℝ) * ((p - 1 : ℕ) : ℝ))
 
 /-- The normalized local factor for an additive constant error. -/
-noncomputable def pairConstantLocalFactor (p K : ℕ)
+noncomputable def pairConstantLocalFactor (p _K : ℕ)
     (ab : ℕ × ℕ) : ℝ :=
   if ab = (0, 0) then 1
   else 1 / ((p - 1 : ℕ) : ℝ)
@@ -86,7 +86,6 @@ theorem sum_pairAreaLocalFactor {p K : ℕ} (hK : 0 < K) :
   unfold pairAreaLocalFactor
   rw [sum_allLabelPairs_zero_other hK
     (((p - 1 : ℕ) : ℝ) / (p : ℝ) ^ 2) (1 / (p : ℝ))]
-  push_cast
   ring
 
 /-- Closed form of the local non-rational-boundary label sum. -/
@@ -98,7 +97,6 @@ theorem sum_pairNonrationalLocalFactor {p K Z : ℕ} (hK : 0 < K) :
   unfold pairNonrationalLocalFactor
   rw [sum_allLabelPairs_zero_other hK
     (1 / (p : ℝ)) (1 / ((Z : ℝ) * ((p - 1 : ℕ) : ℝ)))]
-  push_cast
   ring
 
 /-- Closed form of the local constant-error label sum. -/
@@ -108,7 +106,6 @@ theorem sum_pairConstantLocalFactor {p K : ℕ} (hK : 0 < K) :
   unfold pairConstantLocalFactor
   rw [sum_allLabelPairs_zero_other hK
     (1 : ℝ) (1 / ((p - 1 : ℕ) : ℝ))]
-  push_cast
   ring
 
 /-- Global independent label sums factor coordinatewise. -/
@@ -254,7 +251,7 @@ theorem normalized_sum_pairAreaLocalFactor {p K : ℕ}
   rw [Nat.cast_sub hp1, Nat.cast_sub hKKn]
   norm_num only [Nat.cast_one]
   field_simp [ne_of_gt hpR, ne_of_gt hp1R, ne_of_gt hKK, hpminus]
-  <;> ring
+  ring
 
 /-- Normalizing the global area sum by the CRT unit universe yields the square
 of the first-moment density times the product of the local corrections. -/

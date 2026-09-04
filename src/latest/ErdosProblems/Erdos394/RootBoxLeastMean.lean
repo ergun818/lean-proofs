@@ -58,7 +58,7 @@ theorem le_initial_add_tail_layers
 
 /-- Summed form of the geometric-layer tail decomposition. -/
 theorem sum_le_initial_add_tail_layers
-    {α : Type*} [DecidableEq α] (H : Finset α) (N : α → ℕ)
+    {α : Type*} (H : Finset α) (N : α → ℕ)
     (T : ℕ → ℕ) (hT : Monotone T) (r : ℕ)
     (hbound : ∀ h ∈ H, N h ≤ T r) :
     (∑ h ∈ H, N h) ≤
@@ -247,7 +247,7 @@ theorem geometric_layer_product_le
     (K R q s C d prob : ℝ)
     (hK : 0 ≤ K) (hR : 1 ≤ R) (hqR : R ≤ q)
     (hs : 1 ≤ s) (hKs : K * s ≤ R) (hC : 0 ≤ C)
-    (hd : 0 ≤ d) (hprob : 0 ≤ prob)
+    (hd : 0 ≤ d) (_hprob : 0 ≤ prob)
     (hdle : d ≤ q * K * s / R + 1)
     (hple : prob ≤ 1 / R + C / s + 88 / s ^ 2) :
     d * prob ≤ (2 + (C + 88) * (K + 1)) * (q / R) := by
@@ -262,7 +262,7 @@ theorem geometric_layer_product_le
   have hA0 : 0 ≤ A := zero_le_one.trans hA
   have hdle' : d ≤ A * K * s + 1 := by
     dsimp [A]
-    convert hdle using 1 <;> ring
+    convert hdle using 1; ring
   have harea : d * (1 / R) ≤ 2 * A := by
     calc
       d * (1 / R) ≤ (A * K * s + 1) * (1 / R) := by
@@ -608,7 +608,6 @@ theorem normalized_sum_rootBoxTupleLeastHit_le
       exact hlayer i hi
     _ = (2 + (r : ℝ) * D) * ((q : ℝ) / (R : ℝ)) := by
       simp only [Finset.sum_const, Finset.card_range, nsmul_eq_mul]
-      push_cast
       ring
     _ = (2 + (P.card : ℝ) *
         (2 + ((((80 : ℝ) * ((K * K - 1 : ℕ) : ℝ) +

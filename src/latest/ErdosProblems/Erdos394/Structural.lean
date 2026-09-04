@@ -59,8 +59,7 @@ theorem t_succ_le {k n : ℕ} (hk : 0 < k) (hn : 0 < n) :
 theorem t_eq_one_iff {k n : ℕ} (hk : 0 < k) (hn : 0 < n) :
     t k n = 1 ↔ n ∣ k ! := by
   have hprod : consecutiveProduct k 1 = k ! := by
-    simpa [consecutiveProduct, add_comm] using
-      (Finset.prod_range_add_one_eq_factorial k)
+    simp [consecutiveProduct, add_comm]
   constructor
   · intro ht
     simpa [ht, hprod] using t_dvd hk hn

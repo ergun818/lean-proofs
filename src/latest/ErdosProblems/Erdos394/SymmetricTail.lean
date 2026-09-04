@@ -112,7 +112,7 @@ theorem factorial_mul_elementarySum_le_pow_sum (s : Finset α) (x : α → ℝ)
     dsimp [Λ]
     exact Finset.sum_nonneg fun i hi ↦ hx i hi
   induction j with
-  | zero => simp [Λ]
+  | zero => simp
   | succ j ih =>
       have hrec := succ_mul_elementarySum_le_sum_mul s x hx j
       have hfac : 0 ≤ (j.factorial : ℝ) := by positivity
@@ -124,9 +124,8 @@ theorem factorial_mul_elementarySum_le_pow_sum (s : Finset α) (x : α → ℝ)
                 push_cast
                 ring
         _ ≤ (j.factorial : ℝ) * (Λ * elementarySum s x j) := by
-              apply mul_le_mul_of_nonneg_left
+              apply mul_le_mul_of_nonneg_left _ hfac
               simpa [Λ] using hrec
-              exact hfac
         _ = Λ * ((j.factorial : ℝ) * elementarySum s x j) := by ring
         _ ≤ Λ * Λ ^ j := mul_le_mul_of_nonneg_left ih hΛ
         _ = Λ ^ (j + 1) := by ring

@@ -121,7 +121,7 @@ theorem primeBadUnitWeightedMass_le_card_mul_brun
       S hSprime (M := U) (q := q) (h := unitResidue q a) (R := R)
       hq (ZMod.val_lt (a : ZMod q)) hcopS hR htail
     dsimp [Xmain]
-    convert hsieve using 1 <;> ring
+    convert hsieve using 1; ring
   have hX0 : 0 ≤ Xmain := by
     have hEuler0 : 0 ≤ localEulerProduct S (fun p ↦ 1 / (p : ℝ)) := by
       apply localEulerProduct_nonneg S (fun p ↦ 1 / (p : ℝ))

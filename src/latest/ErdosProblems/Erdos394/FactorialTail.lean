@@ -53,7 +53,6 @@ theorem pow_div_factorial_le_one_half_pow {Λ : ℝ} {n : ℕ}
       rw [← mul_pow]
       congr 1
       field_simp
-      <;> ring
     _ ≤ ((1 : ℝ) / 2) ^ n * (n.factorial : ℝ) :=
       mul_le_mul_of_nonneg_left hfac (by positivity)
 
@@ -100,7 +99,7 @@ theorem geometricBrunOrder_even (J : ℕ) : Even (geometricBrunOrder J) := by
   simp [geometricBrunOrder, two_mul]
 
 /-- The chosen order dominates two hundred times the logarithmic scale. -/
-theorem two_hundred_mul_log_le_geometricBrunOrder {J : ℕ} (hJ : 1 ≤ J) :
+theorem two_hundred_mul_log_le_geometricBrunOrder {J : ℕ} (_hJ : 1 ≤ J) :
     200 * (1 + Real.log J) ≤ (geometricBrunOrder J : ℝ) := by
   have hceil := Nat.le_ceil (100 * (1 + Real.log J))
   unfold geometricBrunOrder

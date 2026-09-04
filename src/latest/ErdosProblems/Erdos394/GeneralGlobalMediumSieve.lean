@@ -92,7 +92,7 @@ theorem tKMul_emptySelected_le_brun
       rw [dif_pos hcop]
       by_cases hsift : badPrimeSet P m = ∅
       · rw [if_pos hsift, if_pos hsift]
-        simp only [Nat.mod_one, if_pos rfl, Nat.mul_one]
+        simp only [Nat.mod_one, Nat.mul_one]
         exact_mod_cast t_le_self hK hmpos
       · rw [if_neg hsift, if_neg hsift]
         simp

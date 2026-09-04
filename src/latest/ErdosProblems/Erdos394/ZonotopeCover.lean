@@ -79,7 +79,7 @@ theorem zono3_subset_five_para {a b c : E} {α β : ℝ}
     exact ⟨X, Z, hX, hZ, by simp [Y, hY0]⟩
   · right; right; right; right
     rw [mem_vadd_para_iff]
-    exact ⟨X, Z, hX, hZ, by simp [Y, hY1, add_assoc, add_comm, add_left_comm]⟩
+    exact ⟨X, Z, hX, hZ, by simp [Y, hY1, add_assoc, add_comm]⟩
 
 /-- A 4-zonotope can be pushed either to its 3-generator base or to one of
 four translated 3-generator side zonotopes. -/

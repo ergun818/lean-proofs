@@ -29,7 +29,7 @@ theorem tKMulCoprimeSiftedMass_eq_sum_admissible
     · rw [dif_pos hcop]
       by_cases hsift : badPrimeSet (P \ T) m = ∅
       · simp [hmpos, hcop, hsift]
-      · simp [hmpos, hcop, hsift]
+      · simp [hmpos, hsift]
     · simp [hcop]
   · simp [hmpos]
 

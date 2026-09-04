@@ -77,7 +77,7 @@ theorem sum_globalRationalAllowedLabels_weight
 two-state local weight used in F-035. -/
 theorem rational_witness_fibre_weight_le
     (P : Finset ℕ) (K j : ℕ) (hK : 0 < K)
-    (hprime : ∀ p ∈ P, p.Prime)
+    (_hprime : ∀ p ∈ P, p.Prime)
     (w : ℕ × ℕ) (hw : w ∈ nonzeroLabelPairs K)
     (S : Finset (∀ _p : ↥P, ℕ × ℕ))
     (height : (∀ _p : ↥P, ℕ × ℕ) → ℕ)

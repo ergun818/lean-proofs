@@ -29,7 +29,6 @@ theorem exists_int_shear_natAbs_le_half (x a : ℤ) (ha : a ≠ 0) :
     have haabs : 0 ≤ |(a : ℝ)| := abs_nonneg _
     nlinarith [mul_le_mul_of_nonneg_left hr haabs]
   have hcast : (2 * (x - n * a).natAbs : ℝ) ≤ (a.natAbs : ℝ) := by
-    push_cast
     simpa [Int.natCast_natAbs, Int.cast_abs] using hreal
   exact_mod_cast hcast
 
