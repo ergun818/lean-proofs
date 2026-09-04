@@ -5,7 +5,7 @@ open MeasureTheory Filter Set
 
 namespace Erdos525
 
-open Classical Finset
+open Finset
 
 namespace Odd
 
@@ -110,7 +110,7 @@ theorem halfGoodOuterDefectContribution_tendsto
     (Eventually.of_forall fun n ↦
       (halfGoodOuterDefectContribution_eq_sub n wideFactor narrowFactor u
         velocityLower velocityUpper hfactor).symm)
-  convert hsub using 1 <;> simp <;> ring
+  convert hsub using 1; simp; ring
 
 def HalfHasFactoredRepresentative
     (n : ℕ) (widthFactor u velocityLower velocityUpper : ℝ)

@@ -4,7 +4,7 @@ open scoped BigOperators ENNReal NNReal Topology Real ComplexConjugate RealInner
 
 namespace Erdos525
 
-open Classical Filter Finset Set MeasureTheory
+open Filter Finset Set MeasureTheory
 
 /-!
 ## Covariance of a single value away from the real degeneracies
@@ -89,11 +89,10 @@ lemma centeredFrequency_endpointPairIndex_false (n : ℕ)
     simp only [endpointPairFrequency]
     omega
   rw [Nat.cast_sub hq]
-  push_cast
   ring
 
 lemma endpoint_trig_pair_lower (a b x t : ℝ)
-    (ht0 : 0 ≤ t) (ht10 : t ≤ 10)
+    (ht0 : 0 ≤ t) (_ht10 : t ≤ 10)
     (hxl : t / 200 ≤ x) (hxu : x ≤ 1 / 2) :
     t ^ 2 / 500000 * (a ^ 2 + b ^ 2) ≤
       (a * Real.cos x + b * Real.sin x) ^ 2 +
@@ -207,7 +206,7 @@ lemma endpoint_pair_projection_lower
   rw [hformula, hformula, centeredFrequency_endpointPairIndex_true,
     centeredFrequency_endpointPairIndex_false]
   dsimp [x, q] at htrig ⊢
-  convert htrig using 1 <;> congr 3 <;> ring_nf
+  convert htrig using 1; congr 3 <;> ring_nf
 
 lemma endpoint_position_norm_sq (u : PositionCoordinate 1) :
     ‖positionToEuclidean u‖ ^ 2 = u 0 0 ^ 2 + u 0 1 ^ 2 := by
@@ -474,7 +473,7 @@ lemma endpoint_chord_two_mul_lower (n : ℕ) (hn : 0 < n) (t : ℝ)
   have hfour := four_mul_distanceToInteger_le_norm_circleExp_sub_one
     (t / (Real.pi * n))
   rw [distanceToInteger_eq_self_of_nonneg_le_half hratio0 hratioHalf] at hfour
-  convert hfour using 1 <;> congr 3 <;> field_simp [hnR.ne', Real.pi_ne_zero] <;> ring
+  convert hfour using 1; congr 3; field_simp [hnR.ne', Real.pi_ne_zero]; ring
 
 lemma endpoint_phasePositionCoeff_norm_sq (u : PositionCoordinate 1) :
     ‖phasePositionCoeff (positionPhaseEmbedding u) 0‖ ^ 2 =
@@ -499,7 +498,7 @@ lemma endpoint_position_cross_re_abs_le
       ‖centeredWaveMoment n k (t - -t)‖ ≤ 6 / delta := by
     intro k
     convert norm_centeredWaveMoment_le n k hn (by omega) (2 * t)
-      delta hdelta hchord using 1 <;> ring_nf
+      delta hdelta hchord using 1; ring_nf
   have hnorm := norm_centeredAffineCrossMoment_le n (-t) t
     (phasePositionCoeff (positionPhaseEmbedding u) 0 / 2) 0
     (conj (phasePositionCoeff (positionPhaseEmbedding u) 0) / 2) 0
@@ -554,7 +553,7 @@ lemma endpoint_position_cross_re_abs_le_reverse
       ‖centeredWaveMoment n k (-t - t)‖ ≤ 6 / delta := by
     intro k
     convert norm_centeredWaveMoment_le n k hn (by omega) (-2 * t)
-      delta hdelta hchord using 1 <;> ring_nf
+      delta hdelta hchord using 1; ring_nf
   have hnorm := norm_centeredAffineCrossMoment_le n t (-t)
     (conj (phasePositionCoeff (positionPhaseEmbedding u) 0) / 2) 0
     (phasePositionCoeff (positionPhaseEmbedding u) 0 / 2) 0
@@ -680,7 +679,7 @@ lemma endpoint_position_cross_re_abs_le_near_pi
           ((Real.pi * n - t) - -(Real.pi * n - t))‖ ≤ 6 / delta := by
     intro k
     convert norm_centeredWaveMoment_le n k hn (by omega)
-      (2 * (Real.pi * n - t)) delta hdelta hchord using 1 <;> ring_nf
+      (2 * (Real.pi * n - t)) delta hdelta hchord using 1; ring_nf
   have hnorm := norm_centeredAffineCrossMoment_le n (-(Real.pi * n - t))
     (Real.pi * n - t)
     (phasePositionCoeff (positionPhaseEmbedding u) 0 / 2) 0
@@ -731,7 +730,7 @@ lemma endpoint_position_cross_re_abs_le_reverse_near_pi
           (-(Real.pi * n - t) - (Real.pi * n - t))‖ ≤ 6 / delta := by
     intro k
     convert norm_centeredWaveMoment_le n k hn (by omega)
-      (-2 * (Real.pi * n - t)) delta hdelta hchord using 1 <;> ring_nf
+      (-2 * (Real.pi * n - t)) delta hdelta hchord using 1; ring_nf
   have hnorm := norm_centeredAffineCrossMoment_le n (Real.pi * n - t)
     (-(Real.pi * n - t))
     (conj (phasePositionCoeff (positionPhaseEmbedding u) 0) / 2) 0

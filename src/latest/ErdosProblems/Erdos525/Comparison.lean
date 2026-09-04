@@ -316,7 +316,7 @@ theorem halfGoodOuterDefectContribution_tendsto
     (Eventually.of_forall fun n ↦
       (halfGoodOuterDefectContribution_eq_sub n widthFactor u
         velocityLower velocityUpper hfactor).symm)
-  convert hsub using 1 <;> simp <;> ring
+  convert hsub using 1; simp; ring
 
 def HalfHasFactoredRepresentative
     (n : ℕ) (widthFactor u velocityLower velocityUpper : ℝ)

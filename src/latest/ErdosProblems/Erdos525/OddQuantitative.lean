@@ -5,7 +5,7 @@ open scoped BigOperators ENNReal NNReal Topology Real ComplexConjugate
 
 namespace Erdos525
 
-open Classical Filter Finset Set MeasureTheory
+open Filter Finset Set MeasureTheory
 
 namespace Odd
 
@@ -88,10 +88,10 @@ lemma scalarGaussian_mem_unit (a x : ℝ) (ha : 0 ≤ a) :
 
 lemma abs_prod_four_sub_prod_four_le
     {a b c d a' b' c' d' : ℝ}
-    (ha : a ∈ Set.Icc (0 : ℝ) 1) (hb : b ∈ Set.Icc (0 : ℝ) 1)
+    (_ha : a ∈ Set.Icc (0 : ℝ) 1) (hb : b ∈ Set.Icc (0 : ℝ) 1)
     (hc : c ∈ Set.Icc (0 : ℝ) 1) (hd : d ∈ Set.Icc (0 : ℝ) 1)
     (ha' : a' ∈ Set.Icc (0 : ℝ) 1) (hb' : b' ∈ Set.Icc (0 : ℝ) 1)
-    (hc' : c' ∈ Set.Icc (0 : ℝ) 1) (hd' : d' ∈ Set.Icc (0 : ℝ) 1) :
+    (hc' : c' ∈ Set.Icc (0 : ℝ) 1) (_hd' : d' ∈ Set.Icc (0 : ℝ) 1) :
     |a * b * c * d - a' * b' * c' * d'| ≤
       |a - a'| + |b - b'| + |c - c'| + |d - d'| := by
   have hid : a * b * c * d - a' * b' * c' * d' =
@@ -233,7 +233,7 @@ lemma phaseLimitingDensity_one_lipschitz (x y : PhaseEuclidean 1) :
       gcongr
     _ = 48 * ‖x - y‖ := by ring
 
-lemma nonneg_mul_exp_neg_le_one (t : ℝ) (ht : 0 ≤ t) :
+lemma nonneg_mul_exp_neg_le_one (t : ℝ) (_ht : 0 ≤ t) :
     t * Real.exp (-t) ≤ 1 := by
   have hden : t ≤ Real.exp t :=
     (le_add_of_nonneg_left (by norm_num : (0 : ℝ) ≤ 1)).trans
@@ -286,7 +286,6 @@ lemma scalarGaussian_dilation_le
         2 * w * s * (x ^ 2 * Real.exp (-t)) by
       rw [← sq_abs]
       ring]
-    change 2 * w * s * (x ^ 2 * Real.exp (-t)) ≤ 12
     calc
       _ ≤ (2 : ℝ) * 3 * 2 * 1 := by
         gcongr
@@ -383,7 +382,7 @@ lemma prefixScale_inv_sub_one_le_inv_nat (n : ℕ) (hn : 0 < n) :
   have hA : 0 < A := by dsimp [A]; positivity
   have haSq : a ^ 2 = (A + 1) / A := by
     dsimp [a, A]
-    convert prefixScale_inv_sq_eq n using 1 <;> push_cast <;> ring
+    convert prefixScale_inv_sq_eq n using 1; ring
   have hid : (a - 1) * (a + 1) = 1 / A := by
     rw [show (a - 1) * (a + 1) = a ^ 2 - 1 by ring, haSq]
     field_simp [hA.ne']
@@ -393,7 +392,7 @@ lemma prefixScale_inv_sub_one_le_inv_nat (n : ℕ) (hn : 0 < n) :
     rw [← hid]
     nlinarith
   have hnR : (0 : ℝ) < n := by exact_mod_cast hn
-  have hnA : (n : ℝ) ≤ A := by dsimp [A]; push_cast; nlinarith
+  have hnA : (n : ℝ) ≤ A := by dsimp [A]; nlinarith
   exact hfirst.trans (one_div_le_one_div_of_le hnR hnA)
 
 lemma densityScaleFactor_one_eq (n : ℕ) :
@@ -409,7 +408,6 @@ lemma densityScaleFactor_one_le_four (n : ℕ) :
   have hden : (0 : ℝ) < 2 * n + 1 := by positivity
   have hratio : (2 * n + 2 : ℝ) / (2 * n + 1 : ℝ) ≤ 2 := by
     rw [div_le_iff₀ hden]
-    push_cast
     nlinarith
   calc
     ((2 * n + 2 : ℝ) / (2 * n + 1 : ℝ)) ^ 2 ≤ (2 : ℝ) ^ 2 :=
@@ -428,16 +426,14 @@ lemma densityScaleFactor_one_sub_one_le_three_inv_nat
     dsimp [q]
     rw [div_le_one hA]
     dsimp [A]
-    push_cast
     nlinarith
   have hqn : q ≤ 1 / (n : ℝ) := by
     dsimp [q, A]
-    exact one_div_le_one_div_of_le hnR (by push_cast; nlinarith)
+    exact one_div_le_one_div_of_le hnR (by nlinarith)
   rw [densityScaleFactor_one_eq]
   have hratio : (2 * n + 2 : ℝ) / (2 * n + 1 : ℝ) = 1 + q := by
     dsimp [q, A]
     field_simp
-    push_cast
     ring
   rw [hratio]
   have hqSq : q ^ 2 ≤ q := by
@@ -469,7 +465,6 @@ lemma norm_extraPhaseEuclidean_one_le_four_div_sqrt_nat
         ring
   have htarget : 16 / (2 * n + 2 : ℝ) ≤ 16 / (n : ℝ) := by
     gcongr
-    push_cast
     nlinarith
   have hsquare : (4 / Real.sqrt n) ^ 2 = 16 / (n : ℝ) := by
     rw [div_pow, Real.sq_sqrt hnR.le]
@@ -615,7 +610,6 @@ theorem eventually_uniform_phaseSmoothedDensity_le_explicit :
     rw [densityScaleFactor_one_eq]
     have hratio : (1 : ℝ) ≤ (2 * n + 2 : ℝ) / (2 * n + 1 : ℝ) := by
       rw [le_div_iff₀ (by positivity : (0 : ℝ) < 2 * n + 1)]
-      push_cast
       nlinarith
     nlinarith [sq_nonneg ((2 * n + 2 : ℝ) / (2 * n + 1 : ℝ) - 1)]
   have hD4 : D ≤ 4 := by simpa [D] using densityScaleFactor_one_le_four n

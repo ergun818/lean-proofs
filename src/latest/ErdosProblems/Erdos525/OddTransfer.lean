@@ -4,7 +4,7 @@ open scoped BigOperators Topology ComplexConjugate RealInnerProductSpace
 
 namespace Erdos525
 
-open Classical Filter Finset Set MeasureTheory
+open Filter Finset Set MeasureTheory
 
 namespace Odd
 
@@ -156,7 +156,7 @@ theorem eventually_tail_le_halfFactoredVoid
   by_contra hcount
   rw [halfFactoredTruncatedLocalMinimumCount] at hcount
   simp only [Finset.card_eq_zero, Finset.filter_eq_empty_iff,
-    not_forall, not_or, not_not] at hcount
+    not_forall, not_not] at hcount
   rcases hcount with ⟨a, ha, hrep⟩
   have hfull := isFactoredTruncatedLocalRepresentative_to_truncated n widthFactor
     v velocityLower velocityUpper hfactor e a hrep

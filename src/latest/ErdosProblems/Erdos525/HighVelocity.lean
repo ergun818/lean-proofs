@@ -225,7 +225,7 @@ lemma blockVelocityTailMass_tendsto_zero :
       have hf0 : 0 ≤ f b := by dsimp [f]; positivity
       by_cases hb : V ≤ ‖b‖
       · rw [show F V b = f b by simp [F, hb]]
-        simpa [Real.norm_eq_abs, abs_of_nonneg hf0]
+        simp [Real.norm_eq_abs, abs_of_nonneg hf0]
       · rw [show F V b = 0 by simp [F, hb]]
         simpa [Real.norm_eq_abs] using hf0)
     integrable_complex_norm_mul_exp_neg_three_normSq
@@ -573,12 +573,11 @@ lemma highMeshVelocity_growing_upper_tendsto_zero :
   have hsize : (localMeshSize n : ℝ) ≤ 2 * rigidityPower n 2 := by
     simp only [localMeshSize, rigidityPower]
     norm_num
-    push_cast
     nlinarith [show (1 : ℝ) ≤ n by exact_mod_cast hn]
   have hcutSq : growingVelocityCutoff n ^ 2 =
       rigidityPower n (1 / 64) := by
     unfold growingVelocityCutoff
-    convert rigidityPower_nat_pow hn (1 / 128) 2 using 1 <;> norm_num
+    convert rigidityPower_nat_pow hn (1 / 128) 2 using 1; norm_num
   have hexp : -(growingVelocityCutoff n / 2) ^ 2 / 2 =
       -(1 / 8) * rigidityPower n (1 / 64) := by
     rw [div_pow, hcutSq]
@@ -923,7 +922,7 @@ theorem eventually_highVelocityMeshWitness_probability_le
             exact hspread he.2.2.1
           have hzero : uniformProbability (P a) = 0 := by
             unfold uniformProbability
-            simp [Finset.filter_eq_empty_iff, hempty]
+            simp [hempty]
           rw [hzero]
           exact div_nonneg hB hmeshPos.le
       · have hempty : ∀ e : SignVector (2 * n), ¬P a e := by
@@ -931,7 +930,7 @@ theorem eventually_highVelocityMeshWitness_probability_le
           exact hsmooth he.2.1
         have hzero : uniformProbability (P a) = 0 := by
           unfold uniformProbability
-          simp [Finset.filter_eq_empty_iff, hempty]
+          simp [hempty]
         rw [hzero]
         exact div_nonneg hB hmeshPos.le
     · have hempty : ∀ e : SignVector (2 * n), ¬P a e := by
@@ -939,7 +938,7 @@ theorem eventually_highVelocityMeshWitness_probability_le
         exact haHalf he.1
       have hzero : uniformProbability (P a) = 0 := by
         unfold uniformProbability
-        simp [Finset.filter_eq_empty_iff, hempty]
+        simp [hempty]
       rw [hzero]
       exact div_nonneg hB hmeshPos.le
   have hexists : uniformProbability (fun e : SignVector (2 * n) ↦
@@ -996,7 +995,7 @@ theorem eventually_highVelocitySmallMinimum_probability_le
             quantitativePhaseDensityError 1 n) +
         (uniformProbability B + uniformProbability C) := by gcongr
     _ = _ := by
-      simp only [A, B, C]
+      simp only [B, C]
       ring
 
 theorem highVelocitySmallMinimum_eventually_lt
@@ -1012,7 +1011,7 @@ theorem highVelocitySmallMinimum_eventually_lt
   have hE : Tendsto E atTop (nhds 0) := by
     have h := growingVelocityCutoff_cube_mul_densityError_tendsto_zero.const_mul
       (648 * Real.pi ^ 2 * (u + 2))
-    convert h using 1 <;> simp [E] <;> ring_nf
+    convert h using 1 <;> simp [E]; ring_nf
   have hrem := (hE.add uniformProbability_highMeshAcceleration_tendsto_zero).add
     uniformProbability_highMeshVelocity_growing_tendsto_zero
   have hrem' : Tendsto (fun n : ℕ ↦

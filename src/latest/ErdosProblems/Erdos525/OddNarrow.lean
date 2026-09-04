@@ -4,7 +4,7 @@ open scoped BigOperators Topology ComplexConjugate RealInnerProductSpace
 
 namespace Erdos525
 
-open Classical Filter Finset Set MeasureTheory
+open Filter Finset Set MeasureTheory
 
 namespace Odd
 
@@ -43,9 +43,14 @@ lemma norm_extra_acceleration (n : ℕ) (b : Bool) (t : ℝ) :
         (((((n + 1 : ℕ) : ℝ) / n : ℂ) * Complex.I) ^ 2) *
         Complex.exp ((((n + 1 : ℕ) : ℝ) * (t / n) : ℂ) * Complex.I)‖ =
       extraAccelerationBound n := by
-  simp only [Complex.ofReal_div, Nat.cast_add, Nat.cast_one, Complex.ofReal_add, Complex.ofReal_natCast,
-    Complex.ofReal_one, Complex.norm_mul, Complex.norm_div, Complex.norm_real, Real.norm_eq_abs, norm_pow,
-    RCLike.norm_natCast, Complex.norm_I, mul_one]
+  simp only [Complex.ofReal_div, Nat.cast_add, Nat.cast_one, Complex.ofReal_add,
+    Complex.ofReal_natCast, Complex.ofReal_one, Complex.norm_mul, Complex.norm_div,
+    Complex.norm_real, Real.norm_eq_abs, abs_sign, Real.sqrt_nonneg, abs_of_nonneg, one_div,
+    norm_pow, RCLike.norm_natCast, Complex.norm_I, mul_one, Complex.norm_exp, Complex.mul_re,
+    Complex.add_re, Complex.natCast_re, Complex.one_re, Complex.div_natCast_re,
+    Complex.ofReal_re, Complex.add_im, Complex.natCast_im, Complex.one_im, add_zero,
+    Complex.div_natCast_im, Complex.ofReal_im, zero_div, mul_zero, sub_zero, Complex.I_re,
+    Complex.mul_im, zero_mul, Complex.I_im, sub_self, Real.exp_zero, extraAccelerationBound]
   rw [show ‖((n : ℕ) : ℂ) + 1‖ = (n : ℝ) + 1 by
     rw [← Nat.cast_one, ← Nat.cast_add, Complex.norm_natCast]
     norm_num]
@@ -190,7 +195,7 @@ lemma fineGlobalAccelerationBound_div_tendsto_zero (k : ℕ) :
   convert hsum using 1
   · funext n
     unfold fineGlobalAccelerationBound
-    simp only [add_div, div_eq_mul_inv]
+    simp only [div_eq_mul_inv]
     ring
   · norm_num
 
@@ -422,7 +427,7 @@ lemma localRepresentative_pair_affine_location_bound_fine
     (hgood : ¬HasHighPrefixFineMeshAcceleration k n e)
     (u velocityLower velocityUpper : ℝ)
     (hu : 0 ≤ u) (hvelocityLower : 0 ≤ velocityLower)
-    (hvelocityUpper : 0 ≤ velocityUpper)
+    (_hvelocityUpper : 0 ≤ velocityUpper)
     (a b : Fin (localMeshSize n))
     (ha : IsTruncatedLocalRepresentative n u velocityLower velocityUpper e a)
     (hb : IsTruncatedLocalRepresentative n u velocityLower velocityUpper e b) :
@@ -623,7 +628,7 @@ lemma localRepresentatives_adjacent_of_fine_bounds
 
 theorem eventually_scaledWeakClose_representatives_adjacent
     (k : ℕ) (L u velocityLower velocityUpper : ℝ)
-    (hL : 0 ≤ L) (hu : 0 ≤ u)
+    (_hL : 0 ≤ L) (hu : 0 ≤ u)
     (hvelocityLower : 0 < velocityLower)
     (hvelocityUpper : 0 ≤ velocityUpper) :
     ∀ᶠ n : ℕ in atTop, ∀ (e : SignVector (2 * n + 1)),
@@ -797,7 +802,7 @@ lemma adjacent_factoredRepresentatives_impossible_of_error_lt
     (k n : ℕ) (hn : 0 < n) (e : SignVector (2 * n + 1))
     (hgood : ¬HasHighPrefixFineMeshAcceleration k n e)
     (widthFactor u velocityLower velocityUpper : ℝ)
-    (hfactor0 : 0 ≤ widthFactor) (hfactor1 : widthFactor < 1)
+    (_hfactor0 : 0 ≤ widthFactor) (hfactor1 : widthFactor < 1)
     (hu : 0 ≤ u) (hvelocityLower : 0 < velocityLower)
     (hvelocityUpper : 0 ≤ velocityUpper)
     (herr : fineAdjacentAffineLocationError k n u velocityLower velocityUpper /
@@ -847,6 +852,7 @@ theorem eventually_halfVeryClose_factoredRepresentatives_imply_highPrefix
           IsFactoredTruncatedLocalRepresentative n widthFactor u
             velocityLower velocityUpper e a) →
         HasHighPrefixFineMeshAcceleration k n e := by
+  classical
   have htarget : 0 < 2 * (1 - widthFactor) := by linarith
   have herr : ∀ᶠ n : ℕ in atTop,
       fineAdjacentAffineLocationError k n u velocityLower velocityUpper /
@@ -977,6 +983,7 @@ theorem halfNonspreadFactoredChooseContribution_tendsto_zero
       n k widthFactor u velocityLower velocityUpper).symm)
   simpa only [zero_add] using hsum'
 
+open Classical in
 noncomputable def halfFactoredTruncatedLocalMinimumCount
     (n : ℕ) (widthFactor u velocityLower velocityUpper : ℝ)
     (e : SignVector (2 * n + 1)) : ℕ :=
@@ -994,6 +1001,7 @@ lemma uniformChooseMoment_halfFactoredTruncatedLocalMinimumCount
           ∀ a ∈ s,
             IsFactoredTruncatedLocalRepresentative n widthFactor u
               velocityLower velocityUpper e a) := by
+  classical
   unfold uniformChooseMoment
   have heq :
       (fun e : SignVector (2 * n + 1) ↦
@@ -1018,7 +1026,7 @@ lemma uniformChooseMoment_halfFactoredTruncatedLocalMinimumCount
     by_cases h : ∀ a ∈ s,
         IsFactoredTruncatedLocalRepresentative n widthFactor u
           velocityLower velocityUpper e a
-    · simp [h]
+    · simp
     · simp [h]
   rw [heq]
   rw [uniformExpectation_finset_sum

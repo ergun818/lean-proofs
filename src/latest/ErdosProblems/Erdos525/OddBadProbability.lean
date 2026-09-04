@@ -5,7 +5,7 @@ open scoped BigOperators Topology ComplexConjugate RealInnerProductSpace
 
 namespace Erdos525
 
-open Classical Filter Finset Set MeasureTheory
+open Filter Finset Set MeasureTheory
 
 namespace Odd
 
@@ -90,7 +90,7 @@ lemma uniformProbability_eval_ball_le
   linarith
 
 lemma positionSmallBallUpper_two_le_four
-    (n : ℕ) (gamma delta : ℝ) (hgamma : 0 < gamma) :
+    (n : ℕ) (gamma delta : ℝ) (_hgamma : 0 < gamma) :
     positionSmallBallUpper n gamma (2 * delta) ≤
       4 * positionSmallBallUpper n gamma delta := by
   have htail : Real.exp (-((2 * delta) ^ 2 / 4) *

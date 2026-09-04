@@ -107,7 +107,7 @@ theorem centeredTail_limsup_le
         blockVelocityMass (1 / (k + 1 : ℝ)) (k + 1 : ℝ))))
       atTop (𝓝 (Real.exp (-2 * rate * u))) :=
     Real.continuous_exp.continuousAt.tendsto.comp (by
-      convert hmass.neg using 1 <;> ring_nf)
+      convert hmass.neg using 1; ring_nf)
   have hlt : ∀ᶠ k : ℕ in atTop,
       Real.exp (-((6 * u / Real.pi) *
         blockVelocityMass (1 / (k + 1 : ℝ)) (k + 1 : ℝ))) < b :=

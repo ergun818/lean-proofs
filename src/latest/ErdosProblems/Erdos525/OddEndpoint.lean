@@ -4,7 +4,7 @@ open scoped BigOperators Topology ComplexConjugate RealInnerProductSpace
 
 namespace Erdos525
 
-open Classical Filter Finset Set MeasureTheory
+open Filter Finset Set MeasureTheory
 
 namespace Odd
 
@@ -328,7 +328,7 @@ lemma extra_exp_pi_im (n : ℕ) (hn : 0 < n) :
   rw [harg, Complex.exp_im]
   simp only [Complex.mul_re, Complex.mul_im, Complex.ofReal_re,
     Complex.ofReal_im, Complex.I_re, Complex.I_im, mul_zero, sub_zero,
-    zero_mul, add_zero, mul_one]
+    add_zero, mul_one]
   rw [Real.sin_nat_mul_pi]
   simp
 
@@ -337,7 +337,7 @@ lemma eval_pi_im (n : ℕ) (hn : 0 < n)
     (eval n e (Real.pi * n)).im = 0 := by
   unfold eval
   rw [Complex.add_im, Complex.mul_im]
-  simp only [Complex.ofReal_re, Complex.ofReal_im, mul_zero, zero_add]
+  simp only [Complex.ofReal_re, Complex.ofReal_im]
   rw [rescaledCenteredEval_pi_im n hn]
   have him := extra_exp_pi_im n hn
   change prefixScale n * 0 + 0 *
@@ -381,7 +381,7 @@ lemma endpoint_linear_norm_ge_zero
   rw [← sq_le_sq₀ (norm_nonneg _) (norm_nonneg _)]
   simp only [Complex.sq_norm, Complex.normSq_apply, Complex.add_re,
     Complex.add_im, Complex.mul_re, Complex.ofReal_re, Complex.ofReal_im,
-    zero_mul, sub_zero, Complex.mul_im, zero_add]
+    zero_mul, sub_zero, Complex.mul_im]
   rw [hz, hv]
   nlinarith [sq_nonneg (t * (velocity n e 0).im)]
 
@@ -394,7 +394,7 @@ lemma endpoint_linear_norm_ge_pi
   rw [← sq_le_sq₀ (norm_nonneg _) (norm_nonneg _)]
   simp only [Complex.sq_norm, Complex.normSq_apply, Complex.add_re,
     Complex.add_im, Complex.mul_re, Complex.ofReal_re, Complex.ofReal_im,
-    zero_mul, sub_zero, Complex.mul_im, zero_add]
+    zero_mul, sub_zero, Complex.mul_im]
   rw [hz, hv]
   nlinarith [sq_nonneg (t * (velocity n e (Real.pi * n)).im)]
 

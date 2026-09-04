@@ -4,7 +4,7 @@ open scoped BigOperators Topology ComplexConjugate RealInnerProductSpace
 
 namespace Erdos525
 
-open Classical Filter Finset Set MeasureTheory
+open Filter Finset Set MeasureTheory
 
 namespace Odd
 
@@ -193,6 +193,7 @@ theorem eventually_halfGoodFactoredTruncatedChooseContribution_close
           blockVelocityMass velocityLower velocityUpper)) ^ m) *
           ((halfGoodLocalSiteSets n m).card : ℝ) /
             (localMeshSize n : ℝ) ^ m| < eps := by
+  classical
   have hlocal := eventually_uniform_scaled_good_factoredTruncatedLocalProbability
     m hm widthFactor u velocityLower velocityUpper hfactor hu hvelLower hvelUpper
       (half_pos heps)
@@ -272,7 +273,7 @@ theorem halfGoodFactoredTruncatedChooseContribution_tendsto
       (𝓝 (A * (((1 / 2 : ℝ) ^ m) / (m.factorial : ℝ)))) := by
     dsimp [reference]
     convert tendsto_const_nhds.mul
-      (halfGoodLocalSiteSets_ratio_tendsto_factorial m hm) using 1 <;> ring_nf
+      (halfGoodLocalSiteSets_ratio_tendsto_factorial m hm) using 1; ring_nf
   have hdiff : Tendsto (fun n : ℕ ↦
       halfGoodFactoredTruncatedChooseContribution n m widthFactor u
           velocityLower velocityUpper - reference n) atTop (𝓝 0) := by
@@ -486,7 +487,7 @@ lemma norm_normalizedPositionEuclideanWalk_sq
   apply Finset.sum_congr rfl
   intro r _hr
   rw [Fin.sum_univ_two]
-  simp only [WithLp.ofLp_toLp]
+  simp only []
   change (normalizedPhaseWalk n e points r 0) ^ 2 +
       (normalizedPhaseWalk n e points r 1) ^ 2 = ‖eval n e (points r)‖ ^ 2
   rw [← Complex.normSq_eq_norm_sq]

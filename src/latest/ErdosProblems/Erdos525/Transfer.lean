@@ -4,7 +4,7 @@ open scoped BigOperators Topology ComplexConjugate RealInnerProductSpace
 
 namespace Erdos525
 
-open Classical Filter Finset Set MeasureTheory
+open Filter Finset Set MeasureTheory
 open Asymptotics
 
 lemma rescaledCenteredEval_neg (n : ℕ) (e : SignVector (2 * n)) (t : ℝ) :
@@ -21,7 +21,7 @@ lemma rescaledCenteredEval_neg (n : ℕ) (e : SignVector (2 * n)) (t : ℝ) :
     · simp
     · rw [← Complex.exp_conj]
       congr 1
-      apply Complex.ext <;> simp [Complex.mul_re, Complex.mul_im] <;> ring
+      apply Complex.ext <;> simp [Complex.mul_re, Complex.mul_im]; ring
 
 @[simp] lemma norm_rescaledCenteredEval_neg
     (n : ℕ) (e : SignVector (2 * n)) (t : ℝ) :
@@ -235,7 +235,6 @@ lemma exists_halfLocalMeshSite_within_halfWidth
         have halastR : (a.val : ℝ) + 1 = (localMeshSize n : ℝ) := by
           exact_mod_cast halast
         have haR : (a : ℝ) = (localMeshSize n : ℝ) - 1 := by
-          change (a.val : ℝ) = (localMeshSize n : ℝ) - 1
           linarith
         dsimp [x, h]
         unfold localMeshPoint localMeshHalfWidth
@@ -281,7 +280,7 @@ lemma localAffineOffset_sub_minimizer_le
     (hortho : (rescaledCenteredEval n e t *
       conj (rescaledCenteredVelocity n e t)).re = 0)
     (a : Fin (localMeshSize n))
-    (haHalf : a ∈ halfLocalMeshSites n)
+    (_haHalf : a ∈ halfLocalMeshSites n)
     (haNear : |t - localMeshPoint n a| ≤ localMeshHalfWidth n)
     (hvelocityLower : 0 < velocityLower)
     (haLower : velocityLower ≤
@@ -786,6 +785,7 @@ lemma exists_smooth_factoredTruncatedLocalRepresentative_of_minimizer
       IsFactoredTruncatedLocalRepresentative n
         (minimumTransferWidthFactor n u velocityLower velocityUpper)
         (minimumTransferHeight n u) velocityLower velocityUpper e a := by
+  classical
   rcases exists_halfLocalMeshSite_within_halfWidth n hn
       (2 * rigiditySmoothScale n) t hwidth htSmooth ht with
     ⟨a, haHalf, haNear⟩

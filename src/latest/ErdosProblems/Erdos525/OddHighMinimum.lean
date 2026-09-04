@@ -5,7 +5,7 @@ open MeasureTheory Filter Set
 
 namespace Erdos525
 
-open Classical Finset
+open Finset
 
 namespace Odd
 
@@ -252,7 +252,7 @@ theorem eventually_highVelocityMeshWitness_probability_le
             exact hspread he.2.2.1
           have hzero : uniformProbability (P a) = 0 := by
             unfold uniformProbability
-            simp [Finset.filter_eq_empty_iff, hempty]
+            simp [hempty]
           rw [hzero]
           exact div_nonneg hB hmeshPos.le
       · have hempty : ∀ e : SignVector (2 * n + 1), ¬P a e := by
@@ -260,7 +260,7 @@ theorem eventually_highVelocityMeshWitness_probability_le
           exact hsmooth he.2.1
         have hzero : uniformProbability (P a) = 0 := by
           unfold uniformProbability
-          simp [Finset.filter_eq_empty_iff, hempty]
+          simp [hempty]
         rw [hzero]
         exact div_nonneg hB hmeshPos.le
     · have hempty : ∀ e : SignVector (2 * n + 1), ¬P a e := by
@@ -268,7 +268,7 @@ theorem eventually_highVelocityMeshWitness_probability_le
         exact haHalf he.1
       have hzero : uniformProbability (P a) = 0 := by
         unfold uniformProbability
-        simp [Finset.filter_eq_empty_iff, hempty]
+        simp [hempty]
       rw [hzero]
       exact div_nonneg hB hmeshPos.le
   have hexists : uniformProbability (fun e : SignVector (2 * n + 1) ↦
@@ -318,7 +318,7 @@ theorem eventually_highVelocitySmallMinimum_probability_le
           648 * Real.pi ^ 2 * (u + 2) * growingVelocityCutoff n ^ 3 *
             quantitativePhaseDensityError n) + uniformProbability C := by gcongr
     _ = _ := by
-      simp only [A, C]
+      simp only [C]
 
 theorem highVelocitySmallMinimum_eventually_lt
     (u V b : ℝ) (hu : 0 ≤ u) (hV : 0 < V)
@@ -333,7 +333,7 @@ theorem highVelocitySmallMinimum_eventually_lt
   have hE : Tendsto E atTop (𝓝 0) := by
     have h := growingVelocityCutoff_cube_mul_quantitativePhaseDensityError_tendsto_zero.const_mul
       (648 * Real.pi ^ 2 * (u + 2))
-    convert h using 1 <;> simp [E] <;> ring_nf
+    convert h using 1 <;> simp [E]; ring_nf
   have hrem := hE.add uniformProbability_highMeshVelocity_growing_tendsto_zero
   have hrem' : Tendsto (fun n : ℕ ↦
       E n + uniformProbability (HasHighMeshVelocity n (growingVelocityCutoff n)))

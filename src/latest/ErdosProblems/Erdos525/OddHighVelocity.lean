@@ -6,7 +6,7 @@ open MeasureTheory Filter Set
 
 namespace Erdos525
 
-open Classical Finset
+open Finset
 
 namespace Odd
 
@@ -190,7 +190,6 @@ lemma sqrt_centeredCount_mul_halfWidth_mul_growingCutoff_tendsto_zero :
     constructor
     · positivity
     · rw [mul_pow, Real.sq_sqrt hnR.le]
-      push_cast
       nlinarith [show (1 : ℝ) ≤ n by exact_mod_cast hn]
   have hmesh := n_mul_localMeshHalfWidth_le_pi n
   have hhalf : localMeshHalfWidth n ≤ Real.pi / n := by
@@ -282,7 +281,6 @@ lemma norm_extraVelocity_le_four_div_sqrt_nat
   have hsqrtN : 0 < Real.sqrt (n : ℝ) := Real.sqrt_pos.2 hnR
   have hsqrtCount : Real.sqrt (n : ℝ) ≤ Real.sqrt (2 * n + 2 : ℝ) := by
     apply Real.sqrt_le_sqrt
-    push_cast
     nlinarith
   have hratio : ((n + 1 : ℕ) : ℝ) / n ≤ 2 := by
     rw [div_le_iff₀ hnR]
@@ -421,12 +419,11 @@ lemma highPrefixMeshVelocity_half_upper_tendsto_zero :
     have hsize : (localMeshSize n : ℝ) ≤ 2 * rigidityPower n 2 := by
       simp only [localMeshSize, rigidityPower]
       norm_num
-      push_cast
       nlinarith [show (1 : ℝ) ≤ n by exact_mod_cast hn]
     have hcutSq : growingVelocityCutoff n ^ 2 =
         rigidityPower n (1 / 64) := by
       unfold growingVelocityCutoff
-      convert rigidityPower_nat_pow hn (1 / 128) 2 using 1 <;> norm_num
+      convert rigidityPower_nat_pow hn (1 / 128) 2 using 1; norm_num
     have hexp : -((growingVelocityCutoff n / 2) / 2) ^ 2 / 2 =
         -(1 / 32) * rigidityPower n (1 / 64) := by
       rw [div_pow, div_pow, hcutSq]

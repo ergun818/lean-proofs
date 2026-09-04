@@ -5,7 +5,7 @@ open scoped BigOperators ENNReal NNReal Topology Real ComplexConjugate
 
 namespace Erdos525
 
-open Classical Filter Finset Set MeasureTheory
+open Filter Finset Set MeasureTheory
 
 namespace Odd
 
@@ -402,13 +402,13 @@ theorem eventually_lowVelocitySmallMinimum_probability_le
           intro e he
           exact hspread he.2.1
         rw [show uniformProbability (P a) = 0 by
-          unfold uniformProbability; simp [Finset.filter_eq_empty_iff, hempty]]
+          unfold uniformProbability; simp [hempty]]
         positivity
     · have hempty : ∀ e : SignVector (2 * n + 1), ¬P a e := by
         intro e he
         exact hsmooth he.1
       rw [show uniformProbability (P a) = 0 by
-        unfold uniformProbability; simp [Finset.filter_eq_empty_iff, hempty]]
+        unfold uniformProbability; simp [hempty]]
       positivity
   have hwitness : uniformProbability
       (HasBoundedLowVelocityMeshWitness n u L) ≤

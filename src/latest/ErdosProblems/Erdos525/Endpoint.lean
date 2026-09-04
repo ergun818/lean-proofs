@@ -1,7 +1,7 @@
 import ErdosProblems.Erdos525.BadArc
 
 open scoped BigOperators Topology ComplexConjugate RealInnerProductSpace
-open Classical Filter Finset Set MeasureTheory
+open Filter Finset Set MeasureTheory
 open Erdos525
 
 namespace Erdos525
@@ -167,7 +167,6 @@ lemma rescaledCenteredEval_pi_im
   unfold Erdos525.rescaledCenteredEval Erdos525.centeredEval
   rw [Finset.mul_sum]
   simp_rw [endpointTwistedSigns_term n hn e]
-  push_cast
   simp
 
 lemma rescaledCenteredVelocity_pi_re
@@ -228,7 +227,7 @@ lemma endpoint_linear_norm_ge_zero
   rw [← sq_le_sq₀ (norm_nonneg _) (norm_nonneg _)]
   simp only [Complex.sq_norm, Complex.normSq_apply, Complex.add_re,
     Complex.add_im, Complex.mul_re, Complex.ofReal_re, Complex.ofReal_im,
-    zero_mul, sub_zero, Complex.mul_im, zero_add]
+    zero_mul, sub_zero, Complex.mul_im]
   rw [hz, hv]
   nlinarith [sq_nonneg (t * (Erdos525.rescaledCenteredVelocity n e 0).im)]
 
@@ -242,7 +241,7 @@ lemma endpoint_linear_norm_ge_pi
   rw [← sq_le_sq₀ (norm_nonneg _) (norm_nonneg _)]
   simp only [Complex.sq_norm, Complex.normSq_apply, Complex.add_re,
     Complex.add_im, Complex.mul_re, Complex.ofReal_re, Complex.ofReal_im,
-    zero_mul, sub_zero, Complex.mul_im, zero_add]
+    zero_mul, sub_zero, Complex.mul_im]
   rw [hz, hv]
   nlinarith [sq_nonneg (t *
     (Erdos525.rescaledCenteredVelocity n e (Real.pi * n)).im)]

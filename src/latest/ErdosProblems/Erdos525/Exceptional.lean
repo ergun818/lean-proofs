@@ -19,7 +19,7 @@ lemma oneBlockProductRegion_eq_preimage_pi
         Metric.closedBall (0 : ℂ) positionRadius ×ˢ
           Metric.closedBall (0 : ℂ) velocityRadius) := by
   ext y
-  simp only [oneBlockProductRegion, Set.mem_setOf_eq, Set.mem_preimage,
+  simp only [oneBlockProductRegion, Set.mem_ofPred_eq, Set.mem_preimage,
     Set.mem_pi, Set.mem_univ, forall_const, Set.mem_prod,
     Metric.mem_closedBall, dist_zero_right]
   constructor
@@ -60,7 +60,7 @@ lemma volumeReal_oneBlockProductRegion
     InnerProductSpace.volume_closedBall_of_dim_even
       (E := ℂ) (k := 1) (by simp)]
   simp only [Complex.finrank_real_complex, ENNReal.toReal_mul,
-    ENNReal.toReal_pow, ENNReal.toReal_ofReal hposition,
+    ENNReal.toReal_ofReal hposition,
     ENNReal.toReal_ofReal hvelocity, pow_two, Nat.factorial_one,
     Nat.cast_one, div_one]
   simp only [pow_one]
@@ -631,7 +631,7 @@ theorem eventually_lowVelocitySmallMinimum_probability_le
           exact hspread he.2.1
         have hzero : uniformProbability (P a) = 0 := by
           unfold uniformProbability
-          simp [Finset.filter_eq_empty_iff, hempty]
+          simp [hempty]
         rw [hzero]
         positivity
     · have hempty : ∀ e : SignVector (2 * n), ¬P a e := by
@@ -639,7 +639,7 @@ theorem eventually_lowVelocitySmallMinimum_probability_le
         exact hsmooth he.1
       have hzero : uniformProbability (P a) = 0 := by
         unfold uniformProbability
-        simp [Finset.filter_eq_empty_iff, hempty]
+        simp [hempty]
       rw [hzero]
       positivity
   have hwitness : uniformProbability

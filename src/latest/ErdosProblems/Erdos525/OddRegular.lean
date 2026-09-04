@@ -4,7 +4,7 @@ open scoped BigOperators Topology ComplexConjugate RealInnerProductSpace
 
 namespace Erdos525
 
-open Classical Filter Finset Set MeasureTheory
+open Filter Finset Set MeasureTheory
 
 namespace Odd
 
@@ -20,7 +20,7 @@ lemma globalAccelerationBound_div_tendsto_zero :
   convert hsum using 1
   · funext n
     unfold globalAccelerationBound
-    simp only [add_div, div_eq_mul_inv]
+    simp only [div_eq_mul_inv]
     ring
   · norm_num
 
@@ -71,7 +71,7 @@ lemma eval_neg (n : ℕ) (e : SignVector (2 * n + 1)) (t : ℝ) :
     · simp
     · rw [← Complex.exp_conj]
       congr 1
-      apply Complex.ext <;> simp [Complex.mul_re, Complex.mul_im] <;> ring
+      apply Complex.ext <;> simp [Complex.mul_re, Complex.mul_im]; ring
 
 @[simp] lemma norm_eval_neg (n : ℕ) (e : SignVector (2 * n + 1)) (t : ℝ) :
     ‖eval n e (-t)‖ = ‖eval n e t‖ := by
@@ -475,6 +475,7 @@ lemma exists_smooth_factoredTruncatedLocalRepresentative_of_minimizer
       IsFactoredTruncatedLocalRepresentative n
         (minimumTransferWidthFactor n u velocityLower velocityUpper)
         (minimumTransferHeight n u) velocityLower velocityUpper e a := by
+  classical
   rcases exists_halfLocalMeshSite_within_halfWidth n hn
       (2 * rigiditySmoothScale n) t hwidth htSmooth ht with
     ⟨a, haHalf, haNear⟩

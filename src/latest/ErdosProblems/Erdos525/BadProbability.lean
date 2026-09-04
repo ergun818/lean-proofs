@@ -4,7 +4,7 @@ open scoped BigOperators Topology ComplexConjugate RealInnerProductSpace
 
 namespace Erdos525
 
-open Classical Filter Finset Set MeasureTheory
+open Filter Finset Set MeasureTheory
 
 lemma norm_normalizedPositionEuclideanWalk_singleton
     (n : ℕ) (e : SignVector (2 * n)) (t : ℝ) :
@@ -64,7 +64,7 @@ lemma uniformProbability_eval_ball_le
 
 lemma HasPositionCovarianceLower.mono
     {n m : ℕ} {points : Fin m → ℝ} {gamma₁ gamma₂ : ℝ}
-    (h₁ : 0 ≤ gamma₁) (hgamma : gamma₁ ≤ gamma₂)
+    (_h₁ : 0 ≤ gamma₁) (hgamma : gamma₁ ≤ gamma₂)
     (hcov : HasPositionCovarianceLower n points gamma₂) :
     HasPositionCovarianceLower n points gamma₁ := by
   intro v
@@ -161,7 +161,6 @@ lemma growingVelocityCutoff_mul_endpointShellStep
   unfold growingVelocityCutoff endpointShellStep endpointShellLower
   rw [← rigidityPower_add hn, ← rigidityPower_add hn]
   congr 2
-  push_cast
   ring
 
 lemma endpointCoverGamma_eq_power
@@ -176,7 +175,7 @@ lemma endpointCoverGamma_eq_power
 
 lemma endpointCoverDelta_upper
     {n : ℕ} (hn : 0 < n) {u : ℝ} (hu : 0 ≤ u)
-    {ℓ : ℕ} (hℓ : ℓ < 49) :
+    {ℓ : ℕ} (_hℓ : ℓ < 49) :
     endpointCoverDelta n ℓ u ≤
       (u + 2) * rigidityPower n (((ℓ : ℝ) - 55) / 128) := by
   have hnOne : (1 : ℝ) ≤ n := by exact_mod_cast (show 1 ≤ n by omega)
@@ -272,7 +271,7 @@ lemma phaseNoWrapRadius_one_sq_lower (n : ℕ) :
 
 lemma endpoint_smoothing_exponent_lower
     {n : ℕ} (hn : 0 < n) {u : ℝ} (hu : 0 ≤ u)
-    {ℓ : ℕ} (hℓ : ℓ < 49) :
+    {ℓ : ℕ} (_hℓ : ℓ < 49) :
     (1 / 1024 : ℝ) * rigidityPower n (18 / 128) ≤
       endpointCoverDelta n ℓ u ^ 2 / 4 * phaseNoWrapRadius n 1 ^ 2 := by
   let a : ℝ := ((ℓ : ℝ) - 55) / 128
@@ -301,7 +300,6 @@ lemma endpoint_smoothing_exponent_lower
       ← rigidityPower_add hn]
     dsimp [a]
     congr 2
-    push_cast
     ring
   have hexp : (18 / 128 : ℝ) ≤ (2 * (ℓ : ℝ) + 18) / 128 := by
     have hℓ0 : (0 : ℝ) ≤ ℓ := by positivity

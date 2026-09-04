@@ -4,7 +4,7 @@ open scoped BigOperators Topology ComplexConjugate RealInnerProductSpace
 
 namespace Erdos525
 
-open Classical Filter Finset Set MeasureTheory
+open Filter Finset Set MeasureTheory
 
 namespace Odd
 
@@ -127,7 +127,7 @@ lemma phaseGaussianKernel_affine (m : ℕ) (a sigma : ℝ)
   exact phaseGaussianKernel_smul m a sigma ha hsigma _
 
 /-- Exact density formula after conditioning on the last sign. -/
-lemma phaseSmoothedDensity_eq_average (n : ℕ) (hn : 0 < n)
+lemma phaseSmoothedDensity_eq_average (n : ℕ) (_hn : 0 < n)
     (points : Fin m → ℝ) (sigma : ℝ) (hsigma : 0 < sigma)
     (y : PhaseEuclidean m) :
     phaseSmoothedDensity n points (prefixScale n * sigma) y =
@@ -171,7 +171,7 @@ lemma prefixScale_inv_tendsto_one :
 odd interval model do not change the limiting phase density, uniformly in the
 spatial target and in the conditioned final sign. -/
 lemma eventually_uniform_phaseLimitingDensity_affine
-    {m : ℕ} (hm : 0 < m) {eps : ℝ} (heps : 0 < eps) :
+    {m : ℕ} (_hm : 0 < m) {eps : ℝ} (heps : 0 < eps) :
     ∀ᶠ n : ℕ in atTop, ∀ (b : Bool) (points : Fin m → ℝ)
         (y : PhaseEuclidean m),
       |phaseLimitingDensity

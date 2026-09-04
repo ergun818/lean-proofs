@@ -4,7 +4,7 @@ open scoped BigOperators Topology ComplexConjugate RealInnerProductSpace
 
 namespace Erdos525
 
-open Classical Filter Finset Set MeasureTheory
+open Filter Finset Set MeasureTheory
 
 /-!  Deterministic covers used for the nonsmooth (major-arc) part of the
 minimum-modulus argument.  The endpoint cover is graded by powers of `n`;
@@ -53,7 +53,7 @@ lemma endpointShellUpper_eq_next (n ℓ : ℕ) :
   ring
 
 lemma mem_endpointCover_of_mem_shell
-    {n ℓ : ℕ} (hℓ : ℓ < 49) {t : ℝ}
+    {n ℓ : ℕ} (_hℓ : ℓ < 49) {t : ℝ}
     (htl : endpointShellLower n ℓ ≤ t)
     (htu : t < endpointShellUpper n ℓ)
     (hn : 0 < n) :
@@ -91,7 +91,7 @@ lemma mem_endpointCover_of_mem_shell
     exact le_add_of_nonneg_right (mul_nonneg (Nat.cast_nonneg _) hstep.le)
 
 lemma exists_endpoint_shell_of_range
-    {n : ℕ} (hn : 1 ≤ n) {t : ℝ}
+    {n : ℕ} (_hn : 1 ≤ n) {t : ℝ}
     (hlower : endpointExclusionRadius n ≤ t)
     (hupper : t < endpointShellUpper n 48) :
     ∃ ℓ < 49,
@@ -140,7 +140,6 @@ lemma endpointShellUpper_div_step_eq
   rw [← Real.rpow_neg hnR.le, ← Real.rpow_neg hnR.le]
   rw [← Real.rpow_add hnR, ← Real.rpow_add hnR]
   congr 2
-  push_cast
   ring
 
 lemma endpointShellCount_cast_le
@@ -526,7 +525,7 @@ lemma interiorArcCover_card_cast_le
           rigidityPower n (1 / 16) * rigidityPower n (5 / 16) =
             rigidityPower n (7 / 16) := by
         rw [← rigidityPower_add hn, ← rigidityPower_add hn]
-        congr 2 <;> norm_num
+        congr 2; norm_num
       rw [← hpowers]
       ring
 
@@ -614,14 +613,14 @@ lemma norm_rescaledCenteredEval_sub_le_of_global_velocity
 
 lemma small_value_transfers_to_left_cover_point
     {n : ℕ} (hn : 0 < n) (e : SignVector (2 * n))
-    (hacc : ¬HasHighMeshAcceleration n e)
-    (hmesh : ¬HasHighMeshVelocity n (growingVelocityCutoff n) e)
+    (_hacc : ¬HasHighMeshAcceleration n e)
+    (_hmesh : ¬HasHighMeshVelocity n (growingVelocityCutoff n) e)
     (hglobal : ∀ s ∈ Set.Ico (-(Real.pi * n)) (Real.pi * n),
       ‖rescaledCenteredVelocity n e s‖ ≤ 2 * growingVelocityCutoff n)
     (u t q step : ℝ)
-    (ht : t ∈ Set.Icc (0 : ℝ) (Real.pi * n))
+    (_ht : t ∈ Set.Icc (0 : ℝ) (Real.pi * n))
     (hq0 : 0 ≤ q) (hqt : q ≤ t) (htop : t < Real.pi * n)
-    (hdist : t - q < step) (hstep : 0 ≤ step)
+    (hdist : t - q < step) (_hstep : 0 ≤ step)
     (hsmall : ‖rescaledCenteredEval n e t‖ ≤ u / n) :
     ‖rescaledCenteredEval n e q‖ ≤
       u / n + 2 * growingVelocityCutoff n * step := by
@@ -658,14 +657,14 @@ lemma small_value_transfers_to_left_cover_point
 
 lemma small_value_transfers_to_right_cover_point
     {n : ℕ} (hn : 0 < n) (e : SignVector (2 * n))
-    (hacc : ¬HasHighMeshAcceleration n e)
-    (hmesh : ¬HasHighMeshVelocity n (growingVelocityCutoff n) e)
+    (_hacc : ¬HasHighMeshAcceleration n e)
+    (_hmesh : ¬HasHighMeshVelocity n (growingVelocityCutoff n) e)
     (hglobal : ∀ s ∈ Set.Ico (-(Real.pi * n)) (Real.pi * n),
       ‖rescaledCenteredVelocity n e s‖ ≤ 2 * growingVelocityCutoff n)
     (u t q step : ℝ)
     (ht : t ∈ Set.Icc (0 : ℝ) (Real.pi * n))
     (htq : t ≤ q) (hqtop : q < Real.pi * n)
-    (hdist : q - t < step) (hstep : 0 ≤ step)
+    (hdist : q - t < step) (_hstep : 0 ≤ step)
     (hsmall : ‖rescaledCenteredEval n e t‖ ≤ u / n) :
     ‖rescaledCenteredEval n e q‖ ≤
       u / n + 2 * growingVelocityCutoff n * step := by

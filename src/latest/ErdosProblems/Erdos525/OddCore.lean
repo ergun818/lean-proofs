@@ -16,7 +16,7 @@ open scoped BigOperators Topology ComplexConjugate RealInnerProductSpace
 
 namespace Erdos525
 
-open Classical Filter Finset Set MeasureTheory
+open Filter Finset Set MeasureTheory
 
 namespace Odd
 
@@ -263,7 +263,7 @@ lemma norm_extraPhaseEuclidean_sq_le {n : ℕ} (hn : 0 < n) (b : Bool)
       ring
 
 lemma norm_extraPhaseEuclidean_tendsto_zero (b : Bool)
-    (points : ∀ n, Fin m → ℝ) :
+    (points : ∀ _n, Fin m → ℝ) :
     Tendsto (fun n : ℕ ↦ ‖extraPhaseEuclidean n b (points n)‖)
       atTop (𝓝 0) := by
   have hden : Tendsto (fun n : ℕ ↦ (2 * n + 2 : ℝ)) atTop atTop := by
@@ -374,8 +374,8 @@ lemma normalizedPhaseEuclideanWalk_appendSign (n : ℕ)
   rcases i with ⟨r, c⟩
   simp only [Odd.normalizedPhaseEuclideanWalk, extraPhaseEuclidean,
     Erdos525.normalizedPhaseEuclideanWalk,
-    phaseToEuclidean_apply, PiLp.add_apply, Pi.add_apply, PiLp.smul_apply,
-    Pi.smul_apply, smul_eq_mul]
+    phaseToEuclidean_apply, PiLp.add_apply, PiLp.smul_apply,
+    smul_eq_mul]
   rw [normalizedPhaseWalk_eq]
   simp
 

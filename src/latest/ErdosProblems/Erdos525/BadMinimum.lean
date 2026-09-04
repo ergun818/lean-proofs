@@ -4,7 +4,7 @@ open scoped BigOperators Topology ComplexConjugate RealInnerProductSpace
 
 namespace Erdos525
 
-open Classical Filter Finset Set MeasureTheory
+open Filter Finset Set MeasureTheory
 
 lemma eventually_endpointShellUpper_48_gt_eleven :
     ∀ᶠ n : ℕ in atTop, 11 < endpointShellUpper n 48 := by

@@ -4,7 +4,7 @@ open scoped BigOperators Topology ComplexConjugate RealInnerProductSpace
 
 namespace Erdos525
 
-open Classical Filter Finset Set MeasureTheory
+open Filter Finset Set MeasureTheory
 
 noncomputable def lowVelocityDiagonalError (u : ℝ) (k : ℕ) : ℝ :=
   256 * Real.pi ^ 2 *
@@ -55,7 +55,7 @@ lemma diagonalHalfVoidLimit (v : ℝ) :
       atTop (𝓝 (Real.exp (-2 * rate * v))) := by
   have hmass := halfScaledExhaustedBlockMass_tendsto v
   exact Real.continuous_exp.continuousAt.tendsto.comp (by
-    convert hmass.neg using 1 <;> ring_nf)
+    convert hmass.neg using 1; ring_nf)
 
 theorem centeredTail_liminf_ge
     (u : ℝ) (hu : 0 < u) {a : ℝ}

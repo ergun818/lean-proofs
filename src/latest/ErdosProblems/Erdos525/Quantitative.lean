@@ -413,7 +413,7 @@ lemma phaseLimitingSmoothingError_le_quadratic
           Real.exp (- (‖u‖ ^ 2 / 12)) =
           |Real.exp (-a) - 1| * Real.exp (- (‖u‖ ^ 2 / 12)) := by
             dsimp [a]
-            congr 3 <;> ring_nf
+            congr 3; ring_nf
       _ ≤ a * Real.exp (- (‖u‖ ^ 2 / 12)) :=
         mul_le_mul_of_nonneg_right habs (Real.exp_pos _).le
       _ ≤ a * Real.exp (- (‖u‖ ^ 2 / 24)) :=
@@ -504,11 +504,11 @@ lemma rigidityPower_mul_phaseCovarianceApproxBound_tendsto_zero
     have hpOne : rigidityPower n p / (6 * (n : ℝ)) =
         (1 / 6 : ℝ) * rigidityPower n (-(1 - p)) := by
       rw [hnPow, show rigidityPower n (-(1 - p)) =
-          rigidityPower n (p - 1) by congr 1 <;> ring]
+          rigidityPower n (p - 1) by congr 1; ring]
       rw [show rigidityPower n (p - 1) =
           rigidityPower n p * rigidityPower n (-1) by
             rw [← rigidityPower_add hn]
-            congr 1 <;> ring]
+            congr 1]
       rw [show rigidityPower n (-1) = (rigidityPower n 1)⁻¹ by
         unfold rigidityPower
         rw [Real.rpow_neg (by exact_mod_cast hn.le)]]

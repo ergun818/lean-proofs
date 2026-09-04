@@ -4,7 +4,7 @@ open scoped BigOperators Topology ComplexConjugate RealInnerProductSpace
 
 namespace Erdos525
 
-open Classical Filter Finset Set MeasureTheory
+open Filter Finset Set MeasureTheory
 
 namespace Odd
 
@@ -41,7 +41,7 @@ lemma continuous_phaseSmoothedDensity
     Continuous (phaseSmoothedDensity n points sigma) := by
   unfold phaseSmoothedDensity uniformExpectation
   apply Continuous.div_const
-  apply continuous_finset_sum
+  apply continuous_finsetSum
   intro e _he
   exact (continuous_phaseGaussianKernel m sigma).comp
     (continuous_const.sub continuous_id)
@@ -65,7 +65,7 @@ lemma integral_phaseSmoothedDensity
 lemma abs_setIntegral_phaseSmoothedDensity_sub_limiting_le
     (m n : ℕ) (hm : 0 < m) (points : Fin m → ℝ) (sigma delta : ℝ)
     (s : Set (PhaseEuclidean m)) (hsfinite : volume s ≠ ⊤)
-    (hdelta : 0 ≤ delta)
+    (_hdelta : 0 ≤ delta)
     (hclose : ∀ y : PhaseEuclidean m,
       |phaseSmoothedDensity n points sigma y - phaseLimitingDensity y| ≤ delta) :
     |(∫ y in s, phaseSmoothedDensity n points sigma y) -
@@ -281,6 +281,7 @@ lemma integral_innerErosion_phaseSmoothedDensity_le
       uniformProbability (fun e : SignVector (2 * n + 1) ↦
           normalizedPhaseEuclideanWalk n e points ∈ s) +
         2 ^ (2 * m) * Real.exp (-(r ^ 2 / (4 * sigma ^ 2))) := by
+  classical
   rw [integral_phaseSmoothedDensity n points sigma hsigma]
   let tail : ℝ := 2 ^ (2 * m) * Real.exp (-(r ^ 2 / (4 * sigma ^ 2)))
   calc

@@ -4,7 +4,7 @@ open scoped BigOperators Topology ComplexConjugate RealInnerProductSpace
 
 namespace Erdos525
 
-open Classical Filter Finset Set MeasureTheory
+open Filter Finset Set MeasureTheory
 open Asymptotics
 
 abbrev PositionCoordinate (m : ℕ) := Fin m → Fin 2 → ℝ
@@ -596,7 +596,7 @@ lemma positionCharFun_integral_le_of_positionCovariance
         calc
           _ ≤ 1 * Real.exp (-(gamma / Real.pi ^ 2 * ‖u‖ ^ 2)) :=
             mul_le_mul hweight hchar (norm_nonneg _) zero_le_one
-          _ = _ := by congr 1 <;> ring_nf
+          _ = _ := by ring_nf
       _ ≤ ∫ u, g u := setIntegral_le_integral hg
         (Eventually.of_forall fun u ↦ by dsimp [g]; positivity)
   have htail : (∫ u in Bᶜ, f u) ≤
@@ -607,7 +607,7 @@ lemma positionCharFun_integral_le_of_positionCovariance
     have hBc : Bᶜ = {u : PositionEuclidean m |
         phaseNoWrapRadius n m ≤ ‖u‖} := by
       ext u
-      simp [B, mem_ball_zero_iff]
+      simp [B]
     rw [hBc]
     simpa [f] using h
   rw [← integral_add_compl (s := B) measurableSet_ball hf]
@@ -747,7 +747,7 @@ theorem phaseLatticeEnergy_high_frequency_position_rigidity
               2 * (k : ℝ) * ((Q ^ (2 * m) : ℕ) : ℝ) / n *
                 (2 * Real.pi / Q) ^ (2 * k - 1))) +
         (2 : ℝ) ^ (2 * k) * a < 1)
-    (hdeltaOne :
+    (_hdeltaOne :
       individualDilationGap q (min (K / n) (lam / n)) ≤ 1)
     (hposition :
       phaseHighPositionBudget t E J (phaseTwistCount m) k <
@@ -773,7 +773,7 @@ theorem phaseLatticeEnergy_high_frequency_position_rigidity
   have hsle : s ≤ 2 * n := by omega
   have hjbase : |((((s : ℕ) : ℤ) - (n : ℤ)) : ℝ)| ≤ (n : ℝ) := by
     have hsreal : (s : ℝ) ≤ 2 * (n : ℝ) := by exact_mod_cast hsle
-    simp only [Int.cast_sub, Int.cast_natCast]
+    simp only [Int.cast_natCast]
     rw [abs_le]
     constructor <;> linarith
   have hj : |((((s : ℕ) : ℤ) - (n : ℤ)) : ℝ)| ≤ J * H :=
@@ -836,7 +836,7 @@ theorem phaseLatticeEnergy_high_frequency_position_rigidity
       gcongr
     have hl1' : (∑ r : Fin m, ∑ c : Fin 4, |u r c|) ≤
         ((4 * m : ℕ) : ℝ) := by
-      convert hl1 using 1 <;> push_cast <;> ring
+      convert hl1 using 1; push_cast; ring
     have hinside :
         (∑ r : Fin m, ∑ c : Fin 4, |u r c|) *
             (eta ^ (2 * k) +
@@ -1061,7 +1061,6 @@ lemma positionRigidity_position_demand_margin_from_eighth
   have hgap' :
       4 * (phaseTwistCount m : ℝ) * positionRigidityGapLossExponent m ≤
         24 / 10000 := hgap.trans (by nlinarith)
-  push_cast
   nlinarith
 
 noncomputable def positionRigidityFourierExponent (m : ℕ) : ℝ :=
@@ -1113,7 +1112,6 @@ lemma eventually_half_positionRigidityCoreScale (m : ℕ) :
     (rigidityPower n (positionRigidityBlockExponent m) / 10)
   change rigidityPower n (positionRigidityBlockExponent m) / 20 ≤
     ((⌊rigidityPower n (positionRigidityBlockExponent m) / 10⌋₊ : ℕ) : ℝ)
-  push_cast at hfloor
   linarith
 
 lemma tendsto_positionRigidityBlockScale_atTop (m : ℕ) :
@@ -1411,7 +1409,7 @@ lemma eventually_positionRigidity_block_condition (m : ℕ) :
                 (positionRigidityEnergyExponent m +
                   2 * positionRigidityGoodThresholdExponent m)) :=
             (rigidityPower_add hn _ _).symm
-          _ = _ := by congr 1 <;> ring
+          _ = _ := by congr 1; ring
       rw [mul_add, mul_one, hp]
     _ ≤ rigidityPower n 1 / 2 + rigidityPower n 1 / 2 := by
       exact add_le_add (by nlinarith) (by nlinarith)
@@ -1741,7 +1739,6 @@ lemma eventually_positionRigidity_demand_condition
     congr 2
     dsimp [b]
     unfold positionRigidityBlockExponent
-    push_cast
     ring
   have hbudget :
       phaseHighPositionBudget t (positionRigidityEnergyScale m n)
@@ -1921,7 +1918,7 @@ theorem eventually_norm_positionCharFun_high_frequency
   have hphase : 0 < phaseNormSq
       (positionPhaseEmbedding (euclideanToPosition u)) := by
     rw [phaseNormSq_positionPhaseEmbedding]
-    simp [positionToEuclidean, euclideanToPosition]
+    simp only [positionToEuclidean, euclideanToPosition, Prod.mk.eta, WithLp.toLp_ofLp]
     positivity
   rw [positionCharFun_eq_normalizedPhaseCharFun]
   apply norm_normalizedPhaseCharFun_le_exp_neg_of_phaseLatticeEnergy
@@ -2107,7 +2104,7 @@ theorem eventually_positionCharFun_integral_le_weakSpread
         calc
           _ ≤ 1 * Real.exp (-(gamma / Real.pi ^ 2 * ‖u‖ ^ 2)) :=
             mul_le_mul hweight hchar (norm_nonneg _) zero_le_one
-          _ = _ := by congr 1 <;> ring_nf
+          _ = _ := by ring_nf
       _ ≤ ∫ u, h u := setIntegral_le_integral hh
         (Eventually.of_forall fun u ↦ by dsimp [h]; positivity)
       _ = (Real.pi / (gamma / Real.pi ^ 2)) ^ m := by
@@ -2255,7 +2252,7 @@ lemma norm_normalizedPositionEuclideanWalk_sq
   apply Finset.sum_congr rfl
   intro r _hr
   rw [Fin.sum_univ_two]
-  simp only [WithLp.ofLp_toLp]
+  simp only []
   change (normalizedPhaseWalk n e points r 0) ^ 2 +
       (normalizedPhaseWalk n e points r 1) ^ 2 =
     ‖rescaledCenteredEval n e (points r)‖ ^ 2
@@ -2319,7 +2316,6 @@ lemma joint_truncatedLocalRepresentatives_positionBall
         (Real.sqrt s.card * R) ^ 2 := by
     rw [norm_normalizedPositionEuclideanWalk_sq]
     rw [mul_pow, Real.sq_sqrt (by positivity)]
-    push_cast
     simpa [R] using hsquares
   exact (sq_le_sq₀ (norm_nonneg _) (mul_nonneg (Real.sqrt_nonneg _) hR)).1
     hnormsq
@@ -2411,7 +2407,6 @@ lemma eventually_weakPhaseCovarianceGamma_lower
   rw [hpowEq] at hdeltaPow
   have hwindow : (n : ℝ) / 3 ≤ weakCovarianceWindow n := by
     unfold weakCovarianceWindow
-    push_cast
     have hfloor : n / 2 + 1 > n / 2 := Nat.lt_succ_self _
     have htwo : 2 * (n / 2) ≤ n := Nat.mul_div_le _ _
     have hlower : n ≤ 3 * (n / 2) := by omega
@@ -2448,7 +2443,6 @@ lemma eventually_weakPhaseCovarianceGamma_lower
             (((weakCovarianceWindow n : ℝ) / (2 * n + 1 : ℝ)) *
               delta ^ (8 * L)) := by
       field_simp [hD.ne', (show (2 * n + 1 : ℝ) ≠ 0 by positivity)]
-      <;> ring
     rw [hleft, hright]
     apply mul_le_mul_of_nonneg_left _ (by positivity)
     exact mul_le_mul hratio hdeltaScaled
@@ -2579,7 +2573,6 @@ lemma positionLowIntegralTerm_eq
         rigidityPower n (-(positionCovarianceFloorExponent m * m)) := by
     rw [rigidityPower_nat_pow hn]
     congr 1
-    push_cast
     ring
   rw [hinv, positionCovarianceFloor_mul m hm]
   unfold rigidityPower
@@ -2647,7 +2640,6 @@ lemma positionTailGaussianExponent_lower
     congr 1
     ring
   have hfactor : (n : ℝ) ≤ 2 * n + 1 := by
-    push_cast
     linarith
   have hnonneg :
       0 ≤ positionSmoothingScale n ^ 2 / 4 *
@@ -2982,7 +2974,6 @@ lemma eventually_smoothBadLocalSites_ratio_le_power :
     exact_mod_cast hraw'
   have hP : (P : ℝ) ≤ 2 * K := by
     have hfloor := Nat.floor_le hK0
-    push_cast
     dsimp [P]
     push_cast
     linarith
@@ -3002,7 +2993,6 @@ lemma eventually_smoothBadLocalSites_ratio_le_power :
       _ ≤ K * ((M : ℝ) / n) := mul_le_mul hKn hMn (by norm_num) hK0
   have hD : (D : ℝ) ≤ 2 * X := by
     have hfloor := Nat.floor_le (by positivity : 0 ≤ X)
-    push_cast
     dsimp [D]
     push_cast
     linarith
@@ -3078,7 +3068,6 @@ lemma eventually_cyclicBoundarySites_ratio_le_power :
       (mul_le_mul hKn hMn (by norm_num) (by positivity))
   have hD : (D : ℝ) ≤ 2 * X := by
     have hfloor := Nat.floor_le (by positivity : 0 ≤ X)
-    push_cast
     dsimp [D]
     push_cast
     linarith
@@ -3146,7 +3135,6 @@ lemma eventually_singletonSpreadBadSites_ratio_le_power :
     nlinarith
   have hD : (D : ℝ) ≤ 2 * X := by
     have hfloor := Nat.floor_le (by positivity : 0 ≤ X)
-    push_cast
     dsimp [D]
     push_cast
     linarith
@@ -3287,11 +3275,13 @@ theorem weighted_badLocalSiteSets_ratio_tendsto_zero
     (tendsto_rigidityPower_neg_zero
       (by norm_num : (0 : ℝ) < 1 / 5)).const_mul C using 1 <;> norm_num
 
+open Classical in
 noncomputable def halfWeakNonspreadLocalSiteSets (n k : ℕ) :
     Finset (Finset (Fin (localMeshSize n))) :=
   (halfNonspreadLocalSiteSets n k).filter fun s ↦
     IsSpread n (weakSpreadScale k n) (localSitesPoints s)
 
+open Classical in
 noncomputable def halfVeryCloseLocalSiteSets (n k : ℕ) :
     Finset (Finset (Fin (localMeshSize n))) :=
   (halfNonspreadLocalSiteSets n k).filter fun s ↦
@@ -3309,6 +3299,7 @@ lemma halfNonspread_eq_weak_union_veryClose (n k : ℕ) :
 lemma halfWeakNonspread_disjoint_veryClose (n k : ℕ) :
     Disjoint (halfWeakNonspreadLocalSiteSets n k)
       (halfVeryCloseLocalSiteSets n k) := by
+  classical
   rw [Finset.disjoint_left]
   intro s hweak hclose
   have hweak' := Finset.mem_filter.mp hweak
@@ -3317,6 +3308,7 @@ lemma halfWeakNonspread_disjoint_veryClose (n k : ℕ) :
 
 lemma halfWeakNonspread_subset_badLocalSiteSets (n k : ℕ) :
     halfWeakNonspreadLocalSiteSets n k ⊆ badLocalSiteSets n k := by
+  classical
   intro s hs
   have hweak := Finset.mem_filter.mp hs
   have hnonspread := Finset.mem_filter.mp hweak.1
@@ -3364,6 +3356,7 @@ theorem eventually_scaled_halfWeakNonspread_site_probability_le_power
             ∀ a ∈ s,
               IsTruncatedLocalRepresentative n u velocityLower velocityUpper e a) ≤
         rigidityPower n (1 / 20) := by
+  classical
   filter_upwards [Nat.eventually_pos,
       eventually_scaled_positionBall_probability_le_power
         hk u velocityUpper hu hvelocityUpper]
@@ -3619,14 +3612,13 @@ theorem scaled_highFineMeshAcceleration_upper_tendsto_zero
     have hsize : (localMeshSize n : ℝ) ≤ 2 * rigidityPower n 2 := by
       simp only [localMeshSize, rigidityPower]
       norm_num
-      push_cast
       nlinarith [show (1 : ℝ) ≤ n by exact_mod_cast hn]
     have hsizePow : (localMeshSize n : ℝ) ^ (d + 1) ≤
         (2 * rigidityPower n 2) ^ (d + 1) := by
       exact pow_le_pow_left₀ (by positivity) hsize _
     have hrpow : rigidityPower n 2 ^ (d + 1) =
         rigidityPower n (2 * (d + 1)) := by
-      convert rigidityPower_nat_pow hn 2 (d + 1) using 1 <;> norm_num
+      convert rigidityPower_nat_pow hn 2 (d + 1) using 1; norm_num
     have hsizePow' : (localMeshSize n : ℝ) ^ (d + 1) ≤
         2 ^ (d + 1) * rigidityPower n (2 * (d + 1)) := by
       calc
@@ -3671,7 +3663,7 @@ theorem localMeshSize_pow_mul_highFineMeshAcceleration_tendsto_zero
     have hprob := uniformProbability_highFineMeshAcceleration_le k n hn
     have hmesh : 0 ≤ (localMeshSize n : ℝ) ^ d := by positivity
     have := mul_le_mul_of_nonneg_left hprob hmesh
-    convert this using 1 <;> ring
+    convert this using 1
   · convert scaled_highFineMeshAcceleration_upper_tendsto_zero k d using 1
     funext n
     ring
@@ -3989,7 +3981,7 @@ lemma localRepresentative_pair_affine_location_bound_fine
     (hgood : ¬HasHighFineMeshAcceleration k n e)
     (u velocityLower velocityUpper : ℝ)
     (hu : 0 ≤ u) (hvelocityLower : 0 ≤ velocityLower)
-    (hvelocityUpper : 0 ≤ velocityUpper)
+    (_hvelocityUpper : 0 ≤ velocityUpper)
     (a b : Fin (localMeshSize n))
     (ha : IsTruncatedLocalRepresentative n u velocityLower velocityUpper e a)
     (hb : IsTruncatedLocalRepresentative n u velocityLower velocityUpper e b) :
@@ -4362,7 +4354,7 @@ lemma localRepresentatives_adjacent_of_fine_bounds
 
 theorem eventually_scaledWeakClose_representatives_adjacent
     (k : ℕ) (L u velocityLower velocityUpper : ℝ)
-    (hL : 0 ≤ L)
+    (_hL : 0 ≤ L)
     (hu : 0 ≤ u) (hvelocityLower : 0 < velocityLower)
     (hvelocityUpper : 0 ≤ velocityUpper) :
     ∀ᶠ n : ℕ in atTop, ∀ (e : SignVector (2 * n)),
@@ -4598,6 +4590,7 @@ lemma halfSmooth_not_weakSpread_has_close_pair
     ∃ a ∈ s, ∃ b ∈ s, a ≠ b ∧
       |localMeshPoint n b - localMeshPoint n a| <
         2 * Real.pi * weakSpreadScale k n := by
+  classical
   have hsmooth : ∀ r : Fin s.card,
       IsSmooth n (rigiditySmoothScale n) (localSitesPoints s r) := by
     intro r
@@ -4705,6 +4698,7 @@ theorem eventually_halfVeryClose_representatives_have_adjacent_pair
           IsTruncatedLocalRepresentative n u velocityLower velocityUpper e a) →
         ∃ a ∈ s, ∃ b ∈ s, a ≠ b ∧
           (b.val = a.val + 1 ∨ a.val = b.val + 1) := by
+  classical
   filter_upwards [Nat.eventually_pos,
       eventually_two_weakSpreadScale_le_rigiditySmoothScale k,
       eventually_scaledWeakClose_representatives_adjacent
@@ -4825,7 +4819,7 @@ theorem fineAdjacentAffineLocationError_relative_tendsto_zero
 
 lemma adjacentRepresentatives_rightBoundary_of_not_highFine
     (k : ℕ) (eta u velocityLower velocityUpper : ℝ)
-    (heta : 0 < eta)
+    (_heta : 0 < eta)
     (n : ℕ) (hn : 0 < n)
     (herr : fineAdjacentAffineLocationError k n u velocityLower velocityUpper /
         localMeshHalfWidth n < eta)
@@ -4898,6 +4892,7 @@ theorem eventually_halfGoodFactoredTruncatedChooseContribution_close
           blockVelocityMass velocityLower velocityUpper)) ^ m) *
           ((halfGoodLocalSiteSets n m).card : ℝ) /
             (localMeshSize n : ℝ) ^ m| < eps := by
+  classical
   have hlocal := eventually_uniform_scaled_good_factoredTruncatedLocalProbability
     m hm widthFactor u velocityLower velocityUpper hfactor hu hvelLower hvelUpper
       (half_pos heps)
@@ -4977,7 +4972,7 @@ theorem halfGoodFactoredTruncatedChooseContribution_tendsto
       (𝓝 (A * (((1 / 2 : ℝ) ^ m) / (m.factorial : ℝ)))) := by
     dsimp [reference]
     convert tendsto_const_nhds.mul
-      (halfGoodLocalSiteSets_ratio_tendsto_factorial m hm) using 1 <;> ring_nf
+      (halfGoodLocalSiteSets_ratio_tendsto_factorial m hm) using 1; ring_nf
   have hdiff : Tendsto (fun n : ℕ ↦
       halfGoodFactoredTruncatedChooseContribution n m widthFactor u
           velocityLower velocityUpper - reference n) atTop (𝓝 0) := by
@@ -5003,8 +4998,9 @@ theorem halfGoodFactoredTruncatedChooseContribution_tendsto
       mul_pow]
     ring
 
+open Classical in
 lemma sum_uniformProbability_eq_uniformExpectation_card_filter
-    {Ω I : Type*} [Fintype Ω] [Nonempty Ω] [DecidableEq I]
+    {Ω I : Type*} [Fintype Ω] [Nonempty Ω]
     (s : Finset I) (P : I → Ω → Prop) :
     (∑ i ∈ s, uniformProbability (P i)) =
       uniformExpectation (fun e ↦ ((s.filter fun i ↦ P i e).card : ℝ)) := by
@@ -5087,8 +5083,9 @@ theorem halfGoodBoundaryDefectContribution_tendsto
     (Eventually.of_forall fun n ↦
       (halfGoodBoundaryDefectContribution_eq_sub n m widthFactor u
         velocityLower velocityUpper hfactorOne).symm)
-  convert hsub using 1 <;> ring_nf
+  convert hsub using 1; ring_nf
 
+open Classical in
 noncomputable def halfGoodBoundaryDefectSiteSets
     (n m : ℕ) (widthFactor u velocityLower velocityUpper : ℝ)
     (e : SignVector (2 * n)) : Finset (Finset (Fin (localMeshSize n))) :=
@@ -5099,6 +5096,7 @@ noncomputable def halfGoodBoundaryDefectSiteSets
       IsFactoredTruncatedLocalRepresentative n widthFactor u
         velocityLower velocityUpper e a)
 
+open Classical in
 noncomputable def halfNonspreadRepresentedLocalSiteSets
     (n m : ℕ) (u velocityLower velocityUpper : ℝ)
     (e : SignVector (2 * n)) : Finset (Finset (Fin (localMeshSize n))) :=
@@ -5120,6 +5118,7 @@ lemma halfGoodBoundaryDefectSiteSets_disjoint_halfNonspreadRepresented
         velocityLower velocityUpper e)
       (halfNonspreadRepresentedLocalSiteSets n m u
         velocityLower velocityUpper e) := by
+  classical
   apply Finset.disjoint_filter_filter
   exact halfGoodLocalSiteSets_disjoint_halfNonspread n m
 
@@ -5212,6 +5211,7 @@ lemma uniformExpectation_halfRecursiveTargetSiteSets_card
   rw [uniformExpectation_halfGoodBoundaryDefectSiteSets_card,
     uniformExpectation_halfNonspreadRepresentedLocalSiteSets_card]
 
+open Classical in
 noncomputable def halfVeryCloseLowRepresentedSiteSets
     (n k : ℕ) (u velocityLower velocityUpper : ℝ)
     (e : SignVector (2 * n)) : Finset (Finset (Fin (localMeshSize n))) :=
@@ -5257,6 +5257,7 @@ lemma mem_halfRecursiveTargetSiteSets_card
     (hs : s ∈ halfRecursiveTargetSiteSets n m widthFactor u
       velocityLower velocityUpper e) :
     s.card = m := by
+  classical
   rw [halfRecursiveTargetSiteSets, Finset.mem_union] at hs
   rcases hs with hgood | hbad
   · exact (Finset.mem_powersetCard.mp
@@ -5327,7 +5328,7 @@ lemma erase_adjacent_mem_halfRecursiveTargetSiteSets
     exact ⟨(fun x hx ↦ (Finset.mem_filter.mp (hsubSmooth hx)).2), hspread⟩
 
 theorem eventually_halfVeryCloseLowRepresented_card_le_recursiveTarget
-    (k : ℕ) (hk : 2 ≤ k)
+    (k : ℕ) (_hk : 2 ≤ k)
     (eta u velocityLower velocityUpper : ℝ)
     (heta : 0 < eta)
     (hu : 0 ≤ u) (hvelocityLower : 0 < velocityLower)
@@ -5481,6 +5482,7 @@ theorem eventually_halfVeryCloseLowTruncatedChooseContribution_le_recursiveTarge
 
 lemma halfVeryCloseLocalSiteSets_card_le_pow (n k : ℕ) :
     (halfVeryCloseLocalSiteSets n k).card ≤ localMeshSize n ^ k := by
+  classical
   calc
     (halfVeryCloseLocalSiteSets n k).card ≤
         ((halfSmoothLocalMeshSites n).powersetCard k).card := by
@@ -5561,6 +5563,7 @@ lemma halfVeryCloseTruncatedChooseContribution_le_high_add_low
 
 lemma eventually_halfVeryCloseLocalSiteSets_one_eq_empty :
     ∀ᶠ n : ℕ in atTop, halfVeryCloseLocalSiteSets n 1 = ∅ := by
+  classical
   filter_upwards [Nat.eventually_pos,
       eventually_two_weakSpreadScale_le_rigiditySmoothScale 1]
     with n hn hscale

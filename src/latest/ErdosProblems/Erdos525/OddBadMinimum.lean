@@ -4,7 +4,7 @@ open scoped BigOperators Topology ComplexConjugate RealInnerProductSpace
 
 namespace Erdos525
 
-open Classical Filter Finset Set MeasureTheory
+open Filter Finset Set MeasureTheory
 
 namespace Odd
 
@@ -80,9 +80,9 @@ lemma small_value_transfers_to_left_cover_point
     (hglobal : ∀ s ∈ Set.Ico (-(Real.pi * n)) (Real.pi * n),
       ‖velocity n e s‖ ≤ 2 * growingVelocityCutoff n)
     (u t q step : ℝ)
-    (ht : t ∈ Set.Icc (0 : ℝ) (Real.pi * n))
+    (_ht : t ∈ Set.Icc (0 : ℝ) (Real.pi * n))
     (hq0 : 0 ≤ q) (hqt : q ≤ t) (htop : t < Real.pi * n)
-    (hdist : t - q < step) (hstep : 0 ≤ step)
+    (hdist : t - q < step) (_hstep : 0 ≤ step)
     (hsmall : ‖eval n e t‖ ≤ u / n) :
     ‖eval n e q‖ ≤ u / n + 2 * growingVelocityCutoff n * step := by
   have hsegment : ∀ s ∈ Set.Icc q t,
@@ -117,7 +117,7 @@ lemma small_value_transfers_to_right_cover_point
     (u t q step : ℝ)
     (ht : t ∈ Set.Icc (0 : ℝ) (Real.pi * n))
     (htq : t ≤ q) (hqtop : q < Real.pi * n)
-    (hdist : q - t < step) (hstep : 0 ≤ step)
+    (hdist : q - t < step) (_hstep : 0 ≤ step)
     (hsmall : ‖eval n e t‖ ≤ u / n) :
     ‖eval n e q‖ ≤ u / n + 2 * growingVelocityCutoff n * step := by
   have hsegment : ∀ s ∈ Set.Icc t q,
