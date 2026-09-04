@@ -25,7 +25,7 @@ lemma completionThinning_relative_lower_failure_le_of_heavy_bounds
     (hbudget :
       r * (completionWeight H Z : ℝ) + u ≤
         (completionWeight H Z : ℝ) *
-          (1 - ((n - 1 : ℕ) : ℝ) / (H \ completionHeavyEdges H Z b).card)^t) :
+          (1 - ((n - 1 : ℕ) : ℝ) / (H \ completionHeavyEdges H Z b).card) ^ t) :
     finsetProbability (H.powersetCard t)
         (fun T ↦ (completionWeight (H \ T) Z : ℝ) <
           r * (completionWeight H Z : ℝ)) ≤

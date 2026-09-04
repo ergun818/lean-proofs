@@ -51,7 +51,8 @@ lemma upper_pmProbability_tendsto_one (epsilon : ℝ) (hepsilon : 0 < epsilon) :
   · have hbase := upper_pmProbability_tendsto_one_of_le_one 1 (by norm_num) le_rfl
     apply tendsto_of_tendsto_of_tendsto_of_le_of_le' hbase tendsto_const_nhds
     · filter_upwards [eventually_upperEdgeCount_le_card epsilon hepsilon.le] with n hn
-      exact pmProbability_mono_of_le (upperEdgeCount_mono 1 epsilon (by linarith only [hepsilon1]) n) hn
+      exact pmProbability_mono_of_le (upperEdgeCount_mono 1 epsilon
+        (by linarith only [hepsilon1]) n) hn
     · exact Eventually.of_forall fun n ↦ pmProbability_le_one n (upperEdgeCount epsilon n)
 
 theorem shamir_threshold_resolution : ShamirThresholdResolution :=

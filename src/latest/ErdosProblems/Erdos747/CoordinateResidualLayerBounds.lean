@@ -35,7 +35,8 @@ lemma coordinate_residual_layer_mean_lower (n M j : ℕ)
   refine ⟨by exact_mod_cast hleftpos, ?_⟩
   apply (le_div_iff₀ hk).mpr
   calc
-    _ ≤ (mu / 2) * n := mul_le_mul_of_nonneg_left (by exact_mod_cast Nat.sub_le n 1) (half_pos hmu).le
+    _ ≤ (mu / 2) * n :=
+      mul_le_mul_of_nonneg_left (by exact_mod_cast Nat.sub_le n 1) (half_pos hmu).le
     _ = (M : ℝ) / 2 := by nlinarith only [hmuId]
     _ ≤ _ := hleft.trans hjR
 
@@ -68,7 +69,8 @@ lemma coordinate_degree_lower_budget (n M cap : ℕ) (a g : ℝ)
     (ha : 0 ≤ a) (hcap : (cap : ℝ) / ((M : ℝ) / n) ≤ g)
     (hmean : 0 < (M : ℝ) / n) (hg : g ≤ a / 6) :
     ((coordinateDegreeFloor n M a + 3 * cap : ℕ) : ℝ) ≤ a * ((M : ℝ) / n) := by
-  have hd : (coordinateDegreeFloor n M a : ℝ) ≤ a * ((M : ℝ) / n) / 2 := Nat.floor_le (by positivity)
+  have hd : (coordinateDegreeFloor n M a : ℝ) ≤ a * ((M : ℝ) / n) / 2 :=
+    Nat.floor_le (by positivity)
   have hc := (div_le_iff₀ hmean).mp hcap
   have hgscaled := mul_le_mul_of_nonneg_right hg hmean.le
   norm_num only [Nat.cast_add, Nat.cast_mul, Nat.cast_ofNat]

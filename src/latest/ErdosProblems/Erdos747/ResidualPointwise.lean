@@ -31,7 +31,7 @@ lemma refinedInsertionGood_presentWeightSpread_self
           (4 * (3 * C₀ * (n : ℝ) + 12 * Real.sqrt n +
             10 * (Real.sqrt (Real.sqrt E * Real.sqrt (3 * n : ℝ)) *
               Real.sqrt (3 * n : ℝ)))) ≤
-        (eta * (delta - 1 / a) * (n : ℝ))^2)
+        (eta * (delta - 1 / a) * (n : ℝ)) ^ 2)
     {H : Finset (Edge n)}
     (hGood : RefinedInsertionGood n M a B codegCap C₀ H) :
     PresentWeightSpread H delta eta := by
@@ -90,7 +90,7 @@ lemma completionThinning_relative_lower_failure_probability_le_weight
           (1 - ((n - 1 : ℕ) : ℝ) /
             (H \ completionHeavyEdges H Z
               ((1 + delta) * matchingWeightTarget (n - 1)
-                (reindexGraphAway H Z hZ))).card)^t) :
+                (reindexGraphAway H Z hZ))).card) ^ t) :
     finsetProbability (H.powersetCard t)
         (fun T ↦ (completionWeight (H \ T) Z : ℝ) <
           r * (completionWeight H Z : ℝ)) ≤
@@ -135,7 +135,7 @@ lemma residualRefinedInheritance_presentWeightSpread
       (((M - 3 * D : ℕ) : ℝ) / ((n - 1 : ℕ) : ℝ)))
     (hgood : ResidualRefinedInheritanceGood
       n M d D codegCap a B c C₀ C₁ H)
-    (hweight : c^2 * matchingWeightTarget n H ≤ completionWeight H Z)
+    (hweight : c ^ 2 * matchingWeightTarget n H ≤ completionWeight H Z)
     (hcap : 0 < codegCap) (hC1 : 0 ≤ C₁) {sigma E delta eta : ℝ}
     (hsigma : 0 < sigma)
     (hratio :
@@ -155,7 +155,7 @@ lemma residualRefinedInheritance_presentWeightSpread
             10 * (Real.sqrt
               (Real.sqrt E * Real.sqrt (3 * (n - 1 : ℕ) : ℝ)) *
                 Real.sqrt (3 * (n - 1 : ℕ) : ℝ)))) ≤
-        (eta * (delta - 1 / a) * ((n - 1 : ℕ) : ℝ))^2) :
+        (eta * (delta - 1 / a) * ((n - 1 : ℕ) : ℝ)) ^ 2) :
     PresentWeightSpread (reindexGraphAway H Z hZ) delta eta := by
   rcases hgood with
     ⟨hPhi, hcount, hdegreeLower, hdegreeUpper, hcodeg, hcountBudget⟩
@@ -190,7 +190,7 @@ lemma completionThinning_relative_lower_failure_probability_le_of_residualInheri
       (((M - 3 * D : ℕ) : ℝ) / ((n - 1 : ℕ) : ℝ)))
     (hgood : ResidualRefinedInheritanceGood
       n M d D codegCap a B c C₀ C₁ H)
-    (hweight : c^2 * matchingWeightTarget n H ≤ completionWeight H Z)
+    (hweight : c ^ 2 * matchingWeightTarget n H ≤ completionWeight H Z)
     (hcap : 0 < codegCap) (hC1 : 0 ≤ C₁)
     (sigma E delta eta r theta u : ℝ)
     (hsigma : 0 < sigma)
@@ -212,7 +212,7 @@ lemma completionThinning_relative_lower_failure_probability_le_of_residualInheri
             10 * (Real.sqrt
               (Real.sqrt E * Real.sqrt (3 * (n - 1 : ℕ) : ℝ)) *
                 Real.sqrt (3 * (n - 1 : ℕ) : ℝ)))) ≤
-        (eta * (delta - 1 / a) * ((n - 1 : ℕ) : ℝ))^2)
+        (eta * (delta - 1 / a) * ((n - 1 : ℕ) : ℝ)) ^ 2)
     (hHne : H.Nonempty)
     (hs : (H \ completionHeavyEdges H Z
       ((1 + delta) * matchingWeightTarget (n - 1)
@@ -240,7 +240,7 @@ lemma completionThinning_relative_lower_failure_probability_le_of_residualInheri
           (1 - ((n - 1 : ℕ) : ℝ) /
             (H \ completionHeavyEdges H Z
               ((1 + delta) * matchingWeightTarget (n - 1)
-                (reindexGraphAway H Z hZ))).card)^t) :
+                (reindexGraphAway H Z hZ))).card) ^ t) :
     finsetProbability (H.powersetCard t)
         (fun T ↦ (completionWeight (H \ T) Z : ℝ) <
           r * (completionWeight H Z : ℝ)) ≤

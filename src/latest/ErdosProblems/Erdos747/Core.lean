@@ -853,7 +853,7 @@ lemma choose_pred_two_three_div_choose_pred_three (V : ℕ) (hV : 4 ≤ V) :
     ((V - 2).choose 3 : ℝ) / ((V - 1).choose 3 : ℝ) =
       ((V - 4 : ℕ) : ℝ) / ((V - 1 : ℕ) : ℝ) := by
   have h := choose_pred_three_div_choose_three (V - 1) (by omega)
-  convert h using 1 <;> congr 2 <;> omega
+  convert h using 1 <;> congr 2
 
 /-- For one edge chosen uniformly from the complete 3-graph, avoiding two
 specified vertices is no more likely than the product of the two individual
@@ -960,7 +960,7 @@ lemma one_avoid_base_div_depleted_base_le (V M : ℕ) (hV : 6 ≤ V)
         12 * (M : ℝ) * (((V - 1).choose 3 : ℝ) - M + 1) := by
     calc
       3 * ((M : ℝ) - 1) * (V.choose 3 : ℝ) ≤
-          3 * (M : ℝ) * (V.choose 3 : ℝ) := by gcongr <;> linarith
+          3 * (M : ℝ) * (V.choose 3 : ℝ) := by gcongr; linarith
       _ ≤ 3 * (M : ℝ) *
           (4 * (((V - 1).choose 3 : ℝ) - M + 1)) := by gcongr
       _ = 12 * (M : ℝ) *
@@ -1207,7 +1207,7 @@ lemma positive_isolated_probability_exp_lower (n M : ℕ) (hn : 2 ≤ n)
     exact hE2nat.ne'
   have hcs := positive_probability_second_moment_lower n M hsample hsecond
   rw [sum_isolatedCount, sum_secondMomentCount, card_sample] at hcs
-  simp only [Nat.cast_mul, Nat.cast_ofNat, one_div, mul_inv_rev, card_sample, ge_iff_le] at hcs
+  simp only [Nat.cast_mul, Nat.cast_ofNat] at hcs
   have hVV : 3 * n ≤ (3 * n) * (3 * n) := Nat.le_mul_self (3 * n)
   have hnorm :
       ((((3 * n).choose 3).choose M : ℝ) *
@@ -1342,7 +1342,7 @@ lemma tendsto_log_three_mul_div_sq :
   refine hprod.congr' ?_
   filter_upwards [eventually_ge_atTop 1] with n hn
   norm_num only [Nat.cast_mul, Nat.cast_ofNat]
-  field_simp <;> ring
+  field_simp
 
 /-- The logarithm of the vertex count is negligible compared with `n`. -/
 lemma tendsto_log_three_mul_div :
@@ -1443,7 +1443,7 @@ lemma shamirScale_le_upperEdgeCount (ε : ℝ) (hε : 0 ≤ ε) (n : ℕ) :
 
 /-- The ceiling defining the supercritical edge count is above the exact
 real-valued supercritical scale, before discarding the factor `1 + ε`. -/
-lemma upperScale_le_upperEdgeCount (ε : ℝ) (hε : -1 ≤ ε) (n : ℕ) :
+lemma upperScale_le_upperEdgeCount (ε : ℝ) (_hε : -1 ≤ ε) (n : ℕ) :
     (1 + ε) * shamirScale n ≤ upperEdgeCount ε n := by
   simpa only [upperEdgeCount] using
     (Nat.le_ceil ((1 + ε) * shamirScale n))
@@ -2021,7 +2021,7 @@ lemma lowerEdgeCount_tendsto_atTop (ε : ℝ) (hε1 : ε < 1) :
     hprod.const_mul_atTop (sub_pos.mpr hε1)
   have hfloor := tendsto_nat_floor_atTop.comp hscale
   refine hfloor.congr' (Eventually.of_forall fun n => ?_)
-  simp [lowerEdgeCount, shamirScale, Function.comp_def]
+  simp [lowerEdgeCount, shamirScale]
 
 /-- Eventually the hypotheses of the finite pair-isolation estimate hold for
 the subcritical edge count. -/
@@ -2082,7 +2082,7 @@ lemma positive_isolated_probability_tendsto_one (ε : ℝ)
           1 / (((3 * n : ℕ) : ℝ) *
             oneAvoidRatio (3 * n) (lowerEdgeCount ε n)))
         atTop (𝓝 1) := by
-    convert hexp.add hinvMean using 1 <;> norm_num
+    convert hexp.add hinvMean using 1 ; norm_num
   have hL :
       Tendsto
         (fun n : ℕ ↦ 1 /
@@ -2127,7 +2127,7 @@ lemma lower_noIsolatedProbability_tendsto_zero (ε : ℝ)
         (fun n : ℕ ↦ 1 -
           ((positiveIsolatedSample n (lowerEdgeCount ε n)).card : ℝ) /
             (sample n (lowerEdgeCount ε n)).card) atTop (𝓝 0) := by
-    convert tendsto_const_nhds.sub hpositive using 1 <;> norm_num
+    convert tendsto_const_nhds.sub hpositive using 1 ; norm_num
   refine hcomplement.congr' ?_
   filter_upwards [eventually_lowerEdgeCount_pair_conditions ε hε0.le hε1]
     with n hpair
@@ -2266,7 +2266,6 @@ lemma incidentEdges_density (n : ℕ) (v : Vertex n) (hn : 0 < n) :
   change (((V - 1).choose 2 : ℝ) / (V.choose 3 : ℝ)) = _
   apply (div_eq_iff hchoose).2
   field_simp [hn0]
-  norm_num only [Nat.cast_ofNat, Nat.cast_mul]
   exact_mod_cast hnat'
 
 /-- Exact density of triples containing a fixed distinct pair. -/
@@ -3033,7 +3032,7 @@ lemma cube_half_le_card_coordinateDescendantSequences {n b : ℕ}
     (hx₀₁ : x₀ ≠ x₁) (hx₀₂ : x₀ ≠ x₂) (hx₁₂ : x₁ ≠ x₂)
     (hc0 : 0 ≤ c) (hc1 : c ≤ 1)
     (htransfer : CoordinateTransferAbove n H
-      (c^2 * (completionWeight H Z₀ : ℝ)) c b)
+      (c ^ 2 * (completionWeight H Z₀ : ℝ)) c b)
     (hbudget : 2 * b + 12 ≤ n) :
     (n / 2)^3 ≤
       (coordinateDescendantSequences H Z₀ x₀ x₁ x₂ c).card := by
@@ -3227,7 +3226,7 @@ lemma coordinateSequenceTriple_mapsTo_heavyDescendants {n : ℕ}
         · exact False.elim (hvx₁ rfl)
         · exact False.elim (hvx₂ rfl)
     · intro hv
-      simp only [Finset.mem_insert, Finset.mem_singleton] at hv
+      simp only [Finset.mem_singleton] at hv
       rcases hv with rfl | rfl | rfl
       · exact Or.inr ⟨by
           intro h
@@ -3352,7 +3351,7 @@ lemma cube_half_le_card_coordinateHeavyDescendants {n b : ℕ}
     (hx₀₁ : x₀ ≠ x₁) (hx₀₂ : x₀ ≠ x₂) (hx₁₂ : x₁ ≠ x₂)
     (hc0 : 0 ≤ c) (hc1 : c ≤ 1)
     (htransfer : CoordinateTransferAbove n H
-      (c^2 * (completionWeight H Z₀ : ℝ)) c b)
+      (c ^ 2 * (completionWeight H Z₀ : ℝ)) c b)
     (hbudget : 2 * b + 12 ≤ n) :
     (n / 2)^3 ≤ (coordinateHeavyDescendants H Z₀ c).card := by
   have hseq := cube_half_le_card_coordinateDescendantSequences
@@ -3374,7 +3373,7 @@ lemma maximumWeightDominated_of_max_transfer {n b : ℕ}
       completionWeight H Z ≤ completionWeight H Z₀)
     (hc0 : 0 ≤ c) (hc1 : c ≤ 1)
     (htransfer : CoordinateTransferAbove n H
-      (c^2 * (completionWeight H Z₀ : ℝ)) c b)
+      (c ^ 2 * (completionWeight H Z₀ : ℝ)) c b)
     (hbudget : 2 * b + 12 ≤ n) :
     MaximumWeightDominated n H
       (((n / 2 : ℕ) : ℝ)^3 / (allEdges n).card) (c^3) := by
@@ -3391,11 +3390,6 @@ lemma maximumWeightDominated_of_max_transfer {n b : ℕ}
   have hKpos : (0 : ℝ) < (allEdges n).card := by
     exact_mod_cast Finset.card_pos.mpr hKnonempty
   refine ⟨Z₀, hZ₀, hmax, ?_⟩
-  change (((n / 2 : ℕ) : ℝ)^3 / (allEdges n).card) *
-      ((allEdges n).card : ℝ) ≤
-    (((allEdges n).filter fun U ↦
-      c^3 * (completionWeight H Z₀ : ℝ) ≤
-        completionWeight H U).card : ℝ)
   rw [div_mul_cancel₀ _ hKpos.ne']
   simpa [coordinateHeavyDescendants] using hdesc
 
@@ -3595,7 +3589,7 @@ def assembleCoordinateResidual {n : ℕ}
 
 lemma assembleCoordinateResidual_mapsTo {n : ℕ}
     {H : Finset (Edge n)} {Z : Edge n} {x y : Vertex n}
-    (hn : 2 ≤ n) (hZ : Z ∈ allEdges n) (hx : x ∈ Z)
+    (hn : 2 ≤ n) (_hZ : Z ∈ allEdges n) (hx : x ∈ Z)
     (hy : y ∉ Z) :
     Set.MapsTo (assembleCoordinateResidual x)
       (↑(coordinateResidualPairs n H Z x y) :
@@ -3805,7 +3799,7 @@ lemma insert_x_injectiveOn_coordinateAmbientPairs {n : ℕ}
 
 lemma coordinateLinkLayer_subset_allEdges {n : ℕ}
     {Z : Edge n} {x y : Vertex n}
-    (hZ : Z ∈ allEdges n) (hx : x ∈ Z) :
+    (_hZ : Z ∈ allEdges n) (hx : x ∈ Z) :
     coordinateLinkLayer n Z x y ⊆ allEdges n := by
   intro A hA
   rcases mem_coordinateLinkLayer.mp hA with ⟨S, hS, rfl⟩
@@ -3834,7 +3828,7 @@ lemma coordinateLinkPairs_eq_filter_ambient {n : ℕ}
 
 lemma image_coordinateLinkPairs_eq_inter_linkLayer {n : ℕ}
     {H : Finset (Edge n)} {Z : Edge n} {x y : Vertex n}
-    (hx : x ∈ Z) :
+    (_hx : x ∈ Z) :
     (coordinateLinkPairs H Z x y).image (fun S ↦ insert x S) =
       H ∩ coordinateLinkLayer n Z x y := by
   ext A
@@ -3886,7 +3880,7 @@ lemma inducedAway_inter_linkLayer_eq_empty {n : ℕ}
 
 lemma inducedAway_union_linkImage {n : ℕ}
     {R L : Finset (Edge n)} {Z : Edge n} {x y : Vertex n}
-    (hx : x ∈ Z) (hL : L ⊆ coordinateAmbientPairs n Z y) :
+    (hx : x ∈ Z) (_hL : L ⊆ coordinateAmbientPairs n Z y) :
     inducedAway (R ∪ L.image (fun S ↦ insert x S)) Z =
       inducedAway R Z := by
   ext A
@@ -4443,7 +4437,7 @@ lemma coordinateBadVertices_subset_linkFailure {n d b : ℕ}
   apply Finset.mem_filter.mpr
   refine ⟨Finset.mem_univ y, hyZ, ?_⟩
   by_contra hfail
-  push_neg at hfail
+  push Not at hfail
   have hlower := coordinateCompletionWeight_lower hn hZ hx hyZ ha
     hfail.1 hfail.2
   exact hyweight (hbudget.trans hlower)
@@ -4772,7 +4766,7 @@ def finiteEntropyDefect {α : Type*} (s : Finset α) (p : α → ℝ) : ℝ :=
 /-- The entropy deficit is the finite relative-entropy sum
 `∑ p(x) log (|s| p(x))`. -/
 lemma finiteEntropyDefect_eq_sum {α : Type*} (s : Finset α)
-    (p : α → ℝ) (hs : s.Nonempty) (hp : ∀ x ∈ s, 0 ≤ p x)
+    (p : α → ℝ) (hs : s.Nonempty) (_hp : ∀ x ∈ s, 0 ≤ p x)
     (hsum : ∑ x ∈ s, p x = 1) :
     finiteEntropyDefect s p =
       ∑ x ∈ s, p x * Real.log ((s.card : ℝ) * p x) := by
@@ -4792,7 +4786,7 @@ lemma finiteEntropyDefect_eq_sum {α : Type*} (s : Finset α)
     ∑ x ∈ s, p x * Real.log (k * p x)
   rw [Finset.sum_congr rfl hpoint]
   rw [Finset.sum_add_distrib, ← Finset.sum_mul, hsum]
-  simpa only [neg_mul, Finset.sum_neg_distrib, sub_neg_eq_add, one_mul]
+  simp only [neg_mul, Finset.sum_neg_distrib, sub_neg_eq_add, one_mul]
 
 lemma finiteEntropyDefect_nonneg {α : Type*} (s : Finset α)
     (p : α → ℝ) (hs : s.Nonempty) (hp : ∀ x ∈ s, 0 ≤ p x)
@@ -5443,7 +5437,7 @@ lemma presentWeightSpread_of_entropyDefect {n : ℕ}
     (hdef : totalLocalEntropyDefect H ≤ E)
     (hbudget :
       (3 * n : ℝ) * (4 * E) ≤
-        (eta * (delta - rho) * (n : ℝ))^2) :
+        (eta * (delta - rho) * (n : ℝ)) ^ 2) :
     PresentWeightSpread H delta eta := by
   unfold PresentWeightSpread
   rw [← matchingFractionBadEdges_eq H hΦ delta]
@@ -5514,7 +5508,7 @@ lemma presentWeightSpread_of_degree_bounds {n : ℕ}
     (hgap : 1 / a < delta)
     (hbudget :
       (3 * n : ℝ) * (4 * ((3 * n : ℝ) * Real.log L)) ≤
-        (eta * (delta - 1 / a) * (n : ℝ))^2) :
+        (eta * (delta - 1 / a) * (n : ℝ)) ^ 2) :
     PresentWeightSpread H delta eta := by
   apply presentWeightSpread_of_entropyDefect H hH hΦ
     (1 / a) delta eta ((3 * n : ℝ) * Real.log L)
@@ -5547,7 +5541,6 @@ lemma coarseRegularPerfect_insert {n M : ℕ} {a B : ℝ}
   rcases Finset.mem_sdiff.mp hZ with ⟨hZall, hZnot⟩
   have hnR : (0 : ℝ) < n := by exact_mod_cast hn
   have hMone : (M + 1 : ℝ) ≤ 2 * M := by
-    norm_num only [Nat.cast_add, Nat.cast_one, Nat.cast_ofNat]
     exact_mod_cast (show M + 1 ≤ 2 * M by omega)
   have hDge : (1 : ℝ) ≤ (M : ℝ) / n := by
     apply (le_div_iff₀ hnR).2
@@ -5598,7 +5591,7 @@ lemma coarseRegularPerfect_presentWeightSpread {n M : ℕ}
       (3 * n : ℝ) *
           (4 * ((3 * n : ℝ) *
             Real.log (B * ((M : ℝ) / n)))) ≤
-        (eta * (delta - 1 / a) * (n : ℝ))^2) :
+        (eta * (delta - 1 / a) * (n : ℝ)) ^ 2) :
     PresentWeightSpread H delta eta := by
   rcases hreg with ⟨hHsample, hpm, hdeg⟩
   rcases mem_sample.mp hHsample with ⟨hHall, hHcard⟩
@@ -6429,7 +6422,7 @@ lemma finsetAverage_exp_iidCenteredSum {α : Type*} (s : Finset α)
           Real.exp (θ * (iidSum W t ω - ↑t * μ)) by simp,
     hnum]
   have hcard : (Finset.univ : Finset (IidSample s t)).card = s.card ^ t := by
-    simp [Fintype.card_fun]
+    simp
   rw [hcard]
   rw [div_pow]
   congr 1
@@ -6946,7 +6939,7 @@ lemma card_goodRemainingChoices (n M : ℕ) :
     (t := goodSample n M) (fun G _ ↦ G.1) ?_ ?_ ?_
   · intro G hG
     rw [Finset.mem_filter] at hG
-    exact Finset.mem_filter.mpr ⟨by simpa [sample] using G.2, hG.2⟩
+    exact Finset.mem_filter.mpr ⟨by simp [sample], hG.2⟩
   · intro G₁ _ G₂ _ h
     exact Subtype.ext h
   · intro H hH
@@ -7578,7 +7571,7 @@ lemma stoppedCenteredSum_succ {n : ℕ} {H : Finset (Edge n)}
 /-- Uniform quadratic lower bound for a logarithmic survival factor when
 `0 ≤ x ≤ b < 1`. -/
 lemma neg_add_sq_div_le_log_one_sub {x b : ℝ}
-    (hx0 : 0 ≤ x) (hxb : x ≤ b) (hb : b < 1) :
+    (_hx0 : 0 ≤ x) (hxb : x ≤ b) (hb : b < 1) :
     -(x + x^2 / (1 - b)) ≤ Real.log (1 - x) := by
   have hx1 : x < 1 := hxb.trans_lt hb
   have hdenx : 0 < 1 - x := sub_pos.mpr hx1
@@ -7747,7 +7740,7 @@ lemma exp_mul_le_endpoint_chord {w b θ : ℝ} (hb : 0 < b)
       ring
 
 lemma centered_two_point_mgf_le {μ b θ : ℝ} (hb : 0 < b)
-    (hμ0 : 0 ≤ μ) (hμb : μ ≤ b) (hθ : |θ * b| ≤ 1 / 2) :
+    (hμ0 : 0 ≤ μ) (_hμb : μ ≤ b) (hθ : |θ * b| ≤ 1 / 2) :
     Real.exp (-θ * μ) *
         (1 + (μ / b) * (Real.exp (θ * b) - 1)) ≤
       Real.exp (θ^2 * μ * b) := by
@@ -9139,7 +9132,7 @@ lemma exists_matchingEdge_two_le_inter_of_genericFailure {n : ℕ}
     (hfail : (matchingOtherMeetingEdges F v A).card < 2) :
     ∃ B ∈ F, 2 ≤ (A ∩ B).card := by
   by_contra hnone
-  push_neg at hnone
+  push Not at hnone
   have htwo := two_le_card_matchingOtherMeetingEdges_of_inter_le_one
     hH hF hAH hvA (fun B hBF ↦ by
       have hnot := hnone B hBF
@@ -9727,7 +9720,11 @@ lemma binary_mass_entropy_le (N a : ℝ) (hN : 0 < N)
   let q : Bool → ℝ := fun b ↦ if b then a / N else (N - a) / N
   have hq0 : ∀ b ∈ (Finset.univ : Finset Bool), 0 ≤ q b := by
     intro b hb
-    cases b <;> simp [q] <;> positivity
+    cases b
+    · simp only [q, Bool.false_eq_true, ↓reduceIte]
+      positivity
+    · simp only [q, ↓reduceIte]
+      positivity
   have hqsum : ∑ b ∈ (Finset.univ : Finset Bool), q b = 1 := by
     simp [q]
     field_simp [hN.ne']
@@ -10081,7 +10078,7 @@ lemma finiteEntropy_image_cardRatio_eq {α β : Type*}
             intro j hj
             rw [(Finset.mem_filter.mp hj).2]
           rw [hconst]
-          simp [finiteMapFiber, mul_comm]))
+          simp [finiteMapFiber]))
   have hpoint : ∀ b ∈ s.image f,
       -(q b) * Real.log (q b) =
         (((finiteMapFiber s f b).card : ℝ) / s.card) *
@@ -10166,7 +10163,7 @@ lemma finiteConditionalEntropy_eq_sub {α β γ : Type*}
 /-- Occupied-joint-fiber expansion of finite conditional entropy. -/
 lemma finiteConditionalEntropy_eq_sum_jointFiber_log_ratio
     {α β γ : Type*} (s : Finset α) (X : α → β) (Z : α → γ)
-    (hs : s.Nonempty) :
+    (_hs : s.Nonempty) :
     finiteConditionalEntropy s X Z =
       (∑ q ∈ s.image (fun ω ↦ (X ω, Z ω)),
           ((finiteMapFiber s (fun ω ↦ (X ω, Z ω)) q).card : ℝ) *
@@ -10571,8 +10568,7 @@ lemma finiteConditionalEntropy_product_eq_average
     intro a ha b hb
     ext q
     rcases q with ⟨a', b'⟩
-    simp only [finiteMapFiber, Finset.mem_filter, Finset.mem_product,
-      Finset.mem_singleton, W, Prod.mk.injEq]
+    simp only [finiteMapFiber, Finset.mem_filter, Finset.mem_product, W, Prod.mk.injEq]
     aesop
   have hJfiber : ∀ a ∈ p, ∀ b ∈ s,
       finiteMapFiber (p ×ˢ s) J (J (a, b)) =
@@ -10581,8 +10577,7 @@ lemma finiteConditionalEntropy_product_eq_average
     intro a ha b hb
     ext q
     rcases q with ⟨a', b'⟩
-    simp only [finiteMapFiber, Finset.mem_filter, Finset.mem_product,
-      Finset.mem_singleton, J, W, Prod.mk.injEq]
+    simp only [finiteMapFiber, Finset.mem_filter, Finset.mem_product, J, W, Prod.mk.injEq]
     aesop
   have hpoint : ∀ q ∈ p ×ˢ s,
       Real.log ((finiteMapFiber (p ×ˢ s) W (W q)).card : ℝ) -
@@ -11216,7 +11211,7 @@ def permutationTripleFirst {n : ℕ} (perm : Equiv.Perm (Vertex n))
 
 lemma permutationTripleFirst_swap {n : ℕ}
     (perm : Equiv.Perm (Vertex n)) (a b c : Vertex n)
-    (hab : a ≠ b) (hac : a ≠ c) (hbc : b ≠ c) :
+    (_hab : a ≠ b) (hac : a ≠ c) (hbc : b ≠ c) :
     permutationTripleFirst (swapPermutationLabels a b perm) b a c ↔
       permutationTripleFirst perm a b c := by
   have hright :
@@ -11598,7 +11593,7 @@ lemma three_mul_card_matchingVertexFirst {n : ℕ}
     ext perm
     simp only [Finset.mem_filter, Finset.mem_univ, true_and]
     rw [matchingVertexFirst, hErase]
-    simp [permutationTripleFirst, and_comm]
+    simp [permutationTripleFirst]
   rw [hevent]
   exact three_mul_card_permutationTripleFirst v y z hyv.symm hzv.symm hyz
 
@@ -12078,9 +12073,9 @@ lemma swapFinsetBlocks_map_of_disjoint {α : Type*} [DecidableEq α]
   · simp
 
 lemma swapMatchingEdges_map_matching {n : ℕ}
-    {H F : Finset (Edge n)} (hH : H ⊆ allEdges n)
+    {H F : Finset (Edge n)} (_hH : H ⊆ allEdges n)
     (hF : F ∈ perfectMatchings n H) {A B : Edge n}
-    (hAF : A ∈ F) (hBF : B ∈ F) (hAB : A ≠ B)
+    (hAF : A ∈ F) (hBF : B ∈ F) (_hAB : A ≠ B)
     (hcard : A.card = B.card) (hdisj : Disjoint A B) :
     F.map (swapFinsetBlocks A B hcard hdisj).finsetCongr.toEmbedding = F := by
   apply Finset.eq_of_subset_of_card_le
@@ -12185,7 +12180,7 @@ lemma card_matchingEdgeRank_eq_edge_independent {n : ℕ}
 /-- A fixed edge has each possible exposure rank in exactly `1/n` of all
 vertex permutations. -/
 lemma n_mul_card_matchingEdgeRank_eq {n : ℕ}
-    {H F : Finset (Edge n)} (hn : 0 < n) (hH : H ⊆ allEdges n)
+    {H F : Finset (Edge n)} (_hn : 0 < n) (hH : H ⊆ allEdges n)
     (hF : F ∈ perfectMatchings n H) {A : Edge n} (hAF : A ∈ F)
     {j : ℕ} (hj : j < n) :
     n * ((Finset.univ : Finset (Equiv.Perm (Vertex n))).filter
@@ -12612,7 +12607,7 @@ lemma three_mul_card_matchingVertexFirst_and_rank {n : ℕ}
     simp only [Finset.mem_filter, Finset.mem_univ, true_and]
     rw [matchingVertexFirst, show matchingEdgeAt hH F v = A by rfl,
       hErase]
-    simp [permutationTripleFirst, R, and_assoc, and_left_comm, and_comm]
+    simp [permutationTripleFirst, R, and_comm]
   rw [show matchingEdgeAt hH F v = A by rfl, hevent]
   simpa only [R] using htriple
 
@@ -12742,7 +12737,7 @@ lemma card_rank_and_two_after_second_independent {n : ℕ}
     {H F : Finset (Edge n)} (hH : H ⊆ allEdges n)
     (hF : F ∈ perfectMatchings n H) {A B C D : Edge n}
     (hAF : A ∈ F) (hBF : B ∈ F) (hCF : C ∈ F) (hDF : D ∈ F)
-    (hAB : A ≠ B) (hAC : A ≠ C) (hAD : A ≠ D)
+    (_hAB : A ≠ B) (hAC : A ≠ C) (hAD : A ≠ D)
     (hBC : B ≠ C) (hBD : B ≠ D) (hCD : C ≠ D) (j : ℕ) :
     ((Finset.univ : Finset (Equiv.Perm (Vertex n))).filter
       (fun perm ↦ matchingEdgeRank perm F A = j ∧
@@ -12797,10 +12792,10 @@ lemma card_rank_and_two_after_second_independent {n : ℕ}
 
 /-- First-moment double count for one specified later edge. -/
 lemma pred_n_mul_card_rank_and_after_eq {n : ℕ}
-    {H F : Finset (Edge n)} (hn : 0 < n) (hH : H ⊆ allEdges n)
+    {H F : Finset (Edge n)} (_hn : 0 < n) (hH : H ⊆ allEdges n)
     (hF : F ∈ perfectMatchings n H) {A B : Edge n}
     (hAF : A ∈ F) (hBF : B ∈ F) (hAB : A ≠ B)
-    {j : ℕ} (hj : j < n) :
+    {j : ℕ} (_hj : j < n) :
     (n - 1) * ((Finset.univ : Finset (Equiv.Perm (Vertex n))).filter
       (fun perm ↦ matchingEdgeRank perm F A = j ∧
         B ∈ matchingEdgesAfter perm F A)).card =
@@ -13009,7 +13004,7 @@ lemma pred_pred_n_mul_card_rank_and_two_after_eq {n : ℕ}
           (Finset.mem_erase.mpr ⟨hAB.symm, hBF⟩),
           Finset.card_erase_of_mem hAF,
           (mem_perfectMatchings.mp hF).2.1]
-        congr 1 <;> omega
+        congr 1
   have hswap := sum_card_filter_swap U I P
   have hswap' :
       (∑ perm ∈ U, (I.filter fun D ↦ P D perm).card) =
@@ -13412,7 +13407,7 @@ lemma candidatePartners_subset_available_iff_generic_pair_after {n : ℕ}
     (hF : F ∈ perfectMatchings n H) (perm : Equiv.Perm (Vertex n))
     (v : Vertex n) (hfirst : matchingVertexFirst hH F perm v)
     {T B C : Edge n} (hBF : B ∈ F) (hCF : C ∈ F)
-    (hBC : B ≠ C)
+    (_hBC : B ≠ C)
     (hcurrentB : matchingEdgeAt hH F v ≠ B)
     (hcurrentC : matchingEdgeAt hH F v ≠ C)
     (hTsub : T.erase v ⊆ B ∪ C)
@@ -13615,7 +13610,7 @@ lemma matchingKahnConditionalSum_take_drop {n : ℕ}
       (∑ i ∈ Finset.range k, matchingKahnPositionCost hH order i) +
         matchingKahnConditionalSum hH (order.take k) (order.drop k) := by
   induction k with
-  | zero => simp [matchingKahnConditionalSum]
+  | zero => simp
   | succ k ih =>
       have hklt : k < order.length := by omega
       have ih' := ih (Nat.le_of_lt hklt)
@@ -14013,7 +14008,7 @@ lemma log_one_add_sq_le_five_sqrt (x : ℝ) (hx : 0 ≤ x) :
         Real.log x = Real.log ((Real.sqrt x)^2) := by
           rw [Real.sq_sqrt hx]
         _ = 2 * Real.log (Real.sqrt x) := by
-          simpa using Real.log_pow (Real.sqrt x) 2
+          simp
     rw [hlogExpand] at hlogMono
     nlinarith
 
@@ -14243,7 +14238,7 @@ prefix is an edge through `v` disjoint from all earlier exposed matching
 edges. -/
 lemma image_matchingEdgeAt_subset_available_of_not_previouslyExposed
     {n : ℕ} {H F : Finset (Edge n)} (hH : H ⊆ allEdges n)
-    (hF : F ∈ perfectMatchings n H) (prior : List (Vertex n))
+    (_hF : F ∈ perfectMatchings n H) (prior : List (Vertex n))
     (v : Vertex n) (hnot : ¬matchingPreviouslyExposed hH F prior v) :
     (matchingPrefixFiber hH F prior).image
         (fun G ↦ matchingEdgeAt hH G v) ⊆
@@ -14545,7 +14540,7 @@ lemma finiteWeightedSqrtError_le_of_entropy_near_max {α : Type*}
       · exact div_pos hl hT
       · exact hcardRatio
     have htwo := finiteEntropy_le_total_log_card_sub_mass_log_ratio
-      s p R N a hN hapos hp htotal (by simpa only [a])
+      s p R N a hN hapos hp htotal (by simp only [a])
     have haLog :
         a * Real.log ((s.card : ℝ) /
             ((s.filter R).card : ℝ)) ≤
@@ -15517,7 +15512,7 @@ least `a` times the number of hits.  This is the deterministic half of the
 bottom/top-block sampling argument. -/
 lemma mul_embeddingHitCount_le_iidSum {α : Type*} {s : Finset α}
     (W : α → ℝ) (Y : Finset α) (t : ℕ) (e : Fin t ↪ ↥s)
-    (a : ℝ) (ha : 0 ≤ a)
+    (a : ℝ) (_ha : 0 ≤ a)
     (hW0 : ∀ x ∈ s, 0 ≤ W x)
     (hWY : ∀ x ∈ Y, a ≤ W x) :
     a * embeddingHitCount Y e ≤ iidSum W t e := by
@@ -15540,7 +15535,7 @@ block, every hit in that block saves at least `b-a` from the crude bound
 `b t`. -/
 lemma iidSum_le_mul_sub_mul_embeddingHitCount {α : Type*}
     {s : Finset α} (W : α → ℝ) (Y : Finset α) (t : ℕ)
-    (e : Fin t ↪ ↥s) (a b : ℝ) (hab : a ≤ b)
+    (e : Fin t ↪ ↥s) (a b : ℝ) (_hab : a ≤ b)
     (hWb : ∀ x ∈ s, W x ≤ b)
     (hWYa : ∀ x ∈ Y, W x ≤ a) :
     iidSum W t e ≤
@@ -15762,7 +15757,7 @@ lemma sampledVertexDegree_upper_factor_le (n M : ℕ) (v : Vertex n)
     (Real.log b) (b * ((M : ℝ) / n)) hall hlog hM
   rw [incidentEdges_density n v hn, Real.exp_log hbpos] at htail
   simpa only [vertexDegree_historyEdges_eq_hitCount] using
-    htail.trans_eq (by congr 2 <;> ring)
+    htail.trans_eq (by congr 2 ; ring)
 
 /-- Arbitrary-factor lower tail for the degree of one fixed vertex. -/
 lemma sampledVertexDegree_lower_factor_le (n M : ℕ) (v : Vertex n)
@@ -15784,7 +15779,7 @@ lemma sampledVertexDegree_lower_factor_le (n M : ℕ) (v : Vertex n)
     (-Real.log a) (a * ((M : ℝ) / n)) hall (by linarith) hM
   rw [incidentEdges_density n v hn, neg_neg, Real.exp_log ha0] at htail
   simpa only [vertexDegree_historyEdges_eq_hitCount] using
-    htail.trans_eq (by congr 2 <;> ring)
+    htail.trans_eq (by congr 2 ; ring)
 
 /-- Union bound for a degree exceeding an arbitrary fixed multiple of its
 mean. -/
@@ -17234,7 +17229,7 @@ lemma matchingKahnPointCost_eq_active_add {n : ℕ}
       hH hF q.1 v).mpr hfirst
     unfold matchingKahnPointCost matchingJointKahnZ matchingKahnZ
       matchingActiveCandidateLogCost matchingActiveNegLogFractionCost
-    simp [hfirst, hnot]
+    simp only [hfirst, hnot, ↓reduceIte]
     have hp : 0 < matchingFraction H (matchingEdgeAt hH q.2 v) :=
       matchingFraction_pos_of_mem_perfectMatching hF
         (matchingEdgeAt_spec hH hF v).1
@@ -17265,12 +17260,12 @@ lemma matchingKahnPointCost_eq_active_add {n : ℕ}
 
 lemma finiteMapFiber_matchingEdgeAt_eq_weight {n : ℕ}
     {H : Finset (Edge n)} (hH : H ⊆ allEdges n)
-    (v : Vertex n) {A : Edge n} (hAH : A ∈ H) (hvA : v ∈ A) :
+    (v : Vertex n) {A : Edge n} (_hAH : A ∈ H) (hvA : v ∈ A) :
     (finiteMapFiber (perfectMatchings n H)
       (fun F ↦ matchingEdgeAt hH F v) A).card = matchingWeight H A := by
   apply congrArg Finset.card
   ext F
-  simp only [finiteMapFiber, matchingWeight, Finset.mem_filter]
+  simp only [finiteMapFiber, Finset.mem_filter]
   constructor
   · rintro ⟨hF, heq⟩
     refine ⟨hF, ?_⟩
@@ -17710,10 +17705,10 @@ lemma sum_candidateMass_activeRank_eq {n : ℕ}
     apply Finset.sum_congr rfl
     intro T hTH
     by_cases hvT : v ∈ T
-    by_cases hsub : T.erase v ⊆ matchingKahnAvailableVertices hH q.2
-        (permutationPrior q.1 v) v
-    · simp [hvT, hsub]
-    · simp [hvT, hsub]
+    · by_cases hsub : T.erase v ⊆ matchingKahnAvailableVertices hH q.2
+          (permutationPrior q.1 v) v
+      · simp [hvT, hsub]
+      · simp [hvT, hsub]
     · simp [hvT]
   rw [Finset.sum_congr rfl hpoint]
   rw [Finset.sum_comm]
@@ -17740,7 +17735,7 @@ lemma sum_candidateMass_activeRank_eq {n : ℕ}
       norm_cast
       apply congrArg Finset.card
       ext q
-      simp only [E, I, matchingActiveRankPairs,
+      simp only [E, matchingActiveRankPairs,
         matchingCandidateSurvivalPairs, Finset.mem_filter]
       tauto
 
@@ -17963,7 +17958,7 @@ lemma average_matchingActiveRankCandidateLogCost_le {n : ℕ}
       field_simp [hOmegaPos.ne', h3n.ne']
 
 lemma matchingEdgeRank_lt_n {n : ℕ} {H F : Finset (Edge n)}
-    (hH : H ⊆ allEdges n) (hF : F ∈ perfectMatchings n H)
+    (_hH : H ⊆ allEdges n) (hF : F ∈ perfectMatchings n H)
     (perm : Equiv.Perm (Vertex n)) {A : Edge n} (hAF : A ∈ F) :
     matchingEdgeRank perm F A < n := by
   let p : Edge n → Prop := fun B ↦
@@ -17999,7 +17994,7 @@ lemma sum_matchingActiveRankCandidateLogCost_eq {n : ℕ}
   · unfold matchingActiveRankCandidateLogCost matchingActiveCandidateLogCost
     simp only [hfirst, true_and, if_true]
     rw [Finset.sum_eq_single k]
-    · simp only [k, if_pos rfl, if_true]
+    · simp only [k, if_true]
     · intro j hj hjne
       rw [if_neg]
       simpa only [k] using Ne.symm hjne
@@ -18018,16 +18013,12 @@ lemma fallingRatio_le_square {n j : ℕ} (hn : 3 ≤ n) (hj : j < n) :
       exact_mod_cast Nat.mul_pos (by omega) (by omega)
     have hnR : (0 : ℝ) < n := by positivity
     have h1 : ((n - j - 1 : ℕ) : ℝ) + 1 = (n - j : ℕ) := by
-      norm_num
       exact_mod_cast (show n - j - 1 + 1 = n - j by omega)
     have h2 : ((n - j - 2 : ℕ) : ℝ) + 2 = (n - j : ℕ) := by
-      norm_num
       exact_mod_cast (show n - j - 2 + 2 = n - j by omega)
     have hn1 : ((n - 1 : ℕ) : ℝ) + 1 = n := by
-      norm_num
       exact_mod_cast (show n - 1 + 1 = n by omega)
     have hn2 : ((n - 2 : ℕ) : ℝ) + 2 = n := by
-      norm_num
       exact_mod_cast (show n - 2 + 2 = n by omega)
     have hale : ((n - j : ℕ) : ℝ) ≤ n := by
       exact_mod_cast Nat.sub_le n j
@@ -18601,7 +18592,7 @@ lemma presentWeightSpread_of_countLower_and_errorBound {n : ℕ}
           (4 * (3 * C * (n : ℝ) + 12 * Real.sqrt n +
             10 * (Real.sqrt (Real.sqrt E * Real.sqrt (3 * n : ℝ)) *
               Real.sqrt (3 * n : ℝ)))) ≤
-        (eta * (delta - rho) * (n : ℝ))^2) :
+        (eta * (delta - rho) * (n : ℝ)) ^ 2) :
     PresentWeightSpread H delta eta := by
   let D : ℝ :=
     3 * C * (n : ℝ) + 12 * Real.sqrt n +
@@ -19474,7 +19465,7 @@ lemma deletionHistory_log_count_lower {n M : ℕ}
     (hgood : DeletionHistoryGood C ((allEdges n).card - M) e)
     (hCb : ∀ i < (allEdges n).card - M,
       C * deletionGamma n (allEdges n) i ≤ b)
-    (hb0 : 0 ≤ b) (hb1 : b < 1)
+    (_hb0 : 0 ≤ b) (hb1 : b < 1)
     (hstop : stoppedCenteredSum C ((allEdges n).card - M) e ≤ u) :
     2 * (n : ℝ) * Real.log (n : ℝ) - 2 * (n : ℝ) -
         (u + (n : ℝ) *
@@ -19651,7 +19642,7 @@ lemma kahnCountLower_historyState {n M : ℕ}
 quadratic budget that appears in the stopped-martingale MGF. -/
 lemma deletionFractionSquareSum_le_varianceBudget {n t : ℕ}
     {H : Finset (Edge n)} (C : ℝ) (e : DeletionHistory H t)
-    (hC : 0 ≤ C) (hgood : DeletionHistoryGood C t e) :
+    (_hC : 0 ≤ C) (hgood : DeletionHistoryGood C t e) :
     ((deletionFractionList t e).map fun x ↦ x^2).sum ≤
       C * deletionVarianceBudget n H C t := by
   induction t with
@@ -20318,7 +20309,7 @@ lemma kahnCountLower_insert {n M : ℕ} {H : Finset (Edge n)}
 
 /-! ### Predicate-filtered insertion double count -/
 
-def predicateUpperBadCount {n : ℕ} (M : ℕ)
+def predicateUpperBadCount {n : ℕ} (_M : ℕ)
     (Good : Finset (Edge n) → Prop) (delta : ℝ)
     (H : Finset (Edge n)) : ℝ :=
   (((coarseUpperBadNonedges n H (2 * (1 + delta))).filter
@@ -20344,7 +20335,7 @@ def predicateExtendPair {n : ℕ} :
 
 lemma predicateExtendPair_mapsTo {n M : ℕ}
     {Good : Finset (Edge n) → Prop} {delta : ℝ}
-    (hn : 0 < n) (hM : 0 < M) (hdelta : 0 ≤ delta)
+    (_hn : 0 < n) (hM : 0 < M) (hdelta : 0 ≤ delta)
     (hu : (1 + delta) * ((n : ℝ) / (M + 1)) ≤ 1 / 2)
     (hgoodPM : ∀ H, Good H → HasPerfectMatching n H) :
     Set.MapsTo predicateExtendPair
@@ -20662,7 +20653,7 @@ lemma refinedInsertionGood_presentWeightSpread {n M codegCap : ℕ}
           (4 * (3 * (C₀ + 1) * (n : ℝ) + 12 * Real.sqrt n +
             10 * (Real.sqrt (Real.sqrt E * Real.sqrt (3 * n : ℝ)) *
               Real.sqrt (3 * n : ℝ)))) ≤
-        (eta * (delta - 2 / a) * (n : ℝ))^2)
+        (eta * (delta - 2 / a) * (n : ℝ)) ^ 2)
     {H : Finset (Edge n)}
     (hGood : RefinedInsertionGood n M a B codegCap C₀ H)
     {Z : Edge n} (hZ : Z ∈ allEdges n \ H) :
@@ -20706,7 +20697,7 @@ lemma refinedInsertionGood_presentWeightSpread {n M codegCap : ℕ}
       haHalf0 haHalf1 (fun v ↦ by
         rw [hGcard]
         exact (hcoarseInsert.2.2 v).1)
-    convert hbase using 1 <;> field_simp
+    convert hbase using 1 ; field_simp
   exact presentWeightSpread_of_countLower_and_errorBound
     hn hGall hPhi (C₀ + 1) E (2 / a) delta eta hcountInsert herror
     heta hgap hreg hbudget
@@ -20733,7 +20724,7 @@ lemma refinedInsertion_globalUpper_failure_probability_le
           (4 * (3 * (C₀ + 1) * (n : ℝ) + 12 * Real.sqrt n +
             10 * (Real.sqrt (Real.sqrt E * Real.sqrt (3 * n : ℝ)) *
               Real.sqrt (3 * n : ℝ)))) ≤
-        (eta * (delta - 2 / a) * (n : ℝ))^2)
+        (eta * (delta - 2 / a) * (n : ℝ)) ^ 2)
     (hdelta0 : 0 ≤ delta)
     (hu : (1 + delta) * ((n : ℝ) / (M + 1)) ≤ 1 / 2)
     (hr : 0 < r)
@@ -21261,7 +21252,7 @@ lemma someAdaptiveCoordinateTailFailure_probability_le
 /-- Failure of the tail clause of `CoordinateTransferRegular` is
 contained in the marked adaptive-tail union event. -/
 lemma coordinateTransferRegular_tail_failure_probability_le
-    {n M d D codegCap Q b B e₁ : ℕ} {c p : ℝ}
+    {n M d D _codegCap Q b _B e₁ : ℕ} {c p : ℝ}
     (hM : M ≤ (allEdges n).card) (hp : 0 ≤ p)
     (hratio : ∀ Z ∈ allEdges n, ∀ x ∈ Z,
       ∀ y : Vertex n, y ∉ Z → ∀ t : ℕ,
@@ -21316,7 +21307,7 @@ predecessor, with the exact normalization-change factor `M/(M+1)`. -/
 lemma completionWeightLowerBound_of_insert_close {n : ℕ}
     (H : Finset (Edge n)) (Z : Edge n) (delta : ℝ)
     (hZ : Z ∉ H) (hPhi : (perfectMatchings n H).card ≠ 0)
-    (hHcard : 0 < H.card) (hdelta0 : 0 ≤ delta) (hdelta1 : delta ≤ 1)
+    (hHcard : 0 < H.card) (_hdelta0 : 0 ≤ delta) (hdelta1 : delta ≤ 1)
     (hclose : CompletionWeightClose (insert Z H) delta Z) :
     CompletionWeightLowerBound H
       ((1 - delta) * (H.card : ℝ) / (H.card + 1)) Z := by
@@ -21346,7 +21337,6 @@ lemma completionWeightLowerBound_of_insert_close {n : ℕ}
   have hden : (0 : ℝ) < (perfectMatchings n (insert Z H)).card := by
     exact_mod_cast Nat.pos_of_ne_zero hPhiInsert
   have hmul := (le_div_iff₀ hden).mp hfracLower
-  unfold matchingFraction at hmul
   rw [show matchingWeight (insert Z H) Z = completionWeight H Z by rfl,
     hcountR] at hmul
   have hu0 : 0 ≤ (1 - delta) * ((n : ℝ) / (H.card + 1)) := by
@@ -21763,7 +21753,7 @@ lemma coordinateResidualExceptionalVerticesAway_card_mul_le
           (fun _ _ _ ↦ Nat.zero_le _)
   have hEeq : coordinateResidualExceptionalVerticesAway G Z a Q = E := by
     ext y
-    simp [coordinateResidualExceptionalVerticesAway, E, Y, and_assoc]
+    simp [coordinateResidualExceptionalVerticesAway, E, Y]
   rw [hEeq]
   exact hbound.trans (hsum.trans (Nat.mul_le_mul_left 3 hB))
 
@@ -22043,7 +22033,7 @@ lemma unreindexEdgeAway_mem_allEdges {n : ℕ} {Z : Edge n}
   exact mem_allEdges.mp hW
 
 lemma disjoint_reindexEdgeAway_iff {n : ℕ} {Z U V : Edge n}
-    (hZ : Z ∈ allEdges n) (hUZ : Disjoint U Z) (hVZ : Disjoint V Z) :
+    (hZ : Z ∈ allEdges n) (hUZ : Disjoint U Z) (_hVZ : Disjoint V Z) :
     Disjoint (reindexEdgeAway Z hZ U) (reindexEdgeAway Z hZ V) ↔
       Disjoint U V := by
   rw [Finset.disjoint_left, Finset.disjoint_left]
@@ -22154,7 +22144,7 @@ lemma card_unreindexFamilyAway {n : ℕ} {Z : Edge n}
 
 lemma isMatching_reindexFamilyAway {n : ℕ} {Z : Edge n}
     (hZ : Z ∈ allEdges n) {F : Finset (Edge n)}
-    (haway : ∀ U ∈ F, Disjoint U Z) (hmatch : IsMatching F) :
+    (_haway : ∀ U ∈ F, Disjoint U Z) (hmatch : IsMatching F) :
     IsMatching (reindexFamilyAway Z hZ F) := by
   intro W hW V hV hWV
   have hWF := (mem_reindexFamilyAway hZ W).mp hW
@@ -22180,7 +22170,7 @@ lemma isMatching_unreindexFamilyAway {n : ℕ} {Z : Edge n}
   have hWX : W ≠ X := by
     intro h
     apply hUV
-    simpa [h]
+    simp [h]
   have hdis := hmatch hWK hXK hWX
   apply (disjoint_reindexEdgeAway_iff hZ
     (unreindexEdgeAway_disjoint hZ W)
@@ -23082,7 +23072,7 @@ lemma kahnCountLower_reindexGraphAway_of_weightLower
     (hZ : Z ∈ allEdges n)
     (hc : 0 < c) (hPhi : (perfectMatchings n H).card ≠ 0)
     (hcount : KahnCountLower H C₀)
-    (hweight : c^2 * matchingWeightTarget n H ≤
+    (hweight : c ^ 2 * matchingWeightTarget n H ≤
       (completionWeight H Z : ℝ))
     (hbudget :
       ((n - 1 : ℕ) : ℝ) *
@@ -23090,7 +23080,7 @@ lemma kahnCountLower_reindexGraphAway_of_weightLower
           2 * ((n - 1 : ℕ) : ℝ) - C₁ * ((n - 1 : ℕ) : ℝ) ≤
         ((n : ℝ) * Real.log ((M : ℝ) / n) -
           2 * (n : ℝ) - C₀ * (n : ℝ)) +
-          Real.log (c^2 * (n : ℝ) / M)) :
+          Real.log (c ^ 2 * (n : ℝ) / M)) :
     KahnCountLower (reindexGraphAway H Z hZ) C₁ := by
   rcases mem_sample.mp hH with ⟨hHall, hHcard⟩
   have hnR : (0 : ℝ) < n := by positivity
@@ -23105,7 +23095,7 @@ lemma kahnCountLower_reindexGraphAway_of_weightLower
     unfold matchingWeightTarget at hweight
     rw [hHcard] at hweight
     dsimp only [f]
-    convert hweight using 1 <;> ring
+    convert hweight using 1 ; ring
   have hwpos : (0 : ℝ) < completionWeight H Z :=
     lt_of_lt_of_le (mul_pos hf hPhiR) hweight'
   have hlogWeight :
@@ -23156,7 +23146,7 @@ lemma refinedInsertion_globalLower_failure_probability_le
           (4 * (3 * (C₀ + 1) * (n : ℝ) + 12 * Real.sqrt n +
             10 * (Real.sqrt (Real.sqrt E * Real.sqrt (3 * n : ℝ)) *
               Real.sqrt (3 * n : ℝ)))) ≤
-        (eta * (delta - 2 / a) * (n : ℝ))^2)
+        (eta * (delta - 2 / a) * (n : ℝ)) ^ 2)
     (hdelta0 : 0 ≤ delta) (hdelta1 : delta ≤ 1)
     (hr : 0 < r)
     (hglobalBudget : r + (M : ℝ) ≤ etaGlobal * (allEdges n).card) :
@@ -23177,7 +23167,7 @@ lemma completionWeight_pos_of_matchingWeightTarget_lower
     {n : ℕ} {H : Finset (Edge n)} {Z : Edge n} {c : ℝ}
     (hn : 0 < n) (hHcard : 0 < H.card)
     (hPhi : (perfectMatchings n H).card ≠ 0) (hc : 0 < c)
-    (hweight : c^2 * matchingWeightTarget n H ≤
+    (hweight : c ^ 2 * matchingWeightTarget n H ≤
       (completionWeight H Z : ℝ)) :
     0 < completionWeight H Z := by
   have htarget : 0 < matchingWeightTarget n H := by
@@ -23193,7 +23183,7 @@ lemma hasPerfectMatching_reindexGraphAway_of_weightLower
     (hn : 2 ≤ n) (hHcard : 0 < H.card)
     (hZ : Z ∈ allEdges n)
     (hPhi : (perfectMatchings n H).card ≠ 0) (hc : 0 < c)
-    (hweight : c^2 * matchingWeightTarget n H ≤
+    (hweight : c ^ 2 * matchingWeightTarget n H ≤
       (completionWeight H Z : ℝ)) :
     HasPerfectMatching (n - 1) (reindexGraphAway H Z hZ) := by
   apply hasPerfectMatching_iff_perfectMatchings_nonempty.mpr
@@ -23210,7 +23200,7 @@ lemma reindexGraphAway_refinedInsertionGood_of_weightLower
     (ha0 : 0 ≤ a) (hB0 : 0 ≤ B) (hc : 0 < c)
     (hPhi : (perfectMatchings n H).card ≠ 0)
     (hcount : KahnCountLower H C₀)
-    (hweight : c^2 * matchingWeightTarget n H ≤
+    (hweight : c ^ 2 * matchingWeightTarget n H ≤
       (completionWeight H Z : ℝ))
     (hdegreeLower : ∀ v : Vertex n,
       d ≤ vertexDegree H v - 3 * codegCap)
@@ -23226,7 +23216,7 @@ lemma reindexGraphAway_refinedInsertionGood_of_weightLower
           2 * ((n - 1 : ℕ) : ℝ) - C₁ * ((n - 1 : ℕ) : ℝ) ≤
         ((n : ℝ) * Real.log ((M : ℝ) / n) -
           2 * (n : ℝ) - C₀ * (n : ℝ)) +
-          Real.log (c^2 * (n : ℝ) / M)) :
+          Real.log (c ^ 2 * (n : ℝ) / M)) :
     RefinedInsertionGood (n - 1) (reindexGraphAway H Z hZ).card
       a B codegCap C₁ (reindexGraphAway H Z hZ) := by
   have hHcard : H.card = M := (mem_sample.mp hH).2
@@ -23246,8 +23236,8 @@ lemma high_from_max_completionWeight {n M : ℕ}
     (hM : 0 < M) (hH : H ∈ sample n M)
     (hmax : ∀ U ∈ allEdges n,
       completionWeight H U ≤ completionWeight H Z₀)
-    (hc : 0 ≤ c)
-    (hhigh : c^2 * (completionWeight H Z₀ : ℝ) ≤
+    (_hc : 0 ≤ c)
+    (hhigh : c ^ 2 * (completionWeight H Z₀ : ℝ) ≤
       completionWeight H Z) :
     c^2 * matchingWeightTarget n H ≤ completionWeight H Z := by
   have htarget := matchingWeightTarget_le_max_completionWeight_of_sample
@@ -23487,7 +23477,7 @@ lemma finsetAverage_iidProduct {α : Type*} (s : Finset α)
         ∑ omega : IidSample s t, iidProduct W t omega by simp,
     hnum]
   have hcard : (Finset.univ : Finset (IidSample s t)).card =
-      s.card^t := by simp [Fintype.card_fun]
+      s.card^t := by simp
   rw [hcard, div_pow]
   congr 1
   · rw [Finset.univ_eq_attach s, Finset.sum_attach]
@@ -23528,7 +23518,7 @@ lemma finsetAverage_iid_succ {α : Type*} (s : Finset α) (t : ℕ)
   have hcardSucc :
       (Finset.univ : Finset (IidSample s (t + 1))).card =
         s.card * (Finset.univ : Finset (IidSample s t)).card := by
-    simp [Fintype.card_fun, pow_succ, mul_comm]
+    simp [pow_succ, mul_comm]
   rw [hcardSucc, Nat.cast_mul]
   ring
 
@@ -23665,7 +23655,7 @@ lemma finsetAverage_exp_iidDoobCentered_le {α : Type*}
                 (fun omega ↦ Real.exp
                   (theta * (iidFiber X x omega - EX)))) := by
         convert finsetAverage_iid_succ s t
-            (fun omega ↦ Real.exp (theta * (X omega - EX))) using 1 <;>
+            (fun omega ↦ Real.exp (theta * (X omega - EX))) using 1 ;
           rfl
       rw [show finsetAverage
           (Finset.univ : Finset (IidSample s (t + 1))) X = EX by rfl,
@@ -24126,7 +24116,6 @@ lemma thinning_survival_term_bounds {q m x : ℝ} (t : ℕ)
         Real.exp ((t : ℝ) * x / m) := by
     rw [← Real.exp_nat_mul, ← Real.exp_add]
     congr 1
-    push_cast
     field_simp [hm0.ne']
     ring
   rw [hexppow] at hpow
@@ -24526,7 +24515,7 @@ lemma embeddingCompletionThinning_lower_tail_le {n t : ℕ}
 
 lemma embeddingFamilySurvivalCount_completion_eq {n t : ℕ}
     (H : Finset (Edge n)) (Z : Edge n) (s : Finset (Edge n))
-    (hsH : s ⊆ H) (e : Fin t ↪ ↥s) :
+    (_hsH : s ⊆ H) (e : Fin t ↪ ↥s) :
     embeddingFamilySurvivalCount (completionMatchings n H Z) e =
       ((completionMatchings n (H \ historyEdges e) Z).card : ℝ) := by
   unfold embeddingFamilySurvivalCount
@@ -24713,7 +24702,7 @@ lemma refinedInsertion_globalLower_fixed_failure_probability_le
           (4 * (3 * (C₀ + 1) * (n : ℝ) + 12 * Real.sqrt n +
             10 * (Real.sqrt (Real.sqrt E * Real.sqrt (3 * n : ℝ)) *
               Real.sqrt (3 * n : ℝ)))) ≤
-        (eta * (delta - 2 / a) * (n : ℝ))^2)
+        (eta * (delta - 2 / a) * (n : ℝ)) ^ 2)
     (hdelta0 : 0 ≤ delta) (hdelta1 : delta ≤ 1)
     (hr : 0 < r)
     (hglobalBudget : r + (M : ℝ) ≤ etaGlobal * (allEdges n).card)
@@ -24741,7 +24730,7 @@ lemma refinedInsertion_globalLower_fixed_failure_probability_le
     _ ≤ eta * (((allEdges n).card - M : ℕ) : ℝ) / r := hbase
 
 def ResidualRefinedInheritanceGood
-    (n M d D codegCap : ℕ) (a B c C₀ C₁ : ℝ)
+    (n M d D codegCap : ℕ) (_a _B c C₀ C₁ : ℝ)
     (H : Finset (Edge n)) : Prop :=
   (perfectMatchings n H).card ≠ 0 ∧
   KahnCountLower H C₀ ∧
@@ -24948,7 +24937,7 @@ lemma presentWeightSpread_of_local_add_degreeL1 {n : ℕ}
     (H : Finset (Edge n)) (hH : H ⊆ allEdges n)
     (hPhi : (perfectMatchings n H).card ≠ 0)
     (delta eta S R : ℝ) (hn : 0 < n)
-    (hdelta : 0 < delta) (heta : 0 ≤ eta)
+    (hdelta : 0 < delta) (_heta : 0 ≤ eta)
     (hlocal : ∑ v : Vertex n, localMatchingL1 H v ≤ S)
     (hdegree : degreeReciprocalL1 H ≤ R)
     (hbudget : S + R ≤ 3 * eta * delta * (n : ℝ)) :
@@ -25322,7 +25311,7 @@ lemma degreeReciprocalTerm_le_abs_normalized {n M : ℕ}
 lemma degreeReciprocalTerm_le_of_not_relativeBad {n M : ℕ}
     (H : Finset (Edge n)) (v : Vertex n) (q : ℝ)
     (hn : 0 < n) (hM : 0 < M) (hcard : H.card = M)
-    (hq0 : 0 ≤ q) (hgood : ¬ DegreeRelativeBad n M q v H) :
+    (_hq0 : 0 ≤ q) (hgood : ¬ DegreeRelativeBad n M q v H) :
     (vertexDegree H v : ℝ) *
         |1 / (vertexDegree H v : ℝ) - matchingFractionMean n H| ≤ q := by
   have hbase := degreeReciprocalTerm_le_abs_normalized H v hn hM hcard
@@ -25344,7 +25333,7 @@ lemma degreeReciprocalTerm_le_of_not_relativeBad {n M : ℕ}
 lemma degreeReciprocalTerm_le_of_degreeUpper {n M : ℕ}
     (H : Finset (Edge n)) (v : Vertex n) (B : ℝ)
     (hn : 0 < n) (hM : 0 < M) (hcard : H.card = M)
-    (hB0 : 0 ≤ B)
+    (_hB0 : 0 ≤ B)
     (hupper : (vertexDegree H v : ℝ) ≤
       B * ((M : ℝ) / n)) :
     (vertexDegree H v : ℝ) *
@@ -25420,9 +25409,9 @@ lemma degreeReciprocalL1_le_of_aggregateRegular {n M : ℕ}
                   (fun v ↦ v ∈ Bad), (1 + B) := by
                 rw [Finset.sum_filter]
           _ = ∑ _v ∈ Bad, (1 + B) := by rw [hfilter]
-          _ = (Bad.card : ℝ) * (1 + B) := by simp <;> ring
+          _ = (Bad.card : ℝ) * (1 + B) := by simp ; ring
       rw [hsumIf]
-      norm_num only [Nat.cast_mul, Nat.cast_ofNat] <;> ring
+      norm_num only [Nat.cast_mul, Nat.cast_ofNat]
     _ ≤ (3 * n : ℝ) * q +
         (eta * (3 * n : ℝ)) * (1 + B) := by
       apply add_le_add (le_refl _)
@@ -25599,7 +25588,7 @@ lemma degreeRelativeBadVertices_insert_subset {n M : ℕ}
 lemma degreeAggregateRegular_insert {n M : ℕ}
     (H : Finset (Edge n)) (Z : Edge n) (q eta B : ℝ)
     (hn : 0 < n) (hM : 0 < M) (hq0 : 0 ≤ q) (hB0 : 0 ≤ B)
-    (hZall : Z ∈ allEdges n) (hZnot : Z ∉ H)
+    (hZall : Z ∈ allEdges n) (_hZnot : Z ∉ H)
     (hreg : DegreeAggregateRegular n M q eta B H) :
     DegreeAggregateRegular n (M + 1)
       (q + 2 * (n : ℝ) / M) (eta + 1 / (n : ℝ))

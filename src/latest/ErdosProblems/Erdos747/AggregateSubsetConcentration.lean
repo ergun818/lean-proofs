@@ -514,7 +514,7 @@ lemma vertexSetDegree_classDelta_nonneg
 
 lemma vertexSetDegree_classDelta_le_two_mul
     (n M : ℕ) (q : ℝ) (W : Finset (Vertex n))
-    (hn : 0 < n) (hq0 : 0 ≤ q) (hq1 : q ≤ 1) :
+    (hn : 0 < n) (_hq0 : 0 ≤ q) (hq1 : q ≤ 1) :
     q * (W.card : ℝ) * ((M : ℝ) / n) / 6 ≤ 2 * M := by
   have hnR : (0 : ℝ) < n := by exact_mod_cast hn
   have hWnat : W.card ≤ 3 * n := by
@@ -525,7 +525,7 @@ lemma vertexSetDegree_classDelta_le_two_mul
     q * (W.card : ℝ) * ((M : ℝ) / n) / 6 ≤
         1 * (3 * (n : ℝ)) * ((M : ℝ) / n) / 6 := by
       gcongr
-    _ = (M : ℝ) / 2 := by field_simp [hnR.ne'] <;> ring
+    _ = (M : ℝ) / 2 := by field_simp [hnR.ne'] ; ring
     _ ≤ 2 * M := by linarith
 
 /-- A fixed vertex set has exponentially small upper incidence deviation,

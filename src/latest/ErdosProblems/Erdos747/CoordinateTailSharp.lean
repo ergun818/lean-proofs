@@ -122,7 +122,7 @@ lemma coordinateTransfer_tail_failure_probability_le_exp
           (Real.exp 1 * Q * D /
             ((((3 * n - 4).choose 2 : ℕ) : ℝ) * (b + 1)))^(b + 1)) / (e₁ + 1)) := by
   apply coordinateTransferRegular_tail_failure_probability_le
-    (codegCap := 0) (B := 0) hM (by positivity)
+    (_codegCap := 0) (_B := 0) hM (by positivity)
   intro Z hZ x hx y hy t ht htD
   simpa only [Nat.cast_add, Nat.cast_one] using
     (coordinate_hypergeometric_exp_ratio_le (Q := Q) hZ hy (by omega) htD hbS)

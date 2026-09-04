@@ -22,7 +22,7 @@ lemma exists_bounded_variance_tilt (V b u : ℝ)
       nlinarith
     · have heq : (u / (2 * V))^2 * V - (u / (2 * V)) * u = -(u^2 / (4 * V)) := by
         field_simp
-        <;> ring
+        ; ring
       rw [heq]
       exact neg_le_neg (min_le_left _ _)
   · refine ⟨1 / (2 * b), by positivity, ?_, ?_⟩
@@ -50,7 +50,7 @@ lemma completionThinning_relative_lower_failure_le_optimized
     (hhit : (t : ℝ) * ((completionHeavyEdges H Z b).card : ℝ) / H.card ≤ pHit)
     (hbudget : r * (completionWeight H Z : ℝ) + u ≤
       (completionWeight H Z : ℝ) *
-        (1 - ((n - 1 : ℕ) : ℝ) / (H \ completionHeavyEdges H Z b).card)^t) :
+        (1 - ((n - 1 : ℕ) : ℝ) / (H \ completionHeavyEdges H Z b).card) ^ t) :
     finsetProbability (H.powersetCard t)
         (fun T ↦ (completionWeight (H \ T) Z : ℝ) <
           r * (completionWeight H Z : ℝ)) ≤

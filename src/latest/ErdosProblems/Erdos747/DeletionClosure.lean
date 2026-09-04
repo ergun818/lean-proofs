@@ -152,7 +152,7 @@ lemma pmProbability_tendsto_one_of_uniform_bootstrap_level_bound
       DeletionHistoryGood (C n) t e →
         stoppedCenteredSum (C n) t e ≤ u n →
           R n t e → DeletionStepGood (C n) e)
-    (hB0 : ∀ n, 0 ≤ B n)
+    (_hB0 : ∀ n, 0 ≤ B n)
     (hlevel : ∀ n t,
       t ≤ (allEdges n).card - M n →
         finsetProbability

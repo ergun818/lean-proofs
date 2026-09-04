@@ -129,7 +129,7 @@ lemma bottomWeightBlock_mem_lt_of_many_lt
 lemma filter_topWeightBlock_le_exception_card
     {α : Type*} [DecidableEq α]
     (s T : Finset α) (W : α → ℝ) (d : ℕ) (a : ℝ)
-    (hd : d ≤ s.card)
+    (_hd : d ≤ s.card)
     (hblock : ∀ y ∈ topWeightBlock s W d, a < W y) :
     ((T.filter fun y ↦ y ∈ topWeightBlock s W d).card : ℝ) ≤
       ((T.filter fun y ↦ a < W y).card : ℝ) := by
@@ -141,7 +141,7 @@ lemma filter_topWeightBlock_le_exception_card
 lemma filter_bottomWeightBlock_le_exception_card
     {α : Type*} [DecidableEq α]
     (s T : Finset α) (W : α → ℝ) (d : ℕ) (a : ℝ)
-    (hd : d ≤ s.card)
+    (_hd : d ≤ s.card)
     (hblock : ∀ y ∈ bottomWeightBlock s W d, W y < a) :
     ((T.filter fun y ↦ y ∈ bottomWeightBlock s W d).card : ℝ) ≤
       ((T.filter fun y ↦ W y < a).card : ℝ) := by

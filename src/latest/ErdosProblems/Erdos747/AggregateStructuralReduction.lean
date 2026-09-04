@@ -18,7 +18,7 @@ lemma coordinateTransferRegularAwayAboveMax_of_residualAggregate
     {n M d D codegCap Q b B e₁ : ℕ}
     {c C₀ C₁ q₁ etaDeg₁ Bdeg₁ L eta : ℝ}
     {H : Finset (Edge n)}
-    (hn : 2 ≤ n) (hM0 : 0 < M) (hH : H ∈ sample n M)
+    (hn : 2 ≤ n) (_hM0 : 0 < M) (hH : H ∈ sample n M)
     (hresidual : ResidualAggregateInheritanceGood
       n M d D codegCap c C₀ C₁ q₁ etaDeg₁ Bdeg₁ H)
     (hdb : b < d) (hJpos : 0 < M - 3 * D)

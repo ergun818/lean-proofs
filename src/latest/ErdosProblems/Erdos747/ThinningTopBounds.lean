@@ -36,7 +36,8 @@ lemma coarseUpperBadNonedge_weight_lower_quarter {n : ℕ} (H : Finset (Edge n))
   have hhigh := lt_of_not_ge hbad
   have htarget : 0 ≤ matchingWeightTarget n H := by unfold matchingWeightTarget; positivity
   have hfactor := coarseUpperFactor_ge_two T hT
-  have h := mul_le_mul_of_nonneg_right (show (1 / 2 : ℝ)^2 ≤ coarseUpperFactor T by nlinarith only [hfactor]) htarget
+  have h := mul_le_mul_of_nonneg_right
+    (show (1 / 2 : ℝ)^2 ≤ coarseUpperFactor T by nlinarith only [hfactor]) htarget
   exact h.trans hhigh.le
 
 lemma presentTypical_weight_lower_quarter {n : ℕ} (H : Finset (Edge n))
@@ -47,7 +48,8 @@ lemma presentTypical_weight_lower_quarter {n : ℕ} (H : Finset (Edge n))
     by_contra hbad
     exact hZtyp (Finset.mem_filter.mpr ⟨hZH, lt_of_not_ge hbad⟩)
   have htarget : 0 ≤ matchingWeightTarget n H := by unfold matchingWeightTarget; positivity
-  exact (mul_le_mul_of_nonneg_right (show (1 / 2 : ℝ)^2 ≤ 1 - alpha by linarith only [halpha]) htarget).trans hlow
+  exact (mul_le_mul_of_nonneg_right
+    (show (1 / 2 : ℝ)^2 ≤ 1 - alpha by linarith only [halpha]) htarget).trans hlow
 
 lemma upper_thinning_diagnostic_miss_le
     {n k : ℕ} {H : Finset (Edge n)} (alpha eta T p : ℝ)
@@ -61,7 +63,8 @@ lemma upper_thinning_diagnostic_miss_le
         (fun U ↦ (completionWeight (H \ U) Z : ℝ) <
           coarseSurvivalFraction T * (completionWeight H Z : ℝ)) ≤ p) :
     finsetProbability (H.powersetCard (k + 1))
-        (fun U ↦ ¬ UpperWeightBlockDiagnostic n (thinningBlockSize (allEdges n).card eta) (k + 1) ⟨H, U⟩) ≤
+        (fun U ↦ ¬ UpperWeightBlockDiagnostic n
+          (thinningBlockSize (allEdges n).card eta) (k + 1) ⟨H, U⟩) ≤
       2 * p + 100 * alpha / eta := by
   let e := thinningExceptionCount (k + 1) eta
   have hfactor := coarseUpperFactor_ge_two T hT
@@ -87,7 +90,8 @@ lemma upper_thinning_diagnostic_miss_le
     (d := thinningBlockSize (allEdges n).card eta) (e := e)
     (show 1 + alpha ≤ coarseUpperFactor T by linarith only [halphaHalf, hfactor])
     hspread hbudget hglobal hk hp hr hscale hdiag hrelative
-  exact hraw.trans (add_le_add le_rfl (thinningExceptionCount_scaled_ratio_le (k + 1) eta alpha heta halpha0))
+  exact hraw.trans (add_le_add le_rfl
+    (thinningExceptionCount_scaled_ratio_le (k + 1) eta alpha heta halpha0))
 
 lemma lower_thinning_diagnostic_miss_le
     {n k : ℕ} {H : Finset (Edge n)} (alpha eta T p : ℝ)
@@ -101,7 +105,8 @@ lemma lower_thinning_diagnostic_miss_le
         (fun U ↦ (completionWeight ((H.erase Z) \ U) Z : ℝ) <
           coarseSurvivalFraction T * (completionWeight (H.erase Z) Z : ℝ)) ≤ p) :
     finsetProbability (H.powersetCard (k + 1))
-        (fun U ↦ ¬ LowerWeightBlockDiagnostic n (thinningBlockSize (allEdges n).card eta) (k + 1) ⟨H, U⟩) ≤
+        (fun U ↦ ¬ LowerWeightBlockDiagnostic n
+          (thinningBlockSize (allEdges n).card eta) (k + 1) ⟨H, U⟩) ≤
       100 * (alpha + p) / eta := by
   let e := thinningExceptionCount (k + 1) eta
   have hr := coarseSurvivalFraction_pos T

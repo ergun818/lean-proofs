@@ -141,8 +141,6 @@ lemma card_labelSelected_fiber {α : Type*}
     (∏ x : ↥s, (labelsForSubset s M H x).card) =
         (∏ x ∈ H, M) *
           ∏ x ∈ (Finset.univ : Finset ↥s) \ H, (s.card - M) := by
-      change (∏ x ∈ (Finset.univ : Finset ↥s),
-        (labelsForSubset s M H x).card) = _
       simp only [labelsForSubset, apply_ite, card_lowLabels,
         card_highLabels, min_eq_left hM]
       rw [Finset.prod_ite]
@@ -302,7 +300,7 @@ lemma binomialLabelMass_le_succ_of_lt_mode
 
 /-- The cleared binomial masses decrease after the parameter `M`. -/
 lemma binomialLabelMass_succ_le_of_mode_le
-    (K M j : ℕ) (hM : M ≤ K) (hMj : M ≤ j) (hj : j < K) :
+    (K M j : ℕ) (_hM : M ≤ K) (hMj : M ≤ j) (hj : j < K) :
     binomialLabelMass K M (j + 1) ≤ binomialLabelMass K M j := by
   have hMKlt : M < K := hMj.trans_lt hj
   have hden : 0 < (j + 1) * (K - M) :=
@@ -489,7 +487,7 @@ lemma finsetProbability_powersetCard_le_labelSelected
       exact Nat.mul_pos (hself M) (hself (s.card - M)))
   have htotal : (Finset.univ : Finset (LabelSample s)).card =
       s.card ^ s.card := by
-    simp [LabelSample, Fintype.card_fun]
+    simp [LabelSample]
   have hcard :
       (((Finset.univ : Finset (LabelSample s)).card : ℕ) : ℝ) ≤
         (s.card + 1 : ℝ) * S.card := by
@@ -557,7 +555,7 @@ lemma finsetProbability_univ_prod_fst
 /-- Restricting independent uniform labels to a fixed coordinate block
 leaves independent uniform labels on that block. -/
 lemma labelRestriction_probability_eq {α : Type*}
-    (s : Finset α) (M : ℕ) (Y : Finset ↥s)
+    (s : Finset α) (_M : ℕ) (Y : Finset ↥s)
     (Q : (↥Y → Fin s.card) → Prop) (hs : s.Nonempty) :
     finsetProbability (Finset.univ : Finset (LabelSample s))
         (fun omega ↦ Q (fun y ↦ omega y.1)) =

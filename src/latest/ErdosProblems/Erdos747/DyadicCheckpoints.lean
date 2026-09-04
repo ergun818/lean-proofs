@@ -63,7 +63,7 @@ lemma deletionHistoryAt_top {n T : ℕ} {H : Finset (Edge n)}
   ext i : 1
   apply congrArg e
   apply Fin.ext
-  simp [deletionHistoryAt]
+  simp
 
 lemma deletionHistoryAt_parent {n T t : ℕ} {H : Finset (Edge n)}
     (e : DeletionHistory H (T + 1)) (ht : t ≤ T) :

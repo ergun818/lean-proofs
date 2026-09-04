@@ -52,8 +52,8 @@ lemma kahnLayerInput_implies_bootstrap_conclusion
     (hn : 2 ≤ n) (hc0 : 0 ≤ cTransfer) (hc1 : cTransfer ≤ 1)
     (hdb : b < d) (hB : 3 * B ≤ e₀ * (Q + 1))
     (he : 2 * (e₀ + e₁) + 12 ≤ n)
-    (hq : q ≤ (((n / 2 : ℕ) : ℝ)^3 / (allEdges n).card))
-    (hcPow : c ≤ cTransfer^3)
+    (hq : q ≤ (((n / 2 : ℕ) : ℝ) ^ 3 / (allEdges n).card))
+    (hcPow : c ≤ cTransfer ^ 3)
     (hcount : KahnCountLower H C₀)
     (hinput : KahnLayerInput n d D codegCap Q b B e₁
       C₀ L eta cTransfer H) :
@@ -71,8 +71,8 @@ lemma kahnStructuralFailure_probability_le_layerInput_failure
     (hn : 2 ≤ n) (hc0 : 0 ≤ cTransfer) (hc1 : cTransfer ≤ 1)
     (hdb : b < d) (hB : 3 * B ≤ e₀ * (Q + 1))
     (he : 2 * (e₀ + e₁) + 12 ≤ n)
-    (hq : q ≤ (((n / 2 : ℕ) : ℝ)^3 / (allEdges n).card))
-    (hcPow : c ≤ cTransfer^3) :
+    (hq : q ≤ (((n / 2 : ℕ) : ℝ) ^ 3 / (allEdges n).card))
+    (hcPow : c ≤ cTransfer ^ 3) :
     finsetProbability (sample n M)
         (KahnStructuralFailure n C₀ L eta q c) ≤
       finsetProbability (sample n M)

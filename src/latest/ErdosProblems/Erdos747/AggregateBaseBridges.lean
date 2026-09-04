@@ -73,14 +73,14 @@ lemma residualAggregateInheritanceGood_of_aggregateLayerRegular
       (((d + 3 * codegCap : ℕ) : ℝ)) ≤ a * ((M : ℝ) / n))
     (hdegreeUpper : B * ((M : ℝ) / n) ≤ (D : ℝ))
     (hcountBudget : ∀ (Z : Edge n) (hZ : Z ∈ allEdges n),
-      c^2 * matchingWeightTarget n H ≤ completionWeight H Z →
+      c ^ 2 * matchingWeightTarget n H ≤ completionWeight H Z →
       ((n - 1 : ℕ) : ℝ) *
             Real.log (((reindexGraphAway H Z hZ).card : ℝ) /
               (n - 1 : ℕ)) -
           2 * ((n - 1 : ℕ) : ℝ) - C₁ * ((n - 1 : ℕ) : ℝ) ≤
         ((n : ℝ) * Real.log ((M : ℝ) / n) -
           2 * (n : ℝ) - C₀ * (n : ℝ)) +
-          Real.log (c^2 * (n : ℝ) / M))
+          Real.log (c ^ 2 * (n : ℝ) / M))
     (haggregateLower : ∀ (Z : Edge n) (hZ : Z ∈ allEdges n),
       (1 - q₁) *
           (((reindexGraphAway H Z hZ).card : ℝ) / (n - 1 : ℕ)) ≤

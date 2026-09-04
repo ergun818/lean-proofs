@@ -21,7 +21,7 @@ lemma residualAggregateInheritance_presentWeightSpread
     (hZ : Z ∈ allEdges n) (hc : 0 < c)
     (hgood : ResidualAggregateInheritanceGood
       n M d D codegCap c C₀ C₁ q₁ etaDeg₁ Bdeg₁ H)
-    (hweight : c^2 * matchingWeightTarget n H ≤ completionWeight H Z)
+    (hweight : c ^ 2 * matchingWeightTarget n H ≤ completionWeight H Z)
     (hcap : 0 < codegCap) (hC1 : 0 ≤ C₁)
     {sigma E delta eta S : ℝ}
     (hsigma : 0 < sigma)
@@ -70,7 +70,7 @@ lemma completionThinning_relative_lower_failure_probability_le_of_residualAggreg
     (hZ : Z ∈ allEdges n) (hc : 0 < c)
     (hgood : ResidualAggregateInheritanceGood
       n M d D codegCap c C₀ C₁ q₁ etaDeg₁ Bdeg₁ H)
-    (hweight : c^2 * matchingWeightTarget n H ≤ completionWeight H Z)
+    (hweight : c ^ 2 * matchingWeightTarget n H ≤ completionWeight H Z)
     (hcap : 0 < codegCap) (hC1 : 0 ≤ C₁)
     (sigma E delta eta S r theta u : ℝ)
     (hsigma : 0 < sigma)
@@ -123,7 +123,7 @@ lemma completionThinning_relative_lower_failure_probability_le_of_residualAggreg
           (1 - ((n - 1 : ℕ) : ℝ) /
             (H \ completionHeavyEdges H Z
               ((1 + delta) * matchingWeightTarget (n - 1)
-                (reindexGraphAway H Z hZ))).card)^t) :
+                (reindexGraphAway H Z hZ))).card) ^ t) :
     finsetProbability (H.powersetCard t)
         (fun T ↦ (completionWeight (H \ T) Z : ℝ) <
           r * (completionWeight H Z : ℝ)) ≤

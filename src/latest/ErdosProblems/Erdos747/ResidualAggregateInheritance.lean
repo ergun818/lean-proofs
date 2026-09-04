@@ -28,7 +28,7 @@ triple, provided the displayed deterministic changes of scale have been
 absorbed into the new parameters. -/
 lemma degreeAggregateRegular_reindexGraphAway
     {n M codegCap : ℕ} {H : Finset (Edge n)} {Z : Edge n}
-    (hZ : Z ∈ allEdges n) (hHcard : H.card = M)
+    (hZ : Z ∈ allEdges n) (_hHcard : H.card = M)
     (q eta B q' eta' B' : ℝ)
     (hcodeg : ∀ u v : Vertex n, u ≠ v →
       vertexCodegree H u v ≤ codegCap)
@@ -168,7 +168,7 @@ lemma reindexGraphAway_kahnAggregateInsertionGood
     (hZ : Z ∈ allEdges n) (hc : 0 < c)
     (hgood : ResidualAggregateInheritanceGood
       n M d D codegCap c C₀ C₁ q₁ etaDeg₁ Bdeg₁ H)
-    (hweight : c^2 * matchingWeightTarget n H ≤ completionWeight H Z) :
+    (hweight : c ^ 2 * matchingWeightTarget n H ≤ completionWeight H Z) :
     KahnAggregateInsertionGood (n - 1) (reindexGraphAway H Z hZ).card
       codegCap C₁ q₁ etaDeg₁ Bdeg₁ (reindexGraphAway H Z hZ) := by
   rcases hgood with

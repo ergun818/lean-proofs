@@ -61,11 +61,13 @@ lemma eventually_standardAggregateLayer_insertion_and_residual
       ∀ H ∈ sample n M, StandardAggregateLayerRegular n M a H → KahnCountLower H (C n) →
         KahnAggregateInsertionGood n M (standardCodegreeCap n M) (C n)
           (aggregateDegreeTolerance n) (aggregateDegreeTolerance n) 32 H ∧
-        ResidualAggregateInheritanceGood n M (coordinateDegreeFloor n M a) (coordinateDegreeCeil n M)
+        ResidualAggregateInheritanceGood n M (coordinateDegreeFloor n M a)
+          (coordinateDegreeCeil n M)
           (standardCodegreeCap n M) c (C n) (residualCountError n (C n) c)
           (standardResidualDegreeTolerance n) (2 * aggregateDegreeTolerance n) 64 H := by
   have hgsmall := (tendsto_order.mp codegreeRelativeError_tendsto_zero).2 (a / 6) (by positivity)
-  have hqsmall := (tendsto_order.mp standardResidualDegreeTolerance_tendsto_zero).2 1 (by norm_num : (0 : ℝ) < 1)
+  have hqsmall := (tendsto_order.mp standardResidualDegreeTolerance_tendsto_zero).2
+    1 (by norm_num : (0 : ℝ) < 1)
   filter_upwards [eventually_upper_count_lower_positive epsilon C hepsilon hC, hgsmall, hqsmall,
     eventually_codegreeRelativeError_pos, log_vertexCount_tendsto_atTop.eventually_ge_atTop 1,
     eventually_ge_atTop 200] with n hpositive hgsmalln hqsmalln hgpos hlog hn
@@ -83,7 +85,8 @@ lemma eventually_standardAggregateLayer_insertion_and_residual
   refine ⟨hgood, ?_⟩
   rw [show (64 : ℝ) = 2 * 32 by norm_num]
   apply residualAggregateInheritanceGood_explicit (by omega : 2 ≤ n) hc
-    (by norm_num : (0 : ℝ) ≤ 32) (aggregateDegreeTolerance_nonneg n) (aggregateDegreeTolerance_nonneg n)
+    (by norm_num : (0 : ℝ) ≤ 32) (aggregateDegreeTolerance_nonneg n)
+      (aggregateDegreeTolerance_nonneg n)
     hgpos.le hmean hsize hrelative hqsmalln.le hHs hreg hpos hcount
   · exact coordinate_degree_lower_budget n M (standardCodegreeCap n M) a (codegreeRelativeError n)
       ha.le hrelative (lt_of_lt_of_le zero_lt_one hmean) hgsmalln.le

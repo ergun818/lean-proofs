@@ -26,7 +26,7 @@ lemma finsetUnion_decidable_irrel {α : Type*}
   simp
 
 lemma upperWeightBlockDiagnostic_top_of_global_failure
-    {n M t d e : ℕ} {H : Finset (Edge n)} {L delta p pExc topError : ℝ}
+    {n M t d e : ℕ} {H : Finset (Edge n)} {L delta p _pExc topError : ℝ}
     (hH : H ∈ (allEdges n).powersetCard M)
     (hAll : (allEdges n).Nonempty)
     (hfail : ¬ GlobalUpperWeightSpread n H L
@@ -84,7 +84,7 @@ lemma upperWeightBlockDiagnostic_top_of_global_failure
         simpa only [X] using htopError)
 
 lemma globalUpperWeightSpread_failure_probability_le_of_thinning
-    {n M t d e : ℕ} {L delta p pExc topError : ℝ}
+    {n M t d _e : ℕ} {L _delta _p _pExc topError : ℝ}
     (htM : t ≤ M) (hMtop : M ≤ (allEdges n).card)
     (htop0 : 0 ≤ topError)
     (hdBottom : d ≤ (allEdges n).card - (M - t))
@@ -149,7 +149,8 @@ lemma globalUpperWeightSpread_failure_probability_le_of_thinning
           simp [hbad]
         unfold finsetProbability
         rw [hempty]
-        simp only [Finset.card_empty, CharP.cast_eq_zero, Finset.card_powersetCard, zero_div, ge_iff_le]
+        simp only [Finset.card_empty, CharP.cast_eq_zero,
+          Finset.card_powersetCard, zero_div, ge_iff_le]
         exact htop0
     · intro F hF
       let dClassical : DecidableEq (Edge n) :=
@@ -243,7 +244,7 @@ lemma lowerWeightBlockDiagnostic_top_of_global_failure
     hXd hdX hambient hdiagnostic hlow hExc).trans herror
 
 lemma globalLowerWeightSpread_failure_probability_le_of_thinning
-    {n M t d e : ℕ} {L topError : ℝ}
+    {n M t d _e : ℕ} {L topError : ℝ}
     (htM : t ≤ M) (hMtop : M ≤ (allEdges n).card)
     (htop0 : 0 ≤ topError)
     (hdBottom : d ≤ (allEdges n).card - (M - t))
@@ -308,7 +309,8 @@ lemma globalLowerWeightSpread_failure_probability_le_of_thinning
           simp [hbad]
         unfold finsetProbability
         rw [hempty]
-        simp only [Finset.card_empty, CharP.cast_eq_zero, Finset.card_powersetCard, zero_div, ge_iff_le]
+        simp only [Finset.card_empty, CharP.cast_eq_zero,
+          Finset.card_powersetCard, zero_div, ge_iff_le]
         exact htop0
     · intro F hF
       let dClassical : DecidableEq (Edge n) :=
@@ -350,7 +352,7 @@ the final deletion-level union.  A top-fibre miss bound of at most one half
 does not appear additively; it only costs a factor two. -/
 
 lemma globalUpperWeightSpread_failure_probability_le_of_thinning_sharp
-    {n M t d e : ℕ} {L topError : ℝ}
+    {n M t d _e : ℕ} {L topError : ℝ}
     (htM : t ≤ M) (hMtop : M ≤ (allEdges n).card)
     (htop0 : 0 ≤ topError) (htopHalf : topError ≤ 1 / 2)
     (hdBottom : d ≤ (allEdges n).card - (M - t))
@@ -445,7 +447,7 @@ lemma globalUpperWeightSpread_failure_probability_le_of_thinning_sharp
         hfinal
 
 lemma globalLowerWeightSpread_failure_probability_le_of_thinning_sharp
-    {n M t d e : ℕ} {L topError : ℝ}
+    {n M t d _e : ℕ} {L topError : ℝ}
     (htM : t ≤ M) (hMtop : M ≤ (allEdges n).card)
     (htop0 : 0 ≤ topError) (htopHalf : topError ≤ 1 / 2)
     (hdBottom : d ≤ (allEdges n).card - (M - t))

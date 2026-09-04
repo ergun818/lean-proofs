@@ -33,8 +33,6 @@ lemma residualCountError_tendsto_zero_along (k : ℕ → ℕ) (C : ℕ → ℝ) 
   norm_num only [zero_mul, add_zero] at hlim
   refine hlim.congr' ?_
   filter_upwards [hk.eventually_ge_atTop 2] with i hi
-  change C i * ((1 : ℝ) + 1 / ((k i - 1 : ℕ) : ℝ)) +
-    (3 - 2 * Real.log c) / ((k i - 1 : ℕ) : ℝ) = residualCountError (k i) (C i) c
   unfold residualCountError
   rw [Nat.cast_sub (by omega : 1 ≤ k i), Nat.cast_one]
   have hkR : (1 : ℝ) < k i := by exact_mod_cast hi
@@ -80,7 +78,7 @@ lemma kahnAggregateInsertionGood_residualPresentWeightSpread
     (hq' : residualDegreeTolerance k B q g ≤ 1)
     (hR : 1 < entropyRatioEnvelope (2 * g))
     (hgood : KahnAggregateInsertionGood k M cap C q eta B H)
-    (hweight : c^2 * matchingWeightTarget k H ≤ completionWeight H Z) :
+    (hweight : c ^ 2 * matchingWeightTarget k H ≤ completionWeight H Z) :
     PresentWeightSpread (reindexGraphAway H Z hZ)
         (residualPresentTolerance k C c g q eta B) (residualPresentTolerance k C c g q eta B) ∧
       ((M : ℝ) / k) / 2 ≤ ((reindexGraphAway H Z hZ).card : ℝ) / ((k - 1 : ℕ) : ℝ) := by

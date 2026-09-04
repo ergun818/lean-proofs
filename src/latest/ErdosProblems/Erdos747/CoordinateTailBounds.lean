@@ -10,7 +10,7 @@ noncomputable section
 attribute [local instance] Classical.propDecidable
 
 lemma coordinate_tail_base_le_exp (a mu : ℝ) (Q D S b : ℕ)
-    (ha : 0 < a) (hmu : 0 ≤ mu) (hS : 0 < S)
+    (ha : 0 < a) (_hmu : 0 ≤ mu) (hS : 0 < S)
     (hQ : (Q : ℝ) ≤ coordinatePairFraction a * S)
     (hD : (D : ℝ) ≤ 33 * mu) (hb : a * mu / 4 ≤ ((b + 1 : ℕ) : ℝ)) :
     Real.exp 1 * Q * D / ((S : ℝ) * ((b + 1 : ℕ) : ℝ)) ≤ Real.exp (-128 / a) := by
@@ -62,7 +62,8 @@ lemma coordinate_parameter_tail_pow_le_exp (n M : ℕ) (a : ℝ)
   have hSpos : 0 < coordinatePairPopulation n := by
     have hnR : (0 : ℝ) < n := by exact_mod_cast (show 0 < n by omega)
     have hp : (0 : ℝ) < coordinatePairPopulation n :=
-      (show (0 : ℝ) < 2 * (n : ℝ)^2 by positivity).trans_le (coordinatePairPopulation_ge_two_sq n hn)
+      (show (0 : ℝ) < 2 * (n : ℝ)^2 by positivity).trans_le
+        (coordinatePairPopulation_ge_two_sq n hn)
     exact_mod_cast hp
   exact coordinate_tail_pow_le_exp a ((M : ℝ) / n)
     (coordinatePairCutoff n a) (coordinateDegreeCeil n M) (coordinatePairPopulation n)
@@ -96,10 +97,13 @@ lemma coordinate_parameter_failure_probability_le (n M : ℕ) (a c : ℝ)
           (Real.exp 1 * coordinatePairCutoff n a * coordinateDegreeCeil n M /
             ((coordinatePairPopulation n : ℝ) * ((coordinateTailFloor n M a + 1 : ℕ) : ℝ)))^
             (coordinateTailFloor n M a + 1) :=
-        div_le_self (by positivity) (by exact_mod_cast (show 1 ≤ coordinateVertexAllowance n + 1 by omega))
+        div_le_self (by positivity) (by exact_mod_cast
+          (show 1 ≤ coordinateVertexAllowance n + 1 by omega))
       _ ≤ _ := mul_le_mul_of_nonneg_left hpow (by positivity)
-  convert mul_le_mul_of_nonneg_left hfrac (show (0 : ℝ) ≤ 3 * (allEdges n).card by positivity) using 1 <;>
-    norm_num only [Nat.cast_mul, Nat.cast_ofNat, Nat.cast_add, Nat.cast_one, coordinatePairPopulation] <;> ring
+  convert mul_le_mul_of_nonneg_left hfrac
+    (show (0 : ℝ) ≤ 3 * (allEdges n).card by positivity) using 1 <;>
+    norm_num only [Nat.cast_mul, Nat.cast_ofNat, Nat.cast_add, Nat.cast_one,
+      coordinatePairPopulation] ; ring
 
 end
 

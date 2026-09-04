@@ -53,8 +53,7 @@ lemma mem_allDensityCodegreeSixFailureSet_iff
         6 ≤ vertexCodegree H u v := by
   classical
   simp only [allDensityCodegreeSixFailureSet, Finset.mem_biUnion,
-    Finset.mem_product, Finset.mem_univ, and_self,
-    Finset.mem_filter, true_and]
+    Finset.mem_filter]
   constructor
   · rintro ⟨⟨u, v⟩, -, hHs, huv, hcodeg⟩
     exact ⟨hHs, u, v, huv, hcodeg⟩

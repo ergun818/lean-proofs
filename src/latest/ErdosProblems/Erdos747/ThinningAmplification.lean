@@ -123,7 +123,7 @@ lemma thinning_bad_probability_mul_one_sub_le
     (Bad : Finset α → Prop)
     (Diagnostic : (Sigma fun _H : Finset α ↦ Finset α) → Prop)
     (topError bottomError : ℝ)
-    (htop0 : 0 ≤ topError) (htop1 : topError ≤ 1)
+    (_htop0 : 0 ≤ topError) (htop1 : topError ≤ 1)
     (hbottom0 : 0 ≤ bottomError)
     (htop : ∀ H ∈ K.powersetCard M, Bad H →
       finsetProbability (H.powersetCard t)

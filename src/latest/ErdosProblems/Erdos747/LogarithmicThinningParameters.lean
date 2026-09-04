@@ -46,7 +46,8 @@ lemma logarithmicThinningSize_sq_div_tendsto_zero (nu : ℝ) (hnu : 0 ≤ nu) :
     Real.log_nonneg (by exact_mod_cast (show 1 ≤ 3 * n by omega))
   have hceil : (logarithmicThinningSize nu n : ℝ) ≤ nu * Real.log ((3 * n : ℕ) : ℝ) + 1 :=
     (Nat.ceil_lt_add_one (by positivity)).le
-  have hsq := (sq_le_sq₀ (Nat.cast_nonneg _) (by positivity : 0 ≤ nu * Real.log ((3 * n : ℕ) : ℝ) + 1)).mpr hceil
+  have hsq := (sq_le_sq₀ (Nat.cast_nonneg _)
+    (by positivity : 0 ≤ nu * Real.log ((3 * n : ℕ) : ℝ) + 1)).mpr hceil
   have hnum : (logarithmicThinningSize nu n : ℝ)^2 ≤
       2 * nu^2 * (Real.log ((3 * n : ℕ) : ℝ))^2 + 2 := by
     nlinarith only [hsq, sq_nonneg (nu * Real.log ((3 * n : ℕ) : ℝ) - 1)]
@@ -59,7 +60,8 @@ lemma eventually_logarithmicThinning_finite_budgets (nu zeta : ℝ)
     (hnu : 0 < nu) (hzeta : 0 < zeta) :
     ∀ᶠ n in atTop, 2 ≤ logarithmicThinningSize nu n ∧
       (logarithmicThinningSize nu n : ℝ) ≤ logarithmicThinningMultiplier nu * halfLogMean n ∧
-      logarithmicThinningSize nu n * logarithmicThinningSize nu n ≤ thinningBlockSize (allEdges n).card zeta ∧
+      logarithmicThinningSize nu n * logarithmicThinningSize nu n ≤
+        thinningBlockSize (allEdges n).card zeta ∧
       ∀ M : ℕ, halfLogMean n ≤ (M : ℝ) / n →
         4 * logarithmicThinningSize nu n * logarithmicThinningSize nu n ≤ M := by
   have hratio := logarithmicThinningSize_sq_div_tendsto_zero nu hnu.le

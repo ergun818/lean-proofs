@@ -28,7 +28,7 @@ lemma exp_neg_eight_mul_le_one_sub_pow (t : ℕ) (T L x : ℝ)
   have htx : (t : ℝ) * x ≤ 4 * T := by
     calc
       _ ≤ (T * L) * (4 / L) := mul_le_mul ht hx hx0 (mul_nonneg hT hL0.le)
-      _ = _ := by field_simp <;> ring
+      _ = _ := by field_simp
   have hlogt := mul_le_mul_of_nonneg_left hlog (Nat.cast_nonneg t)
   calc
     _ ≤ Real.exp ((t : ℝ) * Real.log (1 - x)) :=
@@ -38,16 +38,17 @@ lemma exp_neg_eight_mul_le_one_sub_pow (t : ℕ) (T L x : ℝ)
 lemma normalized_survival_exponents_le (T v w r b V : ℝ)
     (hT : 0 < T) (hv : 0 < v) (hw : 0 < w) (hr : 0 < r)
     (hb : 0 < b) (hV : 0 < V) (hbupper : b ≤ 4 * v * w)
-    (hVupper : V ≤ 16 * T * v * w^2) :
+    (hVupper : V ≤ 16 * T * v * w ^ 2) :
     min (r^2 / (64 * T * v)) (r / (16 * v)) ≤
       min ((r * w)^2 / (4 * V)) ((r * w) / (4 * b)) := by
   apply min_le_min
   · calc
-      _ = (r * w)^2 / (4 * (16 * T * v * w^2)) := by field_simp <;> ring
+      _ = (r * w)^2 / (4 * (16 * T * v * w^2)) := by field_simp ; ring
       _ ≤ _ := div_le_div_of_nonneg_left (sq_nonneg _) (by positivity) (by nlinarith only [hVupper])
   · calc
-      _ = (r * w) / (4 * (4 * v * w)) := by field_simp <;> ring
-      _ ≤ _ := div_le_div_of_nonneg_left (by positivity) (by positivity) (by nlinarith only [hbupper])
+      _ = (r * w) / (4 * (4 * v * w)) := by field_simp ; ring
+      _ ≤ _ := div_le_div_of_nonneg_left (by positivity) (by positivity)
+        (by nlinarith only [hbupper])
 
 lemma card_nonheavy_ge_half_of_residual_presentSpread
     {n : ℕ} (H : Finset (Edge n)) {Z : Edge n} (hZ : Z ∈ allEdges n)

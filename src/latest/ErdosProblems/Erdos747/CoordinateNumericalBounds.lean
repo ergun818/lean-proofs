@@ -18,7 +18,8 @@ def coordinatePairPopulation (n : ℕ) : ℕ := (3 * n - 4).choose 2
 
 def coordinatePairFraction (a : ℝ) : ℝ := a / (264 * Real.exp 1) * Real.exp (-128 / a)
 
-def coordinatePairCutoff (n : ℕ) (a : ℝ) : ℕ := ⌊coordinatePairFraction a * coordinatePairPopulation n⌋₊
+def coordinatePairCutoff (n : ℕ) (a : ℝ) : ℕ :=
+    ⌊coordinatePairFraction a * coordinatePairPopulation n⌋₊
 
 def coordinateVertexAllowance (n : ℕ) : ℕ := n / 16
 
@@ -42,16 +43,19 @@ lemma coordinatePairFraction_lt_one (a : ℝ) (ha : 0 < a) (ha1 : a ≤ 1) :
   exact (mul_le_of_le_one_right hquot0 he).trans_lt hquot
 
 lemma coordinate_degree_rounding_bounds (n M : ℕ) (a : ℝ)
-    (ha : 0 < a) (hlarge : 8 ≤ a * ((M : ℝ) / n)) :
+    (_ha : 0 < a) (hlarge : 8 ≤ a * ((M : ℝ) / n)) :
     coordinateTailFloor n M a < coordinateDegreeFloor n M a ∧
       a * ((M : ℝ) / n) / 8 ≤
         ((coordinateDegreeFloor n M a - coordinateTailFloor n M a : ℕ) : ℝ) ∧
       (coordinateDegreeFloor n M a : ℝ) ≤ a * ((M : ℝ) / n) / 2 ∧
       a * ((M : ℝ) / n) / 4 ≤ ((coordinateTailFloor n M a + 1 : ℕ) : ℝ) := by
   have hmu : 0 ≤ (M : ℝ) / n := by positivity
-  have hdlo : a * ((M : ℝ) / n) / 2 < (coordinateDegreeFloor n M a : ℝ) + 1 := Nat.lt_floor_add_one _
-  have hdhi : (coordinateDegreeFloor n M a : ℝ) ≤ a * ((M : ℝ) / n) / 2 := Nat.floor_le (by positivity)
-  have hbhi : (coordinateTailFloor n M a : ℝ) ≤ a * ((M : ℝ) / n) / 4 := Nat.floor_le (by positivity)
+  have hdlo : a * ((M : ℝ) / n) / 2 < (coordinateDegreeFloor n M a : ℝ) + 1 :=
+    Nat.lt_floor_add_one _
+  have hdhi : (coordinateDegreeFloor n M a : ℝ) ≤ a * ((M : ℝ) / n) / 2 :=
+    Nat.floor_le (by positivity)
+  have hbhi : (coordinateTailFloor n M a : ℝ) ≤ a * ((M : ℝ) / n) / 4 :=
+    Nat.floor_le (by positivity)
   have hblo : a * ((M : ℝ) / n) / 4 < (coordinateTailFloor n M a : ℝ) + 1 := Nat.lt_floor_add_one _
   have hgap : (coordinateTailFloor n M a : ℝ) < coordinateDegreeFloor n M a := by
     linarith only [hdlo, hbhi, hlarge]

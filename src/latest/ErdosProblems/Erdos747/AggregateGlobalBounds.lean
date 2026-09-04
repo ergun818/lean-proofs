@@ -87,7 +87,8 @@ lemma eventually_aggregate_global_failure_probability_le
         (a i) zeta T (E i) ha0 haHalfi.le hzeta haZetai.le hT.le hlargeK
         htM hMtop (by omega) htsq hE0 htopi.1 hpres (fun H hHs hgood ↦ (htopBoth H hHs hgood).2)
   · have hempty := sample_eq_empty_of_card_lt (k i) M (lt_of_not_ge hMtop)
-    simp only [hempty, finsetProbability, Finset.filter_empty, Finset.card_empty, Nat.cast_zero, zero_div]
+    simp only [hempty, finsetProbability, Finset.filter_empty, Finset.card_empty,
+      Nat.cast_zero, zero_div]
     constructor <;> positivity
 
 end

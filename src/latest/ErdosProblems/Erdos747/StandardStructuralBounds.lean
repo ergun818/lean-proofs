@@ -20,15 +20,18 @@ lemma eventually_standard_structural_failure_probability_le
           (fun H ↦ StandardAggregateLayerRegular n M a H ∧
             ¬ KahnLayerInput n (coordinateDegreeFloor n M a) (coordinateDegreeCeil n M)
               (standardCodegreeCap n M) (coordinatePairCutoff n a) (coordinateTailFloor n M a)
-              (coordinateResidualAllowance n (coordinateExceptionFraction a)) (coordinateVertexAllowance n)
-              (C n) (thresholdUpperSpreadFactor a) (coordinateExceptionFraction a) (thresholdTransferFactor a) H) ≤
+              (coordinateResidualAllowance n (coordinateExceptionFraction a))
+                (coordinateVertexAllowance n)
+              (C n) (thresholdUpperSpreadFactor a)
+                (coordinateExceptionFraction a) (thresholdTransferFactor a) H) ≤
         structuralFailureBound n := by
   let c := thresholdTransferFactor a
   let zeta := coordinateExceptionFraction a
   have hc : 0 < c := thresholdTransferFactor_pos a ha
   have hc1 : c ≤ 1 := thresholdTransferFactor_le_one a ha ha1
   have hzeta : 0 < zeta := coordinateExceptionFraction_pos a ha
-  have hinherit := eventually_standardAggregateLayer_insertion_and_residual epsilon a c C hepsilon ha hc hC
+  have hinherit := eventually_standardAggregateLayer_insertion_and_residual
+    epsilon a c C hepsilon ha hc hC
   have hupper := eventually_standard_upper_spreading_failure_le epsilon zeta 41 C
     hepsilon hzeta (by norm_num) hC hC0
   have hresidual := eventually_standard_highResidual_spreading_failure_le epsilon a c zeta 41 C
@@ -59,8 +62,10 @@ lemma eventually_standard_structural_failure_probability_le
       (standardResidualDegreeTolerance n) (2 * aggregateDegreeTolerance n) 64 H ∧
       ¬ HighResidualLowerSpread n H c (thresholdResidualSpreadFactor a) zeta
   let P₃ := SomeAdaptiveCoordinateTailFailure n c (coordinateDegreeFloor n M a)
-    (coordinateDegreeCeil n M) (coordinatePairCutoff n a) (coordinateTailFloor n M a) (coordinateVertexAllowance n)
-  have hprob1 : finsetProbability (sample n M) P₁ ≤ 4 * Real.exp (-41 * Real.log ((3 * n : ℕ) : ℝ)) :=
+    (coordinateDegreeCeil n M) (coordinatePairCutoff n a)
+      (coordinateTailFloor n M a) (coordinateVertexAllowance n)
+  have hprob1 : finsetProbability (sample n M) P₁ ≤
+    4 * Real.exp (-41 * Real.log ((3 * n : ℕ) : ℝ)) :=
     huppern M hM
   have hprob2 : finsetProbability (sample n M) P₂ ≤
       (allEdges n).card * (4 * Real.exp (-41 * Real.log ((3 * (n - 1) : ℕ) : ℝ))) :=
@@ -68,7 +73,8 @@ lemma eventually_standard_structural_failure_probability_le
   have hprob3 : finsetProbability (sample n M) P₃ ≤
       (3 : ℝ) * (allEdges n).card * ((3 * n : ℕ) : ℝ) *
         Real.exp (-32 * Real.log ((3 * n : ℕ) : ℝ)) := by
-    apply (coordinate_parameter_failure_probability_le n M a c (by omega) ha ha1 hMtop hmean1 hlargeM).trans
+    apply (coordinate_parameter_failure_probability_le n M a c (by omega)
+      ha ha1 hMtop hmean1 hlargeM).trans
     apply mul_le_mul_of_nonneg_left _ (by positivity)
     apply Real.exp_le_exp.mpr
     linarith only [hmean]

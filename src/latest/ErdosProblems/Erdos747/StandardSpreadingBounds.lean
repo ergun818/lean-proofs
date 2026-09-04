@@ -23,7 +23,8 @@ lemma eventually_standard_upper_spreading_failure_le
       finsetProbability (sample n M)
           (fun H ↦ KahnAggregateInsertionGood n M (standardCodegreeCap n M) (C n)
               (aggregateDegreeTolerance n) (aggregateDegreeTolerance n) 32 H ∧
-            ¬ GlobalUpperWeightSpread n H (coarseUpperFactor (spreadThinningMultiplier zeta kappa)) zeta) ≤
+            ¬ GlobalUpperWeightSpread n H
+              (coarseUpperFactor (spreadThinningMultiplier zeta kappa)) zeta) ≤
         4 * Real.exp (-kappa * Real.log ((3 * n : ℕ) : ℝ)) := by
   have hglobal := eventually_aggregate_global_failure_probability_le_exp
     (fun n : ℕ ↦ n) C codegreeRelativeError aggregateDegreeTolerance aggregateDegreeTolerance
@@ -57,7 +58,8 @@ lemma eventually_standard_highResidual_spreading_failure_le
               (coordinateDegreeFloor n M a) (coordinateDegreeCeil n M) (standardCodegreeCap n M)
               c (C n) (residualCountError n (C n) c) (standardResidualDegreeTolerance n)
               (2 * aggregateDegreeTolerance n) 64 H ∧
-            ¬ HighResidualLowerSpread n H c (coarseLowerFactor (spreadThinningMultiplier zeta kappa)) zeta) ≤
+            ¬ HighResidualLowerSpread n H c
+              (coarseLowerFactor (spreadThinningMultiplier zeta kappa)) zeta) ≤
         (allEdges n).card * (4 * Real.exp (-kappa * Real.log ((3 * (n - 1) : ℕ) : ℝ))) := by
   have hC1 := residualCountError_tendsto_zero C c hC
   have hC10 : ∀ᶠ n in atTop, 0 ≤ residualCountError n (C n) c := by
@@ -77,7 +79,8 @@ lemma eventually_standard_highResidual_spreading_failure_le
     (fun n ↦ 2 * codegreeRelativeError n) standardResidualDegreeTolerance
     (fun n ↦ 2 * aggregateDegreeTolerance n) 64 zeta kappa
     (nat_sub_const_tendsto_atTop 1) (by norm_num) hzeta hkappa hC1 hC10 hg2 hg2pos
-    standardResidualDegreeTolerance_tendsto_zero (Eventually.of_forall standardResidualDegreeTolerance_nonneg)
+    standardResidualDegreeTolerance_tendsto_zero
+      (Eventually.of_forall standardResidualDegreeTolerance_nonneg)
     heta2 heta20
   filter_upwards [hglobal, log_vertexCount_tendsto_atTop.eventually_ge_atTop 1,
     eventually_ge_atTop 200] with n hglobaln hlog hn
@@ -92,7 +95,8 @@ lemma eventually_standard_highResidual_spreading_failure_le
   have hcap := standardCodegreeCap_pos n M (by omega) hM0
   have hrelative : (standardCodegreeCap n M : ℝ) / ((M : ℝ) / n) ≤ codegreeRelativeError n :=
     relativeCodegreeCap_ratio_le_error epsilon hepsilon n M (by omega) hM
-  apply residualAggregate_highResidual_failure_probability_le (by omega : 2 ≤ n) hM0 hMtop hc (by positivity)
+  apply residualAggregate_highResidual_failure_probability_le (by omega : 2 ≤ n)
+    hM0 hMtop hc (by positivity)
   intro j hj hjM
   have hjmean := coordinate_residual_layer_halfLogMean n M j hn hmean1 hmean hj
   have hjcap := coordinate_residual_layer_relative_cap n M j (standardCodegreeCap n M)

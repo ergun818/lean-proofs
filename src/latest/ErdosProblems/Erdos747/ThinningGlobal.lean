@@ -68,7 +68,7 @@ lemma union_sdiff_eq_left_of_subset_sdiff {α : Type*}
     exact ⟨Or.inl hxF, fun hxT ↦ Finset.disjoint_left.mp hdisj hxF hxT⟩
 
 lemma upperWeightBlockDiagnostic_bottom_probability_le
-    {n M t d : ℕ} (htM : t ≤ M) (hMtop : M ≤ (allEdges n).card)
+    {n M t d : ℕ} (_htM : t ≤ M) (_hMtop : M ≤ (allEdges n).card)
     (hd : d ≤ (allEdges n).card - (M - t))
     (ht : t ≤ (allEdges n).card - (M - t))
     (hs : 0 < (allEdges n).card - (M - t))
@@ -112,7 +112,7 @@ lemma upperWeightBlockDiagnostic_bottom_probability_le
     _ = _ := by rw [hcard]
 
 lemma lowerWeightBlockDiagnostic_bottom_probability_le
-    {n M t d : ℕ} (htM : t ≤ M) (hMtop : M ≤ (allEdges n).card)
+    {n M t d : ℕ} (_htM : t ≤ M) (_hMtop : M ≤ (allEdges n).card)
     (hd : d ≤ (allEdges n).card - (M - t))
     (ht : t ≤ (allEdges n).card - (M - t))
     (hs : 0 < (allEdges n).card - (M - t))

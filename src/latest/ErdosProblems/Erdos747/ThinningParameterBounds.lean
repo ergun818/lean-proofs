@@ -14,7 +14,7 @@ def thinningBlockSize (K : ℕ) (eta : ℝ) : ℕ := ⌊eta * K / 8⌋₊
 def thinningExceptionCount (t : ℕ) (eta : ℝ) : ℕ := ⌊eta * t / 100⌋₊
 
 lemma thinningBlockSize_bounds (K : ℕ) (eta : ℝ)
-    (heta : 0 ≤ eta) (hlarge : 16 ≤ eta * K) :
+    (_heta : 0 ≤ eta) (hlarge : 16 ≤ eta * K) :
     eta * K / 16 ≤ thinningBlockSize K eta ∧
       (thinningBlockSize K eta : ℝ) ≤ eta * K / 8 := by
   have hf : (thinningBlockSize K eta : ℝ) ≤ eta * K / 8 := Nat.floor_le (by positivity)
@@ -27,7 +27,8 @@ lemma thinningExceptionCount_le (t : ℕ) (eta : ℝ) (heta : 0 ≤ eta) :
 lemma thinningExceptionCount_ratio_le (t : ℕ) (eta : ℝ) (heta : 0 < eta) :
     (t : ℝ) / ((thinningExceptionCount t eta + 1 : ℕ) : ℝ) ≤ 100 / eta := by
   have he : eta * t / 100 < (thinningExceptionCount t eta : ℝ) + 1 := Nat.lt_floor_add_one _
-  apply (div_le_div_iff₀ (by positivity : (0 : ℝ) < ((thinningExceptionCount t eta + 1 : ℕ) : ℝ)) heta).mpr
+  apply (div_le_div_iff₀
+    (by positivity : (0 : ℝ) < ((thinningExceptionCount t eta + 1 : ℕ) : ℝ)) heta).mpr
   norm_num only [Nat.cast_add, Nat.cast_one]
   linarith only [he]
 
@@ -60,7 +61,7 @@ lemma thinning_diagnostic_exception_budget (K S t : ℕ) (eta : ℝ)
 
 lemma thinning_global_budget (K M : ℕ) (eta alpha : ℝ)
     (heta : 0 ≤ eta) (hlarge : 16 ≤ eta * K) (hM : M ≤ K)
-    (halpha : 0 ≤ alpha) (hsmall : alpha ≤ eta / 2) :
+    (_halpha : 0 ≤ alpha) (hsmall : alpha ≤ eta / 2) :
     ((2 * thinningBlockSize K eta : ℕ) : ℝ) + alpha * M ≤ eta * K := by
   have hd := (thinningBlockSize_bounds K eta heta hlarge).2
   have hMK : (M : ℝ) ≤ K := by exact_mod_cast hM

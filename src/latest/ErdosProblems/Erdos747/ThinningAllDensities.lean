@@ -52,7 +52,8 @@ lemma conditionalGlobalUpper_failure_probability_le_all_densities
     (hspread : ∀ H ∈ sample n M, Good H → PresentWeightSpread H alpha alpha)
     (htop : ∀ H ∈ sample n M, Good H → ¬ GlobalUpperWeightSpread n H (coarseUpperFactor T) zeta →
       finsetProbability (H.powersetCard t)
-          (fun U ↦ ¬ UpperWeightBlockDiagnostic n (thinningBlockSize (allEdges n).card zeta) t ⟨H, U⟩) ≤ E) :
+          (fun U ↦ ¬ UpperWeightBlockDiagnostic n
+            (thinningBlockSize (allEdges n).card zeta) t ⟨H, U⟩) ≤ E) :
     finsetProbability (sample n M)
         (fun H ↦ Good H ∧ ¬ GlobalUpperWeightSpread n H (coarseUpperFactor T) zeta) ≤
       4 * Real.exp (-((t : ℝ) * zeta) / 1024) := by
@@ -75,7 +76,8 @@ lemma conditionalGlobalUpper_failure_probability_le_all_densities
       have hbig := coarseUpperBadNonedges_card_gt_two_mul_of_not_global_of_spread
         (d := d) (show 1 + alpha ≤ coarseUpperFactor T by linarith only [hfactor, halphaHalf])
         hpres hbudget hbad.2
-      have hsmall : (coarseUpperBadNonedges n H (coarseUpperFactor T)).card ≤ (allEdges n).card - M := by
+      have hsmall : (coarseUpperBadNonedges n H (coarseUpperFactor T)).card ≤
+        (allEdges n).card - M := by
         have h := Finset.card_le_card (Finset.filter_subset
           (fun Z ↦ ¬ CompletionWeightUpperBound H (coarseUpperFactor T) Z) (allEdges n \ H))
         rw [Finset.card_sdiff_of_subset (mem_sample.mp hHs).1, (mem_sample.mp hHs).2] at h
@@ -95,7 +97,8 @@ lemma conditionalGlobalLower_failure_probability_le_all_densities
     (hspread : ∀ H ∈ sample n M, Good H → PresentWeightSpread H alpha alpha)
     (htop : ∀ H ∈ sample n M, Good H → ¬ GlobalLowerWeightSpread n H (coarseLowerFactor T) zeta →
       finsetProbability (H.powersetCard t)
-          (fun U ↦ ¬ LowerWeightBlockDiagnostic n (thinningBlockSize (allEdges n).card zeta) t ⟨H, U⟩) ≤ E) :
+          (fun U ↦ ¬ LowerWeightBlockDiagnostic n
+            (thinningBlockSize (allEdges n).card zeta) t ⟨H, U⟩) ≤ E) :
     finsetProbability (sample n M)
         (fun H ↦ Good H ∧ ¬ GlobalLowerWeightSpread n H (coarseLowerFactor T) zeta) ≤
       4 * Real.exp (-((t : ℝ) * zeta) / 1024) := by
@@ -120,7 +123,8 @@ lemma conditionalGlobalLower_failure_probability_le_all_densities
         (Finset.card_le_card (mem_sample.mp hHs).1) halpha0 halphaZeta
       have hbig := predicateLowerBadNonedges_card_gt_two_mul_of_not_global_of_spread
         (d := d) hfactor hpres hbudget hbad.2
-      have hsmall : (predicateLowerBadNonedges H (coarseLowerFactor T)).card ≤ (allEdges n).card - M := by
+      have hsmall : (predicateLowerBadNonedges H (coarseLowerFactor T)).card ≤
+        (allEdges n).card - M := by
         have h := Finset.card_le_card (Finset.filter_subset
           (fun Z ↦ ¬ CompletionWeightLowerBound H (coarseLowerFactor T) Z) (allEdges n \ H))
         rw [Finset.card_sdiff_of_subset (mem_sample.mp hHs).1, (mem_sample.mp hHs).2] at h

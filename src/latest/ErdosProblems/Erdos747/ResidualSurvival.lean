@@ -14,7 +14,7 @@ attribute [local instance] Classical.propDecidable
 lemma iidCompletionThinning_mean_bounds_of_residual_presentSpread
     {n t : ℕ} (H : Finset (Edge n)) {Z : Edge n}
     (hZ : Z ∈ allEdges n) (delta eta : ℝ)
-    (hn : 2 ≤ n) (hdelta : 0 ≤ delta) (heta : 0 ≤ eta)
+    (hn : 2 ≤ n) (hdelta : 0 ≤ delta) (_heta : 0 ≤ eta)
     (hspread : PresentWeightSpread
       (reindexGraphAway H Z hZ) delta eta)
     (hs : (H \ completionHeavyEdges H Z
@@ -96,7 +96,7 @@ lemma completionThinning_relative_lower_failure_probability_le
           (1 - ((n - 1 : ℕ) : ℝ) /
             (H \ completionHeavyEdges H Z
               ((1 + delta) * matchingWeightTarget (n - 1)
-                (reindexGraphAway H Z hZ))).card)^t) :
+                (reindexGraphAway H Z hZ))).card) ^ t) :
     finsetProbability (H.powersetCard t)
         (fun T ↦ (completionWeight (H \ T) Z : ℝ) <
           r * ((completionMatchings n H Z).card : ℝ)) ≤

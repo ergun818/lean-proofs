@@ -17,7 +17,8 @@ lemma predecessor_exp_log_le (n : ℕ) (kappa : ℝ) (hn : 2 ≤ n) (hkappa : 0 
     Real.exp (-kappa * Real.log ((3 * (n - 1) : ℕ) : ℝ)) ≤
       Real.exp (kappa * Real.log 2) * Real.exp (-kappa * Real.log ((3 * n : ℕ) : ℝ)) := by
   have hN : (0 : ℝ) < ((3 * n : ℕ) : ℝ) := by exact_mod_cast (show 0 < 3 * n by omega)
-  have hpred : (0 : ℝ) < ((3 * (n - 1) : ℕ) : ℝ) := by exact_mod_cast (show 0 < 3 * (n - 1) by omega)
+  have hpred : (0 : ℝ) < ((3 * (n - 1) : ℕ) : ℝ) := by exact_mod_cast
+    (show 0 < 3 * (n - 1) by omega)
   have hcomp : ((3 * n : ℕ) : ℝ) ≤ 2 * ((3 * (n - 1) : ℕ) : ℝ) := by
     exact_mod_cast (show 3 * n ≤ 2 * (3 * (n - 1)) by omega)
   have hlog := Real.log_le_log hN hcomp
@@ -37,7 +38,8 @@ lemma all_levels_failure_bound_tendsto_zero :
   have hlim := ((h1.add (h2.const_mul 4)).add (h3.const_mul (4 * Real.exp (41 * Real.log 2)))).add
     (h4.const_mul 3)
   norm_num only [mul_zero, add_zero] at hlim
-  apply squeeze_zero' (Eventually.of_forall fun n ↦ mul_nonneg (by positivity) (levelFailureBound_nonneg n)) _ hlim
+  apply squeeze_zero'
+    (Eventually.of_forall fun n ↦ mul_nonneg (by positivity) (levelFailureBound_nonneg n)) _ hlim
   filter_upwards [eventually_ge_atTop 2] with n hn
   have hp := predecessor_exp_log_le n 41 hn (by norm_num)
   have hK : (0 : ℝ) ≤ (allEdges n).card := by positivity
@@ -52,8 +54,10 @@ lemma all_levels_failure_bound_tendsto_zero :
         gcongr
       _ = _ := by ring
   have hcoord : ((allEdges n).card + 1 : ℝ) *
-      ((3 : ℝ) * (allEdges n).card * ((3 * n : ℕ) : ℝ) * Real.exp (-32 * Real.log ((3 * n : ℕ) : ℝ))) ≤
-      3 * ((3 * n : ℝ) * ((allEdges n).card + 1 : ℝ)^2 * Real.exp (-32 * Real.log ((3 * n : ℕ) : ℝ))) := by
+      ((3 : ℝ) * (allEdges n).card * ((3 * n : ℕ) : ℝ) *
+        Real.exp (-32 * Real.log ((3 * n : ℕ) : ℝ))) ≤
+      3 * ((3 * n : ℝ) * ((allEdges n).card + 1 : ℝ)^2 *
+        Real.exp (-32 * Real.log ((3 * n : ℕ) : ℝ))) := by
     calc
       _ ≤ ((allEdges n).card + 1 : ℝ) *
           ((3 : ℝ) * ((allEdges n).card + 1 : ℝ) * ((3 * n : ℕ) : ℝ) *

@@ -32,7 +32,8 @@ lemma aggregateSurvivalError_tendsto_zero
   apply uniformSurvivalError_tendsto_zero T L _ hT hL
   · simpa only [mul_zero] using herr.const_mul 2
   · exact Eventually.of_forall fun i ↦
-      mul_nonneg (by norm_num) (residualPresentTolerance_nonneg (k i) (C i) (1 / 2) (g i) (q i) (eta i) B)
+      mul_nonneg (by norm_num) (residualPresentTolerance_nonneg (k i) (C i)
+        (1 / 2) (g i) (q i) (eta i) B)
 
 /-- The pool may be the parent graph or the parent with the tested edge
 erased.  Both have exactly the same completion family and residual graph. -/
@@ -82,7 +83,8 @@ lemma eventually_aggregate_completion_survival
     Finset.card_ne_zero.mpr (hasPerfectMatching_iff_perfectMatchings_nonempty.mp hgood.2.1)
   have hw : 0 < completionWeight X Z := by
     rw [hXweight]
-    exact completionWeight_pos_of_matchingWeightTarget_lower (by omega) hHpos hPhi (by norm_num) hweight
+    exact completionWeight_pos_of_matchingWeightTarget_lower (by omega)
+      hHpos hPhi (by norm_num) hweight
   apply hsurvi (k i) t X Z hZ (a i) (a i) (by omega) (ha0 i) (ha0 i)
     (by dsimp only [gamma]; linarith) ht0 ht hcollision hw
   · rw [hXres]

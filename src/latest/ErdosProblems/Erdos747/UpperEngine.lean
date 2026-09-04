@@ -89,8 +89,8 @@ lemma deletionStepGood_of_kahnLayerInput_sharp_initial
     (hcTransfer0 : 0 ≤ cTransfer) (hcTransfer1 : cTransfer ≤ 1)
     (hdb : bNat < d) (hB : 3 * B ≤ e₀ * (Q + 1))
     (he : 2 * (e₀ + e₁) + 12 ≤ n)
-    (hq : q ≤ (((n / 2 : ℕ) : ℝ)^3 / (allEdges n).card))
-    (hcPow : c ≤ cTransfer^3)
+    (hq : q ≤ (((n / 2 : ℕ) : ℝ) ^ 3 / (allEdges n).card))
+    (hcPow : c ≤ cTransfer ^ 3)
     (e : DeletionHistory (allEdges n) t)
     (hgood : DeletionHistoryGood (L / c) t e)
     (hCb : ∀ i < t,

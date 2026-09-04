@@ -44,7 +44,7 @@ lemma maximum_domination_fraction_lower (n : ℕ) (hn : 2 ≤ n) :
 
 lemma coordinate_residual_exception_budget (n : ℕ) (a : ℝ)
     (hn : 32 ≤ n) (ha : 0 < a)
-    (hlarge : 100 ≤ coordinatePairFraction a * (n : ℝ)^3) :
+    (hlarge : 100 ≤ coordinatePairFraction a * (n : ℝ) ^ 3) :
     3 * coordinateResidualAllowance n (coordinateExceptionFraction a) ≤
       coordinateVertexAllowance n * (coordinatePairCutoff n a + 1) := by
   let q := coordinatePairFraction a
@@ -77,7 +77,7 @@ lemma coordinate_residual_exception_budget (n : ℕ) (a : ℝ)
     nlinarith only [hBupper, hprod, hlarge]
   exact_mod_cast hbound
 
-lemma eventually_coordinate_exception_budgets (a : ℝ) (ha : 0 < a) (ha1 : a ≤ 1) :
+lemma eventually_coordinate_exception_budgets (a : ℝ) (ha : 0 < a) (_ha1 : a ≤ 1) :
     ∀ᶠ n in atTop,
       3 * coordinateResidualAllowance n (coordinateExceptionFraction a) ≤
         coordinateVertexAllowance n * (coordinatePairCutoff n a + 1) ∧

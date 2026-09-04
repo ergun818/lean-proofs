@@ -44,7 +44,8 @@ lemma thresholdTransferFactor_le_one (a : ℝ) (ha : 0 < a) (ha1 : a ≤ 1) :
   have hLR : thresholdResidualSpreadFactor a ≤ 1 / 2 := by
     unfold thresholdResidualSpreadFactor coarseLowerFactor
     linarith only [hr]
-  have hprod := mul_le_mul ha1 hLR (thresholdResidualSpreadFactor_pos a).le (by norm_num : (0 : ℝ) ≤ 1)
+  have hprod := mul_le_mul ha1 hLR (thresholdResidualSpreadFactor_pos a).le
+    (by norm_num : (0 : ℝ) ≤ 1)
   unfold thresholdTransferFactor
   linarith only [hprod]
 

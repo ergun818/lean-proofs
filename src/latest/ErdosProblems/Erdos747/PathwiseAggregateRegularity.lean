@@ -48,7 +48,7 @@ lemma aggregateDegreeFailure_probability_le_uniform
     (n M : ℕ) (hn : 1 ≤ n) (hM0 : 0 < M)
     (hMlower : upperEdgeCount ε n ≤ M) (hM : M ≤ (allEdges n).card)
     (hq0 : 0 ≤ q) (hq1 : q ≤ 1)
-    (hbudget : 64 * (3 * Real.log 2 + kappa) ≤ q^4 * Real.log (n : ℝ))
+    (hbudget : 64 * (3 * Real.log 2 + kappa) ≤ q ^ 4 * Real.log (n : ℝ))
     (hlog : Real.log ((3 * n : ℕ) : ℝ) ≤ n) :
     finsetProbability (sample n M) (AggregateDegreeFailure n M q) ≤
       8 * (((allEdges n).card + 1 : ℝ) *

@@ -115,7 +115,7 @@ lemma completionThinning_relative_lower_failure_le_normalized
   have htx : (t : ℝ) * (k / s.card) ≤ 4 * T := by
     calc
       _ ≤ (T * L) * (4 / L) := mul_le_mul ht hratio (by positivity) (by positivity)
-      _ = _ := by field_simp <;> ring
+      _ = _ := by field_simp
   have hVupper : V ≤ 16 * T * v * w^2 := by
     calc
       _ = ((t : ℝ) * (k / s.card)) * (w * b) := by dsimp only [V]; ring

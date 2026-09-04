@@ -25,7 +25,7 @@ lemma completionWeight_mono {n : ℕ} {H G : Finset (Edge n)}
   refine ⟨?_, hcard, hmatch⟩
   intro A hAF
   rcases Finset.mem_insert.mp (hFsub hAF) with hAZ | hAH
-  · simpa [hAZ] using Finset.mem_insert_self A G
+  · simp [hAZ]
   · exact Finset.mem_insert_of_mem (hHG hAH)
 
 def presentUpperWeightExceptions {n : ℕ} (H : Finset (Edge n))

@@ -28,7 +28,7 @@ def thinningExtendToDelete {α : Type*} :
   | ⟨F, T⟩ => ⟨F ∪ T, T⟩
 
 lemma thinningDeleteToExtend_mem {α : Type*} {K : Finset α} {M t : ℕ}
-    (htM : t ≤ M) {p : Sigma fun _H : Finset α ↦ Finset α}
+    (_htM : t ≤ M) {p : Sigma fun _H : Finset α ↦ Finset α}
     (hp : p ∈ thinningDeletionPairs K M t) :
     thinningDeleteToExtend p ∈ thinningExtensionPairs K M t := by
   rcases p with ⟨H, T⟩
@@ -74,7 +74,7 @@ lemma thinningExtendToDelete_mem {α : Type*} {K : Finset α} {M t : ℕ}
     exact ⟨Finset.subset_union_right, hTcard⟩
 
 lemma thinningDeleteToExtend_leftInverse {α : Type*}
-    {K : Finset α} {M t : ℕ} (htM : t ≤ M)
+    {K : Finset α} {M t : ℕ} (_htM : t ≤ M)
     (p : ↥(thinningDeletionPairs K M t)) :
     thinningExtendToDelete
         (thinningDeleteToExtend p.1) = p.1 := by
@@ -95,7 +95,7 @@ lemma thinningDeleteToExtend_leftInverse {α : Type*}
   · rfl
 
 lemma thinningDeleteToExtend_rightInverse {α : Type*}
-    {K : Finset α} {M t : ℕ} (htM : t ≤ M)
+    {K : Finset α} {M t : ℕ} (_htM : t ≤ M)
     (p : ↥(thinningExtensionPairs K M t)) :
     thinningDeleteToExtend
         (thinningExtendToDelete p.1) = p.1 := by
@@ -187,7 +187,7 @@ lemma card_filter_thinningDeletionPairs_fst {α : Type*}
 
 lemma thinningDeletionPairs_probability_fst {α : Type*}
     (K : Finset α) (M t : ℕ) (htM : t ≤ M)
-    (hMK : M ≤ K.card) (P : Finset α → Prop) :
+    (_hMK : M ≤ K.card) (P : Finset α → Prop) :
     finsetProbability (thinningDeletionPairs K M t) (fun p ↦ P p.1) =
       finsetProbability (K.powersetCard M) P := by
   have hchoose : 0 < M.choose t := Nat.choose_pos htM
@@ -201,7 +201,7 @@ lemma thinningDeletionPairs_probability_fst {α : Type*}
 lemma thinningDeletionPairs_probability_le_of_fiber {α : Type*}
     (K : Finset α) (M t : ℕ) (htM : t ≤ M) (hMK : M ≤ K.card)
     (P : (Sigma fun _H : Finset α ↦ Finset α) → Prop)
-    (delta : ℝ) (hdelta : 0 ≤ delta)
+    (delta : ℝ) (_hdelta : 0 ≤ delta)
     (hfiber : ∀ H ∈ K.powersetCard M,
       finsetProbability (H.powersetCard t)
         (fun T ↦ P ⟨H, T⟩) ≤ delta) :
@@ -252,7 +252,7 @@ lemma thinningDeletionPairs_probability_mul_le_of_fiber {α : Type*}
     (K : Finset α) (M t : ℕ) (htM : t ≤ M) (hMK : M ≤ K.card)
     (P : Finset α → Prop)
     (Q : (Sigma fun _H : Finset α ↦ Finset α) → Prop)
-    (delta : ℝ) (hdelta : 0 ≤ delta)
+    (delta : ℝ) (_hdelta : 0 ≤ delta)
     (hfiber : ∀ H ∈ K.powersetCard M, P H →
       delta ≤ finsetProbability (H.powersetCard t)
         (fun T ↦ Q ⟨H, T⟩)) :
@@ -342,7 +342,7 @@ lemma card_thinningExtensionPairs {α : Type*}
 lemma thinningExtensionPairs_probability_le_of_fiber {α : Type*}
     (K : Finset α) (M t : ℕ) (htM : t ≤ M) (hMK : M ≤ K.card)
     (P : (Sigma fun _F : Finset α ↦ Finset α) → Prop)
-    (delta : ℝ) (hdelta : 0 ≤ delta)
+    (delta : ℝ) (_hdelta : 0 ≤ delta)
     (hfiber : ∀ F ∈ K.powersetCard (M - t),
       finsetProbability ((K \ F).powersetCard t)
         (fun T ↦ P ⟨F, T⟩) ≤ delta) :

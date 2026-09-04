@@ -115,7 +115,7 @@ lemma vertexDegree_eq_card_inter_incidentEdges {n : ℕ}
     vertexDegree H v = (H ∩ incidentEdges n v).card := by
   apply congrArg Finset.card
   ext A
-  simp only [vertexDegree, incidentEdges, Finset.mem_filter,
+  simp only [incidentEdges, Finset.mem_filter,
     Finset.mem_inter]
   constructor
   · rintro ⟨hA, hv⟩
@@ -128,7 +128,7 @@ lemma vertexCodegree_eq_card_inter_pairIncidentEdges {n : ℕ}
     vertexCodegree H u v = (H ∩ pairIncidentEdges n u v).card := by
   apply congrArg Finset.card
   ext A
-  simp only [vertexCodegree, pairIncidentEdges, Finset.mem_filter,
+  simp only [pairIncidentEdges, Finset.mem_filter,
     Finset.mem_inter]
   constructor
   · rintro ⟨hA, hu, hv⟩
@@ -295,7 +295,7 @@ lemma sampledVertexDegree_upper_factor_allDensity_le
     n M v (Real.log B) (B * ((M : ℝ) / n))
     hn hM (Real.log_nonneg hB)
   rw [Real.exp_log hBpos] at hraw
-  exact hraw.trans_eq (by congr 2 <;> ring)
+  exact hraw.trans_eq (by congr 2 ; ring)
 
 /-- Constant-factor lower degree tail, valid on every fixed-size layer. -/
 lemma sampledVertexDegree_lower_factor_allDensity_le
@@ -312,7 +312,7 @@ lemma sampledVertexDegree_lower_factor_allDensity_le
     n M v (-Real.log a) (a * ((M : ℝ) / n))
     hn hM (by linarith)
   rw [neg_neg, Real.exp_log ha0] at hraw
-  exact hraw.trans_eq (by congr 2 <;> ring)
+  exact hraw.trans_eq (by congr 2 ; ring)
 
 /-- The logarithmic-parameter codegree-six tail on every layer. -/
 lemma sampledVertexCodegree_six_allDensity_le

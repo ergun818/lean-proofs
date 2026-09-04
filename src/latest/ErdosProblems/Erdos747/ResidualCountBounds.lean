@@ -43,8 +43,6 @@ lemma residualCountError_tendsto_zero (C : ℕ → ℝ) (c : ℝ)
   norm_num only [zero_mul, add_zero] at hlim
   refine hlim.congr' ?_
   filter_upwards [eventually_ge_atTop 2] with n hn
-  change C n * ((1 : ℝ) + 1 / ((n - 1 : ℕ) : ℝ)) +
-    (3 - 2 * Real.log c) / ((n - 1 : ℕ) : ℝ) = residualCountError n (C n) c
   unfold residualCountError
   rw [Nat.cast_sub (by omega : 1 ≤ n), Nat.cast_one]
   have hnR : (1 : ℝ) < n := by exact_mod_cast hn
@@ -113,7 +111,7 @@ lemma kahnCountLower_reindexGraphAway_explicit_error
     (hn : 2 ≤ n) (hM : 0 < M) (hH : H ∈ sample n M)
     (hZ : Z ∈ allEdges n) (hc : 0 < c)
     (hPhi : (perfectMatchings n H).card ≠ 0) (hcount : KahnCountLower H C)
-    (hweight : c^2 * matchingWeightTarget n H ≤ completionWeight H Z) :
+    (hweight : c ^ 2 * matchingWeightTarget n H ≤ completionWeight H Z) :
     KahnCountLower (reindexGraphAway H Z hZ) (residualCountError n C c) := by
   have hHcard := (mem_sample.mp hH).2
   have hpm := hasPerfectMatching_reindexGraphAway_of_weightLower

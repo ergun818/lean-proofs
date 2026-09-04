@@ -19,7 +19,7 @@ lemma kahnAggregateInsertionGood_reindexGraphAway_explicit
     (hcap : (cap : ℝ) / ((M : ℝ) / n) ≤ g)
     (hq' : residualDegreeTolerance n B q g ≤ 1)
     (hgood : KahnAggregateInsertionGood n M cap C q eta B H)
-    (hweight : c^2 * matchingWeightTarget n H ≤ completionWeight H Z) :
+    (hweight : c ^ 2 * matchingWeightTarget n H ≤ completionWeight H Z) :
     KahnAggregateInsertionGood (n - 1) (reindexGraphAway H Z hZ).card cap
         (residualCountError n C c) (residualDegreeTolerance n B q g)
         (2 * eta) (2 * B) (reindexGraphAway H Z hZ) ∧
