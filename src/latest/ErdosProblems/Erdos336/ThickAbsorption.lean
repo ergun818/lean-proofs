@@ -71,8 +71,8 @@ theorem eventuallyExactlyZ_of_thick_of_oneExtra
     · exact hysmem x hx
     · exact hdsmem x hx
     · exact hzero
-  · simp only [List.sum_append, List.sum_replicate, smul_eq_mul, mul_zero,
-      add_zero, hyssum, hdssum]
+  · simp only [List.sum_append, List.sum_replicate,
+      hyssum, hdssum]
     ring
 
 end Erdos336

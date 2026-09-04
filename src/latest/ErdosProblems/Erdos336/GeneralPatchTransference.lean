@@ -64,7 +64,7 @@ theorem eventuallyExactlyZ_of_general_piecewise_patch
     · exact hSrep
   have hthick : ExactPowerThick D (R + M) := hthickRep
   have hout := eventuallyExactlyZ_of_thick_of_oneExtra hzero hthick hparent
-  convert hout using 1 <;> omega
+  convert hout using 1; omega
 
 /-- Compact-power version of the general patch theorem. -/
 theorem eventuallyExactlyZ_of_compact_power_and_general_patch

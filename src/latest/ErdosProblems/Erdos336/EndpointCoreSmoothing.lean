@@ -34,7 +34,7 @@ lemma zRepExactly_replicate
   refine ⟨List.replicate k x, by simp, ?_, ?_⟩
   · intro z hz
     simpa using (List.mem_replicate.mp hz).2 ▸ hx
-  · simp [nsmul_eq_mul]
+  · simp
 
 /-- Adding `r` independently represented copies of an interval gives the
 whole `r`-fold dilate of that interval, with representation cost `r*t`. -/
@@ -112,8 +112,7 @@ theorem endpoint_core_smoothing
   have hsum := (hcoreRep.add hpRep).add hqRep
   convert hsum using 1
   · omega
-  · push_cast at *
-    rw [hujs]
+  · rw [hujs]
     push_cast
     have hkj : (j : ℤ) ≤ (k : ℤ) := by exact_mod_cast hjk
     rw [Int.natCast_sub hjk]

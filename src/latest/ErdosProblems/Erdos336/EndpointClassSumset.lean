@@ -36,6 +36,7 @@ noncomputable def endpointClassInImage
   let r := QuotientAddGroup.mk' F
   exact (T.image q).filter fun b => r b = z
 
+omit [Fintype H] [DecidableEq H] in
 @[simp] theorem mem_endpointClassSlice
     {T : Finset (ℤ × H)} {δ : ℤ × H}
     {F : AddSubgroup ((ℤ × H) ⧸ AddSubgroup.zmultiples δ)}
@@ -46,15 +47,17 @@ noncomputable def endpointClassInImage
   classical
   simp [endpointClassSlice]
 
+omit [DecidableEq H] [Fintype H] in
 /-- Quotient-class occupancy cannot exceed the number of original strip
 points above that class. -/
-theorem card_endpointClassInImage_le_slice
+theorem card_endpointClassInImage_le_slice [Finite H]
     (T : Finset (ℤ × H)) (δ : ℤ × H)
     (F : AddSubgroup ((ℤ × H) ⧸ AddSubgroup.zmultiples δ))
     (z : (((ℤ × H) ⧸ AddSubgroup.zmultiples δ) ⧸ F)) :
     (endpointClassInImage T δ F z).card ≤
       (endpointClassSlice T δ F z).card := by
   classical
+  let := Fintype.ofFinite H
   let q : (ℤ × H) →+
       ((ℤ × H) ⧸ AddSubgroup.zmultiples δ) :=
     QuotientAddGroup.mk' (AddSubgroup.zmultiples δ)

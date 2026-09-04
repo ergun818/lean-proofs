@@ -28,7 +28,7 @@ theorem endpointClassSlice_subset_vertical_of_interior
     (Ffin : Finset ((ℤ × H) ⧸ AddSubgroup.zmultiples δ))
     (hFfin : ∀ x, x ∈ Ffin ↔ x ∈ F)
     (hfull : ∀ f ∈ Ffin, ∃ k : H, verticalEndpointHom δ k = f)
-    (a : ℤ × H) (haT : a ∈ T) (ha0 : 0 < a.1) (hal : a.1 < l) :
+    (a : ℤ × H) (_haT : a ∈ T) (ha0 : 0 < a.1) (hal : a.1 < l) :
     endpointClassSlice T δ F
         ((QuotientAddGroup.mk' F)
           ((QuotientAddGroup.mk' (AddSubgroup.zmultiples δ)) a)) ⊆

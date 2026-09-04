@@ -32,15 +32,17 @@ lemma dense_progression_core_density {L V n : ℕ} (hL : 15 ≤ L)
   have hdense2 : 8 * (L * V) < 10 * n := by nlinarith
   omega
 
+omit [Fintype G] in
 /-- If a finite set and its reflection around `y` have union smaller than
 `2|S|`, they intersect, so `y∈S+S`. -/
-theorem groupRepExactly_two_of_reflection_union_bound
+theorem groupRepExactly_two_of_reflection_union_bound [Finite G]
     {S : Set G} {y : G} {K : ℕ}
     (hunion : ((S.toFinite.toFinset) ∪
       (S.toFinite.toFinset).image (fun x => y - x)).card ≤ K)
     (hsmall : K < 2 * S.ncard) :
     GroupRepExactly S 2 y := by
   classical
+  let := Fintype.ofFinite G
   let A : Finset G := S.toFinite.toFinset
   let R : Finset G := A.image (fun x => y - x)
   have hcardA : A.card = S.ncard := by
@@ -61,7 +63,7 @@ theorem groupRepExactly_two_of_reflection_union_bound
   obtain ⟨x, hxA, hx⟩ := Finset.mem_image.mp hzR
   refine ⟨[z, x], by simp, ?_, ?_⟩
   · intro w hw
-    simp at hw
+    simp only [List.mem_cons, List.not_mem_nil, or_false] at hw
     rcases hw with rfl | rfl
     · exact S.toFinite.mem_toFinset.mp hzA
     · exact S.toFinite.mem_toFinset.mp hxA
@@ -73,11 +75,13 @@ theorem groupRepExactly_two_of_reflection_union_bound
 def homFiberFinset {m : ℕ} (π : G →+ ZMod m) (z : ZMod m) : Finset G :=
   Finset.univ.filter fun x => π x = z
 
+omit [DecidableEq G] in
 @[simp] theorem mem_homFiberFinset {m : ℕ} (π : G →+ ZMod m)
     {z : ZMod m} {x : G} :
     x ∈ homFiberFinset π z ↔ π x = z := by
   simp [homFiberFinset]
 
+omit [DecidableEq G] in
 /-- If `S` is supported on `L+1` consecutive quotient fibres and has the
 Lev-rank-one density `4L V < 5|S|`, then `2S` contains every fibre in a
 consecutive quotient interval of span `L`.  Here `V` is any uniform upper

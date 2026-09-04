@@ -27,6 +27,7 @@ def WideRankDenseCertificate (C : Set G) (t : ℕ) : Prop :=
         (∀ x ∈ C, ∃ k : ℕ, k ≤ L₀ ∧ π x = α₀ + (k : ZMod m)) ∧
         p ∈ C ∧ q ∈ C ∧ π q = π p + (L₀ : ZMod m)
 
+omit [DecidableEq G] in
 /-- A rank-or-dense certificate for a positive primitive high power gives a
 uniform exact bound after padding in the zero-containing translate. -/
 theorem exact_cover_of_wideRankDenseCertificate
@@ -37,6 +38,7 @@ theorem exact_cover_of_wideRankDenseCertificate
     (hcert : WideRankDenseCertificate (ShiftToZero B b) t) :
     ∀ y : G,
       GroupRepExactly B (2 ^ 280 * T + extensionRankOneCost h) y := by
+  classical
   let C : Set G := ShiftToZero B b
   have hzeroC : 0 ∈ C := zero_mem_shiftToZero hb
   obtain ⟨q, hq⟩ := hexact
@@ -60,8 +62,7 @@ theorem exact_cover_of_wideRankDenseCertificate
       apply all_exact_mono_of_zero hzeroC
         (q := u * t) (M := M)
       · have huT : u * t ≤ 2 ^ 280 * T := Nat.mul_le_mul huU htT
-        dsimp [M]
-        omega
+        exact huT.trans (Nat.le_add_right _ _)
       · exact hqfull
     · have hrankB :
           ∃ (m : ℕ) (_hm : 0 < m) (π : G →+ ZMod m), Function.Surjective π ∧
@@ -85,14 +86,13 @@ theorem exact_cover_of_wideRankDenseCertificate
       apply all_exact_mono_of_zero hzeroC
         (q := 2 * t + extensionRankOneCost h) (M := M)
       · have htwo : 2 * t ≤ 2 ^ 280 * T := by
-          have htwoPow : 2 ≤ 2 ^ 280 := by
-            calc
-              2 = 2 ^ 1 := by simp
-              _ ≤ 2 ^ 280 := Nat.pow_le_pow_right (by omega) (by omega)
+          have htwoPow : (2 : ℕ) ≤ 2 ^ 280 := by
+            have hpow (n : ℕ) (hn : n ≠ 0) : (2 : ℕ) ≤ 2 ^ n :=
+              Nat.le_self_pow hn 2
+            exact hpow 280 (by decide)
           exact le_trans (Nat.mul_le_mul_left 2 htT)
             (Nat.mul_le_mul_right T htwoPow)
-        dsimp [M]
-        omega
+        exact Nat.add_le_add_right htwo _
       · exact hrankC
   exact (all_exact_shift_iff M).mpr htarget
 

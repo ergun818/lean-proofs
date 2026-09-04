@@ -8,7 +8,6 @@ set_option backward.isDefEq.respectTransparency false
 
 namespace Erdos336
 
-set_option maxHeartbeats 1200000
 
 open scoped Pointwise BigOperators
 

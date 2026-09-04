@@ -65,7 +65,7 @@ theorem interval_smoothing
     {A : Set ℕ} {a M L q t p r : ℕ}
     (hzero : 0 ∈ A) (hL : L ∈ A)
     (hcore : ∀ z : ℕ, a ≤ z → z ≤ a + M → z ∈ A)
-    (hqM : L ≤ q * M) (hqt : q ≤ t)
+    (_hqM : L ≤ q * M) (hqt : q ≤ t)
     (hp : p ≤ t - q) (hr : r ≤ q * M) :
     RepresentsExactly A t (q * a + p * L + r) := by
   obtain ⟨rs, hrslen, hrsbound, hrssum⟩ := exists_list_sum_eq_of_le_mul hr
@@ -94,7 +94,7 @@ theorem interval_smoothing
   · dsimp [core, highs, zeros]
     simp only [List.sum_append]
     rw [sum_map_nat_add_left, hrslen, hrssum]
-    simp [nsmul_eq_mul]
+    simp
     omega
 
 /-- The overlap condition used in `interval_smoothing`: choosing

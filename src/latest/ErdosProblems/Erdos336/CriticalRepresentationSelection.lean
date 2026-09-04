@@ -73,7 +73,7 @@ theorem overloaded_selector_is_star
     have hsR := (Finset.mem_filter.mp (Finset.mem_inter.mp hs).2)
     have hadd := r.add_eq s hsL.1
     simp only [hsL.2, hsR.2] at hadd
-    simpa [hadd]
+    simp [hadd]
   have hUcard : (L ∪ R).card ≤ D.card := Finset.card_le_card hUsub
   have hIcard : (L ∩ R).card ≤ 1 := by
     exact le_trans (Finset.card_le_card hIsub) (by simp)
@@ -109,14 +109,14 @@ theorem selector_load_le_one_away_from_star
     · exact (hxg (hs'.2.symm.trans hsg)).elim
     · have hadd := r.add_eq s hs'.1
       rw [hs'.2, hsg] at hadd
-      simpa [hadd]
+      simp [hadd]
   have hRsub : R ⊆ {g + x} := by
     intro s hs
     have hs' := Finset.mem_filter.mp hs
     rcases hstar s hs'.1 with hsg | hsg
     · have hadd := r.add_eq s hs'.1
       rw [hsg, hs'.2] at hadd
-      simpa [add_comm, hadd]
+      simp [hadd]
     · exact (hxg (hs'.2.symm.trans hsg)).elim
   have hRsub' : R ⊆ {x + g} := by
     simpa [add_comm] using hRsub
@@ -138,7 +138,7 @@ theorem selector_load_le_one_away_from_star
 /-- Replace the selected representation of one new sum. -/
 noncomputable def CriticalSelector.replace
     {C : Finset G} (r : CriticalSelector C) (s₀ b c : G)
-    (hs₀ : s₀ ∈ criticalNewSums C) (hb : b ∈ C) (hc : c ∈ C)
+    (_hs₀ : s₀ ∈ criticalNewSums C) (hb : b ∈ C) (hc : c ∈ C)
     (hbc : b + c = s₀) : CriticalSelector C where
   left s := if s = s₀ then b else r.left s
   right s := if s = s₀ then c else r.right s
@@ -186,7 +186,7 @@ theorem balanced_selector_of_offcenter_representation
         subst s
         have hval := hs'.2
         change (if s₀ = s₀ then b else r.left s₀) = g at hval
-        simp only [if_pos rfl] at hval
+        simp only [] at hval
         exact hbg hval
       apply Finset.mem_erase.mpr
       refine ⟨hsne, ?_⟩
@@ -204,7 +204,7 @@ theorem balanced_selector_of_offcenter_representation
         subst s
         have hval := hs'.2
         change (if s₀ = s₀ then c else r.right s₀) = g at hval
-        simp only [if_pos rfl] at hval
+        simp only [] at hval
         exact hcg hval
       apply Finset.mem_erase.mpr
       refine ⟨hsne, ?_⟩
@@ -310,7 +310,7 @@ theorem balanced_selector_or_offcenter_closed
   by_cases hExists : ∃ r : CriticalSelector C,
       ∀ x ∈ C, selectorLoad r x ≤ (criticalNewSums C).card
   · exact Or.inl hExists
-  · push_neg at hExists
+  · push Not at hExists
     let r := defaultCriticalSelector C
     obtain ⟨g, hgC, hover⟩ := hExists r
     right

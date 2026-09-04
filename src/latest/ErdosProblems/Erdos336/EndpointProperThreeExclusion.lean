@@ -9,15 +9,15 @@ set_option backward.isDefEq.respectTransparency false
 
 namespace Erdos336
 
-set_option maxHeartbeats 800000
 
 open scoped Pointwise
 
 variable {H : Type*} [AddCommGroup H] [Fintype H] [DecidableEq H]
 
+omit [Fintype H] in
 /-- In the normalized endpoint setting, at least three new stabilizer classes
 and a nonvertical stabilizer element are impossible. -/
-theorem endpoint_proper_three_impossible
+theorem endpoint_proper_three_impossible [Finite H]
     (T : Finset (ℤ × H)) (l : ℤ) (hlpos : 0 < l)
     (hzero : ((0 : ℤ), 0) ∈ T) (δ : ℤ × H)
     (hδ : δ ∈ integerFiber T l)
@@ -40,6 +40,7 @@ theorem endpoint_proper_three_impossible
     (∃ f ∈ Ffin, ∀ k : H, verticalEndpointHom δ k ≠ f) →
     False := by
   classical
+  let := Fintype.ofFinite H
   dsimp
   let Δ := AddSubgroup.zmultiples δ
   let q : (ℤ × H) →+ ((ℤ × H) ⧸ Δ) := QuotientAddGroup.mk' Δ
@@ -59,7 +60,8 @@ theorem endpoint_proper_three_impossible
   have hsmall : (B + B).card < 2 * B.card - 1 := by
     simpa [B, q, Δ] using hsmallRaw
   obtain ⟨sel, hload⟩ := endpoint_exists_balanced_selector_of_three
-    T δ hzero hthreshold (by simpa [B, q, Δ] using hsmall) (by simpa [D, C, r, Fsub, B, q, Δ] using hD3)
+    T δ hzero hthreshold (by simpa [B, q, Δ] using hsmall)
+    (by simpa [D, C, r, Fsub, B, q, Δ] using hD3)
   change CriticalSelector C at sel
   change ∀ z ∈ C, selectorLoad sel z ≤ D.card at hload
   have hTne : T.Nonempty := ⟨(0, 0), hzero⟩

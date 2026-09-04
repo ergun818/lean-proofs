@@ -17,6 +17,7 @@ open scoped Pointwise
 
 variable {G : Type*} [AddCommGroup G] [Fintype G] [DecidableEq G]
 
+omit [Fintype G] in
 private lemma image_ofAdd_add (A : Finset G) :
     (A.image Multiplicative.ofAdd) * (A.image Multiplicative.ofAdd) =
       (A + A).image Multiplicative.ofAdd := by
@@ -39,6 +40,7 @@ private lemma image_ofAdd_add (A : Finset G) :
       Finset.mem_image.2 ⟨x, hx, rfl⟩,
       Multiplicative.ofAdd y, Finset.mem_image.2 ⟨y, hy, rfl⟩, rfl⟩
 
+omit [AddCommGroup G] [Fintype G] in
 private lemma card_image_ofAdd (A : Finset G) :
     (A.image Multiplicative.ofAdd).card = A.card := by
   rw [Finset.card_image_of_injective]
@@ -113,6 +115,7 @@ theorem add_self_eq_univ_of_three_mul_lt_two_mul
   have : y = x := Multiplicative.ofAdd.injective hyx
   simpa [this] using hy
 
+omit [Fintype G] [DecidableEq G] in
 /-- A positive exact power of a primitive zero-containing set still generates
 its ambient group. -/
 theorem closure_exactPower_eq_top
@@ -143,7 +146,7 @@ theorem closure_exactPower_eq_top
   rw [← hDtop]
   apply AddSubgroup.closure_mono
   have hpowOne : ExactPower D 1 = D := by
-    simpa [exactPower_eq_nsmul]
+    simp [exactPower_eq_nsmul]
   have hmono := exactPower_mono_of_zero hzero
     (Nat.one_le_iff_ne_zero.mpr hk.ne')
   intro x hx
@@ -153,15 +156,19 @@ theorem closure_exactPower_eq_top
 noncomputable def exactPowerFinset (D : Set G) (k : ℕ) : Finset G :=
   (ExactPower D k).toFinite.toFinset
 
+omit [DecidableEq G] in
 @[simp] theorem mem_exactPowerFinset {D : Set G} {k : ℕ} {x : G} :
     x ∈ exactPowerFinset D k ↔ x ∈ ExactPower D k := by
   exact (Set.toFinite (ExactPower D k)).mem_toFinset
 
+omit [DecidableEq G] in
 @[simp] theorem coe_exactPowerFinset (D : Set G) (k : ℕ) :
     (exactPowerFinset D k : Set G) = ExactPower D k := by
+  classical
   ext x
   simp
 
+omit [DecidableEq G] in
 @[simp] theorem card_exactPowerFinset (D : Set G) (k : ℕ) :
     (exactPowerFinset D k).card = (ExactPower D k).ncard := by
   classical
@@ -197,6 +204,7 @@ private lemma three_pow_mul_le_two_pow_of_growth
 lemma dense_saturation_numerical :
     2 ^ 26 * 30000 < 3 ^ 26 := by norm_num
 
+omit [DecidableEq G] in
 /-- A primitive exact power of density greater than `1/30000` saturates after
 at most `2^26` copies.  This is the uniform endgame for the dense alternative
 in the cyclic small-doubling trichotomy. -/
@@ -207,6 +215,7 @@ theorem dense_highPower_saturates
     (hdense : Fintype.card G < 30000 * (ExactPower D t).ncard) :
     ∃ u : ℕ, 0 < u ∧ u ≤ 2 ^ 26 ∧
       ExactPower D (u * t) = Set.univ := by
+  classical
   let f : ℕ → ℕ := fun i => (ExactPower D (2 ^ i * t)).ncard
   have htop : ∀ i, f i ≤ Fintype.card G := by
     intro i
@@ -221,12 +230,12 @@ theorem dense_highPower_saturates
     apply exactPower_mono_of_zero hzero (show 0 ≤ 2 ^ 0 * t by omega)
     exact ⟨[], rfl, by simp, by simp⟩
   by_contra hnot
-  push_neg at hnot
+  push Not at hnot
   have hnolow : ∀ i : ℕ, i < 26 →
       3 * f i ≤ 2 * f (i + 1) := by
     intro i hi
     by_contra hbad
-    push_neg at hbad
+    push Not at hbad
     let A : Finset G := exactPowerFinset D (2 ^ i * t)
     have hAadd : A + A =
         exactPowerFinset D (2 ^ (i + 1) * t) := by

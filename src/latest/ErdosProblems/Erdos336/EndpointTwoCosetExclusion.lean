@@ -10,7 +10,6 @@ set_option backward.isDefEq.respectTransparency false
 
 namespace Erdos336
 
-set_option maxHeartbeats 800000
 
 open scoped Pointwise
 
@@ -90,7 +89,6 @@ theorem endpointQuotient_not_two_stabilizer_cosets
     have heq : (T + T).image ρ = (B + B).image r := by
       change Finset.image (r ∘ q) (T + T) = (B + B).image r
       rw [← Finset.image_image]
-      change ((T + T).image q).image r = (B + B).image r
       rw [Finset.image_add]
     rw [heq, hBBimage]
   exact not_two_image_three_sum_of_strict_threshold

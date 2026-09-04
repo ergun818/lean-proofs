@@ -61,7 +61,7 @@ theorem cyclic_full_fiber_endpoint_smoothing
   have hu_cast : (u : ZMod m) = j • (L : ZMod m) + (s : ZMod m) := by
     rw [hujs]
     push_cast
-    simp [add_nsmul, mul_nsmul]
+    simp
   have hπendpoint : π endpoint = k • π p + j • (L : ZMod m) := by
     dsimp [endpoint]
     simp only [map_add, map_nsmul, hstep]

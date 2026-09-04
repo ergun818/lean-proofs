@@ -50,7 +50,7 @@ theorem exists_large_reflected_piece
     refine ⟨hx, hXS x hx, ?_⟩
     have href := hpick_reflect x hx
     rw [hpick] at href
-    convert href using 1 <;> ring
+    convert href using 1; ring
   · simpa [C] using hfcard
 
 end Erdos336

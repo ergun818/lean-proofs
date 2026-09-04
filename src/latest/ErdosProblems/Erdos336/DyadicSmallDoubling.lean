@@ -69,12 +69,14 @@ lemma nine_pow_mul_le_four_pow_of_growth
 range contains a scale whose doubling constant is strictly below `9/4`.
 The set at scale `i` is the exact `(2^i h)`-power of the normalized set. -/
 theorem exists_dyadic_small_doubling_of_weakCover
-    [Fintype G] {B : Set G} {b : G} {h m : ℕ}
+    [Finite G] {B : Set G} {b : G} {h m : ℕ}
     (hb : b ∈ B) (hweak : ∀ y : G, GroupRepAtMost B h y)
     (hscale : 4 ^ m * (h + 1) < 9 ^ m) :
     ∃ i : ℕ, i < m ∧
       4 * (ExactPower (ShiftToZero B b) (2 ^ (i + 1) * h)).ncard <
         9 * (ExactPower (ShiftToZero B b) (2 ^ i * h)).ncard := by
+  classical
+  let := Fintype.ofFinite G
   let C : Set G := ShiftToZero B b
   let f : ℕ → ℕ := fun i => (ExactPower C (2 ^ i * h)).ncard
   have hdense : Fintype.card G ≤ (h + 1) * f 0 := by
@@ -86,7 +88,7 @@ theorem exists_dyadic_small_doubling_of_weakCover
         Set.ncard_le_ncard (fun _ _ => Set.mem_univ _)
       _ = Fintype.card G := by simp
   by_contra hnot
-  push_neg at hnot
+  push Not at hnot
   have hgrowth : ∀ i : ℕ, i < m → 9 * f i ≤ 4 * f (i + 1) := by
     intro i hi
     simpa [f, C] using hnot i hi

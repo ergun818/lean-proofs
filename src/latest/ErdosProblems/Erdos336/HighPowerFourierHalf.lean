@@ -13,6 +13,7 @@ open scoped Pointwise
 
 variable {N : ℕ} [NeZero N]
 
+omit [NeZero N] in
 private theorem zero_mem_power {C : Set (ZMod N)} (hzero : 0 ∈ C) (t : ℕ) :
     0 ∈ ExactPower C t := by
   refine ⟨List.replicate t 0, by simp, ?_, by simp⟩
@@ -79,7 +80,6 @@ theorem highPower_counterexample_fourier_half
     hzero hprimitive t hnotfull
   have hcard : 62 ≤ A.card := by
     rw [card_exactPowerFinset]
-    change 62 ≤ (ExactPower C t).ncard
     omega
   have hzS : 0 ∈ S := zero_mem_power hzero t
   have hweight := stableWeight_eq_double_sub_one hzS

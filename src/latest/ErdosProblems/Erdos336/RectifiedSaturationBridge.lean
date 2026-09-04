@@ -9,7 +9,6 @@ set_option backward.isDefEq.respectTransparency false
 
 namespace Erdos336
 
-set_option maxHeartbeats 1200000
 
 open scoped Pointwise
 
@@ -132,6 +131,7 @@ theorem add_self_add_vertical_eq_saturated_add_self
     · rw [← hsum, ← hxveq, ← hyweq]
       abel
 
+omit [NeZero m] in
 /-- Strict-half rectification preserves the cardinality of a double sumset
 also after saturation by a subgroup killed by the rectifying homomorphism. -/
 theorem card_add_rectifiedLift_add_vertical
@@ -189,6 +189,7 @@ theorem card_add_rectifiedLift_add_vertical
       _ = (A + A) + KF := by rw [hKK]
   rw [hleft, hcard, hsum]
 
+omit [NeZero N] in
 /-- Affine generation is invariant under translating a finite set. -/
 theorem finsetAffineGenerates_vadd
     (A : Finset (ZMod N)) (p : ZMod N) (hA : FinsetAffineGenerates A) :
@@ -199,7 +200,7 @@ theorem finsetAffineGenerates_vadd
   have hy : -p + x ∈ -p +ᵥ A :=
     Finset.mem_vadd_finset.mpr ⟨x, hx, rfl⟩
   have hm := hsub (-p + x) hy
-  convert hm using 1 <;> abel
+  convert hm using 1; abel
 
 /-- A rank certificate for a translate transfers back to the original set. -/
 theorem finsetRankCertificate_of_translate

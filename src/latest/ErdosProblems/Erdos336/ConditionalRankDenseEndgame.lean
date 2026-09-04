@@ -37,11 +37,13 @@ def RankDenseCertificate (C : Set G) (t : ℕ) : Prop :=
         (∀ x ∈ C, ∃ k : ℕ, k ≤ L₀ ∧ π x = α₀ + (k : ZMod m)) ∧
         p ∈ C ∧ q ∈ C ∧ π q = π p + (L₀ : ZMod m)
 
+omit [Fintype G] [DecidableEq G] in
 /-- Iterating an exact-power set multiplies the exponent. -/
 theorem exactPower_exactPower (A : Set G) (t k : ℕ) :
     ExactPower (ExactPower A t) k = ExactPower A (k * t) := by
   simp only [exactPower_eq_nsmul, smul_smul]
 
+omit [Fintype G] [DecidableEq G] in
 /-- A full exact power of a zero-containing set remains full at every larger
 exponent. -/
 theorem all_exact_mono_of_zero {A : Set G} (hzero : 0 ∈ A)
@@ -51,10 +53,11 @@ theorem all_exact_mono_of_zero {A : Set G} (hzero : 0 ∈ A)
   intro y
   exact exactPower_mono_of_zero hzero hqM (hq y)
 
+omit [DecidableEq G] in
 /-- The rank alternative gives exact coverage at cost
 `2t + extensionRankOneCost h`. -/
 theorem exact_cover_of_rank_certificate
-    {B : Set G} {b : G} (hb : b ∈ B)
+    {B : Set G} {b : G} (_hb : b ∈ B)
     {h t : ℕ} (hweak : ∀ y : G, GroupRepAtMost B h y)
     (hrank :
       ∃ (m : ℕ) (_hm : 0 < m) (π : G →+ ZMod m), Function.Surjective π ∧
@@ -72,6 +75,7 @@ theorem exact_cover_of_rank_certificate
             π q = π p + (L₀ : ZMod m)) :
     ∀ y : G,
       GroupRepExactly B (2 * t + extensionRankOneCost h) y := by
+  classical
   obtain ⟨m, hm, π, hπ, α, L, V, hL, houterS, hfiber, hdense,
     α₀, L₀, p, q, hL₀, hL₀L, houterC, hp, hq, hpq⟩ := hrank
   let C : Set G := ShiftToZero B b
@@ -124,6 +128,7 @@ theorem exact_cover_of_rank_certificate
   exact full_coverage_of_outer_interval_and_core hm π hπ hweak houterB
     hpB hqB hstepB hcoreB hL₀L hL₀
 
+omit [DecidableEq G] in
 /-- A rank-or-dense certificate for a positive primitive high power gives a
 uniform exact bound after padding in the zero-containing translate. -/
 theorem exact_cover_of_rankDenseCertificate
@@ -134,6 +139,7 @@ theorem exact_cover_of_rankDenseCertificate
     (hcert : RankDenseCertificate (ShiftToZero B b) t) :
     ∀ y : G,
       GroupRepExactly B (2 ^ 26 * T + extensionRankOneCost h) y := by
+  classical
   let C : Set G := ShiftToZero B b
   have hzeroC : 0 ∈ C := zero_mem_shiftToZero hb
   obtain ⟨q, hq⟩ := hexact

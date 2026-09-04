@@ -29,7 +29,7 @@ theorem roots_in_rotated_open_semicircle
   have hphase : r * ZMod.toCircle j =
       Circle.exp (ρ + 2 * Real.pi * ((j.val : ℝ) / m)) := by
     rw [show r = Circle.exp ρ by
-      simpa [ρ] using (Circle.exp_arg r).symm]
+      simp [ρ]]
     rw [ZMod.toCircle_eq_circleExp]
     rw [← Circle.exp_add]
   rw [hphase] at hueq

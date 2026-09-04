@@ -18,6 +18,7 @@ noncomputable def quotientFiberFinset
   classical
   exact A.filter fun x => (QuotientAddGroup.mk' K) x = z
 
+omit [DecidableEq G] in
 @[simp] theorem mem_quotientFiberFinset
     {K : AddSubgroup G} {A : Finset G} {z : G ⧸ K} {x : G} :
     x ∈ quotientFiberFinset K A z ↔
@@ -45,9 +46,10 @@ noncomputable def quotientDeficiency
 
 /-- Finite sum of pointwise truncated complements. -/
 theorem sum_const_sub_sum_eq_sum_sub
-    {ι : Type*} [DecidableEq ι] (S : Finset ι) (c : ℕ) (f : ι → ℕ)
+    {ι : Type*} (S : Finset ι) (c : ℕ) (f : ι → ℕ)
     (hf : ∀ x ∈ S, f x ≤ c) :
     (∑ _x ∈ S, c) - (∑ x ∈ S, f x) = ∑ x ∈ S, (c - f x) := by
+  classical
   induction S using Finset.induction_on with
   | empty => simp
   | @insert x S hx ih =>
@@ -59,6 +61,7 @@ theorem sum_const_sub_sum_eq_sum_sub
         exact Finset.sum_le_sum (fun y hy => hf y (Finset.mem_insert_of_mem hy))
       omega
 
+omit [DecidableEq G] in
 /-- Every quotient fibre injects into the finite subgroup. -/
 theorem card_quotient_fiber_le_subgroup
     (K : AddSubgroup G) (Kfin : Finset G)
@@ -73,7 +76,7 @@ theorem card_quotient_fiber_le_subgroup
         apply (QuotientAddGroup.eq_zero_iff (x.1 - a)).mp
         change q (x.1 - a) = 0
         have hxmem : x.1 ∈ A.filter (fun y => q y = z) := by
-          simpa [quotientFiberFinset, q] using x.2
+          simp [quotientFiberFinset, q]
         have hxq : q x.1 = z := (Finset.mem_filter.mp hxmem).2
         have hamem : a ∈ A.filter (fun y => q y = z) := by
           simpa [quotientFiberFinset, q] using ha
@@ -146,6 +149,7 @@ noncomputable def quotientEndpointLoad
   exact (I.filter fun i => (QuotientAddGroup.mk' K) (left i) = z).card +
     (I.filter fun i => (QuotientAddGroup.mk' K) (right i) = z).card
 
+omit [DecidableEq G] in
 /-- Bounding how often each occupied coset is selected bounds the weighted
 sum of its deficiencies. -/
 theorem weighted_deficiency_le

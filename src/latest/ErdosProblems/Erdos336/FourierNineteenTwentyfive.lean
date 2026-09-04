@@ -63,7 +63,7 @@ theorem exists_nonzero_fourier_gt_nineteen_twentyfive
       361 * (A.card : ℝ) ^ 2 <
         625 * ‖cyclicFinsetFourier A k‖ ^ 2 := by
   by_contra hno
-  push_neg at hno
+  push Not at hno
   let S := A + A
   let a : ℝ := A.card
   let d : ℝ := S.card
@@ -89,7 +89,6 @@ theorem exists_nonzero_fourier_gt_nineteen_twentyfive
   have hn : 12000 * (d - 1) ≤ n := by
     have hdpos : 1 ≤ S.card := by omega
     dsimp [d, n]
-    norm_num [Nat.cast_sub hdpos]
     exact_mod_cast (show 12000 * (S.card - 1) ≤ N by simpa [S] using hsparse)
   have he0 : 0 ≤ e := by positivity
   have harith := fourier_nineteen_twentyfive_arithmetic a d e n
@@ -131,7 +130,10 @@ theorem exists_nonzero_fourier_gt_nineteen_twentyfive
           else 361 * a ^ 2 * ‖cyclicFinsetFourier S k‖ ^ 2) ≤
         (if k = 0 then 625 * a ^ 2 * d ^ 2 else 0) +
           361 * a ^ 2 * ‖cyclicFinsetFourier S k‖ ^ 2 := by
-      by_cases hk : k = 0 <;> simp [hk] <;> positivity
+      by_cases hk : k = 0
+      · simp only [hk, if_true, le_add_iff_nonneg_right]
+        positivity
+      · simp [hk]
     have hs := Finset.sum_le_sum
       (fun k (_hk : k ∈ (Finset.univ : Finset (ZMod N))) => hp k)
     simp only [Finset.sum_add_distrib] at hs

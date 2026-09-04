@@ -12,7 +12,6 @@ set_option backward.isDefEq.respectTransparency false
 
 namespace Erdos336
 
-set_option maxHeartbeats 2000000
 
 open scoped Pointwise
 
@@ -109,7 +108,7 @@ theorem liftedModerate_of_normalized_verticalPrimitive
             simpa [B, Ffin, Fsub, q, Δ] using hfull)
         exact ((not_lt_of_ge (by
           simpa [K, Fsub, B, Ffin, q, Δ] using hv)) hp.2).elim
-      · push_neg at hfull
+      · push Not at hfull
         by_cases hD2 : D.card = 2
         · exact (endpoint_proper_two_impossible T l hlpos hzero δ hδ h0 hl
             hbounds hthreshold hexpand

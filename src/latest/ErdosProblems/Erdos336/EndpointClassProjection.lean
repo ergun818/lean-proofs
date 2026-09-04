@@ -9,12 +9,12 @@ set_option backward.isDefEq.respectTransparency false
 
 namespace Erdos336
 
-set_option maxHeartbeats 1000000
 
 open scoped Pointwise BigOperators
 
 variable {H : Type*} [AddCommGroup H] [Fintype H] [DecidableEq H]
 
+omit [DecidableEq H] in
 /-- A fixed integer fibre of one endpoint-quotient class has at most the
 cardinality of the vertical part of the quotient subgroup. -/
 theorem card_integerProjectionFiber_endpointClass_le
@@ -65,6 +65,7 @@ theorem card_integerProjectionFiber_endpointClass_le
     change Xt.card ≤ Kfin.card
     simp [hempty]
 
+omit [DecidableEq H] in
 /-- Consequently a whole endpoint class is bounded by its number of occupied
 integer fibres times the vertical fibre cardinality. -/
 theorem card_endpointClassSlice_le_projection_mul_vertical
@@ -90,6 +91,7 @@ theorem card_endpointClassSlice_le_projection_mul_vertical
       exact card_integerProjectionFiber_endpointClass_le T δ F z t
     _ = P.card * k := by simp
 
+omit [DecidableEq H] in
 /-- The vertical-part cardinal divides the cardinal of a finite endpoint
 quotient subgroup. -/
 theorem card_endpointVerticalPart_dvd
@@ -123,6 +125,7 @@ theorem card_endpointVerticalPart_dvd
   rw [← hKcard, hKM, ← hFcard]
   exact hdvd
 
+omit [DecidableEq H] in
 /-- In a strip of endpoint width `l`, one quotient-subgroup class can
 occupy at most one more integer fibre than the index of its vertical part.
 The division-free cardinal form is `(n-1)|K| ≤ |F|`. -/

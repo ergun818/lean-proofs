@@ -9,7 +9,6 @@ set_option backward.isDefEq.respectTransparency false
 
 namespace Erdos336
 
-set_option maxHeartbeats 2500000
 
 open scoped Pointwise
 
@@ -93,7 +92,7 @@ theorem fullyPrimitiveRectifiableThreeMinusThree :
       rfl
     rw [hzEq]
     constructor
-    · exact Int.ofNat_zero_le k
+    · exact Int.natCast_nonneg k
     · simpa [l] using (show (k : ℤ) ≤ (L : ℤ) by exact_mod_cast hkL)
   have hA₀card : A₀.card = A.card := by
     dsimp [A₀]
@@ -154,10 +153,10 @@ theorem fullyPrimitiveRectifiableThreeMinusThree :
     have hTTV := card_add_rectifiedLift_add_vertical A₀ π 0 houter₀ K hK
     have hA₀K : (A₀ + addSubgroupFinset K).card =
         (A + addSubgroupFinset K).card := by
-      simpa [A₀] using card_translate_add A (addSubgroupFinset K) p
+      simp [A₀]
     have hA₀AK : ((A₀ + A₀) + addSubgroupFinset K).card =
         ((A + A) + addSubgroupFinset K).card := by
-      simpa [A₀] using card_translate_double_add A (addSubgroupFinset K) p
+      simp [A₀]
     rw [hTV, hTcard, hTTV, hTdouble, hA₀K, hA₀card, hA₀AK, hA₀double]
     exact hp
   have hTcert : LiftedModerateCertificate T :=

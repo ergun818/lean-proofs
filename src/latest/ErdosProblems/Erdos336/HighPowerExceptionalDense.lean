@@ -17,12 +17,14 @@ namespace Erdos336
 
 variable {G : Type*} [AddCommGroup G] [Fintype G] [DecidableEq G]
 
+omit [DecidableEq G] in
 /-- Uniformly bounded fibres of a map to `ZMod m` bound the source cardinality
 by `m` times the fibre bound. -/
 theorem card_le_modulus_mul_of_fiber_bound
     {m V : ℕ} (hm : 0 < m) (π : G →+ ZMod m)
     (hfiber : ∀ z : ZMod m, (homFiberFinset π z).card ≤ V) :
     Fintype.card G ≤ m * V := by
+  classical
   let : NeZero m := ⟨Nat.ne_of_gt hm⟩
   let U : Finset G := Finset.univ.biUnion (homFiberFinset π)
   have hU : U = Finset.univ := by
@@ -35,6 +37,7 @@ theorem card_le_modulus_mul_of_fiber_bound
         (fun z _ => hfiber z)
     _ = m * V := by simp
 
+omit [DecidableEq G] in
 /-- A primitive `t`-th power with `t≥3` cannot realize Lev's three-coset
 exception without being globally dense.  Indeed its image support of size at
 most three forces the whole quotient to have size at most three; Lev's
@@ -51,6 +54,7 @@ theorem highPower_three_coset_exception_is_dense
     (hdoub : 4 * (ExactPower C (2 * t)).ncard <
       9 * (ExactPower C t).ncard) :
     Fintype.card G < 2 * (ExactPower C t).ncard := by
+  classical
   let : NeZero m := ⟨Nat.ne_of_gt hm⟩
   have hzero' : 0 ∈ π '' C := ⟨0, hzero, π.map_zero⟩
   have hprimitive' := exactPower_univ_image_of_surjective π hπ hprimitive

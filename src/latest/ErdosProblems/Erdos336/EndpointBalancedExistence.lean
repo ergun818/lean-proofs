@@ -10,15 +10,15 @@ set_option backward.isDefEq.respectTransparency false
 
 namespace Erdos336
 
-set_option maxHeartbeats 800000
 
 open scoped Pointwise
 
 variable {H : Type*} [AddCommGroup H] [Fintype H] [DecidableEq H]
 
+omit [Fintype H] in
 /-- Under the strict rectifiable threshold, every critical endpoint quotient
 with at least three new classes has a balanced representation selector. -/
-theorem endpoint_exists_balanced_selector_of_three
+theorem endpoint_exists_balanced_selector_of_three [Finite H]
     (T : Finset (ℤ × H)) (δ : ℤ × H)
     (hzero : ((0 : ℤ), 0) ∈ T)
     (hthreshold : (T.image Prod.fst).card * (T + T).card <
@@ -37,6 +37,7 @@ theorem endpoint_exists_balanced_selector_of_three
     ∃ sel : CriticalSelector C,
       ∀ z ∈ C, selectorLoad sel z ≤ D.card := by
   classical
+  let := Fintype.ofFinite H
   dsimp
   let Δ := AddSubgroup.zmultiples δ
   let q : (ℤ × H) →+ ((ℤ × H) ⧸ Δ) := QuotientAddGroup.mk' Δ
@@ -64,12 +65,12 @@ theorem endpoint_exists_balanced_selector_of_three
   · obtain ⟨L, hLC, hLCC⟩ := hex
     let : L.Normal := ⟨by
       intro n hn g
-      convert hn using 1 <;> abel⟩
+      convert hn using 1; abel⟩
     let Q₃ := ((((ℤ × H) ⧸ Δ) ⧸ Fsub) ⧸ L)
     let s : (((ℤ × H) ⧸ Δ) ⧸ Fsub) →+ Q₃ := QuotientAddGroup.mk' L
     let ρ : (ℤ × H) →+ Q₃ := s.comp (r.comp q)
     have hImage : T.image ρ = subgroupQuotientImage L C := by
-      simp [subgroupQuotientImage, ρ, s, C, B,
+      simp only [subgroupQuotientImage, ρ, s, C, B,
         Finset.image_image, AddMonoidHom.coe_comp]
       apply Finset.image_congr
       intro x hx

@@ -25,11 +25,13 @@ lemma sum_filter_ne_zero (xs : List G) :
       · simp [hx, ih]
       · simp [hx, ih]
 
+omit [DecidableEq G] in
 /-- Adjoining zero does not change at-most representability: zero terms can
 simply be deleted. -/
 theorem groupRepAtMost_union_zero_iff
     {B : Set G} {h : ℕ} {y : G} :
     GroupRepAtMost (B ∪ {0}) h y ↔ GroupRepAtMost B h y := by
+  classical
   constructor
   · rintro ⟨j, hjh, xs, hlen, hxmem, hxsum⟩
     let ys := xs.filter fun x => x != 0
@@ -42,16 +44,18 @@ theorem groupRepAtMost_union_zero_iff
       rcases hxmem z hz' with hzB | hz0
       · exact hzB
       · exact (hzne (Set.mem_singleton_iff.mp hz0)).elim
-    · simpa [ys, sum_filter_ne_zero, hxsum]
+    · simp [ys, hxsum]
   · rintro ⟨j, hjh, xs, hlen, hxmem, hxsum⟩
     exact ⟨j, hjh, xs, hlen, fun z hz => Or.inl (hxmem z hz), hxsum⟩
 
+omit [DecidableEq G] in
 /-- Translating the one-extra parent by the exceptional element turns exact
 parent coverage into weak coverage by the translated removed set. -/
 theorem all_atMost_shift_of_exact_parent
     {A : Set G} {x : G} {h : ℕ}
     (hparent : ∀ y : G, GroupRepExactly (A ∪ {x}) h y) :
     ∀ y : G, GroupRepAtMost (ShiftToZero A x) h y := by
+  classical
   have hxparent : x ∈ A ∪ {x} := Or.inr rfl
   have hweakParent : ∀ y : G,
       GroupRepAtMost (ShiftToZero (A ∪ {x}) x) h y :=
@@ -60,7 +64,7 @@ theorem all_atMost_shift_of_exact_parent
   apply groupRepAtMost_union_zero_iff.mp
   have hset : ShiftToZero (A ∪ {x}) x = ShiftToZero A x ∪ {0} := by
     ext z
-    simp only [ShiftToZero, Set.mem_setOf_eq, Set.mem_union, Set.mem_singleton_iff]
+    simp only [ShiftToZero, Set.mem_ofPred_eq, Set.mem_union, Set.mem_singleton_iff]
     constructor
     · intro hz
       rcases hz with hzA | hzx
@@ -75,6 +79,7 @@ theorem all_atMost_shift_of_exact_parent
   rw [← hset]
   exact hweakParent y
 
+omit [DecidableEq G] in
 /-- Full exact powers are invariant, up to a target translation, when all
 summands are translated. -/
 theorem all_exact_shift_iff

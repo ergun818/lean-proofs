@@ -17,6 +17,7 @@ variable {G : Type*} [AddCommGroup G] [Fintype G] [DecidableEq G]
 noncomputable def addSubgroupFinset (K : AddSubgroup G) : Finset G :=
   Set.Finite.toFinset (Set.toFinite (K : Set G))
 
+omit [DecidableEq G] in
 @[simp] theorem mem_addSubgroupFinset (K : AddSubgroup G) (x : G) :
     x ∈ addSubgroupFinset K ↔ x ∈ K := by simp [addSubgroupFinset]
 
@@ -64,8 +65,9 @@ private lemma disjoint_vadd_of_coset_support
     rw [← hyx, ← hay]
     abel
 
+omit [Fintype G] in
 private lemma vadd_toFinset_subset_add_of_mem
-    (K : AddSubgroup G) {A B : Finset G} {b : G} (hb : b ∈ B) :
+    (_K : AddSubgroup G) {A B : Finset G} {b : G} (hb : b ∈ B) :
     b +ᵥ A ⊆ B + A := by
   intro x hx
   obtain ⟨a, ha, hax⟩ := Finset.mem_vadd_finset.mp hx
@@ -135,7 +137,7 @@ theorem card_add_ge_subgroup_of_dense_coset
   · obtain ⟨b, hb⟩ := hB
     have hex : ∃ c ∈ B, c ∉ b +ᵥ addSubgroupFinset K := by
       by_contra hn
-      push_neg at hn
+      push Not at hn
       apply hcoset
       exact ⟨b, hn⟩
     obtain ⟨c, hc, hcb⟩ := hex
@@ -186,7 +188,7 @@ theorem card_add_ge_subgroup_of_dense_coset
 /-- Lev's second elementary dense-coset addition bound (Lemma 6.1(ii)). -/
 theorem card_add_ge_card_add_subgroup_or_coset
     (K : AddSubgroup G) {A B : Finset G} {a : G}
-    (hAne : A.Nonempty) (hA : A ⊆ a +ᵥ addSubgroupFinset K)
+    (_hAne : A.Nonempty) (hA : A ⊆ a +ᵥ addSubgroupFinset K)
     (hdense : (addSubgroupFinset K).card ≤ 2 * A.card)
     (hB : B.Nonempty)
     (hlarge : 2 * ((addSubgroupFinset K).card - A.card) < B.card) :
@@ -216,7 +218,7 @@ theorem card_add_ge_card_add_subgroup_or_coset
       simp [H]
     have hex : ∃ c ∈ B, c ∉ b +ᵥ H := by
       by_contra hn
-      push_neg at hn
+      push Not at hn
       apply hcoset
       exact ⟨b, hn⟩
     obtain ⟨c, hc, hcb⟩ := hex
@@ -316,7 +318,7 @@ theorem card_add_ge_card_add_subgroup_or_coset
       · have hFcSmall : Fc.card ≤ H.card - A.card := by omega
         have hdex : ∃ d ∈ B, d ∉ Fb ∪ Fc := by
           by_contra hn
-          push_neg at hn
+          push Not at hn
           have hsub : B ⊆ Fb ∪ Fc := by
             intro x hx
             exact hn x hx

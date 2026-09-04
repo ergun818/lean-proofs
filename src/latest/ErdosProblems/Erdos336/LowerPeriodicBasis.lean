@@ -86,7 +86,7 @@ theorem lowerPeriodic_hasExactOrder
   · intro l hl
     apply not_eventuallyExactly_periodic_of_missing (lower_modulus_pos' u)
     have hnotall := lowerResidues_not_all_exact_before u l hu hl
-    push_neg at hnotall
+    push Not at hnotall
     exact hnotall
 
 /-- For every positive `u`, exact order `3u²+4u` is admissible at variable

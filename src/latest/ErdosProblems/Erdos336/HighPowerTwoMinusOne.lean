@@ -156,7 +156,7 @@ theorem highPower_subset_two_sub_of_not_stableV3
   let D : Set (ZMod m) := f '' C
   have hzD : 0 ∈ D := by
     refine ⟨0, hzero, ?_⟩
-    simp [D]
+    simp
   have hpD : ∃ u : ℕ, ExactPower D u = Set.univ := by
     exact exactPower_univ_image_of_surjective f hf hprimitive
   have himageA : A.image f = exactPowerFinset D t := by
@@ -172,7 +172,8 @@ theorem highPower_subset_two_sub_of_not_stableV3
     rw [← Nat.card_eq_fintype_card,
       AddSubgroup.card_eq_card_quotient_mul_card_addSubgroup]
     congr 1
-    simpa [addSubgroupFinset] using (Nat.card_eq_fintype_card (α := K))
+    exact (Nat.card_eq_fintype_card (α := K)).trans
+      (Fintype.card_of_subtype (addSubgroupFinset K) (mem_addSubgroupFinset K))
   have hNcard : N = m * h := by
     rw [ZMod.card] at hGcard
     simpa [h, hKH] using hGcard

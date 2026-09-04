@@ -16,6 +16,7 @@ variable {H : Type*} [AddCommGroup H] [DecidableEq H]
 def integerFiber (A : Finset (ℤ × H)) (z : ℤ) : Finset (ℤ × H) :=
   A.filter fun x => x.1 = z
 
+omit [AddCommGroup H] [DecidableEq H] in
 @[simp] theorem mem_integerFiber {A : Finset (ℤ × H)} {z : ℤ} {x : ℤ × H} :
     x ∈ integerFiber A z ↔ x ∈ A ∧ x.1 = z := by
   simp [integerFiber]
@@ -24,7 +25,7 @@ def integerFiber (A : Finset (ℤ × H)) (z : ℤ) : Finset (ℤ × H) :=
 regions in the double sumset.  This is the disjointness core of Lev's basic
 endpoint estimate. -/
 theorem endpoint_fiber_three_region_bound
-    (A : Finset (ℤ × H)) (l : ℤ) (hlpos : 0 < l)
+    (A : Finset (ℤ × H)) (l : ℤ) (_hlpos : 0 < l)
     (h0 : 0 ∈ A.image Prod.fst) (hl : l ∈ A.image Prod.fst)
     (hbounds : ∀ z ∈ A.image Prod.fst, 0 ≤ z ∧ z ≤ l) :
     ((A.image Prod.fst).card - 1) * (integerFiber A 0).card +
@@ -287,7 +288,7 @@ theorem moderate_endpoint_arithmetic
     d + σ < 3 * a ∧ d + 2 * e < 3 * a := by
   have hfirst : d + σ < 3 * a := by
     obtain ⟨k, rfl⟩ : ∃ k : ℕ, n = k + 2 := ⟨n - 2, by omega⟩
-    simp at hsmall
+    rw [show k + 2 - 1 = k + 1 by omega] at hsmall
     have hsbound : (2 * k + 3) * σ ≤ 2 * d := by
       have h2end := Nat.mul_le_mul_left 2 hend
       nlinarith

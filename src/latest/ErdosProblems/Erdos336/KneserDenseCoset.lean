@@ -140,7 +140,7 @@ theorem very_small_sum_is_one_stabilizer_coset
     intro x hx
     obtain ⟨y, hy, hyx⟩ := Finset.mem_vadd_finset.mp hx
     have hstable : (A + B) + H = A + B := by
-      simpa [H] using Finset.add_addStab (A + B)
+      simp [H]
     rw [← hstable]
     exact Finset.mem_add.mpr ⟨s, hs, y, hy, hyx⟩
   have hcardsH : (s +ᵥ H).card = (A + B).card := by

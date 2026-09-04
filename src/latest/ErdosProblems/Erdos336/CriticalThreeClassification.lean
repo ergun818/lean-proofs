@@ -8,7 +8,6 @@ set_option backward.isDefEq.respectTransparency false
 
 namespace Erdos336
 
-set_option maxHeartbeats 1200000
 
 open scoped Pointwise
 
@@ -36,6 +35,7 @@ theorem add_triple_zero_eq (a b : G) :
     · subst x; exact Finset.mem_add.mpr ⟨a, by simp, b, by simp, rfl⟩
     · subst x; exact Finset.mem_add.mpr ⟨b, by simp, b, by simp, rfl⟩
 
+omit [AddCommGroup G] in
 /-- Five listed points in a five-element finset are pairwise distinct. -/
 theorem five_distinct_of_card
     (a b c d e : G) (h : ({a, b, c, d, e} : Finset G).card = 5) :
@@ -83,6 +83,7 @@ theorem five_distinct_of_card
   exact ⟨ha.1, ha.2.1, ha.2.2.1, ha.2.2.2,
     hb.1, hb.2.1, hb.2.2, hc.1, hc.2, hde⟩
 
+omit [AddCommGroup G] in
 /-- If a five-element union consists of a three-element core and a pair, then
 the pair has two elements and is disjoint from the core. -/
 theorem pair_disjoint_of_union_card_five
@@ -111,6 +112,7 @@ def orderTwoAddSubgroup (t : G) (ht : t + t = 0) : AddSubgroup G where
     · right
       exact neg_eq_of_add_eq_zero_right ht
 
+omit [DecidableEq G] in
 @[simp] theorem mem_orderTwoAddSubgroup
     (t : G) (ht : t + t = 0) (x : G) :
     x ∈ orderTwoAddSubgroup t ht ↔ x = 0 ∨ x = t := by

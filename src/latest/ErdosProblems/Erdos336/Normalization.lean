@@ -151,7 +151,6 @@ theorem eventuallyExactly_of_eventuallyExactlyZ_translate
         · have hz : (0 : ℤ) ≤
               ((N + (q : ℤ) * (b : ℤ)).toNat : ℤ) := by positivity
           omega
-      push_cast
       omega
     have hN0n : (N0 : ℤ) ≤ (n : ℤ) := by exact_mod_cast hn
     dsimp [m]

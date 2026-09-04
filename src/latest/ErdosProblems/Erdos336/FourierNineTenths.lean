@@ -27,7 +27,7 @@ lemma circleLowerArg_mem (z : Circle) :
 lemma cos_circleLowerArg (z : Circle) :
     Real.cos (circleLowerArg z) = (z : ℂ).re := by
   have hnorm : ‖(z : ℂ)‖ = 1 := by
-    simpa using z.property
+    simp
   have hz : (z : ℂ) ≠ 0 := by
     intro hz
     rw [hz, norm_zero] at hnorm
@@ -112,8 +112,7 @@ theorem exists_fourier_halfopen_slice_nine_tenths
     have heq := congrArg Finset.card (Finset.filter_attach p A)
     simpa [B] using heq
   refine ⟨θ, hθ, B, Finset.filter_subset _ _, ?_, ?_⟩
-  · change 9 * A.card < 10 * B.card
-    change 9 * Fintype.card ↥A <
+  · change 9 * Fintype.card ↥A <
       10 * (Finset.univ.filter fun x : ↥A => p x).card at hcount
     rw [hcard] at hcount
     simpa using hcount

@@ -24,6 +24,7 @@ def CyclicWeakStrongBoundNE (h M : ℕ) : Prop :=
     (∃ q : ℕ, ∀ y : ZMod N, GroupRepExactly B q y) →
     ∀ y : ZMod N, GroupRepExactly B M y
 
+omit [DecidableEq G] in
 /-- The normalized removed set is nonempty because the original finite set
 contains zero. -/
 lemma shiftToZero_nonempty_of_zero_mem {A : Set G} {x : G}

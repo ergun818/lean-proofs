@@ -62,7 +62,6 @@ theorem minimalV2_counterexample_fourier_four_fifths
     hzero hprimitive t hnotfull
   have hcard : 238 ≤ A.card := by
     rw [card_exactPowerFinset]
-    change 238 ≤ (ExactPower C t).ncard
     omega
   have hcardN : 7 ≤ (ExactPower C t).ncard := by
     have : 238 ≤ (ExactPower C t).ncard := by

@@ -46,7 +46,7 @@ theorem thick_addFinite_of_patch_cover
     apply Finset.mem_image.mpr
     exact ⟨(x, s), Finset.mem_product.mpr ⟨hx, hs⟩, rfl⟩
   have hmemT : (a + x) - s ∈ T := by
-    convert ha (x - s) hxs using 1 <;> ring
+    convert ha (x - s) hxs using 1; ring
   have hmemP : (a + x) - s ∈ P := hpatch ((a + x) - s) hU hmemT
   exact ⟨(a + x) - s, hmemP, s, hs, by ring⟩
 

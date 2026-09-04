@@ -39,7 +39,7 @@ private lemma two_mul_triangleLayerSum
       ring
 
 /-- Exact doubled cardinal formula for the inward triangle. -/
-theorem two_mul_triangleRegionCount (V d : ℕ) (hV : 0 < V) :
+theorem two_mul_triangleRegionCount (V d : ℕ) (_hV : 0 < V) :
     2 * triangleRegionCount V d =
       (d / V) * (2 * (d + 1) - V * (d / V + 1)) := by
   apply two_mul_triangleLayerSum

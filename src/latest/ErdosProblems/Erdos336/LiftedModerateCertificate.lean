@@ -23,6 +23,7 @@ def LiftedModerateCertificate (T : Finset (ℤ × ZMod N)) : Prop :=
       ∃ k ∈ K, x = p + i • d + (0, k)) ∧
     L * (addSubgroupFinset K).card ≤ (T + T).card - T.card
 
+omit [NeZero N] in
 /-- Affine generation forces the direction and vertical subgroup to generate
 all of the cyclic coordinate. -/
 theorem direction_join_eq_top_of_liftedModerate
@@ -54,8 +55,9 @@ theorem direction_join_eq_top_of_liftedModerate
     simpa using hsnd
   rw [hsnd']
   have hadd := H.add_mem hdi hki
-  convert hadd using 1 <;> abel
+  convert hadd using 1; abel
 
+omit [NeZero N] in
 /-- The image of the progression direction generates the quotient by `K`. -/
 theorem quotient_zmultiples_direction
     (K : AddSubgroup (ZMod N)) (d : ZMod N)
@@ -87,6 +89,7 @@ noncomputable def directionQuotientHom
   (directionQuotientEquiv K d hgen).symm.toAddMonoidHom.comp
     (QuotientAddGroup.mk' K)
 
+omit [NeZero N] in
 @[simp] theorem directionQuotientHom_apply_direction
     (K : AddSubgroup (ZMod N)) (d : ZMod N)
     (hgen : K ⊔ AddSubgroup.zmultiples d = ⊤) :
@@ -94,6 +97,7 @@ noncomputable def directionQuotientHom
   simp [directionQuotientHom, directionQuotientEquiv,
     zmodAddEquivOfGenerator_symm_apply_generator]
 
+omit [NeZero N] in
 @[simp] theorem directionQuotientHom_ker
     (K : AddSubgroup (ZMod N)) (d : ZMod N)
     (hgen : K ⊔ AddSubgroup.zmultiples d = ⊤) :
@@ -109,6 +113,7 @@ noncomputable def directionQuotientHom
   · intro hx
     simp [directionQuotientHom, (QuotientAddGroup.eq_zero_iff x).mpr hx]
 
+omit [NeZero N] in
 /-- The normalized direction quotient is surjective. -/
 theorem directionQuotientHom_surjective
     (K : AddSubgroup (ZMod N)) (d : ZMod N)
@@ -180,7 +185,7 @@ theorem finsetRankCertificate_of_liftedModerate
   · rw [← hcard, ← hdouble]
     have hkpos : 0 < (addSubgroupFinset K).card := by
       rw [Finset.card_pos]
-      exact ⟨0, by simpa using K.zero_mem⟩
+      exact ⟨0, by simp⟩
     have hkprod : 0 < L * (addSubgroupFinset K).card :=
       Nat.mul_pos hL hkpos
     omega

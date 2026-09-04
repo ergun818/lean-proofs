@@ -368,11 +368,12 @@ theorem canonicalTwoDiagram_isLShape
 /-- Sharp directed degree--diameter bound for every finite abelian group with
 two generators: diameter at most `H` implies `3|G| ≤ (H+2)²`. -/
 theorem twoGenerator_card_le_third
-    {G : Type*} [AddCommGroup G] [DecidableEq G] [Fintype G]
+    {G : Type*} [AddCommGroup G] [Fintype G]
     (a b : G) {H : ℕ}
     (hcover : ∀ g : G, ∃ p : ℕ × ℕ,
       p.1 + p.2 ≤ H ∧ twoGenLabel a b p = g) :
     3 * Fintype.card G ≤ (H + 2) ^ 2 := by
+  classical
   let hgen : ∀ g : G, ∃ p : ℕ × ℕ, twoGenLabel a b p = g :=
     fun g => let ⟨p, _, hp⟩ := hcover g; ⟨p, hp⟩
   obtain ⟨l, h, w, y, hw, hy, hshape⟩ :=

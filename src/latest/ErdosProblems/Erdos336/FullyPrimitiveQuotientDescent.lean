@@ -17,7 +17,7 @@ variable {N : ℕ} [NeZero N]
 theorem three_minus_three_descends_balanced_cyclicQuotient
     {m : ℕ} [NeZero m]
     (K : AddSubgroup (ZMod N)) (π : ZMod N →+ ZMod m)
-    (hK : K ≤ π.ker) (A : Finset (ZMod N)) (hAne : A.Nonempty)
+    (hK : K ≤ π.ker) (A : Finset (ZMod N)) (_hAne : A.Nonempty)
     (hbalance : ((A + A) + addSubgroupFinset K).card - (A + A).card ≤
       (A + addSubgroupFinset K).card - A.card)
     (hsmall : (A.image π).card * (A + A).card <
@@ -121,7 +121,7 @@ theorem rectifiableThreeMinusThree_of_fullyPrimitive
             (A + addSubgroupFinset K).card - A.card <
               ((A + A) + addSubgroupFinset K).card - (A + A).card
       · exact hprimitive N hN A hAne hAaff m hm π hπ α houter hsmall hfull
-      · push_neg at hfull
+      · push Not at hfull
         obtain ⟨K, hKker, hKne, hfail⟩ := hfull
         let q := Nat.card (ZMod N ⧸ K)
         have hq : 0 < q := Nat.card_pos

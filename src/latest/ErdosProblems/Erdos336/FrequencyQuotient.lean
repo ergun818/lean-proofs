@@ -12,7 +12,7 @@ variable {N : ℕ} [NeZero N]
 
 /-- The character indexed by `k` factors through a surjective cyclic quotient
 whose cardinality is exactly the additive order of `k`. -/
-theorem exists_frequency_quotient (k : ZMod N) (hk : k ≠ 0) :
+theorem exists_frequency_quotient (k : ZMod N) (_hk : k ≠ 0) :
     ∃ (m : ℕ) (hm : 0 < m),
       let _ : NeZero m := ⟨hm.ne'⟩
       ∃ π : ZMod N →+ ZMod m,

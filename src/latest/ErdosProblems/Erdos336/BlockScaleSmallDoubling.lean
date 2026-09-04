@@ -17,13 +17,15 @@ namespace Erdos336
 threshold: `4^6 * 128 < 9^6`.  Consequently a block parameter `K`
 with `h+1<128^K` produces small doubling before scale `64^K`. -/
 theorem exists_small_doubling_before_block_scale
-    {G : Type*} [AddCommGroup G] [Fintype G]
+    {G : Type*} [AddCommGroup G] [Finite G]
     {B : Set G} {b : G} {h K : ℕ}
     (hb : b ∈ B) (hweak : ∀ y : G, GroupRepAtMost B h y)
     (hK : 0 < K) (hh : h + 1 < 128 ^ K) :
     ∃ i : ℕ, i < 6 * K ∧ 2 ^ (i + 1) ≤ 64 ^ K ∧
       4 * (ExactPower (ShiftToZero B b) (2 ^ (i + 1) * h)).ncard <
         9 * (ExactPower (ShiftToZero B b) (2 ^ i * h)).ncard := by
+  classical
+  let := Fintype.ofFinite G
   have hbase : 4 ^ 6 * 128 < 9 ^ 6 := by norm_num
   have hpow : (4 ^ 6 * 128) ^ K < (9 ^ 6) ^ K :=
     Nat.pow_lt_pow_left hbase (Nat.ne_of_gt hK)

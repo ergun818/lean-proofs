@@ -59,10 +59,12 @@ theorem exactPower_ssubset_succ_of_not_full
 
 /-- Before saturation, the `k`-th exact power has at least `k+1` elements. -/
 theorem add_one_le_ncard_exactPower_of_not_full
-    [Fintype G] {D : Set G} (hzero : 0 ∈ D)
+    [Finite G] {D : Set G} (hzero : 0 ∈ D)
     (hexact : ∃ q : ℕ, ExactPower D q = Set.univ)
     (k : ℕ) (hk : ExactPower D k ≠ Set.univ) :
     k + 1 ≤ (ExactPower D k).ncard := by
+  classical
+  let := Fintype.ofFinite G
   induction k with
   | zero =>
       have hmem : 0 ∈ ExactPower D 0 := by

@@ -43,6 +43,7 @@ lemma wide_dense_saturation_numerical :
     2 ^ 280 * (30000000 * Nat.factorial 36) < 3 ^ 280 := by
   norm_num [Nat.factorial]
 
+omit [DecidableEq G] in
 /-- A primitive exact power of density greater than the fixed wide-density threshold saturates after
 at most `2^280` copies.  This is the uniform endgame for the dense alternative
 in the cyclic small-doubling trichotomy. -/
@@ -53,6 +54,7 @@ theorem wide_dense_highPower_saturates
     (hdense : Fintype.card G < (30000000 * Nat.factorial 36) * (ExactPower D t).ncard) :
     ∃ u : ℕ, 0 < u ∧ u ≤ 2 ^ 280 ∧
       ExactPower D (u * t) = Set.univ := by
+  classical
   let f : ℕ → ℕ := fun i => (ExactPower D (2 ^ i * t)).ncard
   have htop : ∀ i, f i ≤ Fintype.card G := by
     intro i
@@ -67,12 +69,12 @@ theorem wide_dense_highPower_saturates
     apply exactPower_mono_of_zero hzero (show 0 ≤ 2 ^ 0 * t by omega)
     exact ⟨[], rfl, by simp, by simp⟩
   by_contra hnot
-  push_neg at hnot
+  push Not at hnot
   have hnolow : ∀ i : ℕ, i < 280 →
       3 * f i ≤ 2 * f (i + 1) := by
     intro i hi
     by_contra hbad
-    push_neg at hbad
+    push Not at hbad
     let A : Finset G := exactPowerFinset D (2 ^ i * t)
     have hAadd : A + A =
         exactPowerFinset D (2 ^ (i + 1) * t) := by
@@ -112,12 +114,12 @@ theorem wide_dense_highPower_saturates
       _ ≤ 2 ^ 280 * Fintype.card G := Nat.mul_le_mul_left _ (htop 280)
       _ < 2 ^ 280 * ((30000000 * Nat.factorial 36) * f 0) :=
         (Nat.mul_lt_mul_left (by positivity)).2 hden
-      _ = 2 ^ 280 * (30000000 * Nat.factorial 36) * f 0 := by ring
+      _ = 2 ^ 280 * (30000000 * Nat.factorial 36) * f 0 := (mul_assoc _ _ _).symm
   have hnum := wide_dense_saturation_numerical
   have hnumMul := Nat.mul_lt_mul_of_pos_right hnum fpos
   have hreverse : 2 ^ 280 * (30000000 * Nat.factorial 36) * f 0 <
       3 ^ 280 * f 0 := by
-    simpa [mul_assoc] using hnumMul
+    exact hnumMul
   exact (Nat.lt_asymm hbad hreverse)
 
 

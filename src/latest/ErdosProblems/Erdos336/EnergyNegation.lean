@@ -20,6 +20,7 @@ private def energyNegRightEquiv :
   left_inv p := by rcases p with ⟨⟨a,b⟩,⟨c,d⟩⟩; simp
   right_inv p := by rcases p with ⟨⟨a,b⟩,⟨c,d⟩⟩; simp
 
+omit [Fintype G] in
 /-- Negating the second set does not change additive energy. -/
 theorem addEnergy_neg_right (A : Finset G) :
     A.addEnergy (-A) = A.addEnergy A := by

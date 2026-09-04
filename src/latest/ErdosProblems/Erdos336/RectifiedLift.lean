@@ -19,6 +19,7 @@ noncomputable def halfIntervalLabel
   classical
   exact if h : ∃ q : ℕ, 2 * q < m ∧ π x = α + (q : ZMod m) then h.choose else 0
 
+omit [NeZero N] [NeZero m] in
 theorem halfIntervalLabel_spec
     (π : ZMod N →+ ZMod m) (α : ZMod m) (x : ZMod N)
     (h : ∃ q : ℕ, 2 * q < m ∧ π x = α + (q : ZMod m)) :
@@ -27,6 +28,7 @@ theorem halfIntervalLabel_spec
   rw [halfIntervalLabel, dif_pos h]
   exact h.choose_spec
 
+omit [NeZero m] in
 lemma short_zmod_cast_injective {q r : ℕ}
     (hq : 2 * q < m) (hr : 2 * r < m)
     (h : (q : ZMod m) = (r : ZMod m)) : q = r := by
@@ -41,6 +43,7 @@ noncomputable def rectifiedLift
     Finset (ℤ × ZMod N) :=
   A.image fun x => (Int.ofNat (halfIntervalLabel π α x), x)
 
+omit [NeZero N] [NeZero m] in
 @[simp] theorem mem_rectifiedLift
     {A : Finset (ZMod N)} {π : ZMod N →+ ZMod m} {α : ZMod m}
     {y : ℤ × ZMod N} :
@@ -48,6 +51,7 @@ noncomputable def rectifiedLift
       ∃ x ∈ A, y = (Int.ofNat (halfIntervalLabel π α x), x) := by
   simp [rectifiedLift, eq_comm]
 
+omit [NeZero N] [NeZero m] in
 /-- The lift is cardinality preserving. -/
 theorem card_rectifiedLift
     (A : Finset (ZMod N)) (π : ZMod N →+ ZMod m) (α : ZMod m) :
@@ -56,6 +60,7 @@ theorem card_rectifiedLift
   intro x y h
   exact congrArg Prod.snd h
 
+omit [NeZero N] [NeZero m] in
 /-- Projection back to the cyclic coordinate recovers the original set. -/
 theorem image_snd_rectifiedLift
     (A : Finset (ZMod N)) (π : ZMod N →+ ZMod m) (α : ZMod m) :
@@ -63,6 +68,7 @@ theorem image_snd_rectifiedLift
   ext x
   simp [rectifiedLift]
 
+omit [NeZero N] [NeZero m] in
 /-- On a strict-half-supported set, the number of integer fibres in the lift
 is exactly the number of quotient fibres of the original set. -/
 theorem card_image_fst_rectifiedLift
@@ -112,6 +118,7 @@ theorem card_image_fst_rectifiedLift
     · exact add_left_cancel hqr
   rw [hLiftImage, hP.symm, hZcard, hPcard]
 
+omit [NeZero N] [NeZero m] in
 /-- Equality of cyclic pair-sums is equivalent to equality of lifted
 pair-sums, because both short label sums lie below the modulus. -/
 theorem rectifiedLift_pair_sum_iff
@@ -162,6 +169,7 @@ theorem rectifiedLift_pair_sum_iff
       exact hv
     · exact habcd
 
+omit [NeZero N] [NeZero m] in
 /-- Rectification preserves the double-sumset cardinality exactly. -/
 theorem card_add_rectifiedLift
     (A : Finset (ZMod N)) (π : ZMod N →+ ZMod m) (α : ZMod m)

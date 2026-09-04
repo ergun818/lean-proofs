@@ -11,16 +11,16 @@ set_option backward.isDefEq.respectTransparency false
 
 namespace Erdos336
 
-set_option maxHeartbeats 1800000
 
 open scoped Pointwise
 
 variable {H : Type*} [AddCommGroup H] [Fintype H] [DecidableEq H]
 
+omit [Fintype H] in
 /-- The last proper-stabilizer endpoint case: exactly two new critical
 classes are impossible.  The three-point classification reduces it to a
 balanced selector, a two/three-class quotient, or the progression branch. -/
-theorem endpoint_proper_two_impossible
+theorem endpoint_proper_two_impossible [Finite H]
     (T : Finset (ℤ × H)) (l : ℤ) (hlpos : 0 < l)
     (hzero : ((0 : ℤ), 0) ∈ T) (δ : ℤ × H)
     (hδ : δ ∈ integerFiber T l)
@@ -43,6 +43,7 @@ theorem endpoint_proper_two_impossible
     (∃ f ∈ Ffin, ∀ k : H, verticalEndpointHom δ k ≠ f) →
     False := by
   classical
+  let := Fintype.ofFinite H
   dsimp
   let Δ := AddSubgroup.zmultiples δ
   let q : (ℤ × H) →+ ((ℤ × H) ⧸ Δ) := QuotientAddGroup.mk' Δ
@@ -94,12 +95,12 @@ theorem endpoint_proper_two_impossible
   · obtain ⟨L, hLC, hLCC⟩ := hquotient
     let : L.Normal := ⟨by
       intro n hn g
-      convert hn using 1 <;> abel⟩
+      convert hn using 1; abel⟩
     let Q₃ := ((((ℤ × H) ⧸ Δ) ⧸ Fsub) ⧸ L)
     let s : (((ℤ × H) ⧸ Δ) ⧸ Fsub) →+ Q₃ := QuotientAddGroup.mk' L
     let ρ : (ℤ × H) →+ Q₃ := s.comp (r.comp q)
     have hTimageEq : T.image ρ = subgroupQuotientImage L C := by
-      simp [subgroupQuotientImage, ρ, s, C, B,
+      simp only [subgroupQuotientImage, ρ, s, C, B,
         Finset.image_image, AddMonoidHom.coe_comp]
       apply Finset.image_congr
       intro x hx

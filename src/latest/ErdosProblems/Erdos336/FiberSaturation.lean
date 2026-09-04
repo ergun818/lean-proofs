@@ -32,7 +32,7 @@ lemma vadd_subgroup_finsets_disjoint_of_sub_not_mem
     rw [← hv_eq]
     abel
   rw [ha, hb]
-  convert K.sub_mem hvK huK using 1 <;> abel
+  convert K.sub_mem hvK huK using 1; abel
 
 lemma vadd_subgroup_finsets_eq_of_mem
     (K : AddSubgroup G) {a b : G}
@@ -94,7 +94,7 @@ theorem fiber_sum_full_or_same_small
   have hcard (x : G) : (F x).card + (Hole x).card = H.card := by
     dsimp [F, Hole]
     rw [Finset.inter_comm]
-    simpa using Finset.card_inter_add_card_sdiff (x +ᵥ H) A
+    simp
   by_cases hsame : b ∈ a +ᵥ H
   · have hcoseteq : b +ᵥ H = a +ᵥ H := by
       simpa [H] using vadd_subgroup_finsets_eq_of_mem K hsame
@@ -104,7 +104,7 @@ theorem fiber_sum_full_or_same_small
       rw [← hFeq]
       exact add_eq_vadd_of_coset_support_of_card_lt_add K
         (A := F a) (B := F a) (a := a) (b := b)
-        (by simpa [F, H] using (Finset.inter_subset_right : F a ⊆ a +ᵥ H))
+        (by simp [F, H])
         (by
           intro x hx
           have hx' : x ∈ a +ᵥ H := Finset.inter_subset_right hx

@@ -15,7 +15,8 @@ namespace Erdos336
 
 variable {G : Type*} [AddCommMonoid G] [DecidableEq G]
 
-private def degreeExists (a b : G)
+omit [DecidableEq G] in
+private theorem degreeExists (a b : G)
     (hgen : ∀ g : G, ∃ p : ℕ × ℕ, twoGenLabel a b p = g) (g : G) :
     ∃ d : ℕ, ∃ p : ℕ × ℕ,
       p.1 + p.2 = d ∧ twoGenLabel a b p = g := by
@@ -28,6 +29,7 @@ noncomputable def twoMinDegree (a b : G)
   classical
   exact Nat.find (degreeExists a b hgen g)
 
+omit [DecidableEq G] in
 private theorem twoMinDegree_spec (a b : G)
     (hgen : ∀ g : G, ∃ p : ℕ × ℕ, twoGenLabel a b p = g) (g : G) :
     ∃ p : ℕ × ℕ, p.1 + p.2 = twoMinDegree a b hgen g ∧
@@ -35,7 +37,8 @@ private theorem twoMinDegree_spec (a b : G)
   classical
   exact Nat.find_spec (degreeExists a b hgen g)
 
-private def firstExists (a b : G)
+omit [DecidableEq G] in
+private theorem firstExists (a b : G)
     (hgen : ∀ g : G, ∃ p : ℕ × ℕ, twoGenLabel a b p = g) (g : G) :
     ∃ x : ℕ, x ≤ twoMinDegree a b hgen g ∧
       twoGenLabel a b (x, twoMinDegree a b hgen g - x) = g := by

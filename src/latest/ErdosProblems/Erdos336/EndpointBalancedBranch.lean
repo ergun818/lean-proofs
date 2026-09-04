@@ -11,7 +11,6 @@ set_option backward.isDefEq.respectTransparency false
 
 namespace Erdos336
 
-set_option maxHeartbeats 1000000
 
 open scoped Pointwise BigOperators
 
@@ -120,7 +119,7 @@ theorem endpoint_balanced_selector_count
     have hbfEq : r (b + f) = r b := by
       apply (QuotientAddGroup.eq_iff_sub_mem).mpr
       have hfsub : f ∈ Fsub := (hFmem f).mp hfF
-      convert hfsub using 1 <;> abel
+      convert hfsub using 1; abel
     have hrbC : r b ∈ C := Finset.mem_image.mpr ⟨b, hbB, rfl⟩
     have hriC : i ∈ C := by
       rw [← hri, ← hbf, hbfEq]

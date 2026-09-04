@@ -16,18 +16,21 @@ variable {H : Type*} [AddCommGroup H] [Fintype H] [DecidableEq H]
 def integerProjectionFiber (A : Finset (ℤ × H)) (z : ℤ) : Finset (ℤ × H) :=
   A.filter (fun x => x.1 = z)
 
+omit [AddCommGroup H] [Fintype H] [DecidableEq H] in
 @[simp] theorem mem_integerProjectionFiber {A : Finset (ℤ × H)} {z : ℤ} {x : ℤ × H} :
     x ∈ integerProjectionFiber A z ↔ x ∈ A ∧ x.1 = z := by
   simp [integerProjectionFiber]
 
+omit [Fintype H] in
 /-- A division-free version of Lev's Corollary 3.  The proof chooses a
 largest fibre of `A`; translates of it over every fibre of `B`, together
 with extreme translates of all remaining fibres of `A`, are disjoint. -/
-theorem projection_large_fiber_bound
+theorem projection_large_fiber_bound [Finite H]
     (A B : Finset (ℤ × H)) (hA : A.Nonempty) (hB : B.Nonempty) :
     (A.image Prod.fst).card * (A + B).card ≥
       ((A.image Prod.fst).card + (B.image Prod.fst).card - 1) * A.card := by
   classical
+  let := Fintype.ofFinite H
   let P := A.image Prod.fst
   let Q := B.image Prod.fst
   have hP : P.Nonempty := hA.image Prod.fst
@@ -173,8 +176,7 @@ theorem projection_large_fiber_bound
   have hApartition : Aout.card = A.card - A0.card := by
     have hsplit : Aout = A \ A0 := by
       ext a
-      simp only [Finset.mem_sdiff, Finset.mem_filter,
-        mem_integerProjectionFiber]
+      simp only [Finset.mem_sdiff]
       aesop
     rw [hsplit, Finset.card_sdiff_of_subset hA0sub]
   rw [hApartition] at hcard

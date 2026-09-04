@@ -50,7 +50,6 @@ theorem delegliseD_bound
       (4 : ℤ) * ((h : ℤ) * ((h : ℤ) + 2)) -
           12 * (delegliseD r s q : ℤ) = A ^ 2 + 3 * B ^ 2 - 4 := by
     dsimp [A, B, delegliseD]
-    push_cast
     nlinarith
   have hB0 : B = 0 → s = q := by
     intro hb
@@ -79,7 +78,6 @@ theorem delegliseD_bound
           use (s : ℤ) - ((k + 1 : ℕ) : ℤ)
           dsimp [A] at hA
           dsimp [B]
-          push_cast at hA ⊢
           omega
         obtain ⟨z, hz⟩ := b_even
         have hz0 : z ≠ 0 := by
@@ -96,7 +94,6 @@ theorem delegliseD_bound
             omega
           use ((s + q : ℕ) : ℤ) - 2 * ((k + 1 : ℕ) : ℤ)
           dsimp [A]
-          push_cast
           omega
         obtain ⟨z, hz⟩ := hA3
         have hz0 : z ≠ 0 := by
@@ -110,7 +107,6 @@ theorem delegliseD_bound
           have hs : s = 1 := cop_self_one heq
           have hq : q = 1 := heq ▸ hs
           dsimp [A, B] at *
-          push_cast at *
           nlinarith
         · have hbsq : 1 ≤ B ^ 2 := one_le_sq_of_ne_zero hB
           rw [hz]
@@ -134,7 +130,6 @@ theorem delegliseD_bound
         have hs : s = 1 := cop_self_one heq
         have hq : q = 1 := heq ▸ hs
         dsimp [A, B]
-        push_cast
         nlinarith
       · have hbsq : 1 ≤ B ^ 2 := one_le_sq_of_ne_zero hB
         have hAne : A ≠ 0 := by
@@ -144,12 +139,10 @@ theorem delegliseD_bound
           · obtain ⟨k, hk⟩ : ∃ k, h = 3 * k := by
               use h / 3
               omega
-            push_cast at hAz
             omega
           · obtain ⟨k, hk⟩ : ∃ k, h = 3 * k + 1 := by
               use h / 3
               omega
-            push_cast at hAz
             omega
         have hAsq : 1 ≤ A ^ 2 := one_le_sq_of_ne_zero hAne
         nlinarith

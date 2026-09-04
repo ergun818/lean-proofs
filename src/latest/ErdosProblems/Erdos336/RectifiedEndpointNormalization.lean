@@ -9,12 +9,12 @@ set_option backward.isDefEq.respectTransparency false
 
 namespace Erdos336
 
-set_option maxHeartbeats 1000000
 
 open scoped Pointwise
 
 variable {N m : ℕ} [NeZero N] [NeZero m]
 
+omit [NeZero N] [NeZero m] in
 /-- A finite strict-half arc with at least two quotient values can be translated
 so that its occupied integer labels have genuine endpoints `0` and `L`. -/
 theorem exists_normalized_strict_half_endpoints
@@ -94,6 +94,7 @@ theorem exists_normalized_strict_half_endpoints
     rw [← hcast]
     abel
 
+omit [NeZero N] [NeZero m] in
 /-- Translating by the lower endpoint turns the preceding data into the exact
 strict-half hypothesis based at zero. -/
 theorem normalized_translate_outer
@@ -110,6 +111,7 @@ theorem normalized_translate_outer
   rw [← hxy]
   simpa [vadd_eq_add, sub_eq_add_neg, add_comm] using hkπ
 
+omit [NeZero N] [NeZero m] in
 /-- Under normalized strict-half data, the graph label is the displayed
 integer coordinate and is bounded by the occupied endpoint `L`. -/
 theorem halfIntervalLabel_eq_normalized

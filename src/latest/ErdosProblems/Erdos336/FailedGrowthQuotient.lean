@@ -16,8 +16,10 @@ open scoped Pointwise
 variable {G Q : Type*} [AddCommGroup G] [Fintype G] [DecidableEq G]
   [AddCommGroup Q] [Fintype Q] [DecidableEq Q]
 
+omit [DecidableEq G] in
 lemma image_exactPowerFinset (f : G →+ Q) (C : Set G) (t : ℕ) :
     (exactPowerFinset C t).image f = exactPowerFinset (f '' C) t := by
+  classical
   apply Finset.coe_injective
   rw [Finset.coe_image]
   simp only [coe_exactPowerFinset]

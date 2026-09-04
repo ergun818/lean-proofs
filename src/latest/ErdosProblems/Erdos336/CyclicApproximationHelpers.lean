@@ -22,7 +22,7 @@ def CyclicApproxSet
 private lemma approximate_list
     {K : Type*} [SeminormedAddCommGroup K]
     (φ : ℤ →+ K) {N : ℕ} {F : Set K} {A : Set (ZMod N)} {η : ℝ}
-    (hη : 0 ≤ η)
+    (_hη : 0 ≤ η)
     (happrox : ∀ y ∈ F, ∃ a ∈ A, ‖φ (a.val : ℤ) - y‖ ≤ η)
     (ys : List K) (hys : ∀ y ∈ ys, y ∈ F) :
     ∃ xs : List (ZMod N),
@@ -31,7 +31,7 @@ private lemma approximate_list
       ‖(xs.map (fun a => φ (a.val : ℤ))).sum - ys.sum‖ ≤
         (ys.length : ℝ) * η := by
   induction ys with
-  | nil => exact ⟨[], by simp, by simp, by simp [hη]⟩
+  | nil => exact ⟨[], by simp, by simp, by simp⟩
   | cons y ys ih =>
       obtain ⟨a, haA, hay⟩ := happrox y (hys y (by simp))
       have htail : ∀ z ∈ ys, z ∈ F := by
@@ -85,7 +85,7 @@ near `E` gives an exact-length list from `E` with controlled sum error. -/
 theorem approximate_residue_rep_by_group
     {K : Type*} [SeminormedAddCommGroup K]
     (φ : ℤ →+ K) {N : ℕ} {A : Set (ZMod N)} {E : Set K}
-    {η : ℝ} (hη : 0 ≤ η)
+    {η : ℝ} (_hη : 0 ≤ η)
     (happrox : ∀ a ∈ A, ∃ e ∈ E, ‖φ (a.val : ℤ) - e‖ ≤ η)
     {l : ℕ} {r : ZMod N} (hrep : GroupRepExactly A l r) :
     ∃ xs : List (ZMod N), ∃ es : List K,
@@ -106,7 +106,7 @@ theorem approximate_residue_rep_by_group
           (xs.length : ℝ) * η := by
     intro zs hzmem
     induction zs with
-    | nil => exact ⟨[], by simp, by simp, by simp [hη]⟩
+    | nil => exact ⟨[], by simp, by simp, by simp⟩
     | cons a zs ih =>
         obtain ⟨e, heE, hae⟩ := happrox a (hzmem a (by simp))
         have htail : ∀ z ∈ zs, z ∈ A := by

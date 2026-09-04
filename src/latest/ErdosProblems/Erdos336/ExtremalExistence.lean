@@ -67,7 +67,7 @@ theorem exists_cyclicRemovalBound_of_eventually
 /-- A single finite cyclic bound gives a pointwise upper bound for every
 attainable exact order, not merely for a preselected extremal function. -/
 theorem admissible_upper_of_one_cyclic_bound
-    {r k M : ℕ} (hr : 2 ≤ r) (hadm : Admissible r k)
+    {r k M : ℕ} (_hr : 2 ≤ r) (hadm : Admissible r k)
     (hM : CyclicRemovalBound (r + 1) M) :
     k ≤ M + 4 * r + r := by
   obtain ⟨A, hatMost, horder⟩ := hadm

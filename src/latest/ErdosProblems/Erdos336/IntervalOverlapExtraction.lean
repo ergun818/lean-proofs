@@ -54,7 +54,6 @@ theorem overlapCoeff_coarse
       (4 : ℤ) * (((h + 1 : ℕ) : ℤ) ^ 2) -
           12 * (overlapCoeff r s q : ℤ) = A ^ 2 + 3 * B ^ 2 := by
     dsimp [A, B, overlapCoeff]
-    push_cast
     nlinarith
   have hsqa : 0 ≤ A ^ 2 := sq_nonneg A
   have hsqb : 0 ≤ B ^ 2 := sq_nonneg B

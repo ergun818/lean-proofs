@@ -8,7 +8,6 @@ set_option backward.isDefEq.respectTransparency false
 
 namespace Erdos336
 
-set_option maxHeartbeats 1600000
 
 open scoped Pointwise
 
@@ -18,6 +17,7 @@ noncomputable def strictInteriorPart
     (S : Finset (ℤ × H)) (l : ℤ) : Finset (ℤ × H) :=
   S.filter fun x => 0 < x.1 ∧ x.1 < l
 
+omit [AddCommGroup H] [Fintype H] [DecidableEq H] in
 @[simp] theorem mem_strictInteriorPart
     {S : Finset (ℤ × H)} {l : ℤ} {x : ℤ × H} :
     x ∈ strictInteriorPart S l ↔ x ∈ S ∧ 0 < x.1 ∧ x.1 < l := by
@@ -122,7 +122,7 @@ theorem vertical_full_missing_classification
     change Xu + Xw = (x + y) +ᵥ V at heq
     have hmCoset : m ∈ (x + y) +ᵥ V := by
       apply Finset.mem_vadd_finset.mpr
-      exact ⟨v, hv, by simpa [hsumEq]⟩
+      exact ⟨v, hv, by simp [hsumEq]⟩
     have hmSlices : m ∈ Xu + Xw := by rw [heq]; exact hmCoset
     exact Finset.add_subset_add
       (fun z hz => (mem_endpointClassSlice.mp hz).1)
@@ -172,7 +172,7 @@ theorem vertical_full_missing_classification
       have hwtSnd := congrArg Prod.snd hwtEq
       simp only [Prod.snd_add, Prod.snd_neg] at hsnd hwtSnd ⊢
       rw [hsnd, ← hwtSnd]
-      convert K.add_mem hbK (K.add_mem hwtK hvK) using 1 <;> abel
+      convert K.add_mem hbK (K.add_mem hwtK hvK) using 1; abel
     · intro hz
       obtain ⟨a0, ha0, b0, hb0, hab⟩ := Finset.mem_add.mp hz
       obtain ⟨yt, hytAl, hytb⟩ := Finset.mem_vadd_finset.mp hb0
@@ -205,7 +205,7 @@ theorem vertical_full_missing_classification
       have hwySnd := congrArg Prod.snd hwyEq
       simp only [Prod.snd_add, Prod.snd_neg] at hsnd hwxSnd hwySnd ⊢
       rw [hsnd, ← hwxSnd, ← hwySnd]
-      convert K.add_mem (K.add_mem hwxK hwyK) hvK using 1 <;> abel
+      convert K.add_mem (K.add_mem hwxK hwyK) hvK using 1; abel
     · intro hz
       obtain ⟨bx, hbx, by0, hby0, hbxy⟩ := Finset.mem_add.mp hz
       obtain ⟨xt, hxtAl, hxtbx⟩ := Finset.mem_vadd_finset.mp hbx

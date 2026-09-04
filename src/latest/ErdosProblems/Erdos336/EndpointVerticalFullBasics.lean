@@ -13,6 +13,7 @@ open scoped Pointwise
 
 variable {H : Type*} [AddCommGroup H] [Fintype H] [DecidableEq H]
 
+omit [DecidableEq H] in
 /-- If every element of an endpoint subgroup is vertical, its vertical part
 has exactly the same cardinality. -/
 theorem card_endpointVerticalPart_eq_of_full
@@ -48,6 +49,7 @@ theorem card_endpointVerticalPart_eq_of_full
   change Kfin.card = Ffin.card
   simpa using hc
 
+omit [Fintype H] in
 /-- The endpoint overlap and exact Kneser identity force the sum of endpoint
 fibre sizes to be at most overlap plus stabilizer size. -/
 theorem endpoint_sigma_le_overlap_add_stabilizer

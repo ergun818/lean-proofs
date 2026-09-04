@@ -62,7 +62,6 @@ theorem minimalV2_counterexample_fourier_nineteen_twentyfive
     hzero hprimitive t hnotfull
   have hcard : 7 ≤ A.card := by
     rw [card_exactPowerFinset]
-    change 7 ≤ (ExactPower C t).ncard
     omega
   have hcardN : 7 ≤ (ExactPower C t).ncard := by
     simpa [A, card_exactPowerFinset] using hcard

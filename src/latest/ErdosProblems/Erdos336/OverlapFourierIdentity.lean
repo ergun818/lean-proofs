@@ -17,6 +17,7 @@ noncomputable def orderedDifferenceFiber
     (A : Finset (ZMod N)) (x : ZMod N) : Finset (ZMod N × ZMod N) :=
   (A ×ˢ A).filter fun p => p.1 - p.2 = x
 
+omit [NeZero N] in
 lemma card_differenceOverlap_eq_card_orderedDifferenceFiber
     (A : Finset (ZMod N)) (x : ZMod N) :
     (differenceOverlap A x).card = (orderedDifferenceFiber A x).card := by
@@ -53,11 +54,12 @@ lemma card_differenceOverlap_eq_card_orderedDifferenceFiber
 
 lemma sum_card_fiber_mul_card_fiber_eq_card_equal
     {α β γ : Type*} [Fintype γ]
-    [DecidableEq α] [DecidableEq β] [DecidableEq γ]
+      [DecidableEq γ]
     (P : Finset α) (Q : Finset β) (f : α → γ) (g : β → γ) :
     ∑ x : γ, (P.filter fun p => f p = x).card *
         (Q.filter fun q => g q = x).card =
       ((P ×ˢ Q).filter fun pq => f pq.1 = g pq.2).card := by
+  classical
   simp only [Finset.card_eq_sum_ones, Finset.sum_mul_sum]
   simp_rw [Finset.sum_filter]
   simp only [Finset.sum_product]

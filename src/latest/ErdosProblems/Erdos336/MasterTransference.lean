@@ -44,6 +44,6 @@ theorem eventuallyExactlyZ_of_piecewise_patch
     obtain ⟨a, ha⟩ := hthickRep F
     exact ⟨a, fun x hx => (rep_iff_zRep).mp (ha x hx)⟩
   have hout := eventuallyExactlyZ_of_thick_of_oneExtra hzero hthick hparent
-  convert hout using 1 <;> omega
+  convert hout using 1; omega
 
 end Erdos336

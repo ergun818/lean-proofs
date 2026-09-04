@@ -36,10 +36,13 @@ theorem image_exactPower (f : G →+ Q) (C : Set G) (t : ℕ) :
 
 /-- Primitivity passes through a surjective additive homomorphism. -/
 theorem exactPower_univ_image_of_surjective
-    [Fintype G] [Fintype Q]
+    [Finite G] [Finite Q]
     (f : G →+ Q) (hf : Function.Surjective f)
     {C : Set G} (hprimitive : ∃ q : ℕ, ExactPower C q = Set.univ) :
     ∃ q : ℕ, ExactPower (f '' C) q = Set.univ := by
+  classical
+  let := Fintype.ofFinite G
+  let := Fintype.ofFinite Q
   obtain ⟨q, hq⟩ := hprimitive
   refine ⟨q, ?_⟩
   rw [← image_exactPower, hq, Set.image_univ]
@@ -48,13 +51,16 @@ theorem exactPower_univ_image_of_surjective
 /-- In every finite quotient, a primitive zero-containing power is either
 already full or has at least `t+1` points. -/
 theorem image_highPower_full_or_large
-    [Fintype G] [Fintype Q]
+    [Finite G] [Finite Q]
     (f : G →+ Q) (hf : Function.Surjective f)
     {C : Set G} (hzero : 0 ∈ C)
     (hprimitive : ∃ q : ℕ, ExactPower C q = Set.univ)
     (t : ℕ) :
     ExactPower (f '' C) t = Set.univ ∨
       t + 1 ≤ (ExactPower (f '' C) t).ncard := by
+  classical
+  let := Fintype.ofFinite G
+  let := Fintype.ofFinite Q
   have hzero' : 0 ∈ f '' C := ⟨0, hzero, f.map_zero⟩
   have hprimitive' := exactPower_univ_image_of_surjective f hf hprimitive
   by_cases hfull : ExactPower (f '' C) t = Set.univ
@@ -66,6 +72,7 @@ section Finite
 
 variable [Fintype G] [DecidableEq G]
 
+omit [Fintype G] in
 /-- Kneser's inequality makes the stabilizer-saturation of a strict `9/4`
 small-doubling set more than `8/9` dense, up to the one stabilizer fibre. -/
 theorem stabilizer_saturation_density_of_nine_four
@@ -87,6 +94,7 @@ theorem card_lt_three_mul_of_stabilizer_saturation_eq_univ
   rw [hfull, Finset.card_univ] at hk
   omega
 
+omit [Fintype G] in
 /-- Quotienting by the stabilizer of `S+S` makes the doubled image aperiodic. -/
 theorem addStab_image_add_self_quotient_stabilizer
     (S : Finset G) (hS : S.Nonempty) :

@@ -83,7 +83,6 @@ lemma exists_projected_interval_count
         nlinarith
       · simp only [List.sum_cons, map_add, hx, hsum, List.length_cons,
           Nat.cast_add, add_nsmul, one_nsmul]
-        push_cast
         ring
 
 /-- Weak coverage by a set whose projection lies in a length-`L` cyclic

@@ -70,6 +70,7 @@ theorem rankExceptionalCertificate_of_finsetRankCertificate
     rw [heq, Set.ncard_coe_finset]
     exact hcost
 
+omit [NeZero N] in
 /-- If `B` lies over a quotient interval of span `L`, then every element of
 `2B-B` lies over the translated interval of span `3L`. -/
 theorem image_interval_of_subset_two_sub_one
@@ -141,7 +142,7 @@ theorem finsetAffineGenerates_of_subset_two_sub_one
     have h₃ := hcos v hv
     rw [← huv, ← hb₁b₂]
     have := H.sub_mem (H.add_mem h₁ h₂) h₃
-    convert this using 1 <;> abel
+    convert this using 1; abel
   have hzA : 0 ∈ exactPowerFinset C t := by
     rw [mem_exactPowerFinset]
     refine ⟨List.replicate t 0, by simp, ?_, by simp⟩

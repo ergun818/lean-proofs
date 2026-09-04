@@ -48,7 +48,6 @@ lemma lowerResidues_sum_normal_form
       · refine ⟨j + 1, by simp; omega, ?_⟩
         rw [List.sum_cons, ha, hsum]
         simp only [List.length_cons, Nat.cast_add, Nat.cast_one]
-        push_cast
         ring
 
 /-- At time `g-1`, every residue has an exact representation by the two
@@ -101,7 +100,7 @@ theorem lowerResidues_all_exact
 
 /-- Before time `g-1`, a concrete residue is missing. -/
 theorem lowerResidues_not_all_exact_before
-    (u l : ℕ) (hu : 1 ≤ u) (hl : l < lowerModulus u - 1) :
+    (u l : ℕ) (_hu : 1 ≤ u) (hl : l < lowerModulus u - 1) :
     ¬ (∀ y : ZMod (lowerModulus u), GroupRepExactly (lowerResidues u) l y) := by
   let g := lowerModulus u
   let x := lowerStep u
@@ -120,7 +119,6 @@ theorem lowerResidues_not_all_exact_before
     dsimp [d, x, g]
     rw [show (lowerStep u : ZMod (lowerModulus u)) - 1 =
       (lowerStep u - 1 : ℕ) by
-        push_cast
         have : 1 ≤ lowerStep u := by simp [lowerStep]
         rw [Nat.cast_sub this]
         rfl]

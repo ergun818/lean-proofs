@@ -9,7 +9,6 @@ set_option backward.isDefEq.respectTransparency false
 
 namespace Erdos336
 
-set_option maxHeartbeats 1000000
 
 open scoped Pointwise BigOperators
 
@@ -192,7 +191,6 @@ theorem endpoint_fibers_single_vertical_cosets
     let y := -δ + x
     have hyfst : y.1 = 0 := by
       dsimp [y]
-      change -δ.1 + x.1 = 0
       rw [hxfst, hδfst]
       omega
     have hqyQV : q y ∈ QV := by
@@ -216,7 +214,6 @@ theorem endpoint_fibers_single_vertical_cosets
       apply congrArg q
       exact Prod.ext hyfst.symm rfl
     · dsimp [y]
-      change δ + (-δ + x) = x
       abel
 
 end Erdos336

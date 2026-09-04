@@ -32,9 +32,10 @@ lemma stdAddChar_int_zsmul_toAddCircle
   simp [zsmul_eq_mul]
 
 /-- Pad an enumeration of a finset to any larger positive `Fin d`. -/
-theorem exists_padded_enumeration {α : Type*} [DecidableEq α] [Inhabited α]
-    (Γ : Finset α) {d : ℕ} (hd : 0 < d) (hcard : Γ.card ≤ d) :
+theorem exists_padded_enumeration {α : Type*} [Inhabited α]
+    (Γ : Finset α) {d : ℕ} (_hd : 0 < d) (hcard : Γ.card ≤ d) :
     ∃ e : Fin d → α, ∀ k ∈ Γ, ∃ j : Fin d, e j = k := by
+  classical
   let e : Fin d → α := fun j =>
     if hj : j.val < Γ.card then
       ((Γ.equivFin).symm ⟨j.val, hj⟩).val
@@ -127,7 +128,7 @@ theorem exists_local_bohr_data_of_exactPowerEventuallySyndetic
     apply (Nat.le_div_iff_mul_le hFpos).2
     rw [hJcard]
     have hmul := Nat.mul_le_mul (Nat.mul_le_mul_left T hFcard) hFcard
-    convert hmul using 1 <;> simp [len] <;> ring
+    convert hmul using 1; simp [len]; ring
   have hCbig : T ≤ C.card :=
     le_trans hTcard (le_trans (Nat.div_le_div_right hXcard) hCcard)
   let base : ℤ := N₀ - f₀
@@ -159,7 +160,7 @@ theorem exists_local_bohr_data_of_exactPowerEventuallySyndetic
     intro hempty
     have hz : C'.card = 0 := by simp [hempty]
     rw [hC'card] at hz
-    have : T ≤ 0 := by simpa [hz] using hCbig
+    have : T ≤ 0 := by simp [hz] at hCbig
     omega
   have hRlen : R ≤ len := by
     have hsquare : 1 ≤ s ^ 2 := by

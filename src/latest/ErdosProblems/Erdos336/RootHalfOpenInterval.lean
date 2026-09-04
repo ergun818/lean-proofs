@@ -27,7 +27,7 @@ lemma circle_exp_lowerArg (z : Circle) : Circle.exp (circleLowerArg z) = z := by
     exact Circle.exp_arg z
 
 lemma integer_closed_open_half_interval_label
-    (A : ℝ) (m : ℕ) (hm : 0 < m) (n : ℤ)
+    (A : ℝ) (m : ℕ) (_hm : 0 < m) (n : ℤ)
     (hlow : A ≤ (n : ℝ))
     (hupp : (n : ℝ) < A + (m : ℝ) / 2) :
     ∃ q : ℕ, 2 * q < m ∧
@@ -59,7 +59,7 @@ lemma integer_closed_open_half_interval_label
 occupy a cyclic interval of span strictly below half. -/
 theorem roots_in_halfopen_semicircle
     (m : ℕ) [NeZero m] (r : Circle) (θ : ℝ)
-    (hθ0 : 0 ≤ θ) (hθpi : θ ≤ Real.pi) :
+    (hθ0 : 0 ≤ θ) (_hθpi : θ ≤ Real.pi) :
     ∃ α : ZMod m, ∀ j : ZMod m,
       semicircleArcMem (circleLowerArg (r * ZMod.toCircle j)) θ →
       ∃ q : ℕ, 2 * q < m ∧ j = α + (q : ZMod m) := by
@@ -78,7 +78,7 @@ theorem roots_in_halfopen_semicircle
   have hphase : r * ZMod.toCircle j =
       Circle.exp (ρ + 2 * Real.pi * ((j.val : ℝ) / m)) := by
     rw [show r = Circle.exp ρ by
-      simpa [ρ] using (Circle.exp_arg r).symm]
+      simp [ρ]]
     rw [ZMod.toCircle_eq_circleExp]
     rw [← Circle.exp_add]
   have hueq : Circle.exp (ρ + 2 * Real.pi * ((j.val : ℝ) / m)) =

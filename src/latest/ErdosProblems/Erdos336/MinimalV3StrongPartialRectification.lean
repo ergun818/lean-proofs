@@ -100,7 +100,7 @@ theorem minimalV3_counterexample_strong_partial_rectification
   have halmostSelf : A.card + A.card ≤ (A + A).card + 1 := by
     simpa [A] using almost_expansion_of_smaller_stableV3
       C t (by omega) hzero hcard7 hprimitive hdoub hnot hsmaller'
-      hAne (by simpa [A])
+      hAne (by simp [A])
   have hself : 2 * (ExactPower C t).ncard ≤
       (ExactPower C (2 * t)).ncard + 1 := by
     rw [← card_exactPowerFinset C t,

@@ -76,7 +76,7 @@ theorem natRep_of_groupRep_periodic_of_large
   let xs : List ℕ := (y.val + g * t) :: tailVals
   refine ⟨xs, ?_, ?_, ?_⟩
   · dsimp [xs, tailVals]
-    simp only [List.length_cons, List.length_map]
+    simp only [List.length_map]
     simpa using hlen
   · intro a ha
     simp only [xs, List.mem_cons] at ha
@@ -155,8 +155,7 @@ theorem not_eventuallyExactly_periodic_of_missing
     nlinarith
   have hncast : (n : ZMod g) = y := by
     dsimp [n]
-    simp [Nat.cast_add, Nat.cast_mul, ZMod.natCast_self,
-      ZMod.natCast_zmod_val]
+    simp [Nat.cast_add, Nat.cast_mul]
   apply hy
   rw [← hncast]
   exact groupRep_of_natRep_periodic (hN n hNn)

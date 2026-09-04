@@ -16,6 +16,7 @@ namespace Erdos336
 
 variable {G : Type*} [AddCommGroup G] [DecidableEq G]
 
+omit [DecidableEq G] in
 /-- A list over two elements has well-defined multiplicities summing to its
 length and its sum is the corresponding linear combination. -/
 lemma exists_twoPoint_counts (a b : G) (xs : List G)
@@ -38,13 +39,16 @@ lemma exists_twoPoint_counts (a b : G) (xs : List G)
         simp only [List.sum_cons, hsum, add_nsmul, one_nsmul]
         ac_rfl
 
+omit [DecidableEq G] in
 /-- A weak cover by `{a,b}` is exactly a directed two-generator diameter
 bound. -/
 theorem twoGen_cover_of_twoPoint_weak
-    [Fintype G] (a b : G) {h : ℕ}
+    [Finite G] (a b : G) {h : ℕ}
     (hweak : ∀ y : G, GroupRepAtMost ({a, b} : Set G) h y) :
     ∀ y : G, ∃ p : ℕ × ℕ,
       p.1 + p.2 ≤ h ∧ twoGenLabel a b p = y := by
+  classical
+  let := Fintype.ofFinite G
   intro y
   obtain ⟨j, hj, xs, hlen, hxmem, hxsum⟩ := hweak y
   have hpair : ∀ x ∈ xs, x = a ∨ x = b := by
@@ -55,15 +59,17 @@ theorem twoGen_cover_of_twoPoint_weak
   · omega
   · simpa [twoGenLabel] using hsum.symm.trans hxsum
 
+omit [DecidableEq G] in
 /-- Exact full coverage by `{a,b}` implies that `a-b` generates every element
 by a nonnegative multiple. -/
 theorem exists_nsmul_sub_of_twoPoint_exact
     (a b : G) {q : ℕ}
     (hq : ∀ y : G, GroupRepExactly ({a, b} : Set G) q y) :
     ∀ y : G, ∃ i : ℕ, i • (a - b) = y := by
+  classical
   have hset : ShiftToZero ({a, b} : Set G) b = ({a - b, 0} : Set G) := by
     ext z
-    simp only [ShiftToZero, Set.mem_setOf_eq, Set.mem_insert_iff,
+    simp only [ShiftToZero, Set.mem_ofPred_eq, Set.mem_insert_iff,
       Set.mem_singleton_iff]
     constructor
     · intro hz
@@ -91,15 +97,18 @@ theorem exists_nsmul_sub_of_twoPoint_exact
 /-- The explicit universal two-point weak-to-strong cost. -/
 def twoPointWeakStrongCost (h : ℕ) : ℕ := (h + 2) ^ 2 / 3
 
+omit [DecidableEq G] in
 /-- For a two-element subset of any finite abelian group, weak order `h` plus
 primitivity implies full exact coverage at
 `floor((h+2)^2/3)`. -/
 theorem twoPoint_weakStrong
-    [Fintype G] (a b : G) {h : ℕ}
+    [Finite G] (a b : G) {h : ℕ}
     (hweak : ∀ y : G, GroupRepAtMost ({a, b} : Set G) h y)
     (hexact : ∃ q : ℕ, ∀ y : G, GroupRepExactly ({a, b} : Set G) q y) :
     ∀ y : G, GroupRepExactly ({a, b} : Set G)
       (twoPointWeakStrongCost h) y := by
+  classical
+  let := Fintype.ofFinite G
   let M := twoPointWeakStrongCost h
   have hcover := twoGen_cover_of_twoPoint_weak a b hweak
   have hcardThird := twoGenerator_card_le_third a b hcover
@@ -133,7 +142,7 @@ theorem twoPoint_weakStrong
     · simp [xs, hr]
   have hset : ShiftToZero ({a, b} : Set G) b = ({a - b, 0} : Set G) := by
     ext z
-    simp only [ShiftToZero, Set.mem_setOf_eq, Set.mem_insert_iff,
+    simp only [ShiftToZero, Set.mem_ofPred_eq, Set.mem_insert_iff,
       Set.mem_singleton_iff]
     constructor
     · rintro (hz | hz)

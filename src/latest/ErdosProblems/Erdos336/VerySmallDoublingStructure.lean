@@ -13,10 +13,12 @@ open scoped Pointwise
 
 variable {G : Type*} [AddCommGroup G] [DecidableEq G]
 
+omit [AddCommGroup G] [DecidableEq G] in
 /-- A finite pigeonhole principle inside an ambient finset. -/
 lemma not_disjoint_of_card_add_gt_of_subset
     {A B U : Finset G} (hAU : A ⊆ U) (hBU : B ⊆ U)
     (hcard : U.card < A.card + B.card) : ¬ Disjoint A B := by
+  classical
   intro hdis
   have hunion : A ∪ B ⊆ U := Finset.union_subset hAU hBU
   have hle := Finset.card_le_card hunion
@@ -65,7 +67,7 @@ theorem very_small_doubling_structure
     intro h hh
     let T : Finset G := h +ᵥ A
     have hTcard : T.card = A.card := by
-      simpa [T] using Finset.card_vadd_finset h A
+      simp [T]
     have hAsub : A ⊆ a +ᵥ H := ha
     have hTsub : T ⊆ a +ᵥ H := by
       intro x hx

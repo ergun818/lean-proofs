@@ -113,8 +113,9 @@ theorem image_endpointBoundaryUnion_eq_inter_vertical
       · rw [← hxb]
         have hqδ : q δ = 0 := (QuotientAddGroup.eq_zero_iff δ).mpr
           (AddSubgroup.mem_zmultiples δ)
-        simp [y, q.map_add, hqδ]
+        simp [y]
 
+omit [Fintype H] in
 /-- Exact boundary cardinality. -/
 theorem card_endpointBoundaryUnion
     (T : Finset (ℤ × H)) (l : ℤ) (δ : ℤ × H) :
@@ -128,6 +129,7 @@ theorem card_endpointBoundaryUnion
   have hVcard : V.card = Al.card := Finset.card_vadd_finset _ _
   simpa [endpointBoundaryUnion, endpointOverlap, A0, Al, V, hVcard] using hUnion
 
+omit [Fintype H] in
 /-- The endpoint quotient is injective on the shifted boundary union. -/
 theorem endpointQuotient_injective_on_boundary
     (T : Finset (ℤ × H)) (l : ℤ) (δ : ℤ × H)

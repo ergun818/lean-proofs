@@ -8,7 +8,6 @@ set_option backward.isDefEq.respectTransparency false
 
 namespace Erdos336
 
-set_option maxHeartbeats 1000000
 
 /-- Arithmetic core for the two new sum classes of a three-term critical
 progression.  `pᵢ+dᵢ=f` are the occupied cardinalities in two `F`-cosets;

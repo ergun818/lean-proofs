@@ -17,6 +17,7 @@ variable {G Q : Type*} [AddCommGroup G] [Fintype G] [DecidableEq G]
 noncomputable def homPreimageFinset (f : G →+ Q) (T : Finset Q) : Finset G :=
   Finset.univ.filter fun x => f x ∈ T
 
+omit [Fintype Q] in
 lemma hom_fiber_finset_eq_vadd_ker
     (f : G →+ Q) (hf : Function.Surjective f) (y : Q) :
     (Finset.univ.filter fun x => f x = y) =
@@ -37,17 +38,23 @@ lemma hom_fiber_finset_eq_vadd_ker
     change f (a + k) = y
     rw [f.map_add, ha, show f k = 0 from hk, add_zero]
 
-lemma card_hom_fiber_finset_eq_card_ker
+omit [DecidableEq G] [Fintype Q] in
+lemma card_hom_fiber_finset_eq_card_ker [Finite Q]
     (f : G →+ Q) (hf : Function.Surjective f) (y : Q) :
     (Finset.univ.filter fun x => f x = y).card =
       (addSubgroupFinset f.ker).card := by
+  classical
+  let := Fintype.ofFinite Q
   rw [hom_fiber_finset_eq_vadd_ker f hf y, Finset.card_vadd_finset]
 
+omit [DecidableEq G] [Fintype Q] in
 /-- A surjective homomorphism has constant finite fibres, so the preimage of a
 finite target set has cardinality target-size times kernel-size. -/
-theorem card_homPreimageFinset
+theorem card_homPreimageFinset [Finite Q]
     (f : G →+ Q) (hf : Function.Surjective f) (T : Finset Q) :
     (homPreimageFinset f T).card = T.card * (addSubgroupFinset f.ker).card := by
+  classical
+  let := Fintype.ofFinite Q
   let P := homPreimageFinset f T
   have hmap : (P : Set G).MapsTo f T := by
     intro x hx
@@ -73,12 +80,15 @@ theorem card_homPreimageFinset
       intro y hy
       rfl
 
+omit [Fintype Q] in
 /-- Saturation by the kernel is exactly the preimage of the finite homomorphic
 image, with exact cardinality `|image|*|kernel|`. -/
-theorem card_add_ker_eq_card_image_mul
+theorem card_add_ker_eq_card_image_mul [Finite Q]
     (f : G →+ Q) (hf : Function.Surjective f) (A : Finset G) :
     (A + addSubgroupFinset f.ker).card =
       (A.image f).card * (addSubgroupFinset f.ker).card := by
+  classical
+  let := Fintype.ofFinite Q
   have heq : A + addSubgroupFinset f.ker =
       homPreimageFinset f (A.image f) := by
     ext x
@@ -106,6 +116,7 @@ noncomputable def cyclicQuotientHom (K : AddSubgroup G) :
   exact (zmodAddCyclicAddEquiv hcyc).symm.toAddMonoidHom.comp
     (QuotientAddGroup.mk' K)
 
+omit [Fintype G] [DecidableEq G] in
 lemma cyclicQuotientHom_surjective (K : AddSubgroup G) :
     Function.Surjective (cyclicQuotientHom K) := by
   let hcyc : IsAddCyclic (G ⧸ K) :=
@@ -118,6 +129,7 @@ lemma cyclicQuotientHom_surjective (K : AddSubgroup G) :
   change e.symm (QuotientAddGroup.mk' K x) = z
   rw [hx, e.symm_apply_apply]
 
+omit [Fintype G] [DecidableEq G] in
 @[simp] lemma cyclicQuotientHom_ker (K : AddSubgroup G) :
     (cyclicQuotientHom K).ker = K := by
   ext x

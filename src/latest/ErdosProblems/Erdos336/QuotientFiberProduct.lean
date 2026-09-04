@@ -49,6 +49,7 @@ theorem card_image_mul_card_fiber_le_card_add
   have hcard := Fintype.card_le_of_injective e heinj
   simpa [T, U] using hcard
 
+omit [DecidableEq G] in
 /-- One image fibre has at least the average size, in division-free form. -/
 theorem exists_card_le_image_mul_card_fiber
     (f : G →+ Q) (B : Finset G) (hB : B.Nonempty) :

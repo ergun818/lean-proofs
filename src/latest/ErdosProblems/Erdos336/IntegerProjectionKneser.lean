@@ -79,9 +79,11 @@ def fstAddHom (H : Type*) [AddMonoid H] : (ℤ × H) →+ ℤ where
 /-- A finite sumset contains one full stabilizer coset in every occupied
 integer fibre. -/
 theorem card_image_fst_mul_card_addStab_le
-    {H : Type*} [AddCommGroup H] [Fintype H] [DecidableEq H]
+    {H : Type*} [AddCommGroup H] [Finite H] [DecidableEq H]
     (S : Finset (ℤ × H)) (hS : S.Nonempty) :
     (S.image Prod.fst).card * S.addStab.card ≤ S.card := by
+  classical
+  let := Fintype.ofFinite H
   let P := S.image Prod.fst
   let F := S.addStab
   let rep : (z : ℤ) → z ∈ P → ℤ × H := fun z hz =>
@@ -123,11 +125,13 @@ theorem card_image_fst_mul_card_addStab_le
 
 /-- Kneser plus the torsion-free projection bound, in a division-free form. -/
 theorem projection_kneser_mixed_bound
-    {H : Type*} [AddCommGroup H] [Fintype H] [DecidableEq H]
+    {H : Type*} [AddCommGroup H] [Finite H] [DecidableEq H]
     (A B : Finset (ℤ × H)) (hA : A.Nonempty) (hB : B.Nonempty) :
     ((A.image Prod.fst).card + (B.image Prod.fst).card) * (A + B).card ≥
       ((A.image Prod.fst).card + (B.image Prod.fst).card - 1) *
         (A.card + B.card) := by
+  classical
+  let := Fintype.ofFinite H
   let p := (A.image Prod.fst).card
   let q := (B.image Prod.fst).card
   let S := A + B
@@ -170,10 +174,12 @@ theorem projection_kneser_mixed_bound
 
 /-- Symmetric specialization. -/
 theorem projection_kneser_double_bound
-    {H : Type*} [AddCommGroup H] [Fintype H] [DecidableEq H]
+    {H : Type*} [AddCommGroup H] [Finite H] [DecidableEq H]
     (A : Finset (ℤ × H)) (hA : A.Nonempty) :
     (A.image Prod.fst).card * (A + A).card ≥
       (2 * (A.image Prod.fst).card - 1) * A.card := by
+  classical
+  let := Fintype.ofFinite H
   have h := projection_kneser_mixed_bound A A hA hA
   let p := (A.image Prod.fst).card
   let d := (A + A).card

@@ -9,12 +9,12 @@ set_option backward.isDefEq.respectTransparency false
 
 namespace Erdos336
 
-set_option maxHeartbeats 1000000
 
 open scoped Pointwise
 
 variable {N m : ℕ} [NeZero N] [NeZero m]
 
+omit [NeZero N] [NeZero m] in
 /-- The vertical part of the endpoint-quotient stabilizer of a normalized
 rectified graph is killed by the original rectifying homomorphism. -/
 theorem endpointVerticalPart_le_rectifyingKernel

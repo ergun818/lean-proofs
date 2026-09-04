@@ -13,6 +13,7 @@ open scoped Pointwise
 
 variable {H : Type*} [AddCommGroup H] [Fintype H] [DecidableEq H]
 
+omit [DecidableEq H] in
 /-- Explicit index count for a subgroup `J=<g>+K` modulo an endpoint
 displacement `δ=L g+kδ`. -/
 theorem card_endpointQuotient_subgroup

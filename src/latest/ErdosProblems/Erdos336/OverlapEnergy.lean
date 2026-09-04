@@ -18,6 +18,7 @@ noncomputable def differenceOverlap (A : Finset G) (x : G) : Finset G :=
 noncomputable def differenceRepFiber (A : Finset G) (x : G) : Finset (G × G) :=
   (A ×ˢ (-A)).filter fun p => p.1 + p.2 = x
 
+omit [Fintype G] in
 /-- The overlap `A∩(x+A)` is in bijection with representations of `x` as an
 element of `A+(-A)`. -/
 theorem card_differenceOverlap_eq_card_differenceRepFiber
@@ -34,7 +35,7 @@ theorem card_differenceOverlap_eq_card_differenceRepFiber
       simp only [vadd_eq_add] at hay
       rw [← hay]
       abel
-    · simpa [sub_eq_add_neg, add_assoc, add_left_comm, add_comm]
+    · simp [sub_eq_add_neg, add_left_comm]
   · intro y₁ hy₁ y₂ hy₂ heq
     exact congrArg Prod.fst heq
   · intro p hp
@@ -98,6 +99,7 @@ noncomputable def overlapSigma (A : Finset G) : ℕ :=
   ∑ x : G, (differenceOverlap A x).card *
     (A + differenceOverlap A x).card
 
+omit [Fintype G] in
 /-- Katz--Koester: adding `A` to an `x`-overlap stays inside the corresponding
 `x`-overlap of `2A`. -/
 theorem differenceOverlap_add_subset_double_overlap
@@ -158,6 +160,7 @@ theorem card_cube_add_addEnergy_le_overlapSigma_add_sq
   change A.card ^ 3 + A.addEnergy A ≤ overlapSigma A + A.card ^ 2
   simpa [overlapSigma, pow_succ, mul_assoc] using hsum
 
+omit [Fintype G] in
 /-- Cauchy--Schwarz gives the standard energy lower bound. -/
 theorem card_four_le_card_double_mul_addEnergy (A : Finset G) :
     A.card ^ 4 ≤ (A + A).card * A.addEnergy A := by

@@ -141,7 +141,6 @@ theorem eventuallyExactlyZ_of_cyclic_bound_auto_patch
     have hincl : DenseRange (Set.inclusion (show (Rψ : Set G) ⊆ (H : Set G) from hRH)) := by
       apply (denseRange_inclusion_iff hRH).2
       intro y hy
-      change y ∈ closure (Rψ : Set G)
       simpa [H, AddSubgroup.topologicalClosure_coe] using hy
     have hrange : DenseRange ψ.rangeRestrict :=
       (AddMonoidHom.rangeRestrict_surjective ψ).denseRange

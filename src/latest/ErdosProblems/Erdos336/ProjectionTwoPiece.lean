@@ -154,12 +154,14 @@ theorem two_piece_projection_arithmetic
 
 /-- Lev's sharp two-piece estimate in `ℤ × H`. -/
 theorem projection_two_piece_bound
-    {H : Type*} [AddCommGroup H] [Fintype H] [DecidableEq H]
+    {H : Type*} [AddCommGroup H] [Finite H] [DecidableEq H]
     (A₁ A₂ : Finset (ℤ × H)) (hA₁ : A₁.Nonempty) (hA₂ : A₂.Nonempty) :
     let n₁ := (A₁.image Prod.fst).card
     let n₂ := (A₂.image Prod.fst).card
     (n₁ + n₂) * ((A₁ + A₁).card + (A₁ + A₂).card + (A₂ + A₂).card) ≥
       3 * (n₁ + n₂ - 1) * (A₁.card + A₂.card) := by
+  classical
+  let := Fintype.ofFinite H
   dsimp
   apply two_piece_projection_arithmetic
   · exact (hA₁.image Prod.fst).card_pos

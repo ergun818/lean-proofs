@@ -27,7 +27,7 @@ lemma eq_of_dvd_sub_of_mem_short_interval
   have hq0 : q ≠ 0 := by
     intro hzero
     subst q
-    simp at hq
+    simp only [mul_zero] at hq
     exact hab (sub_eq_zero.mp hq)
   rcases lt_or_gt_of_ne hq0 with hqneg | hqpos
   · have hqm : m * q ≤ -m := by

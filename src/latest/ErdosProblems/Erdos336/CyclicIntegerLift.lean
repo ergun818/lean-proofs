@@ -38,7 +38,7 @@ range, a modular representation by residues of `C⊂[0,L]` is an actual integer
 representation. -/
 theorem lift_short_fourfoldDifference
     {N : ℕ} [NeZero N] {C : Finset ℤ} {L R x : ℤ}
-    (hL : 0 ≤ L) (hR : 0 ≤ R)
+    (_hL : 0 ≤ L) (_hR : 0 ≤ R)
     (hC : ∀ z ∈ C, 0 ≤ z ∧ z ≤ L)
     (hsize : R + 2 * L < (N : ℤ))
     (hxbound : |x| ≤ R)

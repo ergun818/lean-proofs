@@ -36,6 +36,7 @@ def StableHighPowerCertificate (C : Set G) (t : ℕ) : Prop :=
   Fintype.card G < 20000 * ((ExactPower S 2).ncard - S.ncard) ∨
     RankExceptionalCertificate S
 
+omit [DecidableEq G] in
 /-- The stable certificate is strong enough for the older Lev-shaped
 interface under strict `9/4` doubling. -/
 theorem levHighPowerCertificate_of_stable
@@ -44,6 +45,7 @@ theorem levHighPowerCertificate_of_stable
       9 * (ExactPower C t).ncard)
     (hstable : StableHighPowerCertificate C t) :
     LevHighPowerCertificate C t := by
+  classical
   let S := ExactPower C t
   have hpower : ExactPower S 2 = ExactPower C (2 * t) := by
     simpa [S] using exactPower_exactPower C t 2
@@ -76,6 +78,7 @@ section Lift
 
 variable [IsAddCyclic G]
 
+omit [DecidableEq G] in
 /-- Rank/exceptional structure and defect-density lift from a cyclic quotient.
 This is the induction mechanism behind the subgroup-saturation reduction. -/
 theorem stableHighPowerCertificate_of_quotient
@@ -88,6 +91,7 @@ theorem stableHighPowerCertificate_of_quotient
           (addSubgroupFinset K).card ≤
       (ExactPower (ExactPower C t) 2).ncard - (ExactPower C t).ncard) :
     StableHighPowerCertificate C t := by
+  classical
   let m := Nat.card (G ⧸ K)
   let f := cyclicQuotientHom K
   let S := ExactPower C t
@@ -112,8 +116,8 @@ theorem stableHighPowerCertificate_of_quotient
     rw [← Nat.card_eq_fintype_card,
       AddSubgroup.card_eq_card_quotient_mul_card_addSubgroup]
     congr 1
-    simpa [k, addSubgroupFinset] using
-      (Nat.card_eq_fintype_card (α := K))
+    exact (Nat.card_eq_fintype_card (α := K)).trans
+      (Fintype.card_of_subtype (addSubgroupFinset K) (mem_addSubgroupFinset K))
   have hkpos : 0 < k := by
     dsimp [k]
     rw [Finset.card_pos]
@@ -258,7 +262,8 @@ theorem proper_saturation_growth_of_smaller_stable
     rw [← Nat.card_eq_fintype_card,
       AddSubgroup.card_eq_card_quotient_mul_card_addSubgroup]
     congr 1
-    simpa [addSubgroupFinset] using (Nat.card_eq_fintype_card (α := K))
+    exact (Nat.card_eq_fintype_card (α := K)).trans
+      (Fintype.card_of_subtype (addSubgroupFinset K) (mem_addSubgroupFinset K))
   have hk2 : 2 ≤ (addSubgroupFinset K).card := by
     let : Fintype K := Fintype.ofFinite K
     have hk := (AddSubgroup.one_lt_card_iff_ne_bot K).mpr hK
@@ -267,7 +272,6 @@ theorem proper_saturation_growth_of_smaller_stable
     omega
   have hmG : m < Fintype.card G := by
     rw [hGcard]
-    change m < m * (addSubgroupFinset K).card
     nlinarith
   have hchild := hsmaller m hm hmG (cyclicQuotientHom K '' C) hz hp hd
   exact hnot (stableHighPowerCertificate_of_failed_growth K C t

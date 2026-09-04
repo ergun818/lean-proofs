@@ -20,10 +20,12 @@ def verticalEndpointHom (δ : ℤ × H) :
       map_zero' := rfl
       map_add' := fun _ _ => rfl }
 
+omit [Fintype H] [DecidableEq H] in
 @[simp] theorem verticalEndpointHom_apply (δ : ℤ × H) (k : H) :
     verticalEndpointHom δ k =
       (QuotientAddGroup.mk' (AddSubgroup.zmultiples δ)) (0, k) := rfl
 
+omit [Fintype H] [DecidableEq H] in
 /-- A non-torsion endpoint displacement makes the vertical embedding injective. -/
 theorem verticalEndpointHom_injective
     (δ : ℤ × H) (hδpos : 0 < δ.1) :
@@ -48,6 +50,7 @@ def endpointVerticalPart
     (F : AddSubgroup ((ℤ × H) ⧸ AddSubgroup.zmultiples δ)) : AddSubgroup H :=
   F.comap (verticalEndpointHom δ)
 
+omit [DecidableEq H] in
 /-- The vertical part occupies at most half of a finite quotient subgroup as
 soon as that subgroup has a nonvertical element. -/
 theorem twice_card_endpointVerticalPart_le
@@ -102,7 +105,7 @@ theorem twice_card_endpointVerticalPart_le
       have hfEq : f = verticalEndpointHom δ (u.2.1 - v.2.1) := by
         rw [map_sub]
         apply add_right_cancel (b := verticalEndpointHom δ v.2.1)
-        simpa [hcross] using hcross.symm
+        simp [hcross]
       exact (hfnot (u.2.1 - v.2.1) hfEq.symm).elim
     · have hufalse : u.1 = false := Bool.eq_false_of_not_eq_true hu
       have hvfalse : v.1 = false := Bool.eq_false_of_not_eq_true hv

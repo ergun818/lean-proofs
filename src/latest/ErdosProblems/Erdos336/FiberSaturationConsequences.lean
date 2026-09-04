@@ -24,8 +24,7 @@ lemma card_subgroupFiber_add_card_subgroupHole
       (addSubgroupFinset K).card := by
   unfold subgroupFiber subgroupHole
   rw [Finset.inter_comm]
-  simpa using Finset.card_inter_add_card_sdiff
-    (a +ᵥ addSubgroupFinset K) A
+  simp
 
 lemma subgroupHole_subset_saturation_holes
     (K : AddSubgroup G) (A : Finset G) {a : G} (ha : a ∈ A) :

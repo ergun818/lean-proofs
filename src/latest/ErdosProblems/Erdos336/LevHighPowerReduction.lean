@@ -43,6 +43,7 @@ def HasLevHighPowerStructure : Prop :=
         9 * (ExactPower C t).ncard →
       LevHighPowerCertificate C t
 
+omit [Fintype G] [DecidableEq G] in
 /-- A positive exact power contains its zero-containing root. -/
 theorem subset_exactPower_of_zero_pos {C : Set G} (hzero : 0 ∈ C)
     {t : ℕ} (ht : 0 < t) : C ⊆ ExactPower C t := by
@@ -51,6 +52,7 @@ theorem subset_exactPower_of_zero_pos {C : Set G} (hzero : 0 ∈ C)
     exact ⟨[x], by simp, by simpa, by simp⟩
   exact exactPower_mono_of_zero hzero (by omega) hx1
 
+omit [AddCommGroup G] [Fintype G] [DecidableEq G] in
 /-- A set supported on `L+1` labelled quotient fibres has image cardinal at
 most `L+1`, even when the labels wrap around. -/
 theorem ncard_image_le_of_interval_support
@@ -75,15 +77,18 @@ theorem ncard_image_le_of_interval_support
       exact Finset.card_image_le
     _ = L + 1 := Finset.card_range _
 
+omit [DecidableEq G] [Fintype G] in
 /-- If a primitive set has no two distinct values under a surjective finite
 quotient map, then that quotient has at most one point. -/
-theorem card_target_le_one_of_no_image_pair
+theorem card_target_le_one_of_no_image_pair [Finite G]
     {Q : Type*} [AddCommGroup Q] [Fintype Q]
     (f : G →+ Q) (hf : Function.Surjective f)
     {C : Set G} (hzero : 0 ∈ C)
     (hprimitive : ∃ q : ℕ, ExactPower C q = Set.univ)
     (hpair : ¬ ∃ p ∈ C, ∃ q ∈ C, f p ≠ f q) :
     Fintype.card Q ≤ 1 := by
+  classical
+  let := Fintype.ofFinite G
   have hDsub : f '' C ⊆ ({0} : Set Q) := by
     rintro _ ⟨x, hx, rfl⟩
     have hfx : f x = f 0 := by

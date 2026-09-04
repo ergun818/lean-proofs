@@ -159,7 +159,7 @@ theorem groupRepExactly_shift_iff {A : Set G} {e x : G} {k : ℕ} :
     · intro y hy
       simp only [List.mem_map] at hy
       obtain ⟨z, hz, rfl⟩ := hy
-      simp only [ShiftToZero, Set.mem_setOf_eq, sub_add_cancel]
+      simp only [ShiftToZero, Set.mem_ofPred_eq, sub_add_cancel]
       exact hmem z hz
     · simpa [hlen, hsum] using sum_map_sub_right xs e
   · rintro ⟨ys, hlen, hmem, hsum⟩

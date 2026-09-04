@@ -28,7 +28,7 @@ def intervalStretchHom (V : ℕ) : IntPair →+ IntPair where
   toFun p := ((V : ℤ) * p.1 - p.2, p.2)
   map_zero' := by simp
   map_add' p q := by
-    apply Prod.ext <;> simp <;> ring
+    apply Prod.ext <;> simp; ring
 
 /-- Sum of transformed coordinates modulo `V`. -/
 def coordinateSumModHom (V : ℕ) : IntPair →+ ZMod V where

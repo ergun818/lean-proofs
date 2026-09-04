@@ -48,7 +48,7 @@ theorem tendsto_floor_thirds_lower_expression :
         atTop (𝓝 (1 / 3 : ℝ)) := by
     convert
       (tendsto_const_nhds.mul (hu.pow 2)).add
-        ((tendsto_const_nhds.mul hu).mul hinv) using 1 <;> norm_num
+        ((tendsto_const_nhds.mul hu).mul hinv) using 1; norm_num
   apply hmain.congr'
   filter_upwards [eventually_gt_atTop (0 : ℕ)] with r hr
   have hr0 : (r : ℝ) ≠ 0 := by positivity

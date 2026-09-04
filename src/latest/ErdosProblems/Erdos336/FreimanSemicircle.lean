@@ -14,12 +14,7 @@ noncomputable def cutSin (c x : ℝ) : ℝ := if x ≤ c then Real.sin x else 0
 
 lemma integral_sin_eq_cos_sub (a b : ℝ) :
     (∫ x in a..b, Real.sin x) = Real.cos a - Real.cos b := by
-  have hderiv : ∀ x ∈ Set.uIcc a b,
-      HasDerivAt (fun y : ℝ => 0 - Real.cos y) (Real.sin x) x := by
-    intro x hx
-    simpa using (Real.hasDerivAt_cos x).const_sub 0
-  simpa using intervalIntegral.integral_eq_sub_of_hasDerivAt
-    hderiv intervalIntegral.intervalIntegrable_sin
+  simp
 
 lemma integral_cutSin (c : ℝ) (hc : c ∈ Set.Icc (-Real.pi) Real.pi) :
     (∫ x in -Real.pi..Real.pi, cutSin c x) =
@@ -232,7 +227,7 @@ theorem freiman_semicircle_integral_bound
   have hFvalue : (∫ θ in -Real.pi..Real.pi, F θ) =
       2 * ∑ i, Real.cos (φ i) := by
     dsimp [F]
-    rw [intervalIntegral.integral_finset_sum]
+    rw [intervalIntegral.integral_finsetSum]
     · simp_rw [integral_semicircleIntegrand (hφ _).1 (le_of_lt (hφ _).2)]
       rw [Finset.mul_sum]
     · intro i hi
@@ -266,10 +261,10 @@ lemma angleSemicircleCount_complement_lower
       rcases hφ i with ⟨hlo, hhi⟩
       by_cases hi0 : φ i < 0
       · left
-        simp [semicircleArcMem, hi0, hlo, (not_lt_of_ge Real.pi_pos.le)]
+        simp [semicircleArcMem, hi0, hlo]
       · right
         have hi0' : 0 ≤ φ i := le_of_not_gt hi0
-        simp [semicircleArcMem, hi0, hi0', hhi,
+        simp [semicircleArcMem, hi0', hhi,
           (not_lt_of_ge Real.pi_pos.le)]
   let P := Finset.univ.filter fun i => semicircleArcMem (φ i) θ
   let Q := Finset.univ.filter fun i =>
@@ -312,7 +307,7 @@ theorem exists_halfopen_semicircle_nine_tenths
     ∃ θ ∈ Set.Icc (0 : ℝ) Real.pi,
       9 * Fintype.card ι < 10 * angleSemicircleCount φ θ := by
   by_contra hnone
-  push_neg at hnone
+  push Not at hnone
   let n := (9 * Fintype.card ι) / 10
   have hcount : ∀ θ ∈ Set.Icc (0 : ℝ) Real.pi,
       angleSemicircleCount φ θ ≤ n := by

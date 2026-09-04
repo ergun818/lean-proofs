@@ -134,7 +134,7 @@ theorem critical_representation_dichotomy
         omega
       have hex : ∃ l ∈ Lfin, l ∉ X := by
         by_contra hnone
-        push_neg at hnone
+        push Not at hnone
         exact hproper (Finset.Subset.antisymm hXsubLfin hnone)
       obtain ⟨l, hlL, hlX⟩ := hex
       have hlXX : l ∈ X + X := by rwa [hXXeqLfin]

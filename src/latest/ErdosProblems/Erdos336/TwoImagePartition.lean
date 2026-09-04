@@ -21,10 +21,12 @@ def zeroImagePart (T : Finset G) (ρ : G →+ Q) : Finset G :=
 def nonzeroImagePart (T : Finset G) (ρ : G →+ Q) : Finset G :=
   T.filter (fun x => ρ x ≠ 0)
 
+omit [DecidableEq G] in
 @[simp] theorem mem_zeroImagePart {T : Finset G} {ρ : G →+ Q} {x : G} :
     x ∈ zeroImagePart T ρ ↔ x ∈ T ∧ ρ x = 0 := by
   simp [zeroImagePart]
 
+omit [DecidableEq G] in
 @[simp] theorem mem_nonzeroImagePart {T : Finset G} {ρ : G →+ Q} {x : G} :
     x ∈ nonzeroImagePart T ρ ↔ x ∈ T ∧ ρ x ≠ 0 := by
   simp [nonzeroImagePart]

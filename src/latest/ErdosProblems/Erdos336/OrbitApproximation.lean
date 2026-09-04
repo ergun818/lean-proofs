@@ -59,7 +59,7 @@ theorem exists_initial_orbit_net_and_return
     hdenseTail.exists_mem_open hzeroBallOpen hzeroBallNe
   obtain ⟨z, hzlarge, rfl⟩ := hximage
   have hznonneg : 0 ≤ z := by
-    have hbase : (0 : ℤ) ≤ ((B + 1 : ℕ) : ℤ) := Int.ofNat_zero_le _
+    have hbase : (0 : ℤ) ≤ ((B + 1 : ℕ) : ℤ) := Int.natCast_nonneg _
     exact hbase.trans hzlarge
   let N := z.toNat
   have hNz : (N : ℤ) = z := by

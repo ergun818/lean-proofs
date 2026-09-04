@@ -42,7 +42,7 @@ theorem refined_overlap_lower_bound
       · simp [hx, hr0]
       · by_cases hr1 : (differenceOverlap A x).card = 1
         · obtain ⟨b, hb⟩ := Finset.card_eq_one.mp hr1
-          simp [hx, hr1, hb, Finset.card_add_singleton]
+          simp [hx, hb, Finset.card_add_singleton]
         · have hr2 : 2 ≤ (differenceOverlap A x).card := by omega
           have he := hexpand (differenceOverlap A x)
             Finset.inter_subset_left hr2

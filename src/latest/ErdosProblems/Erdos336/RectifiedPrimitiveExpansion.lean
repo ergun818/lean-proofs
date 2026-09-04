@@ -13,6 +13,7 @@ open scoped Pointwise
 
 variable {N m : ℕ} [NeZero N] [NeZero m]
 
+omit [NeZero N] [NeZero m] in
 /-- A vertical period of a sum of two nonempty subsets of a strict-half lift
 is killed by the original rectifying homomorphism. -/
 theorem verticalStabilizer_le_ker_of_rectified_subsets
@@ -80,7 +81,7 @@ theorem verticalStabilizer_le_ker_of_rectified_subsets
       _ = (α + α) + ((α + (halfIntervalLabel π α c : ZMod m)) +
           (α + (halfIntervalLabel π α d : ZMod m))) := by abel
   have hsecond := congrArg Prod.snd heq
-  simp only [Prod.snd_add, Prod.snd_zero, zero_add] at hsecond
+  simp only [Prod.snd_add] at hsecond
   change π k = 0
   have hmap := congrArg π hsecond
   rw [map_add, map_add, map_add] at hmap
@@ -126,6 +127,7 @@ theorem saturation_union_defect_le
       rw [Finset.card_sdiff_of_subset hXsub,
         Finset.card_sdiff_of_subset hYsub]
 
+omit [NeZero m] in
 /-- In the kernel-primitive case, every two nonempty subsets which
 cover the rectified lift have the torsion-free lower sumset bound. -/
 theorem rectified_subset_expansion_of_kernelPrimitive

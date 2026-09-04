@@ -75,7 +75,7 @@ theorem exists_nonzero_fourier_gt_four_fifths
       16 * (A.card : ℝ) ^ 2 <
         25 * ‖cyclicFinsetFourier A k‖ ^ 2 := by
   by_contra hno
-  push_neg at hno
+  push Not at hno
   let S := A + A
   let a : ℝ := A.card
   let d : ℝ := S.card
@@ -107,7 +107,6 @@ theorem exists_nonzero_fourier_gt_four_fifths
   have hn : 12000 * (d - 1) ≤ n := by
     have hdpos : 1 ≤ S.card := by omega
     dsimp [d, n]
-    norm_num [Nat.cast_sub hdpos]
     exact_mod_cast (show 12000 * (S.card - 1) ≤ N by simpa [S] using hsparse)
   have he0 : 0 ≤ e := by positivity
   have harith := fourier_four_fifths_arithmetic a d e u n
@@ -151,7 +150,10 @@ theorem exists_nonzero_fourier_gt_four_fifths
           else 16 * a ^ 2 * ‖cyclicFinsetFourier S k‖ ^ 2) ≤
         (if k = 0 then 25 * a ^ 2 * d ^ 2 else 0) +
           16 * a ^ 2 * ‖cyclicFinsetFourier S k‖ ^ 2 := by
-      by_cases hk : k = 0 <;> simp [hk] <;> positivity
+      by_cases hk : k = 0
+      · simp only [hk, if_true, le_add_iff_nonneg_right]
+        positivity
+      · simp [hk]
     have hs := Finset.sum_le_sum
       (fun k (_hk : k ∈ (Finset.univ : Finset (ZMod N))) => hp k)
     simp only [Finset.sum_add_distrib] at hs

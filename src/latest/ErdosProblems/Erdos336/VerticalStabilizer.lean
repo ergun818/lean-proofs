@@ -20,6 +20,7 @@ def verticalHom : H →+ ℤ × H where
   map_zero' := rfl
   map_add' _ _ := rfl
 
+omit [Fintype H] [DecidableEq H] in
 @[simp] theorem verticalHom_apply (h : H) : verticalHom h = (0, h) := rfl
 
 /-- The vertical copy of a finite subgroup, represented as a finset. -/
@@ -46,6 +47,7 @@ noncomputable def verticalSubgroupFinset (K : AddSubgroup H) : Finset (ℤ × H)
   intro x y h
   exact congrArg Prod.snd h
 
+omit [Fintype H] in
 /-- Every period of a finite nonempty subset of `ℤ × H` is vertical. -/
 theorem fst_eq_zero_of_mem_addStab
     (S : Finset (ℤ × H)) (hS : S.Nonempty) {v : ℤ × H}
@@ -65,6 +67,7 @@ theorem fst_eq_zero_of_mem_addStab
 def verticalStabilizer (S : Finset (ℤ × H)) : AddSubgroup H :=
   (AddAction.stabilizer (ℤ × H) (S : Set (ℤ × H))).comap verticalHom
 
+omit [Fintype H] in
 @[simp] theorem mem_verticalStabilizer
     {S : Finset (ℤ × H)} (hS : S.Nonempty) {k : H} :
     k ∈ verticalStabilizer S ↔ (0, k) ∈ S.addStab := by
@@ -110,6 +113,7 @@ section Rectified
 
 variable {N m : ℕ} [NeZero N] [NeZero m]
 
+omit [NeZero m] in
 /-- Saturating by a subgroup killed by the rectifying homomorphism commutes
 exactly with the rectified lift. -/
 theorem rectifiedLift_add_vertical
@@ -167,6 +171,7 @@ theorem rectifiedLift_add_vertical
       simp
     · rfl
 
+omit [NeZero m] in
 /-- Hence kernel saturation has exactly the same defect before and after
 strict-half rectification. -/
 theorem card_rectifiedLift_add_vertical

@@ -63,9 +63,9 @@ theorem lower_cyclic_cover_multiple_three
   have hsumpos : 0 < q + r := by
     by_contra hz
     have hzero : q + r = 0 := Nat.eq_zero_of_not_pos hz
-    obtain ⟨hq0, hr0⟩ := Nat.add_eq_zero.mp hzero
+    obtain ⟨hq0, hr0⟩ := Nat.add_eq_zero_iff.mp hzero
     rw [hq0, hr0] at hnqr
-    simp at hnqr
+    simp only [zero_mul, zero_add] at hnqr
     exact hn0 hnqr
   by_cases hqu : q = u
   · have hn_expand : n = u * x + r := by simpa [hqu] using hnqr
@@ -111,7 +111,7 @@ theorem lower_step_sub_one_coprime (u : ℕ) :
         lowerModulus u * 3 + 1 := by
     simp [lowerStep, lowerModulus]
     ring
-  show Nat.gcd (lowerStep u - 1) (lowerModulus u) = 1
+  change Nat.gcd (lowerStep u - 1) (lowerModulus u) = 1
   apply Nat.dvd_one.mp
   have hleft : Nat.gcd (lowerStep u - 1) (lowerModulus u) ∣
       (lowerStep u - 1) * (lowerStep u - 1) :=
@@ -125,7 +125,7 @@ theorem lower_step_sub_one_coprime (u : ℕ) :
 construction modulus.  This is the exact-exponent half of the two-residue
 construction. -/
 theorem lower_difference_hits_every_residue
-    (u n : ℕ) (hu : 1 ≤ u) :
+    (u n : ℕ) (_hu : 1 ≤ u) :
     ∃ j : ℕ, j < lowerModulus u ∧
       (lowerStep u - 1) * j % lowerModulus u = n % lowerModulus u := by
   have hg : lowerModulus u ≠ 0 := by

@@ -12,7 +12,6 @@ set_option backward.isDefEq.respectTransparency false
 
 namespace Erdos336
 
-set_option maxHeartbeats 1800000
 
 open scoped Pointwise BigOperators
 
@@ -183,7 +182,7 @@ theorem endpoint_progression_proper_impossible
         rfl
       rw [himage, hC]
       simp [d0, d1, d2, p1, p2, quotientFiberDeficiency,
-        hx0, hx20, hx2x, hx0.symm, hx20.symm, hx2x.symm]
+        hx0.symm, hx20.symm, hx2x.symm]
       ring
     rw [← hqdef, hsum]
     omega

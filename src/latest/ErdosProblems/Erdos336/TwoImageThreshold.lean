@@ -45,7 +45,7 @@ theorem three_minus_three_mono_support
 /-- A two-class / three-double-class quotient is incompatible with a strict
 `3(1-1/s)` doubling inequality in `ℤ × H`. -/
 theorem not_two_image_three_sum_of_strict_threshold
-    {H Q : Type*} [AddCommGroup H] [Fintype H] [DecidableEq H]
+    {H Q : Type*} [AddCommGroup H] [Finite H] [DecidableEq H]
     [AddCommGroup Q] [DecidableEq Q]
     (T : Finset (ℤ × H)) (ρ : (ℤ × H) →+ Q) (hzero : (0, 0) ∈ T)
     (hthreshold : (T.image Prod.fst).card * (T + T).card <
@@ -53,6 +53,7 @@ theorem not_two_image_three_sum_of_strict_threshold
     (himage : (T.image ρ).card = 2)
     (hdoubleImage : ((T + T).image ρ).card = 3) : False := by
   classical
+  let := Fintype.ofFinite H
   let A₀ := zeroImagePart T ρ
   let A₁ := nonzeroImagePart T ρ
   obtain ⟨hA₀ne, hA₁ne, hTunion, hD00_01, hD00_11, hD01_11, hsum⟩ :=

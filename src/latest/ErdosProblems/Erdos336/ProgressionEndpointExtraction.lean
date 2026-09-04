@@ -10,9 +10,10 @@ namespace Erdos336
 
 variable {G : Type*} [AddCommGroup G] [Fintype G] [DecidableEq G]
 
+omit [DecidableEq G] [Fintype G] in
 /-- Any nontrivial image supported in a finite cyclic interval has a
 smallest endpoint-attaining subinterval, with the same orientation. -/
-theorem exists_endpoint_subinterval {m L : ℕ} (π : G →+ ZMod m) {C : Set G} {α : ZMod m}
+theorem exists_endpoint_subinterval [Finite G] {m L : ℕ} (π : G →+ ZMod m) {C : Set G} {α : ZMod m}
     (houter : ∀ x ∈ C, ∃ k : ℕ, k ≤ L ∧ π x = α + (k : ZMod m))
     (hpair : ∃ p ∈ C, ∃ q ∈ C, π p ≠ π q) :
     ∃ (α₀ : ZMod m) (L₀ : ℕ) (p q : G),
@@ -20,6 +21,7 @@ theorem exists_endpoint_subinterval {m L : ℕ} (π : G →+ ZMod m) {C : Set G}
       (∀ x ∈ C, ∃ k : ℕ, k ≤ L₀ ∧ π x = α₀ + (k : ZMod m)) ∧
       p ∈ C ∧ q ∈ C ∧ π q = π p + (L₀ : ZMod m) := by
   classical
+  let := Fintype.ofFinite G
   let I : Finset ℕ := (Finset.range (L + 1)).filter fun k =>
     ∃ x ∈ C, π x = α + (k : ZMod m)
   have hindex : ∀ x ∈ C, ∃ k ∈ I, π x = α + (k : ZMod m) := by

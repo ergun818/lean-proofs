@@ -16,7 +16,7 @@ variable {G : Type*} [AddCommGroup G] [Fintype G] [DecidableEq G]
 original set, provided the original saturation has fewer than one fibre of
 holes. This is the fibre-combinatorial core of Lev's saturation argument. -/
 theorem double_saturation_defect_le
-    (K : AddSubgroup G) (A : Finset G) (hA : A.Nonempty)
+    (K : AddSubgroup G) (A : Finset G) (_hA : A.Nonempty)
     (hdefect : (A + addSubgroupFinset K).card - A.card <
       (addSubgroupFinset K).card) :
     ((A + A) + addSubgroupFinset K).card - (A + A).card ≤

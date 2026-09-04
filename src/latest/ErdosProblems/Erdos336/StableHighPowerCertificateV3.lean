@@ -21,6 +21,7 @@ def StableHighPowerCertificateV3 (C : Set G) (t : ℕ) : Prop :=
   Fintype.card G < (10000000 * Nat.factorial 36) * stableWeight S ∨
   RankExceptionalCertificate S
 
+omit [Fintype G] [DecidableEq G] in
 private theorem zero_mem_exactPower_of_zero_v3
     {C : Set G} (hzero : 0 ∈ C) (t : ℕ) : 0 ∈ ExactPower C t := by
   refine ⟨List.replicate t 0, by simp, ?_, by simp⟩
@@ -28,13 +29,17 @@ private theorem zero_mem_exactPower_of_zero_v3
   rw [List.mem_replicate] at hy
   simpa [hy.2] using hzero
 
-private theorem ncard_le_double_of_zero_v3
+omit [DecidableEq G] [Fintype G] in
+private theorem ncard_le_double_of_zero_v3 [Finite G]
     {S : Set G} (hz : 0 ∈ S) : S.ncard ≤ (ExactPower S 2).ncard := by
+  classical
+  let := Fintype.ofFinite G
   refine Set.ncard_le_ncard ?_ (Set.toFinite _)
   intro x hx
   rw [exactPower_eq_nsmul, two_nsmul]
   exact ⟨x, hx, 0, hz, by simp⟩
 
+omit [DecidableEq G] in
 /-- The first quotient-stable certificate from F-087 implies V3 once the high
 power has at least seven points. -/
 theorem stableV3_of_stable
@@ -44,6 +49,7 @@ theorem stableV3_of_stable
       9 * (ExactPower C t).ncard)
     (hstable : StableHighPowerCertificate C t) :
     StableHighPowerCertificateV3 C t := by
+  classical
   let S := ExactPower C t
   have hzS : 0 ∈ S := zero_mem_exactPower_of_zero_v3 hzero t
   have hSle := ncard_le_double_of_zero_v3 hzS
@@ -112,8 +118,8 @@ theorem stableV3_of_failed_growth
     rw [← Nat.card_eq_fintype_card,
       AddSubgroup.card_eq_card_quotient_mul_card_addSubgroup]
     congr 1
-    simpa [k, addSubgroupFinset] using
-      (Nat.card_eq_fintype_card (α := K))
+    exact (Nat.card_eq_fintype_card (α := K)).trans
+      (Fintype.card_of_subtype (addSubgroupFinset K) (mem_addSubgroupFinset K))
   change Fintype.card (ZMod m) = 1 ∨
       Fintype.card (ZMod m) < (10000000 * Nat.factorial 36) * stableWeight S' ∨
       RankExceptionalCertificate S' at hchild
@@ -122,8 +128,8 @@ theorem stableV3_of_failed_growth
     have hKG : Nat.card K = Nat.card G := by
       let : Fintype K := Fintype.ofFinite K
       rw [Nat.card_eq_fintype_card, Nat.card_eq_fintype_card]
-      have hkcard : Fintype.card K = k := by
-        simpa [k, addSubgroupFinset]
+      have hkcard : Fintype.card K = k :=
+        Fintype.card_of_subtype (addSubgroupFinset K) (mem_addSubgroupFinset K)
       rw [hkcard, hGcard, hm1, one_mul]
     exact False.elim (hKtop (AddSubgroup.eq_top_of_card_eq K hKG))
   · right; left
@@ -144,7 +150,8 @@ theorem stableV3_of_failed_growth
       m * k < ((10000000 * Nat.factorial 36) * stableWeight S') * k :=
         Nat.mul_lt_mul_of_pos_right hdense hkpos
       _ = (10000000 * Nat.factorial 36) * (stableWeight S' * k) := by ring
-      _ ≤ (10000000 * Nat.factorial 36) * stableWeight S := Nat.mul_le_mul_left (10000000 * Nat.factorial 36) hweight
+      _ ≤ (10000000 * Nat.factorial 36) * stableWeight S :=
+        Nat.mul_le_mul_left (10000000 * Nat.factorial 36) hweight
   · have holdChild : StableHighPowerCertificate (f '' C) t := Or.inr hstruct
     have holdParent := stableHighPowerCertificate_of_quotient K C t hzero
       holdChild hdef

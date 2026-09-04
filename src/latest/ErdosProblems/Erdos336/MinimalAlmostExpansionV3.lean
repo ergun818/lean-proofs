@@ -50,7 +50,8 @@ theorem proper_saturation_growth_of_smaller_stableV3
     rw [← Nat.card_eq_fintype_card,
       AddSubgroup.card_eq_card_quotient_mul_card_addSubgroup]
     congr 1
-    simpa [addSubgroupFinset] using (Nat.card_eq_fintype_card (α := K))
+    exact (Nat.card_eq_fintype_card (α := K)).trans
+      (Fintype.card_of_subtype (addSubgroupFinset K) (mem_addSubgroupFinset K))
   have hk2 : 2 ≤ (addSubgroupFinset K).card := by
     let : Fintype K := Fintype.ofFinite K
     have hk := (AddSubgroup.one_lt_card_iff_ne_bot K).mpr hKbot

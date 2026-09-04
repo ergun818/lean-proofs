@@ -9,7 +9,7 @@ set_option backward.isDefEq.respectTransparency false
 namespace Erdos336
 
 lemma integer_open_half_interval_label
-    (A : ℝ) (m : ℕ) (hm : 0 < m) (n : ℤ)
+    (A : ℝ) (m : ℕ) (_hm : 0 < m) (n : ℤ)
     (hlow : A < (n : ℝ))
     (hupp : (n : ℝ) < A + (m : ℝ) / 2) :
     ∃ q : ℕ, 2 * q < m ∧
@@ -17,7 +17,7 @@ lemma integer_open_half_interval_label
   let a : ℤ := Int.floor A + 1
   have hfa : (Int.floor A : ℝ) ≤ A := Int.floor_le A
   have haf : A < (a : ℝ) := by
-    simpa [a] using Int.lt_floor_add_one A
+    simp [a]
   have hfloorN : Int.floor A < n := (Int.floor_lt).2 hlow
   have han : a ≤ n := by
     dsimp [a]

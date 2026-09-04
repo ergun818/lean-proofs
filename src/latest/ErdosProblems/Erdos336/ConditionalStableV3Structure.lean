@@ -73,7 +73,7 @@ theorem cyclicWeakStrongBoundNE_of_stableV3_block
   have hcert : WideRankDenseCertificate C t :=
     wideRankDenseCertificate_of_stableV3 C t (by omega) hzeroC
       hprimitiveC hdoub' hstable
-  simpa [T] using exact_cover_of_wideRankDenseCertificate
+  simpa only [T] using exact_cover_of_wideRankDenseCertificate
     hb ht htT hweak ⟨q, hq⟩ hcert
 
 /-- The corresponding conditional cyclic removal bound follows through the

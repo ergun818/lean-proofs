@@ -24,14 +24,15 @@ noncomputable def cyclicQuotientFactor
   let e := zmodAddCyclicAddEquiv hcyc
   exact (QuotientAddGroup.lift K π hK).comp e.toAddMonoidHom
 
+omit [NeZero N] in
 @[simp] theorem cyclicQuotientFactor_apply_cyclicQuotientHom
     {Q : Type*} [AddCommGroup Q]
     (K : AddSubgroup (ZMod N)) (π : ZMod N →+ Q) (hK : K ≤ π.ker)
     (x : ZMod N) :
     cyclicQuotientFactor K π hK (cyclicQuotientHom K x) = π x := by
-  simp [cyclicQuotientFactor, cyclicQuotientHom,
-    QuotientAddGroup.lift_mk']
+  simp [cyclicQuotientFactor, cyclicQuotientHom]
 
+omit [NeZero N] in
 /-- Surjectivity descends to the factor homomorphism. -/
 theorem cyclicQuotientFactor_surjective
     {Q : Type*} [AddCommGroup Q]
@@ -43,6 +44,7 @@ theorem cyclicQuotientFactor_surjective
   refine ⟨cyclicQuotientHom K x, ?_⟩
   simpa using hx
 
+omit [NeZero N] in
 /-- The image through the original map is exactly the image of the quotient
 set through the factor. -/
 theorem image_cyclicQuotientFactor
@@ -61,6 +63,7 @@ theorem image_cyclicQuotientFactor
     exact ⟨cyclicQuotientHom K x, ⟨x, hx, rfl⟩,
       cyclicQuotientFactor_apply_cyclicQuotientHom K π hK x⟩
 
+omit [NeZero N] in
 /-- A strict-half interval certificate descends through every subgroup of the
 rectifying kernel. -/
 theorem half_interval_descends_cyclicQuotient
@@ -195,7 +198,7 @@ theorem rectifiableThreeMinusThree_of_kernelPrimitive
           (addSubgroupFinset K).card ≤
             (A + addSubgroupFinset K).card - A.card
       · exact hprimitive N hN A hAne hAaff m hm π hπ α houter hsmall hsat
-      · push_neg at hsat
+      · push Not at hsat
         obtain ⟨K, hKker, hKne, hKsmall⟩ := hsat
         let q := Nat.card (ZMod N ⧸ K)
         have hq : 0 < q := Nat.card_pos
