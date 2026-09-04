@@ -332,7 +332,7 @@ noncomputable def split (D : WeightedDecomposition S vertices edges)
 and edge counts by `t`, while preserving Euler and the perimeter double-count.  This is the
 pure bookkeeping operation that turns a one-edge chord split into a multi-edge ear split. -/
 noncomputable def inflateTwoFaces (D : WeightedDecomposition S vertices edges)
-    {U V : Set Plane} (hU : U ∈ D.cells) (hV : V ∈ D.cells) (hUV : U ≠ V) (t : ℕ) :
+    {U V : Set Plane} (hU : U ∈ D.cells) (hV : V ∈ D.cells) (_hUV : U ≠ V) (t : ℕ) :
     WeightedDecomposition S (vertices + t) (edges + t) := by
   classical
   let perimeter' : Set Plane → ℕ := fun W =>

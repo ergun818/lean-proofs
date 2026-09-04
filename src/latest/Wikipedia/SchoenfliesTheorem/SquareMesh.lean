@@ -115,7 +115,7 @@ theorem cover_ringPieces {r : ℝ} (hr : 0 ≤ r) : cover (ringPieces r) = ringS
   ext x
   simp only [ringPieces, cover_cons, cover_nil, union_empty, mem_union, Piece.seg,
     mem_segment_horiz, mem_segment_vert, segment_symm_Icc hr, segment_symm_Icc' hr,
-    mem_Icc, ringSet, mem_setOf_eq, Plane.supNorm]
+    mem_Icc, ringSet, mem_ofPred_eq, Plane.supNorm]
   -- On each side one coordinate is pinned to `±r` and the other is confined to `[-r, r]`;
   -- which of the two is pinned is the only difference between the four sides.
   have hleft : ∀ u v : ℝ, |u| = r → |v| ≤ r → max |u| |v| = r := by

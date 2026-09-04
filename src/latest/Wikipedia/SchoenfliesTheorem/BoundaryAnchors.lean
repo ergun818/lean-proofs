@@ -124,7 +124,7 @@ theorem Graph.pointSet_traceGraph_eq_interiorPart
       have harc := h.edge_isArcBetween hxy
       apply Or.inr
       exact Set.mem_iUnion₂.2 ⟨e, by
-        rw [Graph.edgeSet_eq_setOf_exists_isLink]
+        rw [Graph.edgeSet_eq_setOfPred_exists_isLink]
         exact ⟨x, y, (Graph.traceGraph_isLink D).2
           ⟨heD, hxy, heD harc.left_mem, heD harc.right_mem⟩⟩, hze⟩
 

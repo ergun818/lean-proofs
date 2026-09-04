@@ -177,8 +177,8 @@ noncomputable def invertHomeo (a : Plane) : ({a}ᶜ : Set Plane) ≃ₜ ({a}ᶜ 
     z.2 (mem_singleton_iff.2 (invert_eq_center_iff.1 (mem_singleton_iff.1 h)))⟩
   left_inv z := Subtype.ext (invert_invert a z)
   right_inv z := Subtype.ext (invert_invert a z)
-  continuous_toFun := ((continuousOn_invert a).restrict).subtype_mk _
-  continuous_invFun := ((continuousOn_invert a).restrict).subtype_mk _
+  continuous_toFun := ((continuousOn_invert a).domRestrict).subtype_mk _
+  continuous_invFun := ((continuousOn_invert a).domRestrict).subtype_mk _
 
 /-! ### The image of a Jordan curve
 

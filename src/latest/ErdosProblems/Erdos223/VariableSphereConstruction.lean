@@ -212,11 +212,11 @@ lemma isDiameterOne_configuration {r : ℝ} (hr : 1 / Real.sqrt 2 ≤ r)
     exact ⟨pole r, mem_pole_configuration r hk, basePoint r hk i,
       mem_basePoint_configuration r hk i, dist_pole_basePoint hr hk i⟩
 
-def baseVertex {r : ℝ} (hr : 1 / Real.sqrt 2 ≤ r)
+def baseVertex {r : ℝ} (_hr : 1 / Real.sqrt 2 ≤ r)
     {k : ℕ} (hk : 2 ≤ k) (i : Fin k) : {x // x ∈ configuration r hk} :=
   ⟨basePoint r hk i, mem_basePoint_configuration r hk i⟩
 
-def poleVertex {r : ℝ} (hr : 1 / Real.sqrt 2 ≤ r)
+def poleVertex {r : ℝ} (_hr : 1 / Real.sqrt 2 ≤ r)
     {k : ℕ} (hk : 2 ≤ k) : {x // x ∈ configuration r hk} :=
   ⟨pole r, mem_pole_configuration r hk⟩
 

@@ -71,11 +71,13 @@ lemma sum_card_edgeFinset_connectedComponents :
   rw [← Finset.mul_sum] at hd
   omega
 
+omit [DecidableEq V] in
 theorem edge_add_four_le_two_mul_card_of_connectedComponent
     [Nonempty V]
     (hcomp : ∀ C : G.ConnectedComponent,
       C.toSimpleGraph.edgeFinset.card + 4 ≤ 2 * Fintype.card C) :
     G.edgeFinset.card + 4 ≤ 2 * Fintype.card V := by
+  classical
   have hsum := Finset.sum_le_sum (fun C (_ : C ∈ (Finset.univ : Finset G.ConnectedComponent)) ↦
     hcomp C)
   simp only [Finset.sum_add_distrib, Finset.sum_const, Finset.card_univ,

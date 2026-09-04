@@ -106,8 +106,8 @@ private lemma dist_gamma_le_one {s t : ℝ}
   nlinarith
 
 private lemma gamma_injective_on_arc {s t : ℝ}
-    (hs : 0 ≤ s) (hs' : 3 * s ^ 2 ≤ 1)
-    (ht : 0 ≤ t) (ht' : 3 * t ^ 2 ≤ 1)
+    (_hs : 0 ≤ s) (hs' : 3 * s ^ 2 ≤ 1)
+    (_ht : 0 ≤ t) (ht' : 3 * t ^ 2 ≤ 1)
     (h : gamma s = gamma t) : s = t := by
   have hc := congrArg (fun z : Point 2 ↦ z 1) h
   simp [gamma, point2] at hc
@@ -133,7 +133,7 @@ private lemma three_mul_arcEnd_sq : 3 * arcEnd ^ 2 = 1 := by
   rw [arcEnd]
   nlinarith
 
-private def arcParameter {m : ℕ} (hm : 1 < m) (i : Fin m) : ℝ :=
+private def arcParameter {m : ℕ} (_hm : 1 < m) (i : Fin m) : ℝ :=
   (i : ℝ) / ((m - 1 : ℕ) : ℝ) * arcEnd
 
 private lemma arcParameter_nonneg {m : ℕ} (hm : 1 < m) (i : Fin m) :
@@ -201,7 +201,7 @@ private lemma zero_not_mem_rim {m : ℕ} (hm : 1 < m) :
   change rimPoint hm i = 0 at hi
   change ‖rimPoint hm i‖ = 1 at hn
   rw [hi] at hn
-  simpa using hn
+  simp at hn
 
 private lemma card_planeConfiguration (n : ℕ) (hn : 3 ≤ n) :
     (planeConfiguration n hn).card = n := by
@@ -321,7 +321,7 @@ private lemma planeConfiguration_count_lower (n : ℕ) (hn : 3 ≤ n) :
       have hnorm := norm_gamma (arcParameter hm i)
       change ‖rimPoint hm i‖ = 1 at hnorm
       rw [← hz] at hnorm
-      simpa using hnorm
+      simp at hnorm
     exact hz hv
   have hc_ne_j : c ≠ rv j := by
     intro h
@@ -331,7 +331,7 @@ private lemma planeConfiguration_count_lower (n : ℕ) (hn : 3 ≤ n) :
       have hnorm := norm_gamma (arcParameter hm j)
       change ‖rimPoint hm j‖ = 1 at hnorm
       rw [← hz] at hnorm
-      simpa using hnorm
+      simp at hnorm
     exact hz hv
   have hproper : G.incidenceFinset c ⊂ G.edgeFinset := by
     refine Finset.ssubset_iff_subset_ne.2 ⟨G.incidenceFinset_subset c, ?_⟩
@@ -654,14 +654,14 @@ private theorem graph_edge_card_le_of_comap_alternative
 
 private theorem diameterGraph_comap_alternative (A : Finset (Point 2))
     (hA : IsDiameterOne A) :
-    ∀ (W : Type u) [Fintype W] [DecidableEq W]
+    ∀ (W : Type u) [Fintype W]
       (f : W ↪ {x // x ∈ A})
       [DecidableRel ((diameterGraph A).comap f).Adj],
       ((diameterGraph A).comap f).maxDegree ≤ 2 ∨
         ∃ v : W, ((diameterGraph A).comap f).degree v ≤ 1 := by
   classical
   let G := diameterGraph A
-  intro W _ _ f _
+  intro W _ f _
   let H := G.comap f
   by_cases hdeg : H.maxDegree ≤ 2
   · exact Or.inl hdeg
@@ -754,7 +754,7 @@ theorem diameterPairCount_le_card_plane (A : Finset (Point 2))
     (hA : IsDiameterOne A) :
     diameterPairCount A ≤ A.card := by
   have hbound := graph_edge_card_le_of_comap_alternative (diameterGraph A)
-    (diameterGraph_comap_alternative A hA)
+    (fun W _ _ f ↦ diameterGraph_comap_alternative A hA W f)
   simpa [diameterPairCount] using hbound
 
 /-- The exceptional two-point planar value. -/

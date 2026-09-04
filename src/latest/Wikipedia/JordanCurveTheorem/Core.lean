@@ -59,8 +59,8 @@ point. Coordinates are `p 0`, `p 1` of `p : Plane`. -/
 theorem crossing (hbr : BrouwerFPT) {a b c d : ℝ} (_hab : a ≤ b) (_hcd : c ≤ d)
     (h v : ℝ → Plane)
     (hh : ContinuousOn h (Icc (-1) 1)) (hv : ContinuousOn v (Icc (-1) 1))
-    (hhE : ∀ t ∈ Icc (-1:ℝ) 1, h t 0 ∈ Icc a b ∧ h t 1 ∈ Icc c d)
-    (hvE : ∀ t ∈ Icc (-1:ℝ) 1, v t 0 ∈ Icc a b ∧ v t 1 ∈ Icc c d)
+    (hhE : ∀ t ∈ Icc (-1 : ℝ) 1, h t 0 ∈ Icc a b ∧ h t 1 ∈ Icc c d)
+    (hvE : ∀ t ∈ Icc (-1 : ℝ) 1, v t 0 ∈ Icc a b ∧ v t 1 ∈ Icc c d)
     (hh1 : h (-1) 0 = a) (hh2 : h 1 0 = b)
     (hv1 : v (-1) 1 = c) (hv2 : v 1 1 = d) :
     ∃ s ∈ Icc (-1:ℝ) 1, ∃ t ∈ Icc (-1:ℝ) 1, h s = v t := by
@@ -154,11 +154,11 @@ theorem crossing (hbr : BrouwerFPT) {a b c d : ℝ} (_hab : a ≤ b) (_hcd : c �
     intro p hp
     have hN := hNpos p hp
     refine ⟨?_, ?_⟩
-    · show |(v (p 1) 0 - h (p 0) 0) / N p| ≤ 1
+    · change |(v (p 1) 0 - h (p 0) 0) / N p| ≤ 1
       rw [abs_div, abs_of_pos hN, div_le_one hN]
       calc |v (p 1) 0 - h (p 0) 0| = |h (p 0) 0 - v (p 1) 0| := abs_sub_comm _ _
         _ ≤ N p := le_max_left _ _
-    · show |(h (p 0) 1 - v (p 1) 1) / N p| ≤ 1
+    · change |(h (p 0) 1 - v (p 1) 1) / N p| ≤ 1
       rw [abs_div, abs_of_pos hN, div_le_one hN]
       exact le_max_right _ _
   have hmaps : MapsTo F Q Q := by
@@ -167,7 +167,7 @@ theorem crossing (hbr : BrouwerFPT) {a b c d : ℝ} (_hab : a ≤ b) (_hcd : c �
     exact ⟨mem_Icc.2 (abs_le.1 hb0), mem_Icc.2 (abs_le.1 hb1)⟩
   -- Package as a self-map of `Q` and apply Brouwer.
   let f : C(Q, Q) := ⟨fun p => ⟨F p.1, hmaps p.2⟩, by
-    apply Continuous.subtype_mk; exact hFcont.restrict⟩
+    apply Continuous.subtype_mk; exact hFcont.domRestrict⟩
   obtain ⟨x, hx⟩ := hbr Q hconv hcomp hne0 f
   set p₀ : Plane := (x : Plane) with hp0def
   have hp0Q : p₀ ∈ Q := x.2
@@ -251,7 +251,7 @@ theorem isConnected_compl_closedBall {R : ℝ} (hR : 0 ≤ R) :
   have hset : {x : Plane | R < ‖x‖}
       = (fun p : Plane × ℝ => p.2 • p.1) '' ((sphere (0 : Plane) 1) ×ˢ (Ioi R)) := by
     ext x
-    simp only [mem_setOf_eq, mem_image, mem_prod, mem_Ioi, Prod.exists]
+    simp only [mem_ofPred_eq, mem_image, mem_prod, mem_Ioi, Prod.exists]
     constructor
     · intro hx
       have hxpos : 0 < ‖x‖ := lt_of_le_of_lt hR hx
@@ -424,7 +424,7 @@ theorem arc_not_separates (hbr : BrouwerFPT) {A : Set Plane}
     intro a ha
     have h1 := DFunLike.congr_fun hg ⟨a, ha⟩
     simp only [ContinuousMap.restrict_apply, ContinuousMap.id_apply] at h1
-    show (g a : Plane) = a
+    change (g a : Plane) = a
     exact congrArg Subtype.val h1
   -- A radius `R0 ≥ 0` with `A ⊆ closedBall 0 R0`; the cobounded exterior `E`.
   obtain ⟨R0, hR0, hAsub⟩ : ∃ R0 : ℝ, 0 ≤ R0 ∧ A ⊆ closedBall (0 : Plane) R0 := by
@@ -835,7 +835,7 @@ the rectangle `[-1,1] × [-2,2]`.  For `z ∈ range r`, both `dist z a ≤ 2` an
 `z 0 ∈ [-1,1]` and (adding them) `(z 0)²+(z 1)² ≤ 3`, hence `z 1 ∈ [-2,2]`. -/
 theorem normalized_subset_rectangle
     {r : sphere (0 : Plane) 1 → Plane}
-    (hm : (!₂[(-1:ℝ), 0] : Plane) ∈ range r) (hp : (!₂[(1:ℝ), 0] : Plane) ∈ range r)
+    (hm : (!₂[(-1 : ℝ), 0] : Plane) ∈ range r) (hp : (!₂[(1 : ℝ), 0] : Plane) ∈ range r)
     (hfar : ∀ z ∈ range r, ∀ w ∈ range r, dist z w ≤ 2) :
     range r ⊆ {p : Plane | p 0 ∈ Icc (-1:ℝ) 1 ∧ p 1 ∈ Icc (-2:ℝ) 2} := by
   intro z hz
@@ -852,7 +852,7 @@ theorem normalized_subset_rectangle
   have eb1 : (!₂[(1:ℝ), 0] : Plane) 1 = 0 := by simp
   rw [ea0, ea1] at hza2
   rw [eb0, eb1] at hzb2
-  simp only [mem_setOf_eq, mem_Icc]
+  simp only [mem_ofPred_eq, mem_Icc]
   refine ⟨⟨?_, ?_⟩, ⟨?_, ?_⟩⟩
   · nlinarith [sq_nonneg (z 1)]
   · nlinarith [sq_nonneg (z 1)]
@@ -871,11 +871,11 @@ theorem arc_path {S : Set Plane} {a b : Plane} (hj : JoinedIn S a b) :
     ?_, ?_, ?_, ?_⟩
   · exact (hj.somePath.continuous.comp
       (continuous_projIcc.comp (by fun_prop))).continuousOn
-  · show hj.somePath _ = a
+  · change hj.somePath _ = a
     rw [show Set.projIcc (0:ℝ) 1 (by norm_num) (((-1:ℝ) + 1) / 2) = 0 from
       Subtype.ext (by rw [Set.coe_projIcc]; norm_num)]
     exact hj.somePath.source
-  · show hj.somePath _ = b
+  · change hj.somePath _ = b
     rw [show Set.projIcc (0:ℝ) 1 (by norm_num) (((1:ℝ) + 1) / 2) = 1 from
       Subtype.ext (by rw [Set.coe_projIcc]; norm_num)]
     exact hj.somePath.target
@@ -890,7 +890,7 @@ bottom edge `y=-2` to the top edge `y=2`.  Delivers a curve point on the vertica
 axis. -/
 theorem segment_meets_curve (hbr : BrouwerFPT)
     {r : sphere (0 : Plane) 1 → Plane} (hcont : Continuous r) (_hinj : Injective r)
-    (hm : (!₂[(-1:ℝ), 0] : Plane) ∈ range r) (hp : (!₂[(1:ℝ), 0] : Plane) ∈ range r)
+    (hm : (!₂[(-1 : ℝ), 0] : Plane) ∈ range r) (hp : (!₂[(1 : ℝ), 0] : Plane) ∈ range r)
     (hfar : ∀ z ∈ range r, ∀ w ∈ range r, dist z w ≤ 2) :
     ∃ p ∈ range r, p 0 = 0 ∧ p 1 ∈ Icc (-2:ℝ) 2 := by
   -- the curve is path-connected (continuous image of the path-connected circle)
@@ -912,7 +912,8 @@ theorem segment_meets_curve (hbr : BrouwerFPT)
     apply Continuous.continuousOn
     apply (PiLp.continuous_toLp 2 (fun _ : Fin 2 => ℝ)).comp
     refine continuous_pi (fun i => ?_)
-    fin_cases i <;> simp only [Nat.succ_eq_add_one, Nat.reduceAdd, Fin.mk_one, Fin.isValue, Matrix.cons_val_one,
+    fin_cases i <;> simp only [Nat.succ_eq_add_one, Nat.reduceAdd, Fin.mk_one, Fin.isValue,
+      Matrix.cons_val_one,
     Matrix.cons_val_fin_one, Fin.zero_eta, Matrix.cons_val_zero] <;> fun_prop
   have hv0 : ∀ t : ℝ, v t 0 = 0 := by intro t; simp [hvdef]
   have hv1 : ∀ t : ℝ, v t 1 = 2 * t := by intro t; simp [hvdef]
@@ -941,7 +942,7 @@ curve) and nonempty (`segment_meets_curve`), hence attains its `y`-maximum at so
 point `l ∈ range r` with `l 0 = 0`. -/
 theorem exists_ymax_on_axis (hbr : BrouwerFPT)
     {r : sphere (0 : Plane) 1 → Plane} (hcont : Continuous r) (hinj : Injective r)
-    (hm : (!₂[(-1:ℝ), 0] : Plane) ∈ range r) (hp : (!₂[(1:ℝ), 0] : Plane) ∈ range r)
+    (hm : (!₂[(-1 : ℝ), 0] : Plane) ∈ range r) (hp : (!₂[(1 : ℝ), 0] : Plane) ∈ range r)
     (hfar : ∀ z ∈ range r, ∀ w ∈ range r, dist z w ≤ 2) :
     ∃ l ∈ range r, l 0 = 0 ∧ ∀ p ∈ range r, p 0 = 0 → p 1 ≤ l 1 := by
   set Jax : Set Plane := {p ∈ range r | p 0 = 0} with hJax
@@ -985,7 +986,7 @@ pair `a = !₂[-1,0]`, `b = !₂[1,0]` into two closed arcs `J_n`, `J_s ⊆ Plan
 that the `y`-topmost axis point `l` lies in `J_n`. -/
 theorem jordan_arcs (hbr : BrouwerFPT)
     {r : sphere (0 : Plane) 1 → Plane} (hcont : Continuous r) (hinj : Injective r)
-    (hm : (!₂[(-1:ℝ), 0] : Plane) ∈ range r) (hp : (!₂[(1:ℝ), 0] : Plane) ∈ range r)
+    (hm : (!₂[(-1 : ℝ), 0] : Plane) ∈ range r) (hp : (!₂[(1 : ℝ), 0] : Plane) ∈ range r)
     (hfar : ∀ z ∈ range r, ∀ w ∈ range r, dist z w ≤ 2) :
     ∃ J_n J_s : Set Plane,
       IsClosed J_n ∧ IsClosed J_s ∧
@@ -1080,9 +1081,9 @@ arc `J` that joins the left point `a = !₂[-1,0]` to the right point `b = !₂[
 the rectangle.  Immediate from `crossing`, using `arc_path` for the horizontal path. -/
 theorem vertical_meets_arc (hbr : BrouwerFPT) {J : Set Plane}
     (hJsub : J ⊆ {p : Plane | p 0 ∈ Icc (-1:ℝ) 1 ∧ p 1 ∈ Icc (-2:ℝ) 2})
-    (hJoin : JoinedIn J (!₂[(-1:ℝ), 0]) (!₂[(1:ℝ), 0]))
-    {v : ℝ → Plane} (hvcont : ContinuousOn v (Icc (-1:ℝ) 1))
-    (hvE : ∀ t ∈ Icc (-1:ℝ) 1, v t 0 ∈ Icc (-1:ℝ) 1 ∧ v t 1 ∈ Icc (-2:ℝ) 2)
+    (hJoin : JoinedIn J (!₂[(-1 : ℝ), 0]) (!₂[(1 : ℝ), 0]))
+    {v : ℝ → Plane} (hvcont : ContinuousOn v (Icc (-1 : ℝ) 1))
+    (hvE : ∀ t ∈ Icc (-1 : ℝ) 1, v t 0 ∈ Icc (-1 : ℝ) 1 ∧ v t 1 ∈ Icc (-2 : ℝ) 2)
     (hv1 : v (-1) 1 = -2) (hv2 : v 1 1 = 2) :
     ∃ t ∈ Icc (-1:ℝ) 1, v t ∈ J := by
   obtain ⟨h, hcontOn, hh1, hh2, hhmem⟩ := arc_path hJoin
@@ -1097,7 +1098,7 @@ theorem vertical_meets_arc (hbr : BrouwerFPT) {J : Set Plane}
 /-- A path piece `f : ℝ → Plane`, continuous on `[-1,1]`, as a `Path (f (-1)) (f 1)`
 over `unitInterval` (reparametrized by `s ↦ 2s-1`). -/
 private noncomputable def pathOfPiece {f : ℝ → Plane}
-    (hf : ContinuousOn f (Icc (-1:ℝ) 1)) : Path (f (-1)) (f 1) :=
+    (hf : ContinuousOn f (Icc (-1 : ℝ) 1)) : Path (f (-1)) (f 1) :=
   Path.mk ⟨fun s : unitInterval => f (2 * (s : ℝ) - 1), by
       refine hf.comp_continuous (by fun_prop) (fun s => ?_)
       have hs := s.2; rw [Set.mem_Icc] at hs ⊢
@@ -1105,7 +1106,7 @@ private noncomputable def pathOfPiece {f : ℝ → Plane}
     (by norm_num [Set.Icc.coe_zero]) (by norm_num [Set.Icc.coe_one])
 
 private lemma pathOfPiece_range {f : ℝ → Plane}
-    (hf : ContinuousOn f (Icc (-1:ℝ) 1)) :
+    (hf : ContinuousOn f (Icc (-1 : ℝ) 1)) :
     Set.range (pathOfPiece hf) = f '' Icc (-1:ℝ) 1 := by
   ext p
   simp only [Set.mem_range, Set.mem_image, Set.mem_Icc]
@@ -1115,14 +1116,14 @@ private lemma pathOfPiece_range {f : ℝ → Plane}
     exact ⟨2 * (s : ℝ) - 1, ⟨by linarith [hs.1], by linarith [hs.2]⟩, rfl⟩
   · rintro ⟨y, ⟨hy1, hy2⟩, rfl⟩
     refine ⟨⟨(y + 1) / 2, by rw [Set.mem_Icc]; constructor <;> linarith⟩, ?_⟩
-    show f (2 * ((y + 1) / 2) - 1) = f y
+    change f (2 * ((y + 1) / 2) - 1) = f y
     congr 1; ring
 
 /-- **Path concatenation (2 pieces).** Two path pieces on `[-1,1]` that chain up
 (`f 1 = g (-1)`) glue to one path `c` on `[-1,1]` from `f (-1)` to `g 1`, whose image
 is contained in the union of the pieces' images. -/
 theorem concatPath2 {f g : ℝ → Plane}
-    (hf : ContinuousOn f (Icc (-1:ℝ) 1)) (hg : ContinuousOn g (Icc (-1:ℝ) 1))
+    (hf : ContinuousOn f (Icc (-1 : ℝ) 1)) (hg : ContinuousOn g (Icc (-1 : ℝ) 1))
     (hchain : f 1 = g (-1)) :
     ∃ c : ℝ → Plane, ContinuousOn c (Icc (-1:ℝ) 1) ∧ c (-1) = f (-1) ∧ c 1 = g 1 ∧
       ∀ t ∈ Icc (-1:ℝ) 1, c t ∈ f '' Icc (-1:ℝ) 1 ∪ g '' Icc (-1:ℝ) 1 := by
@@ -1130,11 +1131,11 @@ theorem concatPath2 {f g : ℝ → Plane}
     (pathOfPiece hf).trans ((pathOfPiece hg).cast hchain rfl) with hP
   refine ⟨fun t => P (Set.projIcc 0 1 (by norm_num) ((t + 1) / 2)), ?_, ?_, ?_, ?_⟩
   · exact (P.continuous.comp (continuous_projIcc.comp (by fun_prop))).continuousOn
-  · show P _ = f (-1)
+  · change P _ = f (-1)
     rw [show Set.projIcc (0:ℝ) 1 (by norm_num) (((-1:ℝ) + 1) / 2) = 0 from
       Subtype.ext (by rw [Set.coe_projIcc]; norm_num)]
     exact P.source
-  · show P _ = g 1
+  · change P _ = g 1
     rw [show Set.projIcc (0:ℝ) 1 (by norm_num) (((1:ℝ) + 1) / 2) = 1 from
       Subtype.ext (by rw [Set.coe_projIcc]; norm_num)]
     exact P.target
@@ -1151,8 +1152,8 @@ theorem concatPath2 {f g : ℝ → Plane}
 one path `c` on `[-1,1]` from `f (-1)` to `h 1`, with image in the union of the three
 pieces' images. -/
 theorem concatPath3 {f g h : ℝ → Plane}
-    (hf : ContinuousOn f (Icc (-1:ℝ) 1)) (hg : ContinuousOn g (Icc (-1:ℝ) 1))
-    (hh : ContinuousOn h (Icc (-1:ℝ) 1))
+    (hf : ContinuousOn f (Icc (-1 : ℝ) 1)) (hg : ContinuousOn g (Icc (-1 : ℝ) 1))
+    (hh : ContinuousOn h (Icc (-1 : ℝ) 1))
     (hfg : f 1 = g (-1)) (hgh : g 1 = h (-1)) :
     ∃ c : ℝ → Plane, ContinuousOn c (Icc (-1:ℝ) 1) ∧ c (-1) = f (-1) ∧ c 1 = h 1 ∧
       ∀ t ∈ Icc (-1:ℝ) 1,
@@ -1170,9 +1171,9 @@ theorem concatPath3 {f g h : ℝ → Plane}
 path `c` on `[-1,1]` from `f1 (-1)` to `f5 1`, with image in the union of the five
 pieces' images. -/
 theorem concatPath5 {f1 f2 f3 f4 f5 : ℝ → Plane}
-    (h1 : ContinuousOn f1 (Icc (-1:ℝ) 1)) (h2 : ContinuousOn f2 (Icc (-1:ℝ) 1))
-    (h3 : ContinuousOn f3 (Icc (-1:ℝ) 1)) (h4 : ContinuousOn f4 (Icc (-1:ℝ) 1))
-    (h5 : ContinuousOn f5 (Icc (-1:ℝ) 1))
+    (h1 : ContinuousOn f1 (Icc (-1 : ℝ) 1)) (h2 : ContinuousOn f2 (Icc (-1 : ℝ) 1))
+    (h3 : ContinuousOn f3 (Icc (-1 : ℝ) 1)) (h4 : ContinuousOn f4 (Icc (-1 : ℝ) 1))
+    (h5 : ContinuousOn f5 (Icc (-1 : ℝ) 1))
     (c12 : f1 1 = f2 (-1)) (c23 : f2 1 = f3 (-1)) (c34 : f3 1 = f4 (-1))
     (c45 : f4 1 = f5 (-1)) :
     ∃ c : ℝ → Plane, ContinuousOn c (Icc (-1:ℝ) 1) ∧ c (-1) = f1 (-1) ∧ c 1 = f5 1 ∧
@@ -1221,7 +1222,7 @@ avoiding `J_s`, contradicting `vertical_meets_arc` (`J_s` joins `a` to `b`).  Th
 crossing point lies on the segment, so it sits on the axis at height `≤ m 1`. -/
 theorem ms_meets_Js (hbr : BrouwerFPT)
     {r : sphere (0 : Plane) 1 → Plane} (_hcont : Continuous r) (_hinj : Injective r)
-    (hmr : (!₂[(-1:ℝ), 0] : Plane) ∈ range r) (hpr : (!₂[(1:ℝ), 0] : Plane) ∈ range r)
+    (hmr : (!₂[(-1 : ℝ), 0] : Plane) ∈ range r) (hpr : (!₂[(1 : ℝ), 0] : Plane) ∈ range r)
     (hfar : ∀ z ∈ range r, ∀ w ∈ range r, dist z w ≤ 2)
     {J_n J_s : Set Plane}
     (hUnion : J_n ∪ J_s = range r)
@@ -1361,7 +1362,7 @@ The established `y`-ordering is `q 1 ≤ p 1 ≤ z₀ 1 ≤ m 1 ≤ l 1`.  (Note
 the placement of `z₀` between `p` and `m` — provable at this stage.) -/
 theorem exists_construction_points (hbr : BrouwerFPT)
     {r : sphere (0 : Plane) 1 → Plane} (hcont : Continuous r) (hinj : Injective r)
-    (hm : (!₂[(-1:ℝ), 0] : Plane) ∈ range r) (hp : (!₂[(1:ℝ), 0] : Plane) ∈ range r)
+    (hm : (!₂[(-1 : ℝ), 0] : Plane) ∈ range r) (hp : (!₂[(1 : ℝ), 0] : Plane) ∈ range r)
     (hfar : ∀ z ∈ range r, ∀ w ∈ range r, dist z w ≤ 2) :
     ∃ (J_n J_s : Set Plane) (l m p q z₀ : Plane),
       J_n ∪ J_s = range r ∧
@@ -1442,14 +1443,14 @@ and ending outside a closed superset `C ⊇ O` has a *first exit time* `tw ∈ (
 `α tw` lies in the frontier layer `C \ O`, and `α u ∈ O` for all `u < tw`. -/
 theorem exists_first_exit {α : ℝ → Plane} {O C : Set Plane}
     (hO : IsOpen O) (hC : IsClosed C) (hOC : O ⊆ C)
-    (hcont : ContinuousOn α (Icc (0:ℝ) 1))
+    (hcont : ContinuousOn α (Icc (0 : ℝ) 1))
     (h0 : α 0 ∈ O) (h1 : α 1 ∉ C) :
     ∃ tw ∈ Ioc (0:ℝ) 1, α tw ∈ C ∧ α tw ∉ O ∧ ∀ u ∈ Ico (0:ℝ) tw, α u ∈ O := by
   set S : Set ℝ := {t ∈ Icc (0:ℝ) 1 | α t ∉ O} with hSdef
   -- `S` is closed: it is `Icc 0 1 ∩ α⁻¹(Oᶜ)`
   have hScl : IsClosed S := by
     have hEq : S = Icc (0:ℝ) 1 ∩ α ⁻¹' Oᶜ := by
-      ext t; simp only [hSdef, mem_setOf_eq, mem_inter_iff, mem_preimage, mem_compl_iff]
+      ext t; simp only [hSdef, mem_ofPred_eq, mem_inter_iff, mem_preimage, mem_compl_iff]
     rw [hEq]; exact hcont.preimage_isClosed_of_isClosed isClosed_Icc hO.isClosed_compl
   have hSne : S.Nonempty :=
     ⟨1, ⟨by norm_num, fun h => h1 (hOC h)⟩⟩
@@ -1488,12 +1489,13 @@ theorem isPathConnected_vertSeg (c : ℝ) {T : Set ℝ} (hT : IsPathConnected T)
   have hfcont : Continuous (fun y : ℝ => (!₂[c, y] : Plane)) := by
     apply (PiLp.continuous_toLp 2 (fun _ : Fin 2 => ℝ)).comp
     refine continuous_pi (fun i => ?_)
-    fin_cases i <;> simp only [Nat.succ_eq_add_one, Nat.reduceAdd, Fin.mk_one, Fin.isValue, Matrix.cons_val_one,
+    fin_cases i <;> simp only [Nat.succ_eq_add_one, Nat.reduceAdd, Fin.mk_one, Fin.isValue,
+      Matrix.cons_val_one,
     Matrix.cons_val_fin_one, Fin.zero_eta, Matrix.cons_val_zero] <;> fun_prop
   have himg := hT.image hfcont
   have hEq : (fun y : ℝ => (!₂[c, y] : Plane)) '' T = {p : Plane | p 0 = c ∧ p 1 ∈ T} := by
     ext p
-    simp only [mem_image, mem_setOf_eq]
+    simp only [mem_image, mem_ofPred_eq]
     constructor
     · rintro ⟨y, hy, rfl⟩; exact ⟨by simp, by simpa using hy⟩
     · rintro ⟨h0, h1⟩
@@ -1506,12 +1508,13 @@ theorem isPathConnected_horizSeg (c : ℝ) {T : Set ℝ} (hT : IsPathConnected T
   have hfcont : Continuous (fun x : ℝ => (!₂[x, c] : Plane)) := by
     apply (PiLp.continuous_toLp 2 (fun _ : Fin 2 => ℝ)).comp
     refine continuous_pi (fun i => ?_)
-    fin_cases i <;> simp only [Nat.succ_eq_add_one, Nat.reduceAdd, Fin.mk_one, Fin.isValue, Matrix.cons_val_one,
+    fin_cases i <;> simp only [Nat.succ_eq_add_one, Nat.reduceAdd, Fin.mk_one, Fin.isValue,
+      Matrix.cons_val_one,
     Matrix.cons_val_fin_one, Fin.zero_eta, Matrix.cons_val_zero] <;> fun_prop
   have himg := hT.image hfcont
   have hEq : (fun x : ℝ => (!₂[x, c] : Plane)) '' T = {p : Plane | p 1 = c ∧ p 0 ∈ T} := by
     ext p
-    simp only [mem_image, mem_setOf_eq]
+    simp only [mem_image, mem_ofPred_eq]
     constructor
     · rintro ⟨y, hy, rfl⟩; exact ⟨by simp, by simpa using hy⟩
     · rintro ⟨h0, h1⟩
@@ -1524,7 +1527,7 @@ the frontier of the normalized rectangle `[-1,1]×[-2,2]` has `y = 0` (so it is 
 and pins the left/right edges to `y = 0`. -/
 theorem curve_boundary_axis
     {r : sphere (0 : Plane) 1 → Plane}
-    (hm : (!₂[(-1:ℝ), 0] : Plane) ∈ range r) (hp : (!₂[(1:ℝ), 0] : Plane) ∈ range r)
+    (hm : (!₂[(-1 : ℝ), 0] : Plane) ∈ range r) (hp : (!₂[(1 : ℝ), 0] : Plane) ∈ range r)
     (hfar : ∀ z ∈ range r, ∀ w ∈ range r, dist z w ≤ 2) :
     ∀ p ∈ range r, (p 0 = -1 ∨ p 0 = 1 ∨ p 1 = -2 ∨ p 1 = 2) → p 1 = 0 := by
   intro p hp' hbdry
@@ -1547,7 +1550,7 @@ path-connected, contains the bottom axis point `!₂[0,-2]`, lies in the rectang
 avoids the curve; moreover any frontier point with `y < 0` lies in it. -/
 theorem exists_lower_boundary_path
     {r : sphere (0 : Plane) 1 → Plane}
-    (hm : (!₂[(-1:ℝ), 0] : Plane) ∈ range r) (hp : (!₂[(1:ℝ), 0] : Plane) ∈ range r)
+    (hm : (!₂[(-1 : ℝ), 0] : Plane) ∈ range r) (hp : (!₂[(1 : ℝ), 0] : Plane) ∈ range r)
     (hfar : ∀ z ∈ range r, ∀ w ∈ range r, dist z w ≤ 2) :
     ∃ G : Set Plane,
       IsPathConnected G ∧
@@ -1564,11 +1567,16 @@ theorem exists_lower_boundary_path
   have hRpc : IsPathConnected Rt :=
     isPathConnected_vertSeg 1 ((convex_Ico _ _).isPathConnected (nonempty_Ico.mpr (by norm_num)))
   have hBpc : IsPathConnected Bot :=
-    isPathConnected_horizSeg (-2) ((convex_Icc _ _).isPathConnected (nonempty_Icc.mpr (by norm_num)))
-  have memL : (!₂[(-1:ℝ), -2] : Plane) ∈ L := ⟨by simp, by rw [mem_Ico]; exact ⟨by simp, by norm_num⟩⟩
-  have memBotL : (!₂[(-1:ℝ), -2] : Plane) ∈ Bot := ⟨by simp, by rw [mem_Icc]; exact ⟨by norm_num, by norm_num⟩⟩
-  have memBotR : (!₂[(1:ℝ), -2] : Plane) ∈ Bot := ⟨by simp, by rw [mem_Icc]; exact ⟨by norm_num, by norm_num⟩⟩
-  have memR : (!₂[(1:ℝ), -2] : Plane) ∈ Rt := ⟨by simp, by rw [mem_Ico]; exact ⟨by simp, by norm_num⟩⟩
+    isPathConnected_horizSeg (-2) ((convex_Icc _ _).isPathConnected (nonempty_Icc.mpr (by
+      norm_num)))
+  have memL : (!₂[(-1:ℝ), -2] : Plane) ∈ L := ⟨by simp, by rw [mem_Ico]; exact ⟨by simp, by
+    norm_num⟩⟩
+  have memBotL : (!₂[(-1:ℝ), -2] : Plane) ∈ Bot := ⟨by simp, by rw [mem_Icc]; exact ⟨by norm_num,
+    by norm_num⟩⟩
+  have memBotR : (!₂[(1:ℝ), -2] : Plane) ∈ Bot := ⟨by simp, by rw [mem_Icc]; exact ⟨by norm_num, by
+    norm_num⟩⟩
+  have memR : (!₂[(1:ℝ), -2] : Plane) ∈ Rt := ⟨by simp, by rw [mem_Ico]; exact ⟨by simp, by
+    norm_num⟩⟩
   have hLB : IsPathConnected (L ∪ Bot) := hLpc.union hBpc ⟨_, memL, memBotL⟩
   have hG : IsPathConnected ((L ∪ Bot) ∪ Rt) := hLB.union hRpc ⟨_, Or.inr memBotR, memR⟩
   refine ⟨(L ∪ Bot) ∪ Rt, hG,
@@ -1582,7 +1590,8 @@ theorem exists_lower_boundary_path
       exact ⟨by rw [mem_Icc, h0]; norm_num, by rw [mem_Icc]; exact ⟨h1.1, by linarith [h1.2]⟩⟩
   · rintro p ((hpp | hpp) | hpp) hpr
     · have := curve_boundary_axis hm hp hfar p hpr (Or.inl hpp.1); linarith [hpp.2.2]
-    · have := curve_boundary_axis hm hp hfar p hpr (Or.inr (Or.inr (Or.inl hpp.1))); linarith [hpp.1]
+    · have := curve_boundary_axis hm hp hfar p hpr (Or.inr (Or.inr (Or.inl hpp.1))); linarith
+        [hpp.1]
     · have := curve_boundary_axis hm hp hfar p hpr (Or.inr (Or.inl hpp.1)); linarith [hpp.2.2]
   · intro p hp0 hp1 hnint hpneg
     rcases not_and_or.mp hnint with hn0 | hn1
@@ -1600,7 +1609,7 @@ path-connected, contains the top axis point `!₂[0,2]`, lies in the rectangle, 
 avoids the curve; moreover any frontier point with `y > 0` lies in it. -/
 theorem exists_upper_boundary_path
     {r : sphere (0 : Plane) 1 → Plane}
-    (hm : (!₂[(-1:ℝ), 0] : Plane) ∈ range r) (hp : (!₂[(1:ℝ), 0] : Plane) ∈ range r)
+    (hm : (!₂[(-1 : ℝ), 0] : Plane) ∈ range r) (hp : (!₂[(1 : ℝ), 0] : Plane) ∈ range r)
     (hfar : ∀ z ∈ range r, ∀ w ∈ range r, dist z w ≤ 2) :
     ∃ G : Set Plane,
       IsPathConnected G ∧
@@ -1618,10 +1627,14 @@ theorem exists_upper_boundary_path
     isPathConnected_vertSeg 1 ((convex_Ioc _ _).isPathConnected (nonempty_Ioc.mpr (by norm_num)))
   have hTpc : IsPathConnected Top :=
     isPathConnected_horizSeg 2 ((convex_Icc _ _).isPathConnected (nonempty_Icc.mpr (by norm_num)))
-  have memL : (!₂[(-1:ℝ), 2] : Plane) ∈ L := ⟨by simp, by rw [mem_Ioc]; exact ⟨by norm_num, by simp⟩⟩
-  have memTopL : (!₂[(-1:ℝ), 2] : Plane) ∈ Top := ⟨by simp, by rw [mem_Icc]; exact ⟨by norm_num, by norm_num⟩⟩
-  have memTopR : (!₂[(1:ℝ), 2] : Plane) ∈ Top := ⟨by simp, by rw [mem_Icc]; exact ⟨by norm_num, by norm_num⟩⟩
-  have memR : (!₂[(1:ℝ), 2] : Plane) ∈ Rt := ⟨by simp, by rw [mem_Ioc]; exact ⟨by norm_num, by simp⟩⟩
+  have memL : (!₂[(-1:ℝ), 2] : Plane) ∈ L := ⟨by simp, by rw [mem_Ioc]; exact ⟨by norm_num, by
+    simp⟩⟩
+  have memTopL : (!₂[(-1:ℝ), 2] : Plane) ∈ Top := ⟨by simp, by rw [mem_Icc]; exact ⟨by norm_num, by
+    norm_num⟩⟩
+  have memTopR : (!₂[(1:ℝ), 2] : Plane) ∈ Top := ⟨by simp, by rw [mem_Icc]; exact ⟨by norm_num, by
+    norm_num⟩⟩
+  have memR : (!₂[(1:ℝ), 2] : Plane) ∈ Rt := ⟨by simp, by rw [mem_Ioc]; exact ⟨by norm_num, by
+    simp⟩⟩
   have hLT : IsPathConnected (L ∪ Top) := hLpc.union hTpc ⟨_, memL, memTopL⟩
   have hG : IsPathConnected ((L ∪ Top) ∪ Rt) := hLT.union hRpc ⟨_, Or.inr memTopR, memR⟩
   refine ⟨(L ∪ Top) ∪ Rt, hG,
@@ -1635,7 +1648,8 @@ theorem exists_upper_boundary_path
       exact ⟨by rw [mem_Icc, h0]; norm_num, by rw [mem_Icc]; exact ⟨by linarith [h1.1], h1.2⟩⟩
   · rintro p ((hpp | hpp) | hpp) hpr
     · have := curve_boundary_axis hm hp hfar p hpr (Or.inl hpp.1); linarith [hpp.2.1]
-    · have := curve_boundary_axis hm hp hfar p hpr (Or.inr (Or.inr (Or.inr hpp.1))); linarith [hpp.1]
+    · have := curve_boundary_axis hm hp hfar p hpr (Or.inr (Or.inr (Or.inr hpp.1))); linarith
+        [hpp.1]
     · have := curve_boundary_axis hm hp hfar p hpr (Or.inr (Or.inl hpp.1)); linarith [hpp.2.1]
   · intro p hp0 hp1 hnint hppos
     rcases not_and_or.mp hnint with hn0 | hn1
@@ -1669,8 +1683,8 @@ private lemma axis_segment {x y : Plane} (hx0 : x 0 = 0) (hy0 : y 0 = 0) (hxy : 
       (∀ t, g t 0 = 0) ∧ ∀ t ∈ Icc (-1:ℝ) 1, g t 1 ∈ Icc (x 1) (y 1) := by
   refine ⟨fun t => x + ((t + 1) / 2) • (y - x),
     (by fun_prop : Continuous fun t : ℝ => x + ((t + 1) / 2) • (y - x)).continuousOn,
-    by show x + (((-1:ℝ) + 1) / 2) • (y - x) = x; module,
-    by show x + (((1:ℝ) + 1) / 2) • (y - x) = y; module,
+    by change x + (((-1:ℝ) + 1) / 2) • (y - x) = x; module,
+    by change x + (((1:ℝ) + 1) / 2) • (y - x) = y; module,
     fun t => by simp [PiLp.add_apply, PiLp.smul_apply, PiLp.sub_apply, hx0, hy0], ?_⟩
   intro t ht; rw [mem_Icc] at ht ⊢
   simp only [PiLp.add_apply, PiLp.smul_apply, PiLp.sub_apply, smul_eq_mul]
@@ -1698,7 +1712,7 @@ private lemma isOpen_rectO :
     IsOpen {w : Plane | w 0 ∈ Ioo (-1:ℝ) 1 ∧ w 1 ∈ Ioo (-2:ℝ) 2} := by
   have hEq : {w : Plane | w 0 ∈ Ioo (-1:ℝ) 1 ∧ w 1 ∈ Ioo (-2:ℝ) 2}
       = (fun w : Plane => w 0) ⁻¹' Ioo (-1:ℝ) 1 ∩ (fun w : Plane => w 1) ⁻¹' Ioo (-2:ℝ) 2 := by
-    ext w; simp only [mem_setOf_eq, mem_inter_iff, mem_preimage]
+    ext w; simp only [mem_ofPred_eq, mem_inter_iff, mem_preimage]
   rw [hEq]
   exact (isOpen_Ioo.preimage (by fun_prop)).inter (isOpen_Ioo.preimage (by fun_prop))
 
@@ -1707,15 +1721,15 @@ private lemma isClosed_rectE :
     IsClosed {w : Plane | w 0 ∈ Icc (-1:ℝ) 1 ∧ w 1 ∈ Icc (-2:ℝ) 2} := by
   have hEq : {w : Plane | w 0 ∈ Icc (-1:ℝ) 1 ∧ w 1 ∈ Icc (-2:ℝ) 2}
       = (fun w : Plane => w 0) ⁻¹' Icc (-1:ℝ) 1 ∩ (fun w : Plane => w 1) ⁻¹' Icc (-2:ℝ) 2 := by
-    ext w; simp only [mem_setOf_eq, mem_inter_iff, mem_preimage]
+    ext w; simp only [mem_ofPred_eq, mem_inter_iff, mem_preimage]
   rw [hEq]
   exact (isClosed_Icc.preimage (by fun_prop)).inter (isClosed_Icc.preimage (by fun_prop))
 
 /-- A point of the frontier `E ∖ O` on the horizontal axis is one of the endpoints
 `!₂[±1, 0]`, hence on the curve. -/
 private lemma axis_zero_mem_range {r : sphere (0 : Plane) 1 → Plane}
-    (hm : (!₂[(-1:ℝ), 0] : Plane) ∈ range r) (hp : (!₂[(1:ℝ), 0] : Plane) ∈ range r)
-    {x : Plane} (hxIcc : x 0 ∈ Icc (-1:ℝ) 1)
+    (hm : (!₂[(-1 : ℝ), 0] : Plane) ∈ range r) (hp : (!₂[(1 : ℝ), 0] : Plane) ∈ range r)
+    {x : Plane} (hxIcc : x 0 ∈ Icc (-1 : ℝ) 1)
     (hxO : ¬(x 0 ∈ Ioo (-1:ℝ) 1 ∧ x 1 ∈ Ioo (-2:ℝ) 2))
     (hx1 : x 1 = 0) : x ∈ range r := by
   have hnotIoo0 : x 0 ∉ Ioo (-1:ℝ) 1 := fun hIoo =>
@@ -1733,12 +1747,12 @@ escaping path reversed, axis, north arc, axis) misses `J_s`, contradicting
 `vertical_meets_arc`. -/
 private lemma step_A_case_low (hbr : BrouwerFPT)
     {r : sphere (0 : Plane) 1 → Plane}
-    (hm : (!₂[(-1:ℝ), 0] : Plane) ∈ range r) (hp : (!₂[(1:ℝ), 0] : Plane) ∈ range r)
+    (hm : (!₂[(-1 : ℝ), 0] : Plane) ∈ range r) (hp : (!₂[(1 : ℝ), 0] : Plane) ∈ range r)
     (hfar : ∀ z ∈ range r, ∀ w ∈ range r, dist z w ≤ 2)
     {J_n J_s : Set Plane} (hJnr : J_n ⊆ range r) (hJsr : J_s ⊆ range r)
     (hInter : J_n ∩ J_s = ({!₂[(-1:ℝ), 0], !₂[(1:ℝ), 0]} : Set Plane))
     (hpcJn : IsPathConnected (J_n \ ({!₂[(-1:ℝ), 0], !₂[(1:ℝ), 0]} : Set Plane)))
-    (hJoinJs : JoinedIn J_s (!₂[(-1:ℝ), 0]) (!₂[(1:ℝ), 0]))
+    (hJoinJs : JoinedIn J_s (!₂[(-1 : ℝ), 0]) (!₂[(1 : ℝ), 0]))
     {l m p z₀ : Plane}
     (hlJn : l ∈ J_n) (hl0 : l 0 = 0) (hlmax : ∀ w ∈ range r, w 0 = 0 → w 1 ≤ l 1)
     (hmJn : m ∈ J_n) (hm0 : m 0 = 0)
@@ -1746,7 +1760,7 @@ private lemma step_A_case_low (hbr : BrouwerFPT)
     (hz₀0 : z₀ 0 = 0) (hpz₀_lt : p 1 < z₀ 1) (hz₀m_lt : z₀ 1 < m 1)
     {α : ℝ → Plane} {tw : ℝ}
     (hαcont : Continuous α) (hα0 : α 0 = z₀) (htw0 : 0 ≤ tw)
-    (hαE : ∀ u ∈ Icc (0:ℝ) tw, α u 0 ∈ Icc (-1:ℝ) 1 ∧ α u 1 ∈ Icc (-2:ℝ) 2)
+    (hαE : ∀ u ∈ Icc (0 : ℝ) tw, α u 0 ∈ Icc (-1 : ℝ) 1 ∧ α u 1 ∈ Icc (-2 : ℝ) 2)
     (hαnr : ∀ u : ℝ, α u ∉ range r)
     (hwC0 : α tw 0 ∈ Icc (-1:ℝ) 1) (hwC1 : α tw 1 ∈ Icc (-2:ℝ) 2)
     (hwO : ¬(α tw 0 ∈ Ioo (-1:ℝ) 1 ∧ α tw 1 ∈ Ioo (-2:ℝ) 2))
@@ -1770,9 +1784,9 @@ private lemma step_A_case_low (hbr : BrouwerFPT)
   set g2 : ℝ → Plane := fun t => α (tw * (1 - t) / 2) with hg2def
   have hg2cont : ContinuousOn g2 (Icc (-1:ℝ) 1) :=
     (hαcont.comp (by fun_prop : Continuous fun t : ℝ => tw * (1 - t) / 2)).continuousOn
-  have hg2a : g2 (-1) = α tw := by show α (tw * (1 - (-1)) / 2) = α tw; congr 1; ring
+  have hg2a : g2 (-1) = α tw := by change α (tw * (1 - (-1)) / 2) = α tw; congr 1; ring
   have hg2b : g2 1 = z₀ := by
-    show α (tw * (1 - 1) / 2) = z₀; rw [show tw * (1 - 1) / 2 = (0:ℝ) from by ring, hα0]
+    change α (tw * (1 - 1) / 2) = z₀; rw [show tw * (1 - 1) / 2 = (0:ℝ) from by ring, hα0]
   have hg2arg : ∀ t ∈ Icc (-1:ℝ) 1, tw * (1 - t) / 2 ∈ Icc (0:ℝ) tw := by
     intro t ht; rw [mem_Icc] at ht
     rw [mul_div_assoc]
@@ -1844,12 +1858,12 @@ meets the frontier above the axis, the concatenation `s → q → p → z₀ →
 `J_n`, contradicting `vertical_meets_arc`. -/
 private lemma step_A_case_high (hbr : BrouwerFPT)
     {r : sphere (0 : Plane) 1 → Plane}
-    (hm : (!₂[(-1:ℝ), 0] : Plane) ∈ range r) (hp : (!₂[(1:ℝ), 0] : Plane) ∈ range r)
+    (hm : (!₂[(-1 : ℝ), 0] : Plane) ∈ range r) (hp : (!₂[(1 : ℝ), 0] : Plane) ∈ range r)
     (hfar : ∀ z ∈ range r, ∀ w ∈ range r, dist z w ≤ 2)
     {J_n J_s : Set Plane} (hJnr : J_n ⊆ range r) (hJsr : J_s ⊆ range r)
     (hInter : J_n ∩ J_s = ({!₂[(-1:ℝ), 0], !₂[(1:ℝ), 0]} : Set Plane))
     (hpcJs : IsPathConnected (J_s \ ({!₂[(-1:ℝ), 0], !₂[(1:ℝ), 0]} : Set Plane)))
-    (hJoinJn : JoinedIn J_n (!₂[(-1:ℝ), 0]) (!₂[(1:ℝ), 0]))
+    (hJoinJn : JoinedIn J_n (!₂[(-1 : ℝ), 0]) (!₂[(1 : ℝ), 0]))
     {m p q z₀ : Plane}
     (hmJn : m ∈ J_n) (_hm0 : m 0 = 0) (hmmin : ∀ w ∈ J_n, w 0 = 0 → m 1 ≤ w 1)
     (hpJs : p ∈ J_s) (hp0 : p 0 = 0)
@@ -1857,7 +1871,7 @@ private lemma step_A_case_high (hbr : BrouwerFPT)
     (hz₀0 : z₀ 0 = 0) (hpz₀_lt : p 1 < z₀ 1) (hz₀m_lt : z₀ 1 < m 1)
     {α : ℝ → Plane} {tw : ℝ}
     (hαcont : Continuous α) (hα0 : α 0 = z₀) (htw0 : 0 ≤ tw)
-    (hαE : ∀ u ∈ Icc (0:ℝ) tw, α u 0 ∈ Icc (-1:ℝ) 1 ∧ α u 1 ∈ Icc (-2:ℝ) 2)
+    (hαE : ∀ u ∈ Icc (0 : ℝ) tw, α u 0 ∈ Icc (-1 : ℝ) 1 ∧ α u 1 ∈ Icc (-2 : ℝ) 2)
     (hαnr : ∀ u : ℝ, α u ∉ range r)
     (hwC0 : α tw 0 ∈ Icc (-1:ℝ) 1) (hwC1 : α tw 1 ∈ Icc (-2:ℝ) 2)
     (hwO : ¬(α tw 0 ∈ Ioo (-1:ℝ) 1 ∧ α tw 1 ∈ Ioo (-2:ℝ) 2))
@@ -1902,8 +1916,8 @@ private lemma step_A_case_high (hbr : BrouwerFPT)
   have hg4cont : ContinuousOn g4 (Icc (-1:ℝ) 1) :=
     (hαcont.comp (by fun_prop : Continuous fun t : ℝ => tw * (t + 1) / 2)).continuousOn
   have hg4a : g4 (-1) = z₀ := by
-    show α (tw * ((-1) + 1) / 2) = z₀; rw [show tw * ((-1) + 1) / 2 = (0:ℝ) from by ring, hα0]
-  have hg4b : g4 1 = α tw := by show α (tw * (1 + 1) / 2) = α tw; congr 1; ring
+    change α (tw * ((-1) + 1) / 2) = z₀; rw [show tw * ((-1) + 1) / 2 = (0:ℝ) from by ring, hα0]
+  have hg4b : g4 1 = α tw := by change α (tw * (1 + 1) / 2) = α tw; congr 1; ring
   have hg4arg : ∀ t ∈ Icc (-1:ℝ) 1, tw * (t + 1) / 2 ∈ Icc (0:ℝ) tw := by
     intro t ht; rw [mem_Icc] at ht
     rw [mul_div_assoc]
@@ -1951,7 +1965,7 @@ private lemma step_A_case_high (hbr : BrouwerFPT)
 the farthest pair sits at `!₂[-1,0]`, `!₂[1,0]` (so the diameter is `2`). -/
 theorem step_A_normalized (hbr : BrouwerFPT)
     {r : sphere (0 : Plane) 1 → Plane} (hcont : Continuous r) (hinj : Injective r)
-    (hm : (!₂[(-1:ℝ), 0] : Plane) ∈ range r) (hp : (!₂[(1:ℝ), 0] : Plane) ∈ range r)
+    (hm : (!₂[(-1 : ℝ), 0] : Plane) ∈ range r) (hp : (!₂[(1 : ℝ), 0] : Plane) ∈ range r)
     (hfar : ∀ z ∈ range r, ∀ w ∈ range r, dist z w ≤ 2) :
     ∃ x ∈ (range r)ᶜ, IsBounded (connectedComponentIn (range r)ᶜ x) := by
   classical
@@ -2012,12 +2026,14 @@ theorem step_A_normalized (hbr : BrouwerFPT)
   set α : ℝ → Plane := fun t => hJoinU.somePath (Set.projIcc (0:ℝ) 1 (by norm_num) t) with hαdef
   have hαcont : Continuous α := hJoinU.somePath.continuous.comp continuous_projIcc
   have hα0 : α 0 = z₀ := by
-    show hJoinU.somePath _ = z₀
-    rw [show Set.projIcc (0:ℝ) 1 (by norm_num) 0 = 0 from Subtype.ext (by rw [Set.coe_projIcc]; norm_num)]
+    change hJoinU.somePath _ = z₀
+    rw [show Set.projIcc (0:ℝ) 1 (by norm_num) 0 = 0 from
+      Subtype.ext (by rw [Set.coe_projIcc]; norm_num)]
     exact hJoinU.somePath.source
   have hα1 : α 1 = y := by
-    show hJoinU.somePath _ = y
-    rw [show Set.projIcc (0:ℝ) 1 (by norm_num) 1 = 1 from Subtype.ext (by rw [Set.coe_projIcc]; norm_num)]
+    change hJoinU.somePath _ = y
+    rw [show Set.projIcc (0:ℝ) 1 (by norm_num) 1 = 1 from
+      Subtype.ext (by rw [Set.coe_projIcc]; norm_num)]
     exact hJoinU.somePath.target
   have hαU : ∀ t : ℝ, α t ∈ U := fun t => hJoinU.somePath_mem _
   -- first exit through the frontier `E \ O`
@@ -2105,7 +2121,8 @@ private lemma axis_ray_up_unbounded (c : ℝ) :
     refine ⟨by simp, ?_⟩
     rw [mem_Ioi, hy1]; linarith [le_abs_self c, abs_nonneg M]
   have hin := hM hmem
-  rw [mem_closedBall_zero_iff, norm_axis_pt, abs_of_nonneg (by positivity : (0:ℝ) ≤ |c| + |M| + 1)] at hin
+  rw [mem_closedBall_zero_iff, norm_axis_pt, abs_of_nonneg (by positivity : (0:ℝ) ≤ |c| + |M| + 1)]
+    at hin
   linarith [le_abs_self M, abs_nonneg c]
 
 /-- The downward axis ray `{p | p 0 = 0 ∧ p 1 < c}` is unbounded. -/
@@ -2136,17 +2153,17 @@ private lemma isPreconnected_rect_compl :
     (convex_Ioi _).is_linear_preimage (EuclideanSpace.proj (1:Fin 2)).isLinear
   -- membership witnesses at the four "corners"
   have mAD_A : (!₂[(-2:ℝ), 3] : Plane) ∈ {v : Plane | v 0 ∈ Iio (-1:ℝ)} := by
-    simp only [Set.mem_setOf_eq, mem_Iio]; norm_num
+    simp only [Set.mem_ofPred_eq, mem_Iio]; norm_num
   have mAD_D : (!₂[(-2:ℝ), 3] : Plane) ∈ {v : Plane | v 1 ∈ Ioi (2:ℝ)} := by
-    simp only [Set.mem_setOf_eq, mem_Ioi]; norm_num
+    simp only [Set.mem_ofPred_eq, mem_Ioi]; norm_num
   have mB_D : (!₂[(2:ℝ), 3] : Plane) ∈ {v : Plane | v 1 ∈ Ioi (2:ℝ)} := by
-    simp only [Set.mem_setOf_eq, mem_Ioi]; norm_num
+    simp only [Set.mem_ofPred_eq, mem_Ioi]; norm_num
   have mB_B : (!₂[(2:ℝ), 3] : Plane) ∈ {v : Plane | v 0 ∈ Ioi (1:ℝ)} := by
-    simp only [Set.mem_setOf_eq, mem_Ioi]; norm_num
+    simp only [Set.mem_ofPred_eq, mem_Ioi]; norm_num
   have mC_B : (!₂[(2:ℝ), -3] : Plane) ∈ {v : Plane | v 0 ∈ Ioi (1:ℝ)} := by
-    simp only [Set.mem_setOf_eq, mem_Ioi]; norm_num
+    simp only [Set.mem_ofPred_eq, mem_Ioi]; norm_num
   have mC_C : (!₂[(2:ℝ), -3] : Plane) ∈ {v : Plane | v 1 ∈ Iio (-2:ℝ)} := by
-    simp only [Set.mem_setOf_eq, mem_Iio]; norm_num
+    simp only [Set.mem_ofPred_eq, mem_Iio]; norm_num
   have hAD : IsPreconnected ({v : Plane | v 0 ∈ Iio (-1:ℝ)} ∪ {v : Plane | v 1 ∈ Ioi (2:ℝ)}) :=
     cA.isPreconnected.union _ mAD_A mAD_D cD.isPreconnected
   have hADB : IsPreconnected (({v : Plane | v 0 ∈ Iio (-1:ℝ)} ∪ {v : Plane | v 1 ∈ Ioi (2:ℝ)})
@@ -2159,7 +2176,7 @@ private lemma isPreconnected_rect_compl :
       = ((({v : Plane | v 0 ∈ Iio (-1:ℝ)} ∪ {v : Plane | v 1 ∈ Ioi (2:ℝ)})
       ∪ {v : Plane | v 0 ∈ Ioi (1:ℝ)}) ∪ {v : Plane | v 1 ∈ Iio (-2:ℝ)}) := by
     ext v
-    simp only [mem_setOf_eq, mem_union, mem_Icc, mem_Iio, mem_Ioi, not_and_or, not_le]
+    simp only [mem_ofPred_eq, mem_union, mem_Icc, mem_Iio, mem_Ioi, not_and_or, not_le]
     tauto
   rw [hEq]; exact hADBC
 
@@ -2176,7 +2193,7 @@ private lemma segP_coord (P Q : Plane) (t : ℝ) (i : Fin 2) :
     segP P Q t i = P i + ((t + 1) / 2) * (Q i - P i) := by
   simp only [segP, PiLp.add_apply, PiLp.smul_apply, PiLp.sub_apply, smul_eq_mul]
 
-private lemma segP_dist_le (P Q : Plane) {t : ℝ} (ht : t ∈ Icc (-1:ℝ) 1) :
+private lemma segP_dist_le (P Q : Plane) {t : ℝ} (ht : t ∈ Icc (-1 : ℝ) 1) :
     dist (segP P Q t) P ≤ dist Q P := by
   have hs : |(t + 1) / 2| ≤ 1 := by
     rw [mem_Icc] at ht; rw [abs_le]; constructor <;> linarith [ht.1, ht.2]
@@ -2187,7 +2204,7 @@ private lemma segP_dist_le (P Q : Plane) {t : ℝ} (ht : t ∈ Icc (-1:ℝ) 1) :
         mul_le_mul_of_nonneg_right hs dist_nonneg
     _ = dist Q P := one_mul _
 
-private lemma segP_dist_le' (P Q : Plane) {t : ℝ} (ht : t ∈ Icc (-1:ℝ) 1) :
+private lemma segP_dist_le' (P Q : Plane) {t : ℝ} (ht : t ∈ Icc (-1 : ℝ) 1) :
     dist (segP P Q t) Q ≤ dist P Q := by
   have hs : |1 - (t + 1) / 2| ≤ 1 := by
     rw [mem_Icc] at ht; rw [abs_le]; constructor <;> linarith [ht.1, ht.2]
@@ -2203,7 +2220,7 @@ private lemma segP_dist_le' (P Q : Plane) {t : ℝ} (ht : t ∈ Icc (-1:ℝ) 1) 
 /-- A coordinate of a segment point lies in any interval containing both endpoints'
 corresponding coordinates. -/
 private lemma segP_coord_mem_Icc {P Q : Plane} (i : Fin 2) {lo hi : ℝ}
-    (hP : P i ∈ Icc lo hi) (hQ : Q i ∈ Icc lo hi) {t : ℝ} (ht : t ∈ Icc (-1:ℝ) 1) :
+    (hP : P i ∈ Icc lo hi) (hQ : Q i ∈ Icc lo hi) {t : ℝ} (ht : t ∈ Icc (-1 : ℝ) 1) :
     segP P Q t i ∈ Icc lo hi := by
   rw [mem_Icc] at hP hQ ht
   rw [segP_coord, mem_Icc]
@@ -2211,16 +2228,18 @@ private lemma segP_coord_mem_Icc {P Q : Plane} (i : Fin 2) {lo hi : ℝ}
   have hs1 : (t + 1) / 2 ≤ 1 := by linarith [ht.2]
   constructor
   · nlinarith [mul_nonneg hs0 (by linarith [hQ.1] : (0:ℝ) ≤ Q i - lo),
-      mul_nonneg (by linarith [hs1] : (0:ℝ) ≤ 1 - (t + 1) / 2) (by linarith [hP.1] : (0:ℝ) ≤ P i - lo)]
+      mul_nonneg (by linarith [hs1] : (0:ℝ) ≤ 1 - (t + 1) / 2)
+        (by linarith [hP.1] : (0:ℝ) ≤ P i - lo)]
   · nlinarith [mul_nonneg hs0 (by linarith [hQ.2] : (0:ℝ) ≤ hi - Q i),
-      mul_nonneg (by linarith [hs1] : (0:ℝ) ≤ 1 - (t + 1) / 2) (by linarith [hP.2] : (0:ℝ) ≤ hi - P i)]
+      mul_nonneg (by linarith [hs1] : (0:ℝ) ≤ 1 - (t + 1) / 2)
+        (by linarith [hP.2] : (0:ℝ) ≤ hi - P i)]
 
 /-- **Maehara Step B (normalized).** Uniqueness of the bounded component in
 normalized coordinates (farthest pair at `!₂[-1,0]`, `!₂[1,0]`). Any bounded
 component equals the `z₀`-component `U`, hence all bounded components coincide. -/
 theorem step_B_normalized (hbr : BrouwerFPT)
     {r : sphere (0 : Plane) 1 → Plane} (hcont : Continuous r) (hinj : Injective r)
-    (hm : (!₂[(-1:ℝ), 0] : Plane) ∈ range r) (hp : (!₂[(1:ℝ), 0] : Plane) ∈ range r)
+    (hm : (!₂[(-1 : ℝ), 0] : Plane) ∈ range r) (hp : (!₂[(1 : ℝ), 0] : Plane) ∈ range r)
     (hfar : ∀ z ∈ range r, ∀ w ∈ range r, dist z w ≤ 2) :
     ∀ x ∈ (range r)ᶜ, ∀ y ∈ (range r)ᶜ,
       IsBounded (connectedComponentIn (range r)ᶜ x) →
@@ -2304,7 +2323,8 @@ theorem step_B_normalized (hbr : BrouwerFPT)
   -- the open middle axis segment `(p,m)` lies in `U`
   set Mid : Set Plane := {v : Plane | v 0 = 0 ∧ v 1 ∈ Ioo (p 1) (m 1)} with hMiddef
   have hMidPC : IsPathConnected Mid :=
-    isPathConnected_vertSeg 0 ((convex_Ioo (p 1) (m 1)).isPathConnected (Set.nonempty_Ioo.mpr hpm_lt))
+    isPathConnected_vertSeg 0 ((convex_Ioo (p 1) (m 1)).isPathConnected (Set.nonempty_Ioo.mpr
+      hpm_lt))
   have hMidc : Mid ⊆ (range r)ᶜ := by
     rintro v ⟨hv0, hv1⟩ hvr
     rw [← hUnion] at hvr
@@ -2379,7 +2399,7 @@ theorem step_B_normalized (hbr : BrouwerFPT)
     have hWE : W ⊆ E := by
       intro v hvW
       by_contra hvE
-      rw [hEdef, Set.mem_setOf_eq] at hvE
+      rw [hEdef, Set.mem_ofPred_eq] at hvE
       have hvEc : v ∈ {u : Plane | ¬(u 0 ∈ Icc (-1:ℝ) 1 ∧ u 1 ∈ Icc (-2:ℝ) 2)} := hvE
       have hEcc : {u : Plane | ¬(u 0 ∈ Icc (-1:ℝ) 1 ∧ u 1 ∈ Icc (-2:ℝ) 2)} ⊆ (range r)ᶜ :=
         fun u hu hur => hu (hErect hur)
@@ -2390,13 +2410,15 @@ theorem step_B_normalized (hbr : BrouwerFPT)
         rw [mem_Icc] at hu2; rw [mem_Ioi] at hu1; linarith [hu2.2]
       exact axis_ray_up_unbounded 2 (hwb.subset (subset_trans hup (compW hvW ▸ h1)))
     -- **spine path** `β : n → s`, top to bottom, missing `W`, inside `E`
-    have hnl_cont : ContinuousOn (segP (!₂[(0:ℝ), 2]) l) (Icc (-1:ℝ) 1) := (segP_cont _ _).continuousOn
+    have hnl_cont : ContinuousOn (segP (!₂[(0:ℝ), 2]) l) (Icc (-1:ℝ) 1) :=
+      (segP_cont _ _).continuousOn
     obtain ⟨lm, hlm_cont, hlm_a, hlm_b, hlm_mem⟩ :=
       arc_path (hpcJn.joinedIn l ⟨hlJn, hlab⟩ m ⟨hmJn, hmab⟩)
     have hmp_cont : ContinuousOn (segP m p) (Icc (-1:ℝ) 1) := (segP_cont _ _).continuousOn
     obtain ⟨pq, hpq_cont, hpq_a, hpq_b, hpq_mem⟩ :=
       arc_path (hpcJs.joinedIn p ⟨hpJs, hpab⟩ q ⟨hqJs, hqab⟩)
-    have hqs_cont : ContinuousOn (segP q (!₂[(0:ℝ), -2])) (Icc (-1:ℝ) 1) := (segP_cont _ _).continuousOn
+    have hqs_cont : ContinuousOn (segP q (!₂[(0:ℝ), -2])) (Icc (-1:ℝ) 1) :=
+      (segP_cont _ _).continuousOn
     obtain ⟨β, hβcont, hβa, hβb, hβmem⟩ :=
       concatPath5 hnl_cont hlm_cont hmp_cont hpq_cont hqs_cont
         (by rw [segP_one, hlm_a]) (by rw [hlm_b, segP_neg1]) (by rw [segP_one, hpq_a])
@@ -2491,10 +2513,12 @@ theorem step_B_normalized (hbr : BrouwerFPT)
     have ha₁E : a₁ 0 ∈ Icc (-1:ℝ) 1 ∧ a₁ 1 ∈ Icc (-2:ℝ) 2 := hWE ha₁W
     have hb₁E : b₁ 0 ∈ Icc (-1:ℝ) 1 ∧ b₁ 1 ∈ Icc (-2:ℝ) 2 := hWE hb₁W
     -- **path** `H : a → b`, left to right, inside `E`, missing `β`
-    have hHp1_cont : ContinuousOn (segP (!₂[(-1:ℝ), 0]) a₁) (Icc (-1:ℝ) 1) := (segP_cont _ _).continuousOn
+    have hHp1_cont : ContinuousOn (segP (!₂[(-1:ℝ), 0]) a₁) (Icc (-1:ℝ) 1) :=
+      (segP_cont _ _).continuousOn
     obtain ⟨Harc, hHarc_cont, hHarc_a, hHarc_b, hHarc_mem⟩ :=
       arc_path (hWpc.joinedIn a₁ ha₁W b₁ hb₁W)
-    have hHp3_cont : ContinuousOn (segP b₁ (!₂[(1:ℝ), 0])) (Icc (-1:ℝ) 1) := (segP_cont _ _).continuousOn
+    have hHp3_cont : ContinuousOn (segP b₁ (!₂[(1:ℝ), 0])) (Icc (-1:ℝ) 1) :=
+      (segP_cont _ _).continuousOn
     obtain ⟨H, hHcont, hHa, hHb, hHmem⟩ :=
       concatPath3 hHp1_cont hHarc_cont hHp3_cont
         (by rw [segP_one, hHarc_a]) (by rw [hHarc_b, segP_neg1])
@@ -2538,8 +2562,8 @@ theorem step_B_normalized (hbr : BrouwerFPT)
     have hvE : ∀ t ∈ Icc (-1:ℝ) 1, v t 0 ∈ Icc (-1:ℝ) 1 ∧ v t 1 ∈ Icc (-2:ℝ) 2 := by
       intro t ht; rw [mem_Icc] at ht
       exact hβE (-t) (by rw [mem_Icc]; exact ⟨by linarith [ht.2], by linarith [ht.1]⟩)
-    have hv1 : v (-1) 1 = -2 := by show β (-(-1)) 1 = -2; rw [neg_neg, hβb, segP_one, hs1]
-    have hv2 : v 1 1 = 2 := by show β (-1) 1 = 2; rw [hβa, segP_neg1, hn1]
+    have hv1 : v (-1) 1 = -2 := by change β (-(-1)) 1 = -2; rw [neg_neg, hβb, segP_one, hs1]
+    have hv2 : v 1 1 = 2 := by change β (-1) 1 = 2; rw [hβa, segP_neg1, hn1]
     obtain ⟨s, hs, t, ht, heq⟩ := crossing hbr (by norm_num : (-1:ℝ) ≤ 1) (by norm_num : (-2:ℝ) ≤ 2)
       H v hHcont hvcont hHE hvE hHa0 hHb0 hv1 hv2
     apply hHmiss s hs

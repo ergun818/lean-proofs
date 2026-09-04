@@ -708,7 +708,7 @@ fiber as soon as that fiber is larger than its global nonneighbor
 allowance by two.  This is the basic greedy step used to extract the
 complete tripartite seeds in the stability-to-carrier argument. -/
 theorem Stability.StablePartition.exists_three_cross_neighbors
-    {V : Type*} [Fintype V] [DecidableEq V]
+    {V : Type*} [Fintype V]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     {p : ℕ} {epsilon : ℝ} (P : Stability.StablePartition G p epsilon)
     {i j : Fin p} (hij : i ≠ j) {v : V}
@@ -753,11 +753,13 @@ theorem Stability.StablePartition.exists_three_cross_neighbors
     exact (Finset.mem_filter.mp (hTN hw)).2
 
 private lemma card_biUnion_bad_le
-    {V : Type*} [Fintype V] [DecidableEq V]
+    {V : Type*} [Finite V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (S Q : Finset V) (B : ℕ)
     (hbad : ∀ x ∈ Q, (S.filter fun y ↦ ¬ G.Adj x y).card ≤ B) :
     (Q.biUnion fun x ↦ S.filter fun y ↦ ¬ G.Adj x y).card ≤ Q.card * B := by
+  classical
+  let := Fintype.ofFinite V
   calc
     (Q.biUnion fun x ↦ S.filter fun y ↦ ¬ G.Adj x y).card
         ≤ ∑ x ∈ Q, (S.filter fun y ↦ ¬ G.Adj x y).card := Finset.card_biUnion_le
@@ -765,7 +767,7 @@ private lemma card_biUnion_bad_le
     _ = Q.card * B := by simp
 
 private lemma exists_card_subset_adj
-    {V : Type*} [Fintype V] [DecidableEq V]
+    {V : Type*} [Finite V]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (S Q : Finset V) (B t : ℕ)
     (hbad : ∀ x ∈ Q, (S.filter fun y ↦ ¬ G.Adj x y).card ≤ B)
@@ -773,6 +775,7 @@ private lemma exists_card_subset_adj
     ∃ T : Finset V, T ⊆ S ∧ T.card = t ∧
       ∀ y ∈ T, ∀ x ∈ Q, G.Adj x y := by
   classical
+  let := Fintype.ofFinite V
   let Bad : Finset V := Q.biUnion fun x ↦ S.filter fun y ↦ ¬ G.Adj x y
   have hBadS : Bad ⊆ S := by
     intro y hy
@@ -796,7 +799,7 @@ private lemma exists_card_subset_adj
 /-- Greedily select equal-size blocks from specified parts, preserving all
 cross edges and all edges from a fixed base set. -/
 theorem exists_complete_on_finset_with_base
-    {V ι : Type*} [Fintype V] [DecidableEq V] [DecidableEq ι]
+    {V ι : Type*} [Finite V]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (S : ι → Finset V) (I : Finset ι) (Q₀ : Finset V) (q B t : ℕ)
     (hIq : Q₀.card + I.card * t ≤ q)
@@ -811,6 +814,7 @@ theorem exists_complete_on_finset_with_base
         ∀ x ∈ T i, ∀ y ∈ T j, G.Adj x y) ∧
       ∀ x ∈ Q₀, ∀ i ∈ I, ∀ y ∈ T i, G.Adj x y := by
   classical
+  let := Fintype.ofFinite V
   induction I using Finset.induction_on with
   | empty => exact ⟨fun _ ↦ ∅, by simp, by simp, by simp⟩
   | @insert a I ha ih =>
@@ -886,7 +890,7 @@ theorem exists_complete_on_finset_with_base
             (by simpa [T', hia] using hy)
 
 private theorem exists_complete_multipartite
-    {V : Type*} [Fintype V] [DecidableEq V] {p : ℕ}
+    {V : Type*} [Finite V] {p : ℕ}
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (S : Fin p → Finset V) (q B t : ℕ)
     (hpq : p * t ≤ q)
@@ -896,18 +900,22 @@ private theorem exists_complete_multipartite
     ∃ T : Fin p → Finset V,
       (∀ i, T i ⊆ S i ∧ (T i).card = t) ∧
       ∀ i j, i ≠ j → ∀ x ∈ T i, ∀ y ∈ T j, G.Adj x y := by
+  classical
+  let := Fintype.ofFinite V
   simpa using exists_complete_on_finset_with_base G S Finset.univ ∅ q B t
     (by simpa using hpq) (fun i _ ↦ hsize i)
     (fun i _ j _ hij x hx ↦ hbad i j hij x hx) (by simp)
 
 private lemma completeEquipartite_isContained_of_selected
-    {V : Type*} [Fintype V] [DecidableEq V]
+    {V : Type*} [Finite V]
     {G : SimpleGraph V} {p : ℕ}
     (S T : Fin p → Finset V)
     (hT : ∀ i, T i ⊆ S i ∧ (T i).card = 3)
     (hfiber : ∀ i x, x ∈ S i → ∀ j, x ∈ S j → i = j)
     (hcross : ∀ i j, i ≠ j → ∀ x ∈ T i, ∀ y ∈ T j, G.Adj x y) :
     SimpleGraph.completeEquipartiteGraph p 3 ⊑ G := by
+  classical
+  let := Fintype.ofFinite V
   apply Stability.completeEquipartiteGraph_isContained_of_parts T
   · intro i j hij
     have hi : (T i).Nonempty := Finset.card_pos.mp (by rw [(hT i).2]; decide)
@@ -924,7 +932,7 @@ private lemma completeEquipartite_isContained_of_selected
 fiber is large compared with the union of the at most `3p` exceptional
 nonneighbor sets encountered by the greedy selection. -/
 theorem stablePartition_completeEquipartiteGraph_three_isContained
-    {V : Type*} [Fintype V] [DecidableEq V]
+    {V : Type*} [Fintype V]
     {G : SimpleGraph V} [DecidableRel G.Adj]
     {p : ℕ} {epsilon : ℝ} (P : Stability.StablePartition G p epsilon)
     (_hepsilon : 0 ≤ epsilon)
@@ -975,7 +983,7 @@ theorem stablePartition_completeEquipartiteGraph_three_isContained
   · exact hcross
 
 theorem stablePartition_completeEquipartiteGraph_three_isContained_of_real_bound
-    {V : Type*} [Fintype V] [DecidableEq V]
+    {V : Type*} [Fintype V]
     {G : SimpleGraph V} [DecidableRel G.Adj]
     {p : ℕ} {epsilon : ℝ} (P : Stability.StablePartition G p epsilon)
     (hepsilon : 0 ≤ epsilon)
@@ -983,6 +991,7 @@ theorem stablePartition_completeEquipartiteGraph_three_isContained_of_real_bound
       (3 * (p : ℝ)) * (epsilon * (Fintype.card V : ℝ) + 1) + 3 ≤
         (Fintype.card V : ℝ) / p - epsilon * (Fintype.card V : ℝ)) :
     SimpleGraph.completeEquipartiteGraph p 3 ⊑ G := by
+  classical
   apply stablePartition_completeEquipartiteGraph_three_isContained P hepsilon
   have hceil : (⌈epsilon * (Fintype.card V : ℝ)⌉₊ : ℝ) <
       epsilon * (Fintype.card V : ℝ) + 1 :=
@@ -2107,5 +2116,7 @@ end
 end CarrierOdd
 end Erdos223
 
-#print axioms Erdos223.CarrierOdd.noPole_extremal_isStrongProfile_of_conditional_replacements_of_large
-#print axioms Erdos223.CarrierOdd.stablePartition_completeEquipartiteGraph_three_isContained_of_real_bound
+#print axioms
+  Erdos223.CarrierOdd.noPole_extremal_isStrongProfile_of_conditional_replacements_of_large
+#print axioms
+  Erdos223.CarrierOdd.stablePartition_completeEquipartiteGraph_three_isContained_of_real_bound

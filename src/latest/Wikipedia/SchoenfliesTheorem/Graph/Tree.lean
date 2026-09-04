@@ -246,7 +246,7 @@ theorem IsWalk.deleteVerts {X : Set α} (h : G.IsWalk u W v)
   refine h.anti deleteVerts_le ?_ fun g hg ↦ ?_
   · exact ⟨h.left_mem, hX u mem_walkVertices_self⟩
   · obtain ⟨p, q, hpq⟩ := exists_isLink_of_mem_edgeSet (h.edge_mem hg)
-    simp only [edgeSet_deleteVerts, Set.mem_setOf_eq]
+    simp only [edgeSet_deleteVerts, Set.mem_ofPred_eq]
     exact ⟨p, q, hpq, hX p (mem_walkVertices_of_mem_covered ⟨g, hg, hpq.inc_left⟩),
       hX q (mem_walkVertices_of_mem_covered ⟨g, hg, hpq.inc_right⟩)⟩
 
@@ -254,7 +254,7 @@ theorem IsWalk.deleteVerts {X : Set α} (h : G.IsWalk u W v)
 theorem edgeSet_deleteVerts_singleton (G : Graph α β) (x : α) :
     E(G.deleteVerts {x}) = E(G) \ G.incidenceSet x := by
   ext g
-  simp only [edgeSet_deleteVerts, Set.mem_setOf_eq, Set.mem_sdiff, mem_incidenceSet,
+  simp only [edgeSet_deleteVerts, Set.mem_ofPred_eq, Set.mem_sdiff, mem_incidenceSet,
     Set.mem_singleton_iff]
   refine ⟨fun ⟨p, q, hpq, hp, hq⟩ ↦ ⟨hpq.edge_mem, fun hinc ↦ ?_⟩, fun ⟨hg, hninc⟩ ↦ ?_⟩
   · rcases hinc.eq_or_eq_of_isLink hpq with rfl | rfl

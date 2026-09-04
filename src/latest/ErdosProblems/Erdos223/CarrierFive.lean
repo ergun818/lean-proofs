@@ -415,9 +415,9 @@ theorem exists_carrier_of_cross_unit_triples_with_completion
     have haorth : a 0 -ᵥ cB ∈ PB.directionᗮ := by
       have hp : ↑(SB.orthogonalProjectionSpan (a 0)) = cB := by
         apply SB.orthogonalProjection_eq_circumcenter_of_dist_eq
-        intro j
-        change dist (b j) (a 0) = 1
-        simpa only [dist_comm] using hcross 0 j
+        · intro j
+          change dist (b j) (a 0) = 1
+          simpa only [dist_comm] using hcross 0 j
       rw [← hp]
       change a 0 -ᵥ ↑(SB.orthogonalProjectionSpan (a 0)) ∈
         (affineSpan ℝ (Set.range SB.points)).directionᗮ
@@ -446,8 +446,8 @@ theorem exists_carrier_of_cross_unit_triples_with_completion
     have hborth : b 0 -ᵥ cA ∈ PA.directionᗮ := by
       have hp : ↑(SA.orthogonalProjectionSpan (b 0)) = cA := by
         apply SA.orthogonalProjection_eq_circumcenter_of_dist_eq
-        intro i
-        exact hcross i 0
+        · intro i
+          exact hcross i 0
       rw [← hp]
       change b 0 -ᵥ ↑(SA.orthogonalProjectionSpan (b 0)) ∈
         (affineSpan ℝ (Set.range SA.points)).directionᗮ
@@ -501,8 +501,8 @@ theorem exists_carrier_of_cross_unit_triples_with_completion
   · intro q hq
     have hproj : ↑(SB.orthogonalProjectionSpan q) = cB := by
       apply SB.orthogonalProjection_eq_circumcenter_of_dist_eq
-      intro j
-      simpa [dist_comm] using hq j
+      · intro j
+        simpa [dist_comm] using hq j
     have hqorth : q -ᵥ cB ∈ PB.directionᗮ := by
       rw [← hproj]
       change q -ᵥ ↑(SB.orthogonalProjectionSpan q) ∈
@@ -533,8 +533,8 @@ theorem exists_carrier_of_cross_unit_triples_with_completion
   · intro q hq
     have hproj : ↑(SA.orthogonalProjectionSpan q) = cA := by
       apply SA.orthogonalProjection_eq_circumcenter_of_dist_eq
-      intro i
-      simpa [dist_comm] using hq i
+      · intro i
+        simpa [dist_comm] using hq i
     have hqorth : q -ᵥ cA ∈ PA.directionᗮ := by
       rw [← hproj]
       change q -ᵥ ↑(SA.orthogonalProjectionSpan q) ∈

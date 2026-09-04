@@ -138,7 +138,7 @@ theorem pieceListGraph_inc_iff {l : List Piece} {P : Piece} {v : Plane} :
 
 theorem endSet_pair (a q b : Plane) : endSet [((a, q) : Piece), (q, b)] = {a, q, b} := by
   ext x
-  simp only [endSet, mem_setOf_eq, List.mem_cons, List.not_mem_nil, or_false, mem_insert_iff,
+  simp only [endSet, mem_ofPred_eq, List.mem_cons, List.not_mem_nil, or_false, mem_insert_iff,
     mem_singleton_iff]
   constructor
   · rintro ⟨P, hP, hx⟩
@@ -276,7 +276,7 @@ theorem endSet_splitAllAt {l : List Piece} {P : Piece} {q : Plane} (hP : P ∈ l
     (hq : q ∈ P.interior) (huniq : ∀ S ∈ l, q ∈ S.interior → S = P) :
     endSet (splitAllAt q l) = endSet l ∪ {q} := by
   ext v
-  simp only [endSet, mem_setOf_eq, mem_union, mem_singleton_iff]
+  simp only [endSet, mem_ofPred_eq, mem_union, mem_singleton_iff]
   constructor
   · rintro ⟨R, hR, hv⟩
     rcases (mem_splitAllAt_iff hP hq huniq).1 hR with ⟨hRl, -⟩ | hR2

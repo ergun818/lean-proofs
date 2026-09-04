@@ -127,18 +127,18 @@ lemma parameter_eq_one_of_level_one {n p : ℕ} {v : Fin n}
 
 lemma parameter_pos_of_two_mul_le_val {n p : ℕ} {v : Fin n}
     (hv : 2 * p ≤ (v : ℕ)) : 0 < parameter p v := by
-  simp [parameter, not_lt.mpr (le_trans (Nat.le_mul_of_pos_left p (by omega)) hv),
+  simp only [parameter, not_lt.mpr (le_trans (Nat.le_mul_of_pos_left p (by omega)) hv), ↓reduceIte,
     not_lt.mpr hv]
   positivity
 
 lemma parameter_lt_one_of_two_mul_le_val {n p : ℕ} {v : Fin n}
     (hv : 2 * p ≤ (v : ℕ)) : parameter p v < 1 := by
-  simp [parameter, not_lt.mpr (le_trans (Nat.le_mul_of_pos_left p (by omega)) hv),
+  simp only [parameter, not_lt.mpr (le_trans (Nat.le_mul_of_pos_left p (by omega)) hv), ↓reduceIte,
     not_lt.mpr hv]
   rw [div_lt_one (by positivity : (0 : ℝ) < n + 1)]
   exact_mod_cast Nat.add_lt_add_right v.isLt 1
 
-lemma parameter_injective_of_mod_eq {n p : ℕ} (hp : 0 < p) {v w : Fin n}
+lemma parameter_injective_of_mod_eq {n p : ℕ} (_hp : 0 < p) {v w : Fin n}
     (hmod : (v : ℕ) % p = (w : ℕ) % p)
     (hpar : parameter p v = parameter p w) : v = w := by
   by_cases hv0 : (v : ℕ) < p
@@ -281,7 +281,9 @@ lemma dist_evenPoint_eq_one_of_parameters_zero_one {d n p : ℕ}
   have hsq := dist_evenPoint_sq hdp hp v w
   rw [inner_evenPoint_evenPoint_same_part hdp hp hpart, hv, hw] at hsq
   have hsqrt : Real.sqrt (2 : ℝ) ≠ 0 := by positivity
-  simp [Lenz.firstCoordinate, Lenz.secondCoordinate, hsqrt] at hsq
+  simp only [Lenz.firstCoordinate, ne_eq, OfNat.ofNat_ne_zero, not_false_eq_true, zero_pow,
+    sub_zero, one_div, Real.sqrt_inv, one_pow, sub_self, zero_div, Real.sqrt_zero, mul_zero,
+    Lenz.secondCoordinate, zero_mul, add_zero, sq_eq_one_iff] at hsq
   rcases hsq with h | h
   · exact h
   · have hd : 0 ≤ dist (evenPoint hdp hp v) (evenPoint hdp hp w) := dist_nonneg
@@ -402,7 +404,7 @@ lemma evenCountMap_injOn {d n p : ℕ} (hdp : 2 * p ≤ d) (hp : 0 < p)
           have hne : ((firstVertex hn j : Fin n) : ℕ) % p ≠
               ((secondVertex hn j : Fin n) : ℕ) % p := he
           apply hne
-          simp [firstVertex, secondVertex, Nat.add_mod]
+          simp [firstVertex, secondVertex]
   | inr i =>
       cases b with
       | inl f =>
@@ -417,7 +419,7 @@ lemma evenCountMap_injOn {d n p : ℕ} (hdp : 2 * p ≤ d) (hp : 0 < p)
           have hne : ((firstVertex hn i : Fin n) : ℕ) % p ≠
               ((secondVertex hn i : Fin n) : ℕ) % p := hf
           apply hne
-          simp [firstVertex, secondVertex, Nat.add_mod]
+          simp [firstVertex, secondVertex]
       | inr j =>
           congr 1
           have hpre : s(firstVertex hn i, secondVertex hn i) =
@@ -461,7 +463,7 @@ lemma evenCountMap_mem_diameterEdge {d n p : ℕ} (hdp : 2 * p ≤ d) (hp : 0 < 
         (evenPoint hdp hp (secondVertex hn i)) = 1
       apply dist_evenPoint_eq_one_of_parameters_zero_one hdp hp
       · apply Fin.ext
-        simp [Lenz.part, firstVertex, secondVertex, Nat.add_mod]
+        simp [Lenz.part, firstVertex, secondVertex]
       · apply parameter_eq_zero_of_val_lt
         simp [firstVertex]
       · apply parameter_eq_one_of_level_one
@@ -479,7 +481,7 @@ lemma even_exact_count_le_diameterPairCount {d n p : ℕ}
     (evenCountMap_injOn hdp hp hn)
 
 /-- Exact construction lower bound in even dimensions at least six. -/
-theorem even_exact_lower {d n : ℕ} (hd : 6 ≤ d) (heven : Even d)
+theorem even_exact_lower {d n : ℕ} (hd : 6 ≤ d) (_heven : Even d)
     (hn : 2 * (d / 2) ≤ n) :
     turanNumber (d / 2) n + d / 2 ≤ f d n := by
   have hdp : 2 * (d / 2) ≤ d := by
@@ -512,7 +514,7 @@ lemma oddParameter_sq_le_one {n : ℕ} (p : ℕ) (v : Fin n) :
   simp only [oddParameter]
   split_ifs <;> apply parameter_sq_le_one
 
-lemma le_val_of_mod_eq_zero_of_ne_zero {n p : ℕ} (hp : 0 < p) {v : Fin n}
+lemma le_val_of_mod_eq_zero_of_ne_zero {n p : ℕ} (_hp : 0 < p) {v : Fin n}
     (hmod : (v : ℕ) % p = 0) (hv : (v : ℕ) ≠ 0) : p ≤ (v : ℕ) := by
   by_contra h
   have hvval : (v : ℕ) = 0 := by
@@ -601,8 +603,7 @@ lemma inner_oddPoint_same_part_of_ne_zero {d n p : ℕ}
 lemma inner_oddPoint_self {d n p : ℕ} (hdp : 2 * p + 1 ≤ d) (hp : 0 < p)
     (v : Fin n) : inner ℝ (oddPoint hdp hp v) (oddPoint hdp hp v) = 1 / 2 := by
   by_cases hv : (v : ℕ) = 0
-  ·
-    simp [oddPoint, hv, Lenz.secondCoordinate]
+  · simp [oddPoint, hv, Lenz.secondCoordinate]
   · rw [inner_oddPoint_same_part_of_ne_zero hdp hp hv hv rfl]
     simpa [pow_two] using Lenz.coordinates_sq_add (oddParameter_sq_le_one p v)
 
@@ -615,11 +616,10 @@ lemma inner_oddPoint_of_ne_part {d n p : ℕ} (hdp : 2 * p + 1 ≤ d) (hp : 0 < 
       intro hw
       exact hvw (Fin.ext (hv.trans hw.symm))
     simp [oddPoint, hv, hw, extraIndex_ne_evenIndex, extraIndex_ne_oddIndex,
-      inner_add_left, inner_add_right, EuclideanSpace.inner_single_left]
+      inner_add_right, EuclideanSpace.inner_single_left]
   · by_cases hw : (w : ℕ) = 0
-    ·
-      simp [oddPoint, hv, hw, extraIndex_ne_evenIndex, extraIndex_ne_oddIndex,
-        inner_add_left, inner_add_right, EuclideanSpace.inner_single_left]
+    · simp [oddPoint, hv, hw, extraIndex_ne_evenIndex, extraIndex_ne_oddIndex,
+        inner_add_left, EuclideanSpace.inner_single_left]
     · have hee : Lenz.evenIndex (by omega : 2 * p ≤ d) (Lenz.part hp v) ≠
           Lenz.evenIndex (by omega : 2 * p ≤ d) (Lenz.part hp w) :=
         fun h ↦ hpart (Lenz.evenIndex_injective (by omega : 2 * p ≤ d) h)
@@ -639,15 +639,15 @@ lemma inner_oddPoint_nonneg {d n p : ℕ} (hdp : 2 * p + 1 ≤ d) (hp : 0 < p)
       rw [inner_oddPoint_self]
       norm_num
     · simp [oddPoint, hv, hw, extraIndex_ne_evenIndex, extraIndex_ne_oddIndex,
-        inner_add_left, inner_add_right, EuclideanSpace.inner_single_left]
+        inner_add_right, EuclideanSpace.inner_single_left]
   · by_cases hw : (w : ℕ) = 0
-    ·
-      simp [oddPoint, hv, hw, extraIndex_ne_evenIndex, extraIndex_ne_oddIndex,
-        inner_add_left, inner_add_right, EuclideanSpace.inner_single_left]
+    · simp [oddPoint, hv, hw, extraIndex_ne_evenIndex, extraIndex_ne_oddIndex,
+        inner_add_left, EuclideanSpace.inner_single_left]
     · by_cases hpart : Lenz.part hp v = Lenz.part hp w
-      · simp [oddPoint, hv, hw, hpart, inner_add_left, inner_add_right,
-          EuclideanSpace.inner_single_left, Lenz.evenIndex_ne_oddIndex,
-          Lenz.oddIndex_ne_evenIndex]
+      · simp only [oddPoint, hv, ↓reduceIte, hpart, hw, inner_add_right, inner_add_left,
+          EuclideanSpace.inner_single_left, Real.ringHom_apply, PiLp.single_eq_same, ne_eq,
+          Lenz.oddIndex_ne_evenIndex, not_false_eq_true, PiLp.single_eq_of_ne, mul_zero, add_zero,
+          Lenz.evenIndex_ne_oddIndex, zero_add]
         exact add_nonneg
           (mul_nonneg (Lenz.firstCoordinate_nonneg _) (Lenz.firstCoordinate_nonneg _))
           (mul_nonneg (Lenz.secondCoordinate_nonneg (oddParameter_nonneg _ _))
@@ -691,8 +691,7 @@ lemma oddPoint_injective {d n p : ℕ} (hdp : 2 * p + 1 ≤ d) (hp : 0 < p) :
       rw [oddPoint_apply_extra hdp hp v, oddPoint_apply_extra hdp hp w] at hc
       simp [hv, hw, Lenz.secondCoordinate] at hc
   · by_cases hw : (w : ℕ) = 0
-    ·
-      have hc := congrArg (fun z : Point d ↦ z (extraIndex hdp)) hvw
+    · have hc := congrArg (fun z : Point d ↦ z (extraIndex hdp)) hvw
       rw [oddPoint_apply_extra hdp hp v, oddPoint_apply_extra hdp hp w] at hc
       simp [hv, hw, Lenz.secondCoordinate] at hc
       have hsqrt : Real.sqrt (2 : ℝ) ≠ 0 := by positivity
@@ -781,7 +780,7 @@ lemma oddFirstSecond_same_part {n p : ℕ} (hp : 0 < p) (hn : 3 * p ≤ n)
       Lenz.part hp (oddSecondVertex hn i) := by
   apply Fin.ext
   simp [Lenz.part, oddFirstVertex, oddSecondVertex]
-  split_ifs <;> simp [Nat.add_mod]
+  split_ifs <;> simp
 
 lemma oddParameter_oddFirstVertex {n p : ℕ} (hp : 0 < p) (hn : 3 * p ≤ n)
     (i : Fin p) : oddParameter p (oddFirstVertex hn i) = 0 := by
@@ -797,7 +796,7 @@ lemma oddParameter_oddSecondVertex {n p : ℕ} (hp : 0 < p) (hn : 3 * p ≤ n)
   · have hmod : (2 * p : ℕ) % p = 0 := by simp
     have hsub : 2 * p - p = p := by omega
     simp [oddSecondVertex, oddParameter, hi, hmod, shiftFin, parameter, hsub, hp]
-  · have himod : (p + (i : ℕ)) % p = i := by simp [Nat.add_mod, Nat.mod_eq_of_lt i.isLt]
+  · have himod : (p + (i : ℕ)) % p = i := by simp [Nat.mod_eq_of_lt i.isLt]
     simp [oddSecondVertex, oddParameter, hi, himod, parameter]
     omega
 
@@ -842,7 +841,7 @@ lemma dist_pole_starVertex {d n p : ℕ} (hdp : 2 * p + 1 ≤ d) (hp : 0 < p)
   apply dist_oddPoint_eq_one_of_inner_zero hdp hp
   have hk0 := starVertex_ne_zero hp k
   simp [oddPoint, poleVertex, hk0, extraIndex_ne_evenIndex, extraIndex_ne_oddIndex,
-    inner_add_left, inner_add_right, EuclideanSpace.inner_single_left]
+    inner_add_right, EuclideanSpace.inner_single_left]
 
 def oddVertexEmbedding {d n p : ℕ} (hdp : 2 * p + 1 ≤ d) (hp : 0 < p) :
     Fin n ↪ {x // x ∈ oddConfiguration (n := n) hdp hp} where

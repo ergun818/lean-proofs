@@ -1266,7 +1266,7 @@ theorem exists_near_sectorL (hi : i < n) {ε : ℝ} (hε : 0 < ε) :
          (min 1 (ε / (2 * ‖z - A.vertex (i + 1)‖))) • (z - A.vertex (i + 1)) -
          A.vertex (i + 1) =
          (min 1 (ε / (2 * ‖z - A.vertex (i + 1)‖))) • (z - A.vertex (i + 1)) := by module)
-  · rw [Set.mem_setOf_eq, hsub]
+  · rw [Set.mem_ofPred_eq, hsub]
     exact (smul_mem_arcCCW hδpos).2 harc
   · rw [mem_ball, dist_eq_norm, hsub, norm_smul, Real.norm_eq_abs, abs_of_pos hδpos]
     have h1 : min 1 (ε / (2 * ‖z - A.vertex (i + 1)‖)) ≤ 1 := min_le_left _ _
@@ -1291,7 +1291,7 @@ theorem exists_near_sectorR (hi : i < n) {ε : ℝ} (hε : 0 < ε) :
          (min 1 (ε / (2 * ‖z - A.vertex (i + 1)‖))) • (z - A.vertex (i + 1)) -
          A.vertex (i + 1) =
          (min 1 (ε / (2 * ‖z - A.vertex (i + 1)‖))) • (z - A.vertex (i + 1)) := by module)
-  · rw [Set.mem_setOf_eq, hsub]
+  · rw [Set.mem_ofPred_eq, hsub]
     exact (smul_mem_arcCCW hδpos).2 harc
   · rw [mem_ball, dist_eq_norm, hsub, norm_smul, Real.norm_eq_abs, abs_of_pos hδpos]
     have h1 : min 1 (ε / (2 * ‖z - A.vertex (i + 1)‖)) ≤ 1 := min_le_left _ _

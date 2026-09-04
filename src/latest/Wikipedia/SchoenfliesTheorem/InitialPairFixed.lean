@@ -312,7 +312,7 @@ theorem mem_faceCells_iff_mem_pathCells {k : Bool} {u c : InitialCell}
     c ∈ faceCells k ↔
       c ∈ initialStructure.pathCells u (initBoundary (.face k)) := by
   rw [mem_faceCells_iff]
-  simp only [CellStructure.pathCells, Set.mem_union, Set.mem_setOf_eq,
+  simp only [CellStructure.pathCells, Set.mem_union, Set.mem_ofPred_eq,
     Graph.mem_walkVertices_iff, Graph.mem_coveredVertices_iff]
   constructor
   · rintro (hc | hc)

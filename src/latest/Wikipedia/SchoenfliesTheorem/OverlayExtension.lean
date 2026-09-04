@@ -27,7 +27,7 @@ open scoped Graph
 
 namespace Schoenflies
 
-open Graph
+open Schoenflies.Graph
 
 namespace IsPlaneSubdivisionExtension
 

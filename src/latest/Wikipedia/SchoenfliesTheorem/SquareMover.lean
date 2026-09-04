@@ -590,13 +590,13 @@ theorem frontier_closedSquare (c : Plane) (r : ℝ) :
   · rintro ⟨h1, h2⟩
     exact le_antisymm h1 (not_lt.1 h2)
   · intro h
-    exact ⟨le_of_eq h, by rw [openSquare, mem_setOf_eq, h]; exact lt_irrefl r⟩
+    exact ⟨le_of_eq h, by rw [openSquare, mem_ofPred_eq, h]; exact lt_irrefl r⟩
 
 /-- A mover is the identity on the boundary square `S`. -/
 theorem IsSquareMover.eqOn_frontier {M N : Plane → Plane} (h : IsSquareMover c r M N) :
     EqOn M id (frontier (closedSquare c r)) := by
   intro z hz
-  rw [frontier_closedSquare, mem_setOf_eq] at hz
+  rw [frontier_closedSquare, mem_ofPred_eq] at hz
   exact h.fixes z (le_of_eq hz) hz
 
 /-! ### The mover as a homeomorphism -/
@@ -608,8 +608,8 @@ noncomputable def IsSquareMover.homeomorph {M N : Plane → Plane} (h : IsSquare
   invFun z := ⟨N z, h.mapsTo_inv z.2⟩
   left_inv z := Subtype.ext (h.invOn.1 z.2)
   right_inv z := Subtype.ext (h.invOn.2 z.2)
-  continuous_toFun := h.continuousOn.restrict.subtype_mk _
-  continuous_invFun := h.continuousOn_inv.restrict.subtype_mk _
+  continuous_toFun := h.continuousOn.domRestrict.subtype_mk _
+  continuous_invFun := h.continuousOn_inv.domRestrict.subtype_mk _
 
 @[simp] theorem IsSquareMover.homeomorph_apply {M N : Plane → Plane}
     (h : IsSquareMover c r M N) (z : closedSquare c r) :

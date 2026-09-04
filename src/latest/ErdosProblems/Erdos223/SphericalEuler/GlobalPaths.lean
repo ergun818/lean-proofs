@@ -399,8 +399,8 @@ lemma arc_mem_span_base_direction {A : Finset (Point 3)}
     arc A x i t ∈
       Submodule.span ℝ ({base A x, direction i} : Set (Point 3)) := by
   let S := Submodule.span ℝ ({base A x, direction i} : Set (Point 3))
-  have hb : base A x ∈ S := Submodule.subset_span (by simp [S])
-  have hd : direction i ∈ S := Submodule.subset_span (by simp [S])
+  have hb : base A x ∈ S := Submodule.subset_span (by simp)
+  have hd : direction i ∈ S := Submodule.subset_span (by simp)
   change NormedSpace.normalize
       ((1 - t) • base A x +
         t • positiveSectionPoint (directionFunctional A x) (direction i)) ∈ S

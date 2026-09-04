@@ -32,7 +32,7 @@ noncomputable def diameterGraph {d : ℕ} (A : Finset (Point d)) :
     simpa [dist_comm] using h
   loopless.irrefl := by
     intro x h
-    simpa using h
+    simp at h
 
 noncomputable instance diameterGraph.instDecidableRelAdj {d : ℕ}
     (A : Finset (Point d)) : DecidableRel (diameterGraph A).Adj :=
@@ -113,12 +113,12 @@ theorem isDiameterOne_iff {d : ℕ} {A : Finset (Point d)} :
     refine ⟨fun x hx y hy ↦ ?_, ?_⟩
     · exact (Metric.dist_le_diam_of_mem hbounded hx hy).trans_eq hA
     · by_contra hno
-      push_neg at hno
+      push Not at hno
       have hAne : A.Nonempty := by
         by_contra hempty
         have : A = ∅ := Finset.not_nonempty_iff_eq_empty.mp hempty
         subst A
-        simpa [IsDiameterOne] using hA
+        simp at hA
       let D : Finset ℝ := (A.product A).image fun p ↦ dist p.1 p.2
       have hDne : D.Nonempty := by
         obtain ⟨x, hx⟩ := hAne
@@ -164,7 +164,7 @@ theorem IsDiameterOne.exists_dist_eq_one {d : ℕ} {A : Finset (Point d)}
 
 /-! ## A canonical diameter-one configuration -/
 
-private noncomputable def linePoint {d n : ℕ} (hd : 0 < d) (hn : 1 < n)
+private noncomputable def linePoint {d n : ℕ} (hd : 0 < d) (_hn : 1 < n)
     (i : Fin n) : Point d :=
   EuclideanSpace.single ⟨0, hd⟩ ((i : ℝ) / ((n - 1 : ℕ) : ℝ))
 
@@ -279,7 +279,7 @@ theorem diameterPairCount_eq_one_of_card_eq_two {d : ℕ}
     have hxy_ne : x ≠ y := by
       intro h
       subst y
-      simpa using hxy
+      simp at hxy
     let xs : {z // z ∈ A} := ⟨x, hx⟩
     let ys : {z // z ∈ A} := ⟨y, hy⟩
     have hadj : (diameterGraph A).Adj xs ys := by

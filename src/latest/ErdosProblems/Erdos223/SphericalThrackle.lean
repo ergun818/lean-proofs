@@ -57,7 +57,7 @@ theorem card_edgeFinset_le_card_of_coreNeighbor_le_two
         have : 2 * G.edgeFinset.card ≤ 2 * Fintype.card V := by
           simpa [Nat.mul_comm] using hsum
         exact (Nat.le_of_mul_le_mul_left this (by omega)).trans_eq hn
-      · push_neg at hmin
+      · push Not at hmin
         obtain ⟨v, hv⟩ := hmin
         let s : Set V := {v}ᶜ
         let H : SimpleGraph s := G.induce s
@@ -245,7 +245,7 @@ private lemma exists_endpoint_orientation
     (hXX : X ⬝ᵥ X = q)
     (hYY : ∀ Y ∈ B, Y ⬝ᵥ Y = q)
     (hXY : ∀ Y ∈ B, X ⬝ᵥ Y = α)
-    (hlo : ∀ Y ∈ B, ∀ Y' ∈ B, α ≤ Y ⬝ᵥ Y')
+    (_hlo : ∀ Y ∈ B, ∀ Y' ∈ B, α ≤ Y ⬝ᵥ Y')
     (hhi : ∀ Y ∈ B, ∀ Y' ∈ B, Y ⬝ᵥ Y' ≤ q)
     {Y : RawVector} (hY : Y ∈ B)
     (hwitness : ∃ Z : RawVector,
@@ -288,7 +288,7 @@ private lemma exists_endpoint_orientation
   have hwu : w ⬝ᵥ u = α * (1 - b) := by
     have hZY : Z ⬝ᵥ Y = α := by rw [dotProduct_comm, hYZ]
     simp only [w, u, sub_dotProduct, dotProduct_sub, smul_dotProduct,
-      dotProduct_smul, hZY, hZX, hXZ, hYX, hXX, smul_eq_mul, a, b]
+      dotProduct_smul, hZY, hZX, hXX, smul_eq_mul, a, b]
     rw [hXY Y hY]
     field_simp
     ring
@@ -350,7 +350,7 @@ private lemma exists_endpoint_orientation
     rw [← crossProduct_ne_zero_iff_linearIndependent]
     exact not_ne_iff.mpr hjt_cross
   rw [LinearIndependent.pair_iff' hj_ne] at hdep
-  push_neg at hdep
+  push Not at hdep
   obtain ⟨lambda, hlambda⟩ := hdep
   have hlambda_ne : lambda ≠ 0 := by
     intro hzero
@@ -436,7 +436,7 @@ private lemma card_le_two_of_endpoint_certificates
         have hYneg : lambda Y < 0 := lt_of_le_of_ne (not_lt.mp hp) (hlambda Y hY)
         have hp' : ¬ 0 < lambda Y' := by
           intro hp'
-          simp [sign, hp, hp'] at hdec
+          simp [hp, hp'] at hdec
         exact ⟨hYneg,
           lt_of_le_of_ne (not_lt.mp hp') (hlambda Y' hY')⟩
     let u : RawVector := Y - (α / q) • X
@@ -527,12 +527,12 @@ private lemma card_le_two_of_endpoint_certificates
       rw [← crossProduct_ne_zero_iff_linearIndependent]
       exact not_ne_iff.mpr hjv_cross
     rw [LinearIndependent.pair_iff' hj_ne] at hvdep
-    push_neg at hvdep
+    push Not at hvdep
     obtain ⟨mu, hmu⟩ := hvdep
     have hv0 : v = 0 := by
       have hmuj : mu * (j ⬝ᵥ j) = 0 := by
         rw [← hjv, ← hmu]
-        simp [smul_dotProduct]
+        simp
       have hmu0 : mu = 0 := by
         apply (mul_eq_zero.mp hmuj).resolve_right
         rw [hjj]
@@ -552,7 +552,7 @@ private lemma card_le_two_of_endpoint_certificates
         have hY'X : Y' ⬝ᵥ X = α := by rw [dotProduct_comm, hXY Y' hY']
         have huu_formula : u ⬝ᵥ u' = Y ⬝ᵥ Y' - α ^ 2 / q := by
           simp only [u, u', sub_dotProduct, dotProduct_sub, smul_dotProduct,
-            dotProduct_smul, hYX, hY'X, hXY Y hY, hXX, smul_eq_mul]
+            dotProduct_smul, hYX, hXX, smul_eq_mul]
           rw [hXY Y' hY']
           field_simp
           ring

@@ -14,7 +14,7 @@ theorem IsPath.ncard_walkVertices (h : G.IsPath u D v) :
   | @cons u w v e D he hD hfresh ih =>
       rw [walkVertices_cons he]
       rw [Set.ncard_insert_of_notMem hfresh hD.isWalk.finite_walkVertices]
-      simp [ih, Nat.add_assoc, Nat.add_comm, Nat.add_left_comm]
+      simp [ih, Nat.add_comm, Nat.add_left_comm]
 
 theorem IsPath.ncard_edgeSet_pathGraphOf (h : G.IsPath u D v) :
     E(G.pathGraphOf u D).ncard = D.length := by

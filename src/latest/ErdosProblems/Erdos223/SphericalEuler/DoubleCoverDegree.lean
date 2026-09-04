@@ -48,14 +48,18 @@ def bipartiteDoubleCoverNeighborEquiv (v : V ⊕ V) :
           | inr y => simp at hy
         right_inv := by rintro ⟨y, hy⟩; rfl }
 
+omit [DecidableEq V] in
 lemma degree_bipartiteDoubleCover (v : V ⊕ V) :
     G.bipartiteDoubleCover.degree v = G.degree (forgetSide v) := by
+  classical
   rw [← G.bipartiteDoubleCover.card_neighborSet_eq_degree,
     ← G.card_neighborSet_eq_degree]
   exact Fintype.card_congr (G.bipartiteDoubleCoverNeighborEquiv v)
 
+omit [DecidableEq V] in
 lemma minDegree_bipartiteDoubleCover (hmin : ∀ v, 2 ≤ G.degree v) :
     ∀ w, 2 ≤ G.bipartiteDoubleCover.degree w := by
+  classical
   intro w
   rw [G.degree_bipartiteDoubleCover w]
   exact hmin (forgetSide w)

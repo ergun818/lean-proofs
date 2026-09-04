@@ -289,7 +289,7 @@ theorem overlayGraph_reaches (hnd : ∀ P ∈ pieces, P.Nondeg)
   -- And they carry disjoint sets: a common point is a vertex incident with an edge of each.
   have hdisj : ∀ z, z ∈ S → z ∈ T → False := by
     intro z hzS hzT
-    simp only [hS, hT, mem_iUnion, mem_setOf_eq, exists_prop] at hzS hzT
+    simp only [hS, hT, mem_iUnion, mem_ofPred_eq, exists_prop] at hzS hzT
     obtain ⟨P, ⟨hP, hPr⟩, hzP⟩ := hzS
     obtain ⟨Q, ⟨hQ, hQr⟩, hzQ⟩ := hzT
     have hPQ : P ≠ Q := by rintro rfl; exact hQr hPr
@@ -320,7 +320,7 @@ theorem overlayGraph_reaches (hnd : ∀ P ∈ pieces, P.Nondeg)
       hsub ⟨a, ha, fun h => hdisj a haS h⟩ ⟨b, hb, fun h => hdisj b h hbT⟩
     exact (hunion z hzc).elim hzS hzT
   -- `b` is a vertex on an edge of the reachable class, hence an end of it.
-  simp only [hS, mem_iUnion, mem_setOf_eq, exists_prop] at hbS
+  simp only [hS, mem_iUnion, mem_ofPred_eq, exists_prop] at hbS
   obtain ⟨P, ⟨hP, hPr⟩, hbP⟩ := hbS
   have hbend : b = P.1 ∨ b = P.2 :=
     hdraw.vertex_mem_edgeArc (hlink P hP) hbV (by rwa [edgeArc_segmentDrawing])

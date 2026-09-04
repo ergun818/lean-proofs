@@ -99,7 +99,7 @@ theorem IsCutVertex.exists_cutSplit [G.Finite] [G.Loopless]
       exact ⟨ha, by simpa using hav⟩⟩
   have hpair : ∃ a ∈ V(D), ∃ b ∈ V(D), ¬ D.Reaches a b := by
     by_contra hn
-    push_neg at hn
+    push Not at hn
     exact hcut.2 ⟨hDne, fun u hu w hw => hn u hu w hw⟩
   obtain ⟨a, haD, b, hbD, hab⟩ := hpair
   let S := D.component a

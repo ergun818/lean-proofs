@@ -369,7 +369,7 @@ private lemma activeIndex_injective {m : ℕ} : Function.Injective (@activeIndex
   dsimp only at hv
   split_ifs at hv with hm ht hu hmt htu huu
   all_goals apply Fin.ext
-  all_goals simp only [Fin.val_mk] at hv
+  all_goals simp only at hv
   all_goals try unfold polygonSize at hv
   all_goals try split_ifs at hv
   all_goals omega
@@ -392,14 +392,13 @@ private lemma activeIndex_consecutive_dist {m : ℕ} (hm : 3 ≤ m)
   dsimp only
   split_ifs with hm' ht hu hmt htu huu
   all_goals
-    simp only [Fin.val_mk]
+    simp only
     unfold polygonSize
     split_ifs
   all_goals first
     | exact Or.inl (nat_dist_eq_of_le (by omega) (by omega))
     | exact Or.inl (nat_dist_eq_of_ge (by omega) (by omega))
     | exact Or.inr (nat_dist_eq_of_le (by omega) (by omega))
-    | exact Or.inr (nat_dist_eq_of_ge (by omega) (by omega))
 
 private lemma activeIndex_last_dist_zero {m : ℕ} (hm : 3 ≤ m) (hodd : m % 2 = 1) :
     Nat.dist (activeIndex (⟨0, by omega⟩ : Fin m) : ℕ)
@@ -409,7 +408,7 @@ private lemma activeIndex_last_dist_zero {m : ℕ} (hm : 3 ≤ m) (hodd : m % 2 
   have hzero : (activeIndex (⟨0, by omega⟩ : Fin m) : ℕ) = 0 := by
     simp [activeIndex, hodd]
   have hlast : (activeIndex (⟨m - 1, by omega⟩ : Fin m) : ℕ) = (m - 1) / 2 := by
-    simp [activeIndex, hodd, hlastEven, polygonSize_eq_of_odd]
+    simp [activeIndex, hodd, hlastEven]
   rw [hzero, hlast, polygonSize_eq_of_odd hodd]
   exact nat_dist_eq_of_le (by omega) (by omega)
 
@@ -442,7 +441,7 @@ private lemma activePoint_last_dist_zero_eq_one {m : ℕ} (hm : 3 ≤ m)
     dist (activePoint m ⟨m - 1, by omega⟩) (activePoint m ⟨0, by omega⟩) = 1 := by
   rw [dist_comm]
   apply regularPoint_dist_eq_one_of_dist_half
-    (by unfold polygonSize; split_ifs <;> omega) (polygonSize_odd m)
+    (by unfold polygonSize; split_ifs; omega) (polygonSize_odd m)
   exact activeIndex_last_dist_zero hm hodd
 
 private def activeConfiguration (m : ℕ) : Finset (Point 2) :=
@@ -479,7 +478,7 @@ private lemma pathEdge_injective {m : ℕ} : Function.Injective (@pathEdge m) :=
     exact congrArg (fun z : Fin m ↦ z.val) h.1
   · have h1 := congrArg (fun z : Fin m ↦ z.val) h.1
     have h2 := congrArg (fun z : Fin m ↦ z.val) h.2
-    simp only [Fin.val_mk] at h1 h2
+    simp only at h1 h2
     apply Fin.ext
     omega
 
@@ -494,11 +493,11 @@ private lemma pathEdge_ne_closingEdge {m : ℕ} (hm : 3 ≤ m) (t : Fin (m - 1))
   rcases h with h | h
   · have h1 := congrArg (fun z : Fin m ↦ z.val) h.1
     have h2 := congrArg (fun z : Fin m ↦ z.val) h.2
-    simp only [Fin.val_mk] at h1 h2
+    simp only at h1 h2
     omega
   · have h1 := congrArg (fun z : Fin m ↦ z.val) h.1
     have h2 := congrArg (fun z : Fin m ↦ z.val) h.2
-    simp only [Fin.val_mk] at h1 h2
+    simp only at h1 h2
     omega
 
 private def activeExtraCount (m : ℕ) : ℕ := if m % 2 = 1 then 1 else 0
@@ -669,7 +668,7 @@ private lemma passive_endpoint_equation {m : ℕ} (hm : 3 ≤ m) :
   field_simp
   ring
 
-private def passiveParameter {m b : ℕ} (hb : 2 ≤ b) (i : Fin b) : ℝ :=
+private def passiveParameter {m b : ℕ} (_hb : 2 ≤ b) (i : Fin b) : ℝ :=
   (i : ℝ) / ((b - 1 : ℕ) : ℝ) * passiveEnd m
 
 private lemma passiveParameter_nonneg {m b : ℕ} (hm : 3 ≤ m) (hb : 2 ≤ b) (i : Fin b) :
@@ -700,7 +699,7 @@ private lemma passiveParameter_injective {m b : ℕ} (hm : 3 ≤ m) (hb : 2 ≤ 
     exact h
   exact_mod_cast hc
 
-private def passivePoint (m b : ℕ) (hm : 3 ≤ m) (hb : 2 ≤ b) (i : Fin b) : Point 2 :=
+private def passivePoint (m b : ℕ) (_hm : 3 ≤ m) (hb : 2 ≤ b) (i : Fin b) : Point 2 :=
   passiveRadius m • gamma (passiveParameter (m := m) hb i)
 
 private lemma passivePoint_injective {m b : ℕ} (hm : 3 ≤ m) (hb : 2 ≤ b) :
@@ -843,7 +842,8 @@ private lemma dist_firstEmbed (x y : Point 2) : dist (firstEmbed x) (firstEmbed 
   nlinarith [dist_nonneg (x := firstEmbed x) (y := firstEmbed y),
     dist_nonneg (x := x) (y := y)]
 
-private lemma dist_secondEmbed (x y : Point 2) : dist (secondEmbed x) (secondEmbed y) = dist x y := by
+private lemma dist_secondEmbed (x y : Point 2) :
+    dist (secondEmbed x) (secondEmbed y) = dist x y := by
   have hsq : dist (secondEmbed x) (secondEmbed y) ^ 2 = dist x y ^ 2 := by
     rw [dist_eq_norm, dist_eq_norm, norm_sq_point4, norm_sq_eq_coordinates]
     simp [secondEmbed]
@@ -991,8 +991,7 @@ private def joinedCountDomain (a b : ℕ) :
 private lemma card_joinedCountDomain {a b : ℕ} (ha : 3 ≤ a) :
     (joinedCountDomain a b).card = a * b + cyclicDiameterAllowance a + 1 := by
   unfold joinedCountDomain
-  simp only [Finset.card_disjSum, Finset.card_univ, Fintype.card_prod, Fintype.card_fin,
-    add_left_inj]
+  simp only [Finset.card_disjSum, Finset.card_univ, Fintype.card_prod, Fintype.card_fin]
   rw [show Fintype.card (Fin (a - 1) ⊕ Fin (activeExtraCount a)) =
       (activeLocalDomain a).card by simp [activeLocalDomain]]
   rw [card_activeLocalDomain ha]
@@ -1071,7 +1070,7 @@ private lemma joinedCountMap_injOn {a b : ℕ} (ha : 3 ≤ a) (hb : 2 ≤ b) :
               have hbase : s((.inl p.1 : Fin a ⊕ Fin b), .inr p.2) =
                   s((.inr (⟨0, by omega⟩ : Fin b)), .inr ⟨b - 1, by omega⟩) := by
                 apply hinj
-                simpa [joinedCountMap, Sym2.map_mk] using h
+                simp [joinedCountMap] at h
               rw [Sym2.eq_iff] at hbase
               rcases hbase with h | h <;> simp at h
   | inr r =>
@@ -1091,7 +1090,7 @@ private lemma joinedCountMap_injOn {a b : ℕ} (ha : 3 ≤ a) (hb : 2 ≤ b) :
               have hbase : s((.inr (⟨0, by omega⟩ : Fin b)), .inr ⟨b - 1, by omega⟩) =
                   s((.inl q.1 : Fin a ⊕ Fin b), .inr q.2) := by
                 apply hinj
-                simpa [joinedCountMap, Sym2.map_mk] using h
+                simp [joinedCountMap] at h
               rw [Sym2.eq_iff] at hbase
               rcases hbase with h | h <;> simp at h
       | inr s =>
@@ -1243,7 +1242,8 @@ theorem four_exact_lower {n : ℕ} (hn : 8 ≤ n) :
       turanNumber 2 n + ceilQuot n 2 + fourCorrection n =
           (2 * k + 1) * (2 * k - 1) + cyclicDiameterAllowance (2 * k + 1) + 1 := by
         rw [turanNumber_two, hsub, hdiv, hceil]
-        simp [fourCorrection, cyclicDiameterAllowance, hr]
+        simp only [fourCorrection, hr, OfNat.zero_ne_ofNat, ↓reduceIte, cyclicDiameterAllowance,
+          Nat.mul_add_mod_self_left, Nat.mod_succ, one_ne_zero, Nat.add_right_cancel_iff]
         have hcancel : 2 * k - 1 + 1 = 2 * k := by omega
         nlinarith
       _ ≤ f 4 n := h

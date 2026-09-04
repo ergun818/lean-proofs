@@ -34,7 +34,7 @@ open scoped Graph
 
 namespace Schoenflies
 
-open Graph
+open Schoenflies.Graph
 
 variable {γ : Type*} {S₀ : CellStructure γ}
   {srcOuter srcDom tgtOuter tgtDom : Set Plane}
@@ -317,7 +317,7 @@ theorem localGridVertices_subset_crosscutOverlay {J : Piece} {p : Plane}
       V(Q.crosscutOverlay J p s epsilon extra) := by
   intro x hx
   rw [localGrid_eq, pieceListGraph_vertexSet] at hx
-  simp only [endSet, Set.mem_setOf_eq] at hx
+  simp only [endSet, Set.mem_ofPred_eq] at hx
   obtain ⟨R, hR, hxR⟩ := hx
   change x ∈ V(overlayGraph (Q.crosscutPieces J p s epsilon)
     (attachPoints (Q.crosscutPieces J p s epsilon)
@@ -1076,7 +1076,7 @@ theorem crosscut_isPlaneSubdivisionExtension (hs : 0 < s) (hJ : J.Nondeg)
   vertexSet_subset := by
     intro x hx
     rw [pieceListGraph_vertexSet] at hx
-    simp only [endSet, Set.mem_setOf_eq] at hx
+    simp only [endSet, Set.mem_ofPred_eq] at hx
     obtain ⟨R, hR, hxR⟩ := hx
     simp only [List.mem_singleton] at hR
     subst R

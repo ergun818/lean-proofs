@@ -190,7 +190,7 @@ namespace Plane
 centre in each coordinate separately. -/
 theorem mem_openSquare_iff (c : Plane) (r : ℝ) (x : Plane) :
     x ∈ openSquare c r ↔ ∀ i, |x i - c i| < r := by
-  simp only [openSquare, mem_setOf_eq, supDist, supNorm, sub_apply, max_lt_iff,
+  simp only [openSquare, mem_ofPred_eq, supDist, supNorm, sub_apply, max_lt_iff,
     Fin.forall_fin_two]
 
 /-- The centre of a square of positive radius is in it. -/
@@ -351,7 +351,7 @@ theorem isLocallyPolyConn_compl_biUnion {A : Set Plane} (hA : A.Finite) (ρ : Pl
       rintro c ⟨hcA, hcne⟩
       have : p ∉ closedSquare c (ρ c) :=
         Set.disjoint_left.1 (hdisj c₀ hc₀A c hcA fun h => hcne (h ▸ rfl)) hpc₀
-      simp only [closedSquare, mem_setOf_eq, not_le] at this
+      simp only [closedSquare, mem_ofPred_eq, not_le] at this
       linarith
     obtain ⟨s₁, hs₁, hs₁le⟩ := exists_pos_le_of_finite (hA.sdiff (t := {c₀}))
       (f := fun c => supDist p c - ρ c) hfar
@@ -393,7 +393,7 @@ theorem isLocallyPolyConn_compl_biUnion {A : Set Plane} (hA : A.Finite) (ρ : Pl
     have hfar : ∀ c ∈ A, 0 < supDist p c - ρ c := by
       intro c hcA
       have := hnear c hcA
-      simp only [closedSquare, mem_setOf_eq, not_le] at this
+      simp only [closedSquare, mem_ofPred_eq, not_le] at this
       linarith
     obtain ⟨s, hs, hsle⟩ := exists_pos_le_of_finite hA (f := fun c => supDist p c - ρ c) hfar
     refine isLocallyPolyConnAt_of_convex (isOpen_openSquare p s)

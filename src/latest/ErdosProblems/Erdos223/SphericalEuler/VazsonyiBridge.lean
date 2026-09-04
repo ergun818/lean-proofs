@@ -54,7 +54,7 @@ theorem diameterPairCount_add_two_le_of_minDegree_planar
     (hmin : ∀ v, 2 ≤ (diameterGraph A).degree v) :
     diameterPairCount A + 2 ≤ 2 * A.card :=
   diameterPairCount_add_two_le_of_connected_planar_bound
-    Graph.WeightedFaces.connectedSimpleGraphCallback A hA hmin
+    (fun W _ _ ↦ Graph.WeightedFaces.connectedSimpleGraphCallback W) A hA hmin
 
 #print axioms diameterPairCount_add_two_le_of_minDegree_planar
 

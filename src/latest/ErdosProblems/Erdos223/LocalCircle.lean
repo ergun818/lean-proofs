@@ -327,7 +327,7 @@ private theorem neighbor_chord_sides_equal
     {A B C D : E} {s t : ℝ}
     (hs : 0 < s)
     (hA : ‖A‖ ^ 2 = s) (hB : ‖B‖ ^ 2 = s)
-    (hC : ‖C‖ ^ 2 = s) (hD : ‖D‖ ^ 2 = s)
+    (_hC : ‖C‖ ^ 2 = s) (_hD : ‖D‖ ^ 2 = s)
     (hAB : ⟪A, B⟫ = t) (hBC : ⟪B, C⟫ = t)
     (hDA : ⟪D, A⟫ = t)
     (hoAB : o.areaForm A B = o.areaForm B C)
@@ -363,7 +363,7 @@ private theorem neighbor_chord_sides_equal
     have he : o.areaForm B D = (-2 * t * k) / s := by
       apply (eq_div_iff hs0).2
       nlinarith only [haBD]
-    convert he using 1 <;> ring
+    convert he using 1; ring
   rw [eAC, eBD]
   ring
 
@@ -371,7 +371,7 @@ private theorem neighbor_chord_side_ne_zero
     (o : Orientation ℝ E (Fin 2))
     {A B C : E} {s t : ℝ}
     (hs : 0 < s) (hts : t < s)
-    (hA : ‖A‖ ^ 2 = s) (hB : ‖B‖ ^ 2 = s) (hC : ‖C‖ ^ 2 = s)
+    (_hA : ‖A‖ ^ 2 = s) (hB : ‖B‖ ^ 2 = s) (_hC : ‖C‖ ^ 2 = s)
     (hAB : ⟪A, B⟫ = t) (hBC : ⟪B, C⟫ = t)
     (ho : o.areaForm A B = o.areaForm B C)
     (hk : o.areaForm A B ≠ 0) :
@@ -436,7 +436,7 @@ private theorem eq_left_or_right_of_chordSide_eq_zero
   have harea : o.areaForm U W = 0 := by
     exact hside
   have hZinner : inner ℝ U (W - q • U) = 0 := by
-    simp only [inner_sub_right, inner_smul_right, smul_eq_mul]
+    simp only [inner_sub_right, inner_smul_right]
     change q - q * inner ℝ U U = 0
     rw [real_inner_self_eq_norm_sq, hUnorm]
     ring
@@ -641,12 +641,13 @@ noncomputable section
 
 variable {V : Type*} [Fintype V] [DecidableEq V]
 
+omit [DecidableEq V] in
 private theorem odd_card_of_two_regular_side
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (hdeg : ∀ x, G.degree x = 2)
     {a b c d : V}
-    (hab : G.Adj a b) (hbc : G.Adj b c) (hda : G.Adj d a)
-    (hca : c ≠ a) (hdb : d ≠ b)
+    (hab : G.Adj a b) (hbc : G.Adj b c) (_hda : G.Adj d a)
+    (hca : c ≠ a) (_hdb : d ≠ b)
     (hb_neighbors : ∀ {x}, G.Adj b x → x = a ∨ x = c)
     (ha_neighbors : ∀ {x}, G.Adj a x → x = b ∨ x = d)
     (side : V → ℝ)
@@ -725,7 +726,7 @@ private theorem odd_card_of_two_regular_side
           have hn : (side x * side y) * side c ^ 2 < 0 :=
             mul_neg_of_neg_of_pos hp (sq_pos_of_ne_zero hcnz)
           have : 0 < (side x * side y) * side c ^ 2 := by
-            convert hp' using 1 <;> ring
+            convert hp' using 1; ring
           linarith
         · exact hypos
       exact Or.inr ⟨by simpa [T, S] using hxneg.le, by simpa [S] using hypos⟩
@@ -736,7 +737,7 @@ private theorem odd_card_of_two_regular_side
           have hn : (side x * side y) * side c ^ 2 < 0 :=
             mul_neg_of_neg_of_pos hp (sq_pos_of_ne_zero hcnz)
           have : 0 < (side x * side y) * side c ^ 2 := by
-            convert hp' using 1 <;> ring
+            convert hp' using 1; ring
           linarith
       exact Or.inl ⟨by simpa [S] using hxpos, by simpa [T, S] using hyneg.le⟩
   have hbip : (G.deleteEdges {s(a,b)}).IsBipartiteWith S T := by
@@ -762,7 +763,7 @@ private theorem exists_degree_le_one_of_even_aux
   classical
   let G := diameterGraph A
   by_contra hex
-  push_neg at hex
+  push Not at hex
   have hdeg (x : {z // z ∈ A}) : G.degree x = 2 := by
     have hle : G.degree x ≤ 2 := degree_diameterGraph_le_two hcircle x
     have hgt : 1 < G.degree x := hex x
@@ -806,7 +807,6 @@ private theorem exists_degree_le_one_of_even_aux
     intro h
     subst d'
     exact hbd rfl
-
   let vec (x : {z // z ∈ A}) : P.direction :=
     ⟨(x : Point d) -ᵥ c,
       AffineSubspace.vsub_mem_direction (hcircle.mem_plane x.property) hcircle.2.1⟩

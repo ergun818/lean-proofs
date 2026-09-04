@@ -63,9 +63,10 @@ lemma mk_mem_monochromaticEdges_iff {G : SimpleGraph V} [DecidableRel G.Adj]
 colour classes. -/
 def partiteCore (G : SimpleGraph V) {p : ℕ} (c : V → Fin p) : SimpleGraph V where
   Adj v w := G.Adj v w ∧ c v ≠ c w
-  symm.symm v w h := ⟨h.1.symm, h.2.symm⟩
-  loopless.irrefl v h := h.1.ne rfl
+  symm.symm _v _w h := ⟨h.1.symm, h.2.symm⟩
+  loopless.irrefl _v h := h.1.ne rfl
 
+omit [Fintype V] in
 @[simp] lemma partiteCore_adj {G : SimpleGraph V} {p : ℕ} (c : V → Fin p)
     {v w : V} : (partiteCore G c).Adj v w ↔ G.Adj v w ∧ c v ≠ c w := Iff.rfl
 
@@ -73,6 +74,7 @@ noncomputable instance partiteCore.instDecidableRelAdj {G : SimpleGraph V} [Deci
     {p : ℕ} (c : V → Fin p) : DecidableRel (partiteCore G c).Adj :=
   Classical.decRel _
 
+omit [Fintype V] in
 lemma partiteCore_le (G : SimpleGraph V) {p : ℕ} (c : V → Fin p) :
     partiteCore G c ≤ G := fun _ _ h ↦ h.1
 
@@ -82,12 +84,15 @@ def partiteCoreColoring (G : SimpleGraph V) {p : ℕ} (c : V → Fin p) :
     (partiteCore G c).Coloring (Fin p) :=
   Coloring.mk c fun h ↦ h.2
 
+omit [Fintype V] in
 lemma partiteCore_colorable (G : SimpleGraph V) {p : ℕ} (c : V → Fin p) :
     (partiteCore G c).Colorable p := ⟨partiteCoreColoring G c⟩
 
+omit [Fintype V] in
 lemma colorFiber_isIndepSet_partiteCore (G : SimpleGraph V) {p : ℕ}
     (c : V → Fin p) (i : Fin p) :
     (partiteCore G c).IsIndepSet {v | c v = i} := by
+  classical
   intro v hv w hw _ hvw
   exact hvw.2 (hv.trans hw.symm)
 
@@ -238,7 +243,6 @@ lemma sum_degrees_compl_eq_cross_add_twice_inside [DecidableEq V]
           ∑ x ∈ T, ∑ y ∈ s, if G.Adj x y then 1 else 0 := by
         apply Finset.sum_congr rfl
         intro x hx
-        congr 1
         have heq : G.neighborFinset x ∩ s = s.filter (G.Adj x) := by
           ext y
           simp [and_comm]
@@ -285,7 +289,7 @@ lemma card_edges_add_induce_compl_le [DecidableEq V]
     calc
       _ ≤ ∑ _x ∈ sᶜ, G.maxDegree :=
         Finset.sum_le_sum fun x _ ↦ G.degree_le_maxDegree x
-      _ = _ := by simp [mul_comm]
+      _ = _ := by simp
   have hdecomp := card_edgeFinset_decomp G s
   have hdegrees := sum_degrees_compl_eq_cross_add_twice_inside G s
   omega
@@ -343,7 +347,7 @@ lemma monochromaticEdges_extension_le [DecidableEq V]
       refine ⟨he.1, ?_⟩
       intro z hz
       rw [mem_compl]
-      simp [Sym2.toFinset_mk_eq] at hz
+      simp only [Sym2.toFinset_mk_eq, mem_insert, mem_singleton] at hz
       rcases hz with rfl | rfl
       · exact hx
       · exact hy
@@ -597,6 +601,7 @@ lemma reducedCliqueParts_disjoint
   P.disjoint (reducedCliqueParts_mem_parts hs i) (reducedCliqueParts_mem_parts hs j)
     (reducedCliqueParts_ne hs hij)
 
+omit [Fintype V] in
 /-- Package a coordinate family of equal-sized, pairwise completely joined
 sets into Mathlib's complete-equipartite containment interface. -/
 lemma completeEquipartiteGraph_isContained_of_parts
@@ -605,6 +610,7 @@ lemma completeEquipartiteGraph_isContained_of_parts
     (hcard : ∀ i, #(C i) = t)
     (hcomplete : ∀ ⦃i j : Fin r⦄, i ≠ j → G.IsCompleteBetween (C i) (C j)) :
     completeEquipartiteGraph r t ⊑ G := by
+  classical
   let f : Fin r ↪ Finset V := ⟨C, hCinj⟩
   let K : G.CompleteEquipartiteSubgraph r t := by
     refine ⟨univ.map f, ?_, ?_, ?_⟩
@@ -717,8 +723,10 @@ noncomputable instance completeCrossGraph.instDecidableRelAdj
     {p : ℕ} (c : V → Fin p) : DecidableRel (completeCrossGraph c).Adj :=
   Classical.decRel _
 
+omit [Fintype V] in
 @[simp] lemma completeCrossGraph_adj {p : ℕ} (c : V → Fin p) {v w : V} :
     (completeCrossGraph c).Adj v w ↔ c v ≠ c w := by
+  classical
   change (v ≠ w ∧ c v ≠ c w) ↔ c v ≠ c w
   exact ⟨And.right, fun h ↦ ⟨fun hvw ↦ h (congrArg c hvw), h⟩⟩
 
@@ -731,17 +739,22 @@ def crossNonedgeGraph (G : SimpleGraph V) {p : ℕ} (c : V → Fin p) : SimpleGr
       exact ⟨hc.symm, fun hwv ↦ hG hwv.symm⟩
     loopless := ⟨fun v h ↦ h.1 rfl⟩ }
 
+omit [Fintype V] in
 @[simp] lemma crossNonedgeGraph_adj (G : SimpleGraph V) {p : ℕ}
     (c : V → Fin p) {v w : V} :
     (crossNonedgeGraph G c).Adj v w ↔ c v ≠ c w ∧ ¬ G.Adj v w := by
+  classical
   rfl
 
 noncomputable instance crossNonedgeGraph.instDecidableRelAdj
     (G : SimpleGraph V) [DecidableRel G.Adj] {p : ℕ} (c : V → Fin p) :
     DecidableRel (crossNonedgeGraph G c).Adj := Classical.decRel _
 
-lemma partiteCore_le_completeCrossGraph (G : SimpleGraph V) {p : ℕ}
+omit [Fintype V] in
+lemma partiteCore_le_completeCrossGraph [Finite V] (G : SimpleGraph V) {p : ℕ}
     (c : V → Fin p) : partiteCore G c ≤ completeCrossGraph c := by
+  classical
+  let := Fintype.ofFinite V
   intro v w h
   exact (completeCrossGraph_adj c).2 h.2
 
@@ -986,7 +999,7 @@ noncomputable def retainedCrossNonneighbors
 identity supplying the factor two. -/
 lemma card_exceptionalVertices_mul_le
     (G : SimpleGraph V) [DecidableRel G.Adj] {p : ℕ} (c : V → Fin p)
-    {epsilon : ℝ} (hepsilon : 0 ≤ epsilon) :
+    {epsilon : ℝ} (_hepsilon : 0 ≤ epsilon) :
     (#(exceptionalVertices G c epsilon) : ℝ) *
         (epsilon * (Fintype.card V : ℝ)) ≤
       2 * (#(crossNonedgeGraph G c).edgeFinset : ℝ) := by
@@ -1172,6 +1185,7 @@ variable {V : Type*} [Fintype V] [DecidableEq V]
 uniformity.  It is deliberately stated for candidate subsets of the original
 uniform pair, as required by the greedy embedding argument below. -/
 
+omit [DecidableEq V] [Fintype V] in
 lemma card_lowDegreeVertices_le
     {rho : ℝ} {C D S T : Finset V}
     (hunif : G.IsUniform rho C D)
@@ -1239,6 +1253,7 @@ private def greedyCandidates {r k : ℕ} (hk : k ≤ 3 * r)
   (C j).filter fun y ↦ ∀ a : Fin k,
     (greedyPart r ⟨a, lt_of_lt_of_le a.2 hk⟩ : Fin r).1 < j.1 → G.Adj (f a) y
 
+omit [DecidableEq V] [Fintype V] in
 private lemma greedyCandidates_subset {r k : ℕ} {hk : k ≤ 3 * r}
     {C : Fin r → Finset V} {f : Fin k → V} {j : Fin r} :
     G.greedyCandidates hk C f j ⊆ C j :=
@@ -1252,11 +1267,14 @@ private lemma pow_mono_down {alpha : ℝ} (ha0 : 0 ≤ alpha) (ha1 : alpha ≤ 1
   have hk0 : 0 ≤ alpha ^ k := by positivity
   nlinarith
 
+omit [DecidableEq V] [Fintype V] in
 private lemma card_greedyCandidates_start {r : ℕ} (C : Fin r → Finset V) (j : Fin r) :
     G.greedyCandidates (Nat.zero_le _) C (fun a : Fin 0 ↦ nomatch a) j = C j := by
+  classical
   ext x
   simp [greedyCandidates]
 
+omit [DecidableEq V] [Fintype V] in
 private lemma greedyCandidates_snoc {r k : ℕ} (hk : k ≤ 3 * r)
     (hks : k + 1 ≤ 3 * r) (C : Fin r → Finset V) (f : Fin k → V) (x : V)
     (j : Fin r) :
@@ -1308,8 +1326,10 @@ private def GreedyState (r k : ℕ) (alpha : ℝ)
       k / 3 ≤ j.1 →
       alpha ^ k * #(C j) ≤ #(G.greedyCandidates hk C f j)
 
+omit [DecidableEq V] [Fintype V] in
 private lemma greedyState_zero (r : ℕ) (alpha : ℝ) (C : Fin r → Finset V) :
     G.GreedyState r 0 alpha C (Nat.zero_le _) := by
+  classical
   let f : Fin 0 ↪ V := ⟨Fin.elim0, fun a _ ↦ Fin.elim0 a⟩
   refine ⟨f, ?_, ?_, ?_⟩
   · intro a
@@ -1317,9 +1337,10 @@ private lemma greedyState_zero (r : ℕ) (alpha : ℝ) (C : Fin r → Finset V) 
   · intro a
     exact Fin.elim0 a
   · intro j _
-    simpa [f, greedyCandidates]
+    simp [f, greedyCandidates]
 
-private lemma greedyState_succ
+omit [DecidableEq V] [Fintype V] in
+private lemma greedyState_succ [Finite V]
     {r k : ℕ} {rho delta alpha beta : ℝ} {C : Fin r → Finset V}
     (hk : k ≤ 3 * r) (hks : k + 1 ≤ 3 * r)
     (hstate : G.GreedyState r k alpha C hk)
@@ -1332,6 +1353,7 @@ private lemma greedyState_succ
     (hsize : ∀ i, 2 * (3 * r : ℕ) < beta * #(C i)) :
     G.GreedyState r (k + 1) alpha C hks := by
   classical
+  let := Fintype.ofFinite V
   obtain ⟨f, hfmem, hfadj, hfcard⟩ := hstate
   have hrpos : 0 < r := by omega
   have ha0 : 0 < alpha := by rw [halpha]; linarith
@@ -1356,7 +1378,7 @@ private lemma greedyState_succ
     have hij : i ≠ j := by
       intro h
       subst j
-      simpa [J] using hj
+      simp [J] at hj
     have hji : i.1 < j.1 := (mem_filter.1 hj).2
     have hu := hunif i j hij
     have hr0 : 0 < rho := hu.pos
@@ -1429,8 +1451,7 @@ private lemma greedyState_succ
     refine Fin.lastCases ?_ (fun a' ↦ ?_) a <;>
       refine Fin.lastCases ?_ (fun b' ↦ ?_) b <;> intro hab
     · exact (hab rfl).elim
-    ·
-      have hle : (greedyPart r ⟨b', by omega⟩).1 ≤ i.1 := by
+    · have hle : (greedyPart r ⟨b', by omega⟩).1 ≤ i.1 := by
         dsimp [i, greedyPart]
         exact Nat.div_le_div_right (Nat.le_of_lt b'.2)
       have hne : (greedyPart r ⟨b', by omega⟩).1 ≠ i.1 := by
@@ -1441,8 +1462,7 @@ private lemma greedyState_succ
         lt_of_le_of_ne hle hne
       have hadj := (mem_filter.1 hxS).2 b' hlt
       simpa [f'] using hadj.symm
-    ·
-      have hle : (greedyPart r ⟨a', by omega⟩).1 ≤ i.1 := by
+    · have hle : (greedyPart r ⟨a', by omega⟩).1 ≤ i.1 := by
         dsimp [i, greedyPart]
         exact Nat.div_le_div_right (Nat.le_of_lt a'.2)
       have hne : (greedyPart r ⟨a', by omega⟩).1 ≠ i.1 := by
@@ -1508,9 +1528,10 @@ private lemma greedyPart_greedySlot {r : ℕ} (a : Fin r) (b : Fin 3) :
   change (b.1 + 3 * a.1) / 3 = a.1
   omega
 
+omit [DecidableEq V] [Fintype V] in
 /-- Greedy embedding lemma for dense uniform pairs.  The deliberately strong
 numerical hypotheses make every one of the `3*r` greedy choices possible. -/
-theorem completeEquipartiteGraph_three_isContained_of_uniform
+theorem completeEquipartiteGraph_three_isContained_of_uniform [Finite V]
     {r : ℕ} {rho delta : ℝ} (C : Fin r → Finset V)
     (_hdisj : ∀ i j, i ≠ j → Disjoint (C i) (C j))
     (hdelta : 0 < delta) (hdelta2 : delta ≤ 2)
@@ -1520,6 +1541,8 @@ theorem completeEquipartiteGraph_three_isContained_of_uniform
     (hbad : 2 * (r : ℝ) * rho < (delta / 2) ^ (3 * r))
     (hsize : ∀ i, 2 * (3 * r : ℕ) < (delta / 2) ^ (3 * r) * #(C i)) :
     completeEquipartiteGraph r 3 ⊑ G := by
+  classical
+  let := Fintype.ofFinite V
   let alpha : ℝ := delta / 2
   let beta : ℝ := alpha ^ (3 * r)
   have states : ∀ (k : ℕ) (hk : k ≤ 3 * r), G.GreedyState r k alpha C hk := by
@@ -1548,9 +1571,10 @@ theorem completeEquipartiteGraph_three_isContained_of_uniform
       omega⟩
   exact ⟨⟨hom, e.injective⟩⟩
 
+omit [DecidableEq V] [Fintype V] in
 /-- Equal-cardinality version, convenient for applications to equitable
 regularity partitions. -/
-theorem completeEquipartiteGraph_three_isContained_of_uniform_equipartition
+theorem completeEquipartiteGraph_three_isContained_of_uniform_equipartition [Finite V]
     {r m : ℕ} {rho delta : ℝ} (C : Fin r → Finset V)
     (hcard : ∀ i, #(C i) = m)
     (hdisj : ∀ i j, i ≠ j → Disjoint (C i) (C j))
@@ -1561,6 +1585,8 @@ theorem completeEquipartiteGraph_three_isContained_of_uniform_equipartition
     (hbad : 2 * (r : ℝ) * rho < (delta / 2) ^ (3 * r))
     (hsize : 2 * (3 * r : ℕ) < (delta / 2) ^ (3 * r) * m) :
     completeEquipartiteGraph r 3 ⊑ G := by
+  classical
+  let := Fintype.ofFinite V
   apply G.completeEquipartiteGraph_three_isContained_of_uniform C hdisj hdelta hdelta2
     hrho0 hrho hunif hdense hbad
   intro i

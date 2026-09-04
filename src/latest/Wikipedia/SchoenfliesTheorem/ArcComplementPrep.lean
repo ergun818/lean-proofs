@@ -446,7 +446,7 @@ theorem not_isBounded_compl_closedSquare (c : Plane) (r : ℝ) :
 theorem mem_compl_closedSquare_iff (c : Plane) (r : ℝ) (x : Plane) :
     x ∈ (closedSquare c r)ᶜ ↔ x - c ∈ beyondSquare r := by
   rw [beyondSquare_eq_compl]
-  simp only [mem_compl_iff, closedSquare, mem_setOf_eq, supDist_zero]
+  simp only [mem_compl_iff, closedSquare, mem_ofPred_eq, supDist_zero]
   exact Iff.rfl
 
 theorem compl_closedSquare_eq_image (c : Plane) (r : ℝ) :
@@ -470,7 +470,7 @@ theorem compl_frontier_closedSquare (c : Plane) (r : ℝ) :
     (frontier (closedSquare c r))ᶜ = openSquare c r ∪ (closedSquare c r)ᶜ := by
   ext z
   rw [frontier_closedSquare]
-  simp only [mem_compl_iff, mem_setOf_eq, mem_union, openSquare, closedSquare, not_le]
+  simp only [mem_compl_iff, mem_ofPred_eq, mem_union, openSquare, closedSquare, not_le]
   constructor
   · intro h
     rcases lt_or_gt_of_ne h with h' | h'

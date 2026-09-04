@@ -319,7 +319,7 @@ def pieceListGraph (edges : List Piece) : Graph Plane Piece where
     rcases hxy with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ <;> rcases hvw with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ <;> simp
   edge_mem_iff_exists_isLink := by
     intro P
-    simp only [Set.mem_setOf_eq]
+    simp only [Set.mem_ofPred_eq]
     exact ⟨fun hP => ⟨P.1, P.2, hP, Or.inl ⟨rfl, rfl⟩⟩, fun ⟨_, _, hP, _⟩ => hP⟩
   left_mem_of_isLink := by
     rintro P x y ⟨hP, h⟩
@@ -366,7 +366,7 @@ theorem plane_eq_of_coords {z w : Plane} (h0 : z 0 = w 0) (h1 : z 1 = w 1) : z =
 
 theorem endSet_append (l l' : List Piece) : endSet (l ++ l') = endSet l ∪ endSet l' := by
   ext v
-  simp only [endSet, Set.mem_setOf_eq, Set.mem_union, List.mem_append]
+  simp only [endSet, Set.mem_ofPred_eq, Set.mem_union, List.mem_append]
   constructor
   · rintro ⟨P, hP | hP, h⟩
     exacts [Or.inl ⟨P, hP, h⟩, Or.inr ⟨P, hP, h⟩]
@@ -383,7 +383,7 @@ theorem pieceListGraph_pointSet (l : List Piece) :
     Graph.pointSet (pieceListGraph l) segmentDrawing = cover l := by
   ext z
   simp only [Graph.pointSet, Set.mem_union, Set.mem_iUnion, exists_prop, pieceListGraph_vertexSet,
-    endSet, Set.mem_setOf_eq, pieceListGraph_mem_edgeSet, edgeArc_segmentDrawing, cover]
+    endSet, Set.mem_ofPred_eq, pieceListGraph_mem_edgeSet, edgeArc_segmentDrawing, cover]
   constructor
   · rintro (⟨P, hP, hzP⟩ | ⟨P, hP, hzP⟩)
     · refine ⟨P, hP, ?_⟩

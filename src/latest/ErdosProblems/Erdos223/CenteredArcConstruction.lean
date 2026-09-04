@@ -65,7 +65,7 @@ def arcEnd (r : ℝ) : ℝ := (Real.sqrt (4 * r ^ 2 - 1))⁻¹
 
 lemma half_lt_inv_sqrt_two : (1 : ℝ) / 2 < 1 / Real.sqrt 2 := by
   rw [div_lt_div_iff₀ (by norm_num : (0 : ℝ) < 2) (Real.sqrt_pos.2 (by norm_num))]
-  simpa using (Real.sqrt_lt' (by norm_num : (0 : ℝ) < 2)).2 (by norm_num)
+  simp
 
 lemma arcEnd_pos {r : ℝ} (hr : 1 / 2 < r) : 0 < arcEnd r := by
   unfold arcEnd
@@ -101,7 +101,7 @@ lemma endpoint_equation {r : ℝ} (hr : 1 / 2 < r) :
   field_simp
   ring
 
-def parameter (r : ℝ) {b : ℕ} (hb : 2 ≤ b) (i : Fin b) : ℝ :=
+def parameter (r : ℝ) {b : ℕ} (_hb : 2 ≤ b) (i : Fin b) : ℝ :=
   (i : ℝ) / ((b - 1 : ℕ) : ℝ) * arcEnd r
 
 lemma parameter_nonneg {r : ℝ} (hr : 1 / 2 < r) {b : ℕ} (hb : 2 ≤ b)

@@ -1137,6 +1137,7 @@ lemma normalize_positiveSectionPoint
       NormedSpace.normalize u := by
   exact NormedSpace.normalize_smul_of_pos (inv_pos.mpr hu) u
 
+omit [Fintype I] in
 /-- Positive rescaling preserves the property of being outside the cone of
 all other indexed generators. -/
 lemma positiveSectionPoint_not_mem_other_cone
@@ -1147,6 +1148,7 @@ lemma positiveSectionPoint_not_mem_other_cone
     positiveSectionPoint phi (u i) ∉
       PointedCone.hull ℝ
         (otherIndexedPoints (fun j ↦ positiveSectionPoint phi (u j)) i) := by
+  classical
   intro hmem
   let C := PointedCone.hull ℝ (otherIndexedPoints u i)
   have hle : PointedCone.hull ℝ

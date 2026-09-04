@@ -54,7 +54,8 @@ private lemma delta0_pos {k : ℕ} : 0 < Real.pi / ((k : ℝ) + 2) := by
 
 private lemma delta0_le_pi_div_five {k : ℕ} (hk : 3 ≤ k) :
     Real.pi / ((k : ℝ) + 2) ≤ Real.pi / 5 := by
-  apply div_le_div_of_nonneg_left Real.pi_pos.le (by norm_num) (by exact_mod_cast Nat.add_le_add_right hk 2)
+  apply div_le_div_of_nonneg_left Real.pi_pos.le (by norm_num)
+  exact_mod_cast Nat.add_le_add_right hk 2
 
 private lemma cos_delta_pos {δ : ℝ} (hδ0 : 0 ≤ δ) (hδ : δ ≤ Real.pi / 5) :
     0 < Real.cos δ := by
@@ -146,7 +147,7 @@ private lemma one_sub_two_rad_sq_pos {δ : ℝ} (hδ0 : 0 ≤ δ)
   have hhalf := cos_half_pos hδ0 hδ
   have hdouble := Real.cos_two_mul (δ / 2)
   have hdouble' : Real.cos δ = 2 * Real.cos (δ / 2) ^ 2 - 1 := by
-    convert hdouble using 1 <;> ring_nf
+    convert hdouble using 1; ring_nf
   have hne : 2 * Real.cos (δ / 2) ≠ 0 := by positivity
   unfold rad
   field_simp [hne]
@@ -294,7 +295,7 @@ private lemma outer_eq_ht_mul_ctr_div_rad {δ : ℝ}
   have hh := (ht_pos hδ0 hδ).ne'
   have hdouble := Real.cos_two_mul (δ / 2)
   have hdouble' : Real.cos δ = 2 * Real.cos (δ / 2) ^ 2 - 1 := by
-    convert hdouble using 1 <;> ring_nf
+    convert hdouble using 1; ring_nf
   unfold ctr rad
   field_simp [hr, hh, cos_half_pos hδ0 hδ |>.ne']
   nlinarith [hdouble']
@@ -619,7 +620,7 @@ lemma diameter_identity {k : ℕ} {δ : ℝ} (hk : 3 ≤ k) (hδ0 : 0 < δ)
   have hc := base_cos_half_pos hk hδ0 hδ
   have htwo := Real.cos_two_mul (δ / 2)
   have hcos : Real.cos δ = 2 * Real.cos (δ / 2) ^ 2 - 1 := by
-    convert htwo using 1 <;> ring_nf
+    convert htwo using 1; ring_nf
   unfold rad
   field_simp [hc.ne']
   nlinarith
@@ -719,7 +720,7 @@ lemma basePoint_coordinate_strip {k : ℕ} {δ : ℝ} (hk : 3 ≤ k) (hkodd : Od
   ⟨neg_inner_le_basePoint_x hk hkodd hδ0 hδ i,
     basePoint_x_le_outer hk hδ0 hδ i⟩
 
-lemma signed_cos_factor_le {k m : ℕ} {δ : ℝ} (hk : 3 ≤ k) (hkodd : Odd k)
+lemma signed_cos_factor_le {k m : ℕ} {δ : ℝ} (_hk : 3 ≤ k) (hkodd : Odd k)
     (hδ0 : 0 < δ) (hδ : δ < Real.pi / ((k : ℝ) + 2)) (hm : m ≤ k) :
     1 - sign m * Real.cos ((m : ℝ) * δ) ≤ 1 + Real.cos δ := by
   have hkpi := k_mul_delta_lt_pi hδ0 hδ
@@ -791,7 +792,7 @@ lemma dist_basePoint_consecutive {k : ℕ} {δ : ℝ} (hk : 3 ≤ k)
   nlinarith [dist_nonneg
     (x := basePoint k δ i.castSucc) (y := basePoint k δ i.succ)]
 
-lemma signed_cos_factor_pos {k m : ℕ} {δ : ℝ} (hk : 3 ≤ k) (hkodd : Odd k)
+lemma signed_cos_factor_pos {k m : ℕ} {δ : ℝ} (_hk : 3 ≤ k) (_hkodd : Odd k)
     (hδ0 : 0 < δ) (hδ : δ < Real.pi / ((k : ℝ) + 2))
     (hm0 : 0 < m) (hm : m ≤ k) :
     0 < 1 - sign m * Real.cos ((m : ℝ) * δ) := by
@@ -1387,7 +1388,8 @@ lemma dist_eq_one_of_oddEdgeMap_eq {k : ℕ} {δ : ℝ} (hk : 3 ≤ k) (hkodd : 
       · simpa [vertexPoint, exceptionalPoint, yBase] using dist_support_last hk hkodd hδ0 hδ
     · fin_cases i
       · simpa [vertexPoint, exceptionalPoint, yBase, dist_comm] using dist_support_first hk hδ0 hδ
-      · simpa [vertexPoint, exceptionalPoint, yBase, dist_comm] using dist_support_last hk hkodd hδ0 hδ
+      · simpa [vertexPoint, exceptionalPoint, yBase, dist_comm] using dist_support_last hk hkodd
+          hδ0 hδ
   · simp only [oddEdgeMap] at he
     rw [Sym2.eq_iff] at he
     rcases he with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩

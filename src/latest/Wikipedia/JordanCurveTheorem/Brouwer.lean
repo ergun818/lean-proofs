@@ -152,26 +152,26 @@ theorem no_retraction (ρ : C(closedBall (0 : Plane) 1, closedBall (0 : Plane) 1
   · -- H (0, s) = sLoop s
     intro s
     have hmem : (diskMap (0, s) : Plane) ∈ sphere (0 : Plane) 1 := by
-      show diskPt 0 s ∈ _
+      change diskPt 0 s ∈ _
       simp only [diskPt, Set.Icc.coe_zero, sub_zero, one_smul, zero_smul, add_zero]
       exact (sLoop s).2
     apply Subtype.ext
-    show (ρ (diskMap (0, s)) : Plane) = (sLoop s : Plane)
+    change (ρ (diskMap (0, s)) : Plane) = (sLoop s : Plane)
     rw [hid _ hmem]
     show (diskMap (0, s) : Plane) = (sLoop s : Plane)
-    show diskPt 0 s = (sLoop s : Plane)
+    change diskPt 0 s = (sLoop s : Plane)
     simp [diskPt]
   · -- H (1, s) = base
     intro s
     have hmem : (diskMap (1, s) : Plane) ∈ sphere (0 : Plane) 1 := by
-      show diskPt 1 s ∈ _
+      change diskPt 1 s ∈ _
       simp only [diskPt, Set.Icc.coe_one, sub_self, zero_smul, one_smul, zero_add]
       exact sBase.2
     apply Subtype.ext
-    show (ρ (diskMap (1, s)) : Plane) = (sBase : Plane)
+    change (ρ (diskMap (1, s)) : Plane) = (sBase : Plane)
     rw [hid _ hmem]
     show (diskMap (1, s) : Plane) = (sBase : Plane)
-    show diskPt 1 s = (sBase : Plane)
+    change diskPt 1 s = (sBase : Plane)
     simp [diskPt]
   · -- rel endpoints: for s ∈ {0,1}, H t s = sLoop s = base
     intro t s hs
@@ -180,14 +180,14 @@ theorem no_retraction (ρ : C(closedBall (0 : Plane) 1, closedBall (0 : Plane) 1
       · rw [show s = (0 : I) from h, sLoop_zero]
       · rw [show s = (1 : I) from h, sLoop_one]
     have hmem : (diskMap (t, s) : Plane) ∈ sphere (0 : Plane) 1 := by
-      show diskPt t s ∈ _
+      change diskPt t s ∈ _
       simp only [diskPt, hs', ← add_smul, sub_add_cancel, one_smul]
       exact sBase.2
     apply Subtype.ext
-    show (ρ (diskMap (t, s)) : Plane) = (sLoop s : Plane)
+    change (ρ (diskMap (t, s)) : Plane) = (sLoop s : Plane)
     rw [hid _ hmem, hs']
     show (diskMap (t, s) : Plane) = (sBase : Plane)
-    show diskPt t s = (sBase : Plane)
+    change diskPt t s = (sBase : Plane)
     simp only [diskPt, hs', ← add_smul, sub_add_cancel, one_smul]
 
 /-! ## Phase 3 — Brouwer for the closed unit disk
@@ -210,7 +210,8 @@ noncomputable def Bcoef (x : closedBall (0 : Plane) 1) : ℝ := ⟪(f x : Plane)
 /-- Coefficient `C = ‖f x‖² - 1 ≤ 0`. -/
 noncomputable def Ccoef (x : closedBall (0 : Plane) 1) : ℝ := ‖(f x : Plane)‖ ^ 2 - 1
 /-- Discriminant `B² - A·C ≥ 0`. -/
-noncomputable def discr (x : closedBall (0 : Plane) 1) : ℝ := (Bcoef f x) ^ 2 - Acoef f x * Ccoef f x
+noncomputable def discr (x : closedBall (0 : Plane) 1) : ℝ :=
+  (Bcoef f x) ^ 2 - Acoef f x * Ccoef f x
 /-- The (larger) root parameter `t = (-B + √disc)/A`. -/
 noncomputable def tparam (x : closedBall (0 : Plane) 1) : ℝ :=
   (- Bcoef f x + Real.sqrt (discr f x)) / Acoef f x
@@ -347,9 +348,9 @@ theorem brouwer_disk (f : C(closedBall (0 : Plane) 1, closedBall (0 : Plane) 1))
     rw [mem_closedBall, dist_zero_right, norm_rhoPt f hf x]
   refine no_retraction ⟨fun x => ⟨rhoPt f x, hρmem x⟩, (continuous_rhoPt f hf).subtype_mk _⟩
     (fun x => ?_) (fun x hx => ?_)
-  · show rhoPt f x ∈ sphere (0 : Plane) 1
+  · change rhoPt f x ∈ sphere (0 : Plane) 1
     rw [mem_sphere_zero_iff_norm]; exact norm_rhoPt f hf x
-  · show rhoPt f x = (x : Plane)
+  · change rhoPt f x = (x : Plane)
     exact rhoPt_of_mem_sphere f hf x hx
 
 /-! ## Phase 4 — general nonempty compact convex sets -/
@@ -476,5 +477,9 @@ theorem brouwerFPT : ∀ s : Set Plane, Convex ℝ s → IsCompact s → s.Nonem
   have hval : (f (r x) : Plane) = (x : Plane) := congrArg Subtype.val hx
   have hxs : (x : Plane) ∈ s := by rw [← hval]; exact (f (r x)).2
   have hrx : ((r x : s) : Plane) = (x : Plane) := projFun_eq_self hconv hcomp hne hxs
-  show (f (r x) : Plane) = ((r x : s) : Plane)
+  change (f (r x) : Plane) = ((r x : s) : Plane)
   rw [hval, hrx]
+
+end Brouwer
+
+end JordanCurve

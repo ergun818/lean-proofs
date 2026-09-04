@@ -50,7 +50,7 @@ noncomputable def circleEquivSphere : Circle ≃ sphere (0 : Plane) 1 where
   toFun z := ⟨complexLIE z, by
     rw [mem_sphere_zero_iff_norm, complexLIE.norm_map]; exact z.norm_coe⟩
   invFun w := ⟨complexLIE.symm w, by
-    show complexLIE.symm w ∈ sphere (0 : ℂ) 1
+    change complexLIE.symm w ∈ sphere (0 : ℂ) 1
     rw [mem_sphere_zero_iff_norm, complexLIE.symm.norm_map, ← mem_sphere_zero_iff_norm]
     exact w.2⟩
   left_inv z := by ext; simp [complexLIE.symm_apply_apply]
@@ -141,10 +141,10 @@ lemma arcHomeoUnitInterval_apply_left {a b : ℝ} (hab : a < b) (h : b - a < 2 *
   have hsymm : (arcHomeoIcc h).symm ⟨param a, hmem⟩ = ⟨a, ha⟩ := by
     rw [← key, Homeomorph.symm_apply_apply]
   apply Subtype.ext
-  show ((arcHomeoIcc h).symm.trans (iccHomeoI a b hab) ⟨param a, hmem⟩ : ℝ)
+  change ((arcHomeoIcc h).symm.trans (iccHomeoI a b hab) ⟨param a, hmem⟩ : ℝ)
       = ((0 : unitInterval) : ℝ)
   rw [Homeomorph.trans_apply, hsymm, iccHomeoI_apply_coe, Set.Icc.coe_zero]
-  show (a - a) / (b - a) = 0
+  change (a - a) / (b - a) = 0
   rw [sub_self, zero_div]
 
 /-- The right endpoint `param b` of the arc maps to `1` under `arcHomeoUnitInterval`. -/
@@ -156,10 +156,10 @@ lemma arcHomeoUnitInterval_apply_right {a b : ℝ} (hab : a < b) (h : b - a < 2 
   have hsymm : (arcHomeoIcc h).symm ⟨param b, hmem⟩ = ⟨b, hb⟩ := by
     rw [← key, Homeomorph.symm_apply_apply]
   apply Subtype.ext
-  show ((arcHomeoIcc h).symm.trans (iccHomeoI a b hab) ⟨param b, hmem⟩ : ℝ)
+  change ((arcHomeoIcc h).symm.trans (iccHomeoI a b hab) ⟨param b, hmem⟩ : ℝ)
       = ((1 : unitInterval) : ℝ)
   rw [Homeomorph.trans_apply, hsymm, iccHomeoI_apply_coe, Set.Icc.coe_one]
-  show (b - a) / (b - a) = 1
+  change (b - a) / (b - a) = 1
   rw [div_self (by linarith : b - a ≠ 0)]
 
 /-! ## 2b. Interior of an arc is path-connected -/
@@ -245,7 +245,7 @@ theorem arc_interior_isPathConnected {X : Type*} [TopologicalSpace X] {A : Set X
       refine ⟨(t : ℝ), htmem, ?_⟩
       have hproj : Set.projIcc (0 : ℝ) 1 (by norm_num) (t : ℝ) = t :=
         Set.projIcc_val _ t
-      show ((e.symm (Set.projIcc (0 : ℝ) 1 (by norm_num) (t : ℝ)) : A) : X) = p
+      change ((e.symm (Set.projIcc (0 : ℝ) 1 (by norm_num) (t : ℝ)) : A) : X) = p
       rw [hproj, ht, Homeomorph.symm_apply_apply]
   rw [← himg]
   exact hIoo.image hgcont

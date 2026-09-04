@@ -29,7 +29,7 @@ open scoped Graph
 
 namespace Schoenflies
 
-open Graph
+open Schoenflies.Graph
 
 variable {γ : Type*} {S₀ : CellStructure γ}
   {srcOuter srcDom tgtOuter tgtDom : Set Plane}

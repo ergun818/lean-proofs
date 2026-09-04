@@ -380,14 +380,14 @@ theorem outer_le_skeleton : d.outer ≤ d.skeleton := subdivGraph_mono S.outerGr
 
 @[simp] theorem skeleton_vertexSet : V(d.skeleton) = insert d.newVertex V(S.skel) := by
   ext z
-  simp only [skeleton, subdivGraph_vertexSet, Set.mem_union, Set.mem_setOf_eq,
+  simp only [skeleton, subdivGraph_vertexSet, Set.mem_union, Set.mem_ofPred_eq,
     Set.mem_insert_iff, d.isLink, and_true]
   tauto
 
 @[simp] theorem skeleton_edgeSet :
     E(d.skeleton) = insert d.newEdge₁ (insert d.newEdge₂ (E(S.skel) \ {d.edge})) := by
   ext f
-  simp only [skeleton, subdivGraph_edgeSet, Set.mem_union, Set.mem_setOf_eq,
+  simp only [skeleton, subdivGraph_edgeSet, Set.mem_union, Set.mem_ofPred_eq,
     Set.mem_insert_iff, d.isLink, and_true]
   tauto
 
@@ -410,7 +410,7 @@ theorem outer_isLink (he : d.edge ∈ E(S.outerGraph)) :
 theorem outer_edgeSet_of_mem (he : d.edge ∈ E(S.outerGraph)) :
     E(d.outer) = insert d.newEdge₁ (insert d.newEdge₂ (E(S.outerGraph) \ {d.edge})) := by
   ext f
-  simp only [outer, subdivGraph_edgeSet, Set.mem_union, Set.mem_setOf_eq,
+  simp only [outer, subdivGraph_edgeSet, Set.mem_union, Set.mem_ofPred_eq,
     Set.mem_insert_iff, d.outer_isLink he, and_true]
   tauto
 
@@ -1694,11 +1694,11 @@ theorem isCellDecomposition (hS : S.CombInvariants) (href : d.IsRefinement R R')
     intro τ hτ
     rw [subdivideEdge_cells] at hτ
     ext z
-    simp only [Set.mem_iUnion, Set.mem_setOf_eq, exists_prop]
+    simp only [Set.mem_iUnion, Set.mem_ofPred_eq, exists_prop]
     rcases hτ with ⟨hτc, hτe⟩ | hτn
     · -- a surviving cell: the index set gains the new cells exactly when it had `e`
       rw [href.cell_eq hτc hτe, h.closure_eq hτc]
-      simp only [Set.mem_iUnion, Set.mem_setOf_eq, exists_prop]
+      simp only [Set.mem_iUnion, Set.mem_ofPred_eq, exists_prop]
       constructor
       · rintro ⟨σ, ⟨hσc, hσsub⟩, hz⟩
         by_cases hσe : σ = d.edge

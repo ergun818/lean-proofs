@@ -115,7 +115,7 @@ theorem simpleGraph_edge_add_four_le_two_vertices
     simp [Nat.card_eq_fintype_card]
   have hEcard : E(Q).ncard = F.edgeFinset.card := by
     change F.edgeSet.ncard = F.edgeFinset.card
-    simpa [SimpleGraph.edgeFinset] using Set.ncard_eq_toFinset_card' F.edgeSet
+    simp [SimpleGraph.edgeFinset]
   have hbound := edge_add_four_le_two_vertices_of_connected_isDrawing_isBicoloring
     Q drawing hdraw hQconn (hVcard ▸ hcard) hc
   rwa [hVcard, hEcard] at hbound
@@ -129,13 +129,14 @@ namespace Graph.WeightedFaces
 
 /-- The exact callback expected by the Vázsonyi double-cover bridge. -/
 theorem connectedSimpleGraphCallback
-    (W : Type) [Fintype W] [DecidableEq W]
+    (W : Type) [Fintype W]
     (H : SimpleGraph W) [DecidableRel H.Adj]
     (p : W → Plane) (D : Sym2 W → ℝ → Plane)
     (hconn : H.Connected) (hmin : ∀ w, 2 ≤ H.degree w)
     (hbi : H.IsBipartite) (hp : Function.Injective p)
     (hdraw : Graph.IsDrawing ((Graph.ofSimpleGraph H).map p) D) :
     H.edgeFinset.card + 4 ≤ 2 * Fintype.card W := by
+  classical
   let w : W := Classical.choice hconn.nonempty
   have hcard : 3 ≤ Fintype.card W := by
     have hlt := H.degree_lt_card_verts w

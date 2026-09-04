@@ -269,7 +269,7 @@ lemma blueBase_mem_range_redBluePath_iff
   · rintro rfl
     exact Or.inr (by
       rw [Set.mem_neg]
-      simpa [blueBase] using Path.source_mem_range (path hA hmin (rightIndex hxy)))
+      simp [blueBase])
 
 lemma planePos_mem_range_stereoRedBluePath_iff
     (hA : IsDiameterOne A)
@@ -507,7 +507,7 @@ theorem isDrawing_planeDoubleCoverGraph
   edge_param e he := planeEdge_param hA hmin hz havoid e he
   vertex_mem_edgeArc _ _ _ _ hl hv hve :=
     planeDrawing_vertex_mem_edgeArc hA hmin hz havoid hl hv hve
-  edge_inter e f he hf hef p hpe hpf :=
+  edge_inter _e _f he hf hef _p hpe hpf :=
     planeDrawing_edge_inter hA hmin hz havoid he hf hef hpe hpf
 
 end

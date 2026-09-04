@@ -30,23 +30,29 @@ def ConnectedComponent.neighborEquiv (C : G.ConnectedComponent) (u : C) :
   left_inv w := by apply Subtype.ext; apply Subtype.ext; rfl
   right_inv w := by apply Subtype.ext; rfl
 
+omit [DecidableEq V] in
 lemma ConnectedComponent.degree_toSimpleGraph_eq (C : G.ConnectedComponent) (u : C) :
     C.toSimpleGraph.degree u = G.degree u.1 := by
+  classical
   rw [← C.toSimpleGraph.card_neighborSet_eq_degree,
     ← G.card_neighborSet_eq_degree]
   exact Fintype.card_congr (C.neighborEquiv G u)
 
+omit [DecidableEq V] in
 lemma ConnectedComponent.minDegree_of_minDegree
     (C : G.ConnectedComponent) (hmin : ∀ v, 2 ≤ G.degree v) :
     ∀ u, 2 ≤ C.toSimpleGraph.degree u := by
+  classical
   intro u
   rw [C.degree_toSimpleGraph_eq G u]
   exact hmin u
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 lemma ConnectedComponent.isBipartite (C : G.ConnectedComponent)
     (hbi : G.IsBipartite) : C.toSimpleGraph.IsBipartite :=
   hbi.of_hom C.toSimpleGraph_hom
 
+omit [DecidableEq V] in
 /-- Component summation reduces an arbitrary crossing-free bipartite drawing
 to the connected case. -/
 theorem edge_add_four_le_of_connected_drawing_bound
@@ -63,6 +69,7 @@ theorem edge_add_four_le_of_connected_drawing_bound
       Graph.IsDrawing ((Graph.ofSimpleGraph H).map p) D →
       H.edgeFinset.card + 4 ≤ 2 * Fintype.card W) :
     G.edgeFinset.card + 4 ≤ 2 * Fintype.card V := by
+  classical
   apply G.edge_add_four_le_two_mul_card_of_connectedComponent
   intro C
   let f : C ↪ V := Function.Embedding.subtype C.supp

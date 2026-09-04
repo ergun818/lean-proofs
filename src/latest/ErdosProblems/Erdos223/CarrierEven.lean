@@ -398,7 +398,7 @@ private lemma mem_triplePlane_direction_of_mem_orthogonal_others
     rw [heq]
     exact hsub
   have hcard_ne : Fintype.card {k : Fin p // k ≠ i} = p - 1 := by
-    simpa using Fintype.card_subtype_compl (fun k : Fin p ↦ k = i)
+    simp
   have hUlower : 2 * p - 2 ≤ Module.finrank ℝ U := by
     have := hb.fintype_card_le_finrank
     simp only [Fintype.card_prod, Fintype.card_fin, hcard_ne] at this
@@ -425,8 +425,8 @@ private lemma projection_eq_triple_circumcenter
     (hqr : ∀ a, dist (x i a) q = r) :
     ↑((S i).orthogonalProjectionSpan q) = (S i).circumcenter := by
   apply (S i).orthogonalProjection_eq_circumcenter_of_dist_eq
-  intro a
-  simpa [hpoints i] using hqr a
+  · intro a
+    simpa [hpoints i] using hqr a
 
 /-- `p` mutually cross-unit triples in `Point (2p)`, for `p ≥ 3`, lie on
 one genuine even Lenz carrier.  This is the full multipartite common-center
@@ -586,8 +586,8 @@ theorem exists_evenCircleCarrier_of_cross_unit_triples_with_completion
       calc
         ↑((S k).orthogonalProjectionSpan q) = (S k).circumcenter := by
           apply (S k).orthogonalProjection_eq_circumcenter_of_dist_eq
-          intro a
-          simpa [hpoints k, dist_comm] using hq k hki a
+          · intro a
+            simpa [hpoints k, dist_comm] using hq k hki a
         _ = C.center := hcirc k
     rw [← hproj]
     change q -ᵥ ↑((S k).orthogonalProjectionSpan q) ∈
@@ -714,9 +714,11 @@ open Finset
 
 variable {V : Type*} [DecidableEq V]
 
+omit [DecidableEq V] in
 private lemma exists_superset_subset_card_eq (K S : Finset V) (t : ℕ)
     (hKS : K ⊆ S) (hKt : K.card ≤ t) (htS : t ≤ S.card) :
     ∃ T : Finset V, K ⊆ T ∧ T ⊆ S ∧ T.card = t := by
+  classical
   have hdiff : (S \ K).card = S.card - K.card :=
     Finset.card_sdiff_of_subset hKS
   have hneed : t - K.card ≤ (S \ K).card := by
@@ -745,6 +747,7 @@ private lemma card_bad_le (G : SimpleGraph V) [DecidableRel G.Adj]
     _ ≤ ∑ _x ∈ Q, b := Finset.sum_le_sum fun x hx ↦ hbad x hx
     _ = Q.card * b := by simp
 
+omit [DecidableEq V] in
 /-- If at most `b` candidates are forbidden by each old vertex, the union
 bound leaves `t` new mutually compatible candidates. -/
 private theorem exists_card_subset_adj (G : SimpleGraph V) [DecidableRel G.Adj]
@@ -755,6 +758,7 @@ private theorem exists_card_subset_adj (G : SimpleGraph V) [DecidableRel G.Adj]
     (hsize : (q : ℝ) * b + t ≤ S.card) :
     ∃ T : Finset V, T ⊆ S ∧ T.card = t ∧
       ∀ y ∈ T, ∀ x ∈ Q, G.Adj x y := by
+  classical
   let Bad : Finset V := Q.biUnion fun x ↦ S.filter fun y ↦ ¬ G.Adj x y
   have hBadS : Bad ⊆ S := by
     intro y hy
@@ -780,9 +784,10 @@ private theorem exists_card_subset_adj (G : SimpleGraph V) [DecidableRel G.Adj]
   simp only [Bad, Finset.mem_biUnion, Finset.mem_filter]
   exact ⟨x, hx, (Finset.mem_sdiff.mp hyDiff).1, hxy⟩
 
+omit [DecidableEq V] in
 /-- Greedy multipartite selection with a prescribed base set. -/
 private theorem exists_complete_on_finset_with_base
-    {ι : Type*} [DecidableEq ι]
+    {ι : Type*}
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (S : ι → Finset V) (I : Finset ι) (Q₀ : Finset V)
     (q t : ℕ) (b : ℝ)
@@ -798,6 +803,7 @@ private theorem exists_complete_on_finset_with_base
       (∀ i ∈ I, ∀ j ∈ I, i ≠ j →
         ∀ x ∈ T i, ∀ y ∈ T j, G.Adj x y) ∧
       ∀ x ∈ Q₀, ∀ i ∈ I, ∀ y ∈ T i, G.Adj x y := by
+  classical
   induction I using Finset.induction_on with
   | empty => exact ⟨fun _ ↦ ∅, by simp, by simp, by simp⟩
   | @insert a I ha ih =>
@@ -872,6 +878,7 @@ private theorem exists_complete_on_finset_with_base
           apply hbase x hx i hiI y
           simpa [T', hia] using hy
 
+omit [DecidableEq V] in
 /-- Select `t` mutually cross-adjacent vertices from every fiber, while
 requiring a seed of at most `t` vertices in one distinguished fiber. -/
 theorem exists_complete_parts_containing {p : ℕ}
@@ -886,6 +893,7 @@ theorem exists_complete_parts_containing {p : ℕ}
       (∀ i, T i ⊆ S i ∧ (T i).card = t) ∧
       K ⊆ T i₀ ∧
       ∀ i j, i ≠ j → ∀ x ∈ T i, ∀ y ∈ T j, G.Adj x y := by
+  classical
   have ht : t ≤ (S i₀).card := by
     have := hsize i₀
     have hterm : 0 ≤ ((p * t : ℕ) : ℝ) * b := mul_nonneg (by positivity) hb
@@ -940,6 +948,7 @@ theorem exists_complete_parts_containing {p : ℕ}
         · simpa [T, hi] using hxi
         · simpa [T, hj] using hyj
 
+omit [DecidableEq V] in
 /-- Three-point specialization used to initialize the geometric carrier. -/
 theorem exists_complete_triples_containing {p : ℕ}
     (G : SimpleGraph V) [DecidableRel G.Adj]
@@ -953,6 +962,7 @@ theorem exists_complete_triples_containing {p : ℕ}
       (∀ i, T i ⊆ S i ∧ (T i).card = 3) ∧
       K ⊆ T i₀ ∧
       ∀ i j, i ≠ j → ∀ x ∈ T i, ∀ y ∈ T j, G.Adj x y := by
+  classical
   apply exists_complete_parts_containing G S i₀ K 3 b hb hKS hK
   · intro i
     simpa [Nat.cast_mul, Nat.cast_ofNat, mul_comm] using hsize i
@@ -1674,10 +1684,11 @@ theorem card_induce_carrierVertices_le
 
 /-- Retained fibers belonging to different colors are disjoint. -/
 private theorem retainedFiber_disjoint
-    {V : Type*} [Fintype V] [DecidableEq V] {p : ℕ} (c : V → Fin p) (S0 : Finset V)
+    {V : Type*} [Fintype V] {p : ℕ} (c : V → Fin p) (S0 : Finset V)
     {i j : Fin p} (hij : i ≠ j) :
     Disjoint (Stability.retainedFiber c S0 i)
       (Stability.retainedFiber c S0 j) := by
+  classical
   rw [Finset.disjoint_left]
   intro v hvi hvj
   have hi := (Stability.mem_retainedFiber c S0 i v).mp hvi
@@ -1823,7 +1834,7 @@ theorem card_edgeFinset_le_of_stable_core
         intro v hv
         apply Finset.sum_congr rfl
         intro x hx
-        simpa only [G.adj_comm]
+        simp only [G.adj_comm]
       _ = ∑ v ∈ B, ((G.neighborFinset v ∩ L).card : ℝ) := by
         apply Finset.sum_congr rfl
         intro v hv
@@ -1861,7 +1872,6 @@ theorem card_edgeFinset_le_of_stable_core
     exact_mod_cast hdecomp
   dsimp only
   dsimp [G] at hdecompR
-  norm_num only [Nat.cast_add]
   have hinsideR : ((G.induce (↑L : Set {x // x ∈ A})).edgeFinset.card : ℝ) ≤
       turanNumber p L.card + p := by exact_mod_cast hinside
   have hBinsideR : ((G.induce (↑B : Set {x // x ∈ A})).edgeFinset.card : ℝ) ≤
@@ -1918,7 +1928,7 @@ is strictly smaller than the Turán growth obtained by restoring those
 vertices. -/
 theorem offCarrier_extra_lt_turan_gap
     {p n l b : ℕ} {epsilon : ℝ} (hp : 3 ≤ p)
-    (hsum : l + b = n) (hb : 0 < b) (hepsilon : 0 ≤ epsilon)
+    (hsum : l + b = n) (hb : 0 < b) (_hepsilon : 0 ≤ epsilon)
     (hbsmall : (b : ℝ) < epsilon * n)
     (hlarge : 5 * (p : ℝ) * epsilon * n + 7 * p < 2 * n) :
     (b : ℝ) * ((l : ℝ) - 2 * ((n : ℝ) / p - epsilon * n) + 4) +
@@ -2056,7 +2066,7 @@ theorem IsEvenLenz.diameterPairCount_le_fourValue
   have hlarge : 1 / Real.sqrt 3 < D.carrier.radius i0 ∨
       1 / Real.sqrt 3 < D.carrier.radius i1 := by
     by_contra h
-    push_neg at h
+    push Not at h
     have h0 := D.carrier.radius_nonneg i0
     have h1 := D.carrier.radius_nonneg i1
     have hinv : (0 : ℝ) < 1 / Real.sqrt 3 := by positivity
@@ -2230,7 +2240,7 @@ theorem card_edgeFinset_le_of_stable_core_with_inside
       _ = ∑ v ∈ B, ∑ x ∈ L, if G.Adj v x then (1 : ℝ) else 0 := by
         rw [Finset.sum_comm]
         exact Finset.sum_congr rfl fun v _ ↦ Finset.sum_congr rfl fun x _ ↦ by
-          simpa only [G.adj_comm]
+          simp only [G.adj_comm]
       _ = ∑ v ∈ B, ((G.neighborFinset v ∩ L).card : ℝ) := by
         apply Finset.sum_congr rfl
         intro v hv
@@ -2350,7 +2360,7 @@ theorem eventually_f_even_le_turanNumber_add
       (d := 2 * p) (by omega : 4 ≤ 2 * p) A
     rw [show 2 * p / 2 = p by omega] at hf
     exact hf
-  have hcardV : Fintype.card {x // x ∈ A} = n := by simpa [hAcard]
+  have hcardV : Fintype.card {x // x ∈ A} = n := by simp [hAcard]
   have hnearG :
       (((p : ℝ) - 1) / (2 * p) - delta) * (n : ℝ) ^ 2 ≤
         (G.edgeFinset.card : ℝ) := by
@@ -2429,7 +2439,7 @@ theorem eventually_f_even_le_turanNumber_add
     have hsum : L.card + B.card = n := by
       have hc := Finset.card_compl_add_card L
       rw [hAcard] at hcardSubtype
-      simpa [B, hcardSubtype, add_comm] using hc
+      simp [B, hcardSubtype]
     have hlargeNum :
         5 * (p : ℝ) * epsilon * n + 7 * p < 2 * n := by
       have hpR : (0 : ℝ) < p := by positivity
@@ -2544,7 +2554,7 @@ theorem eventually_f_four_le_exactValue :
   have hfree : (completeEquipartiteGraph 3 3).Free G := by
     simpa using (diameterGraph_completeEquipartiteGraph_free
       (d := 4) (by omega) A)
-  have hcardV : Fintype.card {x // x ∈ A} = n := by simpa [hAcard]
+  have hcardV : Fintype.card {x // x ∈ A} = n := by simp [hAcard]
   have hnearG :
       (((2 : ℝ) - 1) / (2 * 2) - delta) * (n : ℝ) ^ 2 ≤
         (G.edgeFinset.card : ℝ) := by
@@ -2613,7 +2623,7 @@ theorem eventually_f_four_le_exactValue :
     have hsum : L.card + B.card = n := by
       have hc := Finset.card_compl_add_card L
       rw [hAcard] at hcardSubtype
-      simpa [B, hcardSubtype, add_comm] using hc
+      simp [B, hcardSubtype]
     have hinside := card_induce_carrierVertices_le_four hA C hnonempty
     have hedge := card_edgeFinset_le_of_stable_core_with_inside
       (p := 2) (by omega) P C hcore hthree

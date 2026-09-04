@@ -145,7 +145,7 @@ theorem exists_card_edgeFinset_le_completeEquipartite
 The linear term is absorbed by completing the square, leaving an additive
 constant independent of the vertex type and graph. -/
 theorem exists_uniform_card_edgeFinset_le_completeEquipartite
-    (p t : ℕ) (hp : 0 < p) { η : ℝ } (hη : 0 < η) :
+    (p t : ℕ) (hp : 0 < p) {η : ℝ} (hη : 0 < η) :
     ∃ C : ℝ, 0 ≤ C ∧
       ∀ (V : Type*) [Fintype V] (G : SimpleGraph V) [DecidableRel G.Adj],
         (completeEquipartiteGraph (p + 1) t).Free G →
@@ -175,7 +175,7 @@ For fixed `p` and `t`, every sufficiently large graph avoiding
 `completeEquipartiteGraph (p + 1) t` has edge density at most the Turán
 coefficient `(p - 1) / (2p)`, up to an arbitrary positive error. -/
 theorem eventually_card_edgeFinset_le_completeEquipartite
-    (p t : ℕ) (hp : 2 ≤ p) { ε : ℝ } (hε : 0 < ε) :
+    (p t : ℕ) (hp : 2 ≤ p) {ε : ℝ} (hε : 0 < ε) :
     ∀ᶠ m in atTop, ∀ (V : Type*) [Fintype V], Fintype.card V = m →
       ∀ (G : SimpleGraph V) [DecidableRel G.Adj],
         (completeEquipartiteGraph (p + 1) t).Free G →

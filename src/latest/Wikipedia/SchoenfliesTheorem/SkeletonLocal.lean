@@ -458,7 +458,7 @@ separated out; see the module docstring. -/
 theorem IsLocalRadius.ball_diff_eq_cone (h : IsLocalRadius S x r) :
     ball x r \ S = Plane.cone x {u | u ≠ 0 ∧ Plane.dir u ∉ localDirs S x} r := by
   ext z
-  simp only [Set.mem_sdiff, mem_ball, Plane.mem_cone_iff, mem_setOf_eq, sub_ne_zero]
+  simp only [Set.mem_sdiff, mem_ball, Plane.mem_cone_iff, mem_ofPred_eq, sub_ne_zero]
   constructor
   · rintro ⟨hzb, hzS⟩
     have hiff := h.2 z hzb.le

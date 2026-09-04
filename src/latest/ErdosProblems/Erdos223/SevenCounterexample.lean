@@ -105,11 +105,11 @@ abbrev D7V (m : ℕ) := Fin 3 × Fin m
 
 def leftEmbedding (e : {x // x ∈ B} ≃ Fin m) : {x // x ∈ B} ↪ D7V m where
   toFun x := (0, e x)
-  inj' x y h := e.injective (congrArg Prod.snd h)
+  inj' _x _y h := e.injective (congrArg Prod.snd h)
 
 def rightEmbedding (e : {x // x ∈ B} ≃ Fin m) : {x // x ∈ B} ↪ D7V m where
   toFun x := (2, e x)
-  inj' x y h := e.injective (congrArg Prod.snd h)
+  inj' _x _y h := e.injective (congrArg Prod.snd h)
 
 def leftLocalGraph (e : {x // x ∈ B} ≃ Fin m) : SimpleGraph (D7V m) :=
   (diameterGraph B).map (leftEmbedding e)
@@ -151,7 +151,8 @@ lemma cross_disjoint_left (e : {x // x ∈ B} ≃ Fin m) :
   obtain ⟨x, y, _hxy, hx, hy⟩ := hlocal
   have hv := congrArg Prod.fst hx
   have hw := congrArg Prod.fst hy
-  simp only [SimpleGraph.emptyGraph_eq_bot, SimpleGraph.bot_adj] at hv hw
+  change (0 : Fin 3) = v.1 at hv
+  change (0 : Fin 3) = w.1 at hw
   exact (SimpleGraph.completeEquipartiteGraph_adj.mp hcross) (hv.symm.trans hw)
 
 lemma cross_disjoint_right (e : {x // x ∈ B} ≃ Fin m) :
@@ -164,7 +165,8 @@ lemma cross_disjoint_right (e : {x // x ∈ B} ≃ Fin m) :
   obtain ⟨x, y, _hxy, hx, hy⟩ := hlocal
   have hv := congrArg Prod.fst hx
   have hw := congrArg Prod.fst hy
-  simp only [SimpleGraph.emptyGraph_eq_bot, SimpleGraph.bot_adj] at hv hw
+  change (2 : Fin 3) = v.1 at hv
+  change (2 : Fin 3) = w.1 at hw
   exact (SimpleGraph.completeEquipartiteGraph_adj.mp hcross) (hv.symm.trans hw)
 
 lemma left_disjoint_right (e : {x // x ∈ B} ≃ Fin m) :
@@ -264,18 +266,10 @@ lemma card_edgeFinset_d7SourceGraph (e : {x // x ∈ B} ≃ Fin m) (hm : 2 ≤ m
   have hE : (d7SourceGraph e hm).edgeFinset =
       (baseGraph e).edgeFinset ∪ {s(u, v)} := by
     ext q
-    simp only [SimpleGraph.mem_edgeFinset]
-    simp only [Finset.union_singleton, Finset.mem_insert, SimpleGraph.mem_edgeFinset]
-    constructor
-    · rintro (hbase | ⟨hq, _⟩)
-      · exact Or.inr hbase
-      · exact Or.inl hq
-    · rintro (hq | hbase)
-      · refine Or.inr ⟨hq, ?_⟩
-        subst q
-        rw [Sym2.mk_isDiag_iff]
-        exact hne
-      · exact Or.inl hbase
+    simp only [Finset.mem_union, Finset.mem_singleton, SimpleGraph.mem_edgeFinset]
+    change q ∈ (baseGraph e ⊔ SimpleGraph.edge u v).edgeSet ↔ _
+    rw [SimpleGraph.edgeSet_sup, SimpleGraph.edgeSet_edge_of_ne hne]
+    rfl
   rw [hE, Finset.card_union_of_disjoint]
   · rw [card_edgeFinset_baseGraph]
     simp
@@ -326,7 +320,10 @@ lemma d7Point_cross_dist_eq_one
   have hd : 0 ≤ D := dist_nonneg
   change D = 1
   fin_cases i <;> fin_cases j <;>
-    simp [axisHeight] at hsq ⊢ <;> try contradiction
+    simp only [Fin.zero_eta, Fin.isValue, zero_ne_one, ↓reduceIte, axisHeight, sub_self, ne_eq,
+      OfNat.ofNat_ne_zero, not_false_eq_true, zero_pow, add_zero, Fin.mk_one, one_ne_zero,
+      sub_zero, even_two, Even.neg_pow, Fin.reduceFinMk, Fin.reduceEq, sub_neg_eq_add, zero_add,
+      zero_sub] at hsq ⊢ <;> try contradiction
   all_goals
     have hDsq : D ^ 2 = 1 := by nlinarith [houter, hmixed]
     rcases sq_eq_one_iff.mp hDsq with hD | hD
@@ -423,7 +420,7 @@ def d7VertexEmbedding
     (hmixed : a + r ^ 2 + t ^ 2 = 1) :
     D7V m ↪ {x // x ∈ d7Configuration e r t hm} where
   toFun v := ⟨d7Point e r t hm v, mem_d7Configuration e r t hm v⟩
-  inj' v w h := d7Point_injective e r t a hm hr hrpos hBnorm houter hmixed
+  inj' _v _w h := d7Point_injective e r t a hm hr hrpos hBnorm houter hmixed
     (congrArg Subtype.val h)
 
 lemma d7SourceGraph_adj_maps_to_diameter

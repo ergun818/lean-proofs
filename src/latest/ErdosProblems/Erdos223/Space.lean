@@ -171,7 +171,7 @@ theorem diameterPairCount_add_two_le_of_minDegree_certificates
     have hminB : ∀ v, 2 ≤ (diameterGraph B).degree v := by
       intro v
       have heq : (diameterGraph B).degree v = H.degree (iso.symm v) := by
-        simpa using iso.degree_eq (iso.symm v)
+        simp
       rw [heq]
       exact hmin (iso.symm v)
     have hb := diameterPairCount_add_two_le_of_constructible_doubleCover_certificate
@@ -262,7 +262,7 @@ theorem diameterPairCount_add_two_le_of_minDegree_upper
     have hminB : ∀ v, 2 ≤ (diameterGraph B).degree v := by
       intro v
       have heq : (diameterGraph B).degree v = H.degree (iso.symm v) := by
-        simpa using iso.degree_eq (iso.symm v)
+        simp
       rw [heq]
       exact hmin (iso.symm v)
     have hb := hcoreUpper B hBdiam hminB
@@ -301,27 +301,27 @@ def polePoint (j : Fin 2) : Point 3 :=
 
 lemma basePoint_apply_zero (t : ℝ) :
     basePoint t 0 = (Real.sqrt 3 / 2) * ((1 - t ^ 2) / (1 + t ^ 2)) := by
-  simp [basePoint, EuclideanSpace.single_apply]
+  simp [basePoint]
 
 lemma basePoint_apply_one (t : ℝ) :
     basePoint t 1 = Real.sqrt 3 * t / (1 + t ^ 2) := by
-  simp [basePoint, EuclideanSpace.single_apply]
+  simp [basePoint]
 
 lemma basePoint_apply_two (t : ℝ) : basePoint t 2 = 0 := by
-  simp [basePoint, EuclideanSpace.single_apply]
+  simp [basePoint]
 
 lemma polePoint_apply_two (j : Fin 2) :
     polePoint j 2 = (if (j : ℕ) = 0 then (1 / 2 : ℝ) else -1 / 2) := by
-  simp [polePoint, EuclideanSpace.single_apply]
+  simp [polePoint]
 
 lemma polePoint_apply_zero (j : Fin 2) : polePoint j 0 = 0 := by
-  simp [polePoint, EuclideanSpace.single_apply]
+  simp [polePoint]
 
 lemma basePoint_norm_sq (t : ℝ) : ‖basePoint t‖ ^ 2 = 3 / 4 := by
   rw [← real_inner_self_eq_norm_sq]
   have hsqrt : Real.sqrt (3 : ℝ) ^ 2 = 3 := by norm_num
   simp only [basePoint, inner_add_left, inner_add_right,
-    EuclideanSpace.inner_single_left, EuclideanSpace.single_apply,
+    EuclideanSpace.inner_single_left, PiLp.single_apply,
     starRingEnd_apply, star_trivial]
   norm_num
   field_simp
@@ -330,12 +330,11 @@ lemma basePoint_norm_sq (t : ℝ) : ‖basePoint t‖ ^ 2 = 3 / 4 := by
 lemma polePoint_norm_sq (j : Fin 2) : ‖polePoint j‖ ^ 2 = 1 / 4 := by
   rw [← real_inner_self_eq_norm_sq]
   fin_cases j <;> norm_num [polePoint, EuclideanSpace.inner_single_left,
-    EuclideanSpace.single_apply]
+    PiLp.single_apply]
 
 lemma inner_pole_base (j : Fin 2) (t : ℝ) :
     inner ℝ (polePoint j) (basePoint t) = 0 := by
-  simp [polePoint, basePoint, inner_add_right, EuclideanSpace.inner_single_left,
-    EuclideanSpace.single_apply]
+  simp [polePoint, basePoint, inner_add_right, EuclideanSpace.inner_single_left]
 
 lemma dist_pole_base (j : Fin 2) (t : ℝ) : dist (polePoint j) (basePoint t) = 1 := by
   have hsq : dist (polePoint j) (basePoint t) ^ 2 = 1 := by
@@ -364,7 +363,7 @@ lemma base_dist_sq (s t : ℝ) :
   rw [dist_eq_norm, ← real_inner_self_eq_norm_sq]
   have hsqrt : Real.sqrt (3 : ℝ) ^ 2 = 3 := by norm_num
   simp only [basePoint, inner_sub_left, inner_sub_right, inner_add_left, inner_add_right,
-    EuclideanSpace.inner_single_left, EuclideanSpace.single_apply,
+    EuclideanSpace.inner_single_left, PiLp.single_apply,
     starRingEnd_apply, star_trivial]
   norm_num
   field_simp
@@ -412,7 +411,7 @@ lemma base_dist_endpoints : dist (basePoint 0) (basePoint (1 / Real.sqrt 2)) = 1
   have hd : 0 ≤ dist (basePoint 0) (basePoint (1 / Real.sqrt 2)) := dist_nonneg
   nlinarith
 
-def parameter {m : ℕ} (hm : 1 < m) (i : Fin m) : ℝ :=
+def parameter {m : ℕ} (_hm : 1 < m) (i : Fin m) : ℝ :=
   (i : ℝ) / ((m - 1 : ℕ) : ℝ) / Real.sqrt 2
 
 lemma parameter_nonneg {m : ℕ} (hm : 1 < m) (i : Fin m) : 0 ≤ parameter hm i := by
@@ -576,7 +575,7 @@ lemma ncard_completeBipartite (m : ℕ) :
 lemma firstBase_ne_lastBase {m : ℕ} (hm : 1 < m) : firstBase hm ≠ lastBase hm := by
   intro h
   have hv := congrArg Fin.val (Sum.inl.inj h)
-  simp [firstBase, lastBase] at hv
+  simp at hv
   omega
 
 lemma card_witnessGraph {m : ℕ} (hm : 1 < m) :
@@ -749,7 +748,7 @@ lemma isDiameterOne_triangleConfiguration : IsDiameterOne triangleConfiguration 
 def triangleConfigurationVertexEmbedding :
     Fin 3 ↪ {x // x ∈ triangleConfiguration} where
   toFun i := ⟨trianglePoint i, mem_triangleConfiguration i⟩
-  inj' i j h := trianglePoint_injective (congrArg Subtype.val h)
+  inj' _i _j h := trianglePoint_injective (congrArg Subtype.val h)
 
 lemma top_map_le_triangle_diameterGraph :
     (⊤ : SimpleGraph (Fin 3)).map triangleConfigurationVertexEmbedding ≤
