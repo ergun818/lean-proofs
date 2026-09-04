@@ -33,7 +33,7 @@ open scoped BigOperators
 
 namespace Erdos395
 
-open Classical Finset
+open Finset
 open ComplexConjugate
 
 /-- A Rademacher sign encoded by a Boolean. -/
@@ -51,8 +51,9 @@ def signedSum {n : ℕ} (z : Fin n → ℂ) (ε : Fin n → Bool) : ℂ :=
 
 /-- Uniform probability on a nonempty finite type, as normalized cardinality. -/
 noncomputable def uniformProbability {Ω : Type*} [Fintype Ω] [Nonempty Ω]
-    (P : Ω → Prop) : ℝ :=
-  ((Finset.univ.filter P).card : ℝ) / Fintype.card Ω
+    (P : Ω → Prop) : ℝ := by
+  classical
+  exact ((Finset.univ.filter P).card : ℝ) / Fintype.card Ω
 
 lemma uniformProbability_nonneg {Ω : Type*} [Fintype Ω] [Nonempty Ω]
     (P : Ω → Prop) : 0 ≤ uniformProbability P := by
@@ -177,9 +178,10 @@ lemma counting_markov {Ω : Type*} [Fintype Ω] (g : Ω → ℝ) (c : ℝ)
 
 /-- Cauchy--Schwarz lower bound for the number of equal-image ordered pairs. -/
 lemma card_sq_le_card_image_mul_card_eqPairs {Ω ι : Type*}
-    [DecidableEq Ω] [DecidableEq ι] (s : Finset Ω) (f : Ω → ι) :
+    [DecidableEq ι] (s : Finset Ω) (f : Ω → ι) :
     s.card ^ 2 ≤ (s.image f).card *
       ((s.product s).filter fun p ↦ f p.1 = f p.2).card := by
+  classical
   let t := s.image f
   let fiber : ι → Finset Ω := fun y ↦ s.filter fun x ↦ f x = y
   have hsum : s.card = ∑ y ∈ t, (fiber y).card := by
@@ -275,7 +277,7 @@ lemma succ_sqrt_sq_le_four_mul (n : ℕ) (hn : 0 < n) :
     (Nat.sqrt n + 1) ^ 2 ≤ 4 * n := by
   nlinarith [Nat.sqrt_le' n, Nat.sqrt_le_self n]
 
-lemma coord_abs_lt_two_succ_sqrt {n : ℕ} (hn : 0 < n) (w : ℂ)
+lemma coord_abs_lt_two_succ_sqrt {n : ℕ} (_ : 0 < n) (w : ℂ)
     (hw : Complex.normSq w < 2 * n) :
     |w.re| < 2 * (Nat.sqrt n + 1) ∧
       |w.im| < 2 * (Nat.sqrt n + 1) := by
@@ -383,14 +385,14 @@ lemma normSq_sub_lt_of_gridCell_eq {L : ℕ} (hL : 0 < L) {w v : ℂ}
     calc
       |w.re - v.re| * (L : ℝ) = |(w.re - v.re) * L| := by
         rw [abs_mul, abs_of_pos hL']
-      _ = |(L : ℝ) * w.re - L * v.re| := by congr 1 <;> ring
+      _ = |(L : ℝ) * w.re - L * v.re| := by congr 1; ring
       _ < 1 := hre0
   have him : |w.im - v.im| < 1 / (L : ℝ) := by
     rw [lt_div_iff₀ hL']
     calc
       |w.im - v.im| * (L : ℝ) = |(w.im - v.im) * L| := by
         rw [abs_mul, abs_of_pos hL']
-      _ = |(L : ℝ) * w.im - L * v.im| := by congr 1 <;> ring
+      _ = |(L : ℝ) * w.im - L * v.im| := by congr 1; ring
       _ < 1 := him0
   have hinv : 0 < 1 / (L : ℝ) := by positivity
   have hreSq : (w.re - v.re) ^ 2 < (1 / (L : ℝ)) ^ 2 := by
@@ -478,7 +480,7 @@ lemma sum_normSq_add_signedSum : ∀ n (z : Fin n → ℂ) (w : ℂ),
         rw [Finset.sum_comm]
         apply Finset.sum_congr rfl
         intro ε _
-        rw [Finset.sum_eq_add false true] <;> simp <;> congr 1 <;> ring_nf]
+        rw [Finset.sum_eq_add false true] <;> simp; congr 1 <;> ring_nf]
       have hpoint : ∀ x a : ℂ,
           Complex.normSq (x - a) + Complex.normSq (x + a) =
             2 * Complex.normSq x + 2 * Complex.normSq a := by
@@ -497,7 +499,7 @@ lemma sum_normSq_add_signedSum : ∀ n (z : Fin n → ℂ) (w : ℂ),
 
 /-- Finite Markov estimate in the useful lower-tail form. -/
 lemma shifted_smallBall_count {n : ℕ} (z : Fin n → ℂ) (w : ℂ)
-    {R c : ℝ} (hR : 0 < R) (hc : 0 < c)
+    {R c : ℝ} (hR : 0 < R) (_ : 0 < c)
     (henergy : Complex.normSq w + ∑ i, Complex.normSq (z i) ≤ R - c) :
     c * (2 : ℝ) ^ n ≤ R *
       ((Finset.univ.filter fun ε : Fin n → Bool ↦
@@ -568,7 +570,7 @@ lemma pairedDecode_encode {m : ℕ} (x : SignTriple m) :
     simp only [pairedDecode, pairedOutput, pairedCode]
   all_goals
     cases hs : s i <;> cases ht : t i <;> cases hh : h i <;>
-      simp [hs, ht, hh]
+      simp
 
 lemma pairedEncode_decode {m : ℕ} (y : SignPair m × SignVec m) :
     (pairedOutput (pairedDecode y.1 y.2).1 (pairedDecode y.1 y.2).2.1
@@ -580,7 +582,7 @@ lemma pairedEncode_decode {m : ℕ} (y : SignPair m × SignVec m) :
     simp only [pairedDecode, pairedOutput, pairedCode]
   all_goals
     cases ha : a i <;> cases hb : b i <;> cases hk : k i <;>
-      simp [ha, hb, hk]
+      simp
 
 /-- `pairedOutput` has exactly `2^m` preimages, with `pairedCode` recording
 the free Boolean in each coordinate. -/
@@ -626,7 +628,7 @@ lemma card_filter_pairedOutput {m : ℕ} (P : SignPair m → Prop)
       right_inv := by intro y; cases y; rfl }
   rw [← Fintype.card_subtype, ← Fintype.card_subtype]
   rw [Fintype.card_congr e₁, Fintype.card_congr e₂]
-  simp [Fintype.card_prod, card_signCube, mul_comm]
+  simp [Fintype.card_prod, mul_comm]
 
 lemma normSq_midpoint_le_one {u v : ℂ}
     (hu : Complex.normSq u ≤ 1) (hv : Complex.normSq v ≤ 1) :
@@ -655,7 +657,7 @@ lemma sum_normSq_selected_diff_le {m : ℕ} (u v : Fin m → ℂ)
   · exact le_rfl
   · simpa using Complex.normSq_nonneg (u i - v i)
 
-lemma card_filter_product_eq_sum {A B : Type*} [DecidableEq A] [DecidableEq B]
+lemma card_filter_product_eq_sum {A B : Type*}
     (s : Finset A) (t : Finset B) (P : A × B → Prop) [DecidablePred P] :
     ((s.product t).filter P).card =
       ∑ a ∈ s, (t.filter fun b ↦ P (a, b)).card := by
@@ -824,7 +826,7 @@ lemma pairing_probability_lower_bound {m L : ℕ} (hm : 0 < m) (hL : 0 < L)
   simp only [Fintype.card_prod, card_signCube]
   rw [show 2 ^ m * 2 ^ m = (2 : ℕ) ^ (2 * m) by
     rw [← pow_add]
-    congr 1 <;> omega]
+    congr 1; omega]
   have hden : 0 < 800 * (L : ℝ) ^ 2 * (m : ℝ) * R := by positivity
   have hpow : 0 < (2 : ℝ) ^ (2 * m) := by positivity
   push_cast
@@ -1026,13 +1028,13 @@ lemma exists_two_signs_cover_small {u v w : ℂ}
   obtain ⟨c, hc, hnorm⟩ := four_center_cover_small hu hv hw
   rcases hc with rfl | rfl | rfl | rfl
   · refine ⟨![true, true], ?_⟩
-    convert hnorm using 1 <;> simp [signedSum, sign, Fin.sum_univ_two] <;> ring
+    convert hnorm using 1; simp [signedSum, sign, Fin.sum_univ_two]
   · refine ⟨![false, false], ?_⟩
-    convert hnorm using 1 <;> simp [signedSum, sign, Fin.sum_univ_two] <;> ring_nf
+    convert hnorm using 1; simp [signedSum, sign, Fin.sum_univ_two]; ring_nf
   · refine ⟨![true, false], ?_⟩
-    convert hnorm using 1 <;> simp [signedSum, sign, Fin.sum_univ_two] <;> ring_nf
+    convert hnorm using 1; simp [signedSum, sign, Fin.sum_univ_two]; ring_nf
   · refine ⟨![false, true], ?_⟩
-    convert hnorm using 1 <;> simp [signedSum, sign, Fin.sum_univ_two] <;> ring_nf
+    convert hnorm using 1; simp [signedSum, sign, Fin.sum_univ_two]; ring_nf
 
 lemma pair_center_product (u v : ℂ)
     (hu : Complex.normSq u = 1) (hv : Complex.normSq v = 1) :
@@ -1181,13 +1183,13 @@ lemma exists_two_signs_cover_large {u v w : ℂ}
   obtain ⟨c, hc, hnorm⟩ := four_center_cover_large hu hv hw hproduct
   rcases hc with rfl | rfl | rfl | rfl
   · refine ⟨![true, true], ?_⟩
-    convert hnorm using 1 <;> simp [signedSum, sign, Fin.sum_univ_two] <;> ring
+    convert hnorm using 1; simp [signedSum, sign, Fin.sum_univ_two]
   · refine ⟨![false, false], ?_⟩
-    convert hnorm using 1 <;> simp [signedSum, sign, Fin.sum_univ_two] <;> ring_nf
+    convert hnorm using 1; simp [signedSum, sign, Fin.sum_univ_two]; ring_nf
   · refine ⟨![true, false], ?_⟩
-    convert hnorm using 1 <;> simp [signedSum, sign, Fin.sum_univ_two] <;> ring_nf
+    convert hnorm using 1; simp [signedSum, sign, Fin.sum_univ_two]; ring_nf
   · refine ⟨![false, true], ?_⟩
-    convert hnorm using 1 <;> simp [signedSum, sign, Fin.sum_univ_two] <;> ring_nf
+    convert hnorm using 1; simp [signedSum, sign, Fin.sum_univ_two]; ring_nf
 
 lemma exists_one_sign_normSq_le_add_one {u w : ℂ}
     (hu : Complex.normSq u = 1) :
@@ -1527,7 +1529,7 @@ lemma chain_energy_le_endpoint : ∀ n (x : Fin (n + 1) → ℂ),
             ∑ i : Fin n, Complex.normSq (x' i.castSucc - x' i.succ) := by
         apply Finset.sum_congr rfl
         intro i _
-        congr 3 <;> apply Fin.ext <;> rfl
+        congr 3
       rw [hprefix]
       dsimp [x'] at hinit ⊢
       nlinarith
@@ -1623,13 +1625,13 @@ lemma three_far_or_two_cluster {n : ℕ} (hn : 0 < n)
   by_cases ha : ∀ i, ProjectivelyCloseSq ρ (z a) (z i)
   · right
     exact ⟨a, a, fun i ↦ Or.inl (ha i)⟩
-  · push_neg at ha
+  · push Not at ha
     obtain ⟨b, hab⟩ := ha
     by_cases hc : ∀ i,
         ProjectivelyCloseSq ρ (z a) (z i) ∨
         ProjectivelyCloseSq ρ (z b) (z i)
     · exact Or.inr ⟨a, b, hc⟩
-    · push_neg at hc
+    · push Not at hc
       obtain ⟨c, hac, hbc⟩ := hc
       left
       exact ⟨a, b, c,
@@ -2044,7 +2046,7 @@ lemma exists_three_signs_cover_large {u v x w : ℂ}
   have hsum :
       w + signedSum ![u, v, x] ![d 0, d 1, bx] =
         (w + (sign bx : ℂ) * x) + signedSum ![u, v] d := by
-    simp [signedSum, Fin.sum_univ_succ, Fin.sum_univ_two, sign, mul_comm]
+    simp [signedSum, Fin.sum_univ_succ, sign, mul_comm]
     abel_nf
   rw [hsum]
   exact hd
@@ -2148,6 +2150,7 @@ lemma uniformProbability_pair_le_four_of_card_le {r : ℕ}
   field_simp
   exact le_rfl
 
+open scoped Classical in
 lemma uniformProbability_le_two_of_card_le_one_extension {r : ℕ}
     (P : SignVec r → Prop) (Q : SignVec (r + 1) → Prop)
     (hle : (Finset.univ.filter P).card ≤ (Finset.univ.filter Q).card) :
@@ -2166,6 +2169,7 @@ lemma uniformProbability_le_two_of_card_le_one_extension {r : ℕ}
   field_simp
   exact le_rfl
 
+open scoped Classical in
 lemma uniformProbability_le_eight_of_card_le_three_extension {r : ℕ}
     (P : SignVec r → Prop) (Q : SignVec (r + 3) → Prop)
     (hle : (Finset.univ.filter P).card ≤ (Finset.univ.filter Q).card) :
@@ -2546,7 +2550,7 @@ lemma sum_range_two_mul_sub_one {m : ℕ} (hm : 0 < m) (f : ℕ → ℝ) :
       (∑ i ∈ Finset.range (m - 1), f (2 * i + 1)) + f (2 * m - 1) := by
     have heq : m = (m - 1) + 1 := by omega
     conv_lhs => rw [heq, Finset.sum_range_succ]
-    congr 2 <;> omega
+    congr 2; omega
   linarith
 
 /-- Index permutation which lists even positions first and odd positions
@@ -2683,7 +2687,7 @@ lemma exists_pairing_of_projective_cluster {m : ℕ} (hm : 0 < m)
 most `1/3`. -/
 lemma exists_pairing_of_pairwise_close_one_third {m : ℕ} (hm : 0 < m)
     (z : Fin (2 * m) → ℂ) (hz : ∀ i, Complex.normSq (z i) = 1)
-    (a : Fin (2 * m)) {ρ : ℝ} (hρ : 0 ≤ ρ)
+    (a : Fin (2 * m)) {ρ : ℝ} (_ : 0 ≤ ρ)
     (hρsq : ρ ^ 2 = (1 : ℝ) / 3)
     (hpairwise : ∀ i j, ProjectivelyCloseSq ρ (z i) (z j)) :
     ∃ u v : Fin m → ℂ,
@@ -2777,11 +2781,9 @@ lemma exists_world_pairing_of_projective_cluster {m : ℕ} (hm : 0 < m)
       refine Fin.addCases ?_ ?_ i
       · intro j
         simp only [Fin.append_left]
-        change u j = a * evenPart x j
         rfl
       · intro j
         simp only [Fin.append_right]
-        change v j = a * oddPart x j
         rfl
     rw [happ]
     funext i
@@ -2873,9 +2875,7 @@ lemma pairBlockShuffle_right_left {k l : ℕ} (c : Fin k) :
   rw [hinput]
   simp only [finSumFinEquiv_symm_apply_natAdd]
   simp only [Sum.map_inr, finSumFinEquiv_symm_apply_castAdd,
-    fourBlockSwapEquiv, Sum.map_inl, finSumFinEquiv_apply_right,
-    finSumFinEquiv_apply_left]
-  congr 1
+    fourBlockSwapEquiv]
   apply Fin.ext
   simp [Fin.addNat, Fin.natAdd]
   omega
@@ -2894,8 +2894,7 @@ lemma pairBlockShuffle_right_right {k l : ℕ} (d : Fin l) :
   rw [hinput]
   simp only [finSumFinEquiv_symm_apply_natAdd]
   simp only [Sum.map_inr, finSumFinEquiv_symm_apply_natAdd,
-    fourBlockSwapEquiv, finSumFinEquiv_apply_right]
-  congr 1
+    fourBlockSwapEquiv]
   apply Fin.ext
   simp [Fin.addNat, Fin.natAdd]
   omega
@@ -2965,10 +2964,10 @@ lemma combine_world_pairings {k l : ℕ}
   rcases q with j | j
   · have hp := congrArg finSumFinEquiv hq
     simp only [Equiv.apply_symm_apply, finSumFinEquiv_apply_left] at hp
-    simp [p, hp, e, merge, t, hq]
+    simp [p, hp, e, merge, t]
   · have hp := congrArg finSumFinEquiv hq
     simp only [Equiv.apply_symm_apply, finSumFinEquiv_apply_right] at hp
-    simp [p, hp, e, merge, t, hq]
+    simp [p, hp, e, merge, t]
 
 /-- Pair two nonempty projective clusters.  The energy bounds add, while the
 flattened signed-sum distribution is preserved exactly. -/
@@ -3427,7 +3426,7 @@ lemma exists_pairing_of_closedChain_energy {m : ℕ} (hm : 0 < m)
           (shiftedClosedChain hm x ⟨2 * i.val, by omega⟩ -
             shiftedClosedChain hm x ⟨2 * i.val + 1, by omega⟩) = _
         simp only [shiftedClosedChain]
-        congr 3 <;> omega
+        congr 3
       _ = _ := Fin.sum_univ_eq_sum_range
         (fun i ↦ Complex.normSq (y (2 * i + 1) - y (2 * i + 2))) m
   have hsplit : E₀ + E₁ =
@@ -3551,6 +3550,7 @@ theorem erdos395_even_normSq (m : ℕ) (hm : 0 < m)
     ((1 : ℝ) / 1000000000000) / (2 * m) ≤
       uniformProbability (fun ε : SignVec (2 * m) ↦
         Complex.normSq (signedSum z ε) ≤ 2) := by
+  classical
   have hunit : ∀ i, Complex.normSq (z i) ≤ 1 := fun i ↦ (hz i).le
   rcases three_far_or_two_cluster (by omega : 0 < 2 * m) z ((1 : ℝ) / 8) with
       hfar | ⟨a, b, hcover⟩
@@ -3559,7 +3559,7 @@ theorem erdos395_even_normSq (m : ℕ) (hm : 0 < m)
       exists_pairing_of_three_projectively_far hm z hz (by norm_num) hij hik hjk
     have hE' : (∑ i, Complex.normSq (u i - v i)) ≤
         (2 : ℝ) - (1 : ℝ) / 1024 := by
-      convert hE using 1 <;> norm_num
+      convert hE using 1; norm_num
     have hp := pairing_probability_lower_bound hm (by norm_num : 0 < 64)
       u v (fun i ↦ (hu i).le) (fun i ↦ (hv i).le)
       (R := 2) (α := (1 : ℝ) / 1024) (by norm_num) (by norm_num)
@@ -3636,7 +3636,7 @@ theorem erdos395_even_normSq (m : ℕ) (hm : 0 < m)
                 simp only [Finset.mem_sdiff, Finset.mem_univ, true_and]
                 intro his
                 exact hi (hsa i his)
-              simpa [ht0] using this
+              simp [ht0] at this
             obtain ⟨u, v, hu, hv, hE, hc⟩ :=
               exists_pairing_of_projective_cluster hm z hz (z a) (hz a)
                 (by norm_num) (by norm_num) hall
@@ -3827,7 +3827,7 @@ theorem erdos395_odd_normSq (m : ℕ)
         Complex.normSq (signedSum z ε) ≤ 2) = fun _ ↦ True := by
       funext ε
       apply propext
-      simp [signedSum, Fin.sum_univ_succ, Complex.normSq_mul, hz]
+      simp [signedSum, Complex.normSq_mul, hz]
       nlinarith [sign_sq (ε 0)]
     rw [hevent, uniformProbability_true]
     norm_num
@@ -3916,7 +3916,7 @@ theorem erdos395_odd_normSq (m : ℕ)
       have hik : i ≠ k := hki.symm
       have hjk : j ≠ k := hkj.symm
       have hLcard : L.card = 3 := by
-        simp [L, hijne, hji, hki, hik, hkj, hjk]
+        simp [L, hijne, hik, hjk]
       have hRcard : R.card = 2 * (m - 1) := by
         change (Finset.univ \ L).card = 2 * (m - 1)
         rw [Finset.card_sdiff_of_subset (Finset.subset_univ L)]
