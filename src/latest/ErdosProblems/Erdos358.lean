@@ -71,9 +71,9 @@ lemma intervalRepresentations_finite
 
 /-- Under strict monotonicity, `f` agrees with the ordinary finite-set cardinality. -/
 lemma f_eq_ncard
-    {A : ℕ → ℕ} (hA : StrictMono A) {n : ℕ} (hn : 0 < n) :
+    {A : ℕ → ℕ} (_hA : StrictMono A) {n : ℕ} (_hn : 0 < n) :
     f A n = (intervalRepresentations A n).ncard := by
-  simpa [f] using Nat.card_coe_set_eq (intervalRepresentations A n)
+  simp [f]
 
 /-- An injectively indexed collection of representations gives a lower bound for `f`. -/
 lemma le_f_of_injective_representations
@@ -331,8 +331,7 @@ lemma spreadSet_subset_Icc (L q d : ℕ) (hd : d ≤ 2 * q ^ 2) :
   constructor
   · change L ≤ spreadValue L q d i
     unfold spreadValue
-    simpa [add_assoc] using
-      Nat.le_add_right L (i.val + d / q + if q - d % q ≤ i.val then 1 else 0)
+    simp [add_assoc]
   · have hdiv : d / q ≤ 2 * q := by
       apply Nat.div_le_of_le_mul
       simpa [pow_two, mul_comm, mul_left_comm, mul_assoc] using hd
@@ -650,14 +649,15 @@ lemma centeredGeometricCF_norm_sq (x : ℝ) :
       1 / (5 - 4 * Real.cos (2 * Real.pi * x)) := by
   rw [centeredGeometricCF, norm_div, div_pow]
   simp only [Complex.norm_exp]
-  simp only [neg_mul, Complex.neg_re, Complex.mul_re, Complex.re_ofNat, Complex.ofReal_re, Complex.im_ofNat,
-    Complex.ofReal_im, mul_zero, sub_zero, Complex.mul_im, zero_mul, add_zero, Complex.I_re, Complex.I_im, mul_one,
-    sub_self, neg_zero, Real.exp_zero, one_pow, one_div, inv_inj]
+  simp only [neg_mul, Complex.neg_re, Complex.mul_re, Complex.re_ofNat, Complex.ofReal_re,
+    Complex.im_ofNat, Complex.ofReal_im, mul_zero, sub_zero, Complex.mul_im, zero_mul,
+    add_zero, Complex.I_re, Complex.I_im, mul_one, sub_self, neg_zero, Real.exp_zero,
+    one_pow, one_div, inv_inj]
   have hden :
       ‖(2 : ℂ) - Complex.exp ((2 * Real.pi * x : ℝ) * Complex.I)‖ ^ 2 =
         5 - 4 * Real.cos (2 * Real.pi * x) :=
     norm_sq_two_sub_exp (2 * Real.pi * x)
-  convert hden using 1 <;> push_cast <;> ring
+  convert hden using 1; push_cast; ring
 
 lemma circleDist_eq_round (x : ℝ) :
     circleDist x = |x - (round x : ℝ)| := by
@@ -875,11 +875,12 @@ lemma centeredGeometricCF_norm_le_one (x : ℝ) :
 
 /-- Telescoping estimate for two products all of whose factors lie in the
 closed unit ball. -/
-lemma norm_prod_sub_prod_le_sum {ι : Type*} [DecidableEq ι]
+lemma norm_prod_sub_prod_le_sum {ι : Type*}
     (s : Finset ι) (u v : ι → ℂ)
     (hu : ∀ i ∈ s, ‖u i‖ ≤ 1) (hv : ∀ i ∈ s, ‖v i‖ ≤ 1) :
     ‖(∏ i ∈ s, u i) - ∏ i ∈ s, v i‖ ≤
       ∑ i ∈ s, ‖u i - v i‖ := by
+  classical
   induction s using Finset.induction_on with
   | empty => simp
   | @insert a s ha ih =>
@@ -1076,7 +1077,7 @@ lemma centeredGeometricCF_prod_local_approximation (q : ℕ) (t : ℝ)
           ∑ r ∈ s, (y r) ^ 2 := add_le_add hfirst hsecond
     _ = _ := by
       congr 1
-      simp [s, y]
+      simp only [s, y]
       apply Finset.sum_congr rfl
       intro r hr
       ring
@@ -1316,7 +1317,7 @@ lemma continuous_centeredGeometricCF : Continuous centeredGeometricCF := by
   · fun_prop
   · fun_prop
   · intro x
-    convert centeredGeometricCF_denominator_ne x using 1 <;> push_cast <;> ring
+    convert centeredGeometricCF_denominator_ne x using 1; push_cast; ring
 
 /-- The Fourier phase associated with an integer target. -/
 noncomputable def fourierPhase (a : ℤ) (t : ℝ) : ℂ :=
@@ -1336,7 +1337,7 @@ noncomputable def geometricProduct (q : ℕ) (t : ℝ) : ℂ :=
 
 lemma continuous_geometricProduct (q : ℕ) : Continuous (geometricProduct q) := by
   unfold geometricProduct
-  apply continuous_finset_prod
+  apply continuous_finsetProd
   intro r hr
   exact continuous_centeredGeometricCF.comp (continuous_const.mul continuous_id)
 
@@ -1545,7 +1546,7 @@ lemma integrable_gaussian_model {q : ℕ} (hq : 2 ≤ q) (a : ℤ) :
     rw [norm_mul, fourierPhase_norm, one_mul, Complex.norm_real,
       Real.norm_eq_abs, abs_of_pos (Real.exp_pos _),
       quadraticSum_eq_gaussianCoeff_mul]
-    simpa [b]
+    simp [b]
 
 /-- The omitted Gaussian tails are exponentially small at the algebraic major
 radius. -/
@@ -1602,9 +1603,6 @@ lemma gaussian_truncation_error {q : ℕ} (hq : 2 ≤ q) (a : ℤ) :
         rw [majorRadius_eq_inv_pow q hq0]
         rw [← sixteenthRoot_pow_sixteen q]
         dsimp [z]
-        change -Real.exp (-((sixteenthRoot q ^ 16) ^ 3 *
-            (1 / sixteenthRoot q ^ 23)) * (1 / sixteenthRoot q ^ 23)) /
-          (-((sixteenthRoot q ^ 16) ^ 3 * (1 / sixteenthRoot q ^ 23))) = _
         field_simp
   have hleft : ‖∫ t : ℝ in Set.Iic (-η), f t‖ ≤
       Real.exp (-(z ^ 2)) / z ^ 25 := by
@@ -1634,9 +1632,6 @@ lemma gaussian_truncation_error {q : ℕ} (hq : 2 ≤ q) (a : ℤ) :
         rw [majorRadius_eq_inv_pow q hq0]
         rw [← sixteenthRoot_pow_sixteen q]
         dsimp [z]
-        change Real.exp ((sixteenthRoot q ^ 16) ^ 3 *
-            (1 / sixteenthRoot q ^ 23) * -(1 / sixteenthRoot q ^ 23)) /
-          ((sixteenthRoot q ^ 16) ^ 3 * (1 / sixteenthRoot q ^ 23)) = _
         field_simp
   rw [intervalIntegral.integral_of_le (by linarith : -η ≤ η)]
   rw [← setIntegral_compl measurableSet_Ioc hf]
@@ -1935,7 +1930,7 @@ lemma fourier_integral_lower {q : ℕ} (hq : 800 ≤ q)
   have hm : 0 ≤ m := by dsimp [m]; positivity
   have hg' : 2 * m ≤ g := by
     dsimp [m]
-    convert hg using 1 <;> ring
+    convert hg using 1; ring
   have hnorm : ‖I - (g : ℂ)‖ ≤ m := herr.trans (herror.trans_eq rfl)
   have habs : |I.re - g| ≤ m := hre.trans hnorm
   have hdiff : g - I.re ≤ m := by
@@ -1969,7 +1964,6 @@ lemma fairGeometric_integral_geometricCharacter (x : ℝ) :
     congr 1
     funext n
     rw [geometricCharacter_eq]
-    push_cast
     norm_num [div_pow]
     ring]
   rw [tsum_mul_left, tsum_geometric_of_norm_lt_one]
@@ -2078,7 +2072,7 @@ lemma fourier_integrand_integrable (q : ℕ) (a : ℤ) :
         (fairGeometricVector (q - 1))) := by
   let : IsFiniteMeasure
       (volume.restrict (Set.uIoc (-1 / 2 : ℝ) (1 / 2 : ℝ))) := ⟨by
-    simp [Set.uIoc_of_le (by norm_num : (-1 / 2 : ℝ) ≤ 1 / 2)]⟩
+    simp⟩
   let μ := (volume.restrict (Set.uIoc (-1 / 2 : ℝ) (1 / 2 : ℝ))).prod
     (fairGeometricVector (q - 1))
   have hfinite : IsFiniteMeasure μ := by infer_instance
@@ -2174,7 +2168,7 @@ lemma fairSetMeasure_cylinder {u s : Set ℕ} (hu : u.Finite) (hs : s ⊆ u) :
       MeasureTheory.cylinder hu.toFinset
         {v : ↥hu.toFinset → Prop | v = (fun i : ↥hu.toFinset ↦ (i : ℕ) ∈ s)} := by
     ext p
-    simp only [Set.mem_preimage, Set.mem_setOf_eq, MeasureTheory.cylinder,
+    simp only [Set.mem_preimage, Set.mem_ofPred_eq, MeasureTheory.cylinder,
       Set.mem_preimage]
     constructor
     · intro hset
@@ -2194,7 +2188,7 @@ lemma fairSetMeasure_cylinder {u s : Set ℕ} (hu : u.Finite) (hs : s ⊆ u) :
       · have hi : i ∈ hu.toFinset := hu.mem_toFinset.mpr hiu
         have heq := congrFun hfun ⟨i, hi⟩
         change p i = (i ∈ s) at heq
-        simp only [Set.mem_inter_iff, Set.mem_setOf_eq, hiu, and_true]
+        simp only [Set.mem_inter_iff, Set.mem_ofPred_eq, hiu, and_true]
         constructor
         · intro hpi
           rw [← heq]
@@ -2222,10 +2216,10 @@ lemma fairSetMeasure_cylinder {u s : Set ℕ} (hu : u.Finite) (hs : s ⊆ u) :
   have hcoord (i : ↥hu.toFinset) :
       ((μ i) {((i : ℕ) ∈ s)}).toReal = (1 / 2 : ℝ) := by
     dsimp [μ, half]
-    by_cases hi : (i : ℕ) ∈ s <;> simp [hi] <;> norm_num
+    by_cases hi : (i : ℕ) ∈ s <;> simp [hi]; norm_num
   rw [ENNReal.toReal_prod]
   simp_rw [hcoord]
-  simpa [Set.ncard_eq_toFinset_card u hu]
+  simp [Set.ncard_eq_toFinset_card u hu]
 
 def positiveGap {q : ℕ} (g : Fin (q - 1) → ℕ) (j : ℕ) : ℕ :=
   if h : j < q - 1 then g ⟨j, h⟩ + 1 else 0
@@ -2320,7 +2314,7 @@ lemma measurableSet_gapCylinder {q : ℕ} (m : ℕ) (g : Fin (q - 1) → ℕ) :
   have heq : gapCylinder m g =
       ⋂ x ∈ u, {S : Set ℕ | (x ∈ S) = (x ∈ s)} := by
     ext S
-    simp only [Set.mem_iInter, Set.mem_setOf_eq]
+    simp only [Set.mem_iInter, Set.mem_ofPred_eq]
     constructor
     · intro h x hx
       change S ∩ (↑u : Set ℕ) = ↑s at h
@@ -2459,7 +2453,7 @@ lemma gapPoints_subset_of_mem_gapCylinders {q : ℕ} {m : ℕ}
   rw [hh] at hxlarge
   exact hxlarge
 
-lemma gapCylinder_disjoint {q : ℕ} {m : ℕ} (hq : 0 < q)
+lemma gapCylinder_disjoint {q : ℕ} {m : ℕ} (_hq : 0 < q)
     {g h : Fin (q - 1) → ℕ} (hgh : g ≠ h) :
     Disjoint (gapCylinder m g) (gapCylinder m h) := by
   rw [Set.disjoint_left]
@@ -2831,7 +2825,7 @@ lemma two_mul_sum_descending_weights (q : ℕ) :
       rw [hsum, Nat.mul_add]
       rw [Nat.mul_comm 2 ((Finset.range n).sum (fun j ↦ j)),
         Finset.sum_range_id_mul_two]
-      cases n <;> simp <;> ring
+      cases n <;> simp; ring
 
 lemma actualWeightedPositiveGap_int (q : ℕ) (g : Fin (q - 1) → ℕ) :
     (actualWeightedPositiveGap q g : ℤ) =
@@ -3187,8 +3181,8 @@ private lemma finset_sum_add_card_le_sum_of_equal_card_ordered_sdiff
 /-- Two equally long consecutive runs in a set have strictly increasing sums
 when their starting elements increase. -/
 lemma sum_setInterval_lt_of_start_lt {S : Set ℕ} {x y x' y' q : ℕ}
-    (hxS : x ∈ S) (hx'S : x' ∈ S) (hyS : y ∈ S) (hy'S : y' ∈ S)
-    (hxy : x ≤ y) (hx'y' : x' ≤ y') (hxx' : x < x')
+    (hxS : x ∈ S) (_hx'S : x' ∈ S) (_hyS : y ∈ S) (_hy'S : y' ∈ S)
+    (hxy : x ≤ y) (_hx'y' : x' ≤ y') (hxx' : x < x')
     (hcard : (setInterval S x y).card = q)
     (hcard' : (setInterval S x' y').card = q) :
     (∑ z ∈ setInterval S x y, z) <
@@ -3244,8 +3238,8 @@ lemma sum_setInterval_lt_of_start_lt {S : Set ℕ} {x y x' y' q : ℕ}
 /-- Quantitative sliding-window inequality: moving a consecutive window of
 `q` distinct natural numbers to the right raises its sum by at least `q`. -/
 lemma sum_setInterval_add_card_le_of_start_lt {S : Set ℕ} {x y x' y' q : ℕ}
-    (hxS : x ∈ S) (hx'S : x' ∈ S) (hyS : y ∈ S) (hy'S : y' ∈ S)
-    (hxy : x ≤ y) (hx'y' : x' ≤ y') (hxx' : x < x')
+    (hxS : x ∈ S) (_hx'S : x' ∈ S) (_hyS : y ∈ S) (_hy'S : y' ∈ S)
+    (hxy : x ≤ y) (_hx'y' : x' ≤ y') (hxx' : x < x')
     (hcard : (setInterval S x y).card = q)
     (hcard' : (setInterval S x' y').card = q) :
     (∑ z ∈ setInterval S x y, z) + q ≤
@@ -3349,7 +3343,7 @@ lemma fixedStartEvent_disjoint {q m m' n : ℕ} (hq : 0 < q) (hmm' : m ≠ m') :
     (mem_setInterval.mp (hinter'.symm ▸ hy'Points)).2.2
   have hltSum := sum_setInterval_lt_of_start_lt (q := q) hmS hm'S hyS hy'S
     (Nat.le_add_right _ _) (Nat.le_add_right _ _) hlt
-    (by simpa [hinter]) (by simpa [hinter'])
+    (by simp [hinter]) (by simp [hinter'])
   have hsum : (∑ z ∈ setInterval S m y, z) = n := by
     rw [hinter]
     exact gapPoints_sum_eq_of_mem_reverseGood hg
@@ -3654,7 +3648,7 @@ lemma lengthEvent_congr_of_inter_support_eq {q n : ℕ} {S T : Set ℕ}
 
 /-! ### Independent finite coordinate restrictions -/
 
-noncomputable def fairCoordinate (i : ℕ) : Measure Prop :=
+noncomputable def fairCoordinate (_i : ℕ) : Measure Prop :=
   unitInterval.toNNReal half • Measure.dirac True +
     unitInterval.toNNReal (unitInterval.symm half) • Measure.dirac False
 
@@ -3724,7 +3718,7 @@ lemma restrictBits_iIndep {ι : Type*} (u : ι → Finset ℕ)
     · have hd := hdisj i j hij
       rw [Finset.disjoint_left] at hd
       change (a : ℕ) = (b : ℕ) at hab
-      have ha_j : (a : ℕ) ∈ u j := by simpa [hab] using b.property
+      have ha_j : (a : ℕ) ∈ u j := by simp [hab]
       exact False.elim (hd a.property ha_j)
   let flat : (ℕ → Prop) → ((p : Σ i, κ i) → Prop) :=
     fun ω p ↦ ω (F p)
@@ -3889,7 +3883,7 @@ lemma eventIndicator_centered_lowerTail {ι : Type*}
       simp only [X, Pi.neg_apply]
       ring
     rw [hfun] at hn
-    convert hn using 1 <;> norm_num
+    convert hn using 1; norm_num
   simpa only [X, Y] using
     (ProbabilityTheory.HasSubgaussianMGF.measure_sum_ge_le_of_iIndepFun
       hXind hsubG hε)
@@ -3903,12 +3897,7 @@ lemma sum_eventIndicator_eq_eventCount {ι : Type*} (s : Finset ι)
     (E : ι → Set (Set ℕ)) (ω : ℕ → Prop) :
     ∑ i ∈ s, eventIndicator (E i) ω = (eventCount s E ω : ℝ) := by
   classical
-  induction s using Finset.induction_on with
-  | empty => simp [eventCount]
-  | @insert i s hi ih =>
-      by_cases hmem : bitsToSet ω ∈ E i
-      · simp [eventCount, eventIndicator, hi, hmem, ih]
-      · simp [eventCount, eventIndicator, hi, hmem, ih]
+  simp [eventCount, eventIndicator]
 
 lemma integrable_eventIndicator_of_supported {u : Finset ℕ} {E : Set (Set ℕ)}
     (hE : ∀ {S T : Set ℕ}, S ∩ (u : Set ℕ) = T ∩ (u : Set ℕ) →
@@ -4009,7 +3998,7 @@ lemma independent_event_lower_tail_bound {ι : Type*}
       {ω | (∑ i ∈ s, X i) ω ≤ (t : ℝ)} := by
     intro ω hω
     change eventCount s E ω < t at hω
-    show (∑ i ∈ s, X i) ω ≤ (t : ℝ)
+    change (∑ i ∈ s, X i) ω ≤ (t : ℝ)
     dsimp [X]
     simp only [Finset.sum_apply]
     rw [sum_eventIndicator_eq_eventCount]
@@ -4029,7 +4018,7 @@ lemma independent_event_lower_tail_bound {ι : Type*}
       have hm' : ProbabilityTheory.mgf (∑ i ∈ s, X i) fairBits (-1) ≤
           Real.exp (-(1 / 2 *
             ∑ i ∈ s, fairBits.real (bitsToSet ⁻¹' E i))) := by
-        convert hm using 1 <;> ring_nf
+        convert hm using 1; ring_nf
       norm_num
       exact mul_le_mul_of_nonneg_left hm' (Real.exp_pos _).le
     _ = Real.exp ((t : ℝ) -
@@ -4143,7 +4132,7 @@ def primesBetween (a b : ℕ) : Finset ℕ :=
     p ∈ primesBetween a b ↔ a ≤ p ∧ p ≤ b ∧ p.Prime := by
   simp [primesBetween, and_assoc]
 
-lemma primesBetween_eq_sdiff (a b : ℕ) (hab : a ≤ b + 1) :
+lemma primesBetween_eq_sdiff (a b : ℕ) (_hab : a ≤ b + 1) :
     primesBetween a b = Nat.primesLE b \ Nat.primesLE (a - 1) := by
   ext p
   simp only [mem_primesBetween, Finset.mem_sdiff, Nat.mem_primesLE]
@@ -4520,7 +4509,7 @@ lemma mem_validRedOffsets {W C k d : ℕ} :
     d ∈ validRedOffsets W C k ↔
       d ∈ redOffsets W C k ∧ d ≤ k ∧
         k + W * d + 14 ≤ W * (k - d) + 20 := by
-  simp [validRedOffsets, and_assoc]
+  simp [validRedOffsets]
 
 def redCenterScale (W k d : ℕ) : ℕ :=
   2 ^ (W * (k - d) + W - 5)
@@ -4973,7 +4962,7 @@ lemma blueLabels_subset_scaleBluePrimes {W k n : ℕ} (hW : 2 ≤ W)
 
 /-- A convenient deterministic criterion placing every coordinate inspected by
 `lengthEvent q n` inside a half-open ambient block. -/
-lemma lengthSupport_subset_Ico_of_bounds {L U q n : ℕ} (hq : 0 < q)
+lemma lengthSupport_subset_Ico_of_bounds {L U q n : ℕ} (_hq : 0 < q)
     (hleft : L + (q - 1) ≤ n / q)
     (hright : n / q + 5 * q < U) :
     lengthSupport q n ⊆ Finset.Ico L U := by
@@ -5260,8 +5249,8 @@ lemma redLength_support_subset {W k n d q : ℕ} (hW : 30 ≤ W)
     lengthSupport_subset_Ico_of_divScale hDpos hPpos hqpos
       hqBounds.1 hqBounds.2 hDX hLX hUbound
 
-lemma redLengthScale_pos {W k n d : ℕ} (hW : 5 ≤ W) (hk : W ≤ k)
-    (hd : d ≤ k) (hn : n ∈ targetBlock W k) :
+lemma redLengthScale_pos {W k n d : ℕ} (_hW : 5 ≤ W) (hk : W ≤ k)
+    (_hd : d ≤ k) (hn : n ∈ targetBlock W k) :
     0 < redLengthScale W k n d := by
   let D := redCenterScale W k d
   have hDdef : D = 2 ^ (W * (k - d) + W - 5) := by
@@ -5334,7 +5323,7 @@ lemma redLength_lt_globalEnvelope {W C k n d q : ℕ}
 /-! The corresponding bounds for the full family of red subchannels. -/
 
 lemma redSubLengthScale_pos {W k n d e : ℕ}
-    (hW : 5 * e + 5 ≤ W) (hk : W ≤ k) (hd : d ≤ k)
+    (hW : 5 * e + 5 ≤ W) (hk : W ≤ k) (_hd : d ≤ k)
     (hn : n ∈ targetBlock W k) :
     0 < redSubLengthScale W k n d e := by
   let D := redSubCenterScale W k d e
@@ -5463,7 +5452,7 @@ lemma redSubLengthScale_upper {W k n d e : ℕ}
       omega
 
 lemma redSubLength_lt_globalEnvelope {W C k n d e q : ℕ}
-    (hW : 12 * C + 200 ≤ W) (hde : (d, e) ∈ validRedSubchannels W C k)
+    (_hW : 12 * C + 200 ≤ W) (hde : (d, e) ∈ validRedSubchannels W C k)
     (hn : n ∈ targetBlock W k) (hq : q ∈ redSubLengths W k n d e) :
     q < 2 ^ ((2 * C + 1) * k + 3 * W + 20) := by
   rcases mem_validRedSubchannels.mp hde with
@@ -5735,7 +5724,7 @@ lemma redSubLengths_lt_of_rank_gap {W C k n d e d' e' q q' : ℕ}
     _ ≤ q' := hqb'.1
 
 lemma redSubLengths_ne_of_channel_ne {W C k n d e d' e' q q' : ℕ}
-    (hW : 12 * C + 200 ≤ W) (hk : 2 * W ≤ k)
+    (_hW : 12 * C + 200 ≤ W) (hk : 2 * W ≤ k)
     (hn : n ∈ targetBlock W k)
     (hde : (d, e) ∈ validRedSubchannels W C k)
     (hde' : (d', e') ∈ validRedSubchannels W C k)
@@ -5813,7 +5802,7 @@ lemma divCenter_le_add_of_support_inter {q q' n n' : ℕ}
     omega
 
 lemma mul_cross_le_add_of_div_le {n n' q q' L : ℕ}
-    (hq : 0 < q) (hq' : 0 < q') (hcent : n / q ≤ n' / q' + L) :
+    (hq : 0 < q) (_hq' : 0 < q') (hcent : n / q ≤ n' / q' + L) :
     n * q' ≤ n' * q + (L + 1) * q * q' := by
   have hnmod := Nat.mod_lt n hq
   have hnEq := Nat.mod_add_div n q
@@ -6171,7 +6160,7 @@ lemma redLength_sq_le_target {W C k n d q : ℕ}
 private lemma red_support_disjoint_of_close_to_of_lt
     {W C k n₀ n n' d d' q q' : ℕ}
     (hC : 1 ≤ C) (hW : 8 * C + 100 ≤ W) (hk : W + 16 ≤ k)
-    (hn₀ : n₀ ∈ targetBlock W k) (hn : n ∈ targetBlock W k)
+    (_hn₀ : n₀ ∈ targetBlock W k) (hn : n ∈ targetBlock W k)
     (hn' : n' ∈ targetBlock W k)
     (hclose : Close W k n₀ n) (hclose' : Close W k n₀ n')
     (hd : d ∈ validRedOffsets W C k) (hd' : d' ∈ validRedOffsets W C k)
@@ -6278,7 +6267,7 @@ lemma red_support_disjoint_of_close_to_of_ne
 private lemma redSub_support_disjoint_of_close_to_of_lt
     {W C k n₀ n n' d e d' e' q q' : ℕ}
     (hC : 1 ≤ C) (hW : 12 * C + 200 ≤ W) (hk : 2 * W ≤ k)
-    (hn₀ : n₀ ∈ targetBlock W k) (hn : n ∈ targetBlock W k)
+    (_hn₀ : n₀ ∈ targetBlock W k) (hn : n ∈ targetBlock W k)
     (hn' : n' ∈ targetBlock W k)
     (hclose : Close W k n₀ n) (hclose' : Close W k n₀ n')
     (hde : (d, e) ∈ validRedSubchannels W C k)
@@ -6737,7 +6726,7 @@ lemma fairBits_redClusterEvent_eq_sum {m W C k n₀ : ℕ} {g : Fin m → ℕ}
   · intro i hi
     exact measurableSet_lengthEvent _ _
 
-lemma eventCount_attach {ι : Type*} [DecidableEq ι] (s : Finset ι)
+lemma eventCount_attach {ι : Type*} (s : Finset ι)
     (E : ι → Set (Set ℕ)) (ω : ℕ → Prop) :
     eventCount s.attach (fun i ↦ E i.1) ω = eventCount s E ω := by
   classical
@@ -6794,7 +6783,7 @@ lemma redClusterCount_lt_of_exceptional {m W C D k n₀ : ℕ}
     _ ≤ ∑ i : Fin m, (good i).card := Finset.card_biUnion_le
     _ < ∑ _i : Fin m, repairCount D k :=
       Finset.sum_lt_sum_of_nonempty huniv (fun i _ ↦ hgood i)
-    _ = m * repairCount D k := by simp [nsmul_eq_mul]
+    _ = m * repairCount D k := by simp
 
 noncomputable def redClusterMeanCoefficient : ℝ :=
   3 * Real.exp (-1600) / 40960
@@ -7128,7 +7117,7 @@ lemma eventually_redClustered_measure_le (W C D : ℕ)
       tuples.card ≤ (Finset.univ : Finset (Fin m → V)).card :=
         Finset.card_filter_le _ _
       _ = (closeTargets W k n₀).card ^ m := by
-        simp [V, Fintype.card_fun]
+        simp [V]
   have hbase0 : (0 : ℝ) ≤ Real.exp ((m : ℝ) * (k : ℝ) -
       (1 / 2) * (redClusterMeanCoefficient *
         (m : ℝ) * (C : ℝ) * (k : ℝ))) := (Real.exp_pos _).le
@@ -7223,7 +7212,7 @@ lemma int_abs_cross_le_of_support_inter {q q' n n' : ℕ}
       (((6 * (q + q') + 1) * q * q' : ℕ) : ℤ) := by
     exact_mod_cast hab
   have hba' : n' * q ≤ n * q' + (6 * (q + q') + 1) * q * q' := by
-    convert hba using 1 <;> ring
+    convert hba using 1; ring
   have hbaZ : (n' : ℤ) * q ≤ (n : ℤ) * q' +
       (((6 * (q + q') + 1) * q * q' : ℕ) : ℤ) := by
     exact_mod_cast hba'
@@ -7308,7 +7297,7 @@ lemma red_support_disjoint_of_two_blue_collisions
     (hn' : n' ∈ targetBlock W k)
     (hp₁ : p₁ ∈ blueLabels W k n₀) (hp₂ : p₂ ∈ blueLabels W k n)
     (hr₁ : r₁ ∈ blueLabels W k n₀) (hr₂ : r₂ ∈ blueLabels W k n')
-    (hpne : p₁ ≠ p₂) (hrne : r₁ ≠ r₂) (hpr : p₁ ≠ r₁)
+    (hpne : p₁ ≠ p₂) (_hrne : r₁ ≠ r₂) (hpr : p₁ ≠ r₁)
     (hblue : (lengthSupport p₁ n₀ ∩ lengthSupport p₂ n).Nonempty)
     (hblue' : (lengthSupport r₁ n₀ ∩ lengthSupport r₂ n').Nonempty)
     (hd : d ∈ validRedOffsets W C k) (hd' : d' ∈ validRedOffsets W C k)
@@ -7378,7 +7367,6 @@ lemma red_support_disjoint_of_two_blue_collisions
   have hidentity : (n₀ : ℤ) * Z =
       A * s * r₁ - B * q * p₁ + D * p₁ * r₁ := by
     dsimp [Z, A, B, D]
-    push_cast
     ring
   have hAterm := int_abs_mul_nat_mul_le (a := s) (b := r₁) hblueBound
   have hBterm := int_abs_mul_nat_mul_le (a := q) (b := p₁) hblueBound'
@@ -7448,7 +7436,7 @@ lemma redSub_support_disjoint_of_two_blue_collisions
     (hn' : n' ∈ targetBlock W k)
     (hp₁ : p₁ ∈ blueLabels W k n₀) (hp₂ : p₂ ∈ blueLabels W k n)
     (hr₁ : r₁ ∈ blueLabels W k n₀) (hr₂ : r₂ ∈ blueLabels W k n')
-    (hpne : p₁ ≠ p₂) (hrne : r₁ ≠ r₂) (hpr : p₁ ≠ r₁)
+    (hpne : p₁ ≠ p₂) (_hrne : r₁ ≠ r₂) (hpr : p₁ ≠ r₁)
     (hblue : (lengthSupport p₁ n₀ ∩ lengthSupport p₂ n).Nonempty)
     (hblue' : (lengthSupport r₁ n₀ ∩ lengthSupport r₂ n').Nonempty)
     (hde : (d, e) ∈ validRedSubchannels W C k)
@@ -7526,7 +7514,6 @@ lemma redSub_support_disjoint_of_two_blue_collisions
   have hidentity : (n₀ : ℤ) * Z =
       A * s * r₁ - B * q * p₁ + D * p₁ * r₁ := by
     dsimp [Z, A, B, D]
-    push_cast
     ring
   have hAterm := int_abs_mul_nat_mul_le (a := s) (b := r₁) hblueBound
   have hBterm := int_abs_mul_nat_mul_le (a := q) (b := p₁) hblueBound'
@@ -7689,7 +7676,6 @@ lemma blueCollisionTargets_card_le {W k n₀ p p₂ : ℕ}
       exact_mod_cast huZ
     have hl : n₀ * p₂ ≤ n * p + M := by
       have : -((M : ℤ)) ≤ (n₀ : ℤ) * p₂ - (n : ℤ) * p := herr'.1
-      push_cast at this
       omega
     omega
   have himageCard : (s.image (fun n ↦ n * p)).card = s.card :=
@@ -7816,7 +7802,7 @@ lemma eventually_blueBad_measure_le (W C D : ℕ)
     have hset : configEvent g =
         ⋂ i ∈ (Finset.univ : Finset (Fin k)), bitsToSet ⁻¹' E i := by
       ext ω
-      simp only [configEvent, Set.mem_setOf_eq, Set.mem_iInter, Finset.mem_univ,
+      simp only [configEvent, Set.mem_ofPred_eq, Set.mem_iInter, Finset.mem_univ,
         forall_const, Set.mem_preimage]
       constructor
       · intro h i
@@ -7852,7 +7838,7 @@ lemma eventually_blueBad_measure_le (W C D : ℕ)
     calc
       configs.card ≤ (Finset.univ : Finset (Fin k → ↥data)).card :=
         Finset.card_filter_le _ _
-      _ = data.card ^ k := by simp [Fintype.card_fun]
+      _ = data.card ^ k := by simp
       _ ≤ (128 * (2 ^ (k + W + 5)) ^ 5) ^ k :=
         Nat.pow_le_pow_left hdata k
   have hsubset : {ω | BlueBad W C D k n₀ ω} ⊆
@@ -8071,7 +8057,6 @@ lemma scaleRawBound_le_exp_add_exp (W C D k : ℕ) :
                 1 / 2 * (redMeanCoefficient * (C : ℝ) * (k : ℝ))) * k)) := by
             gcongr
             rw [← Real.exp_nat_mul]
-            congr 1
             ring_nf
             exact le_rfl
       _ = Real.exp (blueScaleExponent W C k) := by
@@ -8218,7 +8203,7 @@ lemma exists_eventually_not_scaleBad (W C D : ℕ)
       ∀ᶠ k : ℕ in atTop, ω ∉ {ω | ScaleBad W C D k ω} :=
     MeasureTheory.ae_eventually_notMem
       (scaleBad_tsum_ne_top W C D hC hW hlarge hD)
-  simpa only [Set.mem_setOf_eq] using hae.exists
+  simpa only [Set.mem_ofPred_eq] using hae.exists
 
 /-! ### Deterministic blue repairs -/
 
@@ -8376,7 +8361,7 @@ already chosen channels belonging to far exceptional targets. -/
 lemma farBlockedLabels_card_lt {W C D k n : ℕ} {ω : ℕ → Prop}
     {T : Finset ℕ} {F : ℕ → Finset ℕ}
     (hW : 12 * C + 200 ≤ W) (hk : 2 * W ≤ k)
-    (hn : n ∈ targetBlock W k)
+    (_hn : n ∈ targetBlock W k)
     (hTtarget : ∀ n' ∈ T, n' ∈ targetBlock W k)
     (hTexc : ∀ n' ∈ T, RedExceptional W C D k n' ω)
     (hFlabel : ∀ n' ∈ T, ∀ p' ∈ F n', p' ∈ blueLabels W k n')
@@ -8668,7 +8653,7 @@ lemma redBlock_subset_summandBlock {W k : ℕ} :
   exact ⟨(Nat.pow_le_pow_right (n := 2) (by omega) (by omega)).trans hx.1,
     by simpa only [Nat.mul_add, mul_one] using hx.2⟩
 
-lemma summandBlock_disjoint {W k l : ℕ} (hW : 0 < W) (hkl : k ≠ l) :
+lemma summandBlock_disjoint {W k l : ℕ} (_hW : 0 < W) (hkl : k ≠ l) :
     Disjoint (summandBlock W k) (summandBlock W l) := by
   rw [Finset.disjoint_left]
   intro x hxk hxl
@@ -8710,7 +8695,7 @@ lemma redRealization_inter_redBlock (W k : ℕ) (ω : ℕ → Prop) :
       bitsToSet ω ∩ (redBlock W k : Set ℕ) := by
   ext x
   simp only [Set.mem_inter_iff, Finset.mem_coe, redRealization,
-    Set.mem_setOf_eq, bitsToSet]
+    Set.mem_ofPred_eq, bitsToSet]
   constructor
   · rintro ⟨⟨l, hxl, hω⟩, hxk⟩
     exact ⟨hω, hxk⟩
@@ -8847,7 +8832,7 @@ lemma redTrial_length_injective_on {W C k n : ℕ} (hW : 12 * C + 200 ≤ W)
 /-- A finite family of representations whose interval cardinalities are
 pairwise distinct can be enumerated injectively. -/
 lemma exists_injective_representations_of_distinct_cards
-    {ι : Type*} [DecidableEq ι] {S : Set ℕ} {n t : ℕ}
+    {ι : Type*} {S : Set ℕ} {n t : ℕ}
     (R : Finset ι) (hcard : R.card = t) (q : ι → ℕ)
     (hqinj : ∀ {a b}, a ∈ R → b ∈ R → q a = q b → a = b)
     (hrep : ∀ a ∈ R, ∃ x y,
