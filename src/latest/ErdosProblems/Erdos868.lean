@@ -200,7 +200,7 @@ noncomputable def strictReprIndices (lo m : ℕ) : Finset ℕ :=
 
 /-- The two membership coordinates belonging to a strict unordered
 representation. -/
-def reprEndpoint (lo m : ℕ) (p : (i : strictReprIndices lo m) × Fin 2) : ℕ :=
+def reprEndpoint (lo m : ℕ) (p : (_ : strictReprIndices lo m) × Fin 2) : ℕ :=
   if p.2 = 0 then p.1 else m - p.1
 
 lemma reprEndpoint_injective (lo m : ℕ) : Function.Injective (reprEndpoint lo m) := by
@@ -316,7 +316,8 @@ lemma log_div_cast_le_log_div_cast {m n : ℕ} (hm : 1 ≤ m / 3)
     Real.log (m / 3 : ℕ) / (m : ℝ) ≤ Real.log n / (n : ℝ) := by
   have hm3pos : (0 : ℝ) < (m / 3 : ℕ) := by exact_mod_cast (Nat.zero_lt_of_lt hm)
   have hnpos : (0 : ℝ) < n := by exact_mod_cast lt_of_lt_of_le (Nat.zero_lt_of_lt hm) hlo
-  have hmpos : (0 : ℝ) < m := by exact_mod_cast lt_of_lt_of_le (Nat.zero_lt_of_lt hm) (hlo.trans hhi)
+  have hmpos : (0 : ℝ) < m := by
+    exact_mod_cast lt_of_lt_of_le (Nat.zero_lt_of_lt hm) (hlo.trans hhi)
   have hlog : Real.log (m / 3 : ℕ) ≤ Real.log n := by
     exact Real.strictMonoOn_log.monotoneOn hm3pos hnpos (by exact_mod_cast hlo)
   calc
@@ -486,7 +487,7 @@ lemma pairIndicator_mgf (lo m : ℕ) (i : strictReprIndices lo m) (t : ℝ) :
   rw [pairPresent_map]
   rw [mgf]
   rw [ProbabilityTheory.integral_bernoulliMeasure]
-  simp [boolIndicator, mul_comm, add_comm]
+  simp [mul_comm, add_comm]
 
 noncomputable def pairSum (lo m : ℕ) (ω : ReservoirSample) : ℝ :=
   ∑ i : strictReprIndices lo m, boolIndicator (pairPresent lo m i) ω
@@ -1086,7 +1087,7 @@ lemma tripleEndpoint_injective_in_center {q r : ℕ} (j : Fin 3) :
     Set.InjOn (fun y ↦ tripleEndpoint q r y j)
       {y | y ≤ q ∧ y ≤ r} := by
   intro y hy z hz h
-  simp only [Set.mem_setOf_eq] at hy hz
+  simp only [Set.mem_ofPred_eq] at hy hz
   fin_cases j <;> simp [tripleEndpoint] at h <;> omega
 
 def tripleOverlap (q r y z : ℕ) : Prop :=
@@ -1097,7 +1098,7 @@ noncomputable instance tripleOverlapDecidable (q r y z : ℕ) :
 
 lemma tripleOverlap_symm {q r y z : ℕ} :
     tripleOverlap q r y z → tripleOverlap q r z y := by
-  simpa [tripleOverlap, disjoint_comm]
+  simp [tripleOverlap, disjoint_comm]
 
 lemma tripleOverlap_refl (q r y : ℕ) : tripleOverlap q r y y := by
   intro h
@@ -1154,7 +1155,7 @@ lemma overlap_neighbors_card_le_nine (S : Finset ℕ) {q r : ℕ}
     _ = 9 := by decide
 
 lemma exists_pairwise_avoiding_of_mul_le_card
-    {α : Type*} [DecidableEq α] (R : α → α → Prop) [DecidableRel R]
+    {α : Type*} (R : α → α → Prop) [DecidableRel R]
     (hR_symm : ∀ {a b}, R a b → R b a) (D : ℕ) (hD : 0 < D) :
     ∀ (k : ℕ) (S : Finset α),
       (∀ a ∈ S, R a a) →
@@ -1162,6 +1163,7 @@ lemma exists_pairwise_avoiding_of_mul_le_card
       D * k ≤ S.card →
       ∃ T : Finset α, T ⊆ S ∧ T.card = k ∧
         ∀ a ∈ T, ∀ b ∈ T, a ≠ b → ¬ R a b := by
+  classical
   intro k
   induction k with
   | zero =>
@@ -1279,7 +1281,8 @@ lemma exists_twenty_disjoint_triples {q r : ℕ} (hqr : q ≠ r)
       (fun z hz ↦ hvalid z (hS'sub hz)) y
   obtain ⟨T, hTS', hTcard, hTpair⟩ :=
     exists_pairwise_avoiding_of_mul_le_card (tripleOverlap q r)
-      (@tripleOverlap_symm q r) 9 (by norm_num) 20 S' hrefl hdegree (by norm_num at hS'card ⊢; omega)
+      (@tripleOverlap_symm q r) 9 (by norm_num) 20 S' hrefl hdegree
+      (by norm_num at hS'card ⊢; omega)
   refine ⟨T, fun y hy ↦ hS'sub (hTS' hy), hTcard, ?_, ?_⟩
   · intro y hy
     have hyS' := Finset.mem_filter.1 (hTS' hy)
@@ -1669,7 +1672,7 @@ lemma mem_commonTripleCenters {N q r y : ℕ} {ω : ReservoirSample} :
         ∀ j : Fin 3, extendedAtScale N (tripleEndpoint q r y j) ∧
           membershipBit (tripleEndpoint q r y j) ω = true := by
   classical
-  simp [commonTripleCenters, le_min_iff]
+  simp [commonTripleCenters]
 
 lemma collisionBad_of_many {k q r : ℕ} {ω : ReservoirSample}
     (hq : q ∈ dyadicBlock k) (hr : r ∈ dyadicBlock k) (hqr : q ≠ r)
@@ -1721,7 +1724,6 @@ lemma collisionBad_of_many {k q r : ℕ} {ω : ReservoirSample}
   exact Set.mem_iUnion_of_mem q (Set.mem_iUnion_of_mem hq
     (Set.mem_iUnion_of_mem r (Set.mem_iUnion_of_mem hr
       (Set.mem_iUnion_of_mem ys (by
-        change ω ∈ collisionTupleEvent (dyadicScale k) q r ys
         rw [collisionTupleEvent, if_pos hgood]
         rintro ⟨i, j⟩
         exact (mem_commonTripleCenters.1 (hcenter i)).2 j |>.2)))))
@@ -1957,7 +1959,7 @@ lemma exp_neg_forty_log_dyadic (k : ℕ) :
     Real.exp (-40 * Real.log (dyadicScale k : ℝ)) = (1 / 2 ^ 40 : ℝ) ^ k := by
   rw [log_dyadicScale]
   rw [show -40 * ((k : ℝ) * Real.log 2) = (k : ℕ) * (-40 * Real.log 2) by
-    push_cast; ring, Real.exp_nat_mul]
+    ring, Real.exp_nat_mul]
   congr 1
   rw [show -40 * Real.log (2 : ℝ) = -(40 * Real.log 2) by ring,
     Real.exp_neg, show 40 * Real.log (2 : ℝ) = (40 : ℕ) * Real.log 2 by norm_num,
@@ -2037,7 +2039,7 @@ lemma pointSum_eq_selectedIndices_card (N : ℕ) (ω : ReservoirSample) :
     | empty => simp
     | @insert n s hn ih =>
         cases h : membershipBit n ω <;>
-          simp [Finset.sum_insert hn, Finset.filter_insert, boolIndicator, h, hn, ih] <;> ring
+          simp [Finset.sum_insert hn, Finset.filter_insert, boolIndicator, h, hn]; ring
   unfold pointSum selectedIndices
   exact aux (extendedIndices N)
 
@@ -2146,7 +2148,7 @@ lemma pairSum_eq_presentPairs_card (lo m : ℕ) (ω : ReservoirSample) :
     | empty => simp
     | @insert i s hi ih =>
         cases h : pairPresent lo m i ω <;>
-          simp [Finset.sum_insert hi, Finset.filter_insert, boolIndicator, h, hi, ih] <;> ring
+          simp [Finset.sum_insert hi, Finset.filter_insert, boolIndicator, h, hi]; ring
   unfold pairSum presentPairs
   simpa using aux Finset.univ
 
@@ -2437,7 +2439,7 @@ lemma RobustCounterexample.no_minimal_subbasis (c : RobustCounterexample) :
     rw [Set.not_nonempty_iff_eq_empty.mp h] at hB
     rw [isAsymptoticAddBasisOfOrder_iff_repr_pos] at hB
     obtain ⟨n, hn⟩ := hB.exists
-    simpa [ncard_add_repr_pos_iff] using hn
+    simp [ncard_add_repr_pos_iff] at hn
   obtain ⟨b, hb⟩ := hBne
   exact hminimal b hb (c.every_subbasis_erasable B hBA hB b hb)
 
@@ -2691,7 +2693,7 @@ lemma densePairIndicator_mgf (lo m : ℕ) (i : strictReprIndices lo m) (t : ℝ)
   rw [← mgf_map (Y := densePairPresent lo m i)
     (densePairPresent_measurable lo m i).aemeasurable (by fun_prop)]
   rw [densePairPresent_map, mgf, ProbabilityTheory.integral_bernoulliMeasure]
-  simp [boolIndicator, mul_comm, add_comm]
+  simp [mul_comm, add_comm]
 
 lemma densePairIndicator_iIndep (lo m : ℕ) :
     iIndepFun (fun i ↦ boolIndicator (densePairPresent lo m i)) denseMeasure := by
@@ -2957,7 +2959,6 @@ lemma Z_cast_le_exp_eight_mul (k : ℕ) :
     _ = Real.exp (8 * k) := by
       rw [← Real.exp_nat_mul]
       congr 1
-      push_cast
       ring
 
 lemma denseReprStageBad_measureReal_le_exp_neg {k : ℕ} (hk : 8 ≤ k) :
@@ -3049,7 +3050,6 @@ lemma densePointIndicator_iIndep (S : Finset ℕ) :
 lemma densePointSum_measurable (S : Finset ℕ) : Measurable (densePointSum S) := by
   unfold densePointSum
   apply Finset.measurable_sum S
-
   intro n _hn
   exact boolIndicator_measurable (denseBit_measurable n)
 
@@ -3202,7 +3202,7 @@ lemma densePointMean_initial_le (k : ℕ) :
           calc
             (300 : ℝ) * 32 ^ (k + 1) + 256 * 32 ^ (k + 1) =
                 556 * 32 ^ (k + 1) := by ring
-            _ ≤ 9600 * 32 ^ (k + 1) := by gcongr <;> norm_num
+            _ ≤ 9600 * 32 ^ (k + 1) := by gcongr; norm_num
             _ = 300 * 32 ^ ((k + 1) + 1) := by rw [pow_succ]; ring
 
 lemma densePoint_threshold_domination {k : ℕ} (hk : 10 ≤ k) :
@@ -3562,7 +3562,7 @@ lemma mem_denseCommonTripleCenters {N q r y : ℕ} {ω : DenseSample} :
         ∀ j : Fin 3, denseExtendedAtScale N (tripleEndpoint q r y j) ∧
           denseBit (tripleEndpoint q r y j) ω = true := by
   classical
-  simp [denseCommonTripleCenters, le_min_iff]
+  simp [denseCommonTripleCenters]
 
 lemma denseCollisionBad_of_many {k q r : ℕ} {ω : DenseSample}
     (hq : q ∈ zBlock k) (hr : r ∈ zBlock k) (hqr : q ≠ r)
@@ -3616,7 +3616,6 @@ lemma denseCollisionBad_of_many {k q r : ℕ} {ω : DenseSample}
   exact Set.mem_iUnion_of_mem q (Set.mem_iUnion_of_mem hq
     (Set.mem_iUnion_of_mem r (Set.mem_iUnion_of_mem hr
       (Set.mem_iUnion_of_mem ys (by
-        change ω ∈ denseCollisionTupleEvent (Z k) q r ys
         rw [denseCollisionTupleEvent, if_pos hgood]
         rintro ⟨i, j⟩
         exact (mem_denseCommonTripleCenters.1 (hcenter i)).2 j |>.2)))))
@@ -3650,7 +3649,6 @@ lemma denseProbSqSum_zBlock_le (k : ℕ) :
       intro n hn
       rw [denseProbReal_of_mem_zBlock hn, pow_two, ← mul_pow]
       norm_num
-
     _ = (zBlock k).card * (1 / 64 : ℝ) ^ k := by simp
     _ ≤ (Z (k + 1) : ℝ) * (1 / 64 : ℝ) ^ k := by
       apply mul_le_mul_of_nonneg_right
@@ -3696,7 +3694,7 @@ lemma denseSqMean_initial_le (k : ℕ) :
           calc
             (300 : ℝ) * 4 ^ (k + 1) + 256 * 4 ^ (k + 1) =
                 556 * 4 ^ (k + 1) := by ring
-            _ ≤ 1200 * 4 ^ (k + 1) := by gcongr <;> norm_num
+            _ ≤ 1200 * 4 ^ (k + 1) := by gcongr; norm_num
             _ = 300 * 4 ^ ((k + 1) + 1) := by rw [pow_succ]; ring
 
 def denseCenterDomain (q r : ℕ) : Finset ℕ := Finset.Icc 0 (min q r)
@@ -3706,7 +3704,7 @@ lemma mem_denseCenterDomain {q r y : ℕ} :
   simp [denseCenterDomain]
 
 lemma denseCenterDomain_coordinate_sq_le {k q r : ℕ}
-    (hq : q ∈ zBlock k) (f : ℕ → ℕ)
+    (_hq : q ∈ zBlock k) (f : ℕ → ℕ)
     (hfmem : ∀ y ∈ denseCenterDomain q r, f y < Z (k + 1))
     (hfinj : Set.InjOn f (denseCenterDomain q r : Set ℕ)) :
     ∑ y ∈ denseCenterDomain q r, denseProbReal (f y) ^ 2 ≤
@@ -3901,7 +3899,7 @@ lemma denseTripleWeightSum_le {k q r : ℕ} (hk : 1 ≤ k)
           norm_num
 
 lemma sum_fun_prod_eq_pow {ι α : Type*} [Fintype ι] [Fintype α]
-    [DecidableEq ι] [DecidableEq α] (w : α → ℝ) :
+    [DecidableEq ι] (w : α → ℝ) :
     (∑ y : α, w y) ^ Fintype.card ι =
       ∑ f : ι → α, ∏ i : ι, w (f i) := by
   classical
@@ -4212,7 +4210,7 @@ lemma densePairSum_eq_presentPairs_card (lo m : ℕ) (ω : DenseSample) :
     | empty => simp
     | @insert i s hi ih =>
         cases h : densePairPresent lo m i ω <;>
-          simp [Finset.sum_insert hi, Finset.filter_insert, boolIndicator, h, hi, ih] <;>
+          simp [Finset.sum_insert hi, Finset.filter_insert, boolIndicator, h, hi];
           ring
   unfold densePairSum densePresentPairs
   simpa using aux Finset.univ
@@ -4236,7 +4234,7 @@ lemma densePointSum_eq_selectedInitial_card (k : ℕ) (ω : DenseSample) :
     | empty => simp
     | @insert n s hn ih =>
         cases h : denseBit n ω <;>
-          simp [Finset.sum_insert hn, Finset.filter_insert, boolIndicator, h, hn, ih] <;>
+          simp [Finset.sum_insert hn, Finset.filter_insert, boolIndicator, h, hn];
           ring
   unfold densePointSum denseSelectedInitial
   exact aux (denseInitialIndices k)
@@ -4251,7 +4249,6 @@ lemma exists_dense_master_reservoir : ∃ ω : DenseSample,
   have hall := (ae_eventually_dense_pair_lower.and ae_eventually_dense_point_upper).and
     ae_eventually_dense_global_collision_bound
   obtain ⟨ω, ⟨⟨hpair, hpoint⟩, hcollision⟩⟩ := hall.exists
-
   refine ⟨ω, ?_, ?_, hcollision⟩
   · filter_upwards [hpair] with k hk m hm
     rw [← densePairSum_eq_presentPairs_card]
@@ -4395,7 +4392,7 @@ lemma targetConflict_symm (A S : Finset ℕ) {x y : ℕ}
   · exact Or.inl rfl
   · right
     have hneg := symmetricDiffFinset_neg_mem h
-    convert hneg using 1 <;> ring
+    convert hneg using 1; ring
 
 noncomputable def conflictNeighbor (x : ℕ) (e : ℤ) : ℕ :=
   Int.toNat ((x : ℤ) - e)
@@ -4430,7 +4427,7 @@ lemma targetConflict_neighbors_card_le (A S Q : Finset ℕ) (x : ℕ) :
       Nat.add_le_add_left (symmetricDiffFinset_card_le A S) 1
 
 lemma exists_target_embedding
-    {P : Type*} [Fintype P] [DecidableEq P]
+    {P : Type*} [Fintype P]
     (Q A S : Finset ℕ)
     (hsize : (1 + 2 * (A.card * S.card)) * Fintype.card P ≤ Q.card) :
     ∃ f : P → ℕ, Function.Injective f ∧
@@ -4446,7 +4443,7 @@ lemma exists_target_embedding
       (fun x _hx ↦ targetConflict_refl A S x)
       (fun x _hx ↦ targetConflict_neighbors_card_le A S Q x)
       hsize
-  have hcardP : Fintype.card P = Fintype.card T := by simpa [hTcard]
+  have hcardP : Fintype.card P = Fintype.card T := by simp [hTcard]
   let e : P ≃ T := Fintype.equivOfCardEq hcardP
   refine ⟨fun p ↦ e p, fun p p' h ↦ e.injective (Subtype.ext h),
     fun p ↦ hTQ (e p).property, ?_⟩
@@ -4537,7 +4534,7 @@ lemma mem_stageCanaries {K k c : ℕ} {s : DenseBuildState} :
     c ∈ stageCanaries K k s ↔ K ≤ k ∧ c ∈ zBlock k ∧ c ∉ s.targets := by
   classical
   unfold stageCanaries
-  by_cases hk : K ≤ k <;> simp [hk, and_assoc]
+  by_cases hk : K ≤ k <;> simp [hk]
 
 def boolFin2 (b : Bool) : Fin 2 := if b then 1 else 0
 
@@ -4612,7 +4609,7 @@ lemma patternTransversal_subset_endpointPool
   obtain ⟨i, _hiomit, rfl⟩ := mem_patternTransversal.1 hx
   rw [mem_stageEndpointPool]
   refine ⟨p.1, p.1.property, i, i.property, ?_⟩
-  cases h : p.2.2 i <;> simp [chosenPairEndpoint, h]
+  cases h : p.2.2 i <;> simp [chosenPairEndpoint]
 
 lemma patternTransversal_card
     (ω : DenseSample) (K k : ℕ) (s : DenseBuildState)
@@ -4625,7 +4622,7 @@ lemma patternTransversal_card
         (Finset.univ.filter (fun i : ChosenPairType ω s k p.1 ↦ i ≠ p.2.1)) =
           Finset.univ.erase p.2.1 := by
         ext i
-        simp [eq_comm]
+        simp
     rw [hfilter, Finset.card_erase_of_mem (Finset.mem_univ p.2.1)]
     simp
   · intro i hi j hj hij
@@ -4668,8 +4665,8 @@ lemma stagePattern_card_eq
         (chosenDensePairs ω s k c).card *
           2 ^ (chosenDensePairs ω s k c).card := by
   classical
-  simp only [Fintype.card_sigma, Finset.univ_eq_attach, Fintype.card_prod, Fintype.card_coe, Fintype.card_pi,
-    Fintype.card_bool, Finset.prod_const, Finset.card_attach]
+  simp only [Fintype.card_sigma, Finset.univ_eq_attach, Fintype.card_prod,
+    Fintype.card_coe, Fintype.card_pi, Fintype.card_bool, Finset.prod_const, Finset.card_attach]
   exact Finset.sum_attach (stageCanaries K k s)
     (fun c ↦ (chosenDensePairs ω s k c).card *
       2 ^ (chosenDensePairs ω s k c).card)
@@ -4853,7 +4850,6 @@ noncomputable def buildTargets (ω : DenseSample) (K k : ℕ) : Finset ℕ :=
   stageTargets ω K k (denseBuildState ω K k)
 
 noncomputable def buildCanaries (ω : DenseSample) (K k : ℕ) : Finset ℕ :=
-
   stageCanaries K k (denseBuildState ω K k)
 
 noncomputable def buildDeleted (ω : DenseSample) (K k : ℕ) : Finset ℕ :=
@@ -5084,7 +5080,7 @@ lemma denseBuildState_added_card_le
             _ = 2 ^ ((12 * k + 11) + 1) := by
               conv_rhs => rw [pow_succ]
               exact Nat.mul_comm _ _
-            _ = 2 ^ (12 * (k + 1)) := by congr 1 <;> omega
+            _ = 2 ^ (12 * (k + 1)) := by congr 1
 
 lemma stageTargets_card_le_two_pow
     (ω : DenseSample) (K k : ℕ) (s : DenseBuildState) :
@@ -5117,7 +5113,7 @@ lemma denseBuildState_targets_card_le
             _ = 2 ^ ((12 * k + 11) + 1) := by
               conv_rhs => rw [pow_succ]
               exact Nat.mul_comm _ _
-            _ = 2 ^ (12 * (k + 1)) := by congr 1 <;> omega
+            _ = 2 ^ (12 * (k + 1)) := by congr 1
 
 lemma currentPrefix_card_le_selected_add
     (ω : DenseSample) (s : DenseBuildState) (t N : ℕ)
@@ -5266,7 +5262,7 @@ lemma denseStageStep_currentSet
         (stageAdded ω K k s : Set ℕ) := by
   ext x
   simp only [DenseBuildState.currentSet, denseStageStep, Set.mem_union,
-    Set.mem_diff, Finset.mem_coe, Finset.mem_union, Finset.mem_sdiff]
+    Set.mem_sdiff, Finset.mem_coe, Finset.mem_union, Finset.mem_sdiff]
   aesop
 
 lemma stageTarget_ne_of_ne
@@ -5426,7 +5422,7 @@ lemma denseBuildState_added_mem_stage
     (hx : x ∈ (denseBuildState ω K n).added) :
     ∃ j < n, x ∈ buildAdded ω K j := by
   induction n with
-  | zero => simpa [DenseBuildState.empty] using hx
+  | zero => simp [DenseBuildState.empty] at hx
   | succ n ih =>
       rw [denseBuildState_succ] at hx
       simp only [denseStageStep, Finset.mem_union, Finset.mem_sdiff] at hx
@@ -5454,7 +5450,6 @@ lemma buildAdded_disjoint_buildDeleted
     {i j : ℕ} (hij : i ≠ j) :
     Disjoint (buildAdded ω K i) (buildDeleted ω K j) := by
   apply Finset.disjoint_left.2
-
   intro x hxi hxj
   have hi : x ∈ zBlock (targetStage i) :=
     stageAdded_mem_zBlock (hsize i) hxi
@@ -5551,7 +5546,7 @@ lemma mem_denseFinalSet_iff_state
     {n x : ℕ} (hxlt : x < Z (targetStage n)) :
     x ∈ denseFinalSet ω K ↔ x ∈ (denseBuildState ω K n).currentSet ω := by
   rw [denseFinalSet, DenseBuildState.currentSet]
-  simp only [Set.mem_union, Set.mem_diff, Finset.mem_coe]
+  simp only [Set.mem_union, Set.mem_sdiff, Finset.mem_coe]
   rw [mem_finalDeleted_iff_state ω K hsize hxlt,
     mem_finalAdded_iff_state ω K hsize hxlt]
 
@@ -5831,7 +5826,7 @@ lemma deletion_stage_eq_block_of_endpoint
 lemma pairsKilledBy_state_subset_matching_stage
     (ω : DenseSample) (K : ℕ)
     (hsize : ∀ j, targetSizeCondition ω K j (denseBuildState ω K j))
-    {j k m : ℕ} (hj : j < k) (ht : targetStage j = k)
+    {j k m : ℕ} (_hj : j < k) (ht : targetStage j = k)
     (hm : m ∈ zBlock k) :
     pairsKilledBy ω m (denseBuildState ω K k).deleted ⊆
       pairsKilledBy ω m (buildDeleted ω K j) := by
@@ -5959,7 +5954,7 @@ lemma targetStage_succ_le_two_pow (j : ℕ) :
       norm_num
       have hp : 0 < 2 ^ u := pow_pos (by decide) _
       omega
-    _ = 2 ^ (u + 11) := by rw [← pow_add]; congr 1 <;> omega
+    _ = 2 ^ (u + 11) := by rw [← pow_add]; congr 1; omega
     _ ≤ 2 ^ (24 * u) := Nat.pow_le_pow_right (by decide) (by omega)
 
 lemma linear_block_room {k : ℕ} (hk : 10 ≤ k) :
@@ -5970,7 +5965,7 @@ lemma linear_block_room {k : ℕ} (hk : 10 ≤ k) :
       40 * 2 ^ (k + 1) < 2 ^ 6 * 2 ^ (k + 1) := by
         have hp : 0 < 2 ^ (k + 1) := pow_pos (by decide) _
         norm_num
-      _ = 2 ^ (k + 7) := by rw [← pow_add]; congr 1 <;> omega
+      _ = 2 ^ (k + 7) := by rw [← pow_add]; congr 1; omega
       _ ≤ 2 ^ (2 * k) := Nat.pow_le_pow_right (by decide) (by omega)
       _ = 4 ^ k := by
         rw [show 4 = 2 ^ 2 by norm_num, ← pow_mul]
@@ -6005,7 +6000,7 @@ lemma matched_scaled_power_lt (j : ℕ) :
     _ < 2 ^ 6 * 2 ^ (24 * u + 1) := by
       have hp : 0 < 2 ^ (24 * u + 1) := pow_pos (by decide) _
       norm_num
-    _ = 2 ^ (24 * u + 7) := by rw [← pow_add]; congr 1 <;> omega
+    _ = 2 ^ (24 * u + 7) := by rw [← pow_add]; congr 1; omega
     _ ≤ 2 ^ (2000 * u) := Nat.pow_le_pow_right (by decide) (by omega)
     _ = 4 ^ (targetStage j) := by
       have hexp : 2 * targetStage j = 2000 * u := by
@@ -6055,7 +6050,6 @@ lemma stageCanary_available_pairs
   have hmblock := hm'.2.1
   have hmnot := hm'.2.2
   have hpresent := hpair k hkK m hmblock
-
   have hdecomp := densePresentPairs_card_le_available_add_killed
     ω (denseBuildState ω K k) m
   by_cases hmatch : ∃ j < k, targetStage j = k
@@ -6321,7 +6315,7 @@ lemma patternTransversal_bounds
     cases hchoice : p.2.2 i with
     | false => simpa [chosenPairEndpoint, hchoice] using hiIcc.1
     | true =>
-        simp only [chosenPairEndpoint, hchoice, Bool.true_eq, ↓reduceIte]
+        simp only [chosenPairEndpoint, ↓reduceIte]
         omega
   constructor
   · rw [← hix]
