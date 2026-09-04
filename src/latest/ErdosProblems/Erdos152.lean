@@ -51,7 +51,7 @@ import Mathlib
 -/
 
 open scoped Pointwise Asymptotics
-open Filter
+open Filter Set Finset
 
 namespace Erdos152
 
@@ -64,20 +64,11 @@ def IsSidon {α : Type*} [AddCommMonoid α] (A : Set α) : Prop :=
     i₁ + i₂ = j₁ + j₂ →
       (i₁ = j₁ ∧ i₂ = j₂) ∨ (i₁ = j₂ ∧ i₂ = j₁)
 
-
 /-- Define `f n` to be the minimum of `|{s | s - 1 ∉ A + A, s ∈ A + A, s + 1 ∉ A + A}|` as `A`
 ranges over all Sidon sets of size `n`. -/
 noncomputable def f (n : ℕ) : ℕ :=
   ⨅ A : {A : Set ℕ | A.ncard = n ∧ IsSidon A},
   {s : ℕ | s - 1 ∉ A.1 + A.1 ∧ s ∈ A.1 + A.1 ∧ s + 1 ∉ A.1 + A.1}.ncard
-
-
-
-open scoped Classical
-
-
-
-open Set Finset
 
 noncomputable def num_isolated (A : Set ℕ) : ℕ :=
   {s : ℕ | s - 1 ∉ A + A ∧ s ∈ A + A ∧ s + 1 ∉ A + A}.ncard
@@ -90,7 +81,9 @@ noncomputable def I_N (X : Set ℕ) : ℕ := {x ∈ X | x - 1 ∉ X ∧ x + 1 �
 noncomputable def D_set (A : Set ℕ) : Set ℤ :=
   {z : ℤ | ∃ a b : ℕ, a ∈ A ∧ b ∈ A ∧ z = (a : ℤ) - (b : ℤ)}
 
-noncomputable def ind (X : Set ℤ) (x : ℤ) : ℤ := if x ∈ X then 1 else 0
+noncomputable def ind (X : Set ℤ) (x : ℤ) : ℤ := by
+  classical
+  exact if x ∈ X then 1 else 0
 
 lemma H_val (X : Set ℤ) (x : ℤ) :
   let a := ind X x; let b := ind X (x+1); let c := ind X (x+2); let d := ind X (x+3)
@@ -98,8 +91,10 @@ lemma H_val (X : Set ℤ) (x : ℤ) :
   dsimp [ind]; split_ifs <;> omega
 
 lemma sum_H (X : Set ℤ) (S : Finset ℤ) :
-  ∑ x ∈ S, (ind X x + ind X (x+1) + ind X (x+2) + ind X x * ind X (x+2) + ind X (x+1) * ind X (x+3)) ≥
-  ∑ x ∈ S, (ind X x * ind X (x+1) + 2 * ind X (x+1) * ind X (x+2) + ind X (x+2) * ind X (x+3) + ind X x * ind X (x+3)) := by
+  ∑ x ∈ S, (ind X x + ind X (x+1) + ind X (x+2) +
+    ind X x * ind X (x+2) + ind X (x+1) * ind X (x+3)) ≥
+  ∑ x ∈ S, (ind X x * ind X (x+1) + 2 * ind X (x+1) * ind X (x+2) +
+    ind X (x+2) * ind X (x+3) + ind X x * ind X (x+3)) := by
   apply sum_le_sum
   intro x _
   exact H_val X x
@@ -107,14 +102,19 @@ lemma sum_H (X : Set ℤ) (S : Finset ℤ) :
 lemma universal_parity_3 (X : Set ℤ) (hX : X.Finite) :
   4 * N_k_Z X 1 + N_k_Z X 3 ≤ 3 * X.ncard + 2 * N_k_Z X 2 := by
   simp_rw [NNReal.coe_zero.dvd.elim fun and x => X.ncard_eq_toFinset_card hX, N_k_Z]
-  trans(4)*.card (hX.toFinset.filter (.+1 ∈hX.toFinset))+.card (hX.toFinset.filter (·+3 ∈hX.toFinset))
-  · exact (congr_arg₂ ↑_ ((congr_arg _).comp (congr_arg _) ↑(by simp_all) ) ((congr_arg _) ↑(by simp_all))).le
+  trans(4)*.card (hX.toFinset.filter (·+1 ∈hX.toFinset))+.card (hX.toFinset.filter (·+3
+    ∈hX.toFinset))
+  · exact (congr_arg₂ ↑_ ((congr_arg _).comp (congr_arg _) ↑(by simp_all) ) ((congr_arg _) ↑(by
+      simp_all))).le
   trans(3)*hX.toFinset.card+2 * ( hX.toFinset.filter ( ·+2 ∈ (hX.toFinset))).card
-  · have:{ a ∈hX.toFinset|a+1 ∈hX.toFinset}∪.image (.+1) { a ∈hX.toFinset|a+1 ∈hX.toFinset} ⊆hX.toFinset:= fun and=> by aesop
+  · have:{ a ∈hX.toFinset|a+1 ∈hX.toFinset}∪.image (·+1) { a ∈hX.toFinset|a+1 ∈hX.toFinset}
+      ⊆hX.toFinset:= fun and=> by aesop
     have:= (hX.toFinset.filter ( ·+3 ∈hX.toFinset)).card_le_card ↑( Finset.filter_subset _ _)
     have := ( Finset.card_union _ _).ge.trans ( Finset.card_mono (by valid))
-    simp_rw [tsub_le_iff_right, Finset.card_image_of_injective @_ ↑(add_left_injective _),Nat.card_eq_finsetCard] at this⊢
-    use (by valid ∘this.trans) (Nat.add_le_add_left (Finset.card_le_card_of_surjOn (.+1) fun and=>by norm_num+contextual[comm, add_assoc]:_≤{ a ∈hX.toFinset|a+2 ∈hX.toFinset}.card) _)
+    simp_rw [tsub_le_iff_right, Finset.card_image_of_injective @_ ↑(add_left_injective
+      _),Nat.card_eq_finsetCard] at this⊢
+    use (by valid ∘this.trans) (Nat.add_le_add_left (Finset.card_le_card_of_surjOn (·+1) fun and=>by
+      norm_num+contextual[comm, add_assoc]:_≤{ a ∈hX.toFinset|a+2 ∈hX.toFinset}.card) _)
   · have hcard :
         (hX.toFinset.filter (fun x => x + 2 ∈ hX.toFinset)).card =
           {x ∈ X | x + 2 ∈ X}.ncard := by
@@ -132,11 +132,18 @@ def C_set_Z (X : Set ℤ) := {x ∈ X | x + 1 ∉ X ∧ x + 2 ∈ X}
 
 lemma I_identity_Z (X : Set ℤ) (hX : X.Finite) :
   I_Z X + 2 * N_k_Z X 1 = X.ncard + V_2_Z X := by
+  classical
   rw [←eq_comm, I_Z, two_mul,N_k_Z, V_2_Z,(X).ncard_eq_toFinset_card (hX)]
-  norm_num[←not_or, add_assoc,←hX.toFinset.card_filter_add_card_filter_not fun and=>and-1 ∈X ∨and+1 ∈X,Set.setOf_and,Set.ncard_eq_toFinset_card _ (hX.sep _),id]
-  use(add_left_comm _ _ _).trans ((congr_arg₂ _) ((Nat.card_eq_finsetCard _)▸congr_arg _ (by aesop)) ((congr_arg (.+ _) ((by rw [ Finset.filter_or, Finset.card_union]))).trans ?_))
-  apply((congr_arg _).comp (Nat.card_congr ((.subtypeEquiv (.refl Int) ((by simp_all))))).trans (Nat.card_eq_finsetCard _)).trans.comp (Nat.sub_add_cancel.comp (le_add_right) (Finset.card_filter_le _ _)).trans
-  exact (congr_arg₂ _) ((Nat.card_eq_finsetCard _)▸Nat.card_congr (.subtypeEquiv (.subRight (1)) (by simp_all [and_comm]))) (Nat.card_eq_finsetCard @_▸congr_arg @_ ((congr_arg _) ((funext ((by simp_all))))))
+  norm_num[←not_or, add_assoc,←hX.toFinset.card_filter_add_card_filter_not fun and=>and-1 ∈X ∨and+1
+    ∈X,Set.ofPred_and,Set.ncard_eq_toFinset_card _ (hX.sep _),id]
+  use(add_left_comm _ _ _).trans ((congr_arg₂ _) ((Nat.card_eq_finsetCard _)▸congr_arg _ (by aesop))
+    ((congr_arg (·+ _) ((by rw [ Finset.filter_or, Finset.card_union]))).trans ?_))
+  apply((congr_arg _).comp (Nat.card_congr ((.subtypeEquiv (.refl Int) ((by simp_all))))).trans
+    (Nat.card_eq_finsetCard _)).trans.comp (Nat.sub_add_cancel.comp (le_add_right)
+    (Finset.card_filter_le _ _)).trans
+  exact (congr_arg₂ _) ((Nat.card_eq_finsetCard _)▸Nat.card_congr (.subtypeEquiv (.subRight (1)) (by
+    simp_all [and_comm]))) (Nat.card_eq_finsetCard @_▸congr_arg @_ ((congr_arg _) ((funext ((by
+    simp_all))))))
 
 def C1 (X : Set ℤ) := {x ∈ C_set_Z X | x - 1 ∉ X}
 def C2 (X : Set ℤ) := {x ∈ C_set_Z X | x + 3 ∉ X}
@@ -147,21 +154,32 @@ lemma C_bound (X : Set ℤ) (hX : X.Finite) :
   (C_set_Z X).ncard ≤ (C1 X).ncard + (C3 X).ncard ∧
   (C_set_Z X).ncard ≤ (C2 X).ncard + (C4 X).ncard := by
   delta C1 and C4 C3 C2 and C_set_Z
-  repeat use(Set.ncard_inter_add_ncard_diff_eq_ncard _ _ (hX.sep _)).ge.trans_eq<|add_comm _ _
+  repeat use(Set.ncard_inter_add_ncard_sdiff_eq_ncard _ _ (hX.sep _)).ge.trans_eq<|add_comm _ _
 
-lemma C1_bound (X : Set ℤ) (hX : X.Finite) : (C1 X).ncard ≤ I_Z X := by show Nat.card {s |_}≤.card {s |_}
-                                                                        exact (Nat.card_mono) (hX.sep _) fun and=>.rec fun ⟨a, _⟩M=>by grind
-lemma C2_bound (X : Set ℤ) (hX : X.Finite) : (C2 X).ncard ≤ I_Z X := by show (@Nat.card {s |_}) ≤.card {s |_}
-                                                                        push_cast[Set.setOf_and, C_set_Z,Nat.card_eq_fintype_card, Fintype.card_ofFinset]
-                                                                        exact (Nat.card_image_of_injective (add_left_injective 2) _).ge.trans (Nat.card_mono (hX.sep _) (@Set.image_subset_iff.2 fun and=>.symm ∘by simp_all[add_sub_assoc, add_assoc]))
-lemma C34_bound (X : Set ℤ) (hX : X.Finite) : (C3 X).ncard + (C4 X).ncard ≤ N_k_Z X 3 := by delta C4 and N_k_Z and C3
-                                                                                            norm_num[uniformContinuous_iff,C_set_Z]
-                                                                                            by_cases h:{ c | ((c ∈X∧c+1 ∉X) ∧c ∈X∧c+2 ∈X) ∧c-1 ∈X}.Finite∧{a | ((a ∈X∧a+1 ∉X) ∧ a ∈X∧a+2 ∈X) ∧a+3 ∈ X}.Finite
-                                                                                            · trans(h.1.toFinset.image (.-1)∪h.2.toFinset).card
-                                                                                              · rw [Set.ncard_eq_toFinset_card @_ (h.1),Set.ncard_eq_toFinset_card (@ _) h.2, Finset.card_union_of_disjoint (Finset.disjoint_left.mpr.comp Finset.forall_mem_image.mpr (by simp_all)), Finset.card_image_of_injective @_]
-                                                                                                use sub_left_injective
-                                                                                              · exact (Nat.card_eq_finsetCard _)▸Nat.card_mono (hX.sep _) (Finset.forall_mem_union.2 ⟨ Finset.forall_mem_image.2 (by simp_all[sub_add]), fun and=>.imp_left (·.2.1) ∘h.2.mem_toFinset.1⟩)
-                                                                                            · rcases h ⟨hX.subset fun and true => true.1.1.1,hX.subset fun and true => true.1.2.1⟩
+lemma C1_bound (X : Set ℤ) (hX : X.Finite) : (C1 X).ncard ≤ I_Z X := by
+  change Nat.card {s |_}≤.card {s |_}
+  exact (Nat.card_mono) (hX.sep _) fun and=>.rec fun ⟨a, _⟩M=>by grind
+
+lemma C2_bound (X : Set ℤ) (hX : X.Finite) : (C2 X).ncard ≤ I_Z X := by
+  change (@Nat.card {s |_}) ≤.card {s |_}
+  push_cast[Set.ofPred_and, C_set_Z,Nat.card_eq_fintype_card, Fintype.card_ofFinset]
+  exact (Nat.card_image_of_injective (add_left_injective 2) _).ge.trans (Nat.card_mono (hX.sep _)
+    (@Set.image_subset_iff.2 fun and=>.symm ∘by simp_all[add_sub_assoc, add_assoc]))
+
+lemma C34_bound (X : Set ℤ) (hX : X.Finite) : (C3 X).ncard + (C4 X).ncard ≤ N_k_Z X 3 := by
+  delta C4 and N_k_Z and C3
+  norm_num[C_set_Z]
+  by_cases h:{ c | ((c ∈X∧c+1 ∉X) ∧c ∈X∧c+2 ∈X) ∧c-1 ∈X}.Finite∧{a | ((a ∈X∧a+1 ∉X) ∧ a ∈X∧a+2 ∈X)
+    ∧a+3 ∈ X}.Finite
+  · trans(h.1.toFinset.image (·-1)∪h.2.toFinset).card
+    · rw [Set.ncard_eq_toFinset_card @_ (h.1),Set.ncard_eq_toFinset_card (@ _) h.2,
+        Finset.card_union_of_disjoint (Finset.disjoint_left.mpr.comp Finset.forall_mem_image.mpr (by
+        simp_all)), Finset.card_image_of_injective @_]
+      use sub_left_injective
+    · exact (Nat.card_eq_finsetCard _)▸Nat.card_mono (hX.sep _) (Finset.forall_mem_union.2 ⟨
+        Finset.forall_mem_image.2 (by simp_all[sub_add]), fun and=>.imp_left (·.2.1)
+        ∘h.2.mem_toFinset.1⟩)
+  · rcases h ⟨hX.subset fun and true => true.1.1.1,hX.subset fun and true => true.1.2.1⟩
 
 lemma local_pattern_C_Z (X : Set ℤ) (hX : X.Finite) :
   2 * (C_set_Z X).ncard ≤ N_k_Z X 3 + 2 * I_Z X := by
@@ -180,7 +198,7 @@ lemma local_pattern_bound_Z_hN (X : Set ℤ) (hX : X.Finite) :
   have hB_fin : B.Finite := Set.Finite.subset hX (fun x hx => hx.1)
   have h_union : A ∪ B = {x ∈ X | x + 2 ∈ X} := by
     ext x
-    simp only [Set.mem_union, Set.mem_setOf_eq]
+    simp only [Set.mem_union, Set.mem_ofPred_eq]
     constructor
     · rintro (⟨hx, hx1, hx2⟩ | ⟨hx, hx1, hx2⟩) <;> exact ⟨hx, hx2⟩
     · intro ⟨hx, hx2⟩
@@ -190,7 +208,7 @@ lemma local_pattern_bound_Z_hN (X : Set ℤ) (hX : X.Finite) :
   have h_disj : Disjoint A B := by
     rw [Set.disjoint_iff_inter_eq_empty]
     ext x
-    simp only [Set.mem_inter_iff, Set.mem_setOf_eq, Set.mem_empty_iff_false]
+    simp only [Set.mem_inter_iff, Set.mem_empty_iff_false]
     constructor
     · rintro ⟨⟨hx, hx1, hx2⟩, ⟨hy, hy1, hy2⟩⟩
       exact hy1 hx1
@@ -202,7 +220,7 @@ lemma local_pattern_bound_Z_hN (X : Set ℤ) (hX : X.Finite) :
       omega
     have h_im : (fun x => x + 1) '' A = {x ∈ X | x - 1 ∈ X ∧ x + 1 ∈ X} := by
       ext y
-      simp only [Set.mem_image, Set.mem_setOf_eq]
+      simp only [Set.mem_image, Set.mem_ofPred_eq]
       constructor
       · rintro ⟨x, hx, rfl⟩
         refine ⟨hx.2.1, ?_, ?_⟩
@@ -224,7 +242,7 @@ lemma local_pattern_bound_Z_hN (X : Set ℤ) (hX : X.Finite) :
             exact hy.2.2
         · exact sub_add_cancel y 1
     rw [← h_im]
-    exact (ncard_image_of_injOn h_inj).symm
+    exact (h_inj.ncard_image).symm
   have h_card_union : {x ∈ X | x + 2 ∈ X}.ncard = A.ncard + B.ncard := by
     rw [← h_union]
     apply ncard_union_eq h_disj hA_fin hB_fin
@@ -271,16 +289,21 @@ lemma num_isolated_Z_rel (A : Set ℕ) (hS : (A + A).Finite) :
 
 lemma N_k_Z_rel_1 (A : Set ℕ) : N_k_Z (Z_S (A + A)) (1 : ℤ) = N_k_N (A + A) 1 := by
   delta N_k_N and N_k_Z Z_S
-  exact (congr_arg ↑_ ↑(Set.ext (by·grind))).trans (Set.ncard_image_of_injective ↑_ Nat.cast_injective)
+  exact (congr_arg ↑_ ↑(Set.ext (by·grind))).trans (Set.ncard_image_of_injective ↑_
+    Nat.cast_injective)
 
 lemma N_k_Z_rel_2 (A : Set ℕ) : N_k_Z (Z_S (A + A)) (2 : ℤ) = N_k_N (A + A) 2 := by
   norm_num (config := {singlePass :=1}) [N_k_Z, N_k_N, Z_S]
-  exact (congr_arg _ (Set.ext fun and=>by use And.elim (·.elim fun and true => true.2▸mod_cast by aesop), by aesop)).trans (Set.ncard_image_of_injective _ Nat.cast_injective)
+  exact (congr_arg _ (Set.ext fun and => by
+    use And.elim (·.elim fun and true => true.2 ▸ mod_cast by aesop), by aesop)).trans
+      (Set.ncard_image_of_injective _ Nat.cast_injective)
 
 lemma N_k_Z_rel_3 (A : Set ℕ) : N_k_Z (Z_S (A + A)) (3 : ℤ) = N_k_N (A + A) 3 := by
   delta N_k_N and N_k_Z Z_S
-  refine ((congr_arg _) ↑(Set.ext fun and=>? _)).trans.comp (Set.ncard_image_of_injective _) Nat.cast_injective
-  use fun⟨ ⟨a, C, H⟩,b,A, B⟩=> (by use a, ⟨ C,by cases H with cases B with valid⟩),fun ⟨a, C, H⟩=>H▸⟨ ⟨a, C.1, rfl⟩,_, C.2, rfl⟩
+  refine ((congr_arg _) ↑(Set.ext fun and=>? _)).trans.comp (Set.ncard_image_of_injective _)
+    Nat.cast_injective
+  use fun⟨ ⟨a, C, H⟩,b,A, B⟩=> (by use a, ⟨ C,by cases H with cases B with valid⟩),fun ⟨a, C,
+    H⟩=>H▸⟨ ⟨a, C.1, rfl⟩,_, C.2, rfl⟩
 
 lemma Z_S_card (A : Set ℕ) :
   (Z_S (A + A)).ncard = (A + A).ncard := by
@@ -291,18 +314,25 @@ def quad_k_N (A : Set ℕ) (k : ℕ) : Set (ℕ × ℕ × ℕ × ℕ) :=
   {q | q.1 ∈ A ∧ q.2.1 ∈ A ∧ q.2.2.1 ∈ A ∧ q.2.2.2 ∈ A ∧ q.1 + q.2.1 + k = q.2.2.1 + q.2.2.2}
 
 lemma quad_upper_Q0 (A : Set ℕ) (k : ℕ) (_ : IsSidon A) (hA : A.Finite) (hk : k > 0) :
-  {q ∈ quad_k_N A k | (q.1 : ℤ) - q.2.2.1 = 0}.ncard ≤ A.ncard := by show{ a ∈{s |_}|_}.ncard≤_
-                                                                     simp_all only [mem_ofPred_eq]
-                                                                     use Nat.card_image_of_injOn ( fun and=>? _)|>.ge.trans (Nat.card_mono hA (Set.image_subset_iff.2 fun and=>And.left ∘And.left))
-                                                                     use fun a s R L=>by cases‹∀ _ _ _ _ _ _ _ _ C,_› _ R.1.2.1 _ (by use a.1.2.1) ( _) (by use a.1.2.2.2.1) ( _) (by use R.1.2.2.2.1) (by use a.elim (R.elim (by valid))) with grind
+  {q ∈ quad_k_N A k | (q.1 : ℤ) - q.2.2.1 = 0}.ncard ≤ A.ncard := by
+  change {a ∈ {s | _} | _}.ncard ≤ _
+  simp_all only [mem_ofPred_eq]
+  use Nat.card_image_of_injOn (fun and => ?_) |>.ge.trans
+    (Nat.card_mono hA (Set.image_subset_iff.2 fun and => And.left ∘ And.left))
+  use fun a s R L => by
+    cases ‹∀ _ _ _ _ _ _ _ _ C, _› _ R.1.2.1 _ (by use a.1.2.1)
+      (_) (by use a.1.2.2.2.1) (_) (by use R.1.2.2.2.1)
+      (by use a.elim (R.elim (by valid))) with grind
 
 lemma quad_upper_Qk_inj (A : Set ℕ) (k : ℕ) (_ : IsSidon A) (hk : k > 0) :
   InjOn (fun q : ℕ × ℕ × ℕ × ℕ => q.2.1) {q ∈ quad_k_N A k | (q.1 : ℤ) - q.2.2.1 = -k} := by
-  use show{ a ∈{s |_}|_}.InjOn _ from fun and a s R L=>Prod.ext_iff.2 (a.1.elim (R.1.elim fun and _ _ _=>?_))
+  use show{ a ∈{s |_}|_}.InjOn _ from fun and a s R L=>Prod.ext_iff.2 (a.1.elim (R.1.elim fun and _
+    _ _=>?_))
   simp_all[IsSidon, add_right_comm, sub_right_injective.eq_iff' (sub_sub_self _ _),Prod.ext_iff]
-  cases‹∀ (x _ _ _ _ _ _ _ _),_› _ (by valid) ( _) (by use and) ( s).2.2.1 (by bound) ( _) (by use (by valid:).1) (by valid) with valid
+  cases‹∀ (x _ _ _ _ _ _ _ _),_› _ (by valid) ( _) (by use and) ( s).2.2.1 (by bound) ( _) (by use
+    (by valid:).1) (by valid) with valid
 
-lemma quad_upper_Qk_im (A : Set ℕ) (k : ℕ) (_ : IsSidon A) (hk : k > 0) :
+lemma quad_upper_Qk_im (A : Set ℕ) (k : ℕ) (_ : IsSidon A) (_hk : k > 0) :
   (fun q : ℕ × ℕ × ℕ × ℕ => q.2.1) '' {q ∈ quad_k_N A k | (q.1 : ℤ) - q.2.2.1 = -k} ⊆ A := by
   exact (Set.image_subset_iff.mpr fun and' =>And.elim (by cases · with tauto))
 
@@ -310,22 +340,29 @@ lemma quad_upper_Qk (A : Set ℕ) (k : ℕ) (hSidon : IsSidon A) (hA : A.Finite)
   {q ∈ quad_k_N A k | (q.1 : ℤ) - q.2.2.1 = -k}.ncard ≤ A.ncard := by
   have h_inj := quad_upper_Qk_inj A k hSidon hk
   have h_im := quad_upper_Qk_im A k hSidon hk
-  have h_fin : {q ∈ quad_k_N A k | (q.1 : ℤ) - q.2.2.1 = -k}.Finite := by apply_rules[(hA.of_injOn)]
-                                                                          rwa[Set.image_subset_iff]at*
-  have h_card := ncard_image_of_injOn h_inj
+  have h_fin : {q ∈ quad_k_N A k | (q.1 : ℤ) - q.2.2.1 = -k}.Finite := by
+    apply_rules[(hA.of_injOn)]
+    rwa[Set.image_subset_iff]at*
+  have h_card := h_inj.ncard_image
   have h_le := ncard_le_ncard h_im hA
   omega
 
 lemma quad_upper_other_inj (A : Set ℕ) (k : ℕ) (_ : IsSidon A) :
-  InjOn (fun q : ℕ × ℕ × ℕ × ℕ => (q.1 : ℤ) - q.2.2.1) {q ∈ quad_k_N A k | (q.1 : ℤ) - q.2.2.1 ≠ 0 ∧ (q.1 : ℤ) - q.2.2.1 ≠ -k} := by
+  InjOn (fun q : ℕ × ℕ × ℕ × ℕ => (q.1 : ℤ) - q.2.2.1) {q ∈ quad_k_N A k | (q.1 : ℤ) - q.2.2.1 ≠ 0 ∧
+    (q.1 : ℤ) - q.2.2.1 ≠ -k} := by
   refine show (Set.InjOn _) { a ∈ {s |_}|_} from fun and ⟨ ⟨a, _⟩,R, _⟩b ⟨ ⟨a, _⟩, _⟩p=>?_
-  simp_all[IsSidon, sub_eq_sub_iff_add_eq_add, add_assoc, add_left_comm,Prod.ext_iff]
+  simp_all only [IsSidon, add_assoc, mem_ofPred_eq, ne_eq, true_and, not_false_eq_true, and_self,
+    and_true,
+    sub_eq_sub_iff_add_eq_add, Prod.ext_iff]
   cases eq_or_ne and.1 b.1
-  · cases‹∀ _ _ _ _ _ _ _ _ C,_› and.2.1 (by bound) b.2.1 (by bound) b.2.2.2 (by bound) and.2.2.2 (by bound) (by valid) with valid
-  · exact absurd (‹∀ _ _ _ _ _ _ _ __, _› and.1 · b.1 · b.2.2.1 · and.2.2.fst) (by norm_num[*,Nat.cast_injective p,Nat.cast_injective.ne_iff.1 (sub_ne_zero.1 R)])
+  · cases‹∀ _ _ _ _ _ _ _ _ C,_› and.2.1 (by bound) b.2.1 (by bound) b.2.2.2 (by bound) and.2.2.2
+      (by bound) (by valid) with valid
+  · exact absurd (‹∀ _ _ _ _ _ _ _ __, _› and.1 · b.1 · b.2.2.1 · and.2.2.fst) (by
+      norm_num[*,Nat.cast_injective p,Nat.cast_injective.ne_iff.1 (sub_ne_zero.1 R)])
 
 lemma quad_upper_other_im (A : Set ℕ) (k : ℕ) (_ : IsSidon A) :
-  (fun q : ℕ × ℕ × ℕ × ℕ => (q.1 : ℤ) - q.2.2.1) '' {q ∈ quad_k_N A k | (q.1 : ℤ) - q.2.2.1 ≠ 0 ∧ (q.1 : ℤ) - q.2.2.1 ≠ -k} ⊆ {x ∈ D_set A | x + k ∈ D_set A} := by
+  (fun q : ℕ × ℕ × ℕ × ℕ => (q.1 : ℤ) - q.2.2.1) '' {q ∈ quad_k_N A k | (q.1 : ℤ) - q.2.2.1 ≠ 0 ∧
+    (q.1 : ℤ) - q.2.2.1 ≠ -k} ⊆ {x ∈ D_set A | x + k ∈ D_set A} := by
   rintro z ⟨q, ⟨⟨ha, hb, hc, hd, habcd⟩, _, _⟩, rfl⟩
   constructor
   · exact ⟨q.1, q.2.2.1, ha, hc, rfl⟩
@@ -334,12 +371,15 @@ lemma quad_upper_other_im (A : Set ℕ) (k : ℕ) (_ : IsSidon A) :
     omega
 
 lemma quad_upper_other (A : Set ℕ) (k : ℕ) (hSidon : IsSidon A) (_ : A.Finite) :
-  {q ∈ quad_k_N A k | (q.1 : ℤ) - q.2.2.1 ≠ 0 ∧ (q.1 : ℤ) - q.2.2.1 ≠ -k}.ncard ≤ N_k_Z (D_set A) k := by
+  {q ∈ quad_k_N A k | (q.1 : ℤ) - q.2.2.1 ≠ 0 ∧ (q.1 : ℤ) - q.2.2.1 ≠ -k}.ncard ≤ N_k_Z (D_set A) k
+    := by
   have h_inj := quad_upper_other_inj A k hSidon
   have h_im := quad_upper_other_im A k hSidon
-  have h_fin : {x ∈ D_set A | x + k ∈ D_set A}.Finite := by delta D_set
-                                                            exact (.sep ↑(.subset (.image (Prod.rec _) ↑(.prod (by assumption) (by assumption))) fun and ⟨x,y,A, B, e⟩=>by use(x, y), ⟨A, B⟩,e.symm) _)
-  have h_card := ncard_image_of_injOn h_inj
+  have h_fin : {x ∈ D_set A | x + k ∈ D_set A}.Finite := by
+    delta D_set
+    exact (.sep ↑(.subset (.image (Prod.rec _) ↑(.prod (by assumption) (by assumption))) fun and
+      ⟨x,y,A, B, e⟩=>by use(x, y), ⟨A, B⟩,e.symm) _)
+  have h_card := h_inj.ncard_image
   have h_le := ncard_le_ncard h_im h_fin
   unfold N_k_Z
   omega
@@ -348,7 +388,9 @@ lemma quad_upper_part (A : Set ℕ) (k : ℕ) (_ : A.Finite) :
   (quad_k_N A k).ncard ≤
   {q ∈ quad_k_N A k | (q.1 : ℤ) - q.2.2.1 = 0}.ncard +
   {q ∈ quad_k_N A k | (q.1 : ℤ) - q.2.2.1 = -k}.ncard +
-  {q ∈ quad_k_N A k | (q.1 : ℤ) - q.2.2.1 ≠ 0 ∧ (q.1 : ℤ) - q.2.2.1 ≠ -k}.ncard := by exact (congr_arg _ (Set.ext (by grind))).trans_le.comp (Set.ncard_union_le _ _).trans (Nat.add_le_add_right (Set.ncard_union_le _ _) _)
+  {q ∈ quad_k_N A k | (q.1 : ℤ) - q.2.2.1 ≠ 0 ∧ (q.1 : ℤ) - q.2.2.1 ≠ -k}.ncard := by
+  exact (congr_arg _ (Set.ext (by grind))).trans_le.comp (Set.ncard_union_le _ _).trans
+    (Nat.add_le_add_right (Set.ncard_union_le _ _) _)
 
 lemma quad_upper (A : Set ℕ) (k : ℕ) (hSidon : IsSidon A) (hA : A.Finite) (hk : k > 0) :
   (quad_k_N A k).ncard ≤ N_k_Z (D_set A) k + 2 * A.ncard := by
@@ -358,71 +400,95 @@ lemma quad_upper (A : Set ℕ) (k : ℕ) (hSidon : IsSidon A) (hA : A.Finite) (h
   have h4 := quad_upper_other A k hSidon hA
   omega
 
-def S_good (A : Set ℕ) (k : ℕ) := {s ∈ A + A | s + k ∈ A + A ∧ ¬(∃ a ∈ A, s = 2 * a) ∧ ¬(∃ a ∈ A, s + k = 2 * a)}
+def S_good (A : Set ℕ) (k : ℕ) :=
+  {s ∈ A + A | s + k ∈ A + A ∧ ¬(∃ a ∈ A, s = 2 * a) ∧ ¬(∃ a ∈ A, s + k = 2 * a)}
 
 noncomputable def quad_fiber (A : Set ℕ) (s k : ℕ) : Set (ℕ × ℕ × ℕ × ℕ) :=
   {q ∈ A ×ˢ (A ×ˢ (A ×ˢ A)) | q.1 + q.2.1 = s ∧ q.2.2.1 + q.2.2.2 = s + k}
 
-lemma quad_fiber_subset (A : Set ℕ) (hA : A.Finite) (s k : ℕ) :
-  quad_fiber A s k ⊆ quad_k_N A k := by use show{s |_} ⊆{s |_} from fun and ⟨a, _⟩=>Set.mem_setOf.2 ?_
-                                        norm_num[*, a.2.1, a.1, a.2.2.1, a.2.2.2]
+lemma quad_fiber_subset (A : Set ℕ) (_hA : A.Finite) (s k : ℕ) :
+  quad_fiber A s k ⊆ quad_k_N A k := by
+  use show{s |_} ⊆{s |_} from fun and ⟨a, _⟩=>Set.mem_ofPred.2 ?_
+  norm_num[*, a.2.1, a.1, a.2.2.1, a.2.2.2]
 
 lemma quad_fiber_card (A : Set ℕ) (hA : A.Finite) (k : ℕ) (s : ℕ) (hs : s ∈ S_good A k) :
-  4 ≤ (quad_fiber A s k).ncard := by change(4)≤ {s |_}.ncard
-                                     obtain ⟨a, rfl⟩:= (hA).exists_finset_coe
-                                     simp_all-contextual [Erdos152.S_good, Set.setOf_and,
-                                       Set.ncard_eq_toFinset_card']
-                                     trans {S ∈a ×ˢa ×ˢa ×ˢa | S.1+S.2.1 = s∧S.2.2.1+S.2.2.2 = s+k}.card
-                                     · use hs.1.1.elim fun and⟨i,A, B, _⟩=>hs.1.2.elim fun x⟨R, L, M, _⟩=> if I:and = A then(? _)else if I:x =L then(? _)else(? _)
-                                       · rcases hs.2.1.2 A B (by (bound ) )
-                                       · rcases hs.right.2.right L M (by (fin_omega))
-                                       · exact ( Finset.card_mono (by simp_all -contextual[ Finset.insert_subset_iff,add_comm]:{ (and,A,x,L),(A, and,x,L), (and,A,L,x),(A, and, L,x)} ⊆(_: Finset _))).trans' (by norm_num[*])
-                                     · rw [← Nat.card_eq_finsetCard]
-                                       apply le_of_eq
-                                       apply Nat.card_congr
-                                       exact Equiv.setCongr (by ext q; simp [Set.inter_def])
+  4 ≤ (quad_fiber A s k).ncard := by
+  change(4)≤ {s |_}.ncard
+  obtain ⟨a, rfl⟩:= (hA).exists_finset_coe
+  simp_all -contextual only [finite_toSet, S_good, SetLike.mem_coe, not_exists, not_and,
+    sep_and, ofPred_and, ofPred_mem_eq, mem_inter_iff, mem_ofPred_eq, mem_prod]
+  trans {S ∈a ×ˢa ×ˢa ×ˢa | S.1+S.2.1 = s∧S.2.2.1+S.2.2.2 = s+k}.card
+  · use hs.1.1.elim fun and⟨i,A, B, _⟩=>hs.1.2.elim fun x⟨R, L, M, _⟩=> if I:and = A then(? _)else
+      if I:x =L then(? _)else(? _)
+    · rcases hs.2.1.2 A B (by (bound ) )
+    · rcases hs.right.2.right L M (by (fin_omega))
+    · exact ( Finset.card_mono (by simp_all -contextual[ Finset.insert_subset_iff,add_comm]:{
+        (and,A,x,L),(A, and,x,L), (and,A,L,x),(A, and, L,x)} ⊆(_: Finset _))).trans' (by
+        norm_num[*])
+  · rw [← Nat.card_eq_finsetCard]
+    apply le_of_eq
+    apply Nat.card_congr
+    exact Equiv.setCongr (by ext q; simp [Set.inter_def])
 
-lemma quad_fiber_disjoint (A : Set ℕ) (hA : A.Finite) (k : ℕ) (s1 s2 : ℕ) (h : s1 ≠ s2) :
-  Disjoint (quad_fiber A s1 k) (quad_fiber A s2 k) := by change Disjoint {s |_} {s |_ ∈{s |_}}
-                                                         exact (Set.disjoint_left.2 fun and R L=>h (R.2.1▸L.2.1))
+lemma quad_fiber_disjoint (A : Set ℕ) (_hA : A.Finite) (k : ℕ) (s1 s2 : ℕ) (h : s1 ≠ s2) :
+  Disjoint (quad_fiber A s1 k) (quad_fiber A s2 k) := by
+  change Disjoint {s |_} {s |_ ∈{s |_}}
+  exact (Set.disjoint_left.2 fun and R L=>h (R.2.1▸L.2.1))
 
 lemma quad_lower_sub_fin (A : Set ℕ) (k : ℕ) (hA : A.Finite) :
-  (S_good A k).Finite := by show({s |_ ∈{s |_}}).Finite
-                            apply (hA.add (hA)).sep
+  (S_good A k).Finite := by
+  change({s |_ ∈{s |_}}).Finite
+  apply (hA.add (hA)).sep
 
 lemma quad_lower_sub (A : Set ℕ) (k : ℕ) (hA : A.Finite) :
   4 * (S_good A k).ncard ≤ (quad_k_N A k).ncard := by
   have hS_fin := quad_lower_sub_fin A k hA
   set Q := ⋃ s ∈ S_good A k, quad_fiber A s k
-  have h_Q_sub : Q ⊆ quad_k_N A k := by refine iSup₂_le fun and R M ⟨a, _⟩ =>Set.mem_setOf.2 ?_
-                                        simp_all
-  have h_Q_card : Q.ncard = ∑ s ∈ hS_fin.toFinset, (quad_fiber A s k).ncard := by change (star _)=(∑ a ∈ _,Nat.card {s |_})
-                                                                                  lift A to Finset (↑ ℕ) using(hA) with R L
-                                                                                  trans∑ a ∈hS_fin.toFinset,.card {S ∈R ×ˢR ×ˢR ×ˢR | S.1+S.2.1 = a ∧S.2.2.1+S.2.2.2 = a+k}
-                                                                                  · simp_rw [id,Q, L.symm,Nat.card_eq_finsetCard] at hS_fin⊢
-                                                                                    show star (ENat.toNat (Set.encard (⋃ a ∈ _,{s |_}))) = _
-                                                                                    exact (congr_arg star ((congr_arg _) ((congr_arg _ (by aesop)).trans (.trans (Set.encard_coe_eq_coe_finsetCard _) ((congr_arg _) (Finset.card_biUnion fun and _ _ _ _=> Finset.disjoint_filter.2 (by valid)))))))
-                                                                                  · simp_rw [Set.coe_setOf,Set.mem_prod, R.mem_coe, Finset.mem_filter, R.mem_product]
-  have h_sum_le : ∑ s ∈ hS_fin.toFinset, 4 ≤ Q.ncard := by refine (by valid▸ Finset.sum_le_sum fun and μ=> show (4 ≤Nat.card {s |_} ) from(hS_fin.mem_toFinset.mp μ).elim fun and j=>? _)
-                                                           revert‹ℕ›μ Q hS_fin h_Q_sub h_Q_card
-                                                           use hA.coe_toFinset▸ fun and I I R M ⟨a, C, d, E, _⟩⟨⟨x,y,A, B, _⟩,k, _⟩=>(? _)
-                                                           trans .card ({(a, d,x,A), (d,a,x,A), ( a, d, A, x), (d, a, A,x)}: Finset _)
-                                                           · exact (Nat.card_eq_fintype_card.trans (by norm_num[show a≠d∧x≠A by repeat use fun and=>k ⟨a, C,by_contra (by valid ∘ fun and=>by use x,y,by (fin_omega))⟩])).ge
-                                                           · exact (Nat.card_mono) (.of_fintype _) ((by simp_all-contextual[add_comm,Set.insert_subset_iff]))
-  have h_sum_eq : ∑ s ∈ hS_fin.toFinset, 4 = 4 * (S_good A k).ncard := by exact (Set.ncard_eq_toFinset_card ↑_ hS_fin▸ Finset.sum_const _).trans (mul_comm _ _)
-  have hQk_fin : (quad_k_N A k).Finite := by refine show {s |_}.Finite from hA.exists_le.elim fun and x =>BddAbove.finite ⟨ (and, and, and, and),fun R L=>?_⟩
-                                             exact L.imp (x _) ↑(.imp (x _) ↑(.imp (x _) (x @_ ·.1)))
+  have h_Q_sub : Q ⊆ quad_k_N A k := by
+    refine iSup₂_le fun and R M ⟨a, _⟩ =>Set.mem_ofPred.2 ?_
+    simp_all
+  have h_Q_card : Q.ncard = ∑ s ∈ hS_fin.toFinset, (quad_fiber A s k).ncard := by
+    change (star _)=(∑ a ∈ _,Nat.card {s |_})
+    lift A to Finset (↑ ℕ) using(hA) with R L
+    trans∑ a ∈hS_fin.toFinset,.card {S ∈R ×ˢR ×ˢR ×ˢR | S.1+S.2.1 = a ∧S.2.2.1+S.2.2.2 = a+k}
+    · simp_rw [id,Q, L.symm,Nat.card_eq_finsetCard] at hS_fin⊢
+      change star (ENat.toNat (Set.encard (⋃ a ∈ _,{s |_}))) = _
+      exact (congr_arg star ((congr_arg _) ((congr_arg _ (by aesop)).trans (.trans
+        (Set.encard_coe_eq_coe_finsetCard _) ((congr_arg _) (Finset.card_biUnion fun and _ _ _ _=>
+        Finset.disjoint_filter.2 (by valid)))))))
+    · simp_rw [Set.coe_ofPred,Set.mem_prod, R.mem_coe, Finset.mem_filter, R.mem_product]
+  have h_sum_le : ∑ s ∈ hS_fin.toFinset, 4 ≤ Q.ncard := by
+    refine (by valid▸ Finset.sum_le_sum fun and μ=> show (4 ≤Nat.card {s |_} )
+      from(hS_fin.mem_toFinset.mp μ).elim fun and j=>? _)
+    revert‹ℕ›μ Q hS_fin h_Q_sub h_Q_card
+    use hA.coe_toFinset▸ fun and I I R M ⟨a, C, d, E, _⟩⟨⟨x,y,A, B, _⟩,k, _⟩=>(? _)
+    trans .card ({(a, d,x,A), (d,a,x,A), ( a, d, A, x), (d, a, A,x)}: Finset _)
+    · exact (Nat.card_eq_fintype_card.trans (by norm_num[show a≠d∧x≠A by repeat use fun and=>k ⟨a,
+        C,by_contra (by valid ∘ fun and=>by use x,y,by (fin_omega))⟩])).ge
+    · exact (Nat.card_mono) (.of_fintype _) ((by
+        simp_all-contextual[add_comm,Set.insert_subset_iff]))
+  have h_sum_eq : ∑ s ∈ hS_fin.toFinset, 4 = 4 * (S_good A k).ncard := by
+    exact (Set.ncard_eq_toFinset_card ↑_ hS_fin▸ Finset.sum_const _).trans (mul_comm _ _)
+  have hQk_fin : (quad_k_N A k).Finite := by
+    refine show {s |_}.Finite from hA.exists_le.elim fun and x =>BddAbove.finite ⟨ (and, and, and,
+      and),fun R L=>?_⟩
+    exact L.imp (x _) ↑(.imp (x _) ↑(.imp (x _) (x @_ ·.1)))
   have h_Q_le : Q.ncard ≤ (quad_k_N A k).ncard := by iterate gcongr
   omega
 
 lemma quad_lower_edges (A : Set ℕ) (k : ℕ) (hA : A.Finite) :
-  N_k_N (A + A) k ≤ (S_good A k).ncard + 2 * A.ncard := by rw[two_mul,N_k_N,S_good]
-                                                           trans{ a ∈A+A|a+k ∈A+A∧¬(∃S ∈A,a=2* S) ∧¬∃S ∈A,a+k=2* S}.ncard+(((A.image (2 *.))∪A.image (2 *.-k)).ncard)
-                                                           · use(Set.ncard_le_ncard (fun R L=>? _) ((hA.add hA).sep _|>.union ((hA.image _).union (hA.image _) ) )).trans ↑(Set.ncard_union_le _ _)
-                                                             use or_iff_not_imp_right.2 (and_assoc.1 ⟨ L,. ∘.inl ∘.imp (by bound),by valid ∘Or.inr ∘Exists.imp fun and=>And.imp_right (Nat.sub_eq_of_eq_add ·.symm)⟩)
-                                                           · apply add_right_mono ((Set.ncard_union_le _ _).trans (by push_cast [Nat.add_le_add, A.ncard_image_le hA]))
+  N_k_N (A + A) k ≤ (S_good A k).ncard + 2 * A.ncard := by
+  rw[two_mul,N_k_N,S_good]
+  trans{ a ∈A+A|a+k ∈A+A∧¬(∃S ∈A,a=2* S) ∧¬∃S ∈A,a+k=2* S}.ncard+(((A.image (2 *·))∪A.image (2
+    *·-k)).ncard)
+  · use(Set.ncard_le_ncard (fun R L=>? _) ((hA.add hA).sep _|>.union ((hA.image _).union (hA.image
+      _) ) )).trans ↑(Set.ncard_union_le _ _)
+    use or_iff_not_imp_right.2 (and_assoc.1 ⟨ L,· ∘.inl ∘.imp (by bound),by valid ∘Or.inr
+      ∘Exists.imp fun and=>And.imp_right (Nat.sub_eq_of_eq_add ·.symm)⟩)
+  · apply add_right_mono ((Set.ncard_union_le _ _).trans ?_)
+    exact Nat.add_le_add (Set.ncard_image_le hA) (Set.ncard_image_le hA)
 
-lemma quad_lower (A : Set ℕ) (k : ℕ) (hSidon : IsSidon A) (hA : A.Finite) :
+lemma quad_lower (A : Set ℕ) (k : ℕ) (_hSidon : IsSidon A) (hA : A.Finite) :
   4 * N_k_N (A + A) k ≤ (quad_k_N A k).ncard + 8 * A.ncard := by
   have h1 := quad_lower_sub A k hA
   have h2 := quad_lower_edges A k hA
@@ -505,42 +571,51 @@ lemma quad_upper_2 (A : Set ℕ) (k : ℕ) (hSidon : IsSidon A) (hA : A.Finite) 
 lemma N_bound_upper_1 (A : Set ℕ) (hA : A.Finite) (hSidon : IsSidon A) :
   4 * N_k_N (A + A) 1 ≤ N_k_Z (D_set A) 1 + 10 * A.ncard := by
   have h1 := quad_lower A 1 hSidon hA
-  have h2 : (quad_k_N A 1).ncard ≤ N_k_Z (D_set A) (1 : ℤ) + 2 * A.ncard := quad_upper A 1 hSidon hA (by omega)
+  have h2 : (quad_k_N A 1).ncard ≤ N_k_Z (D_set A) (1 : ℤ) + 2 * A.ncard :=
+    quad_upper A 1 hSidon hA (by omega)
   omega
 
 lemma N_bound_lower_2 (A : Set ℕ) (hA : A.Finite) (hSidon : IsSidon A) :
   N_k_Z (D_set A) 2 ≤ 4 * N_k_N (A + A) 2 + 10 * A.ncard := by
   have h1 := quad_lower_2 A 2 hSidon hA
-  have h2 : N_k_Z (D_set A) (2 : ℤ) ≤ (quad_k_N A 2).ncard + 2 * A.ncard := quad_lower_2 A 2 hSidon hA
+  have h2 : N_k_Z (D_set A) (2 : ℤ) ≤ (quad_k_N A 2).ncard + 2 * A.ncard :=
+    quad_lower_2 A 2 hSidon hA
   have h3 : (quad_k_N A 2).ncard ≤ 4 * N_k_N (A + A) 2 + 2 * A.ncard := quad_upper_2 A 2 hSidon hA
   omega
 
 lemma N_bound_upper_3 (A : Set ℕ) (hA : A.Finite) (hSidon : IsSidon A) :
   4 * N_k_N (A + A) 3 ≤ N_k_Z (D_set A) 3 + 10 * A.ncard := by
   have h1 := quad_lower A 3 hSidon hA
-  have h2 : (quad_k_N A 3).ncard ≤ N_k_Z (D_set A) (3 : ℤ) + 2 * A.ncard := quad_upper A 3 hSidon hA (by omega)
+  have h2 : (quad_k_N A 3).ncard ≤ N_k_Z (D_set A) (3 : ℤ) + 2 * A.ncard :=
+    quad_upper A 3 hSidon hA (by omega)
   omega
 
 lemma D_set_card (A : Set ℕ) (hA : A.Finite) :
   (D_set A).ncard ≤ A.ncard * A.ncard := by
   simp_rw [D_set, mul_comm (A.ncard)]
-  use A.ncard_prod▸.trans (Nat.card_mono ((hA.prod hA).image ((Prod.rec _) ) ) fun and⟨x,y,A, B, e⟩=>by cases e with exists(x, y)) (Nat.card_image_le (hA.prod hA))
+  use A.ncard_prod▸.trans (Nat.card_mono ((hA.prod hA).image ((Prod.rec _) ) ) fun and⟨x,y,A, B,
+    e⟩=>by cases e with exists(x, y)) (Nat.card_image_le (hA.prod hA))
 
 lemma S_card (A : Set ℕ) (hA : A.Finite) (hSidon : IsSidon A) :
   2 * (A + A).ncard ≥ A.ncard * A.ncard := by
   lift A to Finset (↑ ℕ) using (hA) with and A
   rw_mod_cast[ge_iff_le, two_mul,IsSidon]at*
-  use and.card_product and▸.trans ( Finset.card_eq_sum_card_fiberwise fun and' =>And.elim and.add_mem_add ∘ Finset.mem_product.1).le ?_
-  use Nat.mul_two _▸ Finset.sum_le_card_nsmul _ _ _ (and.forall_mem_image₂.2 fun and R L M=>.trans ( Finset.card_mono fun and=> by aesop) ( Finset.card_le_two: Finset.card { (and, L),(L, and)}≤2))
+  use and.card_product and▸.trans ( Finset.card_eq_sum_card_fiberwise fun and' =>And.elim
+    and.add_mem_add ∘ Finset.mem_product.1).le ?_
+  use Nat.mul_two _▸ Finset.sum_le_card_nsmul _ _ _ (and.forall_mem_image₂.2 fun and R L M=>.trans (
+    Finset.card_mono fun and=> by aesop) ( Finset.card_le_two: Finset.card { (and, L),(L, and)}≤2))
 
-lemma num_isolated_lower_bound (n : ℕ) (hn : n > 0) (A : Set ℕ) (h_card : A.ncard = n) (h_sidon : IsSidon A) :
+lemma num_isolated_lower_bound (n : ℕ) (hn : n > 0) (A : Set ℕ) (h_card : A.ncard = n)
+    (h_sidon : IsSidon A) :
   16 * num_isolated A + 100 * n + 16 ≥ n * n := by
   have hF : A.Finite := Set.finite_of_ncard_pos (by omega)
   have hSF : (A + A).Finite := Set.Finite.add hF hF
-  have hSF_Z : (Z_S (A + A)).Finite := by simp_rw [ ←h_card,Z_S]at *
-                                          apply hSF.image
-  have hDF : (D_set A).Finite := by simp_all [D_set]
-                                    exact ( (hF.prod hF).image (Prod.rec _)).subset fun and⟨x,k,y,A, B⟩=>⟨(x, y), ⟨k,A⟩,B.symm⟩
+  have hSF_Z : (Z_S (A + A)).Finite := by
+    simp_rw [ ←h_card,Z_S]at *
+    apply hSF.image
+  have hDF : (D_set A).Finite := by
+    simp_all only [gt_iff_lt, D_set, exists_and_left]
+    exact ( (hF.prod hF).image (Prod.rec _)).subset fun and⟨x,k,y,A, B⟩=>⟨(x, y), ⟨k,A⟩,B.symm⟩
   have h1 := I_identity_Z (Z_S (A + A)) hSF_Z
   have h2 := universal_parity_3 (D_set A) hDF
   have h3 := local_pattern_bound_Z (Z_S (A + A)) hSF_Z
@@ -559,17 +634,23 @@ lemma num_isolated_lower_bound (n : ℕ) (hn : n > 0) (A : Set ℕ) (h_card : A.
 
 lemma exists_sidon_set_n (n : ℕ) : ∃ A : Set ℕ, A.ncard = n ∧ IsSidon A := by
   delta IsSidon
-  use .image (2 ^ ·) ( Finset.range n),mod_cast by simp_all [ Finset.card_image_of_injective, (@2).pow_right_injective],Set.forall_mem_image.2 fun and x =>Set.forall_mem_image.2 ?_
-  use fun a s y⟨A, B, _⟩z⟨D,E, _⟩h=> if I:and<a then if I: A<D then(? _)else(? _)else if I: A<D then(? _)else(? _)
+  use .image (2 ^ ·) ( Finset.range n),mod_cast by simp_all [ Finset.card_image_of_injective,
+    (@2).pow_right_injective],Set.forall_mem_image.2 fun and x =>Set.forall_mem_image.2 ?_
+  use fun a s y⟨A, B, _⟩z⟨D,E, _⟩h=> if I:and<a then if I: A<D then(? _)else(? _)else if I: A<D
+    then(? _)else(? _)
   · use absurd ((2).pow_lt_pow_right · I) (absurd ((2).pow_lt_pow_right · ↑‹and<a›) ∘by (fin_omega))
   · rcases lt_trichotomy A a with S |rfl | S
-    · exact absurd D.two_pow_pos fun and' => absurd ((2).pow_le_pow_right · S) ( (by fin_omega ∘(2).pow_le_pow_right (by decide)) (‹and<a›) )
+    · exact absurd D.two_pow_pos fun and' => absurd ((2).pow_le_pow_right · S) ( (by fin_omega
+        ∘(2).pow_le_pow_right (by decide)) (‹and<a›) )
     · fin_omega
-    · match(2).pow_le_pow_right (by decide) S,(2).pow_le_pow_right (by decide) ( (not_lt.1 I).lt_of_ne fun and=> by aesop), and.two_pow_pos with|_, _A, B=>fin_omega
+    · match(2).pow_le_pow_right (by decide) S,(2).pow_le_pow_right (by decide) ( (not_lt.1
+        I).lt_of_ne fun and=> by aesop), and.two_pow_pos with|_, _A, B=>fin_omega
   · rcases lt_trichotomy and D with a|rfl|c
-    · refine absurd (h.symm▸Nat.lt_add_of_pos_left (by positivity)) fun and=> absurd ((2).pow_le_pow_right · I) ( (by fin_omega ∘(2).pow_le_pow_right (by decide)) ( a))
+    · refine absurd (h.symm▸Nat.lt_add_of_pos_left (by positivity)) fun and=> absurd
+        ((2).pow_le_pow_right · I) ( (by fin_omega ∘(2).pow_le_pow_right (by decide)) ( a))
     · fin_omega
-    · simp_all [le_antisymm (not_lt.1 ↑(mt ((2).pow_le_pow_right ↑ _) fun and=> absurd A.two_pow_pos ((by fin_omega ∘(2).pow_le_pow_right (by decide)) c))) (by valid: a ≤and)]
+    · simp_all [le_antisymm (not_lt.1 ↑(mt ((2).pow_le_pow_right ↑ _) fun and=> absurd A.two_pow_pos
+        ((by fin_omega ∘(2).pow_le_pow_right (by decide)) c))) (by valid: a ≤and)]
   · match (by bound:2^D≤2^A∧2^and≥2^a) with| ⟨a, _⟩=>fin_omega
 
 lemma f_lower_bound_div (n : ℕ) : f n ≥ (n * n - 100 * n - 16) / 16 := by
@@ -590,14 +671,16 @@ lemma f_lower_bound_div (n : ℕ) : f n ≥ (n * n - 100 * n - 16) / 16 := by
     omega
 
 lemma tendsto_bound : Tendsto (fun n : ℕ => (n * n - 100 * n - 16) / 16) atTop atTop := by
-  exact (Filter.tendsto_atTop.2 fun and=>by filter_upwards[Filter.mem_atTop 101,Filter.mem_atTop (and*16+16)] with a _ _ using (by valid ∘Nat.mul_le_mul_right a) (‹101 ≤ a›))
+  refine Filter.tendsto_atTop.2 fun b => ?_
+  filter_upwards [Filter.mem_atTop 101, Filter.mem_atTop (b * 16 + 16)] with a ha hb
+  have hmul := Nat.mul_le_mul_right a ha
+  omega
 
 lemma tendsto_f : Tendsto f atTop atTop := by
   have h_le : ∀ᶠ n in atTop, (n * n - 100 * n - 16) / 16 ≤ f n := by
     filter_upwards [eventually_ge_atTop 1000] with n hn
     exact f_lower_bound_div n
   exact tendsto_atTop_mono' atTop h_le tendsto_bound
-
 
 /-- Must `lim f n = ∞`? -/
 theorem erdos_152_unbounded : Tendsto f atTop atTop := by
