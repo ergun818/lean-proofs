@@ -14,7 +14,7 @@ def badNeighborFinset {V : Type*} [DecidableEq V]
   X.filter fun w => (commonNeighborFinset G T v w).card < L
 
 theorem sum_card_badNeighborFinset
-    {V : Type*} [Fintype V] [DecidableEq V]
+    {V : Type*} [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (X T : Finset V) (L : ℕ) :
     ∑ v ∈ X, (badNeighborFinset G X T L v).card =
@@ -22,13 +22,13 @@ theorem sum_card_badNeighborFinset
         (commonNeighborFinset G T p.1 p.2).card < L).card := by
   classical
   simp only [badNeighborFinset, Finset.card_eq_sum_ones,
-    Finset.sum_filter, Finset.card_product]
+    Finset.sum_filter]
   rw [Finset.sum_product]
 
 /-- Delete the vertices incident with too many low-codegree ordered pairs and
 keep a fixed one-fifth subset of the survivors. -/
 theorem exists_clean_reservoir_subset
-    {V : Type*} [Fintype V] [DecidableEq V]
+    {V : Type*} [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (X T : Finset V) (L : ℕ) (hX : 0 < X.card)
     (hfew : 40 * ((X ×ˢ X).filter fun p =>
@@ -92,11 +92,11 @@ def goodIntermediateFinset {V : Type*} [DecidableEq V]
 
 /-- Two clean vertices retain linearly many good intermediate vertices. -/
 theorem five_mul_card_goodIntermediate_ge
-    {V : Type*} [Fintype V] [DecidableEq V]
+    {V : Type*} [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (X U T : Finset V) (L : ℕ)
     (hXlarge : 20 ≤ X.card) (hUcard : U.card = X.card / 5)
-    {v w : V} (hv : v ∈ U) (hw : w ∈ U)
+    {v w : V} (_hv : v ∈ U) (_hw : w ∈ U)
     (hvGood : 4 * (badNeighborFinset G X T L v).card < X.card)
     (hwGood : 4 * (badNeighborFinset G X T L w).card < X.card) :
     X.card ≤ 5 * (goodIntermediateFinset G X U T L v w).card := by

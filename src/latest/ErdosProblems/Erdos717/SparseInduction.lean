@@ -11,7 +11,7 @@ namespace Erdos717
 
 /-- Independence number cannot increase on passing to an induced graph. -/
 theorem indepNum_induce_finset_le
-    {V : Type*} [Fintype V] [DecidableEq V]
+    {V : Type*} [Finite V]
     (G : SimpleGraph V) (U : Finset V) :
     (G.induce (U : Set V)).indepNum ≤ G.indepNum := by
   classical
@@ -117,12 +117,13 @@ theorem card_edgeFinset_induce_sparseLowPatternSet
 /-- The product of edge density and the independence bound is uniformly
 bounded below once the latter is at most half the order. -/
 theorem one_div_sixtyfour_le_density_mul_indepBound
-    {V : Type*} [Fintype V] [DecidableEq V]
+    {V : Type*} [Fintype V]
     (G : SimpleGraph V) [DecidableRel G.Adj] (a : ℕ)
     (hind : G.indepNum ≤ a) (hn : 0 < Fintype.card V)
     (ha : 2 * a ≤ Fintype.card V) :
     (1 / 64 : ℝ) ≤
       ((G.edgeFinset.card : ℝ) / (Fintype.card V : ℝ) ^ 2) * a := by
+  classical
   let n := Fintype.card V
   let m := G.edgeFinset.card
   have hnR : (0 : ℝ) < n := by exact_mod_cast hn
@@ -325,7 +326,7 @@ theorem sparse_density_drop_transfer
 /-- The `a > n/16` boundary is closed directly by the topological-density
 theorem. -/
 theorem sparse_boundary_potential_lt
-    {V : Type} [Fintype V] [DecidableEq V]
+    {V : Type} [Fintype V]
     (G : SimpleGraph V) [DecidableRel G.Adj] (a k : ℕ)
     (hn : 0 < Fintype.card V) (hm : 0 < G.edgeFinset.card) (ha : 0 < a)
     (hlogn : 100 ≤ Real.log (Fintype.card V : ℝ))
@@ -337,6 +338,7 @@ theorem sparse_boundary_potential_lt
         Fintype.card V)
     (hk : 2 ≤ k) (hnot : ¬Erdos718.ContainsCliqueSubdivision G k) :
     sparsePotential (Fintype.card V) G.edgeFinset.card a < k := by
+  classical
   have hbound := five_mul_card_mul_sparsePotential_sq_lt_edges
     (Fintype.card V) G.edgeFinset.card a hn hm ha hlogn hdle halarge hedgeLarge
   by_contra hnotPot
@@ -368,7 +370,7 @@ theorem sparse_boundary_potential_lt
 subdivision order `k` is arbitrary; the assertion says that every graph
 with no topological `K_k` has potential strictly below `k`. -/
 theorem sparse_graph_potential_lt_forbidden_order
-    {V : Type} [Fintype V] [DecidableEq V]
+    {V : Type} [Fintype V]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (a k : ℕ) (hind : G.indepNum ≤ a)
     (ha : 2 * a ≤ Fintype.card V)

@@ -129,12 +129,12 @@ lemma terminal_mem_support_eq_endpoint {G : SimpleGraph V}
     (hzsupport : z ∈ p.support) (hzterminal : z ∈ Set.range terminal) :
     z = a ∨ z = b := by
   by_contra h
-  push_neg at h
+  push Not at h
   exact (Set.disjoint_left.mp havoid) ⟨hzsupport, h.1, h.2⟩ hzterminal
 
 /-- Every edge of one path in a completed linkage was already present in
 the original graph. -/
-lemma pairLinkage_edge_mem_original [Fintype ι]
+lemma pairLinkage_edge_mem_original
     {G : SimpleGraph V} {terminal : Sum ι ι ↪ V}
     (L : Erdos718.PairLinkage (terminalCompletion G terminal)
       (Set.range terminal) terminal) (i : ι) (e : Sym2 V)
@@ -160,7 +160,7 @@ lemma pairLinkage_edge_mem_original [Fintype ι]
         · exact (hadd.1 (hu.trans hv.symm)).elim
 
 /-- The preceding edge-transfer fact with a larger forbidden terminal set. -/
-lemma pairLinkage_edge_mem_original_of_subset [Fintype ι]
+lemma pairLinkage_edge_mem_original_of_subset
     {G : SimpleGraph V} {X : Set V} {terminal : Sum ι ι ↪ V}
     (L : Erdos718.PairLinkage (terminalCompletion G terminal) X terminal)
     (hterminal : Set.range terminal ⊆ X) (i : ι) (e : Sym2 V)
@@ -190,7 +190,7 @@ lemma pairLinkage_edge_mem_original_of_subset [Fintype ι]
 
 /-- A linkage in the terminal completion transfers back to the original
 graph, with exactly the same supports. -/
-noncomputable def Erdos718.PairLinkage.ofTerminalCompletion [Fintype ι]
+noncomputable def Erdos718.PairLinkage.ofTerminalCompletion
     {G : SimpleGraph V} {terminal : Sum ι ι ↪ V}
     (L : Erdos718.PairLinkage (terminalCompletion G terminal)
       (Set.range terminal) terminal) :
@@ -198,7 +198,7 @@ noncomputable def Erdos718.PairLinkage.ofTerminalCompletion [Fintype ι]
   path i := (L.path i).transfer G (pairLinkage_edge_mem_original L i)
   isPath i := (L.isPath i).transfer _
   avoids i := by
-    simpa only [Erdos718.walkInteriorSet, Set.mem_setOf_eq,
+    simpa only [Erdos718.walkInteriorSet, Set.mem_ofPred_eq,
       Walk.support_transfer] using L.avoids i
   disjoint i j hij := by simpa using L.disjoint hij
 
@@ -218,7 +218,7 @@ noncomputable def Erdos718.PairLinkage.ofTerminalCompletionOfSubset
       Walk.support_transfer] using L.avoids i
   disjoint i j hij := by simpa using L.disjoint hij
 
-theorem nonempty_pairLinkage_terminalCompletion_iff [Fintype ι]
+theorem nonempty_pairLinkage_terminalCompletion_iff
     {G : SimpleGraph V} {terminal : Sum ι ι ↪ V} :
     Nonempty (Erdos718.PairLinkage (terminalCompletion G terminal)
       (Set.range terminal) terminal) ↔
@@ -416,7 +416,7 @@ lemma setCompletion_adj_iff {G : SimpleGraph V} {X : Set V}
   change (G.Adj u v ∨ (harmlessSetGraph X terminal).Adj u v) ↔ _
   rw [harmlessSetGraph_adj_iff]
 
-lemma pairLinkage_edge_mem_setCompletion [Fintype ι]
+lemma pairLinkage_edge_mem_setCompletion
     {G : SimpleGraph V} {X : Set V} {terminal : Sum ι ι ↪ V}
     (L : Erdos718.PairLinkage (setCompletion G X terminal) X terminal)
     (i : ι) (e : Sym2 V) (he : e ∈ (L.path i).edges) :
@@ -458,7 +458,7 @@ noncomputable def Erdos718.PairLinkage.ofSetCompletion [Fintype ι]
       Walk.support_transfer] using L.avoids i
   disjoint i j hij := by simpa using L.disjoint hij
 
-lemma incidentEdges_setCompletion [Fintype ι] [Fintype V]
+lemma incidentEdges_setCompletion [Fintype V]
     [DecidableEq V] (G : SimpleGraph V) (X S : Finset V)
     (terminal : Sum ι ι ↪ V)
     [DecidableRel G.Adj]
@@ -502,7 +502,7 @@ lemma incidentEdges_setCompletion [Fintype ι] [Fintype V]
         change (setCompletion G (X : Set V) terminal).Adj u v
         exact le_setCompletion G (X : Set V) terminal he
 
-lemma isEightKMassed_setCompletion [Fintype ι] [Fintype V]
+lemma isEightKMassed_setCompletion [Fintype V]
     [DecidableEq V] (G : SimpleGraph V) (X : Finset V)
     (terminal : Sum ι ι ↪ V) (k : ℕ)
     [DecidableRel G.Adj]
@@ -529,7 +529,7 @@ lemma isEightKMassed_setCompletion [Fintype ι] [Fintype V]
     rw [incidentEdges_setCompletion G X _ terminal hdisj]
     simpa [t] using hmassed.2 t hXleft horder
 
-lemma edgesOn_lt_setCompletion [Fintype ι] [Fintype V]
+lemma edgesOn_lt_setCompletion [Fintype V]
     [DecidableEq V] (G : SimpleGraph V) (X : Finset V)
     (terminal : Sum ι ι ↪ V)
     [DecidableRel G.Adj]

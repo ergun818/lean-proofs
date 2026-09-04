@@ -13,7 +13,7 @@ namespace Erdos717
 distinct representatives.  This is the easy uniform-cardinality corollary of
 Hall's theorem. -/
 theorem exists_injective_mem_of_fintype_card_le
-    {ι α : Type*} [Fintype ι] [DecidableEq α]
+    {ι α : Type*} [Fintype ι]
     (t : ι → Finset α) (hcard : ∀ i, Fintype.card ι ≤ (t i).card) :
     ∃ f : ι → α, Function.Injective f ∧ ∀ i, f i ∈ t i := by
   classical
@@ -42,7 +42,7 @@ def ShortRoute.ofFour
     ShortRoute G u v {a, x, b} := by
   let p : G.Walk u v := ((hax.toWalk.cons hua).concat hxb).concat hbv
   have hsupport : p.support = [u, a, x, b, v] := by
-    simp [p, SimpleGraph.Adj.support_toWalk]
+    simp [p]
   have hua_ne : u ≠ a := fun h =>
     (Finset.disjoint_left.mp hST) hu (h ▸ ha)
   have hub_ne : u ≠ b := fun h =>
@@ -61,12 +61,12 @@ def ShortRoute.ofFour
     interior_eq := ?_
   }
   · rw [SimpleGraph.Walk.isPath_def, hsupport]
-    simp only [List.nodup_cons, List.mem_cons, List.mem_singleton,
-      List.nodup_singleton, not_or, not_false_eq_true, and_true]
+    simp only [List.nodup_cons, List.mem_cons,
+      not_or]
     aesop
   · ext z
     simp only [Erdos718.walkInteriorSet, hsupport, List.mem_cons,
-      List.mem_singleton, Set.mem_setOf_eq, Finset.mem_coe,
+      Set.mem_ofPred_eq, Finset.mem_coe,
       Finset.mem_insert, Finset.mem_singleton]
     aesop
 
@@ -74,7 +74,7 @@ def ShortRoute.ofFour
 vertices `x` with large codegrees yield a pairwise internally-disjoint family
 of length-four routes. -/
 theorem exists_short_route_reservoir
-    {V : Type*} [Fintype V] [DecidableEq V]
+    {V : Type*} [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (S T U Q : Finset V) (u v : V) (L : ℕ)
     (hST : Disjoint S T) (hUS : U ⊆ S) (hQSU : Q ⊆ S \ U)
@@ -106,7 +106,7 @@ theorem exists_short_route_reservoir
   let usedA : Finset V := Finset.univ.image a
   have husedAcard : usedA.card = Q.card := by
     rw [Finset.card_image_iff.mpr fun _ _ _ _ h => haInj h]
-    simp [IQ, usedA]
+    simp [IQ]
   let right (x : IQ) := (commonNeighborFinset G T x v) \ usedA
   have hrightCard (x : IQ) : Q.card ≤ (right x).card := by
     have hdiff := Finset.card_sdiff_add_card_inter
@@ -146,7 +146,7 @@ theorem exists_short_route_reservoir
     · exact (Finset.disjoint_left.mp hST) (hxS x) (hxb ▸ hbT y) |>.elim
   have hCcard : C.card = Q.card := by
     rw [Finset.card_image_iff.mpr fun _ _ _ _ h => hinteriorInj h]
-    simp [IQ, C]
+    simp [IQ]
   have hpair : (C : Set (Finset V)).Pairwise Disjoint := by
     intro A hAC B hBC hAB
     obtain ⟨x, _hx, rfl⟩ := Finset.mem_image.mp hAC

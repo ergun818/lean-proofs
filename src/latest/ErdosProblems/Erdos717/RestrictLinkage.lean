@@ -68,7 +68,7 @@ lemma isPath_walkRestrictInduce
 /-- Every vertex of a linkage lifted from an induced graph remains in the
 inducing set. -/
 lemma Erdos718.PairLinkage.support_liftInduce_subset
-    {I : Type v} [Fintype I] {X : Set V}
+    {I : Type v} {X : Set V}
     {terminal : Sum I I ↪ V} (hA : Set.range terminal ⊆ A)
     (L : Erdos718.PairLinkage (G.induce A)
       {a : A | (a : V) ∈ X} (terminalIntoSet A terminal hA))

@@ -23,7 +23,7 @@ theorem dense_parameter_log_bounds
   have hbase : (0 : ℝ) < 1 / 10 ^ (20 : ℕ) := by positivity
   have hlogd := Real.strictMonoOn_log.monotoneOn hbase hd hdLower
   have hlogTen : Real.log (10 : ℝ) < 9 := by
-    convert Real.log_lt_sub_one_of_pos (by norm_num : (0 : ℝ) < 10) using 1 <;>
+    convert Real.log_lt_sub_one_of_pos (by norm_num : (0 : ℝ) < 10) using 1;
       norm_num
   have hlogdLower : -180 < Real.log d := by
     rw [one_div, Real.log_inv, Real.log_pow] at hlogd
@@ -35,7 +35,7 @@ theorem dense_parameter_log_bounds
     Real.log_mul (by norm_num : (200 : ℝ) ≠ 0) hQR.ne'] at hlogQineq
   have hlog200 : Real.log (200 : ℝ) < 199 := by
     convert Real.log_lt_sub_one_of_pos
-      (by norm_num : (0 : ℝ) < 200) (by norm_num : (200 : ℝ) ≠ 1) using 1 <;>
+      (by norm_num : (0 : ℝ) < 200) (by norm_num : (200 : ℝ) ≠ 1) using 1;
       norm_num
   have hQbound : Real.log (n : ℝ) - 400 ≤ Real.log (Q : ℝ) := by
     linarith
@@ -46,7 +46,7 @@ theorem dense_parameter_log_bounds
     Real.log_mul (by norm_num : (2000 : ℝ) ≠ 0) hLR.ne'] at hlogLineq
   have hlog2000 : Real.log (2000 : ℝ) < 1999 := by
     convert Real.log_lt_sub_one_of_pos
-      (by norm_num : (0 : ℝ) < 2000) (by norm_num : (2000 : ℝ) ≠ 1) using 1 <;>
+      (by norm_num : (0 : ℝ) < 2000) (by norm_num : (2000 : ℝ) ≠ 1) using 1;
       norm_num
   have hLbound : Real.log (n : ℝ) - 3000 ≤ Real.log (L : ℝ) := by
     norm_num at hlogLineq
@@ -56,7 +56,7 @@ theorem dense_parameter_log_bounds
 /-- In density at least `10⁻²⁰`, absence of `TK_k` forces the dense
 potential below `k`. -/
 theorem dense_graph_potential_lt_forbidden_order
-    {V : Type*} [Fintype V] [DecidableEq V]
+    {V : Type*} [Fintype V]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (a k : ℕ) (hind : G.indepNum ≤ a)
     (hnHuge : 10 ^ 100 ≤ Fintype.card V)

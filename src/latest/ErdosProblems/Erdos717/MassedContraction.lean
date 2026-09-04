@@ -29,16 +29,21 @@ instance deleteOne.instDecidableRel (G : SimpleGraph V)
   inferInstanceAs <| DecidableRel fun u v : V =>
     G.Adj u v ∧ s(u, v) ≠ s(a, b)
 
+omit [DecidableEq V] [Fintype V] in
 lemma deleteOne_adj_iff {G : SimpleGraph V} {a b u v : V} :
     (deleteOne G a b).Adj u v ↔ G.Adj u v ∧ s(u, v) ≠ s(a, b) := by
+  classical
   rfl
 
+omit [DecidableEq V] [Fintype V] in
 lemma deleteOne_le (G : SimpleGraph V) (a b : V) :
     deleteOne G a b ≤ G :=
   fun _ _ h => h.1
 
+omit [DecidableEq V] [Fintype V] in
 lemma deleteOne_comm (G : SimpleGraph V) (a b : V) :
     deleteOne G a b = deleteOne G b a := by
+  classical
   ext u v
   simp only [deleteOne_adj_iff, and_congr_right_iff]
   intro _
@@ -212,6 +217,7 @@ instance pullContractOn.instDecidableRel (G : SimpleGraph V)
       ⟨x, fun h => hb (h ▸ x.property)⟩
       ⟨y, fun h => hb (h ▸ y.property)⟩
 
+omit [DecidableEq V] [Fintype V] in
 lemma pullContractOn_adj {G : SimpleGraph V} {X : Finset V}
     {a b : V} (hb : b ∉ X) {x y : X} :
     (pullContractOn G X a b hb).Adj x y ↔
@@ -227,8 +233,8 @@ def contractFinsetEquiv (X : Finset V) {b : V} (hb : b ∉ X) :
   toFun x := ⟨⟨x, fun h => hb (h ▸ x.property)⟩,
     mem_contractFinset.mpr x.property⟩
   invFun z := ⟨z.1.1, mem_contractFinset.mp z.2⟩
-  left_inv x := Subtype.ext rfl
-  right_inv z := Subtype.ext (Subtype.ext rfl)
+  left_inv _x := Subtype.ext rfl
+  right_inv _z := Subtype.ext (Subtype.ext rfl)
 
 lemma edgesOn_contract_eq_pullContractOn_card
     (G : SimpleGraph V) [DecidableRel G.Adj]
@@ -256,7 +262,7 @@ variable {k : ℕ}
 endpoint is outside the distinguished set.  Claim 2.3 of Thomas--Wollan
 derives this property from the absence of small rigid separations. -/
 def ContractConditionTwo (C : MassedCounterexample k) : Prop :=
-  ∀ (a b : C.V) (hab : C.G.Adj a b) (hb : b ∉ C.X),
+  ∀ (a b : C.V) (_hab : C.G.Adj a b) (_hb : b ∉ C.X),
     ∀ s : Erdos718.Separation (contractAt C.G a b),
       contractFinset C.X b ⊆ s.left →
       s.separator.card < (contractFinset C.X b).card →
@@ -267,7 +273,7 @@ def ContractConditionTwo (C : MassedCounterexample k) : Prop :=
 unique prescribed pair edge incident with `a`. -/
 lemma extra_pullContract_edge_star
     (C : MassedCounterexample k) (hmin : C.IsLexMinimal)
-    (F : FailedPairing C) {a b : C.V} (hab : C.G.Adj a b)
+    (F : FailedPairing C) {a b : C.V} (_hab : C.G.Adj a b)
     (hb : b ∉ C.X) {e : Sym2 C.X}
     (heK : e ∈ (pullContractOn C.G C.X a b hb).edgeFinset)
     (heG : e ∉ (C.G.induce (C.X : Set C.V)).edgeFinset) :
@@ -406,7 +412,7 @@ theorem commonNeighbor_card_ge_sub_one_of_contractConditionTwo
     have hbRange : b ∉ Set.range terminal := fun hbR =>
       hbSet (hterminal hbR)
     let terminalc := ContractLinkage.contractTerminal
-      (G := C.G) (a := a) terminal hbRange
+      (_G := C.G) (_a := a) terminal hbRange
     have hrange : Set.range terminalc ⊆ (Xc : Set _) := by
       rintro z ⟨t, rfl⟩
       change terminalc t ∈ Xc

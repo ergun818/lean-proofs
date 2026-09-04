@@ -22,7 +22,7 @@ theorem log_lt_hundred_of_le_ten_pow_ten {x : ℝ}
   have hlogx : Real.log x ≤ Real.log (10 ^ (10 : ℕ) : ℝ) :=
     Real.strictMonoOn_log.monotoneOn hx (by norm_num) hupper
   have hlogTen : Real.log (10 : ℝ) < 9 := by
-    convert Real.log_lt_sub_one_of_pos (by norm_num : (0 : ℝ) < 10) using 1 <;>
+    convert Real.log_lt_sub_one_of_pos (by norm_num : (0 : ℝ) < 10) using 1;
       norm_num
   rw [Real.log_pow] at hlogx
   have hten : (10 : ℝ) * Real.log 10 < 90 := by nlinarith
@@ -66,7 +66,6 @@ theorem log_choose_le_mul_one_add_log_inv_density
             rw [← div_pow]
             congr 1
             field_simp [ne_of_gt hbR, Real.exp_ne_zero]
-            <;> ring
   have hchooseBound : (a.choose b : ℝ) ≤
       ((Real.exp 1 * a) / b) ^ b := hchoose.trans hratio
   have hpatternR : 16 * d * (a : ℝ) ≤ b := hpattern
@@ -147,7 +146,7 @@ theorem sparse_high_log_case_two
   nlinarith
 
 theorem sparsePotential_eq_exp_log
-    (n m a : ℕ) (hn : 0 < n) (hm : 0 < m) (ha : 0 < a) :
+    (n m a : ℕ) (hn : 0 < n) (hm : 0 < m) (_ha : 0 < a) :
     sparsePotential n m a =
       Real.exp (Real.log n / 2 +
         Real.log n /
@@ -176,7 +175,7 @@ theorem sparsePotential_eq_exp_log
       Real.log_exp, Real.log_pow, Real.log_sqrt hnR.le, hlogInv]
     rw [Real.log_exp]
     ring
-  simp only [sparsePotential, d]
+  simp only [sparsePotential]
   exact (Real.exp_log hpos).symm.trans (congrArg Real.exp hlogEq)
 
 /-- Analytic extraction of the sparse potential from the two alternatives

@@ -22,21 +22,25 @@ def contractProjection {G : SimpleGraph V} {a b : V} (hab : G.Adj a b) :
     V → {z : V // z ≠ b} := fun x =>
   if hx : x = b then ⟨a, hab.ne⟩ else ⟨x, hx⟩
 
+omit [Fintype V] in
 @[simp] lemma contractProjection_b {G : SimpleGraph V} {a b : V}
     (hab : G.Adj a b) :
     contractProjection hab b = ⟨a, hab.ne⟩ := by
   simp [contractProjection]
 
+omit [Fintype V] in
 @[simp] lemma contractProjection_of_ne {G : SimpleGraph V} {a b x : V}
     (hab : G.Adj a b) (hx : x ≠ b) :
     contractProjection hab x = ⟨x, hx⟩ := by
   simp [contractProjection, hx]
 
+omit [Fintype V] in
 @[simp] lemma contractProjection_a {G : SimpleGraph V} {a b : V}
     (hab : G.Adj a b) :
     contractProjection hab a = ⟨a, hab.ne⟩ := by
   exact contractProjection_of_ne hab hab.ne
 
+omit [Fintype V] in
 lemma contractAt_adj_projection_of_ne {G : SimpleGraph V} {a b x y : V}
     (hab : G.Adj a b) (hxy : G.Adj x y)
     (hne : contractProjection hab x ≠ contractProjection hab y) :
@@ -109,6 +113,7 @@ def liftContractSeparation {G : SimpleGraph V} {a b : V}
       contractProjection hab x ∈ s.right \ s.left := by
   simp [Finset.mem_sdiff]
 
+omit [Fintype V] in
 lemma contractProjection_injective_away_b {G : SimpleGraph V} {a b : V}
     (hab : G.Adj a b) : Set.InjOn (contractProjection hab) {x | x ≠ b} := by
   intro x hx y hy hxy
@@ -227,6 +232,7 @@ def contractPreimageFinset {G : SimpleGraph V} {a b : V}
     x ∈ contractPreimageFinset hab S ↔ contractProjection hab x ∈ S := by
   simp [contractPreimageFinset]
 
+omit [Fintype V] in
 /-- Every edge of the contracted graph has an original edge above it. -/
 lemma exists_original_edge_of_contract_edge {G : SimpleGraph V}
     {a b : V} (hab : G.Adj a b) (e : Sym2 {z : V // z ≠ b})
@@ -238,15 +244,15 @@ lemma exists_original_edge_of_contract_edge {G : SimpleGraph V}
       change (contractAt G a b).Adj x y at he
       rcases he.2 with hxy | hxy | hxy
       · refine ⟨s((x : V), (y : V)), hxy, ?_⟩
-        rw [Sym2.map_pair_eq, contractProjection_of_ne hab x.property,
+        rw [Sym2.map_mk, contractProjection_of_ne hab x.property,
           contractProjection_of_ne hab y.property]
       · refine ⟨s(b, (y : V)), hxy.2, ?_⟩
-        rw [Sym2.map_pair_eq, contractProjection_b,
+        rw [Sym2.map_mk, contractProjection_b,
           contractProjection_of_ne hab y.property]
         rw [Sym2.eq_iff]
         exact Or.inl ⟨Subtype.ext hxy.1.symm, rfl⟩
       · refine ⟨s((x : V), b), hxy.2.symm, ?_⟩
-        rw [Sym2.map_pair_eq, contractProjection_of_ne hab x.property,
+        rw [Sym2.map_mk, contractProjection_of_ne hab x.property,
           contractProjection_b]
         rw [Sym2.eq_iff]
         exact Or.inl ⟨rfl, Subtype.ext hxy.1.symm⟩
@@ -262,7 +268,7 @@ lemma contract_edge_incident_lift {G : SimpleGraph V} {a b : V}
   induction E using Sym2.inductionOn with
   | _ x y =>
       subst e
-      rw [Sym2.map_pair_eq, not_pair_subset_compl_iff] at hinc
+      rw [Sym2.map_mk, not_pair_subset_compl_iff] at hinc
       rw [not_pair_subset_compl_iff]
       exact hinc.imp
         (fun hx => (mem_contractPreimageFinset hab S x).mpr hx)
@@ -334,7 +340,7 @@ lemma incidentEdges_contract_le_liftStrictRight
 the contracted separator lifts to linkedness of the separator after the two
 endpoints are split apart. -/
 theorem linked_liftContractSeparation_of_mem_strictRight
-    {G : SimpleGraph V} [DecidableRel G.Adj] {a b : V}
+    {G : SimpleGraph V} {a b : V}
     (hab : G.Adj a b)
     (s : Erdos718.Separation (contractAt G a b))
     (ha : (⟨a, hab.ne⟩ : {z : V // z ≠ b}) ∈ s.right \ s.left)
@@ -365,7 +371,7 @@ theorem linked_liftContractSeparation_of_mem_strictRight
     intro hbR
     exact hbSep (hterminalSep hbR)
   let terminalW : Sum I I ↪ {z : V // z ≠ b} :=
-    ContractLinkage.contractTerminal (G := G) (a := a) terminalV hbRange
+    ContractLinkage.contractTerminal (_G := G) (_a := a) terminalV hbRange
   have hterminalRight : Set.range terminalW ⊆
       (s.right : Set {z : V // z ≠ b}) := by
     rintro _ ⟨q, rfl⟩
@@ -532,7 +538,7 @@ theorem contractConditionTwo_of_noSmallRigidSeparation
         by_contra hzR
         have hz : z ∈ s₀.left \ s₀.right :=
           Finset.mem_sdiff.mpr ⟨hzL, hzR⟩
-        simpa [hempty] using hz
+        simp [hempty] at hz
       have hXSep : Xc ⊆ s₀.separator := by
         intro z hz
         exact Finset.mem_inter.mpr ⟨hs₀.1 hz, hleftSub (hs₀.1 hz)⟩
@@ -583,7 +589,7 @@ theorem contractConditionTwo_of_noSmallRigidSeparation
       by_contra hzR
       have hz : z ∈ s₀.left \ s₀.right :=
         Finset.mem_sdiff.mpr ⟨hzL, hzR⟩
-      simpa [hempty] using hz
+      simp [hempty] at hz
     have hXSep : Xc ⊆ s₀.separator := by
       intro z hz
       exact Finset.mem_inter.mpr ⟨hs₀.1 hz, hleftSub (hs₀.1 hz)⟩

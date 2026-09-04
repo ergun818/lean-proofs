@@ -29,7 +29,7 @@ theorem fourthRoot_pos {x : ℝ} (hx : 0 < x) : 0 < fourthRoot x := by
   simp only [fourthRoot]
   positivity
 
-theorem fourthRoot_sq {x : ℝ} (hx : 0 ≤ x) :
+theorem fourthRoot_sq {x : ℝ} (_hx : 0 ≤ x) :
     fourthRoot x ^ 2 = Real.sqrt x := by
   simp only [fourthRoot]
   exact Real.sq_sqrt (Real.sqrt_nonneg x)
@@ -570,8 +570,8 @@ theorem sparse_log_failure_active_weight_lt
 density fallback.  This is the complete Fox--Lee--Sudakov estimate for a
 graph whose independence number is at most `100 n / c`. -/
 theorem active_graph_weight_lt_forbidden_order
-    {V : Type} [Fintype V] [DecidableEq V]
-    (G : SimpleGraph V) [DecidableRel G.Adj]
+    {V : Type} [Fintype V]
+    (G : SimpleGraph V)
     (a c k : ℕ) (hind : G.indepNum ≤ a)
     (hnHuge : 10 ^ 100 ≤ Fintype.card V)
     (haHalf : 2 * a ≤ Fintype.card V)
@@ -580,6 +580,7 @@ theorem active_graph_weight_lt_forbidden_order
     (hk : 2 ≤ k) (hnot : ¬Erdos718.ContainsCliqueSubdivision G k) :
     chromaticWeight (Fintype.card V) c <
       erdos717Constant * (k - 1) := by
+  classical
   let n := Fintype.card V
   let m := G.edgeFinset.card
   let d : ℝ := (m : ℝ) / (n : ℝ) ^ 2

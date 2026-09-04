@@ -68,7 +68,7 @@ theorem sparsePotential_lt_one_of_order_small
   rw [Real.log_pow] at hlogn
   norm_num at hlogn
   have hlogTen : Real.log (10 : ℝ) < 9 := by
-    convert Real.log_lt_sub_one_of_pos (by norm_num : (0 : ℝ) < 10) using 1 <;>
+    convert Real.log_lt_sub_one_of_pos (by norm_num : (0 : ℝ) < 10) using 1;
       norm_num
   have hlognUpper : Real.log (n : ℝ) < 900 := by nlinarith
   have hy : 0 ≤ Real.log (1 / d) := by

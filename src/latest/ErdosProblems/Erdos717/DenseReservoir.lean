@@ -19,7 +19,7 @@ private def branchPairEmbedding {V : Type*} {r : ℕ} (branch : Fin r ↪ V) :
     · exact branch.injective (congrArg Prod.snd hef)
 
 theorem missing_cliqueEdge_card_le_ordered
-    {V : Type*} [Fintype V] [DecidableEq V]
+    {V : Type*} [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     {r : ℕ} (branch : Fin r ↪ V) (T : Finset V)
     (hbranch : Set.range branch ⊆ (T : Set V)) :
@@ -46,7 +46,7 @@ theorem missing_cliqueEdge_card_le_ordered
 topological clique.  This is the reusable combinatorial heart of both the
 dense and sparse cases. -/
 theorem exists_large_cliqueSubdivision_of_local_reservoir
-    {V : Type*} [Fintype V] [DecidableEq V]
+    {V : Type*}
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (U : Finset V) (X0 L R a : ℕ)
     (hUcard : X0 / 5 ≤ U.card)
@@ -99,7 +99,7 @@ theorem exists_large_cliqueSubdivision_of_local_reservoir
 uses only natural-number inequalities: the later analytic argument is thus
 separated from all graph and routing bookkeeping. -/
 theorem exists_large_cliqueSubdivision_of_reservoir
-    {V : Type*} [Fintype V] [DecidableEq V]
+    {V : Type*} [Fintype V]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (X0 L R a : ℕ)
     (hE : 0 < G.edgeFinset.card)
@@ -118,8 +118,8 @@ theorem exists_large_cliqueSubdivision_of_reservoir
     exists_short_path_reservoir G G le_rfl X0 L hE hX0 hLX harith
   apply exists_large_cliqueSubdivision_of_local_reservoir G U X0 L R a
     hUcard hreservoir hR ha
-  exact indepBoundOn_of_indepNum_le hind
-  intro t ht
-  exact hroute t (ht.trans (Finset.card_le_univ U))
+  · exact indepBoundOn_of_indepNum_le hind
+  · intro t ht
+    exact hroute t (ht.trans (Finset.card_le_univ U))
 
 end Erdos717

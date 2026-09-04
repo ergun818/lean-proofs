@@ -128,11 +128,11 @@ def CliqueSubdivision.restrict {V : Type*} {G : SimpleGraph V} {r s : ℕ}
   path e := S.path (cliqueEdgeCastLE h e)
   path_isPath e := S.path_isPath (cliqueEdgeCastLE h e)
   interior_avoids_branch e := by
-    apply Set.disjoint_of_subset_right
-    · show Set.range ((Fin.castLEEmb h).trans S.branch) ⊆ Set.range S.branch
+    have hbranch : Set.range ((Fin.castLEEmb h).trans S.branch) ⊆ Set.range S.branch := by
       rintro x ⟨i, rfl⟩
-      exact ⟨Fin.castLE h i, by rfl⟩
-    exact S.interior_avoids_branch (cliqueEdgeCastLE h e)
+      exact ⟨Fin.castLE h i, rfl⟩
+    exact Set.disjoint_of_subset_right hbranch
+      (S.interior_avoids_branch (cliqueEdgeCastLE h e))
   interior_pairwise e f hef := by
     exact S.interior_pairwise (fun hmap => hef ((cliqueEdgeCastLE h).injective hmap))
 
@@ -293,11 +293,12 @@ theorem cliqueSubdivisionNumber_mono {V : Type*} [Fintype V]
 /-- The proved topological-density estimate, expressed in terms of the
 public subdivision number of this file. -/
 theorem le_cliqueSubdivisionNumber_of_five_mul_sq_mul_card_le_edges
-    {V : Type} [Fintype V] [DecidableEq V]
+    {V : Type} [Fintype V]
     (G : SimpleGraph V) [DecidableRel G.Adj] (r : ℕ)
     (hV : 0 < Fintype.card V)
     (hE : 5 * (r * r) * Fintype.card V ≤ G.edgeFinset.card) :
     r ≤ cliqueSubdivisionNumber G := by
+  classical
   apply le_cliqueSubdivisionNumber
   apply ContainsCliqueSubdivision.ofErdos718
   exact Erdos717.ThomasWollanMassed.containsCliqueSubdivision_of_five_mul_sq_mul_card_le_edges
@@ -349,9 +350,10 @@ noncomputable def coloringOfInduceComplement {V : Type*} [Fintype V]
             (⟨v, hv⟩ : {x : V | x ∉ I}) := huv
       exact (C.valid hinduced) (Fin.castSucc_injective m heq)
 
-theorem chiNat_le_induce_complement_add_one {V : Type*} [Fintype V]
+theorem chiNat_le_induce_complement_add_one {V : Type*} [Finite V]
     (G : SimpleGraph V) (I : Finset V) (hI : G.IsIndepSet I) :
     chiNat G ≤ chiNat (G.induce {v : V | v ∉ I}) + 1 := by
+  let := Fintype.ofFinite V
   let H := G.induce {v : V | v ∉ I}
   have hcolor : H.Colorable (chiNat H) := by
     exact SimpleGraph.colorable_chromaticNumber_of_fintype H
@@ -505,7 +507,7 @@ theorem erdos717_weight_bound
           dsimp only [n']
           have hcompl : Fintype.card {v : W // v ∉ I} =
               Fintype.card W - I.card := by
-            simpa using (Fintype.card_subtype_compl (fun v : W => v ∈ I))
+            simp
           let e : (↑{v : W | v ∉ I}) ≃ {v : W // v ∉ I} :=
             { toFun := fun v => ⟨v.1, v.2⟩
               invFun := fun v => ⟨v.1, v.2⟩

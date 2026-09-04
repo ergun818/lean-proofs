@@ -86,8 +86,8 @@ private def cutGraph {V : Type*} (G : SimpleGraph V)
     (c : V → Bool) : SimpleGraph V :=
   G.between (colorSet c) (colorSet c)ᶜ
 
-private lemma mk_mem_cutGraph_edgeFinset_iff {V : Type*} [Fintype V]
-    [DecidableEq V] (G : SimpleGraph V) (c : V → Bool)
+private lemma mk_mem_cutGraph_edgeFinset_iff {V : Type*} [Finite V]
+    (G : SimpleGraph V) (c : V → Bool)
     {u v : V} (he : s(u, v) ∈ G.edgeFinset) :
     s(u, v) ∈ (cutGraph G c).edgeFinset ↔ c u ≠ c v := by
   classical
@@ -97,7 +97,7 @@ private lemma mk_mem_cutGraph_edgeFinset_iff {V : Type*} [Fintype V]
     Set.mem_compl_iff, hadj, true_and]
   cases c u <;> cases c v <;> decide
 
-private lemma cutGraph_edgeFinset_eq_filter {V : Type*} [Fintype V]
+private lemma cutGraph_edgeFinset_eq_filter {V : Type*} [Finite V]
     [DecidableEq V] (G : SimpleGraph V) (c : V → Bool) :
     (cutGraph G c).edgeFinset =
       G.edgeFinset.filter fun e => e ∈ (cutGraph G c).edgeFinset := by
@@ -174,10 +174,11 @@ private lemma sum_cutGraph_edge_card_double {V : Type*} [Fintype V]
 /-- Every finite graph has a bipartite spanning subgraph containing at least
 half of its edges. -/
 theorem exists_bipartite_spanning_subgraph_half_edges
-    {V : Type*} [Fintype V] (G : SimpleGraph V) :
+    {V : Type*} [Finite V] (G : SimpleGraph V) :
     ∃ B : SimpleGraph V, B ≤ G ∧ B.IsBipartite ∧
       G.edgeSet.ncard ≤ 2 * B.edgeSet.ncard := by
   classical
+  let := Fintype.ofFinite V
   have hex : ∃ c : V → Bool,
       #G.edgeFinset ≤ 2 * #(cutGraph G c).edgeFinset := by
     by_contra! h

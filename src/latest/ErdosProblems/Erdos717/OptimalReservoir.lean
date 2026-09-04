@@ -13,7 +13,7 @@ namespace Erdos717
 `R^(a-1) s ≤ Q` supplies `s` branch vertices, while `12s²+2R ≤ LR`
 is precisely the (sampled) missing-pair routing budget. -/
 theorem containsCliqueSubdivision_of_local_reservoir_size
-    {V : Type*} [Fintype V] [DecidableEq V]
+    {V : Type*}
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (U : Finset V) (Q L R a s : ℕ)
     (hUcard : Q ≤ U.card)
@@ -102,7 +102,7 @@ theorem containsCliqueSubdivision_of_patterned_reservoir_size
 reservoir with local independence bound `a` does not contain `TK_k`, then its
 size and route budget obey the displayed root-type polynomial inequality. -/
 theorem local_reservoir_order_inequality
-    {V : Type*} [Fintype V] [DecidableEq V]
+    {V : Type*}
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (U : Finset V) (Q L a k : ℕ)
     (hUcard : Q ≤ U.card)

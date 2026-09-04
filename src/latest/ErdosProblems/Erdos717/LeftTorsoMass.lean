@@ -25,6 +25,7 @@ instance avoidVertices.instDecidableRel (G : SimpleGraph V)
     DecidableRel (avoidVertices G R).Adj :=
   inferInstanceAs <| DecidableRel fun x y => G.Adj x y ∧ x ∉ R ∧ y ∉ R
 
+omit [DecidableEq V] [Fintype V] in
 lemma avoidVertices_le (G : SimpleGraph V) (R : Finset V) :
     avoidVertices G R ≤ G := fun _ _ h => h.1
 
@@ -52,7 +53,7 @@ lemma incidentEdges_le_avoidVertices_add
         by_cases hR : a ∈ R ∨ b ∈ R
         · exact Or.inr ⟨he.1,
             (not_pair_subset_compl_iff R a b).2 hR⟩
-        · push_neg at hR
+        · push Not at hR
           exact Or.inl ⟨⟨he.1, hR.1, hR.2⟩, he.2⟩
   calc
     E.card ≤ (E₀ ∪ ER).card := Finset.card_le_card hsubset

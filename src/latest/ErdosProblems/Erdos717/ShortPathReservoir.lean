@@ -12,7 +12,7 @@ namespace Erdos717
 single arithmetic hypothesis is exactly what the DRC double count consumes;
 later real estimates instantiate `X0` and `L`. -/
 theorem exists_short_path_reservoir
-    {V : Type*} [Fintype V] [DecidableEq V]
+    {V : Type*} [Fintype V]
     (H G : SimpleGraph V) [DecidableRel H.Adj] [DecidableRel G.Adj]
     (hHG : H ≤ G)
     (X0 L : ℕ)

@@ -145,10 +145,12 @@ def separationInduceLeftToTorso {G : SimpleGraph V}
     (separationInduceLeftToTorso s t hseparator).separator =
       t.separator := rfl
 
+omit [DecidableEq V] [Fintype V] in
 /-- A set spanning all possible non-loop edges is linked. -/
 theorem isLinkedSet_of_pairwise_adj {G : SimpleGraph V} {S : Set V}
     (hadj : ∀ x ∈ S, ∀ y ∈ S, x ≠ y → G.Adj x y) :
     Erdos718.IsLinkedSet G S := by
+  classical
   intro I _ terminal hterminal
   have hedge (i : I) : G.Adj (terminal (.inl i)) (terminal (.inr i)) := by
     apply hadj _ (hterminal ⟨.inl i, rfl⟩)

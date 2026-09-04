@@ -31,7 +31,7 @@ def ShortRoute.mapLe {V : Type*} {G H : SimpleGraph V} {u v : V}
 missing branch pairs and consisting of routes with at most three internal
 vertices, can be greedily assembled into a topological clique. -/
 theorem containsCliqueSubdivision_of_short_route_reservoir
-    {V : Type*} [Fintype V] [DecidableEq V]
+    {V : Type*}
     (G : SimpleGraph V) [DecidableRel G.Adj] {r : ℕ}
     (branch : Fin r ↪ V)
     (C : Erdos718.CliqueEdge r → Finset (Finset V))
@@ -90,7 +90,7 @@ theorem containsCliqueSubdivision_of_short_route_reservoir
     · have hempty : Erdos718.walkInteriorSet he.toWalk = ∅ := by
         ext x
         simp only [Erdos718.walkInteriorSet, he.support_toWalk,
-          List.mem_cons, List.mem_singleton, Set.mem_setOf_eq, Set.mem_empty_iff_false,
+          List.mem_cons, Set.mem_ofPred_eq, Set.mem_empty_iff_false,
           iff_false]
         aesop
       rw [show path e = he.toWalk by simp [path, he], hempty]
@@ -103,7 +103,7 @@ theorem containsCliqueSubdivision_of_short_route_reservoir
     · have hempty : Erdos718.walkInteriorSet he.toWalk = ∅ := by
         ext x
         simp only [Erdos718.walkInteriorSet, he.support_toWalk,
-          List.mem_cons, List.mem_singleton, Set.mem_setOf_eq, Set.mem_empty_iff_false,
+          List.mem_cons, Set.mem_ofPred_eq, Set.mem_empty_iff_false,
           iff_false]
         aesop
       rw [show path e = he.toWalk by simp [path, he], hempty]
@@ -112,7 +112,7 @@ theorem containsCliqueSubdivision_of_short_route_reservoir
       · have hempty : Erdos718.walkInteriorSet hq.toWalk = ∅ := by
           ext x
           simp only [Erdos718.walkInteriorSet, hq.support_toWalk,
-            List.mem_cons, List.mem_singleton, Set.mem_setOf_eq, Set.mem_empty_iff_false,
+            List.mem_cons, Set.mem_ofPred_eq, Set.mem_empty_iff_false,
             iff_false]
           aesop
         rw [show path q = hq.toWalk by simp [path, hq], hempty]

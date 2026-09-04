@@ -78,8 +78,8 @@ noncomputable def expandTorsoPath
     (i : J) : G.Walk (terminal (.inl i) : V) (terminal (.inr i) : V) := by
   exact (expandTorsoPathAux s L hnoTriple M i
     (L.path i).length 0 (by omega)).copy
-    (by simpa using congrArg Subtype.val (L.path i).getVert_zero)
-    (by simpa using congrArg Subtype.val (L.path i).getVert_length)
+    (by simp)
+    (by simp)
 
 /-- Vertices that are permitted to occur while expanding path `i`: either
 an original vertex of the torso path, or a vertex of a right-side path used
@@ -309,7 +309,6 @@ theorem torsoExpansionAllowed_disjoint
     obtain ⟨zj, hzj, hzjx⟩ := List.mem_map.mp hxj
     have hzz : zi = zj := by
       apply Subtype.ext
-      change (zi : V) = (zj : V)
       change (zi : V) = x at hzix
       change (zj : V) = x at hzjx
       exact hzix.trans hzjx.symm
@@ -458,7 +457,7 @@ lemma Erdos718.PairLinkage.support_expandLeftTorso_allowed
 right separator to a linkage in the original graph.  This is the precise
 linkage-transfer statement used in the separation argument. -/
 theorem nonempty_pairLinkage_of_leftTorso_of_linked_right
-    {J : Type} [Fintype J] {G : SimpleGraph V}
+    {J : Type} {G : SimpleGraph V}
     (s : Erdos718.Separation G)
     (X : Set (s.left : Set V))
     (terminal : Sum J J ↪ (s.left : Set V))
@@ -470,6 +469,8 @@ theorem nonempty_pairLinkage_of_leftTorso_of_linked_right
       (liftLeftSet s X)
       (leftTerminalToGraph s terminal)) := by
   classical
+  let := Fintype.ofInjective (fun j : J => terminal (.inl j))
+    (terminal.injective.comp Sum.inl_injective)
   obtain ⟨L, hminimal⟩ := exists_minimal_pairLinkageTotalLength hleft
   have hnoTriple : HasNoSeparatorTriple s L :=
     hasNoSeparatorTriple_of_minimal s L hminimal

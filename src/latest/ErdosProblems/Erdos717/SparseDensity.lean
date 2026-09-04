@@ -42,7 +42,7 @@ private theorem insert_independent_of_zero_pattern
 /-- A maximum independent set dominates every other vertex.  Counting one
 incident edge per dominated vertex gives this slack, division-free form. -/
 theorem card_le_indepBound_add_twice_edges
-    {V : Type*} [Fintype V] [DecidableEq V]
+    {V : Type*} [Fintype V]
     (G : SimpleGraph V) [DecidableRel G.Adj] (a : ℕ)
     (hind : G.indepNum ≤ a) :
     Fintype.card V ≤ a + 2 * G.edgeFinset.card := by
@@ -117,7 +117,7 @@ theorem card_le_indepBound_add_twice_edges
 `e(G) ≥ n²/(32a)`.  This deliberately slack form follows from the same
 low-degree/maximal-independent-set count used in the sparse reduction. -/
 theorem card_sq_le_thirtytwo_mul_edges_mul_indepBound
-    {V : Type*} [Fintype V] [DecidableEq V]
+    {V : Type*} [Fintype V]
     (G : SimpleGraph V) [DecidableRel G.Adj] (a : ℕ)
     (hind : G.indepNum ≤ a) (ha : 16 * a ≤ Fintype.card V) :
     Fintype.card V * Fintype.card V ≤ 32 * G.edgeFinset.card * a := by

@@ -110,8 +110,7 @@ lemma incidentEdges_leftTorso_eq_induce_left
   unfold incidentEdges
   congr 1
   ext e
-  simp only [Finset.mem_filter, SimpleGraph.mem_edgeFinset,
-    SimpleGraph.mem_edgeSet]
+  simp only [Finset.mem_filter, SimpleGraph.mem_edgeFinset]
   induction e using Sym2.inductionOn with
   | _ a b =>
       constructor
@@ -172,16 +171,13 @@ def composeNestedRight {G : SimpleGraph V}
           intro h
           exact hbL (Finset.mem_map.mpr ⟨b', h, rfl⟩)
         exact t.not_adj haLt haNotTRight hbTRight hbNotTLeft (by
-          change (leftTorso s).Adj a' b'
           apply Or.inl
-          change G.Adj (a' : V) (b' : V)
           rw [haval]
           exact hab)
       · have haNotSRight' : (a' : V) ∉ s.right := by
           rw [haval]
           exact haNotSRight
         exact s.not_adj a'.property haNotSRight' hbSR hbSL (by
-          change G.Adj (a' : V) b
           rw [haval]
           exact hab)
     · rw [Finset.mem_map] at hbTR
@@ -191,9 +187,7 @@ def composeNestedRight {G : SimpleGraph V}
         intro h
         exact hbL (Finset.mem_map.mpr ⟨b', h, hbval⟩)
       exact t.not_adj haLt haNotTRight hbTR hbNotTL (by
-        change (leftTorso s).Adj a' b'
         apply Or.inl
-        change G.Adj (a' : V) (b' : V)
         rw [haval, hbval]
         exact hab)
 
@@ -249,7 +243,7 @@ lemma expandedLeftRegion_eq_composeNestedRight
     expandedLeftRegion s (t.right : Set (s.left : Set V)) =
       ((composeNestedRight s t hseparator).right : Set V) := by
   ext x
-  simp only [expandedLeftRegion, Set.mem_setOf_eq,
+  simp only [expandedLeftRegion, Set.mem_ofPred_eq,
     composeNestedRight_right, Finset.mem_coe, Finset.mem_union,
     Finset.mem_map]
   tauto
@@ -294,14 +288,12 @@ def composeNestedLeft {G : SimpleGraph V}
           exact haR (Finset.mem_map.mpr ⟨a', h, rfl⟩)
         exact t.not_adj haTLeft haNotTRight hbRt hbNotTLeft (by
           apply Or.inl
-          change G.Adj (a' : V) (b' : V)
           rw [hbval]
           exact hab)
       · have hbNotSRight' : (b' : V) ∉ s.right := by
           rw [hbval]
           exact hbNotSRight
         exact s.not_adj b'.property hbNotSRight' haSR haSL (by
-          change G.Adj (b' : V) a
           rw [hbval]
           exact hab.symm)
     · rw [Finset.mem_map] at haTL
@@ -312,7 +304,6 @@ def composeNestedLeft {G : SimpleGraph V}
         exact haR (Finset.mem_map.mpr ⟨a', h, haval⟩)
       exact t.not_adj haTL haNotTR hbRt hbNotTLeft (by
         apply Or.inl
-        change G.Adj (a' : V) (b' : V)
         rw [haval, hbval]
         exact hab)
 
@@ -414,9 +405,10 @@ lemma incidentEdges_composeNestedLeft
     _ = incidentEdges (G.induce (s.left : Set V))
         (t.right \ t.left) := hi.symm
 
+omit [DecidableEq V] [Fintype V] in
 /-- Lifting an induced-torso linkage preserves every vertex index. -/
 lemma getVert_liftInduce
-    {I : Type} [Fintype I] {G : SimpleGraph V}
+    {I : Type} {G : SimpleGraph V}
     {A X : Set V} {terminal : Sum I I ↪ V}
     (hA : Set.range terminal ⊆ A)
     (L : Erdos718.PairLinkage (G.induce A)
@@ -424,12 +416,14 @@ lemma getVert_liftInduce
     (i : I) (n : ℕ) :
     ((Erdos718.PairLinkage.liftInduce hA L).path i).getVert n =
       ((L.path i).getVert n : V) := by
+  classical
   dsimp only [Erdos718.PairLinkage.liftInduce]
   rw [Walk.getVert_copy, Walk.getVert_map]
   rfl
 
+omit [DecidableEq V] [Fintype V] in
 @[simp] lemma length_liftInduce
-    {I : Type} [Fintype I] {G : SimpleGraph V}
+    {I : Type} {G : SimpleGraph V}
     {A X : Set V} {terminal : Sum I I ↪ V}
     (hA : Set.range terminal ⊆ A)
     (L : Erdos718.PairLinkage (G.induce A)
@@ -437,6 +431,7 @@ lemma getVert_liftInduce
     (i : I) :
     ((Erdos718.PairLinkage.liftInduce hA L).path i).length =
       (L.path i).length := by
+  classical
   dsimp only [Erdos718.PairLinkage.liftInduce]
   rw [Walk.length_copy, Walk.length_map]
 

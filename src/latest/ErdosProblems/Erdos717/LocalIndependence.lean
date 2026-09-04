@@ -11,7 +11,7 @@ namespace Erdos717
 /-- A finite vertex set has a largest independent subset, expressed without
 changing the ambient vertex type. -/
 theorem exists_maximum_independent_subset
-    {V : Type*} [Fintype V] [DecidableEq V]
+    {V : Type*}
     (G : SimpleGraph V) (P : Finset V) :
     ∃ I : Finset V, I ⊆ P ∧ G.IsIndepSet I ∧
       IndepBoundOn G P I.card := by
@@ -49,8 +49,8 @@ theorem exists_maximum_independent_subset
     intro x hx y hy hxy
     obtain ⟨x', hx'A, hxx'⟩ := Finset.mem_map.mp hx
     obtain ⟨y', hy'A, hyy'⟩ := Finset.mem_map.mp hy
-    have hxA : (x' : V) ∈ A := by simpa using x'.property
-    have hyA : (y' : V) ∈ A := by simpa using y'.property
+    have hxA : (x' : V) ∈ A := x'.property
+    have hyA : (y' : V) ∈ A := y'.property
     have hne : (x' : V) ≠ (y' : V) := by
       intro h
       apply hxy

@@ -12,7 +12,7 @@ namespace Erdos717
 branch set.  The numerical hypothesis `6m+2 ≤ L` absorbs the floor in
 `L/2` and the three internal vertices used by each earlier route. -/
 theorem containsCliqueSubdivision_of_clean_reservoir
-    {V : Type*} [Fintype V] [DecidableEq V]
+    {V : Type*} [DecidableEq V]
     (H G : SimpleGraph V) [DecidableRel H.Adj] [DecidableRel G.Adj]
     (hHG : H ≤ G)
     (S T X U : Finset V) (L : ℕ)

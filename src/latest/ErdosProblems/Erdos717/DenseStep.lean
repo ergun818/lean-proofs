@@ -12,7 +12,7 @@ namespace Erdos717
 /-- The optimized dense-reservoir alternative with all integer parameters
 chosen canonically from the order and edge count. -/
 theorem dense_reservoir_order_inequality
-    {V : Type*} [Fintype V] [DecidableEq V]
+    {V : Type*} [Fintype V]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (a k : ℕ) (hind : G.indepNum ≤ a)
     (hn : 0 < Fintype.card V) (hm : 0 < G.edgeFinset.card)

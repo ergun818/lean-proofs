@@ -44,7 +44,7 @@ def badPairsAt {V : Type*} [DecidableEq V]
   (badOrderedPairs G S T L).filter fun p => G.Adj p.1 z ∧ G.Adj p.2 z
 
 theorem sum_card_badPairsAt
-    {V : Type*} [Fintype V] [DecidableEq V]
+    {V : Type*} [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (S T : Finset V) (L : ℕ) :
     ∑ z ∈ T, (badPairsAt G S T L z).card =
@@ -55,10 +55,10 @@ theorem sum_card_badPairsAt
   rw [Finset.sum_comm]
   apply Finset.sum_congr rfl
   intro p hp
-  simp only [commonNeighborFinset, Finset.card_eq_sum_ones, Finset.sum_filter]
+  simp only [commonNeighborFinset, Finset.sum_filter]
 
 theorem sum_card_badPairsAt_le
-    {V : Type*} [Fintype V] [DecidableEq V]
+    {V : Type*} [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (S T : Finset V) (L : ℕ) :
     ∑ z ∈ T, (badPairsAt G S T L z).card ≤ S.card * S.card * L := by

@@ -54,7 +54,7 @@ theorem reservoirRouteParameter_ge_five
     (m n : ℕ) (hn : 0 < n) (h : 5000 * (n * n * n) ≤ m * m) :
     5 ≤ reservoirRouteParameter m n := by
   rw [reservoirRouteParameter, Nat.le_div_iff_mul_le (by positivity)]
-  convert h using 1 <;> ring
+  convert h using 1; ring
 
 theorem five_mul_reservoirRouteParameter_le_size
     (m n : ℕ) (hn : 0 < n) (hm : m ≤ n * n) :

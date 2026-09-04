@@ -29,7 +29,7 @@ lemma Walk.IsPath.append_of_inter_eq_endpoint {G : SimpleGraph V}
   have hxq : x ∈ q.support := List.mem_of_mem_tail hyq
   have hxb : x = b := hinter x hxp hxq
   subst x
-  rw [q.support_eq_cons] at hqN
+  rw [← q.cons_tail_support] at hqN
   exact (List.nodup_cons.mp hqN).1 hyq
 
 /-! ### Truncating a path at its first target vertex -/
@@ -64,7 +64,7 @@ lemma support_takeFirstHit_subset {G : SimpleGraph V} {a b : V}
   rw [takeFirstHit, Walk.support_take] at hx
   exact List.mem_of_mem_take hx
 
-lemma takeFirstHit_meets_target_only_at_end [DecidableEq V]
+lemma takeFirstHit_meets_target_only_at_end
     {G : SimpleGraph V} {a b : V}
     (p : G.Walk a b) (B : Set V) (hb : b ∈ B) {x : V}
     (hx : x ∈ (takeFirstHit p B hb).support) (hxB : x ∈ B) :
@@ -88,9 +88,10 @@ lemma takeFirstHit_meets_target_only_at_end [DecidableEq V]
   have heq : p.support.idxOf x = firstHitIndex p B hb := by omega
   rw [← p.getVert_support_idxOf hxFull, heq]
 
-lemma isPath_takeFirstHit [DecidableEq V] {G : SimpleGraph V} {a b : V}
+lemma isPath_takeFirstHit {G : SimpleGraph V} {a b : V}
     {p : G.Walk a b} (hp : p.IsPath) (B : Set V) (hb : b ∈ B) :
     (takeFirstHit p B hb).IsPath := by
+  classical
   exact hp.take _
 
 /-- Terminal-disjoint arms from a prescribed terminal embedding to distinct
@@ -179,10 +180,10 @@ noncomputable def ofABLinkage {W : Type} [Fintype W] [DecidableEq W]
     intro x hxz hxw
     have hxz₀ : x ∈ (takeFirstHit (P.path (index z)) B
         (P.right_mem (index z))).support := by
-      simpa only [Set.mem_setOf_eq, Walk.support_copy] using hxz
+      simpa only [Set.mem_ofPred_eq, Walk.support_copy] using hxz
     have hxw₀ : x ∈ (takeFirstHit (P.path (index w)) B
         (P.right_mem (index w))).support := by
-      simpa only [Set.mem_setOf_eq, Walk.support_copy] using hxw
+      simpa only [Set.mem_ofPred_eq, Walk.support_copy] using hxw
     have hxz' : x ∈ (P.path (index z)).support := by
       apply support_takeFirstHit_subset (P.path (index z)) B
         (P.right_mem (index z)) x
@@ -222,7 +223,7 @@ noncomputable def glue [Fintype ι] {G : SimpleGraph V} {B : Set V}
       (hz : A.anchor z ∈ (M.path i).support) :
       z = .inl i ∨ z = .inr i := by
     by_contra h
-    push_neg at h
+    push Not at h
     have hinterior : A.anchor z ∈
         Erdos718.walkInteriorSet (M.path i) := ⟨hz,
       fun heq => h.1 (A.anchor.injective heq),
@@ -346,12 +347,13 @@ noncomputable def glue [Fintype ι] {G : SimpleGraph V} {B : Set V}
 
 /-- A linked set in the target region joins any family of terminal arms whose
 anchors lie in that linked set. -/
-theorem nonempty_pairLinkage_of_isLinkedSet {J : Type} [Fintype J]
+theorem nonempty_pairLinkage_of_isLinkedSet {J : Type} [Finite J]
     {G : SimpleGraph V} {B : Set V} {terminal : Sum J J ↪ V}
     (A : TerminalArms G B terminal) (S : Set B)
     (hanchor : Set.range (terminalIntoSet B A.anchor A.anchor_mem) ⊆ S)
     (hlinked : Erdos718.IsLinkedSet (G.induce B) S) :
     Nonempty (Erdos718.PairLinkage G (Set.range terminal) terminal) := by
+  let := Fintype.ofFinite J
   obtain ⟨L⟩ := hlinked J (terminalIntoSet B A.anchor A.anchor_mem) hanchor
   have hsmall : {x : B | (x : V) ∈ Set.range A.anchor} ⊆ S := by
     rintro x ⟨z, hz⟩
@@ -378,7 +380,7 @@ end TerminalArms
 right side of a separation, every resulting anchor lies in the separator. -/
 lemma anchor_mem_separator_of_left
     {W : Type} [Fintype W] [DecidableEq W]
-    {J : Type} [Fintype J] {G : SimpleGraph W}
+    {J : Type} {G : SimpleGraph W}
     {terminal : Sum J J ↪ W} (s : Erdos718.Separation G)
     (hterminalLeft : Set.range terminal ⊆ (s.left : Set W))
     (A : TerminalArms G (s.right : Set W) terminal) (z : Sum J J) :

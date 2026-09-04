@@ -435,7 +435,7 @@ theorem isEightKMassed_induce_right_of_minimal_violationFor
         intro x hxL
         by_contra hxR
         have hx : x ∈ t.left \ t.right := Finset.mem_sdiff.mpr ⟨hxL, hxR⟩
-        simpa [hempty] using hx
+        simp [hempty] at hx
       have hSepSub : rightSeparator s ⊆ t.separator := by
         intro x hx
         exact Finset.mem_inter.mpr ⟨hSepLeft hx, hleftSub (hSepLeft hx)⟩
@@ -586,7 +586,7 @@ theorem isEightKMassed_induce_right_of_minimal_violation
         intro x hxL
         by_contra hxR
         have : x ∈ t.left \ t.right := Finset.mem_sdiff.mpr ⟨hxL, hxR⟩
-        simpa [hempty] using this
+        simp [hempty] at this
       have hSepSub : rightSeparator s ⊆ t.separator := by
         intro x hx
         exact Finset.mem_inter.mpr ⟨hSepLeft hx, hleftSub (hSepLeft hx)⟩
@@ -643,7 +643,7 @@ theorem linked_induce_right_of_minimal_violation
       intro x hxL
       by_contra hxR
       have : x ∈ s.left \ s.right := Finset.mem_sdiff.mpr ⟨hxL, hxR⟩
-      simpa [hempty] using this
+      simp [hempty] at this
     have hXSep : C.X ⊆ s.separator := by
       intro x hx
       exact Finset.mem_inter.mpr ⟨hs.1 hx, hleftSub (hs.1 hx)⟩

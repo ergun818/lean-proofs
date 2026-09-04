@@ -13,7 +13,7 @@ namespace ThomasWollanMassed
 `k`-linked. -/
 theorem isKLinked_of_connected_edges
     {V : Type} [Fintype V] [DecidableEq V]
-    (G : SimpleGraph V) [DecidableRel G.Adj] (k : ℕ)
+    (G : SimpleGraph V) (k : ℕ)
     (hconn : Erdos718.IsKConnected G (2 * k))
     (hE : 8 * k * Fintype.card V ≤ G.edgeSet.ncard) :
     Erdos718.IsKLinked G k := by
@@ -53,7 +53,7 @@ theorem isKLinked_of_connected_edges
 explicit constant supplied by the Mader-core and Thomas--Wollan arguments:
 `5 r² |V|` edges force a subdivision of `K_r`. -/
 theorem containsCliqueSubdivision_of_five_mul_sq_mul_card_le_edges
-    {V : Type} [Fintype V] [DecidableEq V]
+    {V : Type} [Fintype V]
     (G : SimpleGraph V) [DecidableRel G.Adj] (r : ℕ)
     (hrV : 0 < Fintype.card V)
     (hE : 5 * (r * r) * Fintype.card V ≤ G.edgeFinset.card) :

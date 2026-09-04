@@ -9,7 +9,7 @@ open SimpleGraph
 namespace Erdos717
 
 private theorem sum_missingOrdered_subset
-    {V : Type*} [Fintype V] [DecidableEq V]
+    {V : Type*} [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (A : Finset V) (s : ℕ) (hs : 2 ≤ s) :
     ∑ S ∈ A.powersetCard s, (missingOrderedPairs G S).card =
@@ -97,7 +97,7 @@ private theorem choose_mul_two_descending
 two.  The factor only absorbs the diagonal difference between `n²` and
 `n(n-1)` and is convenient for integer routing estimates. -/
 theorem exists_subset_missingOrdered_density
-    {V : Type*} [Fintype V] [DecidableEq V]
+    {V : Type*} [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (A : Finset V) (R s : ℕ) (hs : 2 ≤ s) (hsA : s ≤ A.card)
     (hmissing : R * (missingOrderedPairs G A).card ≤ A.card * A.card) :

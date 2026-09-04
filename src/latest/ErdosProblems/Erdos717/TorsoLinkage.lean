@@ -188,7 +188,7 @@ theorem not_adj_getVert_add_two_of_minimal
   have hrsub : ∀ x, x ∈ r.support → x ∈ p.support := by
     intro x hx
     simp only [r, Walk.support_append, Walk.support_concat,
-      List.mem_append, List.mem_cons, List.mem_singleton] at hx
+      List.mem_append, List.mem_cons] at hx
     rcases hx with (hx | rfl | hx) | hx
     · rw [Walk.support_take] at hx
       exact List.mem_of_mem_take hx
@@ -263,7 +263,7 @@ theorem no_separator_triple_of_minimal
   have hrsub : ∀ x, x ∈ r.support → x ∈ p.support := by
     intro x hx
     simp only [r, Walk.support_append, Walk.support_concat,
-      List.mem_append, List.mem_cons, List.mem_singleton] at hx
+      List.mem_append, List.mem_cons] at hx
     rcases hx with (hx | rfl | hx) | hx
     · rw [Walk.support_take] at hx
       exact List.mem_of_mem_take hx
@@ -356,12 +356,12 @@ noncomputable instance SeparatorEdgeOccurrence.instFintype
   infer_instance
 
 lemma getVert_ne_of_linkage_index_ne
-    {J : Type} [Fintype J] {G : SimpleGraph V}
+    {J : Type} {G : SimpleGraph V}
     {s : Erdos718.Separation G} {X : Set (s.left : Set V)}
     {terminal : Sum J J ↪ (s.left : Set V)}
     (L : Erdos718.PairLinkage (leftTorso s) X terminal)
     {i j : J} (hij : i ≠ j) {m n : ℕ}
-    (hm : m ≤ (L.path i).length) (hn : n ≤ (L.path j).length) :
+    (_hm : m ≤ (L.path i).length) (_hn : n ≤ (L.path j).length) :
     (L.path i).getVert m ≠ (L.path j).getVert n := by
   intro h
   have hmSupp := (L.path i).getVert_mem_support m

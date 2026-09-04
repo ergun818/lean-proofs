@@ -94,7 +94,7 @@ lemma card_exclusiveNeighbors (G : SimpleGraph V) [DecidableRel G.Adj]
     (Nb \ insert a Na).card + 1 + (Na ∩ Nb).card =
         (Nb \ insert a Na).card + (Nb ∩ insert a Na).card := by omega
     _ = Nb.card := hsplit
-    _ = G.degree b := by simpa [Nb] using G.card_neighborFinset_eq_degree b
+    _ = G.degree b := by simp [Nb]
 
 private def newEdgeEmbedding (G : SimpleGraph V) [DecidableRel G.Adj]
     {a b : V} (hab : G.Adj a b) :
@@ -212,8 +212,10 @@ instance quotientGraph.instDecidableRel (G : SimpleGraph V)
   inferInstanceAs <| DecidableRel fun A B : P =>
     A ≠ B ∧ ∃ x ∈ (A : Finset V), ∃ y ∈ (B : Finset V), G.Adj x y
 
+omit [DecidableEq V] [Fintype V] in
 lemma singleton_isConnectedBag (G : SimpleGraph V) (v : V) :
     IsConnectedBag G {v} := by
+  classical
   constructor
   · simp
   · intro x y
@@ -236,7 +238,7 @@ lemma singletonPacking_card :
   rw [singletonPacking, Finset.card_image_iff.mpr]
   · simp
   · intro x y h
-    simpa using h
+    simp_all
 
 lemma singletonPacking_connected (G : SimpleGraph V) :
     IsConnectedPacking G singletonPacking := by
@@ -296,6 +298,7 @@ lemma card_edgeFinset_singletonQuotient (G : SimpleGraph V)
     (quotientGraph G singletonPacking).edgeFinset.card = G.edgeFinset.card := by
   exact (singletonQuotientIso G).card_edgeFinset_eq.symm
 
+omit [Fintype V] in
 lemma IsConnectedBag.union_of_adj {G : SimpleGraph V}
     {A B : Finset V} (hA : IsConnectedBag G A)
     (hB : IsConnectedBag G B) {x y : V}
@@ -345,18 +348,21 @@ def mergePacking (P : Finset (Finset V)) (A B : Finset V) :
     Finset (Finset V) :=
   insert (A ∪ B) ((P.erase A).erase B)
 
+omit [Fintype V] in
 lemma mem_mergePacking_union (P : Finset (Finset V)) (A B : Finset V) :
     A ∪ B ∈ mergePacking P A B := by
   simp [mergePacking]
 
+omit [Fintype V] in
 lemma mem_mergePacking_of_mem {P : Finset (Finset V)} {A B C : Finset V}
     (hC : C ∈ P) (hCA : C ≠ A) (hCB : C ≠ B) :
     C ∈ mergePacking P A B := by
   simp [mergePacking, hC, hCA, hCB]
 
+omit [Fintype V] in
 lemma union_not_mem_erased_of_packing {G : SimpleGraph V}
     {P : Finset (Finset V)} (hP : IsConnectedPacking G P)
-    {A B : Finset V} (hA : A ∈ P) (hB : B ∈ P) (hAB : A ≠ B) :
+    {A B : Finset V} (hA : A ∈ P) (_hB : B ∈ P) (_hAB : A ≠ B) :
     A ∪ B ∉ (P.erase A).erase B := by
   intro h
   have hU := (Finset.mem_erase.mp h).2
@@ -366,6 +372,7 @@ lemma union_not_mem_erased_of_packing {G : SimpleGraph V}
   have hdisj := hP.2 A hA (A ∪ B) hUmem hUA.symm
   exact (Finset.disjoint_left.mp hdisj) hx (Finset.mem_union_left B hx)
 
+omit [Fintype V] in
 lemma card_mergePacking {G : SimpleGraph V}
     {P : Finset (Finset V)} (hP : IsConnectedPacking G P)
     {A B : Finset V} (hA : A ∈ P) (hB : B ∈ P) (hAB : A ≠ B) :
@@ -384,9 +391,10 @@ lemma card_mergePacking {G : SimpleGraph V}
     Finset.card_erase_of_mem hB', Finset.card_erase_of_mem hA]
   omega
 
+omit [Fintype V] in
 lemma mergePacking_connected {G : SimpleGraph V}
     {P : Finset (Finset V)} (hP : IsConnectedPacking G P)
-    {A B : Finset V} (hA : A ∈ P) (hB : B ∈ P) (hAB : A ≠ B)
+    {A B : Finset V} (hA : A ∈ P) (hB : B ∈ P) (_hAB : A ≠ B)
     (hquot : (quotientGraph G P).Adj ⟨A, hA⟩ ⟨B, hB⟩) :
     IsConnectedPacking G (mergePacking P A B) := by
   obtain ⟨_, x, hx, y, hy, hxy⟩ := hquot
@@ -417,6 +425,7 @@ lemma mergePacking_connected {G : SimpleGraph V}
           (Finset.mem_of_mem_erase (Finset.mem_of_mem_erase hC)) D
           (Finset.mem_of_mem_erase (Finset.mem_of_mem_erase hD)) hCD
 
+omit [Fintype V] in
 private lemma union_ne_other_of_packing {G : SimpleGraph V}
     {P : Finset (Finset V)} (hP : IsConnectedPacking G P)
     {A B C : Finset V} (hA : A ∈ P) (hC : C ∈ P) (hAC : A ≠ C) :
@@ -429,7 +438,7 @@ private lemma union_ne_other_of_packing {G : SimpleGraph V}
 /-- The injective vertex map induced by merging `B` into `A`. -/
 private def mergeBagEmbedding {G : SimpleGraph V}
     {P : Finset (Finset V)} (hP : IsConnectedPacking G P)
-    (A B : P) (hAB : A ≠ B) :
+    (A B : P) (_hAB : A ≠ B) :
     {C : P // C ≠ B} ↪ mergePacking P A B where
   toFun C := ⟨if hCA : (C.1 : Finset V) = A then
       (A : Finset V) ∪ B else C.1, by
@@ -460,13 +469,15 @@ private def mergeBagEmbedding {G : SimpleGraph V}
           (E : Finset V)) h
         simpa only [dif_neg hCA, dif_neg hDA] using hval
 
+omit [Fintype V] in
 private lemma mergeBagEmbedding_val {G : SimpleGraph V}
     {P : Finset (Finset V)} (hP : IsConnectedPacking G P)
     (A B : P) (hAB : A ≠ B) (C : {C : P // C ≠ B}) :
     ((mergeBagEmbedding hP A B hAB C : mergePacking P A B) : Finset V) =
-      if hCA : (C.1 : Finset V) = A then (A : Finset V) ∪ B else C.1 := by
+      if _hCA : (C.1 : Finset V) = A then (A : Finset V) ∪ B else C.1 := by
   rfl
 
+omit [Fintype V] in
 private lemma mem_mergeBagEmbedding_of_mem {G : SimpleGraph V}
     {P : Finset (Finset V)} (hP : IsConnectedPacking G P)
     (A B : P) (hAB : A ≠ B) (C : {C : P // C ≠ B})
@@ -478,6 +489,7 @@ private lemma mem_mergeBagEmbedding_of_mem {G : SimpleGraph V}
     exact Finset.mem_union_left B (hCA ▸ hx)
   · exact hx
 
+omit [Fintype V] in
 private lemma mem_mergeBagEmbedding_B {G : SimpleGraph V}
     {P : Finset (Finset V)} (hP : IsConnectedPacking G P)
     (A B : P) (hAB : A ≠ B) {x : V} (hx : x ∈ (B : Finset V)) :
@@ -519,6 +531,7 @@ private def contractQuotientHom {G : SimpleGraph V}
       exact ⟨y, mem_mergeBagEmbedding_of_mem hP A B hAB C hy,
         x, hx', hxy.symm⟩
 
+omit [Fintype V] in
 lemma card_contractAt_le_mergedQuotient {G : SimpleGraph V}
     [DecidableRel G.Adj]
     {P : Finset (Finset V)} (hP : IsConnectedPacking G P)
@@ -558,15 +571,19 @@ instance edgeGraph.instDecidableRel (E : Finset (Sym2 V)) :
   inferInstanceAs <| DecidableRel
     (SimpleGraph.fromEdgeSet (E : Set (Sym2 V))).Adj
 
+omit [DecidableEq V] in
 lemma edgeGraph_le {G : SimpleGraph V} [DecidableRel G.Adj]
     {E : Finset (Sym2 V)} (hE : E ⊆ G.edgeFinset) : edgeGraph E ≤ G := by
+  classical
   rw [edgeGraph, SimpleGraph.fromEdgeSet_le]
   intro e he
   exact SimpleGraph.mem_edgeFinset.mp (hE (Set.mem_of_mem_sdiff he))
 
+omit [DecidableEq V] in
 lemma edgeSet_edgeGraph_eq {G : SimpleGraph V} [DecidableRel G.Adj]
     {E : Finset (Sym2 V)} (hE : E ⊆ G.edgeFinset) :
     (edgeGraph E).edgeSet = (E : Set (Sym2 V)) := by
+  classical
   rw [edgeGraph, SimpleGraph.edgeSet_fromEdgeSet]
   exact sdiff_eq_left.mpr (Set.disjoint_left.mpr fun e heE hediag =>
     (G.not_isDiag_of_mem_edgeSet
@@ -615,6 +632,7 @@ lemma exists_minimal_densePacking {G : SimpleGraph V} [DecidableRel G.Adj]
   apply hmin Q
   exact Finset.mem_filter.mpr ⟨Finset.mem_univ Q, hQ⟩
 
+omit [Fintype V] in
 /-- Select exactly `d |P| + 1` quotient edges. -/
 lemma exists_exactEdgeGraph {G : SimpleGraph V} [DecidableRel G.Adj]
     {P : Finset (Finset V)} {d : ℕ}
@@ -633,6 +651,7 @@ lemma exists_exactEdgeGraph {G : SimpleGraph V} [DecidableRel G.Adj]
 /-! Deleting a bag is the other elementary packing operation needed for
 minimality. -/
 
+omit [Fintype V] in
 lemma erase_isConnectedPacking {G : SimpleGraph V}
     {P : Finset (Finset V)} (hP : IsConnectedPacking G P) (A : Finset V) :
     IsConnectedPacking G (P.erase A) := by
@@ -662,6 +681,7 @@ private def eraseQuotientHom {G : SimpleGraph V}
     exact congrArg (fun Z : (P.erase A : Set (Finset V)) =>
       (Z : Finset V)) h
 
+omit [Fintype V] in
 lemma card_induce_compl_singleton_le_eraseQuotient {G : SimpleGraph V}
     [DecidableRel G.Adj]
     {P : Finset (Finset V)} (H : SimpleGraph P) [DecidableRel H.Adj]
@@ -692,6 +712,7 @@ lemma card_induce_compl_singleton_le_eraseQuotient {G : SimpleGraph V}
   rw [← Finset.card_map f.sym2Map]
   exact Finset.card_le_card hmap
 
+omit [Fintype V] in
 lemma minimalDense_exact_minDegree {G : SimpleGraph V}
     [DecidableRel G.Adj] {d : ℕ} {P : Finset (Finset V)}
     (hP : IsConnectedPacking G P)
@@ -732,6 +753,7 @@ lemma minimalDense_exact_minDegree {G : SimpleGraph V}
   have hp : 0 < P.card := Finset.card_pos.mpr ⟨A, A.2⟩
   omega
 
+omit [Fintype V] in
 lemma minimalDense_exact_commonNeighbors {G : SimpleGraph V}
     [DecidableRel G.Adj] {d : ℕ} {P : Finset (Finset V)}
     (hP : IsConnectedPacking G P)
@@ -783,6 +805,7 @@ lemma minimalDense_exact_commonNeighbors {G : SimpleGraph V}
 
 /-! ### The small high-minimum-degree graph -/
 
+omit [DecidableEq V] [Fintype V] in
 lemma exists_degree_le_twice_density
     {P : Finset (Finset V)} (H : SimpleGraph P) [DecidableRel H.Adj]
     {d : ℕ} (hHexact : H.edgeSet.ncard = d * P.card + 1) :
@@ -801,7 +824,7 @@ lemma exists_degree_le_twice_density
       have hxlt : H.degree x < Fintype.card P := H.degree_lt_card_verts x
       simpa using (show 2 ≤ Fintype.card P by omega)
   by_contra hex
-  push_neg at hex
+  push Not at hex
   have hsumLower : P.card * (2 * d + 2) ≤ ∑ x : P, H.degree x := by
     calc
       P.card * (2 * d + 2) = ∑ _x : P, (2 * d + 2) := by simp
@@ -814,7 +837,7 @@ lemma exists_degree_le_twice_density
   omega
 
 lemma card_le_degree_induce_of_subset
-    {P : Type*} [Fintype P] [DecidableEq P]
+    {P : Type*}
     (H : SimpleGraph P) [DecidableRel H.Adj]
     (S D : Finset P) (x : (S : Set P))
     (hD : ∀ y ∈ D, H.Adj x y ∧ y ∈ S) :
@@ -832,6 +855,7 @@ lemma card_le_degree_induce_of_subset
   rw [(H.induce (S : Set P)).card_neighborSet_eq_degree x] at hcard
   simpa using hcard
 
+omit [Fintype V] in
 /-- The closed neighborhood of the low-degree vertex has at most `2d+2`
 vertices and minimum degree at least `d+1`. -/
 lemma exists_small_highMinDegree_induce
@@ -919,12 +943,13 @@ structure LinkedMinorModel (G : SimpleGraph V) (k : ℕ) where
 
 attribute [instance] LinkedMinorModel.fintypeW
 
+omit [DecidableEq V] in
 /-- More than `(8k-1)|V|` edges force a connected-bag minor containing a
 `k`-linked graph.  This is the contraction-minimal form of Thomas--Wollan's
 Corollary 1.2. -/
 theorem exists_linkedMinorModel_of_dense
     (G : SimpleGraph V) [DecidableRel G.Adj]
-    (k : ℕ) (hk : 1 ≤ k) (hV : Nonempty V)
+    (k : ℕ) (hk : 1 ≤ k) (_hV : Nonempty V)
     (hE : (8 * k - 1) * Fintype.card V < G.edgeFinset.card) :
     Nonempty (LinkedMinorModel G k) := by
   classical

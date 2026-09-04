@@ -14,7 +14,7 @@ namespace Erdos717
 
 section FiniteGreedy
 
-variable {ι V : Type*} [DecidableEq ι] [Fintype V] [DecidableEq V]
+variable {ι V : Type*} [DecidableEq V]
 
 /-- In a pairwise-disjoint family, at most `|U|` members can meet `U`. -/
 theorem card_filter_not_disjoint_le (C : Finset (Finset V))
@@ -51,6 +51,7 @@ theorem card_filter_not_disjoint_le (C : Finset (Finset V))
   rw [Fintype.card_coe B, Fintype.card_coe U] at hcard
   simpa only [B] using hcard
 
+omit [DecidableEq V] in
 /-- Greedy transversal lemma.  If each reservoir is internally pairwise
 disjoint, contains more than `b |I|` sets, and every candidate has at most
 `b` points, then one may choose mutually disjoint candidates for all indices
@@ -177,7 +178,7 @@ theorem exists_pairwise_disjoint_choice
       (⟨i, chosen i⟩ : (j : J) × Finset V) ∈ P :=
     Classical.choose_spec (hcover i)
   let f : ι → Finset V := fun i =>
-    if hi : i ∈ I then chosen ⟨i, hi⟩ else Finset.univ
+    if hi : i ∈ I then chosen ⟨i, hi⟩ else ∅
   refine ⟨f, ?_, ?_, ?_⟩
   · intro i hi
     have hpD := hPsub (hchosen ⟨i, hi⟩)

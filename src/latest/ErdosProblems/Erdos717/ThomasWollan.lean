@@ -28,8 +28,10 @@ def availableMiddle (G : SimpleGraph V) [DecidableRel G.Adj]
   (G.neighborFinset (terminal (.inl i)) ∩
       G.neighborFinset (terminal (.inr i))) \ X
 
+omit [DecidableEq V] [Fintype V] in
 private lemma terminal_left_ne_right (terminal : Sum ι ι ↪ V) (i : ι) :
     terminal (.inl i) ≠ terminal (.inr i) := by
+  classical
   intro h
   have h' : (Sum.inl i : Sum ι ι) = Sum.inr i := terminal.injective h
   cases h'
@@ -99,6 +101,7 @@ lemma card_availableMiddle_ge
   change k ≤ (A ∩ B).card - (X ∩ (A ∩ B)).card
   omega
 
+omit [DecidableEq V] in
 /-- Thomas--Wollan's Lemma 3.1: the degree/cardinality inequality forces
 enough distinct common neighbours to route every prescribed pairing by paths
 of length at most two. -/
@@ -108,8 +111,7 @@ theorem isKLinked_of_minDegree_card
     (hsize : Fintype.card V + 3 * k ≤ 2 * δ + 4) :
     Erdos718.IsKLinked G k := by
   classical
-  intro X hXfinite hXcard
-  intro J _ terminal hrange
+  intro X hXfinite hXcard J _ terminal hrange
   let XF : Finset V := hXfinite.toFinset
   have htermX (z : Sum J J) : terminal z ∈ X :=
     hrange ⟨z, rfl⟩
@@ -174,7 +176,7 @@ theorem isKLinked_of_minDegree_card
         (hmiddle_right (⟨i, h⟩ : Missing))
   have linkagePath_isPath (i : J) : (linkagePath i).IsPath := by
     by_cases h : G.Adj (terminal (.inl i)) (terminal (.inr i))
-    · simpa [linkagePath, h] using h.isPath_toWalk
+    · simp [linkagePath, h]
     · let mi : Missing := ⟨i, h⟩
       have hleft := hmiddle_left mi
       have hright := hmiddle_right mi
@@ -216,11 +218,11 @@ theorem isKLinked_of_minDegree_card
     by_cases hi : G.Adj (terminal (.inl i)) (terminal (.inr i))
     · have hpi : linkagePath i = hi.toWalk := by simp [linkagePath, hi]
       rw [hpi, hi.support_toWalk] at hvi
-      simp at hvi
+      simp only [List.mem_cons, List.not_mem_nil, or_false, mem_ofPred_eq] at hvi
       by_cases hj : G.Adj (terminal (.inl j)) (terminal (.inr j))
       · have hpj : linkagePath j = hj.toWalk := by simp [linkagePath, hj]
         rw [hpj, hj.support_toWalk] at hvj
-        simp at hvj
+        simp only [List.mem_cons, List.not_mem_nil, or_false, mem_ofPred_eq] at hvj
         rcases hvi with rfl | rfl <;> rcases hvj with h | h
         all_goals
           have hz := terminal.injective h
@@ -232,7 +234,7 @@ theorem isKLinked_of_minDegree_card
         rw [hpj] at hvj
         simp only [Set.mem_ofPred_eq, SimpleGraph.Walk.support_concat,
           SimpleGraph.Adj.support_toWalk, List.mem_append, List.mem_cons] at hvj
-        simp at hvj
+        simp only [List.not_mem_nil, or_false] at hvj
         rcases hvi with rfl | rfl
         all_goals
           rcases hvj with (h | h) | h
@@ -248,11 +250,11 @@ theorem isKLinked_of_minDegree_card
       rw [hpi] at hvi
       simp only [Set.mem_ofPred_eq, SimpleGraph.Walk.support_concat,
         SimpleGraph.Adj.support_toWalk, List.mem_append, List.mem_cons] at hvi
-      simp at hvi
+      simp only [List.not_mem_nil, or_false] at hvi
       by_cases hj : G.Adj (terminal (.inl j)) (terminal (.inr j))
       · have hpj : linkagePath j = hj.toWalk := by simp [linkagePath, hj]
         rw [hpj, hj.support_toWalk] at hvj
-        simp at hvj
+        simp only [List.mem_cons, List.not_mem_nil, or_false, mem_ofPred_eq] at hvj
         rcases hvj with rfl | rfl
         all_goals
           rcases hvi with (h | h) | h
@@ -268,7 +270,7 @@ theorem isKLinked_of_minDegree_card
         rw [hpj] at hvj
         simp only [Set.mem_ofPred_eq, SimpleGraph.Walk.support_concat,
           SimpleGraph.Adj.support_toWalk, List.mem_append, List.mem_cons] at hvj
-        simp at hvj
+        simp only [List.not_mem_nil, or_false] at hvj
         rcases hvi with (hvi | hvi) | hvi
         · rcases hvj with (hvj | hvj) | hvj
           · have hz := terminal.injective (hvi.symm.trans hvj)
@@ -337,10 +339,12 @@ def toPairLinkage (P : ShortPartialLinkage G X terminal)
     intro i j hij
     exact P.disjoint (fun h => hij (congrArg Subtype.val h))
 
+omit [DecidableEq V] [Fintype V] in
 lemma active_card_lt_of_no_linkage
     (P : ShortPartialLinkage G X terminal)
     (hno : ¬Nonempty (Erdos718.PairLinkage G X terminal)) :
     P.active.card < Fintype.card ι := by
+  classical
   have hle := Finset.card_le_univ P.active
   by_contra hnot
   have heqcard : P.active.card = (Finset.univ : Finset ι).card := by
@@ -348,9 +352,10 @@ lemma active_card_lt_of_no_linkage
   have hfull := Finset.eq_univ_of_card P.active (by simpa using heqcard)
   exact hno ⟨P.toPairLinkage hfull⟩
 
+omit [DecidableEq V] [Fintype V] [Fintype ι] in
 /-- Choose a partial linkage which first maximizes the number of resolved
 pairs and then minimizes the sum of its path lengths. -/
-theorem exists_lexicographically_optimal
+theorem exists_lexicographically_optimal [Finite ι]
     (G : SimpleGraph V) (X : Set V) (terminal : Sum ι ι ↪ V) :
     ∃ P : ShortPartialLinkage G X terminal,
       (∀ Q : ShortPartialLinkage G X terminal,
@@ -358,6 +363,7 @@ theorem exists_lexicographically_optimal
       (∀ Q : ShortPartialLinkage G X terminal,
         Q.active.card = P.active.card → P.totalLength ≤ Q.totalLength) := by
   classical
+  let := Fintype.ofFinite ι
   let ExistsSize (m : ℕ) : Prop :=
     ∃ P : ShortPartialLinkage G X terminal, P.active.card = m
   have hzero : ExistsSize 0 := by
@@ -389,6 +395,7 @@ def interiorFinset (P : ShortPartialLinkage G X terminal) (i : P.active) :
   ((P.path i).support.toFinset.erase (terminal (.inl i.1))).erase
     (terminal (.inr i.1))
 
+omit [Fintype V] [Fintype ι] in
 lemma card_interiorFinset_le_six
     (P : ShortPartialLinkage G X terminal) (i : P.active) :
     (P.interiorFinset i).card ≤ 6 := by
@@ -432,15 +439,20 @@ noncomputable def inactiveTerminals
 def terminalFinset (terminal : Sum ι ι ↪ V) : Finset V :=
   Finset.univ.map terminal
 
+omit [DecidableEq V] [Fintype V] in
 @[simp] lemma card_terminalFinset (terminal : Sum ι ι ↪ V) :
     (terminalFinset terminal).card = 2 * Fintype.card ι := by
+  classical
   simp [terminalFinset, Fintype.card_sum]
   omega
 
+omit [DecidableEq V] [Fintype V] in
 lemma mem_terminalFinset (terminal : Sum ι ι ↪ V) (z : Sum ι ι) :
     terminal z ∈ terminalFinset terminal := by
+  classical
   simp [terminalFinset]
 
+omit [Fintype V] in
 lemma usedVertices_subset_selectedSupports_union_inactiveTerminals
     (P : ShortPartialLinkage G X terminal) :
     P.usedVertices (terminalFinset terminal) ⊆
@@ -461,7 +473,7 @@ lemma usedVertices_subset_selectedSupports_union_inactiveTerminals
           unfold inactiveTerminals
           apply Finset.mem_biUnion.mpr
           refine ⟨i, Finset.mem_filter.mpr ⟨Finset.mem_univ _, hi⟩, ?_⟩
-          show terminal (.inl i) ∈
+          change terminal (.inl i) ∈
             ({terminal (.inl i), terminal (.inr i)} : Finset V)
           simp
     | inr i =>
@@ -475,7 +487,7 @@ lemma usedVertices_subset_selectedSupports_union_inactiveTerminals
           unfold inactiveTerminals
           apply Finset.mem_biUnion.mpr
           refine ⟨i, Finset.mem_filter.mpr ⟨Finset.mem_univ _, hi⟩, ?_⟩
-          show terminal (.inr i) ∈
+          change terminal (.inr i) ∈
             ({terminal (.inl i), terminal (.inr i)} : Finset V)
           simp
   · apply Finset.mem_union_left
@@ -485,6 +497,7 @@ lemma usedVertices_subset_selectedSupports_union_inactiveTerminals
     unfold interiorFinset at hvint
     exact Finset.mem_of_mem_erase (Finset.mem_of_mem_erase hvint)
 
+omit [Fintype V] [Fintype ι] in
 lemma card_usedVertices_le
     (P : ShortPartialLinkage G X terminal) (XF : Finset V) :
     (P.usedVertices XF).card ≤ XF.card + 6 * P.active.card := by
@@ -501,6 +514,7 @@ lemma card_usedVertices_le
       exact P.card_interiorFinset_le_six i
     _ = XF.card + 6 * P.active.card := by simp [Nat.mul_comm]
 
+omit [Fintype V] [Fintype ι] in
 lemma support_subset_usedVertices
     (P : ShortPartialLinkage G X terminal) (XF : Finset V)
     (hterminal : ∀ z, terminal z ∈ XF) (i : P.active) :
@@ -587,6 +601,7 @@ noncomputable def insert
             apply Subtype.ext
             exact congrArg (fun x : P.active => x.1) h)
 
+omit [DecidableEq V] [Fintype V] [Fintype ι] in
 @[simp] lemma active_insert
     (P : ShortPartialLinkage G X terminal) (i : ι) (hi : i ∉ P.active)
     (p : G.Walk (terminal (.inl i)) (terminal (.inr i)))
@@ -656,6 +671,7 @@ noncomputable def replace
           Set.mem_ofPred_eq, SimpleGraph.Walk.support_copy] using h
       · simpa only [newPath, hji, hli, ↓reduceDIte] using P.disjoint hjl
 
+omit [DecidableEq V] [Fintype V] [Fintype ι] in
 @[simp] lemma active_replace
     (P : ShortPartialLinkage G X terminal) (i : P.active)
     (p : G.Walk (terminal (.inl i.1)) (terminal (.inr i.1)))
@@ -665,6 +681,7 @@ noncomputable def replace
       Disjoint {v | v ∈ p.support} {v | v ∈ (P.path j).support}) :
     (P.replace i p hp hlen havoid hdisj).active = P.active := rfl
 
+omit [DecidableEq V] [Fintype V] [Fintype ι] in
 lemma totalLength_replace_lt
     (P : ShortPartialLinkage G X terminal) (i : P.active)
     (p : G.Walk (terminal (.inl i.1)) (terminal (.inr i.1)))
@@ -698,8 +715,8 @@ lemma totalLength_replace_lt
 /-- Four neighbours of an outside vertex on a path include two whose
 positions differ by at least three. -/
 lemma exists_far_apart_neighbors_on_path
-    [DecidableRel G.Adj] {a b v : V} {p : G.Walk a b} (hp : p.IsPath)
-    (hv : v ∉ p.support)
+    [DecidableRel G.Adj] {a b v : V} {p : G.Walk a b} (_hp : p.IsPath)
+    (_hv : v ∉ p.support)
     (hfour : 4 ≤ (G.neighborFinset v ∩ p.support.toFinset).card) :
     ∃ x y : V,
       x ∈ p.support ∧ y ∈ p.support ∧ G.Adj x v ∧ G.Adj v y ∧
@@ -785,6 +802,7 @@ lemma exists_shorter_path_via
     · exact Finset.mem_union_right _
         (List.mem_toFinset.mpr (p.support_dropUntil_subset_support hy hzright))
 
+omit [Fintype ι] in
 /-- In a lexicographically optimal short partial linkage, an unused vertex
 has at most three neighbours on each selected path. -/
 lemma card_neighbors_on_path_le_three_of_optimal
@@ -848,11 +866,13 @@ lemma card_neighbors_on_path_le_three_of_optimal
     exact P.totalLength_replace_lt i q hqpath hqlen hqavoid hqdisj hqlt
   omega
 
+omit [DecidableEq V] [Fintype V] [Fintype ι] in
 lemma terminal_not_mem_selected_path
     (P : ShortPartialLinkage G X terminal)
     (hterminalX : ∀ z, terminal z ∈ X) (z : Sum ι ι) (j : P.active)
     (hzleft : z ≠ .inl j.1) (hzright : z ≠ .inr j.1) :
     terminal z ∉ (P.path j).support := by
+  classical
   intro hz
   by_cases hs : terminal z = terminal (.inl j.1)
   · exact hzleft (terminal.injective hs)
@@ -862,10 +882,10 @@ lemma terminal_not_mem_selected_path
     ⟨hz, hs, ht⟩
   exact (Set.disjoint_left.mp (P.avoids j)) hzint (hterminalX z)
 
+omit [Fintype V] [Fintype ι] in
 /-- An unused vertex cannot be adjacent to both endpoints of an unresolved
 pair, or that two-edge path could be added to the partial linkage. -/
 lemma not_both_adj_inactive_of_optimal
-    [DecidableRel G.Adj]
     (P : ShortPartialLinkage G X terminal) (XF : Finset V)
     (hX : X = (XF : Set V)) (hterminal : ∀ z, terminal z ∈ XF)
     (hmaximal : ∀ Q : ShortPartialLinkage G X terminal,
@@ -942,6 +962,7 @@ lemma not_both_adj_inactive_of_optimal
   have := hmaximal Q
   omega
 
+omit [Fintype ι] in
 lemma card_neighbors_inactive_pair_le_one
     [DecidableRel G.Adj]
     (P : ShortPartialLinkage G X terminal) (XF : Finset V)
@@ -1058,6 +1079,7 @@ lemma card_neighbors_usedVertices_le_three_mul
   change (N ∩ P.usedVertices XF).card ≤ 3 * Fintype.card ι
   omega
 
+omit [Fintype V] in
 /-- Maximality forbids a short route for an inactive pair whose nonterminal
 vertices all lie outside the used set. -/
 lemma no_short_external_walk_of_optimal
@@ -1132,9 +1154,10 @@ lemma mem_shortReach_iff (G : SimpleGraph V) (L : Finset V) (s z : V) :
   classical
   simp [shortReach]
 
-lemma neighbor_mem_shortReach [DecidableRel G.Adj]
+lemma neighbor_mem_shortReach
     (L : Finset V) {s x : V} (hsx : G.Adj s x) (hx : x ∉ L) :
     x ∈ shortReach G L s := by
+  classical
   rw [mem_shortReach_iff]
   refine ⟨hx, hsx.toWalk, by simp, ?_⟩
   intro w hw hws
@@ -1247,10 +1270,11 @@ lemma card_outsideNeighbors_ge
   rw [houtEq]
   omega
 
-lemma one_step_mem_shortReach [DecidableRel G.Adj]
+lemma one_step_mem_shortReach
     (L : Finset V) {s x u : V} (hsx : G.Adj s x) (hxL : x ∉ L)
     (hxu : G.Adj x u) (huL : u ∉ L) :
     u ∈ shortReach G L s := by
+  classical
   rw [mem_shortReach_iff]
   refine ⟨huL, hsx.toWalk.concat hxu, by simp, ?_⟩
   intro w hw hws
@@ -1262,11 +1286,12 @@ lemma one_step_mem_shortReach [DecidableRel G.Adj]
   · exact hwx ▸ hxL
   · exact hwu ▸ huL
 
-lemma two_step_mem_shortReach [DecidableRel G.Adj]
+lemma two_step_mem_shortReach
     (L : Finset V) {s x u w : V} (hsx : G.Adj s x) (hxL : x ∉ L)
     (hxu : G.Adj x u) (huL : u ∉ L)
     (huw : G.Adj u w) (hwL : w ∉ L) :
     w ∈ shortReach G L s := by
+  classical
   rw [mem_shortReach_iff]
   refine ⟨hwL, (hsx.toWalk.concat hxu).concat huw, by simp, ?_⟩
   intro z hz hzs
@@ -1333,9 +1358,10 @@ theorem completeGraph_isKLinked (α : Type*) (k : ℕ) :
     · apply hij
       exact Sum.inr.inj (terminal.injective (hzi.symm.trans hzj))
 
+omit [DecidableEq V] [Fintype V] in
 /-- The two endpoints of an edge induce a `1`-linked subgraph. -/
 theorem exists_oneLinkedSubgraph_of_adj (G : SimpleGraph V)
-    [DecidableRel G.Adj] {u v : V} (huv : G.Adj u v) :
+    {u v : V} (huv : G.Adj u v) :
     Nonempty (KLinkedSubgraph G 1) := by
   classical
   let S : Set V := {u, v}
@@ -1366,6 +1392,7 @@ theorem exists_oneLinkedSubgraph_of_adj (G : SimpleGraph V)
   · rw [hcomplete]
     exact completeGraph_isKLinked S 1
 
+omit [DecidableEq V] in
 /-- Thomas--Wollan, Theorem 1.5, in the exact-terminal form used in its
 proof.  The argument has one vertex of harmless slack: a graph of order at
 most `16k + 1` and minimum degree at least `8k`
@@ -1387,7 +1414,7 @@ theorem exists_kLinkedSubgraph_of_unlinked_exact
     simpa using P.active_card_lt_of_no_linkage hno
   obtain ⟨i, hi⟩ : ∃ i : Fin k, i ∉ P.active := by
     by_contra h
-    push_neg at h
+    push Not at h
     have hfull : P.active = Finset.univ := Finset.eq_univ_of_forall h
     have : P.active.card = k := by simp [hfull]
     omega
@@ -1399,12 +1426,12 @@ theorem exists_kLinkedSubgraph_of_unlinked_exact
     dsimp [L]
     have h := P.card_usedVertices_le XF
     have hXFcard : XF.card = 2 * k := by
-      simpa [XF] using ShortPartialLinkage.card_terminalFinset terminal
+      simp [XF]
     omega
   have endpoint_has_outside_neighbor (s : V) :
       ∃ x : V, G.Adj s x ∧ x ∉ L := by
     by_contra hn
-    push_neg at hn
+    push Not at hn
     have hsub : G.neighborFinset s ⊆ L := by
       intro x hx
       exact hn x (G.mem_neighborFinset s x |>.mp hx)
@@ -1448,7 +1475,7 @@ theorem exists_kLinkedSubgraph_of_unlinked_exact
     have hLlower : 2 * k ≤ L.card := by
       have := Finset.card_le_card htermSub
       have hXFcard : XF.card = 2 * k := by
-        simpa [XF] using ShortPartialLinkage.card_terminalFinset terminal
+        simp [XF]
       omega
     have hWeq : W.card = Fintype.card V - L.card := by
       rw [show W = Finset.univ \ L by ext z; simp [W]]
@@ -1460,7 +1487,7 @@ theorem exists_kLinkedSubgraph_of_unlinked_exact
   have hcover (v : V) (hv : v ∈ W) : v ∈ S ∨ v ∈ T := by
     have hvL : v ∉ L := (Finset.mem_filter.mp hv).2
     by_contra hnot
-    push_neg at hnot
+    push Not at hnot
     let A := ShortPartialLinkage.outsideNeighbors G L x
     let B := ShortPartialLinkage.outsideNeighbors G L y
     let C := ShortPartialLinkage.outsideNeighbors G L v
@@ -1624,6 +1651,7 @@ theorem exists_kLinkedSubgraph_of_unlinked_exact
       linked := hlinked
     }⟩
 
+omit [DecidableEq V] in
 /-- A failed linkage involving at most `2k` distinguished vertices can be
 padded to a failed linkage of exactly `k` pairs.  The padding retains all of
 the distinguished vertices among the new terminals, so a linkage for the
@@ -1700,6 +1728,7 @@ lemma exists_full_unlinked_terminal_of_not_isKLinked
   rw [hsmallTerminal] at Lsmall
   exact hno.false Lsmall
 
+omit [DecidableEq V] in
 /-- Thomas--Wollan, Theorem 1.5, with the one-vertex slack present in its
 proof: a nonempty graph of order at most `16k + 1` and minimum degree at
 least `8k` contains a `k`-linked subgraph. -/

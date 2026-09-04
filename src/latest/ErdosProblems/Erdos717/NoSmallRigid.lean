@@ -192,9 +192,6 @@ theorem noRigidSeparationEqual_of_lexMinimal
           (t.separator : Set (s.left : Set C.V))) ↔
         z ∈ rightSeparator q
       rw [mem_rightSeparator]
-      change ((z : C.V) ∈ liftLeftSet s
-          (t.separator : Set (s.left : Set C.V))) ↔
-        (z : C.V) ∈ q.separator
       rw [show q.separator =
         t.separator.map (Function.Embedding.subtype _) by
           exact composeNestedRight_separator s t hOldTorsoRight]

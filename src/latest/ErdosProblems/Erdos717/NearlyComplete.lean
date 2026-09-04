@@ -21,7 +21,7 @@ def nonNeighborFinset {V : Type*} [DecidableEq V]
   A.filter fun w => w ≠ v ∧ ¬G.Adj v w
 
 theorem sum_card_nonNeighborFinset
-    {V : Type*} [Fintype V] [DecidableEq V]
+    {V : Type*} [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj] (A : Finset V) :
     ∑ v ∈ A, (nonNeighborFinset G A v).card =
       (missingOrderedPairs G A).card := by
@@ -89,7 +89,7 @@ sets in `A` have size at most `k+1`, then after at most `k` successive
 nonneighbourhood restrictions one reaches `T` with few ordered missing
 pairs, losing a factor at most `R` at each restriction. -/
 theorem exists_nearly_complete_subset_aux
-    {V : Type*} [Fintype V] [DecidableEq V]
+    {V : Type*} [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (A : Finset V) (R k : ℕ) (hR : 1 ≤ R)
     (hind : IndepBoundOn G A (k + 1)) :
@@ -168,7 +168,7 @@ theorem exists_nearly_complete_subset_aux
 
 /-- The same lemma stated directly from the graph's independence number. -/
 theorem exists_nearly_complete_subset
-    {V : Type*} [Fintype V] [DecidableEq V]
+    {V : Type*} [Finite V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (A : Finset V) (R a : ℕ) (hR : 1 ≤ R) (ha : 1 ≤ a)
     (hind : G.indepNum ≤ a) :

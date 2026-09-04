@@ -63,7 +63,7 @@ theorem densePotential_lt_of_reservoir_alternative
       Nat.cast_one, Nat.cast_ofNat] at hlogPower
     have hlog38 : Real.log (38 : ℝ) < 37 := by
       convert Real.log_lt_sub_one_of_pos
-        (by norm_num : (0 : ℝ) < 38) (by norm_num : (38 : ℝ) ≠ 1) using 1 <;>
+        (by norm_num : (0 : ℝ) < 38) (by norm_num : (38 : ℝ) ≠ 1) using 1;
         norm_num
     have hLlower : x - 3000 ≤ Real.log (L : ℝ) := by
       simpa only [x] using hlogL

@@ -143,7 +143,7 @@ theorem noRigidSeparationBelow_of_lexMinimal
         by_contra hxR
         have hx : x ∈ t.left \ t.right :=
           Finset.mem_sdiff.mpr ⟨hxL, hxR⟩
-        simpa [hempty] using hx
+        simp [hempty] at hx
       have hXsep : Xl ⊆ t.separator := by
         intro x hx
         exact Finset.mem_inter.mpr ⟨htBad.1 hx, hleftSub (htBad.1 hx)⟩
@@ -277,9 +277,6 @@ theorem noRigidSeparationBelow_of_lexMinimal
           (t.separator : Set (s.left : Set C.V))) ↔
         z ∈ rightSeparator q
       rw [mem_rightSeparator]
-      change ((z : C.V) ∈ liftLeftSet s
-          (t.separator : Set (s.left : Set C.V))) ↔
-        (z : C.V) ∈ q.separator
       rw [show q.separator =
         t.separator.map (Function.Embedding.subtype _) by
           exact composeNestedRight_separator s t hSright]

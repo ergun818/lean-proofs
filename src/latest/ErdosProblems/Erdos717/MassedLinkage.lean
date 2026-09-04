@@ -93,7 +93,6 @@ theorem isLinkedSet_of_kLinkedSubgraph_of_noSmallRigid
       inj' := by
         intro x y h
         apply Subtype.ext
-        change (x : C.V) = (y : C.V)
         exact congrArg (fun z : (t.right : Set C.V) => (z : C.V)) h
       map_rel_iff' := by
         intro x y
@@ -139,7 +138,7 @@ theorem isLinkedSet_of_kLinkedSubgraph_of_noSmallRigid
           by_contra hbL
           have : b ∈ t.right \ t.left :=
             Finset.mem_sdiff.mpr ⟨hbR, hbL⟩
-          simpa [hempty] using this
+          simp [hempty] at this
         exact Finset.mem_inter.mpr ⟨hbL, hbR⟩
       have hcards := Set.ncard_le_ncard hBsep
       rw [Set.ncard_coe_finset] at hcards

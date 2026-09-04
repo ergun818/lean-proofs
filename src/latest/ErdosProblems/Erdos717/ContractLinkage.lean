@@ -42,8 +42,7 @@ lemma exists_liftContractAdj (G : SimpleGraph V) {a b : V} (hab : G.Adj a b)
     refine ⟨hab.toWalk.concat hby, ?_⟩
     intro z hz
     simp only [Adj.toWalk, Walk.support_concat, Walk.support_cons,
-      Walk.support_nil, List.mem_append, List.mem_cons,
-      List.mem_singleton] at hz
+      Walk.support_nil, List.mem_append, List.mem_cons] at hz
     rcases hz with ((rfl | rfl | hfalse) | rfl | hfalse)
     · exact Or.inr (Or.inl rfl)
     · exact Or.inl ⟨rfl, Or.inl rfl⟩
@@ -56,8 +55,7 @@ lemma exists_liftContractAdj (G : SimpleGraph V) {a b : V} (hab : G.Adj a b)
     refine ⟨hbx.symm.toWalk.concat hab.symm, ?_⟩
     intro z hz
     simp only [Adj.toWalk, Walk.support_concat, Walk.support_cons,
-      Walk.support_nil, List.mem_append, List.mem_cons,
-      List.mem_singleton] at hz
+      Walk.support_nil, List.mem_append, List.mem_cons] at hz
     rcases hz with ((rfl | rfl | hfalse) | rfl | hfalse)
     · exact Or.inr (Or.inl rfl)
     · exact Or.inl ⟨rfl, Or.inr rfl⟩
@@ -121,7 +119,7 @@ lemma support_liftContractWalk {G : SimpleGraph V} {a b : V}
 
 /-- The contracted terminal embedding, defined when the deleted endpoint is
 not a terminal. -/
-def contractTerminal {ι : Type v} {G : SimpleGraph V} {a b : V}
+def contractTerminal {ι : Type v} {_G : SimpleGraph V} {_a b : V}
     (terminal : Sum ι ι ↪ V) (hb : b ∉ Set.range terminal) :
     Sum ι ι ↪ {z : V // z ≠ b} where
   toFun z := ⟨terminal z, fun h => hb ⟨z, h⟩⟩
@@ -132,19 +130,19 @@ def contractTerminal {ι : Type v} {G : SimpleGraph V} {a b : V}
 @[simp] lemma contractTerminal_coe {ι : Type v} {G : SimpleGraph V}
     {a b : V} (terminal : Sum ι ι ↪ V)
     (hb : b ∉ Set.range terminal) (z : Sum ι ι) :
-    ((contractTerminal (G := G) (a := a) terminal hb z :
+    ((contractTerminal (_G := G) (_a := a) terminal hb z :
       {z : V // z ≠ b}) : V) = terminal z := rfl
 
 /-- A linkage for the contracted terminal problem lifts to the original
 graph.  Loop erasure is applied separately to each lifted walk; its support
 only shrinks. -/
-noncomputable def Erdos718.PairLinkage.liftContract {ι : Type v} [Fintype ι]
+noncomputable def Erdos718.PairLinkage.liftContract {ι : Type v}
     [DecidableEq V]
     {G : SimpleGraph V} {a b : V} (hab : G.Adj a b)
     (terminal : Sum ι ι ↪ V) (hb : b ∉ Set.range terminal)
     (L : Erdos718.PairLinkage (contractAt G a b)
-      (Set.range (contractTerminal (G := G) (a := a) terminal hb))
-      (contractTerminal (G := G) (a := a) terminal hb)) :
+      (Set.range (contractTerminal (_G := G) (_a := a) terminal hb))
+      (contractTerminal (_G := G) (_a := a) terminal hb)) :
     Erdos718.PairLinkage G (Set.range terminal) terminal where
   path i := ((liftContractWalk G hab (L.path i)).toPath :
       G.Walk _ _).copy
@@ -162,12 +160,12 @@ noncomputable def Erdos718.PairLinkage.liftContract {ι : Type v} [Fintype ι]
     · apply hb
       rwa [← hbcase.1]
     · obtain ⟨w, hwp, hwz⟩ := hw
-      have hwstart : w ≠ contractTerminal (G := G) (a := a) terminal hb (.inl i) := by
+      have hwstart : w ≠ contractTerminal (_G := G) (_a := a) terminal hb (.inl i) := by
         intro h
         apply hz.2.1
         rw [← hwz, h]
         rfl
-      have hwend : w ≠ contractTerminal (G := G) (a := a) terminal hb (.inr i) := by
+      have hwend : w ≠ contractTerminal (_G := G) (_a := a) terminal hb (.inr i) := by
         intro h
         apply hz.2.2
         rw [← hwz, h]
@@ -175,7 +173,7 @@ noncomputable def Erdos718.PairLinkage.liftContract {ι : Type v} [Fintype ι]
       have hwinterior : w ∈ Erdos718.walkInteriorSet (L.path i) :=
         ⟨hwp, hwstart, hwend⟩
       have hwterminal : w ∈ Set.range
-          (contractTerminal (G := G) (a := a) terminal hb) := by
+          (contractTerminal (_G := G) (_a := a) terminal hb) := by
         obtain ⟨t, htz⟩ := hterminal
         exact ⟨t, Subtype.ext (by simpa [htz] using hwz.symm)⟩
       exact (Set.disjoint_left.mp (L.avoids i)) hwinterior hwterminal
@@ -202,15 +200,15 @@ noncomputable def Erdos718.PairLinkage.liftContract {ι : Type v} [Fintype ι]
         subst wj
         exact (Set.disjoint_left.mp (L.disjoint hij)) hwi hwj
 
-theorem nonempty_pairLinkage_of_contract {ι : Type v} [Fintype ι]
-    [DecidableEq V]
+theorem nonempty_pairLinkage_of_contract {ι : Type v}
     {G : SimpleGraph V} {a b : V} (hab : G.Adj a b)
     (terminal : Sum ι ι ↪ V) (hb : b ∉ Set.range terminal)
     (h : Nonempty (Erdos718.PairLinkage (contractAt G a b)
-      (Set.range (contractTerminal (G := G) (a := a) terminal hb))
-      (contractTerminal (G := G) (a := a) terminal hb))) :
-    Nonempty (Erdos718.PairLinkage G (Set.range terminal) terminal) :=
-  h.map fun L => Erdos718.PairLinkage.liftContract hab terminal hb L
+      (Set.range (contractTerminal (_G := G) (_a := a) terminal hb))
+      (contractTerminal (_G := G) (_a := a) terminal hb))) :
+    Nonempty (Erdos718.PairLinkage G (Set.range terminal) terminal) := by
+  classical
+  exact h.map fun L => Erdos718.PairLinkage.liftContract hab terminal hb L
 
 /-- The image of a vertex set in the contracted vertex type, when the
 deleted endpoint is outside that set. -/
@@ -220,12 +218,12 @@ def contractSet {b : V} (X : Set V) : Set {z : V // z ≠ b} :=
 /-- Lifting through a safe contraction while retaining an arbitrary
 forbidden set containing the terminals. -/
 noncomputable def Erdos718.PairLinkage.liftContractOfSubset
-    {ι : Type v} [Fintype ι] [DecidableEq V]
+    {ι : Type v} [DecidableEq V]
     {G : SimpleGraph V} {a b : V} (hab : G.Adj a b)
     {X : Set V} (terminal : Sum ι ι ↪ V)
     (hterminal : Set.range terminal ⊆ X) (hb : b ∉ X)
     (L : Erdos718.PairLinkage (contractAt G a b) (contractSet X)
-      (contractTerminal (G := G) (a := a) terminal
+      (contractTerminal (_G := G) (_a := a) terminal
         (fun hbRange => hb (hterminal hbRange)))) :
     Erdos718.PairLinkage G X terminal where
   path i := ((liftContractWalk G hab (L.path i)).toPath :
@@ -245,13 +243,13 @@ noncomputable def Erdos718.PairLinkage.liftContractOfSubset
     rcases support_liftContractWalk hab (L.path i) hzsupport with hbcase | hw
     · exact hb (hbcase.1 ▸ hzX)
     · obtain ⟨w, hwp, hwz⟩ := hw
-      have hwstart : w ≠ contractTerminal (G := G) (a := a) terminal
+      have hwstart : w ≠ contractTerminal (_G := G) (_a := a) terminal
           (fun hbRange => hb (hterminal hbRange)) (.inl i) := by
         intro h
         apply hz.2.1
         rw [← hwz, h]
         rfl
-      have hwend : w ≠ contractTerminal (G := G) (a := a) terminal
+      have hwend : w ≠ contractTerminal (_G := G) (_a := a) terminal
           (fun hbRange => hb (hterminal hbRange)) (.inr i) := by
         intro h
         apply hz.2.2
@@ -287,16 +285,17 @@ noncomputable def Erdos718.PairLinkage.liftContractOfSubset
         exact (Set.disjoint_left.mp (L.disjoint hij)) hwi hwj
 
 theorem nonempty_pairLinkage_of_contract_of_subset
-    {ι : Type v} [Fintype ι] [DecidableEq V]
+    {ι : Type v}
     {G : SimpleGraph V} {a b : V} (hab : G.Adj a b)
     {X : Set V} (terminal : Sum ι ι ↪ V)
     (hterminal : Set.range terminal ⊆ X) (hb : b ∉ X)
     (h : Nonempty (Erdos718.PairLinkage (contractAt G a b)
       (contractSet X)
-      (contractTerminal (G := G) (a := a) terminal
+      (contractTerminal (_G := G) (_a := a) terminal
         (fun hbRange => hb (hterminal hbRange))))) :
-    Nonempty (Erdos718.PairLinkage G X terminal) :=
-  h.map fun L =>
+    Nonempty (Erdos718.PairLinkage G X terminal) := by
+  classical
+  exact h.map fun L =>
     Erdos717.ContractLinkage.Erdos718.PairLinkage.liftContractOfSubset
       hab terminal hterminal hb L
 

@@ -70,12 +70,12 @@ noncomputable def Erdos718.PairLinkage.mapEmbedding
 /-- The range of a `k`-linked graph embedded in an ambient graph is
 `k`-linked with paths lying in the induced range. -/
 theorem isKLinked_induce_range_of_embedding
-    [Fintype U] [Fintype V] [DecidableEq V]
     {H : SimpleGraph U} {G : SimpleGraph V} (f : H ↪g G) {k : ℕ}
     (hlinked : Erdos718.IsKLinked H k) :
     Erdos718.IsKLinked (G.induce (Set.range f)) k := by
+  classical
   intro X hXfinite hXcard I _ terminal hterminal
-  let e : U ≃ Set.range f := f.toEmbedding.toEquivRange
+  let e : U ≃ Set.range f := Equiv.ofInjective f f.injective
   let terminalU : Sum I I ↪ U := terminal.trans e.symm.toEmbedding
   let XU : Set U := e.symm '' X
   have hXUfinite : XU.Finite := hXfinite.image e.symm

@@ -20,7 +20,7 @@ lemma sym2Map_incident_iff {W : Type*} [Fintype W] [DecidableEq W]
       ¬e.toFinset ⊆ Finset.univ \ S := by
   induction e using Sym2.inductionOn with
   | _ a b =>
-      simp only [Function.Embedding.sym2Map_apply, Sym2.map_pair_eq,
+      simp only [Function.Embedding.sym2Map_apply, Sym2.map_mk,
         Sym2.toFinset_mk_eq]
       simp [Finset.subset_iff]
 
@@ -79,6 +79,7 @@ def restrictEmbedding (A : Set V) (X : Finset V)
 def restrictFinset (A : Set V) (X : Finset V) (hX : (X : Set V) ⊆ A) :
     Finset A := X.attach.map (restrictEmbedding A X hX)
 
+omit [DecidableEq V] [Fintype V] in
 lemma map_restrictFinset (A : Set V) (X : Finset V)
     (hX : (X : Set V) ⊆ A) :
     (restrictFinset A X hX).map (Function.Embedding.subtype A) = X := by
@@ -99,9 +100,11 @@ lemma map_restrictFinset (A : Set V) (X : Finset V)
     refine ⟨a, ?_, rfl⟩
     exact ⟨y, Finset.mem_attach X y, rfl⟩
 
+omit [DecidableEq V] [Fintype V] in
 lemma mem_restrictFinset (A : Set V) (X : Finset V)
     (hX : (X : Set V) ⊆ A) (a : A) :
     a ∈ restrictFinset A X hX ↔ (a : V) ∈ X := by
+  classical
   constructor
   · intro ha
     have hm : (a : V) ∈
@@ -118,9 +121,11 @@ lemma mem_restrictFinset (A : Set V) (X : Finset V)
     have : b = a := (Function.Embedding.subtype A).injective hba
     simpa [this] using hb
 
+omit [DecidableEq V] [Fintype V] in
 lemma card_restrictFinset (A : Set V) (X : Finset V)
     (hX : (X : Set V) ⊆ A) :
     (restrictFinset A X hX).card = X.card := by
+  classical
   simp [restrictFinset]
 
 /-- Lift a separation from the complement of an isolated vertex, placing
@@ -151,7 +156,7 @@ def liftRemoveIsolated (G : SimpleGraph V) {v : V}
     have hbv : b ≠ v := by
       intro h
       subst b
-      simpa using hbR
+      simp at hbR
     have haLs : (⟨a, hav⟩ : {x : V | x ≠ v}) ∈ s.left := by
       have : a ∈ s.left.map (Function.Embedding.subtype _) := by
         simpa [hav] using haL

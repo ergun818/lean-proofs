@@ -21,7 +21,7 @@ structure FullTerminalArms (G : SimpleGraph V) (X B : Set V)
 /-- Select the arms needed by `terminal` from a maximum-size disjoint
 `X`--`B` linkage, and truncate them at their first hit of `B`. -/
 noncomputable def FullTerminalArms.ofABLinkage
-    [Fintype V] [DecidableEq V] [Fintype I]
+    [DecidableEq V]
     {G : SimpleGraph V} {X B : Set V} (hXfinite : X.Finite)
     {terminal : Sum I I ↪ V} (hterminal : Set.range terminal ⊆ X)
     (P : Erdos718.ABLinkage G X B X.ncard) :
@@ -116,8 +116,8 @@ noncomputable def FullTerminalArms.ofABLinkage
 
 /-- Glue full-source-avoiding arms through a linked target set, retaining
 avoidance of the whole source set rather than only the selected terminals. -/
-theorem FullTerminalArms.nonempty_pairLinkage_of_isLinkedSet
-    [Fintype I] {G : SimpleGraph V} {X B : Set V}
+theorem FullTerminalArms.nonempty_pairLinkage_of_isLinkedSet [Finite I]
+    {G : SimpleGraph V} {X B : Set V}
     {terminal : Sum I I ↪ V} (A : FullTerminalArms G X B terminal)
     (S : Set B)
     (hanchor : Set.range (terminalIntoSet B A.anchor A.anchor_mem) ⊆ S)
@@ -126,6 +126,7 @@ theorem FullTerminalArms.nonempty_pairLinkage_of_isLinkedSet
     (hlinked : Erdos718.IsLinkedSet (G.induce B) S) :
     Nonempty (Erdos718.PairLinkage G X terminal) := by
   classical
+  let := Fintype.ofFinite I
   obtain ⟨L⟩ := hlinked I (terminalIntoSet B A.anchor A.anchor_mem) hanchor
   have hsmall : {x : B | (x : V) ∈ Set.range A.anchor} ⊆ S := by
     rintro x ⟨z, hz⟩
@@ -232,12 +233,12 @@ theorem isLinkedSet_of_full_abLinkage_to_linked_right
 linked in its induced graph makes the source set linked in the ambient
 graph. -/
 theorem isLinkedSet_of_full_abLinkage_to_linked_target
-    [Fintype V] [DecidableEq V]
     {G : SimpleGraph V} {X B : Set V}
     (hXfinite : X.Finite)
     (P : Erdos718.ABLinkage G X B X.ncard)
     (hlinked : Erdos718.IsLinkedSet (G.induce B) Set.univ) :
     Erdos718.IsLinkedSet G X := by
+  classical
   intro I _ terminal hterminal
   let A := FullTerminalArms.ofABLinkage hXfinite hterminal P
   apply A.nonempty_pairLinkage_of_isLinkedSet Set.univ
@@ -251,7 +252,6 @@ central linkage is asked to avoid the first target hit of every one of the
 full attachment paths; this set has cardinality at most `|X|` and contains
 every source vertex already lying in the target. -/
 theorem isLinkedSet_of_full_abLinkage_to_kLinked_target
-    [Fintype V] [DecidableEq V]
     {G : SimpleGraph V} {X B : Set V} {k : ℕ}
     (hXfinite : X.Finite) (hXcard : X.ncard ≤ 2 * k)
     (P : Erdos718.ABLinkage G X B X.ncard)

@@ -197,10 +197,10 @@ theorem exists_outside_degree_le_sixteen_mul
         Finset.sum_le_sum fun v hv => h v (Finset.mem_sdiff.mp hv).2
   have hlower' : 2 * (8 * k * O.card) + O.card ≤
       ∑ v ∈ O, C.G.degree v := by
-    convert hsumLower using 1 <;> ring
+    convert hsumLower using 1; ring
   have hupper' : ∑ v ∈ O, C.G.degree v ≤
       2 * (8 * k * O.card) + 2 := by
-    convert hsumUpper using 1 <;> ring
+    convert hsumUpper using 1; ring
   omega
 
 /-- The closed neighborhood of the minimum-degree outside vertex is a

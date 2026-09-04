@@ -11,7 +11,7 @@ namespace Erdos717
 /-- It is enough to check the DRC second-moment inequality at the full
 ambient cardinality and at half the source edge count. -/
 theorem exists_short_path_reservoir_of_edge_square
-    {V : Type*} [Fintype V] [DecidableEq V]
+    {V : Type*} [Fintype V]
     (H G : SimpleGraph V) [DecidableRel H.Adj] [DecidableRel G.Adj]
     (hHG : H ≤ G) (X0 L : ℕ)
     (hE : 0 < H.edgeFinset.card)
@@ -27,6 +27,7 @@ theorem exists_short_path_reservoir_of_edge_square
         6 * (Finset.univ.filter fun q : Erdos718.CliqueEdge r =>
           ¬G.Adj (branch q.1.1) (branch q.1.2)).card + 2 ≤ L →
         Erdos718.ContainsCliqueSubdivision G r := by
+  classical
   apply exists_short_path_reservoir H G hHG X0 L hE hX0 hLX
   intro s t e hs ht hHe
   have hmono : t * (t * (X0 * X0) + 40 * (s * s * L)) ≤
