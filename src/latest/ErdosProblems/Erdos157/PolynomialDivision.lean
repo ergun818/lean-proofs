@@ -90,7 +90,8 @@ theorem monicDegreeEq_reconstruct
   apply Subtype.ext
   exact Polynomial.modByMonic_add_div F.1 g
 
-/-- Long division gives product coordinates: a monic polynomial of degree `n` is exactly its degree-`<m`
+/-- Long division gives product coordinates: a monic polynomial of degree `n` is exactly its
+  degree-`<m`
 remainder and a monic quotient of degree `n-m`. -/
 noncomputable def monicRemainderQuotientEquiv
     {m n : ℕ} (g : Polynomial K) (hg : g.Monic)

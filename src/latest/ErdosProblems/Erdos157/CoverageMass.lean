@@ -25,9 +25,11 @@ theorem coverage_mass_nat (k : ℕ) (hk : 400 ≤ k) :
       _ = k ^ 6 := by rw [← pow_mul]
       _ ≤ (2 ^ k) ^ 6 := Nat.pow_le_pow_left Nat.lt_two_pow_self.le _
       _ = _ := by rw [← pow_mul, mul_comm k 6]
-  have hchoice : Fintype.card (LocalChoice CoefficientField k) ^ 3 ≤ 2 ^ (21 * k ^ 2 + 9282 * k) := by
+  have hchoice :
+      Fintype.card (LocalChoice CoefficientField k) ^ 3 ≤ 2 ^ (21 * k ^ 2 + 9282 * k) := by
     calc
-      _ ≤ (2 ^ (7 * k ^ 2 + 3094 * k)) ^ 3 := Nat.pow_le_pow_left (card_localChoice_coefficientField_le k) _
+      _ ≤ (2 ^ (7 * k ^ 2 + 3094 * k)) ^ 3 := Nat.pow_le_pow_left
+        (card_localChoice_coefficientField_le k) _
       _ = _ := by rw [← pow_mul]; congr 1; ring
   calc
     _ ≤ (2 ^ 10 * 2 ^ (6 * k)) * 2 ^ (21 * k ^ 2 + 9282 * k) * 2 ^ (k ^ 2) :=

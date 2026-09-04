@@ -91,6 +91,7 @@ omit [DecidableEq K] in
 theorem primePolynomial_degree_pos (p : PrimePolynomial K) : 0 < p.1.natDegree := by
   by_contra h
   have hz : p.1.natDegree = 0 := by omega
-  exact p.2.2.not_isUnit (by rw [Polynomial.eq_one_of_monic_natDegree_zero p.2.1 hz]; exact isUnit_one)
+  exact p.2.2.not_isUnit (by rw [Polynomial.eq_one_of_monic_natDegree_zero p.2.1 hz]; exact
+    isUnit_one)
 
 end Erdos157.Elementary.PolynomialCharacters

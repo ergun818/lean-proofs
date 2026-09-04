@@ -8,6 +8,7 @@ open AuxiliaryModuli PolynomialCharacters
 
 variable (K : Type*) [Field K] [DecidableEq K] [Fintype K] [CharP K 2]
 
+omit [DecidableEq K] in
 theorem shorter_level_le_add_three (τ : MaskChoice K) (ω : IntegerParameters K)
     (f₁ f₂ f₃ f₄ : Label K) (h₁₂ : f₂.level ≤ f₁.level)
     (hmax : f₁.level ≤ f₃.level + 1)
@@ -25,6 +26,7 @@ theorem shorter_level_le_add_three (τ : MaskChoice K) (ω : IntegerParameters K
     (labelResidue K f₁ i) (labelResidue K f₂ i) (ω.block f₃ i) (ω.block f₁ i) (ω.block f₂ i)
     htrace.symm
 
+omit [DecidableEq K] in
 theorem shorter_levels_close_of_encoded_pair_eq (τ : MaskChoice K) (ω : IntegerParameters K)
     (f₁ f₂ f₃ f₄ : Label K) (h₁₂ : f₂.level ≤ f₁.level) (h₃₄ : f₄.level ≤ f₃.level)
     (heq : encoded K τ ω f₁ + encoded K τ ω f₂ = encoded K τ ω f₃ + encoded K τ ω f₄) :
@@ -33,6 +35,7 @@ theorem shorter_levels_close_of_encoded_pair_eq (τ : MaskChoice K) (ω : Intege
   exact ⟨shorter_level_le_add_three K τ ω f₁ f₂ f₃ f₄ h₁₂ hmax.1 heq,
     shorter_level_le_add_three K τ ω f₃ f₄ f₁ f₂ h₃₄ hmax.2 heq.symm⟩
 
+omit [DecidableEq K] in
 theorem clean_residue_eq_of_encoded_pair_eq (τ : MaskChoice K) (ω : IntegerParameters K)
     (f₁ f₂ f₃ f₄ : Label K) (i : ℕ)
     (hi₁ : i < f₁.level) (hi₃ : i < f₃.level)

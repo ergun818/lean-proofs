@@ -19,18 +19,25 @@ variable {I : Type*} [DecidableEq I] (X : I → Type*)
 
 noncomputable def coordinateMeasure (i : I) : Measure (X i) := uniformOn Set.univ
 
-instance coordinateMeasure_isProbability (i : I) : IsProbabilityMeasure (coordinateMeasure X i) := by
+omit [∀ i, Fintype (X i)] in
+instance coordinateMeasure_isProbability [∀ i, Finite (X i)] (i : I) :
+    IsProbabilityMeasure (coordinateMeasure X i) := by
   unfold coordinateMeasure
   infer_instance
 
 noncomputable def productMeasure : Measure (∀ i, X i) := Measure.infinitePi (coordinateMeasure X)
 
-instance productMeasure_isProbability : IsProbabilityMeasure (productMeasure X) := by
+omit [∀ i, Fintype (X i)] in
+instance productMeasure_isProbability [∀ i, Finite (X i)] :
+    IsProbabilityMeasure (productMeasure X) := by
   unfold productMeasure
   infer_instance
 
-theorem finite_pi_uniform [Fintype I] :
+omit [DecidableEq I] [∀ i, Fintype (X i)] in
+theorem finite_pi_uniform [∀ i, Finite (X i)] [Fintype I] :
     Measure.pi (coordinateMeasure X) = uniformOn (Set.univ : Set (∀ i, X i)) := by
+  classical
+  let : ∀ i, Fintype (X i) := fun _ => Fintype.ofFinite _
   apply Measure.ext_of_singleton
   intro x
   rw [Measure.pi_singleton]
@@ -57,15 +64,17 @@ theorem cylinder_measure_real (s : Finset I) (B : Finset (∀ i : s, X i)) :
   rw [measureReal_def, cylinder_measure]
   simp only [ENNReal.toReal_div, ENNReal.toReal_natCast]
 
-theorem cylinder_density (s : Finset I) (p : (∀ i : s, X i) → Prop) :
+omit [DecidableEq I] [∀ i, Fintype (X i)] in
+theorem cylinder_density [∀ i, Finite (X i)] (s : Finset I) (p : (∀ i : s, X i) → Prop) :
     (productMeasure X).real {x | p (s.restrict x)} = finiteDensity p := by
   classical
+  let : ∀ i, Fintype (X i) := fun _ => Fintype.ofFinite _
   let B := Finset.univ.filter p
   have he : {x | p (s.restrict x)} = {x | s.restrict x ∈ B} := by ext x; simp [B]
   rw [he, cylinder_measure_real, ← finiteDensity_finset B]
   exact finiteDensity_congr (fun x => by simp [B])
 
-theorem prefix_density (Y : ℕ → Type*) [∀ i, Fintype (Y i)] [∀ i, Nonempty (Y i)]
+theorem prefix_density (Y : ℕ → Type*) [∀ i, Finite (Y i)] [∀ i, Nonempty (Y i)]
     [∀ i, MeasurableSpace (Y i)] [∀ i, MeasurableSingletonClass (Y i)]
     (k : ℕ) (p : (∀ i : Fin k, Y i) → Prop) :
     (productMeasure Y).real {x | p (fun i => x i)} = finiteDensity p := by
@@ -79,9 +88,11 @@ theorem prefix_density (Y : ℕ → Type*) [∀ i, Fintype (Y i)] [∀ i, Nonemp
   rw [finiteDensity_equiv e p] at hc
   exact hc
 
-theorem coordinate_density (i : I) (p : X i → Prop) :
+omit [DecidableEq I] [∀ i, Fintype (X i)] in
+theorem coordinate_density [∀ i, Finite (X i)] (i : I) (p : X i → Prop) :
     (productMeasure X).real {x | p (x i)} = finiteDensity p := by
   classical
+  let : ∀ i, Fintype (X i) := fun _ => Fintype.ofFinite _
   let B : Finset (X i) := Finset.univ.filter p
   have he : {x : ∀ j, X j | p (x i)} = (fun x => x i) ⁻¹' (B : Set (X i)) := by ext x; simp [B]
   have hm : productMeasure X {x | p (x i)} = (B.card : ℝ≥0∞) / Fintype.card (X i) := by
@@ -133,7 +144,8 @@ theorem exists_eventually_avoiding_events {Ω : Type*} [MeasurableSpace Ω]
     ∃ x, ∀ᶠ n in Filter.atTop, x ∉ bad n := by
   have hs : Summable (fun n => μ.real (bad n)) :=
     hsum.of_norm_bounded_eventually_nat (hbad.mono (fun n hn => by
-      simpa only [Real.norm_eq_abs, abs_of_nonneg (measureReal_nonneg : 0 ≤ μ.real (bad n))] using hn))
+      simpa only [Real.norm_eq_abs, abs_of_nonneg (measureReal_nonneg : 0 ≤ μ.real (bad n))] using
+        hn))
   have he (n : ℕ) : μ (bad n) = ENNReal.ofReal (μ.real (bad n)) := by
     exact (ENNReal.ofReal_toReal (measure_ne_top μ _)).symm
   have ht : (∑' n, μ (bad n)) ≠ ⊤ := by

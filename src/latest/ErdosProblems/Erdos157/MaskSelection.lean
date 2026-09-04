@@ -10,6 +10,7 @@ open Filter
 
 variable (K : Type*) [Field K] [DecidableEq K] [Fintype K] [CharP K 2]
 
+omit [DecidableEq K] in
 theorem exists_eventually_good_masks :
     ∃ τ : MaskChoice K, ∀ᶠ k in atTop,
       ∀ z : MaskTarget K k, MaskTargetHit K (fun i => τ i) z := by

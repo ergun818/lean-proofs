@@ -21,7 +21,7 @@ theorem summable_monic_degree_weight (r : ℝ) (hr : 0 ≤ r)
   convert hgeom using 1
   funext d
   rw [tsum_fintype]
-  simp only [Finset.sum_const, Finset.card_univ, smul_eq_mul, card_monic, Nat.cast_pow, mul_pow]
+  simp only [Finset.sum_const, Finset.card_univ, card_monic, mul_pow]
   ring
 
 /-- Regard a prime polynomial as a monic polynomial with its degree recorded. -/
@@ -34,6 +34,7 @@ theorem primeToAllMonic_injective : Function.Injective (primeToAllMonic (K := K)
   apply Subtype.ext
   exact congrArg (fun f : AllMonic K => f.2.1) hpq
 
+omit [DecidableEq K] in
 theorem summable_prime_degree_weight (r : ℝ) (hr : 0 ≤ r)
     (hqr : (Fintype.card K : ℝ) * r < 1) :
     Summable (fun p : PrimePolynomial K => (p.1.natDegree : ℝ) * r ^ p.1.natDegree) := by
@@ -41,6 +42,7 @@ theorem summable_prime_degree_weight (r : ℝ) (hr : 0 ≤ r)
     primeToAllMonic_injective
   simpa only [Function.comp_def, primeToAllMonic] using h
 
+omit [DecidableEq K] in
 /-- The derivative majorant remains summable on every smaller disk. -/
 theorem summable_prime_derivative_weight (r : ℝ) (hr : 0 < r)
     (hqr : (Fintype.card K : ℝ) * r < 1) :

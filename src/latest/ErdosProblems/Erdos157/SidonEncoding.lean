@@ -8,6 +8,7 @@ namespace Erdos157.Elementary
 
 variable (K : Type*) [Field K] [DecidableEq K] [Fintype K] [CharP K 2]
 
+omit [DecidableEq K] in
 theorem encoded_pair_unique_ordered (τ : MaskChoice K) (ω : IntegerParameters K)
     (f₁ f₂ f₃ f₄ : Label K) (h₁₂ : f₂.level ≤ f₁.level) (h₃₄ : f₄.level ≤ f₃.level)
     (heq : encoded K τ ω f₁ + encoded K τ ω f₂ = encoded K τ ω f₃ + encoded K τ ω f₄) :
@@ -23,12 +24,14 @@ theorem encoded_pair_unique_ordered (τ : MaskChoice K) (ω : IntegerParameters 
   have hmax := maximal_levels_close_of_encoded_pair_eq K τ ω f₁ f₂ f₃ f₄ h₁₂ h₃₄ heq
   have hshort := shorter_levels_close_of_encoded_pair_eq K τ ω f₁ f₂ f₃ f₄ h₁₂ h₃₄ heq
   have hprod := common_modulus_degree_le_of_nontrivial_pair K τ ω f₁ f₂ f₃ f₄
-    (min f₂.level f₄.level) (by omega) (Nat.min_le_left _ _) (by omega) (Nat.min_le_right _ _) hlabels heq
+    (min f₂.level f₄.level) (by omega) (Nat.min_le_left _ _) (by omega)
+      (Nat.min_le_right _ _) hlabels heq
   have hclean := clean_segment_degree_le_of_distinct K τ ω f₁ f₂ f₃ f₄ hsingle heq
   rw [segmentProduct_natDegree] at hclean
   exact four_level_degree_contradiction f₁.level f₂.level f₃.level f₄.level
     f₁.level_ge f₂.level_ge f₃.level_ge f₄.level_ge h₁₂ hmax.1 hmax.2 hshort.1 hshort.2 hprod hclean
 
+omit [DecidableEq K] in
 theorem encoded_pair_unique (τ : MaskChoice K) (ω : IntegerParameters K)
     (f₁ f₂ f₃ f₄ : Label K)
     (heq : encoded K τ ω f₁ + encoded K τ ω f₂ = encoded K τ ω f₃ + encoded K τ ω f₄) :
@@ -48,8 +51,10 @@ theorem encoded_pair_unique (τ : MaskChoice K) (ω : IntegerParameters K)
 noncomputable def encodedSet (τ : MaskChoice K) (ω : IntegerParameters K) : Set ℕ :=
   Set.range (encoded K τ ω)
 
+omit [DecidableEq K] in
 /-- No probability or distribution hypothesis is needed for the Sidon property. -/
-theorem encodedSet_isSidon (τ : MaskChoice K) (ω : IntegerParameters K) : IsSidon (encodedSet K τ ω) := by
+theorem encodedSet_isSidon (τ : MaskChoice K) (ω : IntegerParameters K) :
+    IsSidon (encodedSet K τ ω) := by
   intro a b c d ha hb hc hd heq
   obtain ⟨f₁, rfl⟩ := ha
   obtain ⟨f₂, rfl⟩ := hb

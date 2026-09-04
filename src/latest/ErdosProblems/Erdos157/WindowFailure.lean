@@ -35,15 +35,18 @@ theorem window_failure_density (τ : MaskChoice CoefficientField) (k : ℕ) (hk 
   classical
   have hbound (m : Fin (6 * blockPlace CoefficientField 0 (k + 1))) :
       finiteDensity (fun ω : LevelParameters CoefficientField k =>
-        6 * blockPlace CoefficientField 0 k ≤ m.1 ∧ ¬ LocallyRepresented CoefficientField τ k ω m.1) ≤
+        6 * blockPlace CoefficientField 0 k ≤ m.1 ∧
+          ¬ LocallyRepresented CoefficientField τ k ω m.1) ≤
         Real.exp (-(2 : ℝ) ^ (k ^ 2)) := by
     by_cases hm : 6 * blockPlace CoefficientField 0 k ≤ m.1
     · exact (finiteDensity_mono (fun _ h => h.2)).trans
         (window_target_failure τ k hk hhit m.1 hm m.2)
     · have heq : finiteDensity (fun ω : LevelParameters CoefficientField k =>
-        6 * blockPlace CoefficientField 0 k ≤ m.1 ∧ ¬ LocallyRepresented CoefficientField τ k ω m.1) = 0 := by
+        6 * blockPlace CoefficientField 0 k ≤ m.1 ∧
+          ¬ LocallyRepresented CoefficientField τ k ω m.1) = 0 := by
         let : IsEmpty {ω : LevelParameters CoefficientField k //
-            6 * blockPlace CoefficientField 0 k ≤ m.1 ∧ ¬ LocallyRepresented CoefficientField τ k ω m.1} :=
+            6 * blockPlace CoefficientField 0 k ≤ m.1 ∧
+              ¬ LocallyRepresented CoefficientField τ k ω m.1} :=
           ⟨fun ω => hm ω.2.1⟩
         unfold finiteDensity
         rw [Nat.card_eq_fintype_card, Fintype.card_eq_zero, Nat.cast_zero, zero_div]
@@ -52,7 +55,8 @@ theorem window_failure_density (τ : MaskChoice CoefficientField) (k : ℕ) (hk 
   have hb := finiteDensity_exists_le _ (Real.exp (-(2 : ℝ) ^ (k ^ 2))) hbound
   change finiteDensity (fun ω : LevelParameters CoefficientField k =>
     ∃ m : Fin (6 * blockPlace CoefficientField 0 (k + 1)),
-      6 * blockPlace CoefficientField 0 k ≤ m.1 ∧ ¬ LocallyRepresented CoefficientField τ k ω m.1) ≤ _
+      6 * blockPlace CoefficientField 0 k ≤ m.1 ∧ ¬ LocallyRepresented CoefficientField τ k ω m.1)
+        ≤ _
   simpa only [Fintype.card_fin, Nat.cast_mul, Nat.cast_ofNat] using hb
 
 theorem eventually_window_failure_density (τ : MaskChoice CoefficientField)

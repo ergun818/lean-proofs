@@ -15,17 +15,20 @@ open Polynomial
 
 variable {K : Type*} [Field K] [DecidableEq K] [Fintype K]
 
+omit [DecidableEq K] in
 theorem eulerProduct_mul_monicSeries (g : K[X]) (hg : g.Monic)
     (χ : MulChar (AdjoinRoot g) ℂ) (z : ℂ)
     (hz : (Fintype.card K : ℝ) * ‖z‖ < 1) :
     (∏' p : PrimePolynomial K, (1 - primeWeight g χ z p)) *
       (∑' f : AllMonic K, monicTerm g χ z f) = 1 := by
+  classical
   have h := MultisetEuler.tprod_mul_tsum_eq_one (primeWeight g χ z)
     (summable_norm_primeMultisetWeight g hg χ z hz)
   have hsum := primeMultisetEquiv.tsum_eq (monicTerm g χ z)
   simp only [monicTerm_primeMultisetEquiv] at hsum
   rwa [hsum] at h
 
+omit [DecidableEq K] in
 theorem eulerProduct_eq_inv_lPolynomial (g : K[X]) (hg : g.Monic)
     (χ : MulChar (AdjoinRoot g) ℂ) (hχ : χ ≠ 1) (z : ℂ)
     (hz : (Fintype.card K : ℝ) * ‖z‖ < 1) :
@@ -35,13 +38,15 @@ theorem eulerProduct_eq_inv_lPolynomial (g : K[X]) (hg : g.Monic)
   rw [tsum_monicTerm_eq_lPolynomial g hg χ hχ z hz] at h
   exact eq_inv_of_mul_eq_one_left h
 
+omit [DecidableEq K] in
 theorem summable_primeWeight (g : K[X]) (hg : g.Monic)
     (χ : MulChar (AdjoinRoot g) ℂ) (z : ℂ)
     (hz : (Fintype.card K : ℝ) * ‖z‖ < 1) :
-    Summable (primeWeight g χ z) :=
-  (MultisetEuler.summable_norm_weight_singleton (primeWeight g χ z)
+    Summable (primeWeight g χ z) := by
+  exact (MultisetEuler.summable_norm_weight_singleton (primeWeight g χ z)
     (summable_norm_primeMultisetWeight g hg χ z hz)).of_norm
 
+omit [DecidableEq K] in
 theorem primeWeight_norm_lt_one (g : K[X]) (hg : g.Monic)
     (χ : MulChar (AdjoinRoot g) ℂ) (z : ℂ)
     (hz : (Fintype.card K : ℝ) * ‖z‖ < 1) (p : PrimePolynomial K) :
@@ -58,6 +63,7 @@ theorem primeWeight_norm_lt_one (g : K[X]) (hg : g.Monic)
     _ < 1 := pow_lt_one₀ (norm_nonneg z) hzlt (by
       exact ne_of_gt (primePolynomial_degree_pos p))
 
+omit [DecidableEq K] in
 theorem eulerFactor_ne_zero (g : K[X]) (hg : g.Monic)
     (χ : MulChar (AdjoinRoot g) ℂ) (z : ℂ)
     (hz : (Fintype.card K : ℝ) * ‖z‖ < 1) (p : PrimePolynomial K) :
@@ -67,6 +73,7 @@ theorem eulerFactor_ne_zero (g : K[X]) (hg : g.Monic)
   have hnorm := primeWeight_norm_lt_one g hg χ z hz p
   simp [heq] at hnorm
 
+omit [DecidableEq K] in
 /-- The logarithms converge in the disk of absolute convergence. -/
 theorem summable_log_eulerFactor (g : K[X]) (hg : g.Monic)
     (χ : MulChar (AdjoinRoot g) ℂ) (z : ℂ)
@@ -75,6 +82,7 @@ theorem summable_log_eulerFactor (g : K[X]) (hg : g.Monic)
   simpa only [sub_eq_add_neg] using
     Complex.summable_log_one_add_of_summable (summable_primeWeight g hg χ z hz).neg
 
+omit [DecidableEq K] in
 /-- The logarithmic series exponentiates to the reciprocal character polynomial. -/
 theorem exp_sum_log_eq_inv_lPolynomial (g : K[X]) (hg : g.Monic)
     (χ : MulChar (AdjoinRoot g) ℂ) (hχ : χ ≠ 1) (z : ℂ)

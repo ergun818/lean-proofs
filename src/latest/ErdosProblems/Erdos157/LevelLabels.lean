@@ -49,7 +49,7 @@ theorem polynomial_injective : Function.Injective (polynomial (K := K)) := by
   subst g
   rfl
 
-instance countable [Fintype K] : Countable (Label K) := inferInstance
+instance countable [Finite K] : Countable (Label K) := inferInstance
 
 end Label
 end Erdos157.Elementary

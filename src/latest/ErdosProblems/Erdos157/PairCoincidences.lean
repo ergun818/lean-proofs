@@ -7,9 +7,9 @@ namespace Erdos157.Elementary
 open Polynomial PolynomialCharacters AuxiliaryModuli
 
 theorem unordered_pair_eq_of_monic_irreducible_products {K : Type*} [Field K]
-    {f₁ f₂ f₃ f₄ : K[X]} (h₁ : Irreducible f₁) (h₂ : Irreducible f₂)
+    {f₁ f₂ f₃ f₄ : K[X]} (h₁ : Irreducible f₁) (_h₂ : Irreducible f₂)
     (h₃ : Irreducible f₃) (h₄ : Irreducible f₄)
-    (m₁ : f₁.Monic) (m₂ : f₂.Monic) (m₃ : f₃.Monic) (m₄ : f₄.Monic)
+    (m₁ : f₁.Monic) (_m₂ : f₂.Monic) (m₃ : f₃.Monic) (m₄ : f₄.Monic)
     (heq : f₁ * f₂ = f₃ * f₄) : (f₁ = f₃ ∧ f₂ = f₄) ∨ (f₁ = f₄ ∧ f₂ = f₃) := by
   have hdvd : f₁ ∣ f₃ * f₄ := ⟨f₂, heq.symm⟩
   rcases h₁.prime.dvd_mul.mp hdvd with h13 | h14
@@ -31,7 +31,9 @@ theorem label_pair_eq_of_polynomial_products {K : Type*} [Field K]
 
 variable (K : Type*) [Field K] [DecidableEq K] [Fintype K] [CharP K 2]
 
-theorem label_pair_eq_of_encoded_pair_eq_of_degree_bound (τ : MaskChoice K) (ω : IntegerParameters K)
+omit [DecidableEq K] in
+theorem label_pair_eq_of_encoded_pair_eq_of_degree_bound (τ : MaskChoice K)
+  (ω : IntegerParameters K)
     (f₁ f₂ f₃ f₄ : Label K) (m : ℕ)
     (h₁ : m ≤ f₁.level) (h₂ : m ≤ f₂.level) (h₃ : m ≤ f₃.level) (h₄ : m ≤ f₄.level)
     (hdegree : max (levelDegree f₁.level + levelDegree f₂.level)
@@ -49,6 +51,7 @@ theorem label_pair_eq_of_encoded_pair_eq_of_degree_bound (τ : MaskChoice K) (ω
     Label.natDegree, Label.natDegree, Label.natDegree, Label.natDegree]
   exact hdegree
 
+omit [DecidableEq K] in
 theorem common_modulus_degree_le_of_nontrivial_pair (τ : MaskChoice K) (ω : IntegerParameters K)
     (f₁ f₂ f₃ f₄ : Label K) (m : ℕ)
     (h₁ : m ≤ f₁.level) (h₂ : m ≤ f₂.level) (h₃ : m ≤ f₃.level) (h₄ : m ≤ f₄.level)

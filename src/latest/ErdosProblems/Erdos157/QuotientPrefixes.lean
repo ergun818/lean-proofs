@@ -9,8 +9,9 @@ open Polynomial PolynomialCharacters FiniteFiberCounts
 
 variable (K : Type*) [Field K] [DecidableEq K] [Fintype K] [CharP K 2]
 
-noncomputable instance quotientFinite (k : ℕ) : Finite (AdjoinRoot (product K k)) :=
-  Finite.of_injective (quotientEquiv K k) (quotientEquiv K k).injective
+omit [Fintype K] in
+noncomputable instance quotientFinite [Finite K] (k : ℕ) : Finite (AdjoinRoot (product K k)) := by
+  exact Finite.of_injective (quotientEquiv K k) (quotientEquiv K k).injective
 
 noncomputable instance quotientUnitsFintype (k : ℕ) : Fintype (AdjoinRoot (product K k))ˣ :=
   Fintype.ofFinite _
@@ -21,6 +22,7 @@ noncomputable def prefixVectorMap {h k : ℕ} (hhk : h ≤ k) :
   map_one' := rfl
   map_mul' _ _ := rfl
 
+omit [DecidableEq K] in
 theorem prefixVectorMap_surjective {h k : ℕ} (hhk : h ≤ k) :
     Function.Surjective (prefixVectorMap K hhk) := by
   intro v
@@ -33,12 +35,14 @@ noncomputable def quotientProjection {h k : ℕ} (hhk : h ≤ k) :
   (quotientUnitsEquiv K h).symm.toMonoidHom.comp
     ((prefixVectorMap K hhk).comp (quotientUnitsEquiv K k).toMonoidHom)
 
+omit [DecidableEq K] in
 theorem quotientProjection_coordinates {h k : ℕ} (hhk : h ≤ k)
     (u : (AdjoinRoot (product K k))ˣ) :
     quotientUnitsEquiv K h (quotientProjection K hhk u) =
       prefixVectorMap K hhk (quotientUnitsEquiv K k u) :=
   (quotientUnitsEquiv K h).apply_symm_apply _
 
+omit [DecidableEq K] in
 theorem quotientProjection_surjective {h k : ℕ} (hhk : h ≤ k) :
     Function.Surjective (quotientProjection K hhk) := by
   intro u
@@ -47,6 +51,7 @@ theorem quotientProjection_surjective {h k : ℕ} (hhk : h ≤ k) :
   apply (quotientUnitsEquiv K h).injective
   rw [quotientProjection_coordinates, MulEquiv.apply_symm_apply, hv]
 
+omit [DecidableEq K] in
 theorem quotientProjection_levelTripleResidue (l : ℕ) {h k : ℕ} (hhk : h ≤ k)
     (T : PrimeTriple K (levelDegree l)) :
     quotientProjection K hhk (levelTripleResidue l k T) = levelTripleResidue l h T := by
@@ -59,6 +64,7 @@ theorem quotientProjection_levelTripleResidue (l : ℕ) {h k : ℕ} (hhk : h ≤
   rw [quotientUnitsEquiv_val_apply, quotientUnitsEquiv_val_apply]
   simp only [levelTripleResidue, PrimeTriple.residueUnit_val, quotientEquiv_mk_apply]
 
+omit [DecidableEq K] in
 /-- Every prefix class has the same number of full unit-residue extensions. -/
 theorem quotientProjection_fiberCard_mul {h k : ℕ} (hhk : h ≤ k)
     (u : (AdjoinRoot (product K h))ˣ) :

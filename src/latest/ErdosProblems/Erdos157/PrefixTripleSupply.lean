@@ -9,6 +9,7 @@ open Polynomial PolynomialCharacters Filter
 
 variable {K : Type*} [Field K] [DecidableEq K] [Fintype K]
 
+omit [DecidableEq K] in
 theorem primeTriple_fiber_lower_of_primeSupply {n : ℕ} (g : K[X]) (hg : g.Monic)
     (hn : 0 < n) (hc : ∀ f : PrimeDegree K n, IsCoprime g f.1.1)
     (hsize : (6 : ℝ) ≤ (Fintype.card K : ℝ) ^ n / (2 * (n : ℝ) * Nat.card (AdjoinRoot g)ˣ))
@@ -48,11 +49,14 @@ noncomputable def levelTripleResidue (k j : ℕ) (T : PrimeTriple K (levelDegree
   T.residueUnit (AuxiliaryModuli.product K j)
     (fun f => AuxiliaryModuli.product_isCoprime_even_prime K (levelDegree_even k) f j)
 
+omit [DecidableEq K] in
 theorem eventually_prefix_tripleSupply :
     ∀ᶠ k in atTop, ∀ u : (AdjoinRoot (AuxiliaryModuli.product K (prefixLength k)))ˣ,
       (Fintype.card K : ℝ) ^ (3 * levelDegree k) /
-        (512 * (levelDegree k : ℝ) ^ 3 * Nat.card (AdjoinRoot (AuxiliaryModuli.product K (prefixLength k)))ˣ) ≤
-      Nat.card {T : PrimeTriple K (levelDegree k) // levelTripleResidue k (prefixLength k) T = u} := by
+        (512 * (levelDegree k : ℝ) ^ 3 * Nat.card
+          (AdjoinRoot (AuxiliaryModuli.product K (prefixLength k)))ˣ) ≤
+      Nat.card {T : PrimeTriple K (levelDegree k) // levelTripleResidue k (prefixLength k) T =
+        u} := by
   filter_upwards [AuxiliaryModuli.eventually_prefix_prime_lower (K := K),
     eventually_six_le_prefix_primeSupply (K := K), eventually_prefixDegree_lt_levelDegree]
       with k hprimes hsize hdeg

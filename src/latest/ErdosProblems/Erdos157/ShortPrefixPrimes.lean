@@ -10,6 +10,7 @@ open scoped Topology
 
 variable {K : Type*} [Field K] [DecidableEq K] [Fintype K]
 
+omit [DecidableEq K] in
 /-- Eventually, every unit class of every eligible prefix modulus contains
 at least half of the expected number of prime polynomials. -/
 theorem eventually_shortPrefix_prime_lower :

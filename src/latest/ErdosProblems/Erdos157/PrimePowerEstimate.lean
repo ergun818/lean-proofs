@@ -10,10 +10,12 @@ open Polynomial
 
 variable {K : Type*} [Field K] [DecidableEq K] [Fintype K]
 
+omit [DecidableEq K] [Fintype K] in
 /-- The prime-power and inverse-root expansions have identical scalar coefficients. -/
-theorem primePowerCoefficient_eq_rootPowerCoefficient (g : K[X]) (hg : g.Monic)
+theorem primePowerCoefficient_eq_rootPowerCoefficient [Finite K] (g : K[X]) (hg : g.Monic)
     (χ : MulChar (AdjoinRoot g) ℂ) (hχ : χ ≠ 1) (n : ℕ) :
     primePowerCoefficient g χ n = rootPowerCoefficient (inverseRootAt (lPolynomial g χ)) n := by
+  let : Fintype K := Fintype.ofFinite _
   let q : ℝ := Fintype.card K
   have hq : 0 < q := by dsimp only [q]; exact_mod_cast Fintype.card_pos (α := K)
   let r : ℝ := 1 / (2 * q)
@@ -34,6 +36,7 @@ theorem primePowerCoefficient_eq_rootPowerCoefficient (g : K[X]) (hg : g.Monic)
       ((mul_le_mul_of_nonneg_left hz.le (by positivity)).trans_lt hqr))
   exact congrFun heq n
 
+omit [DecidableEq K] in
 /-- Quantitative cancellation in each positive-degree weighted prime-power sum. -/
 theorem norm_primePowerCoefficient_le (g : K[X]) (hg : g.Monic)
     (χ : MulChar (AdjoinRoot g) ℂ) (hχ : χ ≠ 1) (hχ2 : χ ^ 2 ≠ 1)

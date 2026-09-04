@@ -42,8 +42,8 @@ theorem sum_le_threshold_add_cap (w : B → ℝ) (T U : ℝ) (hT : 0 ≤ T)
       linarith
   have hsum : (∑ b : B, if T ≤ w b then U else 0) = (Nat.card {b // T ≤ w b} : ℝ) * U := by
     rw [← Finset.sum_filter, Finset.sum_subtype (p := fun b => T ≤ w b) _ (by simp)]
-    simp only [Finset.sum_const, Finset.card_univ, nsmul_eq_mul, Nat.card_eq_fintype_card]
-    infer_instance
+    · simp only [Finset.sum_const, Finset.card_univ, nsmul_eq_mul, Nat.card_eq_fintype_card]
+    · infer_instance
   calc
     _ ≤ ∑ b, (T + if T ≤ w b then U else 0) := Finset.sum_le_sum (fun b _ => hterm b)
     _ = _ := by rw [Finset.sum_add_distrib, hsum]; simp
@@ -80,6 +80,7 @@ def fiberRestrictionEquiv {C : Type*} (f : A → B) (p : B → C) (u : C)
   left_inv _ := rfl
   right_inv _ := rfl
 
+omit [Fintype A] [Fintype B] in
 theorem fiberCard_restriction {C : Type*} (f : A → B) (p : B → C) (u : C)
     (b : {b // p b = u}) :
     fiberCard (fiberRestriction f p u) b = fiberCard f b.1 :=

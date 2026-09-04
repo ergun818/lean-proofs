@@ -8,6 +8,7 @@ open AuxiliaryModuli Filter
 
 variable (K : Type*) [Field K] [DecidableEq K] [Fintype K] [CharP K 2]
 
+omit [DecidableEq K] in
 theorem level_le_initialPlace (k : ℕ) : k ≤ blockPlace K 0 k := by
   calc
     k ≤ 2 ^ k := Nat.lt_two_pow_self.le
@@ -18,6 +19,7 @@ theorem level_le_initialPlace (k : ℕ) : k ≤ blockPlace K 0 k := by
 noncomputable def targetLevel (m : ℕ) : ℕ :=
   Nat.findGreatest (fun k => 6 * blockPlace K 0 k ≤ m) m
 
+omit [DecidableEq K] in
 theorem targetLevel_window (m : ℕ) (hm : 6 ≤ m) :
     6 * blockPlace K 0 (targetLevel K m) ≤ m ∧
       m < 6 * blockPlace K 0 (targetLevel K m + 1) := by
@@ -33,6 +35,7 @@ theorem targetLevel_window (m : ℕ) (hm : 6 ≤ m) :
   have hle : targetLevel K m + 1 ≤ targetLevel K m := Nat.le_findGreatest hmidx hp
   omega
 
+omit [DecidableEq K] in
 theorem tendsto_targetLevel : Tendsto (targetLevel K) atTop atTop := by
   apply tendsto_atTop.2
   intro k
@@ -40,6 +43,7 @@ theorem tendsto_targetLevel : Tendsto (targetLevel K) atTop atTop := by
   have hk := level_le_initialPlace K k
   exact Nat.le_findGreatest (by omega) hm
 
+omit [DecidableEq K] in
 theorem target_expansion_in_window (m : ℕ) (hm : 6 ≤ m) :
     ∃ d : (∀ i : Fin (targetLevel K m), BlockTarget K i), ∃ z : ℕ,
       m = levelTargetValue K d + blockPlace K 0 (targetLevel K m) * z ∧
@@ -51,6 +55,7 @@ theorem target_expansion_in_window (m : ℕ) (hm : 6 ≤ m) :
   rw [blockPlace_snoc] at hw
   nlinarith [hw.2]
 
+omit [DecidableEq K] in
 theorem two_blockRadix_le_topCapacity (hq : 721 ^ 8 ≤ Fintype.card K) (k : ℕ) (hk : 3 ≤ k) :
     2 * blockRadix K k ≤ Fintype.card K ^ (3 * k) := by
   have hqpos : 0 < Fintype.card K := Fintype.card_pos
@@ -80,9 +85,12 @@ theorem coefficientField_topCapacity (k : ℕ) (hk : 3 ≤ k) :
     2 * blockRadix CoefficientField k ≤ Fintype.card CoefficientField ^ (3 * k) := by
   apply two_blockRadix_le_topCapacity CoefficientField _ k hk
   rw [card_coefficientField]
-  calc
-    721 ^ 8 ≤ (2 ^ 10) ^ 8 := Nat.pow_le_pow_left (by decide) 8
-    _ = 2 ^ 80 := by rw [← pow_mul]
-    _ ≤ 2 ^ 1024 := Nat.pow_le_pow_right (by decide) (by decide)
+  have hsmall : 721 ^ 8 ≤ (2 : ℕ) ^ 80 := by
+    calc
+      721 ^ 8 ≤ (2 ^ 10) ^ 8 := Nat.pow_le_pow_left (by decide) 8
+      _ = 2 ^ 80 := by rw [← pow_mul]
+  have hlarge (n : ℕ) (hn : 80 ≤ n) : 721 ^ 8 ≤ 2 ^ n :=
+    hsmall.trans (Nat.pow_le_pow_right (by decide) hn)
+  exact hlarge 1024 (by decide)
 
 end Erdos157.Elementary

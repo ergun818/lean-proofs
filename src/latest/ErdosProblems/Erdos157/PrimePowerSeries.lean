@@ -23,6 +23,7 @@ theorem hasSum_real_geometric_succ (t : ℝ) (ht : 0 ≤ t) (ht1 : t < 1) :
   have h := (hasSum_geometric_of_lt_one ht ht1).mul_left t
   simpa only [pow_succ', div_eq_mul_inv] using h
 
+omit [DecidableEq K] in
 theorem summable_primePower_majorant (r : ℝ) (hr : 0 ≤ r)
     (hqr : (Fintype.card K : ℝ) * r < 1) :
     Summable (fun i : PrimePolynomial K × ℕ =>
@@ -58,6 +59,7 @@ theorem summable_primePower_majorant (r : ℝ) (hr : 0 ≤ r)
       nlinarith
     · exact (summable_prime_degree_weight (K := K) r hr hqr).mul_left 2
 
+omit [DecidableEq K] in
 theorem summable_norm_primePowerWeight (g : K[X]) (hg : g.Monic)
     (χ : MulChar (AdjoinRoot g) ℂ) (r : ℝ) (hr : 0 ≤ r)
     (hqr : (Fintype.card K : ℝ) * r < 1) :
@@ -77,13 +79,15 @@ theorem summable_norm_primePowerWeight (g : K[X]) (hg : g.Monic)
     · positivity
   · exact summable_primePower_majorant r hr hqr
 
+omit [DecidableEq K] in
 theorem summable_norm_primePowerCoefficient (g : K[X]) (hg : g.Monic)
     (χ : MulChar (AdjoinRoot g) ℂ) (r : ℝ) (hr : 0 < r)
     (hqr : (Fintype.card K : ℝ) * r < 1) :
-    Summable (fun n => ‖primePowerCoefficient g χ n‖ * r ^ n) :=
-  summable_gradedCoefficient primePowerDegree (primePowerWeight g χ) r hr
+    Summable (fun n => ‖primePowerCoefficient g χ n‖ * r ^ n) := by
+  exact summable_gradedCoefficient primePowerDegree (primePowerWeight g χ) r hr
     (summable_norm_primePowerWeight g hg χ r hr.le hqr)
 
+omit [DecidableEq K] in
 theorem hasSum_primePowerTerm (g : K[X]) (hg : g.Monic)
     (χ : MulChar (AdjoinRoot g) ℂ) (p : PrimePolynomial K) (z : ℂ)
     (hz : (Fintype.card K : ℝ) * ‖z‖ < 1) :
@@ -96,6 +100,7 @@ theorem hasSum_primePowerTerm (g : K[X]) (hg : g.Monic)
   simp only [primePowerWeight, primePowerDegree, primeWeight, mul_pow, pow_mul]
   ring
 
+omit [DecidableEq K] in
 theorem hasSum_primePowerCoefficient (g : K[X]) (hg : g.Monic)
     (χ : MulChar (AdjoinRoot g) ℂ) (hχ : χ ≠ 1) (r : ℝ) (hr : 0 < r)
     (hqr : (Fintype.card K : ℝ) * r < 1) (z : ℂ) (hz : ‖z‖ < r) :
@@ -104,7 +109,9 @@ theorem hasSum_primePowerCoefficient (g : K[X]) (hg : g.Monic)
   have hsmall : (Fintype.card K : ℝ) * ‖z‖ < 1 :=
     (mul_le_mul_of_nonneg_left hz.le (by positivity)).trans_lt hqr
   have habs := summable_norm_primePowerWeight g hg χ ‖z‖ (norm_nonneg z) hsmall
-  have hs : Summable (fun i : PrimePolynomial K × ℕ => primePowerWeight g χ i * z ^ primePowerDegree i) := by
+  have hs :
+      Summable (fun i : PrimePolynomial K × ℕ => primePowerWeight g χ i * z ^ primePowerDegree
+    i) := by
     apply Summable.of_norm
     simpa only [norm_mul, norm_pow] using habs
   have htotal : (∑' i : PrimePolynomial K × ℕ, primePowerWeight g χ i * z ^ primePowerDegree i) =
@@ -116,6 +123,7 @@ theorem hasSum_primePowerCoefficient (g : K[X]) (hg : g.Monic)
     (summable_norm_primePowerWeight g hg χ r hr.le hqr) z hz.le
   rwa [htotal] at h
 
+omit [DecidableEq K] in
 /-- The principal zeta specialization, whose logarithmic derivative is rational. -/
 theorem hasSum_zeta_primePowerCoefficient (r : ℝ) (hr : 0 < r)
     (hqr : (Fintype.card K : ℝ) * r < 1) (z : ℂ) (hz : ‖z‖ < r) :
@@ -124,7 +132,9 @@ theorem hasSum_zeta_primePowerCoefficient (r : ℝ) (hr : 0 < r)
   have hsmall : (Fintype.card K : ℝ) * ‖z‖ < 1 :=
     (mul_le_mul_of_nonneg_left hz.le (by positivity)).trans_lt hqr
   have habs := summable_norm_primePowerWeight (1 : K[X]) monic_one 1 ‖z‖ (norm_nonneg z) hsmall
-  have hs : Summable (fun i : PrimePolynomial K × ℕ => primePowerWeight 1 1 i * z ^ primePowerDegree i) := by
+  have hs :
+      Summable (fun i : PrimePolynomial K × ℕ => primePowerWeight 1 1 i * z ^ primePowerDegree
+    i) := by
     apply Summable.of_norm
     simpa only [norm_mul, norm_pow] using habs
   have htotal : (∑' i : PrimePolynomial K × ℕ, primePowerWeight 1 1 i * z ^ primePowerDegree i) =

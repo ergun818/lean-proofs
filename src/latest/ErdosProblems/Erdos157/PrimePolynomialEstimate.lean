@@ -9,6 +9,7 @@ open ElementaryCharacterBound
 
 variable {K : Type*} [Field K] [DecidableEq K] [Fintype K]
 
+omit [DecidableEq K] in
 /-- The polynomial zeta function has weighted prime-power coefficient `q^n`. -/
 theorem zeta_primePowerCoefficient (n : ℕ) (hn : 0 < n) :
     primePowerCoefficient (1 : K[X]) 1 n = (Fintype.card K : ℂ) ^ n := by
@@ -41,12 +42,15 @@ theorem zeta_primePowerCoefficient (n : ℕ) (hn : 0 < n) :
     simpa only [f, α, Fin.sum_univ_one, contribution, neg_div, neg_neg] using hs
   have heq := scalar_coefficients_eq (primePowerCoefficient (1 : K[X]) 1) b f r hr ha hb
     (fun z hz => hasSum_zeta_primePowerCoefficient r hr hqr z hz) hfb
-  simpa only [b, rootPowerCoefficient, if_neg hn.ne', neg_neg, α, Fin.sum_univ_one] using congrFun heq n
+  simpa only [b, rootPowerCoefficient, if_neg hn.ne', neg_neg, α, Fin.sum_univ_one] using congrFun
+    heq n
 
+omit [DecidableEq K] in
 theorem zeta_primeCharacterSum (n : ℕ) :
     primeCharacterSum (1 : K[X]) 1 n = Fintype.card (PrimeDegree K n) := by
   simp [primeCharacterSum, trivial_modulus_character]
 
+omit [DecidableEq K] in
 /-- A coarse explicit prime polynomial theorem, sufficient for the construction. -/
 theorem abs_primeDegree_count_error_le (n : ℕ) (hn : 0 < n) :
     |(n : ℝ) * Fintype.card (PrimeDegree K n) - (Fintype.card K : ℝ) ^ n| ≤

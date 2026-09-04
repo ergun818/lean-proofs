@@ -14,6 +14,7 @@ noncomputable def primeEulerTerm (g : K[X]) (χ : MulChar (AdjoinRoot g) ℂ)
     (p : PrimePolynomial K) (z : ℂ) : ℂ :=
   (p.1.natDegree : ℂ) * (primeWeight g χ z p / (1 - primeWeight g χ z p))
 
+omit [DecidableEq K] [Fintype K] in
 theorem primeEulerTerm_eq_logDerivative (g : K[X]) (χ : MulChar (AdjoinRoot g) ℂ)
     (p : PrimePolynomial K) (z : ℂ) :
     primeEulerTerm g χ p z = -z * eulerLogDerivative g χ p z := by
@@ -28,6 +29,7 @@ theorem primeEulerTerm_eq_logDerivative (g : K[X]) (χ : MulChar (AdjoinRoot g) 
   rw [hpow]
   ring
 
+omit [DecidableEq K] in
 theorem summable_primeEulerTerm (g : K[X]) (hg : g.Monic)
     (χ : MulChar (AdjoinRoot g) ℂ) (r : ℝ) (hr : 0 < r)
     (hqr : (Fintype.card K : ℝ) * r < 1) (z : ℂ) (hz : ‖z‖ ≤ r) :
@@ -35,6 +37,7 @@ theorem summable_primeEulerTerm (g : K[X]) (hg : g.Monic)
   simpa only [primeEulerTerm_eq_logDerivative] using
     (summable_eulerLogDerivative g hg χ r hr hqr z hz).mul_left (-z)
 
+omit [DecidableEq K] in
 theorem sum_primeEulerTerm (g : K[X]) (hg : g.Monic)
     (χ : MulChar (AdjoinRoot g) ℂ) (hχ : χ ≠ 1) (r : ℝ) (hr : 0 < r)
     (hqr : (Fintype.card K : ℝ) * r < 1) (z : ℂ) (hz : ‖z‖ < r) :
@@ -44,6 +47,7 @@ theorem sum_primeEulerTerm (g : K[X]) (hg : g.Monic)
   rw [tsum_mul_left, lPolynomial_logDerivative_eq g hg χ hχ r hr hqr z hz]
   ring
 
+omit [DecidableEq K] in
 theorem sum_zeta_primeEulerTerm (r : ℝ) (hr : 0 < r)
     (hqr : (Fintype.card K : ℝ) * r < 1) (z : ℂ) (hz : ‖z‖ < r) :
     (∑' p : PrimePolynomial K, primeEulerTerm 1 1 p z) =
@@ -52,6 +56,7 @@ theorem sum_zeta_primeEulerTerm (r : ℝ) (hr : 0 < r)
   rw [tsum_mul_left, zeta_logDerivative r hr hqr z hz]
   ring
 
+omit [DecidableEq K] [Fintype K] in
 theorem primeWeight_zeta (p : PrimePolynomial K) (z : ℂ) :
     primeWeight 1 1 z p = z ^ p.1.natDegree := by
   simp only [primeWeight, trivial_modulus_character, one_mul]
@@ -61,7 +66,8 @@ noncomputable def characterPhase (g : K[X]) (χ : MulChar (AdjoinRoot g) ℂ)
     (p : PrimePolynomial K) (z : ℂ) : ℂ :=
   χ (AdjoinRoot.mk g p.1) * (z / (‖z‖ : ℂ)) ^ p.1.natDegree
 
-theorem characterPhase_norm_le (g : K[X]) (hg : g.Monic)
+omit [DecidableEq K] [Fintype K] in
+theorem characterPhase_norm_le [Finite K] (g : K[X]) (hg : g.Monic)
     (χ : MulChar (AdjoinRoot g) ℂ) (p : PrimePolynomial K) (z : ℂ)
     (hz : z ≠ 0) : ‖characterPhase g χ p z‖ ≤ 1 := by
   let : Finite (AdjoinRoot g) :=
@@ -73,6 +79,7 @@ theorem characterPhase_norm_le (g : K[X]) (hg : g.Monic)
   rw [characterPhase, norm_mul, norm_pow, hphase, one_pow, mul_one]
   exact character_norm_le_one χ _
 
+omit [DecidableEq K] [Fintype K] in
 theorem radius_mul_characterPhase (g : K[X]) (χ : MulChar (AdjoinRoot g) ℂ)
     (p : PrimePolynomial K) (z : ℂ) (hz : z ≠ 0) :
     ((‖z‖ ^ p.1.natDegree : ℝ) : ℂ) * characterPhase g χ p z = primeWeight g χ z p := by
@@ -82,6 +89,7 @@ theorem radius_mul_characterPhase (g : K[X]) (χ : MulChar (AdjoinRoot g) ℂ)
   rw [Complex.ofReal_pow, div_pow]
   field_simp
 
+omit [DecidableEq K] [Fintype K] in
 theorem radius_mul_characterPhase_sq (g : K[X]) (χ : MulChar (AdjoinRoot g) ℂ)
     (p : PrimePolynomial K) (z : ℂ) (hz : z ≠ 0) :
     ((‖z‖ ^ p.1.natDegree : ℝ) : ℂ) * characterPhase g χ p z ^ 2 =
@@ -96,8 +104,9 @@ theorem radius_mul_characterPhase_sq (g : K[X]) (χ : MulChar (AdjoinRoot g) ℂ
   field_simp [hnorm]
   linear_combination -(χ (AdjoinRoot.mk g p.1) ^ 2 * z ^ (p.1.natDegree * 2)) * hcancel
 
+omit [DecidableEq K] [Fintype K] in
 /-- Each prime contributes a nonnegative amount to the `3,4,1` combination. -/
-theorem primeEulerTerm_positivity (g : K[X]) (hg : g.Monic)
+theorem primeEulerTerm_positivity [Finite K] (g : K[X]) (hg : g.Monic)
     (χ : MulChar (AdjoinRoot g) ℂ) (p : PrimePolynomial K) (z : ℂ) (hz : ‖z‖ < 1) :
     0 ≤ 3 * (primeEulerTerm 1 1 p (‖z‖ : ℂ)).re +
       4 * (primeEulerTerm g χ p z).re +

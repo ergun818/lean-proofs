@@ -16,15 +16,19 @@ noncomputable instance primeDegreeFintype [Fintype K] (n : ℕ) : Fintype (Prime
 def primeDegreeToPrime {n : ℕ} (p : PrimeDegree K n) : PrimePolynomial K :=
   ⟨p.1.1, p.1.monic, p.2⟩
 
-theorem primeDegreeToPrime_injective (n : ℕ) : Function.Injective (primeDegreeToPrime K (n := n)) := by
+omit [DecidableEq K] in
+theorem primeDegreeToPrime_injective (n : ℕ) :
+    Function.Injective (primeDegreeToPrime K (n := n)) := by
   intro p q h
   apply Subtype.ext
   apply Subtype.ext
   exact congrArg (fun p : PrimePolynomial K => p.1) h
 
+omit [DecidableEq K] in
 theorem primeDegreeToPrime_natDegree {n : ℕ} (p : PrimeDegree K n) :
     (primeDegreeToPrime K p).1.natDegree = n := p.1.natDegree
 
+omit [DecidableEq K] in
 theorem card_primeDegree_le [Fintype K] (n : ℕ) :
     Fintype.card (PrimeDegree K n) ≤ Fintype.card K ^ n := by
   exact (Fintype.card_subtype_le (fun p : MonicDegreeEq K n => Irreducible p.1)).trans_eq
@@ -32,6 +36,7 @@ theorem card_primeDegree_le [Fintype K] (n : ℕ) :
 
 abbrev PrimesAtMost (N : ℕ) := Σ d : Fin (N + 1), PrimeDegree K d.1
 
+omit [DecidableEq K] in
 theorem card_primesAtMost_le [Fintype K] (N : ℕ) :
     Fintype.card (PrimesAtMost K N) ≤ (N + 1) * Fintype.card K ^ N := by
   rw [Fintype.card_sigma]
@@ -46,6 +51,7 @@ theorem card_primesAtMost_le [Fintype K] (N : ℕ) :
 def primeToBounded (N : ℕ) (p : PrimePolynomial K) (hp : p.1.natDegree ≤ N) : PrimesAtMost K N :=
   ⟨⟨p.1.natDegree, by omega⟩, ⟨MonicDegreeEq.mk p.1 p.2.1 rfl, p.2.2⟩⟩
 
+omit [DecidableEq K] in
 theorem primeToBounded_injective (N : ℕ) :
     Function.Injective (fun p : {p : PrimePolynomial K // p.1.natDegree ≤ N} =>
       primeToBounded K N p.1 p.2) := by
@@ -59,17 +65,20 @@ variable {K}
 abbrev PrimePowerFiber (n : ℕ) := {i : PrimePolynomial K × ℕ // primePowerDegree i = n}
 abbrev ProperPrimePowerFiber (n : ℕ) := {i : PrimePowerFiber (K := K) n // 0 < i.1.2}
 
+omit [DecidableEq K] in
 theorem primePowerFiber_degree_le {n : ℕ} (i : PrimePowerFiber (K := K) n) :
     i.1.1.1.natDegree ≤ n := by
   have h := Nat.mul_le_mul_left i.1.1.1.natDegree (by omega : 1 ≤ i.1.2 + 1)
   simpa only [Nat.mul_one, ← i.2, primePowerDegree] using h
 
+omit [DecidableEq K] in
 theorem properPrimePowerFiber_degree_le {n : ℕ} (i : ProperPrimePowerFiber (K := K) n) :
     i.1.1.1.1.natDegree ≤ n / 2 := by
   have h := Nat.mul_le_mul_left i.1.1.1.1.natDegree (by have := i.2; omega : 2 ≤ i.1.1.2 + 1)
   apply (Nat.le_div_iff_mul_le (by decide : 0 < 2)).mpr
   simpa only [← i.1.2, primePowerDegree] using h
 
+omit [DecidableEq K] in
 /-- Once the prime and total degree are fixed, the exponent is unique. -/
 theorem primePowerFiber_prime_injective (n : ℕ) :
     Function.Injective (fun i : PrimePowerFiber (K := K) n => i.1.1) := by
@@ -100,6 +109,7 @@ noncomputable instance primePowerFiberFintype [Fintype K] (n : ℕ) :
 noncomputable instance properPrimePowerFiberFintype [Fintype K] (n : ℕ) :
     Fintype (ProperPrimePowerFiber (K := K) n) := Fintype.ofFinite _
 
+omit [DecidableEq K] in
 theorem card_properPrimePowerFiber_le [Fintype K] (n : ℕ) :
     Fintype.card (ProperPrimePowerFiber (K := K) n) ≤
       (n / 2 + 1) * Fintype.card K ^ (n / 2) := by

@@ -8,6 +8,7 @@ open Polynomial PolynomialCharacters AuxiliaryModuli PackedDigits
 
 variable (K : Type*) [Field K] [DecidableEq K] [Fintype K] [CharP K 2]
 
+omit [DecidableEq K] in
 theorem digitBlocks_pair_head_tail (τ : MaskChoice K) (ω : IntegerParameters K)
     (f₁ f₂ f₃ f₄ : Label K) (i n : ℕ)
     (heq : MixedRadix.encode (digitBlocks K τ ω f₁ i (n + 1)) +
@@ -31,9 +32,11 @@ theorem digitBlocks_pair_head_tail (τ : MaskChoice K) (ω : IntegerParameters K
   apply Nat.eq_of_mul_eq_mul_left (blockRadix_pos K i)
   nlinarith
 
+omit [DecidableEq K] in
 theorem digitBlocks_pair_residues (τ : MaskChoice K) (ω : IntegerParameters K)
     (f₁ f₂ f₃ f₄ : Label K) (i n : ℕ)
-    (heq : MixedRadix.encode (digitBlocks K τ ω f₁ i n) + MixedRadix.encode (digitBlocks K τ ω f₂ i n) =
+    (heq : MixedRadix.encode (digitBlocks K τ ω f₁ i n) + MixedRadix.encode
+      (digitBlocks K τ ω f₂ i n) =
       MixedRadix.encode (digitBlocks K τ ω f₃ i n) + MixedRadix.encode (digitBlocks K τ ω f₄ i n)) :
     ∀ j < n, labelResidue K f₁ (i + j) * labelResidue K f₂ (i + j) =
       labelResidue K f₃ (i + j) * labelResidue K f₄ (i + j) := by
@@ -50,12 +53,14 @@ theorem digitBlocks_pair_residues (τ : MaskChoice K) (ω : IntegerParameters K)
       rw [hidx] at ht
       exact ht
 
+omit [DecidableEq K] in
 theorem encoded_pair_prefix_eq (τ : MaskChoice K) (ω : IntegerParameters K)
     (f₁ f₂ f₃ f₄ : Label K) (m : ℕ)
     (h₁ : m ≤ f₁.level) (h₂ : m ≤ f₂.level) (h₃ : m ≤ f₃.level) (h₄ : m ≤ f₄.level)
     (heq : encoded K τ ω f₁ + encoded K τ ω f₂ = encoded K τ ω f₃ + encoded K τ ω f₄) :
     MixedRadix.encode (digitBlocks K τ ω f₁ 0 m) + MixedRadix.encode (digitBlocks K τ ω f₂ 0 m) =
-      MixedRadix.encode (digitBlocks K τ ω f₃ 0 m) + MixedRadix.encode (digitBlocks K τ ω f₄ 0 m) := by
+      MixedRadix.encode (digitBlocks K τ ω f₃ 0 m) + MixedRadix.encode
+        (digitBlocks K τ ω f₄ 0 m) := by
   obtain ⟨t₁, ht₁⟩ := encoded_prefix_decomposition K τ ω f₁ m h₁
   obtain ⟨t₂, ht₂⟩ := encoded_prefix_decomposition K τ ω f₂ m h₂
   obtain ⟨t₃, ht₃⟩ := encoded_prefix_decomposition K τ ω f₃ m h₃
@@ -67,6 +72,7 @@ theorem encoded_pair_prefix_eq (τ : MaskChoice K) (ω : IntegerParameters K)
     (digitBlocks_place K τ ω f₁ 0 m) (digitBlocks_place K τ ω f₂ 0 m)
     (digitBlocks_place K τ ω f₃ 0 m) (digitBlocks_place K τ ω f₄ 0 m) t₁ t₂ t₃ t₄ heq
 
+omit [DecidableEq K] in
 theorem product_dvd_of_encoded_pair_eq (τ : MaskChoice K) (ω : IntegerParameters K)
     (f₁ f₂ f₃ f₄ : Label K) (m : ℕ)
     (h₁ : m ≤ f₁.level) (h₂ : m ≤ f₂.level) (h₃ : m ≤ f₃.level) (h₄ : m ≤ f₄.level)

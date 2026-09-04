@@ -14,11 +14,13 @@ theorem encode_packed_block {n : ℕ} (b x : ℕ) (y z : Fin n → ℕ) :
         721 ^ n * MixedRadix.encode (List.ofFn (fun j => (721, z j)))) := by
   rw [MixedRadix.encode_cons, MixedRadix.encode_append]
   have hp : MixedRadix.place (List.ofFn (fun j => (721, y j))) = 721 ^ n := by
-    simp only [MixedRadix.place, List.map_ofFn, Function.comp_def, List.ofFn_const, List.prod_replicate]
+    simp only [MixedRadix.place, List.map_ofFn, Function.comp_def, List.ofFn_const,
+      List.prod_replicate]
   rw [hp]
 
 variable (K : Type*) [Field K] [DecidableEq K] [Fintype K] [CharP K 2]
 
+omit [DecidableEq K] in
 theorem realize_blockTarget (i : ℕ) (τ : TagField i → LogDigit K i)
     (d : BlockTarget K i) (u₁ u₂ u₃ : (ResidueField K i)ˣ)
     (t₁ t₂ t₃ : TagField i)

@@ -47,7 +47,8 @@ theorem HalfValid.two_encode_lt_place {xs : List (ℕ × ℕ)} (h : HalfValid xs
     have ht := ih h.2.2
     have hb := h.1
     have hd := h.2.1
-    have hm := Nat.mul_le_mul_left b (show 2 * MixedRadix.encode xs + 1 ≤ MixedRadix.place xs by omega)
+    have hm := Nat.mul_le_mul_left b
+      (show 2 * MixedRadix.encode xs + 1 ≤ MixedRadix.place xs by omega)
     rw [MixedRadix.encode_cons, MixedRadix.place_cons]
     nlinarith
 
@@ -83,8 +84,10 @@ noncomputable def blockDigits (i : ℕ) (τ : TagField i → LogDigit K i)
     (List.ofFn (fun j : Fin (i + 2) =>
       (103 * 7, PairDigits.pack 7 (tagCoordinates i c.tag j).val (c.auxiliary (.inr (.inl j))))) ++
     List.ofFn (fun j : Fin (i + 2) =>
-      (103 * 7, PairDigits.pack 7 (tagCoordinates i (c.tag ^ 2) j).val (c.auxiliary (.inr (.inr j))))))
+      (103 * 7, PairDigits.pack 7 (tagCoordinates i (c.tag ^ 2) j).val
+        (c.auxiliary (.inr (.inr j))))))
 
+omit [DecidableEq K] in
 theorem blockDigits_halfValid (i : ℕ) (τ : TagField i → LogDigit K i)
     (u : (ResidueField K i)ˣ) (c : BlockChoice i) : HalfValid (blockDigits K i τ u c) := by
   unfold blockDigits
@@ -94,30 +97,36 @@ theorem blockDigits_halfValid (i : ℕ) (τ : TagField i → LogDigit K i)
   constructor <;> apply halfValid_ofFn <;> intro j <;>
     exact halfValid_pack _ _ _ (ZMod.val_lt _)
 
+omit [DecidableEq K] in
 theorem blockDigits_length (i : ℕ) (τ : TagField i → LogDigit K i)
     (u : (ResidueField K i)ˣ) (c : BlockChoice i) : (blockDigits K i τ u c).length = 2 * i + 5 := by
   simp only [blockDigits, List.length_cons, List.length_append, List.length_ofFn]
   omega
 
+omit [DecidableEq K] in
 theorem blockDigits_radices_eq (i : ℕ) (τ σ : TagField i → LogDigit K i)
     (u v : (ResidueField K i)ˣ) (c d : BlockChoice i) :
     (blockDigits K i τ u c).map Prod.fst = (blockDigits K i σ v d).map Prod.fst := by
   simp only [blockDigits, List.map_cons, List.map_append, List.map_ofFn, Function.comp_def]
 
+omit [DecidableEq K] in
 theorem blockDigits_get_log (i : ℕ) (τ : TagField i → LogDigit K i)
     (u : (ResidueField K i)ˣ) (c : BlockChoice i) :
     (blockDigits K i τ u c)[0]? = some (103 * Nat.card (ResidueField K i)ˣ,
       PairDigits.pack (Nat.card (ResidueField K i)ˣ) (maskedLog K i τ c.tag u).val
         (c.auxiliary (.inl ()))) := rfl
 
+omit [DecidableEq K] in
 theorem blockDigits_get_tag (i : ℕ) (τ : TagField i → LogDigit K i)
     (u : (ResidueField K i)ˣ) (c : BlockChoice i) (j : Fin (i + 2)) :
     (blockDigits K i τ u c)[j.1 + 1]? = some (721,
       PairDigits.pack 7 (tagCoordinates i c.tag j).val (c.auxiliary (.inr (.inl j)))) := by
   unfold blockDigits
-  rw [List.getElem?_cons_succ, List.getElem?_append_left (by simpa only [List.length_ofFn] using j.2),
+  rw [List.getElem?_cons_succ, List.getElem?_append_left
+    (by simpa only [List.length_ofFn] using j.2),
     List.getElem?_ofFn, dif_pos j.2]
 
+omit [DecidableEq K] in
 theorem blockDigits_get_square (i : ℕ) (τ : TagField i → LogDigit K i)
     (u : (ResidueField K i)ˣ) (c : BlockChoice i) (j : Fin (i + 2)) :
     (blockDigits K i τ u c)[i + 2 + j.1 + 1]? = some (721,
@@ -129,6 +138,7 @@ theorem blockDigits_get_square (i : ℕ) (τ : TagField i → LogDigit K i)
 noncomputable def blockRadix (i : ℕ) : ℕ :=
   (103 * Nat.card (ResidueField K i)ˣ) * 721 ^ (2 * i + 4)
 
+omit [DecidableEq K] in
 theorem blockDigits_place (i : ℕ) (τ : TagField i → LogDigit K i)
     (u : (ResidueField K i)ˣ) (c : BlockChoice i) :
     MixedRadix.place (blockDigits K i τ u c) = blockRadix K i := by

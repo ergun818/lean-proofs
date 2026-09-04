@@ -19,6 +19,7 @@ noncomputable def unitLogEquiv (k : ℕ) :
 def logPrefix {h k : ℕ} (hhk : h ≤ k) (v : LogVector K k) : LogVector K h :=
   fun i => v ⟨i.1, lt_of_lt_of_le i.2 hhk⟩
 
+omit [DecidableEq K] in
 theorem logPrefix_unitLogEquiv {h k : ℕ} (hhk : h ≤ k)
     (v : (AdjoinRoot (product K k))ˣ) :
     logPrefix K hhk (unitLogEquiv K k v) =
@@ -32,10 +33,11 @@ theorem logPrefix_unitLogEquiv {h k : ℕ} (hhk : h ≤ k)
 abbrev HighIndex (h k : ℕ) := {i : Fin k // ¬i.1 < h}
 abbrev HighLogVector (h k : ℕ) := ∀ i : HighIndex h k, LogDigit K i.1
 
-def joinLogVectors {h k : ℕ} (hhk : h ≤ k)
+def joinLogVectors {h k : ℕ} (_hhk : h ≤ k)
     (u : LogVector K h) (v : HighLogVector K h k) : LogVector K k :=
   fun i => if hi : i.1 < h then u ⟨i.1, hi⟩ else v ⟨i, hi⟩
 
+omit [DecidableEq K] in
 theorem logPrefix_join {h k : ℕ} (hhk : h ≤ k)
     (u : LogVector K h) (v : HighLogVector K h k) :
     logPrefix K hhk (joinLogVectors K hhk u v) = u := by
@@ -67,6 +69,7 @@ noncomputable def logExtensionEquiv {h k : ℕ} (hhk : h ≤ k)
 noncomputable def GoodLogVector (k : ℕ) (v : LogVector K k) : Prop :=
   GoodResidue k ((unitLogEquiv K k).symm v)
 
+omit [DecidableEq K] in
 theorem good_log_extensions_density {h k : ℕ} (hhk : h ≤ k)
     (hg : ∀ u : (AdjoinRoot (product K h))ˣ,
       (fiberCard (quotientProjection K hhk) u : ℝ) / (1024 * (levelDegree k : ℝ) ^ 3) ≤
@@ -90,7 +93,8 @@ theorem good_log_extensions_density {h k : ℕ} (hhk : h ≤ k)
   have hc : (0 : ℝ) < fiberCard (quotientProjection K hhk) r := by
     have hn : 0 < Nat.card {v : (AdjoinRoot (product K k))ˣ // quotientProjection K hhk v = r} := by
       let ⟨v, hv⟩ := quotientProjection_surjective K hhk r
-      let : Nonempty {v : (AdjoinRoot (product K k))ˣ // quotientProjection K hhk v = r} := ⟨⟨v, hv⟩⟩
+      let :
+          Nonempty {v : (AdjoinRoot (product K k))ˣ // quotientProjection K hhk v = r} := ⟨⟨v, hv⟩⟩
       exact Nat.card_pos
     exact_mod_cast hn
   unfold finiteDensity

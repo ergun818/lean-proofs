@@ -12,6 +12,7 @@ variable {K : Type*} [Field K] [DecidableEq K] [Fintype K]
 noncomputable def primeProgressionCount (g : K[X]) (n : ℕ) (a : AdjoinRoot g) : ℕ :=
   Nat.card {p : PrimeDegree K n // AdjoinRoot.mk g p.1.1 = a}
 
+omit [DecidableEq K] in
 theorem natCard_adjoinRoot (g : K[X]) (hg : g.Monic) :
     Nat.card (AdjoinRoot g) = Fintype.card K ^ g.natDegree := by
   calc
@@ -19,6 +20,7 @@ theorem natCard_adjoinRoot (g : K[X]) (hg : g.Monic) :
       Nat.card_congr (AdjoinRoot.powerBasisAux' hg).equivFun.toEquiv
     _ = _ := by simp [Nat.card_eq_fintype_card]
 
+omit [DecidableEq K] in
 theorem natCard_adjoinRoot_units_le (g : K[X]) (hg : g.Monic) :
     Nat.card (AdjoinRoot g)ˣ ≤ Fintype.card K ^ g.natDegree := by
   let : Finite (AdjoinRoot g) :=
@@ -35,6 +37,7 @@ theorem isUnit_mk_of_isCoprime (g f : K[X]) (h : IsCoprime g f) :
   have hm := congrArg (AdjoinRoot.mk g) hbc
   simpa only [map_add, map_mul, AdjoinRoot.mk_self, mul_zero, zero_add, map_one] using hm
 
+omit [DecidableEq K] [Fintype K] in
 theorem isUnit_primeResidue (g : K[X]) (hg : g.Monic) {n : ℕ}
     (hn : g.natDegree < n) (p : PrimeDegree K n) : IsUnit (AdjoinRoot.mk g p.1.1) := by
   apply isUnit_mk_of_isCoprime
@@ -45,6 +48,7 @@ theorem isUnit_primeResidue (g : K[X]) (hg : g.Monic) {n : ℕ}
   rw [p.1.natDegree] at hle
   omega
 
+omit [DecidableEq K] in
 /-- An explicit residue-class error; no square-root cancellation is required. -/
 theorem abs_primeProgression_count_error_le (g : K[X]) (hg : g.Monic)
     (hodd : Odd (Nat.card (AdjoinRoot g)ˣ)) (n : ℕ) (hn : g.natDegree < n)

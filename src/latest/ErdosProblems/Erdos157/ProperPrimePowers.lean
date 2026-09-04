@@ -34,6 +34,7 @@ noncomputable def primeDegreeEquivExponentOne (n : ℕ) :
     · rfl
     · exact i.2.symm
 
+omit [DecidableEq K] in
 theorem sum_exponentOne (g : K[X]) (χ : MulChar (AdjoinRoot g) ℂ) (n : ℕ) :
     (∑ i : {i : PrimePowerFiber (K := K) n // i.1.2 = 0}, primePowerWeight g χ i.1.1) =
       (n : ℂ) * primeCharacterSum g χ n := by
@@ -44,8 +45,10 @@ theorem sum_exponentOne (g : K[X]) (χ : MulChar (AdjoinRoot g) ℂ) (n : ℕ) :
     zero_add, pow_one, primeDegreeToPrime, primeCharacterSum, MonicDegreeEq.natDegree,
     Finset.mul_sum]
 
+omit [DecidableEq K] in
 theorem primePowerCoefficient_split (g : K[X]) (χ : MulChar (AdjoinRoot g) ℂ) (n : ℕ) :
-    primePowerCoefficient g χ n = (n : ℂ) * primeCharacterSum g χ n + properPrimePowerSum g χ n := by
+    primePowerCoefficient g χ n = (n : ℂ) * primeCharacterSum g χ n +
+      properPrimePowerSum g χ n := by
   classical
   have hsplit := Fintype.sum_subtype_add_sum_subtype
     (fun i : PrimePowerFiber (K := K) n => i.1.2 = 0)
@@ -54,7 +57,8 @@ theorem primePowerCoefficient_split (g : K[X]) (χ : MulChar (AdjoinRoot g) ℂ)
     Equiv.subtypeEquivRight (fun i => Nat.pos_iff_ne_zero.symm)
   have he := Equiv.sum_comp e (fun i => primePowerWeight g χ i.1.1)
   rw [sum_exponentOne] at hsplit
-  have hproper : (∑ i : {i : PrimePowerFiber (K := K) n // ¬i.1.2 = 0}, primePowerWeight g χ i.1.1) =
+  have hproper :
+      (∑ i : {i : PrimePowerFiber (K := K) n // ¬i.1.2 = 0}, primePowerWeight g χ i.1.1) =
       properPrimePowerSum g χ n := by
     calc
       _ = ∑ i : {i : PrimePowerFiber (K := K) n // ¬i.1.2 = 0},
@@ -68,10 +72,12 @@ theorem primePowerCoefficient_split (g : K[X]) (χ : MulChar (AdjoinRoot g) ℂ)
   rw [tsum_fintype]
   exact hsplit.symm
 
+omit [DecidableEq K] in
 theorem norm_properPrimePowerSum_le (g : K[X]) (hg : g.Monic)
     (χ : MulChar (AdjoinRoot g) ℂ) (n : ℕ) :
     ‖properPrimePowerSum g χ n‖ ≤
       (n : ℝ) * (n / 2 + 1 : ℕ) * (Fintype.card K : ℝ) ^ (n / 2) := by
+  classical
   let : Finite (AdjoinRoot g) :=
     Finite.of_injective (AdjoinRoot.powerBasisAux' hg).equivFun
       (AdjoinRoot.powerBasisAux' hg).equivFun.injective
@@ -93,6 +99,7 @@ theorem norm_properPrimePowerSum_le (g : K[X]) (hg : g.Monic)
       exact_mod_cast card_properPrimePowerFiber_le (K := K) n
     _ = _ := by push_cast; ring
 
+omit [DecidableEq K] in
 /-- Removing higher powers leaves an explicit nonprincipal prime-character bound. -/
 theorem norm_nat_mul_primeCharacterSum_le (g : K[X]) (hg : g.Monic)
     (χ : MulChar (AdjoinRoot g) ℂ) (hχ : χ ≠ 1) (hχ2 : χ ^ 2 ≠ 1)

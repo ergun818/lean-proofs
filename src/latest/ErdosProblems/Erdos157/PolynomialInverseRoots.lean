@@ -68,6 +68,7 @@ theorem inverseRoots_logDerivative (p : ℂ[X]) (hp : p.coeff 0 = 1)
 
 variable {K : Type*} [Field K] [DecidableEq K] [Fintype K]
 
+omit [DecidableEq K] in
 theorem lPolynomial_inverseRoot_norm_le (g : K[X]) (hg : g.Monic)
     (χ : MulChar (AdjoinRoot g) ℂ) (hχ : χ ≠ 1)
     (i : Fin (lPolynomial g χ).roots.toList.length) :
@@ -79,8 +80,8 @@ theorem lPolynomial_inverseRoot_norm_le (g : K[X]) (hg : g.Monic)
   have hconstant := lPolynomial_constantCoeff g hg χ hχ
   simp [heq] at hconstant
 
-omit [DecidableEq K] in
-theorem lPolynomial_root_count_lt (g : K[X]) (hg : g.Monic)
+omit [DecidableEq K] [Fintype K] in
+theorem lPolynomial_root_count_lt [Finite K] (g : K[X]) (hg : g.Monic)
     (χ : MulChar (AdjoinRoot g) ℂ) (hχ : χ ≠ 1) :
     (lPolynomial g χ).roots.toList.length < g.natDegree := by
   have hpne : lPolynomial g χ ≠ 0 := by

@@ -34,7 +34,8 @@ theorem summable_norm_rootPowerCoefficient {m : ℕ} (α : Fin m → ℂ)
     Summable (fun n => ‖rootPowerCoefficient α n‖ * r ^ n) := by
   have hs : Summable (fun n : ℕ => ∑ i, (‖α i‖ * r) ^ n) :=
     summable_sum (fun i _ => summable_geometric_of_lt_one (by positivity) (hα i))
-  apply Summable.of_nonneg_of_le (fun n => by positivity) (g := fun n => ‖rootPowerCoefficient α n‖ * r ^ n)
+  apply Summable.of_nonneg_of_le (fun n => by positivity)
+    (g := fun n => ‖rootPowerCoefficient α n‖ * r ^ n)
     (f := fun n : ℕ => ∑ i, (‖α i‖ * r) ^ n)
   · intro n
     by_cases hn : n = 0
@@ -48,6 +49,7 @@ theorem summable_norm_rootPowerCoefficient {m : ℕ} (α : Fin m → ℂ)
 
 variable {K : Type*} [Field K] [DecidableEq K] [Fintype K]
 
+omit [DecidableEq K] in
 theorem hasSum_lPolynomial_rootPowerCoefficient (g : K[X]) (hg : g.Monic)
     (χ : MulChar (AdjoinRoot g) ℂ) (hχ : χ ≠ 1) (z : ℂ)
     (hz : (Fintype.card K : ℝ) * ‖z‖ < 1) :

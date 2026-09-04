@@ -13,7 +13,8 @@ instance two_isPrime : Fact (Nat.Prime 2) := ⟨Nat.prime_two⟩
 abbrev CoefficientField := GaloisField 2 1024
 
 noncomputable instance coefficientFieldFintype : Fintype CoefficientField := Fintype.ofFinite _
-noncomputable instance coefficientFieldDecidableEq : DecidableEq CoefficientField := Classical.decEq _
+noncomputable instance coefficientFieldDecidableEq :
+    DecidableEq CoefficientField := Classical.decEq _
 
 theorem card_coefficientField : Fintype.card CoefficientField = 2 ^ 1024 := by
   rw [Fintype.card_eq_nat_card]
@@ -192,7 +193,8 @@ theorem eventually_prefix_prime_lower [Fintype K] :
     ∀ᶠ k in Filter.atTop, ∀ a : (AdjoinRoot (product K (prefixLength k)))ˣ,
       (Fintype.card K : ℝ) ^ levelDegree k /
           (2 * (levelDegree k : ℝ) * Nat.card (AdjoinRoot (product K (prefixLength k)))ˣ) ≤
-        PolynomialCharacters.primeProgressionCount (product K (prefixLength k)) (levelDegree k) ↑a := by
+        PolynomialCharacters.primeProgressionCount (product K (prefixLength k))
+          (levelDegree k) ↑a := by
   classical
   filter_upwards [eventually_shortPrefix_prime_lower (K := K)] with k hk
   exact hk _ (product_monic K _) (product_natDegree K _) (quotient_units_card_odd K _)

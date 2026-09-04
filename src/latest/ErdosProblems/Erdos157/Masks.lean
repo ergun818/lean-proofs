@@ -55,11 +55,12 @@ def maskSums {ι : Type*} (T : ι → K × K × K) : (K → G) →+ (ι → G) w
   map_add' τ σ := by ext i; exact map_add _ _ _
 
 /-- Each prescribed vector of trial sums can be attained independently. -/
-theorem maskSums_surjective {ι : Type*} [Fintype ι] (T : ι → K × K × K)
+theorem maskSums_surjective {ι : Type*} [Finite ι] (T : ι → K × K × K)
     (hcard : ∀ i, 2 ≤ (support (T i)).card)
     (hdisj : Pairwise (fun i j => Disjoint (support (T i)) (support (T j)))) :
     Function.Surjective (maskSums (G := G) T) := by
   classical
+  let : Fintype ι := Fintype.ofFinite _
   choose a ha hsingle using fun i => exists_single_coordinate (G := G) (hcard i)
   intro y
   refine ⟨∑ i, Pi.single (a i) (y i), ?_⟩

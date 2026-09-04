@@ -13,6 +13,7 @@ theorem packed_digit_eq_of_lists_eq {xs ys : List (ℕ × ℕ)} (j b d e : ℕ)
   have he := congrArg (fun ls : List (ℕ × ℕ) => ls[j]?) h
   simpa only [hx, hy, Option.some.injEq, Prod.mk.injEq, true_and] using he
 
+omit [DecidableEq K] in
 theorem block_residue_eq_of_encode_eq (i : ℕ) (τ : TagField i → LogDigit K i)
     (u v : (ResidueField K i)ˣ) (c d : BlockChoice i)
     (heq : MixedRadix.encode (blockDigits K i τ u c) = MixedRadix.encode (blockDigits K i τ v d)) :
@@ -22,7 +23,8 @@ theorem block_residue_eq_of_encode_eq (i : ℕ) (τ : TagField i → LogDigit K 
   have htag : c.tag = d.tag := by
     apply (tagCoordinates i).injective
     ext j
-    apply PairDigits.zmod_eq_of_pack_eq 7 _ _ (c.auxiliary (.inr (.inl j))) (d.auxiliary (.inr (.inl j)))
+    apply PairDigits.zmod_eq_of_pack_eq 7 _ _ (c.auxiliary (.inr (.inl j)))
+      (d.auxiliary (.inr (.inl j)))
     exact packed_digit_eq_of_lists_eq (j.1 + 1) 721 _ _
       (blockDigits_get_tag K i τ u c j) (blockDigits_get_tag K i τ v d j) hlist
   have hlog : maskedLog K i τ c.tag u = maskedLog K i τ d.tag v := by
@@ -35,6 +37,7 @@ theorem block_residue_eq_of_encode_eq (i : ℕ) (τ : TagField i → LogDigit K 
   rw [htag] at hlog
   exact add_right_cancel hlog
 
+omit [DecidableEq K] in
 theorem block_encode_ne_pair_encode (i : ℕ) (τ : TagField i → LogDigit K i)
     (u v w : (ResidueField K i)ˣ) (c d e : BlockChoice i) :
     MixedRadix.encode (blockDigits K i τ u c) ≠
@@ -51,17 +54,21 @@ theorem block_encode_ne_pair_encode (i : ℕ) (τ : TagField i → LogDigit K i)
   have hhead := congrArg (fun ls : List (ℕ × ℕ) => ls[0]?) hlist
   have hp : PairDigits.pack (Nat.card (ResidueField K i)ˣ) (maskedLog K i τ c.tag u).val
       (c.auxiliary (.inl ())) =
-    PairDigits.pack (Nat.card (ResidueField K i)ˣ) (maskedLog K i τ d.tag v).val (d.auxiliary (.inl ())) +
-      PairDigits.pack (Nat.card (ResidueField K i)ˣ) (maskedLog K i τ e.tag w).val (e.auxiliary (.inl ())) := by
+    PairDigits.pack (Nat.card (ResidueField K i)ˣ) (maskedLog K i τ d.tag v).val
+      (d.auxiliary (.inl ())) +
+      PairDigits.pack (Nat.card (ResidueField K i)ˣ) (maskedLog K i τ e.tag w).val
+        (e.auxiliary (.inl ())) := by
     simpa only [pairSum, List.getElem?_zipWith, blockDigits_get_log, Option.some.injEq,
       Prod.mk.injEq, true_and] using hhead
   exact PairDigits.single_ne_pair _ _ _ _ 0 (c.auxiliary (.inl ())) (d.auxiliary (.inl ()))
     (e.auxiliary (.inl ())) (ZMod.val_lt _) (ZMod.val_lt _) (ZMod.val_lt _) (by decide)
     (by simpa only [Nat.add_zero] using hp)
 
+omit [DecidableEq K] in
 theorem block_product_eq_of_encode_pair_eq (i : ℕ) (τ : TagField i → LogDigit K i)
     (u₁ u₂ u₃ u₄ : (ResidueField K i)ˣ) (c₁ c₂ c₃ c₄ : BlockChoice i)
-    (heq : MixedRadix.encode (blockDigits K i τ u₁ c₁) + MixedRadix.encode (blockDigits K i τ u₂ c₂) =
+    (heq : MixedRadix.encode (blockDigits K i τ u₁ c₁) + MixedRadix.encode
+      (blockDigits K i τ u₂ c₂) =
       MixedRadix.encode (blockDigits K i τ u₃ c₃) + MixedRadix.encode (blockDigits K i τ u₄ c₄)) :
     u₁ * u₂ = u₃ * u₄ := by
   have hsum := pairSum_eq_of_encode_add_eq (blockDigits_halfValid K i τ u₁ c₁)

@@ -14,10 +14,12 @@ noncomputable def primeResidueUnit {n : ℕ} (g : K[X])
     (hc : ∀ f : PrimeDegree K n, IsCoprime g f.1.1) (f : PrimeDegree K n) : (AdjoinRoot g)ˣ :=
   (isUnit_mk_of_isCoprime g f.1.1 (hc f)).unit
 
+omit [DecidableEq K] [Fintype K] in
 theorem primeResidueUnit_val {n : ℕ} (g : K[X])
     (hc : ∀ f : PrimeDegree K n, IsCoprime g f.1.1) (f : PrimeDegree K n) :
     ↑(primeResidueUnit g hc f) = AdjoinRoot.mk g f.1.1 := IsUnit.unit_spec _
 
+omit [DecidableEq K] [Fintype K] in
 theorem primeResidueUnit_fiberCard {n : ℕ} (g : K[X])
     (hc : ∀ f : PrimeDegree K n, IsCoprime g f.1.1) (a : (AdjoinRoot g)ˣ) :
     fiberCard (primeResidueUnit g hc) a = primeProgressionCount g n ↑a := by
@@ -26,6 +28,7 @@ theorem primeResidueUnit_fiberCard {n : ℕ} (g : K[X])
   intro f
   rw [← Units.val_inj, primeResidueUnit_val]
 
+omit [DecidableEq K] [Fintype K] in
 theorem PrimeTriple.residueUnit_eq_prod {n : ℕ} (g : K[X])
     (hc : ∀ f : PrimeDegree K n, IsCoprime g f.1.1) (T : PrimeTriple K n) :
     T.residueUnit g hc = ∏ f ∈ T.1, primeResidueUnit g hc f := by
@@ -33,14 +36,16 @@ theorem PrimeTriple.residueUnit_eq_prod {n : ℕ} (g : K[X])
   rw [PrimeTriple.residueUnit_val]
   simp only [PrimeTriple.product, primeSetProduct, map_prod, Units.coe_prod, primeResidueUnit_val]
 
+omit [DecidableEq K] [Fintype K] in
 /-- A coarse factor `27` for forgetting the order is sufficient here. -/
-theorem PrimeTriple.residueUnit_fiber_card_lower {n : ℕ} (g : K[X]) (hg : g.Monic)
+theorem PrimeTriple.residueUnit_fiber_card_lower [Finite K] {n : ℕ} (g : K[X]) (hg : g.Monic)
     (hc : ∀ f : PrimeDegree K n, IsCoprime g f.1.1) (L : ℝ) (hL : 6 ≤ L)
     (hlower : ∀ a : (AdjoinRoot g)ˣ, L ≤ primeProgressionCount g n ↑a)
     (u : (AdjoinRoot g)ˣ) :
     (Nat.card (AdjoinRoot g)ˣ : ℝ) ^ 2 * L ^ 3 / 54 ≤
       Nat.card {T : PrimeTriple K n // T.residueUnit g hc = u} := by
   classical
+  let : Fintype K := Fintype.ofFinite _
   let : Finite (AdjoinRoot g) :=
     Finite.of_injective (AdjoinRoot.powerBasisAux' hg).equivFun
       (AdjoinRoot.powerBasisAux' hg).equivFun.injective

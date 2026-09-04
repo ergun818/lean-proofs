@@ -8,7 +8,7 @@ namespace Erdos157.Elementary
 namespace UniformTrials
 
 theorem finiteDensity_missed_points_le_exp {A G : Type*} [AddCommGroup A] [AddCommGroup G]
-    [Fintype A] [Fintype G] {n : ℕ} (f : A →+ (Fin n → G))
+    [Finite A] [Fintype G] {n : ℕ} (f : A →+ (Fin n → G))
     (hf : Function.Surjective f) (w : Fin n → G) :
     finiteDensity (fun a => ∀ j, f a j ≠ w j) ≤ Real.exp (-(n : ℝ) / Fintype.card G) := by
   classical
@@ -39,7 +39,7 @@ theorem finiteDensity_missed_points_le_exp {A G : Type*} [AddCommGroup A] [AddCo
   rw [hshift]
   have hb := finiteDensity_missed_le_exp f hf (fun g => g = 0)
   rw [hz] at hb
-  convert hb using 1 <;> ring_nf
+  convert hb using 1; ring_nf
 
 def assignmentTrials {I J G : Type*} [AddCommGroup G] {n : ℕ}
     (f : Fin n → J → I) : (I → G) →+ (Fin n → J → G) where
@@ -59,11 +59,12 @@ theorem assignmentTrials_surjective {I J G : Type*} [AddCommGroup G] {n : ℕ}
 end UniformTrials
 
 theorem finiteDensity_disjoint_assignments {I J X : Type*}
-    [Fintype I] [Fintype J] [Fintype X] [Nonempty X] {n : ℕ}
+    [Finite I] [Fintype J] [Fintype X] [Nonempty X] {n : ℕ}
     (f : Fin n → J → I) (hf : Function.Injective (Function.uncurry f)) (v : Fin n → J → X) :
     finiteDensity (fun a : I → X => ∀ j, ¬ ∀ s, a (f j s) = v j s) ≤
       Real.exp (-(n : ℝ) / (Fintype.card X : ℝ) ^ Fintype.card J) := by
   classical
+  let : Fintype I := Fintype.ofFinite _
   let D := Fintype.card X
   let : NeZero D := ⟨(Fintype.card_pos (α := X)).ne'⟩
   let e : X ≃ ZMod D := (Fintype.equivFin X).trans (ZMod.finEquiv D).toEquiv

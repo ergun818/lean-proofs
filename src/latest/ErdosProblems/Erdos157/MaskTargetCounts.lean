@@ -18,6 +18,7 @@ noncomputable def maskTargetEquiv (k : ℕ) : MaskTarget K k ≃
 noncomputable instance maskTargetFintype (k : ℕ) : Fintype (MaskTarget K k) :=
   Fintype.ofEquiv _ (maskTargetEquiv K k).symm
 
+omit [DecidableEq K] in
 theorem card_logVector_le (k : ℕ) : Fintype.card (LogVector K k) ≤ Fintype.card K ^ (k ^ 2) := by
   rw [← Nat.card_eq_fintype_card, ← Nat.card_congr (unitLogEquiv K k)]
   have hb := natCard_adjoinRoot_units_le (product K k) (product_monic K k)
@@ -33,6 +34,7 @@ theorem card_tagVector_le (k : ℕ) :
       exact Nat.pow_le_pow_right (by decide) (by omega))
     _ = _ := by rw [Finset.prod_const, Finset.card_univ, Fintype.card_fin, ← pow_mul, mul_comm]
 
+omit [DecidableEq K] in
 theorem card_maskTarget_le (k : ℕ) : Fintype.card (MaskTarget K k) ≤
     Fintype.card K ^ (k ^ 2) * 7 ^ (2 * k * (k + 2)) := by
   rw [Fintype.card_congr (maskTargetEquiv K k), Fintype.card_prod, Fintype.card_prod]
@@ -43,6 +45,7 @@ theorem card_maskTarget_le (k : ℕ) : Fintype.card (MaskTarget K k) ≤
         (Nat.mul_le_mul (card_tagVector_le k) (card_tagVector_le k))
     _ = _ := by rw [← pow_add]; congr 2; ring
 
+omit [DecidableEq K] in
 theorem card_maskTarget_le_exp (k : ℕ) (hk : 1 ≤ k) :
     (Fintype.card (MaskTarget K k) : ℝ) ≤
       Real.exp ((Real.log (Fintype.card K) + 6 * Real.log 7) * (k : ℝ) ^ 2) := by

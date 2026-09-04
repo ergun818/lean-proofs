@@ -6,6 +6,7 @@ namespace Erdos157.Elementary
 
 variable (K : Type*) [Field K] [DecidableEq K] [Fintype K] [CharP K 2]
 
+omit [DecidableEq K] in
 theorem trial_failure_density_le {k h n : ℕ} {z : MaskTarget K k}
     (T : MaskTrialFamily K z h n) (hhk : h ≤ k) (hn : 0 < n) (ε : ℝ)
     (hd : ∀ u : LogVector K h,
@@ -70,6 +71,7 @@ theorem trial_failure_density_le {k h n : ℕ} {z : MaskTarget K k}
     _ ≤ _ := Real.exp_le_exp.mpr
       (mul_le_mul_of_nonpos_left hg (neg_nonpos.mpr (Nat.cast_nonneg n)))
 
+omit [DecidableEq K] in
 theorem maskTarget_failure_density_le {k h n : ℕ} (z : MaskTarget K k)
     (hhk : h ≤ k) (hn : 1 ≤ n) (hsize : n ≤ 7 ^ h) (ε : ℝ)
     (hd : ∀ u : LogVector K h,
@@ -79,7 +81,8 @@ theorem maskTarget_failure_density_le {k h n : ℕ} (z : MaskTarget K k)
   classical
   obtain ⟨T⟩ := exists_maskTrialFamily K z hn hsize
   calc
-    _ ≤ finiteDensity (fun τ : LevelMasks K k => ∀ j, ¬ GoodLogVector K k (trialLogVector K T τ j)) :=
+    _ ≤ finiteDensity (fun τ : LevelMasks K k => ∀ j, ¬ GoodLogVector K k
+      (trialLogVector K T τ j)) :=
       finiteDensity_mono (fun τ hτ j hj => hτ (maskTargetHit_of_trial K T τ j hj))
     _ ≤ _ := trial_failure_density_le K T hhk hn ε hd
 

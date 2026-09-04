@@ -10,7 +10,9 @@ variable (K : Type*) [Field K] [DecidableEq K] [Fintype K] [CharP K 2]
 
 noncomputable def segmentProduct (s n : ℕ) : K[X] := ∏ j ∈ Finset.range n, factor K (s + j)
 
-theorem segmentProduct_natDegree (s n : ℕ) : (segmentProduct K s n).natDegree = n * (2 * s + n) := by
+omit [DecidableEq K] in
+theorem segmentProduct_natDegree (s n : ℕ) :
+    (segmentProduct K s n).natDegree = n * (2 * s + n) := by
   have hsum : ∑ j ∈ Finset.range n, (2 * (s + j) + 1) = n * (2 * s + n) := by
     induction n with
     | zero => simp
@@ -20,6 +22,7 @@ theorem segmentProduct_natDegree (s n : ℕ) : (segmentProduct K s n).natDegree 
   · simpa only [factor_natDegree] using hsum
   · intro j _; exact factor_monic K _
 
+omit [DecidableEq K] in
 theorem segmentProduct_dvd (s n : ℕ) {f : K[X]}
     (hf : ∀ j < n, factor K (s + j) ∣ f) : segmentProduct K s n ∣ f := by
   apply Finset.prod_dvd_of_coprime
@@ -29,12 +32,14 @@ theorem segmentProduct_dvd (s n : ℕ) {f : K[X]}
   · intro j hj
     exact hf j (Finset.mem_range.mp hj)
 
+omit [DecidableEq K] in
 theorem segmentProduct_interval_degree_add (s t : ℕ) (hst : s ≤ t) :
     (segmentProduct K s (t - s)).natDegree + s ^ 2 = t ^ 2 := by
   rw [segmentProduct_natDegree]
   have h := Nat.sub_add_cancel hst
   nlinarith
 
+omit [DecidableEq K] in
 theorem clean_segment_dvd_of_encoded_pair_eq (τ : MaskChoice K) (ω : IntegerParameters K)
     (f₁ f₂ f₃ f₄ : Label K)
     (heq : encoded K τ ω f₁ + encoded K τ ω f₂ = encoded K τ ω f₃ + encoded K τ ω f₄) :
@@ -52,6 +57,7 @@ theorem clean_segment_dvd_of_encoded_pair_eq (τ : MaskChoice K) (ω : IntegerPa
   simp only [labelResidue_val] at hv
   exact AdjoinRoot.mk_eq_mk.mp hv
 
+omit [DecidableEq K] in
 theorem clean_segment_degree_le_of_distinct (τ : MaskChoice K) (ω : IntegerParameters K)
     (f₁ f₂ f₃ f₄ : Label K) (hne : f₁ ≠ f₃)
     (heq : encoded K τ ω f₁ + encoded K τ ω f₂ = encoded K τ ω f₃ + encoded K τ ω f₄) :
@@ -61,7 +67,8 @@ theorem clean_segment_degree_le_of_distinct (τ : MaskChoice K) (ω : IntegerPar
   have hpoly : f₁.polynomial - f₃.polynomial ≠ 0 := by
     intro h
     exact hne (Label.polynomial_injective (sub_eq_zero.mp h))
-  have hd := Polynomial.natDegree_le_of_dvd (clean_segment_dvd_of_encoded_pair_eq K τ ω f₁ f₂ f₃ f₄ heq) hpoly
+  have hd := Polynomial.natDegree_le_of_dvd
+    (clean_segment_dvd_of_encoded_pair_eq K τ ω f₁ f₂ f₃ f₄ heq) hpoly
   have hs := Polynomial.natDegree_sub_le f₁.polynomial f₃.polynomial
   rw [Label.natDegree, Label.natDegree] at hs
   exact hd.trans hs

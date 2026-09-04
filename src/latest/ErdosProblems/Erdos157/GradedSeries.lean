@@ -40,7 +40,7 @@ theorem summable_gradedCoefficient (degree : ι → ℕ) (c : ι → ℂ) (r : �
     (norm_gradedCoefficient_mul_le degree c r hr hc)
   exact h
 
-theorem hasSum_gradedCoefficient (degree : ι → ℕ) (c : ι → ℂ) (r : ℝ) (hr : 0 < r)
+theorem hasSum_gradedCoefficient (degree : ι → ℕ) (c : ι → ℂ) (r : ℝ) (_hr : 0 < r)
     (hc : Summable (fun i => ‖c i‖ * r ^ degree i)) (z : ℂ) (hz : ‖z‖ ≤ r) :
     HasSum (fun n => gradedCoefficient degree c n * z ^ n)
       (∑' i, c i * z ^ degree i) := by

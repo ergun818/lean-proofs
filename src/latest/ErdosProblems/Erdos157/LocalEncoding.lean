@@ -15,11 +15,13 @@ noncomputable def primeAtLevelResidue (k : ℕ) (f : LevelLabel K k) (i : ℕ) :
     ((factor_irreducible K i).coprime_iff_not_dvd.mpr
       (factor_not_dvd_even_prime K (levelDegree_even k) f i))).unit
 
-noncomputable def localValue (τ : MaskChoice K) (k : ℕ) (f : LevelLabel K k) (c : LocalChoice K k) : ℕ :=
+noncomputable def localValue (τ : MaskChoice K) (k : ℕ) (f : LevelLabel K k)
+  (c : LocalChoice K k) : ℕ :=
   MixedRadix.encode ((List.ofFn (fun i : Fin k =>
     blockDigits K i (τ i) (primeAtLevelResidue K k f i) (c.1 i))).flatten) +
       blockPlace K 0 k * (1 + c.2.val)
 
+omit [DecidableEq K] in
 theorem digitBlocks_eq_flatten (τ : MaskChoice K) (ω : IntegerParameters K)
     (f : Label K) (i n : ℕ) :
     digitBlocks K τ ω f i n =
@@ -29,11 +31,12 @@ theorem digitBlocks_eq_flatten (τ : MaskChoice K) (ω : IntegerParameters K)
   | zero => simp [digitBlocks]
   | succ n ih =>
     rw [digitBlocks, List.ofFn_succ, List.flatten_cons, ih]
-    simp only [Fin.val_zero, add_zero, Fin.val_succ]
+    simp only [Fin.val_zero, Fin.val_succ]
     congr 3
     funext j
     rw [show i + 1 + (j : ℕ) = i + ((j : ℕ) + 1) by omega]
 
+omit [DecidableEq K] in
 theorem localValue_eq_encoded (τ : MaskChoice K) (ω : IntegerParameters K)
     (f : Label K) (c : LocalChoice K f.level)
     (hc : ∀ i : Fin f.level, ω.block f i = c.1 i) (ht : ω.top f = c.2) :
@@ -48,6 +51,7 @@ theorem localValue_eq_encoded (τ : MaskChoice K) (ω : IntegerParameters K)
   rw [Nat.zero_add, hc i]
   rfl
 
+omit [DecidableEq K] in
 theorem digitList_levelTarget (k : ℕ) (d : ∀ i : Fin k, BlockTarget K i) :
     PairedTargets.digitList ((levelTargetEquiv K k).symm d) =
       (List.ofFn (fun i => blockTargetDigits K i (d i))).flatten := by
@@ -61,11 +65,13 @@ theorem digitList_levelTarget (k : ℕ) (d : ∀ i : Fin k, BlockTarget K i) :
       List.ofFn_succ', List.concat_eq_append, List.flatten_concat]
     rfl
 
+omit [DecidableEq K] in
 theorem levelTargetValue_eq_encode (k : ℕ) (d : ∀ i : Fin k, BlockTarget K i) :
     levelTargetValue K d =
       MixedRadix.encode ((List.ofFn (fun i => blockTargetDigits K i (d i))).flatten) := by
   rw [levelTargetValue, ← PairedTargets.encode_digitList, digitList_levelTarget]
 
+omit [DecidableEq K] in
 theorem blockTargetDigits_place (i : ℕ) (d : BlockTarget K i) :
     MixedRadix.place (blockTargetDigits K i d) = blockRadix K i := by
   rw [← digitList_blockTarget, PairedTargets.place_digitList, place_blockDataBases]

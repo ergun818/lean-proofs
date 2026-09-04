@@ -33,6 +33,7 @@ theorem squaredPhase_div_pos (z : ℂ) (q : ℝ) (hq : 0 < q) :
 
 variable {K : Type*} [Field K] [DecidableEq K] [Fintype K]
 
+omit [DecidableEq K] in
 /-- The elementary inverse-root bound for a character with nonprincipal square. -/
 theorem norm_inverseRoot_lt_explicit (g : K[X]) (hg : g.Monic)
     (χ : MulChar (AdjoinRoot g) ℂ) (hχ : χ ≠ 1) (hχ2 : χ ^ 2 ≠ 1)
@@ -101,6 +102,7 @@ theorem norm_inverseRoot_lt_explicit (g : K[X]) (hg : g.Monic)
   have := (div_lt_iff₀ hq).mp hroot
   simpa only [p, q, mul_comm] using this
 
+omit [DecidableEq K] in
 /-- Odd-order unit groups satisfy the nonquadratic hypothesis automatically. -/
 theorem norm_inverseRoot_lt_of_odd_units (g : K[X]) (hg : g.Monic)
     (hodd : Odd (Nat.card (AdjoinRoot g)ˣ))
@@ -116,6 +118,7 @@ theorem norm_inverseRoot_lt_of_odd_units (g : K[X]) (hg : g.Monic)
     (by simpa only [Nat.card_eq_fintype_card] using hodd) χ hχ
   exact norm_inverseRoot_lt_explicit g hg χ hχ hχ2 j
 
+omit [DecidableEq K] in
 /-- Explicit power-sum error term, using only the elementary zero-free region. -/
 theorem norm_inverseRoot_powerSum_le (g : K[X]) (hg : g.Monic)
     (χ : MulChar (AdjoinRoot g) ℂ) (hχ : χ ≠ 1) (hχ2 : χ ^ 2 ≠ 1) (d : ℕ) :

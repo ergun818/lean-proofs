@@ -57,8 +57,8 @@ theorem character_fiber_identity {A : Type*} [Fintype A] (x : A → R) (u : Rˣ)
   simp_rw [sum_characters, unit_ratio_eq_one_iff]
   rw [← Finset.sum_filter]
   rw [Finset.sum_subtype (p := fun a => x a = ↑u) _ (by simp)]
-  simp only [Finset.sum_const, Finset.card_univ, nsmul_eq_mul, Nat.card_eq_fintype_card]
-  rw [mul_comm]
+  · simp only [Finset.sum_const, Finset.card_univ, nsmul_eq_mul, Nat.card_eq_fintype_card]
+    rw [mul_comm]
 
 /-- A bound for all nonprincipal character sums controls every unit fiber. -/
 theorem character_fiber_error_le {A : Type*} [Fintype A] (x : A → R)

@@ -8,6 +8,7 @@ open AuxiliaryModuli
 
 variable (K : Type*) [Field K] [DecidableEq K] [Fintype K] [CharP K 2]
 
+omit [DecidableEq K] in
 theorem blockRadix_ge_fieldPower (i : ℕ) : Fintype.card K ^ (2 * i + 1) ≤ blockRadix K i := by
   have hq : 2 ≤ Fintype.card K := Fintype.one_lt_card
   have hp : 2 ≤ Fintype.card K ^ (2 * i + 1) := hq.trans (Nat.le_pow (by omega))
@@ -15,11 +16,13 @@ theorem blockRadix_ge_fieldPower (i : ℕ) : Fintype.card K ^ (2 * i + 1) ≤ bl
   have h103 : Fintype.card K ^ (2 * i + 1) ≤ 103 * (Fintype.card K ^ (2 * i + 1) - 1) := by omega
   exact h103.trans (Nat.le_mul_of_pos_right _ (by positivity))
 
+omit [DecidableEq K] in
 theorem blockRadix_ge_two (i : ℕ) : 2 ≤ blockRadix K i := by
   have hq : 2 ≤ Fintype.card K := Fintype.one_lt_card
   have hp : Fintype.card K ≤ Fintype.card K ^ (2 * i + 1) := Nat.le_pow (by omega)
   exact (hq.trans hp).trans (blockRadix_ge_fieldPower K i)
 
+omit [DecidableEq K] in
 theorem blockPlace_ge_fieldPower (i n : ℕ) :
     Fintype.card K ^ (n * (2 * i + n)) ≤ blockPlace K i n := by
   induction n generalizing i with
@@ -29,9 +32,11 @@ theorem blockPlace_ge_fieldPower (i n : ℕ) :
     rw [hexp, pow_add, blockPlace]
     exact Nat.mul_le_mul (blockRadix_ge_fieldPower K i) (ih (i + 1))
 
+omit [DecidableEq K] in
 theorem initialPlace_ge_fieldPower (k : ℕ) : Fintype.card K ^ (k ^ 2) ≤ blockPlace K 0 k := by
   simpa only [mul_zero, zero_add, pow_two] using blockPlace_ge_fieldPower K 0 k
 
+omit [DecidableEq K] in
 theorem blockPlace_mono (i : ℕ) : Monotone (blockPlace K i) := by
   intro m n hmn
   have h := blockPlace_add K i m (n - m)
@@ -39,6 +44,7 @@ theorem blockPlace_mono (i : ℕ) : Monotone (blockPlace K i) := by
   rw [h]
   exact Nat.le_mul_of_pos_right _ (blockPlace_pos K _ _)
 
+omit [DecidableEq K] in
 theorem topRange_lt_two_next_blocks (k : ℕ) :
     4 * Fintype.card K ^ (3 * k) < blockPlace K k 2 := by
   have hq : 2 ≤ Fintype.card K := Fintype.one_lt_card
@@ -55,6 +61,7 @@ theorem topRange_lt_two_next_blocks (k : ℕ) :
     _ = Fintype.card K ^ (2 * (2 * k + 2)) := by rw [← pow_add]; congr 1; omega
     _ ≤ _ := blockPlace_ge_fieldPower K k 2
 
+omit [DecidableEq K] in
 theorem two_encoded_lt_place_add_two (τ : MaskChoice K) (ω : IntegerParameters K) (f : Label K) :
     2 * encoded K τ ω f < blockPlace K 0 (f.level + 2) := by
   have he := encoded_lt_top_bound K τ ω f
@@ -65,6 +72,7 @@ theorem two_encoded_lt_place_add_two (τ : MaskChoice K) (ω : IntegerParameters
   have hm := Nat.mul_lt_mul_of_pos_left hp hB
   nlinarith
 
+omit [DecidableEq K] in
 theorem encoded_pair_lt_place_add_two (τ : MaskChoice K) (ω : IntegerParameters K)
     (f g : Label K) (k : ℕ) (hf : f.level ≤ k) (hg : g.level ≤ k) :
     encoded K τ ω f + encoded K τ ω g < blockPlace K 0 (k + 2) := by
@@ -74,6 +82,7 @@ theorem encoded_pair_lt_place_add_two (τ : MaskChoice K) (ω : IntegerParameter
   have hpg := blockPlace_mono K 0 (Nat.add_le_add_right hg 2)
   omega
 
+omit [DecidableEq K] in
 theorem level_le_max_add_one_of_encoded_pair_eq (τ : MaskChoice K) (ω : IntegerParameters K)
     (f₁ f₂ f₃ f₄ : Label K) (k : ℕ) (h₃ : f₃.level ≤ k) (h₄ : f₄.level ≤ k)
     (heq : encoded K τ ω f₁ + encoded K τ ω f₂ = encoded K τ ω f₃ + encoded K τ ω f₄) :
@@ -85,6 +94,7 @@ theorem level_le_max_add_one_of_encoded_pair_eq (τ : MaskChoice K) (ω : Intege
   have hhi := encoded_pair_lt_place_add_two K τ ω f₃ f₄ k h₃ h₄
   omega
 
+omit [DecidableEq K] in
 theorem maximal_levels_close_of_encoded_pair_eq (τ : MaskChoice K) (ω : IntegerParameters K)
     (f₁ f₂ f₃ f₄ : Label K) (h₁₂ : f₂.level ≤ f₁.level) (h₃₄ : f₄.level ≤ f₃.level)
     (heq : encoded K τ ω f₁ + encoded K τ ω f₂ = encoded K τ ω f₃ + encoded K τ ω f₄) :

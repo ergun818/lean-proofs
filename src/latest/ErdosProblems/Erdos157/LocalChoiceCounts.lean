@@ -36,6 +36,7 @@ open AuxiliaryModuli
 
 variable (K : Type*) [Field K] [DecidableEq K] [Fintype K] [CharP K 2]
 
+omit [CharP K 2] [DecidableEq K] [Field K] in
 theorem card_localChoice_le (k : ℕ) :
     Fintype.card (LocalChoice K k) ≤
       (7 ^ (k * (k + 2)) * 15 ^ (k ^ 2 + 4 * k)) * Fintype.card K ^ (3 * k) := by

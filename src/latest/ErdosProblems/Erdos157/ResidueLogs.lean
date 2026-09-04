@@ -52,6 +52,7 @@ abbrev LogDigit (i : ℕ) := ZMod (Nat.card (ResidueField K i)ˣ)
 noncomputable def maskedLog (i : ℕ) (τ : TagField i → LogDigit K i)
     (t : TagField i) (u : (ResidueField K i)ˣ) : LogDigit K i := CyclicLog.log u + τ t
 
+omit [DecidableEq K] in
 /-- The two tag moments determine the masks in a pair sum. Hence equality
 of the masked logarithm sums recovers the product residue. -/
 theorem maskedLog_pair_decoding (i : ℕ) (τ : TagField i → LogDigit K i)

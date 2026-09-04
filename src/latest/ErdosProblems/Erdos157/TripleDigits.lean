@@ -7,7 +7,8 @@ namespace Erdos157.Elementary
 theorem PairedTargets.Digit.realize {b : ℕ} [NeZero b] (d : PairedTargets.Digit b)
     (x y z : ZMod b) (hsum : x + y + z = (d.data.val : ZMod b)) :
     ∃ a c e : AuxiliaryDigit,
-      PairDigits.pack b x.val a + PairDigits.pack b y.val c + PairDigits.pack b z.val e = d.value := by
+      PairDigits.pack b x.val a + PairDigits.pack b y.val c + PairDigits.pack b z.val e =
+        d.value := by
   have hb : 0 < b := NeZero.pos b
   let κ := (x.val + y.val + z.val) / b
   have hκ : κ ≤ 2 := by

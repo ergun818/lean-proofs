@@ -33,10 +33,11 @@ theorem finiteDensity_finset {A : Type*} [Fintype A] (s : Finset A) :
     finiteDensity (fun a => a ∈ s) = (s.card : ℝ) / Fintype.card A := by
   simp only [finiteDensity, Nat.card_eq_fintype_card, Fintype.card_coe]
 
-theorem finiteDensity_exists_le_sum {A I : Type*} [Fintype A] [Fintype I]
+theorem finiteDensity_exists_le_sum {A I : Type*} [Finite A] [Fintype I]
     (p : I → A → Prop) :
     finiteDensity (fun a => ∃ i, p i a) ≤ ∑ i, finiteDensity (p i) := by
   classical
+  let : Fintype A := Fintype.ofFinite _
   let f : (Σ i, {a // p i a}) → {a // ∃ i, p i a} :=
     fun x => ⟨x.2.1, x.1, x.2.2⟩
   have hf : Function.Surjective f := by
@@ -50,7 +51,7 @@ theorem finiteDensity_exists_le_sum {A I : Type*} [Fintype A] [Fintype I]
   apply div_le_div_of_nonneg_right _ (Nat.cast_nonneg _)
   exact_mod_cast hc
 
-theorem finiteDensity_exists_le {A I : Type*} [Fintype A] [Fintype I]
+theorem finiteDensity_exists_le {A I : Type*} [Finite A] [Fintype I]
     (p : I → A → Prop) (δ : ℝ) (h : ∀ i, finiteDensity (p i) ≤ δ) :
     finiteDensity (fun a => ∃ i, p i a) ≤ Fintype.card I * δ := by
   calc
@@ -60,11 +61,13 @@ theorem finiteDensity_exists_le {A I : Type*} [Fintype A] [Fintype I]
 
 /-- A bound holding after every value of one group of coordinates has been fixed
 also holds before conditioning. -/
-theorem finiteDensity_prod_le {A B : Type*} [Fintype A] [Fintype B]
+theorem finiteDensity_prod_le {A B : Type*} [Finite A] [Finite B]
     [Nonempty A] [Nonempty B] (p : A → B → Prop) (δ : ℝ)
     (h : ∀ a, finiteDensity (p a) ≤ δ) :
     finiteDensity (fun x : A × B => p x.1 x.2) ≤ δ := by
   classical
+  let : Fintype A := Fintype.ofFinite _
+  let : Fintype B := Fintype.ofFinite _
   have hB : (0 : ℝ) < Fintype.card B := by exact_mod_cast Fintype.card_pos (α := B)
   have hAB : (0 : ℝ) < Fintype.card A * Fintype.card B := by
     exact mul_pos (by exact_mod_cast Fintype.card_pos (α := A)) hB
@@ -85,7 +88,7 @@ theorem finiteDensity_prod_le {A B : Type*} [Fintype A] [Fintype B]
       ring
 
 theorem finiteDensity_split_le {I : Type*} {X : I → Type*} (p : I → Prop)
-    [DecidablePred p] [Fintype I] [∀ i, Fintype (X i)] [∀ i, Nonempty (X i)]
+    [DecidablePred p] [Finite I] [∀ i, Finite (X i)] [∀ i, Nonempty (X i)]
     (bad : (∀ i, X i) → Prop) (δ : ℝ)
     (h : ∀ a : (∀ i : {i // p i}, X i),
       finiteDensity (fun b => bad ((Equiv.piEquivPiSubtypeProd p X).symm (a, b))) ≤ δ) :
@@ -101,10 +104,12 @@ theorem finiteDensity_split_le {I : Type*} {X : I → Type*} (p : I → Prop)
 namespace UniformTrials
 
 theorem finiteDensity_missed_le_exp {A G : Type*} [AddCommGroup A] [AddCommGroup G]
-    [Fintype A] [Fintype G] {n : ℕ} (f : A →+ (Fin n → G))
+    [Finite A] [Finite G] {n : ℕ} (f : A →+ (Fin n → G))
     (hf : Function.Surjective f) (p : G → Prop) :
     finiteDensity (fun a => ∀ j, ¬ p (f a j)) ≤ Real.exp (-(n : ℝ) * finiteDensity p) := by
   classical
+  let : Fintype A := Fintype.ofFinite _
+  let : Fintype G := Fintype.ofFinite _
   let s := Finset.univ.filter p
   have hp : finiteDensity p = (s.card : ℝ) / Fintype.card G := by
     rw [← finiteDensity_finset s]

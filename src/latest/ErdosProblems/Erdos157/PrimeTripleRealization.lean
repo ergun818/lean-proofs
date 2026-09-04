@@ -9,6 +9,7 @@ open AuxiliaryModuli Polynomial PolynomialCharacters
 
 variable (K : Type*) [Field K] [DecidableEq K] [Fintype K] [CharP K 2]
 
+omit [DecidableEq K] in
 theorem realize_primeTriple (τ : MaskChoice K) (k : ℕ)
     (d : ∀ i : Fin k, BlockTarget K i) (t : ∀ i : Fin k, TagField i × TagField i × TagField i)
     (hmom : ∀ i, Parabola.IsTriple ((targetMoments K d).firstMoment i)

@@ -9,6 +9,7 @@ open Polynomial
 
 variable {K : Type*} [Field K] [DecidableEq K] [Fintype K]
 
+omit [DecidableEq K] in
 theorem PrimeTriple.residue_fiber_card_le {n : ℕ} (g : K[X]) (hg : g.Monic)
     (hd : g.natDegree ≤ 3 * n) (a : AdjoinRoot g) :
     Nat.card {T : PrimeTriple K n // AdjoinRoot.mk g T.product = a} ≤
@@ -33,10 +34,12 @@ noncomputable def PrimeTriple.residueUnit {n : ℕ} (g : K[X])
     intro f _
     exact hc f)).unit
 
+omit [DecidableEq K] [Fintype K] in
 theorem PrimeTriple.residueUnit_val {n : ℕ} (g : K[X])
     (hc : ∀ f : PrimeDegree K n, IsCoprime g f.1.1) (T : PrimeTriple K n) :
     ↑(T.residueUnit g hc) = AdjoinRoot.mk g T.product := IsUnit.unit_spec _
 
+omit [DecidableEq K] in
 theorem PrimeTriple.residueUnit_fiber_card_le {n : ℕ} (g : K[X]) (hg : g.Monic)
     (hd : g.natDegree ≤ 3 * n) (hc : ∀ f : PrimeDegree K n, IsCoprime g f.1.1)
     (a : (AdjoinRoot g)ˣ) :
@@ -47,6 +50,7 @@ theorem PrimeTriple.residueUnit_fiber_card_le {n : ℕ} (g : K[X]) (hg : g.Monic
   rw [Nat.card_congr (Equiv.subtypeEquivRight hiff)]
   exact PrimeTriple.residue_fiber_card_le g hg hd ↑a
 
+omit [DecidableEq K] [Fintype K] in
 theorem PrimeTriple.residueUnit_fiber_pairwise_disjoint {n : ℕ} (g : K[X])
     (hd : 2 * n < g.natDegree) (hc : ∀ f : PrimeDegree K n, IsCoprime g f.1.1)
     (a : (AdjoinRoot g)ˣ) :

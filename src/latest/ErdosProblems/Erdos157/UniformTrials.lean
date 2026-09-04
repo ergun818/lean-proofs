@@ -30,7 +30,8 @@ theorem missed_density {n : ℕ} (f : A →+ (Fin n → G)) (hf : Function.Surje
   apply (div_eq_div_iff hA.ne' (pow_ne_zero _ hG.ne')).mpr
   simpa only [mul_comm] using hr
 
-theorem missed_density_le_exp {n : ℕ} (f : A →+ (Fin n → G)) (hf : Function.Surjective f) (s : Finset G) :
+theorem missed_density_le_exp {n : ℕ} (f : A →+ (Fin n → G)) (hf : Function.Surjective f)
+  (s : Finset G) :
     ((missed f s).card : ℝ) / Fintype.card A ≤
       Real.exp (-(n : ℝ) * ((s.card : ℝ) / Fintype.card G)) := by
   rw [missed_density f hf s]
@@ -69,7 +70,8 @@ def varyingMaskSums {n : ℕ} (t : ∀ i, Fin n → T i × T i × T i) :
 
 theorem varyingMaskSums_surjective {n : ℕ} (t : ∀ i, Fin n → T i × T i × T i)
     (hcard : ∀ i j, 2 ≤ (Parabola.support (t i j)).card)
-    (hdisjoint : ∀ i, Pairwise (fun j k => Disjoint (Parabola.support (t i j)) (Parabola.support (t i k)))) :
+    (hdisjoint : ∀ i, Pairwise (fun j k => Disjoint (Parabola.support (t i j))
+      (Parabola.support (t i k)))) :
     Function.Surjective (varyingMaskSums (G' := G') t) :=
   piTrials_surjective _ (fun i => Masks.maskSums_surjective (t i) (hcard i) (hdisjoint i))
 

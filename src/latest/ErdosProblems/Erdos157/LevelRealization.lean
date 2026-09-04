@@ -10,6 +10,7 @@ open AuxiliaryModuli
 
 variable (K : Type*) [Field K] [DecidableEq K] [Fintype K] [CharP K 2]
 
+omit [DecidableEq K] in
 theorem realize_levelTarget (τ : MaskChoice K) (k : ℕ) (f₁ f₂ f₃ : LevelLabel K k)
     (d : ∀ i : Fin k, BlockTarget K i) (t : ∀ i : Fin k, TagField i × TagField i × TagField i)
     (hmom : ∀ i, Parabola.IsTriple ((targetMoments K d).firstMoment i)
@@ -35,7 +36,8 @@ theorem realize_levelTarget (τ : MaskChoice K) (k : ℕ) (f₁ f₂ f₃ : Leve
   choose a₁ a₂ a₃ ha using (fun i : Fin k => realize_blockTarget K i (τ i) (d i)
     (primeAtLevelResidue K k f₁ i) (primeAtLevelResidue K k f₂ i) (primeAtLevelResidue K k f₃ i)
     (t i).1 (t i).2.1 (t i).2.2 (hlog i) (hfirst i) (hsecond i))
-  obtain ⟨r₁, r₂, r₃, hr⟩ := three_top_digits (by positivity : 0 < Fintype.card K ^ (3 * k)) hzlo hzhi
+  obtain ⟨r₁, r₂, r₃, hr⟩ := three_top_digits
+    (by positivity : 0 < Fintype.card K ^ (3 * k)) hzlo hzhi
   let c₁ : LocalChoice K k := (fun i => ⟨(t i).1, a₁ i⟩, r₁)
   let c₂ : LocalChoice K k := (fun i => ⟨(t i).2.1, a₂ i⟩, r₂)
   let c₃ : LocalChoice K k := (fun i => ⟨(t i).2.2, a₃ i⟩, r₃)
@@ -46,7 +48,8 @@ theorem realize_levelTarget (τ : MaskChoice K) (k : ℕ) (f₁ f₂ f₃ : Leve
   have hplace₁ (i : Fin k) : MixedRadix.place (x₁ i) = blockRadix K i := blockDigits_place K _ _ _ _
   have hplace₂ (i : Fin k) : MixedRadix.place (x₂ i) = blockRadix K i := blockDigits_place K _ _ _ _
   have hplace₃ (i : Fin k) : MixedRadix.place (x₃ i) = blockRadix K i := blockDigits_place K _ _ _ _
-  have hplacew (i : Fin k) : MixedRadix.place (w i) = blockRadix K i := blockTargetDigits_place K _ _
+  have hplacew (i : Fin k) :
+      MixedRadix.place (w i) = blockRadix K i := blockTargetDigits_place K _ _
   have hsum := encode_flatten_triple_eq x₁ x₂ x₃ w
     (fun i => (hplace₁ i).trans (hplace₂ i).symm)
     (fun i => (hplace₁ i).trans (hplace₃ i).symm)

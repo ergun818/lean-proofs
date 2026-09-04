@@ -45,7 +45,8 @@ theorem summable_norm_monicTerm (g : K[X]) (hg : g.Monic)
       _ = _ := by simp [card_monic, mul_pow]
   · exact summable_geometric_of_lt_one (by positivity) hz
 
-theorem hasSum_coefficient (g : K[X]) (hg : g.Monic)
+omit [Fintype K] in
+theorem hasSum_coefficient [Finite K] (g : K[X]) (hg : g.Monic)
     (χ : MulChar (AdjoinRoot g) ℂ) (hχ : χ ≠ 1) (z : ℂ) :
     HasSum (fun d => coefficient g χ d * z ^ d) ((lPolynomial g χ).eval z) := by
   have hfin : ∀ d ∉ Finset.range g.natDegree, coefficient g χ d * z ^ d = 0 := by

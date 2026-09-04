@@ -162,9 +162,10 @@ theorem mateEquiv_whiskerBottom
     mateEquiv adj₁ adj₂ (w.whiskerBottom α) =
       (mateEquiv adj₁ adj₂ w).whiskerLeft α := by
   ext X
-  simp only [Functor.comp_obj, mateEquiv_apply, NatTrans.comp_app, Functor.id_obj, Functor.rightUnitor_inv_app,
-    Functor.whiskerLeft_app, Functor.associator_hom_app, Functor.associator_inv_app, Functor.whiskerRight_app,
-    TwoSquare.whiskerBottom_app, Functor.map_comp, Functor.comp_map, Functor.leftUnitor_hom_app, Category.comp_id,
+  simp only [Functor.comp_obj, mateEquiv_apply, NatTrans.comp_app, Functor.id_obj,
+    Functor.rightUnitor_inv_app, Functor.whiskerLeft_app, Functor.associator_hom_app,
+    Functor.associator_inv_app, Functor.whiskerRight_app, TwoSquare.whiskerBottom_app,
+    Functor.map_comp, Functor.comp_map, Functor.leftUnitor_hom_app, Category.comp_id,
     Category.id_comp, Category.assoc, TwoSquare.whiskerLeft_app]
   simp only [← R₂.map_comp]
   rw [← Category.assoc, α.naturality, Category.assoc]
@@ -344,7 +345,7 @@ instance degreeZeroNontrivial :
   refine ⟨⟨0, 1, ?_⟩⟩
   intro h
   have h' := congrArg Subtype.val h
-  simpa using h'
+  simp at h'
 
 /-- The polynomial algebra over its degree-zero part maps onto the whole
 homogeneous coordinate ring. -/
@@ -515,8 +516,7 @@ lemma val_prod_chartCoordinate_pow [Fintype σ] (e : σ → ℕ) :
 lemma chartCoefficient_eq_mk (r : K) :
     chartCoefficient K σ r =
       HomogeneousLocalization.Away.mk (H K σ) (xZero_mem K σ) 0
-        (MvPolynomial.C r) (by
-          simpa using MvPolynomial.isHomogeneous_C (R := K) r) := by
+        (MvPolynomial.C r) (by simp) := by
   rfl
 
 lemma val_chartCoefficient (r : K) :
@@ -524,16 +524,14 @@ lemma val_chartCoefficient (r : K) :
       Localization.mk (MvPolynomial.C r)
         ⟨(xZero K σ) ^ 0, xZero_pow_mem K σ 0⟩ := by
   rw [chartCoefficient_eq_mk]
-  simpa using
-    (HomogeneousLocalization.Away.val_mk
-      (H K σ) 0 (xZero_mem K σ) (MvPolynomial.C r)
-        (by simpa using MvPolynomial.isHomogeneous_C (R := K) r))
+  simp
 
-theorem affineToChart_dehomogenize_eq_mk [Fintype σ]
+theorem affineToChart_dehomogenize_eq_mk [Finite σ]
     (n : ℕ) (p : MvPolynomial (Option σ) K) (hp : p.IsHomogeneous n) :
     affineToChart K σ (dehomogenize K σ p) =
       HomogeneousLocalization.Away.mk (H K σ) (xZero_mem K σ) n p (by
         simpa using hp) := by
+  let : Fintype σ := Fintype.ofFinite _
   induction hp using MvPolynomial.IsWeightedHomogeneous.induction_on with
   | zero =>
       apply HomogeneousLocalization.val_injective
@@ -574,8 +572,8 @@ theorem affineToChart_dehomogenize_eq_mk [Fintype σ]
         val_prod_chartCoordinate_pow, HomogeneousLocalization.Away.val_mk]
       rw [MvPolynomial.monomial_eq]
       rw [Localization.mk_mul]
-      rw [Finsupp.prod_option_index]
-      all_goals simp only [pow_zero, Submonoid.mk_mul_mk, one_mul, Finsupp.prod_pow, Finsupp.some_apply]
+      rw [Finsupp.prod_option_index _ _ (by simp) (by simp [pow_add])]
+      simp only [pow_zero, Submonoid.mk_mul_mk, one_mul, Finsupp.prod_pow, Finsupp.some_apply]
       subst n
       rw [Localization.mk_eq_mk'_apply, Localization.mk_eq_mk'_apply]
       let b : Submonoid.powers (xZero K σ) :=
@@ -593,7 +591,7 @@ theorem affineToChart_dehomogenize_eq_mk [Fintype σ]
               (c : MvPolynomial (Option σ) K))
             (b * c) := by
               congr 1
-              · simp [c, xZero, mul_comm, mul_left_comm, mul_assoc]
+              · simp [c, xZero, mul_comm, mul_left_comm]
               · apply Subtype.ext
                 change (xZero K σ) ^ (Finsupp.weight 1 d) =
                   (xZero K σ) ^ (∑ i : σ, d (some i)) *
@@ -619,8 +617,9 @@ theorem chartToAffine_mk (n : ℕ) (p : MvPolynomial (Option σ) K)
         p 1 (by simp) n
     _ = _ := by simp
 
-theorem affineToChart_comp_chartToAffine [Fintype σ] :
+theorem affineToChart_comp_chartToAffine [Finite σ] :
     (affineToChart K σ).comp (chartToAffine K σ) = RingHom.id _ := by
+  let : Fintype σ := Fintype.ofFinite _
   apply DFunLike.ext _ _
   intro z
   obtain ⟨n, p, hp, rfl⟩ :=
@@ -677,12 +676,12 @@ theorem affineSpaceToProjective_over [Fintype σ] :
   apply (cancel_epi (AffineSpace.SpecIso σ (.of K)).inv).1
   rw [Iso.inv_hom_id_assoc,
     AffineSpace.SpecIso_inv_over (n := σ) (.of K)]
-  simp only [← Spec.map_comp]
+  dsimp only
   congr 1
   apply CommRingCat.hom_ext
   apply RingHom.ext
   intro r
-  simp only [CommRingCat.comp_apply, CommRingCat.hom_ofHom]
+  simp only [CommRingCat.hom_ofHom]
   change (affineChartRingEquiv K σ).symm (chartCoefficient K σ r) =
     MvPolynomial.C r
   rw [RingEquiv.symm_apply_eq]
@@ -886,7 +885,7 @@ noncomputable def mvPolynomialFreeSubmersivePresentation :
 
 theorem mvPolynomialFreeSubmersivePresentation_dimension [Finite σ] :
     (mvPolynomialFreeSubmersivePresentation R σ).dimension = Nat.card σ := by
-  simp [mvPolynomialFreePreSubmersivePresentation, Presentation.dimension]
+  simp [Presentation.dimension]
 
 /-- A polynomial algebra in a finite family of variables is standard smooth
 of relative dimension equal to the cardinality of that family. -/
@@ -910,7 +909,7 @@ namespace CategoryTheory.LocalizerMorphism
 
 universe w₁ w₂ w₃ v₁ v₂ v₃ u₁ u₂ u₃
 
-open Localization
+open _root_.CategoryTheory.Localization
 
 variable {C₁ : Type u₁} [Category.{v₁} C₁]
 variable {C₂ : Type u₂} [Category.{v₂} C₂]
@@ -1019,10 +1018,11 @@ theorem smallHomMap'_comp_localizer
     Functor.comp_map, Functor.associator_hom_app,
     Functor.associator_inv_app,
     Category.id_comp, Category.comp_id]
-  simp only [comp_functor, Functor.comp_obj, Functor.isoWhiskerLeft_hom, Functor.whiskerLeft_app, Iso.symm_hom,
-    Functor.associator_inv_app, Functor.isoWhiskerRight_hom, Functor.whiskerRight_app, Category.id_comp,
-    Functor.isoWhiskerRight_inv, Iso.symm_inv, Functor.associator_hom_app, Category.comp_id, Functor.isoWhiskerLeft_inv,
-    Category.assoc]
+  simp only [comp_functor, Functor.comp_obj, Functor.isoWhiskerLeft_hom,
+    Functor.whiskerLeft_app, Iso.symm_hom, Functor.associator_inv_app,
+    Functor.isoWhiskerRight_hom, Functor.whiskerRight_app, Category.id_comp,
+    Functor.isoWhiskerRight_inv, Iso.symm_inv, Functor.associator_hom_app, Category.comp_id,
+    Functor.isoWhiskerLeft_inv, Category.assoc]
   have hsource :
       W₃.Q.map (Ψ.functor.map eX.inv) ≫
           eΨ.hom.app (Φ.functor.obj X₁) =
@@ -1148,14 +1148,14 @@ theorem smallShiftedHomMap_comp_localizer
   rw [Φ.equiv_smallHomMap' W₁.Q W₂.Q eX eYm GΦ eΦ]
   dsimp only [ecomp, eYlhs, eYm, eYm']
   simp only [Iso.trans_hom, Iso.trans_inv, NatTrans.comp_app,
-    Functor.mapIso_hom, Functor.mapIso_inv, Functor.map_comp,
+    Functor.mapIso_hom, Functor.map_comp,
     Functor.comp_map, Functor.associator_hom_app,
-    Functor.associator_inv_app, Functor.map_id,
-    Category.id_comp, Category.comp_id]
-  simp only [comp_functor, Functor.comp_obj, Functor.isoWhiskerLeft_hom, Functor.whiskerLeft_app, Iso.symm_hom,
-    Functor.associator_inv_app, Functor.isoWhiskerRight_hom, Functor.whiskerRight_app, Category.id_comp,
-    Functor.isoWhiskerRight_inv, Iso.symm_inv, Functor.associator_hom_app, Category.comp_id, Functor.isoWhiskerLeft_inv,
-    Iso.app_hom, Category.assoc]
+    Functor.associator_inv_app, Category.id_comp, Category.comp_id]
+  simp only [comp_functor, Functor.comp_obj, Functor.isoWhiskerLeft_hom,
+    Functor.whiskerLeft_app, Iso.symm_hom, Functor.associator_inv_app,
+    Functor.isoWhiskerRight_hom, Functor.whiskerRight_app, Category.id_comp,
+    Functor.isoWhiskerRight_inv, Iso.symm_inv, Functor.associator_hom_app, Category.comp_id,
+    Functor.isoWhiskerLeft_inv, Iso.app_hom, Category.assoc]
   rw [show
     W₃.Q.map eXlhs.inv =
       W₃.Q.map eX'.inv ≫ W₃.Q.map (Ψ.functor.map eX.inv) by
@@ -1279,7 +1279,7 @@ namespace Abelian.Ext
 
 universe t t' t'' w w' w'' u u' u'' v v' v''
 
-open Localization
+open _root_.CategoryTheory.Localization
 
 variable {C : Type u} [Category.{v} C] [Abelian C]
 variable {D : Type u'} [Category.{v'} D] [Abelian D]
@@ -1567,13 +1567,11 @@ instance mapHomologicalComplexNatTrans_commShift
   ext K i
   simp only [NatTrans.comp_app, Functor.whiskerRight_app,
     Functor.whiskerLeft_app,
-    Functor.commShiftIso_comp_hom_app,
     HomologicalComplex.comp_f,
     Functor.mapHomologicalComplex_commShiftIso_hom_app_f,
-    Functor.map_id, NatTrans.mapHomologicalComplex_app_f,
+    NatTrans.mapHomologicalComplex_app_f,
     CochainComplex.shiftFunctor_map_f',
-    CochainComplex.shiftFunctor_obj_X', Functor.comp_obj,
-    Category.id_comp, Category.comp_id]
+    CochainComplex.shiftFunctor_obj_X', Functor.comp_obj]
   change 𝟙 (F.obj (K.X (i + n))) ≫ e.hom.app (K.X (i + n)) =
     e.hom.app (K.X (i + n)) ≫ 𝟙 (G.obj (K.X (i + n)))
   simp
@@ -1700,8 +1698,7 @@ theorem mapDerivedCategoryNatIso_single_hom
         HomologicalComplex.comp_f,
         HomologicalComplex.singleMapHomologicalComplex_inv_app_self,
         NatIso.mapHomologicalComplex_hom_app_f,
-        HomologicalComplex.single_map_f_self, Category.assoc,
-        Iso.inv_hom_id_app_assoc]
+        HomologicalComplex.single_map_f_self, Category.assoc]
       rw [e.hom.naturality]
       simp
     · exact (HomologicalComplex.isZero_single_obj_X
@@ -1709,8 +1706,7 @@ theorem mapDerivedCategoryNatIso_single_hom
   calc
     _ = DerivedCategory.Q.map
           ((F.mapCochainComplexSingleFunctor 0).inv.app X) ≫ hrest := by
-      simp only [hrest, Category.assoc, Iso.inv_hom_id_app_assoc,
-        ← Functor.map_comp]
+      simp only [hrest, ← Functor.map_comp]
       rw [hcomplex]
       rw [Functor.map_comp]
       simp
@@ -1738,8 +1734,7 @@ theorem mapDerivedCategoryNatIso_single_hom_target
     (fun h ↦ h ≫ (G.mapDerivedCategorySingleFunctor 0).hom.app X)
     (mapDerivedCategoryNatIso_single_hom F G e X)
   have hs' := hs.symm
-  simp only [Category.assoc, Iso.inv_hom_id_app_assoc,
-    Iso.inv_hom_id_app, Category.id_comp] at hs'
+  simp only [Category.assoc, Iso.inv_hom_id_app] at hs'
   erw [Category.comp_id] at hs'
   erw [Iso.inv_hom_id_app_assoc]
   exact hs'
@@ -1826,7 +1821,7 @@ theorem constantSheafAdj_unit_terminal_change
     (D : Type u₂) [Category.{v₂} D] [HasWeakSheafify J D]
     {T T' : C} (hT : IsTerminal T) (hT' : IsTerminal T') (A : D) :
     (constantSheafAdj J D hT).unit.app A ≫
-        ((constantSheaf J D).obj A).val.map (hT.from T').op =
+        ((constantSheaf J D).obj A).obj.map (hT.from T').op =
       (constantSheafAdj J D hT').unit.app A := by
   simp only [constantSheafAdj, Adjunction.comp_unit_app,
     constantPresheafAdj_unit_app, Functor.comp_obj,
@@ -2507,12 +2502,12 @@ theorem baseChangeConstantSheafIsoOfIso_homEquiv_terminal
   rw [Adjunction.homEquiv_unit]
   apply (cancel_mono
     (((baseChangeSheafPushforward f).obj
-      ((constantSheaf (topology X) Ab.{u + 1}).obj A)).val.map v.op)).mp
+      ((constantSheaf (topology X) Ab.{u + 1}).obj A)).obj.map v.op)).mp
   change
     (constantSheafAdj (topology Y) Ab.{u + 1} hT).unit.app A ≫
         c.hom.hom.app (Opposite.op T) ≫
           ((baseChangeSheafPushforward f).obj
-            ((constantSheaf (topology X) Ab.{u + 1}).obj A)).val.map v.op = _
+            ((constantSheaf (topology X) Ab.{u + 1}).obj A)).obj.map v.op = _
   rw [← c.hom.hom.naturality v.op]
   slice_lhs 1 2 =>
     rw [CategoryTheory.constantSheafAdj_unit_terminal_change
@@ -2530,7 +2525,7 @@ theorem baseChangeConstantSheafIsoOfIso_homEquiv_terminal
   change
     (constantSheafAdj (topology X) Ab.{u + 1} hTf₀).unit.app A =
       (constantSheafAdj (topology X) Ab.{u + 1} hTf).unit.app A ≫
-        ((constantSheaf (topology X) Ab.{u + 1}).obj A).val.map
+        ((constantSheaf (topology X) Ab.{u + 1}).obj A).obj.map
           (e.functor.map v).op
   rw [hv]
   exact (CategoryTheory.constantSheafAdj_unit_terminal_change
@@ -2570,7 +2565,7 @@ theorem baseChangeConstantSheafIsoOfIso_comp
       (constantSheafAdj (topology X) Ab.{u + 1}
         (hTg.isTerminalObj
           (baseChangeEquivalenceOfIso f).functor)).unit.app A at hf
-  simp only [Functor.map_comp, Category.assoc]
+  simp only [Functor.map_comp]
   let ef := baseChangeEquivalenceOfIso f
   let efg := baseChangeEquivalenceOfIso (f ≫ g)
   let hTfTg : IsTerminal (ef.functor.obj (eg.functor.obj Tz)) :=
@@ -2592,7 +2587,7 @@ theorem baseChangeConstantSheafIsoOfIso_comp
   change
     (constantSheafAdj (topology X) Ab.{u + 1} hTfg).unit.app A =
       (constantSheafAdj (topology X) Ab.{u + 1} hTfTg).unit.app A ≫
-        ((constantSheaf (topology X) Ab.{u + 1}).obj A).val.map
+        ((constantSheaf (topology X) Ab.{u + 1}).obj A).obj.map
           ((baseChangeComp f g).hom.app Tz).op
   rw [hsite]
   exact (CategoryTheory.constantSheafAdj_unit_terminal_change
@@ -3493,9 +3488,10 @@ theorem equivariantBaseChangeIteratedActual_hom_app_left_fst
         Limits.pullback.fst U.hom (inv (f ≫ g)) =
       Limits.pullback.fst (U.hom ≫ j) (inv (fbar ≫ gbar)) := by
   unfold equivariantBaseChangeIteratedActual
-  simp only [Functor.comp_obj, Functor.id_obj, Iso.trans_hom, Functor.isoWhiskerLeft_hom, Iso.symm_hom,
-    Functor.isoWhiskerRight_hom, NatTrans.comp_app, Functor.whiskerLeft_app, Functor.associator_inv_app,
-    Functor.whiskerRight_app, Functor.associator_hom_app, Category.id_comp, Functor.const_obj_obj]
+  simp only [Functor.comp_obj, Functor.id_obj, Iso.trans_hom, Functor.isoWhiskerLeft_hom,
+    Iso.symm_hom, Functor.isoWhiskerRight_hom, NatTrans.comp_app, Functor.whiskerLeft_app,
+    Functor.associator_inv_app, Functor.whiskerRight_app, Functor.associator_hom_app,
+    Category.id_comp, Functor.const_obj_obj]
   change
     ((baseChangeCompOfEq (inv gbar) (inv fbar)
           (inv (fbar ≫ gbar)) IsIso.inv_comp).hom.app ((map j).obj U)).left ≫
@@ -3538,8 +3534,9 @@ theorem equivariantBaseChangeIteratedActual_hom_app_left_snd
         U.hom ≫ f ≫ g := by
   unfold equivariantBaseChangeIteratedActual
   simp only [Functor.comp_obj, Iso.trans_hom, Functor.isoWhiskerLeft_hom, Iso.symm_hom,
-    Functor.isoWhiskerRight_hom, NatTrans.comp_app, Functor.whiskerLeft_app, Functor.associator_inv_app,
-    Functor.whiskerRight_app, Functor.associator_hom_app, Category.id_comp, Functor.id_obj, Functor.const_obj_obj]
+    Functor.isoWhiskerRight_hom, NatTrans.comp_app, Functor.whiskerLeft_app,
+    Functor.associator_inv_app, Functor.whiskerRight_app, Functor.associator_hom_app,
+    Category.id_comp, Functor.id_obj, Functor.const_obj_obj]
   change
     ((baseChangeCompOfEq (inv gbar) (inv fbar)
           (inv (fbar ≫ gbar)) IsIso.inv_comp).hom.app ((map j).obj U)).left ≫
@@ -3949,14 +3946,17 @@ theorem equivariantBaseChangeRightAdjointIso_hom_comp_actual
     equivariantBaseChangeRightAdjointIso
   ext Q U x
   simp only [Functor.comp_obj, Functor.sheafPushforwardContinuous_obj_obj_obj, Iso.trans_hom,
-    Functor.sheafPushforwardContinuousIso_hom, Iso.symm_hom, NatTrans.comp_app, ObjectProperty.FullSubcategory.comp_hom,
-    Functor.sheafPushforwardContinuousNatTrans_app_hom, ObjectProperty.ι_obj,
-    Functor.sheafPushforwardContinuousComp_hom_app_hom_app, Functor.whiskerRight_app, Functor.op_obj, NatTrans.op_app,
-    Functor.sheafPushforwardContinuousComp_inv_app_hom_app, AddCommGrpCat.hom_comp, Functor.isoWhiskerRight_trans,
-    Functor.isoWhiskerLeft_trans, Iso.trans_symm, Iso.trans_assoc, Functor.isoWhiskerRight_hom,
-    Functor.isoWhiskerLeft_hom, Iso.symm_inv, Functor.sheafPushforwardContinuousIso_inv, Functor.associator_hom_app,
+    Functor.sheafPushforwardContinuousIso_hom, Iso.symm_hom, NatTrans.comp_app,
+    ObjectProperty.FullSubcategory.comp_hom, Functor.sheafPushforwardContinuousNatTrans_app_hom,
+    ObjectProperty.ι_obj, Functor.sheafPushforwardContinuousComp_hom_app_hom_app,
+    Functor.whiskerRight_app, Functor.op_obj, NatTrans.op_app,
+    Functor.sheafPushforwardContinuousComp_inv_app_hom_app, AddCommGrpCat.hom_comp,
+    Functor.isoWhiskerRight_trans, Functor.isoWhiskerLeft_trans, Iso.trans_symm,
+    Iso.trans_assoc, Functor.isoWhiskerRight_hom, Functor.isoWhiskerLeft_hom, Iso.symm_inv,
+    Functor.sheafPushforwardContinuousIso_inv, Functor.associator_hom_app,
     Functor.whiskerLeft_app, Functor.associator_inv_app, Category.id_comp,
-    Functor.sheafPushforwardContinuous_map_hom_app, Functor.sheafPushforwardContinuous_obj_obj_map, Quiver.Hom.unop_op]
+    Functor.sheafPushforwardContinuous_map_hom_app,
+    Functor.sheafPushforwardContinuous_obj_obj_map, Quiver.Hom.unop_op]
   let A := (Q.obj.map ((baseChangeCompInv fbar gbar).inv.app
     ((map j).obj (Opposite.unop U))).op).hom
   let B := (Q.obj.map ((baseChange (inv gbar)).map
@@ -4316,9 +4316,9 @@ theorem lowerShriekEquivariantIso_comp_mate
     rw [CategoryTheory.mateEquiv_whiskerBottom]
     rw [CategoryTheory.mateEquiv_whiskerTop]
     rw [CategoryTheory.mateEquiv_vcomp]
-    dsimp only [bf, bg]
-    rw [(CategoryTheory.mateEquiv _ _).apply_symm_apply]
-    rw [(CategoryTheory.mateEquiv _ _).apply_symm_apply]
+    · dsimp only [bf, bg]
+      rw [(CategoryTheory.mateEquiv _ _).apply_symm_apply]
+      rw [(CategoryTheory.mateEquiv _ _).apply_symm_apply]
   have hbd : bd = bi := by
     apply (CategoryTheory.mateEquiv adjj adjj).injective
     rw [hm]
@@ -5708,7 +5708,7 @@ def continuousMapPresheafCommRing
     [IsTopologicalRing R] :
     Functor (Scheme.{u}ᵒᵖ) CommRingCat.{u + 1} where
   obj U := CommRingCat.of (ULift.{u + 1} C(U.unop, R))
-  map {U V} f := CommRingCat.ofHom
+  map {_U _V} f := CommRingCat.ofHom
     { toFun := fun g ↦ ⟨ContinuousMap.comp g.down f.unop.base.hom⟩
       map_one' := rfl
       map_mul' := fun _ _ ↦ rfl
@@ -6156,15 +6156,15 @@ theorem sawinPrime_prime : sawinPrime.Prime := by
 instance sawinPrime_fact : Fact sawinPrime.Prime := ⟨sawinPrime_prime⟩
 
 theorem sawinPrime_ge_103 : 103 ≤ sawinPrime := by
-  have hpow : 2 ^ 7 ≤ 2 ^ 521 :=
-    Nat.pow_le_pow_right (by omega) (by omega)
+  have hpow :=
+    Nat.pow_le_pow_right (n := 2) (i := 7) (j := 521) (by decide) (by decide)
   norm_num [sawinPrime, mersenne] at hpow ⊢
   omega
 
 theorem two_pow_500_le_sawinPrime : 2 ^ 500 ≤ sawinPrime := by
-  have hpow : 2 ^ 501 ≤ 2 ^ 521 :=
-    Nat.pow_le_pow_right (by omega) (by omega)
-  have hone : 1 ≤ 2 ^ 500 := Nat.one_le_pow 500 2 (by omega)
+  have hpow :=
+    Nat.pow_le_pow_right (n := 2) (i := 501) (j := 521) (by decide) (by decide)
+  have hone := Nat.one_le_pow 500 2 (by omega)
   have hstep : 2 ^ 500 + 1 ≤ 2 ^ 501 := by
     rw [show 501 = 500 + 1 by omega, pow_succ]
     omega
@@ -6819,6 +6819,7 @@ namespace PairwiseCoprimeTripleFactorization
 variable {R S : Type u} [CommRing R] [CommRing S] [Nontrivial S] [Algebra R S]
   {d : ℕ} {P : Polynomial.MonicDegreeEq R (3 * d)}
 
+omit [Nontrivial S] in
 @[ext] theorem ext
     {x y : PairwiseCoprimeTripleFactorization R S d P}
     (h₁ : x.factor₁ = y.factor₁) (h₂ : x.factor₂ = y.factor₂)
@@ -7034,6 +7035,7 @@ def firstRestriction
     (UniversalCoprimeOneTwoFactorizationRing R d P)
     (UniversalPairwiseCoprimeTripleFactorizationRing R d P))
 
+omit [Nontrivial S] in
 theorem firstRestriction_factor₁
     (f : UniversalPairwiseCoprimeTripleFactorizationRing R d P →ₐ[R] S) :
     (Polynomial.UniversalCoprimeFactorizationRing.factor₁ d (2 * d)
@@ -7045,6 +7047,7 @@ theorem firstRestriction_factor₁
     AlgHom.comp_toRingHom, IsScalarTower.coe_toAlgHom]
   congr 1
 
+omit [Nontrivial S] in
 theorem firstRestriction_factor₂
     (f : UniversalPairwiseCoprimeTripleFactorizationRing R d P →ₐ[R] S) :
     ((Polynomial.UniversalCoprimeFactorizationRing.factor₂ d (2 * d)
@@ -7067,6 +7070,7 @@ theorem firstRestriction_factor₂
   simpa only [universalTripleFactor₂, universalTripleFactor₃,
     Polynomial.MonicDegreeEq.map_coe, Polynomial.map_mul] using hmapped.symm
 
+omit [Nontrivial S] in
 /-- Two algebra maps out of the universal triple-factorization ring agree
 as soon as they agree on the three universal factors. -/
 theorem algHom_ext
@@ -7522,6 +7526,7 @@ local notation "RP₀" => ResidueQuotientParameterRing R d m
 local notation "A₀" => UniversalResidueTripleFactorizationRing
   R d m g t hg hgdeg htdeg hm
 
+omit [Nontrivial S] in
 @[ext] theorem ext
     {x y : ResidueTripleFactorizationData R S d m g t}
     (hH : x.quotient = y.quotient)
@@ -7709,6 +7714,7 @@ theorem lift_quotient (x : ResidueTripleFactorizationData R S d m g t) :
   exact (MvPolynomial.mapEquivMonic R S (residueQuotientDegree d m)).apply_symm_apply
     x.quotient
 
+omit [Nontrivial S] in
 /-- Algebra maps agree if their quotient coefficients and all three factors
 agree. -/
 theorem algHom_ext
@@ -7802,6 +7808,7 @@ variable {R S : Type u} [Field R] [CommRing S] [Nontrivial S] [Algebra R S]
   {d m : ℕ} {g t : Polynomial R} (hg : g.Monic) (hgdeg : g.natDegree = m)
   (htdeg : t.degree < (m : WithBot ℕ)) (hm : m ≤ 3 * d)
 
+omit [Nontrivial S] in
 @[ext] theorem ext
     {x y : CongruentPairwiseCoprimeTriple R S d g t}
     (h₁ : x.factor₁ = y.factor₁) (h₂ : x.factor₂ = y.factor₂)
@@ -7815,7 +7822,7 @@ variable {R S : Type u} [Field R] [CommRing S] [Nontrivial S] [Algebra R S]
 
 include hg hgdeg htdeg in
 private theorem mapped_degree_lt
-    (x : ResidueTripleFactorizationData R S d m g t) :
+    (_x : ResidueTripleFactorizationData R S d m g t) :
     (t.map (algebraMap R S)).degree < (g.map (algebraMap R S)).degree := by
   rw [Polynomial.degree_map_eq_of_injective
       (RingHom.injective (algebraMap R S)),
@@ -7838,6 +7845,7 @@ def ofResidueData (x : ResidueTripleFactorizationData R S d m g t) :
   rw [(Polynomial.modByMonic_eq_zero_iff_dvd hG).mpr
     (dvd_mul_right G x.quotient.1), add_zero]
 
+omit [Nontrivial S] in
 private theorem product_monic
     (x : CongruentPairwiseCoprimeTriple R S d g t) :
     (x.factor₁.1 * x.factor₂.1 * x.factor₃.1).Monic :=
@@ -8434,8 +8442,7 @@ theorem universalRootPolynomial_monic (n : ℕ) :
     (universalRootPolynomial K n).Monic := by
   unfold universalRootPolynomial
   apply Polynomial.monic_prod_of_monic
-  intro i
-  intro _
+  intro i _
   exact @Polynomial.monic_X_sub_C Γ(AffineRootSpace K n, ⊤) _
     (AffineSpace.coord (Spec (.of K)) (ULift.up i))
 
@@ -8843,7 +8850,7 @@ noncomputable def largeBlockFiberEquiv
     exact congrArg Prod.snd (E.apply_symm_apply (u, x))
 
 /-- The remainder modulo `g` of the universal product of linear factors. -/
-def universalRootRemainder (n : ℕ) (g : Polynomial K) (hg : g.Monic) :
+def universalRootRemainder (n : ℕ) (g : Polynomial K) (_hg : g.Monic) :
     Polynomial Γ(AffineRootSpace K n, ⊤) :=
   (universalRootPolynomial K n) %ₘ
     (g.map (rootCoefficientMap K n))
@@ -9037,7 +9044,7 @@ variable (K : Type u) [Field K]
 /-- The resultant of `g` with the universal product of linear factors is,
 up to its harmless sign, the product of the evaluations of `g`. -/
 theorem resultant_universalRootPolynomial
-    (n m : ℕ) (g : Polynomial K) (hg : g.Monic)
+    (n m : ℕ) (g : Polynomial K) (_hg : g.Monic)
     (hdeg : g.natDegree = m) :
     Polynomial.resultant (g.map (rootCoefficientMap K n))
         (universalRootPolynomial K n) m n =
@@ -9050,12 +9057,7 @@ theorem resultant_universalRootPolynomial
   have hpdeg :
       (∏ i : Fin n, (Polynomial.X - Polynomial.C
         (AffineSpace.coord (Spec (.of K)) (ULift.up i)))).natDegree = n := by
-    have h := Polynomial.natDegree_prod_of_monic
-      (s := Finset.univ)
-      (f := fun i : Fin n ↦ Polynomial.X - Polynomial.C
-        (AffineSpace.coord (Spec (.of K)) (ULift.up i)))
-      (by intro i _; exact Polynomial.monic_X_sub_C _)
-    simpa using h
+    simp
   have hr := Polynomial.resultant_prod_right Finset.univ
     (g.map (rootCoefficientMap K n))
     (fun i : Fin n ↦ Polynomial.X - Polynomial.C
@@ -9084,7 +9086,7 @@ theorem resultant_universalRootPolynomial
 /-- Reduction modulo a monic polynomial preserves coprimality with the
 modulus. -/
 theorem isCoprime_modByMonic_right_iff
-    (f p : Polynomial K) (hf : f.Monic) :
+    (f p : Polynomial K) (_hf : f.Monic) :
     IsCoprime f (p %ₘ f) ↔ IsCoprime f p := by
   let r := p %ₘ f
   let q := p /ₘ f
@@ -9227,12 +9229,7 @@ theorem universalMonicCoefficientPolynomial_map_affineRootMultiplication
   have hPmonic : P.Monic := universalRootPolynomial_monic K n
   have hPnat : P.natDegree = n := by
     unfold P universalRootPolynomial
-    have h := Polynomial.natDegree_prod_of_monic
-      (s := Finset.univ)
-      (f := fun i : Fin n ↦ Polynomial.X - Polynomial.C
-        (AffineSpace.coord (Spec (.of K)) (ULift.up i)))
-      (by intro i _; exact Polynomial.monic_X_sub_C _)
-    simpa using h
+    simp
   unfold universalMonicCoefficientPolynomial universalResiduePolynomial
   rw [Polynomial.map_add, Polynomial.map_pow, Polynomial.map_X,
     Polynomial.map_sum]
@@ -9306,7 +9303,7 @@ theorem affineRootMultiplication_rootCoefficientMap
 /-- The remainder modulo `g` of the universal monic polynomial on coefficient
 space.  This is the symmetric-power counterpart of
 `universalRootRemainder`. -/
-def universalMonicRemainder (n : ℕ) (g : Polynomial K) (hg : g.Monic) :
+def universalMonicRemainder (n : ℕ) (g : Polynomial K) (_hg : g.Monic) :
     Polynomial Γ(AffineRootSpace K n, ⊤) :=
   (universalMonicCoefficientPolynomial K n) %ₘ
     (g.map (rootCoefficientMap K n))
@@ -9644,12 +9641,7 @@ theorem affineResidueMultiplication_residueUnitSection_eq
       (RingHom.injective (rootCoefficientMap K n)), hdeg]
   have hPdeg : P.natDegree = n := by
     dsimp [P, universalRootPolynomial]
-    have h := Polynomial.natDegree_prod_of_monic
-      (s := Finset.univ)
-      (f := fun i : Fin n ↦ Polynomial.X - Polynomial.C
-        (AffineSpace.coord (Spec (.of K)) (ULift.up i)))
-      (by intro i _; exact Polynomial.monic_X_sub_C _)
-    simpa using h
+    simp
   have hrdeg : r.degree < (m : WithBot ℕ) := by
     exact universalRootRemainder_degree_lt K n m g hg hdeg
   have hrle : r.natDegree ≤ m := by
@@ -10169,7 +10161,7 @@ affine coordinates in Sawin's proof of large-block constancy. -/
 
 /-- The universal monic quotient after division by the fixed modulus. -/
 noncomputable def universalMonicQuotient
-    (n : ℕ) (g : Polynomial K) (hg : g.Monic) :
+    (n : ℕ) (g : Polynomial K) (_hg : g.Monic) :
     Polynomial Γ(AffineRootSpace K n, ⊤) :=
   universalMonicCoefficientPolynomial K n /ₘ
     g.map (rootCoefficientMap K n)
@@ -10195,8 +10187,6 @@ theorem universalMonicQuotient_monic
   have hle : G.degree ≤ P.degree := by
     rw [Polynomial.degree_eq_natDegree hG.ne_zero,
       Polynomial.degree_eq_natDegree hP.ne_zero]
-    change ((G.natDegree : ℕ) : WithBot ℕ) ≤
-      ((P.natDegree : ℕ) : WithBot ℕ)
     rw [show G.natDegree = m by
       dsimp [G]
       rw [Polynomial.natDegree_map_eq_of_injective
@@ -10474,8 +10464,6 @@ theorem affineMonicReconstruction_comp_residue
         ((affineMonicResidueMultiplication K n m g hg).appTop
           (AffineSpace.coord (Spec (.of K)) j)) = _
     rw [affineMonicResidueMultiplication_appTop_coord]
-    change (affineMonicReconstruction K n m g t).appTop
-        ((universalMonicRemainder K n g hg).coeff j.down) = _
     rw [← Polynomial.coeff_map,
       universalMonicRemainder_map_affineMonicReconstruction
         K n m g hg hdeg hmn t]
@@ -10631,8 +10619,6 @@ theorem affineMonicReconstruction_comp_affineMonicQuotient
     rw [CommRingCat.comp_apply]
     unfold affineMonicQuotient
     rw [AffineSpace.homOfVector_appTop_coord]
-    change (affineMonicReconstruction K n m g t).appTop
-        ((universalMonicQuotient K n g hg).coeff j.down) = _
     rw [← Polynomial.coeff_map,
       universalMonicQuotient_map_affineMonicReconstruction
         K n m g hg hdeg hmn t,
@@ -10681,8 +10667,8 @@ theorem symmetricResidueUnitFiberToAffineMonicSpace_comp_residue
       K n m g hg hdeg hmn t ≫
       symmetricCoprimeMonicResidueMultiplication K n m g hg = _
   rw [← symmetricCoprimeMonicResidueMultiplicationToUnit_fac]
-  rw [← Category.assoc, symmetricResidueUnitFiber_condition,
-    Category.assoc]
+  · rw [← Category.assoc, symmetricResidueUnitFiber_condition,
+      Category.assoc]
   all_goals assumption
 
 @[reassoc (attr := simp)]
@@ -10754,7 +10740,6 @@ theorem symmetricResidueUnitFiberToAffineMonicSpace_over
     K n m g hg hdeg hmn]
   rw [← Category.assoc, symmetricResidueUnitFiber_condition,
     Category.assoc, ht, Category.comp_id]
-  all_goals assumption
 
 theorem symmetricResidueUnitFiberToAffineMonicSpace_rootCoefficientMap
     (n m : ℕ) (g : Polynomial K) (hg : g.Monic)
@@ -10920,9 +10905,6 @@ theorem symmetricResidueUnitFiberToQuotient_comp_reconstruction
     rw [Scheme.Hom.comp_appTop, CommRingCat.comp_apply]
     unfold affineMonicReconstruction
     rw [AffineSpace.homOfVector_appTop_coord]
-    change (symmetricResidueUnitFiberToQuotient
-        K n m g hg hdeg hmn t).appTop
-          ((reconstructedMonicPolynomial K n m g t).coeff j.down) = _
     rw [← Polynomial.coeff_map,
       reconstructedMonicPolynomial_map_symmetricFiberToQuotient
         K n m g hg hdeg hmn t ht,
@@ -10964,7 +10946,7 @@ theorem symmetricResidueUnitFiberToQuotient_comp_toFiber
     simp
   · rw [Category.assoc, affineMonicReconstructionToFiber_snd,
       symmetricResidueUnitFiberToQuotient_over]
-    simp
+    · simp
     all_goals exact ht
 
 /-- The symmetric residue fiber is the target-independent affine space of
@@ -11354,7 +11336,7 @@ theorem affineRootFrobenius_universalRootPolynomial
 /-- Reduction of the universal root polynomial modulo the fixed modulus
 commutes with Frobenius. -/
 theorem affineRootFrobenius_universalRootRemainder
-    (q n m : ℕ) [Fact q.Prime]
+    (q n _m : ℕ) [Fact q.Prime]
     (g : Polynomial (ZMod q)) (hg : g.Monic) :
     (universalRootRemainder (ZMod q) n g hg).map
         (affineRootFrobenius q n).appTop.hom =
@@ -11832,7 +11814,7 @@ the source ring of every unit-valued family.  This is the regular, relative
 form of division by the residues contributed by the other Young blocks. -/
 theorem residuePolynomialAlong_isCoprime
     (K : Type u) [Field K] {X : Scheme.{u}}
-    (m : ℕ) (g : Polynomial K) (hg : g.Monic)
+    (m : ℕ) (g : Polynomial K) (_hg : g.Monic)
     (hdeg : g.natDegree = m) (hm : 0 < m)
     (f : X ⟶ ResidueUnitSpace K m g) :
     IsCoprime (residueModulusAlong K m g f)
@@ -11872,7 +11854,7 @@ theorem residuePolynomialAlong_isCoprime
   refine ⟨Polynomial.C c * a, Polynomial.C c * b, ?_⟩
   rw [mul_assoc, mul_assoc, ← mul_add, mul_comm a, mul_comm b, hab,
     ← Polynomial.C_mul]
-  simpa [c] using congrArg Polynomial.C hunit.val_inv_mul
+  simp [c]
 
 /-- A polynomial representative for the inverse of a unit-valued residue. -/
 noncomputable def residuePolynomialInverseAlong
@@ -11970,7 +11952,7 @@ theorem residueModulusAlong_eq_of_over
 /-- Reduction modulo a monic polynomial preserves coprimality over an
 arbitrary commutative coefficient ring. -/
 theorem isCoprime_modByMonic_right_iff_commRing
-    {R : Type*} [CommRing R] (M P : Polynomial R) (hM : M.Monic) :
+    {R : Type*} [CommRing R] (M P : Polynomial R) (_hM : M.Monic) :
     IsCoprime M (P %ₘ M) ↔ IsCoprime M P := by
   let r := P %ₘ M
   let q := P /ₘ M
@@ -12006,7 +11988,7 @@ theorem isUnit_resultant_padded_of_monic_isCoprime
           · exact (Nat.add_sub_of_le hPdeg).symm
         _ = M.coeff M.natDegree ^ (m - P.natDegree) *
               M.resultant P := by
-          rw [Polynomial.resultant_add_right_deg] <;> simp
+          rw [Polynomial.resultant_add_right_deg]; simp
         _ = M.resultant P := by simp [hM.coeff_natDegree]
     rw [hpad]
     exact hdefault
@@ -12406,8 +12388,8 @@ variable (K : Type u) [Field K]
 
 /-- The universal reconstructed polynomial `r_t + gH` over a varying base. -/
 noncomputable def relativeReconstructedMonicPolynomial
-    {X : Scheme.{u}} (n m : ℕ) (g : Polynomial K) (hg : g.Monic)
-    (hdeg : g.natDegree = m) (hmn : m ≤ n)
+    {X : Scheme.{u}} (n m : ℕ) (g : Polynomial K) (_hg : g.Monic)
+    (_hdeg : g.natDegree = m) (_hmn : m ≤ n)
     (t : X ⟶ ResidueUnitSpace K m g) :
     Polynomial Γ(RelativeAffineRootSpace K (n - m)
       (t ≫ residueUnitProjection K m g), ⊤) :=
@@ -12673,9 +12655,6 @@ theorem relativeAffineMonicReconstruction_comp_residue
         ((affineMonicResidueMultiplication K n m g hg).appTop
           (AffineSpace.coord (Spec (.of K)) j)) = _
     rw [affineMonicResidueMultiplication_appTop_coord]
-    change (relativeAffineMonicReconstruction
-        K n m g hg hdeg hmn t).appTop
-        ((universalMonicRemainder K n g hg).coeff j.down) = _
     rw [← Polynomial.coeff_map,
       universalMonicRemainder_map_relativeReconstruction
         K n m g hg hdeg hmn t]
@@ -12852,9 +12831,6 @@ theorem relativeAffineMonicReconstruction_comp_quotient
     rw [CommRingCat.comp_apply]
     unfold affineMonicQuotient
     rw [AffineSpace.homOfVector_appTop_coord]
-    change (relativeAffineMonicReconstruction
-        K n m g hg hdeg hmn t).appTop
-          ((universalMonicQuotient K n g hg).coeff j.down) = _
     rw [← Polynomial.coeff_map,
       universalMonicQuotient_map_relativeReconstruction
         K n m g hg hdeg hmn t,
@@ -12923,9 +12899,9 @@ theorem relativeSymmetricResidueUnitFiberToAffine_comp_residue
       K n m g hg hdeg hmn t ≫
       symmetricCoprimeMonicResidueMultiplication K n m g hg = _
   rw [← symmetricCoprimeMonicResidueMultiplicationToUnit_fac]
-  rw [← Category.assoc,
-    relativeSymmetricResidueUnitFiber_condition,
-    Category.assoc]
+  · rw [← Category.assoc,
+      relativeSymmetricResidueUnitFiber_condition,
+      Category.assoc]
   all_goals assumption
 
 theorem universalMonicRemainder_map_relativeSymmetricFiber
@@ -13092,10 +13068,6 @@ theorem relativeFiberToRelativeAffine_comp_reconstruction
     rw [Scheme.Hom.comp_appTop, CommRingCat.comp_apply]
     unfold relativeAffineMonicReconstruction
     rw [AffineSpace.homOfVector_appTop_coord]
-    change (relativeSymmetricResidueUnitFiberToRelativeAffine
-        K n m g hg hdeg hmn t).appTop
-          ((relativeReconstructedMonicPolynomial
-            K n m g hg hdeg hmn t).coeff j.down) = _
     rw [← Polynomial.coeff_map,
       relativeReconstructedPolynomial_map_relativeFiber
         K n m g hg hdeg hmn t,
@@ -13889,8 +13861,8 @@ theorem locallyOfFiniteType_limit_over
   rw [← he] at hdom
   let : IsIso e.hom.left := by
     refine ⟨⟨e.inv.left, ?_, ?_⟩⟩
-    · simpa using congrArg (fun k => k.left) e.hom_inv_id
-    · simpa using congrArg (fun k => k.left) e.inv_hom_id
+    · simp
+    · simp
   exact (MorphismProperty.cancel_left_of_respectsIso
     P e.hom.left (limit F).hom).mp hdom
 
@@ -15112,13 +15084,13 @@ theorem specPoint_frobenius_fixed_iff_descendsToZMod
           Spec.map (CommRingCat.ofHom f) := by
             congr 1
             exact CommRingCat.hom_ext hf₀
-      _ = x := by simpa [f] using Spec.map_preimage x
+      _ = x := by simp [f]
   · rintro ⟨x₀, hx₀⟩
     obtain ⟨f₀, rfl⟩ := Spec.map_surjective (R := .of R)
       (S := .of (ZMod q)) x₀
     rw [← Spec.map_comp] at hx₀
     have hxmap : Spec.map (CommRingCat.ofHom f) = x := by
-      simpa [f] using Spec.map_preimage x
+      simp [f]
     rw [← hxmap, Spec.map_inj] at hx₀
     rw [← hxmap]
     rw [← Spec.map_comp]
@@ -15698,7 +15670,7 @@ noncomputable def fullResidueUnitFiberFrobeniusCompactSupportComparisonEquiv
     (g : Polynomial (ZMod q)) (hg : g.Monic)
     (hdeg : g.natDegree = m) (hm : 0 < m) (hmn : m ≤ n)
     (t : ResidueUnitPoint (ZMod q) m g)
-    (σ : Equiv.Perm (Fin n))
+    (_σ : Equiv.Perm (Fin n))
     (Xbar S : Scheme)
     (j : FullResidueUnitFiber
       (ZMod q) n m g hg hdeg hm hmn t ⟶ Xbar)
@@ -16031,7 +16003,7 @@ theorem residueField_natCard (i : ℕ) :
     exact (AdjoinRoot.powerBasis' (auxiliaryIrreducible_monic p i)).finrank
   rw [Module.natCard_eq_pow_finrank (K := ZMod p), hfin,
     auxiliaryIrreducible_natDegree]
-  simpa only [Nat.card_eq_fintype_card, ZMod.card]
+  simp only [Nat.card_eq_fintype_card, ZMod.card]
 
 /-- Hence the multiplicative group has exactly `p^(2i+1)-1` elements,
 which is the odd-position radix in Pilatte's mixed-base construction. -/
@@ -16590,6 +16562,7 @@ def blockPlace (q : ℕ) : ℕ → ℕ → ℕ
   | _, 0 => 1
   | i, n + 1 => oddRadix q i * 103 * blockPlace q (i + 1) n
 
+omit [Fact (Nat.Prime q)] in
 theorem blockPlace_add (i m n : ℕ) :
     blockPlace q i (m + n) =
       blockPlace q i m * blockPlace q (i + m) n := by
@@ -16648,7 +16621,7 @@ theorem digitBlock_pair_encode_lt_place (hq : 3 ≤ q)
     MixedRadix.encode (digitBlock q f i n r) +
         MixedRadix.encode (digitBlock q g i n s) < blockPlace q i n := by
   induction n generalizing i with
-  | zero => simp [digitBlock, blockPlace, MixedRadix.encode]
+  | zero => simp [digitBlock, blockPlace]
   | succ n ih =>
       let b := oddRadix q i
       let ef := primePolynomialLogarithm q i f
@@ -16688,7 +16661,7 @@ theorem two_mul_digitBlock_encode_lt_place (hq : 3 ≤ q)
     (r : Fin n → AuxiliaryDigit) :
     2 * MixedRadix.encode (digitBlock q f i n r) < blockPlace q i n := by
   induction n generalizing i with
-  | zero => simp [digitBlock, blockPlace, MixedRadix.encode]
+  | zero => simp [digitBlock, blockPlace]
   | succ n ih =>
       let b := oddRadix q i
       let e := primePolynomialLogarithm q i f
@@ -16743,7 +16716,7 @@ theorem blockWithTopValue_eq_encode_add_place_mul {d i n : ℕ}
     blockWithTopValue q f i n r z =
       MixedRadix.encode (digitBlock q f i n r) + blockPlace q i n * z := by
   induction n generalizing i with
-  | zero => simp [blockWithTopValue, digitBlock, blockPlace, MixedRadix.encode]
+  | zero => simp [blockWithTopValue, digitBlock, blockPlace]
   | succ n ih =>
       simp only [blockWithTopValue, digitBlock, MixedRadix.encode_cons, blockPlace]
       rw [ih (i := i + 1) (r := fun j ↦ r j.succ)]
@@ -16845,7 +16818,7 @@ theorem blockWithTopList_append {d i : ℕ}
         blockPlace q i xs.length *
           blockWithTopList q f (i + xs.length) ys z := by
   induction xs generalizing i with
-  | nil => simp [blockWithTopList, digitBlockList, blockPlace]
+  | nil => simp [digitBlockList, blockPlace]
   | cons a xs ih =>
       simp only [List.cons_append, blockWithTopList, digitBlockList,
         MixedRadix.encode_cons, List.length_cons, blockPlace]
@@ -17009,7 +16982,7 @@ theorem digitBlock_take_bases_eq {d₁ d₂ i n₁ n₂ m : ℕ}
           | zero => omega
           | succ n₂ =>
               rw [show 2 * (m + 1) = Nat.succ (Nat.succ (2 * m)) by omega]
-              simp only [digitBlock, List.take_succ_cons, List.map_cons, Prod.fst]
+              simp only [digitBlock, List.take_succ_cons, List.map_cons]
               rw [ih (i := i + 1) (n₁ := n₁) (n₂ := n₂)
                 (r := fun j ↦ r j.succ) (s := fun j ↦ s j.succ)
                 (by omega) (by omega)]
@@ -17179,6 +17152,7 @@ theorem digitBlock_logarithm_eq_of_eq {d₁ d₂ i n : ℕ}
         rw [hidx]
         exact hh
 
+omit [Fact (Nat.Prime q)] in
 theorem oddRadix_mul_aux_gt_pow {i : ℕ} (hq : 2 ≤ q) :
     q ^ (2 * i + 1) < oddRadix q i * 103 := by
   have hp : 2 ≤ q ^ (2 * i + 1) := by
@@ -17189,6 +17163,7 @@ theorem oddRadix_mul_aux_gt_pow {i : ℕ} (hq : 2 ≤ q) :
   unfold oddRadix
   omega
 
+omit [Fact (Nat.Prime q)] in
 /-- The product of the first `n` paired radices dominates the corresponding
 power whose exponent is the sum of the odd positions. -/
 theorem pow_le_blockPlace (hq : 2 ≤ q) (i n : ℕ) :
@@ -17211,6 +17186,7 @@ theorem pow_le_blockPlace (hq : 2 ≤ q) (i n : ℕ) :
           Nat.mul_le_mul_left _ htail
         _ = oddRadix q i * 103 * blockPlace q (i + 1) n := by ring
 
+omit [Fact (Nat.Prime q)] in
 theorem pow_lt_blockPlace (hq : 2 ≤ q) (i : ℕ) {n : ℕ} (hn : n ≠ 0) :
     q ^ (n * (2 * i + n)) < blockPlace q i n := by
   obtain ⟨n, rfl⟩ := Nat.exists_eq_succ_of_ne_zero hn
@@ -17229,6 +17205,7 @@ theorem pow_lt_blockPlace (hq : 2 ≤ q) (i : ℕ) {n : ℕ} (hn : n ≠ 0) :
       Nat.mul_le_mul_left _ htail
     _ = oddRadix q i * 103 * blockPlace q (i + 1) n := by ring
 
+omit [Fact (Nat.Prime q)] in
 /-- Three complete pairs above level `k` dominate twice the maximal
 level-`k` top digit. -/
 theorem two_mul_topBound_lt_blockPlace_three (hq : 2 ≤ q) (k : ℕ) :
@@ -17259,6 +17236,7 @@ theorem digitBlockList_three_add_top_lt_place (hq : 3 ≤ q) {d k : ℕ}
       (two_mul_topBound_lt_blockPlace_three q (by omega) k)
   omega
 
+omit [Fact (Nat.Prime q)] in
 /-- When `q ≥ 103`, one extra power of `q` per auxiliary radix gives a
 simple upper bound for the paired-radix product. -/
 theorem blockPlace_le_pow (hq : 103 ≤ q) (i n : ℕ) :
@@ -17543,6 +17521,7 @@ theorem logarithm_eq_of_encoded_eq (hq : 3 ≤ q) (ω : Parameters q)
     (ω.auxiliary k f) (ω.auxiliary k g) hb ⟨i, hi⟩
   simpa using hh
 
+omit [Fact (Nat.Prime q)] in
 theorem LevelPolynomial.natDegree_lt_sq {k : ℕ} (hk : 2 ≤ k)
     (f : LevelPolynomial q k) : f.val.natDegree < k ^ 2 := by
   have hu := (mem_degreeIndices.mp f.1.property).2.2
@@ -17551,6 +17530,7 @@ theorem LevelPolynomial.natDegree_lt_sq {k : ℕ} (hk : 2 ≤ k)
     nlinarith
   nlinarith
 
+omit [Fact (Nat.Prime q)] in
 /-- Degree windows for two distinct levels are disjoint. -/
 theorem LevelPolynomial.level_eq_of_val_eq {k l : ℕ}
     (f : LevelPolynomial q k) (g : LevelPolynomial q l)
@@ -17575,6 +17555,7 @@ theorem LevelPolynomial.level_eq_of_val_eq {k l : ℕ}
     rw [hindex] at hf
     nlinarith
 
+omit [Fact (Nat.Prime q)] in
 /-- A polynomial in level at most `k+1` has degree below `k²`, once the
 fixed cutoff `k ≥ 4` has removed the small boundary cases. -/
 theorem LevelPolynomial.natDegree_lt_sq_of_level_le_succ {k l : ℕ}
@@ -17623,7 +17604,7 @@ theorem pow_sq_lt_encoded (hq : 2 ≤ q) (ω : Parameters q) {k : ℕ}
   have hp := pow_lt_blockPlace q hq 0 hk
   have hp' : q ^ (k ^ 2) < MixedRadix.place (lowerDigits q ω f) := by
     rw [lowerDigits_place]
-    convert hp using 1 <;> ring
+    convert hp using 1; ring
   exact hp'.trans_le (place_le_encoded q ω f)
 
 theorem encoded_lt_place_mul_topBound (hq : 3 ≤ q) (ω : Parameters q)
@@ -17650,7 +17631,7 @@ theorem encoded_lt_pow (hq : 103 ≤ q) (ω : Parameters q)
   have hplace : MixedRadix.place (lowerDigits q ω f) ≤ q ^ (k ^ 2 + k) := by
     rw [lowerDigits_place]
     have hp := blockPlace_le_pow q hq 0 k
-    convert hp using 1 <;> ring
+    convert hp using 1; ring
   have hpowpos : 1 ≤ q ^ (3 * k) := Nat.pow_pos (by omega : 0 < q)
   have htop : q ^ (3 * k) + 1 ≤ q ^ (3 * k + 1) := by
     rw [pow_succ]
@@ -17846,7 +17827,7 @@ theorem sum_div_blockPlace_eq_long_suffix (hq : 3 ≤ q)
             rw [blockWithTopList_append, htake, hkr]
       _ = ((MixedRadix.encode (digitBlockList q f.2 k (T.take r)) + zg) +
             blockPlace q k r * blockWithTopList q f.2 j (T.drop r) zf) /
-          blockPlace q k r := by congr 1 <;> omega
+          blockPlace q k r := by congr 1; omega
       _ = _ := by
         rw [Nat.add_mul_div_left _ _ (blockPlace_pos q k r),
           Nat.div_eq_of_lt hsmall, zero_add]
@@ -18273,6 +18254,7 @@ theorem intervalModulus_dvd_larger_sub_of_encoded_add_eq (hq : 3 ≤ q)
       rw [hsum]
     _ = primePolynomialLogarithm q i f₃.2 := hright
 
+omit [Fact (Nat.Prime q)] in
 /-- The degree-window upper inequality in an integer form convenient for
 the final numerical comparison. -/
 theorem LevelPolynomial.twenty_mul_natDegree_lt {k : ℕ}
@@ -18282,6 +18264,7 @@ theorem LevelPolynomial.twenty_mul_natDegree_lt {k : ℕ}
   rw [LevelPolynomial.natDegree]
   nlinarith
 
+omit [Fact (Nat.Prime q)] in
 theorem LevelPolynomial.twenty_mul_natDegree_lt_of_level_le
     {k K : ℕ} (f : LevelPolynomial q k) (hkK : k ≤ K) :
     20 * f.val.natDegree < 7 * (K + 1) ^ 2 := by
@@ -18491,6 +18474,7 @@ noncomputable def sidonCandidateValue (ω : Parameters q)
     (x : SidonCandidate q) : ℕ :=
   encoded q ω x.2
 
+omit [Fact (Nat.Prime q)] in
 theorem sidonCandidate_eq_of_val_eq {x y : SidonCandidate q}
     (h : x.2.val = y.2.val) : x = y := by
   rcases x with ⟨⟨k, hk⟩, f⟩
@@ -18656,7 +18640,7 @@ theorem remaining_pair_eq_of_shared_factor_modEq (k d : ℕ)
       (f : Polynomial (ZMod q)) *
         ((g₁ : Polynomial (ZMod q)) * g₂ -
           (h₁ : Polynomial (ZMod q)) * h₂) := by
-    convert hcong using 1 <;> ring
+    convert hcong using 1; ring
   have hdvd : modulusProduct q k ∣
       (g₁ : Polynomial (ZMod q)) * g₂ -
         (h₁ : Polynomial (ZMod q)) * h₂ :=
@@ -18751,7 +18735,7 @@ theorem primeTriple_ordering_card (d : ℕ) (T : PrimeTriple q d) :
   classical
   let e : Fin 3 ≃ ↥T.1 := Fintype.equivOfCardEq (by
     simp only [Fintype.card_fin, Fintype.card_coe, T.2])
-  convert Fintype.card_equiv e using 1 <;> norm_num
+  convert Fintype.card_equiv e using 1; norm_num
 
 /-- Consequently the ordered distinct triples are exactly six copies of the
 unordered triples. -/
@@ -18990,7 +18974,7 @@ theorem primeTriple_eq_of_shared_common_residue (k d : ℕ)
     dsimp only [pU]
     rw [Polynomial.natDegree_prod_of_monic]
     · simp only [PrimePolynomials.natDegree, Finset.sum_const_nat,
-        Nat.nsmul_eq_mul, hcardU]
+        hcardU]
       omega
     · intro g hg
       exact PrimePolynomials.monic g
@@ -18998,7 +18982,7 @@ theorem primeTriple_eq_of_shared_common_residue (k d : ℕ)
     dsimp only [pV]
     rw [Polynomial.natDegree_prod_of_monic]
     · simp only [PrimePolynomials.natDegree, Finset.sum_const_nat,
-        Nat.nsmul_eq_mul, hcardV]
+        hcardV]
       omega
     · intro g hg
       exact PrimePolynomials.monic g
@@ -19055,6 +19039,7 @@ structure OrderedPrimeTriple (q d : ℕ) where
   second : OfDegree q (2 * d)
   third : OfDegree q (2 * d)
 
+omit [Fact (Nat.Prime q)] in
 theorem orderedPrimeTriple_tuple_injective (d : ℕ) :
     Function.Injective
       (fun T : OrderedPrimeTriple q d => (T.first, T.second, T.third)) := by
@@ -19346,8 +19331,7 @@ theorem congruentOrderedPrimeTriple_inclusion_exclusion (k d : ℕ)
   intro T hT
   specialize hclosure T
   by_cases hp : p T <;> by_cases hr : r T <;> by_cases hs : s T <;>
-    simp only [mul_ite, mul_one, mul_zero] at hclosure ⊢
-  exact fun h => hp (hr.trans h)
+    simp_all [p, r, s, OrderedPrimeTriple.IsDistinct]
 
 /-- Multiplying the three-factor inclusion--exclusion identity by the common
 von-Mangoldt weight gives its factorization-function form. -/
@@ -19618,7 +19602,7 @@ noncomputable def orderedTripleFinEquiv {d : ℕ}
   · intro i j hij
     rcases hT with ⟨h12, h13, h23⟩
     fin_cases i <;> fin_cases j <;>
-      simp_all [f, h12, h13, h23]
+      simp_all [f]
   · rintro ⟨x, hx⟩
     simp only [Finset.mem_insert, Finset.mem_singleton] at hx
     rcases hx with h | h | h
@@ -20010,7 +19994,7 @@ noncomputable def congruentDistinctOrderedPrimeTripleEquivIrreducible
     apply Subtype.ext
     apply Subtype.ext
     apply orderedPrimeTriple_tuple_injective q r
-    congr 1 <;> apply Subtype.ext <;> rfl
+    congr 1
   right_inv x := by
     apply Subtype.ext
     apply CongruentPairwiseCoprimeTriple.ext <;> rfl
@@ -20256,7 +20240,7 @@ theorem primeTripleRatio_eq_one_iff (k d : ℕ)
 /-- Orthogonality away from the identity for the full complex character
 group of the progression quotient. -/
 theorem progressionCharacter_sum_eq_zero {k : ℕ}
-    {x : ProgressionQuotient q k} (hx : IsUnit x) (hne : x ≠ 1) :
+    {x : ProgressionQuotient q k} (_hx : IsUnit x) (hne : x ≠ 1) :
     ∑ χ : ProgressionCharacter q k, χ x = 0 := by
   obtain ⟨χ₀, hχ₀⟩ :=
     MulChar.exists_apply_ne_one_of_hasEnoughRootsOfUnity
@@ -20390,6 +20374,7 @@ theorem progressionTotient_pos (k : ℕ) : 0 < progressionTotient q k := by
   exact Nat.sub_pos_of_lt
     (Nat.one_lt_pow (by omega) ((Fact.out : q.Prime).one_lt))
 
+omit [Fact (Nat.Prime q)] in
 theorem progressionTotient_le_pow_sq (k : ℕ) :
     progressionTotient q k ≤ q ^ (k ^ 2) := by
   induction k with
@@ -21314,7 +21299,7 @@ theorem sum_shortIntervalThreePrimeWeight_eq_orderedProgression (k d : ℕ)
     (hkm : k ^ 2 ≤ 6 * d) :
     (∑ P : MonicOfDegree q (6 * d - k ^ 2),
       shortIntervalThreePrimeWeight q k d a P) =
-      ∑ T : RepresentationFamilies.CongruentPrimeTripleOrdering q k d a,
+      ∑ _T : RepresentationFamilies.CongruentPrimeTripleOrdering q k d a,
         RepresentationFamilies.primeTripleOrderingWeight d := by
   rw [sum_shortIntervalThreePrimeWeight_eq_progression q k d a ha hkm,
     RepresentationFamilies.sum_congruentPrimeTripleOrderingWeight]
@@ -21474,7 +21459,7 @@ theorem minpoly_natDegree_pos {d : ℕ} [NeZero d]
     (minpoly.irreducible (Algebra.IsIntegral.isIntegral x))
 
 /-- A positive proper divisor of `d` is at most `d / 2`. -/
-theorem properDivisor_le_half {e d : ℕ} (he : 0 < e)
+theorem properDivisor_le_half {e d : ℕ} (_he : 0 < e)
     (hd : 0 < d) (hed : e ∣ d) (hne : e ≠ d) : e ≤ d / 2 := by
   obtain ⟨c, rfl⟩ := hed
   have hc : 2 ≤ c := by
@@ -21781,6 +21766,7 @@ theorem gauss_lower_bound {d : ℕ} (hd : 2 ≤ d) :
   have hbad := nonFullDegreeElement_card_le q hd
   omega
 
+omit [Fact (Nat.Prime q)] in
 /-- The large fixed coefficient field makes the proper-subfield error much
 smaller than the ambient field.  This deliberately crude estimate is enough
 for every degree used below. -/
@@ -21841,6 +21827,7 @@ theorem cube_le_twentyFour_mul_choose_three {n : ℕ} (hn : 4 ≤ n) :
     _ = 4 * (n * (n - 1) * (n - 2)) := by ring
     _ = 24 * Nat.choose n 3 := by rw [← six_mul_choose_three]; ring
 
+omit [Fact (Nat.Prime q)] in
 theorem six_mul_degree_lt_field_pow (hq : 2 ^ 500 ≤ q) {d : ℕ}
     (hd : 2 ≤ d) : 6 * d < q ^ d := by
   have hdexp : d ≤ 2 ^ d := Nat.lt_two_pow_self.le
@@ -21893,7 +21880,7 @@ theorem equalDegreeMultinomial_le_two_pow (d : ℕ) :
     Nat.choose (3 * d) d * Nat.choose (2 * d) d ≤
         2 ^ (3 * d) * 2 ^ (2 * d) :=
       Nat.mul_le_mul (Nat.choose_le_two_pow _ _) (Nat.choose_le_two_pow _ _)
-    _ = 2 ^ (5 * d) := by rw [← pow_add]; congr 1 <;> omega
+    _ = 2 ^ (5 * d) := by rw [← pow_add]; congr 1; omega
 
 /-- Explicit integer envelope with the two terms occurring in Sawin's
 Lemma 9.9 after specialization to three equal degrees.  The half-integral
@@ -21932,6 +21919,7 @@ degree of Sawin's Proposition 7.1. -/
 def equalDegreeUpperRadius (d m : ℕ) : ℕ :=
   q ^ ((3 * d + 2 - m) / 2)
 
+omit [Fact (Nat.Prime q)] in
 /-- The two terms printed in Lemma 9.9, with the factor `2` introduced by
 the averaging step of Theorem 7.2, are exactly `equalDegreeError`.  This
 identity keeps the lower and upper cohomological contributions separate
@@ -21986,12 +21974,13 @@ theorem weightedPermutationMatrix_trace
   apply Finset.sum_congr rfl
   intro i hi
   change (∑ x, Matrix.diagonal w i x * (σ.permMatrix ℂ) x i) = _
-  simp only [Matrix.mul_apply, Matrix.diagonal_apply,
+  simp only [Matrix.diagonal_apply,
     Equiv.Perm.permMatrix, PEquiv.toMatrix_apply]
   rw [Finset.sum_eq_single (σ.symm i)]
-  · simp [Equiv.apply_eq_iff_eq_symm_apply]
-  · intro b hb hne
-    simp [Equiv.apply_eq_iff_eq_symm_apply, hne]
+  · simp [← Equiv.eq_symm_apply]
+  · intro b _ hne
+    have hσ : σ b ≠ i := fun h => hne (σ.eq_symm_apply.mpr h)
+    simp [hσ]
   · simp
 
 /-- Restriction of a permutation to a fiber of an invariant map. -/
@@ -23167,6 +23156,7 @@ theorem TwoDegreeFrobeniusAverageData.norm_mass_sub_average_le
   obtain ⟨matrices⟩ := data.frobeniusMatrices i
   exact matrices.norm_error_le
 
+omit [Fact (Nat.Prime q)] in
 /-- Exact finite-dimensional form of Sawin's Proposition 7.1 followed by
 Theorem 7.2 in the three-equal-degree specialization.  The hypotheses give
 the two Frobenius matrices for every progression class, with the precise
@@ -23381,7 +23371,7 @@ theorem equalDegreeError_le (d m : ℕ) :
                 (2 ^ m * 2 ^ (3 * d + 2 * m + 1))) * q ^ h := by ring
           _ = 2 ^ (8 * d + 3 * m + 2) * q ^ h := by
             rw [← pow_add, ← pow_add]
-            congr 2 <;> omega
+            congr 2; omega
   have hterm₂ :
       2 * equalDegreeMultinomial d *
           (2 ^ (m - 3) * Nat.choose (3 * d + 2 * m - 3) (3 * m - 4) *
@@ -23406,7 +23396,7 @@ theorem equalDegreeError_le (d m : ℕ) :
           _ = 2 ^ (8 * d + 3 * m + 2) *
                 q ^ ((3 * d + 2 - m) / 2) := by
             rw [← pow_add, ← pow_add]
-            congr 2 <;> omega
+            congr 2; omega
   unfold equalDegreeError
   calc
     2 * equalDegreeMultinomial d *
@@ -23478,6 +23468,7 @@ theorem sourceEnvelope_exponent_bound (d m : ℕ)
       8 * d + 3 * m + 3 := by
   omega
 
+omit [Fact (Nat.Prime q)] in
 /-- In the canonical degree window, the explicit Lemma 9.14 expression fits
 inside the simpler binary envelope used by the downstream arithmetic. -/
 theorem sawinLemma914EqualDegreeError_le_sieved (d m : ℕ)
@@ -23518,6 +23509,7 @@ theorem canonicalPrimeDegree_upper (k : ℕ) :
   unfold Construction.canonicalDegreeIndex
   omega
 
+omit [Fact (Nat.Prime q)] in
 theorem canonical_sawinLemma914EqualDegreeError_le_sieved {k : ℕ}
     (hk : 1000 ≤ k) :
     sawinLemma914EqualDegreeError q
@@ -23531,6 +23523,7 @@ theorem canonical_sawinLemma914EqualDegreeError_le_sieved {k : ℕ}
       Construction.modulus_degree_in_sawin_range (by omega : 3 ≤ k)
     omega
 
+omit [Fact (Nat.Prime q)] in
 /-- Convert a binary coefficient into a very small power of the fixed large
 coefficient field. -/
 theorem two_pow_le_largeField_pow (hq : 2 ^ 500 ≤ q) (a : ℕ) :
@@ -23551,7 +23544,7 @@ theorem mainCoefficient_le_two_pow (d : ℕ) :
       exact Nat.mul_le_mul (by norm_num) hcubed
     _ = 2 ^ (3 * d + 8) := by
       rw [← pow_mul, ← pow_add]
-      congr 1 <;> omega
+      congr 1; omega
 
 /-- After multiplication by the modulus totient and the harmless
 `192 d³` denominator from the Gauss bound, Sawin's error is still strictly
@@ -24007,7 +24000,7 @@ noncomputable def proper12EquivProper13 (k r : ℕ)
       have h := T.1.2
       change modulusProduct q k ∣ T.1.1.product - a at h
       change modulusProduct q k ∣ V.product - a
-      convert h using 1 <;> simp [V, OrderedPrimeTriple.product] <;> ring
+      convert h using 1; simp [V, OrderedPrimeTriple.product]; ring
     exact ⟨⟨V, hcong⟩, T.2⟩
   invFun T := by
     let V : OrderedPrimeTriple q r :=
@@ -24016,7 +24009,7 @@ noncomputable def proper12EquivProper13 (k r : ℕ)
       have h := T.1.2
       change modulusProduct q k ∣ T.1.1.product - a at h
       change modulusProduct q k ∣ V.product - a
-      convert h using 1 <;> simp [V, OrderedPrimeTriple.product] <;> ring
+      convert h using 1; simp [V, OrderedPrimeTriple.product]; ring
     exact ⟨⟨V, hcong⟩, T.2⟩
   left_inv T := by
     apply Subtype.ext
@@ -24040,7 +24033,7 @@ noncomputable def proper12EquivProper23 (k r : ℕ)
       have h := T.1.2
       change modulusProduct q k ∣ T.1.1.product - a at h
       change modulusProduct q k ∣ V.product - a
-      convert h using 1 <;> simp [V, OrderedPrimeTriple.product] <;> ring
+      convert h using 1; simp [V, OrderedPrimeTriple.product]; ring
     exact ⟨⟨V, hcong⟩, T.2⟩
   invFun T := by
     let V : OrderedPrimeTriple q r :=
@@ -24049,7 +24042,7 @@ noncomputable def proper12EquivProper23 (k r : ℕ)
       have h := T.1.2
       change modulusProduct q k ∣ T.1.1.product - a at h
       change modulusProduct q k ∣ V.product - a
-      convert h using 1 <;> simp [V, OrderedPrimeTriple.product] <;> ring
+      convert h using 1; simp [V, OrderedPrimeTriple.product]; ring
     exact ⟨⟨V, hcong⟩, T.2⟩
   left_inv T := by
     apply Subtype.ext
@@ -24620,7 +24613,7 @@ theorem progressionUnit_fiber_main_add_error
   unfold progressionUnitFiberFourierError
   rw [← Finset.sum_erase_add _ _
     (Finset.mem_univ (1 : ProgressionCharacter q k))]
-  simp only [MulChar.one_apply, Units.isUnit, if_true, Finset.sum_const,
+  simp only [MulChar.one_apply, Units.isUnit, Finset.sum_const,
     Finset.card_univ, nsmul_eq_mul, mul_one]
   ring
 
@@ -25423,7 +25416,7 @@ theorem hasSawinLemma914NonDiagonalPartitionAverageBounds_of_allAndOnePair
             (Fintype.card (ProgressionQuotient q k)ˣ : ℂ)‖ ≤ _
   simp_rw [unitProper13Weight_eq_proper12,
     unitProper23Weight_eq_proper12]
-  convert h using 1 <;> ring
+  convert h using 1; ring
 
 /-- Adding the elementary `3^k` diagonal estimate to the four genuinely
 non-diagonal estimates gives the complete proper-partition bound. -/
@@ -25930,6 +25923,7 @@ def sawinLemma914AverageTraceRank (d m : ℕ) : ℕ :=
   (6 * d ^ 3) *
     (2 ^ m * equalDegreeMultinomial d * 2 ^ (28 * (3 * d - m)))
 
+omit [Fact (Nat.Prime q)] in
 /-- The centered two-degree rank--radius estimate is exactly the numerical
 right side of the source's average-value Theorem 1.7 specialization. -/
 theorem two_mul_sawinLemma914AverageTraceRank_mul_radius (d m : ℕ) :
@@ -25949,6 +25943,7 @@ def sawinLemma914AllAndPairTraceRank (d m : ℕ) : ℕ :=
   (4 * d ^ 3) *
     (2 ^ m * equalDegreeMultinomial d * 2 ^ (28 * (3 * d - m)))
 
+omit [Fact (Nat.Prime q)] in
 theorem two_mul_sawinLemma914AllAndPairTraceRank_mul_radius (d m : ℕ) :
     2 * (sawinLemma914AllAndPairTraceRank d m : ℝ) *
         (sawinLemma914FrobeniusRadius q d m : ℝ) =
@@ -26071,6 +26066,7 @@ def sawinLemma914CharacterTraceRank (k d m : ℕ) : ℕ :=
     (4 * (2 ^ (m + 1) * equalDegreeMultinomial d *
       2 ^ (28 * (3 * d - m))))
 
+omit [Fact (Nat.Prime q)] in
 /-- The character-level rank budget times the common upward-rounded Deligne
 radius is exactly the right side of the reduced cancellation estimate. -/
 theorem sawinLemma914_characterTraceRank_mul_radius (k d m : ℕ) :
@@ -26361,6 +26357,7 @@ def sawinLemma914TraceRankBudget (k d m : ℕ) : ℕ :=
       (2 ^ (m + 1) * equalDegreeMultinomial d *
         2 ^ (28 * (3 * d - m))))
 
+omit [Fact (Nat.Prime q)] in
 theorem sawinLemma914_rankBudget_mul_radius (k d m : ℕ) :
     sawinLemma914TraceRankBudget q k d m *
         sawinLemma914FrobeniusRadius q d m =
@@ -26632,7 +26629,7 @@ cross-multiplied error envelope.  This is the form obtained after carrying
 Sawin's repeated-factor sieve through Lemmas 9.12--9.14. -/
 def HasEqualDegreePrimeTripleDeviation : Prop :=
   ∀ k : ℕ, 1000 ≤ k → ∀ a : Polynomial (ZMod q),
-    ∀ ha : ∀ i < k, ¬ auxiliaryIrreducible q i ∣ a,
+    ∀ _ha : ∀ i < k, ¬ auxiliaryIrreducible q i ∣ a,
       ‖((Nat.choose
             (primePolynomialCount q
               (2 * Construction.canonicalDegreeIndex k)) 3 : ℕ) : ℂ) -
@@ -27440,7 +27437,7 @@ theorem targetBlock_le_levelPower (hq : 103 ≤ q) {k z : ℕ}
     calc
       6 * 103 * q ^ (2 * k + 1) ≤ q ^ 2 * q ^ (2 * k + 1) :=
         Nat.mul_le_mul_right _ hconst
-      _ = q ^ (2 * k + 3) := by rw [← pow_add]; congr 1 <;> omega
+      _ = q ^ (2 * k + 3) := by rw [← pow_add]; congr 1; omega
   have hk_two : k ≤ 2 ^ k := Nat.lt_two_pow_self.le
   have htwoq : 2 ^ k ≤ q ^ k :=
     Nat.pow_le_pow_left (by omega) k
@@ -27477,6 +27474,7 @@ into the inverse-square bound required for summability. -/
 def dyadicExponent (q k : ℕ) : ℕ :=
   q * (2 * (k ^ 2 + 3 * k + 5))
 
+omit [Fact (Nat.Prime q)] in
 theorem square_succ_le_two_pow_dyadicExponent (hq : 103 ≤ q)
     {k m : ℕ} (hm : m ≤ q ^ (k ^ 2 + 3 * k + 4)) :
     (m + 1) ^ 2 ≤ 2 ^ dyadicExponent q k := by
@@ -27493,7 +27491,7 @@ theorem square_succ_le_two_pow_dyadicExponent (hq : 103 ≤ q)
   have hsquare : (m + 1) ^ 2 ≤ q ^ (2 * (E + 1)) := by
     calc
       (m + 1) ^ 2 ≤ (q ^ (E + 1)) ^ 2 := Nat.pow_le_pow_left hm₁ 2
-      _ = q ^ (2 * (E + 1)) := by rw [← pow_mul]; congr 1 <;> omega
+      _ = q ^ (2 * (E + 1)) := by rw [← pow_mul]; congr 1; omega
   have hq_two : q ≤ 2 ^ q := Nat.lt_two_pow_self.le
   have hpower : q ^ (2 * (E + 1)) ≤ 2 ^ dyadicExponent q k := by
     calc
@@ -27550,10 +27548,12 @@ def largeTargetThreshold (q : ℕ) : ℕ :=
   q ^ (1000 * 1001) *
     (6 * 103 * q ^ (2 * 1000 + 1) + 3 * 1000)
 
+omit [Fact (Nat.Prime q)] in
 @[simp]
 theorem largeTargetThresholdFrom_1000 :
     largeTargetThresholdFrom q 1000 = largeTargetThreshold q := by
-  rfl
+  unfold largeTargetThresholdFrom largeTargetThreshold
+  rw [show (1000 : ℕ) + 1 = 1001 from rfl]
 
 theorem targetBlock_level_ge_1000_of_large (hq : 103 ≤ q)
     {m k z : ℕ} (x y : Fin k → ℕ)
@@ -27563,27 +27563,8 @@ theorem targetBlock_level_ge_1000_of_large (hq : 103 ≤ q)
     (hz : z ≤ 6 * 103 * q ^ (2 * k + 1))
     (hlarge : largeTargetThreshold q < m) :
     1000 ≤ k := by
-  by_contra hk
-  have hklt : k < 1000 := by omega
-  have htarget := targetBlock_le_blockPlace_mul q (i := 0) x y z (by
-    simpa only [zero_add] using hx) hy
-  have hplace₁ := blockPlace_le_pow q hq 0 k
-  have hexp : k * (k + 1) ≤ 1000 * 1001 := by nlinarith
-  have hplace₂ : q ^ (k * (k + 1)) ≤ q ^ (1000 * 1001) :=
-    Nat.pow_le_pow_right (by omega : 0 < q) hexp
-  have hplace : blockPlace q 0 k ≤ q ^ (1000 * 1001) := by
-    exact hplace₁.trans (by
-      simpa only [Nat.mul_zero, Nat.zero_add] using hplace₂)
-  have htopExp : 2 * k + 1 ≤ 2 * 1000 + 1 := by omega
-  have htopPow : q ^ (2 * k + 1) ≤ q ^ (2 * 1000 + 1) :=
-    Nat.pow_le_pow_right (by omega : 0 < q) htopExp
-  have htop : z + 3 * k ≤
-      6 * 103 * q ^ (2 * 1000 + 1) + 3 * 1000 := by
-    exact Nat.add_le_add
-      (hz.trans (Nat.mul_le_mul_left (6 * 103) htopPow)) (by omega)
-  have hbound := Nat.mul_le_mul hplace htop
-  rw [hm] at hlarge
-  exact (not_lt_of_ge (htarget.trans hbound)) hlarge
+  apply targetBlock_level_ge_of_large q hq x y hx hy hm hz
+  simpa only [largeTargetThresholdFrom_1000] using hlarge
 
 /-- A valid list-form target expansion is exactly a `targetBlock`.  This
 bridges the terminating Euclidean-division construction above to the
@@ -27640,9 +27621,6 @@ theorem ValidDigits.exists_targetBlock {q i : ℕ} {ds : List (ℕ × ℕ)}
       · intro z
         simp only [MixedRadix.encode_cons, MixedRadix.place_cons,
           targetBlock]
-        change x₀ + oddRadix q i *
-              (y₀ + 103 * MixedRadix.encode ds) +
-            (oddRadix q i * (103 * MixedRadix.place ds)) * z = _
         simp only [x', y', Fin.cases_zero, Fin.cases_succ]
         calc
           x₀ + oddRadix q i * (y₀ + 103 * MixedRadix.encode ds) +
@@ -27710,8 +27688,8 @@ theorem exists_large_targetBlock_data {m : ℕ}
       (∀ j : Fin k, CarryCovered auxiliaryDigitSet (y j)) ∧
       m = targetBlock q 0 k x y z ∧
       3 ≤ z ∧ z ≤ 6 * 103 * q ^ (2 * k + 1) := by
-  have hpow : 1 ≤ q ^ (1000 * 1001) :=
-    Nat.one_le_pow _ _ (by omega)
+  have hpow :=
+    Nat.one_le_pow (1000 * 1001) q (by omega)
   have hfactor : 2 ≤
       6 * 103 * q ^ (2 * 1000 + 1) + 3 * 1000 := by omega
   have hthreshold : 2 ≤ largeTargetThreshold q := by
@@ -27732,11 +27710,13 @@ def levelPolynomialOfDegreeIndex {k d : ℕ} (hd : d ∈ degreeIndices k)
     (f : PrimePolynomials.OfDegree q (2 * d)) : LevelPolynomial q k :=
   ⟨⟨d, hd⟩, f⟩
 
+omit [Fact (Nat.Prime q)] in
 @[simp]
 theorem levelPolynomialOfDegreeIndex_val {k d : ℕ}
     (hd : d ∈ degreeIndices k) (f : PrimePolynomials.OfDegree q (2 * d)) :
     (levelPolynomialOfDegreeIndex q hd f).val = f := rfl
 
+omit [Fact (Nat.Prime q)] in
 theorem levelPolynomialOfDegreeIndex_injective {k d : ℕ}
     (hd : d ∈ degreeIndices k) :
     Function.Injective (levelPolynomialOfDegreeIndex q hd) := by
@@ -27793,6 +27773,7 @@ theorem exists_three_topDigits_sum {N z : ℕ} (hN : 1 ≤ N)
   change (a - 1) + 1 + ((b - 1) + 1) + ((c - 1) + 1) = z
   omega
 
+omit [Fact (Nat.Prime q)] in
 /-- For the construction's range of top coefficients, the three stored
 top digits have enough room as soon as `q ≥ 103` and `k ≥ 3`. -/
 theorem targetTop_le_three_topRange (hq : 103 ≤ q) {k z : ℕ}
@@ -27814,7 +27795,7 @@ theorem targetTop_le_three_topRange (hq : 103 ≤ q) {k z : ℕ}
     _ = 3 * q ^ ((k - 1) + (2 * k + 1)) := by
       congr 1
       exact (pow_add q (k - 1) (2 * k + 1)).symm
-    _ = 3 * q ^ (3 * k) := by congr 2 <;> omega
+    _ = 3 * q ^ (3 * k) := by congr 2; omega
 
 /-- The recursive block expression for an embedded degree-`2d` polynomial
 is exactly its construction-level encoding. -/
@@ -28220,11 +28201,12 @@ theorem parameterMeasure_coordinate_singleton (c : Coordinate q) (v : c.Value) :
 
 /-- Exact mass of a finite cylinder of distinct independent coordinates. -/
 theorem parameterMeasure_finite_cylinder
-    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {ι : Type*} [Fintype ι]
     (e : ι → Coordinate q) (he : Function.Injective e)
     (v : ∀ j : ι, (e j).Value) :
     parameterMeasure q {ω | ∀ j : ι, toRaw q ω (e j) = v j} =
       ∏ j : ι, (Nat.card (e j).Value : ENNReal)⁻¹ := by
+  classical
   have hind := (parameterCoordinates_independent q).precomp he
   have hmass := hind.measure_inter_preimage_eq_mul Finset.univ
     (sets := fun j : ι => ({v j} : Set (e j).Value)) (by
@@ -28252,9 +28234,10 @@ theorem parameterMeasure_finite_cylinder
       exact parameterMeasure_coordinate_singleton q (e j) (v j)
 
 theorem measurableSet_finite_cylinder
-    {ι : Type*} [Fintype ι]
+    {ι : Type*} [Finite ι]
     (e : ι → Coordinate q) (v : ∀ j : ι, (e j).Value) :
     MeasurableSet {ω : Parameters q | ∀ j : ι, toRaw q ω (e j) = v j} := by
+  let : Fintype ι := Fintype.ofFinite _
   rw [show {ω : Parameters q | ∀ j : ι, toRaw q ω (e j) = v j} =
       ⋂ j : ι, (fun ω : Parameters q => toRaw q ω (e j)) ⁻¹'
         ({v j} : Set (e j).Value) by ext ω; simp]
@@ -28265,8 +28248,8 @@ theorem measurableSet_finite_cylinder
 /-- Cylinders supported on disjoint finite sets of product coordinates are
 independent. -/
 theorem finite_cylinders_indepSet
-    {ι κ : Type*} [Fintype ι] [DecidableEq ι]
-    [Fintype κ] [DecidableEq κ]
+    {ι κ : Type*} [Finite ι]
+    [Finite κ]
     (e : ι → Coordinate q) (he : Function.Injective e)
     (f : κ → Coordinate q) (hf : Function.Injective f)
     (hdisj : Disjoint (Set.range e) (Set.range f))
@@ -28275,6 +28258,9 @@ theorem finite_cylinders_indepSet
       {ω : Parameters q | ∀ j : ι, toRaw q ω (e j) = v j}
       {ω : Parameters q | ∀ j : κ, toRaw q ω (f j) = w j}
       (parameterMeasure q) := by
+  classical
+  let : Fintype ι := Fintype.ofFinite _
+  let : Fintype κ := Fintype.ofFinite _
   let E : ι ⊕ κ → Coordinate q
     | .inl i => e i
     | .inr j => f j
@@ -28299,7 +28285,7 @@ theorem finite_cylinders_indepSet
         {ω : Parameters q | ∀ i : ι, toRaw q ω (e i) = v i} ∩
           {ω : Parameters q | ∀ j : κ, toRaw q ω (f j) = w j} := by
     ext ω
-    simp only [Set.mem_setOf_eq, Set.mem_inter_iff]
+    simp only [Set.mem_ofPred_eq, Set.mem_inter_iff]
     constructor
     · intro h
       exact ⟨fun i => h (.inl i), fun j => h (.inr j)⟩
@@ -28324,7 +28310,7 @@ theorem fifteen_pow_le_two_pow (k : ℕ) :
   calc
     15 ^ (3 * k) ≤ (2 ^ 4) ^ (3 * k) :=
       Nat.pow_le_pow_left (by norm_num) _
-    _ = 2 ^ (12 * k) := by rw [← pow_mul]; congr 1 <;> omega
+    _ = 2 ^ (12 * k) := by rw [← pow_mul]; congr 1; omega
 
 theorem dyadicCoefficient_le_two_pow {k : ℕ} (hk : 1000 ≤ k) :
     2 * (k ^ 2 + 3 * k + 5) ≤ 2 ^ (k ^ 2 + 2) := by
@@ -28337,6 +28323,7 @@ theorem dyadicCoefficient_le_two_pow {k : ℕ} (hk : 1000 ≤ k) :
     _ ≤ 4 * 2 ^ (k ^ 2) := Nat.mul_le_mul_left 4 hpow
     _ = 2 ^ (k ^ 2 + 2) := by rw [pow_add]; norm_num; ring
 
+omit [Fact (Nat.Prime q)] in
 /-- A pure power envelope for the requested number of independent trials. -/
 theorem requiredTrials_le (k : ℕ) (hk : 1000 ≤ k) :
     trialDenominator q k * dyadicExponent q k ≤
@@ -28398,6 +28385,7 @@ theorem scaled_requiredTrials_le_predecessor (hq : 2 ^ 500 ≤ q)
     _ ≤ q ^ (3 * d - 1) :=
       Nat.pow_le_pow_right ((Fact.out : q.Prime).pos) (by omega)
 
+omit [Fact (Nat.Prime q)] in
 theorem two_le_trialDenominator (hq : 2 ≤ q) {k : ℕ} (hk : 1 ≤ k) :
     2 ≤ trialDenominator q k := by
   have hqpos : 0 < q := by omega
@@ -28414,6 +28402,7 @@ theorem two_le_trialDenominator (hq : 2 ≤ q) {k : ℕ} (hk : 1 ≤ k) :
   exact hq.trans (hfirst.trans (by
     simpa only [mul_one] using Nat.mul_le_mul_left ((q ^ (3 * k)) ^ 3) hfifteen))
 
+omit [Fact (Nat.Prime q)] in
 theorem trialProbability_eq_inv (k : ℕ) :
     ((q ^ (3 * k) : ℕ) : ENNReal)⁻¹ ^ 3 *
         (15 : ENNReal)⁻¹ ^ (3 * k) =
@@ -28532,6 +28521,7 @@ def trialCoordinate {k : ℕ} (F : Fin 3 → LevelPolynomial q k) :
   | .inl u => .top k (F u)
   | .inr uj => .auxiliary k (F uj.1) uj.2
 
+omit [Fact (Nat.Prime q)] in
 theorem trialCoordinate_injective {k : ℕ} {F : Fin 3 → LevelPolynomial q k}
     (hF : Function.Injective F) : Function.Injective (trialCoordinate q F) := by
   intro s t hst
@@ -28605,6 +28595,7 @@ def embeddedTriple {k d : ℕ} (hd : d ∈ degreeIndices k)
     (levelPolynomialOfDegreeIndex q hd f₂)
     (levelPolynomialOfDegreeIndex q hd f₃)
 
+omit [Fact (Nat.Prime q)] in
 theorem embeddedTriple_injective {k d : ℕ} (hd : d ∈ degreeIndices k)
     {f₁ f₂ f₃ : PrimePolynomials.OfDegree q (2 * d)}
     (h12 : f₁ ≠ f₂) (h13 : f₁ ≠ f₃) (h23 : f₂ ≠ f₃) :
@@ -28614,6 +28605,7 @@ theorem embeddedTriple_injective {k d : ℕ} (hd : d ∈ degreeIndices k)
   · exact fun h => h13 (levelPolynomialOfDegreeIndex_injective q hd h)
   · exact fun h => h23 (levelPolynomialOfDegreeIndex_injective q hd h)
 
+omit [Fact (Nat.Prime q)] in
 theorem embeddedTriple_apply {k d : ℕ} (hd : d ∈ degreeIndices k)
     (f₁ f₂ f₃ : PrimePolynomials.OfDegree q (2 * d)) (u : Fin 3) :
     embeddedTriple q hd f₁ f₂ f₃ u =
@@ -28623,10 +28615,10 @@ theorem embeddedTriple_apply {k d : ℕ} (hd : d ∈ degreeIndices k)
 
 /-- A successful trial cylinder really supplies three members of the
 deterministic Sidon candidate set whose sum is the target. -/
-theorem trialCylinder_subset_tripleSumset (hq : 103 ≤ q)
+theorem trialCylinder_subset_tripleSumset (_hq : 103 ≤ q)
     {k d m : ℕ} (hk : 1000 ≤ k) (hd : d ∈ degreeIndices k)
     (f₁ f₂ f₃ : PrimePolynomials.OfDegree q (2 * d))
-    (h12 : f₁ ≠ f₂) (h13 : f₁ ≠ f₃) (h23 : f₂ ≠ f₃)
+    (_h12 : f₁ ≠ f₂) (_h13 : f₁ ≠ f₃) (_h23 : f₂ ≠ f₃)
     (r₁ r₂ r₃ : Fin k → AuxiliaryDigit)
     (t₁ t₂ t₃ : Fin (q ^ (3 * k)))
     (hblock :
@@ -28828,7 +28820,7 @@ triples is mutually independent, not merely pairwise independent.  The
 proof joins all coordinates occurring in an arbitrary finite subfamily into
 one sigma-indexed cylinder. -/
 theorem SuccessfulTrial.events_iIndep
-    {ι : Type*} [DecidableEq ι]
+    {ι : Type*}
     {k d m : ℕ}
     (hd : d ∈ degreeIndices k)
     (T : ι → RepresentationFamilies.PrimeTriple q d)
@@ -28836,6 +28828,7 @@ theorem SuccessfulTrial.events_iIndep
     (hdisj : ∀ i j, i ≠ j → Disjoint (T i).1 (T j).1) :
     ProbabilityTheory.iIndepSet (fun i => (τ i).event q hd)
       (parameterMeasure q) := by
+  classical
   apply (ProbabilityTheory.iIndepSet_iff_meas_biInter
     (fun i => (τ i).measurableSet_event q hd)).2
   intro s
@@ -28866,7 +28859,7 @@ theorem SuccessfulTrial.events_iIndep
         {ω | ∀ x : (Σ _i : (↥s), TrialSlot k),
           toRaw q ω (E x) = V x} := by
     ext ω
-    simp only [Set.mem_iInter, Set.mem_setOf_eq]
+    simp only [Set.mem_iInter, Set.mem_ofPred_eq]
     constructor
     · intro h x
       exact h x.1 x.1.property x.2
@@ -28907,7 +28900,7 @@ theorem SuccessfulTrial.event_mass {k d m : ℕ}
 /-- Exact failure probability for a finite mutually disjoint family of
 successful trials. -/
 theorem SuccessfulTrial.all_events_fail_mass
-    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {ι : Type*} [Fintype ι]
     {k d m : ℕ}
     (hd : d ∈ degreeIndices k)
     (T : ι → RepresentationFamilies.PrimeTriple q d)
@@ -28916,6 +28909,7 @@ theorem SuccessfulTrial.all_events_fail_mass
     parameterMeasure q {ω | ∀ i, ω ∉ (τ i).event q hd} =
       (1 - (((q ^ (3 * k) : ℕ) : ENNReal)⁻¹ ^ 3 *
         (15 : ENNReal)⁻¹ ^ (3 * k))) ^ Fintype.card ι := by
+  classical
   let E : ι → Set (Parameters q) := fun i => (τ i).event q hd
   have hInd : ProbabilityTheory.iIndepSet E (parameterMeasure q) :=
     SuccessfulTrial.events_iIndep q hd T τ hdisj
@@ -28957,7 +28951,7 @@ theorem SuccessfulTrial.event_subset_tripleSumset (hq : 103 ≤ q)
 /-- Target digits, one congruent prime triple, and three available top
 digits produce concrete successful trial data. -/
 theorem exists_successfulTrial_of_congruentPrimeTriple (hq : 103 ≤ q)
-    {k d m : ℕ} (hk : 1000 ≤ k) (hd : d ∈ degreeIndices k)
+    {k d m : ℕ} (hk : 1000 ≤ k) (_hd : d ∈ degreeIndices k)
     (x y : Fin k → ℕ)
     (hx : ∀ j : Fin k, x j < oddRadix q j)
     (hy : ∀ j : Fin k, CarryCovered auxiliaryDigitSet (y j))
@@ -29140,8 +29134,8 @@ theorem mainTermDominates_for_requiredTrials (hq : 2 ^ 500 ≤ q) :
       SawinSpecialization.scaled_sievedEqualDegreeError_le_predecessor
         q hq hk hrange
   have hq_two : 2 < q := by
-    have hsmall : 2 ^ 3 ≤ 2 ^ 500 :=
-      Nat.pow_le_pow_right (by omega) (by omega)
+    have hsmall :=
+      Nat.pow_le_pow_right (n := 2) (i := 3) (j := 500) (by decide) (by decide)
     norm_num at hsmall
     omega
   have hpower_pos : 0 < q ^ (3 * d - 1) :=
@@ -29157,7 +29151,7 @@ theorem mainTermDominates_for_requiredTrials (hq : 2 ^ 500 ≤ q) :
         calc
           q * q ^ (3 * d - 1) = q ^ (3 * d - 1) * q := Nat.mul_comm _ _
           _ = q ^ ((3 * d - 1) + 1) := (pow_succ _ _).symm
-          _ = q ^ (3 * d) := by congr 1 <;> omega
+          _ = q ^ (3 * d) := by congr 1
   have hP : 4 ≤ SawinSpecialization.primePolynomialCount q d :=
     SawinSpecialization.four_le_primePolynomialCount q hq hd
   have hmainPower : q ^ (3 * d) ≤
@@ -29458,10 +29452,7 @@ theorem erdos_157_of_fourierCancellation (q : ℕ) [Fact q.Prime]
     ∃ S : Set ℕ,
       S.Infinite ∧ IsSidon S ∧ IsAsymptoticBasisOfOrderThree S := by
   have hq103 : 103 ≤ q := by
-    have hsmall : 103 ≤ 2 ^ 500 := by
-      exact (by norm_num : 103 ≤ 2 ^ 7).trans
-        (Nat.pow_le_pow_right (by omega) (by omega))
-    exact hsmall.trans hq
+    omega
   apply erdos_157_of_primeTripleAbundance q hq103
   apply RandomParameters.hasPrimeTripleAbundance_of_sawin
   · exact SawinSpecialization.hasEqualDegreeSawinBound_of_fourierCancellation
@@ -29767,7 +29758,7 @@ theorem schemeFrobeniusOver_naturality_toAffine
       f ≫ affineSchemeFrobeniusOver Y q pY := by
   apply X.affineCover.hom_ext
   intro i
-  simp only [Category.assoc, affineCover_f_schemeFrobeniusOver_assoc]
+  simp only [affineCover_f_schemeFrobeniusOver_assoc]
   rw [affineSchemeFrobeniusOver_naturality
     (X.affineCover.f i ≫ f) q (X.affineCover.f i ≫ pX) pY]
   simp only [Category.assoc]
@@ -29785,7 +29776,7 @@ theorem schemeFrobeniusOver_naturality
       f ≫ schemeFrobeniusOver Y q pY := by
   apply X.affineCover.hom_ext
   intro i
-  simp only [Category.assoc, affineCover_f_schemeFrobeniusOver_assoc]
+  simp only [affineCover_f_schemeFrobeniusOver_assoc]
   let h := X.affineCover.f i ≫ f
   apply Scheme.Cover.hom_ext (Y.affineCover.pullback₁ h)
   intro j
@@ -29816,7 +29807,7 @@ theorem schemeFrobeniusOver_naturality
       simp only [Category.assoc]
     _ = affineSchemeFrobeniusOver W q
           (a ≫ X.affineCover.f i ≫ pX) ≫ b ≫ Y.affineCover.f j := by
-      simp only [Category.assoc, hab]
+      simp only [hab]
     _ = b ≫ affineSchemeFrobeniusOver (Y.affineCover.X j) q
           (Y.affineCover.f j ≫ pY) ≫ Y.affineCover.f j := by
       rw [← Category.assoc,
@@ -29936,7 +29927,6 @@ theorem affineSchemeFrobeniusOver_apply
     specFrobeniusOverZMod_apply_point]
   have h := congrArg (fun f : X ⟶ X ↦ f x) X.isoSpec.hom_inv_id
   have hid : (𝟙 X : X ⟶ X) x = x := by
-    change (𝟙 X : X ⟶ X).base x = x
     rw [Scheme.Hom.id_base]
     rfl
   exact h.trans hid
@@ -30494,11 +30484,11 @@ noncomputable def affineProEtRestrictedBaseChangeIso
       ((Functor.opComp (affineProEtInclusion X)
         (AlgebraicGeometry.Scheme.ProEt.baseChange
           (affineSchemeFrobeniusOver X q p))).symm ≪≫
-            NatIso.op (affineProEtRelativeFrobeniusIso q p)) A.val).symm ≪≫
+            NatIso.op (affineProEtRelativeFrobeniusIso q p)) A.obj).symm ≪≫
         Functor.associator
           (affineProEtInclusion X).op
           (AlgebraicGeometry.Scheme.ProEt.baseChange
-            (affineSchemeFrobeniusOver X q p)).op A.val)
+            (affineSchemeFrobeniusOver X q p)).op A.obj)
 
 noncomputable def proEtBaseChangeSheafIsoOfFrobenius
     {X : Scheme} [IsAffine X] (q : ℕ) [Fact q.Prime]
@@ -30586,11 +30576,11 @@ noncomputable def affineProEtRestrictedBaseChangeIsoSmall
       ((Functor.opComp (affineProEtInclusion X)
         (AlgebraicGeometry.Scheme.ProEt.baseChange
           (affineSchemeFrobeniusOver X q p))).symm ≪≫
-            NatIso.op (affineProEtRelativeFrobeniusIso q p)) A.val).symm ≪≫
+            NatIso.op (affineProEtRelativeFrobeniusIso q p)) A.obj).symm ≪≫
         Functor.associator
           (affineProEtInclusion X).op
           (AlgebraicGeometry.Scheme.ProEt.baseChange
-            (affineSchemeFrobeniusOver X q p)).op A.val)
+            (affineSchemeFrobeniusOver X q p)).op A.obj)
 
 noncomputable def proEtBaseChangeSheafIsoOfFrobeniusSmall
     {X : Scheme.{0}} [IsAffine X] (q : ℕ) [Fact q.Prime]
@@ -31855,9 +31845,10 @@ theorem equivariantBaseChangeBetweenIteratedActual_hom_app_left_fst
         pullback.fst U.hom (inv (e ≫ f)) =
       pullback.fst (U.hom ≫ jX) (inv (ebar ≫ fbar)) := by
   unfold equivariantBaseChangeBetweenIteratedActual
-  simp only [Functor.comp_obj, Functor.id_obj, Iso.trans_hom, Functor.isoWhiskerLeft_hom, Iso.symm_hom,
-    Functor.isoWhiskerRight_hom, NatTrans.comp_app, Functor.whiskerLeft_app, Functor.associator_inv_app,
-    Functor.whiskerRight_app, Functor.associator_hom_app, Category.id_comp, Functor.const_obj_obj]
+  simp only [Functor.comp_obj, Functor.id_obj, Iso.trans_hom, Functor.isoWhiskerLeft_hom,
+    Iso.symm_hom, Functor.isoWhiskerRight_hom, NatTrans.comp_app, Functor.whiskerLeft_app,
+    Functor.associator_inv_app, Functor.whiskerRight_app, Functor.associator_hom_app,
+    Category.id_comp, Functor.const_obj_obj]
   change
     ((baseChangeCompOfEq (inv fbar) (inv ebar)
           (inv (ebar ≫ fbar)) IsIso.inv_comp).hom.app ((map jX).obj U)).left ≫
@@ -31908,8 +31899,9 @@ theorem equivariantBaseChangeBetweenIteratedActual_hom_app_left_snd
         U.hom ≫ e ≫ f := by
   unfold equivariantBaseChangeBetweenIteratedActual
   simp only [Functor.comp_obj, Iso.trans_hom, Functor.isoWhiskerLeft_hom, Iso.symm_hom,
-    Functor.isoWhiskerRight_hom, NatTrans.comp_app, Functor.whiskerLeft_app, Functor.associator_inv_app,
-    Functor.whiskerRight_app, Functor.associator_hom_app, Category.id_comp, Functor.id_obj, Functor.const_obj_obj]
+    Functor.isoWhiskerRight_hom, NatTrans.comp_app, Functor.whiskerLeft_app,
+    Functor.associator_inv_app, Functor.whiskerRight_app, Functor.associator_hom_app,
+    Category.id_comp, Functor.id_obj, Functor.const_obj_obj]
   change
     ((baseChangeCompOfEq (inv fbar) (inv ebar)
           (inv (ebar ≫ fbar)) IsIso.inv_comp).hom.app ((map jX).obj U)).left ≫
@@ -32112,12 +32104,14 @@ theorem equivariantBaseChangeRightAdjointIsoBetween_hom_comp_actual
     equivariantBaseChangeRightAdjointIsoBetween
   ext Q U x
   simp only [Functor.comp_obj, Functor.sheafPushforwardContinuous_obj_obj_obj, Iso.trans_hom,
-    Functor.sheafPushforwardContinuousIso_hom, Iso.symm_hom, NatTrans.comp_app, ObjectProperty.FullSubcategory.comp_hom,
-    Functor.sheafPushforwardContinuousNatTrans_app_hom, ObjectProperty.ι_obj,
-    Functor.sheafPushforwardContinuousComp_hom_app_hom_app, Functor.whiskerRight_app, Functor.op_obj, NatTrans.op_app,
-    Functor.sheafPushforwardContinuousComp_inv_app_hom_app, AddCommGrpCat.hom_comp, Functor.isoWhiskerLeft_trans,
-    Functor.isoWhiskerRight_trans, Iso.trans_assoc, Functor.isoWhiskerRight_hom, Functor.isoWhiskerLeft_hom,
-    Functor.associator_hom_app, Functor.whiskerLeft_app, Functor.associator_inv_app, Category.id_comp,
+    Functor.sheafPushforwardContinuousIso_hom, Iso.symm_hom, NatTrans.comp_app,
+    ObjectProperty.FullSubcategory.comp_hom, Functor.sheafPushforwardContinuousNatTrans_app_hom,
+    ObjectProperty.ι_obj, Functor.sheafPushforwardContinuousComp_hom_app_hom_app,
+    Functor.whiskerRight_app, Functor.op_obj, NatTrans.op_app,
+    Functor.sheafPushforwardContinuousComp_inv_app_hom_app, AddCommGrpCat.hom_comp,
+    Functor.isoWhiskerLeft_trans, Functor.isoWhiskerRight_trans, Iso.trans_assoc,
+    Functor.isoWhiskerRight_hom, Functor.isoWhiskerLeft_hom, Functor.associator_hom_app,
+    Functor.whiskerLeft_app, Functor.associator_inv_app, Category.id_comp,
     Functor.sheafPushforwardContinuous_map_hom_app]
   let A := (Q.obj.map ((baseChangeCompOfEq
     (inv fbar) (inv ebar) (inv (ebar ≫ fbar)) IsIso.inv_comp).inv.app
@@ -32494,9 +32488,9 @@ theorem lowerShriekEquivariantIsoBetweenUnitNormalized_comp
     rw [CategoryTheory.mateEquiv_whiskerBottom]
     rw [CategoryTheory.mateEquiv_whiskerTop]
     rw [CategoryTheory.mateEquiv_vcomp]
-    dsimp only [be, bf]
-    rw [(CategoryTheory.mateEquiv _ _).apply_symm_apply]
-    rw [(CategoryTheory.mateEquiv _ _).apply_symm_apply]
+    · dsimp only [be, bf]
+      rw [(CategoryTheory.mateEquiv _ _).apply_symm_apply]
+      rw [(CategoryTheory.mateEquiv _ _).apply_symm_apply]
   have hbd : bd = bi := by
     apply (CategoryTheory.mateEquiv adjX adjZ).injective
     rw [hm]
@@ -33132,8 +33126,8 @@ theorem baseChangeSheafPushforwardComp_eq_normalizedMate
   rw [CategoryTheory.conjugateEquiv_counit]
   ext U x
   simp only [Functor.id_obj, Functor.comp_obj, Adjunction.comp_counit_app,
-    ObjectProperty.FullSubcategory.comp_hom, NatTrans.comp_app, AddCommGrpCat.hom_comp, AddMonoidHom.coe_comp,
-    Function.comp_apply, Iso.symm_hom]
+    ObjectProperty.FullSubcategory.comp_hom, NatTrans.comp_app, AddCommGrpCat.hom_comp,
+    AddMonoidHom.coe_comp, Function.comp_apply, Iso.symm_hom]
   let y : Q.obj.obj (Opposite.op
       ((baseChange (inv g)).obj ((baseChange (inv f)).obj
         ((baseChange (f ≫ g)).obj U.unop)))) := x
@@ -33182,8 +33176,8 @@ theorem baseChangeSheafPushforwardComp_eq_normalizedMate_between
   rw [CategoryTheory.conjugateEquiv_counit]
   ext U x
   simp only [Functor.id_obj, Functor.comp_obj, Adjunction.comp_counit_app,
-    ObjectProperty.FullSubcategory.comp_hom, NatTrans.comp_app, AddCommGrpCat.hom_comp, AddMonoidHom.coe_comp,
-    Function.comp_apply, Iso.symm_hom]
+    ObjectProperty.FullSubcategory.comp_hom, NatTrans.comp_app, AddCommGrpCat.hom_comp,
+    AddMonoidHom.coe_comp, Function.comp_apply, Iso.symm_hom]
   let y : Q.obj.obj (Opposite.op
       ((baseChange (inv g)).obj ((baseChange (inv f)).obj
         ((baseChange (f ≫ g)).obj U.unop)))) := x
@@ -33489,9 +33483,9 @@ theorem lowerShriekEquivariantIsoUnitNormalized_comp
     rw [CategoryTheory.mateEquiv_whiskerBottom]
     rw [CategoryTheory.mateEquiv_whiskerTop]
     rw [CategoryTheory.mateEquiv_vcomp]
-    dsimp only [bf, bg]
-    rw [(CategoryTheory.mateEquiv _ _).apply_symm_apply]
-    rw [(CategoryTheory.mateEquiv _ _).apply_symm_apply]
+    · dsimp only [bf, bg]
+      rw [(CategoryTheory.mateEquiv _ _).apply_symm_apply]
+      rw [(CategoryTheory.mateEquiv _ _).apply_symm_apply]
   have hbd : bd = bi := by
     apply (CategoryTheory.mateEquiv adjj adjj).injective
     rw [hm]
@@ -33790,7 +33784,7 @@ theorem
           (J.inv.app ((lowerShriek (e.hom ≫ j)).obj QX) ≫
             BE.hom.app QX ≫ (lowerShriek j).map C.inv)
   apply (cancel_mono (BY.hom.app QY)).1
-  simp only [Category.assoc, Iso.inv_hom_id_app, Category.comp_id]
+  simp only [Category.assoc, Iso.inv_hom_id_app]
   apply (cancel_mono ((lowerShriek j).map
     ((baseChangeSheafPushforward fY).map C.hom))).1
   apply (cancel_mono ((lowerShriek j).map
@@ -33833,10 +33827,9 @@ theorem
     Functor.isoWhiskerLeft_hom, Functor.isoWhiskerRight_hom,
     Functor.associator_hom_app, Functor.associator_inv_app,
     Functor.whiskerLeft_app, Functor.whiskerRight_app,
-    NatTrans.comp_app, Category.assoc] at hA hB
+    NatTrans.comp_app] at hA hB
   simp_rw [← baseChangeSheafPushforwardComp_eq_normalizedMate_between] at hA hB
-  simp only [Category.id_comp, Category.comp_id,
-    Category.comp_id, Category.id_comp] at hA hB
+  simp only [Category.id_comp] at hA hB
   rw [baseChangeSheafPushforwardComp_id_left_inv] at hA
   rw [baseChangeSheafPushforwardComp_id_right_inv] at hB
   rw [← lowerShriekEquivariantIsoUnitNormalized_eq_between] at hA hB
@@ -33883,7 +33876,7 @@ theorem
         BE.hom.app ((baseChangeSheafPushforward fX).obj QX) ≫
         (lowerShriek j).map
           ((baseChangeSheafPushforwardComp fX e.hom).hom.app QX) := by
-    convert hB using 1 <;> rfl
+    convert hB using 1; rfl
   have hAnorm :
       (lowerShriekEquivariantIsoBetweenUnitNormalized
         (e.hom ≫ j) j (e.hom ≫ fY) fZ hAeq).hom.app QX =
@@ -33893,7 +33886,7 @@ theorem
         BY.hom.app ((baseChangeSheafPushforward e.hom).obj QX) ≫
         (lowerShriek j).map
           ((baseChangeSheafPushforwardComp e.hom fY).hom.app QX) := by
-    convert hA using 1 <;> rfl
+    convert hA using 1; rfl
   have htail :
       J.inv.app ((lowerShriek (e.hom ≫ j)).obj
           ((baseChangeSheafPushforward fX).obj QX)) ≫
@@ -33957,21 +33950,21 @@ theorem qEllAdicCompactSupportCohomologyActionUnitNormalized_comp
     sheafCohomologyPullbackEndomorphismOfIso
   simp only [AddMonoidHom.comp_apply]
   rw [qEllAdicCompactSupportPullbackOfEquivariantIsoUnitNormalized_comp]
-  simp only [Sheaf.H.map_comp_apply]
-  change
-    (baseChangeSheafCohomologyAddEquivOfIso
-      (fbar ≫ gbar) (qEllAdicCompactSupportSheaf j ell) degree).symm
-        (Sheaf.H.map ((baseChangeSheafPushforwardComp fbar gbar).hom.app
-          (qEllAdicCompactSupportSheaf j ell)) degree
-          (Sheaf.H.map ((baseChangeSheafPushforward gbar).map
-            (qEllAdicCompactSupportPullbackOfEquivariantIsoUnitNormalized
-              j f fbar hf ell)) degree
-            (Sheaf.H.map
+  · simp only [Sheaf.H.map_comp_apply]
+    change
+      (baseChangeSheafCohomologyAddEquivOfIso
+        (fbar ≫ gbar) (qEllAdicCompactSupportSheaf j ell) degree).symm
+          (Sheaf.H.map ((baseChangeSheafPushforwardComp fbar gbar).hom.app
+            (qEllAdicCompactSupportSheaf j ell)) degree
+            (Sheaf.H.map ((baseChangeSheafPushforward gbar).map
               (qEllAdicCompactSupportPullbackOfEquivariantIsoUnitNormalized
-                j g gbar hg ell) degree x))) = _
-  rw [baseChangeSheafCohomologyAddEquivOfIso_symm_comp]
-  rw [baseChangeSheafCohomologyAddEquivOfIso_symm_naturality]
-  rfl
+                j f fbar hf ell)) degree
+              (Sheaf.H.map
+                (qEllAdicCompactSupportPullbackOfEquivariantIsoUnitNormalized
+                  j g gbar hg ell) degree x))) = _
+    rw [baseChangeSheafCohomologyAddEquivOfIso_symm_comp]
+    rw [baseChangeSheafCohomologyAddEquivOfIso_symm_naturality]
+    rfl
 
 theorem lowerShriekEquivariantPullbackUnitNormalized_naturality
     {X Xbar : Scheme.{u}}
@@ -34587,8 +34580,7 @@ theorem matrixCopies_trace {r : ℕ} (copies : ℕ)
       Matrix.blockDiagonal (fun _ : Fin copies ↦ A)
         (finProdFinEquiv.symm i) (finProdFinEquiv.symm i)) = _
   rw [← Equiv.sum_comp finProdFinEquiv]
-  simp only [Equiv.symm_apply_apply, Matrix.diag_apply]
-  rw [Finset.mul_sum]
+  simp [Matrix.blockDiagonal, Fintype.sum_prod_type, Finset.mul_sum]
 
 theorem matrixCopies_charpoly {r : ℕ} (copies : ℕ)
     (A : Matrix (Fin r) (Fin r) ℂ) :
@@ -36218,7 +36210,7 @@ theorem irreducible_map_eq_prod_frobeniusOrbit
         apply (Multiset.Nodup.ext hn1 hn2).2
         intro z
         rw [← Multiset.mem_toFinset, ← Multiset.mem_toFinset]
-        simpa [hfinset]
+        simp [hfinset]
       rw [hroots]
       change (∏ z ∈ Finset.univ.image orbit,
         (Polynomial.X - Polynomial.C z)) = _
@@ -36662,7 +36654,7 @@ theorem rootTupleAffinePoint_universalRootPolynomial
   exact congrFun (rootTupleAffinePoint_coordinates q n F y) i
 
 theorem rootTupleAffinePoint_universalRootRemainder
-    (q n m : ℕ) [Fact q.Prime]
+    (q n _m : ℕ) [Fact q.Prime]
     (F : Type) [Field F] [CharP F q]
     (y : Fin n → F) (g : Polynomial (ZMod q)) (hg : g.Monic) :
     (universalRootRemainder (ZMod q) n g hg).map
@@ -37827,7 +37819,7 @@ theorem threeBlockRootChoiceCoords_twisted_fixed
   intro i
   obtain ⟨⟨b, j⟩, rfl⟩ := finProdFinEquiv.surjective i
   rw [threeBlockCyclePermutation_apply]
-  simp only [threeBlockRootChoiceCoords_apply, frobeniusEquiv_def]
+  simp only [threeBlockRootChoiceCoords_apply]
   by_cases hj : j = 0
   · subst j
     have hpred : ((finRotate (e + 1)).symm (0 : Fin (e + 1))).1 = e := by
@@ -37901,7 +37893,7 @@ theorem threeBlockRootChoiceCoords_factor_aeval
     Polynomial.IsRoot] using hroot
 
 theorem threeBlockRootChoiceCoords_injective
-    (q d : ℕ) [Fact q.Prime] (hd : 0 < d)
+    (q d : ℕ) [Fact q.Prime] (_hd : 0 < d)
     (F : Type*) [Field F] [CharP F q] [PerfectRing F q]
     [Algebra (ZMod q) F] [IsAlgClosed F]
     (g t : Polynomial (ZMod q))
@@ -38214,7 +38206,6 @@ theorem threeBlockRootChoicesToFixedTuple_factor
   congr 3
   unfold threeBlockFixedBlock threeBlockRootChoicesToFixedTuple
   simp only [threeBlockRootChoiceCoords_apply, coe_frobeniusEquiv, Function.iterate_zero, id_eq]
-  rw [Equiv.symm_apply_apply]
 
 theorem threeBlockRootChoicesToFixedTuple_toTriple
     (q d m : ℕ) [Fact q.Prime] (hd : 0 < d)
@@ -38280,11 +38271,12 @@ noncomputable def threeBlockFixedTupleFiberEquivRoots
   right_inv roots := by
     funext b
     apply Subtype.ext
-    simp [threeBlockFixedTupleFiberInitialRoots,
+    simp only [threeBlockFixedTupleFiberInitialRoots,
       threeBlockFixedTupleInitial,
       threeBlockRootChoicesToFixedTuple,
       threeBlockRootChoiceCoords]
     rw [Equiv.symm_apply_apply]
+    rfl
 
 theorem threeBlockInjectiveFixedTupleToTriple_fiber_card_eq
     (q d m : ℕ) [Fact q.Prime] (hd : 0 < d)
@@ -38495,7 +38487,7 @@ theorem threeBlockInjectiveFixedTuple_card_le_triple_card
 /-- In the three-cycle specialization, the distinct geometric fixed points
 and the injective fixed tuples have the same cardinality. -/
 theorem threeBlockInjectiveFixedPoint_natCard_eq_fixedTuple
-    (q d m : ℕ) [Fact q.Prime] (hd : 0 < d)
+    (q d m : ℕ) [Fact q.Prime] (_hd : 0 < d)
     (F : Type) [Field F] [CharP F q] [PerfectRing F q]
     (g : Polynomial (ZMod q)) (hg : g.Monic)
     (hdeg : g.natDegree = m) (hm : 0 < m) (hmn : m ≤ 3 * d)
@@ -38639,7 +38631,7 @@ noncomputable def threeBlockFixedTupleFiniteCode
     (t : ResidueUnitPoint (ZMod q) m g) :
     FullResidueUnitFiberFixedTupleData q (3 * d) m F g hg
         hdeg hm hmn t (threeBlockCyclePermutation d) →
-      (∀ b : Fin 3, Σ p : Polynomial.degreeLT (ZMod q) (d + 1),
+      (∀ _b : Fin 3, Σ p : Polynomial.degreeLT (ZMod q) (d + 1),
         p.1.rootSet F) := by
   intro x b
   let xf : {z : Fin (3 * d) → F //
@@ -38730,7 +38722,7 @@ theorem finiteThreeBlockFixedPointData
 
 /-- Identity trace matrix on the complete three-block twisted fixed locus. -/
 noncomputable def threeBlockFixedPointTraceMatrix
-    (q d m ℓ : ℕ) [Fact q.Prime] [Fact ℓ.Prime] (hd : 0 < d)
+    (q d m ℓ : ℕ) [Fact q.Prime] [Fact ℓ.Prime] (_hd : 0 < d)
     (F : Type) [Field F] [CharP F q] [PerfectRing F q]
     [Algebra (ZMod q) F]
     (g : Polynomial (ZMod q)) (hg : g.Monic)
@@ -38796,7 +38788,7 @@ theorem threeBlockFixedPointTraceMatrix_trace
 /-- The identity matrix on the finite distinct fixed-point locus of the
 three-block twisted Frobenius. -/
 noncomputable def threeBlockInjectiveFixedPointTraceMatrix
-    (q d m ℓ : ℕ) [Fact q.Prime] [Fact ℓ.Prime] (hd : 0 < d)
+    (q d m ℓ : ℕ) [Fact q.Prime] [Fact ℓ.Prime] (_hd : 0 < d)
     (F : Type) [Field F] [CharP F q] [PerfectRing F q]
     [Algebra (ZMod q) F] [Algebra.IsAlgebraic (ZMod q) F]
     (g : Polynomial (ZMod q)) (hg : g.Monic)
@@ -39251,9 +39243,6 @@ theorem affineChartPermutationFromAway_eq
   apply (affineChartRingEquiv K (RI n)).symm.injective
   rw [affineChartRingEquiv_symm_apply,
     affineChartRingEquiv_symm_apply]
-  change chartToAffine K (RI n)
-      (affineChartPermutationFromAway K n σ z) =
-    chartToAffine K (RI n) (affineChartPermutation K n σ z)
   obtain ⟨degree, p, hp, rfl⟩ :=
     HomogeneousLocalization.Away.mk_surjective
       (H K (RI n)) (xZero_mem K (RI n)) z
@@ -39422,7 +39411,7 @@ theorem affineSpaceToProjective_projectiveRootPermutation
   apply CommRingCat.hom_ext
   apply RingHom.ext
   intro z
-  simp only [CommRingCat.comp_apply, CommRingCat.hom_ofHom]
+  dsimp only
   change (affineChartRingEquiv K (RI n)).symm
       (affineChartPermutation K n σ z) =
     MvPolynomial.rename (rootIndexPermutation n σ)
@@ -39813,7 +39802,7 @@ theorem affineRootPermutation_appTop_rootVandermondeSection
     rw [RingHom.mapMatrix_apply]
     ext i j
     simp only [Matrix.map_apply, Matrix.vandermonde_apply,
-      map_pow, Matrix.submatrix_apply, Function.comp_apply, id_eq]
+      map_pow, Matrix.submatrix_apply, id_eq]
     rw [affineRootPermutation_appTop_coord]]
   exact Matrix.det_permute π _
 
@@ -41849,6 +41838,7 @@ noncomputable def alternatingRealizedCharacterAverage
     (-1 : ℂ) ^ (degree : ℕ) *
       realizedCharacterAverage (P degree) rho σ
 
+omit [Fintype G] [Invertible (Fintype.card G : K)] in
 /-- A total ambient cohomology-rank bound controls every character-isotypic
 rank sum, with the expected factor equal to the character representation's
 degree. -/
@@ -41874,6 +41864,7 @@ theorem sum_characterInvariantRank_le_mul_finrank
           rw [Finset.mul_sum]
     _ ≤ Module.finrank K U * ambientRankBudget := by gcongr
 
+omit [FiniteDimensional K U] [Invertible (Fintype.card G : K)] in
 theorem map_characterAverage_alternatingTwistedTrace
     {topDegree : ℕ}
     (P : Fin (topDegree + 1) → FiniteFrobeniusRepresentation K G)
@@ -42036,7 +42027,7 @@ end FrobeniusRepresentationFamily
 
 end SawinGeometry
 end Erdos157
-open scoped BigOperators Classical
+open scoped BigOperators
 
 namespace Erdos157.SawinGeometry
 
@@ -42096,20 +42087,21 @@ def powersetCardEquivFinsetPowerset
   toFun s := ⟨s.1, Finset.mem_powersetCard.mpr
     ⟨Finset.subset_univ _, s.2⟩⟩
   invFun s := ⟨s.1, (Finset.mem_powersetCard.mp s.2).2⟩
-  left_inv s := rfl
-  right_inv s := rfl
+  left_inv _s := rfl
+  right_inv _s := rfl
 
 /-- Trace of an induced exterior-power endomorphism, expanded in the wedge
 basis associated to a finite ordered basis. -/
 theorem trace_exteriorPower_map_eq_sum_det
     {K V I : Type*} [Field K] [AddCommGroup V] [Module K V]
-    [Fintype I] [DecidableEq I] [LinearOrder I]
+    [Fintype I] [LinearOrder I]
     (b : Basis I K V) (degree : ℕ) (f : V →ₗ[K] V) :
     LinearMap.trace K (⋀[K]^degree V) (exteriorPower.map degree f) =
       ∑ s : powersetCard I degree,
         (Matrix.of fun i j : Fin degree =>
           b.coord (powersetCard.ofFinEmbEquiv.symm s j)
             (f (b (powersetCard.ofFinEmbEquiv.symm s i)))).det := by
+  classical
   rw [LinearMap.trace_eq_matrix_trace K (b.exteriorPower degree)]
   unfold Matrix.trace
   apply Finset.sum_congr rfl
@@ -42155,20 +42147,20 @@ theorem coeff_det_one_add_X_smul_eq_trace_exteriorPower
     (fun _ => Iff.rfl)
     (fun s => ((LinearMap.toMatrix b b f).submatrix
       (Subtype.val : s → I) (Subtype.val : s → I)).det)]
-  let minor : ↥((Finset.univ : Finset I).powersetCard degree) → K :=
-    fun s => ((LinearMap.toMatrix b b f).submatrix
-      (Subtype.val : ↥s.1 → I)
-      (Subtype.val : ↥s.1 → I)).det
-  change (∑ s, minor s) = _
-  rw [← e.sum_comp minor]
-  apply Finset.sum_congr rfl
-  intro s _hs
-  dsimp only [minor, e, powersetCardEquivFinsetPowerset]
-  let A := (LinearMap.toMatrix b b f).submatrix
-      (Subtype.val : s.1 → I) (Subtype.val : s.1 → I)
-  have hdet := Matrix.det_submatrix_equiv_self
-    (powersetCard.orderIsoOfFin s).toEquiv A
-  exact hdet.symm
+  · let minor : ↥((Finset.univ : Finset I).powersetCard degree) → K :=
+      fun s => ((LinearMap.toMatrix b b f).submatrix
+        (Subtype.val : ↥s.1 → I)
+        (Subtype.val : ↥s.1 → I)).det
+    change (∑ s, minor s) = _
+    rw [← e.sum_comp minor]
+    apply Finset.sum_congr rfl
+    intro s _hs
+    dsimp only [minor, e, powersetCardEquivFinsetPowerset]
+    let A := (LinearMap.toMatrix b b f).submatrix
+        (Subtype.val : s.1 → I) (Subtype.val : s.1 → I)
+    have hdet := Matrix.det_submatrix_equiv_self
+      (powersetCard.orderIsoOfFin s).toEquiv A
+    exact hdet.symm
 
 end Erdos157.SawinGeometry
 
@@ -42196,14 +42188,14 @@ theorem character_exteriorPower_permutation_eq_sum_det
   intro s _hs
   congr 1
   ext i j
-  show (((Representation.ofMulAction K (Equiv.Perm H) H) g)
+  change (((Representation.ofMulAction K (Equiv.Perm H) H) g)
       (MonoidAlgebra.single (powersetCard.ofFinEmbEquiv.symm s i) 1)).coeff
         (powersetCard.ofFinEmbEquiv.symm s j) =
       if powersetCard.ofFinEmbEquiv.symm s j =
           g (powersetCard.ofFinEmbEquiv.symm s i) then 1 else 0
   rw [Representation.ofMulAction_single]
-  simp only [MonoidAlgebra.coeff_single_apply]
-  simpa only [Equiv.Perm.smul_def, eq_comm]
+  simp only [MonoidAlgebra.coeff_single, Finsupp.single_apply]
+  simp only [Equiv.Perm.smul_def, eq_comm]
 
 theorem toMatrix_ofMulAction_eq_permMatrix
     {K H : Type*} [Field K] [Fintype H] [DecidableEq H]
@@ -42214,11 +42206,11 @@ theorem toMatrix_ofMulAction_eq_permMatrix
   ext i j
   rw [LinearMap.toMatrix_apply, MonoidAlgebra.basis_apply,
     Representation.ofMulAction_single]
-  simp only [Basis.coord_apply, MonoidAlgebra.basis,
+  simp only [MonoidAlgebra.basis,
     MonoidAlgebra.coeffLinearEquiv_apply,
     Equiv.Perm.permMatrix, PEquiv.toMatrix_apply, Equiv.toPEquiv_apply,
     Option.mem_some_iff]
-  simp only [MonoidAlgebra.coeff_single_apply, Equiv.Perm.smul_def,
+  simp only [MonoidAlgebra.coeff_single, Finsupp.single_apply, Equiv.Perm.smul_def,
     Equiv.Perm.inv_def, eq_comm]
   by_cases h : i = g j
   · subst i
@@ -42235,7 +42227,7 @@ def permutationRestriction
     (g : Equiv.Perm H) (s : Finset H)
     (hs : ∀ x, x ∈ s ↔ g x ∈ s) : Equiv.Perm s where
   toFun x := ⟨g x, (hs x).mp x.2⟩
-  invFun x := ⟨g.symm x, (hs (g.symm x)).mpr (by simpa using x.2)⟩
+  invFun x := ⟨g.symm x, (hs (g.symm x)).mpr (by simp)⟩
   left_inv x := Subtype.ext (g.symm_apply_apply x)
   right_inv x := Subtype.ext (g.apply_symm_apply x)
 
@@ -42269,9 +42261,11 @@ theorem powersetCardIndexPermutation_spec
   rfl
 
 theorem powersetCard_invariant_iff_forward
-    {H : Type*} [Fintype H] [DecidableEq H] [LinearOrder H]
+    {H : Type*} [Finite H] [LinearOrder H]
     {degree : ℕ} (g : Equiv.Perm H) (s : powersetCard H degree) :
     (∀ x, x ∈ s ↔ g x ∈ s) ↔ ∀ x ∈ s, g x ∈ s := by
+  classical
+  let : Fintype H := Fintype.ofFinite _
   constructor
   · intro h x hx
     exact (h x).mp hx
@@ -42319,15 +42313,16 @@ theorem exteriorPower_permutation_minor_det_of_invariant
     Matrix.det_permutation]
 
 theorem exteriorPower_permutation_minor_det_of_not_invariant
-    {K H : Type*} [Field K] [Fintype H] [DecidableEq H] [LinearOrder H]
+    {K H : Type*} [Field K] [Finite H] [DecidableEq H] [LinearOrder H]
     {degree : ℕ} (g : Equiv.Perm H) (s : powersetCard H degree)
     (hs : ¬ ∀ x, x ∈ s ↔ g x ∈ s) :
     (Matrix.of fun i j : Fin degree =>
       if powersetCard.ofFinEmbEquiv.symm s j =
           g (powersetCard.ofFinEmbEquiv.symm s i)
       then 1 else 0 : Matrix (Fin degree) (Fin degree) K).det = 0 := by
+  let : Fintype H := Fintype.ofFinite _
   rw [powersetCard_invariant_iff_forward] at hs
-  push_neg at hs
+  push Not at hs
   obtain ⟨x, hx, hgx⟩ := hs
   let xs : s := ⟨x, hx⟩
   obtain ⟨i, hi⟩ := (powersetCard.orderIsoOfFin s).surjective xs
@@ -42346,6 +42341,7 @@ theorem exteriorPower_permutation_minor_det_of_not_invariant
   rw [← heq]
   exact hj
 
+open Classical in
 /-- Character of an exterior power of a permutation module as the signed
 count of invariant subsets of the prescribed size. -/
 theorem character_exteriorPower_permutation_eq_sum_invariant_sign
@@ -42420,7 +42416,7 @@ theorem permutationVirtualMangoldt_eq_derivative_det
       (-1 : K) ^ ((degree : ℕ) - 1)
   rcases degree with ⟨_ | n, hn⟩
   · simp
-  · simp only [Fin.val_mk, Nat.cast_succ, Nat.succ_sub_one]
+  · simp only [Nat.cast_succ, Nat.succ_sub_one]
     rw [show n + 1 + 1 = n + 2 by omega, pow_add]
     norm_num
     ring
@@ -42445,7 +42441,7 @@ theorem det_one_sub_permMatrix_block_eq_zero
     exact one_ne_zero h
   · ext i
     simp only [Matrix.mulVec, dotProduct, Matrix.toSquareBlockProp_def, Matrix.of_apply,
-      Matrix.sub_apply, Matrix.one_apply, Pi.one_apply, Pi.zero_apply, mul_one,
+      Matrix.sub_apply, Matrix.one_apply, Pi.zero_apply, mul_one,
       Equiv.Perm.permMatrix, PEquiv.toMatrix_apply,
       Equiv.toPEquiv_apply, Option.mem_some_iff]
     have hpre : p (g.symm i) := by
@@ -42482,24 +42478,14 @@ theorem eval_det_one_add_X_permMatrix_block_eq_zero
       Matrix.toSquareBlockProp
         ((1 : Matrix H H K) - (g⁻¹).permMatrix K) p := by
     ext i j
-    simp only [PEquiv.map_toMatrix, RingHom.mapMatrix_apply, Polynomial.coe_evalRingHom, Matrix.map_apply]
-    by_cases h₁ : (i : H) = (j : H)
-    · rw [if_pos h₁]
-      by_cases h₂ : g.symm (i : H) = (j : H)
-      · rw [if_pos h₂]
-        rw [if_pos h₁, if_pos h₂]
-        simp
-      · rw [if_neg h₂]
-        rw [if_pos h₁, if_neg h₂]
-        simp
-    · rw [if_neg h₁]
-      by_cases h₂ : g.symm (i : H) = (j : H)
-      · rw [if_pos h₂]
-        rw [if_neg h₁, if_pos h₂]
-        simp
-      · rw [if_neg h₂]
-        rw [if_neg h₁, if_neg h₂]
-        simp
+    change Polynomial.eval (-1 : K)
+        ((1 : Matrix H H (Polynomial K)) i.1 j.1 +
+          Polynomial.X * Polynomial.C ((g⁻¹).permMatrix K i.1 j.1)) =
+        (1 : Matrix H H K) i.1 j.1 - (g⁻¹).permMatrix K i.1 j.1
+    by_cases h : (i : H) = (j : H) <;>
+      simp only [Matrix.one_apply, h, ↓reduceIte, Polynomial.eval_add,
+        Polynomial.eval_mul, Polynomial.eval_X, Polynomial.eval_C, Polynomial.eval_one,
+        Polynomial.eval_zero, neg_one_mul, sub_eq_add_neg]
   rw [hmatrix]
   exact det_one_sub_permMatrix_block_eq_zero g p hp hinv
 
@@ -42519,10 +42505,11 @@ theorem eval_det_permutationDetMatrix_block_eq_zero
 
 theorem permutationDetMatrix_apply_eq_zero_of_invariant_predicate
     {K H : Type*} [Field K] [Fintype H] [DecidableEq H]
-    (g : Equiv.Perm H) (p : H → Prop) [DecidablePred p]
+    (g : Equiv.Perm H) (p : H → Prop)
     (hinv : ∀ x, p x ↔ p (g x))
     (i j : H) (hi : ¬p i) (hj : p j) :
     permutationDetMatrix K H g i j = 0 := by
+  classical
   have hij : i ≠ j := by
     intro h
     exact hi (h ▸ hj)
@@ -42532,7 +42519,7 @@ theorem permutationDetMatrix_apply_eq_zero_of_invariant_predicate
     apply hi
     rw [← hgj]
     exact (hinv j).mp hj
-  simp [permutationDetMatrix, Matrix.one_apply, hij, hperm]
+  simp [permutationDetMatrix, hij, hperm]
 
 theorem det_permutationDetMatrix_factor_of_invariant_predicate
     {K H : Type*} [Field K] [Fintype H] [DecidableEq H]
@@ -42625,13 +42612,14 @@ theorem character_exteriorPower_permutation_top
     Matrix.det_permutation, Equiv.Perm.sign_inv]
 
 theorem character_exteriorPower_permutation_eq_zero_of_only_trivial_invariant_subset
-    (K H : Type*) [Field K] [Fintype H] [DecidableEq H] [LinearOrder H]
+    (K H : Type*) [Field K] [Fintype H] [LinearOrder H]
     (g : Equiv.Perm H) (degree : ℕ) (hdegree : 0 < degree)
     (hdegreeTop : degree < Fintype.card H)
     (htrans : ∀ s : Finset H, (∀ x, x ∈ s ↔ g x ∈ s) →
       s = ∅ ∨ s = Finset.univ) :
     (Representation.exteriorPower
       (Representation.ofMulAction K (Equiv.Perm H) H) degree).character g = 0 := by
+  classical
   rw [character_exteriorPower_permutation_eq_sum_invariant_sign]
   apply Finset.sum_eq_zero
   intro s _hs
@@ -42646,7 +42634,7 @@ theorem character_exteriorPower_permutation_eq_zero_of_only_trivial_invariant_su
   · rfl
 
 theorem permutation_isCycle_of_only_trivial_invariant_subset
-    {H : Type*} [Fintype H] [DecidableEq H] [Nonempty H]
+    {H : Type*} [Fintype H] [Nonempty H]
     (g : Equiv.Perm H) (hcard : 2 ≤ Fintype.card H)
     (htrans : ∀ s : Finset H, (∀ x, x ∈ s ↔ g x ∈ s) →
       s = ∅ ∨ s = Finset.univ) :
@@ -42869,7 +42857,7 @@ theorem permutationVirtualMangoldt_eq_zero_of_cycleType_ne_singleton
       permutation_support_eq_univ_of_only_trivial_invariant_subset g hcycle ht
     apply hg
     rw [hcycle.cycleType, hsupport, Finset.card_univ, Fintype.card_fin]
-  push_neg at hnot
+  push Not at hnot
   obtain ⟨s, hinv, hsne, hsuniv⟩ := hnot
   exact permutationVirtualMangoldt_eq_zero_of_invariant_subset
     K (Fin d) g s hsne hsuniv hinv
@@ -43182,7 +43170,7 @@ theorem threeBlockPermutationFamily_const_finRotate (d : ℕ) :
   fin_cases b <;> rfl
 
 theorem threeBlockPermutationTriple_finRotate_isConj_cycle
-    (d : ℕ) (hd : 2 ≤ d) :
+    (d : ℕ) (_hd : 2 ≤ d) :
     IsConj
       (threeBlockPermutationTriple d (finRotate d) (finRotate d) (finRotate d))
       (threeBlockCyclePermutation d) := by
@@ -43933,8 +43921,7 @@ theorem twoBlockRootChoiceCoords_twisted_fixed
   intro i
   obtain ⟨⟨b, j⟩, rfl⟩ := finProdFinEquiv.surjective i
   simp only [twoBlockPermutationPair, twoBlockPermutationFamily_apply,
-    Matrix.cons_val_fin_one, Matrix.cons_val_zero,
-    twoBlockRootChoiceCoords_apply, frobeniusEquiv_def]
+    twoBlockRootChoiceCoords_apply]
   have hb : ![(finRotate (e + 1)).symm,
       (finRotate (e + 1)).symm] b = (finRotate (e + 1)).symm := by
     fin_cases b <;> rfl
@@ -44006,7 +43993,7 @@ theorem twoBlockRootChoiceCoords_factor_aeval
     Polynomial.IsRoot] using hroot
 
 theorem twoBlockRootChoiceCoords_injective
-    (q d : ℕ) [Fact q.Prime] (hd : 0 < d)
+    (q d : ℕ) [Fact q.Prime] (_hd : 0 < d)
     (F : Type*) [Field F] [CharP F q] [PerfectRing F q]
     [Algebra (ZMod q) F] [IsAlgClosed F]
     (g t : Polynomial (ZMod q))
@@ -44100,7 +44087,7 @@ theorem twoBlockRootChoiceCoords_avoids
     (q d : ℕ) [Fact q.Prime]
     (F : Type*) [Field F] [CharP F q] [PerfectRing F q]
     [Algebra (ZMod q) F] [IsAlgClosed F]
-    (g t : Polynomial (ZMod q)) (hg : g.Monic) (hgt : IsCoprime g t)
+    (g t : Polynomial (ZMod q)) (_hg : g.Monic) (hgt : IsCoprime g t)
     (T : CongruentIrreducibleProperPair q d g t)
     (roots : ∀ b,
       (congruentIrreducibleProperPairFactor q d g t T b).rootSet F) :
@@ -44199,8 +44186,7 @@ theorem twoBlockRootChoicesToCycleTuple_factor
   apply Finset.prod_congr rfl
   intro j _
   congr 3
-  simp only [coe_frobeniusEquiv]
-  rw [Equiv.symm_apply_apply]
+  simp [twoBlockRootChoicesToCycleTuple, twoBlockRootChoiceCoords_apply, coe_frobeniusEquiv]
 
 theorem twoBlockRootChoicesToCycleTuple_toProperPair
     (q d : ℕ) [Fact q.Prime] (hd : 0 < d)
@@ -44314,10 +44300,11 @@ noncomputable def twoBlockCycleTupleFiberEquivRoots
   right_inv roots := by
     funext b
     apply Subtype.ext
-    simp [twoBlockCycleTupleFiberInitialRoots,
+    simp only [twoBlockCycleTupleFiberInitialRoots,
       twoBlockCycleTupleInitial, twoBlockRootChoicesToCycleTuple,
       twoBlockRootChoiceCoords]
     rw [Equiv.symm_apply_apply]
+    rfl
 
 theorem twoBlockCycleTupleToProperPair_fiber_card_eq
     (q d : ℕ) [Fact q.Prime] (hd : 0 < d)
@@ -44428,7 +44415,7 @@ theorem twoBlockCycleTuple_card_eq_pair_card
       simp [Nat.card_eq_fintype_card, Nat.mul_comm]
 
 theorem properPairTwistedTupleCount_finRotate_eq_cycle
-    (q d : ℕ) [Fact q.Prime] (hd : 2 ≤ d)
+    (q d : ℕ) [Fact q.Prime] (_hd : 2 ≤ d)
     (F : Type*) [Field F] [CharP F q] [PerfectRing F q]
     (g t : Polynomial (ZMod q)) :
     properPairTwistedTupleCount q d F g t
@@ -44884,14 +44871,7 @@ theorem universalTwoBlockPolynomial_natDegree
     (K : Type*) [Field K] (d : ℕ) (b : Fin 2) :
     (universalTwoBlockPolynomial K d b).natDegree = d := by
   unfold universalTwoBlockPolynomial
-  have h := Polynomial.natDegree_prod_of_monic
-    (s := Finset.univ)
-    (f := fun j : Fin d ↦
-      Polynomial.X - Polynomial.C
-        (AffineSpace.coord (Spec (.of K))
-          (ULift.up (finProdFinEquiv (b, j)))))
-    (by intro j _; exact Polynomial.monic_X_sub_C _)
-  simpa using h
+  simp
 
 theorem universalProperPairPolynomial_monic
     (K : Type*) [Field K] (d : ℕ) :
@@ -44912,7 +44892,7 @@ theorem universalProperPairPolynomial_natDegree
   omega
 
 noncomputable def universalProperPairRemainder
-    (K : Type*) [Field K] (d : ℕ) (g : Polynomial K) (hg : g.Monic) :
+    (K : Type*) [Field K] (d : ℕ) (g : Polynomial K) (_hg : g.Monic) :
     Polynomial Γ(AffineRootSpace K (2 * d), ⊤) :=
   universalProperPairPolynomial K d %ₘ
     g.map (rootCoefficientMap K (2 * d))
@@ -45057,7 +45037,7 @@ theorem rootTupleAffinePoint_universalProperPairPolynomial
     rootTupleAffinePoint_universalTwoBlockPolynomial]
 
 theorem rootTupleAffinePoint_universalProperPairRemainder
-    (q d m : ℕ) [Fact q.Prime]
+    (q d _m : ℕ) [Fact q.Prime]
     (F : Type) [Field F] [CharP F q]
     (y : Fin (2 * d) → F)
     (g : Polynomial (ZMod q)) (hg : g.Monic) :
@@ -46522,7 +46502,7 @@ noncomputable def properPairResidueFiberDistinctTwistedFixedPointTraceMatrix
     (q d m ℓ : ℕ) [Fact q.Prime] [Fact ℓ.Prime]
     (F : Type) [Field F] [CharP F q] [PerfectRing F q]
     (g t : Polynomial (ZMod q)) (hg : g.Monic)
-    (hdeg : g.natDegree = m) (ht : t.natDegree < m)
+    (_hdeg : g.natDegree = m) (_ht : t.natDegree < m)
     (π₀ π₁ : Equiv.Perm (Fin d)) :
     Matrix
       {z : Spec (.of F) ⟶
@@ -47418,11 +47398,7 @@ noncomputable def FullDistinctCanonicalTwoDegreeGeometricData.toMatrices
       q n m ℓ topDegree lowerDegree upperDegree
       g hg hdeg hm hmn t π σ radius) :
     letI := data.finite lowerDegree
-    let lower := fullResidueUnitFiberDistinctCanonicalTwistedRealizationMatrix
-      q n m ℓ lowerDegree g hg hdeg hm hmn t π σ
     letI := data.finite upperDegree
-    let upper := fullResidueUnitFiberDistinctCanonicalTwistedRealizationMatrix
-      q n m ℓ upperDegree g hg hdeg hm hmn t π σ
     SawinSpecialization.TwoDegreeFrobeniusMatrices
       (Nat.card (FullResidueUnitFiberDistinctGeometricTwistedFixedPoint
         q n m g hg hdeg hm hmn t π) : ℂ)
@@ -47586,11 +47562,7 @@ noncomputable def ProperPairDistinctCanonicalTwoDegreeGeometricData.toMatrices
     (data : ProperPairDistinctCanonicalTwoDegreeGeometricData
       q d m ℓ topDegree lowerDegree upperDegree g t hg π σ radius) :
     letI := data.finite lowerDegree
-    let lower := properPairResidueFiberDistinctCanonicalTwistedRealizationMatrix
-      q d m ℓ lowerDegree g t hg π σ
     letI := data.finite upperDegree
-    let upper := properPairResidueFiberDistinctCanonicalTwistedRealizationMatrix
-      q d m ℓ upperDegree g t hg π σ
     SawinSpecialization.TwoDegreeFrobeniusMatrices
       (Nat.card (ProperPairResidueFiberDistinctGeometricTwistedFixedPoint
         q d m g t hg π) : ℂ)
@@ -48031,7 +48003,6 @@ theorem threeBlockRootChoicesToBlockwiseFixedTuple_factor
   congr 3
   unfold threeBlockFixedBlock threeBlockRootChoicesToBlockwiseFixedTuple
   simp only [threeBlockRootChoiceCoords_apply, coe_frobeniusEquiv, Function.iterate_zero, id_eq]
-  rw [Equiv.symm_apply_apply]
 
 theorem threeBlockRootChoicesToBlockwiseFixedTuple_toTriple
     (q d m : ℕ) [Fact q.Prime] (hd : 0 < d)
@@ -48137,11 +48108,12 @@ noncomputable def threeBlockBlockwiseFixedTupleFiberEquivRoots
   right_inv roots := by
     funext b
     apply Subtype.ext
-    simp [threeBlockBlockwiseFixedTupleFiberInitialRoots,
+    simp only [threeBlockBlockwiseFixedTupleFiberInitialRoots,
       threeBlockFixedTupleInitial,
       threeBlockRootChoicesToBlockwiseFixedTuple,
       threeBlockRootChoiceCoords]
     rw [Equiv.symm_apply_apply]
+    rfl
 
 theorem threeBlockBlockwiseFixedTupleToTriple_fiber_card_eq
     (q d m : ℕ) [Fact q.Prime] (hd : 0 < d)
@@ -48245,7 +48217,7 @@ noncomputable def congruentAllOrderedPrimeTripleEquivOrderedIrreducible
   left_inv T := by
     apply Subtype.ext
     apply orderedPrimeTriple_tuple_injective q r
-    congr 1 <;> apply Subtype.ext <;> rfl
+    congr 1
   right_inv x := by
     apply CongruentOrderedIrreducibleTriple.ext
     funext b
@@ -48429,7 +48401,7 @@ theorem affineRootPermutation_appTop_threeBlockVandermondeSection
     rw [RingHom.mapMatrix_apply]
     ext i j
     simp only [Matrix.map_apply, Matrix.vandermonde_apply,
-      map_pow, Matrix.submatrix_apply, Function.comp_apply, id_eq]
+      map_pow, Matrix.submatrix_apply, id_eq]
     rw [affineRootPermutation_appTop_coord]
     rw [threeBlockCyclePermutation_apply]
   simp_rw [RingHom.map_det, hmatrix, Matrix.det_permute]
@@ -49500,13 +49472,7 @@ noncomputable def FullBlockwiseDistinctCanonicalTwoDegreeGeometricData.toMatrice
       q d m ℓ topDegree lowerDegree upperDegree
       g hg hdeg hm hmn t σ radius) :
     letI := data.finite lowerDegree
-    let lower :=
-      fullResidueUnitFiberBlockwiseDistinctCanonicalTwistedRealizationMatrix
-        q d m ℓ lowerDegree g hg hdeg hm hmn t σ
     letI := data.finite upperDegree
-    let upper :=
-      fullResidueUnitFiberBlockwiseDistinctCanonicalTwistedRealizationMatrix
-        q d m ℓ upperDegree g hg hdeg hm hmn t σ
     SawinSpecialization.TwoDegreeFrobeniusMatrices
       (Nat.card {z : Spec (.of (AlgebraicClosure (ZMod q))) ⟶
           FullResidueUnitFiberBlockwiseDistinct
@@ -49963,7 +49929,7 @@ theorem
   have hsurj : Function.Surjective A := by
     unfold A
     unfold fullResidueUnitFiberDistinctCanonicalPermutationCompactSupportLinearMapUnitNormalized
-    exact AlgebraicGeometry.Scheme.ProEt.qEllAdicCompactSupportCohomologyLinearMapUnitNormalized_surjective
+    exact Scheme.ProEt.qEllAdicCompactSupportCohomologyLinearMapUnitNormalized_surjective
       _ _ _ _ _ ell degree
   ext x
   obtain ⟨y, rfl⟩ := hsurj x
@@ -50074,8 +50040,6 @@ noncomputable abbrev
       𝟙 (Spec (.of (ZMod q))))
     (ht₀ : t₀ ≫ residueUnitProjection (ZMod q) m g =
       𝟙 (Spec (.of (ZMod q)))) :=
-  let p := largeYoungSymmetricResidueFiberProjection
-    (ZMod q) m g hg hdeg hm B i₀ hlarge t ht
   let p₀ := largeYoungSymmetricResidueFiberProjection
     (ZMod q) m g hg hdeg hm B i₀ hlarge t₀ ht₀
   let j₀ := largeYoungSymmetricResidueFiberProjectiveClosureOpen
@@ -50117,7 +50081,7 @@ noncomputable def
   let e := largeYoungSymmetricResidueFiberGeometricIso
     q m g hg hdeg hm B i₀ hlarge t t₀ ht ht₀
   exact
-    AlgebraicGeometry.Scheme.ProEt.qEllAdicCompactSupportCohomologyLinearEquivOfOpenIsoSquareUnitNormalized
+    Scheme.ProEt.qEllAdicCompactSupportCohomologyLinearEquivOfOpenIsoSquareUnitNormalized
       e
       (AlgebraicGeometry.Scheme.ProEt.geometricCompactificationOpen
         q p₀ j₀ pbar₀
@@ -50286,16 +50250,16 @@ theorem
       _ = (e.hom ≫ jGeo₀) ≫ fbar₀ :=
         (Category.assoc _ _ _).symm
   change
-    AlgebraicGeometry.Scheme.ProEt.qEllAdicCompactSupportCohomologyLinearEquivOfOpenIsoSquareUnitNormalized
+    Scheme.ProEt.qEllAdicCompactSupportCohomologyLinearEquivOfOpenIsoSquareUnitNormalized
         e jGeo₀ pbarGeo₀ ell degree
         (AlgebraicGeometry.Scheme.ProEt.qEllAdicCompactSupportCohomologyLinearMapUnitNormalized
           (e.hom ≫ jGeo₀) pbarGeo₀ f fbar₀ h ell degree x) =
       AlgebraicGeometry.Scheme.ProEt.qEllAdicCompactSupportCohomologyLinearMapUnitNormalized
         jGeo₀ pbarGeo₀ f₀ fbar₀ h₀ ell degree
-        (AlgebraicGeometry.Scheme.ProEt.qEllAdicCompactSupportCohomologyLinearEquivOfOpenIsoSquareUnitNormalized
+        (Scheme.ProEt.qEllAdicCompactSupportCohomologyLinearEquivOfOpenIsoSquareUnitNormalized
           e jGeo₀ pbarGeo₀ ell degree x)
   exact
-    AlgebraicGeometry.Scheme.ProEt.qEllAdicCompactSupportCohomologyLinearEquivOfOpenIsoSquareUnitNormalized_map_action
+    Scheme.ProEt.qEllAdicCompactSupportCohomologyLinearEquivOfOpenIsoSquareUnitNormalized_map_action
       e jGeo₀ pbarGeo₀ f f₀ fbar₀ h h₀ hcomm ell degree x
 
 noncomputable def
@@ -50335,7 +50299,7 @@ theorem
     geometricCompactSupportFrobeniusLinearMapUnitNormalized
     fullResidueUnitFiberDistinctCanonicalPermutationCompactSupportLinearMapUnitNormalized
     AlgebraicGeometry.Scheme.ProEt.geometricCompactSupportCohomologyLinearMapUnitNormalized
-  apply AlgebraicGeometry.Scheme.ProEt.qEllAdicCompactSupportCohomologyLinearMapUnitNormalized_comm_of_comm
+  apply Scheme.ProEt.qEllAdicCompactSupportCohomologyLinearMapUnitNormalized_comm_of_comm
   · exact AlgebraicGeometry.Scheme.ProEt.geometricFiberBaseMap_naturality
       q _ _ (fullResidueUnitFiberDistinctPermutation
         (ZMod q) n m g hg hdeg hm hmn t π)
@@ -50438,7 +50402,7 @@ theorem
   have hsurj : Function.Surjective A := by
     unfold A
     unfold properPairResidueFiberDistinctCanonicalPermutationCompactSupportLinearMapUnitNormalized
-    exact AlgebraicGeometry.Scheme.ProEt.qEllAdicCompactSupportCohomologyLinearMapUnitNormalized_surjective
+    exact Scheme.ProEt.qEllAdicCompactSupportCohomologyLinearMapUnitNormalized_surjective
       _ _ _ _ _ ell degree
   ext x
   obtain ⟨y, rfl⟩ := hsurj x
@@ -50494,7 +50458,7 @@ theorem
     geometricCompactSupportFrobeniusLinearMapUnitNormalized
     properPairResidueFiberDistinctCanonicalPermutationCompactSupportLinearMapUnitNormalized
     AlgebraicGeometry.Scheme.ProEt.geometricCompactSupportCohomologyLinearMapUnitNormalized
-  apply AlgebraicGeometry.Scheme.ProEt.qEllAdicCompactSupportCohomologyLinearMapUnitNormalized_comm_of_comm
+  apply Scheme.ProEt.qEllAdicCompactSupportCohomologyLinearMapUnitNormalized_comm_of_comm
   · exact AlgebraicGeometry.Scheme.ProEt.geometricFiberBaseMap_naturality
       q _ _ (properPairResidueFiberDistinctPermutation
         (ZMod q) d m g t hg π) (schemeToSpecZMod_hom_ext q _ _)
@@ -50915,9 +50879,11 @@ theorem trace_conj_of_finite_basis
     {R M N I : Type*} [CommSemiring R]
     [AddCommMonoid M] [Module R M]
     [AddCommMonoid N] [Module R N]
-    [Fintype I] [DecidableEq I]
+    [Finite I]
     (b : Module.Basis I R M) (f : M →ₗ[R] M) (e : M ≃ₗ[R] N) :
     LinearMap.trace R N (e.conj f) = LinearMap.trace R M f := by
+  classical
+  let : Fintype I := Fintype.ofFinite _
   rw [LinearMap.trace_eq_matrix_trace R (b.map e),
     LinearMap.trace_eq_matrix_trace R b]
   congr 1
@@ -50931,11 +50897,14 @@ theorem trace_tensorProduct_of_finite_basis
     {R M N I J : Type*} [CommSemiring R]
     [AddCommMonoid M] [Module R M]
     [AddCommMonoid N] [Module R N]
-    [Fintype I] [DecidableEq I] [Fintype J] [DecidableEq J]
+    [Finite I] [Finite J]
     (bM : Module.Basis I R M) (bN : Module.Basis J R N)
     (f : M →ₗ[R] M) (g : N →ₗ[R] N) :
     LinearMap.trace R (TensorProduct R M N) (TensorProduct.map f g) =
       LinearMap.trace R M f * LinearMap.trace R N g := by
+  classical
+  let : Fintype I := Fintype.ofFinite _
+  let : Fintype J := Fintype.ofFinite _
   rw [LinearMap.trace_eq_matrix_trace R (bM.tensorProduct bN),
     LinearMap.trace_eq_matrix_trace R bM,
     LinearMap.trace_eq_matrix_trace R bN]
@@ -51941,9 +51910,6 @@ theorem normalizedWeightedAverage_centeredTraceFamily
           ∑ j : I, normalizedWeightedAverage K G weight (trace j) := by
   unfold centeredTraceFamily
   rw [normalizedWeightedAverage_sub]
-  change normalizedWeightedAverage K G weight (trace i) -
-      normalizedWeightedAverage K G weight
-        (fun g => (Fintype.card I : K)⁻¹ * ∑ j, trace j g) = _
   unfold normalizedWeightedAverage
   simp_rw [Finset.mul_sum]
   rw [Finset.sum_comm]
@@ -53093,6 +53059,7 @@ noncomputable def frobeniusAsModuleEnd
     { toLinearMap := A.frobenius
       isIntertwining' := A.commutes }
 
+omit [Finite G] [NeZero (Nat.card G : K)] in
 @[simp]
 theorem frobeniusAsModuleEnd_apply
     (A : FrobeniusRepresentation K G V)
@@ -53549,6 +53516,7 @@ noncomputable def restrictEnd
   letI := P.module
   exact e
 
+omit [Finite G] [NeZero (Nat.card G : K)] in
 /-- Centrality for the full group implies centrality after restriction to
 any subgroup; Frobenius commutation is unchanged. -/
 theorem restrictEnd_isCentralIdempotent
@@ -54537,7 +54505,7 @@ structure CanonicalProgressionLargeYoungTraceData
 
 namespace CanonicalProgressionLargeYoungTraceData
 
-noncomputable def reduced_lefschetz
+theorem reduced_lefschetz
     {q k r ell : ℕ} [Fact q.Prime] [Fact ell.Prime]
     {hk : 1 ≤ k} {hkm : k ^ 2 ≤ 3 * (2 * r)}
     {sigma : ℚ_[ell] →+* ℂ} {radius : ℝ} {rankBudget : ℕ}

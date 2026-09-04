@@ -6,7 +6,7 @@ import Mathlib.Data.Fin.Tuple.Basic
 namespace Erdos157.Elementary.PairedTargets
 
 def appendEquiv : (xs ys : List ℕ) → Digits xs × Digits ys ≃ Digits (xs ++ ys)
-  | [], ys =>
+  | [], _ =>
     { toFun := Prod.snd
       invFun := fun d => ((), d)
       left_inv := fun _ => rfl

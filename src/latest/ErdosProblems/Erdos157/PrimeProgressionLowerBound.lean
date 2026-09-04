@@ -8,6 +8,7 @@ open Polynomial
 
 variable {K : Type*} [Field K] [DecidableEq K] [Fintype K]
 
+omit [DecidableEq K] in
 theorem abs_primeProgression_count_error_le_relative (g : K[X]) (hg : g.Monic)
     (hodd : Odd (Nat.card (AdjoinRoot g)ˣ)) (n : ℕ) (hn : g.natDegree < n)
     (a : (AdjoinRoot g)ˣ) :
@@ -32,6 +33,7 @@ theorem abs_primeProgression_count_error_le_relative (g : K[X]) (hg : g.Monic)
       mul_le_mul_of_nonneg_right hcard (by positivity)
     _ ≤ _ := normalize_progression_error _ hq _ _
 
+omit [DecidableEq K] in
 /-- Once the relative error is at most one half, each unit class has many primes. -/
 theorem primeProgressionCount_lower (g : K[X]) (hg : g.Monic)
     (hodd : Odd (Nat.card (AdjoinRoot g)ˣ)) (n : ℕ) (hn : g.natDegree < n)

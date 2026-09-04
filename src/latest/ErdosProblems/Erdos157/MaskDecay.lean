@@ -7,7 +7,7 @@ namespace Erdos157.Elementary
 open Filter
 open scoped Topology
 
-theorem sixth_div_le_trial_exponent (x d : ℝ) (hx : 0 ≤ x) (hd : 0 < d)
+theorem sixth_div_le_trial_exponent (x d : ℝ) (_hx : 0 ≤ x) (hd : 0 < d)
     (hupper : d ≤ x ^ 2) : x ^ 6 / 1024 ≤ x ^ 12 / (1024 * d ^ 3) := by
   apply (div_le_div_iff₀ (by norm_num) (by positivity)).mpr
   have hp : x ^ 6 * d ^ 3 ≤ x ^ 12 := by
@@ -34,6 +34,7 @@ variable (K : Type*) [Field K] [DecidableEq K] [Fintype K] [CharP K 2]
 noncomputable def MaskLevelFailure (k : ℕ) (τ : LevelMasks K k) : Prop :=
   ∃ z : MaskTarget K k, ¬ MaskTargetHit K τ z
 
+omit [DecidableEq K] in
 theorem eventually_maskLevelFailure_density :
     ∀ᶠ k in atTop, finiteDensity (MaskLevelFailure K k) ≤ Real.exp (-(k : ℝ)) := by
   classical

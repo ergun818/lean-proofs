@@ -9,6 +9,7 @@ open ElementaryCharacterBound
 
 variable {K : Type*} [Field K] [DecidableEq K] [Fintype K]
 
+omit [DecidableEq K] in
 theorem hasSum_re_primeEulerTerm (g : K[X]) (hg : g.Monic)
     (χ : MulChar (AdjoinRoot g) ℂ) (hχ : χ ≠ 1) (r : ℝ) (hr : 0 < r)
     (hqr : (Fintype.card K : ℝ) * r < 1) (z : ℂ) (hz : ‖z‖ < r) :
@@ -19,6 +20,7 @@ theorem hasSum_re_primeEulerTerm (g : K[X]) (hg : g.Monic)
   simpa only [Function.comp_def, Complex.reCLM_apply,
     sum_primeEulerTerm g hg χ hχ r hr hqr z hz] using h
 
+omit [DecidableEq K] in
 theorem hasSum_re_zeta_primeEulerTerm (r : ℝ) (hr : 0 < r)
     (hqr : (Fintype.card K : ℝ) * r < 1) (t : ℝ) (ht : 0 ≤ t) (htr : t < r) :
     HasSum (fun p : PrimePolynomial K => (primeEulerTerm 1 1 p (t : ℂ)).re)
@@ -34,6 +36,7 @@ theorem hasSum_re_zeta_primeEulerTerm (r : ℝ) (hr : 0 < r)
       ← Complex.ofReal_sub, ← Complex.ofReal_div, Complex.ofReal_re]
   simpa only [Function.comp_def, Complex.reCLM_apply, hreal] using h
 
+omit [DecidableEq K] in
 /-- The elementary positivity inequality for a character and its square. -/
 theorem euler_logDerivative_positivity (g : K[X]) (hg : g.Monic)
     (χ : MulChar (AdjoinRoot g) ℂ) (hχ : χ ≠ 1) (hχ2 : χ ^ 2 ≠ 1)

@@ -21,6 +21,7 @@ structure MaskTrialFamily {k : ℕ} (z : MaskTarget K k) (h n : ℕ) where
   high_disjoint : ∀ i, ¬i.1 < h →
     Pairwise (fun j l => Disjoint (Parabola.support (triple i j)) (Parabola.support (triple i l)))
 
+omit [DecidableEq K] in
 theorem exists_maskTrialFamily {k h n : ℕ} (z : MaskTarget K k)
     (hn : 1 ≤ n) (hsize : n ≤ 7 ^ h) : Nonempty (MaskTrialFamily K z h n) := by
   classical
@@ -28,7 +29,8 @@ theorem exists_maskTrialFamily {k h n : ℕ} (z : MaskTarget K k)
       (∀ j, Parabola.IsTriple (z.firstMoment i) (z.secondMoment i) (T j)) ∧
       (∀ j, 2 ≤ (Parabola.support (T j)).card) ∧
       (i.1 < h → ∀ j l, T j = T l) ∧
-      (¬i.1 < h → Pairwise (fun j l => Disjoint (Parabola.support (T j)) (Parabola.support (T l)))) := by
+      (¬i.1 < h → Pairwise (fun j l => Disjoint (Parabola.support (T j))
+        (Parabola.support (T l)))) := by
     by_cases hi : i.1 < h
     · obtain ⟨T, hm, hc, _⟩ := tagField_disjoint_trials i 1 (by decide)
         (Nat.one_le_pow _ _ (by decide)) (z.firstMoment i) (z.secondMoment i)
@@ -50,6 +52,7 @@ noncomputable def MaskTargetHit {k : ℕ} (τ : LevelMasks K k) (z : MaskTarget 
     (∀ i, Parabola.IsTriple (z.firstMoment i) (z.secondMoment i) (t i)) ∧
       GoodLogVector K k (fun i => z.logarithm i - Masks.maskSum (t i) (τ i))
 
+omit [DecidableEq K] in
 theorem maskTargetHit_of_trial {k h n : ℕ} {z : MaskTarget K k}
     (T : MaskTrialFamily K z h n) (τ : LevelMasks K k) (j : Fin n)
     (hj : GoodLogVector K k (trialLogVector K T τ j)) : MaskTargetHit K τ z :=

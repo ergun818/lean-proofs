@@ -22,6 +22,7 @@ noncomputable def blockTargetEquiv (i : ℕ) :
     (Equiv.prodCongr (PairedTargets.replicateEquiv 7 (i + 2))
       (PairedTargets.replicateEquiv 7 (i + 2))))
 
+omit [DecidableEq K] in
 theorem blockDataBases_pos (i : ℕ) : ∀ b ∈ blockDataBases K i, 0 < b := by
   intro b hb
   simp only [blockDataBases, List.mem_cons, List.mem_append, List.mem_replicate] at hb
@@ -30,7 +31,9 @@ theorem blockDataBases_pos (i : ℕ) : ∀ b ∈ blockDataBases K i, 0 < b := by
   · decide
   · decide
 
-theorem place_blockDataBases (i : ℕ) : PairedTargets.place (blockDataBases K i) = blockRadix K i := by
+omit [DecidableEq K] in
+theorem place_blockDataBases (i : ℕ) :
+    PairedTargets.place (blockDataBases K i) = blockRadix K i := by
   simp only [PairedTargets.place, blockDataBases, List.map_cons, List.map_append,
     List.map_replicate, List.prod_cons, List.prod_append, List.prod_replicate]
   change (103 * Nat.card (ResidueField K i)ˣ) * (721 ^ (i + 2) * 721 ^ (i + 2)) = _
@@ -41,6 +44,7 @@ noncomputable def levelDataBases : ℕ → List ℕ
   | 0 => []
   | k + 1 => levelDataBases k ++ blockDataBases K k
 
+omit [DecidableEq K] in
 theorem levelDataBases_pos (k : ℕ) : ∀ b ∈ levelDataBases K k, 0 < b := by
   induction k with
   | zero => simp [levelDataBases]
@@ -50,11 +54,14 @@ theorem levelDataBases_pos (k : ℕ) : ∀ b ∈ levelDataBases K k, 0 < b := by
     · exact ih b h
     · exact blockDataBases_pos K k b h
 
+omit [DecidableEq K] in
 theorem blockPlace_snoc (k : ℕ) : blockPlace K 0 (k + 1) = blockPlace K 0 k * blockRadix K k := by
   rw [blockPlace_add]
   simp only [zero_add, blockPlace, mul_one]
 
-theorem place_levelDataBases (k : ℕ) : PairedTargets.place (levelDataBases K k) = blockPlace K 0 k := by
+omit [DecidableEq K] in
+theorem place_levelDataBases (k : ℕ) :
+    PairedTargets.place (levelDataBases K k) = blockPlace K 0 k := by
   induction k with
   | zero => rfl
   | succ k ih =>
@@ -77,6 +84,7 @@ noncomputable def blockTargetDigits (i : ℕ) (d : BlockTarget K i) : List (ℕ 
     (List.ofFn (fun j => (721, (d.2.1 j).value)) ++
       List.ofFn (fun j => (721, (d.2.2 j).value)))
 
+omit [DecidableEq K] in
 theorem digitList_blockTarget (i : ℕ) (d : BlockTarget K i) :
     PairedTargets.digitList ((blockTargetEquiv K i).symm d) = blockTargetDigits K i d := by
   change (103 * Nat.card (ResidueField K i)ˣ, d.1.value) ::
@@ -95,6 +103,7 @@ noncomputable def targetMoments {k : ℕ} (d : ∀ i : Fin k, BlockTarget K i) :
   firstMoment i := (tagCoordinates i).symm (fun j => ((d i).2.1 j).data.val)
   secondMoment i := (tagCoordinates i).symm (fun j => ((d i).2.2 j).data.val)
 
+omit [DecidableEq K] in
 theorem exists_level_target_expansion (k m : ℕ) (hm : 6 * blockPlace K 0 k ≤ m + 2) :
     ∃ d : (∀ i : Fin k, BlockTarget K i), ∃ z : ℕ,
       m = levelTargetValue K d + blockPlace K 0 k * z ∧ 4 ≤ z := by

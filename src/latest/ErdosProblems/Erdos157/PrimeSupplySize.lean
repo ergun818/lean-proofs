@@ -39,6 +39,7 @@ theorem exponential_le_primeSupply (q φ : ℝ) (hq : 1 < q) (hφ : 0 < φ)
 
 variable {K : Type*} [Field K] [DecidableEq K] [Fintype K]
 
+omit [DecidableEq K] in
 theorem eventually_six_le_prefix_primeSupply :
     ∀ᶠ k in atTop, ∀ g : K[X], g.Monic → g.natDegree = prefixLength k ^ 2 →
       (6 : ℝ) ≤ (Fintype.card K : ℝ) ^ levelDegree k /

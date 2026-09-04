@@ -17,10 +17,12 @@ theorem trivial_modulus_character (f : K[X]) :
     exact one_dvd _
   rw [heq, map_one]
 
+omit [DecidableEq K] in
 theorem zeta_coefficient (d : ℕ) :
     coefficient (1 : K[X]) 1 d = (Fintype.card K : ℂ) ^ d := by
   simp [coefficient, trivial_modulus_character, card_monic]
 
+omit [DecidableEq K] in
 theorem polynomial_zeta_series (z : ℂ) (hz : (Fintype.card K : ℝ) * ‖z‖ < 1) :
     (∑' f : AllMonic K, monicTerm 1 1 z f) = (1 - (Fintype.card K : ℂ) * z)⁻¹ := by
   have hs := (summable_norm_monicTerm (1 : K[X]) monic_one 1 z hz).of_norm
@@ -34,6 +36,7 @@ theorem polynomial_zeta_series (z : ℂ) (hz : (Fintype.card K : ℝ) * ‖z‖ 
   exact (hasSum_geometric_of_norm_lt_one (by
     simpa only [norm_mul, Complex.norm_natCast] using hz)).tsum_eq
 
+omit [DecidableEq K] in
 theorem exp_logEulerSeries_zeta (z : ℂ) (hz : (Fintype.card K : ℝ) * ‖z‖ < 1) :
     Complex.exp (logEulerSeries (1 : K[X]) 1 z) = 1 - (Fintype.card K : ℂ) * z := by
   have heuler := eulerProduct_mul_monicSeries (1 : K[X]) monic_one 1 z hz
@@ -53,6 +56,7 @@ theorem exp_logEulerSeries_zeta (z : ℂ) (hz : (Fintype.card K : ℝ) * ‖z‖
       rw [mul_assoc, inv_mul_cancel₀ hne, mul_one]
     _ = _ := by rw [heuler, one_mul]
 
+omit [DecidableEq K] in
 /-- The logarithmic derivative of the zeta Euler product is explicit. -/
 theorem zeta_logDerivative (r : ℝ) (hr : 0 < r)
     (hqr : (Fintype.card K : ℝ) * r < 1) (z : ℂ) (hz : ‖z‖ < r) :

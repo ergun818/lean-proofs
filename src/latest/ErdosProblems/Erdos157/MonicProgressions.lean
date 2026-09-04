@@ -26,6 +26,7 @@ noncomputable def monicResidueFiberEquiv (g : K[X]) (hg : g.Monic) (d : ℕ)
   right_inv Q := by
     exact congrArg Prod.snd ((monicResidueEquiv g hg d hd).apply_symm_apply (a, Q))
 
+omit [DecidableEq K] in
 theorem card_monicResidueFiber (g : K[X]) (hg : g.Monic) (d : ℕ)
     (hd : g.natDegree ≤ d) (a : AdjoinRoot g) :
     Nat.card {f : MonicDegreeEq K d // AdjoinRoot.mk g f.1 = a} =

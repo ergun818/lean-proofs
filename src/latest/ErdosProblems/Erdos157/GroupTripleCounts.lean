@@ -23,6 +23,7 @@ def tripleFiberEquiv (x : A → G) (u : G) :
   left_inv _ := rfl
   right_inv _ := rfl
 
+omit [Fintype G] in
 theorem triple_fiber_lower (x : A → G) (u : G) (L : ℝ)
     (hlower : ∀ b, L ≤ fiberCard x b) :
     (Fintype.card A : ℝ) ^ 2 * L ≤ fiberCard (tripleProduct x) u := by
@@ -36,9 +37,11 @@ theorem triple_fiber_lower (x : A → G) (u : G) (L : ℝ)
     _ = ∑ _ab : A × A, L := by simp [pow_two]
     _ ≤ _ := Finset.sum_le_sum (fun ab _ => hlower _)
 
-theorem triple_fiber_lower_uniform (x : A → G) (u : G) (L : ℝ) (hL : 0 ≤ L)
+omit [Fintype A] in
+theorem triple_fiber_lower_uniform [Finite A] (x : A → G) (u : G) (L : ℝ) (hL : 0 ≤ L)
     (hlower : ∀ b, L ≤ fiberCard x b) :
     (Fintype.card G : ℝ) ^ 2 * L ^ 3 ≤ fiberCard (tripleProduct x) u := by
+  let : Fintype A := Fintype.ofFinite _
   have hA := card_le_of_fiber_lower x L hlower
   calc
     _ = ((Fintype.card G : ℝ) * L) ^ 2 * L := by ring
@@ -47,12 +50,14 @@ theorem triple_fiber_lower_uniform (x : A → G) (u : G) (L : ℝ) (hL : 0 ≤ L
 
 def Distinct (t : A × A × A) : Prop := t.1 ≠ t.2.1 ∧ t.1 ≠ t.2.2 ∧ t.2.1 ≠ t.2.2
 
+omit [Fintype A] in
 theorem support_card_of_distinct [DecidableEq A] {t : A × A × A} (ht : Distinct t) :
     (Parabola.support t).card = 3 := by
   rcases t with ⟨a, b, c⟩
   rcases ht with ⟨hab, hac, hbc⟩
   simp [Parabola.support, hab, hac, hbc]
 
+omit [Fintype A] in
 theorem support_prod_of_distinct {B : Type*} [CommMonoid B] [DecidableEq A]
     (x : A → B) {t : A × A × A} (ht : Distinct t) :
     (∏ a ∈ Parabola.support t, x a) = x t.1 * x t.2.1 * x t.2.2 := by
@@ -101,11 +106,13 @@ noncomputable def distinctTriples (x : A → G) (u : G) : Finset (A × A × A) :
   classical
   exact (productTriples x u).filter Distinct
 
+omit [Fintype G] in
 theorem mem_distinctTriples (x : A → G) (u : G) (t : A × A × A) :
     t ∈ distinctTriples x u ↔ tripleProduct x t = u ∧ Distinct t := by
   classical
   simp only [distinctTriples, productTriples, Finset.mem_filter, Finset.mem_univ, true_and]
 
+omit [Fintype G] in
 theorem productTriples_card (x : A → G) (u : G) :
     (productTriples x u).card = fiberCard (tripleProduct x) u := by
   classical
@@ -118,7 +125,8 @@ theorem distinctTriples_card_lower (x : A → G) (u : G) (L : ℝ) (hL : 6 ≤ L
   have hA := card_le_of_fiber_lower x L hlower
   have htotal := triple_fiber_lower x u L hlower
   have hsplit := Finset.card_filter_add_card_filter_not (s := productTriples x u) Distinct
-  have hbad : ((productTriples x u).filter (fun t => ¬Distinct t)).card ≤ 3 * Fintype.card A ^ 2 := by
+  have hbad :
+      ((productTriples x u).filter (fun t => ¬Distinct t)).card ≤ 3 * Fintype.card A ^ 2 := by
     apply le_trans (Finset.card_le_card (show (productTriples x u).filter (fun t => ¬Distinct t) ⊆
         repeatedTriples from fun t ht => by
       exact Finset.mem_filter.mpr ⟨Finset.mem_univ _, (Finset.mem_filter.mp ht).2⟩))

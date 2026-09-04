@@ -17,6 +17,7 @@ noncomputable def eulerLogDerivative (g : K[X]) (χ : MulChar (AdjoinRoot g) ℂ
   -(χ (AdjoinRoot.mk g p.1) * ((p.1.natDegree : ℂ) * z ^ (p.1.natDegree - 1))) /
     (1 - primeWeight g χ z p)
 
+omit [DecidableEq K] in
 theorem hasDerivAt_log_eulerFactor (g : K[X]) (hg : g.Monic)
     (χ : MulChar (AdjoinRoot g) ℂ) (p : PrimePolynomial K) (z : ℂ)
     (hz : (Fintype.card K : ℝ) * ‖z‖ < 1) :
@@ -30,6 +31,7 @@ theorem hasDerivAt_log_eulerFactor (g : K[X]) (hg : g.Monic)
   exact (((hasDerivAt_pow p.1.natDegree z).const_mul
     (χ (AdjoinRoot.mk g p.1))).const_sub 1).clog hslit
 
+omit [DecidableEq K] in
 /-- Uniform derivative control on any smaller closed disk. -/
 theorem norm_eulerLogDerivative_le (g : K[X]) (hg : g.Monic)
     (χ : MulChar (AdjoinRoot g) ℂ) (r : ℝ) (hr : 0 < r)
@@ -79,6 +81,7 @@ theorem norm_eulerLogDerivative_le (g : K[X]) (hg : g.Monic)
 noncomputable def logEulerSeries (g : K[X]) (χ : MulChar (AdjoinRoot g) ℂ) (z : ℂ) : ℂ :=
   ∑' p : PrimePolynomial K, Complex.log (1 - primeWeight g χ z p)
 
+omit [DecidableEq K] in
 theorem summable_eulerLogDerivative (g : K[X]) (hg : g.Monic)
     (χ : MulChar (AdjoinRoot g) ℂ) (r : ℝ) (hr : 0 < r)
     (hqr : (Fintype.card K : ℝ) * r < 1) (z : ℂ) (hz : ‖z‖ ≤ r) :
@@ -87,6 +90,7 @@ theorem summable_eulerLogDerivative (g : K[X]) (hg : g.Monic)
   intro p
   simpa only [mul_assoc] using norm_eulerLogDerivative_le g hg χ r hr hqr p z hz
 
+omit [DecidableEq K] in
 /-- The logarithmic Euler series may be differentiated throughout every smaller disk. -/
 theorem hasDerivAt_logEulerSeries (g : K[X]) (hg : g.Monic)
     (χ : MulChar (AdjoinRoot g) ℂ) (r : ℝ) (hr : 0 < r)
@@ -96,7 +100,8 @@ theorem hasDerivAt_logEulerSeries (g : K[X]) (hg : g.Monic)
   have hs : Summable (fun p : PrimePolynomial K =>
       2 * (p.1.natDegree : ℝ) * r ^ (p.1.natDegree - 1)) := by
     simpa only [mul_assoc] using (summable_prime_derivative_weight (K := K) r hr hqr).mul_left 2
-  apply hasDerivAt_tsum_of_isPreconnected hs Metric.isOpen_ball (convex_ball (0 : ℂ) r).isPreconnected
+  apply hasDerivAt_tsum_of_isPreconnected hs Metric.isOpen_ball
+    (convex_ball (0 : ℂ) r).isPreconnected
     (y₀ := (0 : ℂ))
   · intro p y hy
     apply hasDerivAt_log_eulerFactor g hg χ p y
@@ -109,6 +114,7 @@ theorem hasDerivAt_logEulerSeries (g : K[X]) (hg : g.Monic)
   · exact summable_log_eulerFactor g hg χ 0 (by simp)
   · simpa only [Metric.mem_ball, dist_zero_right] using hz
 
+omit [DecidableEq K] in
 /-- The polynomial logarithmic derivative is the negative sum of Euler-factor derivatives. -/
 theorem lPolynomial_logDerivative_eq (g : K[X]) (hg : g.Monic)
     (χ : MulChar (AdjoinRoot g) ℂ) (hχ : χ ≠ 1) (r : ℝ) (hr : 0 < r)

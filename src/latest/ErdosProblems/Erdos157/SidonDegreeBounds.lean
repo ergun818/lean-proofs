@@ -35,9 +35,11 @@ theorem four_level_degree_contradiction (a b c d : ℕ)
   have hp : ((min b d : ℕ) : ℝ) ^ 2 ≤
       (7 / 20 : ℝ) * (((a : ℝ) + 2) ^ 2 + ((b : ℝ) + 5) ^ 2) := by
     rcases le_max_iff.mp hprod with hp | hp
-    · have hr : ((min b d : ℕ) : ℝ) ^ 2 ≤ (levelDegree a : ℝ) + levelDegree b := by exact_mod_cast hp
+    · have hr : ((min b d : ℕ) : ℝ) ^ 2 ≤ (levelDegree a : ℝ) + levelDegree b :=
+      by exact_mod_cast hp
       linarith
-    · have hr : ((min b d : ℕ) : ℝ) ^ 2 ≤ (levelDegree c : ℝ) + levelDegree d := by exact_mod_cast hp
+    · have hr : ((min b d : ℕ) : ℝ) ^ 2 ≤ (levelDegree c : ℝ) + levelDegree d :=
+      by exact_mod_cast hp
       linarith
   let s : ℕ := max b d + 2
   let t : ℕ := min a c

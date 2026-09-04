@@ -48,20 +48,24 @@ theorem monicTerm_primeMultisetEquiv (g : K[X]) (χ : MulChar (AdjoinRoot g) ℂ
     monicTerm g χ z (primeMultisetEquiv s) = MultisetEuler.weight (primeWeight g χ z) s :=
   monicWeight_primeProduct g χ z s
 
+omit [DecidableEq K] in
 theorem summable_norm_primeMultisetWeight [Fintype K] (g : K[X]) (hg : g.Monic)
     (χ : MulChar (AdjoinRoot g) ℂ) (z : ℂ)
     (hz : (Fintype.card K : ℝ) * ‖z‖ < 1) :
     Summable (fun s : Multiset (PrimePolynomial K) =>
       ‖MultisetEuler.weight (primeWeight g χ z) s‖) := by
+  classical
   have h := (summable_norm_monicTerm g hg χ z hz).comp_injective
     primeMultisetEquiv.injective
   simpa only [Function.comp_def, monicTerm_primeMultisetEquiv] using h
 
+omit [DecidableEq K] in
 /-- The character polynomial is nonzero throughout its disk of absolute convergence. -/
 theorem lPolynomial_eval_ne_zero [Fintype K] (g : K[X]) (hg : g.Monic)
     (χ : MulChar (AdjoinRoot g) ℂ) (hχ : χ ≠ 1) (z : ℂ)
     (hz : (Fintype.card K : ℝ) * ‖z‖ < 1) :
     (lPolynomial g χ).eval z ≠ 0 := by
+  classical
   have hsum := primeMultisetEquiv.tsum_eq (monicTerm g χ z)
   simp only [monicTerm_primeMultisetEquiv,
     tsum_monicTerm_eq_lPolynomial g hg χ hχ z hz] at hsum
@@ -69,6 +73,7 @@ theorem lPolynomial_eval_ne_zero [Fintype K] (g : K[X]) (hg : g.Monic)
   exact MultisetEuler.tsum_weight_ne_zero (primeWeight g χ z)
     (summable_norm_primeMultisetWeight g hg χ z hz)
 
+omit [DecidableEq K] in
 /-- Consequently every inverse root has modulus at most the field cardinality. -/
 theorem norm_inverseRoot_le_card [Fintype K] (g : K[X]) (hg : g.Monic)
     (χ : MulChar (AdjoinRoot g) ℂ) (hχ : χ ≠ 1) (a : ℂ)

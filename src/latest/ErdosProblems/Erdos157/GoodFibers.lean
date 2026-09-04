@@ -25,6 +25,7 @@ noncomputable def fiberThreshold (k : ℕ) : ℝ :=
 noncomputable def GoodResidue (k : ℕ) (v : (AdjoinRoot (product K k))ˣ) : Prop :=
   fiberThreshold (K := K) k ≤ (fiberCard (levelTripleResidue k k) v : ℝ)
 
+omit [DecidableEq K] in
 theorem good_extensions_lower (k h : ℕ) (hhk : h ≤ k) (hn : 0 < levelDegree k)
     (u : (AdjoinRoot (product K h))ˣ)
     (hmass : (Fintype.card K : ℝ) ^ (3 * levelDegree k) /
@@ -65,7 +66,8 @@ theorem good_extensions_lower (k h : ℕ) (hhk : h ≤ k) (hn : 0 < levelDegree 
     have hB : Fintype.card B = fiberCard p u := by
       rw [← Nat.card_eq_fintype_card]
       rfl
-    have hncard : Fintype.card B * Nat.card (AdjoinRoot (product K h))ˣ ≤ Fintype.card K ^ (k ^ 2) := by
+    have hncard :
+        Fintype.card B * Nat.card (AdjoinRoot (product K h))ˣ ≤ Fintype.card K ^ (k ^ 2) := by
       rw [hB]
       exact hproj.trans_le hcap
     dsimp only [N, φ, q]
@@ -105,6 +107,7 @@ theorem good_extensions_lower (k h : ℕ) (hhk : h ≤ k) (hn : 0 < levelDegree 
   rw [hleft] at hgood
   exact hgood
 
+omit [DecidableEq K] in
 theorem eventually_good_extensions :
     ∀ᶠ k in atTop, prefixLength k ≤ k ∧ ∀ (hhk : prefixLength k ≤ k)
       (u : (AdjoinRoot (product K (prefixLength k)))ˣ),
@@ -114,8 +117,10 @@ theorem eventually_good_extensions :
   filter_upwards [eventually_prefixLength_le, eventually_prefix_tripleSupply (K := K),
     eventually_prefixDegree_lt_levelDegree] with k hk hmass hdeg
   refine ⟨hk, fun hhk u => ?_⟩
-  exact good_extensions_lower k (prefixLength k) hhk (lt_of_le_of_lt (Nat.zero_le _) hdeg) u (hmass u)
+  exact good_extensions_lower k (prefixLength k) hhk (lt_of_le_of_lt (Nat.zero_le _) hdeg) u
+    (hmass u)
 
+omit [DecidableEq K] in
 theorem levelTripleResidue_fiber_pairwise_disjoint (k : ℕ) (hk : 4 ≤ k)
     (u : (AdjoinRoot (product K k))ˣ) :
     Set.Pairwise {T : PrimeTriple K (levelDegree k) | levelTripleResidue k k T = u}

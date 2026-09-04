@@ -104,9 +104,8 @@ theorem tendsto_tailSum (w : α → ℂ)
       atTop (𝓝 (if s = 0 then (1 : ℂ) else 0)) := by
     intro s
     rcases s.empty_or_exists_mem with rfl | ⟨a, ha⟩
-    · simpa [sievedWeight, weight] using
-        (tendsto_const_nhds : Tendsto (fun _ : Finset α => (1 : ℂ)) atTop (𝓝 1))
-    · have hs : s ≠ 0 := by intro h; simpa [h] using ha
+    · simp [sievedWeight, weight]
+    · have hs : s ≠ 0 := by intro h; simp [h] at ha
       rw [if_neg hs]
       apply tendsto_const_nhds.congr'
       filter_upwards [eventually_ge_atTop ({a} : Finset α)] with A hA
@@ -118,10 +117,12 @@ theorem tendsto_tailSum (w : α → ℂ)
   change Tendsto (fun A => ∑' s : Multiset α, sievedWeight w A s) atTop (𝓝 1)
   simpa only [tsum_ite_eq, if_true] using ht
 
+omit [DecidableEq α] in
 /-- Absolute convergence of the multiset expansion forces its sum to be nonzero. -/
 theorem tsum_weight_ne_zero (w : α → ℂ)
     (hw : Summable (fun s : Multiset α => ‖weight w s‖)) :
     (∑' s : Multiset α, weight w s) ≠ 0 := by
+  classical
   intro hz
   have hall : ∀ A, tailSum w A = 0 := by
     intro A
@@ -131,6 +132,7 @@ theorem tsum_weight_ne_zero (w : α → ℂ)
     exact Filter.Eventually.of_forall (fun A => (hall A).symm)
   exact zero_ne_one (tendsto_nhds_unique ht (tendsto_tailSum w hw))
 
+omit [DecidableEq α] in
 /-- Absolute convergence over all multisets includes convergence over singleton factors. -/
 theorem summable_norm_weight_singleton (w : α → ℂ)
     (hw : Summable (fun s : Multiset α => ‖weight w s‖)) : Summable (fun a => ‖w a‖) := by
@@ -140,10 +142,12 @@ theorem summable_norm_weight_singleton (w : α → ℂ)
   have h := hw.comp_injective hinj
   simpa only [Function.comp_def, weight, Multiset.map_singleton, Multiset.prod_singleton] using h
 
+omit [DecidableEq α] in
 /-- The convergent Euler product is the reciprocal of the multiset expansion. -/
 theorem tprod_mul_tsum_eq_one (w : α → ℂ)
     (hw : Summable (fun s : Multiset α => ‖weight w s‖)) :
     (∏' a, (1 - w a)) * (∑' s : Multiset α, weight w s) = 1 := by
+  classical
   have hnorm : Summable (fun a => ‖-w a‖) := by
     simpa only [norm_neg] using summable_norm_weight_singleton w hw
   have hp : Multipliable (fun a => 1 - w a) := by
