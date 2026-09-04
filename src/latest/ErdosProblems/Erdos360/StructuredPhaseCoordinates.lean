@@ -132,7 +132,7 @@ theorem card_dividedResidues_closure
   dsimp only
   let q := closureModulus ht (ordinaryResidues t P)
   let m := t / q
-  letI : NeZero m := ⟨(closureQuotient_pos ht P).ne'⟩
+  let : NeZero m := ⟨(closureQuotient_pos ht P).ne'⟩
   rw [dividedResidues, Finset.card_image_iff]
   intro a ha b hb hab
   have haDiv : a / q < m :=
@@ -166,7 +166,7 @@ theorem closure_dividedResidues_eq_top
   dsimp only
   let q := closureModulus ht (ordinaryResidues t P)
   let m := t / q
-  letI : NeZero m := ⟨(closureQuotient_pos ht P).ne'⟩
+  let : NeZero m := ⟨(closureQuotient_pos ht P).ne'⟩
   let C : Finset (ZMod m) := dividedResidues (m := m) q P
   let e := closureModulus (closureQuotient_pos ht P) C
   have hqpos : 0 < q := closureModulus_pos ht (ordinaryResidues t P)
@@ -233,7 +233,7 @@ theorem closure_dividedResidues_eq_top
   intro x _
   rw [AddSubgroup.mem_zmultiples_iff]
   refine ⟨(x.val : ℤ), ?_⟩
-  simpa using (ZMod.natCast_zmod_val x).symm
+  simp
 
 /-! ## Preservation of the structured normal form under a phase divisor -/
 
@@ -360,7 +360,7 @@ lemma intervalZmodValues_dividedResidues_zero
 
 /-- A literal quotient divides the original pivot whenever the divisor is
 positive and actually divides that pivot. -/
-lemma div_dvd_self_of_pos_of_dvd {q p : ℕ} (hq : 0 < q) (hqp : q ∣ p) :
+lemma div_dvd_self_of_pos_of_dvd {q p : ℕ} (_hq : 0 < q) (hqp : q ∣ p) :
     p / q ∣ p := by
   refine ⟨q, ?_⟩
   simpa [Nat.mul_comm] using (Nat.div_mul_cancel hqp).symm
@@ -386,7 +386,7 @@ theorem intervalClosureCoordinates_coprime
   dsimp only
   let q := closureModulus ht (ordinaryResidues t P)
   let m := t / q
-  letI : NeZero m := ⟨(closureQuotient_pos ht P).ne'⟩
+  let : NeZero m := ⟨(closureQuotient_pos ht P).ne'⟩
   have hquot : ∀ p ∈ P, p / q < m := by
     intro p hp
     exact div_closureModulus_lt_closureQuotient ht hPt hp

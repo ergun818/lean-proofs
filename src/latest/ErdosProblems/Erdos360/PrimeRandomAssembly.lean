@@ -162,7 +162,7 @@ lemma lowerPart_mod_eight_card (Z : Finset ℕ) :
 lemma lowerPart_mod_eight_remainder (Z : Finset ℕ) : Z.card % 8 ≤ 7 := by
   omega
 
-lemma lowerPart_mod_card {Z : Finset ℕ} {h : ℕ} (hh : 0 < h) :
+lemma lowerPart_mod_card {Z : Finset ℕ} {h : ℕ} (_hh : 0 < h) :
     (lowerPart Z (Z.card % h)).card = h * (Z.card / h) := by
   rw [card_lowerPart]
   have hdecomp := Nat.mod_add_div Z.card h

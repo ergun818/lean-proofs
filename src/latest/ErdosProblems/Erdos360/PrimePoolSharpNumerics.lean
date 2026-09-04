@@ -235,8 +235,7 @@ lemma sharpPolynomialReverse_of_uniform
   calc
     2 ^ 712 * u ^ 100 ≤ 2 ^ 712 * (4 * E * a) ^ 100 := by gcongr
     _ = (2 ^ 712 * (4 * E) ^ 100) * a ^ 100 := by
-      rw [mul_pow]
-      ring
+      rw [mul_pow, mul_assoc]
     _ < ((G / (2 * E)) ^ 2 * R₀ ^ 100) * a ^ 100 :=
       Nat.mul_lt_mul_of_pos_right hpoly (Nat.pow_pos haPos)
     _ ≤ (a ^ 2 * R ^ 100) * a ^ 100 := by gcongr

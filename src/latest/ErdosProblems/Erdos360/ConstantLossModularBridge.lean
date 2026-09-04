@@ -34,7 +34,7 @@ lemma HasCyclicCosetProgressionBound.recentered
   obtain ⟨i, hi, hri⟩ := mem_cyclicCosetProgression_iff.mp (hsub hr)
   apply mem_cyclicCosetProgression_iff.mpr
   refine ⟨i, hi, ?_⟩
-  convert hri using 1 <;> abel
+  convert hri using 1; abel
 
 /-- One complete inverse/sieve phase with an arbitrary integral loss `κ` in
 the local cyclic inverse theorem. -/
@@ -211,7 +211,7 @@ theorem picked_not_mem_almostPeriods_of_sparse_localDF_loss_and_stepSieve_from_f
         have hc' : HasLongProgressionCover
             (shiftedZmodValues (recenteredZmodValues base
               (almostPeriods S e))) ((192 * κ) * e) := by
-          convert hc using 1 <;> ring
+          convert hc using 1; ring
         exact hc'.toStepBounded_shiftedZmodValues.mono_set
           (shiftedZmodValues_mono hrec)
       have hinter :=

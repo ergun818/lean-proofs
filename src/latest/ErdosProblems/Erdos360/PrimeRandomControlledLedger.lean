@@ -116,7 +116,7 @@ noncomputable def controlledRandomPreLevInput
     {W Z : Finset ℕ} {d h ell k diversity nzero diameter : ℕ}
     (hY : ∀ x ∈ Y, y < x.1 ∧ x.1 ≤ 2 * y)
     (hW : W ⊆ integerColorClass Y c i) (hWcard : W.card = M)
-    (hd : 0 < d) (hdB : d ≤ B) (hh : 0 < h)
+    (hd : 0 < d) (_hdB : d ≤ B) (hh : 0 < h)
     (hscale : ∀ z ∈ Z, d * z ∈ W)
     (hloss : W.card - Z.card ≤ L * Nat.log 2 B + K * B)
     (hdiverse : ∀ e : ℕ, 1 < e → d * e ≤ B →

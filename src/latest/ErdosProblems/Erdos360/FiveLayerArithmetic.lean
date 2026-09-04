@@ -10,20 +10,20 @@ keeps every proof within Mathlib's standard computational limits.
 -/
 namespace Erdos360
 
-lemma ob_hybridT_eq_hybridG {K w : ℕ} (hw : w ≤ K) (hlow : 4*w < 3*K) :
+lemma ob_hybridT_eq_hybridG {K w : ℕ} (hw : w ≤ K) (hlow : 4 * w < 3 * K) :
     hybridT K w = hybridG K w := by
   simp [hybridT, hybridG, pairWeight, largestPairWeight,
     max_eq_left hw, min_eq_right hw, if_neg (by omega : ¬3*K ≤ 4*w)]
   omega
 
-lemma ob_hybridT_eq_top {K w : ℕ} (hw : w ≤ K) (hhigh : 3*K ≤ 4*w) :
+lemma ob_hybridT_eq_top {K w : ℕ} (hw : w ≤ K) (hhigh : 3 * K ≤ 4 * w) :
     hybridT K w = K := by
   simp [hybridT, pairWeight, largestPairWeight,
     max_eq_left hw, min_eq_right hw, if_pos hhigh]
   omega
 
 lemma ob_low_q0 {M K x y z : ℕ} (hMK : M < K)
-    (hx : x ≤ M) (hy : y ≤ M) (hz : z ≤ M) (hMlow : 4*M < 3*K) :
+    (hx : x ≤ M) (hy : y ≤ M) (hz : z ≤ M) (hMlow : 4 * M < 3 * K) :
     let S := M+K+x+y+z
     let T := hybridT K M + K + hybridT K x + hybridT K y + hybridT K z
     14*S ≤ 40*K + 5*T := by
@@ -40,7 +40,7 @@ lemma ob_low_q0 {M K x y z : ℕ} (hMK : M < K)
 
 lemma ob_low_q1 {M K x y z : ℕ} (hMK : M < K)
     (hxK : x ≤ K) (hMx : M < x) (hy : y ≤ M) (hz : z ≤ M)
-    (hMlow : 4*M < 3*K) :
+    (hMlow : 4 * M < 3 * K) :
     let S := M+K+x+y+z
     let T := hybridT K M + K + hybridT K x + hybridT K y + hybridT K z
     14*S ≤ 40*K + 5*T := by
@@ -55,7 +55,7 @@ lemma ob_low_q1 {M K x y z : ℕ} (hMK : M < K)
 
 lemma ob_low_q2_someLow {M K x y z : ℕ} (hMK : M < K)
     (hxK : x ≤ K) (hyK : y ≤ K) (hMx : M < x) (hMy : M < y)
-    (hz : z ≤ M) (hMlow : 4*M < 3*K) (hxlow : 4*x < 3*K) :
+    (hz : z ≤ M) (hMlow : 4 * M < 3 * K) (hxlow : 4 * x < 3 * K) :
     let S := M+K+x+y+z
     let T := hybridT K M + K + hybridT K x + hybridT K y + hybridT K z
     14*S ≤ 40*K + 5*T := by
@@ -70,8 +70,8 @@ lemma ob_low_q2_someLow {M K x y z : ℕ} (hMK : M < K)
 
 lemma ob_low_q2_bothHigh {M K x y z : ℕ} (hMK : M < K)
     (hxK : x ≤ K) (hyK : y ≤ K) (hMx : M < x) (hMy : M < y)
-    (hz : z ≤ M) (hMlow : 4*M < 3*K)
-    (hxhigh : 3*K ≤ 4*x) (hyhigh : 3*K ≤ 4*y) :
+    (hz : z ≤ M) (hMlow : 4 * M < 3 * K)
+    (hxhigh : 3 * K ≤ 4 * x) (hyhigh : 3 * K ≤ 4 * y) :
     let S := M+K+x+y+z
     let g := hybridG K M
     let AA := g + 3*(g-K) + (2*(K+hybridA K x+hybridA K y)-K)
@@ -88,8 +88,8 @@ lemma ob_low_q2_bothHigh {M K x y z : ℕ} (hMK : M < K)
 
 lemma ob_low_q3_someLow {M K x y z : ℕ} (hMK : M < K)
     (hxK : x ≤ K) (hyK : y ≤ K) (hzK : z ≤ K)
-    (hMx : M < x) (hMy : M < y) (hMz : M < z) (hMlow : 4*M < 3*K)
-    (hxlow : 4*x < 3*K) (hylow : 4*y < 3*K) :
+    (hMx : M < x) (hMy : M < y) (hMz : M < z) (hMlow : 4 * M < 3 * K)
+    (hxlow : 4 * x < 3 * K) (hylow : 4 * y < 3 * K) :
     let S := M+K+x+y+z
     let T := hybridT K M + K + hybridT K x + hybridT K y + hybridT K z
     14*S ≤ 40*K + 5*T := by
@@ -103,8 +103,8 @@ lemma ob_low_q3_someLow {M K x y z : ℕ} (hMK : M < K)
 
 lemma ob_low_q3_twoHigh {M K x y z : ℕ} (hMK : M < K)
     (hxK : x ≤ K) (hyK : y ≤ K) (hzK : z ≤ K)
-    (hMx : M < x) (hMy : M < y) (hMz : M < z) (hMlow : 4*M < 3*K)
-    (hxhigh : 3*K ≤ 4*x) (hyhigh : 3*K ≤ 4*y) (hzlow : 4*z < 3*K) :
+    (hMx : M < x) (hMy : M < y) (hMz : M < z) (hMlow : 4 * M < 3 * K)
+    (hxhigh : 3 * K ≤ 4 * x) (hyhigh : 3 * K ≤ 4 * y) (hzlow : 4 * z < 3 * K) :
     let S := M+K+x+y+z
     let g := hybridG K M
     let AA := g+3*(g-K)+(2*(K+hybridA K x+hybridA K y+hybridA K z)-K)
@@ -130,11 +130,11 @@ lemma ob_low_q3_twoHigh {M K x y z : ℕ} (hMK : M < K)
   have hsum : (gm+K+2*(ax+ay+az)) + (gm+3*K+gz) ≤
       2*max (gm+K+2*(ax+ay+az)) (gm+3*K+gz) :=
     calc
-      _ ≤ max (gm+K+2*(ax+ay+az)) (gm+3*K+gz) +
+      _ ≤ max (gm + K + 2 * (ax + ay + az)) (gm + 3 * K + gz) +
           max (gm+K+2*(ax+ay+az)) (gm+3*K+gz) :=
         add_le_add (le_max_left _ _) (le_max_right _ _)
       _ = _ := by ring
-  have hAA : hybridG K M+3*(hybridG K M-K)+
+  have hAA : hybridG K M + 3 * (hybridG K M-K) +
       (2*(K+hybridA K x+hybridA K y+hybridA K z)-K) =
       gm+K+2*(ax+ay+az) := by simp [gm, ax, ay, az]; omega
   have hT : hybridT K M+K+hybridT K x+hybridT K y+hybridT K z =
@@ -147,10 +147,10 @@ lemma ob_low_q3_twoHigh {M K x y z : ℕ} (hMK : M < K)
   rw [hAA, hT]
   omega
 
-lemma ob_low_q3_allHigh {M K x y z : ℕ} (hMK : M < K)
-    (hxK : x ≤ K) (hyK : y ≤ K) (hzK : z ≤ K)
-    (hMx : M < x) (hMy : M < y) (hMz : M < z) (hMlow : 4*M < 3*K)
-    (hxhigh : 3*K ≤ 4*x) (hyhigh : 3*K ≤ 4*y) (hzhigh : 3*K ≤ 4*z) :
+lemma ob_low_q3_allHigh {M K x y z : ℕ} (_hMK : M < K)
+    (_hxK : x ≤ K) (_hyK : y ≤ K) (_hzK : z ≤ K)
+    (_hMx : M < x) (_hMy : M < y) (hMz : M < z) (hMlow : 4 * M < 3 * K)
+    (hxhigh : 3 * K ≤ 4 * x) (hyhigh : 3 * K ≤ 4 * y) (hzhigh : 3 * K ≤ 4 * z) :
     let S := M+K+x+y+z
     let g := hybridG K M
     let AA := g+3*(g-K)+(2*(K+hybridA K x+hybridA K y+hybridA K z)-K)
@@ -159,8 +159,8 @@ lemma ob_low_q3_allHigh {M K x y z : ℕ} (hMK : M < K)
   simp only [hybridG, hybridA]
   omega
 
-lemma ob_high_q0 {M K x y z : ℕ} (hMK : M < K)
-    (hx : x ≤ M) (hy : y ≤ M) (hz : z ≤ M) (hMhigh : 3*K ≤ 4*M) :
+lemma ob_high_q0 {M K x y z : ℕ} (_hMK : M < K)
+    (hx : x ≤ M) (hy : y ≤ M) (hz : z ≤ M) (hMhigh : 3 * K ≤ 4 * M) :
     let S := M+K+x+y+z
     let C := 4*hybridG K M
     14*S ≤ 40*K+5*C := by
@@ -168,9 +168,9 @@ lemma ob_high_q0 {M K x y z : ℕ} (hMK : M < K)
   simp only [hybridG]
   omega
 
-lemma ob_high_q1 {M K x y z : ℕ} (hMK : M < K)
-    (hxK : x ≤ K) (hMx : M < x) (hy : y ≤ M) (hz : z ≤ M)
-    (hMhigh : 3*K ≤ 4*M) :
+lemma ob_high_q1 {M K x y z : ℕ} (_hMK : M < K)
+    (hxK : x ≤ K) (_hMx : M < x) (hy : y ≤ M) (hz : z ≤ M)
+    (hMhigh : 3 * K ≤ 4 * M) :
     let S := M+K+x+y+z
     let C := 4*hybridG K M
     14*S ≤ 40*K+5*C := by
@@ -180,7 +180,7 @@ lemma ob_high_q1 {M K x y z : ℕ} (hMK : M < K)
 
 lemma ob_high_q2 {M K x y z : ℕ} (hMK : M < K)
     (hxK : x ≤ K) (hyK : y ≤ K) (hMx : M < x) (hMy : M < y)
-    (hz : z ≤ M) (hMhigh : 3*K ≤ 4*M) :
+    (hz : z ≤ M) (hMhigh : 3 * K ≤ 4 * M) :
     let S := M+K+x+y+z
     let g := hybridG K M
     let AA := g+3*(g-K)+(2*(K+hybridA K x+hybridA K y)-K)
@@ -191,7 +191,7 @@ lemma ob_high_q2 {M K x y z : ℕ} (hMK : M < K)
   have htz : 3*z ≤ 2*K+tz := by
     exact three_mul_le_two_mul_add_hybridT (hz.trans hMK.le)
   have hAA : 16*M+6*x+6*y ≤
-      (hybridG K M+3*(hybridG K M-K)+
+      (hybridG K M + 3 * (hybridG K M-K) +
         (2*(K+hybridA K x+hybridA K y)-K))+18*K := by
     simp only [hybridG, hybridA]
     omega
@@ -204,22 +204,22 @@ lemma ob_high_q2 {M K x y z : ℕ} (hMK : M < K)
       if_pos hMhigh, if_pos (by omega : 3*K ≤ 4*x),
       if_pos (by omega : 3*K ≤ 4*y)]
     omega
-  have havg : 28*(M+K+x+y+z) ≤ 80*K +
-      5*((hybridG K M+3*(hybridG K M-K)+
+  have havg : 28 * (M + K + x + y + z) ≤ 80 * K +
+      5 * ((hybridG K M + 3 * (hybridG K M-K) +
         (2*(K+hybridA K x+hybridA K y)-K))+(4*K+tz)) := by omega
   have hsum := add_le_add
     (le_max_left
-      (hybridG K M+3*(hybridG K M-K)+
+      (hybridG K M + 3 * (hybridG K M-K) +
         (2*(K+hybridA K x+hybridA K y)-K)) (4*K+tz))
     (le_max_right
-      (hybridG K M+3*(hybridG K M-K)+
+      (hybridG K M + 3 * (hybridG K M-K) +
         (2*(K+hybridA K x+hybridA K y)-K)) (4*K+tz))
   rw [hT]
   omega
 
 lemma ob_high_q3 {M K x y z : ℕ} (hMK : M < K)
-    (hxK : x ≤ K) (hyK : y ≤ K) (hzK : z ≤ K)
-    (hMx : M < x) (hMy : M < y) (hMz : M < z) (hMhigh : 3*K ≤ 4*M) :
+    (_hxK : x ≤ K) (_hyK : y ≤ K) (_hzK : z ≤ K)
+    (hMx : M < x) (hMy : M < y) (hMz : M < z) (hMhigh : 3 * K ≤ 4 * M) :
     let S := M+K+x+y+z
     let g := hybridG K M
     let AA := g+3*(g-K)+(2*(K+hybridA K x+hybridA K y+hybridA K z)-K)
@@ -296,7 +296,7 @@ lemma five_hybrid_one_good_one_above {M K x y z : ℕ}
   split_ifs <;> omega
 
 lemma five_hybrid_one_good_two_above_high {M K x y z : ℕ}
-    (hMK : M < K) (hxK : x ≤ K) (hyK : y ≤ K) (hzK : z ≤ K)
+    (hMK : M < K) (_hxK : x ≤ K) (_hyK : y ≤ K) (hzK : z ≤ K)
     (hxM : x ≤ M) (hMy : M < y) (hMz : M < z)
     (hyHigh : 3 * K ≤ 4 * y) (hzHigh : 3 * K ≤ 4 * z) :
     let S := M + K + x + y + z
@@ -385,7 +385,7 @@ def fiveHybridOnlyBaseGoal (M K x y z : ℕ) : Prop :=
 
 lemma five_hybrid_only_base_high {M K x y z : ℕ}
     (hMK : M < K) (hxK : x ≤ K) (hyK : y ≤ K) (hzK : z ≤ K)
-    (hMhigh : 3*K ≤ 4*M) : fiveHybridOnlyBaseGoal M K x y z := by
+    (hMhigh : 3 * K ≤ 4 * M) : fiveHybridOnlyBaseGoal M K x y z := by
   dsimp [fiveHybridOnlyBaseGoal]
   by_cases hMx : M < x
   · by_cases hMy : M < y
@@ -428,7 +428,7 @@ lemma five_hybrid_only_base_high {M K x y z : ℕ}
 
 lemma five_hybrid_only_base_low_all_above {M K x y z : ℕ}
     (hMK : M < K) (hxK : x ≤ K) (hyK : y ≤ K) (hzK : z ≤ K)
-    (hMlow : 4*M < 3*K) (hMx : M < x) (hMy : M < y) (hMz : M < z) :
+    (hMlow : 4 * M < 3 * K) (hMx : M < x) (hMy : M < y) (hMz : M < z) :
     fiveHybridOnlyBaseGoal M K x y z := by
   dsimp [fiveHybridOnlyBaseGoal]
   by_cases hxHigh : 3*K ≤ 4*x
@@ -473,8 +473,8 @@ lemma five_hybrid_only_base_low_all_above {M K x y z : ℕ}
       omega
 
 lemma five_hybrid_only_base_low_two_above {M K x y z : ℕ}
-    (hMK : M < K) (hxK : x ≤ K) (hyK : y ≤ K) (hzK : z ≤ K)
-    (hMlow : 4*M < 3*K) (hMx : M < x) (hMy : M < y) (hzM : z ≤ M) :
+    (hMK : M < K) (hxK : x ≤ K) (hyK : y ≤ K) (_hzK : z ≤ K)
+    (hMlow : 4 * M < 3 * K) (hMx : M < x) (hMy : M < y) (hzM : z ≤ M) :
     fiveHybridOnlyBaseGoal M K x y z := by
   dsimp [fiveHybridOnlyBaseGoal]
   have hMz : ¬ M < z := by omega
@@ -494,7 +494,7 @@ lemma five_hybrid_only_base_low_two_above {M K x y z : ℕ}
 
 lemma five_hybrid_only_base_low_one_above {M K x y z : ℕ}
     (hMK : M < K) (hxK : x ≤ K) (hyM : y ≤ M) (hzM : z ≤ M)
-    (hMlow : 4*M < 3*K) (hMx : M < x) :
+    (hMlow : 4 * M < 3 * K) (hMx : M < x) :
     fiveHybridOnlyBaseGoal M K x y z := by
   dsimp [fiveHybridOnlyBaseGoal]
   have hMy : ¬ M < y := by omega
@@ -505,7 +505,7 @@ lemma five_hybrid_only_base_low_one_above {M K x y z : ℕ}
 
 lemma five_hybrid_only_base_low_none_above {M K x y z : ℕ}
     (hMK : M < K) (hxM : x ≤ M) (hyM : y ≤ M) (hzM : z ≤ M)
-    (hMlow : 4*M < 3*K) : fiveHybridOnlyBaseGoal M K x y z := by
+    (hMlow : 4 * M < 3 * K) : fiveHybridOnlyBaseGoal M K x y z := by
   dsimp [fiveHybridOnlyBaseGoal]
   have hMx : ¬ M < x := by omega
   have hMy : ¬ M < y := by omega

@@ -166,10 +166,11 @@ lemma exists_gt_of_two_le_card {B : Finset ℕ} {l : ℕ} (hcard : 2 ≤ B.card)
       omega
     exact ⟨y, hyB, lt_of_le_of_ne (hB y hyB) hyl.symm⟩
 
-lemma exists_lt_of_two_le_card_of_injective {α : Type*} [DecidableEq α]
+lemma exists_lt_of_two_le_card_of_injective {α : Type*}
     {B : Finset α} {f : α → ℕ} {u : ℕ} (hcard : 2 ≤ B.card)
     (hf : Function.Injective f) (hB : ∀ x ∈ B, f x ≤ u) :
     ∃ x ∈ B, f x < u := by
+  classical
   have hBne : B.Nonempty := Finset.card_pos.mp (by omega)
   obtain ⟨x, hx⟩ := hBne
   have herase : (B.erase x).Nonempty := by
@@ -189,10 +190,11 @@ lemma exists_lt_of_two_le_card_of_injective {α : Type*} [DecidableEq α]
       omega
     exact ⟨y, hyB, (hB y hyB).lt_of_ne hyu⟩
 
-lemma exists_gt_of_two_le_card_of_injective {α : Type*} [DecidableEq α]
+lemma exists_gt_of_two_le_card_of_injective {α : Type*}
     {B : Finset α} {f : α → ℕ} {l : ℕ} (hcard : 2 ≤ B.card)
     (hf : Function.Injective f) (hB : ∀ x ∈ B, l ≤ f x) :
     ∃ x ∈ B, l < f x := by
+  classical
   have hBne : B.Nonempty := Finset.card_pos.mp (by omega)
   obtain ⟨x, hx⟩ := hBne
   have herase : (B.erase x).Nonempty := by
@@ -564,7 +566,7 @@ lemma targetResidue_spec {n t d : ℕ} (hd : 0 < d) (ht : Nat.Coprime t d)
 
 /-- A reduced residue `t` at height at least `n/d` lies in one of its two
 Step-3 classes. -/
-lemma mem_residueHigh_or_mid {n d : ℕ} (hd : 1 < d) (hn : Nat.Coprime n d)
+lemma mem_residueHigh_or_mid {n d : ℕ} (_hd : 1 < d) (hn : Nat.Coprime n d)
     (t : BelowTarget n) (ht : Nat.Coprime t.1 d) (htLower : n ≤ d * t.1) :
     let x := targetResidue n t.1 d ht hn
     t ∈ residueHigh n d t.1 x ∨ t ∈ residueMid n d t.1 x := by
@@ -786,7 +788,7 @@ lemma sumCoverFamily_covers {n : ℕ} {ι κ : Type*}
 /-- A set of at most `d` integers, each strictly below `n / d` in the
 cross-multiplied sense, has total sum below `n`.  This is the elementary
 reason the short leftover groups in Step 4 are valid color classes. -/
-lemma targetAvoiding_of_card_le_of_mul_lt {n d : ℕ} (hn : 0 < n) (hd : 0 < d)
+lemma targetAvoiding_of_card_le_of_mul_lt {n d : ℕ} (hn : 0 < n) (_hd : 0 < d)
     {S : Finset (BelowTarget n)} (hcard : S.card ≤ d)
     (hsmall : ∀ x ∈ S, d * x.1 < n) : TargetAvoiding n S := by
   intro A hAS hsum
@@ -819,7 +821,7 @@ noncomputable def rankIn {α : Type*} [DecidableEq α] (S : Finset α) (x : α) 
 
 lemma rankIn_lt_card {α : Type*} [DecidableEq α] {S : Finset α} {x : α}
     (hx : x ∈ S) : rankIn S x < S.card := by
-  simpa [rankIn, hx] using (S.equivFin ⟨x, hx⟩).2
+  simp [rankIn, hx]
 
 lemma rankIn_injOn {α : Type*} [DecidableEq α] (S : Finset α) :
     Set.InjOn (rankIn S) S := by
@@ -847,7 +849,7 @@ lemma mem_chunkFamily {α : Type*} [DecidableEq α] {S : Finset α} {d : ℕ}
   simp [chunkFamily]
 
 lemma chunkFamily_covers {α : Type*} [DecidableEq α] (S : Finset α) {d : ℕ}
-    (hd : 0 < d) {x : α} (hx : x ∈ S) :
+    (_hd : 0 < d) {x : α} (hx : x ∈ S) :
     ∃ i : Fin (S.card / d + 1), x ∈ chunkFamily S d i := by
   have hq : rankIn S x / d ≤ S.card / d :=
     Nat.div_le_div_right (rankIn_lt_card hx).le
@@ -1017,7 +1019,7 @@ noncomputable def oddFirstMissingPrimes (n h : ℕ) : Finset ℕ :=
 lemma mem_oddFirstMissingPrimes {n h p : ℕ} :
     p ∈ oddFirstMissingPrimes n h ↔
       (∃ i < h, primeAt i = p) ∧ 2 < p ∧ ¬p ∣ n := by
-  simp [oddFirstMissingPrimes, and_assoc]
+  simp [oddFirstMissingPrimes]
 
 lemma oddFirstMissingPrimes_prime {n h p : ℕ}
     (hp : p ∈ oddFirstMissingPrimes n h) : p.Prime := by
@@ -1031,7 +1033,7 @@ lemma oddFirstMissingPrimes_subset_sievePrimes (n h : ℕ) :
   apply Erdos851.mem_sievePrimes.mpr
   refine ⟨hp2, ?_, hip ▸ Nat.prime_nth_prime i⟩
   rw [← hip]
-  exact (Nat.nth_lt_nth Nat.infinite_setOf_prime).mpr hi |>.le
+  exact (Nat.nth_lt_nth Nat.infinite_setOfPred_prime).mpr hi |>.le
 
 lemma oddFirstMissingPrimes_prod_squarefree (n h : ℕ) :
     Squarefree (∏ p ∈ oddFirstMissingPrimes n h, p) := by
@@ -1770,11 +1772,7 @@ lemma totient_div_self_eq_primeFactorsProduct (M : ℕ) (hM : 0 < M) :
                 exact_mod_cast (Nat.pos_of_mem_primeFactors hp).ne'
               field_simp [hp0]
               norm_num
-        _ = _ := by simpa using
-          (Finset.prod_div_distrib
-            (s := M.primeFactors)
-            (fun p : ℕ ↦ ((p - 1 : ℕ) : ℝ))
-            (fun p : ℕ ↦ (p : ℝ)))
+        _ = _ := by simp [Finset.prod_div_distrib]
     rw [hprod]
     field_simp [hden]
     exact hN'
@@ -2593,7 +2591,7 @@ lemma avoidsTarget_selfColor {n : ℕ} (hn : 0 < n) :
       · intro hy
         have hxy : selfColor n y = selfColor n x := hmono hy hx
         have : y = x := selfColor_injective n hxy
-        simpa [this]
+        simp [this]
       · intro hy
         have : y = x := Finset.mem_singleton.mp hy
         simpa [this] using hx
@@ -2896,7 +2894,7 @@ lemma subsetSum_card_add_occupiedResidues_le {A : Finset ℕ} {t : ℕ}
         (topRepresentative_mem A.subsetSum t r)
       refine ⟨insert t B, Finset.insert_subset_insert t hBA, ?_⟩
       rw [Finset.sum_insert]
-      · simpa [hsum, add_comm]
+      · simp [hsum, add_comm]
       · exact fun htB ↦ htA (hBA htB)
   calc
     A.subsetSum.card + (occupiedResidues A.subsetSum t).card =
@@ -2967,7 +2965,7 @@ lemma subsetSum_card_add_sum_le_union
         _ = (A ∪ insert t B).subsetSum.card := by
           congr 2
           ext x
-          simp [or_left_comm, or_assoc]
+          simp
 
 /-! ### Almost-period estimates -/
 
@@ -3223,7 +3221,7 @@ lemma Icc_subset_subsetSum_union_of_le_length
         omega
       have hext := Icc_subset_subsetSum_insert_of_le_length
         (show a ≤ b + ∑ s ∈ B, s by omega) ihI
-        (by simpa [Finset.mem_union, htA, htB]) htBound
+        (by simp [Finset.mem_union, htA, htB]) htBound
       simpa [Finset.sum_insert, htB, Finset.union_insert, Nat.add_comm,
         Nat.add_left_comm, Nat.add_assoc] using hext
 
@@ -3444,13 +3442,14 @@ These integer inequalities force `mu = 1`.
 -/
 
 lemma small_sumset_stabilizer_coset
-    {G : Type*} [AddCommGroup G] [Fintype G] [DecidableEq G]
+    {G : Type*} [AddCommGroup G] [Finite G] [DecidableEq G]
     {A B : Finset G} (hA : A.Nonempty) (hB : B.Nonempty)
     (hleft : 2 * (A + B).card < 3 * A.card)
     (hright : (A + B).card < 2 * B.card) :
     ∃ H : AddSubgroup G, ∃ c : G,
       ((A + B : Finset G) : Set G) ⊆ c +ᵥ (H : Set G) ∧
       Nat.card H = (A + B).card := by
+  let := Fintype.ofFinite G
   classical
   let C := A + B
   let Hf := C.addStab
@@ -3496,7 +3495,7 @@ lemma small_sumset_stabilizer_coset
       by_contra hmu0
       have : mu = 0 := Nat.eq_zero_of_not_pos hmu0
       rw [this] at hmu
-      simp at hmu
+      simp only [mul_zero, Finset.card_eq_zero] at hmu
       exact hC.ne_empty hmu
     omega
   have hCcard : C.card = Hf.card := by
@@ -3537,7 +3536,7 @@ lemma small_sumset_stabilizer_coset
 `3|A|/2` threshold while `A` and `B` have comparable sizes, it is contained
 in one coset of a subgroup smaller than `3|A|/2`. -/
 lemma deshouillersFreiman_kneser_corollary_one
-    {G : Type*} [AddCommGroup G] [Fintype G] [DecidableEq G]
+    {G : Type*} [AddCommGroup G] [Finite G] [DecidableEq G]
     {A B : Finset G} (hA : A.Nonempty) (hB : B.Nonempty)
     (_hAB : B.card ≤ A.card)
     (hsmall : 2 * (A + B).card < 3 * A.card)
@@ -3545,6 +3544,7 @@ lemma deshouillersFreiman_kneser_corollary_one
     ∃ H : AddSubgroup G, ∃ c : G,
       ((A + B : Finset G) : Set G) ⊆ c +ᵥ (H : Set G) ∧
       2 * Nat.card H < 3 * A.card := by
+  let := Fintype.ofFinite G
   have hright : (A + B).card < 2 * B.card := by omega
   obtain ⟨H, c, hcos, hcard⟩ :=
     small_sumset_stabilizer_coset hA hB hsmall hright
@@ -3554,13 +3554,14 @@ lemma deshouillersFreiman_kneser_corollary_one
 `2|B|` threshold and under the stated imbalance, the sumset is contained
 in one coset of a subgroup of size below `2|B|`. -/
 lemma deshouillersFreiman_kneser_corollary_two
-    {G : Type*} [AddCommGroup G] [Fintype G] [DecidableEq G]
+    {G : Type*} [AddCommGroup G] [Finite G] [DecidableEq G]
     {A B : Finset G} (hA : A.Nonempty) (hB : B.Nonempty)
     (hsmall : (A + B).card < 2 * B.card)
     (hbalance : 4 * B.card < 3 * A.card) :
     ∃ H : AddSubgroup G, ∃ c : G,
       ((A + B : Finset G) : Set G) ⊆ c +ᵥ (H : Set G) ∧
       Nat.card H < 2 * B.card := by
+  let := Fintype.ofFinite G
   have hleft : 2 * (A + B).card < 3 * A.card := by omega
   obtain ⟨H, c, hcos, hcard⟩ :=
     small_sumset_stabilizer_coset hA hB hleft hsmall
@@ -3593,13 +3594,13 @@ lemma summands_subset_cosets_of_sumset_subset_coset
       hAB (by exact Finset.add_mem_add ha₀ hb₀)
     rw [Set.mem_vadd_set_iff_neg_vadd_mem] at hs hs₀
     have hs' : a + b₀ - c ∈ H := by
-      convert hs using 1 <;> simp [vadd_eq_add] <;> abel_nf
+      convert hs using 1; simp [vadd_eq_add]; abel_nf
     have hs₀' : a₀ + b₀ - c ∈ H := by
-      convert hs₀ using 1 <;> simp [vadd_eq_add] <;> abel_nf
+      convert hs₀ using 1; simp [vadd_eq_add]; abel_nf
     have hd : (a + b₀ - c) - (a₀ + b₀ - c) ∈ H :=
       H.sub_mem hs' hs₀'
     refine ⟨a - a₀, ?_, ?_⟩
-    · simpa using (show a - a₀ ∈ H by convert hd using 1 <;> abel)
+    · simpa using (show a - a₀ ∈ H by convert hd using 1; abel)
     · simp
   · intro b hb
     have hs : a₀ + b ∈ c +ᵥ (H : Set G) :=
@@ -3608,22 +3609,23 @@ lemma summands_subset_cosets_of_sumset_subset_coset
       hAB (by exact Finset.add_mem_add ha₀ hb₀)
     rw [Set.mem_vadd_set_iff_neg_vadd_mem] at hs hs₀
     have hs' : a₀ + b - c ∈ H := by
-      convert hs using 1 <;> simp [vadd_eq_add] <;> abel_nf
+      convert hs using 1; simp [vadd_eq_add]; abel_nf
     have hs₀' : a₀ + b₀ - c ∈ H := by
-      convert hs₀ using 1 <;> simp [vadd_eq_add] <;> abel_nf
+      convert hs₀ using 1; simp [vadd_eq_add]; abel_nf
     have hd : (a₀ + b - c) - (a₀ + b₀ - c) ∈ H :=
       H.sub_mem hs' hs₀'
     refine ⟨b - b₀, ?_, ?_⟩
-    · simpa using (show b - b₀ ∈ H by convert hd using 1 <;> abel)
+    · simpa using (show b - b₀ ∈ H by convert hd using 1; abel)
     · simp
 
 /-- A nonempty set escaping all `H`-cosets contains two elements in
 different `H`-cosets. -/
 lemma exists_sub_not_mem_of_not_containedInAddCoset
-    {G : Type*} [AddCommGroup G] [DecidableEq G]
+    {G : Type*} [AddCommGroup G]
     {H : AddSubgroup G} {B : Finset G} (hB : B.Nonempty)
     (hnot : ¬ ContainedInAddCoset H B) :
     ∃ y ∈ B, ∃ z ∈ B, z - y ∉ H := by
+  classical
   obtain ⟨y, hy⟩ := hB
   by_contra hnone
   push Not at hnone
@@ -3654,15 +3656,15 @@ lemma two_mul_card_le_add_of_coset_and_not_coset
     have huH : u - a ∈ H := by
       have hu' := ha (by simpa using hu)
       rw [Set.mem_vadd_set_iff_neg_vadd_mem] at hu'
-      convert hu' using 1 <;> simp [vadd_eq_add] <;> abel_nf
+      convert hu' using 1; simp [vadd_eq_add]; abel_nf
     have hvH : v - a ∈ H := by
       have hv' := ha (by simpa using hv)
       rw [Set.mem_vadd_set_iff_neg_vadd_mem] at hv'
-      convert hv' using 1 <;> simp [vadd_eq_add] <;> abel_nf
+      convert hv' using 1; simp [vadd_eq_add]; abel_nf
     apply hzy
     have huvH : u - v ∈ H := by
       have := H.sub_mem huH hvH
-      convert this using 1 <;> abel
+      convert this using 1; abel
     have heq : z - y = u - v := by
       have heq' : z + v = y + u := by simpa [vadd_eq_add] using huv
       calc
@@ -3691,12 +3693,13 @@ lies in a subgroup coset whose order is less than `3|A|/2`, or its sum with
 translation injectivity; otherwise the two strict failures are exactly the
 hypotheses of the Kneser corollary above. -/
 lemma small_coset_or_uniform_pair_sum_lower
-    {G : Type*} [AddCommGroup G] [Fintype G] [DecidableEq G]
+    {G : Type*} [AddCommGroup G] [Finite G] [DecidableEq G]
     {A B : Finset G} (hA : A.Nonempty) (hB : B.Nonempty)
     (hBA : B.card ≤ A.card) :
     (∃ H : AddSubgroup G,
       ContainedInAddCoset H A ∧ 2 * Nat.card H < 3 * A.card) ∨
       A.card + 2 * B.card ≤ 2 * (A + B).card := by
+  let := Fintype.ofFinite G
   by_cases hsmallB : 2 * B.card ≤ A.card
   · right
     have hAadd : A.card ≤ (A + B).card :=
@@ -3852,11 +3855,12 @@ lemma exists_translationNew_large_of_closure_eq_top
 remaining translations, one of those translations grows it by a factor at
 least `3/2`. -/
 lemma exists_three_halves_translation_growth
-    {G : Type*} [AddCommGroup G] [Fintype G] [DecidableEq G]
+    {G : Type*} [AddCommGroup G] [Finite G] [DecidableEq G]
     {T X : Finset G} (hT : T.Nonempty) (_hX : X.Nonempty)
     (hsmall : 2 * T.card < X.card) :
     ∃ x ∈ X,
       3 * T.card ≤ 2 * (T ∪ Erdos587.addTranslate x T).card := by
+  let := Fintype.ofFinite G
   classical
   let e := T.card / 2
   let P := almostPeriods T e
@@ -4062,7 +4066,7 @@ lemma exists_generator_modulus {d : ℕ} (hd : 0 < d)
         simpa [r] using hsum
       have hcast : (r : ZMod d) = -((d / q : ℕ) • g) := by
         rw [← hcastg]
-        simp only [nsmul_eq_mul, Nat.cast_mul]
+        simp only [nsmul_eq_mul]
         apply (eq_neg_iff_add_eq_zero).2
         simpa [add_comm] using hsumZ
       have hrK : (r : ZMod d) ∈ K := by
@@ -4153,7 +4157,7 @@ lemma subgroup_eq_zmultiples_of_generator_modulus
         have hi : (i + 1) • (q : ZMod d) ∈ H := by
           simpa [nsmul_eq_mul, mul_comm] using hmult (i + 1)
         have hneg := H.neg_mem hi
-        convert hneg using 1 <;> simp [nsmul_eq_mul] <;> ring
+        convert hneg using 1; simp [nsmul_eq_mul]; ring
 
 lemma natCard_subgroup_of_generator_modulus
     {d q : ℕ} (hd : 0 < d) (_hq : 0 < q) (hqd : q ∣ d)
@@ -4392,7 +4396,7 @@ def HasNatFreimanModel {t : ℕ} [NeZero t] (B : Finset (ZMod t)) : Prop :=
 /-- Two functions with the same collision relation on a finite set have
 images of the same cardinality. -/
 lemma card_image_eq_card_image_of_eq_iff
-    {α β γ : Type*} [DecidableEq α] [DecidableEq β] [DecidableEq γ]
+    {α β γ : Type*} [DecidableEq β] [DecidableEq γ]
     (S : Finset α) (f : α → β) (g : α → γ)
     (hker : ∀ x ∈ S, ∀ y ∈ S, f x = f y ↔ g x = g y) :
     (S.image f).card = (S.image g).card := by
@@ -4483,7 +4487,7 @@ lemma dense_coset_sub_eq_subgroup
     rw [mem_subgroupFinset]
     have ha' := hc (by simpa using ha)
     rw [Set.mem_vadd_set_iff_neg_vadd_mem] at ha'
-    convert ha' using 1 <;> simp [vadd_eq_add]
+    convert ha' using 1; simp [vadd_eq_add]
   have hcardH : (subgroupFinset H).card < E.card + E.card := by
     simpa [card_subgroupFinset, hEA, two_mul] using hdense
   have hsub : subgroupFinset H ⊆ E - E := by
@@ -4597,7 +4601,7 @@ lemma mem_cyclicCosetProgression_iff {b : ℕ} [NeZero b]
     have hh : p.2 ∈ H := by
       simpa using (Finset.mem_product.mp hp).2
     refine ⟨p.1, hi, ?_⟩
-    convert hh using 1 <;> abel
+    convert hh using 1; abel
   · rintro ⟨i, hi, hx⟩
     apply Finset.mem_image.mpr
     refine ⟨(i, x - (a + i • d)), ?_, ?_⟩
@@ -4648,7 +4652,7 @@ lemma natFreimanModel_cyclic_progression_dichotomy
       refine ⟨0, by omega, ?_⟩
       have hiH : i • (d : ZMod t) ∈ H := by
         exact H.nsmul_mem (AddSubgroup.mem_zmultiples (d : ZMod t)) i
-      convert hiH using 1 <;> simp [nsmul_eq_mul] <;> ring
+      convert hiH using 1; simp [nsmul_eq_mul]; ring
     · intro i hi j hj _
       omega
     · change 5 * Nat.card (AddSubgroup.zmultiples (d : ZMod t)) ≤
@@ -4736,7 +4740,7 @@ lemma cyclicCosetProgression_card_eq_of_proper
     have hij : p.1 = q.1 := hproper p.1 hpi q.1 hqi hdiff
     rcases p with ⟨pi, ph⟩
     rcases q with ⟨qi, qh⟩
-    simp only [Prod.fst, Prod.snd] at hij hpq ⊢
+    simp only [] at hij hpq ⊢
     subst qi
     simp only [Prod.mk.injEq, true_and]
     exact add_left_cancel hpq
@@ -4774,7 +4778,7 @@ lemma cyclicCosetProgression_succ {b : ℕ} [NeZero b]
   · rintro (⟨i, hi, hx⟩ | ⟨h, hh, rfl⟩)
     · exact ⟨i, by omega, hx⟩
     · refine ⟨length, by omega, ?_⟩
-      convert hh using 1 <;> abel
+      convert hh using 1; abel
 
 /-- A finite ordinary progression `a, a+q, ..., a+q(length-1)`. -/
 def natProgression (a q length : ℕ) : Finset ℕ :=
@@ -4901,7 +4905,7 @@ def zmodQuotientEmbedding (m d : ℕ) : ZMod d →+ ZMod (m * d) :=
       have hdcast : (Int.castAddHom (ZMod (m * d))) (d : ℤ) =
           (d : ZMod (m * d)) := by norm_num
       rw [hdcast]
-      convert ZMod.natCast_self (m * d) using 1 <;> push_cast <;> ring⟩
+      convert ZMod.natCast_self (m * d) using 1; push_cast; ring⟩
 
 @[simp] lemma zmodQuotientEmbedding_natCast (m d q : ℕ) :
     zmodQuotientEmbedding m d (q : ZMod d) =
@@ -5094,7 +5098,7 @@ lemma zmodQuotRemLift_injective
   have hy : y.val % m + (0 : ZMod (m * d)).val % m < m := by
     simpa using Nat.mod_lt y.val hm
   have hsum : x + 0 = y + 0 :=
-    (zmodQuotRemLift_add_eq_iff hm hx hy).mp (by simpa [hxy])
+    (zmodQuotRemLift_add_eq_iff hm hx hy).mp (by simp [hxy])
   simpa using hsum
 
 /-- A finite no-carry set is order-two Freiman-isomorphic to its
@@ -5408,7 +5412,7 @@ lemma ruzsa_subset_sum_card_lower_of_zero_mem
       intro x hx
       have hxle := A.le_max' x hx
       simp [hmax0] at hxle
-      simpa [hxle]
+      simp [hxle]
     have := Finset.card_le_card hAsub
     simp at this
     omega
@@ -5477,7 +5481,7 @@ lemma ruzsa_subset_sum_card_lower
       intro x hx
       have hxle := A.le_max' x hx
       simp [hmax0] at hxle
-      simpa [hxle]
+      simp [hxle]
     have := Finset.card_le_card hAsub
     simp at this
     omega
@@ -5676,7 +5680,7 @@ lemma hall_condition_of_layer_multiplicity
 translates `anchor i + A`.  The returned second coordinates make the
 representatives usable by the fibre bookkeeping below. -/
 lemma exists_injective_sum_representatives_of_hall
-    {ι : Type*} [Fintype ι]
+    {ι : Type*} [Finite ι]
     (A : Finset ℕ) (anchor : ι → ℕ)
     (_hanchor : ∀ i, anchor i ∈ A)
     (hHall : ∀ J : Finset ι,
@@ -5684,6 +5688,7 @@ lemma exists_injective_sum_representatives_of_hall
     ∃ choice : ι → ℕ,
       (∀ i, choice i ∈ A) ∧
       Function.Injective (fun i ↦ anchor i + choice i) := by
+  let := Fintype.ofFinite ι
   classical
   let T : ι → Finset ℕ := fun i ↦ A.image fun b ↦ anchor i + b
   obtain ⟨f, hf, hfT⟩ :=
@@ -7070,7 +7075,7 @@ lemma reordered_hall_average_contradiction
         mul_nonneg_of_nonpos_of_nonpos hcN (by omega)
       have hGZ' : (G : ℤ) ≤ ((s : ℤ) - 2) * M := by
         norm_num only [Nat.cast_one] at hGZ
-        convert hGZ using 1 <;> ring
+        convert hGZ using 1; ring
       by_cases hcG0 : cG ≤ 0
       · have hpG : (0 : ℤ) ≤
             cG * (G - (((s : ℤ) - 2) * M)) :=
@@ -7924,7 +7929,7 @@ lemma coordinateFiber_sub_mem_pairSumDifferenceSubgroup
   have hsum' : (a + p.1, y' + p.2) ∈ X + X := by
     exact Finset.add_mem_add (mem_coordinateFiber.mp hy') hp
   have hmem := same_sum_fiber_sub_mem_pairSumDifferenceSubgroup hsum hsum'
-  convert hmem using 1 <;> simp <;> abel
+  convert hmem using 1; simp
 
 /-- A chosen point of an occupied coordinate fibre. -/
 noncomputable def coordinateFiberRepresentative
@@ -8560,7 +8565,7 @@ lemma intervalIntegrable_freimanArcWeight (α : ℝ) :
 
 /-- Freiman's semicircle averaging lemma with the rational constants used in
 the Erdős 360 partial lift. -/
-lemma exists_dense_freimanArc {ι : Type*} [DecidableEq ι]
+lemma exists_dense_freimanArc {ι : Type*}
     (s : Finset ι) (α : ι → ℝ)
     (hα : ∀ x ∈ s, -Real.pi < α x ∧ α x ≤ Real.pi)
     (hcos : (13 / 20 : ℝ) * s.card < ∑ x ∈ s, Real.cos (α x)) :
@@ -8641,13 +8646,14 @@ lemma exists_dense_freimanArc {ι : Type*} [DecidableEq ι]
   rw [hF, hG] at hintle
   nlinarith
 
-lemma sum_cos_arg_conj_mul_eq_norm {ι : Type*} [DecidableEq ι]
+lemma sum_cos_arg_conj_mul_eq_norm {ι : Type*}
     (s : Finset ι) (z : ι → ℂ)
     (hz : ∀ x ∈ s, ‖z x‖ = 1)
     (hS : (∑ x ∈ s, z x) ≠ 0) :
     (∑ x ∈ s, Real.cos (Complex.arg
       (conj (∑ y ∈ s, z y) * z x))) =
         ‖∑ x ∈ s, z x‖ := by
+  classical
   let S : ℂ := ∑ x ∈ s, z x
   have hS0 : S ≠ 0 := by simpa [S] using hS
   have hSnorm : ‖S‖ ≠ 0 := norm_ne_zero_iff.mpr (by simpa [S] using hS)
@@ -8796,8 +8802,7 @@ lemma two_val_lt_of_stdAddChar_arg_mem_Ico {m : ℕ} [NeZero m]
           simpa [two_mul] using hy)
     have hperiod : toIocMod Real.two_pi_pos (-Real.pi) (x - 2 * Real.pi) =
         toIocMod Real.two_pi_pos (-Real.pi) x := by
-      simpa [two_nsmul] using
-        (toIocMod_sub Real.two_pi_pos (-Real.pi) x)
+      simp
     have hargneg : toIocMod Real.two_pi_pos (-Real.pi) x < 0 := by
       rw [← hperiod, hself]
       nlinarith [Real.pi_pos]
@@ -8806,7 +8811,7 @@ lemma two_val_lt_of_stdAddChar_arg_mem_Ico {m : ℕ} [NeZero m]
 /-- A half-open semicircle of character values becomes the standard
 no-wrap half interval after translation by a point of the set. -/
 lemma exists_translate_two_val_lt_of_arg_mem_halfArc
-    {ι : Type*} [DecidableEq ι] {m : ℕ} [NeZero m]
+    {ι : Type*} {m : ℕ} [NeZero m]
     (C : Finset ι) (hC : C.Nonempty) (r : ι → ZMod m)
     (γ : ℂ) (hγ : γ ≠ 0) (l : ℝ)
     (harc : ∀ x ∈ C,
@@ -9109,7 +9114,7 @@ theorem exists_dense_cyclic_partialLiftCore
       (conj (cyclicFourierCoeff B q)) hcoeff0
       (θ - Real.pi / 2) (by
         intro x hx
-        convert harc x hx using 1 <;> ring_nf)
+        convert harc x hx using 1; ring_nf)
   refine ⟨m, g, w, C, x₀, ?_, ?_, hx₀, hCB, hcard', ?_⟩
   · simpa [m] using htg
   · simpa [m] using hqord
@@ -9179,7 +9184,7 @@ theorem exists_dense_cyclic_smallProductCore
     (hB : B.Nonempty)
     (hsmall : 25 * (B + B).card ≤ 51 * B.card)
     (hsparse : 1000000000 * B.card ≤ t) :
-    ∃ m g : ℕ, ∃ w : (ZMod t)ˣ, ∃ C : Finset (ZMod t),
+    ∃ m g : ℕ, ∃ _w : (ZMod t)ˣ, ∃ C : Finset (ZMod t),
       ∃ D : Finset (ZMod (m * g)), ∃ X : Finset (ℕ × ZMod g),
         t = m * g ∧ 240 ≤ m ∧ C ⊆ B ∧
         33 * B.card ≤ 40 * C.card ∧ 0 ∈ D ∧
@@ -9311,8 +9316,8 @@ lemma cyclicCosetProgression_sub_subset
   apply mem_cyclicCosetProgression_iff.mpr
   refine ⟨i + (L - j), by omega, ?_⟩
   have hsub := H.sub_mem hxi hyj
-  convert hsub using 1 <;>
-    rw [add_nsmul, sub_nsmul d (by omega : j ≤ L)] <;> abel
+  convert hsub using 1;
+    rw [add_nsmul, sub_nsmul d (by omega : j ≤ L)]; abel
 
 /-- The trivial-subgroup specialization of
 `cyclicCosetProgression_sub_subset`. -/
@@ -9378,7 +9383,7 @@ lemma zmodAffineImage_pullback_proper_cyclic_bot
   have h := congrArg (unitMulAddEquiv w) hij
   simp only [map_sub, map_add, map_nsmul, AddEquiv.apply_symm_apply,
     map_zero] at h
-  convert h using 1 <;> abel
+  convert h using 1; abel
 
 /-- Pull containment in a proper subgroup coset back through a unit-affine
 change of coordinates. -/
@@ -9417,7 +9422,7 @@ lemma zmodAffineImage_pullback_properCoset
         simpa [vadd_eq_add] using heq.symm
       rw [heq']
       simpa using hk
-    convert hdiff using 1 <;> simp [e, unitMulAddEquiv] <;> ring
+    convert hdiff using 1; simp [e, unitMulAddEquiv]; ring
   · simp [vadd_eq_add]
 
 /-- A cyclic set which becomes no-wrap after a unit-affine coordinate change
@@ -9908,7 +9913,6 @@ lemma exists_small_modular_multiple
   refine ⟨s, hspos, hsn, w, ?_, ?_⟩
   · dsimp [w]
     rw [hks]
-    push_cast
     rw [show k * (u : ℤ) - j * (q : ℤ) - k * (u : ℤ) =
         -(j * (q : ℤ)) by ring]
     exact Int.emod_eq_zero_of_dvd ⟨-j, by ring⟩
@@ -9959,7 +9963,7 @@ lemma positiveBlockPiece_length (q z v m : ℕ) (side : Fin 2) :
   by_cases hv : v = 0 <;> simp [positiveBlockPiece, hv]
 
 lemma positive_modular_block_cover
-    {q z v m : ℕ} (hq : 0 < q) (hz : z < q)
+    {q z v m : ℕ} (_hq : 0 < q) (hz : z < q)
     (hvm : v * m ≤ q) :
     ∀ t < m, ∃ side : Fin 2,
       q + ((z + v * t) % q) ∈
@@ -10019,7 +10023,7 @@ lemma negativeBlockPiece_length (q z v m : ℕ) (side : Fin 2) :
   by_cases hv : v = 0 <;> simp [negativeBlockPiece, hv]
 
 lemma negative_modular_block_cover
-    {q z v m : ℕ} (hq : 0 < q) (hz : z < q)
+    {q z v m : ℕ} (_hq : 0 < q) (hz : z < q)
     (hvm : v * m ≤ q) :
     ∀ t < m, ∃ side : Fin 2,
       q + ((z + q - v * t) % q) ∈
@@ -10177,7 +10181,7 @@ lemma negative_cyclic_block_relation
   have hsum := hbase.add (hstepNat.mul_left t)
   have htarget : (a + i₀ • d).val % q + t * (q - v) ≡
       a.val + (i₀ + s * t) * d.val [MOD q] := by
-    convert hsum using 1 <;> ring
+    convert hsum using 1; ring
   have hleft : (a + i₀ • d).val % q + q - v * t ≡
       (a + i₀ • d).val % q + t * (q - v) [MOD q] := by
     let : NeZero q := ⟨hq.ne'⟩
@@ -10185,7 +10189,6 @@ lemma negative_cyclic_block_relation
     rw [Nat.cast_sub (htv.trans (Nat.le_add_left q _))]
     push_cast
     rw [Nat.cast_sub hvq]
-    push_cast
     simp
     ring
   rw [cyclic_anchor_val_mod hq hqb]
@@ -10748,10 +10751,10 @@ lemma cyclicCosetProgression_add_start
   constructor
   · rintro ⟨i, hi, hx⟩
     refine ⟨i, hi, ?_⟩
-    convert hx using 1 <;> abel
+    convert hx using 1; abel
   · rintro ⟨i, hi, hx⟩
     refine ⟨i, hi, ?_⟩
-    convert hx using 1 <;> abel
+    convert hx using 1; abel
 
 lemma card_cyclicCosetProgression_add_start
     {b L : ℕ} [NeZero b] (H : AddSubgroup (ZMod b))
@@ -10838,14 +10841,14 @@ lemma dense_core_progression_longProgressionCover
         (⊥ : AddSubgroup (ZMod b)) (f₀ + (-(L • d))) d (2 * L)))
       (12 * L)
     convert cyclicCosetProgression_bot_shifted_longProgressionCover
-      (f₀ + (-(L • d))) d h2L using 1 <;> omega
+      (f₀ + (-(L • d))) d h2L using 1; omega
   have hcover₁ : HasLongProgressionCover (shiftedZmodValues P₁) (12 * L) := by
     change HasLongProgressionCover
       (shiftedZmodValues (cyclicCosetProgression
         (⊥ : AddSubgroup (ZMod b)) (f₁ + (-(L • d))) d (2 * L)))
       (12 * L)
     convert cyclicCosetProgression_bot_shifted_longProgressionCover
-      (f₁ + (-(L • d))) d h2L using 1 <;> omega
+      (f₁ + (-(L • d))) d h2L using 1; omega
   have hcardP : (shiftedZmodValues P₀).card =
       (shiftedZmodValues P₁).card := by
     rw [card_shiftedZmodValues, card_shiftedZmodValues]
@@ -10853,7 +10856,7 @@ lemma dense_core_progression_longProgressionCover
     rw [card_cyclicCosetProgression_add_start,
       card_cyclicCosetProgression_add_start]
   have hunion := hcover₀.union_equal_card hcover₁ hcardP
-  convert hunion.mono_set hBsub using 1 <;> omega
+  convert hunion.mono_set hBsub using 1; omega
 
 /-- Completion after rectification for a general cyclic coset progression.
 The parameter mass is the number `L` of displayed cosets times the subgroup
@@ -10934,7 +10937,7 @@ lemma dense_core_cosetProgression_longProgressionCover
         (f₀ + (-(L • d))) d (2 * L)))
       (12 * (L * Nat.card H))
     convert cyclicCosetProgression_shifted_longProgressionCover_parametric
-      hb hq hqb h2L H hHdiv hmult (f₀ + (-(L • d))) d using 1 <;> ring
+      hb hq hqb h2L H hHdiv hmult (f₀ + (-(L • d))) d using 1; ring
   have hcover₁ : HasLongProgressionCover (shiftedZmodValues P₁)
       (12 * (L * Nat.card H)) := by
     change HasLongProgressionCover
@@ -10942,7 +10945,7 @@ lemma dense_core_cosetProgression_longProgressionCover
         (f₁ + (-(L • d))) d (2 * L)))
       (12 * (L * Nat.card H))
     convert cyclicCosetProgression_shifted_longProgressionCover_parametric
-      hb hq hqb h2L H hHdiv hmult (f₁ + (-(L • d))) d using 1 <;> ring
+      hb hq hqb h2L H hHdiv hmult (f₁ + (-(L • d))) d using 1; ring
   have hcardP : (shiftedZmodValues P₀).card =
       (shiftedZmodValues P₁).card := by
     rw [card_shiftedZmodValues, card_shiftedZmodValues]
@@ -10950,12 +10953,12 @@ lemma dense_core_cosetProgression_longProgressionCover
     rw [card_cyclicCosetProgression_add_start,
       card_cyclicCosetProgression_add_start]
   have hunion := hcover₀.union_equal_card hcover₁ hcardP
-  convert hunion.mono_set hBsub using 1 <;> ring
+  convert hunion.mono_set hBsub using 1; ring
 
 lemma coprime_add_of_dvd_left {M b x : ℕ} (hMb : M ∣ b) :
     Nat.Coprime M (b + x) ↔ Nat.Coprime M x := by
   obtain ⟨k, rfl⟩ := hMb
-  simpa [add_comm, mul_comm] using Nat.coprime_add_mul_left_right M x k
+  simp [add_comm]
 
 lemma card_coprimePart_shiftedZmodValues
     {b M : ℕ} [NeZero b] (hMb : M ∣ b) (R : Finset (ZMod b)) :
@@ -11023,11 +11026,13 @@ lemma zmod_castHom_eq_zero_iff_val_dvd {q d : ℕ} [NeZero q]
 /-- If a surjective quotient has exactly the translation stabilizer of `S`
 as its kernel, the image of `S` is aperiodic. -/
 lemma image_stabilizer_eq_bot {G H : Type*}
-    [AddCommGroup G] [DecidableEq G] [Fintype G]
-    [AddCommGroup H] [DecidableEq H] [Fintype H]
+    [AddCommGroup G] [DecidableEq G] [Finite G]
+    [AddCommGroup H] [DecidableEq H] [Finite H]
     (f : G →+ H) (hf : Function.Surjective f) (S : Finset G)
     (hker : ∀ x, f x = 0 ↔ x ∈ Erdos587.finsetAddStabilizer S) :
     Erdos587.finsetAddStabilizer (S.image f) = ⊥ := by
+  let := Fintype.ofFinite G
+  let := Fintype.ofFinite H
   apply eq_bot_iff.mpr
   intro y hy
   obtain ⟨x, rfl⟩ := hf y
@@ -11058,7 +11063,7 @@ lemma image_stabilizer_eq_bot {G H : Type*}
     exact Finset.eq_of_subset_of_card_le hxsub (by
       rw [Erdos587.card_addTranslate])
   have hxker : f x = 0 := (hker x).mpr hxstab
-  simpa [hxker]
+  simp [hxker]
 
 /-- Under the same kernel hypothesis, a proper set has proper image. -/
 lemma image_ne_univ_of_stabilizer_kernel {G H : Type*}
@@ -11487,7 +11492,7 @@ lemma normalizedCosetFiber_nonempty_of_diverse_used
       rw [List.length_map]
       rw [← List.toFinset_card_of_nodup (U.nodup_toList.filter _)]
       rw [List.toFinset_filter]
-      simp [Function.comp_def]
+      simp
     rw [hlen]
     exact (hdiverse d hd (by simpa [q] using hdq)).trans hcard
   have hallVal : Erdos587.listSubsetSums
@@ -11782,7 +11787,7 @@ lemma card_liftFinsetToClosure
     Fintype.ofInjective (fun x : H ↦ x.1) Subtype.val_injective
   have himage : (liftFinsetToClosure X).image (fun x : H ↦ x.1) = X := by
     ext x
-    simp only [Finset.mem_image, mem_liftFinsetToClosure]
+    simp only [Finset.mem_image]
     constructor
     · rintro ⟨y, hy, rfl⟩
       exact mem_liftFinsetToClosure.mp hy
@@ -11873,11 +11878,12 @@ lemma exists_translationNew_large_of_normalizedCosetFiber
 points as the remaining set, one remaining shift grows it by at least
 the factor `3/2`. -/
 lemma exists_three_halves_growth
-    {G : Type*} [AddCommGroup G] [Fintype G] [DecidableEq G]
+    {G : Type*} [AddCommGroup G] [Finite G] [DecidableEq G]
     {T X : Finset G} (hT : T.Nonempty) (_hX : X.Nonempty)
     (hsmall : 2 * T.card < X.card) :
     ∃ x ∈ X,
       3 * T.card ≤ 2 * (T ∪ Erdos587.addTranslate x T).card := by
+  let := Fintype.ofFinite G
   classical
   let e := T.card / 2
   let P := almostPeriods T e
@@ -11916,7 +11922,7 @@ lemma exists_three_halves_growth
 
 /-- A growth phase is witnessed by a coset fibre no larger than one quarter
 of the remaining residue set. -/
-def IsModularGrowthPhase {b : ℕ} [NeZero b] (hb : 0 < b)
+def IsModularGrowthPhase {b : ℕ} [NeZero b] (_hb : 0 < b)
     (R₀ R E : Finset (ZMod b)) : Prop :=
   ∃ u : ZMod b,
     4 * (normalizedCosetFiber (AddSubgroup.closure (R : Set (ZMod b)))
@@ -12118,7 +12124,7 @@ lemma modularPhasePick_internal_growth
   have hxSpec := (Classical.choose_spec hex).2
   have hpick : modularPhasePick hb R₀ E hE hdiverse R = x.1 := by
     simp only [modularPhasePick, dif_pos hR, dif_pos hsub, dif_pos hwide,
-      dif_pos hg, hex, x]
+      dif_pos hg, x]
   have hsubtype :
       (⟨modularPhasePick hb R₀ E hE hdiverse R,
         AddSubgroup.subset_closure
@@ -12349,7 +12355,7 @@ lemma modularInternalCard_mono_of_modulus_eq
 
 lemma elementsInSubgroup_insert
     {G : Type*} [AddCommGroup G] [Fintype G] [DecidableEq G]
-    (H : AddSubgroup G) (A : Finset G) (x : H) (hx : x.1 ∉ A) :
+    (H : AddSubgroup G) (A : Finset G) (x : H) (_hx : x.1 ∉ A) :
     elementsInSubgroup H (insert x.1 A) =
       insert x (elementsInSubgroup H A) := by
   ext y
@@ -12653,10 +12659,11 @@ theorem card_modularGrowthIndices_le
     hiData.2 hjData.2 (hfi.trans hfj.symm) (hfj.trans hfq.symm)
 
 lemma card_union_addTranslate_eq
-    {G : Type*} [AddCommGroup G] [Fintype G] [DecidableEq G]
+    {G : Type*} [AddCommGroup G] [Finite G] [DecidableEq G]
     (S : Finset G) (x : G) :
     (S ∪ Erdos587.addTranslate x S).card =
       S.card + (Erdos360.translationNew S x).card := by
+  let := Fintype.ofFinite G
   have hsdiff := Finset.card_sdiff_add_card
     (Erdos587.addTranslate x S) S
   dsimp only [Erdos360.translationNew] at hsdiff ⊢
@@ -12892,7 +12899,7 @@ lemma mem_divideMultiples_iff {Y : Finset ℕ} {e y : ℕ} (he : 0 < e) :
     refine ⟨e * y, Finset.mem_filter.mpr ⟨hy, dvd_mul_right e y⟩, ?_⟩
     exact Nat.mul_div_right y he
 
-lemma card_divideMultiples {Y : Finset ℕ} {e : ℕ} (he : 0 < e) :
+lemma card_divideMultiples {Y : Finset ℕ} {e : ℕ} (_he : 0 < e) :
     (divideMultiples Y e).card = (Y.filter fun y => e ∣ y).card := by
   classical
   rw [divideMultiples, Finset.card_image_iff]
@@ -13010,8 +13017,7 @@ theorem exists_divisorExtractionAux
               simp only [List.length_cons, List.sum_cons]
               ring
         · intro a ha hbound
-          convert hdiverse a ha (by simpa [mul_assoc] using hbound) using 1 <;>
-            simp [mul_assoc]
+          exact hdiverse a ha (by simpa [mul_assoc] using hbound)
       · refine ⟨1, Y, [], by omega, by simp, by simp, ?_, by simp, by simp, ?_⟩
         · simpa using hdB
         · intro e he hde
@@ -13315,7 +13321,6 @@ theorem exists_orderedDivisorExtraction
 /-! ### A finite simultaneous-balancing lemma -/
 
 open Erdos697.Bernoulli in
-
 lemma sum_le_bound_add_sum_subset_card_sub_one
     {A C : Finset ℕ} {g : ℕ → ℕ} {M : ℕ}
     (hCA : C ⊆ A) (hcard : C.card = A.card - 1)
@@ -13387,7 +13392,7 @@ theorem layerHall_uniform_fiber_lower
     intro i j hij
     apply Sum.inl.inj
     apply hinj
-    simpa [anchor, layerHallAnchor, baseChoice, hij]
+    simp [anchor, layerHallAnchor, baseChoice, hij]
   let C : Finset ℕ := Finset.univ.image baseChoice
   have hCA : C ⊆ A := by
     intro a ha
@@ -13637,12 +13642,13 @@ theorem exists_small_largestFiber_coset_of_four_le_R
 /-- In the comparable-size regime, failure of the `3|A|/2` sumset bound
 puts the larger summand in a coset of a subgroup smaller than `3|A|/2`. -/
 lemma small_coset_or_comparable_pair_sum_lower
-    {G : Type*} [AddCommGroup G] [Fintype G] [DecidableEq G]
+    {G : Type*} [AddCommGroup G] [Finite G] [DecidableEq G]
     {A B : Finset G} (hA : A.Nonempty) (hB : B.Nonempty)
-    (hBA : B.card ≤ A.card) (hbalance : 3 * A.card ≤ 4 * B.card) :
+    (_hBA : B.card ≤ A.card) (hbalance : 3 * A.card ≤ 4 * B.card) :
     (∃ H : AddSubgroup G,
       ContainedInAddCoset H A ∧ 2 * Nat.card H < 3 * A.card) ∨
       3 * A.card ≤ 2 * (A + B).card := by
+  let := Fintype.ofFinite G
   by_cases hlower : 3 * A.card ≤ 2 * (A + B).card
   · exact Or.inr hlower
   · left
@@ -13657,12 +13663,13 @@ lemma small_coset_or_comparable_pair_sum_lower
 /-- In the imbalanced-size regime, failure of the `2|B|` sumset bound
 puts the larger summand in a coset of a subgroup smaller than `3|A|/2`. -/
 lemma small_coset_or_imbalanced_pair_sum_lower
-    {G : Type*} [AddCommGroup G] [Fintype G] [DecidableEq G]
+    {G : Type*} [AddCommGroup G] [Finite G] [DecidableEq G]
     {A B : Finset G} (hA : A.Nonempty) (hB : B.Nonempty)
-    (hBA : B.card ≤ A.card) (hbalance : 4 * B.card < 3 * A.card) :
+    (_hBA : B.card ≤ A.card) (hbalance : 4 * B.card < 3 * A.card) :
     (∃ H : AddSubgroup G,
       ContainedInAddCoset H A ∧ 2 * Nat.card H < 3 * A.card) ∨
       2 * B.card ≤ (A + B).card := by
+  let := Fintype.ofFinite G
   by_cases hlower : 2 * B.card ≤ (A + B).card
   · exact Or.inr hlower
   · left
@@ -13678,12 +13685,13 @@ def largestPairWeight (M b : ℕ) : ℕ :=
   if 3 * M ≤ 4 * b then 3 * M else max (2 * M) (4 * b)
 
 lemma small_coset_or_largestPairWeight_le
-    {G : Type*} [AddCommGroup G] [Fintype G] [DecidableEq G]
+    {G : Type*} [AddCommGroup G] [Finite G] [DecidableEq G]
     {A B : Finset G} (hA : A.Nonempty) (hB : B.Nonempty)
     (hBA : B.card ≤ A.card) :
     (∃ H : AddSubgroup G,
       ContainedInAddCoset H A ∧ 2 * Nat.card H < 3 * A.card) ∨
       largestPairWeight A.card B.card ≤ 2 * (A + B).card := by
+  let := Fintype.ofFinite G
   by_cases hbalance : 3 * A.card ≤ 4 * B.card
   · rcases small_coset_or_comparable_pair_sum_lower hA hB hBA hbalance with
       hbad | hgood
@@ -13832,7 +13840,7 @@ theorem exists_weighted_intervalPairSelection
           rcases hp with rfl | rfl | rfl | rfl | rfl <;> omega
         · rw [hmax] at hbase
           simp only [pairWeight_self] at hbase
-          simp [P, Finset.sum_range_succ]
+          simp [Finset.sum_range_succ]
           omega
       · have hmid' : pairWeight (w 0) (w 2) < pairWeight (w 1) (w 1) :=
           Nat.lt_of_not_ge hmid
@@ -13850,7 +13858,7 @@ theorem exists_weighted_intervalPairSelection
           rcases hp with rfl | rfl | rfl | rfl | rfl <;> omega
         · rw [hmax] at hbase
           simp only [pairWeight_self] at hbase
-          simp [P, Finset.sum_range_succ]
+          simp [Finset.sum_range_succ]
           omega
   | succ n hn ih =>
       obtain ⟨P, hPcard, hPbound, hPinj, hPweight⟩ := ih
@@ -13926,12 +13934,13 @@ theorem exists_weighted_intervalPairSelection
         omega
 
 lemma dense_coset_or_pairWeight_le
-    {G : Type*} [AddCommGroup G] [Fintype G] [DecidableEq G]
+    {G : Type*} [AddCommGroup G] [Finite G] [DecidableEq G]
     {A B : Finset G} (hA : A.Nonempty) (hB : B.Nonempty) :
     (∃ H : AddSubgroup G,
         (ContainedInAddCoset H A ∧ 2 * Nat.card H < 3 * A.card) ∨
         (ContainedInAddCoset H B ∧ 2 * Nat.card H < 3 * B.card)) ∨
       pairWeight A.card B.card ≤ 2 * (A + B).card := by
+  let := Fintype.ofFinite G
   rcases le_total B.card A.card with hBA | hAB
   · rcases small_coset_or_largestPairWeight_le hA hB hBA with hbad | hgood
     · exact Or.inl ⟨hbad.choose, Or.inl hbad.choose_spec⟩
@@ -14756,7 +14765,7 @@ theorem exists_dense_fiber_coset_of_oneHole_support
       calc
         ∑ i ∈ Finset.range (s + 1), w i =
             ∑ i ∈ Finset.range ((h + 1) + (s - h)), w i := by
-          congr 2 <;> omega
+          congr 2; omega
         _ = (∑ i ∈ Finset.range (h + 1), w i) +
               ∑ i ∈ Finset.range (s - h), w ((h + 1) + i) :=
           Finset.sum_range_add w (h + 1) (s - h)
@@ -15221,7 +15230,7 @@ of the filtered prime product and one Bertrand prime.  It is coprime to the
 target, lies within a fixed factor of `M * (h / φ(M) + 1)`, and has totient
 at most a fixed multiple of `h`. -/
 lemma exists_tuned_modulus {n h y : ℕ}
-    (hn : 0 < n) (hh : 0 < h)
+    (hn : 0 < n) (_hh : 0 < h)
     (hphi : (missingPrimeProduct n y).totient ≤ h)
     (hy : y < tuningBase n h y)
     (hpow : n < tuningBase n h y ^ 5) :
@@ -15974,7 +15983,7 @@ lemma analytic_upper_main_term_bound
     {N R L LL H h d Vy Vz B C T : ℝ}
     (hN : 0 ≤ N) (hR : 0 ≤ R) (hL : 0 < L) (hLL : 0 < LL)
     (hH : 0 < H) (hh : 0 < h) (hd : 0 < d)
-    (hVy0 : 0 ≤ Vy) (hVz0 : 0 ≤ Vz) (hB : 0 ≤ B)
+    (_hVy0 : 0 ≤ Vy) (hVz0 : 0 ≤ Vz) (hB : 0 ≤ B)
     (hC : 0 ≤ C) (hT : 0 ≤ T)
     (hid : N * R ^ 3 / (L * LL ^ 2 * H ^ 2) = H)
     (hHh : H ≤ h) (hdinv : d⁻¹ ≤ Vz / h)

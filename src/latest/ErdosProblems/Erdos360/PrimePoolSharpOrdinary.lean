@@ -193,7 +193,7 @@ theorem exists_primePoolOrdinaryGrowthCertificate_of_sharp_numerics
     intro t htPivot
     have htI := Finset.mem_Ico.mp (hpivotsRange htPivot)
     have htpos : 0 < t := (Nat.zero_lt_succ (y / d)).trans_le htI.1
-    letI : NeZero t := ⟨htpos.ne'⟩
+    let : NeZero t := ⟨htpos.ne'⟩
     let R₀ := ordinaryResidues t seed
     have hwidth : (2 * y / d + 1) - lo ≤ t := by
       have htwo := Nat.add_div_le_div_add_div_add_one y y d

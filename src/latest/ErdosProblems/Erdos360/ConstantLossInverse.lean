@@ -234,13 +234,13 @@ theorem almostPeriod_longProgressionCover_polynomial_trichotomy_of_sparse_localD
       have hPnonempty : (almostPeriods S D).Nonempty :=
         ⟨0, zero_mem_almostPeriods S D⟩
       have hcover := hstruct.longProgressionCover hPnonempty
-      convert hcover using 1 <;> ring
+      convert hcover using 1; ring
   · right; left
     have hshift : i - 2 + 3 = i + 1 := by omega
     have hpoly := dyadic_numeric_bound_one_point_zero_two
       (n := i - 2) (q := q) (P := (almostPeriods S D).card)
       (S := S.card) (by simpa [hshift] using hqpow) hnumeric
-    simpa [q] using hpoly
+    simpa only [q] using hpoly
 
 /-- Start-at-five form of the constant-loss polynomial trichotomy.  The
 extra hypothesis supplies five available dyadic levels.  It lets the local
@@ -347,6 +347,6 @@ theorem almostPeriod_cyclicProgressionBound_polynomial_trichotomy_of_sparse_loca
     have hpoly := dyadic_numeric_bound_one_point_zero_two_six
       (n := i - 5) (q := q) (P := (almostPeriods S D).card)
       (S := S.card) (by simpa [hshift] using hqpow) hnumeric
-    simpa [q] using hpoly
+    simpa only [q] using hpoly
 
 end Erdos360

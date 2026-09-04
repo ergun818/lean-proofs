@@ -78,7 +78,7 @@ private lemma sum_prime_inv_sq_le_half
       simp only [Finset.mem_singleton]
       by_contra hp2
       have : p ∈ t := Finset.mem_erase.mpr ⟨hp2, hp⟩
-      simpa [ht] using this
+      simp [ht] at this
     calc
       (∑ p ∈ s, (((p : ℝ) ^ 2)⁻¹)) ≤
           ∑ p ∈ ({2} : Finset ℕ), (((p : ℝ) ^ 2)⁻¹) :=
@@ -151,7 +151,6 @@ private lemma sum_prime_inv_sq_le_half
         _ ≤ 1 / 4 := by
           rw [div_le_div_iff₀ (by positivity : (0 : ℝ) < 4 * (K + 1))
             (by norm_num : (0 : ℝ) < 4)]
-          push_cast
           nlinarith
     by_cases htwo : 2 ∈ s
     · rw [← Finset.sum_erase_add _ _ htwo]
@@ -361,7 +360,7 @@ theorem two_fifths_ratio_y_div_log_le_primeStructuredTestSet_card
         n.primeFactors.card ≤
       (1 / 100 : ℝ) * (((n : ℝ) / Nat.totient n) * (y : ℝ) /
         Real.log (y : ℝ)) := by
-    convert herror using 1 <;> ring
+    convert herror using 1; ring
   linarith
 
 /-- Exact count interface for the smaller controlled cap. -/

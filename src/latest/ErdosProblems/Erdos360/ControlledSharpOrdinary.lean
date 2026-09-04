@@ -43,8 +43,7 @@ theorem controlledPrimeOrdinarySourceCompletion_of_sharp_post
         y U z ell d) :
     CFPControlledPrimeOrdinarySourceCompletion
       n colors y U B L M ell (primeStructuredBelowTarget n y U hy) := by
-  intro c i W d Z hW hWcard hd hdB hscale hloss hdiverse hdn hdU
-  intro P hPlower hPcard hPdiverse
+  intro c i W d Z hW hWcard hd hdB hscale hloss hdiverse hdn hdU P hPlower hPcard hPdiverse
   have hZupper : Z.card ≤ M := by
     simpa [hWcard] using card_le_of_positive_scale_subset hd hscale
   have hZlower : Q ≤ Z.card :=

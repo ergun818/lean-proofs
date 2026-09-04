@@ -50,7 +50,7 @@ def primeStructuredTestSet (n y U : ℕ) : Finset ℕ :=
 
 /-- A retained prime quotient belongs to the exact quotient fibre. -/
 lemma primeStructuredQuotients_subset_targetCoprime
-    {n h X : ℕ} (hn : n ≠ 0) (hh : 0 < h)
+    {n h X : ℕ} (hn : n ≠ 0) (_hh : 0 < h)
     (hcut : primeAt (h - 1) ≤ X) :
     primeStructuredQuotients n X ⊆
       targetCoprimeDyadicQuotients n (primeAt (h - 1)) X := by
@@ -96,7 +96,7 @@ lemma primeStructuredQuotients_subset_targetCoprime
 /-- Source-facing factorization: if `B ≤ y/U`, every prime quotient in the
 test set is strictly larger than `B`. -/
 lemma primeStructuredTestSet_factorization_above
-    {n y U B a : ℕ} (hU : 0 < U) (hB : B ≤ y / U)
+    {n y U B a : ℕ} (_hU : 0 < U) (hB : B ≤ y / U)
     (ha : a ∈ primeStructuredTestSet n y U) :
     ∃ u q : ℕ, u ∣ n ∧ q.Prime ∧ B < q ∧ a = u * q := by
   obtain ⟨u, hun, hn, huU, q, hyq, _hq2, hp, _hpn, rfl⟩ :=
@@ -226,7 +226,7 @@ theorem card_primeStructuredTestSet (n y U : ℕ) :
 /-- Every retained quotient is coprime to the complete initial primorial.
 This is the parity invariant needed after common-divisor extraction. -/
 lemma primeStructured_quotient_coprime_primorial
-    {n h X q : ℕ} (hh : 0 < h)
+    {n h X q : ℕ} (_hh : 0 < h)
     (hcut : primeAt (h - 1) ≤ X)
     (hq : q ∈ primeStructuredQuotients n X) :
     Nat.Coprime q (primorial (primeAt (h - 1))) := by
@@ -374,7 +374,7 @@ private lemma quarter_y_log_inv_le_dyadic_main
         (1 / 2 : ℝ) *
           (((y : ℝ) / (2 * u : ℝ)) / Real.log (y : ℝ)) := by
             field_simp [show (u : ℝ) ≠ 0 by exact_mod_cast hu.ne']
-            <;> ring
+          ; ring
     _ ≤ (1 / 2 : ℝ) * (((y / u : ℕ) : ℝ) /
         Real.log ((y / u : ℕ) : ℝ)) :=
       mul_le_mul_of_nonneg_left hratio (by norm_num)
@@ -598,7 +598,7 @@ lemma sum_large_divisors_inv_le (n U : ℕ) :
         (by exact_mod_cast Finset.card_filter_le n.divisors (fun u ↦ U < u))
         (by positivity)
 
-lemma sum_divisors_inv_eq_bounded_add_large {n U : ℕ} (hn : n ≠ 0) :
+lemma sum_divisors_inv_eq_bounded_add_large {n U : ℕ} (_hn : n ≠ 0) :
     (∑ u ∈ n.divisors, (u : ℝ)⁻¹) =
       (∑ u ∈ boundedTargetDivisors n U, (u : ℝ)⁻¹) +
         ∑ u ∈ n.divisors.filter (fun u ↦ U < u), (u : ℝ)⁻¹ := by

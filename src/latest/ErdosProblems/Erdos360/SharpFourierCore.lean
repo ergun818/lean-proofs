@@ -207,7 +207,7 @@ open scoped Interval
 
 /-- Freiman's semicircle averaging argument at the sharp `7/10` threshold. -/
 lemma exists_dense_freimanArc_seventeen_twentieths
-    {ι : Type*} [DecidableEq ι]
+    {ι : Type*}
     (s : Finset ι) (α : ι → ℝ)
     (hα : ∀ x ∈ s, -Real.pi < α x ∧ α x ≤ Real.pi)
     (hcos : (7 / 10 : ℝ) * s.card < ∑ x ∈ s, Real.cos (α x)) :
@@ -278,7 +278,7 @@ lemma exists_dense_freimanArc_seventeen_twentieths
       _ = (s.card + ∑ x ∈ s, Real.cos (α x)) / 2 := by
         simp_rw [add_div]
         rw [Finset.sum_add_distrib]
-        simp
+        simp only [Finset.sum_const, nsmul_eq_mul]
         rw [Finset.sum_div]
         ring
   have hG : (∫ θ in -(Real.pi / 2)..Real.pi / 2, G θ) =
@@ -346,7 +346,7 @@ theorem exists_dense_cyclic_partialLiftCore_seventeen_twentieths
   let m := addOrderOf q
   have hmpos : 0 < m := by exact addOrderOf_pos q
   have hm : NeZero m := ⟨hmpos.ne'⟩
-  letI : NeZero m := hm
+  let : NeZero m := hm
   obtain ⟨θ, hθ, hcard⟩ :=
     exists_dense_cyclicFourierArc_seventeen_twentieths B q hqcoeff
   let C : Finset (ZMod t) := B.filter fun x ↦ freimanArcMember
@@ -400,7 +400,7 @@ theorem exists_dense_cyclic_partialLiftCore_seventeen_twentieths
       (conj (cyclicFourierCoeff B q)) hcoeff0
       (θ - Real.pi / 2) (by
         intro x hx
-        convert harc x hx using 1 <;> ring)
+        convert harc x hx using 1; ring)
   refine ⟨m, g, w, C, x₀, ?_, ?_, hx₀, hCB, hcard', ?_⟩
   · simpa [m] using htg
   · simpa [m] using hqord
@@ -425,7 +425,7 @@ theorem exists_dense_cyclic_noCarryCore_seventeen_twentieths
     exists_dense_cyclic_partialLiftCore_seventeen_twentieths
       B hB hsmall hsparse
   have hmpos : 0 < m := by omega
-  letI : NeZero m := ⟨hmpos.ne'⟩
+  let : NeZero m := ⟨hmpos.ne'⟩
   let c : ZMod t := -((w : ZMod t) * x₀)
   let D := zmodAffineImage c (w : ZMod t) C
   have hDzero : 0 ∈ D := by
@@ -486,7 +486,7 @@ theorem exists_dense_cyclic_smallProductCore_twelve_fifths
   have hg : 0 < g := by
     rw [htg] at ht
     exact Nat.pos_of_mul_pos_left ht
-  letI : NeZero g := ⟨hg.ne'⟩
+  let : NeZero g := ⟨hg.ne'⟩
   subst t
   let X := zmodQuotRemImage m g E
   have hnowrap : ∀ x ∈ E, ∀ y ∈ E,

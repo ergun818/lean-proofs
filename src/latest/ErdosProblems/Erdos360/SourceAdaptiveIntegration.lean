@@ -506,7 +506,7 @@ theorem sourceAdaptive_modular_phase_machine
     (hsatTarget : ∀ i < k,
       satTarget ≤ sourceAdaptiveModulus hb R₀ E hE hdiverse Q i *
         sat (sourceAdaptiveModulus hb R₀ E hE hdiverse Q i))
-    (hgrowthBudget :
+    (_hgrowthBudget :
       (Nat.log 2 dMax + 1) *
           (2 * (Nat.log 2 b + 1) + (Q / L + 1)) ≤ k)
     (hunsatTarget : unsatTarget ≤ D *
@@ -583,7 +583,7 @@ theorem sourceAdaptive_modular_phase_machine_cfp
     (hsatTarget : ∀ i < k,
       satTarget ≤ sourceAdaptiveModulus hb R₀ E hE hdiverse Q i *
         sat (sourceAdaptiveModulus hb R₀ E hE hdiverse Q i))
-    (hgrowthBudget :
+    (_hgrowthBudget :
       (Nat.log 2 dMax + 1) *
           (2 * (Nat.log 2 b + 1) + (Q / L + 1)) ≤ k)
     (hunsatTarget : unsatTarget ≤ D *
@@ -693,7 +693,7 @@ theorem sourceAdaptive_unsaturated_increment_of_normalizedFiberLossConditions
       let R := sourceAdaptiveRemainder hb R₀ E hE hdiverse phaseQ i
       let H := AddSubgroup.closure (R : Set (ZMod b))
       ZMod (Nat.card H) ≃+ H)
-    (coordinateBase : ∀ i (hi : i < k),
+    (coordinateBase : ∀ i (_hi : i < k),
       IsSourceAdaptiveUnsaturatedStep hb R₀ E hE hdiverse phaseQ sat i → ℕ)
     (hconditions : ∀ i (hi : i < k)
       (hu : IsSourceAdaptiveUnsaturatedStep

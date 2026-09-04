@@ -133,7 +133,7 @@ lemma controlledPrime_scalarRooms_of_growth
     (hstrong : 4 * controlledPrimeEll * y * controlledPrimeU n ≤ n)
     (hprobability :
       (4 : ℝ) * (controlledPrimeClassCapTwelve n y + 1) * (2 * y + 1) *
-        Real.exp (- ((controlledPrimeL y -
+        Real.exp (-((controlledPrimeL y -
             (8 * controlledPrimeEll - 1) : ℕ) : ℝ) /
           (1024 * (controlledPrimeEll : ℝ) ^ 2)) < 1) :
     ControlledPrimeScalarPostRooms n y := by
@@ -434,7 +434,7 @@ lemma eventually_controlledPrime_probability_small :
     ∀ᶠ n : ℕ in atTop,
       let y := initialLowerY n (lowerColorCount 1 n)
       (4 : ℝ) * (controlledPrimeClassCapTwelve n y + 1) * (2 * y + 1) *
-        Real.exp (- ((controlledPrimeL y -
+        Real.exp (-((controlledPrimeL y -
             (8 * controlledPrimeEll - 1) : ℕ) : ℝ) /
           (1024 * (controlledPrimeEll : ℝ) ^ 2)) < 1 := by
   let p : ℕ → ℝ := fun n ↦ Real.rpow (n : ℝ) (3 / 20 : ℝ)
@@ -488,11 +488,11 @@ lemma eventually_controlledPrime_probability_small :
         Real.rpow (Real.rpow (n : ℝ) (3 / 5 : ℝ))
           (1 / 4 : ℝ) := by
       dsimp [p]
-      convert Real.rpow_mul hnR.le (3 / 5 : ℝ) (1 / 4 : ℝ) using 1 <;>
+      convert Real.rpow_mul hnR.le (3 / 5 : ℝ) (1 / 4 : ℝ) using 1;
         norm_num
     rw [hpow]
     exact hquarter.trans (rpow_one_fourth_le_fourthRootCeil y)
-  have hexponent : Real.exp (- ((controlledPrimeL y -
+  have hexponent : Real.exp (-((controlledPrimeL y -
           (8 * controlledPrimeEll - 1) : ℕ) : ℝ) /
         (1024 * (controlledPrimeEll : ℝ) ^ 2)) ≤
       Real.exp (-(x n)) := by
@@ -550,15 +550,14 @@ lemma eventually_controlledPrime_probability_small :
       (show (1 : ℝ) ≤ n by exact_mod_cast hnOne)
       (by norm_num : (2 : ℝ) ≤ 21 / 10)
     have hsquare : (n : ℝ) ^ 2 = Real.rpow (n : ℝ) 2 := by
-      simpa using (Real.rpow_natCast (n : ℝ) 2).symm
+      simp
     have hp14 : (p n) ^ 14 = Real.rpow (n : ℝ) (21 / 10 : ℝ) := by
       dsimp [p]
       calc
         (Real.rpow (n : ℝ) (3 / 20 : ℝ)) ^ 14 =
             Real.rpow (Real.rpow (n : ℝ) (3 / 20 : ℝ))
               (14 : ℝ) := by
-                simpa using (Real.rpow_natCast
-                  (Real.rpow (n : ℝ) (3 / 20 : ℝ)) 14).symm
+                simp
         _ = Real.rpow (n : ℝ) ((3 / 20 : ℝ) * 14) :=
           (Real.rpow_mul hnR.le _ _).symm
         _ = Real.rpow (n : ℝ) (21 / 10 : ℝ) := by norm_num
@@ -569,7 +568,7 @@ lemma eventually_controlledPrime_probability_small :
     field_simp [a]
   have hmajorant :
       (4 : ℝ) * (M + 1) * (2 * y + 1) *
-          Real.exp (- ((controlledPrimeL y -
+          Real.exp (-((controlledPrimeL y -
               (8 * controlledPrimeEll - 1) : ℕ) : ℝ) /
             (1024 * (controlledPrimeEll : ℝ) ^ 2)) ≤
         (192 * a ^ 14) *
@@ -577,7 +576,7 @@ lemma eventually_controlledPrime_probability_small :
     have hexpNonneg : 0 ≤ Real.exp (-(x n)) := (Real.exp_pos _).le
     calc
       (4 : ℝ) * (M + 1) * (2 * y + 1) *
-          Real.exp (- ((controlledPrimeL y -
+          Real.exp (-((controlledPrimeL y -
               (8 * controlledPrimeEll - 1) : ℕ) : ℝ) /
             (1024 * (controlledPrimeEll : ℝ) ^ 2)) ≤
           (4 : ℝ) * (M + 1) * (2 * y + 1) *

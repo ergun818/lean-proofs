@@ -59,7 +59,8 @@ lemma adjacent_of_progressionTernaryGenerates
     rw [hgcd] at hdiv
     exact Nat.eq_one_of_dvd_one hdiv
   refine ⟨p, ?_⟩
-  convert hgen using 1 <;> omega
+  convert hgen using 1
+  omega
 
 /-- The three-point base case of the structured-set induction. -/
 lemma progressionTernaryGenerates_of_card_eq_three
@@ -114,8 +115,7 @@ lemma progressionTernaryGenerates_of_card_eq_three
       have hgsub : Finset.univ.image g ⊆ A + A := by
         intro x hx
         obtain ⟨i, -, rfl⟩ := Finset.mem_image.mp hx
-        fin_cases i <;> simp only [g, Matrix.cons_val_zero,
-          Matrix.cons_val_one, Matrix.head_cons, Matrix.tail_cons]
+        fin_cases i <;> simp only [g]
         · exact Finset.mem_add.mpr ⟨a, haA, a, haA, rfl⟩
         · exact Finset.mem_add.mpr ⟨a, haA, b, hbA, rfl⟩
         · exact Finset.mem_add.mpr ⟨a, haA, m, hmA, rfl⟩
@@ -167,8 +167,7 @@ lemma progressionTernaryGenerates_of_card_eq_three
       have hgsub : Finset.univ.image g ⊆ A + A := by
         intro x hx
         obtain ⟨i, -, rfl⟩ := Finset.mem_image.mp hx
-        fin_cases i <;> simp only [g, Matrix.cons_val_zero,
-          Matrix.cons_val_one, Matrix.head_cons, Matrix.tail_cons]
+        fin_cases i <;> simp only [g]
         · exact Finset.mem_add.mpr ⟨a, haA, a, haA, rfl⟩
         · exact Finset.mem_add.mpr ⟨a, haA, b, hbA, rfl⟩
         · exact Finset.mem_add.mpr ⟨a, haA, m, hmA, rfl⟩
@@ -261,7 +260,7 @@ theorem progressionTernaryGenerates_of_three_card_sub_four
           refine ⟨p, q, hpq, ?_⟩
           rw [show A = insert m B by exact (Finset.insert_erase hmA).symm]
           exact ternaryGenerates_insert_of_relation hgen ha hu hv huv.symm
-        · push_neg at hcollision
+        · push Not at hcollision
           let T := B.image fun x ↦ m + x
           have hdis : Disjoint (B + B) T := by
             rw [Finset.disjoint_left]

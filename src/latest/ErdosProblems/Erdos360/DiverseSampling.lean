@@ -9,7 +9,7 @@ open Erdos697.Bernoulli
 noncomputable section
 
 theorem exists_avoiding_weighted_bad
-    {ι δ : Type*} [DecidableEq ι] [DecidableEq δ]
+    {ι δ : Type*} [DecidableEq ι]
     (s : Finset ι) (D : Finset δ) (p : ι → ℝ)
     (hp0 : ∀ i ∈ s, 0 ≤ p i) (hp1 : ∀ i ∈ s, p i ≤ 1)
     (bad : δ → Finset ι → Prop) [DecidableRel bad]
@@ -66,7 +66,7 @@ theorem exists_avoiding_weighted_bad
 
 theorem sum_pow_inter_card_mul_weight
     {ι : Type*} [DecidableEq ι]
-    (s X : Finset ι) (p : ι → ℝ) (a : ℝ) (hX : X ⊆ s) :
+    (s X : Finset ι) (p : ι → ℝ) (a : ℝ) (_ : X ⊆ s) :
     (∑ T ∈ s.powerset,
         a ^ (T ∩ X).card * weight s p T) =
       ∏ i ∈ s, ((1 - p i) + p i * (if i ∈ X then a else 1)) := by
@@ -301,7 +301,9 @@ lemma half_inter_low_weight_le
     (∑ T ∈ s.powerset.filter (fun T ↦ (T ∩ X).card < k / 4),
         weight s (fun _ ↦ (1 / 2 : ℝ)) T)
         ≤ Real.exp (-(X.card : ℝ) / 24) := by
-          convert htail using 1 <;> norm_num <;> ring
+          convert htail using 1
+          norm_num
+          ring
     _ ≤ Real.exp (-(k : ℝ) / 24) := by
       apply Real.exp_le_exp.mpr
       linarith

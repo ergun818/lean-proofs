@@ -937,7 +937,7 @@ theorem fiber_span_lt_three_halves_five
   have hHall := layerHall_weighted_fiber_lower X hA hAzero
     (by omega : 3 ≤ (firstCoordinateSet X).card) hgcd
     (by simpa [A] using hbase) (by simpa [A, D] using hDA)
-    (by simpa [A, D] using hDbase) (by simpa [A, D] using hDle)
+    (by simp) (by simpa [A, D] using hDle)
   have hXcard : X.card = F base + ∑ a ∈ D, F a := by
     rw [card_eq_sum_card_coordinateFiber X]
     dsimp only [D]

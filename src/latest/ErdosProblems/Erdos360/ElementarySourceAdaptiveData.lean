@@ -26,7 +26,7 @@ lemma sourceAdaptiveCeilSaturation_bound
 /-- With a factor-four ambient margin, every ceiling saturation which is at
 least two occupies at most half of the corresponding quotient group. -/
 lemma two_mul_ceilDiv_le_div_of_four_mul_le
-    {target q t : ℕ} (hq : 0 < q) (hqt : q ∣ t)
+    {target q t : ℕ} (hq : 0 < q) (_hqt : q ∣ t)
     (hceil : 2 ≤ target ⌈/⌉ q) (hroom : 4 * target ≤ t) :
     2 * (target ⌈/⌉ q) ≤ t / q := by
   have hqtarget : q < target := by

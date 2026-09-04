@@ -43,7 +43,7 @@ lemma closureModulus_mul_le_card_of_all_fibers
     closureModulus hb R * L ≤ S.card := by
   classical
   let H := AddSubgroup.closure (R : Set (ZMod b))
-  letI : Fintype H :=
+  let : Fintype H :=
     Fintype.ofInjective (fun h : H ↦ h.1) Subtype.val_injective
   let I : Finset (Σ _u : ZMod b, H) :=
     (Finset.univ : Finset (ZMod b)).sigma fun u ↦
@@ -672,7 +672,7 @@ theorem cfp_modular_phase_machine (hb : 0 < b)
     (hsatTarget : ∀ i < k,
       satTarget ≤ cfpModulus hb R₀ E hE hdiverse i *
         sat (cfpModulus hb R₀ E hE hdiverse i))
-    (hgrowthBudget :
+    (_hgrowthBudget :
       (Nat.log 2 dMax + 1) *
           (2 * (Nat.log 2 b + 1) + (Q / L + 1)) ≤ k)
     (hunsatTarget : unsatTarget ≤ D *

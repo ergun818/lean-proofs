@@ -144,10 +144,11 @@ lemma graphCellWeight_le
     (hmax p.2 (Finset.mem_product.mp hpA).2)
 
 private lemma generic_sum_card_filter_lt_eq_sum
-    {α : Type*} [DecidableEq α] (S : Finset α) (f : α → ℕ) (M : ℕ)
+    {α : Type*} (S : Finset α) (f : α → ℕ) (M : ℕ)
     (hf : ∀ a ∈ S, f a ≤ M) :
     (∑ t ∈ Finset.range M, (S.filter fun a => t < f a).card) =
       ∑ a ∈ S, f a := by
+  classical
   simp only [Finset.card_filter]
   rw [Finset.sum_comm]
   apply Finset.sum_congr rfl
@@ -227,10 +228,12 @@ def GeneralizedAffineOn (A : Finset ℕ) (x : ℕ → G) (p q : ℕ) : Prop :=
   ∃ u v : G, ∀ a ∈ A, ∃ k : ℤ,
     (a : ℤ) = (p : ℤ) + k * ((q : ℤ) - p) ∧ x a = k • u + v
 
+omit [DecidableEq G] in
 lemma preservesPairSums_of_generalizedAffineOn
     {A : Finset ℕ} {x : ℕ → G} {p q : ℕ} (hpq : p < q)
     (haff : GeneralizedAffineOn A x p q) :
     PreservesPairSums A x := by
+  classical
   obtain ⟨u, v, haff⟩ := haff
   intro a ha b hb c hc z hz habcz
   obtain ⟨ka, hka, hxa⟩ := haff a ha
@@ -256,11 +259,13 @@ lemma preservesPairSums_of_generalizedAffineOn
       simp only [add_zsmul]
       abel
 
+omit [DecidableEq G] in
 lemma generalizedAffineOn_of_ternaryGenerates
     {A : Finset ℕ} {x : ℕ → G} {p q : ℕ}
-    (hpq : p < q) (hgen : TernaryGenerates A p q)
+    (_hpq : p < q) (hgen : TernaryGenerates A p q)
     (hpres : PreservesPairSums A x) :
     GeneralizedAffineOn A x p q := by
+  classical
   let u : G := x q - x p
   let v : G := x p
   let C : Set ℕ := {a | a ∈ A ∧ ∃ k : ℤ,
@@ -297,12 +302,14 @@ lemma generalizedAffineOn_of_ternaryGenerates
   intro a ha
   exact (hgen.2.2 C (fun _ h => h.1) hpC hqC hclosed ha).2
 
+omit [DecidableEq G] in
 lemma generalizedAffineOn_insert_of_relation
     {B : Finset ℕ} {x : ℕ → G} {m p q a r s : ℕ}
-    (hpq : p < q) (haff : GeneralizedAffineOn B x p q)
+    (_hpq : p < q) (haff : GeneralizedAffineOn B x p q)
     (ha : a ∈ B) (hr : r ∈ B) (hs : s ∈ B)
     (hnum : m + a = r + s) (hlab : x m + x a = x r + x s) :
     GeneralizedAffineOn (insert m B) x p q := by
+  classical
   obtain ⟨u, v, haff⟩ := haff
   obtain ⟨ka, hka, hxa⟩ := haff a ha
   obtain ⟨kr, hkr, hxr⟩ := haff r hr
@@ -334,9 +341,11 @@ def GraphProgressionStructured (A : Finset ℕ) (x : ℕ → G) : Prop :=
   ∃ p q : ℕ, p < q ∧ TernaryGenerates A p q ∧
     GeneralizedAffineOn A x p q
 
+omit [DecidableEq G] in
 lemma graphProgressionStructured_preserves
     {A : Finset ℕ} {x : ℕ → G}
     (h : GraphProgressionStructured A x) : PreservesPairSums A x := by
+  classical
   obtain ⟨p, q, hpq, -, haff⟩ := h
   exact preservesPairSums_of_generalizedAffineOn hpq haff
 
@@ -430,7 +439,7 @@ theorem graphProgressionStructured_of_three_card_sub_four
           · rw [hAeq]
             exact generalizedAffineOn_insert_of_relation hpq haff ha hr hs
               hnum hlab
-        · push_neg at hcollision
+        · push Not at hcollision
           let T := B.image fun a => (m + a, x m + x a)
           have hdis : Disjoint (graphPairCells B x) T := by
             rw [Finset.disjoint_left]
@@ -841,7 +850,7 @@ theorem coordinateFiberRepresentative_preservesPairSums_of_common_cosets
     rw [Set.mem_vadd_set_iff_neg_vadd_mem] at hyr hrr
     apply (QuotientAddGroup.eq_iff_sub_mem).2
     have hdiff := H.sub_mem hyr hrr
-    convert hdiff using 1 <;> simp [vadd_eq_add] <;> abel
+    convert hdiff using 1; simp [vadd_eq_add]
   have hwmax : ∀ a ∈ A, w a ≤ X.card := by
     intro a ha
     dsimp only [w]

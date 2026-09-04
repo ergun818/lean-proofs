@@ -216,7 +216,7 @@ theorem subsetSum_card_add_pivot_growth
     intro t ht
     have htI := Finset.mem_Ico.mp (hB ht)
     have htpos : 0 < t := by omega
-    letI : NeZero t := ⟨htpos.ne'⟩
+    let : NeZero t := ⟨htpos.ne'⟩
     have hcardImage :
         (A.image fun a : ℕ => (a : ZMod t)).card = A.card := by
       apply card_image_zmod_eq_of_subset_Ico A hA

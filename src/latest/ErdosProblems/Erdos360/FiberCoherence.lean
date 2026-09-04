@@ -939,10 +939,10 @@ lemma relativeSupportDiagonalMax_le
 lemma relative_support_threshold_bounds
     {A : Finset ℕ} {M : ℕ} {w : ℕ → ℕ}
     {Good Bad : Finset ℕ} {base : ℕ}
-    (hMpos : 0 < M) (hpart : Good ∪ Bad = A)
+    (_hMpos : 0 < M) (hpart : Good ∪ Bad = A)
     (hdisj : Disjoint Good Bad)
     (hbase : base ∈ Good) (hbasew : w base = M)
-    (hmax : ∀ i ∈ A, w i ≤ M) (hBad : Bad.Nonempty) :
+    (_hmax : ∀ i ∈ A, w i ≤ M) (hBad : Bad.Nonempty) :
     (∀ t ∈ Finset.range M,
       A.card + (A.filter (fun i => t < w i)).card - 1 ≤
         ((A + A).filter fun k =>
@@ -1010,7 +1010,7 @@ lemma relative_support_layerCake_lower
     (A : Finset ℕ) (M : ℕ) (w L : ℕ → ℕ)
     (Good Bad : Finset ℕ)
     (hMpos : 0 < M) (hBad : Bad.Nonempty)
-    (hpart : Good ∪ Bad = A) (hdisj : Disjoint Good Bad)
+    (hpart : Good ∪ Bad = A) (_hdisj : Disjoint Good Bad)
     (hmax : ∀ i ∈ A, w i ≤ M)
     (hLmax : ∀ k ∈ A + A, L k ≤ 2 * M)
     (hlow : ∀ t ∈ Finset.range M,

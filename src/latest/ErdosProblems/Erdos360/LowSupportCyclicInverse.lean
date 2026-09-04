@@ -82,7 +82,7 @@ theorem proper_subgroup_of_one_layer_affine_core
     rw [Set.mem_vadd_set_iff_neg_vadd_mem] at hxa hya
     rw [mem_subgroupFinset]
     have := H.sub_mem hxa hya
-    convert this using 1 <;> simp only [vadd_eq_add] <;> abel
+    convert this using 1; simp only [vadd_eq_add]; abel
   obtain ⟨F, _hFB, hFcard, hBF⟩ :=
     exists_two_translate_difference_cover hC hCB hdense hBsmall
   let q : ZMod (m * g) →+ (ZMod (m * g) ⧸ H) :=

@@ -422,7 +422,7 @@ theorem normalizedFiberMaxPick_global_increment
     apply Finset.card_pos.mp
     rw [show X.card = R.card by exact card_liftFinsetToClosure R]
     exact Finset.card_pos.mpr hR
-  letI : NeZero (Nat.card H) := ⟨Nat.ne_of_gt Nat.card_pos⟩
+  let : NeZero (Nat.card H) := ⟨Nat.ne_of_gt Nat.card_pos⟩
   let pick : H := subgroupFiberMaxPick U X hX
   have hnot := subgroupCoordinates_maxPick_not_almostPeriods A C hsieve
     U X hX hc (by simpa [H, X] using

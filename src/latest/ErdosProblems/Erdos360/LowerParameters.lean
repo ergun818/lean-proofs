@@ -77,7 +77,7 @@ lemma eventually_ten_log_div_loglog_le_lowerColorCount
   have hPQ : Real.rpow (n : ℝ) (3 / 10 : ℝ) = P * Q := by
     have h := Real.rpow_add hnR (1 / 5 : ℝ) (1 / 10 : ℝ)
     dsimp [P, Q]
-    convert h using 1 <;> norm_num
+    convert h using 1; norm_num
   have hlogP : Real.log (n : ℝ) ≤ 5 * P := by
     have h := Real.log_le_rpow_div hnR.le
       (show (0 : ℝ) < 1 / 5 by norm_num)
@@ -281,7 +281,7 @@ lemma integerSqrtWindow_bounds {A : ℝ} (hA : 1 ≤ A) :
   · nlinarith
 
 lemma le_integerSqrtWindow_of_sq_le {A x : ℝ}
-    (hA : 1 ≤ A) (hx : 0 ≤ x) (hxsq : x ^ 2 ≤ 15 * A) :
+    (hA : 1 ≤ A) (_hx : 0 ≤ x) (hxsq : x ^ 2 ≤ 15 * A) :
     x ≤ (integerSqrtWindow A : ℝ) := by
   have hwindow := (integerSqrtWindow_bounds hA).1
   have hy : 0 ≤ (integerSqrtWindow A : ℝ) := by positivity

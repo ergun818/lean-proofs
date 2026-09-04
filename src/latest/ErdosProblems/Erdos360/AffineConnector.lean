@@ -292,7 +292,7 @@ theorem common_coset_graphCellWeight_le_sumset
     rw [Set.mem_vadd_set_iff_neg_vadd_mem] at hyr hrr
     apply (QuotientAddGroup.eq_iff_sub_mem).2
     have hdiff := H.sub_mem hyr hrr
-    convert hdiff using 1 <;> simp [vadd_eq_add]
+    convert hdiff using 1; simp [vadd_eq_add]
   have hone : ∀ c ∈ graphPairCells A x,
       graphCellWeight A x w c ≤ ((X + X).filter fun p => q p = c).card := by
     intro c hc
@@ -427,7 +427,7 @@ theorem affine_commonFiberCosets_of_common_cosets
     rw [Set.mem_vadd_set_iff_neg_vadd_mem] at hyr hrr
     apply (QuotientAddGroup.eq_iff_sub_mem).2
     have hdiff := H.sub_mem hyr hrr
-    convert hdiff using 1 <;> simp [vadd_eq_add]
+    convert hdiff using 1; simp [vadd_eq_add]
   apply (QuotientAddGroup.eq_iff_sub_mem).1
   calc
     QuotientAddGroup.mk' H y =

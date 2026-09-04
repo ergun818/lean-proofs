@@ -344,8 +344,8 @@ lemma sourceAdaptiveInternalMaxPick_maximal
 internal maximum above; every nongrowth phase uses the maximum translation
 of the canonical normalized fibre. -/
 noncomputable def sourceAdaptivePhasePick
-    (hb : 0 < b) (R₀ E : Finset (ZMod b)) (hE : E.Nonempty)
-    (hdiverse : PhaseDiverse hb R₀) (Q : ℕ)
+    (hb : 0 < b) (R₀ E : Finset (ZMod b)) (_hE : E.Nonempty)
+    (_hdiverse : PhaseDiverse hb R₀) (Q : ℕ)
     (R : Finset (ZMod b)) : ZMod b := by
   classical
   by_cases hgrowth : IsSourceAdaptiveGrowthPhase R₀ E R Q
@@ -857,7 +857,7 @@ lemma sourceAdaptiveInternalCard_large_growth_step
     (hb : 0 < b) (R₀ E : Finset (ZMod b)) (hE : E.Nonempty)
     (hdiverse : PhaseDiverse hb R₀) (Q L : ℕ)
     {i : ℕ} (hi : i < R₀.card)
-    (hwide : R₀.card ≤ 2 *
+    (_hwide : R₀.card ≤ 2 *
       (sourceAdaptiveRemainder hb R₀ E hE hdiverse Q i).card)
     (hg : IsSourceAdaptiveGrowthStep hb R₀ E hE hdiverse Q i)
     (hlarge : (sourceAdaptiveRemainder hb R₀ E hE hdiverse Q i).card ≤

@@ -207,7 +207,7 @@ index at least four.  Thus four-fold growth in the quotient contradicts the
 three-coset bound unless `P` was already contained in a proper subgroup of
 the ambient group. -/
 theorem exists_proper_subgroup_of_dyadic_quotient_card_le_three
-    {G : Type*} [AddCommGroup G] [Fintype G] [DecidableEq G]
+    {G : Type*} [AddCommGroup G] [Finite G] [DecidableEq G]
     {P : Finset G} (hzero : 0 ∈ P) {j : ℕ} (hj : 2 ≤ j)
     (H : AddSubgroup G)
     [DecidableEq (G ⧸ H)]
@@ -215,6 +215,7 @@ theorem exists_proper_subgroup_of_dyadic_quotient_card_le_three
     (hthree :
       ((dyadicFinsetSum P j).image (QuotientAddGroup.mk' H)).card ≤ 3) :
     ∃ K : AddSubgroup G, K ≠ ⊤ ∧ (P : Set G) ⊆ (K : Set G) := by
+  let := Fintype.ofFinite G
   classical
   let q : G →+ G ⧸ H := QuotientAddGroup.mk' H
   let Pbar : Finset (G ⧸ H) := P.image q
@@ -269,7 +270,7 @@ theorem exists_proper_subgroup_of_dyadic_quotient_card_le_three
     intro x hx
     have hxzero : x = 0 :=
       (Finset.card_le_one_iff.mp hcardOne) hx hzeroBar
-    simpa [hxzero]
+    simp [hxzero]
   have hPbarCoset : NotContainedInProperCoset Pbar :=
     notContainedInProperCoset_of_zero_mem_not_subset_subgroup
       hzeroBar hPbarProper
@@ -344,12 +345,13 @@ the proper-subgroup branch of CFP Lemma 5.7. -/
 theorem exists_proper_subgroup_of_dyadic_subset_three_cosetProgression
     {t : ℕ} [NeZero t] {P : Finset (ZMod t)}
     (hzero : 0 ∈ P) {j : ℕ} (hj : 2 ≤ j)
-    (H : AddSubgroup (ZMod t)) [DecidableEq (ZMod t ⧸ H)]
+    (H : AddSubgroup (ZMod t))
     (hindex : 3 * Nat.card H < t) (a d : ZMod t)
     (hprog : dyadicFinsetSum P j ⊆
       cyclicCosetProgression H a d 3) :
     ∃ K : AddSubgroup (ZMod t), K ≠ ⊤ ∧
       (P : Set (ZMod t)) ⊆ (K : Set (ZMod t)) := by
+  classical
   apply exists_proper_subgroup_of_dyadic_quotient_card_le_three
     hzero hj H
   · simpa using hindex
@@ -361,16 +363,17 @@ subgroup, then the original set lies in that subgroup.  This is CFP's
 one-coset exclusion, phrased so it can also be used constructively as the
 proper-subgroup alternative. -/
 theorem exists_proper_subgroup_of_dyadic_containedInAddCoset
-    {G : Type*} [AddCommGroup G] [Fintype G] [DecidableEq G]
+    {G : Type*} [AddCommGroup G] [Finite G] [DecidableEq G]
     {P : Finset G} (hzero : 0 ∈ P) (j : ℕ)
     (H : AddSubgroup G) (hHcard : Nat.card H < Nat.card G)
     (hcos : ContainedInAddCoset H (dyadicFinsetSum P j)) :
     ∃ K : AddSubgroup G, K ≠ ⊤ ∧ (P : Set G) ⊆ (K : Set G) := by
+  let := Fintype.ofFinite G
   classical
   have hHproper : H ≠ ⊤ := by
     intro htop
     subst H
-    simpa using hHcard
+    simp at hHcard
   refine ⟨H, hHproper, ?_⟩
   obtain ⟨a, ha⟩ := hcos
   have hzeroDy : 0 ∈ dyadicFinsetSum P j :=
@@ -606,7 +609,7 @@ theorem almostPeriod_longProgressionCover_trichotomy_from_two_of_localDF
     have hP : (almostPeriods S D).Nonempty :=
       ⟨0, zero_mem_almostPeriods S D⟩
     have hcover := hstruct.longProgressionCover hP
-    convert hcover using 1 <;> ring
+    convert hcover using 1; ring
 
 /-- Canonical-scale, integer-power form of CFP Lemma 5.7 reduced only to
 the corrected local Deshouillers--Freiman alternative.  This is the final
@@ -671,7 +674,7 @@ theorem almostPeriod_longProgressionCover_polynomial_trichotomy_of_localDF
     have hpoly := dyadic_numeric_bound_one_point_zero_two
       (n := i - 2) (q := q) (P := (almostPeriods S D).card)
       (S := S.card) (by simpa [hshift] using hqpow) hnumeric
-    simpa [q] using hpoly
+    simpa only [q] using hpoly
   · exact Or.inr (Or.inr hcover)
 
 /-! ### Final sparse corrected-DF interface -/
@@ -834,12 +837,12 @@ theorem almostPeriod_longProgressionCover_polynomial_trichotomy_of_sparse_localD
       have hPnonempty : (almostPeriods S D).Nonempty :=
         ⟨0, zero_mem_almostPeriods S D⟩
       have hcover := hstruct.longProgressionCover hPnonempty
-      convert hcover using 1 <;> ring
+      convert hcover using 1; ring
   · right; left
     have hshift : i - 2 + 3 = i + 1 := by omega
     have hpoly := dyadic_numeric_bound_one_point_zero_two
       (n := i - 2) (q := q) (P := (almostPeriods S D).card)
       (S := S.card) (by simpa [hshift] using hqpow) hnumeric
-    simpa [q] using hpoly
+    simpa only [q] using hpoly
 
 end Erdos360

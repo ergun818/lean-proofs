@@ -81,7 +81,7 @@ lemma excess_basic {M w : ℕ} (hw : w ≤ M) :
     3 * w ≤ 2 * M + 2 * (2 * w - M) := by
   omega
 
-lemma excess_strong {M w : ℕ} (hw : w ≤ M) :
+lemma excess_strong {M w : ℕ} (_hw : w ≤ M) :
     6 * w + M ≤ 4 * M + 4 * (2 * w - M) := by
   omega
 
@@ -160,7 +160,7 @@ lemma good_excess_bounds (Good : Finset ℕ) (w : ℕ → ℕ) {base M : ℕ}
 lemma relative_layerCake_lower
     (s M : ℕ) (w L : ℕ → ℕ) (Good Bad : Finset ℕ)
     (hspos : 0 < s) (hMpos : 0 < M) (hBad : Bad.Nonempty)
-    (hpart : Good ∪ Bad = Finset.range s) (hdisj : Disjoint Good Bad)
+    (hpart : Good ∪ Bad = Finset.range s) (_hdisj : Disjoint Good Bad)
     (hmax : ∀ i ∈ Finset.range s, w i ≤ M)
     (hLmax : ∀ k ∈ Finset.range (2 * s - 1), L k ≤ 2 * M)
     (hlow : ∀ t ∈ Finset.range M,
@@ -352,10 +352,10 @@ lemma relativeIntervalDiagonalMax_le
 
 lemma relative_interval_threshold_bounds
     {s M : ℕ} {w : ℕ → ℕ} {Good Bad : Finset ℕ} {base : ℕ}
-    (hspos : 0 < s) (hMpos : 0 < M)
+    (hspos : 0 < s) (_hMpos : 0 < M)
     (hpart : Good ∪ Bad = Finset.range s) (hdisj : Disjoint Good Bad)
     (hbase : base ∈ Good) (hbasew : w base = M)
-    (hmax : ∀ i ∈ Finset.range s, w i ≤ M)
+    (_hmax : ∀ i ∈ Finset.range s, w i ≤ M)
     (hBad : Bad.Nonempty) :
     (∀ t ∈ Finset.range M,
       s + ((Finset.range s).filter (fun i => t < w i)).card - 1 ≤

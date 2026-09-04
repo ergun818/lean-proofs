@@ -45,7 +45,7 @@ theorem exists_dense_cyclic_smallProductCore_affine
   have hm : 0 < m := by omega
   have hmg : 0 < m * g := NeZero.pos (m * g)
   have hg : 0 < g := Nat.pos_of_mul_pos_left hmg
-  letI : NeZero g := ⟨hg.ne'⟩
+  let : NeZero g := ⟨hg.ne'⟩
   let X := zmodQuotRemImage m g D
   have hnowrap : ∀ x ∈ D, ∀ y ∈ D,
       x.val % m + y.val % m < m := by
@@ -113,7 +113,7 @@ theorem zmodAffineImage_pullback_cyclicCosetProgression
   change e (x - (e.symm (a - c) + i • e.symm d)) ∈ H
   simp only [map_sub, map_add, map_nsmul, AddEquiv.apply_symm_apply]
   change (w : ZMod t) * x - (a - c + i • d) ∈ H
-  convert hxi using 1 <;> ring
+  convert hxi using 1; ring
 
 /-- A subgroup and its inverse image under an additive equivalence have the
 same finite cardinality. -/
@@ -126,7 +126,7 @@ lemma natCard_comap_addEquiv
     { toFun := fun x : H.comap e.toAddMonoidHom => ⟨e x, x.property⟩
       invFun := fun y : H => ⟨e.symm y, by
         change e (e.symm y) ∈ H
-        simpa using y.property⟩
+        simp⟩
       left_inv := by
         intro x
         apply Subtype.ext

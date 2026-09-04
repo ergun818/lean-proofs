@@ -205,7 +205,6 @@ lemma nineteen_twentieth_y_log_inv_le_dyadic_ratio
         ((19 / 20 : ℝ) * ((y : ℝ) / (u : ℝ))) /
           Real.log (y : ℝ) := by
       field_simp [huR.ne', hlogY.ne']
-      <;> ring
     _ ≤ ((y / u : ℕ) : ℝ) /
         Real.log ((y / u : ℕ) : ℝ) := hratio
 
@@ -328,7 +327,7 @@ theorem ratio_y_div_log_fifth_le_primeStructuredTestSet_card
       (1 / 100 : ℝ) *
         (((n : ℝ) / Nat.totient n) * (y : ℝ) /
           Real.log (y : ℝ)) := by
-    convert herror using 1 <;> ring
+    convert herror using 1; ring
   linarith
 
 /-- The exact sharp count needed by the CFP unused-mass ledger.  The final

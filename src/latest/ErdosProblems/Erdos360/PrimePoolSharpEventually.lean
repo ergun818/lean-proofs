@@ -1354,9 +1354,7 @@ private lemma eventually_sharp_polynomial_reverse_at
           exact mul_le_mul_of_nonneg_left hab hDpos.le
       _ = CU *
           Real.rpow (n : ℝ) (67 / 2 : ℝ) := by
-        simp only [mul_pow, hpEq]
-        dsimp [D, CU]
-        ring
+        simp only [D, CU, mul_pow, hpEq, mul_assoc]
   have hLower : CL * Real.rpow (n : ℝ) (1677 / 50 : ℝ) <
       (q : ℝ) ^ 2 * (R : ℝ) ^ 100 := by
     have hqBasePos : (0 : ℝ) < (1 / 400000 : ℝ) *
@@ -1883,9 +1881,9 @@ private lemma eventually_sharp_error_scale_at
 private lemma sharp_sieve_reverse_of_scales
     {N Y E R q L LL a B P x : ℝ}
     (hN : 0 < N) (hY : 0 < Y) (hq : 0 < q)
-    (hL : 0 < L) (hLL : 0 ≤ LL)
+    (hL : 0 < L) (_hLL : 0 ≤ LL)
     (ha : 0 < a) (hB : 0 < B) (hP : 0 < P)
-    (hE : 0 ≤ E) (hx : 0 ≤ x)
+    (_hE : 0 ≤ E) (hx : 0 ≤ x)
     (hEn : E * N ≤ 65536 * Y ^ 2)
     (hNR : N < P * Y * R)
     (hxBound : x ≤ B * LL / L)
@@ -2138,7 +2136,7 @@ private theorem exists_eventually_sharp_sieve_reverse
   exact hresult
 
 private lemma eventually_sharp_sieveCutoff_le_B_at
-    {c : ℝ} (hc : 0 < c) (hc1 : c ≤ 1)
+    {c : ℝ} (hc : 0 < c) (_hc1 : c ≤ 1)
     {S : ℕ} (hS : 101 ≤ S) :
     ∀ᶠ n : ℕ in atTop,
       let y := initialLowerY n (lowerColorCount c n)
@@ -2249,7 +2247,8 @@ theorem exists_eventually_controlledPrimeOrdinarySource :
     tendsto_log_log_coe_at_top.eventually (eventually_ge_atTop 0)] with
       n hn hend hledger hpool hprob hdiversity hgrowth hbudget hunsaturated
         hfiber hpolynomial hlong hreverse hcut hcutTwo hqOne hratioN hloglog
-  dsimp only at hend hledger hpool hprob hdiversity hgrowth hbudget hunsaturated hfiber hpolynomial hlong hreverse hcut ⊢
+  dsimp only at hend hledger hpool hprob hdiversity hgrowth hbudget hunsaturated
+  dsimp only at hfiber hpolynomial hlong hreverse hcut ⊢
   let colors := lowerColorCount c n
   let y := initialLowerY n colors
   let U := controlledPrimeU n

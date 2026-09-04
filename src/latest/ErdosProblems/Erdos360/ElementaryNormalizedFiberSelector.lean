@@ -86,7 +86,7 @@ theorem normalizedFiberMaxPick_global_increment_elementary
   let U := normalizedCosetFiber H S u
   let X := liftFinsetToClosure R
   have hX : X.Nonempty := liftFinsetToClosure_nonempty_of_nonempty hR
-  letI : NeZero (Nat.card H) := ⟨Nat.ne_of_gt Nat.card_pos⟩
+  let : NeZero (Nat.card H) := ⟨Nat.ne_of_gt Nat.card_pos⟩
   let pick : H := subgroupFiberMaxPick U X hX
   have hU : (subgroupCoordinates U).Nonempty := by
     exact Finset.card_pos.mp

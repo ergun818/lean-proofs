@@ -76,7 +76,7 @@ theorem exists_CFPOrdinaryGrowthCertificate_of_coarse_modular_phases
       diverse := hdiverse
       sum_le := hsum }⟩
   intro t ht
-  letI : NeZero t := ⟨(hpivots t ht).ne'⟩
+  let : NeZero t := ⟨(hpivots t ht).ne'⟩
   exact residue_gain_of_coarse_modular_phases (hpivots t ht) seed
     (hphase t ht) (hlog t ht) (hhalf t ht) (hmod t ht) (hquad t ht)
 
@@ -113,7 +113,7 @@ theorem exists_CFPOrdinaryGrowthCertificate_of_diverse_card_scale
   apply exists_CFPOrdinaryGrowthCertificate_of_coarse_modular_phases
     hunion hdisjoint hpivots
   · intro t ht
-    letI : NeZero t := ⟨(hpivots t ht).ne'⟩
+    let : NeZero t := ⟨(hpivots t ht).ne'⟩
     exact phaseDiverse_cast_of_diverse_of_card_scale
       (hpivots t ht) seed hseedRange (hwidth t ht)
       hseedDiverse (hscale t ht)
@@ -227,8 +227,7 @@ theorem exists_CFPOrdinaryGrowthCertificate_of_diverse_shortInterval
     exact htarget.trans (Nat.add_le_add hseedLower hpivotLower)
   · exact hKpos
   · simpa [hunion] using hdiverse
-  · change P.sum (fun z ↦ z) ≤ diameter
-    have hsumBound : P.sum (fun z ↦ z) ≤
+  · have hsumBound : P.sum (fun z ↦ z) ≤
         P.sum (fun _z ↦ hi - 1) := by
       exact Finset.sum_le_sum fun z hz ↦ (hrange z hz).2
     calc

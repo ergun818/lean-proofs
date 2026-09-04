@@ -63,10 +63,10 @@ lemma controlledPrime_unused_numeric
 /-- One global exponential inequality (with `d = 1` and the full cap `M`)
 discharges every stage and every admissible extraction divisor. -/
 lemma controlledPrime_probability_ledger
-    {y M L ell d : ℕ} (hell : 0 < ell) (hd : 0 < d)
+    {y M L ell d : ℕ} (hell : 0 < ell) (_hd : 0 < d)
     (hk : 12 * ell ^ 2 ≤ L - (8 * ell - 1))
     (hsmall : (4 : ℝ) * (M + 1) * (2 * y + 1) *
-      Real.exp (- ((L - (8 * ell - 1) : ℕ) : ℝ) /
+      Real.exp (-((L - (8 * ell - 1) : ℕ) : ℝ) /
         (1024 * (ell : ℝ) ^ 2)) < 1) :
     ∀ j < ell,
       RandomDiversity.exactSplitFailureMass (2 * y / d)
@@ -77,10 +77,10 @@ lemma controlledPrime_probability_ledger
   apply (show (4 : ℝ) *
       (8 * (ell : ℝ) * ((M / (8 * ell) : ℕ) : ℝ) + 1) *
         (((2 * y / d : ℕ) : ℝ) + 1) *
-        Real.exp (- ((L - (8 * ell - 1) : ℕ) : ℝ) /
+        Real.exp (-((L - (8 * ell - 1) : ℕ) : ℝ) /
           (1024 * (ell : ℝ) ^ 2)) ≤
       (4 : ℝ) * (M + 1) * (2 * y + 1) *
-        Real.exp (- ((L - (8 * ell - 1) : ℕ) : ℝ) /
+        Real.exp (-((L - (8 * ell - 1) : ℕ) : ℝ) /
           (1024 * (ell : ℝ) ^ 2)) by
     have hcard : 8 * ell * (M / (8 * ell)) ≤ M :=
       by simpa [mul_comm] using Nat.div_mul_le_self M (8 * ell)
@@ -247,7 +247,7 @@ trimmed to cardinality `M`.  Unlike the older source interface, the loss is
 measured from `W`, not from the whole (possibly much larger) colour class.
 -/
 def CFPControlledRandomTestSetSourceCompletion
-    (n colors y U B L M : ℕ) (Y : Finset (BelowTarget n)) : Prop :=
+    (n colors y _U B L M : ℕ) (Y : Finset (BelowTarget n)) : Prop :=
   ∀ (c : BelowTarget n → Fin colors) (i : Fin colors)
       (W : Finset ℕ) (d : ℕ) (Z : Finset ℕ),
     W ⊆ integerColorClass Y c i → W.card = M →
@@ -299,7 +299,7 @@ theorem forcesTarget_of_controlledRandomTestSetSource
       n colors y U B L M Y)
     (hlev : CFPLevHighMultiplicityPrinciple) :
     ForcesTarget n colors := by
-  apply forcesTarget_of_controlled_extracted_colorClass_completion (K := 0)
+  apply forcesTarget_of_controlled_extracted_colorClass_completion (L := L) (K := 0)
     hcolors hB Y hM
   intro c i W d Z hW hWcard hd hdB hscale hloss hdiverse
   have hloss' : W.card - Z.card ≤ L * Nat.log 2 B := by

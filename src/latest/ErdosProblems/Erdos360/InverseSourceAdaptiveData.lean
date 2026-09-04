@@ -54,7 +54,7 @@ theorem exists_CFPSourceAdaptiveSelectorData_of_normalizedFiberLossConditions
       let R := sourceAdaptiveRemainder ht R₀ {0} (by simp) hdiverse phaseQ i
       let H := AddSubgroup.closure (R : Set (ZMod t))
       ZMod (Nat.card H) ≃+ H)
-    (coordinateBase : ∀ i (hi : i < k),
+    (coordinateBase : ∀ i (_hi : i < k),
       IsSourceAdaptiveUnsaturatedStep ht R₀ {0} (by simp) hdiverse
         phaseQ sat i → ℕ)
     (hconditions : ∀ i (hi : i < k)
@@ -220,7 +220,7 @@ theorem exists_CFPSourceAdaptiveSharpSelectorData_of_normalizedFiberLossConditio
       let R := sourceAdaptiveRemainder ht R₀ {0} (by simp) hdiverse phaseQ i
       let H := AddSubgroup.closure (R : Set (ZMod t))
       ZMod (Nat.card H) ≃+ H)
-    (coordinateBase : ∀ i (hi : i < k),
+    (coordinateBase : ∀ i (_hi : i < k),
       IsSourceAdaptiveUnsaturatedStep ht R₀ {0} (by simp) hdiverse
         phaseQ sat i → ℕ)
     (hconditions : ∀ i (hi : i < k)

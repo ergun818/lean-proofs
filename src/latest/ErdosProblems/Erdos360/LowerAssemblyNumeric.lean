@@ -332,7 +332,6 @@ private theorem eventually_CFPDiagonalNumericBounds_first
       _ ≤ (15 / 2 : ℝ) * h * P * Real.log h := by
         nlinarith [mul_le_mul_of_nonneg_left hone
           (mul_nonneg hhNonneg hPpos.le)]
-
   simpa only [h, P] using hfirst
 
 /- The following derivation was the initial monolithic version of the

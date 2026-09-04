@@ -29,7 +29,7 @@ This definition contains no claim that range and diversity alone imply the
 conclusion; it merely records the result which the structured adaptive proof
 must provide in its full source context. -/
 def CFPControlledPrimeLocalOrdinaryCompletion
-    (n y ell d : ℕ) (Z : Finset ℕ) : Prop :=
+    (_n y ell d : ℕ) (Z : Finset ℕ) : Prop :=
   ∀ P : Finset ℕ,
     P ⊆ lowerPart Z (Z.card % (8 * ell)) →
     P.card = primeRandomPoolSize Z.card ell →
@@ -316,7 +316,7 @@ lemma controlledPrime_canonical_probability_ledger
     (hres : 12 * controlledPrimeEll ^ 2 ≤
       controlledPrimeL y - (8 * controlledPrimeEll - 1))
     (hsmall : (4 : ℝ) * (M + 1) * (2 * y + 1) *
-      Real.exp (- ((controlledPrimeL y -
+      Real.exp (-((controlledPrimeL y -
           (8 * controlledPrimeEll - 1) : ℕ) : ℝ) /
         (1024 * (controlledPrimeEll : ℝ) ^ 2)) < 1) :
     ∀ j < controlledPrimeEll,
@@ -449,7 +449,7 @@ structure ControlledPrimeScalarPostRooms (n y : ℕ) : Prop where
     controlledPrimeExtractedFloorTwelve n y
   probability_small :
     (4 : ℝ) * (controlledPrimeClassCapTwelve n y + 1) * (2 * y + 1) *
-      Real.exp (- ((controlledPrimeL y -
+      Real.exp (-((controlledPrimeL y -
           (8 * controlledPrimeEll - 1) : ℕ) : ℝ) /
         (1024 * (controlledPrimeEll : ℝ) ^ 2)) < 1
   mass : 5 * controlledPrimeEll ^ 2 * controlledPrimeU n ≤

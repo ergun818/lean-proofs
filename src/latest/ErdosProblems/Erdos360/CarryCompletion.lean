@@ -244,7 +244,7 @@ lemma firstCoordinate_pairSum_eq_of_affine_noCarry
   have hmemAgg :
       (((qa : ZMod d) + qb - qc - qe) -
         ((ra + rb) • u - (rc + re) • u)) ∈ H := by
-    convert hmem using 1 <;> simp only [add_nsmul] <;> abel
+    convert hmem using 1; simp only [add_nsmul]; abel
   rcases hcases with heq | heq | heq
   · exact heq
   · exfalso
@@ -259,7 +259,7 @@ lemma firstCoordinate_pairSum_eq_of_affine_noCarry
           m * (qc + qe) + (rc + re) [MOD m * d] := by
       have h := htotal
       rw [habVal, hceVal, heq] at h
-      convert h using 1 <;> ring
+      convert h using 1; ring
     have hmul : m * (qa + qb + 1) ≡ m * (qc + qe) [MOD m * d] :=
       Nat.ModEq.add_right_cancel' (rc + re) hexpanded
     have hqmod : qa + qb + 1 ≡ qc + qe [MOD d] :=
@@ -296,7 +296,7 @@ lemma firstCoordinate_pairSum_eq_of_affine_noCarry
           m * (qc + qe + 1) + (ra + rb) [MOD m * d] := by
       have h := htotal
       rw [habVal, hceVal, heq] at h
-      convert h using 1 <;> ring
+      convert h using 1; ring
     have hmul : m * (qa + qb) ≡ m * (qc + qe + 1) [MOD m * d] :=
       Nat.ModEq.add_right_cancel' (ra + rb) hexpanded
     have hqmod : qa + qb ≡ qc + qe + 1 [MOD d] :=
@@ -520,7 +520,7 @@ noncomputable def wrappedCosetProgressionSubgroup
     by_cases hij : i + j < m
     · refine ⟨i + j, hij, ?_⟩
       have hadd := K.add_mem hxi hyj
-      convert hadd using 1 <;> simp only [zero_add, add_nsmul] <;> abel
+      convert hadd using 1; simp only [zero_add, add_nsmul]; abel
     · have hmij : m ≤ i + j := Nat.le_of_not_gt hij
       refine ⟨i + j - m, by omega, ?_⟩
       have hadd := K.add_mem hxi hyj
@@ -650,7 +650,7 @@ theorem exists_proper_coset_of_affine_fibers_and_carry
           zmodQuotientEmbedding m d v) -
           ((0 : ZMod (m * d)) + (z.val % m) •
             ((1 : ZMod (m * d)) + zmodQuotientEmbedding m d u)) := by
-      simp only [zero_add, add_nsmul, nsmul_one, nsmul_eq_mul]
+      simp only [zero_add,  nsmul_eq_mul]
       ring
     _ = (z - zmodQuotientEmbedding m d v) -
           ((0 : ZMod (m * d)) + (z.val % m) •

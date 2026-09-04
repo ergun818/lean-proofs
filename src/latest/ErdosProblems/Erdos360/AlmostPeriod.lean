@@ -158,13 +158,13 @@ lemma dyadicFinsetSum_almostPeriods_subset
     dyadicFinsetSum (almostPeriods S D) j ⊆
       almostPeriods S ((2 ^ j) * D) := by
   induction j with
-  | zero => simpa
+  | zero => simp
   | succ j ih =>
       intro x hx
       rw [dyadicFinsetSum_succ, Finset.mem_add] at hx
       obtain ⟨a, ha, b, hb, rfl⟩ := hx
       have hab := add_mem_almostPeriods (ih ha) (ih hb)
-      convert hab using 1 <;> simp [pow_succ] <;> ring
+      convert hab using 1; simp [pow_succ]; ring
 
 /-- The incidence bound in the convenient consequence used at the last
 dyadic scale. -/
@@ -459,10 +459,9 @@ lemma dyadic_numeric_bound_one_point_zero_two
     q ^ 102 * P ^ 100 ≤ 2 ^ (102 * (n + 3)) * P ^ 100 :=
       Nat.mul_le_mul_right _ hqpow
     _ = 2 ^ 306 * (2 ^ (102 * n) * P ^ 100) := by
-      rw [show 102 * (n + 3) = 306 + 102 * n by ring, pow_add]
-      ring
+      rw [show 102 * (n + 3) = 306 + 102 * n by ring, pow_add, mul_assoc]
     _ ≤ 2 ^ 306 * (2 ^ 100 * S ^ 100) := Nat.mul_le_mul_left _ hcore
-    _ = (2 ^ 306 * 2 ^ 100) * S ^ 100 := by ring
+    _ = (2 ^ 306 * 2 ^ 100) * S ^ 100 := by rw [mul_assoc]
     _ = 2 ^ (306 + 100) * S ^ 100 := by rw [pow_add]
     _ = 2 ^ 406 * S ^ 100 := by norm_num
 
@@ -500,10 +499,9 @@ lemma dyadic_numeric_bound_one_point_zero_two_six
     q ^ 102 * P ^ 100 ≤ 2 ^ (102 * (n + 6)) * P ^ 100 :=
       Nat.mul_le_mul_right _ hqpow
     _ = 2 ^ 612 * (2 ^ (102 * n) * P ^ 100) := by
-      rw [show 102 * (n + 6) = 612 + 102 * n by ring, pow_add]
-      ring
+      rw [show 102 * (n + 6) = 612 + 102 * n by ring, pow_add, mul_assoc]
     _ ≤ 2 ^ 612 * (2 ^ 100 * S ^ 100) := Nat.mul_le_mul_left _ hcore
-    _ = (2 ^ 612 * 2 ^ 100) * S ^ 100 := by ring
+    _ = (2 ^ 612 * 2 ^ 100) * S ^ 100 := by rw [mul_assoc]
     _ = 2 ^ (612 + 100) * S ^ 100 := by rw [pow_add]
     _ = 2 ^ 712 * S ^ 100 := by norm_num
 
@@ -811,7 +809,7 @@ theorem almostPeriod_cyclicCoset_polynomial_trichotomy
     have hpoly := dyadic_numeric_bound_one_point_zero_two
       (n := i - 2) (q := q) (P := (almostPeriods S D).card)
       (S := S.card) (by simpa [hshift] using hqpow) hnumeric
-    simpa [q] using hpoly
+    simpa only [q] using hpoly
   · exact Or.inr (Or.inr hstruct)
 
 /-- Canonical-scale version of CFP Lemma 5.7 in the integer-cover interface.
@@ -842,7 +840,7 @@ theorem almostPeriod_longProgressionCover_polynomial_trichotomy
     have hP : (almostPeriods S D).Nonempty :=
       ⟨0, zero_mem_almostPeriods S D⟩
     have hcover := hstruct.longProgressionCover hP
-    convert hcover using 1 <;> ring
+    convert hcover using 1; ring
 
 theorem almostPeriod_longProgressionCover_trichotomy_from_two
     {t : ℕ} [NeZero t] {S : Finset (ZMod t)} {D i : ℕ}
@@ -866,7 +864,7 @@ theorem almostPeriod_longProgressionCover_trichotomy_from_two
   · right; right
     have hP : (almostPeriods S D).Nonempty := ⟨0, zero_mem_almostPeriods S D⟩
     have hcover := hstruct.longProgressionCover hP
-    convert hcover using 1 <;> ring
+    convert hcover using 1; ring
 
 /-- Exact reduction of the progression-cover version of CFP Lemma 5.7 to
 the local inverse/pullback statement.  The hypothesis `hinverse` is the one

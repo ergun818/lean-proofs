@@ -25,7 +25,7 @@ lemma three_mul_le_two_mul_add_hybridT {K v : ℕ} (hv : v ≤ K) :
   rw [pairWeight_comm v K] at hp
   omega
 
-lemma hybridY_nonneg {K M : ℕ} {Good : Finset ℕ} {w : ℕ → ℕ} {i : ℕ}
+lemma hybridY_nonneg {K : ℕ} {Good : Finset ℕ} {w : ℕ → ℕ} {i : ℕ}
     (hi : w i ≤ K) : 0 ≤ hybridY K Good w i := by
   have ht := three_mul_le_two_mul_add_hybridT hi
   simp only [hybridY]
@@ -58,7 +58,7 @@ lemma hybrid_low_weighted_case_one
 
 lemma hybrid_low_weighted_case_two
     {K M : ℕ} {Good : Finset ℕ} {w : ℕ → ℕ} {i : ℕ}
-    (hMK : M ≤ K) (hhalf : K < 2 * M) (hthree : 4 * M < 3 * K)
+    (hMK : M ≤ K) (_hhalf : K < 2 * M) (hthree : 4 * M < 3 * K)
     (hibad : i ∉ Good) (hiw : w i ≤ M) :
     4 * (K : ℤ) - 3 * (M : ℤ) ≤
       2 * hybridX K M Good w i + 3 * hybridY K Good w i := by
@@ -84,7 +84,7 @@ lemma hybrid_low_weighted_case_three
 
 lemma hybrid_base_weighted_case_one
     {K M : ℕ} {Good : Finset ℕ} {w : ℕ → ℕ} {base : ℕ}
-    (hMK : M ≤ K) (hhalf : 2 * M ≤ K)
+    (hMK : M ≤ K) (_hhalf : 2 * M ≤ K)
     (hbase : base ∈ Good) (hbasew : w base = M) :
     10 * (K : ℤ) - 15 * (M : ℤ) ≤
       2 * hybridX K M Good w base + 3 * hybridY K Good w base := by
@@ -220,7 +220,7 @@ lemma hybrid_rest_max_bound
     (hcard : 6 ≤ A.card) (hbaseA : base ∈ A) (htopA : top ∈ A)
     (hbase : base ∈ Good) (hbasew : w base = M) (htopw : w top = K)
     (hMK : M < K) (hmax : ∀ i ∈ A, w i ≤ K)
-    (hGoodMax : ∀ i ∈ Good, w i ≤ M) :
+    (_hGoodMax : ∀ i ∈ Good, w i ≤ M) :
     2 * (K : ℤ) ≤ max
       (∑ i ∈ A.erase top, hybridX K M Good w i)
       (∑ i ∈ A.erase top, hybridY K Good w i) := by
@@ -253,7 +253,7 @@ lemma hybrid_rest_max_bound
     exact Finset.card_sdiff_of_subset hLowSub
   have hYnonneg : ∀ i ∈ Rest, 0 ≤ hybridY K Good w i := by
     intro i hi
-    exact hybridY_nonneg (M := M) (hmax i (Finset.mem_of_mem_erase hi))
+    exact hybridY_nonneg (hmax i (Finset.mem_of_mem_erase hi))
   have hregular : ∀ i ∈ Reg, i ∈ Good ∨ M < w i := by
     intro i hi
     by_cases hiG : i ∈ Good
@@ -482,7 +482,6 @@ lemma hybrid_arithmetic_of_maximal_dense
       Finset.sum_const, nsmul_eq_mul, ← Finset.mul_sum]
     rw [hsumGood, hsumHigh]
     rw [hsumS]
-    push_cast
     ring
   have hsumY : (∑ i ∈ A, hybridY K Good w i) =
       2 * (A.card : ℤ) * (K : ℤ) - 3 * (S : ℤ) +
@@ -491,17 +490,14 @@ lemma hybrid_arithmetic_of_maximal_dense
       Finset.sum_const, nsmul_eq_mul, ← Finset.mul_sum]
     rw [hsumGood, hsumT]
     rw [hsumS]
-    push_cast
     ring
   have htopX : hybridX K M Good w top = (K : ℤ) := by
     simp only [hybridX, hybridA, hybridG, htopw, if_neg htopNotGood,
       if_pos hMK, add_zero]
-    norm_num
     omega
   have htopY : hybridY K Good w top = 0 := by
-    simp only [hybridY, hybridG, hybridT, hybridA, htopw, if_neg htopNotGood,
+    simp only [hybridY, hybridG, hybridT, htopw, if_neg htopNotGood,
       pairWeight_self, add_zero]
-    norm_num
     omega
   have hrestX : (∑ i ∈ A.erase top, hybridX K M Good w i) =
       2 * (A.card : ℤ) * (K : ℤ) - 3 * (S : ℤ) +

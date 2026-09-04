@@ -118,7 +118,7 @@ lemma residualDiversity_eight_mul_half
 lemma complementDiversityTailBound_eq_exp
     {h k : ℕ} (hh : 3 ≤ h) :
     RandomDiversity.complementDiversityTailBound h k =
-      Real.exp (- (k : ℝ) /
+      Real.exp (-(k : ℝ) /
         (2 * (h : ℝ) * (2 * (h : ℝ) - 3))) := by
   let H : ℝ := h
   let r : ℝ := (H - 2) / (H - 1)
@@ -161,7 +161,7 @@ lemma complementDiversityTailBound_eq_exp
   change Real.exp ((r * ((1 - r) / (2 * r)) +
       (1 / (1 + ((1 - r) / (2 * r))) - 1)) *
         ((k : ℝ) * (H - 1) / H)) =
-    Real.exp (- (k : ℝ) / (2 * H * (2 * H - 3)))
+    Real.exp (-(k : ℝ) / (2 * H * (2 * H - 3)))
   rw [hsum]
   congr 1
   field_simp
@@ -172,7 +172,7 @@ lemma complementDiversityTailBound_eight_mul
     (hhup : h ≤ 8 * ell) (hk : 12 * ell ^ 2 ≤ k)
     (hq : k / 2 ≤ q) :
     RandomDiversity.complementDiversityTailBound h q ≤
-      Real.exp (- (k : ℝ) / (1024 * (ell : ℝ) ^ 2)) := by
+      Real.exp (-(k : ℝ) / (1024 * (ell : ℝ) ^ 2)) := by
   rw [complementDiversityTailBound_eq_exp hh]
   apply Real.exp_le_exp.mpr
   have hk12 : 12 ≤ k := by nlinarith
@@ -209,7 +209,7 @@ lemma exactSplitFailureMass_eight_mul_bound
     RandomDiversity.exactSplitFailureMass N s (8 * ell - i)
         (RandomDiversity.residualDiversity k (8 * ell) i) ≤
       (4 : ℝ) * (8 * ell * s + 1) * (N + 1) *
-        Real.exp (- (k : ℝ) / (1024 * (ell : ℝ) ^ 2)) := by
+        Real.exp (-(k : ℝ) / (1024 * (ell : ℝ) ^ 2)) := by
   let q := RandomDiversity.residualDiversity k (8 * ell) i
   let h := 8 * ell - i
   have hq : k / 2 ≤ q := residualDiversity_eight_mul_half hell hi hk
@@ -224,7 +224,7 @@ lemma exactSplitFailureMass_eight_mul_bound
   have hqCast : (k : ℝ) ≤ 4 * q := by exact_mod_cast hqNat
   have hqR : (k : ℝ) / 4 ≤ q := by linarith
   have hsample : Real.exp (-(q : ℝ) / (12 * h)) ≤
-      Real.exp (- (k : ℝ) / (1024 * (ell : ℝ) ^ 2)) := by
+      Real.exp (-(k : ℝ) / (1024 * (ell : ℝ) ^ 2)) := by
     apply Real.exp_le_exp.mpr
     have hhpos : (0 : ℝ) < 12 * h := by positivity
     have hellpos : (0 : ℝ) < 1024 * (ell : ℝ) ^ 2 := by positivity
@@ -257,7 +257,7 @@ lemma exactSplitFailureMass_eight_mul_bound
               mul_le_mul_of_nonneg_left hcoeff hq0
     simpa only [neg_div] using neg_le_neg hratio
   have hcomp : RandomDiversity.complementDiversityTailBound h q ≤
-      Real.exp (- (k : ℝ) / (1024 * (ell : ℝ) ^ 2)) :=
+      Real.exp (-(k : ℝ) / (1024 * (ell : ℝ) ^ 2)) :=
     complementDiversityTailBound_eight_mul hell hh hhup hk hq
   unfold RandomDiversity.exactSplitFailureMass
   have hfactor : (((h * s + 1 : ℕ) : ℝ)) ≤ 8 * ell * s + 1 := by
@@ -280,12 +280,12 @@ lemma exactSplitFailureMass_eight_mul_bound
             RandomDiversity.complementDiversityTailBound h q) := by
       gcongr
     _ ≤ (8 * ell * s + 1 : ℕ) * (2 * (N + 1)) *
-          (2 * Real.exp (- (k : ℝ) /
+          (2 * Real.exp (-(k : ℝ) /
             (1024 * (ell : ℝ) ^ 2))) := by
       gcongr
       nlinarith
     _ = (4 : ℝ) * (8 * ell * s + 1) * (N + 1) *
-          Real.exp (- (k : ℝ) / (1024 * (ell : ℝ) ^ 2)) := by
+          Real.exp (-(k : ℝ) / (1024 * (ell : ℝ) ^ 2)) := by
       push_cast
       ring
 
@@ -294,7 +294,7 @@ soon as its single explicit right-hand side is less than one. -/
 lemma exactSplitFailureMass_eight_mul_ledger
     {N s ell k : ℕ} (hell : 0 < ell) (hk : 12 * ell ^ 2 ≤ k)
     (hsmall : (4 : ℝ) * (8 * ell * s + 1) * (N + 1) *
-      Real.exp (- (k : ℝ) / (1024 * (ell : ℝ) ^ 2)) < 1) :
+      Real.exp (-(k : ℝ) / (1024 * (ell : ℝ) ^ 2)) < 1) :
     ∀ i < ell,
       RandomDiversity.exactSplitFailureMass N s (8 * ell - i)
         (RandomDiversity.residualDiversity k (8 * ell) i) < 1 := by

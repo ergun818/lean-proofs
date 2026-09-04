@@ -96,7 +96,7 @@ private lemma modImage_shiftedResidueTops (S : Finset ℕ) (v : ℕ) :
     have hcd : c = d.1 := by
       rw [← hzc]
       simpa using hd
-    simpa [hcd] using d.2
+    simp [hcd]
   · intro hc
     let d : ↑(Erdos13Additive.modImage S v) := ⟨c, hc⟩
     apply Erdos13Additive.mem_modImage.mpr
@@ -141,7 +141,6 @@ theorem lev_refined_lift
       Erdos13Additive.cast_not_mem_of_mem_residueRepsOutside hzR
     apply hznot
     apply mem_union_left
-    change (z : ZMod v) ∈ T
     dsimp only [T]
     rw [← modImage_shiftedResidueTops S v]
     exact Erdos13Additive.mem_modImage.mpr ⟨z, hzE, rfl⟩
@@ -271,7 +270,7 @@ private lemma int_gcd_eq_one_of_not_containedInNontrivialAP
     refine ⟨d, 0, hd, ?_⟩
     intro x hx
     have hdx : d ∣ x := Finset.gcd_dvd hx
-    simpa [Nat.dvd_iff_mod_eq_zero.mp hdx]
+    simp [Nat.dvd_iff_mod_eq_zero.mp hdx]
   rw [Erdos13Additive.nat_int_finset_gcd, hnat]
   norm_num
 
@@ -334,7 +333,7 @@ theorem lev_multi_increment_modImage
               (Erdos13Additive.modImage A v).card).sum +
             (Erdos13Additive.modImage B v).card - parts.length) ≤
       (levFinsetSum parts + B).card := by
-  letI : NeZero v := ⟨Nat.ne_of_gt hv⟩
+  let : NeZero v := ⟨Nat.ne_of_gt hv⟩
   let S := levFinsetSum parts
   let X := Erdos13Additive.modImage S v
   let Y := Erdos13Additive.modImage B v

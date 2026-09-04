@@ -40,7 +40,7 @@ theorem gcd_normalized_affine_productCore_cyclicProgressionBound_five
   let q := A.gcd (fun a : ℕ ↦ a)
   have hXzero : (0, 0) ∈ X := by
     exact Finset.mem_image.mpr
-      ⟨0, hDzero, by simp [zmodQuotRemLift, X]⟩
+      ⟨0, hDzero, by simp [zmodQuotRemLift]⟩
   have hXne : X.Nonempty := ⟨(0, 0), hXzero⟩
   have hAzero : 0 ∈ A :=
     mem_firstCoordinateSet.mpr ⟨0, by simpa [A] using hXzero⟩
@@ -51,7 +51,7 @@ theorem gcd_normalized_affine_productCore_cyclicProgressionBound_five
       Finset.gcd_eq_zero_iff.mp hqzero
     have hAsub : A ⊆ {0} := by
       intro a ha
-      simpa [hallzero a ha]
+      simp [hallzero a ha]
     have hcard : A.card ≤ 1 := by
       simpa using Finset.card_le_card hAsub
     have : A.card = 5 := by simpa [A, X] using hAcard

@@ -113,8 +113,8 @@ private lemma binomialNumerator_le_mode {h s r : ℕ} (hh : 2 ≤ h) :
         · have hzero : binomialNumerator (h * s) h (r + 1) = 0 := by
             unfold binomialNumerator
             rw [Nat.choose_eq_zero_of_lt]
-            simp
-            omega
+            · simp
+            · omega
           rw [hzero]
           exact Nat.zero_le _
   exact (le_total r s).elim (hbelow r) (habove r)
@@ -218,7 +218,7 @@ private lemma fixed_layer_mass_lower {A : Finset ℕ} {h s : ℕ}
   exact_mod_cast (by simpa [mul_comm] using hm)
 
 private theorem exists_fixedCard_avoiding_weighted_bad
-    {iota delta : Type*} [DecidableEq iota] [DecidableEq delta]
+    {iota delta : Type*} [DecidableEq iota]
     (S : Finset iota) (m : ℕ) (D : Finset delta) (p : iota → ℝ)
     (hp0 : ∀ i ∈ S, 0 ≤ p i) (hp1 : ∀ i ∈ S, p i ≤ 1)
     (bad : delta → Finset iota → Prop) [DecidableRel bad]
@@ -340,7 +340,7 @@ theorem exists_fixedCard_diverse_sample
     calc
       (∑ T ∈ A.powerset.filter (bad d), weight A p T) ≤
           Real.exp (-((X d).card : ℝ) / (12 * h)) := by
-            convert hchern using 1 <;> norm_num <;> ring
+            convert hchern using 1; norm_num; ring
       _ ≤ Real.exp (-(k : ℝ) / (12 * h)) := by
         apply Real.exp_le_exp.mpr
         have hhR : (0 : ℝ) < h := by positivity
@@ -583,7 +583,7 @@ private lemma sample_diversity_tail
     (∑ T ∈ A.powerset.filter
         (fun T ↦ (T ∩ X).card < k / (2 * h)), weight A p T) ≤
         Real.exp (-(X.card : ℝ) / (12 * h)) := by
-          convert hchern using 1 <;> norm_num <;> ring
+          convert hchern using 1; norm_num; ring
     _ ≤ Real.exp (-(k : ℝ) / (12 * h)) := by
       apply Real.exp_le_exp.mpr
       have hcast : (k : ℝ) ≤ X.card := by exact_mod_cast hkX

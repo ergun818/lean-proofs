@@ -21,7 +21,7 @@ lemma starMargin_nonneg {K : ℕ} {w : ℕ → ℕ} {i : ℕ}
   omega
 
 lemma crossMargin_good_nonneg {K : ℕ} {Good : Finset ℕ} {w : ℕ → ℕ} {i : ℕ}
-    (hi : w i ≤ K) (hiG : i ∈ Good) : 0 ≤ crossMargin K Good w i := by
+    (_hi : w i ≤ K) (hiG : i ∈ Good) : 0 ≤ crossMargin K Good w i := by
   simp only [crossMargin, hybridG, if_pos hiG]
   omega
 
@@ -35,7 +35,7 @@ lemma high_mixed_base {K M : ℕ} {Good : Finset ℕ} {w : ℕ → ℕ} {base : 
   omega
 
 lemma high_mixed_regular_good {K M : ℕ} {Good : Finset ℕ} {w : ℕ → ℕ} {i : ℕ}
-    (hi : w i ≤ K) (hiG : i ∈ Good) :
+    (_hi : w i ≤ K) (hiG : i ∈ Good) :
     3 * (K : ℤ) ≤ 2 * mixedMargin K M Good w i := by
   simp only [mixedMargin, crossMargin, hybridX, hybridG,
     if_pos hiG]
@@ -61,7 +61,7 @@ lemma high_mixed_regular_low {K M : ℕ} {Good : Finset ℕ} {w : ℕ → ℕ} {
 
 lemma high_mixed_sum_bound
     (A Good : Finset ℕ) (w : ℕ → ℕ) {base top M K : ℕ}
-    (hcard : 6 ≤ A.card) (hGoodSub : Good ⊆ A)
+    (hcard : 6 ≤ A.card) (_hGoodSub : Good ⊆ A)
     (hbaseA : base ∈ A) (htopA : top ∈ A)
     (hbase : base ∈ Good) (hbasew : w base = M) (htopw : w top = K)
     (hMK : M < K) (hMhigh : 5 * K < 6 * M)
@@ -162,7 +162,7 @@ lemma high_mixed_sum_bound
   simpa only [Bad, P] using hQlower
 
 lemma high_X_regular_good {K M : ℕ} {Good : Finset ℕ} {w : ℕ → ℕ} {i : ℕ}
-    (hi : w i ≤ K) (hiG : i ∈ Good) :
+    (_hi : w i ≤ K) (hiG : i ∈ Good) :
     (K : ℤ) ≤ 2 * hybridX K M Good w i := by
   simp only [hybridX, hybridG, hybridA, if_pos hiG]
   split_ifs <;> omega
@@ -176,7 +176,7 @@ lemma high_X_regular_bad {K M : ℕ} {Good : Finset ℕ} {w : ℕ → ℕ} {i : 
   omega
 
 lemma high_X_base {K M : ℕ} {Good : Finset ℕ} {w : ℕ → ℕ} {base : ℕ}
-    (hMK : M < K) (hMhigh : 5 * K < 6 * M)
+    (_hMK : M < K) (hMhigh : 5 * K < 6 * M)
     (hbase : base ∈ Good) (hbasew : w base = M) :
     hybridX K M Good w base = (M : ℤ) := by
   simp only [hybridX, hybridG, hybridA, hbasew, if_pos hbase,
@@ -185,7 +185,7 @@ lemma high_X_base {K M : ℕ} {Good : Finset ℕ} {w : ℕ → ℕ} {base : ℕ}
 
 lemma high_X_sum_bound
     (A Good : Finset ℕ) (w : ℕ → ℕ) {base top M K : ℕ}
-    (hcard : 6 ≤ A.card) (hGoodSub : Good ⊆ A)
+    (hcard : 6 ≤ A.card) (_hGoodSub : Good ⊆ A)
     (hbaseA : base ∈ A) (htopA : top ∈ A)
     (hbase : base ∈ Good) (hbasew : w base = M) (htopw : w top = K)
     (hMK : M < K) (hMhigh : 5 * K < 6 * M)
@@ -346,7 +346,7 @@ lemma zMargin_regular_high {K M : ℕ} {Good : Finset ℕ}
 
 lemma zMargin_nonneg_low_regime {K M : ℕ} {Good : Finset ℕ}
     {w : ℕ → ℕ} {i : ℕ} (hi : w i ≤ K) (hMlow : 6 * M ≤ 5 * K)
-    (hGoodMax : i ∈ Good → w i ≤ M) :
+    (_hGoodMax : i ∈ Good → w i ≤ M) :
     0 ≤ zMargin K M Good w i := by
   by_cases hiG : i ∈ Good
   · have h := zMargin_good_lower (M := M) hi hiG
@@ -465,10 +465,10 @@ lemma low_weighted_sum_bound
 lemma starMargin_base_low_three
     {K M : ℕ} {Good : Finset ℕ} {w : ℕ → ℕ} {base i j k : ℕ}
     (hMlow : 6 * M ≤ 5 * K)
-    (hbase : base ∈ Good) (hbasew : w base = M)
-    (hiG : i ∉ Good) (hiw : w i ≤ M)
-    (hjG : j ∉ Good) (hjw : w j ≤ M)
-    (hkG : k ∉ Good) (hkw : w k ≤ M) :
+    (_hbase : base ∈ Good) (hbasew : w base = M)
+    (_hiG : i ∉ Good) (hiw : w i ≤ M)
+    (_hjG : j ∉ Good) (hjw : w j ≤ M)
+    (_hkG : k ∉ Good) (hkw : w k ≤ M) :
     2 * (K : ℤ) ≤ starMargin K w base + starMargin K w i +
       starMargin K w j + starMargin K w k := by
   simp only [starMargin, hybridT, hbasew, pairWeight,
@@ -526,7 +526,7 @@ lemma low_star_sum_bound
 
 lemma low_z_sum_bound_one
     (A Good : Finset ℕ) (w : ℕ → ℕ) {base top M K : ℕ}
-    (hcard : 6 ≤ A.card) (hGoodSub : Good ⊆ A)
+    (hcard : 6 ≤ A.card) (_hGoodSub : Good ⊆ A)
     (hbaseA : base ∈ A) (htopA : top ∈ A)
     (hbase : base ∈ Good) (hbasew : w base = M) (htopw : w top = K)
     (hMK : M < K) (hMlow : 6 * M ≤ 5 * K)
@@ -671,7 +671,7 @@ lemma low_z_sum_bound_one
 
 lemma low_z_sum_bound_two
     (A Good : Finset ℕ) (w : ℕ → ℕ) {base top M K : ℕ}
-    (hcard : 6 ≤ A.card) (hGoodSub : Good ⊆ A)
+    (hcard : 6 ≤ A.card) (_hGoodSub : Good ⊆ A)
     (hbaseA : base ∈ A) (htopA : top ∈ A)
     (hbase : base ∈ Good) (hbasew : w base = M) (htopw : w top = K)
     (hMK : M < K) (hMlow : 6 * M ≤ 5 * K)
@@ -844,7 +844,7 @@ lemma mixed_average_to_three {s S K C AA B : ℕ}
   let R : ℤ := 2 * ((s - 1 : ℕ) : ℤ) * K
   have h' : 9 * (S : ℤ) ≤ 3 * R + 2 * C + AA := by
     dsimp only [R]
-    convert h using 1 <;> ring
+    convert h using 1; ring
   have hz : 3 * (S : ℤ) ≤ 2 * ((s - 1 : ℕ) : ℤ) * K + B := by
     change 3 * (S : ℤ) ≤ R + B
     omega
@@ -859,7 +859,7 @@ lemma weighted_average_to_three {s S K AA T B : ℕ}
   let R : ℤ := 2 * ((s - 1 : ℕ) : ℤ) * K
   have h' : 15 * (S : ℤ) ≤ 5 * R + 2 * AA + 3 * T := by
     dsimp only [R]
-    convert h using 1 <;> ring
+    convert h using 1; ring
   have hz : 3 * (S : ℤ) ≤ 2 * ((s - 1 : ℕ) : ℤ) * K + B := by
     change 3 * (S : ℤ) ≤ R + B
     omega
@@ -874,7 +874,7 @@ lemma two_average_to_three {s S K AA T B : ℕ}
   let R : ℤ := 2 * ((s - 1 : ℕ) : ℤ) * K
   have h' : 6 * (S : ℤ) ≤ 2 * R + AA + T := by
     dsimp only [R]
-    convert h using 1 <;> ring
+    convert h using 1; ring
   have hz : 3 * (S : ℤ) ≤ 2 * ((s - 1 : ℕ) : ℤ) * K + B := by
     change 3 * (S : ℤ) ≤ R + B
     omega
@@ -905,7 +905,7 @@ lemma weighted_sum_expansion_to_three
       2 * (2 * (s : ℤ) * K - 3 * S + G + 2 * AH) +
         3 * (2 * (s : ℤ) * K - 3 * S + T))
     (hAA : (AA : ℤ) = G + H + (2 * (AH : ℤ) - K))
-    (hH : 0 ≤ (H : ℤ)) (hAAB : AA ≤ B) (hTB : T ≤ B) :
+    (_hH : 0 ≤ (H : ℤ)) (hAAB : AA ≤ B) (hTB : T ≤ B) :
     3 * S ≤ 2 * (s - 1) * K + B := by
   have hbase : ((s - 1 : ℕ) : ℤ) = (s : ℤ) - 1 := by
     rw [Nat.cast_sub hs]
@@ -1072,7 +1072,7 @@ lemma hybrid_three_branch_arithmetic
             by_contra hn
             have hiLow : i ∈ Low := Finset.mem_filter.mpr ⟨hiA, hiG, by omega⟩
             have : Low = ∅ := Finset.card_eq_zero.mp hLc
-            simpa [this] using hiLow
+            simp [this] at hiLow
           have hw := low_weighted_sum_bound A Good w hcard hmax hBadHigh
           rw [hsumWeighted, hsumX, hsumStar] at hw
           let H := (Bad.card - 1) * (hybridG K M - K)

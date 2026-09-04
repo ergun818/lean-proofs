@@ -115,7 +115,7 @@ theorem exists_proper_subgroup_of_dyadic_quotient_card_le_32_at_five
     intro x hx
     have hxzero : x = 0 :=
       (Finset.card_le_one_iff.mp hcardOne) hx hzeroBar
-    simpa [hxzero]
+    simp [hxzero]
   have hPbarCoset : NotContainedInProperCoset Pbar :=
     notContainedInProperCoset_of_zero_mem_not_subset_subgroup
       hzeroBar hPbarProper
@@ -374,7 +374,7 @@ theorem proper_subgroup_of_two_layer_affine_core
       rw [hquotCard] at hcardSmall
       omega
     · intro x hx
-      simpa [hallzero x (by simpa using hx)]
+      simp [hallzero x (by simpa using hx)]
   · push Not at hallzero
     obtain ⟨x, hx, hx0⟩ := hallzero
     have hminus : -x = x := by
@@ -395,7 +395,7 @@ theorem proper_subgroup_of_two_layer_affine_core
           (AddSubgroup.zmultiples x : Set (ZMod (m * g) ⧸ H₀)) := by
       intro y hy
       by_cases hyx : y = x
-      · simpa [hyx] using AddSubgroup.mem_zmultiples x
+      · simp [hyx]
       · have hyErase : y ∈ Pbar.erase x :=
           Finset.mem_erase.mpr ⟨hyx, by simpa using hy⟩
         have hzeroErase : 0 ∈ Pbar.erase x :=
@@ -404,7 +404,7 @@ theorem proper_subgroup_of_two_layer_affine_core
           rw [Finset.card_erase_of_mem hx]
           omega
         have hy0 := Finset.card_le_one_iff.mp heraseCard hyErase hzeroErase
-        simpa [hy0]
+        simp [hy0]
     have hzxTop : AddSubgroup.zmultiples x = ⊤ := by
       by_contra hne
       exact hPbarProper ⟨AddSubgroup.zmultiples x, hne, hPbarSub⟩
@@ -437,7 +437,7 @@ theorem proper_subgroup_of_four_layer_affine_core_at_five
     (hdense : 33 * B.card ≤ 40 * C.card)
     (hBsmall : 25 * (B + B).card ≤ 51 * B.card)
     (hDaff : D = zmodAffineImage c (w : ZMod (m * g)) C)
-    (hm240 : 240 ≤ m) (hDzero : 0 ∈ D)
+    (hm240 : 240 ≤ m) (_hDzero : 0 ∈ D)
     (hfour :
       (firstCoordinateSet (zmodQuotRemImage m g D)).card ≤ 4) :
     ∃ K : AddSubgroup (ZMod (m * g)), K ≠ ⊤ ∧
@@ -603,7 +603,7 @@ theorem cfpLocalDyadicInverseAlternativeWithLoss_48_of_support_le_two_or_six
       hEzero, hEcard, hX, hXcard, hXsum, hXzero, hXrange, hXsmall⟩ :=
     exists_dense_cyclic_smallProductCore_affine B hB
       (by simpa [B, P] using hsmall) (by simpa [B, P] using hsparse)
-  letI : NeZero g := ⟨by
+  let : NeZero g := ⟨by
     have htpos : 0 < t := NeZero.pos t
     have hmg : 0 < m * g := by simpa [htg] using htpos
     exact (Nat.pos_of_mul_pos_left hmg).ne'⟩
@@ -679,7 +679,7 @@ theorem cfpLocalDyadicInverseAlternativeWithLoss_48_of_support_le_two_five_or_si
       hEzero, hEcard, hX, hXcard, hXsum, hXzero, hXrange, hXsmall⟩ :=
     exists_dense_cyclic_smallProductCore_twelve_fifths B hB
       (by simpa [B, P] using hsmall) (by simpa [B, P] using hsparse)
-  letI : NeZero g := ⟨by
+  let : NeZero g := ⟨by
     have htpos : 0 < t := NeZero.pos t
     have hmg : 0 < m * g := by simpa [htg] using htpos
     exact (Nat.pos_of_mul_pos_left hmg).ne'⟩
@@ -762,7 +762,7 @@ theorem cfpLocalDyadicInverseAlternativeWithLoss_48_at_five
       hEzero, hEcard, hX, hXcard, hXsum, hXzero, hXrange, hXsmall⟩ :=
     exists_dense_cyclic_smallProductCore_twelve_fifths B hB
       (by simpa [B, P] using hsmall) (by simpa [B, P] using hsparse)
-  letI : NeZero g := ⟨by
+  let : NeZero g := ⟨by
     have htpos : 0 < t := NeZero.pos t
     have hmg : 0 < m * g := by simpa [htg] using htpos
     exact (Nat.pos_of_mul_pos_left hmg).ne'⟩
@@ -787,7 +787,7 @@ theorem cfpLocalDyadicInverseAlternativeWithLoss_48_at_five
       (hj := hj) (hBdyadic := rfl) w c
       (hC := hCne) (hCB := hCB) (hdense := hdense)
       (hBsmall := by simpa [B, P] using hsmall)
-      (hDaff := hEaff) (hm240 := hm240) (hDzero := hEzero)
+      (hDaff := hEaff) (hm240 := hm240) (_hDzero := hEzero)
       (hfour := by simpa only [hX, castZModFinset] using hfour)
   · right
     obtain ⟨H, a, d, L, hprog, hmass⟩ :=

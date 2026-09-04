@@ -28,7 +28,7 @@ def normalizeFirstCoordinates {d : ℕ} (q : ℕ)
   X.image (divideFirstCoordinate q)
 
 lemma divideFirstCoordinate_injectiveOn
-    {d q : ℕ} (hq : 0 < q) {X : Finset (ℕ × ZMod d)}
+    {d q : ℕ} (_hq : 0 < q) {X : Finset (ℕ × ZMod d)}
     (hdiv : ∀ p ∈ X, q ∣ p.1) :
     Set.InjOn (divideFirstCoordinate q) (X : Set (ℕ × ZMod d)) := by
   intro p hp r hr hpr
@@ -49,7 +49,7 @@ lemma card_normalizeFirstCoordinates
   exact divideFirstCoordinate_injectiveOn hq hdiv hp hr hpr
 
 lemma divideFirstCoordinate_add_of_dvd
-    {d q : ℕ} (p r : ℕ × ZMod d) (hp : q ∣ p.1) (hr : q ∣ r.1) :
+    {d q : ℕ} (p r : ℕ × ZMod d) (hp : q ∣ p.1) (_hr : q ∣ r.1) :
     divideFirstCoordinate q (p + r) =
       divideFirstCoordinate q p + divideFirstCoordinate q r := by
   apply Prod.ext
@@ -107,7 +107,7 @@ lemma firstCoordinateSet_normalizeFirstCoordinates
   aesop
 
 lemma card_firstCoordinateSet_normalizeFirstCoordinates
-    {d q : ℕ} [NeZero d] (hq : 0 < q)
+    {d q : ℕ} [NeZero d] (_hq : 0 < q)
     {X : Finset (ℕ × ZMod d)}
     (hdiv : ∀ p ∈ X, q ∣ p.1) :
     (firstCoordinateSet (normalizeFirstCoordinates q X)).card =
@@ -200,7 +200,7 @@ lemma gcd_firstCoordinateSet_normalizeFirstCoordinates
   have hqne : q ≠ 0 := Nat.ne_of_gt hq
   have haExists : ∃ a ∈ firstCoordinateSet X, a ≠ 0 := by
     by_contra hnone
-    push_neg at hnone
+    push Not at hnone
     have hzero : q = 0 := Finset.gcd_eq_zero_iff.mpr hnone
     exact hqne hzero
   obtain ⟨a, ha, hane⟩ := haExists
@@ -225,7 +225,7 @@ original cyclic group.  The normalized unit step becomes the original step
 `q + m*x`. -/
 lemma zmodQuotRem_normalizedAffineFiber_subset_cyclicCosetProgression
     {m d q L : ℕ} [NeZero d] [NeZero (m * d)]
-    (hq : 0 < q) {K : AddSubgroup (ZMod d)} {x y : ZMod d}
+    (_hq : 0 < q) {K : AddSubgroup (ZMod d)} {x y : ZMod d}
     {D : Finset (ZMod (m * d))}
     (hD : ∀ z ∈ D,
       q ∣ z.val % m ∧

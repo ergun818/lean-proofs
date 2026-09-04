@@ -183,10 +183,10 @@ theorem equivCoordinates_closure_lift_ordinary_any
 closure modulus `q`. -/
 theorem interval_equivCoordinates_closure_lift_ordinary
     {t lo : ℕ} [NeZero t] (ht : 0 < t) (P : Finset ℕ)
-    (hloT : lo ≤ t) (hlo : ∀ p ∈ P, lo ≤ p)
+    (_hloT : lo ≤ t) (hlo : ∀ p ∈ P, lo ≤ p)
     (hhi : ∀ p ∈ P, p < lo + t) :
     let R := ordinaryResidues t P
-    let H := AddSubgroup.closure ((R : Finset (ZMod t)) : Set (ZMod t))
+    let _H := AddSubgroup.closure ((R : Finset (ZMod t)) : Set (ZMod t))
     let q := closureModulus ht R
     intervalZmodValues (lo ⌈/⌉ q)
         (equivCoordinates (closureZModEquiv ht R) (liftFinsetToClosure R)) =
@@ -240,7 +240,7 @@ theorem interval_equivCoordinates_closure_coprime_any
     (hhi : ∀ p ∈ P, p < lo + t)
     (hcop : ∀ p ∈ P, Nat.Coprime M p) :
     let R := ordinaryResidues t P
-    let H := AddSubgroup.closure ((R : Finset (ZMod t)) : Set (ZMod t))
+    let _H := AddSubgroup.closure ((R : Finset (ZMod t)) : Set (ZMod t))
     let q := closureModulus ht R
     ∀ x ∈ intervalZmodValues (lo ⌈/⌉ q)
       (equivCoordinates (closureZModEquiv ht R) (liftFinsetToClosure R)),
@@ -305,7 +305,7 @@ theorem interval_equivCoordinates_closure_coprime
     (hPt : ∀ p ∈ P, p < t)
     (hcop : ∀ p ∈ P, Nat.Coprime M p) :
     let R := ordinaryResidues t P
-    let H := AddSubgroup.closure ((R : Finset (ZMod t)) : Set (ZMod t))
+    let _H := AddSubgroup.closure ((R : Finset (ZMod t)) : Set (ZMod t))
     ∀ x ∈ intervalZmodValues 0
       (equivCoordinates (closureZModEquiv ht R) (liftFinsetToClosure R)),
       Nat.Coprime M x := by

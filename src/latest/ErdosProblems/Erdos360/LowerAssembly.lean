@@ -374,7 +374,7 @@ theorem forcesTarget_of_CFPTestSetCompletion
     (hY : ∀ x ∈ Y, y < x.1 ∧ x.1 ≤ 2 * y)
     (hCFP : CFPTestSetCompletion n colors y B L K Y) :
     ForcesTarget n colors := by
-  apply forcesTarget_of_extracted_colorClass_completion hcolors hB Y
+  apply forcesTarget_of_extracted_colorClass_completion (L := L) (K := K) hcolors hB Y
   intro c i d Z hlarge hd hdB hscale hloss hdiverse
   obtain ⟨hdn, hdata⟩ :=
     hCFP c i d Z hlarge hd hdB hscale hloss hdiverse

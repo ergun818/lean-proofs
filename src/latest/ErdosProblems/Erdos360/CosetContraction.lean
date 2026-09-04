@@ -43,7 +43,7 @@ lemma image_iteratedFinsetSum_addHom
 /-- A surjective additive image of a generating finite set still generates. -/
 lemma closure_image_addHom_eq_top
     {G K : Type*} [AddCommGroup G] [AddCommGroup K]
-    [DecidableEq G] [DecidableEq K]
+     [DecidableEq K]
     {P : Finset G} (f : G →+ K) (hf : Function.Surjective f)
     (hclosure : AddSubgroup.closure (P : Set G) = ⊤) :
     AddSubgroup.closure ((P.image f : Finset K) : Set K) = ⊤ := by
@@ -97,7 +97,6 @@ lemma cyclic_interval_positive_coordinate_contracts
   have hxcoord : x = (delta : ZMod N) := by
     dsimp [delta]
     rw [hx]
-    push_cast
     have hiz : (i : ZMod N) = (z : ZMod N) + ((i - z : ℕ) : ZMod N) := by
       rw [← Nat.cast_add, Nat.add_sub_of_le hzi]
     rw [hiz]
@@ -141,7 +140,7 @@ lemma cyclic_interval_positive_coordinate_contracts
 `cyclic_interval_positive_coordinate_contracts`. -/
 lemma cyclic_interval_negative_coordinate_contracts
     {N L k z i : ℕ} [NeZero N] {a x : ZMod N}
-    (hhalf : 2 * L ≤ N) (hz : z < L) (hi : i < L) (hiz : i ≤ z)
+    (hhalf : 2 * L ≤ N) (hz : z < L) (_hi : i < L) (hiz : i ≤ z)
     (ha : a + (z : ZMod N) = 0)
     (hx : x = a + (i : ZMod N))
     (hmul : ∀ r ≤ k, ∃ j < L, r • x = a + (j : ZMod N)) :
@@ -322,9 +321,9 @@ lemma k_le_length_of_generating_zmod_iterated_subset_half_interval
   have hNtwo : 2 ≤ N := by omega
   have hone : (1 : ZMod N) ≠ 0 := by
     intro heq
-    letI : Fact (1 < N) := ⟨by omega⟩
+    let : Fact (1 < N) := ⟨by omega⟩
     have hv := congrArg ZMod.val heq
-    simpa using hv
+    simp at hv
   have hPtwo : 2 ≤ P.card := by
     by_contra hnot
     have hcard : P.card ≤ 1 := by omega
@@ -509,11 +508,11 @@ theorem cyclic_coset_progression_contraction_of_closure_eq_top
     exact hxK
   let N := Nat.card (ZMod t ⧸ H)
   have hNpos : 0 < N := Nat.card_pos
-  letI : NeZero N := ⟨hNpos.ne'⟩
+  let : NeZero N := ⟨hNpos.ne'⟩
   let e : ZMod N ≃+ (ZMod t ⧸ H) :=
     zmodAddEquivOfGenerator hgenQ (n := N) rfl
   have heone : e 1 = QuotientAddGroup.mk' H d := by
-    simpa [e, q] using zmodAddEquivOfGenerator_apply_one hgenQ rfl
+    simp [e, q]
   exact cyclic_coset_progression_contraction H a d e heone
     hzero hk hkL (by simpa [N] using hhalf) hsum
 
@@ -592,11 +591,11 @@ lemma k_le_length_of_generating_cyclic_coset_iterated_subset
     exact hxK
   let N := Nat.card (ZMod t ⧸ H)
   have hNpos : 0 < N := Nat.card_pos
-  letI : NeZero N := ⟨hNpos.ne'⟩
+  let : NeZero N := ⟨hNpos.ne'⟩
   let e : ZMod N ≃+ (ZMod t ⧸ H) :=
     zmodAddEquivOfGenerator hgenQ (n := N) rfl
   have heone : e 1 = QuotientAddGroup.mk' H d := by
-    simpa [e, q] using zmodAddEquivOfGenerator_apply_one hgenQ rfl
+    simp [e, q]
   let f : ZMod t →+ ZMod N :=
     e.symm.toAddMonoidHom.comp (QuotientAddGroup.mk' H)
   let Q : Finset (ZMod N) := P.image f

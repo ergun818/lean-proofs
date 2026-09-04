@@ -25,9 +25,9 @@ lemma hybrid_five_filter_sum_one_good (w : ℕ → ℕ) {base top i j k M K : �
         (if M < w k then hybridA K (w k) else 0) := by
   rw [Finset.sum_filter]
   simp [hbasew, htopw, hMK, not_lt_of_ge hwiM, hybridA,
-    hbt, hbt.symm, hbi, hbi.symm, hbj, hbj.symm, hbk, hbk.symm,
-    hti, hti.symm, htj, htj.symm, htk, htk.symm,
-    hij, hij.symm, hik, hik.symm, hjk, hjk.symm, add_assoc]
+    hbt, hbi, hbj, hbk,
+    hti, htj, htk,
+    hij, hik, hjk, add_assoc]
   omega
 
 lemma hybrid_five_arithmetic_explicit_three_good
@@ -166,10 +166,12 @@ lemma hybrid_five_arithmetic_explicit_two_good
       omega
   have h := five_hybrid_two_good hMK hwiK hwjK hwkK hwiM hwjM
   have htwice : 2 * K - K = K := by omega
-  simp [hBad, hBadTail, hAH, htwice, hbasew, htopw, hbt, hbt.symm, hbi, hbi.symm,
-    hbj, hbj.symm, hbk, hbk.symm, hti, hti.symm, htj, htj.symm,
-    htk, htk.symm, hij, hij.symm, hik, hik.symm, hjk, hjk.symm,
-    add_assoc] at h ⊢
+  simp only [add_assoc, Nat.add_max_add_left, Finset.mem_insert, hbt, hbi, hbj,
+    Finset.mem_singleton, hbk, or_self, not_false_eq_true, Finset.sum_insert, hbasew,
+    hti, htj, htk, htopw, hij, hik, hjk, Finset.sum_singleton,
+    Finset.card_insert_of_notMem, Finset.card_singleton, Nat.reduceAdd,
+    Nat.add_one_sub_one, Finset.insert_sdiff_insert, hBadTail, one_mul, hAH,
+    ge_iff_le] at h ⊢
   have hC := le_max_left
       (hybridG K M + hybridG K (w i) + hybridG K (w j) + hybridG K M)
       (max
@@ -247,9 +249,9 @@ lemma hybrid_five_filter_sum_only_base (w : ℕ → ℕ) {base top i j k M K : �
         (if M < w k then hybridA K (w k) else 0) := by
   rw [Finset.sum_filter]
   simp [hbasew, htopw, hMK, hybridA,
-    hbt, hbt.symm, hbi, hbi.symm, hbj, hbj.symm, hbk, hbk.symm,
-    hti, hti.symm, htj, htj.symm, htk, htk.symm,
-    hij, hij.symm, hik, hik.symm, hjk, hjk.symm, add_assoc]
+    hbt, hbi, hbj, hbk,
+    hti, htj, htk,
+    hij, hik, hjk, add_assoc]
   omega
 
 lemma hybrid_five_arithmetic_explicit_only_base
@@ -406,9 +408,11 @@ lemma hybrid_five_arithmetic
             subst x
             exact hkm
           · simp [hkm] at hx
-    simp [G0, hiG, hjG, hkG] at hGoodConcrete
+    simp only [Finset.union_assoc, hiG, ↓reduceIte, Finset.singleton_union, hjG, hkG,
+      Finset.union_insert, Finset.insert_union, Finset.union_empty, Finset.empty_union,
+      Finset.union_idempotent, G0] at hGoodConcrete
   · exact hybrid_five_arithmetic_explicit_three_good A Good w hAeq
-      (by rw [hGoodConcrete]; ext x; simp [or_comm, or_left_comm, or_assoc])
+      (by rw [hGoodConcrete]; ext x; simp [or_left_comm])
       hbasew htopw hMK
       hwi hwj hwk (hiGM hiG) (hjGM hjG) (hkGM hkG) hne.symm hib.symm
       hjb.symm hkb.symm hit.symm hjt.symm hkt.symm hij hik hjk
@@ -418,7 +422,7 @@ lemma hybrid_five_arithmetic
       hjb.symm hkb.symm hit.symm hjt.symm hkt.symm hij hik hjk
   · exact hybrid_five_arithmetic_explicit_two_good
       (i := i) (j := k) (k := j) A Good w
-      (by rw [hAeq]; ext x; simp [or_comm, or_left_comm, or_assoc])
+      (by rw [hAeq]; ext x; simp [or_comm])
       (by rw [hGoodConcrete])
       hbasew htopw hMK
       hwi hwk hwj (hiGM hiG) (hkGM hkG) hne.symm hib.symm
@@ -429,21 +433,21 @@ lemma hybrid_five_arithmetic
       hit.symm hjt.symm hkt.symm hij hik hjk
   · exact hybrid_five_arithmetic_explicit_two_good
       (i := j) (j := k) (k := i) A Good w
-      (by rw [hAeq]; ext x; simp [or_comm, or_left_comm, or_assoc])
-      (by rw [hGoodConcrete]; ext x; simp [or_comm, or_left_comm, or_assoc])
+      (by rw [hAeq]; ext x; simp [or_comm, or_left_comm])
+      (by rw [hGoodConcrete]; ext x; simp [or_left_comm])
       hbasew htopw hMK
       hwj hwk hwi (hjGM hjG) (hkGM hkG) hne.symm hjb.symm
       hkb.symm hib.symm hjt.symm hkt.symm hit.symm hjk hij.symm hik.symm
   · exact hybrid_five_arithmetic_explicit_one_good
       (i := j) (j := i) (k := k) A Good w
-      (by rw [hAeq]; ext x; simp [or_comm, or_left_comm, or_assoc])
+      (by rw [hAeq]; ext x; simp [or_left_comm])
       (by rw [hGoodConcrete])
       hbasew htopw hMK
       hwj hwi hwk (hjGM hjG) hne.symm hjb.symm hib.symm hkb.symm
       hjt.symm hit.symm hkt.symm hij.symm hjk hik
   · exact hybrid_five_arithmetic_explicit_one_good
       (i := k) (j := i) (k := j) A Good w
-      (by rw [hAeq]; ext x; simp [or_comm, or_left_comm, or_assoc])
+      (by rw [hAeq]; ext x; simp [or_comm, or_left_comm])
       (by rw [hGoodConcrete])
       hbasew htopw hMK
       hwk hwi hwj (hkGM hkG) hne.symm hkb.symm hib.symm hjb.symm

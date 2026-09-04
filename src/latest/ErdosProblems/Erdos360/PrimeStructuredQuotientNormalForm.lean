@@ -114,7 +114,7 @@ lemma primeStructured_extracted_set_normalForm
 coordinate is larger than the last selected prime. -/
 lemma PrimeStructuredQuotientNormalForm.primeAt_lt_quotient
     {n y U d z r : ℕ}
-    (hU : 0 < U)
+    (_hU : 0 < U)
     (hcut : primeAt (r - 1) ≤ y / U)
     (h : PrimeStructuredQuotientNormalForm n y U d z) :
     primeAt (r - 1) < h.q := by
@@ -213,7 +213,7 @@ rounding a numerical cutoff to a prime index: every retained prime
 coordinate is strictly larger than any `B ≤ y/U`. -/
 lemma primeStructured_extracted_set_coprime_missingPrimeProduct_le_cutoff
     {n y U d B : ℕ} {W Z : Finset ℕ}
-    (hU : 0 < U) (hB : B ≤ y / U)
+    (_hU : 0 < U) (hB : B ≤ y / U)
     (hdn : d ∣ n)
     (hW : W ⊆ primeStructuredTestSet n y U)
     (hscale : ∀ z ∈ Z, d * z ∈ W) :
