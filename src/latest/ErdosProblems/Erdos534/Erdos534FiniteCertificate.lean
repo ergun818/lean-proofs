@@ -223,7 +223,7 @@ lemma checkBlock_sound {x n : ℕ} {d d' : ℤ}
       simp only [checkBlock, Option.some.injEq] at hcheck
       subst d'
       constructor
-      · simpa [hd]
+      · simp [hd]
       · intro y hxy hy
         omega
   | succ n ih =>

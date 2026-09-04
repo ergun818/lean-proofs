@@ -249,12 +249,12 @@ lemma signature_product_cover {N r : ℕ} {S : Finset ℕ}
     exact hscopeDvd.trans hradDvd
   rw [hpartition]
   apply Nat.le_of_dvd
-  exact Nat.mul_pos (Nat.pos_of_ne_zero hN) (Finset.prod_pos fun q hq ↦
-    (Nat.mem_primesLE.mp hq).2.pos)
-  exact hfinalDvd
+  · exact Nat.mul_pos (Nat.pos_of_ne_zero hN) (Finset.prod_pos fun q hq ↦
+      (Nat.mem_primesLE.mp hq).2.pos)
+  · exact hfinalDvd
 
 lemma card_sifted_doubling_of_insert_small {T : Finset ℕ}
-    {p q : ℕ} (hp : p.Prime) (hq : q.Prime) (hqT : q ∉ T)
+    {p q : ℕ} (_hp : p.Prime) (hq : q.Prime) (hqT : q ∉ T)
     (hT : ∀ r ∈ T, r.Prime)
     (hinsert : ∀ U,
       2 * (sifted (insert q T) U).card ≤
@@ -416,7 +416,7 @@ theorem card_sifted_quotient_doubling_three_of_three_large
     have hqPrime := hT q hqData.1
     have hqTwo := hqPrime.two_le
     have : q = 2 := by omega
-    simpa [this]
+    simp [this]
   have hsmallCard : Tsmall.card ≤ 1 := by
     simpa using Finset.card_le_card hsmallSub
   have hsmallProd : (∏ q ∈ Tsmall, (q - 1)) = 1 := by
@@ -704,7 +704,7 @@ lemma cast_card_sifted_triple_two {q r V : ℕ}
     cast_card_sifted_pair_two hq hq2,
     cast_card_sifted_pair_two hq hq2]
   simp only [oddMultipleBalance, Nat.div_div_eq_div_mul]
-  congr 1 <;> ring_nf
+  ring_nf
 
 lemma cast_natDiv_lt_add_one (a b : ℕ) (hb : 0 < b) :
     (a : ℚ) / b < ((a / b : ℕ) : ℚ) + 1 := by
@@ -721,10 +721,12 @@ lemma three_le_floor_six_sub_two_floors {q r V : ℕ}
       (V / (6 * r) : ℕ) := by
   have hq5 : 5 ≤ q := by
     by_contra h
-    interval_cases q <;> norm_num at hq
+    interval_cases q
+    norm_num at hq
   have hr5 : 5 ≤ r := by
     by_contra h
-    interval_cases r <;> norm_num at hr
+    interval_cases r
+    norm_num at hr
   have hgap : q + r + 23 ≤ q * r := by
     rcases lt_or_gt_of_ne hqr with hlt | hgt
     · have hqOdd := hq.odd_of_ne_two (by omega)
@@ -766,7 +768,6 @@ lemma three_le_floor_six_sub_two_floors {q r V : ℕ}
           field_simp
           ring]
     apply (lt_div_iff₀ hden).2
-    norm_num only [Nat.cast_ofNat]
     have hmulQ : (((18 * (q * r) : ℕ) : ℚ)) <
         (V : ℚ) * ((q * r - q - r : ℕ) : ℚ) := by
       exact_mod_cast hmul
@@ -865,7 +866,7 @@ lemma cast_card_sifted_pair {q r V : ℕ}
   have hqSetPrime : ∀ p ∈ ({q} : Finset ℕ), p.Prime := by
     intro p hp
     simpa [Finset.mem_singleton.mp hp] using hq
-  have hrSet : r ∉ ({q} : Finset ℕ) := by simpa [hqr.symm]
+  have hrSet : r ∉ ({q} : Finset ℕ) := by simp [hqr.symm]
   have hsubEmpty : (sifted (∅ : Finset ℕ) (V / q)).card ≤
       (sifted (∅ : Finset ℕ) V).card :=
     Finset.card_le_card (sifted_mono_cutoff _ (Nat.div_le_self V q))
@@ -894,10 +895,12 @@ lemma four_le_floor_three_sub_two_floors {q r V : ℕ}
     4 ≤ V / 3 - V / (3 * q) - V / (3 * r) := by
   have hq5 : 5 ≤ q := by
     by_contra h
-    interval_cases q <;> norm_num at hq
+    interval_cases q
+    norm_num at hq
   have hr5 : 5 ≤ r := by
     by_contra h
-    interval_cases r <;> norm_num at hr
+    interval_cases r
+    norm_num at hr
   let A := V / 3
   have hVdecomp : V ≤ 3 * A + 2 := by
     have hmod := Nat.mod_lt V (by norm_num : 0 < 3)
@@ -1130,7 +1133,7 @@ lemma card_sifted_signature_doubling
           have hr2 : r ≠ 2 := by omega
           have hprodT : (∏ a ∈ ({2, q, r} : Finset ℕ), a) =
               2 * (q * r) := by
-            simp [hqr, hqr.symm, hq2, hq2.symm, hr2, hr2.symm]
+            simp [hqr, hq2.symm, hr2.symm]
           have hprim : (∏ a ∈ Nat.primesLE 3, a) = 6 := by decide
           have hsharp : B * (q * r) ≤ N := by
             have hc := hcover
@@ -1146,7 +1149,7 @@ lemma card_sifted_signature_doubling
         · have hT : T = ({q, r} : Finset ℕ) := by
             simpa [hC] using hTEq h2
           have hprodT : (∏ a ∈ ({q, r} : Finset ℕ), a) = q * r := by
-            simp [hqr, hqr.symm]
+            simp [hqr]
           have hprim : (∏ a ∈ Nat.primesLE 3, a) = 6 := by decide
           have hsharp : B * (q * r) ≤ 2 * N := by
             have hc := hcover

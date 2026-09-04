@@ -23,7 +23,6 @@ lemma primePowerReplace_dvd_primePowerReplace_of_dvd
       Finsupp.single_apply]
     by_cases hpr : p = r
     · subst r
-      simp only [if_pos rfl]
       have hpFac := hfac p
       have hqFac := hfac q
       simp only [↓reduceIte, ge_iff_le]
@@ -32,9 +31,9 @@ lemma primePowerReplace_dvd_primePowerReplace_of_dvd
       exact hfac r
 
 lemma dvd_primePowerReplace_of_dvd_of_not_dvd
-    {p q a g : ℕ} (hp : p.Prime) (hq : q.Prime) (hpq : p ≠ q)
+    {p q a g : ℕ} (hp : p.Prime) (_hq : q.Prime) (hpq : p ≠ q)
     (ha0 : a ≠ 0) (hg0 : g ≠ 0) (hpa : ¬p ∣ a)
-    (hqa : q ∣ a) (hga : g ∣ a) (hqg : ¬q ∣ g) :
+    (_hqa : q ∣ a) (hga : g ∣ a) (hqg : ¬q ∣ g) :
     g ∣ primePowerReplace p q a := by
   rw [← Nat.factorization_le_iff_dvd hg0
     (primePowerReplace_ne_zero hp ha0),
@@ -53,11 +52,10 @@ lemma dvd_primePowerReplace_of_dvd_of_not_dvd
       Finsupp.single_apply]
     by_cases hpr : p = r
     · subst r
-      simp only [if_pos rfl]
       have hgp : g.factorization p = 0 := by
         have := hfac p
         omega
-      simp [hpq, hgp]
+      simp [hgp]
     · simp only [if_neg hpr]
       exact hfac r
 
@@ -140,8 +138,7 @@ lemma QOptimal.leftCompress_primitiveSupportedOn
         have hrepP := primeFactors_primePowerReplace_subset hp hq hpq.ne
           hg0 hgData.2.2.1 hgData.2.1 hpP (hSupport g hgPrim)
         exact hrepP (by simpa [hEq] using ht)
-      ·
-        have hxReplaceA : primePowerReplace p q x ∈ A := by
+      · have hxReplaceA : primePowerReplace p q x ∈ A := by
           by_contra hnot
           exact hxNotMoving (mem_movingPart.mpr ⟨hxA, hqx, hpx, hnot⟩)
         have hxReplace0 : primePowerReplace p q x ≠ 0 :=
@@ -229,7 +226,6 @@ lemma QOptimal.leftCompress_primitiveSupportedOn
       have hxg : x ∣ g := hminimal g hgC hgx
       have hEq : x = g := Nat.dvd_antisymm hxg hgx
       exact hSupport g hgPrim (by simpa [hEq] using ht)
-
   · obtain ⟨a, haMove, rfl⟩ := hxImage
     have haData := mem_movingPart.mp haMove
     have ha0 : a ≠ 0 := by
@@ -360,7 +356,7 @@ lemma exists_supported_leftCompressed_qOptimal
 
 lemma QOptimal.primitiveSupportedOn_multiplesBelow
     {N : ℕ} {G P : Finset ℕ}
-    (hA : QOptimal N (multiplesBelow N G))
+    (_hA : QOptimal N (multiplesBelow N G))
     (hGI : G ⊆ interval N)
     (hGP : ∀ g ∈ G, g.primeFactors ⊆ P) :
     PrimitiveSupportedOn P (multiplesBelow N G) := by
@@ -399,7 +395,7 @@ lemma generatedRemainder_pull_doubling_of_supported
 lemma pull_displayed_support_pred
     {N r : ℕ} {A R : Finset ℕ}
     (hA : QOptimal N A) (hr : r.Prime)
-    (hR : R ⊆ primitive A) (hrR : ∀ g ∈ R, r ∣ g)
+    (hR : R ⊆ primitive A) (_hrR : ∀ g ∈ R, r ∣ g)
     (hSupport : PrimitiveSupportedOn (coreScope N r) A) :
     ∀ g ∈ pullGenerators r R, g.primeFactors ⊆ coreScope N (r - 1) := by
   intro e he t ht
@@ -436,7 +432,7 @@ lemma QOptimal.primitiveSupportedOn_coreScope_self
   exact ⟨hpPrime, (Nat.le_of_dvd (by omega) hpg).trans hgI.2⟩
 
 lemma coreScope_closed_under_allowed_shift
-    {N r p q : ℕ} (hp : p.Prime) (hq : q.Prime) (hpq : p < q)
+    {N r p q : ℕ} (hp : p.Prime) (_hq : q.Prime) (hpq : p < q)
     (hallow : AllowedShift N p q) (hqScope : q ∈ coreScope N r) :
     p ∈ coreScope N r := by
   rcases mem_coreScope.mp hqScope with hqSmall | hqN
@@ -541,7 +537,7 @@ theorem exists_qOptimal_supported_on_coreScope_two (N : ℕ) (hN : N ≠ 0) :
     have hrUsed : ∃ g ∈ primitive (Classical.choose hrGood),
         r ∈ g.primeFactors := by
       by_contra hnone
-      push_neg at hnone
+      push Not at hnone
       have hPred : Good (r - 1) := by
         refine ⟨Classical.choose hrGood, (Classical.choose_spec hrGood).1, ?_⟩
         exact primitiveSupportedOn_coreScope_pred_of_absent
@@ -601,7 +597,7 @@ lemma primitiveSupportedOn_prefixSupport_self
   · have hpTwo : p = 2 := by
       have hpPrime := Nat.prime_of_mem_primeFactors hp
       exact Nat.le_antisymm hpSmall.2 hpPrime.two_le
-    simpa [hpTwo]
+    simp [hpTwo]
   · apply Finset.mem_insert_of_mem
     exact mem_primePrefix.mpr ⟨hpN,
       Nat.le_of_dvd (Nat.pos_of_ne_zero hN) (Nat.dvd_of_mem_primeFactors hpN)⟩
@@ -640,7 +636,7 @@ lemma primitiveSupportedOn_prefixSupport_pred_of_absent
       exact hsAbsent g hg hp
     omega
 
-lemma prefixSupport_erase_subset_pred {N s : ℕ} (hsTwo : s ≠ 2) :
+lemma prefixSupport_erase_subset_pred {N s : ℕ} (_hsTwo : s ≠ 2) :
     (insert 2 (primePrefix N s)).erase s ⊆
       insert 2 (primePrefix N (s - 1)) := by
   intro p hp
@@ -667,7 +663,7 @@ lemma lower_displayed_support_erase
 lemma pull_displayed_support_erase
     {N r : ℕ} {A R P : Finset ℕ}
     (hA : QOptimal N A) (hr : r.Prime)
-    (hR : R ⊆ primitive A) (hrR : ∀ g ∈ R, r ∣ g)
+    (hR : R ⊆ primitive A) (_hrR : ∀ g ∈ R, r ∣ g)
     (hSupport : PrimitiveSupportedOn P A) :
     ∀ g ∈ pullGenerators r R, g.primeFactors ⊆ P.erase r := by
   intro e he p hp
@@ -878,7 +874,7 @@ lemma QOptimal.topGenerator_has_other_endpoint
     · exact hcq.ne hcEq
   have hcMem : c ∈ A := by
     have hrep := hA.primePowerReplace_mem hfix hc hq hcq
-      (Or.inl ⟨hcN, hqN⟩) (hgEq ▸ hgA) (by simp [hgEq]) hcNotDvdQ
+      (Or.inl ⟨hcN, hqN⟩) (hgEq ▸ hgA) (by simp) hcNotDvdQ
     have hrepEq : primePowerReplace c q q = c := by
       rw [primePowerReplace_eq_ordCompl_mul_of_squarefree hq hq.squarefree]
       · have hcompl : ordCompl[q] q = 1 := by
@@ -928,7 +924,7 @@ theorem exists_qOptimal_candidate_of_odd {N : ℕ}
   have hqUsed : ∃ g ∈ primitive (Classical.choose hqGood),
       q ∈ g.primeFactors := by
     by_contra hnone
-    push_neg at hnone
+    push Not at hnone
     have hPred : Good (q - 1) := by
       refine ⟨Classical.choose hqGood, (Classical.choose_spec hqGood).1, ?_⟩
       exact primitiveSupportedOn_prefixSupport_pred_of_absent
@@ -982,7 +978,7 @@ theorem exists_qOptimal_candidate_of_odd {N : ℕ}
         have hpq : p = q := by
           by_contra hpq
           exact hnone ⟨p, hp, hpq⟩
-        simpa [hpq]
+        simp [hpq]
       have hcard := Finset.card_le_card hsub
       simp at hcard
       omega
