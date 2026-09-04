@@ -229,7 +229,7 @@ lemma factorization_subsetProduct_primeAndSquareSet
     _ = (if p ∈ S then 1 else 0) +
           2 * (if p ^ 2 ∈ S then 1 else 0) := by
       rw [Finset.sum_add_distrib]
-      simp [Finset.mul_sum, eq_comm]
+      simp [eq_comm]
 
 theorem primeAndSquareSet_distinctSubsetProducts (N : ℕ) :
     DistinctSubsetProducts (primeAndSquareSet N) := by
@@ -264,7 +264,7 @@ theorem primeAndSquareSet_distinctSubsetProducts (N : ℕ) :
             factorization_subsetProduct_primeAndSquareSet hpP hT] at hfac
           have hbits := bit_two_injective
             (show (if p ∈ S then 1 else 0) ≤ 1 by split_ifs <;> omega)
-            (show (if p ^ 2 ∈ S then 1 else 0) ≤ 1 by split_ifs <;> omega)
+            (show (if p ^ 2 ∈ S then 1 else 0) ≤ 1 by split_ifs; omega)
             (show (if p ∈ T then 1 else 0) ≤ 1 by split_ifs <;> omega)
             (show (if p ^ 2 ∈ T then 1 else 0) ≤ 1 by split_ifs <;> omega) hfac
           simpa [hxS] using hbits.2
@@ -284,7 +284,7 @@ theorem primeAndSquareSet_distinctSubsetProducts (N : ℕ) :
             (show (if p ∈ S then 1 else 0) ≤ 1 by split_ifs <;> omega)
             (show (if p ^ 2 ∈ S then 1 else 0) ≤ 1 by split_ifs <;> omega)
             (show (if p ∈ T then 1 else 0) ≤ 1 by split_ifs <;> omega)
-            (show (if p ^ 2 ∈ T then 1 else 0) ≤ 1 by split_ifs <;> omega) hfac
+            (show (if p ^ 2 ∈ T then 1 else 0) ≤ 1 by split_ifs; omega) hfac
           simpa [hxT] using hbits.2.symm
 
 theorem baseline_le_g (N : ℕ) :
@@ -319,7 +319,7 @@ def highPrimes (N : ℕ) : Finset ℕ :=
   mediumPrimes N ∪ largePrimes N
 
 lemma cubeRoot_pow_le (N : ℕ) : cubeRoot N ^ 3 ≤ N := by
-  exact Nat.pow_nthRoot_le (by simp [cubeRoot])
+  exact Nat.pow_nthRoot_le (by simp)
 
 lemma lt_succ_cubeRoot_pow (N : ℕ) : N < (cubeRoot N + 1) ^ 3 := by
   exact Nat.lt_pow_nthRoot_add_one (by norm_num) N
@@ -693,7 +693,7 @@ private theorem exists_fibrePairing {α β : Type*} [DecidableEq α]
       by_cases hfinj : Set.InjOn f A
       · exact ⟨⟨∅, by simp, by simp, by simp, by simp, by simpa using hfinj⟩⟩
       · simp only [Set.InjOn] at hfinj
-        push_neg at hfinj
+        push Not at hfinj
         obtain ⟨a, ha, b, hb, hab, hf⟩ := hfinj
         let p : Finset α := {a, b}
         let A' : Finset α := A \ p
@@ -1048,17 +1048,17 @@ def elementEdgeSet (N a : ℕ) : Finset ℕ :=
 lemma elementEdgeSet_card {N a : ℕ}
     (ha0 : 0 < a) (haN : a ≤ N)
     (hnonzero : highFactorization N a ≠ 0)
-    (hnot : ¬ IsSquareType N a) :
+    (_hnot : ¬ IsSquareType N a) :
     (elementEdgeSet N a).card = 2 := by
   rcases highSupport_card_eq_one_or_two ha0 haN hnonzero with hcard | hcard
-  · simp [elementEdgeSet, hcard, one_not_mem_highFactorization_support]
+  · simp [elementEdgeSet, hcard]
   · simp [elementEdgeSet, hcard]
 
 lemma elementEdgeSet_erase_one (N a : ℕ) :
     (elementEdgeSet N a).erase 1 = (highFactorization N a).support := by
   by_cases hcard : (highFactorization N a).support.card = 1
-  · simp [elementEdgeSet, hcard, one_not_mem_highFactorization_support]
-  · simp [elementEdgeSet, hcard, one_not_mem_highFactorization_support]
+  · simp [elementEdgeSet, hcard]
+  · simp [elementEdgeSet, hcard]
 
 private lemma exists_sym2_toFinset_eq {s : Finset ℕ} (hs : s.card = 2) :
     ∃ e : Sym2 ℕ, e.toFinset = s := by
@@ -1186,7 +1186,7 @@ lemma productGraph_edgeFinset {N : ℕ} {A : Finset ℕ}
     (hnonzero : ∀ a ∈ A, highFactorization N a ≠ 0) :
     (productGraph N A).edgeFinset = productEdgeFinset N A := by
   apply Finset.coe_injective
-  simpa [productGraph_edgeSet hAN hnonzero]
+  simp [productGraph_edgeSet hAN hnonzero]
 
 lemma productGraph_card_edges_add_squares {N : ℕ} {A : Finset ℕ}
     (hAN : A ⊆ interval N)
@@ -1423,7 +1423,7 @@ lemma alternatingIncidence_balance {u v : V} (w : G.Walk u v) :
       · intro _
         simp [evenIncidence, oddIncidence, evenIncidenceList, oddIncidenceList]
       · intro hodd
-        simpa using hodd
+        simp at hodd
   | @cons u v z huv p ih =>
       constructor
       · intro heven
@@ -1659,6 +1659,7 @@ def evenEdgesFinset (h : w.IsTrail) : Finset (Sym2 V) :=
 def oddEdgesFinset (h : w.IsTrail) : Finset (Sym2 V) :=
   ⟨oddTerms w.edges, oddTerms_nodup h.edges_nodup⟩
 
+omit [DecidableEq V] in
 lemma evenEdgesFinset_disjoint_oddEdgesFinset (h : w.IsTrail) :
     Disjoint (evenEdgesFinset h) (oddEdgesFinset h) := by
   rw [Finset.disjoint_left]
@@ -1856,7 +1857,7 @@ lemma withoutAux_single_one {p : ℕ} (hp : p ≠ 1) :
   · by_cases hqp : q = p
     · subst q
       simp [withoutAux, hp]
-    · simp [withoutAux, hq1, hqp, Finsupp.single_apply]
+    · simp [withoutAux, hq1, hqp]
 
 lemma highFactorization_sum_evenLabelSet_eq_oddLabelSet_of_even
     {N : ℕ} {A : Finset ℕ}
@@ -1911,7 +1912,7 @@ factorization.  Their total cardinality is exactly the circuit length. -/
 theorem highValuation_prod_alternate_evenCircuit
     {N : ℕ} {A : Finset ℕ}
     (hAN : A ⊆ interval N)
-    (hinj : Set.InjOn (highFactorization N) A)
+    (_hinj : Set.InjOn (highFactorization N) A)
     (hnonzero : ∀ a ∈ A, highFactorization N a ≠ 0)
     {u : ℕ} {w : (productGraph N A).Walk u u}
     (hw : w.IsCircuit) (heven : Even w.length) :
@@ -1945,7 +1946,7 @@ incidences at the base vertex. -/
 theorem highValuation_prod_alternate_oddCycle_square
     {N : ℕ} {A : Finset ℕ}
     (hAN : A ⊆ interval N)
-    (hinj : Set.InjOn (highFactorization N) A)
+    (_hinj : Set.InjOn (highFactorization N) A)
     (hnonzero : ∀ a ∈ A, highFactorization N a ≠ 0)
     {p : ℕ} (hp : p ∈ squarePrimeSet N A)
     {w : (productGraph N A).Walk p p}
@@ -1999,7 +2000,7 @@ theorem highValuation_prod_alternate_oddCycle_square
     have htwo : Finsupp.single p 1 + Finsupp.single p 1 =
         Finsupp.single p 2 := by
       ext q
-      by_cases hq : q = p <;> simp [Finsupp.single_apply, hq]
+      by_cases hq : q = p <;> simp [hq]
     rw [highFactorization_sum_evenLabelSet_eq_withoutAux hAN hnonzero,
       Finset.sum_insert haNotO,
       highFactorization_squareElementLabel hp,
@@ -2079,7 +2080,7 @@ variable {α β : Type*} [DecidableEq α] [AddCommMonoid β]
 
 abbrev Choice (P : RelationPacking A f) := P.pairs → Bool
 
-def part (P : RelationPacking A f) (p : Finset α × Finset α)
+def part (_P : RelationPacking A f) (p : Finset α × Finset α)
     (b : Bool) : Finset α :=
   if b then p.2 else p.1
 
@@ -2201,10 +2202,10 @@ lemma sum_chosenSet_eq (P : RelationPacking A f) (c d : P.Choice) :
   apply Finset.sum_congr rfl
   intro p hp
   cases hc : c p <;> cases hd : d p
-  · simp [part, hc, hd]
+  · simp [part]
   · simpa [part, hc, hd] using P.relation p p.property
   · simpa [part, hc, hd] using (P.relation p p.property).symm
-  · simp [part, hc, hd]
+  · simp [part]
 
 lemma card_choice (P : RelationPacking A f) :
     Fintype.card P.Choice = 2 ^ P.pairs.card := by
@@ -2246,7 +2247,7 @@ theorem relationPacking_card_bound {N : ℕ} {A : Finset ℕ}
 the relations are indexed by circuits rather than literally stored as
 pairs of finsets. -/
 theorem indexedRelationPacking_card_bound
-    {ι : Type*} [DecidableEq ι] {N : ℕ} {A : Finset ℕ}
+    {ι : Type*} {N : ℕ} {A : Finset ℕ}
     (hAN : A ⊆ interval N) (hA : DistinctSubsetProducts A)
     (I : Finset ι) (left right : ι → Finset ℕ)
     (hleft : ∀ i ∈ I, left i ⊆ A)
@@ -2260,6 +2261,7 @@ theorem indexedRelationPacking_card_bound
       (∑ a ∈ left i, highFactorization N a) =
         ∑ a ∈ right i, highFactorization N a) :
     2 ^ I.card ≤ (N * N + 1) ^ (smallPrimes N).card := by
+  classical
   let rel : ι → Finset ℕ × Finset ℕ := fun i ↦ (left i, right i)
   have hrelInj : Set.InjOn rel I := by
     intro i hi j hj hij
@@ -2429,7 +2431,7 @@ small-code choice space. -/
 theorem shortEvenCircuitPacking_card_bound
     {N L : ℕ} {A : Finset ℕ}
     (hAN : A ⊆ interval N) (hA : DistinctSubsetProducts A)
-    (hinj : Set.InjOn (highFactorization N) A)
+    (_hinj : Set.InjOn (highFactorization N) A)
     (hnonzero : ∀ a ∈ A, highFactorization N a ≠ 0)
     (P : Finset (Finset (Sym2 ℕ)))
     (hPC : P ⊆ shortEvenCircuitEdgeSets N A L)
@@ -2603,7 +2605,7 @@ noncomputable instance residualProductGraph.fintypeEdgeSet
     Fintype ((productGraph N A).deleteEdges D).edgeSet := by
   apply Set.Finite.fintype
   rw [SimpleGraph.edgeSet_deleteEdges]
-  exact (Set.toFinite (productGraph N A).edgeSet).diff
+  exact (Set.toFinite (productGraph N A).edgeSet).sdiff
 
 def shortSquareOddCircuitEdgeSets (N : ℕ) (A : Finset ℕ)
     (D : Finset (Sym2 ℕ)) (L : ℕ) : Finset (Finset (Sym2 ℕ)) :=
@@ -3042,10 +3044,12 @@ noncomputable instance RootedPath.fintype
 
 /-- Below half the girth, distinct rooted paths have distinct endpoints. -/
 theorem RootedPath.endpoint_injective_of_no_short_cycle
-    {V : Type*} [Fintype V] {G : SimpleGraph V} {root : V} {n : ℕ}
+    {V : Type*} [Finite V] {G : SimpleGraph V} {root : V} {n : ℕ}
     (hno : ∀ u : V, ∀ c : G.Walk u u,
       c.IsCycle → c.length ≤ 2 * n → False) :
     Function.Injective (fun p : RootedPath G root n ↦ p.endpoint) := by
+  classical
+  let := Fintype.ofFinite V
   intro p q hpq
   cases p with
   | mk pe pw pp plen =>
@@ -3094,7 +3098,7 @@ lemma SimpleGraph.Walk.IsPath.neighbor_not_mem_support_of_no_short_cycle
     exact (SimpleGraph.Walk.cons_isCycle_iff q hvw).mpr ⟨hqPath, hedgeQ⟩
   have hclen : c.length ≤ p.length + 1 := by
     simp only [c, SimpleGraph.Walk.length_cons]
-    exact Nat.add_le_add_right (SimpleGraph.Walk.length_dropUntil_le p hwp) 1
+    exact Nat.add_le_add_right (SimpleGraph.Walk.length_dropUntil_le_length p hwp) 1
   exact hno v c hc hclen
 
 def RootedPath.availableNeighbors
@@ -3175,10 +3179,10 @@ noncomputable def RootedPath.extensionEmbedding
       simpa [RootedPath.extend, SimpleGraph.Walk.penultimate_concat] using hpen
     have hpq : p = q := by
       apply RootedPath.endpoint_injective_of_no_short_cycle
-      intro x c hc hclen
-      apply hno x c hc
-      omega
-      exact hep
+      · intro x c hc hclen
+        apply hno x c hc
+        omega
+      · exact hep
     subst q
     have hend : (p.nextEmbedding hdeg i : V) =
         (p.nextEmbedding hdeg j : V) := congrArg RootedPath.endpoint hext
@@ -3190,7 +3194,7 @@ noncomputable def RootedPath.extensionEmbedding
     rfl }
 
 lemma RootedPath.card_double_le_succ
-    {V : Type*} [Fintype V] [DecidableEq V]
+    {V : Type*} [Fintype V]
     {G : SimpleGraph V} [DecidableRel G.Adj]
     (hdeg : ∀ v, 3 ≤ G.degree v)
     {root : V} {n : ℕ}
@@ -3198,6 +3202,7 @@ lemma RootedPath.card_double_le_succ
       c.IsCycle → c.length ≤ 2 * (n + 1) → False) :
     Fintype.card (RootedPath G root n) * 2 ≤
       Fintype.card (RootedPath G root (n + 1)) := by
+  classical
   have hcard := Fintype.card_le_of_injective _
     (RootedPath.extensionEmbedding (root := root) hdeg hno).injective
   simpa using hcard
@@ -3210,13 +3215,14 @@ def RootedPath.nil {V : Type*} {G : SimpleGraph V} (root : V) :
   length_eq := rfl }
 
 lemma RootedPath.pow_two_le_card_of_no_short_cycle
-    {V : Type*} [Fintype V] [DecidableEq V]
+    {V : Type*} [Fintype V]
     {G : SimpleGraph V} [DecidableRel G.Adj]
     (hdeg : ∀ v, 3 ≤ G.degree v)
     {root : V} {n : ℕ}
     (hno : ∀ x : V, ∀ c : G.Walk x x,
       c.IsCycle → c.length ≤ 2 * n → False) :
     2 ^ n ≤ Fintype.card (RootedPath G root n) := by
+  classical
   induction n with
   | zero =>
       have hpos : 0 < Fintype.card (RootedPath G root 0) :=
@@ -3235,12 +3241,13 @@ lemma RootedPath.pow_two_le_card_of_no_short_cycle
       exact hmul.trans (RootedPath.card_double_le_succ hdeg hno)
 
 theorem exists_short_cycle_of_minDegree_three
-    {V : Type*} [Fintype V] [DecidableEq V]
+    {V : Type*} [Fintype V]
     {G : SimpleGraph V} [DecidableRel G.Adj]
     (hV : 0 < Fintype.card V)
     (hdeg : ∀ v, 3 ≤ G.degree v) :
     ∃ x : V, ∃ c : G.Walk x x,
       c.IsCycle ∧ c.length ≤ 2 * (Nat.log2 (Fintype.card V) + 1) := by
+  classical
   let root : V := Classical.choice (Fintype.card_pos_iff.mp hV)
   by_contra hcontra
   push Not at hcontra
@@ -3517,9 +3524,10 @@ theorem card_le_vertices_of_no_short_cycle
 end NBTrace
 
 lemma Dart.card_eq_twice_card_edges
-    {V : Type*} [Fintype V] [DecidableEq V]
+    {V : Type*} [Fintype V]
     (G : SimpleGraph V) [DecidableRel G.Adj] :
     Fintype.card (Dart G) = 2 * G.edgeFinset.card := by
+  classical
   rw [Fintype.card_sigma]
   simp_rw [G.card_neighborSet_eq_degree]
   exact G.sum_degrees_eq_twice_card_edges
@@ -3647,7 +3655,7 @@ lemma Dart.stationary_sum
   have hcard : 2 ≤ Fintype.card (G.neighborSet v) := by
     rw [G.card_neighborSet_eq_degree v]
     exact hdeg v
-  simp only [F, Dart.reverseEquiv, Dart.reverse, Dart.head, Dart.tail,
+  simp only [F, Dart.reverse, Dart.head, Dart.tail,
     Dart.nextVertices, Dart.nextDart, Subtype.coe_eta, Finset.card_erase_of_mem,
     Finset.mem_univ]
   change (∑ u : G.neighborSet v,
@@ -3659,11 +3667,12 @@ lemma Dart.stationary_sum
     (fun w : G.neighborSet v ↦ f ⟨v, w⟩) hcard
 
 lemma log_card_add_average_le_log_sum
-    {α : Type*} [DecidableEq α] (s : Finset α) (f : α → ℝ)
+    {α : Type*} (s : Finset α) (f : α → ℝ)
     (hs : s.Nonempty) (hf : ∀ x ∈ s, 0 < f x) :
     Real.log (s.card : ℝ) +
         (∑ x ∈ s, Real.log (f x)) / (s.card : ℝ) ≤
       Real.log (∑ x ∈ s, f x) := by
+  classical
   let d : ℝ := s.card
   let S : ℝ := ∑ x ∈ s, f x
   have hd : 0 < d := by
@@ -3712,11 +3721,12 @@ lemma log_card_add_average_le_log_sum
   nlinarith [hmul]
 
 lemma fintype_log_card_add_average_le_log_sum
-    {α : Type*} [Fintype α] [DecidableEq α] (f : α → ℝ)
+    {α : Type*} [Fintype α] (f : α → ℝ)
     (hα : Nonempty α) (hf : ∀ x, 0 < f x) :
     Real.log (Fintype.card α : ℝ) +
         (∑ x, Real.log (f x)) / (Fintype.card α : ℝ) ≤
       Real.log (∑ x, f x) := by
+  classical
   simpa using log_card_add_average_le_log_sum
     (Finset.univ : Finset α) f ⟨Classical.choice hα, Finset.mem_univ _⟩
       (fun x _ ↦ hf x)
@@ -3935,7 +3945,7 @@ lemma log_nat_le_log2_add_one_mul_log_two (n : ℕ) (hn : n ≠ 0) :
     _ = (n.log2 + 1 : ℕ) * Real.log 2 := Real.log_pow 2 _
 
 lemma NBTrace.moore_real_inequality
-    {V : Type*} [Fintype V] [DecidableEq V] [Nonempty V]
+    {V : Type*} [Fintype V] [Nonempty V]
     {G : SimpleGraph V} [DecidableRel G.Adj]
     (hdeg : ∀ v, 2 ≤ G.degree v) {q n : ℕ}
     (hexcess : Fintype.card V + q ≤ G.edgeFinset.card)
@@ -3943,18 +3953,20 @@ lemma NBTrace.moore_real_inequality
       c.IsCycle → c.length ≤ 2 * (n + 1) → False) :
     (n : ℝ) * (2 * q : ℕ) * Real.log 2 ≤
       (2 * G.edgeFinset.card : ℕ) *
-        Real.log (Fintype.card V : ℝ) :=
-  (NBTrace.iterated_excess_lower hdeg hexcess n).trans
+        Real.log (Fintype.card V : ℝ) := by
+  classical
+  exact (NBTrace.iterated_excess_lower hdeg hexcess n).trans
     (NBTrace.log_card_sum_le_of_no_short_cycle n hno)
 
 lemma NBTrace.moore_excess_le
-    {V : Type*} [Fintype V] [DecidableEq V] [Nonempty V]
+    {V : Type*} [Fintype V] [Nonempty V]
     {G : SimpleGraph V} [DecidableRel G.Adj]
     (hdeg : ∀ v, 2 ≤ G.degree v) {q n : ℕ}
     (hexcess : Fintype.card V + q ≤ G.edgeFinset.card)
     (hno : ∀ x : V, ∀ c : G.Walk x x,
       c.IsCycle → c.length ≤ 2 * (n + 1) → False) :
     n * q ≤ G.edgeFinset.card * (Nat.log2 (Fintype.card V) + 1) := by
+  classical
   have hreal := NBTrace.moore_real_inequality hdeg hexcess hno
   have hlog := log_nat_le_log2_add_one_mul_log_two
     (Fintype.card V) (Fintype.card_ne_zero)
@@ -3972,12 +3984,14 @@ lemma NBTrace.moore_excess_le
   exact_mod_cast hcast
 
 lemma induced_edge_card_erase
-    {V : Type*} [Fintype V] [DecidableEq V]
+    {V : Type*} [Finite V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (s : Finset V) {x : V} (hx : x ∈ s) :
     (G.induce (↑(s.erase x) : Set V)).edgeFinset.card =
       (G.induce (↑s : Set V)).edgeFinset.card -
         (G.induce (↑s : Set V)).degree ⟨x, hx⟩ := by
+  classical
+  let := Fintype.ofFinite V
   let F : Finset (Sym2 V) := {e ∈ G.edgeFinset | e.toFinset ⊆ s}
   let F' : Finset (Sym2 V) :=
     {e ∈ G.edgeFinset | e.toFinset ⊆ s.erase x}
@@ -4018,7 +4032,7 @@ lemma induced_edge_card_erase
     cases e using Sym2.inductionOn with
     | _ a b =>
     simp [H, ι, F, H.incidenceFinset_eq_filter,
-      G.incidenceFinset_eq_filter, G.map_edgeFinset_induce,
+      G.incidenceFinset_eq_filter,
       Finset.subset_iff, Sym2.exists, Function.Embedding.subtype_apply]
     aesop
   rw [← hF', hdiff, Finset.card_sdiff]
@@ -4027,7 +4041,7 @@ lemma induced_edge_card_erase
   rw [hcardInc, hF]
 
 lemma exists_min_degree_two_induced
-    {V : Type*} [Fintype V] [DecidableEq V]
+    {V : Type*} [Fintype V]
     (G : SimpleGraph V) [DecidableRel G.Adj] {q : ℕ}
     (hq : 0 < q) (hexcess : Fintype.card V + q ≤ G.edgeFinset.card) :
     ∃ s : Finset V,
@@ -4095,13 +4109,14 @@ lemma Nat.log2_mono_of_le {a b : ℕ} (hab : a ≤ b) :
     exact ((Nat.le_log2 ha).1 le_rfl).trans hab
 
 lemma moore_excess_le
-    {V : Type*} [Fintype V] [DecidableEq V]
+    {V : Type*} [Fintype V]
     {G : SimpleGraph V} [DecidableRel G.Adj] {q n : ℕ}
     (hq : 0 < q)
     (hexcess : Fintype.card V + q ≤ G.edgeFinset.card)
     (hno : ∀ x : V, ∀ c : G.Walk x x,
       c.IsCycle → c.length ≤ 2 * (n + 1) → False) :
     n * q ≤ G.edgeFinset.card * (Nat.log2 (Fintype.card V) + 1) := by
+  classical
   obtain ⟨s, hsne, hsExcess, hsDeg⟩ :=
     exists_min_degree_two_induced G hq hexcess
   let H : SimpleGraph (↑s : Set V) := G.induce (↑s : Set V)
@@ -4294,7 +4309,6 @@ lemma finiteProductGraph_edgeFinset
       finiteProductEdgeFinset hAN hnonzero := by
   apply Finset.coe_injective
   rw [SimpleGraph.coe_edgeFinset]
-  change (finiteProductGraph hAN hnonzero).edgeSet = _
   rw [finiteProductGraph, SimpleGraph.edgeSet_fromEdgeSet,
     (finiteProductEdgeFinset_disjoint_diag hAN hnonzero).sdiff_eq_left]
 
@@ -4370,7 +4384,7 @@ lemma neighbor_of_large_mem_nonlarge
     rw [SimpleGraph.mem_support]
     exact ⟨q, hqvG.symm⟩
   have hvVert := productGraph_support_subset_graphVertices hAN hnonzero hvSupp
-  simp only [graphVertices, Finset.coe_insert, Finset.coe_sort_coe,
+  simp only [graphVertices, Finset.coe_insert,
     Set.mem_insert_iff] at hvVert
   rcases hvVert with rfl | hvHigh
   · exact Finset.mem_insert_self _ _
@@ -4680,7 +4694,7 @@ lemma oddCycle_exists_nonlarge_edge
     ∃ a b : ℕ, s(a, b) ∈ c.edges ∧
       a ∈ nonlargeVertices N ∧ b ∈ nonlargeVertices N := by
   by_contra h
-  push_neg at h
+  push Not at h
   have hcolor : ∀ {a b : ℕ}, s(a, b) ∈ c.edges →
       largeColor N a ≠ largeColor N b := by
     intro a b hab
@@ -4868,14 +4882,14 @@ lemma chosenShortOddVertex_injective_of_support_disjoint
   let es := chosenShortOddEdge hAN hnonzero hnoSquare s
   let et := chosenShortOddEdge hAN hnonzero hnoSquare t
   have hsMem : es.first ∈ (shortOddCycleWitness s).walk.support := by
-    apply (shortOddCycleWitness s).walk.fst_mem_support_of_mem_edges
+    apply (shortOddCycleWitness s).walk.fst_mem_support_of_mem_edges (u := es.second)
     have he : s(es.first, es.second) ∈
         (shortOddCycleWitness s).isCycle.isCircuit.isTrail.edgesFinset := by
       rw [(shortOddCycleWitness s).edges_eq]
       exact es.edge_mem
     exact he
   have htMem : et.first ∈ (shortOddCycleWitness t).walk.support := by
-    apply (shortOddCycleWitness t).walk.fst_mem_support_of_mem_edges
+    apply (shortOddCycleWitness t).walk.fst_mem_support_of_mem_edges (u := et.second)
     have he : s(et.first, et.second) ∈
         (shortOddCycleWitness t).isCycle.isCircuit.isTrail.edgesFinset := by
       rw [(shortOddCycleWitness t).edges_eq]
@@ -5127,7 +5141,8 @@ lemma cycleFirstExit_support_union_of_eq
     rw [SimpleGraph.Walk.mem_support_iff_exists_getVert]
     refine ⟨i, ?_, ?_⟩
     · simp [f.walk_eq_take, SimpleGraph.Walk.take_getVert, hif]
-    · simp [f.walk_eq_take]
+    · simp only [f.walk_eq_take, SimpleGraph.Walk.length_copy,
+        SimpleGraph.Walk.take_length, le_inf_iff]
       exact ⟨hif, hi⟩
   · right
     let j := r.length - i
@@ -5136,11 +5151,13 @@ lemma cycleFirstExit_support_union_of_eq
       omega
     rw [SimpleGraph.Walk.mem_support_iff_exists_getVert]
     refine ⟨j, ?_, ?_⟩
-    · simp [b.walk_eq_take, SimpleGraph.Walk.take_getVert, hjb, j,
-        SimpleGraph.Walk.getVert_reverse]
+    · simp only [b.walk_eq_take, SimpleGraph.Walk.getVert_copy,
+        SimpleGraph.Walk.take_getVert, hjb, inf_of_le_right,
+        SimpleGraph.Walk.getVert_reverse, j]
       have hsub : r.length - (r.length - i) = i := by omega
       rw [hsub]
-    · simp [b.walk_eq_take]
+    · simp only [b.walk_eq_take, SimpleGraph.Walk.length_copy,
+        SimpleGraph.Walk.take_length, SimpleGraph.Walk.length_reverse, le_inf_iff]
       constructor
       · exact hjb
       · have hb := hjb.trans b.index_lt_length.le
@@ -5619,7 +5636,6 @@ lemma shortOddCycleWitness_support_disjoint
   intro heq
   apply hst
   apply Subtype.ext
-  change s.1 = t.1
   rw [← Ws.edges_eq, ← Wt.edges_eq]
   exact heq
 
@@ -5891,15 +5907,24 @@ lemma retainedFiniteGraph_card_edges
     ⟨hsupp ⟨y, hxy⟩, hsupp ⟨x, hxy.symm⟩⟩
   have hmap :
       (Kgraph.induce S).edgeFinset.map ι.sym2Map = Kgraph.edgeFinset := by
-    aesop (add simp [Finset.ext_iff, Sym2.exists, Sym2.forall,
-      SimpleGraph.adj_comm, Kgraph, S, ι]) <;>
-      exact ⟨x, (hend a).1, y, a, (hend a).2, Or.inl ⟨rfl, rfl⟩⟩
+    ext e
+    constructor
+    · intro he
+      obtain ⟨e, hedge, rfl⟩ := Finset.mem_map.mp he
+      cases e using Sym2.inductionOn with
+      | _ x y =>
+        rw [SimpleGraph.mem_edgeFinset] at hedge ⊢
+        exact hedge
+    · cases e using Sym2.inductionOn with
+      | _ x y =>
+        intro he
+        have hxy : Kgraph.Adj x y := SimpleGraph.mem_edgeFinset.mp he
+        apply Finset.mem_map.mpr
+        refine ⟨s(⟨x, (hend hxy).1⟩, ⟨y, (hend hxy).2⟩), ?_, rfl⟩
+        exact SimpleGraph.mem_edgeFinset.mpr hxy
   have hcard := congrArg Finset.card hmap
   rw [Finset.card_map] at hcard
-  change (Kgraph.induce S).edgeFinset.card = Kgraph.edgeFinset.card
-  convert hcard using 1 <;>
-    rw [SimpleGraph.edgeFinset_card, SimpleGraph.edgeFinset_card] <;>
-    exact Fintype.card_congr (Equiv.refl _)
+  exact hcard
 
 def retainedHom (N : ℕ) (A : Finset ℕ) (D : Finset (Sym2 ℕ)) :
     retainedFiniteGraph N A D →g residualProductGraph N A D :=
@@ -6197,7 +6222,6 @@ theorem card_le_primeCounting_add_sqrt_add_finiteError
         c.IsCircuit → Even c.length → c.length ≤ L → False := by
     intro z c hc _ hlen
     exact hUnocircuit z c hc hlen
-
   let ell := binaryScale N
   let m := (mediumPrimes N).card + 1
   let q := (recurrentLarge N B U).card
@@ -6215,7 +6239,6 @@ theorem card_le_primeCounting_add_sqrt_add_finiteError
   have hlog : Nat.log2 s + 1 ≤ ell := by
     dsimp [ell]
     exact Nat.add_le_add_right (Nat.log2_mono_of_le hsN) 1
-
   have hqMoore₀ := recurrentLarge_excess_moore
     (N := N) (A := B) (D := U) (n := cycleCutoff N)
     hBN hBzero (by
@@ -6230,7 +6253,6 @@ theorem card_le_primeCounting_add_sqrt_add_finiteError
     simpa only [cycleCutoff, ell, m, q, Nat.mul_assoc] using htrans
   have hqBound : q ≤ 2 * m := cubic_moore_vertex_bound hell hqMoore
   have hsBound : s ≤ 3 * m := by omega
-
   have heMoore₀ := retained_excess_moore
     (N := N) (A := B) (D := U) (n := cycleCutoff N)
       hBN hBzero (by simpa only [L, shortCycleCutoff] using hUno)
@@ -6243,7 +6265,6 @@ theorem card_le_primeCounting_add_sqrt_add_finiteError
   have hexcessDiv : e - s ≤ (6 * m) / (ell ^ 2) := by
     apply (Nat.le_div_iff_mul_le (by positivity : 0 < ell ^ 2)).2
     simpa [Nat.mul_comm] using hexcess
-
   have hEprod : E ⊆ (productGraph N B).edgeFinset := by
     intro x hx
     have hx' := hEsub hx
@@ -6271,7 +6292,6 @@ theorem card_le_primeCounting_add_sqrt_add_finiteError
     change ((productGraph N B).deleteEdges U).edgeFinset.card + U.card = _
     rw [SimpleGraph.edgeFinset_deleteEdges,
       Finset.card_sdiff_add_card_eq_card hUsub]
-
   have hk₀' : k₀ ≤ smallPrimeError N := packingCount_le_smallPrimeError' hk₀
   have hkD' : kD ≤ smallPrimeError N := packingCount_le_smallPrimeError' hkD
   have hkE' : kE ≤ smallPrimeError N := packingCount_le_smallPrimeError' hkE
@@ -6289,7 +6309,6 @@ theorem card_le_primeCounting_add_sqrt_add_finiteError
     have hu := Finset.card_union_le DE F
     have hu' : U.card ≤ DE.card + F.card := by simpa [U] using hu
     omega
-
   have htrim := trimmedProductGraph_card_add_loose N B U
   have hloose := looseEdges_card_le N B U
   have heSplit : e ≤ s + (e - s) := by omega
@@ -6433,7 +6452,7 @@ lemma binaryScale_cast_le_log {N : ℕ} (hN : 1 ≤ N)
       _ = Real.log N / Real.log 2 + 1 := by
         field_simp [htwoPos.ne']
         ring
-  simp only [binaryScale, a]
+  simp only [binaryScale]
   have htwo : (0 : ℝ) < Real.log 2 := Real.log_pos (by norm_num)
   calc
     (Nat.log2 (N + 1) + 1 : ℕ) = (a : ℝ) + 1 := by simp [a]
@@ -6529,7 +6548,6 @@ theorem finiteError_isLittleO :
         dsimp [δ]
         field_simp [hC.ne']
         ring
-
   have hmooreMulNat : moorePart * binaryScale N ^ 2 ≤
       6 * ((mediumPrimes N).card + 1) := by
     exact Nat.div_mul_le_self _ _
