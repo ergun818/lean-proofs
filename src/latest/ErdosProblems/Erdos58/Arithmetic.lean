@@ -166,9 +166,10 @@ theorem list_sum_take_lt_sum_take_of_pos {l : List ℕ} {i j : ℕ}
 /-- In any partition of a finite set into two classes, one class has at
 least `⌈|s|/2⌉` members. -/
 theorem card_filter_ge_ceilHalf_or_card_filter_neg_ge_ceilHalf
-    { α : Type* } [DecidableEq α] (s : Finset α) (P : α → Prop) [DecidablePred P] :
+    {α : Type*} (s : Finset α) (P : α → Prop) [DecidablePred P] :
     ceilHalf s.card ≤ (s.filter P).card ∨
       ceilHalf s.card ≤ (s.filter fun x ↦ ¬ P x).card := by
+  classical
   have hcard : (s.filter P).card + (s.filter fun x ↦ ¬ P x).card = s.card := by
     rw [Finset.card_filter_add_card_filter_not]
   unfold ceilHalf
@@ -176,10 +177,11 @@ theorem card_filter_ge_ceilHalf_or_card_filter_neg_ge_ceilHalf
 
 /-- Among `2j+1` objects colored with two colors, `j+1` have one color. -/
 theorem card_filter_ge_succ_or_card_filter_neg_ge_succ
-    { α : Type* } [DecidableEq α] {s : Finset α} {j : ℕ}
+    {α : Type*} {s : Finset α} {j : ℕ}
     (P : α → Prop) [DecidablePred P] (hs : s.card = 2 * j + 1) :
     j + 1 ≤ (s.filter P).card ∨
       j + 1 ≤ (s.filter fun x ↦ ¬ P x).card := by
+  classical
   simpa [hs] using card_filter_ge_ceilHalf_or_card_filter_neg_ge_ceilHalf s P
 
 /-- The parity specialization of the two-class pigeonhole principle. -/

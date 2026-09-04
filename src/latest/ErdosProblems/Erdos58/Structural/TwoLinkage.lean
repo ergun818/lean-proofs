@@ -51,9 +51,12 @@ variable {A B S : Set V}
 
 namespace TwoLinkage
 
+omit [DecidableEq V] [Fintype V] in
 /-- Two fully support-disjoint paths force at least two vertices in their
 left endpoint set. -/
-theorem two_le_ncard_left (L : TwoLinkage G A B) : 2 ≤ A.ncard := by
+theorem two_le_ncard_left [Finite V] (L : TwoLinkage G A B) : 2 ≤ A.ncard := by
+  classical
+  let := Fintype.ofFinite V
   have hsub : ({L.a₁, L.a₂} : Set V) ⊆ A := by
     intro x hx
     simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at hx
@@ -64,9 +67,12 @@ theorem two_le_ncard_left (L : TwoLinkage G A B) : 2 ≤ A.ncard := by
   rw [Set.ncard_pair L.a_ne] at hcard
   exact hcard
 
+omit [DecidableEq V] [Fintype V] in
 /-- Two fully support-disjoint paths force at least two vertices in their
 right endpoint set. -/
-theorem two_le_ncard_right (L : TwoLinkage G A B) : 2 ≤ B.ncard := by
+theorem two_le_ncard_right [Finite V] (L : TwoLinkage G A B) : 2 ≤ B.ncard := by
+  classical
+  let := Fintype.ofFinite V
   have hsub : ({L.b₁, L.b₂} : Set V) ⊆ B := by
     intro x hx
     simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at hx
@@ -77,8 +83,12 @@ theorem two_le_ncard_right (L : TwoLinkage G A B) : 2 ≤ B.ncard := by
   rw [Set.ncard_pair L.b_ne] at hcard
   exact hcard
 
-theorem endpoint_cardinality (L : TwoLinkage G A B) :
-    2 ≤ A.ncard ∧ 2 ≤ B.ncard :=
+omit [DecidableEq V] [Fintype V] in
+theorem endpoint_cardinality [Finite V] (L : TwoLinkage G A B) :
+    2 ≤ A.ncard ∧ 2 ≤ B.ncard := by
+  classical
+  let := Fintype.ofFinite V
+  exact
   ⟨L.two_le_ncard_left, L.two_le_ncard_right⟩
 
 end TwoLinkage
@@ -94,6 +104,7 @@ def IsABSeparator (G : SimpleGraph V) (A B S : Set V) : Prop :=
 
 namespace TwoConnected
 
+omit [DecidableEq V] in
 /-- The exact graph-specific input to finite set-Menger: when both endpoint
 sets have at least two vertices, deletion connectivity rules out every
 separator of cardinality less than two.  No connectivity hypothesis on the
@@ -101,6 +112,7 @@ sets themselves is needed. -/
 theorem not_isABSeparator_of_ncard_lt_two
     (hG : TwoConnected G) (hA : 2 ≤ A.ncard) (hB : 2 ≤ B.ncard)
     (hS : S.ncard < 2) : ¬IsABSeparator G A B S := by
+  classical
   intro hsep
   have hSle : S.ncard ≤ 1 := by omega
   rcases Set.eq_empty_or_nonempty S with hSempty | ⟨z, hzS⟩
@@ -118,9 +130,11 @@ theorem not_isABSeparator_of_ncard_lt_two
     obtain ⟨x, hxS, hxp⟩ := hsep haA hbB p
     exact hpz (hSsub hxS hzS ▸ hxp)
 
+omit [DecidableEq V] in
 theorem no_small_isABSeparator
     (hG : TwoConnected G) (hA : 2 ≤ A.ncard) (hB : 2 ≤ B.ncard) :
     ∀ S : Set V, IsABSeparator G A B S → 2 ≤ S.ncard := by
+  classical
   intro S hsep
   by_contra h
   exact hG.not_isABSeparator_of_ncard_lt_two hA hB (by omega) hsep
@@ -159,15 +173,17 @@ structure CleanSubpath {a b : V} (p : G.Walk a b) (A B : Set V) where
   support_subset : walk.support ⊆ p.support
   interior : ∀ x ∈ walk.support.tail.dropLast, x ∉ A ∪ B
 
+omit [DecidableEq V] [Fintype V] in
 /-- A path with endpoints in `A` and `B` has a subpath with the same endpoint
 conditions, no internal visit to either endpoint set, and support contained
 in the original support.  We first stop at the first `B`-vertex, then reverse
 and stop at the first `A`-vertex. -/
-private theorem exists_clean_subpath
+private theorem exists_clean_subpath [Finite V]
     {a b : V} (p : G.Walk a b) (hp : p.IsPath)
     (ha : a ∈ A) (hb : b ∈ B) :
     Nonempty (CleanSubpath p A B) := by
   classical
+  let := Fintype.ofFinite V
   have hBmeet : {x ∈ B.toFinset | x ∈ p.support}.Nonempty := by
     refine ⟨b, ?_⟩
     simp [hb]
@@ -275,13 +291,16 @@ def SatisfiesSetMengerTwo (G : SimpleGraph V) : Prop :=
 
 namespace TwoConnected
 
+omit [DecidableEq V] in
 /-- The post-Menger step: once the finite set form of Menger supplies two
 fully support-disjoint `A`--`B` paths, their canonical truncations form a
 `TwoLinkage`. -/
 theorem twoLinkage_of_rawPacking (_hG : TwoConnected G)
     (P : RawTwoPathPacking G A B) : Nonempty (TwoLinkage G A B) := by
+  classical
   exact ⟨P.toTwoLinkage⟩
 
+omit [DecidableEq V] in
 /-- Set-Menger plus the checked deletion-connectivity argument gives the
 desired linkage.  The endpoint-cardinality assumptions are sharp by
 `TwoLinkage.endpoint_cardinality`. -/
@@ -289,15 +308,18 @@ theorem twoLinkage_of_setMenger (hG : TwoConnected G)
     (hMenger : SatisfiesSetMengerTwo G)
     (hA : 2 ≤ A.ncard) (hB : 2 ≤ B.ncard) :
     Nonempty (TwoLinkage G A B) := by
+  classical
   obtain ⟨P⟩ := hMenger A B (hG.no_small_isABSeparator hA hB)
   exact hG.twoLinkage_of_rawPacking P
 
+omit [DecidableEq V] in
 /-- Under finite set-Menger, the two cardinality bounds are not only
 sufficient but exactly characterize existence of the full-support-disjoint
 linkage certificate. -/
 theorem twoLinkage_iff_endpoint_cardinality (hG : TwoConnected G)
     (hMenger : SatisfiesSetMengerTwo G) :
     Nonempty (TwoLinkage G A B) ↔ 2 ≤ A.ncard ∧ 2 ≤ B.ncard := by
+  classical
   constructor
   · rintro ⟨L⟩
     exact L.endpoint_cardinality

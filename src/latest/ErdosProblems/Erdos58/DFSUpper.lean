@@ -159,7 +159,7 @@ private theorem colorable_of_rank_bound {V : Type u} [Fintype V]
           · simp only [if_neg hxv, if_neg hyv]
             exact hc x (Finset.mem_erase.mpr ⟨hxv, hx⟩) y
               (Finset.mem_erase.mpr ⟨hyv, hy⟩) hxy hpar
-      · exact ⟨fun _ ↦ 0, by simpa [Finset.not_nonempty_iff_eq_empty.mp hS]⟩
+      · exact ⟨fun _ ↦ 0, by simp [Finset.not_nonempty_iff_eq_empty.mp hS]⟩
   obtain ⟨c, hc⟩ := h_colorable Finset.univ
   let e : Color ≃ Fin (2 * (k + 1)) :=
     Fintype.equivFinOfCardEq (by simp [Color])
@@ -178,12 +178,13 @@ root, recursively search every component, and join the root to each component
 at the first edge entering it. -/
 
 private lemma exists_root_neighbor_in_component
-    {V : Type u} [Fintype V] (G : SimpleGraph V) (root : V) (hG : G.Connected)
+    {V : Type u} [Finite V] (G : SimpleGraph V) (root : V) (hG : G.Connected)
     (H : SimpleGraph {v : V // v ≠ root})
     (hH : H = G.comap (Function.Embedding.subtype fun v : V ↦ v ≠ root))
     (C : H.ConnectedComponent) :
     ∃ x : C, G.Adj root x.1.1 := by
   classical
+  let := Fintype.ofFinite V
   let y : C := ⟨C.out, C.out_eq⟩
   have hyr : (y.1.1 : V) ≠ root := y.1.2
   obtain ⟨p, hp⟩ := (hG root y.1.1).exists_isPath
@@ -267,13 +268,13 @@ theorem exists_normalTree_of_connected {V : Type u} [Finite V]
           left
           rw [show (route root).support = [root] by simp [route]]
           exact ⟨(route v).support.tail, by
-            simpa using (route v).cons_tail_support⟩
+            simp⟩
         by_cases hv : v = root
         · subst v
           right
           rw [show (route root).support = [root] by simp [route]]
           exact ⟨(route u).support.tail, by
-            simpa using (route u).cons_tail_support⟩
+            simp⟩
         let wu : W := ⟨u, hu⟩
         let wv : W := ⟨v, hv⟩
         have hadjH : H.Adj wu wv := huv
@@ -330,6 +331,7 @@ noncomputable def fundamentalCycle {v w : V} (hvw : G.Adj v w)
   classical
   exact SimpleGraph.Walk.cons hvw (T.route v |>.dropUntil w hw)
 
+omit [Fintype V] in
 lemma length_fundamentalCycle {v w : V} (hvw : G.Adj v w)
     (hpre : (T.route w).support <+: (T.route v).support) :
     (T.fundamentalCycle hvw (hpre.subset (T.end_mem_route w))).length =
@@ -339,11 +341,13 @@ lemma length_fundamentalCycle {v w : V} (hvw : G.Adj v w)
     SimpleGraph.Walk.length_dropUntil]
   rw [← hpre.idxOf_eq_of_mem (T.end_mem_route w), T.length_eq_idxOf_end]
 
-lemma fundamentalCycle_isCycle {v w : V} (hvw : G.Adj v w)
+omit [Fintype V] in
+lemma fundamentalCycle_isCycle [Finite V] {v w : V} (hvw : G.Adj v w)
     (hpre : (T.route w).support <+: (T.route v).support)
     (hpar : (T.route w).length % 2 = (T.route v).length % 2) :
     (T.fundamentalCycle hvw (hpre.subset (T.end_mem_route w))).IsCycle := by
   classical
+  let := Fintype.ofFinite V
   change (SimpleGraph.Walk.cons hvw
     ((T.route v).dropUntil w (hpre.subset (T.end_mem_route w)))).IsCycle
   rw [SimpleGraph.Walk.cons_isCycle_iff]
@@ -365,18 +369,20 @@ lemma fundamentalCycle_isCycle {v w : V} (hvw : G.Adj v w)
   have hdepth_ne : (T.route v).length ≠ (T.route w).length := by
     intro heq
     have hsupp : (T.route w).support = (T.route v).support :=
-      hpre.eq_of_length (by simpa only [SimpleGraph.Walk.length_support, heq])
+      hpre.eq_of_length (by simp only [SimpleGraph.Walk.length_support, heq])
     apply hne
     have hlast := List.getLast_congr (T.route w).support_ne_nil
       (T.route v).support_ne_nil hsupp
     simpa using hlast.symm
   omega
 
-lemma fundamentalCycle_length_mem {v w : V} (hvw : G.Adj v w)
+omit [Fintype V] in
+lemma fundamentalCycle_length_mem [Finite V] {v w : V} (hvw : G.Adj v w)
     (hpre : (T.route w).support <+: (T.route v).support)
     (hpar : (T.route w).length % 2 = (T.route v).length % 2) :
     (T.route v).length - (T.route w).length + 1 ∈ oddCycleLengths G := by
   classical
+  let := Fintype.ofFinite V
   rw [mem_oddCycleLengths_iff]
   have hle : (T.route w).length ≤ (T.route v).length := by
     have := hpre.length_le

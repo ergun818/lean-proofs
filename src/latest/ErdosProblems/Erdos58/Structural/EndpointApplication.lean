@@ -1380,4 +1380,5 @@ end
 
 end Erdos58.Structural.EndpointApplication
 
-#print axioms Erdos58.Structural.EndpointApplication.EndpointConfiguration.endpoint_count_from_configuration
+#print axioms
+  Erdos58.Structural.EndpointApplication.EndpointConfiguration.endpoint_count_from_configuration

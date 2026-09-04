@@ -117,7 +117,7 @@ theorem colorable_two_of_oddCycleLengths_eq_empty
   apply colorable_two_of_no_odd_isCycle
   intro v c hc hclen
   have : c.length ∈ oddCycleLengths G := ⟨hclen, v, c, hc, rfl⟩
-  simpa [hodd] using this
+  simp [hodd] at this
 
 /-- In a graph with no odd cycle lengths, the chromatic number is exactly two
 precisely when the graph contains an edge, expressed canonically as a copy of

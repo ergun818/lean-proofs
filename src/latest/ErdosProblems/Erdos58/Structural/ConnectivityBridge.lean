@@ -25,6 +25,7 @@ universe u
 variable {V : Type u} [Fintype V] [DecidableEq V]
 variable (G : SimpleGraph V) [DecidableRel G.Adj]
 
+omit [DecidableEq V] in
 /-- A positive structural minimum-degree bound implies that the vertex type
 has at least three elements. -/
 theorem card_three_le_of_minDegree' {j : ℕ} (hj : 0 < j) [Nonempty V]
@@ -35,12 +36,14 @@ theorem card_three_le_of_minDegree' {j : ℕ} (hj : 0 < j) [Nonempty V]
   have hle := hdegree v
   omega
 
+omit [DecidableEq V] in
 /-- The connectivity conclusion of `Critical.vertexTwoConnected`, converted
 to the interface used by the longest-cycle proof. -/
 theorem twoConnected_of_vertexTwoConnected_minDegree {j : ℕ} (hj : 0 < j)
     (hconn : Critical.VertexTwoConnected G)
     (hdegree : ∀ v : V, 2 * j + 1 ≤ G.degree v) :
     TwoConnected G := by
+  classical
   let : Nonempty V := hconn.1.nonempty
   refine ⟨card_three_le_of_minDegree' G hj hdegree, hconn.1, ?_⟩
   intro v

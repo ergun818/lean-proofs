@@ -62,25 +62,35 @@ variable {C : LongestOddCycle G}
 def carrier (D : ExteriorOddCycle C) : Set V :=
   {v | v ∈ D.cycle.support}
 
+omit [DecidableEq V] [Fintype V] in
 @[simp] theorem mem_carrier (D : ExteriorOddCycle C) (v : V) :
     v ∈ D.carrier ↔ v ∈ D.cycle.support :=
   Iff.rfl
 
-theorem finite_carrier (D : ExteriorOddCycle C) : D.carrier.Finite := by
+omit [DecidableEq V] [Fintype V] in
+theorem finite_carrier [Finite V] (D : ExteriorOddCycle C) : D.carrier.Finite := by
+  classical
+  let := Fintype.ofFinite V
   exact Set.toFinite D.carrier
 
+omit [DecidableEq V] [Fintype V] in
 theorem disjoint_longest_carrier (D : ExteriorOddCycle C) :
     Disjoint C.carrier D.carrier := by
   rw [Set.disjoint_left]
   intro v hvC hvD
   exact D.support_outside v hvD hvC
 
+omit [DecidableEq V] [Fintype V] in
 theorem length_mem_oddCycleLengths (D : ExteriorOddCycle C) :
     D.cycle.length ∈ oddCycleLengths G :=
   ⟨D.odd_length, D.base, D.cycle, D.isCycle, rfl⟩
 
-theorem length_le_longest (D : ExteriorOddCycle C) :
-    D.cycle.length ≤ C.length :=
+omit [DecidableEq V] [Fintype V] in
+theorem length_le_longest [Finite V] (D : ExteriorOddCycle C) :
+    D.cycle.length ≤ C.length := by
+  classical
+  let := Fintype.ofFinite V
+  exact
   C.maximal D.length_mem_oddCycleLengths
 
 end ExteriorOddCycle
@@ -133,67 +143,92 @@ def data (S : TwoCycleSplice L cLen dLen) : SpliceData G where
   d₁ := S.d₁
   d₂ := S.d₂
 
+omit [DecidableEq V] [Fintype V] in
 @[simp] theorem data_parallel₁ (S : TwoCycleSplice L cLen dLen) :
     S.data.parallel₁ = SpliceData.close L.p S.d₁ L.q S.c₁ :=
   rfl
 
+omit [DecidableEq V] [Fintype V] in
 @[simp] theorem data_parallel₂ (S : TwoCycleSplice L cLen dLen) :
     S.data.parallel₂ = SpliceData.close L.p S.d₂ L.q S.c₂ :=
   rfl
 
+omit [DecidableEq V] [Fintype V] in
 @[simp] theorem data_crossed₁ (S : TwoCycleSplice L cLen dLen) :
     S.data.crossed₁ = SpliceData.close L.p S.d₂ L.q S.c₁ :=
   rfl
 
+omit [DecidableEq V] [Fintype V] in
 @[simp] theorem data_crossed₂ (S : TwoCycleSplice L cLen dLen) :
     S.data.crossed₂ = SpliceData.close L.p S.d₁ L.q S.c₂ :=
   rfl
 
+omit [DecidableEq V] [Fintype V] in
 theorem data_parallel₁_isCycle (S : TwoCycleSplice L cLen dLen) :
     S.data.parallel₁.IsCycle := by
   change (SpliceData.close L.p S.d₁ L.q S.c₁).IsCycle
   exact S.parallel₁_isCycle
 
+omit [DecidableEq V] [Fintype V] in
 theorem data_parallel₂_isCycle (S : TwoCycleSplice L cLen dLen) :
     S.data.parallel₂.IsCycle := by
   change (SpliceData.close L.p S.d₂ L.q S.c₂).IsCycle
   exact S.parallel₂_isCycle
 
+omit [DecidableEq V] [Fintype V] in
 theorem data_crossed₁_isCycle (S : TwoCycleSplice L cLen dLen) :
     S.data.crossed₁.IsCycle := by
   change (SpliceData.close L.p S.d₂ L.q S.c₁).IsCycle
   exact S.crossed₁_isCycle
 
+omit [DecidableEq V] [Fintype V] in
 theorem data_crossed₂_isCycle (S : TwoCycleSplice L cLen dLen) :
     S.data.crossed₂.IsCycle := by
   change (SpliceData.close L.p S.d₁ L.q S.c₂).IsCycle
   exact S.crossed₂_isCycle
 
+omit [DecidableEq V] [Fintype V] in
 /-- Any odd splice in the certificate is an actual odd cycle length of `G`. -/
-theorem parallel₁_mem_oddCycleLengths (S : TwoCycleSplice L cLen dLen)
+theorem parallel₁_mem_oddCycleLengths [Finite V] (S : TwoCycleSplice L cLen dLen)
     (hodd : Odd S.data.parallel₁.length) :
-    S.data.parallel₁.length ∈ oddCycleLengths G :=
+    S.data.parallel₁.length ∈ oddCycleLengths G := by
+  classical
+  let := Fintype.ofFinite V
+  exact
   ⟨hodd, L.a₁, S.data.parallel₁, S.data_parallel₁_isCycle, rfl⟩
 
-theorem parallel₂_mem_oddCycleLengths (S : TwoCycleSplice L cLen dLen)
+omit [DecidableEq V] [Fintype V] in
+theorem parallel₂_mem_oddCycleLengths [Finite V] (S : TwoCycleSplice L cLen dLen)
     (hodd : Odd S.data.parallel₂.length) :
-    S.data.parallel₂.length ∈ oddCycleLengths G :=
+    S.data.parallel₂.length ∈ oddCycleLengths G := by
+  classical
+  let := Fintype.ofFinite V
+  exact
   ⟨hodd, L.a₁, S.data.parallel₂, S.data_parallel₂_isCycle, rfl⟩
 
-theorem crossed₁_mem_oddCycleLengths (S : TwoCycleSplice L cLen dLen)
+omit [DecidableEq V] [Fintype V] in
+theorem crossed₁_mem_oddCycleLengths [Finite V] (S : TwoCycleSplice L cLen dLen)
     (hodd : Odd S.data.crossed₁.length) :
-    S.data.crossed₁.length ∈ oddCycleLengths G :=
+    S.data.crossed₁.length ∈ oddCycleLengths G := by
+  classical
+  let := Fintype.ofFinite V
+  exact
   ⟨hodd, L.a₁, S.data.crossed₁, S.data_crossed₁_isCycle, rfl⟩
 
-theorem crossed₂_mem_oddCycleLengths (S : TwoCycleSplice L cLen dLen)
+omit [DecidableEq V] [Fintype V] in
+theorem crossed₂_mem_oddCycleLengths [Finite V] (S : TwoCycleSplice L cLen dLen)
     (hodd : Odd S.data.crossed₂.length) :
-    S.data.crossed₂.length ∈ oddCycleLengths G :=
+    S.data.crossed₂.length ∈ oddCycleLengths G := by
+  classical
+  let := Fintype.ofFinite V
+  exact
   ⟨hodd, L.a₁, S.data.crossed₂, S.data_crossed₂_isCycle, rfl⟩
 
 end TwoCycleSplice
 
 /-! ## The outside-cycle strict inequality -/
 
+omit [DecidableEq V] [Fintype V] in
 /--
 An exterior odd cycle linked to the designated longest odd cycle by a valid
 two-cycle splice is strictly shorter than the longest cycle.
@@ -203,11 +238,13 @@ were at least as long, the positive total linkage length would make one of
 the four genuine splices both odd and longer than `C`, contradicting
 `C.maximal`.
 -/
-theorem outside_odd_cycle_is_shorter_of_splice
+theorem outside_odd_cycle_is_shorter_of_splice [Finite V]
     {C : LongestOddCycle G} (D : ExteriorOddCycle C)
     (L : TwoLinkage G C.carrier D.carrier)
     (S : TwoCycleSplice L C.length D.cycle.length) :
     D.cycle.length < C.length := by
+  classical
+  let := Fintype.ofFinite V
   by_contra hnot
   have hCD : C.length ≤ D.cycle.length := by omega
   have hlink : 0 < L.p.length + L.q.length :=
@@ -224,35 +261,44 @@ theorem outside_odd_cycle_is_shorter_of_splice
   · have hmax := C.maximal (S.crossed₂_mem_oddCycleLengths h.1)
     omega
 
+omit [DecidableEq V] [Fintype V] in
 /-- Since both old cycle lengths are odd, strict shortness leaves a gap of at
 least two.  This is the form used to separate the exterior length family
 from the designated longest-cycle length in later counts. -/
-theorem outside_odd_cycle_add_two_le_of_splice
+theorem outside_odd_cycle_add_two_le_of_splice [Finite V]
     {C : LongestOddCycle G} (D : ExteriorOddCycle C)
     (L : TwoLinkage G C.carrier D.carrier)
     (S : TwoCycleSplice L C.length D.cycle.length) :
     D.cycle.length + 2 ≤ C.length := by
+  classical
+  let := Fintype.ofFinite V
   have hlt := outside_odd_cycle_is_shorter_of_splice D L S
   rcases D.odd_length with ⟨d, hd⟩
   rcases C.odd with ⟨c, hc⟩
   omega
 
+omit [DecidableEq V] [Fintype V] in
 /-- Existential wrapper convenient after obtaining linkage and splice
 certificates by separate construction lemmas. -/
-theorem outside_odd_cycle_is_shorter
+theorem outside_odd_cycle_is_shorter [Finite V]
     {C : LongestOddCycle G} (D : ExteriorOddCycle C)
     (hsplice : ∃ (L : TwoLinkage G C.carrier D.carrier),
       Nonempty (TwoCycleSplice L C.length D.cycle.length)) :
     D.cycle.length < C.length := by
+  classical
+  let := Fintype.ofFinite V
   obtain ⟨L, ⟨S⟩⟩ := hsplice
   exact outside_odd_cycle_is_shorter_of_splice D L S
 
+omit [DecidableEq V] [Fintype V] in
 /-- Existential form of the two-step odd-length gap. -/
-theorem outside_odd_cycle_add_two_le
+theorem outside_odd_cycle_add_two_le [Finite V]
     {C : LongestOddCycle G} (D : ExteriorOddCycle C)
     (hsplice : ∃ (L : TwoLinkage G C.carrier D.carrier),
       Nonempty (TwoCycleSplice L C.length D.cycle.length)) :
     D.cycle.length + 2 ≤ C.length := by
+  classical
+  let := Fintype.ofFinite V
   obtain ⟨L, ⟨S⟩⟩ := hsplice
   exact outside_odd_cycle_add_two_le_of_splice D L S
 

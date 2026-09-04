@@ -34,25 +34,34 @@ def TwoConnected (G : SimpleGraph V) : Prop :=
 
 namespace TwoConnected
 
+omit [DecidableEq V] in
 theorem card_three_le (hG : TwoConnected G) : 3 ≤ Fintype.card V := hG.1
 
+omit [DecidableEq V] in
 theorem connected (hG : TwoConnected G) : G.Connected := hG.2.1
 
+omit [DecidableEq V] in
 theorem delete_connected (hG : TwoConnected G) (v : V) :
     (G.induce ({v}ᶜ : Set V)).Connected :=
   hG.2.2 v
 
+omit [DecidableEq V] in
 theorem nontrivial (hG : TwoConnected G) : Nontrivial V := by
+  classical
   exact Fintype.one_lt_card_iff_nontrivial.mp (by
     have h := hG.card_three_le
     omega)
 
+omit [DecidableEq V] in
 theorem exists_ne (hG : TwoConnected G) (v : V) : ∃ w : V, w ≠ v := by
+  classical
   let := hG.nontrivial
   exact _root_.exists_ne v
 
+omit [DecidableEq V] in
 theorem exists_two_ne (hG : TwoConnected G) (v : V) :
     ∃ x y : V, x ≠ v ∧ y ≠ v ∧ x ≠ y := by
+  classical
   have hcard : 2 ≤ Fintype.card ({v}ᶜ : Set V) := by
     rw [Fintype.card_compl_set, Set.card_singleton]
     have h := hG.card_three_le
@@ -66,12 +75,14 @@ theorem exists_two_ne (hG : TwoConnected G) (v : V) :
     simpa only [Set.mem_compl_iff, Set.mem_singleton_iff] using y.2
   exact ⟨x, y, hx, hy, fun h ↦ hxy (Subtype.ext h)⟩
 
+omit [DecidableEq V] in
 /-- In a 2-connected graph, any two vertices other than `z` can be joined by
 a simple path avoiding `z`.  This is the direct path-level content of the
 connectivity of `G - z`. -/
 theorem exists_path_avoiding (hG : TwoConnected G) (z : V) {x y : V}
     (hx : x ≠ z) (hy : y ≠ z) :
     ∃ p : G.Walk x y, p.IsPath ∧ z ∉ p.support := by
+  classical
   let x' : ({z}ᶜ : Set V) := ⟨x, hx⟩
   let y' : ({z}ᶜ : Set V) := ⟨y, hy⟩
   obtain ⟨p, hp⟩ := (hG.delete_connected z).exists_isPath x' y'
@@ -97,6 +108,7 @@ theorem exists_path_avoiding (hG : TwoConnected G) (z : V) {x y : V}
     simpa only [q', SimpleGraph.Walk.support_copy] using hqavoid
   exact ⟨q', hq'path, hq'avoid⟩
 
+omit [DecidableEq V] in
 /-- Any two distinct neighbors of a vertex in a 2-connected graph lie with
 that vertex on a simple cycle.  This is a useful rigorously proved special
 linkage consequence which needs only one application of
@@ -104,6 +116,7 @@ linkage consequence which needs only one application of
 theorem exists_cycle_through_two_neighbors (hG : TwoConnected G)
     {x y z : V} (hxy : G.Adj x y) (hxz : G.Adj x z) (hyz : y ≠ z) :
     ∃ c : G.Walk x x, c.IsCycle := by
+  classical
   obtain ⟨p, hp, hpx⟩ :=
     hG.exists_path_avoiding x hxy.ne.symm hxz.ne.symm
   let q : G.Walk y x := p.concat hxz.symm
@@ -149,28 +162,35 @@ namespace TwoLinkage
 
 variable {A B : Set V}
 
+omit [DecidableEq V] [Fintype V] in
 theorem a_ne (L : TwoLinkage G A B) : L.a₁ ≠ L.a₂ := by
   intro h
   exact L.disjoint_support L.p.start_mem_support (h.symm ▸ L.q.start_mem_support)
 
+omit [DecidableEq V] [Fintype V] in
 theorem b_ne (L : TwoLinkage G A B) : L.b₁ ≠ L.b₂ := by
   intro h
   exact L.disjoint_support L.p.end_mem_support (h.symm ▸ L.q.end_mem_support)
 
+omit [DecidableEq V] [Fintype V] in
 theorem p_nonempty (L : TwoLinkage G A B) (hAB : Disjoint A B) : 0 < L.p.length := by
   by_contra h
   have hp0 : L.p.length = 0 := by omega
   have hab : L.a₁ = L.b₁ := L.p.eq_of_length_eq_zero hp0
   exact Set.disjoint_left.1 hAB L.a₁_mem (hab.symm ▸ L.b₁_mem)
 
+omit [DecidableEq V] [Fintype V] in
 theorem q_nonempty (L : TwoLinkage G A B) (hAB : Disjoint A B) : 0 < L.q.length := by
   by_contra h
   have hq0 : L.q.length = 0 := by omega
   have hab : L.a₂ = L.b₂ := L.q.eq_of_length_eq_zero hq0
   exact Set.disjoint_left.1 hAB L.a₂_mem (hab.symm ▸ L.b₂_mem)
 
-theorem total_length_pos (L : TwoLinkage G A B) (hAB : Disjoint A B) :
+omit [DecidableEq V] [Fintype V] in
+theorem total_length_pos [Finite V] (L : TwoLinkage G A B) (hAB : Disjoint A B) :
     0 < L.p.length + L.q.length := by
+  classical
+  let := Fintype.ofFinite V
   have hp := L.p_nonempty hAB
   omega
 
@@ -214,78 +234,109 @@ def SplicesAreCycles : Prop :=
   S.parallel₁.IsCycle ∧ S.parallel₂.IsCycle ∧
     S.crossed₁.IsCycle ∧ S.crossed₂.IsCycle
 
+omit [DecidableEq V] [Fintype V] in
 @[simp] theorem length_close {a₁ a₂ b₁ b₂ : V}
     (p : G.Walk a₁ b₁) (d : G.Walk b₁ b₂)
     (q : G.Walk a₂ b₂) (c : G.Walk a₁ a₂) :
     (close p d q c).length = p.length + d.length + q.length + c.length := by
   simp [close]
 
-@[simp] theorem length_parallel₁ :
+omit [DecidableEq V] [Fintype V] in
+@[simp] theorem length_parallel₁ [Finite V] :
     S.parallel₁.length = S.p.length + S.d₁.length + S.q.length + S.c₁.length := by
+  classical
+  let := Fintype.ofFinite V
   simp [parallel₁]
 
-@[simp] theorem length_parallel₂ :
+omit [DecidableEq V] [Fintype V] in
+@[simp] theorem length_parallel₂ [Finite V] :
     S.parallel₂.length = S.p.length + S.d₂.length + S.q.length + S.c₂.length := by
+  classical
+  let := Fintype.ofFinite V
   simp [parallel₂]
 
-@[simp] theorem length_crossed₁ :
+omit [DecidableEq V] [Fintype V] in
+@[simp] theorem length_crossed₁ [Finite V] :
     S.crossed₁.length = S.p.length + S.d₂.length + S.q.length + S.c₁.length := by
+  classical
+  let := Fintype.ofFinite V
   simp [crossed₁]
 
-@[simp] theorem length_crossed₂ :
+omit [DecidableEq V] [Fintype V] in
+@[simp] theorem length_crossed₂ [Finite V] :
     S.crossed₂.length = S.p.length + S.d₁.length + S.q.length + S.c₂.length := by
+  classical
+  let := Fintype.ofFinite V
   simp [crossed₂]
 
+omit [DecidableEq V] [Fintype V] in
 /-- The sum of the two parallel splices. -/
-theorem parallel_sum {cLen dLen : ℕ}
+theorem parallel_sum [Finite V] {cLen dLen : ℕ}
     (hc : S.c₁.length + S.c₂.length = cLen)
     (hd : S.d₁.length + S.d₂.length = dLen) :
     S.parallel₁.length + S.parallel₂.length =
       cLen + dLen + 2 * (S.p.length + S.q.length) := by
+  classical
+  let := Fintype.ofFinite V
   simp only [length_parallel₁, length_parallel₂]
   omega
 
+omit [DecidableEq V] [Fintype V] in
 /-- The crossed pairing has the same total length as the parallel pairing. -/
-theorem crossed_sum {cLen dLen : ℕ}
+theorem crossed_sum [Finite V] {cLen dLen : ℕ}
     (hc : S.c₁.length + S.c₂.length = cLen)
     (hd : S.d₁.length + S.d₂.length = dLen) :
     S.crossed₁.length + S.crossed₂.length =
       cLen + dLen + 2 * (S.p.length + S.q.length) := by
+  classical
+  let := Fintype.ofFinite V
   simp only [length_crossed₁, length_crossed₂]
   omega
 
+omit [DecidableEq V] [Fintype V] in
 /-- If the two old cycles are odd, the two members of each pairing have the
 same parity. -/
-theorem parallel_same_parity
+theorem parallel_same_parity [Finite V]
     (hc : Odd (S.c₁.length + S.c₂.length))
     (hd : Odd (S.d₁.length + S.d₂.length)) :
     (Odd S.parallel₁.length ↔ Odd S.parallel₂.length) := by
+  classical
+  let := Fintype.ofFinite V
   simp only [length_parallel₁, length_parallel₂]
   simp only [Nat.odd_iff] at hc hd ⊢
   omega
 
-theorem crossed_same_parity
+omit [DecidableEq V] [Fintype V] in
+theorem crossed_same_parity [Finite V]
     (hc : Odd (S.c₁.length + S.c₂.length))
     (hd : Odd (S.d₁.length + S.d₂.length)) :
     (Odd S.crossed₁.length ↔ Odd S.crossed₂.length) := by
+  classical
+  let := Fintype.ofFinite V
   simp only [length_crossed₁, length_crossed₂]
   simp only [Nat.odd_iff] at hc hd ⊢
   omega
 
+omit [DecidableEq V] [Fintype V] in
 /-- Exactly one of the parallel and crossed first splices is odd. -/
-theorem odd_parallel₁_iff_not_odd_crossed₁
+theorem odd_parallel₁_iff_not_odd_crossed₁ [Finite V]
     (hd : Odd (S.d₁.length + S.d₂.length)) :
     (Odd S.parallel₁.length ↔ ¬ Odd S.crossed₁.length) := by
+  classical
+  let := Fintype.ofFinite V
   simp only [length_parallel₁, length_crossed₁]
   simp only [Nat.odd_iff] at hd ⊢
   omega
 
+omit [DecidableEq V] [Fintype V] in
 /-- Consequently one of the two pairings consists of two odd closed walks. -/
-theorem odd_pairing
+theorem odd_pairing [Finite V]
     (hc : Odd (S.c₁.length + S.c₂.length))
     (hd : Odd (S.d₁.length + S.d₂.length)) :
     (Odd S.parallel₁.length ∧ Odd S.parallel₂.length) ∨
       (Odd S.crossed₁.length ∧ Odd S.crossed₂.length) := by
+  classical
+  let := Fintype.ofFinite V
   have hp := S.parallel_same_parity hc hd
   have hx := S.crossed_same_parity hc hd
   have hpx := S.odd_parallel₁_iff_not_odd_crossed₁ hd
@@ -294,28 +345,35 @@ theorem odd_pairing
   · have h₂ : Odd S.crossed₁.length := by tauto
     exact Or.inr ⟨h₂, hx.mp h₂⟩
 
+omit [DecidableEq V] [Fintype V] in
 /-- If the second old cycle is at least as long as the first and the linking
 paths have positive total length, then in each pairing at least one new
 closed walk is strictly longer than the first old cycle. -/
-theorem parallel_one_longer {cLen dLen : ℕ}
+theorem parallel_one_longer [Finite V] {cLen dLen : ℕ}
     (hc : S.c₁.length + S.c₂.length = cLen)
     (hd : S.d₁.length + S.d₂.length = dLen) (hcd : cLen ≤ dLen)
     (hlink : 0 < S.p.length + S.q.length) :
     cLen < S.parallel₁.length ∨ cLen < S.parallel₂.length := by
+  classical
+  let := Fintype.ofFinite V
   have hsum := S.parallel_sum hc hd
   omega
 
-theorem crossed_one_longer {cLen dLen : ℕ}
+omit [DecidableEq V] [Fintype V] in
+theorem crossed_one_longer [Finite V] {cLen dLen : ℕ}
     (hc : S.c₁.length + S.c₂.length = cLen)
     (hd : S.d₁.length + S.d₂.length = dLen) (hcd : cLen ≤ dLen)
     (hlink : 0 < S.p.length + S.q.length) :
     cLen < S.crossed₁.length ∨ cLen < S.crossed₂.length := by
+  classical
+  let := Fintype.ofFinite V
   have hsum := S.crossed_sum hc hd
   omega
 
+omit [DecidableEq V] [Fintype V] in
 /-- The exact conclusion needed in the longest-odd-cycle argument, once the
 four spliced closed walks have separately been shown to be simple cycles. -/
-theorem exists_odd_longer_splice
+theorem exists_odd_longer_splice [Finite V]
     {cLen dLen : ℕ}
     (hc : S.c₁.length + S.c₂.length = cLen)
     (hd : S.d₁.length + S.d₂.length = dLen)
@@ -325,6 +383,8 @@ theorem exists_odd_longer_splice
       (Odd S.parallel₂.length ∧ cLen < S.parallel₂.length) ∨
       (Odd S.crossed₁.length ∧ cLen < S.crossed₁.length) ∨
       (Odd S.crossed₂.length ∧ cLen < S.crossed₂.length) := by
+  classical
+  let := Fintype.ofFinite V
   have hcp : Odd (S.c₁.length + S.c₂.length) := hc ▸ hcodd
   have hdp : Odd (S.d₁.length + S.d₂.length) := hd ▸ hdodd
   rcases S.odd_pairing hcp hdp with hp | hx
@@ -335,10 +395,11 @@ theorem exists_odd_longer_splice
     · exact Or.inr (Or.inr (Or.inl ⟨hx.1, h₁⟩))
     · exact Or.inr (Or.inr (Or.inr ⟨hx.2, h₂⟩))
 
+omit [DecidableEq V] [Fintype V] in
 /-- Cycle-valued form of `exists_odd_longer_splice`.  It cleanly separates
 the finite support-disjointness argument (`SplicesAreCycles`) from the
 universal arithmetic/parity argument proved above. -/
-theorem exists_odd_longer_cycle
+theorem exists_odd_longer_cycle [Finite V]
     {cLen dLen : ℕ}
     (hcycles : S.SplicesAreCycles)
     (hc : S.c₁.length + S.c₂.length = cLen)
@@ -347,6 +408,8 @@ theorem exists_odd_longer_cycle
     (hcd : cLen ≤ dLen) (hlink : 0 < S.p.length + S.q.length) :
     ∃ c : G.Walk S.a₁ S.a₁,
       c.IsCycle ∧ Odd c.length ∧ cLen < c.length := by
+  classical
+  let := Fintype.ofFinite V
   rcases S.exists_odd_longer_splice hc hd hcodd hdodd hcd hlink with
     h | h | h | h
   · exact ⟨S.parallel₁, hcycles.1, h.1, h.2⟩

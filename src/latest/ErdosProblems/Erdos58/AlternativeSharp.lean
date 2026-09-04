@@ -43,7 +43,7 @@ boundary pair `p = 2*j, q = 0`.
 
 This is the numerical content behind the invocation of Gyárfás's Lemma 8.
 -/
-theorem unequal_endpoint_exception {j p q : ℕ} (hj : 0 < j) (hp : 0 < p)
+theorem unequal_endpoint_exception {j p q : ℕ} (_ : 0 < j) (_ : 0 < p)
     (hdegree : 2 * j ≤ p + q)
     (hcount : Arithmetic.ceilHalf p + q ≤ j) :
     q = 0 ∧ p = 2 * j := by
@@ -91,6 +91,7 @@ theorem equal_endpoint_strict_or_boundary {j p q : ℕ} (hj : 0 < j)
 variable {X : Type u} [Fintype X]
 variable (H : SimpleGraph X) [DecidableRel H.Adj]
 
+omit [DecidableRel H.Adj] in
 /-- An isomorphism with `K_(2*j+2)` fixes the number of vertices of the
 graph. -/
 theorem card_eq_of_complete_iso {j : ℕ}

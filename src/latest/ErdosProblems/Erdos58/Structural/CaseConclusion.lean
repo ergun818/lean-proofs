@@ -64,11 +64,13 @@ lemma rotated_chordCount_eq_firstExterior_card_sub_one
   dsimp [s] at hsCard
   omega
 
-lemma leftChordPositions_card_eq_rotated_chordCount
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
+lemma leftChordPositions_card_eq_rotated_chordCount [Finite V]
     (P : LongestExteriorPath C) (D : RotatedCyclicOrientation P)
     (hpos : 0 < P.path.length) :
     (leftChordPositions (P.toBoundaryExteriorPath hpos)).card = D.chordCount := by
   classical
+  let := Fintype.ofFinite V
   have hinj : Set.InjOn
       (fun i : Fin ((P.toBoundaryExteriorPath hpos).walk.length + 1) ↦ (i : ℕ))
       (leftChordPositions (P.toBoundaryExteriorPath hpos)) := by
@@ -78,10 +80,11 @@ lemma leftChordPositions_card_eq_rotated_chordCount
   rw [image_leftChordPositions_val P hpos] at hcard
   exact hcard.symm
 
+omit [DecidableEq V] in
 /-- The different-neighborhood orientation is impossible under the exact
 `j`-length hypothesis. -/
 theorem different_orientation_impossible
-    (hG : TwoConnected G) {j : ℕ} (hj : 0 < j)
+    (_ : TwoConnected G) {j : ℕ} (hj : 0 < j)
     (P : LongestExteriorPath C) (hpos : 0 < P.path.length)
     (hdegree : ∀ v : V, 2 * j + 1 ≤ G.degree v)
     (hodd : (oddCycleLengths G).ncard = j)
@@ -94,6 +97,7 @@ theorem different_orientation_impossible
       (cycleNeighborPositions (toEndpointLongestOddCycle C) (P.last : V) \
         cycleNeighborPositions (toEndpointLongestOddCycle C) (P.first : V)).Nonempty) :
     False := by
+  classical
   let K := different_boundary_configuration_of_longestExteriorPath
     hj P hpos (hdegree (P.first : V)) hodd.le D hattach hcover hcard hextra
   have hmany := differentNeighborhoodNoChordBoundary
@@ -238,6 +242,7 @@ private lemma sdiff_nonempty_of_ne_of_card_le {α : Type*} [DecidableEq α]
   have hBA : B = A := Finset.eq_of_subset_of_card_le hsub hcard
   exact hne hBA.symm
 
+omit [DecidableEq V] in
 /-- In the common-singleton case at `j = 1`, the degree-three bound leaves
 at least one genuine chord at the first endpoint of the exterior path. -/
 lemma leftChordPositions_nonempty_of_singleton_degree
@@ -269,6 +274,7 @@ lemma leftChordPositions_nonempty_of_singleton_degree
   obtain ⟨i, hi, _⟩ := Finset.mem_image.mp hn
   exact ⟨i, hi⟩
 
+omit [DecidableEq V] in
 /-- Complete longest-path endpoint split, apart from the two genuinely
 geometric residuals: the common singleton attachment and the checked
 one-chord-at-each-end configuration.  Unequal neighborhoods and all
@@ -283,6 +289,7 @@ theorem nonIndependent_reduces_to_singleton_or_oneChord
       (cycleNeighborPositions
         (toEndpointLongestOddCycle C) (P.first : V)).card = 1) ∨
       Nonempty (OneChordEachConfiguration (toEndpointLongestOddCycle C) j) := by
+  classical
   let A := cycleNeighborPositions (toEndpointLongestOddCycle C) (P.first : V)
   let B := cycleNeighborPositions (toEndpointLongestOddCycle C) (P.last : V)
   have hend := endpointCycleNeighbors_nonempty hG hj P hpos hdegree hodd
@@ -344,6 +351,7 @@ theorem nonIndependent_reduces_to_singleton_or_oneChord
         hj Q (by simpa [Q] using hpos) hdegree hodd RD.1 RD.2
           hattach hcardQ hextraQ).elim
 
+omit [DecidableEq V] in
 /-- Every positive longest exterior path contradicts the exact `j`-length
 hypothesis.  The endpoint count has already reduced the proof to two cases:
 the common-singleton augmented fan, and the one-chord boundary. -/
@@ -352,6 +360,7 @@ theorem nonIndependent_impossible
     (P : LongestExteriorPath C) (hpos : 0 < P.path.length)
     (hdegree : ∀ v : V, 2 * j + 1 ≤ G.degree v)
     (hodd : (oddCycleLengths G).ncard = j) : False := by
+  classical
   rcases nonIndependent_reduces_to_singleton_or_oneChord
       hG hj P hpos hdegree hodd with hsingleton | hboundary
   · obtain ⟨hsame, hone⟩ := hsingleton

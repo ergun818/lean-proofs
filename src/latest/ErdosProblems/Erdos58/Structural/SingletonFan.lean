@@ -46,16 +46,18 @@ private lemma odd_replace_of_same_mod {a r s : ℕ}
   rw [Nat.odd_iff] at ha ⊢
   omega
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 /-- A whole equal-parity, length-injective family of routes through the
 exterior path closes, using one fixed complementary arc of the odd cycle,
 to the same number of distinct odd cycle lengths. -/
-theorem many_odd_lengths_of_pathFamily
+theorem many_odd_lengths_of_pathFamily [Finite V]
     (P : EscapePath C S x) (hxC : x ∈ C.cycle.support) {r : ℕ}
     (F : PathFamily G P.exteriorEnd x (Fin r))
     (hFsupport : ∀ i v, v ∈ (F.path i).support →
       v = x ∨ v ∈ S.walk.support) :
     r ≤ (oddCycleLengths G).ncard := by
   classical
+  let := Fintype.ofFinite V
   by_cases hr : r = 0
   · omega
   let i₀ : Fin r := ⟨0, by omega⟩
@@ -312,6 +314,7 @@ theorem exists_singletonEndpointFan
     path_eq := rfl }⟩
 -/
 
+omit [DecidableEq V] in
 /-- For `j ≥ 2`, a positive longest exterior path cannot have a literal
 singleton as the common cycle-neighbour set of its two endpoints.  The
 proof appends that neighbour to the exterior path and applies the exact
@@ -368,9 +371,7 @@ theorem equalSingletonEndpoint_impossible
       CaseAssembly.commonNeighborAugmentedFan_position_zero
         (j := j) (by omega) P hpos base hbaseFirst hbaseLast hmany
   have hlast : D.position iLast = D.path.length := by
-    simpa [D, iLast] using
-      CaseAssembly.commonNeighborAugmentedFan_position_last
-        (j := j) P base hbaseFirst hbaseLast hmany
+    simp [D, iLast]
   have hDlength : D.path.length = P.exactAmbientPath.length + 1 := by
     change (CaseAssembly.commonNeighborAugmentedSpine
       P base hbaseLast).length = P.exactAmbientPath.length + 1
