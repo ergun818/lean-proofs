@@ -338,6 +338,7 @@ variable {V : Type*} [Fintype V] [DecidableEq V]
 def lowDegreeFinset (G : SimpleGraph V) [DecidableRel G.Adj] (j : ℕ) : Finset V :=
   Finset.univ.filter fun v ↦ G.degree v ≤ j
 
+omit [DecidableEq V] in
 @[simp] lemma mem_lowDegreeFinset {G : SimpleGraph V} [DecidableRel G.Adj]
     {j : ℕ} {v : V} : v ∈ lowDegreeFinset G j ↔ G.degree v ≤ j := by
   simp [lowDegreeFinset]
@@ -377,6 +378,7 @@ lemma edgeFinset_subset_internal_union_incident (G : SimpleGraph V)
       simpa [SimpleGraph.mem_incidenceFinset] using
         ⟨(SimpleGraph.mem_edgeFinset.mp he), hve'⟩⟩
 
+omit [DecidableEq V] in
 /-- The elementary bound
 `e(G) ≤ choose (|V|-|S|) 2 + ∑_{v∈S} degree(v)`.
 Internal edges of `S` may be counted twice on the right. -/
@@ -403,6 +405,7 @@ lemma card_edgeFinset_le_choose_compl_add_sum_degree (G : SimpleGraph V)
     _ ≤ (Fintype.card V - S.card).choose 2 + ∑ v ∈ S, G.degree v :=
       Nat.add_le_add hinternal (card_incidentToFinset_le_sum_degree G S)
 
+omit [DecidableEq V] in
 /-- Lemma 2.2 of the writeup: a set of `s` vertices of degree at most `j`
 forces `e(G) ≤ choose (n-s) 2 + s*j`. -/
 lemma low_degree_set_edge_bound (G : SimpleGraph V) [DecidableRel G.Adj]
@@ -471,7 +474,7 @@ lemma card_edgeFinset_decomp_finset (G : SimpleGraph V)
 then all edges lie in the two complete-graph envelopes on `S ∪ {c}`
 and on `Sᶜ`. -/
 lemma card_edgeFinset_le_of_cut_side (G : SimpleGraph V)
-    [DecidableRel G.Adj] (S : Finset V) (c : V) (hc : c ∉ S)
+    [DecidableRel G.Adj] (S : Finset V) (c : V) (_hc : c ∉ S)
     (hclosed : ∀ u ∈ S, G.neighborSet u ⊆ (↑(insert c S) : Set V)) :
     G.edgeFinset.card ≤ (S.card + 1).choose 2 +
       (Fintype.card V - S.card).choose 2 := by
@@ -481,7 +484,7 @@ lemma card_edgeFinset_le_of_cut_side (G : SimpleGraph V)
     simp only [X, Finset.mem_filter, Finset.mem_product,
       Finset.mem_compl] at huv
     have hv := hclosed u huv.1.1 huv.2
-    simp only [Set.mem_setOf_eq, Finset.coe_insert, Set.mem_insert_iff,
+    simp only [Finset.coe_insert, Set.mem_insert_iff,
       Finset.mem_coe] at hv
     have hvc : v = c := hv.resolve_right fun h ↦ huv.1.2 h
     subst v
@@ -538,6 +541,7 @@ lemma cut_partition_numerics {n k a : ℕ}
     nlinarith
   omega
 
+omit [DecidableEq V] in
 /-- Every component side of `G-c` has at least the minimum degree many
 vertices: all neighbours of a side vertex stay on that side or are `c`. -/
 lemma component_side_card_ge_minDegree (G : SimpleGraph V)
@@ -554,12 +558,11 @@ lemma component_side_card_ge_minDegree (G : SimpleGraph V)
       Erdos916.ComponentEndBlock.degree_induce_verts (G := G) K hv
   have hlt := (G.induce W).degree_lt_card_verts z
   have hcnot : c ∉ S := by
-    simpa [S] using Erdos916.ComponentEndBlock.cut_not_mem_side (G := G) c K
+    simp [S]
   have hcardW : Fintype.card W = S.toFinset.card + 1 := by
     calc
       Fintype.card W = Fintype.card S + 1 := by
-        simpa [W, S, Erdos916.ComponentEndBlock.verts] using
-          Set.card_insert S hcnot
+        simp [W, S, Erdos916.ComponentEndBlock.verts]
       _ = S.toFinset.card + 1 := by rw [Set.toFinset_card]
   have := hmin v
   rw [hdeg, hcardW] at hlt
@@ -570,6 +573,7 @@ forces vertex two-connectivity. -/
 def VertexTwoConnected (G : SimpleGraph V) : Prop :=
   G.Connected ∧ ∀ c : V, (G.induce {v : V | v ≠ c}).Connected
 
+omit [DecidableEq V] in
 theorem vertexTwoConnected_of_woodallBound_of_minDegree
     (G : SimpleGraph V) [DecidableRel G.Adj] (k : ℕ)
     (horder : 2 * k + 3 ≤ Fintype.card V)
@@ -613,11 +617,9 @@ theorem vertexTwoConnected_of_woodallBound_of_minDegree
       apply hKL
       exact SimpleGraph.ConnectedComponent.eq_of_common_vertex hxK hxL
     have hcS : c ∉ S := by
-      simpa [S, Sset] using
-        Erdos916.ComponentEndBlock.cut_not_mem_side (G := G) c K
+      simp [S, Sset]
     have hcT : c ∉ T := by
-      simpa [T, Tset] using
-        Erdos916.ComponentEndBlock.cut_not_mem_side (G := G) c L
+      simp [T, Tset]
     have hsum : S.card + T.card + 1 ≤ Fintype.card V := by
       have hcST : c ∉ S ∪ T := by simp [hcS, hcT]
       have hle := Finset.card_le_card
@@ -658,6 +660,7 @@ theorem vertexTwoConnected_of_woodallBound_of_minDegree
       (G := G) (s := {z : V | z ≠ c})).toHom
   exact ⟨hconn, hdelConn⟩
 
+omit [DecidableEq V] in
 /-- Split a degree sum over two disjoint exceptional sets and their
 complement. -/
 lemma sum_univ_le_three_parts (f : V → ℕ) (R S : Finset V) (a b c : ℕ)
@@ -710,7 +713,7 @@ variable {a b : V} {p : G.Walk a b}
 
 /-- Along a Hamilton path, every neighbor of the final vertex occurs before
 the final position. -/
-def pathNeighborIndexBeforeEnd (hpp : p.IsPath)
+def pathNeighborIndexBeforeEnd (_hpp : p.IsPath)
     (hall : ∀ x : G.neighborFinset b, x.1 ∈ p.support) :
     G.neighborFinset b ↪ Fin p.length where
   toFun x := by
@@ -738,7 +741,7 @@ def pathNeighborIndexBeforeEnd (hpp : p.IsPath)
 
 /-- Along a Hamilton path, every neighbor of the initial vertex occurs after
 the initial position; subtracting one gives the preceding edge slot. -/
-def pathNeighborIndexAfterStart (hpp : p.IsPath)
+def pathNeighborIndexAfterStart (_hpp : p.IsPath)
     (hall : ∀ x : G.neighborFinset a, x.1 ∈ p.support) :
     G.neighborFinset a ↪ Fin p.length where
   toFun x := by
@@ -814,6 +817,7 @@ def pathNeighborIndexAfterStart (hpp : p.IsPath)
   rw [show p.support.idxOf x.1 - 1 + 1 = p.support.idxOf x.1 by omega]
   exact hget
 
+omit [DecidableRel G.Adj] in
 /-- A Hamilton path whose endpoints are adjacent closes to a Hamilton cycle
 as soon as the ambient graph has at least three vertices. -/
 lemma isHamiltonian_of_hamiltonianPath_of_adj (hn : 3 ≤ Fintype.card V)
@@ -887,7 +891,7 @@ lemma isHamiltonian_of_hamiltonianPath_degree_sum
       apply hinj
       · simp
       · simp
-      · simpa [z, hzb]
+      · simp [z, hzb]
     omega
   have hidx : p.support.idxOf z = i.val := by
     have hz : z = x.1 := by
@@ -942,6 +946,7 @@ def pathPredecessorEmbedding {a b : V} {p : G.Walk a b} (hp : p.IsPath) :
     apply Fin.ext
     exact hp.getVert_injOn (by simp) (by simp) hij
 
+omit [DecidableEq V] [DecidableRel G.Adj] in
 lemma longestPath_neighbor_mem_support_end {a b : V} {p : G.Walk a b}
     (hp : IsLongestPath p) {x : V} (hbx : G.Adj b x) : x ∈ p.support := by
   by_contra hx
@@ -949,6 +954,7 @@ lemma longestPath_neighbor_mem_support_end {a b : V} {p : G.Walk a b}
   have hle := (isLongestPath_iff.mp hp).2 a x (p.concat hbx) hpath
   simp at hle
 
+omit [DecidableEq V] [DecidableRel G.Adj] in
 lemma longestPath_neighbor_mem_support_start {a b : V} {p : G.Walk a b}
     (hp : IsLongestPath p) {x : V} (hax : G.Adj a x) : x ∈ p.support := by
   by_contra hx
@@ -1010,7 +1016,7 @@ lemma degree_add_degree_le_length_of_longestPath
   have hzb : z ≠ b := by
     intro hzb
     have heq : i.val = p.length := hp.isPath.getVert_injOn
-      (by simp) (by simp) (by simpa [z, hzb])
+      (by simp) (by simp) (by simp [z, hzb])
     omega
   have hidx : p.support.idxOf z = i.val := by
     have hz : z = x.1 := by
@@ -1036,6 +1042,7 @@ lemma degree_add_degree_le_length_of_longestPath
   exact (SimpleGraph.Walk.not_adj_end_start_of_longest_path hqp
     (by rw [hqlen]; exact hlen) hmaxq hconn hnham) hqa
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 /-- Two crossing endpoint chords close a path after omitting one internal
 vertex.  This is the cycle-splicing step in Woodall's endpoint lemma. -/
 lemma hasCycleAtLeast_of_path_endpoint_chords
@@ -1079,7 +1086,7 @@ lemma hasCycleAtLeast_of_path_endpoint_chords
     have hidx : p.support.idxOf z = i := by
       have hmem := p.getVert_support_idxOf hzmem
       have hgeteq : p.getVert (p.support.idxOf z) = p.getVert i := by
-        simpa [z] using hmem
+        simp [z]
       have heq : p.support.idxOf z = i := hp.getVert_injOn
         (by
           simp only [Set.mem_ofPred_eq]
@@ -1127,6 +1134,7 @@ lemma hasCycleAtLeast_of_path_endpoint_chords
     simp [c, Walk.length_dropLast, hqlen]
     omega
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 /-- Adjacent crossing endpoint chords close all of a path. -/
 lemma hasCycleAtLeast_succ_of_path_endpoint_chords
     {a b : V} {p : G.Walk a b} (hp : p.IsPath) (hlen : 2 ≤ p.length)
@@ -1149,17 +1157,17 @@ lemma hasCycleAtLeast_succ_of_path_endpoint_chords
       intro hza
       have heq : i = 0 := hp.getVert_injOn
         (by change i ≤ p.length; omega) (by simp)
-        (by simpa [z, hza] using p.getVert_zero.symm)
+        (by simp [z, hza])
       exact hi0 heq
     have hzb : z ≠ b := by
       intro hzb
       have heq : i = p.length := hp.getVert_injOn
         (by change i ≤ p.length; omega) (by simp)
-        (by simpa [z, hzb] using p.getVert_length.symm)
+        (by simp [z, hzb])
       omega
     have hidx : p.support.idxOf z = i := by
       have hgeteq : p.getVert (p.support.idxOf z) = p.getVert i := by
-        simpa [z] using p.getVert_support_idxOf hzmem
+        simp [z]
       exact hp.getVert_injOn
         (by
           have := List.idxOf_lt_length_of_mem hzmem
@@ -1199,6 +1207,7 @@ def PosaDegreeCondition (G : SimpleGraph V) [DecidableRel G.Adj] : Prop :=
     (∀ j, 2 * j = Fintype.card V - 1 →
       (lowDegreeFinset G j).card ≤ j)
 
+omit [DecidableEq V] in
 lemma PosaDegreeCondition.not_small_closed
     (hP : PosaDegreeCondition G) (hn : 3 ≤ Fintype.card V)
     (R : Finset V) (hR : R.Nonempty) (hsmall : 2 * R.card ≤ Fintype.card V)
@@ -1230,6 +1239,7 @@ lemma PosaDegreeCondition.not_small_closed
   dsimp [j] at this hcardlow
   omega
 
+omit [DecidableEq V] in
 /-- Pósa's degree-distribution condition forces connectedness. -/
 lemma PosaDegreeCondition.connected
     (hP : PosaDegreeCondition G) (hn : 3 ≤ Fintype.card V) : G.Connected := by
@@ -1272,11 +1282,13 @@ noncomputable def longestEndpointPairs (G : SimpleGraph V) : Finset (V × V) :=
   Finset.univ.filter fun ab ↦
     ∃ p : G.Walk ab.1 ab.2, IsLongestPath p
 
+omit [DecidableEq V] [DecidableRel G.Adj] in
 @[simp] lemma mem_longestEndpointPairs {ab : V × V} :
     ab ∈ longestEndpointPairs G ↔
       ∃ p : G.Walk ab.1 ab.2, IsLongestPath p := by
   simp [longestEndpointPairs]
 
+omit [DecidableEq V] [DecidableRel G.Adj] in
 lemma longestEndpointPairs_nonempty (hne : Nonempty V) :
     (longestEndpointPairs G).Nonempty := by
   let : Nonempty V := hne
@@ -1388,7 +1400,7 @@ lemma end_mem_longestPathEndpointFan {a b : V} {p : G.Walk a b}
       omega
     · simp only [Set.mem_ofPred_eq]
       omega
-    · simpa [hpen] using hget
+    · simp [hpen]
   rw [hidx, show p.length - 1 + 1 = p.length by omega]
   exact p.getVert_length
 
@@ -1435,7 +1447,7 @@ lemma disjoint_longestPathEndpointFans_of_no_long_cycle
       omega
     · simp only [Set.mem_ofPred_eq]
       have hj := j.isLt
-      simpa using Nat.sub_le p.length (j.val + 1)
+      simp
     · simpa [Walk.getVert_reverse] using hfanEq
   have hi : i.val + 2 ≤ p.length := by
     have hj : j.val < p.length := by simpa using j.isLt
@@ -1565,6 +1577,7 @@ lemma card_endpointFans_le_card_sub_one_of_no_long_cycle
   exact hno ((hasCycleAtLeast_succ_of_path_endpoint_chords hp.isPath
     (by omega) hiBound hbi hai).mono (by omega))
 
+omit [DecidableEq V] [DecidableRel G.Adj] in
 /-- A longest path in a connected graph of order at least three has at least
 two edges. -/
 lemma two_le_length_of_longestPath_connected
@@ -1599,6 +1612,7 @@ lemma two_le_length_of_longestPath_connected
   have hrle := (isLongestPath_iff.mp hp).2 c b (Walk.cons hcaAdj p) hrpath
   simp [hplen] at hrle
 
+omit [DecidableEq V] in
 /-- Woodall's endpoint-fan lemma: the stated minimum degree and edge
 threshold force a cycle at least as long as every supplied path. -/
 theorem hasCycleAtLeast_of_minDegree_edgeCount_path
@@ -1671,6 +1685,7 @@ theorem hasCycleAtLeast_of_minDegree_edgeCount_path
     hdegreeSum.trans hupper
   omega
 
+omit [DecidableEq V] in
 /-- At Woodall's threshold, connectivity and minimum degree `k+2` force a
 cycle of length at least `min n (2(k+2))`.  This is the precise Dirac-type
 input needed in the high-minimum-degree branch. -/
@@ -1852,6 +1867,7 @@ section BondyPancyclic
 variable {V : Type*} [Fintype V] [DecidableEq V]
 variable {G : SimpleGraph V} [DecidableRel G.Adj]
 
+omit [DecidableRel G.Adj] [Fintype V] in
 /-- On a simple cycle, the first occurrence of the vertex in position `i`
 is exactly position `i`, as long as `i` is before the repeated endpoint. -/
 lemma support_idxOf_getVert_eq_of_lt
@@ -1883,6 +1899,7 @@ lemma support_idxOf_getVert_eq_of_lt
     (by simp only [Set.mem_ofPred_eq]; omega)
     (by simp only [Set.mem_ofPred_eq]; omega) hget
 
+omit [DecidableRel G.Adj] [Fintype V] in
 /-- Rotating a simple cycle to position `i` turns position `r` into the
 old cyclic position `i+r`.  The formula is stated without `%` by splitting
 at the end of the old linear presentation. -/
@@ -1902,7 +1919,7 @@ lemma getVert_rotate_getVert
   · simp [Walk.take_getVert, hidx,
       Nat.min_eq_right (by omega : r - (c.length - i) ≤ i)]
 
-lemma add_mod_eq_sub_of_lt_two {n a b : ℕ} (hn : 0 < n)
+lemma add_mod_eq_sub_of_lt_two {n a b : ℕ} (_hn : 0 < n)
     (ha : a < n) (hb : b < n) (hadd : n ≤ a + b) :
     (a + b) % n = a + b - n := by
   have h := Nat.add_mod_add_of_le_add_mod (a := a) (b := b) (c := n) (by
@@ -1910,6 +1927,7 @@ lemma add_mod_eq_sub_of_lt_two {n a b : ℕ} (hn : 0 < n)
   rw [Nat.mod_eq_of_lt ha, Nat.mod_eq_of_lt hb] at h
   omega
 
+omit [DecidableRel G.Adj] [Fintype V] in
 /-- The preceding rotation formula in the usual modular notation. -/
 lemma getVert_rotate_getVert_mod
     {a : V} {c : G.Walk a a} (hc : c.IsCycle) {i r : ℕ}
@@ -1923,6 +1941,7 @@ lemma getVert_rotate_getVert_mod
     congr 1
     omega
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 /-- An external vertex adjacent to positions `i` and `i+r` on a cycle
 closes the intervening cyclic arc to a cycle of length `r+2`. -/
 lemma hasCycleLength_add_two_of_cycle_external_shift
@@ -1937,12 +1956,13 @@ lemma hasCycleLength_add_two_of_cycle_external_shift
   have hxcr : x ∉ cr.support := by
     simpa [cr] using hx
   apply hasCycleLength_add_two_of_cycle_external hcr hxcr hrpos
-    (by simpa [cr] using r.isLt) hxi
+    (by simp [cr]) hxi
   have hrot := getVert_rotate_getVert_mod hc i.isLt r.isLt
   rw [show cr = c.rotate (c.getVert i.val)
       (Walk.getVert_mem_support c i.val) by rfl, hrot]
   simpa [finCycle_apply, Fin.add_def] using hxr
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 /-- Inserting an external vertex into an edge of a simple cycle produces
 a cycle one edge longer. -/
 lemma hasCycleLength_succ_of_cycle_external_adjacent
@@ -1989,8 +2009,10 @@ lemma hasCycleLength_succ_of_cycle_external_adjacent
     exact hxis
   have hcycle := hasCycleLength_add_two_of_path_external hp hpPos hxP
     hxi hxisStart
-  convert hcycle using 1 <;> omega
+  convert hcycle using 1
+  omega
 
+omit [DecidableRel G.Adj] [Fintype V] in
 /-- Every vertex of a simple cycle has a first occurrence before the
 repeated terminal vertex. -/
 lemma support_idxOf_lt_length_of_mem_isCycle
@@ -2014,12 +2036,14 @@ def cycleNeighborPositions {a : V} (c : G.Walk a a) (x : V) :
     Finset (Fin c.length) :=
   Finset.univ.filter fun i ↦ G.Adj x (c.getVert i.val)
 
+omit [DecidableEq V] [Fintype V] in
 @[simp] lemma mem_cycleNeighborPositions
     {a x : V} {c : G.Walk a a} {i : Fin c.length} :
     i ∈ cycleNeighborPositions (G := G) c x ↔
       G.Adj x (c.getVert i.val) := by
   simp [cycleNeighborPositions]
 
+omit [DecidableEq V] in
 /-- If a cycle contains every vertex other than `x`, its cyclic neighbor
 positions count the full degree of `x`. -/
 lemma card_cycleNeighborPositions_eq_degree
@@ -2057,7 +2081,7 @@ lemma exists_mem_and_finCycle_mem
     (hcard : m < 2 * A.card) :
     ∃ i ∈ A, (finCycle r) i ∈ A := by
   by_contra hno
-  push_neg at hno
+  push Not at hno
   let B : Finset (Fin m) := A.map (finCycle r).toEmbedding
   have hdisj : Disjoint A B := by
     rw [Finset.disjoint_left]
@@ -2070,6 +2094,7 @@ lemma exists_mem_and_finCycle_mem
     Fintype.card_fin, show B.card = A.card by simp [B]] at hle
   omega
 
+omit [DecidableEq V] in
 /-- A vertex outside a cycle and adjacent to more than half of its vertices
 creates all cycle lengths obtained by inserting it into cyclic arcs. -/
 lemma hasCycleLength_of_external_high_degree
@@ -2090,8 +2115,11 @@ lemma hasCycleLength_of_external_high_degree
     (i := i) (r := r) (by simpa [r] using hrpos)
     (mem_cycleNeighborPositions.mp hiA)
     (mem_cycleNeighborPositions.mp hirA)
-  convert hcycle using 1 <;> simp [r] <;> omega
+  convert hcycle using 1
+  simp [r]
+  omega
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 lemma mem_support_drop_take_exists_index
     {a z : V} {c : G.Walk a a} {start len : ℕ}
     (hz : z ∈ ((c.drop start).take len).support) :
@@ -2103,6 +2131,7 @@ lemma mem_support_drop_take_exists_index
   rw [Walk.take_getVert, Nat.min_eq_right htlen, Walk.drop_getVert] at ht
   exact ht.symm
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 /-- Two chords with endpoints shifted by two positions splice out the
 single intervening vertex and hence give a cycle one shorter.  This is
 the non-wrapping case of Bondy's degree-sum argument. -/
@@ -2120,7 +2149,7 @@ lemma hasCycleLength_pred_of_shift_two_chords_nowrap
     congr 1
     omega
   let left : G.Walk (c.getVert k) (c.getVert 1) :=
-    seg.reverse.copy hsegEnd (by simp [seg])
+    seg.reverse.copy hsegEnd (by simp)
   have hleft : left.IsPath := by
     simpa [left, seg] using
       (((hc.isPath_drop (n := 1) (by omega)).take (k - 1)).reverse)
@@ -2202,6 +2231,7 @@ lemma hasCycleLength_pred_of_shift_two_chords_nowrap
   simp [z, hqLen]
   omega
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 /-- A chord from the initial vertex to the penultimate cycle vertex cuts
 off the final vertex and gives a cycle one shorter. -/
 lemma hasCycleLength_pred_of_chord_penultimate
@@ -2225,6 +2255,7 @@ lemma hasCycleLength_pred_of_chord_penultimate
   simp [z, hpLen]
   omega
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 /-- Modular form of the shift-two splice. -/
 lemma hasCycleLength_pred_of_shift_two_chords
     {a : V} {c : G.Walk a a} (hc : c.IsCycle) (hlen : 4 ≤ c.length)
@@ -2259,7 +2290,7 @@ lemma hasCycleLength_pred_of_shift_two_chords
     simpa [hkeq] using h0k
 
 lemma exists_mem_inter_of_card_lt_add
-    {W : Type*} [Fintype W] [DecidableEq W] (A B : Finset W)
+    {W : Type*} [Fintype W] (A B : Finset W)
     (hcard : Fintype.card W < A.card + B.card) :
     ∃ x ∈ A, x ∈ B := by
   by_contra hno
@@ -2323,7 +2354,7 @@ lemma degree_add_degree_cyclic_succ_le_of_no_pred_cycle
   have hzero : cr.getVert 0 = c.getVert i.val := by
     have h := getVert_rotate_getVert_mod hc.isCycle i.isLt
       (by omega : 0 < c.length)
-    simpa [cr, Nat.mod_eq_of_lt i.isLt] using h
+    simp [cr]
   have hone : cr.getVert 1 =
       c.getVert ((finCycle ⟨1, by omega⟩) i).val := by
     have h := getVert_rotate_getVert_mod hc.isCycle i.isLt
@@ -2382,6 +2413,7 @@ lemma hasCycleLength_pred_of_hamiltonianCycle_strict_dense
   have hle := four_mul_card_edges_le_square_of_no_pred_cycle hc hlen hno
   omega
 
+omit [DecidableRel G.Adj] [Fintype V] in
 /-- A simple cycle has exactly `length` distinct vertices. -/
 lemma card_support_toFinset_of_isCycle
     {a : V} {c : G.Walk a a} (hc : c.IsCycle) :
@@ -2395,6 +2427,7 @@ lemma card_support_toFinset_of_isCycle
   · exact htail
   · simpa using hbase
 
+omit [DecidableEq V] [DecidableRel G.Adj] in
 /-- The length of a simple cycle is at most the order of its ambient graph. -/
 lemma hasCycleLength_le_card {d : ℕ} (h : HasCycleLength G d) :
     d ≤ Fintype.card V := by
@@ -2407,14 +2440,17 @@ exceeding the order. -/
 noncomputable def circumference (G : SimpleGraph V) : ℕ :=
   Nat.findGreatest (HasCycleLength G) (Fintype.card V)
 
+omit [DecidableEq V] [DecidableRel G.Adj] in
 lemma le_circumference_of_hasCycleLength {d : ℕ}
     (h : HasCycleLength G d) : d ≤ circumference G := by
   exact Nat.le_findGreatest (hasCycleLength_le_card h) h
 
+omit [DecidableEq V] [DecidableRel G.Adj] in
 lemma hasCycleLength_circumference_of_hasCycleLength {d : ℕ}
     (h : HasCycleLength G d) : HasCycleLength G (circumference G) := by
   exact Nat.findGreatest_spec (hasCycleLength_le_card h) h
 
+omit [Fintype V] in
 /-- Cyclic neighbor positions are in bijection with the neighbors lying on
 the support of the cycle. -/
 lemma card_cycleNeighborPositions_eq_card_filter_support
@@ -2441,6 +2477,7 @@ lemma card_cycleNeighborPositions_eq_card_filter_support
       exact mem_cycleNeighborPositions.mpr (by simpa [hjget] using hy'.2)
     exact ⟨j, hjmem, hjget⟩
 
+omit [DecidableEq V] [Fintype V] in
 /-- An outside vertex has at most half as many neighbors on a longest
 cycle as that cycle has vertices. -/
 lemma two_mul_card_cycleNeighborPositions_le_of_maximal
@@ -2484,7 +2521,7 @@ lemma two_mul_card_crossing_le_of_maximal_cycle
     rcases e with ⟨y, x⟩
     simp only [X, R, T, Y, pairEmbedding, Finset.mem_filter,
       Finset.mem_product, Finset.mem_compl, Finset.mem_biUnion,
-      Finset.mem_map, Function.Embedding.coeFn_mk]
+      Finset.mem_map]
     constructor
     · rintro ⟨⟨hyS, hxS⟩, hyx⟩
       refine ⟨x, hxS, y, ?_, rfl⟩
@@ -2526,6 +2563,7 @@ lemma two_mul_card_crossing_le_of_maximal_cycle
           rw [show S.card = c.length by
             simpa [S] using card_support_toFinset_of_isCycle hc]
 
+omit [DecidableRel G.Adj] [Fintype V] in
 /-- A simple cycle becomes Hamiltonian after inducing on precisely its
 support. -/
 lemma isHamiltonianCycle_induce_support
@@ -2567,6 +2605,7 @@ lemma isHamiltonianCycle_induce_support
     _ = c.length := by
       simpa [S] using card_support_toFinset_of_isCycle hc
 
+omit [DecidableEq V] [DecidableRel G.Adj] in
 /-- A cycle shorter than the order omits an ambient vertex. -/
 lemma exists_not_mem_support_of_cycle_length_lt_card
     {a : V} {c : G.Walk a a} (hc : c.IsCycle)
@@ -2577,6 +2616,7 @@ lemma exists_not_mem_support_of_cycle_length_lt_card
   obtain ⟨x, _hxU, hx⟩ := Finset.exists_mem_notMem_of_card_lt_card hcard
   exact ⟨x, by simpa using hx⟩
 
+omit [DecidableEq V] [DecidableRel G.Adj] in
 /-- If a cycle has `n-1` vertices, every vertex other than an omitted
 one lies on the cycle. -/
 lemma mem_support_of_ne_of_cycle_length_pred
@@ -2600,6 +2640,7 @@ lemma mem_support_of_ne_of_cycle_length_pred
   have hnpos : 0 < Fintype.card V := Fintype.card_pos_iff.mpr ⟨a⟩
   omega
 
+omit [DecidableRel G.Adj] in
 /-- Deleting the unique vertex omitted by an `(n-1)`-cycle makes that
 cycle Hamiltonian in the induced graph. -/
 lemma isHamiltonianCycle_induce_compl_singleton_of_cycle_length_pred
@@ -2751,17 +2792,22 @@ def apexGraph : SimpleGraph (Option V) where
     intro x
     cases x <;> simp
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 @[simp] lemma apexGraph_adj_none_none : ¬(apexGraph G).Adj none none := by simp [apexGraph]
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 @[simp] lemma apexGraph_adj_none_some (v : V) :
     (apexGraph G).Adj none (some v) := by simp [apexGraph]
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 @[simp] lemma apexGraph_adj_some_none (v : V) :
     (apexGraph G).Adj (some v) none := by simp [apexGraph]
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 @[simp] lemma apexGraph_adj_some_some (u v : V) :
     (apexGraph G).Adj (some u) (some v) ↔ G.Adj u v := by simp [apexGraph]
 
 def someEmbedding : V ↪ Option V :=
   ⟨some, Option.some_injective V⟩
 
+omit [DecidableRel G.Adj] in
 lemma apexGraph_neighborFinset_none :
     (apexGraph G).neighborFinset none =
       (Finset.univ : Finset (Option V)).erase none := by
@@ -2776,18 +2822,21 @@ lemma apexGraph_neighborFinset_some (v : V) :
   | none => simp [SimpleGraph.mem_neighborFinset]
   | some z => simp [SimpleGraph.mem_neighborFinset, someEmbedding]
 
+omit [DecidableEq V] [DecidableRel G.Adj] in
 @[simp] lemma apexGraph_degree_none :
     (apexGraph G).degree none = Fintype.card V := by
   rw [← SimpleGraph.card_neighborFinset_eq_degree,
     apexGraph_neighborFinset_none]
   simp
 
+omit [DecidableEq V] in
 @[simp] lemma apexGraph_degree_some (v : V) :
     (apexGraph G).degree (some v) = G.degree v + 1 := by
   rw [← SimpleGraph.card_neighborFinset_eq_degree,
     apexGraph_neighborFinset_some]
   simp [someEmbedding, SimpleGraph.card_neighborFinset_eq_degree]
 
+omit [DecidableEq V] in
 lemma apexGraph_card_edgeFinset :
     (apexGraph G).edgeFinset.card =
       G.edgeFinset.card + Fintype.card V := by
@@ -2798,6 +2847,7 @@ lemma apexGraph_card_edgeFinset :
     Nat.nsmul_eq_mul, G.sum_degrees_eq_twice_card_edges] at hsum
   omega
 
+omit [DecidableEq V] in
 /-- Below the apex degree, shifting the cutoff down by one identifies
 the low-degree vertices before and after adjoining the apex. -/
 lemma lowDegreeFinset_apexGraph (j : ℕ) (hjpos : 0 < j)
@@ -2812,6 +2862,7 @@ lemma lowDegreeFinset_apexGraph (j : ℕ) (hjpos : 0 < j)
       simp [someEmbedding]
       omega
 
+omit [DecidableEq V] in
 lemma card_lowDegreeFinset_apexGraph (j : ℕ) (hjpos : 0 < j)
     (hjlt : j < Fintype.card V) :
     (lowDegreeFinset (apexGraph G) j).card =
@@ -2888,6 +2939,7 @@ lemma shiftedPosa_equal_numerics {n k j : ℕ}
     nlinarith
   omega
 
+omit [DecidableEq V] in
 /-- Woodall's threshold and minimum degree `k+1` force the shifted
 Pósa distribution condition with `k` exceptional vertices. -/
 lemma shiftedPosa_of_woodallBound_of_minDegree
@@ -2944,10 +2996,12 @@ lemma shiftedPosa_of_woodallBound_of_minDegree
     have hnum := shiftedPosa_equal_numerics horder hjk hj
     omega
 
+omit [DecidableEq V] in
 lemma shiftedPosaDegreeCondition_zero :
     ShiftedPosaDegreeCondition G 0 ↔ PosaDegreeCondition G := by
   rfl
 
+omit [DecidableEq V] in
 /-- Adding a universal vertex consumes one exceptional vertex in the
 shifted Pósa condition. -/
 lemma ShiftedPosaDegreeCondition.apexGraph {r : ℕ}
@@ -2961,7 +3015,8 @@ lemma ShiftedPosaDegreeCondition.apexGraph {r : ℕ}
     · subst j
       have hempty : lowDegreeFinset (Erdos1012.apexGraph G) 0 = ∅ := by
         ext z
-        cases z <;> simp [lowDegreeFinset] <;> omega
+        cases z <;> simp [lowDegreeFinset]
+        omega
       rw [hempty]
       simp
     have hjpos : 0 < j := Nat.pos_of_ne_zero hj0
@@ -3002,6 +3057,7 @@ lemma length_induce_eq {X : Type*} {H : SimpleGraph X} {s : Set X}
       simp only [SimpleGraph.Walk.induce_cons, SimpleGraph.Walk.length_cons]
       exact congrArg (fun n ↦ n + 1) (ih _)
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 /-- A cycle in the graph obtained by adjoining an apex yields a path
 in the old graph after deleting at most the two cycle edges incident
 with the apex. -/
@@ -3032,9 +3088,9 @@ lemma exists_old_path_of_apex_cycle {a : Option V}
     let p₁ := p₀.induce {z : Option V | z ≠ none} hstay
     have hp₁ : p₁.IsPath := by
       apply SimpleGraph.Walk.IsPath.of_map
-      have hi := SimpleGraph.Walk.map_induce (s := {z : Option V | z ≠ none}) p₀ hstay
-      rw [hi]
-      exact hp₀
+      · have hi := SimpleGraph.Walk.map_induce (s := {z : Option V | z ≠ none}) p₀ hstay
+        rw [hi]
+        exact hp₀
     let p := p₁.map (apexInduceIso G).toHom
     have hp : p.IsPath := hp₁.map (apexInduceIso G).injective
     refine ⟨_, _, p, hp, ?_⟩
@@ -3058,9 +3114,9 @@ lemma exists_old_path_of_apex_cycle {a : Option V}
     let p₁ := p₀.induce {z : Option V | z ≠ none} hstay
     have hp₁ : p₁.IsPath := by
       apply SimpleGraph.Walk.IsPath.of_map
-      have hi := SimpleGraph.Walk.map_induce (s := {z : Option V | z ≠ none}) p₀ hstay
-      rw [hi]
-      exact hp₀
+      · have hi := SimpleGraph.Walk.map_induce (s := {z : Option V | z ≠ none}) p₀ hstay
+        rw [hi]
+        exact hp₀
     let p := p₁.map (apexInduceIso G).toHom
     have hp : p.IsPath := hp₁.map (apexInduceIso G).injective
     refine ⟨_, _, p, hp, ?_⟩
@@ -3069,6 +3125,7 @@ lemma exists_old_path_of_apex_cycle {a : Option V}
       simpa only [p₁] using length_induce_eq p₀ hstay
     omega
 
+omit [DecidableEq V] in
 /-- The shifted Pósa condition supplies a cycle missing at most the
 `r` exceptional vertices, provided the endpoint-fan edge threshold and
 minimum-degree hypotheses hold.  The induction adjoins an apex, applies
@@ -3240,6 +3297,7 @@ lemma maximal_cycle_edge_numerics {n k c : ℕ}
       rw [hid]
       omega
 
+omit [DecidableEq V] in
 /-- The high-minimum-degree branch of Woodall's theorem.  A longest cycle
 has both the shifted-Pósa lower bound and the Dirac-type lower bound above;
 if a requested shorter length were missing, Hamiltonian pancyclicity on the
@@ -3344,6 +3402,7 @@ theorem hasCycleLength_of_woodall_high_minDegree
   have hlower := Nat.mul_le_mul_left 4 hedge
   omega
 
+omit [DecidableEq V] in
 /-- Woodall's theorem on an arbitrary finite vertex type.  The proof is by
 low-degree deletion; in the remaining branch, shifted Pósa gives the target
 long cycle and `hasCycleLength_of_woodall_high_minDegree` supplies all its
@@ -3426,8 +3485,7 @@ theorem woodall_finite_type :
         exact hcycleH.map
           (SimpleGraph.Embedding.induce (G := G) (s := W)).toHom
           (SimpleGraph.Embedding.induce (G := G) (s := W)).injective
-      ·
-        have hmin : ∀ z, k + 3 ≤ G.degree z := by
+      · have hmin : ∀ z, k + 3 ≤ G.degree z := by
           intro z
           have hznot : ¬ G.degree z ≤ k + 2 := by
             intro hz
@@ -3474,8 +3532,7 @@ theorem woodall {n k : ℕ} (horder : 2 * k + 3 ≤ n)
 /-- The complete resolution of Erdős Problem 1012: `2k+3` is a valid
 eventual cutoff, and in fact every cycle length through `n-k` occurs. -/
 theorem erdos_1012 : ∀ k : ℕ, ValidCutoff k (2 * k + 3) := by
-  intro k n hn
-  intro G hedge d hd hdn
+  intro k n hn G hedge d hd hdn
   exact woodall hn G hedge d hd hdn
 
 end WoodallInduction
