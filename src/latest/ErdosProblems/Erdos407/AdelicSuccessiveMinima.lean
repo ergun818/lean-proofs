@@ -148,9 +148,9 @@ theorem entryScale_pos {n : ℕ} [NeZero n] (L : LocalForms n)
       exact heval i
     · simp
     · intro f g hf hg hfx hgx
-      simp [map_add, hfx, hgx]
+      simp [hfx, hgx]
     · intro a f hf hfx
-      simp [map_smul, hfx]
+      simp [hfx]
   have hcoord : ∀ i, x i = 0 := by
     intro i
     let e : RatLinearForm n := LinearMap.proj i
@@ -413,7 +413,7 @@ theorem monotone_append {r d : ℕ} {a : Fin r → ℝ} {b : Fin d → ℝ}
     have hjeq : j = Fin.natAdd r j' := by ext; simp [j']; omega
     rw [hieq, hjeq, Fin.append_right, Fin.append_right]
     apply hb
-    exact Fin.mk_le_mk.mpr (by simp [i', j']; omega)
+    exact Fin.mk_le_mk.mpr (by simp; omega)
 
 theorem linearIndependent_append_perms {n r d : ℕ}
     {x : Fin r → RatVector n} {y : Fin d → RatVector n}

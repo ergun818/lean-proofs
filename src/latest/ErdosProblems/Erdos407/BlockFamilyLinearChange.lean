@@ -190,7 +190,15 @@ theorem taylor_familyBlockLinearChange {blocks coords : ℕ}
       SymmetricPower.taylor.comp (familyBlockLinearChange T) = F := by
     apply MvPolynomial.algHom_ext
     intro x
-    simp only [AlgHom.coe_comp, Function.comp_apply, familyBlockLinearChange_X]
+    simp only [SymmetricPower.taylor, familyBlockLinearChange, AlgHom.coe_comp,
+      MvPolynomial.coe_eval₂AlgHom, MvPolynomial.algebraMap_eq,
+      Function.comp_apply, MvPolynomial.eval₂_X, familyBlockLinearForm,
+      MvPolynomial.eval₂_sum, MvPolynomial.eval₂_mul, MvPolynomial.eval₂_C,
+      MvPolynomial.algebraMap_apply, outerFamilyBlockLinearChange,
+      AlgHom.coe_restrictScalars', MvPolynomial.mapAlgHom_apply, map_add,
+      MvPolynomial.map_C, RingHom.coe_coe, MvPolynomial.eval₂AlgHom_X,
+      map_sum, MvPolynomial.C_mul, MvPolynomial.map_X,
+      MvPolynomial.eval₂_add, outerFamilyBlockLinearForm, F]
     rw [← Finset.sum_add_distrib]
     apply Finset.sum_congr rfl
     intro j hj

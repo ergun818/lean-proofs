@@ -96,9 +96,7 @@ theorem primitiveCoeffs_ne_zero {p : Polynomial ℚ} (hp : p ≠ 0) :
       Polynomial.monomial b.1 (primitiveCoeffs p b)).coeff n =
       ∑ b : p.support,
         (Polynomial.monomial b.1 (primitiveCoeffs p b)).coeff n by
-    simpa using (map_sum (Polynomial.lcoeff ℤ n)
-      (fun b : p.support ↦ Polynomial.monomial b.1 (primitiveCoeffs p b))
-      Finset.univ)]
+    simp]
   rw [Fintype.sum_eq_single ⟨n, hn⟩]
   · rw [Polynomial.coeff_monomial, if_pos rfl]
   · intro b hbn
@@ -114,9 +112,7 @@ theorem primitiveCoeffs_ne_zero {p : Polynomial ℚ} (hp : p ≠ 0) :
       Polynomial.monomial b.1 (primitiveCoeffs p b)).coeff n =
       ∑ b : p.support,
         (Polynomial.monomial b.1 (primitiveCoeffs p b)).coeff n by
-    simpa using (map_sum (Polynomial.lcoeff ℤ n)
-      (fun b : p.support ↦ Polynomial.monomial b.1 (primitiveCoeffs p b))
-      Finset.univ)]
+    simp]
   apply Finset.sum_eq_zero
   intro b hb
   rw [Polynomial.coeff_monomial, if_neg]
@@ -132,7 +128,7 @@ theorem primitivePolynomial_ne_zero {p : Polynomial ℚ} (hp : p ≠ 0) :
 
 /-- Every coordinate of the normalized tuple remains nonzero, because the
 tuple is indexed by the support of `p`. -/
-theorem primitiveCoeffs_ne_zero_apply {p : Polynomial ℚ} (hp : p ≠ 0)
+theorem primitiveCoeffs_ne_zero_apply {p : Polynomial ℚ} (_hp : p ≠ 0)
     (n : p.support) : primitiveCoeffs p n ≠ 0 := by
   intro hn
   have hcoord := congrFun
@@ -156,7 +152,7 @@ theorem primitivePolynomial_support {p : Polynomial ℚ} (hp : p ≠ 0) :
   · rw [Polynomial.mem_support_iff, primitivePolynomial_coeff_of_mem hn]
     simpa only [hn, iff_true] using primitiveCoeffs_ne_zero_apply hp ⟨n, hn⟩
   · rw [Polynomial.mem_support_iff, primitivePolynomial_coeff_of_not_mem hn]
-    simp only [ne_eq, not_true_eq_false, hn, iff_false]
+    simp only [ne_eq, not_true_eq_false, hn]
 
 /-- The integral coefficient tuple has gcd one. -/
 theorem primitiveCoeffs_gcd_eq_one {p : Polynomial ℚ} (hp : p ≠ 0) :
@@ -294,7 +290,7 @@ theorem rationalLinearPolynomial_ne_zero (β : ℚ) :
     Polynomial.C (-β.num)).coeff 1 = 0 at hcoeff
   rw [Polynomial.coeff_add, Polynomial.coeff_C_mul,
     Polynomial.coeff_X_one, Polynomial.coeff_C] at hcoeff
-  simpa using hcoeff
+  simp at hcoeff
 
 /-- The coefficients `den β` and `-num β` are coprime. -/
 theorem rationalLinearPolynomial_primitive (β : ℚ) :
@@ -343,7 +339,7 @@ theorem mahlerHeight_rationalLinearPolynomial (β : ℚ) :
 
 private theorem isPrimitive_pow {P : Polynomial ℤ} (hP : P.IsPrimitive) :
     ∀ e : ℕ, (P ^ e).IsPrimitive
-  | 0 => by simpa using (Polynomial.isPrimitive_one : (1 : Polynomial ℤ).IsPrimitive)
+  | 0 => by simp
   | e + 1 => by
       rw [pow_succ]
       exact (isPrimitive_pow hP e).mul hP

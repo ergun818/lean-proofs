@@ -139,8 +139,8 @@ theorem exists_large_binary_coordinate {n : ℕ} (hn : 0 < n)
     have hscale := Height.logHeight_smul_eq_logHeight
       (![M p, M p] : Fin 2 → ℚ) hi
     rw [← hscale]
-    convert Height.logHeight_one (K := ℚ) (ι := Fin 2) using 2 <;>
-      ext i <;> fin_cases i <;> simp [hp]
+    convert Height.logHeight_one (K := ℚ) (ι := Fin 2) using 2;
+      ext i; fin_cases i <;> simp [hp]
   have huniv :
       (∑ a : Fin (n + 1), Height.logHeight ![M p, M a]) =
         ∑ a ∈ s, Height.logHeight ![M p, M a] := by
@@ -330,7 +330,7 @@ theorem setVariableZero_eq_modMonomial {ι : Type*}
       · have hK : K ≠ 0 := by
           intro hz
           subst K
-          simpa using hle
+          simp at hle
         have hK' : 0 ≠ K := Ne.symm hK
         simp [setVariableZero,
           MvPolynomial.coeff_modMonomial_of_le _ hle, hK']
@@ -674,7 +674,7 @@ theorem setVariableZero_toFormCoordinateVarAt {m n : ℕ}
       rw [setVariableZero_offPivotPolynomialAt M p (a, b) hi j]
       have hpv : zeroFormCoefficient M (a, b) j (p j) = M j (p j) :=
         zeroFormCoefficient_apply_of_ne M (a, b) hv'
-      simp [hv', toFormCoordinateVarAt, hpv]
+      simp [toFormCoordinateVarAt, hpv]
     · simp [setVariableZero, toFormCoordinateVarAt, hk, hv]
 
 /-- Fixed-pivot form coordinates commute with setting a nonpivot variable and
@@ -1102,7 +1102,7 @@ theorem support_specializePolynomial_zero_of_mem {m n : ℕ}
       ∀ {e}, e ∈ (specializePolynomial T Q).support → e i = 0 := by
     intro T
     induction T with
-    | nil => simpa
+    | nil => simp
     | cons a T ih =>
         intro Q hzero e he
         rw [specializePolynomial_cons] at he
@@ -1309,8 +1309,7 @@ theorem dehomogenizeAt_toFormCoordinateVarAt {m n : ℕ}
   rcases i with ⟨j, k⟩
   by_cases hk : k = p j
   · subst k
-    simp only [dehomogenizeAt, MvPolynomial.eval₂Hom_X', Prod.fst,
-      Prod.snd, if_pos rfl]
+    simp only [dehomogenizeAt, MvPolynomial.eval₂Hom_X']
     rw [toFormCoordinateVarAt, dif_pos rfl, map_mul, map_sub,
       MvPolynomial.eval₂Hom_C, MvPolynomial.eval₂Hom_X', if_pos rfl]
     rw [show MvPolynomial.eval₂Hom MvPolynomial.C
@@ -1362,9 +1361,9 @@ theorem scaleVariables_monomial {m : ℕ} (a : Fin m → ℚ)
       MvPolynomial.monomial e (scaleFactor a e * c) := by
   rw [scaleVariables, MvPolynomial.eval₂Hom_monomial,
     MvPolynomial.monomial_eq]
-  simp only [mul_pow, map_mul, MvPolynomial.C_pow]
+  simp only [mul_pow, map_mul]
   rw [Finsupp.prod_mul]
-  simp [scaleFactor, MvPolynomial.monomial_eq]
+  simp [scaleFactor]
   ring
 
 theorem coeff_scaleVariables {m : ℕ} (a : Fin m → ℚ)
@@ -1496,11 +1495,6 @@ theorem dehomogenize_binary_toForm_eq_scale_translate {m n : ℕ}
       (affineSpecialization p (binarySpecializedPolynomial p q P)))
   funext j
   rw [affineFormSubstitutionAt]
-  change MvPolynomial.C
-        (binarySpecializedForms p q M j (p j))⁻¹ *
-      (MvPolynomial.X j - MvPolynomial.C
-        (∑ k ∈ Finset.univ.erase (p j),
-          binarySpecializedForms p q M j k)) = _
   have hpN : binarySpecializedForms p q M j (p j) = M j (p j) := by
     rw [binarySpecializedForms, specializeForms_apply]
     simp [mem_discardedVariables_iff]
@@ -1535,7 +1529,7 @@ def selectedRoots {m n : ℕ} (hn : 0 < n) (M : FormFamily m n)
 orders ensure that dehomogenization is injective on the support. -/
 theorem affineExponentAt_injOn_binarySupport {m n : ℕ}
     {P : MvPolynomial (RothIndex.BlockVar m n) ℚ}
-    (p q : Fin m → Fin (n + 1)) (hpq : ∀ j, q j ≠ p j)
+    (p q : Fin m → Fin (n + 1)) (_hpq : ∀ j, q j ≠ p j)
     (hbinary : ∀ {e}, e ∈ P.support → ∀ i,
       i.2 ≠ p i.1 → i.2 ≠ q i.1 → e i = 0)
     (horders : HasConstantBlockOrders P) :

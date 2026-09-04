@@ -159,7 +159,7 @@ theorem IsPrimitive.exists_not_dvd {ι : Type*} [Fintype ι] [Nonempty ι]
 
 /-- Divide a nonzero finite integer vector by the gcd of its coordinates.
 This supplies the primitive representative of its rational projective class. -/
-theorem exists_primitive_factorization {ι : Type*} [Fintype ι] [DecidableEq ι]
+theorem exists_primitive_factorization {ι : Type*} [Fintype ι]
     (x : ι → ℤ) (hx : ∃ i, x i ≠ 0) :
     ∃ c : ℤ, ∃ u : ι → ℤ,
       c ≠ 0 ∧ (∀ i, x i = c * u i) ∧ IsPrimitive u := by

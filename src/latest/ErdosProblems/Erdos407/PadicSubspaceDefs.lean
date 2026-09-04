@@ -207,7 +207,7 @@ theorem boxHeight_pos {n : ℕ} {x : Fin n → ℤ} (hx : x ≠ 0) :
     0 < boxHeight x := by
   obtain ⟨i, hi⟩ : ∃ i, x i ≠ 0 := by
     by_contra h
-    push_neg at h
+    push Not at h
     exact hx (funext h)
   have habs : 0 < (x i).natAbs := Int.natAbs_pos.mpr hi
   exact habs.trans_le (natAbs_le_boxHeight x i)
@@ -282,19 +282,21 @@ theorem linearFormDenominator_pos {n : ℕ} (f : RatLinearForm n) :
   unfold linearFormDenominator
   exact Finset.prod_pos fun i _ => (coefficientVector f i).den_pos
 
-private theorem den_sum_dvd_prod_den {ι : Type*} [DecidableEq ι]
+private theorem den_sum_dvd_prod_den {ι : Type*}
     (s : Finset ι) (q : ι → ℚ) :
     (∑ i ∈ s, q i).den ∣ ∏ i ∈ s, (q i).den := by
+  classical
   induction s using Finset.induction_on with
   | empty => simp
   | @insert a s ha ih =>
       rw [Finset.sum_insert ha, Finset.prod_insert ha]
       exact (Rat.add_den_dvd _ _).trans (Nat.mul_dvd_mul_left _ ih)
 
-private theorem prod_dvd_prod_of_pointwise {ι : Type*} [DecidableEq ι]
+private theorem prod_dvd_prod_of_pointwise {ι : Type*}
     (s : Finset ι) (a b : ι → ℕ)
     (h : ∀ i ∈ s, a i ∣ b i) :
     (∏ i ∈ s, a i) ∣ ∏ i ∈ s, b i := by
+  classical
   induction s using Finset.induction_on with
   | empty => simp
   | @insert i s hi ih =>
@@ -504,7 +506,7 @@ theorem exists_nonzero_form_vanishes {n : ℕ} (hn : 2 ≤ n)
     ∃ b : Fin n → ℚ, b ≠ 0 ∧ (∑ i, b i * x i) = 0 := by
   obtain ⟨i, hi⟩ : ∃ i, x i ≠ 0 := by
     by_contra h
-    push_neg at h
+    push Not at h
     exact hx (funext h)
   have hn' : 1 < Fintype.card (Fin n) := by
     simp only [Fintype.card_fin]

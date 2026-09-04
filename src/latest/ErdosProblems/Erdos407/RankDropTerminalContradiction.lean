@@ -255,9 +255,6 @@ theorem realPlaceNorm_eval₂_ofCoefficients_le_of_nonzero
           (MvPolynomial.eval₂ (Int.castRingHom ℚ) x
             (MvPolynomial.monomial (AuxiliaryPolynomial.toFinsupp J) (a J))) := by
     unfold HeightBoxes.realPlaceNorm
-    change ((PadicSubspace.placeNorm v
-      (MvPolynomial.eval₂ (Int.castRingHom ℚ) x
-        (AuxiliaryPolynomial.ofCoefficients a)) : ℚ) : ℝ) ≤ _
     rw [← Rat.cast_sum]
     exact_mod_cast hsumQ
   calc
@@ -272,7 +269,7 @@ theorem realPlaceNorm_eval₂_ofCoefficients_le_of_nonzero
       intro J _
       by_cases haJ : a J = 0
       · rw [haJ]
-        simp only [map_zero, MvPolynomial.monomial_zero,
+        simp only [map_zero,
           MvPolynomial.eval₂_zero]
         have hz : HeightBoxes.realPlaceNorm v 0 = 0 := by
           fin_cases v <;>
@@ -303,7 +300,7 @@ theorem transformedDerivative_local_bound
     (eta : ℚ)
     (coeff : AuxiliaryPolynomial.MonomialIndex blocks coords degree → ℤ)
     (I : GLRAuxiliary.DerivativeIndex blocks coords degree)
-    (hweight : GLRAuxiliary.derivativeWeight I ≤ blocks * eta)
+    (_hweight : GLRAuxiliary.derivativeWeight I ≤ blocks * eta)
     (y : Fin blocks → RatVector coords) (Q : Fin blocks → ℕ)
     (c : HeightBoxes.LocalConstants coords) (G : ℝ)
     (hy : ∀ h v i, HeightBoxes.realPlaceNorm v (L v i (y h)) ≤
@@ -316,7 +313,7 @@ theorem transformedDerivative_local_bound
         (fun w ↦ PadicSubspace.integralInverseFormMatrix L w) v I J coeff = 0)
     (v : PadicSubspace.Place23)
     (Jmax : GLRAuxiliary.ResidualMonomialIndex I)
-    (hJmax : ¬ GLRAuxiliary.OutsideCentralBand eta Jmax)
+    (_hJmax : ¬ GLRAuxiliary.OutsideCentralBand eta Jmax)
     (hmax : ∀ J : GLRAuxiliary.ResidualMonomialIndex I,
       ¬ GLRAuxiliary.OutsideCentralBand eta J →
       TerminalEstimates.residualMonomialRadius c J Q v ≤
@@ -352,8 +349,7 @@ theorem transformedDerivative_local_bound
         intro J
         exact (TerminalEstimates.realPlaceNorm_intCast_le_max_one_norm v _).trans
           (max_le_max_left 1 (hcoeff v J))) (by
-        intro J
-        intro haJ
+        intro J haJ
         have hJ : ¬ GLRAuxiliary.OutsideCentralBand eta J := by
           intro hout
           exact haJ (hvanish v J hout)
@@ -444,7 +440,7 @@ theorem dividedDerivative_eval_eq_zero_of_centralProduct_lt_one
       exact transformedDerivative_local_bound L hL eta coeff I hweight
         y Q c G hy P hcoeff hvanish v (Jmax v) (hJmax v).1 (hJmax v).2
     · exact hsmall Jmax (fun v ↦ (hJmax v).1)
-  · push_neg at hall
+  · push Not at hall
     obtain ⟨v, hv⟩ := hall
     have hzero : (fun J : GLRAuxiliary.ResidualMonomialIndex I ↦
         GLRAuxiliary.transformedCoefficient

@@ -37,7 +37,7 @@ namespace ExteriorFinal
 
 open Erdos407 HeightBoxes
 
-theorem two_le_choose_of_pos_of_lt {n q : ℕ} (hn : 2 ≤ n)
+theorem two_le_choose_of_pos_of_lt {n q : ℕ} (_hn : 2 ≤ n)
     (hq : 0 < q) (hqn : q < n) : 2 ≤ n.choose q := by
   have hpos : 0 < n.choose q := Nat.choose_pos hqn.le
   have hone : n.choose q ≠ 1 := by
@@ -178,7 +178,6 @@ theorem rpow_logarithmicExponent {Q : ℕ} (hQ : 1 < Q)
   have hlogQ : Real.log (Q : ℝ) ≠ 0 :=
     (Real.log_pos (by exact_mod_cast hQ)).ne'
   rw [logarithmicExponent, Real.rpow_def_of_pos hQr]
-  congr 1
   field_simp
   exact Real.exp_log ha
 
@@ -241,7 +240,7 @@ theorem abs_logarithmicExponent_le_of_two_le {Q : ℕ} (hQ : 2 ≤ Q)
 /-- The base-`Q` exponent of a fixed positive multiplicative constant is
 eventually arbitrarily small. -/
 theorem exists_abs_logarithmicExponent_cutoff {a ε : ℝ}
-    (ha : 0 < a) (hε : 0 < ε) :
+    (_ha : 0 < a) (hε : 0 < ε) :
     ∃ Q₀ : ℕ, ∀ Q, Q₀ ≤ Q → 2 ≤ Q →
       |logarithmicExponent Q a| ≤ ε := by
   have htendsto : Filter.Tendsto
@@ -609,7 +608,7 @@ theorem abs_certificateMinimaLog_le_logarithmicBound
 
 theorem abs_splitGapSaving_le_two_logarithmicBound
     {n Q : ℕ}
-    (L : AdelicMinima.LocalForms n) (hQ : 2 ≤ Q)
+    (L : AdelicMinima.LocalForms n) (_hQ : 2 ≤ Q)
     (B : ExteriorWedgeBounds.OrderedMinimaData n)
     (kappa : Fin n) (hkappa : 0 < kappa.val)
     (hlog : ∀ i,
@@ -1678,7 +1677,7 @@ theorem finite_recoveredSpaces_of_finite_exteriorFamilies
             W = basisComplementSubspace v J ∧ omittedExteriorSpan v J ∈ C a} =
         ⋃ a, R a := by
     ext W
-    simp only [Set.mem_setOf_eq, Set.mem_iUnion]
+    simp only [Set.mem_ofPred_eq, Set.mem_iUnion]
     rfl
   rw [hUnion]
   exact Set.finite_iUnion hR
@@ -1719,7 +1718,7 @@ theorem exteriorCoordinateSubmodule_omitted_eq_of_finrank
   · rintro _ ⟨x, hx, rfl⟩
     refine Submodule.span_induction
       (p := fun x _ ↦ (exteriorFinCoordinateEquiv n q) x ∈ W)
-      ?_ (by simpa using W.zero_mem) ?_ ?_ hx
+      ?_ (by simp) ?_ ?_ hx
     · rintro _ ⟨J, rfl⟩
       exact hmem J
     · intro x y _ _ hx hy

@@ -595,14 +595,16 @@ theorem hasseDerivative_monomial {σ : Type*} [Fintype σ]
     · have hleft : ¬a = Finsupp.indicator (Finset.univ : Finset σ)
           (fun i _ ↦ b i) := fun h ↦ hb (hind.mp h)
       rw [if_neg hb, if_neg hleft, mul_zero]
-  simp [hasseDerivative, taylor]
+  simp only [hasseDerivative, taylor, MvPolynomial.coe_eval₂AlgHom,
+    MvPolynomial.eval₂_monomial, MvPolynomial.algebraMap_apply, MvPolynomial.algebraMap_eq,
+    Finsupp.prod_pow, MvPolynomial.coeff_C_mul]
   simp_rw [hpow]
   rw [Finset.prod_univ_sum]
   rw [MvPolynomial.coeff_sum]
   by_cases ha : ∀ x, a x ≤ e x
   · rw [Finset.sum_eq_single (fun x ↦ a x)]
     · rw [hcoeff]
-      simp
+      simp only [implies_true, ↓reduceIte]
       rw [MvPolynomial.C_mul_monomial]
     · intro b hb hba
       rw [hcoeff, if_neg]

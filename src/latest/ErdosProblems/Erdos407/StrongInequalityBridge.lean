@@ -63,9 +63,9 @@ theorem of_unit {q : ℚ} (hq : PadicProduct.IsUnit23 q) : IsSInteger q := by
     rw [hab]
     push_cast
     have ha : a = (ap : ℤ) - (an : ℤ) := by
-      simpa [ap, an] using (Int.toNat_sub_toNat_neg a).symm
+      simp [ap, an]
     have hb : b = (bp : ℤ) - (bn : ℤ) := by
-      simpa [bp, bn] using (Int.toNat_sub_toNat_neg b).symm
+      simp [bp, bn]
     rw [ha, hb, zpow_sub₀ (by norm_num : (2 : ℚ) ≠ 0),
       zpow_sub₀ (by norm_num : (3 : ℚ) ≠ 0)]
     simp only [zpow_natCast]
@@ -78,9 +78,9 @@ theorem of_unit {q : ℚ} (hq : PadicProduct.IsUnit23 q) : IsSInteger q := by
     rw [hab]
     push_cast
     have ha : a = (ap : ℤ) - (an : ℤ) := by
-      simpa [ap, an] using (Int.toNat_sub_toNat_neg a).symm
+      simp [ap, an]
     have hb : b = (bp : ℤ) - (bn : ℤ) := by
-      simpa [bp, bn] using (Int.toNat_sub_toNat_neg b).symm
+      simp [bp, bn]
     rw [ha, hb, zpow_sub₀ (by norm_num : (2 : ℚ) ≠ 0),
       zpow_sub₀ (by norm_num : (3 : ℚ) ≠ 0)]
     simp only [zpow_natCast]
@@ -444,7 +444,7 @@ theorem unitPoint_mem_primitiveStrongSolutions_maximal {n : ℕ} (hn : 0 < n)
 finitely many placewise omission patterns, then all three-place unit points
 in `Fin n` are covered by finitely many rational hyperplanes. -/
 theorem finiteCover_unitPoints_fin_of_strongCovers {n : ℕ} (hn : 2 ≤ n)
-    (a : Fin n → ℚ) (ha : ∀ i, a i ≠ 0)
+    (a : Fin n → ℚ) (_ha : ∀ i, a i ≠ 0)
     (hcover : ∀ k : PadicSubspace.Place23 → Option (Fin n),
       PadicSubspace.HasFiniteHyperplaneCover
         (PadicSubspace.primitiveStrongSolutions (omittedFamily a k))) :
@@ -506,7 +506,7 @@ theorem isThreePlaceUnitPoint_reindex {ι κ : Type*}
 
 /-- A finite hyperplane cover in `Fin (card ι)` coordinates transports
 back to the original finite index type. -/
-theorem transport_fin_cover {ι : Type*} [Fintype ι] [DecidableEq ι]
+theorem transport_fin_cover {ι : Type*} [Fintype ι]
     (e : Fin (Fintype.card ι) ≃ ι) (a : ι → ℚ)
     (hfin : ∃ B : Finset (Fin (Fintype.card ι) → ℚ),
       (∀ b ∈ B, b ≠ 0) ∧

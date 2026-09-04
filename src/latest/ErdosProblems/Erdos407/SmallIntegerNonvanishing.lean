@@ -105,11 +105,19 @@ theorem finSuccEquiv_translate {n : ℕ} (a : ℚ) (x : Fin n → ℚ)
     apply MvPolynomial.algHom_ext
     intro i
     refine Fin.cases ?_ (fun j ↦ ?_) i
-    · simp [F, G, T, Polynomial.taylor_apply,
-        MvPolynomial.finSuccEquiv_X_zero]
+    · simp only [AlgHom.coe_comp, AlgEquiv.coe_toAlgHom, Function.comp_apply,
+        translateAlgHom_apply, translate_X, Fin.cons_zero, map_add,
+        MvPolynomial.finSuccEquiv_X_zero, Polynomial.coe_mapAlgHom,
+        AlgHom.coe_restrictScalars', Polynomial.taylorAlgHom_apply, Polynomial.taylor_apply,
+        Polynomial.X_comp, Polynomial.map_add, Polynomial.map_X, Polynomial.map_C,
+        RingHom.coe_coe, MvPolynomial.algHom_C, MvPolynomial.algebraMap_eq,
+        add_right_inj, F, G, T]
       exact (MvPolynomial.finSuccEquiv ℚ n).commutes a
-    · simp [F, G, T, Polynomial.taylor_apply,
-        MvPolynomial.finSuccEquiv_X_succ]
+    · simp only [AlgHom.coe_comp, AlgEquiv.coe_toAlgHom, Function.comp_apply,
+        translateAlgHom_apply, translate_X, Fin.cons_succ, map_add,
+        MvPolynomial.finSuccEquiv_X_succ, Polynomial.coe_mapAlgHom,
+        AlgHom.coe_restrictScalars', Polynomial.taylorAlgHom_apply, Polynomial.taylor_apply,
+        Polynomial.C_comp, Polynomial.map_C, RingHom.coe_coe, add_right_inj, F, G, T]
       exact (MvPolynomial.finSuccEquiv ℚ n).commutes (x j)
   exact DFunLike.congr_fun hFG P
 

@@ -21,7 +21,7 @@ noncomputable section
 
 open Erdos407.GeneralizedRoth
 
-private theorem hasseDerivative_sum {ι κ : Type*} [Fintype ι]
+private theorem hasseDerivative_sum {ι κ : Type*}
     (A : ι →₀ ℕ) (s : Finset κ) (P : κ → MvPolynomial ι ℚ) :
     SymmetricPower.hasseDerivative A (∑ k ∈ s, P k) =
       ∑ k ∈ s, SymmetricPower.hasseDerivative A (P k) := by

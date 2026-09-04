@@ -298,7 +298,7 @@ private theorem polynomialWronskian_ne_zero_of_natDegree_injective {r : ℕ}
         exact derivative_leading_coeff (r := r) (P j) (σ j) (hvalid j)
       · intro j hj
         exact Polynomial.natDegree_iterate_derivative _ _
-    · push_neg at hvalid
+    · push Not at hvalid
       obtain ⟨j, hj⟩ := hvalid
       have hz : (Polynomial.derivative)^[(σ j).1] (P j) = 0 :=
         Polynomial.iterate_derivative_eq_zero hj
@@ -350,7 +350,7 @@ private theorem polynomialWronskian_ne_zero_of_linearIndependent {r : ℕ}
           · simp [hab]
           · simp only [one_smul]
             rw [map_sub]
-            simp [Q, hab]
+            simp [Q]
         have hQ0 : Q ≠ 0 := by
           simpa [Ψ] using hΨ.ne_zero a
         have hQdeg : Q.natDegree < (P a).natDegree := by
@@ -371,8 +371,8 @@ private theorem polynomialWronskian_ne_zero_of_linearIndependent {r : ℕ}
           ext i j
           by_cases hja : j = a
           · subst j
-            simp [polynomialWronskianMatrix, Ψ, Q, Polynomial.iterate_derivative_sub,
-              Polynomial.iterate_derivative_smul, sub_eq_add_neg, Polynomial.smul_eq_C_mul]
+            simp [polynomialWronskianMatrix, Ψ, Q,
+              sub_eq_add_neg, Polynomial.smul_eq_C_mul]
           · simp [polynomialWronskianMatrix, Ψ, hja]
         have hWr : polynomialWronskian Ψ = polynomialWronskian P := by
           rw [polynomialWronskian, polynomialWronskian, hmat]
@@ -480,7 +480,7 @@ private theorem pderiv_comm {m : ℕ} (i j : Fin m) (Q : MvPolynomial (Fin m) �
   · subst j
     rfl
   · have hji : j ≠ i := Ne.symm hij
-    simp [Finsupp.single_apply, hij, hji, add_comm, add_left_comm, mul_comm]
+    simp [hij, hji, add_comm, add_left_comm, mul_comm]
     ring
 
 private theorem multiDerivative_update_succ {m : ℕ} (i : Fin m) (μ : MultiIndex m)
@@ -566,18 +566,22 @@ private theorem derivative_kroneckerMap {m b : ℕ} (Q : MvPolynomial (Fin m) �
   induction Q using MvPolynomial.induction_on with
   | C a => simp [kroneckerMap, chainCoefficient]
   | add P Q hP hQ =>
-      simp only [map_add, Polynomial.derivative_add, hP, hQ]
+      simp only [map_add, hP, hQ]
       rw [← Finset.sum_add_distrib]
       apply Finset.sum_congr rfl
       intro i hi
       ring
   | mul_X P j hP =>
-      simp only [map_mul, MvPolynomial.eval₂AlgHom_X, Polynomial.derivative_mul,
-        Polynomial.derivative_X_pow, hP, MvPolynomial.pderiv_mul,
-        MvPolynomial.pderiv_X, smul_eq_mul, map_add, map_mul]
-      simp [kroneckerMap, chainCoefficient, Pi.single_apply, Finset.sum_add_distrib,
-        Finset.sum_mul, Finset.mul_sum, mul_add, add_mul, mul_comm, mul_left_comm]
-      simp [Polynomial.derivative_X_pow, nsmul_eq_mul, smul_eq_mul]
+      simp only [map_mul, Polynomial.derivative_mul,
+        hP, MvPolynomial.pderiv_mul,
+        MvPolynomial.pderiv_X, map_add, map_mul]
+      simp only [chainCoefficient, kroneckerMap, MvPolynomial.coe_eval₂AlgHom,
+        algebraMap_eq, Algebra.smul_mul_assoc, MvPolynomial.eval₂AlgHom_X, mul_comm,
+        Finset.mul_sum, Algebra.mul_smul_comm, Pi.single_apply,
+        MonoidWithZeroHom.map_ite_one_zero, ite_mul, one_mul, zero_mul, mul_add,
+        mul_left_comm, mul_ite, smul_zero, Finset.sum_add_distrib, Finset.sum_ite_eq,
+        Finset.mem_univ, ↓reduceIte, add_right_inj]
+      simp only [Polynomial.derivative_X_pow, Nat.cast_pow, map_pow, map_natCast]
       rw [Polynomial.smul_eq_C_mul]
       have hC : Polynomial.C (((b ^ j.1 : ℕ) : ℚ)) =
           (b : Polynomial ℚ) ^ j.1 := by
@@ -822,7 +826,7 @@ theorem exists_separationData {m : ℕ}
     intro n
     by_cases hn : n ∈ q.support
     · simp only [Polynomial.finsetSum_coeff, Polynomial.coeff_mul_C, Polynomial.coeff_map,
-        RingHom.coe_coe, Function.comp_apply, hrightCoeff, if_pos hn]
+        hrightCoeff, if_pos hn]
       simpa only [MvPolynomial.smul_eq_C_mul] using (hrepr n).symm
     · have hqn : q.coeff n = 0 := Polynomial.notMem_support_iff.mp hn
       rw [hqn]
@@ -878,7 +882,7 @@ theorem separatedDerivativeMatrix_det {m : ℕ}
     fun j b ↦ (Polynomial.derivative^[b.1] (S.right j)).map MvPolynomial.C
   have hmatrix : separatedDerivativeMatrix S μ = L * R := by
     funext a b
-    simp only [separatedDerivativeMatrix, Matrix.mul_apply, L, R]
+    simp only [separatedDerivativeMatrix, L, R]
     apply Finset.sum_congr rfl
     intro j hj
     rw [mul_comm]
@@ -1097,7 +1101,7 @@ theorem SeparationData.finSuccEquiv_mixedDerivativeMatrix_entry {m : ℕ}
       ((MvPolynomial.pderiv 0)^[b.1] P))).coeff n = _
   rw [finSuccEquiv_multiDerivative_coeff,
     finSuccEquiv_iterate_pderiv_zero, hderivative]
-  simp only [mixedDerivativeMatrix, separatedDerivativeMatrix,
+  simp only [separatedDerivativeMatrix,
     Polynomial.finsetSum_coeff, Polynomial.coeff_mul_C, Polynomial.coeff_map,
     MvPolynomial.C_mul', multiDerivative_finsetSum, multiDerivative_smul]
 

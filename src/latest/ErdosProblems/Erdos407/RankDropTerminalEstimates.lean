@@ -71,7 +71,7 @@ central-band vanishing. -/
 theorem weighted_coordinateWeight_le_of_not_outsideCentralBand
     {blocks coords : ℕ} {degree : Fin blocks → ℕ}
     {I : GLRAuxiliary.DerivativeIndex blocks coords degree}
-    {eta : ℚ} (heta : 0 ≤ eta)
+    {eta : ℚ} (_heta : 0 ≤ eta)
     (J : GLRAuxiliary.ResidualMonomialIndex I)
     (hJ : ¬ GLRAuxiliary.OutsideCentralBand eta J)
     (c : Fin coords → ℝ) :
@@ -256,7 +256,7 @@ theorem exists_auxiliary_parameters {coords : ℕ} (hcoords : 0 < coords)
           (8 * (coords : ℝ) * (eta : ℝ) *
             (∑ v, ∑ i, |c v i|)) / 4 := by
       field_simp
-      <;> ring
+      ring
     _ ≤ ((blocks : ℝ) / (coords : ℝ)) * delta / 4 := by
       exact div_le_div_of_nonneg_right
         (mul_le_mul_of_nonneg_left hsmall (by positivity)) (by norm_num)
@@ -495,9 +495,6 @@ theorem realPlaceNorm_eval₂_ofCoefficients_le
           (MvPolynomial.eval₂ (Int.castRingHom ℚ) x
             (MvPolynomial.monomial (AuxiliaryPolynomial.toFinsupp J) (a J))) := by
     unfold HeightBoxes.realPlaceNorm
-    change ((PadicSubspace.placeNorm v
-      (MvPolynomial.eval₂ (Int.castRingHom ℚ) x
-        (AuxiliaryPolynomial.ofCoefficients a)) : ℚ) : ℝ) ≤ _
     rw [← Rat.cast_sum]
     exact_mod_cast hsumQ
   calc
@@ -642,7 +639,6 @@ theorem prod_residualMonomialRadius_eq_exp
     rw [HeightBoxes.exponentRadius,
       Real.rpow_def_of_pos hQpos, ← Real.exp_nat_mul]
     congr 1
-    push_cast
     ring
   simp_rw [residualMonomialRadius, hfactor]
   let f := fun (v : PadicSubspace.Place23) (h : Fin blocks)
@@ -945,7 +941,7 @@ theorem prod_residualMonomialRadius_lt_one
 uniform displacement times the corresponding absolute weighted load. -/
 theorem scaleWeightedExponent_le_common_add_error
     {blocks coords : ℕ} {degree : Fin blocks → ℕ}
-    (hdegree : ∀ h, 0 < degree h)
+    (_hdegree : ∀ h, 0 < degree h)
     {I : GLRAuxiliary.DerivativeIndex blocks coords degree}
     (c : HeightBoxes.LocalConstants coords)
     (J : PadicSubspace.Place23 → GLRAuxiliary.ResidualMonomialIndex I)

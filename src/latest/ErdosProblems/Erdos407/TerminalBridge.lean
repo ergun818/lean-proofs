@@ -118,7 +118,8 @@ theorem ratioTuple_mem_solutions
     simp only [ratioCoeff, ratioTuple]
     rw [← Finset.sum_subtype (I.erase b) (by simp)
       (fun i ↦ -(signCoeff i / signCoeff b) *
-        ((((unitTuple x hsmooth i / unitTuple x hsmooth b : SubspaceApplication.U23.group) : ℚˣ) : ℚ)))]
+        ((((unitTuple x hsmooth i / unitTuple x hsmooth b :
+          SubspaceApplication.U23.group) : ℚˣ) : ℚ)))]
     have hzeroQ : ∑ i ∈ I, signCoeff i * (x i : ℚ) = 0 := by
       rw [← signedSum_cast]
       simp [hI.2.1]
@@ -148,11 +149,13 @@ theorem ratioTuple_mem_solutions
     simp only [ratioCoeff, ratioTuple]
     rw [← Finset.sum_image (f := fun i ↦
         -(signCoeff i / signCoeff b) *
-          ((((unitTuple x hsmooth i / unitTuple x hsmooth b : SubspaceApplication.U23.group) : ℚˣ) : ℚ)))
+          ((((unitTuple x hsmooth i / unitTuple x hsmooth b :
+            SubspaceApplication.U23.group) : ℚˣ) : ℚ)))
       (g := fun i : {i // i ∈ I.erase b} ↦ i.1)
       Subtype.val_injective.injOn]
     change (∑ i ∈ K, -(signCoeff i / signCoeff b) *
-      ((((unitTuple x hsmooth i / unitTuple x hsmooth b : SubspaceApplication.U23.group) : ℚˣ) : ℚ))) ≠ 0
+      ((((unitTuple x hsmooth i / unitTuple x hsmooth b :
+        SubspaceApplication.U23.group) : ℚˣ) : ℚ))) ≠ 0
     rw [ratio_sum_eq x hsmooth b K]
     exact div_ne_zero (neg_ne_zero.mpr (by
       rw [← signedSum_cast]

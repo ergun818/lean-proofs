@@ -471,8 +471,7 @@ theorem transformPrefixSpan_le {n r : ℕ}
   intro j _
   by_cases hij : Fin.castLE hr i < j
   · have hz : A (Fin.castLE hr i) j = 0 := hA hij
-    simpa [hz] using (Submodule.zero_mem
-      (Submodule.span ℚ (Set.range (fun i : Fin r ↦ x (Fin.castLE hr i)))))
+    simp [hz]
   · apply Submodule.smul_mem
     apply Submodule.subset_span
     have hjr : j.val < r := by
@@ -1733,7 +1732,7 @@ theorem weightedOmittedWedgeRowRadius_eq_splitExponentRadius
   rw [HeightBoxes.exponentRadius]
   unfold splitWeightedRawExteriorLocalConstants
   rw [weightedRawExteriorLocalConstants_eq]
-  simp only [weightedRowLocalConstants, Equiv.symm_apply_apply]
+  simp only [Equiv.symm_apply_apply]
   rw [Real.rpow_add hQpos, Real.rpow_add hQpos, hrows, hsave,
     rpow_weightedDeterminantConstant hQ E place]
   simp only [Finset.prod_mul_distrib, Finset.prod_const, Finset.card_univ,
@@ -1825,7 +1824,7 @@ theorem weightedOmittedWedgeRowRadius_eq_certificateExponentRadius
   rw [HeightBoxes.exponentRadius]
   unfold certificateWeightedRawExteriorLocalConstants
   rw [weightedRawExteriorLocalConstants_eq]
-  simp only [weightedRowLocalConstants, Equiv.symm_apply_apply]
+  simp only [Equiv.symm_apply_apply]
   rw [Real.rpow_add hQpos, Real.rpow_add hQpos, hrows, hsave,
     rpow_weightedDeterminantConstant hQ E place]
   simp only [Finset.prod_mul_distrib, Finset.prod_const, Finset.card_univ,
@@ -1945,7 +1944,8 @@ theorem sum_certificateMinimaLog_eq_logBase_prod {n : ℕ}
     (∑ place, ∑ i, certificateMinimaLog Q B place i) =
       logBase Q (∏ i, B.lambda i) := by
   simp only [certificateMinimaLog]
-  simp only [Finset.sum_ite_irrel, Finset.sum_const_zero, Finset.sum_ite_eq', Finset.mem_univ, ↓reduceIte]
+  simp only [Finset.sum_ite_irrel, Finset.sum_const_zero, Finset.sum_ite_eq',
+    Finset.mem_univ, ↓reduceIte]
   unfold logBase
   rw [Real.log_prod (fun i _ ↦ (B.lambda_pos i).ne')]
   rw [Finset.sum_div]

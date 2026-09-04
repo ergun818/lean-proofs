@@ -185,7 +185,7 @@ theorem Rep.encode_injective : Function.Injective Rep.encode := by
   have hi := congrArg (fun u : ℚˣ => (u : ℚ))
     (congrFun (congrArg Subtype.val hrs) i)
   fin_cases i <;>
-    simp only [Fin.mk_one, Fin.isValue, Fin.reduceFinMk, Fin.zero_eta] at hi ⊢ <;>
+    dsimp [Rep.encode, Rep.encodeUnits, Rep.encodeNat] at hi ⊢ <;>
     exact_mod_cast hi
 
 private def coeff407 (n : ℕ) : Fin 3 → ℚ := fun _ => (n : ℚ)⁻¹
@@ -257,7 +257,7 @@ quadruples `(a,b,c,d)` of nonnegative integers satisfying
 theorem erdos_407 : ∃ C : ℕ, ∀ n : ℕ, w n ≤ C :=
   TerminalBridge.erdos407_of_specializedPadicSubspaceUpToFive
     (StrongInequalityBridge.specializedPadicSubspaceFiniteCoverUpTo_five_of_strongTheorem
-      (fun {n} hn2 hn5 L hL =>
+      (fun {_n} hn2 hn5 L hL =>
         PadicSubspace.finiteCover_primitiveStrongSolutions hn2 hn5 L hL))
 
 #print axioms erdos_407_of_ESS

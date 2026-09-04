@@ -20,9 +20,11 @@ variable {ι : Type*} [Fintype ι]
 /-- Coordinatewise coercion of an integral vector to a rational vector. -/
 def intCastVec (z : ι → ℤ) : ι → ℚ := fun i => z i
 
+omit [Fintype ι] in
 @[simp] theorem intCastVec_apply (z : ι → ℤ) (i : ι) :
     intCastVec z i = (z i : ℚ) := rfl
 
+omit [Fintype ι] in
 theorem intCastVec_injective : Function.Injective (intCastVec : (ι → ℤ) → ι → ℚ) := by
   intro x y h
   funext i
@@ -37,7 +39,7 @@ def IsPrimitive (z : ι → ℤ) : Prop :=
 
 theorem IsPrimitive.ne_zero {z : ι → ℤ} (hz : IsPrimitive z) : z ≠ 0 := by
   rintro rfl
-  simpa [IsPrimitive] using hz
+  simp [IsPrimitive] at hz
 
 private def rowMatrix (x : ι → ℚ) : Matrix Unit ι ℚ := fun _ i => x i
 
@@ -80,6 +82,7 @@ theorem content_mul_divideContent (z : ι → ℤ) (i : ι) :
   rw [mul_comm]
   exact Int.ediv_mul_cancel (content_dvd z i)
 
+omit [Fintype ι] in
 private theorem exists_bezout_finset (s : Finset ι) (z : ι → ℤ) :
     ∃ u : ι → ℤ, ∑ i ∈ s, u i * z i = s.gcd z := by
   classical
@@ -92,7 +95,7 @@ private theorem exists_bezout_finset (s : Finset ι) (z : ι → ℤ) :
       let B : ℤ := Int.gcdB (z a) (s.gcd z)
       refine ⟨fun i => if i = a then A else B * u i, ?_⟩
       rw [Finset.sum_insert ha, Finset.gcd_insert]
-      simp only [if_pos, mul_assoc]
+      simp only [if_pos]
       have hsum :
           (∑ i ∈ s, (if i = a then A else B * u i) * z i) =
             B * s.gcd z := by
@@ -124,7 +127,7 @@ theorem divideContent_primitive {z : ι → ℤ} (hz : z ≠ 0) :
   rw [content]
   obtain ⟨i, hi⟩ : ∃ i, z i ≠ 0 := by
     by_contra h
-    push_neg at h
+    push Not at h
     exact hz (funext h)
   exact Finset.gcd_div_eq_one (Finset.mem_univ i) hi
 
@@ -160,7 +163,7 @@ theorem eq_normalizationScale_smul (x : ι → ℚ) :
   change x i = normalizationScale x * (normalize x i : ℚ)
   rw [← clearDen_div_commonDen x i]
   rw [← content_mul_divideContent (clearDen x) i]
-  simp only [normalizationScale, normalize, intCastVec_apply, Int.cast_mul]
+  simp only [normalizationScale, normalize, Int.cast_mul]
   ring
 
 /-- Two nonzero rational vectors are projectively equivalent when one is a
@@ -173,9 +176,11 @@ theorem projectivelyEquivalent_normalize {x : ι → ℚ} (hx : x ≠ 0) :
   ⟨normalizationScale x, normalizationScale_ne_zero hx,
     eq_normalizationScale_smul x⟩
 
-theorem ProjectivelyEquivalent.refl {x : ι → ℚ} (hx : x ≠ 0) :
+omit [Fintype ι] in
+theorem ProjectivelyEquivalent.refl {x : ι → ℚ} (_hx : x ≠ 0) :
     ProjectivelyEquivalent x x := ⟨1, one_ne_zero, by simp⟩
 
+omit [Fintype ι] in
 theorem ProjectivelyEquivalent.symm {x y : ι → ℚ}
     (h : ProjectivelyEquivalent x y) : ProjectivelyEquivalent y x := by
   obtain ⟨q, hq, rfl⟩ := h
@@ -183,6 +188,7 @@ theorem ProjectivelyEquivalent.symm {x y : ι → ℚ}
   ext i
   simp [hq]
 
+omit [Fintype ι] in
 theorem ProjectivelyEquivalent.trans {x y z : ι → ℚ}
     (hxy : ProjectivelyEquivalent x y) (hyz : ProjectivelyEquivalent y z) :
     ProjectivelyEquivalent x z := by
@@ -197,6 +203,7 @@ theorem ProjectivelyEquivalent.trans {x y z : ι → ℚ}
 def IsNondegenerateFor (coeff x : ι → ℚ) : Prop :=
   ∀ I : Finset ι, I.Nonempty → (∑ i ∈ I, coeff i * x i) ≠ 0
 
+omit [Fintype ι] in
 theorem weightedSubsum_eq_zero_iff_of_eq_smul
     (coeff : ι → ℚ) (I : Finset ι) {x y : ι → ℚ} {q : ℚ}
     (hq : q ≠ 0) (hxy : x = q • y) :
@@ -232,6 +239,7 @@ theorem weightedEquation_normalize_iff (coeff : ι → ℚ)
       (∑ i, coeff i * (normalize x i : ℚ)) = 0 := by
   simpa using weightedSubsum_normalize_iff coeff Finset.univ hx
 
+omit [Fintype ι] in
 theorem nondegenerateFor_preserved_of_eq_smul
     (coeff : ι → ℚ) {x y : ι → ℚ} {q : ℚ}
     (hq : q ≠ 0) (hxy : x = q • y) :
@@ -323,6 +331,7 @@ theorem normalize_eq_or_eq_neg_of_projectivelyEquivalent
 
 /-! ## A primitive representative chosen for each projective point -/
 
+omit [Fintype ι] in
 theorem intCastVec_ne_zero {z : ι → ℤ} (hz : z ≠ 0) : intCastVec z ≠ 0 := by
   intro h
   apply hz

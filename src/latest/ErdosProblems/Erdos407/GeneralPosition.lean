@@ -248,7 +248,8 @@ theorem coordSumHyperplane_ne_top {n : ℕ} (hn : 0 < n) (i : FormIndex n) :
   | none =>
       obtain ⟨j⟩ := Fin.pos_iff_nonempty.mp hn
       intro htop
-      have hmem : (Pi.single j 1 : Fin n → ℚ) ∈ coordSumHyperplane n none := htop.symm ▸ Submodule.mem_top
+      have hmem : (Pi.single j 1 : Fin n → ℚ) ∈ coordSumHyperplane n none :=
+        htop.symm ▸ Submodule.mem_top
       simp at hmem
   | some j =>
       intro htop

@@ -165,10 +165,11 @@ theorem projectiveCoeffHeight_le_of_reindex_diagonal {ι κ : Type*}
 /-- A tuple of nonnegative rational integers bounded by `B` has projective
 height at most `log B`.  Appending the coordinate `1` makes the representing
 integer tuple primitive, which avoids any coprimality hypothesis. -/
-theorem logHeight_natCast_le_log {κ : Type*} [Fintype κ]
+theorem logHeight_natCast_le_log {κ : Type*} [Finite κ]
     (a : κ → ℕ) (B : ℕ) (hB : 0 < B) (ha : ∀ j, a j ≤ B) :
     Height.logHeight (fun j ↦ (a j : ℚ)) ≤ Real.log B := by
   classical
+  let := Fintype.ofFinite κ
   let x : κ ⊕ Unit → ℤ := Sum.elim (fun j ↦ (a j : ℤ)) (fun _ ↦ 1)
   let y : κ ⊕ Unit → ℚ := ((↑) : ℤ → ℚ) ∘ x
   let f : κ → κ ⊕ Unit := Sum.inl
@@ -205,10 +206,11 @@ theorem logHeight_natCast_le_log {κ : Type*} [Fintype κ]
       · exact_mod_cast hmax
 
 /-- Signed integral version of `logHeight_natCast_le_log`. -/
-theorem logHeight_intCast_le_log {κ : Type*} [Fintype κ]
+theorem logHeight_intCast_le_log {κ : Type*} [Finite κ]
     (a : κ → ℤ) (B : ℕ) (hB : 0 < B) (ha : ∀ j, (a j).natAbs ≤ B) :
     Height.logHeight (fun j ↦ (a j : ℚ)) ≤ Real.log B := by
   classical
+  let := Fintype.ofFinite κ
   let x : κ ⊕ Unit → ℤ := Sum.elim a (fun _ ↦ 1)
   let y : κ ⊕ Unit → ℚ := ((↑) : ℤ → ℚ) ∘ x
   let f : κ → κ ⊕ Unit := Sum.inl
@@ -364,7 +366,7 @@ theorem disjointTensorProduct_eq_mul_rename {ι κ : Type*}
   simp only [Finset.sum_mul, Finset.mul_sum, MvPolynomial.monomial_mul]
   unfold disjointTensorProduct
   rw [Fintype.sum_prod_type]
-  simp only [Prod.fst, Prod.snd]
+  simp only []
   rw [← Finset.sum_subtype P.support (fun _ ↦ Iff.rfl)
     (fun J ↦ ∑ K : Q.support,
       MvPolynomial.monomial (disjointJoin (J, K.1))
@@ -428,12 +430,12 @@ private theorem coeff_mul_eq_matrix_sum {ι : Type*}
   simp only [Finsupp.sum, coefficientTensor, multiplicationMatrix, one_mul,
     ite_mul, zero_mul]
   rw [Finset.sum_subtype (AddMonoidAlgebra.coeff P).support (fun _ ↦ Iff.rfl)]
-  simp_rw [Finset.sum_subtype (AddMonoidAlgebra.coeff Q).support (fun _ ↦ Iff.rfl)]
-  rw [Fintype.sum_prod_type]
-  rfl
+  · simp_rw [Finset.sum_subtype (AddMonoidAlgebra.coeff Q).support (fun _ ↦ Iff.rfl)]
+    rw [Fintype.sum_prod_type]
+    rfl
 
 private theorem logHeight_multiplicationMatrix {ι : Type*}
-    {P Q : MvPolynomial ι ℚ} (hP : P ≠ 0) (hQ : Q ≠ 0) :
+    {P Q : MvPolynomial ι ℚ} (_hP : P ≠ 0) (_hQ : Q ≠ 0) :
     Height.logHeight (multiplicationMatrix P Q) = 0 := by
   classical
   rw [Height.logHeight_eq_logHeight_restrict_support]
@@ -681,7 +683,7 @@ theorem projectiveCoeffHeight_mul_le_support {ι : Type*}
       Nat.card {J // MvPolynomial.coeff J P ≠ 0} := Nat.card_congr eP
   have hcardQ : Nat.card Q.support =
       Nat.card {J // MvPolynomial.coeff J Q ≠ 0} := Nat.card_congr eQ
-  convert hlin using 1 <;> simp only [hcardP, hcardQ, add_assoc]
+  convert hlin using 1; simp only [hcardP, hcardQ, add_assoc]
 
 /-! ## Heights of finite sums -/
 
@@ -1192,7 +1194,7 @@ private theorem hasseMultiplier_mul_sub {n : ℕ} (I J : Fin n →₀ ℕ)
     by_cases hxi : x = i
     · subst x
       simp [f]
-    · simp [f, Finsupp.single_apply, hxi]
+    · simp [f, hxi]
   rw [hupdate, Finset.prod_update_of_mem (Finset.mem_univ i)]
   rw [← Finset.mul_prod_erase Finset.univ f (Finset.mem_univ i)]
   simp only [Finset.sdiff_singleton_eq_erase]
@@ -1230,7 +1232,7 @@ private theorem supportHasseDerivative_add_single {n : ℕ}
     · subst x
       simp
       omega
-    · simp [Finsupp.single_apply, h]
+    · simp [h]
   rw [hexp]
   have hmult := hasseMultiplier_mul_sub I J.1 i
   rw [MvPolynomial.smul_monomial]
@@ -1278,7 +1280,7 @@ private theorem pderiv_comm_local {n : ℕ} (i j : Fin n)
   · subst j
     rfl
   · have hji : j ≠ i := Ne.symm hij
-    simp [Finsupp.single_apply, hij, hji, add_comm, add_left_comm, mul_comm]
+    simp [hij, hji, add_comm, add_left_comm, mul_comm]
     ring
 
 private theorem multiDerivative_update_succ_local {n : ℕ} (i : Fin n)
@@ -1562,7 +1564,7 @@ private theorem mixedDerivative_eq_fullMultiDerivative {m k : ℕ}
         funext j
         refine Fin.cases ?_ (fun t ↦ ?_) j
         · simp [wq]
-        · simp [wq, Function.update_of_ne (Fin.succ_ne_zero t).symm]
+        · simp [wq]
       calc
         multiDerivative (liftMultiIndex (μ a))
             ((MvPolynomial.pderiv 0)^[q + 1] P) =
@@ -1783,7 +1785,6 @@ private theorem coeff_mixedSupportHasseMatrix_det {m k : ℕ}
   split_ifs with h
   · rw [Finset.prod_mul_distrib]
     simp only [Units.smul_def]
-    push_cast
     ring
   · simp
 

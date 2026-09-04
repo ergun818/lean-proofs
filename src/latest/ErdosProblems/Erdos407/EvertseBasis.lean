@@ -49,7 +49,7 @@ theorem basisEvaluationMatrix_det_ne_zero {n : ℕ}
   have heq : basisEvaluationMatrix L x =
       formMatrix LL Place23.infinite * X.transpose := by
     ext i j
-    simp only [basisEvaluationMatrix, Matrix.mul_apply, Matrix.transpose_apply, X, LL,
+    simp only [basisEvaluationMatrix, Matrix.mul_apply, X, LL,
       formMatrix]
     exact linearForm_eq_sum_coeff (L i) (x j)
   rw [heq, Matrix.det_mul, Matrix.det_transpose]
@@ -96,7 +96,7 @@ theorem sum_prefixCofactor_mul_prefix_eq_zero {n : ℕ}
         ((i.succAbove a), Fin.last n) := by
       intro h
       exact (Fin.succAbove_ne (Fin.last n) b) (congrArg Prod.snd h)
-    simp [M', Matrix.updateCol, hne]
+    simp [M', Matrix.updateCol]
   simp only [prefixCofactor]
   rw [hlast, hsub]
   ring
@@ -185,8 +185,7 @@ theorem omittedForm_eq_sum_restrictionCoefficient {n : ℕ}
         calc
           -(∑ i, prefixCofactor M (r.succAbove i) *
               M (r.succAbove i) (Fin.castSucc j)) = ∑ i, -f i := by
-            simpa [f] using (Finset.sum_neg_distrib :
-              -(∑ i : Fin n, f i) = ∑ i : Fin n, -f i)
+            simp [f]
           _ = _ := by
             apply Finset.sum_congr rfl
             intro i hi
@@ -721,9 +720,9 @@ theorem evertseBasis_induction : ∀ n : ℕ,
             (-gamma Place23.infinite j) (-gamma Place23.two j)
               (-gamma Place23.three j)
         refine ⟨a, haZ, ?_, ?_, ?_⟩
-        · convert haInf using 2 <;> ring_nf
-        · convert haTwo using 2 <;> ring
-        · convert haThree using 2 <;> ring
+        · convert haInf using 2; ring_nf
+        · convert haTwo using 2; ring
+        · convert haThree using 2; ring
       choose xi hxiZ hxiInf hxiTwo hxiThree using happrox
       have hgamma_eval (v : Place23) (i : Fin n) :
           L v ((maximalCofactorRow v

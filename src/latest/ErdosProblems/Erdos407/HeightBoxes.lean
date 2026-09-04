@@ -178,7 +178,7 @@ theorem IsProperHeight.unbounded {α : Type*} {X : Set α} {h : α → ℕ}
     (hproper : IsProperHeight X h) (hX : X.Infinite) (H : ℕ) :
     ∃ x ∈ X, H < h x := by
   by_contra hnone
-  push_neg at hnone
+  push Not at hnone
   exact hX ((hproper H).subset fun x hx => ⟨hx, hnone x hx⟩)
 
 theorem exists_fastGrowing_list {α : Type*} {X : Set α} {h : α → ℕ}
@@ -293,7 +293,7 @@ theorem exists_infinite_fiber {α κ : Type*} [Finite κ]
     ∃ k : κ, {x | x ∈ X ∧ box x = k}.Infinite := by
   classical
   by_contra hnone
-  push_neg at hnone
+  push Not at hnone
   have hfinite : X.Finite := by
     have hunion : X = ⋃ k : κ, {x | x ∈ X ∧ box x = k} := by
       ext x
@@ -309,7 +309,7 @@ theorem exists_infinite_box {α κ : Type*} [Finite κ]
     ∃ k, (X ∩ B k).Infinite := by
   classical
   by_contra hnone
-  push_neg at hnone
+  push Not at hnone
   have hfiniteUnion : (⋃ k, X ∩ B k).Finite := Set.finite_iUnion hnone
   apply hX
   apply hfiniteUnion.subset
@@ -377,7 +377,7 @@ theorem normalizedLog_mul {H a b : ℝ} (hH : 1 < H)
   field_simp [ne_of_gt (Real.log_pos hH)]
 
 theorem sum_normalizedLog_eq_normalizedLog_prod {ι : Type*}
-    {H : ℝ} (hH : 1 < H) (s : Finset ι) (a : ι → ℝ)
+    {H : ℝ} (_hH : 1 < H) (s : Finset ι) (a : ι → ℝ)
     (ha : ∀ i ∈ s, a i ≠ 0) :
     ∑ i ∈ s, normalizedLog H (a i) =
       normalizedLog H (∏ i ∈ s, a i) := by
@@ -766,7 +766,7 @@ theorem rpow_localConstant {n : ℕ}
 /-- Rounding every local constant upward by at most `η` gives an
 approximation box containing the point. -/
 theorem mem_approximationBox_of_localConstant_le {n : ℕ}
-    (L : Place23 → Fin n → RatLinearForm n) {H η : ℝ} (hH : 1 < H)
+    (L : Place23 → Fin n → RatLinearForm n) {H _η : ℝ} (hH : 1 < H)
     (x : RatVector n) (c : LocalConstants n)
     (hpos : ∀ v i, 0 < realPlaceNorm v (L v i x))
     (hc : ∀ v i, localConstant L H x v i ≤ c v i) :

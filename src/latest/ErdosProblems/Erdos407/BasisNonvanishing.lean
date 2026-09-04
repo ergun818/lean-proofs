@@ -55,7 +55,7 @@ def normalUnitVector {n : ℕ} (M : RatVector (n + 1)) (hM : M ≠ 0) :
     (GeneralizedRoth.pivotIndex M hM)]
   · simp [GeneralizedRoth.pivotIndex_coeff_ne_zero M hM]
   · intro b _ hb
-    simp [Pi.single_apply, hb]
+    simp [hb]
   · simp
 
 /-- Complete a kernel basis by the canonical normal unit vector.  The first
@@ -159,7 +159,7 @@ theorem hasseCoeff_rename_equiv {ι κ : Type*} (e : ι ≃ κ)
   rw [translate_rename_equiv, MvPolynomial.coeff_rename_mapDomain e e.injective]
 
 theorem translate_rename_injective {ι κ : Type*}
-    (f : ι → κ) (hf : Function.Injective f)
+    (f : ι → κ) (_hf : Function.Injective f)
     (a : κ → ℚ) (P : MvPolynomial ι ℚ) :
     RothIndex.translate a (MvPolynomial.rename f P) =
       MvPolynomial.rename f (RothIndex.translate (a ∘ f) P) := by
@@ -186,13 +186,15 @@ theorem hasseCoeff_rename_injective {ι κ : Type*}
 
 /-- The finite-grid lemma in a coordinate-free finite-type form. -/
 theorem exists_smallInteger_hasseCoeff_ne_zero_fintype
-    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {ι : Type*} [Finite ι]
     (P : MvPolynomial ι ℚ) (hP : P ≠ 0) (B : ℕ) :
     ∃ z : ι → ℤ,
       (∀ i, |z i| ≤ (B : ℤ)) ∧
       ∃ I : ι →₀ ℕ,
         (∀ i, I i ≤ MvPolynomial.degreeOf i P / (B + 1)) ∧
         RothIndex.hasseCoeff P (fun i ↦ (z i : ℚ)) I ≠ 0 := by
+  classical
+  let := Fintype.ofFinite ι
   let e : ι ≃ Fin (Fintype.card ι) := Fintype.equivFin ι
   let Q : MvPolynomial (Fin (Fintype.card ι)) ℚ := MvPolynomial.rename e P
   have hQ : Q ≠ 0 := by
@@ -264,7 +266,7 @@ theorem familyBlockLinearForm_completed_eq_rename
   unfold familyBlockLinearForm completedBasisMatrixFamily
   rw [Fin.sum_univ_castSucc]
   have hnormal : normalUnitVector (M u.1) (hM u.1) u.2 = 0 := by
-    simp [normalUnitVector, Pi.single_apply, hu]
+    simp [normalUnitVector, hu]
   simp only [completedBasisMatrix, Fin.lastCases_castSucc,
     Fin.lastCases_last, hnormal, MvPolynomial.C_0, zero_mul, add_zero,
     map_sum, map_mul, MvPolynomial.rename_C, MvPolynomial.rename_X,
@@ -369,7 +371,7 @@ def toFormCoordinateMatrix {m n : ℕ}
     (M : FormFamily m n) (hM : ∀ h, M h ≠ 0) :
     Fin m → Matrix (Fin (n + 1)) (Fin (n + 1)) ℚ :=
   fun h old new ↦
-    if hold : old = GeneralizedRoth.pivotIndex (M h) (hM h) then
+    if _hold : old = GeneralizedRoth.pivotIndex (M h) (hM h) then
       (M h old)⁻¹ *
         (if new = GeneralizedRoth.pivotIndex (M h) (hM h) then 1
           else -M h new)
@@ -387,7 +389,7 @@ theorem familyBlockLinearForm_toFormCoordinateMatrix {m n : ℕ}
     unfold familyBlockLinearForm toFormCoordinateMatrix
       GeneralizedRoth.toFormCoordinateVar GeneralizedRoth.offPivotPolynomial
     rw [dif_pos rfl]
-    simp only [Prod.fst, Prod.snd, dif_pos rfl]
+    simp only []
     simp only [dif_pos trivial]
     rw [← Finset.add_sum_erase Finset.univ
       (fun new : Fin (n + 1) ↦
@@ -397,7 +399,7 @@ theorem familyBlockLinearForm_toFormCoordinateMatrix {m n : ℕ}
                 else -M h new)) *
           MvPolynomial.X (h, new))
       (Finset.mem_univ (GeneralizedRoth.pivotIndex (M h) (hM h)))]
-    simp only [if_pos, map_one, mul_one]
+    simp only [if_pos, mul_one]
     have hoff :
         (∑ x ∈ Finset.univ.erase
               (GeneralizedRoth.pivotIndex (M h) (hM h)),
@@ -517,7 +519,7 @@ theorem blockOrder_tangentialExponent_add_normalOrderOfExponent
   apply Finset.sum_congr rfl
   intro j hj
   have hjp : j ≠ p := (Finset.mem_erase.mp hj).1
-  simp [RestrictionIndex.tangentialExponent, hjp, p]
+  simp [hjp, p]
 
 theorem restrictedDividedDerivativeInAdaptedCoordinates_isMultiHomogeneous
     {m n : ℕ} (M : FormFamily m n) (hM : ∀ h, M h ≠ 0)
@@ -536,7 +538,7 @@ theorem restrictedDividedDerivativeInAdaptedCoordinates_isMultiHomogeneous
           (RestrictionIndex.tangentialExponent M hM e)
           (MvPolynomial.coeff e Q)) ≠ 0 := by
     by_contra hnone
-    push_neg at hnone
+    push Not at hnone
     apply hK
     unfold RestrictionIndex.restrictedDividedDerivativeInAdaptedCoordinates
     simp only [MvPolynomial.coeff_sum]
@@ -769,7 +771,7 @@ theorem familyMatrixPoint_adaptedBasisMatrix_fullGridPoint {m n : ℕ}
 
 /-- Hasse coefficients are evaluations of the corresponding universal
 Hasse derivative. -/
-theorem hasseCoeff_eq_eval_hasseDerivative {ι : Type*} [Fintype ι]
+theorem hasseCoeff_eq_eval_hasseDerivative {ι : Type*}
     (P : MvPolynomial ι ℚ) (a : ι → ℚ) (I : ι →₀ ℕ) :
     RothIndex.hasseCoeff P a I =
       MvPolynomial.eval a (SymmetricPower.hasseDerivative I P) := by
@@ -976,8 +978,6 @@ theorem exists_originalDerivative_eval_matrixPoint_ne_zero
         (fun h ↦ parameterDerivativeDegree J h + N h) := by
     funext h
     rw [blockDegreeOfFinsupp_combinedAdaptedOrder]
-    change SymmetricPower.blockDegreeOfFinsupp
-      (AuxiliaryPolynomial.toFinsupp Atan) h + N h = _
     rw [← (Atan h).2]
     rfl
   let A : AuxiliaryPolynomial.MonomialIndex m (n + 1)
@@ -996,7 +996,7 @@ theorem exists_originalDerivative_eval_matrixPoint_ne_zero
                 rw [AuxiliaryPolynomial.sum_exponent_block Aold h,
                   congrFun eDegree h]⟩,
         by
-          simp only [Fin.val_mk]
+          simp only []
           rw [AuxiliaryPolynomial.sum_exponent_block Aold h,
             congrFun eDegree h]⟩
   refine ⟨A, ?_⟩
@@ -1210,7 +1210,7 @@ theorem familyMatrixPoint_toForm_adapted_eq_basisCombination
         k ≠ GeneralizedRoth.pivotIndex (M h) (hM h) := by
       simpa [p] using hk
     rw [Finset.sum_eq_single k]
-    · simp [hkpivot, adaptedGridImage, basisCombination, y]
+    · simp [hkpivot, adaptedGridImage, basisCombination]
     · intro j hj hjk
       simp [hkpivot, hjk]
     · simp

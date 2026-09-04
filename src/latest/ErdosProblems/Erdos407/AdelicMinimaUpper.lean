@@ -356,12 +356,11 @@ noncomputable def rawEntryScaleProductCertificate_of_realCertificate
     intro i
     funext k
     simp only [q, Finset.sum_apply, Pi.smul_apply, smul_eq_mul,
-      Int.cast_sum, Rat.cast_sum, Rat.cast_mul, Rat.cast_intCast]
+      Rat.cast_sum, Rat.cast_mul, Rat.cast_intCast]
     apply Finset.sum_congr rfl
     intro j _
     rw [hb]
-    simpa [smul_eq_mul] using
-      (Int.cast_smul_eq_zsmul ℝ (z i j) (qb j k : ℝ)).symm
+    simp
   have heval : ∀ i,
       archimedeanEvaluationEquiv L hL (fun k ↦ (q i k : ℝ)) = C.point i := by
     intro i

@@ -120,7 +120,7 @@ theorem mem_upperLocalConstants_approximationBox {n : ℕ} {eta H : ℝ}
     (hrange : ∀ v i, localConstant L H x v i ∈ Set.Icc (-5 : ℝ) 2) :
     InApproximationBox L H
       (upperLocalConstants (localBoxLabelOf heta hrange)) x := by
-  apply mem_approximationBox_of_localConstant_le (η := eta) L hH x _ hpos
+  apply mem_approximationBox_of_localConstant_le (_η := eta) L hH x _ hpos
   intro v i
   exact (localConstant_lt_upperLocalConstants heta hrange v i).le
 

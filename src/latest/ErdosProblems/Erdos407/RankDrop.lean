@@ -1454,13 +1454,13 @@ noncomputable def logarithmicDegree (D : ℝ) (Q : ℕ) : ℕ :=
   ⌊D / Real.log (Q : ℝ)⌋₊
 
 theorem logarithmicDegree_cast_le {D : ℝ} {Q : ℕ}
-    (hD : 0 ≤ D) (hQ : 2 ≤ Q) :
+    (hD : 0 ≤ D) (_hQ : 2 ≤ Q) :
     (logarithmicDegree D Q : ℝ) ≤ D / Real.log (Q : ℝ) := by
   apply Nat.floor_le
   positivity
 
 theorem div_log_lt_logarithmicDegree_add_one {D : ℝ} {Q : ℕ}
-    (hD : 0 ≤ D) (hQ : 2 ≤ Q) :
+    (_hD : 0 ≤ D) (_hQ : 2 ≤ Q) :
     D / Real.log (Q : ℝ) < logarithmicDegree D Q + 1 := by
   exact Nat.lt_floor_add_one _
 
@@ -1477,7 +1477,6 @@ theorem logarithmicDegree_mul_log_bounds {D : ℝ} {Q : ℕ}
   have hupper := logarithmicDegree_cast_le hD hQ
   constructor
   · have := (div_lt_iff₀ hlog).mp hlower
-    push_cast at this
     nlinarith
   · exact (le_div_iff₀ hlog).mp hupper
 
@@ -1495,7 +1494,6 @@ theorem logarithmicDegree_ratio_of_slack {D sigma : ℝ} {Q R : ℕ}
   have hQfloor := div_log_lt_logarithmicDegree_add_one hD hQ
   have hslack : D / Real.log (Q : ℝ) - 1 <
       logarithmicDegree D Q := by
-    push_cast at hQfloor ⊢
     linarith
   exact hRfloor.trans (hsep.trans
     (mul_le_mul_of_nonneg_left hslack.le hsigma))
@@ -2189,7 +2187,6 @@ theorem realPlaceNorm_le_exp_logHeight₁
             (padicNorm.nonneg _)
         _ ≤ q.den := by simpa [div_eq_mul_inv] using hinv
     exact_mod_cast hq.trans (by exact_mod_cast le_max_right q.num.natAbs q.den)
-
   · simp only [HeightBoxes.realPlaceNorm]
     change (padicNorm 3 q : ℝ) ≤ (max q.num.natAbs q.den : ℕ)
     have hden0 : (q.den : ℚ) ≠ 0 := ne_of_gt hdenposQ
@@ -2483,7 +2480,6 @@ theorem selectedCofactor_normalHeight_gap {m : ℕ}
       (Real.rpow_pos_of_pos hQpos _).ne',
     Real.log_pow, Real.log_rpow hQpos] at hlog
   dsimp [C, H] at hlog ⊢
-  push_cast at hlog ⊢
   linarith
 
 /-- Arbitrary-margin form of the normal-height gap. -/
@@ -2543,7 +2539,6 @@ theorem selectedCofactor_normalHeight_gap_of_delta {m : ℕ}
       (Real.rpow_pos_of_pos hQpos _).ne',
     Real.log_pow, Real.log_rpow hQpos] at hlog
   dsimp [C, H] at hlog ⊢
-  push_cast at hlog ⊢
   linarith
 
 /-- Support of the local cofactor coordinates of a codimension-one basis. -/
@@ -2797,7 +2792,7 @@ theorem realPlaceNorm_dotProduct_le_supportRadius {n : ℕ}
     (Q : ℝ) (hQ : 1 ≤ Q) (c : HeightBoxes.LocalConstants n)
     {y : RatVector n}
     (hy : HeightBoxes.InApproximationBox L Q c y)
-    (v : PadicSubspace.Place23) (i : Fin n) (hi : i ∈ I v)
+    (v : PadicSubspace.Place23) (i : Fin n) (_hi : i ∈ I v)
     (himax : ∀ j ∈ I v, c v j ≤ c v i) :
     HeightBoxes.realPlaceNorm v (y ⬝ᵥ w) ≤
       (∑ j ∈ I v,
@@ -3222,7 +3217,7 @@ theorem exists_sCodimOne_primitiveNormal_formHeight_ge {m : ℕ}
               Real.log (PadicSubspace.boxHeight z : ℝ) := hquarter
         _ = Real.log (PadicSubspace.boxHeight z : ℝ) *
             (3 * (m + 1)) := by ring)
-  convert hdiv using 1 <;> field_simp <;> ring
+  convert hdiv using 1; field_simp; ring
 
 @[simp] theorem integralRowMatrix_row {m n : ℕ}
     (x : Fin m → IntVector n) (i : Fin m) :

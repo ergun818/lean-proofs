@@ -79,9 +79,9 @@ private theorem solutions_finite_of_card_le_one
   | inl hempty =>
       have hnone : solutions U a = ∅ := by
         ext x
-        simp only [solutions, Set.mem_setOf_eq, Set.mem_empty_iff_false, iff_false]
+        simp only [solutions, Set.mem_ofPred_eq, Set.mem_empty_iff_false, iff_false]
         rintro ⟨hx, _⟩
-        simpa [IsSolution, subsum] using hx
+        simp [IsSolution, subsum] at hx
       simp [hnone]
   | inr hnonempty =>
       let : Nonempty ι := hnonempty
@@ -130,7 +130,7 @@ private theorem exists_minimalVanishing
     intro i hi hi'
     have hbi : b i = 0 := by
       simpa [supp, hi] using hi'
-    simp [subsum, hbi]
+    simp [hbi]
   let candidates : Finset (Finset ι) :=
     supp.powerset.filter fun J => J.Nonempty ∧ subsum U b x J = 0
   have hcandidates : candidates.Nonempty := by
@@ -189,7 +189,7 @@ private theorem ratioCoeff_ne_zero
   exact div_ne_zero (hJ.2.1 i.1 (Finset.mem_of_mem_erase i.2)) (hJ.2.1 j hj)
 
 private theorem ratio_sum_eq
-    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {ι : Type*}
     (b : ι → ℚ) (x : ι → U) (j : ι) (K : Finset ι) :
     (∑ i ∈ K, -(b i / b j) * (((x i / x j : U) : ℚˣ) : ℚ)) =
       -(∑ i ∈ K, b i * ((x i : ℚˣ) : ℚ)) /
@@ -434,7 +434,7 @@ private theorem collapsedCoeff_ne_zero
 
 private theorem ratio_index_card_lt
     {ι : Type*} [Fintype ι] [DecidableEq ι]
-    {J : Finset ι} {j : ι} (hj : j ∈ J) :
+    {J : Finset ι} {j : ι} (_hj : j ∈ J) :
     Fintype.card {i // i ∈ J.erase j} < Fintype.card ι := by
   rw [Fintype.card_coe]
   apply Finset.card_lt_card
@@ -446,14 +446,14 @@ private theorem ratio_index_card_lt
 private theorem retained_index_card_lt
     {ι : Type*} [Fintype ι] [DecidableEq ι]
     {b : ι → ℚ} {x : ι → U} {J : Finset ι} {j : ι}
-    (hJ : IsMinimalVanishing U b x J) (hj : j ∈ J) :
+    (hJ : IsMinimalVanishing U b x J) (_hj : j ∈ J) :
     Fintype.card {i // i ∈ retained J j} < Fintype.card ι := by
   rw [Fintype.card_coe]
   apply Finset.card_lt_card
   refine ⟨Finset.subset_univ _, ?_⟩
   obtain ⟨k, hkJ, hkj⟩ : ∃ k ∈ J, k ≠ j := by
     by_contra hn
-    push_neg at hn
+    push Not at hn
     have hsub : J ⊆ {j} := fun k hk => by simp [hn k hk]
     have : J.card ≤ 1 := (Finset.card_le_card hsub).trans (by simp)
     exact (not_lt_of_ge this) (minimalVanishing_card_two_le U hJ)
@@ -465,7 +465,7 @@ private theorem retained_index_card_lt
 
 private theorem ratio_collapse_injective
     {ι : Type*} [Fintype ι] [DecidableEq ι]
-    {J : Finset ι} {j : ι} (hj : j ∈ J) :
+    {J : Finset ι} {j : ι} (_hj : j ∈ J) :
     Function.Injective (fun x : ι → U =>
       (ratioTuple U x J j, collapsedTuple U x J j)) := by
   intro x y hxy
@@ -539,7 +539,7 @@ private theorem minimalBlockSet_finite
       Set.Finite.of_finite_image hFfinite (ratio_collapse_injective U hj).injOn
     exact hTfinite
   · have : T = ∅ := Set.not_nonempty_iff_eq_empty.mp hT
-    simpa [T, this]
+    simp [T, this]
 
 /-- Finite linear covers imply finiteness of every nondegenerate affine unit
 equation.  This is the elementary induction-on-arity step in the usual proof

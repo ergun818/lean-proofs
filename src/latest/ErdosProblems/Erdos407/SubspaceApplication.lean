@@ -401,7 +401,7 @@ def SpecializedPadicSubspaceFiniteCover : Prop :=
 
 private theorem finiteLinearCover_of_threePlaceCover
     {ι : Type} [Fintype ι] [DecidableEq ι]
-    (hcard : 2 ≤ Fintype.card ι) (a : ι → ℚ) (ha : ∀ i, a i ≠ 0)
+    (hcard : 2 ≤ Fintype.card ι) (a : ι → ℚ) (_ha : ∀ i, a i ≠ 0)
     (hcover : ∃ B : Finset (ι → ℚ),
       (∀ b ∈ B, b ≠ 0) ∧
       ∀ z : ι → ℤ, IsThreePlaceUnitPoint a z →
@@ -419,7 +419,7 @@ private theorem finiteLinearCover_of_threePlaceCover
     intro hzero
     obtain ⟨i⟩ := ‹Nonempty ι›
     have hi := congrFun hzero i
-    exact Units.ne_zero (x i : ℚˣ) (by simpa [u] using hi)
+    simp [u] at hi
   let z : ι → ℤ := Primitive.normalize u
   let q : ℚ := Primitive.normalizationScale u
   have hqu : u = q • Primitive.intCastVec z := by

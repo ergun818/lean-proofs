@@ -404,7 +404,7 @@ def addDerivativeResidual {blocks coords : ℕ} {degree : Fin blocks → ℕ}
             (AuxiliaryPolynomial.sum_exponent_block J h)
         _ = degree h := Nat.add_sub_of_le (I.blockOrder_le h)⟩,
     by
-      simp only [Finset.sum_add_distrib, Fin.val_mk, DerivativeIndex.order]
+      simp only [Finset.sum_add_distrib, DerivativeIndex.order]
       rw [AuxiliaryPolynomial.sum_exponent_block I.2 h,
         AuxiliaryPolynomial.sum_exponent_block J h]
       exact Nat.add_sub_of_le (I.blockOrder_le h)⟩
@@ -450,7 +450,7 @@ theorem derivativeCoordinateWeight_nonneg {blocks coords : ℕ}
   positivity
 
 theorem derivativeCoordinateWeight_le {blocks coords : ℕ}
-    {degree : Fin blocks → ℕ} (hdegree : ∀ h, 0 < degree h)
+    {degree : Fin blocks → ℕ} (_hdegree : ∀ h, 0 < degree h)
     (I : DerivativeIndex blocks coords degree) (i : Fin coords) :
     derivativeCoordinateWeight I i ≤ derivativeWeight I := by
   unfold derivativeCoordinateWeight derivativeWeight
@@ -610,7 +610,7 @@ theorem pderiv_changeCoordinates {blocks coords : ℕ}
       rw [map_add, changeCoordinates_add, mul_add]
   | mul_X P x hP =>
       simp only [changeCoordinates_mul, changeCoordinates_X,
-        Derivation.leibniz, MvPolynomial.pderiv_X, Pi.single_apply, hP, map_add,
+        Derivation.leibniz, MvPolynomial.pderiv_X, Pi.single_apply, hP,
         smul_eq_mul]
       rcases y with ⟨b, j⟩
       rcases x with ⟨b', k⟩
@@ -633,8 +633,8 @@ theorem pderiv_changeCoordinates {blocks coords : ℕ}
               (if k = i then Q else 0) + L * D i := by
           by_cases hki : k = i
           · subst i
-            simp [smul_eq_mul, Q, L, D]
-          · simp [smul_eq_mul, hki, Q, L, D]
+            simp [Q, L, D]
+          · simp [hki, Q, L, D]
         simp_rw [hterm, mul_add]
         rw [Finset.sum_add_distrib]
         have hdelta :
@@ -654,12 +654,12 @@ theorem pderiv_changeCoordinates {blocks coords : ℕ}
           intro i hi
           ring
         rw [hdelta, hprod]
-        simp only [smul_eq_mul, Q, L, D]
+        simp only [Q, L, D]
         ring
       · have hlin :
             MvPolynomial.pderiv (b, j)
                 (∑ i, MvPolynomial.C (T v k i) * MvPolynomial.X (b', i)) = 0 := by
-          simp [MvPolynomial.pderiv_X, Pi.single_apply, hbb]
+          simp [MvPolynomial.pderiv_X, hbb]
         rw [hlin]
         let L := ∑ i, MvPolynomial.C (T v k i) * MvPolynomial.X (b', i)
         let D := fun i : Fin coords ↦
@@ -669,7 +669,7 @@ theorem pderiv_changeCoordinates {blocks coords : ℕ}
                 (P * (if (b', k) = (b, i) then 1 else 0) +
                   MvPolynomial.X (b', k) * MvPolynomial.pderiv (b, i) P) =
               L * D i := by
-          simp [smul_eq_mul, hbb, L, D]
+          simp [hbb, L, D]
         simp_rw [hterm]
         have hprod :
             (∑ i : Fin coords, MvPolynomial.C (T v i j) * (L * D i)) =
@@ -679,7 +679,7 @@ theorem pderiv_changeCoordinates {blocks coords : ℕ}
           intro i hi
           ring
         rw [hprod]
-        simp [smul_eq_mul, L, D]
+        simp [L, D]
 
 /-- The rational matrix underlying an integral coordinate change. -/
 abbrev rationalCoordinateMatrix {coords : ℕ}
@@ -796,7 +796,7 @@ theorem transformedCoefficient_eq_coeff {blocks coords : ℕ}
   classical
   simp only [transformedCoefficient, basisTransformedCoefficient,
     dividedDerivativeOfCoefficients, changeCoordinates, map_sum, map_mul,
-    MvPolynomial.coeff_sum, MvPolynomial.coeff_C_mul]
+    MvPolynomial.coeff_sum]
   apply Finset.sum_congr rfl
   intro M hM
   rw [MvPolynomial.eval₂Hom_C, MvPolynomial.coeff_C_mul]
@@ -1273,13 +1273,13 @@ theorem postChangeHasseCoefficient_eq_coeff {blocks coords : ℕ}
         orderFinsupp I = AuxiliaryPolynomial.toFinsupp J := by
       apply Finsupp.ext
       intro x
-      simp [Nat.add_sub_cancel_left]
+      simp
     rw [if_pos heq]
   · intro K hK hne
     split_ifs with he
     · have hex : ∃ x, AuxiliaryPolynomial.exponent K x < I.order x := by
         by_contra hnone
-        push_neg at hnone
+        push Not at hnone
         apply hne
         apply AuxiliaryPolynomial.exponent_injective
         funext x
@@ -1745,7 +1745,7 @@ theorem exists_glrAuxiliary_of_no_rows
     let M : AuxiliaryPolynomial.MonomialIndex blocks coords degree := fun h ↦
       Classical.choice (blockExponentNonempty coords (degree h))
     have h := congrFun hz M
-    simpa [c] using h
+    simp [c] at h
   have hbound : ‖c‖ ≤ coefficientHeightBound (degree := degree) eta T := by
     simp [c, coefficientHeightBound, hzero]
   refine ⟨c, hc, AuxiliaryPolynomial.ofCoefficients_ne_zero hc,

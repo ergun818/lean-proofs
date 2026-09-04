@@ -166,7 +166,7 @@ theorem hasPartialDegreeAtMost_det {m k : ℕ}
             intro j hj
             exact MvPolynomial.degreeOf_le_iff.mpr
               (fun J hJ ↦ hA (σ j) j J hJ i)
-          _ = k * d i := by simp [mul_comm]
+          _ = k * d i := by simp
       apply MvPolynomial.degreeOf_le_iff.mpr
       intro L hL
       apply MvPolynomial.degreeOf_le_iff.mp hprod L
@@ -488,7 +488,7 @@ def MixedDetHeightBound : Prop :=
   ∀ {n : ℕ} {P : MvPolynomial (Fin (n + 1)) ℚ}
     (S : GeneralizedWronskian.SeparationData n P)
     (d : Fin (n + 1) → ℕ)
-    (hP : P ≠ 0) (hdeg : PolynomialHeights.HasPartialDegreeAtMost P d)
+    (_hP : P ≠ 0) (_hdeg : PolynomialHeights.HasPartialDegreeAtMost P d)
     (μ : Fin S.k → GeneralizedWronskian.MultiIndex n),
     PolynomialHeights.projectiveCoeffHeight
         (GeneralizedWronskian.mixedDerivativeMatrix S μ).det ≤
@@ -632,7 +632,7 @@ theorem rothLemmaAscending_of_detHeight (hDet : MixedDetHeightBound) :
                     2 * (n + 2 : ℝ) * r (Fin.last (n + 1)) ≤
                     qpar * (r 0 : ℝ) * Height.logHeight₁ (β 0) := by
                   dsimp [qpar]
-                  convert hbig using 1 <;> ring
+                  convert hbig using 1; ring
                 have hm := mul_le_mul_of_nonneg_left hbig' hkR
                 dsimp [qpar]
                 simpa [qpar] using hm
@@ -746,7 +746,7 @@ theorem rothLemmaAscending_of_detHeight (hDet : MixedDetHeightBound) :
                 (qpar * (r i.succ : ℝ) * Height.logHeight₁ (β i.succ)) := by
               apply mul_le_mul_of_nonneg_left _ hkR
               rw [show (n + 2 : ℝ) = (n : ℝ) + 1 + 1 by
-                push_cast; ring]
+                ring]
               dsimp [qpar]
               exact hbig
             _ = qpar * ((S.k : ℝ) * r i.succ) *
@@ -806,7 +806,7 @@ theorem rothLemmaAscending_of_detHeight (hDet : MixedDetHeightBound) :
       have hbound0 : 0 ≤ 2 * (n + 2 : ℝ) * η := by positivity
       have hfinal : (affineIndex P r β : ℝ) ≤ 2 * (n + 2 : ℝ) * η := by
         exact (sq_le_sq₀ hI0 hbound0).mp hsq
-      convert hfinal using 1 <;> push_cast <;> ring
+      convert hfinal using 1; push_cast; ring
 
 theorem rothLemma_of_detHeight (hDet : MixedDetHeightBound)
     {m : ℕ} (hm : 0 < m)
@@ -844,12 +844,12 @@ theorem rothLemma_of_detHeight (hDet : MixedDetHeightBound)
         have hrev1 : e.symm j.castSucc = (j.rev).succ := by
           apply Fin.ext
           simp only [e, Fin.revPerm_symm, Fin.revPerm_apply, Fin.rev,
-            Fin.coe_castSucc, Fin.val_succ]
+            Fin.val_castSucc, Fin.val_succ]
           omega
         have hrev2 : e.symm j.succ = (j.rev).castSucc := by
           apply Fin.ext
           simp only [e, Fin.revPerm_symm, Fin.revPerm_apply, Fin.rev,
-            Fin.val_succ, Fin.coe_castSucc]
+            Fin.val_succ, Fin.val_castSucc]
           omega
         let t : Fin (n + 1 - 1) := ⟨j.rev.val, by omega⟩
         have ho := hratio t

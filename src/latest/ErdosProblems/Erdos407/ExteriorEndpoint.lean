@@ -538,7 +538,7 @@ theorem finrank_basisComplementSubspace {n q : ℕ}
   rw [basisComplementSubspace, finrank_span_eq_card hu]
   simp only [Fintype.card_subtype_compl, Fintype.card_fin]
   rw [show Fintype.card {i : Fin n // i ∈ J₀.1} = q by
-    simpa using J₀.2]
+    simp]
 
 theorem finrank_quotient_basisComplementSubspace {n q : ℕ}
     [Module.Finite ℚ E] {v : Fin n → E} (hv : LinearIndependent ℚ v)
@@ -562,7 +562,7 @@ theorem omittedExteriorSpan_le_exteriorKernel {n q : ℕ}
     intro hsub
     apply J.2
     apply Subtype.ext
-    exact Finset.eq_of_subset_of_card_le hsub (by simpa [J.1.2, J₀.2])
+    exact Finset.eq_of_subset_of_card_le hsub (by simp)
   rw [Finset.not_subset] at hnsub
   obtain ⟨i, hiJ, hiJ₀⟩ := hnsub
   have hirange :
@@ -575,7 +575,7 @@ theorem omittedExteriorSpan_le_exteriorKernel {n q : ℕ}
     (basisComplementSubspace v J₀) _ a
   apply Submodule.subset_span
   refine ⟨⟨i, hiJ₀⟩, ?_⟩
-  simpa [ha]
+  simp [ha]
 
 theorem finrank_omittedExteriorSpan {n q : ℕ}
     {v : Fin n → E} (hv : LinearIndependent ℚ v)
@@ -1346,7 +1346,7 @@ theorem evertseTransform_linearIndependent {n : ℕ}
   rw [Matrix.linearIndependent_rows_iff_isUnit]
   have heq : Y = A * X := by
     ext i j
-    simp only [Y, Matrix.mul_apply, X, EvertseBasis.transformBasis,
+    simp only [Y, X, EvertseBasis.transformBasis,
       Finset.sum_apply, Pi.smul_apply, smul_eq_mul]
     rfl
   rw [heq]
@@ -1780,7 +1780,7 @@ theorem discretizedExponent_lt_add {γ a : ℝ} (hγ : 0 < γ) :
 
 /-- Simultaneous discretization loses less than `card α` meshes in the
 total exponent.  This is the finite error term used after (5.11). -/
-theorem sum_discretizedExponent_lt { α : Type* } [Fintype α] [Nonempty α]
+theorem sum_discretizedExponent_lt {α : Type*} [Fintype α] [Nonempty α]
     (γ : ℝ) (hγ : 0 < γ) (a : α → ℝ) :
     ∑ i, discretizedExponent γ (a i) <
       ∑ i, a i + Fintype.card α * γ := by
@@ -1839,7 +1839,7 @@ theorem sum_discretizedLocalConstants_lt_neg_half {d : ℕ} (hd : 0 < d)
 total rounding loss is at most half that margin, the discretized exponent
 sum is still strictly negative.  This is the arithmetic conclusion at the
 end of GLR §5.3. -/
-theorem sum_discretizedExponent_lt_neg_half { α : Type* }
+theorem sum_discretizedExponent_lt_neg_half {α : Type*}
     [Fintype α] [Nonempty α] (a : α → ℝ) {γ δ : ℝ}
     (hγ : 0 < γ) (ha : ∑ i, a i ≤ -δ)
     (hmesh : Fintype.card α * γ ≤ δ / 2) :

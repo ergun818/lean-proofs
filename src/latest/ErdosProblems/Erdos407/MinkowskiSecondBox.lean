@@ -299,7 +299,7 @@ noncomputable def projectedTail {n : ℕ} (h : Fin (n + 1))
 theorem mul_tailShear_apply_zero {n : ℕ} (h : Fin (n + 1))
     (B : Matrix (Fin (n + 1)) (Fin (n + 1)) ℝ) (i : Fin (n + 1)) :
     (B * tailShear h B) i 0 = B i 0 := by
-  simp [Matrix.mul_apply, Fin.sum_univ_succ, tailShear]
+  simp [Matrix.mul_apply, tailShear]
 
 theorem mul_tailShear_apply_succ {n : ℕ} (h : Fin (n + 1))
     (B : Matrix (Fin (n + 1)) (Fin (n + 1)) ℝ) (i : Fin (n + 1))

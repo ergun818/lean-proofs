@@ -74,7 +74,7 @@ theorem affineIndex_le_weight {m : ℕ}
 /-- Every normalized weight is nonnegative when all normalizing degrees are
 positive. -/
 theorem affineWeight_nonneg {m : ℕ} {r : Fin m → ℕ}
-    (hr : ∀ j, 0 < r j) (J : AffineMultiIndex m) :
+    (_hr : ∀ j, 0 < r j) (J : AffineMultiIndex m) :
     0 ≤ affineWeight r J := by
   unfold affineWeight
   exact Finset.sum_nonneg fun j _ ↦ div_nonneg (by positivity) (by positivity)
@@ -112,7 +112,7 @@ theorem translate_pderiv {m : ℕ} (β : Fin m → ℚ) (i : Fin m)
         RothIndex.translate_mul, RothIndex.translate_mul,
         RothIndex.translate_mul, MvPolynomial.pderiv_mul,
         RothIndex.translate_X, hP]
-      simp [RothIndex.translate_X, Pi.single_apply]
+      simp [Pi.single_apply]
       split_ifs <;> simp
 
 theorem affineWeight_add_single {m : ℕ} (r : Fin m → ℕ)
@@ -149,7 +149,6 @@ theorem affineWeight_add {m : ℕ} (r : Fin m → ℕ)
   rw [← Finset.sum_add_distrib]
   apply Finset.sum_congr rfl
   intro j _
-  change ((((J + K : AffineMultiIndex m)) j : ℕ) : ℚ) / (r j : ℚ) = _
   rw [Finsupp.add_apply, Nat.cast_add, add_div]
 
 /-- The index of a nonzero sum is at least the smaller index of its two
@@ -167,7 +166,7 @@ theorem min_affineIndex_le_add {m : ℕ}
       MvPolynomial.coeff J (RothIndex.translate β P) ≠ 0 ∨
         MvPolynomial.coeff J (RothIndex.translate β Q) ≠ 0 := by
     by_contra h
-    push_neg at h
+    push Not at h
     exact hJ (by rw [h.1, h.2, add_zero])
   rw [← hweight]
   rcases hcases with hJP | hJQ
@@ -216,8 +215,7 @@ theorem affineIndex_add_le_mul {m : ℕ}
 theorem translate_smul {m : ℕ} (a : ℚ) (β : Fin m → ℚ)
     (P : MvPolynomial (Fin m) ℚ) :
     RothIndex.translate β (a • P) = a • RothIndex.translate β P := by
-  simpa [← MvPolynomial.C_mul'] using
-    RothIndex.translate_mul β (MvPolynomial.C a) P
+  simp [← MvPolynomial.C_mul']
 
 /-- Multiplication by a nonzero scalar does not change the index. -/
 theorem affineIndex_smul {m : ℕ} {a : ℚ} (ha : a ≠ 0)
@@ -350,13 +348,13 @@ theorem affineIndex_sub_reciprocal_le_pderiv {m : ℕ}
 /-- Repeating a partial derivative `n` times loses at most `n / rᵢ` from
 the normalized affine index. -/
 theorem affineIndex_sub_iterateLoss_le {m : ℕ}
-    {P : MvPolynomial (Fin m) ℚ} (hP : P ≠ 0)
+    {P : MvPolynomial (Fin m) ℚ} (_hP : P ≠ 0)
     (r : Fin m → ℕ) (β : Fin m → ℚ) (i : Fin m) (n : ℕ)
     (hD : (MvPolynomial.pderiv i)^[n] P ≠ 0) :
     affineIndex P r β - (n : ℚ) / (r i : ℚ) ≤
       affineIndex ((MvPolynomial.pderiv i)^[n] P) r β := by
   induction n with
-  | zero => simpa using le_rfl
+  | zero => simp
   | succ n ih =>
       rw [Function.iterate_succ_apply'] at hD ⊢
       have hprev : (MvPolynomial.pderiv i)^[n] P ≠ 0 := by
@@ -394,7 +392,7 @@ private theorem affineIndex_sub_derivativeFoldLoss_le {m : ℕ}
       affineIndex
         (l.foldl (fun Q i ↦ (MvPolynomial.pderiv i)^[μ i] Q) P) r β := by
   induction l generalizing P with
-  | nil => simpa using le_rfl
+  | nil => simp
   | cons i l ih =>
       simp only [List.foldl_cons, List.map_cons, List.sum_cons] at hD ⊢
       have hfirst : (MvPolynomial.pderiv i)^[μ i] P ≠ 0 := by
@@ -1279,7 +1277,7 @@ def blockPoint {m : ℕ} (β : Fin m → ℚ) : RothIndex.MultiPoint m 0 :=
 @[simp] theorem blockOrder_mapDomain_toUnaryBlock {m : ℕ}
     (J : AffineMultiIndex m) (j : Fin m) :
     RothIndex.blockOrder (Finsupp.mapDomain toUnaryBlock J) j = J j := by
-  simp only [RothIndex.blockOrder, Fin.sum_univ_one]
+  simp only [RothIndex.blockOrder]
   exact Finsupp.mapDomain_apply toUnaryBlock_injective J j
 
 @[simp] theorem normalizedWeight_mapDomain_toUnaryBlock {m : ℕ}

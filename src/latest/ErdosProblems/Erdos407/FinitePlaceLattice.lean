@@ -65,7 +65,7 @@ theorem padicNorm_le_iff_le_floor_power (p : ℕ) [Fact p.Prime]
   · intro hq
     by_cases hq0 : q = 0
     · rw [hq0]
-      simp only [padicNorm.zero, Rat.cast_zero, zero_le]
+      simp only [padicNorm.zero, Rat.cast_zero]
       exact zpow_nonneg (show (0 : ℝ) ≤ (p : ℝ) by positivity) a
     · have hnorm : (padicNorm p q : ℝ) = (p : ℝ) ^ (-(padicValRat p q)) := by
         rw [padicNorm.eq_zpow_of_nonzero hq0, Rat.cast_zpow]
@@ -343,7 +343,7 @@ theorem abs_det_scaledRealBasis_le {m n : ℕ}
         change (s : ℝ) * _ = (s : ℝ) * U i j
         rfl]
   rw [Matrix.det_smul]
-  simp only [Finset.prod_const, Finset.card_univ, Fintype.card_fin, abs_mul,
+  simp only [Fintype.card_fin, abs_mul,
     abs_pow]
   gcongr
   change |Matrix.det U| ≤ _
@@ -621,7 +621,7 @@ theorem exists_finiteScale_normalizes {n : ℕ}
       _ ≤ max R2 R3 := le_max_right _ _
       _ ≤ C := le_max_right _ _
       _ ≤ (2 : ℝ) ^ (k + 1) := hk'.le
-      _ ≤ (3 : ℝ) ^ (k + 1) := by gcongr <;> norm_num
+      _ ≤ (3 : ℝ) ^ (k + 1) := by gcongr; norm_num
 
 /-- Simultaneous rounding of all normalized radii to inverse prime powers.
 The second inequality is the factor-`p` loss used in the index estimate. -/
