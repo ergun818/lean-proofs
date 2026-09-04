@@ -445,7 +445,7 @@ theorem measureReal_smoothContributionPointwiseFailure_le
         ⋃ r ∈ tests ell, point r := by
     ext omega
     simp only [smoothContributionPointwiseFailure, point,
-      smoothContributionBad, Set.mem_setOf_eq, Set.mem_iUnion, exists_prop]
+      smoothContributionBad, Set.mem_ofPred_eq, Set.mem_iUnion, exists_prop]
   rw [hfailure]
   calc
     μ.real (⋃ r ∈ tests ell, point r) ≤

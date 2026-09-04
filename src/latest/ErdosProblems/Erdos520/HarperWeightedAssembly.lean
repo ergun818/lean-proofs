@@ -145,7 +145,7 @@ theorem integral_truncatedHarperWeightedAssembly_twoThird_le
     exact ae_of_all ν fun omega ↦ (hterm_eq i hi omega).symm
   have hsum_integrable :
       Integrable (fun omega ↦ ∑ i ∈ s, term i omega) ν :=
-    integrable_finset_sum s hterm_integrable
+    integrable_finsetSum s hterm_integrable
   calc
     (∫ omega,
         truncatedHarperWeightedAssembly s shell localEnergy omega ^
@@ -162,7 +162,7 @@ theorem integral_truncatedHarperWeightedAssembly_twoThird_le
             (fun i hi ↦ mul_nonneg (harperKernelShellCoefficient_nonneg _)
               (hlocal i hi omega))
     _ = ∑ i ∈ s, ∫ omega, term i omega ∂ν :=
-      integral_finset_sum s hterm_integrable
+      integral_finsetSum s hterm_integrable
     _ ≤ ∑ i ∈ s,
         A * 4 ^ harperTwoThird * harperGlobalMomentSeriesTerm (shell i) := by
       apply Finset.sum_le_sum
@@ -348,7 +348,7 @@ theorem integrable_truncatedHarperWeightedAssembly_twoThird
     exact ae_of_all ν fun omega ↦ (hterm_eq i hi omega).symm
   have hsum_integrable :
       Integrable (fun omega ↦ ∑ i ∈ s, term i omega) ν :=
-    integrable_finset_sum s hterm_integrable
+    integrable_finsetSum s hterm_integrable
   have hassembly_measurable : AEStronglyMeasurable
       (fun omega ↦ truncatedHarperWeightedAssembly s shell localEnergy omega) ν := by
     unfold truncatedHarperWeightedAssembly

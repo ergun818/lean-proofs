@@ -496,7 +496,7 @@ theorem economicalParsevalTail_twoThird_le_scale
     have h := one_add_logLogNat_le_sixteen_mul_economicalVerticalTruncation
       havail
     dsimp only [scale, M] at h ⊢
-    convert! h using 1 <;> norm_num <;> ring
+    convert! h using 1; norm_num; ring
   have htail := rpow_div_nat_twoThird_le_of_scale_le_four_mul
     (A := 8 * harperExplicitMertensConstant) (scale := scale)
     (n := 4 * M)
@@ -504,10 +504,10 @@ theorem economicalParsevalTail_twoThird_le_scale
     hscale hfourM hcompare
   have hM0 : (M : ℝ) ≠ 0 := by positivity
   have hfourM0 : ((4 * M : ℕ) : ℝ) ≠ 0 := by positivity
-  convert! htail using 1 <;>
-    simp only [scale, M, harperTwoThird, Nat.cast_mul, Nat.cast_ofNat]
+  convert! htail using 1;
+    simp only [M, harperTwoThird, Nat.cast_mul, Nat.cast_ofNat]
   field_simp [hM0, hfourM0]
-  <;> ring_nf
+ ; ring_nf
 
 /-- A uniform economical unit-shell estimate implies the exact eventual
 Harper initial-moment bound.  All finite-series and Parseval-tail constants

@@ -292,7 +292,7 @@ theorem integral_gaussianWalkKilledPayoff_variances_eq (vs : List ℝ≥0) (x : 
       gaussianWalkKilledPayoff vs.length x omega ∂gaussianVarianceWalkMeasure vs) =
       gaussianVarianceKilledPotential vs x := by
   induction vs generalizing x with
-  | nil => simp [gaussianWalkKilledPayoff, gaussianVarianceKilledPotential,
+  | nil => simp [gaussianVarianceKilledPotential,
       gaussianVarianceKilledExpectation, gaussianVarianceWalkMeasure]
   | cons v vs ih =>
       change (∫ omega : Fin (vs.length + 1) → ℝ,
@@ -415,7 +415,7 @@ theorem integrable_gaussianVarianceWalk_terminalDistance (vs : List ℝ≥0) (x 
   have hsum : Integrable (fun omega : Fin vs.length → ℝ ↦
       ∑ i, omega i) (gaussianVarianceWalkMeasure vs) := by
     simpa only [Finset.sum_apply] using!
-      (integrable_finset_sum Finset.univ (fun i _hi ↦ heval i))
+      (integrable_finsetSum Finset.univ (fun i _hi ↦ heval i))
   exact (integrable_const x).sub hsum
 
 theorem integralOn_gaussianVarianceWalkSurvival_eq_killedExpectation
@@ -1146,7 +1146,7 @@ theorem gaussianVarianceWalk_third_threeEighths_probability_le_fin
   have hpre : E ⁻¹' gaussianWalkSurvivalSet n x =
       gaussianWalkSurvivalSet vs.length x := by
     ext omega
-    simp only [mem_preimage, gaussianWalkSurvivalSet, mem_setOf_eq]
+    simp only [mem_preimage, gaussianWalkSurvivalSet, mem_ofPred_eq]
     rw [hE]
     exact gaussianWalkSurvives_reindex_finCongr hvlen x omega
   have htransport :
@@ -1217,7 +1217,7 @@ theorem gaussianVarianceWalk_third_threeEighths_logBarrier_probability_le_fin
   have hpre : E ⁻¹' gaussianWalkTimeBarrierSet n 0 bn =
       gaussianWalkTimeBarrierSet vs.length 0 b := by
     ext omega
-    simp only [mem_preimage, gaussianWalkTimeBarrierSet, mem_setOf_eq]
+    simp only [mem_preimage, gaussianWalkTimeBarrierSet, mem_ofPred_eq]
     rw [hE]
     have hre := gaussianWalkTimeBarrierSurvives_reindex_finCongr hvlen 0 b omega
     have hbn : bn =

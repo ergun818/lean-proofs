@@ -43,7 +43,7 @@ theorem caichW_natDiv_le_floor_add_one_of_largePrime
           (x : ℝ) / ((p : ℝ) * (1 + 1 / (X : ℝ))) =
         (x : ℝ) / ((p : ℝ) * ((X : ℝ) + 1)) := by
     field_simp [hXR.ne', hpR.ne']
-    <;> ring
+   ; ring
   have hsmall :
       (x : ℝ) / ((p : ℝ) * ((X : ℝ) + 1)) < 1 := by
     apply (div_lt_one (mul_pos hpR (by positivity))).2
@@ -69,7 +69,6 @@ theorem caichW_natDiv_le_floor_add_one_of_largePrime
   have hsuccR :
       (Nat.floor ((x : ℝ) / t) : ℝ) + 2 ≤ (x / p : ℕ) := by
     exact_mod_cast hsucc
-  norm_num at hsuccR
   linarith
 
 /-- In the large-prime branch the literal short support has at most one

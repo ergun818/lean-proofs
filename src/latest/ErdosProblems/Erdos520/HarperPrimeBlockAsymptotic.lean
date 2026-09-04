@@ -76,7 +76,7 @@ theorem integral_reciprocalPrimeKernel
       have hx0 : x ≠ 0 := ne_of_gt (zero_lt_one.trans hx1)
       have hlogx : Real.log x ≠ 0 := (Real.log_pos hx1).ne'
       unfold reciprocalPrimeKernel
-      convert! (Real.hasDerivAt_log hx0).log hlogx using 1 <;> field_simp)
+      convert! (Real.hasDerivAt_log hx0).log hlogx using 1; field_simp)
     hint
   exact hfund
 
@@ -338,7 +338,7 @@ theorem reciprocalPrimeKernelDeriv_nonpos
   simpa only [neg_div] using! neg_nonpos.mpr (div_nonneg hnum hden)
 
 theorem abs_reciprocalPrimeKernel_mul_thetaError_le
-    {x delta : ℝ} (hx : 1 < x) (hdelta : 0 ≤ delta)
+    {x delta : ℝ} (hx : 1 < x) (_hdelta : 0 ≤ delta)
     (herror : |thetaError x| ≤ delta * x) :
     |reciprocalPrimeKernel x * thetaError x| ≤ delta * invLog x := by
   have hxpos : 0 < x := zero_lt_one.trans hx
@@ -524,7 +524,7 @@ theorem tendsto_square_primeReciprocalBlock_log_two :
       simpa only [Real.norm_eq_abs] using! hA)
   have hfour : Tendsto (fun _ : ℕ ↦ (4 : ℝ)) atTop (nhds 4) :=
     tendsto_const_nhds
-  convert! hfour.mul hdelta using 1 <;> norm_num
+  convert! hfour.mul hdelta using 1; norm_num
 
 /-- The reciprocal mass of every sufficiently late scheduled block is
 uniformly close to `log 2`, independently of the ambient cutoff containing
@@ -661,7 +661,7 @@ theorem exists_eventually_harperScheduledVarianceBiasLoss_lt
   have hsix : Tendsto
       (fun j : ℕ ↦ 6 * (harperBlockEndpoint j : ℝ)⁻¹)
       atTop (𝓝 0) := by
-    convert! hsixConst.mul hinv using 1 <;> norm_num
+    convert! hsixConst.mul hinv using 1; norm_num
   have hevent : ∀ᶠ j : ℕ in atTop,
       6 * (harperBlockEndpoint j : ℝ)⁻¹ < ε :=
     (tendsto_order.mp hsix).2 ε hε

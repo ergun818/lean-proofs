@@ -742,7 +742,7 @@ theorem harperFejerMeasureScaled_tail_le_quarter
   have hset : (T⁻¹ * ·) ⁻¹' {x : ℝ | 8 / T < |x|} =
       {x : ℝ | 8 < |x|} := by
     ext x
-    simp only [preimage_setOf_eq, mem_setOf_eq]
+    simp only [preimage_ofPred_eq, mem_ofPred_eq]
     rw [show T⁻¹ * x = x / T by field_simp, abs_div, abs_of_pos hT,
       div_lt_div_iff_of_pos_right hT]
   rw [harperFejerMeasureScaled,

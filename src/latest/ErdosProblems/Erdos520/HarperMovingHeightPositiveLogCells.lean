@@ -71,7 +71,7 @@ theorem
   obtain ⟨Jvar, hJvar⟩ :=
     exists_harperScheduledMovingHeightOffDiagonalVariance_quarter_half
   obtain ⟨Jcell, hJcell⟩ := Filter.eventually_atTop.1
-    eventually_harperScheduledOffDiagonalRelativeIntervalProbability_le_one_add_width_mul_gaussian_of_variance
+    eventually_harperOffDiagRelativeIntervalProb_le_one_add_width_mul_gaussian_of_variance
   refine ⟨max Jvar Jcell, ?_⟩
   intro M j y hj hy t htLower htUpper u hscale a ha
   have hvar := hJvar M j y (by omega) hy t htLower htUpper u hscale

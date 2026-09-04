@@ -46,9 +46,9 @@ theorem hasDerivAt_standardGaussianKernel (x : ℝ) :
       (-x * standardGaussianKernel x) x := by
   unfold standardGaussianKernel
   have hinner : HasDerivAt (fun z : ℝ ↦ -(1 / 2 : ℝ) * z ^ 2) (-x) x := by
-    convert! (((hasDerivAt_id x).pow 2).const_mul (-(1 / 2 : ℝ))) using 1 <;>
-      simp only [id_eq] <;> ring
-  convert! (Real.hasDerivAt_exp _).comp x hinner using 1 <;> ring
+    convert! (((hasDerivAt_id x).pow 2).const_mul (-(1 / 2 : ℝ))) using 1;
+      simp only [id_eq]; ring
+  convert! (Real.hasDerivAt_exp _).comp x hinner using 1; ring
 
 theorem integrable_standardGaussianKernel :
     Integrable standardGaussianKernel := by
@@ -97,8 +97,8 @@ theorem intervalIntegral_exp_neg_mul (a : ℝ) (ha : 0 < a) :
       simpa [id] using! (hasDerivAt_id u).const_mul (-a)
     have hexp := (Real.hasDerivAt_exp _).comp u hinner
     unfold F
-    convert! hexp.neg.div_const a using 1 <;>
-      field_simp [ha.ne'] <;> ring
+    convert! hexp.neg.div_const a using 1;
+      field_simp [ha.ne']
   calc
     (∫ u : ℝ in (0 : ℝ)..1, Real.exp (-a * u)) = F 1 - F 0 := by
       apply intervalIntegral.integral_eq_sub_of_hasDerivAt_of_le (by norm_num)
@@ -412,7 +412,7 @@ theorem measureReal_barrier_le_of_terminal_split
       _ ≤ ∫ omega in A \ near, D omega ∂P := by
         apply setIntegral_mono_on
         · exact integrableOn_const
-        · exact hDintegrable.mono_set diff_subset
+        · exact hDintegrable.mono_set sdiff_subset
         · exact hfarMeas
         · intro omega homega
           exact hD omega homega
@@ -424,7 +424,7 @@ theorem measureReal_barrier_le_of_terminal_split
       exact Filter.Eventually.of_forall fun omega homega ↦
         hDnonneg omega homega
     · filter_upwards with omega
-      exact fun homega ↦ diff_subset homega
+      exact fun homega ↦ sdiff_subset homega
   have hfarMass : P.real (A \ near) ≤ V / r := by
     rw [le_div_iff₀ hr]
     rw [mul_comm]

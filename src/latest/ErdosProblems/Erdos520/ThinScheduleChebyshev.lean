@@ -207,7 +207,7 @@ theorem freshReciprocalSum_le_of_primeCountingUpperBound
       rw [uIcc_of_le habR] at ht
       have htPos : 0 < t := haPos.trans_le ht.1
       have hlogT : 0 < Real.log t := hlogA.trans_le (Real.log_le_log haPos ht.1)
-      convert! (Real.hasDerivAt_log htPos.ne').log hlogT.ne' using 1 <;> field_simp
+      convert! (Real.hasDerivAt_log htPos.ne').log hlogT.ne' using 1; field_simp
     have honeCont : ContinuousOn (fun t : ℝ ↦ 1 / (t * Real.log t))
         (Icc (a : ℝ) b) := by
       apply ContinuousOn.div continuousOn_const

@@ -72,7 +72,6 @@ theorem caichWPrimeContribution_moment_root_le_piecewise
     exact caichWPrimeContribution_moment_root_le r x hr
       (by exact_mod_cast hX) hp
 
-set_option maxHeartbeats 800000 in
 /-- Finite-prime Minkowski with the single-atom repair made before the
 arithmetic estimate. -/
 theorem caichInitialSmoothingError_moment_root_le_piecewise
@@ -175,7 +174,7 @@ noncomputable def caichAlignedConcreteWoverXNat
 
 theorem caichAlignedConcreteWoverXNat_nonneg
     {r K m : ℕ} {a : ℕ → ℕ → ℕ}
-    {ell i : ℕ} (hi : i ∈ alignedRootExpTests K m ell)
+    {ell i : ℕ} (_hi : i ∈ alignedRootExpTests K m ell)
     (omega : Omega) :
     0 ≤ caichAlignedConcreteWoverXNat r m a ell i omega := by
   unfold caichAlignedConcreteWoverXNat

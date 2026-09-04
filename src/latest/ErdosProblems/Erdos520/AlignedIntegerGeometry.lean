@@ -630,7 +630,7 @@ theorem alignedCaichBlockLevel_sq
         (Real.rpow_two _).symm
       _ = (n : ℝ) ^ (((K : ℝ) / 2) * 2) :=
         (Real.rpow_mul hnR.le _ _).symm
-      _ = (n : ℝ) ^ (K : ℝ) := by congr 1 <;> ring
+      _ = (n : ℝ) ^ (K : ℝ) := by congr 1; ring
       _ = (n : ℝ) ^ K := Real.rpow_natCast _ _
   unfold alignedCaichBlockLevel
   rw [div_pow, Real.sq_sqrt hQ, hrpowSq]
@@ -897,7 +897,7 @@ private theorem outerEndpoint_add_one_le_exp_two_mul_outerExponent
     linarith [Real.exp_one_gt_d9]
   have hExpE : (X : ℝ) ≤ Real.exp (E : ℝ) := by
     have hexp : Real.exp (E : ℝ) = Real.exp 1 ^ E := by
-      simpa using! Real.exp_nat_mul 1 E
+      simp
     rw [hexp]
     change ((2 ^ E : ℕ) : ℝ) ≤ Real.exp 1 ^ E
     rw [Nat.cast_pow, Nat.cast_ofNat]
@@ -1112,7 +1112,7 @@ theorem card_alignedRootExpTests_le_exp_entropy
   have hpow : ((2 : ℝ) ^ n) ≤ Real.exp 1 ^ n :=
     pow_le_pow_left₀ (by norm_num) hbase n
   have hexpEq : Real.exp 1 ^ n = Real.exp (n : ℝ) := by
-    simpa using! (Real.exp_nat_mul 1 n).symm
+    simp
   calc
     ((alignedRootExpTests K m ell).card : ℝ) ≤ ((2 ^ n : ℕ) : ℝ) := by
       exact_mod_cast hcardNat

@@ -468,8 +468,8 @@ theorem primeReciprocalPrefix_le_logLog_add_const
         apply Real.log_ne_zero_of_pos_of_ne_one <;> linarith [ht.1]
       dsimp [G]
       convert! (Real.hasDerivAt_log ht0).log hlogt |>.sub
-        ((hasDerivAt_const t K).div (Real.hasDerivAt_log ht0) hlogt) using 1 <;>
-        field_simp <;> ring
+        ((hasDerivAt_const t K).div (Real.hasDerivAt_log ht0) hlogt) using 1;
+        field_simp; ring
     have hGContU : ContinuousOn G (Set.uIcc (2 : ℝ) y) := by
       simpa [Set.uIcc_of_le hyR] using! hGCont
     have hbase := intervalIntegral.integral_eq_sub_of_hasDerivAt hderiv

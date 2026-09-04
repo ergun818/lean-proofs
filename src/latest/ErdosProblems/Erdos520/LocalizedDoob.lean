@@ -77,13 +77,13 @@ theorem Martingale.measure_initial_inter_maximal_le [IsProbabilityMeasure μ]
     · have hpath : (fun k => G k ω) = fun k => X k ω := by
         funext k
         simp [G, hω]
-      simp only [E, Set.mem_setOf_eq, Set.mem_inter_iff, hω, true_and]
+      simp only [E, Set.mem_ofPred_eq, Set.mem_inter_iff, hω, true_and]
       unfold finiteRunningMax
       simp_rw [hpath]
     · have hpath : (fun k => G k ω) = fun _k => 0 := by
         funext k
         simp [G, hω]
-      simp only [E, Set.mem_setOf_eq, Set.mem_inter_iff, hω, false_and,
+      simp only [E, Set.mem_ofPred_eq, Set.mem_inter_iff, hω, false_and,
         iff_false]
       unfold finiteRunningMax
       simp_rw [hpath]

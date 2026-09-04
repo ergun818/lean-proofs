@@ -353,7 +353,7 @@ theorem exists_eventually_sum_harperScheduledInverseEulerPrimeExponent_le_two
   have hscaled : Tendsto
       (fun j : ℕ ↦ 24 * (harperBlockEndpoint j : ℝ)⁻¹)
       atTop (nhds 0) := by
-    convert! (tendsto_const_nhds.mul hinv) using 1 <;> norm_num
+    convert! (tendsto_const_nhds.mul hinv) using 1; norm_num
   have hevent : ∀ᶠ j : ℕ in atTop,
       24 * (harperBlockEndpoint j : ℝ)⁻¹ < 1 / 4 :=
     (tendsto_order.mp hscaled).2 (1 / 4) (by norm_num)

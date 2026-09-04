@@ -226,7 +226,7 @@ theorem exists_harperScheduledMovingHeightOscillation_le_milli :
       atTop (𝓝 0) := by
     convert! hq.add
       ((tendsto_const_nhds : Tendsto (fun _ : ℕ ↦ 5 * (C + 1))
-        atTop (𝓝 (5 * (C + 1)))).mul hq2) using 1 <;> norm_num
+        atTop (𝓝 (5 * (C + 1)))).mul hq2) using 1; norm_num
   have hsmallEventually : ∀ᶠ J : ℕ in atTop,
       (1 / 2 : ℝ) ^ J +
         5 * (C + 1) * (1 / 2 : ℝ) ^ (2 * J) <

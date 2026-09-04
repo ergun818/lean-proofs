@@ -77,7 +77,7 @@ theorem measureReal_caichAuxiliaryComponentFailure_le_natMomentBudget
         ⋃ r ∈ tests ell, point r := by
     ext omega
     simp only [caichAuxiliaryComponentFailure,
-      caichAuxiliaryComponentGoodAtScale, Set.mem_setOf_eq, not_forall,
+      caichAuxiliaryComponentGoodAtScale, Set.mem_ofPred_eq, not_forall,
       not_le, Set.mem_iUnion, exists_prop, point]
   rw [hfailure]
   calc

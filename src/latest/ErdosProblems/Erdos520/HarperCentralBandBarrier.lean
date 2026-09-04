@@ -72,7 +72,7 @@ theorem exists_harperScheduledCentralBandRelativeIntervalProbability_le_one_add_
   obtain ⟨Jvar, hJvar⟩ :=
     exists_harperScheduledCentralBandOffDiagonalVariance_quarter_half
   obtain ⟨Jcell, hJcell⟩ := Filter.eventually_atTop.1
-    eventually_harperScheduledOffDiagonalRelativeIntervalProbability_le_one_add_width_mul_gaussian_of_variance
+    eventually_harperOffDiagRelativeIntervalProb_le_one_add_width_mul_gaussian_of_variance
   refine ⟨max Jvar Jcell, ?_⟩
   intro d j y hj hy t htLower htUpper u hscale a ha
   have hvar := hJvar d j y (by omega) hy t htLower htUpper u hscale
@@ -140,7 +140,7 @@ theorem exists_harperScheduledCentralBandModerateBoxBarrierProbability_le_exp_tw
   obtain ⟨Jvar, hJvar⟩ :=
     exists_harperScheduledCentralBandVarianceVector_quarter_half
   obtain ⟨Jslice, hJslice⟩ := Filter.eventually_atTop.1
-    eventually_harperScheduledOffDiagonalModerateBoxBarrierProbability_le_exp_two_mul_gaussian_of_variance
+    eventually_harperOffDiagModerateBoxBarrierProb_le_exp_two_mul_gaussian_of_variance
   refine ⟨max Jvar Jslice, ?_⟩
   intro d start hstart n y hy t htLower htUpper u hscale lower upper
   have hvar := hJvar d start (by omega) n y hy t htLower htUpper u hscale

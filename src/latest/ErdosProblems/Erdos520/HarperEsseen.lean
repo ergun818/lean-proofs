@@ -380,7 +380,7 @@ theorem continuous_harperTiltedLinearPrimeBlockCharacteristic
     funext v
     exact harperTiltedLinearPrimeBlockCharacteristic_eq_prod y S t u v
   rw [hrepr]
-  exact continuous_finset_prod S fun p _ ↦
+  exact continuous_finsetProd S fun p _ ↦
     continuous_harperTiltedLinearPrimeCharacteristic p.1 t u
 
 theorem continuous_harperBlockGaussianCharacteristic

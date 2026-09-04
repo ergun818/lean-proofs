@@ -104,7 +104,7 @@ theorem sq_le_shortPrimeAverage
   have hlength : q - p = p / X := by
     dsimp only [q]
     field_simp
-    <;> ring
+   ; ring
   have hmono' :
       (p / X) * A ^ 2 ≤
         ∫ t in p..q, 2 * B t ^ 2 + 2 * (A - B t) ^ 2 := by
@@ -123,7 +123,7 @@ theorem sq_le_shortPrimeAverage
         intervalIntegral.integral_const_mul,
         intervalIntegral.integral_const_mul]
       have hinv : (p / X)⁻¹ = X / p := by
-        field_simp <;> ring
+        field_simp
       rw [div_eq_mul_inv, hinv]
       ring
     _ = _ := by rfl

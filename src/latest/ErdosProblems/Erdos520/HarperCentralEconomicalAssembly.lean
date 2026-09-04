@@ -95,12 +95,12 @@ theorem exp_neg_centralHeight_le_half_pow (d : ℕ) :
         simp only [one_div]
   rw [hexp, pow_succ]
   have hpow : (1 / 4 : ℝ) ^ d ≤ (1 / 2 : ℝ) ^ d := by
-    gcongr <;> norm_num
+    gcongr; norm_num
   nlinarith [show 0 ≤ (1 / 4 : ℝ) ^ d by positivity]
 
 private theorem centralSmallBracket_le_of_base_le
     {Q T z bad geometric : ℝ}
-    (hQ0 : 0 ≤ Q) (hT0 : 0 ≤ T) (hz0 : 0 ≤ z)
+    (hQ0 : 0 ≤ Q) (hT0 : 0 ≤ T) (_hz0 : 0 ≤ z)
     (hQ : Q ≤ z) (hT : T ≤ z) (hbad : bad ≤ geometric) :
     2 * ((Q ^ harperTwoThird + Q) + 2 * bad) +
         2 * (T ^ harperTwoThird + T) ≤

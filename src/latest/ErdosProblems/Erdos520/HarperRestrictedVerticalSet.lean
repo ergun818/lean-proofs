@@ -60,7 +60,7 @@ theorem harperEulerSetEnergy_nonneg
   · exact (Real.log_pos (by exact_mod_cast hy)).le
 
 theorem integrable_harperEulerDensity_prod_restrict
-    (y : Nat) {I : Set Real} (hI : MeasurableSet I)
+    (y : Nat) {I : Set Real} (_hI : MeasurableSet I)
     (hIfinite : volume I ≠ ∞) :
     Integrable
       (fun w : Real × Omega => harperEulerDensity y w.2 w.1)
@@ -127,7 +127,7 @@ theorem integral_normalizedHarperEulerSetMass_restrict_le
     exact ae_of_all μ fun omega => by
       by_cases homega : omega ∈ G
       · simp [FG, S, F, homega, normalizedHarperEulerSetMass, nu]
-      · simp [FG, S, F, homega, normalizedHarperEulerSetMass, nu]
+      · simp [FG, S, F, homega, nu]
   have hright (t : Real) :
       (∫ omega, FG (t, omega) ∂μ) =
         ∫ omega in G, normalizedHarperEulerDensity y omega t ∂μ := by

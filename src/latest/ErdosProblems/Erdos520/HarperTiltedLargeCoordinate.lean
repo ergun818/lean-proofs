@@ -245,7 +245,7 @@ theorem harperCenteredLinearBlockLaw_real_abs_ge_le_exp
       Measure.map X (harperTiltedCubeLaw y t) by
         rfl,
     hmap]
-  simpa only [Set.preimage_setOf_eq, X, P] using! hcube
+  simpa only [Set.preimage_ofPred_eq, X, P] using! hcube
 
 /-- With proxy at most `2/3`, the exact tilted block has the explicit
 two-sided tail `2 exp (-3 R^2/4)`. -/
@@ -632,7 +632,7 @@ theorem
                       (Ioc a
                         (a + harperScheduledRelativeIntervalWidth j)) := by
   obtain ⟨Jmoderate, hJmoderate⟩ :=
-    exists_eventually_harperScheduledOffDiagonalRelativeIntervalProbability_le_one_add_width_mul_gaussian M
+    exists_eventually_harperOffDiagRelativeIntervalProb_le_one_add_width_mul_gaussian M
   obtain ⟨Joutside, hJoutside⟩ :=
     exists_eventually_harperScheduledOffDiagonalOutsideCellProbability_le_width_mul_gaussianOne M
   refine ⟨max Jmoderate Joutside, ?_⟩

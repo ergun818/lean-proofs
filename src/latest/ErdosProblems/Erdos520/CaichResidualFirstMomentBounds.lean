@@ -64,7 +64,7 @@ theorem caichTimeWindowReciprocalMass_eq_shortWindow
 most `Z`, the whole first-moment kernel is at most `Z` times the reciprocal
 mass of that window. -/
 theorem caichCoreTimeFirstMomentKernel_le_mul_timeWindowMass
-    {X t Z : ℝ} {x a b : ℕ} (hZ : 0 ≤ Z)
+    {X t Z : ℝ} {x a b : ℕ} (_hZ : 0 ≤ Z)
     (hcard : ∀ p ∈ freshPrimes a b,
       t / (1 + 1 / X) < (p : ℝ) ∧ (p : ℝ) ≤ t →
         ((Nat.smoothNumbersUpTo
@@ -86,7 +86,7 @@ theorem caichCoreTimeFirstMomentKernel_le_mul_timeWindowMass
 exact logarithmic width. -/
 theorem caichCoreAveragedBlockFirstMoment_le_mul_log
     {X A : ℝ} {x a b : ℕ}
-    (hX : 0 ≤ X) (hA : 0 ≤ A) (ha : 1 ≤ a) (hab : a ≤ b)
+    (hX : 0 ≤ X) (_hA : 0 ≤ A) (ha : 1 ≤ a) (hab : a ≤ b)
     (hpoint : ∀ t ∈ Ioc (a : ℝ) (b : ℝ),
       caichCoreTimeFirstMomentKernel X x a b t ≤ A / t) :
     caichCoreAveragedBlockFirstMoment X x a b ≤
@@ -178,7 +178,7 @@ theorem caichBoundaryAveragedBlockFirstMoment_le
     _ ≤ X * A * (1 / X) := by
       gcongr
       convert! Real.log_le_sub_one_of_pos
-        (by positivity : 0 < 1 + 1 / X) using 1 <;> ring
+        (by positivity : 0 < 1 + 1 / X) using 1; ring
     _ = A := by field_simp
 
 end Problem520

@@ -204,8 +204,8 @@ square. -/
 theorem integrable_sq_caichLambda2Kernel
     {Z : Type*} [MeasurableSpace Z]
     {height lower upper : Z → ℕ}
-    (hheight : Measurable height) (hlower : Measurable lower)
-    (hupper : Measurable upper) (z : Z) :
+    (_hheight : Measurable height) (_hlower : Measurable lower)
+    (_hupper : Measurable upper) (z : Z) :
     Integrable (fun omega ↦ caichLambda2Kernel height lower upper z omega ^ 2) μ := by
   have hmeas : Measurable
       (fun omega ↦ caichLambda2Kernel height lower upper z omega) := by
@@ -241,8 +241,8 @@ theorem integrable_sq_caichLambda2Kernel
 theorem integrable_sq_caichLambda3Kernel
     {Z : Type*} [MeasurableSpace Z]
     {height lower upper : Z → ℕ}
-    (hheight : Measurable height) (hlower : Measurable lower)
-    (hupper : Measurable upper) (z : Z) :
+    (_hheight : Measurable height) (_hlower : Measurable lower)
+    (_hupper : Measurable upper) (z : Z) :
     Integrable (fun omega ↦ caichLambda3Kernel height lower upper z omega ^ 2) μ := by
   have hmeas : Measurable
       (fun omega ↦ caichLambda3Kernel height lower upper z omega) := by
@@ -588,7 +588,7 @@ theorem measureReal_caichAuxiliaryComponentFailure_blockMax_le
         ⋃ r ∈ tests ell, ⋃ j ∈ Finset.range (J ell + 1), point r j := by
     ext omega
     simp only [caichAuxiliaryComponentFailure,
-      caichAuxiliaryComponentGoodAtScale, Set.mem_setOf_eq, not_forall,
+      caichAuxiliaryComponentGoodAtScale, Set.mem_ofPred_eq, not_forall,
       not_le, Set.mem_iUnion, exists_prop, point]
     constructor
     · rintro ⟨r, hr⟩

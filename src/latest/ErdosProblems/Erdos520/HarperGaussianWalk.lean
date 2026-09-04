@@ -323,7 +323,7 @@ theorem measurableSet_gaussianWalkSurvivalSet (n : ℕ) {x : ℝ} (hx : 0 ≤ x)
   have heq : gaussianWalkSurvivalSet n x =
       gaussianWalkKilledPayoff n x ⁻¹' Ioi 0 := by
     ext omega
-    simp only [gaussianWalkSurvivalSet, mem_setOf_eq, mem_preimage, mem_Ioi]
+    simp only [gaussianWalkSurvivalSet, mem_ofPred_eq, mem_preimage, mem_Ioi]
     constructor
     · intro h
       rw [gaussianWalkKilledPayoff_eq_of_survives n x omega h]
@@ -346,7 +346,7 @@ theorem integrable_gaussianWalkTerminalDistance (n : ℕ) (x : ℝ) :
   unfold gaussianWalkTerminalDistance
   have hsum : Integrable (fun omega : Fin n → ℝ ↦ ∑ i, omega i)
       (Measure.pi fun _ : Fin n ↦ gaussianReal 0 1) := by
-    exact integrable_finset_sum Finset.univ fun i _hi ↦ heval i
+    exact integrable_finsetSum Finset.univ fun i _hi ↦ heval i
   exact (integrable_const (μ :=
     Measure.pi fun _ : Fin n ↦ gaussianReal 0 1) x).sub hsum
 
@@ -1273,10 +1273,10 @@ theorem gaussianWalkTimeBarrierSurvives_const_iff
       constructor <;> rintro ⟨hfirst, htail⟩
       · constructor
         · linarith
-        · convert! htail using 1 <;> ring
+        · convert! htail using 1; ring
       · constructor
         · linarith
-        · convert! htail using 1 <;> ring
+        · convert! htail using 1; ring
 
 /-- Any deterministic barrier bounded by `B` is controlled by the flat
 barrier at `B`. -/

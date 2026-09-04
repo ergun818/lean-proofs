@@ -63,17 +63,17 @@ theorem volume_real_harperSignedDyadicBand
       simp only [harperSignedDyadicBand, Bool.false_eq_true, if_false,
         Measure.real, Real.volume_Ico]
       rw [ENNReal.toReal_ofReal]
-      rw [harperDyadicRadius_succ]
-      ring
-      have h := harperDyadicRadius_succ_le d
-      linarith
+      · rw [harperDyadicRadius_succ]
+        ring
+      · have h := harperDyadicRadius_succ_le d
+        linarith
   | true =>
       simp only [harperSignedDyadicBand, if_true, Measure.real,
         Real.volume_Ioc]
       rw [ENNReal.toReal_ofReal]
-      rw [harperDyadicRadius_succ]
-      ring
-      exact sub_nonneg.mpr (harperDyadicRadius_succ_le d)
+      · rw [harperDyadicRadius_succ]
+        ring
+      · exact sub_nonneg.mpr (harperDyadicRadius_succ_le d)
 
 theorem harperSignedDyadicBand_finite
     (positive : Bool) (d : Nat) :
@@ -229,7 +229,7 @@ theorem sum_range_nat_mul_inv_two_pow_le_two (m : Nat) :
   have hsum : HasSum
       (fun d : Nat => (d : Real) * (1 / 2 : Real) ^ d) 2 := by
     convert! hasSum_coe_mul_geometric_of_norm_lt_one
-      (r := (1 / 2 : Real)) (by norm_num) using 1 <;> norm_num
+      (r := (1 / 2 : Real)) (by norm_num) using 1; norm_num
   exact sum_le_hasSum (Finset.range m)
     (fun d _hd => mul_nonneg (Nat.cast_nonneg d) (by positivity)) hsum
 

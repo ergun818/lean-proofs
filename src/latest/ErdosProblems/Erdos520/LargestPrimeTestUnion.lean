@@ -57,7 +57,7 @@ theorem measureReal_largestPrimeStoppedFailure_le
       largestPrimeStoppedFailure tests x a b u T ell =
         ⋃ r ∈ tests ell, point r := by
     ext omega
-    simp only [largestPrimeStoppedFailure, point, Set.mem_setOf_eq,
+    simp only [largestPrimeStoppedFailure, point, Set.mem_ofPred_eq,
       Set.mem_iUnion, exists_prop]
   rw [hfailure]
   calc

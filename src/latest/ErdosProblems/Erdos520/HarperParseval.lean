@@ -32,25 +32,21 @@ private theorem integrable_cauchyFourierSeed :
   have hleft : IntegrableOn cauchyFourierSeed (Iic (0 : ℝ)) := by
     have h := integrableOn_exp_mul_complex_Iic
       (a := (1 / 2 : ℝ)) (by norm_num) 0
-    apply h.congr_fun
+    refine h.congr_fun ?_ measurableSet_Iic
     intro u hu
     unfold cauchyFourierSeed
     rw [abs_of_nonpos hu]
-    congr 1
     push_cast
     ring_nf
-    exact measurableSet_Iic
   have hright : IntegrableOn cauchyFourierSeed (Ioi (0 : ℝ)) := by
     have h := integrableOn_exp_mul_complex_Ioi
       (a := (-1 / 2 : ℝ)) (by norm_num) 0
-    apply h.congr_fun
+    refine h.congr_fun ?_ measurableSet_Ioi
     intro u hu
     unfold cauchyFourierSeed
     rw [abs_of_pos hu]
-    congr 1
     push_cast
     ring_nf
-    exact measurableSet_Ioi
   rw [← integrableOn_univ]
   simpa only [Iic_union_Ioi] using! hleft.union hright
 
@@ -60,8 +56,8 @@ private theorem cauchyComplexAlgebra (b : ℝ) :
         ((((1 / 4 : ℝ) + b ^ 2)⁻¹ : ℝ) : ℂ) := by
   apply Complex.ext <;>
     norm_num [Complex.inv_re, Complex.inv_im, Complex.normSq_apply,
-      Complex.div_re, Complex.div_im, ← Complex.ofReal_pow] <;>
-    field_simp <;>
+      Complex.div_re, Complex.div_im, ← Complex.ofReal_pow];
+    field_simp;
     ring_nf
 
 private theorem fourier_cauchyFourierSeed (w : ℝ) :
@@ -178,10 +174,9 @@ theorem integral_complexExp_mul_div_cauchyKernel (u : ℝ) :
       rw [show inner ℝ w u = w * u by
         change u * w = w * u
         ring]
-      simp only [smul_eq_mul, one_div, one_mul]
+      simp only [smul_eq_mul, one_div]
       congr 2
       · congr 2
-        push_cast
         ring_nf
   rw [hmatch, hscaled] at hinv
   unfold cauchyFourierSeed at hinv
@@ -325,7 +320,7 @@ theorem exp_neg_abs_log_sub_div_sqrt_mul
 This form isolates all Fourier analysis from the squarefree-smooth
 specialization below. -/
 theorem integral_finiteDirichletCosineDensity
-    {ι : Type*} [DecidableEq ι] (s : Finset ι)
+    {ι : Type*} (s : Finset ι)
     (a d : ι → ℝ) (hd : ∀ i ∈ s, 0 < d i) :
     (∫ t : ℝ,
         (∑ i ∈ s, ∑ j ∈ s,
@@ -334,6 +329,7 @@ theorem integral_finiteDirichletCosineDensity
           ((1 / 4 : ℝ) + t ^ 2)) =
       2 * Real.pi *
         ∑ i ∈ s, ∑ j ∈ s, a i * a j / max (d i) (d j) := by
+  classical
   let term : ι → ι → ℝ → ℝ := fun i j t ↦
     (a i * a j / (Real.sqrt (d i) * Real.sqrt (d j))) *
       (Real.cos (t * (Real.log (d i) - Real.log (d j))) /
@@ -359,12 +355,12 @@ theorem integral_finiteDirichletCosineDensity
       intro j hj
       ring
     _ = ∑ i ∈ s, ∑ j ∈ s, ∫ t : ℝ, term i j t := by
-      rw [integral_finset_sum s]
+      rw [integral_finsetSum s]
       · apply Finset.sum_congr rfl
         intro i hi
-        rw [integral_finset_sum s (hterm i hi)]
+        rw [integral_finsetSum s (hterm i hi)]
       · intro i hi
-        exact integrable_finset_sum s (hterm i hi)
+        exact integrable_finsetSum s (hterm i hi)
     _ = ∑ i ∈ s, ∑ j ∈ s,
         (a i * a j / (Real.sqrt (d i) * Real.sqrt (d j))) *
           (2 * Real.pi *
@@ -489,7 +485,7 @@ theorem abs_ΨReal_sq_eq_sum_powerset_maxIndicator
   intro T hT
   by_cases hSz : (freshProduct S : ℝ) ≤ z <;>
     by_cases hTz : (freshProduct T : ℝ) ≤ z <;>
-      simp [hSz, hTz, max_le_iff]
+      simp [hSz, hTz]
 
 /-- Exact finite double-sum formula for the existing inverse-square smooth
 energy. -/
@@ -548,14 +544,14 @@ theorem smoothEnergy_eq_sum_powerset_max
           if max (freshProduct S : ℝ) (freshProduct T : ℝ) ≤ z then
             freshCharacter omega S * freshCharacter omega T / z ^ 2
           else 0 := by
-      rw [integral_finset_sum P]
+      rw [integral_finsetSum P]
       · apply Finset.sum_congr rfl
         intro S hS
-        rw [integral_finset_sum P]
+        rw [integral_finsetSum P]
         intro T hT
         exact integrableOn_tailIndicator_div_sq (hmaxPos S hS T hT) _
       · intro S hS
-        exact integrable_finset_sum P fun T hT ↦
+        exact integrable_finsetSum P fun T hT ↦
           integrableOn_tailIndicator_div_sq (hmaxPos S hS T hT) _
     _ = ∑ S ∈ P, ∑ T ∈ P,
         freshCharacter omega S * freshCharacter omega T /
@@ -578,7 +574,7 @@ private theorem log_freshProduct
 
 /-- Square root of a squarefree prime product. -/
 private theorem sqrt_freshProduct
-    {S : Finset ℕ} (hprime : ∀ p ∈ S, p.Prime) :
+    {S : Finset ℕ} (_hprime : ∀ p ∈ S, p.Prime) :
     Real.sqrt (freshProduct S : ℝ) =
       ∏ p ∈ S, Real.sqrt (p : ℝ) := by
   unfold freshProduct
@@ -661,7 +657,7 @@ theorem prod_harperComplexEulerFactor_eq_dirichletPolynomial
   exact Nat.prime_of_mem_primesBelow ((Finset.mem_powerset.mp hS) hp)
 
 private theorem normSq_harperComplexEulerFactor
-    (omega : Omega) {p : ℕ} (hp : 0 < p) (t : ℝ) :
+    (omega : Omega) {p : ℕ} (_hp : 0 < p) (t : ℝ) :
     Complex.normSq (harperComplexEulerFactor omega p t) =
       harperEulerFactor omega p t := by
   unfold harperComplexEulerFactor harperEulerFactor
@@ -669,7 +665,7 @@ private theorem normSq_harperComplexEulerFactor
   simp only [Complex.add_re, Complex.add_im, Complex.one_re, Complex.one_im,
     Complex.mul_re, Complex.mul_im, Complex.ofReal_re, Complex.ofReal_im,
     Complex.exp_ofReal_mul_I_re, Complex.exp_ofReal_mul_I_im,
-    zero_mul, sub_zero, zero_add, mul_zero, add_zero]
+    zero_mul, sub_zero, zero_add, add_zero]
   ring
 
 /-- The real Euler-product density is the squared norm of its complex
@@ -813,8 +809,8 @@ theorem integrable_harperEulerDensity_div_cauchyKernel
         Real.log (freshProduct T : ℝ))).const_mul _
   have hsum : Integrable (fun t : ℝ ↦
       ∑ S ∈ P, ∑ T ∈ P, term S T t) :=
-    integrable_finset_sum P fun S hS ↦
-      integrable_finset_sum P fun T hT ↦ hterm S T
+    integrable_finsetSum P fun S hS ↦
+      integrable_finsetSum P fun T hT ↦ hterm S T
   apply hsum.congr
   exact ae_of_all volume fun t ↦ by
     change (∑ S ∈ P, ∑ T ∈ P, term S T t) =

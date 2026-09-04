@@ -48,7 +48,7 @@ theorem two_mul_caichAlignedPNTBaseline
         2 ^ (alignedThinExponent K L j - 1) * 2 := by omega
     _ = 2 ^ ((alignedThinExponent K L j - 1) + 1) := by
       rw [pow_succ]
-    _ = 2 ^ alignedThinExponent K L j := by congr 1 <;> omega
+    _ = 2 ^ alignedThinExponent K L j := by congr 1; omega
 
 theorem two_le_caichAlignedPNTBaseline
     {K L j : ℕ} (hL : 4 ≤ L) (hK : 1 ≤ K) :
@@ -62,7 +62,7 @@ theorem two_le_caichAlignedPNTBaseline
   omega
 
 theorem log_caichAlignedPNTBaseline
-    {K L j : ℕ} (hL : 4 ≤ L) (hK : 1 ≤ K) :
+    {K L j : ℕ} (_hL : 4 ≤ L) (_hK : 1 ≤ K) :
     Real.log (caichAlignedPNTBaseline K L j : ℝ) =
       ((alignedThinExponent K L j - 1 : ℕ) : ℝ) * Real.log 2 := by
   unfold caichAlignedPNTBaseline
@@ -428,7 +428,7 @@ theorem caichAlignedNear_smoothing_polylog
           (pow_nonneg (by positivity) _)
       _ = B ^ (200 * K + 2) := by
         rw [← pow_mul, ← pow_add]
-        congr 1 <;> omega
+        congr 1; omega
   have hxThree : 3 ≤ x := by
     exact (two_le_alignedThinEndpoint K L j).trans_lt hactive
   have hlogxOne : 1 ≤ Real.log (x : ℝ) := by
@@ -452,7 +452,7 @@ theorem caichAlignedNear_smoothing_polylog
 point has smoothing width at most one quarter of the initial aligned
 endpoint. -/
 theorem four_mul_caichWSmoothingParameterNat_le_alignedInitial
-    {r K m ell i : ℕ} (hK : 1 ≤ K)
+    {r K m ell i : ℕ} (_hK : 1 ≤ K)
     (hi : i ∈ alignedRootExpTests K m ell)
     (hexponent : caichWSmoothingExponent r * ell ^ K + 2 ≤
       alignedOuterExponent K (ell - 2)) :
@@ -708,7 +708,7 @@ theorem five_le_six_mul_scale_mul_alignedExponent_log_step
       have hellR : (3 : ℝ) ≤ ell := by exact_mod_cast hell
       nlinarith
     apply hnumeric.trans
-    convert! hbasic using 1 <;> field_simp <;> ring
+    convert! hbasic using 1; field_simp
   have hrewrite : Real.log ((ceilThinStep ell E : ℝ) / (E : ℝ)) =
       Real.log (alignedThinExponent K ell (j + 1) : ℝ) -
         Real.log (alignedThinExponent K ell j : ℝ) := by
@@ -723,7 +723,7 @@ theorem five_le_six_mul_scale_mul_alignedExponent_log_step
   have htotal := hlogLower.trans hlogRatio
   have hscalePos : (0 : ℝ) < 6 * ell := by positivity
   have := mul_le_mul_of_nonneg_left htotal hscalePos.le
-  convert! this using 1 <;> field_simp <;> ring
+  convert! this using 1; field_simp
 
 /-- Telescoping the preceding lower bound between any two aligned block
 indices. -/
@@ -791,11 +791,11 @@ theorem card_alignedNear_mul_nine_le
     have hlogBX : Real.log (alignedThinEndpoint K ell b : ℝ) <
         Real.log (x : ℝ) := by
       apply Real.strictMonoOn_log
-      · show (0 : ℝ) < alignedThinEndpoint K ell b
+      · change (0 : ℝ) < alignedThinEndpoint K ell b
         exact_mod_cast (show 0 < alignedThinEndpoint K ell b by
           have := two_le_alignedThinEndpoint K ell b
           omega)
-      · show (0 : ℝ) < x
+      · change (0 : ℝ) < x
         exact_mod_cast (show 0 < x by
           have := (two_le_alignedThinEndpoint K ell b).trans_lt hnearB.1
           omega)
@@ -817,9 +817,9 @@ theorem card_alignedNear_mul_nine_le
           Real.log ((ell : ℝ) ^ (100 * K) *
             (alignedThinExponent K ell a : ℝ)) := by
       apply Real.strictMonoOn_log
-      · show (0 : ℝ) < alignedThinExponent K ell b
+      · change (0 : ℝ) < alignedThinExponent K ell b
         exact_mod_cast alignedThinExponent_pos K ell b
-      · show (0 : ℝ) < (ell : ℝ) ^ (100 * K) *
+      · change (0 : ℝ) < (ell : ℝ) ^ (100 * K) *
             (alignedThinExponent K ell a : ℝ)
         exact mul_pos (pow_pos (by positivity) _)
           (by exact_mod_cast alignedThinExponent_pos K ell a)

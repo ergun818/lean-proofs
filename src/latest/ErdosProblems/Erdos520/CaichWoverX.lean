@@ -91,6 +91,7 @@ theorem caichWShortSupport_subset_Ioc (x p : ℕ) (t : ℝ) :
 /-! ## Measurability and finite moments -/
 
 set_option maxHeartbeats 800000 in
+-- Elaborating the composed ΨReal measurability map exceeds the default heartbeat limit.
 theorem measurable_caichWShortDifference (x : ℕ) {p : ℕ} (hp : 0 < p) :
     Measurable fun u : ℝ × Omega ↦
       caichWShortDifference x p u.1 u.2 := by
@@ -172,11 +173,11 @@ theorem integral_sq_sum_f_finset (s : Finset ℕ) :
       fun omega ↦ ∑ m ∈ s, ∑ n ∈ s, f omega m * f omega n by
     funext omega
     rw [pow_two, Finset.sum_mul_sum],
-    integral_finset_sum s (fun m _ ↦
-      integrable_finset_sum s fun n _ ↦ integrable_f_mul_f m n)]
+    integral_finsetSum s (fun m _ ↦
+      integrable_finsetSum s fun n _ ↦ integrable_f_mul_f m n)]
   apply Finset.sum_congr rfl
   intro m hm
-  rw [integral_finset_sum s
+  rw [integral_finsetSum s
     (fun n _ ↦ integrable_f_mul_f m n)]
   by_cases hsq : Squarefree m
   · rw [if_pos hsq]
@@ -363,7 +364,6 @@ theorem norm_caichWPrimeContribution_le
   exact pow_le_pow_left₀ (abs_nonneg _)
     (abs_caichWShortDifference_le x hp t omega) 2
 
-set_option maxHeartbeats 800000 in
 theorem measurable_caichWPrimeContribution
     {X : ℝ} (hX : 0 < X) (x : ℕ) {p : ℕ} (hp : 0 < p) :
     Measurable fun omega ↦ caichWPrimeContribution X x p omega := by
@@ -414,7 +414,7 @@ theorem integrable_caichWPrimeContribution_pow
       hmem.integrable_norm_pow (Nat.ne_of_gt hr)
 
 theorem measurable_caichWShortMomentRootBudget
-    {r : ℕ} (hr : 0 < r) (x p : ℕ) :
+    {r : ℕ} (_hr : 0 < r) (x p : ℕ) :
     Measurable fun t ↦ caichWShortMomentRootBudget r x p t := by
   let B : ℕ → ℝ := fun z ↦
     (Real.sqrt
@@ -503,7 +503,6 @@ noncomputable def caichWPrimeMomentRootBudget
     ∫ t in (p : ℝ)..(p : ℝ) * (1 + 1 / X),
       caichWShortMomentRootBudget r x p t
 
-set_option maxHeartbeats 1200000 in
 /-- Integral Minkowski followed by the exact short-section interpolation
 bound. -/
 theorem caichWPrimeContribution_moment_root_le
@@ -647,7 +646,7 @@ theorem memLp_caichInitialSmoothingError
     funext omega
     simpa only [Finset.sum_apply] using!
       caichInitialSmoothingError_eq_sum_primeContributions X omega x a b]
-  exact memLp_finset_sum' _ fun p hp ↦
+  exact memLp_finsetSum' _ fun p hp ↦
     memLp_caichWPrimeContribution hX x (mem_freshPrimes.mp hp).1.pos q
 
 theorem integrable_caichInitialSmoothingError_pow
@@ -658,7 +657,6 @@ theorem integrable_caichInitialSmoothingError_pow
     abs_of_nonneg (caichInitialSmoothingError_nonneg hX _ _ _ _)] using!
       hmem.integrable_norm_pow (Nat.ne_of_gt hr)
 
-set_option maxHeartbeats 800000 in
 /-- Finite-prime Minkowski, with every prime section already replaced by
 the explicit divisor-energy budget. -/
 theorem caichInitialSmoothingError_moment_root_le
@@ -943,7 +941,7 @@ theorem summable_measureReal_caichAlignedConcreteWoverX_failure
     ext omega
     simp only [safeValue, value, caichAlignedWSafeThreshold, if_neg hell,
       caichAuxiliaryComponentFailure, caichAuxiliaryComponentGoodAtScale,
-      Set.mem_setOf_eq, not_forall, not_le]
+      Set.mem_ofPred_eq, not_forall, not_le]
     constructor
     · rintro ⟨i, hi, hbad⟩
       exact ⟨i, by simpa only [tests] using! hi, by simpa only [if_pos hi] using! hbad⟩

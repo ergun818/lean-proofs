@@ -363,7 +363,7 @@ theorem LauTenenbaumWuRademacherInterpolation_of_dyadicCost
             (ltwRademacherTestPoint (i + 1) -
               ltwRademacherTestPoint i) := by
       simpa only [ltwHypercontractiveInterpolationFailure,
-        Set.mem_setOf_eq] using! hi
+        Set.mem_ofPred_eq] using! hi
     simpa using! not_lt.mp hi')
 
 /-! ## Deterministic estimates for the root-exponential mesh -/

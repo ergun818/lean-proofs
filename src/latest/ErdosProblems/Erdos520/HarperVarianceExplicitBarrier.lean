@@ -105,7 +105,7 @@ theorem harperScheduledOffDiagonalCDFDistance_le_strong_of_variance_quarter
 
 /-- Once the universal Fejer budget is small enough, a moderate cell is
 dominated by `1 + width` times its variance-matched Gaussian cell. -/
-theorem eventually_harperScheduledOffDiagonalRelativeIntervalProbability_le_one_add_width_mul_gaussian_of_variance :
+theorem eventually_harperOffDiagRelativeIntervalProb_le_one_add_width_mul_gaussian_of_variance :
     ∀ᶠ j : ℕ in atTop, ∀ y : ℕ, ∀ t u a : ℝ,
       (1 / 4 : ℝ) <
           harperLinearBlockVariance y
@@ -175,7 +175,7 @@ theorem eventually_harperScheduledOffDiagonalRelativeIntervalProbability_le_one_
 /-- Every moderate off-diagonal product cell is dominated by its Gaussian
 counterpart with the fixed factor `exp 2`, assuming the actual coordinate
 variances lie in `(1/4,1/2)`. -/
-theorem eventually_harperScheduledOffDiagonalModerateCoordinateCell_le_exp_two_mul_gaussian_of_variance :
+theorem eventually_harperOffDiagModerateCoordinateCell_le_exp_two_mul_gaussian_of_variance :
     ∀ᶠ start : ℕ in atTop, ∀ n y : ℕ, ∀ t : ℝ,
       ∀ u : Fin n → ℝ,
       (∀ i : Fin n,
@@ -210,7 +210,7 @@ theorem eventually_harperScheduledOffDiagonalModerateCoordinateCell_le_exp_two_m
                   harperScheduledRelativeIntervalWidth
                     (start + (i : ℕ))) z) := by
   obtain ⟨J, hJ⟩ := eventually_atTop.1
-    eventually_harperScheduledOffDiagonalRelativeIntervalProbability_le_one_add_width_mul_gaussian_of_variance
+    eventually_harperOffDiagRelativeIntervalProb_le_one_add_width_mul_gaussian_of_variance
   filter_upwards [eventually_ge_atTop J] with start hstart
   intro n y t u hvar z hz
   let rho : Fin n → Measure ℝ := fun i ↦
@@ -246,7 +246,7 @@ theorem eventually_harperScheduledOffDiagonalModerateCoordinateCell_le_exp_two_m
       exact mul_le_mul_of_nonneg_right hCprod (by positivity)
 
 /-- Finite slicing of a variance-controlled off-diagonal product law. -/
-theorem eventually_harperScheduledOffDiagonalModerateBoxBarrierProbability_le_exp_two_mul_gaussian_of_variance :
+theorem eventually_harperOffDiagModerateBoxBarrierProb_le_exp_two_mul_gaussian_of_variance :
     ∀ᶠ start : ℕ in atTop, ∀ n y : ℕ, ∀ t : ℝ,
       ∀ u : Fin n → ℝ,
       (∀ i : Fin n,
@@ -272,7 +272,7 @@ theorem eventually_harperScheduledOffDiagonalModerateBoxBarrierProbability_le_ex
               (harperExpandedPartialSumBarrierSet lower upper
                 (harperScheduledRelativeCellWidth start n)) := by
   filter_upwards
-    [eventually_harperScheduledOffDiagonalModerateCoordinateCell_le_exp_two_mul_gaussian_of_variance]
+    [eventually_harperOffDiagModerateCoordinateCell_le_exp_two_mul_gaussian_of_variance]
       with start hcell
   intro n y t u hvar lower upper
   apply measureReal_inter_barrier_box_le_expandedBarrier
@@ -364,7 +364,7 @@ theorem harperScheduledOffDiagonalGaussianWalk_expandedReverseLogBarrier_probabi
 
 /-- Variance-explicit moderate-box reverse-log probability.  Its eventual
 threshold is universal and independent of every vertical cutoff. -/
-theorem eventually_harperScheduledOffDiagonalModerateBoxReverseLogBarrier_probability_le_of_variance :
+theorem eventually_harperOffDiagModerateBoxReverseLogBarrier_probability_le_of_variance :
     ∀ᶠ start : ℕ in atTop, ∀ n : ℕ, 0 < n → ∀ y : ℕ,
       ∀ t : ℝ, ∀ u : Fin n → ℝ,
       (∀ i : Fin n,
@@ -386,7 +386,7 @@ theorem eventually_harperScheduledOffDiagonalModerateBoxReverseLogBarrier_probab
           Real.exp 2 *
             (64 * (x + 4) / Real.sqrt (n : ℝ)) := by
   filter_upwards
-    [eventually_harperScheduledOffDiagonalModerateBoxBarrierProbability_le_exp_two_mul_gaussian_of_variance]
+    [eventually_harperOffDiagModerateBoxBarrierProb_le_exp_two_mul_gaussian_of_variance]
       with start hslice
   intro n hn y t u hvar x c hx hc lower
   have hslice' := hslice n y t u hvar lower

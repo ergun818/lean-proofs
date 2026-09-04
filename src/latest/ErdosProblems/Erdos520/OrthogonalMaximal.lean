@@ -207,8 +207,8 @@ theorem integrable_fIntervalSum_sq (a L : ℕ) :
           f omega (a + i + 1) * f omega (a + j + 1) by
     funext omega
     rw [pow_two, Finset.sum_mul_sum]]
-  exact integrable_finset_sum _ fun i _ =>
-    integrable_finset_sum _ fun j _ => integrable_f_mul_f _ _
+  exact integrable_finsetSum _ fun i _ =>
+    integrable_finsetSum _ fun j _ => integrable_f_mul_f _ _
 
 /-- Exact interval second moment.  Nonsquarefree terms simply contribute
 zero to the diagonal. -/
@@ -223,12 +223,12 @@ theorem integral_fIntervalSum_sq (a L : ℕ) :
           f omega (a + i + 1) * f omega (a + j + 1) by
     funext omega
     rw [pow_two, Finset.sum_mul_sum],
-    integral_finset_sum (Finset.range L)
-      (fun i _ => integrable_finset_sum _ fun j _ =>
+    integral_finsetSum (Finset.range L)
+      (fun i _ => integrable_finsetSum _ fun j _ =>
         integrable_f_mul_f _ _)]
   apply Finset.sum_congr rfl
   intro i hi
-  rw [integral_finset_sum (Finset.range L)
+  rw [integral_finsetSum (Finset.range L)
     (fun j _ => integrable_f_mul_f _ _)]
   by_cases hs : Squarefree (a + i + 1)
   · rw [if_pos hs]
@@ -554,7 +554,7 @@ theorem measureReal_fIntervalPrefixMax_ge_le_of_le_pow_two
   have hset : {omega | u ^ 2 ≤ fIntervalPrefixMax omega a L ^ 2} =
       {omega | u ≤ fIntervalPrefixMax omega a L} := by
     ext omega
-    simpa only [Set.mem_setOf_eq] using!
+    simpa only [Set.mem_ofPred_eq] using!
       (pow_le_pow_iff_left₀ hu.le
         (fIntervalPrefixMax_nonneg omega a L) (by norm_num : 2 ≠ 0))
   rw [hset] at hmarkov

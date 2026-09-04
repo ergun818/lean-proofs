@@ -103,8 +103,7 @@ theorem exists_localizedThinBlockTailConstant_allScales
   intro ell j hj hJ A B hA hB hBC
   by_cases hell0 : ell = 0
   · subst ell
-    simpa using! (measureReal_le_one (μ := μ)
-      (s := localizedThinBlockBad d 0 j A B))
+    simp
   have hellPos : 0 < ell := Nat.pos_of_ne_zero hell0
   let r := max 2 ell
   have hr2 : 2 ≤ r := le_max_left 2 ell

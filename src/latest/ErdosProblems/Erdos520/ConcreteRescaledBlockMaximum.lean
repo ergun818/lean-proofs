@@ -106,7 +106,7 @@ theorem exists_ae_eventually_concreteShiftedBlockEnergyMax_le
     ext omega
     change A ell ≤ caichBlockEnergyMax s.J s.I ell omega ↔ _
     unfold caichRescaledScheduledEnergyFailure
-    simp only [Set.mem_setOf_eq]
+    simp only [Set.mem_ofPred_eq]
     have hmax : caichBlockEnergyMax s.J s.I ell omega =
         caichBlockEnergyMax s.J
           (caichRescaledScheduledEnergy (fun n => n + S) K s.y)

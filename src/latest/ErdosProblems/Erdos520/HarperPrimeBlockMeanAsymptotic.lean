@@ -98,7 +98,7 @@ theorem exists_eventually_harperScheduledDiagonalCorrection_lt
   have hthree : Tendsto
       (fun j : ℕ ↦ 3 * (harperBlockEndpoint j : ℝ)⁻¹)
       atTop (𝓝 0) := by
-    convert! hthreeConst.mul hinv using 1 <;> norm_num
+    convert! hthreeConst.mul hinv using 1; norm_num
   have hevent : ∀ᶠ j : ℕ in atTop,
       3 * (harperBlockEndpoint j : ℝ)⁻¹ < ε :=
     (tendsto_order.mp hthree).2 ε hε
@@ -229,7 +229,7 @@ theorem exists_eventually_harperScheduledCubicRemainder_lt
         (4 / 3 : ℝ) *
           (Real.sqrt (harperBlockEndpoint j : ℝ))⁻¹)
       atTop (𝓝 0) := by
-    convert! hconst.mul hinv using 1 <;> norm_num
+    convert! hconst.mul hinv using 1; norm_num
   have hevent : ∀ᶠ j : ℕ in atTop,
       (4 / 3 : ℝ) *
           (Real.sqrt (harperBlockEndpoint j : ℝ))⁻¹ < ε :=

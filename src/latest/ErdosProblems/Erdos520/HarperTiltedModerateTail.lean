@@ -172,7 +172,7 @@ theorem harperTiltedCubeLaw_real_abs_scheduledCenteredBlockSum_gt_radius_le
           ((1 / 64 : ℝ) * (((2 ^ j : ℕ) : ℝ))) :=
         div_le_div_of_nonneg_left (by norm_num) hbasePos hR2
       _ = 32 / (((2 ^ j : ℕ) : ℝ)) := by
-        field_simp [ne_of_gt htwoPowPos] <;> norm_num
+        field_simp [ne_of_gt htwoPowPos]; norm_num
   calc
     (harperTiltedCubeLaw y t).real
         {eta |
@@ -216,7 +216,7 @@ theorem harperTiltedCubeLaw_real_preimage_moderateBox_compl_le
         ⋃ i : Fin n, bad i := by
     ext eta
     simp only [Set.mem_preimage, Set.mem_compl_iff,
-      mem_harperCoordinateBox, Set.mem_iUnion, bad, Set.mem_setOf_eq,
+      mem_harperCoordinateBox, Set.mem_iUnion, bad, Set.mem_ofPred_eq,
       not_forall, not_le]
   rw [hevent]
   calc

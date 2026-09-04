@@ -220,7 +220,7 @@ private theorem finset_sup'_pow_of_nonneg {ι : Type*}
     (s.sup' hs f) ^ n = g (s.sup' hs f) := by
       simp [g, max_eq_left hsup_nonneg]
     _ = s.sup' hs (g ∘ f) :=
-      Finset.comp_sup'_eq_sup'_comp hs g hg_sup
+      Finset.apply_sup'_eq_sup'_comp hs g hg_sup
     _ = s.sup' hs (fun i ↦ f i ^ n) := by
       apply Finset.sup'_congr hs rfl
       intro i hi

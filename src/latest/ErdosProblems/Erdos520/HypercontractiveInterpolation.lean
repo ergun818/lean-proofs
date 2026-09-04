@@ -125,7 +125,7 @@ theorem measureReal_abs_fIntervalSum_ge_le_energy
       |fIntervalSum omega a L| ^ (2 * r)} =
       {omega | u ≤ |fIntervalSum omega a L|} := by
     ext omega
-    simpa only [Set.mem_setOf_eq] using!
+    simpa only [Set.mem_ofPred_eq] using!
       (pow_le_pow_iff_left₀ hu.le (abs_nonneg _)
         (by omega : 2 * r ≠ 0))
   rw [hset] at hmarkov
@@ -282,7 +282,7 @@ theorem LauTenenbaumWuRademacherInterpolation_of_hypercontractiveCost
             (ltwRademacherTestPoint (i + 1) -
               ltwRademacherTestPoint i) := by
       simpa only [ltwHypercontractiveInterpolationFailure,
-        Set.mem_setOf_eq] using! hi
+        Set.mem_ofPred_eq] using! hi
     simpa using! not_lt.mp hi')
 
 end Problem520

@@ -88,7 +88,7 @@ theorem integrable_Ψ (z p : ℕ) :
     Integrable (fun omega : Omega => Ψ omega z p) μ := by
   classical
   simp_rw [Ψ_eq_sum_squarefreeSmoothSets]
-  exact integrable_finset_sum _ fun S _ => integrable_freshCharacter S
+  exact integrable_finsetSum _ fun S _ => integrable_freshCharacter S
 
 /-- A deterministic finite bound on every smooth sum. -/
 theorem norm_Ψ_le_card (omega : Omega) (z p : ℕ) :

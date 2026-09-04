@@ -122,6 +122,7 @@ theorem caichCoreTimeFirstMomentKernel_le
   · positivity
 
 set_option maxHeartbeats 800000 in
+-- Elaborating the composed strict smooth-sum map exceeds the default heartbeat limit.
 theorem measurable_caichCoreTimeKernel_joint
     (X : ℝ) (x a b : ℕ) :
     Measurable fun u : ℝ × Omega ↦
@@ -146,7 +147,7 @@ theorem integrable_caichCoreTimeKernel_section
     Integrable (fun omega ↦ caichCoreTimeKernel X omega x a b t) μ := by
   classical
   unfold caichCoreTimeKernel
-  apply integrable_finset_sum
+  apply integrable_finsetSum
   intro p hp
   split_ifs with ht
   · exact (integrable_abs_caichStrictSmoothReal_sq ((x : ℝ) / t) p).const_mul _
@@ -205,7 +206,7 @@ theorem integral_caichCoreTimeKernel_le_firstMomentKernel
       caichCoreTimeFirstMomentKernel X x a b t := by
   classical
   unfold caichCoreTimeKernel caichCoreTimeFirstMomentKernel
-  rw [integral_finset_sum (freshPrimes a b) (fun p hp ↦ by
+  rw [integral_finsetSum (freshPrimes a b) (fun p hp ↦ by
     split_ifs
     · exact (integrable_abs_caichStrictSmoothReal_sq
         ((x : ℝ) / t) p).const_mul _
@@ -475,7 +476,7 @@ theorem integrable_caichLongRatioAveragedMain
     Integrable (fun omega ↦
       caichLongRatioAveragedMain X omega x blocks left right near) μ := by
   unfold caichLongRatioAveragedMain
-  apply integrable_finset_sum
+  apply integrable_finsetSum
   intro j hj
   have hjb : j ∈ blocks := (Finset.mem_filter.mp hj).1
   exact integrable_caichCoreAveragedBlockMain hX hx
@@ -491,7 +492,7 @@ theorem integral_caichLongRatioAveragedMain_le_firstMoment
       caichLongRatioAveragedMain X omega x blocks left right near ∂μ) ≤
       caichLongRatioFirstMoment X x blocks left right near := by
   unfold caichLongRatioAveragedMain caichLongRatioFirstMoment
-  rw [integral_finset_sum _ (fun j hj ↦ by
+  rw [integral_finsetSum _ (fun j hj ↦ by
     have hjb : j ∈ blocks := (Finset.mem_filter.mp hj).1
     exact integrable_caichCoreAveragedBlockMain hX hx
       (hleft j hjb) (hle j hjb))]
@@ -508,7 +509,7 @@ theorem integrable_caichBoundaryAveragedMain
     Integrable (fun omega ↦
       caichBoundaryAveragedMain X omega x blocks left right) μ := by
   unfold caichBoundaryAveragedMain
-  exact integrable_finset_sum _ fun j hj ↦
+  exact integrable_finsetSum _ fun j hj ↦
     integrable_caichBoundaryAveragedBlockMain hX hx (hright j hj)
 
 theorem integral_caichBoundaryAveragedMain_le_firstMoment
@@ -519,7 +520,7 @@ theorem integral_caichBoundaryAveragedMain_le_firstMoment
       caichBoundaryAveragedMain X omega x blocks left right ∂μ) ≤
       caichBoundaryFirstMoment X x blocks left right := by
   unfold caichBoundaryAveragedMain caichBoundaryFirstMoment
-  rw [integral_finset_sum _ (fun j hj ↦
+  rw [integral_finsetSum _ (fun j hj ↦
     integrable_caichBoundaryAveragedBlockMain hX hx (hright j hj))]
   exact Finset.sum_le_sum fun j hj ↦
     integral_caichBoundaryAveragedBlockMain_le_firstMoment

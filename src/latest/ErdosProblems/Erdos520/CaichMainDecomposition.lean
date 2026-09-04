@@ -68,7 +68,7 @@ theorem caichCoreTimeKernel_nonneg
 
 /-- A finite uniform bound sufficient for all compact-interval
 integrability obligations. -/
-noncomputable def caichCorePrimeTimeBound (x p : ℕ) : ℝ :=
+noncomputable def caichCorePrimeTimeBound (_x p : ℕ) : ℝ :=
   (p : ℝ)⁻¹ *
     ((((p - 1 + 1).primesBelow.powerset.card : ℕ) : ℝ)) ^ 2
 
@@ -101,7 +101,7 @@ theorem integrableOn_caichCoreTimeKernel_Ioc
     IntegrableOn (caichCoreTimeKernel X omega x a b) (Ioc u v) := by
   rw [funext fun t ↦ caichCoreTimeKernel_eq_sum_primeTerms
     X omega x a b t]
-  exact integrable_finset_sum _ fun p hp ↦
+  exact integrable_finsetSum _ fun p hp ↦
     integrableOn_caichCorePrimeTimeTerm X omega x p (Ioc u v)
       measure_Ioc_lt_top
 
@@ -113,7 +113,7 @@ private theorem caichCorePrimeTimeSupport_eq_Ico
       Ico (p : ℝ) ((p : ℝ) * (1 + 1 / X)) := by
   have hfactor : 0 < 1 + 1 / X := by positivity
   ext t
-  simp only [Set.mem_setOf_eq, Set.mem_Ico]
+  simp only [Set.mem_ofPred_eq, Set.mem_Ico]
   constructor
   · rintro ⟨hupper, hlower⟩
     exact ⟨hlower, (div_lt_iff₀ hfactor).mp hupper⟩
@@ -196,7 +196,7 @@ theorem caichInitialSmoothedMain_eq_globalCoreTime
     exact caichCoreTimeKernel_eq_sum_primeTerms X omega x a b t
   unfold caichInitialSmoothedMain caichShortPrimeAverage
   rw [hkernel,
-    integral_finset_sum (freshPrimes a b) (fun p hp ↦
+    integral_finsetSum (freshPrimes a b) (fun p hp ↦
       integrableOn_caichCorePrimeTimeTerm X omega x p
         (Ioc (a : ℝ) ((b : ℝ) * (1 + 1 / X))) measure_Ioc_lt_top),
     Finset.mul_sum]

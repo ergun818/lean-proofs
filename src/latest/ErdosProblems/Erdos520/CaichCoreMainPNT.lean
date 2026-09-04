@@ -93,7 +93,6 @@ theorem caichCoreAveragedBlockMain_le_of_cutoffReciprocal
     _ = C / ((X : ℝ) * Real.log (b : ℝ)) := by
       dsimp only [C]
       field_simp
-      <;> ring
 
 /-- Effective PNT supplies the reciprocal-window estimate uniformly in all
 parameters in the polylogarithmic Caich regime. -/

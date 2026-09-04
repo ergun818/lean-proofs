@@ -340,7 +340,7 @@ theorem largestPrime_stoppedTail_measureReal_le (x a b : ℕ) {u T : ℝ}
       (measurableSet_le (measurable_largestPrimeQuadraticVariation x a b)
         measurable_const)
   rw [← integral_indicator_one hs]
-  simpa only [Set.indicator_apply, Set.mem_setOf_eq, Pi.one_apply] using!
+  simpa only [Set.indicator_apply, Set.mem_ofPred_eq, Pi.one_apply] using!
     integral_largestPrime_stoppedTail_le x a b hu hT
 
 end Erdos.Problem520

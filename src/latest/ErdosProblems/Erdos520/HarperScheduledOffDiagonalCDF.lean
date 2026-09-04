@@ -207,7 +207,7 @@ theorem exists_eventually_harperScheduledOffDiagonalCDFDistance_le_strong
 
 /-- A moderate off-diagonal cell incurs only the summable multiplicative
 loss `1 + (j+1)⁻²`. -/
-theorem exists_eventually_harperScheduledOffDiagonalRelativeIntervalProbability_le_one_add_width_mul_gaussian
+theorem exists_eventually_harperOffDiagRelativeIntervalProb_le_one_add_width_mul_gaussian
     (M : ℕ) :
     ∃ J : ℕ, ∀ j : ℕ, J ≤ j → ∀ y : ℕ,
       harperBlockEndpoint (j + 1) ≤ y →
@@ -319,7 +319,7 @@ theorem exists_eventually_harperScheduledOffDiagonalModerateCoordinateCell_le_ex
                         harperScheduledRelativeIntervalWidth
                           (start + (i : ℕ))) z) := by
   obtain ⟨J, hJ⟩ :=
-    exists_eventually_harperScheduledOffDiagonalRelativeIntervalProbability_le_one_add_width_mul_gaussian M
+    exists_eventually_harperOffDiagRelativeIntervalProb_le_one_add_width_mul_gaussian M
   refine ⟨J, ?_⟩
   intro start hstart n y hy t htLower htUpper u hscale z hz
   let rho : Fin n → Measure ℝ := fun i ↦
@@ -360,7 +360,7 @@ theorem exists_eventually_harperScheduledOffDiagonalModerateCoordinateCell_le_ex
 /-- Finite slicing for the off-diagonal product law.  The entire moderate
 barrier event costs only `exp 2`, with no dependence on the number of
 blocks. -/
-theorem exists_eventually_harperScheduledOffDiagonalModerateBoxBarrierProbability_le_exp_two_mul_gaussian
+theorem exists_eventually_harperOffDiagModerateBoxBarrierProb_le_exp_two_mul_gaussian
     (M : ℕ) :
     ∃ J : ℕ, ∀ start : ℕ, J ≤ start → ∀ n y : ℕ,
       harperBlockEndpoint (start + n) ≤ y →

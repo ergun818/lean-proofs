@@ -17,7 +17,6 @@ theorem harperCumulativeScheduledRelativeCellWidth_le_two
       intro i j hij
       change start + i.val + 1 = start + j.val + 1 at hij
       apply Fin.ext
-      change i.val = j.val
       omega⟩
   have hsum : harperCumulativeCellWidth
       (harperScheduledRelativeCellWidth start n) k =

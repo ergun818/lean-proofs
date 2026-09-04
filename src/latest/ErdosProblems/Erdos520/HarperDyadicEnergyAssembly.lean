@@ -238,7 +238,7 @@ theorem integral_harperEulerSetEnergy_core_zero_twoThird_le
   have hrightInt : Integrable (fun omega =>
       core omega ^ harperTwoThird +
         ∑ d ∈ Finset.range m, pair d omega ^ harperTwoThird) μ :=
-    hcoreInt.add (integrable_finset_sum (Finset.range m) hpairInt)
+    hcoreInt.add (integrable_finsetSum (Finset.range m) hpairInt)
   calc
     (∫ omega,
         harperEulerSetEnergy y (harperDyadicCore 0) omega ^
@@ -255,8 +255,8 @@ theorem integral_harperEulerSetEnergy_core_zero_twoThird_le
         ∑ d ∈ Finset.range m,
           ∫ omega, pair d omega ^ harperTwoThird ∂μ := by
       rw [integral_add hcoreInt
-        (integrable_finset_sum (Finset.range m) hpairInt),
-        integral_finset_sum (Finset.range m) hpairInt]
+        (integrable_finsetSum (Finset.range m) hpairInt),
+        integral_finsetSum (Finset.range m) hpairInt]
     _ ≤ coreBudget + ∑ d ∈ Finset.range m,
         (bandBudget false d + bandBudget true d) := by
       apply add_le_add hcore

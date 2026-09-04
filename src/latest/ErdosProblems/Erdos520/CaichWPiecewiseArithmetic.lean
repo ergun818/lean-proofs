@@ -88,7 +88,6 @@ theorem caichWShortMomentRootBudget_le_div_sq_of_smallPrime
     dsimp only [C, C₀, u]
     convert! hcardRaw using 1
     field_simp [hpR.ne', hXR.ne']
-    <;> ring
   have henergyRaw := caichWShortDivisorEnergy_le_of_smallPrime
     hr hxp t
   have hdiv : ((x / p : ℕ) : ℝ) ≤ u := by
@@ -277,7 +276,6 @@ theorem caichWPiecewiseTotalMomentRootBudget_le_harmonic_add_card
             D * (p : ℝ)⁻¹ := by
         dsimp only [D, A]
         field_simp [show (p : ℝ) ≠ 0 by exact_mod_cast hp.ne_zero]
-        <;> ring
       exact hraw.trans (by rw [heq]; linarith)
   unfold caichWPiecewiseTotalMomentRootBudget
   change (∑ p ∈ P, caichWPiecewisePrimeMomentRootBudget r X x p) ≤ _
@@ -288,7 +286,7 @@ theorem caichWPiecewiseTotalMomentRootBudget_le_harmonic_add_card
     _ = D * freshReciprocalSum a x + (#P : ℝ) := by
       rw [Finset.sum_add_distrib]
       simp only [Finset.sum_const, nsmul_eq_mul, mul_one,
-        Nat.cast_ofNat, Nat.cast_id]
+        ]
       unfold freshReciprocalSum
       rw [Finset.mul_sum]
     _ ≤ D * (1 + Real.log (x : ℝ)) + (#P : ℝ) := by
@@ -304,7 +302,7 @@ theorem caichWPiecewiseTotalMomentRootBudget_le_harmonic_add_card
 budget is `O_r(x / log x)`. -/
 theorem caichWPiecewiseTotalMomentRootBudget_le_mul_div_log
     {r x : ℕ} (hr : 1 ≤ r) (hlog : 2 ≤ Real.log (x : ℝ))
-    {Cpi : ℝ} (hCpi : 0 ≤ Cpi) (a : ℕ)
+    {Cpi : ℝ} (_hCpi : 0 ≤ Cpi) (a : ℕ)
     (hcard : (#(freshPrimes a x) : ℝ) ≤
       Cpi * (x : ℝ) / Real.log (x : ℝ)) :
     caichWPiecewiseTotalMomentRootBudget r
@@ -327,7 +325,7 @@ theorem caichWPiecewiseTotalMomentRootBudget_le_mul_div_log
       _ = 2 * A * (x : ℝ) / L := by
         dsimp only [D]
         field_simp [hL.ne']
-        <;> ring
+       ; ring
   have hraw :=
     caichWPiecewiseTotalMomentRootBudget_le_harmonic_add_card
       hr hlog a
@@ -424,7 +422,7 @@ theorem exists_eventually_aligned_caichWPiecewiseBudget_bound
 `(C / log x)^r` moment bound for the natural-cast `W/x` variable. -/
 theorem integral_caichAlignedConcreteWoverXNat_pow_le_of_budget
     {r K m : ℕ} (hr : 1 ≤ r) {a : ℕ → ℕ → ℕ}
-    {C : ℝ} (hC : 0 ≤ C) {ell i : ℕ}
+    {C : ℝ} (_hC : 0 ≤ C) {ell i : ℕ}
     (hi : i ∈ alignedRootExpTests K m ell)
     (hbudget :
       caichWPiecewiseTotalMomentRootBudget r
@@ -491,7 +489,7 @@ theorem measureReal_caichAuxiliaryComponentFailure_le_natMomentBudget_at
         ⋃ i ∈ tests ell, point i := by
     ext omega
     simp only [caichAuxiliaryComponentFailure,
-      caichAuxiliaryComponentGoodAtScale, Set.mem_setOf_eq, not_forall,
+      caichAuxiliaryComponentGoodAtScale, Set.mem_ofPred_eq, not_forall,
       not_le, Set.mem_iUnion, exists_prop, point]
   rw [hfailure]
   calc
@@ -563,7 +561,7 @@ theorem summable_measureReal_caichAlignedConcreteWoverXNat_failure
     unfold caichAuxiliaryComponentFailure
       caichAuxiliaryComponentGoodAtScale
     ext omega
-    simp only [Set.mem_setOf_eq, not_forall, not_le]
+    simp only [Set.mem_ofPred_eq, not_forall, not_le]
     rw [hthreshold]
   have hmeasure :
       μ.real (caichAuxiliaryComponentFailure tests value

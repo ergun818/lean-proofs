@@ -277,7 +277,7 @@ theorem finiteCoinFiberIntegral_smoothEnergy
                 (Function.updateFinset old (freshPrimes a b) eta) z b| ^ 2 /
               z ^ 2) /
           (Fintype.card (freshPrimes a b → Bool) : ℝ) := by
-      rw [integral_finset_sum Finset.univ]
+      rw [integral_finsetSum Finset.univ]
       intro eta heta
       exact hfreshInt eta
     _ = ∫ z in Ioi (0 : ℝ),
@@ -312,7 +312,7 @@ theorem finiteCoinFiberIntegral_smoothEnergy
     _ = ∑ S ∈ (freshPrimes a b).powerset,
           ∫ z in Ioi (0 : ℝ),
             |ΨReal old (z / (freshProduct S : ℝ)) a| ^ 2 / z ^ 2 := by
-      rw [← integral_finset_sum (freshPrimes a b).powerset]
+      rw [← integral_finsetSum (freshPrimes a b).powerset]
       · apply setIntegral_congr_fun measurableSet_Ioi
         intro z hz
         dsimp only

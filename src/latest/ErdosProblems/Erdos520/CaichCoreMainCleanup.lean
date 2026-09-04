@@ -141,8 +141,8 @@ theorem integral_comp_const_div_Ioc
       rw [min_eq_left hdu] at hz
       exact (div_pos hd hb).trans hz.1
     dsimp only [f, f']
-    convert! ((hasDerivAt_inv hzpos.ne').const_mul d) using 1 <;>
-      field_simp <;> ring
+    convert! ((hasDerivAt_inv hzpos.ne').const_mul d) using 1;
+      field_simp
   have hf' : ∀ z ∈ Ioo (min (d / b) (d / a)) (max (d / b) (d / a)),
       f' z ≤ 0 := by
     intro z hz
@@ -176,7 +176,7 @@ theorem integral_comp_const_div_Ioc
 post-substitution kernel. -/
 theorem caichCoreTimeKernel_comp_div
     {X : ℝ} {x a b : ℕ} {z : ℝ}
-    (hX : X ≠ 0) (hx : 0 < x) (hz : z ≠ 0) (omega : Omega) :
+    (_hX : X ≠ 0) (hx : 0 < x) (hz : z ≠ 0) (omega : Omega) :
     caichCoreTimeKernel X omega x a b ((x : ℝ) / z) =
       caichCoreBlockKernel X omega x a b z := by
   classical
@@ -366,7 +366,7 @@ theorem without changing the smoothing cleanup. -/
 theorem caichCoreAveragedBlockMain_le_realSmoothBlockEnergy
     {X C : ℝ} {x a b : ℕ}
     (hX : 0 < X) (hx : 0 < x)
-    (ha : 1 ≤ a) (hab : a ≤ b) (hb : 2 ≤ b)
+    (_ha : 1 ≤ a) (hab : a ≤ b) (hb : 2 ≤ b)
     (hC : 0 ≤ C) (omega : Omega)
     (hshort : ∀ z ∈
       Ioc ((x : ℝ) / (b : ℝ)) ((x : ℝ) / (a : ℝ)),
@@ -473,7 +473,6 @@ theorem caichCoreAveragedBlockMain_le_realSmoothBlockEnergy
             realSmoothBlockMaxSq a b omega z / z ^ 2) := by
       dsimp only [A]
       field_simp
-      <;> ring
 
 /-! ## Finite-block deterministic assembly -/
 
@@ -554,7 +553,6 @@ theorem caichNearRatioAveragedMain_le_card_mul_blockEnergyMax
     _ = ((blocks.filter near).card : ℝ) * C * (x : ℝ) *
         caichBlockEnergyMax J U ell omega := by
       simp only [Finset.sum_const, nsmul_eq_mul]
-      push_cast
       ring
 
 end Problem520

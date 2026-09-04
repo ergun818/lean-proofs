@@ -74,7 +74,7 @@ theorem gaussianVarianceWalk_probability_le_fin_of_lower_of_sqrt_le
   have hpre : E ⁻¹' gaussianWalkSurvivalSet n x =
       gaussianWalkSurvivalSet vs.length x := by
     ext omega
-    simp only [Set.mem_preimage, gaussianWalkSurvivalSet, mem_setOf_eq]
+    simp only [Set.mem_preimage, gaussianWalkSurvivalSet, mem_ofPred_eq]
     rw [hE]
     exact gaussianWalkSurvives_reindex_finCongr hvlen x omega
   have htransport :
@@ -208,7 +208,7 @@ theorem exists_eventually_harperScheduledOffDiagonalGaussianWalk_probability_le
 /-- The expanded normalized reverse-log barrier has probability
 `64 (x+4) / sqrt n` under the off-diagonal Gaussian product.  The logarithmic
 shape is nonpositive and the cumulative slicing width costs only `2`. -/
-theorem exists_eventually_harperScheduledOffDiagonalGaussianWalk_expandedReverseLogBarrier_probability_le
+theorem exists_eventually_harperOffDiagGaussianWalk_expandedReverseLogBarrier_probability_le
     (M : ℕ) :
     ∃ J : ℕ, ∀ start : ℕ, J ≤ start → ∀ n : ℕ, 0 < n → ∀ y : ℕ,
       harperBlockEndpoint (start + n) ≤ y →
@@ -283,9 +283,9 @@ theorem exists_eventually_harperScheduledOffDiagonalModerateBoxReverseLogBarrier
                 Real.exp 2 *
                   (64 * (x + 4) / Real.sqrt (n : ℝ)) := by
   obtain ⟨Jslice, hJslice⟩ :=
-    exists_eventually_harperScheduledOffDiagonalModerateBoxBarrierProbability_le_exp_two_mul_gaussian M
+    exists_eventually_harperOffDiagModerateBoxBarrierProb_le_exp_two_mul_gaussian M
   obtain ⟨Jwalk, hJwalk⟩ :=
-    exists_eventually_harperScheduledOffDiagonalGaussianWalk_expandedReverseLogBarrier_probability_le M
+    exists_eventually_harperOffDiagGaussianWalk_expandedReverseLogBarrier_probability_le M
   refine ⟨max Jslice Jwalk, ?_⟩
   intro start hstart n hn y hy t htLower htUpper u hscale
     x c hx hc lower

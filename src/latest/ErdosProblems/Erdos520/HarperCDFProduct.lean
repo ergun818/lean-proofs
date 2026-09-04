@@ -26,7 +26,7 @@ theorem measureReal_Ioc_eq_cdf_sub
     {a b : ℝ} (hab : a ≤ b) :
     rho.real (Ioc a b) = cdf rho b - cdf rho a := by
   rw [← Set.Iic_sdiff_Iic,
-    measureReal_diff (Set.Iic_subset_Iic.mpr hab) measurableSet_Iic,
+    measureReal_sdiff (Set.Iic_subset_Iic.mpr hab) measurableSet_Iic,
     cdf_eq_real, cdf_eq_real]
 
 /-- A Kolmogorov bound `d` gives a `2d` bound on every half-open interval. -/

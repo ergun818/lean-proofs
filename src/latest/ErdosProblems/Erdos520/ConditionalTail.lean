@@ -38,7 +38,7 @@ theorem pow_mul_measureReal_inter_le_of_condExp
     hInt.integrableOn (B ^ r)
   have hset : {omega | B ^ r ≤ U omega ^ r} = {omega | B ≤ U omega} := by
     ext omega
-    simpa only [Set.mem_setOf_eq] using!
+    simpa only [Set.mem_ofPred_eq] using!
       (pow_le_pow_iff_left₀ hB (hU omega) (Nat.ne_of_gt hr))
   rw [hset, measureReal_restrict_apply' (hm E hE)] at hmarkov
   refine hmarkov.trans ?_

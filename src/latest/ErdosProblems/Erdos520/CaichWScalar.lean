@@ -211,8 +211,8 @@ theorem caichWAlignedScalarSummability_of_largeMoment
         gcongr with i hi
         unfold moment
         rw [if_pos hi]
-        convert! hpointEll i (by simpa only [tests] using! hi) using 1 <;>
-          dsimp only [D, T, tests] <;> ring_nf
+        convert! hpointEll i (by simpa only [tests] using! hi) using 1;
+          dsimp only [D, T, tests]; ring_nf
       _ = ((tests ell).card : ℝ) * Real.exp (-2 * D * T) := by simp
       _ ≤ Real.exp (D * T) * Real.exp (-2 * D * T) :=
         mul_le_mul_of_nonneg_right hDT (Real.exp_pos _).le

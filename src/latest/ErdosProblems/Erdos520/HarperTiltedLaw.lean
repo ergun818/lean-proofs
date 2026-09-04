@@ -83,7 +83,10 @@ noncomputable def harperTiltedCoin (p : ℕ) (t : ℝ) : Measure Bool :=
 instance harperTiltedCoin_isProbabilityMeasure (p : ℕ) (t : ℝ) :
     IsProbabilityMeasure (harperTiltedCoin p t) where
   measure_univ := by
-    simp [harperTiltedCoin]
+    simp only [harperTiltedCoin, Measure.coe_nnreal_smul, Bool.univ_eq, Measure.coe_add,
+      Measure.coe_smul, Pi.add_apply, Pi.smul_apply, MeasurableSpace.measurableSet_top,
+      Measure.dirac_apply', Set.mem_insert_iff, Set.mem_singleton_iff, Bool.false_eq_true, or_false,
+      Set.indicator_of_mem, Pi.one_apply, ENNReal.smul_one, Bool.true_eq_false, or_true]
     rw [← ENNReal.coe_add, harperTiltedCoinWeightNNReal_false_add_true]
     simp
 
@@ -91,8 +94,7 @@ instance harperTiltedCoin_isProbabilityMeasure (p : ℕ) (t : ℝ) :
     (p : ℕ) (t : ℝ) (b : Bool) :
     harperTiltedCoin p t {b} =
       (harperTiltedCoinWeightNNReal p t b : ℝ≥0∞) := by
-  cases b <;> simp [harperTiltedCoin] <;>
-    rw [ENNReal.smul_def, smul_eq_mul, mul_one]
+  cases b <;> simp [harperTiltedCoin]
 
 @[simp] theorem harperTiltedCoin_real_singleton
     (p : ℕ) (t : ℝ) (b : Bool) :

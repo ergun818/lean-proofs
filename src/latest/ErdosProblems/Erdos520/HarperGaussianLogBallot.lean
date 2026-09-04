@@ -631,8 +631,8 @@ theorem gaussianMovingWalkSurvives_to_flat
         linarith [h.1]
       · have htail := ih (x + step.2 - omega 0)
           (fun i ↦ omega i.succ) hdtail h.2
-        convert! htail using 1 <;>
-          simp only [List.map_cons, List.sum_cons] <;> ring
+        convert! htail using 1;
+          simp only [List.map_cons, List.sum_cons]; ring
 
 theorem gaussianMovingWalkSurvivalProbability_le_flat
     (steps : List GaussianMovingStep) (hne : steps ≠ [])
@@ -669,7 +669,7 @@ theorem gaussianMovingWalkSurvivalProbability_le_flat
           (x := x + (steps.map Prod.snd).sum) (by positivity)
           (fun i ↦ hlower (steps.get i) (List.get_mem steps i))
           (fun i ↦ hupper (steps.get i) (List.get_mem steps i))
-      convert! hmain using 1 <;> norm_num
+      convert! hmain using 1; norm_num
 
 /-- Appending a segment can increase the killed affine moment by at most
 the total boundary increase of that segment times the preceding survival
@@ -690,10 +690,10 @@ theorem gaussianMovingWalkAffineMoment_append_le
   | nil =>
       have hmain := gaussianMovingWalkAffineMoment_le_totalIncrement
         vs hx hdv hvarv
-      convert! hmain using 1 <;>
+      convert! hmain using 1;
         simp [gaussianMovingWalkAffineMoment,
           gaussianMovingWalkSurvivalProbability,
-          gaussianMovingKilledExpectation] <;> ring
+          gaussianMovingKilledExpectation]; ring
   | cons u us ih =>
       have hdu0 : 0 ≤ u.2 := hdu u (by simp)
       have hdutail : ∀ step ∈ us, 0 ≤ step.2 := by
@@ -803,7 +803,7 @@ theorem integrable_gaussianMovingWalkTerminalDistance
   have hsum : Integrable (fun omega : Fin steps.length → ℝ ↦
       ∑ i, omega i) (gaussianMovingWalkMeasure steps) := by
     simpa only [Finset.sum_apply] using!
-      (integrable_finset_sum Finset.univ (fun i _hi ↦ heval i))
+      (integrable_finsetSum Finset.univ (fun i _hi ↦ heval i))
   unfold gaussianMovingWalkTerminalDistance
   exact (integrable_const (x + (steps.map Prod.snd).sum)).sub hsum
 
@@ -864,7 +864,7 @@ theorem gaussianMovingWalkSurvivalProbability_append_le_affine
           have htail := gaussianMovingWalkSurvivalProbability_le_flat
             vs hvne hterminal hdv hlower hupper
           dsimp only [c, D]
-          convert! htail using 1 <;> ring
+          convert! htail using 1; ring
   calc
     (∫ omega in gaussianMovingWalkSurvivalSet us x,
         gaussianMovingWalkSurvivalProbability vs
@@ -963,7 +963,6 @@ theorem sum_harperPositiveLogSteps_snd
       simp only [List.map_cons, List.sum_cons]
       rw [ih]
       unfold harperPositiveLogIncrement
-      congr 1
       push_cast
       ring_nf
 
@@ -1015,7 +1014,7 @@ theorem harperPositiveLogSteps_variance_regular
 
 private theorem real_log_two_le_one : Real.log (2 : ℝ) ≤ 1 := by
   have h := Real.log_le_sub_one_of_pos (show (0 : ℝ) < 2 by norm_num)
-  convert! h using 1 <;> norm_num
+  convert! h using 1; norm_num
 
 /-- The boundary rises by at most eight across a doubling block. -/
 theorem sum_harperPositiveLogSteps_snd_doubling_le
@@ -1575,7 +1574,7 @@ theorem harperPositiveLogSteps_survives_iff_timeBarrier
         (fun i ↦ s + x + 8 *
           (Real.log ((start + i.val + 2 : ℕ) : ℝ) -
             Real.log ((start + 1 : ℕ) : ℝ))) omega := by
-  rw [gaussianMovingWalkSurvives_iff_absoluteBarrier]
+  rw [gaussianMovingWalkSurvives_iff_absoluteBarrier _ s]
   let hlen := harperPositiveLogSteps_length variance start n
   let b := gaussianMovingWalkAbsoluteBarrier
     (harperPositiveLogSteps variance start n) (s + x)
@@ -1594,7 +1593,7 @@ theorem harperPositiveLogSteps_survives_iff_timeBarrier
     simp only [finCongr_symm_apply_coe]
   have heta : (fun j ↦ eta ((finCongr hlen).symm j)) = omega := by
     funext i
-    simp [eta, hlen]
+    simp [eta]
   rw [hb, heta]
 
 /-- Extend a finite variance schedule by the lower endpoint of the admissible
@@ -1668,7 +1667,7 @@ theorem gaussianVarianceWalk_quarter_one_positiveLogBarrier_probability_le_fin
       gaussianMovingWalkSurvivalSet steps x := by
     ext omega
     simp only [Set.mem_preimage, gaussianWalkTimeBarrierSet,
-      gaussianMovingWalkSurvivalSet, mem_setOf_eq]
+      gaussianMovingWalkSurvivalSet, mem_ofPred_eq]
     rw [hE]
     have hbridge := harperPositiveLogSteps_survives_iff_timeBarrier
       varianceNat 0 n 0 x (fun j ↦ omega (e.symm j))
@@ -1704,14 +1703,14 @@ theorem gaussianWalkTimeBarrierSurvives_add_const
         · have ht : gaussianWalkTimeBarrierSurvives n
               ((s + omega 0) + c) (fun i ↦ b i.succ + c)
               (fun i ↦ omega i.succ) := by
-            convert! htail using 1 <;> ring
+            convert! htail using 1; ring
           exact (ih (s := s + omega 0) (b := fun i ↦ b i.succ)
             (omega := fun i ↦ omega i.succ)).mp ht
       · constructor
         · linarith
         · have ht := (ih (s := s + omega 0) (b := fun i ↦ b i.succ)
             (omega := fun i ↦ omega i.succ)).mpr htail
-          convert! ht using 1 <;> ring
+          convert! ht using 1; ring
 
 /-- Starting the positive logarithmic schedule later only lowers its rise. -/
 theorem positiveLogDifference_start_le (start i : ℕ) :
@@ -1763,7 +1762,7 @@ theorem gaussianVarianceWalk_quarter_one_positiveLogBarrier_probability_le_fin_s
   have hshift : gaussianWalkTimeBarrierSet n s bzeroS =
       gaussianWalkTimeBarrierSet n 0 bzero := by
     ext omega
-    simp only [gaussianWalkTimeBarrierSet, mem_setOf_eq]
+    simp only [gaussianWalkTimeBarrierSet, mem_ofPred_eq]
     have h := gaussianWalkTimeBarrierSurvives_add_const
       n s 0 bzero omega
     simpa only [zero_add, add_zero, bzeroS, bzero, add_assoc, add_comm,

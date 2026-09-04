@@ -297,7 +297,7 @@ theorem integrableOn_realFrozenSmoothPathMaxMoment_div_sq_via_bonami
       (|ΨReal old (z / (freshProduct S : ℝ)) a| ^ 2 / z ^ 2)
   have hmajorant : IntegrableOn majorant (Ioi (0 : ℝ)) := by
     apply Integrable.const_mul
-    apply integrable_finset_sum P
+    apply integrable_finsetSum P
     intro S hS
     apply Integrable.const_mul
     exact integrableOn_realFreshCoefficient_sq_div_sq_of_mem old hS

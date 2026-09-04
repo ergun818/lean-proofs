@@ -108,7 +108,7 @@ theorem integral_harperLinearBlockSum
         ∂harperTiltedCubeLaw y t) =
       harperLinearBlockMean y S t u := by
   unfold harperLinearBlockSum harperLinearBlockMean
-  rw [integral_finset_sum S fun _ _ ↦ Integrable.of_finite]
+  rw [integral_finsetSum S fun _ _ ↦ Integrable.of_finite]
   apply Finset.sum_congr rfl
   intro p hp
   rw [integral_harperTiltedCube_eval,
@@ -280,7 +280,7 @@ theorem integral_harperLogBlockSum_eq_sum
         ∫ b, harperCoordinateLogIncrement p.1 u b
           ∂harperTiltedCoin p.1 t := by
   unfold harperLogBlockSum
-  rw [integral_finset_sum S fun _ _ ↦ Integrable.of_finite]
+  rw [integral_finsetSum S fun _ _ ↦ Integrable.of_finite]
   apply Finset.sum_congr rfl
   intro p hp
   exact integral_harperTiltedCube_eval y t p
@@ -293,7 +293,7 @@ theorem integral_harperLogMainBlockSum
         ∂harperTiltedCubeLaw y t) =
       harperLogMainBlockMean y S t u := by
   unfold harperLogMainBlockSum harperLogMainBlockMean
-  rw [integral_finset_sum S fun _ _ ↦ Integrable.of_finite]
+  rw [integral_finsetSum S fun _ _ ↦ Integrable.of_finite]
   apply Finset.sum_congr rfl
   intro p hp
   rw [integral_harperTiltedCube_eval,

@@ -63,7 +63,7 @@ theorem integral_abs_fIntervalSum_pow_four_le_energy_sq
     simpa only [I, E, ltwSquarefreeIntervalEnergy] using! hbonami
   have hpow := pow_le_pow_left₀ (Real.rpow_nonneg hI _) hroot 2
   have hrootPow : (I ^ (1 / (2 : ℝ))) ^ 2 = I := by
-    convert! Real.rpow_inv_natCast_pow hI (by norm_num : (2 : ℕ) ≠ 0) using 1 <;>
+    convert! Real.rpow_inv_natCast_pow hI (by norm_num : (2 : ℕ) ≠ 0) using 1;
       norm_num
   rw [hrootPow] at hpow
   exact hpow

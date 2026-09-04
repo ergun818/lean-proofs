@@ -155,7 +155,7 @@ theorem measureReal_pi_prefixPositiveLogBarrier_le_of_gaussianMixtureCell
               (fun k ↦ x + 2 + 8 *
                 Real.log ((k.val + 2 : ℕ) : ℝ))) ≤ B
         dsimp only [B]
-        convert! hgaussian using 1 <;> ring
+        convert! hgaussian using 1; ring
   have hmixture :
       (harperGaussianEnvelopeMixture variance widthNN).real expanded ≤
         Real.exp 4 * B := by
@@ -285,7 +285,7 @@ theorem
               (fun k ↦ x + 2 + 8 *
                 Real.log ((k.val + 2 : ℕ) : ℝ))) ≤ B
         dsimp only [B]
-        convert! hgaussian using 1 <;> ring
+        convert! hgaussian using 1; ring
   have hmixture :
       (harperGaussianEnvelopeMixture variance widthNN).real expanded ≤
         Real.exp 4 * B := by
@@ -592,8 +592,7 @@ theorem
   obtain ⟨Jprob, hprob⟩ :=
     exists_harperMovingHeightPrefixGoodPositiveLogWitness_probability_le
   refine ⟨E, hE, D, hD, max Jrec Jprob, ?_⟩
-  intro M
-  intro start n y hstart hn hyEndpoint hy I hI hIfinite
+  intro M start n y hstart hn hyEndpoint hy I hI hIfinite
     htLower htUpper B hB q r hq hqr hr1
   have hstartRec : Jrec + Nat.clog 2 (M + 1) ≤ start :=
     by omega

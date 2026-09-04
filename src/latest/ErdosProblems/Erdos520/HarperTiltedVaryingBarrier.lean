@@ -124,7 +124,7 @@ theorem measurableSet_harperPartialSumBarrierSet
           lower k ≤ harperPathPartialSum omega k ∧
             harperPathPartialSum omega k ≤ upper k} by
     ext omega
-    simp only [mem_harperPartialSumBarrierSet, mem_iInter, mem_setOf_eq]]
+    simp only [mem_harperPartialSumBarrierSet, mem_iInter, mem_ofPred_eq]]
   exact MeasurableSet.iInter fun k ↦
     (measurableSet_le measurable_const (hsum k)).inter
       (measurableSet_le (hsum k) measurable_const)

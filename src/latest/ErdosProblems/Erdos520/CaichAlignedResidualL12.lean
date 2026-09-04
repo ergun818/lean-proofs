@@ -286,7 +286,7 @@ theorem caichTimeWindowReciprocalMass_le_freshReciprocalSum
   unfold caichTimeWindowReciprocalMass freshReciprocalSum
   apply Finset.sum_le_sum
   intro p hp
-  split_ifs <;> simp <;> positivity
+  split_ifs <;> simp
 
 theorem alignedThinEndpoint_lt_succ
     {K L j : ℕ} (hL : 0 < L) :
@@ -598,7 +598,6 @@ theorem caichAlignedFarScheduledL12FirstMoment_le
         (4 * C / (L : ℝ)) * Real.log (x : ℝ) := by
       dsimp only [B]
       field_simp
-      <;> ring
 
 /-- Literal selected first moments satisfy the displayed Rankin-decay
 majorant uniformly over every test point at all sufficiently large scales. -/
@@ -688,7 +687,7 @@ theorem alignedRootExpTestPoint_log_le_exp_scale
       (2 : ℝ) ^ (ell ^ K) ≤ Real.exp 1 ^ (ell ^ K) :=
         pow_le_pow_left₀ (by norm_num) hbase _
       _ = Real.exp ((ell ^ K : ℕ) : ℝ) := by
-        simpa using! (Real.exp_nat_mul 1 (ell ^ K)).symm
+        simp
       _ = Real.exp ((ell : ℝ) ^ K) := by norm_cast
   have hEnonneg : (0 : ℝ) ≤ alignedOuterExponent K ell := by positivity
   calc
@@ -970,7 +969,7 @@ theorem eventually_selectedAlignedHarperSafeL12Moment_term_le_exp
       (4 * C * (ell : ℝ) ^ (2 * K + 1)) *
           Real.exp ((R : ℝ) * T) ≤ Real.exp V * Real.exp V :=
         mul_le_mul hpolyV hRexp (by positivity) (by positivity)
-      _ = Real.exp (2 * V) := by rw [← Real.exp_add]; congr 1 <;> ring
+      _ = Real.exp (2 * V) := by rw [← Real.exp_add]; congr 1; ring
   have hVabsorb : 2 * V ≤ U / 4 := by
     have h8 : (8 : ℝ) ≤ (ell : ℝ) ^ (48 * K) := by
       have hpowNat : ell ≤ ell ^ (48 * K) :=
@@ -996,7 +995,7 @@ theorem eventually_selectedAlignedHarperSafeL12Moment_term_le_exp
       mul_le_mul_of_nonneg_right hpref (Real.exp_pos _).le
     _ = Real.exp (2 * V - 3 * U / 4) := by
       rw [← Real.exp_add]
-      congr 1 <;> ring
+      congr 1; ring
     _ ≤ Real.exp (-(2 * (2 * m + 2 : ℕ) : ℝ) * (ell : ℝ) ^ K) := by
       apply Real.exp_le_exp.mpr
       have hDabsorb' := hDabsorb
@@ -1160,7 +1159,7 @@ theorem summable_measureReal_selectedAlignedHarperL12_failure
     simp only [safeValue, value,
       selectedAlignedLargeSafeThreshold, if_neg hell,
       caichAuxiliaryComponentFailure, caichAuxiliaryComponentGoodAtScale,
-      Set.mem_setOf_eq, not_forall, not_le]
+      Set.mem_ofPred_eq, not_forall, not_le]
     constructor
     · rintro ⟨i, hi, hbad⟩
       exact ⟨i, by simpa only [tests] using! hi,

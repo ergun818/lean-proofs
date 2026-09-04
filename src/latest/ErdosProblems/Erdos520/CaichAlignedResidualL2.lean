@@ -640,7 +640,7 @@ theorem summable_measureReal_selectedAlignedHarperL2_failure
     simp only [safeValue, value,
       selectedAlignedLargeSafeThreshold, if_neg hell,
       caichAuxiliaryComponentFailure, caichAuxiliaryComponentGoodAtScale,
-      Set.mem_setOf_eq, not_forall, not_le]
+      Set.mem_ofPred_eq, not_forall, not_le]
     constructor
     · rintro ⟨i, hi, hbad⟩
       exact ⟨i, by simpa only [tests] using! hi,

@@ -62,7 +62,7 @@ theorem doob_bonami_minkowski_to_scaled_sum
       (fun z => 4 * ∑ S ∈ P, weight S * (coefficientSq S z / z ^ 2))
       (Ioi (0 : ℝ)) := by
     apply Integrable.const_mul
-    apply integrable_finset_sum P
+    apply integrable_finsetSum P
     intro S hS
     apply Integrable.const_mul
     exact hcoeff_integrable S hS
@@ -110,7 +110,7 @@ theorem doob_bonami_minkowski_to_scaled_sum
         ∑ S ∈ P, weight S *
           ∫ z in Ioi (0 : ℝ), coefficientSq S z / z ^ 2 := by
       rw [integral_const_mul]
-      rw [integral_finset_sum]
+      rw [integral_finsetSum]
       · simp_rw [integral_const_mul]
         ring
       · intro S hS
