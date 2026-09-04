@@ -229,7 +229,7 @@ theorem norm_mangoldtSum_le_typeIClosed_add_typeII
 
 /-- A pointwise bound on a coefficient sequence gives the expected finite
 `L²` bound. -/
-lemma sum_norm_sq_le_card_mul_sq {ι : Type*} [DecidableEq ι]
+lemma sum_norm_sq_le_card_mul_sq {ι : Type*}
     (s : Finset ι) (a : ι → ℂ) (A : ℝ) (hA : 0 ≤ A)
     (ha : ∀ i ∈ s, ‖a i‖ ≤ A) :
     (∑ i ∈ s, ‖a i‖ ^ 2) ≤ (s.card : ℝ) * A ^ 2 := by
@@ -243,7 +243,7 @@ lemma sum_norm_sq_le_card_mul_sq {ι : Type*} [DecidableEq ι]
 /-- Product form of the preceding estimate, matching the coefficient factor
 in a Type-II bound. -/
 lemma l2Norm_sq_mul_l2Norm_sq_le
-    {ι κ : Type*} [DecidableEq ι] [DecidableEq κ]
+    {ι κ : Type*}
     (s : Finset ι) (t : Finset κ) (a : ι → ℂ) (b : κ → ℂ)
     (A B : ℝ) (hA : 0 ≤ A) (hB : 0 ≤ B)
     (ha : ∀ i ∈ s, ‖a i‖ ≤ A)
@@ -264,7 +264,7 @@ lemma l2Norm_sq_mul_l2Norm_sq_le
 /-- The special coefficient product used for `Σ₂,₂`: the first coefficient
 is identically one and the second is bounded by `L`. -/
 lemma one_l2Norm_sq_mul_l2Norm_sq_le
-    {ι κ : Type*} [DecidableEq ι] [DecidableEq κ]
+    {ι κ : Type*}
     (s : Finset ι) (t : Finset κ) (b : κ → ℂ)
     (L : ℝ) (hL : 0 ≤ L) (hb : ∀ j ∈ t, ‖b j‖ ≤ L) :
     TypeII.l2Norm s (fun _ => (1 : ℂ)) ^ 2 *
@@ -396,8 +396,8 @@ module proves the corresponding squared estimates for the masked
 coefficients.  The next elementary lemma turns each such estimate into the
 square-root form consumed by the near--far bilinear bound. -/
 
-lemma l2Norm_le_sqrt_of_sq_le {ι : Type*} [DecidableEq ι]
-    (s : Finset ι) (a : ι → ℂ) {C : ℝ} (hC : 0 ≤ C)
+lemma l2Norm_le_sqrt_of_sq_le {ι : Type*}
+    (s : Finset ι) (a : ι → ℂ) {C : ℝ} (_hC : 0 ≤ C)
     (h : TypeII.l2Norm s a ^ 2 ≤ C) :
     TypeII.l2Norm s a ≤ Real.sqrt C := by
   calc
@@ -535,7 +535,7 @@ noncomputable def dyadicAnalyticFactor
 /-- The exact dyadic majorant for a `Σ₂,₂` block after replacing both
 masked coefficient norms by their proved square-root estimates. -/
 noncomputable def sigma22DyadicMajorant
-    (x : ℝ) (y y' M K j k T : ℕ) : ℝ :=
+    (x : ℝ) (y y' _M _K j k T : ℕ) : ℝ :=
   Real.sqrt ((2 ^ j : ℕ) * Real.log (2 * (2 ^ j : ℕ)) ^ 2) *
     dyadicAnalyticFactor x y y' j k T *
       Real.sqrt (2 ^ k : ℕ)
@@ -1489,7 +1489,7 @@ theorem norm_mangoldtSum_two_pow_le_final
       gcongr
     _ = (111024 : ℝ) * (n : ℝ) ^ (27 / 56 : ℝ) * H ^ 6 := by ring
     _ ≤ (10 ^ 12 : ℝ) * (n : ℝ) ^ (27 / 56 : ℝ) * H ^ 6 := by
-      gcongr <;> norm_num
+      gcongr; norm_num
     _ = (10 ^ 12 : ℝ) * (((2 : ℕ) ^ k : ℕ) : ℝ) ^ (27 / 56 : ℝ) *
         Real.log (256 * (((2 : ℕ) ^ k : ℕ) : ℝ)) ^ 6 := by rfl
 

@@ -54,7 +54,7 @@ theorem large_power_witness_of_upper
   apply exists_prime_sq_dvd_of_not_squarefree
   intro hsq
   have hcut : 2 ^ 1728 ≤ (2 : ℕ) ^ k :=
-    Nat.pow_le_pow_right (by norm_num) (by omega)
+    pow_le_pow_right₀ (by norm_num : 1 ≤ (2 : ℕ)) (show 1728 ≤ k by omega)
   obtain ⟨x, hxlo, hxhi, hlower⟩ :=
     Section7.exists_large_reciprocal_mangoldt_sum (2 ^ k) hcut hsq
   have hlower' :
@@ -62,7 +62,7 @@ theorem large_power_witness_of_upper
         ‖GranvilleRamare9.mangoldtSum (2 ^ k) x‖ := by
     simpa only [section7_mangoldtSum_eq_granvilleRamare9] using hlower
   have hpow : 2 ^ 8192 ≤ (2 : ℕ) ^ k :=
-    Nat.pow_le_pow_right (by norm_num) hk
+    pow_le_pow_right₀ (by norm_num : 1 ≤ (2 : ℕ)) hk
   exact not_final_lower_le_upper_of_ge_cutoff hpow
     (hlower'.trans (hupper k hk x hxlo hxhi))
 

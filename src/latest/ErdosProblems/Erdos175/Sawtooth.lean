@@ -77,12 +77,12 @@ def DegreeTenVaalerData : Prop :=
     (∑ r ∈ frequencies 10, ‖degreeTenMinusCoefficient r‖) ≤ 86 / 99
 
 /-- Weighted exponential sum at frequency `r`. -/
-noncomputable def weightedPhaseSum { ι : Type* }
+noncomputable def weightedPhaseSum {ι : Type*}
     (s : Finset ι) (w : ι → ℝ) (t : ι → ℝ) (r : ℤ) : ℂ :=
   ∑ i ∈ s, (w i : ℂ) * e ((r : ℝ) * t i)
 
 /-- Distribute a weighted sum through a finite Fourier polynomial. -/
-lemma weighted_fourierPolynomial_eq { ι : Type* }
+lemma weighted_fourierPolynomial_eq {ι : Type*}
     (s : Finset ι) (w : ι → ℝ) (t : ι → ℝ)
     (F : Finset ℤ) (a : ℤ → ℂ) :
     ∑ i ∈ s, (w i : ℂ) * fourierPolynomial F a (t i) =
@@ -96,7 +96,7 @@ lemma weighted_fourierPolynomial_eq { ι : Type* }
   ring
 
 /-- Real-part version of `weighted_fourierPolynomial_eq`. -/
-lemma weighted_fourierPolynomial_re_eq { ι : Type* }
+lemma weighted_fourierPolynomial_re_eq {ι : Type*}
     (s : Finset ι) (w : ι → ℝ) (t : ι → ℝ)
     (F : Finset ℤ) (a : ℤ → ℂ) :
     ∑ i ∈ s, w i * (fourierPolynomial F a (t i)).re =
@@ -107,7 +107,7 @@ lemma weighted_fourierPolynomial_re_eq { ι : Type* }
 /-- A pointwise Fourier majorant gives a bound for every finite nonnegative
 weighted sum.  This is the first displayed inequality after Lemma 7.1 in the
 paper, stated in a form which does not assume a particular choice of phases. -/
-lemma weighted_sum_le_of_upperMajorant { ι : Type* }
+lemma weighted_sum_le_of_upperMajorant {ι : Type*}
     (s : Finset ι) (w : ι → ℝ) (t : ι → ℝ)
     (F : Finset ℤ) (f : ℝ → ℝ) (c A M : ℝ) (a : ℤ → ℂ)
     (hw : ∀ i ∈ s, 0 ≤ w i)
@@ -154,7 +154,7 @@ lemma weighted_sum_le_of_upperMajorant { ι : Type* }
 
 /-- Applying upper majorants to both `f` and `-f` bounds the absolute value
 of the weighted sum. -/
-lemma abs_weighted_sum_le_of_majorants { ι : Type* }
+lemma abs_weighted_sum_le_of_majorants {ι : Type*}
     (s : Finset ι) (w : ι → ℝ) (t : ι → ℝ)
     (F : Finset ℤ) (f : ℝ → ℝ) (c A M : ℝ)
     (aPlus aMinus : ℤ → ℂ)
@@ -176,7 +176,7 @@ lemma abs_weighted_sum_le_of_majorants { ι : Type* }
       hphase hcoeffPlus hM
 
 /-- The degree-ten specialization of the weighted Vaaler estimate. -/
-lemma degreeTen_abs_weighted_psi_le { ι : Type* }
+lemma degreeTen_abs_weighted_psi_le {ι : Type*}
     (hVaaler : DegreeTenVaalerData)
     (s : Finset ι) (w : ι → ℝ) (t : ι → ℝ) (M : ℝ)
     (hw : ∀ i ∈ s, 0 ≤ w i)
@@ -223,7 +223,7 @@ lemma equation_7_2
 /-- The complete finite Fourier deduction of (7.2) from Lemma 7.1 and the
 Kummer detector (7.1).  In applications `w d = Λ(d)`, `t₁ d = 2n/d`,
 `t₂ d = n/d`, and `L = log n`. -/
-lemma equation_7_2_of_degreeTen { ι : Type* }
+lemma equation_7_2_of_degreeTen {ι : Type*}
     (hVaaler : DegreeTenVaalerData)
     (s : Finset ι) (w : ι → ℝ) (t₁ t₂ : ι → ℝ)
     (bad M L : ℝ)

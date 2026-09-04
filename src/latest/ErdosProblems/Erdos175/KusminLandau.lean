@@ -108,7 +108,7 @@ lemma two_mul_le_sin_pi_mul {x : ℝ} (hx : 0 ≤ x) (hxhalf : x ≤ 1 / 2) :
     2 * x ≤ Real.sin (Real.pi * x) := by
   have h := Real.mul_le_sin (x := Real.pi * x) (by positivity)
     (by nlinarith [Real.pi_pos] : Real.pi * x ≤ Real.pi / 2)
-  convert h using 1 <;> field_simp [Real.pi_ne_zero]
+  convert h using 1; field_simp [Real.pi_ne_zero]
 
 lemma cotPi_antitoneOn : AntitoneOn cotPi (Ioc 0 (1 / 2 : ℝ)) := by
   intro x hx y hy hxy

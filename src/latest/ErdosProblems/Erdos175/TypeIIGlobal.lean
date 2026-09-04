@@ -108,7 +108,7 @@ lemma orientedDyadicAnalyticFactor_zero_le_closed
         simpa [U, V, orientedLargeScale, orientedSmallScale, hjk] using hhone)
     exact hfactor.trans (by
       simpa [U, V, orientedLargeScale, orientedSmallScale, hjk] using hscalar)
-  · simp only [hjk, if_neg]
+  · simp only [hjk]
     have hfactor := dyadicAnalyticFactor_zero_le_orientedPowerBlockFarQ
       x y y' j k hx (by
         simpa [U, V, orientedLargeScale, orientedSmallScale, hjk] using hhone)
@@ -299,10 +299,10 @@ theorem norm_sigma22_le_closed
         apply Finset.sum_le_sum
         intro k hk
         by_cases hact : blockActive y y' j k ∧ sigma22SupportActive M j
-        · simp only [hact, if_pos]
+        · simp only [hact]
           exact sigma22OrientedBlockMajorant_le_final hy hy' hM3 hyM hMlarge
             hj hact.1 hact.2 hxlower hxupper
-        · simp only [hact, if_neg]
+        · simp only [hact]
           exact hC
       _ = (TypeI.dyadicCount (M * M) : ℝ) *
           TypeI.dyadicCount y' * C := by simp [mul_assoc]
@@ -371,10 +371,10 @@ theorem norm_sigma3_le_closed
         apply Finset.sum_le_sum
         intro k hk
         by_cases hact : blockActive y y' j k ∧ sigma3SupportActive M M j k
-        · simp only [hact, if_pos]
+        · simp only [hact]
           exact sigma3OrientedBlockMajorant_le_final hy hy' hM hM3 hyM hMlarge
             hact.1 hact.2 hxlower hxupper
-        · simp only [hact, if_neg]
+        · simp only [hact]
           exact hC
       _ = (TypeI.dyadicCount y' : ℝ) * TypeI.dyadicCount y' * C := by
         simp [mul_assoc]

@@ -39,7 +39,7 @@ lemma sum_double_inv_eq_finiteHarmonic_mul (H₁ H₂ : ℕ) :
 `1/(r₁r₂)` estimate for every terminal correlation. -/
 theorem reciprocalExpRange_fourth_le_of_terminal
     (x : ℝ) (C N q : ℕ) (hq : 1 ≤ q) (hqN : q ^ 2 ≤ N)
-    (K : ℝ) (hK : 0 ≤ K)
+    (K : ℝ) (_hK : 0 ≤ K)
     (hterminal : ∀ r₁ < q ^ 2, ∀ r₂ < q,
       ‖∑ n ∈ Finset.range (N - (r₂ + 1) - (r₁ + 1)),
         positiveCorrelation₂
@@ -278,7 +278,6 @@ lemma terminalCorrelation_reciprocal_le
       _ = ((C + N : ℕ) : ℝ) ^ 4 / (6 * x) *
           (((r₁ + 1 : ℕ) : ℝ) * ((r₂ + 1 : ℕ) : ℝ))⁻¹ := by
         field_simp
-
   · have hLtwo : L ≤ 1 := by omega
     calc
       ‖∑ n ∈ Finset.range (N - (r₂ + 1) - (r₁ + 1)),
@@ -332,7 +331,7 @@ theorem reciprocalExpSum_fourth_le
     hx (by omega) hq hqN hderiv
   have hend : A + 1 + (B - A) = B + 1 := by omega
   rw [hend] at h
-  convert h using 1 <;> ring
+  convert h using 1; ring
 
 /-- Natural-endpoint form of the first-derivative branch. -/
 theorem norm_reciprocalExpSum_le_firstDerivative

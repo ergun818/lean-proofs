@@ -558,7 +558,6 @@ theorem norm_reciprocalExpRange_le_dyadic_qfree_k1_ambient
       rw [mul_pow, mul_pow, Real.sq_sqrt hdelta, Real.sq_sqrt hLlog]
       have hprod : 0 ≤ (M : ℝ) ^ 2 * (x / (C : ℝ) ^ 3) *
           (1 + Real.log (C : ℝ)) := by positivity
-      norm_num
       nlinarith
 
 /-- Natural-Ioc middle-frequency estimate.  The ambient length is the left
@@ -680,7 +679,6 @@ theorem norm_reciprocalExpSum_le_three_branch
               Real.sqrt (Real.log (C : ℝ)) := by
           nlinarith [hnonnegDirect, hnonnegK2]
         _ = _ := by rfl
-
     · have hratio : (1 / 4 : ℝ) ≤ x / (C : ℝ) ^ 3 := by
         have hC3pos : 0 < (C : ℝ) ^ 3 := by positivity
         rw [le_div_iff₀ hC3pos]

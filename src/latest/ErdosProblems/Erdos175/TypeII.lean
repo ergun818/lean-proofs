@@ -29,7 +29,7 @@ namespace Erdos175.TypeII
 
 section OneBlock
 
-variable {U V : Type*} [DecidableEq U] [DecidableEq V]
+variable {U V : Type*}
 
 /-- The unnormalised `L²` norm of coefficients on a finite support. -/
 noncomputable def l2Norm (s : Finset U) (a : U → ℂ) : ℝ :=
@@ -126,7 +126,7 @@ lemma innerSum_meanSquare_le_sum_norm_correlation
           intro v hv
           apply Finset.sum_congr rfl
           intro w hw
-          simp [norm_mul]
+          simp
 
 /-- Diagonal/off-diagonal correlation estimates imply a mean-square bound.
 The diagonal contributes `D` once, while Cauchy--Schwarz bounds the full
@@ -134,7 +134,7 @@ off-diagonal coefficient mass by `card(vSupport) * ‖beta‖₂²`. -/
 lemma reciprocalInnerBound_of_diagonal_offDiagonal
     (uSupport : Finset U) (vSupport : Finset V)
     (beta : V → ℂ) (kernel : U → V → ℂ) (D Q : ℝ)
-    (hD : 0 ≤ D) (hQ : 0 ≤ Q)
+    (_hD : 0 ≤ D) (hQ : 0 ≤ Q)
     (hdiag : ∀ v ∈ vSupport,
       ‖kernelCorrelation uSupport kernel v v‖ ≤ D)
     (hoff : ∀ v ∈ vSupport, ∀ w ∈ vSupport, v ≠ w →
@@ -417,7 +417,7 @@ lemma productCorrelationSupport_eq_Ioc
 `y < uv ≤ y'`.  In particular, the analytic sum has no holes: it is the
 single `Ioc` interval displayed by `productCorrelationSupport_eq_Ioc`. -/
 lemma kernelCorrelation_restrictedReciprocalKernel_eq
-    (x : ℝ) (y y' U v w : ℕ) (hU : 1 ≤ U) (hv : 0 < v) (hw : 0 < w) :
+    (x : ℝ) (y y' U v w : ℕ) (_hU : 1 ≤ U) (hv : 0 < v) (hw : 0 < w) :
     kernelCorrelation (Finset.Ioc U (2 * U))
         (restrictedReciprocalKernel (Finset.Ioc y y') x) v w =
       ∑ u ∈ Finset.Ioc (max U (max (y / v) (y / w)))
@@ -727,7 +727,7 @@ lemma effective_k1_highFailure_le
   rw [hrhs]
   calc
     q ^ 7 ≤ 147456 * (C : ℝ) ^ 6 * L ^ 2 := hseven
-    _ ≤ 128 ^ 7 * (C : ℝ) ^ 6 * L ^ 2 := by gcongr <;> norm_num
+    _ ≤ 128 ^ 7 * (C : ℝ) ^ 6 * L ^ 2 := by gcongr; norm_num
 
 /-- The integer near-pair threshold used on the power block of length
 `2^j`.  Taking the exponent floor at the integer level makes the threshold
@@ -783,7 +783,7 @@ def dyadicNatBlock (U : ℕ) : Finset ℕ := Finset.Ioc U (2 * U)
 /-- On a rectangular block, the Gram kernel is exactly the unweighted
 reciprocal exponential sum to which Proposition 8.1 applies. -/
 lemma kernelCorrelation_reciprocalKernel_eq
-    (x : ℝ) (U v w : ℕ) (hU : 1 ≤ U) (hv : v ≠ 0) (hw : w ≠ 0) :
+    (x : ℝ) (U v w : ℕ) (_hU : 1 ≤ U) (hv : v ≠ 0) (hw : w ≠ 0) :
     kernelCorrelation (dyadicNatBlock U) (reciprocalKernel x) v w =
       ∑ u ∈ Finset.Ioc U (2 * U),
         e ((x * (1 / (w : ℝ) - 1 / (v : ℝ))) / (u : ℝ)) := by
@@ -917,7 +917,7 @@ lemma l2Norm_aCoeff_le (N z : ℕ) (hz : 1 ≤ z) :
 
 /-- The actual `b_r = μ_{≤M} * Λ_{≤K}` coefficients satisfy the same
 elementary dyadic second-moment estimate as any sequence bounded by `log r`. -/
-lemma sum_norm_bCoeff_sq_le (R M K : ℕ) (hR : 1 ≤ R) :
+lemma sum_norm_bCoeff_sq_le (R M K : ℕ) (_hR : 1 ≤ R) :
     (∑ r ∈ dyadicNatBlock R, ‖((bCoeff M K r : ℝ) : ℂ)‖ ^ 2) ≤
       (R : ℝ) * Real.log (2 * R : ℕ) ^ 2 := by
   have hterm (r : ℕ) (hr : r ∈ dyadicNatBlock R) :
@@ -956,7 +956,7 @@ lemma l2Norm_bCoeff_le (R M K : ℕ) (hR : 1 ≤ R) :
 Mangoldt coefficients on `(K,2K]`.  Granville--Ramaré use the sharper
 `1.285 K log(2K)` estimate; this elementary `K log(2K)^2` bound costs only
 one additional logarithm and preserves the decisive power saving. -/
-lemma sum_norm_vonMangoldt_sq_le (K : ℕ) (hK : 1 ≤ K) :
+lemma sum_norm_vonMangoldt_sq_le (K : ℕ) (_hK : 1 ≤ K) :
     (∑ k ∈ dyadicNatBlock K,
         ‖((ArithmeticFunction.vonMangoldt k : ℝ) : ℂ)‖ ^ 2) ≤
       (K : ℝ) * Real.log (2 * K : ℕ) ^ 2 := by
@@ -1004,7 +1004,7 @@ end ReciprocalKernel
 
 section DyadicAssembly
 
-variable {J : Type*} [DecidableEq J]
+variable {J : Type*}
 
 /-- Triangle inequality followed by Cauchy--Schwarz across a finite family
 of dyadic blocks. -/
@@ -1053,7 +1053,7 @@ constant `R` may be used on every block; disjointness or bounded-overlap
 information is subsequently supplied through the two sums of squared local
 `L²` norms. -/
 lemma norm_sum_bilinearBlocks_le
-    {U V : Type*} [DecidableEq U] [DecidableEq V]
+    {U V : Type*}
     (blocks : Finset J) (uSupport : J → Finset U) (vSupport : J → Finset V)
     (alpha : J → U → ℂ) (beta : J → V → ℂ)
     (kernel : J → U → V → ℂ) (R : ℝ) (hR : 0 ≤ R)

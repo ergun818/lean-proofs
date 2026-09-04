@@ -559,7 +559,7 @@ lemma scaled_endpoint_conditions
 
 /-- Dividing an interval with `y' ≤ 2y` by a positive natural number
 produces a dyadic interval up to the single unavoidable rounding unit. -/
-lemma quotient_interval_sub_le {y y' m : ℕ} (hm : 1 ≤ m)
+lemma quotient_interval_sub_le {y y' m : ℕ} (_hm : 1 ≤ m)
     (hy' : y' ≤ 2 * y) :
     y' / m - y / m ≤ y / m + 1 := by
   have hB : y' / m ≤ 2 * (y / m) + 1 := by
@@ -1065,7 +1065,7 @@ lemma threeBranchOuterNumerator_nonneg {x : ℝ} (y M : ℕ) (hx : 0 < x) :
 
 /-- Increasing the upper endpoint can only increase the packaged majorant. -/
 lemma threeBranchBound_mono_upper {x : ℝ} {A B B' : ℕ}
-    (hx : 0 < x) (hAB : A ≤ B) (hBB' : B ≤ B') :
+    (hx : 0 < x) (_hAB : A ≤ B) (hBB' : B ≤ B') :
     threeBranchBound x A B ≤ threeBranchBound x A B' := by
   have hsub : B - A ≤ B' - A := Nat.sub_le_sub_right hBB' A
   have hlog : 0 ≤ 1 + Real.log (((A + 1 : ℕ) : ℝ)) := by
@@ -1233,7 +1233,7 @@ lemma sum_Icc_le_mul_dyadicCount
 
 /-- Closed summation of all three analytic branches. -/
 lemma sum_threeBranchBound_le
-    {x : ℝ} {y y' M : ℕ} (hx : 0 < x) (hM : 1 ≤ M)
+    {x : ℝ} {y y' M : ℕ} (hx : 0 < x) (_hM : 1 ≤ M)
     (hy' : y' ≤ 2 * y)
     (hA : ∀ m ∈ Finset.Icc 1 M, 1 ≤ y / m) :
     (∑ m ∈ Finset.Icc 1 M,

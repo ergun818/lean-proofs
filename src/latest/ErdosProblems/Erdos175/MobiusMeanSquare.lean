@@ -462,7 +462,6 @@ theorem squarefree_density_weight_identity (N : ℕ) (hN : 1 ≤ N) :
                 (↑k + 2) / (↑k * (↑k + 1))) +
               1 / (N + 1 : ℝ) := by
                 field_simp
-                push_cast
                 ring
         _ = ((harmonic N : ℝ) + 2) + 1 / (N + 1 : ℝ) := by rw [ih]
         _ = (harmonic N : ℝ) + (N + 1 : ℝ)⁻¹ + 2 := by
@@ -546,7 +545,7 @@ theorem mobiusSqReal_eq_zero_of_not_squarefree {n : ℕ} (hn : ¬Squarefree n) :
 /-- For a squarefree number every divisor and complementary divisor is
 squarefree.  For a non-squarefree number the left side below vanishes. -/
 theorem mobiusSqReal_card_divisors_div_le_convolution
-    {n : ℕ} (hn : 1 ≤ n) :
+    {n : ℕ} (_hn : 1 ≤ n) :
     mobiusSqReal n * (n.divisors.card : ℝ) / (n : ℝ) ≤
       ∑ d ∈ n.divisors,
         (mobiusSqReal d / (d : ℝ)) *
@@ -620,7 +619,7 @@ theorem sum_divisor_convolution_eq_sum_factor_pairs
 
 /-- The divisor-weighted Möbius square sum is bounded by the square of its
 unweighted reciprocal sum. -/
-theorem sum_mobius_sq_card_divisors_div_le_sq (N : ℕ) (hN : 1 ≤ N) :
+theorem sum_mobius_sq_card_divisors_div_le_sq (N : ℕ) (_hN : 1 ≤ N) :
     (∑ n ∈ Finset.Icc 1 N,
         mobiusSqReal n * (n.divisors.card : ℝ) / (n : ℝ)) ≤
       (∑ n ∈ Finset.Icc 1 N, mobiusSqReal n / (n : ℝ)) ^ 2 := by
@@ -682,7 +681,7 @@ theorem sum_mobius_sq_card_divisors_div_le (N : ℕ) (hN : 1 ≤ N) :
 /-- Multiples of a squarefree `d` can be divided by `d`; the Möbius function
 then leaves precisely the terms coprime to `d`. -/
 theorem sum_mobius_multiples_eq_coprime_sum
-    {d z : ℕ} (hd : Squarefree d) (hdpos : 1 ≤ d) (hdz : d ≤ z) :
+    {d z : ℕ} (_hd : Squarefree d) (hdpos : 1 ≤ d) (_hdz : d ≤ z) :
     (∑ b ∈ (Finset.Icc 1 z).filter (fun b => d ∣ b),
         (((ArithmeticFunction.moebius b : ℤ) : ℝ) / (b : ℝ))) =
       (((ArithmeticFunction.moebius d : ℤ) : ℝ) / (d : ℝ)) *
@@ -734,7 +733,6 @@ theorem sum_mobius_multiples_eq_coprime_sum
       have hmul := ArithmeticFunction.isMultiplicative_moebius.map_mul_of_coprime hcd.symm
       rw [hmul]
       push_cast
-      norm_num
       ring
     · rw [if_neg hcd]
       have hnSq : ¬Squarefree (d * c) := by
@@ -1005,7 +1003,7 @@ theorem abs_intervalMultipleCount_sub_le_one
   have hnat : (2 * N) / q - N / q = A + (2 * r) / q := by
     change (2 * N) / q - A = A + (2 * r) / q
     rw [hdouble]
-    simp [two_mul, Nat.add_assoc, Nat.add_comm, Nat.add_left_comm]
+    simp [two_mul, Nat.add_assoc]
   rw [hnat]
   have hqR : (0 : ℝ) < (q : ℝ) := by exact_mod_cast hq
   have hreal : (N : ℝ) / (q : ℝ) = (A : ℝ) + (r : ℝ) / (q : ℝ) := by
@@ -1286,7 +1284,7 @@ theorem sum_mul_gcd_div_eq_general (f : ℕ → ℝ) {a z : ℕ} (ha : 1 ≤ a) 
 
 /-- A row of the positive lcm form. -/
 theorem sum_mobiusSqReal_gcd_div_le {a z : ℕ}
-    (ha : Squarefree a) (hapos : 1 ≤ a) (haz : a ≤ z) :
+    (_ha : Squarefree a) (hapos : 1 ≤ a) (haz : a ≤ z) :
     (∑ b ∈ Finset.Icc 1 z,
         mobiusSqReal b * (Nat.gcd a b : ℝ) / (b : ℝ)) ≤
       (a.divisors.card : ℝ) * ((2 / 3 : ℝ) * (Real.log z + 3)) := by

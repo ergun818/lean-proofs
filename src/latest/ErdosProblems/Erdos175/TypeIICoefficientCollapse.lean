@@ -235,9 +235,9 @@ theorem sigma22OrientedBlockMajorant_le_closed
   · have hcoeff := sqrt_const_mul_sqrt_logMass_le
       hy (pow_pos (by omega) j) (pow_pos (by omega) k) hprod hH (by
         simpa [orientedLargeScale, hjk] using hlogLarge)
-    simp only [sigma22OrientedBlockMajorant, hjk, if_neg]
+    simp only [sigma22OrientedBlockMajorant, hjk]
     have hf := hanalytic
-    simp only [hjk, if_neg] at hf hf0
+    simp only [hjk] at hf hf0
     calc
       Real.sqrt ((2 ^ j : ℕ) * Real.log (2 * (2 ^ j : ℕ)) ^ 2) *
           dyadicAnalyticFactor x y y' j k 0 * Real.sqrt (2 ^ k : ℕ) =
@@ -298,9 +298,9 @@ theorem sigma3OrientedBlockMajorant_le_closed
   · have hcoeff := sqrt_lambdaMass_mul_sqrt_aMass_le
       hy hM (pow_pos (by omega) j) (pow_pos (by omega) k) hprod hH (by
         simpa [orientedSmallScale, hjk] using hlogSmall) hlogM
-    simp only [sigma3OrientedBlockMajorant, hjk, if_neg]
+    simp only [sigma3OrientedBlockMajorant, hjk]
     have hf := hanalytic
-    simp only [hjk, if_neg] at hf hf0
+    simp only [hjk] at hf hf0
     calc
       Real.sqrt ((8 / 9 : ℝ) * (2 ^ j : ℕ) * (Real.log M + 3) ^ 3 + 1) *
           dyadicAnalyticFactor x y y' j k 0 *

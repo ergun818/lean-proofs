@@ -551,7 +551,7 @@ lemma erdos_175_of_large
         exists_prime_sq_dvd_centralBinom_two_pow_of_lt hk3 hk
       exact not_squarefree_of_prime_sq_dvd hp hdvd
     · obtain ⟨p, hp, hdvd⟩ := hlarge (2 ^ k) (by
-        exact Nat.pow_le_pow_right (by norm_num) (by omega))
+        exact pow_le_pow_right₀ (by norm_num : 1 ≤ (2 : ℕ)) (show 1617 ≤ k by omega))
       exact not_squarefree_of_prime_sq_dvd hp hdvd
   · exact not_squarefree_of_prime_sq_dvd Nat.prime_two (by
       simpa using (four_dvd_centralBinom_iff n (by omega)).mpr hpow)
@@ -574,7 +574,7 @@ lemma erdos_175_of_large_1728
         exists_prime_sq_dvd_centralBinom_two_pow_of_lt_1728 hk3 hk
       exact not_squarefree_of_prime_sq_dvd hp hdvd
     · obtain ⟨p, hp, hdvd⟩ := hlarge (2 ^ k) (by
-        exact Nat.pow_le_pow_right (by norm_num) (by omega))
+        exact pow_le_pow_right₀ (by norm_num : 1 ≤ (2 : ℕ)) (show 1728 ≤ k by omega))
       exact not_squarefree_of_prime_sq_dvd hp hdvd
   · exact not_squarefree_of_prime_sq_dvd Nat.prime_two (by
       simpa using (four_dvd_centralBinom_iff n (by omega)).mpr hpow)
@@ -598,7 +598,7 @@ lemma erdos_175_of_large_two_pow_1728
         exists_prime_sq_dvd_centralBinom_two_pow_of_lt_1728 hk3 hk
       exact not_squarefree_of_prime_sq_dvd hp hdvd
     · obtain ⟨p, hp, hdvd⟩ := hlarge k (by
-        exact Nat.pow_le_pow_right (by norm_num) (by omega))
+        exact pow_le_pow_right₀ (by norm_num : 1 ≤ (2 : ℕ)) (show 1728 ≤ k by omega))
       exact not_squarefree_of_prime_sq_dvd hp hdvd
   · exact not_squarefree_of_prime_sq_dvd Nat.prime_two (by
       simpa using (four_dvd_centralBinom_iff n (by omega)).mpr hpow)
@@ -622,7 +622,7 @@ lemma erdos_175_of_large_two_pow_2304
         exists_prime_sq_dvd_centralBinom_two_pow_of_lt_2304 hk3 hk
       exact not_squarefree_of_prime_sq_dvd hp hdvd
     · obtain ⟨p, hp, hdvd⟩ := hlarge k (by
-        exact Nat.pow_le_pow_right (by norm_num) (by omega))
+        exact pow_le_pow_right₀ (by norm_num : 1 ≤ (2 : ℕ)) (show 2304 ≤ k by omega))
       exact not_squarefree_of_prime_sq_dvd hp hdvd
   · exact not_squarefree_of_prime_sq_dvd Nat.prime_two (by
       simpa using (four_dvd_centralBinom_iff n (by omega)).mpr hpow)
@@ -645,7 +645,7 @@ lemma erdos_175_of_large_two_pow_2816
         exists_prime_sq_dvd_centralBinom_two_pow_of_lt_2816 hk3 hk
       exact not_squarefree_of_prime_sq_dvd hp hdvd
     · obtain ⟨p, hp, hdvd⟩ := hlarge k (by
-        exact Nat.pow_le_pow_right (by norm_num) (by omega))
+        exact pow_le_pow_right₀ (by norm_num : 1 ≤ (2 : ℕ)) (show 2816 ≤ k by omega))
       exact not_squarefree_of_prime_sq_dvd hp hdvd
   · exact not_squarefree_of_prime_sq_dvd Nat.prime_two (by
       simpa using (four_dvd_centralBinom_iff n (by omega)).mpr hpow)
@@ -668,7 +668,7 @@ lemma erdos_175_of_large_two_pow_8192
         exists_prime_sq_dvd_centralBinom_two_pow_of_lt_8192 hk3 hk
       exact not_squarefree_of_prime_sq_dvd hp hdvd
     · obtain ⟨p, hp, hdvd⟩ := hlarge k (by
-        exact Nat.pow_le_pow_right (by norm_num) (by omega))
+        exact pow_le_pow_right₀ (by norm_num : 1 ≤ (2 : ℕ)) (show 8192 ≤ k by omega))
       exact not_squarefree_of_prime_sq_dvd hp hdvd
   · exact not_squarefree_of_prime_sq_dvd Nat.prime_two (by
       simpa using (four_dvd_centralBinom_iff n (by omega)).mpr hpow)
@@ -681,7 +681,7 @@ theorem erdos_175 {n : ℕ} (hn : 5 ≤ n) :
     (fun k hkpow => ?_)
     n hn
   have hk : 8192 ≤ k :=
-    (Nat.pow_le_pow_iff_right (by norm_num : 1 < 2)).mp hkpow
+    (pow_le_pow_iff_right₀ (by norm_num : 1 < (2 : ℕ))).mp hkpow
   simpa only [centralBinom] using FinalLarge.large_power_witness k hk
 
 #print axioms finite_carry_check_8192

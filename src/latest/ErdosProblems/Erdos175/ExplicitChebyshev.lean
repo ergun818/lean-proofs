@@ -264,7 +264,7 @@ def weightedFactorial (n : ℕ) : ℝ :=
     Real.log ((n / 3).factorial : ℝ) - Real.log ((n / 5).factorial : ℝ) +
       Real.log ((n / 30).factorial : ℝ)
 
-lemma mangoldtFloorConvolution_div (n k : ℕ) (hk : 0 < k) :
+lemma mangoldtFloorConvolution_div (n k : ℕ) (_hk : 0 < k) :
     Real.log ((n / k).factorial : ℝ) =
       ∑ d ∈ Icc 1 n, Λ d * ((n / k) / d : ℕ) := by
   rw [← mangoldtFloorConvolution_eq_log_factorial, mangoldtFloorConvolution]
@@ -635,7 +635,7 @@ private lemma log_sq_le_quarter_power (x : ℝ) (hx : 1 ≤ x) :
       _ = (x ^ (1 / 2 : ℝ)) ^ (1 / 2 : ℝ) := Real.rpow_mul hx0 _ _
       _ = Real.sqrt (Real.sqrt x) := by simp [Real.sqrt_eq_rpow]
   have hlog' : Real.log x ≤ 8 * x ^ (1 / 8 : ℝ) := by
-    convert hlog using 1 <;> ring
+    convert hlog using 1; ring
   have hsq := (sq_le_sq₀ (Real.log_nonneg hx) (by positivity : 0 ≤ 8 * x ^ (1 / 8 : ℝ))).2 hlog'
   nlinarith [hu2]
 
@@ -648,7 +648,7 @@ private lemma explicit_error_le_margin (n : ℕ) (hn : 2 ^ 1728 ≤ n) :
     calc
       10 ^ 24 ≤ 16 ^ 24 := Nat.pow_le_pow_left (by norm_num) 24
       _ = 2 ^ 96 := by norm_num [← pow_mul]
-      _ ≤ 2 ^ 1728 := Nat.pow_le_pow_right (by norm_num) (by norm_num)
+      _ ≤ 2 ^ 1728 := pow_le_pow_right₀ (by norm_num : 1 ≤ (2 : ℕ)) (by norm_num)
   have hnlargeNat : 10 ^ 24 ≤ n := hlargeCutoff.trans hn
   have hnlarge : (10 : ℝ) ^ 24 ≤ n := by exact_mod_cast hnlargeNat
   have hsqrt1 := Real.sqrt_le_sqrt hnlarge
@@ -692,7 +692,7 @@ theorem sqrtInterval_mangoldt_lower (n : ℕ) (hn : 2 ^ 1728 ≤ n) :
   have hsmallCutoff : 4050 ≤ 2 ^ 1728 := by
     calc
       4050 ≤ 2 ^ 12 := by norm_num
-      _ ≤ 2 ^ 1728 := Nat.pow_le_pow_right (by norm_num) (by norm_num)
+      _ ≤ 2 ^ 1728 := pow_le_pow_right₀ (by norm_num : 1 ≤ (2 : ℕ)) (by norm_num)
   have hn4050 : 4050 ≤ n := hsmallCutoff.trans hn
   have hmain := sqrtInterval_mangoldt_lower_with_error n hn4050
   have herr := explicit_error_le_margin n hn

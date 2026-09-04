@@ -329,7 +329,7 @@ lemma norm_reciprocalBilinearSum_Ioc_le_near_far_qfree
         have hvw : v ≠ w := by
           intro heq
           subst w
-          simpa using hdist
+          simp at hdist
         have hdiff : 1 / (w : ℝ) - 1 / (v : ℝ) ≠ 0 := by
           intro hzero
           have hinv : (w : ℝ)⁻¹ = (v : ℝ)⁻¹ := by
@@ -610,7 +610,7 @@ lemma effectiveReciprocalBound_seventh_le_of_high_fail
     (t : ℝ) (A B : ℕ) (ht : 0 < t) (hAB : A < B)
     (hdyadic : B - A ≤ A + 1)
     (hdirect : ¬ t / (((A + 1 : ℕ) : ℝ)) ^ 2 ≤ 1 / 2)
-    (hhone : 12 * t ≤ (((A + 1 : ℕ) : ℝ)) ^ 4)
+    (_hhone : 12 * t ≤ (((A + 1 : ℕ) : ℝ)) ^ 4)
     (hhigh : ¬ (((A + 1 : ℕ) : ℝ)) ^ 4 <
       12 * t * (Nat.sqrt (B - A) : ℝ) ^ 3) :
     effectiveReciprocalBound t A B ^ 7 ≤
@@ -640,7 +640,7 @@ lemma effectiveReciprocalBound_seventh_le_of_high_fail
     simpa only [C, N, s] using hh
   have hk2 : ¬ (12 * t ≤ (C : ℝ) ^ 4 ∧
       (C : ℝ) ^ 4 < 12 * t * (s : ℝ) ^ 3) := by
-    push_neg
+    push Not
     intro _
     exact hhighFails
   by_cases hk1 : 4 * t ≤ (C : ℝ) ^ 3
@@ -743,13 +743,13 @@ lemma abs_one_div_sub_one_div_eq_dist_div
       one_div_le_one_div_of_le (by positivity) (by exact_mod_cast hvw)
     rw [abs_of_nonpos (sub_nonpos.mpr hinv), Nat.dist_eq_sub_of_le hvw,
       Nat.cast_sub hvw]
-    field_simp <;> ring
+    field_simp; ring
   · have hwv : w ≤ v := Nat.le_of_not_ge hvw
     have hinv : 1 / (v : ℝ) ≤ 1 / (w : ℝ) :=
       one_div_le_one_div_of_le (by positivity) (by exact_mod_cast hwv)
     rw [abs_of_nonneg (sub_nonneg.mpr hinv), Nat.dist_comm,
       Nat.dist_eq_sub_of_le hwv, Nat.cast_sub hwv]
-    field_simp <;> ring
+    field_simp
 
 /-- On the power block `V ≤ v,w < 2V`, written as the shifted interval
 `(V-1,2V-1]`, a nonzero reciprocal phase difference has the uniform lower

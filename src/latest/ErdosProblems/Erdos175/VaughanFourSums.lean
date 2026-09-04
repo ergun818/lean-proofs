@@ -38,7 +38,7 @@ def aCoeff (M : ℕ) : ArithmeticFunction ℝ :=
 /-- The portion of `a_l` with `l > M`; below this cutoff the full coefficient
 is exactly the Dirichlet-convolution identity. -/
 def aHigh (M : ℕ) : ArithmeticFunction ℝ :=
-  ⟨fun l => if M < l then aCoeff M l else 0, by simp [aCoeff]⟩
+  ⟨fun l => if M < l then aCoeff M l else 0, by simp⟩
 
 /-- `b_r = ∑_{m k = r, m ≤ M, k ≤ K} μ(m) Λ(k)`. -/
 def bCoeff (M K : ℕ) : ArithmeticFunction ℝ :=
@@ -51,7 +51,7 @@ def bLow (M K : ℕ) : ArithmeticFunction ℝ :=
 /-- The part of `b_r` with `M < r`.  The convolution defining `bCoeff`
 automatically vanishes beyond `M*K`. -/
 def bHigh (M K : ℕ) : ArithmeticFunction ℝ :=
-  ⟨fun r => if M < r then bCoeff M K r else 0, by simp [bCoeff]⟩
+  ⟨fun r => if M < r then bCoeff M K r else 0, by simp⟩
 
 /-- The first paper term, `μ_{≤M} * log`. -/
 def sigma1AF (M : ℕ) : ArithmeticFunction ℝ :=
@@ -70,7 +70,7 @@ def sigma3AF (M K : ℕ) : ArithmeticFunction ℝ :=
   lambdaHigh K * aHigh M
 
 /-- Below `M`, `a_l` is the convolution identity. -/
-theorem aCoeff_eq_one_of_le {M l : ℕ} (hM : 1 ≤ M) (hl : l ≤ M) :
+theorem aCoeff_eq_one_of_le {M l : ℕ} (_hM : 1 ≤ M) (hl : l ≤ M) :
     aCoeff M l = (1 : ArithmeticFunction ℝ) l := by
   rcases Nat.eq_zero_or_pos l with rfl | hlpos
   · simp [aCoeff, ArithmeticFunction.map_zero]

@@ -162,16 +162,13 @@ private lemma degreeThreePolynomial_eq (x : ℝ) :
     (fourierPolynomial (frequencies 3) degreeThreePlusCoefficient x).re =
       degreeThreePolynomial x := by
   rw [frequencies_three]
-  simp only [fourierPolynomial, Finset.sum_insert, Finset.mem_insert,
-    Finset.mem_singleton, reduceCtorEq, or_false, not_false_eq_true,
-    Finset.sum_singleton]
+  simp only [fourierPolynomial]
   simp only [degreeThreePlusCoefficient]
   norm_num
   simp only [c1, c2, c3, e_eq_cos_add_sin]
-  simp only [Complex.add_re, Complex.add_im, Complex.mul_re, Complex.mul_im, Complex.ofReal_re,
-    Complex.ofReal_im, Complex.I_re, Complex.I_im, mul_zero, mul_one,
-    sub_zero, add_zero, zero_mul, Real.cos_neg, Real.sin_neg,
-    map_neg, Complex.conj_re, Complex.conj_im]
+  simp only [Complex.add_re, Complex.add_im, Complex.mul_re, Complex.mul_im,
+    Complex.ofReal_re, Complex.ofReal_im, Complex.I_re, Complex.I_im, mul_zero,
+    mul_one, sub_zero, add_zero]
   simp only [degreeThreePolynomial]
   ring_nf
   simp only [Real.cos_neg, Real.sin_neg]
@@ -181,16 +178,13 @@ private lemma degreeThreeMinusPolynomial_eq (x : ℝ) :
     (fourierPolynomial (frequencies 3) degreeThreeMinusCoefficient x).re =
       degreeThreePolynomial (-x) := by
   rw [frequencies_three]
-  simp only [fourierPolynomial, Finset.sum_insert, Finset.mem_insert,
-    Finset.mem_singleton, reduceCtorEq, or_false, not_false_eq_true,
-    Finset.sum_singleton]
+  simp only [fourierPolynomial]
   simp only [degreeThreeMinusCoefficient, degreeThreePlusCoefficient]
   norm_num
   simp only [c1, c2, c3, e_eq_cos_add_sin]
-  simp only [Complex.add_re, Complex.add_im, Complex.mul_re, Complex.mul_im, Complex.ofReal_re,
-    Complex.ofReal_im, Complex.I_re, Complex.I_im, mul_zero, mul_one,
-    sub_zero, add_zero, zero_mul, Real.cos_neg, Real.sin_neg,
-    degreeThreePolynomial, map_neg, Complex.conj_re, Complex.conj_im]
+  simp only [Complex.add_re, Complex.add_im, Complex.mul_re, Complex.mul_im,
+    Complex.ofReal_re, Complex.ofReal_im, Complex.I_re, Complex.I_im, mul_zero,
+    mul_one, sub_zero, add_zero, degreeThreePolynomial]
   ring_nf
   simp only [Real.cos_neg, Real.sin_neg]
   ring
@@ -406,7 +400,7 @@ private lemma tangent_error_nonneg_of_one_le {u : ℝ}
   have hv1 : v ≤ 1 := (inv_le_one₀ hu0).mpr hu1
   have hvpos : 0 < v := inv_pos.mpr hu0
   have hvu : v = u⁻¹ := rfl
-  have huv : u = v⁻¹ := by simp [v, hu0.ne']
+  have huv : u = v⁻¹ := by simp [v]
   let L : ℝ := v - v ^ 3 / 3 + v ^ 5 / 5 - v ^ 7 / 7
   have hL : L ≤ Real.arctan v := arctan_lower_septic v hv0
   have hatanv : Real.arctan v = Real.pi / 2 - Real.arctan u := by

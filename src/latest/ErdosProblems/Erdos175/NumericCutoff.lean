@@ -651,7 +651,7 @@ private lemma final_endpoint_integer_power_bound :
       _ = (2 : ℕ) ^ 7336 := by
         rw [← pow_mul, ← pow_mul, ← pow_add]
       _ < (2 : ℕ) ^ 8192 :=
-        Nat.pow_lt_pow_right (by norm_num) (by norm_num)
+        pow_lt_pow_right₀ (by norm_num : 1 < (2 : ℕ)) (by norm_num : 7336 < 8192)
   exact_mod_cast hnat
 
 private lemma final_endpoint_power_bound :

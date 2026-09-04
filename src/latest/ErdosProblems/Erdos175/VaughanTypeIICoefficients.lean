@@ -339,7 +339,7 @@ theorem orientedSmallScale_le_orientedLargeScale (j k : ℕ) :
   by_cases hjk : j < k
   · simp only [orientedSmallScale, orientedLargeScale, hjk, if_pos]
     exact Nat.pow_le_pow_right (by norm_num) hjk.le
-  · simp only [orientedSmallScale, orientedLargeScale, hjk, if_neg]
+  · simp only [orientedSmallScale, orientedLargeScale, hjk]
     exact Nat.pow_le_pow_right (by norm_num) (Nat.le_of_not_gt hjk)
 
 @[simp] theorem orientedLargeScale_pos (j k : ℕ) :
@@ -396,7 +396,7 @@ theorem sigma22SupportActive_or_product_lt_small
     have hjupper : 2 ^ j ≤ M * K :=
       two_pow_le_of_mem_range_dyadicCount hMK hj
     have hprod := blockActive_y_lt_four_mul_lower_product hactive
-    simp only [orientedSmallScale, hjk, if_neg]
+    simp only [orientedSmallScale, hjk]
     calc
       y < 4 * (2 ^ j * 2 ^ k) := hprod
       _ ≤ 4 * ((M * K) * 2 ^ k) :=
@@ -548,7 +548,7 @@ theorem sigma22_orientedLargeScale_cube_le_512
       omega
     have hMM : M * M ≠ 0 := mul_ne_zero hM.ne' hM.ne'
     have hU : orientedLargeScale j k ≤ M ^ 2 := by
-      simp only [orientedLargeScale, hjk, if_neg]
+      simp only [orientedLargeScale, hjk]
       simpa [pow_two] using
         two_pow_le_of_mem_range_dyadicCount hMM hj
     have hcube := Nat.pow_le_pow_left hU 3
