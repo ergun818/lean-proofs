@@ -65,7 +65,7 @@ namespace Erdos742
 
 universe u
 
-variable {V : Type u} [Fintype V] [DecidableEq V]
+variable {V : Type u}
 
 /-- A finite greedy-selection lemma in the cardinal form used to linearize
 the family of light critical paths. -/
@@ -123,7 +123,7 @@ def IsDiameter2Critical (G : SimpleGraph V) : Prop :=
 
 section CriticalPaths
 
-variable (G : SimpleGraph V) [DecidableRel G.Adj]
+variable (G : SimpleGraph V)
 
 /-- A type-I critical path: the edge `xy` is the unique path of length at most
 two between its endpoints. -/
@@ -215,7 +215,7 @@ lemma exists_two_lt_edist_deleteEdge (hdiam : G.diam = 2) {e : Sym2 V}
     rw [SimpleGraph.diam, heq]
     rfl
   rw [SimpleGraph.ediam_le_iff] at hnle
-  push_neg at hnle
+  push Not at hnle
   exact hnle
 
 /-- If the deletion of `e` removes a common neighbor `z` of `x,y`, one of
@@ -232,7 +232,7 @@ lemma eq_deletedEdge_left_or_right {e : Sym2 V} {x y z : V}
 /-- One deleted edge can destroy at most one common neighbor of a nonadjacent
 pair. -/
 lemma commonNeighbor_unique_of_deleteEdge {e : Sym2 V} {x y z w : V}
-    (hxy : x ≠ y) (hnadj : ¬G.Adj x y)
+    (hxy : x ≠ y) (_hnadj : ¬G.Adj x y)
     (hz : z ∈ G.commonNeighbors x y) (hw : w ∈ G.commonNeighbors x y)
     (hz' : z ∉ (G.deleteEdges {e}).commonNeighbors x y)
     (hw' : w ∉ (G.deleteEdges {e}).commonNeighbors x y) : z = w := by
@@ -338,6 +338,8 @@ lemma exists_criticalPathContains_of_diameter2Critical
 
 end CriticalPaths
 
+variable [Fintype V] [DecidableEq V]
+
 section AuxiliaryGraphs
 
 variable (G : SimpleGraph V) [DecidableRel G.Adj]
@@ -352,6 +354,7 @@ noncomputable def criticalGraph : SimpleGraph V where
 noncomputable instance criticalGraph.instDecidableRel : DecidableRel (criticalGraph G).Adj :=
   Classical.decRel _
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 @[simp] lemma criticalGraph_adj {x y : V} : (criticalGraph G).Adj x y ↔
     IsCriticalPair G x y := Iff.rfl
 
@@ -365,6 +368,7 @@ noncomputable def disjointNeighborhoodGraph (H : SimpleGraph V) : SimpleGraph V 
 noncomputable instance disjointNeighborhoodGraph.instDecidableRel (H : SimpleGraph V) :
     DecidableRel (disjointNeighborhoodGraph H).Adj := Classical.decRel _
 
+omit [DecidableEq V] [Fintype V] in
 @[simp] lemma disjointNeighborhoodGraph_adj {H : SimpleGraph V} {x y : V} :
     (disjointNeighborhoodGraph H).Adj x y ↔ x ≠ y ∧ H.commonNeighbors x y = ∅ := Iff.rfl
 
@@ -376,6 +380,7 @@ def EdgeMatching (H : SimpleGraph V) [DecidableRel H.Adj]
   M ⊆ H.edgeFinset ∧
     (M : Set (Sym2 V)).Pairwise fun e f ↦ Disjoint (e : Set V) (f : Set V)
 
+omit [DecidableEq V] in
 /-- A maximum-cardinality matching is maximal: every edge outside it meets
 one of its edges. -/
 lemma exists_maximal_edgeMatching (H : SimpleGraph V) [DecidableRel H.Adj] :
@@ -423,10 +428,12 @@ noncomputable def matchingEdge (M : Finset (Sym2 V)) (v : V)
     (hv : IsMatched M v) : M :=
   ⟨hv.choose, hv.choose_spec.1⟩
 
+omit [DecidableEq V] [Fintype V] in
 lemma matchingEdge_contains (M : Finset (Sym2 V)) (v : V)
     (hv : IsMatched M v) : v ∈ (matchingEdge M v hv : Sym2 V) :=
   hv.choose_spec.2
 
+omit [DecidableEq V] [Fintype V] in
 lemma matchingEdge_unique {M : Finset (Sym2 V)}
     (hpair : (M : Set (Sym2 V)).Pairwise
       (fun e f ↦ Disjoint (e : Set V) (f : Set V)))
@@ -445,14 +452,17 @@ noncomputable def matchingRank (M : Finset (Sym2 V)) (v : V) : ℕ :=
     exact if hv : IsMatched M v then
       (Fintype.equivFin M (matchingEdge M v hv)).val else M.card
 
+omit [DecidableEq V] [Fintype V] in
 lemma matchingRank_lt_card {M : Finset (Sym2 V)} {v : V} (hv : IsMatched M v) :
     matchingRank M v < M.card := by
   simp only [matchingRank, dif_pos hv]
   simpa using (Fintype.equivFin M (matchingEdge M v hv)).isLt
 
+omit [DecidableEq V] [Fintype V] in
 lemma matchingRank_eq_card {M : Finset (Sym2 V)} {v : V} (hv : ¬ IsMatched M v) :
     matchingRank M v = M.card := by simp [matchingRank, hv]
 
+omit [DecidableEq V] [Fintype V] in
 lemma matchingEdge_eq_of_rank_eq {M : Finset (Sym2 V)}
     {v w : V} (hv : IsMatched M v) (hw : IsMatched M w)
     (hrank : matchingRank M v = matchingRank M w) :
@@ -462,6 +472,7 @@ lemma matchingEdge_eq_of_rank_eq {M : Finset (Sym2 V)}
   apply Fin.ext
   exact hrank
 
+omit [DecidableEq V] [Fintype V] in
 private lemma sym2_out_mk (e : Sym2 V) : s(e.out.1, e.out.2) = e := by
   rw [Sym2.mk, e.out_eq]
 
@@ -473,6 +484,7 @@ noncomputable def selectedVertex (M : Finset (Sym2 V)) (e : Sym2 V) : V :=
 noncomputable def otherVertex (M : Finset (Sym2 V)) (e : Sym2 V) : V :=
   if matchingRank M e.out.1 ≤ matchingRank M e.out.2 then e.out.2 else e.out.1
 
+omit [DecidableEq V] [Fintype V] in
 lemma selected_other_mk (M : Finset (Sym2 V)) (e : Sym2 V) :
     s(selectedVertex M e, otherVertex M e) = e := by
   by_cases h : matchingRank M e.out.1 ≤ matchingRank M e.out.2
@@ -480,14 +492,17 @@ lemma selected_other_mk (M : Finset (Sym2 V)) (e : Sym2 V) :
   · rw [selectedVertex, otherVertex, if_neg h, if_neg h, Sym2.eq_swap]
     exact sym2_out_mk e
 
+omit [DecidableEq V] [Fintype V] in
 lemma selectedVertex_mem (M : Finset (Sym2 V)) (e : Sym2 V) : selectedVertex M e ∈ e := by
   have h := Sym2.mem_mk_left (selectedVertex M e) (otherVertex M e)
   rwa [selected_other_mk M e] at h
 
+omit [DecidableEq V] [Fintype V] in
 lemma otherVertex_mem (M : Finset (Sym2 V)) (e : Sym2 V) : otherVertex M e ∈ e := by
   have h := Sym2.mem_mk_right (selectedVertex M e) (otherVertex M e)
   rwa [selected_other_mk M e] at h
 
+omit [DecidableEq V] in
 lemma selectedVertex_ne_otherVertex {H : SimpleGraph V} [DecidableRel H.Adj]
     (M : Finset (Sym2 V)) {e : Sym2 V} (he : e ∈ H.edgeFinset) :
     selectedVertex M e ≠ otherVertex M e := by
@@ -496,6 +511,7 @@ lemma selectedVertex_ne_otherVertex {H : SimpleGraph V} [DecidableRel H.Adj]
     exact SimpleGraph.mem_edgeFinset.mp he
   exact hadj.ne
 
+omit [DecidableEq V] in
 lemma selectedVertex_isMatched {H : SimpleGraph V} [DecidableRel H.Adj]
     {M : Finset (Sym2 V)}
     (hcover : ∀ e ∈ H.edgeFinset, e ∉ M →
@@ -527,10 +543,11 @@ lemma selectedVertex_isMatched {H : SimpleGraph V} [DecidableRel H.Adj]
       exact hlt.le
     · exact h
 
+omit [DecidableEq V] in
 lemma matchingEdges_ne_of_nonmatching_edge
     {H : SimpleGraph V} [DecidableRel H.Adj]
     {M : Finset (Sym2 V)}
-    (hpair : (M : Set (Sym2 V)).Pairwise
+    (_hpair : (M : Set (Sym2 V)).Pairwise
       (fun e f ↦ Disjoint (e : Set V) (f : Set V)))
     {e : Sym2 V} (heH : e ∈ H.edgeFinset) (heM : e ∉ M)
     (hs : IsMatched M (selectedVertex M e))
@@ -550,6 +567,7 @@ lemma matchingEdges_ne_of_nonmatching_edge
     exact hpair'.trans (selected_other_mk M e)
   exact heM (hedgeEq ▸ (matchingEdge M (selectedVertex M e) hs).property)
 
+omit [DecidableEq V] in
 lemma selectedVertex_rank_lt_other
     {H : SimpleGraph V} [DecidableRel H.Adj]
     {M : Finset (Sym2 V)}
@@ -575,14 +593,17 @@ lemma selectedVertex_rank_lt_other
 noncomputable def matchingMate (M : Finset (Sym2 V)) (v : V) (hv : IsMatched M v) : V :=
   Sym2.Mem.other (matchingEdge_contains M v hv)
 
+omit [DecidableEq V] [Fintype V] in
 lemma matchingMate_spec (M : Finset (Sym2 V)) (v : V) (hv : IsMatched M v) :
     s(v, matchingMate M v hv) = (matchingEdge M v hv : Sym2 V) :=
-  by simpa [matchingMate] using Sym2.other_spec (matchingEdge_contains M v hv)
+  by simp [matchingMate]
 
+omit [DecidableEq V] [Fintype V] in
 lemma matchingMate_mem (M : Finset (Sym2 V)) (v : V) (hv : IsMatched M v) :
     matchingMate M v hv ∈ (matchingEdge M v hv : Sym2 V) := by
   simpa [matchingMate] using Sym2.other_mem (matchingEdge_contains M v hv)
 
+omit [DecidableEq V] [Fintype V] in
 lemma matchingRank_eq_of_matchingEdge_eq {M : Finset (Sym2 V)}
     {v w : V} (hv : IsMatched M v) (hw : IsMatched M w)
     (h : matchingEdge M v hv = matchingEdge M w hw) :
@@ -590,15 +611,17 @@ lemma matchingRank_eq_of_matchingEdge_eq {M : Finset (Sym2 V)}
   simp only [matchingRank, dif_pos hv, dif_pos hw]
   rw [h]
 
+omit [DecidableEq V] in
 lemma adj_matchingMate {H : SimpleGraph V} [DecidableRel H.Adj]
     {M : Finset (Sym2 V)} (hsub : M ⊆ H.edgeFinset)
     {v : V} (hv : IsMatched M v) : H.Adj v (matchingMate M v hv) := by
   rw [← H.mem_edgeSet, matchingMate_spec]
   exact SimpleGraph.mem_edgeFinset.mp (hsub (matchingEdge M v hv).property)
 
+omit [DecidableEq V] in
 lemma matchingMate_ne_otherVertex {H : SimpleGraph V} [DecidableRel H.Adj]
-    {M : Finset (Sym2 V)} (hsub : M ⊆ H.edgeFinset)
-    (hpair : (M : Set (Sym2 V)).Pairwise
+    {M : Finset (Sym2 V)} (_hsub : M ⊆ H.edgeFinset)
+    (_hpair : (M : Set (Sym2 V)).Pairwise
       (fun e f ↦ Disjoint (e : Set V) (f : Set V)))
     {e : Sym2 V} (heH : e ∈ H.edgeFinset) (heM : e ∉ M)
     (hs : IsMatched M (selectedVertex M e)) :
@@ -654,7 +677,7 @@ lemma nonmatching_edges_inject_commonPairs
       intro hp
       have hp' := (SimpleGraph.mem_edgeFinset.mp hp :
         (disjointNeighborhoodGraph H).Adj _ _)
-      simpa [hp'.2] using hcommon
+      simp [hp'.2] at hcommon
     exact ⟨p, Finset.mem_sdiff.mpr ⟨hpTop, hpNot⟩⟩
   have hinj : Function.Injective hit := by
     intro e f hef
@@ -731,6 +754,7 @@ lemma nonmatching_edges_inject_commonPairs
       omega
   simpa [source, target] using Finset.card_le_card_of_injective (f := hit) hinj
 
+omit [DecidableEq V] in
 /-- A matching has at most half as many edges as the ambient graph has
 vertices. -/
 lemma edgeMatching_card_le_half
@@ -789,6 +813,7 @@ private lemma choose_two_add_half_eq_half_square (n : ℕ) :
     simp [Nat.mul_add_div]
     ring
 
+omit [DecidableEq V] in
 /-- For every finite graph `H`, the number of its edges plus the number of
 pairs with disjoint `H`-neighborhoods is at most `n² / 2`. -/
 lemma card_edges_add_disjointNeighborhood_le
@@ -814,6 +839,7 @@ lemma card_edges_add_disjointNeighborhood_le
   rw [← choose_two_add_half_eq_half_square (Fintype.card V)]
   omega
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 /-- If no type-II critical path survives completely in `H`, then every
 critical pair of `G` has disjoint neighborhoods in `H`. -/
 lemma criticalGraph_le_disjointNeighborhoodGraph {H : SimpleGraph V} (hHG : H ≤ G)
@@ -831,12 +857,13 @@ lemma criticalGraph_le_disjointNeighborhoodGraph {H : SimpleGraph V} (hHG : H �
       rw [G.mem_commonNeighbors]
       exact ⟨hHG (H.mem_commonNeighbors.mp hw).1, hHG (H.mem_commonNeighbors.mp hw).2⟩
     rcases hxy with hI | ⟨z, hII'⟩
-    · simpa [hI.2] using hwG
+    · simp [hI.2] at hwG
     · have hwz : w = z := by simpa [hII'.2.2] using hwG
       exact hII x z y hII' (by
         have h := H.mem_commonNeighbors.mp hw
         exact ⟨by simpa [hwz] using h.1, by simpa [hwz] using h.2.symm⟩)
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 /-- Under the same pruning hypothesis, one critical path contains at most
 one edge of `H`. -/
 lemma criticalPathContains_unique_edge {H : SimpleGraph V}
@@ -862,6 +889,7 @@ lemma criticalPathContains_unique_edge {H : SimpleGraph V}
     · have hwz : w = z := (by simpa [heII.2.2] using hwII.2.2 : z = w).symm
       simp [hwz]
 
+omit [DecidableEq V] [DecidableRel G.Adj] in
 /-- The surviving edges inject into the critical pairs. -/
 lemma card_edgeFinset_le_card_criticalGraph {H : SimpleGraph V} [DecidableRel H.Adj]
     (hHG : H ≤ G) (hG : IsDiameter2Critical G)
@@ -888,6 +916,7 @@ lemma card_edgeFinset_le_card_criticalGraph {H : SimpleGraph V} [DecidableRel H.
     · simpa [hx, hy] using hpath f
     · simpa [hx, hy] using (criticalPathContains_symm (G := G)).mp (hpath f)
 
+omit [DecidableEq V] [Fintype V] in
 /-- Restricting the original graph can only create new pairs with disjoint
 neighborhoods. -/
 lemma induce_disjointNeighborhoodGraph_le (H : SimpleGraph V) (S : Set V) :
@@ -922,11 +951,13 @@ private lemma choose_two_le_half_square (n : ℕ) : n.choose 2 ≤ n ^ 2 / 2 := 
   exact Nat.div_le_div_right (by simpa [pow_two] using
     (Nat.mul_le_mul_left n (Nat.sub_le n 1)))
 
+omit [DecidableEq V] in
 /-- Unless `H` is empty, a neighbor of a maximum-degree vertex has total
 degree in `H` and `disj H` at most `n`. -/
 lemma exists_degree_add_disjoint_degree_le_card (H : SimpleGraph V) [DecidableRel H.Adj]
     (hH : H ≠ ⊥) :
     ∃ y, H.degree y + (disjointNeighborhoodGraph H).degree y ≤ Fintype.card V := by
+  classical
   have : Nonempty V := by
     by_contra h
     have : IsEmpty V := not_nonempty_iff.mp h
@@ -949,7 +980,7 @@ lemma exists_degree_add_disjoint_degree_le_card (H : SimpleGraph V) [DecidableRe
     have hcommon : x ∈ H.commonNeighbors y z := by
       rw [H.mem_commonNeighbors]
       exact ⟨hxy.symm, hxz.symm⟩
-    simpa [hyz.2] using hcommon
+    simp [hyz.2] at hcommon
   have hunion : A ∪ B ⊆ Finset.univ.erase y := by
     intro z hz
     rw [Finset.mem_erase]
@@ -972,6 +1003,7 @@ lemma exists_degree_add_disjoint_degree_le_card (H : SimpleGraph V) [DecidableRe
     Nat.sub_add_cancel Fintype.card_pos
   omega
 
+omit [DecidableEq V] in
 /-- Mantel's theorem in precisely the natural-number form used by Problem
 742. -/
 lemma card_edgeFinset_le_quarter_of_cliqueFree_three {H : SimpleGraph V}
@@ -1019,6 +1051,7 @@ noncomputable def lightTriples [LinearOrder V] (M : ℕ) : Finset (V × V × V) 
         edgeMultiplicity G s(p.1, p.2.1) < M ∧
         edgeMultiplicity G s(p.2.1, p.2.2) < M
 
+omit [DecidableEq V] [DecidableRel G.Adj] in
 @[simp] lemma mem_lightTriples [LinearOrder V] {M : ℕ} {x z y : V} :
     (x, z, y) ∈ lightTriples G M ↔
       x < y ∧ IsTypeII G x z y ∧
@@ -1038,6 +1071,7 @@ instance tripleConflict.instDecidableRel : DecidableRel (TripleConflict (V := V)
     unfold TripleConflict
     infer_instance
 
+omit [DecidableEq V] [Fintype V] in
 lemma tripleConflict_symm : Std.Symm (TripleConflict (V := V)) := by
   constructor
   intro p q h
@@ -1046,11 +1080,13 @@ lemma tripleConflict_symm : Std.Symm (TripleConflict (V := V)) := by
   · exact Or.inr (Or.inl ⟨h.1.symm, h.2.symm⟩)
   · exact Or.inr (Or.inr ⟨h.1.symm, h.2.symm⟩)
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 /-- The center of a type-II critical path is determined by its endpoints. -/
 lemma isTypeII_center_unique {x z z' y : V}
     (hz : IsTypeII G x z y) (hz' : IsTypeII G x z' y) : z = z' := by
   simpa [hz.2.2] using hz'.2.2
 
+omit [DecidableEq V] [DecidableRel G.Adj] in
 /-- Among light triples, a conflict is already witnessed by equality of one
 of the two path edges (the endpoint-pair alternative forces equality). -/
 lemma tripleConflict_of_lightTriples_imp_pathEdge
@@ -1073,8 +1109,9 @@ lemma tripleConflict_of_lightTriples_imp_pathEdge
     exact Or.inl ⟨h.1, hc⟩
   · exact Or.inr h
 
+omit [DecidableRel G.Adj] in
 private lemma lightTriples_firstEdge_fiber_card_le [LinearOrder V]
-    {M : ℕ} {p : V × V × V} (hp : p ∈ lightTriples G M) :
+    {M : ℕ} {p : V × V × V} (_hp : p ∈ lightTriples G M) :
     ((lightTriples G M).filter fun q ↦ q.1 = p.1 ∧ q.2.1 = p.2.1).card ≤
       edgeMultiplicity G s(p.1, p.2.1) := by
   classical
@@ -1104,8 +1141,9 @@ private lemma lightTriples_firstEdge_fiber_card_le [LinearOrder V]
   simpa [source, target, edgeMultiplicity] using
     (Finset.card_le_card_of_injective (f := f) hinj)
 
+omit [DecidableRel G.Adj] in
 private lemma lightTriples_secondEdge_fiber_card_le [LinearOrder V]
-    {M : ℕ} {p : V × V × V} (hp : p ∈ lightTriples G M) :
+    {M : ℕ} {p : V × V × V} (_hp : p ∈ lightTriples G M) :
     ((lightTriples G M).filter fun q ↦ q.2.1 = p.2.1 ∧ q.2.2 = p.2.2).card ≤
       edgeMultiplicity G s(p.2.1, p.2.2) := by
   classical
@@ -1135,6 +1173,7 @@ private lemma lightTriples_secondEdge_fiber_card_le [LinearOrder V]
   simpa [source, target, edgeMultiplicity] using
     (Finset.card_le_card_of_injective (f := f) hinj)
 
+omit [DecidableRel G.Adj] in
 private lemma lightTriples_closedConflict_card_le [LinearOrder V]
     {M : ℕ} {p : V × V × V} (hp : p ∈ lightTriples G M) :
     ((lightTriples G M).filter fun q ↦ q = p ∨ TripleConflict p q).card ≤ 2 * M := by
@@ -1166,6 +1205,7 @@ private lemma lightTriples_closedConflict_card_le [LinearOrder V]
       have h2 : edgeMultiplicity G s(p.2.1, p.2.2) < M := hmult.2.2.2
       omega
 
+omit [DecidableEq V] [DecidableRel G.Adj] in
 /-- A light-path family contains a large subfamily whose tripartite shadow is
 locally linear.  Mathlib's `TripartiteFromTriangles` construction packages
 both edge-disjointness and the absence of accidental triangles. -/
@@ -1239,6 +1279,7 @@ lemma card_le_tripartite_cliqueFinset (t : Finset (V × V × V)) :
 noncomputable def heavyEdges (M : ℕ) : Finset (Sym2 V) :=
   G.edgeFinset.filter fun e ↦ M ≤ edgeMultiplicity G e
 
+omit [DecidableEq V] in
 private lemma criticalPath_edge_fiber_card_le_two (x y : V) :
     ((G.edgeFinset.filter fun e ↦ CriticalPathContains G x y e).card) ≤ 2 := by
   classical
@@ -1272,6 +1313,7 @@ private lemma criticalPath_edge_fiber_card_le_two (x y : V) :
         · exact hIIex ⟨z, hII⟩
       simp [hempty]
 
+omit [DecidableEq V] in
 /-- Heavy edges are few: this is the critical-path incidence double count. -/
 lemma heavyEdges_card_mul_le (M : ℕ) :
     (heavyEdges G M).card * M ≤ 2 * Fintype.card V ^ 2 := by
@@ -1526,16 +1568,19 @@ variable (G : SimpleGraph V) [DecidableRel G.Adj]
 noncomputable def typeIGraph : SimpleGraph V where
   Adj x y := IsTypeI G x y
   symm.symm _ _ h := (isTypeI_symm (G := G)).mp h
-  loopless.irrefl x h := h.1.ne rfl
+  loopless.irrefl _x h := h.1.ne rfl
 
 noncomputable instance typeIGraph.instDecidableRel : DecidableRel (typeIGraph G).Adj :=
   Classical.decRel _
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 @[simp] lemma typeIGraph_adj {x y : V} : (typeIGraph G).Adj x y ↔ IsTypeI G x y :=
   Iff.rfl
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 lemma typeIGraph_le : typeIGraph G ≤ G := fun _ _ h ↦ h.1
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 lemma typeIGraph_le_criticalGraph : typeIGraph G ≤ criticalGraph G :=
   fun _ _ h ↦ Or.inl h
 
@@ -1587,7 +1632,7 @@ lemma degreeInto_eq_sum (H : SimpleGraph V) [DecidableRel H.Adj]
     ext w
     simp [and_comm]
   rw [degreeInto, heq]
-  simpa using (Finset.sum_boole (fun w ↦ H.Adj v w) S).symm
+  simp
 
 /-- Double-counting the edges between two finite vertex sets. -/
 lemma sum_degreeInto_comm (H : SimpleGraph V) [DecidableRel H.Adj]
@@ -1601,9 +1646,11 @@ lemma sum_degreeInto_comm (H : SimpleGraph V) [DecidableRel H.Adj]
   intro v hv
   simp only [adj_comm]
 
+omit [DecidableEq V] [Fintype V] in
 lemma exists_mem_inter_of_card_lt_add {S A B : Finset V}
     (hA : A ⊆ S) (hB : B ⊆ S) (hcard : S.card < A.card + B.card) :
     ∃ x, x ∈ A ∧ x ∈ B := by
+  classical
   by_contra h
   push Not at h
   have hdisj : Disjoint A B := Finset.disjoint_left.mpr h
@@ -1612,6 +1659,7 @@ lemma exists_mem_inter_of_card_lt_add {S A B : Finset V}
   rw [Finset.card_union_of_disjoint hdisj] at this
   omega
 
+omit [Fintype V] in
 lemma card_add_sub_le_card_inter {S A B : Finset V}
     (hA : A ⊆ S) (hB : B ⊆ S) :
     A.card + B.card - S.card ≤ (A ∩ B).card := by
@@ -1619,6 +1667,7 @@ lemma card_add_sub_le_card_inter {S A B : Finset V}
   have hcard := Finset.card_union_add_card_inter A B
   omega
 
+omit [DecidableEq V] [Fintype V] in
 private lemma sum_const_sub (S : Finset V) (a : ℕ) (f : V → ℕ)
     (hf : ∀ x ∈ S, f x ≤ a) :
     ∑ x ∈ S, (a - f x) = S.card * a - ∑ x ∈ S, f x := by
@@ -1683,7 +1732,7 @@ private lemma card_darts_fst_mem (H : SimpleGraph V) [DecidableRel H.Adj]
   classical
   calc
     _ = ∑ d : H.Dart, if d.fst ∈ B then 1 else 0 := by
-      simpa using (Finset.sum_boole (fun d : H.Dart ↦ d.fst ∈ B) Finset.univ).symm
+      simp
     _ = ∑ v ∈ B, ∑ d : H.Dart, if d.fst = v then 1 else 0 := by
       rw [Finset.sum_comm]
       apply Finset.sum_congr rfl
@@ -1695,7 +1744,7 @@ private lemma card_darts_fst_mem (H : SimpleGraph V) [DecidableRel H.Adj]
       apply Finset.sum_congr rfl
       intro v _
       rw [← H.dart_fst_fiber_card_eq_degree v]
-      simpa using (Finset.sum_boole (fun d : H.Dart ↦ d.fst = v) Finset.univ)
+      simp
 
 /-- Deleting a finite vertex set removes at most the sum of its original
 degrees.  Internal edges of the deleted set are deliberately overcounted. -/
@@ -1753,6 +1802,7 @@ lemma card_edgeFinset_le_card_edgesInside_add_sum_degree
   rw [← hsplit, add_comm]
   exact Nat.add_le_add_left (hout.trans_eq (card_darts_fst_mem H B)) _
 
+omit [DecidableEq V] in
 /-- Stability form of the disjoint-neighborhood inequality.  If
 `e(H)+e(disj H)` is within `q²/2` of its maximum, fewer than `q` vertices
 can have degree sum at most `n-q`. -/
@@ -1820,16 +1870,15 @@ lemma card_low_degreeSum_lt
           Nat.cast_div_le
         _ = (S.card : ℝ) ^ 2 / 2 := by norm_num
     rw [Nat.cast_add, Nat.cast_mul, hScard] at hcast
-    push_cast at hcast hdiv
     have hqR : (q : ℝ) ≤ Fintype.card V := by exact_mod_cast hq
     rw [hScard] at hdiv
-    push_cast at hdiv
     have hsubcast : ((Fintype.card V - q : ℕ) : ℝ) =
         Fintype.card V - q := by rw [Nat.cast_sub hq]
     rw [hsubcast] at hcast hdiv
     nlinarith
   exact (not_le_of_gt hdense) (by simpa [Dg] using hReal)
 
+omit [DecidableEq V] in
 /-- Handshake bound for the vertices of degree at least `q`. -/
 lemma card_highDegree_mul_le_twice_edges
     (H : SimpleGraph V) [DecidableRel H.Adj] (q : ℕ) :
@@ -1847,6 +1896,7 @@ lemma card_highDegree_mul_le_twice_edges
       simp
     _ = 2 * H.edgeFinset.card := H.sum_degrees_eq_twice_card_edges
 
+omit [DecidableEq V] in
 lemma card_highDegree_lt
     (H : SimpleGraph V) [DecidableRel H.Adj] {q : ℕ} (hq : 0 < q)
     (hedges : 2 * H.edgeFinset.card < q ^ 2) :
@@ -1854,6 +1904,7 @@ lemma card_highDegree_lt
   have h := card_highDegree_mul_le_twice_edges H q
   nlinarith
 
+omit [DecidableRel G.Adj] in
 /-- Near equality leaves fewer than `q²/2` exceptional
 `disj(H) \ critical(G)` edges. -/
 lemma twice_exception_edges_lt
@@ -1884,7 +1935,7 @@ lemma twice_exception_edges_lt
       _ = (Fintype.card V : ℝ) ^ 2 / 2 := by norm_num
   have hedge : (Dg \ Cg).edgeFinset = Dg.edgeFinset \ Cg.edgeFinset := by
     ext e
-    simp [Dg, Cg, SimpleGraph.sdiff_adj]
+    simp [Dg, Cg]
   have hcard : (Dg \ Cg).edgeFinset.card =
       Dg.edgeFinset.card - Cg.edgeFinset.card := by
     rw [hedge, Finset.card_sdiff_of_subset (SimpleGraph.edgeFinset_mono hCDgraph)]
@@ -2001,7 +2052,7 @@ lemma exists_initialCore
     have hucommon : u ∈ H.commonNeighbors y z := by
       rw [H.mem_commonNeighbors]
       exact ⟨huy.symm, huz.symm⟩
-    simpa [Dg, hyzD.2] using hucommon
+    simp [hyzD.2] at hucommon
   have hCgOutside {y : V} (hyD : y ∈ D) : Cg.neighborFinset y ⊆ C := by
     intro z hyz
     exact hDgOutside hyD (by
@@ -2146,10 +2197,11 @@ lemma exists_initialCore
   have : ¬degreeInto Cg x D ≤ 20 * q := by simpa [A6, hxC] using hxA6
   omega
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 /-- A critical pair cannot have a common neighbor in a graph in which every
 type-II critical path has been broken. -/
 lemma not_commonNeighbor_of_critical
-    {H : SimpleGraph V} [DecidableRel H.Adj] (hHG : H ≤ G)
+    {H : SimpleGraph V} (hHG : H ≤ G)
     (hII : ∀ x z y, IsTypeII G x z y → ¬(H.Adj x z ∧ H.Adj z y))
     {x y z : V} (hcrit : (criticalGraph G).Adj x y) :
     ¬(H.Adj x z ∧ H.Adj z y) := by
@@ -2158,7 +2210,7 @@ lemma not_commonNeighbor_of_critical
   have : z ∈ H.commonNeighbors x y := by
     rw [H.mem_commonNeighbors]
     exact ⟨hz.1, hz.2.symm⟩
-  simpa [hdisj.2] using this
+  simp [hdisj.2] at this
 
 /-- Degrees into the two cells of a finite partition add. -/
 lemma degreeInto_add_of_partition (H : SimpleGraph V) [DecidableRel H.Adj]
@@ -2167,6 +2219,7 @@ lemma degreeInto_add_of_partition (H : SimpleGraph V) [DecidableRel H.Adj]
     degreeInto H v C + degreeInto H v D = H.degree v := by
   rw [← degreeInto_union_of_disjoint H v hdisj, hpart, degreeInto_univ]
 
+omit [DecidableRel G.Adj] in
 /-- If every edge surviving inside `S` can be assigned to a critical pair
 with one endpoint in `S` and the other in `B`, then path uniqueness bounds
 the number of those edges by `|S| |B|`. -/
@@ -2194,6 +2247,7 @@ lemma card_edgesInside_le_mul_of_critical_targets
   have hcard := Fintype.card_le_of_injective target hinj
   simpa [E, Fintype.card_prod] using hcard
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 /-- The same critical-path injection for an arbitrary finite family of
 `G`-edges. -/
 lemma card_edgeFamily_le_mul_of_critical_targets
@@ -2216,6 +2270,7 @@ lemma card_edgeFamily_le_mul_of_critical_targets
   have hcard := Fintype.card_le_of_injective target hinj
   simpa [Fintype.card_prod] using hcard
 
+omit [DecidableEq V] [Fintype V] in
 /-- Existing cross-edges and internal edges charged to missing cross-pairs
 together fit inside the full Cartesian product. -/
 lemma card_interedges_add_edgeFamily_le_mul
@@ -2259,7 +2314,7 @@ lemma card_interedges_add_edgeFamily_le_mul
 /-- Decompose the edges induced by two disjoint cells into cross-edges and
 the two internal edge families. -/
 lemma card_edgesInside_union_le
-    (C D : Finset V) (hCD : Disjoint C D) :
+    (C D : Finset V) (_hCD : Disjoint C D) :
     (edgesInside G (C ∪ D)).card ≤ (G.interedges C D).card +
       (edgesInside G C ∪ edgesInside G D).card := by
   classical
@@ -2455,7 +2510,7 @@ lemma InitialCore.not_large_both
     (I : InitialCore G H q)
     (hHG : H ≤ G)
     (hII : ∀ x z y, IsTypeII G x z y → ¬(H.Adj x z ∧ H.Adj z y))
-    (hq : 0 < q) (v : V) :
+    (_hq : 0 < q) (v : V) :
     degreeInto H v I.C < 2 * q ∨ degreeInto H v I.D < 2 * q := by
   by_contra h
   push Not at h
@@ -2683,6 +2738,7 @@ lemma InitialCore.wrongSide_consequences
   have hD0card : D0.card ≤ I.D.card := Finset.card_le_card hD0sub
   omega
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 /-- Two different two-edge walks between a critical pair are impossible. -/
 lemma criticalPair_commonNeighbor_unique {x y z w : V}
     (hcrit : (criticalGraph G).Adj x y)
@@ -2691,7 +2747,7 @@ lemma criticalPair_commonNeighbor_unique {x y z w : V}
   · have hzmem : z ∈ G.commonNeighbors x y := by
       rw [G.mem_commonNeighbors]
       exact ⟨hz.1, hz.2.symm⟩
-    simpa [hI.2] using hzmem
+    simp [hI.2] at hzmem
   · have hzmem : z ∈ G.commonNeighbors x y := by
       rw [G.mem_commonNeighbors]
       exact ⟨hz.1, hz.2.symm⟩
@@ -2806,6 +2862,7 @@ lemma criticalPathContains_unique_internal
     · have hwz : w = z := (by simpa [hII.2.2] using hw.2.2 : z = w).symm
       simp [hwz]
 
+omit [DecidableEq V] [DecidableRel G.Adj] [Fintype V] in
 lemma isTypeI_of_critical_of_adj {x y : V}
     (hcrit : (criticalGraph G).Adj x y) (hxy : G.Adj x y) : IsTypeI G x y := by
   rcases hcrit with hI | ⟨z, hII⟩
@@ -2959,17 +3016,17 @@ lemma InitialCore.card_isolated_wrongSide_lt
     obtain ⟨a, b, hp⟩ := exists_criticalPathContains_of_diameter2Critical
       (G := G) hG heG
     rcases hp with ⟨hI, heq⟩ | ⟨z, hP, heq | heq⟩
-    · have haF : a ∈ F := he'.2 (by simpa [heq])
-      have hbF : b ∈ F := he'.2 (by simpa [heq])
+    · have haF : a ∈ F := he'.2 (by simp [heq])
+      have hbF : b ∈ F := he'.2 (by simp [heq])
       exact (hNoCrit (hFsub haF) (hFsub hbF) (Or.inl hI)).elim
-    · have haF : a ∈ F := he'.2 (by simpa [heq])
-      have hzF : z ∈ F := he'.2 (by simpa [heq])
+    · have haF : a ∈ F := he'.2 (by simp [heq])
+      have hzF : z ∈ F := he'.2 (by simp [heq])
       have hzmem : z ∈ G.commonNeighbors a b := by simp [hP.2.2]
       have hzb : G.Adj z b := (G.mem_commonNeighbors.mp hzmem).2.symm
       have hbB := hOutside hzF (Or.inr ⟨z, hP⟩) (hFsub haF) hzb
       exact ⟨a, haF, b, hbB, Or.inr ⟨z, hP, Or.inl heq⟩⟩
-    · have hzF : z ∈ F := he'.2 (by simpa [heq])
-      have hbF : b ∈ F := he'.2 (by simpa [heq])
+    · have hzF : z ∈ F := he'.2 (by simp [heq])
+      have hbF : b ∈ F := he'.2 (by simp [heq])
       have hzmem : z ∈ G.commonNeighbors a b := by simp [hP.2.2]
       have hza : G.Adj z a := (G.mem_commonNeighbors.mp hzmem).1.symm
       have haB := hOutside (a := b) (b := a) hzF
@@ -3025,6 +3082,7 @@ lemma InitialCore.card_isolated_wrongSide_lt
   have hFpos : (0 : ℝ) < F.card := by exact_mod_cast hFposN
   nlinarith
 
+omit [DecidableRel G.Adj] in
 /-- Sum of the two internal degree sequences along the matching constructed
 in Section 5.  Critical-pair uniqueness forces the two relevant neighbor
 sets to overlap only at noncritical partners. -/
@@ -3659,7 +3717,7 @@ lemma InitialCore.section6_degree_dichotomy
     (hdense : (((Fintype.card V : ℝ) ^ 2 - q ^ 2) / 4) <
       (H.edgeFinset.card : ℝ)) :
     let D0 := I.D.filter fun y ↦ y ∉ I.A5 ∧ 2 * q ≤ degreeInto H y I.D
-    let D7 := I.D \ (I.A4 ∪ I.A5 ∪ D0)
+    let _D7 := I.D \ (I.A4 ∪ I.A5 ∪ D0)
     ∀ v, degreeInto G v I.C ≤ 6 * q ∨ degreeInto G v I.D < 5 * q := by
   classical
   let D0 := I.D.filter fun y ↦ y ∉ I.A5 ∧ 2 * q ≤ degreeInto H y I.D
@@ -3699,7 +3757,7 @@ lemma InitialCore.section6_degree_dichotomy
         have hvCommon : v ∈ G.commonNeighbors y x := by
           rw [G.mem_commonNeighbors]
           exact ⟨hyv, hvx.symm⟩
-        exact (by simpa [hyxI.2] using hvCommon)
+        exact (by simp [hyxI.2] at hvCommon)
       · simp
     have hsubset : G.neighborFinset v ∩ I.D ⊆ I.D \ D7 := by
       intro y hy
@@ -3707,7 +3765,7 @@ lemma InitialCore.section6_degree_dichotomy
       refine Finset.mem_sdiff.mpr ⟨hy'.2, ?_⟩
       intro hy7
       have : y ∈ G.neighborFinset v ∩ D7 := Finset.mem_inter.mpr ⟨hy'.1, hy7⟩
-      simpa [hnone] using this
+      simp [hnone] at this
     have hc := Finset.card_le_card hsubset
     have hD7card : D7.card ≤ I.D.card := Finset.card_le_card hD7sub
     rw [Finset.card_sdiff_of_subset hD7sub] at hc
@@ -4002,7 +4060,7 @@ lemma InitialCore.exists_section6Partition
     have hyCommon : y ∈ G.commonNeighbors x z := by
       rw [G.mem_commonNeighbors]
       exact ⟨hxy, hzy⟩
-    simpa [hxz.2] using hyCommon
+    simp [hxz.2] at hyCommon
   have hNoEdgeD : ∀ {x y}, x ∈ D7 → y ∈ D' → ¬G.Adj x y := by
     intro x y hx7 hy hxy
     let TX := (typeIGraph G).neighborFinset x ∩ I.C
@@ -4020,7 +4078,7 @@ lemma InitialCore.exists_section6Partition
     have hyCommon : y ∈ G.commonNeighbors x z := by
       rw [G.mem_commonNeighbors]
       exact ⟨hxy, hzy⟩
-    simpa [hxz.2] using hyCommon
+    simp [hxz.2] at hyCommon
   have hScard : S.card < 66 * q := by
     have hSsub : S ⊆ A7 := Finset.union_subset hC8subA hD8subA
     exact (Finset.card_le_card hSsub).trans_lt hsizes.1
@@ -4146,19 +4204,20 @@ lemma Section6Partition.internal_charge
   · have heSide := Finset.mem_union.mp he
     rcases heSide with heC | heD
     · have hsub := (Finset.mem_filter.mp heC).2
-      have hxC : x ∈ P.C := hsub (by simpa [heq])
-      have hyC : y ∈ P.C := hsub (by simpa [heq])
+      have hxC : x ∈ P.C := hsub (by simp [heq])
+      have hyC : y ∈ P.C := hsub (by simp [heq])
       exact (P.no_critical_C hxC hyC (Or.inl hI)).elim
     · have hsub := (Finset.mem_filter.mp heD).2
-      have hxD : x ∈ P.D := hsub (by simpa [heq])
-      have hyD : y ∈ P.D := hsub (by simpa [heq])
+      have hxD : x ∈ P.D := hsub (by simp [heq])
+      have hyD : y ∈ P.D := hsub (by simp [heq])
       exact (P.no_critical_D hxD hyD (Or.inl hI)).elim
-  · have hxS : x ∈ P.S := hver (by simpa [heq])
+  · have hxS : x ∈ P.S := hver (by simp [heq])
     exact hclassify hxS hII.2.1 (Or.inr ⟨z, hII, Or.inl heq⟩)
-  · have hyS : y ∈ P.S := hver (by simpa [heq])
+  · have hyS : y ∈ P.S := hver (by simp [heq])
     exact hclassify hyS (by simpa [adj_comm] using hII.2.1)
       ((criticalPathContains_symm (G := G)).mp (Or.inr ⟨z, hII, Or.inr heq⟩))
 
+omit [DecidableEq V] in
 /-- Exactification: a near-extremal pruned graph forces the original
 diameter-two-critical graph to obey the sharp quarter bound. -/
 lemma exact_bound_of_dense_pruned
@@ -4294,7 +4353,7 @@ theorem erdos_742 : ∃ n₀ : ℕ, ∀ (V : Type*) [Fintype V] [DecidableEq V]
   have hHedges : H.edgeFinset = G.edgeFinset \ R := by
     ext e
     rw [SimpleGraph.mem_edgeFinset, Finset.mem_sdiff, SimpleGraph.mem_edgeFinset]
-    simp [H, R, prunedGraph, SimpleGraph.deleteEdges_adj]
+    simp [H, R, prunedGraph]
   have hHcard : H.edgeFinset.card = G.edgeFinset.card - R.card := by
     rw [hHedges, Finset.card_sdiff_of_subset hRsub]
   have hRle : R.card ≤ G.edgeFinset.card := Finset.card_le_card hRsub
