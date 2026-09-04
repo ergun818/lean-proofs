@@ -136,7 +136,7 @@ lemma signedInverseSquareDifference_succ_sub (X : ℝ) (A : ℕ)
   ring_nf
 
 lemma exists_signedInverseSquareDifference_gap
-    (X : ℝ) (hX : 0 < X) {A : ℕ} (hA : 0 < A)
+    (X : ℝ) (_hX : 0 < X) {A : ℕ} (hA : 0 < A)
     (rs : List ℕ) (hrs : ∀ r ∈ rs, 0 < r) (i : ℕ) :
     ∃ y : ℝ, (A + i : ℕ) ≤ y ∧
       y ≤ (A + i : ℕ) + 1 + rs.sum ∧
@@ -417,7 +417,7 @@ theorem terminalCorrelationMean_inverseSquare_le
         dsimp only [a, b]
         rw [hlen]
         field_simp [ne_of_gt hNreal, ne_of_gt hX, ne_of_gt hprodreal]
-        <;> ring
+        ring
   have havg := terminalCorrelationMean_le_of_leaf
     (u := u) (N := N) (a := a) (b := b) Ls [] ha hb (by simp) hcut hleaf
   simpa only [u, a, b, List.prod_nil, Nat.cast_one, div_one, one_mul] using havg
@@ -445,7 +445,7 @@ theorem inverseSquare_exponential_sum_high_derivative
   have hC : 0 ≤ vdcMomentConstant Ls.length :=
     (vdcMomentConstant_pos Ls.length).le
   rw [correlationAverage] at hmoment
-  simp only [List.sum_nil, Nat.sub_zero, List.length_nil, u] at hmoment
+  simp only [List.sum_nil, Nat.sub_zero, u] at hmoment
   exact hmoment.trans <| by
     apply mul_le_mul_of_nonneg_left _ hC
     linarith

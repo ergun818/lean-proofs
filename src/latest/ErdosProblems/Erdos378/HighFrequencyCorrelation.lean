@@ -57,7 +57,7 @@ lemma reciprocalHighDerivativeBound_nonneg
     Real.rpow_nonneg (reciprocalMomentMajorant_nonneg hX A hN Ls) _
 
 lemma reciprocalProductIntervalSum_eq_translated_Icc
-    (X : ℝ) {a b : ℕ} (hab : a ≤ b) :
+    (X : ℝ) {a b : ℕ} (_hab : a ≤ b) :
     reciprocalProductIntervalSum X 1 a b =
       ∑ n ∈ Finset.Icc 1 (b - a),
         e (-X / ((a + n : ℕ) : ℝ)) := by

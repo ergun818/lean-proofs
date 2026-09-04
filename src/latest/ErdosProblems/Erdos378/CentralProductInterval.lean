@@ -34,7 +34,7 @@ lemma reciprocalProductIntervalSum_rescale
   simp
 
 private lemma quotient_endpoint_le
-    {x y d : ℕ} (hd : 0 < d) (hdx : d ≤ x) (hyx : y ≤ 2 * x) :
+    {x y d : ℕ} (hd : 0 < d) (_hdx : d ≤ x) (hyx : y ≤ 2 * x) :
     y / d ≤ 2 * (x / d) + 1 := by
   have hxlt : x < d * (x / d + 1) := Nat.lt_mul_div_succ x hd
   have hylt : y < d * (2 * (x / d) + 2) := by
@@ -47,7 +47,7 @@ private lemma quotient_endpoint_le
   omega
 
 private lemma central_product_frequency_bounds
-    {X : ℝ} {x y d : ℕ} (hX : 0 < X)
+    {X : ℝ} {x y d : ℕ} (_hX : 0 < X)
     (hd : 0 < d) (hdx : d ≤ x) (hdscale : d ≤ x / d + 1)
     (hXlo : ((y : ℝ) ^ 2) ≤ 4 * X)
     (hXhi : X ≤ (y : ℝ) ^ 16) (hxy : x < y) (hyx : y ≤ 2 * x) :

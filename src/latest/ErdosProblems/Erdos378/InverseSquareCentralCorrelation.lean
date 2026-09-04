@@ -89,7 +89,8 @@ lemma inverseSquareCentralCorrelation_scale_bounds
     omega
   have hmMem : a + 1 ∈ commonProductInterval x y M (2 * M) r s := by
     rw [commonProductInterval, Finset.mem_Ioc]
-    simpa only [a, b,inverseSquareCentralCorrelationLower,inverseSquareCentralCorrelationUpper] using
+    simpa only [a, b, inverseSquareCentralCorrelationLower,
+      inverseSquareCentralCorrelationUpper] using
       (show a < a + 1 ∧ a + 1 ≤ b by omega)
   rcases (mem_commonProductInterval_iff hrPos hsPos).mp hmMem with
     ⟨hmIoc, hmr, hms⟩
@@ -341,9 +342,9 @@ theorem norm_inverseSquareCentral_inverseSquareBilinearBlock_sq_le_energy
                 ‖∑ m ∈ Finset.Ioc M (2 * M),
                 inverseSquareCutoffWeight X x y m r *
                     conj (inverseSquareCutoffWeight X x y m r)‖ ≤ (M : ℝ) := by
-              convert hdiag using 1 <;> norm_num
+              convert hdiag using 1; norm_num
               omega
-            simp only [if_pos rfl]
+            simp only
             have hmain : ‖b r‖ * ‖b r‖ *
                 ‖∑ m ∈ Finset.Ioc M (2 * M),
                 inverseSquareCutoffWeight X x y m r *

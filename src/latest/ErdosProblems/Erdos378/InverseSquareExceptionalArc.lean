@@ -58,7 +58,7 @@ lemma exceptional_arc_cos_lower {u : ℝ}
     norm_num
     nlinarith [Real.pi_pos]
   have hpi : Real.pi < 315 / 100 := by
-    convert Real.pi_lt_d2 using 1 <;> norm_num
+    convert Real.pi_lt_d2 using 1; norm_num
   have ht' : |t| < 3 / 5 := by
     calc
       |t| ≤ 19 * Real.pi / 100 := ht
@@ -119,7 +119,6 @@ lemma inverse_square_phase_cos_eq_mod (h n p : ℕ) (hp : 0 < p) :
   have hnquot : (n : ℝ) / (p : ℝ) ^ 2 =
       (n / p ^ 2 : ℕ) + (n % p ^ 2 : ℕ) / (p : ℝ) ^ 2 := by
     have hpR : (p : ℝ) ^ 2 ≠ 0 := by positivity
-    push_cast
     field_simp
     exact_mod_cast (show n = p ^ 2 * (n / p ^ 2) + n % p ^ 2 by
       simpa using (Nat.div_add_mod n (p ^ 2)).symm)

@@ -42,7 +42,7 @@ lemma inverseSquareShift_le (Q : ℝ) (M : ℕ) :
   unfold inverseSquareShift
   exact Nat.findGreatest_le M
 
-lemma inverseSquareShift_spec {Q : ℝ} (hQ : 0 ≤ Q) (M : ℕ) :
+lemma inverseSquareShift_spec {Q : ℝ} (_hQ : 0 ≤ Q) (M : ℕ) :
     inverseSquareShiftPredicate Q M (inverseSquareShift Q M) := by
   classical
   unfold inverseSquareShift
@@ -87,7 +87,7 @@ def inverseSquareCorrelationSizeCondition (M : ℕ) : Prop :=
       ((34).factorial : ℝ) * logarithmicSafety M ^ 32 ≤ (M : ℝ) ^ 2
 
 lemma baseShift_inverseSquarePredicate_of_frequency_upper
-    {Q : ℝ} (hQ : 0 ≤ Q) {M : ℕ} (hM : 1 ≤ M)
+    {Q : ℝ} (_hQ : 0 ≤ Q) {M : ℕ} (hM : 1 ≤ M)
     (hQupper : Q ≤ inverseSquareFrequencyConstant * (M : ℝ) ^ 31)
     (hsize : inverseSquareCorrelationSizeCondition M) :
     inverseSquareShiftPredicate Q M (baseShift M) := by
@@ -166,7 +166,7 @@ lemma inverseSquareShift_succ_not_predicate
   omega
 
 lemma inverseSquareShift_reverse_product
-    {Q : ℝ} (hQ : 0 ≤ Q) {M q : ℕ} (hM : 1 ≤ M) (hq : 1 ≤ q)
+    {Q : ℝ} (hQ : 0 ≤ Q) {M q : ℕ} (_hM : 1 ≤ M) (hq : 1 ≤ q)
     (hqeq : q = inverseSquareShift Q M) (hqM : q < M) :
     (M : ℝ) ^ 35 <
       2 ^ 33 * Q * ((34).factorial : ℝ) * (q : ℝ) ^ 32 *

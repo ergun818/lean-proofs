@@ -49,7 +49,7 @@ private lemma small_factor_scale
 
 theorem norm_weightedVaughanIntervalTwo_relaxed_le
     {X : ℝ} (hX : 0 < X) {H x y T : ℕ} {B : ℝ}
-    (hH : 1 ≤ H) (hT : 0 < T) (hTy : T ≤ y) (hTx : T ^ 4 ≤ x)
+    (hH : 1 ≤ H) (hT : 0 < T) (_hTy : T ≤ y) (hTx : T ^ 4 ≤ x)
     (hxy : x < y) (hXlo : (y : ℝ) ^ 2 ≤ 4 * (H : ℝ) ^ 2 * X)
     (hXhi : X ≤ (y : ℝ) ^ 16) (hyx : y ≤ 2 * x) (hB0 : 0 ≤ B)
     (hsize : ∀ q : ℕ, 1 ≤ q → q ≤ T ^ 2 →
@@ -123,7 +123,7 @@ private lemma weightedVaughanIntervalThree_eq_supported
 
 theorem norm_weightedVaughanIntervalThree_relaxed_le
     {X : ℝ} (hX : 0 < X) {H x y T : ℕ} {B : ℝ}
-    (hH : 1 ≤ H) (hT : 0 < T) (hTy : T ≤ y) (hTx : T ^ 4 ≤ x)
+    (hH : 1 ≤ H) (hT : 0 < T) (_hTy : T ≤ y) (hTx : T ^ 4 ≤ x)
     (hxy : x < y) (hXlo : (y : ℝ) ^ 2 ≤ 4 * (H : ℝ) ^ 2 * X)
     (hXhi : X ≤ (y : ℝ) ^ 16) (hyx : y ≤ 2 * x) (hB0 : 0 ≤ B)
     (hsize : ∀ q : ℕ, 1 ≤ q → q ≤ T ^ 2 →
@@ -238,7 +238,6 @@ theorem norm_relaxed_reciprocalVaughanBlock_sq_le
       _ = _ := by
         simp only [EA, EB, B, relaxedVaughanBlockMajorant, hmax,
           min_eq_right hKM]
-        push_cast
         ring
   · have hmax : max M K = K := max_eq_right hMK
     have hbase := norm_relaxed_reciprocalBilinearBlock_sq_le_energy
@@ -282,7 +281,6 @@ theorem norm_relaxed_reciprocalVaughanBlock_sq_le
       _ = _ := by
         simp only [EA, EB, B, relaxedVaughanBlockMajorant, hmax,
           min_eq_left hMK]
-        push_cast
         ring
 
 lemma relaxedVaughanBlockMajorant_le_uniform
@@ -451,10 +449,9 @@ theorem norm_weightedVaughanIntervalFour_relaxed_le
         Finset.sum_le_sum fun beta hb ↦ hblock alpha beta
     _ = ((dyadicExponentRange y).card : ℝ) ^ 2 * Real.sqrt A := by
       simp only [Finset.sum_const, nsmul_eq_mul]
-      push_cast
       ring
 
-def relaxedChebyshevMajorant (y T H : ℕ) (B delta : ℝ) : ℝ :=
+def relaxedChebyshevMajorant (y T _H : ℕ) (B delta : ℝ) : ℝ :=
   (T : ℝ) * (2 * Real.log (y : ℝ) * B) +
     ((T ^ 2 : ℕ) : ℝ) * (Real.log (y : ℝ) * B) +
       ((dyadicExponentRange y).card : ℝ) ^ 2 *
@@ -479,7 +476,7 @@ theorem norm_weightedChebyshevInterval_relaxed_le
   have hTone : 1 ≤ T := hT
   have hTlex : T ≤ x := by
     exact (show T ≤ T ^ 4 by nlinarith [pow_pos hT 2, pow_pos hT 3]).trans hTx
-  rw [weightedChebyshevInterval_eq_vaughan,
+  rw [weightedChebyshevInterval_eq_vaughan (U := T) (V := T),
     weightedVaughanIntervalOne_reciprocal_eq_zero (by exact_mod_cast hTlex),
     zero_add]
   have hTwo := norm_weightedVaughanIntervalTwo_relaxed_le

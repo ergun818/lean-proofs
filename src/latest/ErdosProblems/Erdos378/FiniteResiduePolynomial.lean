@@ -21,7 +21,7 @@ open FiniteResidueCRT
 
 noncomputable section
 
-variable {ι τ : Type*} [DecidableEq ι] [Fintype τ]
+variable {ι τ : Type*} [Fintype τ]
 
 def localIndicator (q : ι → ℕ) (A : ι → Finset ℕ) (i : ι) (n : ℕ) : ℝ :=
   if n % q i ∈ A i then 1 else 0

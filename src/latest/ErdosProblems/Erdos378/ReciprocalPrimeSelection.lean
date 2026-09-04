@@ -245,7 +245,6 @@ lemma reciprocal_phase_cos_eq_mod (h k p : ℕ) (hp : 0 < p) (hpk : p ≤ k) :
   have hkquot : (k : ℝ) / p =
       (k / p : ℕ) + (k % p : ℕ) / (p : ℝ) := by
     have hpR : (p : ℝ) ≠ 0 := by positivity
-    push_cast
     field_simp
     exact_mod_cast (show k = p * (k / p) + k % p by
       simpa [mul_comm] using hkdecomp)

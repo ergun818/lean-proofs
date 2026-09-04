@@ -108,7 +108,7 @@ lemma integral_normalizedWeightedPointMeasure
   have hmass : mu.mass = totalWeight s w := by
     exact weightedPointMeasure_mass s w x
   rw [show (mu : Measure UnitCircle).real Set.univ = (totalWeight s w : ℝ) by
-    simpa [hmass]]
+    simp [hmass]]
   rw [Complex.real_smul, Complex.ofReal_inv]
   simp_rw [Complex.real_smul]
 
@@ -126,7 +126,7 @@ lemma integral_normalizedWeightedPointMeasure_real
   have hmass : mu.mass = totalWeight s w := by
     exact weightedPointMeasure_mass s w x
   rw [show (mu : Measure UnitCircle).real Set.univ = (totalWeight s w : ℝ) by
-    simpa [hmass]]
+    simp [hmass]]
   simp only [smul_eq_mul]
 
 def unitCoord (z : UnitCircle) : ℝ :=
@@ -149,8 +149,7 @@ lemma coe_unitCoord (z : UnitCircle) :
 
 lemma unitCoord_coe (t : ℝ) :
     unitCoord (t : UnitCircle) = Int.fract t := by
-  simpa [unitCoord] using
-    (AddCircle.coe_equivIco_mk_apply (p := (1 : ℝ)) t)
+  simp [unitCoord]
 
 lemma unitCoord_coe_of_mem_Ico {t : ℝ} (ht : t ∈ Ico (0 : ℝ) 1) :
     unitCoord (t : UnitCircle) = t := by
@@ -287,7 +286,7 @@ lemma unitHaar_frontier_closedBall (delta : ℝ) :
   exact measure_mono_null Metric.frontier_closedBall_subset_sphere
     (volume_sphere_unitCircle 0 delta)
 
-lemma unitHaar_closedBall {delta : ℝ} (hdelta0 : 0 ≤ delta)
+lemma unitHaar_closedBall {delta : ℝ} (_hdelta0 : 0 ≤ delta)
     (hdelta : delta ≤ 1 / 2) :
     (unitHaar : Measure UnitCircle)
         (Metric.closedBall (0 : UnitCircle) delta) = ENNReal.ofReal (2 * delta) := by

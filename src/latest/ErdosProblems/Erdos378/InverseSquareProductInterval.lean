@@ -31,7 +31,7 @@ lemma inverseSquareOneDimensionalBound_nonneg
   positivity
 
 private lemma quotient_endpoint_le
-    {x y d : ℕ} (hd : 0 < d) (hdx : d ≤ x) (hyx : y ≤ 2 * x) :
+    {x y d : ℕ} (hd : 0 < d) (_hdx : d ≤ x) (hyx : y ≤ 2 * x) :
     y / d ≤ 2 * (x / d) + 1 := by
   have hxlt : x < d * (x / d + 1) := Nat.lt_mul_div_succ x hd
   have hylt : y < d * (2 * (x / d) + 2) := by
@@ -110,7 +110,7 @@ theorem norm_inverseSquareProductInterval_partial_le
     {X delta : ℝ} {x y d b H C : ℕ}
     (hX : 0 < X) (hH : 0 < H) (hdelta : 0 ≤ delta)
     (hd : 0 < d) (hdx : d ≤ x) (hdscale : d ≤ x / d + 1)
-    (hxy : x < y) (hby : b ≤ y / d)
+    (_hxy : x < y) (hby : b ≤ y / d)
     (hyx : y ≤ 2 * x) (hXhi : X ≤ (y : ℝ) ^ 16)
     (hXratio : (H : ℝ) ^ 2 * (y : ℝ) ^ 2 ≤ X)
     (hsize : inverseSquareCorrelationSizeCondition (x / d + 1))

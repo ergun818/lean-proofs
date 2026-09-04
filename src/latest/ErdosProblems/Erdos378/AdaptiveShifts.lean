@@ -58,7 +58,6 @@ lemma differencingError_replicate (n q : ℕ) :
   | succ n ih =>
       simp only [List.replicate_succ, differencingError, ih, Nat.cast_add,
         Nat.cast_one]
-      push_cast
       ring
 
 @[simp] lemma differencingError_derivativeCutoffs (q : ℕ) :
@@ -149,7 +148,7 @@ lemma baseShift_pow_sixteen_le (M : ℕ) :
       _ ≤ M := haM
   simpa only [baseShift, q, c, b, a] using hqsixteen
 
-lemma baseShift_pow_thirtytwo_le_sq {M : ℕ} (hM : 0 < M) :
+lemma baseShift_pow_thirtytwo_le_sq {M : ℕ} (_hM : 0 < M) :
     (baseShift M) ^ 32 ≤ M ^ 2 := by
   have hq16 := baseShift_pow_sixteen_le M
   calc
@@ -164,7 +163,7 @@ lemma adaptiveShift_le (Q : ℝ) (M : ℕ) : adaptiveShift Q M ≤ M :=
     unfold adaptiveShift
     exact Nat.findGreatest_le M
 
-lemma adaptiveShift_spec {Q : ℝ} (hQ : 0 ≤ Q) (M : ℕ) :
+lemma adaptiveShift_spec {Q : ℝ} (_hQ : 0 ≤ Q) (M : ℕ) :
     adaptiveShiftPredicate Q M (adaptiveShift Q M) := by
   classical
   unfold adaptiveShift
@@ -314,7 +313,7 @@ lemma adaptiveShift_reverse_product
           (logarithmicSafety M) ^ 32 :=
     hraw.trans_le <| mul_le_mul_of_nonneg_right
       (mul_le_mul_of_nonneg_left hpowmono hcoef0) (by positivity)
-  convert hout using 1 <;> ring
+  convert hout using 1; ring
 
 lemma reciprocalShiftFactor_adaptive_le
     {Q : ℝ} {M : ℕ} (hM : 1 ≤ M)

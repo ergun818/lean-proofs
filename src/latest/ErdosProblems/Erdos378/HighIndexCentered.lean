@@ -115,7 +115,6 @@ lemma fourier_reciprocalCirclePoint_ofNat (h X p : ℕ) :
   rw [fourier_coe_apply]
   norm_num
   congr 1
-  push_cast
   ring
 
 lemma prime_fourier_sum_ofNat (a b h X : ℕ) :
@@ -151,7 +150,7 @@ lemma prime_fourier_sum_neg_ofNat (a b h X : ℕ) :
       simp only [map_sum]
     _ = _ := congrArg conj (prime_fourier_sum_ofNat a b h X)
 
-lemma norm_prime_fourier_sum (a b X : ℕ) {h : ℤ} (hh : h ≠ 0) :
+lemma norm_prime_fourier_sum (a b X : ℕ) {h : ℤ} (_hh : h ≠ 0) :
     ‖∑ p ∈ primeIntervalSet a b,
         ((primeLogWeight p : ℝ) : ℂ) *
           fourier h (reciprocalCirclePoint X p)‖ =
@@ -462,7 +461,7 @@ theorem eventually_near_primeLogMass_lower :
     calc
       _ ≤ (1 / 1000000000000000 : ℝ) * ((x : ℝ) / Gx ^ 16) := by
         dsimp only [Gx]
-        convert hex using 1 <;> ring
+        convert hex using 1; ring
       _ ≤ (1 / 1000000000000000 : ℝ) *
           (2 ^ 16 * ((y : ℝ) / Gy ^ 16)) :=
         mul_le_mul_of_nonneg_left hscaleX (by norm_num)
@@ -480,12 +479,12 @@ theorem eventually_near_primeLogMass_lower :
   let S : ℝ := (y : ℝ) / Real.log (y : ℝ) ^ 16
   have hgap' : S / 10000000 ≤ (y : ℝ) - x := by
     dsimp only [S]
-    convert hgap using 1 <;> ring
+    convert hgap using 1; ring
   have hout : S / 100000000 ≤
       Chebyshev.theta (y : ℝ) - Chebyshev.theta (x : ℝ) := by
     dsimp only [S] at hgap' ⊢
     nlinarith
-  convert hout using 1 <;> dsimp only [S] <;> ring
+  convert hout using 1; dsimp only [S]; ring
 
 lemma eventually_const_mul_log_sixteen_le :
     ∀ᶠ y : ℕ in atTop,

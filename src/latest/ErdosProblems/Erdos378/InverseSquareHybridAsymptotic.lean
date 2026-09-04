@@ -71,8 +71,8 @@ theorem norm_inverseSquareProductIntervalSum_le_moderate
           (2 * (1 / (8 * (N : ℝ)) +
             3 * ((a + N : ℕ) : ℝ) ^ 3 /
               (32 * (N : ℝ) * Q))) := by
-      convert hraw using 1 <;>
-        simp only [N, Nat.cast_add, div_eq_mul_inv] <;> ring
+      convert hraw using 1;
+        simp only [N, Nat.cast_add, div_eq_mul_inv]; ring
     _ = 2 + (3 / 2) * ((a + N : ℕ) : ℝ) ^ 3 / Q := by
       field_simp [ne_of_gt hNR, ne_of_gt hQ]
       ring
@@ -478,7 +478,7 @@ columns separated by `d` have correlation `O(M K /(R d))` when
 `X ≥ R y²`. -/
 theorem inverseSquareCentralCorrelationFrequency_lower_of_nonempty
     {X R : ℝ} {x y M K r s : ℕ}
-    (hR : 0 < R) (hM : 1 ≤ M) (hK : 0 < K) (hKM : K ≤ M)
+    (hR : 0 < R) (hM : 1 ≤ M) (hK : 0 < K) (_hKM : K ≤ M)
     (hr : r ∈ Finset.Ioc K (2 * K))
     (hs : s ∈ Finset.Ioc K (2 * K)) (hrs : r < s)
     (hXratio : R * (y : ℝ) ^ 2 ≤ X)

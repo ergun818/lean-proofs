@@ -33,7 +33,7 @@ lemma logPowerCutoff_pos (e y : ℕ) : 0 < logPowerCutoff e y := by
   unfold logPowerCutoff
   omega
 
-lemma logPowerCutoff_real_bounds {e y : ℕ} (hy : 1 ≤ y) :
+lemma logPowerCutoff_real_bounds {e y : ℕ} (_hy : 1 ≤ y) :
     Real.log (y : ℝ) ^ e < (logPowerCutoff e y : ℝ) ∧
       (logPowerCutoff e y : ℝ) ≤ Real.log (y : ℝ) ^ e + 1 := by
   have hlog0 : 0 ≤ Real.log (y : ℝ) := Real.log_natCast_nonneg y
@@ -107,19 +107,18 @@ theorem eventually_log_logPowerCutoff_add_three_le (e : ℕ) :
           Real.log_le_log (by norm_num) (by
             exact (show (2 : ℝ) ≤ Real.exp 1 by
               exact Real.exp_one_gt_two.le).trans ht)
-        push_cast
         nlinarith
       refine Asymptotics.IsBigO.of_bound (e + 5) ?_
       filter_upwards [hevent, eventually_ge_atTop (Real.exp 1)] with t ht ht1
       rw [Real.norm_eq_abs, Real.norm_eq_abs,
         abs_of_nonneg (Real.log_nonneg (by
           exact (show (1 : ℝ) ≤ Real.exp 1 by
-            simpa using (Real.exp_pos 1).le).trans ht1))]
+            simp).trans ht1))]
       have ht0 : 0 < t := lt_of_lt_of_le (Real.exp_pos 1) ht1
       have harg : 1 ≤ 2 * t ^ e := by
         have htone : 1 ≤ t :=
           (show (1 : ℝ) ≤ Real.exp 1 by
-            simpa using (Real.exp_pos 1).le).trans ht1
+            simp).trans ht1
         nlinarith [one_le_pow₀ (n := e) htone]
       have hleft : 0 ≤ Real.log (2 * t ^ e) + 3 := by
         linarith [Real.log_nonneg harg]

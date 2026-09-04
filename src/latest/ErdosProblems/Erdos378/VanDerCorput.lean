@@ -29,8 +29,8 @@ The main statement is `vanDerCorput_fundamental_inequality` (indexed by `ℕ`). 
 the auxiliary `vanDerCorput_core`, stated for the zero-extension `w : ℤ → ℂ` of `u` (so all the
 index shifts are clean): writing `vₚ = ∑_{ℓ < L} w (p - aℓ)`, the regrouping identity
 `L · ∑ w = ∑ₚ vₚ` together with Cauchy–Schwarz gives `L² ‖∑ w‖² ≤ (N + a(L-1)) · ∑ₚ ‖vₚ‖²`;
-expanding `‖vₚ‖²` into the autocorrelation `∑_{ℓ,j} ∑ₘ w m · conj (w (m + a(ℓ-j)))` and regrouping by
-the difference `d = ℓ - j` (which occurs `L - |d|` times in the `L × L` box) produces the stated
+expanding `‖vₚ‖²` into the autocorrelation `∑_{ℓ,j} ∑ₘ w m · conj (w (m + a(ℓ-j)))` and regrouping
+by the difference `d = ℓ - j` (which occurs `L - |d|` times in the `L × L` box) produces the stated
 correlation sum.
 
 ## References
@@ -48,14 +48,15 @@ the `L²`-scaled square of the sum is bounded by the diagonal `‖·‖²` term 
 terms. This is proved directly; `vanDerCorput_fundamental_inequality` is the `ℕ`-indexed
 specialisation. -/
 private theorem vanDerCorput_core (a N : ℤ) (L : ℕ) (ha : 1 ≤ a) (hL : 1 ≤ L)
-    (hLN : a * (L:ℤ) ≤ N) (w : ℤ → ℂ) (hsupp : ∀ k, w k ≠ 0 → k ∈ Finset.Icc (1:ℤ) N) :
+    (hLN : a * (L : ℤ) ≤ N) (w : ℤ → ℂ) (hsupp : ∀ k, w k ≠ 0 → k ∈ Finset.Icc (1 : ℤ) N) :
     (L : ℝ) ^ 2 * ‖∑ k ∈ Finset.Icc (1:ℤ) N, w k‖ ^ 2 ≤
       (L:ℝ) * (↑(N + a * ((L:ℤ) - 1))) * (∑ k ∈ Finset.Icc (1:ℤ) N, ‖w k‖ ^ 2)
       + 2 * (↑(N + a * ((L:ℤ) - 1))) * ∑ e ∈ Finset.Icc 1 (L - 1), ((L:ℝ) - (e:ℝ)) *
           (∑ m ∈ Finset.Icc (1:ℤ) (N - a * (e:ℤ)),
             w m * (starRingEnd ℂ) (w (m + a * (e:ℤ)))).re := by
   have hL1 : (1:ℤ) ≤ (L:ℤ) := by exact_mod_cast hL
-  set f0 : ℤ → ℂ := fun e => ∑ m ∈ Finset.Icc (1:ℤ) N, w m * (starRingEnd ℂ) (w (m + a * e)) with hf0
+  set f0 : ℤ → ℂ :=
+    fun e => ∑ m ∈ Finset.Icc (1:ℤ) N, w m * (starRingEnd ℂ) (w (m + a * e)) with hf0
   have hident : ∑ p ∈ Finset.Icc (1:ℤ) (N + a * ((L:ℤ) - 1)), ∑ ℓ ∈ Finset.range L, w (p - a * ↑ℓ)
       = (L:ℂ) * ∑ k ∈ Finset.Icc (1:ℤ) N, w k := by
     rw [Finset.sum_comm]
@@ -79,7 +80,8 @@ private theorem vanDerCorput_core (a N : ℤ) (L : ℕ) (ha : 1 ≤ a) (hL : 1 �
     rw [Finset.sum_congr rfl hper, Finset.sum_const, Finset.card_range, nsmul_eq_mul]
   have hCS : (L:ℝ)^2 * ‖∑ k ∈ Finset.Icc (1:ℤ) N, w k‖^2
       ≤ (↑(N + a * ((L:ℤ) - 1)):ℝ)
-        * ∑ p ∈ Finset.Icc (1:ℤ) (N + a * ((L:ℤ) - 1)), ‖∑ ℓ ∈ Finset.range L, w (p - a * ↑ℓ)‖^2 := by
+        * ∑ p ∈ Finset.Icc (1:ℤ) (N + a * ((L:ℤ) - 1)),
+          ‖∑ ℓ ∈ Finset.range L, w (p - a * ↑ℓ)‖^2 := by
     set S := Finset.Icc (1:ℤ) (N + a * ((L:ℤ) - 1)) with hS
     have hnormeq : ‖∑ p ∈ S, ∑ ℓ ∈ Finset.range L, w (p - a * ↑ℓ)‖
         = (L:ℝ) * ‖∑ k ∈ Finset.Icc (1:ℤ) N, w k‖ := by
@@ -96,7 +98,8 @@ private theorem vanDerCorput_core (a N : ℤ) (L : ℕ) (ha : 1 ≤ a) (hL : 1 �
     calc (L:ℝ)^2 * ‖∑ k ∈ Finset.Icc (1:ℤ) N, w k‖^2
         = ‖∑ p ∈ S, ∑ ℓ ∈ Finset.range L, w (p - a * ↑ℓ)‖^2 := by rw [hnormeq]; ring
       _ ≤ (∑ p ∈ S, ‖∑ ℓ ∈ Finset.range L, w (p - a * ↑ℓ)‖)^2 := hsq
-      _ ≤ (S.card:ℝ) * ∑ p ∈ S, ‖∑ ℓ ∈ Finset.range L, w (p - a * ↑ℓ)‖^2 := sq_sum_le_card_mul_sum_sq
+      _ ≤ (S.card:ℝ) * ∑ p ∈ S, ‖∑ ℓ ∈ Finset.range L, w (p - a * ↑ℓ)‖^2 :=
+        sq_sum_le_card_mul_sum_sq
       _ = (↑(N + a * ((L:ℤ) - 1)):ℝ) * ∑ p ∈ S, ‖∑ ℓ ∈ Finset.range L, w (p - a * ↑ℓ)‖^2 := by
           rw [hcard]
   have hexp : ∑ p ∈ Finset.Icc (1:ℤ) (N + a * ((L:ℤ) - 1)), ‖∑ ℓ ∈ Finset.range L, w (p - a * ↑ℓ)‖^2
@@ -202,14 +205,14 @@ private theorem vanDerCorput_core (a N : ℤ) (L : ℕ) (ha : 1 ≤ a) (hL : 1 �
           ext ℓ; simp only [Finset.mem_range, Finset.mem_filter]; omega,
         Finset.card_range, nsmul_eq_mul]
   have hC0 : (f0 0).re = ∑ k ∈ Finset.Icc (1:ℤ) N, ‖w k‖^2 := by
-    show (∑ m ∈ Finset.Icc (1:ℤ) N, w m * (starRingEnd ℂ) (w (m + a * 0))).re = _
+    change (∑ m ∈ Finset.Icc (1:ℤ) N, w m * (starRingEnd ℂ) (w (m + a * 0))).re = _
     rw [Complex.re_sum]
     exact Finset.sum_congr rfl (fun m _ => by
       rw [mul_zero, add_zero, Complex.mul_conj, Complex.ofReal_re, Complex.normSq_eq_norm_sq])
   have hrestr : ∀ e : ℤ, 1 ≤ e → (f0 e).re
       = (∑ m ∈ Finset.Icc (1:ℤ) (N - a * e), w m * (starRingEnd ℂ) (w (m + a * e))).re := by
     intro e he
-    show (∑ m ∈ Finset.Icc (1:ℤ) N, w m * (starRingEnd ℂ) (w (m + a * e))).re = _
+    change (∑ m ∈ Finset.Icc (1:ℤ) N, w m * (starRingEnd ℂ) (w (m + a * e))).re = _
     congr 1
     refine (Finset.sum_subset (fun k hk => ?_) (fun k hkN hk => ?_)).symm
     · rw [Finset.mem_Icc] at hk ⊢
@@ -222,7 +225,7 @@ private theorem vanDerCorput_core (a N : ℤ) (L : ℕ) (ha : 1 ≤ a) (hL : 1 �
       rw [hz, map_zero, mul_zero]
   have hsym : ∀ e : ℤ, 1 ≤ e → (f0 (-e)).re = (f0 e).re := by
     intro e he
-    show (∑ m ∈ Finset.Icc (1:ℤ) N, w m * (starRingEnd ℂ) (w (m + a * (-e)))).re
+    change (∑ m ∈ Finset.Icc (1:ℤ) N, w m * (starRingEnd ℂ) (w (m + a * (-e)))).re
         = (∑ m ∈ Finset.Icc (1:ℤ) N, w m * (starRingEnd ℂ) (w (m + a * e))).re
     have hae : (0:ℤ) ≤ a * e := mul_nonneg (by linarith) (by linarith)
     have hLHS : ∑ m ∈ Finset.Icc (1:ℤ) N, w m * (starRingEnd ℂ) (w (m + a * (-e)))
@@ -236,7 +239,8 @@ private theorem vanDerCorput_core (a N : ℤ) (L : ℕ) (ha : 1 ≤ a) (hL : 1 �
             by_contra h; have h2 := hsupp _ h; rw [Finset.mem_Icc, mul_neg] at h2; omega
           rw [hz, map_zero, mul_zero]
       rw [hdrop,
-        show Finset.Icc (1 + a * e) N = (Finset.Icc (1:ℤ) (N - a * e)).map (addRightEmbedding (a * e))
+        show Finset.Icc (1 + a * e) N =
+            (Finset.Icc (1:ℤ) (N - a * e)).map (addRightEmbedding (a * e))
           from by rw [Finset.map_add_right_Icc]; congr 1; ring,
         Finset.sum_map]
       exact Finset.sum_congr rfl (fun m' _ => by

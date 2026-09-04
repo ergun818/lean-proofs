@@ -119,7 +119,7 @@ lemma inverseSquareHighDerivativeBound_nonneg
     Real.rpow_nonneg (inverseSquareMomentMajorant_nonneg hX A hN Ls) _
 
 lemma inverseSquareProductIntervalSum_eq_translated_Icc
-    (X : ℝ) {a b : ℕ} (hab : a ≤ b) :
+    (X : ℝ) {a b : ℕ} (_hab : a ≤ b) :
     inverseSquareProductIntervalSum X 1 a b =
       ∑ n ∈ Finset.Icc 1 (b - a),
         e (-X / ((a + n : ℕ) : ℝ) ^ 2) := by

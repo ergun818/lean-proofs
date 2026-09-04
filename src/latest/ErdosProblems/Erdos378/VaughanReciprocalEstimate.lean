@@ -754,7 +754,6 @@ theorem norm_weightedVaughanIntervalFour_reciprocal_le
       exact hblock alpha beta
     _ = ((dyadicExponentRange y).card : ℝ) ^ 2 * Real.sqrt A := by
       simp only [Finset.sum_const, nsmul_eq_mul]
-      push_cast
       ring
 
 end

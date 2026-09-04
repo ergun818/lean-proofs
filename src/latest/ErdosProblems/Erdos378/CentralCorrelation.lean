@@ -35,7 +35,7 @@ def centralCorrelationSizeCondition (M : ℕ) : Prop :=
       (logarithmicSafety M) ^ 32 ≤ M
 
 lemma baseShift_predicate_of_frequency_upper
-    {Q : ℝ} (hQ : 0 ≤ Q) {M : ℕ} (hM : 1 ≤ M)
+    {Q : ℝ} (_hQ : 0 ≤ Q) {M : ℕ} (hM : 1 ≤ M)
     (hQupper : Q ≤ centralFrequencyConstant * (M : ℝ) ^ 31)
     (hsize : centralCorrelationSizeCondition M) :
     adaptiveShiftPredicate Q M (baseShift M) := by
@@ -294,9 +294,9 @@ theorem norm_central_reciprocalBilinearBlock_sq_le_energy
                 ‖∑ m ∈ Finset.Ioc M (2 * M),
                   reciprocalCutoffWeight X x y m r *
                     conj (reciprocalCutoffWeight X x y m r)‖ ≤ (M : ℝ) := by
-              convert hdiag using 1 <;> norm_num
+              convert hdiag using 1; norm_num
               omega
-            simp only [if_pos rfl]
+            simp only
             have hmain : ‖b r‖ * ‖b r‖ *
                 ‖∑ m ∈ Finset.Ioc M (2 * M),
                   reciprocalCutoffWeight X x y m r *

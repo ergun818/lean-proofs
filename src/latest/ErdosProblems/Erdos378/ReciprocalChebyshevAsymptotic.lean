@@ -41,7 +41,7 @@ lemma reciprocalDifferencingLength_pos (y : ℕ) :
   unfold reciprocalDifferencingLength
   omega
 
-lemma reciprocalVaughanCutoff_real_bounds {y : ℕ} (hy : 4 ≤ y) :
+lemma reciprocalVaughanCutoff_real_bounds {y : ℕ} (_hy : 4 ≤ y) :
     (Real.log (y : ℝ)) ^ 16 < (reciprocalVaughanCutoff y : ℝ) ∧
       (reciprocalVaughanCutoff y : ℝ) ≤
         (Real.log (y : ℝ)) ^ 16 + 1 := by
@@ -54,7 +54,7 @@ lemma reciprocalVaughanCutoff_real_bounds {y : ℕ} (hy : 4 ≤ y) :
     gcongr
     exact Nat.floor_le (by positivity)
 
-lemma reciprocalDifferencingLength_real_bounds {y : ℕ} (hy : 1 ≤ y) :
+lemma reciprocalDifferencingLength_real_bounds {y : ℕ} (_hy : 1 ≤ y) :
     Real.sqrt (y : ℝ) < (reciprocalDifferencingLength y : ℝ) ∧
       (reciprocalDifferencingLength y : ℝ) ≤ Real.sqrt (y : ℝ) + 1 := by
   constructor
@@ -200,7 +200,7 @@ lemma eventually_log_natCast_le_rpow (s : ℝ) (hs : 0 < s) :
   simpa only [Function.comp_apply, one_mul, Real.norm_eq_abs,
     abs_of_nonneg hlog, abs_of_nonneg hpow, Real.rpow_one] using hybound
 
-lemma eventually_log_natCast_rpow_le_rpow (a s : ℝ) (ha : 0 ≤ a)
+lemma eventually_log_natCast_rpow_le_rpow (a s : ℝ) (_ha : 0 ≤ a)
     (hs : 0 < s) :
     ∀ᶠ y : ℕ in atTop,
       (Real.log (y : ℝ)) ^ a ≤ (y : ℝ) ^ s := by
@@ -432,7 +432,7 @@ lemma reciprocalChebyshev_fourth_term_le {y : ℕ} (hy : 4 ≤ y)
           (12800 / 3 : ℝ) * (2 + C) * Y ^ 2 / G ^ 12 =
               (12800 / 3 : ℝ) * ((2 + C) * Y ^ 2 / G ^ 12) := by ring
           _ ≤
-              5000 * ((2 + C) * Y ^ 2 / G ^ 12) := by gcongr <;> norm_num
+              5000 * ((2 + C) * Y ^ 2 / G ^ 12) := by gcongr; norm_num
           _ = 5000 * (2 + C) * Y ^ 2 / G ^ 12 := by ring
   have hDsq : D ^ 2 = 5000 * (2 + C) := by
     change reciprocalFourthEnvelopeConstant ^ 2 = _
@@ -491,7 +491,7 @@ theorem tendsto_reciprocalChebyshevMajorant_div :
   have hE : Tendsto E atTop (nhds 0) := by
     dsimp only [E]
     convert tendsto_reciprocalChebyshev_type_envelope.add
-      tendsto_reciprocalChebyshev_fourth_envelope using 1 <;> norm_num
+      tendsto_reciprocalChebyshev_fourth_envelope using 1; norm_num
   have hlog := eventually_log_natCast_le_rpow (1 / 8 : ℝ) (by norm_num)
   have hlogpowRaw := eventually_log_natCast_rpow_le_rpow
     (16 : ℝ) (1 / 128 : ℝ) (by norm_num) (by norm_num)

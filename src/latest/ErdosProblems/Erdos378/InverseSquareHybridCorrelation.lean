@@ -131,11 +131,11 @@ lemma sum_close_mul_le (t : Finset ℕ) (b : ℕ → ℝ) (D : ℕ)
 `D` trivially and applies a common envelope only to separated pairs. -/
 theorem norm_inverseSquareCentral_bilinearBlock_sq_le_hybrid
     {X : ℝ} {x y M K C D : ℕ} (a b : ℕ → ℂ)
-    (hX : 0 < X) (hM : 1 ≤ M) (hK : 0 < K) (hKM : K ≤ M)
-    (hXlo : ((y : ℝ) ^ 2) ≤ 4 * X)
-    (hXhi : X ≤ (y : ℝ) ^ 16) (hyx : y ≤ 2 * x)
-    (hsize : inverseSquareCentralCorrelationSizeCondition M)
-    (hC : 2 ≤ C) (hbaseCap : AdaptiveShifts.baseShift M ≤ M / C)
+    (_hX : 0 < X) (hM : 1 ≤ M) (hK : 0 < K) (hKM : K ≤ M)
+    (_hXlo : ((y : ℝ) ^ 2) ≤ 4 * X)
+    (_hXhi : X ≤ (y : ℝ) ^ 16) (_hyx : y ≤ 2 * x)
+    (_hsize : inverseSquareCentralCorrelationSizeCondition M)
+    (_hC : 2 ≤ C) (_hbaseCap : AdaptiveShifts.baseShift M ≤ M / C)
     (B : ℝ) (hB : 0 ≤ B)
     (hcorr : ∀ r ∈ Finset.Ioc K (2 * K),
       ∀ s ∈ Finset.Ioc K (2 * K),

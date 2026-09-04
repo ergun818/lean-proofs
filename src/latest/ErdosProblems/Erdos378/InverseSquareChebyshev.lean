@@ -249,7 +249,7 @@ theorem norm_weightedChebyshevInterval_inverseSquare_le
   have hTone : 1 ≤ T := hT
   have hTfour : T ≤ T ^ 4 := by nlinarith [pow_pos hT 2, pow_pos hT 3]
   have hTlex : T ≤ x := hTfour.trans hTx
-  rw [weightedChebyshevInterval_eq_vaughan,
+  rw [weightedChebyshevInterval_eq_vaughan (U := T) (V := T),
     weightedVaughanIntervalOne_inverseSquare_eq_zero (by exact_mod_cast hTlex),
     zero_add]
   have hTwo := norm_weightedVaughanIntervalTwo_inverseSquare_le

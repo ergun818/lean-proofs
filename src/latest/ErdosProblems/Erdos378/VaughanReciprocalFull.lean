@@ -184,7 +184,7 @@ theorem norm_weightedChebyshevInterval_reciprocal_le
     (hXhi : X ≤ (y : ℝ) ^ 2) (hyx : y ≤ 2 * x) :
     ‖weightedChebyshevInterval (reciprocalWeight X) x y‖ ≤
       reciprocalChebyshevMajorant y T L := by
-  rw [weightedChebyshevInterval_eq_vaughan,
+  rw [weightedChebyshevInterval_eq_vaughan (U := T) (V := T),
     weightedVaughanIntervalOne_reciprocal_eq_zero (by exact_mod_cast hTx),
     zero_add]
   have hTpow : T ^ 2 ≤ (T ^ 2) ^ 2 := by

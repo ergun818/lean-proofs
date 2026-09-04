@@ -87,7 +87,6 @@ theorem norm_central_reciprocalVaughanBlock_sq_le
       _ = centralVaughanBlockMajorant V M K := by
         simp only [EA, EB, B, centralVaughanBlockMajorant, hmax,
           min_eq_right hKM]
-        push_cast
         ring
   · have hmax : max M K = K := max_eq_right hMK
     have hbase := norm_central_reciprocalBilinearBlock_sq_le_energy
@@ -133,7 +132,6 @@ theorem norm_central_reciprocalVaughanBlock_sq_le
       _ = centralVaughanBlockMajorant V M K := by
         simp only [EA, EB, B, centralVaughanBlockMajorant, hmax,
           min_eq_left hMK]
-        push_cast
         ring
 
 /-- Every dyadic fourth-term block has its scale-specific majorant. -/

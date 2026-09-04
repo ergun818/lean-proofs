@@ -46,17 +46,21 @@ def blockWeight (q : ι → ℕ) (A : ι → Finset ℕ)
     (G : Finset ι) (n : ℕ) : ℝ :=
   (1 - blockHitCount q A G n / blockMass q A G) ^ 2
 
+omit [DecidableEq ι] in
 lemma indicatorMonomial_empty (q : ι → ℕ) (A : ι → Finset ℕ) (n : ℕ) :
     indicatorMonomial q A ∅ n = 1 := by simp [indicatorMonomial]
 
+omit [DecidableEq ι] in
 lemma densityMonomial_empty (q : ι → ℕ) (A : ι → Finset ℕ) :
     densityMonomial q A ∅ = 1 := by simp [densityMonomial]
 
+omit [DecidableEq ι] in
 lemma indicatorMonomial_singleton (q : ι → ℕ) (A : ι → Finset ℕ)
     (p : ι) (n : ℕ) :
     indicatorMonomial q A {p} n = localIndicator q A p n := by
   simp [indicatorMonomial]
 
+omit [DecidableEq ι] in
 lemma densityMonomial_singleton (q : ι → ℕ) (A : ι → Finset ℕ)
     (p : ι) :
     densityMonomial q A {p} = ((A p).card : ℝ) / q p := by
@@ -287,6 +291,7 @@ lemma sum_blockTerm_density
   field_simp [hB0]
   ring
 
+omit [DecidableEq ι] in
 lemma blockVariance_nonneg
     (q : ι → ℕ) (A : ι → Finset ℕ) (G : Finset ι)
     (hAq : ∀ p ∈ G, (A p).card ≤ q p) :
@@ -303,6 +308,7 @@ lemma blockVariance_nonneg
         (by exact_mod_cast hAq p hp)
   positivity
 
+omit [DecidableEq ι] in
 lemma blockVariance_le_card
     (q : ι → ℕ) (A : ι → Finset ℕ) (G : Finset ι)
     (hAq : ∀ p ∈ G, (A p).card ≤ q p) :
@@ -494,6 +500,7 @@ lemma sum_tripleTerm_density
 
 /-! ## Uniform coefficient and support bounds -/
 
+omit [DecidableEq ι] in
 lemma sum_abs_blockTermCoeff (G : Finset ι) (B : ℝ) (hB : 0 < B) :
     (∑ t : BlockTerm G, |blockTermCoeff B t|) =
       1 + (G.card : ℝ) * (2 / B) + (G.card : ℝ) ^ 2 * (1 / B ^ 2) := by
@@ -507,6 +514,7 @@ lemma sum_abs_blockTermCoeff (G : Finset ι) (B : ℝ) (hB : 0 < B) :
   field_simp [hB0]
   ring
 
+omit [DecidableEq ι] in
 lemma sum_abs_blockTermCoeff_le_nine (G : Finset ι) (B : ℝ)
     (hB : 0 < B) (hcard : (G.card : ℝ) ≤ 2 * B) :
     (∑ t : BlockTerm G, |blockTermCoeff B t|) ≤ 9 := by
@@ -522,6 +530,7 @@ lemma sum_abs_blockTermCoeff_le_nine (G : Finset ι) (B : ℝ)
     nlinarith [sq_nonneg ((G.card : ℝ) - 2 * B)]
   linarith
 
+omit [DecidableEq ι] in
 lemma sum_abs_tripleTermCoeff_le_729
     (G₀ G₁ G₂ : Finset ι) (B₀ B₁ B₂ : ℝ)
     (hB₀ : 0 < B₀) (hB₁ : 0 < B₁) (hB₂ : 0 < B₂)
@@ -702,7 +711,6 @@ lemma product_local_cards_le_pow_six
     intro i hi
     change i ∈ (blockTermSupport t.1 ∪ blockTermSupport t.2.1) ∪
       blockTermSupport t.2.2 at hi
-    change i ∈ (G₀ ∪ G₁) ∪ G₂
     rcases Finset.mem_union.mp hi with hi₀₁ | hi₂
     · rcases Finset.mem_union.mp hi₀₁ with hi₀ | hi₁
       · exact Finset.mem_union.mpr
@@ -724,6 +732,7 @@ lemma product_local_cards_le_pow_six
     _ = R ^ (tripleTermSupport t).card := by simp
     _ ≤ R ^ 6 := pow_le_pow_right₀ hR (tripleTermSupport_card_le_six t)
 
+omit [DecidableEq ι] in
 lemma blockVariance_div_sq_le_four_div
     (q : ι → ℕ) (A : ι → Finset ℕ) (G : Finset ι)
     (B T : ℝ) (hAq : ∀ p ∈ G, (A p).card ≤ q p)
@@ -739,6 +748,7 @@ lemma blockVariance_div_sq_le_four_div
     nlinarith [sq_nonneg ((G.card : ℝ) - 2 * B)]
   exact (div_le_div_iff₀ (sq_pos_of_pos hB) hT).mpr (hmul.trans hsq)
 
+omit [DecidableEq ι] in
 lemma triple_model_le_sixtyfour_div_cube
     (q : ι → ℕ) (A : ι → Finset ℕ)
     (G₀ G₁ G₂ : Finset ι) (B₀ B₁ B₂ T : ℝ)
@@ -774,12 +784,14 @@ lemma triple_model_le_sixtyfour_div_cube
         (mul_nonneg h4T h4T)
     _ = 64 / T ^ 3 := by field_simp [ne_of_gt hT]; ring
 
+omit [DecidableEq ι] in
 lemma exists_three_pairwise_disjoint_subsets_card_eq
     (P : Finset ι) {t : ℕ} (ht : 3 * t ≤ P.card) :
     ∃ G₀ G₁ G₂ : Finset ι,
       G₀ ⊆ P ∧ G₁ ⊆ P ∧ G₂ ⊆ P ∧
       Disjoint G₀ G₁ ∧ Disjoint G₀ G₂ ∧ Disjoint G₁ G₂ ∧
       G₀.card = t ∧ G₁.card = t ∧ G₂.card = t := by
+  classical
   obtain ⟨G₀, hG₀P, hG₀card⟩ :=
     Finset.exists_subset_card_eq (show t ≤ P.card by omega)
   let R₁ := P \ G₀

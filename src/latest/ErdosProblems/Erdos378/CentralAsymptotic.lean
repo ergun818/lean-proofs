@@ -167,7 +167,6 @@ theorem tendsto_safety_pow_forty_div_baseShift :
       dsimp only [t]
       push_cast
       rw [div_le_iff₀ (by positivity : (0 : ℝ) < q M)]
-      norm_num
       exact_mod_cast (show q M + 1 ≤ 2 * q M by omega)
     calc
       logarithmicSafety M ^ 64 / (q M : ℝ) ≤
@@ -242,7 +241,7 @@ theorem tendsto_adaptiveCorrelationEnvelope_div :
       34 / logarithmicSafety M +
         8 * adaptiveMomentEnvelope M ^ ((2 ^ 32 : ℕ) : ℝ)⁻¹)
       atTop (nhds 0) := by
-    convert hfirst.add hsecond using 1 <;> norm_num
+    convert hfirst.add hsecond using 1; norm_num
   exact hsum.congr' heq
 
 theorem eventually_centralCorrelationSizeCondition :

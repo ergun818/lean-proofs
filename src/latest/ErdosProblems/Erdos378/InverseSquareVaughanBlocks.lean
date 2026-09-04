@@ -77,9 +77,9 @@ theorem nestedFourthInner_eq_rectangle
   intro k hk
   by_cases hkV : V < (k : ℝ)
   · by_cases hkprod : x < m * k ∧ m * k ≤ y
-    · simp [P, f, cutoffFourthCoefficient, inverseSquareCutoffWeight, hkV, hkprod]
-    · simp [P, f, cutoffFourthCoefficient, inverseSquareCutoffWeight, hkV, hkprod]
-  · simp [P, f, cutoffFourthCoefficient, inverseSquareCutoffWeight, hkV]
+    · simp [f, cutoffFourthCoefficient, inverseSquareCutoffWeight, hkV, hkprod]
+    · simp [f, cutoffFourthCoefficient, inverseSquareCutoffWeight, hkV, hkprod]
+  · simp [f, cutoffFourthCoefficient, inverseSquareCutoffWeight, hkV]
 
 /-- Exact rectangular form of the reciprocal-twisted fourth Vaughan term. -/
 theorem weightedVaughanIntervalFour_reciprocal_eq_rectangle

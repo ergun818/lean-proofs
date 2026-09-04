@@ -142,7 +142,7 @@ lemma correlationAverage_sq_le
           4 * (N : ℝ) / (L : ℝ) *
             ∑ r ∈ Finset.Icc 1 (L - 1),
               ‖∑ n ∈ Finset.Icc 1 (N - (r :: rs).sum),
-                iteratedCorrelation (r :: rs) u n‖ by field_simp <;> ring]
+                iteratedCorrelation (r :: rs) u n‖ by field_simp; ring]
     have hvdcDiv :
         ‖∑ n ∈ Finset.Icc 1 M, iteratedCorrelation rs u n‖ ^ 2 ≤
           (2 * (L : ℝ) * (M : ℝ) ^ 2 +
@@ -280,7 +280,7 @@ private lemma normalized_sum_pow_le_sum_pow
     exact pow_le_pow_left₀ (by positivity) hcardR p
   rw [show (1 / (L : ℝ)) * ∑ i ∈ s, f i =
       (∑ i ∈ s, f i) / (L : ℝ) by
-        simp only [one_div, div_eq_mul_inv, one_mul]
+        simp only [div_eq_mul_inv, one_mul]
         ring]
   rw [div_pow, div_le_iff₀ (pow_pos hLreal (p + 1))]
   calc
@@ -547,7 +547,7 @@ lemma iteratedCorrelation_e_eq (F : ℝ → ℝ) (rs : List ℕ) (n : ℕ) :
       e (((-1 : ℝ) ^ rs.length) *
         forwardDifferences (rs.map (fun r : ℕ ↦ (r : ℝ))) F n) := by
   induction rs generalizing n with
-  | nil => simp [iteratedCorrelation, forwardDifferences]
+  | nil => simp [iteratedCorrelation]
   | cons r rs ih =>
       rw [iteratedCorrelation_cons, ih n, ih (n + r), ← e_sub]
       congr 1
@@ -627,7 +627,7 @@ lemma signedReciprocalDifference_succ_sub (X : ℝ) (A : ℕ)
 /-- Mean-value form of a terminal reciprocal-correlation gap, in every
 derivative order. -/
 lemma exists_signedReciprocalDifference_gap
-    (X : ℝ) (hX : 0 < X) {A : ℕ} (hA : 0 < A)
+    (X : ℝ) (_hX : 0 < X) {A : ℕ} (hA : 0 < A)
     (rs : List ℕ) (hrs : ∀ r ∈ rs, 0 < r) (i : ℕ) :
     ∃ y : ℝ, (A + i : ℕ) ≤ y ∧
       y ≤ (A + i : ℕ) + 1 + rs.sum ∧
@@ -937,7 +937,7 @@ lemma IsShiftExtension.prod_le {Ls rs ss : List ℕ}
 sums recorded by `reciprocalShiftFactor`. -/
 theorem terminalCorrelationMean_le_of_leaf
     {u : ℕ → ℂ} {N : ℕ} {a b : ℝ} (Ls rs : List ℕ)
-    (ha : 0 ≤ a) (hb : 0 ≤ b)
+    (ha : 0 ≤ a) (_hb : 0 ≤ b)
     (hrs : ∀ r ∈ rs, 0 < r)
     (hcut : ∀ L ∈ Ls, 1 ≤ L)
     (hleaf : ∀ ss, IsShiftExtension Ls rs ss →
@@ -1016,8 +1016,7 @@ theorem terminalCorrelationMean_le_of_leaf
               intro r hr
               have hrpos : (0 : ℝ) < r := by
                 exact_mod_cast (Finset.mem_Icc.mp hr).1
-              field_simp [ne_of_gt hrpos, ne_of_gt hrsprod]
-              <;> ring]
+              field_simp [ne_of_gt hrpos, ne_of_gt hrsprod]]
             ring
           rw [mul_add, hrecip]
           exact add_le_add hconst le_rfl
@@ -1095,7 +1094,7 @@ theorem terminalCorrelationMean_reciprocal_le
         dsimp only [a, b]
         rw [hlen]
         field_simp [ne_of_gt hNreal, ne_of_gt hX, ne_of_gt hprodreal]
-        <;> ring
+        ring
   have havg := terminalCorrelationMean_le_of_leaf
     (u := u) (N := N) (a := a) (b := b) Ls [] ha hb (by simp) hcut hleaf
   simpa only [u, a, b, List.prod_nil, Nat.cast_one, div_one, one_mul] using havg
@@ -1127,7 +1126,7 @@ theorem reciprocal_exponential_sum_high_derivative
   have hC : 0 ≤ vdcMomentConstant Ls.length :=
     (vdcMomentConstant_pos Ls.length).le
   rw [correlationAverage] at hmoment
-  simp only [List.sum_nil, Nat.sub_zero, List.length_nil, u] at hmoment
+  simp only [List.sum_nil, Nat.sub_zero, u] at hmoment
   exact hmoment.trans <| by
     apply mul_le_mul_of_nonneg_left _ hC
     linarith

@@ -322,7 +322,7 @@ theorem sum_norm_phaseCoeff_variation_le (f : ℕ → ℝ) (N : ℕ) (hN : 2 ≤
     have h := norm_phaseCoeff_sub_le hm (hlower (i + 1) hi1)
       (hlower i hi0) (hupper (i + 1) hi1) (hupper i hi0)
     dsimp [C, d]
-    convert h using 1 <;> ring
+    convert h using 1; ring
   have hsum : (∑ i ∈ Finset.range (N - 2),
       ‖phaseCoeff (d (i + 1)) - phaseCoeff (d i)‖) ≤
       ∑ i ∈ Finset.range (N - 2), C * |d (i + 1) - d i| := by
@@ -344,7 +344,7 @@ theorem sum_norm_phaseCoeff_variation_le (f : ℕ → ℝ) (N : ℕ) (hN : 2 ≤
     _ ≤ ∑ i ∈ Finset.range (N - 2), C * |d (i + 1) - d i| := hsum
     _ = C * (d 0 - d (N - 2)) := by
       rw [← Finset.mul_sum, hvariation]
-    _ ≤ C * (1 / 2) := by gcongr <;> linarith
+    _ ≤ C * (1 / 2) := by gcongr; linarith
     _ = (8 * (1 / (4 * m)) ^ 2) / 2 := by
       dsimp [C]
       ring
@@ -531,7 +531,7 @@ theorem norm_sum_e_le_of_antitone_phaseDiff_sharp (f : ℕ → ℝ) (N : ℕ)
       ‖phaseCoeff (f (N - 1) - f (N - 2))‖ *
           ‖e (f (N - 1)) - e (f 0)‖ ≤ (1 / (4 * m)) * 2 := by
             gcongr
-      _ = 1 / (2 * m) := by field_simp <;> norm_num
+      _ = 1 / (2 * m) := by field_simp; norm_num
   have hcoeff := sum_norm_phaseCoeff_variation_le_inv
     f N hN m hm hlower hupper hanti
   have hvariation :
@@ -624,7 +624,8 @@ theorem reciprocalPhaseDiff_antitone (X : ℝ) (hX : 0 ≤ X)
   apply div_le_div_of_nonneg_left hX
   · positivity
   · have h1 : (((A + i : ℕ) : ℝ)) ≤ ((A + j : ℕ) : ℝ) := by exact_mod_cast Nat.add_le_add_left hij A
-    have h2 : (((A + i + 1 : ℕ) : ℝ)) ≤ ((A + j + 1 : ℕ) : ℝ) := by exact_mod_cast Nat.add_le_add_right (Nat.add_le_add_left hij A) 1
+    have h2 : (((A + i + 1 : ℕ) : ℝ)) ≤ ((A + j + 1 : ℕ) : ℝ) := by
+      exact_mod_cast Nat.add_le_add_right (Nat.add_le_add_left hij A) 1
     exact mul_le_mul h1 h2 (by positivity) (by positivity)
 
 /-- Lower reciprocal derivative bound on a finite interval. -/
@@ -1001,8 +1002,8 @@ theorem reciprocalDifferencePhase_succ_sub (X : ℝ) (A ℓ i : ℕ) :
     reciprocalDifferencePhase X A ℓ (i + 1) -
         reciprocalDifferencePhase X A ℓ i =
       -forwardDifferences [(ℓ : ℝ), 1] (fun x ↦ -X / x) (A + i : ℕ) := by
-  simp only [reciprocalDifferencePhase, reciprocalPhase,
-    forwardDifferences_cons, forwardDifferences_nil, List.map, List.sum_cons]
+  simp only [reciprocalDifferencePhase, reciprocalPhase, forwardDifferences_cons,
+    forwardDifferences_nil]
   push_cast
   ring
 
@@ -1365,7 +1366,7 @@ theorem reciprocalThirdStageMajorant_le
   have hharm :
       (∑ ℓ₂ ∈ Finset.Icc 1 (L₂ - 1), (1 / (ℓ₂ : ℝ))) =
         (harmonic (L₂ - 1) : ℝ) := by
-    simpa [one_div, harmonic_eq_sum_Icc]
+    simp [one_div, harmonic_eq_sum_Icc]
   have hsum :
       (∑ ℓ₂ ∈ Finset.Icc 1 (L₂ - 1),
         (1 + 3 / (2 *
@@ -1442,7 +1443,7 @@ theorem sum_reciprocalThirdStageMajorant_le
   have hharm :
       (∑ ℓ₁ ∈ Finset.Icc 1 (L₁ - 1), (1 / (ℓ₁ : ℝ))) =
         (harmonic (L₁ - 1) : ℝ) := by
-    simpa [one_div, harmonic_eq_sum_Icc]
+    simp [one_div, harmonic_eq_sum_Icc]
   calc
     (∑ ℓ₁ ∈ Finset.Icc 1 (L₁ - 1),
         reciprocalThirdStageMajorant X A N L₂ ℓ₁) ≤
@@ -1764,7 +1765,7 @@ theorem reciprocal_second_derivative_bound
   have hharm :
       (∑ ℓ ∈ Finset.Icc 1 (L - 1), (1 / (ℓ : ℝ))) =
         (harmonic (L - 1) : ℝ) := by
-    simpa [one_div, harmonic_eq_sum_Icc]
+    simp [one_div, harmonic_eq_sum_Icc]
   have hcorrSum :
       (∑ ℓ ∈ Finset.Icc 1 (L - 1),
         ‖∑ n ∈ Finset.Icc 1 (N - ℓ),

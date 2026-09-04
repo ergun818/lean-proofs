@@ -253,7 +253,7 @@ lemma divisorUnionLogMass_le (s : Finset ℕ) (n k : ℕ)
   split_ifs <;> aesop
 
 lemma sum_weight_phase_lower
-    {α : Type*} [DecidableEq α] (s : Finset α)
+    {α : Type*} (s : Finset α)
     (w f : α → ℝ) (E D : α → Prop)
     [DecidablePred E] [DecidablePred D]
     (hw : ∀ p ∈ s, 0 ≤ w p)

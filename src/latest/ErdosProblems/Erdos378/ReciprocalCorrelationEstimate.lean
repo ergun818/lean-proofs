@@ -1180,9 +1180,9 @@ theorem norm_reciprocalBilinearBlock_sq_le_energy
                 ‖∑ m ∈ Finset.Ioc M (2 * M),
                   reciprocalCutoffWeight X x y m r *
                     conj (reciprocalCutoffWeight X x y m r)‖ ≤ (M : ℝ) := by
-              convert hdiag using 1 <;> norm_num
+              convert hdiag using 1; norm_num
               omega
-            simp only [if_pos rfl]
+            simp only
             have hmain : ‖b r‖ * ‖b r‖ *
                 ‖∑ m ∈ Finset.Ioc M (2 * M),
                   reciprocalCutoffWeight X x y m r *

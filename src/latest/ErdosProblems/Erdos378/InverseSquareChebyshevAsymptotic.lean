@@ -132,7 +132,6 @@ theorem tendsto_logarithmicSafety_pow_div_baseShift (A : ℕ) :
       dsimp only [t]
       push_cast
       rw [div_le_iff₀ (by positivity : (0 : ℝ) < q M)]
-      norm_num
       exact_mod_cast (show q M + 1 ≤ 2 * q M by omega)
     calc
       logarithmicSafety M ^ A / (q M : ℝ) ≤

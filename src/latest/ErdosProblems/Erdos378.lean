@@ -1889,7 +1889,7 @@ lemma squarefree_imp_squarefreeUpTo {P a : ℕ} (ha : Squarefree a) :
 /-- If a prime square divides a finite product and at most one factor is
 divisible by that prime, then its square already divides one factor. -/
 lemma prime_sq_dvd_finset_prod_imp {p : ℕ} (hp : p.Prime)
-    {ι : Type*} [DecidableEq ι] (s : Finset ι) (f : ι → ℕ)
+    {ι : Type*} (s : Finset ι) (f : ι → ℕ)
     (hunique : ∀ i ∈ s, ∀ j ∈ s, p ∣ f i → p ∣ f j → i = j)
     (hdiv : p * p ∣ ∏ i ∈ s, f i) :
     ∃ i ∈ s, p * p ∣ f i := by
@@ -2970,10 +2970,11 @@ lemma hasDensity_union_of_disjoint {S T : Set ℕ} {s t : ℝ}
 
 /-- Densities add over a finite pairwise-disjoint indexed union. -/
 lemma hasDensity_iUnion_finset_of_pairwise_disjoint {ι : Type*}
-    [DecidableEq ι] (s : Finset ι) (S : ι → Set ℕ) (d : ι → ℝ)
+    (s : Finset ι) (S : ι → Set ℕ) (d : ι → ℝ)
     (hd : ∀ i ∈ s, (S i).HasDensity (d i))
     (hpair : ∀ i ∈ s, ∀ j ∈ s, i ≠ j → Disjoint (S i) (S j)) :
     (⋃ i ∈ s, S i).HasDensity (∑ i ∈ s, d i) := by
+  classical
   induction s using Finset.induction_on with
   | empty =>
       simp [Set.HasDensity, Set.partialDensity]

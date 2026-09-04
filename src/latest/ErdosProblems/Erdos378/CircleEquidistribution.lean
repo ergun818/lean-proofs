@@ -149,7 +149,7 @@ theorem tendsto_unitHaar_of_fourier
                   ∫ z : UnitCircle, g z ∂H) +
                 (∫ z : UnitCircle, g z ∂H -
                   ∫ z : UnitCircle, f z ∂H))‖ := by
-            congr 1 <;> ring
+            congr 1; ring
         _ ≤
             ‖∫ z : UnitCircle, f z ∂(mu i : Measure UnitCircle) -
                 ∫ z : UnitCircle, g z ∂(mu i : Measure UnitCircle)‖ +

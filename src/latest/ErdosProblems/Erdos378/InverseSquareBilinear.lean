@@ -387,7 +387,7 @@ theorem norm_inverseSquareBilinearBlock_sq_le_of_correlation
 /-- Uniform form of the bilinear block estimate. -/
 theorem norm_inverseSquareBilinearBlock_sq_le_of_uniform_correlation
     (X : ℝ) (x y m₀ m₁ k₀ k₁ : ℕ) (a b : ℕ → ℂ)
-    (B : ℝ) (hB : 0 ≤ B)
+    (B : ℝ) (_hB : 0 ≤ B)
     (hH : ∀ r ∈ Finset.Ioc k₀ k₁, ∀ s ∈ Finset.Ioc k₀ k₁,
       ‖∑ m ∈ Finset.Ioc m₀ m₁,
         inverseSquareCutoffWeight X x y m s *

@@ -19,7 +19,7 @@ namespace FiniteResidueCRT
 
 noncomputable section
 
-variable {ι : Type*} [DecidableEq ι]
+variable {ι : Type*}
 
 /-- A choice of one allowed residue at every index of `I`. -/
 def Assignment (I : Finset ι) (A : ι → Finset ℕ) :=
@@ -27,6 +27,7 @@ def Assignment (I : Finset ι) (A : ι → Finset ℕ) :=
 
 instance (I : Finset ι) (A : ι → Finset ℕ) :
     Fintype (Assignment I A) := by
+  classical
   unfold Assignment
   infer_instance
 
@@ -154,7 +155,7 @@ lemma mod_mem_residueSet_iff
       (assignmentResidue_mod I q A hq hcop a i')
     have hlt := hA i hi (a i') (a i').property
     have heq := Nat.mod_eq_of_modEq hlocal hlt
-    simpa [heq] using (a i').property
+    simp [heq]
   · intro hn
     let a : Assignment I A := fun i ↦
       ⟨n % q i, hn i i.property⟩

@@ -435,7 +435,6 @@ theorem weightedVaughanIntervalTwo_eq_nested
       apply Finset.sum_congr rfl
       intro n _hn
       rw [Finset.sum_filter]
-
       apply Finset.sum_congr rfl
       intro hd hhd
       rw [← (Nat.mem_divisorsAntidiagonal.mp hhd).1]

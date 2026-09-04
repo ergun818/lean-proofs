@@ -51,17 +51,17 @@ lemma tripleSqrt_upper {m z : ℕ}
   have hm' : m ≤ 4 * x ^ 2 := by
     calc
       m ≤ (x + 1) ^ 2 := hm.le
-      _ ≤ (2 * x) ^ 2 := by gcongr <;> omega
+      _ ≤ (2 * x) ^ 2 := by gcongr; omega
       _ = 4 * x ^ 2 := by ring
   have hx' : x ≤ 4 * y ^ 2 := by
     calc
       x ≤ (y + 1) ^ 2 := hx.le
-      _ ≤ (2 * y) ^ 2 := by gcongr <;> omega
+      _ ≤ (2 * y) ^ 2 := by gcongr; omega
       _ = 4 * y ^ 2 := by ring
   have hy' : y ≤ 4 * z ^ 2 := by
     calc
       y ≤ (z + 1) ^ 2 := hy.le
-      _ ≤ (2 * z) ^ 2 := by gcongr <;> omega
+      _ ≤ (2 * z) ^ 2 := by gcongr; omega
       _ = 4 * z ^ 2 := by ring
   calc
     m ≤ 4 * x ^ 2 := hm'
@@ -113,7 +113,7 @@ theorem eventually_N_le_sourceUpper_cutoff_pow_fifteen :
       simpa only [t, pow_two] using Nat.lt_succ_sqrt q
     calc
       q ≤ (t + 1) ^ 2 := hlt.le
-      _ ≤ (2 * t) ^ 2 := by gcongr <;> omega
+      _ ≤ (2 * t) ^ 2 := by gcongr; omega
       _ = 4 * t ^ 2 := by ring
   have hpow : a ^ 8 * b ^ 8 ≤ 65536 * t ^ 16 := by
     calc

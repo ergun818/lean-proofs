@@ -63,7 +63,7 @@ private lemma norm_reciprocalProductInterval_le_card
 quadratic lower bound used below. -/
 lemma norm_reciprocalProductInterval_le_firstDerivativeEnvelope
     {Q : ℝ} (hQ : 0 < Q) {H M a b : ℕ}
-    (hH : 1 ≤ H) (hM : 1 ≤ M) (hMa : M ≤ a) (hbM : b ≤ 2 * M)
+    (hH : 1 ≤ H) (hM : 1 ≤ M) (_hMa : M ≤ a) (hbM : b ≤ 2 * M)
     (hQlo : (M : ℝ) ^ 2 ≤ 16 * (H : ℝ) ^ 2 * Q)
     (hsmall : Q / ((a + 1 : ℕ) : ℝ) ^ 2 ≤ 1 / 2) :
     ‖reciprocalProductIntervalSum Q 1 a b‖ ≤
@@ -354,9 +354,9 @@ theorem norm_relaxed_reciprocalBilinearBlock_sq_le_energy
                 ‖∑ m ∈ Finset.Ioc M (2 * M),
                   reciprocalCutoffWeight X x y m r *
                     conj (reciprocalCutoffWeight X x y m r)‖ ≤ (M : ℝ) := by
-              convert hdiag using 1 <;> norm_num
+              convert hdiag using 1; norm_num
               omega
-            simp only [if_pos rfl]
+            simp only
             have hmain : ‖b r‖ * ‖b r‖ *
                 ‖∑ m ∈ Finset.Ioc M (2 * M),
                   reciprocalCutoffWeight X x y m r *
@@ -406,7 +406,7 @@ theorem norm_relaxed_reciprocalBilinearBlock_sq_le_energy
     (Finset.sum_nonneg fun m hm ↦ sq_nonneg _)
 
 private lemma relaxed_quotient_endpoint_le
-    {x y d : ℕ} (hd : 0 < d) (hdx : d ≤ x) (hyx : y ≤ 2 * x) :
+    {x y d : ℕ} (hd : 0 < d) (_hdx : d ≤ x) (hyx : y ≤ 2 * x) :
     y / d ≤ 2 * (x / d) + 1 := by
   have hxlt : x < d * (x / d + 1) := Nat.lt_mul_div_succ x hd
   have hylt : y < d * (2 * (x / d) + 2) := by
@@ -419,7 +419,7 @@ private lemma relaxed_quotient_endpoint_le
   omega
 
 private lemma relaxed_product_frequency_bounds
-    {X : ℝ} {H x y d : ℕ} (hX : 0 < X) (hH : 1 ≤ H)
+    {X : ℝ} {H x y d : ℕ} (_hX : 0 < X) (_hH : 1 ≤ H)
     (hd : 0 < d) (hdx : d ≤ x) (hdscale : d ≤ x / d + 1)
     (hXlo : (y : ℝ) ^ 2 ≤ 4 * (H : ℝ) ^ 2 * X)
     (hXhi : X ≤ (y : ℝ) ^ 16) (hxy : x < y) (hyx : y ≤ 2 * x) :

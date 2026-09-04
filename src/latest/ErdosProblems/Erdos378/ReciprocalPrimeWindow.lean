@@ -50,7 +50,7 @@ theorem norm_weightedChebyshev_sqrt_window_le {k : ℕ}
   have hTx : T ≤ s := by
     have hsize' : 16 * L * T ^ 4 ≤ s := by
       change 16 * L * (T ^ 2) ^ 2 ≤ s at hsize
-      convert hsize using 1 <;> ring
+      convert hsize using 1; ring
     calc
       T ≤ T ^ 4 := le_self_pow₀ (by omega) (by norm_num)
       _ = 1 * T ^ 4 := by simp

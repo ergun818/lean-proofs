@@ -34,7 +34,7 @@ lemma reciprocalIntervalMajorant_nonneg {y L : ℕ}
   positivity
 
 private lemma product_floor_endpoint_le
-    {y t : ℕ} (ht : 0 < t) (hty : t ≤ y) :
+    {y t : ℕ} (_ht : 0 < t) (hty : t ≤ y) :
     t * (y / t + 1) ≤ 2 * y := by
   have hdiv := Nat.div_mul_le_self y t
   have htadd : t * (y / t + 1) = (y / t) * t + t := by ring
@@ -86,7 +86,7 @@ private lemma reciprocal_interval_endpoint_factor_le
 
 private lemma reciprocal_interval_small_phase
     {X : ℝ} {x y t L : ℕ}
-    (hX : 0 < X) (ht : 0 < t) (hL : 0 < L)
+    (_hX : 0 < X) (ht : 0 < t) (hL : 0 < L)
     (hXhi : X ≤ (y : ℝ) ^ 2)
     (hyx : y ≤ 2 * x) (hsize : 16 * L * t ^ 2 ≤ x) :
     2 * (X / (t : ℝ)) * L / (((x / t + 1 : ℕ) : ℝ) ^ 3) ≤ 1 / 2 := by
@@ -247,8 +247,7 @@ theorem norm_reciprocalProductInterval_partial_le
             ∑ r ∈ Finset.Ioc (x / t) b,
               ‖reciprocalWeight X (t * r)‖ := norm_sum_le _ _
         _ = (b - x / t : ℕ) := by
-          simp only [norm_reciprocalWeight, Finset.sum_const, Nat.card_Ioc,
-            nsmul_eq_mul, mul_one, Nat.cast_id]
+          simp only [norm_reciprocalWeight, Finset.sum_const, Nat.card_Ioc, nsmul_eq_mul, mul_one]
     calc
       ‖reciprocalProductIntervalSum X t (x / t) b‖ ≤
           ((b - x / t : ℕ) : ℝ) := htrivial
@@ -352,8 +351,6 @@ theorem norm_log_weighted_reciprocalProductInterval_le
     change ‖∑ h ∈ Finset.Ioc a b,
         ((Real.log (h : ℝ) : ℝ) : ℂ) * z h‖ ≤ _
     rw [hn]
-    change ‖∑ h ∈ Finset.Ioc a (a + n + 1),
-        ((Real.log (h : ℝ) : ℝ) : ℂ) * z h‖ ≤ _
     rw [hparts]
     let B : ℝ := (L : ℝ) + Real.sqrt (reciprocalIntervalMajorant y L)
     have hB : 0 ≤ B := by dsimp only [B]; positivity
