@@ -171,14 +171,13 @@ def normalize (a b p : Point) : Point :=
   (((p.1 - a.1) * dx + (p.2 - a.2) * dy) / d,
     orient a b p / d)
 
-lemma normalize_left {a b : Point} (hab : a ≠ b) : normalize a b a = (0, 0) := by
-  have hd : lengthSq a b ≠ 0 := (lengthSq_pos hab).ne'
-  simp [normalize, orient, hd]
+lemma normalize_left {a b : Point} (_ : a ≠ b) : normalize a b a = (0, 0) := by
+  simp [normalize, orient]
 
 lemma normalize_right {a b : Point} (hab : a ≠ b) : normalize a b b = (1, 0) := by
   have hd : lengthSq a b ≠ 0 := (lengthSq_pos hab).ne'
-  simp only [normalize, orient, Prod.fst, Prod.snd]
-  apply Prod.ext <;> simp only [Prod.fst, Prod.snd]
+  simp only [normalize, orient]
+  apply Prod.ext
   · rw [div_eq_one_iff_eq hd]
     simp only [lengthSq]
     ring
@@ -194,7 +193,7 @@ lemma orient_normalize {a b : Point} (hab : a ≠ b) (p q r : Point) :
     orient (normalize a b p) (normalize a b q) (normalize a b r) =
       orient p q r / lengthSq a b := by
   have hd : lengthSq a b ≠ 0 := (lengthSq_pos hab).ne'
-  simp only [normalize, orient, Prod.fst, Prod.snd]
+  simp only [normalize, orient]
   field_simp [hd]
   simp only [lengthSq]
   ring
@@ -206,7 +205,7 @@ lemma lengthSq_normalize {a b : Point} (hab : a ≠ b) (p q : Point) :
   rw [show lengthSq (normalize a b p) (normalize a b q) =
       ((normalize a b q).1 - (normalize a b p).1) ^ 2 +
       ((normalize a b q).2 - (normalize a b p).2) ^ 2 by rfl]
-  simp only [normalize, orient, Prod.fst, Prod.snd]
+  simp only [normalize, orient]
   field_simp [hd]
   simp only [lengthSq]
   ring
@@ -253,8 +252,7 @@ lemma lineDistSq_from_left (p q : Point) (hp : p.2 ≠ 0) (hq : q.2 ≠ 0) :
     lineDistSq p (0, 0) q =
       p.2 ^ 2 * (leftSlope p - leftSlope q) ^ 2 /
         (leftSlope q ^ 2 + 1) := by
-  simp only [lineDistSq, orient, lengthSq, leftSlope, Prod.fst, Prod.snd,
-    sub_zero, zero_mul, mul_zero, zero_add]
+  simp only [lineDistSq, orient, lengthSq, leftSlope, sub_zero]
   field_simp [hp, hq]
   ring
 
@@ -262,8 +260,7 @@ lemma lineDistSq_from_right (p q : Point) (hp : p.2 ≠ 0) (hq : q.2 ≠ 0) :
     lineDistSq p (1, 0) q =
       p.2 ^ 2 * (rightSlope p - rightSlope q) ^ 2 /
         (rightSlope q ^ 2 + 1) := by
-  simp only [lineDistSq, orient, lengthSq, rightSlope, Prod.fst, Prod.snd,
-    sub_zero, zero_mul, mul_zero, zero_add]
+  simp only [lineDistSq, orient, lengthSq, rightSlope, sub_zero]
   field_simp [hp, hq]
   ring
 
@@ -376,7 +373,7 @@ def HasNoncollinearTriple (P : Finset Point) : Prop :=
   ∃ a ∈ P, ∃ b ∈ P, ∃ c ∈ P, ¬ Collinear3 a b c
 
 lemma exists_offLine_pair (P : Finset Point) (hP : HasNoncollinearTriple P)
-    {p : Point} (hp : p ∈ P) :
+    {p : Point} (_ : p ∈ P) :
     ∃ a ∈ P, ∃ b ∈ P, a ≠ b ∧ ¬ Collinear3 a b p := by
   obtain ⟨u, hu, v, hv, w, hw, huv⟩ := hP
   by_cases h₁ : Collinear3 u v p
@@ -480,7 +477,7 @@ lemma exists_third_of_not_ordinary {P : Finset Point} {a b : Point}
     (h : {a, b} ∉ ordinaryPairs P) :
     ∃ c ∈ P, Collinear3 a b c ∧ c ≠ a ∧ c ≠ b := by
   rw [ordinary_pair_iff ha hb hab] at h
-  push_neg at h
+  push Not at h
   obtain ⟨c, hc, hcol, hca, hcb⟩ := h
   exact ⟨c, hc, hcol, hca, hcb⟩
 
@@ -505,8 +502,7 @@ lemma not_collinear_left_of_slope_ne {p q : Point} (hp : p.2 ≠ 0) (hq : q.2 �
   intro hcol
   apply h
   rw [leftSlope, leftSlope, div_eq_div_iff hp hq]
-  simp only [Collinear3, orient, Prod.fst, Prod.snd, sub_zero, zero_mul, mul_zero,
-    zero_add] at hcol
+  simp only [Collinear3, orient, sub_zero] at hcol
   nlinarith
 
 lemma not_collinear_right_of_slope_ne {p q : Point} (hp : p.2 ≠ 0) (hq : q.2 ≠ 0)
@@ -514,8 +510,7 @@ lemma not_collinear_right_of_slope_ne {p q : Point} (hp : p.2 ≠ 0) (hq : q.2 �
   intro hcol
   apply h
   rw [rightSlope, rightSlope, div_eq_div_iff hp hq]
-  simp only [Collinear3, orient, Prod.fst, Prod.snd, sub_zero, zero_mul, mul_zero,
-    zero_add] at hcol
+  simp only [Collinear3, orient, sub_zero] at hcol
   nlinarith
 
 lemma attached_left_comparison {P : Finset Point} {p q a b : Point}
@@ -663,17 +658,17 @@ lemma verticalNormalize_injective {p : Point} (hp : p.2 ≠ 0) :
   intro x y h
   apply Prod.ext
   · have h₁ := congrArg Prod.fst h
-    simp only [verticalNormalize, Prod.fst] at h₁
+    simp only [verticalNormalize] at h₁
     have := (div_left_inj' hp).mp h₁
     linarith
   · have h₂ := congrArg Prod.snd h
-    simp only [verticalNormalize, Prod.snd] at h₂
+    simp only [verticalNormalize] at h₂
     exact (div_left_inj' hp).mp h₂
 
 lemma orient_verticalNormalize {p x y z : Point} (hp : p.2 ≠ 0) :
     orient (verticalNormalize p x) (verticalNormalize p y) (verticalNormalize p z) =
       orient x y z / p.2 ^ 2 := by
-  simp only [verticalNormalize, orient, Prod.fst, Prod.snd]
+  simp only [verticalNormalize, orient]
   field_simp [hp]
   ring
 
@@ -682,7 +677,7 @@ lemma lineDistSq_verticalNormalize {p x a b : Point} (hp : p.2 ≠ 0) (hab : a �
       lineDistSq x a b / p.2 ^ 2 := by
   have hnab : verticalNormalize p a ≠ verticalNormalize p b :=
     (verticalNormalize_injective hp).ne hab
-  simp only [lineDistSq, verticalNormalize, orient, lengthSq, Prod.fst, Prod.snd]
+  simp only [lineDistSq, verticalNormalize, orient, lengthSq]
   field_simp [hp, (lengthSq_pos hab).ne', (lengthSq_pos hnab).ne']
   ring
 
@@ -705,8 +700,8 @@ lemma verticalNormalize_eq_thirdPoint {p v w : Point} (hp : p.2 ≠ 0)
   rw [verticalNormalize_self hp] at hcol'
   have hv' := verticalNormalize_base_snd (p := p) hv
   apply Prod.ext
-  · simp only [thirdPoint, Prod.fst]
-    simp only [Collinear3, orient, Prod.fst, Prod.snd] at hcol'
+  · simp only [thirdPoint]
+    simp only [Collinear3, orient] at hcol'
     rw [hv'] at hcol'
     nlinarith
   · simp [thirdPoint]
@@ -739,8 +734,7 @@ lemma closer_of_inside {u v t : ℝ} (ht₀ : 0 < t) (ht₁ : t < 1)
   rw [Closer, show (1 : ℝ) = lineDistSq (0, 1) (0, 0) (1, 0) by
     simp [lineDistSq_base]]
   rw [lineDistSq_base]
-  simp only [lineDistSq, thirdPoint, orient, lengthSq, Prod.fst, Prod.snd,
-    sub_zero, zero_mul, mul_zero, zero_add]
+  simp only [lineDistSq, thirdPoint, orient, lengthSq, sub_zero]
   norm_num only [one_pow, mul_one]
   have hden : 0 < (t * v - u) ^ 2 + (1 - t) ^ 2 := by
     simpa [thirdPoint, lengthSq] using lengthSq_pos hne
@@ -777,8 +771,7 @@ lemma closer_of_outside {u v t : ℝ} (ht : t ≤ 0 ∨ 1 ≤ t) (ht₁ : t ≠ 
     simp [thirdPoint] at hy
     exact ht₁ (by linarith)
   rw [Closer]
-  simp only [lineDistSq, thirdPoint, orient, lengthSq, Prod.fst, Prod.snd,
-    sub_zero, zero_mul, mul_zero, zero_add]
+  simp only [lineDistSq, thirdPoint, orient, lengthSq, sub_zero]
   norm_num only [one_pow, mul_one]
   have hden : 0 < (t * v - u) ^ 2 + (1 - t) ^ 2 := by
     simpa [thirdPoint, lengthSq] using lengthSq_pos hne
@@ -835,7 +828,7 @@ lemma outside_of_not_inside {t : ℝ} (h : ¬ (0 < t ∧ t < 1)) : t ≤ 0 ∨ 1
 each spoke from `(0,1)`, one of the six cross-lines is closer than the base.
 This is the finite ordered-field heart of the zero-order Kelly--Moser lemma. -/
 lemma three_base_crossing {x y z tx ty tz : ℝ}
-    (hxy : x ≠ y) (hxz : x ≠ z) (hyz : y ≠ z)
+    (hxy : x ≠ y) (hxz : x ≠ z) (_ : y ≠ z)
     (htx₁ : tx ≠ 1) (hty₁ : ty ≠ 1) (htz₁ : tz ≠ 1) :
     Closer y x tx ∨ Closer z x tx ∨ Closer x y ty ∨
       Closer z y ty ∨ Closer x z tz ∨ Closer y z tz := by
@@ -941,7 +934,7 @@ lemma three_base_crossing {x y z tx ty tz : ℝ}
               (by simpa [mul_comm] using hyz0) hsq)
 
 lemma not_ordinary_through_of_order_zero {P : Finset Point} {p v : Point}
-    (hp : p ∈ P) (hv : v ∈ P) (hpv : p ≠ v) (hzero : order P p = 0) :
+    (_ : p ∈ P) (hv : v ∈ P) (hpv : p ≠ v) (hzero : order P p = 0) :
     {p, v} ∉ ordinaryPairs P := by
   intro hord
   have hmem : v ∈ ordinaryPartners P p :=
@@ -1001,7 +994,7 @@ lemma closestPair_ordinary_of_order_zero (P : Finset Point)
   have hNa : (normalize a b a).2 = 0 := by rw [normalize_left hab]
   have hNb : (normalize a b b).2 = 0 := by rw [normalize_right hab]
   have hNc : (normalize a b c).2 = 0 := by
-    simp only [normalize, Prod.snd]
+    simp only [normalize]
     rw [show orient a b c = 0 by exact habc]
     simp
   have hTa : T a = (x, 0) := by
@@ -1108,8 +1101,7 @@ lemma closestPair_ordinary_of_order_zero (P : Finset Point)
         simp [Collinear3] at hcolN
         simp [hcolN]
       rw [hTu, hTw, hTp] at hcolT
-      simp only [Collinear3, orient, thirdPoint, Prod.fst, Prod.snd,
-        sub_zero, zero_mul, mul_zero, zero_add] at hcolT
+      simp only [Collinear3, orient, thirdPoint, sub_zero] at hcolT
       have : t * (V - U) ≠ 0 := mul_ne_zero ht₀ (sub_ne_zero.mpr (Ne.symm huv))
       exact this (by nlinarith)
     have hcand : (u, w) ∈ offLinePairs P p :=
@@ -1285,7 +1277,8 @@ lemma pair_eq_pair_or_swap {u v a b : Point} (huv : u ≠ v) (hab : a ≠ b)
 lemma chosen_line_fiber_card_le_eight (P : Finset Point)
     (hP : HasNoncollinearTriple P) {e : Finset Point} (he : e ∈ ordinaryPairs P) :
     ((zeroOrderPoints P).filter fun p ↦
-      ({(chosenClosestPair P hP p).1, (chosenClosestPair P hP p).2} : Finset Point) = e).card ≤ 8 := by
+      ({(chosenClosestPair P hP p).1, (chosenClosestPair P hP p).2} : Finset Point) = e).card ≤
+        8 := by
   classical
   obtain ⟨a, b, hab, rfl⟩ := Finset.card_eq_two.mp (ordinaryPair_card he)
   let fiber := (zeroOrderPoints P).filter fun p ↦
@@ -1297,9 +1290,11 @@ lemma chosen_line_fiber_card_le_eight (P : Finset Point)
     have horient := pair_eq_pair_or_swap (closestPair_ne hspec) hab hpfilter.2
     rcases horient with ⟨h₁, h₂⟩ | ⟨h₁, h₂⟩
     · apply Finset.mem_union_left
-      exact mem_attachedPoints.mpr ⟨(mem_zeroOrderPoints.mp hpfilter.1).1, by simpa [h₁, h₂] using hspec⟩
+      exact mem_attachedPoints.mpr ⟨(mem_zeroOrderPoints.mp hpfilter.1).1,
+        by simpa [h₁, h₂] using hspec⟩
     · apply Finset.mem_union_right
-      exact mem_attachedPoints.mpr ⟨(mem_zeroOrderPoints.mp hpfilter.1).1, by simpa [h₁, h₂] using hspec⟩
+      exact mem_attachedPoints.mpr ⟨(mem_zeroOrderPoints.mp hpfilter.1).1,
+        by simpa [h₁, h₂] using hspec⟩
   calc
     fiber.card ≤ (attachedPoints P a b ∪ attachedPoints P b a).card :=
       Finset.card_le_card hsub
@@ -1454,7 +1449,7 @@ lemma ordinaryPairs_nearPencil_subset_spokes {n : ℕ} (hn : 4 ≤ n) :
   have hvP : v ∈ nearPencil n := hsub (by simp)
   have hcontains : apex = u ∨ apex = v := by
     by_contra h
-    push_neg at h
+    push Not at h
     have huB : u ∈ basePoints n := by
       simp only [nearPencil, Finset.mem_insert] at huP
       exact huP.resolve_left (Ne.symm h.1)
