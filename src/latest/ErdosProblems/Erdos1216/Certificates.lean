@@ -8118,7 +8118,8 @@ noncomputable def certificatePart0 : Cert :=
             (.tt ⟨2, 6, 5, 4⟩))))
       (.tt ⟨6, 3, 5, 4⟩))
 
-theorem certificatePart0_checked : certificatePart0.check [⟨17, false⟩, ⟨18, false⟩, ⟨19, false⟩, ⟨20, false⟩] = true := by
+theorem certificatePart0_checked :
+    certificatePart0.check [⟨17, false⟩, ⟨18, false⟩, ⟨19, false⟩, ⟨20, false⟩] = true := by
   rfl
 
 noncomputable def certificatePart1 : Cert :=
@@ -9272,7 +9273,8 @@ noncomputable def certificatePart1 : Cert :=
             (.tt ⟨2, 6, 5, 4⟩))))
       (.tt ⟨3, 6, 5, 4⟩))
 
-theorem certificatePart1_checked : certificatePart1.check [⟨17, true⟩, ⟨18, false⟩, ⟨19, false⟩, ⟨20, false⟩] = true := by
+theorem certificatePart1_checked :
+    certificatePart1.check [⟨17, true⟩, ⟨18, false⟩, ⟨19, false⟩, ⟨20, false⟩] = true := by
   rfl
 
 noncomputable def certificatePart2 : Cert :=
@@ -9630,7 +9632,8 @@ noncomputable def certificatePart2 : Cert :=
       (.tt ⟨6, 4, 3, 5⟩)
       (.tt ⟨6, 3, 4, 5⟩))
 
-theorem certificatePart2_checked : certificatePart2.check [⟨17, false⟩, ⟨18, true⟩, ⟨19, false⟩, ⟨20, false⟩] = true := by
+theorem certificatePart2_checked :
+    certificatePart2.check [⟨17, false⟩, ⟨18, true⟩, ⟨19, false⟩, ⟨20, false⟩] = true := by
   rfl
 
 noncomputable def certificatePart3 : Cert :=
@@ -10784,7 +10787,8 @@ noncomputable def certificatePart3 : Cert :=
             (.tt ⟨2, 6, 4, 5⟩))))
       (.tt ⟨3, 6, 4, 5⟩))
 
-theorem certificatePart3_checked : certificatePart3.check [⟨17, true⟩, ⟨18, true⟩, ⟨19, false⟩, ⟨20, false⟩] = true := by
+theorem certificatePart3_checked :
+    certificatePart3.check [⟨17, true⟩, ⟨18, true⟩, ⟨19, false⟩, ⟨20, false⟩] = true := by
   rfl
 
 noncomputable def certificatePart4 : Cert :=
@@ -12712,7 +12716,8 @@ noncomputable def certificatePart4 : Cert :=
               (.tt ⟨3, 2, 5, 4⟩)
               (.tt ⟨2, 3, 5, 4⟩))))))
 
-theorem certificatePart4_checked : certificatePart4.check [⟨17, false⟩, ⟨18, false⟩, ⟨19, true⟩, ⟨20, false⟩] = true := by
+theorem certificatePart4_checked :
+    certificatePart4.check [⟨17, false⟩, ⟨18, false⟩, ⟨19, true⟩, ⟨20, false⟩] = true := by
   rfl
 
 noncomputable def certificatePart5 : Cert :=
@@ -14640,7 +14645,8 @@ noncomputable def certificatePart5 : Cert :=
               (.tt ⟨3, 2, 5, 4⟩)
               (.tt ⟨2, 3, 5, 4⟩))))))
 
-theorem certificatePart5_checked : certificatePart5.check [⟨17, true⟩, ⟨18, false⟩, ⟨19, true⟩, ⟨20, false⟩] = true := by
+theorem certificatePart5_checked :
+    certificatePart5.check [⟨17, true⟩, ⟨18, false⟩, ⟨19, true⟩, ⟨20, false⟩] = true := by
   rfl
 
 noncomputable def certificatePart6 : Cert :=
@@ -15396,7 +15402,8 @@ noncomputable def certificatePart6 : Cert :=
             (.tt ⟨4, 2, 6, 5⟩)
             (.tt ⟨2, 4, 6, 5⟩)))))
 
-theorem certificatePart6_checked : certificatePart6.check [⟨17, false⟩, ⟨18, true⟩, ⟨19, true⟩, ⟨20, false⟩] = true := by
+theorem certificatePart6_checked :
+    certificatePart6.check [⟨17, false⟩, ⟨18, true⟩, ⟨19, true⟩, ⟨20, false⟩] = true := by
   rfl
 
 noncomputable def certificatePart7 : Cert :=
@@ -16152,7 +16159,8 @@ noncomputable def certificatePart7 : Cert :=
       (.tt ⟨4, 3, 6, 5⟩)
       (.tt ⟨3, 4, 6, 5⟩))
 
-theorem certificatePart7_checked : certificatePart7.check [⟨17, true⟩, ⟨18, true⟩, ⟨19, true⟩, ⟨20, false⟩] = true := by
+theorem certificatePart7_checked :
+    certificatePart7.check [⟨17, true⟩, ⟨18, true⟩, ⟨19, true⟩, ⟨20, false⟩] = true := by
   rfl
 
 noncomputable def certificatePart8 : Cert :=
@@ -16908,7 +16916,8 @@ noncomputable def certificatePart8 : Cert :=
                     (.tt ⟨1, 5, 6, 4⟩)))))
             (.tt ⟨2, 5, 6, 4⟩)))))
 
-theorem certificatePart8_checked : certificatePart8.check [⟨17, false⟩, ⟨18, false⟩, ⟨19, false⟩, ⟨20, true⟩] = true := by
+theorem certificatePart8_checked :
+    certificatePart8.check [⟨17, false⟩, ⟨18, false⟩, ⟨19, false⟩, ⟨20, true⟩] = true := by
   rfl
 
 noncomputable def certificatePart9 : Cert :=
@@ -17664,7 +17673,8 @@ noncomputable def certificatePart9 : Cert :=
             (.tt ⟨2, 5, 6, 4⟩))))
       (.tt ⟨3, 5, 6, 4⟩))
 
-theorem certificatePart9_checked : certificatePart9.check [⟨17, true⟩, ⟨18, false⟩, ⟨19, false⟩, ⟨20, true⟩] = true := by
+theorem certificatePart9_checked :
+    certificatePart9.check [⟨17, true⟩, ⟨18, false⟩, ⟨19, false⟩, ⟨20, true⟩] = true := by
   rfl
 
 noncomputable def certificatePart10 : Cert :=
@@ -19592,7 +19602,8 @@ noncomputable def certificatePart10 : Cert :=
               (.tt ⟨3, 2, 4, 5⟩)
               (.tt ⟨2, 3, 4, 5⟩))))))
 
-theorem certificatePart10_checked : certificatePart10.check [⟨17, false⟩, ⟨18, true⟩, ⟨19, false⟩, ⟨20, true⟩] = true := by
+theorem certificatePart10_checked :
+    certificatePart10.check [⟨17, false⟩, ⟨18, true⟩, ⟨19, false⟩, ⟨20, true⟩] = true := by
   rfl
 
 noncomputable def certificatePart11 : Cert :=
@@ -21520,7 +21531,8 @@ noncomputable def certificatePart11 : Cert :=
               (.tt ⟨3, 2, 4, 5⟩)
               (.tt ⟨2, 3, 4, 5⟩))))))
 
-theorem certificatePart11_checked : certificatePart11.check [⟨17, true⟩, ⟨18, true⟩, ⟨19, false⟩, ⟨20, true⟩] = true := by
+theorem certificatePart11_checked :
+    certificatePart11.check [⟨17, true⟩, ⟨18, true⟩, ⟨19, false⟩, ⟨20, true⟩] = true := by
   rfl
 
 noncomputable def certificatePart12 : Cert :=
@@ -22674,7 +22686,8 @@ noncomputable def certificatePart12 : Cert :=
                     (.tt ⟨1, 5, 4, 6⟩)))))
             (.tt ⟨2, 5, 4, 6⟩)))))
 
-theorem certificatePart12_checked : certificatePart12.check [⟨17, false⟩, ⟨18, false⟩, ⟨19, true⟩, ⟨20, true⟩] = true := by
+theorem certificatePart12_checked :
+    certificatePart12.check [⟨17, false⟩, ⟨18, false⟩, ⟨19, true⟩, ⟨20, true⟩] = true := by
   rfl
 
 noncomputable def certificatePart13 : Cert :=
@@ -23032,7 +23045,8 @@ noncomputable def certificatePart13 : Cert :=
             (.tt ⟨2, 5, 4, 6⟩))))
       (.tt ⟨3, 5, 4, 6⟩))
 
-theorem certificatePart13_checked : certificatePart13.check [⟨17, true⟩, ⟨18, false⟩, ⟨19, true⟩, ⟨20, true⟩] = true := by
+theorem certificatePart13_checked :
+    certificatePart13.check [⟨17, true⟩, ⟨18, false⟩, ⟨19, true⟩, ⟨20, true⟩] = true := by
   rfl
 
 noncomputable def certificatePart14 : Cert :=
@@ -24186,7 +24200,8 @@ noncomputable def certificatePart14 : Cert :=
             (.tt ⟨4, 2, 5, 6⟩)
             (.tt ⟨2, 4, 5, 6⟩)))))
 
-theorem certificatePart14_checked : certificatePart14.check [⟨17, false⟩, ⟨18, true⟩, ⟨19, true⟩, ⟨20, true⟩] = true := by
+theorem certificatePart14_checked :
+    certificatePart14.check [⟨17, false⟩, ⟨18, true⟩, ⟨19, true⟩, ⟨20, true⟩] = true := by
   rfl
 
 noncomputable def certificatePart15 : Cert :=
@@ -24544,7 +24559,8 @@ noncomputable def certificatePart15 : Cert :=
       (.tt ⟨4, 3, 5, 6⟩)
       (.tt ⟨3, 4, 5, 6⟩))
 
-theorem certificatePart15_checked : certificatePart15.check [⟨17, true⟩, ⟨18, true⟩, ⟨19, true⟩, ⟨20, true⟩] = true := by
+theorem certificatePart15_checked :
+    certificatePart15.check [⟨17, true⟩, ⟨18, true⟩, ⟨19, true⟩, ⟨20, true⟩] = true := by
   rfl
 
 noncomputable def certificate : Cert :=
@@ -24581,7 +24597,12 @@ noncomputable def certificate : Cert :=
     (certificatePart15))))
 
 theorem certificate_checked : certificate.check [] = true := by
-  simp only [certificate, Cert.check, certificatePart0_checked, certificatePart1_checked, certificatePart2_checked, certificatePart3_checked, certificatePart4_checked, certificatePart5_checked, certificatePart6_checked, certificatePart7_checked, certificatePart8_checked, certificatePart9_checked, certificatePart10_checked, certificatePart11_checked, certificatePart12_checked, certificatePart13_checked, certificatePart14_checked, certificatePart15_checked]
+  simp only [certificate, Cert.check, certificatePart0_checked, certificatePart1_checked,
+    certificatePart2_checked, certificatePart3_checked, certificatePart4_checked,
+    certificatePart5_checked, certificatePart6_checked, certificatePart7_checked,
+    certificatePart8_checked, certificatePart9_checked, certificatePart10_checked,
+    certificatePart11_checked, certificatePart12_checked, certificatePart13_checked,
+    certificatePart14_checked, certificatePart15_checked]
   rfl
 
 lemma orbitKnown_sound {code : BitVec 21} {env : Assignment} {p : Fin 7 → Fin 7}
@@ -24711,7 +24732,9 @@ def Cert.check (env : Assignment) : Cert → Bool
 def certificatePart0 : Cert :=
   .tt ⟨9, 13, 10, 0, 7⟩
 
-theorem certificatePart0_checked : certificatePart0.check [⟨37, false⟩, ⟨38, false⟩, ⟨39, true⟩, ⟨40, false⟩, ⟨41, false⟩] = true := by
+theorem certificatePart0_checked :
+    certificatePart0.check
+      [⟨37, false⟩, ⟨38, false⟩, ⟨39, true⟩, ⟨40, false⟩, ⟨41, false⟩] = true := by
   rfl
 
 def certificatePart1 : Cert :=
@@ -25875,13 +25898,17 @@ def certificatePart1 : Cert :=
                         (.tt ⟨5, 6, 10, 7, 11⟩)))
                     (.tt ⟨5, 6, 12, 13, 7⟩)))))))))
 
-theorem certificatePart1_checked : certificatePart1.check [⟨37, true⟩, ⟨38, false⟩, ⟨39, true⟩, ⟨40, false⟩, ⟨41, false⟩] = true := by
+theorem certificatePart1_checked :
+    certificatePart1.check
+      [⟨37, true⟩, ⟨38, false⟩, ⟨39, true⟩, ⟨40, false⟩, ⟨41, false⟩] = true := by
   rfl
 
 def certificatePart2 : Cert :=
   .tt ⟨12, 9, 13, 0, 7⟩
 
-theorem certificatePart2_checked : certificatePart2.check [⟨37, false⟩, ⟨38, true⟩, ⟨39, true⟩, ⟨40, false⟩, ⟨41, false⟩] = true := by
+theorem certificatePart2_checked :
+    certificatePart2.check
+      [⟨37, false⟩, ⟨38, true⟩, ⟨39, true⟩, ⟨40, false⟩, ⟨41, false⟩] = true := by
   rfl
 
 def certificatePart3 : Cert :=
@@ -27325,13 +27352,17 @@ def certificatePart3 : Cert :=
                 (.tt ⟨6, 13, 7, 8, 10⟩))
               (.tt ⟨6, 7, 9, 10, 11⟩))))))
 
-theorem certificatePart3_checked : certificatePart3.check [⟨37, true⟩, ⟨38, true⟩, ⟨39, true⟩, ⟨40, false⟩, ⟨41, false⟩] = true := by
+theorem certificatePart3_checked :
+    certificatePart3.check
+      [⟨37, true⟩, ⟨38, true⟩, ⟨39, true⟩, ⟨40, false⟩, ⟨41, false⟩] = true := by
   rfl
 
 def certificatePart4 : Cert :=
   .tt ⟨9, 10, 11, 0, 7⟩
 
-theorem certificatePart4_checked : certificatePart4.check [⟨37, false⟩, ⟨38, false⟩, ⟨39, false⟩, ⟨40, true⟩, ⟨41, false⟩] = true := by
+theorem certificatePart4_checked :
+    certificatePart4.check
+      [⟨37, false⟩, ⟨38, false⟩, ⟨39, false⟩, ⟨40, true⟩, ⟨41, false⟩] = true := by
   rfl
 
 def certificatePart5 : Cert :=
@@ -27499,13 +27530,17 @@ def certificatePart5 : Cert :=
             (.tt ⟨10, 6, 11, 7, 12⟩)
             (.tt ⟨6, 10, 11, 7, 12⟩)))))
 
-theorem certificatePart5_checked : certificatePart5.check [⟨37, true⟩, ⟨38, false⟩, ⟨39, false⟩, ⟨40, true⟩, ⟨41, false⟩] = true := by
+theorem certificatePart5_checked :
+    certificatePart5.check
+      [⟨37, true⟩, ⟨38, false⟩, ⟨39, false⟩, ⟨40, true⟩, ⟨41, false⟩] = true := by
   rfl
 
 def certificatePart6 : Cert :=
   .tt ⟨9, 11, 13, 0, 7⟩
 
-theorem certificatePart6_checked : certificatePart6.check [⟨37, false⟩, ⟨38, true⟩, ⟨39, false⟩, ⟨40, true⟩, ⟨41, false⟩] = true := by
+theorem certificatePart6_checked :
+    certificatePart6.check
+      [⟨37, false⟩, ⟨38, true⟩, ⟨39, false⟩, ⟨40, true⟩, ⟨41, false⟩] = true := by
   rfl
 
 def certificatePart7 : Cert :=
@@ -28529,13 +28564,17 @@ def certificatePart7 : Cert :=
                       (.tt ⟨5, 6, 11, 7, 12⟩))))
                 (.tt ⟨6, 7, 8, 9, 10⟩)))))))
 
-theorem certificatePart7_checked : certificatePart7.check [⟨37, true⟩, ⟨38, true⟩, ⟨39, false⟩, ⟨40, true⟩, ⟨41, false⟩] = true := by
+theorem certificatePart7_checked :
+    certificatePart7.check
+      [⟨37, true⟩, ⟨38, true⟩, ⟨39, false⟩, ⟨40, true⟩, ⟨41, false⟩] = true := by
   rfl
 
 def certificatePart8 : Cert :=
   .tt ⟨9, 13, 10, 0, 7⟩
 
-theorem certificatePart8_checked : certificatePart8.check [⟨37, false⟩, ⟨38, false⟩, ⟨39, true⟩, ⟨40, true⟩, ⟨41, false⟩] = true := by
+theorem certificatePart8_checked :
+    certificatePart8.check
+      [⟨37, false⟩, ⟨38, false⟩, ⟨39, true⟩, ⟨40, true⟩, ⟨41, false⟩] = true := by
   rfl
 
 def certificatePart9 : Cert :=
@@ -29677,7 +29716,9 @@ def certificatePart9 : Cert :=
             (.tt ⟨10, 6, 7, 11, 12⟩)
             (.tt ⟨6, 10, 7, 11, 12⟩)))))
 
-theorem certificatePart9_checked : certificatePart9.check [⟨37, true⟩, ⟨38, false⟩, ⟨39, true⟩, ⟨40, true⟩, ⟨41, false⟩] = true := by
+theorem certificatePart9_checked :
+    certificatePart9.check
+      [⟨37, true⟩, ⟨38, false⟩, ⟨39, true⟩, ⟨40, true⟩, ⟨41, false⟩] = true := by
   rfl
 
 def certificatePart10 : Cert :=
@@ -31043,7 +31084,9 @@ def certificatePart10 : Cert :=
                 (.tt ⟨6, 7, 11, 8, 12⟩)))
             (.tt ⟨6, 7, 10, 11, 12⟩)))))
 
-theorem certificatePart10_checked : certificatePart10.check [⟨37, false⟩, ⟨38, true⟩, ⟨39, true⟩, ⟨40, true⟩, ⟨41, false⟩] = true := by
+theorem certificatePart10_checked :
+    certificatePart10.check
+      [⟨37, false⟩, ⟨38, true⟩, ⟨39, true⟩, ⟨40, true⟩, ⟨41, false⟩] = true := by
   rfl
 
 def certificatePart11 : Cert :=
@@ -32221,7 +32264,9 @@ def certificatePart11 : Cert :=
                 (.tt ⟨6, 7, 8, 12, 9⟩)))
             (.tt ⟨6, 7, 10, 11, 12⟩)))))
 
-theorem certificatePart11_checked : certificatePart11.check [⟨37, true⟩, ⟨38, true⟩, ⟨39, true⟩, ⟨40, true⟩, ⟨41, false⟩] = true := by
+theorem certificatePart11_checked :
+    certificatePart11.check
+      [⟨37, true⟩, ⟨38, true⟩, ⟨39, true⟩, ⟨40, true⟩, ⟨41, false⟩] = true := by
   rfl
 
 def certificatePart12 : Cert :=
@@ -32809,7 +32854,9 @@ def certificatePart12 : Cert :=
           (.tt ⟨11, 6, 12, 7, 13⟩)
           (.tt ⟨6, 11, 12, 7, 13⟩))))
 
-theorem certificatePart12_checked : certificatePart12.check [⟨37, false⟩, ⟨38, true⟩, ⟨39, false⟩, ⟨40, false⟩, ⟨41, true⟩] = true := by
+theorem certificatePart12_checked :
+    certificatePart12.check
+      [⟨37, false⟩, ⟨38, true⟩, ⟨39, false⟩, ⟨40, false⟩, ⟨41, true⟩] = true := by
   rfl
 
 def certificatePart13 : Cert :=
@@ -33315,7 +33362,9 @@ def certificatePart13 : Cert :=
           (.tt ⟨11, 6, 12, 7, 13⟩)
           (.tt ⟨6, 11, 12, 7, 13⟩))))
 
-theorem certificatePart13_checked : certificatePart13.check [⟨37, true⟩, ⟨38, true⟩, ⟨39, false⟩, ⟨40, false⟩, ⟨41, true⟩] = true := by
+theorem certificatePart13_checked :
+    certificatePart13.check
+      [⟨37, true⟩, ⟨38, true⟩, ⟨39, false⟩, ⟨40, false⟩, ⟨41, true⟩] = true := by
   rfl
 
 def certificatePart14 : Cert :=
@@ -33553,7 +33602,9 @@ def certificatePart14 : Cert :=
               (.tt ⟨9, 6, 10, 7, 11⟩)
               (.tt ⟨6, 9, 10, 7, 11⟩))))))
 
-theorem certificatePart14_checked : certificatePart14.check [⟨37, false⟩, ⟨38, false⟩, ⟨39, true⟩, ⟨40, false⟩, ⟨41, true⟩] = true := by
+theorem certificatePart14_checked :
+    certificatePart14.check
+      [⟨37, false⟩, ⟨38, false⟩, ⟨39, true⟩, ⟨40, false⟩, ⟨41, true⟩] = true := by
   rfl
 
 def certificatePart15 : Cert :=
@@ -34773,7 +34824,9 @@ def certificatePart15 : Cert :=
                 (.tt ⟨6, 7, 11, 13, 8⟩))
               (.tt ⟨6, 7, 9, 11, 13⟩))))))
 
-theorem certificatePart15_checked : certificatePart15.check [⟨37, true⟩, ⟨38, false⟩, ⟨39, true⟩, ⟨40, false⟩, ⟨41, true⟩] = true := by
+theorem certificatePart15_checked :
+    certificatePart15.check
+      [⟨37, true⟩, ⟨38, false⟩, ⟨39, true⟩, ⟨40, false⟩, ⟨41, true⟩] = true := by
   rfl
 
 def certificatePart16 : Cert :=
@@ -35091,7 +35144,9 @@ def certificatePart16 : Cert :=
               (.tt ⟨9, 6, 7, 10, 11⟩)
               (.tt ⟨6, 9, 7, 10, 11⟩))))))
 
-theorem certificatePart16_checked : certificatePart16.check [⟨37, false⟩, ⟨38, true⟩, ⟨39, true⟩, ⟨40, false⟩, ⟨41, true⟩] = true := by
+theorem certificatePart16_checked :
+    certificatePart16.check
+      [⟨37, false⟩, ⟨38, true⟩, ⟨39, true⟩, ⟨40, false⟩, ⟨41, true⟩] = true := by
   rfl
 
 def certificatePart17 : Cert :=
@@ -37177,13 +37232,17 @@ def certificatePart17 : Cert :=
                 (.tt ⟨6, 7, 13, 8, 10⟩))
               (.tt ⟨6, 7, 9, 10, 11⟩))))))
 
-theorem certificatePart17_checked : certificatePart17.check [⟨37, true⟩, ⟨38, true⟩, ⟨39, true⟩, ⟨40, false⟩, ⟨41, true⟩] = true := by
+theorem certificatePart17_checked :
+    certificatePart17.check
+      [⟨37, true⟩, ⟨38, true⟩, ⟨39, true⟩, ⟨40, false⟩, ⟨41, true⟩] = true := by
   rfl
 
 def certificatePart18 : Cert :=
   .tt ⟨9, 10, 11, 0, 7⟩
 
-theorem certificatePart18_checked : certificatePart18.check [⟨37, false⟩, ⟨38, false⟩, ⟨39, false⟩, ⟨40, true⟩, ⟨41, true⟩] = true := by
+theorem certificatePart18_checked :
+    certificatePart18.check
+      [⟨37, false⟩, ⟨38, false⟩, ⟨39, false⟩, ⟨40, true⟩, ⟨41, true⟩] = true := by
   rfl
 
 def certificatePart19 : Cert :=
@@ -38087,7 +38146,9 @@ def certificatePart19 : Cert :=
           (.tt ⟨11, 6, 7, 12, 13⟩)
           (.tt ⟨6, 11, 7, 12, 13⟩))))
 
-theorem certificatePart19_checked : certificatePart19.check [⟨37, true⟩, ⟨38, false⟩, ⟨39, false⟩, ⟨40, true⟩, ⟨41, true⟩] = true := by
+theorem certificatePart19_checked :
+    certificatePart19.check
+      [⟨37, true⟩, ⟨38, false⟩, ⟨39, false⟩, ⟨40, true⟩, ⟨41, true⟩] = true := by
   rfl
 
 def certificatePart20 : Cert :=
@@ -38601,7 +38662,9 @@ def certificatePart20 : Cert :=
           (.tt ⟨11, 6, 7, 12, 13⟩)
           (.tt ⟨6, 11, 7, 12, 13⟩))))
 
-theorem certificatePart20_checked : certificatePart20.check [⟨37, false⟩, ⟨38, true⟩, ⟨39, false⟩, ⟨40, true⟩, ⟨41, true⟩] = true := by
+theorem certificatePart20_checked :
+    certificatePart20.check
+      [⟨37, false⟩, ⟨38, true⟩, ⟨39, false⟩, ⟨40, true⟩, ⟨41, true⟩] = true := by
   rfl
 
 def certificatePart21 : Cert :=
@@ -39369,7 +39432,9 @@ def certificatePart21 : Cert :=
           (.tt ⟨11, 6, 7, 12, 13⟩)
           (.tt ⟨6, 11, 7, 12, 13⟩))))
 
-theorem certificatePart21_checked : certificatePart21.check [⟨37, true⟩, ⟨38, true⟩, ⟨39, false⟩, ⟨40, true⟩, ⟨41, true⟩] = true := by
+theorem certificatePart21_checked :
+    certificatePart21.check
+      [⟨37, true⟩, ⟨38, true⟩, ⟨39, false⟩, ⟨40, true⟩, ⟨41, true⟩] = true := by
   rfl
 
 def certificatePart22 : Cert :=
@@ -40445,7 +40510,9 @@ def certificatePart22 : Cert :=
                     (.tt ⟨5, 6, 7, 12, 13⟩))))))
           (.tt ⟨6, 7, 11, 12, 13⟩))))
 
-theorem certificatePart22_checked : certificatePart22.check [⟨37, false⟩, ⟨38, false⟩, ⟨39, true⟩, ⟨40, true⟩, ⟨41, true⟩] = true := by
+theorem certificatePart22_checked :
+    certificatePart22.check
+      [⟨37, false⟩, ⟨38, false⟩, ⟨39, true⟩, ⟨40, true⟩, ⟨41, true⟩] = true := by
   rfl
 
 def certificatePart23 : Cert :=
@@ -41751,7 +41818,9 @@ def certificatePart23 : Cert :=
               (.tt ⟨6, 7, 12, 9, 13⟩)))
           (.tt ⟨6, 7, 11, 12, 13⟩))))
 
-theorem certificatePart23_checked : certificatePart23.check [⟨37, true⟩, ⟨38, false⟩, ⟨39, true⟩, ⟨40, true⟩, ⟨41, true⟩] = true := by
+theorem certificatePart23_checked :
+    certificatePart23.check
+      [⟨37, true⟩, ⟨38, false⟩, ⟨39, true⟩, ⟨40, true⟩, ⟨41, true⟩] = true := by
   rfl
 
 def certificatePart24 : Cert :=
@@ -42507,7 +42576,9 @@ def certificatePart24 : Cert :=
               (.tt ⟨6, 9, 7, 13, 10⟩)))
           (.tt ⟨6, 7, 11, 12, 13⟩))))
 
-theorem certificatePart24_checked : certificatePart24.check [⟨37, false⟩, ⟨38, true⟩, ⟨39, true⟩, ⟨40, true⟩, ⟨41, true⟩] = true := by
+theorem certificatePart24_checked :
+    certificatePart24.check
+      [⟨37, false⟩, ⟨38, true⟩, ⟨39, true⟩, ⟨40, true⟩, ⟨41, true⟩] = true := by
   rfl
 
 def certificatePart25 : Cert :=
@@ -43021,7 +43092,9 @@ def certificatePart25 : Cert :=
               (.tt ⟨6, 7, 9, 13, 10⟩)))
           (.tt ⟨6, 7, 11, 12, 13⟩))))
 
-theorem certificatePart25_checked : certificatePart25.check [⟨37, true⟩, ⟨38, true⟩, ⟨39, true⟩, ⟨40, true⟩, ⟨41, true⟩] = true := by
+theorem certificatePart25_checked :
+    certificatePart25.check
+      [⟨37, true⟩, ⟨38, true⟩, ⟨39, true⟩, ⟨40, true⟩, ⟨41, true⟩] = true := by
   rfl
 
 def certificate : Cert :=
@@ -43082,7 +43155,15 @@ def certificate : Cert :=
     (certificatePart25)))))
 
 theorem certificate_checked : certificate.check [] = true := by
-  simp only [certificate, Cert.check, certificatePart0_checked, certificatePart1_checked, certificatePart2_checked, certificatePart3_checked, certificatePart4_checked, certificatePart5_checked, certificatePart6_checked, certificatePart7_checked, certificatePart8_checked, certificatePart9_checked, certificatePart10_checked, certificatePart11_checked, certificatePart12_checked, certificatePart13_checked, certificatePart14_checked, certificatePart15_checked, certificatePart16_checked, certificatePart17_checked, certificatePart18_checked, certificatePart19_checked, certificatePart20_checked, certificatePart21_checked, certificatePart22_checked, certificatePart23_checked, certificatePart24_checked, certificatePart25_checked]
+  simp only [certificate, Cert.check, certificatePart0_checked, certificatePart1_checked,
+    certificatePart2_checked, certificatePart3_checked, certificatePart4_checked,
+    certificatePart5_checked, certificatePart6_checked, certificatePart7_checked,
+    certificatePart8_checked, certificatePart9_checked, certificatePart10_checked,
+    certificatePart11_checked, certificatePart12_checked, certificatePart13_checked,
+    certificatePart14_checked, certificatePart15_checked, certificatePart16_checked,
+    certificatePart17_checked, certificatePart18_checked, certificatePart19_checked,
+    certificatePart20_checked, certificatePart21_checked, certificatePart22_checked,
+    certificatePart23_checked, certificatePart24_checked, certificatePart25_checked]
   rfl
 
 theorem Cert.sound (cert : Cert) (cross : BitVec 42) (env : Assignment)
@@ -43122,7 +43203,9 @@ def certificatePart0 : Cert :=
     (.tt ⟨7, 6, 5, 4⟩)
     (.tt ⟨7, 6, 4, 5⟩)
 
-theorem certificatePart0_checked : certificatePart0.check [⟨23, false⟩, ⟨24, false⟩, ⟨25, false⟩, ⟨26, false⟩, ⟨27, false⟩] = true := by
+theorem certificatePart0_checked :
+    certificatePart0.check
+      [⟨23, false⟩, ⟨24, false⟩, ⟨25, false⟩, ⟨26, false⟩, ⟨27, false⟩] = true := by
   rfl
 
 def certificatePart1 : Cert :=
@@ -43692,7 +43775,9 @@ def certificatePart1 : Cert :=
           (.tt ⟨3, 7, 6, 5⟩))))
     (.tt ⟨7, 4, 6, 5⟩)
 
-theorem certificatePart1_checked : certificatePart1.check [⟨23, true⟩, ⟨24, false⟩, ⟨25, false⟩, ⟨26, false⟩, ⟨27, false⟩] = true := by
+theorem certificatePart1_checked :
+    certificatePart1.check
+      [⟨23, true⟩, ⟨24, false⟩, ⟨25, false⟩, ⟨26, false⟩, ⟨27, false⟩] = true := by
   rfl
 
 def certificatePart2 : Cert :=
@@ -44888,7 +44973,9 @@ def certificatePart2 : Cert :=
                   (.tt ⟨2, 7, 6, 5⟩)))))
           (.tt ⟨3, 7, 6, 5⟩))))
 
-theorem certificatePart2_checked : certificatePart2.check [⟨23, false⟩, ⟨24, true⟩, ⟨25, false⟩, ⟨26, false⟩, ⟨27, false⟩] = true := by
+theorem certificatePart2_checked :
+    certificatePart2.check
+      [⟨23, false⟩, ⟨24, true⟩, ⟨25, false⟩, ⟨26, false⟩, ⟨27, false⟩] = true := by
   rfl
 
 def certificatePart3 : Cert :=
@@ -45522,7 +45609,9 @@ def certificatePart3 : Cert :=
           (.tt ⟨3, 7, 6, 5⟩))))
     (.tt ⟨4, 7, 6, 5⟩)
 
-theorem certificatePart3_checked : certificatePart3.check [⟨23, true⟩, ⟨24, true⟩, ⟨25, false⟩, ⟨26, false⟩, ⟨27, false⟩] = true := by
+theorem certificatePart3_checked :
+    certificatePart3.check
+      [⟨23, true⟩, ⟨24, true⟩, ⟨25, false⟩, ⟨26, false⟩, ⟨27, false⟩] = true := by
   rfl
 
 def certificatePart4 : Cert :=
@@ -46092,7 +46181,9 @@ def certificatePart4 : Cert :=
             (.tt ⟨3, 7, 6, 4⟩))
           (.tt ⟨3, 7, 5, 6⟩))))
 
-theorem certificatePart4_checked : certificatePart4.check [⟨23, false⟩, ⟨24, false⟩, ⟨25, true⟩, ⟨26, false⟩, ⟨27, false⟩] = true := by
+theorem certificatePart4_checked :
+    certificatePart4.check
+      [⟨23, false⟩, ⟨24, false⟩, ⟨25, true⟩, ⟨26, false⟩, ⟨27, false⟩] = true := by
   rfl
 
 def certificatePart5 : Cert :=
@@ -46100,7 +46191,9 @@ def certificatePart5 : Cert :=
     (.tt ⟨7, 5, 4, 6⟩)
     (.tt ⟨7, 4, 5, 6⟩)
 
-theorem certificatePart5_checked : certificatePart5.check [⟨23, true⟩, ⟨24, false⟩, ⟨25, true⟩, ⟨26, false⟩, ⟨27, false⟩] = true := by
+theorem certificatePart5_checked :
+    certificatePart5.check
+      [⟨23, true⟩, ⟨24, false⟩, ⟨25, true⟩, ⟨26, false⟩, ⟨27, false⟩] = true := by
   rfl
 
 def certificatePart6 : Cert :=
@@ -47360,7 +47453,9 @@ def certificatePart6 : Cert :=
                   (.tt ⟨2, 7, 5, 6⟩)))))
           (.tt ⟨3, 7, 5, 6⟩))))
 
-theorem certificatePart6_checked : certificatePart6.check [⟨23, false⟩, ⟨24, true⟩, ⟨25, true⟩, ⟨26, false⟩, ⟨27, false⟩] = true := by
+theorem certificatePart6_checked :
+    certificatePart6.check
+      [⟨23, false⟩, ⟨24, true⟩, ⟨25, true⟩, ⟨26, false⟩, ⟨27, false⟩] = true := by
   rfl
 
 def certificatePart7 : Cert :=
@@ -47930,7 +48025,9 @@ def certificatePart7 : Cert :=
           (.tt ⟨3, 7, 5, 6⟩))))
     (.tt ⟨4, 7, 5, 6⟩)
 
-theorem certificatePart7_checked : certificatePart7.check [⟨23, true⟩, ⟨24, true⟩, ⟨25, true⟩, ⟨26, false⟩, ⟨27, false⟩] = true := by
+theorem certificatePart7_checked :
+    certificatePart7.check
+      [⟨23, true⟩, ⟨24, true⟩, ⟨25, true⟩, ⟨26, false⟩, ⟨27, false⟩] = true := by
   rfl
 
 def certificatePart8 : Cert :=
@@ -49406,7 +49503,9 @@ def certificatePart8 : Cert :=
                     (.tt ⟨2, 6, 4, 5⟩)))))
             (.tt ⟨3, 6, 4, 5⟩)))))
 
-theorem certificatePart8_checked : certificatePart8.check [⟨23, false⟩, ⟨24, false⟩, ⟨25, false⟩, ⟨26, true⟩, ⟨27, false⟩] = true := by
+theorem certificatePart8_checked :
+    certificatePart8.check
+      [⟨23, false⟩, ⟨24, false⟩, ⟨25, false⟩, ⟨26, true⟩, ⟨27, false⟩] = true := by
   rfl
 
 def certificatePart9 : Cert :=
@@ -50954,7 +51053,9 @@ def certificatePart9 : Cert :=
             (.tt ⟨4, 3, 6, 5⟩)
             (.tt ⟨3, 4, 6, 5⟩)))))
 
-theorem certificatePart9_checked : certificatePart9.check [⟨23, true⟩, ⟨24, false⟩, ⟨25, false⟩, ⟨26, true⟩, ⟨27, false⟩] = true := by
+theorem certificatePart9_checked :
+    certificatePart9.check
+      [⟨23, true⟩, ⟨24, false⟩, ⟨25, false⟩, ⟨26, true⟩, ⟨27, false⟩] = true := by
   rfl
 
 def certificatePart10 : Cert :=
@@ -52502,7 +52603,9 @@ def certificatePart10 : Cert :=
             (.tt ⟨4, 3, 5, 7⟩)
             (.tt ⟨3, 6, 4, 5⟩)))))
 
-theorem certificatePart10_checked : certificatePart10.check [⟨23, false⟩, ⟨24, true⟩, ⟨25, false⟩, ⟨26, true⟩, ⟨27, false⟩] = true := by
+theorem certificatePart10_checked :
+    certificatePart10.check
+      [⟨23, false⟩, ⟨24, true⟩, ⟨25, false⟩, ⟨26, true⟩, ⟨27, false⟩] = true := by
   rfl
 
 def certificatePart11 : Cert :=
@@ -53978,7 +54081,9 @@ def certificatePart11 : Cert :=
             (.tt ⟨4, 3, 6, 5⟩)
             (.tt ⟨3, 4, 6, 5⟩)))))
 
-theorem certificatePart11_checked : certificatePart11.check [⟨23, true⟩, ⟨24, true⟩, ⟨25, false⟩, ⟨26, true⟩, ⟨27, false⟩] = true := by
+theorem certificatePart11_checked :
+    certificatePart11.check
+      [⟨23, true⟩, ⟨24, true⟩, ⟨25, false⟩, ⟨26, true⟩, ⟨27, false⟩] = true := by
   rfl
 
 def certificatePart12 : Cert :=
@@ -54612,7 +54717,9 @@ def certificatePart12 : Cert :=
           (.tt ⟨5, 3, 7, 6⟩)
           (.tt ⟨3, 5, 7, 6⟩))))
 
-theorem certificatePart12_checked : certificatePart12.check [⟨23, false⟩, ⟨24, false⟩, ⟨25, true⟩, ⟨26, true⟩, ⟨27, false⟩] = true := by
+theorem certificatePart12_checked :
+    certificatePart12.check
+      [⟨23, false⟩, ⟨24, false⟩, ⟨25, true⟩, ⟨26, true⟩, ⟨27, false⟩] = true := by
   rfl
 
 def certificatePart13 : Cert :=
@@ -55182,7 +55289,9 @@ def certificatePart13 : Cert :=
           (.tt ⟨5, 3, 7, 6⟩)
           (.tt ⟨3, 5, 7, 6⟩))))
 
-theorem certificatePart13_checked : certificatePart13.check [⟨23, true⟩, ⟨24, false⟩, ⟨25, true⟩, ⟨26, true⟩, ⟨27, false⟩] = true := by
+theorem certificatePart13_checked :
+    certificatePart13.check
+      [⟨23, true⟩, ⟨24, false⟩, ⟨25, true⟩, ⟨26, true⟩, ⟨27, false⟩] = true := by
   rfl
 
 def certificatePart14 : Cert :=
@@ -56378,7 +56487,9 @@ def certificatePart14 : Cert :=
           (.tt ⟨5, 3, 7, 6⟩)
           (.tt ⟨3, 5, 7, 6⟩))))
 
-theorem certificatePart14_checked : certificatePart14.check [⟨23, false⟩, ⟨24, true⟩, ⟨25, true⟩, ⟨26, true⟩, ⟨27, false⟩] = true := by
+theorem certificatePart14_checked :
+    certificatePart14.check
+      [⟨23, false⟩, ⟨24, true⟩, ⟨25, true⟩, ⟨26, true⟩, ⟨27, false⟩] = true := by
   rfl
 
 def certificatePart15 : Cert :=
@@ -56386,7 +56497,9 @@ def certificatePart15 : Cert :=
     (.tt ⟨5, 4, 7, 6⟩)
     (.tt ⟨4, 5, 7, 6⟩)
 
-theorem certificatePart15_checked : certificatePart15.check [⟨23, true⟩, ⟨24, true⟩, ⟨25, true⟩, ⟨26, true⟩, ⟨27, false⟩] = true := by
+theorem certificatePart15_checked :
+    certificatePart15.check
+      [⟨23, true⟩, ⟨24, true⟩, ⟨25, true⟩, ⟨26, true⟩, ⟨27, false⟩] = true := by
   rfl
 
 def certificatePart16 : Cert :=
@@ -56394,7 +56507,9 @@ def certificatePart16 : Cert :=
     (.tt ⟨6, 7, 5, 4⟩)
     (.tt ⟨6, 7, 4, 5⟩)
 
-theorem certificatePart16_checked : certificatePart16.check [⟨23, false⟩, ⟨24, false⟩, ⟨25, false⟩, ⟨26, false⟩, ⟨27, true⟩] = true := by
+theorem certificatePart16_checked :
+    certificatePart16.check
+      [⟨23, false⟩, ⟨24, false⟩, ⟨25, false⟩, ⟨26, false⟩, ⟨27, true⟩] = true := by
   rfl
 
 def certificatePart17 : Cert :=
@@ -57590,7 +57705,9 @@ def certificatePart17 : Cert :=
                   (.tt ⟨2, 6, 7, 5⟩)))))
           (.tt ⟨3, 6, 7, 5⟩))))
 
-theorem certificatePart17_checked : certificatePart17.check [⟨23, true⟩, ⟨24, false⟩, ⟨25, false⟩, ⟨26, false⟩, ⟨27, true⟩] = true := by
+theorem certificatePart17_checked :
+    certificatePart17.check
+      [⟨23, true⟩, ⟨24, false⟩, ⟨25, false⟩, ⟨26, false⟩, ⟨27, true⟩] = true := by
   rfl
 
 def certificatePart18 : Cert :=
@@ -58160,7 +58277,9 @@ def certificatePart18 : Cert :=
           (.tt ⟨3, 6, 7, 5⟩))))
     (.tt ⟨6, 4, 7, 5⟩)
 
-theorem certificatePart18_checked : certificatePart18.check [⟨23, false⟩, ⟨24, true⟩, ⟨25, false⟩, ⟨26, false⟩, ⟨27, true⟩] = true := by
+theorem certificatePart18_checked :
+    certificatePart18.check
+      [⟨23, false⟩, ⟨24, true⟩, ⟨25, false⟩, ⟨26, false⟩, ⟨27, true⟩] = true := by
   rfl
 
 def certificatePart19 : Cert :=
@@ -58794,7 +58913,9 @@ def certificatePart19 : Cert :=
           (.tt ⟨3, 6, 7, 5⟩))))
     (.tt ⟨4, 6, 7, 5⟩)
 
-theorem certificatePart19_checked : certificatePart19.check [⟨23, true⟩, ⟨24, true⟩, ⟨25, false⟩, ⟨26, false⟩, ⟨27, true⟩] = true := by
+theorem certificatePart19_checked :
+    certificatePart19.check
+      [⟨23, true⟩, ⟨24, true⟩, ⟨25, false⟩, ⟨26, false⟩, ⟨27, true⟩] = true := by
   rfl
 
 def certificatePart20 : Cert :=
@@ -60270,7 +60391,9 @@ def certificatePart20 : Cert :=
                     (.tt ⟨2, 7, 4, 5⟩)))))
             (.tt ⟨3, 7, 4, 5⟩)))))
 
-theorem certificatePart20_checked : certificatePart20.check [⟨23, false⟩, ⟨24, false⟩, ⟨25, true⟩, ⟨26, false⟩, ⟨27, true⟩] = true := by
+theorem certificatePart20_checked :
+    certificatePart20.check
+      [⟨23, false⟩, ⟨24, false⟩, ⟨25, true⟩, ⟨26, false⟩, ⟨27, true⟩] = true := by
   rfl
 
 def certificatePart21 : Cert :=
@@ -61818,7 +61941,9 @@ def certificatePart21 : Cert :=
             (.tt ⟨4, 3, 5, 6⟩)
             (.tt ⟨3, 4, 5, 6⟩)))))
 
-theorem certificatePart21_checked : certificatePart21.check [⟨23, true⟩, ⟨24, false⟩, ⟨25, true⟩, ⟨26, false⟩, ⟨27, true⟩] = true := by
+theorem certificatePart21_checked :
+    certificatePart21.check
+      [⟨23, true⟩, ⟨24, false⟩, ⟨25, true⟩, ⟨26, false⟩, ⟨27, true⟩] = true := by
   rfl
 
 def certificatePart22 : Cert :=
@@ -63366,7 +63491,9 @@ def certificatePart22 : Cert :=
             (.tt ⟨4, 3, 7, 5⟩)
             (.tt ⟨3, 4, 7, 5⟩)))))
 
-theorem certificatePart22_checked : certificatePart22.check [⟨23, false⟩, ⟨24, true⟩, ⟨25, true⟩, ⟨26, false⟩, ⟨27, true⟩] = true := by
+theorem certificatePart22_checked :
+    certificatePart22.check
+      [⟨23, false⟩, ⟨24, true⟩, ⟨25, true⟩, ⟨26, false⟩, ⟨27, true⟩] = true := by
   rfl
 
 def certificatePart23 : Cert :=
@@ -64842,7 +64969,9 @@ def certificatePart23 : Cert :=
             (.tt ⟨4, 3, 5, 6⟩)
             (.tt ⟨3, 4, 5, 6⟩)))))
 
-theorem certificatePart23_checked : certificatePart23.check [⟨23, true⟩, ⟨24, true⟩, ⟨25, true⟩, ⟨26, false⟩, ⟨27, true⟩] = true := by
+theorem certificatePart23_checked :
+    certificatePart23.check
+      [⟨23, true⟩, ⟨24, true⟩, ⟨25, true⟩, ⟨26, false⟩, ⟨27, true⟩] = true := by
   rfl
 
 def certificatePart24 : Cert :=
@@ -65412,7 +65541,9 @@ def certificatePart24 : Cert :=
             (.tt ⟨3, 6, 7, 4⟩))
           (.tt ⟨3, 6, 5, 7⟩))))
 
-theorem certificatePart24_checked : certificatePart24.check [⟨23, false⟩, ⟨24, false⟩, ⟨25, false⟩, ⟨26, true⟩, ⟨27, true⟩] = true := by
+theorem certificatePart24_checked :
+    certificatePart24.check
+      [⟨23, false⟩, ⟨24, false⟩, ⟨25, false⟩, ⟨26, true⟩, ⟨27, true⟩] = true := by
   rfl
 
 def certificatePart25 : Cert :=
@@ -66672,7 +66803,9 @@ def certificatePart25 : Cert :=
                   (.tt ⟨2, 6, 5, 7⟩)))))
           (.tt ⟨3, 6, 5, 7⟩))))
 
-theorem certificatePart25_checked : certificatePart25.check [⟨23, true⟩, ⟨24, false⟩, ⟨25, false⟩, ⟨26, true⟩, ⟨27, true⟩] = true := by
+theorem certificatePart25_checked :
+    certificatePart25.check
+      [⟨23, true⟩, ⟨24, false⟩, ⟨25, false⟩, ⟨26, true⟩, ⟨27, true⟩] = true := by
   rfl
 
 def certificatePart26 : Cert :=
@@ -66680,7 +66813,9 @@ def certificatePart26 : Cert :=
     (.tt ⟨6, 5, 4, 7⟩)
     (.tt ⟨6, 4, 5, 7⟩)
 
-theorem certificatePart26_checked : certificatePart26.check [⟨23, false⟩, ⟨24, true⟩, ⟨25, false⟩, ⟨26, true⟩, ⟨27, true⟩] = true := by
+theorem certificatePart26_checked :
+    certificatePart26.check
+      [⟨23, false⟩, ⟨24, true⟩, ⟨25, false⟩, ⟨26, true⟩, ⟨27, true⟩] = true := by
   rfl
 
 def certificatePart27 : Cert :=
@@ -67250,7 +67385,9 @@ def certificatePart27 : Cert :=
           (.tt ⟨3, 6, 5, 7⟩))))
     (.tt ⟨4, 6, 5, 7⟩)
 
-theorem certificatePart27_checked : certificatePart27.check [⟨23, true⟩, ⟨24, true⟩, ⟨25, false⟩, ⟨26, true⟩, ⟨27, true⟩] = true := by
+theorem certificatePart27_checked :
+    certificatePart27.check
+      [⟨23, true⟩, ⟨24, true⟩, ⟨25, false⟩, ⟨26, true⟩, ⟨27, true⟩] = true := by
   rfl
 
 def certificatePart28 : Cert :=
@@ -67884,7 +68021,9 @@ def certificatePart28 : Cert :=
           (.tt ⟨5, 3, 6, 7⟩)
           (.tt ⟨3, 5, 6, 7⟩))))
 
-theorem certificatePart28_checked : certificatePart28.check [⟨23, false⟩, ⟨24, false⟩, ⟨25, true⟩, ⟨26, true⟩, ⟨27, true⟩] = true := by
+theorem certificatePart28_checked :
+    certificatePart28.check
+      [⟨23, false⟩, ⟨24, false⟩, ⟨25, true⟩, ⟨26, true⟩, ⟨27, true⟩] = true := by
   rfl
 
 def certificatePart29 : Cert :=
@@ -69080,7 +69219,9 @@ def certificatePart29 : Cert :=
           (.tt ⟨5, 3, 6, 7⟩)
           (.tt ⟨3, 5, 6, 7⟩))))
 
-theorem certificatePart29_checked : certificatePart29.check [⟨23, true⟩, ⟨24, false⟩, ⟨25, true⟩, ⟨26, true⟩, ⟨27, true⟩] = true := by
+theorem certificatePart29_checked :
+    certificatePart29.check
+      [⟨23, true⟩, ⟨24, false⟩, ⟨25, true⟩, ⟨26, true⟩, ⟨27, true⟩] = true := by
   rfl
 
 def certificatePart30 : Cert :=
@@ -69650,7 +69791,9 @@ def certificatePart30 : Cert :=
           (.tt ⟨5, 3, 6, 7⟩)
           (.tt ⟨3, 5, 6, 7⟩))))
 
-theorem certificatePart30_checked : certificatePart30.check [⟨23, false⟩, ⟨24, true⟩, ⟨25, true⟩, ⟨26, true⟩, ⟨27, true⟩] = true := by
+theorem certificatePart30_checked :
+    certificatePart30.check
+      [⟨23, false⟩, ⟨24, true⟩, ⟨25, true⟩, ⟨26, true⟩, ⟨27, true⟩] = true := by
   rfl
 
 def certificatePart31 : Cert :=
@@ -69658,7 +69801,9 @@ def certificatePart31 : Cert :=
     (.tt ⟨5, 4, 6, 7⟩)
     (.tt ⟨4, 5, 6, 7⟩)
 
-theorem certificatePart31_checked : certificatePart31.check [⟨23, true⟩, ⟨24, true⟩, ⟨25, true⟩, ⟨26, true⟩, ⟨27, true⟩] = true := by
+theorem certificatePart31_checked :
+    certificatePart31.check
+      [⟨23, true⟩, ⟨24, true⟩, ⟨25, true⟩, ⟨26, true⟩, ⟨27, true⟩] = true := by
   rfl
 
 def certificate : Cert :=
@@ -69727,7 +69872,17 @@ def certificate : Cert :=
     (certificatePart31)))))
 
 theorem certificate_checked : certificate.check [] = true := by
-  simp only [certificate, Cert.check, certificatePart0_checked, certificatePart1_checked, certificatePart2_checked, certificatePart3_checked, certificatePart4_checked, certificatePart5_checked, certificatePart6_checked, certificatePart7_checked, certificatePart8_checked, certificatePart9_checked, certificatePart10_checked, certificatePart11_checked, certificatePart12_checked, certificatePart13_checked, certificatePart14_checked, certificatePart15_checked, certificatePart16_checked, certificatePart17_checked, certificatePart18_checked, certificatePart19_checked, certificatePart20_checked, certificatePart21_checked, certificatePart22_checked, certificatePart23_checked, certificatePart24_checked, certificatePart25_checked, certificatePart26_checked, certificatePart27_checked, certificatePart28_checked, certificatePart29_checked, certificatePart30_checked, certificatePart31_checked]
+  simp only [certificate, Cert.check, certificatePart0_checked, certificatePart1_checked,
+    certificatePart2_checked, certificatePart3_checked, certificatePart4_checked,
+    certificatePart5_checked, certificatePart6_checked, certificatePart7_checked,
+    certificatePart8_checked, certificatePart9_checked, certificatePart10_checked,
+    certificatePart11_checked, certificatePart12_checked, certificatePart13_checked,
+    certificatePart14_checked, certificatePart15_checked, certificatePart16_checked,
+    certificatePart17_checked, certificatePart18_checked, certificatePart19_checked,
+    certificatePart20_checked, certificatePart21_checked, certificatePart22_checked,
+    certificatePart23_checked, certificatePart24_checked, certificatePart25_checked,
+    certificatePart26_checked, certificatePart27_checked, certificatePart28_checked,
+    certificatePart29_checked, certificatePart30_checked, certificatePart31_checked]
   rfl
 
 theorem Cert.sound (cert : Cert) (code : BitVec 28) (env : Assignment)

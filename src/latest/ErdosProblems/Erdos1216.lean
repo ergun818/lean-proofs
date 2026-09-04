@@ -91,13 +91,11 @@ lemma lit_arc {w n i j : Nat} {code : BitVec w} (hij : i ≠ j)
     (h : Certificates.litSatisfied code (Certificates.arcLit n i j) = true) :
     compactArc code n i j = true := by
   rcases lt_trichotomy i j with hlt | heq | hgt
-  · simp [Certificates.arcLit, compactArc, Certificates.litSatisfied, hlt,
-      ne_of_lt hlt] at h ⊢
-    exact h
+  · simpa [Certificates.arcLit, compactArc, Certificates.litSatisfied, hlt,
+      ne_of_lt hlt] using h
   · exact (hij heq).elim
-  · simp [Certificates.arcLit, compactArc, Certificates.litSatisfied, hgt,
-      ne_of_gt hgt, not_lt_of_ge hgt.le] at h ⊢
-    exact h
+  · simpa [Certificates.arcLit, compactArc, Certificates.litSatisfied,
+      ne_of_gt hgt, not_lt_of_ge hgt.le] using h
 
 lemma order4_data (o : Certificates.Order4) {n : Nat}
     (h : o.data n = true) :
@@ -123,7 +121,7 @@ lemma order4_compact {w n : Nat} {code : BitVec w}
   let d : Fin n := ⟨o.d, hd⟩
   have hall := h.2
   simp only [Certificates.Order4.lits, List.all_cons, List.all_nil,
-    Bool.and_eq_true, Bool.true_eq] at hall
+    Bool.and_eq_true] at hall
   refine ⟨a, b, c, d, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
   · exact fun h => hab (Fin.ext_iff.mp h)
   · exact fun h => hac (Fin.ext_iff.mp h)
@@ -575,15 +573,24 @@ lemma order5_to_transitive (T : Tournament 14) (cross : BitVec 42)
   have gce : g c ≠ g e := fun h => hce (Fin.ext_iff.mp (hg h))
   have gde : g d ≠ g e := fun h => hde (Fin.ext_iff.mp (hg h))
   have eab : T.arc (g a) (g b) = true := hpair a b (by exact fun h => hab (Fin.ext_iff.mp h)) hall.1
-  have eac : T.arc (g a) (g c) = true := hpair a c (by exact fun h => hac (Fin.ext_iff.mp h)) hall.2.1
-  have ead : T.arc (g a) (g d) = true := hpair a d (by exact fun h => had (Fin.ext_iff.mp h)) hall.2.2.1
-  have eae : T.arc (g a) (g e) = true := hpair a e (by exact fun h => hae (Fin.ext_iff.mp h)) hall.2.2.2.1
-  have ebc : T.arc (g b) (g c) = true := hpair b c (by exact fun h => hbc (Fin.ext_iff.mp h)) hall.2.2.2.2.1
-  have ebd : T.arc (g b) (g d) = true := hpair b d (by exact fun h => hbd (Fin.ext_iff.mp h)) hall.2.2.2.2.2.1
-  have ebe : T.arc (g b) (g e) = true := hpair b e (by exact fun h => hbe (Fin.ext_iff.mp h)) hall.2.2.2.2.2.2.1
-  have ecd : T.arc (g c) (g d) = true := hpair c d (by exact fun h => hcd (Fin.ext_iff.mp h)) hall.2.2.2.2.2.2.2.1
-  have ece : T.arc (g c) (g e) = true := hpair c e (by exact fun h => hce (Fin.ext_iff.mp h)) hall.2.2.2.2.2.2.2.2.1
-  have ede : T.arc (g d) (g e) = true := hpair d e (by exact fun h => hde (Fin.ext_iff.mp h)) hall.2.2.2.2.2.2.2.2.2.1
+  have eac : T.arc (g a) (g c) = true :=
+    hpair a c (by exact fun h => hac (Fin.ext_iff.mp h)) hall.2.1
+  have ead : T.arc (g a) (g d) = true :=
+    hpair a d (by exact fun h => had (Fin.ext_iff.mp h)) hall.2.2.1
+  have eae : T.arc (g a) (g e) = true :=
+    hpair a e (by exact fun h => hae (Fin.ext_iff.mp h)) hall.2.2.2.1
+  have ebc : T.arc (g b) (g c) = true :=
+    hpair b c (by exact fun h => hbc (Fin.ext_iff.mp h)) hall.2.2.2.2.1
+  have ebd : T.arc (g b) (g d) = true :=
+    hpair b d (by exact fun h => hbd (Fin.ext_iff.mp h)) hall.2.2.2.2.2.1
+  have ebe : T.arc (g b) (g e) = true :=
+    hpair b e (by exact fun h => hbe (Fin.ext_iff.mp h)) hall.2.2.2.2.2.2.1
+  have ecd : T.arc (g c) (g d) = true :=
+    hpair c d (by exact fun h => hcd (Fin.ext_iff.mp h)) hall.2.2.2.2.2.2.2.1
+  have ece : T.arc (g c) (g e) = true :=
+    hpair c e (by exact fun h => hce (Fin.ext_iff.mp h)) hall.2.2.2.2.2.2.2.2.1
+  have ede : T.arc (g d) (g e) = true :=
+    hpair d e (by exact fun h => hde (Fin.ext_iff.mp h)) hall.2.2.2.2.2.2.2.2.2.1
   refine ⟨u, ?_, ?_⟩
   · intro i j hij
     fin_cases i <;> fin_cases j <;> simp_all [u]
@@ -702,13 +709,13 @@ lemma normalized_pair_zero (T : Tournament 14) (v : Fin 14)
     (a : Fin 7 → Fin 14) (b : Fin 6 → Fin 14)
     (cross : BitVec 42)
     (hva : ∀ i, T.arc v (a i) = true)
-    (hbv : ∀ i, T.arc (b i) v = true)
-    (harcA : ∀ i j : Fin 7, i ≠ j →
+    (_ : ∀ i, T.arc (b i) v = true)
+    (_ : ∀ i j : Fin 7, i ≠ j →
       T.arc (a i) (a j) = Certificates.Q7.qArc i j)
-    (harcB : ∀ i j : Fin 6, i ≠ j →
+    (_ : ∀ i j : Fin 6, i ≠ j →
       T.arc (b i) (b j) = Certificates.Q6.qArc i j)
     (hab : ∀ i j, a i ≠ b j)
-    (hcross : ∀ i j,
+    (_ : ∀ i j,
       cross.getLsbD (i.1 * 6 + j.1) = T.arc (a i) (b j)) :
     ∀ j : Fin 14, (0 : Fin 14) ≠ j →
       Certificates.Normalized.holdsPair cross (0, j.1) = true →
@@ -722,18 +729,18 @@ lemma normalized_pair_zero (T : Tournament 14) (v : Fin 14)
     simp_all [normalizedMap, Certificates.Normalized.holdsPair,
       Certificates.Normalized.crossLit?, Certificates.Normalized.fixedArc,
       Certificates.Normalized.inA, Certificates.Normalized.inB,
-      Certificates.litSatisfied, Certificates.Q7.qArc, Certificates.Q6.qArc]
+      Certificates.Q7.qArc, Certificates.Q6.qArc]
 
 lemma normalized_pair_A (T : Tournament 14) (v : Fin 14)
     (a : Fin 7 → Fin 14) (b : Fin 6 → Fin 14)
     (cross : BitVec 42)
-    (hva : ∀ i, T.arc v (a i) = true)
-    (hbv : ∀ i, T.arc (b i) v = true)
+    (_ : ∀ i, T.arc v (a i) = true)
+    (_ : ∀ i, T.arc (b i) v = true)
     (harcA : ∀ i j : Fin 7, i ≠ j →
       T.arc (a i) (a j) = Certificates.Q7.qArc i j)
-    (harcB : ∀ i j : Fin 6, i ≠ j →
+    (_ : ∀ i j : Fin 6, i ≠ j →
       T.arc (b i) (b j) = Certificates.Q6.qArc i j)
-    (hab : ∀ i j, a i ≠ b j)
+    (_ : ∀ i j, a i ≠ b j)
     (hcross : ∀ i j,
       cross.getLsbD (i.1 * 6 + j.1) = T.arc (a i) (b j)) :
     ∀ i : Fin 7, ∀ j : Fin 14, indexA i ≠ j →
@@ -755,9 +762,9 @@ lemma normalized_pair_A (T : Tournament 14) (v : Fin 14)
 lemma normalized_pair_B (T : Tournament 14) (v : Fin 14)
     (a : Fin 7 → Fin 14) (b : Fin 6 → Fin 14)
     (cross : BitVec 42)
-    (hva : ∀ i, T.arc v (a i) = true)
+    (_ : ∀ i, T.arc v (a i) = true)
     (hbv : ∀ i, T.arc (b i) v = true)
-    (harcA : ∀ i j : Fin 7, i ≠ j →
+    (_ : ∀ i j : Fin 7, i ≠ j →
       T.arc (a i) (a j) = Certificates.Q7.qArc i j)
     (harcB : ∀ i j : Fin 6, i ≠ j →
       T.arc (b i) (b j) = Certificates.Q6.qArc i j)
@@ -1083,12 +1090,12 @@ lemma reverseTournament_arc (T : Tournament 14) {i j : Fin 14} (hij : i ≠ j) :
   · have hidx : i.1 * 14 + j.1 < 14 * 14 := by omega
     have hnrev : ¬ j < i := not_lt_of_ge hlt.le
     simp [reverseTournament, Tournament.arc, hij, hij.symm, hlt, hnrev,
-      BitVec.getLsbD_not, hidx]
+      hidx]
   · exact (hij heq).elim
   · have hidx : j.1 * 14 + i.1 < 14 * 14 := by omega
     have hnlt : ¬ i < j := not_lt_of_ge hgt.le
     simp [reverseTournament, Tournament.arc, hij, hij.symm, hgt, hnlt,
-      BitVec.getLsbD_not, hidx]
+      hidx]
 
 lemma transitive_of_reverse_transitive (T : Tournament 14) :
     HasTransitiveTournament (reverseTournament T) 5 →
@@ -1114,7 +1121,7 @@ lemma reverse_outSet_eq_inSet (T : Tournament 14) (v : Fin 14) :
     simp only [outSet, inSet, Finset.mem_filter, Finset.mem_erase,
       Finset.mem_univ, and_true]
     rw [hrev, hswap]
-    cases hbit : T.arc v x <;> simp [hbit, hx]
+    cases hbit : T.arc v x <;> simp [hx]
 
 /-- Reid--Parker's directed Ramsey theorem R_T(5) = 14, in its upper-bound form. -/
 theorem directed_ramsey_five_fourteen : Guaranteed 14 5 := by
