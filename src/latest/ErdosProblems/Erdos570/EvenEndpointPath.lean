@@ -42,7 +42,7 @@ theorem evenEndpointSequence_injective
   · split at hab <;> rename_i hb
     · have hq := congrArg Fin.val (hw hab)
       apply Fin.ext
-      simp only [Fin.val_mk] at hq
+      simp only [] at hq
       omega
     · exact (hout _ ⟨_, hab.symm⟩).elim
   · split at hab <;> rename_i hb
@@ -56,7 +56,7 @@ theorem evenEndpointSequence_injective
       have hfidx := hf hbase
       have hq := congrArg Fin.val hfidx
       apply Fin.ext
-      simp only [Fin.val_mk] at hq
+      simp only [] at hq
       omega
 
 theorem cycleGraph_even_isContained_of_endpoint_common
@@ -82,7 +82,7 @@ theorem cycleGraph_even_isContained_of_endpoint_common
         have hia : (⟨a.val / 2, by omega⟩ : Fin h) = i := rfl
         have hib : (⟨b.val / 2, by omega⟩ : Fin h) = i := by
           apply Fin.ext
-          simp only [i, Fin.val_mk]
+          simp only [i]
           omega
         rw [hia, hib]
         exact (mem_endpointPathCommonComplIndices.mp (hcommon i)).1

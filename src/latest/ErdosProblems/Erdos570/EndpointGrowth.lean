@@ -20,11 +20,12 @@ namespace Erdos570
 /-- Every graph whose vertex type has cardinality at most a clique embeds in
 the ambient graph containing that clique. -/
 theorem isContained_of_isClique_card
-    {W V : Type*} [Fintype W] [Fintype V] [DecidableEq V]
+    {W V : Type*} [Fintype W] [Finite V]
     {H : SimpleGraph W} {G : SimpleGraph V} {U : Finset V}
     (hU : G.IsClique (U : Set V)) (hcard : Fintype.card W ≤ U.card) :
     H ⊑ G := by
   classical
+  let := Fintype.ofFinite V
   obtain ⟨T, hTU, hTcard⟩ := Finset.exists_subset_card_eq hcard
   let e : W ≃ T := Fintype.equivOfCardEq (by simp [hTcard])
   let f : W → V := fun w ↦ (e w).1

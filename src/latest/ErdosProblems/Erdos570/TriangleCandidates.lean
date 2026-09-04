@@ -141,7 +141,7 @@ theorem sum_card_commonCandidates_subtype
 /-- The sum of the degrees into `Y` equals the sum, over `Y`, of the
 corresponding reverse degrees. -/
 theorem sum_cross_degrees
-    {T Y : Type*} [Fintype T] [DecidableEq T] [Fintype Y] [DecidableEq Y]
+    {T Y : Type*} [Fintype T] [Fintype Y] [DecidableEq Y]
     (N : T → Finset Y) :
     ∑ x : T, (N x).card =
       ∑ y : Y, (Finset.univ.filter fun x : T ↦ y ∈ N x).card := by

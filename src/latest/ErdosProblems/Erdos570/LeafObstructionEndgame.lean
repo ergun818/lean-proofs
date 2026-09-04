@@ -43,11 +43,12 @@ theorem commonPart_subset_ambient {W : Type*} [DecidableEq W] {t : ℕ}
 /-- If every `U i` misses at most `d` points of `T`, their common part
 misses at most `t*d` points. -/
 theorem commonPart_card_ge
-    {W : Type*} [Fintype W] [DecidableEq W] {t d : ℕ}
+    {W : Type*} [Finite W] [DecidableEq W] {t d : ℕ}
     (U : Fin t → Finset W) (T : Finset W)
     (hlarge : ∀ i, T.card - d ≤ ((U i) ∩ T).card) :
     T.card - t * d ≤ (commonPart U T).card := by
   classical
+  let := Fintype.ofFinite W
   let missing : Fin t → Finset W := fun i ↦ T \ U i
   have hmissing (i : Fin t) : (missing i).card ≤ d := by
     have hsplit := Finset.card_sdiff_add_card_inter T (U i)
@@ -72,7 +73,7 @@ theorem commonPart_card_ge
     have hnotall : ¬∀ i, x ∈ U i := by
       intro hall
       exact hxnot (Finset.mem_filter.mpr ⟨hxT, hall⟩)
-    push_neg at hnotall
+    push Not at hnotall
     obtain ⟨i, hi⟩ := hnotall
     apply Finset.mem_biUnion.mpr
     exact ⟨i, Finset.mem_univ _, Finset.mem_sdiff.mpr ⟨hxT, hi⟩⟩
@@ -233,7 +234,7 @@ theorem isContained_compl_of_leafObstructionFamily
   have hKrawEq : Kraw =
       ((F.unused i₀ ∩ T) ∩ (F.unused i₁ ∩ T)) := by
     ext x
-    simp [Kraw, and_assoc, and_left_comm, and_comm]
+    simp [Kraw, and_assoc, and_comm]
   have hKrawCard : H.vertexCount - 2 * L.card + (r + 1) ≤ Kraw.card := by
     let V : Fin 2 → Finset W := fun i ↦ if i = 0 then F.unused i₀ else F.unused i₁
     have hVlarge : ∀ i, T.card - (L.card - 1) ≤ ((V i) ∩ T).card := by

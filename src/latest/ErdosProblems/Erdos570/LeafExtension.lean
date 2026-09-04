@@ -73,20 +73,21 @@ def LeafAssignment.empty
   toFun := fun j ↦ by
     have hpos : 0 < Fintype.card ↥(∅ : Finset (LeafType H L)) :=
       Fintype.card_pos_iff.mpr ⟨j⟩
-    exact False.elim (by simpa using hpos)
+    exact False.elim (by simp at hpos)
   injective := fun x ↦ by
     have hpos : 0 < Fintype.card ↥(∅ : Finset (LeafType H L)) :=
       Fintype.card_pos_iff.mpr ⟨x⟩
-    exact False.elim (by simpa using hpos)
+    exact False.elim (by simp at hpos)
   fresh_core := fun j ↦ by
     have hpos : 0 < Fintype.card ↥(∅ : Finset (LeafType H L)) :=
       Fintype.card_pos_iff.mpr ⟨j⟩
-    exact False.elim (by simpa using hpos)
+    exact False.elim (by simp at hpos)
   adjacent_parent := fun j ↦ by
     have hpos : 0 < Fintype.card ↥(∅ : Finset (LeafType H L)) :=
       Fintype.card_pos_iff.mpr ⟨j⟩
-    exact False.elim (by simpa using hpos)
+    exact False.elim (by simp at hpos)
 
+omit [DecidableEq W] [Fintype W] in
 /-- A full leaf assignment extends the retained-core copy to a copy of the
 whole target. -/
 theorem isContained_of_full_leafAssignment
@@ -110,11 +111,11 @@ theorem isContained_of_full_leafAssignment
     · dsimp only [f] at hxy
       rw [dif_pos hx, dif_neg hy] at hxy
       exact (a.fresh_core
-        ⟨⟨x, hx⟩, Finset.mem_univ _⟩ ⟨y, by simpa [hy]⟩ hxy).elim
+        ⟨⟨x, hx⟩, Finset.mem_univ _⟩ ⟨y, by simp [hy]⟩ hxy).elim
     · dsimp only [f] at hxy
       rw [dif_neg hx, dif_pos hy] at hxy
       exact (a.fresh_core
-        ⟨⟨y, hy⟩, Finset.mem_univ _⟩ ⟨x, by simpa [hx]⟩ hxy.symm).elim
+        ⟨⟨y, hy⟩, Finset.mem_univ _⟩ ⟨x, by simp [hx]⟩ hxy.symm).elim
     · dsimp only [f] at hxy
       rw [dif_neg hx, dif_neg hy] at hxy
       exact congrArg Subtype.val (copy.injective hxy)
@@ -157,6 +158,7 @@ def LeafAssignment.used
     (a : LeafAssignment H hconn hn L hL C copy J) : Finset W :=
   (Finset.univ.image copy) ∪ (Finset.univ.image a.toFun)
 
+omit [Fintype W] in
 theorem LeafAssignment.copy_mem_used
     {copy : SimpleGraph.Copy
       (H.graph.induce ((Finset.univ \ L : Finset _) : Set _)) C}
@@ -164,18 +166,22 @@ theorem LeafAssignment.copy_mem_used
     (a : LeafAssignment H hconn hn L hL C copy J)
     (d : LeafCoreType H L) :
     copy d ∈ a.used H hconn hn L hL C := by
+  classical
   apply Finset.mem_union_left
   exact Finset.mem_image.mpr ⟨d, Finset.mem_univ _, rfl⟩
 
+omit [Fintype W] in
 theorem LeafAssignment.assigned_mem_used
     {copy : SimpleGraph.Copy
       (H.graph.induce ((Finset.univ \ L : Finset _) : Set _)) C}
     {J : Finset (LeafType H L)}
     (a : LeafAssignment H hconn hn L hL C copy J) (j : ↥J) :
     a.toFun j ∈ a.used H hconn hn L hL C := by
+  classical
   apply Finset.mem_union_right
   exact Finset.mem_image.mpr ⟨j, Finset.mem_univ _, rfl⟩
 
+omit [Fintype W] in
 theorem LeafAssignment.used_card_le
     {copy : SimpleGraph.Copy
       (H.graph.induce ((Finset.univ \ L : Finset _) : Set _)) C}
@@ -204,7 +210,7 @@ theorem LeafAssignment.used_card_le
         simpa using Finset.card_image_of_injOn hi
       exact congrArg₂ (· + ·) hcopy hassigned
     _ = (H.vertexCount - L.card) + J.card := by
-      simp [LeafCoreType, Finset.card_sdiff_of_subset (Finset.subset_univ L)]
+      simp [LeafCoreType]
 
 /-- Add one fresh leaf to a partial assignment. -/
 def LeafAssignment.insert
@@ -249,27 +255,23 @@ def LeafAssignment.insert
       exact congrArg (fun z : ↥J ↦ z.1) hsub
   · intro j d
     by_cases hj : j.1 = l
-    · change f j ≠ copy d
-      dsimp only [f]
+    · dsimp only [f]
       rw [dif_pos hj]
       intro hxd
       apply hx
       rw [hxd]
       exact a.copy_mem_used H hconn hn L hL C d
-    · change f j ≠ copy d
-      dsimp only [f]
+    · dsimp only [f]
       rw [dif_neg hj]
       exact a.fresh_core
         ⟨j.1, (Finset.mem_cons.mp j.2).resolve_left hj⟩ d
   · intro j
     by_cases hj : j.1 = l
-    · change C.Adj (copy (selectedLeafParent H hconn hn L hL j.1)) (f j)
-      dsimp only [f]
+    · dsimp only [f]
       rw [dif_pos hj]
       have hjval : j.1 = l := hj
       simpa only [hjval] using hadj
-    · change C.Adj (copy (selectedLeafParent H hconn hn L hL j.1)) (f j)
-      dsimp only [f]
+    · dsimp only [f]
       rw [dif_neg hj]
       exact a.adjacent_parent
         ⟨j.1, (Finset.mem_cons.mp j.2).resolve_left hj⟩
@@ -318,8 +320,7 @@ theorem isContained_or_leaf_obstruction
       have hcard := Finset.card_lt_card hJssub
       simpa using hcard
     refine ⟨d, U, ?_, ?_, ?_⟩
-    ·
-      have hused : used.card ≤ H.vertexCount - 1 := by
+    · have hused : used.card ≤ H.vertexCount - 1 := by
         have haCard := a.used_card_le H hconn hn L hLeaves C
         have hLcard : L.card ≤ H.vertexCount := by
           simpa using Finset.card_le_card (Finset.subset_univ L)

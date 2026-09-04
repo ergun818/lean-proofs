@@ -36,14 +36,14 @@ theorem leafAlternatingSequence_injective
   split at hab <;> rename_i ha
   · split at hab <;> rename_i hb
     · have hq := congrArg Fin.val (hw hab)
-      simp only [Fin.val_mk] at hq
+      simp only [] at hq
       apply Fin.ext
       omega
     · exact (hdisj _ _ hab.symm).elim
   · split at hab <;> rename_i hb
     · exact (hdisj _ _ hab).elim
     · have hq := congrArg Fin.val (hp hab)
-      simp only [Fin.val_mk] at hq
+      simp only [] at hq
       apply Fin.ext
       omega
 
@@ -62,7 +62,7 @@ theorem leafAlternatingSequence_injective
   split <;> rename_i hz
   · congr 1
     apply Fin.ext
-    simp only [Fin.val_mk, Fin.val_last]
+    simp only [Fin.val_last]
     omega
   · simp only [Fin.val_last] at hz
     omega
@@ -91,7 +91,7 @@ theorem cycleGraph_odd_isContained_of_consecutive_cross
         have hwidx : (⟨a.val / 2, by omega⟩ : Fin (r + 2)) =
             i.castSucc := by
           apply Fin.ext
-          simp only [i, Fin.val_mk, Fin.val_castSucc]
+          simp only [i, Fin.val_castSucc]
           omega
         simpa [i, hwidx] using (hleft i).symm
     · split <;> rename_i hb
@@ -99,7 +99,7 @@ theorem cycleGraph_odd_isContained_of_consecutive_cross
         have hwidx : (⟨b.val / 2, by omega⟩ : Fin (r + 2)) =
             i.succ := by
           apply Fin.ext
-          simp only [i, Fin.val_mk, Fin.val_succ]
+          simp only [i, Fin.val_succ]
           omega
         simpa [i, hwidx] using hright i
       · omega

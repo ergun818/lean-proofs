@@ -84,7 +84,7 @@ theorem suspended_last_not_interior {V : Type*} [Fintype V] [DecidableEq V]
   rw [mem_suspendedInterior]
   rintro ⟨i, hi⟩
   have := Fin.ext_iff.mp (hp.injective hi)
-  simp [suspendedMidIndex, suspendedLastIndex] at this
+  simp only [suspendedMidIndex, suspendedLastIndex, Nat.add_right_cancel_iff] at this
   exact (Nat.ne_of_lt i.isLt) this
 
 theorem suspended_endpoints_ne {V : Type*} [Fintype V]
@@ -111,7 +111,7 @@ theorem suspended_neighbor_iff {V : Type*} [Fintype V]
   have hab : a ≠ b := by
     intro h
     have hi := Fin.ext_iff.mp (hp.injective h)
-    simp [a, b, suspendedPrevIndex, suspendedNextIndex] at hi
+    simp [suspendedPrevIndex, suspendedNextIndex] at hi
   have hxa : G.Adj x a := by
     dsimp only [x, a]
     exact (hp.adj (suspendedPrevIndex i) (suspendedMidIndex i) (by
@@ -287,7 +287,7 @@ def suspendedInteriorEquiv
     intro i j hij
     apply Fin.ext
     have hindex := Fin.ext_iff.mp (hp.injective hij)
-    simp only [mid, suspendedMidIndex] at hindex
+    simp only [suspendedMidIndex] at hindex
     omega
   have hset : Set.range mid = (suspendedInterior p : Set V) := by
     ext v

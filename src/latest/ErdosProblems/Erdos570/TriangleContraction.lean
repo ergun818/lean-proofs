@@ -60,7 +60,7 @@ theorem contractionCode_vertexCount
   calc
     Fintype.card {x : V // x ≠ v} =
         Fintype.card V - Fintype.card {x : V // x = v} := by
-      simpa using Fintype.card_subtype_compl (fun x : V ↦ x = v)
+      simp
     _ = Fintype.card V - 1 := by rw [Fintype.card_congr e]; simp
 
 /-- Contracting an edge strictly decreases the number of edges. -/
@@ -83,7 +83,7 @@ theorem contractionCode_edgeCount_lt
       rw [Finset.mem_image]
       refine ⟨s(x, y), ?_, ?_⟩
       · simpa [SimpleGraph.mem_edgeFinset, SimpleGraph.mem_edgeSet] using hxy
-      · simp only [Sym2.map_pair_eq]
+      · simp only [Sym2.map_mk]
         rw [hxa, hyb]
   let d : Sym2 V := s(u, u)
   have hdM : d ∈ M := by
@@ -94,9 +94,7 @@ theorem contractionCode_edgeCount_lt
     · simp [d, c, contractVertex, huv.ne]
   have hdnot : d ∉ (G.map c).edgeFinset := by
     intro hd
-    have : (G.map c).Adj u u := by
-      simpa [d, SimpleGraph.mem_edgeFinset, SimpleGraph.mem_edgeSet] using hd
-    exact this.ne rfl
+    simp [d] at hd
   have hfullLt : (G.map c).edgeFinset.card < M.card := by
     apply Finset.card_lt_card
     rw [Finset.ssubset_iff_subset_ne]
@@ -143,7 +141,7 @@ theorem contractionCode_noIsolated
     have htwo : 2 ≤ (G.neighborFinset u).card := by simpa using huDegree
     have hex : ∃ z ∈ G.neighborFinset u, z ≠ v := by
       by_contra hnot
-      push_neg at hnot
+      push Not at hnot
       have hsub : G.neighborFinset u ⊆ {v} := by
         intro z hz
         simpa using hnot z hz
@@ -167,7 +165,7 @@ theorem contractionCode_noIsolated
 /-- Extend an embedding of the graph with `u,v` removed after choosing
 separate images for those two vertices. -/
 theorem isContained_of_two_vertex_extension
-    {W Z : Type*} [DecidableEq W]
+    {W Z : Type*}
     (G : SimpleGraph W) (B : SimpleGraph Z) {u v : W} (huv : u ≠ v)
     (core : {z : W // z ≠ u ∧ z ≠ v} ↪ Z) (U V : Z)
     (hUV : B.Adj U V)
@@ -266,7 +264,7 @@ triangle-free coloring with no blue copy of the original graph, forces an
 order strictly below `2m+1`. -/
 theorem triangle_adjacent_contraction_contradiction
     {H : GraphCode} {N : ℕ} (C : SimpleGraph (Fin N))
-    [DecidableRel C.Adj] [DecidableRel H.graph.Adj]
+     [DecidableRel H.graph.Adj]
     (hH : NoIsolated H) (hN : 2 * H.edgeCount + 1 ≤ N)
     (u v : Fin H.vertexCount) (huv : H.graph.Adj u v)
     (humin : H.graph.degree u = H.graph.minDegree)
@@ -503,7 +501,7 @@ theorem triangle_adjacent_contraction_contradiction
         · intro a _ b _ hab
           exact copy.injective hab
       _ = p - 1 := by
-        simpa [p] using contractionCode_vertexCount H.graph u v
+        simp [p]
   have hp2m : p ≤ 2 * m := by
     simpa [p, m] using NoIsolated.vertexCount_le_twice_edgeCount hH
   have husedLe : p - 1 ≤ N := by omega

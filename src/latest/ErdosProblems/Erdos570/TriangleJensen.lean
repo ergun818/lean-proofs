@@ -483,7 +483,7 @@ theorem pochhammer_candidate_ratio (δ t y : ℕ) (hδ : 1 ≤ δ)
       rw [← htjCast]
       positivity
     field_simp [ne_of_gt htjpos, ne_of_gt hypos, htjNe]
-    <;> ring
+   ; ring
   rw [hprod]
   have hfallCast :
       (∏ j ∈ Finset.Icc 1 (δ - 1), ((t - j : ℕ) : ℝ)) =
@@ -545,7 +545,7 @@ theorem binomial_candidate_average
         norm_num
       rwa [← hcastPred])
   rw [havgEq] at hJ
-  simp only [Finset.mem_univ, w] at hJ
+  simp only [w] at hJ
   have hratio := pochhammer_candidate_ratio δ t y hδ hδt hty
   have hchoose : ((t.choose δ : ℕ) : ℝ) =
       (descPochhammer ℝ δ).eval (t : ℝ) / δ.factorial :=

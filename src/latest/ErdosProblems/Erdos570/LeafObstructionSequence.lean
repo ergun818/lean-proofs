@@ -53,12 +53,14 @@ def LeafObstructionFamily.empty
 /-- A path copy in a finite region contained in a vertex neighborhood closes
 to a cycle with the center vertex. -/
 theorem no_path_induce_of_subset_neighbor
-    {W : Type*} [Fintype W] [DecidableEq W]
+    {W : Type*} [Finite W]
     {C : SimpleGraph W} {k : ℕ} (hk : 3 ≤ k)
     (hcycle : ¬SimpleGraph.cycleGraph k ⊑ C)
     (z : W) (R : Finset W)
     (hR : ∀ x ∈ R, C.Adj z x) :
     ¬SimpleGraph.pathGraph (k - 1) ⊑ C.induce (R : Set W) := by
+  classical
+  let := Fintype.ofFinite W
   have hkn : 2 ≤ k - 1 := by omega
   have hcycle' : ¬SimpleGraph.cycleGraph ((k - 1) + 1) ⊑ C := by
     rw [show (k - 1) + 1 = k by omega]

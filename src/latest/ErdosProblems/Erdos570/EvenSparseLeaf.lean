@@ -20,7 +20,7 @@ namespace Erdos570
 open Erdos79
 
 theorem ramseyAt_evenBudget_of_sparse_connected
-    {r B : ℕ} (H : GraphCode) [DecidableRel H.graph.Adj]
+    {r B : ℕ} (H : GraphCode)
     (hH : NoIsolated H) (hconn : H.graph.Connected)
     (hm : oddSparseEdgeThreshold (r + 1) ≤ H.edgeCount)
     (hdensity : (oddSparseD (r + 1) - 1) * H.edgeCount <
@@ -123,7 +123,7 @@ theorem ramseyAt_evenBudget_of_sparse_connected
                 (1 + 2 * (H.edgeCount + 1 - H.vertexCount)) ≤
               r + 2 + (2 * (r + 1) + 2) *
                 (1 + 2 * (H.edgeCount + 1 - H.vertexCount)) := by
-            exact Nat.add_le_add_left (by simpa [c] using hcoef) _
+            exact Nat.add_le_add_left (by simp) _
           _ = r + 1 + 1 + (2 * (r + 1) + 2) *
                 (1 + 2 * (H.edgeCount + 1 - H.vertexCount)) := by omega
       obtain ⟨F⟩ := exists_leafObstructionFamily H hconn hn L hLeaves

@@ -16,7 +16,7 @@ namespace Erdos570
 
 namespace BFSTree
 
-variable {V : Type*} [Fintype V] [DecidableEq V]
+variable {V : Type*} [Fintype V]
   {G : SimpleGraph V} {root : V}
 
 /-- An arbitrary injective rank of the finite vertex type. -/

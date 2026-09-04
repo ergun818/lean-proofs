@@ -132,7 +132,7 @@ theorem odd_dense_connected_input
       simp only [oddDenseA]
       exact Nat.mul_pos (Nat.mul_pos (by omega) (by omega)) (by omega)
     have : 0 < a := by
-      exact Nat.mul_pos hA (by simp [a])
+      exact Nat.mul_pos hA (by simp)
     omega
   have hnumeric := efrs_dense_numeric hD hk
     (hthreshold.trans_lt hm) (by simpa [n] using horder)

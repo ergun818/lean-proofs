@@ -203,8 +203,10 @@ def matchedVertices (M : Finset (Sym2 V)) : Finset V :=
 def unmatchedVertices (M : Finset (Sym2 V)) : Finset V :=
   Finset.univ \ matchedVertices M
 
+omit [Fintype V] in
 @[simp] theorem mem_matchedVertices {M : Finset (Sym2 V)} {v : V} :
     v ∈ matchedVertices M ↔ ∃ e ∈ M, v ∈ e := by
+  classical
   simp [matchedVertices]
 
 @[simp] theorem mem_unmatchedVertices {M : Finset (Sym2 V)} {v : V} :
@@ -376,7 +378,7 @@ theorem edgeFinset_isFiniteMatching_of_components_le_one
 /-- An isolate-free graph whose components all have at most one edge is
 isomorphic to the canonical matching with the same edge count. -/
 theorem isomorphic_matchingCode_of_components_le_one
-    (H : GraphCode) [DecidableRel H.graph.Adj] (hH : NoIsolated H)
+    (H : GraphCode) (hH : NoIsolated H)
     (hall : ∀ c : H.graph.ConnectedComponent,
       (componentCode H c).edgeCount ≤ 1) :
     Isomorphic (matchingCode H.edgeCount) H := by
@@ -430,7 +432,7 @@ theorem connected_or_matching_or_nontrivial_component
       (componentCode H c).edgeCount ≤ 1
   · exact Or.inr (Or.inl
       (isomorphic_matchingCode_of_components_le_one H hH hall))
-  · push_neg at hall
+  · push Not at hall
     obtain ⟨c, hc⟩ := hall
     have hsplit := componentCode_edgeCount_add_remainder H c
     have hcle : (componentCode H c).edgeCount ≤ H.edgeCount := by omega
@@ -671,6 +673,7 @@ theorem sparseEndpoint_blue_degree {G : SimpleGraph V} [DecidableRel G.Adj]
     ((unmatchedVertices M).filter fun u ↦ G.Adj (sparseEndpoint hM hmax e he) u).card ≤ 1 :=
   (maximumMatching_exists_sparse_endpoint hM hmax he).choose_spec.2
 
+omit [DecidableEq V] [Fintype V] in
 /-- A finite set of known neighbours in an induced graph lower-bounds the
 degree there. -/
 theorem card_le_degree_induce_of_adj {G : SimpleGraph V} [DecidableRel G.Adj]
@@ -787,7 +790,7 @@ theorem cycle_isContained_compl_of_matching_lt {G : SimpleGraph V}
     let K : SimpleGraph S := Gᶜ.induce (S : Set V)
     have hKdeg : ∀ x : S, Fintype.card S ≤ 2 * K.degree x := by
       intro x
-      have hxS : x.1 ∈ U ∪ R := by simpa [S] using x.2
+      have hxS : x.1 ∈ U ∪ R := by simp [S]
       rw [Finset.mem_union] at hxS
       rcases hxS with hxU | hxR
       · have hsub : U.erase x.1 ⊆ S := by
@@ -1424,7 +1427,7 @@ theorem strongC4Bound :
           have hexists : ∃ v : Fin Q.vertexCount,
               3 ≤ Q.graph.degree v := by
             by_contra hnot
-            push_neg at hnot
+            push Not at hnot
             have hsumLe : ∑ v : Fin Q.vertexCount, Q.graph.degree v ≤
                 ∑ _v : Fin Q.vertexCount, 2 := by
               exact Finset.sum_le_sum fun v _ ↦ by

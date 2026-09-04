@@ -59,16 +59,16 @@ theorem rerouteEndpointPath_injective
   split at hab <;> rename_i ha0
   · split at hab <;> rename_i hb0
     · have hv := congrArg Fin.val (hp hab)
-      simp only [Fin.val_mk] at hv
+      simp only [] at hv
       exact Fin.ext hv
     · split at hab <;> rename_i hbx
       · exact (hx ⟨_, hab⟩).elim
       · split at hab <;> rename_i hbj
         · have hv := congrArg Fin.val (hp hab)
-          simp only [Fin.val_mk] at hv
+          simp only [] at hv
           omega
         · have hv := congrArg Fin.val (hp hab)
-          simp only [Fin.val_mk] at hv
+          simp only [] at hv
           omega
   · split at hab <;> rename_i hax
     · split at hab <;> rename_i hb0
@@ -81,29 +81,29 @@ theorem rerouteEndpointPath_injective
     · split at hab <;> rename_i haj
       · split at hab <;> rename_i hb0
         · have hv := congrArg Fin.val (hp hab)
-          simp only [Fin.val_mk] at hv
+          simp only [] at hv
           omega
         · split at hab <;> rename_i hbx
           · exact (hx ⟨_, hab⟩).elim
           · split at hab <;> rename_i hbj
             · have hv := congrArg Fin.val (hp hab)
-              simp only [Fin.val_mk] at hv
+              simp only [] at hv
               exact Fin.ext (by omega)
             · have hv := congrArg Fin.val (hp hab)
-              simp only [Fin.val_mk] at hv
+              simp only [] at hv
               omega
       · split at hab <;> rename_i hb0
         · have hv := congrArg Fin.val (hp hab)
-          simp only [Fin.val_mk] at hv
+          simp only [] at hv
           omega
         · split at hab <;> rename_i hbx
           · exact (hx ⟨_, hab⟩).elim
           · split at hab <;> rename_i hbj
             · have hv := congrArg Fin.val (hp hab)
-              simp only [Fin.val_mk] at hv
+              simp only [] at hv
               omega
             · have hv := congrArg Fin.val (hp hab)
-              simp only [Fin.val_mk] at hv
+              simp only [] at hv
               exact Fin.ext (by omega)
 
 theorem rerouteEndpointPath_adj
@@ -140,7 +140,7 @@ theorem rerouteEndpointPath_adj
                 (⟨i.val + j.val + 2 - b.val, by omega⟩ : Fin (n + 2)) =
                   j.castSucc := by
               apply Fin.ext
-              simp only [Fin.val_mk, Fin.val_castSucc]
+              simp only [Fin.val_castSucc]
               omega
             rw [hindex]
             exact hxj
@@ -152,18 +152,18 @@ theorem rerouteEndpointPath_adj
           · omega
           · split <;> rename_i hbj
             · apply (hp.adj _ _ ?_).symm
-              simp only [Fin.val_mk]
+              simp only []
               omega
             · have haindex :
                   (⟨i.val + j.val + 2 - a.val, by omega⟩ : Fin (n + 2)) =
                     i.succ := by
                 apply Fin.ext
-                simp only [Fin.val_mk, Fin.val_succ]
+                simp only [Fin.val_succ]
                 omega
               have hbindex :
                   (⟨b.val - 1, by omega⟩ : Fin (n + 2)) = j.succ := by
                 apply Fin.ext
-                simp only [Fin.val_mk, Fin.val_succ]
+                simp only [Fin.val_succ]
                 omega
               rw [haindex, hbindex]
               exact hsucc
@@ -174,7 +174,7 @@ theorem rerouteEndpointPath_adj
           · split <;> rename_i hbj
             · omega
             · apply hp.adj _ _
-              simp only [Fin.val_mk]
+              simp only []
               omega
 
 @[simp] theorem rerouteEndpointPath_zero
@@ -378,7 +378,7 @@ theorem alternatingEndpointSequence_injective
   split at hab <;> rename_i ha
   · split at hab <;> rename_i hb
     · have hq := congrArg Fin.val (hw hab)
-      simp only [Fin.val_mk] at hq
+      simp only [] at hq
       apply Fin.ext
       omega
     · exact (hout _ ⟨_, hab.symm⟩).elim
@@ -392,7 +392,7 @@ theorem alternatingEndpointSequence_injective
         simpa using hval
       have hfidx := hf hbase
       have hq := congrArg Fin.val hfidx
-      simp only [Fin.val_mk] at hq
+      simp only [] at hq
       apply Fin.ext
       omega
 
@@ -419,7 +419,7 @@ theorem alternatingEndpointSequence_adj
         rfl
       have hfb : (⟨b.val / 2, by omega⟩ : Fin (r + 1)) = i := by
         apply Fin.ext
-        simp only [i, Fin.val_mk]
+        simp only [i]
         omega
       rw [hwa, hfb]
       exact (mem_endpointPathCommonComplIndices.mp (hf i)).1
@@ -430,7 +430,7 @@ theorem alternatingEndpointSequence_adj
         rfl
       have hwb : (⟨b.val / 2, by omega⟩ : Fin (r + 2)) = i.succ := by
         apply Fin.ext
-        simp only [i, Fin.val_mk, Fin.val_succ]
+        simp only [i, Fin.val_succ]
         omega
       rw [hfa, hwb]
       exact (mem_endpointPathCommonComplIndices.mp (hf i)).2.symm
@@ -451,7 +451,7 @@ theorem alternatingEndpointSequence_adj
   split <;> rename_i hz
   · congr 1
     apply Fin.ext
-    simp only [Fin.val_mk, Fin.val_last]
+    simp only [Fin.val_last]
     omega
   · simp only [Fin.val_last] at hz
     omega

@@ -19,44 +19,52 @@ because the theorem is not part of the Mathlib v4.33.0 module set.
 
 namespace SimpleGraph
 
-open Classical Walk Function
+open Walk Function
 open scoped List
 variable {V : Type*} [Fintype V] [DecidableEq V] (G : SimpleGraph V)
 
 local notation "‖" X "‖" => Fintype.card X
 
-def closureNewEdges :=
-  { (u, v) : V × V | G.degree u + G.degree v ≥ ‖V‖ ∧ u ≠ v ∧ ¬G.Adj u v }
+def closureNewEdges := by
+  classical
+  exact { (u, v) : V × V | G.degree u + G.degree v ≥ ‖V‖ ∧ u ≠ v ∧ ¬G.Adj u v }
 
-noncomputable def closureStep : SimpleGraph V :=
-  if h : (closureNewEdges G).Nonempty then
+noncomputable def closureStep : SimpleGraph V := by
+  classical
+  exact if h : (closureNewEdges G).Nonempty then
     G ⊔ edge h.some.1 h.some.2
   else
     G
 
+omit [DecidableEq V] in
 lemma self_le_closureStep : G ≤ closureStep G := by
+  classical
   unfold closureStep
   split_ifs with h
   repeat simp
 
 noncomputable def closure := Function.eventualValue self_le_closureStep G
 
+omit [DecidableEq V] in
 lemma closureStep_diff_atmost_one : (closureStep G \ G).edgeSet.Subsingleton := by
+  classical
   unfold closureStep
   split_ifs with h
   · simp only [sup_sdiff_left_self, edgeSet_sdiff]
     apply Set.Subsingleton.anti (t := (edge h.some.1 h.some.2).edgeSet)
     · have : h.some.1 ≠ h.some.2 := h.some_mem.2.1
-      simp [edge_edgeSet_of_ne this]
-    · apply Set.diff_subset
+      simp [edgeSet_edge_of_ne this]
+    · apply Set.sdiff_subset
   · simp
 
+omit [DecidableEq V] in
 lemma closureStep_deleteEdge {u v : V} (huv : ¬G.Adj u v)
     (huv' : G.closureStep.Adj u v) :
     G.closureStep.deleteEdges {s(u, v)} = G := by
+  classical
   rw [← edgeSet_inj]
   ext e
-  simp only [edgeSet_deleteEdges, Set.mem_diff, Set.mem_singleton_iff]
+  simp only [edgeSet_deleteEdges, Set.mem_sdiff, Set.mem_singleton_iff]
   apply Iff.intro
   · rintro ⟨he₁, he₂⟩
     by_contra he₃
@@ -69,7 +77,9 @@ lemma closureStep_deleteEdge {u v : V} (huv : ¬G.Adj u v)
     simp only [he', mem_edgeSet] at he
     exact huv he
 
+omit [DecidableEq V] in
 lemma closureStep_eq_iff' : closureStep G = G ↔ closureNewEdges G = ∅ := by
+  classical
   unfold closureStep
   split_ifs with h
   · have : (G ⊔ edge h.some.1 h.some.2 = G) ↔ False := by
@@ -82,8 +92,11 @@ lemma closureStep_eq_iff' : closureStep G = G ↔ closureNewEdges G = ∅ := by
     simpa [← Set.not_nonempty_iff_eq_empty] using h
   · simpa [← Set.not_nonempty_iff_eq_empty] using h
 
+omit [DecidableEq V] in
+open scoped Classical in
 lemma closureStep_eq_iff : closureStep G = G ↔
     ∀ {u} {v}, u ≠ v → G.degree u + G.degree v ≥ ‖V‖ → G.Adj u v := by
+  classical
   rw [closureStep_eq_iff']
   constructor
   · intro hempty u v huv hdeg
@@ -99,9 +112,12 @@ lemma closureStep_eq_iff : closureStep G = G ↔
     · intro hfalse
       exact hfalse.elim
 
+omit [DecidableEq V] in
+open scoped Classical in
 lemma closureStep_deg_sum {u v : V} (huv : ¬G.Adj u v)
     (huv' : G.closureStep.Adj u v) :
     G.degree u + G.degree v ≥ ‖V‖ := by
+  classical
   have ne : (closureNewEdges G).Nonempty := by
     by_contra h
     simp only [Set.nonempty_iff_ne_empty, ← closureStep_eq_iff', Decidable.not_not] at h
@@ -117,19 +133,24 @@ lemma closureStep_deg_sum {u v : V} (huv : ¬G.Adj u v)
     simpa [-Prod.mk.eta, G_eq, edge_adj] using And.intro prop₂ prop₃
   have edge_eq := (closureStep_diff_atmost_one G mem₁ mem₂).symm
   simp only [Prod.mk.eta, Sym2.eq, Sym2.rel_iff'] at edge_eq
-  cases' edge_eq with h h
+  rcases edge_eq with h | h
   · rw [h] at prop₁
     simpa using prop₁
   · rw [h] at prop₁
     rw [add_comm]
     simpa using prop₁
 
+omit [DecidableEq V] in
 lemma self_le_closure : G ≤ closure G := by
+  classical
   rw [closure]
   apply Function.self_le_eventualValue
 
+omit [DecidableEq V] in
+open scoped Classical in
 lemma closure_spec : ∀ {u} {v}, u ≠ v →
     G.closure.degree u + G.closure.degree v ≥ ‖V‖ → G.closure.Adj u v := by
+  classical
   have : closureStep (closure G) = closure G := isFixedPt_eventualValue self_le_closureStep G
   rwa [closureStep_eq_iff] at this
 
@@ -139,15 +160,20 @@ namespace Walk
 
 variable {a : V} {p : G.Walk a a}
 
-protected theorem IsHamiltonianCycle.transfer (hp : p.IsHamiltonianCycle)
+omit [Fintype V] in
+protected theorem IsHamiltonianCycle.transfer [Finite V] (hp : p.IsHamiltonianCycle)
     {H : SimpleGraph V} (h : ∀ e ∈ p.edges, e ∈ H.edgeSet) :
     (p.transfer H h).IsHamiltonianCycle := by
+  classical
+  let := Fintype.ofFinite V
   rw [isHamiltonianCycle_iff_isCycle_and_length_eq]
   exact ⟨hp.isCycle.transfer h, by simpa using hp.length_eq⟩
 
+omit [DecidableEq V] [Fintype V] in
 private lemma IsCycle.dart_eq_of_fst_eq (hp : p.IsCycle)
     {d e : G.Dart} (hd : d ∈ p.darts) (he : e ∈ p.darts)
     (hfst : d.fst = e.fst) : d = e := by
+  classical
   obtain ⟨i, hi, rfl⟩ := List.getElem_of_mem hd
   obtain ⟨j, hj, rfl⟩ := List.getElem_of_mem he
   have hget : p.getVert i = p.getVert j := by
@@ -162,9 +188,11 @@ private lemma IsCycle.dart_eq_of_fst_eq (hp : p.IsCycle)
   subst j
   rfl
 
+omit [DecidableEq V] [Fintype V] in
 private lemma IsCycle.dart_eq_of_snd_eq (hp : p.IsCycle)
     {d e : G.Dart} (hd : d ∈ p.darts) (he : e ∈ p.darts)
     (hsnd : d.snd = e.snd) : d = e := by
+  classical
   obtain ⟨i, hi, rfl⟩ := List.getElem_of_mem hd
   obtain ⟨j, hj, rfl⟩ := List.getElem_of_mem he
   have hget : p.getVert (i + 1) = p.getVert (j + 1) := by
@@ -178,10 +206,12 @@ private lemma IsCycle.dart_eq_of_snd_eq (hp : p.IsCycle)
   subst j
   rfl
 
+omit [DecidableEq V] [Fintype V] in
 private lemma dart_eq_of_fst_eq_of_nodup_dropLast {u v : V}
     {r : G.Walk u v} (hnodup : r.support.dropLast.Nodup)
     {d e : G.Dart} (hd : d ∈ r.darts) (he : e ∈ r.darts)
     (hfst : d.fst = e.fst) : d = e := by
+  classical
   obtain ⟨i, hi, rfl⟩ := List.getElem_of_mem hd
   obtain ⟨j, hj, rfl⟩ := List.getElem_of_mem he
   have hi' : i < r.support.dropLast.length := by simpa using hi
@@ -196,6 +226,7 @@ private theorem isHamiltonianCycle_of_length_and_tail_toFinset
     (hp : p.length = Fintype.card V) (hV : 3 ≤ Fintype.card V)
     (hsupport : p.support.tail.toFinset = Finset.univ) :
     p.IsHamiltonianCycle := by
+  classical
   rw [isHamiltonianCycle_iff_isCycle_and_length_eq]
   refine ⟨?_, hp⟩
   rw [isCycle_iff_isPath_tail_and_le_length]
@@ -213,11 +244,17 @@ namespace IsHamiltonianCycle
 
 variable (b : V)
 
+omit [Fintype V] in
 private lemma mem_tail_support (hp : p.IsHamiltonianCycle) : b ∈ p.support.tail := by
+  classical
   rw [← support_tail_of_not_nil p hp.not_nil]
   exact hp.isHamiltonian_tail.mem_support b
 
-private lemma mem_dropLast_support (hp : p.IsHamiltonianCycle) : b ∈ p.support.dropLast := by
+omit [Fintype V] in
+private lemma mem_dropLast_support [Finite V]
+    (hp : p.IsHamiltonianCycle) : b ∈ p.support.dropLast := by
+  classical
+  let := Fintype.ofFinite V
   have hb : b ∈ p.tail.support := by
     simpa [support_tail_of_not_nil p hp.not_nil] using hp.mem_tail_support b
   have hb' : b ∈ p.dropLast.support :=
@@ -233,6 +270,7 @@ noncomputable def next (hp : p.IsHamiltonianCycle) : V :=
 
 lemma self_next_in_darts (hp : p.IsHamiltonianCycle) :
     ∃ d ∈ p.darts, d.fst = b ∧ d.snd = hp.next b := by
+  classical
   unfold next dartWithFst
   generalize_proofs hd
   have hspec := hd.choose_spec
@@ -240,6 +278,7 @@ lemma self_next_in_darts (hp : p.IsHamiltonianCycle) :
   exact ⟨d, hspec.1, hspec.2, rfl⟩
 
 lemma next_inj (hp : p.IsHamiltonianCycle) : Function.Injective hp.next := by
+  classical
   intro v₁ v₂ hnext
   obtain ⟨d₁, hd₁, hd₁fst, hd₁snd⟩ := hp.self_next_in_darts v₁
   obtain ⟨d₂, hd₂, hd₂fst, hd₂snd⟩ := hp.self_next_in_darts v₂
@@ -251,6 +290,7 @@ lemma next_inj (hp : p.IsHamiltonianCycle) : Function.Injective hp.next := by
 lemma getVert_succ_eq_next (hp : p.IsHamiltonianCycle)
     {i : ℕ} (hi : i < p.length) (hi' : p.getVert i = b) :
     p.getVert (i + 1) = hp.next b := by
+  classical
   have hiD : i < p.darts.length := by simpa using hi
   have hdi : p.darts[i] ∈ p.darts := List.getElem_mem hiD
   obtain ⟨d, hd, hdfst, hdsnd⟩ := hp.self_next_in_darts b
@@ -264,6 +304,7 @@ lemma getVert_succ_eq_next (hp : p.IsHamiltonianCycle)
 
 lemma rotate_next (hp : p.IsHamiltonianCycle) (hb : b ∈ p.support) (c : V) :
     ((hp.rotate hb).next c) = hp.next c := by
+  classical
   obtain ⟨d₁, hd₁, hd₁fst, hd₁snd⟩ := (hp.rotate hb).self_next_in_darts c
   obtain ⟨d₂, hd₂, hd₂fst, hd₂snd⟩ := hp.self_next_in_darts c
   have hd₁' : d₁ ∈ p.darts := by
@@ -275,11 +316,13 @@ lemma rotate_next (hp : p.IsHamiltonianCycle) (hb : b ∈ p.support) (c : V) :
 variable {b}
 
 theorem next_ne (hp : p.IsHamiltonianCycle) : hp.next b ≠ b := by
+  classical
   obtain ⟨d, -, hdfst, hdsnd⟩ := hp.self_next_in_darts b
   intro h
   exact d.adj.ne (hdfst.trans (hdsnd.trans h).symm)
 
 theorem next_next_ne (hp : p.IsHamiltonianCycle) : hp.next (hp.next b) ≠ b := by
+  classical
   have hb : b ∈ p.support := hp.mem_support b
   let q := p.rotate b hb
   have hq : q.IsHamiltonianCycle := hp.rotate hb
@@ -305,12 +348,14 @@ end IsHamiltonianCycle
 
 end Walk
 
+open scoped Classical in
 private theorem from_ClosureStep_aux
     {u u' v v' : V} {p : G.Walk u u'}
     (hV : ‖V‖ ≥ 3) (hp : p.support ~ Finset.univ.toList)
     (ne : v ≠ u') (vu' : G.Adj v u') (v'u : G.Adj v' u)
     (d : G.Dart) (hd : d ∈ p.darts) (hd₁ : d.fst = v) (hd₂ : d.snd = v') :
     IsHamiltonian G := by
+  classical
   have hv : v ∈ p.support := by simp [List.Perm.mem_iff hp]
   have not_nil : ¬(p.dropUntil v hv).Nil := not_nil_of_ne ne
   have snd_eq_v' : (p.dropUntil v hv).getVert 1 = v' := by
@@ -343,8 +388,8 @@ private theorem from_ClosureStep_aux
     omega
   · assumption
   · simp only [tail_support_append, support_cons, support_nil, List.tail_cons, support_copy,
-      support_reverse, List.tails_reverse, List.append_assoc, List.singleton_append,
-      List.cons_append, List.toFinset_append, List.toFinset_cons, List.toFinset_reverse,
+      support_reverse, List.append_assoc,
+      List.cons_append, List.toFinset_append, List.toFinset_cons,
       List.toFinset_nil, insert_empty_eq, Finset.union_insert, Finset.eq_univ_iff_forall,
       Finset.mem_insert, Finset.mem_union, List.mem_toFinset, Finset.mem_singleton,
       Finset.notMem_empty, false_or, q]
@@ -354,7 +399,7 @@ private theorem from_ClosureStep_aux
     rcases hw with ⟨hw₁, hw₂, hw₃, hw₄⟩
     have mem_tail : w ∈ p.support.tail := by
       have mem : w ∈ p.support := by simp [List.Perm.mem_iff hp]
-      rw [Walk.support_eq_cons] at mem
+      rw [← cons_tail_support] at mem
       simp only [List.mem_cons] at mem
       exact mem.resolve_left hw₄
     have not_mem_drop : w ∉ (p.dropUntil v hv).support.tail := by
@@ -378,15 +423,17 @@ private theorem from_ClosureStep_aux
         (p.takeUntil v hv).support.tail ++ (p.dropUntil v hv).support.tail := by
       rw [← tail_support_append, take_spec]
     simp only [append, List.mem_append] at mem_tail
-    cases' mem_tail with h h
-    exact hw₂ h
-    exact not_mem_drop h
+    rcases mem_tail with h | h
+    · exact hw₂ h
+    · exact not_mem_drop h
 
+open scoped Classical in
 private theorem from_ClosureStep_aux'
     {u v : V} {q : G.closureStep.Walk u u} (hq : q.IsHamiltonianCycle)
     (hV : ‖V‖ ≥ 3) (huv : G.degree u + G.degree v ≥ ‖V‖)
     (hv : v = hq.next u) (not_adj : ¬G.Adj u v) :
     ∃ w w' d, G.Adj w v ∧ G.Adj w' u ∧ d ∈ q.darts ∧ d.fst = w' ∧ d.snd = w := by
+  classical
   let X := (hq.next ·) '' {w | G.Adj u w} \ {u}
   let Y := {w | G.Adj v w} \ {hq.next v}
   have cardX : G.degree u - 1 ≤ X.toFinset.card := calc
@@ -409,8 +456,8 @@ private theorem from_ClosureStep_aux'
       apply Finset.card_le_card
       rw [Finset.subset_compl_comm]
       intro w hw
-      simp only [Finset.mem_insert, Finset.mem_singleton, Set.mem_setOf_eq, Set.toFinset_union,
-        Set.toFinset_diff, Set.toFinset_image, Set.toFinset_setOf, Set.toFinset_singleton,
+      simp only [Finset.mem_insert, Finset.mem_singleton, Set.toFinset_union,
+        Set.toFinset_sdiff, Set.toFinset_image, Set.toFinset_ofPred, Set.toFinset_singleton,
         Finset.compl_union, Finset.mem_inter, Finset.mem_compl, Finset.mem_sdiff,
         Finset.mem_image, Finset.mem_filter, Finset.mem_univ, true_and, not_and,
         Decidable.not_not, forall_exists_index, and_imp, X, Y] at hw ⊢
@@ -448,8 +495,8 @@ private theorem from_ClosureStep_aux'
       _ ≤ ‖V‖ - 3 + 0 := add_le_add card_union (le_of_eq h)
       _ = ‖V‖ - 3 := by simp
   obtain ⟨w, hw⟩ := Finset.card_ne_zero.mp non_empty
-  simp only [Set.mem_setOf_eq, Set.toFinset_inter, Set.toFinset_diff, Set.toFinset_image,
-    Set.toFinset_setOf, Set.toFinset_singleton, Finset.mem_inter, Finset.mem_sdiff,
+  simp only [Set.toFinset_inter, Set.toFinset_sdiff, Set.toFinset_image,
+    Set.toFinset_ofPred, Set.toFinset_singleton, Finset.mem_inter, Finset.mem_sdiff,
     Finset.mem_image, Finset.mem_filter, Finset.mem_univ, true_and, Finset.mem_singleton,
     X, Y] at hw
   rcases hw with ⟨⟨⟨w', hw'₁, hw'₂⟩, -⟩, hw₂, -⟩
@@ -458,6 +505,7 @@ private theorem from_ClosureStep_aux'
   exact ⟨w, w', d, hw₂.symm, hw'₁.symm, hd₁, hd₂⟩
 
 theorem from_ClosureStep (hG : IsHamiltonian (closureStep G)) : IsHamiltonian G := by
+  classical
   by_cases trivial : Fintype.card V = 1
   · exact absurd trivial
   · by_contra nonHamiltonian
@@ -540,7 +588,7 @@ theorem from_ClosureStep (hG : IsHamiltonian (closureStep G)) : IsHamiltonian G 
     have i_min_1 : i - 1 < q'.darts.length := by
       have q'_length : q'.length = q.length - 1 := by
         have hlen := length_tail_add_one q_not_nil
-        simpa [transfer_transfer, length_copy, length_transfer, q'] using hlen
+        simp [transfer_transfer, length_copy, length_transfer, q']
       simp [q'_length]
       omega
     have hd''₁ : (q'.darts[i - 1]).fst = w' := by
@@ -563,15 +611,17 @@ theorem from_ClosureStep (hG : IsHamiltonian (closureStep G)) : IsHamiltonian G 
 
 private theorem from_closure_aux {n} (hG : ¬IsHamiltonian G) :
     ¬IsHamiltonian (closureStep^[n] G) := by
+  classical
   induction n with
   | zero => simpa
   | succ m ih =>
     rw [add_comm]
     contrapose ih
-    simp only [iterate_add_apply, iterate_one, Decidable.not_not] at ih ⊢
+    simp only [iterate_add_apply, iterate_one] at ih ⊢
     exact from_ClosureStep ih
 
 theorem from_closure_iff : IsHamiltonian (closure G) ↔ IsHamiltonian G := by
+  classical
   apply Iff.intro <;> intro hG
   · unfold closure Function.eventualValue at hG
     contrapose hG
@@ -580,6 +630,7 @@ theorem from_closure_iff : IsHamiltonian (closure G) ↔ IsHamiltonian G := by
 
 private theorem complete_graph_hamiltonian (hV : 3 ≤ Fintype.card V) :
     (⊤ : SimpleGraph V).IsHamiltonian := by
+  classical
   obtain ⟨r, hr⟩ : ∃ r, Fintype.card V = r + 3 :=
     ⟨Fintype.card V - 3, by omega⟩
   let e : Fin (r + 3) ≃ V := by
@@ -598,8 +649,9 @@ private theorem complete_graph_hamiltonian (hV : 3 ≤ Fintype.card V) :
 
 /-- Dirac's theorem: a finite graph on at least three vertices whose every
 degree is at least half its order is Hamiltonian. -/
-theorem dirac_theorem [DecidableEq V] [DecidableRel G.Adj] (hV : ‖V‖ ≥ 3)
+theorem dirac_theorem [DecidableRel G.Adj] (hV : ‖V‖ ≥ 3)
     (hG : ∀ u, 2 * G.degree u ≥ ‖V‖) : G.IsHamiltonian := by
+  classical
   suffices G.closure = (⊤ : SimpleGraph V) from
     from_closure_iff.mp (this ▸ complete_graph_hamiltonian hV)
   rw [eq_top_iff]
@@ -615,10 +667,12 @@ theorem dirac_theorem [DecidableEq V] [DecidableRel G.Adj] (hV : ‖V‖ ≥ 3)
       add_le_add (G.degree_le_of_le (v := u) (self_le_closure G))
         (G.degree_le_of_le (v := v) (self_le_closure G))
 
+open scoped Classical in
 /-- Ore's degree-sum criterion for Hamiltonicity. -/
 theorem ore_theorem (hV : ‖V‖ ≥ 3)
     (hG : ∀ {u} {v}, ¬G.Adj u v → G.degree u + G.degree v ≥ ‖V‖) :
     G.IsHamiltonian := by
+  classical
   suffices G.closure = (⊤ : SimpleGraph V) from
     from_closure_iff.mp (this ▸ complete_graph_hamiltonian hV)
   rw [eq_top_iff]

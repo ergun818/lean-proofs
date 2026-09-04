@@ -30,10 +30,11 @@ theorem cliqueFree_three_of_cycleCode_not_isContained
 /-- Every red neighbourhood is a blue clique, and hence has size at most
 the maximum blue clique. -/
 theorem degree_le_compl_cliqueNum_of_cliqueFree_three
-    {V : Type*} [Fintype V] [DecidableEq V]
+    {V : Type*} [Fintype V]
     (C : SimpleGraph V) [DecidableRel C.Adj]
     (hfree : C.CliqueFree 3) (v : V) :
     C.degree v ≤ Cᶜ.cliqueNum := by
+  classical
   have hind := C.isIndepSet_neighborSet_of_triangleFree hfree v
   have hclique : Cᶜ.IsClique (C.neighborFinset v : Set V) := by
     rw [SimpleGraph.isClique_compl]
@@ -43,10 +44,12 @@ theorem degree_le_compl_cliqueNum_of_cliqueFree_three
 /-- An arbitrary graph whose order fits in a clique is contained in the
 ambient graph. -/
 theorem isContained_of_isClique_card_le
-    {W V : Type*} [Fintype W] [Fintype V] [DecidableEq V]
+    {W V : Type*} [Fintype W] [Finite V]
     (H : SimpleGraph W) (B : SimpleGraph V) (T : Finset V)
     (hT : B.IsClique (T : Set V))
     (hcard : Fintype.card W ≤ T.card) : H ⊑ B := by
+  classical
+  let := Fintype.ofFinite V
   let f : W ↪ T := Classical.choice
     (Function.Embedding.nonempty_of_card_le (by
       simpa only [Fintype.card_coe] using hcard))
@@ -63,13 +66,14 @@ theorem isContained_of_isClique_card_le
 the maximum size of a blue clique. -/
 theorem deletion_obstruction_le_compl_cliqueNum
     {H : GraphCode} {N : ℕ} (C : SimpleGraph (Fin N))
-    [DecidableRel C.Adj] (v : Fin H.vertexCount)
+     (v : Fin H.vertexCount)
     [DecidableRel H.graph.Adj] (hdeg : 0 < H.graph.degree v)
     (hroom : H.vertexCount - 1 ≤ N)
     (hRamsey : RamseyAt (cycleCode 3) (supportCode (deleteVertexCode H v)) N)
     (hnoF : ¬ (cycleCode 3).graph ⊑ C) (hnoH : ¬ H.graph ⊑ Cᶜ) :
     N - (H.vertexCount - 1) ≤
       H.graph.degree v * Cᶜ.cliqueNum := by
+  classical
   obtain ⟨u, hu⟩ := exists_large_degree_of_ramseyAt_supported_delete
     C v hdeg hroom hRamsey hnoF hnoH
   have hfree := cliqueFree_three_of_cycleCode_not_isContained C hnoF
@@ -79,10 +83,11 @@ theorem deletion_obstruction_le_compl_cliqueNum
 /-- An independent set meets every edge at most once, so the sum of the
 degrees of its vertices is at most the total number of edges. -/
 theorem sum_degrees_independent_le_card_edges
-    {W : Type*} [Fintype W] [DecidableEq W]
+    {W : Type*} [Fintype W]
     (G : SimpleGraph W) [DecidableRel G.Adj]
     (S : Finset W) (hS : G.IsIndepSet (S : Set W)) :
     ∑ x ∈ S, G.degree x ≤ G.edgeFinset.card := by
+  classical
   let D := Σ x : S, ↑(G.neighborFinset x.1)
   let toEdge : D → G.edgeFinset := fun z ↦
     ⟨s(z.1.1, z.2.1), by
@@ -116,14 +121,15 @@ theorem sum_degrees_independent_le_card_edges
 same size `|Y|-|T|`.  Triangle-freeness bounds the omitted red neighbours
 by `|T|`. -/
 theorem exists_uniform_blue_cross_family
-    {V : Type*} [Fintype V] [DecidableEq V]
-    (C : SimpleGraph V) [DecidableRel C.Adj]
+    {V : Type*} [Finite V]
+    (C : SimpleGraph V)
     (hfree : C.CliqueFree 3) (T Y : Finset V)
     (hTY : Disjoint T Y) (hTcard : T.card = Cᶜ.cliqueNum) :
     ∃ N : T → Finset Y, ∀ x : T,
       (N x).card = Y.card - T.card ∧
         ∀ y ∈ N x, Cᶜ.Adj x.1 y.1 := by
   classical
+  let := Fintype.ofFinite V
   let raw : T → Finset Y := fun x ↦
     Finset.univ.filter fun y : Y ↦ Cᶜ.Adj x.1 y.1
   have hraw (x : T) : Y.card - T.card ≤ (raw x).card := by

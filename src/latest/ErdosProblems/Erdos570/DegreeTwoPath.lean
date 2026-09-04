@@ -28,10 +28,11 @@ structure IsIndexedPath {V : Type*} (G : SimpleGraph V) {n : ℕ}
   adj : ∀ i j : Fin n, i.val + 1 = j.val → G.Adj (p i) (p j)
 
 theorem degree_induce_le
-    {V : Type*} [Fintype V] [DecidableEq V]
+    {V : Type*} [Fintype V]
     {G : SimpleGraph V} [DecidableRel G.Adj]
     {S : Set V} [Fintype S] (v : S) :
     (G.induce S).degree v ≤ G.degree v := by
+  classical
   calc
     (G.induce S).degree v =
         ((G.induce S).neighborFinset v).card := rfl
@@ -49,13 +50,14 @@ theorem degree_induce_le
 /-- Rooted path characterization of a finite connected graph of maximum
 degree two. -/
 theorem exists_bijective_indexedPath_start
-    {V : Type u} [Fintype V] [DecidableEq V]
+    {V : Type u} [Fintype V]
     {G : SimpleGraph V} [DecidableRel G.Adj]
     (hconn : G.Connected) (s : V) (hs : G.degree s ≤ 1)
     (hdeg : ∀ v, G.degree v ≤ 2) :
     ∃ p : Fin (Fintype.card V) → V,
       Function.Bijective p ∧ IsIndexedPath G p ∧
         ∀ i, i.val = 0 → p i = s := by
+  classical
   let P : ℕ → Prop := fun n ↦
     ∀ (W : Type u) [Fintype W] [DecidableEq W]
       (J : SimpleGraph W) [DecidableRel J.Adj],
@@ -184,7 +186,6 @@ theorem exists_bijective_indexedPath_start
                 omega⟩
               have hj : j = z := Fin.ext (by
                 change 0 + 1 = j.val + 1 at hij
-                change j.val = z.val
                 simp only [z]
                 omega)
               have hqzero : q z = u' := by

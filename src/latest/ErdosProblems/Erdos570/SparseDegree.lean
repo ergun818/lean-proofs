@@ -145,9 +145,7 @@ theorem branch_card_le_leaf_add_twice_excess
     have hbool : ∑ v : Fin H.vertexCount,
         (if 3 ≤ H.graph.degree v then 1 else 0) =
           (branchVertices H).card := by
-      simpa [branchVertices] using
-        (Finset.sum_boole (s := (Finset.univ : Finset (Fin H.vertexCount)))
-          (p := fun v ↦ 3 ≤ H.graph.degree v))
+      simp [branchVertices]
     rw [Finset.sum_add_distrib, hconst, hbool]
   have hright : ∑ v : Fin H.vertexCount,
       (H.graph.degree v + (if H.graph.degree v = 1 then 1 else 0)) =
@@ -155,9 +153,7 @@ theorem branch_card_le_leaf_add_twice_excess
     have hbool : ∑ v : Fin H.vertexCount,
         (if H.graph.degree v = 1 then 1 else 0) =
           (leafVertices H).card := by
-      simpa [leafVertices] using
-        (Finset.sum_boole (s := (Finset.univ : Finset (Fin H.vertexCount)))
-          (p := fun v ↦ H.graph.degree v = 1))
+      simp [leafVertices]
     rw [Finset.sum_add_distrib, hdegree, hbool]
   rw [hleft, hright] at hsum
   have hexact := connected_edge_add_one_eq_vertex_add_excess H hconn

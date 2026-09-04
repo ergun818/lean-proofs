@@ -86,7 +86,7 @@ theorem not_adj_of_leaves_of_connected
     have huv : u = v := (hunique v hvw.symm).symm
     have hyu : y.1 = u := hunique y.1 hwy
     have hyv : y.1 = v := hyu.trans huv
-    exact y.2 (by simpa [S, hyv])
+    exact y.2 (by simp [S, hyv])
   omega
 
 /-- Choose the unique edge incident with a leaf. -/

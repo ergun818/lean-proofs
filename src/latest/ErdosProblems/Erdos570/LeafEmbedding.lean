@@ -21,7 +21,7 @@ open Erdos79
 /-- Embed a graph by putting its non-leaves into `K` and its selected leaves
 into fresh vertices of `U`. -/
 theorem isContained_of_leaf_core_clique_cross
-    {W : Type*} [Fintype W] [DecidableEq W]
+    {W : Type*} [Finite W]
     (H : GraphCode) [DecidableRel H.graph.Adj]
     (hconn : H.graph.Connected) (hn : 3 ≤ H.vertexCount)
     (L : Finset (Fin H.vertexCount))
@@ -34,6 +34,7 @@ theorem isContained_of_leaf_core_clique_cross
     (hKcard : H.vertexCount - L.card ≤ K.card) :
     H.graph ⊑ C := by
   classical
+  let := Fintype.ofFinite W
   let core := H.graph.induce
     ((Finset.univ \ L : Finset (Fin H.vertexCount)) : Set _)
   have hKinduce : (C.induce (K : Set W)).IsClique
@@ -86,7 +87,7 @@ theorem isContained_of_leaf_core_clique_cross
   obtain ⟨R, hRavailable, hRcard⟩ :=
     Finset.exists_subset_card_eq havailableCard
   let e : LeafType H L ≃ R :=
-    Fintype.equivOfCardEq (by simpa [hRcard])
+    Fintype.equivOfCardEq (by simp [hRcard])
   let a : LeafAssignment H hconn hn L hL C copy Finset.univ :=
     { toFun := fun j ↦ (e j.1).1
       injective := by

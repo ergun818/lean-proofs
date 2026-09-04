@@ -15,9 +15,10 @@ namespace Erdos570
 /-- Choose distinct representatives from `n` finite sets, each of cardinality
 at least `n`. -/
 theorem exists_injective_mem_of_card_ge
-    {α : Type*} [DecidableEq α] {n : ℕ} (A : Fin n → Finset α)
+    {α : Type*} {n : ℕ} (A : Fin n → Finset α)
     (hcard : ∀ i, n ≤ (A i).card) :
     ∃ f : Fin n → α, Function.Injective f ∧ ∀ i, f i ∈ A i := by
+  classical
   apply (Finset.all_card_le_biUnion_card_iff_exists_injective A).mp
   intro s
   by_cases hs : s.Nonempty
@@ -34,7 +35,7 @@ theorem exists_injective_mem_of_card_ge
 /-- From a finite set with at least `r+2` elements, enumerate `r+2`
 distinct elements with two prescribed distinct members at the two ends. -/
 theorem exists_injective_sequence_with_endpoints
-    {α : Type*} [DecidableEq α] {U : Finset α} {r : ℕ} {a b : α}
+    {α : Type*} {U : Finset α} {r : ℕ} {a b : α}
     (ha : a ∈ U) (hb : b ∈ U) (hab : a ≠ b)
     (hcard : r + 2 ≤ U.card) :
     ∃ w : Fin (r + 2) → α, Function.Injective w ∧
@@ -93,7 +94,7 @@ theorem exists_injective_sequence_with_endpoints
 the two extra elements in the cardinal hypothesis absorb their possible
 presence there. -/
 theorem exists_injective_sequence_with_middle
-    {α : Type*} [DecidableEq α] {K : Finset α} {r : ℕ} {a b : α}
+    {α : Type*} {K : Finset α} {r : ℕ} {a b : α}
     (hab : a ≠ b) (hcard : r + 2 ≤ K.card) :
     ∃ w : Fin (r + 2) → α, Function.Injective w ∧
       w 0 = a ∧ w (Fin.last (r + 1)) = b ∧

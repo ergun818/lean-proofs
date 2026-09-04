@@ -97,7 +97,7 @@ theorem compressedSuspendedSequence_injective
       · split at hij <;> rename_i hjlast
         · contradiction
         · have hv := congrArg Fin.val (Sum.inr.inj hij)
-          simp only [Fin.val_mk] at hv
+          simp only [] at hv
           apply Fin.ext
           omega
 
@@ -120,8 +120,7 @@ theorem sequencePathGraph_adj_consecutive
     (sequencePathGraph q).Adj (q i) (q j) := by
   rw [sequencePathGraph, SimpleGraph.fromEdgeSet_adj]
   constructor
-  · change s(q i, q j) ∈ (suspendedPathEdges q : Set (Sym2 V))
-    change s(q i, q j) ∈ suspendedPathEdges q
+  · change s(q i, q j) ∈ suspendedPathEdges q
     rw [suspendedPathEdges, Finset.mem_image]
     let u : Fin (t + 1) := ⟨i.val, by omega⟩
     refine ⟨u, Finset.mem_univ u, ?_⟩
@@ -573,7 +572,7 @@ theorem available_path_fresh_from_retained
       hx.symm.trans hqright.symm
     have hind := hqinj heq
     have hv := congrArg Fin.val hind
-    simp [suspendedMidIndex, suspendedLastIndex] at hv
+    simp only [suspendedMidIndex, suspendedLastIndex, Nat.add_right_cancel_iff] at hv
     exact (Nat.ne_of_lt i.isLt) hv
   have hxForbidden : copy (Sum.inl x) ∈ compressedForbidden hp copy := by
     simp only [compressedForbidden, Finset.mem_erase]

@@ -44,7 +44,7 @@ theorem pathGraph_isContained_or_compl_of_coloring
           let S : Finset W := Finset.univ.filter fun w ↦ c w = 0
           let T : Finset W := Sᶜ
           have hSTcard : S.card + T.card = Fintype.card W := by
-            simpa [T] using Finset.card_add_card_compl S
+            simp [T]
           let bsize := T.card + k * r
           have hcard' : Fintype.card W + k * (r + 1) ≤ Fintype.card V := by
             simpa using hcard
@@ -62,7 +62,6 @@ theorem pathGraph_isContained_or_compl_of_coloring
             intro hw
             have hwS : w.1 ∈ S := by simp [S, hw]
             have hwT : w.1 ∈ Sᶜ := by
-              change w.1 ∈ Sᶜ
               exact w.2
             exact (Finset.mem_compl.mp hwT) hwS
           let cT : (H.induce (T : Set W)).Coloring (Fin (r + 1)) :=

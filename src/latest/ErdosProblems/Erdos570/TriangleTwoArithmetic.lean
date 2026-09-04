@@ -62,8 +62,8 @@ theorem triangle_degree_two_c2_below
   nlinarith
 
 theorem triangle_degree_two_c2_regular
-    {t f s y : ℝ} (hf : 2 ≤ f) (ht : 2 * f + 1 ≤ t)
-    (ht6 : 6 ≤ t) (hfs : f ≤ s) (hy : 2 * t ≤ y)
+    {t f s y : ℝ} (hf : 2 ≤ f) (_ht : 2 * f + 1 ≤ t)
+    (ht6 : 6 ≤ t) (_hfs : f ≤ s) (hy : 2 * t ≤ y)
     (halpha : 5 * f < 2 * s) :
     y * (t - 1) * f ≤ s * (t * (y - t) - y) := by
   have ht0 : 0 ≤ t := by nlinarith

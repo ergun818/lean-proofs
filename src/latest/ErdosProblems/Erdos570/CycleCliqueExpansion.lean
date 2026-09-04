@@ -72,7 +72,7 @@ theorem independent_or_expanding_subregion
       · by_cases hexp : ExpandsIndependentOn G l W
         · exact Or.inr ⟨W, Finset.Subset.rfl, hW, hexp⟩
         · rw [ExpandsIndependentOn] at hexp
-          push_neg at hexp
+          push Not at hexp
           obtain ⟨X, hXW, hXind, hXbad⟩ := hexp
           let N := relativeNeighborFinset G W X
           let R := W \ (X ∪ N)
@@ -80,7 +80,7 @@ theorem independent_or_expanding_subregion
             rw [Finset.nonempty_iff_ne_empty]
             intro hXe
             subst X
-            simp [N] at hXbad
+            simp at hXbad
           have hXR : Disjoint X R := by
             rw [Finset.disjoint_left]
             intro x hxX hxR

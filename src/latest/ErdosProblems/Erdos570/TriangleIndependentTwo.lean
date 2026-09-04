@@ -24,7 +24,7 @@ open Erdos79
 
 theorem triangle_independent_degree_two_contradiction
     {H : GraphCode} {N : ℕ} (C : SimpleGraph (Fin N))
-    [DecidableRel C.Adj] [DecidableRel H.graph.Adj]
+     [DecidableRel H.graph.Adj]
     (hH : NoIsolated H) (hN : 2 * H.edgeCount + 1 ≤ N)
     (v : Fin H.vertexCount)
     (hvmin : H.graph.degree v = H.graph.minDegree)
@@ -102,7 +102,6 @@ theorem triangle_independent_degree_two_contradiction
     have hp10 : p ≤ 10 := by omega
     have hchoose : p.choose 2 ≤ Nat.choose 10 2 :=
       Nat.choose_le_choose 2 hp10
-    norm_num at hchoose
     omega
   obtain ⟨hft, hty, hmean, hc1, hc2⟩ :=
     triangle_degree_two_extension_arithmetic
@@ -115,8 +114,7 @@ theorem triangle_independent_degree_two_contradiction
       calc
         _ = Fintype.card (Fin H.vertexCount) -
             Fintype.card {w : Fin H.vertexCount // w ∈ S} := by
-              simpa using Fintype.card_subtype_compl
-                (fun w : Fin H.vertexCount ↦ w ∈ S)
+              simp
         _ = p - S.card := by simp [p]
     rw [hcomp]
     dsimp only [t] at hpf ⊢

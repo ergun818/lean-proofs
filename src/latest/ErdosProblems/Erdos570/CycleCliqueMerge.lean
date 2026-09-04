@@ -19,17 +19,19 @@ namespace Erdos570
 
 namespace BFSTree
 
-variable {V : Type*} [Fintype V] [DecidableEq V]
+variable {V : Type*} [DecidableEq V]
   {G : SimpleGraph V} {root : V}
 
 /-- A vertex certified to lie in distance level `i`. -/
 abbrev LevelVertex (G : SimpleGraph V) (root : V) (i : ℕ) :=
   {v : V // G.dist root v = i}
 
+omit [DecidableEq V] in
 theorem levelCommonAncestorExists
     (T : BFSTree G root) (hconn : G.Connected) (i : ℕ)
     (u v : LevelVertex G root i) :
     ∃ r : ℕ, T.ancestor r u.1 = T.ancestor r v.1 := by
+  classical
   refine ⟨i, ?_⟩
   have hu := T.ancestor_dist_eq_root hconn u.1
   have hv := T.ancestor_dist_eq_root hconn v.1
@@ -81,6 +83,9 @@ theorem mergeDepth_pos_of_ne
   rw [hd0] at hspec
   simpa using huv hspec
 
+variable [Fintype V]
+
+omit [DecidableEq V] in
 /-- The selected subpath and merge depth.  The endpoints are given as
 indices into the original path.  Their separation plus the two tree arms is
 exactly `m`, their depth-`d` ancestors agree, and they do not agree earlier. -/
@@ -96,6 +101,7 @@ theorem exists_exact_merge_segment
       d ≤ i ∧
       T.ancestor d (f p) = T.ancestor d (f q) ∧
       ∀ r < d, T.ancestor r (f p) ≠ T.ancestor r (f q) := by
+  classical
   let L := m - 2
   have hL : 0 < L := by simp [L]; omega
   let fp : Fin (L + 1) → LevelVertex G root i :=
@@ -162,7 +168,7 @@ theorem exists_exact_merge_segment
           change T.ancestor (da + (d - da)) (fp a.castSucc).1 =
             T.ancestor (da + (d - da)) (fp a.succ).1 at hadd
           rw [hsum] at hadd
-          convert hadd using 1 <;> simp [a] <;> congr 1
+          convert hadd using 1 <;> simp [a]; congr 1
     simpa [qL, qNat] using hchain ell le_rfl
   have hnotEarlier : ∀ r < d,
       T.ancestor r (fp pL).1 ≠ T.ancestor r (fp qL).1 := by

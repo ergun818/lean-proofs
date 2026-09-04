@@ -20,7 +20,7 @@ namespace Erdos570
 
 /-- Enumerate a finite type in weakly decreasing order of a natural-valued
 weight.  A fixed enumeration of the type breaks ties. -/
-theorem exists_descending_card_order {A : Type*} [Fintype A] [DecidableEq A]
+theorem exists_descending_card_order {A : Type*} [Fintype A]
     (g : A → ℕ) :
     ∃ L : List A, L.Nodup ∧ L.length = Fintype.card A ∧
       (L : Multiset A) = (Finset.univ : Finset A).val ∧
@@ -74,7 +74,7 @@ theorem staircase_upper_lt_endpoint_max {s f G i : ℕ}
 
 /-- The two Goddard--Kleitman endpoint average inequalities force a choice
 of `f` distinct indices whose weights dominate the descending staircase. -/
-theorem exists_staircase_selection {A : Type*} [Fintype A] [DecidableEq A]
+theorem exists_staircase_selection {A : Type*} [Fintype A]
     (g : A → ℕ) {f G : ℕ} (hf : 1 ≤ f) (hfs : f ≤ Fintype.card A)
     (hbound : ∀ a, g a ≤ G)
     (hsf : Fintype.card A * f ≤ ∑ a, g a)
@@ -178,7 +178,7 @@ theorem staircase_floor_upper_lt_endpoint_max {s f G σ i : ℕ}
 last `σ` steps; the two shifted endpoint inequalities force the remaining
 steps at the beginning of the decreasing order. -/
 theorem exists_floor_staircase_selection
-    {A : Type*} [Fintype A] [DecidableEq A]
+    {A : Type*} [Fintype A]
     (g : A → ℕ) {f G σ : ℕ} (hf : 1 ≤ f)
     (hfs : f ≤ Fintype.card A) (hσf : σ ≤ f)
     (hfloor : ∀ a, σ ≤ g a) (hbound : ∀ a, g a ≤ G)
@@ -262,7 +262,7 @@ theorem exists_floor_staircase_selection
 representatives.  This is Hall's theorem, with the Hall inequalities read
 off from the least index in each nonempty subfamily. -/
 theorem exists_distinct_representatives_of_staircase
-    {Y : Type*} [DecidableEq Y] {f : ℕ} (cand : Fin f → Finset Y)
+    {Y : Type*} {f : ℕ} (cand : Fin f → Finset Y)
     (hcard : ∀ i : Fin f, f - i ≤ (cand i).card) :
     ∃ choose : Fin f → Y, Function.Injective choose ∧
       ∀ i : Fin f, choose i ∈ cand i := by
@@ -288,7 +288,7 @@ theorem exists_distinct_representatives_of_staircase
 right `f` indices and then Hall's theorem chooses distinct representatives
 from their candidate sets. -/
 theorem exists_selected_distinct_representatives
-    {A Y : Type*} [Fintype A] [DecidableEq A] [DecidableEq Y]
+    {A Y : Type*} [Fintype A]
     (cand : A → Finset Y) {f G : ℕ}
     (hf : 1 ≤ f) (hfs : f ≤ Fintype.card A)
     (hbound : ∀ a, (cand a).card ≤ G)
@@ -297,6 +297,7 @@ theorem exists_selected_distinct_representatives
     ∃ pick : Fin f → A, ∃ choose : Fin f → Y,
       Function.Injective pick ∧ Function.Injective choose ∧
       ∀ i : Fin f, choose i ∈ cand (pick i) := by
+  classical
   obtain ⟨pick, hpick, hstair⟩ :=
     exists_staircase_selection (fun a ↦ (cand a).card) hf hfs hbound hsf hfG
   obtain ⟨choose, hchoose, hmem⟩ :=

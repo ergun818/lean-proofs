@@ -81,14 +81,14 @@ theorem triangle_dense_numeric
     exact (show t ≤ (δ - 1) * t by
       calc
         t = 1 * t := by ring
-        _ ≤ (δ - 1) * t := by gcongr <;> omega).trans hy
+        _ ≤ (δ - 1) * t := by gcongr; omega).trans hy
   have hgap : δ * f ≤ y - t := by
     rw [Nat.le_sub_iff_add_le hty]
     have hcoeff : δ ≤ (δ - 2) * (2 * δ - 2) := by
       calc
         δ ≤ 2 * δ - 2 := by omega
         _ = 1 * (2 * δ - 2) := by ring
-        _ ≤ (δ - 2) * (2 * δ - 2) := by gcongr <;> omega
+        _ ≤ (δ - 2) * (2 * δ - 2) := by gcongr; omega
     have hmult : (δ - 2) * ((2 * δ - 2) * f) ≤
         (δ - 2) * t := by gcongr
     have hsmall : δ * f ≤ (δ - 2) * ((2 * δ - 2) * f) := by
@@ -115,7 +115,7 @@ theorem triangle_average_floor
   have hty : t ≤ y := by
     calc
       t = 1 * t := by ring
-      _ ≤ (δ - 1) * t := by gcongr <;> omega
+      _ ≤ (δ - 1) * t := by gcongr; omega
       _ ≤ y := hy
   have hypos : 0 < y := by
     have htpos : 0 < t := by omega
@@ -145,7 +145,7 @@ theorem triangle_average_floor
   have hfactor : d ≤ a * (d - 1) := by
     calc
       d = d * 1 := by ring
-      _ ≤ d * (d - 1) := by gcongr <;> omega
+      _ ≤ d * (d - 1) := by gcongr; omega
       _ ≤ a * (d - 1) := by gcongr
   have hleft : d * t ≤ a * ((d - 1) * t) := by
     calc

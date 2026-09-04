@@ -21,8 +21,8 @@ namespace Erdos570
 open Erdos79
 
 theorem ramseyAt_oddBudget_of_sparse_connected
-    {r B : ℕ} (hB : r + 1 ≤ B)
-    (H : GraphCode) [DecidableRel H.graph.Adj]
+    {r B : ℕ} (_hB : r + 1 ≤ B)
+    (H : GraphCode)
     (hH : NoIsolated H) (hconn : H.graph.Connected)
     (hm : oddSparseEdgeThreshold r ≤ H.edgeCount)
     (hdensity : (oddSparseD r - 1) * H.edgeCount <

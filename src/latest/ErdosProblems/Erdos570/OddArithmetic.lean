@@ -16,7 +16,7 @@ theorem sqrt_le_sqrt_add_sub {x m : ℕ} (hxm : x ≤ m) :
   | succ d ih =>
       calc
         Nat.sqrt (x + d.succ) = Nat.sqrt ((x + d).succ) := by
-          congr 1 <;> omega
+          congr 1
         _ ≤ (Nat.sqrt (x + d)).succ := Nat.sqrt_succ_le_succ_sqrt _
         _ ≤ Nat.sqrt x + d.succ := by omega
 
@@ -137,7 +137,7 @@ theorem large_degree_of_pigeonhole
   have hlower : 2 * m - (n - 1) ≤ delta * u := by
     exact (Nat.sub_le_sub_right hhost (n - 1)).trans hpigeon
   have hlower' : 2 * m - n + 1 ≤ delta * u := by
-    convert hlower using 1 <;> omega
+    convert hlower using 1; omega
   have hdecomp : m - n + n = m := Nat.sub_add_cancel hnm
   have hgap : m ≤ D * (m - n) := by
     have hDpred : D - 1 + 1 = D := Nat.sub_add_cancel (by omega)

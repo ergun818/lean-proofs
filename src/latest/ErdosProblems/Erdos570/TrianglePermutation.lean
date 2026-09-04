@@ -157,7 +157,7 @@ theorem exists_le_of_card_mul_le_sum
     (h : Fintype.card A * L ≤ ∑ a : A, u a) :
     ∃ a : A, L ≤ u a := by
   by_contra hnone
-  push_neg at hnone
+  push Not at hnone
   have hstrict : (∑ a : A, u a) < ∑ _a : A, L := by
     apply Finset.sum_lt_sum_of_nonempty Finset.univ_nonempty
     intro a ha

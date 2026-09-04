@@ -18,7 +18,7 @@ vertices.  If the leaf cannot be restored in blue, all of them lie in one
 red neighbourhood, which is a blue clique of order at least `p`. -/
 theorem triangle_degree_one_contradiction
     {H : GraphCode} {N : ℕ} (C : SimpleGraph (Fin N))
-    [DecidableRel C.Adj] [DecidableRel H.graph.Adj]
+     [DecidableRel H.graph.Adj]
     (hH : NoIsolated H) (hconn : H.graph.Connected)
     (hN : 2 * H.edgeCount + 1 ≤ N)
     (v : Fin H.vertexCount) (hv : H.graph.degree v = 1)

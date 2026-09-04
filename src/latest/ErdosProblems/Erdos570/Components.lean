@@ -253,7 +253,7 @@ theorem connected_of_component_edgeCount_eq {H : GraphCode}
                 intro hxc
                 have hdc : d = c :=
                   SimpleGraph.ConnectedComponent.eq_of_common_vertex hxd hxc
-                exact hv (by simpa [d, hdc] using hxd)
+                exact hv (by simp [d, hdc])
               simpa using hxnot⟩
           map_rel' := by
             intro x y hxy

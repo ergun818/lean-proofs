@@ -22,7 +22,7 @@ minimum target degree are independent, a triangle-free red host of order at
 least `2m+1` necessarily contains the target in blue. -/
 theorem triangle_independent_minimum_contradiction
     {H : GraphCode} {N : ℕ} (C : SimpleGraph (Fin N))
-    [DecidableRel C.Adj] [DecidableRel H.graph.Adj]
+     [DecidableRel H.graph.Adj]
     (hH : NoIsolated H) (hN : 2 * H.edgeCount + 1 ≤ N)
     (v : Fin H.vertexCount)
     (hvmin : H.graph.degree v = H.graph.minDegree)
@@ -104,8 +104,7 @@ theorem triangle_independent_minimum_contradiction
       calc
         _ = Fintype.card (Fin H.vertexCount) -
             Fintype.card {w : Fin H.vertexCount // w ∈ S} := by
-              simpa using Fintype.card_subtype_compl
-                (fun w : Fin H.vertexCount ↦ w ∈ S)
+              simp
         _ = p - S.card := by simp [p]
     rw [hcomp]
     dsimp only [t] at hpf ⊢

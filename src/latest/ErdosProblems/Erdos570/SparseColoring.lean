@@ -27,10 +27,13 @@ variable {V : Type*} [Fintype V] [DecidableEq V]
 def edgeEndpoints (E : Finset (Sym2 V)) : Finset V :=
   E.biUnion Sym2.toFinset
 
+omit [Fintype V] in
 @[simp] theorem mem_edgeEndpoints {E : Finset (Sym2 V)} {v : V} :
     v ∈ edgeEndpoints E ↔ ∃ e ∈ E, v ∈ e := by
+  classical
   simp [edgeEndpoints]
 
+omit [Fintype V] in
 theorem card_edgeEndpoints_le (E : Finset (Sym2 V)) :
     (edgeEndpoints E).card ≤ 2 * E.card := by
   classical
@@ -43,6 +46,7 @@ theorem card_edgeEndpoints_le (E : Finset (Sym2 V)) :
     _ ≤ ∑ _e ∈ E, 2 := Finset.sum_le_sum hcard
     _ = 2 * E.card := by simp [mul_comm]
 
+omit [DecidableEq V] in
 /-- A connected finite graph admits a proper coloring using two colors plus
 one private color for every endpoint of an edge outside a spanning tree. -/
 theorem exists_coloring_card_le_two_add_twice_excess
@@ -116,7 +120,7 @@ theorem exists_coloring_card_le_two_add_twice_excess
 excess.  This packages the excess coloring with the iterated Häggkvist bound. -/
 theorem pathGraph_isContained_or_compl_of_connected_excess
     {W U : Type*} [Fintype W] [Fintype U]
-    [DecidableEq W] {k : ℕ} (hk : 2 ≤ k) (H : SimpleGraph W)
+     {k : ℕ} (hk : 2 ≤ k) (H : SimpleGraph W)
     [DecidableRel H.Adj] (hH : H.Connected)
     (C : SimpleGraph U)
     (hcard : Fintype.card W +

@@ -215,12 +215,13 @@ whenever the host region has room for all original vertices.  The extra
 vertices are assigned injectively outside the range of the core copy; they
 need preserve no edges because every endpoint of an edge lies in the support. -/
 theorem isContained_induce_of_supportCode_isContained
-    {H : GraphCode} {V : Type*} [Fintype V] (C : SimpleGraph V)
+    {H : GraphCode} {V : Type*} [Finite V] (C : SimpleGraph V)
     (S : Finset V)
     (hcore : (supportCode H).graph ⊑ C.induce (S : Set V))
     (hcard : H.vertexCount ≤ S.card) :
     H.graph ⊑ C.induce (S : Set V) := by
   classical
+  let := Fintype.ofFinite V
   obtain ⟨copy⟩ := hcore
   let A : Set (Fin H.vertexCount) := H.graph.support
   let fA : A → S := fun x ↦ copy (supportCodeIso H x)

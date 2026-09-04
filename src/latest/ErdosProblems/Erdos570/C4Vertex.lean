@@ -123,7 +123,7 @@ theorem ramseyAt_c4_of_deletable_vertex
   have hwY : w ∉ Y := by
     intro hw
     have : w ∈ C.neighborFinset w := hYneighbor hw
-    simpa using this
+    simp at this
   let removed : Finset (Fin N) := insert w Y
   let S : Finset (Fin N) := removedᶜ
   have hremovedCard : removed.card = d + 2 := by

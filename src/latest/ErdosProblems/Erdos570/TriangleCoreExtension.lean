@@ -21,8 +21,8 @@ namespace Erdos570
 The cardinal identity says precisely that after putting `P` outside `T`,
 all other target vertices fit in `T`. -/
 theorem isContained_of_independent_core_extension
-    {W V : Type*} [Fintype W] [DecidableEq W]
-    {H : SimpleGraph W} {B : SimpleGraph V} [DecidableEq V]
+    {W V : Type*} [Fintype W]
+    {H : SimpleGraph W} {B : SimpleGraph V}
     (S : Finset W) (hSind : H.IsIndepSet (S : Set W))
     (T Y : Finset V) (hTY : Disjoint T Y)
     (hT : B.IsClique (T : Set V))
@@ -47,7 +47,7 @@ theorem isContained_of_independent_core_extension
     calc
       Fintype.card D =
           Fintype.card W - Fintype.card {w : W // w ∈ S} := by
-        simpa [D] using Fintype.card_subtype_compl (fun w : W ↦ w ∈ S)
+        simp [D]
       _ = Fintype.card W - S.card := by simp
   let R := {w : W // w ∈ S ∧ w ∉ P}
   let A := {z : T // z ∉ used}

@@ -54,7 +54,7 @@ theorem cycleGraph_four_isContained_of_rectangle
 /-- A specified copy of `H-v` extends across a fresh apex when the apex has
 all blue adjacencies required at `v`. -/
 theorem isContained_of_deleteVertex_copy_and_apex_on_copy
-    {W : Type*} [Fintype W] [DecidableEq W]
+    {W : Type*} [Finite W]
     (H : GraphCode) (v : Fin H.vertexCount)
     (C : SimpleGraph W) (S : Finset W) (w : W)
     (hwS : w ∉ S)
@@ -66,6 +66,7 @@ theorem isContained_of_deleteVertex_copy_and_apex_on_copy
       H.graph.Adj v x.1 → Cᶜ.Adj w (copy x).1) :
     H.graph ⊑ Cᶜ := by
   classical
+  let := Fintype.ofFinite W
   let D := {x : Fin H.vertexCount // x ≠ v}
   let lift : D → {x : Fin H.vertexCount //
       x ∈ ({v} : Set (Fin H.vertexCount))ᶜ} := fun x ↦ ⟨x.1, by
@@ -116,7 +117,7 @@ theorem isContained_of_deleteVertex_copy_and_apex_on_copy
 /-- A copy of `H-v` inside `S` extends to a copy of `H` when a fresh apex is
 blue-adjacent to every vertex of `S`. -/
 theorem isContained_of_deleteVertex_copy_and_apex
-    {W : Type*} [Fintype W] [DecidableEq W]
+    {W : Type*} [Finite W]
     (H : GraphCode) (v : Fin H.vertexCount)
     (C : SimpleGraph W) (S : Finset W) (w : W)
     (hwS : w ∉ S)
@@ -124,6 +125,8 @@ theorem isContained_of_deleteVertex_copy_and_apex
       Cᶜ.induce (S : Set W))
     (hblue : ∀ x ∈ S, Cᶜ.Adj w x) :
     H.graph ⊑ Cᶜ := by
+  classical
+  let := Fintype.ofFinite W
   obtain ⟨copy⟩ := hcopy
   apply isContained_of_deleteVertex_copy_and_apex_on_copy
     H v C S w hwS copy

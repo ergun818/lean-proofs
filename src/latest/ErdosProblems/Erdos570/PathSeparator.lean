@@ -256,7 +256,7 @@ private theorem dfsSeparatorAux
           have hfirstA : T.first ∉ A := by
             intro h
             exact Finset.disjoint_left.mp hinv.disjointAS h
-              (by simpa [hsingle] using T.first_mem_verts)
+              (by simp [hsingle])
           have hfirstB : T.first ∉ B := by
             intro h
             exact Finset.disjoint_left.mp hinv.disjointBS h T.first_mem_verts
@@ -284,7 +284,8 @@ private theorem dfsSeparatorAux
           have hA'n : A'.card ≤ n := by
             rw [Finset.card_insert_of_notMem hfirstA]
             omega
-          have hstop' : A'.card < n ∨ (pathStackVerts (none : Option (PathStack G))).card ≤ k - 2 := by
+          have hstop' :
+              A'.card < n ∨ (pathStackVerts (none : Option (PathStack G))).card ≤ k - 2 := by
             by_cases h : A'.card < n
             · exact .inl h
             · exact .inr (by simp)
@@ -363,25 +364,26 @@ decreasing_by
       Finset.card_erase_of_mem]
     omega
   · have hBpos : 0 < B.card := Finset.card_pos.mpr ⟨v, hvB⟩
-    simp_all only [pathStackVerts_some, pathStackVerts_none,
+    simp_all only [pathStackVerts_some,
       Finset.card_erase_of_mem, PathStack.card_verts_push]
     omega
   · simp_all only [pathStackVerts_none, Finset.card_empty,
       pathStackVerts_some, Finset.card_singleton]
     omega
-  · simp_all only [pathStackVerts_some, pathStackVerts_none]
+  · simp_all only [pathStackVerts_some]
     omega
 
 /-- DFS separation theorem.  A `P_k`-free graph on at least
 `n + m + k - 2` vertices has disjoint `n`- and `m`-sets with no edge between
 them. -/
 theorem exists_anticomplete_finsets_of_pathGraph_not_isContained
-    {V : Type*} [Fintype V] [DecidableEq V] (G : SimpleGraph V)
+    {V : Type*} [Fintype V] (G : SimpleGraph V)
     {k n m : ℕ} (hk : 2 ≤ k)
     (hcard : n + m + k - 2 ≤ Fintype.card V)
     (hfree : ¬SimpleGraph.pathGraph k ⊑ G) :
     ∃ A B : Finset V, A.card = n ∧ B.card = m ∧ Disjoint A B ∧
       ∀ a ∈ A, ∀ b ∈ B, ¬G.Adj a b := by
+  classical
   let A₀ : Finset V := ∅
   let B₀ : Finset V := Finset.univ
   have hinv₀ : DFSInvariant G A₀ B₀ none := by

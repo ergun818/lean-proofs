@@ -50,7 +50,6 @@ integer versions of the room estimates in the paper. -/
 theorem odd_middle_partition_forces_target
     {F H : GraphCode} {B s k q : ℕ}
     (C : SimpleGraph (Fin (oddBudget B s H.edgeCount)))
-    [DecidableRel C.Adj] [DecidableRel H.graph.Adj]
     (hk : 3 ≤ k) (hsB : s ≤ B)
     (hm : 0 < H.edgeCount)
     (hq : q = Nat.sqrt (2 * H.edgeCount))
@@ -138,12 +137,10 @@ theorem odd_middle_partition_forces_target
     apply isContained_induce_of_supportCode_isContained Cᶜ U₂ hcore₂
     simpa [H₂raw, hScard] using hU₂vertices
   have hjoin : (joinCode H₂raw H₁).graph ⊑ Cᶜ := by
-    apply joinCode_isContained_of_induced_copies
+    refine joinCode_isContained_of_induced_copies ?_ hblue₂ hblue₁ ?_
     · rw [Set.disjoint_left]
       intro x hx₂ hx₁
       exact Finset.disjoint_left.mp hdisj hx₁ hx₂
-    · exact hblue₂
-    · exact hblue₁
     · intro x y
       exact (hcross y.1 y.2 x.1 x.2).symm
   have hpart : IsContained H (joinCode H₂raw H₁) := by

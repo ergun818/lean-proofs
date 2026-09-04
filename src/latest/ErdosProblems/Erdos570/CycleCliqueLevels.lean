@@ -144,7 +144,7 @@ theorem efrs_expansion_forces_large_independent
           hCsub 0 (by omega : 0 ≤ t)
       · simp [B₀, hb₀, b]
     have hex := hexpand B₀
-      (by simpa [B₀] using hCsub 0 (by omega : 0 ≤ t))
+      (by simp [B₀])
       (by simpa [B₀] using hCind 0 (by omega : 0 ≤ t))
     have hNsub := relativeNeighborFinset_distanceLevel_subset
       G x 0 B₀ (by simpa [B₀] using hCsub 0 (by omega : 0 ≤ t))
@@ -177,7 +177,7 @@ theorem efrs_expansion_forces_large_independent
     let Am := distanceLevel G x (i - 1)
     let Ai := distanceLevel G x i
     let Ap := distanceLevel G x (i + 1)
-    have hex := hexpand Bi (by simpa [Bi] using hCsub i hii)
+    have hex := hexpand Bi (by simp [Bi])
       (by simpa [Bi] using hCind i hii)
     have hNsub : relativeNeighborFinset G Finset.univ Bi ⊆
         Am ∪ Ai ∪ Ap := by

@@ -16,10 +16,12 @@ open Erdos79
 /-- An exact-order Ramsey assertion can be applied inside any finite induced
 region having at least that many vertices. -/
 theorem RamseyAt.on_finset {F H : GraphCode} {N : ℕ}
-    (h : RamseyAt F H N) {V : Type*} [Fintype V]
+    (h : RamseyAt F H N) {V : Type*} [Finite V]
     (C : SimpleGraph V) (S : Finset V) (hNS : N ≤ S.card) :
     F.graph ⊑ C.induce (S : Set V) ∨
       H.graph ⊑ Cᶜ.induce (S : Set V) := by
+  classical
+  let := Fintype.ofFinite V
   let Q := C.induce (S : Set V)
   have hc : Fintype.card (S : Set V) = S.card := by simp
   let e : Q ≃g Q.overFin hc := SimpleGraph.overFinIso (G := Q) hc
@@ -49,10 +51,13 @@ theorem RamseyAt.on_finset {F H : GraphCode} {N : ℕ}
 
 /-- Least-Ramsey-number specialization of `RamseyAt.on_finset`. -/
 theorem graphRamseyNumber_on_finset (F H : GraphCode)
-    {V : Type*} [Fintype V] (C : SimpleGraph V) (S : Finset V)
+    {V : Type*} [Finite V] (C : SimpleGraph V) (S : Finset V)
     (hsize : graphRamseyNumber F H ≤ S.card) :
     F.graph ⊑ C.induce (S : Set V) ∨
-      H.graph ⊑ Cᶜ.induce (S : Set V) :=
-  Erdos570.RamseyAt.on_finset (graphRamseyNumber_spec F H) C S hsize
+      H.graph ⊑ Cᶜ.induce (S : Set V) := by
+  classical
+  let := Fintype.ofFinite V
+  exact
+    Erdos570.RamseyAt.on_finset (graphRamseyNumber_spec F H) C S hsize
 
 end Erdos570

@@ -17,7 +17,7 @@ namespace Erdos570
 
 namespace BFSTree
 
-variable {V : Type*} [Fintype V] [DecidableEq V]
+variable {V : Type*} [Fintype V]
   {G : SimpleGraph V} {root : V}
 
 /-- A path with `s` edges, starting at `v`, along which the fixed-level
@@ -138,7 +138,7 @@ theorem monotoneHeight_succ_le
 /-- If no increasing path has `s` edges, every maximum height is below `s`. -/
 theorem monotoneHeight_lt_of_not_path
     (T : BFSTree G root) {i s : ℕ} {v : V}
-    (hs : s ≤ Fintype.card V)
+    (_hs : s ≤ Fintype.card V)
     (hv : G.dist root v = i)
     (hno : ¬ T.MonotonePathFrom i s v) :
     T.monotoneHeight i v < s := by

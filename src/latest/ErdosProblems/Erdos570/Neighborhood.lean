@@ -141,16 +141,16 @@ theorem secondNeighbor_connectors_periodic
       G.Adj (seg i) (seg j) := by
     intro i j hij
     apply hp_adj
-    simp only [seg]
+    simp only []
     omega
   have hseg_zero : seg 0 = p is := by
     apply congrArg p
     apply Fin.ext
-    simp [seg, is]
+    simp [is]
   have hseg_last : seg (Fin.last ((k - 5) + 1)) = p it := by
     apply congrArg p
     apply Fin.ext
-    simp [seg, it]
+    simp [it]
     omega
   apply hcycle
   rw [← Nat.sub_add_cancel hk]
@@ -256,12 +256,12 @@ theorem secondNeighbor_cycle_of_adjacent_connectors_ne
       G.Adj (tail i) (tail j) := by
     intro i j hij
     apply hp_adj
-    simp only [tail]
+    simp only []
     omega
   have htail_zero : tail 0 = p imid := by
     apply congrArg p
     apply Fin.ext
-    simp [tail, imid]
+    simp [imid]
   have hu1_tail : G.Adj (u i1) (tail 0) := by
     rw [htail_zero, hmiddle']
     exact hu_path imid
@@ -283,7 +283,7 @@ theorem secondNeighbor_cycle_of_adjacent_connectors_ne
     change tail (Fin.last (k - 5)) = p ifar
     apply congrArg p
     apply Fin.ext
-    simp [tail, ifar]
+    simp [ifar]
     omega
   rw [← Nat.sub_add_cancel hk]
   exact cycleGraph_succ_isContained_of_path_endpoints
@@ -333,22 +333,22 @@ theorem cycleGraph_isContained_of_pathGraph_secondNeighbor
     simpa [i0, ia] using hperiod 0 (by omega)
   have ha0far : u ia = u ifar0 := by
     have h := hperiod (k - 4) (by omega)
-    convert h using 1 <;> apply congrArg u <;> apply Fin.ext <;>
-      simp [ia, ifar0] <;> omega
+    convert h using 1; apply congrArg u; apply Fin.ext;
+      simp [ifar0]; omega
   have h0far : u i0 = u ifar0 := h0a.trans ha0far
   have h1b : u i1 = u ib := by
     have h := hperiod 1 (by omega)
-    convert h using 1 <;> apply congrArg u <;> apply Fin.ext <;>
-      simp [i1, ib] <;> omega
+    convert h using 1; apply congrArg u; apply Fin.ext;
+      simp [ib]; omega
   have hb1far : u ib = u ifar1 := by
     have h := hperiod (k - 3) (by omega)
-    convert h using 1 <;> apply congrArg u <;> apply Fin.ext <;>
-      simp [ib, ifar1] <;> omega
+    convert h using 1; apply congrArg u; apply Fin.ext;
+      simp [ifar1]; omega
   have h1far : u i1 = u ifar1 := h1b.trans hb1far
   have h2c : u i2 = u ic := by
     have h := hperiod 2 (by omega)
-    convert h using 1 <;> apply congrArg u <;> apply Fin.ext <;>
-      simp [i2, ic] <;> omega
+    convert h using 1; apply congrArg u; apply Fin.ext;
+      simp [ic]; omega
   apply hcycle
   by_cases h01 : u i0 = u i1
   · by_cases h12 : u i1 = u i2
@@ -372,11 +372,11 @@ theorem cycleGraph_isContained_of_pathGraph_secondNeighbor
       have hseg_zero : seg 0 = p i0 := by
         apply congrArg p
         apply Fin.ext
-        simp [seg, i0]
+        simp [i0]
       have hseg_last : seg (Fin.last (k - 2)) = p ic := by
         apply congrArg p
         apply Fin.ext
-        simp [seg, ic]
+        simp [ic]
       have hu0_last : G.Adj (u i0) (p ic) := by
         rw [h01, h12, h2c]
         exact hu_path ic
@@ -387,8 +387,8 @@ theorem cycleGraph_isContained_of_pathGraph_secondNeighbor
     · exact secondNeighbor_cycle_of_adjacent_connectors_ne hk x p u hp hp_nonadj
         hp_adj hu_root hu_path 1 (by omega)
         (by
-          convert h2c using 1 <;> apply congrArg u <;> apply Fin.ext <;>
-            simp [i2, ic] <;> omega)
+          convert h2c using 1; apply congrArg u; apply Fin.ext;
+            simp [ic]; omega)
         (by simpa [i1, ifar1] using h1far)
         (by simpa [i1, i2] using h12)
   · exact secondNeighbor_cycle_of_adjacent_connectors_ne hk x p u hp hp_nonadj

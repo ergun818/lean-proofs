@@ -157,7 +157,6 @@ theorem odd_connected_middle_contradiction
       graphRamseyNumber (cycleCode k) Q ≤
         oddBudget B s Q.edgeCount)
     (C : SimpleGraph (Fin (oddBudget B s H.edgeCount)))
-    [DecidableRel C.Adj]
     (hnoCycle : ¬ (cycleCode k).graph ⊑ C)
     (hnoH : ¬ H.graph ⊑ Cᶜ) : False := by
   classical

@@ -179,7 +179,7 @@ theorem oddLeafBatch_common_room
     let P := 3 * (r + 1) * (r + 1)
     have hx' : 2 * X < n + oddSparseD r := by
       dsimp only [X]
-      convert hxBound using 1 <;> ring
+      convert hxBound using 1; ring
     have hn' : oddSparseD r + 2 * P + 6 ≤ n := by
       dsimp only [P]
       nlinarith

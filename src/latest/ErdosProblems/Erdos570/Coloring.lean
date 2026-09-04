@@ -31,8 +31,9 @@ theorem minDegree_le_sqrt_twice_edge_bound
 /-- An induced subgraph has no more edges than the ambient finite graph. -/
 theorem card_edgeFinset_induce_le
     {V : Type*} [Fintype V] (G : SimpleGraph V) [DecidableRel G.Adj]
-    (s : Set V) [DecidablePred (· ∈ s)] [DecidableEq V] :
+    (s : Set V) [DecidablePred (· ∈ s)] :
     (G.induce s).edgeFinset.card ≤ G.edgeFinset.card := by
+  classical
   have hmap := congrArg Finset.card (G.map_edgeFinset_induce (s := s))
   rw [Finset.card_map] at hmap
   rw [hmap]

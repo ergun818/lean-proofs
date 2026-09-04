@@ -21,6 +21,7 @@ namespace BFSTree
 variable {V : Type*} [Fintype V] [DecidableEq V]
   {G : SimpleGraph V} {root : V}
 
+omit [DecidableEq V] in
 theorem cycleGraph_isContained_of_exact_merge_segment
     (T : BFSTree G root)
     {m i : ℕ} (hm : 3 ≤ m)
@@ -37,6 +38,7 @@ theorem cycleGraph_isContained_of_exact_merge_segment
     (hnotEarlier : ∀ r < d,
       T.ancestor r (f p) ≠ T.ancestor r (f q)) :
     SimpleGraph.cycleGraph m ⊑ G := by
+  classical
   let ell := q.val - p.val
   have hpqle : p.val ≤ q.val := Nat.le_of_lt hpq
   have hpell : p.val + ell = q.val := by
@@ -164,8 +166,8 @@ theorem cycleGraph_isContained_of_exact_merge_segment
       · rw [hcyc_path a haPath, hcyc_path b hbPath]
         rw [pathAt_eq a.val haPath, pathAt_eq b.val hbPath]
         let j : Fin (m - 2) := ⟨p.val + a.val, by omega⟩
-        convert hfadj j using 1 <;> congr 1 <;> apply Fin.ext <;>
-          simp [j, habVal] <;> omega
+        convert hfadj j using 1 <;> congr 1; apply Fin.ext;
+          simp [j, habVal]; omega
       · have haEq : a.val = ell := by omega
         have hbRight : b.val ≤ ell + d := by omega
         rw [hcyc_path a haPath, hcyc_right b (by omega) hbRight,

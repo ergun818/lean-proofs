@@ -34,14 +34,14 @@ theorem evenAlternatingSequence_injective
   · split at hab <;> rename_i hb
     · have hq := congrArg Fin.val (hp hab)
       apply Fin.ext
-      simp only [Fin.val_mk] at hq
+      simp only [] at hq
       omega
     · exact (hdisj _ _ hab).elim
   · split at hab <;> rename_i hb
     · exact (hdisj _ _ hab.symm).elim
     · have hq := congrArg Fin.val (hw hab)
       apply Fin.ext
-      simp only [Fin.val_mk] at hq
+      simp only [] at hq
       omega
 
 /-- A complete bipartite graph with two parts of size `h` contains the
@@ -72,13 +72,13 @@ theorem cycleGraph_even_isContained_of_complete_cross
     have ha0 : a = a0 := Fin.ext ha
     have hblast : b = blast := Fin.ext (by simp [blast]; omega)
     rw [ha0, hblast]
-    simp only [f, evenAlternatingSequence, a0, blast, Fin.val_zero, Nat.zero_mod,
+    simp only [f, evenAlternatingSequence, a0, blast, Nat.zero_mod,
       if_pos]
     have hodd : (2 * h - 1) % 2 ≠ 0 := by omega
     rw [if_neg hodd]
     let p0 : Fin h := ⟨0, by omega⟩
     let wlast : Fin h := ⟨h - 1, by omega⟩
-    have hidx0 : (⟨0 / 2, by omega⟩ : Fin h) = p0 := by ext <;> simp [p0]
+    have hidx0 : (⟨0 / 2, by omega⟩ : Fin h) = p0 := by ext; simp [p0]
     have hidxlast : (⟨(2 * h - 1) / 2, by omega⟩ : Fin h) = wlast := by
       ext
       simp [wlast]
