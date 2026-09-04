@@ -2411,7 +2411,7 @@ theorem sequence_length_pos {Q : ℕ} (hQ : 0 < Q) :
   rw [List.length_pos_iff]
   intro hnil
   have hmem := Fraction.mem_sequence (zeroFraction Q hQ)
-  simpa [hnil] using hmem
+  simp [hnil] at hmem
 
 /-- The first indexed entry of a positive-order Farey sequence is `0/1`. -/
 theorem fractionAt_zero_eq_zeroFraction {Q : ℕ} (hQ : 0 < Q) :
@@ -2741,7 +2741,7 @@ theorem natCast_le_sq_mul_fractionAt_realValue_sub
 `2 A c²` are disjoint. -/
 theorem activeIntervalAt_disjoint_of_large_offset
     {N Q i j : ℕ} {A c : ℝ}
-    (hA : 0 < A) (hc : 1 ≤ c) (hN : 0 < N) (hQ : 0 < Q)
+    (hA : 0 < A) (hc : 1 ≤ c) (_hN : 0 < N) (hQ : 0 < Q)
     (hQN : (Q : ℝ) ≤ c * N) (hij : i < j)
     (hlarge : 2 * A * c ^ 2 ≤ (j - i : ℕ)) :
     Disjoint (activeIntervalAt N Q A i) (activeIntervalAt N Q A j) := by
@@ -3034,7 +3034,7 @@ lemma tsum_moebius_div_sq :
 
 lemma tendsto_moebius_weighted_tsum
     (R : ℕ → ℕ → ℝ) (I M : ℝ)
-    (hM : 0 ≤ M)
+    (_hM : 0 ≤ M)
     (hR : ∀ d, Tendsto (fun n => R n d) atTop (nhds I))
     (hbound : ∀ n d, |R n d| ≤ M) :
     Tendsto
@@ -3078,7 +3078,7 @@ At `d = 0` the Möbius coefficient is zero, so no convergence hypothesis
 on the auxiliary grid term is needed there. -/
 lemma tendsto_moebius_weighted_tsum_pos
     (R : ℕ → ℕ → ℝ) (I M : ℝ)
-    (hM : 0 ≤ M)
+    (_hM : 0 ≤ M)
     (hR : ∀ d, 0 < d → Tendsto (fun n => R n d) atTop (nhds I))
     (hbound : ∀ n d, |R n d| ≤ M) :
     Tendsto
@@ -3456,11 +3456,11 @@ lemma divisibleFareyPair_weight_eq_grid (F : ℝ × ℝ → ℝ)
     Pi.smul_apply, smul_eq_mul]
   congr 2
   · rw [divisibleFareyPairEquivGrid_coord_zero, Nat.cast_div hd1]
-    field_simp [show (d : ℝ) ≠ 0 by exact_mod_cast hd.ne']
-    exact_mod_cast hd.ne'
+    · field_simp [show (d : ℝ) ≠ 0 by exact_mod_cast hd.ne']
+    · exact_mod_cast hd.ne'
   · rw [divisibleFareyPairEquivGrid_coord_one, Nat.cast_div hd2]
-    field_simp [show (d : ℝ) ≠ 0 by exact_mod_cast hd.ne']
-    exact_mod_cast hd.ne'
+    · field_simp [show (d : ℝ) ≠ 0 by exact_mod_cast hd.ne']
+    · exact_mod_cast hd.ne'
 
 lemma filtered_fareyPairWeight_eq_grid_tsum (F : ℝ × ℝ → ℝ)
     {Q d : ℕ} (hQ : 0 < Q) (hd : 0 < d) :
@@ -3599,12 +3599,10 @@ lemma abs_fareyDivisorGridTerm_le_of_bound
     (Q d : ℕ) : |fareyDivisorGridTerm F Q d| ≤ C := by
   by_cases hQ0 : Q = 0
   · subst Q
-    simp [fareyDivisorGridTerm, Farey.denominatorPairFinset]
-    exact hC0
+    simpa [fareyDivisorGridTerm, Farey.denominatorPairFinset] using hC0
   by_cases hd0 : d = 0
   · subst d
-    simp [fareyDivisorGridTerm]
-    exact hC0
+    simpa [fareyDivisorGridTerm] using hC0
   have hQ : 0 < Q := Nat.pos_of_ne_zero hQ0
   have hd : 0 < d := Nat.pos_of_ne_zero hd0
   let D := (Farey.denominatorPairFinset Q).filter
@@ -3678,7 +3676,7 @@ lemma continuous_fareyPairWeight_uniform_bound
         exact_mod_cast (Finset.mem_Icc.mp hpbox.2).2)
 
 lemma normalizedDivisorGridTerm_farey_eq (F : ℝ × ℝ → ℝ)
-    (Q d : ℕ) (hd : 0 < d) :
+    (Q d : ℕ) (_hd : 0 < d) :
     normalizedDivisorGridTerm Farey.denominatorPairFinset
       (Farey.normalizedDenominatorPairWeight F) Q d =
         fareyDivisorGridTerm F Q d := by
@@ -3788,16 +3786,16 @@ lemma normalizedFareyPairVec_eq_smul_grid {Q d : ℕ}
           Fin 2 → ℝ) 0)
     have hd1 := (Finset.mem_filter.mp p.property).2.1
     rw [divisibleFareyPairEquivGrid_coord_zero, Nat.cast_div hd1]
-    field_simp [show (d : ℝ) ≠ 0 by exact_mod_cast hd.ne']
-    exact_mod_cast hd.ne'
+    · field_simp [show (d : ℝ) ≠ 0 by exact_mod_cast hd.ne']
+    · exact_mod_cast hd.ne'
   · change (Q : ℝ)⁻¹ * (p.1.2 : ℝ) =
       (d : ℝ) *
         (((divisibleFareyPairEquivGrid hQ hd p : FareyGridPoint Q d) :
           Fin 2 → ℝ) 1)
     have hd2 := (Finset.mem_filter.mp p.property).2.2
     rw [divisibleFareyPairEquivGrid_coord_one, Nat.cast_div hd2]
-    field_simp [show (d : ℝ) ≠ 0 by exact_mod_cast hd.ne']
-    exact_mod_cast hd.ne'
+    · field_simp [show (d : ℝ) ≠ 0 by exact_mod_cast hd.ne']
+    · exact_mod_cast hd.ne'
 
 def RestrictedFareyGridPoint (s : Set (Fin 2 → ℝ)) (Q d : ℕ) : Type :=
   {x : FareyGridPoint Q d // (d : ℝ) • (x : Fin 2 → ℝ) ∈ s}
@@ -3931,13 +3929,11 @@ lemma abs_fareyCellDivisorGridTerm_le_of_bound
   classical
   by_cases hQ0 : Q = 0
   · subst Q
-    simp [fareyCellDivisorGridTerm, fareyCellPairFinset,
-      Farey.denominatorPairFinset]
-    exact hC0
+    simpa [fareyCellDivisorGridTerm, fareyCellPairFinset,
+      Farey.denominatorPairFinset] using hC0
   by_cases hd0 : d = 0
   · subst d
-    simp [fareyCellDivisorGridTerm]
-    exact hC0
+    simpa [fareyCellDivisorGridTerm] using hC0
   have hQ : 0 < Q := Nat.pos_of_ne_zero hQ0
   have hd : 0 < d := Nat.pos_of_ne_zero hd0
   let D := (fareyCellPairFinset s Q).filter
@@ -3986,7 +3982,7 @@ lemma abs_fareyCellDivisorGridTerm_le_of_bound
 
 lemma normalizedDivisorGridTerm_fareyCell_eq
     (s : Set (Fin 2 → ℝ)) (F : ℝ × ℝ → ℝ)
-    (Q d : ℕ) (hd : 0 < d) :
+    (Q d : ℕ) (_hd : 0 < d) :
     normalizedDivisorGridTerm (fareyCellPairFinset s)
       (Farey.normalizedDenominatorPairWeight F) Q d =
         fareyCellDivisorGridTerm s F Q d := by
@@ -4119,7 +4115,7 @@ lemma latticeRiemannSum_mono
 
 section ThresholdRegion
 
-variable {K : Type*} [Fintype K]
+variable {K : Type*}
 
 /-- A bounded base region cut out by finitely many moving continuous-linear
 half-space inequalities. -/
@@ -4128,6 +4124,7 @@ def linearThresholdRegion
     Set (I → ℝ) :=
   B ∩ ⋂ k, {x | ℓ k x ≤ r}
 
+omit [Fintype I] in
 lemma linearThresholdRegion_mono
     (B : Set (I → ℝ)) (ℓ : K → (I → ℝ) →L[ℝ] ℝ) :
     Monotone (linearThresholdRegion B ℓ) := by
@@ -4135,25 +4132,30 @@ lemma linearThresholdRegion_mono
   rw [linearThresholdRegion, Set.mem_inter_iff, Set.mem_iInter] at hx ⊢
   exact ⟨hx.1, fun k ↦ (hx.2 k).trans hrq⟩
 
+omit [Fintype I] in
 lemma linearThresholdRegion_subset
     (B : Set (I → ℝ)) (ℓ : K → (I → ℝ) →L[ℝ] ℝ) (r : ℝ) :
     linearThresholdRegion B ℓ r ⊆ B := by
   exact Set.inter_subset_left
 
+omit [Fintype I] in
 lemma linearThresholdRegion_isBounded
     {B : Set (I → ℝ)} (hB : Bornology.IsBounded B)
     (ℓ : K → (I → ℝ) →L[ℝ] ℝ) (r : ℝ) :
     Bornology.IsBounded (linearThresholdRegion B ℓ r) :=
   hB.subset (linearThresholdRegion_subset B ℓ r)
 
-lemma linearThresholdRegion_measurableSet
+omit [Fintype I] in
+lemma linearThresholdRegion_measurableSet [Finite I] [Finite K]
     {B : Set (I → ℝ)} (hB : MeasurableSet B)
     (ℓ : K → (I → ℝ) →L[ℝ] ℝ) (r : ℝ) :
     MeasurableSet (linearThresholdRegion B ℓ r) := by
+  let : Fintype I := Fintype.ofFinite I
   rw [linearThresholdRegion]
   exact hB.inter (MeasurableSet.iInter fun k ↦
     measurableSet_le (ℓ k).measurable measurable_const)
 
+omit [Fintype I] in
 lemma linearThresholdRegion_convex
     {B : Set (I → ℝ)} (hB : Convex ℝ B)
     (ℓ : K → (I → ℝ) →L[ℝ] ℝ) (r : ℝ) :
@@ -4166,8 +4168,9 @@ end ThresholdRegion
 
 section ThresholdCollars
 
-variable {K : Type*} [Fintype K]
+variable {K : Type*} [Finite K]
 
+omit [Fintype I] [Finite K] in
 lemma iInter_linearThresholdRegion_add_inv_eq
     (B : Set (I → ℝ)) (ℓ : K → (I → ℝ) →L[ℝ] ℝ) (t : ℝ) :
     (⋂ n : ℕ, linearThresholdRegion B ℓ
@@ -4194,6 +4197,7 @@ lemma iInter_linearThresholdRegion_add_inv_eq
     exact (linearThresholdRegion_mono B ℓ)
       (le_add_of_nonneg_right (by positivity)) hx
 
+omit [Fintype I] in
 lemma iUnion_linearThresholdRegion_sub_inv_eq
     (B : Set (I → ℝ)) (ℓ : K → (I → ℝ) →L[ℝ] ℝ) (t : ℝ) :
     (⋃ n : ℕ, linearThresholdRegion B ℓ
@@ -4214,7 +4218,7 @@ lemma iUnion_linearThresholdRegion_sub_inv_eq
     exact (hn.2 k).trans_lt (by
       linarith [show 0 < ((n : ℝ) + 1)⁻¹ by positivity])
   · intro hx
-    simp only [Set.mem_inter_iff, Set.mem_iInter, Set.mem_setOf_eq] at hx ⊢
+    simp only [Set.mem_inter_iff, Set.mem_iInter, Set.mem_ofPred_eq] at hx ⊢
     have heach : ∀ k, ∀ᶠ n : ℕ in atTop,
         ℓ k x < t - ((n : ℝ) + 1)⁻¹ := fun k ↦
       htend.eventually_const_lt (hx.2 k)
@@ -4285,7 +4289,7 @@ theorem linearThresholdRegion_integral_collars
   have hinnerCoreSubset :
       B ∩ (⋂ k, {x | ℓ k x < t}) ⊆ linearThresholdRegion B ℓ t := by
     intro x hx
-    simp only [Set.mem_inter_iff, Set.mem_iInter, Set.mem_setOf_eq] at hx
+    simp only [Set.mem_inter_iff, Set.mem_iInter, Set.mem_ofPred_eq] at hx
     rw [linearThresholdRegion, Set.mem_inter_iff, Set.mem_iInter]
     refine ⟨hx.1, fun k ↦ ?_⟩
     change ℓ k x ≤ t
@@ -4300,7 +4304,7 @@ theorem linearThresholdRegion_integral_collars
     have hnot : ¬ ∀ k, ℓ k x < t := by
       intro hall
       apply hx.2
-      simp only [Set.mem_inter_iff, Set.mem_iInter, Set.mem_setOf_eq]
+      simp only [Set.mem_inter_iff, Set.mem_iInter, Set.mem_ofPred_eq]
       exact ⟨hxt.1, hall⟩
     push Not at hnot
     obtain ⟨k, hk⟩ := hnot
@@ -4412,7 +4416,7 @@ base cut out by finitely many continuous linear inequalities.  Nullity of the
 active level hyperplanes is precisely the no-jump hypothesis needed for the
 inner collars. -/
 theorem tendsto_latticeRiemannSum_linearThresholdRegion
-    {K : Type*} [Fintype K]
+    {K : Type*} [Finite K]
     (B : Set (I → ℝ)) (ℓ : K → (I → ℝ) →L[ℝ] ℝ)
     (F : (I → ℝ) → ℝ) (u : ℕ → ℝ) (t : ℝ)
     (hBbounded : Bornology.IsBounded B) (hBmeas : MeasurableSet B)
@@ -4652,7 +4656,7 @@ lemma measurable_normalizedLowerEndpoint (A : ℝ) (j : ℕ) :
     (measurable_const.div ((measurable_normalizedDenominator j).pow_const 2))
 
 lemma measurable_finset_image_min'
-    {X ι : Type*} [MeasurableSpace X] [DecidableEq ι]
+    {X ι : Type*} [MeasurableSpace X]
     (s : Finset ι) (hs : s.Nonempty) (f : ι → X → ℝ)
     (hf : ∀ i ∈ s, Measurable (f i)) :
     Measurable (fun x ↦ (s.image (fun i ↦ f i x)).min' (hs.image _)) := by
@@ -4673,7 +4677,7 @@ lemma measurable_finset_image_min'
         simpa using hf a (by simp)
 
 lemma measurable_finset_image_max'
-    {X ι : Type*} [MeasurableSpace X] [DecidableEq ι]
+    {X ι : Type*} [MeasurableSpace X]
     (s : Finset ι) (hs : s.Nonempty) (f : ι → X → ℝ)
     (hf : ∀ i ∈ s, Measurable (f i)) :
     Measurable (fun x ↦ (s.image (fun i ↦ f i x)).max' (hs.image _)) := by
@@ -5360,7 +5364,7 @@ lemma thresholdOverlapIntegrand_singleton_zero
   · simp only [finiteOverlapLength, normalizedUpperEndpoint, normalizedLowerEndpoint,
       normalizedGap, normalizedDenominator_zero, Finset.image_singleton,
       Finset.min'_singleton, Finset.max'_singleton, Finset.sum_range_zero,
-      zero_add, zero_sub, Function.iterate_zero_apply]
+      zero_add, zero_sub]
     rw [max_eq_right (by
       have hdiv : 0 ≤ A / p.1 ^ 2 := div_nonneg hA (sq_nonneg p.1)
       linarith)]
@@ -6492,7 +6496,7 @@ lemma continuous_lowerExtension {K B : ℕ} (k : Itinerary K B)
     positivity
 
 lemma continuous_image_min'
-    {X ι : Type*} [TopologicalSpace X] [DecidableEq ι]
+    {X ι : Type*} [TopologicalSpace X]
     (s : Finset ι) (hs : s.Nonempty) (f : ι → X → ℝ)
     (hf : ∀ i ∈ s, Continuous (f i)) :
     Continuous (fun x ↦ (s.image (fun i ↦ f i x)).min' (hs.image _)) := by
@@ -6509,7 +6513,7 @@ lemma continuous_image_min'
         simpa using hf a (by simp)
 
 lemma continuous_image_max'
-    {X ι : Type*} [TopologicalSpace X] [DecidableEq ι]
+    {X ι : Type*} [TopologicalSpace X]
     (s : Finset ι) (hs : s.Nonempty) (f : ι → X → ℝ)
     (hf : ∀ i ∈ s, Continuous (f i)) :
     Continuous (fun x ↦ (s.image (fun i ↦ f i x)).max' (hs.image _)) := by
@@ -6901,7 +6905,8 @@ lemma index_cast_le_two_div_of_bounds {p : ℝ × ℝ} (hp : p ∈ fareyTriangle
           (bczIndex (bczMap^[j] p) : ℝ) * normalizedDenominator (j + 1) p :=
         mul_le_mul_of_nonneg_left (hlo _ (by omega)) hindex
       _ = normalizedDenominator (j + 2) p + normalizedDenominator j p := by linarith
-      _ ≤ 1 + 1 := add_le_add (normalizedDenominator_le_one hp _) (normalizedDenominator_le_one hp _)
+      _ ≤ 1 + 1 :=
+        add_le_add (normalizedDenominator_le_one hp _) (normalizedDenominator_le_one hp _)
       _ = 2 := by norm_num
   exact (le_div_iff₀ hδ).2 hmul
 
@@ -6948,7 +6953,9 @@ lemma exists_pairDomain_of_cutoff_pos
       simpa using h.2.le
   have hδ : 0 < 1 / (2 * A * c ^ 2) := by positivity
   have hB' : 2 / (1 / (2 * A * c ^ 2)) < (B + 1 : ℕ) := by
-    convert hB using 1 <;> field_simp <;> ring
+    convert hB using 1
+    field_simp
+    ring
   obtain ⟨k, hk⟩ := exists_bounded_cell_of_bounds hp hδ hlower hB'
   refine ⟨k, ?_⟩
   have hnormpos : ∀ j ≤ K + 1, 0 < normalizedDenominator j p :=
@@ -7398,9 +7405,9 @@ lemma normalizedPrimitiveFareyFixedCutoffSum_eq_sum_cells_eventually
       apply Finset.sum_congr rfl
       intro p hp
       by_cases hcop : Nat.Coprime p.1 p.2
-      · simp only [hcop, ↓reduceIte, Farey.normalizedDenominatorPairWeight]
+      · simp only [Farey.normalizedDenominatorPairWeight]
         rw [hpoint p hp]
-        simp [hcop]
+        simp
       · simp [hcop]
     _ = _ := by
       rw [Finset.sum_comm, Finset.sum_div]
@@ -7716,9 +7723,9 @@ lemma normalizedPrimitiveFareyOverlapSum_eq_sum_cells_eventually
       apply Finset.sum_congr rfl
       intro p hp
       by_cases hcop : Nat.Coprime p.1 p.2
-      · simp only [hcop, ↓reduceIte, Farey.normalizedDenominatorPairWeight]
+      · simp only [Farey.normalizedDenominatorPairWeight]
         rw [hpoint p hp]
-        simp [hcop]
+        simp
       · simp [hcop]
     _ = _ := by
       rw [Finset.sum_comm, Finset.sum_div]
@@ -7794,7 +7801,7 @@ lemma convex_singletonFareyCell (t : ℝ) : Convex ℝ (singletonFareyCell t) :=
   exact BCZCells.le_combo ha hb hab hx hy
 
 lemma normalizedPrimitiveFareyFixedCutoffSum_singleton_eq_filtered
-    {A c : ℝ} (hA : 0 ≤ A) (hc : 0 < c) (Q : ℕ) :
+    {A c : ℝ} (hA : 0 ≤ A) (_hc : 0 < c) (Q : ℕ) :
     BCZCells.normalizedPrimitiveFareyFixedCutoffSum Q A c {0} (by simp) =
       (∑ p ∈ VisibleLattice.fareyCellPairFinset
           (singletonFareyCell (1 / c)) Q,
