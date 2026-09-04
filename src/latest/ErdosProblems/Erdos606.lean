@@ -159,10 +159,11 @@ lemma pointPairs_card (P : Finset Point) :
       (P.sym2.filter fun e ↦ ¬ e.IsDiag).card =
         (P.powersetCard 2).card := by
     refine Finset.card_bij (fun x _ ↦ P.filter fun y ↦ y ∈ x) ?_ ?_ ?_
-    · simp +contextual only [mem_filter, mem_sym2_iff, mem_powersetCard, filter_subset, true_and, and_imp]
+    · simp +contextual only [mem_filter, mem_sym2_iff, mem_powersetCard,
+        filter_subset, true_and, and_imp]
       intro a ha₁ ha₂
       rcases a with ⟨x, y⟩
-      simp_all +decide [Sym2.IsDiag]
+      simp_all +decide only [Sym2.mem_iff]
       rw [show {z ∈ P | z = x ∨ z = y} = {x, y} by ext; aesop]
       rw [Finset.card_insert_of_notMem, Finset.card_singleton]
       aesop
@@ -312,7 +313,7 @@ lemma lineOfPair_injOn_of_generalPosition {P : Finset Point}
   change s(p, q) ∈ pointPairs P at he
   change s(r, s) ∈ pointPairs P at hf
   simp only [pointPairs, mem_filter, Finset.mk_mem_sym2_iff,
-    Sym2.mk_isDiag_iff, not_false_eq_true, and_self] at he hf
+    Sym2.mk_isDiag_iff] at he hf
   rcases he with ⟨⟨hp, hq⟩, hpq⟩
   rcases hf with ⟨⟨hr, hs⟩, hrs⟩
   simp only [lineOfPair_mk] at hef
@@ -324,7 +325,7 @@ lemma lineOfPair_injOn_of_generalPosition {P : Finset Point}
     · have hsp : s ≠ p := by
         intro h
         apply hrs
-        simpa [h] using rfl
+        simp [h]
       have hsmem : s ∈ lineThrough p q := by
         rw [hef]
         exact right_mem_lineThrough p s
@@ -336,7 +337,7 @@ lemma lineOfPair_injOn_of_generalPosition {P : Finset Point}
       · have hsq : s ≠ q := by
           intro h
           apply hrs
-          simpa [h] using rfl
+          simp [h]
         have hsmem : s ∈ lineThrough p q := by
           rw [hef]
           exact right_mem_lineThrough q s
@@ -379,7 +380,9 @@ lemma parabola_mem_line {x y z : ℝ}
   obtain ⟨t, ht⟩ := h
   have hx := congrFun ht 0
   have hy := congrFun ht 1
-  simp [parabolaPoint, AffineMap.lineMap_apply_module] at hx hy
+  simp only [parabolaPoint, Fin.isValue, AffineMap.lineMap_apply_module,
+    Matrix.smul_cons, smul_eq_mul, Matrix.smul_empty, Pi.add_apply,
+    Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val_fin_one] at hx hy
   have hx' : t * (y - x) = z - x := by linarith
   have hy' : t * (y ^ 2 - x ^ 2) = z ^ 2 - x ^ 2 := by linarith
   have hxmul := congrArg (fun u : ℝ ↦ u * (x + y)) hx'
@@ -449,13 +452,14 @@ def farParabolaPoint (i : ℕ) : Point := parabolaPoint ((i : ℝ) + 10)
 lemma specialPoint_injective : Function.Injective specialPoint := by
   intro i j h
   have hx := congrFun h 0
-  simp [specialPoint] at hx
+  simp only [specialPoint, Fin.isValue, Matrix.cons_val_zero, Nat.cast_inj] at hx
   exact_mod_cast hx
 
 lemma farParabolaPoint_injective : Function.Injective farParabolaPoint := by
   intro i j h
   have hx := congrFun h 0
-  simp [farParabolaPoint] at hx
+  simp only [farParabolaPoint, Fin.isValue, parabolaPoint_apply_zero,
+    add_left_inj, Nat.cast_inj] at hx
   exact_mod_cast hx
 
 lemma specialPoint_ne_farParabolaPoint (c i : ℕ) :
@@ -469,7 +473,10 @@ lemma specialPoint_ne_farParabolaPoint (c i : ℕ) :
 lemma no_special_special_far {c d i : ℕ} (hcd : c ≠ d)
     (h : farParabolaPoint i ∈ lineThrough (specialPoint c) (specialPoint d)) : False := by
   have hdet := collinearityDet_eq_zero_of_mem h
-  simp [collinearityDet, specialPoint, farParabolaPoint, parabolaPoint] at hdet
+  simp only [collinearityDet, specialPoint, Fin.isValue, Matrix.cons_val_zero,
+    farParabolaPoint, parabolaPoint, Matrix.cons_val_one, Matrix.cons_val_fin_one,
+    sub_zero, sub_self, zero_mul, mul_eq_zero, ne_eq, OfNat.ofNat_ne_zero,
+    not_false_eq_true, pow_eq_zero_iff] at hdet
   have hcast : (c : ℝ) ≠ (d : ℝ) := by exact_mod_cast hcd
   have hpos : 0 < (i : ℝ) + 10 := by positivity
   rcases hdet with hdet | hdet
@@ -479,7 +486,10 @@ lemma no_special_special_far {c d i : ℕ} (hcd : c ≠ d)
 lemma no_special_far_special {c d i : ℕ} (hcd : c ≠ d)
     (h : specialPoint d ∈ lineThrough (specialPoint c) (farParabolaPoint i)) : False := by
   have hdet := collinearityDet_eq_zero_of_mem h
-  simp [collinearityDet, specialPoint, farParabolaPoint, parabolaPoint] at hdet
+  simp only [collinearityDet, farParabolaPoint, parabolaPoint, Fin.isValue,
+    Matrix.cons_val_zero, specialPoint, Matrix.cons_val_one, Matrix.cons_val_fin_one,
+    sub_self, mul_zero, sub_zero, zero_sub, neg_eq_zero, mul_eq_zero, ne_eq,
+    OfNat.ofNat_ne_zero, not_false_eq_true, pow_eq_zero_iff] at hdet
   have hcast : (c : ℝ) ≠ (d : ℝ) := by exact_mod_cast hcd
   have hpos : 0 < (i : ℝ) + 10 := by positivity
   rcases hdet with hdet | hdet
@@ -489,7 +499,9 @@ lemma no_special_far_special {c d i : ℕ} (hcd : c ≠ d)
 lemma no_special_far_far {c i j : ℕ} (hc : c < 3) (hij : i ≠ j)
     (h : farParabolaPoint j ∈ lineThrough (specialPoint c) (farParabolaPoint i)) : False := by
   have hdet := collinearityDet_eq_zero_of_mem h
-  simp [collinearityDet, specialPoint, farParabolaPoint, parabolaPoint] at hdet
+  simp only [collinearityDet, farParabolaPoint, parabolaPoint, Fin.isValue,
+    Matrix.cons_val_zero, specialPoint, Matrix.cons_val_one, Matrix.cons_val_fin_one,
+    sub_zero] at hdet
   have hi0 : (0 : ℝ) ≤ (i : ℝ) := by positivity
   have hj0 : (0 : ℝ) ≤ (j : ℝ) := by positivity
   have hi : (10 : ℝ) ≤ (i : ℝ) + 10 := by linarith
@@ -507,7 +519,9 @@ lemma no_special_far_far {c i j : ℕ} (hc : c < 3) (hij : i ≠ j)
 lemma no_far_far_special {c i j : ℕ} (hc : c < 3) (hij : i ≠ j)
     (h : specialPoint c ∈ lineThrough (farParabolaPoint i) (farParabolaPoint j)) : False := by
   have hdet := collinearityDet_eq_zero_of_mem h
-  simp [collinearityDet, specialPoint, farParabolaPoint, parabolaPoint] at hdet
+  simp only [collinearityDet, farParabolaPoint, parabolaPoint, Fin.isValue,
+    Matrix.cons_val_zero, add_sub_add_right_eq_sub, specialPoint,
+    Matrix.cons_val_one, Matrix.cons_val_fin_one, zero_sub, mul_neg] at hdet
   have hi0 : (0 : ℝ) ≤ (i : ℝ) := by positivity
   have hj0 : (0 : ℝ) ≤ (j : ℝ) := by positivity
   have hi : (10 : ℝ) ≤ (i : ℝ) + 10 := by linarith
@@ -1492,7 +1506,7 @@ lemma offLines_subset_construction (Q : Finset Point) (c : ℝ)
   simp [bandConstruction, hp]
 
 lemma rich_line_vertical_or_off {Q : Finset Point} {c : ℝ}
-    (hc : c ∉ badTransversalSet Q)
+    (_hc : c ∉ badTransversalSet Q)
     (S : Finset (AffineSubspace ℝ Point)) (F : Finset ℝ)
     {M : AffineSubspace ℝ Point}
     (hM : M ∈ determinedLines (bandConstruction Q c S F))
@@ -2302,7 +2316,7 @@ lemma continuum_base_possible {n m : ℕ} (hn : 100 ≤ n)
       rwa [this]
   by_cases hz : K * K = n
   · have hb : continuumBottom n = Mmax n (K - 1) := by
-      simp [continuumBottom, K, hp2, hp1, hz]
+      simp [continuumBottom, K, hz]
     apply hcurrent
     rw [hb] at hlow
     omega
@@ -2418,7 +2432,6 @@ lemma terminal_interval_possible {n m : ℕ} (hn : 100 ≤ n)
     omega
   have hchoose6 : 6 ≤ n.choose 2 := by
     have hc := Nat.choose_le_choose 2 (show 4 ≤ n by omega)
-    norm_num at hc
     exact hc
   have hband := continuum_through_band hn hKtop (le_rfl : n - 3 ≤ n - 3)
   by_cases hm : m ≤ n.choose 2 - 6
@@ -2687,7 +2700,7 @@ lemma line_loss_le_twice_off_pairs {P : Finset Point}
   exact (Nat.sub_le_sub_right hc 1).trans (choose_succ_sub_one_le_twice hq1)
 
 lemma choose_pointsOnLine_eq_zero_of_not_determined {Q P : Finset Point}
-    (hQP : Q ⊆ P) {J : AffineSubspace ℝ Point}
+    (_hQP : Q ⊆ P) {J : AffineSubspace ℝ Point}
     (hJ : J ∈ determinedLines P) (hnot : J ∉ determinedLines Q) :
     (pointsOnLine Q J).card.choose 2 = 0 := by
   classical
@@ -2966,7 +2979,7 @@ lemma continuumBottom_le_Mmin_transition {n : ℕ} (hn : 100 ≤ n) :
     omega
   by_cases hz : K * K = n
   · have hb : continuumBottom n = Mmax n (K - 1) := by
-      simp [continuumBottom, K, hp2, hp1, hz]
+      simp [continuumBottom, K, hz]
     rw [hb]
     omega
   by_cases hm1 : K * K + 1 = n
@@ -3006,7 +3019,7 @@ lemma Mmin_mono_step {n k : ℕ} (hk : 3 * (k + 1) ≤ n) :
   simp only [Mmin]
   omega
 
-lemma Mmin_transition_le {n k : ℕ} (hn : 100 ≤ n)
+lemma Mmin_transition_le {n k : ℕ} (_hn : 100 ≤ n)
     (hKk : transitionIndex n ≤ k) (hk : 3 * k ≤ n) :
     Mmin n (transitionIndex n) ≤ Mmin n k := by
   induction k, hKk using Nat.le_induction with
@@ -3134,7 +3147,7 @@ lemma continuumBottom_le_rpow_eventually :
       have hnpos : (0 : ℝ) < n := by
         exact_mod_cast (show 0 < n by omega)
       rw [← Real.rpow_add hnpos]
-      congr 2 <;> norm_num
+      congr 2; norm_num
 
 lemma Mmin_cast_quadratic_lower {n k r : ℕ} (hn : n = r + k)
     (hthird : n < 3 * k) (hhalf : n ≤ 2 * r) :

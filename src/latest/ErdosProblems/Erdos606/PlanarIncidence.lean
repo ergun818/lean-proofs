@@ -614,7 +614,7 @@ lemma intersectionParameter_ne_zero_of_eval_ne_zero
 lemma pairBad_unique_of_distinct_supports
     {q : Poly2} {z : Point} (hz : MvPolynomial.eval z q ≠ 0)
     {l m : LineIndex} (hlc : Erdos95.Algebraic.LineContained q l.1 (direction l))
-    (hmc : Erdos95.Algebraic.LineContained q m.1 (direction m))
+    (_hmc : Erdos95.Algebraic.LineContained q m.1 (direction m))
     (hne : lineSupport l ≠ lineSupport m) :
     ∀ {c d : ℝ}, PairBad z l m c → PairBad z l m d → c = d := by
   intro c d hc hd
@@ -648,7 +648,7 @@ lemma pairBad_unique_of_distinct_supports
 lemma exists_eval_ne_zero {q : Poly2} (hq : q ≠ 0) :
     ∃ z : Point, MvPolynomial.eval z q ≠ 0 := by
   by_contra h
-  push_neg at h
+  push Not at h
   apply hq
   apply MvPolynomial.funext
   intro z
@@ -921,7 +921,7 @@ lemma linePoint_parameterOf {l : LineIndex} {x : Point}
   rw [parameterOf, dif_pos hx]
   exact Classical.choose_spec hx
 
-lemma parameterOf_injective_on_line {l : LineIndex} (hl : ValidLine l) :
+lemma parameterOf_injective_on_line {l : LineIndex} (_hl : ValidLine l) :
     Set.InjOn (parameterOf l) {x | OnLine l.1 l.2 x} := by
   intro x hx y hy hxy
   rw [linePoint_parameterOf hx, linePoint_parameterOf hy, hxy]
@@ -1456,16 +1456,15 @@ lemma incidenceExponent_bounds :
 
 lemma partition_fit (j : Fin partitionJ) :
     2 ^ (j : ℕ) < (partitionK + 1) ^ 2 := by
-  have hj : (j : ℕ) < 400 := j.isLt
-  have hpow : 2 ^ (j : ℕ) < 2 ^ 400 :=
-    Nat.pow_lt_pow_right (by omega) hj
-  calc
-    2 ^ (j : ℕ) < 2 ^ 400 := hpow
-    _ = (2 ^ 200) ^ 2 := by
-      rw [show 400 = 200 * 2 by norm_num, pow_mul]
-    _ < (2 ^ 200 + 1) ^ 2 := by
-      nlinarith [show 0 < 2 ^ 200 by positivity]
-    _ = (partitionK + 1) ^ 2 := by rfl
+  have hbound (k i : ℕ) (hi : i < k * 2) :
+      2 ^ i < (2 ^ k + 1) ^ 2 := by
+    calc
+      2 ^ i < 2 ^ (k * 2) :=
+        Nat.pow_lt_pow_right (by decide : 1 < (2 : ℕ)) hi
+      _ = (2 ^ k) ^ 2 := pow_mul 2 k 2
+      _ < (2 ^ k + 1) ^ 2 := by
+        nlinarith [show 0 < 2 ^ k by positivity]
+  exact hbound 200 j j.isLt
 
 lemma exists_fixed_partition (S : Finset Point) :
     ∃ p : Fin partitionJ → Poly2,
@@ -1497,7 +1496,7 @@ lemma card_sign_univ :
     (Finset.univ : Finset (Fin partitionJ → Bool)).card = cellNumber := by
   rw [Finset.card_univ, Fintype.card_fun]
   rw [Fintype.card_fin]
-  simp [cellNumber, partitionJ]
+  simp only [Fintype.card_bool, cellNumber]
 
 lemma crossingBudget_le_pow : crossingBudget ≤ 2 ^ 210 := by
   norm_num [crossingBudget, partitionD]
@@ -1505,12 +1504,12 @@ lemma crossingBudget_le_pow : crossingBudget ≤ 2 ^ 210 := by
 lemma cellNumber_rpow_factor :
     (cellNumber : ℝ) ^ (1 - 2 * incidenceExponent) =
       (2 : ℝ) ^ (-152 : ℝ) := by
-  change (((2 ^ 400 : ℕ) : ℝ) ^ (1 - 2 * ((69 : ℝ) / 100))) = _
+  unfold cellNumber
   rw [Nat.cast_pow, Nat.cast_ofNat]
   rw [← Real.rpow_natCast]
   rw [← Real.rpow_mul (by positivity)]
   congr 1
-  norm_num
+  norm_num [partitionJ, incidenceExponent]
 
 lemma pow210_rpow_incidenceExponent :
     (((2 ^ 210 : ℕ) : ℝ) ^ incidenceExponent) ≤ (2 : ℝ) ^ (145 : ℝ) := by
@@ -1611,9 +1610,11 @@ theorem planar_incidence_bound
   | h n ih =>
       by_cases hS : S = ∅
       · subst S
-        simp only [Nat.cast_mul] at hn
         subst n
-        simp [incidenceCount, pointsOnLine]
+        have hzero : incidenceCount ∅ L = 0 := by
+          simp [incidenceCount, pointsOnLine]
+        rw [hzero]
+        simp only [Nat.cast_zero]
         positivity
       obtain ⟨p, hp, hpdeg, hcells⟩ := exists_fixed_partition S
       let q := partitionPolynomial p
@@ -1639,7 +1640,7 @@ theorem planar_incidence_bound
               incidenceLinearConstant * (B sign).card := by
         by_cases hB : B sign = ∅
         · rw [hB]
-          simp only [card_empty, mul_zero, CharP.cast_eq_zero, add_zero]
+          simp only [incidenceCount, Finset.sum_empty, Nat.cast_zero]
           positivity
         · have hBne : (B sign).Nonempty := Finset.nonempty_iff_ne_empty.mpr hB
           obtain ⟨l, hlB⟩ := hBne
@@ -1648,10 +1649,8 @@ theorem planar_incidence_bound
           have htpos : 0 < (T sign).card :=
             lt_of_lt_of_le (by omega) (Finset.card_le_card
               (pointsOnLine_subset (T sign) l))
-          have hRtwo : 2 ≤ cellNumber := by
-            change 2 ≤ 2 ^ 400
-            have := Nat.one_lt_pow (by omega : 400 ≠ 0) (by omega : 1 < 2)
-            omega
+          have hRtwo : 2 ≤ cellNumber :=
+            Nat.one_lt_pow (by decide : partitionJ ≠ 0) (by decide : 1 < (2 : ℕ))
           have hcell := hcells sign
           have htlt : (T sign).card < S.card := by
             change cellNumber * (T sign).card ≤ S.card at hcell
@@ -1966,7 +1965,7 @@ lemma initial_occupancy_ge {S : Finset Point} {L : Finset LineIndex}
   have hjlen : j < (orderedLines S L).length := by omega
   by_cases hji : j = i
   · subst j
-    simpa [hjl]
+    simp [hjl]
   · have hji' : j < i := by omega
     have hrel := (orderedLines_pairwise S L).rel_get_of_lt
       (a := ⟨j, hjlen⟩) (b := ⟨i, hi⟩) hji'
@@ -1985,7 +1984,7 @@ lemma rank_mul_occupancy_le_incidence {S : Finset Point}
         ∑ _l ∈ initialLines S L (i + 1),
           (pointsOnLine S (orderedLines S L)[i]).card := by
       rw [Finset.sum_const, card_initialLines (by simpa using Nat.succ_le_iff.mpr hi)]
-      simp [mul_comm]
+      simp
     _ ≤ ∑ l ∈ initialLines S L (i + 1), (pointsOnLine S l).card := by
       apply Finset.sum_le_sum
       intro l hl
@@ -2042,7 +2041,7 @@ lemma sum_rankedOccupancy_eq (S : Finset Point) (L : Finset LineIndex)
     ∑ i ∈ Finset.range L.card, f (rankedOccupancy S L i) =
       ∑ l ∈ L, f (pointsOnLine S l).card := by
   classical
-  rw [← length_orderedLines]
+  rw [← length_orderedLines S L]
   rw [Finset.sum_range]
   conv_lhs =>
     enter [2, i]
@@ -2055,15 +2054,14 @@ lemma sum_rankedOccupancy_eq (S : Finset Point) (L : Finset LineIndex)
       ((orderedLines_perm S L).map
         (fun l ↦ f (pointsOnLine S l).card)).sum_eq
     _ = _ := by
-      simpa using (List.sum_toFinset
-        (fun l ↦ f (pointsOnLine S l).card) L.nodup_toList).symm
+      simp
 
 lemma sum_rankedOccupancy_cast_eq (S : Finset Point) (L : Finset LineIndex)
     (f : ℕ → ℝ) :
     ∑ i ∈ Finset.range L.card, f (rankedOccupancy S L i) =
       ∑ l ∈ L, f (pointsOnLine S l).card := by
   classical
-  rw [← length_orderedLines]
+  rw [← length_orderedLines S L]
   rw [Finset.sum_range]
   conv_lhs =>
     enter [2, i]
@@ -2076,8 +2074,7 @@ lemma sum_rankedOccupancy_cast_eq (S : Finset Point) (L : Finset LineIndex)
       ((orderedLines_perm S L).map
         (fun l ↦ f (pointsOnLine S l).card)).sum_eq
     _ = _ := by
-      simpa using (List.sum_toFinset
-        (fun l ↦ f (pointsOnLine S l).card) L.nodup_toList).symm
+      simp
 
 lemma sum_Ico_succ_inv_sq_le {a b : ℕ} (ha : 1 ≤ a) (hab : a ≤ b) :
     (∑ i ∈ Finset.Ico a b, (((i + 1 : ℕ) : ℝ) ^ (-2 : ℝ))) ≤
@@ -2192,7 +2189,6 @@ lemma rankedOccupancy_union_div_bound {S : Finset Point}
     _ = (S.card : ℝ) / (i + 1) + (i + 1) := by
       norm_num only [Nat.cast_add, Nat.cast_one]
       field_simp
-      <;> ring_nf
 
 lemma rankedOccupancy_sq_union_bound {S : Finset Point}
     {L : Finset LineIndex} (hdistinct : DistinctSupports L) {i : ℕ}
@@ -2213,7 +2209,7 @@ lemma rankedOccupancy_sq_union_bound {S : Finset Point}
       rw [show (-2 : ℝ) = ((-2 : ℤ) : ℝ) by norm_num, Real.rpow_intCast]
       norm_num only [Nat.cast_add, Nat.cast_one]
       field_simp
-      <;> ring
+      ring
 
 lemma sum_rankedOccupancy_sq_early_le {S : Finset Point}
     {L : Finset LineIndex} (hdistinct : DistinctSupports L)
@@ -2223,7 +2219,7 @@ lemma sum_rankedOccupancy_sq_early_le {S : Finset Point}
       (17 : ℝ) / 18 * S.card ^ 2 + 2 * S.card * q + (q : ℝ) ^ 3 := by
   by_cases hq0 : q = 0
   · subst q
-    simp only [Finset.range_zero, Finset.sum_empty, Nat.cast_zero, zero_pow]
+    simp only [Finset.range_zero, Finset.sum_empty, Nat.cast_zero]
     positivity
   have hq1 : 1 ≤ q := Nat.one_le_iff_ne_zero.mpr hq0
   have hm1 : 1 ≤ L.card := hq1.trans hq
@@ -2282,8 +2278,6 @@ lemma sum_rankedOccupancy_sq_early_le {S : Finset Point}
         have hsqcard := mul_le_mul_of_nonneg_right hcard (sq_nonneg (q : ℝ))
         nlinarith [hinvMul, hconst, hsqterms, hsqcard]
   dsimp [f] at hsplit htail'
-  norm_num only [Finset.sum_range_succ, Finset.sum_range_zero,
-    Finset.sum_empty, zero_add] at hsplit
   simp only [Finset.sum_singleton] at hsplit
   nlinarith
 
@@ -2321,7 +2315,6 @@ lemma incidence_rank_linear_sq (n : ℕ) {j : ℕ} (hj : 1 ≤ j) :
   have hjpos : (0 : ℝ) < j := by exact_mod_cast (show 0 < j by omega)
   rw [show (-2 : ℝ) = ((-2 : ℤ) : ℝ) by norm_num, Real.rpow_intCast]
   field_simp
-  <;> ring
 
 lemma rankedOccupancy_partition_div_bound {S : Finset Point}
     {L : Finset LineIndex} (hvalid : ∀ l ∈ L, ValidLine l)
@@ -2346,7 +2339,6 @@ lemma rankedOccupancy_partition_div_bound {S : Finset Point}
     _ = _ := by
       norm_num only [Nat.cast_add, Nat.cast_one]
       field_simp
-      <;> ring
 
 lemma rankedOccupancy_sq_partition_bound {S : Finset Point}
     {L : Finset LineIndex} (hvalid : ∀ l ∈ L, ValidLine l)
@@ -2504,7 +2496,6 @@ lemma sqrt_error_le {n : ℕ} (hn : 1 ≤ n) :
   have heq : (n : ℝ) ^ 2 * (3 * (Nat.sqrt n : ℝ)⁻¹) =
       (3 * (n : ℝ) ^ 2) / Nat.sqrt n := by
     field_simp
-    <;> ring
   rw [heq, le_div_iff₀ hqpos]
   nlinarith
 
@@ -2527,7 +2518,7 @@ lemma incidence_power_product_le {n m : ℕ} (hn : 1 ≤ n)
     _ = (n : ℝ) ^ (((69 : ℝ) / 50) +
         ((8 : ℝ) / 5) * ((19 : ℝ) / 50)) := by
       rw [Real.rpow_add hnpos]
-    _ = _ := by congr 2 <;> norm_num
+    _ = _ := by congr 2; norm_num
 
 lemma sq_mul_small_rpow {n : ℕ} (hn : 1 ≤ n) :
     (n : ℝ) ^ 2 * (n : ℝ) ^ (-((3 : ℝ) / 250)) =
@@ -2535,7 +2526,7 @@ lemma sq_mul_small_rpow {n : ℕ} (hn : 1 ≤ n) :
   have hnpos : (0 : ℝ) < n := by exact_mod_cast (show 0 < n by omega)
   rw [← Real.rpow_natCast]
   rw [← Real.rpow_add hnpos]
-  congr 2 <;> norm_num
+  congr 2; norm_num
 
 lemma sq_mul_linear_rpow {n : ℕ} (hn : 1 ≤ n) :
     (n : ℝ) ^ 2 * (n : ℝ) ^ (-((2 : ℝ) / 5)) =
@@ -2543,7 +2534,7 @@ lemma sq_mul_linear_rpow {n : ℕ} (hn : 1 ≤ n) :
   have hnpos : (0 : ℝ) < n := by exact_mod_cast (show 0 < n by omega)
   rw [← Real.rpow_natCast]
   rw [← Real.rpow_add hnpos]
-  congr 2 <;> norm_num
+  congr 2; norm_num
 
 theorem sum_rankedOccupancy_sq_lt {S : Finset Point}
     {L : Finset LineIndex} (hvalid : ∀ l ∈ L, ValidLine l)
