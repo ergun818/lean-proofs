@@ -103,7 +103,7 @@ theorem bernoulli_expectation_sum (I : Finset ℕ) (p f : ℕ → ℝ) :
                   Erdos697.Bernoulli.weight I p T * ∑ i ∈ T, f i := by
                 simp_rw [mul_add]
                 rw [Finset.sum_add_distrib, Finset.mul_sum]
-                apply congrArg₂ (.+.)
+                apply congrArg₂ (· + ·)
                 · apply Finset.sum_congr rfl
                   intro T _
                   ring

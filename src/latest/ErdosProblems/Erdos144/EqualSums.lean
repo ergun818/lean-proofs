@@ -78,6 +78,7 @@ theorem sdiff_nonempty_of_ne_of_sum_eq_of_pos (f : α → ℕ) {U V : Finset α}
       Finset.sum_pos (fun x hx ↦ hposV x (Finset.mem_sdiff.mp hx).1) hV
     omega
 
+omit [DecidableEq α] in
 /-- Distinct equal-sum subsets yield disjoint, nonempty equal-sum subsets
 after their intersection is removed. -/
 theorem disjoint_nonempty_equal_sums_of_ne (f : α → ℕ)
@@ -87,6 +88,7 @@ theorem disjoint_nonempty_equal_sums_of_ne (f : α → ℕ)
     ∃ A B : Finset α,
       A ⊆ U ∧ B ⊆ V ∧ Disjoint A B ∧ A.Nonempty ∧ B.Nonempty ∧
         ∑ x ∈ A, f x = ∑ x ∈ B, f x := by
+  classical
   have hne' := sdiff_nonempty_of_ne_of_sum_eq_of_pos f hposU hposV hne hsum
   exact ⟨U \ V, V \ U, Finset.sdiff_subset, Finset.sdiff_subset,
     Finset.disjoint_left.mpr (fun x hxU hxV ↦ by simp_all), hne'.1, hne'.2,
@@ -119,6 +121,7 @@ theorem exists_ne_members_with_equal_sum (family : Finset (Finset α))
   exact Finset.exists_ne_map_eq_of_card_lt_of_maps_to hcard
     (fun U hU ↦ hmaps U hU)
 
+omit [DecidableEq α] in
 /-- Arbitrary-family version of the cancellation argument. -/
 theorem exists_disjoint_nonempty_equal_sum_of_family
     (S : Finset α) (family : Finset (Finset α)) (values : Finset ℕ)
@@ -129,6 +132,7 @@ theorem exists_disjoint_nonempty_equal_sum_of_family
     ∃ U V : Finset α,
       U ⊆ S ∧ V ⊆ S ∧ Disjoint U V ∧ U.Nonempty ∧ V.Nonempty ∧
         ∑ x ∈ U, f x = ∑ x ∈ V, f x := by
+  classical
   obtain ⟨U', hU'family, V', hV'family, hne, hsum⟩ :=
     exists_ne_members_with_equal_sum family values f hmaps hcard
   have hU'S := hfamily U' hU'family
@@ -161,6 +165,7 @@ theorem exists_ne_subsets_with_equal_sum (S : Finset α) (f : α → ℕ)
   exact ⟨U, V, Finset.mem_powerset.mp hU, Finset.mem_powerset.mp hV,
     hne, heq⟩
 
+omit [DecidableEq α] in
 /-- A directly usable form: sufficiently many subsets of a positive-weight
 finite set force two disjoint nonempty subsets with equal sum. -/
 theorem exists_disjoint_nonempty_equal_sum (S : Finset α) (f : α → ℕ)
@@ -169,6 +174,7 @@ theorem exists_disjoint_nonempty_equal_sum (S : Finset α) (f : α → ℕ)
     ∃ U V : Finset α,
       U ⊆ S ∧ V ⊆ S ∧ Disjoint U V ∧ U.Nonempty ∧ V.Nonempty ∧
         ∑ x ∈ U, f x = ∑ x ∈ V, f x := by
+  classical
   obtain ⟨U', V', hU'S, hV'S, hne, hsum⟩ :=
     exists_ne_subsets_with_equal_sum S f hcard
   obtain ⟨U, V, hUU', hVV', hdisj, hUne, hVne, hsums⟩ :=

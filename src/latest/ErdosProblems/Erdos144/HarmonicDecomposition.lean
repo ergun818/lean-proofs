@@ -145,7 +145,7 @@ private theorem nat_sq_eq_self_add_two_mul_choose_two (m : ℕ) :
           ring
 
 private theorem offDiag_card_eq_two_mul_choose_two
-    {α : Type*} [DecidableEq α] (A : Finset α) :
+    {α : Type*} (A : Finset α) :
     A.offDiag.card = 2 * A.card.choose 2 := by
   rw [Finset.offDiag_card]
   have h := nat_sq_eq_self_add_two_mul_choose_two A.card
@@ -240,7 +240,6 @@ theorem normalizedOffDiagonalExpectation_eq_witness_sum
       · simp only [hGood, if_true]
         simp only [Finset.sum_const, nsmul_eq_mul, Finset.card_attach]
         rw [orderedCollisionWitnesses_card]
-        push_cast
         ring
       · simp [hGood]
     _ = ∑ w ∈ eventCollisionWitnesses I Good,
@@ -326,7 +325,8 @@ theorem mem_selectedBelow_iff {S : Finset ℕ} {n i : ↑S} :
 theorem signedTerm_injective_of_pos {n : ℕ} (hn : 0 < n) :
     Function.Injective (signedTerm n) := by
   intro x y hxy
-  fin_cases x <;> fin_cases y <;> simp_all [signedTerm] <;> omega
+  fin_cases x <;> fin_cases y <;> simp_all [signedTerm]
+  omega
 
 /-- A balanced non-diagonal pair has a selected coordinate below its
 largest differing coordinate. -/
@@ -342,7 +342,7 @@ theorem selectedBelow_largestDifferingCoordinate_nonempty
     intro i hi
     have : i ∈ selectedBelow L := (mem_selectedBelow_iff).2 hi
     rw [hempty] at this
-    simpa using this
+    simp at this
   have heq_of_ne : ∀ i : ↑S, i ≠ L → a i = b i := by
     intro i hiL
     have hLi : L < i := lt_of_le_of_ne (not_lt.mp (hnotbelow i))

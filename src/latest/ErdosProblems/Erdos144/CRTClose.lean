@@ -43,6 +43,7 @@ theorem primeProduct_pos (hprime : ∀ i ∈ A, (p i).Prime) :
     0 < primeProduct p A := by
   exact Finset.prod_pos fun i hi ↦ (hprime i hi).pos
 
+omit [DecidableEq ι] in
 /-- Distinct indexed primes are pairwise coprime. -/
 theorem coprime_of_distinct_indices
     (hprime : ∀ i, (p i).Prime) (hinj : Function.Injective p)
@@ -51,6 +52,7 @@ theorem coprime_of_distinct_indices
   exact (hprime i).coprime_iff_not_dvd.mpr fun hdvd ↦
     hij (hinj ((Nat.prime_dvd_prime_iff_eq (hprime i) (hprime j)).mp hdvd))
 
+omit [DecidableEq ι] in
 /-- Global pairwise-coprimality form needed by `ZMod.prodEquivPi`. -/
 theorem primeFamily_pairwise_coprime
     (hprime : ∀ i, (p i).Prime) (hinj : Function.Injective p) :
@@ -184,6 +186,7 @@ theorem abs_log_primeProduct_sub_le_of_approx
 
 variable [Fintype ι] [(i : ι) → NeZero (p i)]
 
+omit [DecidableEq ι] in
 /-- Under the CRT equivalence, coordinate `i` is zero exactly when its
 modulus divides the sampled natural number. -/
 theorem mem_crtZeroSet_iff_dvd
@@ -194,6 +197,7 @@ theorem mem_crtZeroSet_iff_dvd
           (primeFamily_pairwise_coprime hprime hinj)
           (n : ZMod (∏ i, p i))) ↔
       p i ∣ n := by
+  classical
   rw [Erdos697.CRTModel.mem_zeroSet]
   simp only [ZMod.prodEquivPi_apply, map_natCast]
   exact ZMod.natCast_eq_zero_iff n (p i)
@@ -243,6 +247,7 @@ theorem hasCloseDivisors_of_abs_log_sub_lt_log_two
   · exact ⟨d, e, hd, he, hde, by exact_mod_cast hratio_ed⟩
   · exact ⟨e, d, he, hd, hed, by exact_mod_cast hratio_de⟩
 
+omit [Fintype ι] [∀ i, NeZero (p i)] in
 /-- Prime-product specialization of the logarithmic bridge. -/
 theorem hasCloseDivisors_of_primeProducts
     (hprime : ∀ i, (p i).Prime) (hinj : Function.Injective p)

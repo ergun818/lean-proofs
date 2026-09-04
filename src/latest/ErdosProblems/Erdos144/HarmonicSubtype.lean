@@ -15,7 +15,7 @@ The harmonic model is naturally stated using subsets of a finite set
 representations, including equality of every individual Bernoulli weight.
 -/
 
-open scoped BigOperators Classical
+open scoped BigOperators
 
 namespace Erdos144.HarmonicSubtype
 
@@ -106,6 +106,7 @@ theorem prob_eq_subtype_sum (I : Finset ℕ)
 
 /-- The exact transport needed for the bounded equal-subsum event. -/
 theorem boundedEqualSubsum_prob_eq_subtype_sum (I : Finset ℕ) (L : ℕ) :
+    open scoped Classical in
     HarmonicProb.prob I
         (fun T ↦ Harmonic.HasEqualSubsums T ∧ T.card ≤ L) =
       ∑ T ∈ (Finset.univ : Finset ↥I).powerset.filter

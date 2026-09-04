@@ -33,7 +33,7 @@ theorem biUnion_octave_range (D R : ℕ) :
     (Finset.range R).biUnion (octave D) =
       Finset.Ioc (D / 8 ^ R) D := by
   induction R with
-  | zero => simp [octave]
+  | zero => simp
   | succ R ih =>
       rw [Finset.range_add_one, Finset.biUnion_insert, ih]
       ext n

@@ -85,7 +85,7 @@ lemma card_div_upper_le_mass_le_card_div_lower {r x : ℝ}
 /-- The elementary second-order Bonferroni estimate, in the exact form needed
 for the probability that a finite family of independent events has nonempty
 union. -/
-lemma one_sub_prod_bounds {ι : Type*} [DecidableEq ι] (s : Finset ι) (a : ι → ℝ)
+lemma one_sub_prod_bounds {ι : Type*} (s : Finset ι) (a : ι → ℝ)
     (ha0 : ∀ i ∈ s, 0 ≤ a i) (ha1 : ∀ i ∈ s, a i ≤ 1) :
     let q := 1 - ∏ i ∈ s, (1 - a i)
     let S := ∑ i ∈ s, a i

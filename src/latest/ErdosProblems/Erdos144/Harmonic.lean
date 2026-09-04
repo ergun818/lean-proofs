@@ -513,7 +513,6 @@ theorem card_fullSignedDifferenceSet_eq_two_mul_positiveFullNat_add_one
   have hpartition : D = (P ∪ {0}) ∪ N := by
     ext z
     simp only [Finset.mem_union, Finset.mem_singleton]
-    change z ∈ D ↔ (z ∈ P ∨ z = 0) ∨ z ∈ N
     simp only [P, N, Finset.mem_filter]
     constructor
     · intro hz
@@ -592,7 +591,8 @@ theorem positiveFullNat_card_large_of_energy
   have henergy : 4 * D *
       HarmonicBlocks.fullSignedDifferenceEnergy S ≤ ξ * A ^ 2 := by
     have htwice : 2 * (4 * D * (A + E)) ≤ 2 * (ξ * A ^ 2) := by
-      convert htotal using 1 <;> ring
+      convert htotal using 1
+      ring
     have hhalf := Nat.le_of_mul_le_mul_left htwice (by omega : 0 < 2)
     simpa [HarmonicOctaves.fullSignedDifferenceEnergy_eq_diagonal_add_offDiagonal,
       A, E] using hhalf
@@ -658,8 +658,7 @@ theorem prob_good_and_normalizedOffDiagonalEnergy_ge_le
       apply Finset.sum_congr rfl
       intro S _
       by_cases hS : Good S <;>
-        simp [hS, normalizedOffDiagonalEnergy, Erdos144.HarmonicProb.param,
-          div_eq_mul_inv, mul_assoc]
+        simp [hS, normalizedOffDiagonalEnergy, div_eq_mul_inv, mul_assoc]
 
 /-- Integral form of the normalized off-diagonal energy cutoff. -/
 def OffDiagonalEnergyControlled (D ξ : ℕ) (S : Finset ℕ) : Prop :=
@@ -979,7 +978,7 @@ theorem three_mul_loss_positiveNat_card
     have hz : (positiveNatDifferenceSet B).card = 0 :=
       Nat.eq_zero_of_not_pos h
     rw [hcard, hz] at hspread
-    simp at hspread
+    simp only [mul_zero, zero_add, mul_one] at hspread
     exact (not_le_of_gt hxiD) hspread
   calc
     D ≤ xi * (signedDifferenceSet B).card := hspread

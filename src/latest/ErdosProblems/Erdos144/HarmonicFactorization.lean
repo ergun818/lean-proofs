@@ -188,7 +188,7 @@ theorem extension_bad_bound
     (hI : ∀ n ∈ I, 1 ≤ n) (hJ : ∀ n ∈ J, 1 ≤ n)
     (Success Irregular : Finset ℕ → Prop)
     (Fresh : Finset ℕ → Finset ℕ → Prop)
-    (q : ℝ) (hq0 : 0 ≤ q) (hq1 : q ≤ 1)
+    (q : ℝ) (_hq0 : 0 ≤ q) (_hq1 : q ≤ 1)
     (hmono : ∀ ⦃S T : Finset ℕ⦄, S ⊆ T → Success S → Success T)
     (hforce : ∀ B ∈ I.powerset, ¬ Success B → ¬ Irregular B →
       ∀ F, Fresh B F → Success (B ∪ F))
@@ -249,8 +249,9 @@ theorem extension_bad_bound
             linarith [hfresh B hB hsuccess hirregular]
           simp only [hsuccess, not_false_eq_true, if_true, hirregular,
             and_false]
-          convert (mul_le_mul_of_nonneg_left hcond hwB) using 1 <;>
-            simp [hirregular] <;> ring
+          convert (mul_le_mul_of_nonneg_left hcond hwB) using 1
+          simp
+          ring
     _ = (1 - q) * HarmonicProb.prob I (fun B ↦ ¬ Success B) +
         q * HarmonicProb.prob I (fun B ↦ ¬ Success B ∧ Irregular B) := by
       rw [Finset.sum_add_distrib, ← Finset.mul_sum, ← Finset.mul_sum,
@@ -295,7 +296,7 @@ theorem extension_bad_bound_of_sampleFamilies
     (Samples : Finset ℕ → Finset (Finset ℕ))
     (q delta : ℝ) (hq0 : 0 ≤ q) (hq1 : q ≤ 1)
     (hmono : ∀ ⦃S T : Finset ℕ⦄, S ⊆ T → Success S → Success T)
-    (hSamples : ∀ B ∈ I.powerset, Samples B ⊆ J.powerset)
+    (_hSamples : ∀ B ∈ I.powerset, Samples B ⊆ J.powerset)
     (hforce : ∀ B ∈ I.powerset, ¬ Success B → ¬ Irregular B →
       ∀ F ∈ Samples B, Success (B ∪ F))
     (hmass : ∀ B ∈ I.powerset, ¬ Success B → ¬ Irregular B →

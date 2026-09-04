@@ -412,7 +412,7 @@ theorem sum_predecessorFibreMass_le
 fibres, no further probability reindexing is needed.  This is the exact
 interface left for the collision-to-template cover. -/
 theorem normalizedOffDiagonalExpectation_le_of_predecessor_cover
-    {I : Finset ℕ} {Good : Finset ℕ → Prop} [DecidablePred Good]
+    {I : Finset ℕ} {Good : Finset ℕ → Prop}
     (hI : ∀ i ∈ I, 1 ≤ i) (B : Finset ↑I)
     (hcover : normalizedOffDiagonalExpectation I Good ≤
       ∑ M ∈ B, predecessorFibreMass M) :
@@ -1019,12 +1019,12 @@ theorem profileSelectedBelow_largest_nonempty
         have hiMem : i ∈ profileSelectedBelow Q L := by
           simp [profileSelectedBelow, hi, hsel]
         rw [hempty] at hiMem
-        simpa using hiMem
+        simp at hiMem
       have hQi : Q i = none := by
         simpa [Selects] using hiNotSelected
       simp [hQi, localSignedDifference]
     · cases hQi : Q i with
-      | none => simp [hQi, localSignedDifference]
+      | none => simp [localSignedDifference]
       | some uv =>
           have huv : uv.1 = uv.2 := by
             by_contra huv
@@ -1033,7 +1033,7 @@ theorem profileSelectedBelow_largest_nonempty
               exact ⟨Finset.mem_univ i, uv, hQi, huv⟩
             have hiLe : i ≤ L := Finset.le_max' _ _ hiMem
             exact (not_le_of_gt hi) hiLe
-          simp [hQi, localSignedDifference, huv]
+          simp [localSignedDifference, huv]
   have hsum : localSignedDifference L.1 (Q L) = 0 := by
     unfold profileSignedDifference at hbal
     rw [← Finset.sum_erase_add _ _ (Finset.mem_univ L)] at hbal
@@ -1188,9 +1188,9 @@ theorem profile_diagonal_above_largest
     (hi : largestProfileUnequalCoordinate Q hQ < i) :
     IsDiagonalOrNone (Q i) := by
   cases hQi : Q i with
-  | none => simp [IsDiagonalOrNone, hQi]
+  | none => simp [IsDiagonalOrNone]
   | some xy =>
-      simp only [IsDiagonalOrNone, hQi]
+      simp only [IsDiagonalOrNone]
       by_contra hxy
       have hiMem : i ∈ profileUnequalCoordinates Q := by
         rw [profileUnequalCoordinates, Finset.mem_filter]
@@ -1501,7 +1501,7 @@ theorem restrictedReconstructedProfile_le_majorant
           else 0)
         · intro E' _
           by_cases hE' : Regular E' ∧ Selects E' M
-          · simp only [hE', if_true]
+          · simp only [hE']
             exact Finset.sum_nonneg fun xy' _ ↦ Finset.sum_nonneg fun n' _ ↦ by
               by_cases heq : fillHole E n xy = fillHole E' n' xy'
               · simp [heq, energyProfileWeight_nonneg hI]
@@ -1536,7 +1536,7 @@ theorem restrictedReconstructedProfile_le_majorant
         · intro M' _
           exact Finset.sum_nonneg fun E' _ ↦ by
             by_cases hE' : Regular E' ∧ Selects E' M'
-            · simp only [hE', if_true]
+            · simp only [hE']
               exact Finset.sum_nonneg fun xy' _ ↦
                 Finset.sum_nonneg fun n' _ ↦ by
                   by_cases heq : fillHole E n xy = fillHole E' n' xy'
@@ -1548,7 +1548,7 @@ theorem restrictedReconstructedProfile_le_majorant
     unfold restrictedReconstructionMajorant
     exact Finset.sum_nonneg fun M _ ↦ Finset.sum_nonneg fun E _ ↦ by
       by_cases hE : Regular E ∧ Selects E M
-      · simp only [hE, if_true]
+      · simp only [hE]
         exact Finset.sum_nonneg fun xy _ ↦ Finset.sum_nonneg fun n _ ↦ by
           by_cases heq : Q = fillHole E n xy
           · simp [heq, energyProfileWeight_nonneg hI]

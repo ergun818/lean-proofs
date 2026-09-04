@@ -72,7 +72,7 @@ logarithm.  We leave the elementary prime-power removal term separate; this
 is useful in finite block estimates because its square-root decay is much
 stronger than any power needed there. -/
 theorem exists_abs_chebyshevTheta_sub_natCast_le_logSaving_add
-    (D : ℝ) (hD : 0 ≤ D) :
+    (D : ℝ) (_hD : 0 ≤ D) :
     ∃ C : ℝ, 0 < C ∧
       ∃ X0 : ℕ, 4 ≤ X0 ∧
         ∀ x : ℕ, X0 ≤ x →
@@ -258,7 +258,7 @@ lemma chebyshevTheta_nat_sub_eq_sum_Ioc_primes {a b : ℕ} (hab : a ≤ b) :
 
 /-- Exact theta description of a multiplicative prime block. -/
 lemma chebyshevTheta_sub_eq_sum_block {r x : ℝ}
-    (hx : 0 ≤ x) (hrx : x ≤ r * x) :
+    (_hx : 0 ≤ x) (hrx : x ≤ r * x) :
     Chebyshev.theta (r * x) - Chebyshev.theta x =
       ∑ p ∈ block r x, Real.log p := by
   rw [Chebyshev.theta_eq_theta_coe_floor (r * x),
@@ -353,8 +353,10 @@ lemma logBlockMass_theta_bounds {K i : ℕ} (hK : 0 < K) (hi : 0 < i) :
           Chebyshev.theta (Real.exp ((i : ℝ) / K))) * K /
             ((i : ℝ) * Real.exp ((i : ℝ) / K)) by
     constructor
-    · convert hs.1 using 1 <;> field_simp <;> ring
-    · convert hs.2 using 1 <;> field_simp <;> ring)
+    · convert hs.1 using 1
+      field_simp
+    · convert hs.2 using 1
+      field_simp)
 
 /-- Replacing a nonnegative real endpoint by its natural floor costs at most
 one in a theta remainder. -/
@@ -835,8 +837,7 @@ lemma thetaFloor_logSaving_le_exp_div_pow {C t : ℝ} {m : ℕ}
           (Real.log (⌊Real.exp t⌋₊ : ℝ)) ^ m + 1 := by
     have hpowEq : Real.rpow (Real.log (⌊Real.exp t⌋₊ : ℝ)) (m : ℝ) =
         (Real.log (⌊Real.exp t⌋₊ : ℝ)) ^ m := by
-      simpa using! (Real.rpow_natCast
-        (Real.log (⌊Real.exp t⌋₊ : ℝ)) m)
+      simp
     rw [hpowEq] at htheta
     exact htheta
   linarith
@@ -907,7 +908,7 @@ theorem exists_logBlockThetaError_le_exp_div_pow_add_two (m : ℕ) :
       |(Chebyshev.theta (Real.exp u) - Chebyshev.theta (Real.exp t)) -
         (Real.exp u - Real.exp t)| := by
     unfold logBlockThetaError
-    congr 1 <;> simp only [t, u]
+    congr 1
   change logBlockThetaError K i ≤ A * Real.exp t / t ^ m + 2
   rw [hdef]
   calc
@@ -976,7 +977,7 @@ theorem exists_logBlockThetaError_le_relative_pow (m : ℕ) :
 theta error of order `(K/i)^m` contributes one additional power to the
 reciprocal-mass error. -/
 lemma logBlockMassError_le_of_thetaError {K i m : ℕ} {A : ℝ}
-    (hK : 0 < K) (hi : 0 < i) (hA : 0 ≤ A)
+    (hK : 0 < K) (hi : 0 < i) (_hA : 0 ≤ A)
     (htheta : logBlockThetaError K i ≤
       A * Real.exp ((i : ℝ) / K) * (((K : ℝ) / i) ^ m)) :
     logBlockMassError K i ≤
@@ -1000,7 +1001,7 @@ lemma logBlockMassError_le_of_thetaError {K i m : ℕ} {A : ℝ}
         mul_le_mul_of_nonneg_left htheta hcoef
       _ = A * ((K : ℝ) / i) ^ (m + 1) := by
         rw [Real.exp_neg]
-        simp only [Nat.cast_add, Nat.cast_one, pow_succ]
+        simp only [pow_succ]
         field_simp [Real.exp_ne_zero]
   linarith
 
@@ -1106,7 +1107,7 @@ lemma abs_logBlockOccupancy_sub_inv_le_massPow_twenty_five
 /-- Exact Abel summation of the reciprocal-prime prefix against the
 Chebyshev theta function.  This is the identity to which the strong theta
 remainder is applied on a logarithmic block. -/
-theorem primeReciprocalPrefix_eq_theta_abel {x : ℝ} (hx : 2 ≤ x) :
+theorem primeReciprocalPrefix_eq_theta_abel {x : ℝ} (_hx : 2 ≤ x) :
     prime_summatory (fun p ↦ (p : ℝ)⁻¹) 2 x =
       Chebyshev.theta x * (x * Real.log x)⁻¹ +
         ∫ t in Set.Icc (2 : ℝ) x,

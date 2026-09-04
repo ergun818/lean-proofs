@@ -21,7 +21,7 @@ namespace Erdos144.BlockCRTClose
 
 noncomputable section
 
-variable {κ : Type*} [Fintype κ] [DecidableEq κ]
+variable {κ : Type*}
 
 /-- The block labels represented among the selected coordinates `Z`. -/
 def occupiedLabels (label : κ → ℕ) (Z : Finset κ) : Finset ℕ :=
@@ -136,7 +136,7 @@ theorem hasCloseDivisors_of_blockGood
     (hresolution : 2 * (L : ℝ) / K < Real.log 2)
     (hgood : BlockGood label L Z) :
     CRTClose.HasCloseDivisors n := by
-  let (i : κ) : NeZero (p i) := ⟨(hprime i).ne_zero⟩
+  classical
   obtain ⟨A, B, hAB, hAcard, hBcard, hsum⟩ :=
     blockGood_witness_ne hgood
   let A' := coordinateSet label Z A
@@ -186,7 +186,7 @@ theorem hasCloseDivisors_of_blockGood
 
 /-! ## Exact CRT specialization -/
 
-variable [(i : κ) → NeZero (p i)]
+variable [Fintype κ] [(i : κ) → NeZero (p i)]
 
 /-- The occupied-block theorem specialized to the zero set of the exact CRT
 product model.  This is the form consumed by `CRTModel.crt_zeroSet_good_hasDensity`. -/

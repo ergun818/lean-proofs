@@ -59,6 +59,7 @@ theorem occupiedLabels_eq_image_fst (S : Finset (Sigma κ)) :
 def fiber (S : Finset (Sigma κ)) (i : ι) : Finset (κ i) :=
   Finset.univ.filter fun j => Sigma.mk i j ∈ S
 
+omit [Fintype ι] in
 @[simp] theorem mem_fiber (S : Finset (Sigma κ)) (i : ι) (j : κ i) :
     j ∈ fiber κ S i ↔ Sigma.mk i j ∈ S := by
   simp [fiber]
@@ -123,6 +124,7 @@ def blockWeight (p : (i : ι) → κ i → ℝ)
 def occupancyParam (p : (i : ι) → κ i → ℝ) (i : ι) : ℝ :=
   1 - ∏ j, (1 - p i j)
 
+omit [Fintype ι] [DecidableEq ι] in
 @[simp] theorem weight_empty (p : (i : ι) → κ i → ℝ) (i : ι) :
     Erdos697.Bernoulli.weight (Finset.univ : Finset (κ i)) (p i) ∅ =
       ∏ j, (1 - p i j) := by
@@ -131,6 +133,7 @@ def occupancyParam (p : (i : ι) → κ i → ℝ) (i : ι) : ℝ :=
 private abbrev LocalChoice (T : Finset ι) (i : ι) :=
   {U : Finset (κ i) // U.Nonempty ↔ i ∈ T}
 
+omit [Fintype ι] in
 private theorem sum_localChoice_weight (p : (i : ι) → κ i → ℝ)
     (T : Finset ι) (i : ι) :
     (∑ U : LocalChoice κ T i,

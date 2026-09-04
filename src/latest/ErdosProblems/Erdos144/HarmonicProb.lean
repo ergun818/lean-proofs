@@ -121,7 +121,7 @@ lemma prob_or_le (s : Finset ℕ) (P Q : Finset ℕ → Prop)
   linarith
 
 /-- Union bound for a finite family of explicitly represented events. -/
-lemma sum_biUnion_weight_le {κ : Type*} [DecidableEq κ]
+lemma sum_biUnion_weight_le {κ : Type*}
     (s : Finset ℕ) (J : Finset κ) (E : κ → Finset (Finset ℕ))
     (hs : ∀ n ∈ s, 1 ≤ n) :
     (∑ T ∈ J.biUnion E, weight s T) ≤
@@ -150,7 +150,7 @@ lemma sum_biUnion_weight_le {κ : Type*} [DecidableEq κ]
         rw [Finset.sum_insert hj]
 
 /-- Finite union bound, in predicate form. -/
-lemma prob_exists_le_sum {κ : Type*} [DecidableEq κ]
+lemma prob_exists_le_sum {κ : Type*}
     (s : Finset ℕ) (J : Finset κ) (P : κ → Finset ℕ → Prop)
     [∀ j, DecidablePred (P j)]
     [DecidablePred (fun T => ∃ j ∈ J, P j T)]

@@ -147,7 +147,7 @@ theorem profileToData_dataToProfile {I : Finset ℕ}
     have hbase : (i.1 : ↑I) = j.1 :=
       (Subtype.heq_iff_coe_eq hmem).mp hij
     have hq : qd i.1 = some (a j, b j) := by
-      simp [qd, dataToProfile, hbase, j.property]
+      simp [qd, hbase, j.property]
     simp [profileLabels, hq]
   have hb : (profileLabels qd).2 ≍ b := by
     apply Function.hfunext hdom
@@ -155,7 +155,7 @@ theorem profileToData_dataToProfile {I : Finset ℕ}
     have hbase : (i.1 : ↑I) = j.1 :=
       (Subtype.heq_iff_coe_eq hmem).mp hij
     have hq : qd i.1 = some (a j, b j) := by
-      simp [qd, dataToProfile, hbase, j.property]
+      simp [qd, hbase, j.property]
     simp [profileLabels, hq]
   grind
 
@@ -237,7 +237,6 @@ theorem energyProfileWeight_eq_subtype_weight_div {I : Finset ℕ}
           (fun i ↦ 1 / (i.1 : ℝ)) (profileSupport q) /
         (9 : ℝ) ^ (profileSupport q).card := by
   unfold energyProfileWeight Erdos697.Bernoulli.weight
-  change (∏ i ∈ (Finset.univ : Finset ↑I), localEnergyWeight i.1 (q i)) = _
   rw [← Finset.prod_filter_mul_prod_filter_not
     (Finset.univ : Finset ↑I) (fun i ↦ Selects q i)
       (fun i ↦ localEnergyWeight i.1 (q i))]
@@ -596,10 +595,6 @@ private theorem sum_profileEvent_dataToProfile
         apply Fintype.sum_congr
         exact hpoint
       _ = ∑ ab ∈ subtypeBalancedPairs S, c := by
-        change (∑ ab ∈ (Finset.univ : Finset
-          ((↑S → Fin 3) × (↑S → Fin 3))), if
-            subtypeSignedValue S ab.1 - subtypeSignedValue S ab.2 = 0 ∧
-              ab.1 ≠ ab.2 then c else 0) = _
         rw [← Finset.sum_filter]
         congr 1
         ext ab
@@ -611,7 +606,6 @@ private theorem sum_profileEvent_dataToProfile
             (9 : ℝ) ^ (S.image Subtype.val).card := by
         rw [subtypeBalancedPairs_card]
         dsimp [c]
-        push_cast
         ring
   · rw [if_neg hGood]
     apply Finset.sum_eq_zero
@@ -676,13 +670,6 @@ theorem normalizedOffDiagonalExpectation_eq_profile_sum
                 (HarmonicOctaves.offDiagonalSignedEnergy S : ℝ) /
               (9 : ℝ) ^ S.card
           else 0 := by
-    change (∑ S ∈ (Finset.univ : Finset (Finset ↑I)),
-        if Good (S.image Subtype.val) then
-          HarmonicProb.weight I (S.image Subtype.val) *
-              (HarmonicOctaves.offDiagonalSignedEnergy
-                (S.image Subtype.val) : ℝ) /
-            (9 : ℝ) ^ (S.image Subtype.val).card
-        else 0) = _
     refine Finset.sum_bij (fun S _ ↦ S.image Subtype.val) ?_ ?_ ?_ ?_
     · intro S _
       rw [Finset.mem_powerset]
