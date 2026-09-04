@@ -542,8 +542,8 @@ theorem ordinaryDeltaComplex_ne_zero (m : ℕ) :
   intro hzero
   cases m with
   | zero =>
-      simpa [ordinaryDeltaComplex, Erdos240Delta.delta,
-        Erdos240Delta.deltaNumerator, Erdos240Delta.deltaNumeratorInt] using hzero
+      simp [ordinaryDeltaComplex, Erdos240Delta.delta,
+        Erdos240Delta.deltaNumerator, Erdos240Delta.deltaNumeratorInt] at hzero
   | succ m =>
       have hdegree := natDegree_ordinaryDeltaComplex (m + 1)
       rw [hzero, natDegree_zero] at hdegree
@@ -554,7 +554,7 @@ theorem poweredDeltaComplex_ne_zero_of_pos {h lambda : ℕ} (hh : 0 < h) :
   intro hzero
   cases lambda with
   | zero =>
-      simpa [poweredDeltaComplex, poweredDelta] using hzero
+      simp [poweredDeltaComplex, poweredDelta] at hzero
   | succ lambda =>
       have hdegree := natDegree_poweredDeltaComplex h (lambda + 1)
       rw [hzero, natDegree_zero] at hdegree
@@ -918,8 +918,8 @@ theorem terminalNodeNumerator_injective
     (P : VDPLParameters ι) {N : ℕ} :
     Function.Injective (terminalNodeNumerator P : TerminalNode P N → ℕ) := by
   intro x y hxy
-  have hx : (x.2 : ℕ) < 12 := by simpa [VDPLParameters.q] using x.2.isLt
-  have hy : (y.2 : ℕ) < 12 := by simpa [VDPLParameters.q] using y.2.isLt
+  have hx : (x.2 : ℕ) < 12 := by simp
+  have hy : (y.2 : ℕ) < 12 := by simp
   simp only [terminalNodeNumerator, VDPLParameters.q] at hxy
   apply Prod.ext
   · apply Fin.ext
@@ -1091,7 +1091,7 @@ structure TerminalEquation13
     (c : LambdaBox (activeTerminalBox P oldSide) → ℂ) where
   positive : 0 < N
   terminal : P.LlastZeroScale < ((P.q ^ N : ℕ) : ℝ)
-  elimination : ∀ (x : TerminalNode P N) (m : ℕ),
+  elimination : ∀ (_x : TerminalNode P N) (m : ℕ),
     m < terminalMultiplicity P N →
       ∀ r : Fin (Fintype.card ι),
         ContextualEliminationFamily oldSide r
@@ -1116,7 +1116,7 @@ def ofNonsingularTensor
     {c : LambdaBox (activeTerminalBox P oldSide) → ℂ}
     (hN : 0 < N)
     (hterminal : P.LlastZeroScale < ((P.q ^ N : ℕ) : ℝ))
-    (E : ∀ (x : TerminalNode P N) (m : ℕ),
+    (E : ∀ (_x : TerminalNode P N) (m : ℕ),
       m < terminalMultiplicity P N →
         ∀ r : Fin (Fintype.card ι), NonsingularFamily (oldSide r))
     (hrel : ∀ (x : TerminalNode P N) (m : ℕ)
@@ -1157,7 +1157,7 @@ def ofTensor
     {c : LambdaBox (activeTerminalBox P oldSide) → ℂ}
     (hN : 0 < N)
     (hterminal : P.LlastZeroScale < ((P.q ^ N : ℕ) : ℝ))
-    (E : ∀ (x : TerminalNode P N) (m : ℕ),
+    (E : ∀ (_x : TerminalNode P N) (m : ℕ),
       m < terminalMultiplicity P N →
         ∀ r : Fin (Fintype.card ι), EliminationFamily (oldSide r))
     (hrel : ∀ (x : TerminalNode P N) (m : ℕ)

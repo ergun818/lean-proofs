@@ -313,7 +313,7 @@ theorem exp_neg_four_heightScale_lt_stateIntegralLiouvilleThreshold
         congr 1
         ring
   change Real.exp (-(4 * H)) < _
-  simp only [stateIntegralLiouvilleThreshold, one_pow, inv_one, D]
+  simp only [stateIntegralLiouvilleThreshold, one_pow, inv_one]
   rw [show Real.exp (-(4 * H)) = 1 / Real.exp (4 * H) by
     rw [one_div, ← Real.exp_neg]]
   rw [div_div]
@@ -321,5 +321,7 @@ theorem exp_neg_four_heightScale_lt_stateIntegralLiouvilleThreshold
 
 end Erdos240.BakerSourceLiouvilleLowerBounds
 
-#print axioms Erdos240.BakerSourceLiouvilleLowerBounds.norm_state_commonDeltaDenominator_lt_exp_three_heightScale
-#print axioms Erdos240.BakerSourceLiouvilleLowerBounds.exp_neg_four_heightScale_lt_stateIntegralLiouvilleThreshold
+open Erdos240.BakerSourceLiouvilleLowerBounds in
+#print axioms norm_state_commonDeltaDenominator_lt_exp_three_heightScale
+open Erdos240.BakerSourceLiouvilleLowerBounds in
+#print axioms exp_neg_four_heightScale_lt_stateIntegralLiouvilleThreshold

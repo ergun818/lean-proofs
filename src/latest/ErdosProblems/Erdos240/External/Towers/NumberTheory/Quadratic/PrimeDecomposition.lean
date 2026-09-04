@@ -392,11 +392,11 @@ theorem two_inert_eight (k : ℤ) :
   fin_cases r
   · simp only [Nat.reduceAdd, Fin.zero_eta, Fin.isValue, Int.cast_add,
       Int.cast_mul, Int.cast_ofNat, Int.cast_one, htwo, zero_mul, zero_add,
-      one_mul, ne_eq]
+      ne_eq]
     decide
   · simp only [Nat.reduceAdd, Fin.mk_one, Fin.isValue, Int.cast_add,
       Int.cast_mul, Int.cast_ofNat, Int.cast_one, htwo, zero_mul, zero_add,
-      one_mul, ne_eq]
+      ne_eq]
     decide
 
 /-- Theorem 94(iii), first case, for `m = 4k + 2`. -/
@@ -492,7 +492,7 @@ theorem odd_ramifies_order
       rw [hq]
       rw [ht]
       ring
-    exact hpZ.not_unit (hm (p : ℤ) <| by simpa [pow_two] using hsq)
+    exact hpZ.not_isUnit (hm (p : ℤ) <| by simpa [pow_two] using hsq)
   have hcop : IsCoprime (p : ℤ) q :=
     hpZ.irreducible.coprime_iff_not_dvd.mpr hnot
   change ∃ u v : ℤ, u * (p : ℤ) + v * q = 1 at hcop

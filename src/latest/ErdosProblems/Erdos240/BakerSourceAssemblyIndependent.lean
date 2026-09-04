@@ -424,7 +424,7 @@ theorem false (endpoint : ZeroCountEndpoint chain κ) : False := by
     intro i j hij
     apply endpoint.node_injective
     have hijReal := congrArg Complex.re hij
-    simp at hijReal
+    simp only [Complex.natCast_re] at hijReal
     exact_mod_cast hijReal
   have hzero : ∀ i k, k < endpoint.multiplicity i →
       (hasseDeriv k
@@ -978,13 +978,15 @@ theorem uniformBounds_of_sourceCertificates
 #print axioms Erdos240.BakerSourceAssemblyIndependent.ExtrapolationChain.vanishesAtLevel
 #print axioms Erdos240.BakerSourceAssemblyIndependent.ConcreteSourceChain.false
 #print axioms Erdos240.BakerSourceAssemblyIndependent.ConcreteSourceChain.false_of_initialEstimates
-#print axioms Erdos240.BakerSourceAssemblyIndependent.ConcreteSourceChain.false_of_initialRequirements
+open Erdos240.BakerSourceAssemblyIndependent.ConcreteSourceChain in
+#print axioms false_of_initialRequirements
 #print axioms Erdos240.BakerSourceAssemblyIndependent.ZeroCountEndpoint.false
 #print axioms Erdos240.BakerSourceAssemblyIndependent.smallFormContradiction_of_concreteSourceChains
 #print axioms Erdos240.BakerSourceAssemblyIndependent.uniformBounds_of_concreteSourceChains
 #print axioms Erdos240.BakerSourceAssemblyIndependent.normalizedConcreteSourceChains_of_components
 #print axioms Erdos240.BakerSourceAssemblyIndependent.concreteSourceChains_of_normalized
-#print axioms Erdos240.BakerSourceAssemblyIndependent.uniformBounds_of_normalizedConcreteSourceChains
+open Erdos240.BakerSourceAssemblyIndependent in
+#print axioms uniformBounds_of_normalizedConcreteSourceChains
 #print axioms Erdos240.BakerSourceAssemblyIndependent.smallFormContradiction_of_sourceCertificates
 #print axioms Erdos240.BakerSourceAssemblyIndependent.integralCutoffBounds_of_sourceCertificates
 #print axioms Erdos240.BakerSourceAssemblyIndependent.uniformBounds_of_sourceCertificates

@@ -26,6 +26,7 @@ open BakerLemma3Concrete
 variable {oldRank : ℕ} [Nonempty (Fin oldRank)]
   (P : VDPLParameters (Fin oldRank))
 
+omit [Nonempty (Fin oldRank)] in
 /-- The successor coprime radius is much smaller than the terminal
 source-Lemma-5 radius; this quantitative form absorbs an extra radius copy. -/
 theorem two_mul_R_succ_le_lemmaFiveLocalRadius (J : ℕ) :
@@ -46,6 +47,7 @@ theorem two_mul_R_succ_le_lemmaFiveLocalRadius (J : ℕ) :
     _ = 16 * (((P.q ^ J : ℕ) : ℝ)) * P.h *
         P.k ^ (1 / 2 : ℝ) := by ring
 
+omit [Nonempty (Fin oldRank)] in
 /-- The p.52 multiplicity is bounded by the terminal Lemma-5
 multiplicity, including its final `+1`. -/
 theorem Sstep_div_four_le_lemmaFiveLocalMultiplicity (J : ℕ) :

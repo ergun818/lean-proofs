@@ -102,7 +102,7 @@ theorem innerStepCallback_of_honestAlgebraicGrowthBounds
     · exact Real.exp_le_exp.mpr
         (by
           convert P.localError_add_contourExponent_le_neg_five_sourceHeight
-            hcontour using 1 <;> ring)
+            hcontour using 1 ; ring)
     · by_cases ht0 : t = 0
       · subst t
         exact

@@ -41,13 +41,13 @@ variable {oldRank : ℕ} [Nonempty (Fin oldRank)]
 /-- Package four already-instantiated analytic source endpoints.  This is a
 named constructor rather than a local structure literal so the final source
 assembly is insensitive to harmless reordering of the data fields. -/
-def ofFields
+theorem ofFields
     (hbLast : bLast ≠ 0)
     (hintegral : ∀ J (state : LevelState P J), P.LevelOK J →
       IntegralStepInputs P state b bLast)
     (hrationalLower : ∀ J (state : LevelState P J), P.LevelOK J →
       AlgebraicRationalLowerInputs P state b bLast)
-    (hupper : ∀ J (state : LevelState P J) (hJ : P.LevelOK J),
+    (hupper : ∀ J (state : LevelState P J) (_hJ : P.LevelOK J),
       IntegralExtrapolatedAtLevel P (g state b bLast) J →
         RationalInterpolationUpperAtLevel P (f state b bLast)
           (BakerSourceRationalAlternativeIndependent.lower
@@ -64,7 +64,7 @@ def ofFields
 
 /-- Build the integral input from the concrete pointwise Lemma-4 conclusion,
 while accepting the other three analytic endpoints in their final forms. -/
-def ofPointwiseIntegral
+theorem ofPointwiseIntegral
     (hbLast : bLast ≠ 0)
     (hpoint : ∀ J (state : LevelState P J), P.LevelOK J →
       ∀ t, t < terminalStage P →
@@ -75,7 +75,7 @@ def ofPointwiseIntegral
               g state b bLast (l : ℂ) m = 0)
     (hrationalLower : ∀ J (state : LevelState P J), P.LevelOK J →
       AlgebraicRationalLowerInputs P state b bLast)
-    (hupper : ∀ J (state : LevelState P J) (hJ : P.LevelOK J),
+    (hupper : ∀ J (state : LevelState P J) (_hJ : P.LevelOK J),
       IntegralExtrapolatedAtLevel P (g state b bLast) J →
         RationalInterpolationUpperAtLevel P (f state b bLast)
           (BakerSourceRationalAlternativeIndependent.lower
@@ -101,7 +101,7 @@ def continuationOfPointwiseIntegral
               g state b bLast (l : ℂ) m = 0)
     (hrationalLower : ∀ J (state : LevelState P J), P.LevelOK J →
       AlgebraicRationalLowerInputs P state b bLast)
-    (hupper : ∀ J (state : LevelState P J) (hJ : P.LevelOK J),
+    (hupper : ∀ J (state : LevelState P J) (_hJ : P.LevelOK J),
       IntegralExtrapolatedAtLevel P (g state b bLast) J →
         RationalInterpolationUpperAtLevel P (f state b bLast)
           (BakerSourceRationalAlternativeIndependent.lower
@@ -192,5 +192,6 @@ end Erdos240.BakerSourceAnalyticDataFactoryIndependent
 #print axioms Erdos240.BakerSourceAnalyticDataFactoryIndependent.ofFields
 #print axioms Erdos240.BakerSourceAnalyticDataFactoryIndependent.ofPointwiseIntegral
 #print axioms Erdos240.BakerSourceAnalyticDataFactoryIndependent.continuationOfPointwiseIntegral
-#print axioms Erdos240.BakerSourceAnalyticDataFactoryIndependent.normalizedConcreteSourceComponents_of_finAnalyticData
+open Erdos240.BakerSourceAnalyticDataFactoryIndependent in
+#print axioms normalizedConcreteSourceComponents_of_finAnalyticData
 #print axioms Erdos240.BakerSourceAnalyticDataFactoryIndependent.uniformBounds_of_finAnalyticData

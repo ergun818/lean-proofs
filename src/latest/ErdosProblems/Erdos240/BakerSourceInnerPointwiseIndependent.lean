@@ -177,5 +177,6 @@ theorem state_integral_algebraicAlternative {oldRank : ℕ}
 
 end Erdos240.BakerSourceInnerPointwiseIndependent
 
-#print axioms Erdos240.BakerSourceInnerPointwiseIndependent.norm_entire_eval_lt_exp_neg_half_of_sharpOuter
+open Erdos240.BakerSourceInnerPointwiseIndependent in
+#print axioms norm_entire_eval_lt_exp_neg_half_of_sharpOuter
 #print axioms Erdos240.BakerSourceInnerPointwiseIndependent.state_integral_algebraicAlternative

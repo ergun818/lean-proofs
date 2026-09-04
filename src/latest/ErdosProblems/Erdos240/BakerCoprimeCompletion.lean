@@ -166,7 +166,7 @@ theorem coprimeCompletionAtLevel_of_explicit_bounds
       (lower := lower l m)
       (P.R_pos (J + 1)) (P.Sstep_div_four_pos_of_LevelOK hJ)
       hl hlR hlq (differentiable_sourceState_f state b bLast m)
-      (hpoly0 := (Real.exp_pos _).le)
+      (_hpoly0 := (Real.exp_pos _).le)
       (houter0 := (Real.exp_pos _).le)
       (hdecay0 := by positivity)
     · exact hboundary l hl hlR hlq m hm

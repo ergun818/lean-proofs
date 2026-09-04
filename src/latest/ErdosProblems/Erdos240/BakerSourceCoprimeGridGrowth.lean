@@ -587,7 +587,6 @@ theorem norm_polynomial_finiteRepeatedNodes_eval_le_uniform_complex
     _ = delta * ((s.card : ℝ) * T * T *
         (K ^ T * (2 : ℝ) ^ (s.card * T + T))) := by
       simp only [Finset.sum_const, Finset.card_range, nsmul_eq_mul]
-      push_cast
       ring
 
 /-- On the successor p. 52 circle the scaled head argument is at most `64h`. -/
@@ -719,7 +718,6 @@ theorem sourceHeadDeltaMajorant_le_exp_H_div_sixteen {oldRank : ℕ}
     (norm_scaledArgument_le_coprimeCircle P J z hz)).trans ?_
   apply VDPLParameters.pow_le_exp_of_mul_log_le (by norm_num)
   have hceil : Nat.ceil ((64 : ℝ) * P.h + P.h) = 65 * P.h := by
-    norm_num only
     rw [show (64 : ℝ) * P.h + P.h = (65 * P.h : ℕ) by
       push_cast; ring, Nat.ceil_natCast]
   have hcount :
@@ -1025,8 +1023,8 @@ theorem scaledAmplificationClosedForm_le_structural_quarter
               Real.log P.OmegaOld) * P.rank := by
             rw [k_rpow_one_sub_sigma_mul_rpow_sigma P]
   have hs : (initialSupportBound P : ℝ) ≤ Real.exp (H P / 6) := by
-    convert initialSupportBound_le_exp_sixth P hreq using 1 <;>
-      unfold H <;> ring_nf
+    convert initialSupportBound_le_exp_sixth P hreq using 1 ;
+      unfold H ; ring_nf
   have hHexp : H P ≤ Real.exp (H P) := by
     have h := Real.add_one_le_exp (H P)
     nlinarith [H_pos P]

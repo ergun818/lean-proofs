@@ -1391,8 +1391,8 @@ theorem twice_initialDimensionCondition_of_requirement
       unknownCount (initialBoxShape P) := by
   apply nat_lt_initial_unknownCount_of_real_scale P
   · exact two_le_LzeroScale_of_requirement P hreq
-  · convert twice_initial_row_scale_lt P hreq using 1 <;>
-      push_cast <;> ring
+  · convert twice_initial_row_scale_lt P hreq using 1 ;
+      push_cast ; ring
 
 /-- Exact Siegel-lemma slack at level zero, deduced from the displayed
 source requirement rather than assumed as a separate matrix hypothesis. -/
@@ -1417,8 +1417,8 @@ theorem eight_initialDimensionCondition_of_requirement
       unknownCount (initialBoxShape P) := by
   apply nat_lt_initial_unknownCount_of_real_scale P
   · exact two_le_LzeroScale_of_requirement P hreq
-  · convert eight_initial_row_scale_lt P hreq using 1 <;>
-      push_cast <;> ring
+  · convert eight_initial_row_scale_lt P hreq using 1 ;
+      push_cast ; ring
 
 theorem initial_eight_cardinality_slack_of_requirement
     {oldRank : ℕ} [Nonempty (Fin oldRank)]
@@ -1605,7 +1605,7 @@ theorem initial_unknownCount_le_exp_heightScale
   have hlog : Real.log (6 * scale) ≤ 2 * (6 * scale) ^ (1 / 2 : ℝ) := by
     have := Real.log_le_rpow_div (show 0 ≤ 6 * scale by positivity)
       (show (0 : ℝ) < 1 / 2 by norm_num)
-    convert this using 1 <;> norm_num [div_eq_mul_inv] <;> ring
+    convert this using 1 ; norm_num [div_eq_mul_inv] ; ring
   have hsqrt : 0 ≤ (6 * scale) ^ (1 / 2 : ℝ) :=
     Real.rpow_nonneg (by positivity) _
   have hsqrtSq : ((6 * scale) ^ (1 / 2 : ℝ)) ^ (2 : ℕ) = 6 * scale := by
@@ -1744,7 +1744,7 @@ theorem k_rpow_one_sub_sigma_mul_rpow_sigma {oldRank : ℕ}
     (P : VDPLParameters (Fin oldRank)) :
     P.k ^ (1 - P.sigma) * P.k ^ P.sigma = P.k := by
   rw [← Real.rpow_add P.k_pos]
-  convert Real.rpow_one P.k using 1 <;> ring_nf
+  convert Real.rpow_one P.k using 1 ; ring_nf
 
 /-- The `lambda₀` side of the cleared head consumes at most `H/32`. -/
 theorem initial_headSideFactor_le {oldRank : ℕ}
@@ -2044,7 +2044,6 @@ theorem initial_monomialMajorant_le {oldRank : ℕ}
           Real.log P.newHeight ≤
       2 * (P.h : ℝ) * P.k ^ (1 - P.sigma) * P.Omega *
         Real.log P.OmegaOld := by
-    push_cast
     calc
       (∑ r : Fin oldRank,
           ((P.LiZero r : ℝ) * initialRadius P) *
@@ -2202,7 +2201,7 @@ theorem exists_initial_auxiliary_coefficients
       hslack hunknown hmatrix
   refine ⟨c, hc, heq, ?_⟩
   unfold VDPLParameters.coeffHeight
-  convert hheight using 1 <;> ring_nf
+  convert hheight using 1 ; ring_nf
 
 /-- Source-faithful Lemma 2 coefficient construction.  This version uses
 the raw Siegel bound together with the printed factor-eight dimension
@@ -2247,7 +2246,7 @@ theorem exists_initial_auxiliary_coefficients_sourceHeight
     positivity
   have hunknown : (N : ℝ) ≤ Real.exp (H / 6) := by
     dsimp only [N, H]
-    convert initial_unknownCount_le_exp_heightScale P hunknownReq using 1 <;>
+    convert initial_unknownCount_le_exp_heightScale P hunknownReq using 1 ;
       ring_nf
   have hfinal := siegel_rpow_le_exp_third hH hMpos hslack hunknown
     (by simpa only [model, H] using hmatrix)

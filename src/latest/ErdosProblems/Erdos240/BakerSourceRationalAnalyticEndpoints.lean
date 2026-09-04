@@ -301,10 +301,10 @@ theorem rationalInterpolationUpperAtLevel_of_sourceBounds
 
 end Erdos240.BakerSourceRationalAnalyticEndpoints
 
-#print axioms
-  Erdos240.BakerSourceRationalAnalyticEndpoints.levelAlgebraicSourceRowError_ratCast_le_three_quarters
-#print axioms
-  Erdos240.BakerSourceRationalAnalyticEndpoints.norm_fSource_sub_gSource_terminalNode_le_three_quarters
+open Erdos240.BakerSourceRationalAnalyticEndpoints in
+#print axioms levelAlgebraicSourceRowError_ratCast_le_three_quarters
+open Erdos240.BakerSourceRationalAnalyticEndpoints in
+#print axioms norm_fSource_sub_gSource_terminalNode_le_three_quarters
 #print axioms
   Erdos240.BakerSourceRationalAnalyticEndpoints.norm_f_le_terminalRationalContour
 #print axioms

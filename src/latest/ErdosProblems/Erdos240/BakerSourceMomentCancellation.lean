@@ -309,7 +309,7 @@ theorem jetErrorStep_le_mass_mul {oldRank : ℕ}
     (P : VDPLParameters (Fin oldRank)) (N : ℕ) (bLast : ℤ)
     (E : VDPLMultiIndex (oldRank + 1) → ℝ)
     (m : VDPLMultiIndex (oldRank + 1)) {x : ℝ}
-    (hx : 0 ≤ x) (hm : E m ≤ x)
+    (_hx : 0 ≤ x) (hm : E m ≤ x)
     (hbump : ∀ i, E (bump m i) ≤ x) :
     jetErrorStep P N bLast E m ≤
       jetCoefficientMass P N bLast m * x := by
@@ -508,7 +508,7 @@ theorem norm_jetIterate_sub_le_of_weight {oldRank : ℕ}
     (P : VDPLParameters (Fin oldRank)) (N : ℕ) (bLast : ℤ)
     (F G : VDPLMultiIndex (oldRank + 1) → ℂ)
     (E : VDPLMultiIndex (oldRank + 1) → ℝ) (S j : ℕ)
-    (hE : ∀ m, 0 ≤ E m)
+    (_hE : ∀ m, 0 ≤ E m)
     (hpoint : ∀ m, VDPLMultiIndex.weight m ≤ S →
       ‖F m - G m‖ ≤ E m) :
     ∀ m, VDPLMultiIndex.weight m + j ≤ S →
@@ -812,13 +812,13 @@ end Erdos240.BakerSourceMomentCancellation
 #print axioms Erdos240.BakerSourceMomentCancellation.jetIterate_eq_zero_of_weight
 #print axioms Erdos240.BakerSourceMomentCancellation.iteratedDeriv_fSource_eq_jetIterate
 #print axioms Erdos240.BakerSourceMomentCancellation.jetIterate_g_eq_zero_of_vanishesOn
-#print axioms
-  Erdos240.BakerSourceMomentCancellation.norm_normalizedIteratedDeriv_f_le_jetErrorIterate_of_vanishesOn
-#print axioms
-  Erdos240.BakerSourceMomentCancellation.norm_normalizedIteratedDeriv_f_le_sourceJetCoefficientBound_pow_mul
-#print axioms
-  Erdos240.BakerSourceMomentCancellation.norm_normalizedIteratedDeriv_f_le_sourceError_of_integralSeed
+open Erdos240.BakerSourceMomentCancellation in
+#print axioms norm_normalizedIteratedDeriv_f_le_jetErrorIterate_of_vanishesOn
+open Erdos240.BakerSourceMomentCancellation in
+#print axioms norm_normalizedIteratedDeriv_f_le_sourceJetCoefficientBound_pow_mul
+open Erdos240.BakerSourceMomentCancellation in
+#print axioms norm_normalizedIteratedDeriv_f_le_sourceError_of_integralSeed
 #print axioms
   Erdos240.BakerSourceMomentCancellation.jetErrorIterate_const_div_factorial_le_pow
-#print axioms
-  Erdos240.BakerSourceMomentCancellation.norm_normalizedIteratedDeriv_fSource_le_sourceJetCoefficientBound_pow_mul
+open Erdos240.BakerSourceMomentCancellation in
+#print axioms norm_normalizedIteratedDeriv_fSource_le_sourceJetCoefficientBound_pow_mul

@@ -41,11 +41,11 @@ theorem four_mul_radius_div_gap_le_four_thirds
 is exactly `polynomial + (4/3) * outer * nodalDecay < lower`.
 -/
 def coprimeInterpolationCertificateOfBounds
-    {q R T l : ℕ} (hR : 0 < R) (hT : 0 < T)
-    (hl : 1 ≤ l) (hlR : l ≤ R) (hlq : ¬l.Coprime q)
+    {q R T l : ℕ} (hR : 0 < R) (_hT : 0 < T)
+    (_hl : 1 ≤ l) (hlR : l ≤ R) (hlq : ¬l.Coprime q)
     {f : ℂ → ℂ} (hf : Differentiable ℂ f)
     {lower polynomialBound outer decay : ℝ}
-    (hpoly0 : 0 ≤ polynomialBound) (houter0 : 0 ≤ outer)
+    (_hpoly0 : 0 ≤ polynomialBound) (houter0 : 0 ≤ outer)
     (hdecay0 : 0 ≤ decay)
     (hboundary : ∀ w, ‖w‖ = 4 * (R : ℝ) →
       ‖f w - (polynomial f (coprimeNodes q R T)).eval w‖ ≤ outer)

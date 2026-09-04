@@ -72,7 +72,7 @@ def basisTerm (R T r m j : ℕ) : ℂ[X] :=
   split_ifs <;> simp
 
 theorem cofactorPolynomial_eval_ne_zero_of_mem_closedBall
-    {R r : ℕ} (hr : 1 ≤ r) (hrR : r ≤ R)
+    {R r : ℕ} (hr : 1 ≤ r) (_hrR : r ≤ R)
     {z : ℂ} (hz : z ∈ closedBall (r : ℂ) (1 / 2 : ℝ)) :
     (cofactorPolynomial R r).eval z ≠ 0 := by
   rw [eval_cofactorPolynomial]
@@ -124,7 +124,7 @@ theorem cofactorPolynomial_norm_lower_on_half_circle
   have hpow : (1 / 2 : ℝ) ^ R =
       (1 / 2) * (1 / 2) ^ (R - 1) := by
     calc
-      (1 / 2 : ℝ) ^ R = (1 / 2) ^ ((R - 1) + 1) := by congr 1 <;> omega
+      (1 / 2 : ℝ) ^ R = (1 / 2) ^ ((R - 1) + 1) := by congr 1 ; omega
       _ = (1 / 2) * (1 / 2) ^ (R - 1) := by rw [pow_succ]; ring
   rw [hpow] at hfull
   nlinarith [norm_nonneg ((cofactorPolynomial R r).eval z)]
@@ -428,7 +428,7 @@ theorem cofactor_inverseJet_convolution
   rw [hderiv, iteratedDeriv_const]
   split_ifs with hn
   · simp [hn]
-  · simp [hn]
+  · simp
 
 /-- Multiplication by a power of the local parameter shifts Hasse jets. -/
 theorem hasseDeriv_centerPow_mul_eval

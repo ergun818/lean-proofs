@@ -53,7 +53,7 @@ structure ConcreteAnalyticSourceData {oldRank : ℕ}
     IntegralStepInputs P state b bLast
   rationalLower : ∀ J (state : LevelState P J), P.LevelOK J →
     AlgebraicRationalLowerInputs P state b bLast
-  upper : ∀ J (state : LevelState P J) (hJ : P.LevelOK J),
+  upper : ∀ J (state : LevelState P J) (_hJ : P.LevelOK J),
     IntegralExtrapolatedAtLevel P (g state b bLast) J →
     RationalInterpolationUpperAtLevel P (f state b bLast)
       (BakerSourceRationalAlternativeIndependent.lower P state b bLast) J
@@ -105,5 +105,6 @@ theorem integralStepInputsOfPointwise {oldRank : ℕ}
 
 end Erdos240.BakerSourceConcreteConstructionIndependent
 
-#print axioms Erdos240.BakerSourceConcreteConstructionIndependent.ConcreteAnalyticSourceData.continuation
+open Erdos240.BakerSourceConcreteConstructionIndependent.ConcreteAnalyticSourceData in
+#print axioms continuation
 #print axioms Erdos240.BakerSourceConcreteConstructionIndependent.integralStepInputsOfPointwise

@@ -174,8 +174,7 @@ theorem indexResidue_quotientIndex_injective {oldRank : ℕ}
       _ = mu.oldExponent r % P.q + P.q * (mu.oldExponent r / P.q) := by
         rw [hmod, hdiv]
       _ = mu.oldExponent r := Nat.mod_add_div _ _
-  ·
-    have hmod : lambda.lastExponent % P.q = mu.lastExponent % P.q := by
+  · have hmod : lambda.lastExponent % P.q = mu.lastExponent % P.q := by
       have := congrFun hres (Fin.last oldRank)
       simpa [indexResidue, exponentResidue, exponentVector] using
         congrArg Fin.val this
@@ -386,8 +385,7 @@ theorem residueLiftAgreement_quotientIndex {oldRank : ℕ}
       _ = (rho r.castSucc : ℕ) +
           P.q * (quotientIndex P J lambda).oldExponent r := by
         rw [hmod, quotientIndex_oldExponent]
-  ·
-    have hr := congrFun hres (Fin.last oldRank)
+  · have hr := congrFun hres (Fin.last oldRank)
     have hmod : lambda.lastExponent % P.q =
         (rho (Fin.last oldRank) : ℕ) := by
       simpa [indexResidue, exponentResidue, exponentVector] using
@@ -1516,8 +1514,7 @@ theorem coprimeCompletionAtLevel_of_interpolation_certificates
       ∀ m, VDPLMultiIndex.weight m ≤ P.Slevel (J + 1) →
         G (l : ℂ) m = 0 ∨ lower l m ≤ ‖F (l : ℂ) m‖) :
     CoprimeCompletionAtLevel P G J := by
-  intro hcop
-  intro l hl hlR m hm
+  intro hcop l hl hlR m hm
   by_cases hlcop : l.Coprime P.q
   · simpa only [Nat.cast_one, div_one] using
       hcop l hl hlR hlcop m (le_trans hm hbudget)

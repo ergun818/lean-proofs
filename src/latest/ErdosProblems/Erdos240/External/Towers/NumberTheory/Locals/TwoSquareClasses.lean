@@ -452,7 +452,6 @@ theorem quadratic_radicand_irreducible
   intro y hy
   apply quadratic_radicands_nonsquare ha
   refine ⟨y, ?_⟩
-  change (a : ℚ_[2]) = y * y
   simpa [pow_two] using hy.symm
 
 /-- Milne, Exercise 7-5, in square-class form: every nonsquare in `ℚ_[2]`

@@ -374,7 +374,7 @@ theorem norm_sourceHermitePolynomial_eval_le_exp_neg_half_of_currentInvariant
   have hcontourE :
       (2 : ℝ) ^ (((3 * R + l) * T) + R * T) ≤
         Real.exp ((1 / 6) * E) := by
-    convert hcontour using 1 <;> dsimp only [E] <;> ring_nf
+    convert hcontour using 1 ; dsimp only [E] ; ring_nf
   have hresult :
       ‖(polynomial (fun w ↦ f state b bLast w m)
           (integralNodes R T)).eval (l : ℂ)‖ ≤
@@ -399,7 +399,7 @@ theorem norm_sourceHermitePolynomial_eval_le_exp_neg_half_of_currentInvariant
     · have hk : k.1 ≤ T - 1 := by omega
       exact (Nat.add_le_add_left hk _).trans hmT
     · exact hS
-  convert hresult using 1 <;> dsimp only [E] <;> ring_nf
+  convert hresult using 1 ; dsimp only [E] ; ring_nf
 
 /-- The Hermite-polynomial half-exponent bound at the literal `t`th source
 Lemma-4 rectangle.  Radius positivity, strict separation of a genuinely new
@@ -536,10 +536,16 @@ end Erdos240.BakerSourceInnerStepAssemblyIndependent
 #print axioms Erdos240.BakerSourceInnerStepAssemblyIndependent.lemmaFourRadius_mono
 #print axioms Erdos240.BakerSourceInnerStepAssemblyIndependent.lemmaFourRadius_pos
 #print axioms Erdos240.BakerSourceInnerStepAssemblyIndependent.lemmaFourRadius_lt_succ
-#print axioms Erdos240.BakerSourceInnerStepAssemblyIndependent.norm_normalizedIteratedDeriv_f_le_sourceError_of_currentInvariant
-#print axioms Erdos240.BakerSourceInnerStepAssemblyIndependent.norm_normalizedIteratedDeriv_f_le_exp_neg_two_thirds_of_currentInvariant
-#print axioms Erdos240.BakerSourceInnerStepAssemblyIndependent.norm_normalizedIteratedDeriv_f_le_algebraicError_of_currentInvariant
-#print axioms Erdos240.BakerSourceInnerStepAssemblyIndependent.norm_normalizedIteratedDeriv_f_le_exp_neg_two_thirds_algebraic_of_currentInvariant
-#print axioms Erdos240.BakerSourceInnerStepAssemblyIndependent.norm_sourceHermitePolynomial_eval_le_exp_neg_half_of_currentInvariant
-#print axioms Erdos240.BakerSourceInnerStepAssemblyIndependent.norm_sourceHermitePolynomial_eval_le_exp_neg_half_at_innerStage
+open Erdos240.BakerSourceInnerStepAssemblyIndependent in
+#print axioms norm_normalizedIteratedDeriv_f_le_sourceError_of_currentInvariant
+open Erdos240.BakerSourceInnerStepAssemblyIndependent in
+#print axioms norm_normalizedIteratedDeriv_f_le_exp_neg_two_thirds_of_currentInvariant
+open Erdos240.BakerSourceInnerStepAssemblyIndependent in
+#print axioms norm_normalizedIteratedDeriv_f_le_algebraicError_of_currentInvariant
+open Erdos240.BakerSourceInnerStepAssemblyIndependent in
+#print axioms norm_normalizedIteratedDeriv_f_le_exp_neg_two_thirds_algebraic_of_currentInvariant
+open Erdos240.BakerSourceInnerStepAssemblyIndependent in
+#print axioms norm_sourceHermitePolynomial_eval_le_exp_neg_half_of_currentInvariant
+open Erdos240.BakerSourceInnerStepAssemblyIndependent in
+#print axioms norm_sourceHermitePolynomial_eval_le_exp_neg_half_at_innerStage
 #print axioms Erdos240.BakerSourceInnerStepAssemblyIndependent.innerStepCallback_of_pointwise

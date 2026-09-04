@@ -43,7 +43,6 @@ theorem Sstep_add_one_le_k_add_one_mul_normalizedCore {oldRank : ℕ}
   have hS := P.Sstep_cast_le J
   have hscale := levelScale_le_k_mul_normalizedCore P J
   have hcore := one_le_normalizedCore P
-  push_cast
   calc
     (P.Sstep J : ℝ) + 1 ≤
         P.k * (P.OmegaOld * Real.log P.newHeight * Real.log P.OmegaOld) +

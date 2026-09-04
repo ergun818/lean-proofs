@@ -162,8 +162,8 @@ theorem norm_vdplG_sub_vdplF_le_algebraic
             (1 - Complex.exp (-u)) := by
     rw [sourceTerm_modified_eq_algebraic_mul_exp_neg_perturbation
       hbLast lambda]
-    dsimp only [u]
-    ring
+    · dsimp only [u]
+      ring
   rw [hfactor, norm_mul, norm_mul]
   have hrem := ComplexTaylor.norm_exp_sub_partialSum_le (-u) 1
   have hpartial : ComplexTaylor.expPartialSum (-u) 1 = 1 := by

@@ -27,6 +27,7 @@ open BakerSourceOversizedConstantNumerics
 variable {oldRank : ℕ} [Nonempty (Fin oldRank)]
   (P : VDPLParameters (Fin oldRank))
 
+omit [Nonempty (Fin oldRank)] in
 /-- Three successor radii fit inside the source Lemma-5 local radius. -/
 theorem three_mul_R_succ_le_lemmaFiveLocalRadius (J : ℕ) :
     3 * P.R (J + 1) ≤ P.lemmaFiveLocalRadius J := by

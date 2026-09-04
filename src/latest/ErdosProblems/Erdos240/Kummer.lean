@@ -89,7 +89,7 @@ theorem primeClassFamilyHom_apply
     (power_class_pow q _) (a.toAdd i)).toMul = _
   simp only [toMul_sum, zmodClassHom_apply_val]
 
-theorem padicValRat_prod {ι : Type*} [DecidableEq ι] {p : ℕ} [Fact p.Prime]
+theorem padicValRat_prod {ι : Type*} {p : ℕ} [Fact p.Prime]
     (s : Finset ι) (f : ι → ℚ) (hf : ∀ i ∈ s, f i ≠ 0) :
     padicValRat p (∏ i ∈ s, f i) = ∑ i ∈ s, padicValRat p (f i) := by
   classical
@@ -103,10 +103,11 @@ theorem padicValRat_prod {ι : Type*} [DecidableEq ι] {p : ℕ} [Fact p.Prime]
           hf i (Finset.mem_insert_of_mem hi)
 
 theorem prime_product_eq_pow_dvd_exponents
-    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {ι : Type*} [Fintype ι]
     (p : ι → ℕ) (hp : ∀ i, (p i).Prime) (hinj : Function.Injective p)
     {q : ℕ} (e : ι → ℕ) (x : ℚ)
     (hx : x ^ q = ∏ i, (p i : ℚ) ^ e i) : ∀ i, q ∣ e i := by
+  classical
   intro i
   let _ : Fact (p i).Prime := ⟨hp i⟩
   have hv := congrArg (padicValRat (p i)) hx
@@ -132,7 +133,7 @@ theorem prime_product_eq_pow_dvd_exponents
     exact pow_ne_zero _ (by exact_mod_cast (hp j).ne_zero)
 
 theorem prime_product_is_not_pow_in_coprime_degree_extension
-    {ι K : Type*} [Fintype ι] [DecidableEq ι]
+    {ι K : Type*} [Fintype ι]
     [Field K] [Algebra ℚ K] [FiniteDimensional ℚ K]
     (p : ι → ℕ) (hp : ∀ i, (p i).Prime) (hinj : Function.Injective p)
     {q : ℕ} (hcop : q.Coprime (Module.finrank ℚ K))
@@ -154,7 +155,7 @@ theorem prime_product_is_not_pow_in_coprime_degree_extension
   exact Nat.eq_zero_of_dvd_of_lt hqei (he i)
 
 theorem primeClassFamilyHom_injective
-    {ι K : Type*} [Fintype ι] [DecidableEq ι]
+    {ι K : Type*} [Fintype ι]
     [Field K] [Algebra ℚ K] [FiniteDimensional ℚ K]
     {q : ℕ} [NeZero q] (hcop : q.Coprime (Module.finrank ℚ K))
     (p : ι → ℕ) (hp : ∀ i, (p i).Prime) (hinj : Function.Injective p) :
@@ -200,11 +201,12 @@ noncomputable def primeClassPCSubgro
     exact Set.finite_range _
 
 theorem primeClassPCSubgro_card
-    {ι K : Type*} [Fintype ι] [DecidableEq ι]
+    {ι K : Type*} [Fintype ι]
     [Field K] [Algebra ℚ K] [FiniteDimensional ℚ K]
     {q : ℕ} [NeZero q] (hcop : q.Coprime (Module.finrank ℚ K))
     (p : ι → ℕ) (hp : ∀ i, (p i).Prime) (hinj : Function.Injective p) :
     (primeClassPCSubgro (K := K) q p hp).card = q ^ Fintype.card ι := by
+  classical
   rw [PCSubgro.card_eq_card]
   have hi := primeClassFamilyHom_injective (K := K) hcop p hp hinj
   change Nat.card ↑((primeClassFamilyHom (K := K) q p hp).range) =
@@ -214,10 +216,10 @@ theorem primeClassPCSubgro_card
         Nat.card (Multiplicative (ι → ZMod q)) :=
       (Nat.card_congr
         (Equiv.ofInjective (primeClassFamilyHom (K := K) q p hp) hi)).symm
-    _ = q ^ Fintype.card ι := by simp [Nat.card_fun]
+    _ = q ^ Fintype.card ι := by simp
 
 theorem finrank_prime_kummerField
-    {ι : Type*} {K Ω : Type u} [Fintype ι] [DecidableEq ι]
+    {ι : Type*} {K Ω : Type u} [Fintype ι]
     [Field K] [Field Ω] [Algebra ℚ K] [Algebra K Ω]
     [FiniteDimensional ℚ K] [IsAlgClosure K Ω]
     {q : ℕ} [NeZero q] (hroots : (primitiveRoots q K).Nonempty)
@@ -230,7 +232,7 @@ theorem finrank_prime_kummerField
     primeClassPCSubgro_card (K := K) hcop p hp hinj]
 
 theorem finrank_adjoin_prime_radicals
-    {ι : Type*} {K Ω : Type u} [Fintype ι] [DecidableEq ι]
+    {ι : Type*} {K Ω : Type u} [Fintype ι]
     [Field K] [Field Ω] [Algebra ℚ K] [Algebra ℚ Ω] [Algebra K Ω]
     [IsScalarTower ℚ K Ω] [FiniteDimensional ℚ K] [IsAlgClosure K Ω]
     {q : ℕ} [NeZero q] (hroots : (primitiveRoots q K).Nonempty)
@@ -247,7 +249,7 @@ theorem finrank_adjoin_prime_radicals
     rintro x ⟨i, rfl⟩
     rw [hbeta i]
     exact (IntermediateField.mem_bot).2
-      ⟨algebraMap ℚ K (p i : ℚ), by simp [IsScalarTower.algebraMap_apply]⟩
+      ⟨algebraMap ℚ K (p i : ℚ), by simp⟩
   let : FiniteDimensional K L :=
     dimensional_adjoin_pow q (NeZero.pos q) (Set.range beta)
       (Set.finite_range beta) hpow
@@ -312,7 +314,7 @@ theorem finrank_adjoin_prime_radicals
   exact le_antisymm hupper hlower
 
 theorem finrank_adjoin_prime_radicals_rat
-    {ι : Type*} {Ω : Type u} [Fintype ι] [DecidableEq ι]
+    {ι : Type*} {Ω : Type u} [Fintype ι]
     [Field Ω] [Algebra ℚ Ω] [IsAlgClosure ℚ Ω]
     (K : IntermediateField ℚ Ω) [hfd : FiniteDimensional ℚ K]
     {q : ℕ} [NeZero q] (hroots : (primitiveRoots q K).Nonempty)
@@ -364,7 +366,7 @@ theorem finrank_adjoin_prime_radicals_rat
     rintro x ⟨i, rfl⟩
     rw [hbeta i]
     exact (IntermediateField.mem_bot).2
-      ⟨algebraMap ℚ K (p i : ℚ), by simp [IsScalarTower.algebraMap_apply]⟩
+      ⟨algebraMap ℚ K (p i : ℚ), by simp⟩
   let : FiniteDimensional K L :=
     dimensional_adjoin_pow q (NeZero.pos q) (Set.range beta)
       (Set.finite_range beta) hpowK
@@ -404,7 +406,7 @@ theorem finrank_adjoin_prime_radicals_rat
 /-- Distinct rational primes have independent thirteenth roots: adjoining any
 choice of those roots to `ℚ` has the maximal possible degree. -/
 theorem finrank_adjoin_thirteenthRoots_primes_rat
-    {ι : Type*} {Ω : Type u} [Fintype ι] [DecidableEq ι]
+    {ι : Type*} {Ω : Type u} [Fintype ι]
     [Field Ω] [Algebra ℚ Ω] [IsAlgClosure ℚ Ω]
     (p : ι → ℕ) (hp : ∀ i, (p i).Prime) (hinj : Function.Injective p)
     (beta : ι → Ω)

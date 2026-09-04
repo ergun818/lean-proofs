@@ -40,7 +40,7 @@ factors receive their index. -/
 def fallingDenom (k i : ℕ) : ℕ :=
   if i = 0 then k else i
 
-theorem fallingDenom_pos {k i : ℕ} (hk : 0 < k) (hi : i < k) :
+theorem fallingDenom_pos {k i : ℕ} (hk : 0 < k) (_hi : i < k) :
     0 < fallingDenom k i := by
   simp only [fallingDenom]
   split_ifs with h
@@ -180,7 +180,7 @@ theorem map_scaledFallingChooseInt (h k : ℕ) (hk : k ≤ h) :
     (scaledFallingChooseInt (Nat.lcmUpto h) k).map (Int.castRingHom ℚ) =
       (fallingChoose k).comp (C (Nat.lcmUpto h : ℚ) * X) := by
   obtain rfl | k := k
-  · simp [scaledFallingChooseInt, fallingChoose, Ring.choose_zero_right]
+  · simp [scaledFallingChooseInt, fallingChoose]
   · have hkpos : 0 < k + 1 := Nat.succ_pos k
     simp only [scaledFallingChooseInt, Polynomial.map_prod]
     rw [Finset.prod_congr rfl (fun i hi ↦
@@ -249,8 +249,7 @@ theorem coeff_comp_C_mul_X_add_C (p : ℚ[X]) (L : ℕ) (z : ℤ) (m : ℕ) :
     (p.comp (C (L : ℚ) * X + C (z : ℚ))).coeff m =
         ((taylor (z : ℚ) p).comp (C (L : ℚ) * X)).coeff m := by
       congr 1
-      simp only [taylor_apply, comp_assoc, add_comp, X_comp, C_comp,
-        mul_comp]
+      simp only [taylor_apply, comp_assoc, add_comp, X_comp, C_comp]
     _ = (taylor (z : ℚ) p).coeff m * (L : ℚ) ^ m := by
       exact comp_C_mul_X_coeff
     _ = (L : ℚ) ^ m * (hasseDeriv m p).eval (z : ℚ) := by

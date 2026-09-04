@@ -129,5 +129,5 @@ end Erdos240.BakerSourceAlgebraicTargetError
 
 #print axioms
   Erdos240.BakerSourceAlgebraicTargetError.four_heightScale_le_three_quarters_sourceExponent
-#print axioms
-  Erdos240.BakerSourceAlgebraicTargetError.exp_neg_three_quarters_sourceExponent_lt_integralThreshold
+open Erdos240.BakerSourceAlgebraicTargetError in
+#print axioms exp_neg_three_quarters_sourceExponent_lt_integralThreshold

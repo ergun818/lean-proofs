@@ -179,8 +179,8 @@ theorem integralStepInputs_of_sourceBounds
           P.k ^ (1 - P.sigma +
             P.epsilon * ((t + 1 : ℕ) : ℝ))) *
           (P.Omega * Real.log P.OmegaOld)) by rfl]
-    convert hpos using 1 <;>
-      simp only [sourceHeightUnit, positiveStageHeightUnit] <;> ring_nf
+    convert hpos using 1 ;
+      simp only [sourceHeightUnit, positiveStageHeightUnit] ; ring_nf
   · intro m hm
     norm_num [outer]
   · intro t htpos ht m hm
@@ -287,7 +287,8 @@ theorem uniform_rational_prime_log_lower_bound :
 end Erdos240.BakerSourceFinalAssemblyIndependent
 
 #print axioms Erdos240.BakerSourceFinalAssemblyIndependent.sourceTenThreshold_mem_sourceParameters
-#print axioms Erdos240.BakerSourceFinalAssemblyIndependent.exists_uniform_completeSourceConstant_and_requirement
+open Erdos240.BakerSourceFinalAssemblyIndependent in
+#print axioms exists_uniform_completeSourceConstant_and_requirement
 #print axioms Erdos240.BakerSourceFinalAssemblyIndependent.integralStepInputs_of_sourceBounds
 #print axioms Erdos240.BakerSourceFinalAssemblyIndependent.rationalInputs_of_sourceBounds
 #print axioms Erdos240.BakerSourceFinalAssemblyIndependent.hasNormalizedFinAnalyticSourceData

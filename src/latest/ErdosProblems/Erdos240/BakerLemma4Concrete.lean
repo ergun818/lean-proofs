@@ -890,7 +890,7 @@ theorem norm_eval_le_jetEvaluationFactor
         calc
           _ ≤ ‖P.eval a‖ + ‖z - a‖ * ‖Q.eval z‖ := by
             exact (norm_add_le _ _).trans_eq
-              (congrArg₂ (.+.) rfl (norm_mul _ _))
+              (congrArg₂ (·+·) rfl (norm_mul _ _))
           _ ≤ delta + A *
                 (jetEvaluationFactor nodes.length A *
                   ((nodes.length + 2 : ℕ) * delta)) := by
@@ -1086,7 +1086,7 @@ theorem localCircle_left_factor_lower {z : ℂ} {r i : ℕ}
     calc
       ‖((r : ℕ) : ℂ) - ((i + 1 : ℕ) : ℂ)‖ =
           ‖(((r : ℕ) : ℂ) - z) - (((i + 1 : ℕ) : ℂ) - z)‖ := by
-        congr 1 <;> ring
+        congr 1 ; ring
       _ ≤ ‖((r : ℕ) : ℂ) - z‖ + ‖((i + 1 : ℕ) : ℂ) - z‖ :=
         norm_sub_le _ _
       _ = ‖((r : ℕ) : ℂ) - z‖ + ‖z - ((i + 1 : ℕ) : ℂ)‖ := by
@@ -1113,7 +1113,7 @@ theorem localCircle_right_factor_lower {z : ℂ} {r j : ℕ}
     calc
       ‖((r + j + 1 : ℕ) : ℂ) - (r : ℂ)‖ =
           ‖(((r + j + 1 : ℕ) : ℂ) - z) - ((r : ℂ) - z)‖ := by
-        congr 1 <;> ring
+        congr 1 ; ring
       _ ≤ ‖((r + j + 1 : ℕ) : ℂ) - z‖ + ‖(r : ℂ) - z‖ :=
         norm_sub_le _ _
       _ = ‖((r + j + 1 : ℕ) : ℂ) - z‖ + ‖z - (r : ℂ)‖ := by
@@ -1368,7 +1368,7 @@ theorem norm_normalized_localCircleKernel_integral_le
       calc
         ‖(l : ℂ) - (r : ℂ)‖ =
             ‖((l : ℂ) - z) - ((r : ℂ) - z)‖ := by
-          congr 1 <;> ring
+          congr 1 ; ring
         _ ≤ ‖(l : ℂ) - z‖ + ‖(r : ℂ) - z‖ := norm_sub_le _ _
         _ = ‖(l : ℂ) - z‖ + ‖z - (r : ℂ)‖ := by
           rw [norm_sub_rev (r : ℂ) z]
@@ -1484,7 +1484,7 @@ theorem norm_sum_normalized_localCircleKernel_integral_le_exp_add
 and a `1/6`-exponent factorial-contour loss leave the required `1/2`
 exponent. -/
 theorem norm_sum_normalized_localCircleKernel_integral_le_exp
-    {R S l : ℕ} (hRl : R < l) {A delta : ℝ} (hA : 0 ≤ A)
+    {R S l : ℕ} (hRl : R < l) {A delta : ℝ} (_hA : 0 ≤ A)
     (hdelta : 0 ≤ delta) (hsmall : delta ≤ Real.exp (-(2 / 3) * A))
     (hcontour :
       (2 : ℝ) ^ (((3 * R + l) * S) + R * S) ≤
@@ -1745,7 +1745,8 @@ theorem differentiable_sourceState_f
   change Differentiable ℂ (fun z ↦
     vdplF (coordinatesForState state) state.support state.coeff P.h b bLast
       (oldLog P) P.q N z (toSourceMultiIndex P m))
-  exact differentiable_vdplF_for_lemma4 (coordinatesForState state) state.support state.coeff P.h b bLast
+  exact differentiable_vdplF_for_lemma4 (coordinatesForState state)
+    state.support state.coeff P.h b bLast
     (oldLog P) P.q N (toSourceMultiIndex P m)
 
 /-- Concrete source Lemma 4 endpoint for the corrected coefficient state.

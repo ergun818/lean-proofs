@@ -182,7 +182,7 @@ theorem norm_sharpClearedValue_le_one_of_dvd
   have hBA : B ≤ A := by simpa [A, B] using hsub
   have hFA : F ≤ A := by simpa [A, F] using hkey
   have hM0 : 0 ≤ M := by simpa [M] using hLnonneg
-  have hW0 : 0 ≤ W := by simpa [W] using hwval_nonneg
+  have hW0 : 0 ≤ W := by simp [W]
   have hEq : B + F + V = W := by simpa [B, F, V, W] using hwval'
   have htwo :
       ((2 * h * lambda : ℕ) : ℤ) * (padicValNat p q : ℤ) = 2 * A := by

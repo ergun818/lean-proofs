@@ -154,7 +154,7 @@ def terminalActiveIndexToLevel {oldRank : ℕ}
           rw [hs]
           exact Nat.succ_le_succ (state.oldSide_le r)⟩
       lastExponentFin :=
-        ⟨0, by simpa using Nat.succ_pos (levelBoxShape P N).lastMax⟩ }
+        ⟨0, by simp⟩ }
 
 @[simp] theorem terminalActiveIndexToLevel_shift {oldRank : ℕ}
     {P : VDPLParameters (Fin oldRank)} {N : ℕ}
@@ -365,7 +365,7 @@ theorem sum_level_eq_sum_terminalActive {oldRank : ℕ}
         refine ⟨hold, ?_⟩
         apply Nat.eq_zero_of_le_zero
         simpa only [hlastSide] using hlast
-      exact hnot (by simp only [inside, Finset.mem_filter,
+      exact hnot (by simp only [Finset.mem_filter,
         Finset.mem_univ, true_and]; exact hin)
     simp only [hcoeff, Int.cast_zero, zero_mul]
   rw [hrestrict]

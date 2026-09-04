@@ -214,7 +214,6 @@ theorem integral_doubled_coordinates
     · exact hb
     · refine ⟨n, ?_⟩
       apply Rat.intCast_injective
-      change ((a ^ 2 - m * b ^ 2 : ℤ) : ℚ) = ((4 * n : ℤ) : ℚ)
       push_cast
       change (a : ℚ) = 2 * x.re at ha
       change (b : ℚ) = 2 * x.im at hb

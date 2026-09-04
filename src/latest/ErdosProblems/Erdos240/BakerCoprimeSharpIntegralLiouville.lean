@@ -191,7 +191,7 @@ theorem exp_neg_five_halves_heightScale_lt_successor_stateIntegralLiouvilleThres
         congr 1
         ring
   change Real.exp (-((5 / 2 : ℝ) * H)) < _
-  simp only [stateIntegralLiouvilleThreshold, one_pow, inv_one, D]
+  simp only [stateIntegralLiouvilleThreshold, one_pow, inv_one]
   rw [show Real.exp (-((5 / 2 : ℝ) * H)) =
       1 / Real.exp ((5 / 2 : ℝ) * H) by
     rw [one_div, ← Real.exp_neg]]
@@ -200,5 +200,7 @@ theorem exp_neg_five_halves_heightScale_lt_successor_stateIntegralLiouvilleThres
 
 end Erdos240.BakerCoprimeSharpIntegralLiouville
 
-#print axioms Erdos240.BakerCoprimeSharpIntegralLiouville.norm_state_successor_commonDeltaDenominator_lt_exp_three_halves_heightScale
-#print axioms Erdos240.BakerCoprimeSharpIntegralLiouville.exp_neg_five_halves_heightScale_lt_successor_stateIntegralLiouvilleThreshold
+open Erdos240.BakerCoprimeSharpIntegralLiouville in
+#print axioms norm_state_successor_commonDeltaDenominator_lt_exp_three_halves_heightScale
+open Erdos240.BakerCoprimeSharpIntegralLiouville in
+#print axioms exp_neg_five_halves_heightScale_lt_successor_stateIntegralLiouvilleThreshold

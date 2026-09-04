@@ -568,6 +568,7 @@ theorem det_transpose_coefficientMatrix_ne_zero
     P.coefficientMatrix.transpose.det ≠ 0 := by
   simpa only [Matrix.det_transpose] using P.det_coefficientMatrix_ne_zero
 
+omit [DecidableEq I] in
 /-- Vanishing of all rows of one consecutive-degree tensor family is
 equivalent to vanishing of all tensor monomial moments. -/
 theorem rowRelations_eq_zero_iff_monomialMoments_eq_zero
@@ -575,6 +576,7 @@ theorem rowRelations_eq_zero_iff_monomialMoments_eq_zero
     (weight : T → K) (point : T → I → K) :
     P.rowRelations weight point = 0 ↔
       monomialMoments (side := side) weight point = 0 := by
+  classical
   rw [P.rowRelations_eq_transpose_mulVec]
   constructor
   · exact Matrix.eq_zero_of_mulVec_eq_zero
@@ -582,6 +584,7 @@ theorem rowRelations_eq_zero_iff_monomialMoments_eq_zero
   · intro h
     rw [h, Matrix.mulVec_zero]
 
+omit [DecidableEq I] in
 /-- Source-faithful triangular row transport.  The coefficient weights are
 literally unchanged: only the complete basis of relation rows is replaced. -/
 theorem rowRelations_eq_zero_iff
@@ -591,6 +594,7 @@ theorem rowRelations_eq_zero_iff
   rw [P.rowRelations_eq_zero_iff_monomialMoments_eq_zero,
     Q.rowRelations_eq_zero_iff_monomialMoments_eq_zero]
 
+omit [DecidableEq I] in
 /-- Directional form: replace an intermediate product family `P` by the
 canonical family `Q` without changing a single coefficient weight. -/
 theorem rowRelations_eq_zero_transport
@@ -600,6 +604,7 @@ theorem rowRelations_eq_zero_transport
     Q.rowRelations weight point = 0 :=
   (P.rowRelations_eq_zero_iff Q weight point).mp hzero
 
+omit [DecidableEq I] in
 /-- Pointwise spectator form of the row transport. -/
 theorem rowRelations_eq_zero_transport_with_spectator
     {T S : Type*} [Fintype T] (P Q : TensorFamily K I side)
@@ -628,10 +633,12 @@ theorem rowRelations_apply_eq_sum_productCoefficient_monomialMoments
     P.rowRelations weight point a =
       ∑ r, P.productCoefficient r a *
         monomialMoments (side := side) weight point r := by
+  classical
   rw [P.rowRelations_eq_transpose_mulVec]
   simp only [Matrix.mulVec, dotProduct, Matrix.transpose_apply,
     P.coefficientMatrix_apply]
 
+omit [DecidableEq I] in
 /-- A nonzero coefficient of a tensor-product family member can only occur
 at a coordinatewise smaller monomial. -/
 theorem coordinate_le_of_productCoefficient_ne_zero
@@ -646,6 +653,7 @@ theorem coordinate_le_of_productCoefficient_ne_zero
   rw [(P i).degree (a i)]
   exact Nat.lt_of_not_ge hle
 
+omit [DecidableEq I] in
 /-- The diagonal tensor coefficient is the product of the nonzero leading
 coefficients and hence is nonzero. -/
 theorem productCoefficient_diagonal_ne_zero
@@ -657,6 +665,7 @@ theorem productCoefficient_diagonal_ne_zero
   rw [← (P i).degree (a i), Polynomial.coeff_natDegree]
   exact (P i).leadingCoeff_ne_zero (a i)
 
+omit [DecidableEq I] in
 /-- On the total-degree simplex, vanishing of the consecutive-degree family
 rows forces vanishing of every monomial moment in the same simplex.  This is
 the lower-triangular induction used implicitly on p. 51. -/
@@ -668,6 +677,7 @@ theorem monomialMoments_eq_zero_of_rowRelations_eq_zero_on_simplex
       P.rowRelations weight point a = 0) :
     ∀ a : I → Fin (S + 1), totalDegree a ≤ S →
       monomialMoments (side := fun _ : I ↦ S) weight point a = 0 := by
+  classical
   intro a ha
   generalize hn : totalDegree a = n
   induction n using Nat.strong_induction_on generalizing a with
@@ -715,6 +725,7 @@ theorem monomialMoments_eq_zero_of_rowRelations_eq_zero_on_simplex
       exact (mul_eq_zero.mp hrelation).resolve_left
         (P.productCoefficient_diagonal_ne_zero a)
 
+omit [DecidableEq I] in
 /-- Total-degree/simplex form of the p. 51 row transport.  It changes every
 one-variable consecutive-degree family while leaving the term weights and
 evaluation points literally unchanged, and it assumes only the rows whose
@@ -727,6 +738,7 @@ theorem rowRelations_eq_zero_transport_on_simplex
       P.rowRelations weight point a = 0) :
     ∀ a : I → Fin (S + 1), totalDegree a ≤ S →
       Q.rowRelations weight point a = 0 := by
+  classical
   have hmom :=
     P.monomialMoments_eq_zero_of_rowRelations_eq_zero_on_simplex
       weight point hzero
@@ -742,6 +754,7 @@ theorem rowRelations_eq_zero_transport_on_simplex
       (Finset.sum_le_sum fun i _ ↦ hcoord i).trans ha
     rw [hmom r hdegree_le, mul_zero]
 
+omit [DecidableEq I] in
 /-- The simplex row-vanishing condition is independent of the chosen
 consecutive-degree polynomial family. -/
 theorem rowRelations_eq_zero_on_simplex_iff
@@ -769,10 +782,14 @@ end Erdos240.BakerTriangularTransport
 #print axioms Erdos240.BakerTriangularTransport.TensorFamily.exists_monomial_transport
 #print axioms Erdos240.BakerTriangularTransport.TensorFamily.exists_transport_with_spectator
 #print axioms Erdos240.BakerTriangularTransport.TensorFamily.evaluatedRelation_transport
-#print axioms Erdos240.BakerTriangularTransport.TensorFamily.evaluatedRelation_transport_with_spectator
-#print axioms Erdos240.BakerTriangularTransport.TensorFamily.exists_evaluated_transport_with_spectator
+open Erdos240.BakerTriangularTransport.TensorFamily in
+#print axioms evaluatedRelation_transport_with_spectator
+open Erdos240.BakerTriangularTransport.TensorFamily in
+#print axioms exists_evaluated_transport_with_spectator
 #print axioms Erdos240.BakerTriangularTransport.TensorFamily.rowRelations_eq_zero_iff
 #print axioms Erdos240.BakerTriangularTransport.TensorFamily.rowRelations_eq_zero_transport
-#print axioms Erdos240.BakerTriangularTransport.TensorFamily.rowRelations_eq_zero_transport_with_spectator
-#print axioms Erdos240.BakerTriangularTransport.TensorFamily.rowRelations_eq_zero_transport_on_simplex
+open Erdos240.BakerTriangularTransport.TensorFamily in
+#print axioms rowRelations_eq_zero_transport_with_spectator
+open Erdos240.BakerTriangularTransport.TensorFamily in
+#print axioms rowRelations_eq_zero_transport_on_simplex
 #print axioms Erdos240.BakerTriangularTransport.TensorFamily.rowRelations_eq_zero_on_simplex_iff

@@ -63,13 +63,13 @@ theorem initialStage_fiveHeight_add_honestGrowth_add_one_lt_count_mul_log_three
   have hH : (26 / 3 : ℝ) < H := by
     have h := P.twentySix_thirds_lt_sourceHeightUnit
     dsimp only [H, W]
-    convert h using 1 <;> ring
+    convert h using 1 ; ring
   have hleft : 5 * H + 1 + G < (15 / 2 : ℝ) * H := by
     nlinarith
   have hfive := P.initial_five_mul_sourceHeight_lt_count_mul_log_two hN
   have hfive' : 5 * H < (count : ℝ) * Real.log 2 := by
     dsimp only [H, W, count]
-    convert hfive using 1 <;> ring
+    convert hfive using 1 ; ring
   have hcountPos : (0 : ℝ) < count := by
     have hlog : 0 < Real.log 2 := Real.log_pos (by norm_num)
     by_contra hn
@@ -94,7 +94,7 @@ theorem initialStage_fiveHeight_add_honestGrowth_add_one_lt_count_mul_log_three
   have hresult : 5 * H + 1 + G < (count : ℝ) * Real.log 3 :=
     hleft.trans hscaled
   dsimp only [H, G, K, W, count] at hresult ⊢
-  convert hresult using 1 <;> ring
+  convert hresult using 1 ; ring
 
 /-- Ready-to-use sharp first-stage decay with the actual source boundary
 growth.  This is the fixed-height theorem needed by the Lemma-4 pointwise
@@ -118,7 +118,7 @@ theorem initialStage_threeHalves_mul_outerFactor_lt_exp_neg_five_of_honestGrowth
   have hcount :=
     P.initialStage_fiveHeight_add_honestGrowth_add_one_lt_count_mul_log_three
       hN hreq
-  convert hcount using 1 <;> ring
+  exact hcount
 
 end Erdos240.VDPLParameters
 

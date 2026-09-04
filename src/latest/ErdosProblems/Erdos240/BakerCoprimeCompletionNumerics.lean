@@ -225,7 +225,7 @@ theorem four_thirds_mul_growth_mul_coprime_decay_lt_exp_neg_thirteen_quarters
     simpa only [decay, H] using
       P.coprime_decay_pow_lt_exp_neg_eleven_halves_sourceHeight hJ
   have hgrowthH : growth ≤ Real.exp (2 * H) := by
-    convert hgrowth using 1 <;> dsimp only [H] <;> ring
+    exact hgrowth
   have hfactor : (4 / 3 : ℝ) < Real.exp (H / 4) := by
     rw [← Real.exp_log (by norm_num : (0 : ℝ) < 4 / 3)]
     apply Real.exp_lt_exp.mpr
@@ -284,7 +284,7 @@ theorem four_thirds_mul_seven_thirds_growth_mul_coprime_decay_lt_exp_neg_thirtyF
     simpa only [decay, H] using
       P.coprime_decay_pow_lt_exp_neg_eleven_halves_sourceHeight hJ
   have hgrowthH : growth ≤ Real.exp ((7 / 3 : ℝ) * H) := by
-    convert hgrowth using 1 <;> dsimp only [H] <;> ring
+    exact hgrowth
   have hfactor : (4 / 3 : ℝ) < Real.exp (H / 4) := by
     rw [← Real.exp_log (by norm_num : (0 : ℝ) < 4 / 3)]
     apply Real.exp_lt_exp.mpr
@@ -315,7 +315,7 @@ theorem four_thirds_mul_seven_thirds_growth_mul_coprime_decay_lt_exp_neg_thirtyF
         Real.exp ((7 / 3 : ℝ) * H) * Real.exp (-(11 / 2 : ℝ) * H) =
             Real.exp (((7 / 3 : ℝ) * H) + (-(11 / 2 : ℝ) * H)) :=
           (Real.exp_add _ _).symm
-        _ = Real.exp (-(19 / 6 : ℝ) * H) := by congr 1 <;> ring
+        _ = Real.exp (-(19 / 6 : ℝ) * H) := by congr 1 ; ring
     _ < Real.exp (H / 4) * Real.exp (-(19 / 6 : ℝ) * H) :=
       mul_lt_mul_of_pos_right hfactor (Real.exp_pos _)
     _ = Real.exp (-(35 / 12 : ℝ) * H) := by
@@ -385,7 +385,9 @@ end Erdos240.VDPLParameters
 #print axioms Erdos240.VDPLParameters.coprime_fullHermiteFactor_le_exp_sixth
 #print axioms Erdos240.VDPLParameters.eight_mul_sourceHeight_le_sourceExponent_of_structural
 #print axioms Erdos240.VDPLParameters.exp_neg_half_sourceExponent_le_exp_neg_four_sourceHeight
-#print axioms Erdos240.VDPLParameters.four_thirds_mul_growth_mul_coprime_decay_lt_exp_neg_thirteen_quarters
-#print axioms Erdos240.VDPLParameters.four_thirds_mul_seven_thirds_growth_mul_coprime_decay_lt_exp_neg_thirtyFive_twelfths
+open Erdos240.VDPLParameters in
+#print axioms four_thirds_mul_growth_mul_coprime_decay_lt_exp_neg_thirteen_quarters
+open Erdos240.VDPLParameters in
+#print axioms four_thirds_mul_seven_thirds_growth_mul_coprime_decay_lt_exp_neg_thirtyFive_twelfths
 #print axioms Erdos240.VDPLParameters.polynomial_add_outer_lt_exp_neg_five_halves_sourceHeight
 #print axioms Erdos240.VDPLParameters.polynomial_add_outer_lt_exp_neg_three_sourceHeight

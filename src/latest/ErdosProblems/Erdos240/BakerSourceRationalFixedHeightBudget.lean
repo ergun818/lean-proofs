@@ -31,12 +31,14 @@ noncomputable section
 
 namespace Erdos240.VDPLParameters
 
+open Erdos240.BakerSourceRationalLiouvilleLowerBounds
 open Erdos240.BakerLemma3Concrete
 open Erdos240.BakerSourceUniformConstantCompletion
 
 variable {oldRank : ℕ} [Nonempty (Fin oldRank)]
   (P : VDPLParameters (Fin oldRank))
 
+omit [Nonempty (Fin oldRank)] in
 /-- The existing fixed-family ledger already dominates the extra exact-degree
 requirement used below; no new uniform constant has to be chosen. -/
 theorem exactRationalFixedHeight_requirement_of_fixedBounds
@@ -204,7 +206,7 @@ theorem hermite_add_outer_lt_stateRationalLiouvilleThreshold
   have hsum :=
     P.exp_neg_seven_twelfths_add_exactStrong_lt_exactWeak hC₀
   have hlower :=
-    BakerSourceRationalLiouvilleLowerBounds.exp_neg_exactDegreeScale_le_stateRationalLiouvilleThreshold
+    exp_neg_exactDegreeScale_le_stateRationalLiouvilleThreshold
       P hJ state b bLast l hl m hm hgrowth
   exact hsum.trans_le hlower
 

@@ -81,6 +81,7 @@ def CoprimeCompletionAtLevel (P : VDPLParameters ι)
     (G : ℂ → VDPLMultiIndex P.rank → ℂ) (J : ℕ) : Prop :=
   CoprimeDescentAtLevel P G J → IntegralSeedAtLevel P G (J + 1)
 
+omit [Nonempty ι] in
 /-- A full integral seed restricts to the coprime nodes. -/
 theorem IntegralSeedAtLevel.coprime
     {P : VDPLParameters ι} {G : ℂ → VDPLMultiIndex P.rank → ℂ}

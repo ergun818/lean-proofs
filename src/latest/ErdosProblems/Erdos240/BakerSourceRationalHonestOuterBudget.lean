@@ -28,6 +28,7 @@ open BakerSourcePositiveStageGrowth
 variable {oldRank : ℕ} [Nonempty (Fin oldRank)]
   (P : VDPLParameters (Fin oldRank))
 
+omit [Nonempty (Fin oldRank)] in
 /-- The terminal positive-stage unit, multiplied by `k^sigma`, is exactly
 `k^(1/2)` times the fixed source height unit. -/
 theorem terminalPositiveStageHeightUnit_mul_k_rpow_sigma :
@@ -286,7 +287,11 @@ theorem lemmaFive_outerFactor_lt_exp_neg_sourceRadicalDegreeScale_of_honestAnaly
 end Erdos240.VDPLParameters
 
 #print axioms Erdos240.VDPLParameters.terminalPositiveStageHeightUnit_mul_k_rpow_sigma
-#print axioms Erdos240.VDPLParameters.honestTerminal_outerExponent_add_growth_add_one_lt_count_log_two
-#print axioms Erdos240.VDPLParameters.lemmaFive_outerFactor_lt_exp_neg_sourceRadicalDegreeScale_of_honestGrowth
-#print axioms Erdos240.VDPLParameters.honestAnalyticTerminal_outerExponent_add_growth_add_one_lt_count_log_two
-#print axioms Erdos240.VDPLParameters.lemmaFive_outerFactor_lt_exp_neg_sourceRadicalDegreeScale_of_honestAnalyticGrowth
+open Erdos240.VDPLParameters in
+#print axioms honestTerminal_outerExponent_add_growth_add_one_lt_count_log_two
+open Erdos240.VDPLParameters in
+#print axioms lemmaFive_outerFactor_lt_exp_neg_sourceRadicalDegreeScale_of_honestGrowth
+open Erdos240.VDPLParameters in
+#print axioms honestAnalyticTerminal_outerExponent_add_growth_add_one_lt_count_log_two
+open Erdos240.VDPLParameters in
+#print axioms lemmaFive_outerFactor_lt_exp_neg_sourceRadicalDegreeScale_of_honestAnalyticGrowth

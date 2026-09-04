@@ -336,8 +336,8 @@ theorem odd_ramifies_discriminant
   have hfourN : (p : ℤ) ∣ 4 * (A + r * (1 - r)) := by
     have hd := dvd_sub hpm hsqdiv
     convert hd using 1
-    rfl
-    ring
+    · rfl
+    · ring
   have hnot4 : ¬(p : ℤ) ∣ 4 := by
     intro hp4
     have hp22 : (p : ℤ) ∣ 2 * 2 := by simpa using hp4
@@ -357,7 +357,7 @@ theorem odd_ramifies_discriminant
         _ = ((p : ℤ) * u) ^ 2 + 4 * ((p : ℤ) * q) := by rw [ht, hq]
         _ = ((p : ℤ) * u) ^ 2 + 4 * ((p : ℤ) * ((p : ℤ) * s)) := by rw [hs]
         _ = (p : ℤ) ^ 2 * (u ^ 2 + 4 * s) := by ring
-    exact hpZ.not_unit (hm (p : ℤ) (by simpa [pow_two] using hpSq))
+    exact hpZ.not_isUnit (hm (p : ℤ) (by simpa [pow_two] using hpSq))
   have hcopq : IsCoprime (p : ℤ) q :=
     hpZ.irreducible.coprime_iff_not_dvd.mpr hqnot
   change ∃ u v : ℤ, u * (p : ℤ) + v * q = 1 at hcopq

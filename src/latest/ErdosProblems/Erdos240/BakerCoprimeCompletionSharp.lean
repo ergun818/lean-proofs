@@ -27,6 +27,7 @@ noncomputable section
 namespace Erdos240.BakerCoprimeCompletionSharp
 
 open Complex Metric
+open BakerCoprimeSharpIntegralLiouville
 open BakerCoprimeCertificateAssembly
 open BakerCoprimeCompletion
 open BakerCoprimeHermiteTarget
@@ -113,7 +114,7 @@ theorem coprimeCompletionAtLevel_of_sharp_analytic_bounds
       (lower := lower l m)
       (P.R_pos (J + 1)) (P.Sstep_div_four_pos_of_LevelOK hpred)
       hl hlR hlq (differentiable_sourceState_f state b bLast m)
-      (hpoly0 := (Real.exp_pos _).le)
+      (_hpoly0 := (Real.exp_pos _).le)
       (houter0 := (Real.exp_pos _).le)
       (hdecay0 := by positivity)
     · exact hboundary hseed m hm
@@ -133,7 +134,7 @@ theorem coprimeCompletionAtLevel_of_sharp_analytic_bounds
               ((P.h : ℝ) * P.k * P.Omega * Real.log P.OmegaOld))) le_rfl
       exact (P.polynomial_add_outer_lt_exp_neg_five_halves_sourceHeight
           hpoly houter).trans
-        (Erdos240.BakerCoprimeSharpIntegralLiouville.exp_neg_five_halves_heightScale_lt_successor_stateIntegralLiouvilleThreshold
+        (exp_neg_five_halves_heightScale_lt_successor_stateIntegralLiouvilleThreshold
             P hJ (toSourceMultiIndex P m) (by
               simpa only [weight_toSourceMultiIndex] using hm))
   · intro l hl hlR m hm
@@ -167,7 +168,7 @@ theorem coprimeCompletionAtLevel_of_sharp_analytic_bounds
       apply Real.exp_lt_exp.mpr
       nlinarith
     have hthreshold :=
-      Erdos240.BakerCoprimeSharpIntegralLiouville.exp_neg_five_halves_heightScale_lt_successor_stateIntegralLiouvilleThreshold
+      exp_neg_five_halves_heightScale_lt_successor_stateIntegralLiouvilleThreshold
         P hJ (toSourceMultiIndex P m) (by
           simpa only [weight_toSourceMultiIndex] using hm)
     exact hcompare.trans ((hrow l hl hlR m hm).trans

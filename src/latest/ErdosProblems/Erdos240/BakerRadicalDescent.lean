@@ -39,7 +39,7 @@ open Finset
 
 section ExponentDivision
 
-variable {κ K : Type*} [Fintype κ]
+variable {κ K : Type*}
 
 /-- Coordinatewise residue of a natural exponent vector modulo `q`. -/
 def exponentResidue (q : ℕ) [NeZero q] (e : κ → ℕ) : κ → Fin q :=
@@ -114,6 +114,8 @@ theorem exponentResidue_mul (q l : ℕ) [NeZero q] (e : κ → ℕ) :
   apply Fin.ext
   simp [exponentResidue, residueVectorMul, residueMul, Nat.mul_mod]
 
+variable [Fintype κ]
+
 /-- The monomial whose exponents are the coordinatewise residues modulo `q`. -/
 def radicalResidueMonomial [CommMonoid K] (q : ℕ) (beta : κ → K)
     (r : κ → Fin q) : K :=
@@ -154,6 +156,7 @@ theorem radicalMonomial_mul_eq_map_quotient_mul_residueMul
   exact radicalMonomial_eq_map_quotient_mul_residue q a beta hbeta
     (fun i ↦ e i * l)
 
+omit [Fintype κ] in
 /-- Reindexing any independent radical family by multiplication with a unit
 modulo `q` preserves linear independence. -/
 theorem linearIndependent_residueVectorMul
@@ -172,7 +175,7 @@ end ExponentDivision
 section CoefficientExtraction
 
 variable {I ρ K X : Type*}
-  [Fintype ρ] [DecidableEq ρ]
+  [DecidableEq ρ]
   [Field K] [Algebra ℚ K]
 
 /-- Restrict an integer coefficient family to one residue fibre. -/
@@ -244,6 +247,7 @@ def fiberCoefficients (residue : I → ρ) (r : ρ) (c : I → ℤ) :
     ResidueFiber residue r → ℤ :=
   fun i ↦ c i.1
 
+omit [DecidableEq ρ] in
 /-- A nonzero old coefficient family has a residue fibre whose reindexed
 next-level coefficient family is nonzero. -/
 theorem exists_fiberCoefficients_ne_zero
@@ -261,6 +265,7 @@ theorem exists_fiberCoefficients_ne_zero
   have := congrFun hzero (⟨i, rfl⟩ : ResidueFiber residue (residue i))
   exact hi this
 
+omit [DecidableEq ρ] in
 /-- Reindexing on a residue fibre preserves the height verbatim. -/
 theorem fiberCoefficients_abs_le
     (residue : I → ρ) (r : ρ) (c : I → ℤ) (H : ℝ)
@@ -272,7 +277,7 @@ theorem fiberCoefficients_abs_le
 /-- On the selected fibre, every old exponent is its fixed residue plus `q`
 times the next-level quotient exponent. -/
 theorem exponent_eq_selectedResidue_add_mul_quotient
-    {κ : Type*} [Fintype κ] (q : ℕ) [NeZero q]
+    {κ : Type*} (q : ℕ) [NeZero q]
     (exponent : I → κ → ℕ) (r : κ → Fin q)
     (i : ResidueFiber (fun j ↦ exponentResidue q (exponent j)) r)
     (k : κ) :
@@ -305,6 +310,7 @@ def varyingRadicalEvaluation (support : Finset I) (residue : I → ρ)
   ∑ i ∈ support,
     algebraMap ℚ K ((c i : ℚ) * factor i x) * base x (residue i)
 
+omit [DecidableEq ρ] in
 theorem varyingRadicalEvaluation_eq_radicalEvaluation
     (support : Finset I) (residue : I → ρ) (base : X → ρ → K)
     (c : I → ℤ) (factor : I → X → ℚ) (x : X) :
@@ -325,6 +331,10 @@ theorem fiberEvaluation_eq_sum_filter
   apply Finset.sum_congr rfl
   intro i _hi
   by_cases hir : residue i = r <;> simp [hir]
+
+section
+
+variable [Fintype ρ]
 
 /-- Regroup the full algebraic sum by its radical residue monomial. -/
 theorem radicalEvaluation_eq_sum_fiberEvaluation
@@ -372,6 +382,10 @@ theorem varyingRadicalEvaluation_eq_sum_fiberEvaluation
   rw [varyingRadicalEvaluation_eq_radicalEvaluation,
     radicalEvaluation_eq_sum_fiberEvaluation]
 
+end
+
+variable [Finite ρ]
+
 /-- Linear independence of the radical monomials extracts every rational
 residue-class coefficient from a vanishing algebraic sum. -/
 theorem fiberEvaluation_eq_zero_of_linearIndependent
@@ -380,6 +394,7 @@ theorem fiberEvaluation_eq_zero_of_linearIndependent
     (c : I → ℤ) (factor : I → X → ℚ) (x : X)
     (hzero : radicalEvaluation support residue base c factor x = 0) :
     ∀ r, fiberEvaluation support residue c factor r x = 0 := by
+  let := Fintype.ofFinite ρ
   have hsum :
       ∑ r, fiberEvaluation support residue c factor r x • base r = 0 := by
     simpa only [Algebra.smul_def, radicalEvaluation_eq_sum_fiberEvaluation]
@@ -447,7 +462,7 @@ end CoefficientExtraction
 
 section RationalToIntegralGrid
 
-variable {I ρ M : Type*} [Fintype ρ] [DecidableEq ρ]
+variable {I ρ M : Type*} [Finite ρ] [DecidableEq ρ]
 
 /-- Source-facing form of the coefficient descent.
 
@@ -538,7 +553,7 @@ section ThirteenthRoots
 open Erdos240.Kummer
 
 variable {I ι Ω X : Type*}
-  [Fintype I] [Fintype ι] [DecidableEq ι]
+  [Fintype ι]
   [Field Ω] [Algebra ℚ Ω] [Algebra.IsAlgebraic ℚ Ω]
 
 /-- The source descent specialized to thirteenth-root monomials.  The exact
@@ -564,6 +579,7 @@ theorem radicalDescent_thirteenthRoots_of_finrank
       ∀ x ∈ grid,
         fiberEvaluation support (fun i ↦ exponentResidue 13 (exponent i))
           c factor r x = 0 := by
+  classical
   exact exists_nonzero_restriction_and_fiber_vanishing support
     (fun i ↦ exponentResidue 13 (exponent i))
     (thirteenthRootMonomial beta)
@@ -626,6 +642,7 @@ theorem radicalDescent_thirteenthRoots_coprime_of_finrank
           fiberEvaluation support
             (fun i ↦ exponentResidue 13 (exponent i)) c
             (fun i x ↦ factor i x.1 x.2) r (l, m) = 0 := by
+  classical
   exact exists_radicalDescent_of_coprime_rationalGrid_vanishing
     support (fun i ↦ exponentResidue 13 (exponent i))
     (fun l _m r ↦ radicalResidueMonomial 13 beta

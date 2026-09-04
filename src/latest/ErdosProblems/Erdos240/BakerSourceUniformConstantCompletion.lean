@@ -182,5 +182,6 @@ theorem exists_uniform_completeSourceConstant_ge {oldRank : ℕ}
 end Erdos240.BakerSourceUniformConstantCompletion
 
 #print axioms Erdos240.BakerSourceUniformConstantCompletion.exists_pos_upperBound_finset
-#print axioms Erdos240.BakerSourceUniformConstantCompletion.fixedSourceRequirements_sourceParameters_eq
+open Erdos240.BakerSourceUniformConstantCompletion in
+#print axioms fixedSourceRequirements_sourceParameters_eq
 #print axioms Erdos240.BakerSourceUniformConstantCompletion.exists_uniform_completeSourceConstant_ge

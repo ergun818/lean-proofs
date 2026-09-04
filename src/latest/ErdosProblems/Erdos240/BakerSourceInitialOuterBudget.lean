@@ -148,9 +148,10 @@ theorem initialStage_threeHalves_mul_outerFactor_lt_exp_neg_target
     hgrowth0 hgrowth
   have hcount :=
     P.initialStage_outerExponent_add_growth_add_one_lt_count_mul_log_three hN hreq
-  convert hcount using 1 <;> ring
+  convert hcount using 1 ; ring
 
 end Erdos240.VDPLParameters
 
-#print axioms Erdos240.VDPLParameters.initialStage_outerExponent_add_growth_add_one_lt_count_mul_log_three
+open Erdos240.VDPLParameters in
+#print axioms initialStage_outerExponent_add_growth_add_one_lt_count_mul_log_three
 #print axioms Erdos240.VDPLParameters.initialStage_threeHalves_mul_outerFactor_lt_exp_neg_target

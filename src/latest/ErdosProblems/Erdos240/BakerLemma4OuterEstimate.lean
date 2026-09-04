@@ -180,7 +180,7 @@ theorem thirtyOne_div_oneTwentyEight_mul_levelScale_lt_lemmaFourBudget
           (t : ℝ) / (6 * m) := by dsimp only [m]; ring
       _ ≤ (3 * m) / (6 * m) :=
         div_le_div_of_nonneg_right htcast (by positivity)
-      _ = 1 / 2 := by field_simp <;> norm_num
+      _ = 1 / 2 := by field_simp ; norm_num
   have hlower := P.lemmaFourBudget_lower_linear N t hS htpos hteps
   have hcoeff : (1 / 2 : ℝ) ≤
       1 - ((t : ℝ) - 1) * P.epsilon := by
@@ -201,7 +201,6 @@ theorem thirtyOne_div_oneTwentyEight_mul_levelScale_lt_lemmaFourBudget
       (mul_le_mul_of_nonneg_right hcoeff hA) _).trans_lt hlower
   dsimp only [x, m] at hx htbound ⊢
   dsimp only [x] at hfloor
-  push_cast at hcoarse
   nlinarith
 
 /-- At every positive stage the source recursion is multiplication by
@@ -267,7 +266,6 @@ theorem fifteen_mul_radiusCore_lt_lemmaFourRadius [Nonempty ι]
   rw [hscale] at hfloor
   rw [hscale]
   dsimp only [A] at hA ⊢
-  push_cast at hfloor
   nlinarith
 
 /-- In the specialization `mu=1`, the exponent in the source's third
@@ -414,7 +412,7 @@ theorem four_mul_k_le_three_eighth_mul_epsilon_mul_stagePower
     rw [P.epsilon_eq]
     unfold kSeedBase
     have hm : (0 : ℝ) < P.rank + 1 := by positivity
-    field_simp <;> norm_num
+    field_simp ; norm_num
   have hepsStage : (32 / 3 : ℝ) ≤
       P.epsilon * P.k ^ (P.epsilon * (t : ℝ)) :=
     hepsSeed.trans <| mul_le_mul_of_nonneg_left
@@ -490,7 +488,7 @@ theorem ninety_lt_positiveStageExponent [Nonempty ι]
     rw [P.epsilon_eq]
     unfold kSeedBase
     have hm : (0 : ℝ) < P.rank + 1 := by positivity
-    field_simp <;> norm_num
+    field_simp ; norm_num
   have hepsStage : (32 / 3 : ℝ) ≤
       P.epsilon * P.k ^ (P.epsilon * (t : ℝ)) :=
     hepsSeed.trans <| mul_le_mul_of_nonneg_left
@@ -598,7 +596,7 @@ theorem positiveStage_outerExponent_add_growth_add_one_lt_count_mul_log_three
     linarith
   have hraw : (465 / 128 : ℝ) * E < count := by
     dsimp only [E, Kfull, W, count]
-    convert P.positiveStage_rawExponent_lt_nodeCount hN htpos ht using 1 <;>
+    convert P.positiveStage_rawExponent_lt_nodeCount hN htpos ht using 1 ;
       ring
   have hcountpos : (0 : ℝ) < count := by
     have hEpos : 0 < E := lt_trans (by norm_num) hElarge
@@ -670,7 +668,7 @@ theorem positiveStage_fiveHeight_add_growth_add_one_lt_count_mul_log_three
     linarith
   have hraw : (465 / 128 : ℝ) * E < count := by
     dsimp only [E, Kfull, W, count]
-    convert P.positiveStage_rawExponent_lt_nodeCount hN htpos ht using 1 <;>
+    convert P.positiveStage_rawExponent_lt_nodeCount hN htpos ht using 1 ;
       ring
   have hcountpos : (0 : ℝ) < count := by
     have hEpos : 0 < E := lt_trans (by norm_num) hElarge
@@ -727,7 +725,7 @@ theorem positiveStage_threeHalves_mul_outerFactor_lt_exp_neg_target
       hN htpos ht hreq
   have hcount : D + 1 + G < (count : ℝ) * Real.log 3 := by
     dsimp only [D, G, K, W, count]
-    convert hcountSource using 1 <;> ring
+    convert hcountSource using 1 ; ring
   have hpow : (1 / 3 : ℝ) ^ count =
       Real.exp (-((count : ℝ) * Real.log 3)) := by
     calc
@@ -1048,7 +1046,7 @@ theorem initial_threeHalves_mul_outerFactor_lt_exp_neg_five [Nonempty ι]
   have hcount : 5 * H + 1 + 2 * H <
       (count : ℝ) * Real.log 3 := by
     dsimp only [H, count]
-    convert hcountSource using 1 <;> ring
+    convert hcountSource using 1 ; ring
   have hpow : (1 / 3 : ℝ) ^ count =
       Real.exp (-((count : ℝ) * Real.log 3)) := by
     calc
@@ -1111,10 +1109,13 @@ end Erdos240.VDPLParameters
 #print axioms Erdos240.VDPLParameters.ten_div_epsilon_lt_k_rpow_three_mul_epsilon
 #print axioms Erdos240.VDPLParameters.positiveStage_rawExponent_lt_nodeCount
 #print axioms Erdos240.VDPLParameters.four_mul_k_le_three_eighth_mul_epsilon_mul_stagePower
-#print axioms Erdos240.VDPLParameters.thirtyTwo_mul_nextStagePower_lt_sixteen_fifths_mul_epsilon_mul_stagePower
+open Erdos240.VDPLParameters in
+#print axioms thirtyTwo_mul_nextStagePower_lt_sixteen_fifths_mul_epsilon_mul_stagePower
 #print axioms Erdos240.VDPLParameters.ninety_lt_positiveStageExponent
-#print axioms Erdos240.VDPLParameters.positiveStage_outerExponent_add_growth_add_one_lt_count_mul_log_three
-#print axioms Erdos240.VDPLParameters.positiveStage_fiveHeight_add_growth_add_one_lt_count_mul_log_three
+open Erdos240.VDPLParameters in
+#print axioms positiveStage_outerExponent_add_growth_add_one_lt_count_mul_log_three
+open Erdos240.VDPLParameters in
+#print axioms positiveStage_fiveHeight_add_growth_add_one_lt_count_mul_log_three
 #print axioms Erdos240.VDPLParameters.positiveStage_threeHalves_mul_outerFactor_lt_exp_neg_target
 #print axioms Erdos240.VDPLParameters.positiveStage_threeHalves_mul_outerFactor_lt_exp_neg_five
 #print axioms Erdos240.VDPLParameters.initial_five_mul_sourceHeight_lt_count_mul_log_two

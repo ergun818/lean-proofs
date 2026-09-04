@@ -151,5 +151,6 @@ theorem deleted_factorial_pair_div_le_two_pow
 
 end Erdos240.BakerCoprimeFactorialCancellation
 
-#print axioms Erdos240.BakerCoprimeFactorialCancellation.factorial_pair_div_factorial_pair_le_two_pow
+open Erdos240.BakerCoprimeFactorialCancellation in
+#print axioms factorial_pair_div_factorial_pair_le_two_pow
 #print axioms Erdos240.BakerCoprimeFactorialCancellation.deleted_factorial_pair_div_le_two_pow

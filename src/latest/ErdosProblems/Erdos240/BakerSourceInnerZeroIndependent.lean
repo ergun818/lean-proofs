@@ -134,7 +134,7 @@ theorem g_eq_zero_at_new_innerTarget_of_algebraicBounds
       omega
     have hmj := weight_add_jet_le_currentBudget P N t m j.1 hm hj
     have hS := P.lemmaFourBudget_le_Slevel N t
-    convert hjetBound hmj hS using 1 <;> dsimp only [E] <;> ring_nf
+    convert hjetBound hmj hS using 1 ; dsimp only [E] ; ring_nf
   have hcontour :
       (2 : ℝ) ^ (((3 * R + l) * T) + R * T) ≤ Real.exp B := by
     simpa only [R, Rnext, T, B] using
@@ -245,7 +245,7 @@ theorem innerStepCallback_of_algebraicGrowthBounds
     · exact Real.exp_le_exp.mpr
         (by
           convert P.localError_add_contourExponent_le_neg_five_sourceHeight
-            hcontour using 1 <;> ring)
+            hcontour using 1 ; ring)
     · by_cases ht0 : t = 0
       · subst t
         exact (P.initial_threeHalves_mul_outerFactor_lt_exp_neg_five
@@ -262,5 +262,6 @@ theorem innerStepCallback_of_algebraicGrowthBounds
 
 end Erdos240.BakerSourceInnerZeroIndependent
 
-#print axioms Erdos240.BakerSourceInnerZeroIndependent.g_eq_zero_at_new_innerTarget_of_algebraicBounds
+open Erdos240.BakerSourceInnerZeroIndependent in
+#print axioms g_eq_zero_at_new_innerTarget_of_algebraicBounds
 #print axioms Erdos240.BakerSourceInnerZeroIndependent.innerStepCallback_of_algebraicGrowthBounds

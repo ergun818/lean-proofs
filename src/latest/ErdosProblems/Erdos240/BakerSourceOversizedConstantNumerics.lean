@@ -177,7 +177,7 @@ theorem jetErrorIterate_le_pow_of_weight {oldRank : ℕ}
     (P : VDPLParameters (Fin oldRank)) (N : ℕ)
     (bLast : ℤ) (hbLast : bLast ≠ 0) (S j : ℕ)
     (E : VDPLMultiIndex (oldRank + 1) → ℝ)
-    (hE : ∀ m, 0 ≤ E m) {delta : ℝ} (hdelta : 0 ≤ delta)
+    (_hE : ∀ m, 0 ≤ E m) {delta : ℝ} (hdelta : 0 ≤ delta)
     (hbound : ∀ m, VDPLMultiIndex.weight m ≤ S → E m ≤ delta) :
     ∀ m : VDPLMultiIndex (oldRank + 1),
       VDPLMultiIndex.weight m + j ≤ S →
@@ -312,7 +312,6 @@ theorem Slevel_add_one_le_k_add_one_mul_normalizedCore {oldRank : ℕ}
   have hS := P.Slevel_cast_le N
   have hscale := levelScale_le_k_mul_normalizedCore P N
   have hcore := one_le_normalizedCore P
-  push_cast
   calc
     (P.Slevel N : ℝ) + 1 ≤
         P.k * (P.OmegaOld * Real.log P.newHeight * Real.log P.OmegaOld) +
@@ -487,8 +486,12 @@ theorem norm_normalizedIteratedDeriv_f_le_exp_neg_two_thirds_of_oversized
 
 end Erdos240.BakerSourceOversizedConstantNumerics
 
-#print axioms Erdos240.BakerSourceOversizedConstantNumerics.error_smallLinearFormBound_le_exp_neg_three_quarters
+open Erdos240.BakerSourceOversizedConstantNumerics in
+#print axioms error_smallLinearFormBound_le_exp_neg_three_quarters
 #print axioms Erdos240.BakerSourceOversizedConstantNumerics.jetErrorIterate_div_factorial_le_exp_mul
-#print axioms Erdos240.BakerSourceOversizedConstantNumerics.sourceJetCoefficientBound_Slevel_le_oversizedExponent_div_twelve
-#print axioms Erdos240.BakerSourceOversizedConstantNumerics.jetErrorIterate_div_factorial_le_exp_neg_two_thirds
-#print axioms Erdos240.BakerSourceOversizedConstantNumerics.norm_normalizedIteratedDeriv_f_le_exp_neg_two_thirds_of_oversized
+open Erdos240.BakerSourceOversizedConstantNumerics in
+#print axioms sourceJetCoefficientBound_Slevel_le_oversizedExponent_div_twelve
+open Erdos240.BakerSourceOversizedConstantNumerics in
+#print axioms jetErrorIterate_div_factorial_le_exp_neg_two_thirds
+open Erdos240.BakerSourceOversizedConstantNumerics in
+#print axioms norm_normalizedIteratedDeriv_f_le_exp_neg_two_thirds_of_oversized

@@ -42,6 +42,7 @@ its small normalized jets are converted to Hermite-polynomial bounds by
 concrete Lemma 4.
 -/
 
+open Erdos240.BakerSourceRationalLiouvilleLowerBounds
 open scoped BigOperators
 
 noncomputable section
@@ -86,7 +87,7 @@ theorem rationalLocalCircle_left_factor_lower {z : ℂ} {r i q : ℕ}
     calc
       ‖((r : ℕ) : ℂ) - ((i + 1 : ℕ) : ℂ)‖ =
           ‖(((r : ℕ) : ℂ) - z) + (z - ((i + 1 : ℕ) : ℂ))‖ := by
-        congr 1 <;> ring
+        congr 1 ; ring
       _ ≤ ‖((r : ℕ) : ℂ) - z‖ + ‖z - ((i + 1 : ℕ) : ℂ)‖ :=
         norm_add_le _ _
   rw [norm_sub_rev ((r : ℕ) : ℂ) z] at hdist
@@ -117,7 +118,7 @@ theorem rationalLocalCircle_right_factor_lower {z : ℂ} {r j q : ℕ}
     calc
       ‖((r + j + 1 : ℕ) : ℂ) - (r : ℂ)‖ =
           ‖(((r + j + 1 : ℕ) : ℂ) - z) + (z - (r : ℂ))‖ := by
-        congr 1 <;> ring
+        congr 1 ; ring
       _ ≤ ‖((r + j + 1 : ℕ) : ℂ) - z‖ + ‖z - (r : ℂ)‖ :=
         norm_add_le _ _
   rw [norm_sub_rev ((r + j + 1 : ℕ) : ℂ) z] at hdist
@@ -303,7 +304,7 @@ theorem rationalLocalCircle_target_separation
     calc
       ‖(l : ℂ) / (q : ℂ) - (r : ℂ)‖ =
           ‖((l : ℂ) / (q : ℂ) - z) + (z - (r : ℂ))‖ := by
-        congr 1 <;> ring
+        congr 1 ; ring
       _ ≤ ‖(l : ℂ) / (q : ℂ) - z‖ + ‖z - (r : ℂ)‖ :=
         norm_add_le _ _
       _ = ‖z - (l : ℂ) / (q : ℂ)‖ + ‖z - (r : ℂ)‖ := by
@@ -422,7 +423,7 @@ the literal form proved above, so no hidden logarithm or factorial estimate
 enters this statement. -/
 theorem norm_sum_normalized_rationalLocalCircleKernel_integral_le_exp
     {R T l q : ℕ} (hq : 0 < q) (hlR : l ≤ q * R)
-    (hnmid : ¬ q ∣ l) {A delta : ℝ} (hA : 0 ≤ A)
+    (hnmid : ¬ q ∣ l) {A delta : ℝ} (_hA : 0 ≤ A)
     (hdelta : 0 ≤ delta) (hsmall : delta ≤ Real.exp (-(2 / 3) * A))
     (hcontour :
       (2 : ℝ) ^ (R * T) *
@@ -455,7 +456,7 @@ local-circle factor spends only `E / 12`; combined with the normalized-jet
 estimate `exp (-2E/3)`, the polynomial value retains `7E/12` of decay. -/
 theorem norm_sum_normalized_rationalLocalCircleKernel_integral_le_exp_seven_twelfths
     {R T l q : ℕ} (hq : 0 < q) (hlR : l ≤ q * R)
-    (hnmid : ¬ q ∣ l) {E delta : ℝ} (hE : 0 ≤ E)
+    (hnmid : ¬ q ∣ l) {E delta : ℝ} (_hE : 0 ≤ E)
     (hdelta : 0 ≤ delta) (hsmall : delta ≤ Real.exp (-2 * E / 3))
     (hcontour :
       (2 : ℝ) ^ (R * T) *
@@ -557,7 +558,7 @@ rewritten in the source outer-kernel notation.  The local-residue module
 states this first for natural targets; the proof itself only uses that the
 target lies inside the contour, which is the form required at `l/q`. -/
 theorem normalized_outerCircleIntegral_entireKernel_sub_polynomial_complex
-    {R T : ℕ} (hT : 1 ≤ T) (x : ℂ) (f : ℂ → ℂ)
+    {R T : ℕ} (_hT : 1 ≤ T) (x : ℂ) (f : ℂ → ℂ)
     (hf : Differentiable ℂ f) {c : ℂ} {rho : ℝ}
     (hxball : x ∈ Metric.ball c rho)
     (hnodes : ∀ r : Fin R,
@@ -2010,12 +2011,12 @@ theorem rationalInterpolationUpperAtLevel_of_source_exactLiouville
             ((P.h : ℝ) * P.k * P.Omega * Real.log P.OmegaOld))) <
         Real.exp (-((5 + 34 * (13 ^ (oldRank + 1) : ℝ)) *
           ((P.h : ℝ) * P.k * P.Omega * Real.log P.OmegaOld))) := by
-    convert hsum using 1 <;> ring_nf
+    convert hsum using 1 ; ring_nf
   have hmSource :
       VDPLMultiIndex.weight (toSourceMultiIndex P m) ≤ P.Sstep N := by
     simpa only [weight_toSourceMultiIndex] using hm
   have hlower :=
-    Erdos240.BakerSourceRationalLiouvilleLowerBounds.exp_neg_exactDegreeScale_le_stateRationalLiouvilleThreshold
+    exp_neg_exactDegreeScale_le_stateRationalLiouvilleThreshold
         P hN state b bLast l hlR (toSourceMultiIndex P m) hmSource
           (hgrowth l hl1 hlR hnmid m hm)
   exact hupper.trans (hsum'.trans_le (by
@@ -2079,7 +2080,7 @@ theorem sourceState_lemma5_full_budget_of_coarse_normalized_jets
       ℕ → VDPLMultiIndex (oldRank + 1) → ℝ)
     (hint : VanishesOn (BakerSourceState.g state b bLast)
       1 (sourceRationalNodeRadius P N) (sourceRationalS P N))
-    (Mouter : ∀ l (m : VDPLMultiIndex (oldRank + 1)) (w : ℂ),
+    (Mouter : ∀ _l (m : VDPLMultiIndex (oldRank + 1)) (w : ℂ),
       SourceMajorants P (coordinatesForState state) state.support state.coeff P.h b bLast
         (oldLog P) P.q N w m)
     (houterGrowth : ∀ l, 1 ≤ l → l ≤ P.R (N + 1) → ¬ P.q ∣ l →
@@ -2206,7 +2207,7 @@ theorem source_lemma5_nextLevel_of_hermite_bounds
     (hint : VanishesOn
       (sourceG coord support p h b bLast logAlpha logAlphaLast P.q N)
       1 (P.R (N + 1)) (P.Sstep N))
-    (Mouter : ∀ l (m : VDPLMultiIndex (oldRank + 1)) (w : ℂ),
+    (Mouter : ∀ _l (m : VDPLMultiIndex (oldRank + 1)) (w : ℂ),
       SourceMajorants P coord support p h b bLast logAlpha P.q N w m)
     (houterGrowth : ∀ l, 1 ≤ l → l ≤ P.R (N + 1) → ¬ P.q ∣ l →
       ∀ m, VDPLMultiIndex.weight m ≤ P.Sstep N →
@@ -2293,7 +2294,7 @@ theorem source_lemma5_nextLevel_of_small_jets
     (hint : VanishesOn
       (sourceG coord support p h b bLast logAlpha logAlphaLast P.q N)
       1 nodeR (P.Sstep N))
-    (Mouter : ∀ l (m : VDPLMultiIndex (oldRank + 1)) (w : ℂ),
+    (Mouter : ∀ _l (m : VDPLMultiIndex (oldRank + 1)) (w : ℂ),
       SourceMajorants P coord support p h b bLast logAlpha P.q N w m)
     (houterGrowth : ∀ l, 1 ≤ l → l ≤ P.R (N + 1) → ¬ P.q ∣ l →
       ∀ m, VDPLMultiIndex.weight m ≤ P.Sstep N →
@@ -2369,18 +2370,25 @@ end Erdos240.BakerLemma5Concrete
 #print axioms Erdos240.BakerLemma5Concrete.norm_at_rational_lt_of_hermite_bounds
 #print axioms Erdos240.BakerLemma5Concrete.rational_extrapolation_next_budget_of_hermite_bounds
 #print axioms Erdos240.BakerLemma5Concrete.rational_extrapolation_next_budget_of_small_jets
-#print axioms Erdos240.BakerLemma5Concrete.rational_extrapolation_twoRadii_next_budget_of_normalized_jets
-#print axioms Erdos240.BakerLemma5Concrete.rational_extrapolation_twoRadii_next_budget_of_coarse_normalized_jets
-#print axioms Erdos240.BakerLemma5Concrete.norm_source_rationalLocalCircle_sum_le_exp_neg_seven_twelfths
+open Erdos240.BakerLemma5Concrete in
+#print axioms rational_extrapolation_twoRadii_next_budget_of_normalized_jets
+open Erdos240.BakerLemma5Concrete in
+#print axioms rational_extrapolation_twoRadii_next_budget_of_coarse_normalized_jets
+open Erdos240.BakerLemma5Concrete in
+#print axioms norm_source_rationalLocalCircle_sum_le_exp_neg_seven_twelfths
 #print axioms Erdos240.BakerLemma5Concrete.norm_normalized_rationalOuterKernel_integral_le
 #print axioms Erdos240.BakerLemma5Concrete.entire_eval_eq_hermitePolynomial_add_outer_complex
 #print axioms Erdos240.BakerLemma5Concrete.terminal_normalized_jets_le_exp_neg_two_thirds
-#print axioms Erdos240.BakerLemma5Concrete.norm_source_hermitePolynomial_eval_ratCast_le_exp_neg_seven_twelfths
-#print axioms Erdos240.BakerLemma5Concrete.norm_source_rationalOuterKernel_integral_lt_exp_neg_twentySeven
-#print axioms Erdos240.BakerLemma5Concrete.norm_source_rationalOuterKernel_integral_lt_exp_neg_sharpScale
+open Erdos240.BakerLemma5Concrete in
+#print axioms norm_source_hermitePolynomial_eval_ratCast_le_exp_neg_seven_twelfths
+open Erdos240.BakerLemma5Concrete in
+#print axioms norm_source_rationalOuterKernel_integral_lt_exp_neg_twentySeven
+open Erdos240.BakerLemma5Concrete in
+#print axioms norm_source_rationalOuterKernel_integral_lt_exp_neg_sharpScale
 #print axioms Erdos240.BakerLemma5Concrete.norm_source_f_ratCast_lt_hermite_add_outer_exponents
 #print axioms Erdos240.BakerLemma5Concrete.rationalInterpolationUpperAtLevel_of_source_hermite_outer
-#print axioms Erdos240.BakerLemma5Concrete.rationalInterpolationUpperAtLevel_of_source_exactLiouville
+open Erdos240.BakerLemma5Concrete in
+#print axioms rationalInterpolationUpperAtLevel_of_source_exactLiouville
 #print axioms Erdos240.BakerLemma5Concrete.sourceState_lemma5_full_budget_of_coarse_normalized_jets
 #print axioms Erdos240.BakerLemma5Concrete.source_lemma5_nextLevel_of_hermite_bounds
 #print axioms Erdos240.BakerLemma5Concrete.source_lemma5_nextLevel_of_small_jets

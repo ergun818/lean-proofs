@@ -1172,12 +1172,15 @@ theorem exp_neg_three_quarters_le_stateRationalLiouvilleThreshold
     Real.exp (-3 * sourceExponent P
         (C₀ * Real.log P.OmegaOld) / 4) ≤
       stateRationalLiouvilleThreshold P J state b bLast l m := by
-  apply BakerSourceOversizedConstantUniform.exp_neg_three_quarters_le_stateRationalLiouvilleThreshold
+  apply
+    BakerSourceOversizedConstantUniform.exp_neg_three_quarters_le_stateRationalLiouvilleThreshold
   exact rationalLiouvilleProduct_le_exp_three_quarters
     P hJ state b bLast l hl m hm C₀ hC hgrowth
 
 end Erdos240.BakerSourceRationalLiouvilleLowerBounds
 
 #print axioms Erdos240.BakerSourceRationalLiouvilleLowerBounds.rationalTargetConjugateBound_le
-#print axioms Erdos240.BakerSourceRationalLiouvilleLowerBounds.rationalLiouvilleProduct_le_exp_three_quarters
-#print axioms Erdos240.BakerSourceRationalLiouvilleLowerBounds.exp_neg_three_quarters_le_stateRationalLiouvilleThreshold
+open Erdos240.BakerSourceRationalLiouvilleLowerBounds in
+#print axioms rationalLiouvilleProduct_le_exp_three_quarters
+open Erdos240.BakerSourceRationalLiouvilleLowerBounds in
+#print axioms exp_neg_three_quarters_le_stateRationalLiouvilleThreshold

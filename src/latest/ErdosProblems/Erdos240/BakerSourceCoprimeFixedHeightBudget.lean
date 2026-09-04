@@ -150,4 +150,5 @@ end Erdos240.VDPLParameters
 
 #print axioms Erdos240.VDPLParameters.eleven_halves_mul_sourceHeight_lt_coprime_count_log_three
 #print axioms Erdos240.VDPLParameters.coprime_decay_pow_lt_exp_neg_eleven_halves_sourceHeight
-#print axioms Erdos240.VDPLParameters.four_thirds_mul_growth_mul_coprime_decay_lt_exp_neg_three_sourceHeight
+open Erdos240.VDPLParameters in
+#print axioms four_thirds_mul_growth_mul_coprime_decay_lt_exp_neg_three_sourceHeight

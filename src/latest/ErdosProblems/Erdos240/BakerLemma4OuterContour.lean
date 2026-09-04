@@ -228,8 +228,7 @@ theorem normalized_outerCircleIntegral_localPolynomialKernel_complex_eq_zero
           (∮ z in C(c, rho), P.eval x / (z - x)) = P.eval x := by
     rw [show (∮ z in C(c, rho), P.eval x / (z - x)) =
         P.eval x * (∮ z in C(c, rho), 1 / (z - x) ^ (1 : ℕ)) by
-      simpa [div_eq_mul_inv] using circleIntegral.integral_const_mul
-        (P.eval x) (fun z : ℂ => 1 / (z - x) ^ (1 : ℕ)) c rho]
+      simp [div_eq_mul_inv]]
     rw [show (2 * ((Real.pi : ℝ) : ℂ) * I)⁻¹ *
           (P.eval x * (∮ z in C(c, rho), 1 / (z - x) ^ (1 : ℕ))) =
         P.eval x * ((2 * ((Real.pi : ℝ) : ℂ) * I)⁻¹ *
@@ -246,9 +245,7 @@ theorem normalized_outerCircleIntegral_localPolynomialKernel_complex_eq_zero
           (z - ((rm.1.1 + 1 : ℕ) : ℂ)) ^ (S - rm.2.1)) =
         a rm * (∮ z in C(c, rho),
           1 / (z - ((rm.1.1 + 1 : ℕ) : ℂ)) ^ (S - rm.2.1)) by
-      simpa [div_eq_mul_inv] using circleIntegral.integral_const_mul (a rm)
-        (fun z : ℂ => 1 /
-          (z - ((rm.1.1 + 1 : ℕ) : ℂ)) ^ (S - rm.2.1)) c rho]
+      simp [div_eq_mul_inv]]
     rw [show (2 * ((Real.pi : ℝ) : ℂ) * I)⁻¹ *
           (a rm * (∮ z in C(c, rho),
             1 / (z - ((rm.1.1 + 1 : ℕ) : ℂ)) ^ (S - rm.2.1))) =
@@ -774,13 +771,18 @@ theorem norm_entire_eval_le_exp_neg_half_add_three_halves_sharpOuter
 end Erdos240.BakerLemma4Concrete
 
 #print axioms Erdos240.BakerLemma4Concrete.entire_eval_eq_outer_sub_local
-#print axioms Erdos240.BakerLemma4Concrete.normalized_outerCircleIntegral_localPolynomialKernel_complex_eq_zero
+open Erdos240.BakerLemma4Concrete in
+#print axioms normalized_outerCircleIntegral_localPolynomialKernel_complex_eq_zero
 #print axioms Erdos240.BakerLemma4Concrete.norm_normalized_outerCircleIntegral_localEntireKernel_le
 #print axioms Erdos240.BakerLemma4Concrete.norm_entire_eval_le_exp_neg_half_add_outer
-#print axioms Erdos240.BakerLemma4Concrete.norm_normalized_outerCircleIntegral_localEntireKernel_newTarget_le
+open Erdos240.BakerLemma4Concrete in
+#print axioms norm_normalized_outerCircleIntegral_localEntireKernel_newTarget_le
 #print axioms Erdos240.BakerLemma4Concrete.norm_entire_eval_le_exp_neg_half_add_sharpOuter
-#print axioms Erdos240.BakerLemma4Concrete.norm_entire_eval_le_exp_neg_two_thirds_add_loss_add_sharpOuter
-#print axioms Erdos240.BakerLemma4Concrete.norm_entire_eval_le_exp_neg_two_thirds_add_loss_add_three_halves_sharpOuter
+open Erdos240.BakerLemma4Concrete in
+#print axioms norm_entire_eval_le_exp_neg_two_thirds_add_loss_add_sharpOuter
+open Erdos240.BakerLemma4Concrete in
+#print axioms norm_entire_eval_le_exp_neg_two_thirds_add_loss_add_three_halves_sharpOuter
 #print axioms Erdos240.BakerLemma4Concrete.norm_entire_eval_lt_exp_neg_of_loss_and_sharpOuter
 #print axioms Erdos240.BakerLemma4Concrete.sharpOuter_geometricFactor_le_three_halves
-#print axioms Erdos240.BakerLemma4Concrete.norm_entire_eval_le_exp_neg_half_add_three_halves_sharpOuter
+open Erdos240.BakerLemma4Concrete in
+#print axioms norm_entire_eval_le_exp_neg_half_add_three_halves_sharpOuter

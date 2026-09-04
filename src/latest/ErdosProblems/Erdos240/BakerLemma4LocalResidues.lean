@@ -71,7 +71,7 @@ theorem hasseDeriv_mul_X_sub_C_pow_eval_self
   simp [hasseDeriv_mul_X_sub_C_pow_eval]
 
 theorem localOtherPolynomial_eval_ne_zero {R S r : ℕ}
-    (hr : 1 ≤ r) (hrR : r ≤ R) :
+    (hr : 1 ≤ r) (_hrR : r ≤ R) :
     (localOtherPolynomial R S r).eval (r : ℂ) ≠ 0 := by
   rw [localOtherPolynomial_eval]
   apply Finset.prod_ne_zero_iff.mpr
@@ -126,8 +126,7 @@ theorem localPrincipalPolynomial_hasse_diagonal_ne_zero
 theorem localPrincipalPolynomial_linearIndependent (R S : ℕ) :
     LinearIndependent ℂ (localPrincipalPolynomial R S) := by
   rw [Fintype.linearIndependent_iff]
-  intro c hsum
-  intro rm
+  intro c hsum rm
   rcases rm with ⟨r, m⟩
   have hzero (k : ℕ) (hkS : k < S) : c ⟨r, ⟨k, hkS⟩⟩ = 0 := by
     induction k using Nat.strong_induction_on with
@@ -135,8 +134,7 @@ theorem localPrincipalPolynomial_linearIndependent (R S : ℕ) :
       let kk : Fin S := ⟨k, hkS⟩
       have hderiv := congrArg
         (fun Q : ℂ[X] ↦ (hasseDeriv k Q).eval ((r.1 + 1 : ℕ) : ℂ)) hsum
-      simp only [map_sum, map_smul, eval_finsetSum, eval_smul, eval_zero,
-        smul_eq_mul] at hderiv
+      simp only [map_sum, map_smul, eval_finsetSum, eval_smul, smul_eq_mul] at hderiv
       rw [Fintype.sum_sigma] at hderiv
       have hcollapseOther :
           (∑ t : Fin R, ∑ j : Fin S,
@@ -293,7 +291,7 @@ theorem localNodalPolynomial_natDegree (R S : ℕ) :
   unfold localNodalPolynomial
   rw [natDegree_prod_of_monic]
   · simp only [natDegree_pow, natDegree_X_sub_C, Finset.sum_const_nat,
-      Finset.card_range, nsmul_eq_mul]
+      Finset.card_range]
     ring
   · intro i hi
     exact (monic_X_sub_C _).pow _
@@ -337,7 +335,7 @@ theorem localPrincipalPolynomial_coeff_top {R S : ℕ}
 /-- Polynomial partial-fraction numerator decomposition underlying the
 local-circle form of Hermite interpolation. -/
 theorem exists_localPrincipal_decomposition
-    {R S l : ℕ} (hR : 1 ≤ R) (hS : 1 ≤ S) (hRl : R < l)
+    {R S l : ℕ} (hR : 1 ≤ R) (hS : 1 ≤ S) (_hRl : R < l)
     (P : ℂ[X]) (hPdeg : P ∈ Polynomial.degreeLT ℂ (R * S)) :
     ∃ c : IntegralJetIndex R S → ℂ,
       C ((localNodalPolynomial R S).eval (l : ℂ)) * P =
@@ -432,7 +430,7 @@ theorem eval_add_sum_last_eq_zero_of_localPrincipal_decomposition
     rw [map_sum]
     simp only [Polynomial.lcoeff_apply, coeff_smul,
       localPrincipalPolynomial_coeff_top hS, smul_eq_mul, mul_ite, mul_one,
-      mul_zero, Finset.sum_ite_irrel, Finset.sum_const_zero]
+      mul_zero]
     let last : Fin S := ⟨S - 1, by omega⟩
     calc
       (∑ x : Fin S, if x.1 = S - 1 then c ⟨r, x⟩ else 0) =
@@ -518,7 +516,7 @@ theorem eval_localPrincipal_div_localNodal
   field_simp
 
 theorem localPolynomialKernel_eq_partialFractions
-    {R S : ℕ} (hR : 1 ≤ R) (hS : 1 ≤ S)
+    {R S : ℕ} (_hR : 1 ≤ R) (_hS : 1 ≤ S)
     {l z : ℂ} (P : ℂ[X]) (c : IntegralJetIndex R S → ℂ)
     (hdecomp :
       C ((localNodalPolynomial R S).eval l) * P =
@@ -611,7 +609,7 @@ theorem natCast_not_mem_sphere_half (a b : ℕ) :
     (b : ℂ) ∉ Metric.sphere (a : ℂ) (1 / 2 : ℝ) := by
   by_cases hab : a = b
   · subst b
-    simp [Metric.mem_sphere]
+    simp
   · exact fun hb ↦ natCast_not_mem_closedBall_half_of_ne hab
       (Metric.sphere_subset_closedBall hb)
 
@@ -761,8 +759,7 @@ theorem normalized_circleIntegral_localPolynomialKernel_eq_topCoefficient
   rw [htargetZero, mul_zero, zero_add,
     circleIntegral.integral_fun_sum (fun rm _ ↦ hterm rm), mul_sum]
   refine (Fintype.sum_eq_single top (fun rm hrm ↦ ?_)).trans ?_
-  ·
-    have hoff : r ≠ rm.1 ∨ rm.2.1 ≠ S - 1 := by
+  · have hoff : r ≠ rm.1 ∨ rm.2.1 ≠ S - 1 := by
       contrapose! hrm
       refine Sigma.ext_iff.mpr ⟨hrm.1.symm, ?_⟩
       exact heq_of_eq (Fin.ext hrm.2)
@@ -772,9 +769,7 @@ theorem normalized_circleIntegral_localPolynomialKernel_eq_topCoefficient
           c rm / (z - ((rm.1.1 + 1 : ℕ) : ℂ)) ^ (S - rm.2.1)) =
         c rm * (∮ z in C(((r.1 + 1 : ℕ) : ℂ), (1 / 2 : ℝ)),
           1 / (z - ((rm.1.1 + 1 : ℕ) : ℂ)) ^ (S - rm.2.1)) by
-      simpa [div_eq_mul_inv] using circleIntegral.integral_const_mul (c rm)
-        (fun z : ℂ => 1 / (z - ((rm.1.1 + 1 : ℕ) : ℂ)) ^ (S - rm.2.1))
-        (((r.1 + 1 : ℕ) : ℂ)) (1 / 2 : ℝ)]
+      simp [div_eq_mul_inv]]
     calc
       (2 * ((Real.pi : ℝ) : ℂ) * I)⁻¹ *
           (c rm * (∮ z in C(((r.1 + 1 : ℕ) : ℂ), (1 / 2 : ℝ)),
@@ -790,10 +785,7 @@ theorem normalized_circleIntegral_localPolynomialKernel_eq_topCoefficient
         c ⟨r, ⟨S - 1, by omega⟩⟩ *
           (∮ z in C(((r.1 + 1 : ℕ) : ℂ), (1 / 2 : ℝ)),
             1 / (z - ((r.1 + 1 : ℕ) : ℂ)) ^ (S - (S - 1))) by
-      simpa [div_eq_mul_inv] using circleIntegral.integral_const_mul
-        (c ⟨r, ⟨S - 1, by omega⟩⟩)
-        (fun z : ℂ => 1 / (z - ((r.1 + 1 : ℕ) : ℂ)) ^ (S - (S - 1)))
-        (((r.1 + 1 : ℕ) : ℂ)) (1 / 2 : ℝ)]
+      simp [div_eq_mul_inv]]
     calc
       (2 * ((Real.pi : ℝ) : ℂ) * I)⁻¹ *
           (c ⟨r, ⟨S - 1, by omega⟩⟩ *
@@ -870,9 +862,7 @@ theorem normalized_outerCircleIntegral_localPolynomialKernel_eq_zero
     rw [show (∮ z in C(c, rho), P.eval (l : ℂ) / (z - (l : ℂ))) =
         P.eval (l : ℂ) *
           (∮ z in C(c, rho), 1 / (z - (l : ℂ)) ^ (1 : ℕ)) by
-      simpa [div_eq_mul_inv] using circleIntegral.integral_const_mul
-        (P.eval (l : ℂ))
-        (fun z : ℂ => 1 / (z - (l : ℂ)) ^ (1 : ℕ)) c rho]
+      simp [div_eq_mul_inv]]
     rw [show (2 * ((Real.pi : ℝ) : ℂ) * I)⁻¹ *
           (P.eval (l : ℂ) *
             (∮ z in C(c, rho), 1 / (z - (l : ℂ)) ^ (1 : ℕ))) =
@@ -891,9 +881,7 @@ theorem normalized_outerCircleIntegral_localPolynomialKernel_eq_zero
           (z - ((rm.1.1 + 1 : ℕ) : ℂ)) ^ (S - rm.2.1)) =
         a rm * (∮ z in C(c, rho),
           1 / (z - ((rm.1.1 + 1 : ℕ) : ℂ)) ^ (S - rm.2.1)) by
-      simpa [div_eq_mul_inv] using circleIntegral.integral_const_mul (a rm)
-        (fun z : ℂ => 1 /
-          (z - ((rm.1.1 + 1 : ℕ) : ℂ)) ^ (S - rm.2.1)) c rho]
+      simp [div_eq_mul_inv]]
     rw [show (2 * ((Real.pi : ℝ) : ℂ) * I)⁻¹ *
           (a rm * (∮ z in C(c, rho),
             1 / (z - ((rm.1.1 + 1 : ℕ) : ℂ)) ^ (S - rm.2.1))) =
@@ -983,7 +971,7 @@ theorem circleIntegrable_localEntireKernel_of_nodes_mem_ball
 right side is a normalized outer integral of `f` minus its Hermite
 polynomial; no norm estimate has yet been taken. -/
 theorem normalized_outerCircleIntegral_entireKernel_sub_polynomial
-    {R S l : ℕ} (hS : 1 ≤ S) (f : ℂ → ℂ)
+    {R S l : ℕ} (_hS : 1 ≤ S) (f : ℂ → ℂ)
     (hf : Differentiable ℂ f) {c : ℂ} {rho : ℝ}
     (hlball : (l : ℂ) ∈ Metric.ball c rho)
     (hnodes : ∀ r : Fin R,
@@ -1075,8 +1063,7 @@ theorem localHasseTaylorPolynomial_hasse
       (hasseDeriv k.1 P).eval r := by
   rw [localHasseTaylorPolynomial, map_sum, eval_finsetSum]
   refine (Fintype.sum_eq_single k (fun m hmk ↦ ?_)).trans ?_
-  ·
-    rw [mul_comm, hasseDeriv_mul_X_sub_C_pow_eval]
+  · rw [mul_comm, hasseDeriv_mul_X_sub_C_pow_eval]
     by_cases hle : m.1 ≤ k.1
     · rw [if_pos hle, hasseDeriv_C _ _ (by omega), eval_zero]
     · rw [if_neg hle]
@@ -1095,7 +1082,7 @@ theorem localHasseTaylorPolynomial_remainder_dvd
     (localHasseTaylorPolynomial_hasse r P ⟨k, hk⟩).symm
 
 theorem localOtherPolynomial_eval_ne_zero_on_closedBall_half
-    {R S r : ℕ} (hr : 1 ≤ r) (hrR : r ≤ R)
+    {R S r : ℕ} (hr : 1 ≤ r) (_hrR : r ≤ R)
     {z : ℂ} (hz : z ∈ Metric.closedBall (r : ℂ) (1 / 2 : ℝ)) :
     (localOtherPolynomial R S r).eval z ≠ 0 := by
   rw [localOtherPolynomial_eval]
@@ -1110,7 +1097,7 @@ theorem localOtherPolynomial_eval_ne_zero_on_closedBall_half
   exact natCast_not_mem_closedBall_half_of_ne hir (hzi ▸ hz)
 
 theorem circleIntegrable_localPolynomialKernel
-    {R S l : ℕ} (hRl : R < l) (P : ℂ[X]) (r : Fin R) :
+    {R S l : ℕ} (_hRl : R < l) (P : ℂ[X]) (r : Fin R) :
     CircleIntegrable (localPolynomialKernel R S (l : ℂ) P)
       (((r.1 + 1 : ℕ) : ℂ)) (1 / 2 : ℝ) := by
   apply ContinuousOn.circleIntegrable (by norm_num)
@@ -1132,7 +1119,7 @@ theorem circleIntegrable_localPolynomialKernel
     exact natCast_not_mem_sphere_half (r.1 + 1) l (sub_eq_zero.mp hzero ▸ hz)
 
 theorem circleIntegral_localPolynomialKernel_sub_taylor_eq_zero
-    {R S l : ℕ} (hR : 1 ≤ R) (hS : 1 ≤ S) (hRl : R < l)
+    {R S l : ℕ} (_hR : 1 ≤ R) (_hS : 1 ≤ S) (hRl : R < l)
     (P : ℂ[X]) (r : Fin R) :
     (∮ z in C(((r.1 + 1 : ℕ) : ℂ), (1 / 2 : ℝ)),
       localPolynomialKernel R S (l : ℂ) P z -
@@ -1156,7 +1143,7 @@ theorem circleIntegral_localPolynomialKernel_sub_taylor_eq_zero
     have hzr : z - ((r.1 + 1 : ℕ) : ℂ) ≠ 0 := by
       intro hzero
       have hzcenter := sub_eq_zero.mp hzero
-      simpa [hzcenter, Metric.mem_sphere] using hz
+      simp [hzcenter] at hz
     have hzl : z - (l : ℂ) ≠ 0 := by
       exact sub_ne_zero.mpr fun h ↦
         natCast_not_mem_sphere_half (r.1 + 1) l (h.symm ▸ hz)

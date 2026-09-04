@@ -416,7 +416,7 @@ theorem finiteCofactor_inverseJet_convolution
   rw [hderiv, iteratedDeriv_const]
   split_ifs with hn
   · simp [hn]
-  · simp [hn]
+  · simp
 
 theorem finiteInverseCofactorTaylor_hasse
     {s : Finset ℕ} {T r n k : ℕ} (hk : k < n) :
@@ -567,8 +567,7 @@ theorem finiteCofactorPolynomial_monic (s : Finset ℕ) (r : ℕ) :
 theorem finiteCofactorPolynomial_natDegree (s : Finset ℕ) (r : ℕ) :
     (finiteCofactorPolynomial s r).natDegree = (s.erase r).card := by
   rw [finiteCofactorPolynomial, natDegree_prod_of_monic]
-  · simp only [natDegree_X_sub_C, Finset.sum_const_nat, smul_eq_mul,
-      mul_one]
+  · simp only [natDegree_X_sub_C, Finset.sum_const_nat, mul_one]
   · intro i hi
     exact monic_X_sub_C _
 
@@ -858,7 +857,6 @@ theorem norm_polynomial_finiteRepeatedNodes_eval_le_uniform
     _ = delta * ((s.card : ℝ) * T * T *
         (K ^ T * (2 : ℝ) ^ (s.card * T + T))) := by
       simp only [Finset.sum_const, Finset.card_range, nsmul_eq_mul]
-      push_cast
       ring
 
 end Erdos240.CoprimeHermiteBasis

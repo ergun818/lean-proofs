@@ -518,7 +518,6 @@ theorem odd_square_class
   have huq0 : uq ≠ 0 := mul_ne_zero hx (zpow_ne_zero _ hp0)
   have huqVal : uq.valuation = 0 := by
     have hvalP : Padic.valuation (p : ℚ_[p]) = 1 := by
-      change Padic.valuation (((p : ℕ) : ℚ_[p])) = 1
       exact Padic.valuation_p
     rw [Padic.valuation_mul hx (zpow_ne_zero _ hp0),
       Padic.valuation_zpow, hvalP]

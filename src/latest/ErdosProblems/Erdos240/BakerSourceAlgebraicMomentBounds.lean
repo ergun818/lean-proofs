@@ -98,7 +98,7 @@ theorem norm_vdplF_le_analyticGrowth
       apply sum_le_sum
       intro lambda hlambda
       have hfactor :=
-        BakerSourceAlgebraicMajorant.AlgebraicExponentialMajorant.sourceTerm_modified_eq_algebraic_mul_exp_neg_perturbation
+        sourceTerm_modified_eq_algebraic_mul_exp_neg_perturbation
           (coord := coord) (p := p) (h := h) (b := b) (bLast := bLast)
           (logAlpha := logAlpha) (logAlphaLast := logAlphaLast)
           (q := q) (N := N) (z := z) (m := m) hbLast lambda
