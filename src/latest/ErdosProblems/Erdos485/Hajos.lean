@@ -57,6 +57,7 @@ theorem card_support_eulerReduce {p : K[X]} {n : ℕ} (hn : n ∈ p.support) :
   rw [support_eulerReduce, Finset.card_erase_of_mem hn]
   omega
 
+omit [CharZero K] in
 /-- A nonzero monomial cannot vanish at a nonzero point. -/
 theorem two_le_card_support_of_isRoot {p : K[X]} {a : K}
     (hp : p ≠ 0) (ha : a ≠ 0) (hroot : p.IsRoot a) :
@@ -126,12 +127,14 @@ theorem hajos_support_bound {p : K[X]} {a : K} (hp : p ≠ 0) (ha : a ≠ 0)
   have h := hajos_rootMultiplicity_lt_support_card hp ha
   omega
 
+omit [CharZero K] in
 /-- Reflection, and hence reversal, preserves the number of nonzero terms. -/
 theorem card_support_reflect (p : K[X]) (N : ℕ) :
     (p.reflect N).support.card = p.support.card := by
   rw [Polynomial.reflect_support,
     Finset.card_image_of_injective _ (Polynomial.revAt N).injective]
 
+omit [CharZero K] in
 theorem card_support_reverse (p : K[X]) :
     p.reverse.support.card = p.support.card := by
   exact card_support_reflect p p.natDegree

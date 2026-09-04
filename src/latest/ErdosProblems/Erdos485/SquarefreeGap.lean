@@ -30,7 +30,7 @@ open scoped Polynomial.Bivariate
 
 noncomputable section
 
-variable {K : Type*} [Field K] [CharZero K]
+variable {K : Type*} [Field K]
 
 /-- Over a field, association in the iterated polynomial ring differs by a
 nonzero scalar from the ground field.  This turns the UFD factorization API,
@@ -207,6 +207,8 @@ theorem X_not_dvd_coeff_zero_of_C_X_not_dvd_of_natDegree_eq_zero
   obtain ⟨q, hq⟩ := hp
   refine ⟨C q, ?_⟩
   rw [eq_C_of_natDegree_eq_zero hHy, hq, map_mul]
+
+variable [CharZero K]
 
 /-- The specialized-square identity and an exact square-times-squarefree
 factorization force the specialization of `H` to divide the square of the

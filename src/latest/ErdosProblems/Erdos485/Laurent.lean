@@ -129,7 +129,7 @@ theorem leastExponent_C_mul_T {c : K} (hc : c ≠ 0) (r : ℤ) :
   have hsupp' : (C c * T r).coeff.support = {r} := by
     simpa using hsupp
   unfold leastExponent
-  simpa only [hsupp', Finset.min'_singleton]
+  simp only [hsupp', Finset.min'_singleton]
 
 /-- The least coefficient of a nonzero scalar Laurent monomial is its scalar. -/
 theorem leastCoeff_C_mul_T {c : K} (hc : c ≠ 0) (r : ℤ) :

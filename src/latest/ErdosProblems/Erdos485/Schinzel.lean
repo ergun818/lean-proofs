@@ -180,7 +180,7 @@ theorem schinzel_support_bound_of_reduction
       simp only [ht] at hreduce
       rcases hreduce with hbase | ⟨ht4, hsmall | hrecursive⟩
       · rcases hbase with ⟨rfl, hterms⟩
-        simpa [hterms]
+        simp [hterms]
       · exact hsmall.trans (all_zero_estimate ht4)
       · obtain ⟨G, hG, hGt, hPG⟩ := hrecursive
         have hGB : termCount G ≤ B (termCount (G ^ 2)) :=

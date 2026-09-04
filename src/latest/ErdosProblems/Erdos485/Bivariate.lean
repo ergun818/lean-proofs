@@ -111,7 +111,7 @@ theorem exponentWeight_injOn {K : Type*} [Semiring K]
 /-- The coefficient at the encoded exponent `n*a+b` is exactly the original bivariate
 coefficient, provided all `z`-degrees are `< n` and `b < n`. -/
 theorem coeff_specialize_exponentWeight {K : Type*} [CommSemiring K]
-    {n : ℕ} {H : BiPolynomial K} (hn : 0 < n) (hdeg : ZDegreeLT n H)
+    {n : ℕ} {H : BiPolynomial K} (_hn : 0 < n) (hdeg : ZDegreeLT n H)
     (a b : ℕ) (hb : b < n) :
     (specialize n H).coeff (n * a + b) = biCoeff H a b := by
   rw [specialize_apply, eval₂_eq_sum, coeff_sum]

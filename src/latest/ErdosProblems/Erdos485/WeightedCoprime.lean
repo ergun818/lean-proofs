@@ -19,7 +19,7 @@ open scoped Polynomial.Bivariate
 
 noncomputable section
 
-variable {K : Type*} [Field K] [CharZero K]
+variable {K : Type*} [Field K]
 
 /-- The two-variable weight, in Mathlib's bivariate convention: coordinate
 `0` is the inner variable and coordinate `1` is the outer variable. -/
@@ -62,7 +62,7 @@ theorem mvExponent_inj {a b a' b' : ℕ} :
     Polynomial.Bivariate.equivMvPolynomial_X]
   rw [MvPolynomial.X_pow_eq_monomial, MvPolynomial.X_pow_eq_monomial,
     MvPolynomial.C_mul_monomial, MvPolynomial.monomial_mul]
-  simp [mvExponent, add_comm]
+  simp [mvExponent]
 
 @[simp] theorem coeff_equivMvPolynomial_mvExponent (F : BiPolynomial K) (a b : ℕ) :
     MvPolynomial.coeff (mvExponent a b)
@@ -89,6 +89,8 @@ theorem mv_weight_eq_exponentWeight (n : ℕ) (d : Fin 2 →₀ ℕ) :
   rw [mvExponent_eq d, mv_weight_mvExponent]
   simp [exponentWeight]
 
+variable [CharZero K]
+
 /-- A weighted-Euler eigenvector becomes weighted homogeneous after the
 bivariate polynomial is identified with an `MvPolynomial`. -/
 theorem isWeightedHomogeneous_equivMvPolynomial_of_eigen
@@ -114,12 +116,13 @@ theorem isWeightedHomogeneous_equivMvPolynomial_of_eigen
   rw [mv_weight_eq_exponentWeight, mv_weight_eq_exponentWeight]
   exact weights_eq_of_weightedEuler_eq_smul heig hdG hd₀G
 
+omit [CharZero K] in
 /-- If a polynomial has at most one monomial in each weight and is divisible
 by a nonzero weighted-homogeneous polynomial, that divisor divides a variable
 monomial.  This is the graded-ideal form of the distinct-weight argument. -/
 theorem exists_dvd_X_of_weightedHomogeneous_dvd_weightInjective
     {n m : ℕ} {P Q : MvPolynomial (Fin 2) K}
-    (hP : P ≠ 0)
+    (_hP : P ≠ 0)
     (hPirred : Irreducible P)
     (hQ : Q ≠ 0)
     (hhom : MvPolynomial.IsWeightedHomogeneous (mvWeight n) P m)

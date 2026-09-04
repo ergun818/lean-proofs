@@ -78,8 +78,7 @@ theorem weightedEuler_apply (n : ℕ) (F : BiPolynomial K) :
 
 @[simp] theorem weightedEuler_mul (n : ℕ) (F G : BiPolynomial K) :
     weightedEuler n (F * G) = F * weightedEuler n G + G * weightedEuler n F := by
-  simpa [weightedEuler, smul_eq_mul] using
-    (Derivation.leibniz (weightedEulerDerivation n) F G)
+  simp [weightedEuler, smul_eq_mul]
 
 @[simp] theorem innerWeightedDerivation_C (p : Polynomial K) :
     innerWeightedDerivation (C p) = C (X * p.derivative) := by
@@ -124,23 +123,22 @@ theorem weightedEuler_apply (n : ℕ) (F : BiPolynomial K) :
     weightedEuler_C, weightedEuler_X_pow]
   rcases b with _ | b
   · rw [derivative_monomial]
-    simp only [Nat.cast_zero, mul_zero, monomial_zero_right, map_zero, zero_mul,
-      mul_zero, zero_add]
+    simp only [Nat.cast_zero, mul_zero, map_zero]
     rw [← mul_assoc, ← C_mul, C_mul_X_pow_eq_monomial]
     ext i j
     simp [coeff_monomial]
-    split_ifs <;> push_cast <;> ring_nf
+    split_ifs <;> ring_nf
   · rw [derivative_monomial_succ, X_mul_monomial]
     rw [← mul_assoc, mul_comm (X ^ a) (C (monomial (b + 1) (c * (b + 1)))),
       ← add_mul, ← C_mul, ← C_add, C_mul_X_pow_eq_monomial]
-    simp only [← C_eq_natCast, monomial_mul_C]
+    simp only [monomial_mul_C]
     ext i j
     by_cases hi : i = a
     · subst i
-      simp [coeff_monomial, coeff_mul_C]
-      split_ifs <;> push_cast <;> ring
+      simp [coeff_monomial]
+      split_ifs <;> ring
     · have hai : a ≠ i := Ne.symm hi
-      simp [coeff_monomial, hi, hai]
+      simp [coeff_monomial, hai]
 
 theorem coeff_X_mul_derivative [CharZero K] (p : Polynomial K) (b : ℕ) :
     (X * p.derivative).coeff b = (b : K) * p.coeff b := by
@@ -259,11 +257,11 @@ theorem specialize_weightedEuler [CharZero K] (n : ℕ) (F : BiPolynomial K) :
     specialize n (weightedEuler n F) = X * (specialize n F).derivative := by
   induction F using Polynomial.induction_on' with
   | add P Q hP hQ =>
-      simp only [weightedEuler_add, map_add, derivative_add, mul_add, hP, hQ]
+      simp only [weightedEuler_add, map_add, mul_add, hP, hQ]
   | monomial a p =>
       induction p using Polynomial.induction_on' with
       | add p q hp hq =>
-          simp only [map_add, weightedEuler_add, derivative_add, mul_add, hp, hq]
+          simp only [map_add, weightedEuler_add, mul_add, hp, hq]
       | monomial b c =>
           change specialize n (weightedEuler n (biMonomial a b c)) =
             X * (specialize n (biMonomial a b c)).derivative

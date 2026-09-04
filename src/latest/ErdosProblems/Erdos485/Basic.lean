@@ -103,7 +103,7 @@ theorem f_zero : f 0 = 0 := by
 theorem f_one : f 1 = 1 := by
   apply Nat.le_antisymm
   · simpa using f_minimal (P := (1 : ℚ[X])) termCount_one
-  · show 1 ≤ sInf (squareTermCounts 1)
+  · change 1 ≤ sInf (squareTermCounts 1)
     refine le_csInf (squareTermCounts_nonempty 1) ?_
     intro m hm
     rcases hm with ⟨P, hP, rfl⟩

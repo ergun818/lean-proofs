@@ -22,7 +22,7 @@ def finiteImage {α β : Type*} [DecidableEq β] (S : Finset α) (L : α → β)
 
 /-- An injective pair of finite-valued functions gives the elementary product bound. -/
 theorem card_le_card_finiteImage_mul_card_finiteImage
-    {α β γ : Type*} [DecidableEq α] [DecidableEq β] [DecidableEq γ]
+    {α β γ : Type*} [DecidableEq β] [DecidableEq γ]
     (S : Finset α) (L₁ : α → β) (L₂ : α → γ)
     (hinj : Set.InjOn (fun x => (L₁ x, L₂ x)) S) :
     S.card ≤ (finiteImage S L₁).card * (finiteImage S L₂).card := by
@@ -43,7 +43,7 @@ theorem card_le_card_finiteImage_mul_card_finiteImage
 /-- Symmetric form of the finite-image estimate: one of the two images has square at least
 the size of the source. -/
 theorem card_le_max_finiteImage_sq
-    {α β γ : Type*} [DecidableEq α] [DecidableEq β] [DecidableEq γ]
+    {α β γ : Type*} [DecidableEq β] [DecidableEq γ]
     (S : Finset α) (L₁ : α → β) (L₂ : α → γ)
     (hinj : Set.InjOn (fun x => (L₁ x, L₂ x)) S) :
     S.card ≤ max (finiteImage S L₁).card (finiteImage S L₂).card ^ 2 := by

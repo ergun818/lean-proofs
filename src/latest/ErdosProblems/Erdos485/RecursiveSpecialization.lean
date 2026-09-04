@@ -43,7 +43,7 @@ def biLaurentEval {K : Type*} [CommSemiring K]
   rw [eval₂_monomial]
   simp only [coe_eval₂RingHom, eval₂_monomial]
   rw [mul_pow, mul_pow, T_pow, T_pow]
-  simp only [map_mul, specializationWeight, Prod.fst, Prod.snd]
+  simp only [map_mul, specializationWeight]
   calc
     _ = LaurentPolynomial.C c * LaurentPolynomial.C ζ ^ b *
         LaurentPolynomial.C η ^ a *
@@ -102,7 +102,7 @@ theorem biLaurentEval_coeff_eq_laurentSpecialize {K : Type*} [CommSemiring K]
             biCoeff F ab.1 ab.2 * η ^ ab.1 * ζ ^ ab.2 else 0 := by
           simp only [map_sum, AddMonoidAlgebra.coeff_sum,
             biLaurentEval_biMonomial, ← single_eq_C_mul_T,
-            AddMonoidAlgebra.coeff_single, Finsupp.finset_sum_apply,
+            AddMonoidAlgebra.coeff_single, Finsupp.finsetSum_apply,
             Finsupp.single_apply]
     _ = laurentSpecialize F (specializationWeight r p) η ζ e := by
           rw [laurentSpecialize_apply]
@@ -179,9 +179,7 @@ theorem Deformation.specializationWeight_eq {K : Type*} [Field K] [CharZero K]
       (D.q : ℤ) * ((D.p j : ℤ) * N.sqExponent k -
         (N.sqExponent j : ℤ) * D.p k) + D.shift * D.p k := by
   unfold specializationWeight
-  simp only [Prod.fst, Prod.snd]
   rw [D.zExponent_cast, D.residual_eq k, D.residual_eq j]
-  push_cast
   ring
 
 /-- The first deformation term and the term indexed by `k` collide under
@@ -359,7 +357,8 @@ theorem deformation_recursive_step_of_scalar_square
       (finiteImage (exponentPairs F₀) (L k)).card := by
     calc
       A.coeff.support.card =
-          (laurentSpecialize F₀ (specializationWeight (D.residual k) (D.p k)) η ζ).support.card := by
+          (laurentSpecialize F₀
+            (specializationWeight (D.residual k) (D.p k)) η ζ).support.card := by
             rw [biLaurentEval_coeff_eq_laurentSpecialize]
       _ = (finiteImage (exponentPairs F₀) (L k)).card := by
             simpa [L] using hgeneric

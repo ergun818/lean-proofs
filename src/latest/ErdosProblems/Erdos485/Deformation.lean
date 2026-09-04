@@ -163,7 +163,7 @@ theorem PrimitiveNormalization.natDegree_sq_pos {K : Type*} [Field K] [CharZero 
   have hsub : (N.poly ^ 2).support ⊆ {0} := by
     intro i hi
     have := Polynomial.le_natDegree_of_ne_zero (Polynomial.mem_support_iff.mp hi)
-    simp only [hdeg, Finset.mem_singleton]
+    simp only [Finset.mem_singleton]
     omega
   have := Finset.card_le_card hsub
   simp at this
@@ -185,7 +185,7 @@ theorem exists_dirichletData {K : Type*} [Field K] [CharZero K]
     intro i
     have hfirst : N.firstSqIndex < middleIndex (by omega) i := by
       apply Fin.mk_lt_mk.mpr
-      simp [PrimitiveNormalization.firstSqIndex, middleIndex]
+      simp
     have hlast : middleIndex (by omega) i < N.lastSqIndex := by
       apply Fin.mk_lt_mk.mpr
       change i.1 + 1 < t - 1
@@ -230,7 +230,6 @@ theorem exists_dirichletData {K : Type*} [Field K] [CharZero K]
     dsimp [residual]
     rw [hplast, N.sqExponent_last]
     dsimp [n]
-    push_cast
     ring
   have hrabs : ∀ j, (8 : ℝ) * |(residual j : ℝ)| < n := by
     intro j
@@ -262,7 +261,7 @@ theorem exists_dirichletData {K : Type*} [Field K] [CharZero K]
       have hrewrite :
           alpha i - (pInt i : ℝ) / q =
             ((residual j : ℤ) : ℝ) / ((n : ℝ) * q) := by
-        simp only [alpha, residual, hpMid_cast]
+        simp only [alpha, residual]
         rw [hpj, hpMid_cast, hj]
         push_cast
         field_simp
@@ -273,7 +272,6 @@ theorem exists_dirichletData {K : Type*} [Field K] [CharZero K]
           (1 : ℝ) / ((8 : ℕ) * q) * (n * q) = n / 8 := by
         push_cast
         field_simp
-        <;> ring
       rw [hrhs] at hscaled
       nlinarith
   exact ⟨{
@@ -339,13 +337,13 @@ theorem DirichletData.small_bound_of_all_residual_zero
     have := D.q_le
     omega)
 
-theorem biCoeff_finset_sum {K I : Type*} [Semiring K] [DecidableEq I]
+theorem biCoeff_finset_sum {K I : Type*} [Semiring K]
     (s : Finset I) (H : I → BiPolynomial K) (a b : ℕ) :
     biCoeff (∑ i ∈ s, H i) a b = ∑ i ∈ s, biCoeff (H i) a b := by
   simp [biCoeff]
 
 theorem exponentPairs_sum_biMonomial {K I : Type*} [Semiring K]
-    [Fintype I] [DecidableEq I] (a b : I → ℕ) (c : I → K)
+    [Fintype I] (a b : I → ℕ) (c : I → K)
     (hc : ∀ i, c i ≠ 0) (hinj : Function.Injective (fun i ↦ (a i, b i))) :
     exponentPairs (∑ i, biMonomial (a i) (b i) (c i)) =
       Finset.univ.image (fun i ↦ (a i, b i)) := by
@@ -605,7 +603,7 @@ theorem primitiveNormalization_deformation
   obtain ⟨D⟩ := exists_dirichletData N ht
   by_cases hall : ∀ j, D.residual j = 0
   · exact Or.inl (D.small_bound_of_all_residual_zero hall)
-  · push_neg at hall
+  · push Not at hall
     exact Or.inr (D.toDeformation_of_some_residual_ne hall)
 
 end
