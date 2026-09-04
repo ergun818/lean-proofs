@@ -657,7 +657,7 @@ theorem Realization.nonempty
                   simp only [landing, chosen,
                     Landing.budget_node_last,
                     Landing.index_node_last]
-                  convert hcomplexity using 1 <;> rfl
+                  convert hcomplexity using 1; rfl
               | cast i =>
                   intro e
                   change OrderedFace k i.1 at e
@@ -687,7 +687,6 @@ theorem Realization.nonempty
                     Fin.lastCases_castSucc,
                     OrderedPartitionComplex.dropTop] at hcomplexity
                   convert hcomplexity using 1
-                  all_goals rfl
             fine_complexity := by
               intro q
               cases q using Fin.lastCases with
@@ -713,7 +712,7 @@ theorem Realization.nonempty
                     Landing.budget_node_last,
                     Landing.index_node_last]
                   convert hcomplexity using 1
-                  all_goals rfl
+                  rfl
               | cast i =>
                   intro e
                   change OrderedFace k i.1 at e
@@ -744,8 +743,7 @@ theorem Realization.nonempty
                     OrderedPartitionComplex.withTopLayer,
                     Fin.lastCases_castSucc,
                     OrderedPartitionComplex.dropTop] at hcomplexity
-                  convert hcomplexity using 1
-                  all_goals rfl }
+                  convert hcomplexity using 1 }
           exact ⟨{
             landing := landing
             certificate := certificate

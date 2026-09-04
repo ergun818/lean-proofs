@@ -245,7 +245,7 @@ theorem cutCorrelation_eq_sum_boolean
 
 /-- It is enough to bound all Boolean cut correlations. -/
 theorem abs_cutCorrelation_le_of_boolean
-    {G : Type*} [Fintype G] [DecidableEq G] [AddCommGroup G]
+    {G : Type*} [Fintype G] [AddCommGroup G]
     {r : ℕ} {f g : G → ℝ} {ε : ℝ}
     (u : CutTestFamily G r) (hu : IsBoundedCutTest u)
     (hboolean :
@@ -253,6 +253,7 @@ theorem abs_cutCorrelation_le_of_boolean
         |cutCorrelation r f g
           (cutTestFamilyOfBooleanAssignment b)| ≤ ε) :
     |cutCorrelation r f g u| ≤ ε := by
+  classical
   rw [cutCorrelation_eq_sum_boolean]
   calc
     |∑ b : BooleanCutAssignment G r,
@@ -333,7 +334,7 @@ theorem cutCorrelation_boolean_eq_pairing
 already satisfies the full cut-discrepancy relation against arbitrary
 `[0,1]`-valued cut tests. -/
 theorem exists_cutDiscrepancy_model_of_finiteBooleanModel
-    {G : Type*} [Fintype G] [DecidableEq G] [AddCommGroup G]
+    {G : Type*} [Fintype G] [AddCommGroup G]
     (r : ℕ) (f : G → ℝ) {ε : ℝ}
     (hmodel :
       HasFiniteDenseModel
@@ -370,7 +371,7 @@ theorem exists_cutDiscrepancy_model_of_positivePartCorrelationBound
 positive-part hypothesis by finite correlation estimates for products of
 Boolean generalized convolutions, with all quantitative losses explicit. -/
 theorem exists_cutDiscrepancy_model_of_monomialCorrelationBound
-    {G : Type*} [Fintype G] [DecidableEq G] [AddCommGroup G]
+    {G : Type*} [Fintype G] [AddCommGroup G]
     (r : ℕ) (hr : 0 < r)
     {f ν : G → ℝ}
     {p : ℝ[X]} {δ η M : ℝ}
@@ -385,6 +386,7 @@ theorem exists_cutDiscrepancy_model_of_monomialCorrelationBound
     ∃ g : G → ℝ, IsUnitBounded g ∧
       CutDiscrepancyLe r f g
         (polynomialCoefficientL1 p * η + δ * M) := by
+  classical
   apply
     exists_cutDiscrepancy_model_of_positivePartCorrelationBound
       r

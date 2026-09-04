@@ -140,7 +140,7 @@ theorem pullbackBaseEdgeWeight_weightsIdempotent
 /-- If `s ⊆ t` and all factors on `s` are idempotent, multiplying the
 `t`-product by the `s`-product does not change it. -/
 theorem prod_mul_prod_eq_right_of_subset_of_idempotent
-    {ι : Type*} [DecidableEq ι]
+    {ι : Type*}
     (s t : Finset ι) (f : ι → ℝ)
     (hst : s ⊆ t)
     (hf : ∀ i ∈ s, f i * f i = f i) :

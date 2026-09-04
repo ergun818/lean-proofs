@@ -126,7 +126,6 @@ theorem toWeighted_simplexWeight_eq_indicator {k : ℕ}
 by the size of the ambient product. -/
 theorem toWeighted_simplexCount_eq_card_div {k : ℕ}
     {V : Fin k → Type*} [∀ i, Fintype (V i)]
-    [∀ i, DecidableEq (V i)]
     (H : SimplexHypergraph V) :
     H.toWeighted.simplexCount =
       (H.simplexFinset.card : ℝ) /

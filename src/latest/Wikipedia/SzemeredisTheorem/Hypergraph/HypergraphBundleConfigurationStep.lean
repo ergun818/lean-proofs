@@ -48,7 +48,7 @@ variable {G : Type*} [Fintype G] [DecidableEq G]
 
 /-- A nonempty occurrence edge has nonempty projected base edge. -/
 theorem projectedEdge_nonempty
-    {K : Type*} [Fintype K] [DecidableEq K]
+    {K : Type*} [DecidableEq K]
     (B : HypergraphBundle (Fin k) K
       (orderedConfigurationBaseEdges k r))
     {g : Finset K} (_hg : g ∈ B.edges)
@@ -59,7 +59,7 @@ theorem projectedEdge_nonempty
 /-- Every projected occurrence edge has cardinality at most the complex
 rank. -/
 theorem projectedEdge_card_le
-    {K : Type*} [Fintype K] [DecidableEq K]
+    {K : Type*} [DecidableEq K]
     (B : HypergraphBundle (Fin k) K
       (orderedConfigurationBaseEdges k r))
     {g : Finset K} (hg : g ∈ B.edges) :

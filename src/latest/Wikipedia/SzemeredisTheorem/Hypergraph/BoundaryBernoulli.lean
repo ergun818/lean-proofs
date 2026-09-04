@@ -119,7 +119,7 @@ theorem sum_boundaryBernoulliWeight
 
 /-- Bounded boundary factors give nonnegative Bernoulli coefficients. -/
 theorem boundaryBernoulliWeight_nonneg
-    {G : Type*} [Fintype G] [DecidableEq G]
+    {G : Type*} [Fintype G]
     {j : ℕ}
     (u : CutTestFamily G (j + 1))
     (hu : IsBoundedCutTest u)

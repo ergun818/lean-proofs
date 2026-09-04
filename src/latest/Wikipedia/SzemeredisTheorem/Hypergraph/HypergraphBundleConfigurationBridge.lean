@@ -84,8 +84,7 @@ theorem positiveOrderedFaceEdge_ofEdge
     (ht : t.Nonempty) (htr : t.card ≤ r) :
     positiveOrderedFaceEdge
         (positiveOrderedFaceOfEdge t ht htr) = t := by
-  simp [positiveOrderedFaceEdge,
-    positiveOrderedFaceOfEdge]
+  dsimp only [positiveOrderedFaceEdge, positiveOrderedFaceOfEdge]
   exact Finset.map_orderEmbOfFin_univ t _
 
 /-- Passing from a positive ordered face to its range edge is injective:

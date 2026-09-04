@@ -180,7 +180,7 @@ theorem mean_comp_orderedFaceTuple
 /-- In a mixed telescoping term between two unit-interval patterns, all
 nondistinguished factors have magnitude at most one. -/
 theorem mixedOrderedPatternTerm_sq_le_edgeDiff_sq
-    {G : Type*} [Fintype G] [DecidableEq G]
+    {G : Type*}
     {k r : ℕ}
     {H K : WeightedOrderedPattern G k r}
     (hH : H.EdgeWeightsInUnitInterval)
@@ -256,7 +256,7 @@ theorem mixedOrderedPatternTerm_sq_le_edgeDiff_sq
 /-- One mixed telescoping correlation is controlled in square by the
 mean-square discrepancy on its distinguished face. -/
 theorem mixedOrderedPatternCorrelation_sq_le_mean_edgeDiff_sq
-    {G : Type*} [Fintype G] [DecidableEq G] [Nonempty G]
+    {G : Type*} [Fintype G] [Nonempty G]
     {k r : ℕ}
     {H K : WeightedOrderedPattern G k r}
     (hH : H.EdgeWeightsInUnitInterval)

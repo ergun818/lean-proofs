@@ -162,7 +162,7 @@ def insertErasedCoordinate
 
 @[simp]
 theorem insertErasedCoordinate_eraseCoordinate
-    {G : Type*} [DecidableEq G] {n : ℕ}
+    {G : Type*} {n : ℕ}
     (t : Fin n) (a : G) (y : Fin n → G) :
     insertErasedCoordinate t a (eraseCoordinate t y) =
       Function.update y t a := by
@@ -186,7 +186,7 @@ def simplexMixedCutTest
 /-- Evaluation on an erased tuple recovers the corresponding
 non-distinguished edge factor. -/
 theorem simplexMixedCutTest_eraseCoordinate
-    {G : Type*} [DecidableEq G] {n : ℕ}
+    {G : Type*} {n : ℕ}
     (H K : WeightedSimplexSystem
       (fun _ : Fin (n + 1) => G))
     (j : Fin (n + 1)) (a : G)
@@ -262,7 +262,7 @@ theorem prod_orderedSimplexEdgeFactor
 /-- The reconstructed cut product is exactly the product of all
 non-distinguished telescoping factors. -/
 theorem prod_simplexMixedCutTest_eraseCoordinate
-    {G : Type*} [DecidableEq G] {n : ℕ}
+    {G : Type*} {n : ℕ}
     (H K : WeightedSimplexSystem
       (fun _ : Fin (n + 1) => G))
     (j : Fin (n + 1)) (a : G)

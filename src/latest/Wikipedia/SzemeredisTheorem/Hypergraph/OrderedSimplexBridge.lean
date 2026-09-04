@@ -172,11 +172,12 @@ theorem SimplexHypergraph.toOrderedPattern_occurrenceFinset
 /-- In particular, the zero-one normalized pattern count is exactly the
 zero-one normalized simplex count. -/
 theorem SimplexHypergraph.toOrderedPattern_patternCount
-    {G : Type*} [Fintype G] [DecidableEq G] [Nonempty G]
+    {G : Type*} [Fintype G] [Nonempty G]
     {n : ℕ}
     (H : SimplexHypergraph (fun _ : Fin (n + 1) => G)) :
     H.toOrderedPattern.toWeighted.patternCount =
       H.toWeighted.simplexCount := by
+  classical
   rw [OrderedPattern.toWeighted_patternCount_eq,
     SimplexHypergraph.toWeighted_simplexCount_eq_card_div,
     H.toOrderedPattern_occurrenceFinset]

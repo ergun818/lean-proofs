@@ -40,7 +40,7 @@ theorem orderedAPEdgeFactor_self
 coordinate. -/
 @[simp]
 theorem deleteCoordinate_update_same
-    {k : ℕ} {G : Type*} [DecidableEq G]
+    {k : ℕ} {G : Type*}
     (x : Fin k → G) (i : Fin k) (a : G) :
     deleteCoordinate (Function.update x i a) i =
       deleteCoordinate x i := by
@@ -58,7 +58,7 @@ theorem insertNth_eraseCoordinate_eq_update
 /-- Replacing coordinate `t` before inserting the distinguished coordinate
 `j` only replaces coordinate `j.succAbove t` of the resulting full tuple. -/
 theorem insertNth_insertNth_eraseCoordinate
-    {n : ℕ} {G : Type*} [DecidableEq G]
+    {n : ℕ} {G : Type*}
     (j : Fin (n + 2)) (t : Fin (n + 1))
     (a b : G) (y : Fin (n + 1) → G) :
     Fin.insertNth j a

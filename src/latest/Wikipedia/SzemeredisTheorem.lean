@@ -131,7 +131,6 @@ private theorem finitarySzemeredi_of_cyclic_count {k : ℕ} (hk : 1 < k) :
     · exact_mod_cast (Nat.lt_succ_iff.mp hmem.1)
   have hwidth : 2 * ((N : ℤ) - 0) < (M : ℤ) := by
     dsimp [M]
-    push_cast
     omega
   obtain ⟨x, step, hstep, hprogression⟩ :=
     Wikipedia.SzemeredisTheorem.exists_naturalAP_of_cyclicAPVal_shortInterval

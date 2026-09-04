@@ -32,7 +32,7 @@ open scoped BigOperators
 /-- The indicator of a finite union is bounded by the sum of the
 indicators. -/
 theorem finsetIndicator_biUnion_le_sum
-    {ι Ω : Type*} [DecidableEq ι] [DecidableEq Ω]
+    {ι Ω : Type*} [DecidableEq Ω]
     (s : Finset ι) (F : ι → Finset Ω) (x : Ω) :
     finsetIndicator (s.biUnion F) x ≤
       ∑ i ∈ s, finsetIndicator (F i) x := by
@@ -55,8 +55,8 @@ theorem finsetIndicator_biUnion_le_sum
 
 /-- Normalized finite union bound. -/
 theorem mean_finsetIndicator_biUnion_le_sum
-    {ι Ω : Type*} [DecidableEq ι] [DecidableEq Ω]
-    [Fintype ι] [Fintype Ω]
+    {ι Ω : Type*} [DecidableEq Ω]
+    [Fintype Ω]
     (s : Finset ι) (F : ι → Finset Ω) :
     mean (finsetIndicator (s.biUnion F)) ≤
       ∑ i ∈ s, mean (finsetIndicator (F i)) := by

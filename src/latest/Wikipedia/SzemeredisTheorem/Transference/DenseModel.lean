@@ -144,7 +144,7 @@ theorem unitCubeSet_convex (Ω : Type*) :
   rw [unitCubeSet_eq_Icc]
   exact convex_Icc _ _
 
-theorem unitCubeSet_compact (Ω : Type*) [Fintype Ω] :
+theorem unitCubeSet_compact (Ω : Type*) :
     IsCompact (unitCubeSet Ω) := by
   rw [unitCubeSet_eq_Icc]
   exact isCompact_Icc
@@ -213,7 +213,7 @@ theorem profileErrorSet_convex (τ : Type*) (ε : ℝ) :
   convex_Icc _ _
 
 theorem profileErrorSet_compact
-    (τ : Type*) [Fintype τ] (ε : ℝ) :
+    (τ : Type*) (ε : ℝ) :
     IsCompact (profileErrorSet τ ε) :=
   isCompact_Icc
 

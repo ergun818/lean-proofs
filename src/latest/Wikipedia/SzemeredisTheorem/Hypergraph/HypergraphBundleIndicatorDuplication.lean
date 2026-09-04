@@ -72,12 +72,13 @@ theorem projectionEquiv_apply_val
 /-- A product is unchanged when its indexing map identifies factors whose
 common value is idempotent. -/
 theorem prod_comp_eq_prod_image_of_idempotent
-    {α β M : Type*} [DecidableEq α] [DecidableEq β]
+    {α β M : Type*} [DecidableEq β]
     [CommMonoid M]
     (s : Finset α) (f : α → β) (w : β → M)
     (hw : ∀ b ∈ s.image f, w b * w b = w b) :
     (∏ a ∈ s, w (f a)) =
       ∏ b ∈ s.image f, w b := by
+  classical
   induction s using Finset.induction_on with
   | empty =>
       simp

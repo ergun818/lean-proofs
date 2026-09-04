@@ -28,12 +28,11 @@ open scoped BigOperators
 
 variable {Ω ι : Type*}
   [Fintype Ω] [DecidableEq Ω]
-  [Fintype ι] [DecidableEq ι]
 
 namespace FaceRegularityState
 
 /-- Total energy of a finite family of functions in one common partition. -/
-noncomputable def familyEnergy
+noncomputable def familyEnergy [Fintype ι]
     (S : FaceRegularityState Ω) (f : ι → Ω → ℝ) : ℝ :=
   ∑ i, S.energy (f i)
 
@@ -44,7 +43,7 @@ def IsFamilyRegularAgainst
   ∀ i, S.IsRegularAgainst (f i) cuts ε
 
 /-- Total family energy is nonnegative. -/
-theorem familyEnergy_nonneg
+theorem familyEnergy_nonneg [Fintype ι]
     (S : FaceRegularityState Ω) (f : ι → Ω → ℝ) :
     0 ≤ S.familyEnergy f := by
   unfold familyEnergy
@@ -53,7 +52,7 @@ theorem familyEnergy_nonneg
 
 /-- A finite family of `[0,1]`-valued functions has total energy at most its
 cardinality. -/
-theorem familyEnergy_le_card [Nonempty Ω]
+theorem familyEnergy_le_card [Fintype ι] [Nonempty Ω]
     (S : FaceRegularityState Ω) (f : ι → Ω → ℝ)
     (hf0 : ∀ i x, 0 ≤ f i x)
     (hf1 : ∀ i x, f i x ≤ 1) :
@@ -68,7 +67,7 @@ theorem familyEnergy_le_card [Nonempty Ω]
     _ = (Fintype.card ι : ℝ) := by simp
 
 /-- Refining the common partition can only increase total family energy. -/
-theorem familyEnergy_mono
+theorem familyEnergy_mono [Fintype ι]
     (S T : FaceRegularityState Ω) (f : ι → Ω → ℝ)
     (hTS : T.partition ≤ S.partition) :
     S.familyEnergy f ≤ T.familyEnergy f := by
@@ -81,7 +80,7 @@ theorem familyEnergy_mono
 /-- If one member of the family gains `ε²` under a refinement, then the
 whole family potential gains `ε²`; all other summands are charged only by
 monotonicity. -/
-theorem familyEnergy_refineBy_increment
+theorem familyEnergy_refineBy_increment [Fintype ι]
     (S : FaceRegularityState Ω) (f : ι → Ω → ℝ)
     (i : ι) (A : BooleanCutTest Ω) {ε : ℝ}
     (hgain :
@@ -200,7 +199,7 @@ theorem exists_chosenFamilyIrregularCut_correlation
 
 /-- The selected violating cut raises total family energy by at least
 `ε²`. -/
-theorem familyEnergy_increment_chosenFamilyCut [Nonempty Ω]
+theorem familyEnergy_increment_chosenFamilyCut [Fintype ι] [Nonempty Ω]
     (S : FaceRegularityState Ω) (f : ι → Ω → ℝ)
     (cuts : Finset (BooleanCutTest Ω)) {ε : ℝ}
     (hε : 0 ≤ ε)
@@ -393,7 +392,7 @@ theorem familyRegularityRun_partition_eq_join_generatedBy
 
 /-- A run with more steps than the total energy budget must meet a state
 regular for every target. -/
-theorem exists_familyRegular_run_index_before [Nonempty Ω]
+theorem exists_familyRegular_run_index_before [Fintype ι] [Nonempty Ω]
     (S : FaceRegularityState Ω) (f : ι → Ω → ℝ)
     (cuts : Finset (BooleanCutTest Ω))
     {ε : ℝ} {m : ℕ}
@@ -471,7 +470,7 @@ theorem exists_familyRegular_run_index_before [Nonempty Ω]
 /-- Fixed-budget simultaneous regularity, retaining every actual generator.
 The bound depends only on the finite family size and the requested
 regularity threshold, never on `Fintype.card Ω`. -/
-theorem exists_familyRegular_refinement_with_generators_before [Nonempty Ω]
+theorem exists_familyRegular_refinement_with_generators_before [Fintype ι] [Nonempty Ω]
     (S : FaceRegularityState Ω) (f : ι → Ω → ℝ)
     (cuts : Finset (BooleanCutTest Ω))
     {ε : ℝ} {m : ℕ}
@@ -529,7 +528,7 @@ theorem isFaceCutRegularFamily_of_familyRegularAgainst_supports
 /-- Fixed-budget, generator-retaining simultaneous weak hypergraph
 regularity.  This is the finite-family kernel used when the targets are the
 indicators of all atoms in one bounded-complexity upper partition. -/
-theorem exists_faceCutRegularFamily_refinement_with_generators_before
+theorem exists_faceCutRegularFamily_refinement_with_generators_before [Fintype ι]
     {G : Type*} [Fintype G] [DecidableEq G] [Nonempty G]
     {r : ℕ} (hr : 0 < r)
     (S : FaceRegularityState (Fin r → G))

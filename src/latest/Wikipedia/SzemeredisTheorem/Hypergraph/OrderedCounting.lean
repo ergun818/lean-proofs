@@ -127,7 +127,7 @@ theorem orderedFaceTuple_split_update_eq
 /-- The update produced by erasing and reinserting a coordinate does not
 change any face which omits the corresponding distinguished vertex. -/
 theorem orderedFaceTuple_split_insertErased_eq
-    {G : Type*} [DecidableEq G] {k r : ℕ}
+    {G : Type*} {k r : ℕ}
     (e f : OrderedFace k r) (i : Fin r)
     (hmissing : e i ∉ Set.range f)
     (a : G) (y : Fin r → G)
@@ -183,7 +183,7 @@ theorem prod_orderedPatternEdgeFactor
 /-- Reconstructing an erased coordinate leaves a non-distinguished edge
 factor unchanged when the other face omits that coordinate. -/
 theorem orderedPatternEdgeFactor_split_insertErased_eq
-    {G : Type*} [DecidableEq G] {k r : ℕ}
+    {G : Type*} {k r : ℕ}
     (H K : WeightedOrderedPattern G k r)
     (e f : OrderedFace k r) (i : Fin r)
     (hmissing : e i ∉ Set.range f)
@@ -297,7 +297,7 @@ theorem orderedPatternMixedCutTest_bounded
 /-- Evaluating the grouped cut product recovers exactly the product of all
 non-distinguished mixed factors. -/
 theorem cutTestProduct_orderedPatternMixedCutTest
-    {G : Type*} [DecidableEq G] {k r : ℕ}
+    {G : Type*} {k r : ℕ}
     (H K : WeightedOrderedPattern G k r)
     (e : OrderedFace k r) (a : G)
     (y : Fin r → G)

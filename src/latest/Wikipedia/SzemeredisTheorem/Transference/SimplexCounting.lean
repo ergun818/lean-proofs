@@ -26,7 +26,7 @@ def EdgeSupDistanceLe {k : ℕ} {V : Fin k → Type*}
 
 /-- A telescoping product estimate for two families in `[0,1]`. -/
 theorem abs_prod_sub_prod_le_card_mul
-    {ι : Type*} [DecidableEq ι]
+    {ι : Type*}
     (s : Finset ι) (f g : ι → ℝ) {ε : ℝ}
     (hε : 0 ≤ ε)
     (hf0 : ∀ i ∈ s, 0 ≤ f i)
@@ -36,6 +36,7 @@ theorem abs_prod_sub_prod_le_card_mul
     (hfg : ∀ i ∈ s, |f i - g i| ≤ ε) :
     |(∏ i ∈ s, f i) - ∏ i ∈ s, g i| ≤
       (s.card : ℝ) * ε := by
+  classical
   induction s using Finset.induction_on with
   | empty =>
       simp

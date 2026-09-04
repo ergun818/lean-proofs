@@ -247,7 +247,6 @@ theorem containsArbitraryAPs_of_upperDensity_pos (A : Set ℕ)
     exact (htermData j hj).2
   have hwidth : 2 * ((n : ℤ) - 0) < (N : ℤ) := by
     dsimp [N]
-    push_cast
     omega
   obtain ⟨x, step, hstep, hprogression⟩ :=
     exists_naturalAP_of_cyclicAPVal_shortInterval

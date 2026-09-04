@@ -189,7 +189,7 @@ noncomputable def deletedFaceEquiv
 
 /-- A zero-one edge system has zero-one canonical edge functions. -/
 theorem canonicalEdgeFunction_toWeighted_zeroOne
-    {G : Type*} [Fintype G] [DecidableEq G] {n : ℕ}
+    {G : Type*} {n : ℕ}
     (H : SimplexHypergraph
       (fun _ : Fin (n + 1) => G))
     (j : Fin (n + 1)) :

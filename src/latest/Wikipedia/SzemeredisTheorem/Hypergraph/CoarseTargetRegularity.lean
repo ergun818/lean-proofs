@@ -416,7 +416,7 @@ theorem CoarseTargetOrderedComplexRegularityCertificate.nonempty
               OrderedPartitionComplex.withTopLayer,
               Fin.lastCases_castSucc, Fin.succ_castSucc,
               lengthLower]
-            convert hgap using 1 <;> rfl
+            convert hgap using 1; rfl
       · intro q
         cases q using Fin.lastCases with
         | last =>

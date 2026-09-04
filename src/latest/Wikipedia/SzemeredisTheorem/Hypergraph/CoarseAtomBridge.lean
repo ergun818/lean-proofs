@@ -190,7 +190,6 @@ theorem card_fineAtomsInCoarseAtom_le_complexity
 index set. -/
 theorem conditionalMean_finset_sum
     {Ω ι : Type*} [Fintype Ω] [DecidableEq Ω]
-    [Fintype ι] [DecidableEq ι]
     (P : FacePartition Ω) (s : Finset ι)
     (f : ι → Ω → ℝ) (x : Ω) :
     conditionalMean P
@@ -204,7 +203,6 @@ theorem conditionalMean_finset_sum
 functions. -/
 theorem FaceRegularityState.faceCutCorrelation_finset_sum
     {G ι : Type*} [Fintype G] [DecidableEq G]
-    [Fintype ι] [DecidableEq ι]
     {r : ℕ}
     (S : FaceRegularityState (Fin r → G))
     (s : Finset ι)
@@ -244,7 +242,6 @@ theorem FaceRegularityState.faceCutCorrelation_finset_sum
 functions. -/
 theorem FaceRegularityState.booleanCutCorrelation_finset_sum
     {Ω ι : Type*} [Fintype Ω] [DecidableEq Ω]
-    [Fintype ι] [DecidableEq ι]
     (S : FaceRegularityState Ω)
     (s : Finset ι) (f : ι → Ω → ℝ)
     (A : BooleanCutTest Ω) :

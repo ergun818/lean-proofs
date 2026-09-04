@@ -333,7 +333,7 @@ theorem orderedFaceTuple_split_update_eq_of_missing
 /-- Erasing and reinserting a missing coordinate does not change a face
 which omits that coordinate. -/
 theorem orderedFaceTuple_split_insertErased_eq_of_missing
-    {G : Type*} [DecidableEq G] {k j m : ℕ}
+    {G : Type*} {k j m : ℕ}
     (e : OrderedFace k (j + 1)) (f : OrderedFace k m)
     (i : Fin (j + 1))
     (hmissing : e i ∉ Set.range f)
@@ -470,7 +470,7 @@ theorem partialConfigurationWeight_le_one
 /-- Reconstructing an erased coordinate leaves a lower-or-equal rank face
 unchanged when that face omits the reconstructed vertex. -/
 theorem orderedFaceTuple_split_insertNth_erase_eq_of_missing
-    {G : Type*} [DecidableEq G] {k j m : ℕ}
+    {G : Type*} {k j m : ℕ}
     (e : OrderedFace k (j + 1)) (f : OrderedFace k m)
     (i : Fin (j + 1))
     (hmissing : e i ∉ Set.range f)

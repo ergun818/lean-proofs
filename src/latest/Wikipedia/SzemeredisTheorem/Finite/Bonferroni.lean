@@ -15,7 +15,7 @@ open scoped BigOperators
 
 /-- A normalized finite mean commutes with a finite sum. -/
 theorem mean_finset_sum {α κ : Type*}
-    [Fintype α] [Fintype κ]
+    [Fintype α]
     (s : Finset κ) (f : κ → α → ℝ) :
     mean (fun x => ∑ q ∈ s, f q x) =
       ∑ q ∈ s, mean (f q) := by
@@ -26,7 +26,7 @@ theorem mean_finset_sum {α κ : Type*}
 
 /-- First Bonferroni bound for complements of zero--one functions. -/
 theorem one_sub_sum_le_prod_one_sub
-    {κ : Type*} [Fintype κ] [DecidableEq κ]
+    {κ : Type*} [Fintype κ]
     (I : κ → ℝ)
     (hI0 : ∀ q, 0 ≤ I q)
     (hI01 : ∀ q, I q = 0 ∨ I q = 1) :

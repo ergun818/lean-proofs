@@ -573,8 +573,8 @@ theorem abs_bundleCount_pullback_sub_bundleMainProduct_le_envelope
                     dsimp [countLower, Clower]
                     exact
                       ((C.lowerOrder g₀.card).duplicateOutside g₀).bundleCount_nonneg
-                          (((C.lowerOrder g₀.card).duplicateOutside g₀).pullbackBaseEdgeWeight_weightsInUnitInterval
-                              A hA01)
+                          (HypergraphBundle.pullbackBaseEdgeWeight_weightsInUnitInterval
+                            ((C.lowerOrder g₀.card).duplicateOutside g₀) A hA01)
                   have hcountBoundary :
                       countBoundary ≤
                         (1 + E d₀ (n₀ + 1)) *
