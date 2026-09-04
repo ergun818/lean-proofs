@@ -132,7 +132,7 @@ lemma feasible_of_subfactorization {n k : ℕ} (hn : 0 < n) (hk : 0 < k)
       _ = (m + 1).factorial := Nat.mul_div_cancel' ha_dvd
   exact feasible_of_unsorted hk b hb_pos hb_prod hb_lower
 
-lemma feasible_one {n : ℕ} (hn : 0 < n) : Feasible n 1 := by
+lemma feasible_one {n : ℕ} (_ : 0 < n) : Feasible n 1 := by
   refine ⟨by simp, standardRepresentation n, standardRepresentation_spec n, ?_⟩
   intro i
   simp [standardRepresentation]
@@ -959,7 +959,7 @@ theorem eventually_ratio_le_sub_deficit :
         calc
           L * n / (40 * Real.log n) + L * n / (80 * Real.log n) =
               (3 / 80 : ℝ) * (L * n / Real.log n) := by ring
-          _ < (4 / 80 : ℝ) * (L * n / Real.log n) := by gcongr <;> norm_num
+          _ < (4 / 80 : ℝ) * (L * n / Real.log n) := by gcongr; norm_num
           _ = L * n / (20 * Real.log n) := by ring
   exact (not_lt_of_ge hlower hupper)
 
@@ -1240,7 +1240,7 @@ lemma tendsto_log_lowerScale_div_log :
       (fun n : ℕ ↦ Real.log 3 / Real.log (n : ℝ) +
         3 * (Real.log (Real.log (n : ℝ)) / Real.log (n : ℝ)))
       Filter.atTop (nhds 0) := by
-    convert hconst.add ((tendsto_log_log_div_log_nat.const_mul 3)) using 1 <;> norm_num
+    convert hconst.add ((tendsto_log_log_div_log_nat.const_mul 3)) using 1; norm_num
   have hbounds : ∀ᶠ n : ℕ in Filter.atTop,
       0 ≤ Real.log (lowerScale n : ℝ) / Real.log (n : ℝ) ∧
       Real.log (lowerScale n : ℝ) / Real.log (n : ℝ) ≤
@@ -1350,12 +1350,12 @@ lemma tendsto_log_lowerCutoff_div_log :
       (fun n : ℕ ↦ Real.log 2 / Real.log (n : ℝ) +
         3 * (Real.log (lowerScale n : ℝ) / Real.log (n : ℝ)))
       Filter.atTop (nhds 0) := by
-    convert hconst.add (tendsto_log_lowerScale_div_log.const_mul 3) using 1 <;> norm_num
+    convert hconst.add (tendsto_log_lowerScale_div_log.const_mul 3) using 1; norm_num
   have hlowerlim : Tendsto
       (fun n : ℕ ↦ 1 - (Real.log 2 / Real.log (n : ℝ) +
         3 * (Real.log (lowerScale n : ℝ) / Real.log (n : ℝ))))
       Filter.atTop (nhds 1) := by
-    convert tendsto_const_nhds.sub herr using 1 <;> norm_num
+    convert tendsto_const_nhds.sub herr using 1; norm_num
   have hbounds : ∀ᶠ n : ℕ in Filter.atTop,
       1 - (Real.log 2 / Real.log (n : ℝ) +
           3 * (Real.log (lowerScale n : ℝ) / Real.log (n : ℝ))) ≤
@@ -1484,7 +1484,7 @@ lemma tendsto_loglog_sub_lowerCutoff :
   have hneg : Tendsto
       (fun n : ℕ ↦ -Real.log (Real.log (lowerCutoff n : ℝ) / Real.log (n : ℝ)))
       Filter.atTop (nhds 0) := by
-    convert hratioLog.neg using 1 <;> norm_num
+    convert hratioLog.neg using 1; norm_num
   exact hneg.congr' (heq.mono fun _ h ↦ h.symm)
 
 /-- Cumulative reciprocal prime sum, in the exact form used by Mertens' second
@@ -1524,10 +1524,14 @@ lemma sum_lowerLargePrimes_reciprocal (n : ℕ) :
       (Finset.Ioc 0 n).filter Nat.Prime \
           (Finset.Ioc 0 (lowerCutoff n)).filter Nat.Prime = lowerLargePrimes n := by
     ext p
-    simp only [Finset.mem_sdiff, Finset.mem_filter, Finset.mem_Ioc,
-      lowerLargePrimes]
-    aesop
-    exact right.pos
+    simp only [lowerLargePrimes, Finset.mem_sdiff, Finset.mem_filter, Finset.mem_Ioc]
+    constructor
+    · rintro ⟨⟨⟨hp0, hpn⟩, hprime⟩, hnot⟩
+      exact ⟨⟨Nat.lt_of_not_ge (fun hpc ↦ hnot ⟨⟨hp0, hpc⟩, hprime⟩), hpn⟩, hprime⟩
+    · rintro ⟨⟨hcut, hpn⟩, hprime⟩
+      refine ⟨⟨⟨hprime.pos, hpn⟩, hprime⟩, ?_⟩
+      rintro ⟨⟨_, hpc⟩, _⟩
+      exact (not_le_of_gt hcut) hpc
   rw [← hdiff, primeReciprocalSum, primeReciprocalSum,
     ← Finset.sum_sdiff hsub]
   ring
@@ -1553,8 +1557,6 @@ lemma targetLargeCount_real_bound {n : ℕ} (hn : 0 < n) :
         have hpReal : (0 : ℝ) < p := by exact_mod_cast hpprime.pos
         have hpredReal : (0 : ℝ) < (p - 1 : ℕ) := by exact_mod_cast (by omega : 0 < p - 1)
         rw [div_le_div_iff₀ hpredReal hpReal]
-        norm_num
-        push_cast
         have hpineq : p ≤ 2 * (p - 1) := by omega
         have hpineqReal : (p : ℝ) ≤ 2 * (p - 1 : ℕ) := by exact_mod_cast hpineq
         nlinarith
@@ -1580,7 +1582,7 @@ lemma tendsto_targetLargeCount_div :
   · exact Filter.Eventually.of_forall fun n ↦ div_nonneg (Nat.cast_nonneg _) (Nat.cast_nonneg _)
   · filter_upwards [Filter.eventually_gt_atTop 0] with n hn
     exact targetLargeCount_real_bound hn
-  · convert tendsto_largePrime_reciprocal_difference.const_mul 2 using 1 <;> norm_num
+  · convert tendsto_largePrime_reciprocal_difference.const_mul 2 using 1; norm_num
 
 /-- The unique residue class `j` for which `u + 2*j` is divisible by an odd
 modulus. -/
@@ -1667,7 +1669,7 @@ lemma mul_div_block_le (q r m : ℕ) (hq : 0 < q) (hm : 0 < m) :
     q * r = q * (m * (r / m) + r % m) := by rw [Nat.div_add_mod]
     _ < q * (r / m * m) + q * m := by
       rw [mul_add]
-      convert Nat.add_lt_add_left hmul (q * (m * (r / m))) using 1 <;> ring
+      convert Nat.add_lt_add_left hmul (q * (m * (r / m))) using 1; ring
     _ = (q * (r / m) + q) * m := by ring
     _ < (q * (r / m) + q + 1) * m := by
       exact Nat.mul_lt_mul_of_pos_right (Nat.lt_succ_self _) hm
@@ -1780,7 +1782,6 @@ lemma tendsto_approximateLength_div :
       (approximateLength n : ℝ) ≤ (n : ℝ) + 2 * lowerScale n := hcast
       _ = (1 + 2 * (lowerScale n : ℝ) / n) * n := by
         field_simp
-        <;> ring
   have hupperlim : Tendsto (fun n : ℕ ↦ 1 + 2 * (lowerScale n : ℝ) / n)
       Filter.atTop (nhds 1) := by
     have hone : Tendsto (fun _ : ℕ ↦ (1 : ℝ)) Filter.atTop (nhds 1) :=
@@ -1988,8 +1989,7 @@ lemma approximateFactor_log_upper {n : ℕ} (hn : 0 < n) (δ : ℝ)
       _ = (1 + (2 * Real.exp (1 + δ) / lowerScale n +
             4 * Real.exp (1 + δ) / n)) *
           ((n : ℝ) / Real.exp (1 + δ)) := by
-        field_simp [hnreal.ne', hAreal.ne', Real.exp_ne_zero]
-        <;> ring
+        field_simp [hnreal.ne', hAreal.ne', Real.exp_ne_zero]; ring
   have hlogratio : Real.log (c / x) ≤ err :=
     (Real.log_le_sub_one_of_pos (div_pos hc hx)).trans (by linarith)
   have hlogeq : Real.log c - Real.log x = Real.log (c / x) := by
@@ -2037,7 +2037,7 @@ lemma tendsto_approximateLogError (δ : ℝ) :
   have herr : Tendsto
       (fun n : ℕ ↦ 2 * Real.exp (1 + δ) / lowerScale n +
         4 * Real.exp (1 + δ) / n) Filter.atTop (nhds 0) := by
-    convert hA.add hn using 1 <;> norm_num
+    convert hA.add hn using 1; norm_num
   change Tendsto
     (fun n : ℕ ↦
       2 * (lowerScale n : ℝ) * Real.log (n : ℝ) / n +
@@ -2094,8 +2094,7 @@ lemma approximateLog_normalized_bounds (δ : ℝ) (hδ : 0 < δ) :
         exact Finset.sum_le_sum fun i _ ↦ by
           simpa [b, err] using approximateFactor_log_upper hn δ i
       _ = (approximateLength n : ℝ) * (b + err) := by
-        simp
-        <;> ring
+        simp; ring
   have hraw : approximateLog δ n - (n : ℝ) * b ≤
       2 * (lowerScale n : ℝ) * Real.log (n : ℝ) +
         (approximateLength n : ℝ) * err := by
@@ -2107,7 +2106,6 @@ lemma approximateLog_normalized_bounds (δ : ℝ) (hδ : 0 < δ) :
       (approximateLength n : ℝ) ≤ (n : ℝ) + 2 * lowerScale n := hNup
       _ = (1 + 2 * (lowerScale n : ℝ) / n) * n := by
         field_simp [hnreal.ne']
-        <;> ring
   constructor
   · exact div_nonneg (sub_nonneg.mpr hsumlow) hnreal.le
   · rw [show approximateLogError δ n =
@@ -2122,7 +2120,6 @@ lemma approximateLog_normalized_bounds (δ : ℝ) (hδ : 0 < δ) :
       _ = 2 * (lowerScale n : ℝ) * Real.log (n : ℝ) / n +
           ((approximateLength n : ℝ) / n) * err := by
         field_simp [hnreal.ne']
-        <;> ring
       _ ≤ 2 * (lowerScale n : ℝ) * Real.log (n : ℝ) / n +
           (1 + 2 * (lowerScale n : ℝ) / n) * err := by
         gcongr
@@ -2287,7 +2284,6 @@ lemma tendsto_smallDiscrepancyUpper :
     convert h using 1
     · funext n
       field_simp
-      <;> ring
     · norm_num
   have hsecond : Tendsto
       (fun n : ℕ ↦ (lowerScale n : ℝ) *
@@ -2417,7 +2413,6 @@ lemma smallValuationLogError_bound {δ : ℝ} {n : ℕ} (hn : 0 < n)
     _ = smallDiscrepancyUpper n * n := by
       rw [smallDiscrepancyUpper]
       field_simp [hnreal.ne', hApos.ne']
-      <;> ring
 
 lemma tendsto_smallValuationLogError (δ : ℝ) (hδ : 0 < δ) :
     Tendsto (fun n : ℕ ↦ smallValuationLogError δ n / n)
@@ -2530,7 +2525,7 @@ lemma disjoint_small_large (n : ℕ) :
   have hl := (Finset.mem_Ioc.mp hlrange).1
   omega
 
-lemma source_factorization_sum_split {δ : ℝ} {n : ℕ} (hn : 0 < n) :
+lemma source_factorization_sum_split {δ : ℝ} {n : ℕ} (_ : 0 < n) :
     (∑ p ∈ Finset.range (n + 1),
         (sourceValuation δ n p : ℝ) * Real.log p) =
       sourceSmallLog δ n + sourceLargeLog δ n := by
@@ -2727,8 +2722,7 @@ lemma approximateLog_lower_eventually (δ : ℝ) :
       mul_le_mul_of_nonneg_right hN hb
     _ = ∑ _i : Fin (approximateLength n),
         (Real.log (n : ℝ) - 1 - δ) := by
-      simp
-      <;> ring
+      simp; ring
     _ ≤ approximateLog δ n := by
       rw [approximateLog]
       exact Finset.sum_le_sum fun i _ ↦
@@ -2916,7 +2910,6 @@ lemma tendsto_cutoffGapUpper_div_logCutoff :
   have hn0 : Real.log (n : ℝ) ≠ 0 := hn.ne'
   have hL0 : Real.log (lowerCutoff n : ℝ) ≠ 0 := hL.ne'
   field_simp [hn0, hL0]
-  <;> ring
 
 lemma tendsto_cutoffGapUpper_sq_div_logCutoff :
     Tendsto (fun n : ℕ ↦ cutoffGapUpper n ^ 2 /
@@ -2935,7 +2928,6 @@ lemma tendsto_cutoffGapUpper_sq_div_logCutoff :
   have hn0 : Real.log (n : ℝ) ≠ 0 := hn.ne'
   have hL0 : Real.log (lowerCutoff n : ℝ) ≠ 0 := hL.ne'
   field_simp [hn0, hL0]
-  <;> ring
 
 lemma tendsto_largeReciprocal_mul_cutoffLogGap :
     Tendsto (fun n : ℕ ↦
@@ -3000,7 +2992,6 @@ lemma tendsto_largeReciprocal_mul_cutoffLogGap :
         _ = cutoffLogGap n / Real.log (lowerCutoff n : ℝ) := by
           dsimp [cutoffLogGap]
           field_simp [hLlog.ne']
-          <;> ring
     have hDupper : primeReciprocalSum n - primeReciprocalSum (lowerCutoff n) ≤
         cutoffLogGap n / Real.log (lowerCutoff n : ℝ) +
           C / Real.log (n : ℝ) + C / Real.log (lowerCutoff n : ℝ) := by
@@ -3058,7 +3049,7 @@ lemma tendsto_targetLargeCount_mul_cutoffLogGap_div :
 noncomputable def sourceLargeCount (δ : ℝ) (n : ℕ) : ℕ :=
   ∑ p ∈ lowerLargePrimes n, sourceValuation δ n p
 
-lemma sourceLargeLog_upper {n : ℕ} (hn : 0 < n) (δ : ℝ) :
+lemma sourceLargeLog_upper {n : ℕ} (_ : 0 < n) (δ : ℝ) :
     sourceLargeLog δ n ≤ (sourceLargeCount δ n : ℝ) * Real.log n := by
   rw [sourceLargeLog]
   calc
@@ -3348,9 +3339,7 @@ lemma sum_assignedTargetExponent {δ : ℝ} {n : ℕ}
   rw [Finset.sum_comm]
   apply Finset.sum_congr rfl
   intro x hx
-  simpa using Fintype.sum_ite_eq (sourceOccurrenceIndex (e x))
-    (fun _ : Fin (approximateLength n) ↦
-      Finsupp.single (targetOccurrencePrime x) 1)
+  simp
 
 lemma sum_targetOccurrence_single (n : ℕ) :
     ∑ x : TargetLargeOccurrence n,
@@ -3439,7 +3428,7 @@ lemma repairedProduct_factorization_of_not_mem {δ : ℝ} {n p : ℕ}
   intro i hi
   exact Finsupp.filter_apply_pos _ _ hp
 
-lemma repairedProduct_prime_le { δ : ℝ} {n p : ℕ} (hn : 0 < n)
+lemma repairedProduct_prime_le {δ : ℝ} {n p : ℕ} (hn : 0 < n)
     (hupper : oddCeilNat (lowerTarget δ n) + 2 * lowerBlocks n ≤ n)
     (e : TargetLargeOccurrence n ↪ SourceLargeOccurrence δ n)
     (hp : p ∈ (repairedProduct e).factorization.support) : p ≤ n := by
@@ -3455,7 +3444,7 @@ lemma repairedProduct_prime_le { δ : ℝ} {n p : ℕ} (hn : 0 < n)
     exact (Nat.le_of_dvd (approximateFactor_pos hn i) hpdvd).trans
       ((approximateFactor_le_interval_top δ n i).trans hupper)
 
-lemma repairedProduct_log_eq_factorization_sum { δ : ℝ} {n : ℕ}
+lemma repairedProduct_log_eq_factorization_sum {δ : ℝ} {n : ℕ}
     (hn : 0 < n)
     (hupper : oddCeilNat (lowerTarget δ n) + 2 * lowerBlocks n ≤ n)
     (e : TargetLargeOccurrence n ↪ SourceLargeOccurrence δ n) :
@@ -3472,7 +3461,7 @@ lemma repairedProduct_log_eq_factorization_sum { δ : ℝ} {n : ℕ}
       Finsupp.notMem_support_iff.mp hpNot
     simp [hz]
 
-lemma repairedProduct_log_identity { δ : ℝ} {n : ℕ} (hn : 0 < n)
+lemma repairedProduct_log_identity {δ : ℝ} {n : ℕ} (hn : 0 < n)
     (hupper : oddCeilNat (lowerTarget δ n) + 2 * lowerBlocks n ≤ n)
     (e : TargetLargeOccurrence n ↪ SourceLargeOccurrence δ n) :
     Real.log (repairedProduct e : ℝ) =
@@ -3614,7 +3603,7 @@ lemma sourceLargeLog_lower {n : ℕ} (hLpos : 0 < lowerCutoff n) (δ : ℝ) :
       have hpgt := (Finset.mem_Ioc.mp (Finset.mem_filter.mp hp).1).1
       gcongr
 
-lemma targetLargeLog_upper {n : ℕ} (hn : 0 < n) :
+lemma targetLargeLog_upper {n : ℕ} (_ : 0 < n) :
     targetLargeLog n ≤ (targetLargeCount n : ℝ) * Real.log n := by
   rw [targetLargeLog]
   simp only [targetLargeCount, Nat.cast_sum]
@@ -3694,11 +3683,9 @@ lemma tendsto_sourceLargeCount_div (δ : ℝ) (hδ : 0 < δ) :
           2 * (targetLargeCount n : ℝ) +
             Real.log 2 * n / Real.log (lowerCutoff n : ℝ) := by
         field_simp [hLne]
-        <;> ring
       _ = (2 * ((targetLargeCount n : ℝ) / n) +
           Real.log 2 / Real.log (lowerCutoff n : ℝ)) * n := by
         field_simp [hnreal.ne', hLne]
-        <;> ring
   · exact hright
 
 /-- The proof of `tendsto_sourceLargeCount_div` actually supplies the
@@ -3756,11 +3743,9 @@ lemma eventually_sourceLargeCount_div_le (δ : ℝ) (hδ : 0 < δ) :
     _ = 2 * (targetLargeCount n : ℝ) +
           Real.log 2 * n / Real.log (lowerCutoff n : ℝ) := by
       field_simp [hLne]
-      <;> ring
     _ = (2 * ((targetLargeCount n : ℝ) / n) +
         Real.log 2 / Real.log (lowerCutoff n : ℝ)) * n := by
       field_simp [hnreal.ne', hLne]
-      <;> ring
 
 lemma tendsto_sourceLargeCount_mul_cutoffLogGap_div (δ : ℝ) (hδ : 0 < δ) :
     Tendsto (fun n : ℕ ↦
@@ -3792,7 +3777,6 @@ lemma tendsto_sourceLargeCount_mul_cutoffLogGap_div (δ : ℝ) (hδ : 0 < δ) :
             Real.log (lowerCutoff n : ℝ)) := by
         have hLne := hL.ne'
         field_simp [hnreal.ne', hLne]
-        <;> ring
       _ ≤ 2 * ((targetLargeCount n : ℝ) * cutoffLogGap n / n) +
           Real.log 2 * (cutoffGapUpper n /
             Real.log (lowerCutoff n : ℝ)) := by
@@ -3819,7 +3803,7 @@ lemma exists_pointwise_dvd_of_dvd_fin_prod {m P : ℕ} (b : Fin m → ℕ)
       refine ⟨fun i ↦ Fin.elim0 i, ?_, ?_⟩
       · intro i
         exact Fin.elim0 i
-      · simpa [hP1]
+      · simp [hP1]
   | succ m ih =>
       rw [Fin.prod_univ_succ] at hP
       obtain ⟨P₀, P₁, hP₀, hP₁, rfl⟩ := exists_dvd_and_dvd_of_dvd_mul hP
@@ -3829,7 +3813,7 @@ lemma exists_pointwise_dvd_of_dvd_fin_prod {m P : ℕ} (b : Fin m → ℕ)
         refine Fin.cases hP₀ (fun j ↦ ?_) i
         simpa using hd j
       · rw [Fin.prod_univ_succ]
-        simpa [hdprod]
+        simp [hdprod]
 
 lemma nat_le_two_pow (k : ℕ) : k ≤ 2 ^ k := by
   induction k with
@@ -3866,7 +3850,7 @@ lemma inflateExponent_eq_zero_of_le {k d : ℕ} (hd : 0 < d) (hkd : k ≤ d) :
 /-- Minimality gives the one-bit overshoot bound used in the logarithmic
 accounting: after restoring a positive damaged factor, it is strictly below
 `2*k` unless no restoration was needed. -/
-lemma mul_pow_inflateExponent_lt_two_mul {k d : ℕ} (hk : 0 < k) (hd : 0 < d)
+lemma mul_pow_inflateExponent_lt_two_mul {k d : ℕ} (_ : 0 < k) (hd : 0 < d)
     (hdk : d < k) :
     d * 2 ^ inflateExponent k d < 2 * k := by
   have hepos : 0 < inflateExponent k d := by
@@ -4070,7 +4054,7 @@ lemma cleanupQuotient_factorization {δ : ℝ} {n : ℕ}
       (repairedProduct e).factorization - (cleanupProduct e).factorization := by
   exact Nat.factorization_div (cleanupProduct_dvd_repaired e)
 
-lemma cleanupProduct_factorization {δ : ℝ} {n : ℕ} (hn : 0 < n)
+lemma cleanupProduct_factorization {δ : ℝ} {n : ℕ} (_ : 0 < n)
     (e : TargetLargeOccurrence n ↪ SourceLargeOccurrence δ n) :
     (cleanupProduct e).factorization =
       (repairedProduct e).factorization ⊓ n.factorial.factorization.erase 2 := by
@@ -4113,7 +4097,7 @@ lemma cleanupQuotient_factorization_ne_two {δ : ℝ} {n p : ℕ} (hn : 0 < n)
     (cleanupQuotient e).factorization p =
       (repairedProduct e).factorization p - n.factorial.factorization p := by
   rw [cleanupQuotient_factorization e, cleanupProduct_factorization hn e]
-  simp [Finsupp.sub_apply, Finsupp.inf_apply, hp2]
+  simp [Finsupp.inf_apply, hp2]
   omega
 
 lemma cleanupQuotient_factorization_two {δ : ℝ} {n : ℕ} (hn : 0 < n)
@@ -4125,7 +4109,7 @@ lemma cleanupQuotient_factorization_two {δ : ℝ} {n : ℕ} (hn : 0 < n)
     have hgt := (Finset.mem_Ioc.mp (Finset.mem_filter.mp h).1).1
     omega
   rw [cleanupQuotient_factorization e, cleanupProduct_factorization hn e]
-  simp [Finsupp.sub_apply, Finsupp.inf_apply,
+  simp [Finsupp.inf_apply,
     repairedProduct_factorization_of_not_mem e h2not,
     sourceValuation_two_eq_zero]
 
@@ -4257,8 +4241,7 @@ lemma repairedFactor_eq_approximateFactor_of_not_largeIndex {δ : ℝ} {n : ℕ}
   have hfilter : sourceSmallExponent δ n i =
       (approximateFactor δ n i).factorization := by
     rw [sourceSmallExponent, Finsupp.filter_eq_self_iff]
-    intro p hpval
-    intro hpLarge
+    intro p hpval hpLarge
     have hvalpos : 0 < (approximateFactor δ n i).factorization p :=
       Nat.pos_of_ne_zero hpval
     let x : SourceLargeOccurrence δ n :=
@@ -4408,7 +4391,7 @@ lemma assignedTargetFactor_eq_prod {δ : ℝ} {n : ℕ}
             (fun _ _ _ ↦ by rw [pow_add]), ih]
         dsimp [g, h]
         split_ifs with hidx
-        · simp [Finsupp.prod_single_index, (targetOccurrence_data x).2.ne_zero]
+        · simp [Finsupp.prod_single_index]
         · simp
   simpa [g, h] using hprod Finset.univ
 
@@ -4533,7 +4516,7 @@ lemma repairedFactor_log_le_approximate_add_gap {δ : ℝ} {n : ℕ} (hn : 0 < n
     linarith
 
 lemma inflateExponent_log_bound {k d c : ℕ} (hk : 0 < k) (hd : 0 < d)
-    (hc : 0 < c) (hkc : k ≤ c) :
+    (_ : 0 < c) (hkc : k ≤ c) :
     (inflateExponent k d : ℝ) * Real.log 2 ≤
       if d < k then Real.log (c : ℝ) - Real.log (d : ℝ) + Real.log 2 else 0 := by
   by_cases hdk : d < k
@@ -4630,7 +4613,7 @@ lemma sum_inflateExponent_log_bound {δ : ℝ} {n : ℕ} (hn : 0 < n)
         apply Finset.sum_le_sum
         intro i hi
         by_cases hlow : d i < k <;> by_cases hiS : i ∈ S
-        · simp [hlow, hiS]
+        · simp only [if_pos hlow, if_pos hiS, le_add_iff_nonneg_right]
           exact hgap
         · simp [hlow, hiS]
         · simp only [if_neg hlow, if_pos hiS]
@@ -4649,7 +4632,6 @@ lemma sum_inflateExponent_log_bound {δ : ℝ} {n : ℕ} (hn : 0 < n)
           (S.card : ℝ) * cutoffLogGap n := by
         rw [Finset.sum_add_distrib, Finset.sum_sub_distrib]
         simp
-        <;> ring
       _ = sourceLargeLog δ n - targetLargeLog n +
           (sourceLargeCount δ n : ℝ) * cutoffLogGap n := by
         have hBident := repairedProduct_log_identity hn hupper e
