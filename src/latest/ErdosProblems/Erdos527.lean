@@ -272,7 +272,7 @@ lemma rademacher_complex_tail (b : ℕ → ℂ) (s : Finset ℕ)
     intro ε hε
     simp only [Set.mem_union, A, B, Set.mem_ofPred_eq]
     by_contra h
-    push_neg at h
+    push Not at h
     change t ≤ ‖Z ε‖ at hε
     have hz := Complex.norm_le_abs_re_add_abs_im (Z ε)
     linarith
@@ -642,7 +642,6 @@ lemma norm_exp_mul_I_sub_exp_mul_I_le {x y : ℝ} (hxy : |x - y| ≤ 1) :
       Complex.exp (y * Complex.I) * Complex.exp ((x - y) * Complex.I) := by
     rw [← Complex.exp_add]
     congr 1
-    push_cast
     ring
   rw [heq, show Complex.exp (y * Complex.I) * Complex.exp ((x - y) * Complex.I) -
       Complex.exp (y * Complex.I) =
@@ -709,7 +708,7 @@ lemma exists_complexGridPoint_dist_le (q : ℕ) [NeZero q] (hq : 8 ≤ q)
     ‖Complex.exp (z.arg * Complex.I) -
         Complex.exp ((2 * Real.pi * (m : ℝ) / q) * Complex.I)‖
       ≤ 2 * |z.arg - 2 * Real.pi * (m : ℝ) / q| := by
-        convert norm_exp_mul_I_sub_exp_mul_I_le hdabs using 1 <;> push_cast <;> ring
+        convert norm_exp_mul_I_sub_exp_mul_I_le hdabs using 1 ; push_cast ; ring
     _ ≤ 2 * (2 * Real.pi / q) := by
       rw [abs_of_nonneg hd0]
       exact mul_le_mul_of_nonneg_left (le_of_lt hdlt) (by norm_num)
@@ -742,7 +741,7 @@ lemma complexEnergy_root_eq (a : ℕ → ℝ) (s : Finset ℕ)
   rw [he, NNReal.coe_sum]
   apply Finset.sum_congr rfl
   intro n hn
-  simp [e, norm_mul, norm_pow, Grid.norm_complexGridPoint, Complex.norm_real,
+  simp [e, norm_pow, Grid.norm_complexGridPoint, Complex.norm_real,
     Real.norm_eq_abs]
   rfl
 
@@ -1210,7 +1209,6 @@ lemma norm_exp_real_mul_I_sub_exp_real_mul_I_le (x y : ℝ) :
       Complex.exp (y * Complex.I) * Complex.exp ((x - y) * Complex.I) := by
     rw [← Complex.exp_add]
     congr 1
-    push_cast
     ring
   rw [heq, show Complex.exp (y * Complex.I) * Complex.exp ((x - y) * Complex.I) -
       Complex.exp (y * Complex.I) =
@@ -1366,7 +1364,7 @@ lemma branch_radius_arithmetic (q m A B : ℝ)
       _ ≤ 4 * Real.pi / (q * (2 * A)) := hsecond'
       _ = 2 * Real.pi / (q * A) := by
         field_simp
-        <;> ring
+        ; ring
   calc
     2 * Real.pi / (q * A ^ 2) + 4 * Real.pi / (q * m * B) ≤
         2 * Real.pi / (q * A) + 2 * Real.pi / (q * A) :=
@@ -2687,10 +2685,7 @@ theorem ae_eventually_not_flatPrefixGridFailure
   by_cases hk : coefficientEnvelope a N0 k ≤ 1
   · simpa [prefixFailureBound, hk] using
       measureReal_flatPrefixGridFailure_envelope_le a hsmall hN0 k hk
-  · simpa [prefixFailureBound, hk] using
-      (measureReal_le_one (μ := rademacherProductMeasure)
-        (flatPrefixGridFailure a N0 k (prefixPhaseGridSize N0 k)
-          (prefixTolerance N0 k / 2)))
+  · simp [prefixFailureBound, hk]
 
 lemma prefix_phase_mesh_error_le
     (a : ℕ → ℝ) (hsmall : DecaysFasterThanInvSqrt a)
@@ -2835,7 +2830,7 @@ lemma card_scalePrefix_le_scale_succ {N0 k l : ℕ}
 in a whole-scale prefix is at most the next scale. -/
 lemma derivativeCoefficient_sq_le_scale_succ
     (a : ℕ → ℝ) (hsmall : DecaysFasterThanInvSqrt a)
-    {N0 : ℕ} (hN0 : 0 < N0) {k l n : ℕ}
+    {N0 : ℕ} (_hN0 : 0 < N0) {k l n : ℕ}
     (henv : coefficientEnvelope a N0 k ≤ 1)
     (hn : n ∈ scalePrefix N0 k l)
     (hl : l ≤ scale N0 (k + 1)) :
@@ -2998,7 +2993,6 @@ lemma measureReal_derivativeGridFailure_le
                 (2 * S ^ 2)))) := by simp
     _ ≤ (2 * S) * (S ^ 16 * (4 * S ^ (-(65 : ℝ)))) := by
       have hcard : (scale N0 (k + 1) + 1 : ℝ) ≤ 2 * S := by
-        push_cast
         dsimp only [S]
         nlinarith
       have hq : (prefixPhaseGridSize N0 k : ℝ) = S ^ 16 := by
@@ -3061,9 +3055,7 @@ theorem ae_eventually_not_derivativeGridFailure
       (2080 : ℝ) ≤ Real.log (scale N0 (k + 1) : ℝ)
   · simpa [derivativeFailureBound, hk] using
       measureReal_derivativeGridFailure_le a hsmall hN0 k hk.1 hk.2
-  · simpa [derivativeFailureBound, hk] using
-      (measureReal_le_one rademacherProductMeasure
-        (derivativeGridFailure a N0 k))
+  · simp [derivativeFailureBound, hk]
 
 /-- A deterministic second-derivative/Lipschitz budget for every cumulative
 prefix in the whole scale. -/
@@ -3750,7 +3742,7 @@ lemma measure_lt_expectation_sub_le {Ω : Type*} [MeasurableSpace Ω]
     μ {ω | Y ω < μ[Y] - c} ≤ μ {ω | c ≤ |Y ω - μ[Y]|} := by
       apply measure_mono
       intro ω hω
-      simp only [mem_setOf_eq] at hω ⊢
+      simp only [mem_ofPred_eq] at hω ⊢
       rw [abs_of_nonpos (by linarith)]
       linarith
     _ ≤ ENNReal.ofReal (Var[Y; μ] / c ^ 2) :=
@@ -3796,7 +3788,7 @@ lemma measure_exists_failure_le {Ω : Type*} [MeasurableSpace Ω]
     μ {ω | ∃ k ≥ K, ω ∈ failure k} ≤ ∑' j : ℕ, μ (failure (K + j)) := by
   have hset : {ω | ∃ k ≥ K, ω ∈ failure k} = ⋃ j : ℕ, failure (K + j) := by
     ext ω
-    simp only [mem_setOf_eq, mem_iUnion]
+    simp only [mem_ofPred_eq, mem_iUnion]
     constructor
     · rintro ⟨k, hk, hω⟩
       exact ⟨k - K, by simpa [Nat.add_sub_of_le hk] using hω⟩
@@ -3947,7 +3939,7 @@ theorem lintegral_indicator_linear_preimage_sub_le_centered
           change L y + t ∈ K at hy
           have hk := hK_convex hx hy (a := (1 / 2 : ℝ)) (b := (1 / 2 : ℝ))
             (by norm_num) (by norm_num) (by norm_num)
-          convert hk using 1 <;> ext i <;> simp [sub_eq_add_neg] <;> ring
+          convert hk using 1 ; ext i ; simp [sub_eq_add_neg] ; ring
         rw [Set.indicator_of_mem hx, Set.indicator_of_mem hy,
           Set.indicator_of_mem hc]
         exact hp_midpoint_logConcave x y
@@ -3986,7 +3978,7 @@ open ProbabilityTheory
 
 lemma gaussianPDF_zero_one_even (x : ℝ) :
     gaussianPDF 0 1 (-x) = gaussianPDF 0 1 x := by
-  simp [gaussianPDF, gaussianPDFReal, neg_sq]
+  simp [gaussianPDF, gaussianPDFReal]
 
 lemma gaussianPDF_zero_one_midpoint_logConcave (x y : ℝ) :
     gaussianPDF 0 1 ((x + y) / 2) ≥
@@ -4524,8 +4516,10 @@ variable {ι : Type*} [DecidableEq ι]
 def cutoffProduct (u : Finset ι) (L : ι → E →L[ℝ] ℂ) (x : E) : ℝ :=
   ∏ j ∈ u, cutoff (L j x)
 
+omit [DecidableEq ι] in
 theorem cutoffProduct_contDiff (u : Finset ι) (L : ι → E →L[ℝ] ℂ) :
     ContDiff ℝ (⊤ : ℕ∞) (cutoffProduct u L) := by
+  classical
   unfold cutoffProduct
   exact contDiff_prod fun i _ ↦ cutoff_comp_contDiff (L i)
 
@@ -4541,6 +4535,7 @@ private theorem map_prod_eq_prod_pow_count {u : Finset ι} {n : ℕ}
     · simp
     · simpa only [Multiset.mem_toFinset] using hjp
 
+omit [DecidableEq ι] in
 /-- The clean product bound used in fourth-order Lindeberg replacement.  It is polynomial in
 the number and norms of the linear tests: for every `n ≤ 4`,
 `‖D^n ∏ H(L_j x)‖ ≤ (C₄ ∑ ‖L_j‖)^n`. -/
@@ -4548,6 +4543,7 @@ theorem norm_iteratedFDeriv_cutoffProduct_le (u : Finset ι) (L : ι → E →L[
     (x : E) {n : ℕ} (hn : n ≤ 4) :
     ‖iteratedFDeriv ℝ n (cutoffProduct u L) x‖ ≤
       (cutoffC4 * ∑ j ∈ u, ‖L j‖) ^ n := by
+  classical
   unfold cutoffProduct
   calc
     ‖iteratedFDeriv ℝ n (fun x ↦ ∏ j ∈ u, cutoff (L j x)) x‖
@@ -4582,11 +4578,15 @@ variable [Fintype ι]
 def coordinateSum (s : Finset ι) : (ι → ℂ) →L[ℝ] ℂ :=
   ∑ j ∈ s, ContinuousLinearMap.proj j
 
+omit [DecidableEq ι] [Fintype ι] in
 @[simp] theorem coordinateSum_apply (s : Finset ι) (w : ι → ℂ) :
     coordinateSum s w = ∑ j ∈ s, w j := by
+  classical
   simp [coordinateSum]
 
+omit [DecidableEq ι] in
 theorem norm_coordinateSum_le (s : Finset ι) : ‖coordinateSum s‖ ≤ s.card := by
+  classical
   unfold coordinateSum
   calc
     ‖∑ j ∈ s, ContinuousLinearMap.proj j‖
@@ -4602,12 +4602,17 @@ theorem norm_coordinateSum_le (s : Finset ι) : ‖coordinateSum s‖ ≤ s.card
 def scaledCoordinateSum (c : ℝ) (s : Finset ι) : (ι → ℂ) →L[ℝ] ℂ :=
   c • coordinateSum s
 
-@[simp] theorem scaledCoordinateSum_apply (c : ℝ) (s : Finset ι) (w : ι → ℂ) :
+omit [DecidableEq ι] [Fintype ι] in
+@[simp] theorem scaledCoordinateSum_apply [Finite ι] (c : ℝ) (s : Finset ι) (w : ι → ℂ) :
     scaledCoordinateSum c s w = c • ∑ j ∈ s, w j := by
+  classical
+  let : Fintype ι := Fintype.ofFinite ι
   simp [scaledCoordinateSum]
 
+omit [DecidableEq ι] in
 theorem norm_scaledCoordinateSum_le (c : ℝ) (s : Finset ι) :
     ‖scaledCoordinateSum c s‖ ≤ |c| * s.card := by
+  classical
   calc
     ‖scaledCoordinateSum c s‖ ≤ ‖c‖ * ‖coordinateSum s‖ := by
       exact norm_smul_le c (coordinateSum s)
@@ -4704,7 +4709,7 @@ theorem sum_norm_endpointPrefixForms_le (l : ℕ) (endpointScale prefixScale : �
             ≤ |prefixScale| * l := by
           gcongr
           have hcard : (Finset.Iic j).card ≤ l := by
-            simpa using Finset.card_le_card (Finset.subset_univ (Finset.Iic j))
+            simp
           exact_mod_cast hcard
         _ ≤ (|endpointScale| + |prefixScale|) * l := by
           gcongr
@@ -4840,12 +4845,13 @@ lemma covarianceCoefficient_energy_le
       simp
 
 lemma sum_norm_sq_covarianceFourier_le
-    {I : Type*} [Fintype I] [DecidableEq I]
+    {I : Type*} [Fintype I]
     (a : ℕ → ℂ) (m M N : ℕ) (x : UnitAddCircle) (y : I → UnitAddCircle)
     {δ : ℝ} (hδ : 0 < δ) (hsep : ∀ r s, r ≠ s → δ ≤ dist (y r) (y s))
     (ha : ∀ n ∈ Finset.Ioc m (m + M), ‖a n‖ ^ 2 ≤ (N : ℝ)⁻¹) (p : Bool) :
     (∑ r, ‖covarianceFourier a m M x (y r) p‖ ^ 2) ≤
       ((M : ℝ) + δ⁻¹) * (M : ℝ) * ((N : ℝ)⁻¹) ^ 2 := by
+  classical
   have hls := sum_norm_sq_unitAddCircleAddChar_Ioc_le y hδ hsep m M
     (fun n => ((coord p (phaseValue a n x) : ℝ) : ℂ) * a n)
   calc
@@ -4870,7 +4876,7 @@ noncomputable def correlatedIndices {I : Type*} [Fintype I]
   classical
   exact Finset.univ.filter fun r => IsCorrelated a m M x (y r) ρ
 
-@[simp] lemma mem_correlatedIndices {I : Type*} [Fintype I] [DecidableEq I]
+@[simp] lemma mem_correlatedIndices {I : Type*} [Fintype I]
     (a : ℕ → ℂ) (m M : ℕ) (x : UnitAddCircle) (y : I → UnitAddCircle) (ρ : ℝ)
     (r : I) :
     r ∈ correlatedIndices a m M x y ρ ↔ IsCorrelated a m M x (y r) ρ := by
@@ -4892,12 +4898,13 @@ lemma rho_sq_le_sum_fourier_of_correlated
       sq_nonneg ‖covarianceFourier a m M x y false‖]
 
 lemma sum_four_coordinate_fourier_le
-    {I : Type*} [Fintype I] [DecidableEq I]
+    {I : Type*} [Fintype I]
     (a : ℕ → ℂ) (m M N : ℕ) (x : UnitAddCircle) (y : I → UnitAddCircle)
     {δ : ℝ} (hδ : 0 < δ) (hsep : ∀ r s, r ≠ s → δ ≤ dist (y r) (y s))
     (ha : ∀ n ∈ Finset.Ioc m (m + M), ‖a n‖ ^ 2 ≤ (N : ℝ)⁻¹) :
     (∑ r, ∑ p : Bool, ∑ _q : Bool, ‖covarianceFourier a m M x (y r) p‖ ^ 2) ≤
       4 * (((M : ℝ) + δ⁻¹) * (M : ℝ) * ((N : ℝ)⁻¹) ^ 2) := by
+  classical
   have ht := sum_norm_sq_covarianceFourier_le a m M N x y hδ hsep ha true
   have hf := sum_norm_sq_covarianceFourier_le a m M N x y hδ hsep ha false
   simp only [Fintype.sum_bool, Finset.sum_add_distrib]
@@ -4907,7 +4914,7 @@ lemma sum_four_coordinate_fourier_le
 real/imaginary coordinate in the two covariance vectors.  The harmless constant `4` is kept
 explicit. -/
 theorem card_correlatedIndices_le
-    {I : Type*} [Fintype I] [DecidableEq I]
+    {I : Type*} [Fintype I]
     (a : ℕ → ℂ) (m M N : ℕ) (_hMN : M ≤ N)
     (x : UnitAddCircle) (y : I → UnitAddCircle)
     {δ ρ : ℝ} (hδ : 0 < δ) (hρ : 0 < ρ)
@@ -4915,6 +4922,7 @@ theorem card_correlatedIndices_le
     (ha : ∀ n ∈ Finset.Ioc m (m + M), ‖a n‖ ^ 2 ≤ (N : ℝ)⁻¹) :
     ((correlatedIndices a m M x y ρ).card : ℝ) ≤
       4 * (ρ⁻¹) ^ 2 * ((M : ℝ) + δ⁻¹) * (M : ℝ) * ((N : ℝ)⁻¹) ^ 2 := by
+  classical
   let B : ℝ := ((M : ℝ) + δ⁻¹) * (M : ℝ) * ((N : ℝ)⁻¹) ^ 2
   have hpoint : ∀ r ∈ correlatedIndices a m M x y ρ,
       ρ ^ 2 ≤ ∑ p : Bool, ∑ _q : Bool, ‖covarianceFourier a m M x (y r) p‖ ^ 2 := by
@@ -5052,6 +5060,7 @@ structure IsBoundedC4OnLines {n : ℕ} (F : E → ℝ) (v : Fin n → E)
   lineTest : ∀ i a,
     Erdos88.Invariance.IsBoundedC4Test (fun z : ℝ ↦ F (a + z • v i)) (M i)
 
+omit [BorelSpace E] [MeasurableAdd₂ E] in
 theorem IsBoundedC4OnLines.integrable_comp {n : ℕ}
     {F : E → ℝ} {v : Fin n → E} {M : Fin n → ℝ}
     (hF : IsBoundedC4OnLines F v M)
@@ -5062,6 +5071,7 @@ theorem IsBoundedC4OnLines.integrable_comp {n : ℕ}
   · exact (hF.measurable.comp hf).aestronglyMeasurable
   · exact Filter.Eventually.of_forall fun w ↦ hB _
 
+omit [BorelSpace E] [MeasurableAdd₂ E] [MeasurableSpace E] in
 theorem linearCombination_piFinSuccAbove {n : ℕ}
     (v : Fin (n + 1) → E) (t : Fin (n + 1)) (z : ℝ) (y : Fin n → ℝ) :
     linearCombination v
@@ -6180,6 +6190,7 @@ lemma hasGaussianLaw_linearPath {u : J → Ω → ℝ}
     ext k
     rfl
 
+omit [Fintype K] in
 lemma integral_linearPath {u : J → Ω → ℝ}
     (hu : IndependentStandardGaussians u P) (A : K → J → ℝ) (k : K) :
     ∫ ω, linearPath A u ω k ∂P = 0 := by
@@ -6188,6 +6199,7 @@ lemma integral_linearPath {u : J → Ω → ℝ}
   rw [integral_finsetSum _ (fun j _ ↦ (hu.hasGaussianLaw j).integrable.const_mul (A k j))]
   simp [integral_const_mul, hu.integral_eq_zero]
 
+omit [Fintype K] in
 lemma covariance_linearPath {u : J → Ω → ℝ}
     (hu : IndependentStandardGaussians u P) (A B : K → J → ℝ) (s t : K) :
     cov[(fun ω ↦ linearPath A u ω s), (fun ω ↦ linearPath B u ω t); P]
@@ -6240,12 +6252,16 @@ def complexPath (c : Fin n → ℂ) (g h : Fin n → Ω → ℝ)
   ∑ i with i.val < t.val,
     ((g i ω : ℂ) * c i + (h i ω : ℂ) * Complex.I * c i)
 
+omit [MeasurableSpace Ω] in
 lemma complexPath_re (c : Fin n → ℂ) (g h : Fin n → Ω → ℝ) (ω : Ω)
     (t : Fin (n + 1)) :
     (complexPath c g h ω t).re = realPath c g h ω t := by
   classical
-  simp [complexPath, realPath, linearPath, realRow, doubledFamily,
-    Fintype.sum_sum_type, apply_ite, Finset.sum_ite]
+  simp only [complexPath, Complex.re_sum, Complex.add_re, Complex.mul_re, Complex.ofReal_re,
+    Complex.ofReal_im, zero_mul, sub_zero, Complex.I_re, mul_zero, Complex.I_im, mul_one,
+    sub_self, Complex.mul_im, add_zero, zero_sub, realPath, linearPath, realRow, doubledFamily,
+    Fintype.sum_sum_type, Sum.elim_inl, ite_mul, Finset.sum_ite, not_lt, Finset.sum_const_zero,
+    Sum.elim_inr, neg_mul, Finset.sum_neg_distrib]
   rw [Finset.sum_add_distrib]
   congr 1
   · apply Finset.sum_congr rfl
@@ -6256,12 +6272,16 @@ lemma complexPath_re (c : Fin n → ℂ) (g h : Fin n → Ω → ℝ) (ω : Ω)
     intro i hi
     ring
 
+omit [MeasurableSpace Ω] in
 lemma complexPath_im (c : Fin n → ℂ) (g h : Fin n → Ω → ℝ) (ω : Ω)
     (t : Fin (n + 1)) :
     (complexPath c g h ω t).im = imagPath c g h ω t := by
   classical
-  simp [complexPath, imagPath, linearPath, imagRow, doubledFamily,
-    Fintype.sum_sum_type, apply_ite, Finset.sum_ite]
+  simp only [complexPath, Complex.im_sum, Complex.add_im, Complex.mul_im, Complex.ofReal_re,
+    Complex.ofReal_im, zero_mul, add_zero, Complex.mul_re, Complex.I_re, mul_zero, Complex.I_im,
+    mul_one, sub_self, zero_add, imagPath, linearPath, imagRow, doubledFamily,
+    Fintype.sum_sum_type, Sum.elim_inl, ite_mul, Finset.sum_ite, not_lt, Finset.sum_const_zero,
+    Sum.elim_inr]
   rw [Finset.sum_add_distrib]
   congr 1 <;> apply Finset.sum_congr rfl <;> intro i hi <;> ring
 
@@ -6558,7 +6578,7 @@ lemma convex_encodedTubeSet (n : ℕ) (R r : ℝ) :
 
 lemma neg_mem_encodedTubeSet_iff (n : ℕ) (R r : ℝ) (z : Fin (pathDim n) → ℝ) :
     -z ∈ encodedTubeSet n R r ↔ z ∈ encodedTubeSet n R r := by
-  simp only [encodedTubeSet, Set.mem_setOf_eq, map_neg, norm_neg]
+  simp only [encodedTubeSet, Set.mem_ofPred_eq, map_neg, norm_neg]
 
 def originalEncodedPathLM {n : ℕ} (c : Fin n → ℂ) :
     (Fin n → ℝ) →ₗ[ℝ] (Fin (pathDim n) → ℝ) where
@@ -6668,7 +6688,7 @@ theorem canonical_circularEvent_le_originalEvent {n : ℕ} (c : Fin n → ℂ)
               encodedTubeSet n R r} ≤
             standardGaussianProduct n
               {x | originalEncodedPathLM c x ∈ encodedTubeSet n R r} at hA
-      simpa only [canonicalCircularEvent, canonicalOriginalEvent, Set.preimage_setOf_eq,
+      simpa only [canonicalCircularEvent, canonicalOriginalEvent, Set.preimage_ofPred_eq,
         sub_neg_eq_add] using hA
     _ = standardGaussianProduct n (canonicalOriginalEvent c R r) := by simp
 
@@ -6713,7 +6733,7 @@ lemma complexTubeEvent_eq_preimage {Ω : Type*} {n : ℕ} (c : Fin n → ℂ)
       (fun ω i => g i ω) ⁻¹' canonicalOriginalEvent c R r := by
   ext ω
   simp only [complexTubeEvent, canonicalOriginalEvent, encodedTubeSet,
-    Set.mem_setOf_eq, Set.mem_preimage]
+    Set.mem_ofPred_eq, Set.mem_preimage]
   simp_rw [encodedPathCoord_original_g]
 
 lemma circularComplexTubeEvent_eq_preimage {Ω : Type*} {n : ℕ} (c : Fin n → ℂ)
@@ -6723,7 +6743,7 @@ lemma circularComplexTubeEvent_eq_preimage {Ω : Type*} {n : ℕ} (c : Fin n →
         canonicalCircularEvent c R r := by
   ext ω
   simp only [circularComplexTubeEvent, canonicalCircularEvent, encodedTubeSet,
-    Set.mem_setOf_eq, Set.mem_preimage]
+    Set.mem_ofPred_eq, Set.mem_preimage]
   simp_rw [encodedPathCoord_circular]
 
 theorem circularComplexTubeEvent_le_originalComplexTubeEvent
@@ -6960,7 +6980,8 @@ lemma flat_gaussian_cutoff_integrable
       (CutoffLindebergBridge.NormedLindeberg.linearCombination
         (OnePointLindeberg.flatBlockIncrementDirection a hN0 k z) x)
   have hfmeas : Measurable f :=
-    (endpointPrefixCutoff_contDiff (uniformBlockCount k) endpointScale prefixScale).continuous.measurable.comp
+    (endpointPrefixCutoff_contDiff
+      (uniformBlockCount k) endpointScale prefixScale).continuous.measurable.comp
       (CutoffLindebergBridge.NormedLindeberg.measurable_linearCombination _)
   refine Integrable.mono' (integrable_const (1 : ℝ)) hfmeas.aestronglyMeasurable ?_
   exact Filter.Eventually.of_forall fun x ↦ by
@@ -7731,7 +7752,7 @@ lemma gaussianPDFReal_lower_on_Icc (v : ℝ≥0) (hv : v ≠ 0) (c h x : ℝ)
     rw [sq_le_sq]
     simpa [abs_of_nonneg (by positivity : 0 ≤ |c| + h)] using habs
   unfold ProbabilityTheory.gaussianPDFReal
-  simp only [NNReal.coe_eq_zero, hv, if_false, sub_zero]
+  simp only [sub_zero]
   gcongr
 
 /-- A directly usable lower bound for the mass of a finite interval under a
@@ -7793,7 +7814,7 @@ lemma gaussianPDFReal_macroblock_lower (v : ℝ≥0) (c h u : ℝ)
   have hpref : 1 / (4 * u) ≤ 1 / Real.sqrt (2 * Real.pi * (v : ℝ)) := by
     exact one_div_le_one_div_of_le (by positivity) hsqrt_le
   rw [ProbabilityTheory.gaussianPDFReal]
-  simp only [NNReal.coe_eq_zero, hv, if_false, sub_zero]
+  simp only [sub_zero]
   calc
     Real.exp (-256) / (4 * u) = (1 / (4 * u)) * Real.exp (-256) := by ring
     _ ≤ (1 / Real.sqrt (2 * Real.pi * (v : ℝ))) *
@@ -7968,7 +7989,7 @@ theorem indepFun_add_reset_lower
     _ ≤ ∫⁻ x in A, (P.map Y) (Prod.mk x ⁻¹' s) ∂(P.map X) := by
       apply setLIntegral_mono (measurable_measure_prodMk_left hs)
       intro x hx
-      simpa only [s, Set.mem_setOf_eq, hx, true_and, Set.preimage_setOf_eq] using
+      simpa only [s, Set.mem_ofPred_eq, hx, true_and, Set.preimage_ofPred_eq] using
         hreset x hx
     _ ≤ ∫⁻ x, (P.map Y) (Prod.mk x ⁻¹' s) ∂(P.map X) :=
       setLIntegral_le_lintegral A _
@@ -8035,14 +8056,14 @@ theorem gaussian_independent_increment_core_reset_lower
   have hset : {y : ℝ | x + y ∈ Set.Icc (-u / 4) (u / 4)} =
       Set.Icc (-x - u / 4) (-x + u / 4) := by
     ext y
-    simp only [Set.mem_setOf_eq, Set.mem_Icc]
+    simp only [Set.mem_ofPred_eq, Set.mem_Icc]
     constructor <;> rintro ⟨hlo, hhi⟩ <;> constructor <;> linarith
   rw [hset]
   have hmacro := gaussianReal_Icc_macroblock_lower v (-x) (u / 4) u hu
     (by positivity) (by linarith)
     (by simpa only [abs_neg] using hxabs.trans (by linarith))
     hvlo (hvhi.trans (by nlinarith [sq_nonneg u]))
-  convert hmacro using 1 <;> field_simp <;> ring_nf
+  convert hmacro using 1 ; field_simp ; ring_nf
 
 /-- The final reset can target a smaller endpoint interval `[-r,r]`; its cost
 is linear in `r/u`, uniformly over the previous core state. -/
@@ -8068,7 +8089,7 @@ theorem gaussian_independent_increment_final_reset_lower
   have hset : {y : ℝ | x + y ∈ Set.Icc (-r) r} =
       Set.Icc (-x - r) (-x + r) := by
     ext y
-    simp only [Set.mem_setOf_eq, Set.mem_Icc]
+    simp only [Set.mem_ofPred_eq, Set.mem_Icc]
     constructor <;> rintro ⟨hlo, hhi⟩ <;> constructor <;> linarith
   rw [hset]
   exact gaussianReal_Icc_macroblock_lower v (-x) r u hu hr hru
@@ -8103,7 +8124,7 @@ lemma gaussian_macroblock_constant_lower :
   have hof := ENNReal.ofReal_le_ofReal hreal
   have hhalf : (1 / 2 : ℝ≥0∞) = ENNReal.ofReal (1 / 2 : ℝ) := by
     symm
-    simpa using (ENNReal.ofReal_div_of_pos (x := (1 : ℝ)) (y := 2) (by norm_num))
+    simp
   rw [ENNReal.ofReal_mul (by norm_num : 0 ≤ (1 / 2 : ℝ)), ← hhalf] at hof
   exact hof
 
@@ -8158,7 +8179,7 @@ lemma gaussian_final_macroblock_constant_lower (u r : ℝ)
   have hof := ENNReal.ofReal_le_ofReal hreal
   have hhalf : (1 / 2 : ℝ≥0∞) = ENNReal.ofReal (1 / 2 : ℝ) := by
     symm
-    simpa using (ENNReal.ofReal_div_of_pos (x := (1 : ℝ)) (y := 2) (by norm_num))
+    simp
   rw [ENNReal.ofReal_mul (by norm_num : 0 ≤ (1 / 2 : ℝ)), ← hhalf] at hof
   exact hof
 
@@ -8251,7 +8272,7 @@ theorem half_le_measure_of_compl_subset
   rw [← ofReal_measureReal]
   have hhalf : (1 / 2 : ℝ≥0∞) = ENNReal.ofReal (1 / 2 : ℝ) := by
     symm
-    simpa using (ENNReal.ofReal_div_of_pos (x := (1 : ℝ)) (y := 2) (by norm_num))
+    simp
   rw [hhalf]
   exact ENNReal.ofReal_le_ofReal hgood
 
@@ -8260,7 +8281,7 @@ are both at most `u/4`, and every regression coefficient lies in `[0,1]`, then
 the whole bridge is at most `u/2`. -/
 lemma bridge_tube_of_path_and_endpoint_small
     {ι : Type*} {S : ι → ℝ} {Y u : ℝ} {q : ι → ℝ}
-    (hu : 0 ≤ u) (hq0 : ∀ i, 0 ≤ q i) (hq1 : ∀ i, q i ≤ 1)
+    (_hu : 0 ≤ u) (hq0 : ∀ i, 0 ≤ q i) (hq1 : ∀ i, q i ≤ 1)
     (hS : ∀ i, |S i| ≤ u / 4) (hY : |Y| ≤ u / 4) :
     ∀ i, |S i - q i * Y| ≤ u / 2 := by
   intro i
@@ -8282,7 +8303,7 @@ theorem doob_finite_maximal_bound
     {𝒢 : MeasureTheory.Filtration ℕ ‹MeasurableSpace Ω›}
     {f : ℕ → Ω → ℝ} [IsFiniteMeasure P]
     (hsub : MeasureTheory.Submartingale f 𝒢 P) (hnonneg : 0 ≤ f)
-    (n : ℕ) (u V : ℝ) (hu : 0 ≤ u)
+    (n : ℕ) (u V : ℝ) (_hu : 0 ≤ u)
     (hterminal : ∫ ω, f n ω ∂P ≤ V) :
     ENNReal.ofReal (u ^ 2) *
         P {ω | u ^ 2 ≤ (Finset.range (n + 1)).sup'
@@ -8471,7 +8492,7 @@ theorem gaussian_martingale_path_endpoint_lower
   have htube_meas : MeasurableSet tube := by
     exact measurableSet_pi_abs_le (u / 2)
   have htube_mass : (1 / 2 : ℝ≥0∞) ≤ P (B ⁻¹' tube) := by
-    simpa only [B, tube, Set.preimage_setOf_eq] using
+    simpa only [B, tube, Set.preimage_ofPred_eq] using
       martingale_bridge_tube_mass_ge_half hS hL2 n q u (v : ℝ) hu
         (NNReal.coe_nonneg v) hvhi hterminal
         (by simpa only [q] using hq0) (by simpa only [q] using hq1)
@@ -8704,10 +8725,11 @@ set_option backward.isDefEq.respectTransparency false in
 lemma map_innerFamilyCLM_stdGaussian_eq_of_gram_eq
     {H ι : Type*} [NormedAddCommGroup H] [InnerProductSpace ℝ H]
     [FiniteDimensional ℝ H] [MeasurableSpace H] [BorelSpace H]
-    [Fintype ι] [DecidableEq ι] (c d : ι → H)
+    [Fintype ι] (c d : ι → H)
     (hgram : ∀ i j, inner ℝ (c i) (c j) = inner ℝ (d i) (d j)) :
     (stdGaussian H).map (innerFamilyCLM c) =
       (stdGaussian H).map (innerFamilyCLM d) := by
+  classical
   apply IsGaussian.ext
   · rw [integral_map (by fun_prop) (by fun_prop),
       integral_map (by fun_prop) (by fun_prop)]
@@ -8769,8 +8791,8 @@ lemma integral_abs_inner_stdGaussian_le_norm
       integral_mono hLint.abs hright hmaj
     _ = ‖c‖ := by
       rw [integral_div, integral_add, integral_div, hsq, integral_const]
-      simp only [probReal_univ, one_smul]
-      · field_simp
+      · simp only [probReal_univ, one_smul]
+        field_simp
         norm_num
       · exact hX.integrable_sq.div_const _
       · exact integrable_const _
@@ -8959,12 +8981,16 @@ theorem gaussian_projection_coupling
     intro i j
     fin_cases i <;> fin_cases j <;> simp only [C2, C3]
     all_goals rw [PiLp.inner_apply, PiLp.inner_apply]
-    all_goals simp only [Fin.reduceFinMk, Matrix.cons_val, inner_self_eq_norm_sq_to_K, Real.ringHom_apply, Fin.sum_univ_two,
-    Fin.isValue, pairL2_apply_zero, pairL2_apply_one, norm_zero, ne_eq, OfNat.ofNat_ne_zero, not_false_eq_true,
-    zero_pow, zero_add]
+    all_goals simp only [Fin.reduceFinMk, Matrix.cons_val, Fin.sum_univ_two,
+      pairL2_apply_zero, pairL2_apply_one, inner_zero_left,
+      inner_zero_right, add_zero, zero_add]
     all_goals first
-      | simpa [real_inner_self_eq_norm_sq] using hgram00
-      | simpa [real_inner_self_eq_norm_sq] using hgram11
+      | assumption
+      | simpa only [real_inner_comm] using hcross00
+      | simpa only [real_inner_comm] using hcross01
+      | simpa only [real_inner_comm] using hcross10
+      | simpa only [real_inner_comm] using hcross11
+      | simpa only [real_inner_comm] using hgram01
   have hmap : (stdGaussian H2).map (innerFamilyCLM C2) =
       (stdGaussian H2).map (innerFamilyCLM C3) :=
     map_innerFamilyCLM_stdGaussian_eq_of_gram_eq C2 C3 hgram
@@ -8984,10 +9010,10 @@ theorem gaussian_projection_coupling
       _ ≤ ∑ i, (![‖x₀ - xt₀‖, ‖x₁ - xt₁‖, 0, 0] : Fin 4 → ℝ) i := by
         apply sum_le_sum
         intro i _
-        fin_cases i <;> simp only [Fin.mk_one, Fin.isValue, Matrix.cons_val_one, Matrix.cons_val_zero, Fin.zero_eta]
+        fin_cases i <;>
+          simp only [C0, C1, Fin.reduceFinMk, Matrix.cons_val, sub_self, norm_zero, le_refl]
         all_goals rw [pairL2_sub_pairL2]
-        all_goals simp only [sub_self]
-        all_goals exact (norm_pairL2_zero_right _).le
+        all_goals simpa only [sub_self] using (norm_pairL2_zero_right _).le
       _ = _ := by simp [Fin.sum_univ_four]
   have hs12 : ∑ i, ‖C1 i - C2 i‖ ≤ 2 * (‖yr₀‖ + ‖yr₁‖) := by
     have h0 : ‖pairL2 y₀ 0 - pairL2 (y₀ - yr₀) yr₀‖ ≤ 2 * ‖yr₀‖ := by
@@ -9013,10 +9039,10 @@ theorem gaussian_projection_coupling
       _ ≤ ∑ i, (![‖x₀ - xt₀‖, ‖x₁ - xt₁‖, 0, 0] : Fin 4 → ℝ) i := by
         apply sum_le_sum
         intro i _
-        fin_cases i <;> simp only [Fin.mk_one, Fin.isValue, Matrix.cons_val_one, Matrix.cons_val_zero, Fin.zero_eta]
-        all_goals rw [pairL2_sub_pairL2]
-        all_goals simp only [sub_self]
-        all_goals simpa only [norm_sub_rev] using (norm_pairL2_zero_right _).le
+        fin_cases i <;>
+          simp only [C3, C4, Fin.reduceFinMk, Matrix.cons_val, sub_self, norm_zero, le_refl]
+        all_goals rw [pairL2_sub_pairL2, sub_self, norm_pairL2_zero_right]
+        all_goals exact (norm_sub_rev _ _).le
       _ = _ := by simp [Fin.sum_univ_four]
   change |(∫ z, f (innerFamilyCLM C0 z) ∂stdGaussian H2) -
       ∫ z, f (innerFamilyCLM C4 z) ∂stdGaussian H2| ≤ _
@@ -9112,7 +9138,7 @@ lemma inner_sub_orthoProj2_eq_zero_left {H : Type*} [NormedAddCommGroup H]
     (horth : inner ℝ e₀ e₁ = 0) (y : H) :
     inner ℝ e₀ (y - orthoProj2 e₀ e₁ y) = 0 := by
   simp [orthoProj2, inner_sub_right, inner_add_right, orthoProj1,
-    inner_smul_right, real_inner_self_eq_norm_sq, he₀, horth]
+    inner_smul_right, he₀, horth]
 
 lemma inner_sub_orthoProj2_eq_zero_right {H : Type*} [NormedAddCommGroup H]
     [InnerProductSpace ℝ H] {e₀ e₁ : H} (he₁ : ‖e₁‖ = 1)
@@ -9120,7 +9146,7 @@ lemma inner_sub_orthoProj2_eq_zero_right {H : Type*} [NormedAddCommGroup H]
     inner ℝ e₁ (y - orthoProj2 e₀ e₁ y) = 0 := by
   have horth' : inner ℝ e₁ e₀ = 0 := by simpa [real_inner_comm] using horth
   simp [orthoProj2, inner_sub_right, inner_add_right, orthoProj1,
-    inner_smul_right, real_inner_self_eq_norm_sq, he₁, horth']
+    inner_smul_right, he₁, horth']
 
 lemma orthoProj2_gram {H : Type*} [NormedAddCommGroup H]
     [InnerProductSpace ℝ H] {e₀ e₁ : H} (he₀ : ‖e₀‖ = 1) (he₁ : ‖e₁‖ = 1)
@@ -9188,7 +9214,7 @@ noncomputable def unitVec {H : Type*} [NormedAddCommGroup H]
 
 lemma norm_unitVec {H : Type*} [NormedAddCommGroup H]
     [InnerProductSpace ℝ H] {x : H} (hx : x ≠ 0) : ‖unitVec x‖ = 1 := by
-  simp [unitVec, norm_smul, abs_inv, inv_mul_cancel₀ (norm_ne_zero_iff.mpr hx)]
+  simp [unitVec, norm_smul, inv_mul_cancel₀ (norm_ne_zero_iff.mpr hx)]
 
 lemma norm_smul_unitVec {H : Type*} [NormedAddCommGroup H]
     [InnerProductSpace ℝ H] {x : H} (hx : x ≠ 0) : ‖x‖ • unitVec x = x := by
@@ -9200,7 +9226,7 @@ lemma abs_inner_unitVec_le_div {H : Type*} [NormedAddCommGroup H]
     |inner ℝ (unitVec x) y| ≤ m / δ := by
   have hxpos : 0 < ‖x‖ := hδ.trans_le hx
   rw [unitVec, inner_smul_left, abs_mul]
-  simp only [map_inv₀, star_trivial, abs_inv, abs_norm]
+  simp only [map_inv₀, abs_inv]
   rw [inv_mul_eq_div]
   rw [show |(starRingEnd ℝ) ‖x‖| = ‖x‖ by simp]
   exact (div_le_div_iff₀ hxpos hδ).2
@@ -9282,7 +9308,7 @@ lemma gaussianPairDiscrepancy_le_of_first_small
     (by simp) (by simp) (hcross y₀) (hcross y₁)
     (orthoProj1_gram he y₀ y₀) (orthoProj1_gram he y₀ y₁)
     (orthoProj1_gram he y₁ y₁) f hf
-  simp only [sub_zero, sub_self, norm_zero, zero_add] at hmain
+  simp only [sub_zero, sub_self, norm_zero] at hmain
   rw [gaussianPairDiscrepancy]
   exact hmain.trans (by
     have hK : 0 ≤ (K : ℝ) := NNReal.coe_nonneg K
@@ -9472,7 +9498,7 @@ theorem gaussianPairDiscrepancy_le_rpow_quarter
         _ = 1 := Real.one_rpow _
     have hδfour : δ ^ 4 = m := by
       dsimp only [δ]
-      convert Real.rpow_inv_natCast_pow hm (by norm_num : (4 : ℕ) ≠ 0) using 1 <;>
+      convert Real.rpow_inv_natCast_pow hm (by norm_num : (4 : ℕ) ≠ 0) using 1 ;
         norm_num
     have hmδcube : m ≤ δ ^ 3 := by
       rw [← hδfour]
@@ -9761,8 +9787,8 @@ lemma pair_replacement {n l : ℕ} (endpointScale prefixScale : ℝ)
     n l endpointScale prefixScale v
 
 lemma abs_mul_sub_mul_le_of_unit {a b c d : ℝ}
-    (ha0 : 0 ≤ a) (ha1 : a ≤ 1) (hb0 : 0 ≤ b) (hb1 : b ≤ 1)
-    (hc0 : 0 ≤ c) (hc1 : c ≤ 1) (hd0 : 0 ≤ d) (hd1 : d ≤ 1) :
+    (ha0 : 0 ≤ a) (ha1 : a ≤ 1) (_hb0 : 0 ≤ b) (_hb1 : b ≤ 1)
+    (_hc0 : 0 ≤ c) (_hc1 : c ≤ 1) (hd0 : 0 ≤ d) (hd1 : d ≤ 1) :
     |a * b - c * d| ≤ |a - c| + |b - d| := by
   have habsa : |a| ≤ 1 := by simpa [abs_of_nonneg ha0] using ha1
   have habsd : |d| ≤ 1 := by simpa [abs_of_nonneg hd0] using hd1
@@ -10046,8 +10072,9 @@ lemma weightedCount_memLp_two (μ : Measure Ω) (C : Finset ι)
 lemma integral_weightedCount (μ : Measure Ω) (C : Finset ι)
     (w : ι → Ω → ℝ) (hw : ∀ x ∈ C, Integrable (w x) μ) :
     μ[weightedCount C w] = ∑ x ∈ C, μ[w x] := by
-  exact integral_finset_sum C hw
+  exact integral_finsetSum C hw
 
+omit [MeasurableSpace Ω] in
 lemma weightedCount_sq (C : Finset ι) (w : ι → Ω → ℝ) (ω : Ω) :
     weightedCount C w ω ^ 2 =
       ∑ x ∈ C, ∑ y ∈ C, w x ω * w y ω := by
@@ -10065,7 +10092,7 @@ lemma integral_weightedCount_sq (μ : Measure Ω) [IsFiniteMeasure μ]
   calc
     (∫ ω, ∑ x ∈ C, ∑ y ∈ C, w x ω * w y ω ∂μ) =
         ∑ x ∈ C, ∫ ω, ∑ y ∈ C, w x ω * w y ω ∂μ := by
-      apply integral_finset_sum C
+      apply integral_finsetSum C
       intro x hx
       apply integrable_finsetSum C
       intro y hy
@@ -10075,7 +10102,7 @@ lemma integral_weightedCount_sq (μ : Measure Ω) [IsFiniteMeasure μ]
     _ = ∑ x ∈ C, ∑ y ∈ C, μ[fun ω ↦ w x ω * w y ω] := by
       apply Finset.sum_congr rfl
       intro x hx
-      apply integral_finset_sum C
+      apply integral_finsetSum C
       intro y hy
       have hxy : MemLp (fun ω ↦ w x ω * w y ω) 1 μ := by
         exact (hw y hy).mul (hw x hx)
@@ -10110,7 +10137,7 @@ lemma secondMoment_weightedCount_le (μ : Measure Ω) [IsFiniteMeasure μ]
 ordinary pairs the factorization error is `e`; on correlated pairs one pays
 one additional unit. -/
 lemma pairError_sum_le_of_correlation_count (C : Finset ι)
-    (corr : ι → ι → Prop) [DecidableRel corr] {e D : ℝ} (he : 0 ≤ e)
+    (corr : ι → ι → Prop) [DecidableRel corr] {e D : ℝ} (_he : 0 ≤ e)
     (hcorr : (∑ x ∈ C, ∑ y ∈ C, if corr x y then (1 : ℝ) else 0) ≤ D) :
     (∑ x ∈ C, ∑ y ∈ C, (e + if corr x y then (1 : ℝ) else 0)) ≤
       e * (C.card : ℝ) ^ 2 + D := by
@@ -10119,7 +10146,6 @@ lemma pairError_sum_le_of_correlation_count (C : Finset ι)
       e * (C.card : ℝ) ^ 2 +
         ∑ x ∈ C, ∑ y ∈ C, (if corr x y then (1 : ℝ) else 0) := by
     simp only [Finset.sum_add_distrib, Finset.sum_const]
-    push_cast
     ring
   rw [heq]
   gcongr
@@ -10164,7 +10190,7 @@ theorem measure_weightedCount_lt_half_lower_le
   have hcheb := Erdos527.measure_lt_expectation_sub_le μ hY hc hvar
   have hset : {ω | Y ω < μ[Y] - c} = {ω | Y ω < lower / 2} := by
     ext ω
-    simp only [mem_setOf_eq]
+    simp only [mem_ofPred_eq]
     dsimp [c]
     ring_nf
   rw [hset] at hcheb
@@ -10210,6 +10236,7 @@ def aliveCandidates (C : Finset ι) (good : ι → Ω → Prop)
     [∀ x ω, Decidable (good x ω)] (ω : Ω) : Finset ι :=
   C.filter fun x ↦ good x ω
 
+omit [MeasurableSpace Ω] in
 /-- The smooth cutoff is bounded above by the hard survivor indicator, hence
 the weighted count is bounded by the number of actual alive children. -/
 lemma weightedCount_le_card_aliveCandidates (C : Finset ι)
@@ -10282,6 +10309,7 @@ def AllStrongFrom (A : ℕ → Ω → Finset X)
     (size : ℕ → ℕ) (start : ℕ) : Set Ω :=
   {ω | ∀ k ≥ start, ω ∈ StrongAt A size k}
 
+omit [MeasurableSpace Ω] [TopologicalSpace X] in
 lemma noTransitionFailure_implies_allStrong
     (A : ℕ → Ω → Finset X) (size : ℕ → ℕ) (start : ℕ) (ω : Ω)
     (hstart : ω ∈ StrongAt A size start)
@@ -10294,6 +10322,7 @@ lemma noTransitionFailure_implies_allStrong
       by_contra hnext
       exact (hno k hk) ⟨hstrong, hnext⟩
 
+omit [TopologicalSpace X] in
 /-- Summable bounds for transition failures imply simultaneous survival of
 the quantitative size invariant at all later generations.  Notice that the
 failure bound is unconditional but only charges paths whose parent is still
@@ -10333,6 +10362,7 @@ chosen reset generation onward. -/
 def HasLimitPointFrom (K : ℕ → Ω → Set X) (start : ℕ) : Set Ω :=
   {ω | ∃ x, ∀ k ≥ start, x ∈ K k ω}
 
+omit [MeasurableSpace Ω] in
 /-- Pathwise compactness step.  The hypotheses expose exactly what the grid
 geometry must prove: positive target sizes, nonempty thickenings of nonempty
 alive sets, eventual nesting, one compact initial set, and closedness. -/
@@ -10400,7 +10430,7 @@ def thickAlive (A : Finset Y) (r : ℝ) : Set Y :=
 
 lemma mem_thickAlive_iff {A : Finset Y} {r : ℝ} {x : Y} :
     x ∈ thickAlive A r ↔ ∃ y ∈ A, dist x y ≤ r := by
-  simp [thickAlive, dist_comm]
+  simp [thickAlive]
 
 lemma thickAlive_nonempty {A : Finset Y} {r : ℝ}
     (hA : A.Nonempty) (hr : 0 ≤ r) : (thickAlive A r).Nonempty := by
@@ -10731,7 +10761,7 @@ lemma greedyChunks_spec (a : ℝ) (ha : 0 ≤ a) (xs : List ℝ)
             have hbstail : ∀ c ∈ bs, a ≤ c.sum := by
               intro c hc
               exact ih.2.2.2 c (by simp [hgc, hc])
-            simp only [greedyChunks, hgc, prependGreedy.eq_def, hba, if_neg]
+            simp only [greedyChunks, hgc, prependGreedy.eq_def, hba]
             change ([x] :: b :: bs).flatten = x :: xs ∧
               (∀ c ∈ [x] :: b :: bs, c ≠ []) ∧
               (∀ c ∈ [x] :: b :: bs, c.sum ≤ 2 * a) ∧
@@ -10906,7 +10936,7 @@ theorem exists_variance_chunks_fin {n : ℕ} (q : Fin n → ℝ) (u : ℝ)
       _ = 128 * ((∑ i, q i) / u ^ 2) := by
         dsimp [a]
         field_simp
-        <;> ring
+
 
 end
 
@@ -10975,7 +11005,7 @@ lemma measurableSet_historyGood (n : ℕ → ℕ) (u : ℝ) (k : ℕ) :
         ⋂ j : Fin k, ⋂ i : Fin (n j.1 + 1),
           {x | |historyState n j.1 x + x (j.1, i.1)| ≤ 5 * u / 4} by
       ext x
-      simp only [Set.mem_iInter, Set.mem_setOf_eq]
+      simp only [Set.mem_iInter, Set.mem_ofPred_eq]
       constructor
       · intro h j i
         exact h j.1 j.2 i
@@ -11024,11 +11054,11 @@ lemma historyState_blockHistory_succ
       historyState n k (blockHistory S k ω) + S k (n k) ω := by
   simp only [historyState, Finset.sum_range_succ, blockHistory]
   congr 1
-  apply Finset.sum_congr rfl
-  intro j hj
-  have hjk : j < k := Finset.mem_range.mp hj
-  simp [hjk, hjk.trans (Nat.lt_succ_self k)]
-  simp [Nat.lt_succ_self k]
+  · apply Finset.sum_congr rfl
+    intro j hj
+    have hjk : j < k := Finset.mem_range.mp hj
+    simp [hjk, hjk.trans (Nat.lt_succ_self k)]
+  · simp [Nat.lt_succ_self k]
 
 lemma blockGoodEvent_step_of
     {Ω : Type*} (S : ℕ → ℕ → Ω → ℝ) (n : ℕ → ℕ)
@@ -11059,7 +11089,7 @@ lemma coreFactor_le_one :
     ((1 / 2 : ℝ≥0∞) *
       ENNReal.ofReal ((1 / 8 : ℝ) * Real.exp (-256))) ≤ 1 := by
   have he : Real.exp (-256) ≤ 1 := by
-    simpa using Real.exp_le_one_iff.mpr (by norm_num : (-256 : ℝ) ≤ 0)
+    simp
   have hr : (1 / 8 : ℝ) * Real.exp (-256) ≤ 1 := by
     nlinarith [Real.exp_pos (-256)]
   calc
@@ -11232,8 +11262,7 @@ theorem gaussianReal_centered_half_Icc_small_variance_lower
       measurableSet_le measurable_const measurable_id.abs
     have hcheb : μ bad ≤ ENNReal.ofReal ((v : ℝ) / h ^ 2) := by
       have h0 : ∫ x, x ∂μ = 0 := by
-        simpa [μ] using
-          (ProbabilityTheory.integral_id_gaussianReal (v := v) ( μ := (0 : ℝ)))
+        simp [μ]
       have hc := ProbabilityTheory.meas_ge_le_variance_div_sq
         (ProbabilityTheory.memLp_id_gaussianReal (v := v) ( μ := (0 : ℝ)) 2) hh
       rw [ProbabilityTheory.variance_id_gaussianReal] at hc
@@ -11264,7 +11293,7 @@ theorem gaussianReal_centered_half_Icc_small_variance_lower
         _ = 1 / 2 := mul_one _
     have hof := ENNReal.ofReal_le_ofReal hreal
     have hhalf_ofReal : ENNReal.ofReal (1 / 2 : ℝ) = (1 / 2 : ℝ≥0∞) := by
-      simpa using ENNReal.ofReal_div_of_pos (x := (1 : ℝ)) (y := 2) (by norm_num)
+      simp
     simpa only [hhalf_ofReal] using hof
   · have hvlo : h ^ 2 / 2 < (v : ℝ) := lt_of_not_ge hvsmall
     have hdenom_pos : 0 < Real.sqrt (2 * Real.pi * (v : ℝ)) := by positivity
@@ -11283,7 +11312,7 @@ theorem gaussianReal_centered_half_Icc_small_variance_lower
     have hpdf : Real.exp (-1) / u ≤
         ProbabilityTheory.gaussianPDFReal 0 v h := by
       rw [ProbabilityTheory.gaussianPDFReal]
-      simp only [NNReal.coe_eq_zero, hv0, if_false, sub_zero]
+      simp only [sub_zero]
       have hpref : 1 / u ≤ 1 / Real.sqrt (2 * Real.pi * (v : ℝ)) :=
         one_div_le_one_div_of_le hdenom_pos hdenom_le
       have hexp : Real.exp (-1) ≤
@@ -11321,8 +11350,7 @@ theorem gaussianReal_centered_half_Icc_small_variance_lower
               calc
                 Real.exp (-1) / (2 * u) = (1 / 2) * (Real.exp (-1) / u) := by
                   field_simp
-                  <;> ring
-                _ ≤ 1 * (Real.exp (-1) / u) := by gcongr <;> norm_num
+                _ ≤ 1 * (Real.exp (-1) / u) := by gcongr ; norm_num
                 _ = Real.exp (-1) / u := one_mul _
             _ ≤ _ := hpdf
         exact mul_le_mul_of_nonneg_left hweak (by positivity)
@@ -11369,7 +11397,7 @@ theorem gaussian_martingale_small_variance_path_endpoint_lower
         _ = 1 / 2 := one_mul _
     have hof := ENNReal.ofReal_le_ofReal hreal
     have hhalf : ENNReal.ofReal (1 / 2 : ℝ) = (1 / 2 : ℝ≥0∞) := by
-      simpa using ENNReal.ofReal_div_of_pos (x := (1 : ℝ)) (y := 2) (by norm_num)
+      simp
     simpa only [hhalf] using hof
   by_cases hv0 : v = 0
   · have hpath : (1 / 2 : ℝ≥0∞) ≤
@@ -11402,7 +11430,7 @@ theorem gaussian_martingale_small_variance_path_endpoint_lower
         hjoint hcov hYY
     have htube_meas : MeasurableSet tube := measurableSet_pi_abs_le (u / 2)
     have htube_mass : (1 / 2 : ℝ≥0∞) ≤ P (B ⁻¹' tube) := by
-      simpa only [B, tube, Set.preimage_setOf_eq] using
+      simpa only [B, tube, Set.preimage_ofPred_eq] using
         martingale_bridge_tube_mass_ge_half hS hL2 n q u (v : ℝ) hu
           (NNReal.coe_nonneg v) hvhi hterminal
           (by simpa only [q] using hq0) (by simpa only [q] using hq1)
@@ -11596,8 +11624,7 @@ theorem finiteWeightedCoord_covariance {n : ℕ} (c : Fin n → ℝ) (k l : ℕ)
         covariance_const_mul_left, covariance_const_mul_right, coord_covariance]
       by_cases hkl : k = l
       · subst l
-        simp only [if_pos, true_and, covariance_const_mul_left,
-          covariance_const_mul_right]
+        simp only [if_pos, true_and]
         have heq : (⟨k, hk⟩ : Fin n) = ⟨k, hl⟩ := rfl
         rw [heq]
         rw [dif_pos hk]
@@ -11682,7 +11709,7 @@ noncomputable def finiteGaussianPrefixCLM {n : ℕ} (c : Fin n → ℝ) (k : ℕ
 @[simp] theorem finiteGaussianPrefixCLM_apply {n : ℕ} (c : Fin n → ℝ) (k : ℕ)
     (x : EuclideanSpace ℝ (Fin n)) :
     finiteGaussianPrefixCLM c k x = finiteGaussianPartialSum c k x := by
-  simp only [finiteGaussianPrefixCLM, map_sum, ContinuousLinearMap.sum_apply,
+  simp only [finiteGaussianPrefixCLM, _root_.sum_apply,
     finiteWeightedCoordCLM_apply, finiteGaussianPartialSum, partialSum]
 
 /-- The complete prefix path and endpoint are a jointly Gaussian random
@@ -12035,7 +12062,7 @@ lemma blocks_length_sum {n : ℕ} (q : Fin n → ℝ) (blocks : List (List ℝ))
   rw [← List.sum_ofFn]
   have hof : List.ofFn (fun k : Fin blocks.length ↦ (blocks.get k).length) =
       blocks.map List.length := by
-    simpa using List.ofFn_getElem_eq_map blocks List.length
+    simp
   rw [hof]
   have hlength := congrArg List.length hflat
   simpa only [List.length_flatten, List.length_ofFn] using hlength
@@ -12058,7 +12085,7 @@ lemma get_flatten_block {α : Type*} (blocks : List (List α))
   simpa using hget
 
 lemma testBlockIndex_val_eq {n : ℕ} (q : Fin n → ℝ) (blocks : List (List ℝ))
-    (hflat : blocks.flatten = List.ofFn q)
+    (_hflat : blocks.flatten = List.ofFn q)
     (hsum : ∑ k : Fin blocks.length, (blocks.get k).length = n)
     (k : Fin blocks.length) (j : Fin (blocks.get k).length) :
     (testBlockIndex (fun k : Fin blocks.length ↦ (blocks.get k).length)
@@ -12418,7 +12445,7 @@ theorem block_path_endpoint_lower
   apply hlocal.trans_eq
   congr 1
   ext x
-  simp only [Set.mem_preimage, A, Set.mem_setOf_eq, d]
+  simp only [Set.mem_preimage, A, Set.mem_ofPred_eq, d]
   let last : Fin (len k) := ⟨len k - 1, by omega⟩
   have hlast : blockPartialSum a len hsum k (len k - 1) x =
       finiteGaussianPartialSum (blockCoeffs a len hsum k) (len k - 1)
@@ -12632,8 +12659,7 @@ theorem canonical_gaussian_partition_path_endpoint_lower
                 |historyState last k x| + |Y ω i| := abs_add_le _ _
             _ ≤ u / 4 + u := add_le_add hxcore (by simpa only [hYi] using hpi)
             _ = 5 * u / 4 := by ring
-        · simp only [Prod.fst, Prod.snd]
-          change historyState last k x + Y ω ⟨last k, _⟩ ∈ _
+        · simp only []
           dsimp [Y, S]
           rw [assembledBlockPath_of_le a len hsum hklem, hlastval]
           change blockPartialSum a len hsum K (len K - 1) ω ∈ _ at he
@@ -12712,8 +12738,7 @@ theorem canonical_gaussian_partition_path_endpoint_lower
               |historyState last m x| + |Y ω i| := abs_add_le _ _
           _ ≤ u / 4 + u := add_le_add hxcore (by simpa only [hYi] using hpi)
           _ = 5 * u / 4 := by ring
-      · simp only [Prod.fst, Prod.snd]
-        change historyState last m x + Y ω ⟨last m, _⟩ ∈ _
+      · simp only []
         dsimp [Y, S]
         rw [assembledBlockPath_of_le a len hsum (le_refl m), hlastval]
         change blockPartialSum a len hsum K (len K - 1) ω ∈ _ at he
@@ -13057,8 +13082,7 @@ lemma blockIndex_eq_of_symm {n B : ℕ} (len : Fin B → ℕ)
   dsimp
   unfold blockIndex
   apply Fin.ext
-  simpa using congrArg Fin.val
-    (finSigmaFinEquiv.apply_symm_apply (Fin.cast hsum.symm p))
+  simp
 
 theorem blockPathEndpointEvent_subset_scalarPath
     {n m : ℕ} (c : Fin n → ℂ) (len : Fin (m + 1) → ℕ)
@@ -13267,7 +13291,7 @@ theorem canonical_scalarPath_all_variances_lower
         scalarPath c (canonicalCoords 0) x ∈
           pathEndpointSet (5 * u / 4) (Set.Icc (-r) r)} = Set.univ := by
       ext x
-      simp only [Set.mem_setOf_eq, Set.mem_univ, iff_true]
+      simp only [Set.mem_ofPred_eq, Set.mem_univ, iff_true]
       constructor
       · intro t
         have ht : t = (0 : Fin 1) := Fin.eq_zero t
@@ -13393,7 +13417,7 @@ theorem flat_gaussian_cutoff_lower_of_energy
     P a hN0 k z g hGlaw endpointScale prefixScale
       (2 * (5 * u / 4)) (2 * r) (qV ^ 2)
   · simpa only using hend
-  · convert hprefix using 1 <;> ring
+  · convert hprefix using 1 ; ring
   · exact htube
 
 end
@@ -13643,7 +13667,7 @@ lemma targetSize_succ_le_expected_children_half {k : ℕ} (hk : 1000 ≤ k) :
       simpa only [mul_assoc, mul_comm, mul_left_comm] using hbudget
     _ = (onePointTarget k * (targetSize k : ℝ) * ((F : ℝ) / (2 * D))) / 2 := by
       field_simp [ne_of_gt hDreal]
-      <;> ring
+      ; ring
     _ ≤ (onePointTarget k * (targetSize k : ℝ) * (F / D : ℕ)) / 2 := by
       exact div_le_div_of_nonneg_right hfloor'.le (by norm_num)
     _ = onePointTarget k *
@@ -13926,7 +13950,6 @@ lemma normalized_correlated_charge_le (k : ℕ) {C D : ℝ}
       div_le_div_of_nonneg_right hnum (sq_nonneg _)
     _ = (16 * A) / (onePointTarget k ^ 2 * C) := by
       field_simp [ne_of_gt hp, ne_of_gt hCpos]
-      <;> ring
     _ ≤ (16 * A) /
         (onePointTarget k ^ 2 * (targetSize k : ℝ)) := by
       have hden : onePointTarget k ^ 2 * (targetSize k : ℝ) ≤
@@ -14212,7 +14235,7 @@ theorem aliveRel_eq_of_eq_on_scale_interval (N0 : ℕ) (hN0 : 0 < N0)
   intro j hj
   funext i
   apply h
-  simp only [Finset.mem_Ico, FlatVectorAPI.scaleRestriction,
+  simp only [Finset.mem_Ico,
     FlatVectorAPI.scaleCoefficient]
   constructor
   · exact le_trans (scale_monotone N0 (Nat.le_add_right start j))
@@ -14274,8 +14297,8 @@ theorem measurableSet_mem_aliveRel {N0 : ℕ} (hN0 : 0 < N0) (start : ℕ)
   induction t generalizing z with
   | zero =>
       by_cases hz : z ∈ rootGrid N0 hN0 start
-      · simpa [hz]
-      · simpa [hz]
+      · simp [hz]
+      · simp [hz]
   | succ t ih =>
       let k := start + t
       have hcand : MeasurableSet {ε : ℕ → ℝ |
@@ -14293,7 +14316,7 @@ theorem measurableSet_mem_aliveRel {N0 : ℕ} (hN0 : 0 < N0) (start : ℕ)
                 z ∈ Grid.nearChildRoots (scale N0 k) (2 ^ stepExponent k)
                   (Grid.branchChildDenom k) p} by
           ext ε
-          simp only [Set.mem_setOf_eq, Set.mem_iUnion]
+          simp only [Set.mem_ofPred_eq, Set.mem_iUnion]
           exact Grid.mem_childRootUnion_iff _ _ _ _ _]
         apply MeasurableSet.iUnion
         intro p
@@ -14301,7 +14324,7 @@ theorem measurableSet_mem_aliveRel {N0 : ℕ} (hN0 : 0 < N0) (start : ℕ)
             (2 ^ stepExponent k) (Grid.branchChildDenom k) p
         · simpa only [hzp, and_true] using
             ih (Grid.complexGridPoint (scale N0 k) p)
-        · simp only [hzp, and_false, Set.setOf_false]
+        · simp only [hzp, and_false, Set.ofPred_false]
           exact MeasurableSet.empty
       have hlocal : MeasurableSet {ε : ℕ → ℝ |
           good k z (FlatVectorAPI.scaleRestriction ε N0 k)} :=
@@ -14311,7 +14334,7 @@ theorem measurableSet_mem_aliveRel {N0 : ℕ} (hN0 : 0 < N0) (start : ℕ)
               (aliveRel N0 hN0 start good t ε)} ∩
             {ε | good k z (FlatVectorAPI.scaleRestriction ε N0 k)} by
         ext ε
-        simp only [aliveRel_succ, mem_filterGood, Set.mem_setOf_eq,
+        simp only [aliveRel_succ, mem_filterGood, Set.mem_ofPred_eq,
           Set.mem_inter_iff, k]]
       exact hcand.inter hlocal
 
@@ -14327,7 +14350,7 @@ theorem measurableSet_aliveRel_eq {N0 : ℕ} (hN0 : 0 < N0) (start : ℕ)
           {ε | z ∈ aliveRel N0 hN0 start good t ε}
         else {ε | z ∉ aliveRel N0 hN0 start good t ε} by
       ext ε
-      simp only [Set.mem_setOf_eq, Set.mem_iInter]
+      simp only [Set.mem_ofPred_eq, Set.mem_iInter]
       constructor
       · intro heq z hzG
         subst A
@@ -14341,7 +14364,7 @@ theorem measurableSet_aliveRel_eq {N0 : ℕ} (hN0 : 0 < N0) (start : ℕ)
           · exact False.elim (this hzlive)
         · intro z hzA
           have := hz z (hA hzA)
-          simp only [hzA, ↓reduceIte, Set.mem_setOf_eq] at this
+          simp only [hzA, ↓reduceIte, Set.mem_ofPred_eq] at this
           exact this]
     apply MeasurableSet.biInter G.finite_toSet.to_countable
     intro z hzG
@@ -14350,7 +14373,7 @@ theorem measurableSet_aliveRel_eq {N0 : ℕ} (hN0 : 0 < N0) (start : ℕ)
     · exact (measurableSet_mem_aliveRel hN0 start hgood t z).compl
   · have hempty : {ε : ℕ → ℝ | aliveRel N0 hN0 start good t ε = A} = ∅ := by
       ext ε
-      simp only [Set.mem_setOf_eq, Set.mem_empty_iff_false, iff_false]
+      simp only [Set.mem_ofPred_eq, Set.mem_empty_iff_false, iff_false]
       intro heq
       apply hA
       rw [← heq]
@@ -14371,7 +14394,7 @@ theorem measurableSet_aliveCode_eq {N0 : ℕ} (hN0 : 0 < N0) (start : ℕ)
       {ε | aliveRel N0 hN0 start good t ε =
         B.image (indexToRoot N0 hN0 (start + t))} by
     ext ε
-    simp only [Set.mem_setOf_eq]
+    simp only [Set.mem_ofPred_eq]
     constructor
     · intro heq
       rw [← aliveCode_image N0 hN0 start good t ε, heq]
@@ -14433,7 +14456,7 @@ theorem measurable_pastAliveCode {N0 : ℕ} (hN0 : 0 < N0) (start : ℕ)
   exact (measurable_aliveCode hN0 start hgood t).comp
     (measurable_extendPast N0 start t)
 
-lemma disjoint_pastCoordinateSet_scaleCoordinateSet {N0 : ℕ} (hN0 : 0 < N0)
+lemma disjoint_pastCoordinateSet_scaleCoordinateSet {N0 : ℕ} (_hN0 : 0 < N0)
     (start t : ℕ) :
     Disjoint (pastCoordinateSet N0 start t)
       (FlatVectorAPI.scaleCoordinateSet N0 (start + t)) := by
@@ -14498,7 +14521,7 @@ theorem measurableSet_transitionFailure {N0 : ℕ} (hN0 : 0 < N0)
           {ε | bad (start + t) A
             (FlatVectorAPI.scaleRestriction ε N0 (start + t))} by
     ext ε
-    simp only [transitionFailure, Set.mem_setOf_eq, Set.mem_iUnion,
+    simp only [transitionFailure, Set.mem_ofPred_eq, Set.mem_iUnion,
       Set.mem_inter_iff, Finset.mem_powerset]
     constructor
     · intro hb
@@ -14517,7 +14540,7 @@ of a finite past state.  If every deterministic state has transition-failure
 probability at most `b`, then the adaptive transition has the same bound. -/
 theorem measure_adaptive_failure_le_of_indepPast
     {Ω Past Fresh : Type*} [MeasurableSpace Ω] [MeasurableSpace Past]
-    [MeasurableSpace Fresh] [Fintype Past] [MeasurableSingletonClass Past]
+    [MeasurableSpace Fresh] [Finite Past] [MeasurableSingletonClass Past]
     {P : Measure Ω} [IsProbabilityMeasure P]
     (past : Ω → Past) (X : Ω → Fresh) (bad : Past → Fresh → Prop)
     (hpast : Measurable past) (hX : Measurable X)
@@ -14525,6 +14548,7 @@ theorem measure_adaptive_failure_le_of_indepPast
     (hbad : ∀ s, MeasurableSet {x | bad s x}) (b : ℝ≥0∞)
     (hfixed : ∀ s, P (X ⁻¹' {x | bad s x}) ≤ b) :
     P {ω | bad (past ω) (X ω)} ≤ b := by
+  let : Fintype Past := Fintype.ofFinite Past
   let E : Past → Set Ω := fun s =>
     (past ⁻¹' ({s} : Set Past)) ∩ (X ⁻¹' {x | bad s x})
   have hEmeas : ∀ s, MeasurableSet (E s) := fun s =>
@@ -14632,7 +14656,7 @@ theorem measure_recursive_adaptive_failure_le
       {ε | bad (decode (aliveCode N0 hN0 start good t ε))
         (FlatVectorAPI.scaleRestriction ε N0 (start + t))} by
     ext ε
-    simp only [Set.mem_setOf_eq]
+    simp only [Set.mem_ofPred_eq]
     rw [show decode (aliveCode N0 hN0 start good t ε) =
         aliveRel N0 hN0 start good t ε by
       exact aliveCode_image N0 hN0 start good t ε]]
@@ -14793,7 +14817,8 @@ lemma endpoint_norm_lt_of_flatGood (a : ℕ → ℝ) {N0 : ℕ} (hN0 : 0 < N0)
     (NormedLindeberg.linearCombination
       (OnePointLindeberg.flatBlockIncrementDirection a hN0 k z) x) hx
   rw [norm_smul, Real.norm_eq_abs,
-    abs_of_pos (by simp [flatEndpointScale]; positivity)] at hsupport
+    abs_of_pos (by simp only [flatEndpointScale, Nat.cast_add, Nat.cast_one, Nat.ofNat_pos,
+                     mul_pos_iff_of_pos_left]; positivity)] at hsupport
   have hden : 0 < 2 * (((k + 1 : ℕ) : ℝ) ^ 2) := by positivity
   rw [lt_div_iff₀ hden]
   simp only [flatEndpointScale] at hsupport
@@ -14820,7 +14845,8 @@ lemma prefix_norm_lt_of_flatGood (a : ℕ → ℝ)
     (NormedLindeberg.linearCombination
       (OnePointLindeberg.flatBlockIncrementDirection a hN0 k z) x) hx j
   rw [norm_smul, Real.norm_eq_abs,
-    abs_of_pos (by simp [flatPrefixScale]; positivity)] at hsupport
+    abs_of_pos (by simp only [flatPrefixScale, Nat.ofNat_pos, div_pos_iff_of_pos_left,
+                     Real.sqrt_pos]; positivity)] at hsupport
   have hquot :
       (4 * ‖∑ r ∈ Finset.Iic j,
         NormedLindeberg.linearCombination
@@ -14875,7 +14901,7 @@ lemma card_flatCandidates (a : ℕ → ℝ) {N0 : ℕ} (hN0 : 0 < N0)
   RecursiveAlive.card_aliveRel_candidates N0 hN0 start t
     (flatGood a hN0) ε
 
-lemma card_flatCandidateSet (a : ℕ → ℝ) {N0 : ℕ} (hN0 : 0 < N0)
+lemma card_flatCandidateSet (_a : ℕ → ℝ) {N0 : ℕ} (hN0 : 0 < N0)
     (k : ℕ) {A : Finset ℂ} (hA : A ⊆ RecursiveAlive.rootGrid N0 hN0 k) :
     (RecursiveAlive.scaleChildren N0 hN0 k A).card =
       A.card * (2 ^ stepExponent k / (k + 2) ^ 20) := by
@@ -15127,7 +15153,6 @@ lemma gaussian_real_lower_ge_onePointTarget
     rw [div_pow, hsqrtsq]
     norm_num
     field_simp [ne_of_gt hδ]
-    <;> ring
   have hexp_eq :
       Real.exp (-33280 *
           (1 + ((stepExponent k : ℝ) * δ ^ 2) /
@@ -15158,7 +15183,7 @@ lemma gaussian_real_lower_ge_onePointTarget
           F ^ (-(1 / 10 : ℝ)) = F ^ (-(1 / 5 : ℝ)) := by
     rw [← Real.rpow_add (lt_of_lt_of_le zero_lt_one hFone),
       ← Real.rpow_add (lt_of_lt_of_le zero_lt_one hFone)]
-    congr 2 <;> norm_num
+    congr 2 ; norm_num
   have hroot30 : K ^ 4 ≤ F ^ (1 / 30 : ℝ) := by
     simpa only [F, K] using
       succ_pow_four_le_stepFactor_rpow_thirtieth (k := k) (by omega)
@@ -15190,7 +15215,7 @@ lemma gaussian_real_lower_ge_onePointTarget
             (Real.sqrt δ / 16) ^ 2))) ^ 2 := by
     rw [mul_pow, hexp_eq]
     field_simp [ne_of_gt hK]
-    <;> ring
+    ; ring
   calc
     2 * BranchParameterArithmetic.onePointTarget k =
         2 * F ^ (-(1 / 4 : ℝ)) := by rfl
@@ -15335,12 +15360,12 @@ lemma concreteScaleSum_le (a : ℕ → ℝ) (N0 k : ℕ)
   unfold concreteEndpointScale
   nlinarith [sq_nonneg ((k + 1 : ℕ) - 1)]
 
-lemma nat_succ_sq_le_two_pow_two_mul {k : ℕ} (hk : 1 ≤ k) :
+lemma nat_succ_sq_le_two_pow_two_mul {k : ℕ} (_hk : 1 ≤ k) :
     (k + 1) ^ 2 ≤ 2 ^ (2 * k) := by
   have hbase : k + 1 ≤ 2 ^ k := Nat.lt_two_pow_self
   calc
     (k + 1) ^ 2 ≤ (2 ^ k) ^ 2 := Nat.pow_le_pow_left hbase 2
-    _ = 2 ^ (2 * k) := by rw [← pow_mul]; congr 1 <;> omega
+    _ = 2 ^ (2 * k) := by rw [← pow_mul]; congr 1 ; omega
 
 lemma concreteScaleSum_le_two_pow {a : ℕ → ℝ} {N0 k : ℕ}
     (hk : 1 ≤ k) (henv : coefficientEnvelope a N0 k ≤ 1) :
@@ -15585,7 +15610,7 @@ noncomputable def endpointRadius (k : ℕ) : ℝ :=
 noncomputable def scaleEnergyBound (a : ℕ → ℝ) (N0 k : ℕ) : ℝ :=
   stepExponent k * coefficientEnvelope a N0 k ^ 2
 
-lemma coefficientEnvelope_pos (a : ℕ → ℝ) (hsmall : DecaysFasterThanInvSqrt a)
+lemma coefficientEnvelope_pos (a : ℕ → ℝ) (_hsmall : DecaysFasterThanInvSqrt a)
     (N0 k : ℕ) : 0 < coefficientEnvelope a N0 k := by
   exact lt_of_lt_of_le (inv_pos.mpr (Real.sqrt_pos.2 (by positivity)))
     (inv_sqrt_succ_le_coefficientEnvelope a N0 k)
@@ -15672,7 +15697,7 @@ lemma eventually_endpointRadius_le_gaussianRadius_div_four
   exact endpointRadius_le_gaussianRadius_div_four a hsmall N0 hk hδ
 
 lemma flatPhaseCoefficient_normSq
-    (a : ℕ → ℝ) {N0 : ℕ} (hN0 : 0 < N0) (k : ℕ) (z : ℂ)
+    (a : ℕ → ℝ) {N0 : ℕ} (_hN0 : 0 < N0) (k : ℕ) (z : ℂ)
     (hz : ‖z‖ = 1) (i : Fin (scale N0 (k + 1) - scale N0 k)) :
     Complex.normSq (OnePointLindeberg.flatPhaseCoefficient a N0 k z i) =
       a (OnePointLindeberg.flatScaleIndex N0 k i) ^ 2 := by
@@ -15855,7 +15880,7 @@ theorem eventually_onePointTarget_le_flat_rademacher_expectation
             OnePointLindebergAsymptotic.concretePrefixScale, Nat.cast_add,
             Nat.cast_one] using hEk
         linarith)
-  convert hreplace using 1 <;> ring
+  convert hreplace using 1 ; ring
 
 theorem eventually_onePointTarget_le_flatWeight_integral
     (a : ℕ → ℝ) (hsmall : DecaysFasterThanInvSqrt a)
@@ -15906,13 +15931,13 @@ lemma measurableSet_flatGoodTransition_eq
           {x | z ∈ FlatAliveGood.flatGoodTransition a hN0 k A x}
         else {x | z ∉ FlatAliveGood.flatGoodTransition a hN0 k A x} by
       ext x
-      simp only [Set.mem_setOf_eq, Set.mem_iInter]
+      simp only [Set.mem_ofPred_eq, Set.mem_iInter]
       constructor
       · intro heq z hzC
         by_cases hzB : z ∈ B
-        · simp only [hzB, ↓reduceIte, Set.mem_setOf_eq]
+        · simp only [hzB, ↓reduceIte, Set.mem_ofPred_eq]
           rwa [heq]
-        · simp only [hzB, ↓reduceIte, Set.mem_setOf_eq]
+        · simp only [hzB, ↓reduceIte, Set.mem_ofPred_eq]
           rwa [heq]
       · intro hz
         apply Finset.Subset.antisymm
@@ -15926,7 +15951,7 @@ lemma measurableSet_flatGoodTransition_eq
           · exact False.elim (h hzT)
         · intro z hzB
           have h := hz z (hB hzB)
-          simp only [hzB, ↓reduceIte, Set.mem_setOf_eq] at h
+          simp only [hzB, ↓reduceIte, Set.mem_ofPred_eq] at h
           exact h]
     apply MeasurableSet.biInter C.finite_toSet.to_countable
     intro z hzC
@@ -15936,7 +15961,7 @@ lemma measurableSet_flatGoodTransition_eq
   · have hempty :
         {x | FlatAliveGood.flatGoodTransition a hN0 k A x = B} = ∅ := by
       ext x
-      simp only [Set.mem_setOf_eq, Set.mem_empty_iff_false, iff_false]
+      simp only [Set.mem_ofPred_eq, Set.mem_empty_iff_false, iff_false]
       intro heq
       apply hB
       rw [← heq]
@@ -15961,7 +15986,7 @@ theorem flatTransitionBad_measurable (a : ℕ → ℝ) {N0 : ℕ} (hN0 : 0 < N0)
         ⋃ B ∈ small,
           {x | FlatAliveGood.flatGoodTransition a hN0 k A x = B} by
       ext x
-      simp only [Set.mem_setOf_eq, Set.mem_iUnion, Finset.mem_filter,
+      simp only [Set.mem_ofPred_eq, Set.mem_iUnion, Finset.mem_filter,
         Finset.mem_powerset, small]
       constructor
       · intro hcard
@@ -15989,9 +16014,9 @@ theorem recursiveTransitionFailure_eq_finiteGridBranching
         (FlatAliveGood.flatAlive a hN0 start)
         (fun u => BranchParameterArithmetic.targetSize (start + u)) t := by
   ext ε
-  simp only [RecursiveAlive.transitionFailure, Set.mem_setOf_eq,
+  simp only [RecursiveAlive.transitionFailure, Set.mem_ofPred_eq,
     flatTransitionBad, FiniteGridBranching.transitionFailure,
-    FiniteGridBranching.StrongAt, Set.mem_diff]
+    FiniteGridBranching.StrongAt, Set.mem_sdiff]
   rw [show RecursiveAlive.aliveRel N0 hN0 start
         (FlatAliveGood.flatGood a hN0) t ε =
       FlatAliveGood.flatAlive a hN0 start t ε by rfl]
@@ -16406,11 +16431,13 @@ def selectPairPi (s : Finset ι)
   (fun i ↦ if i ∈ s then p.2.1 i else p.1.1 i,
    fun i ↦ if i ∈ s then p.2.2 i else p.1.2 i)
 
+omit [Fintype ι] [MeasurableSpace A] in
 @[simp] lemma selectPairPi_fst_apply (s : Finset ι)
     (p : ((ι → A) × (ι → A)) × ((ι → A) × (ι → A))) (i : ι) :
     (selectPairPi s p).1 i = if i ∈ s then p.2.1 i else p.1.1 i := by
   rfl
 
+omit [Fintype ι] [MeasurableSpace A] in
 @[simp] lemma selectPairPi_snd_apply (s : Finset ι)
     (p : ((ι → A) × (ι → A)) × ((ι → A) × (ι → A))) (i : ι) :
     (selectPairPi s p).2 i = if i ∈ s then p.2.2 i else p.1.2 i := by
@@ -16580,7 +16607,7 @@ lemma norm_complex_pair_zero_one_le (t : EuclideanSpace ℝ (Fin 4)) :
   rw [← sq_le_sq₀ (norm_nonneg _) (norm_nonneg t), Complex.sq_norm,
     Complex.normSq_apply, EuclideanSpace.norm_sq_eq]
   simp only [Complex.add_re, Complex.ofReal_re, Complex.mul_re, Complex.I_re,
-    Complex.ofReal_im, mul_zero, Complex.I_im, mul_one, sub_zero, add_zero,
+    Complex.ofReal_im, mul_zero, Complex.I_im, sub_zero, add_zero,
     Complex.add_im, Complex.mul_im, zero_mul, zero_add, Real.norm_eq_abs]
   rw [Fin.sum_univ_four]
   nlinarith [sq_nonneg |t 2|, sq_nonneg |t 3|, sq_abs (t 0), sq_abs (t 1)]
@@ -16590,7 +16617,7 @@ lemma norm_complex_pair_two_three_le (t : EuclideanSpace ℝ (Fin 4)) :
   rw [← sq_le_sq₀ (norm_nonneg _) (norm_nonneg t), Complex.sq_norm,
     Complex.normSq_apply, EuclideanSpace.norm_sq_eq]
   simp only [Complex.add_re, Complex.ofReal_re, Complex.mul_re, Complex.I_re,
-    Complex.ofReal_im, mul_zero, Complex.I_im, mul_one, sub_zero, add_zero,
+    Complex.ofReal_im, mul_zero, Complex.I_im, sub_zero, add_zero,
     Complex.add_im, Complex.mul_im, zero_mul, zero_add, Real.norm_eq_abs]
   rw [Fin.sum_univ_four]
   nlinarith [sq_nonneg |t 0|, sq_nonneg |t 1|, sq_abs (t 2), sq_abs (t 3)]
@@ -16875,27 +16902,27 @@ lemma flatGaussianHybrid_splice_current_correlated
   · by_cases hr : r = j
     · subst r
       simp only [flatGaussianHybrid, if_pos, hybridContext, Pi.add_apply,
-        insertLocalFour, localBlockFour, PiLp.toLp_apply, Matrix.cons_val_zero,
+        insertLocalFour, localBlockFour, Matrix.cons_val_zero,
         zero_add]
       rw [linearCombination_spliceScaleBlock a hN0 k zx j j g freshG]
       simpa using (complex_coord_reconstruct
         (NormedLindeberg.linearCombination
           (flatBlockIncrementDirection a hN0 k zx) freshG j)).symm
-    · simp only [flatGaussianHybrid, if_pos, hybridContext, hr, if_false,
-        Pi.add_apply, insertLocalFour, zero_add]
+    · simp only [flatGaussianHybrid, hybridContext, hr, if_false,
+        Pi.add_apply, insertLocalFour]
       rw [linearCombination_spliceScaleBlock]
       simp [hr]
   · by_cases hr : r = j
     · subst r
-      simp only [flatGaussianHybrid, Fin.isValue, OfNat.ofNat_ne_zero, if_false,
+      simp only [flatGaussianHybrid, Fin.isValue, if_false,
         lt_self_iff_false, hybridContext, if_pos, Pi.add_apply, insertLocalFour,
-        localBlockFour, PiLp.toLp_apply, Matrix.cons_val_one, zero_add]
+        localBlockFour, Matrix.cons_val_one, zero_add]
       rw [linearCombination_spliceScaleBlock a hN0 k zy j j g freshG]
       simpa using (complex_coord_reconstruct
         (NormedLindeberg.linearCombination
           (flatBlockIncrementDirection a hN0 k zy) freshG j)).symm
-    · simp only [flatGaussianHybrid, Fin.isValue, OfNat.ofNat_ne_zero, if_false,
-        hybridContext, hr, Pi.add_apply, insertLocalFour, zero_add]
+    · simp only [flatGaussianHybrid, Fin.isValue, if_false,
+        hybridContext, hr, Pi.add_apply, insertLocalFour]
       by_cases hlt : r.val < j.val
       · simp only [hlt, if_true]
         rw [linearCombination_spliceScaleBlock a hN0 k zy j r h freshH]
@@ -16919,27 +16946,27 @@ lemma flatGaussianHybrid_splice_current_independent
   · by_cases hr : r = j
     · subst r
       simp only [flatGaussianHybrid, if_pos, hybridContext, Pi.add_apply,
-        insertLocalFour, localBlockFour, PiLp.toLp_apply, Matrix.cons_val_zero,
+        insertLocalFour, localBlockFour, Matrix.cons_val_zero,
         zero_add]
       rw [linearCombination_spliceScaleBlock a hN0 k zx j j g freshG]
       simpa using (complex_coord_reconstruct
         (NormedLindeberg.linearCombination
           (flatBlockIncrementDirection a hN0 k zx) freshG j)).symm
-    · simp only [flatGaussianHybrid, if_pos, hybridContext, hr, if_false,
-        Pi.add_apply, insertLocalFour, zero_add]
+    · simp only [flatGaussianHybrid, hybridContext, hr, if_false,
+        Pi.add_apply, insertLocalFour]
       rw [linearCombination_spliceScaleBlock]
       simp [hr]
   · by_cases hr : r = j
     · subst r
-      simp only [flatGaussianHybrid, Fin.isValue, OfNat.ofNat_ne_zero, if_false,
+      simp only [flatGaussianHybrid, Fin.isValue,
         Nat.lt_add_one, hybridContext, if_pos, Pi.add_apply, insertLocalFour,
-        localBlockFour, PiLp.toLp_apply, Matrix.cons_val_one, zero_add]
+        localBlockFour, Matrix.cons_val_one, zero_add]
       rw [linearCombination_spliceScaleBlock a hN0 k zy j j h freshH]
       simpa using (complex_coord_reconstruct
         (NormedLindeberg.linearCombination
           (flatBlockIncrementDirection a hN0 k zy) freshH j)).symm
-    · simp only [flatGaussianHybrid, Fin.isValue, OfNat.ofNat_ne_zero, if_false,
-        hybridContext, hr, Pi.add_apply, insertLocalFour, zero_add]
+    · simp only [flatGaussianHybrid, Fin.isValue, if_false,
+        hybridContext, hr, Pi.add_apply, insertLocalFour]
       have hiff : r.val < j.val + 1 ↔ r.val < j.val := by omega
       rw [if_congr hiff rfl rfl]
       by_cases hlt : r.val < j.val
@@ -16968,10 +16995,11 @@ lemma map_innerFamilyCLM_stdGaussian_eq_of_cross_gram_eq
     [FiniteDimensional ℝ H₁] [MeasurableSpace H₁] [BorelSpace H₁]
     [NormedAddCommGroup H₂] [InnerProductSpace ℝ H₂]
     [FiniteDimensional ℝ H₂] [MeasurableSpace H₂] [BorelSpace H₂]
-    [Fintype ι] [DecidableEq ι] (c : ι → H₁) (d : ι → H₂)
+    [Fintype ι] (c : ι → H₁) (d : ι → H₂)
     (hgram : ∀ i j, inner ℝ (c i) (c j) = inner ℝ (d i) (d j)) :
     (stdGaussian H₁).map (innerFamilyCLM c) =
       (stdGaussian H₂).map (innerFamilyCLM d) := by
+  classical
   apply IsGaussian.ext
   · rw [integral_map (by fun_prop) (by fun_prop),
       integral_map (by fun_prop) (by fun_prop)]
@@ -17009,11 +17037,12 @@ lemma integral_innerFamilyCLM_stdGaussian_eq_of_cross_gram_eq
     [FiniteDimensional ℝ H₁] [MeasurableSpace H₁] [BorelSpace H₁]
     [NormedAddCommGroup H₂] [InnerProductSpace ℝ H₂]
     [FiniteDimensional ℝ H₂] [MeasurableSpace H₂] [BorelSpace H₂]
-    [Fintype ι] [DecidableEq ι] (c : ι → H₁) (d : ι → H₂)
+    [Fintype ι] (c : ι → H₁) (d : ι → H₂)
     (hgram : ∀ i j, inner ℝ (c i) (c j) = inner ℝ (d i) (d j))
     (f : EuclideanSpace ℝ ι → ℝ) (hf : Measurable f) :
     ∫ x : H₁, f (innerFamilyCLM c x) ∂(stdGaussian H₁) =
       ∫ x : H₂, f (innerFamilyCLM d x) ∂(stdGaussian H₂) := by
+  classical
   calc
     _ = ∫ y, f y ∂((stdGaussian H₁).map (innerFamilyCLM c)) := by
       exact (integral_map (by fun_prop) hf.aestronglyMeasurable).symm
@@ -17197,7 +17226,7 @@ lemma coord_linearCombination_eq_inner_coordinateRow {n l : ℕ}
   apply Finset.sum_congr rfl
   intro i hi
   rw [show x i • v i r = ((x i : ℂ) * v i r) by simp, coord_real_mul]
-  simp [real_inner_comm]
+  simp
 
 /-- Four real rows belonging to the two complex increments in block `r`. -/
 def pairBlockRows {n l : ℕ}
@@ -17361,7 +17390,7 @@ lemma gaussianBlockHybrid_end {n l : ℕ} (vx vy : Fin n → Fin l → ℂ)
         NormedLindeberg.linearCombination vx g
       else NormedLindeberg.linearCombination vy h := by
   ext q r
-  fin_cases q <;> simp [gaussianBlockHybrid, Fin.isLt]
+  fin_cases q <;> simp [gaussianBlockHybrid]
 
 lemma gaussianBlockHybridExpectation_zero {n l : ℕ}
     (endpointScale prefixScale : ℝ) (vx vy : Fin n → Fin l → ℂ) :
@@ -17493,7 +17522,7 @@ lemma norm_uniformBlockCoordVector_sq
 energy in that uniform block. -/
 lemma norm_uniformBlockCoordVector_le_sqrt_energy
     (a : ℕ → ℝ) (x : UnitAddCircle) (p : Bool)
-    {N0 : ℕ} (hN0 : 0 < N0) (k r : ℕ) :
+    {N0 : ℕ} (_hN0 : 0 < N0) (k r : ℕ) :
     ‖uniformBlockCoordVector a x p N0 k r‖ ≤
       Real.sqrt (∑ n ∈ uniformBlock N0 k r, |a n| ^ 2) := by
   rw [← sq_le_sq₀ (norm_nonneg _) (Real.sqrt_nonneg _),
@@ -17863,20 +17892,20 @@ lemma inner_blockCoordVector_toLp_eq_coord_linearCombination
         (flatBlockIncrementDirection a hN0 k z) g r) := by
   rw [PiLp.inner_apply, flat_linearCombination_apply, coord_sum]
   simp only [PairCanonicalHybrid.blockCoordVector_apply,
-    RCLike.inner_apply, conj_trivial, PiLp.toLp_apply]
+    RCLike.inner_apply, conj_trivial]
   rw [Finset.sum_filter]
   apply Finset.sum_congr rfl
   intro i hi
   by_cases hir : uniformBlockOfOffset hN0 k i = r
   · rw [if_pos hir, if_pos hir]
     simp only [flatPhaseCoefficient, flatScaleIndex, scaleCoefficient]
-    cases p <;> simp [coord, Complex.mul_re, Complex.mul_im] <;> ring
+    cases p <;> simp [coord, Complex.mul_re, Complex.mul_im]
   · rw [if_neg hir, if_neg hir]
     simp
 
 def phasePoint (x : UnitAddCircle) : ℂ := unitAddCircleAddChar x
 
-def blockOffset {N0 : ℕ} (hN0 : 0 < N0) (k : ℕ)
+def blockOffset {N0 : ℕ} (_hN0 : 0 < N0) (k : ℕ)
     (j : Fin (uniformBlockCount k))
     (i : Fin (uniformBlockLength N0 k)) :
     Fin (scale N0 (k + 1) - scale N0 k) :=
@@ -18367,12 +18396,10 @@ lemma selectPairPi_eq_splice
         spliceScaleBlock hN0 k j p.1.2 p.2.2) := by
   apply Prod.ext
   · funext i
-    simp [PairSelectPi.selectPairPi, PairSelectPi.selectPi,
-      MeasurableEquiv.arrowProdEquivProdArrow, Equiv.arrowProdEquivProdArrow,
+    simp [PairSelectPi.selectPairPi,
       spliceScaleBlock, blockOffsetSet]
   · funext i
-    simp [PairSelectPi.selectPairPi, PairSelectPi.selectPi,
-      MeasurableEquiv.arrowProdEquivProdArrow, Equiv.arrowProdEquivProdArrow,
+    simp [PairSelectPi.selectPairPi,
       spliceScaleBlock, blockOffsetSet]
 
 lemma measurable_linearCombination {n l : ℕ} (v : Fin n → Fin l → ℂ)
@@ -19061,6 +19088,7 @@ def noCombinedFailureSet
   (⋃ t : ℕ,
     FiniteGridBranching.transitionFailure A size t ∪ gridFailure t)ᶜ
 
+omit [TopologicalSpace X] in
 theorem measurableSet_noCombinedFailureSet
     (A : ℕ → Ω → Finset X) (size : ℕ → ℕ)
     (gridFailure : ℕ → Set Ω)
@@ -19073,6 +19101,7 @@ theorem measurableSet_noCombinedFailureSet
   intro t
   exact (htransitionMeas t).union (hgridMeas t)
 
+omit [MeasurableSpace Ω] [TopologicalSpace X] in
 lemma compl_noCombinedFailureSet
     (A : ℕ → Ω → Finset X) (size : ℕ → ℕ)
     (gridFailure : ℕ → Set Ω) :
@@ -19082,6 +19111,7 @@ lemma compl_noCombinedFailureSet
   unfold noCombinedFailureSet
   rw [compl_compl]
 
+omit [TopologicalSpace X] in
 /-- Quantitative union bound for the combined no-failure event. -/
 theorem measure_compl_noCombinedFailureSet_le
     (μ : Measure Ω)
@@ -19105,6 +19135,7 @@ theorem measure_compl_noCombinedFailureSet_le
       exact (measure_union_le _ _).trans
         (add_le_add (htransitionBound t) (hgridBound t))
 
+omit [TopologicalSpace X] in
 /-- A direct probability-one-assembly lemma. Its output is a measurable set
 of mass at least `1 - tsum (b+c)`. Every point of this set has nonempty alive
 sets at all relative generations and avoids every auxiliary grid failure. -/
@@ -19704,7 +19735,6 @@ lemma flatOnePointLindebergError_concrete_le_correlation_quarter
       rw [← Real.rpow_add (by norm_num : (0 : ℝ) < 2)]
       congr 2
       norm_num only [Nat.cast_pow, Nat.cast_mul, Nat.cast_ofNat]
-      push_cast
       ring
     _ ≤ (2 : ℝ) ^ (-(50 : ℝ) * (k : ℝ) ^ 2) *
           (scale N0 k : ℝ) := by
@@ -20274,7 +20304,7 @@ theorem fixedParent_transition_bad_le
         4 * e / onePointTarget k ^ 2 +
           4 * D / (onePointTarget k * (C.card : ℝ)) ^ 2 by
       field_simp [ne_of_gt (onePointTarget_pos k), ne_of_gt hCcardpos]
-      <;> ring]
+      ]
     exact add_le_add hoff hcorrNorm
   have hraw' := hraw.trans (ENNReal.ofReal_le_ofReal hnormalized)
   simpa only [FlatTransitionFailure.flatTransitionBad, hAsize, true_and,
@@ -20322,7 +20352,7 @@ theorem eventually_uniform_fixedParent_transition_bad_le
   by_cases hAsize : targetSize k ≤ A.card
   · exact hk A hAgrid hAsize
   · simp only [FlatTransitionFailure.flatTransitionBad, hAsize, false_and,
-      Set.setOf_false, measure_empty]
+      Set.ofPred_false, measure_empty]
     exact bot_le
 
 /-- A single sufficiently late reset scale gives the desired unconditional
@@ -20425,7 +20455,7 @@ lemma initial_flatAlive_strong
         (FlatAliveGood.flatAlive a hN0 start)
         (fun t => BranchParameterArithmetic.targetSize (start + t)) 0 := by
   intro ε
-  simp only [FiniteGridBranching.StrongAt, Set.mem_setOf_eq, Nat.add_zero]
+  simp only [FiniteGridBranching.StrongAt, Set.mem_ofPred_eq, Nat.add_zero]
   rw [show FlatAliveGood.flatAlive a hN0 start 0 ε =
       RecursiveAlive.rootGrid N0 hN0 start by rfl]
   simpa only [RecursiveAlive.rootGrid, Grid.card_complexRootGrid] using htarget
@@ -20498,7 +20528,7 @@ lemma measurableSet_signSequenceSet : MeasurableSet signSequenceSet := by
   rw [show signSequenceSet = ⋂ n : ℕ,
       (fun ε : ℕ → ℝ => ε n) ⁻¹' ({1} ∪ {-1} : Set ℝ) by
     ext ε
-    simp only [signSequenceSet, Set.mem_setOf_eq, Set.mem_iInter,
+    simp only [signSequenceSet, Set.mem_ofPred_eq, Set.mem_iInter,
       Set.mem_preimage, Set.mem_union, Set.mem_singleton_iff]]
   apply MeasurableSet.iInter
   intro n
@@ -20507,7 +20537,7 @@ lemma measurableSet_signSequenceSet : MeasurableSet signSequenceSet := by
 
 lemma ae_mem_signSequenceSet :
     ∀ᵐ ε ∂rademacherProductMeasure, ε ∈ signSequenceSet := by
-  simpa only [signSequenceSet, Set.mem_setOf_eq] using ae_rademacherProduct_signs
+  simpa only [signSequenceSet, Set.mem_ofPred_eq] using ae_rademacherProduct_signs
 
 /-- For every requested error, the eventual adaptive transition estimate
 produces a measurable subset of the exact convergence event with mass at
