@@ -50,17 +50,20 @@ lemma veryLowVertices_subset_lowVertices {A : Finset V} {k : ℕ} (hk : 2 ≤ k)
 def Anticomplete (G : SimpleGraph V) (X Y : Finset V) : Prop :=
   ¬ AdjacentSets G X Y
 
+omit [Fintype V] [DecidableEq V] [DecidableRel G.Adj] in
 lemma Anticomplete.symm {X Y : Finset V} (h : Anticomplete G X Y) :
     Anticomplete G Y X := by
   intro hadj
   exact h hadj.symm
 
+omit [Fintype V] [DecidableEq V] [DecidableRel G.Adj] in
 lemma Anticomplete.mono {X Y X' Y' : Finset V} (h : Anticomplete G X Y)
     (hX : X' ⊆ X) (hY : Y' ⊆ Y) : Anticomplete G X' Y' := by
   intro hadj
   rcases hadj with ⟨x, hx, y, hy, hxy⟩
   exact h ⟨x, hX hx, y, hY hy, hxy⟩
 
+omit [Fintype V] [DecidableRel G.Adj] in
 lemma Anticomplete.union_left {X Y Z : Finset V}
     (hX : Anticomplete G X Z) (hY : Anticomplete G Y Z) :
     Anticomplete G (X ∪ Y) Z := by
@@ -70,9 +73,11 @@ lemma Anticomplete.union_left {X Y Z : Finset V}
   · exact hX ⟨x, hx, z, hz, hxz⟩
   · exact hY ⟨x, hx, z, hz, hxz⟩
 
+omit [Fintype V] [DecidableEq V] [DecidableRel G.Adj] in
 lemma anticomplete_empty_left (X : Finset V) : Anticomplete G ∅ X := by
   simp [Anticomplete, AdjacentSets]
 
+omit [Fintype V] [DecidableEq V] [DecidableRel G.Adj] in
 lemma anticomplete_empty_right (X : Finset V) : Anticomplete G X ∅ := by
   simp [Anticomplete, AdjacentSets]
 
@@ -155,8 +160,9 @@ lemma hasMinDegreeOn_of_lowVertices_eq_empty {A : Finset V} {k : ℕ}
   have hvlow : v ∈ lowVertices G A k := by
     rw [mem_lowVertices]
     exact ⟨hv, by omega⟩
-  simpa [hlow] using hvlow
+  simp [hlow] at hvlow
 
+omit [Fintype V] [DecidableEq V] in
 lemma nonempty_of_ssubset {A B : Finset V} (h : A ⊂ B) : B.Nonempty := by
   rcases Finset.ssubset_iff_subset_ne.mp h with ⟨hAB, hne⟩
   by_contra hB
@@ -206,7 +212,7 @@ lemma ExtensionConclusion.lift_shadow_complement
     {U W F A U' : Finset V} {k : ℕ}
     (C : ProtectedFamily G U k) (CF : ProtectedFamily G F k)
     (B : V → Finset V)
-    (hWU : W ⊆ U) (hF : F = U \ W) (hUA : U ⊆ A)
+    (_hWU : W ⊆ U) (hF : F = U \ W) (hUA : U ⊆ A)
     (hCF : ∀ D, D ∈ CF.blocks ↔ D ∈ C.blocks ∧ D ⊆ F)
     (hwhole : C.WholeBlocks W)
     (R : ExtensionConclusion CF B A U') :
@@ -274,7 +280,7 @@ lemma ExtensionConclusion.lift_shadow_complement
       exact R.deleted_anticomplete_new.symm.mono hDAF Subset.rfl
 
 lemma deficitSum_mono_of_subset {F U S : Finset V} {k : ℕ}
-    (hFU : F ⊆ U) (hS : S ⊆ lowVertices G F k) :
+    (hFU : F ⊆ U) (_hS : S ⊆ lowVertices G F k) :
     (S.sum fun s ↦ k - degreeOn G U s) ≤
       S.sum fun s ↦ k - degreeOn G F s := by
   exact Finset.sum_le_sum (s := S) fun s hs ↦
@@ -376,7 +382,7 @@ private lemma delete_zero_shadow_conclusion
     {U A : Finset V} {k : ℕ} {w : V}
     (C : ProtectedFamily G U k) (B : V → Finset V)
     (hk : 2 ≤ k) (hUA : U ⊆ A) (hproper : U ⊂ A)
-    (hwU : w ∈ U) (hwlowU : degreeOn G U w ≤ k - 1)
+    (hwU : w ∈ U) (_hwlowU : degreeOn G U w ≤ k - 1)
     (hwlowA : degreeOn G A w ≤ k - 1)
     (huniqueA : ∀ x ∈ A, degreeOn G A x ≤ k - 1 → x = w)
     (hnew : ∀ D ∈ C.blocks, Anticomplete G (A \ U) D)
@@ -543,7 +549,7 @@ lemma extension_anticomplete_restricted_block
     {U A : Finset V} {k : ℕ} {w : V}
     (C : ProtectedFamily G U k) (hk : 1 ≤ k)
     (hwU : w ∈ U) (hwlow : degreeOn G U w ≤ k - 1)
-    (hUA : U ⊆ A)
+    (_hUA : U ⊆ A)
     (hnew : ∀ D ∈ C.blocks, Anticomplete G (A \ U) D)
     {D : Finset V}
     (hD : D ∈ (C.restrictShadowComplement hk hwU hwlow).blocks) :
@@ -566,7 +572,7 @@ private lemma extensionCertificate_positive_proper_shadow
     {U : Finset V} {k : ℕ} {w : V}
     (C : ProtectedFamily G U k) (hk : 2 ≤ k)
     (hwU : w ∈ U) (hwlow : degreeOn G U w ≤ k - 1)
-    (hproperW : shadow C w ≠ U)
+    (_hproperW : shadow C w ≠ U)
     (hpos : 0 < deletionPotential k G U (shadow C w))
     (EF : ExtensionCertificate G (U \ shadow C w) k
       (C.restrictShadowComplement (by omega) hwU hwlow)) :
@@ -683,9 +689,7 @@ private lemma extensionCertificate_positive_proper_shadow
     refine ⟨U', ?_⟩
     apply R.lift_shadow_complement C CF EF.reserve hWU rfl hUA
     · intro D
-      simpa [CF, F, W] using
-        (ProtectedFamily.mem_restrictShadowComplement_blocks
-          C (by omega) hwU hwlow (D := D))
+      simp [CF]
     · simpa [W] using (shadow_closed C (by omega) hwU hwlow).whole_blocks
 
 /-- The two-stage bookkeeping in Case B.2.b: first delete the extension shadow, then use the
@@ -694,7 +698,7 @@ lemma ExtensionConclusion.lift_shadow_then_complement
     {U W F A WA U' : Finset V} {k : ℕ} {w : V}
     (C : ProtectedFamily G U k) (CF : ProtectedFamily G F k)
     (B BF : V → Finset V)
-    (hWU : W ⊆ U) (hF : F = U \ W) (hUA : U ⊆ A)
+    (_hWU : W ⊆ U) (hF : F = U \ W) (hUA : U ⊆ A)
     (hWAU : WA ⊆ U) (hwlowA : w ∈ lowVertices G A k)
     (hWAres : WA ⊆ B w)
     (hBFres : ∀ v ∈ lowVertices G (A \ WA) k, BF v ⊆ B v)
@@ -823,7 +827,7 @@ private lemma extensionCertificate_zero_proper_shadow
     {U : Finset V} {k : ℕ} {w : V}
     (C : ProtectedFamily G U k) (hk : 2 ≤ k)
     (hwU : w ∈ U) (hwlow : degreeOn G U w ≤ k - 1)
-    (hproperW : shadow C w ≠ U)
+    (_hproperW : shadow C w ≠ U)
     (hzero : deletionPotential k G U (shadow C w) = 0)
     (EF : ExtensionCertificate G (U \ shadow C w) k
       (C.restrictShadowComplement (by omega) hwU hwlow)) :
@@ -886,14 +890,14 @@ private lemma extensionCertificate_zero_proper_shadow
     · by_cases hzw : z = w
       · exact (hvz (hvw.trans hzw.symm)).elim
       · have hzidx := index_of_ne z hz.1 hz.2 hzw
-        simp only [B, hvw, hzw, if_pos, if_neg]
+        simp only [B, hvw, hzw, if_pos]
         rw [Finset.disjoint_left]
         intro x hxW hxB
         have hxF := EF.reserve_subset z hzidx hxB
         exact (mem_sdiff.mp (by simpa [F, W] using hxF)).2 hxW
     · by_cases hzw : z = w
       · have hvidx := index_of_ne v hv.1 hv.2 hvw
-        simp only [B, hvw, hzw, if_pos, if_neg]
+        simp only [B, hvw, hzw, if_pos]
         rw [Finset.disjoint_left]
         intro x hxB hxW
         have hxF := EF.reserve_subset v hvidx hxB
@@ -997,9 +1001,7 @@ private lemma extensionCertificate_zero_proper_shadow
       · simpa [W] using (shadow_closed C (by omega) hwU hwlow).whole_blocks
       · exact hwholeWA
       · intro D
-        simpa [CF, F, W] using
-          (ProtectedFamily.mem_restrictShadowComplement_blocks
-            C (by omega) hwU hwlow (D := D))
+        simp [CF]
       · intro D hDC hdisj
         have hDCA : D ∈ CA.blocks := by change D ∈ C.blocks; exact hDC
         have hanti := shadow_anticomplete_block_of_disjoint CA (by omega)
@@ -1025,13 +1027,11 @@ private lemma extensionCertificate_zero_proper_shadow
       obtain ⟨U', R⟩ := EF.extension A hFA hlowF hnewF
       have RB : ExtensionConclusion CF B A U' := R.map_reserve fun v hv ↦ by
         have hvne : v ≠ w := fun hvw ↦ hwA (hvw ▸ hv)
-        simpa [B, hvne]
+        simp [B, hvne]
       refine ⟨U', ?_⟩
       apply RB.lift_shadow_complement C CF B hWU rfl hUA
       · intro D
-        simpa [CF, F, W] using
-          (ProtectedFamily.mem_restrictShadowComplement_blocks
-            C (by omega) hwU hwlow (D := D))
+        simp [CF]
       · simpa [W] using (shadow_closed C (by omega) hwU hwlow).whole_blocks
 
 /-- Sauermann's extension lemma (Lemma 3.1), in fixed-ambient-set form. -/
@@ -1051,7 +1051,7 @@ theorem exists_extensionCertificate {U : Finset V} {k : ℕ}
   have hUne : U.Nonempty := Finset.nonempty_iff_ne_empty.mpr hU
   have hex : ∃ w ∈ U, degreeOn G U w < k := by
     by_contra hnot
-    push_neg at hnot
+    push Not at hnot
     exact hno U Subset.rfl ⟨hUne, hnot⟩
   obtain ⟨w, hwU, hwlt⟩ := hex
   have hwlow : degreeOn G U w ≤ k - 1 := by omega
@@ -1070,7 +1070,7 @@ theorem exists_extensionCertificate {U : Finset V} {k : ℕ}
         (by simpa [W] using hpos)
       have hpot : deletionPotential k G U U = shortage k G U := by
         have hi := edgeCount_sdiff_add_incidentCount G U U
-        simp at hi
+        simp only [Finset.sdiff_self, edgeCount_empty, zero_add] at hi
         unfold deletionPotential shortage
         rw [hi]
       simpa [W, hfull, hpot] using hdef

@@ -83,7 +83,6 @@ theorem card_le_one_sub_inv_mul
         ((uniformDen k : ℝ) - 1) / (uniformDen k : ℝ) := by
     rw [← uniformDen_cast]
     field_simp
-    <;> ring
   rw [hcoef, div_mul_eq_mul_div]
   apply (le_div_iff₀ hDpos).2
   simpa [mul_comm, mul_left_comm, mul_assoc] using hsmall'

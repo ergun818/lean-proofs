@@ -103,6 +103,7 @@ lemma incidentCount_union_add_inter_le (A D E : Finset V) :
     _ = incidentCount G A D + incidentCount G A E :=
       incidentCount_union_add_inter G A D E
 
+omit [Fintype V] in
 private lemma card_inter_le_card_union {D E : Finset V} :
     (D ∩ E).card ≤ (D ∪ E).card :=
   card_le_card (inter_subset_left.trans subset_union_left)

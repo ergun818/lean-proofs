@@ -19,7 +19,7 @@ namespace Dyadic
 
 open scoped BigOperators
 
-variable {V : Type*} [DecidableEq V]
+variable {V : Type*}
 
 /-- The first position of zero-based dyadic level `j`. -/
 def levelStart (j : ℕ) : ℕ := 2 ^ j - 1
@@ -135,7 +135,7 @@ lemma totalMass_eq_sum_card (C : List (Finset V)) :
   rw [totalMass, Finset.sum_range, ← Fin.sum_univ_fun_getElem]
   apply Finset.sum_congr rfl
   intro i _
-  simp [cardAt, List.getD_eq_getElem]
+  simp [cardAt]
 
 lemma retainedMass_succ (C : List (Finset V)) (j : ℕ) :
     retainedMass C (j + 1) = retainedMass C j + levelMass C j := by
@@ -388,7 +388,7 @@ lemma twice_selected_level_le_previous
     exact hord hib.le hb_lt
   have hpow : 2 ^ j = 2 * 2 ^ (j - 1) := by
     calc
-      2 ^ j = 2 ^ ((j - 1) + 1) := by congr 1 <;> omega
+      2 ^ j = 2 ^ ((j - 1) + 1) := by congr 1; omega
       _ = 2 ^ (j - 1) * 2 := by rw [pow_succ]
       _ = 2 * 2 ^ (j - 1) := by ring
   have hcard : 2 * S.card ≤ 2 ^ (j - 1) := by
@@ -402,7 +402,7 @@ lemma twice_selected_level_le_previous
     _ ≤ levelMass C (j - 1) := hprev
 
 private lemma sum_previous_levels_add_last
-    (C : List (Finset V)) {J₀ J : ℕ} (hJ₀ : 0 < J₀) (hJJ : J₀ ≤ J) :
+    (C : List (Finset V)) {J₀ J : ℕ} (_hJ₀ : 0 < J₀) (hJJ : J₀ ≤ J) :
     (Finset.Ico J₀ J).sum (fun j ↦ levelMass C (j - 1)) + levelMass C (J - 1) =
       levelMass C (J₀ - 1) + betweenMass C J₀ J := by
   induction J, hJJ using Nat.le_induction with
@@ -508,7 +508,7 @@ largest member is known to be too small in the precise sense
 without a separate natural-number subtraction convention.
 -/
 lemma signed_shortage_lt_two_pow (C : List (Finset V)) {q J : ℕ} {t : ℤ}
-    (hJ : 0 < J) (hord : Nonincreasing C) (hcomplete : CompleteThrough C J)
+    (_hJ : 0 < J) (hord : Nonincreasing C) (hcomplete : CompleteThrough C J)
     (hmass : q ≤ retainedMass C J)
     (hforbidden : t * (cardAt C 0 : ℤ) < q) :
     t < (2 ^ J : ℕ) := by

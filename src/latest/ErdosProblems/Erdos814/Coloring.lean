@@ -34,9 +34,7 @@ noncomputable def orderedMaxGood
 lemma mem_orderedMaxGood_iff (G : SimpleGraph V) [DecidableRel G.Adj]
     (A : Finset V) (k : ℕ) (D : Finset V) :
     D ∈ orderedMaxGood G A k ↔ D ∈ maxGood G A k := by
-  simpa [orderedMaxGood] using
-    (List.Perm.mem_iff (List.mergeSort_perm (maxGood G A k).toList
-      (fun D E ↦ decide (E.card ≤ D.card))))
+  simp [orderedMaxGood]
 
 lemma orderedMaxGood_nodup (G : SimpleGraph V) [DecidableRel G.Adj]
     (A : Finset V) (k : ℕ) : (orderedMaxGood G A k).Nodup := by
@@ -186,11 +184,13 @@ structure Appropriate
     BlockUncolored phi (C.getD r ∅) →
       UncoloredNeighborhood G A phi (C.getD r ∅)
 
+omit [DecidableEq V] [Fintype V] in
 @[simp] lemma colorClass_uncolored (A : Finset V) (i : Color k) :
     colorClass A (fun _ ↦ none) i = ∅ := by
   ext v
   simp [colorClass]
 
+omit [DecidableEq V] [Fintype V] in
 @[simp] lemma blockUncolored_uncolored (D : Finset V) :
     BlockUncolored (k := k) (fun _ ↦ none) D := by
   simp [BlockUncolored]
@@ -206,8 +206,7 @@ lemma appropriate_uncolored
     exact Or.inr (blockUncolored_uncolored _)
   · intro i
     rw [colorClass_uncolored]
-    simpa [incidentCount, incidentEdges, edgeOn] using
-      (Nat.zero_le (monochromaticBlockCount C (fun _ ↦ none) J0 i))
+    simp [incidentCount, incidentEdges, edgeOn]
   · intro i
     simpa using hmin
   · intro r hr
@@ -217,6 +216,7 @@ lemma appropriate_uncolored
   · intro r hr hR hu
     simp [UncoloredNeighborhood]
 
+omit [DecidableEq V] [Fintype V] in
 lemma monochromaticBlockCount_mono_ell
     (C : List (Finset V)) (phi : PartialColoring V k) (ell : ℕ) (i : Color k) :
     monochromaticBlockCount C phi ell i ≤
@@ -268,6 +268,7 @@ or back into an uncoloured vertex. -/
 def Extends (phi rho : PartialColoring V k) : Prop :=
   ∀ v i, phi v = some i → rho v = some i
 
+omit [DecidableEq V] [Fintype V] in
 lemma Extends.blockUncolored {phi rho : PartialColoring V k}
     (h : Extends phi rho) {D : Finset V}
     (hD : BlockUncolored rho D) : BlockUncolored phi D := by
@@ -279,6 +280,7 @@ lemma Extends.blockUncolored {phi rho : PartialColoring V k}
       rw [hD v hv] at hrho
       contradiction
 
+omit [DecidableEq V] [Fintype V] in
 lemma Extends.uncoloredBlockCount_le {phi rho : PartialColoring V k}
     (h : Extends phi rho) (C : List (Finset V)) (j : ℕ) :
     uncoloredBlockCount C rho j ≤ uncoloredBlockCount C phi j := by
@@ -293,10 +295,12 @@ lemma Extends.uncoloredBlockCount_le {phi rho : PartialColoring V k}
 def coloredVertices (A : Finset V) (phi : PartialColoring V k) : Finset V :=
   A.filter fun v ↦ (phi v).isSome
 
+omit [DecidableEq V] [Fintype V] in
 lemma mem_coloredVertices_iff {A : Finset V} {phi : PartialColoring V k} {v : V} :
     v ∈ coloredVertices A phi ↔ v ∈ A ∧ ∃ i, phi v = some i := by
   simp [coloredVertices, Option.isSome_iff_exists]
 
+omit [DecidableEq V] [Fintype V] in
 lemma colorClass_subset_coloredVertices
     (A : Finset V) (phi : PartialColoring V k) (i : Color k) :
     colorClass A phi i ⊆ coloredVertices A phi := by
@@ -304,6 +308,7 @@ lemma colorClass_subset_coloredVertices
   have hv' : v ∈ A ∧ phi v = some i := by simpa [colorClass] using hv
   exact mem_coloredVertices_iff.mpr ⟨hv'.1, i, hv'.2⟩
 
+omit [Fintype V] in
 lemma coloredVertices_eq_biUnion_colorClass
     (A : Finset V) (phi : PartialColoring V k) :
     coloredVertices A phi = Finset.univ.biUnion (colorClass A phi) := by
@@ -311,6 +316,7 @@ lemma coloredVertices_eq_biUnion_colorClass
   rw [mem_coloredVertices_iff]
   simp [colorClass]
 
+omit [DecidableEq V] [Fintype V] in
 lemma pairwise_disjoint_colorClass
     (A : Finset V) (phi : PartialColoring V k) :
     (↑(Finset.univ : Finset (Color k)) : Set (Color k)).PairwiseDisjoint
@@ -348,10 +354,11 @@ noncomputable def uncoloredCurrentIndices (C : List (Finset V))
     BlockUncolored phi (C.getD r ∅)
 
 lemma incidentCount_biUnion_le_sum
-    {ι : Type*} [DecidableEq ι]
+    {ι : Type*}
     (A : Finset V) (s : Finset ι) (D : ι → Finset V) :
     incidentCount G A (s.biUnion D) ≤
       ∑ i ∈ s, incidentCount G A (D i) := by
+  classical
   induction s using Finset.induction_on with
   | empty => simp
   | @insert a s ha ih =>
@@ -365,7 +372,7 @@ lemma incidentCount_biUnion_le_sum
         _ = ∑ i ∈ insert a s, incidentCount G A (D i) := by simp [ha]
 
 lemma shortage_sdiff_biUnion_le_add_sum
-    {ι : Type*} [DecidableEq ι]
+    {ι : Type*}
     {A : Finset V} {k : ℕ}
     (s : Finset ι) (D : ι → Finset V) (b : ι → ℕ)
     (hsubset : ∀ i ∈ s, D i ⊆ A)
@@ -479,6 +486,7 @@ lemma monochromaticBlockCount_add_uncoloredPrefix
           exact hone r (Finset.mem_range.mp hr)
     _ = Dyadic.levelStart ell := by simp
 
+omit [DecidableEq V] [Fintype V] in
 lemma uncoloredPrefixIndices_card_succ
     (C : List (Finset V)) (phi : PartialColoring V k) (ell : ℕ) :
     (uncoloredPrefixIndices C phi (ell + 1)).card =
@@ -505,7 +513,7 @@ lemma shortage_deficitResidual_le
     {phi : PartialColoring V k}
     (S : ColoringSystem G A k t C J0 J)
     (hphi : Appropriate G A k C J0 ell J phi)
-    (hJ0ell : J0 ≤ ell) (hellJ : ell < J) :
+    (_hJ0ell : J0 ≤ ell) (hellJ : ell < J) :
     shortage k G (deficitResidual A C phi (ell + 1)) ≤
       t + (Dyadic.levelStart ell : ℕ) + uncoloredBlockCount C phi ell := by
   classical
@@ -739,10 +747,12 @@ lemma incidentCount_deleted_le_of_shortage_le
   unfold deletionPotential at hpot
   exact_mod_cast (sub_nonneg.mp hpot)
 
+omit [DecidableEq V] [Fintype V] in
 lemma card_coloredVertices
     (A : Finset V) (phi : PartialColoring V k) :
     (coloredVertices A phi).card =
       ∑ i : Color k, (colorClass A phi i).card := by
+  classical
   rw [coloredVertices_eq_biUnion_colorClass]
   exact Finset.card_biUnion (pairwise_disjoint_colorClass A phi)
 
@@ -792,6 +802,7 @@ private lemma card_mul_le_sum' {s : Finset ℕ} {f : ℕ → ℕ} {b : ℕ}
       have hsum := ih hs
       nlinarith
 
+omit [DecidableEq V] [Fintype V] in
 lemma uncoloredLevelMass_le_count_mul
     (C : List (Finset V)) (phi : PartialColoring V k) {j J : ℕ}
     (hord : Dyadic.Nonincreasing C) (hcomplete : Dyadic.CompleteThrough C J)
@@ -808,6 +819,7 @@ lemma uncoloredLevelMass_le_count_mul
   exact hr.1.2.trans_le
     ((Dyadic.levelStart_mono (Nat.succ_le_of_lt hjJ)).trans hcomplete)
 
+omit [DecidableEq V] [Fintype V] in
 lemma prevLevel_card_mul_le_mass
     (C : List (Finset V)) {j J : ℕ}
     (hj : 0 < j) (hjJ : j < J)
@@ -829,6 +841,7 @@ lemma prevLevel_card_mul_le_mass
     simpa [show j - 1 + 1 = j by omega] using hr.2
   simpa using hsum
 
+omit [DecidableEq V] [Fintype V] in
 lemma two_mul_uncoloredLevelMass_le_prev
     (C : List (Finset V)) (phi : PartialColoring V k) {j J : ℕ}
     (hj : 0 < j) (hjJ : j < J)
@@ -839,7 +852,7 @@ lemma two_mul_uncoloredLevelMass_le_prev
   have hp := prevLevel_card_mul_le_mass C hj hjJ hord hcomplete
   have hpow : 2 ^ j = 2 * 2 ^ (j - 1) := by
     calc
-      2 ^ j = 2 ^ ((j - 1) + 1) := by congr 1 <;> omega
+      2 ^ j = 2 ^ ((j - 1) + 1) := by congr 1; omega
       _ = 2 ^ (j - 1) * 2 := by rw [pow_succ]
       _ = 2 * 2 ^ (j - 1) := Nat.mul_comm _ _
   rw [hpow] at hprocessed
@@ -854,6 +867,7 @@ lemma two_mul_uncoloredLevelMass_le_prev
       Nat.mul_le_mul_right _ hcount
     _ ≤ Dyadic.levelMass C (j - 1) := hp
 
+omit [DecidableEq V] [Fintype V] in
 lemma uncoloredBetweenMass_succ
     (C : List (Finset V)) (phi : PartialColoring V k) {J0 j : ℕ}
     (hJ0j : J0 ≤ j) :
@@ -864,6 +878,7 @@ lemma uncoloredBetweenMass_succ
   exact (Finset.sum_Ico_consecutive _ (Dyadic.levelStart_mono hJ0j)
     (Dyadic.levelStart_le_succ j)).symm
 
+omit [DecidableEq V] [Fintype V] in
 lemma betweenMass_succ
     (C : List (Finset V)) {J0 j : ℕ} (hJ0j : J0 ≤ j) :
     Dyadic.betweenMass C J0 (j + 1) =
@@ -872,6 +887,7 @@ lemma betweenMass_succ
   exact (Finset.sum_Ico_consecutive _ (Dyadic.levelStart_mono hJ0j)
     (Dyadic.levelStart_le_succ j)).symm
 
+omit [DecidableEq V] [Fintype V] in
 lemma two_mul_uncoloredBetweenMass_add_last_le
     (C : List (Finset V)) (phi : PartialColoring V k) {J0 J : ℕ}
     (hJ0 : 0 < J0) (hJ0J : J0 ≤ J)
@@ -898,6 +914,7 @@ lemma two_mul_uncoloredBetweenMass_add_last_le
       rw [hjm]
       omega
 
+omit [DecidableEq V] [Fintype V] in
 lemma two_mul_uncoloredBetweenMass_le
     (C : List (Finset V)) (phi : PartialColoring V k) {J0 J : ℕ}
     (hJ0 : 0 < J0) (hJ0J : J0 ≤ J)
@@ -909,6 +926,7 @@ lemma two_mul_uncoloredBetweenMass_le
   exact (Nat.le_add_right _ _).trans
     (two_mul_uncoloredBetweenMass_add_last_le C phi hJ0 hJ0J hord hcomplete hprocessed)
 
+omit [DecidableEq V] [Fintype V] in
 lemma betweenMass_eq_uncolored_add_colored
     (C : List (Finset V)) (phi : PartialColoring V k) (J0 J : ℕ) :
     Dyadic.betweenMass C J0 J =
@@ -957,7 +975,7 @@ lemma coloredBlockMass_le_coloredVertices
     simp only [s, Finset.sum_filter]
     apply Finset.sum_congr rfl
     intro r hr
-    by_cases h : BlockUncolored phi (C.getD r ∅) <;> simp [h]
+    simp
   rw [heq]
   exact hcard
 
@@ -975,6 +993,7 @@ lemma final_colored_mass
   have hcm := coloredBlockMass_le_coloredVertices S hphi
   nlinarith [S.late_mass, S.cutoff_level]
 
+omit [DecidableEq V] [Fintype V] in
 /-- Pigeonhole estimate corresponding to (6.4). -/
 lemma exists_large_colorClass
     {A : Finset V} {k : ℕ} {phi : PartialColoring V k}
@@ -982,7 +1001,7 @@ lemma exists_large_colorClass
     (hcolored : A.card < 20 * k * (coloredVertices A phi).card) :
     ∃ i : Color k, A.card < 10000 * k ^ 2 * (colorClass A phi i).card := by
   by_contra h
-  push_neg at h
+  push Not at h
   have hsum :
       10000 * k ^ 2 * (∑ i : Color k, (colorClass A phi i).card) ≤
         (401 * k) * A.card := by
@@ -1044,6 +1063,7 @@ lemma smallCore_of_appropriate_and_colored
       rw [Nat.sub_mul]
       simp
 
+omit [DecidableEq V] [Fintype V] in
 lemma exists_maximalComplete (C : List (Finset V)) :
     ∃ J, Dyadic.MaximalComplete C J := by
   let J := Nat.findGreatest (fun j => Dyadic.levelStart j ≤ C.length) C.length
@@ -1264,7 +1284,8 @@ theorem exists_coloringSystem
       hJmax.1.trans' (Dyadic.levelStart_mono hJ0J)
     have hidx : J0 - 2 + 1 = J0 - 1 := by omega
     have hc : Dyadic.CompleteThrough C (J0 - 2 + 2) := by
-      convert hcomplete0 using 1 <;> omega
+      convert hcomplete0 using 1
+      omega
     have hlevel2 := Dyadic.levelMass_succ_le_two_mul C (J0 - 2) hCnoninc hc
     rw [hidx] at hlevel2
     have hprevMass : Dyadic.levelMass C (J0 - 2) ≤
@@ -1284,7 +1305,8 @@ theorem exists_coloringSystem
     rw [show J0 = (J0 - 1) + 1 by omega, Dyadic.retainedMass_succ]
     have hlevscaled : 100 * k * Dyadic.levelMass C (J0 - 1) < 2 * A.card := by
       have hh := (Nat.mul_lt_mul_left (by omega : 0 < 2)).mpr hcutLevel
-      convert hh using 1 <;> ring
+      convert hh using 1
+      ring
     calc
       100 * k * (Dyadic.retainedMass C (J0 - 1) +
           Dyadic.levelMass C (J0 - 1)) =
@@ -1318,7 +1340,8 @@ theorem exists_coloringSystem
         _ = 16 * A.card := by ring
     have hRlower : 50 * A.card ≤ 300 * k * Dyadic.retainedMass C J := by
       have := Nat.mul_le_mul_left 50 hmassRet
-      convert this using 1 <;> ring
+      convert this using 1
+      ring
     have hRupper' : 300 * k * Dyadic.retainedMass C J < 48 * A.card := by
       have := (Nat.mul_lt_mul_left (by omega : 0 < 3)).mpr hRupper
       convert this using 1 <;> ring
@@ -1402,6 +1425,7 @@ def redBlockUnion (C : List (Finset V)) (U : Finset ℕ)
     (blockColor : ℕ → Option I) (i : I) : Finset V :=
   (redBlockIndices U blockColor i).biUnion fun r ↦ C.getD r ∅
 
+omit [DecidableRel G.Adj] [Fintype I] [Fintype V] in
 /-- An edge to `Z_i` selects an actual block of colour `i`. -/
 lemma adjacent_block_of_adjacent_redBlockUnion
     (C : List (Finset V)) (U : Finset ℕ)
@@ -1421,7 +1445,7 @@ lemma adjacent_block_of_adjacent_redBlockUnion
 This is the degree-drop step in (5.27) and (5.29). -/
 lemma adjacent_of_low_after_delete
     {B Z : Finset V} {k : ℕ} {v : V}
-    (hk : 2 ≤ k) (hZB : Z ⊆ B) (hv : v ∈ B \ Z)
+    (hk : 2 ≤ k) (hZB : Z ⊆ B) (_hv : v ∈ B \ Z)
     (hhigh : k ≤ degreeOn G B v)
     (hlow : degreeOn G (B \ Z) v ≤ k - 1) :
     AdjacentSets G {v} Z := by
@@ -1486,6 +1510,7 @@ structure PerColorExtensionConclusion
       x ∈ E.reserve v
   pairwise_X : ∀ i j, i ≠ j → Disjoint (X i) (X j)
 
+omit [DecidableEq I] [Fintype I] in
 /-- The reusable per-colour application of Sauermann's extension lemma.
 
 `hinside` is (5.27).  `hprotect` is the consequence of (G1)--(G2) saying
@@ -1612,6 +1637,7 @@ theorem apply_extension_per_color
     rw [reserveUnion, mem_biUnion] at hr
     exact hr
 
+omit [DecidableEq I] [Fintype I] in
 /-- Upgrade (K1) from the residual protected family to the original block
 family.  This is the exact last step used in the paper: a whole block is
 either contained in `H`, when the certificate applies, or disjoint from
@@ -1646,6 +1672,7 @@ noncomputable def currentUncoloredIndices
   exact (Dyadic.levelIndices ell).filter fun r ↦
     BlockUncolored phi (C.getD r ∅)
 
+omit [DecidableEq V] [Fintype V] in
 @[simp] lemma card_currentUncoloredIndices
     (C : List (Finset V)) (phi : PartialColoring V k) (ell : ℕ) :
     (currentUncoloredIndices C phi ell).card =
@@ -1678,6 +1705,7 @@ noncomputable def selectedScope
       (s := adjacent s) (n := min (adjacent s).card (need s))
       (Nat.min_le_left _ _))
 
+omit [DecidableEq Block] [DecidableEq Scope] in
 lemma selectedScope_subset
     (adjacent : Scope → Finset Block) (need : Scope → ℕ) (s : Scope) :
     selectedScope adjacent need s ⊆ adjacent s := by
@@ -1687,6 +1715,7 @@ lemma selectedScope_subset
       (s := adjacent s) (n := min (adjacent s).card (need s))
       (Nat.min_le_left _ _))).1
 
+omit [DecidableEq Block] [DecidableEq Scope] in
 lemma card_selectedScope
     (adjacent : Scope → Finset Block) (need : Scope → ℕ) (s : Scope) :
     (selectedScope adjacent need s).card = min (adjacent s).card (need s) := by
@@ -1696,12 +1725,14 @@ lemma card_selectedScope
       (s := adjacent s) (n := min (adjacent s).card (need s))
       (Nat.min_le_left _ _))).2
 
+omit [DecidableEq Block] [DecidableEq Scope] in
 lemma card_selectedScope_le_need
     (adjacent : Scope → Finset Block) (need : Scope → ℕ) (s : Scope) :
     (selectedScope adjacent need s).card ≤ need s := by
   rw [card_selectedScope]
   exact Nat.min_le_right _ _
 
+omit [DecidableEq Block] [DecidableEq Scope] in
 lemma selectedScope_eq_adjacent_of_card_lt_need
     (adjacent : Scope → Finset Block) (need : Scope → ℕ) (s : Scope)
     (h : (adjacent s).card < need s) :
@@ -1735,6 +1766,7 @@ def nonpopularBlocks (U : Finset Block) (S : Finset Scope)
     (scope : Scope → Finset Block) : Finset Block :=
   U \ popularBlocks U S scope
 
+omit [DecidableEq Scope] in
 lemma sum_card_scope_eq_sum_frequency
     (U : Finset Block) (S : Finset Scope) (scope : Scope → Finset Block)
     (hscope : ∀ s ∈ S, scope s ⊆ U) :
@@ -1757,6 +1789,7 @@ lemma sum_card_scope_eq_sum_frequency
       rw [← Finset.sum_filter]
       simp [scopeFrequency]
 
+omit [DecidableEq Scope] in
 lemma popular_frequency_lower
     (U : Finset Block) (S : Finset Scope) (scope : Scope → Finset Block) :
     201 * (popularBlocks U S scope).card ≤
@@ -1777,6 +1810,7 @@ lemma popular_frequency_lower
       intro D hD
       exact (Finset.mem_filter.mp (by simpa [popularBlocks] using hD)).1
 
+omit [DecidableEq Scope] in
 lemma four_mul_card_popular_le
     (U : Finset Block) (S : Finset Scope) (scope : Scope → Finset Block)
     (hscope : ∀ s ∈ S, scope s ⊆ U)
@@ -1786,6 +1820,7 @@ lemma four_mul_card_popular_le
   rw [← sum_card_scope_eq_sum_frequency U S scope hscope] at hlower
   omega
 
+omit [DecidableEq Block] [DecidableEq Scope] in
 lemma sum_card_selectedScope_le
     (U : Finset Block) (S' S : Finset Scope)
     (adjacent : Scope → Finset Block) (need : Scope → ℕ)
@@ -1804,10 +1839,12 @@ def activeScopes (S : Finset Scope) (adjacent : Scope → Finset Block) :
     Finset Scope :=
   S.filter fun s ↦ (adjacent s).Nonempty
 
+omit [DecidableEq Block] [DecidableEq Scope] in
 lemma activeScopes_subset (S : Finset Scope) (adjacent : Scope → Finset Block) :
     activeScopes S adjacent ⊆ S :=
   Finset.filter_subset _ _
 
+omit [DecidableEq Scope] in
 theorem four_mul_card_popular_selectedScope_le
     (U : Finset Block) (S' S : Finset Scope)
     (adjacent : Scope → Finset Block) (need : Scope → ℕ)
@@ -1886,6 +1923,7 @@ noncomputable def selectedNeighborColors
       (n := min (neighborColors G A phi s).card k)
       (Nat.min_le_left _ _))
 
+omit [DecidableEq V] [Fintype V] in
 lemma selectedNeighborColors_subset
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (A : Finset V) (phi : PartialColoring V k)
@@ -1898,6 +1936,7 @@ lemma selectedNeighborColors_subset
       (n := min (neighborColors G A phi s).card k)
       (Nat.min_le_left _ _))).1
 
+omit [DecidableEq V] [Fintype V] in
 lemma card_selectedNeighborColors
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (A : Finset V) (phi : PartialColoring V k)
@@ -1911,6 +1950,7 @@ lemma card_selectedNeighborColors
       (n := min (neighborColors G A phi s).card k)
       (Nat.min_le_left _ _))).2
 
+omit [DecidableEq V] [Fintype V] in
 lemma card_selectedNeighborColors_le
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (A : Finset V) (phi : PartialColoring V k)
@@ -1920,6 +1960,7 @@ lemma card_selectedNeighborColors_le
   rw [card_selectedNeighborColors]
   exact Nat.min_le_right _ _
 
+omit [DecidableEq V] [Fintype V] in
 lemma selectedNeighborColors_eq_of_card_le
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (A : Finset V) (phi : PartialColoring V k)
@@ -1939,8 +1980,6 @@ lemma selectedNeighborColors_eq_of_card_le
 pre-existing greedy theorem. -/
 
 section FiniteGreedy
-
-variable [Fintype Block] [Fintype Scope]
 
 def nonpopularScope
     (P : Finset Block) (S : Finset Scope) (scope : Scope → Finset Block)
@@ -1967,11 +2006,13 @@ lemma card_nonpopularScope_le
   obtain ⟨x, hx, rfl⟩ := hD
   exact (Finset.mem_filter.mp hx).2.2
 
+variable [Finite Scope]
+
 theorem exists_nonpopular_scope_coloring
     {k : ℕ} (hk : 0 < k)
     (U : Finset Block) (S : Finset Scope) (scope : Scope → Finset Block)
     (avoid : Scope → Finset (Color k))
-    (hscopeU : ∀ s ∈ S, scope s ⊆ U)
+    (_hscopeU : ∀ s ∈ S, scope s ⊆ U)
     (hscope : ∀ s ∈ S, (scope s).card ≤ k + 1)
     (havoid : ∀ s, (avoid s).card ≤ k) :
     ∃ color : {D // D ∈ nonpopularBlocks U S scope} → Color k,
@@ -1982,6 +2023,7 @@ theorem exists_nonpopular_scope_coloring
         nonpopularScope (nonpopularBlocks U S scope) S scope s,
         color D ∉ avoid s) := by
   classical
+  let := Fintype.ofFinite Scope
   apply exists_erdos814_scope_coloring hk
   · intro D
     have hnonpop : ¬ IsPopular S scope (D : Block) := by
@@ -2004,6 +2046,7 @@ theorem exists_nonpopular_scope_coloring
     · simp [nonpopularScope, hs]
   · exact havoid
 
+omit [DecidableEq V] [Fintype V] in
 theorem exists_nonpopular_scope_coloring_with_neighbor_lists
     {k : ℕ} (hk : 0 < k)
     (U : Finset Block) (S : Finset Scope) (scope : Scope → Finset Block)
@@ -2028,6 +2071,7 @@ end PopularScratch
 variable {V : Type*} [Fintype V] [DecidableEq V]
 variable {G : SimpleGraph V} [DecidableRel G.Adj]
 
+omit [DecidableRel G.Adj] [Fintype V] in
 lemma adjacent_cut_of_connectedOn
     {A D : Finset V} (hconn : ConnectedOn G A)
     (hD : D.Nonempty) (hDA : D ⊆ A) (hcomp : (A \ D).Nonempty) :
@@ -2082,7 +2126,7 @@ lemma deficitResidual_nonempty
     hphi.future r hrRange.1 hrJ hrData.2 v hvD w hwA hvw
   refine ⟨w, mem_sdiff.mpr ⟨hwA, ?_⟩⟩
   rw [mem_union]
-  push_neg
+  push Not
   constructor
   · intro hwColored
     rw [mem_coloredVertices_iff] at hwColored
@@ -2109,6 +2153,7 @@ noncomputable def residualFutureIndices
   exact (Finset.Ico (Dyadic.levelStart (ell + 1)) (Dyadic.levelStart J)).filter
     fun r ↦ C.getD r ∅ ⊆ deficitResidual A C phi (ell + 1)
 
+omit [Fintype V] in
 lemma blockUncolored_of_subset_deficitResidual
     {A D : Finset V} {C : List (Finset V)} {phi : PartialColoring V k}
     {ell : ℕ} (hD : D ⊆ deficitResidual A C phi (ell + 1)) :
@@ -2145,7 +2190,7 @@ lemma future_block_neighbor_closed_in_deficitResidual
       x hx y hyA hxy
   refine mem_sdiff.mpr ⟨hyA, ?_⟩
   rw [mem_union]
-  push_neg
+  push Not
   constructor
   · intro hyColored
     rw [mem_coloredVertices_iff] at hyColored
@@ -2260,12 +2305,14 @@ noncomputable def assembleColoring (phi : PartialColoring V k)
       some (Classical.choose h)
     else none
 
+omit [Fintype V] in
 @[simp] lemma assembleColoring_eq_some_of_old
     {phi : PartialColoring V k} {C : List (Finset V)} {N : Finset ℕ}
     {psi : ℕ → Color k} {X : Color k → Finset V} {v : V} {i : Color k}
     (h : phi v = some i) : assembleColoring phi C N psi X v = some i := by
   simp [assembleColoring, h]
 
+omit [Fintype V] in
 lemma assembleColoring_eq_none_of_old_none_of_new
     {phi : PartialColoring V k} {C : List (Finset V)} {N : Finset ℕ}
     {psi : ℕ → Color k} {X : Color k → Finset V} {v : V}
@@ -2274,6 +2321,7 @@ lemma assembleColoring_eq_none_of_old_none_of_new
     assembleColoring phi C N psi X v = none := by
   simp [assembleColoring, hphi, hnew]
 
+omit [Fintype V] in
 lemma assembleColoring_eq_some_of_new
     {phi : PartialColoring V k} {C : List (Finset V)} {N : Finset ℕ}
     {psi : ℕ → Color k} {X : Color k → Finset V} {v : V} {i : Color k}
@@ -2290,12 +2338,13 @@ lemma assembleColoring_eq_some_of_new
     exact (Finset.disjoint_left.mp (hpair (Classical.choose hex) i hne)) hvj hv
   simp [assembleColoring, hphi, hex, hchoice]
 
+omit [Fintype V] in
 lemma assembleColoring_eq_some_iff
     {phi : PartialColoring V k} {C : List (Finset V)} {N : Finset ℕ}
     {psi : ℕ → Color k} {X : Color k → Finset V} {v : V} {i : Color k}
     (hpair : ∀ i j, i ≠ j →
       Disjoint (assembledNewClass C N psi X i) (assembledNewClass C N psi X j))
-    (huncolored : ∀ i, ∀ v ∈ assembledNewClass C N psi X i, phi v = none) :
+    (_huncolored : ∀ i, ∀ v ∈ assembledNewClass C N psi X i, phi v = none) :
     assembleColoring phi C N psi X v = some i ↔
       phi v = some i ∨ (phi v = none ∧ v ∈ assembledNewClass C N psi X i) := by
   constructor
@@ -2320,6 +2369,7 @@ lemma assembleColoring_eq_some_iff
     · exact assembleColoring_eq_some_of_old hold
     · exact assembleColoring_eq_some_of_new hnone hpair hnew
 
+omit [Fintype V] in
 lemma selectedBlock_subset_selectedBlockUnion
     {C : List (Finset V)} {N : Finset ℕ} {psi : ℕ → Color k}
     {r : ℕ} (hr : r ∈ N) :
@@ -2328,6 +2378,7 @@ lemma selectedBlock_subset_selectedBlockUnion
   rw [selectedBlockUnion, mem_biUnion]
   exact ⟨r, mem_filter.mpr ⟨hr, rfl⟩, hv⟩
 
+omit [Fintype V] in
 lemma selectedBlock_mono_assembleColoring
     {phi : PartialColoring V k} {C : List (Finset V)} {N : Finset ℕ}
     {psi : ℕ → Color k} {X : Color k → Finset V} {r : ℕ}
@@ -2724,6 +2775,7 @@ noncomputable def selectedVertices (G : SimpleGraph V) [DecidableRel G.Adj]
   classical
   exact S.filter fun s => (adjacentBlockIndices G C Uidx s).Nonempty
 
+omit [DecidableEq V] [Fintype V] in
 lemma selectedVertices_subset (G : SimpleGraph V) [DecidableRel G.Adj]
     (C : List (Finset V))
     (Uidx : Finset ℕ) (S : Finset V) : selectedVertices G C Uidx S ⊆ S := by
@@ -2812,10 +2864,12 @@ def popularIndices (Uidx : Finset ℕ) (S : Finset V)
     (scope : V -> Finset ℕ) : Finset ℕ :=
   Uidx.filter fun r => 200 < scopeFrequency S scope r
 
+omit [DecidableEq V] [Fintype V] in
 lemma sum_scopeFrequency_eq
     (Uidx : Finset ℕ) (S : Finset V) (scope : V -> Finset ℕ)
     (hscope : ∀ s ∈ S, scope s ⊆ Uidx) :
     Uidx.sum (scopeFrequency S scope) = S.sum fun s => (scope s).card := by
+  classical
   induction S using Finset.induction_on with
   | empty => simp [scopeFrequency]
   | @insert s S hs ih =>
@@ -2859,6 +2913,7 @@ lemma sum_scopeFrequency_eq
         _ = (scope s).card + Uidx.sum (scopeFrequency S scope) := by
           rw [hindicator, Nat.add_comm]
 
+omit [DecidableEq V] [Fintype V] in
 lemma popular_double_count
     (Uidx : Finset ℕ) (S : Finset V) (scope : V -> Finset ℕ)
     (hscope : ∀ s ∈ S, scope s ⊆ Uidx) :
@@ -2877,6 +2932,7 @@ lemma popular_double_count
       exact Finset.sum_le_sum_of_subset_of_nonneg
         (Finset.filter_subset _ _) (by simp)
 
+omit [DecidableEq V] [Fintype V] in
 lemma four_mul_popular_le
     (Uidx : Finset ℕ) (S : Finset V) (scope : V -> Finset ℕ)
     (hscope : ∀ s ∈ S, scope s ⊆ Uidx)
@@ -2900,6 +2956,7 @@ lemma selectedPopular_quarter
     exact selectedScope_subset G H C Uidx k s
   · exact selectedScope_total_le E C Uidx hk hshort
 
+omit [DecidableEq V] [Fintype V] in
 lemma nonpopular_frequency_le
     (Uidx : Finset ℕ) (S : Finset V) (scope : V -> Finset ℕ) {r : ℕ}
     (hrU : r ∈ Uidx) (hr : r ∉ popularIndices Uidx S scope) :
@@ -2928,17 +2985,20 @@ noncomputable def neighborColorList (G : SimpleGraph V) [DecidableRel G.Adj]
     (A : Finset V) (phi : PartialColoring V k) (s : V) : Finset (Color k) :=
   chooseMinSubset (neighborColorSet G A phi s) k
 
+omit [DecidableEq V] [Fintype V] in
 lemma neighborColorList_subset (G : SimpleGraph V) [DecidableRel G.Adj]
     (A : Finset V) (phi : PartialColoring V k) (s : V) :
     neighborColorList G A phi s ⊆ neighborColorSet G A phi s :=
   chooseMinSubset_subset _ _
 
+omit [DecidableEq V] [Fintype V] in
 lemma neighborColorList_card_le (G : SimpleGraph V) [DecidableRel G.Adj]
     (A : Finset V) (phi : PartialColoring V k) (s : V) :
     (neighborColorList G A phi s).card ≤ k := by
   rw [neighborColorList, card_chooseMinSubset]
   exact Nat.min_le_right _ _
 
+omit [DecidableEq V] [Fintype V] in
 lemma restrictedScope_card_le_scope
     (Uidx : Finset ℕ) (S : Finset V) (scope : V -> Finset ℕ)
     (s : {s // s ∈ S}) :
@@ -2951,9 +3011,10 @@ lemma restrictedScope_card_le_scope
   · intro r hr q hq heq
     exact Subtype.ext heq
 
+omit [DecidableEq V] [Fintype V] in
 lemma restrictedScope_frequency_le
     (Uidx : Finset ℕ) (S : Finset V) (scope : V -> Finset ℕ)
-    (hscope : ∀ s ∈ S, scope s ⊆ Uidx)
+    (_hscope : ∀ s ∈ S, scope s ⊆ Uidx)
     (r : {r // r ∈ nonpopularIndices Uidx S scope}) :
     ((Finset.univ.filter fun s : {s // s ∈ S} =>
       r ∈ restrictedScope Uidx S scope s).card) ≤ 200 := by
@@ -2978,7 +3039,7 @@ theorem exists_selected_scope_coloring
     {H A : Finset V} {k : ℕ} {C0 : ProtectedFamily G H k}
     (E : ExtensionCertificate G H k C0) (C : List (Finset V))
     (Uidx : Finset ℕ) (phi : PartialColoring V k) (hk : 2 ≤ k)
-    (hshort : shortage k G H ≤ (12 * Uidx.card : ℕ)) :
+    (_hshort : shortage k G H ≤ (12 * Uidx.card : ℕ)) :
     let S' := selectedVertices G C Uidx E.S
     let scope := fun s : V => selectedScope G H C Uidx k s
     let NP := nonpopularIndices Uidx S' scope
@@ -3320,6 +3381,7 @@ def redBlockUnion (C : List (Finset V)) (U : Finset ℕ)
     (blockColor : ℕ → Option I) (i : I) : Finset V :=
   (redBlockIndices U blockColor i).biUnion fun r ↦ C.getD r ∅
 
+omit [DecidableRel G.Adj] [Fintype I] [Fintype V] in
 /-- An edge to `Z_i` selects an actual current-level block of colour `i`. -/
 lemma adjacent_block_of_adjacent_redBlockUnion
     (C : List (Finset V)) (U : Finset ℕ)
@@ -3338,7 +3400,7 @@ lemma adjacent_block_of_adjacent_redBlockUnion
 /-- A vertex which becomes low only after deleting `Z` must see `Z`. -/
 lemma adjacent_of_low_after_delete
     {B Z : Finset V} {k : ℕ} {v : V}
-    (hk : 2 ≤ k) (hZB : Z ⊆ B) (hv : v ∈ B \ Z)
+    (hk : 2 ≤ k) (hZB : Z ⊆ B) (_hv : v ∈ B \ Z)
     (hhigh : k ≤ degreeOn G B v)
     (hlow : degreeOn G (B \ Z) v ≤ k - 1) :
     AdjacentSets G {v} Z := by
@@ -3575,6 +3637,7 @@ lemma lowVertices_currentColor_subset_deficitResidual_succ
     (G := G) phi S.hk hZA (hphi.minDegree i) hneigh hprefix
   simpa [Z, deficitResidual] using hres
 
+omit [Fintype I] [Fintype V] in
 /-- The selected current-level union is part of the prefix deleted in the
 exact deficit residual. -/
 lemma redBlockUnion_subset_uncoloredPrefixUnion_succ
@@ -3595,6 +3658,7 @@ lemma redBlockUnion_subset_uncoloredPrefixUnion_succ
   rw [uncoloredPrefixIndices, mem_filter]
   exact ⟨mem_range.mpr ((Dyadic.mem_levelIndices.mp hrU.1).2), hrU.2⟩
 
+omit [Fintype V] in
 /-- Equation (5.13) implies `H ⊆ H̃_i`: the residual contains no old
 coloured vertex and no selected current-level block. -/
 lemma deficitResidual_subset_currentColorAmbient
@@ -3702,6 +3766,7 @@ lemma extensionDiff_anticomplete_futureBlock
     S hphi hr hrJ hu hx (hAtilde (mem_sdiff.mp hv).1) hvx.symm
   exact (mem_sdiff.mp hv).2 (by simpa [hH] using hvres)
 
+omit [DecidableEq I] [Fintype I] in
 /-- Family-level bridge for the `hnew` premise of
 `apply_extension_per_color`. -/
 lemma extensionDiff_anticomplete_protectedFutureFamily
@@ -3754,6 +3819,7 @@ lemma degreeOn_add_card_le_of_external_neighbor_supply
   rw [card_union_of_disjoint hdisj, hNHcard] at hc
   exact hc
 
+omit [DecidableRel G.Adj] [Fintype V] in
 /-- Pairwise-disjoint adjacent blocks have distinct neighbor
 representatives. -/
 lemma exists_neighborRepresentatives_of_pairwiseDisjoint
@@ -3840,6 +3906,7 @@ lemma degreeOn_eq_of_adjacent_membership_iff
   · rintro ⟨hsv, hvB⟩
     exact ⟨hsv, (h v hsv).mpr hvB⟩
 
+omit [DecidableEq V] [Fintype V] in
 lemma PopularScratch.neighborColorList_eq_of_card_le
     {A : Finset V} {k : ℕ} (phi : PartialColoring V k) (s : V)
     (hcard : (PopularScratch.neighborColorSet G A phi s).card ≤ k) :
@@ -3858,9 +3925,9 @@ block. -/
 lemma certificateVertex_degree_ge_of_greedy_cases
     {H B Z Atilde : Finset V} {k : ℕ}
     (phi : PartialColoring V k)
-    (hk : 2 ≤ k) (hHtilde : H ⊆ Atilde) (hZB : Z ⊆ B)
+    (_hk : 2 ≤ k) (hHtilde : H ⊆ Atilde) (hZB : Z ⊆ B)
     (hAtilde : Atilde = B \ Z) (hminB : HasMinDegreeOn G B k)
-    {s : V} (hsH : s ∈ H) (hslow : degreeOn G H s ≤ k - 1)
+    {s : V} (hsH : s ∈ H) (_hslow : degreeOn G H s ≤ k - 1)
     (hcases :
       ¬ AdjacentSets G {s} Z ∨
       (∃ W : Finset V, W ⊆ Atilde ∧ Disjoint W H ∧
@@ -4055,6 +4122,7 @@ structure PerColorExtensionConclusion
       x ∈ E.reserve v
   pairwise_X : ∀ i j, i ≠ j → Disjoint (X i) (X j)
 
+omit [DecidableEq I] [Fintype I] in
 /-- The reusable per-colour application of Sauermann's extension lemma.
 
 `hinside` is (5.27).  `hprotect` is the consequence of (G1)--(G2) saying
@@ -4181,6 +4249,7 @@ theorem apply_extension_per_color
     rw [reserveUnion, mem_biUnion] at hr
     exact hr
 
+omit [DecidableEq I] [Fintype I] in
 /-- The extension application only uses (5.29) through uniqueness of the
 colour attached to a low vertex.  This factored form is convenient when
 blocks are indexed rather than stored as a finset of finsets. -/
@@ -4292,6 +4361,7 @@ theorem apply_extension_per_color_of_unique
     rw [reserveUnion, mem_biUnion] at hr
     exact hr
 
+omit [DecidableEq I] [Fintype I] in
 /-- Index-valued form of the per-colour application, matching the dyadic
 block representation used by the successor construction. -/
 theorem apply_extension_per_color_indices
@@ -4319,6 +4389,7 @@ theorem apply_extension_per_color_indices
   have hrj := (hred j v hvj).2 r hr hadj
   exact Option.some.inj (hri.symm.trans hrj)
 
+omit [DecidableEq I] [Fintype I] in
 /-- Upgrade (K1) from the residual protected family to the original block
 family.  This is the exact last step used in the paper: a whole block is
 either contained in `H`, when the certificate applies, or disjoint from
@@ -4406,6 +4477,7 @@ lemma selectedBlockUnion_subset_A
     (Dyadic.levelStart_mono (Nat.succ_le_iff.mpr hellJ))
   exact S.block_subset r hrJ hvr
 
+omit [Fintype V] in
 lemma selectedBlockUnion_uncolored
     {k ell : ℕ} {C : List (Finset V)} {phi : PartialColoring V k}
     (N : Finset ℕ) (hN : N ⊆ uncoloredCurrentIndices C phi ell)
@@ -4451,6 +4523,7 @@ lemma selectedBlockUnion_pairwise
   · exact Finset.disjoint_left.mp
       (S.blocks_disjoint r hrJ s hsJ hrs) hvr hvs
 
+omit [Fintype V] in
 lemma selectedBlockUnion_disjoint_residual
     {A : Finset V} {k ell : ℕ} {C : List (Finset V)}
     {phi : PartialColoring V k}
@@ -4527,7 +4600,7 @@ lemma future_uncolored_block_subset_residual
     {C : List (Finset V)} {J0 ell J r : ℕ}
     {phi : PartialColoring V k}
     (S : ColoringSystem G A k t C J0 J)
-    (hphi : Appropriate G A k C J0 ell J phi)
+    (_hphi : Appropriate G A k C J0 ell J phi)
     (hr : Dyadic.levelStart (ell + 1) ≤ r)
     (hrJ : r < Dyadic.levelStart J)
     (hun : BlockUncolored phi (C.getD r ∅)) :
@@ -4865,6 +4938,7 @@ theorem successorData_of_greedy_and_extensions
       future_X_anticomplete := hfutureX }
   exact ⟨ai.rho, ⟨ai.toSuccessorData hphi⟩⟩
 
+omit [Fintype V] in
 lemma currentUncoloredBlock_disjoint_deficitResidual
     {A : Finset V} {k ell : ℕ} {C : List (Finset V)}
     {phi : PartialColoring V k} {r : ℕ}

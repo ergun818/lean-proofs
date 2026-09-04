@@ -68,7 +68,7 @@ lemma exists_degreeOn_lt_of_no_core {A : Finset V} (hA : A.Nonempty)
   rw [HasMinDegreeOn, not_and_or] at hnot
   rcases hnot with hfalse | hdeg
   · exact (hfalse hA).elim
-  · push_neg at hdeg
+  · push Not at hdeg
     exact hdeg
 
 /-- The sharp natural-number edge bound for a graph with no induced `k`-core.
@@ -166,7 +166,7 @@ theorem exists_core_of_efrsThreshold_le (k : ℕ) {A : Finset V}
       (k - 1) * (A.card + 2 - k) + (k - 2).choose 2 ≤ edgeCount G A) :
     ∃ U ⊆ A, HasMinDegreeOn G U k := by
   by_contra h
-  push_neg at h
+  push Not at h
   have hbound := edgeCount_le_coreFreeEdgeBound_of_no_core G k hcard h
   have hpred : k - 1 = (k - 2) + 1 := by omega
   have hcardstep : A.card + 2 - k = A.card - (k - 1) + 1 := by omega

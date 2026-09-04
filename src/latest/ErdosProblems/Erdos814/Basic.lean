@@ -182,6 +182,7 @@ lemma incidentCount_union_add_inter (G : SimpleGraph V) [DecidableRel G.Adj]
   rw [incidentCount, incidentEdges_union]
   exact card_union_add_card_inter _ _
 
+omit [Fintype V] [DecidableEq V] in
 lemma AdjacentSets.symm {G : SimpleGraph V} {X Y : Finset V}
     (h : AdjacentSets G X Y) : AdjacentSets G Y X := by
   rcases h with ⟨x, hx, y, hy, hxy⟩

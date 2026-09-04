@@ -272,7 +272,7 @@ lemma shadow_closed (C : ProtectedFamily G U k) {w : V}
 
 /-- The shadow is the least set satisfying the four closure properties. -/
 lemma shadow_minimal (C : ProtectedFamily G U k) {w : V}
-    (hk : 1 ≤ k) (hwU : w ∈ U) (hwdeg : degreeOn G U w ≤ k - 1)
+    (hk : 1 ≤ k) (_hwU : w ∈ U) (_hwdeg : degreeOn G U w ≤ k - 1)
     {Y : Finset V} (hY : ShadowClosed C w Y) : shadow C w ⊆ Y := by
   exact shadowReachable_subset_of_closed hk (by simpa using hY.root_mem) hY
     (shadow_reachable C w)
@@ -406,7 +406,7 @@ private lemma degreeOn_sdiff_add_one_le_of_adjacent
 
 /-- If `Y ⊆ A` has no edge from `x`, deleting `Y` does not change the degree of `x`. -/
 lemma degreeOn_sdiff_eq_of_not_adjacent {A Y : Finset V} {x : V}
-    (hYA : Y ⊆ A) (hnot : ¬ AdjacentSets G {x} Y) :
+    (_hYA : Y ⊆ A) (hnot : ¬ AdjacentSets G {x} Y) :
     degreeOn G (A \ Y) x = degreeOn G A x := by
   apply Nat.le_antisymm
   · exact degreeOn_mono G sdiff_subset x
@@ -475,7 +475,6 @@ lemma ShadowStep.lowDefect_growth_le {C : ProtectedFamily G U k} {Y Z : Finset V
         push_cast
         have hlt : degreeOn G U x < k := by omega
         rw [Nat.cast_sub hlt.le]
-        push_cast
         ring_nf
         omega
       · simp only [hlow, if_false]

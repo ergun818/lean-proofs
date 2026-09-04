@@ -1,4 +1,5 @@
 import Mathlib.Algebra.Order.BigOperators.Group.Finset
+import Mathlib.Data.Fintype.EquivFin
 
 /-!
 # A finite greedy coloring lemma for Erdős Problem 814
@@ -14,7 +15,7 @@ namespace Erdos814
 
 section GreedyColoring
 
-variable {Item Scope : Type*} [Fintype Item] [Fintype Scope]
+variable {Item Scope : Type*} [Finite Item] [Fintype Scope]
   [DecidableEq Item]
 
 /--
@@ -38,6 +39,7 @@ theorem exists_scope_coloring
     ∃ color : Item → Fin q,
       (∀ s : Scope, Set.InjOn color (scope s : Set Item)) ∧
       (∀ s : Scope, ∀ x ∈ scope s, color x ∉ avoid s) := by
+  let := Fintype.ofFinite Item
   have hq : 0 < q := lt_of_le_of_lt (Nat.zero_le _) hpalette
   let ValidOn := fun (U : Finset Item) (color : Item → Fin q) ↦
     (∀ s : Scope, ∀ x ∈ scope s, x ∈ U → color x ∉ avoid s) ∧

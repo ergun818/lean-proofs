@@ -103,7 +103,7 @@ lemma incidentCount_singleton (G : SimpleGraph V) [DecidableRel G.Adj]
         singleton_subset_iff] using And.intro hv hwA
     · intro hret
       have hvret : v ∈ A \ {v} := (mem_edgeOn.mp hret).2 (by simp [f])
-      simpa using hvret
+      simp at hvret
   symm
   refine Finset.card_bij (fun w hw ↦ f w) ?_ ?_ ?_
   · intro w hw
@@ -125,7 +125,7 @@ lemma incidentCount_singleton (G : SimpleGraph V) [DecidableRel G.Adj]
       rcases he with ⟨⟨hxy, hxA, hyA⟩, hnot⟩
       have hvxy : x = v ∨ y = v := by
         by_contra h
-        push_neg at h
+        push Not at h
         exact hnot ⟨hxy, ⟨hxA, h.1⟩, hyA, h.2⟩
       rcases hvxy with rfl | rfl
       · refine ⟨y, mem_inter.mpr ⟨?_, hyA⟩, ?_⟩
@@ -211,8 +211,7 @@ private lemma sparse_edge_bound
             simpa [H'] using degreeOn_deleteEdge_add_one_right H A hxy hxA
           change k ≤ degreeOn H' A y
           omega
-        · change k ≤ degreeOn H' A v
-          rw [degreeOn_deleteEdge_eq_of_ne H A hvx hvy]
+        · rw [degreeOn_deleteEdge_eq_of_ne H A hvx hvy]
           exact hHmin.2 v hvA
     have hH'low : ∀ v ∈ A, degreeOn H' A v = k → degreeOn G A v = k := by
       intro v hvA hvdeg
@@ -238,7 +237,7 @@ private lemma sparse_edge_bound
       exact ⟨hH'leH.trans hHG, inferInstance, hH'min, hH'low⟩
     have hback : H ≤ H' := hminimal H' hH'candidate hH'leH
     have : H'.Adj x y := hback hxy
-    simpa [H'] using this
+    simp [H'] at this
   let L := A.filter fun v ↦ degreeOn H A v ≤ k + 1
   have hLA : L ⊆ A := filter_subset _ _
   have hremain : edgeCount H (A \ L) = 0 := by
@@ -303,7 +302,7 @@ private def ProtectedPair (H : SimpleGraph V) [DecidableRel H.Adj]
 private lemma protectedPair_empty
     (H : SimpleGraph V) [DecidableRel H.Adj]
     (A T : Finset V) (k : ℕ) : ProtectedPair H A T k ∅ ∅ := by
-  simp [ProtectedPair, HasMinDegreeOn, degreeOn]
+  simp [ProtectedPair, degreeOn]
 
 private lemma ProtectedPair.extend
     (H : SimpleGraph V) [DecidableRel H.Adj]
@@ -554,7 +553,7 @@ private lemma sparse_degreeKSupply
       omega
     · intro v hvA hwv heq
       have hvD : v ∈ D := by
-        simpa [D, mem_degreeEq, hvA, heq]
+        simp [D, mem_degreeEq, hvA, heq]
       have hwT₁ : w ∈ T₁ := by
         apply mem_biUnion.mpr
         refine ⟨v, hvD, mem_inter.mpr ⟨?_, hwA⟩⟩
