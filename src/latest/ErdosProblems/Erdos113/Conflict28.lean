@@ -126,7 +126,7 @@ abbrev LowHalfCycle {W : Type*} [Fintype W] [DecidableEq W]
   Σ z : W, Σ x₁ : W,
     FixedWalk A 13 z x₁ ×
       Σ x₂ : A.neighborSet x₁,
-        {q : FixedWalk A 14 x₂.1 z //
+        {_walk : FixedWalk A 14 x₂.1 z //
           (walkCount A 14 x₂.1 z : ℝ) <
             t * (walkCount A 13 z x₁ : ℝ)}
 
@@ -136,7 +136,7 @@ lemma card_LowHalfCycle_cast {W : Type*} [Fintype W] [DecidableEq W]
       ∑ z : W, ∑ x₁ : W,
         (walkCount A 13 z x₁ : ℝ) *
           ∑ x₂ : A.neighborSet x₁,
-            (Fintype.card {q : FixedWalk A 14 x₂.1 z //
+            (Fintype.card {_walk : FixedWalk A 14 x₂.1 z //
               (walkCount A 14 x₂.1 z : ℝ) <
                 t * (walkCount A 13 z x₁ : ℝ)} : ℝ) := by
   simp only [LowHalfCycle, Fintype.card_sigma, Fintype.card_prod,
@@ -146,7 +146,7 @@ lemma card_LowHalfCycle_cast {W : Type*} [Fintype W] [DecidableEq W]
 lemma card_lowFixedWalks_le {W : Type*} [Fintype W] [DecidableEq W]
     (A : SimpleGraph W) [DecidableRel A.Adj] (t : ℝ) (ht : 0 ≤ t)
     (z x₁ : W) (x₂ : A.neighborSet x₁) :
-    (Fintype.card {q : FixedWalk A 14 x₂.1 z //
+    (Fintype.card {_walk : FixedWalk A 14 x₂.1 z //
       (walkCount A 14 x₂.1 z : ℝ) <
         t * (walkCount A 13 z x₁ : ℝ)} : ℝ) ≤
       t * (walkCount A 13 z x₁ : ℝ) := by
@@ -205,7 +205,7 @@ lemma card_LowHalfCycle_le {W : Type*} [Fintype W] [DecidableEq W]
         _ = (A.degree x₁ : ℝ) *
               (t * (walkCount A 13 z x₁ : ℝ)) := by
           simp only [Finset.sum_const, Finset.card_univ, nsmul_eq_mul,
-            SimpleGraph.card_neighborSet_eq_degree, Nat.cast_mul]
+            SimpleGraph.card_neighborSet_eq_degree]
         _ ≤ D * (t * (walkCount A 13 z x₁ : ℝ)) := by
           exact mul_le_mul_of_nonneg_right (hdegree x₁)
             (mul_nonneg ht (by positivity))
@@ -226,7 +226,7 @@ abbrev HighBadHalfCycle {W : Type*} [Fintype W] [DecidableEq W]
     (R : W → W → Prop) [DecidableRel R] (t : ℝ) :=
   Σ z : W, Σ x₂ : W, Σ q : FixedWalk A 14 x₂ z,
     Σ x₁ : ↑(walkConflictingNeighbors14 A R q),
-      {p : FixedWalk A 13 z x₁.1 //
+      {_walk : FixedWalk A 13 z x₁.1 //
         t * (walkCount A 13 z x₁.1 : ℝ) ≤
           (walkCount A 14 x₂ z : ℝ)}
 
@@ -236,7 +236,7 @@ lemma card_HighBadHalfCycle_cast {W : Type*} [Fintype W] [DecidableEq W]
     (Fintype.card (HighBadHalfCycle A R t) : ℝ) =
       ∑ z : W, ∑ x₂ : W, ∑ q : FixedWalk A 14 x₂ z,
         ∑ x₁ : ↑(walkConflictingNeighbors14 A R q),
-          (Fintype.card {p : FixedWalk A 13 z x₁.1 //
+          (Fintype.card {_walk : FixedWalk A 13 z x₁.1 //
             t * (walkCount A 13 z x₁.1 : ℝ) ≤
               (walkCount A 14 x₂ z : ℝ)} : ℝ) := by
   simp only [HighBadHalfCycle, Fintype.card_sigma, Nat.cast_sum]
@@ -246,7 +246,7 @@ lemma card_highFixedWalks_le {W : Type*} [Fintype W] [DecidableEq W]
     (R : W → W → Prop) [DecidableRel R] (t : ℝ) (ht : 0 < t)
     (z x₂ : W) (q : FixedWalk A 14 x₂ z)
     (x₁ : ↑(walkConflictingNeighbors14 A R q)) :
-    (Fintype.card {p : FixedWalk A 13 z x₁.1 //
+    (Fintype.card {_walk : FixedWalk A 13 z x₁.1 //
       t * (walkCount A 13 z x₁.1 : ℝ) ≤
         (walkCount A 14 x₂ z : ℝ)} : ℝ) ≤
       t⁻¹ * (walkCount A 14 x₂ z : ℝ) := by
@@ -276,7 +276,7 @@ lemma card_highFixedWalks_le {W : Type*} [Fintype W] [DecidableEq W]
 lemma card_HighBadHalfCycle_le {W : Type*} [Fintype W] [DecidableEq W]
     (A : SimpleGraph W) [DecidableRel A.Adj]
     (R : W → W → Prop) [DecidableRel R] (t s : ℝ)
-    (ht : 0 < t) (hs : 0 ≤ s)
+    (ht : 0 < t) (_ : 0 ≤ s)
     (hsymm : ∀ x y, R x y → R y x)
     (hlocal : ∀ u y,
       (((A.neighborFinset y).filter (R u)).card : ℝ) ≤ s) :
@@ -310,7 +310,7 @@ lemma card_HighBadHalfCycle_le {W : Type*} [Fintype W] [DecidableEq W]
         _ = ((walkConflictingNeighbors14 A R q).card : ℝ) *
               (t⁻¹ * (walkCount A 14 x₂ z : ℝ)) := by
           simp only [Finset.sum_const, Finset.card_univ, Fintype.card_coe,
-            nsmul_eq_mul, Nat.cast_mul]
+            nsmul_eq_mul]
         _ ≤ (14 * s) *
               (t⁻¹ * (walkCount A 14 x₂ z : ℝ)) := by
           exact mul_le_mul_of_nonneg_right

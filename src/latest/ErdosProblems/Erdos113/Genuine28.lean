@@ -137,6 +137,7 @@ def relationPartitionDecode
   | Sum.inl x => x.1.1
   | Sum.inr x => x.1.1
 
+omit [DecidableEq V] [Fintype V] in
 @[simp] lemma relationPartitionDecode_partition
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (R : V → V → Prop) [DecidableRel R] (x : HomCycle28 G) :
@@ -145,10 +146,12 @@ def relationPartitionDecode
   unfold relationPartition
   split <;> rfl
 
+omit [DecidableEq V] [Fintype V] in
 lemma relationPartition_injective
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (R : V → V → Prop) [DecidableRel R] :
     Function.Injective (relationPartition G R) := by
+  classical
   intro x y hxy
   apply Subtype.ext
   have h := congrArg relationPartitionDecode hxy
@@ -395,7 +398,7 @@ lemma relationFreeCycles_half_of_almostRegular
     have hid : 28 * ((L * d) * (d / (112 * L * Q)) * H') =
         ((H' * d ^ 2) / Q) / 4 := by
       field_simp
-      <;> ring
+      ring
     rw [hid]
     exact div_le_div_of_nonneg_right hquot (by norm_num)
   have htinv : t⁻¹ ≤ (1568 : ℝ)⁻¹ :=

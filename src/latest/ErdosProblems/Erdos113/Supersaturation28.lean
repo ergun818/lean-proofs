@@ -12,6 +12,7 @@ open Erdos113Cycles Erdos113Regular Erdos113BipartiteGraph
 
 variable {W : Type*} [Fintype W] [DecidableEq W]
 
+omit [DecidableEq W] in
 /-- A polynomial-slack, fully finite substitute for the fixed-length
 Morris--Saxton supersaturation statement needed in the many-four-cycle
 case.  The powers of `degreeBinCount` are harmless logarithmic losses.
@@ -60,7 +61,7 @@ theorem genuineCycles28_lower_of_edgeDensity
     positivity
   have hcap : ∀ b, 0 < cap b := by
     intro b
-    cases b <;> simp [cap] <;> positivity
+    cases b <;> simp [cap]
   have hd : ∀ b, 0 < d b := by
     intro b
     dsimp [d]
@@ -125,11 +126,9 @@ theorem genuineCycles28_lower_of_edgeDensity
       cases b
       · simp only [Bool.false_eq_true, if_false] at hnat
         dsimp [L, cap]
-        push_cast
         exact_mod_cast (by simpa [mul_assoc] using hnat)
       · simp only [if_true] at hnat
         dsimp [L, cap]
-        push_cast
         exact_mod_cast (by simpa [mul_assoc] using hnat)
     dsimp [δ, d]
     apply (div_le_iff₀ (by positivity :
@@ -284,10 +283,8 @@ theorem genuineCycles28_lower_of_edgeDensity
       apply Subtype.ext
       apply Subtype.ext
       simpa [f, proj, hx, hy] using hp
-    · have : false = true := by simpa [f, side, hx, hy] using hs
-      contradiction
-    · have : true = false := by simpa [f, side, hx, hy] using hs
-      contradiction
+    · simp [f, side, hx, hy] at hs
+    · simp [f, side, hx, hy] at hs
     · congr 1
       apply Subtype.ext
       apply Subtype.ext

@@ -4,11 +4,12 @@ open scoped BigOperators
 
 namespace Erdos113Regular
 
-lemma exists_balanced_cell {I : Type*} [Fintype I] [DecidableEq I] [Nonempty I]
+lemma exists_balanced_cell {I : Type*} [Fintype I] [Nonempty I]
     (w : I → ℕ) (e : I → I → ℕ)
-    (hsymm : ∀ i j, e i j = e j i)
+    (_ : ∀ i j, e i j = e j i)
     (hrow : ∀ i, w i ≤ 2 * ∑ j, e i j) :
     ∃ i j, w i + w j ≤ 4 * Fintype.card I * e i j := by
+  classical
   by_contra! hnone
   have hsumw : ∑ i, w i ≤ 2 * ∑ i, ∑ j, e i j := by
     calc

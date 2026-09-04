@@ -33,6 +33,7 @@ noncomputable def genuineCycles (G : SimpleGraph V) (r : ℕ) [NeZero r] :
     Finset (Fin r → V) :=
   Finset.univ.filter (IsGenuineCycle G)
 
+omit [DecidableEq V] in
 @[simp] lemma mem_genuineCycles {G : SimpleGraph V} {r : ℕ} [NeZero r]
     {x : Fin r → V} :
     x ∈ genuineCycles G r ↔ IsGenuineCycle G x := by
@@ -43,6 +44,7 @@ noncomputable def genuineCycles (G : SimpleGraph V) (r : ℕ) [NeZero r] :
 def cycleEdge {r : ℕ} [NeZero r] (x : Fin r → V) (i : Fin r) : Sym2 V :=
   s(x i, x (i + 1))
 
+omit [DecidableEq V] in
 lemma cycleEdge_mem_edgeFinset {G : SimpleGraph V} [DecidableRel G.Adj]
     {r : ℕ} [NeZero r] {x : Fin r → V} (hx : IsHomCycle G x) (i : Fin r) :
     cycleEdge x i ∈ G.edgeFinset := by
@@ -57,17 +59,21 @@ noncomputable instance (D : Finset (Sym2 V)) : DecidableRel (graphOfEdges D).Adj
   classical
   infer_instance
 
+omit [DecidableEq V] [Fintype V] in
 lemma graphOfEdges_adj_iff {D : Finset (Sym2 V)} {u v : V} :
     (graphOfEdges D).Adj u v ↔ s(u, v) ∈ D ∧ u ≠ v := by
   simp [graphOfEdges, SimpleGraph.fromEdgeSet_adj]
 
+omit [DecidableEq V] in
 lemma graphOfEdges_le {G : SimpleGraph V} [DecidableRel G.Adj]
     {D : Finset (Sym2 V)} (hD : D ⊆ G.edgeFinset) :
     graphOfEdges D ≤ G := by
+  classical
   intro u v huv
   have hd : s(u, v) ∈ D := (graphOfEdges_adj_iff.mp huv).1
   exact (SimpleGraph.mem_edgeFinset.mp (hD hd))
 
+omit [DecidableEq V] in
 lemma edgeFinset_graphOfEdges {D : Finset (Sym2 V)}
     (hdiag : Disjoint (D : Set (Sym2 V)) Sym2.diagSet) :
     (graphOfEdges D).edgeFinset = D := by
@@ -77,6 +83,7 @@ lemma edgeFinset_graphOfEdges {D : Finset (Sym2 V)}
   rw [SimpleGraph.edgeSet_fromEdgeSet]
   exact sdiff_eq_left.mpr hdiag
 
+omit [DecidableEq V] in
 lemma disjoint_diag_of_subset_edgeFinset {G : SimpleGraph V} [DecidableRel G.Adj]
     {D : Finset (Sym2 V)} (hD : D ⊆ G.edgeFinset) :
     Disjoint (D : Set (Sym2 V)) Sym2.diagSet := by
@@ -87,15 +94,18 @@ lemma disjoint_diag_of_subset_edgeFinset {G : SimpleGraph V} [DecidableRel G.Adj
     simpa using this
   exact G.not_isDiag_of_mem_edgeSet heG hediag
 
+omit [DecidableEq V] in
 lemma edgeFinset_graphOfEdges_of_subset {G : SimpleGraph V} [DecidableRel G.Adj]
     {D : Finset (Sym2 V)} (hD : D ⊆ G.edgeFinset) :
     (graphOfEdges D).edgeFinset = D :=
   edgeFinset_graphOfEdges (disjoint_diag_of_subset_edgeFinset hD)
 
+omit [DecidableEq V] in
 lemma isHomCycle_graphOfEdges_iff {G : SimpleGraph V} [DecidableRel G.Adj]
     {D : Finset (Sym2 V)} (hD : D ⊆ G.edgeFinset) {r : ℕ} [NeZero r]
     {x : Fin r → V} :
     IsHomCycle (graphOfEdges D) x ↔ ∀ i, cycleEdge x i ∈ D := by
+  classical
   constructor
   · intro hx i
     exact (graphOfEdges_adj_iff.mp (hx i)).1
@@ -104,9 +114,11 @@ lemma isHomCycle_graphOfEdges_iff {G : SimpleGraph V} [DecidableRel G.Adj]
       SimpleGraph.mem_edgeFinset.mp (hD (hx i))
     exact graphOfEdges_adj_iff.mpr ⟨hx i, hiG.ne⟩
 
-lemma genuineCycles_mono {G H : SimpleGraph V} [DecidableRel G.Adj]
-    [DecidableRel H.Adj] (hGH : G ≤ H) (r : ℕ) [NeZero r] :
+omit [DecidableEq V] in
+lemma genuineCycles_mono {G H : SimpleGraph V}
+    (hGH : G ≤ H) (r : ℕ) [NeZero r] :
     genuineCycles G r ⊆ genuineCycles H r := by
+  classical
   intro x hx
   rw [mem_genuineCycles] at hx ⊢
   exact ⟨hx.1, fun i ↦ hGH (hx.2 i)⟩
@@ -130,9 +142,10 @@ lemma cyclesThroughEdge_subset (G : SimpleGraph V) (r : ℕ) [NeZero r]
   intro x hx
   exact (Finset.mem_filter.mp hx).1
 
-lemma cyclesThroughEdge_mono {G H : SimpleGraph V} [DecidableRel G.Adj]
-    [DecidableRel H.Adj] (hGH : G ≤ H) (r : ℕ) [NeZero r] (e : Sym2 V) :
+lemma cyclesThroughEdge_mono {G H : SimpleGraph V}
+    (hGH : G ≤ H) (r : ℕ) [NeZero r] (e : Sym2 V) :
     cyclesThroughEdge G r e ⊆ cyclesThroughEdge H r e := by
+  classical
   intro x hx
   rw [mem_cyclesThroughEdge] at hx ⊢
   exact ⟨⟨hx.1.1, fun i ↦ hGH (hx.1.2 i)⟩, hx.2⟩

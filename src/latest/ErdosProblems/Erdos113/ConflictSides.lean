@@ -12,7 +12,7 @@ abbrev LowHalfCycleSide {W : Type*} [Fintype W] [DecidableEq W]
   Σ z : W, Σ x₁ : {x : W // side x = b},
     FixedWalk A 783 z x₁.1 ×
       Σ x₂ : A.neighborSet x₁.1,
-        {q : FixedWalk A 784 x₂.1 z //
+        {_walk : FixedWalk A 784 x₂.1 z //
           (walkCount A 784 x₂.1 z : ℝ) <
             t * (walkCount A 783 z x₁.1 : ℝ)}
 
@@ -23,7 +23,7 @@ abbrev HighBadHalfCycleSide {W : Type*} [Fintype W] [DecidableEq W]
   Σ z : W, Σ x₂ : {x : W // side x = !b},
     Σ q : FixedWalk A 784 x₂.1 z,
       Σ x₁ : {x : ↑(walkConflictingNeighbors784 A R q) // side x.1 = b},
-        {p : FixedWalk A 783 z x₁.1.1 //
+        {_walk : FixedWalk A 783 z x₁.1.1 //
           t * (walkCount A 783 z x₁.1.1 : ℝ) ≤
             (walkCount A 784 x₂.1 z : ℝ)}
 
@@ -34,7 +34,7 @@ lemma card_LowHalfCycleSide_cast {W : Type*} [Fintype W] [DecidableEq W]
       ∑ z : W, ∑ x₁ : {x : W // side x = b},
         (walkCount A 783 z x₁.1 : ℝ) *
           ∑ x₂ : A.neighborSet x₁.1,
-            (Fintype.card {q : FixedWalk A 784 x₂.1 z //
+            (Fintype.card {_walk : FixedWalk A 784 x₂.1 z //
               (walkCount A 784 x₂.1 z : ℝ) <
                 t * (walkCount A 783 z x₁.1 : ℝ)} : ℝ) := by
   simp only [LowHalfCycleSide, Fintype.card_sigma, Fintype.card_prod,
@@ -76,7 +76,7 @@ lemma card_LowHalfCycleSide_le {W : Type*} [Fintype W] [DecidableEq W]
         _ = (A.degree x₁.1 : ℝ) *
               (t * (walkCount A 783 z x₁.1 : ℝ)) := by
           simp only [Finset.sum_const, Finset.card_univ, nsmul_eq_mul,
-            SimpleGraph.card_neighborSet_eq_degree, Nat.cast_mul]
+            SimpleGraph.card_neighborSet_eq_degree]
         _ ≤ D * (t * (walkCount A 783 z x₁.1 : ℝ)) := by
           exact mul_le_mul_of_nonneg_right (hdegree x₁.1 x₁.2)
             (mul_nonneg ht (by positivity))
@@ -152,7 +152,7 @@ lemma card_HighBadHalfCycleSide_cast {W : Type*} [Fintype W] [DecidableEq W]
       ∑ z : W, ∑ x₂ : {x : W // side x = !b},
         ∑ q : FixedWalk A 784 x₂.1 z,
           ∑ x₁ : {x : ↑(walkConflictingNeighbors784 A R q) // side x.1 = b},
-            (Fintype.card {p : FixedWalk A 783 z x₁.1.1 //
+            (Fintype.card {_walk : FixedWalk A 783 z x₁.1.1 //
               t * (walkCount A 783 z x₁.1.1 : ℝ) ≤
                 (walkCount A 784 x₂.1 z : ℝ)} : ℝ) := by
   simp only [HighBadHalfCycleSide, Fintype.card_sigma, Nat.cast_sum]
@@ -197,8 +197,7 @@ lemma card_HighBadHalfCycleSide_le {W : Type*} [Fintype W] [DecidableEq W]
         _ = (Fintype.card {x : ↑(walkConflictingNeighbors784 A R q) //
               side x.1 = b} : ℝ) *
               (t⁻¹ * (walkCount A 784 x₂.1 z : ℝ)) := by
-          simp only [Finset.sum_const, Finset.card_univ, nsmul_eq_mul,
-            Nat.cast_mul]
+          simp only [Finset.sum_const, Finset.card_univ, nsmul_eq_mul]
         _ ≤ ((walkConflictingNeighbors784 A R q).card : ℝ) *
               (t⁻¹ * (walkCount A 784 x₂.1 z : ℝ)) := by
           apply mul_le_mul_of_nonneg_right _ (mul_nonneg (inv_nonneg.mpr ht.le) (by positivity))

@@ -14,15 +14,15 @@ open Erdos113Pruning Erdos113Cycles
 /-- A maximum-weight `b`-subset.  Every point outside it has weight at most
 every point inside it, and hence `b` times its weight is bounded by the total
 weight of the subset. -/
-theorem exists_top_subset {V : Type*} [Fintype V] [DecidableEq V]
+theorem exists_top_subset {V : Type*} [Fintype V]
     (w : V → ℕ) (b : ℕ) (hb : b ≤ Fintype.card V) :
     ∃ B : Finset V, B.card = b ∧
       ∀ x ∉ B, b * w x ≤ ∑ y ∈ B, w y := by
   classical
   let candidates := (Finset.univ : Finset V).powersetCard b
   have hcand : candidates.Nonempty := by
-    obtain ⟨B, hBsub, hBcard⟩ := Finset.exists_subset_card_eq hb
-    exact ⟨B, by simpa [candidates, hBcard] using hBsub⟩
+    obtain ⟨B, _, hBcard⟩ := Finset.exists_subset_card_eq hb
+    exact ⟨B, by simp [candidates, hBcard]⟩
   obtain ⟨B, hBcand, hBmax⟩ :=
     Finset.exists_max_image candidates (fun A ↦ ∑ y ∈ A, w y) hcand
   have hBcard : B.card = b := (Finset.mem_powersetCard.mp hBcand).2
@@ -147,7 +147,7 @@ oriented edges of the induced graph on `B ∪ C`. -/
 lemma card_dartsToPart_le_twice_induced_edges
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (B : Finset V) (P : Finpartition (Finset.univ : Finset V))
-    {C : Finset V} (hCP : C ∈ P.parts) :
+    {C : Finset V} (_ : C ∈ P.parts) :
     (dartsToPart G B P C).card ≤
       2 * (G.induce (↑(B ∪ C) : Set V)).edgeFinset.card := by
   classical
@@ -269,25 +269,28 @@ lemma selectedDegree_eq_graph_degree
     edgeFinset_graphOfEdges_of_subset hE]
   rfl
 
+omit [Fintype V] in
 lemma selectedDegree_insert_of_mem
     {E : Finset (Sym2 V)} {e : Sym2 V} (he : e ∉ E)
     {v : V} (hv : v ∈ e) :
     selectedDegree (insert e E) v = selectedDegree E v + 1 := by
   simp [selectedDegree, Finset.filter_insert, hv, he]
 
+omit [Fintype V] in
 lemma selectedDegree_insert_of_not_mem
-    {E : Finset (Sym2 V)} {e : Sym2 V} (he : e ∉ E)
+    {E : Finset (Sym2 V)} {e : Sym2 V} (_ : e ∉ E)
     {v : V} (hv : v ∉ e) :
     selectedDegree (insert e E) v = selectedDegree E v := by
-  simp [selectedDegree, Finset.filter_insert, hv, he]
+  simp [selectedDegree, Finset.filter_insert, hv]
 
 /-- Edge sets whose degrees are everywhere at most `D`. -/
 def DegreeCapped (D : ℕ) (E : Finset (Sym2 V)) : Prop :=
   ∀ v, selectedDegree E v ≤ D
 
+omit [Fintype V] in
 lemma degreeCapped_empty (D : ℕ) : DegreeCapped (V := V) D ∅ := by
   intro v
-  simp [DegreeCapped, selectedDegree]
+  simp [selectedDegree]
 
 /-- A maximum-cardinality degree-capped edge set is inclusion-maximal: every
 omitted edge has a saturated endpoint. -/
@@ -309,7 +312,7 @@ theorem exists_maximal_degreeCapped
   refine ⟨E, hEsub, hEcap, ?_⟩
   intro e heG heE
   by_contra hsat
-  push_neg at hsat
+  push Not at hsat
   have hinsertCap : DegreeCapped D (insert e E) := by
     intro v
     by_cases hv : v ∈ e
@@ -340,7 +343,7 @@ def saturatedVertices (D : ℕ) (E : Finset (Sym2 V)) : Finset V :=
 lemma edgeFinset_subset_selected_union_incidentSaturated
     (G : SimpleGraph V) [DecidableRel G.Adj]
     {D : ℕ} {E : Finset (Sym2 V)}
-    (hEsub : E ⊆ G.edgeFinset)
+    (_ : E ⊆ G.edgeFinset)
     (hmax : ∀ e ∈ G.edgeFinset, e ∉ E →
       ∃ v ∈ e, D ≤ selectedDegree E v) :
     G.edgeFinset ⊆ E ∪ incidentEdges G (saturatedVertices D E) := by
@@ -397,6 +400,7 @@ lemma card_edgeFinset_le_selected_add_saturated_degrees
       gcongr
       exact card_incidentEdges_le_sum_degrees G _
 
+omit [DecidableEq V] in
 lemma degree_mul_card_le_of_almost_regular
     (G : SimpleGraph V) [DecidableRel G.Adj] {K : ℕ}
     (hreg : ∀ x y, G.degree x ≤ K * G.degree y) (x : V) :
@@ -412,11 +416,13 @@ lemma degree_mul_card_le_of_almost_regular
       rw [G.sum_degrees_eq_twice_card_edges]
     _ = 2 * K * G.edgeFinset.card := by ring
 
+omit [DecidableEq V] in
 lemma card_mul_sum_degrees_le_of_almost_regular
     (G : SimpleGraph V) [DecidableRel G.Adj] {K : ℕ}
     (hreg : ∀ x y, G.degree x ≤ K * G.degree y) (S : Finset V) :
     Fintype.card V * (∑ v ∈ S, G.degree v) ≤
       S.card * (2 * K * G.edgeFinset.card) := by
+  classical
   calc
     Fintype.card V * (∑ v ∈ S, G.degree v) =
         ∑ v ∈ S, Fintype.card V * G.degree v := by
@@ -427,6 +433,7 @@ lemma card_mul_sum_degrees_le_of_almost_regular
       exact degree_mul_card_le_of_almost_regular G hreg v
     _ = S.card * (2 * K * G.edgeFinset.card) := by simp
 
+omit [DecidableEq V] in
 /-- Deterministic bounded-degree sparsification.  The constants are chosen so
 that the maximal capped set cannot have fewer than `t` edges: otherwise its
 saturated vertices cover the omitted edges, but their total incidence is too
@@ -1099,6 +1106,7 @@ theorem regularCore_of_top_sparse
           gcongr
         _ ≤ (4 * E.card) ^ 21 * n ^ 22 := by gcongr }⟩
 
+omit [DecidableEq V] in
 /-- The dense alternative of the top-block dichotomy.  It finds a much
 smaller induced graph, loses at most `edgeLossFactor` in edge count, and
 preserves the `31/21` density inequality. -/

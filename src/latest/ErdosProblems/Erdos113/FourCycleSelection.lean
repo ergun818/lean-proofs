@@ -24,12 +24,14 @@ lemma fin4_add_one_add_one (i : Fin 4) : i + 1 + 1 = i + 2 := by
 lemma fin4_sub_one_add_one (i : Fin 4) : i - 1 + 1 = i := by
   decide +revert
 
+omit [DecidableEq V] [Fintype V] in
 lemma rotateFour_injective : Function.Injective (rotateFour : (Fin 4 → V) → Fin 4 → V) := by
   intro x y hxy
   funext i
   have h := congrFun hxy (i - 1)
   simpa [rotateFour, fin4_sub_one_add_one] using h
 
+omit [DecidableEq V] [Fintype V] in
 lemma rotateFour_genuine {G : SimpleGraph V} {x : Fin 4 → V}
     (hx : IsGenuineCycle G x) : IsGenuineCycle G (rotateFour x) := by
   constructor
@@ -37,9 +39,13 @@ lemma rotateFour_genuine {G : SimpleGraph V} {x : Fin 4 → V}
   · intro i
     simpa [rotateFour, fin4_add_one_add_one] using hx.2 (i + 1)
 
+omit [DecidableEq V] [Fintype V] in
 @[simp] lemma rotateFour_zero (x : Fin 4 → V) : rotateFour x 0 = x 1 := rfl
+omit [DecidableEq V] [Fintype V] in
 @[simp] lemma rotateFour_one (x : Fin 4 → V) : rotateFour x 1 = x 2 := rfl
+omit [DecidableEq V] [Fintype V] in
 @[simp] lemma rotateFour_two (x : Fin 4 → V) : rotateFour x 2 = x 3 := rfl
+omit [DecidableEq V] [Fintype V] in
 @[simp] lemma rotateFour_three (x : Fin 4 → V) : rotateFour x 3 = x 0 := rfl
 
 /-- Ordered four-cycles for which the diagonal through coordinates `0,2`
@@ -95,7 +101,7 @@ theorem genuineCycles_four_card_le_twice_oriented
   simpa only [Fintype.card_sum, two_mul] using hcard
 
 lemma exists_fiber_with_card_bound
-    {A B : Type*} [DecidableEq A] [DecidableEq B]
+    {A B : Type*} [DecidableEq B]
     (S : Finset A) (T : Finset B) (hT : T.Nonempty) (f : A → B)
     (hf : ∀ x ∈ S, f x ∈ T) :
     ∃ y ∈ T, S.card ≤ T.card * (S.filter fun x ↦ f x = y).card := by
@@ -206,6 +212,7 @@ lemma codegree_comm (G : SimpleGraph V) [DecidableRel G.Adj] (u w : V) :
 def sideVertices (side : V → Bool) (b : Bool) : Finset V :=
   Finset.univ.filter fun v ↦ side v = b
 
+omit [DecidableEq V] in
 @[simp] lemma mem_sideVertices {side : V → Bool} {b : Bool} {v : V} :
     v ∈ sideVertices side b ↔ side v = b := by
   simp [sideVertices]
@@ -214,6 +221,7 @@ def activeSideVertices (G : SimpleGraph V) [DecidableRel G.Adj]
     (side : V → Bool) (b : Bool) : Finset V :=
   Finset.univ.filter fun v ↦ side v = b ∧ 0 < G.degree v
 
+omit [DecidableEq V] in
 @[simp] lemma mem_activeSideVertices
     {G : SimpleGraph V} [DecidableRel G.Adj]
     {side : V → Bool} {b : Bool} {v : V} :
@@ -380,6 +388,7 @@ def cycleTriple (x : Fin 4 → V) : Triple V :=
 def swapTriple (p : Triple V) : Triple V :=
   ⟨p.right, p.middle, p.left⟩
 
+omit [DecidableEq V] [Fintype V] in
 @[simp] lemma swapTriple_swapTriple (p : Triple V) :
     swapTriple (swapTriple p) = p := by cases p; rfl
 
@@ -724,11 +733,12 @@ lemma secondDyadicPairs_ne (S : FirstSelection G side)
   simpa [← hpab] using hval
 
 lemma card_le_image_card_mul_of_fiber_le
-    {A B : Type*} [DecidableEq A] [DecidableEq B]
+    {A B : Type*} [DecidableEq B]
     (T : Finset A) (f : A → B) (M : ℕ)
     (hfiber : ∀ b ∈ T.image f,
       (T.filter fun a ↦ f a = b).card ≤ M) :
     T.card ≤ (T.image f).card * M := by
+  classical
   rw [Finset.card_eq_sum_card_fiberwise
     (s := T) (t := T.image f) (fun a ha ↦ Finset.mem_image.mpr ⟨a, ha, rfl⟩)]
   calc
@@ -853,7 +863,7 @@ theorem exists_secondSelection (S : FirstSelection G side) :
       rw [Finset.nonempty_iff_ne_empty]
       intro hempty
       rw [hempty] at hj
-      simp at hj
+      simp only [Finset.card_empty, mul_zero, Nat.le_zero, Finset.card_eq_zero] at hj
       exact S.triples_nonempty.ne_empty hj
     many := hj.trans (by
       calc

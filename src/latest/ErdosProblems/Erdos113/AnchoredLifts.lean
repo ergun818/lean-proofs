@@ -15,6 +15,7 @@ def anchorNeighbors {F : SimpleGraph T} {G : SimpleGraph V}
     [DecidableRel G.Adj] (L : LiftSystem F G) (v y : V) : Finset T :=
   Finset.univ.filter fun t ↦ G.Adj v (L.embed t) ∧ G.Adj (L.embed t) y
 
+omit [DecidableEq T] [DecidableEq V] [Fintype V] in
 @[simp] lemma mem_anchorNeighbors {F : SimpleGraph T} {G : SimpleGraph V}
     [DecidableRel G.Adj] (L : LiftSystem F G) {v y : V} {t : T} :
     t ∈ anchorNeighbors L v y ↔
@@ -34,16 +35,19 @@ structure AnchoredLiftSystem (F : SimpleGraph T) (G : SimpleGraph V)
     (anchorNeighbors toLiftSystem anchor y).card ≤ rightCap
   left_cap : ∀ t, (leftPartners toLiftSystem t).card ≤ leftCap
 
+omit [DecidableEq T] [DecidableEq V] in
 lemma bridgeAnchors_subset_anchorNeighbors
     {F : SimpleGraph T} {G : SimpleGraph V} [DecidableRel G.Adj]
     (A : AnchoredLiftSystem F G) (u w : V) :
     bridgeAnchors A.toLiftSystem u w ⊆
       anchorNeighbors A.toLiftSystem A.anchor u := by
+  classical
   intro t ht
   have htdata := (mem_bridgeAnchors A.toLiftSystem).mp ht
   rw [mem_anchorNeighbors]
   exact ⟨A.anchor_adj t, htdata.1.symm⟩
 
+omit [DecidableEq T] [DecidableEq V] in
 theorem bridgeAnchors_card_le
     {F : SimpleGraph T} {G : SimpleGraph V} [DecidableRel G.Adj]
     (A : AnchoredLiftSystem F G) (u w : V)
@@ -52,17 +56,20 @@ theorem bridgeAnchors_card_le
   (Finset.card_le_card (bridgeAnchors_subset_anchorNeighbors A u w)).trans
     (A.anchor_cap u hu)
 
+omit [DecidableEq T] [DecidableEq V] in
 lemma linked_mem_anchorNeighbors
     {F : SimpleGraph T} {G : SimpleGraph V} [DecidableRel G.Adj]
     (A : AnchoredLiftSystem F G) {t : T} {y : V}
     (h : Linked A.toLiftSystem t y) :
     t ∈ anchorNeighbors A.toLiftSystem A.anchor y := by
+  classical
   rw [mem_anchorNeighbors]
   refine ⟨A.anchor_adj t, ?_⟩
   rcases h with ⟨b, hy⟩ | ⟨a, hy⟩
   · exact A.toLiftSystem.adj_left hy
   · exact (A.toLiftSystem.adj_right hy).symm
 
+omit [DecidableEq T] [DecidableEq V] in
 lemma isMiddleVertex_of_linked
     {F : SimpleGraph T} {G : SimpleGraph V} [DecidableRel G.Adj]
     (A : AnchoredLiftSystem F G) {t : T} {y : V}
@@ -72,10 +79,12 @@ lemma isMiddleVertex_of_linked
   · exact ⟨t, b, hy⟩
   · exact ⟨a, t, hy⟩
 
+omit [DecidableEq T] [DecidableEq V] in
 theorem rightPartners_card_le
     {F : SimpleGraph T} {G : SimpleGraph V} [DecidableRel G.Adj]
     (A : AnchoredLiftSystem F G) (y : V) :
     (rightPartners A.toLiftSystem y).card ≤ A.rightCap := by
+  classical
   by_cases hy : (rightPartners A.toLiftSystem y).Nonempty
   · obtain ⟨t₀, ht₀⟩ := hy
     have hmiddle := isMiddleVertex_of_linked A

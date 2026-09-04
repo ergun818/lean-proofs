@@ -49,6 +49,6 @@ lemma closedWalkCount_interpolation_28 {W : Type*} [Fintype W]
     closedWalkCount_cast_eq_sum_eigenvalues_pow]
   simp only [one_mul, Real.one_rpow, Finset.sum_const, Finset.card_univ,
     nsmul_eq_mul, mul_one] at hh
-  convert hh using 1 <;> norm_num
+  convert hh using 1; norm_num
 
 end Erdos113Moments56

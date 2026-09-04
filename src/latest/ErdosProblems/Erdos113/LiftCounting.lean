@@ -13,6 +13,7 @@ abbrev Index := Fin 28
 def allChoices (S : Index → Finset V) : Finset (Index → V) :=
   Fintype.piFinset S
 
+omit [DecidableEq V] [Fintype V] in
 @[simp] lemma mem_allChoices {S : Index → Finset V} {y : Index → V} :
     y ∈ allChoices S ↔ ∀ i, y i ∈ S i := by
   simp [allChoices]
@@ -39,11 +40,13 @@ def validChoices (S : Index → Finset V) (X : Finset V) :
     Finset (Index → V) :=
   allChoices S \ (duplicateBad S ∪ forbiddenBad S X)
 
+omit [Fintype V] in
 @[simp] lemma mem_duplicateEvent {S : Index → Finset V} {p q : Index}
     {y : Index → V} :
     y ∈ duplicateEvent S p q ↔ (∀ i, y i ∈ S i) ∧ y p = y q := by
   simp [duplicateEvent]
 
+omit [Fintype V] in
 @[simp] lemma mem_forbiddenEvent {S : Index → Finset V} {X : Finset V}
     {p : Index} {y : Index → V} :
     y ∈ forbiddenEvent S X p ↔ (∀ i, y i ∈ S i) ∧ y p ∈ X := by
@@ -61,6 +64,7 @@ lemma card_indexPairs_le : indexPairs.card ≤ 28 ^ 2 := by
 private def restrictAway (p : Index) (y : Index → V) : Fin 27 → V :=
   fun i ↦ y (p.succAbove i)
 
+omit [Fintype V] in
 lemma duplicateEvent_card_le (S : Index → Finset V) (s : ℕ)
     (hupper : ∀ i, (S i).card ≤ 2 * s) (p q : Index) (hpq : p ≠ q) :
     (duplicateEvent S p q).card ≤ (2 * s) ^ 27 := by
@@ -100,6 +104,7 @@ lemma duplicateEvent_card_le (S : Index → Finset V) (s : ℕ)
           exact Finset.prod_le_prod (fun _ _ ↦ Nat.zero_le _) fun i _ ↦ hupper _
         _ = (2 * s) ^ 27 := by simp
 
+omit [Fintype V] in
 lemma forbiddenEvent_card_le (S : Index → Finset V) (X : Finset V) (s : ℕ)
     (hupper : ∀ i, (S i).card ≤ 2 * s) (p : Index) :
     (forbiddenEvent S X p).card ≤ X.card * (2 * s) ^ 27 := by
@@ -138,6 +143,7 @@ lemma forbiddenEvent_card_le (S : Index → Finset V) (X : Finset V) (s : ℕ)
           exact Finset.prod_le_prod (fun _ _ ↦ Nat.zero_le _) fun i _ ↦ hupper _
         _ = (2 * s) ^ 27 := by simp
 
+omit [Fintype V] in
 lemma duplicateBad_card_le (S : Index → Finset V) (s : ℕ)
     (hupper : ∀ i, (S i).card ≤ 2 * s) :
     (duplicateBad S).card ≤ 28 ^ 2 * (2 * s) ^ 27 := by
@@ -154,6 +160,7 @@ lemma duplicateBad_card_le (S : Index → Finset V) (s : ℕ)
       gcongr
       exact card_indexPairs_le
 
+omit [Fintype V] in
 lemma forbiddenBad_card_le (S : Index → Finset V) (X : Finset V) (s : ℕ)
     (hupper : ∀ i, (S i).card ≤ 2 * s) (hX : X.card ≤ 28) :
     (forbiddenBad S X).card ≤ 28 ^ 2 * (2 * s) ^ 27 := by
@@ -168,6 +175,7 @@ lemma forbiddenBad_card_le (S : Index → Finset V) (X : Finset V) (s : ℕ)
       exact (forbiddenEvent_card_le S X s hupper p).trans (by gcongr)
     _ = 28 ^ 2 * (2 * s) ^ 27 := by simp [pow_two]; ring
 
+omit [Fintype V] in
 lemma bad_card_le (S : Index → Finset V) (X : Finset V) (s : ℕ)
     (hupper : ∀ i, (S i).card ≤ 2 * s) (hX : X.card ≤ 28) :
     (duplicateBad S ∪ forbiddenBad S X).card ≤
@@ -181,6 +189,7 @@ lemma bad_card_le (S : Index → Finset V) (X : Finset V) (s : ℕ)
         (forbiddenBad_card_le S X s hupper hX)
     _ = 1568 * (2 * s) ^ 27 := by ring
 
+omit [DecidableEq V] [Fintype V] in
 lemma allChoices_card_lower (S : Index → Finset V) (s : ℕ)
     (hlower : ∀ i, s ≤ (S i).card) :
     s ^ 28 ≤ (allChoices S).card := by
@@ -191,6 +200,7 @@ lemma allChoices_card_lower (S : Index → Finset V) (s : ℕ)
     _ ≤ ∏ i : Index, (S i).card := by
       exact Finset.prod_le_prod (fun _ _ ↦ Nat.zero_le _) fun i _ ↦ hlower i
 
+omit [Fintype V] in
 lemma validChoices_half_lower (S : Index → Finset V) (X : Finset V) (s : ℕ)
     (hlower : ∀ i, s ≤ (S i).card)
     (hupper : ∀ i, (S i).card ≤ 2 * s)
@@ -211,6 +221,7 @@ lemma validChoices_half_lower (S : Index → Finset V) (X : Finset V) (s : ℕ)
       _ = s ^ 28 := by ring
   omega
 
+omit [Fintype V] in
 lemma mem_validChoices {S : Index → Finset V} {X : Finset V}
     {y : Index → V} :
     y ∈ validChoices S X ↔
@@ -237,7 +248,7 @@ lemma mem_validChoices {S : Index → Finset V} {X : Finset V}
     rw [validChoices, Finset.mem_sdiff]
     refine ⟨mem_allChoices.mpr hall, ?_⟩
     rw [Finset.mem_union]
-    push_neg
+    push Not
     constructor
     · intro hdup
       rw [duplicateBad, Finset.mem_biUnion] at hdup

@@ -17,8 +17,10 @@ noncomputable def orderedFourCyclesThroughEdge
     (D : Finset (Sym2 V)) (e : Sym2 V) : Finset (Fin 4 → V) :=
   cyclesThroughEdge (graphOfEdges D) 4 e
 
+omit [DecidableEq V] in
 @[simp] lemma mem_orderedFourCycles {D : Finset (Sym2 V)} {x : Fin 4 → V} :
     x ∈ orderedFourCycles D ↔ IsGenuineCycle (graphOfEdges D) x := by
+  classical
   simp [orderedFourCycles]
 
 @[simp] lemma mem_orderedFourCyclesThroughEdge
@@ -36,7 +38,7 @@ lemma orderedFourCyclesThroughEdge_subset
 
 lemma orderedFourCycles_erase_edge
     {G : SimpleGraph V} [DecidableRel G.Adj]
-    {D : Finset (Sym2 V)} (hD : D ⊆ G.edgeFinset) {e : Sym2 V} (he : e ∈ D) :
+    {D : Finset (Sym2 V)} (hD : D ⊆ G.edgeFinset) {e : Sym2 V} (_ : e ∈ D) :
     orderedFourCycles (D.erase e) =
       orderedFourCycles D \ orderedFourCyclesThroughEdge D e := by
   classical
@@ -67,6 +69,7 @@ lemma card_orderedFourCycles_erase_add_through
   exact Finset.card_sdiff_add_card_eq_card
     (orderedFourCyclesThroughEdge_subset D e)
 
+omit [DecidableEq V] in
 lemma card_orderedFourCycles_le (D : Finset (Sym2 V)) :
     (orderedFourCycles D).card ≤ (Fintype.card V) ^ 4 := by
   calc
@@ -74,6 +77,7 @@ lemma card_orderedFourCycles_le (D : Finset (Sym2 V)) :
       simpa using Finset.card_le_card (Finset.subset_univ (s := orderedFourCycles D))
     _ = (Fintype.card V) ^ 4 := by simp
 
+omit [DecidableEq V] [Fintype V] in
 lemma cycleEdge_injective_four {x : Fin 4 → V}
     (hx : Function.Injective x) :
     Function.Injective (cycleEdge x) := by
@@ -91,11 +95,13 @@ lemma cycleEdge_injective_four {x : Fin 4 → V}
   have h32 : x 3 ≠ x 2 := h23.symm
   intro i j hij
   fin_cases i <;> fin_cases j <;>
-    simp_all [cycleEdge, Sym2.eq_iff]
+    simp_all [cycleEdge]
 
+omit [DecidableEq V] in
 lemma four_le_card_of_mem_orderedFourCycles
     {D : Finset (Sym2 V)} {x : Fin 4 → V}
     (hx : x ∈ orderedFourCycles D) : 4 ≤ D.card := by
+  classical
   have hgen := mem_orderedFourCycles.mp hx
   let f : Fin 4 → ↑D := fun i ↦
     ⟨cycleEdge x i, by
@@ -107,9 +113,11 @@ lemma four_le_card_of_mem_orderedFourCycles
   simpa only [Fintype.card_fin, Fintype.card_coe] using
     Fintype.card_le_of_injective f hf
 
+omit [DecidableEq V] in
 lemma orderedFourCycles_eq_empty_of_card_lt_four
     {D : Finset (Sym2 V)} (hD : D.card < 4) :
     orderedFourCycles D = ∅ := by
+  classical
   apply Finset.eq_empty_iff_forall_notMem.mpr
   intro x hx
   exact (not_le_of_gt hD) (four_le_card_of_mem_orderedFourCycles hx)
@@ -133,7 +141,7 @@ theorem exists_pruned_subset
       by_cases hgood :
           ∀ e ∈ E, (orderedFourCyclesThroughEdge E e).card < K
       · exact ⟨E, Finset.Subset.rfl, by simp, hgood⟩
-      · push_neg at hgood
+      · push Not at hgood
         obtain ⟨e, he, hload⟩ := hgood
         have hproper : E.erase e ⊂ E := Finset.erase_ssubset he
         have hEraseG : E.erase e ⊆ G.edgeFinset :=
@@ -158,7 +166,7 @@ theorem exists_pruned_subset
 the deletion process keeps strictly more than half of the edges. -/
 theorem exists_pruned_subset_more_than_half
     (G : SimpleGraph V) [DecidableRel G.Adj]
-    (E : Finset (Sym2 V)) (hE : E ⊆ G.edgeFinset) (K : ℕ) (hK : 0 < K)
+    (E : Finset (Sym2 V)) (hE : E ⊆ G.edgeFinset) (K : ℕ) (_ : 0 < K)
     (hsmall : 2 * (orderedFourCycles E).card < E.card * K) :
     ∃ D : Finset (Sym2 V),
       D ⊆ E ∧ E.card < 2 * D.card ∧

@@ -18,6 +18,7 @@ abbrev NeighborVertex (G : SimpleGraph V) [DecidableRel G.Adj] (v : V) :=
 def neighborEmbed {G : SimpleGraph V} [DecidableRel G.Adj] {v : V} :
     NeighborVertex G v → V := fun x ↦ x.1
 
+omit [DecidableEq V] in
 lemma neighborEmbed_injective {G : SimpleGraph V} [DecidableRel G.Adj] {v : V} :
     Function.Injective (neighborEmbed (G := G) (v := v)) :=
   Subtype.val_injective

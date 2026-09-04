@@ -40,12 +40,13 @@ theorem exists_pruned_subfamily_weighted {a : Type*} [DecidableEq a]
         · intro F hF hnonempty
           exact le_of_not_gt (fun hlt ↦ hsmall ⟨F, hF, hnonempty, hlt⟩)
 
-theorem exists_pruned_indexed {a K : Type*} [DecidableEq a] [DecidableEq K]
+theorem exists_pruned_indexed {a K : Type*} [DecidableEq a]
     (C : Finset a) (S : Finset K) (fiber : K → Finset a) (t : K → ℕ) :
     ∃ D : Finset a,
       D ⊆ C ∧
       C.card ≤ D.card + ∑ k ∈ S, (t k - 1) ∧
       ∀ k ∈ S, (D ∩ fiber k).Nonempty → t k ≤ (D ∩ fiber k).card := by
+  classical
   induction hn : S.card using Nat.strong_induction_on generalizing C S with
   | h n ih =>
       by_cases hsmall : ∃ k ∈ S,

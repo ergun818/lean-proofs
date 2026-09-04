@@ -13,7 +13,7 @@ open Erdos113AlmostRegular
 larger power.  This is the elementary absorption principle used for every
 constant in the final host calculation. -/
 theorem eventually_const_mul_rpow_le_rpow
-    {a b C : ℝ} (hab : a < b) (hC : 0 ≤ C) :
+    {a b C : ℝ} (hab : a < b) (_ : 0 ≤ C) :
     ∀ᶠ n : ℕ in atTop, C * (n : ℝ) ^ a ≤ (n : ℝ) ^ b := by
   have hdelta : 0 < b - a := sub_pos.mpr hab
   have ht : Tendsto (fun n : ℕ ↦ (n : ℝ) ^ (b - a)) atTop atTop :=
@@ -174,7 +174,7 @@ local four-cycle cap, and one final monomial inequality. -/
 theorem many_branch_numeric_of_master
     (m L N a b f q d Q : ℕ) (β : ℝ)
     (hL : 0 < L) (hN : 0 < N) (ha : 2 ≤ a)
-    (hq : 0 < q) (hd : 0 < d) (hβ : 0 ≤ β)
+    (hq : 0 < q) (hd : 0 < d) (_ : 0 ≤ β)
     (hb : b < 2 * a)
     (hQ : Q * d ≤ 128 * L * q)
     (hselection : q ≤ 32 * m * L ^ 2 * b * f)
@@ -303,9 +303,9 @@ bad-walk contribution is budgeted by `W / 896`; there are two color classes
 and the outer factor is `56`. -/
 theorem few_branch_numerics
     (n s e : ℕ) (W d β Q : ℝ) (D t₀ t₂ : Bool → ℝ)
-    (hs : 0 < s) (hd : 0 < d) (hβ : 0 ≤ β)
-    (hD : ∀ b, 0 ≤ D b) (ht₀ : ∀ b, 0 < t₀ b)
-    (ht₂ : ∀ b, 0 < t₂ b) (hQ : 0 ≤ Q)
+    (_ : 0 < s) (hd : 0 < d) (hβ : 0 ≤ β)
+    (_ : ∀ b, 0 ≤ D b) (_ : ∀ b, 0 < t₀ b)
+    (_ : ∀ b, 0 < t₂ b) (_ : 0 ≤ Q)
     (hW : d ^ (56 : ℕ) ≤ W)
     (hinterp₀ : ∀ b,
       896 * D b * t₀ b * (n : ℝ) ^ ((1 : ℝ) / 28) ≤ d ^ (2 : ℕ))

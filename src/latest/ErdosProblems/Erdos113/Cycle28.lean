@@ -12,7 +12,7 @@ namespace Erdos113Cycle28
 
 open Erdos113Cycles
 
-variable {V : Type*} [Fintype V] [DecidableEq V]
+variable {V : Type*}
 
 abbrev Tuple28 (V : Type*) := Fin 28 → V
 
@@ -26,7 +26,7 @@ def closedWalkTuple (G : SimpleGraph V) (P : ClosedWalk28 G) : Tuple28 V :=
 lemma closedWalkTuple_isHomCycle (G : SimpleGraph V) (P : ClosedWalk28 G) :
     IsHomCycle G (closedWalkTuple G P) := by
   intro i
-  have hi : i.val < P.2.1.length := by simpa [P.2.2] using i.isLt
+  have hi : i.val < P.2.1.length := by simp [P.2.2]
   have h := P.2.1.adj_getVert_succ hi
   by_cases hlast : i.val + 1 < 28
   · have hadd : (i + 1 : Fin 28).val = i.val + 1 :=
@@ -75,8 +75,8 @@ def tupleClosedWalk {G : SimpleGraph V} (x : Tuple28 V) (hx : IsHomCycle G x) :
     ClosedWalk28 G := by
   let p := WF.walkOfFin 28 (closeSeq x) (closeSeq_adj hx)
   refine ⟨x 0, ⟨p.copy ?_ ?_, ?_⟩⟩
-  · simp [p, closeSeq]
-  · simp [p, closeSeq]
+  · simp [closeSeq]
+  · simp [closeSeq]
   · simp [p]
 
 @[simp] lemma closedWalkTuple_tupleClosedWalk {G : SimpleGraph V}
@@ -122,6 +122,8 @@ noncomputable def closedWalkHomEquiv (G : SimpleGraph V) :
       refine ⟨tupleClosedWalk x.1 x.2, ?_⟩
       apply Subtype.ext
       exact closedWalkTuple_tupleClosedWalk x.1 x.2⟩
+
+variable [Fintype V] [DecidableEq V]
 
 lemma card_homCycle28_eq_closedWalkCount (G : SimpleGraph V) [DecidableRel G.Adj] :
     Fintype.card {x : Tuple28 V // IsHomCycle G x} =

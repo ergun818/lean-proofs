@@ -28,6 +28,7 @@ lemma incidenceFinset_graphOfEdges_inter
   simp only [Finset.mem_inter, Finset.mem_filter]
   tauto
 
+omit [DecidableEq V] in
 lemma live_of_positive_degree_subset
     {G : SimpleGraph V} [DecidableRel G.Adj]
     {D E : Finset (Sym2 V)} (hD : D ⊆ G.edgeFinset) (hED : E ⊆ D)
@@ -35,6 +36,7 @@ lemma live_of_positive_degree_subset
     (hvside : sideOfColor c v = b)
     (hv : 0 < (graphOfEdges E).degree v) :
     v ∈ liveSideVertices D c b := by
+  classical
   rw [mem_liveSideVertices]
   refine ⟨hvside, ?_⟩
   rw [← (graphOfEdges D).card_incidenceFinset_eq_degree]
@@ -44,6 +46,7 @@ lemma live_of_positive_degree_subset
       rw [← incidenceFinset_graphOfEdges_inter hD hED] at he
       exact (Finset.mem_inter.mp he).2))
 
+omit [DecidableEq V] in
 /-- A final low-degree deletion on a dynamically pruned cell.  The balanced
 cell estimate pays for both sides, so more than half of the edges remain. -/
 theorem exists_minDegree_pruned_subset
@@ -225,6 +228,7 @@ def liveGraph (E : Finset (Sym2 V)) : SimpleGraph (LiveVertex E) :=
 noncomputable instance liveGraph_decidableRel (E : Finset (Sym2 V)) :
     DecidableRel (liveGraph E).Adj := Classical.decRel _
 
+omit [DecidableEq V] in
 lemma liveGraph_degree (E : Finset (Sym2 V)) (v : LiveVertex E) :
     (liveGraph E).degree v = (graphOfEdges E).degree v.1 := by
   exact (graphOfEdges E).degree_induce_support v

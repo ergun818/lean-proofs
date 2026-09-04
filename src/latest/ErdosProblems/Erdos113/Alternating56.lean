@@ -79,7 +79,7 @@ lemma alternatingTuple_injective {V : Type*} {x y : Fin 28 → V}
       rw [← oddIndex_halfIndex_of_odd p hp,
         ← oddIndex_halfIndex_of_odd q hq, hy hiy]
 
-lemma alternatingTuple_hom {V : Type*} [Fintype V]
+lemma alternatingTuple_hom {V : Type*}
     (G : SimpleGraph V) (x y : Fin 28 → V)
     (hxy : ∀ i, G.Adj (x i) (y i))
     (hyx : ∀ i, G.Adj (y i) (x (i + 1))) :
@@ -91,7 +91,7 @@ lemma alternatingTuple_hom {V : Type*} [Fintype V]
   · rw [← oddIndex_halfIndex_of_odd p hp, oddIndex_add_one]
     simpa using hyx (halfIndex p)
 
-lemma alternatingTuple_genuine {V : Type*} [Fintype V]
+lemma alternatingTuple_genuine {V : Type*}
     (G : SimpleGraph V) (x y : Fin 28 → V)
     (hx : Function.Injective x) (hy : Function.Injective y)
     (hdisj : ∀ i j, x i ≠ y j)

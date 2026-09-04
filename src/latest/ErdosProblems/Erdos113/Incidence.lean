@@ -25,16 +25,19 @@ noncomputable def rightPartners {F : SimpleGraph T} {G : SimpleGraph V}
     (L : LiftSystem F G) (y : V) : Finset T :=
   by classical exact Finset.univ.filter fun t ↦ Linked L t y
 
+omit [DecidableEq T] [DecidableEq V] [Fintype T] in
 @[simp] lemma mem_leftPartners {F : SimpleGraph T} {G : SimpleGraph V}
     (L : LiftSystem F G) {t : T} {y : V} :
     y ∈ leftPartners L t ↔ Linked L t y := by
   simp [leftPartners]
 
+omit [DecidableEq T] [DecidableEq V] [Fintype V] in
 @[simp] lemma mem_rightPartners {F : SimpleGraph T} {G : SimpleGraph V}
     (L : LiftSystem F G) {t : T} {y : V} :
     t ∈ rightPartners L y ↔ Linked L t y := by
   simp [rightPartners]
 
+omit [DecidableEq T] [DecidableEq V] [Fintype T] [Fintype V] in
 lemma linked_ne_embed {F : SimpleGraph T} {G : SimpleGraph V}
     (L : LiftSystem F G) {t : T} {y : V} (h : Linked L t y) (u : T) :
     y ≠ L.embed u := by
@@ -54,23 +57,28 @@ noncomputable instance incidenceGraph_decidableRel
     {F : SimpleGraph T} {G : SimpleGraph V} (L : LiftSystem F G) :
     DecidableRel (incidenceGraph L).Adj := Classical.decRel _
 
+omit [DecidableEq T] [DecidableEq V] [Fintype T] [Fintype V] in
 @[simp] lemma incidenceGraph_adj_iff {F : SimpleGraph T} {G : SimpleGraph V}
     (L : LiftSystem F G) {u y : V} :
     (incidenceGraph L).Adj u y ↔
       u ≠ y ∧ (incidenceRel L u y ∨ incidenceRel L y u) := by
   exact SimpleGraph.fromRel_adj _ _ _
 
+omit [DecidableEq T] [DecidableEq V] [Fintype T] [Fintype V] in
 lemma incidenceGraph_adj_embed_of_linked
     {F : SimpleGraph T} {G : SimpleGraph V}
     (L : LiftSystem F G) {t : T} {y : V} (h : Linked L t y) :
     (incidenceGraph L).Adj (L.embed t) y := by
+  classical
   rw [incidenceGraph_adj_iff]
   exact ⟨(linked_ne_embed L h t).symm, Or.inl ⟨t, rfl, h⟩⟩
 
+omit [DecidableEq T] [Fintype V] in
 lemma liftedTuple_hom_incidence {F : SimpleGraph T} {G : SimpleGraph V}
-    (L : LiftSystem F G) {p : (x : Fin 28 → T) × (Fin 28 → V)}
+    (L : LiftSystem F G) {p : (_ : Fin 28 → T) × (Fin 28 → V)}
     (hp : p ∈ liftPairs F G L) :
     IsHomCycle (incidenceGraph L) (liftedTuple L p) := by
+  classical
   have hpdata := (mem_liftPairs L).mp hp
   have hchoices := (mem_validChoices.mp hpdata.2).1
   apply alternatingTuple_hom
@@ -81,10 +89,12 @@ lemma liftedTuple_hom_incidence {F : SimpleGraph T} {G : SimpleGraph V}
     exact (incidenceGraph_adj_embed_of_linked L
       (Or.inr ⟨p.1 i, hchoices i⟩)).symm
 
+omit [DecidableEq T] [Fintype V] in
 theorem liftedCycles_genuine_incidence {F : SimpleGraph T} {G : SimpleGraph V}
     (L : LiftSystem F G) {z : Fin 56 → V}
     (hz : z ∈ liftedCycles F G L) :
     IsGenuineCycle (incidenceGraph L) z := by
+  classical
   rw [liftedCycles, Finset.mem_image] at hz
   obtain ⟨p, hp, rfl⟩ := hz
   exact ⟨(liftedTuple_genuine L hp).1, liftedTuple_hom_incidence L hp⟩
@@ -97,36 +107,44 @@ def incidenceSide {F : SimpleGraph T} {G : SimpleGraph V}
     (L : LiftSystem F G) (v : V) : Bool :=
   decide (v ∈ embeddedVertices L)
 
+omit [DecidableEq T] [Fintype V] in
 @[simp] lemma incidenceSide_eq_true {F : SimpleGraph T} {G : SimpleGraph V}
     (L : LiftSystem F G) {v : V} :
     incidenceSide L v = true ↔ v ∈ embeddedVertices L := by
   simp [incidenceSide]
 
+omit [DecidableEq T] [Fintype V] in
 @[simp] lemma incidenceSide_embed {F : SimpleGraph T} {G : SimpleGraph V}
     (L : LiftSystem F G) (t : T) : incidenceSide L (L.embed t) = true := by
   simp [incidenceSide, embeddedVertices]
 
+omit [DecidableEq T] [Fintype V] in
 lemma incidenceSide_linked {F : SimpleGraph T} {G : SimpleGraph V}
     (L : LiftSystem F G) {t : T} {y : V} (h : Linked L t y) :
     incidenceSide L y = false := by
+  classical
   rw [Bool.eq_false_iff]
   intro hy
   rw [incidenceSide_eq_true] at hy
   obtain ⟨u, _hu, hueq⟩ := Finset.mem_image.mp hy
   exact linked_ne_embed L h u hueq.symm
 
+omit [DecidableEq T] [Fintype V] in
 lemma incidenceGraph_cross {F : SimpleGraph T} {G : SimpleGraph V}
     (L : LiftSystem F G) {u y : V} (h : (incidenceGraph L).Adj u y) :
     incidenceSide L y = !(incidenceSide L u) := by
+  classical
   rcases (incidenceGraph_adj_iff L).mp h with ⟨_, hrel | hrel⟩
   · obtain ⟨t, rfl, hty⟩ := hrel
     simp [incidenceSide_linked L hty]
   · obtain ⟨t, rfl, htu⟩ := hrel
     simp [incidenceSide_linked L htu]
 
+omit [DecidableEq T] [DecidableEq V] [Fintype T] in
 lemma incidenceGraph_degree_embed_le {F : SimpleGraph T} {G : SimpleGraph V}
     (L : LiftSystem F G) (t : T) :
     (incidenceGraph L).degree (L.embed t) ≤ (leftPartners L t).card := by
+  classical
   rw [← SimpleGraph.card_neighborFinset_eq_degree]
   apply Finset.card_le_card
   intro y hy
@@ -139,9 +157,11 @@ lemma incidenceGraph_degree_embed_le {F : SimpleGraph T} {G : SimpleGraph V}
   · obtain ⟨u, _huy, huembed⟩ := hrel
     exact False.elim ((linked_ne_embed L huembed t) rfl)
 
+omit [DecidableEq T] in
 lemma incidenceGraph_degree_nonembedded_le {F : SimpleGraph T} {G : SimpleGraph V}
     (L : LiftSystem F G) {y : V} (hy : y ∉ embeddedVertices L) :
     (incidenceGraph L).degree y ≤ (rightPartners L y).card := by
+  classical
   rw [← SimpleGraph.card_neighborFinset_eq_degree]
   calc
     ((incidenceGraph L).neighborFinset y).card ≤
@@ -157,12 +177,14 @@ lemma incidenceGraph_degree_nonembedded_le {F : SimpleGraph T} {G : SimpleGraph 
         exact ⟨t, by simpa using hty, htz⟩
     _ ≤ (rightPartners L y).card := Finset.card_image_le
 
+omit [DecidableEq T] in
 theorem incidenceGraph_degree_le
     {F : SimpleGraph T} {G : SimpleGraph V}
     (L : LiftSystem F G) (A B : ℕ)
     (hleft : ∀ t, (leftPartners L t).card ≤ A)
     (hright : ∀ y, (rightPartners L y).card ≤ B) (v : V) :
     (incidenceGraph L).degree v ≤ if incidenceSide L v then A else B := by
+  classical
   by_cases hv : v ∈ embeddedVertices L
   · obtain ⟨t, _ht, htv⟩ := Finset.mem_image.mp hv
     subst v
@@ -173,10 +195,12 @@ theorem incidenceGraph_degree_le
     rw [hs]
     exact (incidenceGraph_degree_nonembedded_le L hv).trans (hright v)
 
+omit [DecidableEq T] in
 theorem incidenceGraph_isBipartiteWith
     {F : SimpleGraph T} {G : SimpleGraph V} (L : LiftSystem F G) :
     (incidenceGraph L).IsBipartiteWith (↑(embeddedVertices L) : Set V)
       (↑((embeddedVertices L)ᶜ) : Set V) := by
+  classical
   refine ⟨?_, ?_⟩
   · rw [Set.disjoint_left]
     intro a ha hb
@@ -198,11 +222,13 @@ theorem incidenceGraph_isBipartiteWith
     have hsy : incidenceSide L y = true := by simpa using hcross
     simpa [incidenceSide] using hsy
 
+omit [DecidableEq T] [DecidableEq V] in
 theorem incidenceGraph_edge_card_le
     {F : SimpleGraph T} {G : SimpleGraph V}
     (L : LiftSystem F G) (A : ℕ)
     (hleft : ∀ t, (leftPartners L t).card ≤ A) :
     (incidenceGraph L).edgeFinset.card ≤ Fintype.card T * A := by
+  classical
   have hsum := (incidenceGraph L).isBipartiteWith_sum_degrees_eq_card_edges
     (s := embeddedVertices L) (t := (embeddedVertices L)ᶜ)
     (incidenceGraph_isBipartiteWith L)

@@ -166,10 +166,11 @@ lemma degree_inr {U V : Type*} [Fintype U] [Fintype V]
   simpa only [Fintype.card_coe] using Fintype.card_congr (rightNeighborEquivFiber E v)
 
 lemma cross {U V : Type*} [Fintype U] [Fintype V]
-    [DecidableEq U] [DecidableEq V] (E : Finset (U × V))
+    (E : Finset (U × V))
     {x y : LiveLeft E ⊕ LiveRight E} (h : (retainedGraph E).Adj x y) :
     Sum.elim (fun _ ↦ false) (fun _ ↦ true) y =
       !Sum.elim (fun _ ↦ false) (fun _ ↦ true) x := by
+  classical
   rcases x with u | v <;> rcases y with u' | v' <;> simp_all [retainedGraph]
 
 lemma nonempty_of_nonempty {U V : Type*} [Fintype U] [Fintype V]

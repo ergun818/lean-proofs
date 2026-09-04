@@ -40,22 +40,24 @@ def liftsOfCycle {F : SimpleGraph T} {G : SimpleGraph V}
   validChoices (cycleMiddleSets L x) (cycleEmbeddedVertices L x)
 
 def liftPairs (F : SimpleGraph T) (G : SimpleGraph V) (L : LiftSystem F G) :
-    Finset ((x : Fin 28 → T) × (Fin 28 → V)) :=
+    Finset ((_ : Fin 28 → T) × (Fin 28 → V)) :=
   (genuineCycles F 28).sigma fun x ↦ liftsOfCycle L x
 
 def liftedTuple {F : SimpleGraph T} {G : SimpleGraph V}
-    (L : LiftSystem F G) (p : (x : Fin 28 → T) × (Fin 28 → V)) : Fin 56 → V :=
+    (L : LiftSystem F G) (p : (_ : Fin 28 → T) × (Fin 28 → V)) : Fin 56 → V :=
   alternatingTuple (L.embed ∘ p.1) p.2
 
 def liftedCycles (F : SimpleGraph T) (G : SimpleGraph V) (L : LiftSystem F G) :
     Finset (Fin 56 → V) :=
   (liftPairs F G L).image (liftedTuple L)
 
+omit [DecidableEq T] [Fintype T] [Fintype V] in
 @[simp] lemma mem_cycleEmbeddedVertices {F : SimpleGraph T} {G : SimpleGraph V}
     (L : LiftSystem F G) (x : Fin 28 → T) (v : V) :
     v ∈ cycleEmbeddedVertices L x ↔ ∃ i, L.embed (x i) = v := by
   simp [cycleEmbeddedVertices]
 
+omit [DecidableEq T] [Fintype T] [Fintype V] in
 lemma cycleEmbeddedVertices_card_le {F : SimpleGraph T} {G : SimpleGraph V}
     (L : LiftSystem F G) (x : Fin 28 → T) :
     (cycleEmbeddedVertices L x).card ≤ 28 := by
@@ -64,12 +66,14 @@ lemma cycleEmbeddedVertices_card_le {F : SimpleGraph T} {G : SimpleGraph V}
       exact Finset.card_image_le
     _ = 28 := by simp
 
+omit [DecidableEq T] [Fintype V] in
 @[simp] lemma mem_liftPairs {F : SimpleGraph T} {G : SimpleGraph V}
-    (L : LiftSystem F G) {p : (x : Fin 28 → T) × (Fin 28 → V)} :
+    (L : LiftSystem F G) {p : (_ : Fin 28 → T) × (Fin 28 → V)} :
     p ∈ liftPairs F G L ↔
       IsGenuineCycle F p.1 ∧ p.2 ∈ liftsOfCycle L p.1 := by
   simp [liftPairs]
 
+omit [DecidableEq T] [DecidableEq V] [Fintype T] [Fintype V] in
 lemma liftedTuple_injective {F : SimpleGraph T} {G : SimpleGraph V}
     (L : LiftSystem F G) : Function.Injective (liftedTuple L) := by
   rintro ⟨x, y⟩ ⟨x', y'⟩ hpq
@@ -83,15 +87,19 @@ lemma liftedTuple_injective {F : SimpleGraph T} {G : SimpleGraph V}
   subst y'
   rfl
 
+omit [DecidableEq T] [Fintype V] in
 lemma card_liftedCycles {F : SimpleGraph T} {G : SimpleGraph V}
     (L : LiftSystem F G) :
     (liftedCycles F G L).card = (liftPairs F G L).card := by
+  classical
   exact Finset.card_image_of_injective _ (liftedTuple_injective L)
 
+omit [DecidableEq T] [Fintype T] [Fintype V] in
 lemma liftsOfCycle_half_lower {F : SimpleGraph T} {G : SimpleGraph V}
     (L : LiftSystem F G) (hlarge : 3136 * 2 ^ 27 ≤ L.lower)
     {x : Fin 28 → T} (hx : IsGenuineCycle F x) :
     L.lower ^ 28 ≤ 2 * (liftsOfCycle L x).card := by
+  classical
   apply validChoices_half_lower
   · intro i
     exact L.lower_card (hx.2 i)
@@ -100,10 +108,12 @@ lemma liftsOfCycle_half_lower {F : SimpleGraph T} {G : SimpleGraph V}
   · exact cycleEmbeddedVertices_card_le L x
   · exact hlarge
 
+omit [DecidableEq T] [Fintype V] in
 theorem liftedCycles_card_lower {F : SimpleGraph T} {G : SimpleGraph V}
     (L : LiftSystem F G) (hlarge : 3136 * 2 ^ 27 ≤ L.lower) :
     (genuineCycles F 28).card * L.lower ^ 28 ≤
       2 * (liftedCycles F G L).card := by
+  classical
   rw [card_liftedCycles, liftPairs, Finset.card_sigma]
   have hsum : ∑ x ∈ genuineCycles F 28, L.lower ^ 28 ≤
       ∑ x ∈ genuineCycles F 28, 2 * (liftsOfCycle L x).card := by
@@ -111,10 +121,12 @@ theorem liftedCycles_card_lower {F : SimpleGraph T} {G : SimpleGraph V}
       liftsOfCycle_half_lower L hlarge (mem_genuineCycles.mp hx)
   simpa [Finset.mul_sum, Finset.sum_mul] using hsum
 
+omit [DecidableEq T] [Fintype V] in
 lemma liftedTuple_genuine {F : SimpleGraph T} {G : SimpleGraph V}
-    (L : LiftSystem F G) {p : (x : Fin 28 → T) × (Fin 28 → V)}
+    (L : LiftSystem F G) {p : (_ : Fin 28 → T) × (Fin 28 → V)}
     (hp : p ∈ liftPairs F G L) :
     IsGenuineCycle G (liftedTuple L p) := by
+  classical
   have hx := (mem_liftPairs L).mp hp
   have hy := mem_validChoices.mp hx.2
   apply alternatingTuple_genuine
@@ -127,9 +139,11 @@ lemma liftedTuple_genuine {F : SimpleGraph T} {G : SimpleGraph V}
   · intro i
     exact L.adj_right (hy.1 i)
 
+omit [DecidableEq T] [Fintype V] in
 theorem liftedCycles_genuine {F : SimpleGraph T} {G : SimpleGraph V}
     (L : LiftSystem F G) {z : Fin 56 → V}
     (hz : z ∈ liftedCycles F G L) : IsGenuineCycle G z := by
+  classical
   rw [liftedCycles, Finset.mem_image] at hz
   obtain ⟨p, hp, rfl⟩ := hz
   exact liftedTuple_genuine L hp
@@ -143,6 +157,7 @@ def singleFiber56 (C : Finset (Fin 56 → V)) (i : Fin 56)
     (r : OffSingle56 i → V) : Finset (Fin 56 → V) :=
   C.filter fun z ↦ restrictOffSingle56 i z = r
 
+omit [Fintype V] in
 lemma eval_injective_on_singleFiber56 (C : Finset (Fin 56 → V))
     (i : Fin 56) (r : OffSingle56 i → V) :
     Set.InjOn (fun z : Fin 56 → V ↦ z i) (singleFiber56 C i r) := by
@@ -155,6 +170,7 @@ lemma eval_injective_on_singleFiber56 (C : Finset (Fin 56 → V))
   · have h := congrFun (hzrest.trans hwrest.symm) ⟨j, hji⟩
     exact h
 
+omit [Fintype V] in
 lemma value_eq_of_mem_singleFiber56 {C : Finset (Fin 56 → V)}
     {i : Fin 56} {r : OffSingle56 i → V} {z w : Fin 56 → V}
     (hz : z ∈ singleFiber56 C i r) (hw : w ∈ singleFiber56 C i r)
@@ -189,6 +205,7 @@ def IsMiddleVertex {F : SimpleGraph T} {G : SimpleGraph V}
     (L : LiftSystem F G) (y : V) : Prop :=
   ∃ a b, y ∈ L.middle a b
 
+omit [DecidableEq T] [DecidableEq V] [Fintype V] in
 @[simp] lemma mem_bridgeAnchors {F : SimpleGraph T} {G : SimpleGraph V}
     [DecidableRel G.Adj] (L : LiftSystem F G) {u w : V} {t : T} :
     t ∈ bridgeAnchors L u w ↔
@@ -201,6 +218,7 @@ lemma oddIndex_halfIndex_sub_one_of_even (i : Fin 56)
   revert i
   decide +revert
 
+omit [DecidableEq T] [Fintype V] in
 theorem singleFiber56_liftedCycles_card_le
     {F : SimpleGraph T} {G : SimpleGraph V} [DecidableRel G.Adj]
     (L : LiftSystem F G)
@@ -209,6 +227,7 @@ theorem singleFiber56_liftedCycles_card_le
       (bridgeAnchors L u w).card ≤ cap)
     (i : Fin 56) (r : OffSingle56 i → V) :
     (singleFiber56 (liftedCycles F G L) i r).card ≤ cap := by
+  classical
   let C := liftedCycles F G L
   let K := singleFiber56 C i r
   by_cases hK : K.Nonempty

@@ -27,6 +27,7 @@ def encodePathTuple (G : SimpleGraph V) (m : ℕ) :
     f.1 ⟨m, Nat.lt_succ_self m⟩,
     ⟨WF.walkOfFin m f.1 f.2, WF.walkOfFin_length m f.1 f.2⟩⟩
 
+omit [DecidableEq V] [Fintype V] in
 lemma encodePathTuple_injective (G : SimpleGraph V) (m : ℕ) :
     Function.Injective (encodePathTuple G m) := by
   intro f g h
@@ -39,6 +40,7 @@ lemma encodePathTuple_injective (G : SimpleGraph V) (m : ℕ) :
     WF.walkOfFin_getVert m g.1 g.2 i.val (Nat.le_of_lt_succ i.2)] at hw
   exact hw
 
+omit [DecidableEq V] in
 lemma card_pathTuple_cast_le (G : SimpleGraph V) [DecidableRel G.Adj]
     (D : ℝ) (hD : 0 ≤ D) (hdeg : ∀ x, (G.degree x : ℝ) ≤ D) (m : ℕ) :
     (Fintype.card (PathTuple G m) : ℝ) ≤ Fintype.card V * D ^ m := by
@@ -62,6 +64,7 @@ lemma card_pathTuple_cast_le (G : SimpleGraph V) [DecidableRel G.Adj]
       exact Lower.walkMass_upper G D hD hdeg m u
     _ = Fintype.card V * D ^ m := by simp
 
+omit [DecidableEq V] in
 lemma card_pathTuple_cast_le_bipartite
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (side : V → Bool) (D : Bool → ℝ) (hD : ∀ b, 0 ≤ D b)
@@ -106,6 +109,7 @@ lemma card_pathTuple_cast_le_bipartite
       simp
       ring
 
+omit [DecidableEq V] in
 lemma card_pathTuple_53_cast_le_bipartite
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (side : V → Bool) (D : Bool → ℝ) (hD : ∀ b, 0 ≤ D b)
@@ -114,12 +118,14 @@ lemma card_pathTuple_53_cast_le_bipartite
     (Fintype.card (PathTuple G 53) : ℝ) ≤
       Fintype.card V *
         (D false ^ 27 * D true ^ 26 + D true ^ 27 * D false ^ 26) := by
+  classical
   have h := card_pathTuple_cast_le_bipartite G side D hD hcross hdeg 53
   rw [show 53 = 2 * 26 + 1 by norm_num,
     Erdos113LowerBipartite.alternatingProduct_odd,
     Erdos113LowerBipartite.alternatingProduct_odd] at h
   simpa using h
 
+omit [DecidableEq V] in
 /-- For an odd-length bipartite path, starting from its first oriented edge
 replaces the crude vertex-count factor by twice the number of edges.  This is
 the form used for adjacent-pair patterns in the many-four-cycle family. -/

@@ -152,7 +152,7 @@ theorem exists_pruned_subfamily {α : Type*} [DecidableEq α] (t : ℕ)
               intro x hx
               have hxD := hDsub (Finset.mem_inter.mp hx).1
               exact (Finset.mem_sdiff.mp hxD).2 (Finset.mem_inter.mp hx).2
-            exact (by simpa [hempty] using hnonempty)
+            simp [hempty] at hnonempty
           · exact hDstab F' (Finset.mem_erase.mpr ⟨hF'eq, hF'mem⟩) hnonempty
       · refine ⟨C, Finset.Subset.rfl, by omega, ?_⟩
         intro F hFmem hnonempty
@@ -662,10 +662,7 @@ noncomputable def manyFourCycleGoodFamily_of_numerics
   · dsimp [L, A]
     simp only [Erdos113SelectedLift.FirstSelection.SecondSelection.anchoredLiftSystem,
       Erdos113AnchorConstruction.selectedAnchoredLiftSystem,
-      Erdos113SelectedLift.FirstSelection.SecondSelection.liftSystem,
       Erdos113AnchorConstruction.selectedLiftSystem]
-    change 2 * 2 ^ R.index.val ≤
-      2 ^ (R.index.val + 1) + 2 ^ (S.scaleIndex.val + 1)
     simp only [pow_succ]
     omega
   · intro u w hu
@@ -1045,7 +1042,7 @@ lemma controlledGenuineCycles_half_closedWalkCount_bipartite_of_numerics
     (hcap : ∀ u y, G.Adj y u →
       ((Erdos113FourCycles.extensionsThroughEdge G u y).card : ℝ) ≤
         Q (side y))
-    (hclosed : 0 < (Conflict.closedWalkCount G 56 : ℝ))
+    (_ : 0 < (Conflict.closedWalkCount G 56 : ℝ))
     (hnumeric :
       56 * ∑ b : Bool,
           (D b * t₀ b *
@@ -2146,7 +2143,7 @@ lemma closedWalkCount_interpolation_784 {W : Type*} [Fintype W]
     closedWalkCount_cast_eq_sum_eigenvalues_pow]
   simp only [one_mul, Real.one_rpow, Finset.sum_const, Finset.card_univ,
     nsmul_eq_mul, mul_one] at hh
-  convert hh using 1 <;> norm_num
+  convert hh using 1; norm_num
 
 universe u
 
@@ -2319,7 +2316,7 @@ lemma badClosedWalks1568_cast_le {W : Type*} [Fintype W] [DecidableEq W]
       Encode.card_BadClosedWalk1568_cast_le A R t D s ht hs hdegree hsymm hlocal
 
 lemma exists_cleanCycle_of_almostRegular
-    {W : Type*} [Fintype W] [DecidableEq W] [Nonempty W]
+    {W : Type*} [Fintype W] [Nonempty W]
     (A : SimpleGraph W) [DecidableRel A.Adj]
     (R : W → W → Prop) [DecidableRel R]
     (hR : ∀ x y, R x y → R y x)
@@ -2336,6 +2333,7 @@ lemma exists_cleanCycle_of_almostRegular
     ∃ X : Erdos113.Column → W,
       (∀ c, A.Adj (X c) (X (Erdos113.nextColumn c))) ∧
       ∀ c d, c ≠ d → ¬ R (X c) (X d) := by
+  classical
   have hNpos : 0 < N := by rw [hN]; positivity
   let Q : ℝ := N ^ ((1 : ℝ) / 784)
   have hQ : 0 < Q := Real.rpow_pos_of_pos hNpos _
@@ -2386,7 +2384,6 @@ lemma exists_cleanCycle_of_almostRegular
     have hcalc : 1568 * (D * (D * (3136 * L ^ 2 * Q)⁻¹) * H') =
         (1568 / 3136) * ((D ^ 2 * H') / (L ^ 2 * Q)) := by
       field_simp
-      <;> ring
     rw [hcalc]
     have hquot : (D ^ 2 * H') / (L ^ 2 * Q) ≤ H := by
       apply (div_le_iff₀ (by positivity : 0 < L ^ 2 * Q)).2
@@ -2442,7 +2439,7 @@ lemma badClosedWalks1568_side_cast_le {W : Type*} [Fintype W]
         A R side t D s ht hD hs hcross hdegree hsymm hlocal
 
 lemma exists_cleanCycle_of_bipartiteAlmostRegular
-    {W : Type*} [Fintype W] [DecidableEq W] [Nonempty W]
+    {W : Type*} [Fintype W] [Nonempty W]
     (A : SimpleGraph W) [DecidableRel A.Adj]
     (R : W → W → Prop) [DecidableRel R]
     (hR : ∀ x y, R x y → R y x)
@@ -2461,6 +2458,7 @@ lemma exists_cleanCycle_of_bipartiteAlmostRegular
     ∃ X : Column → W,
       (∀ c, A.Adj (X c) (X (nextColumn c))) ∧
       ∀ c e, c ≠ e → ¬ R (X c) (X e) := by
+  classical
   have hNpos : 0 < N := by rw [hN]; positivity
   let Q : ℝ := N ^ ((1 : ℝ) / 784)
   have hQ : 0 < Q := Real.rpow_pos_of_pos hNpos _
@@ -2527,7 +2525,7 @@ lemma exists_cleanCycle_of_bipartiteAlmostRegular
           D true * (D false / (6272 * L ^ 2 * Q)) * H') =
         (1 / 2 : ℝ) * ((D false * D true * H') / (L ^ 2 * Q)) := by
       field_simp
-      <;> ring
+      ring
     rw [show 1568 *
         (D true * (D false / (6272 * L ^ 2 * Q)) * H' +
           D false * (D true / (6272 * L ^ 2 * Q)) * H') =
@@ -2637,7 +2635,7 @@ noncomputable def badAuxiliaryColumnCycles {W : Type u} [Fintype W]
     (homAuxiliaryColumnCycles A).filter (HasBlockedAuxiliaryColumnConflict R)
 
 @[simp] lemma mem_homAuxiliaryColumnCycles {W : Type u} [Fintype W]
-    [DecidableEq W] (A : SimpleGraph W) [DecidableRel A.Adj]
+    (A : SimpleGraph W) [DecidableRel A.Adj]
     (P : BlockedAuxiliaryColumnCycle W) :
     P ∈ homAuxiliaryColumnCycles A ↔
       IsHomBlockedAuxiliaryColumnCycle A P := by
@@ -2645,7 +2643,7 @@ noncomputable def badAuxiliaryColumnCycles {W : Type u} [Fintype W]
   simp [homAuxiliaryColumnCycles]
 
 @[simp] lemma mem_badAuxiliaryColumnCycles {W : Type u} [Fintype W]
-    [DecidableEq W] (A : SimpleGraph W) [DecidableRel A.Adj]
+    (A : SimpleGraph W) [DecidableRel A.Adj]
     (R : W → W → Prop) [DecidableRel R]
     (P : BlockedAuxiliaryColumnCycle W) :
     P ∈ badAuxiliaryColumnCycles A R ↔
@@ -2655,7 +2653,7 @@ noncomputable def badAuxiliaryColumnCycles {W : Type u} [Fintype W]
   simp [badAuxiliaryColumnCycles]
 
 lemma exists_pairwise_nonconflicting_column_cycle_of_bad_lt_total
-    {W : Type u} [Fintype W] [DecidableEq W]
+    {W : Type u} [Fintype W]
     (A : SimpleGraph W) [DecidableRel A.Adj]
     (R : W → W → Prop) [DecidableRel R]
     (hcard : (badAuxiliaryColumnCycles A R).card <
@@ -2726,7 +2724,7 @@ theorem cleanCycleSelector1568_proof : CleanCycleSelector1568 := by
     positivity
   have hcap : ∀ b, 0 < cap b := by
     intro b
-    cases b <;> simp [cap] <;> positivity
+    cases b <;> simp [cap]
   have hprojAdj {x y : LiveLeft E ⊕ LiveRight E} (hxy : B.Adj x y) :
       A.Adj (proj x) (proj y) := by
     rcases x with x | x <;> rcases y with y | y
@@ -3077,14 +3075,14 @@ lemma nextColumn_ne_prevColumn (c : Column) : nextColumn c ≠ prevColumn c := b
   cases b
   · intro h
     have hj := congrArg Prod.fst h
-    simp [nextColumn, prevColumn] at hj
+    change j = j - 1 at hj
     have hzero : (1 : ZMod 784) = 0 := by
       linear_combination hj
     exact hone hzero
   · intro h
     have hj := congrArg Prod.fst h
-    simp [nextColumn, prevColumn] at hj
-    exact hone hj
+    change j + 1 = j at hj
+    exact hone (add_left_cancel (hj.trans (add_zero j).symm))
 
 /-
 The following three vertex-level nonfixed-point statements are kept separate
@@ -3245,10 +3243,11 @@ structure IsCleanSliceCycle {V : Type*} (G : SimpleGraph V)
 
 /-- Janzer's interleaving has exactly the adjacency pattern needed to embed
 the explicit graph once a clean auxiliary `1568`-cycle has been selected. -/
-theorem copy_of_cleanSliceCycle {V : Type*} [Fintype V] [DecidableEq V]
+theorem copy_of_cleanSliceCycle {V : Type*}
     (G : SimpleGraph V) (X : Column → SliceTuple V)
     (hclean : IsCleanSliceCycle G X) :
     janzerGraph ⊑ G := by
+  classical
   refine ⟨⟨⟨fun v ↦ X v.2 v.1, ?_⟩, hclean.injective⟩⟩
   intro v w hvw
   change w = matchingVertex v ∨ w = nextVertex v ∨ w = prevVertex v at hvw
@@ -3862,7 +3861,6 @@ lemma low_ready_inputs
             | exact he
             | exact hDD
             | exact mul_nonneg (hDnonneg false) (hDnonneg true)
-            | positivity
         _ = _ := by
           have hm557 : (m : ℝ) ^ ((2 : ℝ) / 7) * m *
               (m : ℝ) ^ ((10 : ℝ) / 21) *
@@ -3960,7 +3958,7 @@ lemma sparseCore_low_branch
     letI : Fintype C.W := C.fintypeW
     letI : DecidableEq C.W := C.decEqW
     letI : DecidableRel C.graph.Adj := C.decAdj
-    ∀ (H : DenseHostCell C.graph) (K : MinDegreeHostCell H),
+    ∀ (H : DenseHostCell C.graph) (_ : MinDegreeHostCell H),
       HostPowerReady C.order →
       1568 * (C.order : ℝ) ^ (-(1 : ℝ) / 14) <
         cleanSelectorThreshold (Fintype.card (SliceTuple C.W)) →
@@ -4006,7 +4004,6 @@ lemma sparseCore_low_branch
     · exact (not_lt_of_ge hc.le h.1).elim
   have hPedge : P.edgeFinset.Nonempty := by
     apply Finset.card_pos.mp
-    change 0 < P.edgeFinset.card
     rw [show P.edgeFinset.card = K.edges.card by
       simpa [P] using K.liveGraph_edge_card]
     exact K.edges_nonempty.card_pos
@@ -4332,11 +4329,6 @@ lemma high_ready_inputs
             (16777216 * (L : ℝ) ^ (5 : ℕ) *
               (R * (m : ℝ) ^ ((10 : ℝ) / 21))) := by
           gcongr
-          all_goals first
-            | exact hNcapR
-            | exact hNroot
-            | exact_mod_cast hℓL
-            | positivity
         _ = (((702464 * 512) * 16777216 * R ^ (2 : ℕ) *
               (2 * R) ^ ((1 : ℝ) / 14)) *
               (m : ℝ) ^ ((25 : ℝ) / 49) * (L : ℝ) ^ (9 : ℕ)) *
@@ -4500,7 +4492,7 @@ lemma selectedLiftedCycles_nonempty
     (hcross : ∀ ⦃x y⦄, G.Adj x y → side y = !side x)
     (S : FirstSelection G side) (R : S.SecondSelection)
     (Q : ℕ)
-    (hcycle : ∀ t : NeighborVertex G S.anchor,
+    (_ : ∀ t : NeighborVertex G S.anchor,
       (Erdos113Cycles.cyclesThroughEdge G 4 s(S.anchor, t.1)).card ≤ Q)
     (hlift : 3136 * 2 ^ 27 ≤ 2 ^ R.index.val)
     (hsuper :

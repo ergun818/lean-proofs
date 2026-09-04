@@ -19,6 +19,7 @@ variable {V : Type*} [Fintype V] [DecidableEq V]
 def sideOfColor (c : V → Fin 2) (v : V) : Bool :=
   decide (c v = 1)
 
+omit [DecidableEq V] [Fintype V] in
 lemma sideOfColor_cross {G : SimpleGraph V} {c : V → Fin 2}
     (hc : ∀ ⦃v w⦄, G.Adj v w → c v ≠ c w)
     {v w : V} (hvw : G.Adj v w) :
@@ -195,7 +196,7 @@ lemma endpoint_mem_degreeBin_of_mem_orientedCellEdges
   rcases Sym2.eq_iff.mp hpedge with hsame | hswap
   · refine ⟨?_, ?_⟩
     · intro _
-      simpa [← hsame.1] using p.1.2
+      exact hsame.1 ▸ p.1.2
     intro hne
     exact False.elim (hne (by simpa [← hsame.1] using hpdata.2))
   · refine ⟨?_, ?_⟩
@@ -208,7 +209,7 @@ lemma endpoint_mem_degreeBin_of_mem_orientedCellEdges
           _ = !b := congrArg (fun x : Bool ↦ !x) hpdata.2
       cases b <;> simp_all
     · intro _
-      simpa [← hswap.2] using p.2.2
+      exact hswap.2 ▸ p.2.2
 
 lemma graphOfOrientedSubset_degree_le
     (G : SimpleGraph V) [DecidableRel G.Adj]
@@ -268,6 +269,7 @@ def liveSideVertices (D : Finset (Sym2 V)) (c : V → Fin 2) (b : Bool) :
   Finset.univ.filter fun v ↦
     sideOfColor c v = b ∧ 0 < (graphOfEdges D).degree v
 
+omit [DecidableEq V] in
 @[simp] lemma mem_liveSideVertices
     {D : Finset (Sym2 V)} {c : V → Fin 2} {b : Bool} {v : V} :
     v ∈ liveSideVertices D c b ↔
@@ -536,6 +538,7 @@ theorem DenseHostCell.extensionsThroughEdge_le_dynamicCycleCap
 def sideFinset (c : V → Fin 2) (b : Bool) : Finset V :=
   Finset.univ.filter fun v ↦ sideOfColor c v = b
 
+omit [DecidableEq V] in
 @[simp] lemma mem_sideFinset {c : V → Fin 2} {b : Bool} {v : V} :
     v ∈ sideFinset c b ↔ sideOfColor c v = b := by
   simp [sideFinset]

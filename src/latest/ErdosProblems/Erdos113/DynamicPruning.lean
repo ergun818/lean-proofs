@@ -234,7 +234,7 @@ theorem exists_dynamically_pruned_edgeFinset
       R hR hEne hq
   refine ⟨D, hDsub, hDcard, ?_⟩
   intro e he
-  convert hDload e he using 1 <;> dsimp [R, L] <;> ring
+  convert hDload e he using 1; dsimp [R, L]; ring
 
 end
 

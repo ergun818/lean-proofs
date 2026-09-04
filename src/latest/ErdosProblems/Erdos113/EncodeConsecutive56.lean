@@ -134,7 +134,7 @@ lemma pWalk_getVert {W : Type*} {A : SimpleGraph W}
 noncomputable def makeBadHalfCycle {W : Type*} [Fintype W] [DecidableEq W]
     (A : SimpleGraph W) [DecidableRel A.Adj]
     (R : W → W → Prop) [DecidableRel R]
-    (P : ClosedWalk56 A) (c : Fin 56) (d : Fin 28)
+    (P : ClosedWalk56 A) (c : Fin 56) (_ : Fin 28)
     (hR : R (cv P c) (cv P (cyclicAdd56 c 2))) :
     BadHalfCycle A R := by
   let z := qSeq P c ⟨28, by omega⟩
@@ -287,8 +287,8 @@ abbrev BadClosedWalk56 {W : Type*} [Fintype W] [DecidableEq W]
 lemma exists_orientedConflict56 {W : Type*} [Fintype W] [DecidableEq W]
     (A : SimpleGraph W) [DecidableRel A.Adj]
     (R : W → W → Prop) [DecidableRel R]
-    (hsymm : ∀ x y, R x y → R y x) (b : BadClosedWalk56 A R) :
-    ∃ c : Fin 56, ∃ d : Fin 28,
+    (_ : ∀ x y, R x y → R y x) (b : BadClosedWalk56 A R) :
+    ∃ c : Fin 56, ∃ _ : Fin 28,
       R (cv b.1 c) (cv b.1 (cyclicAdd56 c 2)) := by
   obtain ⟨c, hc⟩ := b.2
   exact ⟨c, 0, hc⟩
@@ -297,7 +297,7 @@ noncomputable def orientedConflict56 {W : Type*} [Fintype W] [DecidableEq W]
     (A : SimpleGraph W) [DecidableRel A.Adj]
     (R : W → W → Prop) [DecidableRel R]
     (hsymm : ∀ x y, R x y → R y x) (b : BadClosedWalk56 A R) :
-    Σ c : Fin 56, {d : Fin 28 //
+    Σ c : Fin 56, {_d : Fin 28 //
       R (cv b.1 c) (cv b.1 (cyclicAdd56 c 2))} := by
   let c := Classical.choose (exists_orientedConflict56 A R hsymm b)
   let d := Classical.choose (Classical.choose_spec
