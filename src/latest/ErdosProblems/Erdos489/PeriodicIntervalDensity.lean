@@ -58,10 +58,10 @@ theorem periodic_interval_count_lower
     have hrem := congrArg (fun n => n % P) hEq
     have hzrem : F z % P = z.1 := by
       dsimp [F]
-      simp [Nat.add_mod, Nat.mul_mod, Nat.mod_eq_of_lt hzr]
+      simp [Nat.add_mod, Nat.mod_eq_of_lt hzr]
     have hwrem : F w % P = w.1 := by
       dsimp [F]
-      simp [Nat.add_mod, Nat.mul_mod, Nat.mod_eq_of_lt hwr]
+      simp [Nat.add_mod, Nat.mod_eq_of_lt hwr]
     rw [hzrem, hwrem] at hrem
     have hfirst : z.1 = w.1 := hrem
     have hmul : (L / P + 1 + z.2) * P =

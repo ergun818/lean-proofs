@@ -122,13 +122,13 @@ theorem card_shifted_pair_solutions_mul_product_period_le
       · exact Finset.mem_range.mpr (Nat.mod_lt n hp)
       · constructor
         · have hmul : a ∣ p * (n / p) := by
-            exact dvd_mul_of_dvd_left (by simpa [p] using dvd_mul_right a b) _
+            exact dvd_mul_of_dvd_left (by simp [p]) _
           apply (Nat.dvd_add_iff_left hmul).mpr
           have hnrepr := Nat.mod_add_div n p
           rw [← hnrepr] at hna
           simpa [Nat.add_assoc, Nat.add_left_comm, Nat.add_comm] using hna
         · have hmul : b ∣ p * (n / p) := by
-            exact dvd_mul_of_dvd_left (by simpa [p, Nat.mul_comm] using dvd_mul_right b a) _
+            exact dvd_mul_of_dvd_left (by simp [p]) _
           apply (Nat.dvd_add_iff_left hmul).mpr
           have hnrepr := Nat.mod_add_div n p
           rw [← hnrepr] at hnb

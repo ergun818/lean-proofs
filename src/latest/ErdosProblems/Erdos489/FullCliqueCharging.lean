@@ -90,7 +90,7 @@ theorem full_clique_charge_le_rankKernel
       (4 * (X : ℝ) * (C : ℝ) *
           min ((z.1 : ℝ) + 1) ((z.2 : ℝ) + 1) +
         2 * ((a z.1 : ℝ) * (a z.2 : ℝ))) /
-          ((a z.1 : ℝ) * (a z.2 : ℝ)) by field_simp <;> ring]
+          ((a z.1 : ℝ) * (a z.2 : ℝ)) by field_simp]
     apply (le_div_iff₀ hab).mpr
     calc
       (cap z : ℝ) * ((a z.1 : ℝ) * (a z.2 : ℝ)) =

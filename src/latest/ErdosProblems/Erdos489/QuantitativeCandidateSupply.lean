@@ -86,7 +86,8 @@ theorem cast_sub_prod_div_prod_eq_sieveDensity
       unfold sieveDensity
       congr 1
       rw [Nat.cast_sub (by omega)]
-      field_simp [ne_of_gt hapos] <;> norm_num
+      field_simp [ne_of_gt hapos]
+      norm_num
 
 /-- A positive lower bound for the full list density is also a cross-multiplied
 lower bound for the integral density numerator of its coprime part. -/
@@ -164,7 +165,7 @@ theorem affineCandidates_coprimePart_linear_supply
           (ρ / (2 * (Q : ℝ))) * (G : ℝ) := by ring
       _ ≤ (ρ / (2 * (Q : ℝ))) *
           (2 * ((Q : ℝ) * (P : ℝ)) * ((q : ℝ) - 2)) := hfirst
-      _ = (ρ * (P : ℝ)) * ((q : ℝ) - 2) := by field_simp <;> ring
+      _ = (ρ * (P : ℝ)) * ((q : ℝ) - 2) := by field_simp
       _ ≤ (E : ℝ) * ((q : ℝ) - 2) := hsecond
       _ = ((q : ℝ) - 2) * (E : ℝ) := by ring
   have hbaseR : ((((q - 2) * E : ℕ)) : ℝ) ≤

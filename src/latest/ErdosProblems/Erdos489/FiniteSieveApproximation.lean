@@ -20,21 +20,21 @@ noncomputable instance finiteDivisorSiftedDecidable
     (p : ℕ → Prop) (R : ℕ) : DecidablePred (finiteDivisorSifted p R) :=
   Classical.decPred _
 
- theorem finiteDivisorSifted_periodic (p : ℕ → Prop) (R : ℕ) :
+theorem finiteDivisorSifted_periodic (p : ℕ → Prop) (R : ℕ) :
     Function.Periodic (finiteDivisorSifted p R)
       ((List.range R).map (Nat.nth p)).prod :=
   avoidList_periodic _
 
- theorem divisorSifted_imp_finite (p : ℕ → Prop) [DecidablePred p]
+theorem divisorSifted_imp_finite (p : ℕ → Prop)
     (hp : Set.Infinite {n | p n}) (R n : ℕ) :
     divisorSifted p n → finiteDivisorSifted p R n := by
   intro hn a ha
   rcases List.mem_map.mp ha with ⟨r, hr, rfl⟩
   exact hn.2 _ (Nat.nth_mem_of_infinite hp r)
 
- theorem finiteDivisorSifted_pos
-    (p : ℕ → Prop) [DecidablePred p] (hp : Set.Infinite {n | p n})
-    (hp2 : ∀ n, p n → 2 ≤ n) (R n : ℕ) (hR : 0 < R)
+theorem finiteDivisorSifted_pos
+    (p : ℕ → Prop) (_hp : Set.Infinite {n | p n})
+    (_hp2 : ∀ n, p n → 2 ≤ n) (R n : ℕ) (hR : 0 < R)
     (hn : finiteDivisorSifted p R n) : 0 < n := by
   by_contra hn0
   have heq : n = 0 := by omega
@@ -50,7 +50,7 @@ noncomputable def sieveMismatch (p : ℕ → Prop) (R M : ℕ) : Finset ℕ := b
   exact (Finset.range M).filter fun n =>
     finiteDivisorSifted p R n ∧ ¬divisorSifted p n
 
- theorem sieveMismatch_card_cast_le
+theorem sieveMismatch_card_cast_le
     (p : ℕ → Prop) [DecidablePred p] (hp : Set.Infinite {n | p n})
     (hp2 : ∀ n, p n → 2 ≤ n)
     (R M : ℕ) (hR : 0 < R) (ε : ℝ)
@@ -82,7 +82,7 @@ noncomputable def sieveMismatch (p : ℕ → Prop) (R M : ℕ) : Finset ℕ := b
     intro n hn
     have hnf := hnotfull n hn
     rw [divisorSifted] at hnf
-    push_neg at hnf
+    push Not at hnf
     exact hnf (hpos n hn)
   have hdvd : ∀ n ∈ S, a (rank n) ∣ n := by
     intro n hn
@@ -134,14 +134,14 @@ noncomputable def badGapStarts (p : ℕ → Prop) (R H x : ℕ) : Finset ℕ := 
   exact (Finset.range (H + 1)).biUnion fun k =>
     (Finset.range x).filter fun n => n + k ∈ sieveMismatch p R (x + H + 1)
 
- theorem badGapStarts_subset_range (p : ℕ → Prop) (R H x : ℕ) :
+theorem badGapStarts_subset_range (p : ℕ → Prop) (R H x : ℕ) :
     badGapStarts p R H x ⊆ Finset.range x := by
   classical
   intro n hn
   rcases Finset.mem_biUnion.mp hn with ⟨k, hk, hnk⟩
   exact (Finset.mem_filter.mp hnk).1
 
- theorem badGapStarts_card_le (p : ℕ → Prop) (R H x : ℕ) :
+theorem badGapStarts_card_le (p : ℕ → Prop) (R H x : ℕ) :
     (badGapStarts p R H x).card ≤
       (H + 1) * (sieveMismatch p R (x + H + 1)).card := by
   classical
@@ -174,7 +174,7 @@ noncomputable def badGapStarts (p : ℕ → Prop) (R H x : ℕ) : Finset ℕ := 
 /-- Outside `badGapStarts`, full and finite sieves agree throughout the
 window inspected by the truncated cost. -/
 theorem sieve_window_agree_of_not_bad
-    (p : ℕ → Prop) [DecidablePred p]
+    (p : ℕ → Prop)
     (hp : Set.Infinite {n | p n}) (R H x n : ℕ)
     (hnx : n < x) (hgood : n ∉ badGapStarts p R H x) :
     ∀ k, k ≤ H →

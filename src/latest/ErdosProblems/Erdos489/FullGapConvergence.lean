@@ -19,7 +19,7 @@ noncomputable def fullGapAverage (p : ℕ → Prop) (x : ℕ) : ℝ :=
 
 /-- Exact decomposition into short-gap local cost and the long-gap tail. -/
 theorem fullGapAverage_eq_truncated_add_tail
-    (p : ℕ → Prop) [DecidablePred p]
+    (p : ℕ → Prop)
     (hB : Set.Infinite {n | divisorSifted p n}) (H x : ℕ) :
     fullGapAverage p x = fullTruncatedGapAverage p H x +
       (((∑ i ∈ (Finset.range (Nat.count (divisorSifted p) x)).filter

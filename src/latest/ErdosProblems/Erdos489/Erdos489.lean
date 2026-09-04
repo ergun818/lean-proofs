@@ -17,9 +17,10 @@ infinite increasing sequence. This is represented by the explicit hypothesis
 
 namespace Erdos489
 
-open Classical Filter
+open Filter
 open scoped Topology BigOperators
 
+open Classical in
 /-- A positive answer to Erdős Problem 489. -/
 theorem erdos489_statement :
     ∀ A : Set ℕ,

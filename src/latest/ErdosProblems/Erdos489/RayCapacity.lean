@@ -58,14 +58,7 @@ theorem positive_ray_finset_count_bound
       rw [Finset.length_sort, Finset.card_univ, Fintype.card_coe]
     have hzmem : ∀ i, z i ∈ T := by
       intro i
-      by_cases hi : i < Ls.length
-      · have hzi : z i = Ls[i].1 := by
-          dsimp [z]
-          rw [List.getD_eq_getElem Ls z0 hi]
-        rw [hzi]
-        exact Ls[i].2
-      · have hi' : Ls.length ≤ i := by omega
-        simpa [z, List.getD_eq_default _ _ hi'] using z0.2
+      exact (Ls.getD i z0).2
     have hzorder : ∀ i < T.card - 1,
         (z i).1 * (z (i + 1)).2 < (z (i + 1)).1 * (z i).2 := by
       intro i hi

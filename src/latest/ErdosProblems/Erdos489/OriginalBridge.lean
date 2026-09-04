@@ -8,7 +8,7 @@ set_option relaxedAutoImplicit true
 set_option backward.defeqAttrib.useBackward true
 set_option backward.isDefEq.respectTransparency false
 
-open Classical Filter
+open Filter
 open scoped Topology BigOperators
 
 namespace Erdos489
@@ -19,7 +19,8 @@ def restrictedForbidden (A : Set ℕ) (n : ℕ) : Prop := n ∈ A ∧ 2 ≤ n
 noncomputable instance restrictedForbiddenDecidable (A : Set ℕ) :
     DecidablePred (restrictedForbidden A) := Classical.decPred _
 
- theorem restricted_count_le_original_Icc (A : Set ℕ) (x : ℕ) :
+open Classical in
+theorem restricted_count_le_original_Icc (A : Set ℕ) (x : ℕ) :
     Nat.count (restrictedForbidden A) x ≤
       ((Finset.Icc 1 x).filter (· ∈ A)).card := by
   rw [Nat.count_eq_card_filter_range]
@@ -30,7 +31,8 @@ noncomputable instance restrictedForbiddenDecidable (A : Set ℕ) :
   apply Finset.mem_filter.mpr
   exact ⟨Finset.mem_Icc.mpr ⟨le_trans (by omega : 1 ≤ 2) hnp.2, hnr.le⟩, hnp.1⟩
 
- theorem restricted_count_isLittleO
+open Classical in
+theorem restricted_count_isLittleO
     (A : Set ℕ)
     (hA : (fun x : ℕ => (((Finset.Icc 1 x).filter (· ∈ A)).card : ℝ))
       =o[atTop] (fun x : ℕ => Real.sqrt (x : ℝ))) :
@@ -53,7 +55,7 @@ noncomputable instance restrictedForbiddenDecidable (A : Set ℕ) :
     abs_of_nonneg (show (0 : ℝ) ≤ (Nat.count (restrictedForbidden A) x : ℝ) by positivity),
     abs_of_nonneg (Real.sqrt_nonneg _)] using hleR.trans hx'
 
- theorem eventually_sq_le_nth_of_count_isLittleO_sqrt
+theorem eventually_sq_le_nth_of_count_isLittleO_sqrt
     (p : ℕ → Prop) [DecidablePred p] (hp : Set.Infinite {n | p n})
     (hcount : (fun x : ℕ => (Nat.count p x : ℝ)) =o[atTop]
       (fun x : ℕ => Real.sqrt (x : ℝ))) :
@@ -82,7 +84,7 @@ noncomputable instance restrictedForbiddenDecidable (A : Set ℕ) :
     nlinarith
   exact_mod_cast hcast
 
- theorem restrictedForbidden_infinite (A : Set ℕ) (hA : A.Infinite) :
+theorem restrictedForbidden_infinite (A : Set ℕ) (hA : A.Infinite) :
     Set.Infinite {n | restrictedForbidden A n} := by
   by_contra hnot
   rw [Set.not_infinite] at hnot
@@ -91,17 +93,17 @@ noncomputable instance restrictedForbiddenDecidable (A : Set ℕ) :
     by_cases hn2 : 2 ≤ n
     · exact Set.mem_union_left _ ⟨hn, hn2⟩
     · apply Set.mem_union_right
-      show n < 2
+      change n < 2
       omega
   exact hA ((hnot.union (Set.finite_Iio 2)).subset hsub)
 
- theorem one_not_mem_of_sievedSet_infinite
+theorem one_not_mem_of_sievedSet_infinite
     (A : Set ℕ) (hB : (sievedSet A).Infinite) : 1 ∉ A := by
   intro h1
   rcases hB.nonempty with ⟨n, hn⟩
   exact hn.2 1 h1 (one_dvd n)
 
- theorem divisorSifted_restricted_iff
+theorem divisorSifted_restricted_iff
     (A : Set ℕ) (hB : (sievedSet A).Infinite) (n : ℕ) :
     divisorSifted (restrictedForbidden A) n ↔ n ∈ sievedSet A := by
   have h1 := one_not_mem_of_sievedSet_infinite A hB
@@ -121,7 +123,7 @@ noncomputable instance restrictedForbiddenDecidable (A : Set ℕ) :
     intro a ha hadvd
     exact hn.2 a ha.1 hadvd
 
- theorem fullGapAverage_restricted_eq
+theorem fullGapAverage_restricted_eq
     (A : Set ℕ) (hB : (sievedSet A).Infinite) (x : ℕ) :
     fullGapAverage (restrictedForbidden A) x = gapSumSq A x / (x : ℝ) := by
   classical
@@ -139,7 +141,8 @@ noncomputable instance restrictedForbiddenDecidable (A : Set ℕ) :
     Nat.nth_strictMono hBin
   rw [Nat.cast_sub (hmono.monotone (by omega : i ≤ i + 1))]
 
- theorem exists_original_limit_of_infinite_forbidden
+open Classical in
+theorem exists_original_limit_of_infinite_forbidden
     (A : Set ℕ) (hAinf : A.Infinite)
     (hthin : (fun x : ℕ => (((Finset.Icc 1 x).filter (· ∈ A)).card : ℝ))
       =o[atTop] (fun x : ℕ => Real.sqrt (x : ℝ)))
@@ -164,3 +167,5 @@ noncomputable instance restrictedForbiddenDecidable (A : Set ℕ) :
   obtain ⟨L, hL⟩ := exists_fullGapAverage_limit p hp hp2 hBp hs hev hcount
   refine ⟨L, hL.congr' ?_⟩
   exact Filter.Eventually.of_forall fun x => fullGapAverage_restricted_eq A hB x
+
+end Erdos489

@@ -77,7 +77,9 @@ theorem progression_many_coprime_pairs
           2 / (64 * (C : ℝ) ^ 2) :=
         div_le_div_of_nonneg_left (by positivity)
           (by positivity) hCYcast
-      _ = 1 / (32 * (C : ℝ) ^ 2) := by field_simp <;> ring
+      _ = 1 / (32 * (C : ℝ) ^ 2) := by
+        field_simp
+        ring
   have hquad : 2 * (G : ℝ) ^ 2 /
       ((Q : ℝ) ^ 2 * (Y : ℝ)) ≤
       (G : ℝ) ^ 2 / (32 * (C : ℝ) ^ 2) := by
@@ -104,7 +106,8 @@ theorem progression_many_coprime_pairs
   have hmain : d ^ 2 * (G : ℝ) ^ 2 / 2 =
       (G : ℝ) ^ 2 / (8 * (C : ℝ) ^ 2) := by
     dsimp [d]
-    field_simp <;> ring
+    field_simp
+    ring
   have hlower : (G : ℝ) ^ 2 / (16 * (C : ℝ) ^ 2) ≤
       ((coprimeOrderedPairs S).card : ℝ) := by
     rw [hmain] at hpair

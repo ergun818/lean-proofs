@@ -12,7 +12,7 @@ set_option backward.isDefEq.respectTransparency false
 
 namespace Erdos489
 
-open Classical Filter
+open Filter
 open scoped Topology BigOperators
 
 /-- A sequence whose one-step shift is positive-periodic has a Cesàro limit. -/
@@ -51,9 +51,10 @@ theorem exists_tendsto_average_of_shift_periodic
 
 /-- A forward period bounds every enumerated gap by one period. -/
 theorem nth_gap_le_of_forward_period
-    (q : ℕ → Prop) [DecidablePred q] (hq : Set.Infinite {n | q n})
+    (q : ℕ → Prop) (hq : Set.Infinite {n | q n})
     (P : ℕ) (hP : 0 < P) (hforward : ∀ n, q n → q (n + P)) (i : ℕ) :
     Nat.nth q (i + 1) - Nat.nth q i ≤ P := by
+  classical
   have hmem := Nat.nth_mem_of_infinite hq i
   have hend := hforward _ hmem
   have hlt : Nat.nth q i < Nat.nth q i + P := by omega
@@ -71,6 +72,7 @@ theorem exists_original_limit_of_finite_forbidden
     (A : Set ℕ) (hAfin : A.Finite) (hB : (sievedSet A).Infinite) :
     ∃ L : ℝ, Tendsto (fun x : ℕ => gapSumSq A x / (x : ℝ))
       atTop (𝓝 L) := by
+  classical
   let p := restrictedForbidden A
   let s : Finset ℕ := hAfin.toFinset.filter fun a => 2 ≤ a
   let avoid : ℕ → Prop := fun n => ∀ a ∈ s, ¬a ∣ n

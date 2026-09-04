@@ -258,6 +258,6 @@ theorem noncoprimeOrderedPairs_cast_le_progression
       linarith
     _ = 2 * (G : ℝ) ^ 2 / ((Q : ℝ) ^ 2 * (Y : ℝ)) +
           2 * ((G + 1 : ℕ) : ℝ) := by
-      field_simp <;> ring
+      field_simp
 
 end Erdos489

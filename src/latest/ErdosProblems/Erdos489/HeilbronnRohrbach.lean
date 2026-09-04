@@ -31,7 +31,7 @@ lemma periodic_filter_card_mul (f : ℕ → Prop) [DecidablePred f] {P : ℕ}
         have hi := hf.nat_mul k i
         simp only [Nat.cast_id] at hi
         rw [Nat.add_comm] at hi
-        simpa only [hi]
+        simp only [hi]
       simp_rw [hshift]
       rw [← Finset.card_filter f (Finset.range P)]
       change k * ((Finset.range P).filter f).card +

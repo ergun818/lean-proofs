@@ -11,7 +11,7 @@ namespace Erdos489
 /-- A finite map has a transversal: one representative of every value in its
 image, contained in the original set and with injective restricted map. -/
 theorem Finset.exists_subset_injOn_card_eq_image
-    {α β : Type*} [DecidableEq α] [DecidableEq β]
+    {α β : Type*} [DecidableEq β]
     (S : Finset α) (f : α → β) :
     ∃ T : Finset α, T ⊆ S ∧ Set.InjOn f (T : Set α) ∧
       T.card = (S.image f).card := by

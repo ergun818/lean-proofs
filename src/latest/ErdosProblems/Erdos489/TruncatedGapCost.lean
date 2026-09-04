@@ -22,9 +22,10 @@ noncomputable def truncatedGapCost (q : ℕ → Prop) (H n : ℕ) : ℕ := by
 /-- There is no predicate member strictly between consecutive terms of an
 infinite predicate enumeration. -/
 theorem nth_consecutive_no_mem
-    (q : ℕ → Prop) [DecidablePred q] (hq : Set.Infinite {n | q n})
+    (q : ℕ → Prop) (hq : Set.Infinite {n | q n})
     (i n : ℕ) (hleft : Nat.nth q i < n)
     (hright : n < Nat.nth q (i + 1)) : ¬q n := by
+  classical
   intro hn
   have hicount : i < Nat.count q n := (Nat.lt_nth_iff_count_lt hq).2 hleft
   have hidx : i + 1 ≤ Nat.count q n := by omega
@@ -37,10 +38,11 @@ theorem nth_consecutive_no_mem
 /-- On an enumerated predicate point, the exact-gap word is equivalent to the
 successive enumerated gap having that length. -/
 theorem gapPattern_nth_iff_gap_eq
-    (q : ℕ → Prop) [DecidablePred q] (hq : Set.Infinite {n | q n})
+    (q : ℕ → Prop) (hq : Set.Infinite {n | q n})
     (i d : ℕ) (hd : 0 < d) :
     gapPattern q d (Nat.nth q i) ↔
       Nat.nth q (i + 1) - Nat.nth q i = d := by
+  classical
   have hbmono : StrictMono (Nat.nth q) := Nat.nth_strictMono hq
   have hbi : q (Nat.nth q i) := Nat.nth_mem_of_infinite hq i
   have hbi1 : q (Nat.nth q (i + 1)) := Nat.nth_mem_of_infinite hq (i + 1)
@@ -87,7 +89,7 @@ theorem gapPattern_nth_iff_gap_eq
 /-- The local truncated cost at the `i`-th predicate member is exactly the
 square of its next gap when that gap is below `H`, and zero otherwise. -/
 theorem truncatedGapCost_nth
-    (q : ℕ → Prop) [DecidablePred q] (hq : Set.Infinite {n | q n})
+    (q : ℕ → Prop) (hq : Set.Infinite {n | q n})
     (H i : ℕ) :
     truncatedGapCost q H (Nat.nth q i) =
       if Nat.nth q (i + 1) - Nat.nth q i < H then

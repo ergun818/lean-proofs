@@ -12,7 +12,7 @@ namespace Erdos489
 difference are equal. -/
 theorem eq_of_pos_proportional_of_abs_sub_eq
     (x₁ y₁ x₂ y₂ : ℝ)
-    (hx₁ : 0 < x₁) (hy₁ : 0 < y₁) (hx₂ : 0 < x₂) (hy₂ : 0 < y₂)
+    (hx₁ : 0 < x₁) (hy₁ : 0 < y₁) (hx₂ : 0 < x₂) (_hy₂ : 0 < y₂)
     (hprop : x₁ * y₂ = y₁ * x₂)
     (hdiff : 0 < |x₁ - y₁|)
     (habs : |x₁ - y₁| = |x₂ - y₂|) :
@@ -75,7 +75,7 @@ proportional and whose within-column distance lies in `[1,D]` has at most `D`
 members.  Thus the determinant-zero alternative from F-018 has bounded
 multiplicity when the selected witness pair has bounded physical separation. -/
 theorem card_le_of_pairwise_proportional_bounded_dist
-    {α : Type*} [DecidableEq α] (S : Finset α)
+    {α : Type*} (S : Finset α)
     (x y : α → ℕ) (D : ℕ)
     (hpairinj : Set.InjOn (fun i => (x i, y i)) (S : Set α))
     (hxpos : ∀ i ∈ S, 0 < x i) (hypos : ∀ i ∈ S, 0 < y i)
@@ -83,6 +83,7 @@ theorem card_le_of_pairwise_proportional_bounded_dist
     (hdpos : ∀ i ∈ S, 0 < Nat.dist (x i) (y i))
     (hdle : ∀ i ∈ S, Nat.dist (x i) (y i) ≤ D) :
     S.card ≤ D := by
+  classical
   let delta : α → ℕ := fun i => Nat.dist (x i) (y i)
   have hdinj : Set.InjOn delta (S : Set α) := by
     intro i hi j hj hij

@@ -67,7 +67,8 @@ theorem summable_rankPairKernel_of_sq_le (a : ℕ → ℕ)
     have hmul := mul_le_mul_of_nonneg_right hmin hsnon
     calc
       min x y * (Real.sqrt x * Real.sqrt y) ≤
-          (Real.sqrt x * Real.sqrt y) * (Real.sqrt x * Real.sqrt y) := by simpa [mul_comm] using hmul
+          (Real.sqrt x * Real.sqrt y) * (Real.sqrt x * Real.sqrt y) := by
+        simpa [mul_comm] using hmul
       _ = (Real.sqrt x) ^ 2 * (Real.sqrt y) ^ 2 := by ring
       _ = x * y := by rw [hsx, hsy]
   let den : ℝ := (x * Real.sqrt x) * (y * Real.sqrt y)
@@ -87,7 +88,7 @@ theorem summable_rankPairKernel_of_sq_le (a : ℕ → ℕ)
       min x y ≤ (A * B) / den := (le_div_iff₀ hdpos).2 hcross
       _ = (1 / (x * Real.sqrt x)) * (1 / (y * Real.sqrt y)) * (A * B) := by
         field_simp
-        <;> ring
+        ring
   simpa [x, y, A, B] using hquot
 
 end Erdos489

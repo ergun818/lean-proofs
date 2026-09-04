@@ -12,7 +12,7 @@ namespace Erdos489
 can have rank below `t`.  Equivalently, all but at most `t` objects have rank
 at least `t`. -/
 theorem card_le_card_rank_ge_add
-    {α : Type*} [DecidableEq α] (s : Finset α) (rank : α → ℕ)
+    {α : Type*} (s : Finset α) (rank : α → ℕ)
     (hinj : Set.InjOn rank (s : Set α)) (t : ℕ) :
     s.card ≤ (s.filter (fun x => t ≤ rank x)).card + t := by
   classical
@@ -39,7 +39,7 @@ theorem card_le_card_rank_ge_add
 /-- In particular, if there are at least `2t` distinctly ranked objects, at
 least `t` of them have rank at least `t`. -/
 theorem card_rank_ge_of_twice_le_card
-    {α : Type*} [DecidableEq α] (s : Finset α) (rank : α → ℕ)
+    {α : Type*} (s : Finset α) (rank : α → ℕ)
     (hinj : Set.InjOn rank (s : Set α)) (t : ℕ)
     (hcard : 2 * t ≤ s.card) :
     t ≤ (s.filter (fun x => t ≤ rank x)).card := by

@@ -8,13 +8,14 @@ set_option backward.isDefEq.respectTransparency false
 
 namespace Erdos489
 
-open Classical Filter
+open Filter
 open scoped Topology BigOperators
 
 /-- Positive natural numbers divisible by no member of `A`. -/
 def sievedSet (A : Set ℕ) : Set ℕ :=
   {n : ℕ | 0 < n ∧ ∀ a ∈ A, ¬ a ∣ n}
 
+open Classical in
 /-- The sum of squared successive gaps whose left endpoint is below `x`. -/
 noncomputable def gapSumSq (A : Set ℕ) (x : ℕ) : ℝ :=
   let B := sievedSet A

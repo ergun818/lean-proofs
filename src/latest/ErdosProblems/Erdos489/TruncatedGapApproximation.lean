@@ -73,8 +73,8 @@ noncomputable def finiteTruncatedGapLimit
   ((∑ n ∈ Finset.range P,
       truncatedGapCost (finiteDivisorSifted p R) H n : ℕ) : ℝ) / (P : ℝ)
 
- theorem finiteTruncatedGapAverage_tendsto
-    (p : ℕ → Prop) [DecidablePred p]
+theorem finiteTruncatedGapAverage_tendsto
+    (p : ℕ → Prop)
     (hp : Set.Infinite {n | p n}) (hp2 : ∀ n, p n → 2 ≤ n)
     (R H : ℕ) :
     Tendsto (finiteTruncatedGapAverage p R H) atTop
@@ -97,8 +97,8 @@ noncomputable def finiteTruncatedGapLimit
     tendsto_periodic_nat_average
       (truncatedGapCost (finiteDivisorSifted p R) H) P hP hper
 
- theorem full_finite_truncated_sum_difference
-    (p : ℕ → Prop) [DecidablePred p]
+theorem full_finite_truncated_sum_difference
+    (p : ℕ → Prop)
     (hp : Set.Infinite {n | p n}) (R H x : ℕ) :
     |((∑ n ∈ Finset.range x,
         truncatedGapCost (divisorSifted p) H n : ℕ) : ℝ) -

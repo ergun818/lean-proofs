@@ -100,9 +100,9 @@ noncomputable def boundaryPotential (X D x y : ℝ) : ℝ :=
 /-- For two boundary points in counterclockwise order, their determinant is at
 most the increase of the boundary potential. -/
 theorem rayDet_le_boundaryPotential_sub
-    (X D px py qx qy : ℝ) (hX : 0 < X) (hD : 0 < D)
-    (hpx0 : 0 ≤ px) (hpxX : px ≤ X) (hpy0 : 0 ≤ py) (hpyD : py ≤ D)
-    (hqx0 : 0 ≤ qx) (hqxX : qx ≤ X) (hqy0 : 0 ≤ qy) (hqyD : qy ≤ D)
+    (X D px py qx qy : ℝ) (_hX : 0 < X) (hD : 0 < D)
+    (hpx0 : 0 ≤ px) (hpxX : px ≤ X) (_hpy0 : 0 ≤ py) (hpyD : py ≤ D)
+    (_hqx0 : 0 ≤ qx) (hqxX : qx ≤ X) (_hqy0 : 0 ≤ qy) (hqyD : qy ≤ D)
     (hpedge : px = X ∨ py = D) (hqedge : qx = X ∨ qy = D)
     (horient : 0 ≤ rayDet px py qx qy) :
     rayDet px py qx qy ≤
@@ -142,7 +142,7 @@ theorem boundaryPotential_mem_Icc
   · simp [boundaryPotential, hx]
     constructor <;> nlinarith [mul_nonneg hX.le hy0, mul_le_mul_of_nonneg_left hyD hX.le]
   · have hyedge : y = D := hedge.resolve_left hx
-    simp [boundaryPotential, hx, hyedge]
+    simp [boundaryPotential, hx]
     constructor
     · nlinarith [mul_le_mul_of_nonneg_left hxX hD.le]
     · nlinarith [mul_nonneg hD.le hx0]
@@ -240,7 +240,7 @@ bounded by `X`, and are listed in strictly increasing slope order, then the
 theorem ordered_positive_ray_count_bound
     (N a b X D : ℕ) (r s : ℕ → ℕ)
     (ha : 0 < a) (hb : 0 < b) (hX : 0 < X) (hD : 0 < D)
-    (hr : ∀ i, 0 < r i) (hs : ∀ i, 0 < s i)
+    (_hr : ∀ i, 0 < r i) (hs : ∀ i, 0 < s i)
     (hbsX : ∀ i, b * s i ≤ X)
     (hside : ∀ i, b * s i < a * r i)
     (hstrip : ∀ i, a * r i ≤ b * s i + D)

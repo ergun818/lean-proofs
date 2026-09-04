@@ -36,7 +36,7 @@ theorem coprime_add_noncoprime_card (S : Finset ℕ) :
 `d²G²/2-B` ordered pairs are coprime whenever at most `B` are bad. -/
 theorem coprimeOrderedPairs_cast_lower_of_card
     (S : Finset ℕ) (G : ℕ) (d B : ℝ)
-    (hd : 0 ≤ d)
+    (_hd : 0 ≤ d)
     (hcard : d * (G : ℝ) ≤ (S.card : ℝ))
     (hlarge : 2 ≤ d * (G : ℝ))
     (hbad : ((noncoprimeOrderedPairs S).card : ℝ) ≤ B) :

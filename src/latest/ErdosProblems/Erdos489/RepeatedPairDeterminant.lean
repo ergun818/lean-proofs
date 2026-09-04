@@ -37,9 +37,7 @@ theorem int_mul_dvd_shiftedPairDet
   have hkb₂z : (n₂ : ℤ) + (u₂₂ : ℤ) = (b : ℤ) * (kb₂ : ℤ) := by
     exact_mod_cast hkb₂
   dsimp [shiftedPairDet]
-  push_cast
   rw [hka₁z, hka₂z, hkb₁z, hkb₂z]
-  push_cast
   ring
 
 /-- Subtracting the first column cancels the two large gap starts.  Thus a
@@ -75,7 +73,7 @@ theorem abs_shifted_det_le
 columns must be exactly proportional: their determinant vanishes. -/
 theorem shiftedPairDet_eq_zero_of_product_large
     (a b n₁ n₂ u₁₁ u₁₂ u₂₁ u₂₂ X G : ℕ)
-    (ha : 0 < a) (hb : 0 < b)
+    (_ha : 0 < a) (_hb : 0 < b)
     (hn₁X : n₁ ≤ X) (hn₂X : n₂ ≤ X)
     (hu₁₁G : u₁₁ ≤ G) (hu₁₂G : u₁₂ ≤ G)
     (hu₂₁G : u₂₁ ≤ G) (hu₂₂G : u₂₂ ≤ G)
@@ -101,7 +99,7 @@ theorem shiftedPairDet_eq_zero_of_product_large
   by_contra hd0
   have hnatpos : 0 < d.natAbs := Int.natAbs_pos.mpr hd0
   have hnatdvd : a * b ∣ d.natAbs := by
-    rw [← Int.natAbs_cast (a * b), Int.natAbs_dvd_natAbs]
+    rw [← Int.natAbs_natCast (a * b), Int.natAbs_dvd_natAbs]
     exact hdvd
   have hab_le : a * b ≤ d.natAbs := Nat.le_of_dvd hnatpos hnatdvd
   have hab_real : ((a * b : ℕ) : ℝ) ≤ |(d : ℝ)| := by

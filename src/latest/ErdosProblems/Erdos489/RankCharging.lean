@@ -38,7 +38,7 @@ theorem card_sq_le_two_sum_succ_nat (s : Finset ℕ) :
   let t : Finset ℤ := s.image (fun x : ℕ => (x : ℤ))
   have ht : ∀ x ∈ t, 0 ≤ x := by
     intro x hx
-    simp [t] at hx
+    simp only [t, Finset.mem_image] at hx
     obtain ⟨n, _, rfl⟩ := hx
     positivity
   have h := card_sq_le_two_sum_add_one t ht

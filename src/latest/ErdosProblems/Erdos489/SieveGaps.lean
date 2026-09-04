@@ -15,7 +15,7 @@ def divisorSifted (p : ℕ → Prop) (n : ℕ) : Prop :=
 /-- No sifted integer lies strictly between consecutive members of the
 increasing enumeration of an infinite sifted set. -/
 theorem divisorSifted_consecutive_gap_covered
-    (p : ℕ → Prop) [DecidablePred p]
+    (p : ℕ → Prop)
     (hB : Set.Infinite {n | divisorSifted p n}) (i n : ℕ)
     (hleft : Nat.nth (divisorSifted p) i < n)
     (hright : n < Nat.nth (divisorSifted p) (i + 1)) :
@@ -24,7 +24,7 @@ theorem divisorSifted_consecutive_gap_covered
   have hnpos : 0 < n :=
     lt_of_le_of_lt (Nat.zero_le _) hleft
   by_contra hnone
-  push_neg at hnone
+  push Not at hnone
   have hnB : divisorSifted p n := ⟨hnpos, hnone⟩
   have hicount : i < Nat.count (divisorSifted p) n :=
     (Nat.lt_nth_iff_count_lt hB).2 hleft
@@ -40,7 +40,7 @@ theorem divisorSifted_consecutive_gap_covered
 /-- The sifted enumeration is strictly increasing and all of its consecutive
 open gaps are covered by forbidden divisors. -/
 theorem divisorSifted_enumeration_structure
-    (p : ℕ → Prop) [DecidablePred p]
+    (p : ℕ → Prop)
     (hB : Set.Infinite {n | divisorSifted p n}) :
     StrictMono (Nat.nth (divisorSifted p)) ∧
       ∀ i n,

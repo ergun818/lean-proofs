@@ -27,7 +27,7 @@ theorem escapingMass_antitone (x : ℕ) : Antitone (fun h => escapingMass h x) :
   intro h k hhk
   by_cases hh : h < x + 1 <;> by_cases hk : k < x + 1
   · simp [escapingMass, hh, hk]
-  · simp [escapingMass, hh, hk]
+  · simp only [escapingMass, if_pos hh, if_neg hk]
     positivity
   · omega
   · simp [escapingMass, hh, hk]
