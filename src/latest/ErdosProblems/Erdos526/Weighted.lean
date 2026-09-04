@@ -49,7 +49,7 @@ lemma weightedCover_anti {ι κ : Type*} [Fintype ι] [DecidableEq ι]
       by_cases hV : V = ∅
       · have hU : U = ∅ := Finset.eq_empty_iff_forall_notMem.2 fun x hx ↦ by
           have := hUV hx
-          simpa [hV] using this
+          simp [hV] at this
         simp [hU, hV]
       · split_ifs <;> norm_num
   | cons k K ih =>
@@ -222,7 +222,6 @@ lemma weightedCover_eq_assignmentSum {ι : Type u} {κ : Type v}
       rw [Fintype.sum_prod_type]
       apply Finset.sum_congr rfl
       intro S hS
-      simp only [Prod.fst, Prod.snd]
       simp only [subset_union_iff_sdiff_subset']
       rw [ih]
       rw [Finset.mul_sum]

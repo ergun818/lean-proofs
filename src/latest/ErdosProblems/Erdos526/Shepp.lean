@@ -1358,7 +1358,7 @@ def localFiniteMissPairs
 lemma isClosed_localFiniteMissPairs
     (a : ℕ → ℝ) (M : ℕ) (ε : ℝ) :
     IsClosed (localFiniteMissPairs a M ε) := by
-  simp only [localFiniteMissPairs, setOf_and, setOf_forall]
+  simp only [localFiniteMissPairs, ofPred_and, ofPred_forall]
   apply IsClosed.inter
   · exact isClosed_Icc.preimage continuous_snd
   apply isClosed_iInter
@@ -1374,14 +1374,14 @@ lemma localFiniteCoverEvent_compl
     (localFiniteCoverEvent a M ε)ᶜ =
       Prod.fst '' localFiniteMissPairs a M ε := by
   ext ω
-  simp only [localFiniteCoverEvent, mem_compl_iff, mem_setOf_eq, mem_image,
+  simp only [localFiniteCoverEvent, mem_compl_iff, mem_ofPred_eq, mem_image,
     localFiniteMissPairs, Finset.mem_range, arc, Metric.mem_ball,
     not_forall, not_exists, not_and, not_lt]
   constructor
   · rintro ⟨x, hxI, hx⟩
     exact ⟨(ω, x), ⟨hxI, hx⟩, rfl⟩
   · rintro ⟨⟨ω', x⟩, ⟨hxI, hx⟩, hω⟩
-    simp only [Prod.fst] at hω
+    dsimp only at hω
     subst ω'
     exact ⟨x, hxI, hx⟩
 
@@ -1389,7 +1389,8 @@ lemma measurableSet_localFiniteCoverEvent
     (a : ℕ → ℝ) (M : ℕ) (ε : ℝ) :
     MeasurableSet (localFiniteCoverEvent a M ε) := by
   have hcompact : IsCompact (localFiniteMissPairs a M ε) := by
-    apply (isCompact_univ.prod isCompact_Icc).of_isClosed_subset
+    apply (isCompact_univ.prod isCompact_Icc :
+      IsCompact (Set.univ ×ˢ Icc (0 : ℝ) ε)).of_isClosed_subset
       (isClosed_localFiniteMissPairs a M ε)
     intro p hp
     exact ⟨mem_univ p.1, hp.1⟩
@@ -1404,7 +1405,7 @@ lemma localFiniteCoverEvent_compl_subset_gridMiss_shrunken
       finiteGridMissEvent (fun n ↦ a n - 2 * δ) M δ L := by
   intro ω hω
   rw [mem_compl_iff] at hω
-  simp only [localFiniteCoverEvent, mem_setOf_eq] at hω
+  simp only [localFiniteCoverEvent, mem_ofPred_eq] at hω
   push Not at hω
   obtain ⟨x, ⟨hx₀, hxL⟩, hxmiss⟩ := hω
   obtain ⟨j, hjL, hxj⟩ :=
@@ -1588,7 +1589,7 @@ lemma finiteEnergy_prefixShrink_ge
 
 lemma sum_sq_prefixShrink_le
     {a : ℕ → ℝ} (M : ℕ) {δ : ℝ}
-    (ha₀ : ∀ n, 0 ≤ a n) (hδ : 0 ≤ δ)
+    (_ : ∀ n, 0 ≤ a n) (hδ : 0 ≤ δ)
     (hsmall : ∀ n < M, 2 * δ ≤ a n) :
     (∑ n ∈ Finset.range M, (prefixShrink a M δ n) ^ 2) ≤
       ∑ n ∈ Finset.range M, (a n) ^ 2 := by
@@ -1794,7 +1795,7 @@ lemma measurableSet_localFiniteCoverEventAt
       localFiniteCoverEventAt a M c ε := by
     ext ω
     simp only [mem_preimage, localFiniteCoverEvent, localFiniteCoverEventAt,
-      mem_setOf_eq]
+      mem_ofPred_eq]
     constructor
     · intro h x hx
       have hy : x - c ∈ Icc (0 : ℝ) ε := by
@@ -1838,7 +1839,7 @@ lemma sampleShift_preimage_localFiniteCoverEventAt
       localFiniteCoverEvent a M ε := by
   ext ω
   simp only [mem_preimage, localFiniteCoverEvent, localFiniteCoverEventAt,
-    mem_setOf_eq]
+    mem_ofPred_eq]
   constructor
   · intro h y hy
     have hx : y + c ∈ Icc c (c + ε) := by
@@ -2115,7 +2116,7 @@ lemma sampleTail_preimage_onceCoverageEvent (a : ℕ → ℝ) (N : ℕ) :
     sampleTail N ⁻¹' onceCoverageEvent (sequenceTail a N) =
       coversFromEvent a N := by
   ext ω
-  simp only [mem_preimage, onceCoverageEvent, coversFromEvent, mem_setOf_eq,
+  simp only [mem_preimage, onceCoverageEvent, coversFromEvent, mem_ofPred_eq,
     CoversOnce, CoversFrom]
   constructor
   · intro h x
@@ -2232,7 +2233,7 @@ lemma sampleTail_preimage_fullCoverageEvent (a : ℕ → ℝ) (K : ℕ) :
     sampleTail K ⁻¹' fullCoverageEvent (sequenceTail a K) =
       fullCoverageEvent a := by
   ext ω
-  simp only [mem_preimage, fullCoverageEvent, mem_setOf_eq,
+  simp only [mem_preimage, fullCoverageEvent, mem_ofPred_eq,
     CoversInfinitelyOften, CoversFrom]
   constructor
   · intro h N x
@@ -2350,7 +2351,7 @@ lemma coversInfinitelyOften_iff_infinite_hits
     omega
   · intro h N x
     by_contra hnone
-    push_neg at hnone
+    push Not at hnone
     have hsub : {n : ℕ | x ∈ arc (ω n) (a n)} ⊆ Set.Iio N := by
       intro n hn
       by_contra hnlt
@@ -2384,7 +2385,7 @@ lemma map_rearrangedSample_sampleMeasure {a : ℕ → ℝ}
       (f := fun k : ℕ ↦ (e k : ℕ)) hinj)
 
 lemma image_rearranged_hitSet
-    {a b : ℕ → ℝ} (ha₀ : ∀ n, 0 ≤ a n)
+    {a b : ℕ → ℝ} (_ : ∀ n, 0 ≤ a n)
     (e : ℕ ≃ {n : ℕ // 0 < a n})
     (hb : ∀ k : ℕ, b k = a (e k : ℕ))
     (ω : Sample) (x : Circle) :
@@ -2414,7 +2415,7 @@ lemma rearrangedSample_mem_fullCoverageEvent_iff
     (hb : ∀ k : ℕ, b k = a (e k : ℕ)) (ω : Sample) :
     rearrangedSample e ω ∈ fullCoverageEvent b ↔
       ω ∈ fullCoverageEvent a := by
-  rw [fullCoverageEvent, fullCoverageEvent, mem_setOf_eq, mem_setOf_eq,
+  rw [fullCoverageEvent, fullCoverageEvent, mem_ofPred_eq, mem_ofPred_eq,
     coversInfinitelyOften_iff_infinite_hits,
     coversInfinitelyOften_iff_infinite_hits]
   have hinj : Function.Injective (fun k : ℕ ↦ (e k : ℕ)) := by
@@ -2461,7 +2462,7 @@ theorem shepp_criterion_for_rearrangement
     {a b : ℕ → ℝ}
     (ha₀ : ∀ n, 0 ≤ a n)
     (halim : Tendsto a atTop (nhds 0))
-    (hdiv : ¬ Summable a)
+    (_ : ¬ Summable a)
     (hrearr : IsDecreasingRearrangement a b) :
     sampleMeasure (fullCoverageEvent a) = 1 ↔ SheppCondition b := by
   obtain ⟨hanti, e, hb⟩ := hrearr
@@ -2581,7 +2582,6 @@ theorem exists_decreasingRearrangement
   let : OrderBot P := {
     bot := botP
     bot_le x := by
-      change botP ≤ x
       by_cases hx : x ≤ q
       · exact s.min'_le x (by
           simpa only [s, Set.Finite.mem_toFinset, Set.mem_Iic] using hx)
@@ -2590,7 +2590,7 @@ theorem exists_decreasingRearrangement
           (le_of_not_ge hx) }
   let : NoMaxOrder P := ⟨fun x ↦ by
     by_contra hmax
-    push_neg at hmax
+    push Not at hmax
     have hall : ∀ y : P, y ≤ x := hmax
     have hicc : (Set.Iic x).Finite := hIic_finite x
     have huniv : Set.Iic x = (Set.univ : Set P) :=

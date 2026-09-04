@@ -51,7 +51,7 @@ def arc (z : Circle) (length : ℝ) : Set Circle :=
 most one half.  This oriented form is the geometric input in Shepp's
 leftmost-gap argument. -/
 lemma arc_interval_convex {z : Circle} {length y q x : ℝ}
-    (hlength₀ : 0 ≤ length) (hlength : length ≤ 1 / 4)
+    (_ : 0 ≤ length) (hlength : length ≤ 1 / 4)
     (hyq : y ≤ q) (hqx : q ≤ x) (hxy : x - y ≤ 1 / 2)
     (hy : (y : Circle) ∈ arc z length) (hx : (x : Circle) ∈ arc z length) :
     (q : Circle) ∈ arc z length := by
@@ -160,7 +160,7 @@ lemma uniformCircle_eq_volume :
     (AddCircle.volume_eq_smul_haarAddCircle (T := (1 : ℝ)))
 
 /-- A short arc has the prescribed Haar measure. -/
-lemma measure_arc {z : Circle} {length : ℝ} (hlength₀ : 0 ≤ length)
+lemma measure_arc {z : Circle} {length : ℝ} (_ : 0 ≤ length)
     (hlength₁ : length ≤ 1) :
     uniformCircle (arc z length) = ENNReal.ofReal length := by
   rw [uniformCircle_eq_volume, arc,
@@ -232,7 +232,7 @@ lemma real_volume_closedBall_inter_two (r x y : ℝ) :
 
 /-- Local two-ball overlap formula on the unit circle.  The hypotheses keep
 both centers and both short balls inside one fundamental interval. -/
-lemma measure_closedBall_inter_coe (r x y : ℝ) (hr₀ : 0 ≤ r)
+lemma measure_closedBall_inter_coe (r x y : ℝ) (_ : 0 ≤ r)
     (hr : r ≤ 1 / 8) (hxy : |x - y| ≤ 1 / 4) :
     uniformCircle
         (Metric.closedBall (x : Circle) r ∩ Metric.closedBall (y : Circle) r) =
@@ -417,7 +417,7 @@ def FiniteCovers (a : ℕ → ℝ) (ω : Sample) (N M : ℕ) : Prop :=
 
 /-- If shortened arcs cover a fine grid, the original arcs cover the circle. -/
 lemma finiteCovers_of_grid_shrunken {a : ℕ → ℝ} {ω : Sample} {M : ℕ}
-    (hM : 0 < M) (hlength : ∀ n < M, 2 / (M : ℝ) < a n)
+    (hM : 0 < M) (_ : ∀ n < M, 2 / (M : ℝ) < a n)
     (hgrid : ∀ j < M, ∃ n < M,
       gridPoint M j ∈ arc (ω n) (a n - 2 / (M : ℝ))) :
     FiniteCovers a ω 0 M := by
@@ -446,7 +446,7 @@ def finiteMissPairs (a : ℕ → ℝ) (N M : ℕ) : Set (Sample × Circle) :=
 
 lemma isClosed_finiteMissPairs (a : ℕ → ℝ) (N M : ℕ) :
     IsClosed (finiteMissPairs a N M) := by
-  simp only [finiteMissPairs, setOf_forall]
+  simp only [finiteMissPairs, ofPred_forall]
   apply isClosed_iInter
   intro n
   apply isClosed_iInter
@@ -457,15 +457,15 @@ lemma isClosed_finiteMissPairs (a : ℕ → ℝ) (N M : ℕ) :
 lemma finiteCoverEvent_compl (a : ℕ → ℝ) (N M : ℕ) :
     (finiteCoverEvent a N M)ᶜ = Prod.fst '' finiteMissPairs a N M := by
   ext ω
-  simp only [finiteCoverEvent, mem_compl_iff, mem_setOf_eq, FiniteCovers,
-    image_image, mem_image, finiteMissPairs, Finset.mem_Ico, arc,
+  simp only [finiteCoverEvent, mem_compl_iff, mem_ofPred_eq, FiniteCovers,
+    mem_image, finiteMissPairs, Finset.mem_Ico, arc,
     Metric.mem_ball, not_forall, not_exists, not_and, not_lt]
   constructor
   · intro h
     obtain ⟨x, hx⟩ := h
     exact ⟨(ω, x), hx, rfl⟩
   · rintro ⟨⟨ω', x⟩, hx, hω⟩
-    simp only [Prod.fst] at hω
+    dsimp only at hω
     subst ω'
     exact ⟨x, hx⟩
 
@@ -506,7 +506,7 @@ def coversFromEvent (a : ℕ → ℝ) (N : ℕ) : Set Sample :=
 lemma coversFromEvent_eq_iUnion (a : ℕ → ℝ) (N : ℕ) :
     coversFromEvent a N = ⋃ M : ℕ, finiteCoverEvent a N M := by
   ext ω
-  simp only [coversFromEvent, mem_setOf_eq, mem_iUnion, finiteCoverEvent,
+  simp only [coversFromEvent, mem_ofPred_eq, mem_iUnion, finiteCoverEvent,
     coversFrom_iff_exists_finiteCovers]
 
 lemma measurableSet_coversFromEvent (a : ℕ → ℝ) (N : ℕ) :
@@ -693,7 +693,7 @@ lemma finiteCoverEvent_compl_subset_gridMiss {a : ℕ → ℝ} {M : ℕ}
     exact mem_iUnion.2 ⟨j,
       mem_iUnion.2 ⟨Finset.mem_range.2 hjM, hj⟩⟩
   simp only [mem_iInter] at hjnot
-  push_neg at hjnot
+  push Not at hjnot
   obtain ⟨n, hnM, hnmiss⟩ := hjnot
   have hhit : ω ∈ hitEvent (shrunkenLength a M) (gridPoint M j) n := by
     simpa only [missEvent, mem_compl_iff, not_not] using hnmiss
@@ -771,7 +771,7 @@ lemma measureReal_finiteCoverEvent_compl_le_gridProduct
       ring
 
 lemma gridProduct_le_exp_prefix {a : ℕ → ℝ} {M : ℕ} (hM : 0 < M)
-    (ha₀ : ∀ n, 0 ≤ a n) (ha₁ : ∀ n, a n ≤ 1) :
+    (_ : ∀ n, 0 ≤ a n) (ha₁ : ∀ n, a n ≤ 1) :
     (M : ℝ) * ∏ n ∈ Finset.range M, (1 - a n + 2 / (M : ℝ)) ≤
       (M : ℝ) * Real.exp (2 - prefixLength a M) := by
   have hfactor (n : ℕ) : 0 ≤ 1 - a n + 2 / (M : ℝ) := by
@@ -829,7 +829,7 @@ lemma frequently_largeSquareThreshold {a : ℕ → ℝ}
     ∀ N, ∃ n, N ≤ n ∧ largeSquareThreshold n < a n := by
   intro N
   by_contra h
-  push_neg at h
+  push Not at h
   have hev : ∀ᶠ n in atTop, a n ≤ largeSquareThreshold n :=
     eventually_atTop.2 ⟨N, h⟩
   apply hsq
@@ -1121,8 +1121,8 @@ lemma jointMissSet_section (a : ℕ → ℝ) (n : ℕ) (t : ℝ) :
     (fun ω : Sample ↦ (ω, t)) ⁻¹' jointMissSet a n =
       missEvent a (t : Circle) n := by
   ext ω
-  simp only [jointMissSet, mem_preimage, mem_setOf_eq, Prod.fst, Prod.snd,
-    missEvent, hitEvent, mem_compl_iff, Metric.mem_ball, center]
+  simp only [jointMissSet, mem_preimage, mem_ofPred_eq, missEvent, hitEvent,
+    mem_compl_iff, Metric.mem_ball, center]
   rw [not_lt, dist_comm]
 
 lemma finiteUncoveredPairs_section (a : ℕ → ℝ) (M : ℕ) (t : ℝ) :
@@ -1187,10 +1187,10 @@ lemma integral_uncoveredIndicator_mul_sample
       simp [Set.indicator_of_mem hA, Set.indicator_of_mem hB,
         Set.indicator_of_mem hC]
     · have hC : ω ∉ C := by simpa [← hAB, hA] using hB
-      simp [Set.indicator_of_mem hA, Set.indicator, hB, hC]
+      simp [Set.indicator, hB, hC]
     · have hC : ω ∉ C := by simpa [← hAB, hB] using hA
       simp [Set.indicator, hA, hC]
-    · have hC : ω ∉ C := by simpa [← hAB, hA] using hB
+    · have hC : ω ∉ C := by simp [← hAB, hA]
       simp [Set.indicator, hA, hB, hC]
   rw [hfun, integral_indicator_const]
   · simp only [smul_eq_mul, mul_one]
@@ -1247,7 +1247,7 @@ lemma localUncoveredLength_sq (a : ℕ → ℝ) (M : ℕ) (ε : ℝ) (ω : Sampl
 
 /-- The exact second-moment identity on a short real-coordinate interval. -/
 lemma integral_localUncoveredLength_sq
-    {a : ℕ → ℝ} (M : ℕ) (ε : ℝ) (hε₀ : 0 ≤ ε) (hε : ε ≤ 1 / 4)
+    {a : ℕ → ℝ} (M : ℕ) (ε : ℝ) (_ : 0 ≤ ε) (hε : ε ≤ 1 / 4)
     (ha₀ : ∀ n, 0 ≤ a n) (ha : ∀ n, a n ≤ 1 / 4) :
     ∫ ω, localUncoveredLength a M ε ω ^ 2 ∂sampleMeasure =
       ∫ x in Icc (0 : ℝ) ε, ∫ y in Icc (0 : ℝ) ε,
@@ -1497,7 +1497,7 @@ lemma finiteMissKernel_eq_mul_finiteNormalizedKernel
           ((1 - 2 * a n + max (a n - t) 0) / (1 - a n) ^ 2) := by
       rw [Finset.prod_pow]
 
-lemma normalizedFactor_nonneg {a t : ℝ} (ha₀ : 0 ≤ a) (ha : a ≤ 1 / 4) :
+lemma normalizedFactor_nonneg {a t : ℝ} (_ : 0 ≤ a) (ha : a ≤ 1 / 4) :
     0 ≤ (1 - 2 * a + max (a - t) 0) / (1 - a) ^ 2 := by
   have hnum : 0 ≤ 1 - 2 * a + max (a - t) 0 := by
     have := le_max_right (a - t) 0
@@ -1674,7 +1674,7 @@ lemma finiteExponentialKernel_pos (a : ℕ → ℝ) (M : ℕ) (t : ℝ) :
     0 < finiteExponentialKernel a M t := by
   exact Real.exp_pos _
 
-lemma finiteOverlapSum_mono_nat {a : ℕ → ℝ} (ha₀ : ∀ n, 0 ≤ a n)
+lemma finiteOverlapSum_mono_nat {a : ℕ → ℝ} (_ : ∀ n, 0 ≤ a n)
     {M L : ℕ} (hML : M ≤ L) (t : ℝ) :
     finiteOverlapSum a M t ≤ finiteOverlapSum a L t := by
   unfold finiteOverlapSum
@@ -1698,7 +1698,7 @@ lemma finiteEnergy_mono_nat {a : ℕ → ℝ} (ha₀ : ∀ n, 0 ≤ a n)
   intro t ht
   exact finiteExponentialKernel_mono_nat ha₀ hML t
 
-lemma finiteEnergy_nonneg (a : ℕ → ℝ) (M : ℕ) {ε : ℝ} (hε : 0 ≤ ε) :
+lemma finiteEnergy_nonneg (a : ℕ → ℝ) (M : ℕ) {ε : ℝ} (_ : 0 ≤ ε) :
     0 ≤ finiteEnergy a ε M := by
   unfold finiteEnergy
   exact setIntegral_nonneg measurableSet_Icc (fun t _ ↦ (finiteExponentialKernel_pos a M t).le)
@@ -1742,13 +1742,13 @@ lemma integral_Icc_max_sub_zero {c ε : ℝ} (hc₀ : 0 ≤ c) (hcε : c ≤ ε)
               (continuous_id.intervalIntegrable 0 c)
           _ = c ^ 2 / 2 := by
             rw [intervalIntegral.integral_const, integral_id]
-            simp only [sub_zero, smul_eq_mul, mul_one, zero_pow, OfNat.zero_ne_ofNat]
+            simp only [sub_zero, smul_eq_mul]
             ring
       rw [hlinear]
       simp
 
 lemma finite_sum_sq_div_two_le_energy {a : ℕ → ℝ} {ε : ℝ}
-    (hε₀ : 0 ≤ ε) (ha₀ : ∀ n, 0 ≤ a n) (haε : ∀ n, a n ≤ ε)
+    (_ : 0 ≤ ε) (ha₀ : ∀ n, 0 ≤ a n) (haε : ∀ n, a n ≤ ε)
     (M : ℕ) :
     (∑ n ∈ Finset.range M, (a n) ^ 2 / 2) ≤ finiteEnergy a ε M := by
   have hoverlap_cont : Continuous (finiteOverlapSum a M) := by
@@ -1772,7 +1772,7 @@ lemma finite_sum_sq_div_two_le_energy {a : ℕ → ℝ} {ε : ℝ}
     (∑ n ∈ Finset.range M, (a n) ^ 2 / 2) =
         ∫ t in Icc (0 : ℝ) ε, finiteOverlapSum a M t := by
       unfold finiteOverlapSum
-      rw [integral_finset_sum]
+      rw [integral_finsetSum]
       · apply Finset.sum_congr rfl
         intro n hn
         exact (integral_Icc_max_sub_zero (ha₀ n) (haε n)).symm
@@ -1786,10 +1786,10 @@ lemma summable_sq_of_not_energy {a : ℕ → ℝ} {ε : ℝ}
   have hmonoEnergy : Monotone (finiteEnergy a ε) := finiteEnergy_mono_nat ha₀ ε
   have hbounded : ∃ B : ℝ, ∀ M, finiteEnergy a ε M < B := by
     rw [EnergyCondition, hmonoEnergy.tendsto_atTop_atTop_iff] at henergy
-    push_neg at henergy
+    push Not at henergy
     exact henergy
   obtain ⟨B, hB⟩ := hbounded
-  apply summable_of_sum_le (fun n ↦ sq_nonneg (a n))
+  apply summable_of_sum_le (c := 2 * B) (fun n ↦ sq_nonneg (a n))
   intro s
   obtain ⟨M, hsM⟩ := s.exists_nat_subset_range
   calc
@@ -1870,7 +1870,7 @@ lemma integral_localUncoveredLength_sq_le_measure_mul_secondMoment
     ae_of_all _ fun ω ↦ localUncoveredLength_nonneg a M ε ω
   have hInonneg : ∀ᵐ ω ∂sampleMeasure, 0 ≤ I ω := by
     filter_upwards [] with ω
-    by_cases hω : ω ∈ E <;> simp [I, Set.indicator, hω]
+    by_cases hω : ω ∈ E <;> simp [I, hω]
   have hXmem : MemLp X (ENNReal.ofReal (2 : ℝ)) sampleMeasure := by
     apply MemLp.of_bound
       (stronglyMeasurable_localUncoveredLength a M ε).aestronglyMeasurable ε
@@ -1880,7 +1880,7 @@ lemma integral_localUncoveredLength_sq_le_measure_mul_secondMoment
   have hImem : MemLp I (ENNReal.ofReal (2 : ℝ)) sampleMeasure := by
     apply MemLp.of_bound (measurable_const.indicator hE).aestronglyMeasurable 1
     filter_upwards [] with ω
-    by_cases hω : ω ∈ E <;> simp [I, Set.indicator, hω]
+    by_cases hω : ω ∈ E <;> simp [Set.indicator, hω]
   have hholder := integral_mul_le_Lp_mul_Lq_of_nonneg
     Real.HolderConjugate.two_two hXnonneg hInonneg hXmem hImem
   have hXI : (fun ω ↦ X ω * I ω) = X := by
@@ -1898,7 +1898,7 @@ lemma integral_localUncoveredLength_sq_le_measure_mul_secondMoment
   have hI2 : (∫ ω, I ω ^ 2 ∂sampleMeasure) = sampleMeasure.real E := by
     have hfun : (fun ω ↦ I ω ^ 2) = I := by
       funext ω
-      by_cases hω : ω ∈ E <;> simp [I, Set.indicator, hω]
+      by_cases hω : ω ∈ E <;> simp [I, hω]
     rw [hfun]
     change (∫ ω, E.indicator (fun _ ↦ (1 : ℝ)) ω ∂sampleMeasure) = _
     rw [integral_indicator_const]
@@ -2003,7 +2003,7 @@ theorem measure_onceCoverageEvent_ne_one_of_not_energy
   have hmonoEnergy : Monotone (finiteEnergy a ε) := finiteEnergy_mono_nat ha₀ ε
   have hbounded : ∃ B : ℝ, ∀ M, finiteEnergy a ε M < B := by
     rw [EnergyCondition, hmonoEnergy.tendsto_atTop_atTop_iff] at henergy
-    push_neg at henergy
+    push Not at henergy
     exact henergy
   obtain ⟨B, hB⟩ := hbounded
   have hBpos : 0 < B := by
@@ -2503,7 +2503,6 @@ lemma finite_shepp_root_le_hardy (a : ℕ → ℝ)
           1 / ((r : ℝ) * (r + 1 : ℝ)) ≤
             2 / (r + 1 : ℝ) ^ 2 := by
         field_simp
-        norm_num only [Nat.cast_add, Nat.cast_one]
         nlinarith
       unfold tiltedRoot
       calc
@@ -2772,11 +2771,11 @@ lemma finiteEnergy_one {a : ℕ → ℝ} {ε : ℝ}
   rw [show (1 : ℕ) = 0 + 1 by omega,
     finiteEnergy_succ_recurrence_integral hanti ha₀ haε 0,
     finiteEnergy_zero a ((ha₀ 0).trans (haε 0))]
-  simp only [zero_add, Nat.cast_zero, Nat.cast_one, zero_mul, sub_zero]
+  simp only [zero_add, Nat.cast_zero, zero_mul, sub_zero]
   rw [intervalIntegral_exp_sub_mul _ (1 : ℝ) _ _ (by norm_num)]
   unfold prefixLength
-  simp only [range_zero, sum_empty, Nat.cast_zero, zero_mul, sub_zero,
-    Real.exp_zero, range_one, sum_singleton, Nat.cast_one, one_mul]
+  simp only [range_zero, sum_empty, sub_zero,
+    Real.exp_zero, range_one, sum_singleton, one_mul]
   rw [intervalIntegral.integral_const]
   simp only [sub_zero, smul_eq_mul, mul_one]
   simp only [sub_self, Real.exp_zero, div_one]
